@@ -59,12 +59,25 @@ function lwtv_underscore_entry_footer() {
 		}
 	}
 
+	/* Show author box on single posts only */
+	if ( is_single() && 'post' === get_post_type() ) {
+		?>
+			<p class="author-description">
+				<?php echo get_avatar( get_the_author_meta('user_email'), $size = '75'); ?>
+				<?php echo get_the_author_meta( 'description' ); ?>
+			</p>
+		<?php
+	}
+
 	if ( ! is_single() && ! post_password_required() && ( comments_open() || get_comments_number() ) ) {
 		echo '<span class="comments-link">';
 		/* translators: %s: post title */
 		comments_popup_link( sprintf( wp_kses( __( 'Leave a Comment<span class="screen-reader-text"> on %s</span>', 'lwtv_underscore' ), array( 'span' => array( 'class' => array() ) ) ), get_the_title() ) );
 		echo '</span>';
 	}
+	
+	/* Show Jetpack Here */
+	lwtv_underscore_jetpack_post_meta();
 
 	edit_post_link(
 		sprintf(
@@ -75,15 +88,7 @@ function lwtv_underscore_entry_footer() {
 		'<span class="edit-link">',
 		'</span>'
 	);
-	
-	?>
-		<p class="author-description">
-			<?php echo get_avatar( get_the_author_meta('user_email'), $size = '75'); ?>
-			<?php echo get_the_author_meta( 'description' ); ?>
-		</p>
-	<?php
-	
-	lwtv_underscore_jetpack_post_meta();
+
 }
 endif;
 
