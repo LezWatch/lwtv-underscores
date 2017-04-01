@@ -21,6 +21,6 @@ add_action( 'customize_register', 'lwtv_underscore_customize_register' );
  * Binds JS handlers to make Theme Customizer preview reload changes asynchronously.
  */
 function lwtv_underscore_customize_preview_js() {
-	wp_enqueue_script( 'lwtv_underscore_customizer', get_template_directory_uri() . '/js/customizer.js', array( 'customize-preview' ), '20151215', true );
+	wp_enqueue_script( 'lwtv_underscore_customizer', get_template_directory_uri() . '/js/customizer.js', array( 'customize-preview' ), '20170401', true );
 }
 add_action( 'customize_preview_init', 'lwtv_underscore_customize_preview_js' );

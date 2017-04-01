@@ -7,7 +7,6 @@
  * @package LezWatch_TV
  */
  
-
 // Post Thumbnail
 $thumbnail = get_the_post_thumbnail( $post->ID, 'character-img', array( 'alt' => get_the_title($post->ID), 'title' => get_the_title($post->ID) ) );
 

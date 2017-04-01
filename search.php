@@ -6,6 +6,8 @@
  *
  * @package LezWatch_TV
  */
+ 
+$allsearch = new WP_Query("s=$s&showposts=0"); 
 
 get_header(); ?>
 
@@ -17,6 +19,7 @@ get_header(); ?>
 
 			<header class="page-header">
 				<h1 class="page-title"><?php printf( esc_html__( 'Search Results for: %s', 'lwtv_underscore' ), '<span>' . get_search_query() . '</span>' ); ?></h1>
+				
 			</header><!-- .page-header -->
 
 			<?php
@@ -32,7 +35,7 @@ get_header(); ?>
 
 			endwhile;
 
-			lwtv_underscore_numeric_posts_nav();
+			lwtv_underscore_numeric_posts_nav( 'wp_query', $allsearch->found_posts );
 
 		else :
 

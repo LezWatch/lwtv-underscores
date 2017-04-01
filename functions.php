@@ -139,9 +139,9 @@ function lwtv_underscore_scripts() {
 	wp_enqueue_style( 'lwtv_underscore-style', get_stylesheet_uri() );
 	wp_enqueue_style( 'lwtv_underscore-style-sidebar', get_template_directory_uri() . '/layouts/content-sidebar.css' );
 
-	wp_enqueue_script( 'lwtv_underscore-navigation', get_template_directory_uri() . '/js/navigation.js', array(), '20151215', true );
+	wp_enqueue_script( 'lwtv_underscore-navigation', get_template_directory_uri() . '/js/navigation.js', array(), '20170401', true );
 
-	wp_enqueue_script( 'lwtv_underscore-skip-link-focus-fix', get_template_directory_uri() . '/js/skip-link-focus-fix.js', array(), '20151215', true );
+	wp_enqueue_script( 'lwtv_underscore-skip-link-focus-fix', get_template_directory_uri() . '/js/skip-link-focus-fix.js', array(), '20170401', true );
 
 	if ( is_singular() && comments_open() && get_option( 'thread_comments' ) ) {
 		wp_enqueue_script( 'comment-reply' );
@@ -183,10 +183,9 @@ if ( !defined( 'LWTV_SYMBOLICONS_PATH' ) )
 	define( 'LWTV_SYMBOLICONS_PATH', WP_PLUGIN_DIR . '/lwtv-plugin/symbolicons/images' );
 
 /**
- * Custom code
+ * AMP
  */
-include_once( get_stylesheet_directory() . '/inc/search.php' );       // Search
-include_once( get_stylesheet_directory() . '/inc/amp.php' );          // AMP
+include_once( get_stylesheet_directory() . '/inc/amp.php' );
 
 /*
  * Custom Image Sizes
@@ -329,10 +328,3 @@ function lwtv_underscore_jetpack_post_meta( ) {
 		$post_meta = $custom_likes->post_likes( '' );
 	}
 }
-/*
- * Jetpack Post Meta
- *
- * Force Jetpack to be where we want it, not where it wants.
- */
-
-function lwtv_underscore_author_box(){}
