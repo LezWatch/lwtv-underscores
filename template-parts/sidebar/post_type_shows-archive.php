@@ -9,37 +9,39 @@
 	<?php get_search_form(); ?>
 </div></section>
 
-<section id="tagcloud" class="widget widget_tags"><div class="widget-wrap">
-	<h4 class="widget-title widgettitle">Tropes</h4>
-		<?php
-			$args = array(
-				'post_type' => 'post_type_shows',
-				'taxonomy'  => array( 'lez_tropes' ),
-			);
-			wp_tag_cloud( $args );
-		?>
-</div></section>
+<section id="facet" class="widget widget_facet"><div class="widget-wrap">
 
-<section id="tagcloud" class="widget widget_tags"><div class="widget-wrap">
 	<h4 class="widget-title widgettitle">Stations</h4>
-		<?php
-			$args = array(
-				'post_type' => 'post_type_shows',
-				'taxonomy'  => array( 'lez_stations' ),
-			);
-			wp_tag_cloud( $args );
-		?>
-</div></section>
+	<?php 
+		echo facetwp_display( 'facet', 'show_stations' ); 
+	?>
 
-<section id="tagcloud" class="widget widget_tags"><div class="widget-wrap">
-	<h4 class="widget-title widgettitle">Show Formats</h4>
-		<?php
-			$args = array(
-				'post_type' => 'post_type_shows',
-				'taxonomy'  => array( 'lez_formats' ),
-			);
-			wp_tag_cloud( $args );
-		?>
+	<h4 class="widget-title widgettitle">Tropes</h4>
+	<?php 
+		echo facetwp_display( 'facet', 'show_tropes' ); 
+	?>
+
+	<h4 class="widget-title widgettitle">Worth It?</h4>
+	<?php 
+		echo facetwp_display( 'facet', 'show_worthit' ); 
+	?>
+
+	<h4 class="widget-title widgettitle">Realness</h4>
+	<?php 
+		echo facetwp_display( 'facet', 'show_realness' ); 
+	?>
+
+	<h4 class="widget-title widgettitle">Quality</h4>
+	<?php 
+		echo facetwp_display( 'facet', 'show_quality' ); 
+	?>
+
+	<h4 class="widget-title widgettitle">Screen Time</h4>
+	<?php 
+		echo facetwp_display( 'facet', 'show_screentime' ); 
+	?>
+	
+	<button class="facetwp-reset" onclick="FWP.reset()"><?php _e('Reset','rc'); ?></button>
 </div></section>
 
 <?php

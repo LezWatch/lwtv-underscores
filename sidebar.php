@@ -21,7 +21,7 @@ if ( ! is_active_sidebar( 'sidebar-1' ) ) {
 
 		// Show the right sidebar for the page type:
 		if ( get_post_type() == 'post_type_characters' && !is_search() ) {
-			get_template_part( 'template-parts/sidebar/post_type_characters' );
+			get_template_part( 'template-parts/sidebar/post_type_characters-' . $type  );
 		} elseif ( get_post_type() == 'post_type_shows' && !is_search() ) {
 			get_template_part( 'template-parts/sidebar/post_type_shows-' . $type );
 		} else { 

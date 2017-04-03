@@ -27,8 +27,7 @@ if ( is_tax() ) {
 get_header(); ?>
 
 	<div id="primary" class="content-area">
-		<main id="main" class="site-main" role="main">
-
+		<main id="main" class="site-main" role="main"><div class="facetwp-template">
 		<?php
 		if ( have_posts() ) : ?>
 
@@ -39,6 +38,7 @@ get_header(); ?>
 				?>
 			</header><!-- .page-header -->
 
+			
 			<?php
 			/* Start the Loop */
 			while ( have_posts() ) : the_post();
@@ -47,15 +47,14 @@ get_header(); ?>
 
 			endwhile;
 
-			lwtv_underscore_numeric_posts_nav();
+			echo facetwp_display( 'pager' );
 
 		else :
-
 			get_template_part( 'template-parts/content/none' );
-
+			
 		endif; ?>
 
-		</main><!-- #main -->
+		</div></main><!-- #main -->
 	</div><!-- #primary -->
 
 <?php
