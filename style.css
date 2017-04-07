@@ -611,7 +611,6 @@ a:active {
 	margin: 0;
 	padding-left: 0;
 	color: #fff;
-	width: 100%;
 	background-color: #333;
 }
 
@@ -633,7 +632,6 @@ a:active {
 	box-shadow: 0 3px 3px rgba(0, 0, 0, 0.2);
 	float: left;
 	position: absolute;
-	top: 1.5em;
 	left: -999em;
 	z-index: 99999;
 }
@@ -846,6 +844,10 @@ header.page-header .archive-description,
 body.archive header.page-header {
 	padding: 20px;
 	background: #ddd;
+}
+
+header div.facetwp-counts {
+	display: inline;
 }
 
 /*--------------------------------------------------------------

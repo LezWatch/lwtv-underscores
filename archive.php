@@ -24,6 +24,9 @@ if ( is_tax() ) {
 	$symbolicon = '<span role="img" aria-label="'.$term->name.'" title="'.$term->name.'" class="taxonomy-svg '.$term->slug.'">'.file_get_contents( $iconpath . $icon ).'</span>';
 }
 
+$count_posts = facetwp_display( 'counts' );
+$selections = facetwp_display( 'selections' );
+
 get_header(); ?>
 
 	<div id="primary" class="content-area">
@@ -33,8 +36,10 @@ get_header(); ?>
 
 			<header class="page-header">
 				<?php
-					the_archive_title( '<h1 class="page-title">', $symbolicon . '</h1>' );
+					the_archive_title( '<h1 class="page-title">', ' (' . $count_posts . ')' . $symbolicon . '</h1>' );
 					the_archive_description( '<div class="archive-description">', '</div>' );
+					
+					echo $selections;
 				?>
 			</header><!-- .page-header -->
 

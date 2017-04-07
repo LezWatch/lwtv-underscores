@@ -25,8 +25,20 @@
 	<?php 
 		echo facetwp_display( 'facet', 'show_worthit' ); 
 	?>
+
+	<h4 class="widget-title widgettitle">Stars</h4>
+	<?php 
+		echo facetwp_display( 'facet', 'show_stars' ); 
+	?>
+
+	<h4 class="widget-title widgettitle">Aired Between...</h4>
+	<?php 
+		echo facetwp_display( 'facet', 'show_airdates' ); 
+	?>
 	
-	<button class="facetwp-reset" onclick="FWP.reset()"><?php _e('Reset','rc'); ?></button>
+	<h4 class="widget-title widgettitle">&nbsp;</h4>
+		<center><button class="facetwp-reset" onclick="FWP.reset()"><?php _e('Reset All Parameters','rc'); ?></button></center>
+
 </div></section>
 
 <section id="tagcloud" class="widget widget_tags"><div class="widget-wrap">

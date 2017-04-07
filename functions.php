@@ -84,55 +84,6 @@ function lwtv_underscore_content_width() {
 add_action( 'after_setup_theme', 'lwtv_underscore_content_width', 0 );
 
 /**
- * Register widget area.
- *
- * @link https://developer.wordpress.org/themes/functionality/sidebars/#registering-a-sidebar
- */
-function lwtv_underscore_widgets_init() {
-	register_sidebar( array(
-		'name'          => esc_html__( 'Sidebar', 'lwtv_underscore' ),
-		'id'            => 'sidebar-1',
-		'description'   => esc_html__( 'This is the primary sidebar.', 'lwtv_underscore' ),
-		'before_widget' => '<section id="%1$s" class="widget %2$s">',
-		'after_widget'  => '</section>',
-		'before_title'  => '<h2 class="widget-title">',
-		'after_title'   => '</h2>',
-	) );
-
-	register_sidebar( array(
-		'name'          => esc_html__( 'Header', 'lwtv_underscore' ),
-		'id'            => 'header-1',
-		'description'   => esc_html__( 'This is the header widget area. It typically appears next to the site title or logo. This widget area is not suitable to display every type of widget, and works best with a custom menu, a search form, or possibly a text widget.', 'lwtv_underscore' ),
-		'before_widget' => '<section id="%1$s" class="widget %2$s">',
-		'after_widget'  => '</section>',
-		'before_title'  => '<h2 class="widget-title">',
-		'after_title'   => '</h2>',
-	) );
-
-	register_sidebar( array(
-		'name'          => esc_html__( 'After Entry', 'lwtv_underscore' ),
-		'id'            => 'after-entry-1',
-		'description'   => esc_html__( 'This goes below entries on single pages only.', 'lwtv_underscore' ),
-		'before_widget' => '<section id="%1$s" class="widget %2$s">',
-		'after_widget'  => '</section>',
-		'before_title'  => '<h2 class="widget-title">',
-		'after_title'   => '</h2>',
-	) );
-	
-	register_sidebar( array(
-		'name'          => esc_html__( 'Footer', 'lwtv_underscore' ),
-		'id'            => 'footer-1',
-		'description'   => esc_html__( 'Footer widget area.', 'lwtv_underscore' ),
-		'before_widget' => '<section id="%1$s" class="widget %2$s">',
-		'after_widget'  => '</section>',
-		'before_title'  => '<h2 class="widget-title">',
-		'after_title'   => '</h2>',
-	) );
-
-}
-add_action( 'widgets_init', 'lwtv_underscore_widgets_init' );
-
-/**
  * Enqueue scripts and styles.
  */
 function lwtv_underscore_scripts() {
@@ -148,6 +99,11 @@ function lwtv_underscore_scripts() {
 	}
 }
 add_action( 'wp_enqueue_scripts', 'lwtv_underscore_scripts' );
+
+/**
+ * Widgets!
+ */
+require get_template_directory() . '/inc/widgets.php';
 
 /**
  * Implement the Custom Header feature.
@@ -327,4 +283,15 @@ function lwtv_underscore_jetpack_post_meta( ) {
 		$custom_likes = new Jetpack_Likes;
 		$post_meta = $custom_likes->post_likes( '' );
 	}
+}
+
+/*
+ * Filter Comment Status
+ *
+ * Remove comments from attachment pages
+ */
+add_filter( 'comments_open', 'lwtv_underscore_filter_media_comment_status', 10 , 2 );
+function lwtv_underscore_filter_media_comment_status( $open, $post_id ) {
+	if( get_post_type() == 'attachment' ) return false;
+	return $open;
 }

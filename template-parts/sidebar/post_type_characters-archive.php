@@ -20,12 +20,14 @@
 		echo facetwp_display( 'facet', 'char_gender' ); 
 	?>
 
-	<h4 class="widget-title widgettitle">Died</h4>
+	<h4 class="widget-title widgettitle">Actor(s)</h4>
 	<?php 
-		echo facetwp_display( 'facet', 'char_dead' ); 
+		echo facetwp_display( 'facet', 'char_actors' ); 
 	?>
-	
-	<button class="facetwp-reset" onclick="FWP.reset()"><?php _e('Reset','rc'); ?></button>
+
+	<h4 class="widget-title widgettitle">&nbsp;</h4>
+		<center><button class="facetwp-reset" onclick="FWP.reset()"><?php _e('Reset All Parameters','rc'); ?></button></center>
+
 </div></section>
 
 <?php

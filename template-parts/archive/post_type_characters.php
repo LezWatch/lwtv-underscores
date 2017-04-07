@@ -13,11 +13,11 @@ $thumbnail = get_the_post_thumbnail( $post->ID, 'character-img', array( 'alt' =>
 // Are they dead?
 $tombstone = '';
 if ( has_term( 'dead', 'lez_cliches' ) && get_post_meta( $post->ID, 'lezchars_death_year', true ) ) {
-	$tombstone = '<span role="img" aria-label="RIP Tombstone" title="RIP Tombstone" class="charlist-grave">'.file_get_contents(LWTV_SYMBOLICONS_PATH.'/svg/rip_gravestone.svg').'</span>';
+	$tombstone = '<span role="img" aria-label="RIP Tombstone" title="RIP Tombstone" class="charlist-grave">' . file_get_contents( LWTV_SYMBOLICONS_PATH.'/svg/rip_gravestone.svg' ) . '</span>';
 }
 
 // Character title and link
-$chartitle = '<a href="' . get_permalink( $post->ID ) . '">'.get_the_title( $post->ID ).'</a>';
+$chartitle = '<a href="' . get_permalink( $post->ID ) . '">' . get_the_title( $post->ID ) . '</a>';
 
 $character_show_IDs = get_post_meta($post->ID, 'lezchars_show_group', true);
 $show_title = array();
@@ -38,7 +38,7 @@ $showtitle = implode(", ", $show_title );
 	<header class="entry-header"></header>
 	
 	<div class="entry-content">
-		<?php echo $thumbnail; ?>
+		<?php echo '<a href="' . get_permalink( $post->ID ) . '">' . $thumbnail . '</a>'; ?>
 		<p>
 			<span class="chartitle"><?php echo $tombstone.$chartitle; ?></span>
 			<br><span class="showtitle"><?php echo $showtitle; ?></span>
