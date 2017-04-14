@@ -12,30 +12,35 @@
 <section id="facet" class="widget widget_facet"><div class="widget-wrap">
 
 	<h4 class="widget-title widgettitle">Tropes</h4>
-	<?php 
-		echo facetwp_display( 'facet', 'show_tropes' ); 
+	<?php
+		echo facetwp_display( 'facet', 'show_tropes' );
 	?>
 
 	<h4 class="widget-title widgettitle">Formats</h4>
-	<?php 
-		echo facetwp_display( 'facet', 'show_format' ); 
+	<?php
+		echo facetwp_display( 'facet', 'show_format' );
 	?>
 
 	<h4 class="widget-title widgettitle">Worth It?</h4>
-	<?php 
-		echo facetwp_display( 'facet', 'show_worthit' ); 
+	<?php
+		echo facetwp_display( 'facet', 'show_worthit' );
 	?>
 
 	<h4 class="widget-title widgettitle">Stars</h4>
-	<?php 
-		echo facetwp_display( 'facet', 'show_stars' ); 
+	<?php
+		echo facetwp_display( 'facet', 'show_stars' );
 	?>
 
-	<h4 class="widget-title widgettitle">Aired Between...</h4>
-	<?php 
-		echo facetwp_display( 'facet', 'show_airdates' ); 
+	<h4 class="widget-title widgettitle">Trigger Warning</h4>
+	<?php
+		echo facetwp_display( 'facet', 'show_trigger_warning' );
 	?>
-	
+
+	<h4 class="widget-title widgettitle">On Air Between...</h4>
+	<?php
+		echo facetwp_display( 'facet', 'show_airdates' );
+	?>
+
 	<h4 class="widget-title widgettitle">&nbsp;</h4>
 		<center><button class="facetwp-reset" onclick="FWP.reset()"><?php _e('Reset All Parameters','rc'); ?></button></center>
 
