@@ -12,19 +12,19 @@ if((get_post_meta($post->ID, "lezshows_worthit_rating", true))) {
 	if ( $thumb_rating == "Yes" ) { $thumb_icon = "thumbs_up.svg"; $thumb_link = "up"; }
 	if ( $thumb_rating == "Meh" ) { $thumb_icon = "meh-o.svg"; $thumb_link = "meh"; }
 	if ( $thumb_rating == "No" ) { $thumb_icon = "thumbs_down.svg"; $thumb_link = "down"; }
-	$thumb_image = file_get_contents(LWTV_SYMBOLICONS_PATH.'/svg/'.$thumb_icon);
+	$thumb_image = file_get_contents(LP_SYMBOLICONS_PATH.'/svg/'.$thumb_icon);
 	echo '<a href="/thumbs/'.$thumb_link.'/"><span role="img" aria-label="Worth Watching? '.$thumb_rating.'." title="Worth Watching? '.$thumb_rating.'." class="archive-worthit '.lcfirst($thumb_rating).'">'.$thumb_image.'</span></a>';
 }
 
 if((get_post_meta($post->ID, "lezshows_triggerwarning", true))) {
-	$trigger_image = file_get_contents(LWTV_SYMBOLICONS_PATH.'/svg/alert.svg');
+	$trigger_image = file_get_contents(LP_SYMBOLICONS_PATH.'/svg/alert.svg');
 	echo '<span role="img" aria-label="This show has a trigger warning!" title="Trigger Warning!" class="archive-trigger">'.$trigger_image.'</span>';
 }
 
 $title = '<a href="' . get_permalink( $post->ID ) . '">'.get_the_title($post->ID).'</a>';
 if ( get_post_meta( get_the_ID(), 'lezshows_stars', true) ) {
 	$color = esc_attr( get_post_meta( get_the_ID(), 'lezshows_stars' , true) );
-	$icon = '<a href="/stars/'.$color.'/"><span role="img" aria-label="'.ucfirst($color).' Star Show" title="'.ucfirst($color).' Star Show" class="showlist-star '.$color.'">'.file_get_contents(LWTV_SYMBOLICONS_PATH.'/svg/star.svg').'</span></a>';
+	$icon = '<a href="/stars/'.$color.'/"><span role="img" aria-label="'.ucfirst($color).' Star Show" title="'.ucfirst($color).' Star Show" class="showlist-star '.$color.'">'.file_get_contents(LP_SYMBOLICONS_PATH.'/svg/star.svg').'</span></a>';
 	$title .= ' '.$icon;
 }
 echo '<h3 class="post-tile">'.$title.'</h3>';
@@ -35,7 +35,7 @@ if ( $terms && ! is_wp_error( $terms ) ) {
 	// loop over each returned trope
 
 	foreach( $terms as $term ) {
-		$iconpath = LWTV_SYMBOLICONS_PATH.'/svg/';
+		$iconpath = LP_SYMBOLICONS_PATH.'/svg/';
 		$termicon = get_term_meta( $term->term_id, 'lez_termsmeta_icon', true );
 		$icon = $termicon ? $termicon.'.svg' : 'square.svg';
 

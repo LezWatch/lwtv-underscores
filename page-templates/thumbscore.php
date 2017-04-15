@@ -35,7 +35,7 @@ if ( $thumbscore == 'up' ) {
 $type           = 'post_type_shows';
 $query_args     = LWTV_Loops::post_meta_query( 'post_type_shows', 'lezshows_worthit_rating', $thumb, 'IN' );
 $count_posts    = $query_args->post_count;
-$iconpath       = LWTV_SYMBOLICONS_PATH . '/svg/' . $icon;
+$iconpath       = LP_SYMBOLICONS_PATH . '/svg/' . $icon;
 
 get_header(); ?>
 

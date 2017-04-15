@@ -15,7 +15,7 @@ if ( !in_array( $thisrole, $validroles ) ){
 $type           = 'post_type_characters';
 $query_args     = LWTV_Loops::post_meta_query( $type, 'lezchars_show_group', $thisrole, 'LIKE' );
 $count_posts    = $query_args->post_count;
-$iconpath       = LWTV_SYMBOLICONS_PATH.'/svg/person.svg';
+$iconpath       = LP_SYMBOLICONS_PATH.'/svg/person.svg';
 
 get_header(); ?>
 

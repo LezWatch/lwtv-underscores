@@ -93,7 +93,7 @@ $cliches = '';
 if ( $lez_cliches && ! is_wp_error( $lez_cliches ) ) {
     $cliches = ' &mdash; Clichés: ';
 	foreach($lez_cliches as $the_cliche) {
-		$iconpath = LWTV_SYMBOLICONS_PATH.'/svg/';
+		$iconpath = LP_SYMBOLICONS_PATH.'/svg/';
 		$termicon = get_term_meta( $the_cliche->term_id, 'lez_termsmeta_icon', true );
 		$icon = ( $termicon && file_exists( $iconpath.$termicon.'.svg' ) )? $termicon.'.svg' : 'square.svg';
 		$cliches .= '&nbsp;<a href="'. get_term_link( $the_cliche->slug, 'lez_cliches') .'" rel="tag" class="character cliche cliche-'. $the_cliche->slug .'" title="'. $the_cliche->name .'"><span role="img" aria-label="'. $the_cliche->name .'" title="'. $the_cliche->name .'" class="character-cliche '. $the_cliche->slug .'">'. file_get_contents( $iconpath . $icon ) .'</span></a>';

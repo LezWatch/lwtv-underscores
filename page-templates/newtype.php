@@ -17,7 +17,7 @@ if ( !in_array( $type, $validnew ) ){
 $archive_title  = 'Newest '.ucfirst( $type );
 $count_posts    = wp_count_posts( 'post_type_'.$type )->publish;
 $posttype       = 'post_type_'.$type;
-$iconpath       = LWTV_SYMBOLICONS_PATH . '/svg/flag.svg';
+$iconpath       = LP_SYMBOLICONS_PATH . '/svg/flag.svg';
 
 add_filter( 'body_class', 'leznew_body_class' );
 function leznew_body_class( $classes ) {

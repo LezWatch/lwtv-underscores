@@ -20,7 +20,7 @@ if ( in_array( $color, $validcolors ) ){
 $type           = 'post_type_shows';
 $query_args     = LWTV_Loops::post_meta_query( 'post_type_shows', 'lezshows_stars', $color, 'IN' );
 $count_posts    = $query_args->post_count;
-$iconpath       = LWTV_SYMBOLICONS_PATH.'/svg/star.svg';
+$iconpath       = LP_SYMBOLICONS_PATH.'/svg/star.svg';
 
 get_header(); ?>
 

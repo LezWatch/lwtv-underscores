@@ -13,8 +13,8 @@ $show_quality = min ( $show_quality, 5 );
 $screen_time = (int) get_post_meta($show_id, 'lezshows_screentime_rating', true);
 $screen_time = min( $screen_time, 5 );
 
-$positive_heart = '<span role="img" class="show-heart positive">'.file_get_contents(LWTV_SYMBOLICONS_PATH.'/svg/heart.svg').'</span>';
-$negative_heart = '<span role="img" class="show-heart negative">'.file_get_contents(LWTV_SYMBOLICONS_PATH.'/svg/heart.svg').'</span>';
+$positive_heart = '<span role="img" class="show-heart positive">'.file_get_contents(LP_SYMBOLICONS_PATH.'/svg/heart.svg').'</span>';
+$negative_heart = '<span role="img" class="show-heart negative">'.file_get_contents(LP_SYMBOLICONS_PATH.'/svg/heart.svg').'</span>';
 ?>
 <section id="search" class="widget widget_search"><div class="widget-wrap">
 	<h4 class="widget-title widgettitle">Search</h4>
@@ -48,7 +48,7 @@ if((get_post_meta($show_id, "lezshows_worthit_rating", true))) { ?>
 					if ( $thumb_rating == "Yes" ) { $thumb = "thumbs_up.svg"; }
 					if ( $thumb_rating == "Meh" ) { $thumb = "meh-o.svg"; }
 					if ( $thumb_rating == "No" ) { $thumb = "thumbs_down.svg"; }
-					$thumb_image = file_get_contents(LWTV_SYMBOLICONS_PATH.'/svg/'.$thumb);
+					$thumb_image = file_get_contents(LP_SYMBOLICONS_PATH.'/svg/'.$thumb);
 					echo '<span role="img" class="show-worthit '.lcfirst($thumb_rating).'">'.$thumb_image.'</span>';
 					echo get_post_meta($show_id, 'lezshows_worthit_rating', true);
 					?>
@@ -90,9 +90,9 @@ if((get_post_meta($show_id, "lezshows_worthit_rating", true))) { ?>
 				<li class="show trope trope-<?php echo $term->slug; ?>">
 					<a href="<?php echo get_term_link( $term->slug, 'lez_tropes'); ?>" rel="show trope"><?php
 						$icon = get_term_meta( $term->term_id, 'lez_termsmeta_icon', true );
-						$iconpath = LWTV_SYMBOLICONS_PATH.'/svg/'.$icon.'.svg';
+						$iconpath = LP_SYMBOLICONS_PATH.'/svg/'.$icon.'.svg';
 						if ( empty( $icon ) || !file_exists( $iconpath ) ) {
-							$iconpath = LWTV_SYMBOLICONS_PATH.'/svg/square.svg';
+							$iconpath = LP_SYMBOLICONS_PATH.'/svg/square.svg';
 						}
 						echo file_get_contents( $iconpath );
 					?></a>

@@ -13,7 +13,7 @@ $thumbnail = get_the_post_thumbnail( $post->ID, 'character-img', array( 'alt' =>
 // Are they dead?
 $tombstone = '';
 if ( has_term( 'dead', 'lez_cliches' ) && get_post_meta( $post->ID, 'lezchars_death_year', true ) ) {
-	$tombstone = '<span role="img" aria-label="RIP Tombstone" title="RIP Tombstone" class="charlist-grave">' . file_get_contents( LWTV_SYMBOLICONS_PATH.'/svg/rip_gravestone.svg' ) . '</span>';
+	$tombstone = '<span role="img" aria-label="RIP Tombstone" title="RIP Tombstone" class="charlist-grave">' . file_get_contents( LP_SYMBOLICONS_PATH.'/svg/rip_gravestone.svg' ) . '</span>';
 }
 
 // Character title and link

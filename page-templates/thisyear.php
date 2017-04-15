@@ -14,7 +14,7 @@ if ( !is_numeric( $thisyear ) ){
 $previousurl = site_url( '/this-year/'.( $thisyear - 1 ).'/' );
 $nexturl     = site_url( '/this-year/'.( $thisyear + 1 ).'/' );
 $thisurl     = site_url( '/this-year/'. date('Y') .'/' );
-$iconpath    = LWTV_SYMBOLICONS_PATH.'/svg/calendar_alt.svg';
+$iconpath    = LP_SYMBOLICONS_PATH.'/svg/calendar_alt.svg';
 
 function lwtv_underscore_this_year_dead( $thisyear ) {
 

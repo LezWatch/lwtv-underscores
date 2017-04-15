@@ -131,14 +131,6 @@ require get_template_directory() . '/inc/customizer.php';
 require get_template_directory() . '/inc/jetpack.php';
 
 /**
- * Symbolicons should be defined by the plugin but just in case...
- */
-if ( !defined( 'LWTV_SYMBOLICONS_URL' ) )
-	define( 'LWTV_SYMBOLICONS_URL', WP_PLUGIN_URL . '/lwtv-plugin/symbolicons/images' );
-if ( !defined( 'LWTV_SYMBOLICONS_PATH' ) )
-	define( 'LWTV_SYMBOLICONS_PATH', WP_PLUGIN_DIR . '/lwtv-plugin/symbolicons/images' );
-
-/**
  * AMP
  */
 include_once( get_stylesheet_directory() . '/inc/amp.php' );
@@ -160,11 +152,11 @@ function lwtv_underscore_header() {
 	printf( '<span role="img" aria-label="Toaster" title="Toaster" class="logo toaster"><a href="/"><img src="%s" alt="Rainbow Toaster" title="Rainbow Toaster" width="100px" height="100px" /></a></span>', $header_image );
 }
 
-/* 
+/*
  * Numeric Post Navigation
  */
 function lwtv_underscore_numeric_posts_nav( $query = 'wp_query', $count = null ) {
-	
+
 	if( is_singular( 'post' ) )
 		return;
 
@@ -176,14 +168,14 @@ function lwtv_underscore_numeric_posts_nav( $query = 'wp_query', $count = null )
 	$posts_per_page = get_option('posts_per_page');
 
 	if ( $count == null ) {
-		$post_type = ( $query->post_type == '' )? 'post' : $query->post_type; 
+		$post_type = ( $query->post_type == '' )? 'post' : $query->post_type;
 		$published_posts = wp_count_posts( $post_type )->publish;
 		$page_number_max = ceil( $published_posts / $posts_per_page );
 	} else {
 		$published_posts = ceil( $count / $posts_per_page );
 		$page_number_max = ceil( $count / $posts_per_page );
 	}
-	
+
 	/** Stop execution if there's only 1 page */
 	if( $page_number_max <= 1 )
 		return;
@@ -251,7 +243,7 @@ function lwtv_underscore_numeric_posts_nav( $query = 'wp_query', $count = null )
  *
  * Everything BUT regular posts go alphabetical
  */
-add_action( 'pre_get_posts', 'lwtv_underscore_archive_sort_order' ); 
+add_action( 'pre_get_posts', 'lwtv_underscore_archive_sort_order' );
 function lwtv_underscore_archive_sort_order( $query ) {
 	if ( is_archive() && !is_post_type_archive( 'post' ) ) {
 		$query->set( 'order', 'ASC' );

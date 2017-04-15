@@ -11,7 +11,7 @@
 $icon = '';
 if ( get_post_meta( get_the_ID(), 'lezshows_stars', true) ) {
 	$color = esc_attr( get_post_meta( get_the_ID( ), 'lezshows_stars' , true ) );
-	$icon = '<span role="img" aria-label="' . ucfirst( $color ) . ' Star Show" title="' . ucfirst( $color ) . ' Star Show" class="show-star ' . $color . '">' . file_get_contents( LWTV_SYMBOLICONS_PATH . '/svg/star.svg' ) . '</span>';
+	$icon = '<span role="img" aria-label="' . ucfirst( $color ) . ' Star Show" title="' . ucfirst( $color ) . ' Star Show" class="show-star ' . $color . '">' . file_get_contents( LP_SYMBOLICONS_PATH . '/svg/star.svg' ) . '</span>';
 }
 
 ?>
@@ -37,7 +37,7 @@ if ( get_post_meta( get_the_ID(), 'lezshows_stars', true) ) {
 		<?php
 			
 			if ( get_post_meta( get_the_ID(), 'lezshows_triggerwarning', true ) == 'on' ) {
-				echo '<div class="callout callout-trigger"><span role="img" aria-label="Warning Hand" title="Warning Hand">' . file_get_contents( LWTV_SYMBOLICONS_PATH . '/svg/hand.svg' ) . '</span><p><strong>TRIGGER WARNING!</strong> This show is intended for <em>mature audiences</em> only. If explicit violence, sex, and abuse aren\'t your speed, neither is this show.</p></div>';
+				echo '<div class="callout callout-trigger"><span role="img" aria-label="Warning Hand" title="Warning Hand">' . file_get_contents( LP_SYMBOLICONS_PATH . '/svg/hand.svg' ) . '</span><p><strong>TRIGGER WARNING!</strong> This show is intended for <em>mature audiences</em> only. If explicit violence, sex, and abuse aren\'t your speed, neither is this show.</p></div>';
 			}
 			
 			?>
