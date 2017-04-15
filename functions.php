@@ -245,9 +245,11 @@ function lwtv_underscore_numeric_posts_nav( $query = 'wp_query', $count = null )
  */
 add_action( 'pre_get_posts', 'lwtv_underscore_archive_sort_order' );
 function lwtv_underscore_archive_sort_order( $query ) {
-	if ( is_archive() && !is_post_type_archive( 'post' ) ) {
-		$query->set( 'order', 'ASC' );
-		$query->set( 'orderby', 'title' );
+    if ( $query->is_main_query() && !is_admin() ) {
+		if ( is_post_type_archive( array( 'post_type_characters', 'post_type_shows' ) ) ) {
+	        $query->set( 'order', 'ASC' );
+	        $query->set( 'orderby', 'title' );
+		}
 	}
 }
 
