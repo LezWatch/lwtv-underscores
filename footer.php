@@ -18,6 +18,11 @@
 			<?php dynamic_sidebar( 'footer-1' ); ?>
 		</div><!-- .site-info -->
 	</footer><!-- #colophon -->
+
+	<div class="after-footer-widget">
+		<?php dynamic_sidebar( 'after-footer' ); ?>
+	</div>
+
 </div><!-- #page -->
 
 <?php wp_footer(); ?>

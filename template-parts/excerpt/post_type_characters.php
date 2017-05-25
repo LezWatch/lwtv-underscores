@@ -102,6 +102,7 @@ if ( $lez_cliches && ! is_wp_error( $lez_cliches ) ) {
 
 // Generate Gender & Sexuality Data
 // Usage: $gender_sexuality
+
 $gender_sexuality = '';
 $gender_terms = get_the_terms( $character['id'], 'lez_gender', true);
 if ( $gender_terms && ! is_wp_error( $gender_terms ) ) {

@@ -11,34 +11,26 @@
 
 <section id="facet" class="widget widget_facet"><div class="widget-wrap">
 
-	<h4 class="widget-title widgettitle">Tropes</h4>
-	<?php
-		echo facetwp_display( 'facet', 'show_tropes' );
-	?>
+	<h4 class="widget-title widgettitle">Order Shows By ...</h4>
+		<div class="facetwp-sort"><?php echo facetwp_display( 'sort' ); ?></div>
 
-	<h4 class="widget-title widgettitle">Formats</h4>
 	<?php
-		echo facetwp_display( 'facet', 'show_format' );
-	?>
+		$facets = array (
+		'Tropes'            => 'show_tropes',
+		'Genres'            => 'show_genres',
+		'Formats'           => 'show_format',
+		'Worth It?'         => 'show_worthit',
+		'Stars'             => 'show_stars',
+		'Trigger Warning'   => 'show_trigger_warning',
+		'On Air Between...' => 'show_airdates',
+	);
 
-	<h4 class="widget-title widgettitle">Worth It?</h4>
-	<?php
-		echo facetwp_display( 'facet', 'show_worthit' );
-	?>
-
-	<h4 class="widget-title widgettitle">Stars</h4>
-	<?php
-		echo facetwp_display( 'facet', 'show_stars' );
-	?>
-
-	<h4 class="widget-title widgettitle">Trigger Warning</h4>
-	<?php
-		echo facetwp_display( 'facet', 'show_trigger_warning' );
-	?>
-
-	<h4 class="widget-title widgettitle">On Air Between...</h4>
-	<?php
-		echo facetwp_display( 'facet', 'show_airdates' );
+	foreach ( $facets as $title => $facet ) {
+		?>
+		<h4 class="widget-title widgettitle"><?php echo $title; ?></h4>
+			<?php echo facetwp_display( 'facet', $facet ); ?>
+		<?php
+	}
 	?>
 
 	<h4 class="widget-title widgettitle">&nbsp;</h4>

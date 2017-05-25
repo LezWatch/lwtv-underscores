@@ -5,24 +5,23 @@
 
 <section id="facet" class="widget widget_facet"><div class="widget-wrap">
 
-	<h4 class="widget-title widgettitle">Clichés</h4>
-	<?php 
-		echo facetwp_display( 'facet', 'char_cliches' ); 
-	?>
+	<h4 class="widget-title widgettitle">Order Characters By ...</h4>
+		<div class="facetwp-sort"><?php echo facetwp_display( 'sort' ); ?></div>
 
-	<h4 class="widget-title widgettitle">Sexuality</h4>
-	<?php 
-		echo facetwp_display( 'facet', 'char_sexuality' ); 
-	?>
+	<?php
+		$facets = array (
+		'Clichés'   => 'char_cliches',
+		'Sexuality' => 'char_sexuality',
+		'Gender'    => 'char_gender',
+		'Actor(s)'  => 'char_actors',
+	);
 
-	<h4 class="widget-title widgettitle">Gender</h4>
-	<?php 
-		echo facetwp_display( 'facet', 'char_gender' ); 
-	?>
-
-	<h4 class="widget-title widgettitle">Actor(s)</h4>
-	<?php 
-		echo facetwp_display( 'facet', 'char_actors' ); 
+	foreach ( $facets as $title => $facet ) {
+		?>
+		<h4 class="widget-title widgettitle"><?php echo $title; ?></h4>
+			<?php echo facetwp_display( 'facet', $facet ); ?>
+		<?php
+	}
 	?>
 
 	<h4 class="widget-title widgettitle">&nbsp;</h4>

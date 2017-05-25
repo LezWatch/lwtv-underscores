@@ -11,7 +11,11 @@
 
 <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 	<header class="entry-header">
-		<?php the_title( sprintf( '<h2 class="entry-title"><a href="%s" rel="bookmark">', esc_url( get_permalink() ) ), '</a></h2>' ); ?>
+		<?php 
+			if ( 'post' === get_post_type() || 'page' === get_post_type() ) {
+				the_title( sprintf( '<h2 class="entry-title"><a href="%s" rel="bookmark">', esc_url( get_permalink() ) ), '</a></h2>' ); 
+			}
+		?>
 
 		<?php 
 			if ( 'post' === get_post_type() ) { ?>
@@ -35,7 +39,7 @@
 				'shows'     => get_post_meta( $post->ID, 'lezchars_show_group', true ),
 				'show_from' => 0,
 			);
-			include(locate_template('template-parts/excerpt/post_type_characters.php'));
+			include( locate_template( 'template-parts/excerpt/post_type_characters.php' ) );
 		} else {
 			the_excerpt();
 		}

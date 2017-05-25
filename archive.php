@@ -25,7 +25,36 @@ if ( is_tax() ) {
 }
 
 $count_posts = facetwp_display( 'counts' );
-$selections = facetwp_display( 'selections' );
+$selections  = facetwp_display( 'selections' );
+
+// I wish this wasn't hard coded, but it's very weird and I was very tired.
+$fwp_sort    = ( isset( $_GET['fwp_sort'] ) )? $_GET['fwp_sort'] : '';
+switch ( $fwp_sort ) {
+	case 'most_queers':
+		$sort = 'Number of Characters (Descending)';
+		break;
+	case 'least_queers':
+		$sort = 'Number of Characters (Ascending)';
+		break;
+	case 'most_dead':
+		$sort = 'Number of Dead Characters (Descending)';
+		break;
+	case 'least_dead':
+		$sort = 'Number of Dead Characters (Ascending)';
+		break;
+	case 'date_desc':
+		$sort = 'Date (Newest)';
+		break;
+	case 'date_asc':
+		$sort = 'Date (Oldest)';
+		break;
+	case 'title_desc':
+		$sort = 'Name (Z-A)';
+		break;
+	case 'title_asc':
+	default:
+		$sort = 'Name (A-Z)';
+}
 
 get_header(); ?>
 
@@ -36,7 +65,7 @@ get_header(); ?>
 
 			<header class="page-header">
 				<?php
-					the_archive_title( '<h1 class="page-title">', ' (' . $count_posts . ')' . $symbolicon . '</h1>' );
+					the_archive_title( '<h1 class="page-title">' . $symbolicon, '<br />Sorted By ' . $sort . ' (' . $count_posts . ')</h1>' );
 					the_archive_description( '<div class="archive-description">', '</div>' );
 
 					echo $selections;

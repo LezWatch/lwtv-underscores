@@ -19,7 +19,7 @@ function lwtv_underscore_widgets_init() {
 	register_sidebar( array(
 		'name'          => esc_html__( 'Front Page Top', 'lwtv_underscore' ),
 		'id'            => 'front-page-top',
-		'description'   => esc_html__( 'This goes above the loop on the front page only.', 'lwtv_underscore' ),
+		'description'   => esc_html__( 'This goes above the loop on the front page only. It\'s perfect for explaining what your site is about and presenting a welcome message.', 'lwtv_underscore' ),
 		'before_widget' => '<section id="%1$s" class="widget %2$s">',
 		'after_widget'  => '</section>',
 		'before_title'  => '<h2 class="widget-title">',
@@ -66,5 +66,20 @@ function lwtv_underscore_widgets_init() {
 		'after_title'   => '</h2>',
 	) );
 
+	register_sidebar( array(
+		'name'          => esc_html__( 'After Footer', 'lwtv_underscore' ),
+		'id'            => 'after-footer',
+		'description'   => esc_html__( 'Below footer widget area.', 'lwtv_underscore' ),
+		'before_widget' => '<section id="%1$s" class="widget %2$s">',
+		'after_widget'  => '</section>',
+		'before_title'  => '<h2 class="widget-title">',
+		'after_title'   => '</h2>',
+	) );
+
 }
 add_action( 'widgets_init', 'lwtv_underscore_widgets_init' );
+
+/**
+ * Special Widget for Featured Custom Post Types
+ */
+require get_template_directory() . '/inc/featured-cpt.php';
