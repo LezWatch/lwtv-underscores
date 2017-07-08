@@ -8,16 +8,16 @@
 
 .content-area {
 	float: right;
-	margin: 0 0 0 -25%;
+	margin: 0 0 0 -30%;
 	width: 100%;
 }
 .site-main {
-	margin: 0 0 0 25%;
+	margin: 0 0 0 30%;
 }
 .site-content .widget-area {
 	float: left;
 	overflow: hidden;
-	width: 25%;
+	width: 30%;
 }
 .site-footer {
 	clear: both;
