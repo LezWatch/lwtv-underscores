@@ -63,7 +63,12 @@
 	if ( empty($havecharacters) || $havecharacters == '0' ) {
 		echo '<p>There are no queers listed yet for this show.</p>';
 	} else {
-		echo '<p>There '. sprintf( _n( 'is %s queer character', 'are %s queer characters', $havecharcount ), $havecharcount ).' listed for this show.</p>';
+
+		$deadtext = 'none are dead';
+		if ( $havedeadcount > '0' )
+			$deadtext = sprintf( _n( '%s is dead', '%s are dead', $havedeadcount ), $havedeadcount );
+
+		echo '<p>There '. sprintf( _n( 'is %s queer character', 'are %s queer characters', $havecharcount ), $havecharcount ).' listed for this show. Of those, ' . $deadtext . '.</p>';
 		foreach( $havecharacters as $character ) {
 		?>
 			<ul class="character-list">

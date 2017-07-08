@@ -23,6 +23,7 @@ if ( in_array( 'post_type_shows' , $query_types)) $checked_shows = 'checked="che
 		<label for="s" class="assistive-text">Search the Database</label>
 		<input type="text" class="field" name="s" id="s" placeholder="Search the Database" />
 		<input type="submit" class="submit" name="submit" id="searchsubmit" value="Search" />
+		<br />
 		<input type="checkbox" name="post_type[]" value="post_type_characters" <?php echo $checked_characters; ?> /> <label class="search-input-label">Characters</label>
 		<input type="checkbox" name="post_type[]" value="post_type_shows" <?php echo $checked_shows; ?> /> <label class="search-input-label">Shows</label>
 	</form>

@@ -44,7 +44,7 @@ function lwtv_underscore_setup() {
 
 	// This theme uses wp_nav_menu() in one location.
 	register_nav_menus( array(
-		'menu-1' => esc_html__( 'Primary', 'lwtv_underscore' ),
+		'menu-primary' => esc_html__( 'Primary', 'lwtv_underscore' ),
 	) );
 
 	/*

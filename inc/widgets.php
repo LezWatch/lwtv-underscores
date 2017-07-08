@@ -47,6 +47,26 @@ function lwtv_underscore_widgets_init() {
 	) );
 
 	register_sidebar( array(
+		'name'          => esc_html__( 'Sidebar - Character Archives', 'lwtv_underscore' ),
+		'id'            => 'archive-character-sidebar',
+		'description'   => esc_html__( 'This is the sidebar for character archives.', 'lwtv_underscore' ),
+		'before_widget' => '<section id="%1$s" class="widget %2$s">',
+		'after_widget'  => '</section>',
+		'before_title'  => '<h2 class="widget-title">',
+		'after_title'   => '</h2>',
+	) );
+
+	register_sidebar( array(
+		'name'          => esc_html__( 'Sidebar - Show Archives', 'lwtv_underscore' ),
+		'id'            => 'archive-show-sidebar',
+		'description'   => esc_html__( 'This is the sidebar for show archives.', 'lwtv_underscore' ),
+		'before_widget' => '<section id="%1$s" class="widget %2$s">',
+		'after_widget'  => '</section>',
+		'before_title'  => '<h2 class="widget-title">',
+		'after_title'   => '</h2>',
+	) );
+
+	register_sidebar( array(
 		'name'          => esc_html__( 'After Entry', 'lwtv_underscore' ),
 		'id'            => 'after-entry-1',
 		'description'   => esc_html__( 'This goes below entries on single pages only.', 'lwtv_underscore' ),
@@ -55,7 +75,7 @@ function lwtv_underscore_widgets_init() {
 		'before_title'  => '<h2 class="widget-title">',
 		'after_title'   => '</h2>',
 	) );
-	
+
 	register_sidebar( array(
 		'name'          => esc_html__( 'Footer', 'lwtv_underscore' ),
 		'id'            => 'footer-1',

@@ -120,8 +120,8 @@ if ( $sexuality_terms && ! is_wp_error( $sexuality_terms ) ) {
 <div class="shows-list-character-content">
 	<p><span class="entry-meta">
 		<a href="<?php echo $character['url']; ?>"><?php echo get_the_post_thumbnail( $character['id'], 'character-img', array( 'alt' => $character['title'] , 'title' => $character['title'] ) ); ?></a>
-	
-		<?php echo $the_title; ?> 
+
+		<?php echo $the_title; ?>
 		<?php if ( $character_type !== '' ) echo '('.$character_type .')'; ?>
 
 		<br /><?php echo $gender_sexuality . $cliches; ?>
@@ -131,13 +131,12 @@ if ( $sexuality_terms && ! is_wp_error( $sexuality_terms ) ) {
 	</span></p>
 
 	<div class="characters-description">
-		<p><?php 
-			if ( $character['content'] !== '' ) { 
-				echo $character['content']; 
+		<p><?php
+			if ( $character['content'] !== '' ) {
+				echo $character['content'];
 			} else {
 				the_content();
 			}
 			?></p>
 	</div>
-
 </div>

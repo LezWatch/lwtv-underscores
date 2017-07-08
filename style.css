@@ -27,6 +27,7 @@ Nicolas Gallagher and Jonathan Neal http://necolas.github.io/normalize.css/
 # Typography
 # Elements
 # Forms
+# Body
 # Header
 # Navigation
 	## Links
@@ -431,11 +432,11 @@ table {
 	width: 100%;
 }
 
-.clearfix:after { 
-   content: "."; 
-   visibility: hidden; 
-   display: block; 
-   height: 0; 
+.clearfix:after {
+   content: ".";
+   visibility: hidden;
+   display: block;
+   height: 0;
    clear: both;
 }
 
@@ -522,6 +523,14 @@ textarea:focus {
 
 textarea {
 	width: 100%;
+}
+
+/*--------------------------------------------------------------
+# Body
+--------------------------------------------------------------*/
+#page.site {
+	margin: 50px;
+	background: #fff;
 }
 
 /*--------------------------------------------------------------
@@ -826,7 +835,7 @@ a:active {
 .footer-widget{
 	background: #333;
 	color: #fff;
-	margin: 15px 0px;
+	padding: 5px 15px;
 	text-align: center;
 }
 
