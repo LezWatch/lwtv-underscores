@@ -554,7 +554,8 @@ span.logo.toaster img:hover {
 	text-shadow: 4px 4px 4px #000;
 }
 .site-title a,
-.site-title a:hover {
+.site-title a:hover,
+.site-title a:visited {
 	background-color: transparent;
 	display: inline-block;
 	padding: 16px;
@@ -566,7 +567,7 @@ span.logo.toaster img:hover {
 	display: block;
 	height: initial;
 	margin-bottom: 10px;
-	text-indent: 0px;
+	text-indent: 10px;
 	clear: both;
 }
 
@@ -581,17 +582,17 @@ span.logo.toaster img:hover {
 ## Links
 --------------------------------------------------------------*/
 a {
-	color: royalblue;
+	color: #d1548e;
 }
 
 a:visited {
-	color: purple;
+	color: #d1548e;
 }
 
 a:hover,
 a:focus,
 a:active {
-	color: midnightblue;
+	text-decoration: none;
 }
 
 a:focus {
@@ -820,6 +821,18 @@ a:active {
 	margin: 0 0 1.5em;
 }
 
+.widget-title {
+	text-align: center;
+	text-transform: uppercase;
+	padding-bottom: 10px;
+	font-size: 1.2em;
+	background: url( images/lines.png) bottom repeat-x;
+}
+
+.widget ul {
+	margin: 0;
+}
+
 /* Make sure select elements fit in widgets. */
 .widget select {
 	max-width: 100%;
@@ -832,11 +845,22 @@ a:active {
 }
 
 /* Footer Widget */
-.footer-widget{
+.footer-widget {
 	background: #333;
 	color: #fff;
 	padding: 5px 15px;
 	text-align: center;
+}
+
+/* After Footer Widget */
+.after-footer-widget {
+	text-align: center;
+}
+.after-footer-widget section {
+	display: inline-block;
+	vertical-align: top;
+	width: 30%;
+	text-align: left;
 }
 
 /*--------------------------------------------------------------
