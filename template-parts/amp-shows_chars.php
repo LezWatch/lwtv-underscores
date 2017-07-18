@@ -124,7 +124,6 @@
 				}
 
 				if ( $tropes && ! is_wp_error( $tropes ) ) {
-
 					$trope_echo = get_the_term_list( $this->ID, 'lez_tropes', '<p class="entry-meta"><strong>Tropes:</strong> ', ', ' );
 				}
 

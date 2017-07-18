@@ -81,8 +81,13 @@ if ( get_post_meta( $character['id'], 'lezchars_death_year', true) ) {
 	if ( !is_array ( $character_death ) ) {
 		$character_death = array( get_post_meta( $character['id'], 'lezchars_death_year', true) );
 	}
-	$character_death = implode(", ", $character_death );
-	$rip = '<strong>RIP:</strong> '. $character_death;
+	$echo_death = array();
+	foreach( $character_death as $death ) {
+		$date = date_create_from_format('j/m/Y', $death );
+		$echo_death[] = date_format($date, 'F d, Y');
+	}
+	$echo_death = implode(", ", $echo_death );
+	$rip = '<strong>RIP:</strong> '. $echo_death;
 }
 
 // Generate list of Cliches
