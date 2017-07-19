@@ -83,7 +83,7 @@ if ( get_post_meta( $character['id'], 'lezchars_death_year', true) ) {
 	}
 	$echo_death = array();
 	foreach( $character_death as $death ) {
-		$date = date_create_from_format('j/m/Y', $death );
+		$date = date_create_from_format('m/j/Y', $death );
 		$echo_death[] = date_format($date, 'F d, Y');
 	}
 	$echo_death = implode(", ", $echo_death );
