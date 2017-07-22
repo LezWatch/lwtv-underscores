@@ -36,9 +36,7 @@ if ( get_post_meta( get_the_ID(), 'lezshows_stars', true) ) {
 	<div class="entry-content">
 		<?php
 			
-			if ( get_post_meta( get_the_ID(), 'lezshows_triggerwarning', true ) == 'on' ) {
-				echo '<div class="callout callout-trigger"><span role="img" aria-label="Warning Hand" title="Warning Hand">' . file_get_contents( LP_SYMBOLICONS_PATH . '/svg/hand.svg' ) . '</span><p><strong>TRIGGER WARNING!</strong> This show is intended for <em>mature audiences</em> only. If explicit violence, sex, and abuse aren\'t your speed, neither is this show.</p></div>';
-			}
+			LWTV_CPT_Shows::echo_content_warning();
 			
 			?>
 			<section class="shows-extras" name="overview" id="overview">

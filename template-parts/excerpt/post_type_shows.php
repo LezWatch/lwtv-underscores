@@ -36,9 +36,9 @@ if( ( get_post_meta( $post->ID, "lezshows_worthit_rating", true ) ) ) {
 
 // Trigger Warning
 $trigger = '';
-if ( ( get_post_meta( $post->ID, 'lezshows_triggerwarning', true ) ) ) {
+if( ( get_post_meta( $post->ID, "lezshows_triggerwarning", true ) ) ) {
 	$trigger_image = file_get_contents( LP_SYMBOLICONS_PATH . '/svg/alert.svg' );
-	$trigger = '<span role="img" aria-label="This show has a trigger warning!" title="Trigger Warning!" class="archive-trigger">' . $trigger_image . ' </span>';
+	$trigger = '<span role="img" aria-label="This show has a trigger warning!" title="Trigger Warning!" class="archive-trigger archive-trigger-' . get_post_meta( $post->ID, "lezshows_triggerwarning", true ) . '">' . $trigger_image . '</span>';
 }
 
 // Show Title

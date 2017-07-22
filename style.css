@@ -1010,9 +1010,40 @@ ul.character-list {
     border-width: 1px 1px 3px 1px;
     border-style: solid;
 }
-.callout-trigger {
+.callout-trigger-on {
     background: #fbeaea;
     border: 2px solid #dc3232;
+}
+.callout-trigger-med,
+.callout-trigger-low {
+    background: #ecedcf;
+    border: 2px solid #f1c40f;
+}
+.callout svg {
+    width: 36px;
+    height: 36px;
+    float: left;
+    margin: 10px;
+}
+.callout-trigger-on svg * {
+	fill: #dc3232;
+}
+.callout-trigger-med svg *,
+.callout-trigger-low svg * {
+	fill: #f1c40f;
+}
+.archive-trigger svg {
+    width: 30px;
+    height: 30px;
+	float: right;
+	padding: 4px;
+}
+.archive-trigger-on svg * {
+	fill: #dc3232;
+}
+.archive-trigger-med svg *,
+.archive-trigger-low svg * {
+	fill: #f1c40f;
 }
 
 /* Stars */

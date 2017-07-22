@@ -25,9 +25,7 @@
 	<div class="amp-wp-article-content">
 
 		<?php
-			if( get_post_meta($this->ID, "lezshows_triggerwarning", true) ) {
-				echo '<div class="callout callout-trigger"><p><strong>TRIGGER WARNING!</strong> This show is intended for mature audiences only. If explicit violence, death, and assault aren\'t your speed, neither is this show.</p></div>';
-			}
+			LWTV_CPT_Shows::echo_content_warning( 'amp' );
 		?>
 
 		<?php

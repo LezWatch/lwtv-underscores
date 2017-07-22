@@ -167,7 +167,6 @@ class LWTV_AMP {
 		// only CSS here please...
 		?>
 		p.lezwatch-featured-image.character-img {
-			float: left;
 			padding: 10px;
 		}
 		.entry-meta png {
@@ -176,9 +175,6 @@ class LWTV_AMP {
 		}
 		.entry-meta png * {
 			fill: #333;
-		}
-		.amp-wp-article-content {
-			min-height: 300px;
 		}
 		.amp-wp-show-footer {
 			background: #eee;
@@ -192,9 +188,14 @@ class LWTV_AMP {
 			border-width: 1px;
 			border-style: solid;
 		}
-		.callout-trigger {
-			background: #fbeaea;
-			border: 2px solid #dc3232;
+		.callout-trigger-on {
+		    background: #fbeaea;
+		    border: 2px solid #dc3232;
+		}
+		.callout-trigger-med,
+		.callout-trigger-low {
+		    background: #ecedcf;
+		    border: 2px solid #f1c40f;
 		}
 		.callout img {
 			width: 36px;
