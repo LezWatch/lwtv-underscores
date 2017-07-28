@@ -195,5 +195,3 @@ if((get_post_meta($show_id, "lezshows_screentime_rating", true))) { ?>
 			<?php } ?>
 	</div></section><?php
 }
-
-get_template_part( 'template-parts/widgets/googleads' );

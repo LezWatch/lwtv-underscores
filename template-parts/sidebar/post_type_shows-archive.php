@@ -4,5 +4,3 @@
  */
 
 dynamic_sidebar( 'archive-show-sidebar' );
-
-get_template_part( 'template-parts/widgets/googleads' );

@@ -4,5 +4,3 @@
  */
 
 dynamic_sidebar( 'archive-character-sidebar' );
-
-get_template_part( 'template-parts/widgets/googleads' );
