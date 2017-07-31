@@ -16,9 +16,8 @@ $show_quality = min ( $show_quality, 5 );
 $screen_time = (int) get_post_meta($show_id, 'lezshows_screentime_rating', true);
 $screen_time = min( $screen_time, 5 );
 
-$positive_heart = '<span role="img" class="show-heart positive">'.file_get_contents(LP_SYMBOLICONS_PATH.'/svg/heart.svg').'</span>';
-$negative_heart = '<span role="img" class="show-heart negative">'.file_get_contents(LP_SYMBOLICONS_PATH.'/svg/heart.svg').'</span>';
 ?>
+
 <section id="search" class="widget widget_search"><div class="widget-wrap">
 	<h4 class="widget-title widgettitle">Search</h4>
 	<?php get_search_form(); ?>
