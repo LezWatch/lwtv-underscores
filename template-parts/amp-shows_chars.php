@@ -32,35 +32,9 @@
 			echo $this->get( 'post_amp_content' );
 			if ( get_post_type( $this->ID ) === 'post_type_shows'  ) {
 
-				$charactersloop = LWTV_Loops::post_meta_query( 'post_type_characters', 'lezchars_show_group', $this->ID, 'LIKE' );
-
-				$havecharacters = array();
-				$havecharcount  = 0;
-
-				// Store as array to defeat some stupid with counting and prevent querying the database too many times
-				if ($charactersloop->have_posts() ) {
-					while ( $charactersloop->have_posts() ) {
-
-						$charactersloop->the_post();
-						global $post;
-
-						$char_id = $post->ID;
-						$shows_array = get_post_meta( $char_id, 'lezchars_show_group', true);
-
-						if ( $shows_array !== '' && get_post_status ( $char_id ) == 'publish' ) {
-							foreach( $shows_array as $char_show ) {
-								if ( $char_show['show'] == $this->ID ) {
-									$havecharacters[$char_id] = array(
-										'title'   => get_the_title( $char_id ),
-										'url'     => get_the_permalink( $char_id ),
-									);
-									$havecharcount++;
-								}
-							}
-						}
-					}
-					wp_reset_query();
-				}
+				$havecharacters = LWTV_CPT_Characters::list_characters( $show_id, 'query' );
+				$havecharcount  = LWTV_CPT_Characters::list_characters( $show_id, 'count' );
+				$havedeadcount  = LWTV_CPT_Characters::list_characters( $show_id, 'dead' );
 
 				if( (get_post_meta($this->ID, "lezshows_plots", true) )  ) { ?>
 					<section id="timeline" class="shows-extras"><h2>Queer Plotline Timeline</h2>

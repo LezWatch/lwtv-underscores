@@ -6,6 +6,9 @@
 global $post;
 $show_id = $post->ID;
 
+$slug = get_post_field( 'post_name', get_post( $show_id ) );
+$term = term_exists( $slug , 'post_tag' );
+
 $realness_rating = (int) get_post_meta($show_id, 'lezshows_realness_rating', true);
 $realness_rating = min( $realness_rating, 5 );
 $show_quality = (int) get_post_meta($show_id, 'lezshows_quality_rating', true);
@@ -31,6 +34,9 @@ $negative_heart = '<span role="img" class="show-heart negative">'.file_get_conte
 			}
 			if( ( get_post_meta( get_the_ID(), 'lezshows_episodes', true) )  ) {
 				?><li><a href="#episodes">Episodes</a></li><?php
+			}
+			if ( $term !== 0 && $term !== null ) {
+				?><li><a href="#related-posts">Related Posts</a></li><?php
 			}
 			?>
 			<li><a href="#characters">Characters</a></li>
