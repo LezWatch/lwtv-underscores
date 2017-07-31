@@ -9,12 +9,10 @@ $show_id = $post->ID;
 $slug = get_post_field( 'post_name', get_post( $show_id ) );
 $term = term_exists( $slug , 'post_tag' );
 
-$realness_rating = (int) get_post_meta($show_id, 'lezshows_realness_rating', true);
-$realness_rating = min( $realness_rating, 5 );
-$show_quality = (int) get_post_meta($show_id, 'lezshows_quality_rating', true);
-$show_quality = min ( $show_quality, 5 );
-$screen_time = (int) get_post_meta($show_id, 'lezshows_screentime_rating', true);
-$screen_time = min( $screen_time, 5 );
+$worthit = get_post_meta( $show_id, 'lezshows_worthit_rating', true );
+$realness_rating = min( (int) get_post_meta($show_id, 'lezshows_realness_rating', true), 5 );
+$show_quality = min ( (int) get_post_meta($show_id, 'lezshows_quality_rating', true), 5 );
+$screen_time = min( (int) get_post_meta($show_id, 'lezshows_screentime_rating', true), 5 );
 
 ?>
 
