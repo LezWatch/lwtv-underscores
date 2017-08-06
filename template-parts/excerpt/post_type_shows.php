@@ -26,18 +26,30 @@ if( ( get_post_meta( $post->ID, "lezshows_worthit_rating", true ) ) ) {
 		default:
 			$thumb_rating = 'Unrated';
 	}
-	
-	$thumb_image = file_get_contents( LP_SYMBOLICONS_PATH . '/svg/' . $thumb_icon );
+
+	// Make sure symbolicons exist
+	$thumb_image = $thumb_rating;
+	if ( defined( 'LP_SYMBOLICONS_PATH' ) ) {
+		$thumb_request = wp_remote_get( LP_SYMBOLICONS_PATH.''.$thumb_icon );
+		$thumb_image   = $thumb_request['body'];
+	}
 	
 	if ( $thumb_rating !== 'Unrated' ) {
-		$worthit = '<a href="/shows/?fwp_show_worthit=' . lcfirst( $thumb_rating ) . '"><span role="img" aria-label="Worth Watching? ' . $thumb_rating . '." title="Worth Watching? ' . $thumb_rating . '." class="archive-worthit ' . lcfirst( $thumb_rating ) . '">'.$thumb_image.'</span></a>';
+		$worthit = '<a href="/shows/?fwp_show_worthit=' . lcfirst( $thumb_rating ) . '"><span role="img" aria-label="Worth Watching? ' . $thumb_rating . '." title="Worth Watching? ' . $thumb_rating . '." class="archive-worthit ' . lcfirst( $thumb_rating ) . '">' . $thumb_image . '</span></a>';
 	}
 }
 
 // Trigger Warning
 $trigger = '';
-if( ( get_post_meta( $post->ID, "lezshows_triggerwarning", true ) ) ) {
-	$trigger_image = file_get_contents( LP_SYMBOLICONS_PATH . '/svg/alert.svg' );
+if ( ( get_post_meta( $post->ID, 'lezshows_triggerwarning', true ) ) ) {
+
+	// Make sure symbolicons exist
+	$trigger_image = '⚠';
+	if ( defined( 'LP_SYMBOLICONS_PATH' ) ) {
+		$trigger_request = wp_remote_get( LP_SYMBOLICONS_PATH . 'alert.svg' );
+		$trigger_image   = $trigger_request['body'];
+	}
+
 	$trigger = '<span role="img" aria-label="This show has a trigger warning!" title="Trigger Warning!" class="archive-trigger archive-trigger-' . get_post_meta( $post->ID, "lezshows_triggerwarning", true ) . '">' . $trigger_image . '</span>';
 }
 
@@ -45,9 +57,17 @@ if( ( get_post_meta( $post->ID, "lezshows_triggerwarning", true ) ) ) {
 $title = '<a href="' . get_permalink( $post->ID ) . '">' . get_the_title( $post->ID ) . '</a>';
 
 // Add Icon (if the show has a star)
-if ( get_post_meta( get_the_ID(), 'lezshows_stars', true) ) {
-	$color = esc_attr( get_post_meta( get_the_ID(), 'lezshows_stars' , true) );
-	$icon = '<a href="/shows/?fwp_show_stars=' . $color . '"><span role="img" aria-label="'.ucfirst($color).' Star Show" title="' . ucfirst( $color ) . ' Star Show" class="showlist-star ' . $color . '">'.file_get_contents( LP_SYMBOLICONS_PATH . '/svg/star.svg' ).'</span></a>';
+if ( get_post_meta( get_the_ID(), 'lezshows_stars', true ) ) {
+	$color = esc_attr( get_post_meta( get_the_ID(), 'lezshows_stars' , true ) );
+
+	// Make sure symbolicons exist
+	$star_image = '★';
+	if ( defined( 'LP_SYMBOLICONS_PATH' ) ) {
+		$star_request = wp_remote_get( LP_SYMBOLICONS_PATH.'star.svg' );
+		$star_image   = $star_request['body'];
+	}
+
+	$icon = '<a href="/shows/?fwp_show_stars=' . $color . '"><span role="img" aria-label="' . ucfirst( $color ) . ' Star Show" title="' . ucfirst( $color ) . ' Star Show" class="showlist-star ' . $color . '">' . $star_image . '</span></a>';
 	$title .= ' '.$icon;
 }
 $title = '<h3 class="post-title excerpt">'.$title.'</h3>';
@@ -59,12 +79,21 @@ if ( $terms && ! is_wp_error( $terms ) ) {
 
 	// loop over each returned trope
 	foreach( $terms as $term ) {
-		$termicon = get_term_meta( $term->term_id, 'lez_termsmeta_icon', true );
-		$icon = $termicon ? $termicon.'.svg' : 'square.svg';
 
-		if ( !file_exists( $iconpath . $icon ) ) $icon = 'square.svg';
+		// Make sure symbolicons exist
+		$term_image = $term->name;
+		if ( defined( 'LP_SYMBOLICONS_PATH' ) ) {
+			$iconpath = LP_SYMBOLICONS_PATH.'';
+			$termicon = get_term_meta( $term->term_id, 'lez_termsmeta_icon', true );
+			$tropicon = $termicon ? $termicon : 'square';
 
-		$post_tags .= '&nbsp;<a href="' . get_term_link( $term ) . '" rel="tag" class="show tag trope trope-' . $term->slug . '" title="' . $term->name . '"><span role="img" aria-label="'. $term->name . '" title="' . $term->name . '" class="showlist trope trope-' . $term->slug . '">'. file_get_contents( $iconpath . $icon ) .'</span></a>';
+			$svg = wp_remote_get( $iconpath . $tropicon . '.svg' );
+			if ( $svg['response']['code'] !== '404' ) {
+				$term_image = $svg['body'];
+			}
+		}
+
+		$post_tags .= '&nbsp;<a href="' . get_term_link( $term ) . '" rel="tag" class="show tag trope trope-' . $term->slug . '" title="' . $term->name . '"><span role="img" aria-label="'. $term->name . '" title="' . $term->name . '" class="showlist trope trope-' . $term->slug . '">'. $term_image .'</span></a>';
 	}
 	$post_tags = '<p class="entry-meta">' . $post_tags . '</p>';
 }

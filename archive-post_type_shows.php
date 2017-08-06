@@ -1,6 +1,6 @@
 <?php
 /**
- * The template for displaying archive pages
+ * The template for displaying archive pages for Shows
  *
  * @link https://codex.wordpress.org/Template_Hierarchy
  *
@@ -8,20 +8,11 @@
  */
 
 $symbolicon = '';
-if ( is_tax() ) {
-	$term = get_term_by( 'slug', get_query_var( 'term' ), get_query_var( 'taxonomy' ) );
-	$iconpath = LP_SYMBOLICONS_PATH.'/svg/';
-	$termicon = get_term_meta( $term->term_id, 'lez_termsmeta_icon', true );
-	$icon = $termicon ? $termicon.'.svg' : 'square.svg';
+if ( defined( 'LP_SYMBOLICONS_PATH' ) ) {
+	$get_svg = wp_remote_get( LP_SYMBOLICONS_PATH . 'window.svg' );
+	$icon    = $get_svg['body'];
 
-	if ( get_query_var( 'taxonomy' ) == 'lez_stations' ) {
-		$icon = 'tv_retro.svg';
-		$description = $description ?: "Where to watch...";
-	}
-
-	if ( !file_exists( $iconpath . $icon ) ) $icon = 'square.svg';
-
-	$symbolicon = '<span role="img" aria-label="'.$term->name.'" title="'.$term->name.'" class="taxonomy-svg '.$term->slug.'">'.file_get_contents( $iconpath . $icon ).'</span>';
+	$symbolicon = '<span role="img" aria-label="post_type_shows" title="Shows" class="taxonomy-svg shows">' . $icon .'</span>';
 }
 
 $count_posts = facetwp_display( 'counts' );
@@ -66,8 +57,9 @@ get_header(); ?>
 			<header class="page-header">
 				<?php
 					the_archive_title( '<h1 class="page-title">' . $symbolicon, '<br />Sorted By ' . $sort . ' (' . $count_posts . ')</h1>' );
-					the_archive_description( '<div class="archive-description">', '</div>' );
-
+					$descriptions = get_option( 'wpseo_titles' );
+					$description  = $descriptions['metadesc-ptarchive-post_type_shows'];
+					echo '<div class="archive-description">' . $description . '</div>';
 					echo $selections;
 				?>
 			</header><!-- .page-header -->

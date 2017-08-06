@@ -8,12 +8,19 @@
  */
  
 // Post Thumbnail
-$thumbnail = get_the_post_thumbnail( $post->ID, 'character-img', array( 'alt' => get_the_title($post->ID), 'title' => get_the_title($post->ID) ) );
+$thumbnail = get_the_post_thumbnail( $post->ID, 'thumbnail', array( 'alt' => get_the_title($post->ID), 'title' => get_the_title($post->ID) ) );
 
 // Are they dead?
 $tombstone = '';
 if ( has_term( 'dead', 'lez_cliches' ) && get_post_meta( $post->ID, 'lezchars_death_year', true ) ) {
-	$tombstone = '<span role="img" aria-label="RIP Tombstone" title="RIP Tombstone" class="charlist-grave">' . file_get_contents( LP_SYMBOLICONS_PATH.'/svg/rip_gravestone.svg' ) . '</span>';
+
+	$iconpath = '☠';
+	if ( defined( 'LP_SYMBOLICONS_PATH' ) )  {
+		$get_svg = wp_remote_get( LP_SYMBOLICONS_PATH . 'rip_gravestone.svg' );
+		$iconpath = $get_svg['body'];
+	}
+
+	$tombstone = '<span role="img" aria-label="RIP Tombstone" title="RIP Tombstone" class="charlist-grave">' . $iconpath . '</span>';
 }
 
 // Character title and link

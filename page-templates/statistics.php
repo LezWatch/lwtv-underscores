@@ -30,7 +30,10 @@ get_header(); ?>
 			</div>
 		</header>
 
-		<?php LWTV_Stats_Display::display( $statstype ); ?>
+		<?php 
+			if ( $statstype == 'main' ) the_content();
+			LWTV_Stats_Display::display( $statstype );
+		?>
 
 		</main><!-- #main -->
 	</div><!-- #primary -->

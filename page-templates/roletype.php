@@ -15,7 +15,12 @@ if ( !in_array( $thisrole, $validroles ) ){
 $type           = 'post_type_characters';
 $query_args     = LWTV_Loops::post_meta_query( $type, 'lezchars_show_group', $thisrole, 'LIKE' );
 $count_posts    = $query_args->post_count;
-$iconpath       = LP_SYMBOLICONS_PATH.'/svg/person.svg';
+
+$iconpath = '☃';
+if ( defined( 'LP_SYMBOLICONS_PATH' ) )  {
+	$get_svg = LP_SYMBOLICONS_PATH . 'person.svg';
+	$iconpath = $get_svg['body'];
+}
 
 get_header(); ?>
 
@@ -26,9 +31,9 @@ get_header(); ?>
 			<div class="archive-description">
 				<h1 class="archive-title">
 					<?php echo ucfirst( $thisrole ).' Characters ('. $count_posts .')'; ?>
-					<span role="img" aria-label="calendar" title="calendar" class="taxonomy-svg calendar"><?php echo file_get_contents( $iconpath ); ?></span>
+					<span role="img" aria-label="calendar" title="calendar" class="taxonomy-svg calendar"><?php echo $iconpath; ?></span>
 				</h1>
-				<p>Characters who are considered to be cast as <?php echo $thisrole; ?>s. Some characters have multiple roles, of course...</p>
+				<p>Characters who are considered to be cast as <?php echo $thisrole; ?>s. Some characters have multiple roles, of course ...</p>
 			</div>
 		</header>
 

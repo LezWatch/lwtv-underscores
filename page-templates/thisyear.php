@@ -14,7 +14,12 @@ if ( !is_numeric( $thisyear ) ){
 $previousurl = site_url( '/this-year/'.( $thisyear - 1 ).'/' );
 $nexturl     = site_url( '/this-year/'.( $thisyear + 1 ).'/' );
 $thisurl     = site_url( '/this-year/'. date('Y') .'/' );
-$iconpath    = LP_SYMBOLICONS_PATH.'/svg/calendar_alt.svg';
+
+$iconpath = '⁂';
+if ( defined( 'LP_SYMBOLICONS_PATH' ) )  {
+	$get_svg = LP_SYMBOLICONS_PATH . 'calendar_alt.svg';
+	$iconpath = $get_svg['body'];
+}
 
 function lwtv_underscore_this_year_dead( $thisyear ) {
 

@@ -289,3 +289,19 @@ function lwtv_underscore_filter_media_comment_status( $open, $post_id ) {
 	if( get_post_type() == 'attachment' ) return false;
 	return $open;
 }
+
+
+/**
+ * Archive Query
+ * 
+ * Change posts-per-page for custom post type archives
+ */
+function lwtv_underscores_archive_query( $query ) {
+if ( $query->is_archive() && $query->is_main_query() && !is_admin() ) {
+	
+	// Characters = 24
+	if ( is_post_type_archive( 'post_type_characters' ) ) $query->set( 'posts_per_page', 24 );
+        
+    }
+}
+add_action( 'pre_get_posts', 'lwtv_underscores_archive_query' );

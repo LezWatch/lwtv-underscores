@@ -97,11 +97,19 @@ $lez_cliches = get_the_terms( $character['id'], 'lez_cliches' );
 $cliches = '';
 if ( $lez_cliches && ! is_wp_error( $lez_cliches ) ) {
     $cliches = ' &mdash; Clichés: ';
-	foreach($lez_cliches as $the_cliche) {
-		$iconpath = LP_SYMBOLICONS_PATH.'/svg/';
+	foreach( $lez_cliches as $the_cliche ) {
+
 		$termicon = get_term_meta( $the_cliche->term_id, 'lez_termsmeta_icon', true );
-		$icon = ( $termicon && file_exists( $iconpath.$termicon.'.svg' ) )? $termicon.'.svg' : 'square.svg';
-		$cliches .= '&nbsp;<a href="'. get_term_link( $the_cliche->slug, 'lez_cliches') .'" rel="tag" class="character cliche cliche-'. $the_cliche->slug .'" title="'. $the_cliche->name .'"><span role="img" aria-label="'. $the_cliche->name .'" title="'. $the_cliche->name .'" class="character-cliche '. $the_cliche->slug .'">'. file_get_contents( $iconpath . $icon ) .'</span></a>';
+		$svg      = $termicon ? $termicon.'.svg' : 'square.svg';
+
+		$cliche_icon = '▢';
+		if ( defined( 'LP_SYMBOLICONS_PATH' ) )  {
+			$get_svg = wp_remote_get( LP_SYMBOLICONS_PATH . $svg );
+			$cliche_icon = $get_svg['body'];
+		}
+
+		$cliches .= '&nbsp;<a href="' . get_term_link( $the_cliche->slug, 'lez_cliches') . '" rel="tag" class="character cliche cliche-' . $the_cliche->slug . '" title="' . $the_cliche->name . '"><span role="img" aria-label="' . $the_cliche->name . '" title="' . $the_cliche->name . '" class="character-cliche ' . $the_cliche->slug . '">' . $cliche_icon . '</span></a>';
+
 	}
 }
 
