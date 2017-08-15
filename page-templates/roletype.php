@@ -18,7 +18,7 @@ $count_posts    = $query_args->post_count;
 
 $iconpath = '☃';
 if ( defined( 'LP_SYMBOLICONS_PATH' ) )  {
-	$get_svg = LP_SYMBOLICONS_PATH . 'person.svg';
+	$get_svg  = wp_remote_get( LP_SYMBOLICONS_PATH . 'person.svg' );
 	$iconpath = $get_svg['body'];
 }
 
@@ -40,7 +40,7 @@ get_header(); ?>
 			<?php
 			$query = new WP_Query ( array(
 					'post_type'              => $type,
-					'posts_per_page'         => get_option( 'posts_per_page' ),
+					'posts_per_page'         => 24,
 					'orderby'                => 'title',
 					'order'                  => 'ASC',
 					'no_found_rows'          => true,

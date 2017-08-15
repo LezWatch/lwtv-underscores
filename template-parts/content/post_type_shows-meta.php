@@ -52,16 +52,9 @@
 
 		echo '<p>There '. sprintf( _n( 'is %s queer character', 'are %s queer characters', $havecharcount ), $havecharcount ).' listed for this show. Of those, ' . $deadtext . '.</p>';
 		foreach( $havecharacters as $character ) {
-		?>
-			<ul class="character-list">
-				<li class="clearfix">
-					<?php
-						include( locate_template('template-parts/excerpt/post_type_characters.php') );
-					?>
-				</li>
-				<!-- // The end of The Loop -->
-			</ul>
-		<?php
+			echo '<article class="post-' . $character['id'] .' post_type_characters type-post_type_characters status-publish has-post-thumbnail entry">';
+				include( locate_template('template-parts/excerpt/post_type_characters.php') );
+			echo '</article>';
 		}
 	}
 	echo '</section>';

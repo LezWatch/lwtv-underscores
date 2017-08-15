@@ -68,9 +68,7 @@ get_header(); ?>
 			<?php
 			/* Start the Loop */
 			while ( have_posts() ) : the_post();
-
 				get_template_part( 'template-parts/archive/'.get_post_type() );
-
 			endwhile;
 
 			echo facetwp_display( 'pager' );

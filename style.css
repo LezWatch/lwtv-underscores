@@ -1140,7 +1140,8 @@ span.played-by {
 /* WP Sites Grid Column Archives Genesis */
 body.page-template-roles article,
 body.page-template-newest.newest-characters article,
-.archive article.type-post_type_characters {
+.archive article.type-post_type_characters,
+.single-post_type_shows article.type-post_type_characters {
     margin: 5px;
     width: 160px;
     display: inline-block;

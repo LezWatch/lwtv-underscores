@@ -12,10 +12,10 @@ $icon = '';
 if ( get_post_meta( get_the_ID(), 'lezshows_stars', true) ) {
 	$color = esc_attr( get_post_meta( get_the_ID(), 'lezshows_stars' , true ) );
 
-	$star = '☆';
-	if ( defined( 'LP_SYMBOLICONS_PATH' ) )  {
-		$get_svg = LP_SYMBOLICONS_PATH . 'star.svg';
-		$star = $get_svg['body'];
+	$star = '★';
+	if ( defined( 'LP_SYMBOLICONS_PATH' ) ) {
+		$starrequest  = wp_remote_get( LP_SYMBOLICONS_PATH.'star.svg' );
+		$star = $starrequest['body'];
 	}
 
 	$icon = '<span role="img" aria-label="' . ucfirst( $color ) . ' Star Show" title="' . ucfirst( $color ) . ' Star Show" class="show-star ' . $color . '">' . $star . '</span>';
