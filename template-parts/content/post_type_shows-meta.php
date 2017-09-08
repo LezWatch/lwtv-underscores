@@ -11,28 +11,26 @@
 	$show_id = $post->ID;
 
 	// Queer Plots - Only display if they exist
-	if( (get_post_meta($show_id, "lezshows_plots", true) )  ) { ?>
+	if ( (get_post_meta($show_id, "lezshows_plots", true) ) ) { ?>
 		<section name="timeline" id="timeline" class="shows-extras"><h2>Queer Plotline Timeline</h2>
 		<?php echo apply_filters('the_content', wp_kses_post( get_post_meta($show_id, 'lezshows_plots', true) ) ); ?></section><?php
 	}
 
 	// Best Lez Episodes - Only display if they exist
-	if((get_post_meta($show_id, "lezshows_episodes", true))) { ?>
+	if ( ( get_post_meta($show_id, "lezshows_episodes", true ) ) ) { ?>
 		<section name="episodes" id="episodes" class="shows-extras"><h2>Notable Lez-Centric Episodes</h2>
 		<?php echo apply_filters('the_content', wp_kses_post( get_post_meta($show_id, 'lezshows_episodes', true) ) ); ?></section> <?php
 	}
 
 	// Related Posts
 	$slug = get_post_field( 'post_name', get_post() );
-	$term = term_exists( $slug , 'post_tag' );
-	if ( $term !== 0 && $term !== null ) { ?>
-		<section name="related-posts" id="related-posts" class="shows-extras">
-			<h2>Related Posts</h2>
-			<?php
-				echo LWTV_CPT_Shows::related_posts( $slug, 'post' );
-			?>
-		</section> <?php
-	}
+	?>
+	<section name="related-posts" id="related-posts" class="shows-extras">		
+		<?php
+			echo LWTV_CPT_Shows::related_posts( $slug, 'post' );
+		?>
+		</section> 
+	<?php
 
 	// Great big characters section!
 	echo '<section name="characters" id="characters" class="shows-extras">';
