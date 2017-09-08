@@ -40,6 +40,10 @@ $screen_time = min( (int) get_post_meta($show_id, 'lezshows_screentime_rating', 
 		</ul>
 </div></section>
 
+<section id="amazon" class="widget widget_text"><div class="widget-wrap">
+	<?php echo LWTV_CPT_Shows::display_amazon( $show_id ); ?>
+</div></section>
+
 <section id="ratings" class="widget widget_text"><div class="widget-wrap">
 	<h4 class="widget-title widgettitle">Is it Worth Watching?</h4>
 	<?php echo LWTV_CPT_Shows::display_worthit( $show_id, $worthit ); ?>
