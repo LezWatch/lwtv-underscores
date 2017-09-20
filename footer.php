@@ -33,9 +33,7 @@
 		<div class="container">
 			<div class="row">
 				<div class="col credits">
-					Copyright &#169;  2014–<?php esc_attr_e( date( 'Y' ) ); ?>
-					<a href="<?php echo esc_url( home_url( '/' ) ); ?>" title="<?php echo esc_attr__( get_bloginfo( 'name', 'display' ) ); ?>" rel="home"><?php bloginfo( 'name' ); ?></a>
-					Powered by WordPress and hosted on DreamPress
+					<?php dynamic_sidebar( 'footer-4' ); ?>
 				</div>
 			</div><!-- .row -->
 		</div><!-- .container -->
