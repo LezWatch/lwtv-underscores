@@ -525,7 +525,11 @@ h2.widget-title {}
     &, a, a:visited {
       color: $white;
     }
-    .credits {}
+    .credits {
+      p {
+        margin-bottom: 0;
+      }
+    }
   }
 }
 

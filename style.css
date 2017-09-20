@@ -796,6 +796,9 @@ ul.comment-list li .comment-content .btn a, ul.comment-list li .comment-content 
 #colophon .bottom-footer, #colophon .bottom-footer a, #colophon .bottom-footer a:visited {
   color: #fff;
 }
+#colophon .bottom-footer .credits p {
+  margin-bottom: 0;
+}
 
 /* ==========================================================================
    Specific Media STYLES
