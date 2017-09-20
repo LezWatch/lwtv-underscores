@@ -1,0 +1,40 @@
+/* =Font Styles
+----------------------------------------------- */
+
+/* Font Sizes - based on base font of 16px */
+
+$basefont: 16px;
+
+@mixin font-12 {font-size: 0.75rem;}
+@mixin font-13 {font-size: 0.812rem;}
+@mixin font-14 {font-size: 0.875rem;}
+@mixin font-15 {font-size: 0.937rem;}
+@mixin font-18 {font-size: 1.125rem;}
+@mixin font-20 {font-size: 1.25rem;}
+@mixin font-22 {font-size: 1.375rem;}
+@mixin font-24 {font-size: 1.5rem;}
+@mixin font-26 {font-size: 1.625rem;}
+@mixin font-28 {font-size: 1.75rem;}
+@mixin font-30 {font-size: 1.875rem;}
+@mixin font-32 {font-size: 2rem;}
+@mixin font-36 {font-size: 2.25rem;}
+@mixin font-40 {font-size: 2.5rem;}
+@mixin font-44 {font-size: 2.75rem;}
+
+
+
+/* If Using Font files */
+
+// @font-face {
+//   font-family: 'Font Name';
+//   src: url('inc/fonts/font-name.eot');
+//   src: url('inc/fonts/font-name.eot?#iefix') format('embedded-opentype'),
+//   url('inc/fonts/font-name.woff2') format('woff2'),
+//   url('inc/fonts/font-name.woff') format('woff'),
+//   url('inc/fonts/font-name.ttf') format('truetype'),
+//   url('inc/fonts/font-name.svg#font-name') format('svg');
+// }
+
+// @mixin FontName {
+//   font-family: 'Font Name';
+// }

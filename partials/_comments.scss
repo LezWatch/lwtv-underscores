@@ -1,0 +1,100 @@
+/* =Styling for our fancy comments walker
+----------------------------------------------- */
+
+#comment {
+  height: 80px;
+}
+
+#comments {
+  background-color: $white;
+  padding: 1em;
+
+  .comments-title, #reply-title {
+    margin-bottom: 1.4em;
+    margin-top: 0;
+  }
+
+  ul {
+    list-style-type: none;
+    padding: 0;
+  }
+
+  ul.children {
+    padding-left: 2em;
+
+    li.depth-3 {
+      .comment-content {
+        margin-left: 0.6em;
+      }
+    }
+
+    li.depth-4 {
+      .comment-content {
+        margin-left: 1em;
+      }
+    }
+  }
+}
+
+ul.comment-list {
+  font-size: .78em;
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+
+  & > li.pingback {
+    .comment-body {
+      margin-bottom: 1em;
+    }
+  }
+
+  li {
+
+    .comment-author {
+      padding: 4px;
+      margin-bottom: 20px;
+      line-height: 1.42857143;
+      background-color: $white;
+      border: 1px solid $lightgrey;
+      @include border-radius(4px);
+      @include box-transition(border .2s ease-in-out);
+      width: 128px;
+
+      img {
+        width: 100%;
+      }
+
+      .fn {
+        display: block;
+        font-weight: 500;
+        margin-top: 4px;
+        text-align: center;
+      }
+
+      .says {
+        display: none;
+      }
+    }
+
+    .comment-content {
+      padding: 1.4em;
+      margin-bottom: 20px;
+      line-height: 1.42857143;
+      background-color: $white;
+      border: 1px solid $lightgrey;
+      @include border-radius(4px);
+
+      .comment-metadata {
+        margin-bottom: 1em;
+      }
+
+      .btn {
+        float: right;
+        
+        a, a:hover {
+          color: $black;
+        }
+      }
+    }
+  }
+}

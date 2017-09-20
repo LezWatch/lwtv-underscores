@@ -1,0 +1,21 @@
+/* =Helper Mixins
+----------------------------------------------- */
+
+@mixin text-left {text-align:left;}
+@mixin text-right {text-align:right;}
+@mixin text-center {text-align:center;}
+
+@mixin float-right {float:right;}
+@mixin float-left {float:left;}
+@mixin float-none {float:none;}
+
+@mixin center {display:block; margin: 0 auto;}
+@mixin img-center {display:block;margin: 1em auto;}
+
+@mixin no-border {border: 0 !important;}
+
+@mixin hide {display: none;}
+
+@mixin separator {margin: 0 1em; display: inline; }
+
+@mixin troubleshoot {border: 1px solid red;}

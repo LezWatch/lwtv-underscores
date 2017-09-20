@@ -1,29 +1,46 @@
 <?php
 /**
- * The template for displaying the footer
+ * The template for displaying the footer.
  *
- * Contains the closing of the #content div and all content after.
- *
- * @link https://developer.wordpress.org/themes/basics/template-files/#template-partials
- *
- * @package LezWatch_TV
+ * @package YIKES Starter
  */
-
 ?>
 
-	</div><!-- #content -->
+<footer id="colophon" class="site-footer" role="contentinfo">
+	<div class="top-footer">
+		<div class="container">
+			<div class="row footer-widgets">
+				<div class="col-md-3 footer-col first">
+					<?php dynamic_sidebar( 'footer-1' ); ?>
+				</div>
 
-	<footer id="colophon" class="site-footer" role="contentinfo">
-		<div class="footer-widget">
-			<?php dynamic_sidebar( 'footer-1' ); ?>
-		</div><!-- .site-info -->
-	</footer><!-- #colophon -->
+				<div class="col-md-3 footer-col">
+					<?php dynamic_sidebar( 'footer-2' ); ?>
+				</div>
 
-	<div class="after-footer-widget">
-		<?php dynamic_sidebar( 'after-footer' ); ?>
-	</div>
+				<div class="col-md-3 footer-col">
+					<?php dynamic_sidebar( 'footer-3' ); ?>
+				</div>
 
-</div><!-- #page -->
+				<div class="col-md-3 footer-col">
+					<?php dynamic_sidebar( 'footer-4' ); ?>
+				</div>
+			</div>
+		</div>
+	</div><!-- .top-footer -->
+
+	<div class="bottom-footer">
+		<div class="container">
+			<div class="row">
+				<div class="col credits">
+					Copyright &#169;  2014–<?php esc_attr_e( date( 'Y' ) ); ?>
+					<a href="<?php echo esc_url( home_url( '/' ) ); ?>" title="<?php echo esc_attr__( get_bloginfo( 'name', 'display' ) ); ?>" rel="home"><?php bloginfo( 'name' ); ?></a>
+					Powered by WordPress and hosted on DreamPress
+				</div>
+			</div><!-- .row -->
+		</div><!-- .container -->
+	</div><!-- .bottom-footer -->
+</footer><!-- #colophon -->
 
 <?php wp_footer(); ?>
 

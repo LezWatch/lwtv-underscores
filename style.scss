@@ -1,0 +1,539 @@
+/*
+Theme Name: LezWatchTV
+Theme URI: https://lezwatchtv.com/
+Author: LezWatchTV
+Author URI: https://lezwatchtv.com/
+Description: LezWatchTV Theme Episode III - Return of the Custom Theme 
+Version: 3.0
+License: GNU General Public License v2 or later
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
+Text Domain: yikes_starter
+Tags: 
+*/
+
+@import 'partials/fonts';
+@import 'partials/colors';
+@import 'partials/helpers';
+@import 'partials/mixins';
+
+/* ==========================================================================
+   Layout
+   ========================================================================== */
+
+#masthead {}
+
+#main {
+  background-color: $white;
+}
+
+#secondary {}
+
+#colophon {}
+
+
+/* ==========================================================================
+   Global
+   ========================================================================== */
+
+body {
+  font-family: 'Open Sans', sans-serif;
+  font-size: $basefont;
+  line-height: 1.5;
+  color: $darkgrey;
+  background-color: $lwtv-dkgrey;
+}
+
+p {
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+
+blockquote {
+  border-left: 3px solid $medgrey;
+  color: $darkgrey;
+  font-family: Georgia, Times, "Times New Roman", serif;  
+  @include font-20;
+  margin: 0 0 1em;
+  padding-left: 1em;
+}
+
+/* Links */
+
+a {
+  color: $link-color;
+  text-decoration: none;
+  @include box-transition(background 0.3s ease-in-out);
+
+  &:visited {
+    color: $link-color;
+  }
+
+  &:hover, &:focus, &:active {
+    color: $link-hover-color;
+    text-decoration: none;
+  }
+}
+
+
+/* Accessibility */
+
+.screen-reader-text {
+  @include screen-reader;
+}
+
+
+/* =Bootstrap Overrides
+----------------------------------------------- */
+
+/* Pagination */
+
+.pagination {
+  margin-top: 2em;
+
+  li.page-item {
+    a.page-link {}
+    &.first {}
+    &.previous {}
+    &.active {}
+    &.next {}
+    &.last {}
+  }
+}
+
+
+/* Buttons */
+
+/* Global styles for all the buttons!  */
+
+a.btn, button.btn, input[type="button"].btn, input[type="submit"].btn,
+button, input[type="button"], input[type="submit"] {
+  border: 3px solid transparent;
+  @include border-radius(0);
+  @include fade;
+}
+
+/* Color styles for specific button classes  */
+
+button, input[type="button"], input[type="submit"], // keep this line for the defaut button style 
+a.btn-primary, button.btn-primary, input[type="button"].btn-primary, input[type="submit"].btn-primary {
+  &, &:visited {
+    background-color: $blue;
+    border-color: $blue;
+    color: $white;
+  }
+
+  &.active, &.focus, &:active, &:focus, &:hover {
+    background-color: $white;
+    border-color: $blue;
+    color: $blue;
+    @include fade;
+  }
+}
+
+a.btn-outline-primary, button.btn-outline-primary, input[type="button"].btn-outline-primary, input[type="submit"].btn-outline-primary {
+  &, &:visited {
+    background-color: $white;
+    border-color: $blue;
+    color: $blue;
+  }
+
+  &.active, &.focus, &:active, &:focus, &:hover {
+    background-color: $blue;
+    border-color: $blue;
+    color: $white;
+  }
+}
+
+
+/* =Typography
+    Font CSS is all in the partial _fonts.scss
+----------------------------------------------- */
+
+/* Headings */
+
+h1, h2, h3, h4, h5, h6,
+.h1, .h2, .h3, .h4, .h5, .h6 {
+  margin-bottom: 1rem;
+  font-family: 'Oswald', sans-serif;
+  font-weight: 400;
+  line-height: 1.1;
+}
+
+h1, .h1 {
+  @include font-40;
+}
+
+h2, .h2 {
+  @include font-32;
+}
+
+h3, .h3 {
+  @include font-28;
+}
+
+h4, .h4 {
+  @include font-24;
+}
+
+h5, .h5 {
+  @include font-20;
+}
+
+h6, .h6 {
+  font-size: 1rem;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+
+h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
+  text-decoration: none;
+}
+
+
+/* =Forms - Most handled by Bootstrap. Overrides below
+----------------------------------------------- */
+
+/* styles that makes comments and Gravity forms Bootstrappy */
+
+@import 'partials/forms';
+
+
+/* ==========================================================================
+   Header
+   ========================================================================== */
+
+
+/* If using Jumbotron */
+.jumbotron.jumbotron-fluid {
+  background-image: url("images/lezwatchtv-bg-header.png");  
+  background-size: contain;
+  color: $white;
+  @include font-18;
+  margin-bottom: 0;
+}
+
+/* =Menu
+----------------------------------------------- */
+
+/* If using a fixed-top navbar */
+
+.admin-bar .fixed-top.main-nav {margin-top: 32px;}
+.site-subheader {margin-top: 50px;}
+
+#masthead {
+  .navbar-brand {
+    @include font-26;
+    font-weight: 600;
+    color: $lwtv-pink;
+
+    img {
+      height: 40px;
+      width: auto;
+    }
+  }
+
+}
+
+/* Main Nav background color */
+
+nav.main-nav {
+  background-color: $black;
+}
+
+/* Change the main nav colors */
+
+@import 'partials/navcolors';
+
+
+
+/* ==========================================================================
+   Content
+   ========================================================================== */
+
+/* =Global
+----------------------------------------------- */
+
+.hentry, .widget-area {margin: 2em 0 2.5em;}
+.single .byline, .group-blog .byline {display: inline;}
+.entry-content, .entry-summary {margin: 2em 0 0;}
+.sticky, .bypostauthor {display: block;}
+h1.entry-title {margin-bottom: 0;}
+
+footer.entry-meta {
+  border-top: 1px solid $lightgrey;
+  margin-top: 2em;
+  padding-top: 1em;
+
+  .footer-entry-meta-item {
+    display: block;
+  }
+
+  .fa {
+    margin-left: 1em;
+    width: 16px;
+  }
+}
+
+/* Loop styles for loopy content */
+
+.site-loop {
+  .card {
+    .card-header {}
+    .card-img-top {
+      border-top-left-radius: 0;
+      border-top-right-radius: 0;
+    }
+    .card-body {
+      .card-title {}
+      .card-text {
+        p {
+          margin-bottom: 0;
+        }
+      }
+    }
+    .card-footer {}
+  }
+}
+
+
+
+/* =Home page
+----------------------------------------------- */
+
+/* If using the alertbox */
+
+.home .alert {
+  background-color: $lwtv-salmon;
+  border: 0;
+  border-color: transparent;
+  @include border-radius(0);
+  color: $white;
+
+  a, a:visited {
+    color: $white;
+  }
+
+  &, p {
+    margin: 0;
+  }
+}
+
+/* Content blocks */
+
+section {
+  padding-bottom: 2rem;
+}
+
+/* =Sub pages
+----------------------------------------------- */
+
+/* Posts */
+
+.blog {
+
+  .post-container {
+    margin-bottom: 4rem;
+
+    &:last-of-type {
+      margin-bottom: 0;
+    }
+  }
+}
+
+
+/* =Custom Post Types
+----------------------------------------------- */
+
+/* Change events styles */
+
+// @import 'partials/events';
+
+
+/* =Media
+----------------------------------------------- */
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+.alignnone {@include images;} 
+.alignright {@extend .alignnone; float: right; margin: 0 0 2em 2em;}
+.alignleft {@extend .alignnone; float: left; margin: 0 2em 2em 0;}
+.aligncenter {@extend .alignnone; margin: 2em auto; display: block;}
+
+.img-noborder {@include images-noborder;}
+
+.comment-content img.wp-smiley {
+  @include no-border;
+  margin: 0 1em;
+}
+
+.wp-caption {
+  border: 1px solid $lightgrey;
+  margin-bottom: 1.5em;
+  max-width: 100%;
+  img[class*="wp-image-"] {
+    display: block;
+    margin: 1.2% auto 0;
+    max-width: 98%;
+  }
+}
+
+.wp-caption .wp-caption-text {
+  margin: 0.8075em 0;
+  text-align: center;
+}
+
+.site-content {
+  .gallery {
+    margin-bottom: 1.5em;
+
+    a img {
+      border: none;
+      height: auto;
+      max-width: 90%;
+    }
+
+    dd {
+      margin: 0;
+    }
+  }
+}
+
+.gallery-caption {display: block;}
+
+/* Make sure embeds and iframes fit their containers */
+
+embed, iframe, object {
+  max-width: 100%;
+}
+
+
+/* =Comments
+----------------------------------------------- */
+
+/* Pretty comments */
+
+@import 'partials/comments';
+
+
+/* =Search results
+----------------------------------------------- */
+
+.search-results {
+
+  .search-entry-title {
+    .fa-search {
+      font-size: 0.64em;
+      vertical-align: middle;
+    }
+  }
+
+  .entry-summary {
+    margin: 1em 0 2em;
+  }
+}
+
+
+/* ==========================================================================
+   Widgetized Areas
+   ========================================================================== */
+
+/* =Global
+----------------------------------------------- */
+
+h2.widget-title {}
+
+
+/* =Sidebars
+----------------------------------------------- */
+
+.widget {
+  margin: 0 0 2em;
+
+  .dead-widget-container & {
+    margin-bottom: 0;
+    text-align: center;
+  }
+}
+
+/* Search widget */
+
+.widget_search {
+  .btn.search-submit {
+    border: 1px;
+  }
+}
+
+
+/* =Footer
+----------------------------------------------- */
+
+#colophon {
+  .footer-widgets {
+
+    h2.widget-title {
+      border-bottom: dotted 1px $lwtv-grey2;
+      @include font-28;
+      padding-bottom: 15px;
+      margin-bottom: 20px;
+    }
+
+    ul {
+      list-style-type: none;
+      padding: 0;
+
+      li {
+        margin-bottom: 0.5rem;
+      }
+
+      a, a:visited {
+        color: $darkgrey;
+      }
+
+      a:hover, a:focus, a:active {
+        color: $link-hover-color;
+        text-decoration: none;
+      }
+    }
+  }
+}
+
+
+
+/* ==========================================================================
+   Footer
+   ========================================================================== */
+
+#colophon {
+
+  .top-footer {
+    background-color: $lwtv-grey;
+    @include font-14;
+    padding: 20px 0 0;
+  }
+
+  .bottom-footer {
+    background-color: $lwtv-dkgrey;
+    @include font-12;
+    padding: 16px 0;
+
+    &, a, a:visited {
+      color: $white;
+    }
+    .credits {}
+  }
+}
+
+
+/* ==========================================================================
+   Specific Media STYLES
+   ========================================================================== */
+
+/* responsive styles */
+
+//@import 'partials/responsive';

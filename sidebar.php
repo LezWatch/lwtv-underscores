@@ -1,10 +1,8 @@
 <?php
 /**
- * The sidebar containing the main widget area
+ * The Sidebar containing the main widget areas.
  *
- * @link https://developer.wordpress.org/themes/basics/template-files/#template-partials
- *
- * @package LezWatch_TV
+ * @package YIKES Starter
  */
 
 if ( ! is_active_sidebar( 'sidebar-1' ) ) {
@@ -12,20 +10,7 @@ if ( ! is_active_sidebar( 'sidebar-1' ) ) {
 }
 ?>
 
-<aside id="secondary" class="widget-area" role="complementary">
-	<?php 
-		// Currently only used for shows, but in case archives and
-		// single pages need different sidebars:
-		$type = 'archive';
-		if ( is_single() )  $type = 'single';
-
-		// Show the right sidebar for the page type:
-		if ( get_post_type() == 'post_type_characters' && !is_search() ) {
-			get_template_part( 'template-parts/sidebar/post_type_characters-' . $type  );
-		} elseif ( get_post_type() == 'post_type_shows' && !is_search() ) {
-			get_template_part( 'template-parts/sidebar/post_type_shows-' . $type );
-		} else { 
-			dynamic_sidebar( 'sidebar-1' );
-		}
-	?>
-</aside><!-- #secondary -->
+<div id="secondary" class="widget-area" role="complementary">
+	<?php do_action( 'before_sidebar' ); ?>
+	<?php dynamic_sidebar( 'sidebar-1' ); ?>
+</div><!-- #secondary -->
