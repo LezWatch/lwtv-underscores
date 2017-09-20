@@ -76,6 +76,7 @@
 					</div><!-- .row -->
 				</div><!-- .container -->
 			</div><!-- /.jumbotron -->
+  			<div class="rainbow"></div>
 
 		<?php } ?>
 	</div><!-- .site-subheader -->

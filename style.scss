@@ -57,6 +57,10 @@ blockquote {
   padding-left: 1em;
 }
 
+.rainbow {
+  @include rainbows;
+}
+
 /* Links */
 
 a {

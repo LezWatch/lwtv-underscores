@@ -30,14 +30,24 @@ $link-focus-color:   $link-hover-color;
 $link-active-color:  $link-hover-color;
 $link-visited-color: $link-color;
 
-/* Social colors */
+@-webkit-keyframes rainbow {
+    0% {background-position:0% 82%}
+    50% {background-position:100% 19%}
+    100% {background-position:0% 82%}
+}
 
-$facebook: #3b5998;
-$twitter: #00a0d1;
-$pinterest: #910101;
-$instagram: #675144;
-$gplus: #DD4B39;
-$linkedin: #3399CC;
-$tumblr: #2C4762;
-$vimeo: #445566;
-$youtube: #C4302B;
+@-moz-keyframes rainbow {
+    0% {background-position:0% 82%}
+    50% {background-position:100% 19%}
+    100% {background-position:0% 82%}
+}
+@-o-keyframes rainbow {
+    0% {background-position:0% 82%}
+    50% {background-position:100% 19%}
+    100% {background-position:0% 82%}
+}
+@keyframes rainbow { 
+    0% {background-position:0% 82%}
+    50% {background-position:100% 19%}
+    100% {background-position:0% 82%}
+}
