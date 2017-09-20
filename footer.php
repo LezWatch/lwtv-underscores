@@ -33,7 +33,7 @@
 		<div class="container">
 			<div class="row">
 				<div class="col credits">
-					<?php dynamic_sidebar( 'footer-4' ); ?>
+					<?php dynamic_sidebar( 'subfooter-1' ); ?>
 				</div>
 			</div><!-- .row -->
 		</div><!-- .container -->
