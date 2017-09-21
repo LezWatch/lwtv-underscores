@@ -22,11 +22,15 @@ get_header(); ?>
 
 						<?php if ( have_posts() ) : ?>
 
-							<?php while ( have_posts() ) : the_post(); ?>
+		        			<div class="row site-loop main-posts-loop equal-height">
 
-								<?php get_template_part( 'content', 'posts' ); ?>
+								<?php while ( have_posts() ) : the_post(); ?>
 
-							<?php endwhile; ?>
+									<?php get_template_part( 'content', 'posts' ); ?>
+
+								<?php endwhile; ?>
+
+							</div>
 
 							<!-- Next / Previous pagination without numbers is yikes_starter_paging_nav(); -->
 							<?php wp_bootstrap_pagination(); ?>

@@ -12,46 +12,48 @@ get_header(); ?>
 	<section class="home-featured-posts">
 		<div class="container">
     		<div class="row">
-
 				<!-- Newest posts -->
-      			<div class="col-sm-8 site-loop home-featured-post-loop"> 
-        			<h2 class="posts-title">New Posts <i class="fa fa-newspaper-o" aria-hidden="true"></i></h2>
+      			<div class="col-sm-8"> 
 
-					<?php $lastpostloop = new WP_Query( array(
-						'posts_per_page' => '1', 
-						'orderby' => 'date', 
-						'order' => 'DESC'
-					) ); ?>
-					 
-					<!-- // The Loop -->
-					<?php while ($lastpostloop->have_posts()) : $lastpostloop->the_post(); ?>
+      				<div class="site-loop home-featured-post-loop">
+	        			<h2 class="posts-title">New Posts <i class="fa fa-newspaper-o" aria-hidden="true"></i></h2>
 
-						<div class="card">
-							<?php if ( has_post_thumbnail()) : ?>
-							   <a href="<?php the_permalink(); ?>" title="<?php the_title_attribute(); ?>" >
-							  	 <?php the_post_thumbnail( 'large', array( 'class' => 'card-img-top' ) );; ?>
-							   </a>
-							<?php endif; ?>
-							<div class="card-body">
-						  		<h3 class="card-title"><?php the_title(); ?></h3>
-								<div class="card-meta text-muted">
-									<?php the_date(); ?>
-									<i class="fa fa-user-circle-o" aria-hidden="true"></i> <?php the_author(); ?>
-								</div>
-						  		<div class="card-text">
-						  			<?php the_excerpt(); ?>
-						  		</div>
-							</div><!-- .card-body -->
-							<div class="card-footer">
-								<a href="<?php the_permalink(); ?>" class="btn btn-outline-primary">
-									Read More <span class="screen-reader-text">about <?php the_title(); ?></span>
-								</a>
-							</div><!-- .card-footer -->
-						</div><!-- .card -->
+						<?php $lastpostloop = new WP_Query( array(
+							'posts_per_page' => '1', 
+							'orderby' => 'date', 
+							'order' => 'DESC'
+						) ); ?>
+						 
+						<!-- // The Loop -->
+						<?php while ($lastpostloop->have_posts()) : $lastpostloop->the_post(); ?>
 
-					<?php endwhile;  ?>	
+							<div class="card">
+								<?php if ( has_post_thumbnail()) : ?>
+								   <a href="<?php the_permalink(); ?>" title="<?php the_title_attribute(); ?>" >
+								  	 <?php the_post_thumbnail( 'large', array( 'class' => 'card-img-top' ) );; ?>
+								   </a>
+								<?php endif; ?>
+								<div class="card-body">
+							  		<h3 class="card-title"><?php the_title(); ?></h3>
+									<div class="card-meta text-muted">
+										<?php the_date(); ?>
+										<i class="fa fa-user-circle-o" aria-hidden="true"></i> <?php the_author(); ?>
+									</div>
+							  		<div class="card-text">
+							  			<?php the_excerpt(); ?>
+							  		</div>
+								</div><!-- .card-body -->
+								<div class="card-footer">
+									<a href="<?php the_permalink(); ?>" class="btn btn-outline-primary">
+										Read More <span class="screen-reader-text">about <?php the_title(); ?></span>
+									</a>
+								</div><!-- .card-footer -->
+							</div><!-- .card -->
 
-					<?php wp_reset_postdata(); ?>
+						<?php endwhile;  ?>	
+
+						<?php wp_reset_postdata(); ?>
+					</div>
 
 					<div class="site-loop home-featured-secondary-loop">
 
@@ -184,7 +186,7 @@ get_header(); ?>
 	        		<h2 class="posts-title">More Posts <i class="fa fa-newspaper-o" aria-hidden="true"></i></h2>
 	        	</div>
 	        </div>
-	        <div class="row site-loop home-featured-post-loop equal-height">
+	        <div class="row site-loop main-posts-loop equal-height">
 				<?php $oldpostsloop = new WP_Query( array(
 					'posts_per_page' => '6',
 					'offset' => '6',

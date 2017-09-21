@@ -613,8 +613,11 @@ footer.entry-meta .fa {
   -o-border-radius: 0;
   border-radius: 0;
 }
+.site-loop .card .card-body {
+  font-size: 0.875rem;
+}
 .site-loop .card .card-body .card-title {
-  font-size: 1.5rem;
+  font-size: 1.25rem;
 }
 .site-loop .card .card-body .card-meta {
   margin-bottom: 0.75rem;
@@ -648,6 +651,12 @@ section {
   padding-bottom: 1rem;
 }
 
+.home-featured-posts .site-loop.home-featured-post-loop .card-body {
+  font-size: 16px;
+}
+.home-featured-posts .site-loop.home-featured-post-loop .card-body .card-title {
+  font-size: 1.75rem;
+}
 .home-featured-posts .site-loop.home-featured-secondary-loop .card.col-sm-5 {
   background-repeat: no-repeat;
   -webkit-background-size: cover;
@@ -655,12 +664,6 @@ section {
   -o-background-size: cover;
   background-size: cover;
   background-position: center top;
-}
-.home-featured-posts .site-loop.home-featured-secondary-loop .card .card-body {
-  font-size: 0.875rem;
-}
-.home-featured-posts .site-loop.home-featured-secondary-loop .card .card-body .card-title {
-  font-size: 1.25rem;
 }
 
 .home-featured-shows {
@@ -676,12 +679,6 @@ section {
 
 .home-older-posts {
   padding: 20px 0;
-}
-.home-older-posts .site-loop.home-featured-post-loop .card .card-body {
-  font-size: 0.875rem;
-}
-.home-older-posts .site-loop.home-featured-post-loop .card .card-body .card-title {
-  font-size: 1.25rem;
 }
 
 /* =Sub pages

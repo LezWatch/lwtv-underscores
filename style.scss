@@ -300,13 +300,18 @@ footer.entry-meta {
     .card-header {
       @include border-radius(0);
     }
+
     .card-img-top, .card-img {
       @include border-radius(0);
     }
+
     .card-body {
+      @include font-14;
+
       .card-title {
-        @include font-24;
+        @include font-20;
       }
+
       .card-meta {
         margin-bottom: 0.75rem;
 
@@ -314,12 +319,14 @@ footer.entry-meta {
           margin-left: 1em;
         }
       }
+
       .card-text {
         p {
           margin-bottom: 0;
         }
       }
     }
+
     .card-footer {
       background-color: $white;
       border: 0;
@@ -328,6 +335,8 @@ footer.entry-meta {
     }
   }
 }
+
+
 
 
 
@@ -345,22 +354,25 @@ section {
   padding-bottom: 1rem;
 }
 
+
 .home-featured-posts {
+
+  .site-loop.home-featured-post-loop {
+    .card-body {
+      font-size: $basefont;
+
+      .card-title {
+        @include font-28;
+      }
+    }
+  }
+
   .site-loop.home-featured-secondary-loop {
     .card {
-
       &.col-sm-5 {
         background-repeat: no-repeat;
         @include cover;
         background-position: center top;
-      }
-
-      .card-body {
-        @include font-14;
-
-        .card-title {
-          @include font-20;
-        }
       }
     }
   }
@@ -381,19 +393,6 @@ section {
 
 .home-older-posts {
   padding: 20px 0;
-
-  .site-loop.home-featured-post-loop {
-    .card {
-
-      .card-body {
-        @include font-14;
-
-        .card-title {
-          @include font-20;
-        }
-      }
-    }
-  }
 }
 
 
