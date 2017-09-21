@@ -81,13 +81,12 @@ $endcolor: #7DB9E8;
     padding: 0px !important;
 } 
 
-//  background: url(images/bg.jpg) no-repeat center center fixed;
+//  background-image: url(images/bg.jpg);
 @mixin cover {
 	-webkit-background-size: cover;
 	-moz-background-size: cover;
 	-o-background-size: cover;
 	background-size: cover;
-	height: 100%;
 }
 
 @mixin placeholdercolor($arguement...) {

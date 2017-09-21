@@ -214,7 +214,7 @@ h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
 
 /* If using Jumbotron */
 .jumbotron.jumbotron-fluid {
-  background-image: url("images/lezwatchtv-bg-header.png");  
+  background-image: url("images/lezwatchtv-bg-header.png");
   background-size: contain;
   color: $white;
   @include font-18;
@@ -348,15 +348,9 @@ section {
     .card {
 
       &.col-sm-5 {
-        overflow: hidden;
-      }
-
-      .card-img {
-        height: 100%;
-        left: -10%;
-        max-width: none;
-        position: absolute;
-        width: auto;
+        background-repeat: no-repeat;
+        @include cover;
+        background-position: center top;
       }
 
       .card-body {

@@ -66,15 +66,12 @@ get_header(); ?>
 						<!-- // The Loop -->
 						<?php while ($newpostsloop->have_posts()) : $newpostsloop->the_post(); ?>
 
-
 							<div class="card-group">
-								<div class="card col-sm-5">
-									<?php if ( has_post_thumbnail()) : ?>
-									   <a href="<?php the_permalink(); ?>" title="<?php the_title_attribute(); ?>" >
-									  	 <?php the_post_thumbnail( 'large', array( 'class' => 'card-img' ) );; ?>
-									   </a>
+								<div class="card col-sm-5"	
+									<?php if ( has_post_thumbnail() ) : ?>
+									    style="background-image: url(<?php the_post_thumbnail_url( 'large' ); ?>);"
 									<?php endif; ?>
-									<div class="card-img-overlay"></div>
+								>
 								</div>
 								<div class="card col-sm-7">
 									<div class="card-body">
@@ -94,7 +91,6 @@ get_header(); ?>
 									</div>
 								</div><!-- .card -->
 							</div><!-- .card-group -->
-
 
 						<?php endwhile;  ?>	
 						<!-- // The end of The Loop -->

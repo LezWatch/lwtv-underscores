@@ -646,14 +646,12 @@ section {
 }
 
 .home-featured-posts .site-loop.home-featured-secondary-loop .card.col-sm-5 {
-  overflow: hidden;
-}
-.home-featured-posts .site-loop.home-featured-secondary-loop .card .card-img {
-  height: 100%;
-  left: -10%;
-  max-width: none;
-  position: absolute;
-  width: auto;
+  background-repeat: no-repeat;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+  background-position: center top;
 }
 .home-featured-posts .site-loop.home-featured-secondary-loop .card .card-body {
   font-size: 0.875rem;
