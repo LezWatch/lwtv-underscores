@@ -583,12 +583,34 @@ footer.entry-meta .fa {
 }
 
 /* Loop styles for loopy content */
+.site-loop .card {
+  margin-bottom: 1.4rem;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  -ms-border-radius: 0;
+  -o-border-radius: 0;
+  border-radius: 0;
+}
+.site-loop .card .card-header {
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  -ms-border-radius: 0;
+  -o-border-radius: 0;
+  border-radius: 0;
+}
 .site-loop .card .card-img-top {
   border-top-left-radius: 0;
   border-top-right-radius: 0;
 }
 .site-loop .card .card-body .card-text p {
   margin-bottom: 0;
+}
+.site-loop .card .card-footer {
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  -ms-border-radius: 0;
+  -o-border-radius: 0;
+  border-radius: 0;
 }
 
 /* =Home page

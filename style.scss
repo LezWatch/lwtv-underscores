@@ -287,7 +287,12 @@ footer.entry-meta {
 
 .site-loop {
   .card {
-    .card-header {}
+    margin-bottom: 1.4rem;
+    @include border-radius(0);
+
+    .card-header {
+      @include border-radius(0);
+    }
     .card-img-top {
       border-top-left-radius: 0;
       border-top-right-radius: 0;
@@ -300,7 +305,9 @@ footer.entry-meta {
         }
       }
     }
-    .card-footer {}
+    .card-footer {
+      @include border-radius(0);
+    }
   }
 }
 
