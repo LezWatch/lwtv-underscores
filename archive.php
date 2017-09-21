@@ -52,7 +52,7 @@ get_header(); ?>
 				</div><!-- #primary -->
 			</div><!-- .col-sm-8 -->
 
-			<div class="col-sm-4 site-sidebar">
+			<div class="col-sm-4 site-sidebar site-loop">
 
 				<?php get_sidebar(); ?>
 

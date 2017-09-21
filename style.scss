@@ -316,7 +316,14 @@ footer.entry-meta {
     }
 
     .card-header {
+      background: $lwtv-gradient;
       @include border-radius(0);
+      color: $white;
+      @include border-radius(0);
+
+      h3, h4, h5 {
+        margin-bottom: 0;
+      }
     }
 
     .card-img-top, .card-img {
@@ -339,6 +346,15 @@ footer.entry-meta {
       }
 
       .card-text {
+        .fa {
+          text-align: center;
+          width: 22px;
+        }
+
+        .card-excerpt {
+          margin-top: 0.4rem;
+        }
+
         p {
           margin-bottom: 0;
         }
@@ -564,48 +580,6 @@ h2.widget-title {}
 .site-sidebar {
   .widget {
     margin: 0 0 2em;
-
-    .card {
-      @include border-radius(0);
-
-      .card-img-top, .card-img {
-        @include border-radius(0);
-      }
-
-      .card-header {
-        background: $lwtv-gradient;
-        @include border-radius(0);
-        color: $white;
-
-        h4 {
-          margin-bottom: 0;
-        }
-      }
-
-      .card-body {
-        .card-title {
-          @include font-20;
-        }
-
-        .card-text {
-          .fa {
-            text-align: center;
-            width: 22px;
-          }
-
-          .card-excerpt {
-            margin-top: 0.4rem;
-          }
-        }
-      }
-
-      .card-footer {
-        background-color: $white;
-        border: 0;
-        @include border-radius(0);
-        padding-top: 0;
-      }
-    }
   }
 }
 

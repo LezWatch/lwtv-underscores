@@ -102,7 +102,7 @@ get_header(); ?>
 				</div><!-- .col-sm-8 -->
 
 				<!-- Home Page Sidebar -->
-				<div class="col-sm-4 site-sidebar">
+				<div class="col-sm-4 site-sidebar site-loop">
 					<?php dynamic_sidebar( 'sidebar-1' ); ?>
 				</div>
 

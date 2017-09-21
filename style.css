@@ -627,11 +627,21 @@ footer.entry-meta .fa {
   padding: 0;
 }
 .site-loop .card .card-header {
+  background: linear-gradient(60deg, #ab47bc, #8e24aa);
   -webkit-border-radius: 0;
   -moz-border-radius: 0;
   -ms-border-radius: 0;
   -o-border-radius: 0;
   border-radius: 0;
+  color: #fff;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  -ms-border-radius: 0;
+  -o-border-radius: 0;
+  border-radius: 0;
+}
+.site-loop .card .card-header h3, .site-loop .card .card-header h4, .site-loop .card .card-header h5 {
+  margin-bottom: 0;
 }
 .site-loop .card .card-img-top, .site-loop .card .card-img {
   -webkit-border-radius: 0;
@@ -651,6 +661,13 @@ footer.entry-meta .fa {
 }
 .site-loop .card .card-body .card-meta .fa {
   margin-left: 1em;
+}
+.site-loop .card .card-body .card-text .fa {
+  text-align: center;
+  width: 22px;
+}
+.site-loop .card .card-body .card-text .card-excerpt {
+  margin-top: 0.4rem;
 }
 .site-loop .card .card-body .card-text p {
   margin-bottom: 0;
@@ -929,52 +946,6 @@ ul.comment-list li .comment-content .btn a, ul.comment-list li .comment-content 
 ----------------------------------------------- */
 .site-sidebar .widget {
   margin: 0 0 2em;
-}
-.site-sidebar .widget .card {
-  -webkit-border-radius: 0;
-  -moz-border-radius: 0;
-  -ms-border-radius: 0;
-  -o-border-radius: 0;
-  border-radius: 0;
-}
-.site-sidebar .widget .card .card-img-top, .site-sidebar .widget .card .card-img {
-  -webkit-border-radius: 0;
-  -moz-border-radius: 0;
-  -ms-border-radius: 0;
-  -o-border-radius: 0;
-  border-radius: 0;
-}
-.site-sidebar .widget .card .card-header {
-  background: linear-gradient(60deg, #ab47bc, #8e24aa);
-  -webkit-border-radius: 0;
-  -moz-border-radius: 0;
-  -ms-border-radius: 0;
-  -o-border-radius: 0;
-  border-radius: 0;
-  color: #fff;
-}
-.site-sidebar .widget .card .card-header h4 {
-  margin-bottom: 0;
-}
-.site-sidebar .widget .card .card-body .card-title {
-  font-size: 1.25rem;
-}
-.site-sidebar .widget .card .card-body .card-text .fa {
-  text-align: center;
-  width: 22px;
-}
-.site-sidebar .widget .card .card-body .card-text .card-excerpt {
-  margin-top: 0.4rem;
-}
-.site-sidebar .widget .card .card-footer {
-  background-color: #fff;
-  border: 0;
-  -webkit-border-radius: 0;
-  -moz-border-radius: 0;
-  -ms-border-radius: 0;
-  -o-border-radius: 0;
-  border-radius: 0;
-  padding-top: 0;
 }
 
 /* =Footer

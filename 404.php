@@ -10,7 +10,7 @@ get_header(); ?>
 <div id="main" class="site-main" role="main">
 	<div class="container">
 		<div class="row">
-			<div class="col">
+			<div class="col-sm-8">
 				<div id="primary" class="content-area">
 					<div id="content" class="site-content clearfix" role="main">
 						<article id="post-0" class="post not-found">
@@ -28,7 +28,13 @@ get_header(); ?>
 						</article><!-- #post-0 .post .not-found -->
 					</div><!-- #content -->
 				</div><!-- #primary -->
-			</div><!-- .col -->
+			</div><!-- .col-sm-8 -->
+
+			<div class="col-sm-4 site-sidebar site-loop">
+
+				<?php get_sidebar(); ?>
+
+			</div><!-- .col-sm-4 -->
 		</div><!-- .row -->
 	</div><!-- .container -->
 </div><!-- #main -->
