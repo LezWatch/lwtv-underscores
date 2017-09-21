@@ -121,54 +121,53 @@ get_header(); ?>
     		<div class="row">
       			<div class="col">
         			<div class="card-deck">
-
           				<div class="card">
-          					<img class="card-img-top" src="img/sense8-pic.jpg" alt="Card image cap">
+          					<img class="card-img-top" src="<?php echo get_template_directory_uri(); ?>/images/sense8-pic.jpg">
             				<div class="card-body">
               					<h4 class="card-title">Sense8</h4>
-								<div class="card-text">
+								<div class="card-meta">
 									<strong>Airs on:</strong> Netflix<br />
 									<strong>Airdates:</strong> 2015 - Current
 								</div>
-              					<p class="card-text show-excerpt">
+              					<p class="card-text">
                 					A wonderful science fiction drama by siblings Lilly & Lana Wachowski and J. Michael Straczynski revolving around eight strangers from different parts of the world who suddenly become mentally and emotionally linked.
               					</p>
             				</div>
-            				<div class="card-footer-light">
+            				<div class="card-footer">
             					<a href="#" class="btn btn-outline-primary">Go to Show Profile</a>
             				</div>
           				</div>
 
 						<div class="card"> 
-							<img class="card-img-top img-fluid" src="img/odat.jpg" alt="Card image cap">
+							<img class="card-img-top" src="<?php echo get_template_directory_uri(); ?>/images/odat.jpg">
 							<div class="card-body">
 								<h4 class="card-title">One Day at Time</h4>
-								<div class="card-text">
+								<div class="card-meta">
 									<strong>Airs on:</strong> Netflix<br />
 									<strong>Airdates:</strong> 2017 - current
 								</div>
-								<p class="card-text show-excerpt">
+								<p class="card-text">
 									This is it. This is it. This is life, the one you get. So go and have a ball.
 								</p>
 							</div>
-							<div class="card-footer-light">
+							<div class="card-footer">
 								<a href="#" class="btn btn-outline-primary">Go to Show Profile</a>
 							</div>
 						</div>
 
 	          			<div class="card"> 
-	          				<img class="card-img-top img-fluid" src="img/wayhaught.jpg" alt="Card image cap">
+	          				<img class="card-img-top" src="<?php echo get_template_directory_uri(); ?>/images/wayhaught.jpg">
 	            			<div class="card-body">
 	              				<h4 class="card-title">Wynonna Earp</h4>
-	              				<div class="card-text">
+	              				<div class="card-meta">
 					                <strong>Airs on:</strong> Syfy<br />
 					                <strong>Airdates:</strong> 2016 - current
 	              				</div>
-	              				<p class="card-text show-excerpt">
+	              				<p class="card-text">
 	              					When a badass troublemaker turns twenty-seven, she becomes the hero we all need.
 	              				</p>
 	            			</div>
-	            			<div class="card-footer-light">
+	            			<div class="card-footer">
 	            				<a href="#" class="btn btn-outline-primary">Go to Show Profile</a></div>
 	          				</div>
 	        			</div>
