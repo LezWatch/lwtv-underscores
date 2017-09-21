@@ -119,6 +119,7 @@ function yks_the_custom_logo() {
 
 /*  Custom Thumbnail sizes */
 add_image_size( 'postloop-img', 525, 300, true ); // hard crop mode
+add_image_size( 'widget-img', 350, 320, array( 'center', 'top' ) ); // hard crop mode
 // add_image_size( 'featured-img', 400, 400 ); // soft proportional crop mode
 
 /*

@@ -44,7 +44,6 @@ class LWTV_Character extends WP_Widget {
 		/** Output widget HTML BEGIN **/
 		echo $before_widget;
 
-
 		$query = new WP_Query( $q_args );
 		while ($query->have_posts()) {
 			$query->the_post();
@@ -55,7 +54,7 @@ class LWTV_Character extends WP_Widget {
           </div>';
 
 		// Featured Image
-		echo the_post_thumbnail( 'large', array( 'class' => 'card-img-top' ) );
+		echo the_post_thumbnail( 'widget-img', array( 'class' => 'card-img-top' ) );
 
 		echo '<div class="card-body">';
 
@@ -64,15 +63,13 @@ class LWTV_Character extends WP_Widget {
 
 		echo '<div class="card-text">';
 
-		// Show
-
+		// Shows
 		$shows = get_post_meta( get_the_ID(), 'lezchars_show_group', true );
 		foreach ($shows as $show) {
 			$show_post = get_post( $show['show']);
 			echo '<div class="card-meta-item"><i class="fa fa-television" aria-hidden="true"></i> <a href="' . get_the_permalink($show_post->ID)  .'">' . $show_post->post_title .'</a></div>';
 		}
 		
-
 		// Actor
 		$field = get_post_meta( get_the_ID(), 'lezchars_actor', true );
 		$field_value = isset( $field[0] ) ? $field[0] : '';
@@ -83,7 +80,7 @@ class LWTV_Character extends WP_Widget {
 
         // Button
 		echo '<div class="card-footer">
-          	<a href="#" class="btn btn-outline-primary">Character Profile</a>
+          	<a href="' . get_the_permalink()  .'" class="btn btn-outline-primary">Character Profile</a>
           </div>';
 
 		echo '</div>';
