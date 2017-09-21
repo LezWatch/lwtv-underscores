@@ -17,7 +17,6 @@ get_header(); ?>
 							<header class="entry-header">
 								<h1 class="entry-title"><?php esc_attr_e( yikes_starter_blog_page_title() ); ?></h1>
 							</header><!-- .entry-header -->
-
 						</article><!-- #post-## -->
 
 						<?php if ( have_posts() ) : ?>
@@ -32,7 +31,6 @@ get_header(); ?>
 
 							</div>
 
-							<!-- Next / Previous pagination without numbers is yikes_starter_paging_nav(); -->
 							<?php wp_bootstrap_pagination(); ?>
 
 						<?php else : ?>
