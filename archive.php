@@ -16,30 +16,35 @@ get_header(); ?>
 
 						<?php if ( have_posts() ) : ?>
 
-							<header class="entry-header">
-								<?php
-									the_archive_title( '<h1 class="entry-title">', '</h1>' );
-									the_archive_description( '<div class="taxonomy-description">', '</div>' );
-								?>
-							</header><!-- .entry-header -->
+							<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
+								<header class="entry-header">
+									<?php
+										the_archive_title( '<h1 class="entry-title">', '</h1>' );
+										the_archive_description( '<div class="taxonomy-description">', '</div>' );
+									?>
+								</header><!-- .entry-header -->
+	
+								<div class="entry-content">
+				        			<div class="row site-loop main-posts-loop equal-height">
 
-		        			<div class="row site-loop main-posts-loop equal-height">
+										<?php while ( have_posts() ) : the_post(); ?>
 
-								<?php while ( have_posts() ) : the_post(); ?>
+												<?php get_template_part( 'content', 'posts' ); ?>
 
-										<?php get_template_part( 'content', 'posts' ); ?>
+										<?php endwhile; ?>
 
-								<?php endwhile; ?>
+									</div>
 
-							</div>
+									<?php wp_bootstrap_pagination(); ?>
 
-							<?php wp_bootstrap_pagination(); ?>
+									<?php else : ?>
 
-						<?php else : ?>
+										<?php get_template_part( 'content', 'none' ); ?>
 
-							<?php get_template_part( 'content', 'none' ); ?>
+									<?php endif; ?>
 
-						<?php endif; ?>
+								</div>
+							</article><!-- #post-## -->
 
 					</div><!-- #content -->
 				</div><!-- #primary -->
