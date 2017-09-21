@@ -73,6 +73,7 @@ Tags:
    ========================================================================== */
 #main {
   background-color: #fff;
+  padding: 20px 0;
 }
 
 /* ==========================================================================
@@ -169,12 +170,7 @@ a:hover, a:focus, a:active {
 /* Global styles for all the buttons!  */
 a.btn, button.btn, input[type="button"].btn, input[type="submit"].btn,
 button, input[type="button"], input[type="submit"] {
-  border: 3px solid transparent;
-  -webkit-border-radius: 0;
-  -moz-border-radius: 0;
-  -ms-border-radius: 0;
-  -o-border-radius: 0;
-  border-radius: 0;
+  border: 1px solid transparent;
   -webkit-transition: all 0.3s;
   -moz-transition: all 0.3s;
   -o-transition: all 0.3s;

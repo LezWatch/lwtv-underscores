@@ -24,6 +24,7 @@ Tags:
 
 #main {
   background-color: $white;
+  padding: 20px 0;
 }
 
 #secondary {}
@@ -111,8 +112,7 @@ a {
 
 a.btn, button.btn, input[type="button"].btn, input[type="submit"].btn,
 button, input[type="button"], input[type="submit"] {
-  border: 3px solid transparent;
-  @include border-radius(0);
+  border: 1px solid transparent;
   @include fade;
 }
 
