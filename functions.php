@@ -226,11 +226,21 @@ add_action( 'after_setup_theme', 'yikes_starter_setup' );
 
 /* Register widgetized areas and update sidebar with default widgets  */
 function yikes_starter_widgets_init() {
+	// Home Sidebar
+	register_sidebar( array(
+		'name' => __( 'Home Page Sidebar', 'yikes_starter' ),
+		'id' => 'sidebar-1',
+		'description' => 'The sidebar for the home page',
+		'before_widget' => '<aside id="%1$s" class="widget %2$s">',
+		'after_widget' => '</aside>',
+		'before_title' => '<h2 class="widget-title">',
+		'after_title' => '</h2>',
+	) );
 	// Primary Widget
 	register_sidebar( array(
-		'name' => __( 'Sidebar', 'yikes_starter' ),
-		'id' => 'sidebar-1',
-		'description' => 'The primary sidebar',
+		'name' => __( 'Sub Page Sidebar', 'yikes_starter' ),
+		'id' => 'sidebar-2',
+		'description' => 'The sidebar for sub pages',
 		'before_widget' => '<aside id="%1$s" class="widget %2$s">',
 		'after_widget' => '</aside>',
 		'before_title' => '<h2 class="widget-title">',

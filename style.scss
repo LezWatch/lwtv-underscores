@@ -307,22 +307,9 @@ footer.entry-meta {
 /* =Home page
 ----------------------------------------------- */
 
-/* If using the alertbox */
-
-.home .alert {
-  background-color: $lwtv-salmon;
-  border: 0;
-  border-color: transparent;
-  @include border-radius(0);
-  color: $white;
-
-  a, a:visited {
-    color: $white;
-  }
-
-  &, p {
-    margin: 0;
-  }
+h2.posts-title {
+  color: $lwtv-pink;
+  font-weight: 500;
 }
 
 /* Content blocks */
@@ -331,29 +318,21 @@ section {
   padding-bottom: 2rem;
 }
 
+.home-featured-posts {}
+.home-featured-shows {}
+
+
+
 /* =Sub pages
 ----------------------------------------------- */
 
 /* Posts */
 
-.blog {
-
-  .post-container {
-    margin-bottom: 4rem;
-
-    &:last-of-type {
-      margin-bottom: 0;
-    }
-  }
-}
 
 
 /* =Custom Post Types
 ----------------------------------------------- */
 
-/* Change events styles */
-
-// @import 'partials/events';
 
 
 /* =Media
@@ -453,23 +432,40 @@ embed, iframe, object {
 h2.widget-title {}
 
 
+/* =Header
+----------------------------------------------- */
+
+/* The Widget Area of Death */
+
+.home .alert {
+  background-color: $lwtv-salmon;
+  border: 0;
+  border-color: transparent;
+  @include border-radius(0);
+  color: $white;
+
+  a, a:visited {
+    color: $white;
+  }
+
+  &, p {
+    margin: 0;
+  }
+}
+
+
 /* =Sidebars
 ----------------------------------------------- */
 
 .widget {
   margin: 0 0 2em;
 
-  .dead-widget-container & {
+  .dead-widget-container &, .credits & {
     margin-bottom: 0;
-    text-align: center;
   }
-}
 
-/* Search widget */
-
-.widget_search {
-  .btn.search-submit {
-    border: 1px;
+  .dead-widget-container & {
+    text-align: center;
   }
 }
 
@@ -529,6 +525,7 @@ h2.widget-title {}
     &, a, a:visited {
       color: $white;
     }
+
     .credits {
       p {
         margin-bottom: 0;

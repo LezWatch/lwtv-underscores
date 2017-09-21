@@ -583,23 +583,9 @@ footer.entry-meta .fa {
 
 /* =Home page
 ----------------------------------------------- */
-/* If using the alertbox */
-.home .alert {
-  background-color: #f55a4e;
-  border: 0;
-  border-color: transparent;
-  -webkit-border-radius: 0;
-  -moz-border-radius: 0;
-  -ms-border-radius: 0;
-  -o-border-radius: 0;
-  border-radius: 0;
-  color: #fff;
-}
-.home .alert a, .home .alert a:visited {
-  color: #fff;
-}
-.home .alert, .home .alert p {
-  margin: 0;
+h2.posts-title {
+  color: #d1548e;
+  font-weight: 500;
 }
 
 /* Content blocks */
@@ -610,16 +596,8 @@ section {
 /* =Sub pages
 ----------------------------------------------- */
 /* Posts */
-.blog .post-container {
-  margin-bottom: 4rem;
-}
-.blog .post-container:last-of-type {
-  margin-bottom: 0;
-}
-
 /* =Custom Post Types
 ----------------------------------------------- */
-/* Change events styles */
 /* =Media
 ----------------------------------------------- */
 img {
@@ -804,19 +782,37 @@ ul.comment-list li .comment-content .btn a, ul.comment-list li .comment-content 
    ========================================================================== */
 /* =Global
 ----------------------------------------------- */
+/* =Header
+----------------------------------------------- */
+/* The Widget Area of Death */
+.home .alert {
+  background-color: #f55a4e;
+  border: 0;
+  border-color: transparent;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  -ms-border-radius: 0;
+  -o-border-radius: 0;
+  border-radius: 0;
+  color: #fff;
+}
+.home .alert a, .home .alert a:visited {
+  color: #fff;
+}
+.home .alert, .home .alert p {
+  margin: 0;
+}
+
 /* =Sidebars
 ----------------------------------------------- */
 .widget {
   margin: 0 0 2em;
 }
-.dead-widget-container .widget {
+.dead-widget-container .widget, .credits .widget {
   margin-bottom: 0;
-  text-align: center;
 }
-
-/* Search widget */
-.widget_search .btn.search-submit {
-  border: 1px;
+.dead-widget-container .widget {
+  text-align: center;
 }
 
 /* =Footer
