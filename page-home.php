@@ -30,7 +30,7 @@ get_header(); ?>
 							<div class="card">
 								<?php if ( has_post_thumbnail()) : ?>
 								   <a href="<?php the_permalink(); ?>" title="<?php the_title_attribute(); ?>" >
-								  	 <?php the_post_thumbnail( 'large', array( 'class' => 'card-img-top' ) );; ?>
+								  	 <?php the_post_thumbnail( 'large', array( 'class' => 'card-img-top' ) ); ?>
 								   </a>
 								<?php endif; ?>
 								<div class="card-body">
@@ -201,7 +201,7 @@ get_header(); ?>
 						<div class="card"> 
 							<?php if ( has_post_thumbnail()) : ?>
 							   <a href="<?php the_permalink(); ?>" title="<?php the_title_attribute(); ?>" >
-							  	 <?php the_post_thumbnail( 'postloop-img', array( 'class' => 'card-img-top' ) );; ?>
+							  	 <?php the_post_thumbnail( 'postloop-img', array( 'class' => 'card-img-top' ) ); ?>
 							   </a>
 							<?php endif; ?>
 							<div class="card-body">

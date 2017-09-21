@@ -930,6 +930,13 @@ ul.comment-list li .comment-content .btn a, ul.comment-list li .comment-content 
 .site-sidebar .widget {
   margin: 0 0 2em;
 }
+.site-sidebar .widget .card {
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  -ms-border-radius: 0;
+  -o-border-radius: 0;
+  border-radius: 0;
+}
 .site-sidebar .widget .card .card-header {
   background: linear-gradient(60deg, #ab47bc, #8e24aa);
   -webkit-border-radius: 0;
@@ -946,11 +953,14 @@ ul.comment-list li .comment-content .btn a, ul.comment-list li .comment-content 
   font-size: 1.25rem;
 }
 .site-sidebar .widget .card .card-footer {
+  background-color: #fff;
+  border: 0;
   -webkit-border-radius: 0;
   -moz-border-radius: 0;
   -ms-border-radius: 0;
   -o-border-radius: 0;
   border-radius: 0;
+  padding-top: 0;
 }
 
 /* =Footer

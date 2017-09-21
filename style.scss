@@ -566,6 +566,8 @@ h2.widget-title {}
     margin: 0 0 2em;
 
     .card {
+      @include border-radius(0);
+      
       .card-header {
         background: $lwtv-gradient;
         @include border-radius(0);
@@ -577,7 +579,6 @@ h2.widget-title {}
       }
 
       .card-body {
-
         .card-title {
           @include font-20;
         }
@@ -586,7 +587,10 @@ h2.widget-title {}
       }
 
       .card-footer {
+        background-color: $white;
+        border: 0;
         @include border-radius(0);
+        padding-top: 0;
       }
     }
   }

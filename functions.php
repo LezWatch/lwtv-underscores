@@ -99,8 +99,9 @@ add_filter( 'excerpt_more', 'yks_excerpt_more' );
 
 /************* Widgets *************/
 
-// load my widget
+// load my widgets
 require_once 'inc/widgets/social-nav-widget.php';
+require_once 'inc/widgets/character-widget.php';
 
 
 /************* Theme Logo *************/
