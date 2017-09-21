@@ -136,7 +136,8 @@ button, input[type="button"], input[type="submit"] {
 /* Color styles for specific button classes  */
 
 button, input[type="button"], input[type="submit"], // keep this line for the defaut button style 
-a.btn-primary, button.btn-primary, input[type="button"].btn-primary, input[type="submit"].btn-primary {
+a.btn-primary, button.btn-primary, input[type="button"].btn-primary, input[type="submit"].btn-primary,
+.show > .btn-primary.dropdown-toggle {
   &, &:visited {
     background-color: $lwtv-pink;
     border-color: $lwtv-pink;
@@ -544,12 +545,7 @@ h2.widget-title {}
   }
 }
 
-
-/* =Sidebars
------------------------------------------------ */
-
 .widget {
-  margin: 0 0 2em;
 
   .dead-widget-container &, .credits & {
     margin-bottom: 0;
@@ -557,6 +553,42 @@ h2.widget-title {}
 
   .dead-widget-container & {
     text-align: center;
+  }
+}
+
+
+
+/* =Sidebars
+----------------------------------------------- */
+
+.site-sidebar {
+  .widget {
+    margin: 0 0 2em;
+
+    .card {
+      .card-header {
+        background: $lwtv-gradient;
+        @include border-radius(0);
+        color: $white;
+
+        h4 {
+          margin-bottom: 0;
+        }
+      }
+
+      .card-body {
+
+        .card-title {
+          @include font-20;
+        }
+
+        .card-text {}
+      }
+
+      .card-footer {
+        @include border-radius(0);
+      }
+    }
   }
 }
 

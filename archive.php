@@ -25,12 +25,11 @@ get_header(); ?>
 
 							<?php while ( have_posts() ) : the_post(); ?>
 
-								<?php get_template_part( 'content', get_post_format() ); ?>
+								<?php get_template_part( 'content', 'posts' ); ?>
 
 							<?php endwhile; ?>
 
-							<!-- Alt Bootstrap pagination is <?php page_navi(); ?> -->
-							<?php yikes_starter_paging_nav(); ?>
+							<?php wp_bootstrap_pagination(); ?>
 
 						<?php else : ?>
 
