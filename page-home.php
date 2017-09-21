@@ -22,11 +22,11 @@ get_header(); ?>
 						</div>
 						<div class="card">
 							<div class="card-body">
+						  		<h3 class="card-title">Fall 2017 Preview – Cable TV</h3>
 								<div class="card-meta text-muted">
 									October 27, 2017 
 									<i class="fa fa-user-circle-o" aria-hidden="true"></i> <a href="#">Mika (ipstenu) Epstein</a>
 								</div>
-						  		<h3 class="card-title">Fall 2017 Preview – Cable TV</h3>
 						  		<div class="card-text">
 						  			<p>
 						  				Following our surprisingly disappointing reveal on how there’s only one new Network TV show with a new queer female, it’s time to look at cable.
