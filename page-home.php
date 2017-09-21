@@ -8,10 +8,12 @@ get_header(); ?>
 
 <div id="main" class="site-main" role="main">
 
-	<!-- Newest posts -->
+	<!-- Home page top section -->
 	<section class="home-featured-posts">
 		<div class="container">
     		<div class="row">
+
+				<!-- Newest posts -->
       			<div class="col-sm-8 site-loop"> 
         			<h2 class="posts-title">New Posts <i class="fa fa-newspaper-o" aria-hidden="true"></i></h4>        			
 
@@ -54,21 +56,21 @@ get_header(); ?>
 						  				We got to go to a third taping of One Day at a Time and it was just as much fun as the first two.
 						  			</p>
 						  		</div>
-						  		<div class="card-footer">
-									<a href="#" class="btn btn-outline-primary">
-										Read More <span class="screen-reader-text">about [title]</span>
-									</a>
-								</div>
+						  	</div>
+					  		<div class="card-footer">
+								<a href="#" class="btn btn-outline-primary">
+									Read More <span class="screen-reader-text">about [title]</span>
+								</a>
 							</div>
-						</div>
+						</div><!-- .card -->
 					</div><!-- .card-group -->
-
 				</div><!-- .col-sm-8 -->
 
 				<!-- Home Page Sidebar -->
 				<div class="col-sm-4">
 					<?php dynamic_sidebar( 'sidebar-1' ); ?>
 				</div>
+
 			</div><!-- .row -->
 		</div><!-- .container -->
 	</section>
