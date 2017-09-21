@@ -1,19 +1,19 @@
 <?php
 
 	/**
-	 * Adds The LWTV Recently Added Character widget.
+	 * Adds The LWTV Recently Added Show widget.
 	 */
 
-class LWTV_Character extends WP_Widget {
+class LWTV_Show extends WP_Widget {
 
 	/**
 	 * Register widget with WordPress.
 	 */
 	public function __construct() {
 		parent::__construct(
-			'lwtv_character', // Base ID
-			'LWTV Recent Character', // Name
-			array( 'description' => __( 'Displays the character most recently added to the database.', 'yikes_starter' ) ) // Args
+			'lwtv_show', // Base ID
+			'LWTV Recent Show', // Name
+			array( 'description' => __( 'Displays the show most recently added to the database.', 'yikes_starter' ) ) // Args
 		);
 	}
 
@@ -24,8 +24,8 @@ class LWTV_Character extends WP_Widget {
 	public function widget( $args, $instance ) {
 
 		// start a Queery
-		$char_args = array(
-			'post_type' => 'post_type_characters',
+		$show_args = array(
+			'post_type' => 'post_type_shows',
 			'posts_per_page' => '1', 
 			'orderby' => 'date', 
 			'order' => 'DESC'
@@ -44,17 +44,17 @@ class LWTV_Character extends WP_Widget {
 		/** Output widget HTML BEGIN **/
 		echo $before_widget;
 
-		$query = new WP_Query( $char_args );
+		$query = new WP_Query( $show_args );
 		while ($query->have_posts()) {
 			$query->the_post();
 
 		echo '<div class="card">';
 		echo '<div class="card-header">
-              <h4><i class="fa fa-address-card float-right" aria-hidden="true"></i> Recently Added Character</h4>
+              <h4><i class="fa fa-address-card float-right" aria-hidden="true"></i> Recently Added Show</h4>
           </div>';
 
 		// Featured Image
-		echo the_post_thumbnail( 'widget-img', array( 'class' => 'card-img-top' ) );
+		echo the_post_thumbnail( 'postloop-img', array( 'class' => 'card-img-top' ) );
 
 		echo '<div class="card-body">';
 
@@ -63,24 +63,23 @@ class LWTV_Character extends WP_Widget {
 
 		echo '<div class="card-text">';
 
-		// Shows
-		$shows = get_post_meta( get_the_ID(), 'lezchars_show_group', true );
-		foreach ($shows as $show) {
-			$show_post = get_post( $show['show']);
-			echo '<div class="card-meta-item"><i class="fa fa-television" aria-hidden="true"></i> <a href="' . get_the_permalink($show_post->ID)  .'">' . $show_post->post_title .'</a></div>';
-		}
+		// Airs on
+		echo '<div class="card-meta-item"><strong>Airs On:</strong> stations-term</div>';
 		
-		// Actor
-		$field = get_post_meta( get_the_ID(), 'lezchars_actor', true );
+		// Airdates
+		$field = get_post_meta( get_the_ID(), 'lezshows_airdates', true );
 		$field_value = isset( $field[0] ) ? $field[0] : '';
-		echo '<div class="card-meta-item"><i class="fa fa-user" aria-hidden="true"></i> ' . $field_value  . '</div>';
+		echo '<div class="card-meta-item"><strong>Airdates:</strong> ' . $field_value  . '</div>';
+
+		// Excerpt
+		echo '<div class="card-excerpt">' . get_the_excerpt() .'</div>';
 
 		echo '</div>
             </div>';
 
         // Button
 		echo '<div class="card-footer">
-          	<a href="' . get_the_permalink()  .'" class="btn btn-outline-primary">Character Profile</a>
+          	<a href="' . get_the_permalink()  .'" class="btn btn-outline-primary">Show Profile</a>
           </div>';
 
 		echo '</div>';
@@ -128,10 +127,10 @@ class LWTV_Character extends WP_Widget {
 
 }
 
-// Register LWTV_Character widget
-function register_lwtv_character() {
-	register_widget( 'LWTV_Character' );
+// Register LWTV_Show widget
+function register_lwtv_show() {
+	register_widget( 'LWTV_Show' );
 }
-add_action( 'widgets_init', 'register_lwtv_character' );
+add_action( 'widgets_init', 'register_lwtv_show' );
 
 ?>
