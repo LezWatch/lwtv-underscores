@@ -129,9 +129,9 @@ get_header(); ?>
 									<strong>Airs on:</strong> Netflix<br />
 									<strong>Airdates:</strong> 2015 - Current
 								</div>
-              					<p class="card-text">
+              					<div class="card-text">
                 					A wonderful science fiction drama by siblings Lilly & Lana Wachowski and J. Michael Straczynski revolving around eight strangers from different parts of the world who suddenly become mentally and emotionally linked.
-              					</p>
+              					</div>
             				</div>
             				<div class="card-footer">
             					<a href="#" class="btn btn-outline-primary">Go to Show Profile</a>
@@ -146,9 +146,9 @@ get_header(); ?>
 									<strong>Airs on:</strong> Netflix<br />
 									<strong>Airdates:</strong> 2017 - current
 								</div>
-								<p class="card-text">
+								<div class="card-text">
 									This is it. This is it. This is life, the one you get. So go and have a ball.
-								</p>
+								</div>
 							</div>
 							<div class="card-footer">
 								<a href="#" class="btn btn-outline-primary">Go to Show Profile</a>
@@ -163,12 +163,12 @@ get_header(); ?>
 					                <strong>Airs on:</strong> Syfy<br />
 					                <strong>Airdates:</strong> 2016 - current
 	              				</div>
-	              				<p class="card-text">
+	              				<div class="card-text">
 	              					When a badass troublemaker turns twenty-seven, she becomes the hero we all need.
-	              				</p>
+	              				</div>
 	            			</div>
 	            			<div class="card-footer">
-	            				<a href="#" class="btn btn-outline-primary">Go to Show Profile</a></div>
+	            				<a href="#" class="btn btn-outline-primary">Go to Show Profile</a>
 	          				</div>
 	        			</div>
 
@@ -176,6 +176,19 @@ get_header(); ?>
       			</div><!-- .col -->
     		</div><!-- .row -->
 		</div><!-- .container -->
+	</section>
+
+	<!-- Older Posts -->
+	<section class="home-older-posts">
+	  	<div class="container">
+	    	<div class="row">
+	      		<div class="col site-loop home-featured-post-loop">
+	        		<h2 class="posts-title">More Posts <i class="fa fa-newspaper-o" aria-hidden="true"></i></h2>
+
+	        		And here are my old posts
+	     		</div>
+	     	</div>
+	    </div>
 	</section>
 
 </div><!-- #main -->

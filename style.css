@@ -645,7 +645,7 @@ h2.posts-title {
 
 /* Content blocks */
 section {
-  padding-bottom: 2rem;
+  padding-bottom: 1rem;
 }
 
 .home-featured-posts .site-loop.home-featured-secondary-loop .card.col-sm-5 {
@@ -672,6 +672,10 @@ section {
 }
 .home-featured-shows .card {
   margin-bottom: 0;
+}
+
+.home-older-posts {
+  padding: 20px 0;
 }
 
 /* =Sub pages

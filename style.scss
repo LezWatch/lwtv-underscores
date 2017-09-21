@@ -342,7 +342,7 @@ h2.posts-title {
 /* Content blocks */
 
 section {
-  padding-bottom: 2rem;
+  padding-bottom: 1rem;
 }
 
 .home-featured-posts {
@@ -377,6 +377,10 @@ section {
   .card {
     margin-bottom: 0;
   }
+}
+
+.home-older-posts {
+  padding: 20px 0;
 }
 
 
