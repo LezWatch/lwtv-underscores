@@ -43,7 +43,7 @@ get_header(); ?>
 						  		</div>
 							</div><!-- .card-body -->
 							<div class="card-footer">
-								<a href="#" class="btn btn-outline-primary">
+								<a href="<?php the_permalink(); ?>" class="btn btn-outline-primary">
 									Read More <span class="screen-reader-text">about <?php the_title(); ?></span>
 								</a>
 							</div><!-- .card-footer -->
