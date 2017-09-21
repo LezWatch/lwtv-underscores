@@ -50,7 +50,6 @@ get_header(); ?>
 						</div><!-- .card -->
 
 					<?php endwhile;  ?>	
-					<!-- // The end of The Loop -->
 
 					<?php wp_reset_postdata(); ?>
 
@@ -92,8 +91,7 @@ get_header(); ?>
 								</div><!-- .card -->
 							</div><!-- .card-group -->
 
-						<?php endwhile;  ?>	
-						<!-- // The end of The Loop -->
+						<?php endwhile;  ?>
 
 						<?php wp_reset_postdata(); ?>
 
@@ -182,13 +180,52 @@ get_header(); ?>
 	<section class="home-older-posts">
 	  	<div class="container">
 	    	<div class="row">
-	      		<div class="col site-loop home-featured-post-loop">
+	      		<div class="col">
 	        		<h2 class="posts-title">More Posts <i class="fa fa-newspaper-o" aria-hidden="true"></i></h2>
+	        	</div>
+	        </div>
+	        <div class="row site-loop home-featured-post-loop equal-height">
+				<?php $oldpostsloop = new WP_Query( array(
+					'posts_per_page' => '6',
+					'offset' => '6',
+					'orderby' => 'date', 
+					'order' => 'DESC'
+				) ); ?>
+				 
+				<!-- // The Loop -->
+				<?php while ($oldpostsloop->have_posts()) : $oldpostsloop->the_post(); ?>
+    				
+    				<div class="col-sm-4">
+						<div class="card"> 
+							<?php if ( has_post_thumbnail()) : ?>
+							   <a href="<?php the_permalink(); ?>" title="<?php the_title_attribute(); ?>" >
+							  	 <?php the_post_thumbnail( 'large', array( 'class' => 'card-img-top' ) );; ?>
+							   </a>
+							<?php endif; ?>
+							<div class="card-body">
+						  		<h3 class="card-title"><?php the_title(); ?></h3>
+								<div class="card-meta text-muted">
+									<?php the_date(); ?>
+									<i class="fa fa-user-circle-o" aria-hidden="true"></i> <?php the_author(); ?>
+								</div>
+						  		<div class="card-text">
+						  			<?php the_excerpt(); ?>
+						  		</div>
+						  	</div>
+					  		<div class="card-footer">
+								<a href="<?php the_permalink(); ?>" class="btn btn-sm btn-outline-primary">
+									Read More <span class="screen-reader-text">about <?php the_title(); ?></span>
+								</a>
+							</div>
+						</div><!-- .card -->
+					</div><!-- .col-sm-4 -->
 
-	        		And here are my old posts
-	     		</div>
-	     	</div>
-	    </div>
+				<?php endwhile;  ?>
+
+				<?php wp_reset_postdata(); ?>					
+	     	
+     		</div><!-- .row .home-featured-post-loop -->
+	    </div><!-- .container -->
 	</section>
 
 </div><!-- #main -->

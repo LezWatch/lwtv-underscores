@@ -381,6 +381,19 @@ section {
 
 .home-older-posts {
   padding: 20px 0;
+
+  .site-loop.home-featured-post-loop {
+    .card {
+
+      .card-body {
+        @include font-14;
+
+        .card-title {
+          @include font-20;
+        }
+      }
+    }
+  }
 }
 
 

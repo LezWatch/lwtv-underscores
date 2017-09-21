@@ -677,6 +677,12 @@ section {
 .home-older-posts {
   padding: 20px 0;
 }
+.home-older-posts .site-loop.home-featured-post-loop .card .card-body {
+  font-size: 0.875rem;
+}
+.home-older-posts .site-loop.home-featured-post-loop .card .card-body .card-title {
+  font-size: 1.25rem;
+}
 
 /* =Sub pages
 ----------------------------------------------- */
