@@ -405,6 +405,8 @@ nav.main-nav {
 /* =Custom Nav styles
 ----------------------------------------------- */
 .navbar.main-nav {
+  -webkit-box-shadow: 0 2px 30px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 30px rgba(0, 0, 0, 0.2);
   height: 50px;
   padding: 0;
 }
@@ -602,10 +604,18 @@ footer.entry-meta .fa {
   border-top-left-radius: 0;
   border-top-right-radius: 0;
 }
+.site-loop .card .card-body .card-title {
+  font-size: 1.5rem;
+}
+.site-loop .card .card-body .card-meta {
+  margin-bottom: 1rem;
+}
 .site-loop .card .card-body .card-text p {
   margin-bottom: 0;
 }
 .site-loop .card .card-footer {
+  background-color: #fff;
+  border: 0;
   -webkit-border-radius: 0;
   -moz-border-radius: 0;
   -ms-border-radius: 0;

@@ -298,7 +298,12 @@ footer.entry-meta {
       border-top-right-radius: 0;
     }
     .card-body {
-      .card-title {}
+      .card-title {
+        @include font-24;
+      }
+      .card-meta {
+        margin-bottom: 1rem;
+      }
       .card-text {
         p {
           margin-bottom: 0;
@@ -306,6 +311,8 @@ footer.entry-meta {
       }
     }
     .card-footer {
+      background-color: $white;
+      border: 0;
       @include border-radius(0);
     }
   }
