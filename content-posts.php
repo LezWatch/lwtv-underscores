@@ -4,7 +4,7 @@
  */
 ?>
 
-	<div class="col-sm-4">
+	<div class="col-sm-6">
 		<div class="card"> 
 			<?php if ( has_post_thumbnail()) : ?>
 			   <a href="<?php the_permalink(); ?>" title="<?php the_title_attribute(); ?>" >
