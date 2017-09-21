@@ -50,7 +50,7 @@ class LWTV_Show extends WP_Widget {
 
 		echo '<div class="card">';
 		echo '<div class="card-header">
-              <h4><i class="fa fa-address-card float-right" aria-hidden="true"></i> Recently Added Show</h4>
+              <h4><i class="fa fa-television float-right" aria-hidden="true"></i> Recently Added Show</h4>
           </div>';
 
 		// Featured Image
