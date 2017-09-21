@@ -937,6 +937,13 @@ ul.comment-list li .comment-content .btn a, ul.comment-list li .comment-content 
   -o-border-radius: 0;
   border-radius: 0;
 }
+.site-sidebar .widget .card .card-img-top, .site-sidebar .widget .card .card-img {
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  -ms-border-radius: 0;
+  -o-border-radius: 0;
+  border-radius: 0;
+}
 .site-sidebar .widget .card .card-header {
   background: linear-gradient(60deg, #ab47bc, #8e24aa);
   -webkit-border-radius: 0;
@@ -951,6 +958,10 @@ ul.comment-list li .comment-content .btn a, ul.comment-list li .comment-content 
 }
 .site-sidebar .widget .card .card-body .card-title {
   font-size: 1.25rem;
+}
+.site-sidebar .widget .card .card-body .card-text .fa {
+  text-align: center;
+  width: 22px;
 }
 .site-sidebar .widget .card .card-footer {
   background-color: #fff;

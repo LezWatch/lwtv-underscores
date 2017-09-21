@@ -55,20 +55,28 @@ class LWTV_Character extends WP_Widget {
           </div>';
 
 		// Featured Image
-		echo the_post_thumbnail( 'medium', array( 'class' => 'card-img-top' ) );
+		echo the_post_thumbnail( 'large', array( 'class' => 'card-img-top' ) );
 
 		echo '<div class="card-body">';
 
 		// Title
-		echo '<h4 class="card-title">' . the_title() .'</h4>';
+		echo '<h4 class="card-title">' . get_the_title() .'</h4>';
 
 		echo '<div class="card-text">';
 
 		// Show
-		echo '<div class="card-meta-item"><i class="fa fa-television" aria-hidden="true"></i> <a href="#">' . get_post_meta( $post->ID, 'lezchars_show', true ) .'</a></div>';
+
+		$shows = get_post_meta( get_the_ID(), 'lezchars_show_group', true );
+		foreach ($shows as $show) {
+			$show_post = get_post( $show['show']);
+			echo '<div class="card-meta-item"><i class="fa fa-television" aria-hidden="true"></i> <a href="' . get_the_permalink($show_post->ID)  .'">' . $show_post->post_title .'</a></div>';
+		}
+		
 
 		// Actor
-		echo '<div class="card-meta-item"><i class="fa fa-user" aria-hidden="true"></i>' . get_post_meta( $post->ID, 'lezchars_actor', true ) .'</div>';
+		$field = get_post_meta( get_the_ID(), 'lezchars_actor', true );
+		$field_value = isset( $field[0] ) ? $field[0] : '';
+		echo '<div class="card-meta-item"><i class="fa fa-user" aria-hidden="true"></i> ' . $field_value  . '</div>';
 
 		echo '</div>
             </div>';
@@ -99,8 +107,6 @@ class LWTV_Character extends WP_Widget {
 
 		// Update each setting to new values entered by user
 		$instance['title']     = strip_tags( $new_instance['title'] );
-		$instance['textarea']  = ($new_instance['textarea']);
-		$instance['textarea2'] = ($new_instance['textarea2']);
 
 		return $instance;
 	}
@@ -112,8 +118,6 @@ class LWTV_Character extends WP_Widget {
 	public function form( $instance ) {
 
 		$title     = isset( $instance['title'] ) ? $instance['title'] : '';
-		$textarea  = isset( $instance['textarea'] ) ? $instance['textarea'] : '';
-		$textarea2 = isset( $instance['textarea2'] ) ? $instance['textarea2'] : '';
 
 	?>
 
