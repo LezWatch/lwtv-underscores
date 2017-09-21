@@ -490,60 +490,60 @@ nav.main-nav {
   top: -11px;
 }
 
-.menu-social-menu-container li a, .menu-social-menu-container li a:visited {
+.widget_yikes_social_menu_widget li a, .widget_yikes_social_menu_widget li a:visited {
   line-height: 1;
   padding-top: 0;
 }
-.menu-social-menu-container li a:before, .menu-social-menu-container li a:visited:before {
+.widget_yikes_social_menu_widget li a:before, .widget_yikes_social_menu_widget li a:visited:before {
   display: inline-block;
   font-size: 1.75rem;
   width: 60px;
   vertical-align: middle;
 }
-.menu-social-menu-container li a:hover:before, .menu-social-menu-container li a:focus:before, .menu-social-menu-container li a:visited:hover:before, .menu-social-menu-container li a:visited:focus:before {
+.widget_yikes_social_menu_widget li a:hover:before, .widget_yikes_social_menu_widget li a:focus:before, .widget_yikes_social_menu_widget li a:visited:hover:before, .widget_yikes_social_menu_widget li a:visited:focus:before {
   color: #8d329f;
 }
-.menu-social-menu-container li.instagram a:before {
+.widget_yikes_social_menu_widget li.instagram a:before {
   content: "";
   font-family: FontAwesome;
 }
-.menu-social-menu-container li.twitter a:before {
+.widget_yikes_social_menu_widget li.twitter a:before {
   content: "";
   font-family: FontAwesome;
 }
-.menu-social-menu-container li.facebook a:before {
+.widget_yikes_social_menu_widget li.facebook a:before {
   content: "";
   font-family: FontAwesome;
 }
-.menu-social-menu-container li.youtube a:before {
+.widget_yikes_social_menu_widget li.youtube a:before {
   content: "";
   font-family: FontAwesome;
 }
-.menu-social-menu-container li.vimeo a:before {
+.widget_yikes_social_menu_widget li.vimeo a:before {
   content: "";
   font-family: FontAwesome;
 }
-.menu-social-menu-container li.pinterest a:before {
+.widget_yikes_social_menu_widget li.pinterest a:before {
   content: "";
   font-family: FontAwesome;
 }
-.menu-social-menu-container li.linkedin a:before {
+.widget_yikes_social_menu_widget li.linkedin a:before {
   content: "";
   font-family: FontAwesome;
 }
-.menu-social-menu-container li.tumblr a:before {
+.widget_yikes_social_menu_widget li.tumblr a:before {
   content: "";
   font-family: FontAwesome;
 }
-.menu-social-menu-container li.rss a:before {
+.widget_yikes_social_menu_widget li.rss a:before {
   content: "";
   font-family: FontAwesome;
 }
-.menu-social-menu-container li.mail a:before {
+.widget_yikes_social_menu_widget li.mail a:before {
   content: "";
   font-family: FontAwesome;
 }
-.menu-social-menu-container li.gplus a:before {
+.widget_yikes_social_menu_widget li.gplus a:before {
   content: "";
   font-family: FontAwesome;
 }
