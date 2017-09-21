@@ -963,6 +963,9 @@ ul.comment-list li .comment-content .btn a, ul.comment-list li .comment-content 
   text-align: center;
   width: 22px;
 }
+.site-sidebar .widget .card .card-body .card-text .card-excerpt {
+  margin-top: 0.4rem;
+}
 .site-sidebar .widget .card .card-footer {
   background-color: #fff;
   border: 0;
