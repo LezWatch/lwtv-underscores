@@ -121,29 +121,31 @@ button, input[type="button"], input[type="submit"] {
 button, input[type="button"], input[type="submit"], // keep this line for the defaut button style 
 a.btn-primary, button.btn-primary, input[type="button"].btn-primary, input[type="submit"].btn-primary {
   &, &:visited {
-    background-color: $blue;
-    border-color: $blue;
+    background-color: $lwtv-pink;
+    border-color: $lwtv-pink;
     color: $white;
   }
 
   &.active, &.focus, &:active, &:focus, &:hover {
     background-color: $white;
-    border-color: $blue;
-    color: $blue;
+    border-color: $lwtv-pink;
+    color: $lwtv-pink;
     @include fade;
   }
 }
 
-a.btn-outline-primary, button.btn-outline-primary, input[type="button"].btn-outline-primary, input[type="submit"].btn-outline-primary {
+a.btn-outline-primary, button.btn-outline-primary, 
+input[type="button"].btn-outline-primary, 
+input[type="submit"].btn-outline-primary {
   &, &:visited {
     background-color: $white;
-    border-color: $blue;
-    color: $blue;
+    border-color: $lwtv-pink;
+    color: $lwtv-pink;
   }
 
   &.active, &.focus, &:active, &:focus, &:hover {
-    background-color: $blue;
-    border-color: $blue;
+    background-color: $lwtv-pink;
+    border-color: $lwtv-pink;
     color: $white;
   }
 }

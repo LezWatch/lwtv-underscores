@@ -22,35 +22,23 @@ get_header(); ?>
 						</div>
 						<div class="card">
 							<div class="card-body">
-						  		<h3 class="card-title">Card title</h3>
+								<div class="card-meta text-muted">
+									October 27, 2017 
+									<i class="fa fa-user-circle-o" aria-hidden="true"></i> <a href="#">Mika (ipstenu) Epstein</a>
+								</div>
+						  		<h3 class="card-title">Fall 2017 Preview – Cable TV</h3>
 						  		<div class="card-text">
 						  			<p>
-						  				Wack the mini furry mouse groom yourself 4 hours - checked, have your beauty sleep 18 hours.
+						  				Following our surprisingly disappointing reveal on how there’s only one new Network TV show with a new queer female, it’s time to look at cable.
 						  			</p>
 						  		</div>
-								<a href="#" class="btn btn-primary btn-block">
+								<a href="#" class="btn btn-outline-primary">
 									Read More <span class="screen-reader-text">about [title]</span>
 								</a>
 							</div>
 						</div>
-						<div class="card">
-							<img class="card-img" src="https://cldup.com/lQHR05Qone.jpg" alt="">
-							<div class="card-img-overlay"></div>
-						</div>
-						<div class="card">
-							<div class="card-body">
-						  		<h3 class="card-title">Card title</h3>
-						  		<div class="card-text">
-						  			<p>
-						  				Wack the mini furry mouse groom yourself 4 hours - checked, have your beauty sleep 18 hours.
-						  			</p>
-						  		</div>
-								<a href="#" class="btn btn-primary btn-block">
-									Read More <span class="screen-reader-text">about [title]</span>
-								</a>
-							</div>
-						</div>
-					</div>
+					</div><!-- .card-group -->
+
 				</div><!-- .col-sm-8 -->
 
 				<!-- Home Page Sidebar -->

@@ -185,8 +185,8 @@ button, input[type="button"], input[type="submit"] {
 button, button:visited, input[type="button"], input[type="button"]:visited, input[type="submit"], input[type="submit"]:visited,
 a.btn-primary,
 a.btn-primary:visited, button.btn-primary, button.btn-primary:visited, input[type="button"].btn-primary, input[type="button"].btn-primary:visited, input[type="submit"].btn-primary, input[type="submit"].btn-primary:visited {
-  background-color: #06c;
-  border-color: #06c;
+  background-color: #d1548e;
+  border-color: #d1548e;
   color: #fff;
 }
 button.active, button.focus, button:active, button:focus, button:hover, input[type="button"].active, input[type="button"].focus, input[type="button"]:active, input[type="button"]:focus, input[type="button"]:hover, input[type="submit"].active, input[type="submit"].focus, input[type="submit"]:active, input[type="submit"]:focus, input[type="submit"]:hover,
@@ -196,22 +196,36 @@ a.btn-primary:active,
 a.btn-primary:focus,
 a.btn-primary:hover, button.btn-primary.active, button.btn-primary.focus, button.btn-primary:active, button.btn-primary:focus, button.btn-primary:hover, input[type="button"].btn-primary.active, input[type="button"].btn-primary.focus, input[type="button"].btn-primary:active, input[type="button"].btn-primary:focus, input[type="button"].btn-primary:hover, input[type="submit"].btn-primary.active, input[type="submit"].btn-primary.focus, input[type="submit"].btn-primary:active, input[type="submit"].btn-primary:focus, input[type="submit"].btn-primary:hover {
   background-color: #fff;
-  border-color: #06c;
-  color: #06c;
+  border-color: #d1548e;
+  color: #d1548e;
   -webkit-transition: all 0.3s;
   -moz-transition: all 0.3s;
   -o-transition: all 0.3s;
   transition: all 0.3s;
 }
 
-a.btn-outline-primary, a.btn-outline-primary:visited, button.btn-outline-primary, button.btn-outline-primary:visited, input[type="button"].btn-outline-primary, input[type="button"].btn-outline-primary:visited, input[type="submit"].btn-outline-primary, input[type="submit"].btn-outline-primary:visited {
+a.btn-outline-primary, a.btn-outline-primary:visited, button.btn-outline-primary, button.btn-outline-primary:visited,
+input[type="button"].btn-outline-primary,
+input[type="button"].btn-outline-primary:visited,
+input[type="submit"].btn-outline-primary,
+input[type="submit"].btn-outline-primary:visited {
   background-color: #fff;
-  border-color: #06c;
-  color: #06c;
+  border-color: #d1548e;
+  color: #d1548e;
 }
-a.btn-outline-primary.active, a.btn-outline-primary.focus, a.btn-outline-primary:active, a.btn-outline-primary:focus, a.btn-outline-primary:hover, button.btn-outline-primary.active, button.btn-outline-primary.focus, button.btn-outline-primary:active, button.btn-outline-primary:focus, button.btn-outline-primary:hover, input[type="button"].btn-outline-primary.active, input[type="button"].btn-outline-primary.focus, input[type="button"].btn-outline-primary:active, input[type="button"].btn-outline-primary:focus, input[type="button"].btn-outline-primary:hover, input[type="submit"].btn-outline-primary.active, input[type="submit"].btn-outline-primary.focus, input[type="submit"].btn-outline-primary:active, input[type="submit"].btn-outline-primary:focus, input[type="submit"].btn-outline-primary:hover {
-  background-color: #06c;
-  border-color: #06c;
+a.btn-outline-primary.active, a.btn-outline-primary.focus, a.btn-outline-primary:active, a.btn-outline-primary:focus, a.btn-outline-primary:hover, button.btn-outline-primary.active, button.btn-outline-primary.focus, button.btn-outline-primary:active, button.btn-outline-primary:focus, button.btn-outline-primary:hover,
+input[type="button"].btn-outline-primary.active,
+input[type="button"].btn-outline-primary.focus,
+input[type="button"].btn-outline-primary:active,
+input[type="button"].btn-outline-primary:focus,
+input[type="button"].btn-outline-primary:hover,
+input[type="submit"].btn-outline-primary.active,
+input[type="submit"].btn-outline-primary.focus,
+input[type="submit"].btn-outline-primary:active,
+input[type="submit"].btn-outline-primary:focus,
+input[type="submit"].btn-outline-primary:hover {
+  background-color: #d1548e;
+  border-color: #d1548e;
   color: #fff;
 }
 
