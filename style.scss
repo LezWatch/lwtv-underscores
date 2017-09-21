@@ -347,20 +347,24 @@ section {
   .site-loop.home-featured-secondary-loop {
     .card {
 
-      &.col-sm-3, &.col-sm-4 {
+      &.col-sm-5 {
         overflow: hidden;
       }
 
       .card-img {
         height: 100%;
-        width: auto;
-        position: absolute;
+        left: -10%;
         max-width: none;
-        left: -20%;
+        position: absolute;
+        width: auto;
       }
 
       .card-body {
         @include font-14;
+
+        .card-title {
+          @include font-20;
+        }
       }
     }
   }

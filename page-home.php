@@ -68,7 +68,7 @@ get_header(); ?>
 
 
 							<div class="card-group">
-								<div class="card col-sm-4">
+								<div class="card col-sm-5">
 									<?php if ( has_post_thumbnail()) : ?>
 									   <a href="<?php the_permalink(); ?>" title="<?php the_title_attribute(); ?>" >
 									  	 <?php the_post_thumbnail( 'large', array( 'class' => 'card-img' ) );; ?>
@@ -76,7 +76,7 @@ get_header(); ?>
 									<?php endif; ?>
 									<div class="card-img-overlay"></div>
 								</div>
-								<div class="card col-sm-8">
+								<div class="card col-sm-7">
 									<div class="card-body">
 								  		<h3 class="card-title"><?php the_title(); ?></h3>
 										<div class="card-meta text-muted">
@@ -88,7 +88,7 @@ get_header(); ?>
 								  		</div>
 								  	</div>
 							  		<div class="card-footer">
-										<a href="<?php the_permalink(); ?>" class="btn btn-outline-primary">
+										<a href="<?php the_permalink(); ?>" class="btn btn-sm btn-outline-primary">
 											Read More <span class="screen-reader-text">about <?php the_title(); ?></span>
 										</a>
 									</div>
