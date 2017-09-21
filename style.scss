@@ -340,7 +340,14 @@ section {
 }
 
 .home-featured-posts {}
-.home-featured-shows {}
+
+.home-featured-shows {
+  background-color: $lwtv-pink;
+
+  h2 {
+    color: $white;
+  }
+}
 
 
 

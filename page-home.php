@@ -15,28 +15,44 @@ get_header(); ?>
 
 				<!-- Newest posts -->
       			<div class="col-sm-8 site-loop"> 
-        			<h2 class="posts-title">New Posts <i class="fa fa-newspaper-o" aria-hidden="true"></i></h4>        			
+        			<h2 class="posts-title">New Posts <i class="fa fa-newspaper-o" aria-hidden="true"></i></h2>
 
-					<div class="card">
-						<img class="card-img-top" src="http://placekitten.com.s3.amazonaws.com/homepage-samples/408/287.jpg" alt="">
-						<div class="card-body">
-					  		<h3 class="card-title">Fall 2017 Preview – Cable TV</h3>
-							<div class="card-meta text-muted">
-								October 27, 2017 
-								<i class="fa fa-user-circle-o" aria-hidden="true"></i> <a href="#">Mika (ipstenu) Epstein</a>
-							</div>
-					  		<div class="card-text">
-					  			<p>
-					  				Following our surprisingly disappointing reveal on how there’s only one new Network TV show with a new queer female, it’s time to look at cable.
-					  			</p>
-					  		</div>
-						</div><!-- .card-body -->
-						<div class="card-footer">
-							<a href="#" class="btn btn-outline-primary">
-								Read More <span class="screen-reader-text">about [title]</span>
-							</a>
-						</div><!-- .card-footer -->
-					</div><!-- .card -->
+					<?php $lastpostloop = new WP_Query( array(
+						'posts_per_page' => '1', 
+						'orderby' => 'date', 
+						'order' => 'DESC'
+					) ); ?>
+					 
+					<!-- // The Loop -->
+					<?php while ($lastpostloop->have_posts()) : $lastpostloop->the_post(); ?>
+
+						<div class="card">
+							<?php if ( has_post_thumbnail()) : ?>
+							   <a href="<?php the_permalink(); ?>" title="<?php the_title_attribute(); ?>" >
+							  	 <?php the_post_thumbnail( 'thumbnail', array( 'class' => 'card-img-top' ) );; ?>
+							   </a>
+							<?php endif; ?>			
+							<div class="card-body">
+						  		<h3 class="card-title"><?php the_title(); ?></h3>
+								<div class="card-meta text-muted">
+									<?php the_date(); ?>
+									<i class="fa fa-user-circle-o" aria-hidden="true"></i> <?php the_author(); ?>
+								</div>
+						  		<div class="card-text">
+						  			<?php the_excerpt(); ?>
+						  		</div>
+							</div><!-- .card-body -->
+							<div class="card-footer">
+								<a href="#" class="btn btn-outline-primary">
+									Read More <span class="screen-reader-text">about <?php the_title(); ?></span>
+								</a>
+							</div><!-- .card-footer -->
+						</div><!-- .card -->
+
+					<?php endwhile;  ?>	
+					<!-- // The end of The Loop -->
+
+					<?php wp_reset_postdata(); ?>
 
 					<div class="card-group">
 						<div class="card">

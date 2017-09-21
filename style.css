@@ -639,6 +639,13 @@ section {
   padding-bottom: 2rem;
 }
 
+.home-featured-shows {
+  background-color: #d1548e;
+}
+.home-featured-shows h2 {
+  color: #fff;
+}
+
 /* =Sub pages
 ----------------------------------------------- */
 /* Posts */
