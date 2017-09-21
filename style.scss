@@ -290,12 +290,15 @@ footer.entry-meta {
     margin-bottom: 1.4rem;
     @include border-radius(0);
 
+    &.col-sm-9, &.col-sm-3 {
+      padding: 0;
+    }
+
     .card-header {
       @include border-radius(0);
     }
-    .card-img-top {
-      border-top-left-radius: 0;
-      border-top-right-radius: 0;
+    .card-img-top, .card-img {
+      @include border-radius(0);
     }
     .card-body {
       .card-title {
@@ -339,7 +342,24 @@ section {
   padding-bottom: 2rem;
 }
 
-.home-featured-posts {}
+.home-featured-posts {
+  .site-loop.home-featured-secondary-loop {
+    .card {
+
+      &.col-sm-3 {
+        overflow: hidden;
+      }
+      
+      .card-img {
+        height: 100%;
+        width: auto;
+        position: absolute;
+        max-width: none;
+        left: -50%;
+      }
+    }
+  }
+}
 
 .home-featured-shows {
   background-color: $lwtv-pink;

@@ -20,6 +20,39 @@ Tags:
 /* Base theme colors */
 /* Theme color palette */
 /* Link colors */
+@-webkit-keyframes rainbow {
+  0% {
+    background-position: 0% 82%;
+  }
+  50% {
+    background-position: 100% 19%;
+  }
+  100% {
+    background-position: 0% 82%;
+  }
+}
+@-moz-keyframes rainbow {
+  0% {
+    background-position: 0% 82%;
+  }
+  50% {
+    background-position: 100% 19%;
+  }
+  100% {
+    background-position: 0% 82%;
+  }
+}
+@-o-keyframes rainbow {
+  0% {
+    background-position: 0% 82%;
+  }
+  50% {
+    background-position: 100% 19%;
+  }
+  100% {
+    background-position: 0% 82%;
+  }
+}
 @keyframes rainbow {
   0% {
     background-position: 0% 82%;
@@ -77,9 +110,13 @@ blockquote {
   top: 0;
   bottom: 0;
   position: relative;
+  background: -webkit-linear-gradient(34deg, #ff2400, #e81d1d, #e8b71d, #e3e81d, #1de840, #1ddde8, #2b1de8, #dd00f3, #dd00f3);
+  background: -o-linear-gradient(34deg, #ff2400, #e81d1d, #e8b71d, #e3e81d, #1de840, #1ddde8, #2b1de8, #dd00f3, #dd00f3);
   background: linear-gradient(124deg, #ff2400, #e81d1d, #e8b71d, #e3e81d, #1de840, #1ddde8, #2b1de8, #dd00f3, #dd00f3);
   background-size: 1800% 1800%;
+  -webkit-animation: rainbow 18s ease infinite;
   -z-animation: rainbow 18s ease infinite;
+  -o-animation: rainbow 18s ease infinite;
   animation: rainbow 18s ease infinite;
 }
 
@@ -87,6 +124,9 @@ blockquote {
 a {
   color: #d1548e;
   text-decoration: none;
+  -webkit-transition: background 0.3s ease-in-out;
+  -moz-transition: background 0.3s ease-in-out;
+  -o-transition: background 0.3s ease-in-out;
   transition: background 0.3s ease-in-out;
 }
 a:visited {
@@ -101,8 +141,7 @@ a:hover, a:focus, a:active {
 .screen-reader-text {
   border: 0;
   clip: rect(1px, 1px, 1px, 1px);
-  -webkit-clip-path: inset(50%);
-          clip-path: inset(50%);
+  clip-path: inset(50%);
   height: 1px;
   margin: -1px;
   overflow: hidden;
@@ -132,6 +171,9 @@ a:hover, a:focus, a:active {
 a.btn, button.btn, input[type="button"].btn, input[type="submit"].btn,
 button, input[type="button"], input[type="submit"] {
   border: 1px solid transparent;
+  -webkit-transition: all 0.3s;
+  -moz-transition: all 0.3s;
+  -o-transition: all 0.3s;
   transition: all 0.3s;
 }
 
@@ -152,6 +194,9 @@ a.btn-primary:hover, button.btn-primary.active, button.btn-primary.focus, button
   background-color: #fff;
   border-color: #d1548e;
   color: #d1548e;
+  -webkit-transition: all 0.3s;
+  -moz-transition: all 0.3s;
+  -o-transition: all 0.3s;
   transition: all 0.3s;
 }
 
@@ -360,6 +405,7 @@ nav.main-nav {
 /* =Custom Nav styles
 ----------------------------------------------- */
 .navbar.main-nav {
+  -webkit-box-shadow: 0 2px 30px rgba(0, 0, 0, 0.2);
   box-shadow: 0 2px 30px rgba(0, 0, 0, 0.2);
   height: 50px;
   padding: 0;
@@ -391,8 +437,7 @@ nav.main-nav {
 .navbar.main-nav ul.navbar-nav > li.nav-item.hide-text > a.nav-link .menu-link-text {
   border: 0;
   clip: rect(1px, 1px, 1px, 1px);
-  -webkit-clip-path: inset(50%);
-          clip-path: inset(50%);
+  clip-path: inset(50%);
   height: 1px;
   margin: -1px;
   overflow: hidden;
@@ -542,14 +587,28 @@ footer.entry-meta .fa {
 /* Loop styles for loopy content */
 .site-loop .card {
   margin-bottom: 1.4rem;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  -ms-border-radius: 0;
+  -o-border-radius: 0;
   border-radius: 0;
+}
+.site-loop .card.col-sm-9, .site-loop .card.col-sm-3 {
+  padding: 0;
 }
 .site-loop .card .card-header {
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  -ms-border-radius: 0;
+  -o-border-radius: 0;
   border-radius: 0;
 }
-.site-loop .card .card-img-top {
-  border-top-left-radius: 0;
-  border-top-right-radius: 0;
+.site-loop .card .card-img-top, .site-loop .card .card-img {
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  -ms-border-radius: 0;
+  -o-border-radius: 0;
+  border-radius: 0;
 }
 .site-loop .card .card-body .card-title {
   font-size: 1.5rem;
@@ -566,6 +625,10 @@ footer.entry-meta .fa {
 .site-loop .card .card-footer {
   background-color: #fff;
   border: 0;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  -ms-border-radius: 0;
+  -o-border-radius: 0;
   border-radius: 0;
   padding-top: 0;
 }
@@ -580,6 +643,17 @@ h2.posts-title {
 /* Content blocks */
 section {
   padding-bottom: 2rem;
+}
+
+.home-featured-posts .site-loop.home-featured-secondary-loop .card.col-sm-3 {
+  overflow: hidden;
+}
+.home-featured-posts .site-loop.home-featured-secondary-loop .card .card-img {
+  height: 100%;
+  width: auto;
+  position: absolute;
+  max-width: none;
+  left: -50%;
 }
 
 .home-featured-shows {
@@ -603,6 +677,7 @@ img {
 
 .alignnone, .alignright, .alignleft, .aligncenter {
   border: 1px solid #E5E5E5;
+  -webkit-box-shadow: 0 3px 4px rgba(0, 0, 0, 0.2);
   box-shadow: 0 3px 4px rgba(0, 0, 0, 0.2);
   padding: 6px;
 }
@@ -624,6 +699,7 @@ img {
 
 .img-noborder {
   border: 0px !important;
+  -webkit-box-shadow: none !important;
   box-shadow: none !important;
   padding: 0px !important;
 }
@@ -716,7 +792,14 @@ ul.comment-list li .comment-author {
   line-height: 1.42857143;
   background-color: #fff;
   border: 1px solid #dedede;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  -ms-border-radius: 4px;
+  -o-border-radius: 4px;
   border-radius: 4px;
+  -webkit-transition: border 0.2s ease-in-out;
+  -moz-transition: border 0.2s ease-in-out;
+  -o-transition: border 0.2s ease-in-out;
   transition: border 0.2s ease-in-out;
   width: 128px;
 }
@@ -738,6 +821,10 @@ ul.comment-list li .comment-content {
   line-height: 1.42857143;
   background-color: #fff;
   border: 1px solid #dedede;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  -ms-border-radius: 4px;
+  -o-border-radius: 4px;
   border-radius: 4px;
 }
 ul.comment-list li .comment-content .comment-metadata {
@@ -772,6 +859,10 @@ ul.comment-list li .comment-content .btn a, ul.comment-list li .comment-content 
   background-color: #f55a4e;
   border: 0;
   border-color: transparent;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  -ms-border-radius: 0;
+  -o-border-radius: 0;
   border-radius: 0;
   color: #fff;
 }
