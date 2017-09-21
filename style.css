@@ -608,7 +608,10 @@ footer.entry-meta .fa {
   font-size: 1.5rem;
 }
 .site-loop .card .card-body .card-meta {
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
+}
+.site-loop .card .card-body .card-meta .fa {
+  margin-left: 1em;
 }
 .site-loop .card .card-body .card-text p {
   margin-bottom: 0;
@@ -621,6 +624,7 @@ footer.entry-meta .fa {
   -ms-border-radius: 0;
   -o-border-radius: 0;
   border-radius: 0;
+  padding-top: 0;
 }
 
 /* =Home page

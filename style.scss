@@ -302,7 +302,11 @@ footer.entry-meta {
         @include font-24;
       }
       .card-meta {
-        margin-bottom: 1rem;
+        margin-bottom: 0.75rem;
+
+        .fa {
+          margin-left: 1em;
+        }
       }
       .card-text {
         p {
@@ -314,6 +318,7 @@ footer.entry-meta {
       background-color: $white;
       border: 0;
       @include border-radius(0);
+      padding-top: 0;
     }
   }
 }
