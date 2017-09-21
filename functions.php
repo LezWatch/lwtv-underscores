@@ -117,8 +117,8 @@ function yks_the_custom_logo() {
 /************* Images *************/
 
 /*  Custom Thumbnail sizes */
+add_image_size( 'postloop-img', 525, 300, true ); // hard crop mode
 // add_image_size( 'featured-img', 400, 400 ); // soft proportional crop mode
-// add_image_size( 'other-img', 200, 269, true ); // hard crop mode
 
 /*
  Ability to display featured image captions */
