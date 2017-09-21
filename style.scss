@@ -290,7 +290,8 @@ footer.entry-meta {
     margin-bottom: 1.4rem;
     @include border-radius(0);
 
-    &.col-sm-9, &.col-sm-3 {
+    &.col-sm-3, &.col-sm-4, &.col-sm-5, &.col-sm-6,
+    &.col-sm-7, &.col-sm-8, &.col-sm-9, &.col-sm-10 {
       padding: 0;
     }
 
@@ -346,16 +347,20 @@ section {
   .site-loop.home-featured-secondary-loop {
     .card {
 
-      &.col-sm-3 {
+      &.col-sm-3, &.col-sm-4 {
         overflow: hidden;
       }
-      
+
       .card-img {
         height: 100%;
         width: auto;
         position: absolute;
         max-width: none;
-        left: -50%;
+        left: -20%;
+      }
+
+      .card-body {
+        @include font-14;
       }
     }
   }
