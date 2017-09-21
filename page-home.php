@@ -21,23 +21,22 @@ get_header(); ?>
 						<img class="card-img-top" src="http://placekitten.com.s3.amazonaws.com/homepage-samples/408/287.jpg" alt="">
 						<div class="card-body">
 					  		<h3 class="card-title">Fall 2017 Preview – Cable TV</h3>
-								<div class="card-meta text-muted">
-									October 27, 2017 
-									<i class="fa fa-user-circle-o" aria-hidden="true"></i> <a href="#">Mika (ipstenu) Epstein</a>
-								</div>
-						  		<div class="card-text">
-						  			<p>
-						  				Following our surprisingly disappointing reveal on how there’s only one new Network TV show with a new queer female, it’s time to look at cable.
-						  			</p>
-						  		</div>
-						  	</div>
-						</div>
+							<div class="card-meta text-muted">
+								October 27, 2017 
+								<i class="fa fa-user-circle-o" aria-hidden="true"></i> <a href="#">Mika (ipstenu) Epstein</a>
+							</div>
+					  		<div class="card-text">
+					  			<p>
+					  				Following our surprisingly disappointing reveal on how there’s only one new Network TV show with a new queer female, it’s time to look at cable.
+					  			</p>
+					  		</div>
+						</div><!-- .card-body -->
 						<div class="card-footer">
 							<a href="#" class="btn btn-outline-primary">
 								Read More <span class="screen-reader-text">about [title]</span>
 							</a>
-						</div>
-					</div>
+						</div><!-- .card-footer -->
+					</div><!-- .card -->
 
 					<div class="card-group">
 						<div class="card">
