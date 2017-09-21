@@ -96,12 +96,29 @@ a {
   margin-top: 2em;
 
   li.page-item {
-    a.page-link {}
-    &.first {}
-    &.previous {}
-    &.active {}
-    &.next {}
-    &.last {}
+    a.page-link {
+      color: $lwtv-pink;
+    }
+    &.active {
+      .page-link {
+        background-color: $lwtv-pink;
+        border-color: $lwtv-pink;
+        color: $white;
+      }
+    }
+    &.first, &.previous, &.next, &.last {
+      a.page-link {
+        background-color: $lwtv-pink;
+        border-color: $lwtv-pink;
+        color: $white;
+      }
+    }
+
+    &:first-child, &:last-child {
+      .page-link {
+        @include border-radius(0);
+      }
+    }
   }
 }
 

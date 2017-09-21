@@ -165,6 +165,26 @@ a:hover, a:focus, a:active {
 .pagination {
   margin-top: 2em;
 }
+.pagination li.page-item a.page-link {
+  color: #d1548e;
+}
+.pagination li.page-item.active .page-link {
+  background-color: #d1548e;
+  border-color: #d1548e;
+  color: #fff;
+}
+.pagination li.page-item.first a.page-link, .pagination li.page-item.previous a.page-link, .pagination li.page-item.next a.page-link, .pagination li.page-item.last a.page-link {
+  background-color: #d1548e;
+  border-color: #d1548e;
+  color: #fff;
+}
+.pagination li.page-item:first-child .page-link, .pagination li.page-item:last-child .page-link {
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  -ms-border-radius: 0;
+  -o-border-radius: 0;
+  border-radius: 0;
+}
 
 /* Buttons */
 /* Global styles for all the buttons!  */
