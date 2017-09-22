@@ -93,12 +93,29 @@ p {
 }
 
 blockquote {
-  border-left: 3px solid #999;
+  background-color: #ebf5fa;
+  border-left: 4px solid #d1548e;
   color: #222;
   font-family: Georgia, Times, "Times New Roman", serif;
-  font-size: 1.25rem;
-  margin: 0 0 1em;
-  padding-left: 1em;
+  font-weight: 500;
+  font-size: 1.125rem;
+  margin: 0 0 1rem;
+  padding: 1em;
+  -webkit-font-smoothing: antialiased;
+}
+blockquote p {
+  padding-left: 28px;
+}
+blockquote p:last-child {
+  margin-bottom: 0;
+}
+blockquote:before {
+  color: #d1548e;
+  content: '\201C';
+  font-size: 2.75rem;
+  font-weight: 600;
+  line-height: 1;
+  position: absolute;
 }
 
 .rainbow {
@@ -743,9 +760,7 @@ img {
 }
 
 .alignnone, .alignright, .alignleft, .aligncenter {
-  border: 1px solid #E5E5E5;
-  -webkit-box-shadow: 0 3px 4px rgba(0, 0, 0, 0.2);
-  box-shadow: 0 3px 4px rgba(0, 0, 0, 0.2);
+  border: 1px solid #d6d6d6;
   padding: 6px;
 }
 
@@ -824,10 +839,12 @@ embed, iframe, object {
 
 #comments {
   background-color: #fff;
+  border: 2px solid #d1548e;
+  margin-top: 2rem;
   padding: 1em;
 }
 #comments .comments-title, #comments #reply-title {
-  margin-bottom: 1.4em;
+  margin-bottom: 0.6em;
   margin-top: 0;
 }
 #comments ul {
@@ -847,7 +864,7 @@ embed, iframe, object {
 ul.comment-list {
   font-size: .78em;
   list-style-type: none;
-  margin: 0;
+  margin: 0 0 2rem 0;
   padding: 0;
 }
 ul.comment-list > li.pingback .comment-body {

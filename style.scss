@@ -50,12 +50,32 @@ p {
 }
 
 blockquote {
-  border-left: 3px solid $medgrey;
+  background-color: $lwtv-ltgrey;
+  border-left: 4px solid $lwtv-pink;
   color: $darkgrey;
-  font-family: Georgia, Times, "Times New Roman", serif;  
-  @include font-20;
-  margin: 0 0 1em;
-  padding-left: 1em;
+  font-family: Georgia, Times, "Times New Roman", serif;
+  font-weight: 500;
+  @include font-18;
+  margin: 0 0 1rem;
+  padding: 1em;
+  -webkit-font-smoothing: antialiased;
+
+  p {
+    padding-left: 28px;
+  }
+
+  p:last-child {
+    margin-bottom: 0;
+  }
+
+  &:before {
+    color: $lwtv-pink;
+    content: '\201C';
+    @include font-44;
+    font-weight: 600;
+    line-height: 1;
+    position: absolute;
+  }
 }
 
 .rainbow {

@@ -69,8 +69,7 @@ $endcolor: #7DB9E8;
 }
 
 @mixin images {
-    border: 1px solid #E5E5E5;
-    @include box-shadow(0 3px 4px rgba(0, 0, 0, 0.2));
+    border: 1px solid $lwtv-grey2;
     padding: 6px;
 } 
 

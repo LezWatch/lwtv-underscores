@@ -7,10 +7,12 @@
 
 #comments {
   background-color: $white;
+  border: 2px solid $lwtv-pink;
+  margin-top: 2rem;
   padding: 1em;
 
   .comments-title, #reply-title {
-    margin-bottom: 1.4em;
+    margin-bottom: 0.6em;
     margin-top: 0;
   }
 
@@ -39,7 +41,7 @@
 ul.comment-list {
   font-size: .78em;
   list-style-type: none;
-  margin: 0;
+  margin: 0 0 2rem 0;
   padding: 0;
 
   & > li.pingback {
