@@ -6,6 +6,8 @@
  */
 get_header(); ?>
 
+<?php $paged = get_query_var( 'page' ) ? get_query_var( 'page' ) : 1; ?>
+
 <div id="main" class="site-main" role="main">
 
 	<!-- Home page top section -->
@@ -189,11 +191,11 @@ get_header(); ?>
 	        <div class="row site-loop main-posts-loop equal-height">
 				<?php $oldpostsloop = new WP_Query( array(
 					'posts_per_page' => '6',
+					'paged' => $paged,
 					'offset' => '6',
 					'orderby' => 'date', 
 					'order' => 'DESC'
-				) ); ?>
-				 
+				) ); ?>				 
 
 				<!-- // The Loop -->
 				<?php while ($oldpostsloop->have_posts()) : $oldpostsloop->the_post(); ?>

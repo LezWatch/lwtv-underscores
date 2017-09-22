@@ -22,6 +22,7 @@ class LWTV_Show extends WP_Widget {
 	 */
 
 	public function widget( $args, $instance ) {
+		global $post;
 
 		// start a Queery
 		$show_args = array(
@@ -63,13 +64,22 @@ class LWTV_Show extends WP_Widget {
 
 		echo '<div class="card-text">';
 
+
 		// Airs on
-		echo '<div class="card-meta-item"><strong>Airs On:</strong> stations-term</div>';
+		echo '<div class="card-meta-item"><strong>Airs On:</strong> ';
+		$stations =  get_the_terms( $post, 'lez_stations');
+		$station_string='';
+		foreach ($stations as $station) {
+			$station_string .= $station->name . ', ';		
+		}
+		echo trim($station_string , ', ');
+		echo '</div>';
 		
 		// Airdates
 		$field = get_post_meta( get_the_ID(), 'lezshows_airdates', true );
-		$field_value = isset( $field[0] ) ? $field[0] : '';
-		echo '<div class="card-meta-item"><strong>Airdates:</strong> ' . $field_value  . '</div>';
+		$start = isset( $field['start'] ) ? $field['start'] : '';
+		$finish = isset( $field['finish'] ) ? $field['finish'] : '';
+		echo '<div class="card-meta-item"><strong>Airdates:</strong> ' . $start  . ' - ' . $finish  . '</div>';
 
 		// Excerpt
 		echo '<div class="card-excerpt">' . get_the_excerpt() .'</div>';

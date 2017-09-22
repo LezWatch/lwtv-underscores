@@ -199,7 +199,6 @@ function yikes_generate_pagination_buttons( $page_number, $max_num_pages, $view_
 	<?php
 }
 
-
 function yikes_generate_page_number_buttons( $page_number, $max_num_pages ) {
 	$page_number   = (int) $page_number;
 	$max_num_pages = (int) $max_num_pages;
