@@ -209,7 +209,7 @@ h1, h2, h3, h4, h5, h6,
 }
 
 h1, .h1 {
-  @include font-40;
+  @include font-44;
 }
 
 h2, .h2 {
@@ -264,6 +264,10 @@ h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
   margin-bottom: 0;
 }
 
+h1.site-description {
+  @include font-40;
+}
+
 /* =Menu
 ----------------------------------------------- */
 
@@ -307,12 +311,18 @@ nav.main-nav {
 
 .hentry, .widget-area {margin: 2em 0 2.5em;}
 .single .byline, .group-blog .byline {display: inline;}
-.entry-content, .entry-summary {margin: 2em 0 0;}
+.entry-content, .entry-summary {
+  margin: 2em 0 0;
+
+  p {
+    margin-bottom: 1.6em;
+  }
+}
 .sticky, .bypostauthor {display: block;}
 h1.entry-title {margin-bottom: 0;}
 
 footer.entry-meta {
-  border-top: 1px solid $lightgrey;
+  border-top: 1px solid $lwtv-purple;
   margin-top: 2em;
   padding-top: 1em;
 
@@ -461,6 +471,20 @@ section {
 
 /* Posts */
 
+.entry-header {
+  .entry-meta {
+    border-bottom: 1px solid $lwtv-pink;
+    color: $lwtv-medgrey;
+    font-weight: 600;
+    margin-top: .75rem;
+    padding-bottom: 1rem;
+
+
+    .fa {
+      margin-left: 1em;
+    }
+  }
+}
 
 
 /* =Custom Post Types

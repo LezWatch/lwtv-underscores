@@ -287,7 +287,7 @@ h1, h2, h3, h4, h5, h6,
 }
 
 h1, .h1 {
-  font-size: 2.5rem;
+  font-size: 2.75rem;
 }
 
 h2, .h2 {
@@ -422,6 +422,10 @@ button, input[type="button"], input[type="submit"] {
   color: #fff;
   font-size: 1.125rem;
   margin-bottom: 0;
+}
+
+h1.site-description {
+  font-size: 2.5rem;
 }
 
 /* =Menu
@@ -611,6 +615,9 @@ nav.main-nav {
 .entry-content, .entry-summary {
   margin: 2em 0 0;
 }
+.entry-content p, .entry-summary p {
+  margin-bottom: 1.6em;
+}
 
 .sticky, .bypostauthor {
   display: block;
@@ -621,7 +628,7 @@ h1.entry-title {
 }
 
 footer.entry-meta {
-  border-top: 1px solid #dedede;
+  border-top: 1px solid #8d329f;
   margin-top: 2em;
   padding-top: 1em;
 }
@@ -750,6 +757,17 @@ section {
 /* =Sub pages
 ----------------------------------------------- */
 /* Posts */
+.entry-header .entry-meta {
+  border-bottom: 1px solid #d1548e;
+  color: #555;
+  font-weight: 600;
+  margin-top: .75rem;
+  padding-bottom: 1rem;
+}
+.entry-header .entry-meta .fa {
+  margin-left: 1em;
+}
+
 /* =Custom Post Types
 ----------------------------------------------- */
 /* =Media

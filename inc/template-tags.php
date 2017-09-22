@@ -48,8 +48,8 @@ if ( ! function_exists( 'yikes_starter_post_nav' ) ) :
 		<nav aria-label="Post Navigation" role="navigation">
 			<ul class="pagination justify-content-between">
 				<?php
-					previous_post_link( '<li class="page-item previous">%link</li>', _x( '<i class="fa fa-chevron-circle-left" aria-hidden="true"></i>&nbsp; Previous', 'Previous post link', 'yikes_starter' ) );
-					next_post_link( '<li class="page-item next">%link</li>', _x( 'Next &nbsp <i class="fa fa-chevron-circle-right" aria-hidden="true"></i>', 'Next post link', 'yikes_starter' ) );
+					previous_post_link( '<li class="page-item previous">%link</li>', _x( '<i class="fa fa-chevron-circle-left" aria-hidden="true"></i>&nbsp; Previous Post', 'Previous post link', 'yikes_starter' ) );
+					next_post_link( '<li class="page-item next">%link</li>', _x( 'Next Post &nbsp <i class="fa fa-chevron-circle-right" aria-hidden="true"></i>', 'Next post link', 'yikes_starter' ) );
 				?>
 			</ul>
 		</nav><!-- .navigation -->
@@ -72,13 +72,13 @@ if ( ! function_exists( 'yikes_starter_posted_on' ) ) :
 		);
 
 			$posted_on = sprintf(
-				esc_html_x( 'Posted on %s', 'post date', 'yikes_starter' ),
-				'<a href="' . esc_url( get_permalink() ) . '" rel="bookmark">' . $time_string . '</a>'
+				esc_html_x( '%s', 'post date', 'yikes_starter' ),
+				$time_string . ' <i class="fa fa-user-circle-o" aria-hidden="true"></i>'
 			);
 
 			$byline = sprintf(
-				esc_html_x( 'by %s', 'post author', 'yikes_starter' ),
-				'<span class="author vcard"><a class="url fn n" href="' . esc_url( get_author_posts_url( get_the_author_meta( 'ID' ) ) ) . '">' . esc_html( get_the_author() ) . '</a></span>'
+				esc_html_x( ' %s', 'post author', 'yikes_starter' ),
+				'<span class="author vcard"> <a class="url fn n" href="' . esc_url( get_author_posts_url( get_the_author_meta( 'ID' ) ) ) . '">' . esc_html( get_the_author() ) . '</a></span>'
 			);
 
 			echo '<span class="posted-on">' . $posted_on . '</span><span class="byline"> ' . $byline . '</span>';
