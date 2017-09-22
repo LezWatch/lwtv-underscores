@@ -180,19 +180,18 @@ function yikes_generate_pagination_buttons( $page_number, $max_num_pages, $view_
 	}
 
 	?>
-	<nav aria-label="Post Pages navigation" role="navigation">
+	<nav aria-label="Post Pages navigation" role="navigation" class="yikes-pagination">
 		<ul class="pagination justify-content-center">
-			<li class="page-item next">
-				<?php next_posts_link( '<span>Next &nbsp;</span><i class="fa fa-chevron-circle-right" aria-hidden="true"></i>', $max_num_pages ); ?>					
+			<li class="page-item previous mr-auto">
+				<?php previous_posts_link( '<i class="fa fa-chevron-circle-left" aria-hidden="true"></i><span>&nbsp; Previous</span>' ); ?>
 			</li>
 
 			<!-- Page Number Buttons -->
 			<?php yikes_generate_page_number_buttons( $page_number, $max_num_pages ); ?>
 
 			<?php if ( $view_all !== false ) { echo '<li><a href="' . esc_attr( $view_all ) . '" class="page-link"><span>View All</span></a></li>'; } ?>
-
-			<li class="page-item previous">
-				<?php previous_posts_link( '<i class="fa fa-chevron-circle-left" aria-hidden="true"></i><span>&nbsp; Previous</span>' ); ?>
+			<li class="page-item next ml-auto">
+				<?php next_posts_link( '<span>Next &nbsp;</span><i class="fa fa-chevron-circle-right" aria-hidden="true"></i>', $max_num_pages ); ?>					
 			</li>
 		</ul>
 	</nav>
@@ -282,8 +281,8 @@ function yikes_pagination_get_first_page( $page_number, $max_num_pages, $active_
 
 function yikes_pagination_get_page( $page_number, $max_num_pages, $active_flag, $last_page = false, $last_page_override = false ) {
 	if ( $page_number <= $max_num_pages && $last_page === false || ( $last_page === true && $max_num_pages > 5 ) || $last_page_override === true ) {
-		$active = $active_flag === true ? 'class="active"' : false;
-		return '<li class="page-item"><a ' . $active . ' href="' . get_pagenum_link( $page_number ) . '" class="page-link">' . $page_number . '</a></li>';
+		$active = $active_flag === true ? 'active' : false;
+		return '<li class="page-item"><a class="page-link ' . $active . '" href="' . get_pagenum_link( $page_number ) . '" >' . $page_number . '</a></li>';
 	}
 }
 

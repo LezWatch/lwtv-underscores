@@ -6,9 +6,14 @@
  */
 get_header(); ?>
 
-<?php $paged = get_query_var( 'page' ) ? get_query_var( 'page' ) : 1; ?>
+<?php 
+	$paged = get_query_var( 'page' ) ? get_query_var( 'page' ) : 1; 
+	$already_displayed_posts = array();
+?>
 
 <div id="main" class="site-main" role="main">
+
+	<?php if ( $paged == 1 ) { ?>
 
 	<!-- Home page top section -->
 	<section class="home-featured-posts">
@@ -27,7 +32,7 @@ get_header(); ?>
 						) ); ?>
 						 
 						<!-- // The Loop -->
-						<?php while ($lastpostloop->have_posts()) : $lastpostloop->the_post(); ?>
+						<?php while ($lastpostloop->have_posts()) : $lastpostloop->the_post(); $already_displayed_posts[]=get_the_ID(); ?>
 
 							<div class="card">
 								<?php if ( has_post_thumbnail()) : ?>
@@ -67,7 +72,7 @@ get_header(); ?>
 						) ); ?>
 						 
 						<!-- // The Loop -->
-						<?php while ($newpostsloop->have_posts()) : $newpostsloop->the_post(); ?>
+						<?php while ($newpostsloop->have_posts()) : $newpostsloop->the_post(); $already_displayed_posts[]=get_the_ID(); ?>
 
 							<div class="card-group">
 								<div class="card col-sm-5"	
@@ -107,7 +112,6 @@ get_header(); ?>
 				<div class="col-sm-4 site-sidebar site-loop">
 					<?php dynamic_sidebar( 'sidebar-1' ); ?>
 				</div>
-
 			</div><!-- .row -->
 		</div><!-- .container -->
 	</section>
@@ -173,12 +177,13 @@ get_header(); ?>
 	            				<a href="#" class="btn btn-outline-primary">Go to Show Profile</a>
 	          				</div>
 	        			</div>
-
 	        		</div><!-- .card-deck -->
       			</div><!-- .col -->
     		</div><!-- .row -->
 		</div><!-- .container -->
 	</section>
+
+	<?php } ?>
 
 	<!-- Older Posts -->
 	<section class="home-older-posts">
@@ -189,10 +194,11 @@ get_header(); ?>
 	        	</div>
 	        </div>
 	        <div class="row site-loop main-posts-loop equal-height">
+
 				<?php $oldpostsloop = new WP_Query( array(
 					'posts_per_page' => '6',
 					'paged' => $paged,
-					'offset' => '6',
+					'post__not_in'   => $already_displayed_posts,
 					'orderby' => 'date', 
 					'order' => 'DESC'
 				) ); ?>				 

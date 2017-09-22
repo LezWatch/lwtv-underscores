@@ -162,6 +162,11 @@ a:hover, a:focus, a:active {
 /* =Bootstrap Overrides
 ----------------------------------------------- */
 /* Pagination */
+nav.yikes-pagination {
+  padding: 0 20px;
+  width: 100%;
+}
+
 .pagination {
   margin-top: 2em;
 }
