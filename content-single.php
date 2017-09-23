@@ -18,15 +18,16 @@
 		</div><!-- .entry-meta -->
 	</header><!-- .entry-header -->
 
-	<div class="entry-content">
+	<div class="entry-content clearfix">
 		<?php the_content(); ?>
+	</div><!-- .entry-content -->
+
 		<?php
 			wp_link_pages( array(
 				'before' => '<div class="page-links">' . esc_attr__( 'Pages:', 'yikes_starter' ),
 				'after'  => '</div>',
 			) );
 		?>
-	</div><!-- .entry-content -->
 
 	<footer class="entry-meta">
 		<?php

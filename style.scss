@@ -410,9 +410,6 @@ footer.entry-meta {
 }
 
 
-
-
-
 /* =Home page
 ----------------------------------------------- */
 
@@ -476,6 +473,11 @@ section {
 /* Posts */
 
 .entry-header {
+
+  .wp-post-image {
+    margin-bottom: 1.4rem;
+  }
+
   .entry-meta {
     border-bottom: 1px solid $lwtv-pink;
     color: $lwtv-medgrey;
@@ -486,6 +488,26 @@ section {
 
     .fa {
       margin-left: 1em;
+    }
+  }
+}
+
+.related-shows {  
+  background-color: $lwtv-ltgrey;
+  border-left: 4px solid $lwtv-pink;
+  margin: 0 0 1rem;
+  padding: 1em;
+
+  ul {
+    margin: 0;
+    padding: 0;
+
+    li {
+      list-style-type: none;
+
+      &:before {
+        @include fontawesome("\f26c");
+      }
     }
   }
 }
