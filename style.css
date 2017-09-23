@@ -271,6 +271,7 @@ input[type="submit"].btn-outline-primary:focus,
 input[type="submit"].btn-outline-primary:hover {
   background-color: #d1548e;
   border-color: #d1548e;
+  box-shadow: 0 0 0 2px rgba(141, 50, 159, 0.5);
   color: #fff;
 }
 

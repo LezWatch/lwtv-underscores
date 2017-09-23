@@ -189,6 +189,7 @@ input[type="submit"].btn-outline-primary {
   &.active, &.focus, &:active, &:focus, &:hover {
     background-color: $lwtv-pink;
     border-color: $lwtv-pink;
+    box-shadow: 0 0 0 2px rgba(141, 50, 159,.5);
     color: $white;
   }
 }
