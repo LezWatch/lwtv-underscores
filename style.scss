@@ -325,20 +325,6 @@ nav.main-nav {
 .sticky, .bypostauthor {display: block;}
 h1.entry-title {margin-bottom: 0;}
 
-footer.entry-meta {
-  border-top: 1px solid $lwtv-purple;
-  margin-top: 2em;
-  padding-top: 1em;
-
-  .footer-entry-meta-item {
-    display: block;
-  }
-
-  .fa {
-    margin-left: 1em;
-    width: 16px;
-  }
-}
 
 /* Loop styles for loopy content */
 
@@ -507,8 +493,38 @@ section {
 
       &:before {
         @include fontawesome("\f26c");
+        margin-right: 4px;
       }
     }
+  }
+}
+
+.author-bio-box {
+  background-color: $lwtv-ltgrey;
+  @include font-14;
+  padding: 1em;
+  border-top: 1px solid $lwtv-purple;
+  margin-top: 4rem;
+
+  .avatar {
+    border: 1px solid $lwtv-pink;
+  }
+
+  .author-bio {
+    margin-bottom: 0.4rem;
+  }
+}
+
+footer.entry-meta {
+  padding-top: 1em;
+
+  .footer-entry-meta-item {
+    display: block;
+  }
+
+  .fa {
+    margin-left: 1em;
+    width: 16px;
   }
 }
 

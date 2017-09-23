@@ -630,19 +630,6 @@ h1.entry-title {
   margin-bottom: 0;
 }
 
-footer.entry-meta {
-  border-top: 1px solid #8d329f;
-  margin-top: 2em;
-  padding-top: 1em;
-}
-footer.entry-meta .footer-entry-meta-item {
-  display: block;
-}
-footer.entry-meta .fa {
-  margin-left: 1em;
-  width: 16px;
-}
-
 /* Loop styles for loopy content */
 .site-loop .card {
   border: none;
@@ -790,6 +777,32 @@ section {
 .related-shows ul li:before {
   content: "";
   font-family: FontAwesome;
+  margin-right: 4px;
+}
+
+.author-bio-box {
+  background-color: #ebf5fa;
+  font-size: 0.875rem;
+  padding: 1em;
+  border-top: 1px solid #8d329f;
+  margin-top: 4rem;
+}
+.author-bio-box .avatar {
+  border: 1px solid #d1548e;
+}
+.author-bio-box .author-bio {
+  margin-bottom: 0.4rem;
+}
+
+footer.entry-meta {
+  padding-top: 1em;
+}
+footer.entry-meta .footer-entry-meta-item {
+  display: block;
+}
+footer.entry-meta .fa {
+  margin-left: 1em;
+  width: 16px;
 }
 
 /* =Custom Post Types

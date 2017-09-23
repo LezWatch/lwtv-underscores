@@ -148,6 +148,11 @@ function yikes_post_thumbnail_caption() {
 require_once 'inc/walker-comment.php';
 
 
+/************* Authors *************/
+// Author bio box
+require_once 'inc/author-box.php';
+
+
 /************* Archives  *************/
 // get rid of the “Category:”, “Tag:”, “Author:”, “Archives:” and “Other taxonomy name:” in the archive title
 
