@@ -55,7 +55,9 @@ class LWTV_Show extends WP_Widget {
           </div>';
 
 		// Featured Image
+        echo '<a href="' . get_the_permalink()  .'">';
 		echo the_post_thumbnail( 'postloop-img', array( 'class' => 'card-img-top' ) );
+        echo '</a>';
 
 		echo '<div class="card-body">';
 

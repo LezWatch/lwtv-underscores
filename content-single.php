@@ -8,6 +8,9 @@
 
 <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 	<header class="entry-header">
+		<?php if ( has_post_thumbnail()) : ?>
+		  	<?php the_post_thumbnail( 'large' ); ?>
+		<?php endif; ?>
 		<h1 class="entry-title"><?php the_title(); ?></h1>
 
 		<div class="entry-meta">
