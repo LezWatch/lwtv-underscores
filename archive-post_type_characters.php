@@ -49,38 +49,62 @@ switch ( $fwp_sort ) {
 
 get_header(); ?>
 
-	<div id="primary" class="content-area">
-		<main id="main" class="site-main" role="main"><div class="facetwp-template">
-		<?php
-		if ( have_posts() ) : ?>
+<div id="main" class="site-main" role="main">
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-8">
+				<div id="primary" class="content-area">
+					<div id="content" class="site-content clearfix" role="main">
 
-			<header class="page-header">
-				<?php
-					the_archive_title( '<h1 class="page-title">' . $symbolicon, '<br />Sorted By ' . $sort . ' (' . $count_posts . ')</h1>' );					
-					$descriptions = get_option( 'wpseo_titles' );
-					$description  = $descriptions['metadesc-ptarchive-post_type_characters'];
-					echo '<div class="archive-description">' . $description . '</div>';
-					echo $selections;
-				?>
-			</header><!-- .page-header -->
+						<?php if ( have_posts() ) : ?>
+
+							<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
+								<header class="entry-header">
+									<?php
+										the_archive_title( '<h1 class="page-title">' . $symbolicon, '<br />Sorted By ' . $sort . ' (' . $count_posts . ')</h1>' );					
+										$descriptions = get_option( 'wpseo_titles' );
+										$description  = $descriptions['metadesc-ptarchive-post_type_characters'];
+										echo '<div class="archive-description">' . $description . '</div>';
+										echo $selections;
+									?>
+								</header><!-- .entry-header -->
+	
+								<div class="entry-content">
+				        			<div class="row site-loop main-posts-loop equal-height">
+
+										<?php while ( have_posts() ) : the_post(); ?>
+
+											<div class="col-sm-4">
+												<?php get_template_part( 'template-parts/content', 'posts' ); ?>
+											</div>
+
+										<?php endwhile; ?>
+
+									</div>
+
+									<?php wp_bootstrap_pagination(); ?>
+
+									<?php else : ?>
+
+										<?php get_template_part( 'content', 'none' ); ?>
+
+									<?php endif; ?>
+
+								</div>
+							</article><!-- #post-## -->
+
+					</div><!-- #content -->
+				</div><!-- #primary -->
+			</div><!-- .col-sm-8 -->
+
+			<div class="col-sm-4 site-sidebar site-loop">
+
+				<?php get_sidebar(); ?>
+
+			</div><!-- .col-sm-4 -->
+		</div><!-- .row -->
+	</div><!-- .container -->
+</div><!-- #main -->
 
 
-			<?php
-			/* Start the Loop */
-			while ( have_posts() ) : the_post();
-				get_template_part( 'template-parts/archive/'.get_post_type() );
-			endwhile;
-
-			echo facetwp_display( 'pager' );
-
-		else :
-			get_template_part( 'template-parts/content/none' );
-
-		endif; ?>
-
-		</div></main><!-- #main -->
-	</div><!-- #primary -->
-
-<?php
-get_sidebar();
-get_footer();
+<?php get_footer(); ?>

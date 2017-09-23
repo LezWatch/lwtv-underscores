@@ -27,7 +27,7 @@ get_header(); ?>
 										<?php while ( have_posts() ) : the_post(); ?>
 
 											<div class="col-sm-6">
-												<?php get_template_part( 'content', 'posts' ); ?>
+												<?php get_template_part( 'template-parts/content', 'posts' ); ?>
 											</div>
 
 										<?php endwhile; ?>
