@@ -719,13 +719,19 @@ section {
   padding-bottom: 1rem;
 }
 
-.home-featured-posts .site-loop.home-featured-post-loop .card-body {
+.site-loop.home-featured-post-loop .card-body {
   font-size: 16px;
 }
-.home-featured-posts .site-loop.home-featured-post-loop .card-body .card-title {
+.site-loop.home-featured-post-loop .card-body .card-title {
   font-size: 1.75rem;
 }
-.home-featured-posts .site-loop.home-featured-secondary-loop .card.col-sm-5 {
+
+.site-loop.home-featured-secondary-loop .card-group,
+.site-loop.show-archive-loop .card-group {
+  width: 100%;
+}
+.site-loop.home-featured-secondary-loop .card.col-sm-5,
+.site-loop.show-archive-loop .card.col-sm-5 {
   background-repeat: no-repeat;
   -webkit-background-size: cover;
   -moz-background-size: cover;

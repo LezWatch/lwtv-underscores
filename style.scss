@@ -416,28 +416,30 @@ section {
 }
 
 
-.home-featured-posts {
+.site-loop.home-featured-post-loop {
+  .card-body {
+    font-size: $basefont;
 
-  .site-loop.home-featured-post-loop {
-    .card-body {
-      font-size: $basefont;
-
-      .card-title {
-        @include font-28;
-      }
-    }
-  }
-
-  .site-loop.home-featured-secondary-loop {
-    .card {
-      &.col-sm-5 {
-        background-repeat: no-repeat;
-        @include cover;
-        background-position: center top;
-      }
+    .card-title {
+      @include font-28;
     }
   }
 }
+
+.site-loop.home-featured-secondary-loop,
+.site-loop.show-archive-loop {
+  .card-group {
+    width: 100%;
+  }
+  .card {
+    &.col-sm-5 {
+      background-repeat: no-repeat;
+      @include cover;
+      background-position: center top;
+    }
+  }
+}
+
 
 .home-featured-shows {
   background-color: $lwtv-pink;

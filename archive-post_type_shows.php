@@ -39,7 +39,7 @@ get_header(); ?>
 					<div id="content" class="site-content clearfix" role="main">
 						<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 							<div class="entry-content">
-			        			<div class="row site-loop character-archive-loop equal-height">
+			        			<div class="row site-loop show-archive-loop equal-height">
 									<?php
 									if ( have_posts() ) : ?>
 
@@ -49,10 +49,10 @@ get_header(); ?>
 											get_template_part( 'template-parts/excerpt', 'post_type_shows' );
 							
 										endwhile;; ?>
-								</div><!-- .row .site-loop -->
+								</div><!-- .site-loop -->
 
 								<?php						
-										echo facetwp_display( 'pager' );
+									echo facetwp_display( 'pager' );
 							
 									else :
 										get_template_part( 'template-parts/content', 'none' );
