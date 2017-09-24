@@ -38,10 +38,10 @@ get_header(); ?>
 		<div class="row">
 			<div class="col-sm-9">
 				<div id="primary" class="content-area">
-					<div id="content" class="site-content clearfix facetwp-template" role="main">
+					<div id="content" class="site-content clearfix" role="main">
 						<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 							<div class="entry-content">
-			        			<div class="row site-loop main-posts-loop equal-height">
+			        			<div class="row site-loop character-archive-loop equal-height">
 									<?php
 									if ( have_posts() ) : ?>
 										<?php

@@ -269,7 +269,7 @@ h1.site-description {
   @include font-40;
 
   a.badge, a.badge:visited {
-    color: $white;
+    color: $white !important;
   }
 }
 

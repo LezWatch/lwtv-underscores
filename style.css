@@ -429,7 +429,7 @@ h1.site-description {
   font-size: 2.5rem;
 }
 h1.site-description a.badge, h1.site-description a.badge:visited {
-  color: #fff;
+  color: #fff !important;
 }
 
 /* =Menu
@@ -1459,32 +1459,6 @@ a.facetwp-page {
 }
 .facetwp-pager li.page-link {
   color: #d1548e;
-}
-
-a.facetwp-page.active {
-  font-weight: normal;
-}
-
-.facetwp-template {
-  margin: 2em 0 2.5em;
-}
-
-.facetwp-template .card.post-type-shows {
-  margin-bottom: 1.4em;
-}
-.facetwp-template .col-sm-4,
-.facetwp-template .col-sm-3 {
-  margin-bottom: 1em;
-}
-.facetwp-template .card-footer {
-  background-color: #fff;
-  border: 0;
-  -webkit-border-radius: 0;
-  -moz-border-radius: 0;
-  -ms-border-radius: 0;
-  -o-border-radius: 0;
-  border-radius: 0;
-  padding-top: 0;
 }
 
 /*--------------------------------------------------------------

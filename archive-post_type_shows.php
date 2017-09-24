@@ -31,40 +31,44 @@ get_header(); ?>
 	</div><!-- /.jumbotron -->
 </div>
 
-
 <div id="main" class="site-main" role="main">
 	<div class="container">
 		<div class="row">
-			<div class="col-sm-8">
+			<div class="col-sm-9">
 				<div id="primary" class="content-area">
-					<div id="content" class="site-content clearfix" role="main"><div class="facetwp-template">
-						<?php
-						if ( have_posts() ) : ?>
+					<div id="content" class="site-content clearfix" role="main">
+						<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
+							<div class="entry-content">
+			        			<div class="row site-loop character-archive-loop equal-height">
+									<?php
+									if ( have_posts() ) : ?>
 
-							<?php
-							/* Start the Loop */
-							while ( have_posts() ) : the_post();
-								get_template_part( 'template-parts/excerpt', 'post_type_shows' );
-				
-							endwhile;
-				
-							echo facetwp_display( 'pager' );
-				
-						else :
-							get_template_part( 'template-parts/content', 'none' );
-				
-						endif; ?>
+										<?php
+										/* Start the Loop */
+										while ( have_posts() ) : the_post();
+											get_template_part( 'template-parts/excerpt', 'post_type_shows' );
+							
+										endwhile;; ?>
+								</div><!-- .row .site-loop -->
 
-					</div></div><!-- #content -->
+								<?php						
+										echo facetwp_display( 'pager' );
+							
+									else :
+										get_template_part( 'template-parts/content', 'none' );
+							
+								endif; ?>					
+							</div><!-- .entry-content -->
+						</article><!-- #post-## -->
+					</div><!-- #content -->
 				</div><!-- #primary -->
+			</div><!-- .col-sm-9 -->
 	
-			</div><!-- .col-sm-8 -->
-	
-			<div class="col-sm-4">
+			<div class="col-sm-3">
 
 				<?php get_sidebar(); ?>
 
-			</div><!-- .col-sm-4 -->
+			</div><!-- .col-sm-3 -->
 
 		</div><!-- .row -->
 	</div><!-- .container -->
