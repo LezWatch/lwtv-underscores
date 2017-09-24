@@ -14,7 +14,8 @@ if ( !is_numeric( $thisyear ) ){
 $previousurl = site_url( '/this-year/'.( $thisyear - 1 ).'/' );
 $nexturl     = site_url( '/this-year/'.( $thisyear + 1 ).'/' );
 $thisurl     = site_url( '/this-year/'. date('Y') .'/' );
-$iconpath    = lwtv_yikes_symbolicons( 'calendar_alt.svg', 'fa-calendar' );
+$iconpath    = '<span role="img" aria-label="post_type_characters" title="Characters" class="taxonomy-svg characters">' . lwtv_yikes_symbolicons( 'calendar_alt.svg', 'fa-calendar' ) . '</span>';
+
 
 function lwtv_underscore_this_year_dead( $thisyear ) {
 
@@ -230,35 +231,39 @@ function lwtv_underscore_this_year_shows( $thisyear ) {
 get_header(); 
 ?>
 
+<div class="archive-subheader">
+	<div class="jumbotron">
+		<div class="container">
+			<header class="archive-header">
+				<div class="archive-description">
+					<h1 class="archive-title">
+						In This Year - <?php echo $thisyear; ?>
+						<?php echo ( isset( $iconpath ) ? $iconpath : '' ); ?>
+					</h1>
+					<p>A recap of queer events that occurred in <?php echo $thisyear; ?></p>
+					<div class="archive-pagination pagination"><ul>
+					<?php
+					if ( $thisyear !== date('Y') ) {
+						?>
+						<li class="pagination-next"><a href="<?php echo $nexturl; ?>">« Next Year</a></li>
+						<li><a href="<?php echo $thisurl; ?>">This Year (<?php echo date('Y'); ?>)</a></li>
+						<?php
+					}
+					?>
+						<li class="pagination-previous"><a href="<?php echo $previousurl; ?>">Previous Year »</a></li>
+					</ul></div>
+				</div>
+			</header><!-- .archive-header -->
+		</div><!-- .container -->
+	</div><!-- /.jumbotron -->
+</div>
+
 <div id="main" class="site-main" role="main">
 	<div class="container">
 		<div class="row">
 			<div class="col-sm-8">
 				<div id="primary" class="content-area">
-					<div id="content" class="site-content clearfix" role="main">
-
-						<header class="archive-header card">
-							<div class="archive-description">
-								<h1 class="archive-title">
-									In This Year - <?php echo $thisyear; ?>
-									<?php echo ( isset( $iconpath ) ? $iconpath : '' ); ?>
-								</h1>
-								<p>A recap of queer events that occurred in <?php echo $thisyear; ?></p>
-								<div class="archive-pagination pagination"><ul>
-								<?php
-								if ( $thisyear !== date('Y') ) {
-									?>
-									<li class="pagination-next"><a href="<?php echo $nexturl; ?>">« Next Year</a></li>
-									<li><a href="<?php echo $thisurl; ?>">This Year (<?php echo date('Y'); ?>)</a></li>
-									<?php
-								}
-								?>
-									<li class="pagination-previous"><a href="<?php echo $previousurl; ?>">Previous Year »</a></li>
-								</ul></div>
-				
-							</div>
-						</header>
-				
+					<div id="content" class="site-content clearfix" role="main">				
 						<?php
 							lwtv_underscore_this_year_dead( $thisyear );
 							lwtv_underscore_this_year_shows( $thisyear ); 

@@ -15,7 +15,7 @@
  *
  * Used by FacetWP on custom pages (roles)
  */
-function lwtv_underscore_numeric_posts_nav( $query = 'wp_query', $count = null ) {
+function lwtv_yikes_facet_numeric_posts_nav( $query = 'wp_query', $count = null ) {
 
 	if( is_singular( 'post' ) )
 		return;
@@ -78,7 +78,7 @@ function lwtv_underscore_numeric_posts_nav( $query = 'wp_query', $count = null )
 	/**	Link to last page, plus next if necessary */
 	if ( ! in_array( $max, $links ) ) {
 		if ( ! in_array( $max - 1, $links ) )
-			echo '<li class="page-item page-link">Next &nbsp;<i class="fa fa-chevron-right" aria-hidden="true"></i></li>';
+			printf( '<li class="page-item next">%s</li>', get_next_posts_link( 'Next &nbsp;<i class="fa fa-chevron-right" aria-hidden="true"></i>' ) );
 
 		$class = $paged == $max ? ' active' : '';
 		printf( '<li class="page-item last ml-auto%s"><a href="%s" class="page-link">%s</a></li>', $class, esc_url( get_pagenum_link( $max ) ), 'Last &nbsp;<i class="fa fa-chevron-circle-right" aria-hidden="true"></i>' );
@@ -86,7 +86,7 @@ function lwtv_underscore_numeric_posts_nav( $query = 'wp_query', $count = null )
 
 	/**	Next Post Link */
 	if ( get_next_posts_link() )
-		printf( '<li class="page-item next">%s</li>', next_posts_link( 'Next &nbsp;<i class="fa fa-chevron-right" aria-hidden="true"></i>' ) );
+		printf( '<li class="page-item next">%s</li>', get_next_posts_link( 'Next &nbsp;<i class="fa fa-chevron-right" aria-hidden="true"></i>' ) );
 
 	echo '</ul></nav>';
 

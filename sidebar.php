@@ -13,7 +13,7 @@ if ( ! is_active_sidebar( 'sidebar-2' ) ) {
 <aside id="secondary" class="widget-area" role="complementary">
 	<?php 
 		// Show the right sidebar for the page type:
-		if ( !is_single() ) {
+		if ( !is_singular() ) {
 			switch ( get_post_type() ) {
 				case 'post_type_characters':
 					dynamic_sidebar( 'archive-character-sidebar' );
@@ -30,8 +30,15 @@ if ( ! is_active_sidebar( 'sidebar-2' ) ) {
 				case 'post_type_shows':
 					get_template_part( 'template-parts/sidebar', get_post_type() );
 					break;
+				case 'page':
+					if ( is_page( 'role' ) ) {
+						dynamic_sidebar( 'archive-character-sidebar' );
+					} else {
+						dynamic_sidebar( 'sidebar-2' );						
+					}
+					break;
 				default:
-					dynamic_sidebar( 'sidebar-2' );				
+					dynamic_sidebar( 'sidebar-2' );
 			}
 		}
 	?>
