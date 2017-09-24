@@ -686,8 +686,8 @@ embed, iframe, object {
 
     h2.widget-title {
       font-family: 'Open Sans', sans-serif;
+      font-size: $basefont;
       font-weight: 700;
-      @include font-16;
       margin-bottom: .5rem;
     }
   }
