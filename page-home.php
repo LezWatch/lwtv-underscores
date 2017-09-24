@@ -130,7 +130,6 @@ get_header(); ?>
     		</div>
     		<div class="row">
 				<div class="col">
-
 					<div class="card-deck">
 						<?php
 							
@@ -171,7 +170,9 @@ get_header(); ?>
 									</div>
 	            				</div>
 	            				<div class="card-footer">
-	            					<a href="<?php the_permalink(); ?>" class="btn btn-sm btn-outline-primary">Go to Show Profile</a>
+	            					<a href="<?php the_permalink(); ?>" class="btn btn-sm btn-outline-primary">
+	            						Go to Show Profile
+	            					</a>
 	            				</div>
 							</div>
 

@@ -17,61 +17,55 @@ $sort        = lwtv_yikes_facetwp_sortby( ( isset( $_GET['fwp_sort'] ) )? $_GET[
 
 get_header(); ?>
 
-<div class="archive-subheader">
-	<div class="jumbotron">
-		<div class="container">
-			<header class="archive-header">
-				<?php
-					the_archive_title( '<h1 class="facetwp-page-title page-title">' . $title, ' (' . $count_posts . '<span class="facetwp-count"></span>)</h1>' );
-					$descriptions = get_option( 'wpseo_titles' );
-					$description  = $descriptions['metadesc-ptarchive-post_type_characters'];
-					echo '<div class="taxonomyg-description">' . $description . '<br />Sorted by ' . $sort . '.</div>';
-					echo $selections;
-				?>
-			</header><!-- .archive-header -->
-		</div><!-- .container -->
-	</div><!-- /.jumbotron -->
-</div>
-
 <div id="main" class="site-main" role="main">
 	<div class="container">
 		<div class="row">
-			<div class="col-sm-8">
+			<div class="col-sm-9">
 				<div id="primary" class="content-area">
-					<div id="content" class="site-content clearfix facetwp-template" role="main">
-						<?php
-						if ( have_posts() ) : ?>
-							<div class="container">
-								<div class="row">
+					<div id="content" class="site-content clearfix" role="main">
+						<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
+							<header class="entry-header">
+								<?php
+									the_archive_title( '<h1 class="facetwp-page-title page-title">' . $title, ' (' . $count_posts . '<span class="facetwp-count"></span>)</h1>' );
+									$descriptions = get_option( 'wpseo_titles' );
+									$description  = $descriptions['metadesc-ptarchive-post_type_characters'];
+									echo '<div class="taxonomyg-description">' . $description . '<br />Sorted by ' . $sort . '.</div>';
+									echo $selections;
+								?>
+							</header><!-- .entry-header -->
+	
+							<div class="entry-content">
+			        			<div class="row site-loop main-posts-loop equal-height">
 									<?php
-									/* Start the Loop */
-									while ( have_posts() ) : the_post();
-										?><div class="col-sm-4"><?php
-										get_template_part( 'template-parts/excerpt', 'post_type_characters' );
-										//get_template_part( 'template-parts/content', 'characters' );
-										?></div><?php
+									if ( have_posts() ) : ?>
+										<?php
+										/* Start the Loop */
+										while ( have_posts() ) : the_post();
+											?><div class="col-sm-4"><?php
+											get_template_part( 'template-parts/excerpt', 'post_type_characters' );
+											//get_template_part( 'template-parts/content', 'characters' );
+											?></div><?php
 									endwhile; ?>
-								</div>
-							</div>
-							<?php
-							echo facetwp_display( 'pager' );
-			
-						else :
-							get_template_part( 'template-parts/content', 'none' );
-				
-						endif; ?>
+
+								</div><!-- .row .site-loop -->
+
+								<?php
+									echo facetwp_display( 'pager' );
+					
+								else :
+									get_template_part( 'template-parts/content', 'none' );
+						
+								endif; ?>
+							</div><!-- .entry-content -->
+						</article><!-- #post-## -->
 
 					</div><!-- #content -->
 				</div><!-- #primary -->
-	
-			</div><!-- .col-sm-8 -->
-	
-			<div class="col-sm-4">
+			</div><!-- .col-sm-9 -->
 
-				<?php get_sidebar(); ?>
-
-			</div><!-- .col-sm-4 -->
-
+			<div class="col-sm-3 site-sidebar site-loop">
+				<?php dynamic_sidebar( 'sidebar-3' ); ?>
+			</div>
 		</div><!-- .row -->
 	</div><!-- .container -->
 </div><!-- #main -->

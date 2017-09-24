@@ -15,7 +15,7 @@ get_header(); ?>
 
 						<?php if ( have_posts() ) : ?>
 
-							<header class="archive-header card">
+							<header class="archive-header">
 								<h1 class="page-title"><?php printf( esc_attr__( 'Search Results for: %s', 'yikes_starter' ), '<span>' . get_search_query() . '</span>' ); ?></h1>
 							</header>
 
