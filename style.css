@@ -1039,6 +1039,11 @@ ul.comment-list li .comment-content .btn a, ul.comment-list li .comment-content 
 .site-sidebar .widget {
   margin: 0 0 1em;
 }
+.site-sidebar .widget h2.widget-title {
+  background: linear-gradient(60deg, #ab47bc, #8e24aa);
+  font-size: 1.5rem;
+  margin-bottom: 0;
+}
 
 /* =Footer
 ----------------------------------------------- */

@@ -640,7 +640,6 @@ embed, iframe, object {
 /* =Global
 ----------------------------------------------- */
 
-h2.widget-title {}
 
 
 /* =Header
@@ -681,6 +680,12 @@ h2.widget-title {}
 .site-sidebar {
   .widget {
     margin: 0 0 1em;
+
+    h2.widget-title {
+      background: $lwtv-gradient;
+      @include font-24;
+      margin-bottom: 0;
+    }
   }
 }
 
