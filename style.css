@@ -424,11 +424,10 @@ button, input[type="button"], input[type="submit"] {
   font-size: 1.125rem;
   margin-bottom: 0;
 }
-
-h1.site-description {
+.jumbotron.jumbotron-fluid h1.site-description {
   font-size: 2.5rem;
 }
-h1.site-description a.badge, h1.site-description a.badge:visited {
+.jumbotron.jumbotron-fluid h1.site-description a.badge, .jumbotron.jumbotron-fluid h1.site-description a.badge:visited {
   color: #fff !important;
 }
 
