@@ -427,7 +427,7 @@ button, input[type="button"], input[type="submit"] {
 .jumbotron.jumbotron-fluid h1.site-description {
   font-size: 2.5rem;
 }
-.jumbotron.jumbotron-fluid h1.site-description a.badge, .jumbotron.jumbotron-fluid h1.site-description a.badge:visited {
+.jumbotron.jumbotron-fluid a.badge, .jumbotron.jumbotron-fluid a.badge:visited {
   color: #fff !important;
 }
 
