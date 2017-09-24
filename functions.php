@@ -334,6 +334,26 @@ function yikes_starter_widgets_init() {
 		'before_title' => '<h2 class="widget-title">',
 		'after_title' => '</h2>',
 	) );
+	// Sidebar for Character Archives
+	register_sidebar( array(
+		'name'          => esc_html__( 'Sidebar - Character Archives', 'lwtv_underscore' ),
+		'id'            => 'archive-character-sidebar',
+		'description'   => esc_html__( 'This is the sidebar for character archives.', 'lwtv_underscore' ),
+		'before_widget' => '<section id="%1$s" class="widget %2$s">',
+		'after_widget'  => '</section>',
+		'before_title'  => '<h2 class="widget-title">',
+		'after_title'   => '</h2>',
+	) );
+	// Sidebar for Show Archives
+	register_sidebar( array(
+		'name'          => esc_html__( 'Sidebar - Show Archives', 'lwtv_underscore' ),
+		'id'            => 'archive-show-sidebar',
+		'description'   => esc_html__( 'This is the sidebar for show archives.', 'lwtv_underscore' ),
+		'before_widget' => '<section id="%1$s" class="widget %2$s">',
+		'after_widget'  => '</section>',
+		'before_title'  => '<h2 class="widget-title">',
+		'after_title'   => '</h2>',
+	) );
 }
 add_action( 'widgets_init', 'yikes_starter_widgets_init' );
 
@@ -430,79 +450,11 @@ require get_template_directory() . '/inc/customizer.php';
 /* Remove custom background support */
 remove_theme_support( 'custom-background' );
 
-
-/* Load Jetpack compatibility file.  */
-require get_template_directory() . '/inc/jetpack.php';
-
-/* AMP  */
+/* Load AMP functionality file. */
 require get_template_directory() . '/inc/amp.php';
 
+/* Load FacetWP compatibility file. */
+require get_template_directory() . '/inc/facet.php';
 
-
-/*
- * Archive Sort Order
- *
- * Everything BUT regular posts go alphabetical
- */
-add_action( 'pre_get_posts', 'lwtv_underscore_archive_sort_order' );
-function lwtv_underscore_archive_sort_order( $query ) {
-    if ( $query->is_main_query() && !is_admin() ) {
-		if ( is_post_type_archive( array( 'post_type_characters', 'post_type_shows' ) ) ) {
-	        $query->set( 'order', 'ASC' );
-	        $query->set( 'orderby', 'title' );
-		}
-	}
-}
-
-/*
- * Remove Jetpack because it's stupid. We'll add it back
- */
-add_action( 'loop_start', 'lwtv_underscore_jetpack_remove_share' );
-function lwtv_underscore_jetpack_remove_share() {
-	remove_filter( 'the_content', 'sharing_display', 19 );
-	remove_filter( 'the_excerpt', 'sharing_display', 19 );
-	if ( class_exists( 'Jetpack_Likes' ) ) {
-		remove_filter( 'the_content', array( Jetpack_Likes::init(), 'post_likes' ), 30, 1 );
-	}
-}
-
-/*
- * Jetpack Post Meta
- *
- * Force Jetpack to be where we want it, not where it wants.
- */
-function lwtv_underscore_jetpack_post_meta( ) {
-	if ( function_exists( 'sharing_display' ) ) sharing_display( '', true );
-
-	if ( class_exists( 'Jetpack_Likes' ) ) {
-		$custom_likes = new Jetpack_Likes;
-		$post_meta = $custom_likes->post_likes( '' );
-	}
-}
-
-/*
- * Filter Comment Status
- *
- * Remove comments from attachment pages
- */
-add_filter( 'comments_open', 'lwtv_underscore_filter_media_comment_status', 10 , 2 );
-function lwtv_underscore_filter_media_comment_status( $open, $post_id ) {
-	if( get_post_type() == 'attachment' ) return false;
-	return $open;
-}
-
-
-/**
- * Archive Query
- * 
- * Change posts-per-page for custom post type archives
- */
-function lwtv_underscores_archive_query( $query ) {
-if ( $query->is_archive() && $query->is_main_query() && !is_admin() ) {
-	
-	// Characters = 24
-	if ( is_post_type_archive( 'post_type_characters' ) ) $query->set( 'posts_per_page', 24 );
-        
-    }
-}
-add_action( 'pre_get_posts', 'lwtv_underscores_archive_query' );
+/* Load Mika's Queer compatibility file. */
+require get_template_directory() . '/inc/lesbians.php';

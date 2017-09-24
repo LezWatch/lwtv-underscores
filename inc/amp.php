@@ -1,8 +1,13 @@
 <?php
 /**
- * Name: Lez Amp
- * Decription: The AMP Stuff
+ * AMP functions and definitions
+ *
+ * This will only run if AMP by Automattic is installed and active.
+ * All the magic sauce is run by this.
+ *
+ * @package LezWatchTV
  */
+
 
 /**
  * class LWTV_AMP
@@ -66,7 +71,7 @@ class LWTV_AMP {
 
 		$post_type=$post->post_type;
 		$post_id=$post->ID;
-		$image_size = 'featured-image';
+		$image_size = 'full';
 
 		if ( $post_type === 'post_type_characters' ) {
 			$image_size = 'character-img';
@@ -82,21 +87,21 @@ class LWTV_AMP {
 			$all_shows = get_post_meta( $post_id, 'lezchars_show_group', true );
 			$show_title = array();
 			foreach ( $all_shows as $each_show ) {
-				array_push( $show_title, '<em><a href="' . get_permalink( $each_show['show'] ) . '">' . get_the_title( $each_show['show'] ) . '</a></em> ('. $each_show['type'] .' character)' );
+				array_push( $show_title, '<em><a href="' . get_permalink( $each_show['show'] ) . '">' . get_the_title( $each_show['show'] ) . '</a></em> (' . $each_show['type'] . ' character)' );
 			}
-			$on_shows = ( empty( $show_title ) )? ' no shows.' : ': '.implode(", ", $show_title );
+			$on_shows = ( empty( $show_title ) )? ' no shows.' : ': ' . implode( ", ", $show_title );
 			$appears = '<strong>Appears on</strong>' . $on_shows;
 
 			// Generate actors
 			// Usage: $actors
 
-			$character_actors = get_post_meta( $post_id, 'lezchars_actor', true);
+			$character_actors = get_post_meta( $post_id, 'lezchars_actor', true );
 			if ( !is_array ( $character_actors ) ) {
-				$character_actors = array( get_post_meta( $post_id, 'lezchars_actor', true) );
+				$character_actors = array( get_post_meta( $post_id, 'lezchars_actor', true ) );
 			}
 			$actor_count = count( $character_actors );
 			$actor_title = sprintf( _n( 'Actor', 'Actors', $actor_count ), $actor_count );
-			$actors = '<strong>'. $actor_title .':</strong> '.implode(", ", $character_actors );
+			$actors = '<strong>' . $actor_title . ':</strong> ' . implode( ", ", $character_actors );
 
 			// Generate RIP
 			// Usage: $rip
@@ -108,11 +113,11 @@ class LWTV_AMP {
 				}
 				$echo_death = array();
 				foreach( $character_death as $death ) {
-					$date = date_create_from_format('m/j/Y', $death );
-					$echo_death[] = date_format($date, 'F d, Y');
+					$date = date_create_from_format( 'm/j/Y', $death );
+					$echo_death[] = date_format( $date, 'F d, Y');
 				}
-				$echo_death = implode(", ", $echo_death );
-				$rip = '<strong>RIP:</strong> '. $echo_death;
+				$echo_death = implode( ", ", $echo_death );
+				$rip = '<strong>RIP:</strong> ' . $echo_death;
 			}
 
 			// Generate list of Cliches
@@ -123,27 +128,26 @@ class LWTV_AMP {
 			// Generate Gender & Sexuality Data
 			// Usage: $gender_sexuality
 			$gender_sexuality = '';
-			$gender_terms = get_the_terms( $post_id, 'lez_gender', true);
+			$gender_terms = get_the_terms( $post_id, 'lez_gender', true );
 			if ( $gender_terms && ! is_wp_error( $gender_terms ) ) {
-				foreach($gender_terms as $gender_term) {
-					$gender_sexuality .= '<a href="'. get_term_link( $gender_term->slug, 'lez_gender') .'" rel="tag" title="'. $gender_term->name .'">'. $gender_term->name .'</a> ';
+				foreach( $gender_terms as $gender_term ) {
+					$gender_sexuality .= '<a href="' . get_term_link( $gender_term->slug, 'lez_gender' ) . '" rel="tag" title="' . $gender_term->name . '">' . $gender_term->name . '</a> ';
 				}
 			}
-			$sexuality_terms = get_the_terms( $post_id, 'lez_sexuality', true);
+			$sexuality_terms = get_the_terms( $post_id, 'lez_sexuality', true );
 			if ( $sexuality_terms && ! is_wp_error( $sexuality_terms ) ) {
-				foreach($sexuality_terms as $sexuality_term) {
-					$gender_sexuality .= '<a href="'. get_term_link( $sexuality_term->slug, 'lez_sexuality') .'" rel="tag" title="'. $sexuality_term->name .'">'. $sexuality_term->name .'</a> ';
+				foreach( $sexuality_terms as $sexuality_term ) {
+					$gender_sexuality .= '<a href="' . get_term_link( $sexuality_term->slug, 'lez_sexuality' ) . '" rel="tag" title="' . $sexuality_term->name . '">' . $sexuality_term->name . '</a> ';
 				}
 			}
-
 
 			$content =
-				'<p>'. $appears .'</p>'
-				.'<p><span class="entry-meta">' .$cliches .'</span></p>'
-				.'<p>'. $gender_sexuality .'</p>'
+				  '<p>' . $appears . '</p>'
+				. '<p><span class="entry-meta">' . $cliches .'</span></p>'
+				. '<p>' . $gender_sexuality . '</p>'
 				. $rip 
-				.'<p>' .$actors. '</p>'
-				.$content;
+				. '<p>' . $actors . '</p>'
+				. $content;
 		}
 
 		if ( $post_type === 'post_type_shows' ) {
@@ -151,7 +155,7 @@ class LWTV_AMP {
 		}
 
 		if ( has_post_thumbnail() && $post_type !== 'post' ) {
-			$image = '<p class="lezwatch-featured-image '.$image_size.'">'.get_the_post_thumbnail( $post_id, $image_size ).'</p>';
+			$image = '<p class="lezwatch-featured-image ' . $image_size . '">' . get_the_post_thumbnail( $post_id, $image_size ) . '</p>';
 			$content = $image . $content;
 		}
 		return $content;
@@ -229,7 +233,6 @@ class LWTV_AMP {
 				),
 			),
 		);
-
 		return $analytics;
 	}
 

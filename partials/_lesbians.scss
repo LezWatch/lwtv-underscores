@@ -1,0 +1,418 @@
+/* =Lesbians
+----------------------------------------------- */
+
+/*--------------------------------------------------------------
+## Bootstrapification
+--------------------------------------------------------------*/
+
+/* If using Jumbotron */
+.archive-subheader .jumbotron {
+  background: $lwtv-pink;
+  background-size: contain;
+  color: $white;
+  @include font-18;
+  margin-bottom: 0;
+}
+
+/*--------------------------------------------------------------
+## Shows
+--------------------------------------------------------------*/
+h3.post-title.excerpt {
+    clear: none;
+    margin-top: 0;
+}
+
+.archive article {
+	clear: both;
+	padding: 10px 0px;
+}
+
+img.attachment-medium.size-medium.wp-post-image,
+img.attachment-character-img.size-character-img.wp-post-image {
+    float: left;
+    padding: 0 10px 10px;
+}
+ul.character-list {
+    list-style-type: none;
+}
+.shows-extras {
+    margin: 0 0 16px;
+}
+.shows-extras:after {
+    clear: both;
+    content: " ";
+    display: table;
+}
+.shows-extras h2 {
+    margin: 30px 0 20px 0;
+    padding-bottom: 20px;
+    text-transform: uppercase;
+}
+
+/* Trigger Warning */
+.callout svg {
+    width: 36px;
+    height: 36px;
+    float: left;
+    margin: 10px;
+}
+.callout-danger svg * {
+	fill: $red;
+}
+.callout-info svg *,
+.callout-warning svg * {
+	fill: $lwtv-yellow;
+}
+
+/* ratings icons */
+.ratings-icons {
+    text-align: center;
+    padding: 5px;
+}
+
+/* Show Sidebar - Network Info */
+aside li.network {
+    margin-bottom: 5px;
+    padding-bottom: 5px;
+    border: none;
+}
+aside ul.networks-data {
+	list-style: none;
+}
+
+/* Entry Meta */
+.entry-meta {
+	color: $darkgrey;
+	font-size: 13px;
+	font-size: 1.3rem;
+}
+.entry-meta a {
+	color: $darkgrey!important;
+}
+.entry-meta a:hover {
+	color: $lwtv-pink!important;
+}
+.content .entry-meta .entry-comments-link {
+	display: none;
+}
+ul.entry-meta {
+	list-style-type: none;
+	padding-bottom: 1em;
+}
+
+/* Show Tropes - Sidebar */
+aside ul.tropes-list {
+    list-style: none;
+}
+aside li.show.trope {
+    border: none;
+}
+.show.trope svg {
+    width: 20px;
+    height: 20px;
+    vertical-align: middle;
+    margin-right: 10px;
+}
+.show.trope a {
+	text-decoration: none;
+}
+.show.trope a.trope-link {
+    text-decoration: underline;
+}
+
+/* Table of Contents */
+section#toc li:nth-child(n+2):before {
+    content: " / ";
+}
+section#toc li {
+    border: none;
+    padding: 0px;
+    margin: 0px;
+    display: inline;
+}
+
+/* Characters */
+span.chartitle {
+    font-weight: bold;
+    min-height: 25px;
+}
+span.played-by {
+    padding-left: 20px;
+}
+
+/*--------------------------------------------------------------
+## Characters
+--------------------------------------------------------------*/
+.single-post_type_characters .entry-content ul > li {
+    list-style-type: none;
+}
+
+/* WP Sites Grid Column Archives */
+body.page-template-roletype article,
+body.page-template-newest.newest-characters article,
+.archive article.type-post_type_characters,
+.single-post_type_shows article.type-post_type_characters {
+    margin: 0px 5px 0px 0px;
+    width: 160px;
+    max-width: 160px;
+    display: inline-block;
+    vertical-align: top;
+}
+
+/*--------------------------------------------------------------
+# SVG
+--------------------------------------------------------------*/
+
+/*--------------------------------------------------------------
+## Headers
+--------------------------------------------------------------*/
+h1 svg *,
+h3 svg * {
+    fill: $white;
+}
+
+/*--------------------------------------------------------------
+## Shortcodes
+--------------------------------------------------------------*/
+span.svg-shortcode svg {
+    width: 50px;
+    height: 50px;
+    margin: 0 5px 0 5px;
+}
+span.svg-shortcode a {
+    text-decoration: none;
+}
+span.svg-shortcode a svg {
+	fill: $lwtv-pink;
+}
+span.svg-shortcode a:hover svg {
+	fill: $darkgrey;
+}
+
+
+/*--------------------------------------------------------------
+## Stars
+--------------------------------------------------------------*/
+.showlist-star.gold svg *,
+.show-star.gold svg * {
+    fill: $lwtv-gold;
+}
+.showlist-star.gold i.fa,
+.show-star.gold i.fa {
+	color: $lwtv-gold;
+}
+
+.showlist-star.silver svg *,
+.show-star.silver svg * {
+    fill: $lwtv-silver
+}
+.showlist-star.silver i.fa,
+.show-star.silver i.fa {
+    color: $lwtv-silver
+}
+.show-star svg {
+    width: 40px;
+    height: 40px;
+}
+.showlist-star svg {
+    width: 20px;
+    height: 20px;
+}
+
+/*--------------------------------------------------------------
+## Shows We Love
+--------------------------------------------------------------*/
+.show-we-love svg *,
+.show-we-love i.fa {
+    fill: $red;
+}
+.show-we-love svg {
+    width: 40px;
+    height: 40px;
+}
+
+/*--------------------------------------------------------------
+## Ratings
+--------------------------------------------------------------*/
+.ratings-icons svg {
+    width: 30px;
+    height: 30px;
+}
+.ratings-icons .show-heart.positive svg {
+    fill: $red;
+}
+.ratings-icons .show-heart.negative svg {
+    fill: $lwtv-grey;
+}
+
+/*--------------------------------------------------------------
+## Worthit
+--------------------------------------------------------------*/
+.archive-worthit svg {
+    width: 30px;
+    height: 30px;
+	float: right;
+	padding: 4px;
+}
+.show-worthit svg {
+    vertical-align: middle;
+    margin-right: 10px;
+}
+.worthit {
+    font-size: 150%;
+    font-weight: 500;
+}
+.show-worthit svg {
+	width: 50px;
+	height: 50px;
+}
+.archive-worthit.meh svg *,
+.show-worthit.meh svg *,
+.worthit-Meh {
+	fill: $lwtv-yellow;
+	color: $lwtv-yellow;
+}
+.archive-worthit.yes svg *,
+.show-worthit.yes svg *,
+.worthit-Yes {
+	color: $green;
+	fill: $green;
+}
+.archive-worthit.no svg *,
+.show-worthit.no svg *,
+.worthit-No {
+	color: $red;
+	fill: $red;
+}
+
+/*--------------------------------------------------------------
+## Entry Meta
+--------------------------------------------------------------*/
+.entry-meta svg {
+    width: 16px;
+    height: 16px;
+}
+.entry-meta svg * {
+    fill: $darkgrey;
+}
+.entry-meta svg:hover * {
+    fill: $lwtv-pink;
+}
+
+/*--------------------------------------------------------------
+## Characters
+--------------------------------------------------------------*/
+.char-grave svg {
+	width: 40px;
+	height: 40px;
+}
+.charlist-grave svg {
+	width: 25px;
+	height: 25px;
+	float: right;
+}
+.charlist-grave svg * {
+	fill: $darkgrey;
+}
+
+/*--------------------------------------------------------------
+# Taxonomies
+--------------------------------------------------------------*/
+.taxonomy-svg svg,
+.taxonomy-svg i.fa {
+	width: 100px;
+	height: 100px;
+	float: right;
+	margin: 5px;
+}
+
+/*--------------------------------------------------------------
+# Facet
+--------------------------------------------------------------*/
+div.facetwp-counts {
+	display: inline;
+}
+
+a.facetwp-page {
+	padding: 0px;
+	margin-right: 0px;
+}
+
+.facetwp-pager {
+	clear: both;
+}
+
+.facetwp-pager {
+	li.page-item.page-link.active {
+		z-index: 2;
+		color: $white;
+		background-color: $lwtv-pink;
+		border-color: $lwtv-pink;
+	}
+	
+	li.page-link {
+		color: $lwtv-pink;
+	}
+	
+}
+
+a.facetwp-page.active {
+	font-weight: normal;
+}
+
+.facetwp-template {
+	margin: 2em 0 2.5em;
+}
+
+.facetwp-template {
+	
+	.card.post-type-shows {
+		margin-bottom: 1.4em;
+	}
+	
+	.col-sm-4,
+	.col-sm-3 {
+		margin-bottom: 1em;
+	}
+
+	.card-footer {
+		background-color: $white;
+		border: 0;
+		@include border-radius(0);
+		padding-top: 0;
+	}
+}
+
+/*--------------------------------------------------------------
+# Statistics
+--------------------------------------------------------------*/
+
+canvas {
+	-moz-user-select: none;
+	-webkit-user-select: none;
+	-ms-user-select: none;
+}
+.stats-columns .one-half,
+div#container.one-half {
+    width: 40%;
+}
+@media only screen and (max-width: 700px) {
+	.stats-columns .one-half,
+	div#container.one-half {
+		width: 100%;
+	}
+}
+
+div#statistics {
+	clear:both;
+}
+#statistics ul {
+	columns: 2;
+	-webkit-columns: 2;
+	-moz-columns: 2;
+	margin-bottom: 16px;
+	list-style: none;
+	-webkit-column-break-inside: avoid;
+	page-break-inside: avoid;
+	break-inside: avoid;
+}

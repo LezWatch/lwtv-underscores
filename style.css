@@ -20,39 +20,6 @@ Tags:
 /* Base theme colors */
 /* Theme color palette */
 /* Link colors */
-@-webkit-keyframes rainbow {
-  0% {
-    background-position: 0% 82%;
-  }
-  50% {
-    background-position: 100% 19%;
-  }
-  100% {
-    background-position: 0% 82%;
-  }
-}
-@-moz-keyframes rainbow {
-  0% {
-    background-position: 0% 82%;
-  }
-  50% {
-    background-position: 100% 19%;
-  }
-  100% {
-    background-position: 0% 82%;
-  }
-}
-@-o-keyframes rainbow {
-  0% {
-    background-position: 0% 82%;
-  }
-  50% {
-    background-position: 100% 19%;
-  }
-  100% {
-    background-position: 0% 82%;
-  }
-}
 @keyframes rainbow {
   0% {
     background-position: 0% 82%;
@@ -127,13 +94,9 @@ blockquote:before {
   top: 0;
   bottom: 0;
   position: relative;
-  background: -webkit-linear-gradient(34deg, #ff2400, #e81d1d, #e8b71d, #e3e81d, #1de840, #1ddde8, #2b1de8, #dd00f3, #dd00f3);
-  background: -o-linear-gradient(34deg, #ff2400, #e81d1d, #e8b71d, #e3e81d, #1de840, #1ddde8, #2b1de8, #dd00f3, #dd00f3);
   background: linear-gradient(124deg, #ff2400, #e81d1d, #e8b71d, #e3e81d, #1de840, #1ddde8, #2b1de8, #dd00f3, #dd00f3);
   background-size: 1800% 1800%;
-  -webkit-animation: rainbow 18s ease infinite;
   -z-animation: rainbow 18s ease infinite;
-  -o-animation: rainbow 18s ease infinite;
   animation: rainbow 18s ease infinite;
 }
 
@@ -141,9 +104,6 @@ blockquote:before {
 a {
   color: #d1548e;
   text-decoration: none;
-  -webkit-transition: background 0.3s ease-in-out;
-  -moz-transition: background 0.3s ease-in-out;
-  -o-transition: background 0.3s ease-in-out;
   transition: background 0.3s ease-in-out;
 }
 a:visited {
@@ -158,7 +118,8 @@ a:hover, a:focus, a:active {
 .screen-reader-text {
   border: 0;
   clip: rect(1px, 1px, 1px, 1px);
-  clip-path: inset(50%);
+  -webkit-clip-path: inset(50%);
+          clip-path: inset(50%);
   height: 1px;
   margin: -1px;
   overflow: hidden;
@@ -201,10 +162,6 @@ nav.yikes-pagination {
   color: #fff;
 }
 .pagination li.page-item:first-child .page-link, .pagination li.page-item:last-child .page-link {
-  -webkit-border-radius: 0;
-  -moz-border-radius: 0;
-  -ms-border-radius: 0;
-  -o-border-radius: 0;
   border-radius: 0;
 }
 
@@ -213,9 +170,6 @@ nav.yikes-pagination {
 a.btn, button.btn, input[type="button"].btn, input[type="submit"].btn,
 button, input[type="button"], input[type="submit"] {
   border: 1px solid transparent;
-  -webkit-transition: all 0.3s;
-  -moz-transition: all 0.3s;
-  -o-transition: all 0.3s;
   transition: all 0.3s;
 }
 
@@ -243,9 +197,6 @@ a.btn-primary:hover, button.btn-primary.active, button.btn-primary.focus, button
   background-color: #fff;
   border-color: #d1548e;
   color: #d1548e;
-  -webkit-transition: all 0.3s;
-  -moz-transition: all 0.3s;
-  -o-transition: all 0.3s;
   transition: all 0.3s;
 }
 
@@ -462,7 +413,6 @@ nav.main-nav {
 /* =Custom Nav styles
 ----------------------------------------------- */
 .navbar.main-nav {
-  -webkit-box-shadow: 0 2px 30px rgba(0, 0, 0, 0.2);
   box-shadow: 0 2px 30px rgba(0, 0, 0, 0.2);
   height: 50px;
   padding: 0;
@@ -494,7 +444,8 @@ nav.main-nav {
 .navbar.main-nav ul.navbar-nav > li.nav-item.hide-text > a.nav-link .menu-link-text {
   border: 0;
   clip: rect(1px, 1px, 1px, 1px);
-  clip-path: inset(50%);
+  -webkit-clip-path: inset(50%);
+          clip-path: inset(50%);
   height: 1px;
   margin: -1px;
   overflow: hidden;
@@ -638,12 +589,7 @@ h1.entry-title {
 /* Loop styles for loopy content */
 .site-loop .card {
   border: none;
-  -webkit-border-radius: 0;
-  -moz-border-radius: 0;
-  -ms-border-radius: 0;
-  -o-border-radius: 0;
   border-radius: 0;
-  -webkit-box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.14);
   box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.14);
   margin-bottom: 1.4rem;
 }
@@ -652,26 +598,14 @@ h1.entry-title {
 }
 .site-loop .card .card-header {
   background: linear-gradient(60deg, #ab47bc, #8e24aa);
-  -webkit-border-radius: 0;
-  -moz-border-radius: 0;
-  -ms-border-radius: 0;
-  -o-border-radius: 0;
   border-radius: 0;
   color: #fff;
-  -webkit-border-radius: 0;
-  -moz-border-radius: 0;
-  -ms-border-radius: 0;
-  -o-border-radius: 0;
   border-radius: 0;
 }
 .site-loop .card .card-header h3, .site-loop .card .card-header h4, .site-loop .card .card-header h5 {
   margin-bottom: 0;
 }
 .site-loop .card .card-img-top, .site-loop .card .card-img {
-  -webkit-border-radius: 0;
-  -moz-border-radius: 0;
-  -ms-border-radius: 0;
-  -o-border-radius: 0;
   border-radius: 0;
 }
 .site-loop .card .card-body {
@@ -699,10 +633,6 @@ h1.entry-title {
 .site-loop .card .card-footer {
   background-color: #fff;
   border: 0;
-  -webkit-border-radius: 0;
-  -moz-border-radius: 0;
-  -ms-border-radius: 0;
-  -o-border-radius: 0;
   border-radius: 0;
   padding-top: 0;
 }
@@ -727,9 +657,6 @@ section {
 }
 .home-featured-posts .site-loop.home-featured-secondary-loop .card.col-sm-5 {
   background-repeat: no-repeat;
-  -webkit-background-size: cover;
-  -moz-background-size: cover;
-  -o-background-size: cover;
   background-size: cover;
   background-position: center top;
 }
@@ -846,7 +773,6 @@ img {
 
 .img-noborder {
   border: 0px !important;
-  -webkit-box-shadow: none !important;
   box-shadow: none !important;
   padding: 0px !important;
 }
@@ -941,14 +867,7 @@ ul.comment-list li .comment-author {
   line-height: 1.42857143;
   background-color: #fff;
   border: 1px solid #dedede;
-  -webkit-border-radius: 4px;
-  -moz-border-radius: 4px;
-  -ms-border-radius: 4px;
-  -o-border-radius: 4px;
   border-radius: 4px;
-  -webkit-transition: border 0.2s ease-in-out;
-  -moz-transition: border 0.2s ease-in-out;
-  -o-transition: border 0.2s ease-in-out;
   transition: border 0.2s ease-in-out;
   width: 128px;
 }
@@ -970,10 +889,6 @@ ul.comment-list li .comment-content {
   line-height: 1.42857143;
   background-color: #fff;
   border: 1px solid #dedede;
-  -webkit-border-radius: 4px;
-  -moz-border-radius: 4px;
-  -ms-border-radius: 4px;
-  -o-border-radius: 4px;
   border-radius: 4px;
 }
 ul.comment-list li .comment-content .comment-metadata {
@@ -1008,10 +923,6 @@ ul.comment-list li .comment-content .btn a, ul.comment-list li .comment-content 
   background-color: #f55a4e;
   border: 0;
   border-color: transparent;
-  -webkit-border-radius: 0;
-  -moz-border-radius: 0;
-  -ms-border-radius: 0;
-  -o-border-radius: 0;
   border-radius: 0;
   color: #fff;
 }
@@ -1082,5 +993,450 @@ ul.comment-list li .comment-content .btn a, ul.comment-list li .comment-content 
    Specific Media STYLES
    ========================================================================== */
 /* responsive styles */
+/* ==========================================================================
+   Old styles
+   ========================================================================== */
+/* lesbian styles */
+/* =Lesbians
+----------------------------------------------- */
+/*--------------------------------------------------------------
+## Bootstrapification
+--------------------------------------------------------------*/
+/* If using Jumbotron */
+.archive-subheader .jumbotron {
+  background: #d1548e;
+  background-size: contain;
+  color: #fff;
+  font-size: 1.125rem;
+  margin-bottom: 0;
+}
+
+/*--------------------------------------------------------------
+## Shows
+--------------------------------------------------------------*/
+h3.post-title.excerpt {
+  clear: none;
+  margin-top: 0;
+}
+
+.archive article {
+  clear: both;
+  padding: 10px 0px;
+}
+
+img.attachment-medium.size-medium.wp-post-image,
+img.attachment-character-img.size-character-img.wp-post-image {
+  float: left;
+  padding: 0 10px 10px;
+}
+
+ul.character-list {
+  list-style-type: none;
+}
+
+.shows-extras {
+  margin: 0 0 16px;
+}
+
+.shows-extras:after {
+  clear: both;
+  content: " ";
+  display: table;
+}
+
+.shows-extras h2 {
+  margin: 30px 0 20px 0;
+  padding-bottom: 20px;
+  text-transform: uppercase;
+}
+
+/* Trigger Warning */
+.callout svg {
+  width: 36px;
+  height: 36px;
+  float: left;
+  margin: 10px;
+}
+
+.callout-danger svg * {
+  fill: #c0392b;
+}
+
+.callout-info svg *,
+.callout-warning svg * {
+  fill: #f1c40f;
+}
+
+/* ratings icons */
+.ratings-icons {
+  text-align: center;
+  padding: 5px;
+}
+
+/* Show Sidebar - Network Info */
+aside li.network {
+  margin-bottom: 5px;
+  padding-bottom: 5px;
+  border: none;
+}
+
+aside ul.networks-data {
+  list-style: none;
+}
+
+/* Entry Meta */
+.entry-meta {
+  color: #222;
+  font-size: 13px;
+  font-size: 1.3rem;
+}
+
+.entry-meta a {
+  color: #222 !important;
+}
+
+.entry-meta a:hover {
+  color: #d1548e !important;
+}
+
+.content .entry-meta .entry-comments-link {
+  display: none;
+}
+
+ul.entry-meta {
+  list-style-type: none;
+  padding-bottom: 1em;
+}
+
+/* Show Tropes - Sidebar */
+aside ul.tropes-list {
+  list-style: none;
+}
+
+aside li.show.trope {
+  border: none;
+}
+
+.show.trope svg {
+  width: 20px;
+  height: 20px;
+  vertical-align: middle;
+  margin-right: 10px;
+}
+
+.show.trope a {
+  text-decoration: none;
+}
+
+.show.trope a.trope-link {
+  text-decoration: underline;
+}
+
+/* Table of Contents */
+section#toc li:nth-child(n+2):before {
+  content: " / ";
+}
+
+section#toc li {
+  border: none;
+  padding: 0px;
+  margin: 0px;
+  display: inline;
+}
+
+/* Characters */
+span.chartitle {
+  font-weight: bold;
+  min-height: 25px;
+}
+
+span.played-by {
+  padding-left: 20px;
+}
+
+/*--------------------------------------------------------------
+## Characters
+--------------------------------------------------------------*/
+.single-post_type_characters .entry-content ul > li {
+  list-style-type: none;
+}
+
+/* WP Sites Grid Column Archives */
+body.page-template-roletype article,
+body.page-template-newest.newest-characters article,
+.archive article.type-post_type_characters,
+.single-post_type_shows article.type-post_type_characters {
+  margin: 0px 5px 0px 0px;
+  width: 160px;
+  max-width: 160px;
+  display: inline-block;
+  vertical-align: top;
+}
+
+/*--------------------------------------------------------------
+# SVG
+--------------------------------------------------------------*/
+/*--------------------------------------------------------------
+## Headers
+--------------------------------------------------------------*/
+h1 svg *,
+h3 svg * {
+  fill: #fff;
+}
+
+/*--------------------------------------------------------------
+## Shortcodes
+--------------------------------------------------------------*/
+span.svg-shortcode svg {
+  width: 50px;
+  height: 50px;
+  margin: 0 5px 0 5px;
+}
+
+span.svg-shortcode a {
+  text-decoration: none;
+}
+
+span.svg-shortcode a svg {
+  fill: #d1548e;
+}
+
+span.svg-shortcode a:hover svg {
+  fill: #222;
+}
+
+/*--------------------------------------------------------------
+## Stars
+--------------------------------------------------------------*/
+.showlist-star.gold svg *,
+.show-star.gold svg * {
+  fill: #FFD700;
+}
+
+.showlist-star.gold i.fa,
+.show-star.gold i.fa {
+  color: #FFD700;
+}
+
+.showlist-star.silver svg *,
+.show-star.silver svg * {
+  fill: #C0C0C0;
+}
+
+.showlist-star.silver i.fa,
+.show-star.silver i.fa {
+  color: #C0C0C0;
+}
+
+.show-star svg {
+  width: 40px;
+  height: 40px;
+}
+
+.showlist-star svg {
+  width: 20px;
+  height: 20px;
+}
+
+/*--------------------------------------------------------------
+## Shows We Love
+--------------------------------------------------------------*/
+.show-we-love svg *,
+.show-we-love i.fa {
+  fill: #c0392b;
+}
+
+.show-we-love svg {
+  width: 40px;
+  height: 40px;
+}
+
+/*--------------------------------------------------------------
+## Ratings
+--------------------------------------------------------------*/
+.ratings-icons svg {
+  width: 30px;
+  height: 30px;
+}
+
+.ratings-icons .show-heart.positive svg {
+  fill: #c0392b;
+}
+
+.ratings-icons .show-heart.negative svg {
+  fill: #f3f3f3;
+}
+
+/*--------------------------------------------------------------
+## Worthit
+--------------------------------------------------------------*/
+.archive-worthit svg {
+  width: 30px;
+  height: 30px;
+  float: right;
+  padding: 4px;
+}
+
+.show-worthit svg {
+  vertical-align: middle;
+  margin-right: 10px;
+}
+
+.worthit {
+  font-size: 150%;
+  font-weight: 500;
+}
+
+.show-worthit svg {
+  width: 50px;
+  height: 50px;
+}
+
+.archive-worthit.meh svg *,
+.show-worthit.meh svg *,
+.worthit-Meh {
+  fill: #f1c40f;
+  color: #f1c40f;
+}
+
+.archive-worthit.yes svg *,
+.show-worthit.yes svg *,
+.worthit-Yes {
+  color: #5cb85c;
+  fill: #5cb85c;
+}
+
+.archive-worthit.no svg *,
+.show-worthit.no svg *,
+.worthit-No {
+  color: #c0392b;
+  fill: #c0392b;
+}
+
+/*--------------------------------------------------------------
+## Entry Meta
+--------------------------------------------------------------*/
+.entry-meta svg {
+  width: 16px;
+  height: 16px;
+}
+
+.entry-meta svg * {
+  fill: #222;
+}
+
+.entry-meta svg:hover * {
+  fill: #d1548e;
+}
+
+/*--------------------------------------------------------------
+## Characters
+--------------------------------------------------------------*/
+.char-grave svg {
+  width: 40px;
+  height: 40px;
+}
+
+.charlist-grave svg {
+  width: 25px;
+  height: 25px;
+  float: right;
+}
+
+.charlist-grave svg * {
+  fill: #222;
+}
+
+/*--------------------------------------------------------------
+# Taxonomies
+--------------------------------------------------------------*/
+.taxonomy-svg svg,
+.taxonomy-svg i.fa {
+  width: 100px;
+  height: 100px;
+  float: right;
+  margin: 5px;
+}
+
+/*--------------------------------------------------------------
+# Facet
+--------------------------------------------------------------*/
+div.facetwp-counts {
+  display: inline;
+}
+
+a.facetwp-page {
+  padding: 0px;
+  margin-right: 0px;
+}
+
+.facetwp-pager {
+  clear: both;
+}
+
+.facetwp-pager li.page-item.page-link.active {
+  z-index: 2;
+  color: #fff;
+  background-color: #d1548e;
+  border-color: #d1548e;
+}
+.facetwp-pager li.page-link {
+  color: #d1548e;
+}
+
+a.facetwp-page.active {
+  font-weight: normal;
+}
+
+.facetwp-template {
+  margin: 2em 0 2.5em;
+}
+
+.facetwp-template .card.post-type-shows {
+  margin-bottom: 1.4em;
+}
+.facetwp-template .col-sm-4,
+.facetwp-template .col-sm-3 {
+  margin-bottom: 1em;
+}
+.facetwp-template .card-footer {
+  background-color: #fff;
+  border: 0;
+  border-radius: 0;
+  padding-top: 0;
+}
+
+/*--------------------------------------------------------------
+# Statistics
+--------------------------------------------------------------*/
+canvas {
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+}
+
+.stats-columns .one-half,
+div#container.one-half {
+  width: 40%;
+}
+
+@media only screen and (max-width: 700px) {
+  .stats-columns .one-half,
+  div#container.one-half {
+    width: 100%;
+  }
+}
+div#statistics {
+  clear: both;
+}
+
+#statistics ul {
+  columns: 2;
+  -webkit-columns: 2;
+  -moz-columns: 2;
+  margin-bottom: 16px;
+  list-style: none;
+  break-inside: avoid;
+}
 
 /*# sourceMappingURL=style.css.map */

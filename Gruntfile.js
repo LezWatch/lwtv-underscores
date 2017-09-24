@@ -111,8 +111,8 @@ module.exports = function(grunt) {
 		'sass',
         'cssmin',
 		'postcss',
-		'browserSync',
-        'watch',
+		//'browserSync',
+        //'watch',
     ]);
 
 };

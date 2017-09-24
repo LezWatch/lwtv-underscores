@@ -7,7 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Yikes Inc.",
-  "license": "GPLv2",
+  "license": "GPL-2.0",
+  "repository": "https://github.com/lezwatch/lwtv-underscores/",
   "dependencies": {
     "grunt": "^0.4.5"
   },
