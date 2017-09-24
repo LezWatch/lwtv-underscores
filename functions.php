@@ -244,11 +244,31 @@ function yikes_starter_widgets_init() {
 		'before_title' => '<h2 class="widget-title">',
 		'after_title' => '</h2>',
 	) );
-	// Primary Widget
+	// Sub Page Sidebar
 	register_sidebar( array(
 		'name' => __( 'Sub Page Sidebar', 'yikes_starter' ),
 		'id' => 'sidebar-2',
 		'description' => 'The sidebar for sub pages',
+		'before_widget' => '<aside id="%1$s" class="widget %2$s">',
+		'after_widget' => '</aside>',
+		'before_title' => '<h2 class="widget-title">',
+		'after_title' => '</h2>',
+	) );
+	// Character Archives Sidebar
+	register_sidebar( array(
+		'name' => __( 'Character Archives Sidebar', 'yikes_starter' ),
+		'id' => 'sidebar-3',
+		'description' => 'The sidebar for character archive pages',
+		'before_widget' => '<aside id="%1$s" class="widget %2$s">',
+		'after_widget' => '</aside>',
+		'before_title' => '<h2 class="widget-title">',
+		'after_title' => '</h2>',
+	) );
+	// Show Archives Sidebar
+	register_sidebar( array(
+		'name' => __( 'Show Archives Sidebar', 'yikes_starter' ),
+		'id' => 'sidebar-4',
+		'description' => 'The sidebar for show archive pages',
 		'before_widget' => '<aside id="%1$s" class="widget %2$s">',
 		'after_widget' => '</aside>',
 		'before_title' => '<h2 class="widget-title">',
