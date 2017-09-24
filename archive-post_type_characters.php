@@ -67,7 +67,7 @@ get_header(); ?>
 				</div><!-- #primary -->
 			</div><!-- .col-sm-9 -->
 	
-			<div class="col-sm-3 site-sidebar site-loop">
+			<div class="col-sm-3 site-sidebar showchars-sidebar site-loop">
 
 				<?php get_sidebar(); ?>
 
