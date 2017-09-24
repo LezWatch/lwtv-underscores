@@ -150,9 +150,11 @@ get_header(); ?>
 						while ( $lovedpostloop->have_posts() ) : $lovedpostloop->the_post();
 						?>
 							<div class="card">
-								<img class="card-img-top" src="<?php the_post_thumbnail_url( 'medium' ); ?>">
+							   <a href="<?php the_permalink(); ?>" title="<?php the_title_attribute(); ?>" >
+							  	 <?php the_post_thumbnail( 'postloop-img', array( 'class' => 'card-img-top' ) ); ?>
+							   </a>
 	            				<div class="card-body">
-								<h4 class="card-title"><?php the_title(); ?></h4>
+									<h4 class="card-title"><?php the_title(); ?></h4>
 									<div class="card-meta">
 										<?php 
 											$stations = get_the_terms( get_the_ID(), 'lez_stations' );
