@@ -36,41 +36,42 @@ get_header(); ?>
 <div id="main" class="site-main" role="main">
 	<div class="container">
 		<div class="row">
-			<div class="col-sm-8">
+			<div class="col-sm-9">
 				<div id="primary" class="content-area">
 					<div id="content" class="site-content clearfix facetwp-template" role="main">
-						<?php
-						if ( have_posts() ) : ?>
-							<div class="container">
-								<div class="row">
+						<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
+							<div class="entry-content">
+			        			<div class="row site-loop main-posts-loop equal-height">
 									<?php
-									/* Start the Loop */
-									while ( have_posts() ) : the_post();
-										?><div class="col-sm-4"><?php
-										get_template_part( 'template-parts/excerpt', 'post_type_characters' );
-										//get_template_part( 'template-parts/content', 'characters' );
-										?></div><?php
-									endwhile; ?>
-								</div>
-							</div>
-							<?php
-							echo facetwp_display( 'pager' );
-			
-						else :
-							get_template_part( 'template-parts/content', 'none' );
-				
-						endif; ?>
+									if ( have_posts() ) : ?>
+										<?php
+										/* Start the Loop */
+										while ( have_posts() ) : the_post();
+											?><div class="col-sm-4"><?php
+											get_template_part( 'template-parts/excerpt', 'post_type_characters' );
+											//get_template_part( 'template-parts/content', 'characters' );
+											?></div><?php
+										endwhile; ?>
+								</div><!-- .row .site-loop -->
 
+								<?php
+									echo facetwp_display( 'pager' );
+					
+								else :
+									get_template_part( 'template-parts/content', 'none' );
+						
+								endif; ?>						
+							</div><!-- .entry-content -->
+						</article><!-- #post-## -->
 					</div><!-- #content -->
 				</div><!-- #primary -->
+			</div><!-- .col-sm-9 -->
 	
-			</div><!-- .col-sm-8 -->
-	
-			<div class="col-sm-4">
+			<div class="col-sm-3">
 
 				<?php get_sidebar(); ?>
 
-			</div><!-- .col-sm-4 -->
+			</div><!-- .col-sm-3 -->
 
 		</div><!-- .row -->
 	</div><!-- .container -->
