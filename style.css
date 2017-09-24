@@ -812,6 +812,11 @@ footer.entry-meta .fa {
 
 /* =Custom Post Types
 ----------------------------------------------- */
+/* Characters */
+.facetwp-counts {
+  display: inline;
+}
+
 /* =Media
 ----------------------------------------------- */
 img {

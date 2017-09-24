@@ -61,10 +61,13 @@ get_header(); ?>
 							<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 								<header class="entry-header">
 									<?php
-										the_archive_title( '<h1 class="page-title">' . $symbolicon, '<br />Sorted By ' . $sort . ' (' . $count_posts . ')</h1>' );					
+										the_archive_title( '<h1 class="entry-title"><i class="fa fa-users" aria-hidden="true"></i> ', '</h1>' );
+									?>
+									<?php
+										echo '<h2>Sorted By ' . $sort . ' (' . $count_posts . ')</h2>' ;					
 										$descriptions = get_option( 'wpseo_titles' );
 										$description  = $descriptions['metadesc-ptarchive-post_type_characters'];
-										echo '<div class="archive-description">' . $description . '</div>';
+										echo '<div class="taxonomy-description">' . $description . '</div>';
 										echo $selections;
 									?>
 								</header><!-- .entry-header -->
@@ -75,7 +78,7 @@ get_header(); ?>
 										<?php while ( have_posts() ) : the_post(); ?>
 
 											<div class="col-sm-4">
-												<?php get_template_part( 'template-parts/content', 'posts' ); ?>
+												<?php get_template_part( 'template-parts/content', 'characters' ); ?>
 											</div>
 
 										<?php endwhile; ?>
