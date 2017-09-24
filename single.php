@@ -13,20 +13,26 @@ get_header(); ?>
 				<div id="primary" class="content-area">
 					<div id="content" class="site-content clearfix" role="main">
 
-						<?php while ( have_posts() ) : the_post(); ?>
+						<?php
+							while ( have_posts() ) : the_post(); 
+								
+								// Check for custom post types
+								if ( 'post' === get_post_type() ) {
+									get_template_part( 'template-parts/content', 'single' ); 
+								} else {
+									get_template_part( 'template-parts/content', get_post_type() );
+								}
 
-							<?php get_template_part( 'template-parts/content', 'single' ); ?>
-
-							<?php
 								// If comments are open or we have at least one comment, load up the comment template
 								if ( comments_open() || '0' !== get_comments_number() ) {
 									comments_template();
 								}
-							?>
+								
+								// Only show post nav on posts (to not break facet)
+								if ( 'post' === get_post_type() ) yikes_starter_post_nav();
 
-							<?php yikes_starter_post_nav(); ?>
-
-						<?php endwhile; // end of the loop. ?>
+							endwhile; // end of the loop. 
+						?>
 
 					</div><!-- #content -->
 				</div><!-- #primary -->
@@ -41,4 +47,4 @@ get_header(); ?>
 	</div><!-- .container -->
 </div><!-- #main -->
 
-<?php get_footer(); ?>
+<?php get_footer();

@@ -15,7 +15,7 @@ get_header(); ?>
 
 						<?php if ( have_posts() ) : ?>
 
-							<header class="page-header">
+							<header class="archive-header card">
 								<h1 class="page-title"><?php printf( esc_attr__( 'Search Results for: %s', 'yikes_starter' ), '<span>' . get_search_query() . '</span>' ); ?></h1>
 							</header>
 
@@ -25,12 +25,12 @@ get_header(); ?>
 
 							<?php endwhile; ?>
 
-							<!-- Alt Bootstrap pagination is <?php page_navi(); ?> -->
+							<!-- Alt Bootstrap pagination is page_navi() -->
 							<?php yikes_starter_paging_nav(); ?>
 
 						<?php else : ?>
 
-							<?php get_template_part( 'content', 'none' ); ?>
+							<?php get_template_part( 'template-parts/content', 'none' ); ?>
 
 						<?php endif; ?>
 					</div><!-- #content -->
@@ -46,4 +46,4 @@ get_header(); ?>
 	</div><!-- .container -->
 </div><!-- #main -->
 
-<?php get_footer(); ?>
+<?php get_footer();

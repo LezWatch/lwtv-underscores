@@ -25,11 +25,13 @@ get_header(); ?>
       				<div class="site-loop home-featured-post-loop">
 	        			<h2 class="posts-title">New Posts <i class="fa fa-newspaper-o" aria-hidden="true"></i></h2>
 
-						<?php $lastpostloop = new WP_Query( array(
+						<?php 
+						$lastpostloop = new WP_Query( array(
 							'posts_per_page' => '1', 
 							'orderby' => 'date', 
 							'order' => 'DESC'
-						) ); ?>
+						) ); 
+						?>
 						 
 						<!-- // The Loop -->
 						<?php while ($lastpostloop->have_posts()) : $lastpostloop->the_post(); $already_displayed_posts[]=get_the_ID(); ?>
@@ -64,12 +66,14 @@ get_header(); ?>
 
 					<div class="site-loop home-featured-secondary-loop">
 
-						<?php $newpostsloop = new WP_Query( array(
+						<?php 
+						$newpostsloop = new WP_Query( array(
 							'posts_per_page' => '5',
-							'offset' => '1',
-							'orderby' => 'date', 
-							'order' => 'DESC'
-						) ); ?>
+							'offset'         => '1',
+							'orderby'        => 'date', 
+							'order'          => 'DESC'
+						) ); 
+						?>
 						 
 						<!-- // The Loop -->
 						<?php while ($newpostsloop->have_posts()) : $newpostsloop->the_post(); $already_displayed_posts[]=get_the_ID(); ?>
@@ -120,63 +124,63 @@ get_header(); ?>
 	<section class="home-featured-shows">
 		<div class="container site-loop">
     		<div class="row">
-      			<div class="col">
+				<div class="col">
         			<h2>Shows We Love <i class="fa fa-heart" aria-hidden="true"></i></h2>
-      			</div>
+				</div>
     		</div>
     		<div class="row">
-      			<div class="col">
-        			<div class="card-deck">
-          				<div class="card">
-          					<img class="card-img-top" src="<?php echo get_template_directory_uri(); ?>/images/sense8-pic.jpg">
-            				<div class="card-body">
-              					<h4 class="card-title">Sense8</h4>
-								<div class="card-meta">
-									<strong>Airs on:</strong> Netflix<br />
-									<strong>Airdates:</strong> 2015 - Current
-								</div>
-              					<div class="card-text">
-                					A wonderful science fiction drama by siblings Lilly & Lana Wachowski and J. Michael Straczynski revolving around eight strangers from different parts of the world who suddenly become mentally and emotionally linked.
-              					</div>
-            				</div>
-            				<div class="card-footer">
-            					<a href="#" class="btn btn-outline-primary">Go to Show Profile</a>
-            				</div>
-          				</div>
+				<div class="col">
 
-						<div class="card"> 
-							<img class="card-img-top" src="<?php echo get_template_directory_uri(); ?>/images/odat.jpg">
-							<div class="card-body">
-								<h4 class="card-title">One Day at Time</h4>
-								<div class="card-meta">
-									<strong>Airs on:</strong> Netflix<br />
-									<strong>Airdates:</strong> 2017 - current
-								</div>
-								<div class="card-text">
-									This is it. This is it. This is life, the one you get. So go and have a ball.
-								</div>
+					<div class="card-deck">
+						<?php
+							
+						// Collect 10 loved posts (max) and then pick three
+						$lovedpostloop = new WP_Query( array(
+							'post_type'         => 'post_type_shows',
+							'posts_per_page'    => '10',
+							'post_status'       => array( 'publish' ),
+							'no_found_rows'     => true,
+							'_loved_shuffle'    => 3,
+							'meta_query'        => array( array(
+								'key'     => 'lezshows_worthit_show_we_love',
+								'value'   => 'on',
+								'compare' => '=',
+							),),
+						) ); 
+						
+						while ( $lovedpostloop->have_posts() ) : $lovedpostloop->the_post();
+						?>
+							<div class="card">
+								<img class="card-img-top" src="<?php the_post_thumbnail_url( 'medium' ); ?>">
+	            				<div class="card-body">
+								<h4 class="card-title"><?php the_title(); ?></h4>
+									<div class="card-meta">
+										<?php 
+											$stations = get_the_terms( get_the_ID(), 'lez_stations' );
+											if ( $stations && ! is_wp_error( $stations ) ) {
+												echo get_the_term_list( get_the_ID(), 'lez_stations', '<strong>Network:</strong> ', ', ' ) .'<br />';
+											}
+											$airdates = get_post_meta( get_the_ID(), 'lezshows_airdates', true );
+											if ( $airdates ) {
+												echo '<strong>Airdates:</strong> '. $airdates['start'] .' - '. $airdates['finish'] .'<br />';
+											}
+										?>
+									</div>
+									<div class="card-text">
+										<?php the_excerpt(); ?>
+									</div>
+	            				</div>
+	            				<div class="card-footer">
+	            					<a href="<?php the_permalink(); ?>" class="btn btn-sm btn-outline-primary">Go to Show Profile</a>
+	            				</div>
 							</div>
-							<div class="card-footer">
-								<a href="#" class="btn btn-outline-primary">Go to Show Profile</a>
-							</div>
-						</div>
 
-	          			<div class="card"> 
-	          				<img class="card-img-top" src="<?php echo get_template_directory_uri(); ?>/images/wayhaught.jpg">
-	            			<div class="card-body">
-	              				<h4 class="card-title">Wynonna Earp</h4>
-	              				<div class="card-meta">
-					                <strong>Airs on:</strong> Syfy<br />
-					                <strong>Airdates:</strong> 2016 - current
-	              				</div>
-	              				<div class="card-text">
-	              					When a badass troublemaker turns twenty-seven, she becomes the hero we all need.
-	              				</div>
-	            			</div>
-	            			<div class="card-footer">
-	            				<a href="#" class="btn btn-outline-primary">Go to Show Profile</a>
-	          				</div>
-	        			</div>
+						<?php
+						endwhile;
+						wp_reset_postdata();
+						?>
+					<!-- End Loop -->
+
 	        		</div><!-- .card-deck -->
       			</div><!-- .col -->
     		</div><!-- .row -->
@@ -222,4 +226,4 @@ get_header(); ?>
 
 </div><!-- #main -->
 
-<?php get_footer(); ?>
+<?php get_footer();

@@ -4,85 +4,70 @@
  *
  * @link https://codex.wordpress.org/Template_Hierarchy
  *
- * @package LezWatch_TV
+ * @package LezWatchTV
  */
 
-$symbolicon = '';
-if ( defined( 'LP_SYMBOLICONS_PATH' ) ) {
-	$get_svg = wp_remote_get( LP_SYMBOLICONS_PATH . 'window.svg' );
-	$icon    = $get_svg['body'];
-
-	$symbolicon = '<span role="img" aria-label="post_type_shows" title="Shows" class="taxonomy-svg shows">' . $icon .'</span>';
-}
-
+$icon        = lwtv_yikes_symbolicons( 'window.svg', 'fa-video-camera' );
 $count_posts = facetwp_display( 'counts' );
 $selections  = facetwp_display( 'selections' );
-
-// I wish this wasn't hard coded, but it's very weird and I was very tired.
-$fwp_sort    = ( isset( $_GET['fwp_sort'] ) )? $_GET['fwp_sort'] : '';
-switch ( $fwp_sort ) {
-	case 'most_queers':
-		$sort = 'Number of Characters (Descending)';
-		break;
-	case 'least_queers':
-		$sort = 'Number of Characters (Ascending)';
-		break;
-	case 'most_dead':
-		$sort = 'Number of Dead Characters (Descending)';
-		break;
-	case 'least_dead':
-		$sort = 'Number of Dead Characters (Ascending)';
-		break;
-	case 'date_desc':
-		$sort = 'Date (Newest)';
-		break;
-	case 'date_asc':
-		$sort = 'Date (Oldest)';
-		break;
-	case 'title_desc':
-		$sort = 'Name (Z-A)';
-		break;
-	case 'title_asc':
-	default:
-		$sort = 'Name (A-Z)';
-}
+$title       = '<span role="img" aria-label="post_type_shows" title="Shows" class="taxonomy-svg shows">' . $icon . '</span>';
+$sort        = lwtv_yikes_facetwp_sortby( ( isset( $_GET['fwp_sort'] ) )? $_GET['fwp_sort'] : '' );
 
 get_header(); ?>
 
-	<div id="primary" class="content-area">
-		<main id="main" class="site-main" role="main"><div class="facetwp-template">
-		<?php
-		if ( have_posts() ) : ?>
-
-			<header class="page-header">
+<div class="archive-subheader">
+	<div class="jumbotron">
+		<div class="container">
+			<header class="archive-header">
 				<?php
-					the_archive_title( '<h1 class="page-title">' . $symbolicon, '<br />Sorted By ' . $sort . ' (' . $count_posts . ')</h1>' );
+					the_archive_title( '<h1 class="page-title">' . $title, ' (' . $count_posts . '<span class="facetwp-count"></span>)</h1>' );
 					$descriptions = get_option( 'wpseo_titles' );
 					$description  = $descriptions['metadesc-ptarchive-post_type_shows'];
-					echo '<div class="archive-description">' . $description . '</div>';
+					echo '<div class="archive-description">' . $description . '<br />Sorted by ' . $sort . '.</div>';
 					echo $selections;
 				?>
-			</header><!-- .page-header -->
+			</header><!-- .archive-header -->
+		</div><!-- .container -->
+	</div><!-- /.jumbotron -->
+</div>
 
 
-			<?php
-			/* Start the Loop */
-			while ( have_posts() ) : the_post();
+<div id="main" class="site-main" role="main">
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-8">
+				<div id="primary" class="content-area">
+					<div id="content" class="site-content clearfix" role="main"><div class="facetwp-template">
+						<?php
+						if ( have_posts() ) : ?>
 
-				get_template_part( 'template-parts/archive/'.get_post_type() );
+							<?php
+							/* Start the Loop */
+							while ( have_posts() ) : the_post();
+								get_template_part( 'template-parts/excerpt', 'post_type_shows' );
+				
+							endwhile;
+				
+							echo facetwp_display( 'pager' );
+				
+						else :
+							get_template_part( 'template-parts/content', 'none' );
+				
+						endif; ?>
 
-			endwhile;
+					</div></div><!-- #content -->
+				</div><!-- #primary -->
+	
+			</div><!-- .col-sm-8 -->
+	
+			<div class="col-sm-4">
 
-			echo facetwp_display( 'pager' );
+				<?php get_sidebar(); ?>
 
-		else :
-			get_template_part( 'template-parts/content/none' );
+			</div><!-- .col-sm-4 -->
 
-		endif; ?>
+		</div><!-- .row -->
+	</div><!-- .container -->
+</div><!-- #main -->
 
-		</div></main><!-- #main -->
-	</div><!-- #primary -->
-
-<?php
-get_sidebar();
-get_footer();
+<?php get_footer();

@@ -113,6 +113,9 @@ function yikes_starter_entry_footer() {
 		echo '</span>';
 	}
 
+	/* This forces Jetpack to display sharing links where we want them. */
+	lwtv_underscore_jetpack_post_meta();
+
 	edit_post_link(
 		sprintf(
 			/* translators: %s: Name of current post */
