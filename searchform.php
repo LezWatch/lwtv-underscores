@@ -36,8 +36,8 @@
 
 			</div>
 		</form>
-	</div>
-</div>
+	</div><!-- .card-body -->
+</div><!-- .card -->
 
 <script>
 	function searchCPT( custom_post_type, display_name ) {
