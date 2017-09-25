@@ -126,10 +126,10 @@ function lwtv_underscore_jetpack_post_meta( ) {
  * Everything BUT regular posts go alphabetical
  */
 function lwtv_underscore_archive_sort_order( $query ) {
-    if ( ( $query->is_main_query() || is_page() ) && !is_admin() ) {
+    if ( ( $query->is_main_query() || is_page( 'role' ) ) && !is_admin() ) {
 	    $posttypes  = array( 'post_type_characters', 'post_type_shows' );
 	    $taxonomies = array( 'lez_cliches', 'lez_gender', 'lez_sexuality', 'lez_tropes', 'lez_country', 'lez_stations', 'lez_formats', 'lez_genres' );
-		if ( is_post_type_archive( $posttypes ) || is_tax( $taxonomies ) || is_page() ) {
+		if ( is_post_type_archive( $posttypes ) || is_tax( $taxonomies ) || is_page( 'role' ) ) {
 	        $query->set( 'order', 'ASC' );
 	        $query->set( 'orderby', 'title' );
 		}
@@ -143,10 +143,10 @@ add_action( 'pre_get_posts', 'lwtv_underscore_archive_sort_order' );
  * Change posts-per-page for custom post type archives
  */
 function lwtv_yikes_archive_query( $query ) {
-	if ( ( ( $query->is_archive() && $query->is_main_query() ) || is_page() ) && !is_admin() ) {
+	if ( ( ( $query->is_archive() && $query->is_main_query() ) || is_page( 'role' ) ) && !is_admin() ) {
 		// Character archive Pages get 24 per page vs the regular 10
 		$taxonomies = array( 'lez_cliches', 'lez_gender', 'lez_sexuality' );
-		if ( is_post_type_archive( 'post_type_characters' ) || is_tax( $taxonomies ) || is_page() ) {
+		if ( is_post_type_archive( 'post_type_characters' ) || is_tax( $taxonomies ) || is_page( 'role' ) ) {
 			$query->set( 'posts_per_page', 24 );
 		}  
     }
