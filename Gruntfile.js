@@ -67,7 +67,7 @@ module.exports = function(grunt) {
 			},
 		},
 		
-		// Borwser Sync
+		// Browser Sync
 		/* Optional -- http://www.browsersync.io/docs/grunt/ */
 		browserSync: {
 			bsFiles: {
@@ -111,8 +111,8 @@ module.exports = function(grunt) {
 		'sass',
         'cssmin',
 		'postcss',
-		//'browserSync',
-        //'watch',
+		'browserSync',
+        'watch',
     ]);
 
 };

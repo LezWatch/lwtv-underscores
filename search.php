@@ -6,24 +6,37 @@
  */
 get_header(); ?>
 
+<div class="archive-subheader">
+	<div class="jumbotron">
+		<div class="container">
+			<header class="archive-header">
+				<h1 class="page-title">
+					<?php printf( esc_attr__( 'Search Results for: %s', 'yikes_starter' ), '<span>' . get_search_query() . '</span>' ); ?>
+				</h1>
+			</header><!-- .archive-header -->
+		</div><!-- .container -->
+	</div><!-- /.jumbotron -->
+</div>
+
 <div id="main" class="site-main" role="main">
 	<div class="container">
 		<div class="row">
-			<div class="col-sm-8">
+			<div class="col-sm-9">
 				<div id="primary" class="content-area">
 					<div id="content" class="site-content clearfix" role="main">
 
 						<?php if ( have_posts() ) : ?>
 
-							<header class="archive-header">
-								<h1 class="page-title"><?php printf( esc_attr__( 'Search Results for: %s', 'yikes_starter' ), '<span>' . get_search_query() . '</span>' ); ?></h1>
-							</header>
+		        			<div class="row site-loop main-posts-loop equal-height">
 
-							<?php while ( have_posts() ) : the_post(); ?>
+								<?php while ( have_posts() ) : the_post(); ?>
 
-								<?php get_template_part( 'template-parts/content', 'search' ); ?>
+									<div class="col-sm-4">
+										<?php get_template_part( 'template-parts/content', 'search' ); ?>
+									</div>
 
-							<?php endwhile; ?>
+								<?php endwhile; ?>
+							</div>
 
 							<!-- Alt Bootstrap pagination is page_navi() -->
 							<?php yikes_starter_paging_nav(); ?>
@@ -35,13 +48,13 @@ get_header(); ?>
 						<?php endif; ?>
 					</div><!-- #content -->
 				</div><!-- #primary -->
-			</div><!-- .col-sm-8 -->
+			</div><!-- .col-sm-9 -->
 
-			<div class="col-sm-4 site-sidebar site-loop">
+			<div class="col-sm-3 site-sidebar showchars-sidebar site-loop">
 
 				<?php get_sidebar(); ?>
 
-			</div><!-- .col-sm-4 -->
+			</div><!-- .col-sm-3 -->
 		</div><!-- .row -->
 	</div><!-- .container -->
 </div><!-- #main -->
