@@ -7,10 +7,11 @@ global $post;
 $char_id = $post->ID;
 ?>
 
-<section id="search" class="widget widget_search"><div class="widget-wrap">
-	<h4 class="widget-title widgettitle">Search</h4>
-	<?php get_search_form(); ?>
-</div></section>
+<section id="search" class="widget widget_search">
+	<div class="widget-wrap">
+		<?php get_search_form(); ?>
+	</div>
+</section>
 
 <section id="amazon" class="widget widget_text"><div class="widget-wrap">
 	<?php echo LWTV_Amazon::show_amazon( $char_id ); ?>

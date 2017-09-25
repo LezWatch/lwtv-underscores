@@ -10,14 +10,6 @@
  
 /** THE GENERAL SECTION **/
 
-/*
- * Custom Image Sizes
- *
- * character-img - used on show and character pages
- * show-img - used as header image for shows
- */
-add_image_size( 'character-img', 225, 300, true );
-add_image_size( 'show-img', 960, 400, true );
 
 /**
  * Loved Shows Shuffle

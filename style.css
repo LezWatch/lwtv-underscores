@@ -634,6 +634,10 @@ h1.entry-title {
   margin-top: 0.6rem;
 }
 
+.archive-description a, .archive-description a:visited {
+  color: #fff;
+}
+
 /* Loop styles for loopy content */
 .site-loop .card {
   border: none;

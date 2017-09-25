@@ -118,30 +118,18 @@ function yks_the_custom_logo() {
 
 /************* Images *************/
 
-/*  Custom Thumbnail sizes */
+/*
+ * Custom Image Sizes
+ *
+ * character-img - used on show and character pages
+ * show-img - used as header image for shows
+ */
+add_image_size( 'character-img', 225, 300, true );
+add_image_size( 'show-img', 960, 400, true );
 add_image_size( 'postloop-img', 525, 300, true ); // hard crop mode
 add_image_size( 'widget-img', 350, 320, array( 'center', 'top' ) ); // hard crop mode
-// add_image_size( 'featured-img', 400, 400 ); // soft proportional crop mode
 
-/*
- Ability to display featured image captions */
-/* <?php echo yikes_post_thumbnail_caption(); ?> */
 
-function yikes_post_thumbnail_caption() {
-	global $post;
-	// Get the thumbnail ID for the given post
-	$thumbnail_id = get_post_thumbnail_id( $post->ID );
-	// Get the attachment for this post
-	$thumbnail_image = get_posts( array(
-		'p' => $thumbnail_id,
-		'post_type' => 'attachment',
-	) );
-	// If the thumbnail image exists
-	if ( $thumbnail_image && isset( $thumbnail_image[0] ) ) {
-		$caption = $thumbnail_image[0]->post_excerpt;
-	}
-	return $caption;
-}
 
 /************* Comments *************/
 // Comments Walker
