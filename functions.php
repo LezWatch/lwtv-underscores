@@ -126,11 +126,9 @@ function yks_the_custom_logo() {
  * character-img - used on show and character pages
  * show-img - used as header image for shows
  */
-add_image_size( 'character-img', 225, 300, true );
+add_image_size( 'character-img', 350, 412, true );
 add_image_size( 'show-img', 960, 400, true );
 add_image_size( 'postloop-img', 525, 300, true ); // hard crop mode
-add_image_size( 'widget-img', 350, 320, array( 'center', 'top' ) ); // hard crop mode
-
 
 
 /************* Comments *************/

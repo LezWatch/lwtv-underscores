@@ -26,7 +26,7 @@ $alttext     = get_the_title( $the_ID ) . ' - ' . wp_strip_all_tags( $the_conten
 		<?php if ( has_post_thumbnail( $the_ID ) ) : ?>
 			<div class="character-image-wrapper">
 			   <a href="<?php the_permalink( $the_ID ); ?>" title="<?php the_title_attribute( $the_ID ); ?>" >
-			  	 <?php echo get_the_post_thumbnail( $the_ID, 'widget-img', array( 'class' => 'card-img-top' , 'alt' => $alttext, 'title' => $alttext ) ); ?>
+			  	 <?php echo get_the_post_thumbnail( $the_ID, 'character-img', array( 'class' => 'card-img-top' , 'alt' => $alttext, 'title' => $alttext ) ); ?>
 			   </a>
 			</div>
 		<?php endif; ?>
