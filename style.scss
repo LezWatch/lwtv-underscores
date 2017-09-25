@@ -703,11 +703,9 @@ embed, iframe, object {
         padding: .75rem 1.25rem;
 
         .facetwp-facet {
-          border-bottom: 1px solid $lwtv-bordergrey;
           margin-bottom: 2rem;
 
           &:last-of-type {
-            border-bottom: 0;
             margin-bottom: 0;
           }
         }

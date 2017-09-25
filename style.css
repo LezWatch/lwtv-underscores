@@ -1055,11 +1055,9 @@ ul.comment-list li .comment-content .btn a, ul.comment-list li .comment-content 
   padding: .75rem 1.25rem;
 }
 .site-sidebar.showchars-sidebar .card-filter .card-body .widget .facetwp-facet {
-  border-bottom: 1px solid rgba(0, 0, 0, 0.125);
   margin-bottom: 2rem;
 }
 .site-sidebar.showchars-sidebar .card-filter .card-body .widget .facetwp-facet:last-of-type {
-  border-bottom: 0;
   margin-bottom: 0;
 }
 .site-sidebar.showchars-sidebar .card-filter .card-body .widget:last-of-type {
