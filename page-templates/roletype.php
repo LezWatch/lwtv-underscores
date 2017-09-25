@@ -71,8 +71,11 @@ get_header(); ?>
 									<?php
 										if ( $query->have_posts() ):
 										while ( $query->have_posts() ): $query->the_post();
-											get_template_part( 'template-parts/excerpt', 'post_type_characters' );
-										endwhile; ?>
+											?><div class="col-sm-4"><?php
+												get_template_part( 'template-parts/excerpt', 'post_type_characters' );
+											?></div><?php
+										endwhile; 
+									?>
 								</div>
 
 								<?php

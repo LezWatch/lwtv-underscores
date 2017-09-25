@@ -49,7 +49,6 @@ get_header(); ?>
 										while ( have_posts() ) : the_post();
 											?><div class="col-sm-4"><?php
 											get_template_part( 'template-parts/excerpt', 'post_type_characters' );
-											//get_template_part( 'template-parts/content', 'characters' );
 											?></div><?php
 										endwhile; ?>
 								</div><!-- .row .site-loop -->
