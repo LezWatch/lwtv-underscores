@@ -22,19 +22,16 @@ h3.post-title.excerpt {
     margin-top: 0;
 }
 
-.archive article {
-	clear: both;
-	padding: 10px 0px;
-}
-
 img.attachment-medium.size-medium.wp-post-image,
 img.attachment-character-img.size-character-img.wp-post-image {
     float: left;
     padding: 0 10px 10px;
 }
+
 ul.character-list {
     list-style-type: none;
 }
+
 .shows-extras {
     margin: 0 0 16px;
 }
@@ -81,20 +78,24 @@ aside ul.networks-data {
 }
 
 /* Entry Meta */
+
 .entry-meta {
-	color: $darkgrey;
-	font-size: 13px;
-	font-size: 1.3rem;
+    color: $darkgrey;
+    @include font-13;
+
+    a {
+    	color: $darkgrey!important;
+
+        &:hover {
+        color: $lwtv-pink!important;
+    }
 }
-.entry-meta a {
-	color: $darkgrey!important;
-}
-.entry-meta a:hover {
-	color: $lwtv-pink!important;
-}
+
+
 .content .entry-meta .entry-comments-link {
 	display: none;
 }
+
 ul.entry-meta {
 	list-style-type: none;
 	padding-bottom: 1em;

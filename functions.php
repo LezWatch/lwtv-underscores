@@ -103,6 +103,8 @@ add_filter( 'excerpt_more', 'yks_excerpt_more' );
 require_once 'inc/widgets/social-nav-widget.php';
 require_once 'inc/widgets/character-widget.php';
 require_once 'inc/widgets/show-widget.php';
+require_once 'inc/widgets/filter-widget1.php';
+require_once 'inc/widgets/filter-widget2.php';
 
 
 /************* Theme Logo *************/
