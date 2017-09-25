@@ -304,9 +304,9 @@ function yikes_starter_widgets_init() {
 	) );
 	// Sidebar for Character Archives
 	register_sidebar( array(
-		'name'          => esc_html__( 'Sidebar - Character Archives', 'lwtv_underscore' ),
+		'name'          => esc_html__( 'Sidebar - Character Archives', 'lwtv_yikes' ),
 		'id'            => 'archive-character-sidebar',
-		'description'   => esc_html__( 'This is the sidebar for character archives.', 'lwtv_underscore' ),
+		'description'   => esc_html__( 'This is the sidebar for character archives.', 'lwtv_yikes' ),
 		'before_widget' => '<section id="%1$s" class="widget %2$s">',
 		'after_widget'  => '</section>',
 		'before_title'  => '<h2 class="widget-title">',
@@ -314,9 +314,9 @@ function yikes_starter_widgets_init() {
 	) );
 	// Sidebar for Show Archives
 	register_sidebar( array(
-		'name'          => esc_html__( 'Sidebar - Show Archives', 'lwtv_underscore' ),
+		'name'          => esc_html__( 'Sidebar - Show Archives', 'lwtv_yikes' ),
 		'id'            => 'archive-show-sidebar',
-		'description'   => esc_html__( 'This is the sidebar for show archives.', 'lwtv_underscore' ),
+		'description'   => esc_html__( 'This is the sidebar for show archives.', 'lwtv_yikes' ),
 		'before_widget' => '<section id="%1$s" class="widget %2$s">',
 		'after_widget'  => '</section>',
 		'before_title'  => '<h2 class="widget-title">',

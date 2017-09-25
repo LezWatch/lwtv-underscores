@@ -118,7 +118,7 @@ if ( $sexuality_terms && ! is_wp_error( $sexuality_terms ) ) {
 
 		<?php			
 			wp_link_pages( array(
-				'before' => '<div class="page-links">' . esc_html__( 'Pages:', 'lwtv_underscore' ),
+				'before' => '<div class="page-links">' . esc_html__( 'Pages:', 'lwtv_yikes' ),
 				'after'  => '</div>',
 			) );
 		?>

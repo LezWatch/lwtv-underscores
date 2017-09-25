@@ -32,11 +32,11 @@ add_filter( 'the_posts', function( $posts, \WP_Query $query ) {
  * Remove comments from attachment pages. This is for SEO and spam
  * purposes. Why do spammers spam?
  */
-function lwtv_underscore_filter_media_comment_status( $open, $post_id ) {
+function lwtv_yikes_filter_media_comment_status( $open, $post_id ) {
 	if ( get_post_type() == 'attachment' ) return false;
 	return $open;
 }
-add_filter( 'comments_open', 'lwtv_underscore_filter_media_comment_status', 10 , 2 );
+add_filter( 'comments_open', 'lwtv_yikes_filter_media_comment_status', 10 , 2 );
 
 
 /**
@@ -75,32 +75,32 @@ function lwtv_yikes_symbolicons( $svg = 'square.svg', $fontawesome = 'fa-square'
  * This allows for responsive videos when using the [video]
  * shortcode, or VideoPress
  */
-function lwtv_underscore_jetpack_setup() {
+function lwtv_yikes_jetpack_setup() {
 	// Add theme support for Responsive Videos.
 	add_theme_support( 'jetpack-responsive-videos' );
 }
-add_action( 'after_setup_theme', 'lwtv_underscore_jetpack_setup' );
+add_action( 'after_setup_theme', 'lwtv_yikes_jetpack_setup' );
 
 /*
  * Remove Jetpack because it's stupid. 
  *
  * This stops Jetpack from adding sharing
  */
-function lwtv_underscore_jetpack_remove_share() {
+function lwtv_yikes_jetpack_remove_share() {
 	remove_filter( 'the_content', 'sharing_display', 19 );
 	remove_filter( 'the_excerpt', 'sharing_display', 19 );
 	if ( class_exists( 'Jetpack_Likes' ) ) {
 		remove_filter( 'the_content', array( Jetpack_Likes::init(), 'post_likes' ), 30, 1 );
 	}
 }
-add_action( 'loop_start', 'lwtv_underscore_jetpack_remove_share' );
+add_action( 'loop_start', 'lwtv_yikes_jetpack_remove_share' );
 
 /*
  * Force Jetpack to be where we want it, not where it wants.
  *
  * This is manually called by post-content pages.
  */
-function lwtv_underscore_jetpack_post_meta( ) {
+function lwtv_yikes_jetpack_post_meta( ) {
 	if ( function_exists( 'sharing_display' ) ) sharing_display( '', true );
 
 	if ( class_exists( 'Jetpack_Likes' ) ) {
