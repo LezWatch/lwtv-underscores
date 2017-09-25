@@ -52,7 +52,7 @@ $alttext     = get_the_title( $the_ID ) . ' - ' . wp_strip_all_tags( $the_conten
 				// Don't show on show pages
 				if ( 'post_type_shows' !== get_post_type( ) ) {
 					$shows = get_post_meta( $the_ID, 'lezchars_show_group', true );
-					foreach ($shows as $show) {
+					foreach ( $shows as $show ) {
 						$show_post = get_post( $show['show']);
 						echo '<div class="card-meta-item"><i class="fa fa-television" aria-hidden="true"></i> <a href="' . get_the_permalink( $show_post->ID )  .'">' . $show_post->post_title .'</a></div>';
 					}
@@ -60,9 +60,10 @@ $alttext     = get_the_title( $the_ID ) . ' - ' . wp_strip_all_tags( $the_conten
 				?>
 
 				<?php
-					$field = get_post_meta( $the_ID, 'lezchars_actor', true );
-					$field_value = isset( $field[0] ) ? $field[0] : ''; 
-					echo '<div class="card-meta-item"><i class="fa fa-user" aria-hidden="true"></i> ' . $field_value  . '</div>';
+					$actors = get_post_meta( $the_ID, 'lezchars_actor', true );
+					foreach ( $actors as $actor ) {
+						echo '<div class="card-meta-item"><i class="fa fa-user" aria-hidden="true"></i> ' . $actor  . '</div>';
+					}					
 				?>
 		  	</div>
 		</div>

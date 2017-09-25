@@ -144,3 +144,108 @@ function lwtv_yikes_character_archive_query( $query ) {
     }
 }
 add_action( 'pre_get_posts', 'lwtv_yikes_character_archive_query' );
+
+/**
+ * Show content warning
+ *
+ * @access public
+ * @return void
+ */
+function lwtv_yikes_content_warning( $show_id ) {
+	
+	$warning_array = array(
+		'card'    => 'none',
+		'content' => 'none',
+	);
+	
+	// If there's no post ID passed or it's not a show, we show nothing.
+	if ( is_null( $show_id ) || get_post_type( $show_id ) !== 'post_type_shows' ) return $warning_array;
+	
+	switch ( get_post_meta( $show_id, 'lezshows_triggerwarning', true ) ) {
+		case "on":
+			$warning_array['card']    = 'danger';
+			$warning_array['content'] = '<strong>WARNING!</strong> This show contains scenes of explicit violence, drug use, suicide, sex, and/or abuse.';
+			break;
+		case "med":
+			$warning_array['card']    = 'warning';
+			$warning_array['content'] = '<strong>CAUTION!</strong> This show regularly discusses and sometimes depicts "strong content" like violence and abuse.';
+			break;
+		case "low":
+			$warning_array['card']    = 'info';
+			$warning_array['content'] = '<strong>NOTICE!</strong> While generally acceptable for the over 14 crowd, this show may hit some sensitive topics now and then.';
+			break;
+		default:
+			$warning_array['card']    = 'none';
+			$warning_array['content'] = 'none';
+	}
+
+	$warning_array['content'] .= ' If those aren\'t your speed, neither is this show.';
+
+	return $warning_array;
+}
+
+function lwtv_yikes_get_characters_for_show( $show_id, $role ) {
+	
+	$valid_roles = array( 'regular', 'recurring', 'guest' );
+	
+	// If this isn't a show page, or there are no valid roles, bail.
+	if ( get_post_type( $show_id ) !== 'post_type_shows' || !in_array( $role, $valid_roles ) ) return;
+		
+	$count      = LWTV_CPT_Characters::list_characters( $show_id, 'count' );
+	$characters = array();
+	
+	$charactersloop = new WP_Query( array(
+		'post_type'              => 'post_type_characters',
+		'post_status'            => array( 'publish' ),
+		'orderby'                => 'title',
+		'order'                  => 'ASC',
+		'posts_per_page'         => $count,
+		'no_found_rows'          => true,
+		'update_post_term_cache' => false,
+		'meta_query'             => array( 
+			'relation'    => 'AND',
+			array(
+				'key'     => 'lezchars_show_group',
+				'value'   => $role,
+				'compare' => 'LIKE',
+			),
+			array(
+				'key'     => 'lezchars_show_group',
+				'value'   => $show_id,
+				'compare' => 'LIKE',
+			),
+		),
+	) );
+
+	if ( $charactersloop->have_posts() ) {
+		while ( $charactersloop->have_posts() ) {
+			$charactersloop->the_post();
+			$char_id = get_the_ID();
+			$shows_array = get_post_meta( $char_id, 'lezchars_show_group', true );
+
+			// If the character is in this show, AND a published character
+			// we will pass the following data to the character template
+			// to determine what to display
+
+			if ( $shows_array !== '' && !empty( $shows_array ) && get_post_status ( $char_id ) == 'publish' ) {
+				foreach( $shows_array as $char_show ) {
+					if ( $char_show['show'] == $show_id && $char_show['type'] == $role ) {
+						$characters[$char_id] = array(
+							'id'        => $char_id,
+							'title'     => get_the_title( $char_id ),
+							'url'       => get_the_permalink( $char_id ),
+							'content'   => get_the_content( $char_id ),
+							'shows'     => $shows_array,
+							'show_from' => $show_id,
+						);
+
+					}
+				}
+			}
+		}
+		wp_reset_query();
+	}
+
+	return $characters;
+
+}

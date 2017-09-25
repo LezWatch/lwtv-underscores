@@ -14,23 +14,23 @@ if ( !in_array( $thisrole, $validroles ) ){
 	exit;
 }
 
-					$query = new WP_Query ( array(
-						'post_type'              => 'post_type_characters',
-						'update_post_term_cache' => false,
-						'update_post_meta_cache' => false,
-						'posts_per_page'         => 24,
-						'order'                  => 'ASC',
-						'orderby'                => 'title',
-						'post_status'            => array( 'publish' ),
-						'paged'                  => $paged,
-						'meta_query'             => array(
-							array(
-								'key'     => 'lezchars_show_group',
-								'value'   => $thisrole,
-								'compare' => 'LIKE',
-							),
-						),
-					) );
+$query = new WP_Query ( array(
+	'post_type'              => 'post_type_characters',
+	'update_post_term_cache' => false,
+	'update_post_meta_cache' => false,
+	'posts_per_page'         => 24,
+	'order'                  => 'ASC',
+	'orderby'                => 'title',
+	'post_status'            => array( 'publish' ),
+	'paged'                  => $paged,
+	'meta_query'             => array(
+		array(
+			'key'     => 'lezchars_show_group',
+			'value'   => $thisrole,
+			'compare' => 'LIKE',
+		),
+	),
+) );
 
 $count_posts = facetwp_display( 'counts' );
 
