@@ -40,8 +40,7 @@ function lwtv_author_box( $content ) {
 		// Check if author has a website in their profile
 		if ( ! empty( $user_website ) ) {
 			// Display author website link
-			$author_details .= '<div class="author-website"><i class="fa fa-globe" aria-hidden="true"></i>
- + <a href="' . $user_website . '" target="_blank" rel="nofollow">Website</a></div></div>';		
+			$author_details .= '<div class="author-website"><i class="fa fa-globe" aria-hidden="true"></i> <a href="' . $user_website . '" target="_blank" rel="nofollow">Website</a></div></div>';		
 		} else { 
 			// if there is no author website then just close the column
 			$author_details .= '</div>';

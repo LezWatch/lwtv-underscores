@@ -24,14 +24,16 @@ $alttext     = get_the_title( $the_ID ) . ' - ' . wp_strip_all_tags( $the_conten
 ?>
 	<div class="card"> 
 		<?php if ( has_post_thumbnail( $the_ID ) ) : ?>
-		   <a href="<?php the_permalink( $the_ID ); ?>" title="<?php the_title_attribute( $the_ID ); ?>" >
-		  	 <?php echo get_the_post_thumbnail( $the_ID, 'character-img', array( 'class' => 'card-img-top' , 'alt' => $alttext, 'title' => $alttext ) ); ?>
-		   </a>
+			<div class="character-image-wrapper">
+			   <a href="<?php the_permalink( $the_ID ); ?>" title="<?php the_title_attribute( $the_ID ); ?>" >
+			  	 <?php echo get_the_post_thumbnail( $the_ID, 'widget-img', array( 'class' => 'card-img-top' , 'alt' => $alttext, 'title' => $alttext ) ); ?>
+			   </a>
+			</div>
 		<?php endif; ?>
 		<div class="card-body">
 
 			<?php
-				// This is fiddly becuase of Sara Lance
+				// This is fiddly because of Sara Lance
 				$deadpage = false;
 				$grave = '';
 				$term = get_term_by( 'slug', get_query_var( 'term' ), get_query_var( 'taxonomy' ) );

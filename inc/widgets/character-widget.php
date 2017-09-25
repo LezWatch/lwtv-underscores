@@ -54,9 +54,11 @@ class LWTV_Character extends WP_Widget {
           </div>';
 
 		// Featured Image
+        echo '<div class="character-image-wrapper">';
         echo '<a href="' . get_the_permalink()  .'">';
 		echo the_post_thumbnail( 'widget-img', array( 'class' => 'card-img-top' ) );
         echo '</a>';
+        echo '</div>';
 
 		echo '<div class="card-body">';
 
