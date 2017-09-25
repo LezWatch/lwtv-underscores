@@ -697,6 +697,22 @@ embed, iframe, object {
     margin: 0 0 1em;
   }
 
+  .widget_categories, .widget_tag_cloud {
+    @include box-shadow(0 1px 4px 0 rgba(0, 0, 0, 0.14));
+    padding-bottom: .75rem;
+
+    .tagcloud {
+      padding: 0 1.25rem;
+    }
+
+    h2.widget-title {
+      background: $lwtv-gradient;
+      color: $white;
+      @include font-24;
+      padding: .75rem 1.25rem;
+    }
+  }
+
   &.showchars-sidebar {
 
     .card-search {

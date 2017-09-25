@@ -48,7 +48,8 @@ get_header(); ?>
 										while ( have_posts() ) : the_post();
 											get_template_part( 'template-parts/excerpt', 'post_type_shows' );
 							
-										endwhile;; ?>
+										endwhile; 
+									?>
 								</div><!-- .site-loop -->
 
 								<?php						

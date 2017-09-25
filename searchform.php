@@ -33,7 +33,6 @@
 				<span class="input-group-btn">
 					<button class="btn btn-primary" type="submit">Go</button>
 				</span>
-
 			</div>
 		</form>
 	</div><!-- .card-body -->
