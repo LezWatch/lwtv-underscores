@@ -828,6 +828,7 @@ footer.entry-meta .fa {
 
 .character-image-wrapper {
   max-height: 300px;
+  overflow: hidden;
 }
 
 /* =Media
