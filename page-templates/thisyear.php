@@ -17,7 +17,7 @@ $thisurl     = site_url( '/this-year/'. date('Y') .'/' );
 $iconpath    = '<span role="img" aria-label="post_type_characters" title="Characters" class="taxonomy-svg characters">' . lwtv_yikes_symbolicons( 'calendar_alt.svg', 'fa-calendar' ) . '</span>';
 
 
-function lwtv_underscore_this_year_dead( $thisyear ) {
+function lwtv_yikes_this_year_dead( $thisyear ) {
 
 	$dead_chars_loop = LWTV_Loops::post_meta_query( 'post_type_characters', 'lezchars_death_year', $thisyear, 'REGEXP');
 	$dead_chars_query = wp_list_pluck( $dead_chars_loop->posts, 'ID' );
@@ -90,7 +90,7 @@ function lwtv_underscore_this_year_dead( $thisyear ) {
 	wp_reset_query();
 }
 
-function lwtv_underscore_this_year_shows( $thisyear ) {
+function lwtv_yikes_this_year_shows( $thisyear ) {
 
 	// Constants
 	$shows_this_year = array( 'current' => 0, 'ended' => 0, 'started' => 0);
@@ -267,8 +267,8 @@ get_header();
 				<div id="primary" class="content-area">
 					<div id="content" class="site-content clearfix" role="main">				
 						<?php
-							lwtv_underscore_this_year_dead( $thisyear );
-							lwtv_underscore_this_year_shows( $thisyear ); 
+							lwtv_yikes_this_year_dead( $thisyear );
+							lwtv_yikes_this_year_shows( $thisyear ); 
 						?>
 					</div><!-- #content -->
 				</div><!-- #primary -->

@@ -114,7 +114,7 @@ function yikes_starter_entry_footer() {
 	}
 
 	/* This forces Jetpack to display sharing links where we want them. */
-	lwtv_underscore_jetpack_post_meta();
+	lwtv_yikes_jetpack_post_meta();
 
 	edit_post_link(
 		sprintf(

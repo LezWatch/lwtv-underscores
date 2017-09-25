@@ -39,7 +39,10 @@ $screentime = min( (int) get_post_meta($show_id, 'lezshows_screentime_rating', t
 </div></section>
 
 <section id="amazon" class="widget widget_text"><div class="widget-wrap">
-	<?php echo LWTV_CPT_Shows::display_amazon( $show_id ); ?>
+	<?php 
+		// The Amazon display code is INSANE and lives in lwtv-plugin
+		echo LWTV_Amazon::show_amazon( $show_id ); 
+	?>
 </div></section>
 
 <section id="ratings" class="widget widget_text"><div class="widget-wrap">
