@@ -80,42 +80,42 @@ get_header(); ?>
 		<div class="row">
 			<div class="col-sm-9">
 				<div id="primary" class="content-area">
-					<div id="content" class="site-content clearfix" role="main"><div class="facetwp-template">
+					<div id="content" class="site-content clearfix" role="main">
+						<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
+							<div class="entry-content">
+			        			<div class="row site-loop show-archive-loop equal-height">
+									<?php
+									if ( have_posts() ) : ?>
+										<?php
+										/* Start the Loop */
+										while ( have_posts() ) : the_post();
+											switch ( get_post_type( get_the_ID() ) ) {
+												case 'post_type_characters':
+													get_template_part( 'template-parts/excerpt', 'post_type_characters' );
+													break;
+												case 'post_type_shows':
+													get_template_part( 'template-parts/excerpt', 'post_type_shows' );
+													break;
+												default:
+													get_template_part( 'template-parts/content', 'posts' );
+											}				
+									endwhile; ?>
+								</div><!-- .site-loop -->
 
-						<?php
-						if ( have_posts() ) : ?>
-							<div class="container">
-								<div class="row">
 								<?php
-								/* Start the Loop */
-								while ( have_posts() ) : the_post();
-									switch ( get_post_type( get_the_ID() ) ) {
-										case 'post_type_characters':
-											get_template_part( 'template-parts/excerpt', 'post_type_characters' );
-											break;
-										case 'post_type_shows':
-											get_template_part( 'template-parts/excerpt', 'post_type_shows' );
-											break;
-										default:
-											get_template_part( 'template-parts/content', 'posts' );
-									}				
-								endwhile; ?>
-								</div>
-							</div>
-							<?php
-							echo facetwp_display( 'pager' );
+									echo facetwp_display( 'pager' );
 			
-						else :
-							get_template_part( 'template-parts/content', 'none' );
-				
-						endif; ?>
-
-					</div></div><!-- #content -->
+								else :
+									get_template_part( 'template-parts/content', 'none' );
+						
+								endif; ?>				
+							</div><!-- .entry-content -->
+						</article><!-- #post-## -->
+					</div><!-- #content -->
 				</div><!-- #primary -->
-	
 			</div><!-- .col-sm-9 -->
 	
-			<div class="col-sm-3">
+			<div class="col-sm-3 site-sidebar showchars-sidebar site-loop">
 
 				<?php get_sidebar(); ?>
 
@@ -124,5 +124,6 @@ get_header(); ?>
 		</div><!-- .row -->
 	</div><!-- .container -->
 </div><!-- #main -->
+
 
 <?php get_footer();
