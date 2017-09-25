@@ -64,36 +64,34 @@ get_header(); ?>
 		<div class="row">
 			<div class="col-sm-9">
 				<div id="primary" class="content-area">
-					<div id="content" class="site-content clearfix" role="main"><div class="facetwp-template">
-
-					<?php
-					if ( $query->have_posts() ):
-					?>
-						<div class="container">
-							<div class="row"><?php
-								while ( $query->have_posts() ): $query->the_post();
-									?><div class="col-sm-4"><?php
-										get_template_part( 'template-parts/excerpt', 'post_type_characters' );
-									?></div><?php
-								endwhile; ?>
+					<div id="content" class="site-content clearfix" role="main">
+						<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
+							<div class="entry-content facetwp-template">
+			        			<div class="row site-loop character-archive-loop equal-height">
+									<?php
+										if ( $query->have_posts() ):
+										while ( $query->have_posts() ): $query->the_post();
+											get_template_part( 'template-parts/excerpt', 'post_type_characters' );
+										endwhile; ?>
 								</div>
-							</div><?php
 
-							lwtv_yikes_facet_numeric_posts_nav( $query );
+								<?php
+
+								lwtv_yikes_facet_numeric_posts_nav( $query );
+								
+								wp_reset_postdata(); 
+						
+								else :
+									get_template_part( 'template-parts/content', 'none' );
 							
-							wp_reset_postdata(); 
-			
-					else :
-						get_template_part( 'template-parts/content', 'none' );
-				
-					endif; ?>
-
-					</div></div><!-- #content -->
+								endif; ?>			
+							</div><!-- .entry-content -->
+						</article><!-- #post-## -->
+					</div><!-- #content -->
 				</div><!-- #primary -->
-	
 			</div><!-- .col-sm-9 -->
 	
-			<div class="col-sm-3">
+			<div class="col-sm-3 site-sidebar showchars-sidebar site-loop">
 
 				<?php get_sidebar(); ?>
 
