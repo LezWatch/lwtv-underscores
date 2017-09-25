@@ -554,6 +554,10 @@ footer.entry-meta {
 .character-image-wrapper {
   max-height: 300px;
   overflow: hidden;
+
+  .character-archive-loop {
+    height: 300px;
+  }
 }
 
 

@@ -830,6 +830,9 @@ footer.entry-meta .fa {
   max-height: 300px;
   overflow: hidden;
 }
+.character-image-wrapper .character-archive-loop {
+  height: 300px;
+}
 
 /* =Media
 ----------------------------------------------- */
