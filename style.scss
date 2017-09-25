@@ -717,6 +717,11 @@ embed, iframe, object {
           &:last-of-type {
             margin-bottom: 0;
           }
+
+          .facetwp-autocomplete-update {
+            font-size: 14px;
+            margin-top: 0.4rem;
+          }
         }
 
         &:last-of-type {

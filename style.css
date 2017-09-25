@@ -1068,6 +1068,10 @@ ul.comment-list li .comment-content .btn a, ul.comment-list li .comment-content 
 .site-sidebar.showchars-sidebar .card-filter .card-body .widget .facetwp-facet:last-of-type {
   margin-bottom: 0;
 }
+.site-sidebar.showchars-sidebar .card-filter .card-body .widget .facetwp-facet .facetwp-autocomplete-update {
+  font-size: 14px;
+  margin-top: 0.4rem;
+}
 .site-sidebar.showchars-sidebar .card-filter .card-body .widget:last-of-type {
   border-bottom: 0;
 }
