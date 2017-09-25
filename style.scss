@@ -690,6 +690,10 @@ embed, iframe, object {
 
   &.showchars-sidebar {
 
+    .card-search {
+      margin-bottom: 0;
+    }
+
     .card-filter .card-body {
       padding: 0;
 

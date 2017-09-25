@@ -1043,6 +1043,9 @@ ul.comment-list li .comment-content .btn a, ul.comment-list li .comment-content 
 .site-sidebar .widget {
   margin: 0 0 1em;
 }
+.site-sidebar.showchars-sidebar .card-search {
+  margin-bottom: 0;
+}
 .site-sidebar.showchars-sidebar .card-filter .card-body {
   padding: 0;
 }
