@@ -241,17 +241,19 @@ get_header();
 						<?php echo ( isset( $iconpath ) ? $iconpath : '' ); ?>
 					</h1>
 					<p>A recap of queer events that occurred in <?php echo $thisyear; ?></p>
-					<div class="archive-pagination pagination"><ul>
-					<?php
-					if ( $thisyear !== date('Y') ) {
-						?>
-						<li class="pagination-next"><a href="<?php echo $nexturl; ?>">« Next Year</a></li>
-						<li><a href="<?php echo $thisurl; ?>">This Year (<?php echo date('Y'); ?>)</a></li>
-						<?php
-					}
-					?>
-						<li class="pagination-previous"><a href="<?php echo $previousurl; ?>">Previous Year »</a></li>
-					</ul></div>
+					<div class="archive-pagination pagination">
+						<ul>
+							<?php
+							if ( $thisyear !== date('Y') ) {
+								?>
+								<li class="pagination-next"><a href="<?php echo $nexturl; ?>">« Next Year</a></li>
+								<li><a href="<?php echo $thisurl; ?>">This Year (<?php echo date('Y'); ?>)</a></li>
+								<?php
+							}
+							?>
+							<li class="pagination-previous"><a href="<?php echo $previousurl; ?>">Previous Year »</a></li>
+						</ul>
+					</div>
 				</div>
 			</header><!-- .archive-header -->
 		</div><!-- .container -->
@@ -261,7 +263,7 @@ get_header();
 <div id="main" class="site-main" role="main">
 	<div class="container">
 		<div class="row">
-			<div class="col-sm-8">
+			<div class="col-sm-9">
 				<div id="primary" class="content-area">
 					<div id="content" class="site-content clearfix" role="main">				
 						<?php
@@ -270,10 +272,10 @@ get_header();
 						?>
 					</div><!-- #content -->
 				</div><!-- #primary -->
-			</div><!-- .col-sm-8 -->
-			<div class="col-sm-4">
+			</div><!-- .col-sm-9 -->
+			<div class="col-sm-3 site-sidebar site-loop">
 				<?php get_sidebar(); ?>
-			</div><!-- .col-sm-4 -->
+			</div><!-- .col-sm-3 -->
 		</div><!-- .row -->
 	</div><!-- .container -->
 </div><!-- #main -->
