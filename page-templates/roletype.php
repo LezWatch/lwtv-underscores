@@ -14,7 +14,28 @@ if ( !in_array( $thisrole, $validroles ) ){
 	exit;
 }
 
+					$query = new WP_Query ( array(
+						'post_type'              => 'post_type_characters',
+						'update_post_term_cache' => false,
+						'update_post_meta_cache' => false,
+						'posts_per_page'         => 24,
+						'order'                  => 'ASC',
+						'orderby'                => 'title',
+						'post_status'            => array( 'publish' ),
+						'paged'                  => $paged,
+						'meta_query'             => array(
+							array(
+								'key'     => 'lezchars_show_group',
+								'value'   => $thisrole,
+								'compare' => 'LIKE',
+							),
+						),
+					) );
+
 $count_posts = facetwp_display( 'counts' );
+
+//$count_posts = $query->post_count;
+
 $icon        = lwtv_yikes_symbolicons( 'person.svg', 'fa-person' );
 $selections  = facetwp_display( 'selections' );
 $title       = '<span role="img" aria-label="post_type_characters" title="Characters" class="taxonomy-svg characters">' . $icon . '</span>';
@@ -46,22 +67,6 @@ get_header(); ?>
 					<div id="content" class="site-content clearfix" role="main"><div class="facetwp-template">
 
 					<?php
-					$query = new WP_Query ( array(
-						'post_type'              => 'post_type_characters',
-						'no_found_rows'          => true,
-						'update_post_term_cache' => false,
-						'update_post_meta_cache' => false,
-						'post_status'            => array( 'publish' ),
-						'paged'                  => $paged,
-						'meta_query'	=> array(
-							array(
-								'key'     => 'lezchars_show_group',
-								'value'   => $thisrole,
-								'compare' => 'LIKE',
-							),
-						),
-					) );
-					
 					if ( $query->have_posts() ):
 					?>
 						<div class="container">
