@@ -91,7 +91,9 @@ get_header(); ?>
 										while ( have_posts() ) : the_post();
 											switch ( get_post_type( get_the_ID() ) ) {
 												case 'post_type_characters':
+													?><div class="col-sm-4"><?php
 													get_template_part( 'template-parts/excerpt', 'post_type_characters' );
+													?></div><?php
 													break;
 												case 'post_type_shows':
 													get_template_part( 'template-parts/excerpt', 'post_type_shows' );
