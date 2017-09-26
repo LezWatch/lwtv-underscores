@@ -145,6 +145,8 @@ function lwtv_yikes_character_archive_query( $query ) {
 }
 add_action( 'pre_get_posts', 'lwtv_yikes_character_archive_query' );
 
+/** THE DISPLAY SECTION **/
+
 /**
  * Show content warning
  *
@@ -184,7 +186,16 @@ function lwtv_yikes_content_warning( $show_id ) {
 	return $warning_array;
 }
 
-function lwtv_yikes_get_characters_for_show( $show_id, $role ) {
+
+/**
+ * lwtv_yikes_get_characters_for_show function.
+ * 
+ * @access public
+ * @param mixed $show_id
+ * @param mixed $role
+ * @return void
+ */
+function lwtv_yikes_get_characters_for_show( $show_id, $role = 'regular' ) {
 	
 	$valid_roles = array( 'regular', 'recurring', 'guest' );
 	
@@ -223,7 +234,8 @@ function lwtv_yikes_get_characters_for_show( $show_id, $role ) {
 			$char_id = get_the_ID();
 			$shows_array = get_post_meta( $char_id, 'lezchars_show_group', true );
 
-			// If the character is in this show, AND a published character
+			// If the character is in this show, AND a published character,
+			// AND has this role ON THIS SHOW (you can thank Sara Lance),
 			// we will pass the following data to the character template
 			// to determine what to display
 
@@ -245,7 +257,5 @@ function lwtv_yikes_get_characters_for_show( $show_id, $role ) {
 		}
 		wp_reset_query();
 	}
-
 	return $characters;
-
 }

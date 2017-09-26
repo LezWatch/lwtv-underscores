@@ -11,6 +11,38 @@
 $statstype = ( isset($wp_query->query['statistics'] ) )? $wp_query->query['statistics'] : 'main' ;
 $validstat = array('death', 'characters', 'shows', 'lists', 'main', 'trends' );
 
+// Based on the type of stats, set our display:
+switch ( $statstype ) {
+	case 'death':
+		$title = 'Statistics on Queer Female Deaths';
+		$image = lwtv_yikes_symbolicons( 'rip_gravestone.svg', 'fa-users' );
+		$intro = 'For a pure list of all dead, we have <a href="https://lezwatchtv.com/trope/dead-queers/">shows where characters died</a> as well as <a href="https://lezwatchtv.com/cliche/dead/">characters who have died</a> (aka the <a href="https://lezwatchtv.com/cliche/dead/">Dead Lesbians</a> list).';
+		break;
+	case 'characters':
+		$title = 'Statistics on Queer Female Characters';
+		$image = lwtv_yikes_symbolicons( 'users.svg', 'fa-users' );
+		$intro = 'Statistics specific to characters (sexuality, gender IDs, role types, etc).';
+		break;
+	case 'shows':
+		$title = 'Statistics on Shows With Queer Females';
+		$image = lwtv_yikes_symbolicons( 'tv_retro.svg', 'fa-users' );
+		$intro = 'Statistics specific to shows.';
+		break;
+	case 'trends':
+		$title = 'Statistics in the form of Trendlines';
+		$image = lwtv_yikes_symbolicons( 'line_graph.svg', 'fa-users' );
+		$intro = 'Trendlines and predictions.';
+		break;
+	case 'main':
+	default: 
+		$title = 'Statistics of Queer Females on TV';
+		$image = lwtv_yikes_symbolicons( 'bar_graph.svg', 'fa-users' );
+		$intro = '';
+		break;
+}
+
+$image = '<span role="img" aria-label="statistics" title="Statistics" class="taxonomy-svg statistics">' . $image . '</span>';
+
 // If there's no valid stat, we bail
 if ( !in_array( $statstype, $validstat ) ){
 	wp_redirect( get_site_url().'/stats/' , '301' );
@@ -24,9 +56,8 @@ get_header(); ?>
 		<div class="container">
 			<header class="archive-header">
 				<div class="archive-description">
-					<span role="img" aria-label="calendar" title="calendar" class="taxonomy-svg calendar"><?php echo file_get_contents( LWTV_Stats_Display::iconpath( $statstype ) ); ?></span>
-					<h1 class="archive-title"><?php echo LWTV_Stats_Display::title( $statstype ); ?></h1>
-					<p><?php echo LWTV_Stats_Display::intro( $statstype ); ?></p>
+					<h1 class="archive-title"><?php echo $title . $image; ?></h1>
+					<p><?php $intro; ?></p>
 				</div>
 			</header><!-- .archive-header -->
 		</div><!-- .container -->
@@ -41,7 +72,7 @@ get_header(); ?>
 					<div id="content" class="site-content clearfix" role="main">				
 						<?php 
 							if ( $statstype == 'main' ) the_content();
-							LWTV_Stats_Display::display( $statstype );
+							get_template_part( 'template-parts/statistics', $statstype );
 						?>
 					</div><!-- #content -->
 				</div><!-- #primary -->
