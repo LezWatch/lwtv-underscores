@@ -23,7 +23,7 @@ get_header(); ?>
 					the_archive_title( '<h1 class="page-title">' . $title, ' (' . $count_posts . '<span class="facetwp-count"></span>)</h1>' );
 					$descriptions = get_option( 'wpseo_titles' );
 					$description  = $descriptions['metadesc-ptarchive-post_type_shows'];
-					echo '<div class="archive-description">' . $description . '<br />Sorted by ' . $sort . '.</div>';
+					echo '<div class="archive-description">' . $description . 'Sorted by ' . $sort . '.</div>';
 					echo $selections;
 				?>
 			</header><!-- .archive-header -->

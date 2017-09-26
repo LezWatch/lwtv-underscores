@@ -650,12 +650,15 @@ button, input[type="button"], input[type="submit"] {
 h1.entry-title {
   margin-bottom: 0;
 }
-
-.taxonomy-description {
-  margin-top: 0.6rem;
+.no-results h1.entry-title {
+  font-size: 2rem;
+  margin-top: 20px;
 }
 
-.archive-description a, .archive-description a:visited {
+.taxonomy-description, .archive-description {
+  margin-top: 0.6rem;
+}
+.taxonomy-description a, .taxonomy-description a:visited, .archive-description a, .archive-description a:visited {
   color: #fff;
 }
 
@@ -779,7 +782,7 @@ section {
 ----------------------------------------------- */
 /* Posts */
 .entry-header .wp-post-image {
-  margin-bottom: .75rem;
+  margin-bottom: .5rem;
 }
 .entry-header .entry-meta {
   border-bottom: 1px solid #d1548e;
@@ -1213,6 +1216,7 @@ ul.comment-list li .comment-content .btn a, ul.comment-list li .comment-content 
   color: #fff;
   font-size: 1.125rem;
   margin-bottom: 0;
+  padding: 3rem 2rem;
 }
 
 /*--------------------------------------------------------------

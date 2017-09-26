@@ -25,7 +25,7 @@ get_header(); ?>
 					the_archive_title( '<h1 class="facetwp-page-title page-title">' . $title, ' (' . $count_posts . '<span class="facetwp-count"></span>)</h1>' );
 					$descriptions = get_option( 'wpseo_titles' );
 					$description  = $descriptions['metadesc-ptarchive-post_type_characters'];
-					echo '<div class="taxonomyg-description">' . $description . '<br />Sorted by ' . $sort . '.</div>';
+					echo '<div class="archive-description">' . $description . 'Sorted by ' . $sort . '.</div>';
 					echo $selections;
 				?>
 			</header><!-- .archive-header -->

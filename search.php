@@ -31,7 +31,7 @@ get_header(); ?>
 
 								<?php while ( have_posts() ) : the_post(); ?>
 
-									<div class="col-sm-4">
+									<div class="col-sm-3">
 										<?php get_template_part( 'template-parts/content', 'search' ); ?>
 									</div>
 
