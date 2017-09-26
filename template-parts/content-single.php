@@ -11,7 +11,6 @@
 		<?php if ( has_post_thumbnail()) : ?>
 		  	<?php the_post_thumbnail( 'large' ); ?>
 		<?php endif; ?>
-		<h1 class="entry-title"><?php the_title(); ?></h1>
 
 		<div class="entry-meta">
 			<?php yikes_starter_posted_on(); ?>

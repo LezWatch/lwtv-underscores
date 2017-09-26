@@ -778,11 +778,12 @@ section {
 ----------------------------------------------- */
 /* Posts */
 .entry-header .wp-post-image {
-  margin-bottom: 1.4rem;
+  margin-bottom: .75rem;
 }
 .entry-header .entry-meta {
   border-bottom: 1px solid #d1548e;
   color: #555;
+  font-size: 16px;
   font-weight: 600;
   margin-top: .75rem;
   padding-bottom: 1rem;
@@ -967,7 +968,6 @@ embed, iframe, object {
 }
 
 ul.comment-list {
-  font-size: .78em;
   list-style-type: none;
   margin: 0 0 2rem 0;
   padding: 0;

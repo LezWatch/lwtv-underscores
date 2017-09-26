@@ -497,12 +497,13 @@ section {
 .entry-header {
 
   .wp-post-image {
-    margin-bottom: 1.4rem;
+    margin-bottom: .75rem;
   }
 
   .entry-meta {
     border-bottom: 1px solid $lwtv-pink;
     color: $lwtv-medgrey;
+    font-size: $basefont;
     font-weight: 600;
     margin-top: .75rem;
     padding-bottom: 1rem;
