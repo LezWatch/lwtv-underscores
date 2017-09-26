@@ -9,11 +9,10 @@
 $icon = '';
 
 // If this is a show, we may want to show a star or a heart.
-if ( get_post_type( 'post_type_shows' ) ) {	
+if ( get_post_type() == 'post_type_shows' ) {	
 	// If there's a star, we'll show it:
 	if ( get_post_meta( get_the_ID(), 'lezshows_stars', true) ) {
 		$color = esc_attr( get_post_meta( get_the_ID(), 'lezshows_stars' , true ) );
-	
 		$star  = lwtv_yikes_symbolicons( 'star.svg', 'fa-star' );
 		$icon .= ' <span role="img" aria-label="' . ucfirst( $color ) . ' Star Show" title="' . ucfirst( $color ) . ' Star Show" class="show-star ' . $color . '">' . $star . '</span>';
 	}
@@ -23,7 +22,6 @@ if ( get_post_type( 'post_type_shows' ) ) {
 		$heart = lwtv_yikes_symbolicons( 'heart.svg', 'fa-heart' );
 		$icon .= ' <span role="img" aria-label="We Love This Show!" title="We Love This Show!" class="show-we-love">' . $heart . '</span>';
 	}
-
 }
  
 get_header(); ?>

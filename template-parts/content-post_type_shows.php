@@ -9,6 +9,13 @@
 ?>
 
 <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
+	<header class="entry-header">
+		<?php the_post_thumbnail( 'show-img', array( 'alt' => get_the_title() , 'title' => get_the_title() ) ); ?>
+		<div class="entry-meta">
+			
+		</div><!-- .entry-meta -->
+	</header><!-- .entry-header -->
+
 	<div class="entry-content">
 		<?php
 			$warning    = lwtv_yikes_content_warning( get_the_ID() );
