@@ -36,7 +36,7 @@ get_header(); ?>
 <div id="main" class="site-main" role="main">
 	<div class="container">
 		<div class="row">
-			<div class="col-sm-9">
+			<div class="col-sm-12">
 				<div id="primary" class="content-area">
 					<div id="content" class="site-content clearfix" role="main">				
 						<?php 
@@ -45,10 +45,7 @@ get_header(); ?>
 						?>
 					</div><!-- #content -->
 				</div><!-- #primary -->
-			</div><!-- .col-sm-9 -->
-			<div class="col-sm-3 site-sidebar site-loop">
-				<?php get_sidebar(); ?>
-			</div><!-- .col-sm-3 -->
+			</div><!-- .col-sm-12 -->
 		</div><!-- .row -->
 	</div><!-- .container -->
 </div><!-- #main -->
