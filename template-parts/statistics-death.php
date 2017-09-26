@@ -61,12 +61,12 @@ $deadshow_percent = round( ( $deadshows / $allshows ) * 100 , 2 );
 
 <div class="container">
 	<div class="row">
-		<div class="col-sm-6">
+		<div class="col">
 			<?php LWTV_Stats::generate( 'characters', 'dead-years', 'barchart' ); ?>
 		</div>
 	</div>
 	<div class="row">
-		<div class="col-sm-6">
+		<div class="col">
 			<h3>Deaths by Year</h3>
 			<?php LWTV_Stats::generate( 'characters', 'dead-years', 'percentage' ); ?>
 		</div>
