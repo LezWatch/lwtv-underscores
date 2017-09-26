@@ -19,9 +19,11 @@ switch ( get_post_type( $post->ID ) ) {
 
 <div class="card"> 
 	<?php if ( has_post_thumbnail()) : ?>
-	   <a href="<?php the_permalink(); ?>" title="<?php the_title_attribute(); ?>" >
-	  	 <?php the_post_thumbnail( 'postloop-img', array( 'class' => 'card-img-top' ) ); ?>
-	   </a>
+		<div class="character-image-wrapper">
+			<a href="<?php the_permalink(); ?>" title="<?php the_title_attribute(); ?>" >
+			 	<?php the_post_thumbnail( 'postloop-img', array( 'class' => 'card-img-top' ) ); ?>
+			</a>
+		</div>
 	<?php endif; ?>
 	<div class="card-body">
   		<h3 class="card-title"><i class="fa <?php echo $searchicon; ?>"></i> <?php the_title(); ?></h3>
