@@ -6,18 +6,25 @@
  */
 get_header(); ?>
 
+<div class="archive-subheader">
+	<div class="jumbotron">
+		<div class="container">
+			<header class="archive-header">
+				<h1 class="page-title">
+					<?php esc_attr_e( yikes_starter_blog_page_title() ); ?>
+				</h1>
+			</header><!-- .archive-header -->
+		</div><!-- .container -->
+	</div><!-- /.jumbotron -->
+</div>
+
 <div id="main" class="site-main" role="main">
 	<div class="container">
 		<div class="row">
 			<div class="col-sm-9">
 				<div id="primary" class="content-area">
 					<div id="content" class="site-content clearfix" role="main">
-
 						<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
-							<header class="entry-header">
-								<h1 class="entry-title"><?php esc_attr_e( yikes_starter_blog_page_title() ); ?></h1>
-							</header><!-- .entry-header -->
-
 							<div class="entry-content">
 
 								<?php if ( have_posts() ) : ?>

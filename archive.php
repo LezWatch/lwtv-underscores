@@ -7,6 +7,19 @@
 
 get_header(); ?>
 
+<div class="archive-subheader">
+	<div class="jumbotron">
+		<div class="container">
+			<header class="archive-header">
+				<?php
+					the_archive_title( '<h1 class="page-title">', '</h1>' );
+					the_archive_description( '<div class="taxonomy-description">', '</div>' );
+				?>
+			</header><!-- .archive-header -->
+		</div><!-- .container -->
+	</div><!-- /.jumbotron -->
+</div>
+
 <div id="main" class="site-main" role="main">
 	<div class="container">
 		<div class="row">
@@ -16,14 +29,7 @@ get_header(); ?>
 
 						<?php if ( have_posts() ) : ?>
 
-							<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
-								<header class="entry-header">
-									<?php
-										the_archive_title( '<h1 class="entry-title">', '</h1>' );
-										the_archive_description( '<div class="taxonomy-description">', '</div>' );
-									?>
-								</header><!-- .entry-header -->
-	
+							<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>	
 								<div class="entry-content">
 				        			<div class="row site-loop main-posts-loop equal-height">
 
@@ -47,7 +53,6 @@ get_header(); ?>
 
 								</div>
 							</article><!-- #post-## -->
-
 					</div><!-- #content -->
 				</div><!-- #primary -->
 			</div><!-- .col-sm-9 -->

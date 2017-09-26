@@ -6,8 +6,6 @@
  */
 get_header(); ?>
 
-
-
 <div class="archive-subheader">
 	<div class="jumbotron">
 		<div class="container">
