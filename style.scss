@@ -293,12 +293,29 @@ h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
     }
   }
 
-}
+  .header-search-bar {
+    background-color: $lwtv-dkgrey;
+    @include box-shadow(0 2px 30px rgba(0, 0, 0, 0.2));
+    margin-top: 50px;
+    padding: 10px 0;
+    z-index: 9999;
 
-/* Main Nav background color */
+    .form-group {
+      margin-bottom: 0;
 
-nav.main-nav {
-  background-color: $black;
+      label {
+        color: $white;
+        @include font-20;
+        font-weight: 600;
+        text-align: right;
+      }
+    }
+
+    .fa {
+      @include font-32;
+    }
+  }
+
 }
 
 /* Change the main nav colors */

@@ -451,10 +451,25 @@ button, input[type="button"], input[type="submit"] {
   height: 40px;
   width: auto;
 }
-
-/* Main Nav background color */
-nav.main-nav {
-  background-color: #000;
+#masthead .header-search-bar {
+  background-color: #333;
+  -webkit-box-shadow: 0 2px 30px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 30px rgba(0, 0, 0, 0.2);
+  margin-top: 50px;
+  padding: 10px 0;
+  z-index: 9999;
+}
+#masthead .header-search-bar .form-group {
+  margin-bottom: 0;
+}
+#masthead .header-search-bar .form-group label {
+  color: #fff;
+  font-size: 1.25rem;
+  font-weight: 600;
+  text-align: right;
+}
+#masthead .header-search-bar .fa {
+  font-size: 2rem;
 }
 
 /* Change the main nav colors */
@@ -476,7 +491,6 @@ nav.main-nav {
   /* Style for inactive links */
   /* Style for active links */
   /* Use this class on a menu item to hide the text when using an icon */
-  /* Example of using an icon */
   /* Secondary Menus */
 }
 .navbar.main-nav ul.navbar-nav > li.nav-item > a.nav-link {
@@ -510,16 +524,6 @@ nav.main-nav {
   z-index: 100000;
   /* Above WP toolbar. */
 }
-.navbar.main-nav ul.navbar-nav > li.nav-item.search > a.nav-link:before {
-  content: "";
-  font-family: FontAwesome;
-  color: #fff;
-  font-weight: 300;
-}
-.navbar.main-nav ul.navbar-nav > li.nav-item.search > a {
-  background-color: #8d329f;
-  padding-bottom: 13px;
-}
 .navbar.main-nav ul.navbar-nav > li.nav-item ul.dropdown-menu {
   background-color: #fff;
   border-top-left-radius: 0;
@@ -544,6 +548,17 @@ nav.main-nav {
   top: -11px;
 }
 
+/* Search button */
+.nav-item.search a, .nav-item.search a:visited {
+  background-color: #8d329f;
+  color: #fff;
+  padding: 14px 20px;
+}
+.nav-item.search a:hover, .nav-item.search a:focus {
+  background-color: #d1548e;
+}
+
+/* Social Menu */
 .widget_yikes_social_menu_widget li a, .widget_yikes_social_menu_widget li a:visited {
   line-height: 1;
   padding-top: 0;

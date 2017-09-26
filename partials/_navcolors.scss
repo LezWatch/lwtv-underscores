@@ -38,18 +38,6 @@
         @include screen-reader;
       }
 
-      /* Example of using an icon */
-      &.search > a.nav-link:before {            
-        @include fontawesome("\f002");
-        color: $white;
-        font-weight: 300;
-      }
-
-      &.search > a {
-        background-color: $lwtv-purple;
-        padding-bottom: 13px;
-      }
-
       /* Secondary Menus */        
       ul.dropdown-menu {
         background-color: $white;
@@ -86,6 +74,24 @@
     }
   }
 }
+
+/* Search button */
+
+.nav-item.search a {
+
+  &, &:visited {
+    background-color: $lwtv-purple;
+    color: $white;
+    padding: 14px 20px;
+  }
+
+  &:hover, &:focus {
+    background-color: $lwtv-pink;
+  }
+}
+
+
+/* Social Menu */
 
 .widget_yikes_social_menu_widget {
 

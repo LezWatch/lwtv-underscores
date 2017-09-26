@@ -37,8 +37,29 @@
 					'walker'	 	=> new wp_bootstrap_navwalker(),
 				) );
 			?>
+
+			<span class="nav-item search" id="search-btn">
+				<a class="nav-link" data-toggle="collapse" href="#collapseSearch">
+					<i class="fa fa-search" aria-hidden="true"></i>
+					<span class="screen-reader-text">Search the Site</span>
+				</a> 
+			</span>
 		</div>
 	</nav><!-- #site-navigation -->
+
+	<div class="collapse fixed-top header-search-bar" id="collapseSearch">
+		<div class="container">
+			<div class="row">
+				<div class="col">
+					<div class="search-body">
+						<div class="search-box">
+							<?php get_template_part( 'template-parts/searchbox' ); ?>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 
 	<div class="site-subheader">
 
