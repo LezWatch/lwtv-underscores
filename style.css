@@ -845,6 +845,9 @@ footer.entry-meta .fa {
   max-height: 300px;
   overflow: hidden;
 }
+.search-results .character-image-wrapper {
+  max-height: 200px;
+}
 .character-archive-loop .character-image-wrapper {
   height: 300px;
 }

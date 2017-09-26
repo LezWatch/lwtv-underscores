@@ -572,6 +572,10 @@ footer.entry-meta {
   max-height: 300px;
   overflow: hidden;
 
+  .search-results & {
+    max-height: 200px;
+  }
+
   .character-archive-loop & {
     height: 300px;
   }
