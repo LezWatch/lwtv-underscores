@@ -6,43 +6,9 @@
  *
  * @package LezWatchTV
  */
-
-// Default to a blank icon
-$icon = '';
-
-// If there's a star, we'll show it:
-if ( get_post_meta( get_the_ID(), 'lezshows_stars', true) ) {
-	$color = esc_attr( get_post_meta( get_the_ID(), 'lezshows_stars' , true ) );
-
-	$star  = lwtv_yikes_symbolicons( 'star.svg', 'fa-star' );
-	$icon .= ' <span role="img" aria-label="' . ucfirst( $color ) . ' Star Show" title="' . ucfirst( $color ) . ' Star Show" class="show-star ' . $color . '">' . $star . '</span>';
-}
-
-// If we love this show, we'll show it:
-if ( get_post_meta( get_the_ID(), 'lezshows_worthit_show_we_love', true) ) {
-	$heart = lwtv_yikes_symbolicons( 'heart.svg', 'fa-heart' );
-	$icon .= ' <span role="img" aria-label="We Love This Show!" title="We Love This Show!" class="show-we-love">' . $heart . '</span>';
-}
 ?>
 
 <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
-	<header class="entry-header">
-		<?php		
-		the_post_thumbnail( 'show-img', array( 'alt' => get_the_title() , 'title' => get_the_title() ) );
-
-		if ( is_single() ) :
-			the_title( '<h1 class="entry-title">', $icon . '</h1>' );
-		else :
-			the_title( '<h2 class="entry-title"><a href="' . esc_url( get_permalink() ) . '" rel="bookmark">', '</a>' . $icon . '</h2>' );
-		endif;
-
-		?>
-
-		<div class="entry-meta">
-			
-		</div><!-- .entry-meta -->
-	</header><!-- .entry-header -->
-
 	<div class="entry-content">
 		<?php
 			$warning    = lwtv_yikes_content_warning( get_the_ID() );
@@ -61,10 +27,7 @@ if ( get_post_meta( get_the_ID(), 'lezshows_worthit_show_we_love', true) ) {
 
 		<section class="shows-extras" name="overview" id="overview">
 			<h2>Overview</h2>
-			<?php
-		
-			the_content();
-			?>
+			<?php the_content(); ?>
 		</section>
 		<?php
 		
