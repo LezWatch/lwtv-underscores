@@ -935,6 +935,25 @@ ul.comment-list li .comment-content .btn a, ul.comment-list li .comment-content 
   color: #000;
 }
 
+/* =Search form
+----------------------------------------------- */
+/* Search the database */
+.card-search {
+  margin-bottom: 0;
+  border: none;
+  border-radius: 0;
+  box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.14);
+}
+.card-search .card-header {
+  background: linear-gradient(60deg, #ab47bc, #8e24aa);
+  border-radius: 0;
+  color: #fff;
+  border-radius: 0;
+}
+.card-search .card-header h4 {
+  margin-bottom: 0;
+}
+
 /* =Search results
 ----------------------------------------------- */
 .search-results .search-entry-title .fa-search {
@@ -991,9 +1010,6 @@ ul.comment-list li .comment-content .btn a, ul.comment-list li .comment-content 
   color: #fff;
   font-size: 1.5rem;
   padding: .75rem 1.25rem;
-}
-.site-sidebar.showchars-sidebar .card-search {
-  margin-bottom: 0;
 }
 .site-sidebar.showchars-sidebar .card-filter .card-body {
   padding: 0;

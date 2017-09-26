@@ -651,6 +651,31 @@ embed, iframe, object {
 @import 'partials/comments';
 
 
+
+/* =Search form
+----------------------------------------------- */
+
+/* Search the database */
+
+.card-search {
+  margin-bottom: 0;
+  border: none;
+  @include border-radius(0);
+  @include box-shadow(0 1px 4px 0 rgba(0, 0, 0, 0.14));
+
+  .card-header {
+    background: $lwtv-gradient;
+    @include border-radius(0);
+    color: $white;
+    @include border-radius(0);
+
+    h4 {
+      margin-bottom: 0;
+    }
+  }
+}
+
+
 /* =Search results
 ----------------------------------------------- */
 
@@ -735,10 +760,6 @@ embed, iframe, object {
   }
 
   &.showchars-sidebar {
-
-    .card-search {
-      margin-bottom: 0;
-    }
 
     .card-filter .card-body {
       padding: 0;
