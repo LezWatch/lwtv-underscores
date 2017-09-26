@@ -15,47 +15,35 @@
 
 <div class="container">
 	<div class="row">
-		<div class="col">
+		<div class="col-sm-6">
 			<h3>Worth It?</h3>
-			<div class="statistics-piechart">
-				<?php LWTV_Stats::generate( 'shows', 'thumbs', 'piechart' ); ?>
-			</div>
+			<?php LWTV_Stats::generate( 'shows', 'thumbs', 'piechart' ); ?>
 		</div>
-		<div class="col">
+		<div class="col-sm-6">
 			<h3>Stars</h3>
-			<div class="statistics-piechart">
-				<?php LWTV_Stats::generate( 'shows', 'stars', 'piechart' ); ?>
-			</div>
+			<?php LWTV_Stats::generate( 'shows', 'stars', 'piechart' ); ?>
 		</div>
 
 		<div class="w-100"></div>
 	
-		<div class="col">
+		<div class="col-sm-6">
 			<h3>Show Format</h3>
-			<div class="statistics-piechart">
-				<?php LWTV_Stats::generate( 'shows', 'formats', 'piechart' ); ?>
-			</div>
+			<?php LWTV_Stats::generate( 'shows', 'formats', 'piechart' ); ?>
 		</div>
-		<div class="col">
+		<div class="col-sm-6">
 			<h3>Trigger Warnings</h3>
-			<div class="statistics-piechart">
-				<?php LWTV_Stats::generate( 'shows', 'trigger', 'piechart' ); ?>
-			</div>
+			<?php LWTV_Stats::generate( 'shows', 'trigger', 'piechart' ); ?>
 		</div>
 
 		<div class="w-100"></div>
 	
-		<div class="col">
+		<div class="col-sm-6">
 			<h3>Trigger Warnings</h3>
-			<div class="statistics-piechart">
 				<?php LWTV_Stats::generate( 'shows', 'trigger', 'piechart' ); ?>
-			</div>
 		</div>
 		<div class="col">
 			<h3>Currently Airing</h3>
-			<div class="statistics-piechart">
-				<?php LWTV_Stats::generate( 'shows', 'current', 'piechart' ); ?>
-			</div>
+			<?php LWTV_Stats::generate( 'shows', 'current', 'piechart' ); ?>
 		</div>
 	</div>
 </div>

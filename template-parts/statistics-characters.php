@@ -13,32 +13,24 @@
 
 <div class="container">
 	<div class="row">
-		<div class="col">
+		<div class="col-sm-6">
 			<h3>Sexuality</h3>
-			<div class="statistics-piechart">
-				<?php LWTV_Stats::generate( 'characters', 'sexuality', 'piechart' ); ?>
-			</div>
+			<?php LWTV_Stats::generate( 'characters', 'sexuality', 'piechart' ); ?>
 		</div>
-		<div class="col">
+		<div class="col-sm-6">
 			<h3>Gender Identity</h3>
-			<div class="statistics-piechart">
-				<?php LWTV_Stats::generate( 'characters', 'gender', 'piechart' ); ?>
-			</div>
+			<?php LWTV_Stats::generate( 'characters', 'gender', 'piechart' ); ?>
 		</div>
 
 		<div class="w-100"></div>
 	
-		<div class="col">
+		<div class="col-sm-6">
 			<h3>Queer IRL</h3>
-			<div class="statistics-piechart">
-				<?php LWTV_Stats::generate( 'characters', 'queer-irl', 'piechart' ); ?>
-			</div>
+			<?php LWTV_Stats::generate( 'characters', 'queer-irl', 'piechart' ); ?>
 		</div>
-		<div class="col">
+		<div class="col-sm-6">
 			<h3>By Role</h3>
-			<div class="statistics-piechart">
-				<?php LWTV_Stats::generate( 'characters', 'role', 'piechart' ); ?>
-			</div>
+			<?php LWTV_Stats::generate( 'characters', 'role', 'piechart' ); ?>
 		</div>
 	</div>
 </div>

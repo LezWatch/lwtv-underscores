@@ -35,32 +35,24 @@ $deadshow_percent = round( ( $deadshows / $allshows ) * 100 , 2 );
 
 <div class="container">
 	<div class="row">
-		<div class="col">
+		<div class="col-sm-6">
 			<h3>Shows With Dead</h3>
-			<div class="statistics-piechart">
-				<?php LWTV_Stats::generate( 'characters', 'dead-shows', 'piechart' ); ?>	
-			</div>
+			<?php LWTV_Stats::generate( 'characters', 'dead-shows', 'piechart' ); ?>	
 		</div>
-		<div class="col">
+		<div class="col-sm-6">
 			<h3>Character Sexuality</h3>
-			<div class="statistics-piechart">
-				<?php LWTV_Stats::generate( 'characters', 'dead-sex', 'piechart' ); ?>
-			</div>
+			<?php LWTV_Stats::generate( 'characters', 'dead-sex', 'piechart' ); ?>
 		</div>
 
 		<div class="w-100"></div>
 	
-		<div class="col">
+		<div class="col-sm-6">
 			<h3>Character Gender Identity</h3>
-			<div class="statistics-piechart">
-				<?php LWTV_Stats::generate( 'characters', 'dead-gender', 'piechart' ); ?>
-			</div>
+			<?php LWTV_Stats::generate( 'characters', 'dead-gender', 'piechart' ); ?>
 		</div>
-		<div class="col">
+		<div class="col-sm-6">
 			<h3>Character Role</h3>
-			<div class="statistics-piechart">
 				<?php LWTV_Stats::generate( 'characters', 'dead-role', 'piechart' ); ?>
-			</div>
 		</div>
 	</div>
 </div>
@@ -69,12 +61,12 @@ $deadshow_percent = round( ( $deadshows / $allshows ) * 100 , 2 );
 
 <div class="container">
 	<div class="row">
-		<div class="col">
+		<div class="col-sm-6">
 			<?php LWTV_Stats::generate( 'characters', 'dead-years', 'barchart' ); ?>
 		</div>
 	</div>
 	<div class="row">
-		<div class="col">
+		<div class="col-sm-6">
 			<h3>Deaths by Year</h3>
 			<?php LWTV_Stats::generate( 'characters', 'dead-years', 'percentage' ); ?>
 		</div>
