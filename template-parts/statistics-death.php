@@ -19,10 +19,10 @@ $deadshow_percent = round( ( $deadshows / $allshows ) * 100 , 2 );
 <div class="container">
 	<div class="row">
 		<div class="col">
-			<strong><a href="/cliche/dead/">Dead Characters</a> — <?php echo $deadchar_percent; ?>% (<?php echo $deadchars; ?> characters)
+			<strong><a href="/cliche/dead/">Dead Characters</a></strong> — <?php echo $deadchar_percent; ?>% (<?php echo $deadchars; ?> characters)
 		</div>
 		<div class="col">
-			<strong><a href="/trope/dead-queers/">Shows with Dead</a> — <?php echo $deadshow_percent; ?>% (<?php echo $deadshows; ?> shows)
+			<strong><a href="/trope/dead-queers/">Shows with Dead</a></strong> — <?php echo $deadshow_percent; ?>% (<?php echo $deadshows; ?> shows)
 		</div>
 	</div>
 </div>
