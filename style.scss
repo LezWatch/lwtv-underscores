@@ -300,6 +300,10 @@ h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
     padding: 10px 0;
     z-index: 9999;
 
+    .admin-bar & {
+      margin-top: 82px;
+    }
+
     .form-group {
       margin-bottom: 0;
 
@@ -372,10 +376,8 @@ h1.entry-title {margin-bottom: 0;}
       background: $lwtv-gradient;
       @include border-radius(0);
       color: $white;
-      @include border-radius(0);
 
-      h3, h4, h5 {
-        margin-bottom: 0;
+      h3, h4, h5 {        margin-bottom: 0;
       }
     }
 
@@ -657,21 +659,25 @@ embed, iframe, object {
 
 /* Search the database */
 
-.card-search {
-  margin-bottom: 0;
+.card.card-search {
   border: none;
   @include border-radius(0);
-  @include box-shadow(0 1px 4px 0 rgba(0, 0, 0, 0.14));
 
   .card-header {
-    background: $lwtv-gradient;
+    background-color: transparent;
     @include border-radius(0);
-    color: $white;
-    @include border-radius(0);
+
+    .fa {
+      float: none !important;
+    }
 
     h4 {
       margin-bottom: 0;
     }
+  }
+
+  .input-group {
+    margin-bottom: 0.2rem;
   }
 }
 
@@ -760,6 +766,10 @@ embed, iframe, object {
   }
 
   &.showchars-sidebar {
+
+    .card-search {
+      margin-bottom: 0;
+    }
 
     .card-filter .card-body {
       padding: 0;

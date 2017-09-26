@@ -16,15 +16,22 @@ get_header(); ?>
 						<article id="post-0" class="post not-found">
 							<header class="entry-header">
 								<h1 class="entry-title">
-									<?php esc_attr_e( 'Oops! That page can&rsquo;t be found.', 'yikes_starter' ); ?>
+									<?php esc_attr_e( 'Oops! This isn\'t the page you thought it was.', 'yikes_starter' ); ?>
 								</h1>
 							</header><!-- .entry-header -->
 
 							<div class="entry-content clearfix">
-								<p><?php esc_attr_e( 'Sorry, nothing was found at this address. Please try again or use the search below.', 'yikes_starter' ); ?></p>
+								<p>
+									<img src="<?php echo get_template_directory_uri(); ?>/images/rose.gif" alt="Rose from Jane the Virgin" />
+								</p>
+								<p>
+									<?php esc_attr_e( 'Sorry, there is no page with this address. Please try again or use the search below.', 'yikes_starter' ); ?>										
+								</p>
 
-								<div class="col-sm-8">
-									<?php get_search_form(); ?>
+								<div class="row no-gutters">
+									<div class="col-sm-8">
+										<?php get_search_form(); ?>
+									</div>
 								</div>
 							</div><!-- .entry-content -->
 						</article><!-- #post-0 .post .not-found -->

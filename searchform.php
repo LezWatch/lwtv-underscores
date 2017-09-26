@@ -21,7 +21,7 @@
 					<button class="btn btn-primary" type="submit">Go</button>
 				</span>
 			</div>
-			<div class="form-check form-check-inline">
+			<div class="form-check form-check-inline ml-2">
 				<label class="form-check-label">
 					<input class="form-check-input" type="checkbox"  onclick="searchCPT( 'post_type_shows' )" id="CheckboxShows" value="Shows"> Shows
 				</label>
