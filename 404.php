@@ -7,6 +7,18 @@
 
 get_header(); ?>
 
+<div class="archive-subheader">
+	<div class="jumbotron">
+		<div class="container">
+			<header class="archive-header">
+				<h1 class="page-title">
+					<?php esc_attr_e( 'Oops! This isn\'t the page you thought it was.', 'yikes_starter' ); ?>
+				</h1>
+			</header><!-- .archive-header -->
+		</div><!-- .container -->
+	</div><!-- /.jumbotron -->
+</div>
+
 <div id="main" class="site-main" role="main">
 	<div class="container">
 		<div class="row">
@@ -14,12 +26,6 @@ get_header(); ?>
 				<div id="primary" class="content-area">
 					<div id="content" class="site-content clearfix" role="main">
 						<article id="post-0" class="post not-found">
-							<header class="entry-header">
-								<h1 class="entry-title">
-									<?php esc_attr_e( 'Oops! This isn\'t the page you thought it was.', 'yikes_starter' ); ?>
-								</h1>
-							</header><!-- .entry-header -->
-
 							<div class="entry-content clearfix">
 								<p>
 									<img src="<?php echo get_template_directory_uri(); ?>/images/rose.gif" alt="Rose from Jane the Virgin" />
