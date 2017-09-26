@@ -398,6 +398,7 @@ h1.entry-title {margin-bottom: 0;}
 
       .card-meta {
         margin-bottom: 0.75rem;
+        @include font-14;
 
         .fa {
           margin-left: 0.6em;

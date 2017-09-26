@@ -701,6 +701,7 @@ h1.entry-title {
 }
 .site-loop .card .card-body .card-meta {
   margin-bottom: 0.75rem;
+  font-size: 0.875rem;
 }
 .site-loop .card .card-body .card-meta .fa {
   margin-left: 0.6em;
