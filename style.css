@@ -96,6 +96,7 @@ blockquote {
   background-color: #ebf5fa;
   border-left: 4px solid #d1548e;
   color: #222;
+  display: inline-block;
   font-family: Georgia, Times, "Times New Roman", serif;
   font-weight: 500;
   font-size: 1.125rem;
@@ -819,6 +820,10 @@ section {
 }
 .author-bio-box .author-bio {
   margin-bottom: 0.4rem;
+}
+.author-bio-box .fa {
+  text-align: center;
+  width: 16px;
 }
 
 footer.entry-meta {

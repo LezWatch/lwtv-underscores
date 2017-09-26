@@ -53,6 +53,7 @@ blockquote {
   background-color: $lwtv-ltgrey;
   border-left: 4px solid $lwtv-pink;
   color: $darkgrey;
+  display: inline-block;
   font-family: Georgia, Times, "Times New Roman", serif;
   font-weight: 500;
   @include font-18;
@@ -544,6 +545,11 @@ section {
 
   .author-bio {
     margin-bottom: 0.4rem;
+  }
+
+  .fa {
+    text-align: center;
+    width: 16px;
   }
 }
 
