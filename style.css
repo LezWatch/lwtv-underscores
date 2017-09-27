@@ -1450,8 +1450,8 @@ span.svg-shortcode a:hover svg {
 }
 
 .show-star svg {
-  width: 40px;
-  height: 40px;
+  width: 75px;
+  height: 75px;
 }
 
 .showlist-star svg {
@@ -1468,8 +1468,8 @@ span.svg-shortcode a:hover svg {
 }
 
 .show-we-love svg {
-  width: 40px;
-  height: 40px;
+  width: 75px;
+  height: 75px;
 }
 
 /*--------------------------------------------------------------
@@ -1491,63 +1491,42 @@ span.svg-shortcode a:hover svg {
 /*--------------------------------------------------------------
 ## Worthit
 --------------------------------------------------------------*/
-.archive-worthit svg {
-  width: 30px;
-  height: 30px;
-  float: right;
-  padding: 4px;
-}
-
 .show-worthit svg {
   vertical-align: middle;
   margin-right: 10px;
+  width: 50px;
+  height: 50px;
 }
 
 .worthit {
   font-size: 150%;
   font-weight: 500;
+  color: #fff;
 }
 
-.show-worthit svg {
-  width: 50px;
-  height: 50px;
+.ratings-icons.worthit-yes {
+  background: #5cb85c;
 }
 
-.archive-worthit.meh svg *,
-.show-worthit.meh svg *,
-.worthit-Meh {
-  fill: #f1c40f;
-  color: #f1c40f;
+.ratings-icons.worthit-no {
+  background: #c0392b;
 }
 
-.archive-worthit.yes svg *,
-.show-worthit.yes svg *,
-.worthit-Yes {
-  color: #5cb85c;
-  fill: #5cb85c;
+.ratings-icons.worthit-meh {
+  background: #f1c40f;
 }
 
-.archive-worthit.no svg *,
-.show-worthit.no svg *,
-.worthit-No {
-  color: #c0392b;
-  fill: #c0392b;
+.show-worthit,
+.show-worthit svg * {
+  fill: #fff;
+  color: #fff;
 }
 
 /*--------------------------------------------------------------
-## Entry Meta
+## Shows
 --------------------------------------------------------------*/
-.entry-meta svg {
-  width: 16px;
-  height: 16px;
-}
-
-.entry-meta svg * {
-  fill: #222;
-}
-
-.entry-meta svg:hover * {
-  fill: #d1548e;
+.show-header-svg {
+  float: right;
 }
 
 /*--------------------------------------------------------------
@@ -1612,21 +1591,6 @@ canvas {
   -moz-user-select: none;
   -webkit-user-select: none;
   -ms-user-select: none;
-}
-
-.stats-columns .one-half,
-div#container.one-half {
-  width: 40%;
-}
-
-@media only screen and (max-width: 700px) {
-  .stats-columns .one-half,
-  div#container.one-half {
-    width: 100%;
-  }
-}
-div#statistics {
-  clear: both;
 }
 
 #statistics ul {

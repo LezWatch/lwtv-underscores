@@ -6,6 +6,10 @@
  *
  * @package LezWatchTV
  */
+
+$show_id = $post->ID;
+$slug    = get_post_field( 'post_name', get_post( $show_id ) );
+$term    = term_exists( $slug , 'post_tag' );
 ?>
 
 	<?php the_post_thumbnail( 'show-img', array( 'class' => 'card-img-top' , 'alt' => get_the_title() , 'title' => get_the_title() ) ); ?>

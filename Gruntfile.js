@@ -106,6 +106,14 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-postcss'); // CSS autoprefixer plugin (cross-browser auto pre-fixes)
 
     // register task
+    grunt.registerTask('mika', [
+		'uglify',
+		'sass',
+        'cssmin',
+		'postcss',
+    ]);
+
+    // register task
     grunt.registerTask('default', [
 		'uglify',
 		'sass',
