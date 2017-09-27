@@ -86,6 +86,7 @@ $term    = term_exists( $slug , 'post_tag' );
 	$slug = get_post_field( 'post_name', get_post() );
 	?>
 	<section name="related-posts" id="related-posts" class="showschar-section">	
+		<h2>Related Articles</h2>
 		<div class="card-body">	
 			<?php
 				echo LWTV_CPT_Shows::related_posts( $slug, 'post' );
