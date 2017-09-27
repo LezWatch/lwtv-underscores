@@ -8,7 +8,6 @@
  */
 
 // Determine icon (Font-Awesome fallback)
-
 $icon        = lwtv_yikes_symbolicons( 'users.svg', 'fa-users' );
 $count_posts = facetwp_display( 'counts' );
 $selections  = facetwp_display( 'selections' );

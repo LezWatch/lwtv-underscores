@@ -248,6 +248,7 @@ function lwtv_yikes_get_characters_for_show( $show_id, $role = 'regular' ) {
 							'content'   => get_the_content( $char_id ),
 							'shows'     => $shows_array,
 							'show_from' => $show_id,
+							'role_from' => $role,
 						);
 
 					}

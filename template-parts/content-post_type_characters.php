@@ -78,7 +78,7 @@ $gender_sexuality = lwtv_yikes_chardata( get_the_ID(), 'gender' ) . lwtv_yikes_c
 			
 					<?php if ( $character_type !== '' ) echo '('.$character_type .')'; ?>
 			
-					<br /><?php echo $gender_sexuality . $cliches; ?>
+					<br /><?php echo $gender_sexuality . ' &mdash; ' . $cliches; ?>
 					<br /><?php echo $actors; ?>
 					<?php if ( count( $show_title ) !== 0 ) echo '<br />'. $appears; ?>
 					<?php if ( isset( $rip ) ) echo '<br />' . $rip ; ?>

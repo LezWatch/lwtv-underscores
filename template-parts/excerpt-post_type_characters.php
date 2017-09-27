@@ -21,19 +21,8 @@ $the_ID      = ( isset( $character['id'] ) )? $character['id'] : $post->ID;
 $the_content = ( isset( $character['content'] ) )? $character['content'] : get_the_content();
 $alttext     = get_the_title( $the_ID ) . ' - ' . wp_strip_all_tags( $the_content );
 
+$role      = ( isset( $character['role_from'] ) )? $character['role_from'] : 'regular';
 $grave     = lwtv_yikes_chardata( $the_ID, 'dead' );
-
-// We don't show this on show pages
-$shows     = array();
-if ( 'post_type_shows' !== get_post_type( ) ) {
-	$shows     = lwtv_yikes_chardata( $the_ID, 'shows' );
-}
-
-$actors    = lwtv_yikes_chardata( $the_ID, 'actors' );
-$gender    = lwtv_yikes_chardata( $the_ID, 'gender' );
-$sexuality = lwtv_yikes_chardata( $the_ID, 'sexuality' );
-$cliches   = lwtv_yikes_chardata( $the_ID, 'cliches' );
-
 ?>
 <div class="card"> 
 	<?php if ( has_post_thumbnail( $the_ID ) ) : ?>
@@ -51,24 +40,42 @@ $cliches   = lwtv_yikes_chardata( $the_ID, 'cliches' );
 		</h4>
 		<div class="card-text">
 			<?php
-			// List of Shows (will not show on show pages)
-			if ( !empty( $shows ) ) {
-				foreach ( $shows as $show ) {
-					$show_post = get_post( $show['show']);
-					echo '<div class="card-meta-item shows"><i class="fa fa-television" aria-hidden="true"></i> <a href="' . get_the_permalink( $show_post->ID )  .'">' . $show_post->post_title .'</a></div>';
+			// If they're not a regular, we're not going to show this, OR run the calculations,
+			// becuase the L Word has too many people.
+			if ( $role == 'regular' ) {
+
+				// We don't show this on show pages
+				$shows     = array();
+				if ( 'post_type_shows' !== get_post_type( ) ) {
+					$shows     = lwtv_yikes_chardata( $the_ID, 'shows' );
 				}
+				
+				$actors    = lwtv_yikes_chardata( $the_ID, 'actors' );
+				$gender    = lwtv_yikes_chardata( $the_ID, 'gender' );
+				$sexuality = lwtv_yikes_chardata( $the_ID, 'sexuality' );
+				$cliches   = lwtv_yikes_chardata( $the_ID, 'cliches' );
+
+
+				// List of Shows (will not show on show pages)
+				if ( !empty( $shows ) ) {
+					foreach ( $shows as $show ) {
+						$show_post = get_post( $show['show']);
+						echo '<div class="card-meta-item shows"><i class="fa fa-television" aria-hidden="true"></i> <a href="' . get_the_permalink( $show_post->ID )  .'">' . $show_post->post_title .'</a></div>';
+					}
+				}
+	
+				// List of Actors
+				foreach ( $actors as $actor ) {
+					echo '<div class="card-meta-item actors">'. lwtv_yikes_symbolicons( 'person.svg', 'fa-user' ) . ' ' . $actor . '</div>';
+				}
+	
+				// Gender and Sexuality
+				echo '<div class="card-meta-item"> ' . $gender . ' &bull; ' . $sexuality . '</div>';
+	
+				// List of Cliches
+				echo '<div class="card-meta-item cliches"> ' . $cliches . '</div>';
 			}
-
-			// List of Actors
-			foreach ( $actors as $actor ) {
-				echo '<div class="card-meta-item actors">'. lwtv_yikes_symbolicons( 'person.svg', 'fa-user' ) . ' ' . $actor . '</div>';
-			}
-
-			// Gender and Sexuality
-			echo '<div class="card-meta-item"> ' . $gender . ' &bull; ' . $sexuality . '</div>';
-
-			// List of Cliches
-			echo '<div class="card-meta-item cliches"> ' . $cliches . '</div>';
 			?>
-	  	</div>
+		</div>
+	</div>
 </div><!-- .card -->
