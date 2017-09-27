@@ -14,32 +14,16 @@ $quality      = min( (int) get_post_meta( $show_id, 'lezshows_quality_rating', t
 $screentime   = min( (int) get_post_meta( $show_id, 'lezshows_screentime_rating', true ), 5 );
 ?>
 
-<section id="search" class="widget widget_search"><div class="widget-wrap">
-	<h4 class="widget-title widgettitle">Search</h4>
+<section id="search" class="widget widget_search">
 	<?php get_search_form(); ?>
-</div></section>
+</section>
 
-<section id="toc" class="widget widget_text"><div class="widget-wrap">
-		<h4 class="widget-title widgettitle">Table of Contents</h4>
-		<ul>
-			<li><a href="#overview">Overview</a></li>
-			<?php
-			if( ( get_post_meta( get_the_ID(), 'lezshows_plots', true) ) ) {
-				?><li><a href="#timeline">Timeline</a></li><?php
-			}
-			if( ( get_post_meta( get_the_ID(), 'lezshows_episodes', true) ) ) {
-				?><li><a href="#episodes">Episodes</a></li><?php
-			}
-			if ( $term !== 0 && $term !== null ) {
-				?><li><a href="#related-posts">Related Posts</a></li><?php
-			}
-			?>
-			<li><a href="#characters">Characters</a></li>
-		</ul>
-</div></section>
-
-<section id="ratings" class="widget widget_text"><div class="widget-wrap">
-	<h4 class="widget-title widgettitle">Is it Worth Watching?</h4>
+<section id="ratings" class="widget widget_text">
+	<div class="card">		
+		<div class="card-header">
+			<h4>Is it Worth Watching?</h4>
+		</div>
+		
 		<?php
 		// If there's no rating, let's not show anything
 		if ( $thumb_rating == null ) {
@@ -86,9 +70,11 @@ $screentime   = min( (int) get_post_meta( $show_id, 'lezshows_screentime_rating'
 	
 			</div><?php
 		} ?>
-</div></section>
+	</div>
+</section>
 
-<section id="ratings" class="widget widget_text"><div class="widget-wrap">
+<section id="ratings" class="widget widget_text">
+	<div class="widget-wrap">
 	<h4 class="widget-title widgettitle">Tropes</h4>
 	<?php
 		// get the tropes associated with this show
