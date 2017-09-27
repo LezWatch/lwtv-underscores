@@ -13,7 +13,7 @@ $character_type = '';
 
 // Generate list of shows
 // Usage: $appears
-$all_shows = get_post_meta( get_the_ID(), 'lezchars_show_group', true );
+$all_shows = lwtv_yikes_chardata( get_the_ID(), 'shows' );
 $show_title = array();
 
 if ( $all_shows !== '' ) {
@@ -31,10 +31,7 @@ $appears = '<strong>Appears on</strong>' . $on_shows;
 
 // Generate actors
 // Usage: $actors
-$character_actors = get_post_meta( get_the_ID(), 'lezchars_actor', true );
-if ( !is_array ( $character_actors ) ) {
-	$character_actors = array( get_post_meta( get_the_ID(), 'lezchars_actor', true ) );
-}
+$character_actors = lwtv_yikes_chardata( get_the_ID(), 'actors' );
 $actor_count = count( $character_actors );
 $actor_title = sprintf( _n( 'Actor', 'Actors', $actor_count ), $actor_count );
 $actors = '<strong>' . $actor_title . ':</strong> ' . implode( ", ", $character_actors );
@@ -58,35 +55,11 @@ if ( get_post_meta( get_the_ID(), 'lezchars_death_year', true ) ) {
 
 // Generate list of Cliches
 // Usage: $cliches
-$lez_cliches = get_the_terms( get_the_ID(), 'lez_cliches' );
-$cliches = '';
-if ( $lez_cliches && ! is_wp_error( $lez_cliches ) ) {
-    $cliches = ' &mdash; Clichés: ';
-	foreach( $lez_cliches as $the_cliche ) {
-
-		// Make sure Symbolicons exist. Display the name if not.
-		$termicon = get_term_meta( $the_cliche->term_id, 'lez_termsmeta_icon', true );
-		$tropicon = $termicon ? $termicon . '.svg' : 'square.svg';
-		$icon     = lwtv_yikes_symbolicons( $tropicon, 'fa-square' );
-		$cliches .= '&nbsp;<a href="' . get_term_link( $the_cliche->slug, 'lez_cliches') . '" rel="tag" class="character cliche cliche-' . $the_cliche->slug . '" title="' . $the_cliche->name . '"><span role="img" aria-label="' . $the_cliche->name . '" title="' . $the_cliche->name . '" class="character-cliche ' . $the_cliche->slug . '">' .$icon . '</span></a>';
-	}
-}
+$cliches   = lwtv_yikes_chardata( get_the_ID(), 'cliches' );
 
 // Generate Gender & Sexuality Data
 // Usage: $gender_sexuality
-$gender_sexuality = '';
-$gender_terms = get_the_terms( get_the_ID(), 'lez_gender', true );
-if ( $gender_terms && ! is_wp_error( $gender_terms ) ) {
-	foreach( $gender_terms as $gender_term ) {
-		$gender_sexuality .= '<a href="' . get_term_link( $gender_term->slug, 'lez_gender') . '" rel="tag" title="' . $gender_term->name . '">' . $gender_term->name . '</a> ';
-	}
-}
-$sexuality_terms = get_the_terms( get_the_ID(), 'lez_sexuality', true );
-if ( $sexuality_terms && ! is_wp_error( $sexuality_terms ) ) {
-	foreach($sexuality_terms as $sexuality_term) {
-		$gender_sexuality .= '<a href="'. get_term_link( $sexuality_term->slug, 'lez_sexuality')  .'" rel="tag" title="' . $sexuality_term->name . '">' . $sexuality_term->name . '</a> ';
-	}
-}
+$gender_sexuality = lwtv_yikes_chardata( get_the_ID(), 'gender' ) . lwtv_yikes_chardata( get_the_ID(), 'sexuality' );
 ?>
 
 <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>

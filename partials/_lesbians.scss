@@ -22,17 +22,9 @@ h3.post-title.excerpt {
     clear: none;
     margin-top: 0;
 }
-
-img.attachment-medium.size-medium.wp-post-image,
-img.attachment-character-img.size-character-img.wp-post-image {
-    float: left;
-    padding: 0 10px 10px;
+.show-header-svg {
+	float: right;
 }
-
-ul.character-list {
-    list-style-type: none;
-}
-
 .shows-extras {
     margin: 0 0 16px;
 }
@@ -135,25 +127,28 @@ section#toc li {
 }
 
 /* Characters */
-span.chartitle {
-    font-weight: bold;
-    min-height: 25px;
-}
-span.played-by {
-    padding-left: 20px;
+.card-meta-item.cliches svg,
+.card-meta-item.actors svg {
+	height: 15px;
+	width: 15px;
+	vertical-align: middle;
 }
 
 /*--------------------------------------------------------------
 ## Characters
 --------------------------------------------------------------*/
+img.attachment-character-img.size-character-img.wp-post-image {
+	float: left;
+	padding: 10px;
+}
 .single-post_type_characters .entry-content ul > li {
     list-style-type: none;
 }
-
-
-/*--------------------------------------------------------------
-# SVG
---------------------------------------------------------------*/
+.character-cliche svg {
+	height: 15px;
+	width: 15px;
+	vertical-align: middle;
+}
 
 /*--------------------------------------------------------------
 ## Headers
@@ -266,14 +261,6 @@ span.svg-shortcode a:hover svg {
 	fill: $white;
 	color: $white;
 }
-
-/*--------------------------------------------------------------
-## Shows
---------------------------------------------------------------*/
-.show-header-svg {
-	float: right;
-}
-
 
 /*--------------------------------------------------------------
 ## Characters

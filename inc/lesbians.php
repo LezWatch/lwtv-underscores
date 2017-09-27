@@ -201,8 +201,7 @@ function lwtv_yikes_get_characters_for_show( $show_id, $role = 'regular' ) {
 	
 	// If this isn't a show page, or there are no valid roles, bail.
 	if ( get_post_type( $show_id ) !== 'post_type_shows' || !in_array( $role, $valid_roles ) ) return;
-		
-	$count      = LWTV_CPT_Characters::list_characters( $show_id, 'count' );
+
 	$characters = array();
 	
 	$charactersloop = new WP_Query( array(
@@ -210,7 +209,7 @@ function lwtv_yikes_get_characters_for_show( $show_id, $role = 'regular' ) {
 		'post_status'            => array( 'publish' ),
 		'orderby'                => 'title',
 		'order'                  => 'ASC',
-		'posts_per_page'         => $count,
+		'posts_per_page'         => '100',
 		'no_found_rows'          => true,
 		'update_post_term_cache' => false,
 		'meta_query'             => array( 
@@ -258,4 +257,67 @@ function lwtv_yikes_get_characters_for_show( $show_id, $role = 'regular' ) {
 		wp_reset_query();
 	}
 	return $characters;
+}
+
+function lwtv_yikes_chardata( $the_ID, $data ) {
+	
+	// Early Bail
+	if ( !isset( $the_ID ) || !isset( $data) ) return;
+	
+	$output = '';
+	
+	switch ( $data ) {
+		case 'dead':
+			$deadpage = get_term_by( 'slug', get_query_var( 'term' ), get_query_var( 'taxonomy' ) );
+			// Show nothing on archive pages for dead
+			if ( !empty( $term ) && $term->slug == 'dead' ) { 
+				return;
+			} elseif ( get_post_meta( $the_ID, 'lezchars_death_year', true ) ) {
+				$output = '<span role="img" aria-label="RIP Tombstone" title="RIP Tombstone" class="charlist-grave">' . lwtv_yikes_symbolicons( 'rip_gravestone.svg', 'fa-times-circle' ) . '</span>';
+			}
+			break;
+		case 'shows':
+			$ouput = get_post_meta( $the_ID, 'lezchars_show_group', true );
+			break;
+		case 'actors':
+			$character_actors = get_post_meta( $the_ID, 'lezchars_actor', true );
+			if ( !is_array ( $character_actors ) ) {
+				$character_actors = array( get_post_meta( $the_ID, 'lezchars_actor', true ) );
+			}
+			$output = $character_actors;
+			break;
+		case 'gender':
+			$gender_terms = get_the_terms( $the_ID, 'lez_gender', true );
+			if ( $gender_terms && ! is_wp_error( $gender_terms ) ) {
+				foreach( $gender_terms as $gender_term ) {
+					$output .= '<a href="' . get_term_link( $gender_term->slug, 'lez_gender') . '" rel="tag" title="' . $gender_term->name . '">' . $gender_term->name . '</a> ';
+				}
+			}
+			break;
+		case 'sexuality':
+			$sexuality_terms = get_the_terms( $the_ID, 'lez_sexuality', true );
+			if ( $sexuality_terms && ! is_wp_error( $sexuality_terms ) ) {
+				foreach( $sexuality_terms as $sexuality_term ) {
+					$output .= '<a href="' . get_term_link( $sexuality_term->slug, 'lez_sexuality') . '" rel="tag" title="' . $sexuality_term->name . '">' . $sexuality_term->name . '</a> ';
+				}
+			}
+			break;
+		case 'cliches':
+			$lez_cliches = get_the_terms( $the_ID, 'lez_cliches' );
+			$cliches = '';
+			if ( $lez_cliches && ! is_wp_error( $lez_cliches ) ) {
+			    $cliches = 'Clichés: ';
+				foreach( $lez_cliches as $the_cliche ) {
+					// Make sure Symbolicons exist. Display the name if not.
+					$termicon = get_term_meta( $the_cliche->term_id, 'lez_termsmeta_icon', true );
+					$tropicon = $termicon ? $termicon . '.svg' : 'square.svg';
+					$icon     = lwtv_yikes_symbolicons( $tropicon, 'fa-square' );
+					$cliches .= '<a href="' . get_term_link( $the_cliche->slug, 'lez_cliches') . '" rel="tag" class="character cliche cliche-' . $the_cliche->slug . '" title="' . $the_cliche->name . '" data-toggle="tooltip" rel="tag" data-original-title="' . $the_cliche->name . '"><span role="img" aria-label="' . $the_cliche->name . '" title="" class="character-cliche ' . $the_cliche->slug . '">' .$icon . '</span></a>&nbsp;';
+				}
+			}
+			$output = $cliches;
+			break;
+	}
+	
+	return $output;
 }
