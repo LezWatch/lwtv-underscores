@@ -590,7 +590,7 @@ footer.entry-meta {
   max-height: 300px;
   overflow: hidden;
 
-  .search-results & {
+  .search-results &, .character-show-loop & {
     max-height: 200px;
   }
 
