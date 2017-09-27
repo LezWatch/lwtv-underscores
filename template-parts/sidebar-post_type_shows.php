@@ -6,8 +6,6 @@
 global $post;
 
 $show_id      = $post->ID;
-$slug         = get_post_field( 'post_name', get_post( $show_id ) );
-$term         = term_exists( $slug , 'post_tag' );
 $thumb_rating = get_post_meta( $show_id, 'lezshows_worthit_rating', true );
 $realness     = min( (int) get_post_meta( $show_id, 'lezshows_realness_rating', true ), 5 );
 $quality      = min( (int) get_post_meta( $show_id, 'lezshows_quality_rating', true ), 5 );
@@ -30,8 +28,8 @@ $screentime   = min( (int) get_post_meta( $show_id, 'lezshows_screentime_rating'
 			?><p><em>Coming soon...</em></p><?php
 		} else {
 			?>
-			<div class="ratings-icons">
-				<div class="worthit worthit-<?php echo esc_attr( $thumb_rating ); ?>">
+			<div class="ratings-icons worthit-<?php echo lcfirst( $thumb_rating ); ?>">
+				<div class="worthit">
 					<?php
 					if ( $thumb_rating == "Yes" ) { $thumb_icon = "thumbs_up.svg"; }
 					if ( $thumb_rating == "Meh" ) { $thumb_icon = "meh-o.svg"; }

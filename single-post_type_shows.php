@@ -5,9 +5,8 @@
  * @package YIKES Starter
  */
 
-// Default to a blank icon
-$icon = '';
-
+// Build the show icon
+$icon = '<div class="show-header-svg">';
 // If this is a show, we may want to show a star or a heart.
 if ( get_post_type() == 'post_type_shows' ) {	
 	// If there's a star, we'll show it:
@@ -23,6 +22,7 @@ if ( get_post_type() == 'post_type_shows' ) {
 		$icon .= ' <span role="img" aria-label="We Love This Show!" title="We Love This Show!" class="show-we-love">' . $heart . '</span>';
 	}
 }
+$icon .= '</div>';
  
 get_header(); ?>
 
