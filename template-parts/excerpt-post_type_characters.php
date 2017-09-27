@@ -42,11 +42,11 @@ $grave     = lwtv_yikes_chardata( $the_ID, 'dead' );
 			<?php
 			// If they're not a regular, we're not going to show this, OR run the calculations,
 			// becuase the L Word has too many people.
-			if ( $role == 'regular' ) {
+			if ( $role == 'regular' && 'post_type_shows' == get_post_type() ) {
 
 				// We don't show this on show pages
 				$shows     = array();
-				if ( 'post_type_shows' !== get_post_type( ) ) {
+				if ( 'post_type_shows' !== get_post_type() ) {
 					$shows     = lwtv_yikes_chardata( $the_ID, 'shows' );
 				}
 				
