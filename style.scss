@@ -654,8 +654,28 @@ article.post_type_shows {}
 }
 
 #characters {
+
+  .title-regulars {}
+
+  .title-recurring, .title-guest {
+    margin-top: 2rem;
+  }
+
   .container {
     padding: 0;
+  }
+
+  .card {
+    margin-bottom: 1rem;
+  }
+
+  .guest-character-list {
+    padding:0;
+
+    li {
+      display: inline-block;
+      width: 33%;
+    }
   }
 }
 

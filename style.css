@@ -905,8 +905,21 @@ footer.entry-meta .fa {
   margin-bottom: 0;
 }
 
+#characters .title-recurring, #characters .title-guest {
+  margin-top: 2rem;
+}
 #characters .container {
   padding: 0;
+}
+#characters .card {
+  margin-bottom: 1rem;
+}
+#characters .guest-character-list {
+  padding: 0;
+}
+#characters .guest-character-list li {
+  display: inline-block;
+  width: 33%;
 }
 
 .show-worthit, .show-worthit svg * {

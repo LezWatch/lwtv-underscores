@@ -116,7 +116,7 @@ $term    = term_exists( $slug , 'post_tag' );
 		// Get the list of REGULAR characters
 		$chars_regular = lwtv_yikes_get_characters_for_show( $show_id, 'regular' );
 		if ( !empty( $chars_regular ) ) {	
-			?><h3>Regulars</h3>
+			?><h3 class="title-regulars">Regulars</h3>
 			<div class="container"><div class="row site-loop character-show-loop equal-height"><?php
 			foreach( $chars_regular as $character ) {
 				?><div class="col-sm-4"><?php
@@ -128,7 +128,7 @@ $term    = term_exists( $slug , 'post_tag' );
 		// Get the list of RECURRING characters
 		$chars_recurring = lwtv_yikes_get_characters_for_show( $show_id, 'recurring' );
 		if ( !empty( $chars_recurring ) ) {	
-			?><h3>Recurring</h3>
+			?><h3 class="title-recurring">Recurring</h3>
 			<div class="container"><div class="row site-loop character-show-loop equal-height"><?php
 			foreach( $chars_recurring as $character ) {
 				?><div class="col-sm-4"><?php
@@ -140,8 +140,8 @@ $term    = term_exists( $slug , 'post_tag' );
 		// Get the list of GUEST characters
 		$chars_guest = lwtv_yikes_get_characters_for_show( $show_id, 'guest' );
 		if ( !empty( $chars_guest ) ) {	
-			?><h3>Guest</h3>
-			<ul><?php
+			?><h3 class="title-guest">Guest</h3>
+			<ul class="guest-character-list"><?php
 			foreach( $chars_guest as $character ) {
 				?><li><a href="<?php the_permalink( $character['id'] ); ?>" title="<?php the_title_attribute( $character['id'] ); ?>" ><?php echo get_the_title( $character['id'] ); ?></a></li><?php
 			}
