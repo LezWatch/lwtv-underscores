@@ -640,7 +640,7 @@ button, input[type="button"], input[type="submit"] {
   margin: 2em 0 0;
 }
 .entry-content p, .entry-summary p {
-  margin-bottom: 1.6em;
+  margin-bottom: 1.2em;
 }
 
 .sticky, .bypostauthor {
@@ -862,7 +862,37 @@ footer.entry-meta .fa {
   height: 300px;
 }
 
+/* Single Show / Single Character Template */
+.showschar-section {
+  padding-bottom: 0;
+}
+.showschar-section p:last-child {
+  margin-bottom: 0;
+}
+.showschar-section h2 {
+  background-color: #f3f3f3;
+  line-height: 1;
+  margin-bottom: 0;
+  padding: .75rem 1.25rem .9rem;
+}
+
 /* Single Show Template */
+.toc-container .toc-title {
+  display: inline-block;
+  float: left;
+  font-size: 1.25rem;
+  line-height: 1;
+  margin: 0 2rem 0 0;
+  vertical-align: top;
+}
+.toc-container .breadcrumb {
+  margin-bottom: 0;
+}
+
+#characters .container {
+  padding: 0;
+}
+
 /* =Media
 ----------------------------------------------- */
 img {
@@ -914,7 +944,9 @@ img {
 }
 
 .wp-caption .wp-caption-text {
-  margin: 0.8075em 0;
+  font-size: 0.875rem;
+  line-height: 1.2;
+  margin: .6em 0 .2em 0;
   text-align: center;
 }
 
