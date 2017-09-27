@@ -955,6 +955,19 @@ footer.entry-meta .fa {
   margin-bottom: 0;
 }
 
+.show.trope svg {
+  width: 32px;
+  height: 32px;
+  vertical-align: middle;
+  margin-right: 10px;
+}
+.show.trope a {
+  text-decoration: none;
+}
+.show.trope a.trope-link {
+  text-decoration: underline;
+}
+
 /* =Media
 ----------------------------------------------- */
 img {
