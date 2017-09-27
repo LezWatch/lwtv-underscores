@@ -914,6 +914,9 @@ footer.entry-meta .fa {
 #characters .card {
   margin-bottom: 1rem;
 }
+#characters .card-title {
+  margin-bottom: 0;
+}
 #characters .guest-character-list {
   padding: 0;
 }
