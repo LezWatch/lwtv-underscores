@@ -345,7 +345,7 @@ h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
   margin: 2em 0 0;
 
   p {
-    margin-bottom: 1.6em;
+    margin-bottom: 1.2em;
   }
 }
 
@@ -599,10 +599,46 @@ footer.entry-meta {
   }
 }
 
+/* Single Show / Single Character Template */
+
+.showschar-section {
+  padding-bottom: 0;
+
+  p:last-child {
+    margin-bottom: 0;
+  }
+
+ h2 {
+    background-color: $lwtv-grey;
+    line-height: 1;
+    margin-bottom: 0;
+    padding: .75rem 1.25rem .9rem;
+  }
+}
+
 /* Single Show Template */
 
-article.post_type_shows {
+article.post_type_shows {}
 
+.toc-container {
+  .toc-title {
+    display: inline-block;
+    float: left;
+    @include font-20;
+    line-height: 1;
+    margin: 0 2rem 0 0;
+    vertical-align: top;
+  }
+
+  .breadcrumb {
+    margin-bottom: 0;
+  }
+}
+
+#characters {
+  .container {
+    padding: 0;
+  }
 }
 
 
@@ -638,7 +674,9 @@ img {
 }
 
 .wp-caption .wp-caption-text {
-  margin: 0.8075em 0;
+  @include font-14;
+  line-height: 1.2;
+  margin: .6em 0 .2em 0;
   text-align: center;
 }
 

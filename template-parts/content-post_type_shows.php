@@ -12,26 +12,26 @@ $slug    = get_post_field( 'post_name', get_post( $show_id ) );
 $term    = term_exists( $slug , 'post_tag' );
 ?>
 
-<?php the_post_thumbnail( 'show-img', array( 'class' => 'card-img-top' , 'alt' => get_the_title() , 'title' => get_the_title() ) ); ?>
+	<?php the_post_thumbnail( 'show-img', array( 'class' => 'card-img-top' , 'alt' => get_the_title() , 'title' => get_the_title() ) ); ?>
 
-<section id="toc" class="widget widget_text">
-	<h4 class="widget-title widgettitle">Table of Contents</h4>
-	<ul>
-		<li><a href="#overview">Overview</a></li>
-		<?php
-		if( ( get_post_meta( get_the_ID(), 'lezshows_plots', true) ) ) {
-			?><li><a href="#timeline">Timeline</a></li><?php
-		}
-		if( ( get_post_meta( get_the_ID(), 'lezshows_episodes', true) ) ) {
-			?><li><a href="#episodes">Episodes</a></li><?php
-		}
-		if ( $term !== 0 && $term !== null ) {
-			?><li><a href="#related-posts">Related Posts</a></li><?php
-		}
-		?>
-		<li><a href="#characters">Characters</a></li>
-	</ul>
-</section>
+	<section id="toc" class="toc-container card-body">		
+		<nav class="breadcrumb">
+			<h4 class="toc-title">Table of Contents</h4>
+			<a class="breadcrumb-item smoothscroll" href="#overview">Overview</a>
+			<?php
+			if( ( get_post_meta( get_the_ID(), 'lezshows_plots', true) ) ) {
+				?><a class="breadcrumb-item smoothscroll" href="#timeline">Timeline</a><?php
+			}
+			if( ( get_post_meta( get_the_ID(), 'lezshows_episodes', true) ) ) {
+				?><a class="breadcrumb-item smoothscroll" href="#episodes">Episodes</a><?php
+			}
+			if ( $term !== 0 && $term !== null ) {
+				?><a class="breadcrumb-item smoothscroll" href="#related-posts">Related Posts</a><?php
+			}
+			?>
+			<a class="breadcrumb-item smoothscroll" href="#characters">Characters</a>
+		</nav>
+	</section>
 
 	<?php
 		$warning    = lwtv_yikes_content_warning( get_the_ID() );
@@ -41,16 +41,21 @@ $term    = term_exists( $slug , 'post_tag' );
 		?>
 			<div class="callout card card-inverse alert-<?php echo $warning['card']; ?> text-center">
 				<div class="card-block">
-					<p><span class="callout-<?php echo $warning['card']; ?>" role="img" aria-label="Warning Hand" title="Warning Hand"><?php echo $warn_image; ?></span><?php echo $warning['content']; ?></p>
+					<p>
+						<span class="callout-<?php echo $warning['card']; ?>" role="img" aria-label="Warning Hand" title="Warning Hand"><?php echo $warn_image; ?></span><?php echo $warning['content']; ?>
+					</p>
 				</div>
 			</div>
 		<?php
 		}
 	?>
 
-	<section class="shows-extras" name="overview" id="overview">
+	<section class="showschar-section" name="overview" id="overview">
 		<h2>Overview</h2>
-		<?php the_content(); ?>
+
+		<div class="card-body">
+			<?php the_content(); ?>
+		</div>
 	</section>
 
 	<?php
@@ -59,29 +64,40 @@ $term    = term_exists( $slug , 'post_tag' );
 
 	// Queer Plots - Only display if they exist
 	if ( (get_post_meta($show_id, "lezshows_plots", true) ) ) { ?>
-		<section name="timeline" id="timeline" class="shows-extras"><h2>Queer Plotline Timeline</h2>
-		<?php echo apply_filters('the_content', wp_kses_post( get_post_meta($show_id, 'lezshows_plots', true) ) ); ?></section><?php
+		<section name="timeline" id="timeline" class="showschar-section">
+			<h2>Queer Plotline Timeline</h2>
+			<div class="card-body">
+				<?php echo apply_filters('the_content', wp_kses_post( get_post_meta($show_id, 'lezshows_plots', true) ) ); ?>
+			</div>
+		</section><?php
 	}
 
 	// Best Lez Episodes - Only display if they exist
 	if ( ( get_post_meta($show_id, "lezshows_episodes", true ) ) ) { ?>
-		<section name="episodes" id="episodes" class="shows-extras"><h2>Notable Lez-Centric Episodes</h2>
-		<?php echo apply_filters('the_content', wp_kses_post( get_post_meta($show_id, 'lezshows_episodes', true) ) ); ?></section> <?php
+		<section name="episodes" id="episodes" class="showschar-section">
+			<h2>Notable Queer-Centric Episodes</h2>
+			<div class="card-body">
+				<?php echo apply_filters('the_content', wp_kses_post( get_post_meta($show_id, 'lezshows_episodes', true) ) ); ?>
+			</div>
+		</section> <?php
 	}
 
 	// Related Posts
 	$slug = get_post_field( 'post_name', get_post() );
 	?>
-	<section name="related-posts" id="related-posts" class="shows-extras">		
-		<?php
-			echo LWTV_CPT_Shows::related_posts( $slug, 'post' );
-		?>
+	<section name="related-posts" id="related-posts" class="showschar-section">	
+		<div class="card-body">	
+			<?php
+				echo LWTV_CPT_Shows::related_posts( $slug, 'post' );
+			?>
+		</div>
 	</section> 
 	<?php
 
 	// Great big characters section!
-	echo '<section name="characters" id="characters" class="shows-extras">';
+	echo '<section name="characters" id="characters" class="showschar-section">';
 	echo '<h2>Characters</h2>';
+	echo '<div class="card-body">';
 
 	// This just gets the numbers of all characters and how many are dead.
 	$havecharcount  = LWTV_CPT_Characters::list_characters( $show_id, 'count' );
@@ -100,7 +116,7 @@ $term    = term_exists( $slug , 'post_tag' );
 		$chars_regular = lwtv_yikes_get_characters_for_show( $show_id, 'regular' );
 		if ( !empty( $chars_regular ) ) {	
 			?><h3>Regulars</h3>
-			<div class="container"><div class="row"><?php
+			<div class="container"><div class="row site-loop character-archive-loop equal-height"><?php
 			foreach( $chars_regular as $character ) {
 				?><div class="col-sm-4"><?php
 					include( locate_template( 'template-parts/excerpt-post_type_characters.php' ) );
@@ -112,7 +128,7 @@ $term    = term_exists( $slug , 'post_tag' );
 		$chars_recurring = lwtv_yikes_get_characters_for_show( $show_id, 'recurring' );
 		if ( !empty( $chars_recurring ) ) {	
 			?><h3>Recurring</h3>
-			<div class="container"><div class="row"><?php
+			<div class="container"><div class="row site-loop character-archive-loop equal-height"><?php
 			foreach( $chars_recurring as $character ) {
 				?><div class="col-sm-4"><?php
 					include( locate_template( 'template-parts/excerpt-post_type_characters.php' ) );
@@ -131,5 +147,6 @@ $term    = term_exists( $slug , 'post_tag' );
 			echo '</ul>';
 		}
 	}
+	echo '</div>';
 	echo '</section>';
 ?>
