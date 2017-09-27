@@ -411,7 +411,7 @@ h1.entry-title {
     .card-body {
       @include font-14;
 
-      p:last-child {
+      p:last-child, ul:last-of-type {
         margin-bottom: 0;
       }
 
@@ -685,6 +685,13 @@ article.post_type_shows {}
   svg {
     width: 60px;
     height: 60px;
+  }
+
+  .show-heart {
+    svg {
+      width: 30px;
+      height: 30px;
+    }
   }
 
   .show-heart.positive svg {

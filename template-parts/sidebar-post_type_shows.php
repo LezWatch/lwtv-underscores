@@ -74,98 +74,109 @@ $screentime   = min( (int) get_post_meta( $show_id, 'lezshows_screentime_rating'
 </section>
 
 <section id="ratings" class="widget widget_text">
-	<div class="widget-wrap">
-	<h4 class="widget-title widgettitle">Tropes</h4>
-	<?php
-		// get the tropes associated with this show
-		$terms = get_the_terms( $show_id, 'lez_tropes' );
+	<div class="card">			
+		<div class="card-header">
+			<h4>Tropes</h4>
+		</div>
+		<div class="card-body">
+			<?php
+				// get the tropes associated with this show
+				$terms = get_the_terms( $show_id, 'lez_tropes' );
 
-		if ( !$terms || is_wp_error( $terms ) ) {
-			// If there are no terms, throw a message
-			?><p><em>Coming soon...</em></p><?php
-		} else {
-			?><ul class="trope-list"><?php
-				// loop over each returned trope
-				foreach( $terms as $term ) { ?>
-					<li class="show trope trope-<?php echo $term->slug; ?>">
-						<a href="<?php echo get_term_link( $term->slug, 'lez_tropes'); ?>" rel="show trope"><?php
-							// Echo the taxonomy icon (default to squares if empty)
-							$icon = get_term_meta( $term->term_id, 'lez_termsmeta_icon', true );
-							echo lwtv_yikes_symbolicons( $icon .'.svg', 'fa-square' );
-						?></a>
-						<a href="<?php echo get_term_link( $term->slug, 'lez_tropes'); ?>" rel="show trope" class="trope-link"><?php
-							echo $term->name;
-						?></a>
-					</li><?php
-				}
-			?></ul><?php
-		} ?>
-</div></section>
+				if ( !$terms || is_wp_error( $terms ) ) {
+					// If there are no terms, throw a message
+					?><p><em>Coming soon...</em></p><?php
+				} else {
+					?><ul class="trope-list list-group"><?php
+						// loop over each returned trope
+						foreach( $terms as $term ) { ?>
+						<li class="list-group-item show trope trope-<?php echo $term->slug; ?>">
+							<a href="<?php echo get_term_link( $term->slug, 'lez_tropes'); ?>" rel="show trope"><?php
+								// Echo the taxonomy icon (default to squares if empty)
+								$icon = get_term_meta( $term->term_id, 'lez_termsmeta_icon', true );
+								echo lwtv_yikes_symbolicons( $icon .'.svg', 'fa-square' );
+							?></a>
+							<a href="<?php echo get_term_link( $term->slug, 'lez_tropes'); ?>" rel="show trope" class="trope-link"><?php
+								echo $term->name;
+							?></a>
+						</li><?php
+					}
+				?></ul><?php
+			} ?>
+		</div>
+	</div>
+</section>
 
 <section id="ratings" class="widget widget_text"><div class="widget-wrap">
-	<h4 class="widget-title widgettitle">Ratings</h4>
-	<?php
-		// Bail if not set
-		if ( $realness == '0' && $quality == '0' && $screentime == '0' ) {
-			?><p><em>Coming soon...</em></p><?php
-		} else {
-			// We have some love, let's show it
-			$heart_types    = array( 'realness', 'quality', 'screentime' );
-			$heart          = lwtv_yikes_symbolicons( 'heart.svg', 'fa-heart' );
-			$positive_heart = '<span role="img" class="show-heart positive">' . $heart . '</span>';
-			$negative_heart = '<span role="img" class="show-heart negative">' . $heart . '</span>';
+	<div class="card">			
+		<div class="card-header">
+			<h4>Ratings</h4>
+		</div>
+		<div class="card-body">
+			<?php
+				// Bail if not set
+				if ( $realness == '0' && $quality == '0' && $screentime == '0' ) {
+					?><p><em>Coming soon...</em></p><?php
+				} else {
+					// We have some love, let's show it
+					$heart_types    = array( 'realness', 'quality', 'screentime' );
+					$heart          = lwtv_yikes_symbolicons( 'heart.svg', 'fa-heart' );
+					$positive_heart = '<span role="img" class="show-heart positive">' . $heart . '</span>';
+					$negative_heart = '<span role="img" class="show-heart negative">' . $heart . '</span>';
 
-			foreach ( $heart_types as $type ) {
-	
-				switch ( $type ) {
-					case 'realness';
-						$rating = $realness;
-						$detail = 'lezshows_realness_details';
-						break;
-					case 'quality';
-						$rating = $quality;
-						$detail = 'lezshows_quality_details';
-						break;
-					case 'screentime';
-						$rating = $screentime;
-						$detail = 'lezshows_screentime_details';
-						break;
-				}
-	
-				if ( $rating > '0' ) {
-					?>
-					<div class="ratings-icons">
-						<h3><?php echo ucfirst( $type ); ?></h3>
-						<?php
-						// while loop to display filled in hearts
-						// based on set ratings
-						$i = 1;
-						while( $i <= $rating ) {
-							echo $positive_heart;
-							$i++;
+					foreach ( $heart_types as $type ) {
+			
+						switch ( $type ) {
+							case 'realness';
+								$rating = $realness;
+								$detail = 'lezshows_realness_details';
+								break;
+							case 'quality';
+								$rating = $quality;
+								$detail = 'lezshows_quality_details';
+								break;
+							case 'screentime';
+								$rating = $screentime;
+								$detail = 'lezshows_screentime_details';
+								break;
 						}
-						// calculate the remaining empty hearts
-						if ( $i >= 1 ) {
-							$loop_count = $i - 1;
-						} else {
-							$loop_count = 0;
+			
+						if ( $rating > '0' ) {
+							?>
+							<div class="ratings-icons">
+								<h3><?php echo ucfirst( $type ); ?></h3>
+								<?php
+								// while loop to display filled in hearts
+								// based on set ratings
+								$i = 1;
+								while( $i <= $rating ) {
+									echo $positive_heart;
+									$i++;
+								}
+								// calculate the remaining empty hearts
+								if ( $i >= 1 ) {
+									$loop_count = $i - 1;
+								} else {
+									$loop_count = 0;
+								}
+								while ( $loop_count < 5 ) {
+									echo $negative_heart;
+									$loop_count++;
+								}
+								?><span class="screen-reader-text">Rating: <?php echo $rating ?> Hearts (out of 5)</span>
+							</div>
+							<?php
+			
+							if( ( get_post_meta( $show_id, $detail, true) ) ) {
+								echo apply_filters( 'the_content', wp_kses_post( get_post_meta( $show_id, $detail, true ) ) );
+							}
 						}
-						while ( $loop_count < 5 ) {
-							echo $negative_heart;
-							$loop_count++;
-						}
-						?><span class="screen-reader-text">Rating: <?php echo $rating ?> Hearts (out of 5)</span>
-					</div>
-					<?php
-	
-					if( ( get_post_meta( $show_id, $detail, true) ) ) {
-						echo apply_filters( 'the_content', wp_kses_post( get_post_meta( $show_id, $detail, true ) ) );
 					}
 				}
-			}
-		}
-	?>
-</div></section>
+			?>
+		</div>
+	</div>
+</section>
 
 <section id="amazon" class="widget widget_text"><div class="widget-wrap">
 	<?php 

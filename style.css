@@ -712,7 +712,7 @@ h1.entry-title {
 .site-loop .card .card-body {
   font-size: 0.875rem;
 }
-.site-loop .card .card-body p:last-child {
+.site-loop .card .card-body p:last-child, .site-loop .card .card-body ul:last-of-type {
   margin-bottom: 0;
 }
 .site-loop .card .card-body .card-title {
@@ -930,6 +930,10 @@ footer.entry-meta .fa {
 .ratings-icons svg {
   width: 60px;
   height: 60px;
+}
+.ratings-icons .show-heart svg {
+  width: 30px;
+  height: 30px;
 }
 .ratings-icons .show-heart.positive svg {
   fill: #c0392b;
