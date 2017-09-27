@@ -57,36 +57,6 @@ ul.entry-meta {
 	padding-bottom: 1em;
 }
 
-/* Show Tropes - Sidebar */
-aside ul.tropes-list {
-    list-style: none;
-}
-aside li.show.trope {
-    border: none;
-}
-.show.trope svg {
-    width: 20px;
-    height: 20px;
-    vertical-align: middle;
-    margin-right: 10px;
-}
-.show.trope a {
-	text-decoration: none;
-}
-.show.trope a.trope-link {
-    text-decoration: underline;
-}
-
-/* Table of Contents */
-section#toc li:nth-child(n+2):before {
-    content: " / ";
-}
-section#toc li {
-    border: none;
-    padding: 0px;
-    margin: 0px;
-    display: inline;
-}
 
 /* Characters */
 .card-meta-item.cliches svg,

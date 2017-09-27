@@ -59,7 +59,7 @@ get_header(); ?>
 				</div><!-- #primary -->
 			</div><!-- .col-sm-8 -->
 
-			<div class="col-sm-4 site-sidebar site-loop">
+			<div class="col-sm-4 site-sidebar site-loop showschar-section">
 
 				<?php get_sidebar(); ?>
 
