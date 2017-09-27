@@ -4,9 +4,7 @@ The 100% Original Theme for LezWatch TV
 
 ## Description
 
-**Development** [ ![Codeship Status for LezWatch/lwtv-underscores](https://app.codeship.com/projects/23254790-5aa1-0135-27f4-1aaa9552a23d/status?branch=devlopment)](https://lezwatchtv.com)
-
-**Master** [ ![Codeship Status for LezWatch/lwtv-underscores](https://app.codeship.com/projects/23254790-5aa1-0135-27f4-1aaa9552a23d/status?branch=master)](https://lezwatchtv.com)
+[ ![Codeship Status for LezWatch/lwtv-underscores](https://app.codeship.com/projects/23254790-5aa1-0135-27f4-1aaa9552a23d/status?branch=master)](https://lezwatchtv.com)
 
 Based on the Yikes Starter Theme, the LWTV theme has been customized for custom post types, fully integrated with the LWTV Plugin.
 
