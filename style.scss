@@ -721,21 +721,12 @@ article.post_type_shows {}
   }
 }
 
-
 .show.trope {
   svg {
     width: 32px;
     height: 32px;
     vertical-align: middle;
     margin-right: 10px;
-  }
-
-  a {
-    text-decoration: none;
-    
-    &.trope-link {
-      text-decoration: underline;
-    }
   }
 }
 
