@@ -10,7 +10,7 @@
 $icon        = lwtv_yikes_symbolicons( 'window.svg', 'fa-video-camera' );
 $count_posts = facetwp_display( 'counts' );
 $selections  = facetwp_display( 'selections' );
-$title       = '<span role="img" aria-label="post_type_shows" title="Shows" class="taxonomy-svg shows">' . $icon . '</span>';
+$title       = '<span role="img" aria-label="post_type_shows" title="Shows" class="taxonomy-svg shows" data-toggle="tooltip">' . $icon . '</span>';
 $sort        = lwtv_yikes_facetwp_sortby( ( isset( $_GET['fwp_sort'] ) )? $_GET['fwp_sort'] : '' );
 
 get_header(); ?>

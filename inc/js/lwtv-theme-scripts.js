@@ -30,3 +30,10 @@ jQuery(document).ready(function($) {
     }
   });
 });
+
+// Tooltips
+jQuery(document).ready(function($) {
+	$(function () {
+		$('[data-toggle="tooltip"]').tooltip();
+	});
+});

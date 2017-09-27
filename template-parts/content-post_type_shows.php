@@ -83,18 +83,22 @@ $term    = term_exists( $slug , 'post_tag' );
 	}
 
 	// Related Posts
-	$slug = get_post_field( 'post_name', get_post() );
-	?>
-	<section name="related-posts" id="related-posts" class="showschar-section">	
-		<h2>Related Articles</h2>
-		<div class="card-body">	
-			<?php
-				echo LWTV_CPT_Shows::related_posts( $slug, 'post' );
-			?>
-		</div>
-	</section> 
-	<?php
-
+	$slug   = get_post_field( 'post_name', get_post() );
+	$relate = LWTV_Related_Posts::are_there_posts( $slug );
+	
+	if ( $relate ) {
+		?>
+		<section name="related-posts" id="related-posts" class="showschar-section">	
+			<h2>Related Articles</h2>
+			<div class="card-body">	
+				<?php
+					echo LWTV_CPT_Shows::related_posts( $slug );
+				?>
+			</div>
+		</section> 
+		<?php
+	}
+	
 	// Great big characters section!
 	echo '<section name="characters" id="characters" class="showschar-section">';
 	echo '<h2>Characters</h2>';

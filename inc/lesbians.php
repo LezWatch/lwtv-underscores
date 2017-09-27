@@ -309,11 +309,10 @@ function lwtv_yikes_chardata( $the_ID, $data ) {
 			if ( $lez_cliches && ! is_wp_error( $lez_cliches ) ) {
 			    $cliches = 'Clichés: ';
 				foreach( $lez_cliches as $the_cliche ) {
-					// Make sure Symbolicons exist. Display the name if not.
 					$termicon = get_term_meta( $the_cliche->term_id, 'lez_termsmeta_icon', true );
 					$tropicon = $termicon ? $termicon . '.svg' : 'square.svg';
 					$icon     = lwtv_yikes_symbolicons( $tropicon, 'fa-square' );
-					$cliches .= '<a href="' . get_term_link( $the_cliche->slug, 'lez_cliches') . '" rel="tag" class="character cliche cliche-' . $the_cliche->slug . '" title="' . $the_cliche->name . '" data-toggle="tooltip" rel="tag" title="' . $the_cliche->name . '"><span role="img" aria-label="' . $the_cliche->name . '" class="character-cliche ' . $the_cliche->slug . '">' .$icon . '</span></a>&nbsp;';
+					$cliches .= '<a href="' . get_term_link( $the_cliche->slug, 'lez_cliches') . '" data-toggle="tooltip" data-placement="bottom" rel="tag" title="' . $the_cliche->name . '"><span role="img" aria-label="' . $the_cliche->name . '" class="character-cliche ' . $the_cliche->slug . '">' .$icon . '</span></a>&nbsp;';
 				}
 			}
 			$output = $cliches;

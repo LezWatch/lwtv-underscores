@@ -38,7 +38,7 @@ $count_posts = facetwp_display( 'counts' );
 
 $icon        = lwtv_yikes_symbolicons( 'person.svg', 'fa-person' );
 $selections  = facetwp_display( 'selections' );
-$title       = '<span role="img" aria-label="post_type_characters" title="Characters" class="taxonomy-svg characters">' . $icon . '</span>';
+$title       = '<span role="img" aria-label="post_type_characters" title="Characters" class="taxonomy-svg characters" data-toggle="tooltip">' . $icon . '</span>';
 $sort        = lwtv_yikes_facetwp_sortby( ( isset( $_GET['fwp_sort'] ) )? $_GET['fwp_sort'] : '' );
 
 get_header(); ?>

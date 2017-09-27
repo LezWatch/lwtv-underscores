@@ -14,7 +14,7 @@ if ( !is_numeric( $thisyear ) ){
 $previousurl = site_url( '/this-year/'.( $thisyear - 1 ).'/' );
 $nexturl     = site_url( '/this-year/'.( $thisyear + 1 ).'/' );
 $thisurl     = site_url( '/this-year/'. date('Y') .'/' );
-$iconpath    = '<span role="img" aria-label="post_type_characters" title="Characters" class="taxonomy-svg characters">' . lwtv_yikes_symbolicons( 'calendar_alt.svg', 'fa-calendar' ) . '</span>';
+$iconpath    = '<span role="img" aria-label="post_type_characters" title="Characters" data-toggle="tooltip" class="taxonomy-svg characters">' . lwtv_yikes_symbolicons( 'calendar_alt.svg', 'fa-calendar' ) . '</span>';
 
 
 function lwtv_yikes_this_year_dead( $thisyear ) {

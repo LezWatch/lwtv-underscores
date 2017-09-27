@@ -13,13 +13,13 @@ if ( get_post_type() == 'post_type_shows' ) {
 	if ( get_post_meta( get_the_ID(), 'lezshows_stars', true) ) {
 		$color = esc_attr( get_post_meta( get_the_ID(), 'lezshows_stars' , true ) );
 		$star  = lwtv_yikes_symbolicons( 'star.svg', 'fa-star' );
-		$icon .= ' <span role="img" aria-label="' . ucfirst( $color ) . ' Star Show" title="' . ucfirst( $color ) . ' Star Show" class="show-star ' . $color . '">' . $star . '</span>';
+		$icon .= ' <span role="img" aria-label="' . ucfirst( $color ) . ' Star Show" data-toggle="tooltip" title="' . ucfirst( $color ) . ' Star Show" class="show-star ' . $color . '">' . $star . '</span>';
 	}
 	
 	// If we love this show, we'll show it:
 	if ( get_post_meta( get_the_ID(), 'lezshows_worthit_show_we_love', true) ) {
 		$heart = lwtv_yikes_symbolicons( 'heart.svg', 'fa-heart' );
-		$icon .= ' <span role="img" aria-label="We Love This Show!" title="We Love This Show!" class="show-we-love">' . $heart . '</span>';
+		$icon .= ' <span role="img" aria-label="We Love This Show!" data-toggle="tooltip" title="We Love This Show!" class="show-we-love">' . $heart . '</span>';
 	}
 }
 $icon .= '</div>';
