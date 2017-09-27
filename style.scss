@@ -151,6 +151,19 @@ nav.yikes-pagination {
   }
 }
 
+/* List Groups */
+
+.list-group {
+  .list-group-item {
+    border-left: 0;
+    border-right: 0;
+
+    &:first-child, &:last-child {
+      @include border-radius(0);
+    }
+  }
+}
+
 
 /* Buttons */
 
@@ -386,7 +399,8 @@ h1.entry-title {
       @include border-radius(0);
       color: $white;
 
-      h3, h4, h5 {        margin-bottom: 0;
+      h3, h4, h5 {
+        margin-bottom: 0;
       }
     }
 
@@ -396,6 +410,10 @@ h1.entry-title {
 
     .card-body {
       @include font-14;
+
+      p:last-child {
+        margin-bottom: 0;
+      }
 
       .card-title {
         @include font-20;
@@ -638,6 +656,55 @@ article.post_type_shows {}
 #characters {
   .container {
     padding: 0;
+  }
+}
+
+.show-worthit {
+  & , & svg * {
+    fill: $white;
+    color: $white;
+  }
+
+  svg {
+    vertical-align: middle;
+    margin-right: 10px;
+    width: 50px;
+    height: 50px;
+  }
+}
+
+.worthit {
+  color: $white;
+  @include font-30;
+  font-weight: 500;
+  padding: 0.8rem;
+}
+
+.ratings-icons {
+  
+  svg {
+    width: 60px;
+    height: 60px;
+  }
+
+  .show-heart.positive svg {
+    fill: $red;
+  }
+
+  .show-heart.negative svg {
+    fill: $lwtv-grey;
+  }
+
+  &.worthit-yes {
+    background: $green;
+  }
+  
+  &.worthit-no {
+    background: $red;
+  }
+  
+  &.worthit-meh {
+    background: $lwtv-yellow;
   }
 }
 

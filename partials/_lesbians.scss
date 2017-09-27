@@ -25,19 +25,7 @@ h3.post-title.excerpt {
 .show-header-svg {
 	float: right;
 }
-.shows-extras {
-    margin: 0 0 16px;
-}
-.shows-extras:after {
-    clear: both;
-    content: " ";
-    display: table;
-}
-.shows-extras h2 {
-    margin: 30px 0 20px 0;
-    padding-bottom: 20px;
-    text-transform: uppercase;
-}
+
 
 /* Trigger Warning */
 .callout svg {
@@ -59,32 +47,6 @@ h3.post-title.excerpt {
     text-align: center;
     padding: 5px;
 }
-
-/* Show Sidebar - Network Info */
-aside li.network {
-    margin-bottom: 5px;
-    padding-bottom: 5px;
-    border: none;
-}
-aside ul.networks-data {
-	list-style: none;
-}
-
-/* Entry Meta */
-
-.entry-meta {
-    color: $darkgrey;
-    @include font-13;
-
-    a {
-    	color: $darkgrey!important;
-
-        &:hover {
-            color: $lwtv-pink!important;
-        }
-    }
-}
-
 
 .content .entry-meta .entry-comments-link {
 	display: none;
@@ -137,13 +99,7 @@ section#toc li {
 /*--------------------------------------------------------------
 ## Characters
 --------------------------------------------------------------*/
-img.attachment-character-img.size-character-img.wp-post-image {
-	float: left;
-	padding: 10px;
-}
-.single-post_type_characters .entry-content ul > li {
-    list-style-type: none;
-}
+
 .character-cliche svg {
 	height: 15px;
 	width: 15px;
@@ -218,49 +174,6 @@ span.svg-shortcode a:hover svg {
     height: 75px;
 }
 
-/*--------------------------------------------------------------
-## Ratings
---------------------------------------------------------------*/
-.ratings-icons svg {
-    width: 30px;
-    height: 30px;
-}
-.ratings-icons .show-heart.positive svg {
-    fill: $red;
-}
-.ratings-icons .show-heart.negative svg {
-    fill: $lwtv-grey;
-}
-
-/*--------------------------------------------------------------
-## Worthit
---------------------------------------------------------------*/
-.show-worthit svg {
-    vertical-align: middle;
-    margin-right: 10px;
-	width: 50px;
-	height: 50px;
-}
-.worthit {
-    font-size: 150%;
-    font-weight: 500;
-    color: $white;
-}
-
-.ratings-icons.worthit-yes {
-	background: $green;
-}
-.ratings-icons.worthit-no {
-	background: $red;
-}
-.ratings-icons.worthit-meh {
-	background: $lwtv-yellow;
-}
-.show-worthit,
-.show-worthit svg * {
-	fill: $white;
-	color: $white;
-}
 
 /*--------------------------------------------------------------
 ## Characters

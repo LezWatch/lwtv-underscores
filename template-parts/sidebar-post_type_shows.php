@@ -43,25 +43,27 @@ $screentime   = min( (int) get_post_meta( $show_id, 'lezshows_screentime_rating'
 			</div>
 	
 			<div class="ratings-details">
-				<?php
-					if ( ( get_post_meta( $show_id, 'lezshows_worthit_details', true ) ) ) {
-						echo apply_filters( 'the_content', wp_kses_post( get_post_meta( $show_id, 'lezshows_worthit_details', true ) ) );
-					}
-				?>
+				<div class="card-body">
+					<?php
+						if ( ( get_post_meta( $show_id, 'lezshows_worthit_details', true ) ) ) {
+							echo apply_filters( 'the_content', wp_kses_post( get_post_meta( $show_id, 'lezshows_worthit_details', true ) ) );
+						}
+					?>
+				</div>
 	
-				<ul class="network-data">
+				<ul class="network-data list-group">
 					<?php
 					$stations = get_the_terms( $show_id, 'lez_stations' );
 					if ( $stations && ! is_wp_error( $stations ) ) {
-						echo '<li class="network names">'. get_the_term_list( $show_id, 'lez_stations', '<strong>Airs On:</strong> ', ', ' ) .'</li>';
+						echo '<li class="list-group-item network names">'. get_the_term_list( $show_id, 'lez_stations', '<strong>Airs On:</strong> ', ', ' ) .'</li>';
 					}
 					$formats = get_the_terms( $show_id, 'lez_formats' );
 					if ( $formats && ! is_wp_error( $formats ) ) {
-						echo '<li class="network formats">'. get_the_term_list( $show_id, 'lez_formats', '<strong>Show Format:</strong> ', ', ' ) .'</li>';
+						echo '<li class="list-group-item network formats">'. get_the_term_list( $show_id, 'lez_formats', '<strong>Show Format:</strong> ', ', ' ) .'</li>';
 					}
 					if ( get_post_meta($show_id, 'lezshows_airdates', true) ) {
 						$airdates = get_post_meta( $show_id, 'lezshows_airdates', true );
-						echo '<li class="network airdates"><strong>Airdates:</strong> '. $airdates['start'] .' - '. $airdates['finish'] .'</li>';
+						echo '<li class="list-group-item network airdates"><strong>Airdates:</strong> '. $airdates['start'] .' - '. $airdates['finish'] .'</li>';
 					}
 					?>
 				</ul>
