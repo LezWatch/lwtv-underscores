@@ -892,6 +892,13 @@ footer.entry-meta .fa {
   margin-bottom: 4rem;
 }
 
+.percentage-container {
+  margin-top: 1rem;
+}
+.percentage-container .row {
+  margin-bottom: 2em;
+}
+
 canvas {
   -moz-user-select: none;
   -webkit-user-select: none;
