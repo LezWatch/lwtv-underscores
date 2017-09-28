@@ -1438,15 +1438,19 @@ a.facetwp-page {
 .site-sidebar .widget {
   margin: 0 0 1em;
 }
-.site-sidebar .widget_categories, .site-sidebar .widget_tag_cloud {
+.site-sidebar .widget_categories, .site-sidebar .widget_tag_cloud,
+.site-sidebar .widget-tags {
   -webkit-box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.14);
   box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.14);
   padding-bottom: .75rem;
 }
-.site-sidebar .widget_categories .tagcloud, .site-sidebar .widget_tag_cloud .tagcloud {
+.site-sidebar .widget_categories .tagcloud, .site-sidebar .widget_categories .widget-tags-container, .site-sidebar .widget_tag_cloud .tagcloud, .site-sidebar .widget_tag_cloud .widget-tags-container,
+.site-sidebar .widget-tags .tagcloud,
+.site-sidebar .widget-tags .widget-tags-container {
   padding: 0 1.25rem;
 }
-.site-sidebar .widget_categories h2.widget-title, .site-sidebar .widget_tag_cloud h2.widget-title {
+.site-sidebar .widget_categories h2.widget-title, .site-sidebar .widget_tag_cloud h2.widget-title,
+.site-sidebar .widget-tags h2.widget-title {
   background: linear-gradient(60deg, #ab47bc, #8e24aa);
   color: #fff;
   font-size: 1.5rem;

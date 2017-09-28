@@ -1197,11 +1197,12 @@ a.facetwp-page {
     margin: 0 0 1em;
   }
 
-  .widget_categories, .widget_tag_cloud {
+  .widget_categories, .widget_tag_cloud,
+  .widget-tags,  {
     @include box-shadow(0 1px 4px 0 rgba(0, 0, 0, 0.14));
     padding-bottom: .75rem;
 
-    .tagcloud {
+    .tagcloud, .widget-tags-container {
       padding: 0 1.25rem;
     }
 
