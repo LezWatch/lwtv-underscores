@@ -43,8 +43,14 @@
 			<h3>Trigger Warnings</h3>
 			<?php LWTV_Stats::generate( 'shows', 'trigger', 'piechart' ); ?>
 		</div>
+<<<<<<< HEAD
 	</div>
 	<div class="row">
+=======
+
+		<div class="w-100"></div>
+
+>>>>>>> e291d10bbd902cb819eeb04e09f2295bd118026e
 		<div class="col-sm-6">
 			<h3>Shows We Love</h3>
 			<?php LWTV_Stats::generate( 'shows', 'weloveit', 'piechart' ); ?>
@@ -66,7 +72,11 @@
 			<h3>Worth It Scores</h3>
 			<?php LWTV_Stats::generate( 'shows', 'thumbs', 'percentage' ); ?>
 		</div>
+<<<<<<< HEAD
 		<div class="col-sm-6">
+=======
+		<div class="col">
+>>>>>>> e291d10bbd902cb819eeb04e09f2295bd118026e
 			<h3>Stars Rankings</h3>
 			<?php LWTV_Stats::generate( 'shows', 'stars', 'percentage' ); ?>
 		</div>
@@ -76,7 +86,11 @@
 			<h3>Show Formats</h3>
 			<?php LWTV_Stats::generate( 'shows', 'formats', 'percentage' ); ?>
 		</div>
+<<<<<<< HEAD
 		<div class="col-sm-6">
+=======
+		<div class="col">
+>>>>>>> e291d10bbd902cb819eeb04e09f2295bd118026e
 			<h3>Trigger Warnings</h3>
 			<?php LWTV_Stats::generate( 'shows', 'trigger', 'percentage' ); ?>
 		</div>
@@ -86,7 +100,11 @@
 			<h3>Shows We Love</h3>
 			<?php LWTV_Stats::generate( 'shows', 'weloveit', 'percentage' ); ?>
 		</div>
+<<<<<<< HEAD
 		<div class="col-sm-6">
+=======
+		<div class="col">
+>>>>>>> e291d10bbd902cb819eeb04e09f2295bd118026e
 			<h3>Currently Airing</h3>
 			<?php LWTV_Stats::generate( 'shows', 'current', 'percentage' ); ?>
 		</div>
