@@ -698,6 +698,27 @@ article.post_type_shows {}
   }
 }
 
+/* Trigger Warning */
+.trigger-warning-container {
+
+  svg {
+    float: left;
+    margin: 10px;
+    height: 36px;
+    width: 36px
+  }
+
+  .callout-danger svg * {
+    fill: $red;
+  }
+
+  .callout-info, .callout-warning {
+    svg * {
+      fill: $lwtv-yellow;
+    }
+  }
+}
+
 #characters {
 
   .title-regulars {}

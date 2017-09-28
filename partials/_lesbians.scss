@@ -24,20 +24,6 @@ h3.post-title.excerpt {
 }
 
 
-/* Trigger Warning */
-.callout svg {
-    width: 36px;
-    height: 36px;
-    float: left;
-    margin: 10px;
-}
-.callout-danger svg * {
-	fill: $red;
-}
-.callout-info svg *,
-.callout-warning svg * {
-	fill: $lwtv-yellow;
-}
 
 /* ratings icons */
 .ratings-icons {

@@ -933,6 +933,20 @@ footer.entry-meta .fa {
   margin-bottom: 0;
 }
 
+/* Trigger Warning */
+.trigger-warning-container svg {
+  float: left;
+  margin: 10px;
+  height: 36px;
+  width: 36px;
+}
+.trigger-warning-container .callout-danger svg * {
+  fill: #c0392b;
+}
+.trigger-warning-container .callout-info svg *, .trigger-warning-container .callout-warning svg * {
+  fill: #f1c40f;
+}
+
 #characters .title-recurring, #characters .title-guest {
   margin-top: 2rem;
 }
@@ -1378,23 +1392,6 @@ ul.comment-list li .comment-content .btn a, ul.comment-list li .comment-content 
 h3.post-title.excerpt {
   clear: none;
   margin-top: 0;
-}
-
-/* Trigger Warning */
-.callout svg {
-  width: 36px;
-  height: 36px;
-  float: left;
-  margin: 10px;
-}
-
-.callout-danger svg * {
-  fill: #c0392b;
-}
-
-.callout-info svg *,
-.callout-warning svg * {
-  fill: #f1c40f;
 }
 
 /* ratings icons */
