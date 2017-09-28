@@ -1070,11 +1070,19 @@ h3.post-title.excerpt {
   margin-right: 10px;
 }
 
-/* =Archive Pages (posts / shows / characters)
+/* =Archive Pages (posts / shows / characters / taxonomies)
 ----------------------------------------------- */
 h1 svg *,
 h3 svg * {
   fill: #fff;
+}
+
+.taxonomy-svg svg,
+.taxonomy-svg i.fa {
+  width: 100px;
+  height: 100px;
+  float: right;
+  margin-top: -20px;
 }
 
 /* =Media
@@ -1463,17 +1471,6 @@ span.svg-shortcode a:hover svg {
 
 .charlist-grave svg * {
   fill: #222;
-}
-
-/*--------------------------------------------------------------
-# Taxonomies
---------------------------------------------------------------*/
-.taxonomy-svg svg,
-.taxonomy-svg i.fa {
-  width: 100px;
-  height: 100px;
-  float: right;
-  margin: 5px;
 }
 
 /*--------------------------------------------------------------

@@ -885,12 +885,21 @@ article.post_type_shows {}
 
 
 
-/* =Archive Pages (posts / shows / characters)
+/* =Archive Pages (posts / shows / characters / taxonomies)
 ----------------------------------------------- */
 
 h1 svg *,
 h3 svg * {
   fill: $white;
+}
+
+
+.taxonomy-svg svg,
+.taxonomy-svg i.fa {
+  width: 100px;
+  height: 100px;
+  float: right;
+  margin-top: -20px;
 }
 
 

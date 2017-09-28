@@ -27,9 +27,8 @@
 			<h3>Gender Identity</h3>
 			<?php LWTV_Stats::generate( 'characters', 'gender', 'piechart' ); ?>
 		</div>
-
-		<div class="w-100"></div>
-	
+	</div>
+	<div class="row">
 		<div class="col-sm-6">
 			<h3>Queer IRL</h3>
 			<?php LWTV_Stats::generate( 'characters', 'queer-irl', 'piechart' ); ?>
@@ -47,25 +46,21 @@
 
 <div class="container">
 	<div class="row">
-		<div class="col">
+		<div class="col-sm-6">
 			<h3>Sexual Identity</h3>
 			<?php LWTV_Stats::generate( 'characters', 'sexuality', 'percentage' ); ?>
 		</div>
-	</div>
-	<div class="row">
-		<div class="col">
+		<div class="col-sm-6">
 			<h3>Gender Identity</h3>
 			<?php LWTV_Stats::generate( 'characters', 'gender', 'percentage' ); ?>
 		</div>
 	</div>
 	<div class="row">
-		<div class="col">
+		<div class="col-sm-6">
 			<h3>Roles</h3>
 			<?php LWTV_Stats::generate( 'characters', 'role', 'percentage' ); ?>
 		</div>
-	</div>
-	<div class="row">
-		<div class="col">
+		<div class="col-sm-6">
 			<h3>Queer IRL</h3>
 			<?php LWTV_Stats::generate( 'characters', 'queer-irl', 'percentage' ); ?>
 		</div>
