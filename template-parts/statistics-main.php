@@ -36,7 +36,7 @@
 
 <hr>
 
-<div class="container">
+<div class="container percentage-container">
 	<div class="row">
 		<div class="col-sm-6">
 			<?php LWTV_Stats::generate( 'characters', 'cliches', 'list' ); ?>

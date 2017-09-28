@@ -47,7 +47,7 @@
 
 <h2><a name="percentages">Percentages</a></h2>
 
-<div class="container">
+<div class="container percentage-container">
 	<div class="row">
 		<div class="col-sm-6">
 			<h3>Sexual Identity</h3>

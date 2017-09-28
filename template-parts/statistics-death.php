@@ -86,7 +86,7 @@ $deadshow_percent = round( ( $deadshows / $allshows ) * 100 , 2 );
 
 <p>Percentages are of <em>all</em> queers and shows, not just the dead.</p>
 
-<div class="containerpercentage-container">
+<div class="container percentage-container">
 	<div class="row">
 		<div class="col-sm-6">
 			<h3>Shows</h3>
