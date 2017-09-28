@@ -92,7 +92,7 @@ if ( $related ) {
 		<h2>Related Articles</h2>
 		<div class="card-body">	
 			<?php
-				echo LWTV_CPT_Shows::related_posts( $slug );
+				echo LWTV_Related_Posts::related_posts( $slug );
 			?>
 		</div>
 	</section> 

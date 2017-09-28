@@ -37,10 +37,15 @@
 	<div class="amp-wp-article-content">
 
 		<?php
-			LWTV_CPT_Shows::echo_content_warning( 'amp' );
-		?>
+			$warning = lwtv_yikes_content_warning( get_the_ID() );
+			if ( $warning['card'] != 'none' ) {
+				?>
+				<div class="alert alert-<?php echo $warning['card']; ?>" role="alert">
+					<?php echo $warning['content']; ?>
+				</div>
+				<?php
+			}
 
-		<?php
 			echo $this->get( 'post_amp_content' );
 			if ( get_post_type( $this->ID ) === 'post_type_shows'  ) {
 
