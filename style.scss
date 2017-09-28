@@ -540,7 +540,6 @@ section {
 /* =Sub pages
 ----------------------------------------------- */
 
-
 /* Subheaders */
 .archive-subheader .jumbotron {
   background: $lwtv-pink;
@@ -627,6 +626,29 @@ footer.entry-meta {
     margin-left: 1em;
     width: 16px;
   }
+}
+
+/* Statistics Pages */
+
+.chart-container {
+  .row {
+    margin-bottom: 4rem;
+  }
+}
+
+canvas {
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+}
+
+
+
+/* Advertising */
+
+.amazon-ads,
+.affiliate-ads {
+  margin-top: 15px;
 }
 
 
@@ -892,7 +914,6 @@ h1 svg *,
 h3 svg * {
   fill: $white;
 }
-
 
 .taxonomy-svg svg,
 .taxonomy-svg i.fa {

@@ -17,7 +17,7 @@
 
 <h2><a name="charts">Charts</a></h2>
 
-<div class="container">
+<div class="container chart-container">
 	<div class="row">
 		<div class="col-sm-6">
 			<h3>Sexuality</h3>

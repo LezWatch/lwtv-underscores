@@ -887,6 +887,23 @@ footer.entry-meta .fa {
   width: 16px;
 }
 
+/* Statistics Pages */
+.chart-container .row {
+  margin-bottom: 4rem;
+}
+
+canvas {
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+}
+
+/* Advertising */
+.amazon-ads,
+.affiliate-ads {
+  margin-top: 15px;
+}
+
 /* =Custom Post Types
 ----------------------------------------------- */
 /* Characters */
@@ -1497,23 +1514,6 @@ a.facetwp-page {
 }
 .facetwp-pager li.page-link {
   color: #d1548e;
-}
-
-/*--------------------------------------------------------------
-# Statistics
---------------------------------------------------------------*/
-canvas {
-  -moz-user-select: none;
-  -webkit-user-select: none;
-  -ms-user-select: none;
-}
-
-/*--------------------------------------------------------------
-# Advertising
---------------------------------------------------------------*/
-.amazon-ads,
-.affiliate-ads {
-  margin-top: 15px;
 }
 
 /*# sourceMappingURL=style.css.map */
