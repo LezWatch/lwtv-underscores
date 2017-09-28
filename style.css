@@ -929,6 +929,20 @@ canvas {
   vertical-align: middle;
 }
 
+.char-grave svg {
+  width: 40px;
+  height: 40px;
+}
+
+.charlist-grave svg {
+  width: 25px;
+  height: 25px;
+  float: right;
+}
+.charlist-grave svg * {
+  fill: #222;
+}
+
 /* Single Show / Single Character Template */
 h3.post-title.excerpt {
   clear: none;
@@ -1016,17 +1030,19 @@ h3.post-title.excerpt {
 #characters .card-title {
   margin-bottom: 0;
 }
-#characters .card-meta-item.cliches svg, #characters .card-meta-item.actors svg {
-  height: 15px;
-  width: 15px;
-  vertical-align: middle;
-}
 #characters .guest-character-list {
   padding: 0;
 }
 #characters .guest-character-list li {
   display: inline-block;
   width: 33%;
+}
+
+.card-meta-item.cliches svg,
+.card-meta-item.actors svg {
+  height: 15px;
+  width: 15px;
+  vertical-align: middle;
 }
 
 .show-worthit, .show-worthit svg * {
@@ -1449,9 +1465,6 @@ ul.comment-list li .comment-content .btn a, ul.comment-list li .comment-content 
 /* =Lesbians
 ----------------------------------------------- */
 /*--------------------------------------------------------------
-## Characters
---------------------------------------------------------------*/
-/*--------------------------------------------------------------
 ## Shortcodes
 --------------------------------------------------------------*/
 span.svg-shortcode svg {
@@ -1463,30 +1476,10 @@ span.svg-shortcode svg {
 span.svg-shortcode a {
   text-decoration: none;
 }
-
 span.svg-shortcode a svg {
   fill: #d1548e;
 }
-
 span.svg-shortcode a:hover svg {
-  fill: #222;
-}
-
-/*--------------------------------------------------------------
-## Characters
---------------------------------------------------------------*/
-.char-grave svg {
-  width: 40px;
-  height: 40px;
-}
-
-.charlist-grave svg {
-  width: 25px;
-  height: 25px;
-  float: right;
-}
-
-.charlist-grave svg * {
   fill: #222;
 }
 

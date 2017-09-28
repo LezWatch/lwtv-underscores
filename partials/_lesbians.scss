@@ -3,13 +3,6 @@
 
 
 /*--------------------------------------------------------------
-## Characters
---------------------------------------------------------------*/
-
-
-
-
-/*--------------------------------------------------------------
 ## Shortcodes
 --------------------------------------------------------------*/
 span.svg-shortcode svg {
@@ -17,31 +10,17 @@ span.svg-shortcode svg {
     height: 50px;
     margin: 0 5px 0 5px;
 }
+
 span.svg-shortcode a {
     text-decoration: none;
-}
-span.svg-shortcode a svg {
-	fill: $lwtv-pink;
-}
-span.svg-shortcode a:hover svg {
-	fill: $darkgrey;
-}
 
-
-/*--------------------------------------------------------------
-## Characters
---------------------------------------------------------------*/
-.char-grave svg {
-	width: 40px;
-	height: 40px;
-}
-.charlist-grave svg {
-	width: 25px;
-	height: 25px;
-	float: right;
-}
-.charlist-grave svg * {
-	fill: $darkgrey;
+	svg {
+		fill: $lwtv-pink;
+	}
+	
+	&:hover svg {
+		fill: $darkgrey;
+	}
 }
 
 
@@ -72,6 +51,5 @@ a.facetwp-page {
 	
 	li.page-link {
 		color: $lwtv-pink;
-	}
-	
+	}	
 }

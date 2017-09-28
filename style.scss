@@ -683,6 +683,23 @@ canvas {
   vertical-align: middle;
 }
 
+.char-grave svg {
+  width: 40px;
+  height: 40px;
+}
+
+.charlist-grave {
+  svg {
+    width: 25px;
+    height: 25px;
+    float: right;
+  }
+
+  svg * {
+    fill: $darkgrey;
+  }
+}
+
 
 /* Single Show / Single Character Template */
 
@@ -811,14 +828,6 @@ article.post_type_shows {}
     margin-bottom: 0;
   }
 
-  .card-meta-item.cliches, .card-meta-item.actors {
-    svg {
-      height: 15px;
-      width: 15px;
-      vertical-align: middle;
-    }
-  }
-
   .guest-character-list {
     padding:0;
 
@@ -826,6 +835,15 @@ article.post_type_shows {}
       display: inline-block;
       width: 33%;
     }
+  }
+}
+
+.card-meta-item.cliches, 
+.card-meta-item.actors {
+  svg {
+    height: 15px;
+    width: 15px;
+    vertical-align: middle;
   }
 }
 
