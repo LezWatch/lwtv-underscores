@@ -872,7 +872,7 @@ footer.entry-meta .fa {
   overflow: hidden;
 }
 .search-results .character-image-wrapper, .character-show-loop .character-image-wrapper {
-  max-height: 200px;
+  height: 200px;
 }
 .character-archive-loop .character-image-wrapper {
   height: 300px;
