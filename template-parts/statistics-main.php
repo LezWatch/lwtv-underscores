@@ -21,7 +21,7 @@
 
 <hr>
 
-<div class="container">
+<div class="container chart-container">
 	<div class="row">
 		<div class="col">
 			<?php LWTV_Stats::generate( 'characters', 'cliches', 'barchart' ); ?>
@@ -38,12 +38,10 @@
 
 <div class="container">
 	<div class="row">
-		<div class="col">
+		<div class="col-sm-6">
 			<?php LWTV_Stats::generate( 'characters', 'cliches', 'list' ); ?>
 		</div>
-	</div>
-	<div class="row">
-		<div class="col">
+		<div class="col-sm-6">
 			<?php LWTV_Stats::generate( 'shows', 'tropes', 'list' ); ?>
 		</div>
 	</div>

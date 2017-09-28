@@ -1327,6 +1327,51 @@ ul.comment-list li .comment-content .btn a, ul.comment-list li .comment-content 
   margin: 1em 0 2em;
 }
 
+/*--------------------------------------------------------------
+## Shortcodes
+--------------------------------------------------------------*/
+span.svg-shortcode svg {
+  width: 50px;
+  height: 50px;
+  margin: 0 5px 0 5px;
+}
+
+span.svg-shortcode a {
+  text-decoration: none;
+}
+span.svg-shortcode a svg {
+  fill: #d1548e;
+}
+span.svg-shortcode a:hover svg {
+  fill: #222;
+}
+
+/*--------------------------------------------------------------
+# Facet
+--------------------------------------------------------------*/
+div.facetwp-counts {
+  display: inline;
+}
+
+a.facetwp-page {
+  padding: 0px;
+  margin-right: 0px;
+}
+
+.facetwp-pager {
+  clear: both;
+}
+
+.facetwp-pager li.page-item.page-link.active {
+  z-index: 2;
+  color: #fff;
+  background-color: #d1548e;
+  border-color: #d1548e;
+}
+.facetwp-pager li.page-link {
+  color: #d1548e;
+}
+
 /* ==========================================================================
    Widgetized Areas
    ========================================================================== */
@@ -1458,55 +1503,5 @@ ul.comment-list li .comment-content .btn a, ul.comment-list li .comment-content 
    Specific Media STYLES
    ========================================================================== */
 /* responsive styles */
-/* ==========================================================================
-   Old styles
-   ========================================================================== */
-/* lesbian styles */
-/* =Lesbians
------------------------------------------------ */
-/*--------------------------------------------------------------
-## Shortcodes
---------------------------------------------------------------*/
-span.svg-shortcode svg {
-  width: 50px;
-  height: 50px;
-  margin: 0 5px 0 5px;
-}
-
-span.svg-shortcode a {
-  text-decoration: none;
-}
-span.svg-shortcode a svg {
-  fill: #d1548e;
-}
-span.svg-shortcode a:hover svg {
-  fill: #222;
-}
-
-/*--------------------------------------------------------------
-# Facet
---------------------------------------------------------------*/
-div.facetwp-counts {
-  display: inline;
-}
-
-a.facetwp-page {
-  padding: 0px;
-  margin-right: 0px;
-}
-
-.facetwp-pager {
-  clear: both;
-}
-
-.facetwp-pager li.page-item.page-link.active {
-  z-index: 2;
-  color: #fff;
-  background-color: #d1548e;
-  border-color: #d1548e;
-}
-.facetwp-pager li.page-link {
-  color: #d1548e;
-}
 
 /*# sourceMappingURL=style.css.map */

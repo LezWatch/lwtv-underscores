@@ -1060,6 +1060,59 @@ embed, iframe, object {
   }
 }
 
+/*--------------------------------------------------------------
+## Shortcodes
+--------------------------------------------------------------*/
+span.svg-shortcode svg {
+    width: 50px;
+    height: 50px;
+    margin: 0 5px 0 5px;
+}
+
+span.svg-shortcode a {
+    text-decoration: none;
+
+  svg {
+    fill: $lwtv-pink;
+  }
+  
+  &:hover svg {
+    fill: $darkgrey;
+  }
+}
+
+
+
+/*--------------------------------------------------------------
+# Facet
+--------------------------------------------------------------*/
+div.facetwp-counts {
+  display: inline;
+}
+
+a.facetwp-page {
+  padding: 0px;
+  margin-right: 0px;
+}
+
+.facetwp-pager {
+  clear: both;
+}
+
+.facetwp-pager {
+  li.page-item.page-link.active {
+    z-index: 2;
+    color: $white;
+    background-color: $lwtv-pink;
+    border-color: $lwtv-pink;
+  }
+  
+  li.page-link {
+    color: $lwtv-pink;
+  } 
+}
+
+
 
 /* ==========================================================================
    Widgetized Areas
@@ -1242,11 +1295,3 @@ embed, iframe, object {
 /* responsive styles */
 
 //@import 'partials/responsive';
-
-/* ==========================================================================
-   Old styles
-   ========================================================================== */
-
-/* lesbian styles */
-
-@import 'partials/lesbians';

@@ -90,12 +90,12 @@ $deadshow_percent = round( ( $deadshows / $allshows ) * 100 , 2 );
 			<h3>Shows</h3>
 			<?php LWTV_Stats::generate( 'shows', 'dead-shows', 'percentage' ); ?>
 		</div>
-	</div>
-	<div class="row">
 		<div class="col-sm-6">
 			<h3>Sexual Orientation</h3>
 			<?php LWTV_Stats::generate( 'characters', 'dead-sex', 'percentage' ); ?>
 		</div>
+	</div>
+	<div class="row">
 		<div class="col-sm-6">
 			<h3>Gender Identity</h3>
 			<?php LWTV_Stats::generate( 'characters', 'dead-gender', 'percentage' ); ?>
