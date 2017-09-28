@@ -5,15 +5,25 @@
  * @package LezWatchTV
  */
 ?>
-<h2><a href="/shows/">Total Shows</a></strong> (<?php echo LWTV_Stats::generate( 'shows', 'total', 'count' ); ?>)</h2>
+<h2>
+	<a href="/shows/">Total Shows</a></strong> (<?php echo LWTV_Stats::generate( 'shows', 'total', 'count' ); ?>)
+</h2>
 
-<center><a href="#charts">Charts</a> // <a href="#percentages">Percentages</a></center>
+<section id="toc" class="toc-container card-body">
+	<nav class="breadcrumb">
+		<h4 class="toc-title">Go to:</h4>
+		<a class="breadcrumb-item smoothscroll" href="#charts">Charts</a>
+		<a class="breadcrumb-item smoothscroll" href="#percentages">Percentages</a>
+	</nav>
+</section>
 
-<hr>
 
-<h2><a name="charts">Charts</a></h2>
 
-<div class="container">
+<h2>
+	<a name="charts">Charts</a>
+</h2>
+
+<div class="container chart-container">
 	<div class="row">
 		<div class="col-sm-6">
 			<h3>Worth It?</h3>
@@ -23,9 +33,8 @@
 			<h3>Stars</h3>
 			<?php LWTV_Stats::generate( 'shows', 'stars', 'piechart' ); ?>
 		</div>
-
-		<div class="w-100"></div>
-	
+	</div>
+	<div class="row">	
 		<div class="col-sm-6">
 			<h3>Show Format</h3>
 			<?php LWTV_Stats::generate( 'shows', 'formats', 'piechart' ); ?>
@@ -34,8 +43,8 @@
 			<h3>Trigger Warnings</h3>
 			<?php LWTV_Stats::generate( 'shows', 'trigger', 'piechart' ); ?>
 		</div>
-
-		<div class="w-100"></div>
+	</div>
+	<div class="row">
 		<div class="col-sm-6">
 			<h3>Shows We Love</h3>
 			<?php LWTV_Stats::generate( 'shows', 'weloveit', 'piechart' ); ?>
@@ -51,39 +60,33 @@
 
 <h2><a name="percentages">Percentages</a></h2>
 
-<div class="container">
+<div class="container chart-container">
 	<div class="row">
-		<div class="col">
+		<div class="col-sm-6">
 			<h3>Worth It Scores</h3>
 			<?php LWTV_Stats::generate( 'shows', 'thumbs', 'percentage' ); ?>
 		</div>
-	</div>
-	<div class="row">
-		<div class="col">
+		<div class="col-sm-6">
 			<h3>Stars Rankings</h3>
 			<?php LWTV_Stats::generate( 'shows', 'stars', 'percentage' ); ?>
 		</div>
 	</div>
 	<div class="row">
-		<div class="col">
+		<div class="col-sm-6">
 			<h3>Show Formats</h3>
 			<?php LWTV_Stats::generate( 'shows', 'formats', 'percentage' ); ?>
 		</div>
-	</div>
-	<div class="row">
-		<div class="col">
+		<div class="col-sm-6">
 			<h3>Trigger Warnings</h3>
 			<?php LWTV_Stats::generate( 'shows', 'trigger', 'percentage' ); ?>
 		</div>
 	</div>
 	<div class="row">
-		<div class="col">
+		<div class="col-sm-6">
 			<h3>Shows We Love</h3>
 			<?php LWTV_Stats::generate( 'shows', 'weloveit', 'percentage' ); ?>
 		</div>
-	</div>
-	<div class="row">
-		<div class="col">
+		<div class="col-sm-6">
 			<h3>Currently Airing</h3>
 			<?php LWTV_Stats::generate( 'shows', 'current', 'percentage' ); ?>
 		</div>
