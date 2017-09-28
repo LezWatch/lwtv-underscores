@@ -701,6 +701,12 @@ article.post_type_shows {}
 /* Trigger Warning */
 .trigger-warning-container {
 
+  .alert {
+    @include border-radius(0);
+    border-left: 0;
+    border-right: 0;
+  }
+
   svg {
     float: left;
     margin: 10px;
