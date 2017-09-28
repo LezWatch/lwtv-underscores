@@ -11,7 +11,7 @@ get_header(); ?>
 	<div class="jumbotron">
 		<div class="container">
 			<header class="archive-header">
-				<h1 class="page-title">
+				<h1 class="entry-title">
 					<?php esc_attr_e( 'Oops! This isn\'t the page you thought it was.', 'yikes_starter' ); ?>
 				</h1>
 			</header><!-- .archive-header -->

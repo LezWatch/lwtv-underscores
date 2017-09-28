@@ -29,10 +29,8 @@ get_header(); ?>
 <div class="archive-subheader">
 	<div class="jumbotron">
 		<div class="container">
-			<header class="archive-header">
-				<h1 class="page-title">					
-					<?php the_title( '<h1 class="entry-title">', $icon . '</h1>' ); ?>
-				</h1>
+			<header class="archive-header">			
+				<?php the_title( '<h1 class="entry-title">', $icon . '</h1>' ); ?>
 			</header><!-- .archive-header -->
 		</div><!-- .container -->
 	</div><!-- /.jumbotron -->

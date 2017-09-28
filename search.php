@@ -10,7 +10,7 @@ get_header(); ?>
 	<div class="jumbotron">
 		<div class="container">
 			<header class="archive-header">
-				<h1 class="page-title">
+				<h1 class="entry-title">
 					<?php printf( esc_attr__( 'Search Results for: %s', 'yikes_starter' ), '<span>' . get_search_query() . '</span>' ); ?>
 				</h1>
 			</header><!-- .archive-header -->

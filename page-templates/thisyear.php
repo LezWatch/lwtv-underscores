@@ -236,7 +236,7 @@ get_header();
 		<div class="container">
 			<header class="archive-header">
 				<div class="archive-description">
-					<h1 class="archive-title">
+					<h1 class="entry-title">
 						In This Year - <?php echo $thisyear; ?>
 						<?php echo ( isset( $iconpath ) ? $iconpath : '' ); ?>
 					</h1>

@@ -56,7 +56,7 @@ get_header(); ?>
 		<div class="container">
 			<header class="archive-header">
 				<div class="archive-description">
-					<h1 class="archive-title"><?php echo $title . $image; ?></h1>
+					<h1 class="entry-title"><?php echo $title . $image; ?></h1>
 					<p><?php $intro; ?></p>
 				</div>
 			</header><!-- .archive-header -->

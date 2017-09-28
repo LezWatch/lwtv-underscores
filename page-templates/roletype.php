@@ -47,7 +47,7 @@ get_header(); ?>
 	<div class="jumbotron">
 		<div class="container">
 			<header class="archive-header">
-				<h1 class="facetwp-page-title page-title">
+				<h1 class="facetwp-page-title entry-title">
 					<?php echo ucfirst( $thisrole ).' Characters ('. $count_posts .'<span class="facetwp-count"></span>)'; ?>
 					<?php echo $title; ?>
 				</h1>
