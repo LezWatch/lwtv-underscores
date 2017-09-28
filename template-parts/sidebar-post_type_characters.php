@@ -13,6 +13,10 @@ $char_id = $post->ID;
 	</div>
 </section>
 
+<section id="amazon" class="widget widget_text">
+	<?php echo LWTV_Amazon::show_amazon( $char_id ); ?>
+</section>
+
 <section id="tagcloud" class="widget widget-tags">
 	<h2 class="widget-title">Sexuality</h2>
 	<div class="widget-tags-container">
@@ -50,8 +54,4 @@ $char_id = $post->ID;
 			wp_tag_cloud( $args );
 		?>
 	</div>
-</section>
-
-<section id="amazon" class="widget widget_text">
-	<?php echo LWTV_Amazon::show_amazon( $char_id ); ?>
 </section>

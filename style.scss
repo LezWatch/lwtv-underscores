@@ -683,10 +683,15 @@ canvas {
 /* Single Character Template */
 
 .character-page {
-  .card {  
+  .card-group {  
     border: none;
     @include border-radius(0);
     @include box-shadow(0 1px 4px 0 rgba(0, 0, 0, 0.14));
+
+    .card {      
+      border: none;
+      @include border-radius(0);
+    }
   }
 }
 
