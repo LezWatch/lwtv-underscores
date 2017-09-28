@@ -22,6 +22,10 @@ $the_content = ( isset( $character['content'] ) )? $character['content'] : get_t
 $alttext     = get_the_title( $the_ID ) . ' - ' . wp_strip_all_tags( $the_content );
 $role        = ( isset( $character['role_from'] ) )? $character['role_from'] : 'regular';
 $grave       = lwtv_yikes_chardata( $the_ID, 'dead' );
+$archive     = ( is_archive() || is_tax() || is_page() )? true : false;
+
+// Reset to prevent Teri Polo from overtaking the world
+unset( $shows, $actors, $gender, $sexuality, $cliches );
 
 ?>
 
@@ -41,41 +45,57 @@ $grave       = lwtv_yikes_chardata( $the_ID, 'dead' );
 		</h4>
 		<div class="card-text">
 			<?php
-			// If they're not a regular, we're not going to show this, OR run the calculations,
-			// becuase the L Word has too many people.
-			if ( $role == 'regular' && 'post_type_shows' == get_post_type() ) {
 
-				// We don't show this on show pages
-				$shows     = array();
-				if ( 'post_type_shows' !== get_post_type() ) {
-					$shows     = lwtv_yikes_chardata( $the_ID, 'shows' );
-				}
-				
-				$actors    = lwtv_yikes_chardata( $the_ID, 'actors' );
+			// Shows: Only show on NON show pages
+			if ( 'post_type_shows' !== get_post_type() ) {
+				$shows = lwtv_yikes_chardata( $the_ID, 'shows' );
+			}
+
+			// If we're a regular we show it all
+			if ( $role == 'regular' && 'post_type_shows' == get_post_type() ) {
 				$gender    = lwtv_yikes_chardata( $the_ID, 'gender' );
 				$sexuality = lwtv_yikes_chardata( $the_ID, 'sexuality' );
 				$cliches   = lwtv_yikes_chardata( $the_ID, 'cliches' );
+			}
+			
+			if ( ( $role == 'regular' && 'post_type_shows' == get_post_type() ) || $archive ) {
+				$actors    = lwtv_yikes_chardata( $the_ID, 'actors' );
+			}
 
-				// List of Shows (will not show on show pages)
-				if ( !empty( $shows ) ) {
-					foreach ( $shows as $show ) {
-						$show_post = get_post( $show['show']);
-						echo '<div class="card-meta-item shows"><i class="fa fa-television" aria-hidden="true"></i> <a href="' . get_the_permalink( $show_post->ID )  .'">' . $show_post->post_title .'</a></div>';
-					}
+			// List of Shows (will not show on show pages)
+			if ( isset( $shows ) ) {
+				foreach ( $shows as $show ) {
+					$show_post = get_post( $show['show']);
+					echo '<div class="card-meta-item shows"><i class="fa fa-television" aria-hidden="true"></i> <a href="' . get_the_permalink( $show_post->ID )  .'">' . $show_post->post_title .'</a></div>';
 				}
-	
-				// List of Actors
+			}
+
+			// List of Actors
+			if ( isset( $actors ) ) {
 				foreach ( $actors as $actor ) {
 					echo '<div class="card-meta-item actors">'. lwtv_yikes_symbolicons( 'person.svg', 'fa-user' ) . ' ' . $actor . '</div>';
 				}
-	
-				// Gender and Sexuality
+			}
+
+			// Gender and Sexuality
+			if ( isset( $gender ) && isset( $sexuality ) ) {
 				echo '<div class="card-meta-item"> ' . $gender . ' &bull; ' . $sexuality . '</div>';
-	
-				// List of Cliches
+			}
+
+			// List of Cliches
+			if ( isset( $cliches ) ) {
 				echo '<div class="card-meta-item cliches"> ' . $cliches . '</div>';
 			}
 			?>
 		</div>
 	</div>
+	<?php
+	if ( $archive ) {
+		?>
+		<div class="card-footer">
+			<a href="<?php the_permalink( $the_ID ); ?>" title="<?php the_title_attribute( $the_ID ); ?>" class="btn btn-outline-primary">Character Profile</a>
+		</div>
+		<?php
+	} 
+	?>
 </div><!-- .card -->

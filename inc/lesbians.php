@@ -15,8 +15,7 @@
  * Loved Shows Shuffle
  *
  * This puts the loved show in a random order so it'll be different
- * for reloads. If we have more than three loved shows, it'll make
- * it even moar random.
+ * for reloads.
  */
 add_filter( 'the_posts', function( $posts, \WP_Query $query ) {
     if( $pick = $query->get( '_loved_shuffle' ) ) {
@@ -51,7 +50,8 @@ add_filter( 'comments_open', 'lwtv_yikes_filter_media_comment_status', 10 , 2 );
  */
 function lwtv_yikes_symbolicons( $svg = 'square.svg', $fontawesome = 'fa-square' ) {	
 
-	$icon = '<i class="fa ' . $fontawesome . '" aria-hidden="true"></i>';
+	$icon   = '<i class="fa ' . $fontawesome . '" aria-hidden="true"></i>';
+	$square = file_get_contents( get_template_directory() . '/images/square.svg' );
 
 	if ( defined( 'LP_SYMBOLICONS_PATH' ) ) {
 		$response      = wp_remote_get( LP_SYMBOLICONS_PATH );
@@ -60,8 +60,10 @@ function lwtv_yikes_symbolicons( $svg = 'square.svg', $fontawesome = 'fa-square'
 		if ( $response_code == '200' ) {
 			$get_svg      = wp_remote_get( LP_SYMBOLICONS_PATH . $svg );
 			$response_svg = wp_remote_retrieve_response_code( $get_svg );
-			$icon         = ( $response_svg == '200' )? $get_svg['body'] : 'square.svg';
+			$icon         = ( $response_svg == '200' )? $get_svg['body'] : $square;
 		}
+	} elseif ( !wp_style_is( 'yikes-fontawesome-style', 'enqueued' ) ) {
+		$icon = $square;
 	}
 
 	return $icon;
@@ -84,7 +86,8 @@ add_action( 'after_setup_theme', 'lwtv_yikes_jetpack_setup' );
 /*
  * Remove Jetpack because it's stupid. 
  *
- * This stops Jetpack from adding sharing
+ * This stops Jetpack from adding sharing after every post 
+ * on a home page or archive if you use a custom loop.
  */
 function lwtv_yikes_jetpack_remove_share() {
 	remove_filter( 'the_content', 'sharing_display', 19 );
@@ -115,7 +118,8 @@ function lwtv_yikes_jetpack_post_meta( ) {
 /*
  * Archive Sort Order
  *
- * Everything BUT regular posts go alphabetical
+ * Characters, shows, and certain taxonmies will use a
+ * special order: ASC by title
  */
 function lwtv_yikes_archive_sort_order( $query ) {
     if ( $query->is_main_query() && !is_admin() ) {
@@ -132,7 +136,8 @@ add_action( 'pre_get_posts', 'lwtv_yikes_archive_sort_order' );
 /**
  * Archive Query
  * 
- * Change posts-per-page for custom post type archives
+ * Characters and certain taxonomies show 24 posts per
+ * page on archives.
  */
 function lwtv_yikes_character_archive_query( $query ) {
 	if ( $query->is_archive() && $query->is_main_query() && !is_admin() ) {
@@ -149,6 +154,8 @@ add_action( 'pre_get_posts', 'lwtv_yikes_character_archive_query' );
 
 /**
  * Show content warning
+ *
+ * If a show has a content warning, let's show it.
  *
  * @access public
  * @return void
@@ -186,21 +193,23 @@ function lwtv_yikes_content_warning( $show_id ) {
 	return $warning_array;
 }
 
-
 /**
- * lwtv_yikes_get_characters_for_show function.
+ * Get Characters For Show
+ *
+ * Get all the characters for a show, based on role type.
  * 
  * @access public
- * @param mixed $show_id
- * @param mixed $role
- * @return void
+ * @param mixed $show_id: Extracted from page the function is called on
+ * @param mixed $role: regular (default), recurring, guest
+ * @return array of characters
  */
 function lwtv_yikes_get_characters_for_show( $show_id, $role = 'regular' ) {
-	
+
+	// Valid Roles:	
 	$valid_roles = array( 'regular', 'recurring', 'guest' );
 	
 	// If this isn't a show page, or there are no valid roles, bail.
-	if ( get_post_type( $show_id ) !== 'post_type_shows' || !in_array( $role, $valid_roles ) ) return;
+	if ( !isset( $show_id ) || get_post_type( $show_id ) !== 'post_type_shows' || !in_array( $role, $valid_roles ) ) return;
 
 	$characters = array();
 	
@@ -250,7 +259,6 @@ function lwtv_yikes_get_characters_for_show( $show_id, $role = 'regular' ) {
 							'show_from' => $show_id,
 							'role_from' => $role,
 						);
-
 					}
 				}
 			}
@@ -260,13 +268,25 @@ function lwtv_yikes_get_characters_for_show( $show_id, $role = 'regular' ) {
 	return $characters;
 }
 
+
+/**
+ * Character Data
+ *
+ * Called on character page to generate certain data bits
+ * 
+ * @access public
+ * @param mixed $the_ID: the character ID
+ * @param mixed $data: 
+ * @return void
+ */
 function lwtv_yikes_chardata( $the_ID, $data ) {
-	
+
 	// Early Bail
-	if ( !isset( $the_ID ) || !isset( $data) ) return;
+	$valid_data = array( 'dead', 'shows', 'actors', 'gender', 'sexuality', 'cliches' );
+	if ( !isset( $the_ID ) || !isset( $data) || !in_array( $data, $valid_data ) ) return;
 	
 	$output = '';
-	
+
 	switch ( $data ) {
 		case 'dead':
 			$deadpage = get_term_by( 'slug', get_query_var( 'term' ), get_query_var( 'taxonomy' ) );
@@ -278,7 +298,7 @@ function lwtv_yikes_chardata( $the_ID, $data ) {
 			}
 			break;
 		case 'shows':
-			$ouput = get_post_meta( $the_ID, 'lezchars_show_group', true );
+			$output = get_post_meta( $the_ID, 'lezchars_show_group', true );
 			break;
 		case 'actors':
 			$character_actors = get_post_meta( $the_ID, 'lezchars_actor', true );
