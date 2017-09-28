@@ -682,6 +682,14 @@ canvas {
 
 /* Single Character Template */
 
+.character-page {
+  .card {  
+    border: none;
+    @include border-radius(0);
+    @include box-shadow(0 1px 4px 0 rgba(0, 0, 0, 0.14));
+  }
+}
+
 .character-cliche svg {
   height: 15px;
   width: 15px;
