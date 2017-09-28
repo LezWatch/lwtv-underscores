@@ -809,6 +809,24 @@ article.post_type_shows {}
 }
 
 
+/* Notable Queer-Centric Episodes */
+
+#episodes {
+
+  ul {
+    list-style-type: none;
+    padding: 0;
+
+    li {
+      margin-bottom: 0.6rem;
+
+      &:before {
+        @include fontawesome("\f26c")
+      }      
+    }
+  }
+}
+
 /* Character listing */
 
 #characters {

@@ -1021,6 +1021,19 @@ h3.post-title.excerpt {
   fill: #f1c40f;
 }
 
+/* Notable Queer-Centric Episodes */
+#episodes ul {
+  list-style-type: none;
+  padding: 0;
+}
+#episodes ul li {
+  margin-bottom: 0.6rem;
+}
+#episodes ul li:before {
+  content: "";
+  font-family: FontAwesome;
+}
+
 /* Character listing */
 #characters .title-recurring, #characters .title-guest {
   margin-top: 2rem;
