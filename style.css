@@ -1027,11 +1027,15 @@ h3.post-title.excerpt {
   padding: 0;
 }
 #episodes ul li {
-  margin-bottom: 0.6rem;
+  margin-bottom: 1rem;
+  padding-left: 26px;
 }
 #episodes ul li:before {
   content: "";
   font-family: FontAwesome;
+  font-weight: 700;
+  left: 20px;
+  position: absolute;
 }
 
 /* Character listing */

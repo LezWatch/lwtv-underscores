@@ -818,10 +818,14 @@ article.post_type_shows {}
     padding: 0;
 
     li {
-      margin-bottom: 0.6rem;
+      margin-bottom: 1rem;
+      padding-left: 26px;
 
       &:before {
-        @include fontawesome("\f26c")
+        @include fontawesome("\f26c");
+        font-weight: 700;
+        left: 20px;
+        position: absolute;
       }      
     }
   }
