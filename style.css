@@ -668,11 +668,8 @@ h1.entry-title {
   margin-top: 20px;
 }
 
-.taxonomy-description, .archive-description {
-  margin-top: 0.6rem;
-}
-.taxonomy-description a, .taxonomy-description a:visited, .archive-description a, .archive-description a:visited {
-  color: #fff;
+.jetpack-video-wrapper {
+  margin-top: 1rem;
 }
 
 /* Table of Contents */
@@ -1129,6 +1126,13 @@ h3.post-title.excerpt {
 
 /* =Archive Pages (posts / shows / characters / taxonomies)
 ----------------------------------------------- */
+.taxonomy-description, .archive-description {
+  margin-top: 0.6rem;
+}
+.taxonomy-description a, .taxonomy-description a:visited, .archive-description a, .archive-description a:visited {
+  color: #fff;
+}
+
 h1 svg *,
 h3 svg * {
   fill: #fff;
