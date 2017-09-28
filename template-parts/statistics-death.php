@@ -27,13 +27,19 @@ $deadshow_percent = round( ( $deadshows / $allshows ) * 100 , 2 );
 	</div>
 </div>
 
-<center><a href="#charts">Charts</a> // <a href="#percentages">Percentages</a></center>
+<section id="toc" class="toc-container card-body">
+	<nav class="breadcrumb">
+		<h4 class="toc-title">Go to:</h4>
+		<a class="breadcrumb-item smoothscroll" href="#charts">Charts</a>
+		<a class="breadcrumb-item smoothscroll" href="#percentages">Percentages</a>
+	</nav>
+</section>
 
-<hr>
+<h2>
+	<a name="charts">Charts</a>
+</h2>
 
-<h2><a name="charts">Charts</a></h2>
-
-<div class="container">
+<div class="container chart-container">
 	<div class="row">
 		<div class="col-sm-6">
 			<h3>Shows With Dead</h3>
@@ -43,30 +49,29 @@ $deadshow_percent = round( ( $deadshows / $allshows ) * 100 , 2 );
 			<h3>Character Sexuality</h3>
 			<?php LWTV_Stats::generate( 'characters', 'dead-sex', 'piechart' ); ?>
 		</div>
-
-		<div class="w-100"></div>
-	
+	</div>
+	<div class="row">
 		<div class="col-sm-6">
 			<h3>Character Gender Identity</h3>
 			<?php LWTV_Stats::generate( 'characters', 'dead-gender', 'piechart' ); ?>
 		</div>
 		<div class="col-sm-6">
 			<h3>Character Role</h3>
-				<?php LWTV_Stats::generate( 'characters', 'dead-role', 'piechart' ); ?>
+			<?php LWTV_Stats::generate( 'characters', 'dead-role', 'piechart' ); ?>
 		</div>
 	</div>
 </div>
 
-<p>On average, <strong><?php LWTV_Stats::generate( 'characters', 'dead-years', 'average' ); ?></strong> characters die per year (including years where no queers died).</p>
+<p>
+	On average, <strong><?php LWTV_Stats::generate( 'characters', 'dead-years', 'average' ); ?></strong> characters die per year (including years where no queers died).
+</p>
 
 <div class="container">
 	<div class="row">
-		<div class="col">
+		<div class="col-sm-6">
 			<?php LWTV_Stats::generate( 'characters', 'dead-years', 'barchart' ); ?>
 		</div>
-	</div>
-	<div class="row">
-		<div class="col">
+		<div class="col-sm-6">
 			<h3>Deaths by Year</h3>
 			<?php LWTV_Stats::generate( 'characters', 'dead-years', 'percentage' ); ?>
 		</div>
@@ -81,25 +86,23 @@ $deadshow_percent = round( ( $deadshows / $allshows ) * 100 , 2 );
 
 <div class="container">
 	<div class="row">
-		<div class="col">
+		<div class="col-sm-6">
 			<h3>Shows</h3>
 			<?php LWTV_Stats::generate( 'shows', 'dead-shows', 'percentage' ); ?>
 		</div>
 	</div>
 	<div class="row">
-		<div class="col">
+		<div class="col-sm-6">
 			<h3>Sexual Orientation</h3>
 			<?php LWTV_Stats::generate( 'characters', 'dead-sex', 'percentage' ); ?>
 		</div>
-	</div>
-	<div class="row">
-		<div class="col">
+		<div class="col-sm-6">
 			<h3>Gender Identity</h3>
 			<?php LWTV_Stats::generate( 'characters', 'dead-gender', 'percentage' ); ?>
 		</div>
 	</div>
 	<div class="row">
-		<div class="col">
+		<div class="col-sm-6">
 			<h3>Character Role</h3>
 			<?php LWTV_Stats::generate( 'characters', 'dead-role', 'percentage' ); ?>
 		</div>

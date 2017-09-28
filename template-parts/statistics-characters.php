@@ -5,7 +5,10 @@
  * @package LezWatchTV
  */
 ?>
-<h2><a href="/characters/">Total Characters</a></strong> (<?php echo LWTV_Stats::generate( 'characters', 'total', 'count' ); ?>)</h2>
+
+<h2>
+	<a href="/characters/">Total Characters</a></strong> (<?php echo LWTV_Stats::generate( 'characters', 'total', 'count' ); ?>)
+</h2>
 
 <section id="toc" class="toc-container card-body">
 	<nav class="breadcrumb">
