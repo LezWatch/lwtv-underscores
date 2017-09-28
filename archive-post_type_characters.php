@@ -46,7 +46,7 @@ get_header(); ?>
 										<?php
 										/* Start the Loop */
 										while ( have_posts() ) : the_post();
-											?><div class="col-sm-3"><?php
+											?><div class="col-sm-4"><?php
 											get_template_part( 'template-parts/excerpt', 'post_type_characters' );
 											?></div><?php
 										endwhile; ?>

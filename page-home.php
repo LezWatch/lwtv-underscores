@@ -133,10 +133,10 @@ get_header(); ?>
 					<div class="card-deck">
 						<?php
 							
-						// Collect 10 loved posts (max) and then pick three
+						// Collect 30 loved posts (max) and then pick 3
 						$lovedpostloop = new WP_Query( array(
 							'post_type'         => 'post_type_shows',
-							'posts_per_page'    => '10',
+							'posts_per_page'    => '30',
 							'post_status'       => array( 'publish' ),
 							'no_found_rows'     => true,
 							'_loved_shuffle'    => 3,
