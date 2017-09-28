@@ -635,21 +635,34 @@ footer.entry-meta {
 }
 
 
-/* Stars */
+/* Stars and Hearts */
 
-.showlist-star.gold svg *, .show-star.gold svg * {
-  fill: $lwtv-gold;
-}
-.showlist-star.gold i.fa, .show-star.gold i.fa {
-  color: $lwtv-gold;
+.showlist-star, .show-star {
+  &.gold {
+    svg * {
+      fill: $lwtv-gold;
+    }  
+    i.fa {
+      color: $lwtv-gold;
+    }  
+  }
+
+  &.silver {
+    svg * {
+      fill: $lwtv-silver
+    }
+    i.fa {
+      color: $lwtv-silver
+    }
+  }
 }
 
-.showlist-star.silver svg *, .show-star.silver svg * {
-  fill: $lwtv-silver
+.show-we-love {
+  svg *, i.fa {
+    fill: $red;
+  }
 }
-.showlist-star.silver i.fa, .show-star.silver i.fa {
-  color: $lwtv-silver
-}
+
 
 /* Single Show Template */
 
@@ -785,6 +798,15 @@ article.post_type_shows {}
   }
 }
 
+
+
+/* =Archive Pages (posts / shows / characters)
+----------------------------------------------- */
+
+h1 svg *,
+h3 svg * {
+  fill: $white;
+}
 
 
 

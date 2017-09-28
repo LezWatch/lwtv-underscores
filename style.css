@@ -892,21 +892,22 @@ footer.entry-meta .fa {
   padding: .75rem 1.25rem .9rem;
 }
 
-/* Stars */
+/* Stars and Hearts */
 .showlist-star.gold svg *, .show-star.gold svg * {
   fill: #FFD700;
 }
-
 .showlist-star.gold i.fa, .show-star.gold i.fa {
   color: #FFD700;
 }
-
 .showlist-star.silver svg *, .show-star.silver svg * {
   fill: #C0C0C0;
 }
-
 .showlist-star.silver i.fa, .show-star.silver i.fa {
   color: #C0C0C0;
+}
+
+.show-we-love svg *, .show-we-love i.fa {
+  fill: #c0392b;
 }
 
 /* Single Show Template */
@@ -1003,6 +1004,13 @@ footer.entry-meta .fa {
   height: 32px;
   vertical-align: middle;
   margin-right: 10px;
+}
+
+/* =Archive Pages (posts / shows / characters)
+----------------------------------------------- */
+h1 svg *,
+h3 svg * {
+  fill: #fff;
 }
 
 /* =Media
@@ -1422,14 +1430,6 @@ ul.entry-meta {
 }
 
 /*--------------------------------------------------------------
-## Headers
---------------------------------------------------------------*/
-h1 svg *,
-h3 svg * {
-  fill: #fff;
-}
-
-/*--------------------------------------------------------------
 ## Shortcodes
 --------------------------------------------------------------*/
 span.svg-shortcode svg {
@@ -1448,20 +1448,6 @@ span.svg-shortcode a svg {
 
 span.svg-shortcode a:hover svg {
   fill: #222;
-}
-
-/*--------------------------------------------------------------
-## Shows We Love
---------------------------------------------------------------*/
-.show-we-love svg *,
-.show-we-love i.fa {
-  fill: #c0392b;
-}
-
-.show-we-love svg {
-  width: 75px;
-  height: 75px;
-  margin: 5px;
 }
 
 /*--------------------------------------------------------------

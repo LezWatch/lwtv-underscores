@@ -10,7 +10,7 @@ get_header(); ?>
 	<div class="jumbotron">
 		<div class="container">
 			<header class="archive-header">
-				<h1 class="page-title">
+				<h1 class="entry-title">
 					<?php the_title(); ?></h1>
 				</h1>
 			</header><!-- .archive-header -->

@@ -72,13 +72,6 @@ ul.entry-meta {
 	vertical-align: middle;
 }
 
-/*--------------------------------------------------------------
-## Headers
---------------------------------------------------------------*/
-h1 svg *,
-h3 svg * {
-    fill: $white;
-}
 
 /*--------------------------------------------------------------
 ## Shortcodes
@@ -96,22 +89,6 @@ span.svg-shortcode a svg {
 }
 span.svg-shortcode a:hover svg {
 	fill: $darkgrey;
-}
-
-
-
-
-/*--------------------------------------------------------------
-## Shows We Love
---------------------------------------------------------------*/
-.show-we-love svg *,
-.show-we-love i.fa {
-    fill: $red;
-}
-.show-we-love svg {
-    width: 75px;
-    height: 75px;
-	margin: 5px;
 }
 
 

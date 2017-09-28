@@ -12,7 +12,7 @@ get_header(); ?>
 		<div class="container">
 			<header class="archive-header">
 				<?php
-					the_archive_title( '<h1 class="page-title">', '</h1>' );
+					the_archive_title( '<h1 class="entry-title">', '</h1>' );
 					the_archive_description( '<div class="taxonomy-description">', '</div>' );
 				?>
 			</header><!-- .archive-header -->
