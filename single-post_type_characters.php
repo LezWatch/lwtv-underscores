@@ -1,28 +1,12 @@
 <?php
 /**
- * The Template for displaying all single Show pages.
+ * The Template for displaying all single character pages.
  *
  * @package YIKES Starter
  */
 
-// Build the show icon
-$icon = '<div class="show-header-svg">';
-// If this is a show, we may want to show a star or a heart.
-if ( get_post_type() == 'post_type_shows' ) {	
-	// If there's a star, we'll show it:
-	if ( get_post_meta( get_the_ID(), 'lezshows_stars', true) ) {
-		$color = esc_attr( get_post_meta( get_the_ID(), 'lezshows_stars' , true ) );
-		$star  = lwtv_yikes_symbolicons( 'star.svg', 'fa-star' );
-		$icon .= ' <span role="img" aria-label="' . ucfirst( $color ) . ' Star Show" data-toggle="tooltip" title="' . ucfirst( $color ) . ' Star Show" class="show-star ' . $color . '">' . $star . '</span>';
-	}
-	
-	// If we love this show, we'll show it:
-	if ( get_post_meta( get_the_ID(), 'lezshows_worthit_show_we_love', true) ) {
-		$heart = lwtv_yikes_symbolicons( 'heart.svg', 'fa-heart' );
-		$icon .= ' <span role="img" aria-label="We Love This Show!" data-toggle="tooltip" title="We Love This Show!" class="show-we-love">' . $heart . '</span>';
-	}
-}
-$icon .= '</div>';
+// Default to a blank icon
+$icon = '';
  
 get_header(); ?>
 
