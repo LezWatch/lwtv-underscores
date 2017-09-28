@@ -44,7 +44,7 @@ $related = LWTV_Related_Posts::are_there_posts( $slug );
 	?>
 
 	<section id="trigger-warning" class="trigger-warning-container">
-		<div class="alert alert-danger alert-<?php echo $warning['card']; ?>" role="alert">
+		<div class="alert alert-<?php echo $warning['card']; ?>" role="alert">
 			<span class="callout-<?php echo $warning['card']; ?>" role="img" aria-label="Warning Hand" title="Warning Hand"><?php echo $warn_image; ?></span>
 			<?php echo $warning['content']; ?>
 		</div>
