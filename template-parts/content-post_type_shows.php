@@ -123,7 +123,7 @@ if ( $related ) {
 			$chars_regular = lwtv_yikes_get_characters_for_show( $show_id, 'regular' );
 			if ( !empty( $chars_regular ) ) {	
 				?><h3 class="title-regulars">Regulars</h3>
-				<div class="container"><div class="row site-loop character-show-loop equal-height"><?php
+				<div class="container characters-regulars-container"><div class="row site-loop character-show-loop equal-height"><?php
 				foreach( $chars_regular as $character ) {
 					?><div class="col-sm-4"><?php
 						include( locate_template( 'template-parts/excerpt-post_type_characters.php' ) );
@@ -135,7 +135,7 @@ if ( $related ) {
 			$chars_recurring = lwtv_yikes_get_characters_for_show( $show_id, 'recurring' );
 			if ( !empty( $chars_recurring ) ) {	
 				?><h3 class="title-recurring">Recurring</h3>
-				<div class="container"><div class="row site-loop character-show-loop equal-height"><?php
+				<div class="container characters-recurring-container"><div class="row site-loop character-show-loop equal-height"><?php
 				foreach( $chars_recurring as $character ) {
 					?><div class="col-sm-4"><?php
 						include( locate_template( 'template-parts/excerpt-post_type_characters.php' ) );

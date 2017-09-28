@@ -725,12 +725,20 @@ article.post_type_shows {}
   }
 }
 
+/* Character listing */
+
 #characters {
 
   .title-regulars {}
 
   .title-recurring, .title-guest {
     margin-top: 2rem;
+  }
+
+  .characters-regulars-container {
+    .card-text {
+      margin-top: 0.6rem;
+    }
   }
 
   .container {

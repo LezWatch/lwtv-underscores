@@ -956,8 +956,12 @@ footer.entry-meta .fa {
   fill: #f1c40f;
 }
 
+/* Character listing */
 #characters .title-recurring, #characters .title-guest {
   margin-top: 2rem;
+}
+#characters .characters-regulars-container .card-text {
+  margin-top: 0.6rem;
 }
 #characters .container {
   padding: 0;
