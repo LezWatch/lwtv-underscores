@@ -25,7 +25,8 @@ Tags:
 #main {
   background-color: $white;
 
-  .home &, .search-results & {
+  .home &, .search-results &,
+  .page-template-statistics & {
     padding: 20px 0;
   }
 }

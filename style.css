@@ -74,7 +74,7 @@ Tags:
 #main {
   background-color: #fff;
 }
-.home #main, .search-results #main {
+.home #main, .search-results #main, .page-template-statistics #main {
   padding: 20px 0;
 }
 

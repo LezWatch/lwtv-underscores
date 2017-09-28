@@ -42,15 +42,14 @@ $related = LWTV_Related_Posts::are_there_posts( $slug );
 	
 	if ( $warning['card'] != 'none' ) {
 	?>
-<section id="toc" class="toc-container card-body">
-	<div class="callout card card-inverse alert-<?php echo $warning['card']; ?> text-center">
-		<div class="card-block">
-			<p>
-				<span class="callout-<?php echo $warning['card']; ?>" role="img" aria-label="Warning Hand" title="Warning Hand"><?php echo $warn_image; ?></span><?php echo $warning['content']; ?>
-			</p>
+
+	<section id="trigger-warning" class="trigger-warning-container card-body">
+		<div class="alert alert-danger alert-<?php echo $warning['card']; ?>" role="alert">
+			<span class="callout-<?php echo $warning['card']; ?>" role="img" aria-label="Warning Hand" title="Warning Hand"><?php echo $warn_image; ?></span>
+			<?php echo $warning['content']; ?>
 		</div>
-	</div>
-</section>
+	</section>
+
 	<?php
 	}
 ?>
