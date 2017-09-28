@@ -1,62 +1,12 @@
 /* =Lesbians
 ----------------------------------------------- */
 
-/*--------------------------------------------------------------
-## Bootstrapification
---------------------------------------------------------------*/
-
-/* If using Jumbotron */
-.archive-subheader .jumbotron {
-  background: $lwtv-pink;
-  background-size: contain;
-  color: $white;
-  @include font-18;
-  margin-bottom: 0;
-  padding: 3rem 2rem;
-}
-
-/*--------------------------------------------------------------
-## Shows
---------------------------------------------------------------*/
-h3.post-title.excerpt {
-    clear: none;
-    margin-top: 0;
-}
-
-
-
-/* ratings icons */
-.ratings-icons {
-    text-align: center;
-    padding: 5px;
-}
-
-.content .entry-meta .entry-comments-link {
-	display: none;
-}
-
-ul.entry-meta {
-	list-style-type: none;
-	padding-bottom: 1em;
-}
-
-/* Characters */
-.card-meta-item.cliches svg,
-.card-meta-item.actors svg {
-	height: 15px;
-	width: 15px;
-	vertical-align: middle;
-}
 
 /*--------------------------------------------------------------
 ## Characters
 --------------------------------------------------------------*/
 
-.character-cliche svg {
-	height: 15px;
-	width: 15px;
-	vertical-align: middle;
-}
+
 
 
 /*--------------------------------------------------------------

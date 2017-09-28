@@ -15,7 +15,7 @@ $related = LWTV_Related_Posts::are_there_posts( $slug );
 
 <?php the_post_thumbnail( 'show-img', array( 'class' => 'card-img-top' , 'alt' => get_the_title() , 'title' => get_the_title() ) ); ?>
 
-<section id="toc" class="toc-container card-body">		
+<section id="toc" class="toc-container card-body">
 	<nav class="breadcrumb">
 		<h4 class="toc-title">Table of Contents</h4>
 		<a class="breadcrumb-item smoothscroll" href="#overview">Overview</a>

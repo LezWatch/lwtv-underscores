@@ -7,7 +7,13 @@
 ?>
 <h2><a href="/characters/">Total Characters</a></strong> (<?php echo LWTV_Stats::generate( 'characters', 'total', 'count' ); ?>)</h2>
 
-<center><a href="#charts">Charts</a> // <a href="#percentages">Percentages</a></center>
+<section id="toc" class="toc-container card-body">
+	<nav class="breadcrumb">
+		<h4 class="toc-title">Go to:</h4>
+		<a class="breadcrumb-item smoothscroll" href="#charts">Charts</a>
+		<a class="breadcrumb-item smoothscroll" href="#percentages">Percentages</a>
+	</nav>
+</section>
 
 <h2><a name="charts">Charts</a></h2>
 

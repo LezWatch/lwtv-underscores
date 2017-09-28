@@ -675,6 +675,23 @@ h1.entry-title {
   color: #fff;
 }
 
+/* Table of Contents */
+.toc-container .toc-title {
+  display: inline-block;
+  font-size: 1.25rem;
+  line-height: 1;
+  margin: 0 0.6rem 0 0;
+  vertical-align: top;
+}
+.toc-container .breadcrumb {
+  margin-bottom: 0;
+  text-align: center;
+}
+.toc-container .breadcrumb .breadcrumb-item {
+  display: inline-block;
+  float: none;
+}
+
 /* Loop styles for loopy content */
 .site-loop .card {
   border: none;
@@ -796,6 +813,16 @@ section {
 
 /* =Sub pages
 ----------------------------------------------- */
+/* Subheaders */
+.archive-subheader .jumbotron {
+  background: #d1548e;
+  background-size: contain;
+  color: #fff;
+  font-size: 1.125rem;
+  margin-bottom: 0;
+  padding: 3rem 2rem;
+}
+
 /* Posts */
 .entry-header .wp-post-image {
   margin-bottom: .5rem;
@@ -878,7 +905,19 @@ footer.entry-meta .fa {
   height: 300px;
 }
 
+/* Single Character Template */
+.character-cliche svg {
+  height: 15px;
+  width: 15px;
+  vertical-align: middle;
+}
+
 /* Single Show / Single Character Template */
+h3.post-title.excerpt {
+  clear: none;
+  margin-top: 0;
+}
+
 .showschar-section {
   padding-bottom: 0;
 }
@@ -921,18 +960,6 @@ footer.entry-meta .fa {
   width: 50px;
 }
 
-.toc-container .toc-title {
-  display: inline-block;
-  float: left;
-  font-size: 1.25rem;
-  line-height: 1;
-  margin: 0 2rem 0 0;
-  vertical-align: top;
-}
-.toc-container .breadcrumb {
-  margin-bottom: 0;
-}
-
 /* Trigger Warning */
 .trigger-warning-container .alert {
   -webkit-border-radius: 0;
@@ -972,6 +999,11 @@ footer.entry-meta .fa {
 #characters .card-title {
   margin-bottom: 0;
 }
+#characters .card-meta-item.cliches svg, #characters .card-meta-item.actors svg {
+  height: 15px;
+  width: 15px;
+  vertical-align: middle;
+}
 #characters .guest-character-list {
   padding: 0;
 }
@@ -998,6 +1030,11 @@ footer.entry-meta .fa {
   padding: 0.8rem;
 }
 
+/* ratings icons */
+.ratings-icons {
+  padding: 5px;
+  text-align: center;
+}
 .ratings-icons svg {
   width: 60px;
   height: 60px;
@@ -1387,58 +1424,8 @@ ul.comment-list li .comment-content .btn a, ul.comment-list li .comment-content 
 /* =Lesbians
 ----------------------------------------------- */
 /*--------------------------------------------------------------
-## Bootstrapification
---------------------------------------------------------------*/
-/* If using Jumbotron */
-.archive-subheader .jumbotron {
-  background: #d1548e;
-  background-size: contain;
-  color: #fff;
-  font-size: 1.125rem;
-  margin-bottom: 0;
-  padding: 3rem 2rem;
-}
-
-/*--------------------------------------------------------------
-## Shows
---------------------------------------------------------------*/
-h3.post-title.excerpt {
-  clear: none;
-  margin-top: 0;
-}
-
-/* ratings icons */
-.ratings-icons {
-  text-align: center;
-  padding: 5px;
-}
-
-.content .entry-meta .entry-comments-link {
-  display: none;
-}
-
-ul.entry-meta {
-  list-style-type: none;
-  padding-bottom: 1em;
-}
-
-/* Characters */
-.card-meta-item.cliches svg,
-.card-meta-item.actors svg {
-  height: 15px;
-  width: 15px;
-  vertical-align: middle;
-}
-
-/*--------------------------------------------------------------
 ## Characters
 --------------------------------------------------------------*/
-.character-cliche svg {
-  height: 15px;
-  width: 15px;
-  vertical-align: middle;
-}
-
 /*--------------------------------------------------------------
 ## Shortcodes
 --------------------------------------------------------------*/

@@ -380,6 +380,29 @@ h1.entry-title {
   }
 }
 
+/* Table of Contents */
+
+
+.toc-container {
+  .toc-title {
+    display: inline-block;
+    @include font-20;
+    line-height: 1;
+    margin: 0 0.6rem 0 0;
+    vertical-align: top;
+  }
+
+  .breadcrumb {
+    margin-bottom: 0;
+    text-align: center;
+
+    .breadcrumb-item {
+      display: inline-block;
+      float: none;
+    }
+  }
+}
+
 
 /* Loop styles for loopy content */
 
@@ -517,6 +540,17 @@ section {
 /* =Sub pages
 ----------------------------------------------- */
 
+
+/* Subheaders */
+.archive-subheader .jumbotron {
+  background: $lwtv-pink;
+  background-size: contain;
+  color: $white;
+  @include font-18;
+  margin-bottom: 0;
+  padding: 3rem 2rem;
+}
+
 /* Posts */
 
 .entry-header {
@@ -618,7 +652,22 @@ footer.entry-meta {
   }
 }
 
+
+/* Single Character Template */
+
+.character-cliche svg {
+  height: 15px;
+  width: 15px;
+  vertical-align: middle;
+}
+
+
 /* Single Show / Single Character Template */
+
+h3.post-title.excerpt {
+  clear: none;
+  margin-top: 0;
+}
 
 .showschar-section {
   padding-bottom: 0;
@@ -683,20 +732,6 @@ article.post_type_shows {}
   }
 }
 
-.toc-container {
-  .toc-title {
-    display: inline-block;
-    float: left;
-    @include font-20;
-    line-height: 1;
-    margin: 0 2rem 0 0;
-    vertical-align: top;
-  }
-
-  .breadcrumb {
-    margin-bottom: 0;
-  }
-}
 
 /* Trigger Warning */
 .trigger-warning-container {
@@ -725,6 +760,7 @@ article.post_type_shows {}
   }
 }
 
+
 /* Character listing */
 
 #characters {
@@ -751,6 +787,14 @@ article.post_type_shows {}
 
   .card-title {
     margin-bottom: 0;
+  }
+
+  .card-meta-item.cliches, .card-meta-item.actors {
+    svg {
+      height: 15px;
+      width: 15px;
+      vertical-align: middle;
+    }
   }
 
   .guest-character-list {
@@ -784,7 +828,12 @@ article.post_type_shows {}
   padding: 0.8rem;
 }
 
+
+/* ratings icons */
+
 .ratings-icons {
+  padding: 5px;
+  text-align: center;
   
   svg {
     width: 60px;
