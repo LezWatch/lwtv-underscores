@@ -28,7 +28,7 @@ get_header(); ?>
 					<div id="content" class="site-content clearfix" role="main">						
 						<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 							<div class="entry-content">
-								<div class="card">
+								<div class="card-group">
 									<?php
 										while ( have_posts() ) : the_post(); 
 											get_template_part( 'template-parts/content', get_post_type() );

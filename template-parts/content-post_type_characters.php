@@ -62,42 +62,31 @@ $cliches   = lwtv_yikes_chardata( get_the_ID(), 'cliches' );
 $gender_sexuality = lwtv_yikes_chardata( get_the_ID(), 'gender' ) . lwtv_yikes_chardata( get_the_ID(), 'sexuality' );
 ?>
 
-<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
-	<header class="entry-header">
-		<?php the_title( '<h1 class="entry-title">', '</h1>' ); ?>
+<div class="card col-sm-5">
+	<?php the_post_thumbnail( 'character-img', array( 'class' => 'single-char-img' , 'alt' => get_the_title() , 'title' => get_the_title() ) ); ?>	
+</div>
 
-		<div class="entry-meta">
-			
-		</div><!-- .entry-meta -->
-	</header><!-- .entry-header -->
-
-	<div class="entry-content">
-			<div class="shows-list-character-content">
-				<p><span class="entry-meta">
-					<a href="<?php the_permalink(); ?>"><?php echo get_the_post_thumbnail( get_the_ID(), 'character-img', array( 'alt' => get_the_title(), 'title' => get_the_title() ) ); ?></a>
-			
-					<?php if ( $character_type !== '' ) echo '('.$character_type .')'; ?>
-			
-					<br /><?php echo $gender_sexuality . ' &mdash; ' . $cliches; ?>
-					<br /><?php echo $actors; ?>
-					<?php if ( count( $show_title ) !== 0 ) echo '<br />'. $appears; ?>
-					<?php if ( isset( $rip ) ) echo '<br />' . $rip ; ?>
-				</span></p>
-			
-				<div class="characters-description">
-					<p><?php echo the_content(); ?></p>
-				</div>
+<div class="card col-sm-7">
+	<div class="card-body">
+		<div class="card-meta">
+			<div class="card-meta-item">
+				<?php if ( $character_type !== '' ) echo '('.$character_type .')'; ?>
 			</div>
-
-		<?php			
-			wp_link_pages( array(
-				'before' => '<div class="page-links">' . esc_html__( 'Pages:', 'lwtv_yikes' ),
-				'after'  => '</div>',
-			) );
-		?>
-	</div><!-- .entry-content -->
-
-	<footer class="entry-footer">
-		<?php yikes_starter_entry_footer(); ?>
-	</footer><!-- .entry-footer -->
-</article><!-- #post-## -->
+			<div class="card-meta-item">
+				<?php echo $gender_sexuality . ' &mdash; ' . $cliches; ?>
+			</div>
+			<div class="card-meta-item">
+				<?php echo $actors; ?>
+			</div>
+			<div class="card-meta-item">
+				<?php if ( count( $show_title ) !== 0 ) echo '<br />'. $appears; ?>
+			</div>
+			<div class="card-meta-item">
+				<?php if ( isset( $rip ) ) echo '<br />' . $rip ; ?>
+			</div>
+		</div>
+		<div class="characters-description">
+			<p><?php echo the_content(); ?></p>
+		</div>
+	</div>
+</div>
