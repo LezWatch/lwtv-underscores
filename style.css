@@ -945,9 +945,9 @@ footer.entry-meta .fa {
 }
 .trigger-warning-container svg {
   float: left;
-  margin: 10px;
-  height: 36px;
-  width: 36px;
+  margin: 5px 10px 0 0;
+  height: 40px;
+  width: 40px;
 }
 .trigger-warning-container .callout-danger svg * {
   fill: #c0392b;
