@@ -892,10 +892,32 @@ footer.entry-meta .fa {
   padding: .75rem 1.25rem .9rem;
 }
 
+/* Stars */
+.showlist-star.gold svg *, .show-star.gold svg * {
+  fill: #FFD700;
+}
+
+.showlist-star.gold i.fa, .show-star.gold i.fa {
+  color: #FFD700;
+}
+
+.showlist-star.silver svg *, .show-star.silver svg * {
+  fill: #C0C0C0;
+}
+
+.showlist-star.silver i.fa, .show-star.silver i.fa {
+  color: #C0C0C0;
+}
+
 /* Single Show Template */
-.show-header-svg {
+.showschar-header .show-header-svg {
   float: right;
   margin-top: -14px;
+}
+.showschar-header .show-header-svg svg {
+  height: 50px;
+  margin: 5px;
+  width: 50px;
 }
 
 .toc-container .toc-title {
@@ -1426,40 +1448,6 @@ span.svg-shortcode a svg {
 
 span.svg-shortcode a:hover svg {
   fill: #222;
-}
-
-/*--------------------------------------------------------------
-## Stars
---------------------------------------------------------------*/
-.showlist-star.gold svg *,
-.show-star.gold svg * {
-  fill: #FFD700;
-}
-
-.showlist-star.gold i.fa,
-.show-star.gold i.fa {
-  color: #FFD700;
-}
-
-.showlist-star.silver svg *,
-.show-star.silver svg * {
-  fill: #C0C0C0;
-}
-
-.showlist-star.silver i.fa,
-.show-star.silver i.fa {
-  color: #C0C0C0;
-}
-
-.show-star svg {
-  width: 50px;
-  height: 50px;
-  margin: 5px;
-}
-
-.showlist-star svg {
-  width: 20px;
-  height: 20px;
 }
 
 /*--------------------------------------------------------------

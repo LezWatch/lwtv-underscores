@@ -634,13 +634,39 @@ footer.entry-meta {
   }
 }
 
+
+/* Stars */
+
+.showlist-star.gold svg *, .show-star.gold svg * {
+  fill: $lwtv-gold;
+}
+.showlist-star.gold i.fa, .show-star.gold i.fa {
+  color: $lwtv-gold;
+}
+
+.showlist-star.silver svg *, .show-star.silver svg * {
+  fill: $lwtv-silver
+}
+.showlist-star.silver i.fa, .show-star.silver i.fa {
+  color: $lwtv-silver
+}
+
 /* Single Show Template */
 
 article.post_type_shows {}
 
-.show-header-svg {
-  float: right;
-  margin-top: -14px;
+.showschar-header {
+
+  .show-header-svg {
+    float: right;
+    margin-top: -14px;
+
+    svg {
+      height: 50px;
+      margin: 5px;
+      width: 50px;
+    }
+  }
 }
 
 .toc-container {
