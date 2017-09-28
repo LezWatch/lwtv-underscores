@@ -123,8 +123,9 @@ span.svg-shortcode a:hover svg {
     color: $lwtv-silver
 }
 .show-star svg {
-    width: 75px;
-    height: 75px;
+    width: 50px;
+    height: 50px;
+	margin: 5px;
 }
 .showlist-star svg {
     width: 20px;
@@ -141,6 +142,7 @@ span.svg-shortcode a:hover svg {
 .show-we-love svg {
     width: 75px;
     height: 75px;
+	margin: 5px;
 }
 
 
@@ -210,13 +212,12 @@ canvas {
 	-webkit-user-select: none;
 	-ms-user-select: none;
 }
-#statistics ul {
-	columns: 2;
-	-webkit-columns: 2;
-	-moz-columns: 2;
-	margin-bottom: 16px;
-	list-style: none;
-	-webkit-column-break-inside: avoid;
-	page-break-inside: avoid;
-	break-inside: avoid;
+
+/*--------------------------------------------------------------
+# Advertising
+--------------------------------------------------------------*/
+
+.amazon-ads,
+.affiliate-ads {
+	margin-top: 15px;
 }

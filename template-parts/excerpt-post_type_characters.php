@@ -20,14 +20,15 @@ global $post;
 $the_ID      = ( isset( $character['id'] ) )? $character['id'] : $post->ID;
 $the_content = ( isset( $character['content'] ) )? $character['content'] : get_the_content();
 $alttext     = get_the_title( $the_ID ) . ' - ' . wp_strip_all_tags( $the_content );
+$role        = ( isset( $character['role_from'] ) )? $character['role_from'] : 'regular';
+$grave       = lwtv_yikes_chardata( $the_ID, 'dead' );
 
-$role      = ( isset( $character['role_from'] ) )? $character['role_from'] : 'regular';
-$grave     = lwtv_yikes_chardata( $the_ID, 'dead' );
 ?>
+
 <div class="card"> 
 	<?php if ( has_post_thumbnail( $the_ID ) ) : ?>
 		<div class="character-image-wrapper">
-		   <a href="<?php the_permalink( $the_ID ); ?>" title="<?php the_title_attribute( $the_ID ); ?>" >
+		   <a href="<?php the_permalink( $the_ID ); ?>" title="<?php get_the_title( $the_ID ); ?>" >
 		  	 <?php echo get_the_post_thumbnail( $the_ID, 'character-img', array( 'class' => 'card-img-top' , 'alt' => $alttext, 'title' => $alttext ) ); ?>
 		   </a>
 		</div>
@@ -35,7 +36,7 @@ $grave     = lwtv_yikes_chardata( $the_ID, 'dead' );
 	<div class="card-body">
 		<h4 class="card-title">
 			<a href="<?php the_permalink( $the_ID ); ?>" title="<?php the_title_attribute( $the_ID ); ?>" >
-				<?php echo get_the_title( $the_ID ) . $grave; ?>
+				<?php echo $grave . get_the_title( $the_ID ); ?>
 			</a>
 		</h4>
 		<div class="card-text">
@@ -54,7 +55,6 @@ $grave     = lwtv_yikes_chardata( $the_ID, 'dead' );
 				$gender    = lwtv_yikes_chardata( $the_ID, 'gender' );
 				$sexuality = lwtv_yikes_chardata( $the_ID, 'sexuality' );
 				$cliches   = lwtv_yikes_chardata( $the_ID, 'cliches' );
-
 
 				// List of Shows (will not show on show pages)
 				if ( !empty( $shows ) ) {

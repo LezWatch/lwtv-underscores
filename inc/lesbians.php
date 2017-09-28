@@ -1,6 +1,6 @@
 <?php
 /**
- * Weird LQTV functions and definitions
+ * Weird LWTV functions and definitions
  *
  * This is crazy shit Mika wrote to force everything to play 
  * nicely with each other. Including cursing at Jetpack.
@@ -209,7 +209,7 @@ function lwtv_yikes_get_characters_for_show( $show_id, $role = 'regular' ) {
 		'post_status'            => array( 'publish' ),
 		'orderby'                => 'title',
 		'order'                  => 'ASC',
-		'posts_per_page'         => '100',
+		'posts_per_page'         => '100', // If The L Word ever gets over 100 characters, change this
 		'no_found_rows'          => true,
 		'update_post_term_cache' => false,
 		'meta_query'             => array( 
