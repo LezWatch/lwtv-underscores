@@ -82,10 +82,10 @@ $gender_sexuality = lwtv_yikes_chardata( get_the_ID(), 'gender' ) . lwtv_yikes_c
 				<?php echo $actors; ?>
 			</div>
 			<div class="card-meta-item">
-				<?php if ( count( $show_title ) !== 0 ) echo '<br />'. $appears; ?>
+				<?php if ( count( $show_title ) !== 0 ) echo $appears; ?>
 			</div>
 			<div class="card-meta-item">
-				<?php if ( isset( $rip ) ) echo '<br />' . $rip ; ?>
+				<?php if ( isset( $rip ) ) echo $rip ; ?>
 			</div>
 		</div>
 		<div class="characters-description">
