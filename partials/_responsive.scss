@@ -1,37 +1,33 @@
 /* =Responsive styles
 ----------------------------------------------- */
 
-/*
-*
-* Mobile-first breakpoints
-*
-*/
-// Extra small devices (portrait phones, less than 576px)
-// No media query since this is the default in Bootstrap
-
-// Small devices (landscape phones, 576px and up)
-@media (min-width: 576px) {}
-
-// Medium devices (tablets, 768px and up)
-@media (min-width: 768px) {}
-
-// Large devices (desktops, 992px and up)
-@media (min-width: 992px) {}
-
-// Extra large devices (large desktops, 1200px and up)
-@media (min-width: 1200px) {}
-
-/*
-*
-* Desktop-first breakpoints
-*
-*/
-
 // Extra large devices (large desktops)
 // No media query since the extra-large breakpoint has no upper bound on its width
 
 // Large devices (desktops, less than 1200px)
-@media (max-width: 1199px) {}
+@media (max-width: 1199px) {
+
+  #masthead .navbar-brand {
+    font-size: 1.35rem;
+  }
+  .navbar.main-nav{
+    .container {
+      max-width: 100%;
+    }
+
+    ul.navbar-nav > li.nav-item > a.nav-link {
+      white-space: nowrap;
+    }
+  }
+
+  .close-btn-container {
+    padding-left: 10px;
+  }
+  
+  .jumbotron.jumbotron-fluid h1.site-description {
+    font-size: 2.25rem;
+  }
+}
 
 // Medium devices (tablets, less than 992px)
 @media (max-width: 991px) {

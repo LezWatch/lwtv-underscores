@@ -1552,5 +1552,50 @@ a.facetwp-page {
    Specific Media STYLES
    ========================================================================== */
 /* responsive styles */
+/* =Responsive styles
+----------------------------------------------- */
+@media (max-width: 1199px) {
+  #masthead .navbar-brand {
+    font-size: 1.35rem;
+  }
+
+  .navbar.main-nav .container {
+    max-width: 100%;
+  }
+  .navbar.main-nav ul.navbar-nav > li.nav-item > a.nav-link {
+    white-space: nowrap;
+  }
+
+  .close-btn-container {
+    padding-left: 10px;
+  }
+
+  .jumbotron.jumbotron-fluid h1.site-description {
+    font-size: 2.25rem;
+  }
+}
+@media (max-width: 991px) {
+  #masthead .navbar {
+    display: block;
+  }
+  #masthead .navbar .nav {
+    float: none;
+    margin-top: 0;
+    text-align: center;
+  }
+  #masthead .navbar .nav > li {
+    display: inline-block;
+    vertical-align: top;
+  }
+  #masthead .navbar .nav .open .dropdown-menu {
+    background-color: #fff;
+    position: absolute;
+  }
+}
+/*
+*
+* Individual breakpoints
+*
+*/
 
 /*# sourceMappingURL=style.css.map */
