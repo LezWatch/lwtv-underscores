@@ -434,7 +434,6 @@ button, input[type="button"], input[type="submit"] {
    ========================================================================== */
 /* If using Jumbotron */
 .jumbotron.jumbotron-fluid {
-  /* background-image: url("images/lezwatchtv-bg-header.png"); */
   background-size: contain;
   color: #fff;
   font-size: 1.125rem;
