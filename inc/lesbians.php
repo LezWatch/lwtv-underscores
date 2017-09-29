@@ -196,7 +196,10 @@ function lwtv_yikes_content_warning( $show_id ) {
  * @param mixed $role: regular (default), recurring, guest
  * @return array of characters
  */
-function lwtv_yikes_get_characters_for_show( $show_id, $role = 'regular' ) {
+function lwtv_yikes_get_characters_for_show( $show_id, $havecharcount, $role = 'regular' ) {
+
+	// Default to ten if we got a weird number or something.
+	$havecharcount = ( empty( $havecharcount ) || !int( $havecharcount ) )? '10' : $havecharcount ;
 
 	// Valid Roles:	
 	$valid_roles = array( 'regular', 'recurring', 'guest' );
@@ -204,6 +207,7 @@ function lwtv_yikes_get_characters_for_show( $show_id, $role = 'regular' ) {
 	// If this isn't a show page, or there are no valid roles, bail.
 	if ( !isset( $show_id ) || get_post_type( $show_id ) !== 'post_type_shows' || !in_array( $role, $valid_roles ) ) return;
 
+	// Prepare the ARRAY
 	$characters = array();
 	
 	$charactersloop = new WP_Query( array(
@@ -211,7 +215,7 @@ function lwtv_yikes_get_characters_for_show( $show_id, $role = 'regular' ) {
 		'post_status'            => array( 'publish' ),
 		'orderby'                => 'title',
 		'order'                  => 'ASC',
-		'posts_per_page'         => '50', // The L Word is currently at 38 GUEST characters
+		'posts_per_page'         => $havecharcount,
 		'no_found_rows'          => true,
 		'update_post_term_cache' => false,
 		'meta_query'             => array( 

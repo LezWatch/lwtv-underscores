@@ -107,8 +107,8 @@ if ( $related ) {
 		<?php
 
 		// This just gets the numbers of all characters and how many are dead.
-		$havecharcount  = LWTV_CPT_Characters::list_characters( $show_id, 'count' );
-		$havedeadcount  = LWTV_CPT_Characters::list_characters( $show_id, 'dead' );
+		$havecharcount = LWTV_CPT_Characters::list_characters( $show_id, 'count' );
+		$havedeadcount = LWTV_CPT_Characters::list_characters( $show_id, 'dead' );
 		
 		if ( empty( $havecharcount ) || $havecharcount == '0' ) {
 			echo '<p>There are no queers listed yet for this show.</p>';
@@ -120,7 +120,7 @@ if ( $related ) {
 			echo '<p>There '. sprintf( _n( 'is %s queer character', 'are %s queer characters', $havecharcount ), $havecharcount ).' listed for this show. Of those, ' . $deadtext . '.</p>';
 		
 			// Get the list of REGULAR characters
-			$chars_regular = lwtv_yikes_get_characters_for_show( $show_id, 'regular' );
+			$chars_regular = lwtv_yikes_get_characters_for_show( $show_id, $havecharcount, 'regular' );
 			if ( !empty( $chars_regular ) ) {	
 				?><h3 class="title-regulars">Regulars</h3>
 				<div class="container characters-regulars-container"><div class="row site-loop character-show-loop equal-height"><?php
@@ -132,7 +132,7 @@ if ( $related ) {
 				echo '</div></div>';
 			}
 			// Get the list of RECURRING characters
-			$chars_recurring = lwtv_yikes_get_characters_for_show( $show_id, 'recurring' );
+			$chars_recurring = lwtv_yikes_get_characters_for_show( $show_id, $havecharcount, 'recurring' );
 			if ( !empty( $chars_recurring ) ) {	
 				?><h3 class="title-recurring">Recurring</h3>
 				<div class="container characters-recurring-container"><div class="row site-loop character-show-loop equal-height"><?php
@@ -144,7 +144,7 @@ if ( $related ) {
 				echo '</div></div>';
 			}
 			// Get the list of GUEST characters
-			$chars_guest = lwtv_yikes_get_characters_for_show( $show_id, 'guest' );
+			$chars_guest = lwtv_yikes_get_characters_for_show( $show_id, $havecharcount, 'guest' );
 			if ( !empty( $chars_guest ) ) {	
 				?><h3 class="title-guest">Guest</h3>
 				<ul class="guest-character-list"><?php
