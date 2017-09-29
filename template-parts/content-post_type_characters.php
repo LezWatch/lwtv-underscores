@@ -73,7 +73,10 @@ $gender_sexuality = lwtv_yikes_chardata( get_the_ID(), 'gender' ) . lwtv_yikes_c
 				<?php if ( $character_type !== '' ) echo '('.$character_type .')'; ?>
 			</div>
 			<div class="card-meta-item">
-				<?php echo $gender_sexuality . ' &mdash; ' . $cliches; ?>
+				<?php echo $gender_sexuality; ?>
+			</div>
+			<div class="card-meta-item">
+				<?php echo $cliches; ?>
 			</div>
 			<div class="card-meta-item">
 				<?php echo $actors; ?>
