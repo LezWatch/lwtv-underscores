@@ -21,26 +21,26 @@ $the_ID      = ( isset( $character['id'] ) )? $character['id'] : $post->ID;
 $the_content = ( isset( $character['content'] ) )? $character['content'] : get_the_content();
 $alttext     = get_the_title( $the_ID ) . ' - ' . wp_strip_all_tags( $the_content );
 $role        = ( isset( $character['role_from'] ) )? $character['role_from'] : 'regular';
-$grave       = lwtv_yikes_chardata( $the_ID, 'dead' );
 $archive     = ( is_archive() || is_tax() || is_page() )? true : false;
 
 // Reset to prevent Teri Polo from overtaking the world
-unset( $shows, $actors, $gender, $sexuality, $cliches );
+unset( $shows, $actors, $gender, $sexuality, $cliches, $grave );
 
 ?>
 
 <div class="card"> 
 	<?php if ( has_post_thumbnail( $the_ID ) ) : ?>
 		<div class="character-image-wrapper">
-		   <a href="<?php the_permalink( $the_ID ); ?>" title="<?php get_the_title( $the_ID ); ?>" >
-		  	 <?php echo get_the_post_thumbnail( $the_ID, 'character-img', array( 'class' => 'card-img-top' , 'alt' => $alttext, 'title' => $alttext ) ); ?>
+			<a href="<?php the_permalink( $the_ID ); ?>" title="<?php get_the_title( $the_ID ); ?>" >
+				<?php echo get_the_post_thumbnail( $the_ID, 'character-img', array( 'class' => 'card-img-top' , 'alt' => $alttext, 'title' => $alttext ) ); ?>
 		   </a>
 		</div>
 	<?php endif; ?>
 	<div class="card-body">
 		<h4 class="card-title">
 			<a href="<?php the_permalink( $the_ID ); ?>" title="<?php the_title_attribute( $the_ID ); ?>" >
-				<?php echo $grave . get_the_title( $the_ID ); ?>
+				<?php echo get_the_title( $the_ID ); ?>
+				<?php if ( $archive ) echo lwtv_yikes_chardata( $the_ID, 'dead' ); ?>
 			</a>
 		</h4>
 		<div class="card-text">

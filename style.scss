@@ -709,6 +709,17 @@ canvas {
   height: 40px;
 }
 
+.charlist-grave-sm {
+  svg {
+    width: 15px;
+    height: 15px;
+  }
+
+  svg * {
+    fill: $medgrey;
+  }
+}
+
 .charlist-grave {
   svg {
     width: 25px;

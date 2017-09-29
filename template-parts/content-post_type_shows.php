@@ -149,7 +149,10 @@ if ( $related ) {
 				?><h3 class="title-guest">Guest</h3>
 				<ul class="guest-character-list"><?php
 				foreach( $chars_guest as $character ) {
-					?><li><a href="<?php the_permalink( $character['id'] ); ?>" title="<?php the_title_attribute( $character['id'] ); ?>" ><?php echo get_the_title( $character['id'] ); ?></a></li><?php
+					
+					$grave = ( get_post_meta( $character['id'], 'lezchars_death_year', true ) )? '<span role="img" aria-label="RIP Tombstone" title="RIP Tombstone" class="charlist-grave-sm">' . lwtv_yikes_symbolicons( 'rip_gravestone.svg', 'fa-times-circle' ) . '</span>' : '';
+					
+					?><li><a href="<?php the_permalink( $character['id'] ); ?>" title="<?php the_title_attribute( $character['id'] ); ?>" ><?php echo get_the_title( $character['id'] ) . ' ' . $grave; ?></a></li><?php
 				}
 				echo '</ul>';
 			}

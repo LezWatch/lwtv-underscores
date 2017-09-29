@@ -6,10 +6,9 @@
  
 global $pager;
 
-$thisrole = ( isset($wp_query->query['roletype'] ) )? $wp_query->query['roletype'] : '' ;
+$thisrole   = ( isset($wp_query->query['roletype'] ) )? $wp_query->query['roletype'] : '' ;
 $validroles = array('regular', 'recurring', 'guest');
-
-$amarchive = true;
+$amarchive  = true;
 
 if ( !in_array( $thisrole, $validroles ) ){
 	wp_redirect( get_site_url().'/character/' , '301' );
