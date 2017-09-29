@@ -30,12 +30,9 @@ function lwtv_author_box( $content ) {
 		
 		// Author avatar, name and bio
 		 
-		$author_details .= '<div class="col-sm-3">' . get_avatar( get_the_author_meta('user_email') , 190 ) . '</div>';
-		 
+		$author_details  = '<div class="col-sm-3">' . get_avatar( get_the_author_meta('user_email') , 190 ) . '</div>';
 		$author_details .= '<div class="col-sm-9"><h4 class="author_name">About ' . $display_name . '</h4><div class="author-bio">' . nl2br( $user_description ) . '</div>';
-		 
-		$author_details .= '<div class="author-archives"><i class="fa fa-newspaper-o" aria-hidden="true"></i>
-		 <a href="'. $user_posts .'">View all articles by ' . $display_name . '</a></div>';  
+		$author_details .= '<div class="author-archives"><i class="fa fa-newspaper-o" aria-hidden="true"></i> <a href="'. $user_posts .'">View all articles by ' . $display_name . '</a></div>';  
 		 
 		// Check if author has a website in their profile
 		if ( ! empty( $user_website ) ) {

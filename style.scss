@@ -376,6 +376,10 @@ h1.entry-title {
   margin-top: 1rem;
 }
 
+.sharedaddy.sd-sharing-enabled {
+	padding: 1.25em;
+}
+
 /* Table of Contents */
 
 .toc-container {
@@ -573,6 +577,7 @@ section {
   border-left: 4px solid $lwtv-pink;
   margin: 2rem 0;
   padding: 1em;
+  clear: both;
 
   ul {
     margin: 0;

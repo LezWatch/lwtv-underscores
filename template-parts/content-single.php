@@ -18,7 +18,9 @@
 	</header><!-- .entry-header -->
 
 	<div class="entry-content clearfix">
-		<?php the_content(); ?>
+		<?php 
+			the_content();
+		?>
 	</div><!-- .entry-content -->
 
 		<?php
