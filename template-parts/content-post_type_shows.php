@@ -76,7 +76,7 @@ if ( (get_post_meta($show_id, "lezshows_plots", true) ) ) { ?>
 	</section><?php
 }
 
-// Best Lez Episodes - Only display if they exist
+// Best Episodes - Only display if they exist
 if ( ( get_post_meta($show_id, "lezshows_episodes", true ) ) ) { ?>
 	<section name="episodes" id="episodes" class="showschar-section">
 		<h2>Notable Queer-Centric Episodes</h2>

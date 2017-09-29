@@ -53,15 +53,8 @@ function lwtv_yikes_symbolicons( $svg = 'square.svg', $fontawesome = 'fa-square'
 	$icon   = '<i class="fa ' . $fontawesome . '" aria-hidden="true"></i>';
 	$square = file_get_contents( get_template_directory() . '/images/square.svg' );
 
-	if ( defined( 'LP_SYMBOLICONS_PATH' ) ) {
-		$response      = wp_remote_get( LP_SYMBOLICONS_PATH );
-		$response_code = wp_remote_retrieve_response_code( $response );
-		
-		if ( $response_code == '200' ) {
-			$get_svg      = wp_remote_get( LP_SYMBOLICONS_PATH . $svg );
-			$response_svg = wp_remote_retrieve_response_code( $get_svg );
-			$icon         = ( $response_svg == '200' )? $get_svg['body'] : $square;
-		}
+	if ( defined( 'LP_SYMBOLICONS_PATH' ) && file_exists( LP_SYMBOLICONS_PATH . $svg ) ) {
+		$icon = file_get_contents( LP_SYMBOLICONS_PATH . $svg );
 	} elseif ( !wp_style_is( 'yikes-fontawesome-style', 'enqueued' ) ) {
 		$icon = $square;
 	}
@@ -218,7 +211,7 @@ function lwtv_yikes_get_characters_for_show( $show_id, $role = 'regular' ) {
 		'post_status'            => array( 'publish' ),
 		'orderby'                => 'title',
 		'order'                  => 'ASC',
-		'posts_per_page'         => '100', // If The L Word ever gets over 100 characters, change this
+		'posts_per_page'         => '50', // The L Word is currently at 38 GUEST characters
 		'no_found_rows'          => true,
 		'update_post_term_cache' => false,
 		'meta_query'             => array( 
