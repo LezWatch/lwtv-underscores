@@ -74,7 +74,11 @@
 					</div>
 				</div>
 			</div>
-			<div class="jumbotron jumbotron-fluid">
+			<div class="jumbotron jumbotron-fluid"				
+				<?php if ( get_header_image() ) : ?>
+					style="background-image: url(<?php header_image(); ?>);"
+				<?php endif; ?>
+			>
 				<div class="container">
 					<div class="row">
 						<div class="col-sm-3">

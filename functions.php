@@ -177,7 +177,6 @@ if ( ! function_exists( 'yikes_starter_setup' ) ) {
 		/* Set up Nav menus */
 		register_nav_menus( array(
 			'primary' => __( 'Primary Menu', 'yikes_starter' ),
-			// 'top_menu' => __( 'Top Menu', 'yikes_starter' ),
 			'social_menu' => __( 'Social Menu', 'yikes_starter' ),
 		) );
 
@@ -413,7 +412,7 @@ require get_template_directory() . '/inc/customizer.php';
 /************* Optional Items *************/
 
 /* Implement the Custom Header feature. */
-// require get_template_directory() . '/inc/custom-header.php';
+require get_template_directory() . '/inc/custom-header.php';
 
 /* Remove custom background support */
 remove_theme_support( 'custom-background' );
