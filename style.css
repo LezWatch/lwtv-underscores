@@ -1587,6 +1587,10 @@ a.facetwp-page {
   .jumbotron.jumbotron-fluid h1.site-description {
     font-size: 2.25rem;
   }
+
+  .character-archive-loop .character-image-wrapper {
+    height: 200px;
+  }
 }
 @media (max-width: 991px) {
   #masthead .navbar {

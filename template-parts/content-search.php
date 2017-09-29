@@ -21,7 +21,7 @@ switch ( get_post_type( $post->ID ) ) {
 	<?php if ( has_post_thumbnail()) : ?>
 		<div class="character-image-wrapper">
 			<a href="<?php the_permalink(); ?>" title="<?php the_title_attribute(); ?>" >
-			 	<?php the_post_thumbnail( 'postloop-img', array( 'class' => 'card-img-top' ) ); ?>
+			 	<?php the_post_thumbnail( 'character-img', array( 'class' => 'card-img-top' ) ); ?>
 			</a>
 		</div>
 	<?php endif; ?>
