@@ -199,7 +199,8 @@ function lwtv_yikes_content_warning( $show_id ) {
 function lwtv_yikes_get_characters_for_show( $show_id, $havecharcount, $role = 'regular' ) {
 
 	// Default to ten if we got a weird number or something.
-	$havecharcount = ( empty( $havecharcount ) || !int( $havecharcount ) )? '10' : $havecharcount ;
+	// We call this "The Shane Clause"
+	$count = ( isset( $havecharcount ) && $havecharcount >= '20' )? $havecharcount : '20' ;
 
 	// Valid Roles:	
 	$valid_roles = array( 'regular', 'recurring', 'guest' );
@@ -215,7 +216,7 @@ function lwtv_yikes_get_characters_for_show( $show_id, $havecharcount, $role = '
 		'post_status'            => array( 'publish' ),
 		'orderby'                => 'title',
 		'order'                  => 'ASC',
-		'posts_per_page'         => $havecharcount,
+		'posts_per_page'         => $count,
 		'no_found_rows'          => true,
 		'update_post_term_cache' => false,
 		'meta_query'             => array( 
