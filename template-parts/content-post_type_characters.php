@@ -62,34 +62,30 @@ $cliches   = lwtv_yikes_chardata( get_the_ID(), 'cliches' );
 $gender_sexuality = lwtv_yikes_chardata( get_the_ID(), 'gender' ) . lwtv_yikes_chardata( get_the_ID(), 'sexuality' );
 ?>
 
-<div class="card col-sm-5 show-page-img">
+<div class="card-body">
 	<?php the_post_thumbnail( 'character-img', array( 'class' => 'single-char-img' , 'alt' => get_the_title() , 'title' => get_the_title() ) ); ?>	
-</div>
-
-<div class="card col-sm-7">
-	<div class="card-body">
-		<div class="card-meta">
-			<div class="card-meta-item">
-				<?php if ( $character_type !== '' ) echo '('.$character_type .')'; ?>
-			</div>
-			<div class="card-meta-item">
-				<?php echo $gender_sexuality; ?>
-			</div>
-			<div class="card-meta-item">
-				<?php echo $cliches; ?>
-			</div>
-			<div class="card-meta-item">
-				<?php echo $actors; ?>
-			</div>
-			<div class="card-meta-item">
-				<?php if ( count( $show_title ) !== 0 ) echo $appears; ?>
-			</div>
-			<div class="card-meta-item">
-				<?php if ( isset( $rip ) ) echo $rip ; ?>
-			</div>
+	
+	<div class="card-meta">
+		<div class="card-meta-item">
+			<?php if ( $character_type !== '' ) echo '('.$character_type .')'; ?>
 		</div>
-		<div class="characters-description">
-			<p><?php echo the_content(); ?></p>
+		<div class="card-meta-item">
+			<?php echo $gender_sexuality; ?>
 		</div>
+		<div class="card-meta-item">
+			<?php echo $cliches; ?>
+		</div>
+		<div class="card-meta-item">
+			<?php echo $actors; ?>
+		</div>
+		<div class="card-meta-item">
+			<?php if ( count( $show_title ) !== 0 ) echo $appears; ?>
+		</div>
+		<div class="card-meta-item">
+			<?php if ( isset( $rip ) ) echo $rip ; ?>
+		</div>
+	</div>
+	<div class="characters-description">
+		<?php echo the_content(); ?>
 	</div>
 </div>

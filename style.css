@@ -945,8 +945,9 @@ canvas {
   -o-border-radius: 0;
   border-radius: 0;
 }
-.character-page .card-group .card.show-page-img {
-  padding-left: 0;
+.character-page .card-group .card .single-char-img {
+  float: left;
+  margin: 0 2rem 2rem 0;
 }
 
 .character-cliche svg {
