@@ -17,7 +17,7 @@ function yikes_starter_custom_header_setup() {
 	add_theme_support( 'custom-header', apply_filters( 'yikes_starter_custom_header_args', array(
 		'default-image'          => '',
 		'width'                  => 2250,
-		'height'                 => 600,
+		'height'                 => 602,
 		'flex-height'            => true,
 		'wp-head-callback'       => 'yikes_starter_header_style',
 	) ) );

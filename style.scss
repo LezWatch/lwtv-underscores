@@ -280,6 +280,7 @@ h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
   color: $white;
   @include font-18;
   margin-bottom: 0;
+  max-height: 600px;
 
   h1.site-description {
     @include font-40;
