@@ -62,7 +62,7 @@ $cliches   = lwtv_yikes_chardata( get_the_ID(), 'cliches' );
 $gender_sexuality = lwtv_yikes_chardata( get_the_ID(), 'gender' ) . lwtv_yikes_chardata( get_the_ID(), 'sexuality' );
 ?>
 
-<div class="card col-sm-5">
+<div class="card col-sm-5 show-page-img">
 	<?php the_post_thumbnail( 'character-img', array( 'class' => 'single-char-img' , 'alt' => get_the_title() , 'title' => get_the_title() ) ); ?>	
 </div>
 

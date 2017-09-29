@@ -691,6 +691,10 @@ canvas {
     .card {      
       border: none;
       @include border-radius(0);
+
+      &.show-page-img {
+        padding-left: 0;
+      }
     }
   }
 }
