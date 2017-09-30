@@ -80,7 +80,33 @@
 }
 
 // Small devices (landscape phones, less than 768px)
-@media (max-width: 767px) {}
+@media (max-width: 767px) {
+
+
+  .page, .post {
+    .container {
+      width: 100%;
+      max-width: 100%;
+    }
+  }
+
+  .navbar.main-nav ul.navbar-nav > li.nav-item > a.nav-link {
+    font-size: 13px;
+  }
+
+  .jumbotron.jumbotron-fluid {
+    padding: 2rem 1rem;
+
+    h1.site-description {
+      @include font-24;
+    }
+
+    p {
+      font-size: $basefont;
+      line-height: 1.2;
+    }
+  }
+}
 
 // Extra small devices (portrait phones, less than 576px)
 @media (max-width: 575px) {}
