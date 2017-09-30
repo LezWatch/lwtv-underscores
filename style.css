@@ -1632,7 +1632,12 @@ a.facetwp-page {
   }
 
   .navbar.main-nav ul.navbar-nav > li.nav-item > a.nav-link {
-    font-size: 13px;
+    font-size: 0.812rem;
+  }
+
+  .dead-widget-container {
+    font-size: 0.875rem;
+    line-height: 1.1;
   }
 
   .jumbotron.jumbotron-fluid {
@@ -1646,10 +1651,76 @@ a.facetwp-page {
     line-height: 1.2;
   }
 }
+@media (max-width: 575px) {
+  .navbar.main-nav ul.navbar-nav > li:first-child {
+    border-left: 0;
+  }
+
+  #masthead .header-search-bar {
+    padding: 0;
+  }
+  #masthead .header-search-bar .form-group label {
+    text-align: center;
+  }
+  #masthead .header-search-bar .col-sm-1.searchbox-button {
+    padding: 6px 15px;
+    text-align: center;
+  }
+  #masthead .header-search-bar .col-sm-1.searchbox-button .btn {
+    width: 60%;
+  }
+  #masthead .header-search-bar .col-sm-1.searchbox-close {
+    position: absolute;
+    top: 6px;
+  }
+  #masthead .header-search-bar .col-sm-1.searchbox-close .close-btn-container {
+    padding-left: 0;
+    position: absolute;
+    right: 15px;
+  }
+
+  .jumbotron.jumbotron-fluid {
+    padding: 1rem;
+  }
+  .jumbotron.jumbotron-fluid .header-logo img {
+    display: block;
+    margin: 0 auto;
+    width: 50%;
+  }
+}
 /*
 *
 * Individual breakpoints
 *
 */
+@media (max-width: 600px) {
+  #masthead .navbar-brand {
+    display: none;
+  }
+}
+@media (min-width: 576px) and (max-width: 767px) {
+  #masthead .navbar-brand {
+    font-size: 0.75rem;
+  }
+  #masthead .navbar-brand img {
+    height: 30px;
+    margin-right: 4px;
+    width: auto;
+  }
+  #masthead .header-search-bar .form-group label {
+    font-size: 1rem;
+  }
+  #masthead .header-search-bar .form-group .col-sm-7.searchbox-input {
+    max-width: 50%;
+  }
+  #masthead .header-search-bar .form-group .close-btn-container {
+    padding-left: 30px;
+  }
+
+  .navbar.main-nav ul.navbar-nav > li.nav-item > a.nav-link {
+    font-size: 0.75rem;
+    padding: 14px 12px;
+  }
+}
 
 /*# sourceMappingURL=style.css.map */
