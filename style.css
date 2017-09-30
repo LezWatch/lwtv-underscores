@@ -1606,6 +1606,9 @@ a.facetwp-page {
   #masthead .navbar-brand {
     font-size: 1rem;
   }
+  #masthead .navbar-brand img {
+    margin-left: 1rem;
+  }
   #masthead .header-search-bar {
     padding: 20px 0 0 0;
   }
