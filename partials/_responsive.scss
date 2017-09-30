@@ -93,6 +93,32 @@
     }
   }
 
+  #masthead {
+    .navbar-brand {
+      @include font-12;
+
+      img {
+        height: 30px;
+        margin-right: 4px;
+        width: auto;
+      }
+    }
+
+    .header-search-bar {
+      label {
+        font-size: 1rem;
+      }
+
+      .col-sm-7.searchbox-input {
+        max-width: 50%;
+      }
+
+      .close-btn-container {
+        padding-left: 30px;
+      }
+    }
+  }
+
   .navbar.main-nav ul.navbar-nav > li.nav-item > a.nav-link {
     @include font-13;
   }
@@ -116,12 +142,47 @@
   }
 }
 
+
+ 
+/*
+*
+* Individual breakpoints
+*
+*/
+
+// iPhone 6/8 landscape (less than 668px)
+@media (max-width: 668px) {
+
+  #masthead .navbar-brand {
+    .navbar-brand-text {
+      display: none;
+    }
+  }
+
+}
+
+
+// Android (Nexus 4) landscape (less than 600px)
+@media (max-width: 600px) {
+  #masthead .navbar-brand {
+    margin-right: 0;
+  }
+
+  .navbar.main-nav ul.navbar-nav > li.nav-item > a.nav-link {
+    @include font-12;
+    padding: 14px 12px;
+  }
+}
+
+
 // Extra small devices (portrait phones, less than 576px)
 @media (max-width: 575px) {
 
   #masthead {
     .header-search-bar {
+
       padding: 0;
+
       .form-group {
         label {
           font-size: 1rem;
@@ -134,7 +195,9 @@
       }
 
       .col-sm-7.searchbox-input {
+        max-width: 100%;
         padding: 0 40px;
+        width: 100%;
       }
 
       .col-sm-1.searchbox-button {
@@ -178,6 +241,10 @@
     height: auto;
     position: relative;
 
+    .dropdown-menu {
+      @include font-12;
+    }
+
     ul.navbar-nav {
       display: block;
       width: 100%;
@@ -196,6 +263,7 @@
 
       & > li.nav-item > a.nav-link {
         @include font-13;
+        padding: 14px 11px;
       }
     }
   }
@@ -218,56 +286,6 @@
       margin-bottom: 0;
     }
   }
-
-}
-
- 
-
-/*
-*
-* Individual breakpoints
-*
-*/
-
-// Android (Nexus 4) landscape (less than 600px)
-@media (max-width: 600px) {
-  #masthead .navbar-brand {
-    display: none;
-  }
-}
-  
-// Small devices (landscape phones, from 576px up to 767px)
-@media (min-width: 576px) and (max-width: 767px) {
-  #masthead {
-    .navbar-brand {
-      @include font-12;
-
-      img {
-        height: 30px;
-        margin-right: 4px;
-        width: auto;
-      }
-    }
-
-    .header-search-bar .form-group {
-      label {
-        font-size: 1rem;
-      }
-
-      .col-sm-7.searchbox-input {
-        max-width: 50%;
-      }
-
-      .close-btn-container {
-        padding-left: 30px;
-      }
-    }
-  }
-
-  .navbar.main-nav ul.navbar-nav > li.nav-item > a.nav-link {
-    @include font-12;
-    padding: 14px 12px;
-  }
 }
 
 
@@ -279,22 +297,32 @@
         border: 0;
 
         &.nav-item > a.nav-link {
-          padding: 8px 14px;
+          padding: 6px 10px;
         }
       }
     }
   }
 
   .nav-item.search a {
-    padding: 24px 20px;
+    padding: 20px;
   }
 }
 
 
 // iPhone 6/8 (portrait phones, less than 376px)
 @media (max-width: 376px) {
+
+  #masthead .navbar-brand img {
+    margin-left: 0.6rem;
+    margin-right: 11px;
+  }
+
   .navbar.main-nav ul.navbar-nav > li.nav-item > a.nav-link {
-    padding: 8px 13px;
+    padding: 6px 8px;
+  }
+
+  .nav-item.search a {
+    padding: 20px 12px;
   }
 
   .jumbotron.jumbotron-fluid {
@@ -310,10 +338,15 @@
 // iPhone 5 (portrait phones, less than 320px)
 @media (max-width: 320px) {
   .navbar.main-nav ul.navbar-nav > li.nav-item > a.nav-link {
-    padding: 6px;
+    @include font-12;
+    padding: 6px 4px;
   }
 
+  #masthead .navbar-brand img {
+    margin-left: .4rem;
+    margin-right: 10px;
+  }
   .nav-item.search a {
-    padding: 20px 12px;
+    padding: 18px 8px;
   }
 }

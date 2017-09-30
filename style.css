@@ -1634,6 +1634,24 @@ a.facetwp-page {
     max-width: 100%;
   }
 
+  #masthead .navbar-brand {
+    font-size: 0.75rem;
+  }
+  #masthead .navbar-brand img {
+    height: 30px;
+    margin-right: 4px;
+    width: auto;
+  }
+  #masthead .header-search-bar label {
+    font-size: 1rem;
+  }
+  #masthead .header-search-bar .col-sm-7.searchbox-input {
+    max-width: 50%;
+  }
+  #masthead .header-search-bar .close-btn-container {
+    padding-left: 30px;
+  }
+
   .navbar.main-nav ul.navbar-nav > li.nav-item > a.nav-link {
     font-size: 0.812rem;
   }
@@ -1654,6 +1672,26 @@ a.facetwp-page {
     line-height: 1.2;
   }
 }
+/*
+*
+* Individual breakpoints
+*
+*/
+@media (max-width: 668px) {
+  #masthead .navbar-brand .navbar-brand-text {
+    display: none;
+  }
+}
+@media (max-width: 600px) {
+  #masthead .navbar-brand {
+    margin-right: 0;
+  }
+
+  .navbar.main-nav ul.navbar-nav > li.nav-item > a.nav-link {
+    font-size: 0.75rem;
+    padding: 14px 12px;
+  }
+}
 @media (max-width: 575px) {
   #masthead .header-search-bar {
     padding: 0;
@@ -1666,7 +1704,9 @@ a.facetwp-page {
     font-size: 0.875rem;
   }
   #masthead .header-search-bar .col-sm-7.searchbox-input {
+    max-width: 100%;
     padding: 0 40px;
+    width: 100%;
   }
   #masthead .header-search-bar .col-sm-1.searchbox-button {
     padding: 6px 15px;
@@ -1704,6 +1744,9 @@ a.facetwp-page {
     height: auto;
     position: relative;
   }
+  .navbar.main-nav .dropdown-menu {
+    font-size: 0.75rem;
+  }
   .navbar.main-nav ul.navbar-nav {
     display: block;
     width: 100%;
@@ -1719,6 +1762,7 @@ a.facetwp-page {
   }
   .navbar.main-nav ul.navbar-nav > li.nav-item > a.nav-link {
     font-size: 0.812rem;
+    padding: 14px 11px;
   }
 
   .jumbotron.jumbotron-fluid {
@@ -1735,55 +1779,30 @@ a.facetwp-page {
     margin-bottom: 0;
   }
 }
-/*
-*
-* Individual breakpoints
-*
-*/
-@media (max-width: 600px) {
-  #masthead .navbar-brand {
-    display: none;
-  }
-}
-@media (min-width: 576px) and (max-width: 767px) {
-  #masthead .navbar-brand {
-    font-size: 0.75rem;
-  }
-  #masthead .navbar-brand img {
-    height: 30px;
-    margin-right: 4px;
-    width: auto;
-  }
-  #masthead .header-search-bar .form-group label {
-    font-size: 1rem;
-  }
-  #masthead .header-search-bar .form-group .col-sm-7.searchbox-input {
-    max-width: 50%;
-  }
-  #masthead .header-search-bar .form-group .close-btn-container {
-    padding-left: 30px;
-  }
-
-  .navbar.main-nav ul.navbar-nav > li.nav-item > a.nav-link {
-    font-size: 0.75rem;
-    padding: 14px 12px;
-  }
-}
 @media (max-width: 420px) {
   .navbar.main-nav ul.navbar-nav > li {
     border: 0;
   }
   .navbar.main-nav ul.navbar-nav > li.nav-item > a.nav-link {
-    padding: 8px 14px;
+    padding: 6px 10px;
   }
 
   .nav-item.search a {
-    padding: 24px 20px;
+    padding: 20px;
   }
 }
 @media (max-width: 376px) {
+  #masthead .navbar-brand img {
+    margin-left: 0.6rem;
+    margin-right: 11px;
+  }
+
   .navbar.main-nav ul.navbar-nav > li.nav-item > a.nav-link {
-    padding: 8px 13px;
+    padding: 6px 8px;
+  }
+
+  .nav-item.search a {
+    padding: 20px 12px;
   }
 
   .jumbotron.jumbotron-fluid {
@@ -1795,11 +1814,17 @@ a.facetwp-page {
 }
 @media (max-width: 320px) {
   .navbar.main-nav ul.navbar-nav > li.nav-item > a.nav-link {
-    padding: 6px;
+    font-size: 0.75rem;
+    padding: 6px 4px;
+  }
+
+  #masthead .navbar-brand img {
+    margin-left: .4rem;
+    margin-right: 10px;
   }
 
   .nav-item.search a {
-    padding: 20px 12px;
+    padding: 18px 8px;
   }
 }
 
