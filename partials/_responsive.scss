@@ -85,15 +85,13 @@
     .character-image-wrapper {
       height: 200px;
     }
-    
+
     .site-content {
       .col-sm-3 {
-        .col-sm-3 {
-          -ms-flex: 0 0 33%;
-          flex: 0 0 33%;
-          max-width: 33%;
-          width: 33%;
-        }
+        -ms-flex: 0 0 33%;
+        flex: 0 0 33%;
+        max-width: 33%;
+        width: 33%;
       }
     }
   }
