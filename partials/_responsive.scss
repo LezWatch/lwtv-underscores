@@ -96,6 +96,28 @@
     }
   }
 
+  .single-post_type_characters {
+    .character-page .card .single-char-img {
+      float: none;
+      margin: 0 0 2rem 0;
+      width: 100%;
+    }
+  }
+
+  .archive {
+    .site-main {
+      .col-sm-9 {
+        .entry-content {
+          .col-sm-4 {
+            -ms-flex: 0 0 50%;
+            flex: 0 0 50%;
+            max-width: 50%;
+          }
+        }
+      }
+    }
+  }
+
 }
 
 // Small devices (landscape phones, less than 768px)
