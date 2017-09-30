@@ -206,8 +206,15 @@
         width: 50%;
       }
     }
-
   }
+
+  .home-featured-secondary-loop {
+    .card.col-sm-5 {
+      height: 220px;
+      margin-bottom: 0;
+    }
+  }
+
 }
 
  
@@ -289,12 +296,8 @@
   .jumbotron.jumbotron-fluid {
     padding: 1rem 0;
 
-    h1.site-description {
-      @include font-20;
-    }
-
-    p {
-      @include font-14;
+    .header-logo img {
+      width: 34%;
     }
   }
 }

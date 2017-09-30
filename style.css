@@ -1726,6 +1726,11 @@ a.facetwp-page {
     margin: 0 auto;
     width: 50%;
   }
+
+  .home-featured-secondary-loop .card.col-sm-5 {
+    height: 220px;
+    margin-bottom: 0;
+  }
 }
 /*
 *
@@ -1781,11 +1786,8 @@ a.facetwp-page {
   .jumbotron.jumbotron-fluid {
     padding: 1rem 0;
   }
-  .jumbotron.jumbotron-fluid h1.site-description {
-    font-size: 1.25rem;
-  }
-  .jumbotron.jumbotron-fluid p {
-    font-size: 0.875rem;
+  .jumbotron.jumbotron-fluid .header-logo img {
+    width: 34%;
   }
 }
 @media (max-width: 320px) {
