@@ -1591,6 +1591,16 @@ a.facetwp-page {
   .character-archive-loop .character-image-wrapper {
     height: 200px;
   }
+
+  .show-archive-loop .character-image-wrapper {
+    height: 200px;
+  }
+
+  .alignright .showschar-section, .alignleft .showschar-section {
+    float: none;
+    margin: 2em 0;
+    width: 100%;
+  }
 }
 @media (max-width: 991px) {
   #masthead .navbar {

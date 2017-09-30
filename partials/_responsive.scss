@@ -31,6 +31,20 @@
   .character-archive-loop .character-image-wrapper {
     height: 200px;
   }
+
+.show-archive-loop {
+  .character-image-wrapper {
+    height: 200px;
+  }
+}
+
+  .alignright, .alignleft {
+    .showschar-section {
+      float: none;
+      margin: 2em 0;
+      width: 100%;
+    }
+  }
 }
 
 // Medium devices (tablets, less than 992px)
