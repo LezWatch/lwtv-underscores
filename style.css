@@ -924,7 +924,7 @@ canvas {
   max-height: 300px;
   overflow: hidden;
 }
-.search-results .character-image-wrapper, .character-show-loop .character-image-wrapper {
+.character-show-loop .character-image-wrapper {
   height: 200px;
 }
 .character-archive-loop .character-image-wrapper {
