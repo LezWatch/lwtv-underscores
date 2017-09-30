@@ -49,25 +49,34 @@
 
 // Medium devices (tablets, less than 992px)
 @media (max-width: 991px) {
-  #masthead .navbar {
-    display: block;
 
-    .nav {
-      float: none;
-      margin-top: 0;
-      text-align: center;
+  #masthead {
+    .navbar-brand {
+      font-size: 1rem;
+    }
 
-      & > li {
-        display: inline-block;
-        vertical-align: top;
-      }
+    .header-search-bar {
+      padding: 20px 0 0 0;
 
-      .open .dropdown-menu {
-        background-color: $white;
-        position: absolute;
+      .col-sm-1.searchbox-button {
+        padding-left: 0;
       }
     }
   }
+
+  .navbar.main-nav ul.navbar-nav > li.nav-item > a.nav-link {
+    font-size: 14px;
+    padding: 14px;
+  }
+
+  .jumbotron.jumbotron-fluid {
+    padding: 2rem;
+
+    h1.site-description {
+      @include font-28;
+    }
+  }
+
 }
 
 // Small devices (landscape phones, less than 768px)

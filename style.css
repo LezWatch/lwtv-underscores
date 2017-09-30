@@ -1603,21 +1603,26 @@ a.facetwp-page {
   }
 }
 @media (max-width: 991px) {
-  #masthead .navbar {
-    display: block;
+  #masthead .navbar-brand {
+    font-size: 1rem;
   }
-  #masthead .navbar .nav {
-    float: none;
-    margin-top: 0;
-    text-align: center;
+  #masthead .header-search-bar {
+    padding: 20px 0 0 0;
   }
-  #masthead .navbar .nav > li {
-    display: inline-block;
-    vertical-align: top;
+  #masthead .header-search-bar .col-sm-1.searchbox-button {
+    padding-left: 0;
   }
-  #masthead .navbar .nav .open .dropdown-menu {
-    background-color: #fff;
-    position: absolute;
+
+  .navbar.main-nav ul.navbar-nav > li.nav-item > a.nav-link {
+    font-size: 14px;
+    padding: 14px;
+  }
+
+  .jumbotron.jumbotron-fluid {
+    padding: 2rem;
+  }
+  .jumbotron.jumbotron-fluid h1.site-description {
+    font-size: 1.75rem;
   }
 }
 /*
