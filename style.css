@@ -1652,31 +1652,70 @@ a.facetwp-page {
   }
 }
 @media (max-width: 575px) {
-  .navbar.main-nav ul.navbar-nav > li:first-child {
-    border-left: 0;
-  }
-
   #masthead .header-search-bar {
     padding: 0;
   }
   #masthead .header-search-bar .form-group label {
+    font-size: 1rem;
     text-align: center;
+  }
+  #masthead .header-search-bar .form-group input {
+    font-size: 0.875rem;
+  }
+  #masthead .header-search-bar .col-sm-7.searchbox-input {
+    padding: 0 40px;
   }
   #masthead .header-search-bar .col-sm-1.searchbox-button {
     padding: 6px 15px;
     text-align: center;
   }
   #masthead .header-search-bar .col-sm-1.searchbox-button .btn {
+    font-size: 0.875rem;
     width: 60%;
   }
   #masthead .header-search-bar .col-sm-1.searchbox-close {
     position: absolute;
-    top: 6px;
+    top: 4px;
   }
   #masthead .header-search-bar .col-sm-1.searchbox-close .close-btn-container {
     padding-left: 0;
     position: absolute;
-    right: 15px;
+    right: 10px;
+  }
+
+  #masthead .header-search-bar, .site-subheader {
+    margin-top: 0;
+  }
+
+  #search-btn {
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+
+  .nav-item.search a {
+    padding: 12px 20px;
+  }
+
+  .navbar.main-nav {
+    height: auto;
+    position: relative;
+  }
+  .navbar.main-nav ul.navbar-nav {
+    display: block;
+    width: 100%;
+  }
+  .navbar.main-nav ul.navbar-nav > li {
+    display: inline-block;
+  }
+  .navbar.main-nav ul.navbar-nav > li:first-child {
+    border-left: 0;
+  }
+  .navbar.main-nav ul.navbar-nav > li:last-child {
+    border-right: 0;
+  }
+  .navbar.main-nav ul.navbar-nav > li.nav-item > a.nav-link {
+    font-size: 0.812rem;
   }
 
   .jumbotron.jumbotron-fluid {
@@ -1720,6 +1759,32 @@ a.facetwp-page {
   .navbar.main-nav ul.navbar-nav > li.nav-item > a.nav-link {
     font-size: 0.75rem;
     padding: 14px 12px;
+  }
+}
+@media (max-width: 420px) {
+  .navbar.main-nav ul.navbar-nav > li {
+    border: 0;
+  }
+  .navbar.main-nav ul.navbar-nav > li.nav-item > a.nav-link {
+    padding: 8px 14px;
+  }
+
+  .nav-item.search a {
+    padding: 24px 20px;
+  }
+}
+@media (max-width: 376px) {
+  .navbar.main-nav ul.navbar-nav > li.nav-item > a.nav-link {
+    padding: 8px 13px;
+  }
+}
+@media (max-width: 320px) {
+  .navbar.main-nav ul.navbar-nav > li.nav-item > a.nav-link {
+    padding: 6px;
+  }
+
+  .nav-item.search a {
+    padding: 20px 12px;
   }
 }
 

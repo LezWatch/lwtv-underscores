@@ -115,24 +115,22 @@
 // Extra small devices (portrait phones, less than 576px)
 @media (max-width: 575px) {
 
-  .navbar.main-nav {
-    ul.navbar-nav {
-      & > li {
-
-        &:first-child {
-          border-left: 0;
-        }
-      }
-    }
-  }
-
   #masthead {
     .header-search-bar {
       padding: 0;
       .form-group {
         label {
+          font-size: 1rem;
           text-align: center;
         }
+
+        input {
+          @include font-14;
+        }
+      }
+
+      .col-sm-7.searchbox-input {
+        padding: 0 40px;
       }
 
       .col-sm-1.searchbox-button {
@@ -140,26 +138,67 @@
         text-align: center;
 
         .btn {
+          @include font-14;
           width: 60%;
         }
       }
 
       .col-sm-1.searchbox-close {
         position: absolute;
-        top: 6px;
+        top: 4px;
 
         .close-btn-container {
           padding-left: 0;
           position: absolute;
-          right: 15px;
+          right: 10px;
         }
+      }
+    }
+  }
+
+  #masthead .header-search-bar, .site-subheader {
+    margin-top: 0;
+  }
+
+  #search-btn {
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+
+  .nav-item.search a {
+    padding: 12px 20px;
+  }
+
+  .navbar.main-nav {
+    height: auto;
+    position: relative;
+
+    ul.navbar-nav {
+      display: block;
+      width: 100%;
+
+      & > li {
+        display: inline-block;
+
+        &:first-child {
+          border-left: 0;
+        }
+
+        &:last-child {
+          border-right: 0;
+        }
+      }
+
+      & > li.nav-item > a.nav-link {
+        @include font-13;
       }
     }
   }
 
   .jumbotron.jumbotron-fluid {
     padding: 1rem;
-    
+
     .header-logo {
       img {
         display: block;
@@ -178,8 +217,6 @@
 * Individual breakpoints
 *
 */
-// Extra small devices (portrait phones, less than 576px)
-@media (max-width: 575px) {}
 
 // Android (Nexus 4) landscape (less than 600px)
 @media (max-width: 600px) {
@@ -220,14 +257,44 @@
     @include font-12;
     padding: 14px 12px;
   }
-
 }
 
-// Medium devices (tablets, from 768px up to 991px)
-@media (min-width: 768px) and (max-width: 991px) {}
 
-// Large devices (desktops, from 992px up tp 1199px)
-@media (min-width: 992px) and (max-width: 1199px) {}
+// Extra small devices (portrait phones, less than 420px)
+@media (max-width: 420px) {
+  .navbar.main-nav {
+    ul.navbar-nav {
+      & > li {
+        border: 0;
 
-// Extra large devices (large desktops, 1200px and up)
-@media (min-width: 1200px) {}
+        &.nav-item > a.nav-link {
+          padding: 8px 14px;
+        }
+      }
+    }
+  }
+
+  .nav-item.search a {
+    padding: 24px 20px;
+  }
+}
+
+
+// iPhone 6 (portrait phones, less than 376px)
+@media (max-width: 376px) {
+  .navbar.main-nav ul.navbar-nav > li.nav-item > a.nav-link {
+    padding: 8px 13px;
+  }
+}
+
+
+// iPhone 5 (portrait phones, less than 320px)
+@media (max-width: 320px) {
+  .navbar.main-nav ul.navbar-nav > li.nav-item > a.nav-link {
+    padding: 6px;
+  }
+
+  .nav-item.search a {
+    padding: 20px 12px;
+  }
+}
