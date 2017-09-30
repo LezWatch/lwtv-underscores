@@ -676,9 +676,10 @@ canvas {
   overflow: hidden;
 
   .character-show-loop & {
-   height: 200px;
+    height: 200px;
   }
 
+  .search-results &, 
   .character-archive-loop & {
     height: 300px;
   }

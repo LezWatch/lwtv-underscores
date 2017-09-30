@@ -927,7 +927,7 @@ canvas {
 .character-show-loop .character-image-wrapper {
   height: 200px;
 }
-.character-archive-loop .character-image-wrapper {
+.search-results .character-image-wrapper, .character-archive-loop .character-image-wrapper {
   height: 300px;
 }
 
