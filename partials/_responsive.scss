@@ -280,10 +280,22 @@
 }
 
 
-// iPhone 6 (portrait phones, less than 376px)
+// iPhone 6/8 (portrait phones, less than 376px)
 @media (max-width: 376px) {
   .navbar.main-nav ul.navbar-nav > li.nav-item > a.nav-link {
     padding: 8px 13px;
+  }
+
+  .jumbotron.jumbotron-fluid {
+    padding: 1rem 0;
+
+    h1.site-description {
+      @include font-20;
+    }
+
+    p {
+      @include font-14;
+    }
   }
 }
 

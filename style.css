@@ -1777,6 +1777,16 @@ a.facetwp-page {
   .navbar.main-nav ul.navbar-nav > li.nav-item > a.nav-link {
     padding: 8px 13px;
   }
+
+  .jumbotron.jumbotron-fluid {
+    padding: 1rem 0;
+  }
+  .jumbotron.jumbotron-fluid h1.site-description {
+    font-size: 1.25rem;
+  }
+  .jumbotron.jumbotron-fluid p {
+    font-size: 0.875rem;
+  }
 }
 @media (max-width: 320px) {
   .navbar.main-nav ul.navbar-nav > li.nav-item > a.nav-link {
