@@ -1649,6 +1649,16 @@ a.facetwp-page {
     flex: 0 0 50%;
     max-width: 50%;
   }
+  .archive .site-main .col-sm-9 .entry-content .col-sm-4 .character-image-wrapper {
+    height: 300px;
+  }
+
+  #overview .alignright, #overview .alignleft {
+    display: block;
+    float: none;
+    margin: 1rem 0;
+    width: 100%;
+  }
 }
 @media (max-width: 767px) {
   .page .container, .post .container {
