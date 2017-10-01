@@ -1702,7 +1702,7 @@ a.facetwp-page {
   }
 }
 @media (max-width: 767px) {
-  .page .container, .single .container, .archive .container, .blog .container {
+  .page .container, .single .container, .archive .container, .blog .container, .search .container {
     width: 100%;
     max-width: 100%;
   }
