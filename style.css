@@ -1982,6 +1982,10 @@ a.facetwp-page {
   .jumbotron.jumbotron-fluid .header-logo img {
     width: 34%;
   }
+
+  #characters .guest-character-list li {
+    width: 100%;
+  }
 }
 @media (max-width: 320px) {
   .navbar.main-nav ul.navbar-nav > li.nav-item > a.nav-link {

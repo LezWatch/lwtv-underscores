@@ -427,7 +427,7 @@
       margin-top: 12px;
       display: block;
     }
-    
+
     svg {
       height: 40px;
       margin: 0 5px;
@@ -533,6 +533,10 @@
     .header-logo img {
       width: 34%;
     }
+  }
+  
+  #characters .guest-character-list li {
+    width: 100%;
   }
 }
 
