@@ -1927,6 +1927,16 @@ a.facetwp-page {
   .taxonomy-svg i.fa, .taxonomy-svg svg {
     display: none;
   }
+
+  .chart-container .row {
+    margin-bottom: 0;
+  }
+  .chart-container .row:last-of-type .col-sm-6:last-of-type {
+    margin-bottom: 0;
+  }
+  .chart-container .col-sm-6 {
+    margin-bottom: 4rem;
+  }
 }
 @media (max-width: 420px) {
   .navbar.main-nav ul.navbar-nav > li {

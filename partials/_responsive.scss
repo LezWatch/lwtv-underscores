@@ -410,7 +410,7 @@
     max-height: none !important;
     height: auto !important;
   }
-  
+
   .showschar-header .show-header-svg svg {
     height: 40px;
     margin: 12px 5px;
@@ -453,6 +453,22 @@
 
   .taxonomy-svg i.fa, .taxonomy-svg svg {
     display: none;
+  }
+
+  .chart-container {
+    .row {
+      margin-bottom: 0;
+
+      &:last-of-type {
+        .col-sm-6:last-of-type {
+          margin-bottom: 0;
+        }
+      }
+    }
+    .col-sm-6 {
+      margin-bottom: 4rem;
+
+    }
   }
 }
 
