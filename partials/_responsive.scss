@@ -372,6 +372,44 @@
       margin-bottom: 0;
     }
   }
+
+  .home-featured-shows {
+    .card {
+      margin-bottom: 1rem;
+
+      &:last-of-type {
+        margin-bottom: 0;
+      }
+    }
+  }
+
+  .character-image-wrapper {
+    max-height: none;
+    overflow: hidden;
+    height: auto;
+  }
+
+  .aligncenter, .alignleft, .alignnone, .alignright {
+    display: block;
+    float: none;
+    margin: 2em 0;
+    width: 100%;
+  }
+
+  #colophon .footer-widgets h2.widget-title {
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+  } 
+
+  .footer-widgets {
+    .footer-col {
+      margin-bottom: 1rem;
+
+      &:last-of-type {
+        margin-bottom: 0;
+      }
+    }
+  }
 }
 
 
