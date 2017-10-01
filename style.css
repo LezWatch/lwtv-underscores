@@ -1887,11 +1887,25 @@ a.facetwp-page {
     height: auto !important;
   }
 
+  .showschar-header .show-header-svg svg {
+    height: 40px;
+    margin: 12px 5px;
+    width: 40px;
+  }
+
   .aligncenter, .alignleft, .alignnone, .alignright, .alignleft, .aligncenter, .alignright {
     display: block;
     float: none;
     margin: 2em 0;
     width: 100%;
+  }
+
+  #overview .alignleft, #overview .alignright {
+    width: 100% !important;
+  }
+
+  .wp-caption img[class*="wp-image-"] {
+    width: 98%;
   }
 
   h4.author_name {
