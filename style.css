@@ -1621,7 +1621,7 @@ a.facetwp-page {
     max-width: 100%;
   }
 
-  #masthead .fixed-top.main-nav {
+  #masthead .admin-bar .fixed-top.main-nav {
     margin-top: 46px;
   }
   #masthead .navbar-brand {
