@@ -425,7 +425,7 @@
 
     span {
       margin-top: 12px;
-      display: block;
+      display: inline-block;
     }
 
     svg {
@@ -534,7 +534,15 @@
       width: 34%;
     }
   }
-  
+
+  .showschar-header .show-header-svg {
+    svg {
+      height: 30px;
+      margin: 0;
+      width: 30px;
+    }
+  }
+
   #characters .guest-character-list li {
     width: 100%;
   }

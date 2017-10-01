@@ -1897,7 +1897,7 @@ a.facetwp-page {
 
   .showschar-header .show-header-svg span {
     margin-top: 12px;
-    display: block;
+    display: inline-block;
   }
   .showschar-header .show-header-svg svg {
     height: 40px;
@@ -1981,6 +1981,12 @@ a.facetwp-page {
   }
   .jumbotron.jumbotron-fluid .header-logo img {
     width: 34%;
+  }
+
+  .showschar-header .show-header-svg svg {
+    height: 30px;
+    margin: 0;
+    width: 30px;
   }
 
   #characters .guest-character-list li {
