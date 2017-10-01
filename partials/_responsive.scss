@@ -383,8 +383,14 @@
     }
   }
 
+  .site-loop.show-archive-loop .card-group {
+    width: 96%;
+    margin: auto;
+  }
+
   .characters-regulars-container .col-sm-4, 
-  .col-sm-9 .entry-content .col-sm-4 {
+  .col-sm-9 .entry-content .col-sm-4,
+  .search-results .site-content .col-sm-3 {
     -ms-flex: 0 0 100%;
     flex: 0 0 100%;
     max-width: 100%;
@@ -392,9 +398,8 @@
   }
 
   .character-image-wrapper {
-    max-height: none;
-    overflow: hidden;
-    height: auto;
+    max-height: none !important;
+    height: auto !important;
   }
 
   .aligncenter, .alignleft, .alignnone, .alignright {
