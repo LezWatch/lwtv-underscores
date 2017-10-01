@@ -157,7 +157,7 @@ if ( $related ) {
 					
 					$grave = ( get_post_meta( $character['id'], 'lezchars_death_year', true ) )? '<span role="img" aria-label="RIP Tombstone" title="RIP Tombstone" class="charlist-grave-sm">' . lwtv_yikes_symbolicons( 'rip_gravestone.svg', 'fa-times-circle' ) . '</span>' : '';
 					
-					?><li><a href="<?php the_permalink( $character['id'] ); ?>" title="<?php get_the_title( $character['id'] ); ?>" ><?php echo get_the_title( $character['id'] ) . ' ' . $grave; ?></a></li><?php
+					?><li><a href="<?php the_permalink( $character['id'] ); ?>" title="<?php echo get_the_title( $character['id'] ); ?>" ><?php echo get_the_title( $character['id'] ) . ' ' . $grave; ?></a></li><?php
 				}
 				echo '</ul>';
 			}
