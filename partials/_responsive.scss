@@ -180,6 +180,10 @@
   }
 
   #masthead {
+	.fixed-top.main-nav {
+		margin-top: 46px;
+	}  
+	
     .navbar-brand {
       @include font-12;
 
@@ -188,6 +192,13 @@
         margin-right: 4px;
         width: auto;
       }
+      .navbar-brand-text {
+        display: none;
+      }
+    }
+    
+    #search-btn {
+	  position: relative;
     }
 
     .header-search-bar {
@@ -239,9 +250,13 @@
 // iPhone 6/8 landscape (less than 668px)
 @media (max-width: 668px) {
 
-  #masthead .navbar-brand {
-    .navbar-brand-text {
-      display: none;
+  #masthead {
+    ul.navbar-nav {
+	  width: 75%;
+    }
+    
+    .admin-bar .fixed-top.main-nav {
+      margin-top: 0px;
     }
   }
 
@@ -265,6 +280,9 @@
 @media (max-width: 575px) {
 
   #masthead {
+	.fixed-top.main-nav {
+		margin-top: 0px;
+	}
     .header-search-bar {
 
       padding: 0;
