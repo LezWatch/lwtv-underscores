@@ -199,10 +199,10 @@ function lwtv_yikes_content_warning( $show_id ) {
  */
 function lwtv_yikes_get_characters_for_show( $show_id, $havecharcount, $role = 'regular' ) {
 
-	// The Shane Clause:
+	// The Shane Clause & The Clone Club Correlary
 	// Calculate the max number of characters to list, based on the
-	// previous count. Default/Minimum is 20 characters.
-	$count = ( isset( $havecharcount ) && $havecharcount >= '20' )? $havecharcount : '20' ;
+	// previous count. Default/Minimum is 100 characters.
+	$count = ( isset( $havecharcount ) && $havecharcount >= '100' )? $havecharcount : '100' ;
 
 	// Valid Roles:	
 	$valid_roles = array( 'regular', 'recurring', 'guest' );
@@ -220,7 +220,7 @@ function lwtv_yikes_get_characters_for_show( $show_id, $havecharcount, $role = '
 		'order'                  => 'ASC',
 		'posts_per_page'         => $count,
 		'no_found_rows'          => true,
-		'update_post_term_cache' => false,
+		'update_post_term_cache' => true,
 		'meta_query'             => array( 
 			'relation'    => 'AND',
 			array(
@@ -239,7 +239,7 @@ function lwtv_yikes_get_characters_for_show( $show_id, $havecharcount, $role = '
 	if ( $charactersloop->have_posts() ) {
 		while ( $charactersloop->have_posts() ) {
 			$charactersloop->the_post();
-			$char_id = get_the_ID();
+			$char_id     = get_the_ID();
 			$shows_array = get_post_meta( $char_id, 'lezchars_show_group', true );
 
 			// The Sara Lance Complexity:
@@ -247,7 +247,7 @@ function lwtv_yikes_get_characters_for_show( $show_id, $havecharcount, $role = '
 			// AND has this role ON THIS SHOW we will pass the following 
 			// data to the character template to determine what to display.
 
-			if ( $shows_array !== '' && !empty( $shows_array ) && get_post_status ( $char_id ) == 'publish' ) {
+			if ( get_post_status ( $char_id ) == 'publish' && isset( $shows_array ) && !empty( $shows_array ) ) {
 				foreach( $shows_array as $char_show ) {
 					if ( $char_show['show'] == $show_id && $char_show['type'] == $role ) {
 						$characters[$char_id] = array(
