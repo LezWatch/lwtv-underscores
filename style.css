@@ -1644,13 +1644,13 @@ a.facetwp-page {
     width: 100%;
   }
 
-  .archive .site-main .col-sm-9 .entry-content .col-sm-4,
+  .col-sm-9 .entry-content .col-sm-4,
   .characters-regulars-container .col-sm-4 {
     -ms-flex: 0 0 50%;
     flex: 0 0 50%;
     max-width: 50%;
   }
-  .archive .site-main .col-sm-9 .entry-content .col-sm-4 .character-image-wrapper,
+  .col-sm-9 .entry-content .col-sm-4 .character-image-wrapper,
   .characters-regulars-container .col-sm-4 .character-image-wrapper {
     height: 300px;
   }
