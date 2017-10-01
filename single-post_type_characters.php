@@ -5,8 +5,12 @@
  * @package YIKES Starter
  */
 
-// Default to a blank icon
-$icon = '';
+// Build the icon
+// We don't use this on characters yet. We might later
+// use it to show death? Or characters we love? Let's
+// keep options open.
+$icon  = '<div class="character-header-svg">';
+$icon .= '</div>';
  
 get_header(); ?>
 

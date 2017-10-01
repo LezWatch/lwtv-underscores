@@ -57,7 +57,7 @@ get_header(); ?>
 			<header class="archive-header">
 				<div class="archive-description">
 					<h1 class="entry-title"><?php echo $title . $image; ?></h1>
-					<p><?php $intro; ?></p>
+					<p><?php echo $intro; ?></p>
 				</div>
 			</header><!-- .archive-header -->
 		</div><!-- .container -->
@@ -69,7 +69,7 @@ get_header(); ?>
 		<div class="row">
 			<div class="col-sm-12">
 				<div id="primary" class="content-area">
-					<div id="content" class="site-content clearfix" role="main">				
+					<div id="content" class="site-content clearfix" role="main">
 						<?php 
 							if ( $statstype == 'main' ) the_content();
 							get_template_part( 'template-parts/statistics', $statstype );
@@ -81,4 +81,4 @@ get_header(); ?>
 	</div><!-- .container -->
 </div><!-- #main -->
 
-<?php get_footer(); ?>
+<?php get_footer();

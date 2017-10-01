@@ -7,7 +7,10 @@
  *
  * @package LezWatchTV
  */
- 
+
+/* This Year code: */
+require get_template_directory() . '/inc/thisyear.php';
+
 /** THE GENERAL SECTION **/
 
 
@@ -71,7 +74,6 @@ function lwtv_yikes_symbolicons( $svg = 'square.svg', $fontawesome = 'fa-square'
  * shortcode, or VideoPress
  */
 function lwtv_yikes_jetpack_setup() {
-	// Add theme support for Responsive Videos.
 	add_theme_support( 'jetpack-responsive-videos' );
 }
 add_action( 'after_setup_theme', 'lwtv_yikes_jetpack_setup' );
@@ -130,11 +132,10 @@ add_action( 'pre_get_posts', 'lwtv_yikes_archive_sort_order' );
  * Archive Query
  * 
  * Characters and certain taxonomies show 24 posts per
- * page on archives.
+ * page on archives instead of the normal 10.
  */
 function lwtv_yikes_character_archive_query( $query ) {
 	if ( $query->is_archive() && $query->is_main_query() && !is_admin() ) {
-		// Character archive Pages get 24 per page vs the regular 10
 		$taxonomies = array( 'lez_cliches', 'lez_gender', 'lez_sexuality' );
 		if ( is_post_type_archive( 'post_type_characters' ) || is_tax( $taxonomies ) ) {
 			$query->set( 'posts_per_page', 24 );
@@ -198,8 +199,9 @@ function lwtv_yikes_content_warning( $show_id ) {
  */
 function lwtv_yikes_get_characters_for_show( $show_id, $havecharcount, $role = 'regular' ) {
 
-	// Default to ten if we got a weird number or something.
-	// We call this "The Shane Clause"
+	// The Shane Clause:
+	// Calculate the max number of characters to list, based on the
+	// previous count. Default/Minimum is 20 characters.
 	$count = ( isset( $havecharcount ) && $havecharcount >= '20' )? $havecharcount : '20' ;
 
 	// Valid Roles:	
@@ -240,10 +242,10 @@ function lwtv_yikes_get_characters_for_show( $show_id, $havecharcount, $role = '
 			$char_id = get_the_ID();
 			$shows_array = get_post_meta( $char_id, 'lezchars_show_group', true );
 
+			// The Sara Lance Complexity:
 			// If the character is in this show, AND a published character,
-			// AND has this role ON THIS SHOW (you can thank Sara Lance),
-			// we will pass the following data to the character template
-			// to determine what to display
+			// AND has this role ON THIS SHOW we will pass the following 
+			// data to the character template to determine what to display.
 
 			if ( $shows_array !== '' && !empty( $shows_array ) && get_post_status ( $char_id ) == 'publish' ) {
 				foreach( $shows_array as $char_show ) {
@@ -325,7 +327,7 @@ function lwtv_yikes_chardata( $the_ID, $data ) {
 			$lez_cliches = get_the_terms( $the_ID, 'lez_cliches' );
 			$cliches = '';
 			if ( $lez_cliches && ! is_wp_error( $lez_cliches ) ) {
-			    $cliches = 'Clichés: ';
+			    $cliches = '';
 				foreach( $lez_cliches as $the_cliche ) {
 					$termicon = get_term_meta( $the_cliche->term_id, 'lez_termsmeta_icon', true );
 					$tropicon = $termicon ? $termicon . '.svg' : 'square.svg';

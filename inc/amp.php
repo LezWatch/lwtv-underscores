@@ -192,14 +192,17 @@ class LWTV_AMP {
 			border-width: 1px;
 			border-style: solid;
 		}
-		.callout-trigger-on {
+		.trigger-danger {
 		    background: #fbeaea;
 		    border: 2px solid #dc3232;
 		}
-		.callout-trigger-med,
-		.callout-trigger-low {
-		    background: #ecedcf;
+		.trigger-warning {
+		    background: #fff3cd;
 		    border: 2px solid #f1c40f;
+		}
+		.trigger-info {
+		    background: #d1ecf1;
+		    border: 2px solid #0c5460;
 		}
 		.callout img {
 			width: 36px;

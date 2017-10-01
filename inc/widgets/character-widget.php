@@ -44,9 +44,9 @@ class LWTV_Character extends WP_Widget {
 		/** Output widget HTML BEGIN **/
 		echo $before_widget;
 
-		$query = new WP_Query( $char_args );
-		while ($query->have_posts()) {
-			$query->the_post();
+		$queery = new WP_Query( $char_args );
+		while ($queery->have_posts()) {
+			$queery->the_post();
 
 		echo '<div class="card">';
 		echo '<div class="card-header">

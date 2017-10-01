@@ -72,9 +72,7 @@ unset( $shows, $actors, $gender, $sexuality, $cliches, $grave );
 
 			// List of Actors
 			if ( isset( $actors ) ) {
-				foreach ( $actors as $actor ) {
-					echo '<div class="card-meta-item actors">'. lwtv_yikes_symbolicons( 'person.svg', 'fa-user' ) . ' ' . $actor . '</div>';
-				}
+				echo '<div class="card-meta-item actors">' . lwtv_yikes_symbolicons( 'person.svg', 'fa-user' ) . ' ' . implode( ", ", $actors ) . '</div>';
 			}
 
 			// Gender and Sexuality
@@ -84,7 +82,7 @@ unset( $shows, $actors, $gender, $sexuality, $cliches, $grave );
 
 			// List of Cliches
 			if ( isset( $cliches ) ) {
-				echo '<div class="card-meta-item cliches"> ' . $cliches . '</div>';
+				echo '<div class="card-meta-item cliches">Clichés: ' . $cliches . '</div>';
 			}
 			?>
 		</div>

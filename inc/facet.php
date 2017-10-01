@@ -15,20 +15,20 @@
  *
  * Used by FacetWP on custom pages (roles)
  */
-function lwtv_yikes_facet_numeric_posts_nav( $query = 'wp_query', $count = null ) {
+function lwtv_yikes_facet_numeric_posts_nav( $queery = 'wp_query', $count = null ) {
 
 	if( is_singular( 'post' ) )
 		return;
 
-	if ( $query == 'wp_query' ) {
+	if ( $queery == 'wp_query' ) {
 		global $wp_query;
-		$query = $wp_query;
+		$queery = $wp_query;
 	}
 
 	$posts_per_page = get_option('posts_per_page');
 
 	if ( $count == null ) {
-		$post_type = ( $query->post_type == '' )? 'post' : $query->post_type;
+		$post_type = ( $queery->post_type == '' )? 'post' : $queery->post_type;
 		$published_posts = wp_count_posts( $post_type )->publish;
 		$page_number_max = ceil( $published_posts / $posts_per_page );
 	} else {

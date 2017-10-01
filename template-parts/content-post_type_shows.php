@@ -10,6 +10,7 @@
 $show_id = $post->ID;
 $slug    = get_post_field( 'post_name', get_post( $show_id ) );
 $term    = term_exists( $slug , 'post_tag' );
+$tag     = get_term_by( 'name', $slug, 'post_tag');
 $related = LWTV_Related_Posts::are_there_posts( $slug );
 ?>
 
@@ -35,28 +36,25 @@ $related = LWTV_Related_Posts::are_there_posts( $slug );
 </section>
 
 <?php
-	
-	// This shows a warning if the show has trigger warnings
-	$warning    = lwtv_yikes_content_warning( get_the_ID() );
-	$warn_image = lwtv_yikes_symbolicons( 'hand.svg', 'fa-hand-paper-o' );
-	
-	if ( $warning['card'] != 'none' ) {
-	?>
+// The Game of Thrones Flag of Gratuitious Violence:
+// This shows a notice if the show has trigger warnings
+$warning    = lwtv_yikes_content_warning( get_the_ID() );
+$warn_image = lwtv_yikes_symbolicons( 'hand.svg', 'fa-hand-paper-o' );
 
+if ( $warning['card'] != 'none' ) {
+	?>
 	<section id="trigger-warning" class="trigger-warning-container">
 		<div class="alert alert-<?php echo $warning['card']; ?>" role="alert">
 			<span class="callout-<?php echo $warning['card']; ?>" role="img" aria-label="Warning Hand" title="Warning Hand"><?php echo $warn_image; ?></span>
 			<?php echo $warning['content']; ?>
 		</div>
 	</section>
-
 	<?php
-	}
+}
 ?>
 
 <section class="showschar-section" name="overview" id="overview">
 	<h2>Overview</h2>
-
 	<div class="card-body">
 		<?php the_content(); ?>
 	</div>
@@ -67,23 +65,27 @@ $related = LWTV_Related_Posts::are_there_posts( $slug );
 $show_id = $post->ID;
 
 // Queer Plots - Only display if they exist
-if ( (get_post_meta($show_id, "lezshows_plots", true) ) ) { ?>
+if ( (get_post_meta($show_id, "lezshows_plots", true) ) ) { 
+	?>
 	<section name="timeline" id="timeline" class="showschar-section">
 		<h2>Queer Plotline Timeline</h2>
 		<div class="card-body">
 			<?php echo apply_filters('the_content', wp_kses_post( get_post_meta($show_id, 'lezshows_plots', true) ) ); ?>
 		</div>
-	</section><?php
+	</section>
+	<?php
 }
 
 // Best Episodes - Only display if they exist
-if ( ( get_post_meta($show_id, "lezshows_episodes", true ) ) ) { ?>
+if ( ( get_post_meta($show_id, "lezshows_episodes", true ) ) ) { 
+	?>
 	<section name="episodes" id="episodes" class="showschar-section">
 		<h2>Notable Queer-Centric Episodes</h2>
 		<div class="card-body">
 			<?php echo apply_filters('the_content', wp_kses_post( get_post_meta($show_id, 'lezshows_episodes', true) ) ); ?>
 		</div>
-	</section> <?php
+	</section>
+	<?php
 }
 
 if ( $related ) {
@@ -93,6 +95,9 @@ if ( $related ) {
 		<div class="card-body">	
 			<?php
 				echo LWTV_Related_Posts::related_posts( $slug );
+				if ( count ( LWTV_Related_Posts::count_related_posts( $slug ) ) > '5' ) {
+					echo '<p><a href="' . get_tag_link( $tag ) . '">Read More ...</a></p>';
+				}
 			?>
 		</div>
 	</section> 
@@ -115,14 +120,14 @@ if ( $related ) {
 		} else {
 		
 			$deadtext = 'none are dead';
-			if ( $havedeadcount > '0' ) $deadtext = sprintf( _n( '%s is dead', '%s are dead', $havedeadcount ), $havedeadcount );
+			if ( $havedeadcount > '0' ) $deadtext = sprintf( _n( '<strong>%s</strong> is dead', '<strong>%s</strong> are dead', $havedeadcount ), $havedeadcount );
 		
-			echo '<p>There '. sprintf( _n( 'is %s queer character', 'are %s queer characters', $havecharcount ), $havecharcount ).' listed for this show. Of those, ' . $deadtext . '.</p>';
+			echo '<p>There '. sprintf( _n( 'is <strong>%s</strong> queer character', 'are <strong>%s</strong> queer characters', $havecharcount ), $havecharcount ).' listed for this show; ' . $deadtext . '.</p>';
 		
 			// Get the list of REGULAR characters
 			$chars_regular = lwtv_yikes_get_characters_for_show( $show_id, $havecharcount, 'regular' );
-			if ( !empty( $chars_regular ) ) {	
-				?><h3 class="title-regulars">Regulars</h3>
+			if ( !empty( $chars_regular ) ) {
+				?><h3 class="title-regulars">Regular<?php echo _n( '', 's', count( $chars_regular ) ); ?> (<?php echo count( $chars_regular ); ?>)</h3>
 				<div class="container characters-regulars-container"><div class="row site-loop character-show-loop equal-height"><?php
 				foreach( $chars_regular as $character ) {
 					?><div class="col-sm-4"><?php
@@ -134,7 +139,7 @@ if ( $related ) {
 			// Get the list of RECURRING characters
 			$chars_recurring = lwtv_yikes_get_characters_for_show( $show_id, $havecharcount, 'recurring' );
 			if ( !empty( $chars_recurring ) ) {	
-				?><h3 class="title-recurring">Recurring</h3>
+				?><h3 class="title-recurring">Recurring (<?php echo count( $chars_recurring ); ?>)</h3>
 				<div class="container characters-recurring-container"><div class="row site-loop character-show-loop equal-height"><?php
 				foreach( $chars_recurring as $character ) {
 					?><div class="col-sm-4"><?php
@@ -146,7 +151,7 @@ if ( $related ) {
 			// Get the list of GUEST characters
 			$chars_guest = lwtv_yikes_get_characters_for_show( $show_id, $havecharcount, 'guest' );
 			if ( !empty( $chars_guest ) ) {	
-				?><h3 class="title-guest">Guest</h3>
+				?><h3 class="title-guest">Guest<?php echo _n( '', 's', count( $chars_guest ) ); ?> (<?php echo count( $chars_guest ); ?>)</h3>
 				<ul class="guest-character-list"><?php
 				foreach( $chars_guest as $character ) {
 					

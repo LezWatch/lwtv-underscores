@@ -7,14 +7,14 @@
 
 // Pre flight magic to determine what search boxes were checked
 $checked_shows = $checked_characters = '';
-$query_types = get_query_var('post_type');
+$queery_types = get_query_var('post_type');
 
-if ( is_null($query_types) || empty($query_types) ) {
-	$query_types = array( 'post_type_characters', 'post_type_shows' );
+if ( is_null($queery_types) || empty($queery_types) ) {
+	$queery_types = array( 'post_type_characters', 'post_type_shows' );
 }
-if ( !is_array( $query_types ) ) { $query_types = array( $query_types ); }
-if ( in_array( 'post_type_characters' , $query_types) ) { $checked_characters = 'checked="checked"'; }
-if ( in_array( 'post_type_shows' , $query_types) ) { $checked_shows = 'checked="checked"'; }
+if ( !is_array( $queery_types ) ) { $queery_types = array( $queery_types ); }
+if ( in_array( 'post_type_characters' , $queery_types) ) { $checked_characters = 'checked="checked"'; }
+if ( in_array( 'post_type_shows' , $queery_types) ) { $checked_shows = 'checked="checked"'; }
 ?>
 
 <div class="card card-search">

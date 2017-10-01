@@ -26,7 +26,8 @@ Tags:
   background-color: $white;
 
   .home &, .search-results &,
-  .page-template-statistics & {
+  .page-template-statistics &,
+  .page-template-thisyear & {
     padding: 20px 0;
   }
 }
@@ -635,6 +636,16 @@ footer.entry-meta {
   .row {
     margin-bottom: 4rem;
   }
+
+  ul.statistics.percentages.dead-years {
+	    padding:0;
+
+        li {
+          display: inline-block;
+          width: 33%;
+        }
+  }
+
 }
 
 .percentage-container {
@@ -652,7 +663,23 @@ canvas {
   -ms-user-select: none;
 }
 
+/* This Year Pages */
 
+.thisyear-container {
+  .row {
+    margin-bottom: 4rem;
+  }
+
+  ul.this-year-shows {
+	    padding:0;
+
+        li {
+          display: inline-block;
+          width: 33%;
+        }
+  }
+
+}
 
 /* Advertising */
 
@@ -701,6 +728,10 @@ canvas {
 
     .characters-description {
       margin-top: 1.6rem;
+    }
+    
+    .card-meta-item {
+	    margin-bottom: .6rem;
     }
   }
 }

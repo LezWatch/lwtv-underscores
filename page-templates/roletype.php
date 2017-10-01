@@ -15,7 +15,7 @@ if ( !in_array( $thisrole, $validroles ) ){
 	exit;
 }
 
-$query = new WP_Query ( array(
+$queery = new WP_Query ( array(
 	'post_type'              => 'post_type_characters',
 	'update_post_term_cache' => false,
 	'update_post_meta_cache' => false,
@@ -34,9 +34,6 @@ $query = new WP_Query ( array(
 ) );
 
 $count_posts = facetwp_display( 'counts' );
-
-//$count_posts = $query->post_count;
-
 $icon        = lwtv_yikes_symbolicons( 'person.svg', 'fa-person' );
 $selections  = facetwp_display( 'selections' );
 $title       = '<span role="img" aria-label="post_type_characters" title="Characters" class="taxonomy-svg characters" data-toggle="tooltip">' . $icon . '</span>';
@@ -70,8 +67,8 @@ get_header(); ?>
 							<div class="entry-content facetwp-template">
 			        			<div class="row site-loop character-archive-loop equal-height">
 									<?php
-										if ( $query->have_posts() ):
-										while ( $query->have_posts() ): $query->the_post();
+										if ( $queery->have_posts() ):
+										while ( $queery->have_posts() ): $queery->the_post();
 											?><div class="col-sm-4"><?php
 												get_template_part( 'template-parts/excerpt', 'post_type_characters' );
 											?></div><?php
@@ -81,7 +78,7 @@ get_header(); ?>
 
 								<?php
 
-								lwtv_yikes_facet_numeric_posts_nav( $query );
+								lwtv_yikes_facet_numeric_posts_nav( $queery );
 								
 								wp_reset_postdata(); 
 						
