@@ -532,6 +532,10 @@
     .header-logo img {
       width: 34%;
     }
+
+    p:first-of-type {
+      display: none;
+    }
   }
 
   .showschar-header .show-header-svg {

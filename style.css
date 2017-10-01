@@ -1982,6 +1982,9 @@ a.facetwp-page {
   .jumbotron.jumbotron-fluid .header-logo img {
     width: 34%;
   }
+  .jumbotron.jumbotron-fluid p:first-of-type {
+    display: none;
+  }
 
   .showschar-header .show-header-svg svg {
     height: 30px;
