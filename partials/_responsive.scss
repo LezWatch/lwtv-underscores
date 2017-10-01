@@ -383,6 +383,14 @@
     }
   }
 
+  .characters-regulars-container .col-sm-4, 
+  .col-sm-9 .entry-content .col-sm-4 {
+    -ms-flex: 0 0 100%;
+    flex: 0 0 100%;
+    max-width: 100%;
+    width: 100%;
+  }
+
   .character-image-wrapper {
     max-height: none;
     overflow: hidden;
@@ -409,6 +417,10 @@
         margin-bottom: 0;
       }
     }
+  }
+
+  .taxonomy-svg i.fa, .taxonomy-svg svg {
+    display: none;
   }
 }
 
