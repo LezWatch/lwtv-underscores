@@ -115,12 +115,31 @@
     }
   }
 
+  .characters-regulars-container .col-sm-4 .character-image-wrapper {
+    height: 200px;
+  }
+
+  .characters-recurring-container .character-show-loop .character-image-wrapper {
+    height: 120px;
+  }
+
+  #characters .guest-character-list li {
+    width: 50%;
+  }
+
   #overview {
     .alignright, .alignleft {
       display: block;
       float: none;
       margin: 1rem 0;
       width: 100%;
+    }
+  }
+
+  .widget_categories {
+    ul {
+      list-style-type: none;
+      padding: 0 0 0 0.6rem;
     }
   }
 
