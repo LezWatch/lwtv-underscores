@@ -1940,13 +1940,13 @@ a.facetwp-page {
     display: none;
   }
 
-  .chart-container .row {
+  .chart-container .row, .percentage-container .row {
     margin-bottom: 0;
   }
-  .chart-container .row:last-of-type .col-sm-6:last-of-type {
+  .chart-container .row:last-of-type .col-sm-6:last-of-type, .percentage-container .row:last-of-type .col-sm-6:last-of-type {
     margin-bottom: 2rem;
   }
-  .chart-container .col-sm-6 {
+  .chart-container .col-sm-6, .percentage-container .col-sm-6 {
     margin-bottom: 4rem;
   }
 }

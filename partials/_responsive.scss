@@ -473,7 +473,7 @@
     display: none;
   }
 
-  .chart-container {
+  .chart-container, .percentage-container {
     .row {
       margin-bottom: 0;
 
@@ -485,7 +485,6 @@
     }
     .col-sm-6 {
       margin-bottom: 4rem;
-
     }
   }
 }
