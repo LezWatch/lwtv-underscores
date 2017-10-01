@@ -1686,6 +1686,16 @@ a.facetwp-page {
   .archive-subheader .jumbotron {
     padding: 2rem;
   }
+
+  .taxonomy-svg i.fa, .taxonomy-svg svg {
+    width: 80px;
+    height: 80px;
+    float: none;
+    margin-top: 0;
+    position: absolute;
+    right: 20px;
+    top: 70px;
+  }
 }
 @media (max-width: 767px) {
   .page .container, .post .container {
