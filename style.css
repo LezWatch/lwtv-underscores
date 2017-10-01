@@ -1683,6 +1683,10 @@ a.facetwp-page {
     max-width: 90%;
   }
 
+  .taxonomy-description {
+    max-width: 90%;
+  }
+
   .archive-subheader .jumbotron {
     padding: 2rem;
   }

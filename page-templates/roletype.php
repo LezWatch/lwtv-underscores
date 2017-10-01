@@ -53,7 +53,7 @@ get_header(); ?>
 					<?php echo $title; ?>
 				</h1>
 				
-				<div class="taxonomyg-description"><p>Characters who are considered to be cast as <?php echo $thisrole; ?>s. Some characters have multiple roles, of course ...<br />Sorted by <?php echo $sort; ?>.</p></div>
+				<div class="taxonomy-description"><p>Characters who are considered to be cast as <?php echo $thisrole; ?>s. Some characters have multiple roles, of course ...<br />Sorted by <?php echo $sort; ?>.</p></div>
 					<?php echo $selections; ?>
 			</header><!-- .archive-header -->
 		</div><!-- .container -->
