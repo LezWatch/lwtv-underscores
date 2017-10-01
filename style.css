@@ -1678,6 +1678,14 @@ a.facetwp-page {
     list-style-type: none;
     padding: 0 0 0 0.6rem;
   }
+
+  .page-template-statistics h1.entry-title {
+    max-width: 90%;
+  }
+
+  .archive-subheader .jumbotron {
+    padding: 2rem;
+  }
 }
 @media (max-width: 767px) {
   .page .container, .post .container {
