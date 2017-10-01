@@ -1839,6 +1839,7 @@ a.facetwp-page {
   }
 
   .jumbotron.jumbotron-fluid {
+    background-size: 200%;
     padding: 1rem;
   }
   .jumbotron.jumbotron-fluid .header-logo img {
