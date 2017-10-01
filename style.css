@@ -1873,6 +1873,14 @@ a.facetwp-page {
     font-size: 32px;
   }
 
+  .page-template-statistics h1.entry-title {
+    max-width: 100%;
+  }
+
+  .taxonomy-description {
+    max-width: 100%;
+  }
+
   .characters-regulars-container .col-sm-4,
   .col-sm-9 .entry-content .col-sm-4,
   .search-results .site-content .col-sm-3 {
@@ -1932,7 +1940,7 @@ a.facetwp-page {
     margin-bottom: 0;
   }
   .chart-container .row:last-of-type .col-sm-6:last-of-type {
-    margin-bottom: 0;
+    margin-bottom: 2rem;
   }
   .chart-container .col-sm-6 {
     margin-bottom: 4rem;
