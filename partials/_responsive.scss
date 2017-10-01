@@ -421,10 +421,18 @@
     height: auto !important;
   }
 
-  .showschar-header .show-header-svg svg {
-    height: 40px;
-    margin: 12px 5px;
-    width: 40px;
+  .showschar-header .show-header-svg {
+
+    span {
+      margin-top: 12px;
+      display: block;
+    }
+    
+    svg {
+      height: 40px;
+      margin: 0 5px;
+      width: 40px;
+    }
   }
 
   .aligncenter, .alignleft, .alignnone, .alignright {
