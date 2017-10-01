@@ -389,6 +389,14 @@
     margin: auto;
   }
 
+  .archive-subheader .jumbotron {
+    padding: 0.8rem 1rem 1.1rem 1rem;
+  }
+
+  h1.entry-title {
+    font-size: 32px;
+  }
+
   .characters-regulars-container .col-sm-4, 
   .col-sm-9 .entry-content .col-sm-4,
   .search-results .site-content .col-sm-3 {
@@ -408,6 +416,10 @@
     float: none;
     margin: 2em 0;
     width: 100%;
+  }
+
+  h4.author_name {
+    margin-top: 1rem;
   }
 
   #colophon .footer-widgets h2.widget-title {
