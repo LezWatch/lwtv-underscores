@@ -1,51 +1,56 @@
 <?php
 /**
- * The template for displaying search results pages
+ * The template for displaying Search Results pages.
  *
- * @link https://developer.wordpress.org/themes/basics/template-hierarchy/#search-result
- *
- * @package LezWatch_TV
+ * @package YIKES Starter
  */
- 
-$allsearch = new WP_Query("s=$s&showposts=0"); 
-
 get_header(); ?>
 
-	<section id="primary" class="content-area">
-		<main id="main" class="site-main" role="main">
+<div class="archive-subheader">
+	<div class="jumbotron">
+		<div class="container">
+			<header class="archive-header">
+				<h1 class="entry-title">
+					<?php printf( esc_attr__( 'Search Results for: %s', 'yikes_starter' ), '<span>' . get_search_query() . '</span>' ); ?>
+				</h1>
+			</header><!-- .archive-header -->
+		</div><!-- .container -->
+	</div><!-- /.jumbotron -->
+</div>
 
-		<?php
-		if ( have_posts() ) : ?>
+<div id="main" class="site-main" role="main">
+	<div class="container">
+		<div class="row">
+			<div class="col">
+				<div id="primary" class="content-area">
+					<div id="content" class="site-content clearfix" role="main">
 
-			<header class="page-header">
-				<h1 class="page-title"><?php printf( esc_html__( 'Search Results for: %s', 'lwtv_underscore' ), '<span>' . get_search_query() . '</span>' ); ?></h1>
-				
-			</header><!-- .page-header -->
+						<?php if ( have_posts() ) : ?>
 
-			<?php
-			/* Start the Loop */
-			while ( have_posts() ) : the_post();
+		        			<div class="row site-loop main-posts-loop equal-height">
 
-				/**
-				 * Run the loop for the search to output the results.
-				 * If you want to overload this in a child theme then include a file
-				 * called content-search.php and that will be used instead.
-				 */
-				get_template_part( 'template-parts/content/search' );
+								<?php while ( have_posts() ) : the_post(); ?>
 
-			endwhile;
+									<div class="col-sm-3">
+										<?php get_template_part( 'template-parts/content', 'search' ); ?>
+									</div>
 
-			lwtv_underscore_numeric_posts_nav( 'wp_query', $allsearch->found_posts );
+								<?php endwhile; ?>
+							</div>
 
-		else :
+							<!-- Alt Bootstrap pagination is page_navi() -->
+							<?php yikes_starter_paging_nav(); ?>
 
-			get_template_part( 'template-parts/content/none' );
+						<?php else : ?>
 
-		endif; ?>
+							<?php get_template_part( 'template-parts/content', 'none' ); ?>
 
-		</main><!-- #main -->
-	</section><!-- #primary -->
+						<?php endif; ?>
+					</div><!-- #content -->
+				</div><!-- #primary -->
+			</div><!-- .col -->
+		</div><!-- .row -->
+	</div><!-- .container -->
+</div><!-- #main -->
 
-<?php
-get_sidebar();
-get_footer();
+<?php get_footer();

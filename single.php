@@ -1,36 +1,66 @@
 <?php
 /**
- * The template for displaying all single posts
+ * The Template for displaying all single posts.
  *
- * @link https://developer.wordpress.org/themes/basics/template-hierarchy/#single-post
- *
- * @package LezWatch_TV
+ * @package YIKES Starter
  */
-
+ 
 get_header(); ?>
 
-	<div id="primary" class="content-area">
-		<main id="main" class="site-main" role="main">
+<div class="archive-subheader">
+	<div class="jumbotron">
+		<div class="container">
+			<header class="archive-header">			
+				<?php the_title( '<h1 class="entry-title">', '</h1>' ); ?>
+			</header><!-- .archive-header -->
+		</div><!-- .container -->
+	</div><!-- /.jumbotron -->
+</div>
 
-		<?php
-		while ( have_posts() ) : the_post();
+<div id="main" class="site-main" role="main">
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-9">
+				<div id="primary" class="content-area">
+					<div id="content" class="site-content clearfix" role="main">
 
-			get_template_part( 'template-parts/content/'.get_post_type() );
+						<?php
+							while ( have_posts() ) : the_post(); 
+								
+								// Check for custom post types
+								if ( 'post' === get_post_type() ) {
+									get_template_part( 'template-parts/content', 'single' ); 
+								} else {
+									// NOTE! We use single-post_type_{shows|character}.php for the
+									// individual CPTs.
+									get_template_part( 'template-parts/content', get_post_type() );
+								}
 
-			// We don't need this for our CPTs
-			if ( 'post' === get_post_type() ) the_post_navigation();
+								// Force Jetpack to display sharing links where we want them.
+								lwtv_yikes_jetpack_post_meta();
+								
+								// If comments are open or we have at least one comment, load up the comment template
+								if ( comments_open() || '0' !== get_comments_number() ) {
+									comments_template();
+								}
+								
+								// Only show post nav on posts (to not break facet)
+								if ( 'post' === get_post_type() ) yikes_starter_post_nav();
 
-			// If comments are open or we have at least one comment, load up the comment template.
-			if ( comments_open() || get_comments_number() ) :
-				comments_template();
-			endif;
+							endwhile; // end of the loop. 
+						?>
 
-		endwhile; // End of the loop.
-		?>
+					</div><!-- #content -->
+				</div><!-- #primary -->
+			</div><!-- .col-sm-9 -->
 
-		</main><!-- #main -->
-	</div><!-- #primary -->
+			<div class="col-sm-3 site-sidebar site-loop">
 
-<?php
-get_sidebar();
-get_footer();
+				<?php get_sidebar(); ?>
+
+			</div><!-- .col-sm-3 -->
+		</div><!-- .row -->
+	</div><!-- .container -->
+</div><!-- #main -->
+
+<?php get_footer();

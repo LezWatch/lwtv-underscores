@@ -1,31 +1,45 @@
 <?php
 /**
- * The sidebar containing the main widget area
+ * The Sidebar containing the main widget areas.
  *
- * @link https://developer.wordpress.org/themes/basics/template-files/#template-partials
- *
- * @package LezWatch_TV
+ * @package YIKES Starter
  */
 
-if ( ! is_active_sidebar( 'sidebar-1' ) ) {
+if ( ! is_active_sidebar( 'sidebar-2' ) ) {
 	return;
 }
 ?>
 
 <aside id="secondary" class="widget-area" role="complementary">
 	<?php 
-		// Currently only used for shows, but in case archives and
-		// single pages need different sidebars:
-		$type = 'archive';
-		if ( is_single() )  $type = 'single';
-
 		// Show the right sidebar for the page type:
-		if ( get_post_type() == 'post_type_characters' && !is_search() ) {
-			get_template_part( 'template-parts/sidebar/post_type_characters-' . $type  );
-		} elseif ( get_post_type() == 'post_type_shows' && !is_search() ) {
-			get_template_part( 'template-parts/sidebar/post_type_shows-' . $type );
-		} else { 
-			dynamic_sidebar( 'sidebar-1' );
+		if ( !is_singular() ) {
+			switch ( get_post_type() ) {
+				case 'post_type_characters':
+					dynamic_sidebar( 'archive-character-sidebar' );
+					break;
+				case 'post_type_shows':
+					dynamic_sidebar( 'archive-show-sidebar' );
+					break;
+				default:
+					dynamic_sidebar( 'sidebar-2' );
+			}
+		} else {
+			switch ( get_post_type() ) {
+				case 'post_type_characters':
+				case 'post_type_shows':
+					get_template_part( 'template-parts/sidebar', get_post_type() );
+					break;
+				case 'page':
+					if ( is_page( 'role' ) ) {
+						dynamic_sidebar( 'archive-character-sidebar' );
+					} else {
+						dynamic_sidebar( 'sidebar-2' );						
+					}
+					break;
+				default:
+					dynamic_sidebar( 'sidebar-2' );
+			}
 		}
 	?>
 </aside><!-- #secondary -->

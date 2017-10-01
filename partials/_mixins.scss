@@ -1,0 +1,196 @@
+/* =Mixins
+----------------------------------------------- */
+
+@mixin border-radius($arguement...) {
+	-webkit-border-radius: $arguement;
+	-moz-border-radius: $arguement;
+	-ms-border-radius: $arguement;
+	-o-border-radius: $arguement;
+	border-radius: $arguement;
+}
+
+@mixin user-select($arguement...) {
+	-webkit-user-select: $arguement;
+	-moz-user-select: $arguement;
+	-ms-user-select: $arguement;
+	-o-user-select: $arguement;
+}
+
+@mixin box-shadow($arguement...) {
+	-webkit-box-shadow: $arguement;
+	box-shadow: $arguement;
+}
+
+@mixin bottom-shadow {
+	@include box-shadow(0px 9px 9px -9px $black);
+}
+
+@mixin card-shadow {
+	box-shadow: 0 12px 20px -10px rgba(156, 39, 176, 0.28), 0 4px 20px 0px rgba(0, 0, 0, 0.12), 0 7px 8px -5px rgba(156, 39, 176, 0.2);
+}
+
+$startcolor: #1E5799; 
+$endcolor: #7DB9E8; 
+
+@mixin box-gradient-vertical {
+	background: $startcolor; /* Old browsers */
+	background: -moz-linear-gradient(top, $startcolor 0%, $endcolor 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,$startcolor), color-stop(100%,$endcolor)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top, $startcolor 0%,$endcolor 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top, $startcolor 0%,$endcolor 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top, $startcolor 0%,$endcolor 100%); /* IE10+ */
+	background: linear-gradient(to bottom, $startcolor 0%,$endcolor 100%); /* W3C */
+	    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='$startcolor', endColorstr='$endcolor',GradientType=0 ); /* IE6-8 */
+}
+
+@mixin box-gradient-horizontal {
+	background: $startcolor; /* Old browsers */
+	background: -moz-linear-gradient(left, $startcolor 0%, $endcolor 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, right top, color-stop(0%,$startcolor), color-stop(100%,$endcolor)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(left, $startcolor 0%,$endcolor 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(left, $startcolor 0%,$endcolor 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(left, $startcolor 0%,$endcolor 100%); /* IE10+ */
+	background: linear-gradient(to right, $startcolor 0%,$endcolor 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='$startcolor', endColorstr='$endcolor',GradientType=1 ); /* IE6-8 */
+}
+
+@mixin box-transition($arguement...) {
+  	-webkit-transition: $arguement;
+	-moz-transition: $arguement;
+   	-o-transition: $arguement;
+  	transition: $arguement;
+}
+
+@mixin fade {
+  	-webkit-transition: all 0.3s;
+	-moz-transition: all 0.3s;
+   	-o-transition: all 0.3s;
+  	transition: all 0.3s;
+}
+
+@mixin images {
+    border: 1px solid $lwtv-grey2;
+    padding: 6px;
+} 
+
+@mixin images-noborder {
+    border: 0px !important;
+	-webkit-box-shadow: none !important;
+ 	box-shadow: none !important;
+    padding: 0px !important;
+} 
+
+//  background-image: url(images/bg.jpg);
+@mixin cover {
+	-webkit-background-size: cover;
+	-moz-background-size: cover;
+	-o-background-size: cover;
+	background-size: cover;
+}
+
+@mixin placeholdercolor($arguement...) {
+	::-webkit-input-placeholder {color: $arguement;}
+	:-moz-placeholder {color: $arguement;}
+	::-moz-placeholder {color: $arguement;}
+	:-ms-input-placeholder {color: $arguement;}
+}
+
+@mixin placeholderweight($arguement...) {
+	::-webkit-input-placeholder {font-weight: $arguement;}
+	:-moz-placeholder {font-weight: $arguement;}
+	::-moz-placeholder {font-weight: $arguement;}
+	:-ms-input-placeholder {font-weight: $arguement;}
+}
+
+@mixin placeholdersize($arguement...) {
+	::-webkit-input-placeholder {font-size: $arguement;}
+	:-moz-placeholder {font-size: $arguement;}
+	::-moz-placeholder {font-size: $arguement;}
+	:-ms-input-placeholder {font-size: $arguement;}
+}
+
+@mixin box-transform($arguement...) {
+  	-webkit-transform: $arguement;
+ 	-moz-transform: $arguement;
+   	-ms-transform: $arguement;
+  	transform: $arguement;
+}
+
+@mixin form-input {
+    height: 34px;
+    padding: 6px 12px;
+    font-size: 14px;
+    line-height: 1.428571429;
+    color: $darkgrey;
+    vertical-align: middle;
+    background-color: $white;
+    border: 1px solid $lightgrey;
+    @include border-radius(4px);
+    @include box-shadow(inset 0 1px 1px rgba(0, 0, 0, 0.075));
+    @include box-transition(border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s);
+
+  	&:focus {
+	    border-color: $lightblue;
+	    outline: 0;
+	    @include box-shadow(inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(102, 175, 233, 0.6));
+  	}
+}
+
+@mixin vertical-align {
+	position: relative;
+	top: 50%;
+	-webkit-transform: translateY(-50%);
+	-ms-transform: translateY(-50%);
+	transform: translateY(-50%);
+}
+
+// Like this @include fontawesome("\f0ad");
+@mixin fontawesome($arguement...) {
+    content: $arguement;
+    font-family: FontAwesome;
+}
+
+@mixin text-shadow {
+	text-shadow: -1px -2px 3px $black;
+	text-shadow: 2px 3px 3px $black;
+}
+
+@mixin screen-reader {
+    border: 0;
+    clip: rect( 1px, 1px, 1px, 1px );
+    clip-path: inset( 50% );
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px;
+    word-wrap: normal;
+
+    &:focus {
+	    clip: auto !important;
+	    display: block;
+	    height: auto;
+	    width: auto;
+	    z-index: 100000; /* Above WP toolbar. */
+    }
+}
+
+@mixin rainbows {
+	box-shadow: 0 2px 30px rgba(0, 0, 0, 0.2);
+	height: 5px;
+	width: 100%;
+	left:0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	position: relative;
+	background: -webkit-linear-gradient(34deg, #ff2400, #e81d1d, #e8b71d, #e3e81d, #1de840, #1ddde8, #2b1de8, #dd00f3, #dd00f3);
+	background: -o-linear-gradient(34deg, #ff2400, #e81d1d, #e8b71d, #e3e81d, #1de840, #1ddde8, #2b1de8, #dd00f3, #dd00f3);
+	background: linear-gradient(124deg, #ff2400, #e81d1d, #e8b71d, #e3e81d, #1de840, #1ddde8, #2b1de8, #dd00f3, #dd00f3);
+	background-size: 1800% 1800%;
+	-webkit-animation: rainbow 18s ease infinite;
+	-z-animation: rainbow 18s ease infinite;
+	-o-animation: rainbow 18s ease infinite;
+	animation: rainbow 18s ease infinite;
+}

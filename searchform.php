@@ -1,29 +1,44 @@
 <?php
 /**
- * Template for displaying search forms on LezWatch TV
- * Filter the search form to search for characters and shows
+ * The template for displaying search forms in YIKES Starter
  *
- * @package WordPress
- * @subpackage lwtv_underscores
+ * @package YIKES Starter
  */
 
-$checked_shows = '';
-$checked_characters = '';
-$query_types = get_query_var('post_type');
+// Pre flight magic to determine what search boxes were checked
+$checked_shows = $checked_characters = '';
+$queery_types = get_query_var('post_type');
 
-if ( is_null($query_types) || empty($query_types) ) {
-	$query_types = array( 'post_type_characters', 'post_type_shows' );
+if ( is_null($queery_types) || empty($queery_types) ) {
+	$queery_types = array( 'post_type_characters', 'post_type_shows' );
 }
-if ( !is_array( $query_types ) ) $query_types = array( $query_types );
-if ( in_array( 'post_type_characters' , $query_types)) $checked_characters = 'checked="checked"';
-if ( in_array( 'post_type_shows' , $query_types)) $checked_shows = 'checked="checked"';
-
+if ( !is_array( $queery_types ) ) { $queery_types = array( $queery_types ); }
+if ( in_array( 'post_type_characters' , $queery_types) ) { $checked_characters = 'checked="checked"'; }
+if ( in_array( 'post_type_shows' , $queery_types) ) { $checked_shows = 'checked="checked"'; }
 ?>
-	<form method="get" id="searchform" action="<?php echo esc_url( home_url( '/' ) ); ?>">
-		<label for="s" class="assistive-text">Search the Database</label>
-		<input type="text" class="field" name="s" id="s" placeholder="Search the Database" />
-		<input type="submit" class="submit" name="submit" id="searchsubmit" value="Search" />
-		<br />
-		<input type="checkbox" name="post_type[]" value="post_type_characters" <?php echo $checked_characters; ?> /> <label class="search-input-label">Characters</label>
-		<input type="checkbox" name="post_type[]" value="post_type_shows" <?php echo $checked_shows; ?> /> <label class="search-input-label">Shows</label>
-	</form>
+
+<div class="card card-search">
+	<div class="card-header">
+		<h4><i class="fa fa-search float-right" aria-hidden="true"></i> Search the Database</h4>
+	</div>
+	<div class="card-body">
+		<form role="search" class="search-form" action="<?php echo esc_url( home_url( '/' ) ); ?>" method="get">
+			<div class="input-group input-group-sm">
+				<input type="text" name="s" id="search" class="form-control" aria-label="Search for..." value="<?php the_search_query(); ?>" title="<?php _ex( 'Search for:', 'label', 'yikes_starter' ); ?>" >
+				<span class="input-group-btn">
+					<button class="btn btn-primary" type="submit">Go</button>
+				</span>
+			</div>
+			<div class="form-check form-check-inline ml-2">
+				<label class="form-check-label">
+					<input class="form-check-input" type="checkbox" name="post_type[]" value="post_type_shows" id="CheckboxShows" value="Shows" <?php echo $checked_shows; ?>> Shows
+				</label>
+			</div>
+			<div class="form-check form-check-inline">
+				<label class="form-check-label">
+					<input class="form-check-input" type="checkbox" name="post_type[]" value="post_type_characters" id="CheckboxShows" value="Shows" <?php echo $checked_characters; ?>> Characters
+				</label>
+			</div>
+		</form>
+	</div><!-- .card-body -->
+</div><!-- .card -->

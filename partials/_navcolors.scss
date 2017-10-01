@@ -1,0 +1,161 @@
+/* =Custom Nav styles
+----------------------------------------------- */
+
+.navbar.main-nav {
+  @include box-shadow(0 2px 30px rgba(0, 0, 0, 0.2));
+  height: 50px;
+  padding: 0;
+
+  ul.navbar-nav > li  {
+    border-left:solid 1px $lightgrey;
+
+    &:last-child {
+      border-right:solid 1px $lightgrey;
+    }
+
+    &.nav-item {
+
+      /* Style for inactive links */
+      & > a.nav-link,  {
+        color: $darkgrey;
+        @include font-15;
+        font-weight: 600;
+        padding: 14px 20px;
+        text-transform:uppercase;
+      }
+
+      /* Style for active links */
+      &.current-menu-item > a.nav-link, &.current-menu-parent > a.nav-link, 
+      &.current-menu-ancestor > a.nav-link, .single-post &.current_page_parent > a.nav-link,
+      &:hover > a.nav-link, &:focus > a.nav-link, &:active > a.nav-link,
+      &.show > a.nav-link.dropdown-toggle {
+        background-color: $lwtv-pink;
+        color: $white;
+      }
+      
+      /* Use this class on a menu item to hide the text when using an icon */
+      &.hide-text > a.nav-link .menu-link-text {
+        @include screen-reader;
+      }
+
+      /* Secondary Menus */        
+      ul.dropdown-menu {
+        background-color: $white;
+        border-top-left-radius: 0;
+        top: 95%;
+
+        & li.nav-item {
+
+          /* Style for inactive links on submenus */
+          a.dropdown-item {
+            background-color: $white;
+            color: $darkgrey;
+          }
+
+          /* Style for active links on submenus */
+          &.current-menu-parent > a.dropdown-item, 
+          &.active > a.dropdown-item, &:hover > a.dropdown-item, &:focus > a.dropdown-item {
+            background-color: $lwtv-pink;
+            color: $white;
+          }
+
+          /* Tertiary Menus - reveal them on parent hover */
+          &.dropdown {
+            &:hover, &:focus {
+              & > ul.dropdown-menu {
+                display: block;
+                left: 100%;
+                top: -11px;
+              }
+            }
+          }
+        }
+      }     
+    }
+  }
+}
+
+/* Search button */
+
+.nav-item.search a {
+
+  &, &:visited {
+    background-color: $lwtv-purple;
+    color: $white;
+    padding: 14px 20px;
+  }
+
+  &:hover, &:focus {
+    background-color: $lwtv-pink;
+  }
+}
+
+
+/* Social Menu */
+
+.widget_yikes_social_menu_widget {
+
+  li {
+    a, a:visited { 
+      line-height: 1;
+      padding-top: 0;
+
+      &:before {
+        display: inline-block;
+        @include font-28;
+        width: 60px;
+        vertical-align: middle;
+      }
+
+      &:hover, &:focus {
+        &:before {
+          color: $link-hover-color;
+        }
+      }
+    }
+
+    &.instagram a:before {
+      @include fontawesome("\f16d");
+    }
+
+    &.twitter a:before {
+      @include fontawesome("\f099");
+    }
+
+    &.facebook a:before {
+      @include fontawesome("\f230");
+    }
+
+    &.youtube a:before {
+      @include fontawesome("\f167");
+    }
+
+    &.vimeo a:before {
+      @include fontawesome("\f27d");
+    }
+
+    &.pinterest a:before {
+      @include fontawesome("\f0d2");
+    }
+
+    &.linkedin a:before {
+      @include fontawesome("\f0e1");
+    }
+
+    &.tumblr a:before {
+      @include fontawesome("\f173");
+    }
+
+    &.rss a:before {
+      @include fontawesome("\f09e");
+    }
+
+    &.mail a:before {
+      @include fontawesome("\f003");
+    }
+
+    &.gplus a:before {
+      @include fontawesome("\f0d5");
+    }
+  }
+}

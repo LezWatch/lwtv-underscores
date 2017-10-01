@@ -1,0 +1,47 @@
+@charset "utf-8";
+
+/* CSS Document */
+
+body.login {
+  padding-top: 0;
+}
+
+/* Login Screen */
+
+#login {
+  margin: 0 auto;
+  padding-top: 30px;
+  h1 {
+    margin-top: 60px;
+    padding: 20px 0 0;
+    a {
+      background: url(../images/logo-login.png) no-repeat top center;
+      background-size: 300px 225px;
+      width: 300px;
+      height: 225px;
+      margin: 0 auto;
+    }
+  }
+  form {
+    box-shadow: 0 4px 18px #1D2736;
+    -moz-box-shadow: 0 4px 18px #1D2736;
+  }
+}
+
+/* Dashboard */
+
+#wphead #header-logo {
+  background: url(../images/favicon.png) no-repeat scroll center center transparent;
+  height: 16px;
+  width: 16px;
+}
+
+/* Custom admin styles */
+
+/** Events **/
+
+.cmb_metabox_description .yks-events-error
+    {
+    font-style: italic;
+    color: red;
+    }

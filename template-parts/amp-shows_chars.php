@@ -1,3 +1,15 @@
+<?php
+/*
+ * The AMP template for characters and shows.
+ *
+ * Customized AMP Template used by the custom post types.
+ * This file is called by /inc/amp.php - if that file is
+ * missing, this does nothing.
+ * 
+ * @package LezWatchTV
+ */
+?>
+
 <!doctype html>
 <html amp <?php echo AMP_HTML_Utils::build_attributes_string( $this->get( 'html_tag_attributes' ) ); ?>>
 <head>
@@ -25,16 +37,21 @@
 	<div class="amp-wp-article-content">
 
 		<?php
-			LWTV_CPT_Shows::echo_content_warning( 'amp' );
-		?>
+			$warning = lwtv_yikes_content_warning( get_the_ID() );
+			if ( $warning['card'] != 'none' ) {
+				?>
+				<div class="callout trigger-<?php echo $warning['card']; ?>" role="alert">
+					<?php echo $warning['content']; ?>
+				</div>
+				<?php
+			}
 
-		<?php
 			echo $this->get( 'post_amp_content' );
 			if ( get_post_type( $this->ID ) === 'post_type_shows'  ) {
 
-				$havecharacters = LWTV_CPT_Characters::list_characters( $show_id, 'query' );
-				$havecharcount  = LWTV_CPT_Characters::list_characters( $show_id, 'count' );
-				$havedeadcount  = LWTV_CPT_Characters::list_characters( $show_id, 'dead' );
+				$havecharacters = LWTV_CPT_Characters::list_characters( $this->ID, 'query' );
+				$havecharcount  = LWTV_CPT_Characters::list_characters( $this->ID, 'count' );
+				$havedeadcount  = LWTV_CPT_Characters::list_characters( $this->ID, 'dead' );
 
 				if( (get_post_meta($this->ID, "lezshows_plots", true) )  ) { ?>
 					<section id="timeline" class="shows-extras"><h2>Queer Plotline Timeline</h2>

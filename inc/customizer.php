@@ -1,8 +1,8 @@
 <?php
 /**
- * LezWatch TV Theme Customizer
+ * YIKES Starter Theme Customizer.
  *
- * @package LezWatch_TV
+ * @package YIKES_Starter
  */
 
 /**
@@ -10,17 +10,17 @@
  *
  * @param WP_Customize_Manager $wp_customize Theme Customizer object.
  */
-function lwtv_underscore_customize_register( $wp_customize ) {
+function yikes_starter_customize_register( $wp_customize ) {
 	$wp_customize->get_setting( 'blogname' )->transport         = 'postMessage';
 	$wp_customize->get_setting( 'blogdescription' )->transport  = 'postMessage';
 	$wp_customize->get_setting( 'header_textcolor' )->transport = 'postMessage';
 }
-add_action( 'customize_register', 'lwtv_underscore_customize_register' );
+add_action( 'customize_register', 'yikes_starter_customize_register' );
 
 /**
  * Binds JS handlers to make Theme Customizer preview reload changes asynchronously.
  */
-function lwtv_underscore_customize_preview_js() {
-	wp_enqueue_script( 'lwtv_underscore_customizer', get_template_directory_uri() . '/js/customizer.js', array( 'customize-preview' ), '20170401', true );
+function yikes_starter_customize_preview_js() {
+	wp_enqueue_script( 'yikes_starter_customizer', get_template_directory_uri() . '/inc/js/customizer.js', array( 'customize-preview' ), '20151215', true );
 }
-add_action( 'customize_preview_init', 'lwtv_underscore_customize_preview_js' );
+add_action( 'customize_preview_init', 'yikes_starter_customize_preview_js' );

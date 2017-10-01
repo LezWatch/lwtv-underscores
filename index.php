@@ -1,56 +1,67 @@
 <?php
 /**
- * The main template file
+ * The main template file.
  *
- * This is the most generic template file in a WordPress theme
- * and one of the two required files for a theme (the other being style.css).
- * It is used to display a page when nothing more specific matches a query.
- * E.g., it puts together the home page when no home.php file exists.
- *
- * @link https://codex.wordpress.org/Template_Hierarchy
- *
- * @package LezWatch_TV
+ * @package YIKES Starter
  */
-
 get_header(); ?>
 
-	<div id="primary" class="content-area">
-		<main id="main" class="site-main" role="main">
+<div class="archive-subheader">
+	<div class="jumbotron">
+		<div class="container">
+			<header class="archive-header">
+				<h1 class="entry-title">
+					<?php esc_attr_e( yikes_starter_blog_page_title() ); ?>
+				</h1>
+			</header><!-- .archive-header -->
+		</div><!-- .container -->
+	</div><!-- /.jumbotron -->
+</div>
 
-		<?php
-		if ( have_posts() ) :
+<div id="main" class="site-main" role="main">
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-9">
+				<div id="primary" class="content-area">
+					<div id="content" class="site-content clearfix" role="main">
+						<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
+							<div class="entry-content">
 
-			if ( is_home() && ! is_front_page() ) : ?>
-				<header>
-					<h1 class="page-title screen-reader-text"><?php single_post_title(); ?></h1>
-				</header>
+								<?php if ( have_posts() ) : ?>
 
-			<?php
-			endif;
+				        			<div class="row site-loop main-posts-loop equal-height">
 
-			/* Start the Loop */
-			while ( have_posts() ) : the_post();
+										<?php while ( have_posts() ) : the_post(); ?>
 
-				/*
-				 * Include the Post-Format-specific template for the content.
-				 * If you want to override this in a child theme, then include a file
-				 * called content-___.php (where ___ is the Post Format name) and that will be used instead.
-				 */
-				get_template_part( 'template-parts/content/'.get_post_type() );
+											<div class="col-sm-4">
+												<?php get_template_part( 'template-parts/content', 'posts' ); ?>
+											</div>
 
-			endwhile;
+										<?php endwhile; ?>
 
-			lwtv_underscore_numeric_posts_nav();
+									</div>
 
-		else :
+									<?php wp_bootstrap_pagination(); ?>
 
-			get_template_part( 'template-parts/content/none' );
+								<?php else : ?>
 
-		endif; ?>
+									<?php get_template_part( 'template-parts/content', 'none' ); ?>
 
-		</main><!-- #main -->
-	</div><!-- #primary -->
+								<?php endif; ?>
 
-<?php
-get_sidebar();
-get_footer();
+							</div>
+						</article><!-- #post-## -->
+					</div><!-- #content -->
+				</div><!-- #primary -->
+			</div><!-- .col-sm-9 -->
+
+			<div class="col-sm-3 site-sidebar site-loop">
+
+				<?php get_sidebar(); ?>
+
+			</div><!-- .col-sm-3 -->
+		</div><!-- .row -->
+	</div><!-- .container -->
+</div><!-- #main -->
+
+<?php get_footer();

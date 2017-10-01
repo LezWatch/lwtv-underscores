@@ -1,0 +1,1397 @@
+/*
+Theme Name: LezWatchTV
+Theme URI: https://lezwatchtv.com/
+Author: LezWatchTV
+Author URI: https://lezwatchtv.com/
+Description: LezWatchTV Theme Episode III - Return of the Custom Theme 
+Version: 3.0
+License: GNU General Public License v2 or later
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
+Text Domain: yikes_starter
+Tags: 
+*/
+
+@import 'partials/fonts';
+@import 'partials/colors';
+@import 'partials/helpers';
+@import 'partials/mixins';
+
+/* ==========================================================================
+   Layout
+   ========================================================================== */
+
+#masthead {}
+
+#main {
+  background-color: $white;
+
+  .home &, .search-results &,
+  .page-template-statistics &,
+  .page-template-thisyear & {
+    padding: 20px 0;
+  }
+}
+
+#secondary {}
+
+#colophon {}
+
+
+/* ==========================================================================
+   Global
+   ========================================================================== */
+
+body {
+  font-family: 'Open Sans', sans-serif;
+  font-size: $basefont;
+  line-height: 1.5;
+  color: $darkgrey;
+  background-color: $lwtv-dkgrey;
+}
+
+p {
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+
+blockquote {
+  background-color: $lwtv-ltgrey;
+  border-left: 4px solid $lwtv-pink;
+  color: $darkgrey;
+  display: inline-block;
+  font-family: Georgia, Times, "Times New Roman", serif;
+  font-weight: 500;
+  @include font-18;
+  margin: 0 0 1rem;
+  padding: 1em;
+  -webkit-font-smoothing: antialiased;
+
+  p {
+    padding-left: 28px;
+  }
+
+  p:last-child {
+    margin-bottom: 0;
+  }
+
+  &:before {
+    color: $lwtv-pink;
+    content: '\201C';
+    @include font-44;
+    font-weight: 600;
+    line-height: 1;
+    position: absolute;
+  }
+}
+
+.rainbow {
+  @include rainbows;
+}
+
+/* Links */
+
+a {
+  color: $link-color;
+  text-decoration: none;
+  @include box-transition(background 0.3s ease-in-out);
+
+  &:visited {
+    color: $link-color;
+  }
+
+  &:hover, &:focus, &:active {
+    color: $link-hover-color;
+    text-decoration: none;
+  }
+}
+
+
+/* Accessibility */
+
+.screen-reader-text {
+  @include screen-reader;
+}
+
+
+/* =Bootstrap Overrides
+----------------------------------------------- */
+
+/* Pagination */
+
+nav.yikes-pagination {
+  padding: 0 40px;
+  width: 100%;
+}
+
+.pagination {
+  margin-top: 2em;
+
+  li.page-item {
+    a.page-link {
+      color: $lwtv-pink;
+    }
+    &.active {
+      .page-link {
+        background-color: $lwtv-pink;
+        border-color: $lwtv-pink;
+        color: $white;
+      }
+    }
+    &.first, &.previous, &.next, &.last {
+      a.page-link {
+        background-color: $lwtv-pink;
+        border-color: $lwtv-pink;
+        color: $white;
+      }
+    }
+
+    &:first-child, &:last-child {
+      .page-link {
+        @include border-radius(0);
+      }
+    }
+  }
+}
+
+/* List Groups */
+
+.list-group {
+  .list-group-item {
+    border-left: 0;
+    border-right: 0;
+
+    &:first-child, &:last-child {
+      @include border-radius(0);
+    }
+  }
+}
+
+
+/* Buttons */
+
+/* Global styles for all the buttons!  */
+
+a.btn, button.btn, input[type="button"].btn, input[type="submit"].btn,
+button, input[type="button"], input[type="submit"] {
+  border: 1px solid transparent;
+  @include fade;
+}
+
+/* Color styles for specific button classes  */
+
+button, input[type="button"], input[type="submit"], // keep this line for the defaut button style 
+a.btn-primary, button.btn-primary, input[type="button"].btn-primary, input[type="submit"].btn-primary,
+.show > .btn-primary.dropdown-toggle {
+  &, &:visited {
+    background-color: $lwtv-pink;
+    border-color: $lwtv-pink;
+    color: $white;
+  }
+
+  &.active, &.focus, &:active, &:focus, &:hover {
+    background-color: $white;
+    border-color: $lwtv-pink;
+    color: $lwtv-pink;
+    @include fade;
+  }
+}
+
+a.btn-outline-primary, button.btn-outline-primary, 
+input[type="button"].btn-outline-primary, 
+input[type="submit"].btn-outline-primary {
+  &, &:visited {
+    background-color: $white;
+    border-color: $lwtv-pink;
+    color: $lwtv-pink;
+  }
+
+  &.active, &.focus, &:active, &:focus, &:hover {
+    background-color: $lwtv-pink;
+    border-color: $lwtv-pink;
+    box-shadow: 0 0 0 2px rgba(141, 50, 159,.5);
+    color: $white;
+  }
+}
+
+
+/* =Typography
+    Font CSS is all in the partial _fonts.scss
+----------------------------------------------- */
+
+/* Headings */
+
+h1, h2, h3, h4, h5, h6,
+.h1, .h2, .h3, .h4, .h5, .h6 {
+  margin-bottom: 1rem;
+  font-family: 'Oswald', sans-serif;
+  font-weight: 400;
+  line-height: 1.1;
+}
+
+h1, .h1 {
+  @include font-44;
+}
+
+h2, .h2 {
+  @include font-32;
+}
+
+h3, .h3 {
+  @include font-28;
+}
+
+h4, .h4 {
+  @include font-24;
+}
+
+h5, .h5 {
+  @include font-20;
+}
+
+h6, .h6 {
+  font-size: 1rem;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+
+h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
+  text-decoration: none;
+}
+
+
+/* =Forms - Most handled by Bootstrap. Overrides below
+----------------------------------------------- */
+
+/* styles that makes comments and Gravity forms Bootstrappy */
+
+@import 'partials/forms';
+
+
+/* ==========================================================================
+   Header
+   ========================================================================== */
+
+
+/* If using Jumbotron */
+.jumbotron.jumbotron-fluid {
+  background-size: contain;
+  color: $white;
+  @include font-18;
+  margin-bottom: 0;
+  max-height: 600px;
+
+  h1.site-description {
+    @include font-40;
+  }
+
+  a.badge, a.badge:visited {
+    color: $white !important;
+  }
+}
+
+/* =Menu
+----------------------------------------------- */
+
+/* If using a fixed-top navbar */
+
+.admin-bar .fixed-top.main-nav {margin-top: 32px;}
+.site-subheader {margin-top: 50px;}
+
+#masthead {
+  .navbar-brand {
+    @include font-26;
+    font-weight: 600;
+    color: $lwtv-pink;
+
+    img {
+      height: 40px;
+      width: auto;
+    }
+  }
+
+  .header-search-bar {
+    background-color: $lwtv-dkgrey;
+    @include box-shadow(0 2px 30px rgba(0, 0, 0, 0.2));
+    margin-top: 50px;
+    padding: 10px 0;
+    z-index: 9999;
+
+    .admin-bar & {
+      margin-top: 82px;
+    }
+
+    .form-group {
+      margin-bottom: 0;
+
+      label {
+        color: $white;
+        @include font-20;
+        font-weight: 600;
+        text-align: right;
+      }
+    }
+
+    .fa {
+      @include font-32;
+    }
+  }
+
+}
+
+/* Change the main nav colors */
+
+@import 'partials/navcolors';
+
+
+
+/* ==========================================================================
+   Content
+   ========================================================================== */
+
+/* =Global
+----------------------------------------------- */
+
+.hentry, .widget-area {margin: 2em 0 2.5em;}
+.single .byline, .group-blog .byline {display: inline;}
+.entry-content, .entry-summary {
+  margin: 2em 0 0;
+
+  p {
+    margin-bottom: 1.2em;
+  }
+}
+
+.sticky, .bypostauthor {display: block;}
+h1.entry-title { 
+  margin-bottom: 0;
+
+  .no-results & {
+    @include font-32;
+    margin-top: 20px;
+  }
+}
+
+.jetpack-video-wrapper {
+  margin-top: 1rem;
+}
+
+.sharedaddy.sd-sharing-enabled {
+	padding: 1.25em;
+}
+
+/* Table of Contents */
+
+.toc-container {
+  .toc-title {
+    display: inline-block;
+    @include font-20;
+    line-height: 1;
+    margin: 0 0.6rem 0 0;
+    vertical-align: top;
+  }
+
+  .breadcrumb {
+    margin-bottom: 0;
+    text-align: center;
+
+    .breadcrumb-item {
+      display: inline-block;
+      float: none;
+    }
+  }
+}
+
+
+/* Loop styles for loopy content */
+
+.site-loop {
+  .card {
+    border: none;
+    @include border-radius(0);
+    @include box-shadow(0 1px 4px 0 rgba(0, 0, 0, 0.14));
+    margin-bottom: 1.4rem;
+
+    &.col-sm-3, &.col-sm-4, &.col-sm-5, &.col-sm-6,
+    &.col-sm-7, &.col-sm-8, &.col-sm-9, &.col-sm-10 {
+      padding: 0;
+    }
+
+    .card-header {
+      background: $lwtv-gradient;
+      @include border-radius(0);
+      color: $white;
+
+      h3, h4, h5 {
+        margin-bottom: 0;
+      }
+    }
+
+    .card-img-top, .card-img {
+      @include border-radius(0);
+    }
+
+    .card-body {
+      @include font-14;
+
+      p:last-child, ul:last-of-type {
+        margin-bottom: 0;
+      }
+
+      .card-title {
+        @include font-20;
+      }
+
+      .card-meta {
+        margin-bottom: 0.75rem;
+        @include font-14;
+
+        .fa {
+          margin-left: 0.6em;
+        }
+      }
+
+      .card-text {
+        .fa {
+          text-align: center;
+          width: 22px;
+        }
+
+        .card-excerpt {
+          margin-top: 0.4rem;
+        }
+
+        p {
+          margin-bottom: 0;
+        }
+      }
+    }
+
+    .card-footer {
+      background-color: $white;
+      border: 0;
+      @include border-radius(0);
+      padding-top: 0;
+    }
+  }
+}
+
+
+/* =Home page
+----------------------------------------------- */
+
+h2.posts-title {
+  color: $lwtv-pink;
+  font-weight: 500;
+}
+
+/* Content blocks */
+
+section {
+  padding-bottom: 1rem;
+}
+
+
+.site-loop.home-featured-post-loop {
+  .card-body {
+    font-size: $basefont;
+
+    .card-title {
+      @include font-28;
+    }
+  }
+}
+
+.site-loop.home-featured-secondary-loop,
+.site-loop.show-archive-loop {
+  .card-group {
+    width: 100%;
+  }
+  .card {
+    &.col-sm-5 {
+      background-repeat: no-repeat;
+      @include cover;
+      background-position: center top;
+    }
+  }
+}
+
+
+.home-featured-shows {
+  background-color: $lwtv-pink;
+  padding: 20px 0 30px;
+
+  h2 {
+    color: $white;
+  }
+
+  .card {
+    margin-bottom: 0;
+  }
+}
+
+.home-older-posts {
+  padding: 20px 0;
+}
+
+
+
+/* =Sub pages
+----------------------------------------------- */
+
+/* Subheaders */
+.archive-subheader .jumbotron {
+  background: $lwtv-pink;
+  background-size: contain;
+  color: $white;
+  @include font-18;
+  margin-bottom: 0;
+  padding: 3rem 2rem;
+}
+
+/* Posts */
+
+.entry-header {
+
+  .wp-post-image {
+    margin-bottom: .5rem;
+  }
+
+  .entry-meta {
+    border-bottom: 1px solid $lwtv-pink;
+    color: $lwtv-medgrey;
+    font-size: $basefont;
+    font-weight: 600;
+    margin-top: .75rem;
+    padding-bottom: 1rem;
+
+
+    .fa {
+      margin-left: 0.6em;
+    }
+  }
+}
+
+.related-shows {  
+  background-color: $lwtv-ltgrey;
+  border-left: 4px solid $lwtv-pink;
+  margin: 2rem 0;
+  padding: 1em;
+  clear: both;
+
+  ul {
+    margin: 0;
+    padding: 0;
+
+    li {
+      list-style-type: none;
+
+      &:before {
+        @include fontawesome("\f26c");
+        margin-right: 4px;
+      }
+    }
+  }
+}
+
+.author-bio-box {
+  background-color: $lwtv-ltgrey;
+  @include font-14;
+  padding: 1em;
+  border-top: 1px solid $lwtv-purple;
+  margin-top: 4rem;
+
+  .avatar {
+    border: 1px solid $lwtv-pink;
+  }
+
+  .author-bio {
+    margin-bottom: 0.4rem;
+  }
+
+  .fa {
+    text-align: center;
+    width: 16px;
+  }
+}
+
+footer.entry-meta {
+  padding-top: 1em;
+
+  .footer-entry-meta-item {
+    display: block;
+  }
+
+  .fa {
+    margin-left: 1em;
+    width: 16px;
+  }
+}
+
+/* Statistics Pages */
+
+.chart-container {
+  .row {
+    margin-bottom: 4rem;
+  }
+
+  ul.statistics.percentages.dead-years {
+	    padding:0;
+
+        li {
+          display: inline-block;
+          width: 33%;
+        }
+  }
+
+}
+
+.percentage-container {
+  margin-top: 2rem;
+
+  .row {
+    margin-bottom: 2em;
+  }
+
+}
+
+canvas {
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+}
+
+/* This Year Pages */
+
+.thisyear-container {
+  .row {
+    margin-bottom: 4rem;
+  }
+
+  ul.this-year-shows {
+	    padding:0;
+
+        li {
+          display: inline-block;
+          width: 33%;
+        }
+  }
+
+}
+
+/* Advertising */
+
+.amazon-ads,
+.affiliate-ads {
+  margin-top: 15px;
+}
+
+
+/* =Custom Post Types
+----------------------------------------------- */
+
+/* Characters */
+
+.facetwp-counts {
+  display: inline;
+}
+
+.character-image-wrapper {
+  max-height: 300px;
+  overflow: hidden;
+
+  .character-show-loop & {
+    height: 200px;
+  }
+
+  .search-results &, 
+  .character-archive-loop & {
+    height: 300px;
+  }
+}
+
+
+/* Single Character Template */
+
+.character-page {
+  .card {      
+    border: none;
+    @include border-radius(0);
+    @include box-shadow(0 1px 4px 0 rgba(0, 0, 0, 0.14));
+
+    .single-char-img {
+      float: left;
+      margin: 0 2rem 0 0;
+    }
+
+    .characters-description {
+      margin-top: 1.6rem;
+    }
+    
+    .card-meta-item {
+	    margin-bottom: .6rem;
+    }
+  }
+}
+
+.character-cliche svg {
+  height: 15px;
+  width: 15px;
+  vertical-align: middle;
+}
+
+.char-grave svg {
+  width: 40px;
+  height: 40px;
+}
+
+.charlist-grave-sm {
+  svg {
+    width: 15px;
+    height: 15px;
+  }
+
+  svg * {
+    fill: $medgrey;
+  }
+}
+
+.charlist-grave {
+  svg {
+    width: 25px;
+    height: 25px;
+    float: right;
+  }
+
+  svg * {
+    fill: $darkgrey;
+  }
+}
+
+
+/* Single Show / Single Character Template */
+
+h3.post-title.excerpt {
+  clear: none;
+  margin-top: 0;
+}
+
+.showschar-section {
+  padding-bottom: 0;
+
+  p:last-child {
+    margin-bottom: 0;
+  }
+
+ h2 {
+    background-color: $lwtv-grey;
+    line-height: 1;
+    margin-bottom: 0;
+    padding: .75rem 1.25rem .9rem;
+  }
+}
+
+
+/* Stars and Hearts */
+
+.showlist-star, .show-star {
+  &.gold {
+    svg * {
+      fill: $lwtv-gold;
+    }  
+    i.fa {
+      color: $lwtv-gold;
+    }  
+  }
+
+  &.silver {
+    svg * {
+      fill: $lwtv-silver
+    }
+    i.fa {
+      color: $lwtv-silver
+    }
+  }
+}
+
+.show-we-love {
+  svg *, i.fa {
+    fill: $red;
+  }
+}
+
+
+/* Single Show Template */
+
+article.post_type_shows {}
+
+.showschar-header {
+
+  .show-header-svg {
+    float: right;
+    margin-top: -14px;
+
+    svg {
+      height: 50px;
+      margin: 5px;
+      width: 50px;
+    }
+  }
+}
+
+
+/* Trigger Warning */
+.trigger-warning-container {
+
+  .alert {
+    @include border-radius(0);
+    border-left: 0;
+    border-right: 0;
+  }
+
+  svg {
+    float: left;
+    margin: 5px 10px 0 0;
+    height: 40px;
+    width: 40px;
+  }
+
+  .callout-danger svg * {
+    fill: $red;
+  }
+
+  .callout-info, .callout-warning {
+    svg * {
+      fill: $lwtv-yellow;
+    }
+  }
+}
+
+
+/* Notable Queer-Centric Episodes */
+
+#episodes {
+
+  ul {
+    list-style-type: none;
+    padding: 0;
+
+    li {
+      margin-bottom: 1rem;
+      padding-left: 26px;
+
+      &:before {
+        @include fontawesome("\f26c");
+        font-weight: 700;
+        left: 20px;
+        position: absolute;
+      }      
+    }
+  }
+}
+
+/* Character listing */
+
+#characters {
+
+  .title-regulars {}
+
+  .title-recurring, .title-guest {
+    margin-top: 2rem;
+  }
+
+  .characters-regulars-container {
+    .card-text {
+      margin-top: 0.6rem;
+    }
+  }
+
+  .container {
+    padding: 0;
+  }
+
+  .card {
+    margin-bottom: 1rem;
+  }
+
+  .card-title {
+    margin-bottom: 0;
+  }
+
+  .guest-character-list {
+    padding:0;
+
+    li {
+      display: inline-block;
+      width: 33%;
+    }
+  }
+}
+
+.card-meta-item.cliches, 
+.card-meta-item.actors {
+  svg {
+    height: 15px;
+    width: 15px;
+    vertical-align: middle;
+  }
+}
+
+.show-worthit {
+  & , & svg * {
+    fill: $white;
+    color: $white;
+  }
+
+  svg {
+    vertical-align: middle;
+    margin-right: 10px;
+    width: 50px;
+    height: 50px;
+  }
+}
+
+.worthit {
+  color: $white;
+  @include font-30;
+  font-weight: 500;
+  padding: 0.8rem;
+}
+
+
+/* ratings icons */
+
+.ratings-icons {
+  padding: 5px;
+  text-align: center;
+  
+  svg {
+    width: 60px;
+    height: 60px;
+  }
+
+  .show-heart {
+    svg {
+      width: 30px;
+      height: 30px;
+    }
+  }
+
+  .show-heart.positive svg {
+    fill: $red;
+  }
+
+  .show-heart.negative svg {
+    fill: $lwtv-grey;
+  }
+
+  &.worthit-yes {
+    background: $green;
+  }
+  
+  &.worthit-no {
+    background: $red;
+  }
+  
+  &.worthit-meh {
+    background: $lwtv-yellow;
+  }
+}
+
+.showschar-section {
+  .card {
+    margin-bottom: 0;
+  }
+}
+
+.show.trope {
+  svg {
+    width: 32px;
+    height: 32px;
+    vertical-align: middle;
+    margin-right: 10px;
+  }
+}
+
+
+
+/* =Archive Pages (posts / shows / characters / taxonomies)
+----------------------------------------------- */
+
+.taxonomy-description, .archive-description {
+  margin-top: 0.6rem;
+  a, a:visited {
+    color: $white;
+  }
+}
+
+h1 svg *,
+h3 svg * {
+  fill: $white;
+}
+
+.taxonomy-svg svg,
+.taxonomy-svg i.fa {
+  width: 100px;
+  height: 100px;
+  float: right;
+  margin-top: -20px;
+}
+
+
+
+/* =Media
+----------------------------------------------- */
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+.alignnone {@include images;} 
+.alignright {@extend .alignnone; float: right; margin: 0 0 2em 2em;}
+.alignleft {@extend .alignnone; float: left; margin: 0 2em 2em 0;}
+.aligncenter {@extend .alignnone; margin: 2em auto; display: block;}
+
+.img-noborder {@include images-noborder;}
+
+.comment-content img.wp-smiley {
+  @include no-border;
+  margin: 0 1em;
+}
+
+.wp-caption {
+  border: 1px solid $lightgrey;
+  margin-bottom: 1.5em;
+  max-width: 100%;
+  img[class*="wp-image-"] {
+    display: block;
+    margin: 1.2% auto 0;
+    max-width: 98%;
+  }
+}
+
+.wp-caption .wp-caption-text {
+  @include font-14;
+  line-height: 1.2;
+  margin: .6em 0 .2em 0;
+  text-align: center;
+}
+
+.site-content {
+  .gallery {
+    margin-bottom: 1.5em;
+
+    a img {
+      border: none;
+      height: auto;
+      max-width: 90%;
+    }
+
+    dd {
+      margin: 0;
+    }
+  }
+}
+
+.gallery-caption {display: block;}
+
+/* Make sure embeds and iframes fit their containers */
+
+embed, iframe, object {
+  max-width: 100%;
+}
+
+
+/* =Comments
+----------------------------------------------- */
+
+/* Pretty comments */
+
+@import 'partials/comments';
+
+
+
+/* =Search form
+----------------------------------------------- */
+
+/* Search the database */
+
+.card.card-search {
+  border: none;
+  @include border-radius(0);
+
+  .card-header {
+    background-color: transparent;
+    @include border-radius(0);
+
+    .fa {
+      float: none !important;
+    }
+
+    h4 {
+      margin-bottom: 0;
+    }
+  }
+
+  .input-group {
+    margin-bottom: 0.2rem;
+  }
+}
+
+
+/* =Search results
+----------------------------------------------- */
+
+.search-results {
+
+  .search-entry-title {
+    .fa-search {
+      font-size: 0.64em;
+      vertical-align: middle;
+    }
+  }
+
+  .entry-summary {
+    margin: 1em 0 2em;
+  }
+}
+
+/*--------------------------------------------------------------
+## Shortcodes
+--------------------------------------------------------------*/
+span.svg-shortcode svg {
+    width: 50px;
+    height: 50px;
+    margin: 0 5px 0 5px;
+}
+
+span.svg-shortcode a {
+    text-decoration: none;
+
+  svg {
+    fill: $lwtv-pink;
+  }
+  
+  &:hover svg {
+    fill: $darkgrey;
+  }
+}
+
+
+
+/*--------------------------------------------------------------
+# Facet
+--------------------------------------------------------------*/
+div.facetwp-counts {
+  display: inline;
+}
+
+a.facetwp-page {
+  padding: 0px;
+  margin-right: 0px;
+}
+
+.facetwp-pager {
+  clear: both;
+}
+
+.facetwp-pager {
+  li.page-item.page-link.active {
+    z-index: 2;
+    color: $white;
+    background-color: $lwtv-pink;
+    border-color: $lwtv-pink;
+  }
+  
+  li.page-link {
+    color: $lwtv-pink;
+  } 
+}
+
+
+
+/* ==========================================================================
+   Widgetized Areas
+   ========================================================================== */
+
+/* =Global
+----------------------------------------------- */
+
+
+
+/* =Header
+----------------------------------------------- */
+
+/* The Widget Area of Death */
+
+.home .alert {
+  background-color: $lwtv-salmon;
+  border: 0;
+  border-color: transparent;
+  @include border-radius(0);
+  color: $white;
+
+  a, a:visited {
+    color: $white;
+  }
+
+  &, p {
+    margin: 0;
+  }
+}
+
+.widget {
+  .dead-widget-container &, .credits & {
+    margin-bottom: 0;
+  }
+
+  .dead-widget-container & {
+    text-align: center;
+  }
+}
+
+
+/* =Sidebars
+----------------------------------------------- */
+
+.site-sidebar {
+  .widget {
+    margin: 0 0 1em;
+  }
+
+  .widget_categories, .widget_tag_cloud,
+  .widget-tags,  {
+    @include box-shadow(0 1px 4px 0 rgba(0, 0, 0, 0.14));
+    padding-bottom: .75rem;
+
+    .tagcloud, .widget-tags-container {
+      padding: 0 1.25rem;
+    }
+
+    h2.widget-title {
+      background: $lwtv-gradient;
+      color: $white;
+      @include font-24;
+      padding: .75rem 1.25rem;
+    }
+  }
+
+  &.showchars-sidebar {
+
+    .card-search {
+      margin-bottom: 0;
+    }
+
+    .card-filter .card-body {
+      padding: 0;
+
+      .widget {
+        border-bottom: 1px solid $lwtv-bordergrey;
+        margin-bottom: 0;
+        padding: .75rem 1.25rem;
+
+        .facetwp-facet {
+          margin-bottom: 2rem;
+
+          &:last-of-type {
+            margin-bottom: 0;
+          }
+
+          .facetwp-autocomplete-update {
+            font-size: 14px;
+            margin-top: 0.4rem;
+          }
+        }
+
+        &:last-of-type {
+          border-bottom: 0;
+        }
+      }
+    }
+
+    h2.widget-title {
+      font-family: 'Open Sans', sans-serif;
+      font-size: $basefont;
+      font-weight: 700;
+      margin-bottom: .5rem;
+      text-transform: uppercase;
+    }
+  }
+}
+
+
+/* =Footer
+----------------------------------------------- */
+
+#colophon {
+  .footer-widgets {
+
+    h2.widget-title {
+      border-bottom: dotted 1px $lwtv-grey2;
+      @include font-28;
+      padding-bottom: 15px;
+      margin-bottom: 20px;
+    }
+
+    ul {
+      list-style-type: none;
+      padding: 0;
+
+      li {
+        margin-bottom: 0.5rem;
+      }
+
+      a, a:visited {
+        color: $darkgrey;
+      }
+
+      a:hover, a:focus, a:active {
+        color: $link-hover-color;
+        text-decoration: none;
+      }
+    }
+  }
+}
+
+
+
+/* ==========================================================================
+   Footer
+   ========================================================================== */
+
+#colophon {
+
+  .top-footer {
+    background-color: $lwtv-grey;
+    @include font-14;
+    padding: 20px 0 0;
+  }
+
+  .bottom-footer {
+    background-color: $lwtv-dkgrey;
+    @include font-12;
+    padding: 16px 0;
+
+    &, a, a:visited {
+      color: $white;
+    }
+
+    .credits {
+      p {
+        margin-bottom: 0;
+      }
+    }
+  }
+}
+
+
+/* ==========================================================================
+   Specific Media STYLES
+   ========================================================================== */
+
+/* responsive styles */
+
+@import 'partials/responsive';

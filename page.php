@@ -1,41 +1,47 @@
 <?php
 /**
- * The template for displaying all pages
+ * The template for displaying all pages.
  *
- * This is the template that displays all pages by default.
- * Please note that this is the WordPress construct of pages
- * and that other 'pages' on your WordPress site may use a
- * different template.
- *
- * @link https://codex.wordpress.org/Template_Hierarchy
- *
- * @package LezWatch_TV
+ * @package YIKES Starter
  */
-
 get_header(); ?>
 
-	<div id="primary" class="content-area">
-		<main id="main" class="site-main" role="main">
+<div class="archive-subheader">
+	<div class="jumbotron">
+		<div class="container">
+			<header class="archive-header">
+				<h1 class="entry-title">
+					<?php the_title(); ?></h1>
+				</h1>
+			</header><!-- .archive-header -->
+		</div><!-- .container -->
+	</div><!-- /.jumbotron -->
+</div>
 
-			<?php
-			while ( have_posts() ) : the_post();
+<div id="main" class="site-main" role="main">
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-9">
+				<div id="primary" class="content-area">
+					<div id="content" class="site-content clearfix" role="main">
 
-				get_template_part( 'template-parts/content/page' );
+						<?php 
+							while ( have_posts() ) : the_post();
+								get_template_part( 'template-parts/content', 'page' );								
+							endwhile;
+						?>
 
-				// If comments are open or we have at least one comment, load up the comment template.
-				// Disabled because why do we need comments on PAGES?
-				/*
-				if ( comments_open() || get_comments_number() ) :
-					comments_template();
-				endif;
-				*/
+					</div><!-- #content -->
+				</div><!-- #primary -->
+			</div><!-- .col-sm-9 -->
 
-			endwhile; // End of the loop.
-			?>
+			<div class="col-sm-3 site-sidebar site-loop">
 
-		</main><!-- #main -->
-	</div><!-- #primary -->
+				<?php get_sidebar(); ?>
 
-<?php
-get_sidebar();
-get_footer();
+			</div><!-- .col-sm-3 -->
+		</div><!-- .row -->
+	</div><!-- .container -->
+</div><!-- #main -->
+
+<?php get_footer();
