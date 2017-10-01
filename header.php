@@ -22,7 +22,9 @@
 		<div class="container">
 			<a href="<?php echo esc_url( home_url( '/' ) ); ?>" title="<?php echo esc_attr( get_bloginfo( 'name', 'display' ) ); ?>" rel="home" class="navbar-brand">
 				<img src="<?php echo get_template_directory_uri(); ?>/images/lezwatch-logo-icon.png" alt="<?php bloginfo( 'name' ); ?>">
-				<?php bloginfo( 'name' ); ?>
+				<span class="navbar-brand-text">
+					<?php bloginfo( 'name' ); ?>
+				</span>
 			</a>
 			<?php
 				wp_nav_menu( array(

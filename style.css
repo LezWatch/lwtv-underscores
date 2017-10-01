@@ -1520,6 +1520,9 @@ a.facetwp-page {
   #masthead .navbar-brand {
     font-size: 1rem;
   }
+  #masthead .navbar-brand img {
+    margin-left: 1rem;
+  }
   #masthead .header-search-bar {
     padding: 20px 0 0 0;
   }
@@ -1538,11 +1541,102 @@ a.facetwp-page {
   .jumbotron.jumbotron-fluid h1.site-description {
     font-size: 1.75rem;
   }
+
+  .search-results .character-image-wrapper {
+    height: 200px;
+  }
+  .search-results .site-content .col-sm-3 {
+    -ms-flex: 0 0 33%;
+    flex: 0 0 33%;
+    max-width: 33%;
+    width: 33%;
+  }
+
+  .character-page .card .single-char-img {
+    float: none;
+    margin: 0 0 2rem 0;
+    width: 100%;
+  }
+
+  .col-sm-9 .entry-content .col-sm-4,
+  .characters-regulars-container .col-sm-4 {
+    -ms-flex: 0 0 50%;
+    flex: 0 0 50%;
+    max-width: 50%;
+  }
+  .col-sm-9 .entry-content .col-sm-4 .character-image-wrapper,
+  .characters-regulars-container .col-sm-4 .character-image-wrapper {
+    height: 300px;
+  }
+
+  .characters-regulars-container .col-sm-4 .character-image-wrapper {
+    height: 200px;
+  }
+
+  .characters-recurring-container .character-show-loop .character-image-wrapper {
+    height: 120px;
+  }
+
+  #characters .guest-character-list li {
+    width: 50%;
+  }
+
+  #overview .alignright, #overview .alignleft {
+    display: block;
+    float: none;
+    margin: 1rem 0;
+    width: 100%;
+  }
+
+  .widget_categories ul {
+    list-style-type: none;
+    padding: 0 0 0 0.6rem;
+  }
+
+  .page-template-statistics h1.entry-title {
+    max-width: 90%;
+  }
+
+  .taxonomy-description {
+    max-width: 90%;
+  }
+
+  .archive-subheader .jumbotron {
+    padding: 2rem;
+  }
+
+  .taxonomy-svg i.fa, .taxonomy-svg svg {
+    width: 80px;
+    height: 80px;
+    float: none;
+    margin-top: 0;
+    position: absolute;
+    right: 20px;
+    top: 70px;
+  }
 }
 @media (max-width: 767px) {
-  .page .container, .post .container {
+  .page .container, .single .container, .archive .container, .blog .container, .search .container {
     width: 100%;
     max-width: 100%;
+  }
+
+  #masthead .navbar-brand {
+    font-size: 0.75rem;
+  }
+  #masthead .navbar-brand img {
+    height: 30px;
+    margin-right: 4px;
+    width: auto;
+  }
+  #masthead .header-search-bar label {
+    font-size: 1rem;
+  }
+  #masthead .header-search-bar .col-sm-7.searchbox-input {
+    max-width: 50%;
+  }
+  #masthead .header-search-bar .close-btn-container {
+    padding-left: 30px;
   }
 
   .navbar.main-nav ul.navbar-nav > li.nav-item > a.nav-link {
@@ -1565,35 +1659,101 @@ a.facetwp-page {
     line-height: 1.2;
   }
 }
-@media (max-width: 575px) {
-  .navbar.main-nav ul.navbar-nav > li:first-child {
-    border-left: 0;
+/*
+*
+* Individual breakpoints
+*
+*/
+@media (max-width: 668px) {
+  #masthead .navbar-brand .navbar-brand-text {
+    display: none;
+  }
+}
+@media (max-width: 600px) {
+  #masthead .navbar-brand {
+    margin-right: 0;
   }
 
+  .navbar.main-nav ul.navbar-nav > li.nav-item > a.nav-link {
+    font-size: 0.75rem;
+    padding: 14px 12px;
+  }
+}
+@media (max-width: 575px) {
   #masthead .header-search-bar {
     padding: 0;
   }
   #masthead .header-search-bar .form-group label {
+    font-size: 1rem;
     text-align: center;
+  }
+  #masthead .header-search-bar .form-group input {
+    font-size: 0.875rem;
+  }
+  #masthead .header-search-bar .col-sm-7.searchbox-input {
+    max-width: 100%;
+    padding: 0 40px;
+    width: 100%;
   }
   #masthead .header-search-bar .col-sm-1.searchbox-button {
     padding: 6px 15px;
     text-align: center;
   }
   #masthead .header-search-bar .col-sm-1.searchbox-button .btn {
+    font-size: 0.875rem;
     width: 60%;
   }
   #masthead .header-search-bar .col-sm-1.searchbox-close {
     position: absolute;
-    top: 6px;
+    top: 4px;
   }
   #masthead .header-search-bar .col-sm-1.searchbox-close .close-btn-container {
     padding-left: 0;
     position: absolute;
-    right: 15px;
+    right: 10px;
+  }
+
+  #masthead .header-search-bar, .site-subheader {
+    margin-top: 0;
+  }
+
+  #search-btn {
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+
+  .nav-item.search a {
+    padding: 12px 20px;
+  }
+
+  .navbar.main-nav {
+    height: auto;
+    position: relative;
+  }
+  .navbar.main-nav .dropdown-menu {
+    font-size: 0.875rem;
+  }
+  .navbar.main-nav ul.navbar-nav {
+    display: block;
+    width: 100%;
+  }
+  .navbar.main-nav ul.navbar-nav > li {
+    display: inline-block;
+  }
+  .navbar.main-nav ul.navbar-nav > li:first-child {
+    border-left: 0;
+  }
+  .navbar.main-nav ul.navbar-nav > li:last-child {
+    border-right: 0;
+  }
+  .navbar.main-nav ul.navbar-nav > li.nav-item > a.nav-link {
+    font-size: 0.812rem;
+    padding: 14px 11px;
   }
 
   .jumbotron.jumbotron-fluid {
+    background-size: 200%;
     padding: 1rem;
   }
   .jumbotron.jumbotron-fluid .header-logo img {
@@ -1601,39 +1761,168 @@ a.facetwp-page {
     margin: 0 auto;
     width: 50%;
   }
-}
-/*
-*
-* Individual breakpoints
-*
-*/
-@media (max-width: 600px) {
-  #masthead .navbar-brand {
+
+  .card-group .card.col-sm-5 {
+    height: 220px;
+    margin-bottom: 0;
+  }
+
+  .home-featured-shows .card {
+    margin-bottom: 1rem;
+  }
+  .home-featured-shows .card:last-of-type {
+    margin-bottom: 0;
+  }
+
+  .site-loop.show-archive-loop .card-group {
+    width: 96%;
+    margin: auto;
+  }
+
+  .archive-subheader .jumbotron {
+    padding: 0.8rem 1rem 1.1rem 1rem;
+  }
+
+  h1.entry-title {
+    font-size: 32px;
+  }
+
+  .page-template-statistics h1.entry-title {
+    max-width: 100%;
+  }
+
+  .taxonomy-description {
+    max-width: 100%;
+  }
+
+  .characters-regulars-container .col-sm-4,
+  .col-sm-9 .entry-content .col-sm-4,
+  .search-results .site-content .col-sm-3 {
+    -ms-flex: 0 0 100%;
+    flex: 0 0 100%;
+    max-width: 100%;
+    width: 100%;
+  }
+
+  .character-image-wrapper {
+    max-height: none !important;
+    height: auto !important;
+  }
+
+  .showschar-header .show-header-svg span {
+    margin-top: 12px;
+    display: inline-block;
+  }
+  .showschar-header .show-header-svg svg {
+    height: 40px;
+    margin: 0 5px;
+    width: 40px;
+  }
+
+  .aligncenter, .alignleft, .alignnone, .alignright, .alignleft, .aligncenter, .alignright {
+    display: block;
+    float: none;
+    margin: 2em 0;
+    width: 100%;
+  }
+
+  #overview .alignleft, #overview .alignright {
+    width: 100% !important;
+  }
+
+  .wp-caption img[class*="wp-image-"] {
+    width: 98%;
+  }
+
+  h4.author_name {
+    margin-top: 1rem;
+  }
+
+  #colophon .footer-widgets h2.widget-title {
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+  }
+
+  .footer-widgets .footer-col {
+    margin-bottom: 1rem;
+  }
+  .footer-widgets .footer-col:last-of-type {
+    margin-bottom: 0;
+  }
+
+  .taxonomy-svg i.fa, .taxonomy-svg svg {
     display: none;
   }
+
+  .chart-container .row, .percentage-container .row {
+    margin-bottom: 0;
+  }
+  .chart-container .row:last-of-type .col-sm-6:last-of-type, .percentage-container .row:last-of-type .col-sm-6:last-of-type {
+    margin-bottom: 2rem;
+  }
+  .chart-container .col-sm-6, .percentage-container .col-sm-6 {
+    margin-bottom: 4rem;
+  }
 }
-@media (min-width: 576px) and (max-width: 767px) {
-  #masthead .navbar-brand {
-    font-size: 0.75rem;
+@media (max-width: 420px) {
+  .navbar.main-nav ul.navbar-nav > li {
+    border: 0;
   }
+  .navbar.main-nav ul.navbar-nav > li.nav-item > a.nav-link {
+    padding: 6px 10px;
+  }
+
+  .nav-item.search a {
+    padding: 20px;
+  }
+}
+@media (max-width: 376px) {
   #masthead .navbar-brand img {
-    height: 30px;
-    margin-right: 4px;
-    width: auto;
-  }
-  #masthead .header-search-bar .form-group label {
-    font-size: 1rem;
-  }
-  #masthead .header-search-bar .form-group .col-sm-7.searchbox-input {
-    max-width: 50%;
-  }
-  #masthead .header-search-bar .form-group .close-btn-container {
-    padding-left: 30px;
+    margin-left: 0.6rem;
+    margin-right: 11px;
   }
 
   .navbar.main-nav ul.navbar-nav > li.nav-item > a.nav-link {
+    padding: 6px 8px;
+  }
+
+  .nav-item.search a {
+    padding: 20px 12px;
+  }
+
+  .jumbotron.jumbotron-fluid {
+    padding: 1rem 0;
+  }
+  .jumbotron.jumbotron-fluid .header-logo img {
+    width: 34%;
+  }
+  .jumbotron.jumbotron-fluid p:first-of-type {
+    display: none;
+  }
+
+  .showschar-header .show-header-svg svg {
+    height: 30px;
+    margin: 0;
+    width: 30px;
+  }
+
+  #characters .guest-character-list li {
+    width: 100%;
+  }
+}
+@media (max-width: 320px) {
+  .navbar.main-nav ul.navbar-nav > li.nav-item > a.nav-link {
     font-size: 0.75rem;
-    padding: 14px 12px;
+    padding: 6px 4px;
+  }
+
+  #masthead .navbar-brand img {
+    margin-left: .4rem;
+    margin-right: 10px;
+  }
+
+  .nav-item.search a {
+    padding: 18px 8px;
   }
 }
 

@@ -3,7 +3,7 @@ jQuery(document).ready(function($) {
     $(window).load(function(){
     //Define equalHeight function
     function equalHeight() {
-      if ($(document).width() >= 768 ){
+      if ($(document).width() >= 600 ){
 
         $('.site-loop.equal-height').each(function() {
           var heightText = 0; //height counter for .panel-body.h4
