@@ -13,7 +13,7 @@ $term    = term_exists( $slug , 'post_tag' );
 $related = LWTV_Related_Posts::are_there_posts( $slug );
 ?>
 
-<?php the_post_thumbnail( 'show-img', array( 'class' => 'card-img-top' , 'alt' => get_the_title() , 'title' => get_the_title() ) ); ?>
+<?php the_post_thumbnail( 'large', array( 'class' => 'card-img-top' , 'alt' => get_the_title() , 'title' => get_the_title() ) ); ?>
 
 <section id="toc" class="toc-container card-body">
 	<nav class="breadcrumb">
