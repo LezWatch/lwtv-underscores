@@ -7,7 +7,7 @@
  * @package LezWatchTV
  */
 
-$icon        = lwtv_yikes_symbolicons( 'window.svg', 'fa-video-camera' );
+$icon        = lwtv_yikes_symbolicons( 'tv_flatscreen.svg', 'fa-television' );
 $count_posts = facetwp_display( 'counts' );
 $selections  = facetwp_display( 'selections' );
 $title       = '<span role="img" aria-label="post_type_shows" title="Shows" class="taxonomy-svg shows" data-toggle="tooltip">' . $icon . '</span>';
@@ -20,10 +20,10 @@ get_header(); ?>
 		<div class="container">
 			<header class="archive-header">
 				<?php
-					the_archive_title( '<h1 class="entry-title">' . $title, ' (' . $count_posts . '<span class="facetwp-count"></span>)</h1>' );
+					the_archive_title( '<h1 class="entry-title">', ' (' . $count_posts . '<span class="facetwp-count"></span>)' . $title . '</h1>' );
 					$descriptions = get_option( 'wpseo_titles' );
 					$description  = $descriptions['metadesc-ptarchive-post_type_shows'];
-					echo '<div class="archive-description">' . $description . ' Sorted by ' . $sort . '.</div>';
+					echo '<div class="archive-description"><p>' . $description . '</p><p>Sorted by ' . $sort . '.</div>';
 					echo $selections;
 				?>
 			</header><!-- .archive-header -->

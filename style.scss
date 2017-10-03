@@ -814,6 +814,16 @@ h3.post-title.excerpt {
       color: $lwtv-silver
     }
   }
+
+  &.bronze {
+    svg * {
+      fill: $lwtv-bronze
+    }
+    i.fa {
+      color: $lwtv-bronze
+    }
+  }
+
 }
 
 .show-we-love {
@@ -984,7 +994,7 @@ article.post_type_shows {}
   }
 
   .show-heart.negative svg {
-    fill: $lwtv-grey;
+    fill: $lwtv-grey2;
   }
 
   &.worthit-yes {
