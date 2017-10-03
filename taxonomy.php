@@ -67,7 +67,7 @@ get_header(); ?>
 			<header class="archive-header">
 				<?php
 					the_archive_title( '<h1 class="facetwp-page-title entry-title">' . $title_prefix . $title, $title_suffix . ' (' . $count_posts . '<span class="facetwp-count"></span>)</h1>' );
-					the_archive_description( '<div class="archive-description">', ' Sorted by ' . $sort . '.</div>' );
+					the_archive_description( '<div class="archive-description">', '<p>Sorted by ' . $sort . '.</p></div>' );
 					echo $selections;
 				?>
 			</header><!-- .archive-header -->

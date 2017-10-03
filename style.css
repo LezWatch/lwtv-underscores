@@ -953,6 +953,12 @@ h3.post-title.excerpt {
 .showlist-star.silver i.fa, .show-star.silver i.fa {
   color: #C0C0C0;
 }
+.showlist-star.bronze svg *, .show-star.bronze svg * {
+  fill: #B87333;
+}
+.showlist-star.bronze i.fa, .show-star.bronze i.fa {
+  color: #B87333;
+}
 
 .show-we-love svg *, .show-we-love i.fa {
   fill: #c0392b;
@@ -1071,7 +1077,7 @@ h3.post-title.excerpt {
   fill: #c0392b;
 }
 .ratings-icons .show-heart.negative svg {
-  fill: #f3f3f3;
+  fill: #d6d6d6;
 }
 .ratings-icons.worthit-yes {
   background: #5cb85c;
@@ -1515,6 +1521,12 @@ a.facetwp-page {
     margin: 2em 0;
     width: 100%;
   }
+
+  div.fs-label-wrap,
+  .facetwp-type-fselect .fs-wrap,
+  .facetwp-type-fselect .fs-dropdown {
+    width: 170px !important;
+  }
 }
 @media (max-width: 991px) {
   #masthead .navbar-brand {
@@ -1609,21 +1621,28 @@ a.facetwp-page {
     width: 80px;
     height: 80px;
     float: none;
-    margin-top: 0;
+    margin-top: 32px;
     position: absolute;
     right: 20px;
     top: 70px;
   }
+
+  .show.trope svg,
+  .ratings-icons .show-heart svg {
+    width: 25px !important;
+    height: 25px !important;
+  }
 }
-@media (max-width: 767px) {
+@media (max-width: 780px) {
   .page .container, .single .container, .archive .container, .blog .container, .search .container {
     width: 100%;
     max-width: 100%;
   }
 
-  #masthead .admin-bar .fixed-top.main-nav {
-    margin-top: 46px;
+  .admin-bar .fixed-top.main-nav {
+    margin-top: 46px !important;
   }
+
   #masthead .navbar-brand {
     font-size: 0.75rem;
   }
@@ -1667,6 +1686,10 @@ a.facetwp-page {
     font-size: 16px;
     line-height: 1.2;
   }
+
+  .taxonomy-svg i.fa, .taxonomy-svg svg {
+    margin-top: 46px;
+  }
 }
 /*
 *
@@ -1675,7 +1698,7 @@ a.facetwp-page {
 */
 @media (max-width: 668px) {
   #masthead ul.navbar-nav {
-    width: 75%;
+    margin-left: 20px !important;
   }
   #masthead .admin-bar .fixed-top.main-nav {
     margin-top: 0px;

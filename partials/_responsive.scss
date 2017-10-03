@@ -45,6 +45,13 @@
       width: 100%;
     }
   }
+
+  div.fs-label-wrap,
+  .facetwp-type-fselect .fs-wrap, 
+  .facetwp-type-fselect .fs-dropdown {
+	  width: 170px!important;
+  }
+
 }
 
 // Medium devices (tablets, less than 992px)
@@ -161,16 +168,23 @@
     width: 80px;
     height: 80px;
     float: none;
-    margin-top: 0;
+    margin-top: 32px;
     position: absolute;
     right: 20px;
     top: 70px;
   }
 
+  .show.trope svg,
+  .ratings-icons .show-heart svg {
+    width: 25px!important;
+    height: 25px!important;
+  }
+
 }
 
-// Small devices (landscape phones, less than 768px)
-@media (max-width: 767px) {
+// Small devices (landscape phones, less than 780px)
+// Changed to match the WP-Admin bar breakpoint
+@media (max-width: 780px) {
 
   .page, .single, .archive, .blog, .search {
     .container {
@@ -179,11 +193,11 @@
     }
   }
 
+  .admin-bar .fixed-top.main-nav {
+    margin-top: 46px!important;
+  }
+
   #masthead {
-	.admin-bar .fixed-top.main-nav {
-		margin-top: 46px;
-	}  
-	
     .navbar-brand {
       @include font-12;
 
@@ -237,6 +251,11 @@
       line-height: 1.2;
     }
   }
+
+  .taxonomy-svg i.fa, .taxonomy-svg svg {
+    margin-top: 46px;
+  }
+
 }
 
 
@@ -252,7 +271,7 @@
 
   #masthead {
     ul.navbar-nav {
-	  width: 75%;
+	  margin-left: 20px !important;
     }
     
     .admin-bar .fixed-top.main-nav {
