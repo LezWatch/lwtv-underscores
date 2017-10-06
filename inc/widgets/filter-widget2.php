@@ -74,5 +74,3 @@ function register_filter_bottom() {
 	register_widget( 'Filter_Bottom' );
 }
 add_action( 'widgets_init', 'register_filter_bottom' );
-
-?>

@@ -103,7 +103,7 @@ function lwtv_yikes_this_year_shows( $thisyear ) {
 		while ( $shows_queery->have_posts() ) {
 			$shows_queery->the_post();
 
-			$show_id = get_the_ID();
+			$show_id   = get_the_ID();
 			$show_name = preg_replace( '/\s*/', '', get_the_title( $show_id ) );
 			$show_name = strtolower( $show_name );
 
@@ -216,19 +216,33 @@ function lwtv_yikes_this_year_shows( $thisyear ) {
 function lwtv_yikes_this_year_navigation( $thisyear ) {
 	
 	$thisyear = ( isset( $thisyear ) )? $thisyear : date( 'Y' );
-	$prevurl  = site_url( '/this-year/' . ( $thisyear - 1 ) . '/' );
-	$nexturl  = site_url( '/this-year/' . ( $thisyear + 1 ) . '/' );
-	$thisurl  = site_url( '/this-year/' . date('Y') . '/' );
+	$lastyear = FIRST_LWTV_YEAR;
+	$baseurl  = '/this-year/';
 	?>
 
-	<nav aria-label="This Year Navigation" role="navigation">
-		<ul class="pagination justify-content-between">
-			<li class="page-item previous"><a href="<?php echo $prevurl; ?>"><i class="fa fa-chevron-circle-left" aria-hidden="true"></i>&nbsp;Previous Year</a></li>
+	<nav aria-label="This Year navigation" role="navigation">
+		<ul class="pagination justify-content-center">
+			
+			<?php
+			// If it's not 1961, we can show the first year we have queers
+			if ( $thisyear !== $lastyear ) {
+				?>
+				<li class="page-item first mr-auto"><a href="<?php echo $baseurl . $lastyear . '/'; ?>" class="page-link"><i class="fa fa-chevron-circle-left" aria-hidden="true"></i> First (<?php echo $lastyear; ?>)</a></li>
+				<li class="page-item previous"><a href="<?php echo $baseurl . ( $thisyear - 1 ) . '/'; ?>" title="previous year" class="page-link"><i class="fa fa-chevron-circle-left" aria-hidden="true"></i> Previous</a></li>	
+				<li class="page-item"><a href="<?php echo $baseurl . ( $thisyear - 2 ) . '/'; ?>" class="page-link"><?php echo ( $thisyear - 2 ); ?></a></li>
+				<li class="page-item"><a href="<?php echo $baseurl . ( $thisyear - 1 ) . '/'; ?>" class="page-link"><?php echo ( $thisyear - 1 ); ?></a></li>
+				<?php
+			}	
+			?>
+						
+			<li class="page-item active"><span class="active page-link"><?php echo $thisyear; ?></span></li>
+
 			<?php
 			if ( $thisyear !== date('Y') ) {
 				?>
-				<li><a href="<?php echo $thisurl; ?>">Current Year (<?php echo date('Y'); ?>)</a></li>
-				<li class="page-item next"><a href="<?php echo $nexturl; ?>">Next Year&nbsp;<i class="fa fa-chevron-circle-right" aria-hidden="true"></i></a></li>
+				<li class="page-item"><a href="<?php echo $baseurl . ( $thisyear +1 ) . '/'; ?>" class="page-link"><?php echo ( $thisyear + 1 ); ?></a></li>
+				<li class="page-item next"><a href="<?php echo $baseurl . ( $thisyear +1 ) . '/'; ?>" class="page-link" title="next year">Next <i class="fa fa-chevron-circle-right" aria-hidden="true"></i></a></li>
+				<li class="page-item last ml-auto"><a href="<?php echo $baseurl . date( 'Y' ) . '/'; ?>" class="page-link">Last (<?php echo date( 'Y' ); ?>) <i class="fa fa-chevron-circle-right" aria-hidden="true"></i></a></li>
 				<?php
 			}
 			?>

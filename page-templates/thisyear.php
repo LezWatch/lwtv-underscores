@@ -6,12 +6,12 @@
 
 $thisyear = (int) (isset( $wp_query->query['thisyear'] ) )? $wp_query->query['thisyear'] : date('Y');
 
-if ( !is_numeric( $thisyear ) ){
-	wp_redirect( get_site_url().'/this-year/' , '301' );
+if ( !is_numeric( $thisyear ) || $thisyear < FIRST_LWTV_YEAR ){
+	wp_redirect( '/this-year/' , '301' );
 	exit;
 }
 
-$iconpath    = '<span role="img" aria-label="post_type_characters" title="Characters" data-toggle="tooltip" class="taxonomy-svg characters">' . lwtv_yikes_symbolicons( 'calendar_alt.svg', 'fa-calendar' ) . '</span>';
+$iconpath = '<span role="img" aria-label="post_type_characters" title="Characters" class="taxonomy-svg characters">' . lwtv_yikes_symbolicons( 'calendar_alt.svg', 'fa-calendar' ) . '</span>';
 
 get_header(); 
 ?>
@@ -25,7 +25,8 @@ get_header();
 						In This Year - <?php echo $thisyear; ?>
 						<?php echo ( isset( $iconpath ) ? $iconpath : '' ); ?>
 					</h1>
-					<p>An overview of queer events that occurred in <?php echo $thisyear; ?></p>
+					<p>An overview of queer events that occurred in <?php echo $thisyear; ?>.</p>
+					<p>You can review the list of TV shows that aired, began, and ended in each year, as well as all characters who died in each year, going back to <?php echo FIRST_LWTV_YEAR; ?>.</p>
 				</div>
 			</header><!-- .archive-header -->
 		</div><!-- .container -->

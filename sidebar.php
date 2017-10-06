@@ -34,7 +34,7 @@ if ( ! is_active_sidebar( 'sidebar-2' ) ) {
 					if ( is_page( 'role' ) ) {
 						dynamic_sidebar( 'archive-character-sidebar' );
 					} else {
-						dynamic_sidebar( 'sidebar-2' );						
+						dynamic_sidebar( 'sidebar-2' );
 					}
 					break;
 				default:

@@ -18,12 +18,12 @@ get_header(); ?>
 	<!-- Home page top section -->
 	<section class="home-featured-posts">
 		<div class="container">
-    		<div class="row">
+			<div class="row">
 				<!-- Newest posts -->
-      			<div class="col-sm-8"> 
+				<div class="col-sm-8"> 
 
-      				<div class="site-loop home-featured-post-loop">
-	        			<h2 class="posts-title">New Posts <i class="fa fa-newspaper-o" aria-hidden="true"></i></h2>
+					<div class="site-loop home-featured-post-loop">
+						<h2 class="posts-title">New Posts <?php echo lwtv_yikes_symbolicons( 'newspaper.svg', 'fa-newspaper-o' ); ?></h2>
 
 						<?php 
 						$lastpostloop = new WP_Query( array(
@@ -32,25 +32,23 @@ get_header(); ?>
 							'order' => 'DESC'
 						) ); 
 						?>
-						 
+
 						<!-- // The Loop -->
 						<?php while ($lastpostloop->have_posts()) : $lastpostloop->the_post(); $already_displayed_posts[]=get_the_ID(); ?>
 
 							<div class="card">
 								<?php if ( has_post_thumbnail()) : ?>
-								   <a href="<?php the_permalink(); ?>" title="<?php the_title_attribute(); ?>" >
-								  	 <?php the_post_thumbnail( 'large', array( 'class' => 'card-img-top' ) ); ?>
-								   </a>
+									<a href="<?php the_permalink(); ?>" title="<?php the_title_attribute(); ?>" ><?php the_post_thumbnail( 'large', array( 'class' => 'card-img-top' ) ); ?></a>
 								<?php endif; ?>
 								<div class="card-body">
-							  		<h3 class="card-title"><?php the_title(); ?></h3>
+									<h3 class="card-title"><?php the_title(); ?></h3>
 									<div class="card-meta text-muted">
 										<?php the_date(); ?>
 										<i class="fa fa-user-circle-o" aria-hidden="true"></i> <?php the_author(); ?>
 									</div>
-							  		<div class="card-text">
-							  			<?php the_excerpt(); ?>
-							  		</div>
+									<div class="card-text">
+										<?php the_excerpt(); ?>
+									</div>
 								</div><!-- .card-body -->
 								<div class="card-footer">
 									<a href="<?php the_permalink(); ?>" class="btn btn-outline-primary">
@@ -80,23 +78,24 @@ get_header(); ?>
 
 							<div class="card-group">
 								<div class="card col-sm-5"	
-									<?php if ( has_post_thumbnail() ) : ?>
-									    style="background-image: url(<?php the_post_thumbnail_url( 'large' ); ?>);"
-									<?php endif; ?>
+									<?php 
+									if ( has_post_thumbnail() ) { ?>
+										style="background-image: url(<?php the_post_thumbnail_url( 'large' ); ?>);"
+									<?php } ?>
 								>
 								</div>
 								<div class="card col-sm-7">
 									<div class="card-body">
-								  		<h3 class="card-title"><?php the_title(); ?></h3>
+										<h3 class="card-title"><?php the_title(); ?></h3>
 										<div class="card-meta text-muted">
 											<?php the_date(); ?>
 											<i class="fa fa-user-circle-o" aria-hidden="true"></i> <?php the_author(); ?>
 										</div>
-								  		<div class="card-text">
-								  			<?php the_excerpt(); ?>
-								  		</div>
-								  	</div>
-							  		<div class="card-footer">
+										<div class="card-text">
+											<?php the_excerpt(); ?>
+										</div>
+									</div>
+									<div class="card-footer">
 										<a href="<?php the_permalink(); ?>" class="btn btn-sm btn-outline-primary">
 											Read More <span class="screen-reader-text">about <?php the_title(); ?></span>
 										</a>
@@ -123,12 +122,12 @@ get_header(); ?>
 	<!-- Shows We Love -->
 	<section class="home-featured-shows">
 		<div class="container site-loop">
-    		<div class="row">
+			<div class="row">
 				<div class="col">
-        			<h2>Shows We Love <i class="fa fa-heart" aria-hidden="true"></i></h2>
+					<h2>Shows We Love <?php echo lwtv_yikes_symbolicons( 'heart.svg', 'fa-heart' ); ?></h2>
 				</div>
-    		</div>
-    		<div class="row">
+			</div>
+			<div class="row">
 				<div class="col">
 					<div class="card-deck">
 						<?php
@@ -150,10 +149,8 @@ get_header(); ?>
 						while ( $lovedpostloop->have_posts() ) : $lovedpostloop->the_post();
 						?>
 							<div class="card">
-							   <a href="<?php the_permalink(); ?>" title="<?php the_title_attribute(); ?>" >
-							  	 <?php the_post_thumbnail( 'postloop-img', array( 'class' => 'card-img-top' ) ); ?>
-							   </a>
-	            				<div class="card-body">
+								<a href="<?php the_permalink(); ?>" title="<?php the_title_attribute(); ?>" ><?php the_post_thumbnail( 'postloop-img', array( 'class' => 'card-img-top' ) ); ?></a>
+								<div class="card-body">
 									<h4 class="card-title"><?php the_title(); ?></h4>
 									<div class="card-meta">
 										<?php 
@@ -170,12 +167,12 @@ get_header(); ?>
 									<div class="card-text">
 										<?php the_excerpt(); ?>
 									</div>
-	            				</div>
-	            				<div class="card-footer">
-	            					<a href="<?php the_permalink(); ?>" class="btn btn-sm btn-outline-primary">
-	            						Go to Show Profile
-	            					</a>
-	            				</div>
+								</div>
+								<div class="card-footer">
+									<a href="<?php the_permalink(); ?>" class="btn btn-sm btn-outline-primary">
+										Go to Show Profile
+									</a>
+								</div>
 							</div>
 
 						<?php
@@ -184,9 +181,9 @@ get_header(); ?>
 						?>
 					<!-- End Loop -->
 
-	        		</div><!-- .card-deck -->
-      			</div><!-- .col -->
-    		</div><!-- .row -->
+					</div><!-- .card-deck -->
+				</div><!-- .col -->
+			</div><!-- .row -->
 		</div><!-- .container -->
 	</section>
 
@@ -194,37 +191,43 @@ get_header(); ?>
 
 	<!-- Older Posts -->
 	<section class="home-older-posts">
-	  	<div class="container">
-	    	<div class="row">
-	      		<div class="col">
-	        		<h2 class="posts-title">More Posts <i class="fa fa-newspaper-o" aria-hidden="true"></i></h2>
-	        	</div>
-	        </div>
-	        <div class="row site-loop main-posts-loop equal-height">
+		<div class="container">
+			<div class="row">
+				<div class="col">
+					<h2 class="posts-title">More Posts <?php echo lwtv_yikes_symbolicons( 'newspaper.svg', 'fa-newspaper-o' ); ?></h2>
+				</div>
+			</div>
+			<div class="row site-loop main-posts-loop equal-height">
 
-				<?php $oldpostsloop = new WP_Query( array(
-					'posts_per_page' => '6',
-					'paged' => $paged,
+				<?php
+					
+				$old_posts_per_page = ( $paged == 1 )? '6' : '12';
+					
+				$oldpostsloop = new WP_Query( array(
+					'posts_per_page' => $old_posts_per_page,
+					'paged'          => $paged,
 					'post__not_in'   => $already_displayed_posts,
-					'orderby' => 'date', 
-					'order' => 'DESC'
-				) ); ?>				 
+					'orderby'        => 'date', 
+					'order'          => 'DESC'
+				) ); 
+				?>
 
 				<!-- // The Loop -->
-				<?php while ($oldpostsloop->have_posts()) : $oldpostsloop->the_post(); ?>
+				<?php
+				while ($oldpostsloop->have_posts()) : $oldpostsloop->the_post(); ?>
 
 					<div class="col-sm-4">
-    					<?php get_template_part( 'template-parts/content', 'posts' ); ?>
-    				</div>
+						<?php get_template_part( 'template-parts/content', 'posts' ); ?>
+					</div>
+				<?php 
+				endwhile;
 
-				<?php endwhile;  ?>
+				wp_reset_postdata();
+				yikes_generate_pagination_buttons( $paged, $oldpostsloop->max_num_pages ); 
+				?>
 
-				<?php yikes_generate_pagination_buttons( $paged, $oldpostsloop->max_num_pages ); ?>
-
-				<?php wp_reset_postdata(); ?>					
-	     	
-     		</div><!-- .row .home-featured-post-loop -->
-	    </div><!-- .container -->
+			</div><!-- .row .home-featured-post-loop -->
+		</div><!-- .container -->
 	</section>
 
 </div><!-- #main -->

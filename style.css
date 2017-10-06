@@ -5,7 +5,7 @@ Theme URI: https://lezwatchtv.com/
 Author: LezWatchTV
 Author URI: https://lezwatchtv.com/
 Description: LezWatchTV Theme Episode III - Return of the Custom Theme 
-Version: 3.0
+Version: 3.1
 License: GNU General Public License v2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Text Domain: yikes_starter
@@ -238,6 +238,15 @@ input[type="submit"].btn-outline-primary:hover {
   color: #fff;
 }
 
+.close-btn-container svg {
+  width: 35px;
+  height: 35px;
+  vertical-align: middle;
+}
+.close-btn-container svg * {
+  fill: #d1548e;
+}
+
 /* =Typography
     Font CSS is all in the partial _fonts.scss
 ----------------------------------------------- */
@@ -413,6 +422,14 @@ button, input[type="button"], input[type="submit"] {
 #masthead .navbar-brand img {
   height: 40px;
   width: auto;
+}
+#masthead .nav-item.search svg {
+  height: 15px;
+  width: 15px;
+  vertical-align: middle;
+}
+#masthead .nav-item.search svg * {
+  fill: #fff;
 }
 #masthead .header-search-bar {
   background-color: #333;
@@ -699,6 +716,14 @@ h2.posts-title {
   color: #d1548e;
   font-weight: 500;
 }
+h2.posts-title svg {
+  width: 30px;
+  height: 30px;
+  vertical-align: middle;
+}
+h2.posts-title svg * {
+  fill: #d1548e;
+}
 
 /* Content blocks */
 section {
@@ -730,6 +755,14 @@ section {
 .home-featured-shows h2 {
   color: #fff;
 }
+.home-featured-shows h2 svg {
+  width: 30px;
+  height: 30px;
+  vertical-align: middle;
+}
+.home-featured-shows h2 svg * {
+  fill: #fff;
+}
 .home-featured-shows .card {
   margin-bottom: 0;
 }
@@ -748,6 +781,22 @@ section {
   font-size: 1.125rem;
   margin-bottom: 0;
   padding: 3rem 2rem;
+}
+.archive-subheader .jumbotron .facetwp-selections li {
+  display: block;
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+.archive-subheader .jumbotron .facetwp-selection-label {
+  font-weight: bold;
+}
+.archive-subheader .jumbotron .facetwp-title {
+  text-transform: capitalize;
+}
+.archive-subheader .jumbotron li[data-facet="show_loved"],
+.archive-subheader .jumbotron li[data-facet="show_stars"],
+.archive-subheader .jumbotron li[data-facet="show_worthit"] {
+  display: none;
 }
 
 /* Posts */
@@ -803,6 +852,11 @@ section {
   text-align: center;
   width: 16px;
 }
+.author-bio-box svg {
+  width: 15px;
+  height: 15px;
+  vertical-align: middle;
+}
 
 footer.entry-meta {
   padding-top: 1em;
@@ -813,6 +867,11 @@ footer.entry-meta .footer-entry-meta-item {
 footer.entry-meta .fa {
   margin-left: 1em;
   width: 16px;
+}
+footer.entry-meta svg {
+  width: 15px;
+  height: 15px;
+  vertical-align: middle;
 }
 
 /* Statistics Pages */
@@ -907,6 +966,7 @@ canvas {
 .charlist-grave-sm svg {
   width: 15px;
   height: 15px;
+  vertical-align: middle;
 }
 .charlist-grave-sm svg * {
   fill: #999;
@@ -916,6 +976,7 @@ canvas {
   width: 25px;
   height: 25px;
   float: right;
+  vertical-align: middle;
 }
 .charlist-grave svg * {
   fill: #222;
@@ -973,6 +1034,7 @@ h3.post-title.excerpt {
   height: 50px;
   margin: 5px;
   width: 50px;
+  vertical-align: middle;
 }
 
 /* Trigger Warning */
@@ -986,6 +1048,7 @@ h3.post-title.excerpt {
   margin: 5px 10px 0 0;
   height: 40px;
   width: 40px;
+  vertical-align: middle;
 }
 .trigger-warning-container .callout-danger svg * {
   fill: #c0392b;
@@ -1035,6 +1098,7 @@ h3.post-title.excerpt {
   width: 33%;
 }
 
+.card-meta-item.shows svg,
 .card-meta-item.cliches svg,
 .card-meta-item.actors svg {
   height: 15px;
@@ -1068,10 +1132,12 @@ h3.post-title.excerpt {
 .ratings-icons svg {
   width: 60px;
   height: 60px;
+  vertical-align: middle;
 }
 .ratings-icons .show-heart svg {
   width: 30px;
   height: 30px;
+  vertical-align: middle;
 }
 .ratings-icons .show-heart.positive svg {
   fill: #c0392b;
@@ -1240,6 +1306,10 @@ ul.comment-list {
 ul.comment-list > li.pingback .comment-body {
   margin-bottom: 1em;
 }
+ul.comment-list svg {
+  width: 15px;
+  height: 15px;
+}
 ul.comment-list li .comment-author {
   padding: 4px;
   margin-bottom: 20px;
@@ -1297,6 +1367,11 @@ ul.comment-list li .comment-content .btn a, ul.comment-list li .comment-content 
 .card.card-search .card-header h4 {
   margin-bottom: 0;
 }
+.card.card-search .card-header h4 svg {
+  width: 30px;
+  height: 30px;
+  vertical-align: middle;
+}
 .card.card-search .input-group {
   margin-bottom: 0.2rem;
 }
@@ -1309,6 +1384,14 @@ ul.comment-list li .comment-content .btn a, ul.comment-list li .comment-content 
 }
 .search-results .entry-summary {
   margin: 1em 0 2em;
+}
+.search-results .card-title svg {
+  height: 20px;
+  width: 20px;
+  vertical-align: middle;
+}
+.search-results .card-title svg * {
+  fill: #222;
 }
 
 /*--------------------------------------------------------------
@@ -1389,6 +1472,14 @@ a.facetwp-page {
 ----------------------------------------------- */
 .site-sidebar .widget {
   margin: 0 0 1em;
+}
+.site-sidebar .card-header svg {
+  width: 25px;
+  height: 25px;
+  vertical-align: middle;
+}
+.site-sidebar .card-header svg * {
+  fill: #fff;
 }
 .site-sidebar .widget_categories, .site-sidebar .widget_tag_cloud,
 .site-sidebar .widget-tags {

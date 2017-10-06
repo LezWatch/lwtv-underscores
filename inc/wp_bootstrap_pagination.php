@@ -20,8 +20,8 @@ function wp_bootstrap_pagination( $args = array() ) {
     );
     
     $args['range'] = (int) $args['range'] - 1;
-    if ( !$args['custom_query'] )
-        $args['custom_query'] = @$GLOBALS['wp_query'];
+    if ( !$args['custom_query'] ) $args['custom_query'] = @$GLOBALS['wp_query'];
+
     $count = (int) $args['custom_query']->max_num_pages;
     $page  = intval( get_query_var( 'paged' ) );
     $ceil  = ceil( $args['range'] / 2 );

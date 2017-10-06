@@ -13,7 +13,6 @@ require get_template_directory() . '/inc/thisyear.php';
 
 /** THE GENERAL SECTION **/
 
-
 /**
  * Loved Shows Shuffle
  *
@@ -21,12 +20,12 @@ require get_template_directory() . '/inc/thisyear.php';
  * for reloads.
  */
 add_filter( 'the_posts', function( $posts, \WP_Query $query ) {
-    if( $pick = $query->get( '_loved_shuffle' ) ) {
-        shuffle( $posts );
-        $posts = array_slice( $posts, 0, (int) $pick );
-    }
-    return $posts;
-}, 10, 2 );
+		if( $pick = $query->get( '_loved_shuffle' ) ) {
+			shuffle( $posts );
+			$posts = array_slice( $posts, 0, (int) $pick );
+		}
+		return $posts;
+	}, 10, 2 );
 
 /*
  * Filter Comment Status
@@ -39,7 +38,6 @@ function lwtv_yikes_filter_media_comment_status( $open, $post_id ) {
 	return $open;
 }
 add_filter( 'comments_open', 'lwtv_yikes_filter_media_comment_status', 10 , 2 );
-
 
 /**
  * Symbolicons Output
@@ -108,7 +106,7 @@ function lwtv_yikes_jetpack_post_meta( ) {
 }
 
 
-/** THE ARCHIVE SORT SECTION **/
+/** THE ARCHIVE SECTION **/
 
 /*
  * Archive Sort Order
@@ -117,12 +115,12 @@ function lwtv_yikes_jetpack_post_meta( ) {
  * special order: ASC by title
  */
 function lwtv_yikes_archive_sort_order( $query ) {
-    if ( $query->is_main_query() && !is_admin() ) {
-	    $posttypes  = array( 'post_type_characters', 'post_type_shows' );
-	    $taxonomies = array( 'lez_cliches', 'lez_gender', 'lez_sexuality', 'lez_tropes', 'lez_country', 'lez_stations', 'lez_formats', 'lez_genres' );
+	if ( $query->is_main_query() && !is_admin() ) {
+		$posttypes  = array( 'post_type_characters', 'post_type_shows' );
+		$taxonomies = array( 'lez_cliches', 'lez_gender', 'lez_sexuality', 'lez_tropes', 'lez_country', 'lez_stations', 'lez_formats', 'lez_genres' );
 		if ( is_post_type_archive( $posttypes ) || is_tax( $taxonomies ) ) {
-	        $query->set( 'order', 'ASC' );
-	        $query->set( 'orderby', 'title' );
+			$query->set( 'order', 'ASC' );
+			$query->set( 'orderby', 'title' );
 		}
 	}
 }
@@ -139,10 +137,70 @@ function lwtv_yikes_character_archive_query( $query ) {
 		$taxonomies = array( 'lez_cliches', 'lez_gender', 'lez_sexuality' );
 		if ( is_post_type_archive( 'post_type_characters' ) || is_tax( $taxonomies ) ) {
 			$query->set( 'posts_per_page', 24 );
-		}  
-    }
+		}
+	}
 }
 add_action( 'pre_get_posts', 'lwtv_yikes_character_archive_query' );
+
+/**
+ * Taxonomy Archive Title
+ *
+ * Take the data from the taxonomy to determine a dynamic title.
+ * 
+ * @access public
+ * @param mixed $location
+ * @param mixed $posttype
+ * @param mixed $taxonomy
+ * @return $title_prefix OR $title_suffix
+ */
+function lwtv_yikes_tax_archive_title( $location, $posttype, $taxonomy ) {
+	
+	// Bail if not set
+	if ( !isset( $location ) || !isset( $posttype ) || !isset( $taxonomy ) ) return;
+
+	$title_prefix = $title_suffix = '';
+	$term         = get_term_by( 'slug', get_query_var( 'term' ), $taxonomy );
+	$termicon     = get_term_meta( $term->term_id, 'lez_termsmeta_icon', true );
+	$iconname     = $termicon ? $termicon . '.svg' : 'square.svg';
+	$icon         = lwtv_yikes_symbolicons( $iconname, 'fa-square' );
+
+	switch ( $posttype ) {
+		case 'post_type_characters':
+			$title_suffix = ' Characters';
+			break;
+		case 'post_type_shows':
+			$title_prefix = 'TV Shows ';
+			
+			// TV Shows are harder to have titles
+			switch ( $taxonomy ) {
+				case 'lez_tropes':
+					$title_prefix .= 'With The ';
+					$title_suffix .= ' Trope';
+					break;
+				case 'lez_country':
+					$icon          = lwtv_yikes_symbolicons( 'earth.svg', 'fa-globe' );
+					$title_prefix .= 'That Originate In ';
+					break;
+				case 'lez_stations':
+					$icon          = lwtv_yikes_symbolicons( 'antenna.svg', 'fa-bullhorn' );
+					$title_prefix .= 'That Air On ';
+					break;
+				case 'lez_formats':
+					$title_prefix .= 'That Air As ';
+					break;
+				case 'lez_genres':
+					$title_prefix = '';
+					$title_suffix = ' TV Shows';
+					break;
+			}
+			break;
+	}
+	
+	if ( $location == 'prefix' ) return $title_prefix;
+	if ( $location == 'suffix' ) return $title_suffix;
+	if ( $location == 'icon' )   return $icon;
+}
+
 
 /** THE DISPLAY SECTION **/
 

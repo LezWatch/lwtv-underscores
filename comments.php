@@ -48,9 +48,9 @@ if ( post_password_required() ) {
 		<ul class="comment-list">
 			<?php
 				wp_list_comments( array(
-					'style'      => 'ul',
-					'short_ping' => true,
-					'walker' => new New_Walker_Comment(),
+					'style'       => 'ul',
+					'short_ping'  => true,
+					'walker'      => new LWTV_Walker_Comment(),
 					'avatar_size' => 118,
 					'reply_text'  => 'reply',
 				) );
@@ -72,12 +72,11 @@ if ( post_password_required() ) {
 
 	endif; // Check for have_comments().
 
-
 	// If comments are closed and there are comments, let's leave a little note, shall we?
-	if ( ! comments_open() && get_comments_number() && post_type_supports( get_post_type(), 'comments' ) ) : ?>
-
+	if ( ! comments_open() && get_comments_number() && post_type_supports( get_post_type(), 'comments' ) ) : 
+		?>
 		<p class="no-comments"><?php esc_html_e( 'Comments are closed.', 'yikes_starter' ); ?></p>
-	<?php
+		<?php
 	endif;
 
 	comment_form();

@@ -7,11 +7,11 @@
  * @package LezWatchTV
  */
 
-$icon        = lwtv_yikes_symbolicons( 'tv_flatscreen.svg', 'fa-television' );
-$count_posts = facetwp_display( 'counts' );
-$selections  = facetwp_display( 'selections' );
-$title       = '<span role="img" aria-label="post_type_shows" title="Shows" class="taxonomy-svg shows" data-toggle="tooltip">' . $icon . '</span>';
-$sort        = lwtv_yikes_facetwp_sortby( ( isset( $_GET['fwp_sort'] ) )? $_GET['fwp_sort'] : '' );
+$icon         = lwtv_yikes_symbolicons( 'tv_flatscreen.svg', 'fa-television' );
+$count_posts  = facetwp_display( 'counts' );
+$title        = '<span role="img" aria-label="post_type_shows" title="Shows" class="taxonomy-svg shows">' . $icon . '</span>';
+$descriptions = get_option( 'wpseo_titles' );
+$description  = $descriptions['metadesc-ptarchive-post_type_shows' ];
 
 get_header(); ?>
 
@@ -20,12 +20,15 @@ get_header(); ?>
 		<div class="container">
 			<header class="archive-header">
 				<?php
-					the_archive_title( '<h1 class="entry-title">', ' (' . $count_posts . '<span class="facetwp-count"></span>)' . $title . '</h1>' );
-					$descriptions = get_option( 'wpseo_titles' );
-					$description  = $descriptions['metadesc-ptarchive-post_type_shows'];
-					echo '<div class="archive-description"><p>' . $description . '</p><p>Sorted by ' . $sort . '.</div>';
-					echo $selections;
+					the_archive_title( '<h1 class="entry-title">' . $title, ' (' . $count_posts . '<span class="facetwp-count"></span>)</h1>' );
 				?>
+				<div class="archive-description">
+					<?php 
+						echo '<h3 class="facetwp-title"></h3>';
+						echo '<p>' . $description . ' <span class="facetwp-description"></span> <span class="facetwp-sorted"></span></p>';
+						echo facetwp_display( 'selections' );
+					?>
+				</div>
 			</header><!-- .archive-header -->
 		</div><!-- .container -->
 	</div><!-- /.jumbotron -->
@@ -39,7 +42,7 @@ get_header(); ?>
 					<div id="content" class="site-content clearfix" role="main">
 						<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 							<div class="entry-content facetwp-template">
-			        			<div class="row site-loop show-archive-loop equal-height">
+								<div class="row site-loop show-archive-loop equal-height">
 									<?php
 									if ( have_posts() ) : ?>
 

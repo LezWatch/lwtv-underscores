@@ -35,9 +35,7 @@ $queery = new WP_Query ( array(
 
 $count_posts = facetwp_display( 'counts' );
 $icon        = lwtv_yikes_symbolicons( 'person.svg', 'fa-person' );
-$selections  = facetwp_display( 'selections' );
-$title       = '<span role="img" aria-label="post_type_characters" title="Characters" class="taxonomy-svg characters" data-toggle="tooltip">' . $icon . '</span>';
-$sort        = lwtv_yikes_facetwp_sortby( ( isset( $_GET['fwp_sort'] ) )? $_GET['fwp_sort'] : '' );
+$title       = '<span role="img" aria-label="post_type_characters" title="Characters" class="taxonomy-svg characters">' . $icon . '</span>';
 
 get_header(); ?>
 
@@ -49,9 +47,14 @@ get_header(); ?>
 					<?php echo ucfirst( $thisrole ).' Characters ('. $count_posts .'<span class="facetwp-count"></span>)'; ?>
 					<?php echo $title; ?>
 				</h1>
-				
-				<div class="taxonomy-description"><p>Characters who are considered to be cast as <?php echo $thisrole; ?>s. Some characters have multiple roles, of course ...<br />Sorted by <?php echo $sort; ?>.</p></div>
-					<?php echo $selections; ?>
+
+				<div class="archive-description">
+					<?php 
+						echo '<p>Characters who are considered to be cast as ' . $thisrole . 's. Some characters have multiple roles, of course. <span class="facetwp-description"></span></p>';
+						echo '<p><span class="facetwp-sorted"></span></p>';
+						echo facetwp_display( 'selections' );
+					?>
+				</div>
 			</header><!-- .archive-header -->
 		</div><!-- .container -->
 	</div><!-- /.jumbotron -->
@@ -65,7 +68,7 @@ get_header(); ?>
 					<div id="content" class="site-content clearfix" role="main">
 						<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 							<div class="entry-content facetwp-template">
-			        			<div class="row site-loop character-archive-loop equal-height">
+								<div class="row site-loop character-archive-loop equal-height">
 									<?php
 										if ( $queery->have_posts() ):
 										while ( $queery->have_posts() ): $queery->the_post();

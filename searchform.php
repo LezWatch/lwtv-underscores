@@ -19,7 +19,7 @@ if ( in_array( 'post_type_shows' , $queery_types) ) { $checked_shows = 'checked=
 
 <div class="card card-search">
 	<div class="card-header">
-		<h4><i class="fa fa-search float-right" aria-hidden="true"></i> Search the Database</h4>
+		<h4><?php echo lwtv_yikes_symbolicons( 'search.svg', 'fa-search-o' ); ?> Search the Database</h4>
 	</div>
 	<div class="card-body">
 		<form role="search" class="search-form" action="<?php echo esc_url( home_url( '/' ) ); ?>" method="get">

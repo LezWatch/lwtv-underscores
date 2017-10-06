@@ -33,7 +33,7 @@ unset( $shows, $actors, $gender, $sexuality, $cliches, $grave );
 		<div class="character-image-wrapper">
 			<a href="<?php the_permalink( $the_ID ); ?>" title="<?php get_the_title( $the_ID ); ?>" >
 				<?php echo get_the_post_thumbnail( $the_ID, 'character-img', array( 'class' => 'card-img-top' , 'alt' => $alttext, 'title' => $alttext ) ); ?>
-		   </a>
+			</a>
 		</div>
 	<?php endif; ?>
 	<div class="card-body">
@@ -64,15 +64,21 @@ unset( $shows, $actors, $gender, $sexuality, $cliches, $grave );
 
 			// List of Shows (will not show on show pages)
 			if ( isset( $shows ) ) {
-				foreach ( $shows as $show ) {
-					$show_post = get_post( $show['show']);
-					echo '<div class="card-meta-item shows"><i class="fa fa-television" aria-hidden="true"></i> <a href="' . get_the_permalink( $show_post->ID )  .'">' . $show_post->post_title .'</a></div>';
+				$show_title = array();
+				foreach ( $shows as $each_show ) {
+					if ( get_post_status ( $each_show['show'] ) !== 'publish' ) {
+						array_push( $show_title, '<em><span class="disabled-show-link">' . get_the_title( $each_show['show'] ) . '</span></em>' );
+					} else {
+						array_push( $show_title, '<em><a href="' . get_permalink( $each_show['show'] ) . '">' . get_the_title( $each_show['show'] ) . '</a></em>' );
+					}
 				}
+				$on_shows = ( empty( $show_title ) )? '<em>None</em>' : implode( ', ', $show_title );
+				echo '<div class="card-meta-item shows">' . lwtv_yikes_symbolicons( 'tv_flatscreen.svg', 'fa-television' ) . '&nbsp;' . $on_shows . '</div>';
 			}
 
 			// List of Actors
 			if ( isset( $actors ) ) {
-				echo '<div class="card-meta-item actors">' . lwtv_yikes_symbolicons( 'person.svg', 'fa-user' ) . ' ' . implode( ", ", $actors ) . '</div>';
+				echo '<div class="card-meta-item actors">' . lwtv_yikes_symbolicons( 'person.svg', 'fa-user' ) . '&nbsp;' . implode( ", ", $actors ) . '</div>';
 			}
 
 			// Gender and Sexuality

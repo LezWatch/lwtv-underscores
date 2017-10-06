@@ -39,9 +39,7 @@ class LWTV_AMP {
 	 * @return file
 	 */
 	function amp_post_template_file( $file, $type, $post ) {
-		$post_type=$post->post_type;
-
-		if ( 'post_type_characters' === $post_type || 'post_type_shows' === $post_type ) {
+		if ( in_array( $post->post_type, array( 'post_type_shows', 'post_type_characters' ) ) ) {
 			$file = get_stylesheet_directory() . '/template-parts/amp-shows_chars.php';
 		}
 		return $file;
@@ -78,12 +76,10 @@ class LWTV_AMP {
 
 			// Generate Character Type
 			// Usage: $character_type
-
 			$character_type = '';
 
 			// Generate list of shows
 			// Usage: $appears
-
 			$all_shows = get_post_meta( $post_id, 'lezchars_show_group', true );
 			$show_title = array();
 			foreach ( $all_shows as $each_show ) {
@@ -173,13 +169,6 @@ class LWTV_AMP {
 		p.lezwatch-featured-image.character-img {
 			padding: 10px;
 		}
-		.entry-meta png {
-			width: 16px;
-			height: 16px;
-		}
-		.entry-meta png * {
-			fill: #333;
-		}
 		.amp-wp-show-footer {
 			background: #eee;
 			border: 2px solid #d1548e;
@@ -193,16 +182,16 @@ class LWTV_AMP {
 			border-style: solid;
 		}
 		.trigger-danger {
-		    background: #fbeaea;
-		    border: 2px solid #dc3232;
+			background: #fbeaea;
+			border: 2px solid #dc3232;
 		}
 		.trigger-warning {
-		    background: #fff3cd;
-		    border: 2px solid #f1c40f;
+			background: #fff3cd;
+			border: 2px solid #f1c40f;
 		}
 		.trigger-info {
-		    background: #d1ecf1;
-		    border: 2px solid #0c5460;
+			background: #d1ecf1;
+			border: 2px solid #0c5460;
 		}
 		.callout img {
 			width: 36px;

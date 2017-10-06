@@ -64,7 +64,7 @@
 			</span>
 		<?php }
 
-		edit_post_link( esc_attr__( 'Edit', 'yikes_starter' ), '<div class="edit-link"><i class="fa fa-pencil" aria-hidden="true"></i>', '</div>' );
+		edit_post_link( esc_attr__( 'Edit', 'yikes_starter' ), '<div class="edit-link">' .  lwtv_yikes_symbolicons( 'pencil.svg', 'fa-pencil' ), '</div>' );
 		?>
 	</footer><!-- .entry-meta -->
 </article><!-- #post-## -->

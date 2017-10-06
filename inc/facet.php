@@ -17,8 +17,7 @@
  */
 function lwtv_yikes_facet_numeric_posts_nav( $queery = 'wp_query', $count = null ) {
 
-	if( is_singular( 'post' ) )
-		return;
+	if( is_singular( 'post' ) ) return;
 
 	if ( $queery == 'wp_query' ) {
 		global $wp_query;
@@ -37,8 +36,7 @@ function lwtv_yikes_facet_numeric_posts_nav( $queery = 'wp_query', $count = null
 	}
 
 	/** Stop execution if there's only 1 page */
-	if( $page_number_max <= 1 )
-		return;
+	if( $page_number_max <= 1 ) return;
 
 	/** Listical calculations for how many pages */
 	$paged = get_query_var( 'paged' ) ? absint( get_query_var( 'paged' ) ) : 1;
@@ -158,39 +156,74 @@ add_filter( 'facetwp_pager_html', 'lwtv_yikes_facetwp_pager_html', 10, 2 );
 
 
 /**
- * Determine FacetWP Sort By
+ * Adding ajaxy content to archives.
  *
- * Outputs sort value.
+ * Since Facet is so fast, the old PHP way of calculating sorted and titles
+ * doesn't work anymore. Welcome to Javascript Hell.
  */
-function lwtv_yikes_facetwp_sortby( $fwp_sort ) {
+function lwtv_yikes_facetwp_add_labels() {
+	?>
+	<script>
+	(function($) {
+	    $(document).on('facetwp-loaded', function() {
 
-	switch ( $fwp_sort ) {
-		case 'most_queers':
-			$sort = 'number of characters (descending)';
-			break;
-		case 'least_queers':
-			$sort = 'number of characters (ascending)';
-			break;
-		case 'most_dead':
-			$sort = 'number of dead characters (descending)';
-			break;
-		case 'least_dead':
-			$sort = 'number of dead characters (ascending)';
-			break;
-		case 'date_desc':
-			$sort = 'date added (newest to oldest)';
-			break;
-		case 'date_asc':
-			$sort = 'date added (oldest to newest)';
-			break;
-		case 'title_desc':
-			$sort = 'name (Z-A)';
-			break;
-		case 'title_asc':
-		default:
-			$sort = 'name (A-Z)';
-	}
+			var title = new Array();
 
-	return $sort;
+			// Titles
+			if ( FWP.facets.show_loved == 'on' ) { title.push( 'We Love' ); }
+			if ( FWP.facets.show_worthit == 'yes' ) { title.push( 'That Are Worth Watching' ); }
+			if ( FWP.facets.show_worthit == 'no' ) { title.push( 'That Are Not Worth Watching' ); }
+			if ( FWP.facets.show_stars != '' && typeof FWP.facets.show_stars != 'undefined' ) {
+				if ( FWP.facets.show_stars.constructor == Array ) {
+					var stars = FWP.facets.show_stars.join( ' & ' );				
+				} else {
+					var stars = FWP.facets.show_stars;
+				}
+				title.push( 'With ' + stars + ' Stars ' ); 
+			}
+			
+			if ( title[0] != null ) {
+				$('.facetwp-title').html( 'Shows ' + title.join( ', ' ) );
+			}
+			
+			// Sorting
+			switch( FWP.extras.sort ) {
+				case 'most_queers':
+					var fwp_sorted = 'number of characters (descending)';
+					break;
+				case 'least_queers':
+					var fwp_sorted = 'number of characters (ascending)';
+					break;
+				case 'most_dead':
+					var fwp_sorted = 'number of dead characters (descending)';
+					break;
+				case 'least_dead':
+					var fwp_sorted = 'number of dead characters (ascending)';
+					break;
+				case 'date_desc':
+					var fwp_sorted = 'date added (newest to oldest)';
+					break;
+				case 'date_asc':
+					var fwp_sorted = 'date added (oldest to newest)';
+					break;
+				case 'title_desc':
+					var fwp_sorted = 'name (Z-A)';
+					break;
+				case 'high_score':
+					var fwp_sorted = 'score (high to low)';
+					break;
+				case 'low_score':
+					var fwp_sorted = 'score (low to high)';
+					break;
+				case 'title_asc':
+				default:
+					var fwp_sorted = 'name (A-Z)';
+			}
+			$('.facetwp-sorted').html( 'Sorted by ' + fwp_sorted + '.' );
 
+		});
+	})(jQuery);
+	</script>
+	<?php
 }
+add_action( 'wp_head', 'lwtv_yikes_facetwp_add_labels', 100 );

@@ -14,9 +14,9 @@ global $post;
 
 <div class="card-group" id="post-<?php the_ID(); ?>">
 	<div class="card col-sm-5"	
-		<?php if ( has_post_thumbnail() ) : ?>
-		    style="background-image: url(<?php the_post_thumbnail_url( 'large' ); ?>);"
-		<?php endif; ?>
+		<?php if ( has_post_thumbnail() ) { ?>
+			style="background-image: url(<?php the_post_thumbnail_url( 'large' ); ?>);"
+		<?php } ?>
 	>
 	</div>
 	<div class="card col-sm-7">
@@ -38,7 +38,7 @@ global $post;
 			</div>
 		</div>
 
-  		<div class="card-footer">
+		<div class="card-footer">
 			<a href="<?php the_permalink(); ?>" class="btn btn-sm btn-outline-primary">
 				Read More <span class="screen-reader-text">about <?php the_title(); ?></span>
 			</a>

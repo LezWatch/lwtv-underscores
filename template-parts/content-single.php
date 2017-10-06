@@ -9,7 +9,7 @@
 <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 	<header class="entry-header">
 		<?php if ( has_post_thumbnail()) : ?>
-		  	<?php the_post_thumbnail( 'large' ); ?>
+			<?php the_post_thumbnail( 'large' ); ?>
 		<?php endif; ?>
 
 		<div class="entry-meta">
@@ -41,16 +41,16 @@
 			if ( ! yikes_starter_categorized_blog() ) {
 				// This blog only has 1 category so we just need to worry about tags in the meta text
 				if ( '' != $tag_list ) {
-					$meta_text = __( '<span class="footer-entry-meta-item"><i class="fa fa-tags"></i> %2$s.</span> <span class="footer-entry-meta-item"><i class="fa fa-bookmark-o"></i> <a href="%3$s" title="Permalink to %4$s" rel="bookmark">Post link</a>.</span>', 'yikes_starter' );
+					$meta_text = __( '<span class="footer-entry-meta-item">' . lwtv_yikes_symbolicons( 'tag.svg', 'fa-tags' ) . '&nbsp;%2$s</span> <span class="footer-entry-meta-item">' . lwtv_yikes_symbolicons( 'album.svg', 'fa-bookmark-o' ) . '&nbsp;<a href="%3$s" title="Permalink to %4$s" rel="bookmark">Post link</a></span>', 'yikes_starter' );
 				} else {
-					$meta_text = __( '<span class="footer-entry-meta-item"><i class="fa fa-bookmark-o"></i> <a href="%3$s" title="Permalink to %4$s" rel="bookmark">Post link</a>.</span>', 'yikes_starter' );
+					$meta_text = __( '<span class="footer-entry-meta-item">' . lwtv_yikes_symbolicons( 'album.svg', 'fa-bookmark-o' ) . '&nbsp;<a href="%3$s" title="Permalink to %4$s" rel="bookmark">Post link</a></span>', 'yikes_starter' );
 				}
 			} else {
 				// But this blog has loads of categories so we should probably display them here
 				if ( '' != $tag_list ) {
-					$meta_text = __( '<span class="footer-entry-meta-item"><i class="fa fa-folder-open"></i> %1$s</span> <span class="footer-entry-meta-item"><i class="fa fa-tags"></i> %2$s.</span> <span class="footer-entry-meta-item"><i class="fa fa-bookmark-o"></i> <a href="%3$s" title="Permalink to %4$s" rel="bookmark">Post link</a>.</span>', 'yikes_starter' );
+					$meta_text = __( '<span class="footer-entry-meta-item">' . lwtv_yikes_symbolicons( 'folder_upload.svg', 'fa-folder-open' ) . '&nbsp;%1$s</span> <span class="footer-entry-meta-item">' . lwtv_yikes_symbolicons( 'tag.svg', 'fa-tags' ) . '&nbsp;%2$s</span> <span class="footer-entry-meta-item">' . lwtv_yikes_symbolicons( 'album.svg', 'fa-bookmark-o' ) . '&nbsp;<a href="%3$s" title="Permalink to %4$s" rel="bookmark">Post link</a></span>', 'yikes_starter' );
 				} else {
-					$meta_text = __( '<span class="footer-entry-meta-item"><i class="fa fa-folder-open"></i> %1$s.</span> <span class="footer-entry-meta-item"><i class="fa fa-bookmark-o"></i> <a href="%3$s" title="Permalink to %4$s" rel="bookmark">Post link</a>.</span>', 'yikes_starter' );
+					$meta_text = __( '<span class="footer-entry-meta-item">' . lwtv_yikes_symbolicons( 'folder_upload.svg', 'fa-folder-open' ) . '&nbsp;%1$s</span> <span class="footer-entry-meta-item">' . lwtv_yikes_symbolicons( 'album.svg', 'fa-bookmark-o' ) . '&nbsp;<a href="%3$s" title="Permalink to %4$s" rel="bookmark">Post link</a></span>', 'yikes_starter' );
 				}
 			} // End if().
 

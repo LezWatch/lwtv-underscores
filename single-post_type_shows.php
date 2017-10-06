@@ -22,6 +22,7 @@ if ( get_post_meta( get_the_ID(), 'lezshows_worthit_show_we_love', true) ) {
 }
 
 $icon .= '</div>';
+// Icon is built.
  
 get_header(); ?>
 
@@ -40,7 +41,7 @@ get_header(); ?>
 		<div class="row">
 			<div class="col-sm-8">
 				<div id="primary" class="content-area">
-					<div id="content" class="site-content clearfix" role="main">						
+					<div id="content" class="site-content clearfix" role="main">
 						<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 							<div class="entry-content show-page">
 								<div class="card">

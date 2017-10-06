@@ -8,11 +8,11 @@
  */
 
 // Determine icon (Font-Awesome fallback)
-$icon        = lwtv_yikes_symbolicons( 'users.svg', 'fa-users' );
-$count_posts = facetwp_display( 'counts' );
-$selections  = facetwp_display( 'selections' );
-$title       = '<span role="img" aria-label="post_type_characters" title="Characters" data-toggle="tooltip" class="taxonomy-svg characters">' . $icon . '</span>';
-$sort        = lwtv_yikes_facetwp_sortby( ( isset( $_GET['fwp_sort'] ) )? $_GET['fwp_sort'] : '' );
+$icon         = lwtv_yikes_symbolicons( 'users.svg', 'fa-users' );
+$count_posts  = facetwp_display( 'counts' );
+$title        = '<span role="img" aria-label="post_type_characters" title="Characters" class="taxonomy-svg characters">' . $icon . '</span>';
+$descriptions = get_option( 'wpseo_titles' );
+$description  = $descriptions['metadesc-ptarchive-post_type_characters' ];
 
 get_header(); ?>
 
@@ -22,11 +22,14 @@ get_header(); ?>
 			<header class="archive-header">
 				<?php
 					the_archive_title( '<h1 class="facetwp-page-title entry-title">', ' (' . $count_posts . '<span class="facetwp-count"></span>)' . $title . '</h1>' );
-					$descriptions = get_option( 'wpseo_titles' );
-					$description  = $descriptions['metadesc-ptarchive-post_type_characters'];
-					echo '<div class="archive-description"><p>' . $description . '</p><p>Sorted by ' . $sort . '.</div>';
-					echo $selections;
 				?>
+				<div class="archive-description">
+					<?php 
+						echo '<p>' . $description . ' <span class="facetwp-description"></span></p>';
+						echo '<p><span class="facetwp-sorted"></span></p>';
+						echo facetwp_display( 'selections' );
+					?>
+				</div>
 			</header><!-- .archive-header -->
 		</div><!-- .container -->
 	</div><!-- /.jumbotron -->
@@ -40,7 +43,7 @@ get_header(); ?>
 					<div id="content" class="site-content clearfix" role="main">
 						<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 							<div class="entry-content facetwp-template">
-			        			<div class="row site-loop character-archive-loop equal-height">
+								<div class="row site-loop character-archive-loop equal-height">
 									<?php
 									if ( have_posts() ) : ?>
 										<?php

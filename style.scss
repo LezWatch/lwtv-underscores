@@ -4,7 +4,7 @@ Theme URI: https://lezwatchtv.com/
 Author: LezWatchTV
 Author URI: https://lezwatchtv.com/
 Description: LezWatchTV Theme Episode III - Return of the Custom Theme 
-Version: 3.0
+Version: 3.1
 License: GNU General Public License v2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Text Domain: yikes_starter
@@ -214,6 +214,17 @@ input[type="submit"].btn-outline-primary {
 }
 
 
+.close-btn-container {
+  svg {
+    width: 35px;
+    height: 35px;
+    vertical-align: middle;
+  }
+  svg * {
+    fill: $lwtv-pink;
+  }
+}
+
 /* =Typography
     Font CSS is all in the partial _fonts.scss
 ----------------------------------------------- */
@@ -311,6 +322,17 @@ h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
       width: auto;
     }
   }
+  
+  .nav-item.search {
+      svg {
+        height: 15px;
+        width: 15px;
+        vertical-align: middle;
+      }
+      svg * {
+        fill: $white;
+      }
+  }
 
   .header-search-bar {
     background-color: $lwtv-dkgrey;
@@ -379,7 +401,7 @@ h1.entry-title {
 }
 
 .sharedaddy.sd-sharing-enabled {
-	padding: 1.25em;
+    padding: 1.25em;
 }
 
 /* Table of Contents */
@@ -485,6 +507,16 @@ h1.entry-title {
 h2.posts-title {
   color: $lwtv-pink;
   font-weight: 500;
+  
+  svg {
+    width: 30px;
+    height: 30px;
+    vertical-align: middle;
+  }
+  
+  svg * {
+    fill: $lwtv-pink;
+  }
 }
 
 /* Content blocks */
@@ -525,6 +557,16 @@ section {
 
   h2 {
     color: $white;
+
+    svg {
+      width: 30px;
+      height: 30px;
+      vertical-align: middle;
+    }
+
+    svg * {
+      fill: $white;
+    }
   }
 
   .card {
@@ -549,6 +591,27 @@ section {
   @include font-18;
   margin-bottom: 0;
   padding: 3rem 2rem;
+
+  .facetwp-selections li {
+    display: block;
+    margin-top: 0;
+    margin-bottom: 1rem;
+  }
+  
+  .facetwp-selection-label {
+    font-weight: bold;
+  }
+  
+  .facetwp-title {
+    text-transform: capitalize;
+  }
+  
+  li[data-facet="show_loved"],
+  li[data-facet="show_stars"],
+  li[data-facet="show_worthit"] {
+    display: none;
+  }
+  
 }
 
 /* Posts */
@@ -615,6 +678,12 @@ section {
     text-align: center;
     width: 16px;
   }
+  
+  svg {
+    width: 15px;
+    height: 15px;
+    vertical-align: middle;
+  }
 }
 
 footer.entry-meta {
@@ -628,6 +697,12 @@ footer.entry-meta {
     margin-left: 1em;
     width: 16px;
   }
+  
+  svg {
+    width: 15px;
+    height: 15px;
+    vertical-align: middle;
+  }
 }
 
 /* Statistics Pages */
@@ -638,7 +713,7 @@ footer.entry-meta {
   }
 
   ul.statistics.percentages.dead-years {
-	    padding:0;
+        padding:0;
 
         li {
           display: inline-block;
@@ -671,7 +746,7 @@ canvas {
   }
 
   ul.this-year-shows {
-	    padding:0;
+        padding:0;
 
         li {
           display: inline-block;
@@ -731,7 +806,7 @@ canvas {
     }
     
     .card-meta-item {
-	    margin-bottom: .6rem;
+        margin-bottom: .6rem;
     }
   }
 }
@@ -751,6 +826,7 @@ canvas {
   svg {
     width: 15px;
     height: 15px;
+    vertical-align: middle;
   }
 
   svg * {
@@ -763,6 +839,7 @@ canvas {
     width: 25px;
     height: 25px;
     float: right;
+    vertical-align: middle;
   }
 
   svg * {
@@ -847,6 +924,7 @@ article.post_type_shows {}
       height: 50px;
       margin: 5px;
       width: 50px;
+      vertical-align: middle;
     }
   }
 }
@@ -866,6 +944,7 @@ article.post_type_shows {}
     margin: 5px 10px 0 0;
     height: 40px;
     width: 40px;
+    vertical-align: middle;
   }
 
   .callout-danger svg * {
@@ -940,6 +1019,7 @@ article.post_type_shows {}
   }
 }
 
+.card-meta-item.shows,
 .card-meta-item.cliches, 
 .card-meta-item.actors {
   svg {
@@ -980,12 +1060,14 @@ article.post_type_shows {}
   svg {
     width: 60px;
     height: 60px;
+    vertical-align: middle;
   }
 
   .show-heart {
     svg {
       width: 30px;
       height: 30px;
+      vertical-align: middle;
     }
   }
 
@@ -1143,6 +1225,12 @@ embed, iframe, object {
 
     h4 {
       margin-bottom: 0;
+      
+      svg {
+        width: 30px;
+        height: 30px;
+        vertical-align: middle;
+      }
     }
   }
 
@@ -1166,6 +1254,17 @@ embed, iframe, object {
 
   .entry-summary {
     margin: 1em 0 2em;
+  }
+  
+  .card-title{
+    svg {
+      height: 20px;
+      width: 20px;
+      vertical-align: middle;
+    }
+    svg * {
+      fill: $darkgrey;
+    }
   }
 }
 
@@ -1271,6 +1370,17 @@ a.facetwp-page {
   .widget {
     margin: 0 0 1em;
   }
+
+    .card-header {
+      svg {
+        width: 25px;
+        height: 25px;
+        vertical-align: middle;
+      }
+      svg * {
+        fill: $white;
+      }
+    }
 
   .widget_categories, .widget_tag_cloud,
   .widget-tags,  {
