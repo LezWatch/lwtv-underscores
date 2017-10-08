@@ -32,7 +32,7 @@ get_header(); ?>
 				<div class="archive-description">
 					<?php 
 						echo '<h3 class="facetwp-title"></h3>';
-						echo '<p>' . $description . ' <span class="facetwp-description"></span></p>';
+						the_archive_description( '<p>', '<span class="facetwp-description"></span></p>' );
 						echo '<p><span class="facetwp-sorted"></span></p>';
 						echo facetwp_display( 'selections' );
 					?>
