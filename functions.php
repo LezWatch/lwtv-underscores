@@ -56,38 +56,38 @@ function yikes_starter_blog_page_featured_image( $image_size = 'full' ) {
  **/
 function yks_get_page_by_template( $template, $use_transient = false ) {
 
-    if ( $use_transient === true ) {
-        $page_id = get_transient( "wp_page_template_{$template}" );
+	if ( $use_transient === true ) {
+		$page_id = get_transient( "wp_page_template_{$template}" );
 
-        if ( ! empty( $page_id ) ) {
-        	return $page_id;
-    	}
-    }
-    
-    if ( empty( $page_id ) ) {
-        $pages = new WP_Query( array(
-            'post_type' => 'page',
-            'posts_per_page' => '-1',
-            'fields' => 'ids',
-        ) );
+		if ( ! empty( $page_id ) ) {
+			return $page_id;
+		}
+	}
+	
+	if ( empty( $page_id ) ) {
+		$pages = new WP_Query( array(
+			'post_type'      => 'page',
+			'posts_per_page' => '-1',
+			'fields'         => 'ids',
+		) );
 
-        if ( $pages->have_posts() ) {
-            foreach( $pages->posts as $page_id ) {
-                $pagetemplate = get_post_meta( $page_id, '_wp_page_template', true );
-                if ( $pagetemplate === $template ) {
+		if ( $pages->have_posts() ) {
+			foreach( $pages->posts as $page_id ) {
+				$pagetemplate = get_post_meta( $page_id, '_wp_page_template', true );
+				if ( $pagetemplate === $template ) {
 
-                    if ( $use_transient === true ) {
-                        set_transient( "wp_page_template_{$template}", $page_id, 1 * HOUR_IN_SECONDS );
-                    }
+					if ( $use_transient === true ) {
+						set_transient( "wp_page_template_{$template}", $page_id, 1 * HOUR_IN_SECONDS );
+					}
 
-                    return $page_id;
-                }
-            }
-            wp_reset_postdata();
-        }
-    }
+					return $page_id;
+				}
+			}
+			wp_reset_postdata();
+		}
+	}
 
-    return false;
+	return false;
 }
 
 
@@ -145,19 +145,19 @@ require_once 'inc/author-box.php';
 // get rid of the “Category:”, “Tag:”, “Author:”, “Archives:” and “Other taxonomy name:” in the archive title
 
 function yikes_archive_title( $title ) {
-    if ( is_category() ) {
-        $title = single_cat_title( '', false );
-    } elseif ( is_tag() ) {
-        $title = single_tag_title( '', false );
-    } elseif ( is_author() ) {
-        $title = '<span class="vcard">' . get_the_author() . '</span>';
-    } elseif ( is_post_type_archive() ) {
-        $title = post_type_archive_title( '', false );
-    } elseif ( is_tax() ) {
-        $title = single_term_title( '', false );
-    }
+	if ( is_category() ) {
+		$title = single_cat_title( '', false );
+	} elseif ( is_tag() ) {
+		$title = single_tag_title( '', false );
+	} elseif ( is_author() ) {
+		$title = '<span class="vcard">' . get_the_author() . '</span>';
+	} elseif ( is_post_type_archive() ) {
+		$title = post_type_archive_title( '', false );
+	} elseif ( is_tax() ) {
+		$title = single_term_title( '', false );
+	}
   
-    return $title;
+	return $title;
 }
  
 add_filter( 'get_the_archive_title', 'yikes_archive_title' );
@@ -223,83 +223,83 @@ add_action( 'after_setup_theme', 'yikes_starter_setup' );
 function yikes_starter_widgets_init() {
 	// Home Sidebar
 	register_sidebar( array(
-		'name' => __( 'Home Page Sidebar', 'yikes_starter' ),
-		'id' => 'sidebar-1',
-		'description' => 'The sidebar for the home page',
+		'name'          => __( 'Home Page Sidebar', 'yikes_starter' ),
+		'id'            => 'sidebar-1',
+		'description'   => 'The sidebar for the home page',
 		'before_widget' => '<aside id="%1$s" class="widget %2$s">',
-		'after_widget' => '</aside>',
-		'before_title' => '<h2 class="widget-title">',
-		'after_title' => '</h2>',
+		'after_widget'  => '</aside>',
+		'before_title'  => '<h2 class="widget-title">',
+		'after_title'   => '</h2>',
 	) );
 	// Sub Page Sidebar
 	register_sidebar( array(
-		'name' => __( 'Sub Page Sidebar', 'yikes_starter' ),
-		'id' => 'sidebar-2',
-		'description' => 'The sidebar for sub pages',
+		'name'          => __( 'Sub Page Sidebar', 'yikes_starter' ),
+		'id'            => 'sidebar-2',
+		'description'   => 'The sidebar for sub pages',
 		'before_widget' => '<aside id="%1$s" class="widget %2$s">',
-		'after_widget' => '</aside>',
-		'before_title' => '<h2 class="widget-title">',
-		'after_title' => '</h2>',
+		'after_widget'  => '</aside>',
+		'before_title'  => '<h2 class="widget-title">',
+		'after_title'   => '</h2>',
 	) );
 	// Dead Character Widget
 	register_sidebar( array(
-		'name' => __( 'Widget Area of Death', 'yikes_starter' ),
-		'id' => 'dead-1',
-		'description' => 'The home page header widget with the last dead character.',
+		'name'          => __( 'Widget Area of Death', 'yikes_starter' ),
+		'id'            => 'dead-1',
+		'description'   => 'The home page header widget with the last dead character.',
 		'before_widget' => '<aside id="%1$s" class="widget %2$s">',
-		'after_widget' => '</aside>',
-		'before_title' => '<h2 class="widget-title">',
-		'after_title' => '</h2>',
+		'after_widget'  => '</aside>',
+		'before_title'  => '<h2 class="widget-title">',
+		'after_title'   => '</h2>',
 	) );
 	// Footer Widget 1
 	register_sidebar( array(
-		'name' => __( 'Footer Widget Area One', 'yikes_starter' ),
-		'id' => 'footer-1',
-		'description' => 'The first footer widget area.',
+		'name'          => __( 'Footer Widget Area One', 'yikes_starter' ),
+		'id'            => 'footer-1',
+		'description'   => 'The first footer widget area.',
 		'before_widget' => '<aside id="%1$s" class="widget %2$s">',
-		'after_widget' => '</aside>',
-		'before_title' => '<h2 class="widget-title">',
-		'after_title' => '</h2>',
+		'after_widget'  => '</aside>',
+		'before_title'  => '<h2 class="widget-title">',
+		'after_title'   => '</h2>',
 	) );
 	// Footer Widget 2
 	register_sidebar( array(
-		'name' => __( 'Footer Widget Area Two', 'yikes_starter' ),
-		'id' => 'footer-2',
-		'description' => 'The second footer widget area.',
+		'name'          => __( 'Footer Widget Area Two', 'yikes_starter' ),
+		'id'            => 'footer-2',
+		'description'   => 'The second footer widget area.',
 		'before_widget' => '<aside id="%1$s" class="widget %2$s">',
-		'after_widget' => '</aside>',
-		'before_title' => '<h2 class="widget-title">',
-		'after_title' => '</h2>',
+		'after_widget'  => '</aside>',
+		'before_title'  => '<h2 class="widget-title">',
+		'after_title'   => '</h2>',
 	) );
 	// Footer Widget 3
 	register_sidebar( array(
-		'name' => __( 'Footer Widget Area Three', 'yikes_starter' ),
-		'id' => 'footer-3',
-		'description' => 'The third footer widget area.',
+		'name'          => __( 'Footer Widget Area Three', 'yikes_starter' ),
+		'id'            => 'footer-3',
+		'description'   => 'The third footer widget area.',
 		'before_widget' => '<aside id="%1$s" class="widget %2$s">',
-		'after_widget' => '</aside>',
-		'before_title' => '<h2 class="widget-title">',
-		'after_title' => '</h2>',
+		'after_widget'  => '</aside>',
+		'before_title'  => '<h2 class="widget-title">',
+		'after_title'   => '</h2>',
 	) );
 	// Footer Widget 4
 	register_sidebar( array(
-		'name' => __( 'Footer Widget Area Four', 'yikes_starter' ),
-		'id' => 'footer-4',
-		'description' => 'The third footer widget area.',
+		'name'          => __( 'Footer Widget Area Four', 'yikes_starter' ),
+		'id'            => 'footer-4',
+		'description'   => 'The third footer widget area.',
 		'before_widget' => '<aside id="%1$s" class="widget %2$s">',
-		'after_widget' => '</aside>',
-		'before_title' => '<h2 class="widget-title">',
-		'after_title' => '</h2>',
+		'after_widget'  => '</aside>',
+		'before_title'  => '<h2 class="widget-title">',
+		'after_title'   => '</h2>',
 	) );
 	// Credits Widget
 	register_sidebar( array(
-		'name' => __( 'Bottom Footer Widget Area', 'yikes_starter' ),
-		'id' => 'subfooter-1',
-		'description' => 'The bottom footer credits area.',
+		'name'          => __( 'Bottom Footer Widget Area', 'yikes_starter' ),
+		'id'            => 'subfooter-1',
+		'description'   => 'The bottom footer credits area.',
 		'before_widget' => '<aside id="%1$s" class="widget %2$s">',
-		'after_widget' => '</aside>',
-		'before_title' => '<h2 class="widget-title">',
-		'after_title' => '</h2>',
+		'after_widget'  => '</aside>',
+		'before_title'  => '<h2 class="widget-title">',
+		'after_title'   => '</h2>',
 	) );
 	// Sidebar for Character Archives
 	register_sidebar( array(
@@ -343,15 +343,15 @@ add_filter('next_post_link', 'post_link_attributes');
 add_filter('previous_post_link', 'post_link_attributes');
 
 function post_link_attributes($output) {
-    $code = 'class="page-link"';
-    return str_replace('<a href=', '<a '.$code.' href=', $output);
+	$code = 'class="page-link"';
+	return str_replace('<a href=', '<a '.$code.' href=', $output);
 }
 
 add_filter('next_posts_link_attributes', 'posts_link_attributes');
 add_filter('previous_posts_link_attributes', 'posts_link_attributes');
 
 function posts_link_attributes() {
-    return 'class="page-link"';
+	return 'class="page-link"';
 }
 
 

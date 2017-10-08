@@ -14,7 +14,7 @@
  *
  * @see Walker
  */
-class New_Walker_Comment extends Walker {
+class LWTV_Walker_Comment extends Walker {
 
 	/**
 	 * What the class handles.
@@ -241,7 +241,8 @@ class New_Walker_Comment extends Walker {
 ?>
 		<<?php echo $tag; ?> id="comment-<?php comment_ID(); ?>" <?php comment_class( '', $comment ); ?>>
 			<div class="comment-body">
-				<i class="fa fa-share-square-o" aria-hidden="true"></i> <?php _e( 'Pingback:' ); ?> <?php comment_author_link( $comment ); ?> <?php edit_comment_link( __( 'Edit' ), '<span class="edit-link">', '</span>' ); ?>
+				<?php echo lwtv_yikes_symbolicons( 'box_action.svg', 'fa-share-square-o' ); ?>
+				<?php _e( 'Pingback:' ); ?> <?php comment_author_link( $comment ); ?> <?php edit_comment_link( __( 'Edit' ), '<span class="edit-link">', '</span>' ); ?>
 			</div>
 <?php
 	}
@@ -327,7 +328,7 @@ class New_Walker_Comment extends Walker {
 	 */
 	protected function html5_comment( $comment, $depth, $args ) {
 		$tag = ( 'div' === $args['style'] ) ? 'div' : 'li';
-?>
+		?>
 		<<?php echo $tag; ?> id="comment-<?php comment_ID(); ?>" <?php comment_class( $this->has_children ? 'parent' : '', $comment ); ?>>
 			<article id="div-comment-<?php comment_ID(); ?>" class="comment-body clearfix">
 				<div class="row">
@@ -344,7 +345,7 @@ class New_Walker_Comment extends Walker {
 					<div class="col-sm-10">
 						<div class="comment-content clearfix">
 							<div class="comment-metadata">
-								<i class="fa fa-clock-o" aria-hidden="true"></i>
+								<?php echo lwtv_yikes_symbolicons( 'clock.svg', 'fa-clock-o' ); ?>
 								<a href="<?php echo esc_url( get_comment_link( $comment, $args ) ); ?>">
 									<time datetime="<?php comment_time( 'c' ); ?>">
 										<?php
@@ -371,17 +372,16 @@ class New_Walker_Comment extends Walker {
 									'add_below' => 'div-comment',
 									'depth'     => $depth,
 									'max_depth' => $args['max_depth'],
-									'before'    => '<div class="reply btn btn-default btn-sm"><i class="fa fa-reply"></i> ',
+									'before'    => '<div class="reply btn btn-default btn-sm">' . lwtv_yikes_symbolicons( 'undo.svg', 'fa-reply' ),
 									'after'     => '</div>'
 								) ) );
-							?>
-							
 
-							<?php edit_comment_link( __( 'Edit' ), '<span class="edit-link">', '</span>' ); ?>
+								edit_comment_link( __( 'Edit' ), '<span class="edit-link">', '</span>' ); 
+							?>
 						</div><!-- .comment-content -->
 					</div>
 				</div>
 			</article><!-- .comment-body -->
-<?php
+		<?php
 	}
 }

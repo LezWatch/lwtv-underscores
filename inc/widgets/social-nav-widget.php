@@ -50,9 +50,9 @@ class YIKES_Social_Menu_Widget extends WP_Widget {
 		$nav_menu_args = array(
 			'fallback_cb' => '',
 			'menu'        => $menu_id,
-			'link_before'    => "<span {$hide_text}>",
-			'link_after'     => '</span>',
-			'menu_class'    => $orientation,
+			'link_before' => "<span {$hide_text}>",
+			'link_after'  => '</span>',
+			'menu_class'  => $orientation,
 		);
 
 		//Display widget title
@@ -73,7 +73,7 @@ class YIKES_Social_Menu_Widget extends WP_Widget {
 
 	public function update( $new_instance, $old_instance ) {
 		$instance = $old_instance;
-		$instance['title'] = strip_tags( $new_instance['title'] );
+		$instance['title']       = strip_tags( $new_instance['title'] );
 		$instance['hide_text']   = $new_instance['hide_text'] ? 1 : 0;
 		$instance['orientation'] = $new_instance['orientation'];
 		return $instance;
@@ -84,8 +84,8 @@ class YIKES_Social_Menu_Widget extends WP_Widget {
 	 */
 
 	public function form( $instance ) {
-		$title     = isset( $instance['title'] ) ? esc_attr( $instance['title'] ) : '';
-		$hide    = isset( $instance['hide_text'] ) ? $instance['hide_text'] : 0;
+		$title       = isset( $instance['title'] ) ? esc_attr( $instance['title'] ) : '';
+		$hide        = isset( $instance['hide_text'] ) ? $instance['hide_text'] : 0;
 		$orientation = isset( $instance['orientation'] ) ? $instance['orientation'] : '';
 		?>
 		<p>
@@ -111,5 +111,3 @@ function register_yikes_social_menu_widget() {
 	register_widget( 'YIKES_Social_Menu_Widget' );
 }
 add_action( 'widgets_init', 'register_yikes_social_menu_widget' );
-
-?>

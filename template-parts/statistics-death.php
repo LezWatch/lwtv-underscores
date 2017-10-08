@@ -62,9 +62,7 @@ $deadshow_percent = round( ( $deadshows / $allshows ) * 100 , 2 );
 	</div>
 </div>
 
-<p>
-	On average, <strong><?php LWTV_Stats::generate( 'characters', 'dead-years', 'average' ); ?></strong> characters die per year (including years where no queers died).
-</p>
+<p>On average, <strong><?php LWTV_Stats::generate( 'characters', 'dead-years', 'average' ); ?></strong> characters die per year (including years where no queers died).</p>
 
 <div class="container chart-container">
 	<div class="row">

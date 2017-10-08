@@ -12,6 +12,7 @@ get_header(); ?>
 			<header class="archive-header">
 				<h1 class="entry-title">
 					<?php printf( esc_attr__( 'Search Results for: %s', 'yikes_starter' ), '<span>' . get_search_query() . '</span>' ); ?>
+					<span role="img" aria-label="Search Results" title="Search Results" class="taxonomy-svg 404"><?php echo lwtv_yikes_symbolicons( 'search.svg', 'fa-search' ); ?></span>
 				</h1>
 			</header><!-- .archive-header -->
 		</div><!-- .container -->
@@ -27,7 +28,7 @@ get_header(); ?>
 
 						<?php if ( have_posts() ) : ?>
 
-		        			<div class="row site-loop main-posts-loop equal-height">
+							<div class="row site-loop main-posts-loop equal-height">
 
 								<?php while ( have_posts() ) : the_post(); ?>
 

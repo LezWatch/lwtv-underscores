@@ -31,7 +31,7 @@ get_header(); ?>
 
 							<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>	
 								<div class="entry-content">
-				        			<div class="row site-loop main-posts-loop equal-height">
+									<div class="row site-loop main-posts-loop equal-height">
 
 										<?php while ( have_posts() ) : the_post(); ?>
 

@@ -41,7 +41,7 @@ switch ( $statstype ) {
 		break;
 }
 
-$image = '<span role="img" aria-label="statistics" title="Statistics" data-toggle="tooltip" class="taxonomy-svg statistics">' . $image . '</span>';
+$image = '<span role="img" aria-label="statistics" title="Statistics" class="taxonomy-svg statistics">' . $image . '</span>';
 
 // If there's no valid stat, we bail
 if ( !in_array( $statstype, $validstat ) ){

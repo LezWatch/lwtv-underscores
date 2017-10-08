@@ -13,6 +13,7 @@ get_header(); ?>
 			<header class="archive-header">
 				<h1 class="entry-title">
 					<?php esc_attr_e( 'Oops! This isn\'t the page you thought it was.', 'yikes_starter' ); ?>
+					<span role="img" aria-label="404" title="404 - Page Not Found" class="taxonomy-svg 404"><?php echo lwtv_yikes_symbolicons( 'easter_egg.svg', 'fa-gift' ); ?></span>
 				</h1>
 			</header><!-- .archive-header -->
 		</div><!-- .container -->
@@ -28,7 +29,7 @@ get_header(); ?>
 						<article id="post-0" class="post not-found">
 							<div class="entry-content clearfix">
 								<p>
-									<img src="<?php echo get_template_directory_uri(); ?>/images/rose.gif" alt="Rose from Jane the Virgin" />
+									<img src="<?php echo get_template_directory_uri(); ?>/images/rose.gif" alt="Rose revealing herself from Jane the Virgin" />
 								</p>
 								<p>
 									<?php esc_attr_e( 'Sorry, there is no page with this address. Please try again or use the search below.', 'yikes_starter' ); ?>										

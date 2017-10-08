@@ -42,7 +42,19 @@ class Filter_Top extends WP_Widget {
 
 		// If a fontawesome icon is set
 		if ( $fontawesome ) {
-			echo '<i class="fa ' . $fontawesome . ' float-right" aria-hidden="true"></i>';
+			
+			switch ( $fontawesome ) {
+				case 'fa-television':
+					$icon = lwtv_yikes_symbolicons( 'tv_flatscreen.svg', 'fa-television' );
+					break;
+				case 'fa-users':
+					$icon = lwtv_yikes_symbolicons( 'users.svg', 'fa-users' );
+					break;
+				default:
+					$icon = '<i class="fa ' . $fontawesome . ' float-right" aria-hidden="true"></i>';
+			}
+			
+			echo '<span class="float-right">' . $icon . '</span>';
 		}
 
 		// If the title is set
@@ -105,5 +117,3 @@ function register_filter_top() {
 	register_widget( 'Filter_Top' );
 }
 add_action( 'widgets_init', 'register_filter_top' );
-
-?>

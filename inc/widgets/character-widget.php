@@ -1,8 +1,8 @@
 <?php
 
-	/**
-	 * Adds The LWTV Recently Added Character widget.
-	 */
+/**
+ * Adds The LWTV Recently Added Character widget.
+ */
 
 class LWTV_Character extends WP_Widget {
 
@@ -50,15 +50,15 @@ class LWTV_Character extends WP_Widget {
 
 		echo '<div class="card">';
 		echo '<div class="card-header">
-              <h4><i class="fa fa-address-card float-right" aria-hidden="true"></i> Recently Added Character</h4>
+              <h4>Recently Added Character <span class="float-right">' . lwtv_yikes_symbolicons( 'contact_cards.svg', 'fa-address-card' ) . '</span></h4>
           </div>';
 
 		// Featured Image
-        echo '<div class="character-image-wrapper">';
-        echo '<a href="' . get_the_permalink()  .'">';
+		echo '<div class="character-image-wrapper">';
+		echo '<a href="' . get_the_permalink()  .'">';
 		echo the_post_thumbnail( 'character-img', array( 'class' => 'card-img-top' ) );
-        echo '</a>';
-        echo '</div>';
+		echo '</a>';
+		echo '</div>';
 
 		echo '<div class="card-body">';
 
@@ -71,21 +71,21 @@ class LWTV_Character extends WP_Widget {
 		$shows = get_post_meta( get_the_ID(), 'lezchars_show_group', true );
 		foreach ($shows as $show) {
 			$show_post = get_post( $show['show']);
-			echo '<div class="card-meta-item"><i class="fa fa-television" aria-hidden="true"></i> <a href="' . get_the_permalink($show_post->ID)  .'">' . $show_post->post_title .'</a></div>';
+			echo '<div class="card-meta-item shows">' . lwtv_yikes_symbolicons( 'tv_flatscreen.svg', 'fa-television' ) . '&nbsp;<a href="' . get_the_permalink($show_post->ID)  .'">' . $show_post->post_title .'</a></div>';
 		}
 		
 		// Actor
 		$field = get_post_meta( get_the_ID(), 'lezchars_actor', true );
 		$field_value = isset( $field[0] ) ? $field[0] : '';
-		echo '<div class="card-meta-item"><i class="fa fa-user" aria-hidden="true"></i> ' . $field_value  . '</div>';
+		echo '<div class="card-meta-item actors">' . lwtv_yikes_symbolicons( 'person.svg', 'fa-user' ) . '&nbsp;' . $field_value  . '</div>';
 
 		echo '</div>
-            </div>';
+			  </div>';
 
-        // Button
+		// Button
 		echo '<div class="card-footer">
-          	<a href="' . get_the_permalink()  .'" class="btn btn-outline-primary">Character Profile</a>
-          </div>';
+				<a href="' . get_the_permalink()  .'" class="btn btn-outline-primary">Character Profile</a>
+			  </div>';
 
 		echo '</div>';
 
@@ -118,7 +118,7 @@ class LWTV_Character extends WP_Widget {
 
 	public function form( $instance ) {
 
-		$title     = isset( $instance['title'] ) ? $instance['title'] : '';
+		$title = isset( $instance['title'] ) ? $instance['title'] : '';
 
 	?>
 
@@ -137,5 +137,3 @@ function register_lwtv_character() {
 	register_widget( 'LWTV_Character' );
 }
 add_action( 'widgets_init', 'register_lwtv_character' );
-
-?>

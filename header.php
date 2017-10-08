@@ -28,21 +28,21 @@
 			</a>
 			<?php
 				wp_nav_menu( array(
-					'menu'       	=> 'primary',
+					'menu'           => 'primary',
 					'theme_location' => 'primary',
-					'depth'      	=> 3,
-					'container'  	=> false,
-					'link_before'	=> '<span class="menu-link-text">', // Use this for screen readers if using icons 
-					'link_after'	=> '</span>', // Use this for screen readers if using icons 
-					'menu_class' 	=> 'navbar-nav ml-auto',
-					'fallback_cb' 	=> 'wp_page_menu',
-					'walker'	 	=> new wp_bootstrap_navwalker(),
+					'depth'          => 3,
+					'container'      => false,
+					'link_before'    => '<span class="menu-link-text">', // Use this for screen readers if using icons 
+					'link_after'     => '</span>', // Use this for screen readers if using icons 
+					'menu_class'     => 'navbar-nav ml-auto',
+					'fallback_cb'    => 'wp_page_menu',
+					'walker'         => new wp_bootstrap_navwalker(),
 				) );
 			?>
 
 			<span class="nav-item search" id="search-btn">
 				<a class="nav-link" data-toggle="collapse" href="#collapseSearch">
-					<i class="fa fa-search" aria-hidden="true"></i>
+					<?php echo lwtv_yikes_symbolicons( 'search.svg', 'fa-search' ); ?>
 					<span class="screen-reader-text">Search the Site</span>
 				</a> 
 			</span>
@@ -65,18 +65,18 @@
 
 	<div class="site-subheader">
 
-		<?php if (is_front_page() ) {?>
+		<?php if ( is_front_page() && get_query_var( 'page' ) == 0  ) {?>
 
-			<div class="alert alert-danger" role="alert"> 
+			<div class="alert alert-danger" role="alert">
 				<div class="container">
 					<div class="row">
-						<div class="col dead-widget-container">    
+						<div class="col dead-widget-container">
 							<?php dynamic_sidebar( 'dead-1' ); ?>
 						</div>
 					</div>
 				</div>
 			</div>
-			<div class="jumbotron jumbotron-fluid"				
+			<div class="jumbotron jumbotron-fluid"
 				<?php if ( get_header_image() ) : ?>
 					style="background-image: url(<?php header_image(); ?>);"
 				<?php endif; ?>
@@ -94,7 +94,7 @@
 								<?php bloginfo( 'description' ); ?>
 							</h1>
 
-							<?php while ( have_posts() ) : the_post(); ?>	
+							<?php while ( have_posts() ) : the_post(); ?>
 								
 								<?php the_content(); ?>
 

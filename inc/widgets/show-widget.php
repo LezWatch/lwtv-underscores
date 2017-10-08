@@ -26,10 +26,10 @@ class LWTV_Show extends WP_Widget {
 
 		// start a Queery
 		$show_args = array(
-			'post_type' => 'post_type_shows',
+			'post_type'      => 'post_type_shows',
 			'posts_per_page' => '1', 
-			'orderby' => 'date', 
-			'order' => 'DESC'
+			'orderby'        => 'date', 
+			'order'          => 'DESC'
 		);
 
 		// Get what's needed from $args array ($args populated with options from widget area register_sidebar function)
@@ -39,8 +39,8 @@ class LWTV_Show extends WP_Widget {
 		$after_title   = isset( $args['after_title'] ) ? $args['after_title'] : '';
 
 		// Get what's needed from $instanse array ($instance populated with user inputs from widget form)
-		$title     = isset( $instance['title'] ) && ! empty( trim( $instance['title'] ) ) ? $instance['title'] : 'YIKES Example Widget';
-		$title     = apply_filters( 'widget_title', $title, $instance, $this->id_base );
+		$title = isset( $instance['title'] ) && ! empty( trim( $instance['title'] ) ) ? $instance['title'] : 'YIKES Example Widget';
+		$title = apply_filters( 'widget_title', $title, $instance, $this->id_base );
 
 		/** Output widget HTML BEGIN **/
 		echo $before_widget;
@@ -51,13 +51,13 @@ class LWTV_Show extends WP_Widget {
 
 		echo '<div class="card">';
 		echo '<div class="card-header">
-              <h4><i class="fa fa-television float-right" aria-hidden="true"></i> Recently Added Show</h4>
-          </div>';
+				<h4>Recently Added Show <span class="float-right">' . lwtv_yikes_symbolicons( 'tv_flatscreen.svg', 'fa-television' ) . '</span></h4>
+			  </div>';
 
 		// Featured Image
-        echo '<a href="' . get_the_permalink()  .'">';
+		echo '<a href="' . get_the_permalink()  .'">';
 		echo the_post_thumbnail( 'postloop-img', array( 'class' => 'card-img-top' ) );
-        echo '</a>';
+		echo '</a>';
 
 		echo '<div class="card-body">';
 
@@ -72,7 +72,7 @@ class LWTV_Show extends WP_Widget {
 		$stations =  get_the_terms( $post, 'lez_stations');
 		$station_string='';
 		foreach ($stations as $station) {
-			$station_string .= $station->name . ', ';		
+			$station_string .= $station->name . ', ';
 		}
 		echo trim($station_string , ', ');
 		echo '</div>';
@@ -87,12 +87,12 @@ class LWTV_Show extends WP_Widget {
 		echo '<div class="card-excerpt">' . get_the_excerpt() .'</div>';
 
 		echo '</div>
-            </div>';
+			  </div>';
 
-        // Button
+		// Button
 		echo '<div class="card-footer">
-          	<a href="' . get_the_permalink()  .'" class="btn btn-outline-primary">Show Profile</a>
-          </div>';
+				<a href="' . get_the_permalink()  .'" class="btn btn-outline-primary">Show Profile</a>
+			  </div>';
 
 		echo '</div>';
 
@@ -144,5 +144,3 @@ function register_lwtv_show() {
 	register_widget( 'LWTV_Show' );
 }
 add_action( 'widgets_init', 'register_lwtv_show' );
-
-?>

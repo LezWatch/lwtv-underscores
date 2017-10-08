@@ -7,57 +7,18 @@
  * @package LezWatchTV
  */
 
-// Set everything to empty
-$title_prefix = $title_suffix = $icon = '';
+// Get the Term information and icons
+$term         = get_term_by( 'slug', get_query_var( 'term' ), get_query_var( 'taxonomy' ) );
+$iconname     = lwtv_yikes_tax_archive_title( 'icon', get_post_type( get_the_ID() ), get_query_var( 'taxonomy' )  );
+$the_icon     = '<span role="img" aria-label="' . $term->name . '" title="' . $term->name . '" class="taxonomy-svg ' . $term->slug . '"> ' . $iconname . '</span>';
+$title_prefix = lwtv_yikes_tax_archive_title( 'prefix', get_post_type( get_the_ID() ), get_query_var( 'taxonomy' ) );
+$title_suffix = lwtv_yikes_tax_archive_title( 'suffix', get_post_type( get_the_ID() ), get_query_var( 'taxonomy' ) );
 
-// Set the defaults
-$term     = get_term_by( 'slug', get_query_var( 'term' ), get_query_var( 'taxonomy' ) );
-$taxonomy = get_query_var( 'taxonomy' );
-$termicon = get_term_meta( $term->term_id, 'lez_termsmeta_icon', true );
-$svg      = $termicon ? $termicon . '.svg' : 'square.svg';
-
-$count_posts = $term->count;
-
-if ( 'post_type_characters' == get_post_type( get_the_ID() ) || 'post_type_shows' == get_post_type( get_the_ID() ) ) {
-	$count_posts = facetwp_display( 'counts' );
-	
-	switch ( get_post_type( get_the_ID() ) ) {
-		case 'post_type_characters':
-			$title_suffix = ' Characters';
-			break;
-		case 'post_type_shows':
-			$title_prefix = 'TV Shows ';
-
-			// TV Shows are harder to have titles
-			switch ( get_query_var( 'taxonomy' ) ) {
-				case 'lez_tropes':
-					$title_prefix .= 'With The ';
-					$title_suffix .= ' Trope';
-					break;
-				case 'lez_country':
-					$svg = 'globe_stand.svg';
-					$title_prefix .= 'That Originate In ';
-					break;
-				case 'lez_stations':
-					$svg = 'tv_retro.svg';
-					$title_prefix .= 'That Air On ';
-					break;
-				case 'lez_formats':
-					$title_prefix .= 'That Air As ';
-					break;
-				case 'lez_genres':
-					$title_prefix = '';
-					$title_suffix = ' TV Shows';
-					break;
-			}
-			break;
-	}
+// Count Posts: If this is a show or a character taxonomy, we do extra
+$count_posts  = $term->count;
+if ( in_array( get_post_type( get_the_ID() ) , array( 'post_type_shows', 'post_type_characters' ) ) ) {
+	$count_posts  = facetwp_display( 'counts' );
 }
-
-$selections = facetwp_display( 'selections' );
-$sort       = lwtv_yikes_facetwp_sortby( ( isset( $_GET['fwp_sort'] ) )? $_GET['fwp_sort'] : '' );
-$icon       = lwtv_yikes_symbolicons( $svg, 'fa-square' );
-$title      = '<span role="img" aria-label="' . $term->name . '" title="' . $term->name . '" class="taxonomy-svg ' . $term->slug . '"> ' . $icon . '</span>';
 
 get_header(); ?>
 
@@ -66,10 +27,16 @@ get_header(); ?>
 		<div class="container">
 			<header class="archive-header">
 				<?php
-					the_archive_title( '<h1 class="facetwp-page-title entry-title">' . $title_prefix . $title, $title_suffix . ' (' . $count_posts . '<span class="facetwp-count"></span>)</h1>' );
-					the_archive_description( '<div class="archive-description">', '<p>Sorted by ' . $sort . '.</p></div>' );
-					echo $selections;
+					the_archive_title( '<h1 class="facetwp-page-title entry-title">' . $title_prefix, $title_suffix . ' (' . $count_posts . '<span class="facetwp-count"></span>)' . $the_icon . '</h1>' );
 				?>
+				<div class="archive-description">
+					<?php 
+						echo '<h3 class="facetwp-title"></h3>';
+						echo '<p>' . $description . ' <span class="facetwp-description"></span></p>';
+						echo '<p><span class="facetwp-sorted"></span></p>';
+						echo facetwp_display( 'selections' );
+					?>
+				</div>
 			</header><!-- .archive-header -->
 		</div><!-- .container -->
 	</div><!-- /.jumbotron -->
@@ -83,7 +50,7 @@ get_header(); ?>
 					<div id="content" class="site-content clearfix" role="main">
 						<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 							<div class="entry-content facetwp-template">
-			        			<div class="row site-loop show-archive-loop equal-height">
+								<div class="row site-loop show-archive-loop equal-height">
 									<?php
 									if ( have_posts() ) : ?>
 										<?php
@@ -100,7 +67,7 @@ get_header(); ?>
 													break;
 												default:
 													get_template_part( 'template-parts/content', 'posts' );
-											}				
+											}
 									endwhile; ?>
 								</div><!-- .site-loop -->
 
@@ -110,7 +77,7 @@ get_header(); ?>
 								else :
 									get_template_part( 'template-parts/content', 'none' );
 						
-								endif; ?>				
+								endif; ?>
 							</div><!-- .entry-content -->
 						</article><!-- #post-## -->
 					</div><!-- #content -->
