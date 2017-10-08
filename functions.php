@@ -4,6 +4,11 @@
  *
  * @package YIKES Starter
  */
+ 
+// Define theme version so CSS shit doesn't break. Again.
+if ( ! defined( 'LWTV_THEME_VERSION' ) ) {
+	define( 'LWTV_THEME_VERSION', '3.1.0' );
+}
 
 /* Set the content width based on the theme's design and stylesheet.  */
 if ( ! isset( $content_width ) ) {
@@ -358,7 +363,7 @@ function posts_link_attributes() {
 /*************  Enqueue scripts and styles *************/
 
 function yikes_starter_scripts() {
-	wp_enqueue_style( 'yikes-starter-style', get_stylesheet_directory_uri() . '/style.min.css' );
+	wp_enqueue_style( 'yikes-starter-style', get_stylesheet_directory_uri() . '/style.min.css', array(), LWTV_THEME_VERSION );
 
 	// combined + minified
 	// navigation.js & skip-link-focus-fix.js
