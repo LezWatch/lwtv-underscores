@@ -25,7 +25,6 @@ $archive     = ( is_archive() || is_tax() || is_page() )? true : false;
 
 // Reset to prevent Teri Polo from overtaking the world
 unset( $shows, $actors, $gender, $sexuality, $cliches, $grave );
-
 ?>
 
 <div class="card"> 

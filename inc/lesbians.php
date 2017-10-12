@@ -351,7 +351,7 @@ function lwtv_yikes_chardata( $the_ID, $data ) {
 			// Show nothing on archive pages for dead
 			if ( !empty( $term ) && $term->slug == 'dead' ) { 
 				return;
-			} elseif ( get_post_meta( $the_ID, 'lezchars_death_year', true ) ) {
+			} elseif ( has_term( 'dead', 'lez_cliches' , $the_ID ) ) {
 				$output = '<span role="img" aria-label="RIP Tombstone" title="RIP Tombstone" class="charlist-grave">' . lwtv_yikes_symbolicons( 'rip_gravestone.svg', 'fa-times-circle' ) . '</span>';
 			}
 			break;

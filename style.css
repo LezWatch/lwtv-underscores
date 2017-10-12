@@ -1188,6 +1188,30 @@ h3 svg * {
   margin-top: -20px;
 }
 
+.archive .callout svg {
+  float: right;
+  height: 25px;
+  width: 25px;
+  vertical-align: top;
+  padding-right: 5px;
+}
+.archive .callout-danger svg *,
+.archive .callout-we-love svg * {
+  fill: #c0392b;
+}
+.archive .callout-info, .archive .callout-warning svg * {
+  fill: #f1c40f;
+}
+.archive .callout-star-gold svg * {
+  fill: #FFD700;
+}
+.archive .callout-star-silver svg * {
+  fill: #C0C0C0;
+}
+.archive .callout-star-bronze svg * {
+  fill: #B87333;
+}
+
 /* =Media
 ----------------------------------------------- */
 img {
@@ -1258,6 +1282,10 @@ img {
 
 .gallery-caption {
   display: block;
+}
+
+figure.gallery-item {
+  display: inline-block;
 }
 
 /* Make sure embeds and iframes fit their containers */

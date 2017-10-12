@@ -9,7 +9,10 @@
 // We don't use this on characters yet. We might later
 // use it to show death? Or characters we love? Let's
 // keep options open.
-$icon  = '<div class="character-header-svg">';
+$icon  = '<div class="show-header-svg">';
+if ( has_term( 'dead', 'lez_cliches' ) ) {
+	$icon .= ' <span role="img" aria-label="RIP - Dead Character" data-toggle="tooltip" title="RIP - Dead Character" class="cliche-dead">' . lwtv_yikes_symbolicons( 'rip_gravestone.svg', 'fa-square' ) . '</span>';
+}
 $icon .= '</div>';
  
 get_header(); ?>
