@@ -8,7 +8,7 @@ function lwtv_author_box( $content ) {
 	global $post;
 	
 	// Bail Early
-	if ( is_singular( 'post' ) && isset( $post->post_author ) ) {
+	if ( is_singular( 'post' ) && isset( $post->post_author ) && !is_amp_endpoint() ) {
 
 		$author = $post->post_author;
 		 

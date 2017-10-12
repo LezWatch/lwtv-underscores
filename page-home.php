@@ -160,7 +160,9 @@ get_header(); ?>
 											}
 											$airdates = get_post_meta( get_the_ID(), 'lezshows_airdates', true );
 											if ( $airdates ) {
-												echo '<strong>Airdates:</strong> '. $airdates['start'] .' - '. $airdates['finish'] .'<br />';
+												$airdate  = $airdates['start'] . ' - ' . $airdates['finish'];
+												if ( $airdates['start'] == $airdates['finish'] ) { $airdate = $airdates['finish']; }
+												echo '<strong>Airdates:</strong> '. $airdate .'<br />';
 											}
 										?>
 									</div>

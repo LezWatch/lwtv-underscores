@@ -109,7 +109,9 @@
 					$info_array['networks'] = get_the_term_list( $this->ID, 'lez_stations', '<strong>Network(s):</strong> ', ', ' );
 				}
 				if ( $airdates ) {
-					$info_array['airdates'] =  '<strong>Airdates:</strong> '. $airdates['start'] .' - '. $airdates['finish'];
+					$airdate  = $airdates['start'] . ' - ' . $airdates['finish'];
+					if ( $airdates['start'] == $airdates['finish'] ) { $airdate = $airdates['finish']; }
+					$info_array['airdates'] =  '<strong>Airdates:</strong> '. $airdate;
 				}
 
 				if ( $tropes && ! is_wp_error( $tropes ) ) {

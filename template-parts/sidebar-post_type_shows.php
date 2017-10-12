@@ -63,7 +63,9 @@ $screentime   = min( (int) get_post_meta( $show_id, 'lezshows_screentime_rating'
 					}
 					if ( get_post_meta($show_id, 'lezshows_airdates', true) ) {
 						$airdates = get_post_meta( $show_id, 'lezshows_airdates', true );
-						echo '<li class="list-group-item network airdates"><strong>Airdates:</strong> '. $airdates['start'] .' - '. $airdates['finish'] .'</li>';
+						$airdate  = $airdates['start'] . ' - ' . $airdates['finish'];
+						if ( $airdates['start'] == $airdates['finish'] ) { $airdate = $airdates['finish']; }
+						echo '<li class="list-group-item network airdates"><strong>Airdates:</strong> '. $airdate .'</li>';
 					}
 					?>
 				</ul>

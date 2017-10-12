@@ -78,10 +78,14 @@ class LWTV_Show extends WP_Widget {
 		echo '</div>';
 		
 		// Airdates
-		$field = get_post_meta( get_the_ID(), 'lezshows_airdates', true );
-		$start = isset( $field['start'] ) ? $field['start'] : '';
-		$finish = isset( $field['finish'] ) ? $field['finish'] : '';
-		echo '<div class="card-meta-item"><strong>Airdates:</strong> ' . $start  . ' - ' . $finish  . '</div>';
+		$field   = get_post_meta( get_the_ID(), 'lezshows_airdates', true );
+		$start   = isset( $field['start'] ) ? $field['start'] : '';
+		$finish  = isset( $field['finish'] ) ? $field['finish'] : '';
+		$airdate = $start  . ' - ' . $finish;
+		
+		if ( $start == $finish ) { $airdate = $finish; }
+		
+		echo '<div class="card-meta-item"><strong>Airdates:</strong> ' . $airdate . '</div>';
 
 		// Excerpt
 		echo '<div class="card-excerpt">' . get_the_excerpt() .'</div>';
