@@ -49,7 +49,7 @@ function lwtv_author_box( $content ) {
 		$author_details .= ( ! empty( $user_website ) )? '<div class="author-website">' . lwtv_yikes_symbolicons( 'earth.svg', 'fa-globe' ) . '&nbsp;<a href="' . $user_website . '" target="_blank" rel="nofollow">Website</a> </div>' : '';
 		
 		// Add favourite shows if they're there
-		$author_details .= ( isset( $favourites ) && !empty( $favourites ) )? '<div class="author-favourites">' . lwtv_yikes_symbolicons( 'television.svg', 'fa-tv' ) . '&nbsp;Favourite ' . $fav_title . ': ' . $favourites . '</div>' : '';
+		$author_details .= ( isset( $favourites ) && !empty( $favourites ) )? '<div class="author-favourites">' . lwtv_yikes_symbolicons( 'tv_flatscreen.svg', 'fa-television' ) . '&nbsp;Favorite ' . $fav_title . ': ' . $favourites . '</div>' : '';
 		
 		$author_details .= '</div>';
 		
