@@ -20,22 +20,41 @@ function lwtv_author_box( $content ) {
 		$user_description = ( get_the_author_meta( 'user_description', $author ) )? get_the_author_meta( 'user_description', $author ) : '';
 		 
 		// Get author's website URL 
-		$user_website = get_the_author_meta('url', $author);
+		$user_website = get_the_author_meta( 'url', $author );
 		 
 		// Get link to the author archive page
-		$user_posts = get_author_posts_url( get_the_author_meta( 'ID' , $author));
+		$user_posts = get_author_posts_url( get_the_author_meta( 'ID' , $author ) );
 		
+		// Get author Fav Shows
+		$all_fav_shows = get_the_author_meta( 'lez_user_favourite_shows', $author );
+		if ( $all_fav_shows !== '' ) {
+			$show_title = array();
+			foreach ( $all_fav_shows as $each_show ) {
+				if ( get_post_status ( $each_show ) !== 'publish' ) {
+					array_push( $show_title, '<em><span class="disabled-show-link">' . get_the_title( $each_show ) . '</span></em>' );
+				} else {
+					array_push( $show_title, '<em><a href="' . get_permalink( $each_show ) . '">' . get_the_title( $each_show ) . '</a></em>' );
+				}
+			}
+			$favourites = ( empty( $show_title ) )? '' : implode( ', ', $show_title );
+			$fav_title =  _n( 'Show', 'Shows', count( $show_title ) );
+		}
+
 		// Author avatar, name and bio		 
 		$author_details  = '<div class="col-sm-3">' . get_avatar( get_the_author_meta('user_email') , 190 ) . '</div>';
 		$author_details .= '<div class="col-sm-9"><h4 class="author_name">About ' . $display_name . '</h4><div class="author-bio">' . nl2br( $user_description ) . '</div>';
 		$author_details .= '<div class="author-archives">' . lwtv_yikes_symbolicons( 'newspaper.svg', 'fa-newspaper-o' ) . '&nbsp;<a href="'. $user_posts .'">View all articles by ' . $display_name . '</a></div>'; 
 		
 		// Add URL if it's there
-		$author_details .= ( ! empty( $user_website ) )? '<div class="author-website">' . lwtv_yikes_symbolicons( 'earth.svg', 'fa-globe' ) . '&nbsp;<a href="' . $user_website . '" target="_blank" rel="nofollow">Website</a></div></div>' : '</div>';
-		 	 
+		$author_details .= ( ! empty( $user_website ) )? '<div class="author-website">' . lwtv_yikes_symbolicons( 'earth.svg', 'fa-globe' ) . '&nbsp;<a href="' . $user_website . '" target="_blank" rel="nofollow">Website</a> </div>' : '';
+		
+		// Add favourite shows if they're there
+		$author_details .= ( isset( $favourites ) && !empty( $favourites ) )? '<div class="author-favourites">' . lwtv_yikes_symbolicons( 'television.svg', 'fa-tv' ) . '&nbsp;Favourite ' . $fav_title . ': ' . $favourites . '</div>' : '';
+		
+		$author_details .= '</div>';
+		
 		// Pass all this info to post content  
 		$content = $content . '<section class="author-bio-box"><div class="row">' . $author_details . '</div></section>';
-	
 	}
 	
 	return $content;
