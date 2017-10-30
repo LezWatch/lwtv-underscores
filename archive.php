@@ -10,7 +10,7 @@ $archive_details = '<div class="archive-header-details">';
 
 if ( is_author() ) {
 	// Use the Gravatar
-	$icon .= get_avatar();
+	$icon .= get_avatar( get_the_author_meta( 'user_email' ) );
 	
 	// Get author's website URL 
 	$user_twitter = get_the_author_meta( 'twitter' );
