@@ -61,11 +61,15 @@ $screentime   = min( (int) get_post_meta( $show_id, 'lezshows_screentime_rating'
 					if ( $formats && ! is_wp_error( $formats ) ) {
 						echo '<li class="list-group-item network formats">'. get_the_term_list( $show_id, 'lez_formats', '<strong>Show Format:</strong> ', ', ' ) .'</li>';
 					}
-					if ( get_post_meta($show_id, 'lezshows_airdates', true) ) {
+					if ( get_post_meta( $show_id, 'lezshows_airdates', true ) ) {
 						$airdates = get_post_meta( $show_id, 'lezshows_airdates', true );
 						$airdate  = $airdates['start'] . ' - ' . $airdates['finish'];
 						if ( $airdates['start'] == $airdates['finish'] ) { $airdate = $airdates['finish']; }
 						echo '<li class="list-group-item network airdates"><strong>Airdates:</strong> '. $airdate .'</li>';
+					}
+					$genres = get_the_terms( $show_id, 'lez_genres' );
+					if ( $genres && ! is_wp_error( $genres ) ) {
+						echo '<li class="list-group-item network genres">'. get_the_term_list( $show_id, 'lez_genres', '<strong>Genres:</strong> ', ', ' ) .'</li>';
 					}
 					?>
 				</ul>

@@ -20,7 +20,7 @@ function lwtv_author_box( $content ) {
 		$user_description = ( get_the_author_meta( 'user_description', $author ) )? get_the_author_meta( 'user_description', $author ) : '';
 		 
 		// Get author's website URL 
-		$user_website = get_the_author_meta( 'url', $author );
+		$user_twitter = get_the_author_meta( 'twitter', $author );
 		 
 		// Get link to the author archive page
 		$user_posts = get_author_posts_url( get_the_author_meta( 'ID' , $author ) );
@@ -45,8 +45,8 @@ function lwtv_author_box( $content ) {
 		$author_details .= '<div class="col-sm-9"><h4 class="author_name">About ' . $display_name . '</h4><div class="author-bio">' . nl2br( $user_description ) . '</div>';
 		$author_details .= '<div class="author-archives">' . lwtv_yikes_symbolicons( 'newspaper.svg', 'fa-newspaper-o' ) . '&nbsp;<a href="'. $user_posts .'">View all articles by ' . $display_name . '</a></div>'; 
 		
-		// Add URL if it's there
-		$author_details .= ( ! empty( $user_website ) )? '<div class="author-website">' . lwtv_yikes_symbolicons( 'earth.svg', 'fa-globe' ) . '&nbsp;<a href="' . $user_website . '" target="_blank" rel="nofollow">Website</a> </div>' : '';
+		// Add Twitter if it's there
+		$author_details .= ( ! empty( $user_twitter ) )? '<div class="author-twitter">' . lwtv_yikes_symbolicons( 'twitter.svg', 'fa-twitter' ) . '&nbsp;<a href="https://twitter.com/' . $user_twitter . '" target="_blank" rel="nofollow">@' . $user_twitter . '</a> </div>' : '';
 		
 		// Add favourite shows if they're there
 		$author_details .= ( isset( $favourites ) && !empty( $favourites ) )? '<div class="author-favourites">' . lwtv_yikes_symbolicons( 'tv_flatscreen.svg', 'fa-television' ) . '&nbsp;Favorite ' . $fav_title . ': ' . $favourites . '</div>' : '';

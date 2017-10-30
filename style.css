@@ -2,7 +2,7 @@
 /*
 Theme Name: LezWatchTV
 Theme URI: https://lezwatchtv.com/
-Author: LezWatchTV
+Author: Tracy Levesque, Mika Epstein
 Author URI: https://lezwatchtv.com/
 Description: LezWatchTV Theme Episode III - Return of the Custom Theme 
 Version: 3.1
@@ -330,13 +330,6 @@ input[type="tel"]:focus, input[type="time"]:focus, input[type="url"]:focus, inpu
   background-color: #fff;
   border-color: #80bdff;
   outline: none;
-}
-textarea::-webkit-input-placeholder, select::-webkit-input-placeholder, input[type="text"]::-webkit-input-placeholder, input[type="date"]::-webkit-input-placeholder,
-input[type="datetime-local"]::-webkit-input-placeholder, input[type="email"]::-webkit-input-placeholder, input[type="month"]::-webkit-input-placeholder,
-input[type="number"]::-webkit-input-placeholder, input[type="password"]::-webkit-input-placeholder, input[type="search"]::-webkit-input-placeholder,
-input[type="tel"]::-webkit-input-placeholder, input[type="time"]::-webkit-input-placeholder, input[type="url"]::-webkit-input-placeholder, input[type="week"]::-webkit-input-placeholder {
-  color: #868e96;
-  opacity: 1;
 }
 textarea:-ms-input-placeholder, select:-ms-input-placeholder, input[type="text"]:-ms-input-placeholder, input[type="date"]:-ms-input-placeholder,
 input[type="datetime-local"]:-ms-input-placeholder, input[type="email"]:-ms-input-placeholder, input[type="month"]:-ms-input-placeholder,
@@ -1180,6 +1173,42 @@ h3 svg * {
   fill: #fff;
 }
 
+.archive-header .archive-header-icon {
+  float: right;
+  margin-top: -14px;
+}
+.archive-header .archive-header-icon svg {
+  height: 50px;
+  margin: 5px;
+  width: 50px;
+  vertical-align: middle;
+}
+.archive-header .archive-header-details {
+  color: #fff;
+  font-size: 0.875rem;
+}
+.archive-header .archive-header-details div {
+  margin-bottom: 0.4em;
+}
+.archive-header .archive-header-details a {
+  text-decoration: underline;
+}
+.archive-header .archive-header-details a:hover {
+  color: #8d329f;
+}
+.archive-header .archive-header-details .fa {
+  text-align: center;
+  width: 16px;
+}
+.archive-header .archive-header-details svg {
+  width: 20px !important;
+  height: 20px;
+  vertical-align: middle;
+}
+.archive-header .archive-header-details svg * {
+  fill: #fff;
+}
+
 .taxonomy-svg svg,
 .taxonomy-svg i.fa {
   width: 100px;
@@ -1439,6 +1468,36 @@ span.svg-shortcode a svg {
 }
 span.svg-shortcode a:hover svg {
   fill: #222;
+}
+
+.glossary.term svg {
+  width: 32px;
+  height: 32px;
+  vertical-align: middle;
+  margin-right: 10px;
+}
+
+.author-box {
+  background-color: #ebf5fa;
+  font-size: 0.875rem;
+}
+.author-box .avatar {
+  border: 1px solid #d1548e;
+}
+.author-box .author-bio {
+  margin-bottom: 0.4rem;
+}
+.author-box .author-details {
+  clear: both;
+}
+.author-box .fa {
+  text-align: center;
+  width: 16px;
+}
+.author-box svg {
+  width: 15px;
+  height: 15px;
+  vertical-align: middle;
 }
 
 /*--------------------------------------------------------------
