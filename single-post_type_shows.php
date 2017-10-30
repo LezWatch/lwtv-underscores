@@ -9,8 +9,12 @@
 $icon = '<div class="show-header-svg">';
 
 // Show star if applicable:
-if ( get_post_meta( get_the_ID(), 'lezshows_stars', true) ) {
+if ( get_post_meta( get_the_ID(), 'lezshows_stars', true ) || get_the_terms( get_the_ID(), 'lez_stars' ) ) {
 	$color = esc_attr( get_post_meta( get_the_ID(), 'lezshows_stars' , true ) );
+	if ( get_the_terms( get_the_ID(), 'lez_stars' ) ) {
+		$color_term = get_the_terms( get_the_ID(), 'lez_stars' );
+		$color = $color_term[0]->slug;
+	}
 	$star  = lwtv_yikes_symbolicons( 'star.svg', 'fa-star' );
 	$icon .= ' <span role="img" aria-label="' . ucfirst( $color ) . ' Star Show" data-toggle="tooltip" title="' . ucfirst( $color ) . ' Star Show" class="show-star ' . $color . '">' . $star . '</span>';
 }

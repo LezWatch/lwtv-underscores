@@ -192,6 +192,10 @@ function lwtv_yikes_tax_archive_title( $location, $posttype, $taxonomy ) {
 					$title_prefix = '';
 					$title_suffix = ' TV Shows';
 					break;
+				case 'lez_stars':
+					$title_prefix .= 'With A ';
+					$icon          = lwtv_yikes_symbolicons( 'star.svg', 'fa-star' );
+					break;
 			}
 			break;
 	}

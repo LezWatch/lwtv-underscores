@@ -2,7 +2,7 @@
 /*
 Theme Name: LezWatchTV
 Theme URI: https://lezwatchtv.com/
-Author: LezWatchTV
+Author: Tracy Levesque, Mika Epstein
 Author URI: https://lezwatchtv.com/
 Description: LezWatchTV Theme Episode III - Return of the Custom Theme 
 Version: 3.1
@@ -1173,6 +1173,42 @@ h3 svg * {
   fill: #fff;
 }
 
+.archive-header .archive-header-icon {
+  float: right;
+  margin-top: -14px;
+}
+.archive-header .archive-header-icon svg {
+  height: 50px;
+  margin: 5px;
+  width: 50px;
+  vertical-align: middle;
+}
+.archive-header .archive-header-details {
+  color: #fff;
+  font-size: 0.875rem;
+}
+.archive-header .archive-header-details div {
+  margin-bottom: 0.4em;
+}
+.archive-header .archive-header-details a {
+  text-decoration: underline;
+}
+.archive-header .archive-header-details a:hover {
+  color: #8d329f;
+}
+.archive-header .archive-header-details .fa {
+  text-align: center;
+  width: 16px;
+}
+.archive-header .archive-header-details svg {
+  width: 20px !important;
+  height: 20px;
+  vertical-align: middle;
+}
+.archive-header .archive-header-details svg * {
+  fill: #fff;
+}
+
 .taxonomy-svg svg,
 .taxonomy-svg i.fa {
   width: 100px;
@@ -1439,6 +1475,29 @@ span.svg-shortcode a:hover svg {
   height: 32px;
   vertical-align: middle;
   margin-right: 10px;
+}
+
+.author-box {
+  background-color: #ebf5fa;
+  font-size: 0.875rem;
+}
+.author-box .avatar {
+  border: 1px solid #d1548e;
+}
+.author-box .author-bio {
+  margin-bottom: 0.4rem;
+}
+.author-box .author-details {
+  clear: both;
+}
+.author-box .fa {
+  text-align: center;
+  width: 16px;
+}
+.author-box svg {
+  width: 15px;
+  height: 15px;
+  vertical-align: middle;
 }
 
 /*--------------------------------------------------------------

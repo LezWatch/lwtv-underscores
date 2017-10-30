@@ -5,6 +5,41 @@
  * @package YIKES Starter
  */
 
+$icon            = '<div class="archive-header-icon">';
+$archive_details = '<div class="archive-header-details">';
+
+if ( is_author() ) {
+	// Use the Gravatar
+	$icon .= get_avatar();
+	
+	// Get author's website URL 
+	$user_twitter = get_the_author_meta( 'twitter' );
+
+	// Get author Fav Shows
+	$all_fav_shows = get_the_author_meta( 'lez_user_favourite_shows' );
+	if ( $all_fav_shows !== '' ) {
+		$show_title = array();
+		foreach ( $all_fav_shows as $each_show ) {
+			if ( get_post_status ( $each_show ) !== 'publish' ) {
+				array_push( $show_title, '<em><span class="disabled-show-link">' . get_the_title( $each_show ) . '</span></em>' );
+			} else {
+				array_push( $show_title, '<em><a href="' . get_permalink( $each_show ) . '">' . get_the_title( $each_show ) . '</a></em>' );
+			}
+		}
+		$favourites = ( empty( $show_title ) )? '' : implode( ', ', $show_title );
+		$fav_title =  _n( 'Show', 'Shows', count( $show_title ) );
+	}
+
+	// Add Twitter if it's there
+	$archive_details .= ( ! empty( $user_twitter ) )? '<div class="author-twitter">' . lwtv_yikes_symbolicons( 'twitter.svg', 'fa-twitter' ) . '&nbsp;<a href="https://twitter.com/' . $user_twitter . '" target="_blank" rel="nofollow">@' . $user_twitter . '</a> </div>' : '';
+
+	// Add favourite shows if they're there
+	$archive_details .= ( isset( $favourites ) && !empty( $favourites ) )? '<div class="author-favourites">' . lwtv_yikes_symbolicons( 'tv_flatscreen.svg', 'fa-television' ) . '&nbsp;Favorite ' . $fav_title . ': ' . $favourites . '</div>' : '';
+}
+
+$icon            .= '</div>';
+$archive_details .= '</div>';
+
 get_header(); ?>
 
 <div class="archive-subheader">
@@ -12,8 +47,8 @@ get_header(); ?>
 		<div class="container">
 			<header class="archive-header">
 				<?php
-					the_archive_title( '<h1 class="entry-title">', '</h1>' );
-					the_archive_description( '<div class="taxonomy-description">', '</div>' );
+					the_archive_title( '<h1 class="entry-title">', $icon . '</h1>' );
+					the_archive_description( '<div class="archive-description">', $archive_details . '</div>' );
 				?>
 			</header><!-- .archive-header -->
 		</div><!-- .container -->
@@ -32,23 +67,16 @@ get_header(); ?>
 							<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>	
 								<div class="entry-content">
 									<div class="row site-loop main-posts-loop equal-height">
-
 										<?php while ( have_posts() ) : the_post(); ?>
-
 											<div class="col-sm-4">
 												<?php get_template_part( 'template-parts/content', 'posts' ); ?>
 											</div>
-
 										<?php endwhile; ?>
-
 									</div>
-
 									<?php wp_bootstrap_pagination(); ?>
 
 									<?php else : ?>
-
 										<?php get_template_part( 'template-parts/content', 'none' ); ?>
-
 									<?php endif; ?>
 
 								</div>
@@ -65,6 +93,5 @@ get_header(); ?>
 		</div><!-- .row -->
 	</div><!-- .container -->
 </div><!-- #main -->
-
 
 <?php get_footer();
