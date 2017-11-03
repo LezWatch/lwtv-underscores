@@ -951,10 +951,8 @@ article.post_type_shows {}
     fill: $red;
   }
 
-  .callout-info, .callout-warning {
-    svg * {
-      fill: $lwtv-yellow;
-    }
+  .callout-info svg *, .callout-warning svg * {
+    fill: $lwtv-yellow;
   }
 
 }
