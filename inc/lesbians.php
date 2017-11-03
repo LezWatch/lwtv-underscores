@@ -117,7 +117,7 @@ function lwtv_yikes_jetpack_post_meta( ) {
 function lwtv_yikes_archive_sort_order( $query ) {
 	if ( $query->is_main_query() && !is_admin() ) {
 		$posttypes  = array( 'post_type_characters', 'post_type_shows' );
-		$taxonomies = array( 'lez_cliches', 'lez_gender', 'lez_sexuality', 'lez_tropes', 'lez_country', 'lez_stations', 'lez_formats', 'lez_genres' );
+		$taxonomies = array( 'lez_cliches', 'lez_gender', 'lez_sexuality', 'lez_tropes', 'lez_country', 'lez_stations', 'lez_formats', 'lez_genres', 'lez_stars', 'lez_triggers' );
 		if ( is_post_type_archive( $posttypes ) || is_tax( $taxonomies ) ) {
 			$query->set( 'order', 'ASC' );
 			$query->set( 'orderby', 'title' );
