@@ -40,7 +40,7 @@
 		</div>
 		<div class="col-sm-6">
 			<h3>Trigger Warnings</h3>
-			<?php LWTV_Stats::generate( 'shows', 'trigger', 'piechart' ); ?>
+			<?php LWTV_Stats::generate( 'shows', 'triggers', 'piechart' ); ?>
 		</div>
 	</div>
 	<div class="row">

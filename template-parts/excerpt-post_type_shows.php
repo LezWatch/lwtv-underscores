@@ -28,17 +28,12 @@ global $post;
 				// The Game of Thrones Flag of Gratuitious Violence
 				$warning    = lwtv_yikes_content_warning( get_the_ID() );
 				$warn_image = lwtv_yikes_symbolicons( 'alert.svg', 'fa-exclamation-triangle' );
-				
 				if ( $warning['card'] != 'none' ) {
 					echo '<span class="callout callout-' . $warning['card'] . '" role="img" aria-label="Warning - This show contains triggers" title="Warning - This show contains trigers">' . $warn_image . '</span>';
 				}
 
 				// Stars of Queerness
-				if ( get_post_meta( get_the_ID(), 'lezshows_stars', true) ) {
-					$color = esc_attr( get_post_meta( get_the_ID(), 'lezshows_stars' , true ) );
-					$star  = lwtv_yikes_symbolicons( 'star.svg', 'fa-star' );
-					echo '<span role="img" aria-label="' . ucfirst( $color ) . ' Star Show" data-toggle="tooltip" title="' . ucfirst( $color ) . ' Star Show" class="callout callout-star-' . $color . '">' . $star . '</span>';
-				}
+				echo '<span class="callout">' . lwtv_yikes_show_star( get_the_ID() ) . '</span>';
 
 				// Hearts of Lurve
 				if ( get_post_meta( get_the_ID(), 'lezshows_worthit_show_we_love', true) ) {

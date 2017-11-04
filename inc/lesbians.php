@@ -117,7 +117,7 @@ function lwtv_yikes_jetpack_post_meta( ) {
 function lwtv_yikes_archive_sort_order( $query ) {
 	if ( $query->is_main_query() && !is_admin() ) {
 		$posttypes  = array( 'post_type_characters', 'post_type_shows' );
-		$taxonomies = array( 'lez_cliches', 'lez_gender', 'lez_sexuality', 'lez_tropes', 'lez_country', 'lez_stations', 'lez_formats', 'lez_genres' );
+		$taxonomies = array( 'lez_cliches', 'lez_gender', 'lez_sexuality', 'lez_tropes', 'lez_country', 'lez_stations', 'lez_formats', 'lez_genres', 'lez_stars', 'lez_triggers' );
 		if ( is_post_type_archive( $posttypes ) || is_tax( $taxonomies ) ) {
 			$query->set( 'order', 'ASC' );
 			$query->set( 'orderby', 'title' );
@@ -196,6 +196,11 @@ function lwtv_yikes_tax_archive_title( $location, $posttype, $taxonomy ) {
 					$title_prefix .= 'With A ';
 					$icon          = lwtv_yikes_symbolicons( 'star.svg', 'fa-star' );
 					break;
+				case 'lez_triggers':
+					$title_prefix .= 'With A ';
+					$title_suffix .= ' Trigger Warning';
+					$icon          = lwtv_yikes_symbolicons( 'alert.svg', 'fa-exclamation-triangle' );
+					break;
 			}
 			break;
 	}
@@ -207,6 +212,31 @@ function lwtv_yikes_tax_archive_title( $location, $posttype, $taxonomy ) {
 
 
 /** THE DISPLAY SECTION **/
+
+/**
+ * Show star
+ *
+ * If a show has a star, let's show it.
+ *
+ * @access public
+ * @return void
+ */
+function lwtv_yikes_show_star( $show_id ) {
+	$star_terms = get_the_terms( $show_id, 'lez_stars' );
+
+	if ( get_post_meta( $show_id, 'lezshows_stars', true ) || ( !empty( $star_terms ) && !is_wp_error( $star_terms ) ) ) {
+		$color = esc_attr( get_post_meta( $show_id, 'lezshows_stars' , true ) );
+		if ( !empty( $star_terms ) && !is_wp_error( $star_terms ) ) {
+			$color_term = get_the_terms( $show_id, 'lez_stars' );
+			$color = $color_term[0]->slug;
+		}
+		$star = ' <span role="img" aria-label="' . ucfirst( $color ) . ' Star Show" data-toggle="tooltip" title="' . ucfirst( $color ) . ' Star Show" class="show-star ' . $color . '">' . lwtv_yikes_symbolicons( 'star.svg', 'fa-star' ) . '</span>';
+		return $star;
+	} else {
+		return;
+	}
+
+}
 
 /**
  * Show content warning
@@ -226,25 +256,26 @@ function lwtv_yikes_content_warning( $show_id ) {
 	// If there's no post ID passed or it's not a show, we show nothing.
 	if ( is_null( $show_id ) || get_post_type( $show_id ) !== 'post_type_shows' ) return $warning_array;
 	
-	switch ( get_post_meta( $show_id, 'lezshows_triggerwarning', true ) ) {
+	$trigger_terms = get_the_terms( $show_id, 'lez_triggers' );
+	$trigger = ( !empty( $trigger_terms ) && !is_wp_error( $trigger_terms ) )? $trigger_terms[0]->slug : get_post_meta( $show_id, 'lezshows_triggerwarning', true );
+	$warning_array['content'] = ( !empty( $trigger_terms ) && !is_wp_error( $trigger_terms ) )? term_description( $trigger_terms[0]->term_id, 'lez_triggers' ) : '<strong>WARNING</strong> This show may be upsetting to watch.';
+	
+	switch ( $trigger ) {
 		case "on":
+		case "high":
 			$warning_array['card']    = 'danger';
-			$warning_array['content'] = '<strong>WARNING!</strong> This show contains scenes of explicit violence, drug use, suicide, sex, and/or abuse.';
 			break;
 		case "med":
+		case "medium":
 			$warning_array['card']    = 'warning';
-			$warning_array['content'] = '<strong>CAUTION!</strong> This show regularly discusses and sometimes depicts "strong content" like violence and abuse.';
 			break;
 		case "low":
 			$warning_array['card']    = 'info';
-			$warning_array['content'] = '<strong>NOTICE!</strong> While generally acceptable for the over 14 crowd, this show may hit some sensitive topics now and then.';
 			break;
 		default:
 			$warning_array['card']    = 'none';
 			$warning_array['content'] = 'none';
 	}
-
-	$warning_array['content'] .= ' If those aren\'t your speed, neither is this show.';
 
 	return $warning_array;
 }
