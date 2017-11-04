@@ -25,6 +25,12 @@ $archive     = ( is_archive() || is_tax() || is_page() )? true : false;
 
 // Reset to prevent Teri Polo from overtaking the world
 unset( $shows, $actors, $gender, $sexuality, $cliches, $grave );
+
+
+// Show a gravestone for recurring characters
+if ( ( $role == 'recurring' && 'post_type_shows' == get_post_type() ) ) {
+	$grave = ( get_post_meta( $the_ID, 'lezchars_death_year', true ) )? '<span role="img" aria-label="RIP Tombstone" title="RIP Tombstone" class="charlist-grave-sm">' . lwtv_yikes_symbolicons( 'rip_gravestone.svg', 'fa-times-circle' ) . '</span>' : '';
+}
 ?>
 
 <div class="card"> 
@@ -38,8 +44,11 @@ unset( $shows, $actors, $gender, $sexuality, $cliches, $grave );
 	<div class="card-body">
 		<h4 class="card-title">
 			<a href="<?php the_permalink( $the_ID ); ?>" title="<?php the_title_attribute( $the_ID ); ?>" >
-				<?php echo get_the_title( $the_ID ); ?>
-				<?php if ( $archive ) echo lwtv_yikes_chardata( $the_ID, 'dead' ); ?>
+				<?php 
+					echo get_the_title( $the_ID );
+					if ( $archive ) echo lwtv_yikes_chardata( $the_ID, 'dead' ); 
+					if ( isset( $grave ) ) echo ' ' . $grave;
+				?>
 			</a>
 		</h4>
 		<div class="card-text">
@@ -56,7 +65,7 @@ unset( $shows, $actors, $gender, $sexuality, $cliches, $grave );
 				$sexuality = lwtv_yikes_chardata( $the_ID, 'sexuality' );
 				$cliches   = lwtv_yikes_chardata( $the_ID, 'cliches' );
 			}
-			
+
 			if ( ( $role == 'regular' && 'post_type_shows' == get_post_type() ) || $archive ) {
 				$actors    = lwtv_yikes_chardata( $the_ID, 'actors' );
 			}

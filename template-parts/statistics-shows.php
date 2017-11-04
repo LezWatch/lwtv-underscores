@@ -77,7 +77,7 @@
 		</div>
 		<div class="col-sm-6">
 			<h3>Trigger Warnings</h3>
-			<?php LWTV_Stats::generate( 'shows', 'trigger', 'percentage' ); ?>
+			<?php LWTV_Stats::generate( 'shows', 'triggers', 'percentage' ); ?>
 		</div>
 	</div>
 	<div class="row">

@@ -48,6 +48,10 @@ $screentime   = min( (int) get_post_meta( $show_id, 'lezshows_screentime_rating'
 						if ( ( get_post_meta( $show_id, 'lezshows_worthit_details', true ) ) ) {
 							echo apply_filters( 'the_content', wp_kses_post( get_post_meta( $show_id, 'lezshows_worthit_details', true ) ) );
 						}
+
+					// Calculate the show score and echo
+					LWTV_Shows_Calculate::do_the_math( $show_id );
+					echo '<strong>Show Score:</strong> ' . round( get_post_meta( $show_id, 'lezshows_the_score', true ), 2 );
 					?>
 				</div>
 	
