@@ -87,7 +87,7 @@ if ( ( $role == 'recurring' && 'post_type_shows' == get_post_type() ) ) {
 			// List of Actors
 			if ( isset( $actors ) ) {
 				$num_actors = count( $actors );
-				$actorsmore = ( $num_actors > 2 )? ', and ' . $num_actors .' more' : '';
+				$actorsmore = ( $num_actors > 2 )? ', and ' . ( $num_actors - 2 ) .' more' : '';
 				$actors     = array_slice($actors, 0, 2);
 				echo '<div class="card-meta-item actors">' . lwtv_yikes_symbolicons( 'person.svg', 'fa-user' ) . '&nbsp;' . implode( ", ", $actors ) . $actorsmore . '</div>';
 			}
