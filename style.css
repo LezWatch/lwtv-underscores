@@ -154,6 +154,13 @@ nav.yikes-pagination {
 .pagination li.page-item a.page-link {
   color: #d1548e;
 }
+.pagination li.page-item svg {
+  width: 12px;
+  height: 12px;
+}
+.pagination li.page-item svg * {
+  fill: #fff;
+}
 .pagination li.page-item.active .page-link {
   background-color: #d1548e;
   border-color: #d1548e;
@@ -693,6 +700,15 @@ h1.entry-title {
 .site-loop .card .card-body .card-meta .fa {
   margin-left: 0.6em;
 }
+.site-loop .card .card-body .card-meta svg {
+  margin-left: 0.6em;
+  width: 20px;
+  height: 20px;
+  vertical-align: middle;
+}
+.site-loop .card .card-body .card-meta svg * {
+  fill: #868e96;
+}
 .site-loop .card .card-body .card-text .fa {
   text-align: center;
   width: 22px;
@@ -810,6 +826,15 @@ section {
   font-weight: 600;
   margin-top: .75rem;
   padding-bottom: 1rem;
+}
+.entry-header .entry-meta svg {
+  margin-left: 0.6em;
+  height: 22px;
+  width: 22px;
+  vertical-align: middle;
+}
+.entry-header .entry-meta svg * {
+  fill: #555;
 }
 .entry-header .entry-meta .fa {
   margin-left: 0.6em;
@@ -1529,6 +1554,9 @@ a.facetwp-page {
   color: #fff;
   background-color: #d1548e;
   border-color: #d1548e;
+}
+.facetwp-pager li.page-item svg * {
+  fill: #d1548e;
 }
 .facetwp-pager li.page-link {
   color: #d1548e;

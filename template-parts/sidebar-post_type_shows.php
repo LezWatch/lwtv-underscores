@@ -31,9 +31,9 @@ $screentime   = min( (int) get_post_meta( $show_id, 'lezshows_screentime_rating'
 			<div class="ratings-icons worthit-<?php echo lcfirst( $thumb_rating ); ?>">
 				<div class="worthit">
 					<?php
-					if ( $thumb_rating == "Yes" ) { $thumb_icon = "thumbs_up.svg"; }
-					if ( $thumb_rating == "Meh" ) { $thumb_icon = "meh-o.svg"; }
-					if ( $thumb_rating == "No" )  { $thumb_icon = "thumbs_down.svg"; }
+					if ( $thumb_rating == "Yes" ) { $thumb_icon = "thumbs-up.svg"; }
+					if ( $thumb_rating == "Meh" ) { $thumb_icon = "meh.svg"; }
+					if ( $thumb_rating == "No" )  { $thumb_icon = "thumbs-down.svg"; }
 	
 					$thumb_image = lwtv_yikes_symbolicons( $thumb_icon, 'fa-square' );
 					echo '<span role="img" class="show-worthit ' . lcfirst( $thumb_rating ) . '">' . $thumb_image . '</span>';

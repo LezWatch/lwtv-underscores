@@ -130,6 +130,13 @@ nav.yikes-pagination {
     a.page-link {
       color: $lwtv-pink;
     }
+    svg {
+      width: 12px;
+      height: 12px;
+    }
+    svg * {
+      fill: $white;
+    }
     &.active {
       .page-link {
         background-color: $lwtv-pink;
@@ -473,6 +480,16 @@ h1.entry-title {
         .fa {
           margin-left: 0.6em;
         }
+
+        svg {
+          margin-left: 0.6em;
+          width: 20px;
+          height: 20px;
+          vertical-align: middle;
+        }
+        svg * {
+          fill: #868e96;
+        }
       }
 
       .card-text {
@@ -629,8 +646,15 @@ section {
     font-weight: 600;
     margin-top: .75rem;
     padding-bottom: 1rem;
-
-
+    svg {
+      margin-left: 0.6em;
+      height: 22px;
+      width: 22px;
+      vertical-align: middle;
+    }
+    svg * {
+      fill: $lwtv-medgrey;
+    }
     .fa {
       margin-left: 0.6em;
     }
@@ -1425,7 +1449,9 @@ a.facetwp-page {
     background-color: $lwtv-pink;
     border-color: $lwtv-pink;
   }
-  
+  li.page-item svg * {
+    fill: $lwtv-pink;
+  }
   li.page-link {
     color: $lwtv-pink;
   } 

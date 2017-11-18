@@ -29,7 +29,7 @@ unset( $shows, $actors, $gender, $sexuality, $cliches, $grave );
 
 // Show a gravestone for recurring characters
 if ( ( $role == 'recurring' && 'post_type_shows' == get_post_type() ) ) {
-	$grave = ( get_post_meta( $the_ID, 'lezchars_death_year', true ) )? '<span role="img" aria-label="RIP Tombstone" title="RIP Tombstone" class="charlist-grave-sm">' . lwtv_yikes_symbolicons( 'rip_gravestone.svg', 'fa-times-circle' ) . '</span>' : '';
+	$grave = ( get_post_meta( $the_ID, 'lezchars_death_year', true ) )? '<span role="img" aria-label="RIP Tombstone" title="RIP Tombstone" class="charlist-grave-sm">' . lwtv_yikes_symbolicons( 'rest-in-peace.svg', 'fa-times-circle' ) . '</span>' : '';
 }
 ?>
 
@@ -81,7 +81,7 @@ if ( ( $role == 'recurring' && 'post_type_shows' == get_post_type() ) ) {
 					}
 				}
 				$on_shows = ( empty( $show_title ) )? '<em>None</em>' : implode( ', ', $show_title );
-				echo '<div class="card-meta-item shows">' . lwtv_yikes_symbolicons( 'tv_flatscreen.svg', 'fa-television' ) . '&nbsp;' . $on_shows . '</div>';
+				echo '<div class="card-meta-item shows">' . lwtv_yikes_symbolicons( 'tv-hd.svg', 'fa-television' ) . '&nbsp;' . $on_shows . '</div>';
 			}
 
 			// List of Actors
@@ -89,7 +89,7 @@ if ( ( $role == 'recurring' && 'post_type_shows' == get_post_type() ) ) {
 				$num_actors = count( $actors );
 				$actorsmore = ( $num_actors > 2 )? ', and ' . ( $num_actors - 2 ) .' more' : '';
 				$actors     = array_slice($actors, 0, 2);
-				echo '<div class="card-meta-item actors">' . lwtv_yikes_symbolicons( 'person.svg', 'fa-user' ) . '&nbsp;' . implode( ", ", $actors ) . $actorsmore . '</div>';
+				echo '<div class="card-meta-item actors">' . lwtv_yikes_symbolicons( 'user.svg', 'fa-user' ) . '&nbsp;' . implode( ", ", $actors ) . $actorsmore . '</div>';
 			}
 
 			// Gender and Sexuality

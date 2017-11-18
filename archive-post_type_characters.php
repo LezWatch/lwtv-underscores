@@ -8,7 +8,7 @@
  */
 
 // Determine icon (Font-Awesome fallback)
-$icon         = lwtv_yikes_symbolicons( 'users.svg', 'fa-users' );
+$icon         = lwtv_yikes_symbolicons( 'contact-card.svg', 'fa-users' );
 $count_posts  = facetwp_display( 'counts' );
 $title        = '<span role="img" aria-label="post_type_characters" title="Characters" class="taxonomy-svg characters">' . $icon . '</span>';
 $descriptions = get_option( 'wpseo_titles' );

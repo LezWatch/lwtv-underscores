@@ -13,8 +13,9 @@
 		<div class="card-body">
 			<h3 class="card-title"><?php the_title(); ?></h3>
 			<div class="card-meta text-muted">
-				<?php the_date(); ?>
-				<i class="fa fa-user-circle-o" aria-hidden="true"></i> <?php the_author(); ?>
+				<?php the_date(); ?> 
+				<?php echo lwtv_yikes_symbolicons( 'user-circle.svg', 'fa-user-circle-o' ); ?> 
+				<?php the_author(); ?>
 			</div>
 			<div class="card-text">
 				<?php the_excerpt(); ?>

@@ -7,7 +7,7 @@
 
 switch ( get_post_type( $post->ID ) ) {
 	case 'post_type_shows':
-		$searchicon = lwtv_yikes_symbolicons( 'tv_flatscreen.svg', 'fa-television' );
+		$searchicon = lwtv_yikes_symbolicons( 'tv-hd.svg', 'fa-television' );
 		break;
 	case 'post_type_characters':
 		$searchicon = lwtv_yikes_symbolicons( 'female.svg', 'fa-female' );
