@@ -49,9 +49,7 @@ class LWTV_Character extends WP_Widget {
 			$queery->the_post();
 
 		echo '<div class="card">';
-		echo '<div class="card-header">
-              <h4>Recently Added Character <span class="float-right">' . lwtv_yikes_symbolicons( 'contact_cards.svg', 'fa-address-card' ) . '</span></h4>
-          </div>';
+		echo '<div class="card-header"><h4>Recently Added Character <span class="float-right">' . lwtv_yikes_symbolicons( 'contact_cards.svg', 'fa-address-card' ) . '</span></h4></div>';
 
 		// Featured Image
 		echo '<div class="character-image-wrapper">';

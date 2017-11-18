@@ -124,7 +124,7 @@ get_header(); ?>
 		<div class="container site-loop">
 			<div class="row">
 				<div class="col">
-					<h2>Shows We Love <?php echo lwtv_yikes_symbolicons( 'heart.svg', 'fa-heart' ); ?></h2>
+					<h2>Shows We Love <?php echo lwtv_yikes_symbolicons( 'hearts.svg', 'fa-heart' ); ?></h2>
 				</div>
 			</div>
 			<div class="row">

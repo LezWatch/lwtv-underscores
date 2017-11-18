@@ -178,11 +178,11 @@ function lwtv_yikes_tax_archive_title( $location, $posttype, $taxonomy ) {
 					$title_suffix .= ' Trope';
 					break;
 				case 'lez_country':
-					$icon          = lwtv_yikes_symbolicons( 'earth.svg', 'fa-globe' );
+					$icon          = lwtv_yikes_symbolicons( 'globe.svg', 'fa-globe' );
 					$title_prefix .= 'That Originate In ';
 					break;
 				case 'lez_stations':
-					$icon          = lwtv_yikes_symbolicons( 'antenna.svg', 'fa-bullhorn' );
+					$icon          = lwtv_yikes_symbolicons( 'signal-range.svg', 'fa-bullhorn' );
 					$title_prefix .= 'That Air On ';
 					break;
 				case 'lez_formats':

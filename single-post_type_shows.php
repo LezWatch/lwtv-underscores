@@ -13,7 +13,7 @@ $icon .= lwtv_yikes_show_star( get_the_ID() );
 
 // Show love if applicable:
 if ( get_post_meta( get_the_ID(), 'lezshows_worthit_show_we_love', true) ) {
-	$heart = lwtv_yikes_symbolicons( 'heart.svg', 'fa-heart' );
+	$heart = lwtv_yikes_symbolicons( 'hearts.svg', 'fa-heart' );
 	$icon .= ' <span role="img" aria-label="We Love This Show!" data-toggle="tooltip" title="We Love This Show!" class="show-we-love">' . $heart . '</span>';
 }
 
