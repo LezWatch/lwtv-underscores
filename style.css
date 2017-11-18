@@ -1133,6 +1133,7 @@ h3.post-title.excerpt {
   width: 60px;
   height: 60px;
   vertical-align: middle;
+  margin: 2px;
 }
 .ratings-icons .show-heart svg {
   width: 30px;
