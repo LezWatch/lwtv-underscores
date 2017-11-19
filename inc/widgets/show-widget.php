@@ -51,7 +51,7 @@ class LWTV_Show extends WP_Widget {
 
 		echo '<div class="card">';
 		echo '<div class="card-header">
-				<h4>Recently Added Show <span class="float-right">' . lwtv_yikes_symbolicons( 'tv_flatscreen.svg', 'fa-television' ) . '</span></h4>
+				<h4>Recently Added Show <span class="float-right">' . lwtv_yikes_symbolicons( 'tv-hd.svg', 'fa-television' ) . '</span></h4>
 			  </div>';
 
 		// Featured Image

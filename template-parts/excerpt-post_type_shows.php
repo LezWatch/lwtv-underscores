@@ -27,7 +27,7 @@ global $post;
 				<?php
 				// The Game of Thrones Flag of Gratuitious Violence
 				$warning    = lwtv_yikes_content_warning( get_the_ID() );
-				$warn_image = lwtv_yikes_symbolicons( 'alert.svg', 'fa-exclamation-triangle' );
+				$warn_image = lwtv_yikes_symbolicons( 'warning.svg', 'fa-exclamation-triangle' );
 				if ( $warning['card'] != 'none' ) {
 					echo '<span class="callout callout-' . $warning['card'] . '" role="img" aria-label="Warning - This show contains triggers" title="Warning - This show contains trigers">' . $warn_image . '</span>';
 				}
@@ -37,7 +37,7 @@ global $post;
 
 				// Hearts of Lurve
 				if ( get_post_meta( get_the_ID(), 'lezshows_worthit_show_we_love', true) ) {
-					$heart = lwtv_yikes_symbolicons( 'heart.svg', 'fa-heart' );
+					$heart = lwtv_yikes_symbolicons( 'hearts.svg', 'fa-heart' );
 					echo ' <span role="img" aria-label="We Love This Show!" data-toggle="tooltip" title="We Love This Show!" class="callout callout-we-love">' . $heart . '</span>';
 				}
 

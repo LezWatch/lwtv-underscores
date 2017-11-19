@@ -20,11 +20,11 @@ if ( ! function_exists( 'yikes_starter_paging_nav' ) ) :
 		<nav aria-label="Post Pages navigation" role="navigation">
 			<ul class="pagination justify-content-between">
 				<?php if ( get_previous_posts_link() ) : ?>
-				<li class="page-item previous"><?php previous_posts_link( __( '<i class="fa fa-chevron-circle-left" aria-hidden="true"></i>&nbsp; Previous', 'yikes_starter' ) ); ?></li>
+				<li class="page-item previous"><?php previous_posts_link( __( lwtv_yikes_symbolicons( 'caret-left-circle.svg', 'fa-chevron-circle-left' ) . ' Previous', 'yikes_starter' ) ); ?></li>
 				<?php endif; ?>
 
 				<?php if ( get_next_posts_link() ) : ?>
-				<li class="page-item next"><?php next_posts_link( __( 'Next &nbsp;<i class="fa fa-chevron-circle-right" aria-hidden="true"></i>', 'yikes_starter' ) ); ?></li>
+				<li class="page-item next"><?php next_posts_link( __( 'Next ' . lwtv_yikes_symbolicons( 'caret-right-circle.svg', 'fa-chevron-circle-right' ), 'yikes_starter' ) ); ?></li>
 				<?php endif; ?>
 			</ul>
 		</nav><!-- .navigation -->
@@ -48,8 +48,8 @@ if ( ! function_exists( 'yikes_starter_post_nav' ) ) :
 		<nav aria-label="Post Navigation" role="navigation">
 			<ul class="pagination justify-content-between">
 				<?php
-					previous_post_link( '<li class="page-item previous">%link</li>', _x( '<i class="fa fa-chevron-circle-left" aria-hidden="true"></i>&nbsp; Previous Post', 'Previous post link', 'yikes_starter' ) );
-					next_post_link( '<li class="page-item next">%link</li>', _x( 'Next Post &nbsp <i class="fa fa-chevron-circle-right" aria-hidden="true"></i>', 'Next post link', 'yikes_starter' ) );
+					previous_post_link( '<li class="page-item previous">%link</li>', _x( lwtv_yikes_symbolicons( 'caret-left-circle.svg', 'fa-chevron-circle-left' ) . ' Previous Post', 'Previous post link', 'yikes_starter' ) );
+					next_post_link( '<li class="page-item next">%link</li>', _x( 'Next Post ' . lwtv_yikes_symbolicons( 'caret-right-circle.svg', 'fa-chevron-circle-right' ), 'Next post link', 'yikes_starter' ) );
 				?>
 			</ul>
 		</nav><!-- .navigation -->
@@ -73,7 +73,7 @@ if ( ! function_exists( 'yikes_starter_posted_on' ) ) :
 
 			$posted_on = sprintf(
 				esc_html_x( '%s', 'post date', 'yikes_starter' ),
-				$time_string . ' <i class="fa fa-user-circle-o" aria-hidden="true"></i>'
+				$time_string . lwtv_yikes_symbolicons( 'user-circle.svg', 'fa-user-circle-o' )
 			);
 
 			$byline = sprintf(
@@ -183,7 +183,7 @@ function yikes_generate_pagination_buttons( $page_number, $max_num_pages, $view_
 	<nav aria-label="Post Pages navigation" role="navigation" class="yikes-pagination">
 		<ul class="pagination justify-content-center">
 			<li class="page-item previous mr-auto">
-				<?php previous_posts_link( '<i class="fa fa-chevron-circle-left" aria-hidden="true"></i><span>&nbsp; Previous</span>' ); ?>
+				<?php previous_posts_link( lwtv_yikes_symbolicons( 'caret-left-circle.svg', 'fa-chevron-circle-left' ) . ' Previous</span>' ); ?>
 			</li>
 
 			<!-- Page Number Buttons -->
@@ -191,7 +191,7 @@ function yikes_generate_pagination_buttons( $page_number, $max_num_pages, $view_
 
 			<?php if ( $view_all !== false ) { echo '<li><a href="' . esc_attr( $view_all ) . '" class="page-link"><span>View All</span></a></li>'; } ?>
 			<li class="page-item next ml-auto">
-				<?php next_posts_link( '<span>Next &nbsp;</span><i class="fa fa-chevron-circle-right" aria-hidden="true"></i>', $max_num_pages ); ?>					
+				<?php next_posts_link( '<span>Next </span>' . lwtv_yikes_symbolicons( 'caret-right-circle.svg', 'fa-chevron-circle-right' ), $max_num_pages ); ?>					
 			</li>
 		</ul>
 	</nav>

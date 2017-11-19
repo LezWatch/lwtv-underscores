@@ -234,8 +234,8 @@ function lwtv_yikes_this_year_navigation( $thisyear ) {
 			// If it's not 1961, we can show the first year we have queers
 			if ( $thisyear !== $lastyear ) {
 				?>
-				<li class="page-item first mr-auto"><a href="<?php echo $baseurl . $lastyear . '/'; ?>" class="page-link"><i class="fa fa-chevron-circle-left" aria-hidden="true"></i> First (<?php echo $lastyear; ?>)</a></li>
-				<li class="page-item previous"><a href="<?php echo $baseurl . ( $thisyear - 1 ) . '/'; ?>" title="previous year" class="page-link"><i class="fa fa-chevron-circle-left" aria-hidden="true"></i> Previous</a></li>	
+				<li class="page-item first mr-auto"><a href="<?php echo $baseurl . $lastyear . '/'; ?>" class="page-link"><?php echo lwtv_yikes_symbolicons( 'caret-left-circle.svg', 'fa-chevron-circle-left' ); ?> First (<?php echo $lastyear; ?>)</a></li>
+				<li class="page-item previous"><a href="<?php echo $baseurl . ( $thisyear - 1 ) . '/'; ?>" title="previous year" class="page-link"><?php echo lwtv_yikes_symbolicons( 'caret-left.svg', 'fa-chevron-left' ); ?> Previous</a></li>	
 				<li class="page-item"><a href="<?php echo $baseurl . ( $thisyear - 2 ) . '/'; ?>" class="page-link"><?php echo ( $thisyear - 2 ); ?></a></li>
 				<li class="page-item"><a href="<?php echo $baseurl . ( $thisyear - 1 ) . '/'; ?>" class="page-link"><?php echo ( $thisyear - 1 ); ?></a></li>
 				<?php
@@ -248,8 +248,8 @@ function lwtv_yikes_this_year_navigation( $thisyear ) {
 			if ( $thisyear !== date('Y') ) {
 				?>
 				<li class="page-item"><a href="<?php echo $baseurl . ( $thisyear +1 ) . '/'; ?>" class="page-link"><?php echo ( $thisyear + 1 ); ?></a></li>
-				<li class="page-item next"><a href="<?php echo $baseurl . ( $thisyear +1 ) . '/'; ?>" class="page-link" title="next year">Next <i class="fa fa-chevron-circle-right" aria-hidden="true"></i></a></li>
-				<li class="page-item last ml-auto"><a href="<?php echo $baseurl . date( 'Y' ) . '/'; ?>" class="page-link">Last (<?php echo date( 'Y' ); ?>) <i class="fa fa-chevron-circle-right" aria-hidden="true"></i></a></li>
+				<li class="page-item next"><a href="<?php echo $baseurl . ( $thisyear +1 ) . '/'; ?>" class="page-link" title="next year">Next <?php echo lwtv_yikes_symbolicons( 'caret-right-circle.svg', 'fa-chevron-circle-right' ); ?></a></li>
+				<li class="page-item last ml-auto"><a href="<?php echo $baseurl . date( 'Y' ) . '/'; ?>" class="page-link">Last (<?php echo date( 'Y' ); ?>)<?php echo lwtv_yikes_symbolicons( 'caret-right.svg', 'fa-chevron-right' ); ?></a></li>
 				<?php
 			}
 			?>

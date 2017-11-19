@@ -49,9 +49,7 @@ class LWTV_Character extends WP_Widget {
 			$queery->the_post();
 
 		echo '<div class="card">';
-		echo '<div class="card-header">
-              <h4>Recently Added Character <span class="float-right">' . lwtv_yikes_symbolicons( 'contact_cards.svg', 'fa-address-card' ) . '</span></h4>
-          </div>';
+		echo '<div class="card-header"><h4>Recently Added Character <span class="float-right">' . lwtv_yikes_symbolicons( 'contact-card.svg', 'fa-address-card' ) . '</span></h4></div>';
 
 		// Featured Image
 		echo '<div class="character-image-wrapper">';
@@ -77,7 +75,7 @@ class LWTV_Character extends WP_Widget {
 		// Actor
 		$field = get_post_meta( get_the_ID(), 'lezchars_actor', true );
 		$field_value = isset( $field[0] ) ? $field[0] : '';
-		echo '<div class="card-meta-item actors">' . lwtv_yikes_symbolicons( 'person.svg', 'fa-user' ) . '&nbsp;' . $field_value  . '</div>';
+		echo '<div class="card-meta-item actors">' . lwtv_yikes_symbolicons( 'user.svg', 'fa-user' ) . '&nbsp;' . $field_value  . '</div>';
 
 		echo '</div>
 			  </div>';

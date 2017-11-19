@@ -178,11 +178,11 @@ function lwtv_yikes_tax_archive_title( $location, $posttype, $taxonomy ) {
 					$title_suffix .= ' Trope';
 					break;
 				case 'lez_country':
-					$icon          = lwtv_yikes_symbolicons( 'earth.svg', 'fa-globe' );
+					$icon          = lwtv_yikes_symbolicons( 'globe.svg', 'fa-globe' );
 					$title_prefix .= 'That Originate In ';
 					break;
 				case 'lez_stations':
-					$icon          = lwtv_yikes_symbolicons( 'antenna.svg', 'fa-bullhorn' );
+					$icon          = lwtv_yikes_symbolicons( 'satellite-signal.svg', 'fa-bullhorn' );
 					$title_prefix .= 'That Air On ';
 					break;
 				case 'lez_formats':
@@ -199,7 +199,7 @@ function lwtv_yikes_tax_archive_title( $location, $posttype, $taxonomy ) {
 				case 'lez_triggers':
 					$title_prefix .= 'With A ';
 					$title_suffix .= ' Trigger Warning';
-					$icon          = lwtv_yikes_symbolicons( 'alert.svg', 'fa-exclamation-triangle' );
+					$icon          = lwtv_yikes_symbolicons( 'warning.svg', 'fa-exclamation-triangle' );
 					break;
 			}
 			break;
@@ -387,7 +387,7 @@ function lwtv_yikes_chardata( $the_ID, $data ) {
 			if ( !empty( $term ) && $term->slug == 'dead' ) { 
 				return;
 			} elseif ( has_term( 'dead', 'lez_cliches' , $the_ID ) ) {
-				$output = '<span role="img" aria-label="RIP Tombstone" title="RIP Tombstone" class="charlist-grave">' . lwtv_yikes_symbolicons( 'rip_gravestone.svg', 'fa-times-circle' ) . '</span>';
+				$output = '<span role="img" aria-label="Grim Reaper" title="Grim Reaper" class="charlist-grave">' . lwtv_yikes_symbolicons( 'grim-reaper.svg', 'fa-times-circle' ) . '</span>';
 			}
 			break;
 		case 'shows':

@@ -34,7 +34,7 @@ $queery = new WP_Query ( array(
 ) );
 
 $count_posts = facetwp_display( 'counts' );
-$icon        = lwtv_yikes_symbolicons( 'person.svg', 'fa-person' );
+$icon        = lwtv_yikes_symbolicons( 'user.svg', 'fa-person' );
 $title       = '<span role="img" aria-label="post_type_characters" title="Characters" class="taxonomy-svg characters">' . $icon . '</span>';
 
 get_header(); ?>
