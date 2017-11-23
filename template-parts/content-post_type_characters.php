@@ -22,8 +22,10 @@ if ( $all_shows !== '' ) {
 }
 
 $on_shows = ( empty( $show_title ) )? ' None' : ': ' . implode( ', ', $show_title );
-$on_title =  _n( 'Show', 'Shows', count( $show_title ) );
-$appears  = '<strong>' . $on_title . '</strong>' . $on_shows;
+if ( isset( $show_title ) && count( $show_title ) !== 0 ) {
+	$on_title =  _n( 'Show', 'Shows', count( $show_title ) );
+	$appears  = '<strong>' . $on_title . '</strong>' . $on_shows;
+}
 
 // Generate actors
 // Usage: $actors

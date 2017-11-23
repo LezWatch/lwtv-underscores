@@ -53,12 +53,6 @@ if ( ( $role == 'recurring' && 'post_type_shows' == get_post_type() ) ) {
 		</h4>
 		<div class="card-text">
 			<?php
-
-			// Shows: Only show on NON show pages
-			if ( 'post_type_shows' !== get_post_type() ) {
-				$shows = lwtv_yikes_chardata( $the_ID, 'shows' );
-			}
-
 			// If we're a regular we show it all
 			if ( $role == 'regular' && 'post_type_shows' == get_post_type() ) {
 				$gender    = lwtv_yikes_chardata( $the_ID, 'gender' );
@@ -71,26 +65,12 @@ if ( ( $role == 'recurring' && 'post_type_shows' == get_post_type() ) ) {
 			}
 
 			// List of Shows (will not show on show pages)
-			if ( isset( $shows ) ) {
-				$show_title = array();
-				foreach ( $shows as $each_show ) {
-					if ( get_post_status ( $each_show['show'] ) !== 'publish' ) {
-						array_push( $show_title, '<em><span class="disabled-show-link">' . get_the_title( $each_show['show'] ) . '</span></em>' );
-					} else {
-						array_push( $show_title, '<em><a href="' . get_permalink( $each_show['show'] ) . '">' . get_the_title( $each_show['show'] ) . '</a></em>' );
-					}
-				}
-				$on_shows = ( empty( $show_title ) )? '<em>None</em>' : implode( ', ', $show_title );
-				echo '<div class="card-meta-item shows">' . lwtv_yikes_symbolicons( 'tv-hd.svg', 'fa-television' ) . '&nbsp;' . $on_shows . '</div>';
+			if ( 'post_type_characters' == get_post_type() ) {
+				echo lwtv_yikes_chardata( get_the_ID(), 'oneshow' );
 			}
 
 			// List of Actors
-			if ( isset( $actors ) ) {
-				$num_actors = count( $actors );
-				$actorsmore = ( $num_actors > 2 )? ', and ' . ( $num_actors - 2 ) .' more' : '';
-				$actors     = array_slice($actors, 0, 2);
-				echo '<div class="card-meta-item actors">' . lwtv_yikes_symbolicons( 'user.svg', 'fa-user' ) . '&nbsp;' . implode( ", ", $actors ) . $actorsmore . '</div>';
-			}
+			echo lwtv_yikes_chardata( get_the_ID(), 'oneactor' );
 
 			// Gender and Sexuality
 			if ( isset( $gender ) && isset( $sexuality ) ) {
