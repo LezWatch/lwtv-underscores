@@ -59,26 +59,15 @@ class LWTV_Character extends WP_Widget {
 		echo '</div>';
 
 		echo '<div class="card-body">';
-
-		// Title
-		echo '<h4 class="card-title">' . get_the_title() .'</h4>';
-
-		echo '<div class="card-text">';
-
-		// Shows
-		$shows = get_post_meta( get_the_ID(), 'lezchars_show_group', true );
-		foreach ($shows as $show) {
-			$show_post = get_post( $show['show']);
-			echo '<div class="card-meta-item shows">' . lwtv_yikes_symbolicons( 'tv_flatscreen.svg', 'fa-television' ) . '&nbsp;<a href="' . get_the_permalink($show_post->ID)  .'">' . $show_post->post_title .'</a></div>';
-		}
-		
-		// Actor
-		$field = get_post_meta( get_the_ID(), 'lezchars_actor', true );
-		$field_value = isset( $field[0] ) ? $field[0] : '';
-		echo '<div class="card-meta-item actors">' . lwtv_yikes_symbolicons( 'user.svg', 'fa-user' ) . '&nbsp;' . $field_value  . '</div>';
-
-		echo '</div>
-			  </div>';
+			// Title
+			echo '<h4 class="card-title">' . get_the_title() .'</h4>';
+			echo '<div class="card-text">';
+				// Only show one show
+				echo lwtv_yikes_chardata( get_the_ID(), 'oneshow' );
+				// Actor
+				echo lwtv_yikes_chardata( get_the_ID(), 'oneactor' );
+			echo '</div>
+		</div>';
 
 		// Button
 		echo '<div class="card-footer">

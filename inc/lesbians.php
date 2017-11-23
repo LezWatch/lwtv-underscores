@@ -365,7 +365,7 @@ function lwtv_yikes_get_characters_for_show( $show_id, $havecharcount, $role = '
 /**
  * Character Data
  *
- * Called on character page to generate certain data bits
+ * Called on character pages to generate certain data bits
  * 
  * @access public
  * @param mixed $the_ID: the character ID
@@ -375,7 +375,7 @@ function lwtv_yikes_get_characters_for_show( $show_id, $havecharcount, $role = '
 function lwtv_yikes_chardata( $the_ID, $data ) {
 
 	// Early Bail
-	$valid_data = array( 'dead', 'shows', 'actors', 'gender', 'sexuality', 'cliches' );
+	$valid_data = array( 'dead', 'shows', 'actors', 'gender', 'sexuality', 'cliches', 'oneshow', 'oneactor' );
 	if ( !isset( $the_ID ) || !isset( $data) || !in_array( $data, $valid_data ) ) return;
 	
 	$output = '';
@@ -392,6 +392,33 @@ function lwtv_yikes_chardata( $the_ID, $data ) {
 			break;
 		case 'shows':
 			$output = get_post_meta( $the_ID, 'lezchars_show_group', true );
+			break;
+		case 'oneshow':
+			$all_shows   = get_post_meta( $the_ID, 'lezchars_show_group', true );
+			$shows_value = isset( $all_shows[0] ) ? $all_shows[0] : '';
+			$output      = '';
+			if ( !empty( $shows_value ) ) {
+				$num_shows = count( $all_shows );
+				$showsmore = ( $num_shows > 1 )? ' (plus ' . ( $num_shows - 1 ) .' more)' : '';
+				$show_post = get_post( $shows_value['show']);
+				$output   .= '<div class="card-meta-item shows">' . lwtv_yikes_symbolicons( 'tv-hd.svg', 'fa-television' ) . '<em>';
+				if ( get_post_status ( $shows_value['show'] ) !== 'publish' ) {
+					$output .= '&nbsp;<span class="disabled-show-link">' . $show_post->post_title . '</span>';
+				} else {
+					$output .= '&nbsp;<a href="' . get_the_permalink( $show_post->ID )  .'">' . $show_post->post_title .'</a>';
+				}
+				$output .= '</em>' . $showsmore . '</div>';
+			}
+			break;
+		case 'oneactor':
+			$actors      = get_post_meta( $the_ID, 'lezchars_actor', true );
+			$actor_value = isset( $actors[0] ) ? $actors[0] : '';
+			$output      = '';
+			if ( !empty( $actor_value ) ) {
+				$num_actors = count( $actors );
+				$actorsmore = ( $num_actors > 1 )? ' (plus ' . ( $num_actors - 1 ) .' more)' : '';
+				$output .= '<div class="card-meta-item actors">' . lwtv_yikes_symbolicons( 'user.svg', 'fa-user' ) . '&nbsp;' . $actor_value . $actorsmore . '</div>';
+			}
 			break;
 		case 'actors':
 			$character_actors = get_post_meta( $the_ID, 'lezchars_actor', true );
@@ -420,7 +447,7 @@ function lwtv_yikes_chardata( $the_ID, $data ) {
 			$lez_cliches = get_the_terms( $the_ID, 'lez_cliches' );
 			$cliches = '';
 			if ( $lez_cliches && ! is_wp_error( $lez_cliches ) ) {
-			    $cliches = '';
+				$cliches = '';
 				foreach( $lez_cliches as $the_cliche ) {
 					$termicon = get_term_meta( $the_cliche->term_id, 'lez_termsmeta_icon', true );
 					$tropicon = $termicon ? $termicon . '.svg' : 'square.svg';
