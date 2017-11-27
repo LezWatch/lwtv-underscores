@@ -26,8 +26,8 @@ switch ( get_post_type( $post->ID ) ) {
 		</div>
 	<?php endif; ?>
 	<div class="card-body">
-		<h3 class="card-title"><?php 
-			echo $searchicon; 
+		<h3 class="card-title"><?php
+			echo $searchicon . '&nbsp;'; 
 			the_title(); 
 		?></h3>
 		<div class="card-text">
