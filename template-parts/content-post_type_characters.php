@@ -83,7 +83,7 @@ $gender_sexuality = lwtv_yikes_chardata( get_the_ID(), 'gender' ) . ' &bull; ' .
 		</div>
 		<div class="card-meta-item">
 			<?php 
-				if ( isset( $dead_or_alive ) ) echo $dead_or_alive;
+				if ( isset( $dead_or_alive ) ) echo $dead_or_alive . '</br>';
 				if ( isset( $rip ) ) echo $rip;
 			?>
 		</div>
