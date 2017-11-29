@@ -33,6 +33,11 @@ $all_actors  = lwtv_yikes_chardata( get_the_ID(), 'actors' );
 $actor_title = _n( 'Actor', 'Actors', count( $all_actors ) );
 $actors      = '<strong>' . $actor_title . ':</strong> ' . implode( ", ", $all_actors );
 
+// Generate Status
+// Usage: $dead_or_alive
+$doa_status    = ( has_term( 'dead', 'lez_cliches' , get_the_ID() ) )? 'Dead' : 'Alive';
+$dead_or_alive = '<strong>Status:</strong> ' . $doa_status;
+
 // Generate RIP
 // Usage: $rip
 if ( get_post_meta( get_the_ID(), 'lezchars_death_year', true ) ) {
@@ -77,7 +82,10 @@ $gender_sexuality = lwtv_yikes_chardata( get_the_ID(), 'gender' ) . ' &bull; ' .
 			<?php if ( isset( $show_title ) && count( $show_title ) !== 0 ) echo $appears; ?>
 		</div>
 		<div class="card-meta-item">
-			<?php if ( isset( $rip ) ) echo $rip ; ?>
+			<?php if ( isset( $dead_or_alive ) ) echo $dead_or_alive . '</br>'; ?>
+		</div>
+		<div class="card-meta-item">
+			<?php if ( isset( $rip ) ) echo $rip; ?>
 		</div>
 	</div>
 	<div class="characters-description">
