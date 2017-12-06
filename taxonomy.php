@@ -65,6 +65,9 @@ get_header(); ?>
 												case 'post_type_shows':
 													get_template_part( 'template-parts/excerpt', 'post_type_shows' );
 													break;
+												case 'post_type_actors':
+													get_template_part( 'template-parts/excerpt', 'post_type_actors' );
+													break;
 												default:
 													get_template_part( 'template-parts/content', 'posts' );
 											}
