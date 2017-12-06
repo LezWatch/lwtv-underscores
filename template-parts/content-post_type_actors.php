@@ -7,24 +7,33 @@
  * @package LezWatchTV
  */
 
-// Generate Birth
-// Usage: $birth
+// Generate Life Stats
+// Usage: $life
+$life = array();
 if ( get_post_meta( get_the_ID(), 'lezactors_birth', true ) ) {
-	$death = get_post_meta( get_the_ID(), 'lezactors_birth', true );
-	$rip = '<strong>Born:</strong> ' . $birth;
+	$get_birth     = date_create_from_format( 'Y-m-j', get_post_meta( get_the_ID(), 'lezactors_birth', true ) );
+	$life['birth'] = date_format( $get_birth, 'F d, Y');
 }
-// Generate RIP
-// Usage: $death
 if ( get_post_meta( get_the_ID(), 'lezactors_death', true ) ) {
-	$death = get_post_meta( get_the_ID(), 'lezactors_death', true );
-	$rip = '<strong>Died:</strong> ' . $death;
+	$get_death     = date_create_from_format( 'Y-m-j', get_post_meta( get_the_ID(), 'lezactors_death', true ) );
+	$life['death'] = date_format( $get_death, 'F d, Y');
 }
 
 // Generate Gender & Sexuality Data
-// Usage: $gender_sexuality
-$gender    = lwtv_yikes_actordata( get_the_ID(), 'gender' );
-$sexuality = lwtv_yikes_actordata( get_the_ID(), 'sexuality' );
+// Usage: $gender
+// Usage: $sexuality
+$gender    = lwtv_yikes_actordata( get_the_ID(), 'gender', true );
+$sexuality = lwtv_yikes_actordata( get_the_ID(), 'sexuality', true );
 
+// Generate URLs
+// Usage: $urls
+$urls = array();
+if ( get_post_meta( get_the_ID(), 'lezactors_imdb', true ) ) {
+	$urls['IMDb'] = esc_url( 'https://imdb.com/name/' . get_post_meta( get_the_ID(), 'lezactors_imdb', true ) );
+}
+if ( get_post_meta( get_the_ID(), 'lezactors_wikipedia', true ) ) {
+	$urls['WikiPedia'] = esc_url( get_post_meta( get_the_ID(), 'lezactors_wikipedia', true ) );
+}
 ?>
 
 <section class="showschar-section" name="overview" id="overview">
@@ -44,14 +53,33 @@ $sexuality = lwtv_yikes_actordata( get_the_ID(), 'sexuality' );
 	<div class="card-body">
 		<div class="card-meta">
 			<div class="card-meta-item">
-				<?php if ( isset( $gender ) && !empty( $gender ) ) echo '&bull; ' . $gender . '</br>'; ?>
-				<?php if ( isset( $sexuality ) && !empty( $sexuality ) ) echo '&bull; ' . $sexuality; ?>
+				<?php 
+					if ( isset( $gender ) && !empty( $gender ) ) echo $gender; 
+					if ( isset( $gender ) && !empty( $gender ) && isset( $sexuality ) && !empty( $sexuality ) ) echo ' &bull; ';
+					if ( isset( $sexuality ) && !empty( $sexuality ) ) echo $sexuality; 
+				?>
 			</div>
 			<div class="card-meta-item">
-				<?php if ( isset( $birth ) ) echo $birth . '</br>'; ?>
+				<?php 
+					$life_total = count( $life );
+					$life_count = 1;
+					foreach ( $life as $event => $date ) {
+						echo '<strong>' . ucfirst( $event ) . '</strong>: ' . $date;
+						if ( $life_count !== $life_total ) echo ' &bull; ' ;
+						$life_count++;
+					}
+				?>
 			</div>
 			<div class="card-meta-item">
-				<?php if ( isset( $rip ) ) echo $rip; ?>
+				<?php 
+					$urls_total = count( $urls );
+					$urls_count = 1;
+					foreach ( $urls as $source => $link ) {
+						echo '<a href="' . $link . '">' . $source . '</a>';
+						if ( $urls_count !== $urls_total ) echo ' &bull; ' ;
+						$urls_count++;
+					}
+				?>
 			</div>
 		</div>
 	</div>
