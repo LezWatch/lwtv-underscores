@@ -482,7 +482,51 @@ function lwtv_yikes_actordata( $the_ID, $data ) {
 
 	switch ( $data ) {
 		case 'characters':
-			// TBD
+			$characters = array();
+			$charactersloop = new WP_Query( array(
+				'post_type'              => 'post_type_characters',
+				'post_status'            => array( 'publish' ),
+				'orderby'                => 'title',
+				'order'                  => 'ASC',
+				'posts_per_page'         => '20',
+				'no_found_rows'          => true,
+				'update_post_term_cache' => true,
+				'meta_query'             => array( 
+					array(
+						'key'     => 'lezchars_actor',
+						'value'   => $the_ID,
+						'compare' => 'LIKE',
+					),
+				),
+			) );
+	
+			if ( $charactersloop->have_posts() ) {
+				while ( $charactersloop->have_posts() ) {
+					$charactersloop->the_post();
+					$char_id     = get_the_ID();
+					$actors_array = get_post_meta( $char_id, 'lezchars_actor', true );
+		
+					// The Sara Lance Complexity:
+					// If the character has this actor AND is a published character,
+					// THEN we will pass the following data to the actor 
+					// template to determine what to display.
+		
+					if ( get_post_status ( $char_id ) == 'publish' && isset( $actors_array ) && !empty( $actors_array ) ) {
+						foreach( $actors_array as $char_actor ) {
+							if ( $char_actor == $the_ID ) {
+								$characters[$char_id] = array(
+									'id'        => $char_id,
+									'title'     => get_the_title( $char_id ),
+									'url'       => get_the_permalink( $char_id ),
+									'content'   => get_the_content( $char_id ),
+								);
+							}
+						}
+					}
+				}
+				wp_reset_query();
+			}
+			$output = $characters;
 			break;
 		case 'gender':
 			$gender_terms = get_the_terms( $the_ID, 'lez_actor_gender', true );

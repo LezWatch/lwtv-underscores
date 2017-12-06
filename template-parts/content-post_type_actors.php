@@ -7,28 +7,6 @@
  * @package LezWatchTV
  */
 
-// Generate list of chars
-// Usage: $characters
-/*
-$all_chars = lwtv_yikes_actordata( get_the_ID(), 'characters' );
-if ( $all_chars !== '' ) {
-	$char_title = array();
-	foreach ( $all_chars as $each_char ) {
-		if ( get_post_status ( $each_char['char'] ) !== 'publish' ) {
-			array_push( $char_title, '<em><span class="disabled-char-link">' . get_the_title( $each_char['char'] ) . '</span></em> (' . $each_char['type'] . ' character)' );
-		} else {
-			array_push( $char_title, '<em><a href="' . get_permalink( $each_char['char'] ) . '">' . get_the_title( $each_char['char'] ) . '</a></em> (' . $each_char['type'] . ' character)' );
-		}
-	}
-}
-
-$is_chars = ( empty( $char_title ) )? ' None' : ': ' . implode( ', ', $char_title );
-if ( isset( $char_title ) && count( $char_title ) !== 0 ) {
-	$is_title =  _n( 'Character', 'Characters', count( $char_title ) );
-	$characters  = '<strong>' . $is_title . '</strong>' . $is_chars;
-}
-*/
-
 // Generate Birth
 // Usage: $birth
 if ( get_post_meta( get_the_ID(), 'lezactors_birth', true ) ) {
@@ -44,31 +22,62 @@ if ( get_post_meta( get_the_ID(), 'lezactors_death', true ) ) {
 
 // Generate Gender & Sexuality Data
 // Usage: $gender_sexuality
-$gender_sexuality = lwtv_yikes_actordata( get_the_ID(), 'gender' ) . ' &bull; ' . lwtv_yikes_actordata( get_the_ID(), 'sexuality' );
+$gender    = lwtv_yikes_actordata( get_the_ID(), 'gender' );
+$sexuality = lwtv_yikes_actordata( get_the_ID(), 'sexuality' );
+
 ?>
 
-<div class="card-body">
-	<?php the_post_thumbnail( 'character-img', array( 'class' => 'single-char-img' , 'alt' => get_the_title() , 'title' => get_the_title() ) ); ?>	
-	
-	<div class="card-meta">
-		<div class="card-meta-item">
-			<?php echo $gender_sexuality; ?>
-		</div>
-		<div class="card-meta-item">
-			<?php if ( isset( $characters ) ) echo $characters . '</br>'; ?>
-		</div>
-		<div class="card-meta-item">
-			<?php if ( isset( $char_title ) && count( $char_title ) !== 0 ) echo $appears; ?>
-		</div>
-		<div class="card-meta-item">
-			<?php if ( isset( $birth ) ) echo $birth . '</br>'; ?>
-		</div>
-		<div class="card-meta-item">
-			<?php if ( isset( $rip ) ) echo $rip; ?>
+<section class="showschar-section" name="overview" id="overview">
+	<div class="card-body">
+		<?php 
+			if ( !empty( get_the_content() ) ) {
+				the_content(); 
+			} else {
+				the_title( '<p>', ' is an actor who has played at least one queer character on TV.</p>' );
+			}
+			?>
+	</div>
+</section>
+
+<section name="vitals" id="vitals" class="showschar-section">
+	<h2>Vitals</h2>
+	<div class="card-body">
+		<div class="card-meta">
+			<div class="card-meta-item">
+				<?php if ( isset( $gender ) && !empty( $gender ) ) echo '&bull; ' . $gender . '</br>'; ?>
+				<?php if ( isset( $sexuality ) && !empty( $sexuality ) ) echo '&bull; ' . $sexuality; ?>
+			</div>
+			<div class="card-meta-item">
+				<?php if ( isset( $birth ) ) echo $birth . '</br>'; ?>
+			</div>
+			<div class="card-meta-item">
+				<?php if ( isset( $rip ) ) echo $rip; ?>
+			</div>
 		</div>
 	</div>
-	<div class="actor-description">
-		<hr />
-		<?php echo the_content(); ?>
+</section>
+
+<?php
+// Great big characters section!
+?>
+<section name="characters" id="characters" class="showschar-section">
+	<h2>Characters</h2>
+	<div class="card-body">
+		<?php
+		$all_chars = lwtv_yikes_actordata( get_the_ID(), 'characters' );
+		if ( empty( $all_chars ) || count( $all_chars ) == '0' ) {
+			echo '<p>There are no queers listed yet for this actor.</p>';
+		} else {
+			echo '<p>There '. sprintf( _n( 'is <strong>%s</strong> queer character', 'are <strong>%s</strong> queer characters', count( $all_chars ) ), count( $all_chars ) ).' played by this actor.</p>';
+		
+			echo '<div class="container characters-regulars-container"><div class="row site-loop character-show-loop equal-height">';
+				foreach( $all_chars as $character ) {
+					echo '<div class="col-sm-4">';
+						include( locate_template( 'template-parts/excerpt-post_type_characters.php' ) );
+					echo '</div>';
+				}
+			echo '</div></div>';
+		}
+		?>
 	</div>
-</div>
+</section>
