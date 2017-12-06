@@ -470,7 +470,7 @@ function lwtv_yikes_chardata( $the_ID, $data ) {
 }
 
 /**
- * Character Data
+ * Actor Data
  *
  * Called on actor pages to generate certain data bits
  * 
