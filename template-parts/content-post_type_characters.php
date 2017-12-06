@@ -30,8 +30,22 @@ if ( isset( $show_title ) && count( $show_title ) !== 0 ) {
 // Generate actors
 // Usage: $actors
 $all_actors  = lwtv_yikes_chardata( get_the_ID(), 'actors' );
-$actor_title = _n( 'Actor', 'Actors', count( $all_actors ) );
-$actors      = '<strong>' . $actor_title . ':</strong> ' . implode( ", ", $all_actors );
+if ( $all_actors !== '' ) {
+	$the_actors = array();
+	foreach ( $all_actors as $each_actor ) {
+		if ( get_post_status ( $each_actor ) !== 'publish' ) {
+			array_push( $the_actors, '<span class="disabled-show-link">' . get_the_title( $each_actor ) . '</span>' );
+		} else {
+			array_push( $the_actors, '<a href="' . get_permalink( $each_actor ) . '">' . get_the_title( $each_actor ) . '</a>' );
+		}
+	}
+}
+
+$is_actors = ( empty( $the_actors ) )? ' None' : ': ' . implode( ', ', $the_actors );
+if ( isset( $the_actors ) && count( $the_actors ) !== 0 ) {
+	$actor_title = _n( 'Actor', 'Actors', count( $all_actors ) );
+	$actors  = '<strong>' . $actor_title . '</strong>' . $is_actors;
+}
 
 // Generate Status
 // Usage: $dead_or_alive
@@ -76,7 +90,7 @@ $gender_sexuality = lwtv_yikes_chardata( get_the_ID(), 'gender' ) . ' &bull; ' .
 			<?php echo $cliches; ?>
 		</div>
 		<div class="card-meta-item">
-			<?php echo $actors; ?>
+			<?php if ( isset( $actor_title ) && count( $actor_title ) !== 0 ) echo $actors; ?>
 		</div>
 		<div class="card-meta-item">
 			<?php if ( isset( $show_title ) && count( $show_title ) !== 0 ) echo $appears; ?>

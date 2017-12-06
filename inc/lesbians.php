@@ -417,7 +417,14 @@ function lwtv_yikes_chardata( $the_ID, $data ) {
 			if ( !empty( $actor_value ) ) {
 				$num_actors = count( $actors );
 				$actorsmore = ( $num_actors > 1 )? ' (plus ' . ( $num_actors - 1 ) .' more)' : '';
-				$output .= '<div class="card-meta-item actors">' . lwtv_yikes_symbolicons( 'user.svg', 'fa-user' ) . '&nbsp;' . $actor_value . $actorsmore . '</div>';
+				$actor_post = get_post( $actor_value );
+				$output .= '<div class="card-meta-item actors">' . lwtv_yikes_symbolicons( 'user.svg', 'fa-user' ) . '&nbsp;';
+				if ( get_post_status ( $actor_value ) !== 'publish' ) {
+					$output .= '&nbsp;<span class="disabled-show-link">' . $actor_post->post_title . '</span>';
+				} else {
+					$output .= '&nbsp;<a href="' . get_the_permalink( $actor_post->ID )  .'">' . $actor_post->post_title .'</a>';
+				}
+				$output .= $actorsmore . '</div>';
 			}
 			break;
 		case 'actors':
@@ -459,5 +466,91 @@ function lwtv_yikes_chardata( $the_ID, $data ) {
 			break;
 	}
 	
+	return $output;
+}
+
+/**
+ * Character Data
+ *
+ * Called on actor pages to generate certain data bits
+ * 
+ * @access public
+ * @param mixed $the_ID: the actor post ID
+ * @param mixed $data: 
+ * @return void
+ */
+function lwtv_yikes_actordata( $the_ID, $data ) {
+
+	// Early Bail
+	$valid_data = array( 'characters', 'gender', 'sexuality' );
+	if ( !isset( $the_ID ) || !isset( $data) || !in_array( $data, $valid_data ) ) return;
+	
+	$output = '';
+
+	switch ( $data ) {
+		case 'characters':
+			$characters = array();
+			$charactersloop = new WP_Query( array(
+				'post_type'              => 'post_type_characters',
+				'post_status'            => array( 'publish' ),
+				'orderby'                => 'title',
+				'order'                  => 'ASC',
+				'posts_per_page'         => '20',
+				'no_found_rows'          => true,
+				'update_post_term_cache' => true,
+				'meta_query'             => array( 
+					array(
+						'key'     => 'lezchars_actor',
+						'value'   => $the_ID,
+						'compare' => 'LIKE',
+					),
+				),
+			) );
+	
+			if ( $charactersloop->have_posts() ) {
+				while ( $charactersloop->have_posts() ) {
+					$charactersloop->the_post();
+					$char_id     = get_the_ID();
+					$actors_array = get_post_meta( $char_id, 'lezchars_actor', true );
+		
+					// The Sara Lance Complexity:
+					// If the character has this actor AND is a published character,
+					// THEN we will pass the following data to the actor 
+					// template to determine what to display.
+		
+					if ( get_post_status ( $char_id ) == 'publish' && isset( $actors_array ) && !empty( $actors_array ) ) {
+						foreach( $actors_array as $char_actor ) {
+							if ( $char_actor == $the_ID ) {
+								$characters[$char_id] = array(
+									'id'        => $char_id,
+									'title'     => get_the_title( $char_id ),
+									'url'       => get_the_permalink( $char_id ),
+									'content'   => get_the_content( $char_id ),
+								);
+							}
+						}
+					}
+				}
+				wp_reset_query();
+			}
+			$output = $characters;
+			break;
+		case 'gender':
+			$gender_terms = get_the_terms( $the_ID, 'lez_actor_gender', true );
+			if ( $gender_terms && ! is_wp_error( $gender_terms ) ) {
+				foreach( $gender_terms as $gender_term ) {
+					$output .= '<a href="' . get_term_link( $gender_term->slug, 'lez_actor_gender') . '" rel="tag" title="' . $gender_term->name . '">' . $gender_term->name . '</a> ';
+				}
+			}
+			break;
+		case 'sexuality':
+			$sexuality_terms = get_the_terms( $the_ID, 'lez_actor_sexuality', true );
+			if ( $sexuality_terms && ! is_wp_error( $sexuality_terms ) ) {
+				foreach( $sexuality_terms as $sexuality_term ) {
+					$output .= '<a href="' . get_term_link( $sexuality_term->slug, 'lez_actor_sexuality') . '" rel="tag" title="' . $sexuality_term->name . '">' . $sexuality_term->name . '</a> ';
+				}
+			}
+			break;
+	}
 	return $output;
 }
