@@ -417,7 +417,14 @@ function lwtv_yikes_chardata( $the_ID, $data ) {
 			if ( !empty( $actor_value ) ) {
 				$num_actors = count( $actors );
 				$actorsmore = ( $num_actors > 1 )? ' (plus ' . ( $num_actors - 1 ) .' more)' : '';
-				$output .= '<div class="card-meta-item actors">' . lwtv_yikes_symbolicons( 'user.svg', 'fa-user' ) . '&nbsp;' . $actor_value . $actorsmore . '</div>';
+				$actor_post = get_post( $actor_value );
+				$output .= '<div class="card-meta-item actors">' . lwtv_yikes_symbolicons( 'user.svg', 'fa-user' ) . '&nbsp;';
+				if ( get_post_status ( $actor_value ) !== 'publish' ) {
+					$output .= '&nbsp;<span class="disabled-show-link">' . $actor_post->post_title . '</span>';
+				} else {
+					$output .= '&nbsp;<a href="' . get_the_permalink( $actor_post->ID )  .'">' . $actor_post->post_title .'</a>';
+				}
+				$output .= $actorsmore . '</div>';
 			}
 			break;
 		case 'actors':
