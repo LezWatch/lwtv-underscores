@@ -90,14 +90,23 @@ class LWTV_AMP {
 
 			// Generate actors
 			// Usage: $actors
-
-			$character_actors = get_post_meta( $post_id, 'lezchars_actor', true );
-			if ( !is_array ( $character_actors ) ) {
-				$character_actors = array( get_post_meta( $post_id, 'lezchars_actor', true ) );
+			$all_actors  = lwtv_yikes_chardata( $post_id, 'actors' );
+			if ( $all_actors !== '' ) {
+				$the_actors = array();
+				foreach ( $all_actors as $each_actor ) {
+					if ( get_post_status ( $each_actor ) !== 'publish' ) {
+						array_push( $the_actors, '<span class="disabled-show-link">' . get_the_title( $each_actor ) . '</span>' );
+					} else {
+						array_push( $the_actors, '<a href="' . get_permalink( $each_actor ) . '">' . get_the_title( $each_actor ) . '</a>' );
+					}
+				}
 			}
-			$actor_count = count( $character_actors );
-			$actor_title = sprintf( _n( 'Actor', 'Actors', $actor_count ), $actor_count );
-			$actors = '<strong>' . $actor_title . ':</strong> ' . implode( ", ", $character_actors );
+			
+			$is_actors = ( empty( $the_actors ) )? ' None' : ': ' . implode( ', ', $the_actors );
+			if ( isset( $the_actors ) && count( $the_actors ) !== 0 ) {
+				$actor_title = _n( 'Actor', 'Actors', count( $all_actors ) );
+				$actors  = '<strong>' . $actor_title . '</strong>' . $is_actors;
+			}
 
 			// Generate RIP
 			// Usage: $rip
