@@ -15,6 +15,9 @@ if ( ! is_active_sidebar( 'sidebar-2' ) ) {
 		// Show the right sidebar for the page type:
 		if ( !is_singular() ) {
 			switch ( get_post_type() ) {
+				case 'post_type_actors':
+					dynamic_sidebar( 'archive-actor-sidebar' );
+					break;
 				case 'post_type_characters':
 					dynamic_sidebar( 'archive-character-sidebar' );
 					break;
@@ -26,6 +29,7 @@ if ( ! is_active_sidebar( 'sidebar-2' ) ) {
 			}
 		} else {
 			switch ( get_post_type() ) {
+				case 'post_type_actors':
 				case 'post_type_characters':
 				case 'post_type_shows':
 					get_template_part( 'template-parts/sidebar', get_post_type() );

@@ -47,8 +47,11 @@ class Filter_Top extends WP_Widget {
 				case 'fa-television':
 					$icon = lwtv_yikes_symbolicons( 'tv-hd.svg', 'fa-television' );
 					break;
+				case 'fa-vcard':
+					$icon = lwtv_yikes_symbolicons( 'contact-card.svg', 'fa-vcard' );
+					break;
 				case 'fa-users':
-					$icon = lwtv_yikes_symbolicons( 'contact-card.svg', 'fa-users' );
+					$icon = lwtv_yikes_symbolicons( 'users.svg', 'fa-users' );
 					break;
 				default:
 					$icon = '<i class="fa ' . $fontawesome . ' float-right" aria-hidden="true"></i>';

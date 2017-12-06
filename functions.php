@@ -306,6 +306,16 @@ function yikes_starter_widgets_init() {
 		'before_title'  => '<h2 class="widget-title">',
 		'after_title'   => '</h2>',
 	) );
+	// Sidebar for Actore Archives
+	register_sidebar( array(
+		'name'          => esc_html__( 'Sidebar - Actor Archives', 'lwtv_yikes' ),
+		'id'            => 'archive-actor-sidebar',
+		'description'   => esc_html__( 'This is the sidebar for actor archives.', 'lwtv_yikes' ),
+		'before_widget' => '<section id="%1$s" class="widget %2$s">',
+		'after_widget'  => '</section>',
+		'before_title'  => '<h2 class="widget-title">',
+		'after_title'   => '</h2>',
+	) );
 	// Sidebar for Character Archives
 	register_sidebar( array(
 		'name'          => esc_html__( 'Sidebar - Character Archives', 'lwtv_yikes' ),
