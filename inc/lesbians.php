@@ -461,3 +461,45 @@ function lwtv_yikes_chardata( $the_ID, $data ) {
 	
 	return $output;
 }
+
+/**
+ * Character Data
+ *
+ * Called on actor pages to generate certain data bits
+ * 
+ * @access public
+ * @param mixed $the_ID: the actor post ID
+ * @param mixed $data: 
+ * @return void
+ */
+function lwtv_yikes_actordata( $the_ID, $data ) {
+
+	// Early Bail
+	$valid_data = array( 'characters', 'gender', 'sexuality' );
+	if ( !isset( $the_ID ) || !isset( $data) || !in_array( $data, $valid_data ) ) return;
+	
+	$output = '';
+
+	switch ( $data ) {
+		case 'characters':
+			// TBD
+			break;
+		case 'gender':
+			$gender_terms = get_the_terms( $the_ID, 'lez_actor_gender', true );
+			if ( $gender_terms && ! is_wp_error( $gender_terms ) ) {
+				foreach( $gender_terms as $gender_term ) {
+					$output .= '<a href="' . get_term_link( $gender_term->slug, 'lez_actor_gender') . '" rel="tag" title="' . $gender_term->name . '">' . $gender_term->name . '</a> ';
+				}
+			}
+			break;
+		case 'sexuality':
+			$sexuality_terms = get_the_terms( $the_ID, 'lez_actor_sexuality', true );
+			if ( $sexuality_terms && ! is_wp_error( $sexuality_terms ) ) {
+				foreach( $sexuality_terms as $sexuality_term ) {
+					$output .= '<a href="' . get_term_link( $sexuality_term->slug, 'lez_actor_sexuality') . '" rel="tag" title="' . $sexuality_term->name . '">' . $sexuality_term->name . '</a> ';
+				}
+			}
+			break;
+	}
+	return $output;
+}
