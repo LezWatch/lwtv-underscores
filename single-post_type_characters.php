@@ -6,9 +6,6 @@
  */
 
 // Build the icon
-// We don't use this on characters yet. We might later
-// use it to show death? Or characters we love? Let's
-// keep options open.
 $icon  = '<div class="show-header-svg">';
 if ( has_term( 'dead', 'lez_cliches' ) ) {
 	$icon .= ' <span role="img" aria-label="RIP - Dead Character" data-toggle="tooltip" title="RIP - Dead Character" class="cliche-dead">' . lwtv_yikes_symbolicons( 'rest-in-peace.svg', 'fa-square' ) . '</span>';

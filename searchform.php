@@ -6,7 +6,7 @@
  */
 
 // Pre flight magic to determine what search boxes were checked
-$checked_shows = $checked_characters = '';
+$checked_shows = $checked_characters = $checked_actors = '';
 $queery_types = get_query_var('post_type');
 
 if ( is_null($queery_types) || empty($queery_types) ) {
@@ -15,6 +15,7 @@ if ( is_null($queery_types) || empty($queery_types) ) {
 if ( !is_array( $queery_types ) ) { $queery_types = array( $queery_types ); }
 if ( in_array( 'post_type_characters' , $queery_types) ) { $checked_characters = 'checked="checked"'; }
 if ( in_array( 'post_type_shows' , $queery_types) ) { $checked_shows = 'checked="checked"'; }
+if ( in_array( 'post_type_actors' , $queery_types) ) { $checked_actors = 'checked="checked"'; }
 ?>
 
 <div class="card card-search">
@@ -36,7 +37,12 @@ if ( in_array( 'post_type_shows' , $queery_types) ) { $checked_shows = 'checked=
 			</div>
 			<div class="form-check form-check-inline">
 				<label class="form-check-label">
-					<input class="form-check-input" type="checkbox" name="post_type[]" value="post_type_characters" id="CheckboxShows" value="Shows" <?php echo $checked_characters; ?>> Characters
+					<input class="form-check-input" type="checkbox" name="post_type[]" value="post_type_characters" id="CheckboxCharacters" value="Characters" <?php echo $checked_characters; ?>> Characters
+				</label>
+			</div>
+			<div class="form-check form-check-inline">
+				<label class="form-check-label">
+					<input class="form-check-input" type="checkbox" name="post_type[]" value="post_type_actors" id="CheckboxActors" value="Actors" <?php echo $checked_actors; ?>> Actors
 				</label>
 			</div>
 		</form>
