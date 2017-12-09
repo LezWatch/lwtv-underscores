@@ -812,9 +812,9 @@ canvas {
 }
 
 
-/* Single Character Template */
+/* Single Character & Single Actor Template */
 
-.character-page {
+.character-page , .actor-page {
   .card {      
     border: none;
     @include border-radius(0);
@@ -830,7 +830,15 @@ canvas {
     }
     
     .card-meta-item {
-        margin-bottom: .6rem;
+      margin-bottom: .6rem;
+
+      h2 {
+        background-color: transparent;
+        @include font-28;
+        margin-top: 0;
+        margin-bottom: 1rem;
+        padding: 0;
+      }
     }
   }
 }
@@ -868,6 +876,20 @@ canvas {
 
   svg * {
     fill: $darkgrey;
+  }
+}
+
+/* Single Actor Template */
+
+.actor-page {
+  .card {
+    .single-char-img {
+      margin-bottom: 1.25rem;
+    }
+  }
+
+  .actor-orientation {
+    margin-left: 2rem;
   }
 }
 

@@ -12,7 +12,7 @@
 $life = array();
 if ( get_post_meta( get_the_ID(), 'lezactors_birth', true ) ) {
 	$get_birth     = date_create_from_format( 'Y-m-j', get_post_meta( get_the_ID(), 'lezactors_birth', true ) );
-	$life['birth'] = date_format( $get_birth, 'F d, Y');
+	$life['birth date'] = date_format( $get_birth, 'F d, Y');
 }
 if ( get_post_meta( get_the_ID(), 'lezactors_death', true ) ) {
 	$get_death     = date_create_from_format( 'Y-m-j', get_post_meta( get_the_ID(), 'lezactors_death', true ) );
@@ -38,25 +38,31 @@ if ( get_post_meta( get_the_ID(), 'lezactors_wikipedia', true ) ) {
 
 <section class="showschar-section" name="overview" id="overview">
 	<div class="card-body">
-		<?php 
-			if ( !empty( get_the_content() ) ) {
-				the_content(); 
-			} else {
-				the_title( '<p>', ' is an actor who has played at least one queer character on TV.</p>' );
-			}
-			?>
+		<?php the_post_thumbnail( 'character-img', array( 'class' => 'single-char-img' , 'alt' => get_the_title() , 'title' => get_the_title() ) ); ?>	
+
+		<div class="card-meta">
+			<div class="card-meta-item">
+				<?php 
+					if ( !empty( get_the_content() ) ) {
+					?>
+						<h2>Actor Bio</h2> <?php the_content(); 
+					} else {
+						the_title( '<p>', ' is an actor who has played at least one queer character on TV.</p>' );
+					}
+				?>
+			</div>
+		</div>
 	</div>
 </section>
 
 <section name="vitals" id="vitals" class="showschar-section">
-	<h2>Vitals</h2>
+	<h2>Actor Information</h2>
 	<div class="card-body">
 		<div class="card-meta">
 			<div class="card-meta-item">
 				<?php 
-					if ( isset( $gender ) && !empty( $gender ) ) echo $gender; 
-					if ( isset( $gender ) && !empty( $gender ) && isset( $sexuality ) && !empty( $sexuality ) ) echo ' &bull; ';
-					if ( isset( $sexuality ) && !empty( $sexuality ) ) echo $sexuality; 
+					if ( isset( $gender ) && !empty( $gender ) ) echo '<strong>Gender 0rientation:</strong> ' . $gender; 
+					if ( isset( $sexuality ) && !empty( $sexuality ) ) echo '<span class="actor-orientation"><strong>Sexual orientation:</strong> ' . $sexuality . '</span>'; 
 				?>
 			</div>
 			<div class="card-meta-item">
@@ -74,6 +80,7 @@ if ( get_post_meta( get_the_ID(), 'lezactors_wikipedia', true ) ) {
 				<?php 
 					$urls_total = count( $urls );
 					$urls_count = 1;
+					echo '<strong>Links:</strong> ';
 					foreach ( $urls as $source => $link ) {
 						echo '<a href="' . $link . '">' . $source . '</a>';
 						if ( $urls_count !== $urls_total ) echo ' &bull; ' ;
@@ -94,16 +101,17 @@ if ( get_post_meta( get_the_ID(), 'lezactors_wikipedia', true ) ) {
 		<?php
 		$all_chars = lwtv_yikes_actordata( get_the_ID(), 'characters' );
 		if ( empty( $all_chars ) || count( $all_chars ) == '0' ) {
-			echo '<p>There are no queers listed yet for this actor.</p>';
+			echo '<p>There are no queer characters listed yet for this actor.</p>';
 		} else {
 			echo '<p>There '. sprintf( _n( 'is <strong>%s</strong> queer character', 'are <strong>%s</strong> queer characters', count( $all_chars ) ), count( $all_chars ) ).' played by this actor.</p>';
 		
-			echo '<div class="container characters-regulars-container"><div class="row site-loop character-show-loop equal-height">';
-				foreach( $all_chars as $character ) {
-					echo '<div class="col-sm-4">';
-						include( locate_template( 'template-parts/excerpt-post_type_characters.php' ) );
-					echo '</div>';
-				}
+			echo '<div class="container characters-regulars-container">
+					<div class="row site-loop character-show-loop equal-height">';
+						foreach( $all_chars as $character ) {
+							echo '<div class="col-sm-4">';
+								include( locate_template( 'template-parts/excerpt-post_type_characters.php' ) );
+							echo '</div>';
+						}
 			echo '</div></div>';
 		}
 		?>
