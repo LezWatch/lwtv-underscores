@@ -10,7 +10,7 @@ $checked_shows = $checked_characters = $checked_actors = '';
 $queery_types = get_query_var('post_type');
 
 if ( is_null($queery_types) || empty($queery_types) ) {
-	$queery_types = array( 'post_type_characters', 'post_type_shows' );
+	$queery_types = array( 'post_type_characters', 'post_type_shows', 'post_type_actors' );
 }
 if ( !is_array( $queery_types ) ) { $queery_types = array( $queery_types ); }
 if ( in_array( 'post_type_characters' , $queery_types) ) { $checked_characters = 'checked="checked"'; }

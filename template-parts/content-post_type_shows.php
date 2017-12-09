@@ -100,7 +100,7 @@ if ( $related ) {
 					if ( $tag == 0 || $tag == null ) {
 						echo '';
 					} else {
-						echo '<p><a href="' . get_tag_link( $tag ) . '">Read More ...</a></p>';
+						echo '<p><a href="' . get_tag_link( $tag['term_id'] ) . '">Read More ...</a></p>';
 					}
 				}
 			?>
