@@ -690,7 +690,7 @@ function lwtv_yikes_is_queer( $the_ID ) {
 	}
 	
 	// If the actor is heterosexual they may not be queer...
-	$straight_sexuality =  array( 'heterosexual' );
+	$straight_sexuality =  array( 'heterosexual', 'unknown' );
 	$sexuality_terms    = get_the_terms( $the_ID, 'lez_actor_sexuality', true );
 	if ( !$sexuality_terms || is_wp_error( $sexuality_terms ) || has_term( $straight_sexuality, 'lez_actor_sexuality', $the_ID ) ) {
 		$sexuality = false;
