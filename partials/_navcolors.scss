@@ -115,35 +115,35 @@
     }
 
     &.instagram a:before {
-      @include fontawesome("\f16d");
+      @include fontawesome_brand("\f16d");
     }
 
     &.twitter a:before {
-      @include fontawesome("\f099");
+      @include fontawesome_brand("\f099");
     }
 
     &.facebook a:before {
-      @include fontawesome("\f230");
+      @include fontawesome_brand("\f082");
     }
 
     &.youtube a:before {
-      @include fontawesome("\f167");
+      @include fontawesome_brand("\f167");
     }
 
     &.vimeo a:before {
-      @include fontawesome("\f27d");
+      @include fontawesome_brand("\f40a");
     }
 
     &.pinterest a:before {
-      @include fontawesome("\f0d2");
+      @include fontawesome_brand("\f0d2");
     }
 
     &.linkedin a:before {
-      @include fontawesome("\f0e1");
+      @include fontawesome_brand("\f0e1");
     }
 
     &.tumblr a:before {
-      @include fontawesome("\f173");
+      @include fontawesome_brand("\f173");
     }
 
     &.rss a:before {
@@ -151,11 +151,11 @@
     }
 
     &.mail a:before {
-      @include fontawesome("\f003");
+      @include fontawesome("\f0e0");
     }
 
     &.gplus a:before {
-      @include fontawesome("\f0d5");
+      @include fontawesome_brand("\f0d5");
     }
   }
 }

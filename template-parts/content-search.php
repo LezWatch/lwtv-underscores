@@ -7,16 +7,16 @@
 
 switch ( get_post_type( $post->ID ) ) {
 	case 'post_type_shows':
-		$searchicon = lwtv_yikes_symbolicons( 'tv-hd.svg', 'fa-television' );
+		$searchicon = lwtv_yikes_symbolicons( 'tv-hd.svg', 'fa-tv' );
 		break;
 	case 'post_type_actors':
-		$searchicon = lwtv_yikes_symbolicons( 'award-academy.svg', 'fa-television' );
+		$searchicon = lwtv_yikes_symbolicons( 'award-academy.svg', 'fa-tv' );
 		break;
 	case 'post_type_characters':
 		$searchicon = lwtv_yikes_symbolicons( 'female.svg', 'fa-female' );
 		break;
 	default:
-		$searchicon = lwtv_yikes_symbolicons( 'newspaper.svg', 'fa-newspaper-o' );
+		$searchicon = lwtv_yikes_symbolicons( 'newspaper.svg', 'fa-newspaper' );
 	}
 ?>
 

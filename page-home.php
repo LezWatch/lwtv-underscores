@@ -23,7 +23,7 @@ get_header(); ?>
 				<div class="col-sm-8"> 
 
 					<div class="site-loop home-featured-post-loop">
-						<h2 class="posts-title">New Posts <?php echo lwtv_yikes_symbolicons( 'newspaper.svg', 'fa-newspaper-o' ); ?></h2>
+						<h2 class="posts-title">New Posts <?php echo lwtv_yikes_symbolicons( 'newspaper.svg', 'fa-newspaper' ); ?></h2>
 
 						<?php 
 						$lastpostloop = new WP_Query( array(
@@ -44,7 +44,7 @@ get_header(); ?>
 									<h3 class="card-title"><?php the_title(); ?></h3>
 									<div class="card-meta text-muted">
 										<?php the_date(); ?> 
-										<?php echo lwtv_yikes_symbolicons( 'user-circle.svg', 'fa-user-circle-o' ); ?> 
+										<?php echo lwtv_yikes_symbolicons( 'user-circle.svg', 'fa-user-circle' ); ?> 
 										<?php the_author(); ?>
 									</div>
 									<div class="card-text">
@@ -90,7 +90,7 @@ get_header(); ?>
 										<h3 class="card-title"><?php the_title(); ?></h3>
 										<div class="card-meta text-muted">
 											<?php the_date(); ?>
-											<?php echo lwtv_yikes_symbolicons( 'user-circle.svg', 'fa-user-circle-o' ); ?> 
+											<?php echo lwtv_yikes_symbolicons( 'user-circle.svg', 'fa-user-circle' ); ?> 
 											<?php the_author(); ?>
 										</div>
 										<div class="card-text">
@@ -198,7 +198,7 @@ get_header(); ?>
 		<div class="container">
 			<div class="row">
 				<div class="col">
-					<h2 class="posts-title">More Posts <?php echo lwtv_yikes_symbolicons( 'newspaper.svg', 'fa-newspaper-o' ); ?></h2>
+					<h2 class="posts-title">More Posts <?php echo lwtv_yikes_symbolicons( 'newspaper.svg', 'fa-newspaper' ); ?></h2>
 				</div>
 			</div>
 			<div class="row site-loop main-posts-loop equal-height">

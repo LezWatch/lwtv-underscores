@@ -15,28 +15,28 @@ $validstat = array('death', 'characters', 'shows', 'lists', 'main', 'trends' );
 switch ( $statstype ) {
 	case 'death':
 		$title = 'Statistics on Queer Female Deaths';
-		$image = lwtv_yikes_symbolicons( 'grim-reaper.svg', 'fa-users' );
+		$image = lwtv_yikes_symbolicons( 'grim-reaper.svg', 'fa-ban' );
 		$intro = 'For a pure list of all dead, we have <a href="https://lezwatchtv.com/trope/dead-queers/">shows where characters died</a> as well as <a href="https://lezwatchtv.com/cliche/dead/">characters who have died</a> (aka the <a href="https://lezwatchtv.com/cliche/dead/">Dead Lesbians</a> list).';
 		break;
 	case 'characters':
 		$title = 'Statistics on Queer Female Characters';
-		$image = lwtv_yikes_symbolicons( 'chart-bar.svg', 'fa-users' );
+		$image = lwtv_yikes_symbolicons( 'chart-bar.svg', 'fa-chart-bar' );
 		$intro = 'Statistics specific to characters (sexuality, gender IDs, role types, etc).';
 		break;
 	case 'shows':
 		$title = 'Statistics on Shows With Queer Females';
-		$image = lwtv_yikes_symbolicons( 'chart-pie.svg', 'fa-users' );
+		$image = lwtv_yikes_symbolicons( 'chart-pie.svg', 'fa-chart-pie' );
 		$intro = 'Statistics specific to shows.';
 		break;
 	case 'trends':
 		$title = 'Statistics in the form of Trendlines';
-		$image = lwtv_yikes_symbolicons( 'graph-line.svg', 'fa-users' );
+		$image = lwtv_yikes_symbolicons( 'graph-line.svg', 'fa-chart-line' );
 		$intro = 'Trendlines and predictions.';
 		break;
 	case 'main':
 	default: 
 		$title = 'Statistics of Queer Females on TV';
-		$image = lwtv_yikes_symbolicons( 'graph-bar.svg', 'fa-users' );
+		$image = lwtv_yikes_symbolicons( 'graph-bar.svg', 'fa-chart-area' );
 		$intro = '';
 		break;
 }

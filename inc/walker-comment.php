@@ -241,7 +241,7 @@ class LWTV_Walker_Comment extends Walker {
 ?>
 		<<?php echo $tag; ?> id="comment-<?php comment_ID(); ?>" <?php comment_class( '', $comment ); ?>>
 			<div class="comment-body">
-				<?php echo lwtv_yikes_symbolicons( 'share.svg', 'fa-share-square-o' ); ?>
+				<?php echo lwtv_yikes_symbolicons( 'share.svg', 'fa-share-square' ); ?>
 				<?php _e( 'Pingback:' ); ?> <?php comment_author_link( $comment ); ?> <?php edit_comment_link( __( 'Edit' ), '<span class="edit-link">', '</span>' ); ?>
 			</div>
 <?php
@@ -345,7 +345,7 @@ class LWTV_Walker_Comment extends Walker {
 					<div class="col-sm-10">
 						<div class="comment-content clearfix">
 							<div class="comment-metadata">
-								<?php echo lwtv_yikes_symbolicons( 'clock.svg', 'fa-clock-o' ); ?>
+								<?php echo lwtv_yikes_symbolicons( 'clock.svg', 'fa-clock' ); ?>
 								<a href="<?php echo esc_url( get_comment_link( $comment, $args ) ); ?>">
 									<time datetime="<?php comment_time( 'c' ); ?>">
 										<?php

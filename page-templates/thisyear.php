@@ -11,7 +11,7 @@ if ( !is_numeric( $thisyear ) || $thisyear < FIRST_LWTV_YEAR ){
 	exit;
 }
 
-$iconpath = '<span role="img" aria-label="post_type_characters" title="Characters" class="taxonomy-svg characters">' . lwtv_yikes_symbolicons( 'calendar-15.svg', 'fa-calendar' ) . '</span>';
+$iconpath = '<span role="img" aria-label="post_type_characters" title="Characters" class="taxonomy-svg characters">' . lwtv_yikes_symbolicons( 'calendar-15.svg', 'fa-calendar-alt' ) . '</span>';
 
 get_header(); 
 ?>

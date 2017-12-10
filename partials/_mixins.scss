@@ -145,9 +145,15 @@ $endcolor: #7DB9E8;
 }
 
 // Like this @include fontawesome("\f0ad");
-@mixin fontawesome($arguement...) {
-	content: $arguement;
-	font-family: FontAwesome;
+@mixin fontawesome($argument...) {
+	content: $argument;
+	font-family: "Font Awesome 5 Free";
+}
+
+// Like this @include fontawesome_brand("\f0ad");
+@mixin fontawesome_brand($argument...) {
+	content: $argument;
+	font-family: "Font Awesome 5 Brands";
 }
 
 @mixin text-shadow {

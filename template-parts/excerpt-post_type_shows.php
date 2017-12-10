@@ -29,7 +29,7 @@ global $post;
 				$warning    = lwtv_yikes_content_warning( get_the_ID() );
 				$warn_image = lwtv_yikes_symbolicons( 'warning.svg', 'fa-exclamation-triangle' );
 				if ( $warning['card'] != 'none' ) {
-					echo '<span class="callout callout-' . $warning['card'] . '" role="img" aria-label="Warning - This show contains triggers" title="Warning - This show contains trigers">' . $warn_image . '</span>';
+					echo '<span class="callout callout-' . $warning['card'] . '" role="img" aria-label="Warning - This show contains triggers" title="Warning - This show contains triggers">' . $warn_image . '</span>';
 				}
 
 				// Stars of Queerness

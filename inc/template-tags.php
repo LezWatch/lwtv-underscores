@@ -73,7 +73,7 @@ if ( ! function_exists( 'yikes_starter_posted_on' ) ) :
 
 			$posted_on = sprintf(
 				esc_html_x( '%s', 'post date', 'yikes_starter' ),
-				$time_string . lwtv_yikes_symbolicons( 'user-circle.svg', 'fa-user-circle-o' )
+				$time_string . lwtv_yikes_symbolicons( 'user-circle.svg', 'fa-user-circle' )
 			);
 
 			$byline = sprintf(

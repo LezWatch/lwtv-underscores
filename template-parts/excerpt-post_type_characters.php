@@ -28,7 +28,7 @@ unset( $shows, $actors, $gender, $sexuality, $cliches, $grave );
 
 // Show a gravestone for recurring characters
 if ( ( $role == 'recurring' && 'post_type_shows' == get_post_type() ) || 'post_type_actors' == get_post_type() ) {
-	$grave = ( has_term( 'dead', 'lez_cliches' , $the_ID ) )? '<span role="img" aria-label="RIP Tombstone" title="RIP Tombstone" class="charlist-grave-sm">' . lwtv_yikes_symbolicons( 'rest-in-peace.svg', 'fa-times-circle' ) . '</span>' : '';
+	$grave = ( has_term( 'dead', 'lez_cliches' , $the_ID ) )? '<span role="img" aria-label="RIP Tombstone" title="RIP Tombstone" class="charlist-grave-sm">' . lwtv_yikes_symbolicons( 'rest-in-peace.svg', 'fa-ban' ) . '</span>' : '';
 }
 ?>
 
