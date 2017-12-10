@@ -27,10 +27,10 @@ $gender_sexuality = array();
 $gender           = lwtv_yikes_actordata( get_the_ID(), 'gender', true );
 $sexuality        = lwtv_yikes_actordata( get_the_ID(), 'sexuality', true );
 if ( isset( $gender ) && !empty( $gender ) ) {
-	$gender_sexuality['Gender Orientation'] = $gender; 
+	$gender_sexuality['Gender orientation'] = $gender; 
 }
 if ( isset( $sexuality ) && !empty( $sexuality ) ) {
-	$gender_sexuality['Sexual Orientation'] = $sexuality; 
+	$gender_sexuality['Sexual orientation'] = $sexuality; 
 }
 
 // Generate URLs
@@ -93,9 +93,9 @@ if ( get_post_meta( get_the_ID(), 'lezactors_wikipedia', true ) ) {
 				<?php 
 					if ( count( $urls ) > 0 ) {
 						echo '<strong>Links:</strong> ';
-						echo '<ul>';
+						echo '<ul class="actor-meta-links">';
 						foreach ( $urls as $source => $link ) {
-							echo '<li><a href="' . $link . '">' . $source . '</a></li>';
+							echo '<li><i class="fa fa-imdb" aria-hidden="true"></i> <i class="fa fa-wikipedia-w" aria-hidden="true"></i> <a href="' . $link . '">' . $source . '</a></li>';
 						}
 						echo '</ul>';
 					}

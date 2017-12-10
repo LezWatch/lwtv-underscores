@@ -887,10 +887,24 @@ canvas {
       margin-bottom: 1.25rem;
     }
   }
-  ul {
+
+  .card-meta-item {
+    ul {
+      padding: 0;
+
       li {
         display: inline-block;
         width: 50%;
+      }
+
+      &.actor-meta-links {
+        display: inline;
+
+        li {
+          padding-right: 1rem;
+          width: auto;
+        }
+      }
     }
   }
 
