@@ -960,21 +960,28 @@ canvas {
   height: 300px;
 }
 
-/* Single Character Template */
-.character-page .card {
+/* Single Character & Single Actor Template */
+.character-page .card, .actor-page .card {
   border: none;
   border-radius: 0;
   box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.14);
 }
-.character-page .card .single-char-img {
+.character-page .card .single-char-img, .actor-page .card .single-char-img {
   float: left;
   margin: 0 2rem 0 0;
 }
-.character-page .card .characters-description {
+.character-page .card .characters-description, .actor-page .card .characters-description {
   margin-top: 1.6rem;
 }
-.character-page .card .card-meta-item {
+.character-page .card .card-meta-item, .actor-page .card .card-meta-item {
   margin-bottom: .6rem;
+}
+.character-page .card .card-meta-item h2, .actor-page .card .card-meta-item h2 {
+  background-color: transparent;
+  font-size: 1.75rem;
+  margin-top: 0;
+  margin-bottom: 1rem;
+  padding: 0;
 }
 
 .character-cliche svg {
@@ -1005,6 +1012,18 @@ canvas {
 }
 .charlist-grave svg * {
   fill: #222;
+}
+
+/* Single Actor Template */
+.actor-page .card .single-char-img {
+  margin-bottom: 1.25rem;
+}
+.actor-page ul li {
+  display: inline-block;
+  width: 50%;
+}
+.actor-page .actor-orientation {
+  margin-left: 2rem;
 }
 
 /* Single Show / Single Character Template */
@@ -1126,9 +1145,9 @@ h3.post-title.excerpt {
 .card-meta-item.shows svg,
 .card-meta-item.cliches svg,
 .card-meta-item.actors svg {
-  height: 15px;
-  width: 15px;
-  vertical-align: middle;
+  height: 12px;
+  width: 12px;
+  margin-right: 6px;
 }
 
 .show-worthit, .show-worthit svg * {

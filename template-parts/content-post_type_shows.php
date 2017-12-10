@@ -96,7 +96,12 @@ if ( $related ) {
 			<?php
 				echo LWTV_Related_Posts::related_posts( $slug );
 				if ( count ( LWTV_Related_Posts::count_related_posts( $slug ) ) > '5' ) {
-					echo '<p><a href="' . get_tag_link( $tag ) . '">Read More ...</a></p>';
+					$tag = term_exists( $slug , 'post_tag' );
+					if ( $tag == 0 || $tag == null ) {
+						echo '';
+					} else {
+						echo '<p><a href="' . get_tag_link( $tag['term_id'] ) . '">Read More ...</a></p>';
+					}
 				}
 			?>
 		</div>

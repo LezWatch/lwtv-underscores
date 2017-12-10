@@ -45,6 +45,25 @@
 
 <hr>
 
+<h2><a name="barcharts">Barcharts</a></h2>
+
+<div class="container chart-container">
+	<div class="row">
+		<div class="col">
+			<?php LWTV_Stats::generate( 'actors', 'per-char', 'barchart' ); ?>
+			<p>This chart displays the number of actors who play each character. So for example, "11 (1)" means there's one character who has 11 actors (and yes, there is one).</p>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col">
+			<?php LWTV_Stats::generate( 'actors', 'per-actor', 'barchart' ); ?>
+			<p>This chart displays the number of characters each actor plays. So for example, "20 (1)" means there's one actor who played 20 characters (that would be the 'unknown' actor).</p>
+		</div>
+	</div>
+</div>
+
+<hr>
+
 <h2><a name="percentages">Percentages</a></h2>
 
 <div class="container percentage-container">
