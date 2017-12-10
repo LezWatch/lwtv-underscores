@@ -887,6 +887,12 @@ canvas {
       margin-bottom: 1.25rem;
     }
   }
+  ul {
+      li {
+        display: inline-block;
+        width: 50%;
+    }
+  }
 
   .actor-orientation {
     margin-left: 2rem;
@@ -1068,9 +1074,9 @@ article.post_type_shows {}
 .card-meta-item.cliches, 
 .card-meta-item.actors {
   svg {
-    height: 15px;
-    width: 15px;
-    vertical-align: middle;
+    height: 12px;
+    width: 12px;
+    margin-right: 6px;
   }
 }
 

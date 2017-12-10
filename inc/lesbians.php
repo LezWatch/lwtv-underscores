@@ -407,7 +407,7 @@ function lwtv_yikes_chardata( $the_ID, $data ) {
 				} else {
 					$output .= '&nbsp;<a href="' . get_the_permalink( $show_post->ID )  .'">' . $show_post->post_title .'</a>';
 				}
-				$output .= '</em>' . $showsmore . '</div>';
+				$output .= '</em> (' . $shows_value['type'] . ')' . $showsmore . '</div>';
 			}
 			break;
 		case 'oneactor':
@@ -482,12 +482,25 @@ function lwtv_yikes_chardata( $the_ID, $data ) {
 function lwtv_yikes_actordata( $the_ID, $data ) {
 
 	// Early Bail
-	$valid_data = array( 'characters', 'gender', 'sexuality' );
+	$valid_data = array( 'characters', 'gender', 'sexuality', 'age', 'dead' );
 	if ( !isset( $the_ID ) || !isset( $data) || !in_array( $data, $valid_data ) ) return;
 	
 	$output = '';
 
 	switch ( $data ) {
+		case 'age':
+			$end = new DateTime( );
+			if ( get_post_meta( get_the_ID(), 'lezactors_death', true ) ) {
+				$get_death = new DateTime( get_post_meta( get_the_ID(), 'lezactors_death', true ) );
+				$end       = $get_death;
+			}
+			if ( get_post_meta( get_the_ID(), 'lezactors_birth', true ) ) {
+				$start = new DateTime( get_post_meta( get_the_ID(), 'lezactors_birth', true ) );
+			}
+			if ( isset( $start ) ) {
+				$output = $start->diff($end);
+			}
+			break;
 		case 'characters':
 			$characters = array();
 			$charactersloop = new WP_Query( array(
@@ -506,18 +519,11 @@ function lwtv_yikes_actordata( $the_ID, $data ) {
 					),
 				),
 			) );
-	
 			if ( $charactersloop->have_posts() ) {
 				while ( $charactersloop->have_posts() ) {
 					$charactersloop->the_post();
-					$char_id     = get_the_ID();
+					$char_id      = get_the_ID();
 					$actors_array = get_post_meta( $char_id, 'lezchars_actor', true );
-		
-					// The Sara Lance Complexity:
-					// If the character has this actor AND is a published character,
-					// THEN we will pass the following data to the actor 
-					// template to determine what to display.
-		
 					if ( get_post_status ( $char_id ) == 'publish' && isset( $actors_array ) && !empty( $actors_array ) ) {
 						foreach( $actors_array as $char_actor ) {
 							if ( $char_actor == $the_ID ) {
@@ -526,6 +532,7 @@ function lwtv_yikes_actordata( $the_ID, $data ) {
 									'title'     => get_the_title( $char_id ),
 									'url'       => get_the_permalink( $char_id ),
 									'content'   => get_the_content( $char_id ),
+									'shows'     => get_post_meta( $char_id, 'lezchars_show_group', true ),
 								);
 							}
 						}
@@ -534,6 +541,52 @@ function lwtv_yikes_actordata( $the_ID, $data ) {
 				wp_reset_query();
 			}
 			$output = $characters;
+			break;
+		case 'dead':
+			$dead     = array();
+			$deadloop = new WP_Query( array(
+				'post_type'              => 'post_type_characters',
+				'post_status'            => array( 'publish' ),
+				'orderby'                => 'title',
+				'order'                  => 'ASC',
+				'posts_per_page'         => '20',
+				'no_found_rows'          => true,
+				'update_post_term_cache' => true,
+				'meta_query'             => array( 
+					array(
+						'key'     => 'lezchars_actor',
+						'value'   => $the_ID,
+						'compare' => 'LIKE',
+					),
+				),
+				'tax_query'              => array(
+					'taxonomy' => 'lez_cliches',
+					'terms'    => 'dead',
+					'field'    => 'slug',
+					'operator' => 'IN',
+				),
+			) );
+			if ( $deadloop->have_posts() ) {
+				while ( $deadloop->have_posts() ) {
+					$deadloop->the_post();
+					$char_id = get_the_ID();
+					$actors  = get_post_meta( $char_id, 'lezchars_actor', true );
+		
+					if ( get_post_status ( $char_id ) == 'publish' && isset( $actors ) && !empty( $actors ) ) {
+						foreach( $actors as $actor ) {
+							if ( $actor == $the_ID && has_term( 'dead', 'lez_cliches' , $char_id )) {
+								$dead[$char_id] = array(
+									'id'        => $char_id,
+									'title'     => get_the_title( $char_id ),
+									'url'       => get_the_permalink( $char_id ),
+								);
+							}
+						}
+					}
+				}
+				wp_reset_query();
+			}
+			$output = $dead;
 			break;
 		case 'gender':
 			$gender_terms = get_the_terms( $the_ID, 'lez_actor_gender', true );

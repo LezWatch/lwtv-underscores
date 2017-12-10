@@ -26,9 +26,8 @@ $archive     = ( is_archive() || is_tax() || is_page() )? true : false;
 // Reset to prevent Teri Polo from overtaking the world
 unset( $shows, $actors, $gender, $sexuality, $cliches, $grave );
 
-
 // Show a gravestone for recurring characters
-if ( ( $role == 'recurring' && 'post_type_shows' == get_post_type() ) ) {
+if ( ( $role == 'recurring' && 'post_type_shows' == get_post_type() ) || 'post_type_actors' == get_post_type() ) {
 	$grave = ( has_term( 'dead', 'lez_cliches' , $the_ID ) )? '<span role="img" aria-label="RIP Tombstone" title="RIP Tombstone" class="charlist-grave-sm">' . lwtv_yikes_symbolicons( 'rest-in-peace.svg', 'fa-times-circle' ) . '</span>' : '';
 }
 ?>
@@ -65,12 +64,14 @@ if ( ( $role == 'recurring' && 'post_type_shows' == get_post_type() ) ) {
 			}
 
 			// List of Shows (will not show on show pages)
-			if ( 'post_type_characters' == get_post_type() ) {
-				echo lwtv_yikes_chardata( get_the_ID(), 'oneshow' );
+			if ( 'post_type_characters' == get_post_type() || 'post_type_actors' == get_post_type() ) {
+				echo lwtv_yikes_chardata( $the_ID, 'oneshow' );
 			}
 
 			// List of Actors
-			echo lwtv_yikes_chardata( get_the_ID(), 'oneactor' );
+			if ( !'post_type_actors' == get_post_type() ) {
+				echo lwtv_yikes_chardata( $the_ID, 'oneactor' );
+			}
 
 			// Gender and Sexuality
 			if ( isset( $gender ) && isset( $sexuality ) ) {
