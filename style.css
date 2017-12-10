@@ -563,47 +563,47 @@ button, input[type="button"], input[type="submit"] {
 }
 .widget_yikes_social_menu_widget li.instagram a:before {
   content: "";
-  font-family: FontAwesome;
+  font-family: "Font Awesome 5 Brands";
 }
 .widget_yikes_social_menu_widget li.twitter a:before {
   content: "";
-  font-family: FontAwesome;
+  font-family: "Font Awesome 5 Brands";
 }
 .widget_yikes_social_menu_widget li.facebook a:before {
-  content: "";
-  font-family: FontAwesome;
+  content: "";
+  font-family: "Font Awesome 5 Brands";
 }
 .widget_yikes_social_menu_widget li.youtube a:before {
   content: "";
-  font-family: FontAwesome;
+  font-family: "Font Awesome 5 Brands";
 }
 .widget_yikes_social_menu_widget li.vimeo a:before {
-  content: "";
-  font-family: FontAwesome;
+  content: "";
+  font-family: "Font Awesome 5 Brands";
 }
 .widget_yikes_social_menu_widget li.pinterest a:before {
   content: "";
-  font-family: FontAwesome;
+  font-family: "Font Awesome 5 Brands";
 }
 .widget_yikes_social_menu_widget li.linkedin a:before {
   content: "";
-  font-family: FontAwesome;
+  font-family: "Font Awesome 5 Brands";
 }
 .widget_yikes_social_menu_widget li.tumblr a:before {
   content: "";
-  font-family: FontAwesome;
+  font-family: "Font Awesome 5 Brands";
 }
 .widget_yikes_social_menu_widget li.rss a:before {
   content: "";
-  font-family: FontAwesome;
+  font-family: "Font Awesome 5 Free";
 }
 .widget_yikes_social_menu_widget li.mail a:before {
-  content: "";
-  font-family: FontAwesome;
+  content: "";
+  font-family: "Font Awesome 5 Free";
 }
 .widget_yikes_social_menu_widget li.gplus a:before {
   content: "";
-  font-family: FontAwesome;
+  font-family: "Font Awesome 5 Brands";
 }
 
 /* ==========================================================================
@@ -856,7 +856,7 @@ section {
 }
 .related-shows ul li:before {
   content: "";
-  font-family: FontAwesome;
+  font-family: "Font Awesome 5 Free";
   margin-right: 4px;
 }
 
@@ -1018,9 +1018,19 @@ canvas {
 .actor-page .card .single-char-img {
   margin-bottom: 1.25rem;
 }
-.actor-page ul li {
+.actor-page .card-meta-item ul {
+  padding: 0;
+}
+.actor-page .card-meta-item ul li {
   display: inline-block;
   width: 50%;
+}
+.actor-page .card-meta-item ul.actor-meta-links {
+  display: inline;
+}
+.actor-page .card-meta-item ul.actor-meta-links li {
+  padding-right: 1rem;
+  width: auto;
 }
 .actor-page .actor-orientation {
   margin-left: 2rem;
@@ -1112,7 +1122,7 @@ h3.post-title.excerpt {
 }
 #episodes ul li:before {
   content: "";
-  font-family: FontAwesome;
+  font-family: "Font Awesome 5 Free";
   font-weight: 700;
   left: 20px;
   position: absolute;

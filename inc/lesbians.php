@@ -51,7 +51,7 @@ add_filter( 'comments_open', 'lwtv_yikes_filter_media_comment_status', 10 , 2 );
  */
 function lwtv_yikes_symbolicons( $svg = 'square.svg', $fontawesome = 'fa-square' ) {	
 
-	$icon   = '<i class="fa ' . $fontawesome . '" aria-hidden="true"></i>';
+	$icon   = '<i class="fas ' . $fontawesome . ' fa-fw" aria-hidden="true"></i>';
 	$square = file_get_contents( get_template_directory() . '/images/square.svg' );
 
 	if ( defined( 'LP_SYMBOLICONS_PATH' ) && file_exists( LP_SYMBOLICONS_PATH . $svg ) ) {
@@ -161,12 +161,75 @@ function lwtv_yikes_tax_archive_title( $location, $posttype, $taxonomy ) {
 	$title_prefix = $title_suffix = '';
 	$term         = get_term_by( 'slug', get_query_var( 'term' ), $taxonomy );
 	$termicon     = get_term_meta( $term->term_id, 'lez_termsmeta_icon', true );
-	$iconname     = $termicon ? $termicon . '.svg' : 'square.svg';
-	$icon         = lwtv_yikes_symbolicons( $iconname, 'fa-square' );
+
+	// FA defaults
+	switch ( $taxonomy ) {
+		case 'lez_cliches':
+			$fa  = 'fa-bell';
+			$svg = $termicon ? $termicon . '.svg' : 'bell.svg';
+			break;
+		case 'lez_gender':
+			$fa  = 'fa-venus';
+			$svg = $termicon ? $termicon . '.svg' : 'venus.svg';
+			break;
+		case 'lez_sexuality':
+			$fa  = 'fa-venus-double';
+			$svg = $termicon ? $termicon . '.svg' : 'venus-double.svg';
+			break;
+		case 'lez_romantic':
+			$fa  = 'fa-heart';
+			$svg = $termicon ? $termicon . '.svg' : 'heart-download.svg';
+			break;
+		case 'lez_formats':
+			$fa  = 'fa-tv';
+			$svg = $termicon ? $termicon . '.svg' : 'tv.svg';
+			break;
+		case 'lez_actor_gender':
+			$fa  = 'fa-bug';
+			$svg = 'octopus.svg';
+			break;
+		case 'lez_actor_sexuality':
+			$fa  = 'fa-heartbeat';
+			$svg = 'user-heart.svg';
+			break;
+		case 'lez_stars':
+			$fa  = 'fa-star';
+			$svg = 'star.svg';
+			break;
+		case 'lez_triggers':
+			$fa  = 'fa-exclamation-triangle';
+			$svg = 'warning.svg';
+			break;
+		case 'lez_stations':
+			$fa  = 'fa-bullhorn';
+			$svg = 'satellite-signal.svg';
+			break;
+		case 'lez_country':
+			$fa  = 'fa-globe';
+			$svg = 'globe.svg';
+			break;
+		default:
+			$fa  = 'fa-square';
+			$svg = $termicon ? $termicon . '.svg' : 'square.svg';
+			break;
+	}
+
+	$icon = lwtv_yikes_symbolicons( $svg, $fa );
 
 	switch ( $posttype ) {
 		case 'post_type_characters':
 			$title_suffix = ' Characters';
+			break;
+		case 'post_type_actors':
+			$title_prefix = 'Actors ';
+			switch ( $taxonomy ) {
+				case 'lez_actor_gender':
+					$title_prefix .= 'Who Identify As A ';
+					break;
+				case 'lez_actor_sexuality':
+					$title_prefix .= 'Who Identify As ';
+					break;
+			}
 			break;
 		case 'post_type_shows':
 			$title_prefix = 'TV Shows ';
@@ -178,11 +241,9 @@ function lwtv_yikes_tax_archive_title( $location, $posttype, $taxonomy ) {
 					$title_suffix .= ' Trope';
 					break;
 				case 'lez_country':
-					$icon          = lwtv_yikes_symbolicons( 'globe.svg', 'fa-globe' );
 					$title_prefix .= 'That Originate In ';
 					break;
 				case 'lez_stations':
-					$icon          = lwtv_yikes_symbolicons( 'satellite-signal.svg', 'fa-bullhorn' );
 					$title_prefix .= 'That Air On ';
 					break;
 				case 'lez_formats':
@@ -194,12 +255,10 @@ function lwtv_yikes_tax_archive_title( $location, $posttype, $taxonomy ) {
 					break;
 				case 'lez_stars':
 					$title_prefix .= 'With A ';
-					$icon          = lwtv_yikes_symbolicons( 'star.svg', 'fa-star' );
 					break;
 				case 'lez_triggers':
 					$title_prefix .= 'With A ';
 					$title_suffix .= ' Trigger Warning';
-					$icon          = lwtv_yikes_symbolicons( 'warning.svg', 'fa-exclamation-triangle' );
 					break;
 			}
 			break;
@@ -401,7 +460,7 @@ function lwtv_yikes_chardata( $the_ID, $data ) {
 				$num_shows = count( $all_shows );
 				$showsmore = ( $num_shows > 1 )? ' (plus ' . ( $num_shows - 1 ) .' more)' : '';
 				$show_post = get_post( $shows_value['show']);
-				$output   .= '<div class="card-meta-item shows">' . lwtv_yikes_symbolicons( 'tv-hd.svg', 'fa-television' ) . '<em>';
+				$output   .= '<div class="card-meta-item shows">' . lwtv_yikes_symbolicons( 'tv-hd.svg', 'fa-tv' ) . '<em>';
 				if ( get_post_status ( $shows_value['show'] ) !== 'publish' ) {
 					$output .= '&nbsp;<span class="disabled-show-link">' . $show_post->post_title . '</span>';
 				} else {
@@ -631,7 +690,7 @@ function lwtv_yikes_is_queer( $the_ID ) {
 	}
 	
 	// If the actor is heterosexual they may not be queer...
-	$straight_sexuality =  array( 'heterosexual' );
+	$straight_sexuality =  array( 'heterosexual', 'unknown' );
 	$sexuality_terms    = get_the_terms( $the_ID, 'lez_actor_sexuality', true );
 	if ( !$sexuality_terms || is_wp_error( $sexuality_terms ) || has_term( $straight_sexuality, 'lez_actor_sexuality', $the_ID ) ) {
 		$sexuality = false;

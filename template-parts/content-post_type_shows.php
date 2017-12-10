@@ -39,7 +39,7 @@ $related = LWTV_Related_Posts::are_there_posts( $slug );
 // The Game of Thrones Flag of Gratuitious Violence:
 // This shows a notice if the show has trigger warnings
 $warning    = lwtv_yikes_content_warning( get_the_ID() );
-$warn_image = lwtv_yikes_symbolicons( 'hand.svg', 'fa-hand-paper-o' );
+$warn_image = lwtv_yikes_symbolicons( 'hand.svg', 'fa-hand-paper' );
 
 if ( $warning['card'] != 'none' ) {
 	?>

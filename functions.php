@@ -7,7 +7,7 @@
  
 // Define theme version so CSS shit doesn't break. Again.
 if ( ! defined( 'LWTV_THEME_VERSION' ) ) {
-	define( 'LWTV_THEME_VERSION', '3.1.2' );
+	define( 'LWTV_THEME_VERSION', '3.1.3' );
 }
 
 /* Set the content width based on the theme's design and stylesheet.  */
@@ -383,12 +383,12 @@ function yikes_starter_scripts() {
 		wp_enqueue_script( 'comment-reply' );
 	}
 
-	wp_enqueue_style( 'yikes-bootstrap-style', get_template_directory_uri() . '/inc/bootstrap/css/bootstrap.min.css', array(), 'all' );
-	wp_enqueue_style( 'yikes-fontawesome-style', get_template_directory_uri() . '/inc/css/font-awesome.min.css', array(), 'all' );
-	wp_enqueue_style( 'google-fonts', '//fonts.googleapis.com/css?family=Open+Sans:400,600,700', false );
-	wp_enqueue_style( 'google-fonts2', '//fonts.googleapis.com/css?family=Oswald:400,500', false );
-	wp_enqueue_script( 'yikes-popper-script', '//cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js',  array(), 'all', true );
-	wp_enqueue_script( 'yikes-bootstrap-script', get_template_directory_uri() . '/inc/bootstrap/js/bootstrap.min.js', array( 'jquery' ), 'all', true );
+	wp_enqueue_style( 'bootstrap', get_template_directory_uri() . '/inc/bootstrap/css/bootstrap.min.css', array(), '4.0.0-beta', 'all' );
+	wp_enqueue_style( 'fontawesome', get_template_directory_uri() . '/inc/css/fontawesome-5.min.css', array(), '5.0.1', 'all' );
+	wp_enqueue_style( 'open-sans', '//fonts.googleapis.com/css?family=Open+Sans:400,600,700', false );
+	wp_enqueue_style( 'oswald', '//fonts.googleapis.com/css?family=Oswald:400,500', false );
+	wp_enqueue_script( 'yikes-popper-script', get_template_directory_uri() . '/inc/js/popper.min.js',  array(), '1.11.0', 'all', true );
+	wp_enqueue_script( 'bootstrap', get_template_directory_uri() . '/inc/bootstrap/js/bootstrap.min.js', array( 'jquery' ), '4.0.0-beta', 'all', true );
 }
 
 add_action( 'wp_enqueue_scripts', 'yikes_starter_scripts' );

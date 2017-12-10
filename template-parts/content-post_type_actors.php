@@ -36,11 +36,26 @@ if ( isset( $sexuality ) && !empty( $sexuality ) ) {
 // Generate URLs
 // Usage: $urls
 $urls = array();
+if ( get_post_meta( get_the_ID(), 'lezactors_homepage', true ) ) {
+	$urls['imdb'] = array(
+		'name' => 'Homepage',
+		'url'  => esc_url( get_post_meta( get_the_ID(), 'lezactors_homepage', true ) ),
+		'fa'   => 'home',
+	);
+}
 if ( get_post_meta( get_the_ID(), 'lezactors_imdb', true ) ) {
-	$urls['IMDb'] = esc_url( 'https://imdb.com/name/' . get_post_meta( get_the_ID(), 'lezactors_imdb', true ) );
+	$urls['imdb'] = array(
+		'name' => 'IMDb',
+		'url'  => esc_url( 'https://imdb.com/name/' . get_post_meta( get_the_ID(), 'lezactors_imdb', true ) ),
+		'fa'   => 'imdb',
+	);
 }
 if ( get_post_meta( get_the_ID(), 'lezactors_wikipedia', true ) ) {
-	$urls['WikiPedia'] = esc_url( get_post_meta( get_the_ID(), 'lezactors_wikipedia', true ) );
+	$urls['wikipedia'] = array(
+		'name' => 'WikiPedia',
+		'url'  => esc_url( get_post_meta( get_the_ID(), 'lezactors_wikipedia', true ) ),
+		'fa'   => 'wikipedia-w',
+	);
 }
 ?>
 
@@ -93,9 +108,9 @@ if ( get_post_meta( get_the_ID(), 'lezactors_wikipedia', true ) ) {
 				<?php 
 					if ( count( $urls ) > 0 ) {
 						echo '<strong>Links:</strong> ';
-						echo '<ul>';
-						foreach ( $urls as $source => $link ) {
-							echo '<li><a href="' . $link . '">' . $source . '</a></li>';
+						echo '<ul class="actor-meta-links">';
+						foreach ( $urls as $source ) {
+							echo '<li><i class="fab fa-' . strtolower( $source['fa'] ) . '" aria-hidden="true"></i> <a href="' . $source['url'] . '">' . $source['name'] . '</a></li>';
 						}
 						echo '</ul>';
 					}

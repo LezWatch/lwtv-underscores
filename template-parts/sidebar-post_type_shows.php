@@ -31,11 +31,11 @@ $screentime   = min( (int) get_post_meta( $show_id, 'lezshows_screentime_rating'
 			<div class="ratings-icons worthit-<?php echo lcfirst( $thumb_rating ); ?>">
 				<div class="worthit">
 					<?php
-					if ( $thumb_rating == "Yes" ) { $thumb_icon = "thumbs-up.svg"; }
+					if ( $thumb_rating == "Yes" ) { $thumb_icon = "thumbs-up"; }
 					if ( $thumb_rating == "Meh" ) { $thumb_icon = "meh.svg"; }
-					if ( $thumb_rating == "No" )  { $thumb_icon = "thumbs-down.svg"; }
+					if ( $thumb_rating == "No" )  { $thumb_icon = "thumbs-down"; }
 	
-					$thumb_image = lwtv_yikes_symbolicons( $thumb_icon, 'fa-square' );
+					$thumb_image = lwtv_yikes_symbolicons( $thumb_icon . '.svg', 'fa-' . $thumb_icon );
 					echo '<span role="img" class="show-worthit ' . lcfirst( $thumb_rating ) . '">' . $thumb_image . '</span>';
 					echo get_post_meta( $show_id, 'lezshows_worthit_rating', true );
 					?>
@@ -103,7 +103,7 @@ $screentime   = min( (int) get_post_meta( $show_id, 'lezshows_screentime_rating'
 						<a href="<?php echo get_term_link( $term->slug, 'lez_tropes'); ?>" rel="show trope"><?php
 							// Echo the taxonomy icon (default to squares if empty)
 							$icon = get_term_meta( $term->term_id, 'lez_termsmeta_icon', true );
-							echo lwtv_yikes_symbolicons( $icon .'.svg', 'fa-square' );
+							echo lwtv_yikes_symbolicons( $icon .'.svg', 'fa-lemon' );
 						?></a>
 						<a href="<?php echo get_term_link( $term->slug, 'lez_tropes'); ?>" rel="show trope" class="trope-link"><?php
 							echo $term->name;
