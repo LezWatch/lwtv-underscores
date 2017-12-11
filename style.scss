@@ -791,13 +791,13 @@ canvas {
 /* =Custom Post Types
 ----------------------------------------------- */
 
-/* Characters */
+/* Characters and Actors*/
 
 .facetwp-counts {
   display: inline;
 }
 
-.character-image-wrapper {
+.character-image-wrapper, .actor-image-wrapper {
   max-height: 300px;
   overflow: hidden;
 
