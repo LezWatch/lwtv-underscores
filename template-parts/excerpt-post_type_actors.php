@@ -24,7 +24,7 @@ unset( $shows, $actors, $gender, $sexuality, $cliches, $grave );
 	<?php if ( has_post_thumbnail( $the_ID ) ) : ?>
 		<div class="actor-image-wrapper">
 			<a href="<?php the_permalink( $the_ID ); ?>" title="<?php get_the_title( $the_ID ); ?>" >
-				<?php echo get_the_post_thumbnail( $the_ID, 'actor-img', array( 'class' => 'card-img-top' , 'alt' => $alttext, 'title' => $alttext ) ); ?>
+				<?php echo get_the_post_thumbnail( $the_ID, 'character-img', array( 'class' => 'card-img-top' , 'alt' => $alttext, 'title' => $alttext ) ); ?>
 			</a>
 		</div>
 	<?php endif; ?>
