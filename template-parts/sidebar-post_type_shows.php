@@ -32,7 +32,7 @@ $screentime   = min( (int) get_post_meta( $show_id, 'lezshows_screentime_rating'
 				<div class="worthit">
 					<?php
 					if ( $thumb_rating == "Yes" ) { $thumb_icon = "thumbs-up"; }
-					if ( $thumb_rating == "Meh" ) { $thumb_icon = "meh.svg"; }
+					if ( $thumb_rating == "Meh" ) { $thumb_icon = "meh"; }
 					if ( $thumb_rating == "No" )  { $thumb_icon = "thumbs-down"; }
 	
 					$thumb_image = lwtv_yikes_symbolicons( $thumb_icon . '.svg', 'fa-' . $thumb_icon );
