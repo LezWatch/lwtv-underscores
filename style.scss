@@ -674,10 +674,11 @@ section {
 
     li {
       list-style-type: none;
-
-      &:before {
-        @include fontawesome("\f26c");
-        margin-right: 4px;
+      svg {
+          width: 20px;
+          height: 20px;
+          margin-right: 4px;
+          vertical-align: middle;
       }
     }
   }
