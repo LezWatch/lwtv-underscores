@@ -56,7 +56,7 @@ function lwtv_yikes_symbolicons( $svg = 'square.svg', $fontawesome = 'fa-square'
 
 	if ( defined( 'LP_SYMBOLICONS_PATH' ) && file_exists( LP_SYMBOLICONS_PATH . $svg ) ) {
 		$icon = file_get_contents( LP_SYMBOLICONS_PATH . $svg );
-	} elseif ( !wp_style_is( 'yikes-fontawesome-style', 'enqueued' ) ) {
+	} elseif ( !wp_style_is( 'fontawesome', 'enqueued' ) ) {
 		$icon = $square;
 	}
 
@@ -459,7 +459,7 @@ function lwtv_yikes_chardata( $the_ID, $data ) {
 			if ( !empty( $shows_value ) ) {
 				$num_shows = count( $all_shows );
 				$showsmore = ( $num_shows > 1 )? ' (plus ' . ( $num_shows - 1 ) .' more)' : '';
-				$show_post = get_post( $shows_value['show']);
+				$show_post = get_post( $shows_value['show'] );
 				$output   .= '<div class="card-meta-item shows">' . lwtv_yikes_symbolicons( 'tv-hd.svg', 'fa-tv' ) . '<em>';
 				if ( get_post_status ( $shows_value['show'] ) !== 'publish' ) {
 					$output .= '&nbsp;<span class="disabled-show-link">' . $show_post->post_title . '</span>';
