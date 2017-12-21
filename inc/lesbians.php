@@ -681,31 +681,7 @@ function lwtv_yikes_actordata( $the_ID, $data ) {
  */
 function lwtv_yikes_is_queer( $the_ID ) {
 	
-	// If we're not a valid ID and not an actor, bail.
-	if ( !isset( $the_ID ) || !is_singular( 'post_type_actors' ) ) return false;
-	
-	// Defaults
-	$gender = $sexuality = true;
-	
-	// If the actor is cis, they may not be queer...
-	$straight_genders =  array( 'cis-man', 'cis-woman', 'cisgender' );
-	$gender_terms     = get_the_terms( $the_ID, 'lez_actor_gender', true );
-	if ( !$gender_terms || is_wp_error( $gender_terms ) || has_term( $straight_genders, 'lez_actor_gender', $the_ID ) ) {
-		$gender = false;
-	}
-	
-	// If the actor is heterosexual they may not be queer...
-	$straight_sexuality =  array( 'heterosexual', 'unknown' );
-	$sexuality_terms    = get_the_terms( $the_ID, 'lez_actor_sexuality', true );
-	if ( !$sexuality_terms || is_wp_error( $sexuality_terms ) || has_term( $straight_sexuality, 'lez_actor_sexuality', $the_ID ) ) {
-		$sexuality = false;
-	}
-	
-	// If either the gender or sexuality is queer, we have a queerio!
-	$is_queer = false;
-	if ( $sexuality == true || $gender == true ) {
-		$is_queer = true;
-	}
+	$is_queer = ( LWTV_Loops::is_actor_queer( $the_ID ) == 'yes' )? true : false;
 	
 	return $is_queer;
 }
