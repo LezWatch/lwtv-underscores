@@ -58,6 +58,11 @@ function lwtv_yikes_symbolicons( $svg = 'square.svg', $fontawesome = 'fa-square'
 		$icon = file_get_contents( LP_SYMBOLICONS_PATH . $svg );
 	} elseif ( !wp_style_is( 'fontawesome', 'enqueued' ) ) {
 		$icon = $square;
+	} 
+	
+	// Override for AMP - NO ICONS
+	if ( is_amp_endpoint() ) {
+		$icon = '';
 	}
 
 	return $icon;

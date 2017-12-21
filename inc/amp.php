@@ -25,6 +25,7 @@ class LWTV_AMP {
 		add_action( 'pre_amp_render_post', array( $this, 'add_custom_actions' ) );
 		add_action( 'amp_post_template_css', array( $this, 'amp_post_template_css' ) );
 		add_filter( 'amp_post_template_analytics', array( $this, 'amp_add_custom_analytics' ) );
+		add_action( 'amp_post_template_head', array( $this, 'amp_post_template_head' ) );
 	}
 
 	/*
@@ -84,6 +85,16 @@ class LWTV_AMP {
 			$content = $image . $content;
 		}
 		return $content;
+	}
+
+
+	/**
+	 * Edit Head Action.
+	 * 
+	 * Add custom code to the header
+	 */
+	function amp_post_template_head( $amp_template ) {
+		// Nothing Yet
 	}
 
 	/*
