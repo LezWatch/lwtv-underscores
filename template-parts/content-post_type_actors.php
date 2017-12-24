@@ -57,6 +57,13 @@ if ( get_post_meta( get_the_ID(), 'lezactors_wikipedia', true ) ) {
 		'fa'   => 'wikipedia-w',
 	);
 }
+if ( get_post_meta( get_the_ID(), 'lezactors_twitter', true ) ) {
+	$urls['wikipedia'] = array(
+		'name' => 'Twitter',
+		'url'  => esc_url( 'https://twitter.com/' . get_post_meta( get_the_ID(), 'lezactors_twitter', true ) ),
+		'fa'   => 'twitter',
+	);
+}
 ?>
 
 <section class="showschar-section" name="overview" id="overview">
