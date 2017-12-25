@@ -46,7 +46,7 @@ if ( get_post_meta( get_the_ID(), 'lezactors_homepage', true ) ) {
 if ( get_post_meta( get_the_ID(), 'lezactors_imdb', true ) ) {
 	$urls['imdb'] = array(
 		'name' => 'IMDb',
-		'url'  => esc_url( 'https://imdb.com/name/' . get_post_meta( get_the_ID(), 'lezactors_imdb', true ) ),
+		'url'  => esc_url( 'https://www.imdb.com/name/' . get_post_meta( get_the_ID(), 'lezactors_imdb', true ) ),
 		'fa'   => 'imdb',
 	);
 }
@@ -55,6 +55,13 @@ if ( get_post_meta( get_the_ID(), 'lezactors_wikipedia', true ) ) {
 		'name' => 'WikiPedia',
 		'url'  => esc_url( get_post_meta( get_the_ID(), 'lezactors_wikipedia', true ) ),
 		'fa'   => 'wikipedia-w',
+	);
+}
+if ( get_post_meta( get_the_ID(), 'lezactors_twitter', true ) ) {
+	$urls['wikipedia'] = array(
+		'name' => 'Twitter',
+		'url'  => esc_url( 'https://twitter.com/' . get_post_meta( get_the_ID(), 'lezactors_twitter', true ) ),
+		'fa'   => 'twitter',
 	);
 }
 ?>

@@ -155,13 +155,11 @@ if ( $related ) {
 			}
 			// Get the list of GUEST characters
 			$chars_guest = lwtv_yikes_get_characters_for_show( $show_id, $havecharcount, 'guest' );
-			if ( !empty( $chars_guest ) ) {	
+			if ( !empty( $chars_guest ) ) {
 				?><h3 class="title-guest">Guest<?php echo _n( '', 's', count( $chars_guest ) ); ?> (<?php echo count( $chars_guest ); ?>)</h3>
 				<ul class="guest-character-list"><?php
 				foreach( $chars_guest as $character ) {
-					
-					$grave = ( has_term( 'dead', 'lez_cliches' , $the_ID ) )? '<span role="img" aria-label="RIP Tombstone" title="RIP Tombstone" class="charlist-grave-sm">' . lwtv_yikes_symbolicons( 'rest-in-peace.svg', 'fa-times-circle' ) . '</span>' : '';
-					
+					$grave = ( has_term( 'dead', 'lez_cliches' , $character['id'] ) )? '<span role="img" aria-label="RIP Tombstone" title="RIP Tombstone" class="charlist-grave-sm">' . lwtv_yikes_symbolicons( 'rest-in-peace.svg', 'fa-times-circle' ) . '</span>' : '';
 					?><li><a href="<?php the_permalink( $character['id'] ); ?>" title="<?php echo get_the_title( $character['id'] ); ?>" ><?php echo get_the_title( $character['id'] ) . ' ' . $grave; ?></a></li><?php
 				}
 				echo '</ul>';

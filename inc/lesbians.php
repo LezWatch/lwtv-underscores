@@ -555,8 +555,7 @@ function lwtv_yikes_actordata( $the_ID, $data ) {
 		case 'age':
 			$end = new DateTime( );
 			if ( get_post_meta( get_the_ID(), 'lezactors_death', true ) ) {
-				$get_death = new DateTime( get_post_meta( get_the_ID(), 'lezactors_death', true ) );
-				$end       = $get_death;
+				$end = new DateTime( get_post_meta( get_the_ID(), 'lezactors_death', true ) );
 			}
 			if ( get_post_meta( get_the_ID(), 'lezactors_birth', true ) ) {
 				$start = new DateTime( get_post_meta( get_the_ID(), 'lezactors_birth', true ) );
