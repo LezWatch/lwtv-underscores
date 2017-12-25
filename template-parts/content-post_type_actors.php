@@ -46,7 +46,7 @@ if ( get_post_meta( get_the_ID(), 'lezactors_homepage', true ) ) {
 if ( get_post_meta( get_the_ID(), 'lezactors_imdb', true ) ) {
 	$urls['imdb'] = array(
 		'name' => 'IMDb',
-		'url'  => esc_url( 'https://imdb.com/name/' . get_post_meta( get_the_ID(), 'lezactors_imdb', true ) ),
+		'url'  => esc_url( 'https://www.imdb.com/name/' . get_post_meta( get_the_ID(), 'lezactors_imdb', true ) ),
 		'fa'   => 'imdb',
 	);
 }
