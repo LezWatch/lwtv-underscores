@@ -467,9 +467,9 @@ function lwtv_yikes_chardata( $the_ID, $data ) {
 				$show_post = get_post( $shows_value['show'] );
 				$output   .= '<div class="card-meta-item shows">' . lwtv_yikes_symbolicons( 'tv-hd.svg', 'fa-tv' ) . '<em>';
 				if ( get_post_status ( $shows_value['show'] ) !== 'publish' ) {
-					$output .= '&nbsp;<span class="disabled-show-link">' . $show_post->post_title . '</span>';
+					$output .= '<span class="disabled-show-link">' . $show_post->post_title . '</span>';
 				} else {
-					$output .= '&nbsp;<a href="' . get_the_permalink( $show_post->ID )  .'">' . $show_post->post_title .'</a>';
+					$output .= '<a href="' . get_the_permalink( $show_post->ID )  .'">' . $show_post->post_title .'</a>';
 				}
 				$output .= '</em> (' . $shows_value['type'] . ')' . $showsmore . '</div>';
 			}
@@ -482,11 +482,11 @@ function lwtv_yikes_chardata( $the_ID, $data ) {
 				$num_actors = count( $actors );
 				$actorsmore = ( $num_actors > 1 )? ' (plus ' . ( $num_actors - 1 ) .' more)' : '';
 				$actor_post = get_post( $actor_value );
-				$output .= '<div class="card-meta-item actors">' . lwtv_yikes_symbolicons( 'user.svg', 'fa-user' ) . '&nbsp;';
+				$output .= '<div class="card-meta-item actors">' . lwtv_yikes_symbolicons( 'user.svg', 'fa-user' );
 				if ( get_post_status ( $actor_value ) !== 'publish' ) {
-					$output .= '&nbsp;<span class="disabled-show-link">' . $actor_post->post_title . '</span>';
+					$output .= '<span class="disabled-show-link">' . $actor_post->post_title . '</span>';
 				} else {
-					$output .= '&nbsp;<a href="' . get_the_permalink( $actor_post->ID )  .'">' . $actor_post->post_title .'</a>';
+					$output .= '<a href="' . get_the_permalink( $actor_post->ID )  .'">' . $actor_post->post_title .'</a>';
 				}
 				$output .= $actorsmore . '</div>';
 			}
