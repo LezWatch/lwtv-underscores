@@ -38,7 +38,7 @@ if ( isset( $sexuality ) && !empty( $sexuality ) ) {
 $urls = array();
 if ( get_post_meta( get_the_ID(), 'lezactors_homepage', true ) ) {
 	$urls['home'] = array(
-		'name' => 'Homepage',
+		'name' => 'Website',
 		'url'  => esc_url( get_post_meta( get_the_ID(), 'lezactors_homepage', true ) ),
 		'fa'   => 'fas fa-home',
 	);
