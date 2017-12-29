@@ -37,31 +37,38 @@ if ( isset( $sexuality ) && !empty( $sexuality ) ) {
 // Usage: $urls
 $urls = array();
 if ( get_post_meta( get_the_ID(), 'lezactors_homepage', true ) ) {
-	$urls['imdb'] = array(
+	$urls['home'] = array(
 		'name' => 'Homepage',
 		'url'  => esc_url( get_post_meta( get_the_ID(), 'lezactors_homepage', true ) ),
-		'fa'   => 'home',
+		'fa'   => 'fas fa-home',
 	);
 }
 if ( get_post_meta( get_the_ID(), 'lezactors_imdb', true ) ) {
 	$urls['imdb'] = array(
 		'name' => 'IMDb',
 		'url'  => esc_url( 'https://www.imdb.com/name/' . get_post_meta( get_the_ID(), 'lezactors_imdb', true ) ),
-		'fa'   => 'imdb',
+		'fa'   => 'fab fa-imdb',
 	);
 }
 if ( get_post_meta( get_the_ID(), 'lezactors_wikipedia', true ) ) {
 	$urls['wikipedia'] = array(
 		'name' => 'WikiPedia',
 		'url'  => esc_url( get_post_meta( get_the_ID(), 'lezactors_wikipedia', true ) ),
-		'fa'   => 'wikipedia-w',
+		'fa'   => 'fab fa-wikipedia-w',
 	);
 }
 if ( get_post_meta( get_the_ID(), 'lezactors_twitter', true ) ) {
-	$urls['wikipedia'] = array(
+	$urls['twitter'] = array(
 		'name' => 'Twitter',
 		'url'  => esc_url( 'https://twitter.com/' . get_post_meta( get_the_ID(), 'lezactors_twitter', true ) ),
-		'fa'   => 'twitter',
+		'fa'   => 'fab fa-twitter',
+	);
+}
+if ( get_post_meta( get_the_ID(), 'lezactors_instagram', true ) ) {
+	$urls['instagram'] = array(
+		'name' => 'Instagram',
+		'url'  => esc_url( 'https://www.instagram.com/' . get_post_meta( get_the_ID(), 'lezactors_instagram', true ) ),
+		'fa'   => 'fab fa-instagram',
 	);
 }
 ?>
@@ -117,7 +124,7 @@ if ( get_post_meta( get_the_ID(), 'lezactors_twitter', true ) ) {
 						echo '<strong>Links:</strong> ';
 						echo '<ul class="actor-meta-links">';
 						foreach ( $urls as $source ) {
-							echo '<li><i class="fab fa-' . strtolower( $source['fa'] ) . '" aria-hidden="true"></i> <a href="' . $source['url'] . '">' . $source['name'] . '</a></li>';
+							echo '<li><i class="' . strtolower( $source['fa'] ) . '" aria-hidden="true"></i> <a href="' . $source['url'] . '">' . $source['name'] . '</a></li>';
 						}
 						echo '</ul>';
 					}

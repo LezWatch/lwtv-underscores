@@ -114,6 +114,15 @@
       }
     }
 
+    &.rss a::before {
+      @include fontawesome("\f09e");
+      font-weight: 700;
+    }
+
+    &.mail a:before {
+      @include fontawesome("\f0e0");
+    }
+
     &.instagram a:before {
       @include fontawesome_brand("\f16d");
     }
@@ -144,14 +153,6 @@
 
     &.tumblr a:before {
       @include fontawesome_brand("\f173");
-    }
-
-    &.rss a:before {
-      @include fontawesome("\f09e");
-    }
-
-    &.mail a:before {
-      @include fontawesome("\f0e0");
     }
 
     &.gplus a:before {

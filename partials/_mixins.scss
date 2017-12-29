@@ -144,7 +144,7 @@ $endcolor: #7DB9E8;
 	transform: translateY(-50%);
 }
 
-// Like this @include fontawesome("\f0ad");
+// Like this @include fontawesome_free("\f0ad");
 @mixin fontawesome($argument...) {
 	content: $argument;
 	font-family: "Font Awesome 5 Free";
