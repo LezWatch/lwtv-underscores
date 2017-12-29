@@ -554,6 +554,15 @@ button, input[type="button"], input[type="submit"] {
 .widget_yikes_social_menu_widget li a:hover:before, .widget_yikes_social_menu_widget li a:focus:before, .widget_yikes_social_menu_widget li a:visited:hover:before, .widget_yikes_social_menu_widget li a:visited:focus:before {
   color: #8d329f;
 }
+.widget_yikes_social_menu_widget li.rss a::before {
+  content: "";
+  font-family: "Font Awesome 5 Free";
+  font-weight: 700;
+}
+.widget_yikes_social_menu_widget li.mail a:before {
+  content: "";
+  font-family: "Font Awesome 5 Free";
+}
 .widget_yikes_social_menu_widget li.instagram a:before {
   content: "";
   font-family: "Font Awesome 5 Brands";
@@ -585,14 +594,6 @@ button, input[type="button"], input[type="submit"] {
 .widget_yikes_social_menu_widget li.tumblr a:before {
   content: "";
   font-family: "Font Awesome 5 Brands";
-}
-.widget_yikes_social_menu_widget li.rss a:before {
-  content: "";
-  font-family: "Font Awesome 5 Free";
-}
-.widget_yikes_social_menu_widget li.mail a:before {
-  content: "";
-  font-family: "Font Awesome 5 Free";
 }
 .widget_yikes_social_menu_widget li.gplus a:before {
   content: "";
