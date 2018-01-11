@@ -74,6 +74,8 @@ $cliches   = '<strong>Clichés:</strong> ' . lwtv_yikes_chardata( get_the_ID(), 
 // Generate Gender & Sexuality Data
 // Usage: $gender_sexuality
 $gender_sexuality = lwtv_yikes_chardata( get_the_ID(), 'gender' ) . ' &bull; ' . lwtv_yikes_chardata( get_the_ID(), 'sexuality' );
+if ( !null( lwtv_yikes_chardata( get_the_ID(), 'romantic' ) ) ) $gender_sexuality .= ' &bull; ' . lwtv_yikes_chardata( get_the_ID(), 'romantic' );
+
 ?>
 
 <div class="card-body">
