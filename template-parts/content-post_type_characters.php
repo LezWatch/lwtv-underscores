@@ -74,7 +74,9 @@ $cliches   = '<strong>Clichés:</strong> ' . lwtv_yikes_chardata( get_the_ID(), 
 // Generate Gender & Sexuality & Romantic Data
 // Usage: $gender_sexuality
 $gender_sexuality = lwtv_yikes_chardata( get_the_ID(), 'gender' ) . ' &bull; ' . lwtv_yikes_chardata( get_the_ID(), 'sexuality' );
-if ( !is_null( lwtv_yikes_chardata( get_the_ID(), 'romantic' ) ) ) $gender_sexuality .= ' &bull; ' . lwtv_yikes_chardata( get_the_ID(), 'romantic' );
+if ( !is_null( lwtv_yikes_chardata( get_the_ID(), 'romantic' ) ) && lwtv_yikes_chardata( get_the_ID(), 'romantic' ) !== '' ) {
+	$gender_sexuality .= ' &bull; ' . lwtv_yikes_chardata( get_the_ID(), 'romantic' );
+}
 
 // Microformats Fix
 lwtv_microformats_fix( $post->ID );
