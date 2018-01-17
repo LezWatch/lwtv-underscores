@@ -14,9 +14,9 @@
 		<h4 class="toc-title">Go to:</h4>
 		<a class="breadcrumb-item smoothscroll" href="#charts">Charts</a>
 		<a class="breadcrumb-item smoothscroll" href="#percentages">Percentages</a>
+		<a class="breadcrumb-item smoothscroll" href="#misc">Miscellaneous</a>
 	</nav>
 </section>
-
 
 <h2>
 	<a name="charts">Charts</a>
@@ -91,3 +91,9 @@
 		</div>
 	</div>
 </div>
+
+<hr>
+
+<h2><a name="misc">Miscellaneous</a></h2>
+
+<p>The average show score is <strong><?php LWTV_Stats::generate( 'shows', 'scores', 'average' ); ?></strong>.</p>

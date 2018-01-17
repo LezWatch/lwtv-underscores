@@ -290,7 +290,7 @@ class LWTV_Walker_Comment extends Walker {
 				<?php
 					/* translators: %s: comment author link */
 					printf( __( '%s <span class="says">says:</span>' ),
-						sprintf( '<cite class="fn">%s</cite>', get_comment_author_link( $comment ) )
+						sprintf( '<cite class="author">%s</cite>', get_comment_author_link( $comment ) )
 					);
 				?>
 			</div>

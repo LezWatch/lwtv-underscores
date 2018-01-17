@@ -439,7 +439,7 @@ function lwtv_yikes_get_characters_for_show( $show_id, $havecharcount, $role = '
 function lwtv_yikes_chardata( $the_ID, $data ) {
 
 	// Early Bail
-	$valid_data = array( 'dead', 'shows', 'actors', 'gender', 'sexuality', 'cliches', 'oneshow', 'oneactor' );
+	$valid_data = array( 'dead', 'shows', 'actors', 'gender', 'sexuality', 'romantic', 'cliches', 'oneshow', 'oneactor' );
 	if ( !isset( $the_ID ) || !isset( $data) || !in_array( $data, $valid_data ) ) return;
 	
 	$output = '';
@@ -511,6 +511,14 @@ function lwtv_yikes_chardata( $the_ID, $data ) {
 			if ( $sexuality_terms && ! is_wp_error( $sexuality_terms ) ) {
 				foreach( $sexuality_terms as $sexuality_term ) {
 					$output .= '<a href="' . get_term_link( $sexuality_term->slug, 'lez_sexuality') . '" rel="tag" title="' . $sexuality_term->name . '">' . $sexuality_term->name . '</a> ';
+				}
+			}
+			break;
+		case 'romantic':
+			$romantic_terms = get_the_terms( $the_ID, 'lez_romantic', true );
+			if ( $romantic_terms && ! is_wp_error( $romantic_terms ) ) {
+				foreach( $romantic_terms as $romantic_term ) {
+					$output .= '<a href="' . get_term_link( $romantic_term->slug, 'lez_romantic') . '" rel="tag" title="' . $romantic_term->name . '">' . $romantic_term->name . '</a> ';
 				}
 			}
 			break;
@@ -679,8 +687,25 @@ function lwtv_yikes_actordata( $the_ID, $data ) {
  * @return void
  */
 function lwtv_yikes_is_queer( $the_ID ) {
-	
 	$is_queer = ( LWTV_Loops::is_actor_queer( $the_ID ) == 'yes' )? true : false;
-	
 	return $is_queer;
+}
+
+/**
+ * Fix microformats
+ * We have to have author, updated, and entry-title IN the hentry data. 
+ * 
+ * @access public
+ * @param mixed $post_id
+ * @return void
+ */
+function lwtv_microformats_fix( $post_id ) {
+	$valid_types = array( 'post_type_authors', 'post_type_characters', 'post_type_shows' );
+	if ( in_array( get_post_type( $post_id ), $valid_types ) ) {
+		echo '<div class="hatom-extra" style="display:none;visibility:hidden;">
+			<span class="entry-title">' . get_the_title( $post_id ) . '</span>
+			<span class="updated">' . get_the_modified_time( 'F jS, Y', $post_id ) . '</span>
+			<span class="author vcard"><span class="fn">' . get_option( 'blogname' ) . '</span></span>
+		</div>';
+	}
 }

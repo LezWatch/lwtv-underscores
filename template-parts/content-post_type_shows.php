@@ -12,6 +12,9 @@ $slug    = get_post_field( 'post_name', get_post( $show_id ) );
 $term    = term_exists( $slug , 'post_tag' );
 $tag     = get_term_by( 'name', $slug, 'post_tag');
 $related = LWTV_Related_Posts::are_there_posts( $slug );
+
+// Microformats Fix
+lwtv_microformats_fix( $post->ID );
 ?>
 
 <?php the_post_thumbnail( 'large', array( 'class' => 'card-img-top' , 'alt' => get_the_title() , 'title' => get_the_title() ) ); ?>
@@ -61,16 +64,13 @@ if ( $warning['card'] != 'none' ) {
 </section>
 
 <?php
-
-$show_id = $post->ID;
-
 // Queer Plots - Only display if they exist
-if ( (get_post_meta($show_id, "lezshows_plots", true) ) ) { 
+if ( (get_post_meta($show_id, 'lezshows_plots', true) ) ) { 
 	?>
 	<section name="timeline" id="timeline" class="showschar-section">
 		<h2>Queer Plotline Timeline</h2>
 		<div class="card-body">
-			<?php echo apply_filters('the_content', wp_kses_post( get_post_meta($show_id, 'lezshows_plots', true) ) ); ?>
+			<?php echo apply_filters('the_content', wp_kses_post( get_post_meta($show_id, 'lezshows_plots', true ) ) ); ?>
 		</div>
 	</section>
 	<?php
@@ -82,7 +82,7 @@ if ( ( get_post_meta($show_id, "lezshows_episodes", true ) ) ) {
 	<section name="episodes" id="episodes" class="showschar-section">
 		<h2>Notable Queer-Centric Episodes</h2>
 		<div class="card-body">
-			<?php echo apply_filters('the_content', wp_kses_post( get_post_meta($show_id, 'lezshows_episodes', true) ) ); ?>
+			<?php echo apply_filters('the_content', wp_kses_post( get_post_meta( $show_id, 'lezshows_episodes', true ) ) ); ?>
 		</div>
 	</section>
 	<?php
@@ -97,9 +97,7 @@ if ( $related ) {
 				echo LWTV_Related_Posts::related_posts( $slug );
 				if ( count ( LWTV_Related_Posts::count_related_posts( $slug ) ) > '5' ) {
 					$tag = term_exists( $slug , 'post_tag' );
-					if ( $tag == 0 || $tag == null ) {
-						echo '';
-					} else {
+					if ( !is_null( $tag ) && $tag >= 1 ) {
 						echo '<p><a href="' . get_tag_link( $tag['term_id'] ) . '">Read More ...</a></p>';
 					}
 				}
@@ -164,7 +162,7 @@ if ( $related ) {
 				}
 				echo '</ul>';
 			}
-		} 
+		}
 		?>
 	</div>
 </section>
