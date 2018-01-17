@@ -71,10 +71,10 @@ if ( get_post_meta( get_the_ID(), 'lezchars_death_year', true ) ) {
 // Usage: $cliches
 $cliches   = '<strong>Clichés:</strong> ' . lwtv_yikes_chardata( get_the_ID(), 'cliches' );
 
-// Generate Gender & Sexuality Data
+// Generate Gender & Sexuality & Romantic Data
 // Usage: $gender_sexuality
 $gender_sexuality = lwtv_yikes_chardata( get_the_ID(), 'gender' ) . ' &bull; ' . lwtv_yikes_chardata( get_the_ID(), 'sexuality' );
-if ( !null( lwtv_yikes_chardata( get_the_ID(), 'romantic' ) ) ) $gender_sexuality .= ' &bull; ' . lwtv_yikes_chardata( get_the_ID(), 'romantic' );
+if ( !is_null( lwtv_yikes_chardata( get_the_ID(), 'romantic' ) ) ) $gender_sexuality .= ' &bull; ' . lwtv_yikes_chardata( get_the_ID(), 'romantic' );
 
 ?>
 
