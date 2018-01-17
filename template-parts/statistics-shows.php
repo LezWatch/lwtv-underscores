@@ -96,4 +96,4 @@
 
 <h2><a name="misc">Miscellaneous</a></h2>
 
-<p>The average show score is <strong><?php LWTV_Stats::generate( 'shows', 'scores', 'average' ); ?></strong>.</p>
+<p>The average show score is <strong><?php LWTV_Stats::generate( 'shows', 'scores', 'average' ); ?></strong>. The lowest score is <strong><?php LWTV_Stats::generate( 'shows', 'scores', 'low' ); ?></strong> and the highest is <strong><?php LWTV_Stats::generate( 'shows', 'scores', 'high' ); ?></strong>.</p>
