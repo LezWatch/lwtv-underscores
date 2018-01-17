@@ -10,9 +10,8 @@ $icon  = '<div class="show-header-svg">';
 if ( lwtv_yikes_is_queer( $post->ID ) ) {
 	$icon .= ' <span role="img" aria-label="Queer IRL Actor" data-toggle="tooltip" title="Queer IRL Actor" class="cliche-queer-irl">' . lwtv_yikes_symbolicons( 'rainbow.svg', 'fa-cloud' ) . '</span>';
 }
-
 $icon .= '</div>';
- 
+
 get_header(); ?>
 
 <div class="archive-subheader">

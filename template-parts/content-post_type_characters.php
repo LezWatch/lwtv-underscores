@@ -76,6 +76,8 @@ $cliches   = '<strong>Clichés:</strong> ' . lwtv_yikes_chardata( get_the_ID(), 
 $gender_sexuality = lwtv_yikes_chardata( get_the_ID(), 'gender' ) . ' &bull; ' . lwtv_yikes_chardata( get_the_ID(), 'sexuality' );
 if ( !is_null( lwtv_yikes_chardata( get_the_ID(), 'romantic' ) ) ) $gender_sexuality .= ' &bull; ' . lwtv_yikes_chardata( get_the_ID(), 'romantic' );
 
+// Microformats Fix
+lwtv_microformats_fix( $post->ID );
 ?>
 
 <div class="card-body">

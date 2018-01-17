@@ -71,6 +71,9 @@ if ( get_post_meta( get_the_ID(), 'lezactors_instagram', true ) ) {
 		'fa'   => 'fab fa-instagram',
 	);
 }
+
+// Microformats Fix
+lwtv_microformats_fix( $post->ID );
 ?>
 
 <section class="showschar-section" name="overview" id="overview">

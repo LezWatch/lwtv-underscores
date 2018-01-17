@@ -687,8 +687,25 @@ function lwtv_yikes_actordata( $the_ID, $data ) {
  * @return void
  */
 function lwtv_yikes_is_queer( $the_ID ) {
-	
 	$is_queer = ( LWTV_Loops::is_actor_queer( $the_ID ) == 'yes' )? true : false;
-	
 	return $is_queer;
+}
+
+/**
+ * Fix microformats
+ * We have to have author, updated, and entry-title IN the hentry data. 
+ * 
+ * @access public
+ * @param mixed $post_id
+ * @return void
+ */
+function lwtv_microformats_fix( $post_id ) {
+	$valid_types = array( 'post_type_authors', 'post_type_characters', 'post_type_shows' );
+	if ( in_array( get_post_type( $post_id ), $valid_types ) ) {
+		echo '<div class="hatom-extra" style="display:none;visibility:hidden;">
+			<span class="entry-title">' . get_the_title( $post_id ) . '</span>
+			<span class="updated">' . get_the_modified_time( 'F jS, Y', $post_id ) . '</span>
+			<span class="author vcard"><span class="fn">' . get_option( 'blogname' ) . '</span></span>
+		</div>';
+	}
 }
