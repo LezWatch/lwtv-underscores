@@ -460,7 +460,6 @@ function lwtv_yikes_chardata( $the_ID, $data ) {
 		case 'oneshow':
 			$all_shows   = get_post_meta( $the_ID, 'lezchars_show_group', true );
 			$shows_value = isset( $all_shows[0] ) ? $all_shows[0] : '';
-			$output      = '';
 			if ( !empty( $shows_value ) ) {
 				$num_shows = count( $all_shows );
 				$showsmore = ( $num_shows > 1 )? ' (plus ' . ( $num_shows - 1 ) .' more)' : '';
@@ -477,7 +476,6 @@ function lwtv_yikes_chardata( $the_ID, $data ) {
 		case 'oneactor':
 			$actors      = get_post_meta( $the_ID, 'lezchars_actor', true );
 			$actor_value = isset( $actors[0] ) ? $actors[0] : '';
-			$output      = '';
 			if ( !empty( $actor_value ) ) {
 				$num_actors = count( $actors );
 				$actorsmore = ( $num_actors > 1 )? ' (plus ' . ( $num_actors - 1 ) .' more)' : '';
