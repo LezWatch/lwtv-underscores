@@ -73,7 +73,7 @@ $screentime   = min( (int) get_post_meta( $show_id, 'lezshows_screentime_rating'
 						$airdates = get_post_meta( $show_id, 'lezshows_airdates', true );
 						$airdate  = $airdates['start'] . ' - ' . $airdates['finish'];
 						if ( $airdates['start'] == $airdates['finish'] ) { $airdate = $airdates['finish']; }
-						if ( !is_null( $airdates['finish'] ) && get_post_meta( $show_id, 'lezshows_seasons', true ) ) {
+						if ( is_numeric( $airdates['finish'] ) && get_post_meta( $show_id, 'lezshows_seasons', true ) ) {
 							$airdate .= ' (' . get_post_meta( $show_id, 'lezshows_seasons', true ) . ' seasons)';
 						}
 

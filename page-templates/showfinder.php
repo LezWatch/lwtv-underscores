@@ -1,17 +1,27 @@
 <?php
-/**
- * The template for displaying archive pages for Shows
- *
- * @link https://codex.wordpress.org/Template_Hierarchy
- *
- * @package LezWatchTV
+/*
+ * Template Name: Show Finder
+ * Description: Show all shows with a special interface to help people find the ones they want.
  */
+ 
+global $pager;
 
-$icon         = lwtv_yikes_symbolicons( 'tv-hd.svg', 'fa-tv' );
-$count_posts  = facetwp_display( 'counts' );
-$title        = '<span role="img" aria-label="post_type_shows" title="Shows" class="taxonomy-svg shows">' . $icon . '</span>';
-$descriptions = get_option( 'wpseo_titles' );
-$description  = $descriptions['metadesc-ptarchive-post_type_shows' ];
+$amarchive  = true;
+
+$queery = new WP_Query ( array(
+	'post_type'              => 'post_type_shows',
+	'update_post_term_cache' => false,
+	'update_post_meta_cache' => false,
+	'posts_per_page'         => 24,
+	'order'                  => 'ASC',
+	'orderby'                => 'title',
+	'post_status'            => array( 'publish' ),
+	'paged'                  => $paged,
+) );
+
+$count_posts = facetwp_display( 'counts' );
+$icon        = lwtv_yikes_symbolicons( 'tv-hd.svg', 'fa-tv' );
+$title       = '<span role="img" aria-label="post_type_shows" title="Shows" class="taxonomy-svg shows">' . $icon . '</span>';
 
 get_header(); ?>
 
@@ -19,13 +29,15 @@ get_header(); ?>
 	<div class="jumbotron">
 		<div class="container">
 			<header class="archive-header">
-				<?php
-					the_archive_title( '<h1 class="entry-title">' . $title, ' (' . $count_posts . '<span class="facetwp-count"></span>)</h1>' );
-				?>
+				<h1 class="facetwp-page-title entry-title">
+					<?php echo 'TV Shows ('. $count_posts .'<span class="facetwp-count"></span>)'; ?>
+					<?php echo $title; ?>
+				</h1>
+
 				<div class="archive-description">
 					<?php 
-						echo '<h3 class="facetwp-title"></h3>';
-						echo '<p>' . $description . ' <span class="facetwp-description"></span> <span class="facetwp-sorted"></span></p>';
+						echo '<p>Looking for the greatest shows with the characters you want? The show finder can help! <span class="facetwp-description"></span></p>';
+						echo '<p><span class="facetwp-sorted"></span></p>';
 						echo facetwp_display( 'selections' );
 					?>
 				</div>
@@ -34,7 +46,7 @@ get_header(); ?>
 	</div><!-- /.jumbotron -->
 </div>
 
-<div id="main" class="site-main" role="main">
+<div id="main" class="site-main archive" role="main">
 	<div class="container">
 		<div class="row">
 			<div class="col-sm-9">
@@ -44,19 +56,16 @@ get_header(); ?>
 							<div class="entry-content facetwp-template">
 								<div class="row site-loop show-archive-loop equal-height">
 									<?php
-									if ( have_posts() ) : ?>
-
-										<?php
-										/* Start the Loop */
-										while ( have_posts() ) : the_post();
+									if ( $queery->have_posts() ):
+										while ( $queery->have_posts() ): $queery->the_post();
 											get_template_part( 'template-parts/excerpt', 'post_type_shows' );
-							
 										endwhile; 
 									?>
 								</div><!-- .site-loop -->
 
 								<?php
-									echo facetwp_display( 'pager' );
+									lwtv_yikes_facet_numeric_posts_nav( $queery );
+									wp_reset_postdata();
 							
 									else :
 										get_template_part( 'template-parts/content', 'none' );
