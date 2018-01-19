@@ -37,6 +37,8 @@ if ( ! is_active_sidebar( 'sidebar-2' ) ) {
 				case 'page':
 					if ( is_page( 'role' ) ) {
 						dynamic_sidebar( 'archive-character-sidebar' );
+					} elseif ( is_page( 'show-finder' ) ) {
+						dynamic_sidebar( 'show-finder-sidebar' );
 					} else {
 						dynamic_sidebar( 'sidebar-2' );
 					}

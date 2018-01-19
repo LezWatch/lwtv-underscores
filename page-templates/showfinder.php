@@ -6,17 +6,16 @@
  
 global $pager;
 
-$amarchive  = true;
-
 $queery = new WP_Query ( array(
 	'post_type'              => 'post_type_shows',
 	'update_post_term_cache' => false,
 	'update_post_meta_cache' => false,
-	'posts_per_page'         => 24,
+	'posts_per_page'         => 20,
 	'order'                  => 'ASC',
 	'orderby'                => 'title',
 	'post_status'            => array( 'publish' ),
 	'paged'                  => $paged,
+	'facetwp'                => true,
 ) );
 
 $count_posts = facetwp_display( 'counts' );
@@ -63,13 +62,12 @@ get_header(); ?>
 									?>
 								</div><!-- .site-loop -->
 
-								<?php
-									lwtv_yikes_facet_numeric_posts_nav( $queery );
-									wp_reset_postdata();
-							
-									else :
-										get_template_part( 'template-parts/content', 'none' );
-							
+							<?php
+								lwtv_yikes_facet_numeric_posts_nav( $queery );
+								wp_reset_postdata();
+						
+								else :
+									get_template_part( 'template-parts/content', 'none' );
 								endif; ?>
 							</div><!-- .entry-content -->
 						</article><!-- #post-## -->

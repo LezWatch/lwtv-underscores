@@ -65,7 +65,8 @@ get_header(); ?>
 												case 'post_type_shows':
 													get_template_part( 'template-parts/excerpt', 'post_type_shows' );
 													break;
-												case 'post_type_actors':													?><div class="col-sm-4"><?php
+												case 'post_type_actors':
+													?><div class="col-sm-4"><?php
 													get_template_part( 'template-parts/excerpt', 'post_type_actors' );
 													?></div><?php
 													break;

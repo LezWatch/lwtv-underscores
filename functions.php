@@ -337,6 +337,16 @@ function yikes_starter_widgets_init() {
 		'before_title'  => '<h2 class="widget-title">',
 		'after_title'   => '</h2>',
 	) );
+	// Sidebar for Show Finder
+	register_sidebar( array(
+		'name'          => esc_html__( 'Sidebar - Show Finder', 'lwtv_yikes' ),
+		'id'            => 'show-finder-sidebar',
+		'description'   => esc_html__( 'This is the sidebar for the show finder.', 'lwtv_yikes' ),
+		'before_widget' => '<section id="%1$s" class="widget %2$s">',
+		'after_widget'  => '</section>',
+		'before_title'  => '<h2 class="widget-title">',
+		'after_title'   => '</h2>',
+	) );
 }
 add_action( 'widgets_init', 'yikes_starter_widgets_init' );
 
