@@ -161,10 +161,13 @@ add_filter( 'facetwp_pager_html', 'lwtv_yikes_facetwp_pager_html', 10, 2 );
  * doesn't work anymore. Welcome to Javascript Hell.
  */
 function lwtv_yikes_facetwp_add_labels() {
+	
+	if( !is_archive() ) return;
+	
 	?>
 	<script>
 	(function($) {
-	    $(document).on('facetwp-loaded', function() {
+		$(document).on('facetwp-loaded', function() {
 
 			var title = new Array();
 

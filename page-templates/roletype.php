@@ -8,7 +8,6 @@ global $pager;
 
 $thisrole   = ( isset($wp_query->query['roletype'] ) )? $wp_query->query['roletype'] : '' ;
 $validroles = array('regular', 'recurring', 'guest');
-$amarchive  = true;
 
 if ( !in_array( $thisrole, $validroles ) ){
 	wp_redirect( get_site_url().'/character/' , '301' );
@@ -24,6 +23,7 @@ $queery = new WP_Query ( array(
 	'orderby'                => 'title',
 	'post_status'            => array( 'publish' ),
 	'paged'                  => $paged,
+	'facetwp'                => true,
 	'meta_query'             => array(
 		array(
 			'key'     => 'lezchars_show_group',
@@ -80,15 +80,13 @@ get_header(); ?>
 								</div>
 
 								<?php
-
 								lwtv_yikes_facet_numeric_posts_nav( $queery );
-								
 								wp_reset_postdata(); 
 						
 								else :
 									get_template_part( 'template-parts/content', 'none' );
 							
-								endif; ?>			
+								endif; ?>
 							</div><!-- .entry-content -->
 						</article><!-- #post-## -->
 					</div><!-- #content -->
@@ -96,9 +94,7 @@ get_header(); ?>
 			</div><!-- .col-sm-9 -->
 	
 			<div class="col-sm-3 site-sidebar showchars-sidebar site-loop">
-
 				<?php get_sidebar(); ?>
-
 			</div><!-- .col-sm-3 -->
 
 		</div><!-- .row -->

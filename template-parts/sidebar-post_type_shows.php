@@ -17,7 +17,7 @@ $screentime   = min( (int) get_post_meta( $show_id, 'lezshows_screentime_rating'
 </section>
 
 <section id="ratings" class="widget widget_text">
-	<div class="card">		
+	<div class="card">
 		<div class="card-header">
 			<h4>Is it Worth Watching?</h4>
 		</div>

@@ -8,7 +8,7 @@
 // Define theme version so CSS shit doesn't break. Again.
 // Bump this any time you make serious CSS changes, becuase CSS is a dillhole
 if ( ! defined( 'LWTV_THEME_VERSION' ) ) {
-	define( 'LWTV_THEME_VERSION', '3.1.4' );
+	define( 'LWTV_THEME_VERSION', '3.1.5' );
 }
 
 /* Set the content width based on the theme's design and stylesheet.  */
@@ -337,6 +337,16 @@ function yikes_starter_widgets_init() {
 		'before_title'  => '<h2 class="widget-title">',
 		'after_title'   => '</h2>',
 	) );
+	// Sidebar for Show Finder
+	register_sidebar( array(
+		'name'          => esc_html__( 'Sidebar - Show Finder', 'lwtv_yikes' ),
+		'id'            => 'show-finder-sidebar',
+		'description'   => esc_html__( 'This is the sidebar for the show finder.', 'lwtv_yikes' ),
+		'before_widget' => '<section id="%1$s" class="widget %2$s">',
+		'after_widget'  => '</section>',
+		'before_title'  => '<h2 class="widget-title">',
+		'after_title'   => '</h2>',
+	) );
 }
 add_action( 'widgets_init', 'yikes_starter_widgets_init' );
 
@@ -374,8 +384,6 @@ function posts_link_attributes() {
 /*************  Enqueue scripts and styles *************/
 
 function yikes_starter_scripts() {
-	wp_enqueue_style( 'yikes-starter-style', get_stylesheet_directory_uri() . '/style.min.css', array(), LWTV_THEME_VERSION );
-
 	// combined + minified
 	// navigation.js & skip-link-focus-fix.js
 	wp_enqueue_script( 'yikes-starter-navigation', get_template_directory_uri() . '/inc/js/yikes-theme-scripts.min.js', array(), '20120206', true );
@@ -384,12 +392,16 @@ function yikes_starter_scripts() {
 		wp_enqueue_script( 'comment-reply' );
 	}
 
-	wp_enqueue_style( 'bootstrap', get_template_directory_uri() . '/inc/bootstrap/css/bootstrap.min.css', array(), '4.0.0-beta', 'all' );
+	wp_enqueue_style( 'bootstrap', get_template_directory_uri() . '/inc/bootstrap/css/bootstrap.css', array(), '4.0.0', 'all' );
 	wp_enqueue_style( 'fontawesome', get_template_directory_uri() . '/inc/css/fontawesome-all.min.css', array(), '5.0.2', 'all' );
 	wp_enqueue_style( 'open-sans', '//fonts.googleapis.com/css?family=Open+Sans:400,600,700', false );
 	wp_enqueue_style( 'oswald', '//fonts.googleapis.com/css?family=Oswald:400,500', false );
 	wp_enqueue_script( 'yikes-popper-script', get_template_directory_uri() . '/inc/js/popper.min.js',  array(), '1.11.0', 'all', true );
-	wp_enqueue_script( 'bootstrap', get_template_directory_uri() . '/inc/bootstrap/js/bootstrap.min.js', array( 'jquery' ), '4.0.0-beta', 'all', true );
+	wp_enqueue_script( 'bootstrap', get_template_directory_uri() . '/inc/bootstrap/js/bootstrap.min.js', array( 'jquery' ), '4.0.0', 'all', true );
+
+	// This has to be at the bottom to override Bootstrap 4.0.0
+	wp_enqueue_style( 'yikes-starter-style', get_stylesheet_directory_uri() . '/style.min.css', array(), LWTV_THEME_VERSION );
+
 }
 
 add_action( 'wp_enqueue_scripts', 'yikes_starter_scripts' );
