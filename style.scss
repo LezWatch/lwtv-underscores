@@ -1095,28 +1095,6 @@ article.post_type_shows {}
   }
 }
 
-.show-worthit {
-  & , & svg * {
-    fill: $white;
-    color: $white;
-  }
-
-  svg {
-    vertical-align: middle;
-    margin-right: 10px;
-    width: 50px;
-    height: 50px;
-  }
-}
-
-.worthit {
-  color: $white;
-  @include font-30;
-  font-weight: 500;
-  padding: 0.8rem;
-}
-
-
 /* ratings icons */
 
 .ratings-icons {
@@ -1174,6 +1152,27 @@ article.post_type_shows {}
   }
 }
 
+
+.show-worthit {
+  & , & svg * {
+    fill: $white;
+    color: $white;
+  }
+
+  svg {
+    vertical-align: middle;
+    margin-right: 10px;
+    width: 50px;
+    height: 50px;
+  }
+}
+
+.worthit {
+  color: $white;
+  @include font-30;
+  font-weight: 500;
+  padding: 0.8rem;
+}
 
 
 /* =Archive Pages (posts / shows / characters / taxonomies)

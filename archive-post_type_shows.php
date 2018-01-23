@@ -55,13 +55,13 @@ get_header(); ?>
 									?>
 								</div><!-- .site-loop -->
 
-								<?php						
+								<?php
 									echo facetwp_display( 'pager' );
 							
 									else :
 										get_template_part( 'template-parts/content', 'none' );
 							
-								endif; ?>					
+								endif; ?>
 							</div><!-- .entry-content -->
 						</article><!-- #post-## -->
 					</div><!-- #content -->

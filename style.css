@@ -338,6 +338,13 @@ input[type="tel"]:focus, input[type="time"]:focus, input[type="url"]:focus, inpu
   border-color: #80bdff;
   outline: none;
 }
+textarea::-webkit-input-placeholder, select::-webkit-input-placeholder, input[type="text"]::-webkit-input-placeholder, input[type="date"]::-webkit-input-placeholder,
+input[type="datetime-local"]::-webkit-input-placeholder, input[type="email"]::-webkit-input-placeholder, input[type="month"]::-webkit-input-placeholder,
+input[type="number"]::-webkit-input-placeholder, input[type="password"]::-webkit-input-placeholder, input[type="search"]::-webkit-input-placeholder,
+input[type="tel"]::-webkit-input-placeholder, input[type="time"]::-webkit-input-placeholder, input[type="url"]::-webkit-input-placeholder, input[type="week"]::-webkit-input-placeholder {
+  color: #868e96;
+  opacity: 1;
+}
 textarea:-ms-input-placeholder, select:-ms-input-placeholder, input[type="text"]:-ms-input-placeholder, input[type="date"]:-ms-input-placeholder,
 input[type="datetime-local"]:-ms-input-placeholder, input[type="email"]:-ms-input-placeholder, input[type="month"]:-ms-input-placeholder,
 input[type="number"]:-ms-input-placeholder, input[type="password"]:-ms-input-placeholder, input[type="search"]:-ms-input-placeholder,
@@ -1155,24 +1162,6 @@ h3.post-title.excerpt {
   margin-right: 6px;
 }
 
-.show-worthit, .show-worthit svg * {
-  fill: #fff;
-  color: #fff;
-}
-.show-worthit svg {
-  vertical-align: middle;
-  margin-right: 10px;
-  width: 50px;
-  height: 50px;
-}
-
-.worthit {
-  color: #fff;
-  font-size: 1.875rem;
-  font-weight: 500;
-  padding: 0.8rem;
-}
-
 /* ratings icons */
 .ratings-icons {
   padding: 5px;
@@ -1214,6 +1203,24 @@ h3.post-title.excerpt {
   height: 32px;
   vertical-align: middle;
   margin-right: 10px;
+}
+
+.show-worthit, .show-worthit svg * {
+  fill: #fff;
+  color: #fff;
+}
+.show-worthit svg {
+  vertical-align: middle;
+  margin-right: 10px;
+  width: 50px;
+  height: 50px;
+}
+
+.worthit {
+  color: #fff;
+  font-size: 1.875rem;
+  font-weight: 500;
+  padding: 0.8rem;
 }
 
 /* =Archive Pages (posts / shows / characters / taxonomies)
@@ -1802,6 +1809,7 @@ a.facetwp-page {
     width: 33%;
   }
 
+  .actor-page .card .single-char-img,
   .character-page .card .single-char-img {
     float: none;
     margin: 0 0 2rem 0;
