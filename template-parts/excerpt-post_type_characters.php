@@ -19,7 +19,7 @@ global $post;
 
 $the_ID      = ( isset( $character['id'] ) )? $character['id'] : $post->ID;
 $the_content = ( isset( $character['content'] ) )? $character['content'] : get_the_content();
-$alttext     = get_the_title( $the_ID ) . ' - ' . wp_strip_all_tags( $the_content );
+$alttext     = 'A picture of the character ' . get_the_title( $the_ID );
 $role        = ( isset( $character['role_from'] ) )? $character['role_from'] : 'regular';
 $archive     = ( is_archive() || is_tax() || is_page() )? true : false;
 
