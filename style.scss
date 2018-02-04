@@ -604,6 +604,7 @@ section {
 .archive-subheader .jumbotron {
   background: $lwtv-pink;
   background-size: contain;
+  @include border-radius(0);
   color: $white;
   @include font-18;
   margin-bottom: 0;
@@ -1550,16 +1551,39 @@ a.facetwp-page {
     margin: 0 0 1em;
   }
 
-    .card-header {
-      svg {
-        width: 25px;
-        height: 25px;
-        vertical-align: middle;
+  .card.card-search {
+
+    .search-form {
+      input[type="text"] {
+        border-right: 0;
       }
-      svg * {
-        fill: $white;
+      
+      .btn {
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
       }
     }
+  }
+
+  .card-header {
+    svg {
+      width: 25px;
+      height: 25px;
+      vertical-align: middle;
+    }
+    svg * {
+      fill: $white;
+    }
+  }
+
+  &.col-sm-3 {
+    .card.card-search {
+
+      .form-check-inline:last-of-type {
+        margin-left: 0.5rem;
+      }
+    }
+  }
 
   .widget_categories, .widget_tag_cloud,
   .widget-tags,  {
