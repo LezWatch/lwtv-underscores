@@ -114,8 +114,8 @@ switch ( $view ) {
 			</div>
 			<div class="row">
 				<div class="col-sm-6">
-					<h3>Nations</h3>
-					<?php LWTV_Stats::generate( 'shows', 'nations', 'percentage' ); ?>
+					<h3>Tropes</h3>
+					<?php LWTV_Stats::generate( 'shows', 'tropes', 'percentage' ); ?>
 				</div>
 				<div class="col-sm-6">
 					<h3>Genres</h3>

@@ -6,9 +6,10 @@
  */
  
 $valid_views = array( 
-	'country'   => array( 'format' => 'barchart', 'slug' => 'country' ),
-	'gender'    => array( 'format' => 'stackedbar', 'slug' => 'country-gender' ),
-	'sexuality' => array( 'format' => 'stackedbar', 'slug' => 'country-sexuality' ),
+	'country'    => array( 'format' => 'barchart', 'slug' => 'country' ),
+	'gender'     => array( 'format' => 'stackedbar', 'slug' => 'country-gender' ),
+	'sexuality'  => array( 'format' => 'stackedbar', 'slug' => 'country-sexuality' ),
+	'percentage' => array( 'format' => 'percentage', 'slug' => 'country' ),
 );
 $view        = ( !isset( $_GET['view'] ) || !array_key_exists( $_GET['view'], $valid_views ) )? 'country' : $_GET['view'];
 
@@ -23,7 +24,7 @@ $view        = ( !isset( $_GET['view'] ) || !array_key_exists( $_GET['view'], $v
 		<h4 class="toc-title">Go to:</h4>
 		<?php
 		foreach ( $valid_views as $the_view => $the_format ) {
-			echo '<a class="breadcrumb-item" href="' . esc_url( add_query_arg( 'view', $the_view, '/statistics/nations/' ) ) . '">Shows by ' . ucfirst( $the_view ) . '</a> ';
+			echo '<a class="breadcrumb-item" href="' . esc_url( add_query_arg( 'view', $the_view, '/statistics/nations/' ) ) . '">By ' . ucfirst( $the_view ) . '</a> ';
 		}
 		?>
 	</nav>
