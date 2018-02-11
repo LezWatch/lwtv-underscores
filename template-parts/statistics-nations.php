@@ -15,7 +15,7 @@ $valid_views = array( 'overview', 'gender', 'sexuality' );
 $view        = ( !isset( $_GET['view'] ) || !in_array( $_GET['view'], $valid_views ) )? 'overview' : sanitize_title( $_GET['view'] );
 
 // Format
-$valid_formats = array( 'bar', 'pie', 'percent' );
+$valid_formats = array( 'bar', 'pie' );
 $format        = ( !isset( $_GET['format'] ) || !in_array( $_GET['format'], $valid_formats ) )? 'bar' : sanitize_title( $_GET['format'] );
 
 // Columns
@@ -57,9 +57,8 @@ $columns = ( $format == 'pie' )? 'col-sm-6' : 'col';
 					<?php
 						foreach( $valid_formats as $fmat ) {
 							$selected   = ( $format == $fmat )? 'selected=selected' : '';
-							$fmat_title = ( $fmat == 'percent' )? 'Percentage' : ucfirst( $fmat ) . ' Chart';
 							$disabled   = ( $fmat !== 'bar' && $country == 'all' )? 'disabled' : '';
-							echo '<option value="' . $fmat . '" ' . $selected . ' ' . $disabled . '>' . $fmat_title . '</option>';
+							echo '<option value="' . $fmat . '" ' . $selected . ' ' . $disabled . '>' . ucfirst( $fmat ) . ' Chart</option>';
 						}
 					?>
 				</select>
@@ -105,9 +104,6 @@ $columns = ( $format == 'pie' )? 'col-sm-6' : 'col';
 			switch ( $format ) {
 				case 'bar':
 					$format = ( $country == 'all' && in_array( $view, array( 'sexuality', 'gender' ) ) )? 'stackedbar' : 'barchart';
-					break;
-				case 'percent':
-					$format = 'percentage';
 					break;
 				case 'pie':
 					$format = 'piechart';
