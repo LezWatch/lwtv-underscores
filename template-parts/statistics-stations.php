@@ -4,41 +4,143 @@
  *
  * @package LezWatchTV
  */
+
+// Stations
+$valid_station = ( isset( $_GET['station'] ) )? term_exists( $_GET['station'], 'lez_stations' ) : '';
+$station       = ( !isset( $_GET['station'] ) || !is_array( $valid_station ) )? 'all' : sanitize_title( $_GET['station'] );
+
+// Views
+$valid_views = array( 'overview', 'gender', 'sexuality' );
+$view        = ( !isset( $_GET['view'] ) || !in_array( $_GET['view'], $valid_views ) )? 'overview' : sanitize_title( $_GET['view'] );
+
+// Format
+$valid_formats = array( 'bar', 'pie', 'percent' );
+$format        = ( !isset( $_GET['format'] ) || !in_array( $_GET['format'], $valid_formats ) )? 'bar' : sanitize_title( $_GET['format'] );
+
+// All the stations crash things, so we have to do this:
+$format = ( $station == 'all' )? '' : $format;
+$disabled = ( $station == 'all' )? 'disabled' : '';
+
+// Count
+$all_stations = get_terms( 'lez_stations', array( 'hide_empty' => 0 ) );
+$count        = LWTV_Stats::generate( 'shows', 'stations', 'count' );
+
+// Columns
+$columns = ( $format == 'pie' )? 'col-sm-6' : 'col';
+
 ?>
 <h2>
-	Total Stations (<?php echo LWTV_Stats::generate( 'shows', 'stations', 'count' ); ?>)
+	Total Stations (<?php echo $count; ?>)
 </h2>
 
-<div class="container">
-	<div class="row">
-		<div class="col">
-			<?php //LWTV_Stats::generate( 'shows', 'stations', 'barchart' ); ?>
-		</div>
-	</div>
-</div>
+<section id="toc" class="toc-container card-body">
+	<nav class="breadcrumb">
+		<form method="get" action="<?php esc_url( add_query_arg( 'view', $view, '/statistics/shows/' ) ); ?>" id="go" class="form-inline">
+			<div class="form-group">
+				<select name="station" id="station" class="form-control">
+					<option value="all">Station</option>
+					<?php
+						foreach( $all_stations as $the_station ) {
+							$selected = ( $station == $the_station->slug )? 'selected=selected' : '';
+							$shows    = _n( 'Show', 'Shows', $the_station->count );
+							echo '<option value="' . $the_station->slug . '" ' . $selected . '>' . $the_station->name . ' (' . $the_station->count . ' ' . $shows . ')</option>';
+						}
+					?>
+				</select>
+			</div>
+			<div class="form-group">
+				<select name="view" id="view" class="form-control">
+					<option value="overview">Overview</option>
+					<?php
+						$statstype = array( 'gender', 'sexuality' );
+						foreach( $statstype as $stat ) {
+							$selected = ( $view == $stat )? 'selected=selected' : '';
+							echo '<option value="' . $stat . '" ' . $selected . ' ' . $disabled . '>' . ucfirst( $stat ) . '</option>';
+						}
+					?>
+				</select>
+			</div>
+			<div class="form-group">
+				<select name="format" id="format" class="form-control">
+					<option value="">Format</option>
+					<?php
+						foreach( $valid_formats as $fmat ) {
+							$selected   = ( $format == $fmat )? 'selected=selected' : '';
+							$fmat_title = ( $fmat == 'percent' )? 'Percentage' : ucfirst( $fmat ) . ' Chart';
+							echo '<option value="' . $fmat . '" ' . $selected . ' ' . $disabled . '>' . $fmat_title . '</option>';
+						}
+					?>
+				</select>
+			</div>
+			<div class="form-group">
+				<button type="submit" id="submit" class="btn btn-default">Go</button>
+			</div>
+		</form>
+	</nav>
+</section>
 
 <div class="container">
 	<div class="row">
-		<div class="col">
-			<?php //LWTV_Stats::generate( 'shows', 'stations-gender', 'stackedbar' ); ?>
-		</div>
-	</div>
-</div>
+		<div class="<?php echo $columns; ?>">
+		<?php
+			// Title
+			switch( $station ) {
+				case 'all':
+					$title_station = 'All Stations';
+					break;
+				default:
+					$station_object = get_term_by( 'slug', $station, 'lez_stations', 'ARRAY_A' );
+					$title_station  = $station_object['name'];
+			}
 
-<div class="container">
-	<div class="row">
-		<div class="col">
-			<?php //LWTV_Stats::generate( 'shows', 'stations-sexuality', 'stackedbar' ); ?>
-		</div>
-	</div>
-</div>
+			switch ( $view ) {
+				case 'overview':
+					$title = 'Overview of ' . $title_station . ' by Show Count';
+					break;
+				case 'sexuality':
+					$title = 'Details on ' . $title_station . ' by Character Sexual Orientation';
+					break;
+				case 'gender':
+					$title = 'Details on ' . $title_station . ' by Character Gender Identity';
+					break;
+				case 'romantic':
+					$title = 'Details on ' . $title_station . ' by Character Romantic Orientation';
+			}
 
-<hr>
+			echo '<h3>' . $title . '</h3>';
 
-<div class="container">
-	<div class="row">
-		<div class="col">
-			<?php LWTV_Stats::generate( 'shows', 'stations', 'percentage' ); ?>
+			// Adjust Format
+			switch ( $format ) {
+				case 'bar':
+					$format = 'barchart';
+					break;
+				case 'percent':
+					$format = 'percentage';
+					break;
+				case 'pie':
+					$format = 'piechart';
+					break;
+			}
+
+			// station-[substation]-[view]
+			$view    = '-' . $view;
+			$station = ( $station == 'overview' )? '-all' : '-' . $station; 
+			
+			if ( $station == '-all' ) {
+				echo '<p>Due to the high number of stations (' . $count . '), we cannot display an overview. For information on characters per station, please use the dropdowns to select a station and drill down for more information.</p>';
+				echo '<ul>';
+					foreach( $all_stations as $the_station ) {
+						$shows    = _n( 'Show', 'Shows', $the_station->count );
+						echo '<li><a href="' . $the_station->url . '">' . $the_station->name . '</a> (' . $the_station->count . ' ' . $shows . ')</li>';
+					}
+				echo '</ul>';
+
+				
+			} else {
+				LWTV_Stats::generate( 'shows', 'stations' . $station . $view , $format );
+			}
+
+		?>
 		</div>
 	</div>
 </div>
