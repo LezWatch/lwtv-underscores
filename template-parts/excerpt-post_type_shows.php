@@ -24,16 +24,17 @@ global $post;
 			<h3 class="card-title">
 				<a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
 				
+				<span class="callout">
 				<?php
 				// The Game of Thrones Flag of Gratuitious Violence
 				$warning    = lwtv_yikes_content_warning( get_the_ID() );
 				$warn_image = lwtv_yikes_symbolicons( 'warning.svg', 'fa-exclamation-triangle' );
 				if ( $warning['card'] != 'none' ) {
-					echo '<span class="callout callout-' . $warning['card'] . '" role="img" aria-label="Warning - This show contains triggers" title="Warning - This show contains triggers">' . $warn_image . '</span>';
+					echo '<span class="callout callout-' . $warning['card'] . '" role="img" data-toggle="tooltip" aria-label="Warning - This show contains triggers" title="Warning - This show contains triggers">' . $warn_image . '</span>';
 				}
 
 				// Stars of Queerness
-				echo '<span class="callout">' . lwtv_yikes_show_star( get_the_ID() ) . '</span>';
+				echo '<span class="callout callout-star">' . lwtv_yikes_show_star( get_the_ID() ) . '</span>';
 
 				// Hearts of Lurve
 				if ( get_post_meta( get_the_ID(), 'lezshows_worthit_show_we_love', true) ) {
@@ -41,7 +42,13 @@ global $post;
 					echo ' <span role="img" aria-label="We Love This Show!" data-toggle="tooltip" title="We Love This Show!" class="callout callout-we-love">' . $heart . '</span>';
 				}
 
+				// Skulls of Death
+				if ( has_term( 'dead-queers', 'lez_tropes', get_the_ID() ) ) {
+					$skull = lwtv_yikes_symbolicons( 'skull-crossbones.svg', 'fa-ban' );
+					echo ' <span role="img" aria-label="Warning - There is death on this show." data-toggle="tooltip" title="Warning - There is death on this show." class="callout callout-death">' . $skull . '</span>';
+				}
 				?>
+				</span>
 				
 				</h3>
 			<div class="card-text"><?php the_excerpt(); ?></div>
