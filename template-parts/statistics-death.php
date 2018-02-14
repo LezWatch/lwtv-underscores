@@ -41,9 +41,7 @@ $view        = ( !isset( $_GET['view'] ) || !in_array( $_GET['view'], $valid_vie
 	</nav>
 </section>
 
-<h2>
-	<a name="charts"><?php echo ucfirst( $the_view ) ?></a>
-</h2>
+<h2><a name="charts"><?php echo ucfirst( $view ) ?></a></h2>
 
 <?php
 switch ( $view ) {

@@ -25,9 +25,7 @@ $view        = ( !isset( $_GET['view'] ) || !in_array( $_GET['view'], $valid_vie
 	</nav>
 </section>
 
-<h2>
-	<a name="charts"><?php echo ucfirst( $the_view ) ?></a>
-</h2>
+<h2><a name="charts"><?php echo ucfirst( $view ) ?></a></h2>
 
 <?php
 switch ( $view ) {
@@ -62,12 +60,14 @@ switch ( $view ) {
 		<div class="container chart-container">
 			<div class="row">
 				<div class="col">
+					<h3>Actors per Character</h3>
 					<?php LWTV_Stats::generate( 'actors', 'per-char', 'barchart' ); ?>
 					<p>This chart displays the number of actors who play each character. So for example, "11 (1)" means there's one character who has 11 actors (and yes, there is one).</p>
 				</div>
 			</div>
 			<div class="row">
 				<div class="col">
+					<h3>Characters per Actor</h3>
 					<?php LWTV_Stats::generate( 'actors', 'per-actor', 'barchart' ); ?>
 					<p>This chart displays the number of characters each actor plays. So for example, "20 (1)" means there's one actor who played 20 characters (that would be the 'unknown' actor).</p>
 				</div>

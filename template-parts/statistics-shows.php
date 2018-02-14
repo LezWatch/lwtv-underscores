@@ -26,9 +26,7 @@ $view        = ( !isset( $_GET['view'] ) || !in_array( $_GET['view'], $valid_vie
 	</nav>
 </section>
 
-<h2>
-	<a name="charts"><?php echo ucfirst( $the_view ) ?></a>
-</h2>
+<h2><a name="charts"><?php echo ucfirst( $view ) ?></a></h2>
 
 <?php
 switch ( $view ) {
@@ -73,6 +71,7 @@ switch ( $view ) {
 		<div class="container barchart-container">
 			<div class="row">
 				<div class="col">
+					<h3>Shows per Countries</h3>
 					<?php LWTV_Stats::generate( 'shows', 'country', 'barchart' ); ?>
 				</div>
 			</div>
@@ -114,8 +113,8 @@ switch ( $view ) {
 			</div>
 			<div class="row">
 				<div class="col-sm-6">
-					<h3>Nations</h3>
-					<?php LWTV_Stats::generate( 'shows', 'nations', 'percentage' ); ?>
+					<h3>Tropes</h3>
+					<?php LWTV_Stats::generate( 'shows', 'tropes', 'percentage' ); ?>
 				</div>
 				<div class="col-sm-6">
 					<h3>Genres</h3>

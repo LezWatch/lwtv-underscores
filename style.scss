@@ -1000,7 +1000,6 @@ article.post_type_shows {}
 
 /* Trigger Warning */
 .trigger-warning-container {
-
   .alert {
     @include border-radius(0);
     border-left: 0;
@@ -1243,12 +1242,19 @@ h3 svg * {
 }
 
 .archive {
-  .callout svg {
+  .callout {
     float: right;
+  }
+
+  .callout svg {
     height: 25px;
     width: 25px;
     vertical-align: top;
     padding-right: 5px;
+  }
+
+  .callout-death svg * {
+    fill: $darkgrey;
   }
 
   .callout-danger svg *,
@@ -1500,6 +1506,11 @@ a.facetwp-page {
   } 
 }
 
+div.facetwp-facet-shows_scores input.facetwp-number {
+  display: inline;
+  width: 30%;
+  margin: .2rem;
+}
 
 
 /* ==========================================================================

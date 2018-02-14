@@ -24,11 +24,13 @@
 <div class="container chart-container">
 	<div class="row">
 		<div class="col">
+			<h3>Character Clichés</h3>
 			<?php LWTV_Stats::generate( 'characters', 'cliches', 'barchart' ); ?>
 		</div>
 	</div>
 	<div class="row">
 		<div class="col">
+			<h3>Show Tropes</h3>
 			<?php LWTV_Stats::generate( 'shows', 'tropes', 'barchart' ); ?>
 		</div>
 	</div>
@@ -39,9 +41,11 @@
 <div class="container percentage-container">
 	<div class="row">
 		<div class="col-sm-6">
+			<h3>Character Clichés</h3>
 			<?php LWTV_Stats::generate( 'characters', 'cliches', 'list' ); ?>
 		</div>
 		<div class="col-sm-6">
+			<h3>Show Tropes</h3>
 			<?php LWTV_Stats::generate( 'shows', 'tropes', 'list' ); ?>
 		</div>
 	</div>
