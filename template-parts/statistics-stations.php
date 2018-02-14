@@ -119,10 +119,10 @@ $columns = ( $format == 'pie' )? 'col-sm-6' : 'col';
 			}
 
 			// station-[substation]-[view]
-			$view    = '-' . $view;
-			$station = ( $station == 'overview' )? '-all' : '-' . $station; 
+			$view    = '_' . $view;
+			$station = ( $station == 'overview' )? '_all' : '_' . $station; 
 			
-			if ( $station == '-all' ) {
+			if ( $station == '_all' ) {
 				echo '<p>Due to the high number of stations (' . $count . '), we cannot display an overview. For information on characters per station, please use the dropdowns to select a station and drill down for more information.</p>';
 				echo '<ul>';
 					foreach( $all_stations as $the_station ) {
