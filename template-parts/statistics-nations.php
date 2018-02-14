@@ -110,9 +110,9 @@ $columns = ( $format == 'pie' )? 'col-sm-6' : 'col';
 					break;
 			}
 
-			// country-[subcountry]-[view]
-			$view    = '-' . $view;
-			$country = ( $country == 'overview' )? '-all' : '-' . $country; 
+			// country_[subcountry]_[view]
+			$view    = '_' . $view;
+			$country = ( $country == 'overview' )? '_all' : '_' . $country; 
 			LWTV_Stats::generate( 'shows', 'country' . $country . $view , $format );
 		?>
 		</div>
