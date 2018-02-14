@@ -8,7 +8,7 @@
 // Define theme version so CSS shit doesn't break. Again.
 // Bump this any time you make serious CSS changes, becuase CSS is a dillhole
 if ( ! defined( 'LWTV_THEME_VERSION' ) ) {
-	define( 'LWTV_THEME_VERSION', '3.1.5' );
+	define( 'LWTV_THEME_VERSION', '3.1.6' );
 }
 
 /* Set the content width based on the theme's design and stylesheet.  */
