@@ -23,7 +23,7 @@ global $post;
 		<div class="card-body">
 			<h3 class="card-title">
 				<a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
-				
+
 				<span class="callout">
 				<?php
 				// The Game of Thrones Flag of Gratuitious Violence
