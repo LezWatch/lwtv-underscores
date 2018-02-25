@@ -18,7 +18,8 @@ if ( ! isset( $content_width ) ) {
 
 /************* YIKES Stuff ********************/
 
-// YIKES Setup theme constants These will be used for server and web paths so we don't have to reference functions every time
+// YIKES Setup theme constants These will be used for server and web paths 
+// so we don't have to reference functions every time
 if ( ! defined( 'YKS_THEME_PATH' ) ) {
 	define( 'YKS_THEME_PATH', get_stylesheet_directory() );
 }
@@ -36,8 +37,8 @@ function yikes_starter_blog_page_title() {
 /**
 * Get the featured image of the page defined for posts.
 * 
-* @param mixed | $image_size | A valid image size value. Could be a string like 'full' or an array with height/width values. 
-*							   See the wp_get_attachment_image_url() function documentation for more details.
+* @param mixed | $image_size | Valid image size value. (i.e. string like 'full', array with height/width values) 
+*                              See the wp_get_attachment_image_url() function documentation for more details.
 *
 * @return Image URL if found, else false
 */
@@ -346,10 +347,12 @@ add_action( 'widgets_init', 'yikes_starter_widgets_init' );
 require_once 'inc/wp_bootstrap_navwalker.php';
 
 /*
-  Pagination
-*	@usage
-*	1) setup your WP_Query with a $paged variable (https://codex.wordpress.org/Pagination#Adding_the_.22paged.22_parameter_to_a_query)
-*	2) Wherever you'd like the pagination to appear, add <?php echo page_navi( $query ); ?> where $query is the entire $query setup in the previous step
+ * Pagination
+ *  @usage
+ *    1) setup WP_Query with a $paged variable 
+ *      (https://codex.wordpress.org/Pagination#Adding_the_.22paged.22_parameter_to_a_query)
+ *    2) Wherever you'd like the pagination to appear, add <?php echo page_navi( $query ); ?> 
+ *       where $query is the entire $query setup in the previous step
 */
 require_once 'inc/wp_bootstrap_pagination.php';
 
@@ -420,6 +423,9 @@ require get_template_directory() . '/inc/custom-header.php';
 
 /* Remove custom background support */
 remove_theme_support( 'custom-background' );
+
+
+/************* LWTV Addtional Items *************/
 
 /* Load AMP functionality file. */
 require get_template_directory() . '/inc/amp.php';

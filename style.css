@@ -387,6 +387,11 @@ button, input[type="button"], input[type="submit"] {
   transition: all 0.15s ease-in-out;
 }
 
+/* Select Drowpdown */
+select {
+  margin-right: 0.75rem;
+}
+
 /* Gravity Forms */
 .gform_wrapper .gfield_time_hour i {
   margin-top: 0;
