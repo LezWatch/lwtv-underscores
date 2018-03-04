@@ -61,6 +61,7 @@
 				get_permalink(),
 				the_title_attribute( 'echo=0' )
 			);
+
 		?>
 	</footer><!-- .entry-meta -->
 </article><!-- #post-## -->
