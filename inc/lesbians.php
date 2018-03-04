@@ -51,21 +51,25 @@ add_filter( 'comments_open', 'lwtv_yikes_filter_media_comment_status', 10 , 2 );
  */
 function lwtv_yikes_symbolicons( $svg = 'square.svg', $fontawesome = 'fa-square' ) {	
 
-	$icon   = '<i class="fas ' . $fontawesome . ' fa-fw" aria-hidden="true"></i>';
-	$square = file_get_contents( get_template_directory() . '/images/square.svg' );
+	$return = '<i class="fas ' . $fontawesome . ' fa-fw" aria-hidden="true"></i>';
+	$square = get_template_directory_uri( '/images/square.svg' );
 
 	if ( defined( 'LP_SYMBOLICONS_PATH' ) && file_exists( LP_SYMBOLICONS_PATH . $svg ) ) {
-		$icon = file_get_contents( LP_SYMBOLICONS_PATH . $svg );
+		$icon = LP_SYMBOLICONS_URL . $svg;
 	} elseif ( !wp_style_is( 'fontawesome', 'enqueued' ) ) {
 		$icon = $square;
-	} 
+	}
 	
-	// Override for AMP - NO ICONS
-	if ( is_amp_endpoint() ) {
-		$icon = '';
+	if ( isset( $icon ) ) {
+		$return = '<span class="cmb2-icon" role="img"><svg width="100%" height="100%" data-src="' . $icon . '"/></svg></span>';
 	}
 
-	return $icon;
+	// Override for AMP - NO ICONS
+	if ( is_amp_endpoint() ) {
+		$return = '';
+	}
+
+	return $return;
 }
  
 /** THE JETPACK SECTION **/
