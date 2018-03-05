@@ -63,7 +63,7 @@ if ( get_post_meta( get_the_ID(), 'lezchars_death_year', true ) ) {
 
 	foreach( $character_death as $death ) {
 		if ( substr( $death, 2, 1 ) != '/' ) {
-			$date = date_format( date_create_from_format( 'Y-m-d', $death ), 'd F, Y');
+			$date = date_format( date_create_from_format( 'Y-m-d', $death ), 'd F Y');
 		} else {
 			$date = date_format( date_create_from_format( 'm/d/Y', $death ), 'F d, Y');
 		}
