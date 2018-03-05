@@ -190,6 +190,18 @@ function lwtv_yikes_facetwp_add_labels() {
 			
 			// Sorting
 			switch( FWP.extras.sort ) {
+				case 'death_asc':
+					var fwp_sorted = 'date of death (oldest to newest)';
+					break;
+				case 'death_desc':
+					var fwp_sorted = 'date of death (most recent to oldest)';
+					break;
+				case 'birth_asc':
+					var fwp_sorted = 'date of birth (oldest to newest)';
+					break;
+				case 'birth_desc':
+					var fwp_sorted = 'date of birth (most recent to oldest)';
+					break;
 				case 'most_queers':
 					var fwp_sorted = 'number of characters (descending)';
 					break;

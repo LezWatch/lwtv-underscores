@@ -42,12 +42,18 @@ function lwtv_yikes_this_year_dead( $thisyear ) {
 				$show_info = implode( ', ', $show_title );
 
 				// Only extract the date for this year and convert to unix time
-				// Jesus, I hope no one dies twice in the same year ...
+				// Jesus, I hope no one dies twice in the same year ... SARA
 				$died_date = get_post_meta( $dead_char, 'lezchars_death_year', true);
 				foreach ( $died_date as $date ) {
-					$died_year = substr( $date, -4 );
-					if ( $died_year == $thisyear ) {
+					if ( (int) substr( $date, 0, 4 ) == substr( $date, 0, 4 ) ) {
+						$died_year = substr( $date, 0, 4 );
+						$died_array = date_parse_from_format( 'Y-m-d', $date );
+					} else {
+						$died_year = substr( $date, -4 );
 						$died_array = date_parse_from_format( 'm/d/Y', $date );
+					}
+
+					if ( $died_year == $thisyear ) {
 						$died = mktime( $died_array['hour'], $died_array['minute'], $died_array['second'], $died_array['month'], $died_array['day'], $died_array['year'] );
 					}
 				}

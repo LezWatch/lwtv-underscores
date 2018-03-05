@@ -55,13 +55,13 @@ function lwtv_yikes_symbolicons( $svg = 'square.svg', $fontawesome = 'fa-square'
 	$square = get_template_directory_uri( '/images/square.svg' );
 
 	if ( defined( 'LP_SYMBOLICONS_PATH' ) && file_exists( LP_SYMBOLICONS_PATH . $svg ) ) {
-		$icon = LP_SYMBOLICONS_URL . $svg;
+		$icon = LP_SYMBOLICONS_PATH . $svg;
 	} elseif ( !wp_style_is( 'fontawesome', 'enqueued' ) ) {
 		$icon = $square;
 	}
 	
 	if ( isset( $icon ) ) {
-		$return = '<span class="cmb2-icon" role="img"><svg width="100%" height="100%" data-src="' . $icon . '"/></svg></span>';
+		$return = '<span class="symbolicon" role="img">' . file_get_contents( $icon ) . '</span>';
 	}
 
 	// Override for AMP - NO ICONS
@@ -143,7 +143,7 @@ add_action( 'pre_get_posts', 'lwtv_yikes_archive_sort_order' );
  */
 function lwtv_yikes_character_archive_query( $query ) {
 	if ( $query->is_archive() && $query->is_main_query() && !is_admin() ) {
-		$taxonomies = array( 'lez_cliches', 'lez_gender', 'lez_sexuality' );
+		$taxonomies = array( 'lez_cliches', 'lez_gender', 'lez_sexuality', 'lez_romantic' );
 		if ( is_post_type_archive( 'post_type_characters' ) || is_tax( $taxonomies ) ) {
 			$query->set( 'posts_per_page', 24 );
 		}
