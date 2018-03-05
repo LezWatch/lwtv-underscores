@@ -87,11 +87,11 @@
 
 			$life = array();
 			if ( get_post_meta( get_the_ID(), 'lezactors_birth', true ) ) {
-				$get_birth     = date_create_from_format( 'Y-m-j', get_post_meta( get_the_ID(), 'lezactors_birth', true ) );
+				$get_birth     = date_create_from_format( 'Y-m-d', get_post_meta( get_the_ID(), 'lezactors_birth', true ) );
 				$life['birth'] = date_format( $get_birth, 'F d, Y');
 			}
 			if ( get_post_meta( get_the_ID(), 'lezactors_death', true ) ) {
-				$get_death     = date_create_from_format( 'Y-m-j', get_post_meta( get_the_ID(), 'lezactors_death', true ) );
+				$get_death     = date_create_from_format( 'Y-m-d', get_post_meta( get_the_ID(), 'lezactors_death', true ) );
 				$life['death'] = date_format( $get_death, 'F d, Y');
 			}
 

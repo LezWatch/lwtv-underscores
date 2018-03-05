@@ -90,9 +90,9 @@
 				$echo_death = array();
 				foreach( $character_death as $death ) {
 					if ( (int) substr( $death, 0, 4 ) == substr( $death, 0, 4 ) ) {
-						$date = date_format( date_create_from_format( 'Y-m-j', $death ), 'F d, Y');
+						$date = date_format( date_create_from_format( 'Y-m-d', $death ), 'F d, Y');
 					} else {
-						$date = date_format( date_create_from_format( 'm/j/Y', $death ), 'F d, Y');
+						$date = date_format( date_create_from_format( 'm/d/Y', $death ), 'F d, Y');
 					}
 					$echo_death[] = $date;
 				}
