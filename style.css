@@ -1575,6 +1575,16 @@ span.svg-shortcode a:hover svg {
   vertical-align: middle;
 }
 
+.screener-worthit, .screener-worthit svg *, .screener-warn, .screener-warn svg * {
+  fill: #fff;
+  color: #fff;
+}
+.screener-worthit svg, .screener-warn svg {
+  vertical-align: top;
+  width: 20px;
+  height: 20px;
+}
+
 /*--------------------------------------------------------------
 # Facet
 --------------------------------------------------------------*/
@@ -1608,6 +1618,36 @@ div.facetwp-facet-shows_scores input.facetwp-number {
   display: inline;
   width: 30%;
   margin: .2rem;
+}
+
+/*--------------------------------------------------------------
+# Callouts
+--------------------------------------------------------------*/
+.bd-callout {
+  padding: 1.25rem;
+  margin-top: 1.25rem;
+  margin-bottom: 1.25rem;
+  border: 1px solid #eee;
+  border-left-width: .25rem;
+  border-radius: .25rem;
+  border-left-color: #d1548e;
+}
+
+.bd-callout h4 {
+  margin-top: 0;
+  margin-bottom: 0.25rem;
+}
+
+.bd-callout p:last-child {
+  margin-bottom: 0;
+}
+
+.bd-callout code {
+  border-radius: 0.25rem;
+}
+
+.bd-callout + .bd-callout {
+  margin-top: -0.25rem;
 }
 
 /* ==========================================================================
