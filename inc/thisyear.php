@@ -178,7 +178,7 @@ function lwtv_yikes_this_year_shows( $thisyear ) {
 		}
 		echo '</ul>';
 	} else {
-		?><p>No shows with known queer female characters aired in <?php echo $thisyear; ?>.</p><?php
+		?><p>No qualifying shows aired in <?php echo $thisyear; ?>.</p><?php
 	}
 	?>
 
@@ -198,7 +198,7 @@ function lwtv_yikes_this_year_shows( $thisyear ) {
 		}
 		echo '</ul>';
 	} else {
-		?><p>No shows with known queer female characters premiered in <?php echo $thisyear; ?>.</p><?php
+		?><p>No qualifying shows premiered in <?php echo $thisyear; ?>.</p><?php
 	}
 	?>
 
@@ -218,7 +218,7 @@ function lwtv_yikes_this_year_shows( $thisyear ) {
 		}
 		echo '</ul>';
 	} else {
-		?><p>No shows with known queer female characters ended in <?php echo $thisyear; ?>.</p><?php
+		?><p>No qualifying shows ended in <?php echo $thisyear; ?>.</p><?php
 	}
 	?>
 

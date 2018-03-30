@@ -119,7 +119,7 @@ if ( $related ) {
 		$havedeadcount = LWTV_CPT_Characters::list_characters( $show_id, 'dead' );
 		
 		if ( empty( $havecharcount ) || $havecharcount == '0' ) {
-			echo '<p>There are no queers listed yet for this show.</p>';
+			echo '<p>There are no characters listed yet for this show.</p>';
 		} else {
 		
 			$deadtext = 'none are dead';

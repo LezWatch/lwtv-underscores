@@ -66,7 +66,7 @@
 			echo '<h2>Characters ('. $havecharcount .')</h2>';
 
 			if ( empty($havecharacters) ) {
-				echo '<p>There are no queers listed for this show.</p>';
+				echo '<p>There are no characters listed for this show.</p>';
 			} else {
 				foreach( $havecharacters as $character ) {
 				?>

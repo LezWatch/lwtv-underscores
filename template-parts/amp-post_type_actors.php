@@ -41,7 +41,7 @@
 			if ( !empty( $this->get( 'post_amp_content' ) ) ) {
 				echo $this->get( 'post_amp_content' );
 			} else {
-				the_title( '<p>', ' is an actor who has played at least one queer character on TV.</p>' );
+				the_title( '<p>', ' is an actor who has played at least one character on TV.</p>' );
 			}
 
 			$all_chars = lwtv_yikes_actordata( get_the_ID(), 'characters' );
@@ -50,9 +50,9 @@
 			echo '<h2>Characters</h2>';
 
 			if ( empty( $all_chars ) || count( $all_chars ) == '0' ) {
-				echo '<p>There are no queers listed yet for this actor.</p>';
+				echo '<p>There are no characters listed yet for this actor.</p>';
 			} else {
-				echo '<p>There '. sprintf( _n( 'is <strong>%s</strong> queer character', 'are <strong>%s</strong> queer characters', count( $all_chars ) ), count( $all_chars ) ).' played by this actor.</p>';
+				echo '<p>There '. sprintf( _n( 'is <strong>%s</strong> character', 'are <strong>%s</strong> characters', count( $all_chars ) ), count( $all_chars ) ).' played by this actor.</p>';
 		
 				echo '<div class="container characters-regulars-container"><div class="row site-loop character-show-loop equal-height">';
 					foreach( $all_chars as $character ) {
