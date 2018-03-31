@@ -48,38 +48,41 @@ class LWTV_Character extends WP_Widget {
 		while ($queery->have_posts()) {
 			$queery->the_post();
 
-		echo '<div class="card">';
-		echo '<div class="card-header"><h4>Recently Added Character <span class="float-right">' . lwtv_yikes_symbolicons( 'contact-card.svg', 'fa-address-card' ) . '</span></h4></div>';
+			$thumb_attribution = get_post_meta( get_post_thumbnail_id(), 'lwtv_attribution', true );
+			$thumb_title       = ( empty( $thumb_attribution ) )? get_the_title() : get_the_title() . ' &copy; ' . $thumb_attribution;
 
-		// Featured Image
-		echo '<div class="character-image-wrapper">';
-		echo '<a href="' . get_the_permalink()  .'">';
-		echo the_post_thumbnail( 'character-img', array( 'class' => 'card-img-top' ) );
-		echo '</a>';
-		echo '</div>';
-
-		echo '<div class="card-body">';
-			// Title
-			echo '<h4 class="card-title">' . get_the_title() .'</h4>';
-			echo '<div class="card-text">';
-				// Only show one show
-				echo lwtv_yikes_chardata( get_the_ID(), 'oneshow' );
-				// Actor
-				echo lwtv_yikes_chardata( get_the_ID(), 'oneactor' );
-			echo '</div>
-		</div>';
-
-		// Button
-		echo '<div class="card-footer">
-				<a href="' . get_the_permalink()  .'" class="btn btn-outline-primary">Character Profile</a>
-			  </div>';
-
-		echo '</div>';
-
-		wp_reset_postdata();
-
-		echo $after_widget;
-		/** Output widget HTML END **/
+			echo '<div class="card">';
+			echo '<div class="card-header"><h4>Recently Added Character <span class="float-right">' . lwtv_yikes_symbolicons( 'contact-card.svg', 'fa-address-card' ) . '</span></h4></div>';
+	
+			// Featured Image
+			echo '<div class="character-image-wrapper">';
+			echo '<a href="' . get_the_permalink()  .'">';
+			echo the_post_thumbnail( 'character-img', array( 'class' => 'card-img-top', 'alt' => $thumb_title, 'title' => $thumb_title ) );
+			echo '</a>';
+			echo '</div>';
+	
+			echo '<div class="card-body">';
+				// Title
+				echo '<h4 class="card-title">' . get_the_title() .'</h4>';
+				echo '<div class="card-text">';
+					// Only show one show
+					echo lwtv_yikes_chardata( get_the_ID(), 'oneshow' );
+					// Actor
+					echo lwtv_yikes_chardata( get_the_ID(), 'oneactor' );
+				echo '</div>
+			</div>';
+	
+			// Button
+			echo '<div class="card-footer">
+					<a href="' . get_the_permalink()  .'" class="btn btn-outline-primary">Character Profile</a>
+				  </div>';
+	
+			echo '</div>';
+	
+			wp_reset_postdata();
+	
+			echo $after_widget;
+			/** Output widget HTML END **/
 		}
 
 	}

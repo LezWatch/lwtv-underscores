@@ -74,11 +74,16 @@ if ( get_post_meta( get_the_ID(), 'lezactors_instagram', true ) ) {
 
 // Microformats Fix
 lwtv_microformats_fix( $post->ID );
+
+// Thumbnail attribution
+$thumb_attribution = get_post_meta( get_post_thumbnail_id(), 'lwtv_attribution', true );
+$thumb_title       = ( empty( $thumb_attribution ) )? get_the_title() : get_the_title() . ' &copy; ' . $thumb_attribution;
+
 ?>
 
 <section class="showschar-section" name="overview" id="overview">
 	<div class="card-body">
-		<?php the_post_thumbnail( 'character-img', array( 'class' => 'single-char-img' , 'alt' => get_the_title() , 'title' => get_the_title() ) ); ?>	
+		<?php the_post_thumbnail( 'character-img', array( 'class' => 'single-char-img' , 'alt' => get_the_title() , 'title' => $thumb_title ) ); ?>	
 
 		<div class="card-meta">
 			<div class="card-meta-item">
