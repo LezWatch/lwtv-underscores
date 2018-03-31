@@ -15,9 +15,15 @@ $related = LWTV_Related_Posts::are_there_posts( $slug );
 
 // Microformats Fix
 lwtv_microformats_fix( $post->ID );
-?>
 
-<?php the_post_thumbnail( 'large', array( 'class' => 'card-img-top' , 'alt' => get_the_title() , 'title' => get_the_title() ) ); ?>
+// Thumbnail attribution
+$thumb_attribution = get_post_meta( get_post_thumbnail_id(), 'lwtv_attribution', true );
+$thumb_title       = ( empty( $thumb_attribution ) )? get_the_title() : get_the_title() . ' &copy; ' . $thumb_attribution;
+
+// Echo the header image
+the_post_thumbnail( 'large', array( 'class' => 'card-img-top' , 'alt' => get_the_title() , 'title' => $thumb_title ) );
+
+?>
 
 <section id="toc" class="toc-container card-body">
 	<nav class="breadcrumb">

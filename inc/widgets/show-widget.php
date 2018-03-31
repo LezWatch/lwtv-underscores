@@ -49,61 +49,59 @@ class LWTV_Show extends WP_Widget {
 		while ($queery->have_posts()) {
 			$queery->the_post();
 
-		echo '<div class="card">';
-		echo '<div class="card-header">
-				<h4>Recently Added Show <span class="float-right">' . lwtv_yikes_symbolicons( 'tv-hd.svg', 'fa-tv' ) . '</span></h4>
-			  </div>';
+			$thumb_attribution = get_post_meta( get_post_thumbnail_id(), 'lwtv_attribution', true );
+			$thumb_title       = ( empty( $thumb_attribution ) )? get_the_title() : get_the_title() . ' &copy; ' . $thumb_attribution;
 
-		// Featured Image
-		echo '<a href="' . get_the_permalink()  .'">';
-		echo the_post_thumbnail( 'postloop-img', array( 'class' => 'card-img-top' ) );
-		echo '</a>';
-
-		echo '<div class="card-body">';
-
-		// Title
-		echo '<h4 class="card-title">' . get_the_title() .'</h4>';
-
-		echo '<div class="card-text">';
-
-
-		// Airs on
-		echo '<div class="card-meta-item"><strong>Airs On:</strong> ';
-		$stations =  get_the_terms( $post, 'lez_stations');
-		$station_string='';
-		foreach ($stations as $station) {
-			$station_string .= $station->name . ', ';
-		}
-		echo trim($station_string , ', ');
-		echo '</div>';
-		
-		// Airdates
-		$field   = get_post_meta( get_the_ID(), 'lezshows_airdates', true );
-		$start   = isset( $field['start'] ) ? $field['start'] : '';
-		$finish  = isset( $field['finish'] ) ? $field['finish'] : '';
-		$airdate = $start  . ' - ' . $finish;
-		
-		if ( $start == $finish ) { $airdate = $finish; }
-		
-		echo '<div class="card-meta-item"><strong>Airdates:</strong> ' . $airdate . '</div>';
-
-		// Excerpt
-		echo '<div class="card-excerpt">' . get_the_excerpt() .'</div>';
-
-		echo '</div>
-			  </div>';
-
-		// Button
-		echo '<div class="card-footer">
-				<a href="' . get_the_permalink()  .'" class="btn btn-outline-primary">Show Profile</a>
-			  </div>';
-
-		echo '</div>';
-
-		wp_reset_postdata();
-
-		echo $after_widget;
-		/** Output widget HTML END **/
+			echo '<div class="card">';
+			echo '<div class="card-header"><h4>Recently Added Show <span class="float-right">' . lwtv_yikes_symbolicons( 'tv-hd.svg', 'fa-tv' ) . '</span></h4></div>';
+	
+			// Featured Image
+			echo '<a href="' . get_the_permalink()  .'">';
+			echo the_post_thumbnail( 'postloop-img', array( 'class' => 'card-img-top', 'alt' => $thumb_title, 'title' => $thumb_title ) );
+			echo '</a>';
+	
+			echo '<div class="card-body">';
+	
+			// Title
+			echo '<h4 class="card-title">' . get_the_title() .'</h4>';
+	
+			echo '<div class="card-text">';
+	
+	
+			// Airs on
+			echo '<div class="card-meta-item"><strong>Airs On:</strong> ';
+			$stations =  get_the_terms( $post, 'lez_stations');
+			$station_string='';
+			foreach ($stations as $station) {
+				$station_string .= $station->name . ', ';
+			}
+			echo trim($station_string , ', ');
+			echo '</div>';
+			
+			// Airdates
+			$field   = get_post_meta( get_the_ID(), 'lezshows_airdates', true );
+			$start   = isset( $field['start'] ) ? $field['start'] : '';
+			$finish  = isset( $field['finish'] ) ? $field['finish'] : '';
+			$airdate = $start  . ' - ' . $finish;
+			
+			if ( $start == $finish ) { $airdate = $finish; }
+			
+			echo '<div class="card-meta-item"><strong>Airdates:</strong> ' . $airdate . '</div>';
+	
+			// Excerpt
+			echo '<div class="card-excerpt">' . get_the_excerpt() .'</div>';
+	
+			echo '</div></div>';
+	
+			// Button
+			echo '<div class="card-footer"><a href="' . get_the_permalink()  .'" class="btn btn-outline-primary">Show Profile</a></div>';
+	
+			echo '</div>';
+	
+			wp_reset_postdata();
+	
+			echo $after_widget;
+			/** Output widget HTML END **/
 		}
 
 	}

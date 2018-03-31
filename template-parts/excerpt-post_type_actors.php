@@ -16,6 +16,9 @@ $the_content = ( isset( $actor['content'] ) )? $actor['content'] : get_the_conte
 $alttext     = 'A picture of the actor ' . get_the_title( $the_ID );
 $archive     = ( is_archive() || is_tax() || is_page() )? true : false;
 
+$thumb_attribution = get_post_meta( get_post_thumbnail_id(), 'lwtv_attribution', true );
+$thumb_title       = ( empty( $thumb_attribution ) )? $alttext : $alttext . ' &copy; ' . $thumb_attribution;
+
 // Reset to prevent Teri Polo from overtaking the world
 unset( $shows, $actors, $gender, $sexuality, $cliches, $grave );
 ?>
@@ -24,7 +27,7 @@ unset( $shows, $actors, $gender, $sexuality, $cliches, $grave );
 	<?php if ( has_post_thumbnail( $the_ID ) ) : ?>
 		<div class="actor-image-wrapper">
 			<a href="<?php the_permalink( $the_ID ); ?>" title="<?php get_the_title( $the_ID ); ?>" >
-				<?php echo get_the_post_thumbnail( $the_ID, 'character-img', array( 'class' => 'card-img-top' , 'alt' => $alttext, 'title' => $alttext ) ); ?>
+				<?php echo get_the_post_thumbnail( $the_ID, 'character-img', array( 'class' => 'card-img-top' , 'alt' => $thumb_title, 'title' => $thumb_title ) ); ?>
 			</a>
 		</div>
 	<?php endif; ?>

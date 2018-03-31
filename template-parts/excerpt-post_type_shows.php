@@ -10,10 +10,14 @@
  */
 
 global $post;
+
+// Thumbnail attribution
+$thumb_attribution = get_post_meta( get_post_thumbnail_id(), 'lwtv_attribution', true );
+$thumb_title       = ( empty( $thumb_attribution ) )? get_the_title() : get_the_title() . ' &copy; ' . $thumb_attribution;
 ?>
 
 <div class="card-group" id="post-<?php the_ID(); ?>">
-	<div class="card col-sm-5"	
+	<div title="<?php echo $thumb_title; ?>" class="card col-sm-5" 
 		<?php if ( has_post_thumbnail() ) { ?>
 			style="background-image: url(<?php the_post_thumbnail_url( 'large' ); ?>);"
 		<?php } ?>
