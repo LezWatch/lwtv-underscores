@@ -610,7 +610,6 @@ section {
   padding: 3rem 2rem;
 
   .facetwp-selections li {
-    display: block;
     margin-top: 0;
     margin-bottom: 1rem;
   }
@@ -940,7 +939,7 @@ h3.post-title.excerpt {
 
 /* Stars and Hearts */
 
-.showlist-star, .show-star {
+.showlist-star, .show-star, .screener-star {
   &.gold {
     svg * {
       fill: $lwtv-gold;
@@ -1474,7 +1473,7 @@ span.svg-shortcode a {
   }
 }
 
-.screener-worthit, .screener-warn, {
+.screener-worthit, .screener-warn, .screener-star {
   & , & svg * {
     fill: $white;
     color: $white;

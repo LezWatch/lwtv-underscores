@@ -92,7 +92,7 @@ switch ( $view ) {
 		break;
 	case 'percentages':
 		?>
-		<p>Percentages are of <em>all</em> queers and shows, not just the dead.</p>
+		<p>Percentages are of <em>all</em> characters and shows, not just the dead.</p>
 		
 		<div class="container percentage-container">
 			<div class="row">

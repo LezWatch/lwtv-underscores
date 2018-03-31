@@ -87,7 +87,7 @@ lwtv_microformats_fix( $post->ID );
 					?>
 						<h2>Actor Bio</h2> <?php the_content(); 
 					} else {
-						the_title( '<p>', ' is an actor who has played at least one queer character on TV.</p>' );
+						the_title( '<p>', ' is an actor who has played at least one character on TV.</p>' );
 					}
 				?>
 			</div>
@@ -151,11 +151,11 @@ lwtv_microformats_fix( $post->ID );
 		$havedeadcount = count ( lwtv_yikes_actordata( get_the_ID(), 'dead' ) );
 
 		if ( empty( $havecharcount ) || $havecharcount == '0' ) {
-			echo '<p>There are no queers characters listed yet for this actor.</p>';
+			echo '<p>There are no characters listed yet for this actor.</p>';
 		} else {
 			$deadtext = 'none are dead';
 			if ( $havedeadcount > '0' ) $deadtext = sprintf( _n( '<strong>%s</strong> is dead', '<strong>%s</strong> are dead', $havedeadcount ), $havedeadcount );
-			echo '<p>There '. sprintf( _n( 'is <strong>%s</strong> queer character', 'are <strong>%s</strong> queer characters', $havecharcount ), $havecharcount ).' listed for this actor; ' . $deadtext . '.</p>';
+			echo '<p>There '. sprintf( _n( 'is <strong>%s</strong> character', 'are <strong>%s</strong> characters', $havecharcount ), $havecharcount ).' listed for this actor; ' . $deadtext . '.</p>';
 		
 			echo '<div class="container characters-regulars-container">
 					<div class="row site-loop character-show-loop equal-height">';
