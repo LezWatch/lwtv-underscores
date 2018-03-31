@@ -806,7 +806,6 @@ section {
   padding: 3rem 2rem;
 }
 .archive-subheader .jumbotron .facetwp-selections li {
-  display: block;
   margin-top: 0;
   margin-bottom: 1rem;
 }
@@ -1064,22 +1063,22 @@ h3.post-title.excerpt {
 }
 
 /* Stars and Hearts */
-.showlist-star.gold svg *, .show-star.gold svg * {
+.showlist-star.gold svg *, .show-star.gold svg *, .screener-star.gold svg * {
   fill: #FFD700;
 }
-.showlist-star.gold i.fa, .show-star.gold i.fa {
+.showlist-star.gold i.fa, .show-star.gold i.fa, .screener-star.gold i.fa {
   color: #FFD700;
 }
-.showlist-star.silver svg *, .show-star.silver svg * {
+.showlist-star.silver svg *, .show-star.silver svg *, .screener-star.silver svg * {
   fill: #C0C0C0;
 }
-.showlist-star.silver i.fa, .show-star.silver i.fa {
+.showlist-star.silver i.fa, .show-star.silver i.fa, .screener-star.silver i.fa {
   color: #C0C0C0;
 }
-.showlist-star.bronze svg *, .show-star.bronze svg * {
+.showlist-star.bronze svg *, .show-star.bronze svg *, .screener-star.bronze svg * {
   fill: #B87333;
 }
-.showlist-star.bronze i.fa, .show-star.bronze i.fa {
+.showlist-star.bronze i.fa, .show-star.bronze i.fa, .screener-star.bronze i.fa {
   color: #B87333;
 }
 
@@ -1575,11 +1574,11 @@ span.svg-shortcode a:hover svg {
   vertical-align: middle;
 }
 
-.screener-worthit, .screener-worthit svg *, .screener-warn, .screener-warn svg * {
+.screener-worthit, .screener-worthit svg *, .screener-warn, .screener-warn svg *, .screener-star, .screener-star svg * {
   fill: #fff;
   color: #fff;
 }
-.screener-worthit svg, .screener-warn svg {
+.screener-worthit svg, .screener-warn svg, .screener-star svg {
   vertical-align: top;
   width: 20px;
   height: 20px;
