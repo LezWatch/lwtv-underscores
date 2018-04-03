@@ -386,7 +386,7 @@ function yikes_starter_scripts() {
 	}
 
 	wp_enqueue_style( 'bootstrap', get_template_directory_uri() . '/inc/bootstrap/css/bootstrap.css', array(), '4.0.0', 'all' );
-	wp_enqueue_style( 'fontawesome', get_template_directory_uri() . '/inc/css/fontawesome-all.min.css', array(), '5.0.2', 'all' );
+	wp_enqueue_style( 'fontawesome', get_template_directory_uri() . '/inc/css/fontawesome-all.min.css', array(), '5.0.9', 'all' );
 	wp_enqueue_style( 'open-sans', '//fonts.googleapis.com/css?family=Open+Sans:400,600,700', false );
 	wp_enqueue_style( 'oswald', '//fonts.googleapis.com/css?family=Oswald:400,500', false );
 	wp_enqueue_script( 'yikes-popper-script', get_template_directory_uri() . '/inc/js/popper.min.js',  array(), '1.11.0', 'all', true );
