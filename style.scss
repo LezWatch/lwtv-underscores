@@ -1317,18 +1317,36 @@ img {
   text-align: center;
 }
 
-.site-content {
-  .gallery {
-    margin-bottom: 1.5em;
+.gallery {
+  margin-bottom: 1.5em;
 
-    a img {
-      border: none;
-      height: auto;
-      max-width: 90%;
+  figure {
+    display: inline-block;
+    padding: 0 1rem;
+  }
+
+  a img {
+    border: none;
+  }
+
+  &.gallery-columns-2 {
+
+    figure {      
+      width: 50%;
     }
+  }
 
-    dd {
-      margin: 0;
+  &.gallery-columns-3 {
+
+    figure {      
+      width: 33%;
+    }
+  }
+
+  &.gallery-columns-4 {
+
+    figure {      
+      width: 25%;
     }
   }
 }
