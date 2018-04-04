@@ -1322,7 +1322,12 @@ img {
 
   figure {
     display: inline-block;
-    padding: 0 1rem;
+    padding: 0 2rem;
+
+    &.gallery-item {
+      display: inline-block;
+      vertical-align: top;
+    }
   }
 
   a img {
@@ -1351,9 +1356,12 @@ img {
   }
 }
 
-.gallery-caption {display: block;}
+.gallery-caption {
+  display: block;
+  @include font-14;
+  padding-top: 0.3rem;
+}
 
-figure.gallery-item {display: inline-block;}
 
 /* Make sure embeds and iframes fit their containers */
 

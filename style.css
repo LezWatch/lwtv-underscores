@@ -1464,7 +1464,11 @@ img {
 }
 .gallery figure {
   display: inline-block;
-  padding: 0 1rem;
+  padding: 0 2rem;
+}
+.gallery figure.gallery-item {
+  display: inline-block;
+  vertical-align: top;
 }
 .gallery a img {
   border: none;
@@ -1481,10 +1485,8 @@ img {
 
 .gallery-caption {
   display: block;
-}
-
-figure.gallery-item {
-  display: inline-block;
+  font-size: 0.875rem;
+  padding-top: 0.3rem;
 }
 
 /* Make sure embeds and iframes fit their containers */
