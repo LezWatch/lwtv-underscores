@@ -113,6 +113,17 @@ $columns = ( $format == 'pie' )? 'col-sm-6' : 'col';
 			// country_[subcountry]_[view]
 			$view    = '_' . $view;
 			$country = ( $country == 'overview' )? '_all' : '_' . $country; 
+
+				if ( $country !== '_all' ) {
+
+					$onair     = LWTV_Stats::showcount( 'onair', 'country', ltrim( $country, '_' ) );
+					$allshows  = LWTV_Stats::showcount( 'total', 'country', ltrim( $country, '_' ) );
+					$showscore = LWTV_Stats::showcount( 'score', 'country', ltrim( $country, '_' ) );
+					
+					echo '<p>Currently, ' . $onair . ' of ' . $allshows . ' shows are on air. The average show score for this nation is ' . $showscore . ' (out of a possible 100).</p>';
+				}
+
+
 			LWTV_Stats::generate( 'shows', 'country' . $country . $view , $format );
 		?>
 		</div>
