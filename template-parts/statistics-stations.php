@@ -10,8 +10,8 @@ $valid_station = ( isset( $_GET['station'] ) )? term_exists( $_GET['station'], '
 $station       = ( !isset( $_GET['station'] ) || !is_array( $valid_station ) )? 'all' : sanitize_title( $_GET['station'] );
 
 // Views
-$valid_views = array( 'overview', 'gender', 'sexuality' );
-$view        = ( !isset( $_GET['view'] ) || !in_array( $_GET['view'], $valid_views ) )? 'overview' : sanitize_title( $_GET['view'] );
+$valid_views   = array( 'overview', 'gender', 'sexuality' );
+$view          = ( !isset( $_GET['view'] ) || !in_array( $_GET['view'], $valid_views ) )? 'overview' : sanitize_title( $_GET['view'] );
 
 // Format
 $valid_formats = array( 'bar', 'pie' );
@@ -42,7 +42,7 @@ $columns = ( $format == 'pie' )? 'col-sm-6' : 'col';
 					<?php
 						foreach( $all_stations as $the_station ) {
 							$selected = ( $station == $the_station->slug )? 'selected=selected' : '';
-							$shows    = _n( 'Show', 'Shows', $the_station->count );
+							$shows    = _n( 'show', 'shows', $the_station->count );
 							echo '<option value="' . $the_station->slug . '" ' . $selected . '>' . $the_station->name . ' (' . $the_station->count . ' ' . $shows . ')</option>';
 						}
 					?>
@@ -55,7 +55,7 @@ $columns = ( $format == 'pie' )? 'col-sm-6' : 'col';
 						$statstype = array( 'gender', 'sexuality' );
 						foreach( $statstype as $stat ) {
 							$selected = ( $view == $stat )? 'selected=selected' : '';
-							echo '<option value="' . $stat . '" ' . $selected . ' ' . $disabled . '>' . ucfirst( $stat ) . '</option>';
+							echo '<option value="' . $stat . '" ' . $selected . '>' . ucfirst( $stat ) . '</option>';
 						}
 					?>
 				</select>
@@ -85,16 +85,18 @@ $columns = ( $format == 'pie' )? 'col-sm-6' : 'col';
 			// Title
 			switch( $station ) {
 				case 'all':
-					$title_station = 'All Stations';
+					$title_station = 'All Station';
 					break;
 				default:
 					$station_object = get_term_by( 'slug', $station, 'lez_stations', 'ARRAY_A' );
-					$title_station  = $station_object['name'];
+					$title_station  = '<a href="' . home_url( '/station/' . $station ) . '">' . $station_object['name'] . '</a>';
 			}
+
+			$title = 'Overview of ' . $title_station . ' Information';
 
 			switch ( $view ) {
 				case 'overview':
-					$title = 'Overview of ' . $title_station . ' by Show Count';
+					$title = 'Overview of ' . $title_station;
 					break;
 				case 'sexuality':
 					$title = 'Details on ' . $title_station . ' by Character Sexual Orientation';
@@ -118,21 +120,33 @@ $columns = ( $format == 'pie' )? 'col-sm-6' : 'col';
 					break;
 			}
 
+			// Adjust Title...
+			if ( $view == 'overview' && $station !== 'all' ) $view = 'all';
+
 			// station-[substation]-[view]
 			$view    = '_' . $view;
 			$station = ( $station == 'overview' )? '_all' : '_' . $station; 
 			
 			if ( $station == '_all' ) {
-				echo '<p>Due to the high number of stations (' . $count . '), we cannot display an overview. For information on characters per station, please use the dropdowns to select a station and drill down for more information.</p>';
+				echo '<p>Due to the high number of stations (' . $count . '), we cannot display an overview. For information on statistics per station, please use the dropdowns to select a station and drill down for more information.</p>';
 				echo '<ul>';
 					foreach( $all_stations as $the_station ) {
-						$shows    = _n( 'Show', 'Shows', $the_station->count );
-						echo '<li><a href="' . $the_station->url . '">' . $the_station->name . '</a> (' . $the_station->count . ' ' . $shows . ')</li>';
+						$shows = _n( 'show', 'shows', $the_station->count );
+						echo '<li><a href="?station=' . $the_station->slug . '">' . $the_station->name . '</a> (' . $the_station->count . ' ' . $shows . ', average score ' . $showscore = LWTV_Stats::showcount( 'score', 'stations', $the_station->slug ) . ')</li>';
 					}
 				echo '</ul>';
 
 				
 			} else {
+				if ( $view == '_all' && $station !== '_all' ) {
+
+					$onair     = LWTV_Stats::showcount( 'onair', 'stations', ltrim( $station, '_' ) );
+					$allshows  = LWTV_Stats::showcount( 'total', 'stations', ltrim( $station, '_' ) );
+					$showscore = LWTV_Stats::showcount( 'score', 'stations', ltrim( $station, '_' ) );
+					
+					echo '<p>Currently, ' . $onair . ' of ' . $allshows . ' shows are on air. The average show score for this station is ' . $showscore . ' (out of a possible 100).</p>';
+				}
+				
 				LWTV_Stats::generate( 'shows', 'stations' . $station . $view , $format );
 			}
 
