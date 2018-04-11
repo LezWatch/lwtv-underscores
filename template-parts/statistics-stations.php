@@ -140,11 +140,12 @@ $columns = ( $format == 'pie' )? 'col-sm-6' : 'col';
 			} else {
 				if ( $view == '_all' && $station !== '_all' ) {
 
-					$onair     = LWTV_Stats::showcount( 'onair', 'stations', ltrim( $station, '_' ) );
-					$allshows  = LWTV_Stats::showcount( 'total', 'stations', ltrim( $station, '_' ) );
-					$showscore = LWTV_Stats::showcount( 'score', 'stations', ltrim( $station, '_' ) );
+					$onair      = LWTV_Stats::showcount( 'onair', 'stations', ltrim( $station, '_' ) );
+					$allshows   = LWTV_Stats::showcount( 'total', 'stations', ltrim( $station, '_' ) );
+					$showscore  = LWTV_Stats::showcount( 'score', 'stations', ltrim( $station, '_' ) );
+					$onairscore = LWTV_Stats::showcount( 'onairscore', 'stations', ltrim( $station, '_' ) );
 					
-					echo '<p>Currently, ' . $onair . ' of ' . $allshows . ' shows are on air. The average show score for this station is ' . $showscore . ' (out of a possible 100).</p>';
+					echo '<p>Currently, ' . $onair . ' of ' . $allshows . ' shows are on air. The average score for all shows on this station is ' . $showscore . ', and ' . $onairscore . ' for shows currently on air (out of a possible 100).</p>';
 				}
 				
 				LWTV_Stats::generate( 'shows', 'stations' . $station . $view , $format );
