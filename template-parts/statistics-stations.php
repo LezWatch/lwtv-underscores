@@ -124,7 +124,7 @@ $columns = ( $format == 'pie' )? 'col-sm-6' : 'col';
 			if ( $view == 'overview' && $station !== 'all' ) $view = 'all';
 
 			// station-[substation]-[view]
-			$view    = '_' . $view;
+			$view    = ( $view == 'overview' )? '_all' : '_' . $view; 
 			$station = ( $station == 'overview' )? '_all' : '_' . $station; 
 			
 			if ( $station == '_all' ) {
