@@ -96,7 +96,7 @@ $screentime   = min( (int) get_post_meta( $show_id, 'lezshows_screentime_rating'
 </section>
 
 <section id="ratings" class="widget widget_text">
-	<div class="card">			
+	<div class="card">
 		<div class="card-header">
 			<h4>Tropes</h4>
 		</div>
@@ -127,8 +127,39 @@ $screentime   = min( (int) get_post_meta( $show_id, 'lezshows_screentime_rating'
 	</div>
 </section>
 
+<?php
+// Intersectionality
+$intersections = get_the_terms( $show_id, 'lez_intersections' );
+if ( $intersections && !is_wp_error( $intersections ) ) {
+?>
+	<section id="ratings" class="widget widget_text">
+		<div class="card">
+			<div class="card-header">
+				<h4>Intersectionality</h4>
+			</div>
+				<ul class="trope-list list-group"><?php
+					// loop over each returned trope
+					foreach( $intersections as $intersection ) { ?>
+						<li class="list-group-item show trope trope-<?php echo $intersection->slug; ?>">
+							<a href="<?php echo get_term_link( $intersection->slug, 'lez_intersections'); ?>" rel="show trope"><?php
+								// Echo the taxonomy icon (default to squares if empty)
+								$icon = get_term_meta( $intersection->term_id, 'lez_termsmeta_icon', true );
+								echo lwtv_yikes_symbolicons( $icon .'.svg', 'fa-lemon' );
+							?></a>
+							<a href="<?php echo get_term_link( $intersection->slug, 'lez_intersections'); ?>" rel="show trope" class="trope-link"><?php
+								echo $intersection->name;
+							?></a>
+						</li><?php
+					}
+				?></ul>
+		</div>
+	</section>
+<?php
+}
+?>
+
 <section id="ratings" class="widget widget_text">
-	<div class="card">			
+	<div class="card">
 		<div class="card-header">
 			<h4>Ratings</h4>
 		</div>
