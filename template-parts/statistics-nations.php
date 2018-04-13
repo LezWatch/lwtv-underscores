@@ -111,7 +111,7 @@ $columns = ( $format == 'pie' )? 'col-sm-6' : 'col';
 			}
 
 			// country_[subcountry]_[view]
-			$view    = '_' . $view;
+			$view    = ( $view == 'overview' )? '_all' : '_' . $view; 
 			$country = ( $country == 'overview' )? '_all' : '_' . $country; 
 
 				if ( $country !== '_all' ) {
