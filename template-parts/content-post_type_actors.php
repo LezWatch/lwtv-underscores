@@ -92,7 +92,7 @@ $thumb_title       = ( empty( $thumb_attribution ) )? get_the_title() : get_the_
 					?>
 						<h2>Actor Bio</h2> <?php the_content(); 
 					} else {
-						the_title( '<p>', ' is an actor who has played at least one character on TV.</p>' );
+						the_title( '<p>', ' is an actor who has played at least one character on TV. Information on this page has not yet been verified. Please <a href="/about/contact/">contact us</a> with any corrections or amendments.</p>' );
 					}
 				?>
 			</div>
