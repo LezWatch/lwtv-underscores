@@ -58,7 +58,6 @@ blockquote {
   background-color: $lwtv-ltgrey;
   border-left: 4px solid $lwtv-pink;
   color: $darkgrey;
-  display: inline-block;
   font-family: Georgia, Times, "Times New Roman", serif;
   font-weight: 500;
   @include font-18;
@@ -1002,6 +1001,11 @@ article.post_type_shows {}
     @include border-radius(0);
     border-left: 0;
     border-right: 0;
+    margin-bottom: 0;
+
+    p {
+      margin-bottom: 0;
+    }
   }
 
   svg {
