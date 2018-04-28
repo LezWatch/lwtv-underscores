@@ -98,7 +98,6 @@ blockquote {
   background-color: #ebf5fa;
   border-left: 4px solid #d1548e;
   color: #222;
-  display: inline-block;
   font-family: Georgia, Times, "Times New Roman", serif;
   font-weight: 500;
   font-size: 1.125rem;
@@ -1190,6 +1189,10 @@ h3.post-title.excerpt {
   border-radius: 0;
   border-left: 0;
   border-right: 0;
+  margin-bottom: 0;
+}
+.trigger-warning-container .alert p {
+  margin-bottom: 0;
 }
 .trigger-warning-container svg {
   float: left;
