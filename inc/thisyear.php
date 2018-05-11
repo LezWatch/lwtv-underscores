@@ -122,7 +122,8 @@ function lwtv_yikes_this_year_shows( $thisyear ) {
 
 			// Shows Currently Airing
 			if ( get_post_meta( $show_id, 'lezshows_airdates', true) ) {
-				$airdates = get_post_meta( $show_id, 'lezshows_airdates', true);
+				$airdates  = get_post_meta( $show_id, 'lezshows_airdates', true);
+				$countries = get_the_term_list( $show_id, 'lez_country' );
 
 				if (
 					( $airdates['finish'] == 'current' && $thisyear == date('Y') ) // Still Current and it's NOW
@@ -130,9 +131,10 @@ function lwtv_yikes_this_year_shows( $thisyear ) {
 				) {
 				// Currently Airing Shows shows for the current year only
 					$shows_current[$show_name] = array(
-						'url'    => get_permalink( $show_id ),
-						'name'   => get_the_title( $show_id ),
-						'status' => get_post_status( $show_id ),
+						'url'     => get_permalink( $show_id ),
+						'name'    => get_the_title( $show_id ),
+						'status'  => get_post_status( $show_id ),
+						'country' => strip_tags( $countries ),
 					);
 					$shows_this_year['current']++;
 				}
@@ -140,9 +142,10 @@ function lwtv_yikes_this_year_shows( $thisyear ) {
 				// Shows that ended this year
 				if( $airdates['finish'] == $thisyear ) {
 					$shows_ended[$show_name] = array(
-						'url'    => get_permalink( $show_id ),
-						'name'   => get_the_title( $show_id ),
-						'status' => get_post_status( $show_id ),
+						'url'     => get_permalink( $show_id ),
+						'name'    => get_the_title( $show_id ),
+						'status'  => get_post_status( $show_id ),
+						'country' => strip_tags( $countries ),
 					);
 					$shows_this_year['ended']++;
 				}
@@ -150,9 +153,10 @@ function lwtv_yikes_this_year_shows( $thisyear ) {
 				// Shows that STARTED this year
 				if ( $airdates['start'] == $thisyear ) {
 					$shows_started[$show_name] = array(
-						'url'    => get_permalink( $show_id ),
-						'name'   => get_the_title( $show_id ),
-						'status' => get_post_status( $show_id ),
+						'url'     => get_permalink( $show_id ),
+						'name'    => get_the_title( $show_id ),
+						'status'  => get_post_status( $show_id ),
+						'country' => strip_tags( $countries ),
 					);
 					$shows_this_year['started']++;
 				}
@@ -172,7 +176,7 @@ function lwtv_yikes_this_year_shows( $thisyear ) {
 		foreach ( $shows_current as $show ) {
 			$show_output = $show['name'];
 			if ( $show['status'] == 'publish' ) {
-				$show_output = '<a href="' . $show['url'] . '">' . $show['name'] . '</a>';
+				$show_output = '<a href="' . $show['url'] . '">' . $show['name'] . '</a> <small>(' . $show['country'] . ')</small>';
 			}
 			echo '<li>' . $show_output . '</li>';
 		}
@@ -192,7 +196,7 @@ function lwtv_yikes_this_year_shows( $thisyear ) {
 		foreach ( $shows_started as $show ) {
 			$show_output = $show['name'];
 			if ( $show['status'] == 'publish' ) {
-				$show_output = '<a href="' . $show['url'] . '">' . $show['name'] . '</a>';
+				$show_output = '<a href="' . $show['url'] . '">' . $show['name'] . '</a> <small>(' . $show['country'] . ')</small>';
 			}
 			echo '<li>' . $show_output . '</li>';
 		}
@@ -212,7 +216,7 @@ function lwtv_yikes_this_year_shows( $thisyear ) {
 		foreach ( $shows_ended as $show ) {
 			$show_output = $show['name'];
 			if ( $show['status'] == 'publish' ) {
-				$show_output = '<a href="' . $show['url'] . '">' . $show['name'] . '</a>';
+				$show_output = '<a href="' . $show['url'] . '">' . $show['name'] . '</a> <small>(' . $show['country'] . ')</small>';
 			}
 			echo '<li>' . $show_output . '</li>';
 		}
