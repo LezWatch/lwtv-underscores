@@ -1487,6 +1487,10 @@ ul.comment-list li .comment-content .btn a, ul.comment-list li .comment-content 
   color: #000;
 }
 
+.comment-form-cookies-consent label {
+  padding-left: 5px;
+}
+
 /* =Search form
 ----------------------------------------------- */
 /* Search the database */
