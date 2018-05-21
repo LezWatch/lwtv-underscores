@@ -13,45 +13,6 @@ $char_id = $post->ID;
 	</div>
 </section>
 
-<section id="amazon" class="widget widget_text">
-	<?php echo LWTV_Amazon::show_amazon( $char_id ); ?>
-</section>
-
-<section id="tagcloud" class="widget widget-tags">
-	<h2 class="widget-title">Sexuality</h2>
-	<div class="widget-tags-container">
-		<?php
-			$args = array(
-				'post_type' => 'post_type_characters',
-				'taxonomy'  => array( 'lez_sexuality' ),
-			);
-			wp_tag_cloud( $args );
-		?>
-	</div>
-</section>
-
-<section id="tagcloud" class="widget widget-tags">
-	<h2 class="widget-title">Gender Identity</h2>
-	<div class="widget-tags-container">
-		<?php
-			$args = array(
-				'post_type' => 'post_type_characters',
-				'taxonomy'  => array( 'lez_gender' ),
-			);
-			wp_tag_cloud( $args );
-		?>
-	</div>
-</section>
-
-<section id="tagcloud" class="widget widget-tags">
-	<h2 class="widget-title">Character Clichés</h2>
-	<div class="widget-tags-container">
-		<?php
-			$args = array(
-				'post_type' => 'post_type_characters',
-				'taxonomy'  => array( 'lez_cliches' ),
-			);
-			wp_tag_cloud( $args );
-		?>
-	</div>
+<section id="affiliates" class="widget widget_text">
+	<?php echo LWTV_Affilliates::characters( $char_id, 'widget' ); ?>
 </section>

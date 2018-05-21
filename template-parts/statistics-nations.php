@@ -4,29 +4,29 @@
  *
  * @package LezWatchTV
  */
- 
 
 // Country
 $valid_country = ( isset( $_GET['country'] ) )? term_exists( $_GET['country'], 'lez_country' ) : '';
 $country       = ( !isset( $_GET['country'] ) || !is_array( $valid_country ) )? 'all' : sanitize_title( $_GET['country'] );
 
 // Views
-$valid_views = array( 'overview', 'gender', 'sexuality' );
-$view        = ( !isset( $_GET['view'] ) || !in_array( $_GET['view'], $valid_views ) )? 'overview' : sanitize_title( $_GET['view'] );
+$valid_views   = array( 'overview', 'gender', 'sexuality' );
+$view          = ( !isset( $_GET['view'] ) || !in_array( $_GET['view'], $valid_views ) )? 'overview' : sanitize_title( $_GET['view'] );
 
 // Format
 $valid_formats = array( 'bar', 'pie' );
 $format        = ( !isset( $_GET['format'] ) || !in_array( $_GET['format'], $valid_formats ) )? 'bar' : sanitize_title( $_GET['format'] );
 
-// Columns
-$columns = ( $format == 'pie' )? 'col-sm-6' : 'col';
+// Current URL
+$current_url = add_query_arg( $_SERVER['QUERY_STRING'], '', home_url( $wp->request ) );
 ?>
 
 <h2>Statistics of Nations (<?php echo LWTV_Stats::generate( 'shows', 'country', 'count' ); ?>)</h2>
 
 <section id="toc" class="toc-container card-body">
 	<nav class="breadcrumb">
-		<form method="get" action="<?php esc_url( add_query_arg( 'view', $view, '/statistics/shows/' ) ); ?>" id="go" class="form-inline">
+		<form method="get" id="go" class="form-inline">
+			<input type="hidden" name="view" value="<?php echo $view; ?>">
 			<div class="form-group">
 				<select name="country" id="country" class="form-control">
 					<option value="all">Country (All)</option>
@@ -41,38 +41,26 @@ $columns = ( $format == 'pie' )? 'col-sm-6' : 'col';
 				</select>
 			</div>
 			<div class="form-group">
-				<select name="view" id="view" class="form-control">
-					<option value="overview">Overview</option>
-					<?php
-						$statstype = array( 'gender', 'sexuality' );
-						foreach( $statstype as $stat ) {
-							$selected = ( $view == $stat )? 'selected=selected' : '';
-							echo '<option value="' . $stat . '" ' . $selected . '>' . ucfirst( $stat ) . '</option>';
-						}
-					?>
-				</select>
-			</div>
-			<div class="form-group">
-				<select name="format" id="format" class="form-control">
-					<?php
-						foreach( $valid_formats as $fmat ) {
-							$selected   = ( $format == $fmat )? 'selected=selected' : '';
-							$disabled   = ( $fmat !== 'bar' && $country == 'all' )? 'disabled' : '';
-							echo '<option value="' . $fmat . '" ' . $selected . ' ' . $disabled . '>' . ucfirst( $fmat ) . ' Chart</option>';
-						}
-					?>
-				</select>
-			</div>
-			<div class="form-group">
 				<button type="submit" id="submit" class="btn btn-default">Go</button>
 			</div>
 		</form>
 	</nav>
 </section>
 
+<ul class="nav nav-tabs">
+	<?php
+	foreach ( $valid_views as $the_view ) {
+		$active = ( $view == $the_view )? ' active' : '';
+		echo '<li class="nav-item"><a class="nav-link' . $active . '" href="' . esc_url( add_query_arg( 'view', $the_view, $current_url ) ) . '">' . strtoupper( str_replace( '-', ' ', $the_view ) ) . '</a></li>';
+	}
+	?>
+</ul>
+
+<p>&nbsp;</p>
+
 <div class="container">
 	<div class="row">
-		<div class="<?php echo $columns; ?>">
+		<div class="col">
 		<?php
 			// Title
 			switch( $country ) {
@@ -100,15 +88,8 @@ $columns = ( $format == 'pie' )? 'col-sm-6' : 'col';
 
 			echo '<h3>' . $title . '</h3>';
 
-			// Adjust Format
-			switch ( $format ) {
-				case 'bar':
-					$format = ( $country == 'all' && in_array( $view, array( 'sexuality', 'gender' ) ) )? 'stackedbar' : 'barchart';
-					break;
-				case 'pie':
-					$format = 'piechart';
-					break;
-			}
+			// Format tweak for all things
+			$format = ( $country == 'all' && in_array( $view, array( 'sexuality', 'gender', 'romantic' ) ) )? 'stackedbar' : 'barchart';
 
 			// country_[subcountry]_[view]
 			$view    = ( $view == 'overview' )? '_all' : '_' . $view; 

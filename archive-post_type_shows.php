@@ -19,15 +19,18 @@ get_header(); ?>
 	<div class="jumbotron">
 		<div class="container">
 			<header class="archive-header">
-				<?php
-					the_archive_title( '<h1 class="entry-title">' . $title, ' (' . $count_posts . '<span class="facetwp-count"></span>)</h1>' );
-				?>
-				<div class="archive-description">
+				<div class="row">
+					<div class="col-10"><?php the_archive_title( '<h1 class="facetwp-page-title entry-title">', ' (' . $count_posts . '<span class="facetwp-count"></span>)</h1>' ); ?></div>
+					<div class="col-2 icon plain"><?php echo $title; ?></div>
+				</div>
+				<div class="row">
+					<div class="archive-description">
 					<?php 
-						echo '<h3 class="facetwp-title"></h3>';
-						echo '<p>' . $description . ' <span class="facetwp-description"></span> <span class="facetwp-sorted"></span></p>';
+						echo '<p>' . $description . ' <span class="facetwp-description"></span></p>';
+						echo '<p><span class="facetwp-sorted"></span></p>';
 						echo facetwp_display( 'selections' );
 					?>
+					</div>
 				</div>
 			</header><!-- .archive-header -->
 		</div><!-- .container -->

@@ -65,13 +65,18 @@ if ( $warning['card'] != 'none' ) {
 <section class="showschar-section" name="overview" id="overview">
 	<h2>Overview</h2>
 	<div class="card-body">
-		<?php the_content(); ?>
+		<?php 
+			if ( ( get_post_meta( $show_id, 'lezshows_affiliate', true ) ) ) {
+				echo '<section id="affiliate-watch-link" class="affiliate-watch-container">' . LWTV_Affilliates::shows( $show_id, 'affiliate' ) . '</section>';
+			}
+			the_content();
+		?>
 	</div>
 </section>
 
 <?php
 // Queer Plots - Only display if they exist
-if ( (get_post_meta($show_id, 'lezshows_plots', true) ) ) { 
+if ( ( get_post_meta( $show_id, 'lezshows_plots', true ) ) ) { 
 	?>
 	<section name="timeline" id="timeline" class="showschar-section">
 		<h2>Queer Plotline Timeline</h2>
