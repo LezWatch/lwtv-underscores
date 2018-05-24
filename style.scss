@@ -1021,10 +1021,11 @@ h3.post-title.excerpt {
 /* Affiliate Watch */
 .affiliate-watch-container {
   background-color: $lwtv-grey;
+  margin-bottom: 1.25rem;
   padding: 0.6rem;
 
   svg {
-    float: left;
+    display: inline-block;
     margin: 0 10px;
     height: 25px;
     width: 25px;
@@ -1036,7 +1037,9 @@ h3.post-title.excerpt {
 
   .how-to-watch {
     font-family: 'Oswald', sans-serif;
+    @include font-20;
     font-weight: 400;
+    vertical-align: middle;
   }
 
   .btn {
