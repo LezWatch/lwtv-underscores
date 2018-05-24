@@ -71,13 +71,14 @@ if ( $warning['card'] != 'none' ) {
 }
 ?>
 
+<?php
+if ( ( get_post_meta( $show_id, 'lezshows_affiliate', true ) ) ) {
+	echo '<section id="affiliate-watch-link" class="affiliate-watch-container">' . LWTV_Affilliates::shows( $show_id, 'affiliate' ) . '</section>';
+}
+?>
+
 <section class="showschar-section" name="overview" id="overview">
 	<h2>Overview</h2>
-	<?php
-	if ( ( get_post_meta( $show_id, 'lezshows_affiliate', true ) ) ) {
-		echo '<section id="affiliate-watch-link" class="affiliate-watch-container">' . LWTV_Affilliates::shows( $show_id, 'affiliate' ) . '</section>';
-	}
-	?>
 	<div class="card-body">
 		<?php the_content(); ?>
 	</div>
