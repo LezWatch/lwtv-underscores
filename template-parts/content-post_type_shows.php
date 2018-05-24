@@ -9,20 +9,23 @@
 
 $show_id = $post->ID;
 $slug    = get_post_field( 'post_name', get_post( $show_id ) );
-$term    = term_exists( $slug , 'post_tag' );
-$tag     = get_term_by( 'name', $slug, 'post_tag');
+$term    = term_exists( $slug, 'post_tag' );
+$tag     = get_term_by( 'name', $slug, 'post_tag' );
 $related = LWTV_Related_Posts::are_there_posts( $slug );
 
-// Microformats Fix
+// Microformats Fix.
 lwtv_microformats_fix( $post->ID );
 
-// Thumbnail attribution
+// Thumbnail attribution.
 $thumb_attribution = get_post_meta( get_post_thumbnail_id(), 'lwtv_attribution', true );
-$thumb_title       = ( empty( $thumb_attribution ) )? get_the_title() : get_the_title() . ' &copy; ' . $thumb_attribution;
+$thumb_title       = ( empty( $thumb_attribution ) ) ? get_the_title() : get_the_title() . ' &copy; ' . $thumb_attribution;
 
-// Echo the header image
-the_post_thumbnail( 'large', array( 'class' => 'card-img-top' , 'alt' => get_the_title() , 'title' => $thumb_title ) );
-
+// Echo the header image.
+the_post_thumbnail('large', array(
+	'class' => 'card-img-top',
+	'alt'   => get_the_title(),
+	'title' => $thumb_title,
+) );
 ?>
 
 <section id="toc" class="toc-container card-body">
@@ -30,14 +33,20 @@ the_post_thumbnail( 'large', array( 'class' => 'card-img-top' , 'alt' => get_the
 		<h4 class="toc-title">Table of Contents</h4>
 		<a class="breadcrumb-item smoothscroll" href="#overview">Overview</a>
 		<?php
-		if( ( get_post_meta( get_the_ID(), 'lezshows_plots', true) ) ) {
-			?><a class="breadcrumb-item smoothscroll" href="#timeline">Timeline</a><?php
+		if ( ( get_post_meta( get_the_ID(), 'lezshows_plots', true ) ) ) {
+			?>
+			<a class="breadcrumb-item smoothscroll" href="#timeline">Timeline</a>
+			<?php
 		}
-		if( ( get_post_meta( get_the_ID(), 'lezshows_episodes', true) ) ) {
-			?><a class="breadcrumb-item smoothscroll" href="#episodes">Episodes</a><?php
+		if ( ( get_post_meta( get_the_ID(), 'lezshows_episodes', true ) ) ) {
+			?>
+			<a class="breadcrumb-item smoothscroll" href="#episodes">Episodes</a>
+			<?php
 		}
 		if ( $related ) {
-			?><a class="breadcrumb-item smoothscroll" href="#related-posts">Related Posts</a><?php
+			?>
+			<a class="breadcrumb-item smoothscroll" href="#related-posts">Related Posts</a>
+			<?php
 		}
 		?>
 		<a class="breadcrumb-item smoothscroll" href="#characters">Characters</a>
@@ -45,8 +54,8 @@ the_post_thumbnail( 'large', array( 'class' => 'card-img-top' , 'alt' => get_the
 </section>
 
 <?php
-// The Game of Thrones Flag of Gratuitious Violence:
-// This shows a notice if the show has trigger warnings
+// The Game of Thrones Flag of Gratuitous Violence.
+// This shows a notice if the show has trigger warnings.
 $warning    = lwtv_yikes_content_warning( get_the_ID() );
 $warn_image = lwtv_yikes_symbolicons( 'hand.svg', 'fa-hand-paper' );
 
@@ -65,35 +74,35 @@ if ( $warning['card'] != 'none' ) {
 <section class="showschar-section" name="overview" id="overview">
 	<h2>Overview</h2>
 	<div class="card-body">
-		<?php 
-			if ( ( get_post_meta( $show_id, 'lezshows_affiliate', true ) ) ) {
-				echo '<section id="affiliate-watch-link" class="affiliate-watch-container">' . LWTV_Affilliates::shows( $show_id, 'affiliate' ) . '</section>';
-			}
-			the_content();
+		<?php
+		if ( ( get_post_meta( $show_id, 'lezshows_affiliate', true ) ) ) {
+			echo '<section id="affiliate-watch-link" class="affiliate-watch-container">' . LWTV_Affilliates::shows( $show_id, 'affiliate' ) . '</section>';
+		}
+		the_content();
 		?>
 	</div>
 </section>
 
 <?php
-// Queer Plots - Only display if they exist
+// Queer Plots - Only display if they exist.
 if ( ( get_post_meta( $show_id, 'lezshows_plots', true ) ) ) { 
 	?>
 	<section name="timeline" id="timeline" class="showschar-section">
 		<h2>Queer Plotline Timeline</h2>
 		<div class="card-body">
-			<?php echo apply_filters('the_content', wp_kses_post( get_post_meta($show_id, 'lezshows_plots', true ) ) ); ?>
+			<?php echo apply_filters( 'the_content', wp_kses_post( get_post_meta( $show_id, 'lezshows_plots', true ) ) ); ?>
 		</div>
 	</section>
 	<?php
 }
 
-// Best Episodes - Only display if they exist
-if ( ( get_post_meta($show_id, "lezshows_episodes", true ) ) ) { 
+// Best Episodes - Only display if they exist.
+if ( ( get_post_meta( $show_id, 'lezshows_episodes', true ) ) ) {
 	?>
 	<section name="episodes" id="episodes" class="showschar-section">
 		<h2>Notable Queer-Centric Episodes</h2>
 		<div class="card-body">
-			<?php echo apply_filters('the_content', wp_kses_post( get_post_meta( $show_id, 'lezshows_episodes', true ) ) ); ?>
+			<?php echo apply_filters( 'the_content', wp_kses_post( get_post_meta( $show_id, 'lezshows_episodes', true ) ) ); ?>
 		</div>
 	</section>
 	<?php
@@ -105,13 +114,13 @@ if ( $related ) {
 		<h2>Related Articles</h2>
 		<div class="card-body">	
 			<?php
-				echo LWTV_Related_Posts::related_posts( $slug );
-				if ( count ( LWTV_Related_Posts::count_related_posts( $slug ) ) > '5' ) {
-					$tag = term_exists( $slug , 'post_tag' );
-					if ( !is_null( $tag ) && $tag >= 1 ) {
-						echo '<p><a href="' . get_tag_link( $tag['term_id'] ) . '">Read More ...</a></p>';
-					}
+			echo LWTV_Related_Posts::related_posts( $slug );
+			if ( count( LWTV_Related_Posts::count_related_posts( $slug ) ) > '5' ) {
+				$tag = term_exists( $slug, 'post_tag' );
+				if ( ! is_null( $tag ) && $tag >= 1 ) {
+					echo '<p><a href="' . get_tag_link( $tag['term_id'] ) . '">Read More ...</a></p>';
 				}
+			}
 			?>
 		</div>
 	</section> 
@@ -128,11 +137,11 @@ if ( $related ) {
 		// This just gets the numbers of all characters and how many are dead.
 		$havecharcount = LWTV_CPT_Characters::list_characters( $show_id, 'count' );
 		$havedeadcount = LWTV_CPT_Characters::list_characters( $show_id, 'dead' );
-		
+
 		if ( empty( $havecharcount ) || $havecharcount == '0' ) {
 			echo '<p>There are no characters listed yet for this show.</p>';
 		} else {
-		
+
 			$deadtext = 'none are dead';
 			if ( $havedeadcount > '0' ) $deadtext = sprintf( _n( '<strong>%s</strong> is dead', '<strong>%s</strong> are dead', $havedeadcount ), $havedeadcount );
 		
