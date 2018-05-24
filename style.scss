@@ -1020,6 +1020,7 @@ h3.post-title.excerpt {
 
 /* Affiliate Watch */
 .affiliate-watch-container {
+  background-color: $lwtv-grey;
   padding: 0.6rem;
 
   svg {
@@ -1034,7 +1035,8 @@ h3.post-title.excerpt {
   }
 
   .how-to-watch {
-    font-weight: 700;
+    font-family: 'Oswald', sans-serif;
+    font-weight: 400;
   }
 
   .btn {
