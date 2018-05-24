@@ -17,8 +17,11 @@ get_header(); ?>
 <div class="archive-subheader">
 	<div class="jumbotron">
 		<div class="container">
-			<header class="showschar-header">
-				<?php the_title( '<h1 class="entry-title">', $icon . '</h1>' ); ?>
+			<header class="archive-header">
+				<div class="row">
+					<div class="col-10"><?php the_title( '<h1 class="entry-title">', '</h1>' ); ?></div>
+					<div class="col-2 icon"><?php echo $icon; ?></div>
+				</div>
 			</header><!-- .archive-header -->
 		</div><!-- .container -->
 	</div><!-- /.jumbotron -->

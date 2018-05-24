@@ -5,28 +5,30 @@
  * @package YIKES Starter
  */
 
-// Build the icon
+// Build the icon.
 $icon = '<div class="show-header-svg">';
 
-// Show star if applicable
+// Show star if applicable.
 $icon .= lwtv_yikes_show_star( get_the_ID() );
 
-// Show love if applicable:
-if ( get_post_meta( get_the_ID(), 'lezshows_worthit_show_we_love', true) ) {
+// Show love if applicable.
+if ( get_post_meta( get_the_ID(), 'lezshows_worthit_show_we_love', true ) ) {
 	$heart = lwtv_yikes_symbolicons( 'hearts.svg', 'fa-heart' );
 	$icon .= ' <span role="img" aria-label="We Love This Show!" data-toggle="tooltip" title="We Love This Show!" class="show-we-love">' . $heart . '</span>';
 }
 
 $icon .= '</div>';
 // Icon is built.
- 
 get_header(); ?>
 
 <div class="archive-subheader">
 	<div class="jumbotron">
 		<div class="container">
-			<header class="showschar-header">
-				<?php the_title( '<h1 class="entry-title">', $icon . '</h1>' ); ?>
+			<header class="archive-header">
+				<div class="row">
+					<div class="col-10"><?php the_title( '<h1 class="entry-title">', '</h1>' ); ?></div>
+					<div class="col-2 icon"><?php echo $icon; ?></div>
+				</div>
 			</header><!-- .archive-header -->
 		</div><!-- .container -->
 	</div><!-- /.jumbotron -->
@@ -42,13 +44,14 @@ get_header(); ?>
 							<div class="entry-content show-page">
 								<div class="card">
 									<?php
-										while ( have_posts() ) : the_post();
-											// Show content type: 
-											get_template_part( 'template-parts/content', get_post_type() );
+									while ( have_posts() ) :
+										the_post();
+										// Show content type.
+										get_template_part( 'template-parts/content', get_post_type() );
 
-											// Force Jetpack share links to display ONCE:
-											lwtv_yikes_jetpack_post_meta();
-										endwhile; // end of the loop. 
+										// Force Jetpack share links to display ONCE.
+										lwtv_yikes_jetpack_post_meta();
+									endwhile; // end of the loop.
 									?>
 								</div>
 							</div><!-- .entry-content -->
@@ -66,4 +69,4 @@ get_header(); ?>
 	</div><!-- .container -->
 </div><!-- #main -->
 
-<?php get_footer();
+<?php get_footer(); ?>

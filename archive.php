@@ -46,10 +46,13 @@ get_header(); ?>
 	<div class="jumbotron">
 		<div class="container">
 			<header class="archive-header">
-				<?php
-					the_archive_title( '<h1 class="entry-title">', $icon . '</h1>' );
-					the_archive_description( '<div class="archive-description">', $archive_details . '</div>' );
-				?>
+				<div class="row">
+					<div class="col-10"><?php the_archive_title( '<h1 class="entry-title">', '</h1>' ); ?></div>
+					<div class="col-2 icon plain"><?php echo $icon; ?></div>
+				</div>
+				<div class="row">
+					<div class="archive-description"><?php the_archive_description( '<div class="archive-description">', $archive_details . '</div>' ); ?></div>
+				</div>
 			</header><!-- .archive-header -->
 		</div><!-- .container -->
 	</div><!-- /.jumbotron -->

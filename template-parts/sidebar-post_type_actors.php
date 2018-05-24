@@ -13,32 +13,6 @@ $actor_id = $post->ID;
 	</div>
 </section>
 
-<section id="amazon" class="widget widget_text">
-	<?php echo LWTV_Amazon::show_amazon( $actor_id ); ?>
-</section>
-
-<section id="tagcloud" class="widget widget-tags">
-	<h2 class="widget-title">Sexuality</h2>
-	<div class="widget-tags-container">
-		<?php
-			$args = array(
-				'post_type' => 'post_type_actors',
-				'taxonomy'  => array( 'lez_actor_sexuality' ),
-			);
-			wp_tag_cloud( $args );
-		?>
-	</div>
-</section>
-
-<section id="tagcloud" class="widget widget-tags">
-	<h2 class="widget-title">Gender Identity</h2>
-	<div class="widget-tags-container">
-		<?php
-			$args = array(
-				'post_type' => 'post_type_actors',
-				'taxonomy'  => array( 'lez_actor_gender' ),
-			);
-			wp_tag_cloud( $args );
-		?>
-	</div>
+<section id="affiliates" class="widget widget_text">
+	<?php echo LWTV_Affilliates::actors( $actor_id, 'widget' ); ?>
 </section>

@@ -9,43 +9,43 @@
 */
 
 $statstype = ( isset($wp_query->query['statistics'] ) )? $wp_query->query['statistics'] : 'main' ;
-$validstat = array( 'death', 'characters', 'shows', 'lists', 'main', 'trends', 'nations', 'stations' );
+$validstat = array( 'death', 'characters', 'shows', 'main', 'actors', 'nations', 'stations' );
 
 // Based on the type of stats, set our display:
 switch ( $statstype ) {
 	case 'death':
 		$title = 'Statistics on Queer Female Deaths';
 		$image = lwtv_yikes_symbolicons( 'grim-reaper.svg', 'fa-ban' );
-		$intro = 'For a pure list of all dead, we have <a href="https://lezwatchtv.com/trope/dead-queers/">shows where characters died</a> as well as <a href="https://lezwatchtv.com/cliche/dead/">characters who have died</a> (aka the <a href="https://lezwatchtv.com/cliche/dead/">Dead Lesbians</a> list).';
+		$intro = 'For a pure list of all dead, we have <a href="/trope/dead-queers/">shows where characters died</a> as well as <a href="/cliche/dead/">characters who have died</a> (aka the <a href="/cliche/dead/">Dead Lesbians</a> list).';
 		break;
 	case 'characters':
-		$title = 'Statistics on Queer Female Characters';
+		$title = 'Statistics on Characters';
 		$image = lwtv_yikes_symbolicons( 'chart-bar.svg', 'fa-chart-bar' );
-		$intro = 'Statistics specific to characters (sexuality, gender IDs, role types, etc).';
+		$intro = 'Data specific to queer characters.';
+		break;
+	case 'actors':
+		$title = 'Statistics on Actors';
+		$image = lwtv_yikes_symbolicons( 'graph-line.svg', 'fa-chart-line' );
+		$intro = 'Data specific to actors who play queer characters.';
 		break;
 	case 'shows':
-		$title = 'Statistics on Shows with Queer Females';
+		$title = 'Statistics on Shows';
 		$image = lwtv_yikes_symbolicons( 'chart-pie.svg', 'fa-chart-pie' );
-		$intro = 'Statistics specific to shows.';
-		break;
-	case 'trends':
-		$title = 'Statistics in the form of Trendlines';
-		$image = lwtv_yikes_symbolicons( 'graph-line.svg', 'fa-chart-line' );
-		$intro = 'Trendlines and predictions.';
+		$intro = 'Data specific to TV shows with queer characters.';
 		break;
 	case 'nations':
-		$title = 'Statistics on Nations with Shows with Queer Females';
+		$title = 'Statistics on Nations';
 		$image = lwtv_yikes_symbolicons( 'globe.svg', 'fa-globe' );
 		$intro = 'Data specific to queer representation on shows by nation.';
 		break;
 	case 'stations':
-		$title = 'Statistics on Channels with Shows with Queer Females';
+		$title = 'Statistics on Channels';
 		$image = lwtv_yikes_symbolicons( 'satellite-signal.svg', 'fa-bullhorn' );
 		$intro = 'Data specific to queer representation on shows by channel or station.';
 		break;
 	case 'main':
 	default: 
-		$title = 'Statistics of Queer Females on TV';
+		$title = 'TV Statistics';
 		$image = lwtv_yikes_symbolicons( 'graph-bar.svg', 'fa-chart-area' );
 		$intro = '';
 		break;
@@ -65,9 +65,12 @@ get_header(); ?>
 	<div class="jumbotron">
 		<div class="container">
 			<header class="archive-header">
-				<div class="archive-description">
-					<h1 class="entry-title"><?php echo $title . $image; ?></h1>
-					<p><?php echo $intro; ?></p>
+				<div class="row">
+					<div class="col-10"><h1 class="entry-title"><?php echo $title; ?></h1></div>
+					<div class="col-2 icon plain"><?php echo $image; ?></div>
+				</div>
+				<div class="row">
+					<div class="archive-description"><p><?php echo $intro; ?></p></div>
 				</div>
 			</header><!-- .archive-header -->
 		</div><!-- .container -->
@@ -81,7 +84,7 @@ get_header(); ?>
 				<div id="primary" class="content-area">
 					<div id="content" class="site-content clearfix" role="main">
 						<?php 
-							if ( $statstype == 'main' ) the_content();
+							//if ( $statstype == 'main' ) the_content();
 							get_template_part( 'template-parts/statistics', $statstype );
 						?>
 					</div><!-- #content -->

@@ -10,6 +10,7 @@ $thumb_rating = get_post_meta( $show_id, 'lezshows_worthit_rating', true );
 $realness     = min( (int) get_post_meta( $show_id, 'lezshows_realness_rating', true ), 5 );
 $quality      = min( (int) get_post_meta( $show_id, 'lezshows_quality_rating', true ), 5 );
 $screentime   = min( (int) get_post_meta( $show_id, 'lezshows_screentime_rating', true ), 5 );
+$watch_where  = get_post_meta( $show_id, 'lezshows_watch_where', true );
 ?>
 
 <section id="search" class="widget widget_search">
@@ -59,7 +60,7 @@ $screentime   = min( (int) get_post_meta( $show_id, 'lezshows_screentime_rating'
 					<?php
 					$stations = get_the_terms( $show_id, 'lez_stations' );
 					if ( $stations && ! is_wp_error( $stations ) ) {
-						echo '<li class="list-group-item network names">'. get_the_term_list( $show_id, 'lez_stations', '<strong>Airs On:</strong> ', ', ' ) .'</li>';
+						echo '<li class="list-group-item network names">' . get_the_term_list( $show_id, 'lez_stations', '<strong>Airs On:</strong> ', ', ' ) . '</li>';
 					}
 					$countries = get_the_terms( $show_id, 'lez_country' );
 					if ( $countries && ! is_wp_error( $countries ) ) {
@@ -93,6 +94,10 @@ $screentime   = min( (int) get_post_meta( $show_id, 'lezshows_screentime_rating'
 			</div><?php
 		} ?>
 	</div>
+</section>
+
+<section id="affiliates watch-now" class="widget widget_text">
+	<?php echo LWTV_Affilliates::shows( $show_id, 'widget' ); ?>
 </section>
 
 <section id="ratings" class="widget widget_text">
@@ -227,12 +232,4 @@ if ( $intersections && !is_wp_error( $intersections ) ) {
 			?>
 		</div>
 	</div>
-</section>
-
-<section id="amazon" class="widget widget_text">
-	<?php 
-		// The Amazon display code is INSANE and lives in lwtv-plugin
-		// Trust me, it's better this way
-		echo LWTV_Amazon::show_amazon( $show_id ); 
-	?>
 </section>

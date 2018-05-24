@@ -626,7 +626,6 @@ section {
   li[data-facet="show_worthit"] {
     display: none;
   }
-  
 }
 
 /* Posts */
@@ -744,6 +743,16 @@ footer.entry-meta {
         }
   }
 
+  ul.statistics.lists.tropes, 
+  ul.statistics.lists.genres,
+  ul.statistics.lists.cliches {
+        padding:0;
+
+        li {
+          display: inline-block;
+          width: 50%;
+        }
+  }
 }
 
 .percentage-container {
@@ -969,28 +978,11 @@ h3.post-title.excerpt {
 }
 
 .show-we-love {
-  svg *, i.fa {
+  svg * {
     fill: $red;
   }
-}
-
-
-/* Single Show Template */
-
-article.post_type_shows {}
-
-.showschar-header {
-
-  .show-header-svg {
-    float: right;
-    margin-top: -14px;
-
-    svg {
-      height: 50px;
-      margin: 5px;
-      width: 50px;
-      vertical-align: middle;
-    }
+  i.fa {
+    color: $red;
   }
 }
 
@@ -1026,6 +1018,34 @@ article.post_type_shows {}
 
 }
 
+/* Affiliate Watch */
+.affiliate-watch-container {
+  background-color: $lwtv-grey;
+  margin-bottom: 1.25rem;
+  padding: 0.6rem;
+
+  svg {
+    display: inline-block;
+    margin: 0 10px;
+    height: 25px;
+    width: 25px;
+    vertical-align: middle;
+  }
+  svg * {
+    fill: $lwtv-pink;
+  }
+
+  .how-to-watch {
+    font-family: 'Oswald', sans-serif;
+    @include font-20;
+    font-weight: 400;
+    vertical-align: middle;
+  }
+
+  .btn {
+    margin: 0 0.4rem;
+  }
+}
 
 /* Notable Queer-Centric Episodes */
 
@@ -1194,15 +1214,24 @@ h3 svg * {
 
 .archive-header {
 
-  .archive-header-icon {
+  .icon {
     float: right;
-    margin-top: -14px;
 
     svg {
       height: 50px;
       margin: 5px;
       width: 50px;
       vertical-align: middle;
+    }
+    .fa {
+      text-align: center;
+      width: 16px;
+    }
+  }
+
+  .plain {
+    svg * {
+      fill: $white;
     }
   }
 
@@ -1218,29 +1247,17 @@ h3 svg * {
     a:hover {
       color: $lwtv-purple;
     }
-    .fa {
-      text-align: center;
-      width: 16px;
-    }
     svg {
-      width: 20px!important;
-      height: 20px;
+      height: 16px;
+      width: 16px;
       vertical-align: middle;
+      padding-right: 5px;
     }
     svg * {
       fill: $white;
     }
   }
 
-}
-
-
-.taxonomy-svg svg,
-.taxonomy-svg i.fa {
-  width: 100px;
-  height: 100px;
-  float: right;
-  margin-top: -20px;
 }
 
 .archive {

@@ -11,10 +11,10 @@ get_header(); ?>
 	<div class="jumbotron">
 		<div class="container">
 			<header class="archive-header">
-				<h1 class="entry-title">
-					<?php esc_attr_e( 'Oops! This isn\'t the page you thought it was.', 'yikes_starter' ); ?>
-					<span role="img" aria-label="404" title="404 - Page Not Found" class="taxonomy-svg 404"><?php echo lwtv_yikes_symbolicons( 'easter-egg-alt.svg', 'fa-gift' ); ?></span>
-				</h1>
+				<div class="row">
+					<div class="col-10"><h1 class="entry-title"><?php esc_attr_e( 'Oops! This isn\'t the page you thought it was.', 'yikes_starter' ); ?></h1></div>
+					<div class="col-2 icon plain"><span role="img" aria-label="404" title="404 - Page Not Found" class="taxonomy-svg 404"><?php echo lwtv_yikes_symbolicons( 'easter-egg-alt.svg', 'fa-gift' ); ?></span></div>
+				</div>
 			</header><!-- .archive-header -->
 		</div><!-- .container -->
 	</div><!-- /.jumbotron -->

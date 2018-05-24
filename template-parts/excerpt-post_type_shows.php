@@ -1,7 +1,7 @@
 <?php
-/*
+/**
  * This content is called by all archival displays of shows
- * 
+ *
  * It's used by the following files
  *      - archive-post_type_shows.php
  *      - taxonomy.php
@@ -11,9 +11,9 @@
 
 global $post;
 
-// Thumbnail attribution
+// Thumbnail attribution.
 $thumb_attribution = get_post_meta( get_post_thumbnail_id(), 'lwtv_attribution', true );
-$thumb_title       = ( empty( $thumb_attribution ) )? get_the_title() : get_the_title() . ' &copy; ' . $thumb_attribution;
+$thumb_title       = ( empty( $thumb_attribution ) ) ? get_the_title() : get_the_title() . ' &copy; ' . $thumb_attribution;
 ?>
 
 <div class="card-group" id="post-<?php the_ID(); ?>">
@@ -29,46 +29,47 @@ $thumb_title       = ( empty( $thumb_attribution ) )? get_the_title() : get_the_
 				<a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
 
 				<span class="callout">
-				<?php
-				// The Game of Thrones Flag of Gratuitious Violence
-				$warning    = lwtv_yikes_content_warning( get_the_ID() );
-				$warn_image = lwtv_yikes_symbolicons( 'warning.svg', 'fa-exclamation-triangle' );
-				if ( $warning['card'] != 'none' ) {
-					echo '<span class="callout callout-' . $warning['card'] . '" role="img" data-toggle="tooltip" aria-label="Warning - This show contains triggers" title="Warning - This show contains triggers">' . $warn_image . '</span>';
-				}
+					<?php
+					// The Game of Thrones Flag of Gratuitous Violence.
+					$warning    = lwtv_yikes_content_warning( get_the_ID() );
+					$warn_image = lwtv_yikes_symbolicons( 'warning.svg', 'fa-exclamation-triangle' );
+					if ( $warning['card'] != 'none' ) {
+						echo '<span class="callout callout-' . $warning['card'] . '" role="img" data-toggle="tooltip" aria-label="Warning - This show contains triggers" title="Warning - This show contains triggers">' . $warn_image . '</span>';
+					}
 
-				// Stars of Queerness
-				echo '<span class="callout callout-star">' . lwtv_yikes_show_star( get_the_ID() ) . '</span>';
+					// Stars of Queerness.
+					echo '<span class="callout callout-star">' . lwtv_yikes_show_star( get_the_ID() ) . '</span>';
 
-				// Hearts of Lurve
-				if ( get_post_meta( get_the_ID(), 'lezshows_worthit_show_we_love', true) ) {
-					$heart = lwtv_yikes_symbolicons( 'hearts.svg', 'fa-heart' );
-					echo ' <span role="img" aria-label="We Love This Show!" data-toggle="tooltip" title="We Love This Show!" class="callout callout-we-love">' . $heart . '</span>';
-				}
+					// Hearts of Lurve.
+					if ( get_post_meta( get_the_ID(), 'lezshows_worthit_show_we_love', true ) ) {
+						$heart = lwtv_yikes_symbolicons( 'hearts.svg', 'fa-heart' );
+						echo ' <span role="img" aria-label="We Love This Show!" data-toggle="tooltip" title="We Love This Show!" class="callout callout-we-love">' . $heart . '</span>';
+					}
 
-				// Skulls of Death
-				if ( has_term( 'dead-queers', 'lez_tropes', get_the_ID() ) ) {
-					$skull = lwtv_yikes_symbolicons( 'skull-crossbones.svg', 'fa-ban' );
-					echo ' <span role="img" aria-label="Warning - There is death on this show." data-toggle="tooltip" title="Warning - There is death on this show." class="callout callout-death">' . $skull . '</span>';
-				}
-				?>
+					// Skulls of Death.
+					if ( has_term( 'dead-queers', 'lez_tropes', get_the_ID() ) ) {
+						$skull = lwtv_yikes_symbolicons( 'skull-crossbones.svg', 'fa-ban' );
+						echo ' <span role="img" aria-label="Warning - There is death on this show." data-toggle="tooltip" title="Warning - There is death on this show." class="callout callout-death">' . $skull . '</span>';
+					}
+					?>
 				</span>
-				
-				</h3>
+			</h3>
 			<div class="card-text"><?php the_excerpt(); ?></div>
 
 			<div class="card-meta">
-				<?php 
-					$stations = get_the_terms( get_the_ID(), 'lez_stations' );
-					if ( $stations && ! is_wp_error( $stations ) ) {
-						echo get_the_term_list( get_the_ID(), 'lez_stations', '<strong>Network:</strong> ', ', ' ) .'<br />';
+				<?php
+				$stations = get_the_terms( get_the_ID(), 'lez_stations' );
+				if ( $stations && ! is_wp_error( $stations ) ) {
+					echo get_the_term_list( get_the_ID(), 'lez_stations', '<strong>Network:</strong> ', ', ' ) . '<br />';
+				}
+				$airdates = get_post_meta( get_the_ID(), 'lezshows_airdates', true );
+				if ( $airdates ) {
+					$airdate = $airdates['start'] . ' - ' . $airdates['finish'];
+					if ( $airdates['start'] == $airdates['finish'] ) {
+						$airdate = $airdates['finish'];
 					}
-					$airdates = get_post_meta( get_the_ID(), 'lezshows_airdates', true );
-					if ( $airdates ) {
-						$airdate  = $airdates['start'] . ' - ' . $airdates['finish'];
-						if ( $airdates['start'] == $airdates['finish'] ) { $airdate = $airdates['finish']; }
-						echo '<strong>Airdates:</strong> '. $airdate .'<br />';
-					}
+					echo '<strong>Airdates:</strong> ' . $airdate . '<br />';
+				}
 				?>
 			</div>
 		</div>

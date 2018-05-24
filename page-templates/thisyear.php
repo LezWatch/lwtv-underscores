@@ -20,13 +20,15 @@ get_header();
 	<div class="jumbotron">
 		<div class="container">
 			<header class="archive-header">
-				<div class="archive-description">
-					<h1 class="entry-title">
-						In This Year - <?php echo $thisyear; ?>
-						<?php echo ( isset( $iconpath ) ? $iconpath : '' ); ?>
-					</h1>
-					<p>An overview of queer events that occurred in <?php echo $thisyear; ?>.</p>
-					<p>You can review the list of TV shows that aired, began, and ended in each year, as well as all characters who died in each year, going back to <?php echo FIRST_LWTV_YEAR; ?>.</p>
+				<div class="row">
+					<div class="col-10"><h1 class="entry-title">In This Year - <?php echo $thisyear; ?></h1></div>
+					<div class="col-2 icon plain"><?php echo ( isset( $iconpath ) ? $iconpath : '' ); ?></div>
+				</div>
+				<div class="row">
+					<div class="archive-description">
+						<p>An overview of queer events that occurred in <?php echo $thisyear; ?>.</p>
+						<p>You can review the list of TV shows that aired, began, and ended in each year, as well as all characters who died in each year, going back to <?php echo FIRST_LWTV_YEAR; ?>.</p>
+					</div>
 				</div>
 			</header><!-- .archive-header -->
 		</div><!-- .container -->

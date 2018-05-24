@@ -63,6 +63,8 @@
 		</div>
 	</div>
 
+	<a name="top"></a>
+
 	<div class="site-subheader">
 
 		<?php if ( is_front_page() && get_query_var( 'page' ) == 0  ) {?>
