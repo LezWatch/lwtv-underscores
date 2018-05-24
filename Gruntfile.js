@@ -65,21 +65,8 @@ module.exports = function(grunt) {
                     event:['all']
                 },
             },
-        },
+        }, 
 
-        // Browser Sync
-        /* Optional -- http://www.browsersync.io/docs/grunt/ */
-        browserSync: {
-            bsFiles: {
-                src : [ 'style.min.css' ],
-            },
-            options: {
-                proxy: "localhost/lezwatchtv/",
-                watchTask : true
-            }
-        },
-
-        
         // Autoprefixer for our CSS files
         postcss: {
             options: {
@@ -101,7 +88,6 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-sass');
     grunt.loadNpmTasks('grunt-contrib-cssmin');
     grunt.loadNpmTasks('grunt-contrib-watch');
-    grunt.loadNpmTasks('grunt-browser-sync');   // browser-sync auto refresh
     grunt.loadNpmTasks('grunt-postcss');        // CSS autoprefixer plugin (cross-browser auto pre-fixes)
     grunt.loadNpmTasks('grunt-composer');       // Composer updates 
 
@@ -124,7 +110,6 @@ module.exports = function(grunt) {
         'sass',
         'cssmin',
         'postcss',
-        'browserSync',
         'watch',
     ]);
 

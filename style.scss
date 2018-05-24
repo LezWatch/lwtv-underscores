@@ -1020,6 +1020,8 @@ h3.post-title.excerpt {
 
 /* Affiliate Watch */
 .affiliate-watch-container {
+  padding: 0.6rem;
+
   svg {
     float: left;
     margin: 0 10px;
@@ -1028,7 +1030,15 @@ h3.post-title.excerpt {
     vertical-align: middle;
   }
   svg * {
-    fill: $white;
+    fill: $lwtv-pink;
+  }
+
+  .how-to-watch {
+    font-weight: 700;
+  }
+
+  .btn {
+    margin: 0 0.4rem;
   }
 }
 
