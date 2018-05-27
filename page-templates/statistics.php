@@ -84,7 +84,6 @@ get_header(); ?>
 				<div id="primary" class="content-area">
 					<div id="content" class="site-content clearfix" role="main">
 						<?php 
-							//if ( $statstype == 'main' ) the_content();
 							get_template_part( 'template-parts/statistics', $statstype );
 						?>
 					</div><!-- #content -->

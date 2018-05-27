@@ -32,19 +32,19 @@ switch ( $view ) {
 
 		<div class="container">
 			<div class="row equal-height">
-				<div class="col-4">
+				<div class="col">
 					<div class="alert alert-success" role="info"><center>
 						<h3 class="alert-heading">Characters</h3>
 						<h5><?php echo LWTV_Stats::generate( 'characters', 'total', 'count' ); ?></h5>
 					</center></div>
 				</div>
-				<div class="col-4">
+				<div class="col">
 					<div class="alert alert-info" role="info"><center>
 						<h3 class="alert-heading">Sexual Orientations</h3>
 						<h5><?php echo wp_count_terms( 'lez_sexuality' ); ?></h5>
 					</center></div>
 				</div>
-				<div class="col-4">
+				<div class="col">
 					<div class="alert alert-warning" role="info"><center>
 						<h3 class="alert-heading">Gender Identities</h3>
 						<h5><?php echo wp_count_terms( 'lez_gender' ); ?></h5>
