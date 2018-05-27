@@ -37,13 +37,13 @@ switch ( $view ) {
 
 		<div class="container">
 			<div class="row equal-height">
-				<div class="col-6">
+				<div class="col">
 					<div class="alert alert-danger" role="info"><center>
 						<h3 class="alert-heading">Characters</h3>
 						<h5><?php echo $deadchar_percent; ?>% (<?php echo $deadchars; ?>)</h5>
 					</center></div>
 				</div>
-				<div class="col-6">
+				<div class="col">
 					<div class="alert alert-danger" role="info"><center>
 						<h3 class="alert-heading">Shows</h3>
 						<h5><?php echo $deadshow_percent; ?>% (<?php echo $deadshows; ?>)</h5>

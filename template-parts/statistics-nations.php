@@ -65,7 +65,7 @@ $current_url = add_query_arg( $_SERVER['QUERY_STRING'], '', home_url( $wp->reque
 			// Title
 			switch( $country ) {
 				case 'all':
-					$title_country = 'All Countries';
+					$title_country = 'Shows in All Countries';
 					break;
 				default:
 					$country_object = get_term_by( 'slug', $country, 'lez_country', 'ARRAY_A' );

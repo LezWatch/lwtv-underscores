@@ -6,37 +6,44 @@
  */
 ?>
 
-<?php the_content(); ?>
+<?php 
+	the_content(); 
+	
+	$characters = LWTV_Stats::generate( 'characters', 'total', 'count' );
+	$shows      = LWTV_Stats::generate( 'shows', 'total', 'count' );
+	$actors     = LWTV_Stats::generate( 'actors', 'total', 'count' );
+	$dead_chars = LWTV_Stats::generate( 'characters', 'dead', 'count' );
+	?>
 
 <h2><a name="overview">Overview</a></h2>
 
 <div class="container">
 	<div class="row equal-height">
-		<div class="col-3">
+		<div class="col">
 			<div class="alert alert-success" role="info"><center>
 				<h3 class="alert-heading">Characters</h3>
-				<h5><?php echo LWTV_Stats::generate( 'characters', 'total', 'count' ); ?></h5>
+				<h5><?php echo $characters; ?></h5>
 				<p>[<a href="characters">Character Statistics</a>]</p>
 			</center></div>
 		</div>
-		<div class="col-3">
+		<div class="col">
 			<div class="alert alert-info" role="info"><center>
 				<h3 class="alert-heading">Shows</h3>
-				<h5><?php echo LWTV_Stats::generate( 'shows', 'total', 'count' ); ?></h5>
+				<h5><?php echo $shows; ?></h5>
 				<p>[<a href="shows">Show Statistics</a>]</p>
 			</center></div>
 		</div>
-		<div class="col-3">
+		<div class="col">
 			<div class="alert alert-warning" role="info"><center>
 				<h3 class="alert-heading">Actors</h3>
-				<h5><?php echo LWTV_Stats::generate( 'actors', 'total', 'count' ); ?></h5>
+				<h5><?php echo $actors; ?></h5>
 				<p>[<a href="actors">Actor Statistics</a>]</p>
 			</center></div>
 		</div>
-		<div class="col-3">
+		<div class="col">
 			<div class="alert alert-danger" role="info"><center>
 				<h3 class="alert-heading">Dead Characters</h3>
-				<h5><?php echo LWTV_Stats::generate( 'characters', 'dead', 'count' ); ?></h5>
+				<h5><?php echo $dead_chars; ?></h5>
 				<p>[<a href="death">Death Statistics</a>]</p>
 			</center></div>
 		</div>
@@ -52,8 +59,9 @@
 			<table class="table table-striped table-hover">
 				<thead>
 					<tr>
-						<th scope="col">Nation</th>
+						<th scope="col">&nbsp;</th>
 						<th scope="col">Shows</th>
+						<th scope="col">Percent</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -68,6 +76,7 @@
 						echo '<tr>
 								<th scope="row"><a href="nations/?country=' . $nation->slug . '">' . $nation->name . '</a></th>
 								<td>' . $nation->count . '</td>
+								<td>' . round( ( ( $nation->count / $shows ) * 100 ) , 1 ) .'%</td>
 							</tr>';
 					}
 					?>
@@ -81,8 +90,9 @@
 			<table class="table table-striped table-hover">
 				<thead>
 					<tr>
-						<th scope="col">Station</th>
+						<th scope="col">&nbsp;</th>
 						<th scope="col">Shows</th>
+						<th scope="col">Percent</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -97,6 +107,7 @@
 						echo '<tr>
 								<th scope="row"><a href="stations/?station=' . $station->slug . '">' . $station->name . '</a></th>
 								<td>' . $station->count . '</td>
+								<td>' . round( ( ( $station->count / $shows ) * 100 ) , 1 ) .'%</td>
 							</tr>';
 					}
 					?>
