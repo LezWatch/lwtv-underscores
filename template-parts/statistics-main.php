@@ -82,7 +82,7 @@
 					?>
 				</tbody>
 			</table>
-			<a href="nations"><button type="button" class="btn btn-info btn-lg btn-block">All <?php echo LWTV_Stats::generate( 'shows', 'country', 'count' ); ?> Nations</button></a>
+			<a href="nations"><button type="button" class="btn btn-info btn-lg btn-block">All <?php echo wp_count_terms( 'lez_country' ); ?> Nations</button></a>
 		</div>
 
 		<div class="col">
@@ -113,7 +113,7 @@
 					?>
 				</tbody>
 			</table>
-			<a href="stations"><button type="button" class="btn btn-info btn-lg btn-block">All <?php echo LWTV_Stats::generate( 'shows', 'stations', 'count' ); ?> Stations</button></a>
+			<a href="stations"><button type="button" class="btn btn-info btn-lg btn-block">All <?php echo wp_count_terms( 'lez_stations' ); ?> Stations</button></a>
 		</div>
 	</div>
 </div>

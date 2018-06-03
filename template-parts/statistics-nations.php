@@ -89,38 +89,43 @@ $col_class  = ( $country !== 'all' && $view !== 'overview' )? 'col-sm-6' : 'col'
 			$format  = ( $view == '_all' )? 'barchart' : 'piechart';
 
 			if ( $country == '_all' ) {
-			?>
-				<script>
-					jQuery(document).ready(function($){
-						$("#nationsTable").tablesorter({
-							theme : "bootstrap",
+				if ( $view == '_all' ) {
+				?>
+					<script>
+						jQuery(document).ready(function($){
+							$("#nationsTable").tablesorter({
+								theme : "bootstrap",
+							});
 						});
-					});
-				</script>
-				<p>For more information on individual nations, please use the dropdown menu, or click on a nation listed below.</p>
-				<table id="nationsTable" class="tablesorter table table-striped table-hover">
-					<thead>
-						<tr>
-							<th scope="col">Country Name</th>
-							<th scope="col">Shows</th>
-							<th scope="col">Percentage (of all shows)</th>
-							<th scope="col">Avg Score</th>
-						</tr>
-					</thead>
-					<tbody>
-						<?
-						foreach( $nations as $nation ) {
-							echo '<tr>
-									<th scope="row"><a href="?view=overview&country=' . $nation->slug . '">' . $nation->name . '</a></th>
-									<td>' . $nation->count . '</td>
-									<td>' . round( ( ( $nation->count / $shows_count ) * 100 ) , 1 ) .'%</td>
-									<td>' . LWTV_Stats::showcount( 'score', 'country', $nation->slug ) . '</td>
-								</tr>';
-						}
-						?>
-					</tbody>
-				</table>
-			<?php
+					</script>
+					<p>For more information on individual nations, please use the dropdown menu, or click on a nation listed below.</p>
+					<table id="nationsTable" class="tablesorter table table-striped table-hover">
+						<thead>
+							<tr>
+								<th scope="col">Country Name</th>
+								<th scope="col">Shows</th>
+								<th scope="col">Percentage (of all shows)</th>
+								<th scope="col">Avg Score</th>
+							</tr>
+						</thead>
+						<tbody>
+							<?
+							foreach( $nations as $nation ) {
+								echo '<tr>
+										<th scope="row"><a href="?view=overview&country=' . $nation->slug . '">' . $nation->name . '</a></th>
+										<td>' . $nation->count . '</td>
+										<td>' . round( ( ( $nation->count / $shows_count ) * 100 ) , 1 ) .'%</td>
+										<td>' . LWTV_Stats::showcount( 'score', 'country', $nation->slug ) . '</td>
+									</tr>';
+							}
+							?>
+						</tbody>
+					</table>
+				<?php
+				} else {
+					LWTV_Stats::generate( 'shows', 'country' . $country . $view , 'stackedbar' );
+				}
+
 			} else {
 				$onair      = LWTV_Stats::showcount( 'onair', 'country', ltrim( $country, '_' ) );
 				$allshows   = LWTV_Stats::showcount( 'total', 'country', ltrim( $country, '_' ) );
