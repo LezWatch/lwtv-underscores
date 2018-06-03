@@ -10,7 +10,6 @@ $thumb_rating = get_post_meta( $show_id, 'lezshows_worthit_rating', true );
 $realness     = min( (int) get_post_meta( $show_id, 'lezshows_realness_rating', true ), 5 );
 $quality      = min( (int) get_post_meta( $show_id, 'lezshows_quality_rating', true ), 5 );
 $screentime   = min( (int) get_post_meta( $show_id, 'lezshows_screentime_rating', true ), 5 );
-$watch_where  = get_post_meta( $show_id, 'lezshows_watch_where', true );
 ?>
 
 <section id="search" class="widget widget_search">

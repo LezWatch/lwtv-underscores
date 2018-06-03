@@ -27,7 +27,7 @@ get_header(); ?>
 			<header class="archive-header">
 				<div class="row">
 					<div class="col-10"><?php the_title( '<h1 class="entry-title">', '</h1>' ); ?></div>
-					<div class="col-2 icon"><?php echo $icon; ?></div>
+					<div class="col-2 icon plain"><?php echo $icon; ?></div>
 				</div>
 			</header><!-- .archive-header -->
 		</div><!-- .container -->
