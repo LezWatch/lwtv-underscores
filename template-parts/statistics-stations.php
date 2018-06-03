@@ -85,39 +85,43 @@ switch( $station ) {
 			$station = ( $station == 'overview' )? '_all' : '_' . $station; 
 			
 			if ( $station == '_all' ) {
-				?>
-				<script>
-					jQuery(document).ready(function($){
-						$("#stationsTable").tablesorter({
-							theme : "bootstrap",
+				if ( $view == '_all' ) {
+					?>
+					<script>
+						jQuery(document).ready(function($){
+							$("#stationsTable").tablesorter({
+								theme : "bootstrap",
+							});
 						});
-					});
-				</script>
-
-				<p>For more information on individual stations, please use the dropdown menu, or click on a station listed below.</p>
-				<table id="stationsTable" class="tablesorter table table-striped table-hover">
-					<thead>
-						<tr>
-							<th scope="col">Station Name</th>
-							<th scope="col">Total Shows</th>
-							<th scope="col">Percentage (of all shows)</th>
-							<th scope="col">Avg Score</th>
-						</tr>
-					</thead>
-					<tbody>
-						<?
-						foreach( $all_stations as $the_station ) {
-							echo '<tr>
-									<th scope="row"><a href="?station=' . $the_station->slug . '">' . $the_station->name . '</a></th>
-									<td>' . $the_station->count . '</td>
-									<td>' . round( ( ( $the_station->count / $shows_count ) * 100 ) , 1 ) . '%</td>
-									<td>' . LWTV_Stats::showcount( 'score', 'stations', $the_station->slug ) . '</td>
-								</tr>';
-						}
-						?>
-					</tbody>
-				</table>
-				<?php
+					</script>
+	
+					<p>For more information on individual stations, please use the dropdown menu, or click on a station listed below.</p>
+					<table id="stationsTable" class="tablesorter table table-striped table-hover">
+						<thead>
+							<tr>
+								<th scope="col">Station Name</th>
+								<th scope="col">Total Shows</th>
+								<th scope="col">Percentage (of all shows)</th>
+								<th scope="col">Avg Score</th>
+							</tr>
+						</thead>
+						<tbody>
+							<?
+							foreach( $all_stations as $the_station ) {
+								echo '<tr>
+										<th scope="row"><a href="?station=' . $the_station->slug . '">' . $the_station->name . '</a></th>
+										<td>' . $the_station->count . '</td>
+										<td>' . round( ( ( $the_station->count / $shows_count ) * 100 ) , 1 ) . '%</td>
+										<td>' . LWTV_Stats::showcount( 'score', 'stations', $the_station->slug ) . '</td>
+									</tr>';
+							}
+							?>
+						</tbody>
+					</table>
+					<?php
+				} else {
+					LWTV_Stats::generate( 'shows', 'stations' . $station . $view , 'stackedbar' );
+				}
 			} else {
 				$format = 'piechart';
 
