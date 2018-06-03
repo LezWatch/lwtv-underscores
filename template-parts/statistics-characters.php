@@ -7,6 +7,8 @@
 
 $valid_views = array( 'overview', 'cliches', 'gender', 'sexuality', 'queer-irl', 'roles' );
 $view        = ( !isset( $_GET['view'] ) || !in_array( $_GET['view'], $valid_views ) )? 'overview' : $_GET['view'];
+
+$character_count = LWTV_Stats::generate( 'characters', 'total', 'count' );
 ?>
 
 <h2>
@@ -29,13 +31,12 @@ $view        = ( !isset( $_GET['view'] ) || !in_array( $_GET['view'], $valid_vie
 switch ( $view ) {
 	case 'overview':
 		?>
-
 		<div class="container">
 			<div class="row equal-height">
 				<div class="col">
 					<div class="alert alert-success" role="info"><center>
 						<h3 class="alert-heading">Characters</h3>
-						<h5><?php echo LWTV_Stats::generate( 'characters', 'total', 'count' ); ?></h5>
+						<h5><?php echo $character_count; ?></h5>
 					</center></div>
 				</div>
 				<div class="col">
@@ -60,8 +61,9 @@ switch ( $view ) {
 					<table class="table table-striped table-hover">
 						<thead>
 							<tr>
-								<th scope="col">Cliché</th>
+								<th scope="col"></th>
 								<th scope="col">Characters</th>
+								<th scope="col">Percent</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -76,6 +78,7 @@ switch ( $view ) {
 								echo '<tr>
 										<th scope="row"><a href="/cliche/' . $cliche->slug . '">' . $cliche->name . '</a></th>
 										<td>' . $cliche->count . '</td>
+										<td>' . round( ( ( $cliche->count / $character_count ) * 100 ) , 1 ) .'%</td>
 									</tr>';
 							}
 							?>
@@ -89,22 +92,24 @@ switch ( $view ) {
 					<table class="table table-striped table-hover">
 						<thead>
 							<tr>
-								<th scope="col">Sexuality</th>
+								<th scope="col"></th>
 								<th scope="col">Characters</th>
+								<th scope="col">Percent</th>
 							</tr>
 						</thead>
 						<tbody>
 							<?
-							$stations = get_terms( 'lez_sexuality', array(
+							$sexualities = get_terms( 'lez_sexuality', array(
 								'number'     => 5,
 								'orderby'    => 'count',
 								'hide_empty' => 0,
 								'order'      => 'DESC',
 							) );
-							foreach( $stations as $station ) {
+							foreach( $sexualities as $sexuality ) {
 								echo '<tr>
-										<th scope="row"><a href="/sexuality/' . $station->slug . '">' . $station->name . '</a></th>
-										<td>' . $station->count . '</td>
+										<th scope="row"><a href="/sexuality/' . $sexuality->slug . '">' . $sexuality->name . '</a></th>
+										<td>' . $sexuality->count . '</td>
+										<td>' . round( ( ( $sexuality->count / $character_count ) * 100 ) , 1 ) .'%</td>
 									</tr>';
 							}
 							?>
@@ -118,8 +123,9 @@ switch ( $view ) {
 					<table class="table table-striped table-hover">
 						<thead>
 							<tr>
-								<th scope="col">Gender</th>
+								<th scope="col"></th>
 								<th scope="col">Characters</th>
+								<th scope="col">Percent</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -134,6 +140,7 @@ switch ( $view ) {
 								echo '<tr>
 										<th scope="row"><a href="/gender/' . $gender->slug . '">' . $gender->name . '</a></th>
 										<td>' . $gender->count . '</td>
+										<td>' . round( ( ( $gender->count / $character_count ) * 100 ) , 1 ) .'%</td>
 									</tr>';
 							}
 							?>
@@ -156,7 +163,7 @@ switch ( $view ) {
 			</div>
 			<div class="row">
 				<div class="col">
-					<?php LWTV_Stats::generate( 'characters', 'cliches', 'list' ); ?>
+					<?php LWTV_Stats::generate( 'characters', 'cliches', 'percentage' ); ?>
 				</div>
 			</div>
 		</div>

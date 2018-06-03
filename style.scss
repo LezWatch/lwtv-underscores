@@ -1229,10 +1229,8 @@ h3 svg * {
     }
   }
 
-  .plain {
-    svg * {
-      fill: $white;
-    }
+  svg * {
+    fill: $white;
   }
 
   .archive-header-details {
