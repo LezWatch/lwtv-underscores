@@ -87,14 +87,6 @@ switch( $station ) {
 			if ( $station == '_all' ) {
 				if ( $view == '_all' ) {
 					?>
-					<script>
-						jQuery(document).ready(function($){
-							$("#stationsTable").tablesorter({
-								theme : "bootstrap",
-							});
-						});
-					</script>
-	
 					<p>For more information on individual stations, please use the dropdown menu, or click on a station listed below.</p>
 					<table id="stationsTable" class="tablesorter table table-striped table-hover">
 						<thead>
