@@ -979,10 +979,10 @@ h3.post-title.excerpt {
 
 .show-we-love {
   svg * {
-    fill: $red;
+    fill: $red!important;
   }
   i.fa {
-    color: $red;
+    color: $red!important;
   }
 }
 

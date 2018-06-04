@@ -8,7 +8,7 @@
 // Define theme version so CSS shit doesn't break. Again.
 // Bump this any time you make serious CSS changes, becuase CSS is a dillhole
 if ( ! defined( 'LWTV_THEME_VERSION' ) ) {
-	define( 'LWTV_THEME_VERSION', '3.1.8' );
+	define( 'LWTV_THEME_VERSION', '3.1.9' );
 }
 
 /* Set the content width based on the theme's design and stylesheet.  */
@@ -378,7 +378,7 @@ function posts_link_attributes() {
 
 function yikes_starter_scripts() {
 
-	$font_awesome = '5.0.12';
+	$font_awesome = '5.0.13';
 	$bootstrap    = '4.1.1';
 	
 	// combined + minified
