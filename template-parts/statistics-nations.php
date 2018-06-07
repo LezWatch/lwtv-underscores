@@ -91,13 +91,6 @@ $col_class  = ( $country !== 'all' && $view !== 'overview' )? 'col-sm-6' : 'col'
 			if ( $country == '_all' ) {
 				if ( $view == '_all' ) {
 				?>
-					<script>
-						jQuery(document).ready(function($){
-							$("#nationsTable").tablesorter({
-								theme : "bootstrap",
-							});
-						});
-					</script>
 					<p>For more information on individual nations, please use the dropdown menu, or click on a nation listed below.</p>
 					<table id="nationsTable" class="tablesorter table table-striped table-hover">
 						<thead>
