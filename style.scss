@@ -1613,7 +1613,7 @@ div.facetwp-facet-shows_scores input.facetwp-number {
 
 /* The Widget Area of Death */
 
-.home .alert {
+.home .alert-danger {
   background-color: $lwtv-salmon;
   border: 0;
   border-color: transparent;
@@ -1805,6 +1805,12 @@ div.facetwp-facet-shows_scores input.facetwp-number {
       }
     }
   }
+}
+
+.alert-gdpr {
+  position: fixed;
+  bottom: 0;
+  right: 0;
 }
 
 
