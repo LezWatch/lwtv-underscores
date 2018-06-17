@@ -732,4 +732,4 @@ function lwtv_gdpr_footer(){
 		<?php
 	}
 }
-add_action( 'wp_footer', 'lwtv_gdpr_footer', 5 );
+//add_action( 'wp_footer', 'lwtv_gdpr_footer', 5 );
