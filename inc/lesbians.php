@@ -719,14 +719,17 @@ function lwtv_microformats_fix( $post_id ) {
 /** THE GDPR SECTION **/
 
 /**
- * Echo GDPR bullshit
+ * Echo GDPR notice if users aren't logged in
+ * (logged in users alredy know what they're in for, yo)
  */
 function lwtv_gdpr_footer(){
-	?>
-	<div id="GDPRAlert" class="alert alert-info alert-dismissible fade collapse alert-gdpr" role="alert">
-		<strong>Privacy & Cookies:</strong>  This site uses cookies to track usage and provide content. By continuing to use this website, you agree to their use. For more information, you may review our <a href="/tos/">Terms of Use</a> and <a href="/tos/privacy/">Privacy Policy</a>.
-		<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-	</div>
-	<?php
+	if ( !is_user_logged_in() ) {
+		?>
+		<div id="GDPRAlert" class="alert alert-info alert-dismissible fade collapse alert-gdpr" role="alert">
+			We use cookies to personalize content, provide features, analyze traffic, and optimize advertising. By continuing to use this website, you agree to their use. For more information, you may review our <a href="/tos/">Terms of Use</a> and <a href="/tos/privacy/">Privacy Policy</a>.
+			<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		</div>
+		<?php
+	}
 }
 add_action( 'wp_footer', 'lwtv_gdpr_footer', 5 );
