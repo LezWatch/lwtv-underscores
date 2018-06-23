@@ -140,7 +140,7 @@ switch( $station ) {
 	if ( $station !== '_all' && $view !== '_all' ) {
 		?>
 		<div class="<?php echo $col_class; ?>">
-			<?php LWTV_Stats::generate( 'shows', 'stations' . $station . $view , 'percentage' ); ?>
+			<?php LWTV_Stats::generate( 'characters', 'stations' . $station . $view , 'percentage' ); ?>
 		</div>
 		<?php
 	}

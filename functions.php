@@ -378,7 +378,7 @@ function posts_link_attributes() {
 
 function yikes_starter_scripts() {
 
-	$font_awesome = '5.0.13';
+	$font_awesome = '5.1.0';
 	$bootstrap    = '4.1.1';
 	
 	// combined + minified
