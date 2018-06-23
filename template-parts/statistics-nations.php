@@ -139,7 +139,7 @@ $col_class  = ( $country !== 'all' && $view !== 'overview' )? 'col-sm-6' : 'col'
 	if ( $country !== '_all' && $view !== '_all' ) {
 		?>
 		<div class="<?php echo $col_class; ?>">
-			<?php LWTV_Stats::generate( 'shows', 'country' . $country . $view , 'percentage' ); ?>
+			<?php LWTV_Stats::generate( 'characters', 'country' . $country . $view , 'percentage' ); ?>
 		</div>
 		<?php
 	}
