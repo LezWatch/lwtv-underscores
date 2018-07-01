@@ -14,38 +14,31 @@ $validstat = array( 'death', 'characters', 'shows', 'main', 'actors', 'nations',
 // Based on the type of stats, set our display:
 switch ( $statstype ) {
 	case 'death':
-		$title = 'Statistics on Queer Female Deaths';
 		$image = lwtv_yikes_symbolicons( 'grim-reaper.svg', 'fa-ban' );
 		$intro = 'For a pure list of all dead, we have <a href="/trope/dead-queers/">shows where characters died</a> as well as <a href="/cliche/dead/">characters who have died</a> (aka the <a href="/cliche/dead/">Dead Lesbians</a> list).';
 		break;
 	case 'characters':
-		$title = 'Statistics on Characters';
 		$image = lwtv_yikes_symbolicons( 'chart-bar.svg', 'fa-chart-bar' );
 		$intro = 'Data specific to queer characters.';
 		break;
 	case 'actors':
-		$title = 'Statistics on Actors';
 		$image = lwtv_yikes_symbolicons( 'graph-line.svg', 'fa-chart-line' );
 		$intro = 'Data specific to actors who play queer characters.';
 		break;
 	case 'shows':
-		$title = 'Statistics on Shows';
 		$image = lwtv_yikes_symbolicons( 'chart-pie.svg', 'fa-chart-pie' );
 		$intro = 'Data specific to TV shows with queer characters.';
 		break;
 	case 'nations':
-		$title = 'Statistics on Nations';
 		$image = lwtv_yikes_symbolicons( 'globe.svg', 'fa-globe' );
 		$intro = 'Data specific to queer representation on shows by nation.';
 		break;
 	case 'stations':
-		$title = 'Statistics on Channels';
 		$image = lwtv_yikes_symbolicons( 'satellite-signal.svg', 'fa-bullhorn' );
 		$intro = 'Data specific to queer representation on shows by channel or station.';
 		break;
 	case 'main':
 	default: 
-		$title = 'TV Statistics';
 		$image = lwtv_yikes_symbolicons( 'graph-bar.svg', 'fa-chart-area' );
 		$intro = '';
 		break;
@@ -55,7 +48,7 @@ $image = '<span role="img" aria-label="statistics" title="Statistics" class="tax
 
 // If there's no valid stat, we bail
 if ( !in_array( $statstype, $validstat ) ){
-	wp_redirect( get_site_url().'/stats/' , '301' );
+	wp_redirect( get_site_url().'/statistics/' , '301' );
 	exit;
 }
 
@@ -66,7 +59,12 @@ get_header(); ?>
 		<div class="container">
 			<header class="archive-header">
 				<div class="row">
-					<div class="col-10"><h1 class="entry-title"><?php echo $title; ?></h1></div>
+					<div class="col-10"><h1 class="entry-title">Statistics 
+						<?php 
+							$title = ( 'main' !== $statstype )? 'on ' . ucfirst( $statstype ) : '';
+							echo $title;
+						?>
+					</h1></div>
 					<div class="col-2 icon plain"><?php echo $image; ?></div>
 				</div>
 				<div class="row">
