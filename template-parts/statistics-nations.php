@@ -10,8 +10,13 @@ $valid_country = ( isset( $_GET['country'] ) )? term_exists( $_GET['country'], '
 $country       = ( !isset( $_GET['country'] ) || !is_array( $valid_country ) )? 'all' : sanitize_title( $_GET['country'] );
 
 // Views
-$valid_views   = array( 'overview', 'gender', 'sexuality' );
-$view          = ( !isset( $_GET['view'] ) || !in_array( $_GET['view'], $valid_views ) )? 'overview' : sanitize_title( $_GET['view'] );
+$valid_views   = array( 
+	'overview'  => 'shows',
+	'sexuality' => 'characters',
+	'gender'    => 'characters',
+	'tropes'    => 'shows',
+);
+$view          = ( !isset( $_GET['view'] ) || ( ! array_key_exists( $_GET['view'], $valid_views ) ) )? 'overview' : sanitize_title( $_GET['view'] );
 
 // Format
 $valid_formats = array( 'bar', 'pie' );
@@ -65,7 +70,7 @@ switch( $country ) {
 
 <ul class="nav nav-tabs">
 	<?php
-	foreach ( $valid_views as $the_view ) {
+	foreach ( $valid_views as $the_view => $the_post_type ) {
 		$active = ( $view == $the_view )? ' active' : '';
 		echo '<li class="nav-item"><a class="nav-link' . $active . '" href="' . esc_url( add_query_arg( 'view', $the_view, $current_url ) ) . '">' . strtoupper( str_replace( '-', ' ', $the_view ) ) . '</a></li>';
 	}
@@ -75,21 +80,36 @@ switch( $country ) {
 <p>&nbsp;</p>
 
 <?php
-$col_class  = ( $country !== 'all' && $view !== 'overview' )? 'col-sm-6' : 'col';
+	$col_class = ( $country !== 'all' && $view !== 'overview' )? 'col-sm-6' : 'col';
+	$post_type = $valid_views[ $view ];
 ?>
 
 <div class="container chart-container">
+
+	<?php
+		if ( 'all' !== $country && 'overview' !== $view ) {
+			switch ( $post_type ) {
+				case 'characters':
+					echo '<p>The following statistics relate to characters on shows that air in this country.</p>';
+					break;
+				case 'shows':
+					echo '<p>The following statistics relate to shows that air in this country.</p>';
+					break;
+			}
+		}
+	?>
+
 	<div class="row">
 		<div class="<?php echo $col_class; ?>">
 		<?php
 
 			// country_[subcountry]_[view]
-			$view    = ( $view == 'overview' )? '_all' : '_' . $view; 
-			$country = ( $country == 'overview' )? '_all' : '_' . $country; 
-			$format  = ( $view == '_all' )? 'barchart' : 'piechart';
+			$view      = ( $view == 'overview' )? '_all' : '_' . $view; 
+			$country   = ( $country == 'overview' )? '_all' : '_' . $country; 
+			$format    = ( $view == '_all' )? 'barchart' : 'piechart';
 
-			if ( $country == '_all' ) {
-				if ( $view == '_all' ) {
+			if ( '_all' === $country ) {
+				if ( '_all' === $view ) {
 				?>
 					<p>For more information on individual nations, please use the dropdown menu, or click on a nation listed below.</p>
 					<table id="nationsTable" class="tablesorter table table-striped table-hover">
@@ -116,7 +136,7 @@ $col_class  = ( $country !== 'all' && $view !== 'overview' )? 'col-sm-6' : 'col'
 					</table>
 				<?php
 				} else {
-					LWTV_Stats::generate( 'shows', 'country' . $country . $view , 'stackedbar' );
+					LWTV_Stats::generate( $post_type, 'country' . $country . $view , 'stackedbar' );
 				}
 
 			} else {
@@ -129,7 +149,7 @@ $col_class  = ( $country !== 'all' && $view !== 'overview' )? 'col-sm-6' : 'col'
 					echo '<p>Currently, ' . $onair . ' of ' . $allshows . ' shows are on air. The average score for all shows in this country is ' . $showscore . ', and ' . $onairscore . ' for shows currently on air (out of a possible 100).</p>';
 				}
 
-				LWTV_Stats::generate( 'shows', 'country' . $country . $view , $format );
+				LWTV_Stats::generate( $post_type, 'country' . $country . $view , $format );
 			}
 
 		?>
@@ -137,9 +157,10 @@ $col_class  = ( $country !== 'all' && $view !== 'overview' )? 'col-sm-6' : 'col'
 
 	<?php
 	if ( $country !== '_all' && $view !== '_all' ) {
+		$format = ( 'shows' === $post_type )? 'list' : 'percentage';
 		?>
 		<div class="<?php echo $col_class; ?>">
-			<?php LWTV_Stats::generate( 'characters', 'country' . $country . $view , 'percentage' ); ?>
+			<?php LWTV_Stats::generate( $post_type, 'country' . $country . $view , $format ); ?>
 		</div>
 		<?php
 	}

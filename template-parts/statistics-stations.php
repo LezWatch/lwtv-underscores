@@ -10,8 +10,13 @@ $valid_station = ( isset( $_GET['station'] ) )? term_exists( $_GET['station'], '
 $station       = ( !isset( $_GET['station'] ) || !is_array( $valid_station ) )? 'all' : sanitize_title( $_GET['station'] );
 
 // Views
-$valid_views   = array( 'overview', 'gender', 'sexuality' );
-$view          = ( !isset( $_GET['view'] ) || !in_array( $_GET['view'], $valid_views ) )? 'overview' : sanitize_title( $_GET['view'] );
+$valid_views   = array( 
+	'overview'  => 'shows',
+	'sexuality' => 'characters',
+	'gender'    => 'characters',
+	'tropes'    => 'shows',
+);
+$view          = ( !isset( $_GET['view'] ) || ( ! array_key_exists( $_GET['view'], $valid_views ) ) )? 'overview' : sanitize_title( $_GET['view'] );
 
 // Count
 $all_stations = get_terms( 'lez_stations', array( 'hide_empty' => 0 ) );
@@ -43,11 +48,10 @@ switch( $station ) {
 			<input type="hidden" name="view" value="<?php echo $view; ?>">
 			<div class="form-group">
 				<select name="station" id="station" class="form-control">
-					<option value="all">Station</option>
+					<option value="all">All Stations</option>
 					<?php
 						foreach( $all_stations as $the_station ) {
 							$selected = ( $station == $the_station->slug )? 'selected=selected' : '';
-							$shows    = _n( 'show', 'shows', $the_station->count );
 							echo '<option value="' . $the_station->slug . '" ' . $selected . '>' . $the_station->name . '</option>';
 						}
 					?>
@@ -62,7 +66,7 @@ switch( $station ) {
 
 <ul class="nav nav-tabs">
 	<?php
-	foreach ( $valid_views as $the_view ) {
+	foreach ( $valid_views as $the_view => $the_post_type ) {
 		$active = ( $view == $the_view )? ' active' : '';
 		echo '<li class="nav-item"><a class="nav-link' . $active . '" href="' . esc_url( add_query_arg( 'view', $the_view, $current_url ) ) . '">' . strtoupper( str_replace( '-', ' ', $the_view ) ) . '</a></li>';
 	}
@@ -73,13 +77,27 @@ switch( $station ) {
 
 <?php
 	$col_class = ( $station !== 'all' && $view !== 'overview' )? 'col-sm-6' : 'col';
+	$post_type = $valid_views[ $view ];
 ?>
 
 <div class="container">
+
+	<?php
+		if ( 'all' !== $station && 'overview' !== $view ) {
+			switch ( $post_type ) {
+				case 'characters':
+					echo '<p>The following statistics relate to characters on shows that air on this station.</p>';
+					break;
+				case 'shows':
+					echo '<p>The following statistics relate to shows that air on this station.</p>';
+					break;
+			}
+		}
+	?>
 	<div class="row">
 		<div class="<?php echo $col_class; ?>">
 		<?php
-			$view = ( $view == 'overview' && $station !== 'all' )? 'all' : $view;
+			$view = ( 'overview' === $view && 'all' !== $station )? 'all' : $view;
 			// station-[substation]-[view]
 			$view    = ( $view == 'overview' )? '_all' : '_' . $view; 
 			$station = ( $station == 'overview' )? '_all' : '_' . $station; 
@@ -112,7 +130,7 @@ switch( $station ) {
 					</table>
 					<?php
 				} else {
-					LWTV_Stats::generate( 'shows', 'stations' . $station . $view , 'stackedbar' );
+					LWTV_Stats::generate( $post_type, 'stations' . $station . $view , 'stackedbar' );
 				}
 			} else {
 				$format = 'piechart';
@@ -130,7 +148,7 @@ switch( $station ) {
 					}
 				}
 				
-				LWTV_Stats::generate( 'shows', 'stations' . $station . $view , $format );
+				LWTV_Stats::generate( $post_type, 'stations' . $station . $view , $format );
 			}
 
 		?>
@@ -138,9 +156,10 @@ switch( $station ) {
 
 	<?php
 	if ( $station !== '_all' && $view !== '_all' ) {
+		$format = ( 'shows' === $post_type )? 'list' : 'percentage';
 		?>
 		<div class="<?php echo $col_class; ?>">
-			<?php LWTV_Stats::generate( 'characters', 'stations' . $station . $view , 'percentage' ); ?>
+			<?php LWTV_Stats::generate( $post_type, 'stations' . $station . $view , $format ); ?>
 		</div>
 		<?php
 	}
