@@ -6,7 +6,7 @@
  *      - archive-post_type_actors.php
  *      - taxonomy.php
  *
- * @package LezWatchTV
+ * @package LezWatch.TV
  */
 
 global $post;

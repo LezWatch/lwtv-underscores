@@ -5,7 +5,7 @@
  * This is crazy shit Mika wrote to force everything to play 
  * nicely with each other. Including cursing at Jetpack.
  *
- * @package LezWatchTV
+ * @package LezWatch.TV
  */
 
 /* This Year code: */

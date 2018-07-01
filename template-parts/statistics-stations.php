@@ -2,7 +2,7 @@
 /**
  * The template for displaying station statistics
  *
- * @package LezWatchTV
+ * @package LezWatch.TV
  */
 
 // Stations

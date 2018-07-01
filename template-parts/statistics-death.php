@@ -2,7 +2,7 @@
 /**
  * The template for displaying the death stats page
  *
- * @package LezWatchTV
+ * @package LezWatch.TV
  */
 
 $deadchars = LWTV_Stats::generate( 'characters', 'dead', 'count' );

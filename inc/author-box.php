@@ -2,7 +2,7 @@
 /**
  * LWTV Author Box
  * 
- * @package LezWatchTV
+ * @package LezWatch.TV
  */
 function lwtv_author_box( $content ) {
 	global $post;

@@ -4,7 +4,7 @@
  *
  * @link https://codex.wordpress.org/Template_Hierarchy
  *
- * @package LezWatchTV
+ * @package LezWatch.TV
  */
 
 // Determine icon (Font-Awesome fallback)

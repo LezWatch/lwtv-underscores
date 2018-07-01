@@ -2,7 +2,7 @@
 /**
  * Functions that power the "This Year" pages
  *
- * @package LezWatchTV
+ * @package LezWatch.TV
  */
  
 /**

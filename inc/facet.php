@@ -7,7 +7,7 @@
  *
  * @link https://facetwp.com/
  *
- * @package LezWatchTV
+ * @package LezWatch.TV
  */
 
 /*

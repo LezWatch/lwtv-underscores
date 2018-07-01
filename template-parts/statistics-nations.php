@@ -2,7 +2,7 @@
 /**
  * The template for displaying national statistics
  *
- * @package LezWatchTV
+ * @package LezWatch.TV
  */
 
 // Country

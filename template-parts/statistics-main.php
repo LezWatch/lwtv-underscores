@@ -2,7 +2,7 @@
 /**
  * The template for displaying the main stats page
  *
- * @package LezWatchTV
+ * @package LezWatch.TV
  */
 ?>
 

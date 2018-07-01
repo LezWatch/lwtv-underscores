@@ -6,7 +6,7 @@
  * This file is called by /inc/amp.php - if that file is
  * missing, this does nothing.
  * 
- * @package LezWatchTV
+ * @package LezWatch.TV
  */
 ?>
 

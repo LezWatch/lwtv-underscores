@@ -2,7 +2,7 @@
 /**
  * The template for displaying the character stats page
  *
- * @package LezWatchTV
+ * @package LezWatch.TV
  */
 
 $valid_views = array( 'overview', 'cliches', 'gender', 'sexuality', 'queer-irl', 'roles' );

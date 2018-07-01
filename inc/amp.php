@@ -5,7 +5,7 @@
  * This will only run if AMP by Automattic is installed and active.
  * All the magic sauce is run by this.
  *
- * @package LezWatchTV
+ * @package LezWatch.TV
  */
 
 

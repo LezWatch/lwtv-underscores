@@ -2,7 +2,7 @@
 /**
  * The template for displaying the actor stats page
  *
- * @package LezWatchTV
+ * @package LezWatch.TV
  */
 
 $valid_views = array( 'overview', 'gender', 'sexuality', 'roles' );

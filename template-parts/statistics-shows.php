@@ -2,7 +2,7 @@
 /**
  * The template for displaying the shows stats page
  *
- * @package LezWatchTV
+ * @package LezWatch.TV
  */
 
 $valid_views = array( 'overview', 'tropes', 'genres', 'formats', 'stars', 'triggers', 'on-air', 'worth-it', 'we-love-it' );

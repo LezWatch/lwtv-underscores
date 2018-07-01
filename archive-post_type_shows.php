@@ -4,7 +4,7 @@
  *
  * @link https://codex.wordpress.org/Template_Hierarchy
  *
- * @package LezWatchTV
+ * @package LezWatch.TV
  */
 
 $icon         = lwtv_yikes_symbolicons( 'tv-hd.svg', 'fa-tv' );
