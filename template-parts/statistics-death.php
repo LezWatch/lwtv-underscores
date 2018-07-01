@@ -13,7 +13,7 @@ $allshows  = LWTV_Stats::generate( 'shows', 'all', 'count' );
 $deadchar_percent = round( ( $deadchars / $allchars ) * 100 , 2 ) ;
 $deadshow_percent = round( ( $deadshows / $allshows ) * 100 , 2 );
 
-$valid_views = array( 'overview', 'characters', 'shows', 'years' );
+$valid_views = array( 'overview', 'characters', 'shows', 'stations', 'nations', 'years' );
 $view        = ( !isset( $_GET['view'] ) || !in_array( $_GET['view'], $valid_views ) )? 'overview' : $_GET['view'];
 
 ?>
@@ -34,7 +34,6 @@ $view        = ( !isset( $_GET['view'] ) || !in_array( $_GET['view'], $valid_vie
 switch ( $view ) {
 	case 'overview':
 		?>
-
 		<div class="container">
 			<div class="row equal-height">
 				<div class="col">
@@ -109,6 +108,38 @@ switch ( $view ) {
 				</div>
 				<div class="col-sm-6">
 					<?php LWTV_Stats::generate( 'shows', 'dead-shows', 'percentage' ); ?>
+				</div>
+			</div>
+		</div>
+		<?php
+		break;
+	case 'stations':
+		?>
+		<div class="container chart-container">
+			<div class="row">
+				<div class="col">
+					<?php LWTV_Stats::generate( 'shows', 'dead-stations', 'barchart' ); ?>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col">
+					<?php LWTV_Stats::generate( 'shows', 'dead-stations', 'percentage' ); ?>
+				</div>
+			</div>
+		</div>
+		<?php
+		break;
+	case 'nations':
+		?>
+		<div class="container chart-container">
+			<div class="row">
+				<div class="col">
+					<?php LWTV_Stats::generate( 'shows', 'dead-nations', 'barchart' ); ?>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col">
+					<?php LWTV_Stats::generate( 'shows', 'dead-nations', 'percentage' ); ?>
 				</div>
 			</div>
 		</div>
