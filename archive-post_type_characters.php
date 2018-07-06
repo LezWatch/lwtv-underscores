@@ -12,7 +12,7 @@ $icon         = lwtv_yikes_symbolicons( 'contact-card.svg', 'fa-users' );
 $count_posts  = facetwp_display( 'counts' );
 $title        = '<span role="img" aria-label="post_type_characters" title="Characters" class="taxonomy-svg characters">' . $icon . '</span>';
 $descriptions = get_option( 'wpseo_titles' );
-$description  = $descriptions['metadesc-ptarchive-post_type_characters' ];
+$description  = $descriptions['metadesc-ptarchive-post_type_characters'];
 
 get_header(); ?>
 
@@ -22,12 +22,12 @@ get_header(); ?>
 			<header class="archive-header">
 				<div class="row">
 					<div class="col-10"><?php the_archive_title( '<h1 class="facetwp-page-title entry-title">', ' (' . $count_posts . '<span class="facetwp-count"></span>)</h1>' ); ?></div>
-					<div class="col-2 icon plain"><?php echo $title; ?></div>
+					<div class="col-2 icon plain"><?php $title; ?></div>
 				</div>
 				<div class="row">
 					<div class="archive-description">
-					<?php 
-						echo '<p>' . $description . ' <span class="facetwp-description"></span></p>';
+					<?php
+						echo '<p>' . wp_kses_post( $description ) . ' <span class="facetwp-description"></span></p>';
 						echo '<p><span class="facetwp-sorted"></span></p>';
 						echo facetwp_display( 'selections' );
 					?>
@@ -62,7 +62,7 @@ get_header(); ?>
 									echo facetwp_display( 'pager' );
 								else :
 									get_template_part( 'template-parts/content', 'none' );
-								endif; 
+								endif;
 								?>
 							</div><!-- .entry-content -->
 						</article><!-- #post-## -->

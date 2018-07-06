@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <ruleset name="LezWatch.TV Coding Standards">
     <description>A custom ruleset to take in account both WordPress and Lesbian standards.</description>
+
     <rule ref="WordPress-Extra">
         <exclude name="WordPress.Files.FileName.InvalidClassFileName" />
         <exclude name="WordPress.Files.FileName.NotHyphenatedLowercase" />
@@ -11,4 +12,12 @@
         <exclude name="WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents" />
         <exclude name="WordPress.PHP.DevelopmentFunctions.error_log_trigger_error" />
     </rule>
+
+    <rule ref="WordPress.XSS.EscapeOutput">
+        <properties>
+            <property name="customEscapingFunctions" value="lwtv_yikes_symbolicons" type="array" />
+            <property name="customEscapingFunctions" value="facetwp_display" type="array" />
+        </properties>
+    </rule>
+
 </ruleset>
