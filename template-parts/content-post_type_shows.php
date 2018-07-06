@@ -59,7 +59,7 @@ the_post_thumbnail('large', array(
 $warning    = lwtv_yikes_content_warning( get_the_ID() );
 $warn_image = lwtv_yikes_symbolicons( 'hand.svg', 'fa-hand-paper' );
 
-if ( $warning['card'] != 'none' ) {
+if ( 'none' !== $warning['card'] ) {
 	?>
 	<section id="trigger-warning" class="trigger-warning-container">
 		<div class="alert alert-<?php echo $warning['card']; ?>" role="alert">
@@ -111,9 +111,9 @@ if ( ( get_post_meta( $show_id, 'lezshows_episodes', true ) ) ) {
 
 if ( $related ) {
 	?>
-	<section name="related-posts" id="related-posts" class="showschar-section">	
+	<section name="related-posts" id="related-posts" class="showschar-section">
 		<h2>Related Articles</h2>
-		<div class="card-body">	
+		<div class="card-body">
 			<?php
 			echo LWTV_Related_Posts::related_posts( $slug );
 			if ( count( LWTV_Related_Posts::count_related_posts( $slug ) ) > '5' ) {
@@ -124,7 +124,7 @@ if ( $related ) {
 			}
 			?>
 		</div>
-	</section> 
+	</section>
 	<?php
 }
 
@@ -145,9 +145,9 @@ if ( $related ) {
 
 			$deadtext = 'none are dead';
 			if ( $havedeadcount > '0' ) $deadtext = sprintf( _n( '<strong>%s</strong> is dead', '<strong>%s</strong> are dead', $havedeadcount ), $havedeadcount );
-		
+
 			echo '<p>There '. sprintf( _n( 'is <strong>%s</strong> queer character', 'are <strong>%s</strong> queer characters', $havecharcount ), $havecharcount ).' listed for this show; ' . $deadtext . '.</p>';
-		
+
 			// Get the list of REGULAR characters
 			$chars_regular = lwtv_yikes_get_characters_for_show( $show_id, $havecharcount, 'regular' );
 			if ( !empty( $chars_regular ) ) {
@@ -162,7 +162,7 @@ if ( $related ) {
 			}
 			// Get the list of RECURRING characters
 			$chars_recurring = lwtv_yikes_get_characters_for_show( $show_id, $havecharcount, 'recurring' );
-			if ( !empty( $chars_recurring ) ) {	
+			if ( !empty( $chars_recurring ) ) {
 				?><h3 class="title-recurring">Recurring (<?php echo count( $chars_recurring ); ?>)</h3>
 				<div class="container characters-recurring-container"><div class="row site-loop character-show-loop equal-height"><?php
 				foreach( $chars_recurring as $character ) {
