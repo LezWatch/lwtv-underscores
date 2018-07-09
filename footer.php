@@ -42,5 +42,11 @@
 
 <?php wp_footer(); ?>
 
+<!--
+	If you're reading this source code, hi!
+	Everything can be found at https://github.com/lezwatch/lwtv-underscores
+	You're welcome to fork our code and make your own site with it.
+-->
+
 </body>
 </html>

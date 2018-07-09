@@ -11,7 +11,7 @@ $icon         = lwtv_yikes_symbolicons( 'tv-hd.svg', 'fa-tv' );
 $count_posts  = facetwp_display( 'counts' );
 $title        = '<span role="img" aria-label="post_type_shows" title="Shows" class="taxonomy-svg shows">' . $icon . '</span>';
 $descriptions = get_option( 'wpseo_titles' );
-$description  = $descriptions['metadesc-ptarchive-post_type_shows' ];
+$description  = $descriptions['metadesc-ptarchive-post_type_shows'];
 
 get_header(); ?>
 
@@ -21,12 +21,12 @@ get_header(); ?>
 			<header class="archive-header">
 				<div class="row">
 					<div class="col-10"><?php the_archive_title( '<h1 class="facetwp-page-title entry-title">', ' (' . $count_posts . '<span class="facetwp-count"></span>)</h1>' ); ?></div>
-					<div class="col-2 icon plain"><?php echo $title; ?></div>
+					<div class="col-2 icon plain"><?php echo lwtv_sanitized( $title ); ?></div>
 				</div>
 				<div class="row">
 					<div class="archive-description">
-					<?php 
-						echo '<p>' . $description . ' <span class="facetwp-description"></span></p>';
+					<?php
+						echo '<p>' . wp_kses_post( $description ) . ' <span class="facetwp-description"></span></p>';
 						echo '<p><span class="facetwp-sorted"></span></p>';
 						echo facetwp_display( 'selections' );
 					?>
@@ -47,30 +47,23 @@ get_header(); ?>
 							<div class="entry-content facetwp-template">
 								<div class="row site-loop show-archive-loop equal-height">
 									<?php
-									if ( have_posts() ) : ?>
-
-										<?php
+									if ( have_posts() ) :
 										/* Start the Loop */
-										while ( have_posts() ) : the_post();
+										while ( have_posts() ) :
+											the_post();
 											get_template_part( 'template-parts/excerpt', 'post_type_shows' );
-							
-										endwhile; 
-									?>
-								</div><!-- .site-loop -->
-
-								<?php
-									echo facetwp_display( 'pager' );
-							
+										endwhile;
 									else :
 										get_template_part( 'template-parts/content', 'none' );
-							
-								endif; ?>
+									endif;
+									?>
+								</div><!-- .site-loop -->
+								<?php echo facetwp_display( 'pager' ); ?>
 							</div><!-- .entry-content -->
 						</article><!-- #post-## -->
 					</div><!-- #content -->
 				</div><!-- #primary -->
 			</div><!-- .col-sm-9 -->
-	
 			<div class="col-sm-3 site-sidebar showchars-sidebar site-loop">
 
 				<?php get_sidebar(); ?>
@@ -81,4 +74,6 @@ get_header(); ?>
 	</div><!-- .container -->
 </div><!-- #main -->
 
-<?php get_footer();
+<?php
+
+get_footer();

@@ -4,7 +4,7 @@
  *
  * @package YIKES Starter
  */
- 
+
 // Define theme version so CSS shit doesn't break. Again.
 // Bump this any time you make serious CSS changes, becuase CSS is a dillhole
 if ( ! defined( 'LWTV_THEME_VERSION' ) ) {
@@ -18,7 +18,7 @@ if ( ! isset( $content_width ) ) {
 
 /************* YIKES Stuff ********************/
 
-// YIKES Setup theme constants These will be used for server and web paths 
+// YIKES Setup theme constants These will be used for server and web paths
 // so we don't have to reference functions every time
 if ( ! defined( 'YKS_THEME_PATH' ) ) {
 	define( 'YKS_THEME_PATH', get_stylesheet_directory() );
@@ -35,13 +35,13 @@ function yikes_starter_blog_page_title() {
 }
 
 /**
-* Get the featured image of the page defined for posts.
-* 
-* @param mixed | $image_size | Valid image size value. (i.e. string like 'full', array with height/width values) 
-*                              See the wp_get_attachment_image_url() function documentation for more details.
-*
-* @return Image URL if found, else false
-*/
+ * Get the featured image of the page defined for posts.
+ *
+ * @param mixed | $image_size | Valid image size value. (i.e. string like 'full', array with height/width values)
+ *                              See the wp_get_attachment_image_url() function documentation for more details.
+ *
+ * @return Image URL if found, else false
+ */
 function yikes_starter_blog_page_featured_image( $image_size = 'full' ) {
 	$page_id_for_posts = get_option( 'page_for_posts' );
 	if ( ! empty( $page_id_for_posts ) && has_post_thumbnail( $page_id_for_posts ) ) {
@@ -56,21 +56,21 @@ function yikes_starter_blog_page_featured_image( $image_size = 'full' ) {
 /**
  * Get the ID of a page based on the template it's using.
  *
- * @param string | $template	  | The name of a template, e.g. page-home.php
+ * @param string | $template      | The name of a template, e.g. page-home.php
  * @param bool   | $use_transient | Whether we should set/check a transient value before querying
- * 
+ *
  * @return mixed | Page ID if found, else false
  **/
 function yks_get_page_by_template( $template, $use_transient = false ) {
 
-	if ( $use_transient === true ) {
+	if ( true === $use_transient ) {
 		$page_id = get_transient( "wp_page_template_{$template}" );
 
 		if ( ! empty( $page_id ) ) {
 			return $page_id;
 		}
 	}
-	
+
 	if ( empty( $page_id ) ) {
 		$pages = new WP_Query( array(
 			'post_type'      => 'page',
@@ -79,11 +79,11 @@ function yks_get_page_by_template( $template, $use_transient = false ) {
 		) );
 
 		if ( $pages->have_posts() ) {
-			foreach( $pages->posts as $page_id ) {
+			foreach ( $pages->posts as $page_id ) {
 				$pagetemplate = get_post_meta( $page_id, '_wp_page_template', true );
 				if ( $pagetemplate === $template ) {
 
-					if ( $use_transient === true ) {
+					if ( true === $use_transient ) {
 						set_transient( "wp_page_template_{$template}", $page_id, 1 * HOUR_IN_SECONDS );
 					}
 
@@ -117,7 +117,7 @@ require_once 'inc/widgets/filter-widget2.php';
 /************* Theme Logo *************/
 
 function yks_the_custom_logo() {
-	
+
 	if ( function_exists( 'the_custom_logo' ) ) {
 		the_custom_logo();
 	}
@@ -163,10 +163,10 @@ function yikes_archive_title( $title ) {
 	} elseif ( is_tax() ) {
 		$title = single_term_title( '', false );
 	}
-  
+
 	return $title;
 }
- 
+
 add_filter( 'get_the_archive_title', 'yikes_archive_title' );
 
 
@@ -183,19 +183,19 @@ if ( ! function_exists( 'yikes_starter_setup' ) ) {
 
 		/* Set up Nav menus */
 		register_nav_menus( array(
-			'primary' => __( 'Primary Menu', 'yikes_starter' ),
+			'primary'     => __( 'Primary Menu', 'yikes_starter' ),
 			'social_menu' => __( 'Social Menu', 'yikes_starter' ),
 		) );
 
-		 /*
-		  Make theme available for translation.
+		/**
+		 * Make theme available for translation.
 		 * Translations can be filed in the /languages/ directory.
 		 * If you're building a theme based on yikes starter, use a find and replace
 		 * to change 'yikes_starter' to the name of your theme in all the template files
 		 */
 		load_theme_textdomain( 'yikes_starter', get_template_directory() . '/languages' );
 
-		 /*
+		/**
 		 * Let WordPress manage the document title.
 		 * By adding theme support, we declare that this theme does not use a
 		 * hard-coded <title> tag in the document head, and expect WordPress to
@@ -216,7 +216,7 @@ if ( ! function_exists( 'yikes_starter_setup' ) ) {
 		add_theme_support( 'html5', array( 'search-form', 'comment-form', 'comment-list', 'gallery', 'caption' ) );
 
 		// Enable shortcodes in text widgets
-		add_filter('widget_text','do_shortcode');
+		add_filter( 'widget_text', 'do_shortcode' );
 
 		/*
 		 Enable support for Post Formats */
@@ -349,25 +349,25 @@ require_once 'inc/wp_bootstrap_navwalker.php';
 /*
  * Pagination
  *  @usage
- *    1) setup WP_Query with a $paged variable 
+ *    1) setup WP_Query with a $paged variable
  *      (https://codex.wordpress.org/Pagination#Adding_the_.22paged.22_parameter_to_a_query)
- *    2) Wherever you'd like the pagination to appear, add <?php echo page_navi( $query ); ?> 
+ *    2) Wherever you'd like the pagination to appear, add <?php echo page_navi( $query ); ?>
  *       where $query is the entire $query setup in the previous step
 */
 require_once 'inc/wp_bootstrap_pagination.php';
 
 // Add classes to “next_post_link” and “previous_post_link”
 
-add_filter('next_post_link', 'post_link_attributes');
-add_filter('previous_post_link', 'post_link_attributes');
+add_filter( 'next_post_link', 'post_link_attributes' );
+add_filter( 'previous_post_link', 'post_link_attributes' );
 
-function post_link_attributes($output) {
+function post_link_attributes( $output ) {
 	$code = 'class="page-link"';
-	return str_replace('<a href=', '<a '.$code.' href=', $output);
+	return str_replace( '<a href=', '<a ' . $code . ' href=', $output );
 }
 
-add_filter('next_posts_link_attributes', 'posts_link_attributes');
-add_filter('previous_posts_link_attributes', 'posts_link_attributes');
+add_filter( 'next_posts_link_attributes', 'posts_link_attributes' );
+add_filter( 'previous_posts_link_attributes', 'posts_link_attributes' );
 
 function posts_link_attributes() {
 	return 'class="page-link"';
@@ -380,7 +380,7 @@ function yikes_starter_scripts() {
 
 	$font_awesome = '5.1.0';
 	$bootstrap    = '4.1.1';
-	
+
 	// combined + minified
 	// navigation.js & skip-link-focus-fix.js
 	wp_enqueue_script( 'yikes-starter-navigation', get_template_directory_uri() . '/inc/js/yikes-theme-scripts.min.js', array(), '20120206', true );
@@ -393,7 +393,7 @@ function yikes_starter_scripts() {
 	wp_enqueue_style( 'fontawesome', get_template_directory_uri() . '/inc/css/fontawesome-all.min.css', array(), $font_awesome, 'all' );
 	wp_enqueue_style( 'open-sans', '//fonts.googleapis.com/css?family=Open+Sans:400,600,700', false );
 	wp_enqueue_style( 'oswald', '//fonts.googleapis.com/css?family=Oswald:400,500', false );
-	wp_enqueue_script( 'yikes-popper-script', get_template_directory_uri() . '/inc/js/popper.min.js',  array(), '1.11.0', 'all', true );
+	wp_enqueue_script( 'yikes-popper-script', get_template_directory_uri() . '/inc/js/popper.min.js', array(), '1.11.0', 'all', true );
 	wp_enqueue_script( 'bootstrap', get_template_directory_uri() . '/inc/bootstrap/js/bootstrap.min.js', array( 'jquery' ), $bootstrap, 'all', true );
 	wp_enqueue_script( 'lwtv-gdpr', get_template_directory_uri() . '/inc/js/gdpr.js', array( 'bootstrap' ), LWTV_THEME_VERSION, 'all', true );
 

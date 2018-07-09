@@ -4,17 +4,21 @@
  */
 ?>
 
-	<div class="card"> 
-		<?php if ( has_post_thumbnail()) : ?>
+	<div class="card">
+		<?php
+		if ( has_post_thumbnail() ) {
+			?>
 			<a href="<?php the_permalink(); ?>" title="<?php the_title_attribute(); ?>" >
 				<?php the_post_thumbnail( 'postloop-img', array( 'class' => 'card-img-top' ) ); ?>
 			</a>
-		<?php endif; ?>
+			<?php
+		}
+		?>
 		<div class="card-body">
 			<h3 class="card-title"><?php the_title(); ?></h3>
 			<div class="card-meta text-muted">
-				<?php the_date(); ?> 
-				<?php echo lwtv_yikes_symbolicons( 'user-circle.svg', 'fa-user-circle' ); ?> 
+				<?php the_date(); ?>
+				<?php echo lwtv_yikes_symbolicons( 'user-circle.svg', 'fa-user-circle' ); ?>
 				<?php the_author(); ?>
 			</div>
 			<div class="card-text">

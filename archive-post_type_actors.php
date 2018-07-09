@@ -22,7 +22,7 @@ get_header(); ?>
 			<header class="archive-header">
 				<div class="row">
 					<div class="col-10"><?php the_archive_title( '<h1 class="facetwp-page-title entry-title">', ' (' . $count_posts . '<span class="facetwp-count"></span>)</h1>' ); ?></div>
-					<div class="col-2 icon plain"><?php echo $title; // WPCS: XSS ok. ?></div>
+					<div class="col-2 icon plain"><?php echo lwtv_sanitized( $title ); ?></div>
 				</div>
 				<div class="row">
 					<div class="archive-description">
@@ -53,22 +53,16 @@ get_header(); ?>
 									/* Start the Loop */
 									while ( have_posts() ) :
 										the_post();
-										?>
-										<div class="col-sm-4">
-										<?php
+										echo '<div class="col-sm-4">';
 										get_template_part( 'template-parts/excerpt', 'post_type_actors' );
-										?>
-										</div>
-										<?php
+										echo '</div>';
 									endwhile;
-									?>
-								</div><!-- .row .site-loop -->
-									<?php
-									echo facetwp_display( 'pager' );
 								else :
 									get_template_part( 'template-parts/content', 'none' );
 								endif;
 								?>
+								</div><!-- .row .site-loop -->
+							<?php echo facetwp_display( 'pager' ); ?>
 							</div><!-- .entry-content -->
 						</article><!-- #post-## -->
 					</div><!-- #content -->

@@ -27,7 +27,7 @@ get_header(); ?>
 			<header class="archive-header">
 				<div class="row">
 					<div class="col-10"><?php the_title( '<h1 class="entry-title">', '</h1>' ); ?></div>
-					<div class="col-2 icon plain"><?php echo $icon; ?></div>
+					<div class="col-2 icon plain"><?php echo lwtv_sanitized( $icon ); ?></div>
 				</div>
 			</header><!-- .archive-header -->
 		</div><!-- .container -->
@@ -46,9 +46,7 @@ get_header(); ?>
 									<?php
 									while ( have_posts() ) :
 										the_post();
-										// Show content type.
 										get_template_part( 'template-parts/content', get_post_type() );
-
 										// Force Jetpack share links to display ONCE.
 										lwtv_yikes_jetpack_post_meta();
 									endwhile; // end of the loop.
@@ -69,4 +67,6 @@ get_header(); ?>
 	</div><!-- .container -->
 </div><!-- #main -->
 
-<?php get_footer(); ?>
+<?php
+
+get_footer();

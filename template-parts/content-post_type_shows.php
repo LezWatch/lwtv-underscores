@@ -62,9 +62,9 @@ $warn_image = lwtv_yikes_symbolicons( 'hand.svg', 'fa-hand-paper' );
 if ( 'none' !== $warning['card'] ) {
 	?>
 	<section id="trigger-warning" class="trigger-warning-container">
-		<div class="alert alert-<?php echo $warning['card']; ?>" role="alert">
-			<span class="callout-<?php echo $warning['card']; ?>" role="img" aria-label="Warning Hand" title="Warning Hand"><?php echo $warn_image; ?></span>
-			<?php echo $warning['content']; ?>
+		<div class="alert alert-<?php echo esc_attr( $warning['card'] ); ?>" role="alert">
+			<span class="callout-<?php echo esc_attr( $warning['card'] ); ?>" role="img" aria-label="Warning Hand" title="Warning Hand"><?php echo lwtv_sanitized( $warn_image ); ?></span>
+			<?php echo wp_kses_post( $warning['content'] ); ?>
 		</div>
 	</section>
 	<?php
@@ -73,7 +73,7 @@ if ( 'none' !== $warning['card'] ) {
 
 <?php
 if ( ( get_post_meta( $show_id, 'lezshows_affiliate', true ) ) ) {
-	echo '<section id="affiliate-watch-link" class="affiliate-watch-container">' . LWTV_Affilliates::shows( $show_id, 'affiliate' ) . '</section>';
+	echo '<section id="affiliate-watch-link" class="affiliate-watch-container">' . LWTV_Affilliates::shows( $show_id, 'affiliate' ) . '</section>'; // WPCS: XSS okay.
 }
 ?>
 
@@ -91,7 +91,7 @@ if ( ( get_post_meta( $show_id, 'lezshows_plots', true ) ) ) {
 	<section name="timeline" id="timeline" class="showschar-section">
 		<h2>Queer Plotline Timeline</h2>
 		<div class="card-body">
-			<?php echo apply_filters( 'the_content', wp_kses_post( get_post_meta( $show_id, 'lezshows_plots', true ) ) ); ?>
+			<?php echo wp_kses_post( apply_filters( 'the_content', get_post_meta( $show_id, 'lezshows_plots', true ) ) ); ?>
 		</div>
 	</section>
 	<?php
@@ -103,7 +103,7 @@ if ( ( get_post_meta( $show_id, 'lezshows_episodes', true ) ) ) {
 	<section name="episodes" id="episodes" class="showschar-section">
 		<h2>Notable Queer-Centric Episodes</h2>
 		<div class="card-body">
-			<?php echo apply_filters( 'the_content', wp_kses_post( get_post_meta( $show_id, 'lezshows_episodes', true ) ) ); ?>
+			<?php echo wp_kses_post( apply_filters( 'the_content', get_post_meta( $show_id, 'lezshows_episodes', true ) ) ); ?>
 		</div>
 	</section>
 	<?php
@@ -115,11 +115,11 @@ if ( $related ) {
 		<h2>Related Articles</h2>
 		<div class="card-body">
 			<?php
-			echo LWTV_Related_Posts::related_posts( $slug );
+			echo LWTV_Related_Posts::related_posts( $slug ); // WPCS: XSS okay
 			if ( count( LWTV_Related_Posts::count_related_posts( $slug ) ) > '5' ) {
 				$tag = term_exists( $slug, 'post_tag' );
 				if ( ! is_null( $tag ) && $tag >= 1 ) {
-					echo '<p><a href="' . get_tag_link( $tag['term_id'] ) . '">Read More ...</a></p>';
+					echo '<p><a href="' . esc_url( get_tag_link( $tag['term_id'] ) ) . '">Read More ...</a></p>';
 				}
 			}
 			?>
@@ -139,47 +139,58 @@ if ( $related ) {
 		$havecharcount = LWTV_CPT_Characters::list_characters( $show_id, 'count' );
 		$havedeadcount = LWTV_CPT_Characters::list_characters( $show_id, 'dead' );
 
-		if ( empty( $havecharcount ) || $havecharcount == '0' ) {
+		if ( empty( $havecharcount ) || '0' === $havecharcount ) {
 			echo '<p>There are no characters listed yet for this show.</p>';
 		} else {
-
 			$deadtext = 'none are dead';
-			if ( $havedeadcount > '0' ) $deadtext = sprintf( _n( '<strong>%s</strong> is dead', '<strong>%s</strong> are dead', $havedeadcount ), $havedeadcount );
+			if ( $havedeadcount > '0' ) {
+				// translators: %s is the number of dead characters
+				$deadtext = sprintf( _n( '<strong>%s</strong> is dead', '<strong>%s</strong> are dead', $havedeadcount ), $havedeadcount );
+			}
 
-			echo '<p>There '. sprintf( _n( 'is <strong>%s</strong> queer character', 'are <strong>%s</strong> queer characters', $havecharcount ), $havecharcount ).' listed for this show; ' . $deadtext . '.</p>';
+			// translators: %s is the number of characters total
+			echo wp_kses_post( '<p>There ' . sprintf( _n( 'is <strong>%s</strong> queer character', 'are <strong>%s</strong> queer characters', $havecharcount ), $havecharcount ) . ' listed for this show; ' . $deadtext . '.</p>' );
 
 			// Get the list of REGULAR characters
 			$chars_regular = lwtv_yikes_get_characters_for_show( $show_id, $havecharcount, 'regular' );
-			if ( !empty( $chars_regular ) ) {
-				?><h3 class="title-regulars">Regular<?php echo _n( '', 's', count( $chars_regular ) ); ?> (<?php echo count( $chars_regular ); ?>)</h3>
-				<div class="container characters-regulars-container"><div class="row site-loop character-show-loop equal-height"><?php
-				foreach( $chars_regular as $character ) {
-					?><div class="col-sm-4"><?php
-						include( locate_template( 'template-parts/excerpt-post_type_characters.php' ) );
-					?></div><?php
+			if ( ! empty( $chars_regular ) ) {
+				?>
+				<h3 class="title-regulars"><?php echo esc_html( _n( 'Regular', 'Regulars', count( $chars_regular ) ) ); ?> (<?php echo (int) count( $chars_regular ); ?>)</h3>
+				<div class="container characters-regulars-container"><div class="row site-loop character-show-loop equal-height">
+				<?php
+				foreach ( $chars_regular as $character ) {
+					echo '<div class="col-sm-4">';
+					include locate_template( 'template-parts/excerpt-post_type_characters.php' );
+					echo '</div>';
 				}
 				echo '</div></div>';
 			}
 			// Get the list of RECURRING characters
 			$chars_recurring = lwtv_yikes_get_characters_for_show( $show_id, $havecharcount, 'recurring' );
-			if ( !empty( $chars_recurring ) ) {
-				?><h3 class="title-recurring">Recurring (<?php echo count( $chars_recurring ); ?>)</h3>
-				<div class="container characters-recurring-container"><div class="row site-loop character-show-loop equal-height"><?php
-				foreach( $chars_recurring as $character ) {
-					?><div class="col-sm-4"><?php
-						include( locate_template( 'template-parts/excerpt-post_type_characters.php' ) );
-					?></div><?php
+			if ( ! empty( $chars_recurring ) ) {
+				?>
+				<h3 class="title-recurring">Recurring (<?php echo count( $chars_recurring ); ?>)</h3>
+				<div class="container characters-recurring-container"><div class="row site-loop character-show-loop equal-height">
+				<?php
+				foreach ( $chars_recurring as $character ) {
+					echo '<div class="col-sm-4">';
+					include locate_template( 'template-parts/excerpt-post_type_characters.php' );
+					echo '</div>';
 				}
 				echo '</div></div>';
 			}
 			// Get the list of GUEST characters
 			$chars_guest = lwtv_yikes_get_characters_for_show( $show_id, $havecharcount, 'guest' );
-			if ( !empty( $chars_guest ) ) {
-				?><h3 class="title-guest">Guest<?php echo _n( '', 's', count( $chars_guest ) ); ?> (<?php echo count( $chars_guest ); ?>)</h3>
-				<ul class="guest-character-list"><?php
-				foreach( $chars_guest as $character ) {
-					$grave = ( has_term( 'dead', 'lez_cliches' , $character['id'] ) )? '<span role="img" aria-label="RIP Tombstone" title="RIP Tombstone" class="charlist-grave-sm">' . lwtv_yikes_symbolicons( 'rest-in-peace.svg', 'fa-times-circle' ) . '</span>' : '';
-					?><li><a href="<?php the_permalink( $character['id'] ); ?>" title="<?php echo get_the_title( $character['id'] ); ?>" ><?php echo get_the_title( $character['id'] ) . ' ' . $grave; ?></a></li><?php
+			if ( ! empty( $chars_guest ) ) {
+				?>
+				<h3 class="title-guest"><?php echo esc_html( _n( 'Guest', 'Guests', count( $chars_guest ) ) ); ?> (<?php echo count( $chars_guest ); ?>)</h3>
+				<ul class="guest-character-list">
+				<?php
+				foreach ( $chars_guest as $character ) {
+					$grave = ( has_term( 'dead', 'lez_cliches', $character['id'] ) ) ? '<span role="img" aria-label="RIP Tombstone" title="RIP Tombstone" class="charlist-grave-sm">' . lwtv_yikes_symbolicons( 'rest-in-peace.svg', 'fa-times-circle' ) . '</span>' : '';
+					?>
+					<li><a href="<?php the_permalink( $character['id'] ); ?>" title="<?php echo get_the_title( $character['id'] ); ?>" ><?php echo get_the_title( $character['id'] ) . ' ' . lwtv_sanitized( $grave ); ?></a></li>
+					<?php
 				}
 				echo '</ul>';
 			}

@@ -8,14 +8,16 @@
         <exclude name="WordPress.WP.DiscouragedFunctions.wp_reset_query_wp_reset_query" />
         <exclude name="WordPress.WP.I18n.NonSingularStringLiteralSingle" />
         <exclude name="WordPress.WP.I18n.NonSingularStringLiteralPlural" />
+		<exclude name="WordPress.WP.I18n.NonSingularStringLiteralText" />
+		<exclude name="WordPress.WP.I18n.MissingTranslatorsComment" />
         <exclude name="WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode" />
         <exclude name="WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents" />
         <exclude name="WordPress.PHP.DevelopmentFunctions.error_log_trigger_error" />
     </rule>
 
-    <rule ref="WordPress.XSS.EscapeOutput">
+    <rule ref="WordPress.Security.EscapeOutput">
         <properties>
-            <property name="customEscapingFunctions" value="lwtv_yikes_symbolicons" type="array" />
+            <property name="customAutoEscapedFunctions" value="lwtv_yikes_symbolicons,get_previous_posts_link,get_next_posts_link,yikes_pagination_get_page,yikes_pagination_get_page_space_right,yikes_pagination_get_page_space_left,yikes_pagination_get_first_page,lwtv_sanitized,lwtv_yikes_chardata,lwtv_yikes_show_star,LWTV_Stats" type="array" />
             <property name="customEscapingFunctions" value="facetwp_display" type="array" />
         </properties>
     </rule>

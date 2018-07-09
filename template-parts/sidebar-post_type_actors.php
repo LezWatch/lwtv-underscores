@@ -14,5 +14,5 @@ $actor_id = $post->ID;
 </section>
 
 <section id="affiliates" class="widget widget_text">
-	<?php echo LWTV_Affilliates::actors( $actor_id, 'widget' ); ?>
+	<?php echo LWTV_Affilliates::actors( $actor_id, 'widget' ); // WPCS: XSS okay ?>
 </section>

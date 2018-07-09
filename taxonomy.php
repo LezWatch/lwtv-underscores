@@ -9,15 +9,15 @@
 
 // Get the Term information and icons
 $term         = get_term_by( 'slug', get_query_var( 'term' ), get_query_var( 'taxonomy' ) );
-$iconname     = lwtv_yikes_tax_archive_title( 'icon', get_post_type( get_the_ID() ), get_query_var( 'taxonomy' )  );
+$iconname     = lwtv_yikes_tax_archive_title( 'icon', get_post_type( get_the_ID() ), get_query_var( 'taxonomy' ) );
 $the_icon     = '<span role="img" aria-label="' . $term->name . '" title="' . $term->name . '" class="taxonomy-svg ' . $term->slug . '"> ' . $iconname . '</span>';
 $title_prefix = lwtv_yikes_tax_archive_title( 'prefix', get_post_type( get_the_ID() ), get_query_var( 'taxonomy' ) );
 $title_suffix = lwtv_yikes_tax_archive_title( 'suffix', get_post_type( get_the_ID() ), get_query_var( 'taxonomy' ) );
 
 // Count Posts: If this is a show or a character taxonomy, we do extra
-$count_posts  = $term->count;
-if ( in_array( get_post_type( get_the_ID() ) , array( 'post_type_shows', 'post_type_characters' ) ) ) {
-	$count_posts  = facetwp_display( 'counts' );
+$count_posts = $term->count;
+if ( in_array( get_post_type( get_the_ID() ), array( 'post_type_shows', 'post_type_characters' ), true ) ) {
+	$count_posts = facetwp_display( 'counts' );
 }
 
 get_header(); ?>
@@ -28,11 +28,11 @@ get_header(); ?>
 			<header class="archive-header">
 				<div class="row">
 					<div class="col-10"><?php the_archive_title( '<h1 class="facetwp-page-title entry-title">' . $title_prefix, $title_suffix . ' (' . $count_posts . '<span class="facetwp-count"></span>)</h1>' ); ?></div>
-					<div class="col-2 icon plain"><?php echo $the_icon; ?></div>
+					<div class="col-2 icon plain"><?php echo lwtv_sanitized( $the_icon ); ?></div>
 				</div>
 				<div class="row">
 					<div class="archive-description">
-					<?php 
+					<?php
 						echo '<h3 class="facetwp-title"></h3>';
 						the_archive_description( '<p>', '<span class="facetwp-description"></span></p>' );
 						echo '<p><span class="facetwp-sorted"></span></p>';
@@ -55,47 +55,42 @@ get_header(); ?>
 							<div class="entry-content facetwp-template">
 								<div class="row site-loop show-archive-loop equal-height">
 									<?php
-									if ( have_posts() ) : ?>
-										<?php
+									if ( have_posts() ) :
 										/* Start the Loop */
-										while ( have_posts() ) : the_post();
+										while ( have_posts() ) :
+											the_post();
 											switch ( get_post_type( get_the_ID() ) ) {
 												case 'post_type_characters':
-													?><div class="col-sm-4"><?php
+													echo '<div class="col-sm-4">';
 													get_template_part( 'template-parts/excerpt', 'post_type_characters' );
-													?></div><?php
+													echo '</div>';
 													break;
 												case 'post_type_shows':
 													get_template_part( 'template-parts/excerpt', 'post_type_shows' );
 													break;
 												case 'post_type_actors':
-													?><div class="col-sm-4"><?php
+													echo '<div class="col-sm-4">';
 													get_template_part( 'template-parts/excerpt', 'post_type_actors' );
-													?></div><?php
+													echo '</div>';
 													break;
 												default:
 													get_template_part( 'template-parts/content', 'posts' );
 											}
-									endwhile; ?>
+										endwhile;
+									else :
+										get_template_part( 'template-parts/content', 'none' );
+									endif;
+									?>
 								</div><!-- .site-loop -->
-
-								<?php
-									echo facetwp_display( 'pager' );
-			
-								else :
-									get_template_part( 'template-parts/content', 'none' );
-						
-								endif; ?>
+								<?php echo facetwp_display( 'pager' ); ?>
 							</div><!-- .entry-content -->
 						</article><!-- #post-## -->
 					</div><!-- #content -->
 				</div><!-- #primary -->
 			</div><!-- .col-sm-9 -->
-	
+
 			<div class="col-sm-3 site-sidebar showchars-sidebar site-loop">
-
 				<?php get_sidebar(); ?>
-
 			</div><!-- .col-sm-3 -->
 
 		</div><!-- .row -->
@@ -103,4 +98,6 @@ get_header(); ?>
 </div><!-- #main -->
 
 
-<?php get_footer();
+<?php
+
+get_footer();

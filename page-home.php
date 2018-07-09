@@ -6,8 +6,8 @@
  */
 get_header(); ?>
 
-<?php 
-	$paged = get_query_var( 'page' ) ? get_query_var( 'page' ) : 1; 
+<?php
+	$paged = get_query_var( 'page' ) ? get_query_var( 'page' ) : 1;
 	$already_displayed_posts = array();
 ?>
 
@@ -20,17 +20,17 @@ get_header(); ?>
 		<div class="container">
 			<div class="row">
 				<!-- Newest posts -->
-				<div class="col-sm-8"> 
+				<div class="col-sm-8">
 
 					<div class="site-loop home-featured-post-loop">
 						<h2 class="posts-title">New Posts <?php echo lwtv_yikes_symbolicons( 'newspaper.svg', 'fa-newspaper' ); ?></h2>
 
-						<?php 
+						<?php
 						$lastpostloop = new WP_Query( array(
-							'posts_per_page' => '1', 
-							'orderby' => 'date', 
+							'posts_per_page' => '1',
+							'orderby' => 'date',
 							'order' => 'DESC'
-						) ); 
+						) );
 						?>
 
 						<!-- // The Loop -->
@@ -43,8 +43,8 @@ get_header(); ?>
 								<div class="card-body">
 									<h3 class="card-title"><?php the_title(); ?></h3>
 									<div class="card-meta text-muted">
-										<?php the_date(); ?> 
-										<?php echo lwtv_yikes_symbolicons( 'user-circle.svg', 'fa-user-circle' ); ?> 
+										<?php the_date(); ?>
+										<?php echo lwtv_yikes_symbolicons( 'user-circle.svg', 'fa-user-circle' ); ?>
 										<?php the_author(); ?>
 									</div>
 									<div class="card-text">
@@ -58,28 +58,28 @@ get_header(); ?>
 								</div><!-- .card-footer -->
 							</div><!-- .card -->
 
-						<?php endwhile;  ?>	
+						<?php endwhile;  ?>
 
 						<?php wp_reset_postdata(); ?>
 					</div>
 
 					<div class="site-loop home-featured-secondary-loop">
 
-						<?php 
+						<?php
 						$newpostsloop = new WP_Query( array(
 							'posts_per_page' => '5',
 							'offset'         => '1',
-							'orderby'        => 'date', 
+							'orderby'        => 'date',
 							'order'          => 'DESC'
-						) ); 
+						) );
 						?>
-						 
+
 						<!-- // The Loop -->
 						<?php while ($newpostsloop->have_posts()) : $newpostsloop->the_post(); $already_displayed_posts[]=get_the_ID(); ?>
 
 							<div class="card-group">
-								<div class="card col-sm-5"	
-									<?php 
+								<div class="card col-sm-5"
+									<?php
 									if ( has_post_thumbnail() ) { ?>
 										style="background-image: url(<?php the_post_thumbnail_url( 'large' ); ?>);"
 									<?php } ?>
@@ -90,7 +90,7 @@ get_header(); ?>
 										<h3 class="card-title"><?php the_title(); ?></h3>
 										<div class="card-meta text-muted">
 											<?php the_date(); ?>
-											<?php echo lwtv_yikes_symbolicons( 'user-circle.svg', 'fa-user-circle' ); ?> 
+											<?php echo lwtv_yikes_symbolicons( 'user-circle.svg', 'fa-user-circle' ); ?>
 											<?php the_author(); ?>
 										</div>
 										<div class="card-text">
@@ -133,21 +133,23 @@ get_header(); ?>
 				<div class="col">
 					<div class="card-deck">
 						<?php
-							
+
 						// Collect 30 loved posts (max) and then pick 3
 						$lovedpostloop = new WP_Query( array(
-							'post_type'         => 'post_type_shows',
-							'posts_per_page'    => '30',
-							'post_status'       => array( 'publish' ),
-							'no_found_rows'     => true,
-							'_loved_shuffle'    => 3,
-							'meta_query'        => array( array(
-								'key'     => 'lezshows_worthit_show_we_love',
-								'value'   => 'on',
-								'compare' => '=',
-							),),
-						) ); 
-						
+							'post_type'      => 'post_type_shows',
+							'posts_per_page' => '30',
+							'post_status'    => array( 'publish' ),
+							'no_found_rows'  => true,
+							'_loved_shuffle' => 3,
+							'meta_query'     => array(
+								array(
+									'key'     => 'lezshows_worthit_show_we_love',
+									'value'   => 'on',
+									'compare' => '=',
+								),
+							),
+						) );
+
 						while ( $lovedpostloop->have_posts() ) : $lovedpostloop->the_post();
 						?>
 							<div class="card">
@@ -155,7 +157,7 @@ get_header(); ?>
 								<div class="card-body">
 									<h4 class="card-title"><?php the_title(); ?></h4>
 									<div class="card-meta">
-										<?php 
+										<?php
 											$stations = get_the_terms( get_the_ID(), 'lez_stations' );
 											if ( $stations && ! is_wp_error( $stations ) ) {
 												echo get_the_term_list( get_the_ID(), 'lez_stations', '<strong>Network:</strong> ', ', ' ) .'<br />';
@@ -204,16 +206,16 @@ get_header(); ?>
 			<div class="row site-loop main-posts-loop equal-height">
 
 				<?php
-					
+
 				$old_posts_per_page = ( $paged == 1 )? '6' : '12';
-					
+
 				$oldpostsloop = new WP_Query( array(
 					'posts_per_page' => $old_posts_per_page,
 					'paged'          => $paged,
 					'post__not_in'   => $already_displayed_posts,
-					'orderby'        => 'date', 
+					'orderby'        => 'date',
 					'order'          => 'DESC'
-				) ); 
+				) );
 				?>
 
 				<!-- // The Loop -->
@@ -223,11 +225,11 @@ get_header(); ?>
 					<div class="col-sm-4">
 						<?php get_template_part( 'template-parts/content', 'posts' ); ?>
 					</div>
-				<?php 
+				<?php
 				endwhile;
 
 				wp_reset_postdata();
-				yikes_generate_pagination_buttons( $paged, $oldpostsloop->max_num_pages ); 
+				yikes_generate_pagination_buttons( $paged, $oldpostsloop->max_num_pages );
 				?>
 
 			</div><!-- .row .home-featured-post-loop -->

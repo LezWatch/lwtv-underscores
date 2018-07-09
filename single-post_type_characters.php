@@ -6,12 +6,12 @@
  */
 
 // Build the icon
-$icon  = '<div class="show-header-svg">';
+$icon = '<div class="show-header-svg">';
 if ( has_term( 'dead', 'lez_cliches' ) ) {
 	$icon .= ' <span role="img" aria-label="RIP - Dead Character" data-toggle="tooltip" title="RIP - Dead Character" class="cliche-dead">' . lwtv_yikes_symbolicons( 'rest-in-peace.svg', 'fa-ban' ) . '</span>';
 }
 $icon .= '</div>';
- 
+
 get_header(); ?>
 
 <div class="archive-subheader">
@@ -20,7 +20,7 @@ get_header(); ?>
 			<header class="archive-header">
 				<div class="row">
 					<div class="col-10"><?php the_title( '<h1 class="entry-title">', '</h1>' ); ?></div>
-					<div class="col-2 icon plain"><?php echo $icon; ?></div>
+					<div class="col-2 icon plain"><?php echo lwtv_sanitized( $icon ); ?></div>
 				</div>
 			</header><!-- .archive-header -->
 		</div><!-- .container -->
@@ -37,11 +37,13 @@ get_header(); ?>
 							<div class="entry-content character-page">
 								<div class="card">
 									<?php
-										while ( have_posts() ) : the_post(); 
-											get_template_part( 'template-parts/content', get_post_type() );
-											// Force Jetpack to display sharing links where we want them.
-											lwtv_yikes_jetpack_post_meta();
-										endwhile; // end of the loop. 
+									while ( have_posts() ) :
+										the_post();
+										get_template_part( 'template-parts/content', get_post_type() );
+										// Force Jetpack to display sharing links where we want them.
+										lwtv_yikes_jetpack_post_meta();
+									endwhile;
+									// end of the loop.
 									?>
 								</div>
 							</div><!-- .entry-content -->
@@ -56,4 +58,6 @@ get_header(); ?>
 	</div><!-- .container -->
 </div><!-- #main -->
 
-<?php get_footer();
+<?php
+
+get_footer();

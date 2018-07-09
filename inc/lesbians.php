@@ -20,9 +20,10 @@ require get_template_directory() . '/inc/thisyear.php';
  * for reloads.
  */
 add_filter( 'the_posts', function( $posts, \WP_Query $query ) {
-	if ( $pick === $query->get( '_loved_shuffle' ) ) {
-			shuffle( $posts );
-			$posts = array_slice( $posts, 0, (int) $pick );
+	$pick = $query->get( '_loved_shuffle' );
+	if ( is_numeric( $pick ) ) {
+		shuffle( $posts );
+		$posts = array_slice( $posts, 0, (int) $pick );
 	}
 		return $posts;
 }, 10, 2 );
@@ -63,7 +64,9 @@ function lwtv_yikes_symbolicons( $svg = 'square.svg', $fontawesome = 'fa-square'
 	}
 
 	if ( isset( $icon ) ) {
-		$return = '<span class="symbolicon" role="img">' . lwtv_file_get_contents( $icon ) . '</span>';
+		// @codingStandardsIgnoreStart
+		$return = '<span class="symbolicon" role="img">' . file_get_contents( $icon ) . '</span>';
+		// @codingStandardsIgnoreEnd
 	}
 
 	// Override for AMP - NO ICONS
@@ -388,7 +391,7 @@ function lwtv_yikes_get_characters_for_show( $show_id, $havecharcount, $role = '
 	$valid_roles = array( 'regular', 'recurring', 'guest' );
 
 	// If this isn't a show page, or there are no valid roles, bail.
-	if ( ! isset( $show_id ) || 'post_type_shows' !== get_post_type( $show_id ) || ! in_array( $role, $valid_roles ) ) {
+	if ( ! isset( $show_id ) || 'post_type_shows' !== get_post_type( $show_id ) || ! in_array( $role, $valid_roles, true ) ) {
 		return;
 	}
 
@@ -429,9 +432,9 @@ function lwtv_yikes_get_characters_for_show( $show_id, $havecharcount, $role = '
 			// AND has this role ON THIS SHOW we will pass the following
 			// data to the character template to determine what to display.
 
-			if ( 'publish' === get_post_status ( $char_id ) && isset( $shows_array ) && ! empty( $shows_array ) ) {
+			if ( 'publish' === get_post_status( $char_id ) && isset( $shows_array ) && ! empty( $shows_array ) ) {
 				foreach ( $shows_array as $char_show ) {
-					if ( $char_show['show'] === $show_id && $char_show['type'] === $role ) {
+					if ( $char_show['show'] == $show_id && $char_show['type'] === $role ) { // WPCS: loose comparison ok.
 						$characters[ $char_id ] = array(
 							'id'        => $char_id,
 							'title'     => get_the_title( $char_id ),
@@ -465,7 +468,7 @@ function lwtv_yikes_chardata( $the_id, $data ) {
 
 	// Early Bail
 	$valid_data = array( 'dead', 'shows', 'actors', 'gender', 'sexuality', 'romantic', 'cliches', 'oneshow', 'oneactor' );
-	if ( ! isset( $the_id ) || ! isset( $data ) || ! in_array( $data, $valid_data ) ) {
+	if ( ! isset( $the_id ) || ! isset( $data ) || ! in_array( $data, $valid_data, true ) ) {
 		return;
 	}
 
@@ -580,7 +583,7 @@ function lwtv_yikes_actordata( $the_id, $data ) {
 
 	// Early Bail
 	$valid_data = array( 'characters', 'gender', 'sexuality', 'age', 'dead' );
-	if ( ! isset( $the_id ) || ! isset( $data ) || ! in_array( $data, $valid_data ) ) {
+	if ( ! isset( $the_id ) || ! isset( $data ) || ! in_array( $data, $valid_data, true ) ) {
 		return;
 	}
 
@@ -600,7 +603,7 @@ function lwtv_yikes_actordata( $the_id, $data ) {
 			}
 			break;
 		case 'characters':
-			$characters = array();
+			$characters     = array();
 			$charactersloop = new WP_Query( array(
 				'post_type'              => 'post_type_characters',
 				'post_status'            => array( 'publish' ),
@@ -624,7 +627,7 @@ function lwtv_yikes_actordata( $the_id, $data ) {
 					$actors_array = get_post_meta( $char_id, 'lezchars_actor', true );
 					if ( 'publish' === get_post_status( $char_id ) && isset( $actors_array ) && ! empty( $actors_array ) ) {
 						foreach ( $actors_array as $char_actor ) {
-							if ( $char_actor === $the_id ) {
+							if ( $char_actor == $the_id ) { // WPCS: loose comparison ok.
 								$characters[ $char_id ] = array(
 									'id'      => $char_id,
 									'title'   => get_the_title( $char_id ),
@@ -672,7 +675,7 @@ function lwtv_yikes_actordata( $the_id, $data ) {
 
 					if ( 'publish' === get_post_status( $char_id ) && isset( $actors ) && ! empty( $actors ) ) {
 						foreach ( $actors as $actor ) {
-							if ( $actor === $the_id && has_term( 'dead', 'lez_cliches', $char_id ) ) {
+							if ( $actor == $the_id && has_term( 'dead', 'lez_cliches', $char_id ) ) {  // WPCS: loose comparison ok.
 								$dead[ $char_id ] = array(
 									'id'    => $char_id,
 									'title' => get_the_title( $char_id ),
@@ -690,15 +693,15 @@ function lwtv_yikes_actordata( $the_id, $data ) {
 			$gender_terms = get_the_terms( $the_id, 'lez_actor_gender', true );
 			if ( $gender_terms && ! is_wp_error( $gender_terms ) ) {
 				foreach ( $gender_terms as $gender_term ) {
-					$output .= '<a href="' . get_term_link( $gender_term->slug, 'lez_actor_gender') . '" rel="tag" title="' . $gender_term->name . '">' . $gender_term->name . '</a> ';
+					$output .= '<a href="' . get_term_link( $gender_term->slug, 'lez_actor_gender' ) . '" rel="tag" title="' . $gender_term->name . '">' . $gender_term->name . '</a> ';
 				}
 			}
 			break;
 		case 'sexuality':
 			$sexuality_terms = get_the_terms( $the_id, 'lez_actor_sexuality', true );
 			if ( $sexuality_terms && ! is_wp_error( $sexuality_terms ) ) {
-				foreach( $sexuality_terms as $sexuality_term ) {
-					$output .= '<a href="' . get_term_link( $sexuality_term->slug, 'lez_actor_sexuality') . '" rel="tag" title="' . $sexuality_term->name . '">' . $sexuality_term->name . '</a> ';
+				foreach ( $sexuality_terms as $sexuality_term ) {
+					$output .= '<a href="' . get_term_link( $sexuality_term->slug, 'lez_actor_sexuality' ) . '" rel="tag" title="' . $sexuality_term->name . '">' . $sexuality_term->name . '</a> ';
 				}
 			}
 			break;
@@ -714,7 +717,7 @@ function lwtv_yikes_actordata( $the_id, $data ) {
  * @return void
  */
 function lwtv_yikes_is_queer( $the_id ) {
-	$is_queer = ( LWTV_Loops::is_actor_queer( $the_id ) == 'yes' )? true : false;
+	$is_queer = ( 'yes' === LWTV_Loops::is_actor_queer( $the_id ) ) ? true : false;
 	return $is_queer;
 }
 
@@ -731,11 +734,11 @@ function lwtv_yikes_is_queer( $the_id ) {
  */
 function lwtv_microformats_fix( $post_id ) {
 	$valid_types = array( 'post_type_authors', 'post_type_characters', 'post_type_shows' );
-	if ( in_array( get_post_type( $post_id ), $valid_types ) ) {
+	if ( in_array( get_post_type( $post_id ), $valid_types, true ) ) {
 		echo '<div class="hatom-extra" style="display:none;visibility:hidden;">
-			<span class="entry-title">' . get_the_title( $post_id ) . '</span>
-			<span class="updated">' . get_the_modified_time( 'F jS, Y', $post_id ) . '</span>
-			<span class="author vcard"><span class="fn">' . get_option( 'blogname' ) . '</span></span>
+			<span class="entry-title">' . esc_html( get_the_title( $post_id ) ) . '</span>
+			<span class="updated">' . esc_html( get_the_modified_time( 'F jS, Y', $post_id ) ) . '</span>
+			<span class="author vcard"><span class="fn">' . esc_html( get_option( 'blogname' ) ) . '</span></span>
 		</div>';
 	}
 }
@@ -759,20 +762,15 @@ function lwtv_gdpr_footer() {
 }
 //add_action( 'wp_footer', 'lwtv_gdpr_footer', 5 );
 
-/** The Sanitization Section **/
+/** Sanitzation Section **/
 
 /**
- * This does nothing. I know.
+ * This function does NOTHING, and if someone submitted it to the .org repo,
+ * I would slap them with a fish. The problem is there isn't a good way to
+ * sanitize an SVG, so it's this or having a million WPCS comments.
+ * @param  mixed $input HTML content with an SVG
+ * @return mixed        Content with an SVG
  */
-function lwtv_file_get_contents( $file ) {
-	// @codingStandardsIgnoreStart
-	return file_get_contents( $file );
-	// @codingStandardsIgnoreEnd
-}
-
-/**
- * This does nothing. I know.
- */
-function lwtv_kses( $content ) {
-	return $content;
+function lwtv_sanitized( $input ) {
+	return $input;
 }

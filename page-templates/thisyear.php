@@ -4,16 +4,16 @@
 * Description: Used to show the yearly data of lezbians and what not.
 */
 
-$thisyear = (int) (isset( $wp_query->query['thisyear'] ) )? $wp_query->query['thisyear'] : date('Y');
+$thisyear = (int) ( isset( $wp_query->query['thisyear'] ) ) ? $wp_query->query['thisyear'] : date( 'Y' );
 
-if ( !is_numeric( $thisyear ) || $thisyear < FIRST_LWTV_YEAR ){
-	wp_redirect( '/this-year/' , '301' );
+if ( ! is_numeric( $thisyear ) || $thisyear < FIRST_LWTV_YEAR ) {
+	wp_safe_redirect( '/this-year/', '301' );
 	exit;
 }
 
 $iconpath = '<span role="img" aria-label="post_type_characters" title="Characters" class="taxonomy-svg characters">' . lwtv_yikes_symbolicons( 'calendar-15.svg', 'fa-calendar-alt' ) . '</span>';
 
-get_header(); 
+get_header();
 ?>
 
 <div class="archive-subheader">
@@ -21,13 +21,13 @@ get_header();
 		<div class="container">
 			<header class="archive-header">
 				<div class="row">
-					<div class="col-10"><h1 class="entry-title">In This Year - <?php echo $thisyear; ?></h1></div>
-					<div class="col-2 icon plain"><?php echo ( isset( $iconpath ) ? $iconpath : '' ); ?></div>
+					<div class="col-10"><h1 class="entry-title">In This Year - <?php echo (int) $thisyear; ?></h1></div>
+					<div class="col-2 icon plain"><?php echo ( isset( $iconpath ) ? $iconpath : '' ); // WPCS: XSS okay. ?></div>
 				</div>
 				<div class="row">
 					<div class="archive-description">
-						<p>An overview of queer events that occurred in <?php echo $thisyear; ?>.</p>
-						<p>You can review the list of TV shows that aired, began, and ended in each year, as well as all characters who died in each year, going back to <?php echo FIRST_LWTV_YEAR; ?>.</p>
+						<p>An overview of queer events that occurred in <?php echo (int) $thisyear; ?>.</p>
+						<p>You can review the list of TV shows that aired, began, and ended in each year, as well as all characters who died in each year, going back to <?php echo (int) FIRST_LWTV_YEAR; ?>.</p>
 					</div>
 				</div>
 			</header><!-- .archive-header -->
@@ -61,13 +61,13 @@ get_header();
 							<div class="row">
 								<div class="col">
 									<h2>This Years Shows</h2>
-									<?php lwtv_yikes_this_year_shows( $thisyear );  ?>
+									<?php lwtv_yikes_this_year_shows( $thisyear ); ?>
 								</div>
 							</div>
 						</div>
 
 						<?php
-							lwtv_yikes_this_year_navigation( $thisyear ); 
+							lwtv_yikes_this_year_navigation( $thisyear );
 						?>
 					</div><!-- #content -->
 				</div><!-- #primary -->
@@ -76,4 +76,6 @@ get_header();
 	</div><!-- .container -->
 </div><!-- #main -->
 
-<?php get_footer();
+<?php
+
+get_footer();
