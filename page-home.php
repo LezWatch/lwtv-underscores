@@ -7,13 +7,13 @@
 get_header(); ?>
 
 <?php
-	$paged = get_query_var( 'page' ) ? get_query_var( 'page' ) : 1;
+	$paged                   = get_query_var( 'page' ) ? get_query_var( 'page' ) : 1;
 	$already_displayed_posts = array();
 ?>
 
 <div id="main" class="site-main" role="main">
 
-	<?php if ( $paged == 1 ) { ?>
+	<?php if ( 1 === $paged ) { ?>
 
 	<!-- Home page top section -->
 	<section class="home-featured-posts">
@@ -28,18 +28,25 @@ get_header(); ?>
 						<?php
 						$lastpostloop = new WP_Query( array(
 							'posts_per_page' => '1',
-							'orderby' => 'date',
-							'order' => 'DESC'
+							'orderby'        => 'date',
+							'order'          => 'DESC',
 						) );
 						?>
 
 						<!-- // The Loop -->
-						<?php while ($lastpostloop->have_posts()) : $lastpostloop->the_post(); $already_displayed_posts[]=get_the_ID(); ?>
-
+						<?php
+						while ( $lastpostloop->have_posts() ) :
+							$lastpostloop->the_post();
+							$already_displayed_posts[] = get_the_ID();
+							?>
 							<div class="card">
-								<?php if ( has_post_thumbnail()) : ?>
+								<?php
+								if ( has_post_thumbnail() ) :
+									?>
 									<a href="<?php the_permalink(); ?>" title="<?php the_title_attribute(); ?>" ><?php the_post_thumbnail( 'large', array( 'class' => 'card-img-top' ) ); ?></a>
-								<?php endif; ?>
+									<?php
+								endif;
+								?>
 								<div class="card-body">
 									<h3 class="card-title"><?php the_title(); ?></h3>
 									<div class="card-meta text-muted">
@@ -57,10 +64,11 @@ get_header(); ?>
 									</a>
 								</div><!-- .card-footer -->
 							</div><!-- .card -->
+							<?php
+						endwhile;
 
-						<?php endwhile;  ?>
-
-						<?php wp_reset_postdata(); ?>
+						wp_reset_postdata();
+						?>
 					</div>
 
 					<div class="site-loop home-featured-secondary-loop">
@@ -70,19 +78,23 @@ get_header(); ?>
 							'posts_per_page' => '5',
 							'offset'         => '1',
 							'orderby'        => 'date',
-							'order'          => 'DESC'
+							'order'          => 'DESC',
 						) );
 						?>
 
 						<!-- // The Loop -->
-						<?php while ($newpostsloop->have_posts()) : $newpostsloop->the_post(); $already_displayed_posts[]=get_the_ID(); ?>
-
+						<?php
+						while ( $newpostsloop->have_posts() ) :
+							$newpostsloop->the_post();
+							$already_displayed_posts[] = get_the_ID();
+							?>
 							<div class="card-group">
 								<div class="card col-sm-5"
 									<?php
-									if ( has_post_thumbnail() ) { ?>
-										style="background-image: url(<?php the_post_thumbnail_url( 'large' ); ?>);"
-									<?php } ?>
+									if ( has_post_thumbnail() ) {
+										echo 'style="background-image: url(' . esc_url( the_post_thumbnail_url( 'large' ) ) . ');"';
+									}
+									?>
 								>
 								</div>
 								<div class="card col-sm-7">
@@ -105,9 +117,11 @@ get_header(); ?>
 								</div><!-- .card -->
 							</div><!-- .card-group -->
 
-						<?php endwhile;  ?>
+							<?php
+						endwhile;
 
-						<?php wp_reset_postdata(); ?>
+						wp_reset_postdata();
+						?>
 
 					</div><!-- .home-featured-secondary-loop -->
 

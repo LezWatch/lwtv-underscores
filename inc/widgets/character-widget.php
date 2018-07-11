@@ -25,10 +25,10 @@ class LWTV_Character extends WP_Widget {
 
 		// start a Queery
 		$char_args = array(
-			'post_type' => 'post_type_characters',
-			'posts_per_page' => '1', 
-			'orderby' => 'date', 
-			'order' => 'DESC'
+			'post_type'      => 'post_type_characters',
+			'posts_per_page' => '1',
+			'orderby'        => 'date',
+			'order'          => 'DESC',
 		);
 
 		// Get what's needed from $args array ($args populated with options from widget area register_sidebar function)
@@ -38,32 +38,36 @@ class LWTV_Character extends WP_Widget {
 		$after_title   = isset( $args['after_title'] ) ? $args['after_title'] : '';
 
 		// Get what's needed from $instanse array ($instance populated with user inputs from widget form)
-		$title     = isset( $instance['title'] ) && ! empty( trim( $instance['title'] ) ) ? $instance['title'] : 'YIKES Example Widget';
-		$title     = apply_filters( 'widget_title', $title, $instance, $this->id_base );
+		$title = isset( $instance['title'] ) && ! empty( trim( $instance['title'] ) ) ? $instance['title'] : 'YIKES Example Widget';
+		$title = apply_filters( 'widget_title', $title, $instance, $this->id_base );
 
 		/** Output widget HTML BEGIN **/
-		echo $before_widget;
+		echo wp_kses_post( $before_widget );
 
 		$queery = new WP_Query( $char_args );
-		while ($queery->have_posts()) {
+		while ( $queery->have_posts() ) {
 			$queery->the_post();
 
 			$thumb_attribution = get_post_meta( get_post_thumbnail_id(), 'lwtv_attribution', true );
-			$thumb_title       = ( empty( $thumb_attribution ) )? get_the_title() : get_the_title() . ' &copy; ' . $thumb_attribution;
+			$thumb_title       = ( empty( $thumb_attribution ) ) ? get_the_title() : get_the_title() . ' &copy; ' . $thumb_attribution;
 
 			echo '<div class="card">';
 			echo '<div class="card-header"><h4>Recently Added Character <span class="float-right">' . lwtv_yikes_symbolicons( 'contact-card.svg', 'fa-address-card' ) . '</span></h4></div>';
-	
+
 			// Featured Image
 			echo '<div class="character-image-wrapper">';
-			echo '<a href="' . get_the_permalink()  .'">';
-			echo the_post_thumbnail( 'character-img', array( 'class' => 'card-img-top', 'alt' => $thumb_title, 'title' => $thumb_title ) );
+			echo '<a href="' . esc_url( get_the_permalink() ) . '">';
+			echo the_post_thumbnail( 'character-img', array(
+				'class' => 'card-img-top',
+				'alt'   => $thumb_title,
+				'title' => $thumb_title,
+			) );
 			echo '</a>';
 			echo '</div>';
-	
+
 			echo '<div class="card-body">';
 				// Title
-				echo '<h4 class="card-title">' . get_the_title() .'</h4>';
+				echo '<h4 class="card-title">' . get_the_title() . '</h4>';
 				echo '<div class="card-text">';
 					// Only show one show
 					echo lwtv_yikes_chardata( get_the_ID(), 'oneshow' );
@@ -71,17 +75,17 @@ class LWTV_Character extends WP_Widget {
 					echo lwtv_yikes_chardata( get_the_ID(), 'oneactor' );
 				echo '</div>
 			</div>';
-	
+
 			// Button
 			echo '<div class="card-footer">
-					<a href="' . get_the_permalink()  .'" class="btn btn-outline-primary">Character Profile</a>
+					<a href="' . esc_url( get_the_permalink() ) . '" class="btn btn-outline-primary">Character Profile</a>
 				  </div>';
-	
+
 			echo '</div>';
-	
+
 			wp_reset_postdata();
-	
-			echo $after_widget;
+
+			echo wp_kses_post( $after_widget );
 			/** Output widget HTML END **/
 		}
 
@@ -97,7 +101,7 @@ class LWTV_Character extends WP_Widget {
 		$instance = $old_instance;
 
 		// Update each setting to new values entered by user
-		$instance['title']     = strip_tags( $new_instance['title'] );
+		$instance['title'] = wp_strip_all_tags( $new_instance['title'] );
 
 		return $instance;
 	}
@@ -109,15 +113,14 @@ class LWTV_Character extends WP_Widget {
 	public function form( $instance ) {
 
 		$title = isset( $instance['title'] ) ? $instance['title'] : '';
+		?>
 
-	?>
+		<p>
+			<label for="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>"><?php esc_html_e( 'Title (optional)' ); ?></label>
+			<input class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'title' ) ); ?>" type="text" value="<?php echo esc_attr( $title ); ?>" />
+		</p>
 
-	<p>
-		<label for="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>"><?php esc_html_e( 'Title (optional)' ); ?></label>
-		<input class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'title' ) ); ?>" type="text" value="<?php echo esc_attr( $title ); ?>" />
-	</p>
-
-	<?php
+		<?php
 	}
 
 }
