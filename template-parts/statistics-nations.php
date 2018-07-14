@@ -43,7 +43,7 @@ switch ( $country ) {
 
 ?>
 
-<h2><?php echo esc_html( $title_country ); ?></h2>
+<h2><?php echo wp_kses_post( $title_country ); ?></h2>
 
 <section id="toc" class="toc-container card-body">
 	<nav class="breadcrumb">
@@ -56,7 +56,7 @@ switch ( $country ) {
 					foreach ( $nations as $nation ) {
 						$selected = ( $country === $nation->slug ) ? 'selected=selected' : '';
 						$shows    = _n( 'Show', 'Shows', $nation->count );
-						echo '<option value="' . esc_url( $nation->slug ) . '" ' . esc_html( $selected ) . '>' . esc_html( $nation->name ) . '</option>';
+						echo '<option value="' . esc_attr( $nation->slug ) . '" ' . esc_html( $selected ) . '>' . esc_html( $nation->name ) . '</option>';
 					}
 					?>
 				</select>
@@ -72,7 +72,7 @@ switch ( $country ) {
 	<?php
 	foreach ( $valid_views as $the_view => $the_post_type ) {
 		$active = ( $view === $the_view ) ? ' active' : '';
-		echo '<li class="nav-item"><a class="nav-link' . esc_attr( $active ) . '" href="' . esc_url( add_query_arg( 'view', $the_view, $current_url ) ) . '">' . esc_html( strtoupper( str_replace( '-', ' ', $the_view ) ) ) . '</a></li>';
+		echo '<li class="nav-item"><a class="nav-link' . esc_attr( $active ) . '" href="' . esc_attr( add_query_arg( 'view', $the_view, $current_url ) ) . '">' . esc_html( strtoupper( str_replace( '-', ' ', $the_view ) ) ) . '</a></li>';
 	}
 	?>
 </ul>
@@ -125,7 +125,7 @@ switch ( $country ) {
 					<?php
 					foreach ( $nations as $nation ) {
 						echo '<tr>
-							<th scope="row"><a href="?view=overview&country=' . esc_url( $nation->slug ) . '">' . esc_html( $nation->name ) . '</a></th>
+							<th scope="row"><a href="?view=overview&country=' . esc_attr( $nation->slug ) . '">' . esc_html( $nation->name ) . '</a></th>
 							<td>' . (int) $nation->count . '</td>
 							<td>' . esc_html( round( ( ( $nation->count / $shows_count ) * 100 ), 1 ) ) . '%</td>
 							<td>' . LWTV_Stats::showcount( 'score', 'country', $nation->slug ) . '</td>
@@ -145,7 +145,7 @@ switch ( $country ) {
 			$onairscore = LWTV_Stats::showcount( 'onairscore', 'country', ltrim( $country, '_' ) );
 
 			if ( '_all' === $view ) {
-				echo esc_html( '<p>Currently, ' . $onair . ' of ' . $allshows . ' shows are on air. The average score for all shows in this country is ' . $showscore . ', and ' . $onairscore . ' for shows currently on air (out of a possible 100).</p>' );
+				echo wp_kses_post( '<p>Currently, ' . $onair . ' of ' . $allshows . ' shows are on air. The average score for all shows in this country is ' . $showscore . ', and ' . $onairscore . ' for shows currently on air (out of a possible 100).</p>' );
 			}
 
 			LWTV_Stats::generate( $post_type, 'country' . $country . $view, $format );

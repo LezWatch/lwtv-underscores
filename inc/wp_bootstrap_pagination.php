@@ -20,7 +20,7 @@ function wp_bootstrap_pagination( $args = array() ) {
 	);
 
 	$args['range'] = (int) $args['range'] - 1;
-	if ( ! $args['custom_query'] ) {
+	if ( ! in_array( 'custom_query', $args ) || ! $args['custom_query'] ) {
 		$args['custom_query'] = @$GLOBALS['wp_query'];
 	}
 

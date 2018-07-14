@@ -40,7 +40,7 @@ switch ( $station ) {
 
 ?>
 
-<h2><?php echo esc_html( $title_station ); ?></h2>
+<h2><?php echo wp_kses_post( $title_station ); ?></h2>
 
 <section id="toc" class="toc-container card-body">
 	<nav class="breadcrumb">
@@ -68,7 +68,7 @@ switch ( $station ) {
 	<?php
 	foreach ( $valid_views as $the_view => $the_post_type ) {
 		$active = ( $view === $the_view ) ? ' active' : '';
-		echo '<li class="nav-item"><a class="nav-link' . esc_attr( $active ) . '" href="' . esc_url( add_query_arg( 'view', $the_view, $current_url ) ) . '">' . esc_html( strtoupper( str_replace( '-', ' ', $the_view ) ) ) . '</a></li>';
+		echo '<li class="nav-item"><a class="nav-link' . esc_attr( $active ) . '" href="' . esc_attr( add_query_arg( 'view', $the_view, $current_url ) ) . '">' . esc_html( strtoupper( str_replace( '-', ' ', $the_view ) ) ) . '</a></li>';
 	}
 	?>
 </ul>
@@ -119,7 +119,7 @@ switch ( $station ) {
 						<?php
 						foreach ( $all_stations as $the_station ) {
 							echo '<tr>
-									<th scope="row"><a href="?station=' . esc_url( $the_station->slug ) . '">' . esc_html( $the_station->name ) . '</a></th>
+									<th scope="row"><a href="?station=' . esc_attr( $the_station->slug ) . '">' . esc_html( $the_station->name ) . '</a></th>
 									<td>' . (int) $the_station->count . '</td>
 									<td>' . esc_html( round( ( ( $the_station->count / $shows_count ) * 100 ), 1 ) ) . '%</td>
 									<td>' . LWTV_Stats::showcount( 'score', 'stations', $the_station->slug ) . '</td>
@@ -143,7 +143,7 @@ switch ( $station ) {
 				$onairscore = LWTV_Stats::showcount( 'onairscore', 'stations', ltrim( $station, '_' ) );
 
 				if ( '_all' === $view ) {
-					echo esc_html( '<p>Currently, ' . $onair . ' of ' . $allshows . ' shows are on air. The average score for all shows in this station is ' . $showscore . ', and ' . $onairscore . ' for shows currently on air (out of a possible 100).</p>' );
+					echo wp_kses_post( '<p>Currently, ' . $onair . ' of ' . $allshows . ' shows are on air. The average score for all shows in this station is ' . $showscore . ', and ' . $onairscore . ' for shows currently on air (out of a possible 100).</p>' );
 					$format = 'barchart';
 				}
 			}
