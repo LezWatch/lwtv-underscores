@@ -33,7 +33,6 @@ class Filter_Bottom extends WP_Widget {
 
 		echo '	</div><!-- .card-body -->
 		</div><!-- .card -->';
-		
 
 		/** Output widget HTML BEGIN **/
 	}
@@ -57,14 +56,8 @@ class Filter_Bottom extends WP_Widget {
 	 */
 
 	public function form( $instance ) {
-
-		$title     = isset( $instance['title'] ) ? $instance['title'] : '';
-		$fontawesome  = isset( $instance['fontawesome'] ) ? $instance['fontawesome'] : '';
-
-	?>
-
-
-	<?php
+		$title       = isset( $instance['title'] ) ? $instance['title'] : '';
+		$fontawesome = isset( $instance['fontawesome'] ) ? $instance['fontawesome'] : '';
 	}
 
 }

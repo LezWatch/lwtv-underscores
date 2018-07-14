@@ -40,8 +40,8 @@
 		$warning = lwtv_yikes_content_warning( get_the_ID() );
 		if ( 'none' !== $warning['card'] ) {
 			?>
-			<div class="callout trigger-<?php echo $warning['card']; ?>" role="alert">
-				<?php echo $warning['content']; ?>
+			<div class="callout trigger-<?php echo esc_attr( $warning['card'] ); ?>" role="alert">
+				<?php echo lwtv_sanitized( $warning['content'] ); ?>
 			</div>
 			<?php
 		}

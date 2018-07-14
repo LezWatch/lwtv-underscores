@@ -26,7 +26,7 @@ class YIKES_Social_Menu_Widget extends WP_Widget {
 		//Get menu ID for Social Nav Menu
 		$menu_name = 'social_menu';
 		$locations = get_nav_menu_locations();
-		$menu_id = isset( $locations[ $menu_name ] ) ? $locations[ $menu_name ] : '';
+		$menu_id   = isset( $locations[ $menu_name ] ) ? $locations[ $menu_name ] : '';
 
 		//Get title
 		$title = ! empty( trim( $instance['title'] ) ) ? $instance['title'] : 'Social';
@@ -41,7 +41,7 @@ class YIKES_Social_Menu_Widget extends WP_Widget {
 
 		//Get $before_widget attribute set on selected widget area (register_sidebar) and display
 		$before_widget = isset( $args['before_widget'] ) ? $args['before_widget'] : '';
-		echo $before_widget;
+		echo lwtv_sanitized( $before_widget );
 
 		//Check if hide_text option is set
 		$hide_text = ! empty( $instance['hide_text'] ) ? 'class="widget-hide-text"' : '';
@@ -57,14 +57,14 @@ class YIKES_Social_Menu_Widget extends WP_Widget {
 
 		//Display widget title
 		$before_title = isset( $args['before_title'] ) ? $args['before_title'] : '';
-		$after_title = isset( $args['after_title'] ) ? $args['after_title'] : '';
-		echo $before_title . $title . $after_title;
+		$after_title  = isset( $args['after_title'] ) ? $args['after_title'] : '';
+		echo lwtv_sanitized( $before_title . $title . $after_title );
 
 		wp_nav_menu( apply_filters( 'widget_nav_menu_args', $nav_menu_args, $menu_id, $args, $instance ) );
 
 		//Get $after_widget attribute set on selected widget area (register_sidebar) and display
 		$after_widget = isset( $args['after_widget'] ) ? $args['after_widget'] : '';
-		echo $after_widget;
+		echo lwtv_sanitized( $after_widget );
 	}
 
 	/**
@@ -72,8 +72,8 @@ class YIKES_Social_Menu_Widget extends WP_Widget {
 	 */
 
 	public function update( $new_instance, $old_instance ) {
-		$instance = $old_instance;
-		$instance['title']       = strip_tags( $new_instance['title'] );
+		$instance                = $old_instance;
+		$instance['title']       = wp_strip_all_tags( $new_instance['title'] );
 		$instance['hide_text']   = $new_instance['hide_text'] ? 1 : 0;
 		$instance['orientation'] = $new_instance['orientation'];
 		return $instance;
@@ -96,13 +96,12 @@ class YIKES_Social_Menu_Widget extends WP_Widget {
 			<input class="checkbox" type="checkbox"<?php checked( $hide ); ?> id="<?php echo esc_attr( $this->get_field_id( 'hide_text' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'hide_text' ) ); ?>" /> <label for="<?php echo esc_attr( $this->get_field_id( 'hide_text' ) ); ?>"><?php esc_html_e( 'Hide Text' ); ?></label>
 		</p>
 		<p>
-			<input type="radio" id="stacked" name="<?php echo esc_attr( $this->get_field_name( 'orientation' ) ); ?>" value="stacked" <?php if ( 'stacked' === $orientation ) { echo 'checked'; } ?>>
+			<input type="radio" id="stacked" name="<?php echo esc_attr( $this->get_field_name( 'orientation' ) ); ?>" value="stacked" <?php checked( $orientation, 'stacked' ); ?> />
 			<label for="stacked">Stacked</label>
-			<input type="radio" id="inline" name="<?php echo esc_attr( $this->get_field_name( 'orientation' ) ); ?>" value="inline" <?php if ( 'inline' === $orientation ) { echo 'checked'; } ?>>
+			<input type="radio" id="stacked" name="<?php echo esc_attr( $this->get_field_name( 'orientation' ) ); ?>" value="stacked" <?php checked( $orientation, 'inline' ); ?> />
 			<label for="inline">Inline</label>
 		</p>
-
-	<?php
+		<?php
 	}
 }
 
