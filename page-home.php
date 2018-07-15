@@ -90,11 +90,13 @@ get_header(); ?>
 							?>
 							<div class="card-group">
 								<div class="card col-sm-5"
-									<?php
-									if ( has_post_thumbnail() ) {
-										echo 'style="background-image: url(' . esc_url( the_post_thumbnail_url( 'large' ) ) . ');"';
-									}
+								<?php
+								if ( has_post_thumbnail() ) {
 									?>
+									style="background-image: url(<?php the_post_thumbnail_url( 'large' ); ?>);"
+									<?php
+								}
+								?>
 								>
 								</div>
 								<div class="card col-sm-7">
@@ -164,24 +166,27 @@ get_header(); ?>
 							),
 						) );
 
-						while ( $lovedpostloop->have_posts() ) : $lovedpostloop->the_post();
-						?>
+						while ( $lovedpostloop->have_posts() ) :
+							$lovedpostloop->the_post();
+							?>
 							<div class="card">
 								<a href="<?php the_permalink(); ?>" title="<?php the_title_attribute(); ?>" ><?php the_post_thumbnail( 'postloop-img', array( 'class' => 'card-img-top' ) ); ?></a>
 								<div class="card-body">
 									<h4 class="card-title"><?php the_title(); ?></h4>
 									<div class="card-meta">
 										<?php
-											$stations = get_the_terms( get_the_ID(), 'lez_stations' );
-											if ( $stations && ! is_wp_error( $stations ) ) {
-												echo get_the_term_list( get_the_ID(), 'lez_stations', '<strong>Network:</strong> ', ', ' ) .'<br />';
+										$stations = get_the_terms( get_the_ID(), 'lez_stations' );
+										if ( $stations && ! is_wp_error( $stations ) ) {
+											echo get_the_term_list( get_the_ID(), 'lez_stations', '<strong>Network:</strong> ', ', ' ) . '<br />';
+										}
+										$airdates = get_post_meta( get_the_ID(), 'lezshows_airdates', true );
+										if ( $airdates ) {
+											$airdate = $airdates['start'] . ' - ' . $airdates['finish'];
+											if ( $airdates['start'] === $airdates['finish'] ) {
+												$airdate = $airdates['finish'];
 											}
-											$airdates = get_post_meta( get_the_ID(), 'lezshows_airdates', true );
-											if ( $airdates ) {
-												$airdate  = $airdates['start'] . ' - ' . $airdates['finish'];
-												if ( $airdates['start'] == $airdates['finish'] ) { $airdate = $airdates['finish']; }
-												echo '<strong>Airdates:</strong> '. $airdate .'<br />';
-											}
+											echo '<strong>Airdates:</strong> ' . esc_html( $airdate ) . '<br />';
+										}
 										?>
 									</div>
 									<div class="card-text">
@@ -195,7 +200,7 @@ get_header(); ?>
 								</div>
 							</div>
 
-						<?php
+							<?php
 						endwhile;
 						wp_reset_postdata();
 						?>
@@ -221,25 +226,27 @@ get_header(); ?>
 
 				<?php
 
-				$old_posts_per_page = ( $paged == 1 )? '6' : '12';
+				$old_posts_per_page = ( 1 === $paged ) ? '6' : '12';
 
 				$oldpostsloop = new WP_Query( array(
 					'posts_per_page' => $old_posts_per_page,
 					'paged'          => $paged,
 					'post__not_in'   => $already_displayed_posts,
 					'orderby'        => 'date',
-					'order'          => 'DESC'
+					'order'          => 'DESC',
 				) );
 				?>
 
 				<!-- // The Loop -->
 				<?php
-				while ($oldpostsloop->have_posts()) : $oldpostsloop->the_post(); ?>
+				while ( $oldpostsloop->have_posts() ) :
+					$oldpostsloop->the_post();
+					?>
 
 					<div class="col-sm-4">
 						<?php get_template_part( 'template-parts/content', 'posts' ); ?>
 					</div>
-				<?php
+					<?php
 				endwhile;
 
 				wp_reset_postdata();
@@ -252,4 +259,6 @@ get_header(); ?>
 
 </div><!-- #main -->
 
-<?php get_footer();
+<?php
+
+get_footer();
