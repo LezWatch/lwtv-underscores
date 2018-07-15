@@ -8,7 +8,7 @@
 // Define theme version so CSS shit doesn't break. Again.
 // Bump this any time you make serious CSS changes, becuase CSS is a dillhole
 if ( ! defined( 'LWTV_THEME_VERSION' ) ) {
-	define( 'LWTV_THEME_VERSION', '3.1.9' );
+	define( 'LWTV_THEME_VERSION', '3.1.10' );
 }
 
 /* Set the content width based on the theme's design and stylesheet.  */
@@ -379,7 +379,7 @@ function posts_link_attributes() {
 function yikes_starter_scripts() {
 
 	$font_awesome = '5.1.0';
-	$bootstrap    = '4.1.1';
+	$bootstrap    = '4.1.2';
 
 	// combined + minified
 	// navigation.js & skip-link-focus-fix.js
@@ -391,8 +391,8 @@ function yikes_starter_scripts() {
 
 	wp_enqueue_style( 'bootstrap', get_template_directory_uri() . '/inc/bootstrap/css/bootstrap.css', array(), $bootstrap, 'all' );
 	wp_enqueue_style( 'fontawesome', get_template_directory_uri() . '/inc/css/fontawesome-all.min.css', array(), $font_awesome, 'all' );
-	wp_enqueue_style( 'open-sans', '//fonts.googleapis.com/css?family=Open+Sans:400,600,700', false );
-	wp_enqueue_style( 'oswald', '//fonts.googleapis.com/css?family=Oswald:400,500', false );
+	wp_enqueue_style( 'open-sans', '//fonts.googleapis.com/css?family=Open+Sans:400,600,700', array(), LWTV_THEME_VERSION, false );
+	wp_enqueue_style( 'oswald', '//fonts.googleapis.com/css?family=Oswald:400,500', array(), LWTV_THEME_VERSION, false );
 	wp_enqueue_script( 'yikes-popper-script', get_template_directory_uri() . '/inc/js/popper.min.js', array(), '1.11.0', 'all', true );
 	wp_enqueue_script( 'bootstrap', get_template_directory_uri() . '/inc/bootstrap/js/bootstrap.min.js', array( 'jquery' ), $bootstrap, 'all', true );
 	wp_enqueue_script( 'lwtv-gdpr', get_template_directory_uri() . '/inc/js/gdpr.js', array( 'bootstrap' ), LWTV_THEME_VERSION, 'all', true );
