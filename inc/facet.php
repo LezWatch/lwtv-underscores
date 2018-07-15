@@ -206,7 +206,7 @@ function lwtv_yikes_facetwp_add_labels() {
 			var title = new Array();
 
 			// Titles
-			if ( FWP.facets.show_loved == 'on' ) { title.push( 'We Love' ); }
+			if ( FWP.facets.show_loved == 'yes' ) { title.push( 'We Love' ); }
 			if ( FWP.facets.show_worthit == 'yes' ) { title.push( 'That Are Worth Watching' ); }
 			if ( FWP.facets.show_worthit == 'no' ) { title.push( 'That Are Not Worth Watching' ); }
 			if ( FWP.facets.show_stars != '' && typeof FWP.facets.show_stars != 'undefined' ) {
@@ -219,7 +219,7 @@ function lwtv_yikes_facetwp_add_labels() {
 			}
 
 			if ( title[0] != null ) {
-				$('.facetwp-title').html( 'Shows ' + title.join( ', ' ) );
+				$('.facetwp-title').html( 'TV Shows ' + title.join( ', ' ) + ' ' );
 			}
 
 			// Sorting

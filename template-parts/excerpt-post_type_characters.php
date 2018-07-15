@@ -92,7 +92,7 @@ if ( ( 'recutting' === $role && 'post_type_shows' === get_post_type() ) || 'post
 
 			// List of Cliches
 			if ( isset( $cliches ) ) {
-				echo wp_kses_post( '<div class="card-meta-item cliches">Clichés: ' . $cliches . '</div>' );
+				echo lwtv_sanitized( '<div class="card-meta-item cliches">Clichés: ' . $cliches . '</div>' );
 			}
 			?>
 		</div>

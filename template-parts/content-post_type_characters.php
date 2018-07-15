@@ -111,7 +111,7 @@ $thumb_array       = array(
 			<?php echo wp_kses_post( $gender_sexuality ); ?>
 		</div>
 		<div class="card-meta-item">
-			<?php echo wp_kses_post( $cliches ); ?>
+			<?php echo lwtv_sanitized( $cliches ); ?>
 		</div>
 		<div class="card-meta-item">
 			<?php
