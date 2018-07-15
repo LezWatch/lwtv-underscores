@@ -36,26 +36,26 @@ class My_Widget extends WP_Widget {
 		$textarea2 = isset( $instance['textarea2'] ) && ! empty( trim( $instance['textarea2'] ) ) ? $instance['textarea2'] : '';
 
 		/** Output widget HTML BEGIN **/
-		echo $before_widget;
+		echo lwtv_sanitized( $before_widget );
 		echo '<ul>';
 
 		// If the title is set
 		if ( $title ) {
-			echo $before_title . $title . $after_title;
+			echo lwtv_sanitized( $before_title . $title . $after_title );
 		}
 
 		// If text is entered in the first textarea
 		if ( $textarea ) {
-			echo '	<li>' . $textarea . '</li>';
+			echo '	<li>' . wp_kses_post( $textarea ) . '</li>';
 		}
 
 		// If text is entered in the second textarea
 		if ( $textarea2 ) {
-			echo '	<li>' . $textarea2 . '</li>';
+			echo '	<li>' . wp_kses_post( $textarea2 ) . '</li>';
 		}
 
 		echo '</ul>';
-		echo $after_widget;
+		echo lwtv_sanitized( $after_widget );
 		/** Output widget HTML BEGIN **/
 	}
 
@@ -69,9 +69,9 @@ class My_Widget extends WP_Widget {
 		$instance = $old_instance;
 
 		// Update each setting to new values entered by user
-		$instance['title']     = strip_tags( $new_instance['title'] );
-		$instance['textarea']  = ($new_instance['textarea']);
-		$instance['textarea2'] = ($new_instance['textarea2']);
+		$instance['title']     = wp_strip_all_tags( $new_instance['title'] );
+		$instance['textarea']  = ( $new_instance['textarea'] );
+		$instance['textarea2'] = ( $new_instance['textarea2'] );
 
 		return $instance;
 	}
@@ -86,24 +86,24 @@ class My_Widget extends WP_Widget {
 		$textarea  = isset( $instance['textarea'] ) ? $instance['textarea'] : '';
 		$textarea2 = isset( $instance['textarea2'] ) ? $instance['textarea2'] : '';
 
-	?>
+		?>
 
-	<p>
-		<label for="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>"><?php esc_html_e( 'Title (optional)' ); ?></label>
-		<input class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'title' ) ); ?>" type="text" value="<?php echo esc_attr( $title ); ?>" />
-	</p>
+		<p>
+			<label for="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>"><?php esc_html_e( 'Title (optional)' ); ?></label>
+			<input class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'title' ) ); ?>" type="text" value="<?php echo esc_attr( $title ); ?>" />
+		</p>
 
-	<p>
-		<label for="<?php echo esc_attr( $this->get_field_id( 'textarea' ) ); ?>"><?php esc_html_e( 'Enter text below:' ); ?></label>
-		<textarea class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'textarea' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'textarea' ) ); ?>"><?php echo esc_html( $textarea ); ?></textarea>
-	</p>
+		<p>
+			<label for="<?php echo esc_attr( $this->get_field_id( 'textarea' ) ); ?>"><?php esc_html_e( 'Enter text below:' ); ?></label>
+			<textarea class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'textarea' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'textarea' ) ); ?>"><?php echo esc_html( $textarea ); ?></textarea>
+		</p>
 
-	<p>
-		<label for="<?php echo esc_attr( $this->get_field_id( 'textarea2' ) ); ?>"><?php esc_html_e( 'Enter more text below:' ); ?></label>
-		<textarea class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'textarea2' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'textarea2' ) ); ?>"><?php echo esc_html( $textarea2 ); ?></textarea>
-	</p>
+		<p>
+			<label for="<?php echo esc_attr( $this->get_field_id( 'textarea2' ) ); ?>"><?php esc_html_e( 'Enter more text below:' ); ?></label>
+			<textarea class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'textarea2' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'textarea2' ) ); ?>"><?php echo esc_html( $textarea2 ); ?></textarea>
+		</p>
 
-	<?php
+		<?php
 	}
 
 }

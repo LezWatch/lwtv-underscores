@@ -2,7 +2,7 @@
 /**
  * The template for displaying the death stats page
  *
- * @package LezWatchTV
+ * @package LezWatch.TV
  */
 
 $deadchars = LWTV_Stats::generate( 'characters', 'dead', 'count' );
@@ -10,19 +10,18 @@ $allchars  = LWTV_Stats::generate( 'characters', 'all', 'count' );
 $deadshows = LWTV_Stats::generate( 'shows', 'dead', 'count' );
 $allshows  = LWTV_Stats::generate( 'shows', 'all', 'count' );
 
-$deadchar_percent = round( ( $deadchars / $allchars ) * 100 , 2 ) ;
-$deadshow_percent = round( ( $deadshows / $allshows ) * 100 , 2 );
+$deadchar_percent = round( ( $deadchars / $allchars ) * 100, 2 );
+$deadshow_percent = round( ( $deadshows / $allshows ) * 100, 2 );
 
 $valid_views = array( 'overview', 'characters', 'shows', 'stations', 'nations', 'years' );
-$view        = ( !isset( $_GET['view'] ) || !in_array( $_GET['view'], $valid_views ) )? 'overview' : $_GET['view'];
-
+$view        = ( ! isset( $_GET['view'] ) || ! in_array( $_GET['view'], $valid_views, true ) ) ? 'overview' : $_GET['view']; // WPCS: CSRF okay
 ?>
 
 <ul class="nav nav-tabs">
 	<?php
 	foreach ( $valid_views as $the_view ) {
-		$active = ( $view == $the_view )? ' active' : '';
-		echo '<li class="nav-item"><a class="nav-link' . $active . '" href="' . esc_url( add_query_arg( 'view', $the_view, '/statistics/death/' ) ) . '">' . strtoupper( str_replace( '-', ' ', $the_view ) ) . '</a></li>';
+		$active = ( $view === $the_view ) ? ' active' : '';
+		echo '<li class="nav-item"><a class="nav-link' . esc_attr( $active ) . '" href="' . esc_url( add_query_arg( 'view', $the_view, '/statistics/death/' ) ) . '">' . esc_html( strtoupper( str_replace( '-', ' ', $the_view ) ) ) . '</a></li>';
 	}
 	?>
 </ul>
@@ -39,13 +38,13 @@ switch ( $view ) {
 				<div class="col">
 					<div class="alert alert-danger" role="info"><center>
 						<h3 class="alert-heading">Characters</h3>
-						<h5><?php echo $deadchar_percent; ?>% (<?php echo $deadchars; ?>)</h5>
+						<h5><?php echo esc_html( $deadchar_percent ); ?>% (<?php echo esc_html( $deadchars ); ?>)</h5>
 					</center></div>
 				</div>
 				<div class="col">
 					<div class="alert alert-danger" role="info"><center>
 						<h3 class="alert-heading">Shows</h3>
-						<h5><?php echo $deadshow_percent; ?>% (<?php echo $deadshows; ?>)</h5>
+						<h5><?php echo esc_html( $deadshow_percent ); ?>% (<?php echo esc_html( $deadshows ); ?>)</h5>
 					</center></div>
 				</div>
 			</div>
@@ -148,7 +147,7 @@ switch ( $view ) {
 	case 'years':
 		?>
 		<p>On average, <strong><?php LWTV_Stats::generate( 'characters', 'dead-years', 'average' ); ?></strong> characters die per year (including years where no queers died).</p>
-		
+
 		<div class="container chart-container">
 			<div class="row">
 				<div class="col">

@@ -4,7 +4,7 @@
  *
  * @link https://codex.wordpress.org/Template_Hierarchy
  *
- * @package LezWatchTV
+ * @package LezWatch.TV
  */
 
 // Determine icon (Font-Awesome fallback)
@@ -12,7 +12,7 @@ $icon         = lwtv_yikes_symbolicons( 'team.svg', 'fa-users' );
 $count_posts  = facetwp_display( 'counts' );
 $title        = '<span role="img" aria-label="post_type_actors" title="Actors" class="taxonomy-svg actors">' . $icon . '</span>';
 $descriptions = get_option( 'wpseo_titles' );
-$description  = $descriptions['metadesc-ptarchive-post_type_actors' ];
+$description  = $descriptions['metadesc-ptarchive-post_type_actors'];
 
 get_header(); ?>
 
@@ -21,15 +21,15 @@ get_header(); ?>
 		<div class="container">
 			<header class="archive-header">
 				<div class="row">
-					<div class="col-10"><?php the_archive_title( '<h1 class="facetwp-page-title entry-title">', ' (' . $count_posts . '<span class="facetwp-count"></span>)</h1>' ); ?></div>
-					<div class="col-2 icon plain"><?php echo $title; ?></div>
+					<div class="col-10"><?php the_archive_title( '<h1 class="facetwp-page-title entry-title"><span class="facetwp-title">', '</span>(' . $count_posts . '<span class="facetwp-count"></span>)</h1>' ); ?></div>
+					<div class="col-2 icon plain"><?php echo lwtv_sanitized( $title ); ?></div>
 				</div>
 				<div class="row">
 					<div class="archive-description">
-					<?php 
-						echo '<p>' . $description . ' <span class="facetwp-description"></span></p>';
+					<?php
+						echo '<p>' . wp_kses_post( $description ) . ' <span class="facetwp-description"></span></p>';
 						echo '<p><span class="facetwp-sorted"></span></p>';
-						echo facetwp_display( 'selections' );
+						echo wp_kses_post( facetwp_display( 'selections' ) );
 					?>
 					</div>
 				</div>
@@ -49,21 +49,20 @@ get_header(); ?>
 							<div class="entry-content facetwp-template">
 								<div class="row site-loop actor-archive-loop equal-height">
 								<?php
-								if ( have_posts() ) : ?>
-									<?php
+								if ( have_posts() ) :
 									/* Start the Loop */
-									while ( have_posts() ) : the_post();
-										?><div class="col-sm-4"><?php
+									while ( have_posts() ) :
+										the_post();
+										echo '<div class="col-sm-4">';
 										get_template_part( 'template-parts/excerpt', 'post_type_actors' );
-										?></div><?php
-									endwhile; ?>
-										</div><!-- .row .site-loop -->
-									<?php
-									echo facetwp_display( 'pager' );
+										echo '</div>';
+									endwhile;
 								else :
 									get_template_part( 'template-parts/content', 'none' );
-								endif; 
+								endif;
 								?>
+								</div><!-- .row .site-loop -->
+							<?php echo facetwp_display( 'pager' ); ?>
 							</div><!-- .entry-content -->
 						</article><!-- #post-## -->
 					</div><!-- #content -->
@@ -78,4 +77,6 @@ get_header(); ?>
 	</div><!-- .container -->
 </div><!-- #main -->
 
-<?php get_footer();
+<?php
+
+get_footer();

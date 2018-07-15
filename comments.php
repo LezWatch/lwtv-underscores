@@ -22,7 +22,8 @@ if ( post_password_required() ) {
 
 	<?php
 	// You can start editing here -- including this comment!
-	if ( have_comments() ) : ?>
+	if ( have_comments() ) :
+		?>
 		<h2 class="comments-title">
 			<?php
 				printf( // WPCS: XSS OK.
@@ -57,7 +58,10 @@ if ( post_password_required() ) {
 			?>
 		</ul><!-- .comment-list -->
 
-		<?php if ( get_comment_pages_count() > 1 && get_option( 'page_comments' ) ) : // Are there comments to navigate through? ?>
+		<?php
+		if ( get_comment_pages_count() > 1 && get_option( 'page_comments' ) ) :
+			// Are there comments to navigate through?
+			?>
 		<nav id="comment-nav-below" class="navigation comment-navigation" role="navigation">
 			<h2 class="screen-reader-text"><?php esc_html_e( 'Comment navigation', 'yikes_starter' ); ?></h2>
 			<div class="nav-links">
@@ -67,13 +71,13 @@ if ( post_password_required() ) {
 
 			</div><!-- .nav-links -->
 		</nav><!-- #comment-nav-below -->
-		<?php
+			<?php
 		endif; // Check for comment navigation.
 
 	endif; // Check for have_comments().
 
 	// If comments are closed and there are comments, let's leave a little note, shall we?
-	if ( ! comments_open() && get_comments_number() && post_type_supports( get_post_type(), 'comments' ) ) : 
+	if ( ! comments_open() && get_comments_number() && post_type_supports( get_post_type(), 'comments' ) ) :
 		?>
 		<p class="no-comments"><?php esc_html_e( 'Comments are closed.', 'yikes_starter' ); ?></p>
 		<?php

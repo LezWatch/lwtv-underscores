@@ -2,24 +2,24 @@
 /**
  * The template for displaying the character stats page
  *
- * @package LezWatchTV
+ * @package LezWatch.TV
  */
 
 $valid_views = array( 'overview', 'cliches', 'gender', 'sexuality', 'queer-irl', 'roles' );
-$view        = ( !isset( $_GET['view'] ) || !in_array( $_GET['view'], $valid_views ) )? 'overview' : $_GET['view'];
+$view        = ( ! isset( $_GET['view'] ) || ! in_array( $_GET['view'], $valid_views, true ) ) ? 'overview' : $_GET['view']; // WPCS: CSRF okay
 
 $character_count = LWTV_Stats::generate( 'characters', 'total', 'count' );
 ?>
 
 <h2>
-	<a href="/characters/">Total Characters</a></strong> (<?php echo LWTV_Stats::generate( 'characters', 'total', 'count' ); ?>)
+	<a href="/characters/">Total Characters</a></strong> (<?php echo LWTV_Stats::generate( 'characters', 'total', 'count' ); // WPCS: XSS okay ?>)
 </h2>
 
 <ul class="nav nav-tabs">
 	<?php
 	foreach ( $valid_views as $the_view ) {
-		$active = ( $view == $the_view )? ' active' : '';
-		echo '<li class="nav-item"><a class="nav-link' . $active . '" href="' . esc_url( add_query_arg( 'view', $the_view, '/statistics/characters/' ) ) . '">' . strtoupper( str_replace( '-', ' ', $the_view ) ) . '</a></li>';
+		$active = ( $view === $the_view ) ? ' active' : '';
+		echo '<li class="nav-item"><a class="nav-link' . esc_attr( $active ) . '" href="' . esc_url( add_query_arg( 'view', $the_view, '/statistics/characters/' ) ) . '">' . esc_html( strtoupper( str_replace( '-', ' ', $the_view ) ) ) . '</a></li>';
 	}
 	?>
 </ul>
@@ -36,19 +36,19 @@ switch ( $view ) {
 				<div class="col">
 					<div class="alert alert-success" role="info"><center>
 						<h3 class="alert-heading">Characters</h3>
-						<h5><?php echo $character_count; ?></h5>
+						<h5><?php echo (int) $character_count; ?></h5>
 					</center></div>
 				</div>
 				<div class="col">
 					<div class="alert alert-info" role="info"><center>
 						<h3 class="alert-heading">Sexual Orientations</h3>
-						<h5><?php echo wp_count_terms( 'lez_sexuality' ); ?></h5>
+						<h5><?php echo (int) wp_count_terms( 'lez_sexuality' ); ?></h5>
 					</center></div>
 				</div>
 				<div class="col">
 					<div class="alert alert-warning" role="info"><center>
 						<h3 class="alert-heading">Gender Identities</h3>
-						<h5><?php echo wp_count_terms( 'lez_gender' ); ?></h5>
+						<h5><?php echo (int) wp_count_terms( 'lez_gender' ); ?></h5>
 					</center></div>
 				</div>
 			</div>
@@ -67,26 +67,26 @@ switch ( $view ) {
 							</tr>
 						</thead>
 						<tbody>
-							<?
+							<?php
 							$cliches = get_terms( 'lez_cliches', array(
 								'number'     => 14,
 								'orderby'    => 'count',
 								'hide_empty' => 0,
 								'order'      => 'DESC',
 							) );
-							foreach( $cliches as $cliche ) {
+							foreach ( $cliches as $cliche ) {
 								echo '<tr>
-										<th scope="row"><a href="/cliche/' . $cliche->slug . '">' . $cliche->name . '</a></th>
-										<td>' . $cliche->count . '</td>
-										<td>' . round( ( ( $cliche->count / $character_count ) * 100 ) , 1 ) .'%</td>
+										<th scope="row"><a href="/cliche/' . esc_url( $cliche->slug ) . '">' . esc_html( $cliche->name ) . '</a></th>
+										<td>' . (int) $cliche->count . '</td>
+										<td>' . esc_html( round( ( ( $cliche->count / $character_count ) * 100 ), 1 ) ) . '%</td>
 									</tr>';
 							}
 							?>
 						</tbody>
 					</table>
-					<a href="?view=cliches"><button type="button" class="btn btn-info btn-lg btn-block">All <?php echo wp_count_terms( 'lez_cliches' ); ?> Clichés</button></a>
+					<a href="?view=cliches"><button type="button" class="btn btn-info btn-lg btn-block">All <?php echo (int) wp_count_terms( 'lez_cliches' ); ?> Clichés</button></a>
 				</div>
-		
+
 				<div class="col">
 					<h4>Top Sexual Orientations</h4>
 					<table class="table table-striped table-hover">
@@ -98,24 +98,24 @@ switch ( $view ) {
 							</tr>
 						</thead>
 						<tbody>
-							<?
+							<?php
 							$sexualities = get_terms( 'lez_sexuality', array(
 								'number'     => 5,
 								'orderby'    => 'count',
 								'hide_empty' => 0,
 								'order'      => 'DESC',
 							) );
-							foreach( $sexualities as $sexuality ) {
+							foreach ( $sexualities as $sexuality ) {
 								echo '<tr>
-										<th scope="row"><a href="/sexuality/' . $sexuality->slug . '">' . $sexuality->name . '</a></th>
-										<td>' . $sexuality->count . '</td>
-										<td>' . round( ( ( $sexuality->count / $character_count ) * 100 ) , 1 ) .'%</td>
+										<th scope="row"><a href="/sexuality/' . esc_url( $sexuality->slug ) . '">' . esc_html( $sexuality->name ) . '</a></th>
+										<td>' . (int) $sexuality->count . '</td>
+										<td>' . esc_html( round( ( ( $sexuality->count / $character_count ) * 100 ), 1 ) ) . '%</td>
 									</tr>';
 							}
 							?>
 						</tbody>
 					</table>
-					<a href="?view=sexuality"><button type="button" class="btn btn-info btn-lg btn-block">All <?php echo wp_count_terms( 'lez_sexuality' ); ?> Sexual Orientations</button></a>
+					<a href="?view=sexuality"><button type="button" class="btn btn-info btn-lg btn-block">All <?php echo (int) wp_count_terms( 'lez_sexuality' ); ?> Sexual Orientations</button></a>
 
 					<p>&nbsp;</p>
 
@@ -129,24 +129,24 @@ switch ( $view ) {
 							</tr>
 						</thead>
 						<tbody>
-							<?
+							<?php
 							$genders = get_terms( 'lez_gender', array(
 								'number'     => 5,
 								'orderby'    => 'count',
 								'hide_empty' => 0,
 								'order'      => 'DESC',
 							) );
-							foreach( $genders as $gender ) {
+							foreach ( $genders as $gender ) {
 								echo '<tr>
-										<th scope="row"><a href="/gender/' . $gender->slug . '">' . $gender->name . '</a></th>
-										<td>' . $gender->count . '</td>
-										<td>' . round( ( ( $gender->count / $character_count ) * 100 ) , 1 ) .'%</td>
+										<th scope="row"><a href="/gender/' . esc_url( $gender->slug ) . '">' . esc_html( $gender->name ) . '</a></th>
+										<td>' . (int) $gender->count . '</td>
+										<td>' . esc_html( round( ( ( $gender->count / $character_count ) * 100 ), 1 ) ) . '%</td>
 									</tr>';
 							}
 							?>
 						</tbody>
 					</table>
-					<a href="?view=gender"><button type="button" class="btn btn-info btn-lg btn-block">All <?php echo wp_count_terms( 'lez_gender' ); ?> Gender Identities</button></a>
+					<a href="?view=gender"><button type="button" class="btn btn-info btn-lg btn-block">All <?php echo (int) wp_count_terms( 'lez_gender' ); ?> Gender Identities</button></a>
 
 				</div>
 			</div>
@@ -176,7 +176,7 @@ switch ( $view ) {
 				<div class="col-sm-6">
 					<?php LWTV_Stats::generate( 'characters', 'sexuality', 'piechart' ); ?>
 				</div>
-				
+
 				<div class="col-sm-6">
 					<?php LWTV_Stats::generate( 'characters', 'sexuality', 'percentage' ); ?>
 				</div>
@@ -191,7 +191,7 @@ switch ( $view ) {
 				<div class="col-sm-6">
 					<?php LWTV_Stats::generate( 'characters', 'gender', 'piechart' ); ?>
 				</div>
-				
+
 				<div class="col-sm-6">
 					<?php LWTV_Stats::generate( 'characters', 'gender', 'percentage' ); ?>
 				</div>
@@ -206,7 +206,7 @@ switch ( $view ) {
 				<div class="col-sm-6">
 					<?php LWTV_Stats::generate( 'characters', 'queer-irl', 'piechart' ); ?>
 				</div>
-				
+
 				<div class="col-sm-6">
 					<?php LWTV_Stats::generate( 'characters', 'queer-irl', 'percentage' ); ?>
 				</div>

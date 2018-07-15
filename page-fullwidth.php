@@ -24,17 +24,18 @@ get_header(); ?>
 			<div class="col-sm-12">
 				<div id="primary" class="content-area">
 					<div id="content" class="site-content clearfix" role="main">
-
-						<?php 
-							while ( have_posts() ) : the_post();
-								get_template_part( 'template-parts/content', 'page' );
-							endwhile;
+						<?php
+						while ( have_posts() ) :
+							the_post();
+							get_template_part( 'template-parts/content', 'page' );
+						endwhile;
 						?>
-
 					</div><!-- #content -->
 				</div><!-- #primary -->
 		</div><!-- .row -->
 	</div><!-- .container -->
 </div><!-- #main -->
 
-<?php get_footer();
+<?php
+
+get_footer();

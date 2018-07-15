@@ -21,30 +21,30 @@
 	<nav id="site-navigation" class="navbar fixed-top navbar-expand navbar-light bg-light main-nav" role="navigation">
 		<div class="container">
 			<a href="<?php echo esc_url( home_url( '/' ) ); ?>" title="<?php echo esc_attr( get_bloginfo( 'name', 'display' ) ); ?>" rel="home" class="navbar-brand">
-				<img src="<?php echo get_template_directory_uri(); ?>/images/lezwatch-logo-icon.png" alt="<?php bloginfo( 'name' ); ?>">
+				<img src="<?php echo esc_url( get_template_directory_uri() ); ?>/images/lezwatch-logo-icon.png" alt="<?php bloginfo( 'name' ); ?>">
 				<span class="navbar-brand-text">
 					<?php bloginfo( 'name' ); ?>
 				</span>
 			</a>
-			<?php
+				<?php
 				wp_nav_menu( array(
 					'menu'           => 'primary',
 					'theme_location' => 'primary',
 					'depth'          => 3,
 					'container'      => false,
-					'link_before'    => '<span class="menu-link-text">', // Use this for screen readers if using icons 
-					'link_after'     => '</span>', // Use this for screen readers if using icons 
+					'link_before'    => '<span class="menu-link-text">', // Use this for screen readers if using icons
+					'link_after'     => '</span>', // Use this for screen readers if using icons
 					'menu_class'     => 'navbar-nav ml-auto',
 					'fallback_cb'    => 'wp_page_menu',
-					'walker'         => new wp_bootstrap_navwalker(),
+					'walker'         => new WP_Bootstrap_Navwalker(),
 				) );
-			?>
+				?>
 
 			<span class="nav-item search" id="search-btn">
 				<a class="nav-link" data-toggle="collapse" href="#collapseSearch">
 					<?php echo lwtv_yikes_symbolicons( 'search.svg', 'fa-search' ); ?>
 					<span class="screen-reader-text">Search the Site</span>
-				</a> 
+				</a>
 			</span>
 		</div>
 	</nav><!-- #site-navigation -->
@@ -67,8 +67,9 @@
 
 	<div class="site-subheader">
 
-		<?php if ( is_front_page() && get_query_var( 'page' ) == 0  ) {?>
-
+		<?php
+		if ( is_front_page() && 0 == get_query_var( 'page' ) ) { // WPSC: loose comparison ok.
+			?>
 			<div class="alert alert-danger" role="alert">
 				<div class="container">
 					<div class="row">
@@ -87,7 +88,7 @@
 					<div class="row">
 						<div class="col-sm-3">
 							<div class="header-logo">
-								<?php yks_the_custom_logo()?>
+								<?php yks_the_custom_logo(); ?>
 							</div>
 						</div>
 
@@ -96,16 +97,17 @@
 								<?php bloginfo( 'description' ); ?>
 							</h1>
 
-							<?php while ( have_posts() ) : the_post(); ?>
-								
-								<?php the_content(); ?>
-
-							<?php endwhile; ?>
+							<?php
+							while ( have_posts() ) :
+								the_post();
+								the_content();
+							endwhile;
+							?>
 						</div><!-- .col -->
 					</div><!-- .row -->
 				</div><!-- .container -->
 			</div><!-- /.jumbotron -->
-  			<div class="rainbow"></div>
+			<div class="rainbow"></div>
 
 		<?php } ?>
 	</div><!-- .site-subheader -->

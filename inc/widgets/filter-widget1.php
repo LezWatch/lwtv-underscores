@@ -30,9 +30,9 @@ class Filter_Top extends WP_Widget {
 		$after_title   = isset( $args['after_title'] ) ? $args['after_title'] : '';
 
 		// Get what's needed from $instanse array ($instance populated with user inputs from widget form)
-		$title     = isset( $instance['title'] ) && ! empty( trim( $instance['title'] ) ) ? $instance['title'] : 'Filter';
-		$title     = apply_filters( 'widget_title', $title, $instance, $this->id_base );
-		$fontawesome  = isset( $instance['fontawesome'] ) && ! empty( trim( $instance['fontawesome'] ) ) ? $instance['fontawesome'] : '';
+		$title       = isset( $instance['title'] ) && ! empty( trim( $instance['title'] ) ) ? $instance['title'] : 'Filter';
+		$title       = apply_filters( 'widget_title', $title, $instance, $this->id_base );
+		$fontawesome = isset( $instance['fontawesome'] ) && ! empty( trim( $instance['fontawesome'] ) ) ? $instance['fontawesome'] : '';
 
 		/** Output widget HTML BEGIN **/
 
@@ -42,7 +42,7 @@ class Filter_Top extends WP_Widget {
 
 		// If a fontawesome icon is set
 		if ( $fontawesome ) {
-			
+
 			switch ( $fontawesome ) {
 				case 'fa-television':
 				case 'fa-tv':
@@ -58,19 +58,18 @@ class Filter_Top extends WP_Widget {
 				default:
 					$icon = '<i class="fa ' . $fontawesome . ' float-right" aria-hidden="true"></i>';
 			}
-			
-			echo '<span class="float-right">' . $icon . '</span>';
+
+			echo '<span class="float-right">' . lwtv_sanitized( $icon ) . '</span>';
 		}
 
 		// If the title is set
 		if ( $title ) {
-			echo $title;
+			echo lwtv_sanitized( $title );
 		}
 
 		echo '</h4>
 			</div>
 			<div class="card-body">';
-		
 
 		/** Output widget HTML BEGIN **/
 	}
@@ -85,8 +84,8 @@ class Filter_Top extends WP_Widget {
 		$instance = $old_instance;
 
 		// Update each setting to new values entered by user
-		$instance['title']     = strip_tags( $new_instance['title'] );
-		$instance['fontawesome']  = ($new_instance['fontawesome']);
+		$instance['title']       = wp_strip_all_tags( $new_instance['title'] );
+		$instance['fontawesome'] = ( $new_instance['fontawesome'] );
 
 		return $instance;
 	}
@@ -97,22 +96,21 @@ class Filter_Top extends WP_Widget {
 
 	public function form( $instance ) {
 
-		$title     = isset( $instance['title'] ) ? $instance['title'] : '';
-		$fontawesome  = isset( $instance['fontawesome'] ) ? $instance['fontawesome'] : '';
+		$title       = isset( $instance['title'] ) ? $instance['title'] : '';
+		$fontawesome = isset( $instance['fontawesome'] ) ? $instance['fontawesome'] : '';
+		?>
 
-	?>
+		<p>
+			<label for="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>"><?php esc_html_e( 'Title (optional)' ); ?></label>
+			<input class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'title' ) ); ?>" type="text" value="<?php echo esc_attr( $title ); ?>" />
+		</p>
 
-	<p>
-		<label for="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>"><?php esc_html_e( 'Title (optional)' ); ?></label>
-		<input class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'title' ) ); ?>" type="text" value="<?php echo esc_attr( $title ); ?>" />
-	</p>
+		<p>
+			<label for="<?php echo esc_attr( $this->get_field_id( 'fontawesome' ) ); ?>"><?php esc_html_e( 'FontAwesome Class:' ); ?></label>
+			<input class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'fontawesome' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'fontawesome' ) ); ?>" type="text" value="<?php echo esc_attr( $fontawesome ); ?>" />
+		</p>
 
-	<p>
-		<label for="<?php echo esc_attr( $this->get_field_id( 'fontawesome' ) ); ?>"><?php esc_html_e( 'FontAwesome Class:' ); ?></label>
-		<input class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'fontawesome' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'fontawesome' ) ); ?>" type="text" value="<?php echo esc_attr( $fontawesome ); ?>" />
-	</p>
-
-	<?php
+		<?php
 	}
 
 }

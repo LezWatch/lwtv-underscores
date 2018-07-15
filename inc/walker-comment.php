@@ -37,7 +37,10 @@ class LWTV_Walker_Comment extends Walker {
 	 * @see Walker::$db_fields
 	 * @todo Decouple this
 	 */
-	public $db_fields = array ('parent' => 'comment_parent', 'id' => 'comment_ID');
+	public $db_fields = array(
+		'parent' => 'comment_parent',
+		'id'     => 'comment_ID',
+	);
 
 	/**
 	 * Starts the list before the elements are added.
@@ -53,7 +56,7 @@ class LWTV_Walker_Comment extends Walker {
 	 * @param array  $args   Optional. Uses 'style' argument for type of HTML list. Default empty array.
 	 */
 	public function start_lvl( &$output, $depth = 0, $args = array() ) {
-		$GLOBALS['comment_depth'] = $depth + 1;
+		$GLOBALS['comment_depth'] = $depth + 1; // WPCS: override ok.
 
 		switch ( $args['style'] ) {
 			case 'div':
@@ -83,7 +86,7 @@ class LWTV_Walker_Comment extends Walker {
 	 *                       Default empty array.
 	 */
 	public function end_lvl( &$output, $depth = 0, $args = array() ) {
-		$GLOBALS['comment_depth'] = $depth + 1;
+		$GLOBALS['comment_depth'] = $depth + 1; // WPCS: override ok.
 
 		switch ( $args['style'] ) {
 			case 'div':
@@ -131,11 +134,12 @@ class LWTV_Walker_Comment extends Walker {
 	 * @param string     $output            Used to append additional content. Passed by reference.
 	 */
 	public function display_element( $element, &$children_elements, $max_depth, $depth, $args, &$output ) {
-		if ( !$element )
+		if ( ! $element ) {
 			return;
+		}
 
 		$id_field = $this->db_fields['id'];
-		$id = $element->$id_field;
+		$id       = $element->$id_field;
 
 		parent::display_element( $element, $children_elements, $max_depth, $depth, $args, $output );
 
@@ -144,10 +148,10 @@ class LWTV_Walker_Comment extends Walker {
 		 * and display them at this level. This is to prevent them being orphaned to the end
 		 * of the list.
 		 */
-		if ( $max_depth <= $depth + 1 && isset( $children_elements[$id]) ) {
-			foreach ( $children_elements[ $id ] as $child )
+		if ( $max_depth <= $depth + 1 && isset( $children_elements[ $id ] ) ) {
+			foreach ( $children_elements[ $id ] as $child ) {
 				$this->display_element( $child, $children_elements, $max_depth, $depth, $args, $output );
-
+			}
 			unset( $children_elements[ $id ] );
 		}
 
@@ -172,17 +176,17 @@ class LWTV_Walker_Comment extends Walker {
 	 */
 	public function start_el( &$output, $comment, $depth = 0, $args = array(), $id = 0 ) {
 		$depth++;
-		$GLOBALS['comment_depth'] = $depth;
-		$GLOBALS['comment'] = $comment;
+		$GLOBALS['comment_depth'] = $depth; // WPCS: override ok.
+		$GLOBALS['comment']       = $comment; // WPCS: override ok.
 
-		if ( !empty( $args['callback'] ) ) {
+		if ( ! empty( $args['callback'] ) ) {
 			ob_start();
 			call_user_func( $args['callback'], $comment, $args, $depth );
 			$output .= ob_get_clean();
 			return;
 		}
 
-		if ( ( 'pingback' == $comment->comment_type || 'trackback' == $comment->comment_type ) && $args['short_ping'] ) {
+		if ( ( 'pingback' === $comment->comment_type || 'trackback' === $comment->comment_type ) && $args['short_ping'] ) {
 			ob_start();
 			$this->ping( $comment, $depth, $args );
 			$output .= ob_get_clean();
@@ -212,16 +216,17 @@ class LWTV_Walker_Comment extends Walker {
 	 * @param array      $args    Optional. An array of arguments. Default empty array.
 	 */
 	public function end_el( &$output, $comment, $depth = 0, $args = array() ) {
-		if ( !empty( $args['end-callback'] ) ) {
+		if ( ! empty( $args['end-callback'] ) ) {
 			ob_start();
 			call_user_func( $args['end-callback'], $comment, $args, $depth );
 			$output .= ob_get_clean();
 			return;
 		}
-		if ( 'div' == $args['style'] )
+		if ( 'div' === $args['style'] ) {
 			$output .= "</div><!-- #comment-## -->\n";
-		else
+		} else {
 			$output .= "</li><!-- #comment-## -->\n";
+		}
 	}
 
 	/**
@@ -237,14 +242,14 @@ class LWTV_Walker_Comment extends Walker {
 	 * @param array      $args    An array of arguments.
 	 */
 	protected function ping( $comment, $depth, $args ) {
-		$tag = ( 'div' == $args['style'] ) ? 'div' : 'li';
-?>
-		<<?php echo $tag; ?> id="comment-<?php comment_ID(); ?>" <?php comment_class( '', $comment ); ?>>
+		$tag = ( 'div' === $args['style'] ) ? 'div' : 'li';
+		?>
+		<<?php echo wp_kses_post( $tag ); ?> id="comment-<?php comment_ID(); ?>" <?php comment_class( '', $comment ); ?>>
 			<div class="comment-body">
 				<?php echo lwtv_yikes_symbolicons( 'share.svg', 'fa-share-square' ); ?>
-				<?php _e( 'Pingback:' ); ?> <?php comment_author_link( $comment ); ?> <?php edit_comment_link( __( 'Edit' ), '<span class="edit-link">', '</span>' ); ?>
+				<?php esc_html_e( 'Pingback:' ); ?> <?php comment_author_link( $comment ); ?> <?php edit_comment_link( __( 'Edit' ), '<span class="edit-link">', '</span>' ); ?>
 			</div>
-<?php
+		<?php
 	}
 
 	/**
@@ -260,58 +265,66 @@ class LWTV_Walker_Comment extends Walker {
 	 * @param array      $args    An array of arguments.
 	 */
 	protected function comment( $comment, $depth, $args ) {
-		if ( 'div' == $args['style'] ) {
-			$tag = 'div';
+		if ( 'div' === $args['style'] ) {
+			$tag       = 'div';
 			$add_below = 'comment';
 		} else {
-			$tag = 'li';
+			$tag       = 'li';
 			$add_below = 'div-comment';
 		}
-?>
-		<<?php echo $tag; ?> <?php comment_class( $this->has_children ? 'parent' : '', $comment ); ?> id="comment-<?php comment_ID(); ?>">
-		<?php if ( 'div' != $args['style'] ) : ?>
+		?>
+		<<?php echo wp_kses_post( $tag ); ?> <?php comment_class( $this->has_children ? 'parent' : '', $comment ); ?> id="comment-<?php comment_ID(); ?>">
+		<?php if ( 'div' !== $args['style'] ) : ?>
 		<div id="div-comment-<?php comment_ID(); ?>" class="comment-body">
 		<?php endif; ?>
 		<div class="comment-author vcard
-			<?php if ( 0 != $args['avatar_size'] ) echo get_avatar( $comment, $args['avatar_size'] ); ?>
+			<?php
+			if ( 0 !== $args['avatar_size'] ) {
+				echo get_avatar( $comment, $args['avatar_size'] );
+			}
+			?>
 		</div>
-		<?php if ( '0' == $comment->comment_approved ) : ?>
-		<em class="comment-awaiting-moderation"><?php _e( 'Your comment is awaiting moderation.' ) ?></em>
+		<?php if ( '0' === $comment->comment_approved ) : ?>
+		<em class="comment-awaiting-moderation"><?php esc_html_e( 'Your comment is awaiting moderation.' ); ?></em>
 		<br />
 		<?php endif; ?>
 
 		<div class="comment-meta commentmetadata"><a href="<?php echo esc_url( get_comment_link( $comment, $args ) ); ?>">
 			<?php
 				/* translators: 1: comment date, 2: comment time */
-				printf( __( '%1$s at %2$s' ), get_comment_date( '', $comment ),  get_comment_time() ); ?></a><?php edit_comment_link( __( '(Edit)' ), '&nbsp;&nbsp;', '' );
+				printf( wp_kses_post( __( '%1$s at %2$s' ), get_comment_date( '', $comment ), get_comment_time() ) );
 			?>
+			</a><?php edit_comment_link( __( '(Edit)' ), '&nbsp;&nbsp;', '' ); ?>
 
 			<div class="comment-meta-author">
 				<?php
 					/* translators: %s: comment author link */
-					printf( __( '%s <span class="says">says:</span>' ),
+					printf( wp_kses_post( __( '%s <span class="says">says:</span>' ),
 						sprintf( '<cite class="author">%s</cite>', get_comment_author_link( $comment ) )
-					);
+					) );
 				?>
 			</div>
 		</div>
 
-		<?php comment_text( $comment, array_merge( $args, array( 'add_below' => $add_below, 'depth' => $depth, 'max_depth' => $args['max_depth'] ) ) ); ?>
-
 		<?php
+		$comment_array = array(
+			'add_below' => $add_below,
+			'depth'     => $depth,
+			'max_depth' => $args['max_depth'],
+		);
+		comment_text( $comment, array_merge( $args, $comment_array ) );
+
 		comment_reply_link( array_merge( $args, array(
 			'add_below' => $add_below,
 			'depth'     => $depth,
 			'max_depth' => $args['max_depth'],
 			'before'    => '<div class="reply">',
-			'after'     => '</div>'
+			'after'     => '</div>',
 		) ) );
-		?>
 
-		<?php if ( 'div' != $args['style'] ) : ?>
-		</div>
-		<?php endif; ?>
-<?php
+		if ( 'div' !== $args['style'] ) :
+			echo '</div>';
+		endif;
 	}
 
 	/**
@@ -329,16 +342,20 @@ class LWTV_Walker_Comment extends Walker {
 	protected function html5_comment( $comment, $depth, $args ) {
 		$tag = ( 'div' === $args['style'] ) ? 'div' : 'li';
 		?>
-		<<?php echo $tag; ?> id="comment-<?php comment_ID(); ?>" <?php comment_class( $this->has_children ? 'parent' : '', $comment ); ?>>
+		<<?php echo wp_kses_post( $tag ); ?> id="comment-<?php comment_ID(); ?>" <?php comment_class( $this->has_children ? 'parent' : '', $comment ); ?>>
 			<article id="div-comment-<?php comment_ID(); ?>" class="comment-body clearfix">
 				<div class="row">
 					<div class="col-sm-2">
 						<div class="comment-author vcard">
-							<?php if ( 0 != $args['avatar_size'] ) echo get_avatar( $comment, $args['avatar_size'] ); ?>
+							<?php
+							if ( 0 !== $args['avatar_size'] ) {
+								echo get_avatar( $comment, $args['avatar_size'] );
+							}
+							?>
 						</div><!-- .comment-author -->
 
-						<?php if ( '0' == $comment->comment_approved ) : ?>
-						<p class="comment-awaiting-moderation"><?php _e( 'Your comment is awaiting moderation.' ); ?></p>
+						<?php if ( '0' === $comment->comment_approved ) : ?>
+						<p class="comment-awaiting-moderation"><?php esc_html_e( 'Your comment is awaiting moderation.' ); ?></p>
 						<?php endif; ?>
 					</div><!-- .comment-author -->
 
@@ -350,7 +367,7 @@ class LWTV_Walker_Comment extends Walker {
 									<time datetime="<?php comment_time( 'c' ); ?>">
 										<?php
 											/* translators: 1: comment date, 2: comment time */
-											printf( __( '%1$s at %2$s' ), get_comment_date( '', $comment ), get_comment_time() );
+											printf( wp_kses_post( __( '%1$s at %2$s' ), get_comment_date( '', $comment ), get_comment_time() ) );
 										?>
 									</time>
 								</a>
@@ -358,8 +375,7 @@ class LWTV_Walker_Comment extends Walker {
 								<div class="comment-meta-author">
 									<?php
 										/* translators: %s: comment author link */
-										printf( __( '%s <span class="says">says:</span>' ),
-											sprintf( '<b class="fn">%s</b>', get_comment_author_link( $comment ) )
+										printf( wp_kses_post( __( '%s <span class="says">says:</span>' ), sprintf( '<b class="fn">%s</b>', get_comment_author_link( $comment ) ) )
 										);
 									?>
 								</div>
@@ -373,10 +389,10 @@ class LWTV_Walker_Comment extends Walker {
 									'depth'     => $depth,
 									'max_depth' => $args['max_depth'],
 									'before'    => '<div class="reply btn btn-default btn-sm">' . lwtv_yikes_symbolicons( 'reply.svg', 'fa-reply' ),
-									'after'     => '</div>'
+									'after'     => '</div>',
 								) ) );
 
-								edit_comment_link( __( 'Edit' ), '<span class="edit-link">', '</span>' ); 
+								edit_comment_link( __( 'Edit' ), '<span class="edit-link">', '</span>' );
 							?>
 						</div><!-- .comment-content -->
 					</div>

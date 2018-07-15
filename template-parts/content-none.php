@@ -14,7 +14,12 @@
 	<div class="entry-content">
 		<?php if ( is_home() && current_user_can( 'publish_posts' ) ) : ?>
 
-			<p><?php printf( esc_attr__( 'Ready to publish your first post? <a href="%1$s">Get started here</a>.', 'yikes_starter' ), esc_url( admin_url( 'post-new.php' ) ) ); ?></p>
+		<p>
+			<?php
+			// translators: $1 is a link to wp-admin
+			printf( esc_attr__( 'Ready to publish your first post? <a href="%1$s">Get started here</a>.', 'yikes_starter' ), esc_url( admin_url( 'post-new.php' ) ) );
+			?>
+		</p>
 
 		<?php elseif ( is_search() ) : ?>
 

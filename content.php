@@ -41,30 +41,33 @@
 			/* translators: used between list items, there is a space after the comma */
 			$categories_list = get_the_category_list( esc_attr__( ', ', 'yikes_starter' ) );
 			if ( $categories_list && yikes_starter_categorized_blog() ) {
-			?>
+				?>
 				<span class="cat-links">
-					<?php echo 'Posted in ' . $categories_list; ?>
+					<?php echo 'Posted in ' . wp_kses_post( $categories_list ); ?>
 				</span>
-			<?php
+				<?php
 			}
 
 			$tags_list = get_the_tag_list( '', esc_attr__( ', ', 'yikes_starter' ) );
 
-			if ( $tags_list ) { ?>
+			if ( $tags_list ) {
+				?>
 				<span class="tags-links">
-					<?php echo 'Tagged ' . $tags_list; ?>
+					<?php echo 'Tagged ' . wp_kses_post( $tags_list ); ?>
 				</span>
-			<?php
+				<?php
 			}
 		}
 
-		if ( ! post_password_required() && ( comments_open() || '0' !== get_comments_number() ) ) { ?>
+		if ( ! post_password_required() && ( comments_open() || '0' !== get_comments_number() ) ) {
+			?>
 			<span class="comments-link">
 				<?php comments_popup_link( esc_attr__( 'Leave a comment', 'yikes_starter' ), esc_attr__( '1 Comment', 'yikes_starter' ), esc_attr__( '% Comments', 'yikes_starter' ) ); ?>
 			</span>
-		<?php }
+			<?php
+		}
 
-		edit_post_link( esc_attr__( 'Edit', 'yikes_starter' ), '<div class="edit-link">' .  lwtv_yikes_symbolicons( 'pencil.svg', 'fa-pencil-alt' ), '</div>' );
+		edit_post_link( esc_attr__( 'Edit', 'yikes_starter' ), '<div class="edit-link">' . lwtv_yikes_symbolicons( 'pencil.svg', 'fa-pencil-alt' ), '</div>' );
 		?>
 	</footer><!-- .entry-meta -->
 </article><!-- #post-## -->

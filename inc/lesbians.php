@@ -2,10 +2,10 @@
 /**
  * Weird LWTV functions and definitions
  *
- * This is crazy shit Mika wrote to force everything to play 
+ * This is crazy shit Mika wrote to force everything to play
  * nicely with each other. Including cursing at Jetpack.
  *
- * @package LezWatchTV
+ * @package LezWatch.TV
  */
 
 /* This Year code: */
@@ -20,12 +20,13 @@ require get_template_directory() . '/inc/thisyear.php';
  * for reloads.
  */
 add_filter( 'the_posts', function( $posts, \WP_Query $query ) {
-		if( $pick = $query->get( '_loved_shuffle' ) ) {
-			shuffle( $posts );
-			$posts = array_slice( $posts, 0, (int) $pick );
-		}
+	$pick = $query->get( '_loved_shuffle' );
+	if ( is_numeric( $pick ) ) {
+		shuffle( $posts );
+		$posts = array_slice( $posts, 0, (int) $pick );
+	}
 		return $posts;
-	}, 10, 2 );
+}, 10, 2 );
 
 /*
  * Filter Comment Status
@@ -34,34 +35,38 @@ add_filter( 'the_posts', function( $posts, \WP_Query $query ) {
  * purposes. Why do spammers spam?
  */
 function lwtv_yikes_filter_media_comment_status( $open, $post_id ) {
-	if ( get_post_type() == 'attachment' ) return false;
+	if ( 'attachment' === get_post_type() ) {
+		return false;
+	}
 	return $open;
 }
-add_filter( 'comments_open', 'lwtv_yikes_filter_media_comment_status', 10 , 2 );
+add_filter( 'comments_open', 'lwtv_yikes_filter_media_comment_status', 10, 2 );
 
 /**
  * Symbolicons Output
  *
  * Echos the default outputtable symbolicon, based on the SVG and FA icon passed to it.
- * 
+ *
  * @access public
  * @param string $svg (default: 'square.svg')
  * @param string $fontawesome (default: 'fa-square')
  * @return icon
  */
-function lwtv_yikes_symbolicons( $svg = 'square.svg', $fontawesome = 'fa-square' ) {	
+function lwtv_yikes_symbolicons( $svg = 'square.svg', $fontawesome = 'fa-square' ) {
 
 	$return = '<i class="fas ' . $fontawesome . ' fa-fw" aria-hidden="true"></i>';
 	$square = get_template_directory_uri( '/images/square.svg' );
 
 	if ( defined( 'LP_SYMBOLICONS_PATH' ) && file_exists( LP_SYMBOLICONS_PATH . $svg ) ) {
 		$icon = LP_SYMBOLICONS_PATH . $svg;
-	} elseif ( !wp_style_is( 'fontawesome', 'enqueued' ) ) {
+	} elseif ( ! wp_style_is( 'fontawesome', 'enqueued' ) ) {
 		$icon = $square;
 	}
-	
+
 	if ( isset( $icon ) ) {
+		// @codingStandardsIgnoreStart
 		$return = '<span class="symbolicon" role="img">' . file_get_contents( $icon ) . '</span>';
+		// @codingStandardsIgnoreEnd
 	}
 
 	// Override for AMP - NO ICONS
@@ -71,7 +76,7 @@ function lwtv_yikes_symbolicons( $svg = 'square.svg', $fontawesome = 'fa-square'
 
 	return $return;
 }
- 
+
 /** THE JETPACK SECTION **/
 
 /**
@@ -86,9 +91,9 @@ function lwtv_yikes_jetpack_setup() {
 add_action( 'after_setup_theme', 'lwtv_yikes_jetpack_setup' );
 
 /*
- * Remove Jetpack because it's stupid. 
+ * Remove Jetpack because it's stupid.
  *
- * This stops Jetpack from adding sharing after every post 
+ * This stops Jetpack from adding sharing after every post
  * on a home page or archive if you use a custom loop.
  */
 function lwtv_yikes_jetpack_remove_share() {
@@ -105,12 +110,14 @@ add_action( 'loop_start', 'lwtv_yikes_jetpack_remove_share' );
  *
  * This is manually called by post-content pages.
  */
-function lwtv_yikes_jetpack_post_meta( ) {
-	if ( function_exists( 'sharing_display' ) ) sharing_display( '', true );
+function lwtv_yikes_jetpack_post_meta() {
+	if ( function_exists( 'sharing_display' ) ) {
+		sharing_display( '', true );
+	}
 
 	if ( class_exists( 'Jetpack_Likes' ) ) {
-		$custom_likes = new Jetpack_Likes;
-		$post_meta = $custom_likes->post_likes( '' );
+		$custom_likes = new Jetpack_Likes();
+		$post_meta    = $custom_likes->post_likes( '' );
 	}
 }
 
@@ -124,9 +131,9 @@ function lwtv_yikes_jetpack_post_meta( ) {
  * special order: ASC by title
  */
 function lwtv_yikes_archive_sort_order( $query ) {
-	if ( $query->is_main_query() && !is_admin() ) {
+	if ( $query->is_main_query() && ! is_admin() ) {
 		$posttypes  = array( 'post_type_characters', 'post_type_shows', 'post_type_actors' );
-		$taxonomies = array( 'lez_cliches', 'lez_gender', 'lez_sexuality', 'lez_tropes', 'lez_country', 'lez_stations', 'lez_formats', 'lez_genres', 'lez_stars', 'lez_triggers', 'lez_actor_gender', 'lez_actor_sexuality', );
+		$taxonomies = array( 'lez_cliches', 'lez_gender', 'lez_sexuality', 'lez_tropes', 'lez_country', 'lez_stations', 'lez_formats', 'lez_genres', 'lez_stars', 'lez_triggers', 'lez_actor_gender', 'lez_actor_sexuality' );
 		if ( is_post_type_archive( $posttypes ) || is_tax( $taxonomies ) ) {
 			$query->set( 'order', 'ASC' );
 			$query->set( 'orderby', 'title' );
@@ -137,12 +144,12 @@ add_action( 'pre_get_posts', 'lwtv_yikes_archive_sort_order' );
 
 /**
  * Archive Query
- * 
+ *
  * Characters and certain taxonomies show 24 posts per
  * page on archives instead of the normal 10.
  */
 function lwtv_yikes_character_archive_query( $query ) {
-	if ( $query->is_archive() && $query->is_main_query() && !is_admin() ) {
+	if ( $query->is_archive() && $query->is_main_query() && ! is_admin() ) {
 		$taxonomies = array( 'lez_cliches', 'lez_gender', 'lez_sexuality', 'lez_romantic' );
 		if ( is_post_type_archive( 'post_type_characters' ) || is_tax( $taxonomies ) ) {
 			$query->set( 'posts_per_page', 24 );
@@ -155,7 +162,7 @@ add_action( 'pre_get_posts', 'lwtv_yikes_character_archive_query' );
  * Taxonomy Archive Title
  *
  * Take the data from the taxonomy to determine a dynamic title.
- * 
+ *
  * @access public
  * @param mixed $location
  * @param mixed $posttype
@@ -163,11 +170,14 @@ add_action( 'pre_get_posts', 'lwtv_yikes_character_archive_query' );
  * @return $title_prefix OR $title_suffix
  */
 function lwtv_yikes_tax_archive_title( $location, $posttype, $taxonomy ) {
-	
-	// Bail if not set
-	if ( !isset( $location ) || !isset( $posttype ) || !isset( $taxonomy ) ) return;
 
-	$title_prefix = $title_suffix = '';
+	// Bail if not set
+	if ( ! isset( $location ) || ! isset( $posttype ) || ! isset( $taxonomy ) ) {
+		return;
+	}
+
+	$title_prefix = '';
+	$title_suffix = '';
 	$term         = get_term_by( 'slug', get_query_var( 'term' ), $taxonomy );
 	$termicon     = get_term_meta( $term->term_id, 'lez_termsmeta_icon', true );
 
@@ -242,7 +252,7 @@ function lwtv_yikes_tax_archive_title( $location, $posttype, $taxonomy ) {
 			break;
 		case 'post_type_shows':
 			$title_prefix = 'TV Shows ';
-			
+
 			// TV Shows are harder to have titles
 			switch ( $taxonomy ) {
 				case 'lez_tropes':
@@ -272,10 +282,20 @@ function lwtv_yikes_tax_archive_title( $location, $posttype, $taxonomy ) {
 			}
 			break;
 	}
-	
-	if ( $location == 'prefix' ) return $title_prefix;
-	if ( $location == 'suffix' ) return $title_suffix;
-	if ( $location == 'icon' )   return $icon;
+
+	switch ( $location ) {
+		case 'prefix':
+			$return = $title_prefix;
+			break;
+		case 'suffix':
+			$return = $title_suffix;
+			break;
+		case 'icon':
+			$return = $icon;
+			break;
+	}
+
+	return $return;
 }
 
 
@@ -292,11 +312,11 @@ function lwtv_yikes_tax_archive_title( $location, $posttype, $taxonomy ) {
 function lwtv_yikes_show_star( $show_id ) {
 	$star_terms = get_the_terms( $show_id, 'lez_stars' );
 
-	if ( get_post_meta( $show_id, 'lezshows_stars', true ) || ( !empty( $star_terms ) && !is_wp_error( $star_terms ) ) ) {
-		$color = esc_attr( get_post_meta( $show_id, 'lezshows_stars' , true ) );
-		if ( !empty( $star_terms ) && !is_wp_error( $star_terms ) ) {
+	if ( get_post_meta( $show_id, 'lezshows_stars', true ) || ( ! empty( $star_terms ) && ! is_wp_error( $star_terms ) ) ) {
+		$color = esc_attr( get_post_meta( $show_id, 'lezshows_stars', true ) );
+		if ( ! empty( $star_terms ) && ! is_wp_error( $star_terms ) ) {
 			$color_term = get_the_terms( $show_id, 'lez_stars' );
-			$color = $color_term[0]->slug;
+			$color      = $color_term[0]->slug;
 		}
 		$star = ' <span role="img" aria-label="' . ucfirst( $color ) . ' Star Show" data-toggle="tooltip" title="' . ucfirst( $color ) . ' Star Show" class="show-star ' . $color . '">' . lwtv_yikes_symbolicons( 'star.svg', 'fa-star' ) . '</span>';
 		return $star;
@@ -315,30 +335,32 @@ function lwtv_yikes_show_star( $show_id ) {
  * @return void
  */
 function lwtv_yikes_content_warning( $show_id ) {
-	
+
 	$warning_array = array(
 		'card'    => 'none',
 		'content' => 'none',
 	);
-	
+
 	// If there's no post ID passed or it's not a show, we show nothing.
-	if ( is_null( $show_id ) || get_post_type( $show_id ) !== 'post_type_shows' ) return $warning_array;
-	
-	$trigger_terms = get_the_terms( $show_id, 'lez_triggers' );
-	$trigger = ( !empty( $trigger_terms ) && !is_wp_error( $trigger_terms ) )? $trigger_terms[0]->slug : get_post_meta( $show_id, 'lezshows_triggerwarning', true );
-	$warning_array['content'] = ( !empty( $trigger_terms ) && !is_wp_error( $trigger_terms ) )? term_description( $trigger_terms[0]->term_id, 'lez_triggers' ) : '<strong>WARNING</strong> This show may be upsetting to watch.';
-	
+	if ( is_null( $show_id ) || get_post_type( $show_id ) !== 'post_type_shows' ) {
+		return $warning_array;
+	}
+
+	$trigger_terms            = get_the_terms( $show_id, 'lez_triggers' );
+	$trigger                  = ( ! empty( $trigger_terms ) && ! is_wp_error( $trigger_terms ) ) ? $trigger_terms[0]->slug : get_post_meta( $show_id, 'lezshows_triggerwarning', true );
+	$warning_array['content'] = ( ! empty( $trigger_terms ) && ! is_wp_error( $trigger_terms ) ) ? term_description( $trigger_terms[0]->term_id, 'lez_triggers' ) : '<strong>WARNING</strong> This show may be upsetting to watch.';
+
 	switch ( $trigger ) {
-		case "on":
-		case "high":
-			$warning_array['card']    = 'danger';
+		case 'on':
+		case 'high':
+			$warning_array['card'] = 'danger';
 			break;
-		case "med":
-		case "medium":
-			$warning_array['card']    = 'warning';
+		case 'med':
+		case 'medium':
+			$warning_array['card'] = 'warning';
 			break;
-		case "low":
-			$warning_array['card']    = 'info';
+		case 'low':
+			$warning_array['card'] = 'info';
 			break;
 		default:
 			$warning_array['card']    = 'none';
@@ -352,7 +374,7 @@ function lwtv_yikes_content_warning( $show_id ) {
  * Get Characters For Show
  *
  * Get all the characters for a show, based on role type.
- * 
+ *
  * @access public
  * @param mixed $show_id: Extracted from page the function is called on
  * @param mixed $role: regular (default), recurring, guest
@@ -363,17 +385,19 @@ function lwtv_yikes_get_characters_for_show( $show_id, $havecharcount, $role = '
 	// The Shane Clause & The Clone Club Correlary
 	// Calculate the max number of characters to list, based on the
 	// previous count. Default/Minimum is 100 characters.
-	$count = ( isset( $havecharcount ) && $havecharcount >= '100' )? $havecharcount : '100' ;
+	$count = ( isset( $havecharcount ) && $havecharcount >= '100' ) ? $havecharcount : '100';
 
-	// Valid Roles:	
+	// Valid Roles:
 	$valid_roles = array( 'regular', 'recurring', 'guest' );
-	
+
 	// If this isn't a show page, or there are no valid roles, bail.
-	if ( !isset( $show_id ) || get_post_type( $show_id ) !== 'post_type_shows' || !in_array( $role, $valid_roles ) ) return;
+	if ( ! isset( $show_id ) || 'post_type_shows' !== get_post_type( $show_id ) || ! in_array( $role, $valid_roles, true ) ) {
+		return;
+	}
 
 	// Prepare the ARRAY
 	$characters = array();
-	
+
 	$charactersloop = new WP_Query( array(
 		'post_type'              => 'post_type_characters',
 		'post_status'            => array( 'publish' ),
@@ -382,8 +406,8 @@ function lwtv_yikes_get_characters_for_show( $show_id, $havecharcount, $role = '
 		'posts_per_page'         => $count,
 		'no_found_rows'          => true,
 		'update_post_term_cache' => true,
-		'meta_query'             => array( 
-			'relation'    => 'AND',
+		'meta_query'             => array(
+			'relation' => 'AND',
 			array(
 				'key'     => 'lezchars_show_group',
 				'value'   => $role,
@@ -405,13 +429,13 @@ function lwtv_yikes_get_characters_for_show( $show_id, $havecharcount, $role = '
 
 			// The Sara Lance Complexity:
 			// If the character is in this show, AND a published character,
-			// AND has this role ON THIS SHOW we will pass the following 
+			// AND has this role ON THIS SHOW we will pass the following
 			// data to the character template to determine what to display.
 
-			if ( get_post_status ( $char_id ) == 'publish' && isset( $shows_array ) && !empty( $shows_array ) ) {
-				foreach( $shows_array as $char_show ) {
-					if ( $char_show['show'] == $show_id && $char_show['type'] == $role ) {
-						$characters[$char_id] = array(
+			if ( 'publish' === get_post_status( $char_id ) && isset( $shows_array ) && ! empty( $shows_array ) ) {
+				foreach ( $shows_array as $char_show ) {
+					if ( $char_show['show'] == $show_id && $char_show['type'] === $role ) { // WPCS: loose comparison ok.
+						$characters[ $char_id ] = array(
 							'id'        => $char_id,
 							'title'     => get_the_title( $char_id ),
 							'url'       => get_the_permalink( $char_id ),
@@ -434,112 +458,114 @@ function lwtv_yikes_get_characters_for_show( $show_id, $havecharcount, $role = '
  * Character Data
  *
  * Called on character pages to generate certain data bits
- * 
+ *
  * @access public
- * @param mixed $the_ID: the character ID
- * @param mixed $data: 
+ * @param mixed $the_id: the character ID
+ * @param mixed $data:
  * @return void
  */
-function lwtv_yikes_chardata( $the_ID, $data ) {
+function lwtv_yikes_chardata( $the_id, $data ) {
 
 	// Early Bail
 	$valid_data = array( 'dead', 'shows', 'actors', 'gender', 'sexuality', 'romantic', 'cliches', 'oneshow', 'oneactor' );
-	if ( !isset( $the_ID ) || !isset( $data) || !in_array( $data, $valid_data ) ) return;
-	
+	if ( ! isset( $the_id ) || ! isset( $data ) || ! in_array( $data, $valid_data, true ) ) {
+		return;
+	}
+
 	$output = '';
 
 	switch ( $data ) {
 		case 'dead':
 			$deadpage = get_term_by( 'slug', get_query_var( 'term' ), get_query_var( 'taxonomy' ) );
 			// Show nothing on archive pages for dead
-			if ( !empty( $term ) && $term->slug == 'dead' ) { 
+			if ( ! empty( $term ) && 'dead' === $term->slug ) {
 				return;
-			} elseif ( has_term( 'dead', 'lez_cliches' , $the_ID ) ) {
+			} elseif ( has_term( 'dead', 'lez_cliches', $the_id ) ) {
 				$output = '<span role="img" aria-label="Grim Reaper" title="Grim Reaper" class="charlist-grave">' . lwtv_yikes_symbolicons( 'grim-reaper.svg', 'fa-times-circle' ) . '</span>';
 			}
 			break;
 		case 'shows':
-			$output = get_post_meta( $the_ID, 'lezchars_show_group', true );
+			$output = get_post_meta( $the_id, 'lezchars_show_group', true );
 			break;
 		case 'oneshow':
-			$all_shows   = get_post_meta( $the_ID, 'lezchars_show_group', true );
+			$all_shows   = get_post_meta( $the_id, 'lezchars_show_group', true );
 			$shows_value = isset( $all_shows[0] ) ? $all_shows[0] : '';
-			if ( !empty( $shows_value ) ) {
+			if ( ! empty( $shows_value ) ) {
 				$num_shows = count( $all_shows );
-				$showsmore = ( $num_shows > 1 )? ' (plus ' . ( $num_shows - 1 ) .' more)' : '';
+				$showsmore = ( $num_shows > 1 ) ? ' (plus ' . ( $num_shows - 1 ) . ' more)' : '';
 				$show_post = get_post( $shows_value['show'] );
 				$output   .= '<div class="card-meta-item shows">' . lwtv_yikes_symbolicons( 'tv-hd.svg', 'fa-tv' ) . '<em>';
-				if ( get_post_status ( $shows_value['show'] ) !== 'publish' ) {
+				if ( get_post_status( $shows_value['show'] ) !== 'publish' ) {
 					$output .= '<span class="disabled-show-link">' . $show_post->post_title . '</span>';
 				} else {
-					$output .= '<a href="' . get_the_permalink( $show_post->ID )  .'">' . $show_post->post_title .'</a>';
+					$output .= '<a href="' . get_the_permalink( $show_post->ID ) . '">' . $show_post->post_title . '</a>';
 				}
 				$output .= '</em> (' . $shows_value['type'] . ')' . $showsmore . '</div>';
 			}
 			break;
 		case 'oneactor':
-			$actors      = get_post_meta( $the_ID, 'lezchars_actor', true );
+			$actors      = get_post_meta( $the_id, 'lezchars_actor', true );
 			$actor_value = isset( $actors[0] ) ? $actors[0] : '';
-			if ( !empty( $actor_value ) ) {
+			if ( ! empty( $actor_value ) ) {
 				$num_actors = count( $actors );
-				$actorsmore = ( $num_actors > 1 )? ' (plus ' . ( $num_actors - 1 ) .' more)' : '';
+				$actorsmore = ( $num_actors > 1 ) ? ' (plus ' . ( $num_actors - 1 ) . ' more)' : '';
 				$actor_post = get_post( $actor_value );
-				$output .= '<div class="card-meta-item actors">' . lwtv_yikes_symbolicons( 'user.svg', 'fa-user' );
-				if ( get_post_status ( $actor_value ) !== 'publish' ) {
+				$output    .= '<div class="card-meta-item actors">' . lwtv_yikes_symbolicons( 'user.svg', 'fa-user' );
+				if ( get_post_status( $actor_value ) !== 'publish' ) {
 					$output .= '<span class="disabled-show-link">' . $actor_post->post_title . '</span>';
 				} else {
-					$output .= '<a href="' . get_the_permalink( $actor_post->ID )  .'">' . $actor_post->post_title .'</a>';
+					$output .= '<a href="' . get_the_permalink( $actor_post->ID ) . '">' . $actor_post->post_title . '</a>';
 				}
 				$output .= $actorsmore . '</div>';
 			}
 			break;
 		case 'actors':
-			$character_actors = get_post_meta( $the_ID, 'lezchars_actor', true );
-			if ( !is_array ( $character_actors ) ) {
-				$character_actors = array( get_post_meta( $the_ID, 'lezchars_actor', true ) );
+			$character_actors = get_post_meta( $the_id, 'lezchars_actor', true );
+			if ( ! is_array( $character_actors ) ) {
+				$character_actors = array( get_post_meta( $the_id, 'lezchars_actor', true ) );
 			}
 			$output = $character_actors;
 			break;
 		case 'gender':
-			$gender_terms = get_the_terms( $the_ID, 'lez_gender', true );
+			$gender_terms = get_the_terms( $the_id, 'lez_gender', true );
 			if ( $gender_terms && ! is_wp_error( $gender_terms ) ) {
-				foreach( $gender_terms as $gender_term ) {
-					$output .= '<a href="' . get_term_link( $gender_term->slug, 'lez_gender') . '" rel="tag" title="' . $gender_term->name . '">' . $gender_term->name . '</a> ';
+				foreach ( $gender_terms as $gender_term ) {
+					$output .= '<a href="' . get_term_link( $gender_term->slug, 'lez_gender' ) . '" rel="tag" title="' . $gender_term->name . '">' . $gender_term->name . '</a> ';
 				}
 			}
 			break;
 		case 'sexuality':
-			$sexuality_terms = get_the_terms( $the_ID, 'lez_sexuality', true );
+			$sexuality_terms = get_the_terms( $the_id, 'lez_sexuality', true );
 			if ( $sexuality_terms && ! is_wp_error( $sexuality_terms ) ) {
-				foreach( $sexuality_terms as $sexuality_term ) {
-					$output .= '<a href="' . get_term_link( $sexuality_term->slug, 'lez_sexuality') . '" rel="tag" title="' . $sexuality_term->name . '">' . $sexuality_term->name . '</a> ';
+				foreach ( $sexuality_terms as $sexuality_term ) {
+					$output .= '<a href="' . get_term_link( $sexuality_term->slug, 'lez_sexuality' ) . '" rel="tag" title="' . $sexuality_term->name . '">' . $sexuality_term->name . '</a> ';
 				}
 			}
 			break;
 		case 'romantic':
-			$romantic_terms = get_the_terms( $the_ID, 'lez_romantic', true );
+			$romantic_terms = get_the_terms( $the_id, 'lez_romantic', true );
 			if ( $romantic_terms && ! is_wp_error( $romantic_terms ) ) {
-				foreach( $romantic_terms as $romantic_term ) {
-					$output .= '<a href="' . get_term_link( $romantic_term->slug, 'lez_romantic') . '" rel="tag" title="' . $romantic_term->name . '">' . $romantic_term->name . '</a> ';
+				foreach ( $romantic_terms as $romantic_term ) {
+					$output .= '<a href="' . get_term_link( $romantic_term->slug, 'lez_romantic' ) . '" rel="tag" title="' . $romantic_term->name . '">' . $romantic_term->name . '</a> ';
 				}
 			}
 			break;
 		case 'cliches':
-			$lez_cliches = get_the_terms( $the_ID, 'lez_cliches' );
-			$cliches = '';
+			$lez_cliches = get_the_terms( $the_id, 'lez_cliches' );
+			$cliches     = '';
 			if ( $lez_cliches && ! is_wp_error( $lez_cliches ) ) {
 				$cliches = '';
-				foreach( $lez_cliches as $the_cliche ) {
+				foreach ( $lez_cliches as $the_cliche ) {
 					$termicon = get_term_meta( $the_cliche->term_id, 'lez_termsmeta_icon', true );
 					$tropicon = $termicon ? $termicon . '.svg' : 'square.svg';
 					$icon     = lwtv_yikes_symbolicons( $tropicon, 'fa-square' );
-					$cliches .= '<a href="' . get_term_link( $the_cliche->slug, 'lez_cliches') . '" data-toggle="tooltip" data-placement="bottom" rel="tag" title="' . $the_cliche->name . '"><span role="img" aria-label="' . $the_cliche->name . '" class="character-cliche ' . $the_cliche->slug . '">' .$icon . '</span></a>&nbsp;';
+					$cliches .= '<a href="' . get_term_link( $the_cliche->slug, 'lez_cliches' ) . '" data-toggle="tooltip" data-placement="bottom" rel="tag" title="' . $the_cliche->name . '"><span role="img" aria-label="' . $the_cliche->name . '" class="character-cliche ' . $the_cliche->slug . '">' . $icon . '</span></a>&nbsp;';
 				}
 			}
 			$output = $cliches;
 			break;
 	}
-	
+
 	return $output;
 }
 
@@ -547,23 +573,25 @@ function lwtv_yikes_chardata( $the_ID, $data ) {
  * Actor Data
  *
  * Called on actor pages to generate certain data bits
- * 
+ *
  * @access public
- * @param mixed $the_ID: the actor post ID
- * @param mixed $data: 
+ * @param mixed $the_id: the actor post ID
+ * @param mixed $data:
  * @return void
  */
-function lwtv_yikes_actordata( $the_ID, $data ) {
+function lwtv_yikes_actordata( $the_id, $data ) {
 
 	// Early Bail
 	$valid_data = array( 'characters', 'gender', 'sexuality', 'age', 'dead' );
-	if ( !isset( $the_ID ) || !isset( $data) || !in_array( $data, $valid_data ) ) return;
-	
+	if ( ! isset( $the_id ) || ! isset( $data ) || ! in_array( $data, $valid_data, true ) ) {
+		return;
+	}
+
 	$output = '';
 
 	switch ( $data ) {
 		case 'age':
-			$end = new DateTime( );
+			$end = new DateTime();
 			if ( get_post_meta( get_the_ID(), 'lezactors_death', true ) ) {
 				$end = new DateTime( get_post_meta( get_the_ID(), 'lezactors_death', true ) );
 			}
@@ -571,11 +599,11 @@ function lwtv_yikes_actordata( $the_ID, $data ) {
 				$start = new DateTime( get_post_meta( get_the_ID(), 'lezactors_birth', true ) );
 			}
 			if ( isset( $start ) ) {
-				$output = $start->diff($end);
+				$output = $start->diff( $end );
 			}
 			break;
 		case 'characters':
-			$characters = array();
+			$characters     = array();
 			$charactersloop = new WP_Query( array(
 				'post_type'              => 'post_type_characters',
 				'post_status'            => array( 'publish' ),
@@ -584,10 +612,10 @@ function lwtv_yikes_actordata( $the_ID, $data ) {
 				'posts_per_page'         => '20',
 				'no_found_rows'          => true,
 				'update_post_term_cache' => true,
-				'meta_query'             => array( 
+				'meta_query'             => array(
 					array(
 						'key'     => 'lezchars_actor',
-						'value'   => $the_ID,
+						'value'   => $the_id,
 						'compare' => 'LIKE',
 					),
 				),
@@ -597,15 +625,15 @@ function lwtv_yikes_actordata( $the_ID, $data ) {
 					$charactersloop->the_post();
 					$char_id      = get_the_ID();
 					$actors_array = get_post_meta( $char_id, 'lezchars_actor', true );
-					if ( get_post_status ( $char_id ) == 'publish' && isset( $actors_array ) && !empty( $actors_array ) ) {
-						foreach( $actors_array as $char_actor ) {
-							if ( $char_actor == $the_ID ) {
-								$characters[$char_id] = array(
-									'id'        => $char_id,
-									'title'     => get_the_title( $char_id ),
-									'url'       => get_the_permalink( $char_id ),
-									'content'   => get_the_content( $char_id ),
-									'shows'     => get_post_meta( $char_id, 'lezchars_show_group', true ),
+					if ( 'publish' === get_post_status( $char_id ) && isset( $actors_array ) && ! empty( $actors_array ) ) {
+						foreach ( $actors_array as $char_actor ) {
+							if ( $char_actor == $the_id ) { // WPCS: loose comparison ok.
+								$characters[ $char_id ] = array(
+									'id'      => $char_id,
+									'title'   => get_the_title( $char_id ),
+									'url'     => get_the_permalink( $char_id ),
+									'content' => get_the_content( $char_id ),
+									'shows'   => get_post_meta( $char_id, 'lezchars_show_group', true ),
 								);
 							}
 						}
@@ -625,10 +653,10 @@ function lwtv_yikes_actordata( $the_ID, $data ) {
 				'posts_per_page'         => '20',
 				'no_found_rows'          => true,
 				'update_post_term_cache' => true,
-				'meta_query'             => array( 
+				'meta_query'             => array(
 					array(
 						'key'     => 'lezchars_actor',
-						'value'   => $the_ID,
+						'value'   => $the_id,
 						'compare' => 'LIKE',
 					),
 				),
@@ -644,14 +672,14 @@ function lwtv_yikes_actordata( $the_ID, $data ) {
 					$deadloop->the_post();
 					$char_id = get_the_ID();
 					$actors  = get_post_meta( $char_id, 'lezchars_actor', true );
-		
-					if ( get_post_status ( $char_id ) == 'publish' && isset( $actors ) && !empty( $actors ) ) {
-						foreach( $actors as $actor ) {
-							if ( $actor == $the_ID && has_term( 'dead', 'lez_cliches' , $char_id )) {
-								$dead[$char_id] = array(
-									'id'        => $char_id,
-									'title'     => get_the_title( $char_id ),
-									'url'       => get_the_permalink( $char_id ),
+
+					if ( 'publish' === get_post_status( $char_id ) && isset( $actors ) && ! empty( $actors ) ) {
+						foreach ( $actors as $actor ) {
+							if ( $actor == $the_id && has_term( 'dead', 'lez_cliches', $char_id ) ) {  // WPCS: loose comparison ok.
+								$dead[ $char_id ] = array(
+									'id'    => $char_id,
+									'title' => get_the_title( $char_id ),
+									'url'   => get_the_permalink( $char_id ),
 								);
 							}
 						}
@@ -662,18 +690,18 @@ function lwtv_yikes_actordata( $the_ID, $data ) {
 			$output = $dead;
 			break;
 		case 'gender':
-			$gender_terms = get_the_terms( $the_ID, 'lez_actor_gender', true );
+			$gender_terms = get_the_terms( $the_id, 'lez_actor_gender', true );
 			if ( $gender_terms && ! is_wp_error( $gender_terms ) ) {
-				foreach( $gender_terms as $gender_term ) {
-					$output .= '<a href="' . get_term_link( $gender_term->slug, 'lez_actor_gender') . '" rel="tag" title="' . $gender_term->name . '">' . $gender_term->name . '</a> ';
+				foreach ( $gender_terms as $gender_term ) {
+					$output .= '<a href="' . get_term_link( $gender_term->slug, 'lez_actor_gender' ) . '" rel="tag" title="' . $gender_term->name . '">' . $gender_term->name . '</a> ';
 				}
 			}
 			break;
 		case 'sexuality':
-			$sexuality_terms = get_the_terms( $the_ID, 'lez_actor_sexuality', true );
+			$sexuality_terms = get_the_terms( $the_id, 'lez_actor_sexuality', true );
 			if ( $sexuality_terms && ! is_wp_error( $sexuality_terms ) ) {
-				foreach( $sexuality_terms as $sexuality_term ) {
-					$output .= '<a href="' . get_term_link( $sexuality_term->slug, 'lez_actor_sexuality') . '" rel="tag" title="' . $sexuality_term->name . '">' . $sexuality_term->name . '</a> ';
+				foreach ( $sexuality_terms as $sexuality_term ) {
+					$output .= '<a href="' . get_term_link( $sexuality_term->slug, 'lez_actor_sexuality' ) . '" rel="tag" title="' . $sexuality_term->name . '">' . $sexuality_term->name . '</a> ';
 				}
 			}
 			break;
@@ -683,13 +711,13 @@ function lwtv_yikes_actordata( $the_ID, $data ) {
 
 /**
  * Is the actor queer function
- * 
+ *
  * @access public
- * @param mixed $the_ID
+ * @param mixed $the_id
  * @return void
  */
-function lwtv_yikes_is_queer( $the_ID ) {
-	$is_queer = ( LWTV_Loops::is_actor_queer( $the_ID ) == 'yes' )? true : false;
+function lwtv_yikes_is_queer( $the_id ) {
+	$is_queer = ( 'yes' === LWTV_Loops::is_actor_queer( $the_id ) ) ? true : false;
 	return $is_queer;
 }
 
@@ -698,19 +726,19 @@ function lwtv_yikes_is_queer( $the_ID ) {
 
 /**
  * Fix microformats
- * We have to have author, updated, and entry-title IN the hentry data. 
- * 
+ * We have to have author, updated, and entry-title IN the hentry data.
+ *
  * @access public
  * @param mixed $post_id
  * @return void
  */
 function lwtv_microformats_fix( $post_id ) {
 	$valid_types = array( 'post_type_authors', 'post_type_characters', 'post_type_shows' );
-	if ( in_array( get_post_type( $post_id ), $valid_types ) ) {
+	if ( in_array( get_post_type( $post_id ), $valid_types, true ) ) {
 		echo '<div class="hatom-extra" style="display:none;visibility:hidden;">
-			<span class="entry-title">' . get_the_title( $post_id ) . '</span>
-			<span class="updated">' . get_the_modified_time( 'F jS, Y', $post_id ) . '</span>
-			<span class="author vcard"><span class="fn">' . get_option( 'blogname' ) . '</span></span>
+			<span class="entry-title">' . esc_html( get_the_title( $post_id ) ) . '</span>
+			<span class="updated">' . esc_html( get_the_modified_time( 'F jS, Y', $post_id ) ) . '</span>
+			<span class="author vcard"><span class="fn">' . esc_html( get_option( 'blogname' ) ) . '</span></span>
 		</div>';
 	}
 }
@@ -722,8 +750,8 @@ function lwtv_microformats_fix( $post_id ) {
  * Echo GDPR notice if users aren't logged in
  * (logged in users alredy know what they're in for, yo)
  */
-function lwtv_gdpr_footer(){
-	if ( !is_user_logged_in() ) {
+function lwtv_gdpr_footer() {
+	if ( ! is_user_logged_in() ) {
 		?>
 		<div id="GDPRAlert" class="alert alert-info alert-dismissible fade collapse alert-gdpr" role="alert">
 			We use cookies to personalize content, provide features, analyze traffic, and optimize advertising. By continuing to use this website, you agree to their use. For more information, you may review our <a href="/tos/">Terms of Use</a> and <a href="/tos/privacy/">Privacy Policy</a>.
@@ -733,3 +761,16 @@ function lwtv_gdpr_footer(){
 	}
 }
 //add_action( 'wp_footer', 'lwtv_gdpr_footer', 5 );
+
+/** Sanitzation Section **/
+
+/**
+ * This function does NOTHING, and if someone submitted it to the .org repo,
+ * I would slap them with a fish. The problem is there isn't a good way to
+ * sanitize an SVG, so it's this or having a million WPCS comments.
+ * @param  mixed $input HTML content with an SVG
+ * @return mixed        Content with an SVG
+ */
+function lwtv_sanitized( $input ) {
+	return $input;
+}

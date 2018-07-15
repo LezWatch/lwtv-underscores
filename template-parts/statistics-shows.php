@@ -2,11 +2,11 @@
 /**
  * The template for displaying the shows stats page
  *
- * @package LezWatchTV
+ * @package LezWatch.TV
  */
 
 $valid_views = array( 'overview', 'tropes', 'genres', 'formats', 'stars', 'triggers', 'on-air', 'worth-it', 'we-love-it' );
-$view        = ( !isset( $_GET['view'] ) || !in_array( $_GET['view'], $valid_views ) )? 'overview' : $_GET['view'];
+$view        = ( ! isset( $_GET['view'] ) || ! in_array( $_GET['view'], $valid_views, true ) ) ? 'overview' : $_GET['view']; // WPCS: CSRF ok.
 
 ?>
 <h2>
@@ -16,8 +16,8 @@ $view        = ( !isset( $_GET['view'] ) || !in_array( $_GET['view'], $valid_vie
 <ul class="nav nav-tabs">
 	<?php
 	foreach ( $valid_views as $the_view ) {
-		$active = ( $view == $the_view )? ' active' : '';
-		echo '<li class="nav-item"><a class="nav-link' . $active . '" href="' . esc_url( add_query_arg( 'view', $the_view, '/statistics/shows/' ) ) . '">' . strtoupper( str_replace( '-', ' ', $the_view ) ) . '</a></li>';
+		$active = ( $view === $the_view ) ? ' active' : '';
+		echo '<li class="nav-item"><a class="nav-link' . esc_attr( $active ) . '" href="' . esc_url( add_query_arg( 'view', $the_view, '/statistics/shows/' ) ) . '">' . esc_html( strtoupper( str_replace( '-', ' ', $the_view ) ) ) . '</a></li>';
 	}
 	?>
 </ul>
@@ -29,7 +29,6 @@ $view        = ( !isset( $_GET['view'] ) || !in_array( $_GET['view'], $valid_vie
 switch ( $view ) {
 	case 'overview':
 		?>
-
 		<div class="container">
 			<div class="row equal-height">
 				<div class="col-4">
@@ -41,13 +40,13 @@ switch ( $view ) {
 				<div class="col-4">
 					<div class="alert alert-info" role="info"><center>
 						<h3 class="alert-heading">Tropes</h3>
-						<h5><?php echo wp_count_terms( 'lez_tropes' ); ?></h5>
+						<h5><?php echo (int) wp_count_terms( 'lez_tropes' ); ?></h5>
 					</center></div>
 				</div>
 				<div class="col-4">
 					<div class="alert alert-warning" role="info"><center>
 						<h3 class="alert-heading">Genres</h3>
-						<h5><?php echo wp_count_terms( 'lez_genres' ); ?></h5>
+						<h5><?php echo (int) wp_count_terms( 'lez_genres' ); ?></h5>
 					</center></div>
 				</div>
 			</div>
@@ -67,25 +66,25 @@ switch ( $view ) {
 							</tr>
 						</thead>
 						<tbody>
-							<?
-							$tropes  = get_terms( 'lez_tropes', array(
+							<?php
+							$tropes = get_terms( 'lez_tropes', array(
 								'number'     => 10,
 								'orderby'    => 'count',
 								'hide_empty' => 0,
 								'order'      => 'DESC',
 							) );
-							foreach( $tropes as $trope ) {
+							foreach ( $tropes as $trope ) {
 								echo '<tr>
-										<th scope="row"><a href="/trope/' . $trope->slug . '">' . $trope->name . '</a></th>
-										<td>' . $trope->count . '</td>
+										<th scope="row"><a href="/trope/' . esc_url( $trope->slug ) . '">' . esc_html( $trope->name ) . '</a></th>
+										<td>' . (int) $trope->count . '</td>
 									</tr>';
 							}
 							?>
 						</tbody>
 					</table>
-					<a href="?view=tropes"><button type="button" class="btn btn-info btn-lg btn-block">All <?php echo wp_count_terms( 'lez_tropes' ); ?> Tropes</button></a>
+					<a href="?view=tropes"><button type="button" class="btn btn-info btn-lg btn-block">All <?php echo (int) wp_count_terms( 'lez_tropes' ); ?> Tropes</button></a>
 				</div>
-		
+
 				<div class="col">
 					<h4>Top Genres</h4>
 					<table class="table table-striped table-hover">
@@ -96,23 +95,23 @@ switch ( $view ) {
 							</tr>
 						</thead>
 						<tbody>
-							<?
+							<?php
 							$genres = get_terms( 'lez_genres', array(
 								'number'     => 10,
 								'orderby'    => 'count',
 								'hide_empty' => 0,
 								'order'      => 'DESC',
 							) );
-							foreach( $genres as $genre ) {
+							foreach ( $genres as $genre ) {
 								echo '<tr>
-										<th scope="row"><a href="/genre/' . $genre->slug . '">' . $genre->name . '</a></th>
-										<td>' . $genre->count . '</td>
+										<th scope="row"><a href="/genre/' . esc_url( $genre->slug ) . '">' . esc_html( $genre->name ) . '</a></th>
+										<td>' . (int) $genre->count . '</td>
 									</tr>';
 							}
 							?>
 						</tbody>
 					</table>
-					<a href="?view=genres"><button type="button" class="btn btn-info btn-lg btn-block">All <?php echo wp_count_terms( 'lez_genres' ); ?> Genres</button></a>
+					<a href="?view=genres"><button type="button" class="btn btn-info btn-lg btn-block">All <?php echo (int) wp_count_terms( 'lez_genres' ); ?> Genres</button></a>
 				</div>
 			</div>
 		</div>
@@ -220,7 +219,7 @@ switch ( $view ) {
 		</div>
 		<?php
 		break;
-	case 'on-air'
+	case 'on-air':
 		?>
 		<div class="container chart-container">
 			<div class="row">

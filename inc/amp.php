@@ -5,7 +5,7 @@
  * This will only run if AMP by Automattic is installed and active.
  * All the magic sauce is run by this.
  *
- * @package LezWatchTV
+ * @package LezWatch.TV
  */
 
 
@@ -39,8 +39,8 @@ class LWTV_AMP {
 	 *
 	 * @return file
 	 */
-	function amp_post_template_file( $file, $type, $post ) {
-		if ( in_array( $post->post_type, array( 'post_type_shows', 'post_type_characters', 'post_type_actors' ) ) ) {
+	public function amp_post_template_file( $file, $type, $post ) {
+		if ( in_array( $post->post_type, array( 'post_type_shows', 'post_type_characters', 'post_type_actors' ), true ) ) {
 			$file = get_stylesheet_directory() . '/template-parts/amp-' . $post->post_type . '.php';
 		}
 		return $file;
@@ -52,7 +52,7 @@ class LWTV_AMP {
 	 * Filter the content to add some of our own extras
 	 *
 	 */
-	function add_custom_actions() {
+	public function add_custom_actions() {
 		add_filter( 'the_content', array( $this, 'amp_add_content' ) );
 	}
 
@@ -65,23 +65,23 @@ class LWTV_AMP {
 	 *
 	 * @return content
 	 */
-	function amp_add_content( $content ) {
+	public function amp_add_content( $content ) {
 		global $post;
 
-		$post_type=$post->post_type;
-		$post_id=$post->ID;
+		$post_type  = $post->post_type;
+		$post_id    = $post->ID;
 		$image_size = 'full';
 
-		if ( $post_type === 'post_type_characters' ) {
+		if ( 'post_type_characters' === $post_type ) {
 			$image_size = 'character-img';
 		}
 
-		if ( $post_type === 'post_type_shows' ) {
+		if ( 'post_type_shows' === $post_type ) {
 			$image_size = 'show-img';
 		}
 
-		if ( has_post_thumbnail() && $post_type !== 'post' ) {
-			$image = '<p class="lezwatch-featured-image ' . $image_size . '">' . get_the_post_thumbnail( $post_id, $image_size ) . '</p>';
+		if ( has_post_thumbnail() && 'post' !== $post_type ) {
+			$image   = '<p class="lezwatch-featured-image ' . $image_size . '">' . get_the_post_thumbnail( $post_id, $image_size ) . '</p>';
 			$content = $image . $content;
 		}
 		return $content;
@@ -90,10 +90,10 @@ class LWTV_AMP {
 
 	/**
 	 * Edit Head Action.
-	 * 
+	 *
 	 * Add custom code to the header
 	 */
-	function amp_post_template_head( $amp_template ) {
+	public function amp_post_template_head( $amp_template ) {
 		// Nothing Yet
 	}
 
@@ -103,7 +103,7 @@ class LWTV_AMP {
 	 * Add our own custom CSS
 	 *
 	 */
-	function amp_post_template_css( $amp_template ) {
+	public function amp_post_template_css( $amp_template ) {
 		// only CSS here please...
 		?>
 		p.lezwatch-featured-image.character-img {
@@ -142,24 +142,24 @@ class LWTV_AMP {
 		<?php
 	}
 
-	function amp_add_custom_analytics( $analytics ) {
+	public function amp_add_custom_analytics( $analytics ) {
 		if ( ! is_array( $analytics ) ) {
 			$analytics = array();
 		}
 
 		// https://developers.google.com/analytics/devguides/collection/amp-analytics/
 		$analytics['lwtv-googleanalytics'] = array(
-			'type' => 'googleanalytics',
-			'attributes' => array(
+			'type'        => 'googleanalytics',
+			'attributes'  => array(
 				// 'data-credentials' => 'include',
 			),
 			'config_data' => array(
-				'vars' => array(
-					'account' => "UA-3187964-11",
+				'vars'     => array(
+					'account' => 'UA-3187964-11',
 				),
 				'triggers' => array(
 					'trackPageview' => array(
-						'on' => 'visible',
+						'on'      => 'visible',
 						'request' => 'pageview',
 					),
 				),
