@@ -164,7 +164,7 @@ $thumb_array       = array(
 			$deadtext = 'none are dead';
 			if ( $havedeadcount > '0' ) {
 				// translators: %s is a number
-				$deadtext = sprintf( esc_html( _n( '<strong>%s</strong> is dead', '<strong>%s</strong> are dead', $havedeadcount ) ), $havedeadcount );
+				$deadtext = sprintf( _n( '<strong>%s</strong> is dead', '<strong>%s</strong> are dead', $havedeadcount ), $havedeadcount );
 			}
 			// translators: %s is 'are' or a number.
 			echo wp_kses_post( '<p>There ' . sprintf( _n( 'is <strong>%s</strong> character', 'are <strong>%s</strong> characters', $havecharcount ), $havecharcount ) . ' listed for this actor; ' . $deadtext . '.</p>' );
