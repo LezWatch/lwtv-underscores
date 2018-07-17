@@ -94,7 +94,8 @@ $screentime   = min( (int) get_post_meta( $show_id, 'lezshows_screentime_rating'
 						echo '<li class="list-group-item network genres">' . get_the_term_list( $show_id, 'lez_genres', '<strong>Genres:</strong> ', ', ' ) . '</li>';
 					}
 					if ( get_post_meta( $show_id, 'lezshows_imdb', true ) ) {
-						echo '<li class="list-group-item network imdb"><a href="https://www.imdb.com/title/' . esc_url( get_post_meta( $show_id, 'lezshows_imdb', true ) ) . '">IMDb</a></li>';
+						$imdb = 'https://www.imdb.com/title/' . get_post_meta( $show_id, 'lezshows_imdb', true );
+						echo '<li class="list-group-item network imdb"><a href="' . esc_url( $imdb ) . '">IMDb</a></li>';
 					}
 					?>
 				</ul>
