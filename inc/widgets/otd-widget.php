@@ -103,7 +103,7 @@ class LWTV_OTD_Widget extends WP_Widget {
 
 			// Featured Image
 			echo '<div class="' . esc_attr( $type ) . '-image-wrapper">';
-			echo '<a href="' . esc_url( get_the_permalink() ) . '">';
+			echo '<a href="' . esc_url( get_the_permalink( $the_post ) ) . '">';
 			echo get_the_post_thumbnail( $the_post, $thumb, array(
 				'class' => 'card-img-top',
 				'alt'   => $thumb_title,
@@ -122,7 +122,7 @@ class LWTV_OTD_Widget extends WP_Widget {
 
 			// Button
 			echo '<div class="card-footer">
-				<a href="' . esc_url( get_the_permalink() ) . '" class="btn btn-outline-primary">' . esc_attr( ucfirst( $type ) ) . ' Profile</a>
+				<a href="' . esc_url( get_the_permalink( $the_post ) ) . '" class="btn btn-outline-primary">' . esc_attr( ucfirst( $type ) ) . ' Profile</a>
 			</div>';
 
 		echo '</div>';
