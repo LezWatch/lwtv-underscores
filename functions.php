@@ -112,7 +112,7 @@ require_once 'inc/widgets/character-widget.php';
 require_once 'inc/widgets/show-widget.php';
 require_once 'inc/widgets/filter-widget1.php';
 require_once 'inc/widgets/filter-widget2.php';
-
+require_once 'inc/widgets/otd-widget.php';
 
 /************* Theme Logo *************/
 
