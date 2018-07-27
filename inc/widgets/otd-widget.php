@@ -132,8 +132,7 @@ class LWTV_Today_Widget extends WP_Widget {
 
 	public function display_death( $output = 'widget' ) {
 		$response = self::get_data( 'death' );
-
-		$count    = ( 'NONE' === $response['content'] ) ? 0 : count( $response );
+		$count    = ( array_key_exists( 'none', $response ) ) ? 0 : count( $response );
 		$how_many = 'no characters died.';
 		$the_dead = '';
 
