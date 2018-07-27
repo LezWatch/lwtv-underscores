@@ -9,16 +9,23 @@ class LWTV_Today_Widget extends WP_Widget {
 	/**
 	 * Holds widget settings defaults, populated in constructor.
 	 */
-	protected $defaults;
-	protected $valid_array;
+	protected static $defaults;
+	protected static $valid_array;
+	protected static $apiurl;
 
 	/**
 	 * Register widget with WordPress.
 	 */
 	public function __construct() {
 
-		$this->valid_array = array( 'everything', 'character', 'show', 'death' );
-		$this->defaults    = array(
+		self::$apiurl = 'https://lezwatchtv.com/wp-json/lwtv/v1';
+
+		if ( WP_DEBUG ) {
+			self::$apiurl = home_url() . '/wp-json/lwtv/v1';
+		}
+
+		self::$valid_array = array( 'everything', 'character', 'show', 'death' );
+		self::$defaults    = array(
 			'title' => 'Today ...',
 			'type'  => 'everything',
 		);
@@ -37,7 +44,7 @@ class LWTV_Today_Widget extends WP_Widget {
 	 * Front-end display of widget.
 	 */
 	public function widget( $args, $instance ) {
-		$instance = wp_parse_args( (array) $instance, $this->defaults );
+		$instance = wp_parse_args( (array) $instance, self::$defaults );
 		$type     = ( ! empty( $instance['type'] ) ) ? $instance['type'] : 'everything';
 
 		// Get what's needed from $args array ($args populated with options from widget area register_sidebar function)
@@ -85,7 +92,7 @@ class LWTV_Today_Widget extends WP_Widget {
 	}
 
 	public function get_data( $type = 'character' ) {
-		$request = wp_remote_get( 'https://lezwatchtv.com/wp-json/lwtv/v1/of-the-day/' . $type );
+		$request = wp_remote_get( self::$apiurl . '/of-the-day/' . $type );
 
 		// Make sure it's running before we do anything...
 		if ( wp_remote_retrieve_response_code( $request ) !== 200 ) {
@@ -133,7 +140,6 @@ class LWTV_Today_Widget extends WP_Widget {
 		if ( $count > 0 ) {
 			// translators: %s is the number of dead characters.
 			$how_many = sprintf( _n( '%s character died:', '%s characters died:', $count ), $count );
-
 			$the_dead = '<ul class="byq-otd">';
 
 			foreach ( $response as $dead_character ) {
@@ -216,7 +222,7 @@ class LWTV_Today_Widget extends WP_Widget {
 	public function update( $new_instance, $old_instance ) {
 		$new_instance['title'] = wp_strip_all_tags( $new_instance['title'] );
 
-		if ( ! in_array( $new_instance['type'], $this->valid_array, true ) ) {
+		if ( ! in_array( $new_instance['type'], self::$valid_array, true ) ) {
 			$new_instance['type'] = 'everything';
 		}
 
@@ -227,7 +233,7 @@ class LWTV_Today_Widget extends WP_Widget {
 	 * Back-end widget form.
 	 */
 	public function form( $instance ) {
-		$instance = wp_parse_args( (array) $instance, $this->defaults );
+		$instance = wp_parse_args( (array) $instance, self::$defaults );
 		?>
 		<p>
 			<label for="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>"><?php echo 'Title'; ?>: </label>
@@ -238,7 +244,7 @@ class LWTV_Today_Widget extends WP_Widget {
 			<label for="<?php echo esc_attr( $this->get_field_id( 'type' ) ); ?>"><?php echo 'Type'; ?>: </label>
 			<select id="<?php echo esc_attr( $this->get_field_id( 'type' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'type' ) ); ?>" class="widefat">
 				<?php
-				foreach ( $this->valid_array as $type ) {
+				foreach ( self::$valid_array as $type ) {
 					?>
 					<option <?php selected( $instance['type'], $type ); ?> value="<?php echo esc_attr( $type ); ?>"><?php echo esc_html( ucfirst( $type ) ); ?></option>
 					<?php
