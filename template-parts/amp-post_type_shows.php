@@ -85,7 +85,6 @@
 	<footer class="amp-wp-article-footer">
 		<?php
 		echo '<section class="amp-wp-show-footer">';
-		$thumb_rating    = get_post_meta( $this->ID, 'lezshows_worthit_rating', true );
 		$networks        = get_the_terms( $this->ID, 'lez_stations' );
 		$airdates        = get_post_meta( $this->ID, 'lezshows_airdates', true );
 		$tropes          = get_the_terms( $this->ID, 'lez_tropes' );
@@ -98,13 +97,15 @@
 		$info_array      = array();
 		$ratings_array   = array();
 
-		if ( $thumb_rating ) {
-			$info_array['worthit'] = '<strong>Worth Watching?</strong> ' . $thumb_rating;
-		}
+		$info_array = array(
+			'worthit' => '<strong>Worth Watching?</strong> ' . get_post_meta( $this->ID, 'lezshows_worthit_rating', true ),
+			'score'   => '<strong>Show Score:</strong> ' . round( get_post_meta( $show_id, 'lezshows_the_score', true ), 2 ),
+		);
 
 		if ( $networks && ! is_wp_error( $networks ) ) {
 			$info_array['networks'] = get_the_term_list( $this->ID, 'lez_stations', '<strong>Network(s):</strong> ', ', ' );
 		}
+
 		if ( $airdates ) {
 			$airdate = $airdates['start'] . ' - ' . $airdates['finish'];
 			if ( $airdates['start'] === $airdates['finish'] ) {
