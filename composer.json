@@ -1,0 +1,49 @@
+{
+    "name": "LezWatch/lwtv-underscores",
+    "description": "LezWatch.TV Theme",
+    "type": "wordpress theme",
+    "keywords": ["wordpress","theme"],
+    "license": "GPLv3",
+    "authors": [
+        {
+            "name": "LezWatch.TV",
+            "email": "contact@lezwatchtv.com"
+        }
+    ],
+    "repositories": [
+        {
+          "type": "package",
+          "package": {
+            "name": "fortawesome/font-awesome-free",
+            "version": "5.2.0",
+            "source": {
+              "url": "https://github.com/FortAwesome/Font-Awesome",
+              "type": "git",
+              "reference": "master"
+            }
+          }
+        }
+    ],
+    "require": {
+        "php": ">=5.6.0",
+        "slowprog/composer-copy-file": "^0.2.1",
+        "twbs/bootstrap": "^4.1",
+        "fortawesome/font-awesome-free": "*"
+    },
+    "scripts": {
+        "post-install-cmd": [
+            "SlowProg\\CopyFile\\ScriptHandler::copy"
+        ],
+        "post-update-cmd": [
+            "SlowProg\\CopyFile\\ScriptHandler::copy"
+        ]
+    },
+    "extra" : {
+        "copy-file": {
+            "vendor/twbs/bootstrap/dist/css/": "inc/bootstrap/css/",
+            "vendor/twbs/bootstrap/dist/js/": "inc/bootstrap/js/",
+            "vendor/fortawesome/font-awesome-free/web-fonts-with-css/css/": "inc/fontawesome/css/",
+            "vendor/fortawesome/font-awesome-free/web-fonts-with-css/webfonts/": "inc/fontawesome/webfonts/"
+        }
+    }
+}
