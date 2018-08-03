@@ -665,8 +665,9 @@ section {
     content: counter(listicle-counter);
     counter-increment: listicle-counter;
     font-family: Georgia, Times, "Times New Roman", serif;
-    @include font-32;
-    font-weight: 500;
+    @include font-50;
+    font-weight: 600;
+    margin-right: 6px;
   }
 
   dt {

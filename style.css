@@ -930,8 +930,9 @@ section {
   content: counter(listicle-counter);
   counter-increment: listicle-counter;
   font-family: Georgia, Times, "Times New Roman", serif;
-  font-size: 2rem;
-  font-weight: 500;
+  font-size: 3rem;
+  font-weight: 600;
+  margin-right: 6px;
 }
 .listicle dt {
   font-family: 'Oswald', sans-serif;
