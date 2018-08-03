@@ -925,12 +925,14 @@ section {
 
 .listicle {
   counter-reset: listicle-counter;
+  border-bottom: 1px solid #ebf5fa;
+  margin-bottom: 2rem;
 }
 .listicle dt:before {
   content: counter(listicle-counter);
   counter-increment: listicle-counter;
-  font-family: Georgia, Times, "Times New Roman", serif;
-  font-size: 3rem;
+  font-family: 'Oswald', sans-serif;
+  font-size: 2.25rem;
   font-weight: 600;
   margin-right: 6px;
 }
