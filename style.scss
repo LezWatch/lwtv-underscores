@@ -660,14 +660,14 @@ section {
 
 .listicle {
   counter-reset: listicle-counter;
-  border-bottom: 1px solid $lwtv-ltgrey;
+  border-bottom: 1px solid $lwtv-grey2;
   margin-bottom: 2rem;
   
   & dt:before {
     content: counter(listicle-counter);
     counter-increment: listicle-counter;
     font-family: 'Oswald', sans-serif;
-    @include font-36;
+    @include font-32;
     font-weight: 600;
     margin-right: 6px;
   }

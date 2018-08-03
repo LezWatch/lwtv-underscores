@@ -925,14 +925,14 @@ section {
 
 .listicle {
   counter-reset: listicle-counter;
-  border-bottom: 1px solid #ebf5fa;
+  border-bottom: 1px solid #d6d6d6;
   margin-bottom: 2rem;
 }
 .listicle dt:before {
   content: counter(listicle-counter);
   counter-increment: listicle-counter;
   font-family: 'Oswald', sans-serif;
-  font-size: 2.25rem;
+  font-size: 2rem;
   font-weight: 600;
   margin-right: 6px;
 }
