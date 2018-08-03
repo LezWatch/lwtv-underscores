@@ -939,7 +939,13 @@ section {
   font-size: 2rem;
   font-weight: 400;
   line-height: 1.1;
-  margin: 1rem 0 1.4rem;
+  margin-bottom: 1rem;
+}
+.listicle dt:first-child {
+  margin-top: 0;
+}
+.listicle dd {
+  margin-bottom: 2rem;
 }
 
 .related-shows {
