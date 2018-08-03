@@ -936,7 +936,7 @@ section {
   font-weight: 600;
   margin-right: 6px;
 }
-.listicle dt:before.reversed dt:before {
+.listicle.reversed dt:before {
   counter-increment: listicle-counter -1;
 }
 .listicle dt {

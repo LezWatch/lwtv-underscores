@@ -670,10 +670,10 @@ section {
     @include font-32;
     font-weight: 600;
     margin-right: 6px;
+  }
 
-    &.reversed  dt:before {
-     counter-increment: listicle-counter -1;
-    }
+  &.reversed  dt:before {
+   counter-increment: listicle-counter -1;
   }
 
   dt {
