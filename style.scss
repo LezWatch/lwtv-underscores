@@ -3,12 +3,12 @@ Theme Name: LezWatch.TV
 Theme URI: https://lezwatchtv.com/
 Author: Tracy Levesque, Mika Epstein
 Author URI: https://lezwatchtv.com/
-Description: LezWatch.TV Theme Episode III - Return of the Custom Theme 
+Description: LezWatch.TV Theme Episode III - Return of the Custom Theme
 Version: 3.1
 License: GNU General Public License v2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Text Domain: yikes_starter
-Tags: 
+Tags:
 */
 
 @import 'partials/fonts';
@@ -185,7 +185,7 @@ button, input[type="button"], input[type="submit"] {
 
 /* Color styles for specific button classes  */
 
-button, input[type="button"], input[type="submit"], // keep this line for the defaut button style 
+button, input[type="button"], input[type="submit"], // keep this line for the defaut button style
 a.btn-primary, button.btn-primary, input[type="button"].btn-primary, input[type="submit"].btn-primary,
 .show > .btn-primary.dropdown-toggle {
   &, &:visited {
@@ -202,8 +202,8 @@ a.btn-primary, button.btn-primary, input[type="button"].btn-primary, input[type=
   }
 }
 
-a.btn-outline-primary, button.btn-outline-primary, 
-input[type="button"].btn-outline-primary, 
+a.btn-outline-primary, button.btn-outline-primary,
+input[type="button"].btn-outline-primary,
 input[type="submit"].btn-outline-primary {
   &, &:visited {
     background-color: $white;
@@ -327,7 +327,7 @@ h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
       width: auto;
     }
   }
-  
+
   .nav-item.search {
       svg {
         height: 15px;
@@ -392,7 +392,7 @@ h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
 }
 
 .sticky, .bypostauthor {display: block;}
-h1.entry-title { 
+h1.entry-title {
   margin-bottom: 0;
 
   .no-results & {
@@ -522,13 +522,13 @@ h1.entry-title {
 h2.posts-title {
   color: $lwtv-pink;
   font-weight: 500;
-  
+
   svg {
     width: 30px;
     height: 30px;
     vertical-align: middle;
   }
-  
+
   svg * {
     fill: $lwtv-pink;
   }
@@ -612,15 +612,15 @@ section {
     margin-top: 0;
     margin-bottom: 1rem;
   }
-  
+
   .facetwp-selection-label {
     font-weight: bold;
   }
-  
+
   .facetwp-title {
     text-transform: capitalize;
   }
-  
+
   li[data-facet="show_loved"],
   li[data-facet="show_stars"],
   li[data-facet="show_worthit"] {
@@ -662,7 +662,7 @@ section {
   counter-reset: listicle-counter;
   border-bottom: 1px solid $lwtv-grey2;
   margin-bottom: 2rem;
-  
+
   & dt:before {
     content: counter(listicle-counter);
     counter-increment: listicle-counter;
@@ -670,6 +670,10 @@ section {
     @include font-32;
     font-weight: 600;
     margin-right: 6px;
+  }
+
+  &.reversed  dt:before {
+   counter-increment: listicle-counter -1;
   }
 
   dt {
@@ -689,7 +693,7 @@ section {
   }
 }
 
-.related-shows {  
+.related-shows {
   background-color: $lwtv-ltgrey;
   border-left: 4px solid $lwtv-pink;
   margin: 2rem 0;
@@ -731,7 +735,7 @@ section {
     text-align: center;
     width: 16px;
   }
-  
+
   svg {
     width: 15px;
     height: 15px;
@@ -750,7 +754,7 @@ footer.entry-meta {
     margin-left: 1em;
     width: 16px;
   }
-  
+
   svg {
     width: 15px;
     height: 15px;
@@ -774,7 +778,7 @@ footer.entry-meta {
         }
   }
 
-  ul.statistics.lists.tropes, 
+  ul.statistics.lists.tropes,
   ul.statistics.lists.genres,
   ul.statistics.lists.cliches {
         padding:0;
@@ -844,7 +848,7 @@ canvas {
     height: 200px;
   }
 
-  .search-results &, 
+  .search-results &,
   .character-archive-loop &, .actor-archive-loop {
     height: 300px;
   }
@@ -854,7 +858,7 @@ canvas {
 /* Single Character & Single Actor Template */
 
 .character-page , .actor-page {
-  .card {      
+  .card {
     border: none;
     @include border-radius(0);
     @include box-shadow(0 1px 4px 0 rgba(0, 0, 0, 0.14));
@@ -867,7 +871,7 @@ canvas {
     .characters-description {
       margin-top: 1.6rem;
     }
-    
+
     .card-meta-item {
       margin-bottom: .6rem;
 
@@ -982,10 +986,10 @@ h3.post-title.excerpt {
   &.gold {
     svg * {
       fill: $lwtv-gold;
-    }  
+    }
     i.fa {
       color: $lwtv-gold;
-    }  
+    }
   }
 
   &.silver {
@@ -1139,7 +1143,7 @@ h3.post-title.excerpt {
 }
 
 .card-meta-item.shows,
-.card-meta-item.cliches, 
+.card-meta-item.cliches,
 .card-meta-item.actors {
   svg {
     height: 12px;
@@ -1153,7 +1157,7 @@ h3.post-title.excerpt {
 .ratings-icons {
   padding: 5px;
   text-align: center;
-  
+
   svg {
     width: 60px;
     height: 60px;
@@ -1180,11 +1184,11 @@ h3.post-title.excerpt {
   &.worthit-yes {
     background: $green;
   }
-  
+
   &.worthit-no {
     background: $red;
   }
-  
+
   &.worthit-meh {
     background: $lwtv-yellow;
   }
@@ -1337,7 +1341,7 @@ img {
   height: auto;
 }
 
-.alignnone {@include images;} 
+.alignnone {@include images;}
 .alignright {@extend .alignnone; float: right; margin: 0 0 2em 2em;}
 .alignleft {@extend .alignnone; float: left; margin: 0 2em 2em 0;}
 .aligncenter {@extend .alignnone; margin: 2em auto; display: block;}
@@ -1386,21 +1390,21 @@ img {
 
   &.gallery-columns-2 {
 
-    figure {      
+    figure {
       width: 50%;
     }
   }
 
   &.gallery-columns-3 {
 
-    figure {      
+    figure {
       width: 33%;
     }
   }
 
   &.gallery-columns-4 {
 
-    figure {      
+    figure {
       width: 25%;
     }
   }
@@ -1448,7 +1452,7 @@ embed, iframe, object {
 
     h4 {
       margin-bottom: 0;
-      
+
       svg {
         width: 30px;
         height: 30px;
@@ -1478,7 +1482,7 @@ embed, iframe, object {
   .entry-summary {
     margin: 1em 0 2em;
   }
-  
+
   .card-title{
     svg {
       height: 20px;
@@ -1506,7 +1510,7 @@ span.svg-shortcode a {
   svg {
     fill: $lwtv-pink;
   }
-  
+
   &:hover svg {
     fill: $darkgrey;
   }
@@ -1532,7 +1536,7 @@ span.svg-shortcode a {
   .author-bio {
     margin-bottom: 0.4rem;
   }
-  
+
   .author-details{
       clear: both;
   }
@@ -1541,7 +1545,7 @@ span.svg-shortcode a {
     text-align: center;
     width: 16px;
   }
-  
+
   svg {
     width: 15px;
     height: 15px;
@@ -1590,7 +1594,7 @@ a.facetwp-page {
   }
   li.page-link {
     color: $lwtv-pink;
-  } 
+  }
 }
 
 div.facetwp-facet-shows_scores input.facetwp-number {
@@ -1685,7 +1689,7 @@ div.facetwp-facet-shows_scores input.facetwp-number {
       input[type="text"] {
         border-right: 0;
       }
-      
+
       .btn {
         border-top-left-radius: 0;
         border-bottom-left-radius: 0;
