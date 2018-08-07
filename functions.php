@@ -8,7 +8,7 @@
 // Bump this any time you make serious CSS changes, becuase CSS is a dillhole
 if ( ! defined( 'LWTV_THEME_VERSION' ) ) {
 	define( 'LWTV_THEME_VERSION', array(
-		'lwtv-underscores' => '3.1.11',
+		'lwtv-underscores' => '3.1.12',
 		'font-awesome'     => '5.2.0',
 		'bootstrap'        => '4.1.3',
 	) );
