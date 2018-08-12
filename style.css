@@ -1207,6 +1207,15 @@ h3.post-title.excerpt {
   font-weight: 700;
   left: 20px;
   position: absolute;
+  font-style: normal;
+  font-variant: normal;
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+}
+#episodes ul li .svg-inline--fa {
+  width: 1.75rem;
+  height: 1rem;
+  vertical-align: middle;
 }
 
 /* Character listing */
