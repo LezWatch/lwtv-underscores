@@ -116,6 +116,12 @@
           color: $link-hover-color;
         }
       }
+
+      svg {
+        height: 1.4rem;
+        vertical-align: middle;
+        width: 2rem;
+      }
     }
 
     &.rss a::before {
