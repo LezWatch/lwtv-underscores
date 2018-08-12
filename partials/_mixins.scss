@@ -29,8 +29,8 @@
 	box-shadow: 0 12px 20px -10px rgba(156, 39, 176, 0.28), 0 4px 20px 0px rgba(0, 0, 0, 0.12), 0 7px 8px -5px rgba(156, 39, 176, 0.2);
 }
 
-$startcolor: #1E5799; 
-$endcolor: #7DB9E8; 
+$startcolor: #1E5799;
+$endcolor: #7DB9E8;
 
 @mixin box-gradient-vertical {
 	background: $startcolor; /* Old browsers */
@@ -71,14 +71,14 @@ $endcolor: #7DB9E8;
 @mixin images {
 	border: 1px solid $lwtv-grey2;
 	padding: 6px;
-} 
+}
 
 @mixin images-noborder {
 	border: 0px !important;
 	-webkit-box-shadow: none !important;
 	box-shadow: none !important;
 	padding: 0px !important;
-} 
+}
 
 //  background-image: url(images/bg.jpg);
 @mixin cover {
@@ -145,13 +145,22 @@ $endcolor: #7DB9E8;
 }
 
 // Like this @include fontawesome_free("\f0ad");
-@mixin fontawesome($argument...) {
+@mixin fontawesome_free($argument...) {
+	display: none;
 	content: $argument;
 	font-family: "Font Awesome 5 Free";
 }
 
+// Like this @include fontawesome_pro("\f0ad");
+@mixin fontawesome_pro($argument...) {
+	display: none;
+	content: $argument;
+	font-family: "Font Awesome 5 Regular";
+}
+
 // Like this @include fontawesome_brand("\f0ad");
 @mixin fontawesome_brand($argument...) {
+	display: none;
 	content: $argument;
 	font-family: "Font Awesome 5 Brands";
 }
