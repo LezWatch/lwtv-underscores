@@ -623,10 +623,10 @@ select {
 .widget_yikes_social_menu_widget li a:hover:before, .widget_yikes_social_menu_widget li a:focus:before, .widget_yikes_social_menu_widget li a:visited:hover:before, .widget_yikes_social_menu_widget li a:visited:focus:before {
   color: #8d329f;
 }
-.widget_yikes_social_menu_widget li a svg, .widget_yikes_social_menu_widget li a:visited svg {
+.widget_yikes_social_menu_widget li a .svg-inline--fa, .widget_yikes_social_menu_widget li a:visited .svg-inline--fa {
+  width: 2rem;
   height: 1.4rem;
   vertical-align: middle;
-  width: 2rem;
 }
 .widget_yikes_social_menu_widget li.rss a::before {
   display: none;
