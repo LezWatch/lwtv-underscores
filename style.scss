@@ -1095,7 +1095,7 @@ h3.post-title.excerpt {
       padding-left: 26px;
 
       &:before {
-        @include fontawesome_free("\f26c");
+        @include fontawesome_pro("\f26c");
         font-weight: 700;
         left: 20px;
         position: absolute;
