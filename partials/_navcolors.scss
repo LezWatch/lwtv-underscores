@@ -25,14 +25,14 @@
       }
 
       /* Style for active links */
-      &.current-menu-item > a.nav-link, &.current-menu-parent > a.nav-link, 
+      &.current-menu-item > a.nav-link, &.current-menu-parent > a.nav-link,
       &.current-menu-ancestor > a.nav-link, .single-post &.current_page_parent > a.nav-link,
       &:hover > a.nav-link, &:focus > a.nav-link, &:active > a.nav-link,
       &.show > a.nav-link.dropdown-toggle {
         background-color: $lwtv-pink;
         color: $white;
       }
-      
+
       /* Use this class on a menu item to hide the text when using an icon */
       &.hide-text > a.nav-link .menu-link-text {
         @include screen-reader;
@@ -53,7 +53,7 @@
           }
 
           /* Style for active links on submenus */
-          &.current-menu-parent > a.dropdown-item, 
+          &.current-menu-parent > a.dropdown-item,
           &.active > a.dropdown-item, &:hover > a.dropdown-item, &:focus > a.dropdown-item {
             background-color: $lwtv-pink;
             color: $white;
@@ -70,7 +70,7 @@
             }
           }
         }
-      }     
+      }
     }
   }
 }
@@ -96,12 +96,16 @@
 .widget_yikes_social_menu_widget {
 
   li {
-    a, a:visited { 
+    a, a:visited {
       line-height: 1;
       padding-top: 0;
 
       &:before {
         display: inline-block;
+        font-style: normal;
+        font-variant: normal;
+        text-rendering: auto;
+        -webkit-font-smoothing: antialiased;
         @include font-28;
         width: 60px;
         vertical-align: middle;
@@ -112,15 +116,20 @@
           color: $link-hover-color;
         }
       }
+
+      .svg-inline--fa {
+        width: 2rem;
+        height: 1.4rem;
+        vertical-align: middle;
+      }
     }
 
     &.rss a::before {
-      @include fontawesome("\f09e");
-      font-weight: 700;
+      @include fontawesome_pro("\f09e");
     }
 
     &.mail a:before {
-      @include fontawesome("\f0e0");
+      @include fontawesome_pro("\f0e0");
     }
 
     &.instagram a:before {

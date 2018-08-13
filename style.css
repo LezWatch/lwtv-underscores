@@ -551,6 +551,10 @@ select {
 }
 .widget_yikes_social_menu_widget li a:before, .widget_yikes_social_menu_widget li a:visited:before {
   display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
   font-size: 1.75rem;
   width: 60px;
   vertical-align: middle;
@@ -558,48 +562,63 @@ select {
 .widget_yikes_social_menu_widget li a:hover:before, .widget_yikes_social_menu_widget li a:focus:before, .widget_yikes_social_menu_widget li a:visited:hover:before, .widget_yikes_social_menu_widget li a:visited:focus:before {
   color: #8d329f;
 }
+.widget_yikes_social_menu_widget li a .svg-inline--fa, .widget_yikes_social_menu_widget li a:visited .svg-inline--fa {
+  width: 2rem;
+  height: 1.4rem;
+  vertical-align: middle;
+}
 .widget_yikes_social_menu_widget li.rss a::before {
+  display: none;
   content: "";
-  font-family: "Font Awesome 5 Free";
-  font-weight: 700;
+  font-family: "Font Awesome 5 Regular";
 }
 .widget_yikes_social_menu_widget li.mail a:before {
+  display: none;
   content: "";
-  font-family: "Font Awesome 5 Free";
+  font-family: "Font Awesome 5 Regular";
 }
 .widget_yikes_social_menu_widget li.instagram a:before {
+  display: none;
   content: "";
   font-family: "Font Awesome 5 Brands";
 }
 .widget_yikes_social_menu_widget li.twitter a:before {
+  display: none;
   content: "";
   font-family: "Font Awesome 5 Brands";
 }
 .widget_yikes_social_menu_widget li.facebook a:before {
+  display: none;
   content: "";
   font-family: "Font Awesome 5 Brands";
 }
 .widget_yikes_social_menu_widget li.youtube a:before {
+  display: none;
   content: "";
   font-family: "Font Awesome 5 Brands";
 }
 .widget_yikes_social_menu_widget li.vimeo a:before {
+  display: none;
   content: "";
   font-family: "Font Awesome 5 Brands";
 }
 .widget_yikes_social_menu_widget li.pinterest a:before {
+  display: none;
   content: "";
   font-family: "Font Awesome 5 Brands";
 }
 .widget_yikes_social_menu_widget li.linkedin a:before {
+  display: none;
   content: "";
   font-family: "Font Awesome 5 Brands";
 }
 .widget_yikes_social_menu_widget li.tumblr a:before {
+  display: none;
   content: "";
   font-family: "Font Awesome 5 Brands";
 }
 .widget_yikes_social_menu_widget li.gplus a:before {
+  display: none;
   content: "";
   font-family: "Font Awesome 5 Brands";
 }
@@ -1182,11 +1201,21 @@ h3.post-title.excerpt {
   padding-left: 26px;
 }
 #episodes ul li:before {
+  display: none;
   content: "";
-  font-family: "Font Awesome 5 Free";
+  font-family: "Font Awesome 5 Regular";
   font-weight: 700;
   left: 20px;
   position: absolute;
+  font-style: normal;
+  font-variant: normal;
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+}
+#episodes ul li .svg-inline--fa {
+  width: 1.75rem;
+  height: 1rem;
+  vertical-align: middle;
 }
 
 /* Character listing */
