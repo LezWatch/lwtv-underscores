@@ -177,7 +177,7 @@ switch ( $view ) {
 		</div>
 		<?php
 		break;
-	case 'format':
+	case 'formats':
 		?>
 		<div class="container chart-container">
 			<div class="row">
