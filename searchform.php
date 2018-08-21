@@ -30,14 +30,14 @@ if ( in_array( 'post_type_actors', $queery_types, true ) ) {
 
 <div class="card card-search">
 	<div class="card-header">
-		<h4><?php echo lwtv_yikes_symbolicons( 'search.svg', 'fa-search' ); ?> Search the Database</h4>
+		<h4><?php echo lwtv_yikes_symbolicons( 'search.svg', 'fa-search' ); // WPCS: XSS ok, sanitization ok. ?> Search the Database</h4>
 	</div>
 	<div class="card-body">
 		<form role="search" class="search-form" action="<?php echo esc_url( home_url( '/' ) ); ?>" method="get">
 			<div class="input-group input-group-sm">
 				<input type="text" name="s" id="search" class="form-control" aria-label="Search for..." value="<?php the_search_query(); ?>" title="<?php echo esc_html_x( 'Search for:', 'label', 'yikes_starter' ); ?>" >
 				<span class="input-group-btn">
-					<button class="btn btn-primary" type="submit">Go</button>
+					<button class="btn btn-primary btn-sm" type="submit">Go</button>
 				</span>
 			</div>
 			<div class="form-check form-check-inline ml-2">
