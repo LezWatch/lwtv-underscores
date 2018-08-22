@@ -31,9 +31,7 @@ get_header(); ?>
 									echo '<div class="row site-loop main-posts-loop">';
 									while ( have_posts() ) :
 										the_post();
-										echo '<div class="col-sm-4">';
 										get_template_part( 'template-parts/content', 'posts' );
-										echo '</div>';
 									endwhile;
 									echo '</div>';
 									wp_bootstrap_pagination();

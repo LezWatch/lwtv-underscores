@@ -74,9 +74,7 @@ get_header(); ?>
 										<?php
 										while ( have_posts() ) :
 											the_post();
-											echo '<div class="col-sm-4">';
 											get_template_part( 'template-parts/content', 'posts' );
-											echo '</div>';
 										endwhile;
 										wp_bootstrap_pagination();
 						else :
