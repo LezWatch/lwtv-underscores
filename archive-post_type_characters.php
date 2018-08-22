@@ -46,7 +46,7 @@ get_header(); ?>
 					<div id="content" class="site-content clearfix" role="main">
 						<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 							<div class="entry-content facetwp-template">
-								<div class="row site-loop character-archive-loop equal-height">
+								<div class="row site-loop character-archive-loop">
 								<?php
 								if ( have_posts() ) :
 									/* Start the Loop */

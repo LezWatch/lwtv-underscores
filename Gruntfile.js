@@ -9,7 +9,7 @@ module.exports = function(grunt) {
                 files: {
                     // admin scripts
                     'inc/js/yikes-theme-scripts.min.js': [ // widget specific script
-                        'inc/js/navigation.js' , 'inc/js/skip-link-focus-fix.js' , 'inc/js/equal-height.js' , 'inc/js/lwtv-theme-scripts.js'
+                        'inc/js/navigation.js' , 'inc/js/skip-link-focus-fix.js' , 'inc/js/lwtv-theme-scripts.js'
                     ],
                      'inc/js/customizer.min.js': [ // widget specific script
                         'inc/js/customizer.js'
