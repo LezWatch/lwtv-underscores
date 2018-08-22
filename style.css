@@ -853,7 +853,7 @@ section {
 
 .site-loop.home-featured-secondary-loop,
 .site-loop.show-archive-loop {
-  grid-auto-rows: 280px;
+  grid-auto-rows: 1fr;
 }
 .site-loop.home-featured-secondary-loop .card-group,
 .site-loop.show-archive-loop .card-group {
