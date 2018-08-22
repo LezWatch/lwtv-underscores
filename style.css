@@ -1494,6 +1494,11 @@ h3 svg * {
   fill: #B87333;
 }
 
+.site-loop.actor-archive-loop,
+.site-loop.character-archive-loop {
+  grid-template-columns: repeat(3, 1fr);
+}
+
 /* =Media
 ----------------------------------------------- */
 img {
