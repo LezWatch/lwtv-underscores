@@ -441,7 +441,6 @@ h1.entry-title {
     border: none;
     @include border-radius(0);
     @include box-shadow(0 1px 4px 0 rgba(0, 0, 0, 0.14));
-    margin-bottom: 1.4rem;
 
     &.col-sm-3, &.col-sm-4, &.col-sm-5, &.col-sm-6,
     &.col-sm-7, &.col-sm-8, &.col-sm-9, &.col-sm-10 {
@@ -1346,10 +1345,12 @@ h3 svg * {
   }
 }
 
-.site-loop.actor-archive-loop,
-.site-loop.character-archive-loop {
-  grid-template-columns: repeat(3, 1fr);
-  grid-gap: 1.6rem;
+.site-loop {
+  &.actor-archive-loop, &.character-archive-loop,
+  &.main-posts-loop {
+    grid-template-columns: repeat(3, 1fr);
+    grid-gap: 1.6rem;
+  }
 }
 
 
