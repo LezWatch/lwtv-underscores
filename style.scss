@@ -435,6 +435,8 @@ h1.entry-title {
 /* Loop styles for loopy content */
 
 .site-loop {
+  display: grid;
+
   .card {
     border: none;
     @include border-radius(0);
@@ -553,6 +555,8 @@ section {
 
 .site-loop.home-featured-secondary-loop,
 .site-loop.show-archive-loop {
+  grid-auto-rows: 280px;
+  
   .card-group {
     width: 100%;
   }
