@@ -556,7 +556,7 @@ section {
 .site-loop.home-featured-secondary-loop,
 .site-loop.show-archive-loop {
   grid-auto-rows: 1fr;
-  
+
   .card-group {
     width: 100%;
   }
@@ -1344,6 +1344,11 @@ h3 svg * {
   .callout-star-bronze svg * {
     fill: $lwtv-bronze;
   }
+}
+
+.site-loop.actor-archive-loop,
+.site-loop.character-archive-loop {
+  grid-template-columns: repeat(3, 1fr);
 }
 
 

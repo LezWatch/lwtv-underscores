@@ -53,7 +53,7 @@ get_header(); ?>
 									/* Start the Loop */
 									while ( have_posts() ) :
 										the_post();
-										echo '<div class="col-sm-4">';
+										echo '<div class="actor-archive-loop-item">';
 										get_template_part( 'template-parts/excerpt', 'post_type_actors' );
 										echo '</div>';
 									endwhile;
