@@ -1349,6 +1349,7 @@ h3 svg * {
 .site-loop.actor-archive-loop,
 .site-loop.character-archive-loop {
   grid-template-columns: repeat(3, 1fr);
+  grid-gap: 1.6rem;
 }
 
 
