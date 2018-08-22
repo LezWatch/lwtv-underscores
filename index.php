@@ -28,7 +28,7 @@ get_header(); ?>
 							<div class="entry-content">
 								<?php
 								if ( have_posts() ) :
-									echo '<div class="row site-loop main-posts-loop equal-height">';
+									echo '<div class="row site-loop main-posts-loop">';
 									while ( have_posts() ) :
 										the_post();
 										echo '<div class="col-sm-4">';
