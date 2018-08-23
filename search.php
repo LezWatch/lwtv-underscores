@@ -32,12 +32,10 @@ get_header(); ?>
 					<div id="content" class="site-content clearfix" role="main">
 						<?php
 						if ( have_posts() ) :
-							echo '<div class="row site-loop main-posts-loop equal-height">';
+							echo '<div class="row site-loop main-posts-loop">';
 							while ( have_posts() ) :
 								the_post();
-								echo '<div class="col-sm-3">';
 								get_template_part( 'template-parts/content', 'search' );
-								echo '</div>';
 							endwhile;
 							echo '</div>';
 							echo '<!-- Alt Bootstrap pagination is page_navi() -->';

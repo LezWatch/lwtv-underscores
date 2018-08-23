@@ -156,12 +156,10 @@ if ( $related ) {
 			if ( ! empty( $chars_regular ) ) {
 				?>
 				<h3 class="title-regulars"><?php echo esc_html( _n( 'Regular', 'Regulars', count( $chars_regular ) ) ); ?> (<?php echo (int) count( $chars_regular ); ?>)</h3>
-				<div class="container characters-regulars-container"><div class="row site-loop character-show-loop equal-height">
+				<div class="container characters-regulars-container"><div class="row site-loop character-show-loop">
 				<?php
 				foreach ( $chars_regular as $character ) {
-					echo '<div class="col-sm-4">';
 					include locate_template( 'template-parts/excerpt-post_type_characters.php' );
-					echo '</div>';
 				}
 				echo '</div></div>';
 			}
@@ -170,12 +168,10 @@ if ( $related ) {
 			if ( ! empty( $chars_recurring ) ) {
 				?>
 				<h3 class="title-recurring">Recurring (<?php echo count( $chars_recurring ); ?>)</h3>
-				<div class="container characters-recurring-container"><div class="row site-loop character-show-loop equal-height">
+				<div class="container characters-recurring-container"><div class="row site-loop character-show-loop">
 				<?php
 				foreach ( $chars_recurring as $character ) {
-					echo '<div class="col-sm-4">';
 					include locate_template( 'template-parts/excerpt-post_type_characters.php' );
-					echo '</div>';
 				}
 				echo '</div></div>';
 			}

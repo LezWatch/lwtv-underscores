@@ -54,7 +54,7 @@
 			// translators: %s is the number of characters
 			echo '<p>There ' . lwtv_sanitized( sprintf( _n( 'is <strong>%s</strong> character', 'are <strong>%s</strong> characters', count( $all_chars ) ), count( $all_chars ) ) ) . ' played by this actor.</p>';
 
-			echo '<div class="container characters-regulars-container"><div class="row site-loop character-show-loop equal-height">';
+			echo '<div class="container characters-regulars-container"><div class="row site-loop character-show-loop">';
 			foreach ( $all_chars as $character ) {
 				?>
 				<ul class="character-list">

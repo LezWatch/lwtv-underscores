@@ -53,7 +53,7 @@ get_header(); ?>
 					<div id="content" class="site-content clearfix" role="main">
 						<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 							<div class="entry-content facetwp-template">
-								<div class="row site-loop show-archive-loop equal-height">
+								<div class="row site-loop show-archive-loop">
 									<?php
 									if ( have_posts() ) :
 										/* Start the Loop */
@@ -61,17 +61,13 @@ get_header(); ?>
 											the_post();
 											switch ( get_post_type( get_the_ID() ) ) {
 												case 'post_type_characters':
-													echo '<div class="col-sm-4">';
 													get_template_part( 'template-parts/excerpt', 'post_type_characters' );
-													echo '</div>';
 													break;
 												case 'post_type_shows':
 													get_template_part( 'template-parts/excerpt', 'post_type_shows' );
 													break;
 												case 'post_type_actors':
-													echo '<div class="col-sm-4">';
 													get_template_part( 'template-parts/excerpt', 'post_type_actors' );
-													echo '</div>';
 													break;
 												default:
 													get_template_part( 'template-parts/content', 'posts' );
