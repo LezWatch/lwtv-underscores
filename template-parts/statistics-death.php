@@ -34,7 +34,7 @@ switch ( $view ) {
 	case 'overview':
 		?>
 		<div class="container">
-			<div class="row equal-height">
+			<div class="row">
 				<div class="col">
 					<div class="alert alert-danger" role="info"><center>
 						<h3 class="alert-heading">Characters</h3>

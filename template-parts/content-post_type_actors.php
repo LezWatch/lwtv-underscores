@@ -163,17 +163,15 @@ $thumb_array       = array(
 		} else {
 			$deadtext = 'none are dead';
 			if ( $havedeadcount > '0' ) {
-				// translators: %s is a number
+				// translators: %s is a number.
 				$deadtext = sprintf( _n( '<strong>%s</strong> is dead', '<strong>%s</strong> are dead', $havedeadcount ), $havedeadcount );
 			}
 			// translators: %s is 'are' or a number.
 			echo wp_kses_post( '<p>There ' . sprintf( _n( 'is <strong>%s</strong> character', 'are <strong>%s</strong> characters', $havecharcount ), $havecharcount ) . ' listed for this actor; ' . $deadtext . '.</p>' );
 
-			echo '<div class="container characters-regulars-container"><div class="row site-loop character-show-loop equal-height">';
+			echo '<div class="container characters-regulars-container"><div class="row site-loop character-show-loop">';
 			foreach ( $all_chars as $character ) {
-				echo '<div class="col-sm-4">';
-					include locate_template( 'template-parts/excerpt-post_type_characters.php' );
-				echo '</div>';
+				include locate_template( 'template-parts/excerpt-post_type_characters.php' );
 			}
 			echo '</div></div>';
 		}

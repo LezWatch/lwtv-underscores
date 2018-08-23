@@ -150,7 +150,7 @@ get_header(); ?>
 					<div class="card-deck">
 						<?php
 
-						// Collect 30 loved posts (max) and then pick 3
+						// Collect 30 loved posts (max) and then pick 3.
 						$lovedpostloop = new WP_Query( array(
 							'post_type'      => 'post_type_shows',
 							'posts_per_page' => '30',
@@ -222,8 +222,7 @@ get_header(); ?>
 					<h2 class="posts-title">More Posts <?php echo lwtv_yikes_symbolicons( 'newspaper.svg', 'fa-newspaper' ); ?></h2>
 				</div>
 			</div>
-			<div class="row site-loop main-posts-loop equal-height">
-
+			<div class="row site-loop main-posts-loop">
 				<?php
 
 				$old_posts_per_page = ( 1 === $paged ) ? '6' : '12';
@@ -243,16 +242,13 @@ get_header(); ?>
 					$oldpostsloop->the_post();
 					?>
 
-					<div class="col-sm-4">
-						<?php get_template_part( 'template-parts/content', 'posts' ); ?>
-					</div>
+					<?php get_template_part( 'template-parts/content', 'posts' ); ?>
 					<?php
 				endwhile;
 
 				wp_reset_postdata();
 				yikes_generate_pagination_buttons( $paged, $oldpostsloop->max_num_pages );
 				?>
-
 			</div><!-- .row .home-featured-post-loop -->
 		</div><!-- .container -->
 	</section>

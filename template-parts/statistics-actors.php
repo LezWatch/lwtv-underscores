@@ -53,7 +53,7 @@ switch ( $view ) {
 		</div>
 
 		<div class="container">
-			<div class="row equal-height">
+			<div class="row">
 				<div class="col">
 					<h4>Top Sexual Orientations</h4>
 					<table class="table table-striped table-hover">
