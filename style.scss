@@ -543,6 +543,8 @@ section {
 
 
 .site-loop.home-featured-post-loop {
+  margin-bottom: 1.4rem;
+  
   .card-body {
     font-size: $basefont;
 
@@ -557,8 +559,10 @@ section {
   grid-auto-rows: 1fr;
 
   .card-group {
+    margin-bottom: 1.4rem;
     width: 100%;
   }
+
   .card {
     &.col-sm-5 {
       background-repeat: no-repeat;
