@@ -20,6 +20,9 @@ if ( in_array( get_post_type( get_the_ID() ), array( 'post_type_shows', 'post_ty
 	$count_posts = facetwp_display( 'counts' );
 }
 
+// Post Type Detector
+$post_type_is = rtrim( str_replace( 'post_type_', '', lwtv_yikes_get_post_types_by_taxonomy( $term->taxonomy ) ), 's' );
+
 get_header(); ?>
 
 <div class="archive-subheader">
@@ -53,7 +56,7 @@ get_header(); ?>
 					<div id="content" class="site-content clearfix" role="main">
 						<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 							<div class="entry-content facetwp-template">
-								<div class="row site-loop show-archive-loop">
+								<div class="row site-loop <?php echo esc_attr( $post_type_is ); ?>-archive-loop">
 									<?php
 									if ( have_posts() ) :
 										/* Start the Loop */

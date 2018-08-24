@@ -125,6 +125,22 @@ function lwtv_yikes_jetpack_post_meta() {
 /** THE ARCHIVE SECTION **/
 
 /*
+ * https://wordpress.stackexchange.com/questions/172645/get-the-post-type-a-taxonomy-is-attached-to
+ */
+function lwtv_yikes_get_post_types_by_taxonomy( $tax = 'category' ) {
+	$out        = '';
+	$post_types = get_post_types();
+	foreach ( $post_types as $post_type ) {
+		$taxonomies = get_object_taxonomies( $post_type );
+		if ( in_array( $tax, $taxonomies ) ) {
+			// There should only be one (Highlander)
+			$out = $post_type;
+		}
+	}
+	return $out;
+}
+
+/*
  * Archive Sort Order
  *
  * Characters, shows, and certain taxonmies will use a
