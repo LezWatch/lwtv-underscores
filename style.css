@@ -1347,7 +1347,7 @@ h3.post-title.excerpt {
 }
 #characters .guest-character-list li {
   display: inline-block;
-  width: 33%;
+  width: 32%;
 }
 
 .card-meta-item.shows svg,
@@ -1501,11 +1501,11 @@ h3 svg * {
   fill: #B87333;
 }
 
-.site-loop.actor-archive-loop, .site-loop.character-archive-loop, .site-loop.main-posts-loop, .site-loop.character-show-loop, .site-loop.character-show-loop {
+.site-loop.actor-archive-loop, .site-loop.character-archive-loop, .site-loop.main-posts-loop, .site-loop.character-show-loop {
   grid-template-columns: repeat(3, 1fr);
   grid-gap: 1.6rem;
 }
-.site-loop.actor-archive-loop.four-across-loop, .site-loop.character-archive-loop.four-across-loop, .site-loop.main-posts-loop.four-across-loop, .site-loop.character-show-loop.four-across-loop, .site-loop.character-show-loop.four-across-loop {
+.site-loop.actor-archive-loop.four-across-loop, .site-loop.character-archive-loop.four-across-loop, .site-loop.main-posts-loop.four-across-loop, .site-loop.character-show-loop.four-across-loop {
   grid-template-columns: repeat(4, 1fr);
 }
 

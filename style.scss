@@ -1154,7 +1154,7 @@ h3.post-title.excerpt {
 
     li {
       display: inline-block;
-      width: 33%;
+      width: 32%;
     }
   }
 }
@@ -1351,8 +1351,7 @@ h3 svg * {
 
 .site-loop {
   &.actor-archive-loop, &.character-archive-loop,
-  &.main-posts-loop, &.character-show-loop,
-  &.character-show-loop {
+  &.main-posts-loop, &.character-show-loop {
     grid-template-columns: repeat(3, 1fr);
     grid-gap: 1.6rem;
 
