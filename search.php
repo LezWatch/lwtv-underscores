@@ -4,6 +4,7 @@
  *
  * @package YIKES Starter
  */
+
 get_header(); ?>
 
 <div class="archive-subheader">
@@ -13,7 +14,7 @@ get_header(); ?>
 				<div class="row">
 					<div class="col-10"><h1 class="entry-title">
 					<?php
-						// translators: %s is whatever you just searched for
+						// translators: %s is whatever you just searched for.
 						printf( esc_attr__( 'Search Results for: %s', 'yikes_starter' ), '<span>' . get_search_query() . '</span>' );
 					?>
 					</h1></div>
@@ -32,7 +33,7 @@ get_header(); ?>
 					<div id="content" class="site-content clearfix" role="main">
 						<?php
 						if ( have_posts() ) :
-							echo '<div class="row site-loop main-posts-loop">';
+							echo '<div class="row site-loop main-posts-loop four-across-loop">';
 							while ( have_posts() ) :
 								the_post();
 								get_template_part( 'template-parts/content', 'search' );
