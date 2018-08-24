@@ -1351,7 +1351,8 @@ h3 svg * {
 
 .site-loop {
   &.actor-archive-loop, &.character-archive-loop,
-  &.main-posts-loop {
+  &.main-posts-loop, &.character-show-loop,
+  &.character-show-loop {
     grid-template-columns: repeat(3, 1fr);
     grid-gap: 1.6rem;
 
