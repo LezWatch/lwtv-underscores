@@ -222,7 +222,10 @@ get_header(); ?>
 					<h2 class="posts-title">More Posts <?php echo lwtv_yikes_symbolicons( 'newspaper.svg', 'fa-newspaper' ); ?></h2>
 				</div>
 			</div>
-			<div class="row site-loop main-posts-loop <?php if ( $paged > 1 ) {  echo "four-across-loop" } ?>">
+			<?php
+			$class = ( 1 === $paged ) ? '' : 'four-across-loop';
+			?>
+			<div class="row site-loop main-posts-loop <?php echo esc_attr( $class ); ?>">
 				<?php
 
 				$old_posts_per_page = ( 1 === $paged ) ? '6' : '12';
