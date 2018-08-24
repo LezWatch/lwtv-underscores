@@ -1505,6 +1505,9 @@ h3 svg * {
   grid-template-columns: repeat(3, 1fr);
   grid-gap: 1.6rem;
 }
+.site-loop.actor-archive-loop.four-across-loop, .site-loop.character-archive-loop.four-across-loop, .site-loop.main-posts-loop.four-across-loop {
+  grid-template-columns: repeat(4, 1fr);
+}
 
 /* =Media
 ----------------------------------------------- */

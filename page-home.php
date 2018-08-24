@@ -222,7 +222,7 @@ get_header(); ?>
 					<h2 class="posts-title">More Posts <?php echo lwtv_yikes_symbolicons( 'newspaper.svg', 'fa-newspaper' ); ?></h2>
 				</div>
 			</div>
-			<div class="row site-loop main-posts-loop">
+			<div class="row site-loop main-posts-loop <?php if ( $paged > 1 ) {  echo "four-across-loop" } ?>">
 				<?php
 
 				$old_posts_per_page = ( 1 === $paged ) ? '6' : '12';
@@ -247,9 +247,10 @@ get_header(); ?>
 				endwhile;
 
 				wp_reset_postdata();
-				yikes_generate_pagination_buttons( $paged, $oldpostsloop->max_num_pages );
 				?>
 			</div><!-- .row .home-featured-post-loop -->
+
+			<?php yikes_generate_pagination_buttons( $paged, $oldpostsloop->max_num_pages ); ?>
 		</div><!-- .container -->
 	</section>
 
