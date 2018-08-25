@@ -75,12 +75,12 @@ get_header(); ?>
 										the_post();
 										get_template_part( 'template-parts/content', 'posts' );
 									endwhile;
-									wp_bootstrap_pagination();
 									else :
 										get_template_part( 'template-parts/content', 'none' );
 									endif;
 									?>
 								</div>
+								<?php wp_bootstrap_pagination(); ?>
 							</div>
 						</article><!-- #post-## -->
 					</div><!-- #content -->
