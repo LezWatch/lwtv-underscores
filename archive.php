@@ -64,25 +64,25 @@ get_header(); ?>
 			<div class="col-sm-9">
 				<div id="primary" class="content-area">
 					<div id="content" class="site-content clearfix" role="main">
-
 						<?php
 						if ( have_posts() ) :
-							?>
-							<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
-								<div class="entry-content">
-									<div class="row site-loop main-posts-loop">
-										<?php
-										while ( have_posts() ) :
-											the_post();
-											get_template_part( 'template-parts/content', 'posts' );
-										endwhile;
-										wp_bootstrap_pagination();
-						else :
-										get_template_part( 'template-parts/content', 'none' );
-						endif;
 						?>
+						<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
+							<div class="entry-content">
+								<div class="row site-loop main-posts-loop">
+									<?php
+									while ( have_posts() ) :
+										the_post();
+										get_template_part( 'template-parts/content', 'posts' );
+									endwhile;
+									wp_bootstrap_pagination();
+									else :
+										get_template_part( 'template-parts/content', 'none' );
+									endif;
+									?>
 								</div>
-							</article><!-- #post-## -->
+							</div>
+						</article><!-- #post-## -->
 					</div><!-- #content -->
 				</div><!-- #primary -->
 			</div><!-- .col-sm-9 -->
