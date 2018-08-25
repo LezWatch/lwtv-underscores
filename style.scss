@@ -1131,18 +1131,11 @@ h3.post-title.excerpt {
     margin-top: 2rem;
   }
 
-  .characters-regulars-container {
+  .container.characters-regulars-container {
+    padding: 0 1rem;
     .card-text {
       margin-top: 0.6rem;
     }
-  }
-
-  .container {
-    padding: 0;
-  }
-
-  .card {
-    margin-bottom: 1rem;
   }
 
   .card-title {
@@ -1358,6 +1351,10 @@ h3 svg * {
     &.four-across-loop {
       grid-template-columns: repeat(4, 1fr);
     }
+  }
+ 
+  &.character-show-loop {
+    grid-gap: 1rem;
   }
 }
 
