@@ -1330,14 +1330,11 @@ h3.post-title.excerpt {
 #characters .title-recurring, #characters .title-guest {
   margin-top: 2rem;
 }
-#characters .characters-regulars-container .card-text {
+#characters .container.characters-regulars-container {
+  padding: 0 1rem;
+}
+#characters .container.characters-regulars-container .card-text {
   margin-top: 0.6rem;
-}
-#characters .container {
-  padding: 0;
-}
-#characters .card {
-  margin-bottom: 1rem;
 }
 #characters .card-title {
   margin-bottom: 0;
@@ -1507,6 +1504,9 @@ h3 svg * {
 }
 .site-loop.actor-archive-loop.four-across-loop, .site-loop.character-archive-loop.four-across-loop, .site-loop.main-posts-loop.four-across-loop, .site-loop.character-show-loop.four-across-loop {
   grid-template-columns: repeat(4, 1fr);
+}
+.site-loop.character-show-loop {
+  grid-gap: 1rem;
 }
 
 /* =Media
