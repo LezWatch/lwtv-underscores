@@ -2079,7 +2079,7 @@ div.facetwp-facet-shows_scores input.facetwp-number {
   }
 }
 @media (max-width: 1024px) {
-  .site-sidebar.col-sm-3 .card.card-search .form-check-inline {
+  .site-sidebar .card.card-search .form-check-inline {
     margin-left: .5rem;
   }
 }
@@ -2142,6 +2142,10 @@ div.facetwp-facet-shows_scores input.facetwp-number {
     grid-template-columns: repeat(2, 1fr);
     grid-gap: 1.2rem;
     padding: 0 0 0 1rem;
+  }
+
+  .site-loop.home-featured-secondary-loop, .site-loop.show-archive-loop {
+    padding-left: 1rem;
   }
 
   .characters-regulars-container .col-sm-4 .character-image-wrapper {
