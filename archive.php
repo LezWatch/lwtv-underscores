@@ -9,13 +9,13 @@ $icon            = '<div class="archive-header-icon">';
 $archive_details = '<div class="archive-header-details">';
 
 if ( is_author() ) {
-	// Use the Gravatar
+	// Use the Gravatar.
 	$icon .= get_avatar( get_the_author_meta( 'user_email' ) );
 
-	// Get author's website URL
+	// Get author's website URL.
 	$user_twitter = get_the_author_meta( 'twitter' );
 
-	// Get author Fav Shows
+	// Get author Fav Shows.
 	$all_fav_shows = get_the_author_meta( 'lez_user_favourite_shows' );
 	if ( '' !== $all_fav_shows ) {
 		$show_title = array();
@@ -30,10 +30,10 @@ if ( is_author() ) {
 		$fav_title  = _n( 'Show', 'Shows', count( $show_title ) );
 	}
 
-	// Add Twitter if it's there
+	// Add Twitter if it's there.
 	$archive_details .= ( ! empty( $user_twitter ) ) ? '<div class="author-twitter">' . lwtv_yikes_symbolicons( 'twitter.svg', 'fa-twitter' ) . '&nbsp;<a href="https://twitter.com/' . $user_twitter . '" target="_blank" rel="nofollow">@' . $user_twitter . '</a> </div>' : '';
 
-	// Add favourite shows if they're there
+	// Add favourite shows if they're there.
 	$archive_details .= ( isset( $favourites ) && ! empty( $favourites ) ) ? '<div class="author-favourites">' . lwtv_yikes_symbolicons( 'tv-hd.svg', 'fa-tv' ) . '&nbsp;Favorite ' . $fav_title . ': ' . $favourites . '</div>' : '';
 }
 
@@ -47,11 +47,15 @@ get_header(); ?>
 		<div class="container">
 			<header class="archive-header">
 				<div class="row">
-					<div class="col-10"><?php the_archive_title( '<h1 class="entry-title">', '</h1>' ); ?></div>
-					<div class="col-2 icon plain"><?php echo lwtv_sanitized( $icon ); ?></div>
+					<div class="col-10">
+						<?php the_archive_title( '<h1 class="entry-title">', '</h1>' ); ?>
+					</div>
+					<div class="col-2 icon plain"><?php echo lwtv_sanitized( $icon ); // WPCS: XSS ok. ?></div>
 				</div>
 				<div class="row">
-					<div class="archive-description"><?php the_archive_description( '<div class="archive-description">', $archive_details . '</div>' ); ?></div>
+					<div class="col">
+						<?php the_archive_description( '<div class="archive-description">', $archive_details . '</div>' ); ?>
+					</div>
 				</div>
 			</header><!-- .archive-header -->
 		</div><!-- .container -->

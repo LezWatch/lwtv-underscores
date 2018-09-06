@@ -7,20 +7,20 @@
  * @package LezWatch.TV
  */
 
-// Get the Term information and icons
+// Get the Term information and icons.
 $term         = get_term_by( 'slug', get_query_var( 'term' ), get_query_var( 'taxonomy' ) );
 $iconname     = lwtv_yikes_tax_archive_title( 'icon', get_post_type( get_the_ID() ), get_query_var( 'taxonomy' ) );
 $the_icon     = '<span role="img" aria-label="' . $term->name . '" title="' . $term->name . '" class="taxonomy-svg ' . $term->slug . '"> ' . $iconname . '</span>';
 $title_prefix = lwtv_yikes_tax_archive_title( 'prefix', get_post_type( get_the_ID() ), get_query_var( 'taxonomy' ) );
 $title_suffix = lwtv_yikes_tax_archive_title( 'suffix', get_post_type( get_the_ID() ), get_query_var( 'taxonomy' ) );
 
-// Count Posts: If this is a show or a character taxonomy, we do extra
+// Count Posts: If this is a show or a character taxonomy, we do extra.
 $count_posts = $term->count;
 if ( in_array( get_post_type( get_the_ID() ), array( 'post_type_shows', 'post_type_characters' ), true ) ) {
 	$count_posts = facetwp_display( 'counts' );
 }
 
-// Post Type Detector
+// Post Type Detector.
 $post_type_is = rtrim( str_replace( 'post_type_', '', lwtv_yikes_get_post_types_by_taxonomy( $term->taxonomy ) ), 's' );
 
 get_header(); ?>
@@ -30,17 +30,23 @@ get_header(); ?>
 		<div class="container">
 			<header class="archive-header">
 				<div class="row">
-					<div class="col-10"><?php the_archive_title( '<h1 class="facetwp-page-title entry-title">' . $title_prefix, $title_suffix . ' (' . $count_posts . '<span class="facetwp-count"></span>)</h1>' ); ?></div>
-					<div class="col-2 icon plain"><?php echo lwtv_sanitized( $the_icon ); ?></div>
+					<div class="col-10">
+						<?php the_archive_title( '<h1 class="facetwp-page-title entry-title">' . $title_prefix, $title_suffix . ' (' . $count_posts . '<span class="facetwp-count"></span>)</h1>' ); ?>
+					</div>
+					<div class="col-2 icon plain">
+						<?php echo lwtv_sanitized( $the_icon ); // WPCS: XSS ok. ?>
+					</div>
 				</div>
 				<div class="row">
-					<div class="archive-description">
-					<?php
-						echo '<h3 class="facetwp-title"></h3>';
-						the_archive_description( '<p>', '<span class="facetwp-description"></span></p>' );
-						echo '<p><span class="facetwp-sorted"></span></p>';
-						echo facetwp_display( 'selections' );
-					?>
+					<div class="col">
+						<div class="archive-description">
+							<?php
+								echo '<h3 class="facetwp-title"></h3>';
+								the_archive_description( '<p>', '<span class="facetwp-description"></span></p>' );
+								echo '<p><span class="facetwp-sorted"></span></p>';
+								echo facetwp_display( 'selections' );
+							?>
+						</div>
 					</div>
 				</div>
 			</header><!-- .archive-header -->
