@@ -273,14 +273,16 @@
   .site-loop.actor-archive-loop, .site-loop.character-archive-loop, 
   .site-loop.character-show-loop, .site-loop.main-posts-loop,
   .site-loop.actor-archive-loop.four-across-loop, .site-loop.character-archive-loop.four-across-loop,
-  .site-loop.character-show-loop.four-across-loop, .site-loop.main-posts-loop.four-across-loop {
+  .site-loop.character-show-loop.four-across-loop, .site-loop.main-posts-loop.four-across-loop,
+  .site-loop.home-featured-secondary-loop, .site-loop.show-archive-loop {
     grid-template-columns: 1fr;
     grid-gap: 1rem;
-    padding: 0;
+    padding: 0 1rem;
   }
 
-  .site-loop.home-featured-secondary-loop, .site-loop.show-archive-loop {
-    padding-left: 0;
+  .character-image-wrapper {
+    max-height: none !important;
+    height: auto !important;
   }
 
 }
@@ -480,13 +482,7 @@
     width: 100%;
   }
 
-  .character-image-wrapper {
-    max-height: none !important;
-    height: auto !important;
-  }
-
   .showschar-header .show-header-svg {
-
     span {
       margin-top: 12px;
       display: inline-block;

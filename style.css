@@ -1882,6 +1882,10 @@ div.facetwp-facet-shows_scores input.facetwp-number {
    ========================================================================== */
 /* =Global
 ----------------------------------------------- */
+.site-sidebar.site-loop {
+  display: block;
+}
+
 /* =Header
 ----------------------------------------------- */
 /* The Widget Area of Death */
@@ -2256,14 +2260,16 @@ div.facetwp-facet-shows_scores input.facetwp-number {
   .site-loop.actor-archive-loop, .site-loop.character-archive-loop,
   .site-loop.character-show-loop, .site-loop.main-posts-loop,
   .site-loop.actor-archive-loop.four-across-loop, .site-loop.character-archive-loop.four-across-loop,
-  .site-loop.character-show-loop.four-across-loop, .site-loop.main-posts-loop.four-across-loop {
+  .site-loop.character-show-loop.four-across-loop, .site-loop.main-posts-loop.four-across-loop,
+  .site-loop.home-featured-secondary-loop, .site-loop.show-archive-loop {
     grid-template-columns: 1fr;
     grid-gap: 1rem;
-    padding: 0;
+    padding: 0 1rem;
   }
 
-  .site-loop.home-featured-secondary-loop, .site-loop.show-archive-loop {
-    padding-left: 0;
+  .character-image-wrapper {
+    max-height: none !important;
+    height: auto !important;
   }
 }
 /*
@@ -2415,11 +2421,6 @@ div.facetwp-facet-shows_scores input.facetwp-number {
     flex: 0 0 100%;
     max-width: 100%;
     width: 100%;
-  }
-
-  .character-image-wrapper {
-    max-height: none !important;
-    height: auto !important;
   }
 
   .showschar-header .show-header-svg span {
