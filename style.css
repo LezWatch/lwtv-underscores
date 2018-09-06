@@ -2198,6 +2198,10 @@ div.facetwp-facet-shows_scores input.facetwp-number {
     width: 25px !important;
     height: 25px !important;
   }
+
+  .affiliate-watch-container .btn {
+    margin: 0 .4rem .4rem 0;
+  }
 }
 @media (max-width: 780px) {
   .page .container, .single .container, .archive .container, .blog .container, .search .container {
@@ -2270,6 +2274,11 @@ div.facetwp-facet-shows_scores input.facetwp-number {
   .character-image-wrapper {
     max-height: none !important;
     height: auto !important;
+  }
+
+  .site-loop.home-featured-secondary-loop .card-group,
+  .site-loop.show-archive-loop .card-group {
+    margin-bottom: 0;
   }
 }
 /*
