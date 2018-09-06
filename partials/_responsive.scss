@@ -54,6 +54,15 @@
 
 }
 
+// Landscape Tablets (tablets, less than 1024px)
+@media (max-width: 1024px) {
+
+  .site-sidebar.col-sm-3 .card.card-search .form-check-inline {
+    margin-left: .5rem;
+  }
+
+}
+
 // Medium devices (tablets, less than 992px)
 @media (max-width: 991px) {
 
@@ -121,6 +130,13 @@
         height: 300px;
       }
     }
+  }
+
+  .site-loop.actor-archive-loop, .site-loop.character-archive-loop, 
+  .site-loop.character-show-loop, .site-loop.main-posts-loop {
+    grid-template-columns: repeat(2,1fr);
+    grid-gap: 1.2rem;
+    padding: 0 0 0 1rem;
   }
 
   .characters-regulars-container .col-sm-4 .character-image-wrapper {

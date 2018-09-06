@@ -2078,6 +2078,11 @@ div.facetwp-facet-shows_scores input.facetwp-number {
     width: 170px !important;
   }
 }
+@media (max-width: 1024px) {
+  .site-sidebar.col-sm-3 .card.card-search .form-check-inline {
+    margin-left: .5rem;
+  }
+}
 @media (max-width: 991px) {
   #masthead .navbar-brand {
     font-size: 1rem;
@@ -2130,6 +2135,13 @@ div.facetwp-facet-shows_scores input.facetwp-number {
   .col-sm-9 .entry-content .col-sm-4 .character-image-wrapper,
   .characters-regulars-container .col-sm-4 .character-image-wrapper {
     height: 300px;
+  }
+
+  .site-loop.actor-archive-loop, .site-loop.character-archive-loop,
+  .site-loop.character-show-loop, .site-loop.main-posts-loop {
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 1.2rem;
+    padding: 0 0 0 1rem;
   }
 
   .characters-regulars-container .col-sm-4 .character-image-wrapper {
