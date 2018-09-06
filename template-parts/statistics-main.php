@@ -16,7 +16,7 @@ $dead_chars = LWTV_Stats::generate( 'characters', 'dead', 'count' );
 <h2><a name="overview">Overview</a></h2>
 
 <div class="container">
-	<div class="row equal-height">
+	<div class="row">
 		<div class="col">
 			<div class="alert alert-success" role="info"><center>
 				<h3 class="alert-heading">Characters</h3>
@@ -51,7 +51,7 @@ $dead_chars = LWTV_Stats::generate( 'characters', 'dead', 'count' );
 <hr>
 
 <div class="container">
-	<div class="row equal-height">
+	<div class="row">
 		<div class="col">
 			<h4>Top Ten Nations</h4>
 			<table class="table table-striped table-hover">

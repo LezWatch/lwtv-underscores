@@ -20,16 +20,20 @@ get_header(); ?>
 		<div class="container">
 			<header class="archive-header">
 				<div class="row">
-					<div class="col-10"><?php the_archive_title( '<h1 class="facetwp-page-title entry-title"><span class="facetwp-title">', '</span> (' . $count_posts . '<span class="facetwp-count"></span>)</h1>' ); ?></div>
-					<div class="col-2 icon plain"><?php echo lwtv_sanitized( $title ); ?></div>
+					<div class="col-10">
+						<?php the_archive_title( '<h1 class="facetwp-page-title entry-title"><span class="facetwp-title">', '</span> (' . $count_posts . '<span class="facetwp-count"></span>)</h1>' ); ?>
+					</div>
+					<div class="col-2 icon plain"><?php echo lwtv_sanitized( $title ); // WPCS: XSS ok. ?></div>
 				</div>
 				<div class="row">
-					<div class="archive-description">
-					<?php
-						echo '<p>' . wp_kses_post( $description ) . ' <span class="facetwp-description"></span></p>';
-						echo '<p><span class="facetwp-sorted"></span></p>';
-						echo facetwp_display( 'selections' );
-					?>
+					<div class="col">
+						<div class="archive-description">
+							<?php
+								echo '<p>' . wp_kses_post( $description ) . ' <span class="facetwp-description"></span></p>';
+								echo '<p><span class="facetwp-sorted"></span></p>';
+								echo facetwp_display( 'selections' );
+							?>
+						</div>
 					</div>
 				</div>
 			</header><!-- .archive-header -->
@@ -46,15 +50,13 @@ get_header(); ?>
 					<div id="content" class="site-content clearfix" role="main">
 						<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 							<div class="entry-content facetwp-template">
-								<div class="row site-loop character-archive-loop equal-height">
+								<div class="row site-loop character-archive-loop">
 								<?php
 								if ( have_posts() ) :
 									/* Start the Loop */
 									while ( have_posts() ) :
 										the_post();
-										echo '<div class="col-sm-4">';
 										get_template_part( 'template-parts/excerpt', 'post_type_characters' );
-										echo '</div>';
 									endwhile;
 								else :
 									get_template_part( 'template-parts/content', 'none' );

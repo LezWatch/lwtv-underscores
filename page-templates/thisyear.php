@@ -1,8 +1,10 @@
 <?php
 /**
-* Template Name: This Year
-* Description: Used to show the yearly data of lezbians and what not.
-*/
+ * Template Name: This Year
+ * Description: Used to show the yearly data of lezbians and what not.
+ *
+ * @package YIKES Starter
+ */
 
 $thisyear = (int) ( isset( $wp_query->query['thisyear'] ) ) ? $wp_query->query['thisyear'] : date( 'Y' );
 
@@ -21,13 +23,19 @@ get_header();
 		<div class="container">
 			<header class="archive-header">
 				<div class="row">
-					<div class="col-10"><h1 class="entry-title">In This Year - <?php echo (int) $thisyear; ?></h1></div>
+					<div class="col-10">
+						<h1 class="entry-title">
+							In This Year - <?php echo (int) $thisyear; ?>
+						</h1>
+					</div>
 					<div class="col-2 icon plain"><?php echo ( isset( $iconpath ) ? $iconpath : '' ); // WPCS: XSS okay. ?></div>
 				</div>
 				<div class="row">
-					<div class="archive-description">
-						<p>An overview of queer events that occurred in <?php echo (int) $thisyear; ?>.</p>
-						<p>You can review the list of TV shows that aired, began, and ended in each year, as well as all characters who died in each year, going back to <?php echo (int) FIRST_LWTV_YEAR; ?>.</p>
+					<div class="col">
+						<div class="archive-description">
+							<p>An overview of queer events that occurred in <?php echo (int) $thisyear; ?>.</p>
+							<p>You can review the list of TV shows that aired, began, and ended in each year, as well as all characters who died in each year, going back to <?php echo (int) FIRST_LWTV_YEAR; ?>.</p>
+						</div>
 					</div>
 				</div>
 			</header><!-- .archive-header -->

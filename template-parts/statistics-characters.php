@@ -32,7 +32,7 @@ switch ( $view ) {
 	case 'overview':
 		?>
 		<div class="container">
-			<div class="row equal-height">
+			<div class="row">
 				<div class="col">
 					<div class="alert alert-success" role="info"><center>
 						<h3 class="alert-heading">Characters</h3>
@@ -55,7 +55,7 @@ switch ( $view ) {
 		</div>
 
 		<div class="container">
-			<div class="row equal-height">
+			<div class="row">
 				<div class="col">
 					<h4>Top Clichés</h4>
 					<table class="table table-striped table-hover">

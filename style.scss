@@ -435,11 +435,12 @@ h1.entry-title {
 /* Loop styles for loopy content */
 
 .site-loop {
+  display: grid;
+
   .card {
     border: none;
     @include border-radius(0);
     @include box-shadow(0 1px 4px 0 rgba(0, 0, 0, 0.14));
-    margin-bottom: 1.4rem;
 
     &.col-sm-3, &.col-sm-4, &.col-sm-5, &.col-sm-6,
     &.col-sm-7, &.col-sm-8, &.col-sm-9, &.col-sm-10 {
@@ -542,6 +543,8 @@ section {
 
 
 .site-loop.home-featured-post-loop {
+  margin-bottom: 1.4rem;
+  
   .card-body {
     font-size: $basefont;
 
@@ -553,9 +556,13 @@ section {
 
 .site-loop.home-featured-secondary-loop,
 .site-loop.show-archive-loop {
+  grid-auto-rows: 1fr;
+
   .card-group {
+    margin-bottom: 1.4rem;
     width: 100%;
   }
+
   .card {
     &.col-sm-5 {
       background-repeat: no-repeat;
@@ -1124,18 +1131,11 @@ h3.post-title.excerpt {
     margin-top: 2rem;
   }
 
-  .characters-regulars-container {
+  .container.characters-regulars-container {
+    padding: 0 1rem;
     .card-text {
       margin-top: 0.6rem;
     }
-  }
-
-  .container {
-    padding: 0;
-  }
-
-  .card {
-    margin-bottom: 1rem;
   }
 
   .card-title {
@@ -1147,7 +1147,7 @@ h3.post-title.excerpt {
 
     li {
       display: inline-block;
-      width: 33%;
+      width: 32%;
     }
   }
 }
@@ -1339,6 +1339,22 @@ h3 svg * {
 
   .callout-star-bronze svg * {
     fill: $lwtv-bronze;
+  }
+}
+
+.site-loop {
+  &.actor-archive-loop, &.character-archive-loop,
+  &.main-posts-loop, &.character-show-loop {
+    grid-template-columns: repeat(3, 1fr);
+    grid-gap: 1.6rem;
+
+    &.four-across-loop {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+ 
+  &.character-show-loop {
+    grid-gap: 1rem;
   }
 }
 

@@ -53,6 +53,11 @@ input[type="tel"], input[type="time"], input[type="url"], input[type="week"]  {
   }
 }
 
+
+.form-control:focus {
+  box-shadow: none;
+}
+
 /* Buttons */
 
 button, input[type="button"], input[type="submit"] {

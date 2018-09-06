@@ -125,6 +125,22 @@ function lwtv_yikes_jetpack_post_meta() {
 /** THE ARCHIVE SECTION **/
 
 /*
+ * https://wordpress.stackexchange.com/questions/172645/get-the-post-type-a-taxonomy-is-attached-to
+ */
+function lwtv_yikes_get_post_types_by_taxonomy( $tax = 'category' ) {
+	$out        = '';
+	$post_types = get_post_types();
+	foreach ( $post_types as $post_type ) {
+		$taxonomies = get_object_taxonomies( $post_type );
+		if ( in_array( $tax, $taxonomies ) ) {
+			// There should only be one (Highlander)
+			$out = $post_type;
+		}
+	}
+	return $out;
+}
+
+/*
  * Archive Sort Order
  *
  * Characters, shows, and certain taxonmies will use a
@@ -381,75 +397,7 @@ function lwtv_yikes_content_warning( $show_id ) {
  * @return array of characters
  */
 function lwtv_yikes_get_characters_for_show( $show_id, $havecharcount, $role = 'regular' ) {
-
-	// The Shane Clause & The Clone Club Correlary
-	// Calculate the max number of characters to list, based on the
-	// previous count. Default/Minimum is 100 characters.
-	$count = ( isset( $havecharcount ) && $havecharcount >= '100' ) ? $havecharcount : '100';
-
-	// Valid Roles:
-	$valid_roles = array( 'regular', 'recurring', 'guest' );
-
-	// If this isn't a show page, or there are no valid roles, bail.
-	if ( ! isset( $show_id ) || 'post_type_shows' !== get_post_type( $show_id ) || ! in_array( $role, $valid_roles, true ) ) {
-		return;
-	}
-
-	// Prepare the ARRAY
-	$characters = array();
-
-	$charactersloop = new WP_Query( array(
-		'post_type'              => 'post_type_characters',
-		'post_status'            => array( 'publish' ),
-		'orderby'                => 'title',
-		'order'                  => 'ASC',
-		'posts_per_page'         => $count,
-		'no_found_rows'          => true,
-		'update_post_term_cache' => true,
-		'meta_query'             => array(
-			'relation' => 'AND',
-			array(
-				'key'     => 'lezchars_show_group',
-				'value'   => $role,
-				'compare' => 'LIKE',
-			),
-			array(
-				'key'     => 'lezchars_show_group',
-				'value'   => $show_id,
-				'compare' => 'LIKE',
-			),
-		),
-	) );
-
-	if ( $charactersloop->have_posts() ) {
-		while ( $charactersloop->have_posts() ) {
-			$charactersloop->the_post();
-			$char_id     = get_the_ID();
-			$shows_array = get_post_meta( $char_id, 'lezchars_show_group', true );
-
-			// The Sara Lance Complexity:
-			// If the character is in this show, AND a published character,
-			// AND has this role ON THIS SHOW we will pass the following
-			// data to the character template to determine what to display.
-
-			if ( 'publish' === get_post_status( $char_id ) && isset( $shows_array ) && ! empty( $shows_array ) ) {
-				foreach ( $shows_array as $char_show ) {
-					if ( $char_show['show'] == $show_id && $char_show['type'] === $role ) { // WPCS: loose comparison ok.
-						$characters[ $char_id ] = array(
-							'id'        => $char_id,
-							'title'     => get_the_title( $char_id ),
-							'url'       => get_the_permalink( $char_id ),
-							'content'   => get_the_content( $char_id ),
-							'shows'     => $shows_array,
-							'show_from' => $show_id,
-							'role_from' => $role,
-						);
-					}
-				}
-			}
-		}
-		wp_reset_query();
-	}
+	$characters = LWTV_CPT_Characters::get_chars_for_show( $show_id, $havecharcount, $role );
 	return $characters;
 }
 

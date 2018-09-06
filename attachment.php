@@ -4,6 +4,7 @@
  *
  * @package YIKES Starter
  */
+
 get_header(); ?>
 
 <div id="main" class="site-main" role="main">

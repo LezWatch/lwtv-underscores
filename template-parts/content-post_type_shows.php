@@ -152,35 +152,31 @@ if ( $related ) {
 			echo wp_kses_post( '<p>There ' . sprintf( _n( 'is <strong>%s</strong> queer character', 'are <strong>%s</strong> queer characters', $havecharcount ), $havecharcount ) . ' listed for this show; ' . $deadtext . '.</p>' );
 
 			// Get the list of REGULAR characters
-			$chars_regular = lwtv_yikes_get_characters_for_show( $show_id, $havecharcount, 'regular' );
+			$chars_regular = LWTV_CPT_Characters::get_chars_for_show( $show_id, $havecharcount, 'regular' );
 			if ( ! empty( $chars_regular ) ) {
 				?>
 				<h3 class="title-regulars"><?php echo esc_html( _n( 'Regular', 'Regulars', count( $chars_regular ) ) ); ?> (<?php echo (int) count( $chars_regular ); ?>)</h3>
-				<div class="container characters-regulars-container"><div class="row site-loop character-show-loop equal-height">
+				<div class="container characters-regulars-container"><div class="row site-loop character-show-loop">
 				<?php
 				foreach ( $chars_regular as $character ) {
-					echo '<div class="col-sm-4">';
 					include locate_template( 'template-parts/excerpt-post_type_characters.php' );
-					echo '</div>';
 				}
 				echo '</div></div>';
 			}
 			// Get the list of RECURRING characters
-			$chars_recurring = lwtv_yikes_get_characters_for_show( $show_id, $havecharcount, 'recurring' );
+			$chars_recurring = LWTV_CPT_Characters::get_chars_for_show( $show_id, $havecharcount, 'recurring' );
 			if ( ! empty( $chars_recurring ) ) {
 				?>
 				<h3 class="title-recurring">Recurring (<?php echo count( $chars_recurring ); ?>)</h3>
-				<div class="container characters-recurring-container"><div class="row site-loop character-show-loop equal-height">
+				<div class="container characters-recurring-container"><div class="row site-loop character-show-loop">
 				<?php
 				foreach ( $chars_recurring as $character ) {
-					echo '<div class="col-sm-4">';
 					include locate_template( 'template-parts/excerpt-post_type_characters.php' );
-					echo '</div>';
 				}
 				echo '</div></div>';
 			}
 			// Get the list of GUEST characters
-			$chars_guest = lwtv_yikes_get_characters_for_show( $show_id, $havecharcount, 'guest' );
+			$chars_guest = LWTV_CPT_Characters::get_chars_for_show( $show_id, $havecharcount, 'guest' );
 			if ( ! empty( $chars_guest ) ) {
 				?>
 				<h3 class="title-guest"><?php echo esc_html( _n( 'Guest', 'Guests', count( $chars_guest ) ) ); ?> (<?php echo count( $chars_guest ); ?>)</h3>
