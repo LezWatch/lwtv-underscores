@@ -194,6 +194,12 @@
     height: 25px!important;
   }
 
+  .affiliate-watch-container {
+    .btn {
+      margin: 0 .4rem .4rem 0;
+    }
+  }
+
 }
 
 // Small devices (landscape phones, less than 780px)
@@ -283,6 +289,20 @@
   .character-image-wrapper {
     max-height: none !important;
     height: auto !important;
+  }
+
+  .site-loop.home-featured-secondary-loop .card-group, 
+  .site-loop.show-archive-loop .card-group {
+    margin-bottom: 0;
+  }
+
+  .site-loop.show-archive-loop .card-group {
+    width: 100%;
+    margin: auto;
+  }
+
+  .card-group > .card {
+    margin-bottom: 0;
   }
 
 }
