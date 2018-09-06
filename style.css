@@ -2148,6 +2148,12 @@ div.facetwp-facet-shows_scores input.facetwp-number {
     padding-left: 1rem;
   }
 
+  .site-loop.actor-archive-loop.four-across-loop, .site-loop.character-archive-loop.four-across-loop,
+  .site-loop.character-show-loop.four-across-loop, .site-loop.main-posts-loop.four-across-loop {
+    grid-template-columns: repeat(3, 1fr);
+    padding-right: 1rem;
+  }
+
   .characters-regulars-container .col-sm-4 .character-image-wrapper {
     height: 200px;
   }
