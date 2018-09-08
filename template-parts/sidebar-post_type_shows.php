@@ -189,7 +189,7 @@ if ( $intersections && ! is_wp_error( $intersections ) ) {
 		<div class="card-body">
 			<?php
 			// Bail if not set
-			if ( '0' === $realness && '0' === $quality && '0' === $screentime ) {
+			if ( ! $realness && ! $quality && ! $screentime ) {
 				echo '<p><em>Coming soon...</em></p>';
 			} else {
 				// We have some love, let's show it
@@ -215,35 +215,21 @@ if ( $intersections && ! is_wp_error( $intersections ) ) {
 							break;
 					}
 
-					if ( $rating > '0' ) {
-						?>
-						<div class="ratings-icons">
-							<h3><?php echo esc_html( ucfirst( $type ) ); ?></h3>
-							<?php
-							// while loop to display filled in hearts
-							// based on set ratings
-							$i = 1;
-							while ( $i <= $rating ) {
-								echo lwtv_sanitized( $positive_heart );
-								$i++;
-							}
-							// calculate the remaining empty hearts
-							if ( $i >= 1 ) {
-								$loop_count = $i - 1;
-							} else {
-								$loop_count = 0;
-							}
-							while ( $loop_count < 5 ) {
-								echo lwtv_sanitized( $negative_heart );
-								$loop_count++;
-							}
-							?>
-							<span class="screen-reader-text">Rating: <?php echo (int) $rating; ?> Hearts (out of 5)</span>
-						</div>
+					?>
+					<div class="ratings-icons">
+						<h3><?php echo esc_html( ucfirst( $type ) ); ?></h3>
 						<?php
-						if ( ( get_post_meta( $show_id, $detail, true ) ) ) {
-							echo wp_kses_post( apply_filters( 'the_content', get_post_meta( $show_id, $detail, true ) ) );
+						if ( $rating >= '0' ) {
+							$leftover = 5 - $rating;
+							echo lwtv_sanitized( str_repeat( $positive_heart, $rating ) );
+							echo lwtv_sanitized( str_repeat( $negative_heart, $leftover ) );
 						}
+						?>
+						<span class="screen-reader-text">Rating: <?php echo (int) $rating; ?> Hearts (out of 5)</span>
+					</div>
+					<?php
+					if ( ( get_post_meta( $show_id, $detail, true ) ) ) {
+						echo wp_kses_post( apply_filters( 'the_content', get_post_meta( $show_id, $detail, true ) ) );
 					}
 				}
 			}
