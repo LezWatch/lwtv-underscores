@@ -71,7 +71,7 @@ class LWTV_AMP {
 
 		// Set Image
 		if ( has_post_thumbnail() && 'post' !== $post_type ) {
-			$image   = '<p class="lezwatch-featured-image ' . $post_type_is . '-img">' . get_the_post_thumbnail( $post_id, $post_type_is . '-img' ) . '</p>';
+			$image   = '<p class="lezwatch-featured-image ' . $post_type_is . '-img">' . get_the_post_thumbnail( get_the_ID(), $post_type_is . '-img' ) . '</p>';
 			$return .= $image;
 		}
 
@@ -354,22 +354,28 @@ class LWTV_AMP {
 		}
 
 		// Add character info:
-		$havecharacters = LWTV_CPT_Characters::list_characters( $post_id, 'query' );
-		$havecharcount  = LWTV_CPT_Characters::list_characters( $post_id, 'count' );
-		$havedeadcount  = LWTV_CPT_Characters::list_characters( $post_id, 'dead' );
-		$characters     = '<section id="characters" class="shows-extras"><h2>Characters (' . (int) $havecharcount . ')</h2>';
+		$havecharcount = LWTV_CPT_Characters::list_characters( $post_id, 'count' );
+		$havedeadcount = LWTV_CPT_Characters::list_characters( $post_id, 'dead' );
+		$characters    = '<section id="characters" class="shows-extras"><h2>Characters (' . (int) $havecharcount . ')</h2>';
 
-		if ( empty( $havecharacters ) ) {
+		if ( empty( $havecharcount ) ) {
 			$characters .= '<p>There are no characters listed for this show.</p>';
 		} else {
+
+			// Lists of characters
+			$regulars  = LWTV_CPT_Characters::get_chars_for_show( $post_id, $havecharcount, 'regular' );
+			$recurring = LWTV_CPT_Characters::get_chars_for_show( $post_id, $havecharcount, 'recurring' );
+			$guests    = LWTV_CPT_Characters::get_chars_for_show( $post_id, $havecharcount, 'guest' );
+			$all_chars = array_merge( $regulars, $recurring, $guests );
+
 			$characters .= '<ul class="character-list">';
-			foreach ( $havecharacters as $character ) {
+			foreach ( $all_chars as $character ) {
 				$characters .= '<li class="clearfix"><a href="' . $character['url'] . 'amp/">' . $character['title'] . '</a></li>';
 			}
 			$characters .= '</ul>';
 		}
-		$characters = '</section>';
-		$return    .= $characters;
+		$characters .= '</section>';
+		$return     .= $characters;
 
 		// Add Info Box
 		$networks        = get_the_terms( get_the_ID(), 'lez_stations' );
@@ -415,25 +421,25 @@ class LWTV_AMP {
 			$intersection_echo = get_the_term_list( get_the_ID(), 'lez_intersections', '<p class="entry-meta"><strong>Intersectionality:</strong> ', ', ' );
 		}
 
-		if ( $realness_rating ) {
+		if ( isset( $realness_rating ) ) {
 			$ratings_array['realness'] = '<strong>Realness:</strong> ' . $realness_rating . ' (out of 5)';
 		}
-		if ( $show_quality ) {
+		if ( isset( $show_quality ) ) {
 			$ratings_array['quality'] = '<strong>Quality:</strong> ' . $show_quality . ' (out of 5)';
 		}
-		if ( $screen_time ) {
+		if ( isset( $screen_time ) ) {
 			$ratings_array['screen_time'] = '<strong>Screen Time:</strong> ' . $screen_time . ' (out of 5)';
 		}
 
 		$infobox  = '<section class="amp-wp-show-footer"><center>';
 		$infobox .= '<p class="entry-meta">' . join( ' &bull; ', $info_array ) . '</p>';
-		if ( $trope_echo ) {
+		if ( isset( $trope_echo ) ) {
 			$infobox .= $trope_echo;
 		}
-		if ( $genre_echo ) {
+		if ( isset( $genre_echo ) ) {
 			$infobox .= $genre_echo;
 		}
-		if ( $intersection_echo ) {
+		if ( isset( $intersection_echo ) ) {
 			$infobox .= $intersection_echo;
 		}
 		$infobox .= '<p class="entry-meta">' . join( ' &bull; ', $ratings_array ) . '</p>';
@@ -462,6 +468,16 @@ class LWTV_AMP {
 	public function amp_post_template_css( $amp_template ) {
 		// only CSS here please...
 		?>
+
+		ul.character-list {
+			-moz-column-count: 3;
+			-moz-column-gap: 10px;
+			-webkit-column-count: 3;
+			-webkit-column-gap: 10px;
+			column-count: 3;
+			column-gap: 10px;
+		}
+
 		p.lezwatch-featured-image.character-img {
 			padding: 10px;
 			float: left;
