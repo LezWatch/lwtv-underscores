@@ -8,7 +8,6 @@
  * @package LezWatch.TV
  */
 
-
 /**
  * class LWTV_AMP
  * @since 1.0
@@ -227,7 +226,7 @@ class LWTV_AMP {
 			foreach ( $urls as $source ) {
 				$return .= ' &bull; <a href="' . esc_url( $source['url'] ) . '">' . esc_html( $source['name'] ) . '</a>';
 			}
-			echo '</li>';
+			$return .= '</li>';
 		}
 
 		$return .= '</ul>';
@@ -255,7 +254,7 @@ class LWTV_AMP {
 		$all_shows  = get_post_meta( $post_id, 'lezchars_show_group', true );
 		$show_title = array();
 		foreach ( $all_shows as $each_show ) {
-			array_push( $show_title, '<em><a href="' . get_permalink( $each_show['show'] ) . '">' . get_the_title( $each_show['show'] ) . '</a></em> (' . $each_show['type'] . ' character)' );
+			array_push( $show_title, '<em><a href="' . get_permalink( $each_show['show'] ) . 'amp/">' . get_the_title( $each_show['show'] ) . '</a></em> (' . $each_show['type'] . ' character)' );
 		}
 		$on_shows = ( empty( $show_title ) ) ? ' no shows.' : ': ' . implode( ', ', $show_title );
 		$appears  = '<strong>Appears on</strong>' . $on_shows;
