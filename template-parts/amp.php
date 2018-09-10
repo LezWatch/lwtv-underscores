@@ -9,7 +9,6 @@
  * @package LezWatch.TV
  */
 ?>
-
 <!doctype html>
 <html amp <?php echo AMP_HTML_Utils::build_attributes_string( $this->get( 'html_tag_attributes' ) ); // WPCS: XSS okay. ?>>
 <head>
