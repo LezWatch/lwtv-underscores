@@ -8,20 +8,20 @@
  */
 
 // Get the Term information and icons.
-$term         = get_term_by( 'slug', get_query_var( 'term' ), get_query_var( 'taxonomy' ) );
+$the_term     = get_term_by( 'slug', get_query_var( 'term' ), get_query_var( 'taxonomy' ) );
 $iconname     = lwtv_yikes_tax_archive_title( 'icon', get_post_type( get_the_ID() ), get_query_var( 'taxonomy' ) );
-$the_icon     = '<span role="img" aria-label="' . $term->name . '" title="' . $term->name . '" class="taxonomy-svg ' . $term->slug . '"> ' . $iconname . '</span>';
+$the_icon     = '<span role="img" aria-label="' . $the_term->name . '" title="' . $the_term->name . '" class="taxonomy-svg ' . $the_term->slug . '"> ' . $iconname . '</span>';
 $title_prefix = lwtv_yikes_tax_archive_title( 'prefix', get_post_type( get_the_ID() ), get_query_var( 'taxonomy' ) );
 $title_suffix = lwtv_yikes_tax_archive_title( 'suffix', get_post_type( get_the_ID() ), get_query_var( 'taxonomy' ) );
 
 // Count Posts: If this is a show or a character taxonomy, we do extra.
-$count_posts = $term->count;
+$count_posts = $the_term->count;
 if ( in_array( get_post_type( get_the_ID() ), array( 'post_type_shows', 'post_type_characters' ), true ) ) {
 	$count_posts = facetwp_display( 'counts' );
 }
 
 // Post Type Detector.
-$post_type_is = rtrim( str_replace( 'post_type_', '', lwtv_yikes_get_post_types_by_taxonomy( $term->taxonomy ) ), 's' );
+$post_type_is = rtrim( str_replace( 'post_type_', '', lwtv_yikes_get_post_types_by_taxonomy( $the_term->taxonomy ) ), 's' );
 
 get_header(); ?>
 
@@ -41,10 +41,20 @@ get_header(); ?>
 					<div class="col">
 						<div class="archive-description">
 							<?php
-								echo '<h3 class="facetwp-title"></h3>';
+							echo '<h3 class="facetwp-title"></h3>';
+							$no_desc_terms = array( 'lez_actor_gender', 'lez_actor_sexuality', 'lez_gender', 'lez_sexuality', 'lez_romantic', 'lez_stations' );
+							if ( in_array( get_query_var( 'taxonomy' ), $no_desc_terms, true ) ) {
+								$meta = get_option( 'wpseo_titles' );
+								$desc = $meta['metadesc-tax-lez_stations'];
+								$desc = str_replace( '%%term_title%%', $the_term->name, $desc );
+								echo '<p>' . $desc . '</p>';
+								echo '<span class="facetwp-description"></span>';
+							} else {
 								the_archive_description( '<p>', '<span class="facetwp-description"></span></p>' );
-								echo '<p><span class="facetwp-sorted"></span></p>';
-								echo facetwp_display( 'selections' );
+							}
+
+							echo '<p><span class="facetwp-sorted"></span></p>';
+							echo facetwp_display( 'selections' );
 							?>
 						</div>
 					</div>
