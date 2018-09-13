@@ -45,9 +45,9 @@ get_header(); ?>
 							$no_desc_terms = array( 'lez_actor_gender', 'lez_actor_sexuality', 'lez_gender', 'lez_sexuality', 'lez_romantic', 'lez_stations' );
 							if ( in_array( get_query_var( 'taxonomy' ), $no_desc_terms, true ) ) {
 								$meta = get_option( 'wpseo_titles' );
-								$desc = $meta['metadesc-tax-lez_stations'];
+								$desc = $meta[ 'metadesc-tax-' . get_query_var( 'taxonomy' ) ];
 								$desc = str_replace( '%%term_title%%', $the_term->name, $desc );
-								echo '<p>' . $desc . '</p>';
+								echo '<p>' . wp_kses_post( $desc ) . '</p>';
 								echo '<span class="facetwp-description"></span>';
 							} else {
 								the_archive_description( '<p>', '<span class="facetwp-description"></span></p>' );
