@@ -256,44 +256,27 @@ function lwtv_yikes_tax_archive_title( $location, $posttype, $taxonomy ) {
 			$title_suffix = ' Characters';
 			break;
 		case 'post_type_actors':
-			$title_prefix = 'Actors ';
-			switch ( $taxonomy ) {
-				case 'lez_actor_gender':
-					$title_prefix .= 'Who Identify As A ';
-					break;
-				case 'lez_actor_sexuality':
-					$title_prefix .= 'Who Identify As ';
-					break;
-			}
+			$title_suffix = ' Actors';
 			break;
 		case 'post_type_shows':
-			$title_prefix = 'TV Shows ';
+			$title_suffix = ' TV Shows';
 
 			// TV Shows are harder to have titles
 			switch ( $taxonomy ) {
-				case 'lez_tropes':
-					$title_prefix .= 'With The ';
-					$title_suffix .= ' Trope';
+				case 'lez_stars':
+					$title_suffix = '';
+					$title_prefix = 'TV Shows with ';
 					break;
 				case 'lez_country':
-					$title_prefix .= 'That Originate In ';
-					break;
-				case 'lez_stations':
-					$title_prefix .= 'That Air On ';
+					$title_suffix = ' Based TV Shows';
+					$title_prefix = '';
 					break;
 				case 'lez_formats':
-					$title_prefix .= 'That Air As ';
-					break;
-				case 'lez_genres':
-					$title_prefix = '';
-					$title_suffix = ' TV Shows';
-					break;
-				case 'lez_stars':
-					$title_prefix .= 'With A ';
+					$title_suffix = '';
 					break;
 				case 'lez_triggers':
-					$title_prefix .= 'With A ';
-					$title_suffix .= ' Trigger Warning';
+					$title_prefix = 'TV Shows with ';
+					$title_suffix = ' Trigger Warnings';
 					break;
 			}
 			break;
