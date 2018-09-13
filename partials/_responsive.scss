@@ -23,18 +23,18 @@
   .close-btn-container {
     padding-left: 10px;
   }
-  
+
   .jumbotron.jumbotron-fluid h1.site-description {
     font-size: 2.25rem;
   }
 
   .character-archive-loop .character-image-wrapper {
-    height: 200px;
+    height: 250px;
   }
 
   .show-archive-loop {
     .character-image-wrapper {
-      height: 200px;
+      height: 250px;
     }
   }
 
@@ -47,7 +47,7 @@
   }
 
   div.fs-label-wrap,
-  .facetwp-type-fselect .fs-wrap, 
+  .facetwp-type-fselect .fs-wrap,
   .facetwp-type-fselect .fs-dropdown {
 	  width: 170px!important;
   }
@@ -129,7 +129,7 @@
     }
   }
 
-  .site-loop.actor-archive-loop, .site-loop.character-archive-loop, 
+  .site-loop.actor-archive-loop, .site-loop.character-archive-loop,
   .site-loop.character-show-loop, .site-loop.main-posts-loop {
     grid-template-columns: repeat(2,1fr);
     grid-gap: 1.2rem;
@@ -151,11 +151,11 @@
   }
 
   .characters-recurring-container .character-show-loop .character-image-wrapper {
-    height: 120px;
+    height: 160px;
   }
 
   #characters .guest-character-list li {
-    width: 50%;
+    width: 40%;
   }
 
   #overview {
@@ -230,7 +230,7 @@
         display: none;
       }
     }
-    
+
     #search-btn {
 	  position: relative;
     }
@@ -276,12 +276,12 @@
     margin-top: 46px;
   }
 
-  .site-loop.actor-archive-loop, .site-loop.character-archive-loop, 
+  .site-loop.actor-archive-loop, .site-loop.character-archive-loop,
   .site-loop.character-show-loop, .site-loop.main-posts-loop,
   .site-loop.actor-archive-loop.four-across-loop, .site-loop.character-archive-loop.four-across-loop,
   .site-loop.character-show-loop.four-across-loop, .site-loop.main-posts-loop.four-across-loop,
   .site-loop.home-featured-secondary-loop, .site-loop.show-archive-loop {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2,1fr);
     grid-gap: 1rem;
     padding: 0 1rem;
   }
@@ -295,7 +295,7 @@
     height: auto !important;
   }
 
-  .site-loop.home-featured-secondary-loop .card-group, 
+  .site-loop.home-featured-secondary-loop .card-group,
   .site-loop.show-archive-loop .card-group {
     margin-bottom: 0;
   }
@@ -312,7 +312,7 @@
 }
 
 
- 
+
 /*
 *
 * Individual breakpoints
@@ -326,7 +326,7 @@
     ul.navbar-nav {
 	  margin-left: 20px !important;
     }
-    
+
     .admin-bar .fixed-top.main-nav {
       margin-top: 0px;
     }
@@ -497,7 +497,7 @@
     max-width: 100%;
   }
 
-  .characters-regulars-container .col-sm-4, 
+  .characters-regulars-container .col-sm-4,
   .col-sm-9 .entry-content .col-sm-4,
   .search-results .site-content .col-sm-3 {
     -ms-flex: 0 0 100%;
@@ -541,7 +541,7 @@
   #colophon .footer-widgets h2.widget-title {
     padding-bottom: 10px;
     margin-bottom: 10px;
-  } 
+  }
 
   .footer-widgets {
     .footer-col {
