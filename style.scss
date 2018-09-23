@@ -1634,6 +1634,13 @@ div.facetwp-facet-shows_scores input.facetwp-number {
   margin: .2rem;
 }
 
+.facetwp-type-fselect .fs-wrap, .facetwp-type-fselect .fs-dropdown {
+    max-width: 220px;
+    min-width: 100px;
+    overflow-wrap: break-word;
+    width: auto;
+}
+
 /*--------------------------------------------------------------
 # Callouts
 --------------------------------------------------------------*/
