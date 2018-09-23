@@ -25,6 +25,10 @@ function lwtv_author_box( $content ) {
 		// Get link to the author archive page
 		$user_posts = get_author_posts_url( get_the_author_meta( 'ID', $author ) );
 
+		// Get number of posts written
+		$user_post_num = ( count_user_posts( $author, 'post' ) > 1 ) ? 'Read all ' . count_user_posts( $author, 'post' ) . ' articles' : 'This is the first article';
+		$user_articles = $user_post_num . ' by ' . $display_name . '.';
+
 		// Get author Fav Shows
 		$all_fav_shows = get_the_author_meta( 'lez_user_favourite_shows', $author );
 		if ( '' !== $all_fav_shows ) {
@@ -43,7 +47,8 @@ function lwtv_author_box( $content ) {
 		// Author avatar, name and bio
 		$author_details  = '<div class="col-sm-3">' . get_avatar( get_the_author_meta( 'user_email' ), 190 ) . '</div>';
 		$author_details .= '<div class="col-sm-9"><h4 class="author_name">About ' . $display_name . '</h4><div class="author-bio">' . nl2br( $user_description ) . '</div>';
-		$author_details .= '<div class="author-archives">' . lwtv_yikes_symbolicons( 'newspaper.svg', 'fa-newspaper' ) . '&nbsp;<a href="' . $user_posts . '">View all articles by ' . $display_name . '</a></div>';
+
+		$author_details .= '<div class="author-archives">' . lwtv_yikes_symbolicons( 'newspaper.svg', 'fa-newspaper' ) . '&nbsp;<a href="' . $user_posts . '">' . $user_articles . '</a></div>';
 
 		// Add Twitter if it's there
 		$author_details .= ( ! empty( $user_twitter ) ) ? '<div class="author-twitter">' . lwtv_yikes_symbolicons( 'twitter.svg', 'fa-twitter' ) . '&nbsp;<a href="https://twitter.com/' . $user_twitter . '" target="_blank" rel="nofollow">@' . $user_twitter . '</a> </div>' : '';
