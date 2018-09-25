@@ -37,7 +37,6 @@ switch ( $station ) {
 		$station_object = get_term_by( 'slug', $station, 'lez_stations', 'ARRAY_A' );
 		$title_station  = '<a href="' . home_url( '/station/' . $station ) . '">' . $station_object['name'] . '</a> (' . $shows . ' Shows / ' . $characters . ' Characters)';
 }
-
 ?>
 
 <h2><?php echo wp_kses_post( $title_station ); ?></h2>
@@ -77,14 +76,14 @@ switch ( $station ) {
 
 <?php
 	$col_class = ( 'all' !== $station && 'overview' !== $view ) ? 'col-sm-6' : 'col';
-	$post_type = $valid_views[ $view ];
+	$type_post = $valid_views[ $view ];
 ?>
 
 <div class="container">
 
 	<?php
 	if ( 'all' !== $station && 'overview' !== $view ) {
-		switch ( $post_type ) {
+		switch ( $type_post ) {
 			case 'characters':
 				echo '<p>The following statistics relate to characters on shows that air on this station.</p>';
 				break;
@@ -130,7 +129,7 @@ switch ( $station ) {
 				</table>
 				<?php
 			} else {
-				LWTV_Stats::generate( $post_type, 'stations' . $station . $view, 'stackedbar' );
+				LWTV_Stats::generate( $type_post, 'stations' . $station . $view, 'stackedbar' );
 			}
 		} else {
 			$format = 'piechart';
@@ -148,17 +147,17 @@ switch ( $station ) {
 				}
 			}
 
-			LWTV_Stats::generate( $post_type, 'stations' . $station . $view, $format );
+			LWTV_Stats::generate( $type_post, 'stations' . $station . $view, $format );
 		}
 		?>
 		</div>
 
 	<?php
 	if ( '_all' !== $station && '_all' !== $view ) {
-		$format = ( 'shows' === $post_type ) ? 'list' : 'percentage';
+		$format = ( 'shows' === $type_post ) ? 'list' : 'percentage';
 		?>
 		<div class="<?php echo esc_attr( $col_class ); ?>">
-			<?php LWTV_Stats::generate( $post_type, 'stations' . $station . $view, $format ); ?>
+			<?php LWTV_Stats::generate( $type_post, 'stations' . $station . $view, $format ); ?>
 		</div>
 		<?php
 	}

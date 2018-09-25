@@ -20,7 +20,7 @@ global $post;
 $the_id      = ( isset( $character['id'] ) ) ? $character['id'] : $post->ID;
 $the_content = ( isset( $character['content'] ) ) ? $character['content'] : get_the_content();
 $alttext     = 'A picture of the character ' . get_the_title( $the_id );
-$role        = ( isset( $character['role_from'] ) ) ? $character['role_from'] : 'regular';
+$char_role   = ( isset( $character['role_from'] ) ) ? $character['role_from'] : 'regular';
 $archive     = ( is_archive() || is_tax() || is_page() ) ? true : false;
 
 $thumb_attribution = get_post_meta( get_post_thumbnail_id(), 'lwtv_attribution', true );
@@ -35,7 +35,7 @@ $thumb_array       = array(
 unset( $shows, $actors, $gender, $sexuality, $cliches, $grave );
 
 // Show a gravestone for recurring characters
-if ( ( 'recurring' === $role && 'post_type_shows' === get_post_type() ) || 'post_type_actors' === get_post_type() ) {
+if ( ( 'recurring' === $char_role && 'post_type_shows' === get_post_type() ) || 'post_type_actors' === get_post_type() ) {
 	$grave = ( has_term( 'dead', 'lez_cliches', $the_id ) ) ? '<span role="img" aria-label="RIP Tombstone" title="RIP Tombstone" class="charlist-grave-sm">' . lwtv_yikes_symbolicons( 'rest-in-peace.svg', 'fa-ban' ) . '</span>' : '';
 }
 ?>
@@ -65,13 +65,13 @@ if ( ( 'recurring' === $role && 'post_type_shows' === get_post_type() ) || 'post
 		<div class="card-text">
 			<?php
 			// If we're a regular we show it all
-			if ( 'regular' === $role && 'post_type_shows' === get_post_type() ) {
+			if ( 'regular' === $char_role && 'post_type_shows' === get_post_type() ) {
 				$gender    = lwtv_yikes_chardata( $the_id, 'gender' );
 				$sexuality = lwtv_yikes_chardata( $the_id, 'sexuality' );
 				$cliches   = lwtv_yikes_chardata( $the_id, 'cliches' );
 			}
 
-			if ( ( 'regular' === $role && 'post_type_shows' === get_post_type() ) || $archive ) {
+			if ( ( 'regular' === $char_role && 'post_type_shows' === get_post_type() ) || $archive ) {
 				$actors = lwtv_yikes_chardata( $the_id, 'actors' );
 			}
 

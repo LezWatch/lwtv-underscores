@@ -5,7 +5,13 @@
 
 global $post;
 
-$show_id      = $post->ID;
+$show_id = $post->ID;
+
+// Do the math to make sure we're up to date.
+if ( class_exists( 'LWTV_Shows_Calculate' ) ) {
+	LWTV_Shows_Calculate::do_the_math( $show_id );
+}
+
 $thumb_rating = get_post_meta( $show_id, 'lezshows_worthit_rating', true );
 $realness     = min( (int) get_post_meta( $show_id, 'lezshows_realness_rating', true ), 5 );
 $quality      = min( (int) get_post_meta( $show_id, 'lezshows_quality_rating', true ), 5 );
@@ -57,8 +63,6 @@ $screentime   = min( (int) get_post_meta( $show_id, 'lezshows_screentime_rating'
 						echo wp_kses_post( apply_filters( 'the_content', wp_kses_post( get_post_meta( $show_id, 'lezshows_worthit_details', true ) ) ) );
 					}
 
-					// Calculate the show score and echo
-					LWTV_Shows_Calculate::do_the_math( $show_id );
 					echo '<strong>Show Score:</strong> ' . esc_html( round( get_post_meta( $show_id, 'lezshows_the_score', true ), 2 ) );
 					?>
 				</div>
@@ -106,8 +110,12 @@ $screentime   = min( (int) get_post_meta( $show_id, 'lezshows_screentime_rating'
 	</div>
 </section>
 
-<section id="affiliates watch-now" class="widget widget_text">
-	<?php echo LWTV_Affilliates::shows( $show_id, 'widget' ); // WPSC: XSS okay ?>
+<section id="affiliates" class="widget widget_text">
+	<?php
+	if ( class_exists( 'LWTV_Affilliates' ) ) {
+		echo LWTV_Affilliates::shows( $show_id, 'widget' ); // WPCS: XSS okay
+	}
+	?>
 </section>
 
 <section id="ratings" class="widget widget_text">

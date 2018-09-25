@@ -24,7 +24,7 @@ $thumb_array       = array(
 	'title' => $thumb_title,
 );
 
-// Reset to prevent Teri Polo from overtaking the world
+// The Terrible Terri Polo: If we don't reset, her stats apply to everyone.
 unset( $shows, $actors, $gender, $sexuality, $cliches, $grave );
 ?>
 

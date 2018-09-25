@@ -14,5 +14,9 @@ $char_id = $post->ID;
 </section>
 
 <section id="affiliates" class="widget widget_text">
-	<?php echo LWTV_Affilliates::characters( $char_id, 'widget' ); // WPCS: XSS okay ?>
+	<?php
+	if ( class_exists( 'LWTV_Affilliates' ) ) {
+		echo LWTV_Affilliates::characters( $char_id, 'widget' ); // WPCS: XSS okay
+	}
+	?>
 </section>
