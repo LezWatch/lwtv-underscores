@@ -68,12 +68,15 @@ switch ( $view ) {
 						</thead>
 						<tbody>
 							<?php
-							$cliches = get_terms( 'lez_cliches', array(
-								'number'     => 14,
-								'orderby'    => 'count',
-								'hide_empty' => 0,
-								'order'      => 'DESC',
-							) );
+							$cliches = get_terms(
+								'lez_cliches',
+								array(
+									'number'     => 14,
+									'orderby'    => 'count',
+									'hide_empty' => 0,
+									'order'      => 'DESC',
+								)
+							);
 							foreach ( $cliches as $cliche ) {
 								echo '<tr>
 										<th scope="row"><a href="/cliche/' . esc_url( $cliche->slug ) . '">' . esc_html( $cliche->name ) . '</a></th>
@@ -99,12 +102,15 @@ switch ( $view ) {
 						</thead>
 						<tbody>
 							<?php
-							$sexualities = get_terms( 'lez_sexuality', array(
-								'number'     => 5,
-								'orderby'    => 'count',
-								'hide_empty' => 0,
-								'order'      => 'DESC',
-							) );
+							$sexualities = get_terms(
+								'lez_sexuality',
+								array(
+									'number'     => 5,
+									'orderby'    => 'count',
+									'hide_empty' => 0,
+									'order'      => 'DESC',
+								)
+							);
 							foreach ( $sexualities as $sexuality ) {
 								echo '<tr>
 										<th scope="row"><a href="/sexuality/' . esc_url( $sexuality->slug ) . '">' . esc_html( $sexuality->name ) . '</a></th>
@@ -130,12 +136,15 @@ switch ( $view ) {
 						</thead>
 						<tbody>
 							<?php
-							$genders = get_terms( 'lez_gender', array(
-								'number'     => 5,
-								'orderby'    => 'count',
-								'hide_empty' => 0,
-								'order'      => 'DESC',
-							) );
+							$genders = get_terms(
+								'lez_gender',
+								array(
+									'number'     => 5,
+									'orderby'    => 'count',
+									'hide_empty' => 0,
+									'order'      => 'DESC',
+								)
+							);
 							foreach ( $genders as $gender ) {
 								echo '<tr>
 										<th scope="row"><a href="/gender/' . esc_url( $gender->slug ) . '">' . esc_html( $gender->name ) . '</a></th>

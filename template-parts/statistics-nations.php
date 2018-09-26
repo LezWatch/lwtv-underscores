@@ -103,7 +103,7 @@ switch ( $country ) {
 		<div class="<?php echo esc_attr( $col_class ); ?>">
 		<?php
 
-		// country_[subcountry]_[view]
+		// Reminder: country [subcountry] [view]
 		$view    = ( 'overview' === $view ) ? '_all' : '_' . $view;
 		$country = ( 'overview' === $country ) ? '_all' : '_' . $country;
 		$format  = ( '_all' === $view ) ? 'barchart' : 'piechart';

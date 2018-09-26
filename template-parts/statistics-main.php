@@ -64,12 +64,15 @@ $dead_chars = LWTV_Stats::generate( 'characters', 'dead', 'count' );
 				</thead>
 				<tbody>
 					<?php
-					$nations = get_terms( 'lez_country', array(
-						'number'     => 10,
-						'orderby'    => 'count',
-						'hide_empty' => 0,
-						'order'      => 'DESC',
-					) );
+					$nations = get_terms(
+						'lez_country',
+						array(
+							'number'     => 10,
+							'orderby'    => 'count',
+							'hide_empty' => 0,
+							'order'      => 'DESC',
+						)
+					);
 					foreach ( $nations as $nation ) {
 						echo '<tr>
 								<th scope="row"><a href="nations/?country=' . esc_url( $nation->slug ) . '">' . esc_html( $nation->name ) . '</a></th>
@@ -95,12 +98,15 @@ $dead_chars = LWTV_Stats::generate( 'characters', 'dead', 'count' );
 				</thead>
 				<tbody>
 					<?php
-					$stations = get_terms( 'lez_stations', array(
-						'number'     => 10,
-						'orderby'    => 'count',
-						'hide_empty' => 0,
-						'order'      => 'DESC',
-					) );
+					$stations = get_terms(
+						'lez_stations',
+						array(
+							'number'     => 10,
+							'orderby'    => 'count',
+							'hide_empty' => 0,
+							'order'      => 'DESC',
+						)
+					);
 					foreach ( $stations as $station ) {
 						echo '<tr>
 								<th scope="row"><a href="stations/?station=' . esc_url( $station->slug ) . '">' . esc_html( $station->name ) . '</a></th>

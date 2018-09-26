@@ -26,10 +26,12 @@
 	</div><!-- .entry-content -->
 
 		<?php
-		wp_link_pages( array(
-			'before' => '<div class="page-links">' . esc_attr__( 'Pages:', 'yikes_starter' ),
-			'after'  => '</div>',
-		) );
+		wp_link_pages(
+			array(
+				'before' => '<div class="page-links">' . esc_attr__( 'Pages:', 'yikes_starter' ),
+				'after'  => '</div>',
+			)
+		);
 		?>
 
 	<footer class="entry-meta">
@@ -54,7 +56,7 @@
 			} else {
 				$meta_text = __( '<span class="footer-entry-meta-item">' . lwtv_yikes_symbolicons( 'folder-open.svg', 'fa-folder-open' ) . '&nbsp;%1$s</span> <span class="footer-entry-meta-item">' . lwtv_yikes_symbolicons( 'bookmark.svg', 'fa-bookmark' ) . '&nbsp;<a href="%3$s" title="Permalink to %4$s" rel="bookmark">Post link</a></span>', 'yikes_starter' );
 			}
-		} // End if().
+		} // End if.
 
 		printf(
 			lwtv_sanitized( $meta_text ),

@@ -94,12 +94,15 @@ switch ( $view ) {
 						</thead>
 						<tbody>
 							<?php
-							$genders = get_terms( 'lez_actor_gender', array(
-								'number'     => 5,
-								'orderby'    => 'count',
-								'hide_empty' => 0,
-								'order'      => 'DESC',
-							) );
+							$genders = get_terms(
+								'lez_actor_gender',
+								array(
+									'number'     => 5,
+									'orderby'    => 'count',
+									'hide_empty' => 0,
+									'order'      => 'DESC',
+								)
+							);
 							foreach ( $genders as $gender ) {
 								echo '<tr>
 										<th scope="row"><a href="/gender/' . esc_url( $gender->slug ) . '">' . esc_html( $gender->name ) . '</a></th>

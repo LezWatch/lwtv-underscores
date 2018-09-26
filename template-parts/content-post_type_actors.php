@@ -34,38 +34,38 @@ if ( isset( $sexuality ) && ! empty( $sexuality ) ) {
 }
 
 // Generate URLs
-// Usage: $urls
-$urls = array();
+// Usage: $actor_urls
+$actor_urls = array();
 if ( get_post_meta( get_the_ID(), 'lezactors_homepage', true ) ) {
-	$urls['home'] = array(
+	$actor_urls['home'] = array(
 		'name' => 'Website',
 		'url'  => esc_url( get_post_meta( get_the_ID(), 'lezactors_homepage', true ) ),
 		'fa'   => 'fas fa-home',
 	);
 }
 if ( get_post_meta( get_the_ID(), 'lezactors_imdb', true ) ) {
-	$urls['imdb'] = array(
+	$actor_urls['imdb'] = array(
 		'name' => 'IMDb',
 		'url'  => esc_url( 'https://www.imdb.com/name/' . get_post_meta( get_the_ID(), 'lezactors_imdb', true ) ),
 		'fa'   => 'fab fa-imdb',
 	);
 }
 if ( get_post_meta( get_the_ID(), 'lezactors_wikipedia', true ) ) {
-	$urls['wikipedia'] = array(
+	$actor_urls['wikipedia'] = array(
 		'name' => 'WikiPedia',
 		'url'  => esc_url( get_post_meta( get_the_ID(), 'lezactors_wikipedia', true ) ),
 		'fa'   => 'fab fa-wikipedia-w',
 	);
 }
 if ( get_post_meta( get_the_ID(), 'lezactors_twitter', true ) ) {
-	$urls['twitter'] = array(
+	$actor_urls['twitter'] = array(
 		'name' => 'Twitter',
 		'url'  => esc_url( 'https://twitter.com/' . get_post_meta( get_the_ID(), 'lezactors_twitter', true ) ),
 		'fa'   => 'fab fa-twitter',
 	);
 }
 if ( get_post_meta( get_the_ID(), 'lezactors_instagram', true ) ) {
-	$urls['instagram'] = array(
+	$actor_urls['instagram'] = array(
 		'name' => 'Instagram',
 		'url'  => esc_url( 'https://www.instagram.com/' . get_post_meta( get_the_ID(), 'lezactors_instagram', true ) ),
 		'fa'   => 'fab fa-instagram',
@@ -111,8 +111,8 @@ $thumb_array       = array(
 				<?php
 				if ( count( $gender_sexuality ) > 0 ) {
 					echo '<ul>';
-					foreach ( $gender_sexuality as $title => $data ) {
-						echo '<li><strong>' . esc_html( ucfirst( $title ) ) . '</strong>: ' . wp_kses_post( $data ) . '</li>';
+					foreach ( $gender_sexuality as $item => $data ) {
+						echo '<li><strong>' . esc_html( ucfirst( $item ) ) . '</strong>: ' . wp_kses_post( $data ) . '</li>';
 					}
 					echo '</ul>';
 				}
@@ -131,10 +131,10 @@ $thumb_array       = array(
 			</div>
 			<div class="card-meta-item">
 				<?php
-				if ( count( $urls ) > 0 ) {
+				if ( count( $actor_urls ) > 0 ) {
 					echo '<strong>Links:</strong> ';
 					echo '<ul class="actor-meta-links">';
-					foreach ( $urls as $source ) {
+					foreach ( $actor_urls as $source ) {
 						echo '<li><i class="' . esc_attr( strtolower( $source['fa'] ) ) . '" aria-hidden="true"></i> <a href="' . esc_url( $source['url'] ) . '">' . esc_html( $source['name'] ) . '</a></li>';
 					}
 					echo '</ul>';

@@ -67,12 +67,15 @@ switch ( $view ) {
 						</thead>
 						<tbody>
 							<?php
-							$tropes = get_terms( 'lez_tropes', array(
-								'number'     => 10,
-								'orderby'    => 'count',
-								'hide_empty' => 0,
-								'order'      => 'DESC',
-							) );
+							$tropes = get_terms(
+								'lez_tropes',
+								array(
+									'number'     => 10,
+									'orderby'    => 'count',
+									'hide_empty' => 0,
+									'order'      => 'DESC',
+								)
+							);
 							foreach ( $tropes as $trope ) {
 								echo '<tr>
 										<th scope="row"><a href="/trope/' . esc_url( $trope->slug ) . '">' . esc_html( $trope->name ) . '</a></th>
@@ -96,12 +99,15 @@ switch ( $view ) {
 						</thead>
 						<tbody>
 							<?php
-							$genres = get_terms( 'lez_genres', array(
-								'number'     => 10,
-								'orderby'    => 'count',
-								'hide_empty' => 0,
-								'order'      => 'DESC',
-							) );
+							$genres = get_terms(
+								'lez_genres',
+								array(
+									'number'     => 10,
+									'orderby'    => 'count',
+									'hide_empty' => 0,
+									'order'      => 'DESC',
+								)
+							);
 							foreach ( $genres as $genre ) {
 								echo '<tr>
 										<th scope="row"><a href="/genre/' . esc_url( $genre->slug ) . '">' . esc_html( $genre->name ) . '</a></th>
