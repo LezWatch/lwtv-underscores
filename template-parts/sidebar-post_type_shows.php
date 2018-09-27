@@ -12,10 +12,10 @@ if ( class_exists( 'LWTV_Shows_Calculate' ) ) {
 	LWTV_Shows_Calculate::do_the_math( $show_id );
 }
 
-$thumb_rating = get_post_meta( $show_id, 'lezshows_worthit_rating', true );
-$realness     = min( (int) get_post_meta( $show_id, 'lezshows_realness_rating', true ), 5 );
-$quality      = min( (int) get_post_meta( $show_id, 'lezshows_quality_rating', true ), 5 );
-$screentime   = min( (int) get_post_meta( $show_id, 'lezshows_screentime_rating', true ), 5 );
+$thumb_rating = ( get_post_meta( $show_id, 'lezshows_worthit_rating', true ) ) ? get_post_meta( $show_id, 'lezshows_worthit_rating', true ) : 'TBD';
+$realness     = ( get_post_meta( $show_id, 'lezshows_realness_rating', true ) ) ? min( (int) get_post_meta( $show_id, 'lezshows_realness_rating', true ), 5 ) : 0;
+$quality      = ( get_post_meta( $show_id, 'lezshows_quality_rating', true ) ) ? min( (int) get_post_meta( $show_id, 'lezshows_quality_rating', true ), 5 ) : 0;
+$screentime   = ( get_post_meta( $show_id, 'lezshows_screentime_rating', true ) ) ? min( (int) get_post_meta( $show_id, 'lezshows_screentime_rating', true ), 5 ) : 0;
 ?>
 
 <section id="search" class="widget widget_search">
@@ -28,85 +28,82 @@ $screentime   = min( (int) get_post_meta( $show_id, 'lezshows_screentime_rating'
 			<h4>Is it Worth Watching?</h4>
 		</div>
 
-		<?php
-		// If there's no rating, let's not show anything
-		if ( null === $thumb_rating ) {
-			echo '<p><em>Coming soon...</em></p>';
-		} else {
-			?>
-			<div class="ratings-icons worthit-<?php echo esc_attr( lcfirst( $thumb_rating ) ); ?>">
-				<div class="worthit">
-					<?php
-					switch ( $thumb_rating ) {
-						case 'Yes':
-							$thumb_icon = 'thumbs-up';
-							break;
-						case 'Meh':
-							$thumb_icon = 'meh';
-							break;
-						case 'No':
-							$thumb_icon = 'thumbs-down';
-							break;
-					}
+		<div class="ratings-icons worthit-<?php echo esc_attr( strtolower( $thumb_rating ) ); ?>">
+			<div class="worthit">
+				<?php
+				switch ( $thumb_rating ) {
+					case 'Yes':
+						$thumb_icon = 'thumbs-up';
+						break;
+					case 'Meh':
+						$thumb_icon = 'meh';
+						break;
+					case 'No':
+						$thumb_icon = 'thumbs-down';
+						break;
+					case 'TBD':
+						$thumb_icon = 'clock-retro';
+						break;
+				}
 
-					$thumb_image = lwtv_yikes_symbolicons( $thumb_icon . '.svg', 'fa-' . $thumb_icon );
-					echo '<span role="img" class="show-worthit ' . esc_attr( lcfirst( $thumb_rating ) ) . '">' . lwtv_sanitized( $thumb_image ) . '</span>';
-					echo wp_kses_post( get_post_meta( $show_id, 'lezshows_worthit_rating', true ) );
-					?>
-				</div>
+				$thumb_image = lwtv_yikes_symbolicons( $thumb_icon . '.svg', 'fa-' . $thumb_icon );
+				echo '<span role="img" class="show-worthit ' . esc_attr( strtolower( $thumb_rating ) ) . '">' . lwtv_sanitized( $thumb_image ) . '</span>';
+				echo wp_kses_post( $thumb_rating );
+				?>
 			</div>
+		</div>
 
-			<div class="ratings-details">
-				<div class="card-body">
-					<?php
-					if ( ( get_post_meta( $show_id, 'lezshows_worthit_details', true ) ) ) {
-						echo wp_kses_post( apply_filters( 'the_content', wp_kses_post( get_post_meta( $show_id, 'lezshows_worthit_details', true ) ) ) );
-					}
+		<div class="ratings-details">
+			<div class="card-body">
+				<?php
+				if ( ( get_post_meta( $show_id, 'lezshows_worthit_details', true ) ) && 'TBD' !== $thumb_rating ) {
+					echo wp_kses_post( apply_filters( 'the_content', wp_kses_post( get_post_meta( $show_id, 'lezshows_worthit_details', true ) ) ) );
+				} else {
+					echo wp_kses_post( '<p><em>This show has not yet been watched. Have you seen it? Please <a href="/about/contact/">contact us</a>.</em></p>' );
+				}
 
+				if ( get_post_meta( $show_id, 'lezshows_the_score', true ) ) {
 					echo '<strong>Show Score:</strong> ' . esc_html( round( get_post_meta( $show_id, 'lezshows_the_score', true ), 2 ) );
-					?>
-				</div>
-
-				<ul class="network-data list-group">
-					<?php
-					$stations = get_the_terms( $show_id, 'lez_stations' );
-					if ( $stations && ! is_wp_error( $stations ) ) {
-						echo '<li class="list-group-item network names">' . get_the_term_list( $show_id, 'lez_stations', '<strong>Airs On:</strong> ', ', ' ) . '</li>';
-					}
-					$countries = get_the_terms( $show_id, 'lez_country' );
-					if ( $countries && ! is_wp_error( $countries ) ) {
-						echo '<li class="list-group-item network country">' . get_the_term_list( $show_id, 'lez_country', '<strong>Airs In:</strong> ', ', ' ) . '</li>';
-					}
-					$formats = get_the_terms( $show_id, 'lez_formats' );
-					if ( $formats && ! is_wp_error( $formats ) ) {
-						echo '<li class="list-group-item network formats">' . get_the_term_list( $show_id, 'lez_formats', '<strong>Show Format:</strong> ', ', ' ) . '</li>';
-					}
-					if ( get_post_meta( $show_id, 'lezshows_airdates', true ) ) {
-						$airdates = get_post_meta( $show_id, 'lezshows_airdates', true );
-						$airdate  = $airdates['start'] . ' - ' . $airdates['finish'];
-						if ( $airdates['start'] === $airdates['finish'] ) {
-							$airdate = $airdates['finish'];
-						}
-						if ( is_numeric( $airdates['finish'] ) && get_post_meta( $show_id, 'lezshows_seasons', true ) ) {
-							$airdate .= ' (' . get_post_meta( $show_id, 'lezshows_seasons', true ) . ' seasons)';
-						}
-
-						echo '<li class="list-group-item network airdates"><strong>Airdates:</strong> ' . esc_html( $airdate ) . '</li>';
-					}
-					$genres = get_the_terms( $show_id, 'lez_genres' );
-					if ( $genres && ! is_wp_error( $genres ) ) {
-						echo '<li class="list-group-item network genres">' . get_the_term_list( $show_id, 'lez_genres', '<strong>Genres:</strong> ', ', ' ) . '</li>';
-					}
-					if ( get_post_meta( $show_id, 'lezshows_imdb', true ) ) {
-						$imdb = 'https://www.imdb.com/title/' . get_post_meta( $show_id, 'lezshows_imdb', true );
-						echo '<li class="list-group-item network imdb"><a href="' . esc_url( $imdb ) . '">IMDb</a></li>';
-					}
-					?>
-				</ul>
+				}
+				?>
 			</div>
-			<?php
-		}
-		?>
+
+			<ul class="network-data list-group">
+				<?php
+				$stations = get_the_terms( $show_id, 'lez_stations' );
+				if ( $stations && ! is_wp_error( $stations ) ) {
+					echo '<li class="list-group-item network names">' . get_the_term_list( $show_id, 'lez_stations', '<strong>Airs On:</strong> ', ', ' ) . '</li>';
+				}
+				$countries = get_the_terms( $show_id, 'lez_country' );
+				if ( $countries && ! is_wp_error( $countries ) ) {
+					echo '<li class="list-group-item network country">' . get_the_term_list( $show_id, 'lez_country', '<strong>Airs In:</strong> ', ', ' ) . '</li>';
+				}
+				$formats = get_the_terms( $show_id, 'lez_formats' );
+				if ( $formats && ! is_wp_error( $formats ) ) {
+					echo '<li class="list-group-item network formats">' . get_the_term_list( $show_id, 'lez_formats', '<strong>Show Format:</strong> ', ', ' ) . '</li>';
+				}
+				if ( get_post_meta( $show_id, 'lezshows_airdates', true ) ) {
+					$airdates = get_post_meta( $show_id, 'lezshows_airdates', true );
+					$airdate  = $airdates['start'] . ' - ' . $airdates['finish'];
+					if ( $airdates['start'] === $airdates['finish'] || ! $airdates['finish'] ) {
+						$airdate = $airdates['start'];
+					}
+					if ( is_numeric( $airdates['finish'] ) && get_post_meta( $show_id, 'lezshows_seasons', true ) ) {
+						$airdate .= ' (' . get_post_meta( $show_id, 'lezshows_seasons', true ) . ' seasons)';
+					}
+					echo '<li class="list-group-item network airdates"><strong>Airdates:</strong> ' . esc_html( $airdate ) . '</li>';
+				}
+				$genres = get_the_terms( $show_id, 'lez_genres' );
+				if ( $genres && ! is_wp_error( $genres ) ) {
+					echo '<li class="list-group-item network genres">' . get_the_term_list( $show_id, 'lez_genres', '<strong>Genres:</strong> ', ', ' ) . '</li>';
+				}
+				if ( get_post_meta( $show_id, 'lezshows_imdb', true ) ) {
+					$imdb = 'https://www.imdb.com/title/' . get_post_meta( $show_id, 'lezshows_imdb', true );
+					echo '<li class="list-group-item network imdb"><a href="' . esc_url( $imdb ) . '">IMDb</a></li>';
+				}
+				?>
+			</ul>
+		</div>
 	</div>
 </section>
 
@@ -125,25 +122,25 @@ $screentime   = min( (int) get_post_meta( $show_id, 'lezshows_screentime_rating'
 		</div>
 		<?php
 		// get the tropes associated with this show
-		$terms = get_the_terms( $show_id, 'lez_tropes' );
+		$tropes = get_the_terms( $show_id, 'lez_tropes' );
 
-		if ( ! $terms || is_wp_error( $terms ) ) {
+		if ( ! $tropes || is_wp_error( $tropes ) ) {
 			// If there are no terms, throw a message
 			echo '<p><em>Coming soon...</em></p>';
 		} else {
 			echo '<ul class="trope-list list-group">';
 			// loop over each returned trope
-			foreach ( $terms as $term ) {
+			foreach ( $tropes as $trope ) {
 				?>
-				<li class="list-group-item show trope trope-<?php echo esc_attr( $term->slug ); ?>">
-					<a href="<?php echo esc_url( get_term_link( $term->slug, 'lez_tropes' ) ); ?>" rel="show trope">
+				<li class="list-group-item show trope trope-<?php echo esc_attr( $trope->slug ); ?>">
+					<a href="<?php echo esc_url( get_term_link( $trope->slug, 'lez_tropes' ) ); ?>" rel="show trope">
 					<?php
 						// Echo the taxonomy icon (default to squares if empty)
-						$icon = get_term_meta( $term->term_id, 'lez_termsmeta_icon', true );
+						$icon = get_term_meta( $trope->term_id, 'lez_termsmeta_icon', true );
 						echo lwtv_yikes_symbolicons( $icon . '.svg', 'fa-lemon' );
 					?>
 					</a>
-					<a href="<?php echo esc_url( get_term_link( $term->slug, 'lez_tropes' ) ); ?>" rel="show trope" class="trope-link"><?php echo esc_html( $term->name ); ?></a>
+					<a href="<?php echo esc_url( get_term_link( $trope->slug, 'lez_tropes' ) ); ?>" rel="show trope" class="trope-link"><?php echo esc_html( $trope->name ); ?></a>
 				</li>
 				<?php
 			}
@@ -206,9 +203,9 @@ if ( $intersections && ! is_wp_error( $intersections ) ) {
 				$positive_heart = '<span role="img" class="show-heart positive">' . $heart . '</span>';
 				$negative_heart = '<span role="img" class="show-heart negative">' . $heart . '</span>';
 
-				foreach ( $heart_types as $type ) {
+				foreach ( $heart_types as $heart ) {
 
-					switch ( $type ) {
+					switch ( $heart ) {
 						case 'realness':
 							$rating = $realness;
 							$detail = 'lezshows_realness_details';
@@ -225,7 +222,7 @@ if ( $intersections && ! is_wp_error( $intersections ) ) {
 
 					?>
 					<div class="ratings-icons">
-						<h3><?php echo esc_html( ucfirst( $type ) ); ?></h3>
+						<h3><?php echo esc_html( ucfirst( $heart ) ); ?></h3>
 						<?php
 						if ( $rating >= '0' ) {
 							$leftover = 5 - $rating;

@@ -29,10 +29,11 @@ $lwtv-yellow: #f1c40f;
 $lwtv-gold: #FFD700;
 $lwtv-silver: #C0C0C0;
 $lwtv-bronze: #B87333;
+$lwtv-orange: #e51e24;
 
 /* Link colors */
 
-$link-color:         $lwtv-pink; 
+$link-color:         $lwtv-pink;
 $link-hover-color:   $lwtv-purple;
 $link-focus-color:   $link-hover-color;
 $link-active-color:  $link-hover-color;
@@ -54,7 +55,7 @@ $link-visited-color: $link-color;
     50% {background-position:100% 19%}
     100% {background-position:0% 82%}
 }
-@keyframes rainbow { 
+@keyframes rainbow {
     0% {background-position:0% 82%}
     50% {background-position:100% 19%}
     100% {background-position:0% 82%}

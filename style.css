@@ -1296,6 +1296,9 @@ section#characters .card {
 .ratings-icons.worthit-meh {
   background: #f1c40f;
 }
+.ratings-icons.worthit-tbd {
+  background: #e51e24;
+}
 
 .showschar-section .card {
   margin-bottom: 0;
@@ -2156,10 +2159,15 @@ div.facetwp-facet-shows_scores input.facetwp-number {
   .site-loop.actor-archive-loop, .site-loop.character-archive-loop,
   .site-loop.character-show-loop, .site-loop.main-posts-loop,
   .site-loop.actor-archive-loop.four-across-loop, .site-loop.character-archive-loop.four-across-loop,
-  .site-loop.character-show-loop.four-across-loop {
-    grid-template-columns: repeat(2, 1fr);
+  .site-loop.character-show-loop.four-across-loop, .site-loop.main-posts-loop.four-across-loop,
+  .site-loop.home-featured-secondary-loop, .site-loop.show-archive-loop {
+    grid-template-columns: 1fr;
     grid-gap: 1rem;
     padding: 0 1rem;
+  }
+
+  .site-loop.home-featured-secondary-loop {
+    padding: 0;
   }
 
   .character-image-wrapper {
