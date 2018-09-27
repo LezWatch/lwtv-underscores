@@ -1296,6 +1296,9 @@ section#characters .card {
 .ratings-icons.worthit-meh {
   background: #f1c40f;
 }
+.ratings-icons.worthit-tbd {
+  background: #06c;
+}
 
 .showschar-section .card {
   margin-bottom: 0;
