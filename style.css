@@ -1974,7 +1974,7 @@ div.facetwp-facet-shows_scores input.facetwp-number {
   div.fs-label-wrap,
   .facetwp-type-fselect .fs-wrap,
   .facetwp-type-fselect .fs-dropdown {
-    width: 170px !important;
+    width: inherit !important;
   }
 
   .site-sidebar .card.card-search .form-check-inline {

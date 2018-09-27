@@ -48,7 +48,7 @@ $screentime   = ( get_post_meta( $show_id, 'lezshows_screentime_rating', true ) 
 
 				$thumb_image = lwtv_yikes_symbolicons( $thumb_icon . '.svg', 'fa-' . $thumb_icon );
 				echo '<span role="img" class="show-worthit ' . esc_attr( strtolower( $thumb_rating ) ) . '">' . lwtv_sanitized( $thumb_image ) . '</span>';
-				echo wp_kses_post( get_post_meta( $show_id, 'lezshows_worthit_rating', true ) );
+				echo wp_kses_post( $thumb_rating );
 				?>
 			</div>
 		</div>
