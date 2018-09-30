@@ -367,7 +367,13 @@ class LWTV_Walker_Comment extends Walker {
 									<time datetime="<?php comment_time( 'c' ); ?>">
 										<?php
 											/* translators: 1: comment date, 2: comment time */
-											printf( wp_kses_post( __( '%1$s at %2$s' ), get_comment_date( '', $comment ), get_comment_time() ) );
+											printf(
+												wp_kses_post(
+													__( '%1$s at %2$s' ),
+													get_comment_date( '', $comment ),
+													get_comment_time()
+												)
+											);
 										?>
 									</time>
 								</a>
@@ -375,7 +381,11 @@ class LWTV_Walker_Comment extends Walker {
 								<div class="comment-meta-author">
 									<?php
 										/* translators: %s: comment author link */
-										printf( wp_kses_post( __( '%s <span class="says">says:</span>' ), sprintf( '<b class="fn">%s</b>', get_comment_author_link( $comment ) ) )
+										printf(
+											wp_kses_post(
+												__( '%s <span class="says">says:</span>' ),
+												sprintf( '<b class="fn">%s</b>', get_comment_author_link( $comment ) )
+											)
 										);
 									?>
 								</div>
