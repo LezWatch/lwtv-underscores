@@ -7,6 +7,11 @@
  * @package LezWatch.TV
  */
 
+// Related Posts
+$slug     = get_post_field( 'post_name', get_post( get_the_ID() ) );
+$get_tags = get_term_by( 'name', $slug, 'post_tag' );
+$related  = LWTV_Related_Posts::are_there_posts( $slug );
+
 // Generate Life Stats
 // Usage: $life
 $life = array();
@@ -146,6 +151,26 @@ $thumb_array       = array(
 </section>
 
 <?php
+// Related Posts
+if ( $related ) {
+	?>
+	<section name="related-posts" id="related-posts" class="showschar-section">
+		<h2>Related Articles</h2>
+		<div class="card-body">
+			<?php
+			echo LWTV_Related_Posts::related_posts( $slug ); // WPCS: XSS okay
+			if ( count( LWTV_Related_Posts::count_related_posts( $slug ) ) > '5' ) {
+				$get_tags = term_exists( $slug, 'post_tag' );
+				if ( ! is_null( $get_tags ) && $get_tags >= 1 ) {
+					echo '<p><a href="' . esc_url( get_tag_link( $get_tags['term_id'] ) ) . '">Read More ...</a></p>';
+				}
+			}
+			?>
+		</div>
+	</section>
+	<?php
+}
+
 // Great big characters section!
 ?>
 <section name="characters" id="characters" class="showschar-section">

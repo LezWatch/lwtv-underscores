@@ -7,11 +7,10 @@
  * @package LezWatch.TV
  */
 
-$show_id = $post->ID;
-$slug    = get_post_field( 'post_name', get_post( $show_id ) );
-$term    = term_exists( $slug, 'post_tag' );
-$tag     = get_term_by( 'name', $slug, 'post_tag' );
-$related = LWTV_Related_Posts::are_there_posts( $slug );
+$show_id  = $post->ID;
+$slug     = get_post_field( 'post_name', get_post( $show_id ) );
+$get_tags = get_term_by( 'name', $slug, 'post_tag' );
+$related  = LWTV_Related_Posts::are_there_posts( $slug );
 
 // Microformats Fix.
 lwtv_microformats_fix( $post->ID );
@@ -21,11 +20,14 @@ $thumb_attribution = get_post_meta( get_post_thumbnail_id(), 'lwtv_attribution',
 $thumb_title       = ( empty( $thumb_attribution ) ) ? get_the_title() : get_the_title() . ' &copy; ' . $thumb_attribution;
 
 // Echo the header image.
-the_post_thumbnail('large', array(
-	'class' => 'card-img-top',
-	'alt'   => get_the_title(),
-	'title' => $thumb_title,
-) );
+the_post_thumbnail(
+	'large',
+	array(
+		'class' => 'card-img-top',
+		'alt'   => get_the_title(),
+		'title' => $thumb_title,
+	)
+);
 ?>
 
 <section id="toc" class="toc-container card-body">
@@ -117,9 +119,9 @@ if ( $related ) {
 			<?php
 			echo LWTV_Related_Posts::related_posts( $slug ); // WPCS: XSS okay
 			if ( count( LWTV_Related_Posts::count_related_posts( $slug ) ) > '5' ) {
-				$tag = term_exists( $slug, 'post_tag' );
-				if ( ! is_null( $tag ) && $tag >= 1 ) {
-					echo '<p><a href="' . esc_url( get_tag_link( $tag['term_id'] ) ) . '">Read More ...</a></p>';
+				$get_tags = term_exists( $slug, 'post_tag' );
+				if ( ! is_null( $get_tags ) && $get_tags >= 1 ) {
+					echo '<p><a href="' . esc_url( get_tag_link( $get_tags['term_id'] ) ) . '">Read More ...</a></p>';
 				}
 			}
 			?>

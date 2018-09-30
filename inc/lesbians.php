@@ -203,27 +203,33 @@ function lwtv_yikes_tax_archive_title( $location, $posttype, $taxonomy ) {
 			$fa  = 'fa-bell';
 			$svg = $termicon ? $termicon . '.svg' : 'bell.svg';
 			break;
-		case 'lez_gender':
-			$fa  = 'fa-venus';
-			$svg = $termicon ? $termicon . '.svg' : 'venus.svg';
-			break;
-		case 'lez_sexuality':
-			$fa  = 'fa-venus-double';
-			$svg = $termicon ? $termicon . '.svg' : 'venus-double.svg';
-			break;
-		case 'lez_romantic':
-			$fa  = 'fa-heart';
-			$svg = $termicon ? $termicon . '.svg' : 'heart-download.svg';
+		case 'lez_tropes':
+			$fa  = 'fa-pastafarianism';
+			$svg = $termicon ? $termicon . '.svg' : 'octopus.svg';
 			break;
 		case 'lez_formats':
-			$fa  = 'fa-tv';
-			$svg = $termicon ? $termicon . '.svg' : 'tv.svg';
+			$fa  = 'fa-film';
+			$svg = $termicon ? $termicon . '.svg' : 'film-strip.svg';
 			break;
+		case 'lez_genres':
+			$fa  = 'fa-th-large';
+			$svg = $termicon ? $termicon . '.svg' : 'blocks.svg';
+			break;
+		case 'lez_intersections':
+			$fa  = 'fa-flag';
+			$svg = $termicon ? $termicon . '.svg' : 'flag-wave.svg';
+			break;
+		case 'lez_gender':
 		case 'lez_actor_gender':
-			$fa  = 'fa-bug';
-			$svg = 'octopus.svg';
+			$fa  = 'fa-female';
+			$svg = 'female.svg';
 			break;
+		case 'lez_sexuality':
 		case 'lez_actor_sexuality':
+			$fa  = 'fa-venus-double';
+			$svg = 'venus-double.svg';
+			break;
+		case 'lez_romantic':
 			$fa  = 'fa-heartbeat';
 			$svg = 'user-heart.svg';
 			break;
@@ -245,7 +251,7 @@ function lwtv_yikes_tax_archive_title( $location, $posttype, $taxonomy ) {
 			break;
 		default:
 			$fa  = 'fa-square';
-			$svg = $termicon ? $termicon . '.svg' : 'square.svg';
+			$svg = 'square.svg';
 			break;
 	}
 
