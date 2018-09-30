@@ -7,11 +7,11 @@
  * @package LezWatch.TV
  */
 
-$icon         = lwtv_yikes_symbolicons( 'contact-card.svg', 'fa-users' );
-$count_posts  = facetwp_display( 'counts' );
-$title        = '<span role="img" aria-label="post_type_characters" title="Characters" class="taxonomy-svg characters">' . $icon . '</span>';
-$descriptions = get_option( 'wpseo_titles' );
-$description  = $descriptions['metadesc-ptarchive-post_type_characters'];
+$icon        = lwtv_yikes_symbolicons( 'contact-card.svg', 'fa-users' );
+$count_posts = facetwp_display( 'counts' );
+$char_title  = '<span role="img" aria-label="post_type_characters" title="Characters" class="taxonomy-svg characters">' . $icon . '</span>';
+$seo_descs   = get_option( 'wpseo_titles' );
+$seo_desc    = $seo_descs['metadesc-ptarchive-post_type_characters'];
 
 get_header(); ?>
 
@@ -23,13 +23,13 @@ get_header(); ?>
 					<div class="col-10">
 						<?php the_archive_title( '<h1 class="facetwp-page-title entry-title"><span class="facetwp-title">', '</span> (' . $count_posts . '<span class="facetwp-count"></span>)</h1>' ); ?>
 					</div>
-					<div class="col-2 icon plain"><?php echo lwtv_sanitized( $title ); // WPCS: XSS ok. ?></div>
+					<div class="col-2 icon plain"><?php echo lwtv_sanitized( $char_title ); // WPCS: XSS ok. ?></div>
 				</div>
 				<div class="row">
 					<div class="col">
 						<div class="archive-description">
 							<?php
-								echo '<p>' . wp_kses_post( $description ) . ' <span class="facetwp-description"></span></p>';
+								echo '<p>' . wp_kses_post( $seo_desc ) . ' <span class="facetwp-description"></span></p>';
 								echo '<p><span class="facetwp-sorted"></span></p>';
 								echo facetwp_display( 'selections' );
 							?>
