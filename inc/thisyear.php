@@ -90,7 +90,7 @@ function lwtv_yikes_this_year_dead( $thisyear ) {
 		<ul>
 			<?php
 			foreach ( $death_list_array as $dead ) {
-				echo '<li><a href="' . esc_url( $dead['url'] ) . '">' . esc_html( $dead['name'] ) . '</a> / ' . esc_html( $dead['shows'] ) . ' / ' . esc_html( date( 'd F', $dead['died'] ) ) . ' </li>';
+				echo '<li><a href="' . esc_url( $dead['url'] ) . '">' . esc_html( $dead['name'] ) . '</a> / ' . wp_kses_post( $dead['shows'] ) . ' / ' . esc_html( date( 'd F', $dead['died'] ) ) . ' </li>';
 			}
 			?>
 		</ul>
