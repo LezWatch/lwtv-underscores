@@ -245,6 +245,11 @@ function lwtv_yikes_this_year_shows( $thisyear ) {
 	wp_reset_query();
 }
 
+/**
+ * Navigation for the year
+ * @param  [type]  $thisyear 
+ * @return boolean           [description]
+ */
 function lwtv_yikes_this_year_navigation( $thisyear ) {
 
 	$thisyear = ( isset( $thisyear ) ) ? $thisyear : date( 'Y' );

@@ -8,8 +8,12 @@
  * @package LezWatch.TV
  */
 
-/* This Year code: */
-require get_template_directory() . '/inc/thisyear.php';
+// This Year code
+require 'thisyear.php';
+
+// Statistics code
+require 'statistics.php';
+
 
 /** THE GENERAL SECTION **/
 
@@ -19,6 +23,7 @@ require get_template_directory() . '/inc/thisyear.php';
  * This puts the loved show in a random order so it'll be different
  * for reloads.
  */
+// @codingStandardsIgnoreStart
 add_filter( 'the_posts', function( $posts, \WP_Query $query ) {
 	$pick = $query->get( '_loved_shuffle' );
 	if ( is_numeric( $pick ) ) {
@@ -27,6 +32,7 @@ add_filter( 'the_posts', function( $posts, \WP_Query $query ) {
 	}
 		return $posts;
 }, 10, 2 );
+// @codingStandardsIgnoreEnd
 
 /*
  * Filter Comment Status
@@ -304,6 +310,22 @@ function lwtv_yikes_tax_archive_title( $location, $posttype, $taxonomy ) {
 }
 
 
+/** SEARCH **/
+
+/**
+ * Filter the except length to 25 words.
+ *
+ * @param int $length Excerpt length.
+ * @return int (Maybe) modified excerpt length.
+ */
+function lwtv_search_custom_excerpt_length( $length ) {
+	return 25;
+}
+if ( is_search ) {
+	add_filter( 'excerpt_length', 'lwtv_search_custom_excerpt_length', 999 );
+}
+
+
 /** THE DISPLAY SECTION **/
 
 /**
@@ -541,22 +563,24 @@ function lwtv_yikes_actordata( $the_id, $data ) {
 			break;
 		case 'characters':
 			$characters     = array();
-			$charactersloop = new WP_Query( array(
-				'post_type'              => 'post_type_characters',
-				'post_status'            => array( 'publish' ),
-				'orderby'                => 'title',
-				'order'                  => 'ASC',
-				'posts_per_page'         => '20',
-				'no_found_rows'          => true,
-				'update_post_term_cache' => true,
-				'meta_query'             => array(
-					array(
-						'key'     => 'lezchars_actor',
-						'value'   => $the_id,
-						'compare' => 'LIKE',
+			$charactersloop = new WP_Query(
+				array(
+					'post_type'              => 'post_type_characters',
+					'post_status'            => array( 'publish' ),
+					'orderby'                => 'title',
+					'order'                  => 'ASC',
+					'posts_per_page'         => '20',
+					'no_found_rows'          => true,
+					'update_post_term_cache' => true,
+					'meta_query'             => array(
+						array(
+							'key'     => 'lezchars_actor',
+							'value'   => $the_id,
+							'compare' => 'LIKE',
+						),
 					),
-				),
-			) );
+				)
+			);
 			if ( $charactersloop->have_posts() ) {
 				while ( $charactersloop->have_posts() ) {
 					$charactersloop->the_post();
@@ -582,28 +606,30 @@ function lwtv_yikes_actordata( $the_id, $data ) {
 			break;
 		case 'dead':
 			$dead     = array();
-			$deadloop = new WP_Query( array(
-				'post_type'              => 'post_type_characters',
-				'post_status'            => array( 'publish' ),
-				'orderby'                => 'title',
-				'order'                  => 'ASC',
-				'posts_per_page'         => '20',
-				'no_found_rows'          => true,
-				'update_post_term_cache' => true,
-				'meta_query'             => array(
-					array(
-						'key'     => 'lezchars_actor',
-						'value'   => $the_id,
-						'compare' => 'LIKE',
+			$deadloop = new WP_Query(
+				array(
+					'post_type'              => 'post_type_characters',
+					'post_status'            => array( 'publish' ),
+					'orderby'                => 'title',
+					'order'                  => 'ASC',
+					'posts_per_page'         => '20',
+					'no_found_rows'          => true,
+					'update_post_term_cache' => true,
+					'meta_query'             => array(
+						array(
+							'key'     => 'lezchars_actor',
+							'value'   => $the_id,
+							'compare' => 'LIKE',
+						),
 					),
-				),
-				'tax_query'              => array(
-					'taxonomy' => 'lez_cliches',
-					'terms'    => 'dead',
-					'field'    => 'slug',
-					'operator' => 'IN',
-				),
-			) );
+					'tax_query'              => array(
+						'taxonomy' => 'lez_cliches',
+						'terms'    => 'dead',
+						'field'    => 'slug',
+						'operator' => 'IN',
+					),
+				)
+			);
 			if ( $deadloop->have_posts() ) {
 				while ( $deadloop->have_posts() ) {
 					$deadloop->the_post();

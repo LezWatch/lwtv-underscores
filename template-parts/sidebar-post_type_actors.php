@@ -11,7 +11,6 @@ $actor_id = $post->ID;
 if ( class_exists( 'LWTV_Actors_Calculate' ) ) {
 	LWTV_Actors_Calculate::do_the_math( $actor_id );
 }
-
 ?>
 
 <section id="search" class="widget widget-search">

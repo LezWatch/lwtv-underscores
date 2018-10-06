@@ -5,7 +5,7 @@
  * @package LezWatch.TV
  */
 
-$valid_views = array( 'overview', 'tropes', 'genres', 'formats', 'stars', 'triggers', 'on-air', 'worth-it', 'we-love-it' );
+$valid_views = array( 'overview', 'tropes', 'genres', 'stars', 'triggers', 'on-air', 'worth-it', 'we-love-it' );
 $view        = ( ! isset( $_GET['view'] ) || ! in_array( $_GET['view'], $valid_views, true ) ) ? 'overview' : $_GET['view']; // WPCS: CSRF ok.
 
 ?>

@@ -11,7 +11,7 @@
  */
 
 $statstype = ( isset( $wp_query->query['statistics'] ) ) ? $wp_query->query['statistics'] : 'main';
-$validstat = array( 'death', 'characters', 'shows', 'main', 'actors', 'nations', 'stations' );
+$validstat = array( 'death', 'characters', 'shows', 'main', 'actors', 'nations', 'stations', 'formats' );
 
 // Based on the type of stats, set our display.
 switch ( $statstype ) {
@@ -38,6 +38,10 @@ switch ( $statstype ) {
 	case 'stations':
 		$image = lwtv_yikes_symbolicons( 'satellite-signal.svg', 'fa-bullhorn' );
 		$intro = 'Data specific to queer representation on shows by channel or station.';
+		break;
+	case 'formats':
+		$image = lwtv_yikes_symbolicons( 'graph-bar.svg', 'fa-chart-area' );
+		$intro = 'Data specific to queer representation by show format (i.e. TV show, web series, etc.)';
 		break;
 	case 'main':
 	default:

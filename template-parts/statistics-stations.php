@@ -76,28 +76,21 @@ switch ( $station ) {
 
 <?php
 	$col_class = ( 'all' !== $station && 'overview' !== $view ) ? 'col-sm-6' : 'col';
-	$type_post = $valid_views[ $view ];
+	$cpts_type = $valid_views[ $view ];
 ?>
 
 <div class="container">
 
 	<?php
 	if ( 'all' !== $station && 'overview' !== $view ) {
-		switch ( $type_post ) {
-			case 'characters':
-				echo '<p>The following statistics relate to characters on shows that air on this station.</p>';
-				break;
-			case 'shows':
-				echo '<p>The following statistics relate to shows that air on this station.</p>';
-				break;
-		}
+		echo wp_kses_post( lwtv_yikes_statistics_description( 'station', $cpts_type, $view ) );
 	}
 	?>
 	<div class="row">
 		<div class="<?php echo esc_attr( $col_class ); ?>">
 		<?php
 		$view = ( 'overview' === $view && 'all' !== $station ) ? 'all' : $view;
-		// station-[substation]-[view]
+		// Remember: station [substation] [view]
 		$view    = ( 'overview' === $view ) ? '_all' : '_' . $view;
 		$station = ( 'overview' === $station ) ? '_all' : '_' . $station;
 
@@ -129,7 +122,7 @@ switch ( $station ) {
 				</table>
 				<?php
 			} else {
-				LWTV_Stats::generate( $type_post, 'stations' . $station . $view, 'stackedbar' );
+				LWTV_Stats::generate( $cpts_type, 'stations' . $station . $view, 'stackedbar' );
 			}
 		} else {
 			$format = 'piechart';
@@ -147,17 +140,17 @@ switch ( $station ) {
 				}
 			}
 
-			LWTV_Stats::generate( $type_post, 'stations' . $station . $view, $format );
+			LWTV_Stats::generate( $cpts_type, 'stations' . $station . $view, $format );
 		}
 		?>
 		</div>
 
 	<?php
 	if ( '_all' !== $station && '_all' !== $view ) {
-		$format = ( 'shows' === $type_post ) ? 'list' : 'percentage';
+		$format = ( 'shows' === $cpts_type ) ? 'list' : 'percentage';
 		?>
 		<div class="<?php echo esc_attr( $col_class ); ?>">
-			<?php LWTV_Stats::generate( $type_post, 'stations' . $station . $view, $format ); ?>
+			<?php LWTV_Stats::generate( $cpts_type, 'stations' . $station . $view, $format ); ?>
 		</div>
 		<?php
 	}
