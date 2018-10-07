@@ -16,6 +16,7 @@ $valid_views = array(
 	'gender'        => 'characters',
 	'tropes'        => 'shows',
 	'intersections' => 'shows',
+	'formats'       => 'shows',
 );
 $view        = ( ! isset( $_GET['view'] ) || ( ! array_key_exists( $_GET['view'], $valid_views ) ) ) ? 'overview' : sanitize_title( $_GET['view'] ); // WPCS: CSRF ok
 
@@ -123,7 +124,21 @@ switch ( $station ) {
 				</table>
 				<?php
 			} else {
-				LWTV_Stats::generate( $cpts_type, 'stations' . $station . $view, 'stackedbar' );
+				$this_one_view = substr( $view, 1 );
+				if ( 'shows' !== $valid_views[ $this_one_view ] ) {
+					LWTV_Stats::generate( $cpts_type, 'stations' . $station . $view, 'stackedbar' );
+				} else {
+					?>
+					<div class="row">
+						<div class="col-sm-6">
+							<?php LWTV_Stats::generate( 'shows', $this_one_view, 'piechart' ); ?>
+						</div>
+						<div class="col-sm-6">
+							<?php LWTV_Stats::generate( 'shows', $this_one_view, 'percentage' ); ?>
+						</div>
+					</div>
+					<?php
+				}
 			}
 		} else {
 			$format = 'piechart';
