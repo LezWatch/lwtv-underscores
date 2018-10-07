@@ -132,7 +132,7 @@ switch ( $showform ) {
 			} else {
 				$this_one_view = substr( $view, 1 );
 				if ( 'shows' !== $valid_views[ $this_one_view ] ) {
-					LWTV_Stats::generate( $cpts_type, 'showform' . $showform . $view, 'stackedbar' );
+					LWTV_Stats::generate( $cpts_type, 'formats' . $showform . $view, 'stackedbar' );
 				} else {
 					?>
 					<div class="row">
