@@ -30,6 +30,9 @@ function lwtv_yikes_statistics_description( $type, $cpts_type, $view ) {
 				case 'intersections':
 					$description = '<p>Intersectionality is a positive representation on a show, of a generally marginalized group of people. This is the breakdown of intersectionality on shows that air ' . $in_or_on . ' this ' . $type . '. Note: Not all shows have positive representation of intersectionality.</p>';
 					break;
+				case 'formats':
+					$description = '<p>Formats are the way in which TV Shows are seen. This is the breakdown of TV show formats for shows that air ' . $in_or_on . ' this ' . $type . '</p>';
+					break;
 				default:
 					$description = '<p>The following statistics relate to shows that air ' . $in_or_on . ' this ' . $type . '.</p>';
 					break;

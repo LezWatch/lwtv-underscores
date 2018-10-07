@@ -321,7 +321,7 @@ function lwtv_yikes_tax_archive_title( $location, $posttype, $taxonomy ) {
 function lwtv_search_custom_excerpt_length( $length ) {
 	return 25;
 }
-if ( is_search ) {
+if ( is_search() ) {
 	add_filter( 'excerpt_length', 'lwtv_search_custom_excerpt_length', 999 );
 }
 
