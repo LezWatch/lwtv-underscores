@@ -130,7 +130,21 @@ switch ( $showform ) {
 				</table>
 				<?php
 			} else {
-				LWTV_Stats::generate( $cpts_type, 'showform' . $showform . $view, 'stackedbar' );
+				$this_one_view = substr( $view, 1 );
+				if ( 'shows' !== $valid_views[ $this_one_view ] ) {
+					LWTV_Stats::generate( $cpts_type, 'showform' . $showform . $view, 'stackedbar' );
+				} else {
+					?>
+					<div class="row">
+						<div class="col-sm-6">
+							<?php LWTV_Stats::generate( 'shows', $this_one_view, 'piechart' ); ?>
+						</div>
+						<div class="col-sm-6">
+							<?php LWTV_Stats::generate( 'shows', $this_one_view, 'percentage' ); ?>
+						</div>
+					</div>
+					<?php
+				}
 			}
 		} else {
 			$onair      = LWTV_Stats::showcount( 'onair', 'formats', ltrim( $showform, '_' ) );
