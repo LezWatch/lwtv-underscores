@@ -11,10 +11,12 @@ $country       = ( ! isset( $_GET['country'] ) || ! is_array( $valid_country ) )
 
 // Views
 $valid_views = array(
-	'overview'  => 'shows',
-	'sexuality' => 'characters',
-	'gender'    => 'characters',
-	'tropes'    => 'shows',
+	'overview'      => 'shows',
+	'sexuality'     => 'characters',
+	'gender'        => 'characters',
+	'tropes'        => 'shows',
+	'intersections' => 'shows',
+	'formats'       => 'shows',
 );
 $view        = ( ! isset( $_GET['view'] ) || ( ! array_key_exists( $_GET['view'], $valid_views ) ) ) ? 'overview' : sanitize_title( $_GET['view'] ); // WPCS: CSRF ok.
 
@@ -81,21 +83,14 @@ switch ( $country ) {
 
 <?php
 	$col_class = ( 'all' !== $country && 'overview' !== $view ) ? 'col-sm-6' : 'col';
-	$post_type = $valid_views[ $view ];
+	$cpts_type = $valid_views[ $view ];
 ?>
 
 <div class="container chart-container">
 
 	<?php
 	if ( 'all' !== $country && 'overview' !== $view ) {
-		switch ( $post_type ) {
-			case 'characters':
-				echo '<p>The following statistics relate to characters on shows that air in this country.</p>';
-				break;
-			case 'shows':
-				echo '<p>The following statistics relate to shows that air in this country.</p>';
-				break;
-		}
+		echo wp_kses_post( lwtv_yikes_statistics_description( 'nation', $cpts_type, $view ) );
 	}
 	?>
 
@@ -136,7 +131,21 @@ switch ( $country ) {
 				</table>
 				<?php
 			} else {
-				LWTV_Stats::generate( $post_type, 'country' . $country . $view, 'stackedbar' );
+				$this_one_view = substr( $view, 1 );
+				if ( 'shows' !== $valid_views[ $this_one_view ] ) {
+					LWTV_Stats::generate( $cpts_type, 'country' . $country . $view, 'stackedbar' );
+				} else {
+					?>
+					<div class="row">
+						<div class="col-sm-6">
+							<?php LWTV_Stats::generate( 'shows', $this_one_view, 'piechart' ); ?>
+						</div>
+						<div class="col-sm-6">
+							<?php LWTV_Stats::generate( 'shows', $this_one_view, 'percentage' ); ?>
+						</div>
+					</div>
+					<?php
+				}
 			}
 		} else {
 			$onair      = LWTV_Stats::showcount( 'onair', 'country', ltrim( $country, '_' ) );
@@ -148,17 +157,17 @@ switch ( $country ) {
 				echo wp_kses_post( '<p>Currently, ' . $onair . ' of ' . $allshows . ' shows are on air. The average score for all shows in this country is ' . $showscore . ', and ' . $onairscore . ' for shows currently on air (out of a possible 100).</p>' );
 			}
 
-			LWTV_Stats::generate( $post_type, 'country' . $country . $view, $format );
+			LWTV_Stats::generate( $cpts_type, 'country' . $country . $view, $format );
 		}
 		?>
 		</div>
 
 	<?php
 	if ( '_all' !== $country && '_all' !== $view ) {
-		$format = ( 'shows' === $post_type ) ? 'list' : 'percentage';
+		$format = ( 'shows' === $cpts_type ) ? 'list' : 'percentage';
 		?>
 		<div class="<?php echo esc_attr( $col_class ); ?>">
-			<?php LWTV_Stats::generate( $post_type, 'country' . $country . $view, $format ); ?>
+			<?php LWTV_Stats::generate( $cpts_type, 'country' . $country . $view, $format ); ?>
 		</div>
 		<?php
 	}

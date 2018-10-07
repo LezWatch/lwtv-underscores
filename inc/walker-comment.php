@@ -299,9 +299,11 @@ class LWTV_Walker_Comment extends Walker {
 			<div class="comment-meta-author">
 				<?php
 					/* translators: %s: comment author link */
-					printf( wp_kses_post( __( '%s <span class="says">says:</span>' ),
-						sprintf( '<cite class="author">%s</cite>', get_comment_author_link( $comment ) )
-					) );
+					$comment_author_link = sprintf(
+						__( '<cite class="author">%s</cite> <span class="says">says:</span>' ),
+						get_comment_author_link( $comment )
+					);
+					echo wp_kses_post( $comment_author_link );
 				?>
 			</div>
 		</div>
@@ -313,14 +315,14 @@ class LWTV_Walker_Comment extends Walker {
 			'max_depth' => $args['max_depth'],
 		);
 		comment_text( $comment, array_merge( $args, $comment_array ) );
-
-		comment_reply_link( array_merge( $args, array(
+		$comment_args = array(
 			'add_below' => $add_below,
 			'depth'     => $depth,
 			'max_depth' => $args['max_depth'],
 			'before'    => '<div class="reply">',
 			'after'     => '</div>',
-		) ) );
+		);
+		comment_reply_link( array_merge( $args, $comment_args ) );
 
 		if ( 'div' !== $args['style'] ) :
 			echo '</div>';
@@ -367,13 +369,12 @@ class LWTV_Walker_Comment extends Walker {
 									<time datetime="<?php comment_time( 'c' ); ?>">
 										<?php
 											/* translators: 1: comment date, 2: comment time */
-											printf(
-												wp_kses_post(
-													__( '%1$s at %2$s' ),
-													get_comment_date( '', $comment ),
-													get_comment_time()
-												)
+											$comment_date = sprintf(
+												__( '%1$s at %2$s' ),
+												get_comment_date( '', $comment ),
+												get_comment_time( 'h:i A' )
 											);
+											echo wp_kses_post( $comment_date );
 										?>
 									</time>
 								</a>
@@ -381,27 +382,25 @@ class LWTV_Walker_Comment extends Walker {
 								<div class="comment-meta-author">
 									<?php
 										/* translators: %s: comment author link */
-										printf(
-											wp_kses_post(
-												__( '%s <span class="says">says:</span>' ),
-												sprintf( '<b class="fn">%s</b>', get_comment_author_link( $comment ) )
-											)
+										$comment_name = sprintf(
+											__( '<strong class="fn">%s</strong> <span class="says">says:</span>' ),
+											get_comment_author_link()
 										);
+										echo wp_kses_post( $comment_name );
 									?>
 								</div>
 							</div><!-- .comment-metadata -->
 
-							<?php comment_text(); ?>
-
 							<?php
-								comment_reply_link( array_merge( $args, array(
+								comment_text();
+								$comment_args = array(
 									'add_below' => 'div-comment',
 									'depth'     => $depth,
 									'max_depth' => $args['max_depth'],
 									'before'    => '<div class="reply btn btn-default btn-sm">' . lwtv_yikes_symbolicons( 'reply.svg', 'fa-reply' ),
 									'after'     => '</div>',
-								) ) );
-
+								);
+								comment_reply_link( array_merge( $args, $comment_args ) );
 								edit_comment_link( __( 'Edit' ), '<span class="edit-link">', '</span>' );
 							?>
 						</div><!-- .comment-content -->

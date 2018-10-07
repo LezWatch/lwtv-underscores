@@ -45,7 +45,8 @@ function lwtv_yikes_this_year_dead( $thisyear ) {
 			// Jesus, I hope no one dies twice in the same year ... SARA
 			$died_date = get_post_meta( $dead_char, 'lezchars_death_year', true );
 			foreach ( $died_date as $date ) {
-				if ( (int) substr( $date, 0, 4 ) === substr( $date, 0, 4 ) ) {
+
+				if ( (int) substr( $date, 0, 4 ) === (int) substr( $date, 0, 4 ) ) {
 					$died_year  = substr( $date, 0, 4 );
 					$died_array = date_parse_from_format( 'Y-m-d', $date );
 				} else {
@@ -90,7 +91,7 @@ function lwtv_yikes_this_year_dead( $thisyear ) {
 		<ul>
 			<?php
 			foreach ( $death_list_array as $dead ) {
-				echo '<li><a href="' . esc_url( $dead['url'] ) . '">' . esc_html( $dead['name'] ) . '</a> / ' . esc_html( $dead['shows'] ) . ' / ' . esc_html( date( 'd F', $dead['died'] ) ) . ' </li>';
+				echo '<li><a href="' . esc_url( $dead['url'] ) . '">' . esc_html( $dead['name'] ) . '</a> / ' . wp_kses_post( $dead['shows'] ) . ' / ' . esc_html( date( 'd F', $dead['died'] ) ) . ' </li>';
 			}
 			?>
 		</ul>
@@ -244,6 +245,11 @@ function lwtv_yikes_this_year_shows( $thisyear ) {
 	wp_reset_query();
 }
 
+/**
+ * Navigation for the year
+ * @param  [type]  $thisyear 
+ * @return boolean           [description]
+ */
 function lwtv_yikes_this_year_navigation( $thisyear ) {
 
 	$thisyear = ( isset( $thisyear ) ) ? $thisyear : date( 'Y' );
