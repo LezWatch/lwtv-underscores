@@ -16,7 +16,6 @@ $valid_views = array(
 	'gender'        => 'characters',
 	'tropes'        => 'shows',
 	'intersections' => 'shows',
-	'formats'       => 'shows',
 );
 $view        = ( ! isset( $_GET['view'] ) || ( ! array_key_exists( $_GET['view'], $valid_views ) ) ) ? 'overview' : sanitize_title( $_GET['view'] ); // WPCS: CSRF ok
 
