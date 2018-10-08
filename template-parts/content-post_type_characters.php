@@ -33,7 +33,9 @@ $all_actors = lwtv_yikes_chardata( get_the_ID(), 'actors' );
 if ( '' !== $all_actors ) {
 	$the_actors = array();
 	foreach ( $all_actors as $each_actor ) {
-		if ( get_post_status( $each_actor ) !== 'publish' ) {
+		if ( get_post_status( $each_actor ) === 'private' ) {
+			array_push( $the_actors, '<a href="/actors/unknown/">Unknown</a>' );
+		} elseif ( get_post_status( $each_actor ) !== 'publish' ) {
 			array_push( $the_actors, '<span class="disabled-show-link">' . get_the_title( $each_actor ) . '</span>' );
 		} else {
 			array_push( $the_actors, '<a href="' . get_permalink( $each_actor ) . '">' . get_the_title( $each_actor ) . '</a>' );

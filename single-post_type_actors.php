@@ -12,6 +12,9 @@ if ( lwtv_yikes_is_queer( $post->ID ) ) {
 }
 $icon .= '</div>';
 
+// Privacy
+$privacy = ( 'private' === get_post_status( $post->ID ) ) ? '<p><strong>Note:</strong> <em>This post is private and not visible to non-admins. Do not make this public without confirming in #staff first.</em></p>' : '';
+
 get_header(); ?>
 
 <div class="archive-subheader">
@@ -19,7 +22,7 @@ get_header(); ?>
 		<div class="container">
 			<header class="archive-header">
 				<div class="row">
-					<div class="col-10"><?php the_title( '<h1 class="entry-title">', '</h1>' ); ?></div>
+					<div class="col-10"><?php the_title( '<h1 class="entry-title">', '</h1>' ); ?><?php echo wp_kses_post( $privacy ); ?></div>
 					<div class="col-2 icon plain"><?php echo $icon; // WPSC: XSS okay ?></div>
 				</div>
 			</header><!-- .archive-header -->
