@@ -117,7 +117,7 @@ a {
 /* Embeds */
 
 figure.wp-block-embed {
-  .figcaption {
+  figcaption {
     text-align: left;
   }
 
@@ -130,15 +130,8 @@ figure.wp-block-embed {
       margin: 0px auto 12px !important;
     }
 
-    .figcaption {
+    figcaption {
       text-align: center;
-    }
-  }
-
-  &.alignleft {
-
-    .figcaption {
-      text-align: left;
     }
   }
 }

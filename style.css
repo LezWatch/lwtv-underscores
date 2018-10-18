@@ -181,7 +181,7 @@ a:hover, a:focus, a:active {
 /* =Gutenberg
 ----------------------------------------------- */
 /* Embeds */
-figure.wp-block-embed .figcaption {
+figure.wp-block-embed figcaption {
   text-align: left;
 }
 figure.wp-block-embed.alignleft, figure.wp-block-embed.aligncenter, figure.wp-block-embed.alignright {
@@ -190,11 +190,8 @@ figure.wp-block-embed.alignleft, figure.wp-block-embed.aligncenter, figure.wp-bl
 figure.wp-block-embed.aligncenter iframe {
   margin: 0px auto 12px !important;
 }
-figure.wp-block-embed.aligncenter .figcaption {
+figure.wp-block-embed.aligncenter figcaption {
   text-align: center;
-}
-figure.wp-block-embed.alignleft .figcaption {
-  text-align: left;
 }
 
 /* =Bootstrap Overrides
