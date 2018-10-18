@@ -134,6 +134,13 @@ figure.wp-block-embed {
       text-align: center;
     }
   }
+
+  &.alignleft {
+
+    .figcaption {
+      text-align: left;
+    }
+  }
 }
 
 
