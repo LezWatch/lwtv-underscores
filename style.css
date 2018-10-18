@@ -193,6 +193,9 @@ figure.wp-block-embed.aligncenter iframe {
 figure.wp-block-embed.aligncenter .figcaption {
   text-align: center;
 }
+figure.wp-block-embed.alignleft .figcaption {
+  text-align: left;
+}
 
 /* =Bootstrap Overrides
 ----------------------------------------------- */
