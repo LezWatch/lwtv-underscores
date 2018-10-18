@@ -187,11 +187,8 @@ figure.wp-block-embed .figcaption {
 figure.wp-block-embed.alignleft, figure.wp-block-embed.aligncenter, figure.wp-block-embed.alignright {
   border: 0;
 }
-figure.wp-block-embed.alignright {
-  text-align: right;
-}
-figure.wp-block-embed.aligncenter {
-  margin: 0px auto 12px;
+figure.wp-block-embed.aligncenter iframe {
+  margin: 0px auto 12px !important;
 }
 figure.wp-block-embed.aligncenter .figcaption {
   text-align: center;

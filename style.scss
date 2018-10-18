@@ -125,18 +125,17 @@ figure.wp-block-embed {
     border: 0;
   }
 
-  &.alignright {
-    text-align: right;
-  }
-
   &.aligncenter {
-    margin: 0px auto 12px;
+    iframe {
+      margin: 0px auto 12px !important;
+    }
 
     .figcaption {
       text-align: center;
     }
   }
 }
+
 
 /* =Bootstrap Overrides
 ----------------------------------------------- */
