@@ -111,6 +111,32 @@ a {
   @include screen-reader;
 }
 
+/* =Gutenberg
+----------------------------------------------- */
+
+/* Embeds */
+
+figure.wp-block-embed {
+  .figcaption {
+    text-align: left;
+  }
+
+  &.alignleft, &.aligncenter, &.alignright {
+    border: 0;
+  }
+
+  &.alignright {
+    text-align: right;
+  }
+
+  &.aligncenter {
+    margin: 0px auto 12px;
+
+    .figcaption {
+      text-align: center;
+    }
+  }
+}
 
 /* =Bootstrap Overrides
 ----------------------------------------------- */
