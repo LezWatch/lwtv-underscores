@@ -11,7 +11,6 @@ if ( ! defined( 'LWTV_THEME_VERSION' ) ) {
 		'lwtv-underscores' => '3.1.16',
 		'font-awesome'     => '5.2.0',
 		'bootstrap'        => '4.1.3',
-		'lwtv-blocks'      => '1',
 	);
 	define( 'LWTV_THEME_VERSION', $versions );
 }
@@ -413,10 +412,7 @@ add_action( 'wp_enqueue_scripts', 'yikes_starter_scripts' );
  * Enqueue block styles in the editor.
  */
 function yikes_block_editor_styles() {
-	$get_theme_vers = LWTV_THEME_VERSION;
-	$lwtv_blocks    = $get_theme_vers['lwtv-blocks'];
-
-	wp_enqueue_style( 'yikes-block-editor-styles', get_stylesheet_directory_uri() . '/style-editor.min.css', array(), $lwtv_blocks );
+	wp_enqueue_style( 'yikes-block-editor-styles', get_stylesheet_directory_uri() . '/style-editor.min.css', false, '1.0', 'all' );
 }
 
 add_action( 'enqueue_block_editor_assets', 'yikes_block_editor_styles' );
