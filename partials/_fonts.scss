@@ -1,9 +1,12 @@
 /* =Font Styles
 ----------------------------------------------- */
 
-/* Font Sizes - based on base font of 16px */
+// Font Sizes - based on base font of 16px
 
 $basefont: 16px;
+$basefontfamily: 'Open Sans', sans-serif;
+$basefontcolor: $darkgrey;
+$baseheight: 1.5;
 
 @mixin font-12 {font-size: 0.75rem;}
 @mixin font-13 {font-size: 0.812rem;}
@@ -22,20 +25,32 @@ $basefont: 16px;
 @mixin font-44 {font-size: 2.75rem;}
 @mixin font-48 {font-size: 3rem;}
 
+$headingfontfamily: 'Oswald', sans-serif;
+$headingfontheight: 1.1;
+$headingfontweight: 400;
+$headingfontcolor: $darkgrey;
+$headingbmargin: 1rem;
 
+@mixin h1 {
+	@include font-40;
+}
 
-/* If Using Font files */
+@mixin h2 {
+ 	@include font-32;
+}
 
-// @font-face {
-//   font-family: 'Font Name';
-//   src: url('inc/fonts/font-name.eot');
-//   src: url('inc/fonts/font-name.eot?#iefix') format('embedded-opentype'),
-//   url('inc/fonts/font-name.woff2') format('woff2'),
-//   url('inc/fonts/font-name.woff') format('woff'),
-//   url('inc/fonts/font-name.ttf') format('truetype'),
-//   url('inc/fonts/font-name.svg#font-name') format('svg');
-// }
+@mixin h3 {
+	@include font-28;
+}
 
-// @mixin FontName {
-//   font-family: 'Font Name';
-// }
+@mixin h4 {
+	@include font-24;
+}
+
+@mixin h5 {
+	@include font-20;
+}
+
+@mixin h6 {
+	font-size: 1rem;
+}

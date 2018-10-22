@@ -5,25 +5,30 @@
  * @package YIKES Starter
  */
 
-// Bump this any time you make serious CSS changes, becuase CSS is a dillhole
+// Bump this any time you make serious CSS changes.
 if ( ! defined( 'LWTV_THEME_VERSION' ) ) {
 	$versions = array(
 		'lwtv-underscores' => '3.1.16',
 		'font-awesome'     => '5.2.0',
 		'bootstrap'        => '4.1.3',
+		'lwtv-blocks'      => '1',
 	);
 	define( 'LWTV_THEME_VERSION', $versions );
 }
 
-/* Set the content width based on the theme's design and stylesheet.  */
+/**
+ * Set the content width based on the theme's design and stylesheet.
+ */
 if ( ! isset( $content_width ) ) {
 	$content_width = 825; /* pixels */
 }
 
-/************* YIKES Stuff ********************/
+/**
+ * YIKES Stuff
+ */
 
-// YIKES Setup theme constants These will be used for server and web paths
-// so we don't have to reference functions every time
+// YIKES Setup theme constants These will be used for server and web paths.
+// so we don't have to reference functions every time.
 if ( ! defined( 'YKS_THEME_PATH' ) ) {
 	define( 'YKS_THEME_PATH', get_stylesheet_directory() );
 }
@@ -31,86 +36,29 @@ if ( ! defined( 'YKS_THEME_URL' ) ) {
 	define( 'YKS_THEME_URL', trailingslashit( get_stylesheet_directory_uri() ) );
 }
 
-// Get the title of the Posts page
+/**
+ * Get the title of the Posts page.
+ */
 function yikes_starter_blog_page_title() {
 	if ( get_option( 'page_for_posts' ) ) {
 		return get_the_title( get_option( 'page_for_posts' ) );
 	}
 }
 
+
 /**
- * Get the featured image of the page defined for posts.
+ * Excerpts
  *
- * @param mixed | $image_size | Valid image size value. (i.e. string like 'full', array with height/width values)
- *                              See the wp_get_attachment_image_url() function documentation for more details.
- *
- * @return Image URL if found, else false
+ * @param string $more set the more ellipsis.
  */
-function yikes_starter_blog_page_featured_image( $image_size = 'full' ) {
-	$page_id_for_posts = get_option( 'page_for_posts' );
-	if ( ! empty( $page_id_for_posts ) && has_post_thumbnail( $page_id_for_posts ) ) {
-		$post_thumbnail_id = get_post_thumbnail_id( $page_id_for_posts );
-		return esc_url( wp_get_attachment_image_url( $post_thumbnail_id, $image_size ) );
-	}
-
-	// If no image is found, return false
-	return false;
-}
-
-/**
- * Get the ID of a page based on the template it's using.
- *
- * @param string | $template      | The name of a template, e.g. page-home.php
- * @param bool   | $use_transient | Whether we should set/check a transient value before querying
- *
- * @return mixed | Page ID if found, else false
- **/
-function yks_get_page_by_template( $template, $use_transient = false ) {
-
-	if ( true === $use_transient ) {
-		$page_id = get_transient( "wp_page_template_{$template}" );
-
-		if ( ! empty( $page_id ) ) {
-			return $page_id;
-		}
-	}
-
-	if ( empty( $page_id ) ) {
-		$pages = new WP_Query( array(
-			'post_type'      => 'page',
-			'posts_per_page' => '-1',
-			'fields'         => 'ids',
-		) );
-
-		if ( $pages->have_posts() ) {
-			foreach ( $pages->posts as $page_id ) {
-				$pagetemplate = get_post_meta( $page_id, '_wp_page_template', true );
-				if ( $pagetemplate === $template ) {
-
-					if ( true === $use_transient ) {
-						set_transient( "wp_page_template_{$template}", $page_id, 1 * HOUR_IN_SECONDS );
-					}
-
-					return $page_id;
-				}
-			}
-			wp_reset_postdata();
-		}
-	}
-
-	return false;
-}
-
-
-/************* Excerpts *************/
 function yks_excerpt_more( $more ) {
 	return '...';
 }
 add_filter( 'excerpt_more', 'yks_excerpt_more' );
 
-/************* Widgets *************/
-
-// load my widgets
+/**
+ * Widgets
+ */
 require_once 'inc/widgets/social-nav-widget.php';
 require_once 'inc/widgets/character-widget.php';
 require_once 'inc/widgets/show-widget.php';
@@ -118,18 +66,19 @@ require_once 'inc/widgets/filter-widget1.php';
 require_once 'inc/widgets/filter-widget2.php';
 require_once 'inc/widgets/otd-widget.php';
 
-/************* Theme Logo *************/
-
+/**
+ * Theme Logo
+ */
 function yks_the_custom_logo() {
-
 	if ( function_exists( 'the_custom_logo' ) ) {
 		the_custom_logo();
 	}
-
 }
 
 
-/************* Images *************/
+/**
+ * Images
+ */
 
 /*
  * Custom Image Sizes
@@ -139,22 +88,28 @@ function yks_the_custom_logo() {
  */
 add_image_size( 'character-img', 350, 412, true );
 add_image_size( 'show-img', 960, 400, true );
-add_image_size( 'postloop-img', 525, 300, true ); // hard crop mode
+add_image_size( 'postloop-img', 525, 300, true );
 
 
-/************* Comments *************/
-// Comments Walker
+/**
+ * Comments
+ */
 require_once 'inc/walker-comment.php';
 
 
-/************* Authors *************/
-// Author bio box
+/**
+ * Authors
+ */
+// Author bio box.
 require_once 'inc/author-box.php';
 
 
-/************* Archives  *************/
-// get rid of the “Category:”, “Tag:”, “Author:”, “Archives:” and “Other taxonomy name:” in the archive title
-
+/**
+ * Archives
+ *
+ * @param string $title get rid of the “Category:”, “Tag:”, “Author:”, “Archives:”
+ *  and “Other taxonomy name:” in the archive title.
+ */
 function yikes_archive_title( $title ) {
 	if ( is_category() ) {
 		$title = single_cat_title( '', false );
@@ -174,22 +129,27 @@ function yikes_archive_title( $title ) {
 add_filter( 'get_the_archive_title', 'yikes_archive_title' );
 
 
-/************* Theme Setup *************/
-
+/**
+ * Theme Setup
+ */
 function yikes_starter_add_editor_styles() {
 	add_editor_style( 'custom-editor-style.css' );
 }
 add_action( 'admin_init', 'yikes_starter_add_editor_styles' );
 
 if ( ! function_exists( 'yikes_starter_setup' ) ) {
-	/* Sets up theme defaults and registers support for various WordPress features. */
+	/**
+	 * Sets up theme defaults and registers support for various WordPress features. */
 	function yikes_starter_setup() {
 
-		/* Set up Nav menus */
-		register_nav_menus( array(
-			'primary'     => __( 'Primary Menu', 'yikes_starter' ),
-			'social_menu' => __( 'Social Menu', 'yikes_starter' ),
-		) );
+		/**
+		 * Set up Nav menus */
+		register_nav_menus(
+			array(
+				'primary'     => __( 'Primary Menu', 'yikes_starter' ),
+				'social_menu' => __( 'Social Menu', 'yikes_starter' ),
+			)
+		);
 
 		/**
 		 * Make theme available for translation.
@@ -219,135 +179,161 @@ if ( ! function_exists( 'yikes_starter_setup' ) ) {
 		/* Switch default core markup for search form, comment form, and comments to output valid HTML5.  */
 		add_theme_support( 'html5', array( 'search-form', 'comment-form', 'comment-list', 'gallery', 'caption' ) );
 
-		// Enable shortcodes in text widgets
+		// Enable shortcodes in text widgets.
 		add_filter( 'widget_text', 'do_shortcode' );
 
-		/*
-		 Enable support for Post Formats */
-		// add_theme_support( 'post-formats', array( 'aside', 'image', 'video', 'quote', 'link' ) );
+		// Enable editor styles.
+		add_theme_support( 'editor-styles' );
 	}
-}// End if().
+}
+
 add_action( 'after_setup_theme', 'yikes_starter_setup' );
 
 
-/* Register widgetized areas and update sidebar with default widgets  */
+/**
+ * Register widgetized areas and update sidebar with default widgets
+ */
 function yikes_starter_widgets_init() {
-	// Home Sidebar
-	register_sidebar( array(
-		'name'          => __( 'Home Page Sidebar', 'yikes_starter' ),
-		'id'            => 'sidebar-1',
-		'description'   => 'The sidebar for the home page',
-		'before_widget' => '<aside id="%1$s" class="widget %2$s">',
-		'after_widget'  => '</aside>',
-		'before_title'  => '<h2 class="widget-title">',
-		'after_title'   => '</h2>',
-	) );
-	// Sub Page Sidebar
-	register_sidebar( array(
-		'name'          => __( 'Sub Page Sidebar', 'yikes_starter' ),
-		'id'            => 'sidebar-2',
-		'description'   => 'The sidebar for sub pages',
-		'before_widget' => '<aside id="%1$s" class="widget %2$s">',
-		'after_widget'  => '</aside>',
-		'before_title'  => '<h2 class="widget-title">',
-		'after_title'   => '</h2>',
-	) );
-	// Dead Character Widget
-	register_sidebar( array(
-		'name'          => __( 'Widget Area of Death', 'yikes_starter' ),
-		'id'            => 'dead-1',
-		'description'   => 'The home page header widget with the last dead character.',
-		'before_widget' => '<aside id="%1$s" class="widget %2$s">',
-		'after_widget'  => '</aside>',
-		'before_title'  => '<h2 class="widget-title">',
-		'after_title'   => '</h2>',
-	) );
-	// Footer Widget 1
-	register_sidebar( array(
-		'name'          => __( 'Footer Widget Area One', 'yikes_starter' ),
-		'id'            => 'footer-1',
-		'description'   => 'The first footer widget area.',
-		'before_widget' => '<aside id="%1$s" class="widget %2$s">',
-		'after_widget'  => '</aside>',
-		'before_title'  => '<h2 class="widget-title">',
-		'after_title'   => '</h2>',
-	) );
-	// Footer Widget 2
-	register_sidebar( array(
-		'name'          => __( 'Footer Widget Area Two', 'yikes_starter' ),
-		'id'            => 'footer-2',
-		'description'   => 'The second footer widget area.',
-		'before_widget' => '<aside id="%1$s" class="widget %2$s">',
-		'after_widget'  => '</aside>',
-		'before_title'  => '<h2 class="widget-title">',
-		'after_title'   => '</h2>',
-	) );
-	// Footer Widget 3
-	register_sidebar( array(
-		'name'          => __( 'Footer Widget Area Three', 'yikes_starter' ),
-		'id'            => 'footer-3',
-		'description'   => 'The third footer widget area.',
-		'before_widget' => '<aside id="%1$s" class="widget %2$s">',
-		'after_widget'  => '</aside>',
-		'before_title'  => '<h2 class="widget-title">',
-		'after_title'   => '</h2>',
-	) );
-	// Footer Widget 4
-	register_sidebar( array(
-		'name'          => __( 'Footer Widget Area Four', 'yikes_starter' ),
-		'id'            => 'footer-4',
-		'description'   => 'The third footer widget area.',
-		'before_widget' => '<aside id="%1$s" class="widget %2$s">',
-		'after_widget'  => '</aside>',
-		'before_title'  => '<h2 class="widget-title">',
-		'after_title'   => '</h2>',
-	) );
-	// Credits Widget
-	register_sidebar( array(
-		'name'          => __( 'Bottom Footer Widget Area', 'yikes_starter' ),
-		'id'            => 'subfooter-1',
-		'description'   => 'The bottom footer credits area.',
-		'before_widget' => '<aside id="%1$s" class="widget %2$s">',
-		'after_widget'  => '</aside>',
-		'before_title'  => '<h2 class="widget-title">',
-		'after_title'   => '</h2>',
-	) );
-	// Sidebar for Actore Archives
-	register_sidebar( array(
-		'name'          => esc_html__( 'Sidebar - Actor Archives', 'lwtv_yikes' ),
-		'id'            => 'archive-actor-sidebar',
-		'description'   => esc_html__( 'This is the sidebar for actor archives.', 'lwtv_yikes' ),
-		'before_widget' => '<section id="%1$s" class="widget %2$s">',
-		'after_widget'  => '</section>',
-		'before_title'  => '<h2 class="widget-title">',
-		'after_title'   => '</h2>',
-	) );
-	// Sidebar for Character Archives
-	register_sidebar( array(
-		'name'          => esc_html__( 'Sidebar - Character Archives', 'lwtv_yikes' ),
-		'id'            => 'archive-character-sidebar',
-		'description'   => esc_html__( 'This is the sidebar for character archives.', 'lwtv_yikes' ),
-		'before_widget' => '<section id="%1$s" class="widget %2$s">',
-		'after_widget'  => '</section>',
-		'before_title'  => '<h2 class="widget-title">',
-		'after_title'   => '</h2>',
-	) );
-	// Sidebar for Show Archives
-	register_sidebar( array(
-		'name'          => esc_html__( 'Sidebar - Show Archives', 'lwtv_yikes' ),
-		'id'            => 'archive-show-sidebar',
-		'description'   => esc_html__( 'This is the sidebar for show archives.', 'lwtv_yikes' ),
-		'before_widget' => '<section id="%1$s" class="widget %2$s">',
-		'after_widget'  => '</section>',
-		'before_title'  => '<h2 class="widget-title">',
-		'after_title'   => '</h2>',
-	) );
+	// Home Sidebar.
+	register_sidebar(
+		array(
+			'name'          => __( 'Home Page Sidebar', 'yikes_starter' ),
+			'id'            => 'sidebar-1',
+			'description'   => 'The sidebar for the home page',
+			'before_widget' => '<aside id="%1$s" class="widget %2$s">',
+			'after_widget'  => '</aside>',
+			'before_title'  => '<h2 class="widget-title">',
+			'after_title'   => '</h2>',
+		)
+	);
+	// Sub Page Sidebar.
+	register_sidebar(
+		array(
+			'name'          => __( 'Sub Page Sidebar', 'yikes_starter' ),
+			'id'            => 'sidebar-2',
+			'description'   => 'The sidebar for sub pages',
+			'before_widget' => '<aside id="%1$s" class="widget %2$s">',
+			'after_widget'  => '</aside>',
+			'before_title'  => '<h2 class="widget-title">',
+			'after_title'   => '</h2>',
+		)
+	);
+	// Dead Character Widget.
+	register_sidebar(
+		array(
+			'name'          => __( 'Widget Area of Death', 'yikes_starter' ),
+			'id'            => 'dead-1',
+			'description'   => 'The home page header widget with the last dead character.',
+			'before_widget' => '<aside id="%1$s" class="widget %2$s">',
+			'after_widget'  => '</aside>',
+			'before_title'  => '<h2 class="widget-title">',
+			'after_title'   => '</h2>',
+		)
+	);
+	// Footer Widget 1.
+	register_sidebar(
+		array(
+			'name'          => __( 'Footer Widget Area One', 'yikes_starter' ),
+			'id'            => 'footer-1',
+			'description'   => 'The first footer widget area.',
+			'before_widget' => '<aside id="%1$s" class="widget %2$s">',
+			'after_widget'  => '</aside>',
+			'before_title'  => '<h2 class="widget-title">',
+			'after_title'   => '</h2>',
+		)
+	);
+	// Footer Widget 2.
+	register_sidebar(
+		array(
+			'name'          => __( 'Footer Widget Area Two', 'yikes_starter' ),
+			'id'            => 'footer-2',
+			'description'   => 'The second footer widget area.',
+			'before_widget' => '<aside id="%1$s" class="widget %2$s">',
+			'after_widget'  => '</aside>',
+			'before_title'  => '<h2 class="widget-title">',
+			'after_title'   => '</h2>',
+		)
+	);
+	// Footer Widget 3.
+	register_sidebar(
+		array(
+			'name'          => __( 'Footer Widget Area Three', 'yikes_starter' ),
+			'id'            => 'footer-3',
+			'description'   => 'The third footer widget area.',
+			'before_widget' => '<aside id="%1$s" class="widget %2$s">',
+			'after_widget'  => '</aside>',
+			'before_title'  => '<h2 class="widget-title">',
+			'after_title'   => '</h2>',
+		)
+	);
+	// Footer Widget 4.
+	register_sidebar(
+		array(
+			'name'          => __( 'Footer Widget Area Four', 'yikes_starter' ),
+			'id'            => 'footer-4',
+			'description'   => 'The third footer widget area.',
+			'before_widget' => '<aside id="%1$s" class="widget %2$s">',
+			'after_widget'  => '</aside>',
+			'before_title'  => '<h2 class="widget-title">',
+			'after_title'   => '</h2>',
+		)
+	);
+	// Credits Widget.
+	register_sidebar(
+		array(
+			'name'          => __( 'Bottom Footer Widget Area', 'yikes_starter' ),
+			'id'            => 'subfooter-1',
+			'description'   => 'The bottom footer credits area.',
+			'before_widget' => '<aside id="%1$s" class="widget %2$s">',
+			'after_widget'  => '</aside>',
+			'before_title'  => '<h2 class="widget-title">',
+			'after_title'   => '</h2>',
+		)
+	);
+	// Sidebar for Actor Archives.
+	register_sidebar(
+		array(
+			'name'          => esc_html__( 'Sidebar - Actor Archives', 'lwtv_yikes' ),
+			'id'            => 'archive-actor-sidebar',
+			'description'   => esc_html__( 'This is the sidebar for actor archives.', 'lwtv_yikes' ),
+			'before_widget' => '<section id="%1$s" class="widget %2$s">',
+			'after_widget'  => '</section>',
+			'before_title'  => '<h2 class="widget-title">',
+			'after_title'   => '</h2>',
+		)
+	);
+	// Sidebar for Character Archives.
+	register_sidebar(
+		array(
+			'name'          => esc_html__( 'Sidebar - Character Archives', 'lwtv_yikes' ),
+			'id'            => 'archive-character-sidebar',
+			'description'   => esc_html__( 'This is the sidebar for character archives.', 'lwtv_yikes' ),
+			'before_widget' => '<section id="%1$s" class="widget %2$s">',
+			'after_widget'  => '</section>',
+			'before_title'  => '<h2 class="widget-title">',
+			'after_title'   => '</h2>',
+		)
+	);
+	// Sidebar for Show Archives.
+	register_sidebar(
+		array(
+			'name'          => esc_html__( 'Sidebar - Show Archives', 'lwtv_yikes' ),
+			'id'            => 'archive-show-sidebar',
+			'description'   => esc_html__( 'This is the sidebar for show archives.', 'lwtv_yikes' ),
+			'before_widget' => '<section id="%1$s" class="widget %2$s">',
+			'after_widget'  => '</section>',
+			'before_title'  => '<h2 class="widget-title">',
+			'after_title'   => '</h2>',
+		)
+	);
 }
+
 add_action( 'widgets_init', 'yikes_starter_widgets_init' );
 
-/************* Bootstrap Stuff *************/
-
-// Navigation Walker
+/**
+ * Bootstrap Stuff
+ */
+// Navigation Walker.
 require_once 'inc/wp_bootstrap_navwalker.php';
 
 /*
@@ -360,11 +346,15 @@ require_once 'inc/wp_bootstrap_navwalker.php';
 */
 require_once 'inc/wp_bootstrap_pagination.php';
 
-// Add classes to “next_post_link” and “previous_post_link”
-
+// Add classes to “next_post_link” and “previous_post_link”.
 add_filter( 'next_post_link', 'post_link_attributes' );
 add_filter( 'previous_post_link', 'post_link_attributes' );
 
+/**
+ * Pagination
+ *
+ *  @param string $output add classes to links.
+ */
 function post_link_attributes( $output ) {
 	$code = 'class="page-link"';
 	return str_replace( '<a href=', '<a ' . $code . ' href=', $output );
@@ -373,22 +363,28 @@ function post_link_attributes( $output ) {
 add_filter( 'next_posts_link_attributes', 'posts_link_attributes' );
 add_filter( 'previous_posts_link_attributes', 'posts_link_attributes' );
 
+/**
+ * Pagination
+ *
+ *  Add classes to pagination links
+ */
 function posts_link_attributes() {
 	return 'class="page-link"';
 }
 
-
-/*************  Enqueue scripts and styles *************/
-
+/**
+ *  Scripts and styles
+ */
 function yikes_starter_scripts() {
 
 	$get_theme_vers   = LWTV_THEME_VERSION;
 	$lwtv_underscores = $get_theme_vers['lwtv-underscores'];
 	$font_awesome     = $get_theme_vers['font-awesome'];
 	$bootstrap        = $get_theme_vers['bootstrap'];
+	$lwtv_blocks      = $get_theme_vers['lwtv-blocks'];
 
-	// combined + minified
-	// navigation.js & skip-link-focus-fix.js
+	// combined + minified.
+	// navigation.js & skip-link-focus-fix.js.
 	wp_enqueue_script( 'yikes-starter-navigation', get_template_directory_uri() . '/inc/js/yikes-theme-scripts.min.js', array(), '20120206', true );
 
 	if ( is_singular() && comments_open() && get_option( 'thread_comments' ) ) {
@@ -397,9 +393,7 @@ function yikes_starter_scripts() {
 
 	wp_enqueue_style( 'bootstrap', get_template_directory_uri() . '/inc/bootstrap/css/bootstrap.css', array(), $bootstrap, 'all' );
 
-	// Font Awesome FREE
-	//wp_enqueue_style( 'fontawesome', get_template_directory_uri() . '/inc/fontawesome/css/fontawesome-all.min.css', array(), $font_awesome, 'all' );
-	// Font Awesome PRO
+	// Font Awesome PRO.
 	wp_enqueue_script( 'font-awesome', get_template_directory_uri() . '/inc/fa-pro/all.min.js', array(), $font_awesome, 'all', false );
 	wp_add_inline_script( 'font-awesome', 'FontAwesomeConfig = { searchPseudoElements: true };', 'before' );
 
@@ -409,19 +403,22 @@ function yikes_starter_scripts() {
 	wp_enqueue_script( 'bootstrap', get_template_directory_uri() . '/inc/bootstrap/js/bootstrap.min.js', array( 'jquery' ), $bootstrap, 'all', true );
 	wp_enqueue_script( 'lwtv-gdpr', get_template_directory_uri() . '/inc/js/gdpr.js', array( 'bootstrap' ), $lwtv_underscores, 'all', true );
 
-	// This has to be at the bottom to override Bootstrap 4.x
+	// This has to be at the bottom to override Bootstrap 4.x.
 	wp_enqueue_style( 'yikes-starter-style', get_stylesheet_directory_uri() . '/style.min.css', array(), $lwtv_underscores );
 
 }
 
 add_action( 'wp_enqueue_scripts', 'yikes_starter_scripts' );
 
-/************* Admin *************/
-
-// Block the admin bar for non-admins
-if ( ! current_user_can( 'administrator' ) ) {
-	show_admin_bar( false );
+/**
+ * Enqueue block styles in the editor.
+ */
+function yikes_block_editor_styles() {
+	wp_enqueue_style( 'yikes-block-editor-styles', get_stylesheet_directory_uri() . '/style-editor.min.css', array(), $lwtv_blocks );
 }
+
+add_action( 'enqueue_block_editor_assets', 'yikes_block_editor_styles' );
+
 
 /* Custom template tags for this theme. */
 require get_template_directory() . '/inc/template-tags.php';
@@ -433,7 +430,9 @@ require get_template_directory() . '/inc/extras.php';
 require get_template_directory() . '/inc/customizer.php';
 
 
-/************* Optional Items *************/
+/**
+ * Optional Items
+ */
 
 /* Implement the Custom Header feature. */
 require get_template_directory() . '/inc/custom-header.php';
@@ -441,8 +440,9 @@ require get_template_directory() . '/inc/custom-header.php';
 /* Remove custom background support */
 remove_theme_support( 'custom-background' );
 
-
-/************* LWTV Addtional Items *************/
+/**
+ * LWTV Additional Items
+ */
 
 /* Load AMP functionality file. */
 require get_template_directory() . '/inc/amp.php';
