@@ -1,0 +1,92 @@
+/*
+The stylesheet for Gutenberg Blocks in the editor
+*/
+/* =Color Variables for our theme
+----------------------------------------------- */
+/* =Font Styles
+----------------------------------------------- */
+/* =Helper Mixins
+----------------------------------------------- */
+/* =Mixins
+----------------------------------------------- */
+/* ==========================================================================
+   Editor Styles
+   ========================================================================== */
+/* Main column width */
+body.gutenberg-editor-page .editor-post-title__block,
+body.gutenberg-editor-page .editor-default-block-appender,
+body.gutenberg-editor-page .editor-block-list__block {
+  max-width: 1110px; }
+
+/* Width of "wide" blocks */
+body.gutenberg-editor-page .editor-block-list__block[data-align="wide"] {
+  max-width: 1110px; }
+
+/* Width of "full-wide" blocks */
+body.gutenberg-editor-page .editor-block-list__block[data-align="full"] {
+  max-width: none; }
+
+/* ==========================================================================
+   Global
+   ========================================================================== */
+.edit-post-visual-editor, .edit-post-visual-editor p.wp-block-paragraph, .edit-post-visual-editor .editor-block-list__block, .edit-post-visual-editor, .edit-post-visual-editor p.wp-block-paragraph, .edit-post-visual-editor .editor-block-list__block {
+  font-family: "Open Sans", sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  color: #000; }
+
+.editor-writing-flow {
+  /* Links */ }
+  .editor-writing-flow blockquote {
+    border-left: 3px solid #999;
+    color: #555;
+    font-family: Georgia, Times, "Times New Roman", serif;
+    font-size: 1.25rem;
+    margin: 0 0 1em;
+    padding-left: 1em; }
+  .editor-writing-flow a {
+    color: #06c;
+    -webkit-transition: all 0.3s;
+    -moz-transition: all 0.3s;
+    -o-transition: all 0.3s;
+    transition: all 0.3s;
+    text-decoration: none; }
+    .editor-writing-flow a:visited {
+      color: #06c; }
+    .editor-writing-flow a:hover, .editor-writing-flow a:focus, .editor-writing-flow a:active {
+      color: #3399ff;
+      -webkit-transition: all 0.3s;
+      -moz-transition: all 0.3s;
+      -o-transition: all 0.3s;
+      transition: all 0.3s;
+      text-decoration: none; }
+
+/* =Typography
+    Font CSS is all in the partial _fonts.scss
+----------------------------------------------- */
+/* Headings */
+.editor-writing-flow .editor-post-title__block .editor-post-title__input {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  font-family: "Open Sans", sans-serif;
+  font-weight: 500;
+  line-height: 1.1;
+  color: #000; }
+.editor-writing-flow .wp-block-heading h2, .editor-writing-flow .wp-block-heading h3, .editor-writing-flow .wp-block-heading h4, .editor-writing-flow .wp-block-heading h5, .editor-writing-flow .wp-block-heading h6 {
+  margin-bottom: 1rem;
+  font-family: "Open Sans", sans-serif;
+  font-weight: 500;
+  line-height: 1.1;
+  color: #000; }
+.editor-writing-flow .wp-block-heading h2, .editor-writing-flow .wp-block-heading .h2 {
+  font-size: 2rem; }
+.editor-writing-flow .wp-block-heading h3, .editor-writing-flow .wp-block-heading .h3 {
+  font-size: 1.75rem; }
+.editor-writing-flow .wp-block-heading h4, .editor-writing-flow .wp-block-heading .h4 {
+  font-size: 1.5rem; }
+.editor-writing-flow .wp-block-heading h5, .editor-writing-flow .wp-block-heading .h5 {
+  font-size: 1.25rem; }
+.editor-writing-flow .wp-block-heading h6, .editor-writing-flow .wp-block-heading .h6 {
+  font-size: 1rem; }
+
+/*# sourceMappingURL=blocks-style.css.map */

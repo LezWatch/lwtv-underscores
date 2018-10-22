@@ -8,11 +8,11 @@ Version: 3.1
 License: GNU General Public License v2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Text Domain: yikes_starter
-Tags:
+Tags: Gay
 */
 
-@import 'partials/fonts';
 @import 'partials/colors';
+@import 'partials/fonts';
 @import 'partials/helpers';
 @import 'partials/mixins';
 
@@ -42,9 +42,9 @@ Tags:
    ========================================================================== */
 
 body {
-  font-family: 'Open Sans', sans-serif;
+  font-family: $basefontfamily;
   font-size: $basefont;
-  line-height: 1.5;
+  line-height: $baseheight;
   color: $darkgrey;
   background-color: $lwtv-dkgrey;
 }
@@ -263,10 +263,10 @@ input[type="submit"].btn-outline-primary {
 
 h1, h2, h3, h4, h5, h6,
 .h1, .h2, .h3, .h4, .h5, .h6 {
-  margin-bottom: 1rem;
-  font-family: 'Oswald', sans-serif;
-  font-weight: 400;
-  line-height: 1.1;
+  margin-bottom: $headingbmargin;
+  font-family: $headingfontfamily;
+  font-weight: $headingfontweight;
+  line-height: $headingfontheight;
 }
 
 h1, .h1 {
