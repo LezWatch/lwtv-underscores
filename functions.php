@@ -181,6 +181,9 @@ if ( ! function_exists( 'yikes_starter_setup' ) ) {
 
 		// Enable shortcodes in text widgets.
 		add_filter( 'widget_text', 'do_shortcode' );
+
+		// Enable editor styles.
+		add_theme_support( 'editor-styles' );
 	}
 }
 
