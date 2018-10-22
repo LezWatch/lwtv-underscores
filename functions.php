@@ -381,7 +381,6 @@ function yikes_starter_scripts() {
 	$lwtv_underscores = $get_theme_vers['lwtv-underscores'];
 	$font_awesome     = $get_theme_vers['font-awesome'];
 	$bootstrap        = $get_theme_vers['bootstrap'];
-	$lwtv_blocks      = $get_theme_vers['lwtv-blocks'];
 
 	// combined + minified.
 	// navigation.js & skip-link-focus-fix.js.
@@ -414,6 +413,9 @@ add_action( 'wp_enqueue_scripts', 'yikes_starter_scripts' );
  * Enqueue block styles in the editor.
  */
 function yikes_block_editor_styles() {
+	$get_theme_vers = LWTV_THEME_VERSION;
+	$lwtv_blocks    = $get_theme_vers['lwtv-blocks'];
+
 	wp_enqueue_style( 'yikes-block-editor-styles', get_stylesheet_directory_uri() . '/style-editor.min.css', array(), $lwtv_blocks );
 }
 
