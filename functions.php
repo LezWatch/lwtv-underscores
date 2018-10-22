@@ -381,7 +381,6 @@ function yikes_starter_scripts() {
 	$lwtv_underscores = $get_theme_vers['lwtv-underscores'];
 	$font_awesome     = $get_theme_vers['font-awesome'];
 	$bootstrap        = $get_theme_vers['bootstrap'];
-	$lwtv_blocks      = $get_theme_vers['lwtv-blocks'];
 
 	// combined + minified.
 	// navigation.js & skip-link-focus-fix.js.
