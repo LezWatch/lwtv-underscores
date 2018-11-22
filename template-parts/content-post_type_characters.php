@@ -118,7 +118,7 @@ $thumb_array       = array(
 		</div>
 		<div class="card-meta-item">
 			<?php
-			if ( isset( $actor_title ) && count( $actor_title ) !== 0 ) {
+			if ( isset( $actors ) ) {
 				echo wp_kses_post( $actors );
 			}
 			?>
