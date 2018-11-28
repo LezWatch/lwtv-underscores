@@ -832,6 +832,14 @@ section {
   padding: 20px 0;
 }
 
+/* Tables */
+.wp-block-table {
+  padding: 5px;
+}
+.wp-block-table tr {
+  padding: 5px;
+}
+
 /* =Sub pages
 ----------------------------------------------- */
 /* Subheaders */
