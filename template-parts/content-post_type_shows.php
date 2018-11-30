@@ -196,3 +196,18 @@ if ( $related ) {
 		?>
 	</div>
 </section>
+
+<?php
+if ( function_exists( 'km_rpbt_get_related_posts' ) ) {
+	?>
+	<section name="related-posts" id="related-posts" class="showschar-section">
+		<h2>More Shows Like This</h2>
+		<div class="card-body">
+			<p>Is this show totally your jam? You might also like these:</p>
+			<?php
+			echo do_shortcode( '[related_posts_by_tax title="" posts_per_page="6" public_only="true"]' );
+			?>
+		</div>
+	</section>
+	<?php
+}
