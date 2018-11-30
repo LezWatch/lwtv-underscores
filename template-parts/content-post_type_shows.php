@@ -50,6 +50,11 @@ the_post_thumbnail(
 			<a class="breadcrumb-item smoothscroll" href="#related-posts">Related Posts</a>
 			<?php
 		}
+		if ( function_exists( 'km_rpbt_get_related_posts' ) ) {
+			?>
+			<a class="breadcrumb-item smoothscroll" href="#similar-shows">More Shows Like This</a>
+			<?php
+		}
 		?>
 		<a class="breadcrumb-item smoothscroll" href="#characters">Characters</a>
 	</nav>
@@ -200,12 +205,12 @@ if ( $related ) {
 <?php
 if ( function_exists( 'km_rpbt_get_related_posts' ) ) {
 	?>
-	<section name="related-posts" id="related-posts" class="showschar-section">
+	<section name="similar-shows" id="related-posts" class="showschar-section">
 		<h2>More Shows Like This</h2>
 		<div class="card-body">
 			<p>Is this show totally your jam? You might also like these:</p>
 			<?php
-			echo do_shortcode( '[related_posts_by_tax title="" posts_per_page="6" public_only="true"]' );
+			echo do_shortcode( '[related_posts_by_tax title=""]' );
 			?>
 		</div>
 	</section>
