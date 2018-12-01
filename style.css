@@ -1353,6 +1353,11 @@ section#characters .card {
   padding: 0.8rem;
 }
 
+/* Related Posts by Taxonomy Code */
+.rpbt_shortcode figure.similar-shows a {
+  font-style: italic;
+}
+
 /* =Archive Pages (posts / shows / characters / taxonomies)
 ----------------------------------------------- */
 .taxonomy-description, .archive-description {

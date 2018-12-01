@@ -46,17 +46,21 @@ the_post_thumbnail(
 			<?php
 		}
 		if ( $related ) {
+			// Related Posts (if available)
 			?>
-			<a class="breadcrumb-item smoothscroll" href="#related-posts">Related Posts</a>
-			<?php
-		}
-		if ( function_exists( 'km_rpbt_get_related_posts' ) ) {
-			?>
-			<a class="breadcrumb-item smoothscroll" href="#similar-shows">More Shows Like This</a>
+			<a class="breadcrumb-item smoothscroll" href="#related-posts">Articles</a>
 			<?php
 		}
 		?>
 		<a class="breadcrumb-item smoothscroll" href="#characters">Characters</a>
+		<?php
+		// Similar Shows
+		if ( has_filter( 'related_posts_by_taxonomy_posts_meta_query' ) ) {
+			?>
+			<a class="breadcrumb-item smoothscroll" href="#similar-shows">Similar Shows</a>
+			<?php
+		}
+		?>
 	</nav>
 </section>
 
@@ -119,7 +123,7 @@ if ( ( get_post_meta( $show_id, 'lezshows_episodes', true ) ) ) {
 if ( $related ) {
 	?>
 	<section name="related-posts" id="related-posts" class="showschar-section">
-		<h2>Related Articles</h2>
+		<h2>Articles</h2>
 		<div class="card-body">
 			<?php
 			echo LWTV_Related_Posts::related_posts( $slug ); // WPCS: XSS okay
@@ -203,14 +207,14 @@ if ( $related ) {
 </section>
 
 <?php
-if ( function_exists( 'km_rpbt_get_related_posts' ) ) {
+if ( has_filter( 'related_posts_by_taxonomy_posts_meta_query' ) ) {
 	?>
 	<section name="similar-shows" id="related-posts" class="showschar-section">
-		<h2>More Shows Like This</h2>
+		<h2>Similar Shows</h2>
 		<div class="card-body">
-			<p>Is this show totally your jam? You might also like these:</p>
+			<p>Looking for more TV shows like this one?</p>
 			<?php
-			echo do_shortcode( '[related_posts_by_tax title=""]' );
+			echo do_shortcode( '[related_posts_by_tax title="" format="thumbnails" link_caption="true" posts_per_page="6" post_class="similar-shows"]' );
 			?>
 		</div>
 	</section>
