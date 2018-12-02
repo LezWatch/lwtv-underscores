@@ -56,7 +56,7 @@ the_post_thumbnail(
 		<?php
 		// Similar Shows
 		if ( has_filter( 'related_posts_by_taxonomy_posts_meta_query' ) ) {
-			$rpbt_shortcode = do_shortcode( '[related_posts_by_tax title="" format="medium" link_caption="true" posts_per_page="6" columns="2" post_class="similar-shows"]' );
+			$rpbt_shortcode = do_shortcode( '[related_posts_by_tax title="" format="thumbnails" image_size="postloop-img" link_caption="true" posts_per_page="6" columns="2" post_class="similar-shows"]' );
 			if ( ! empty( $rpbt_shortcode ) ) {
 				?>
 				<a class="breadcrumb-item smoothscroll" href="#similar-shows">Similar Shows</a>
