@@ -56,9 +56,12 @@ the_post_thumbnail(
 		<?php
 		// Similar Shows
 		if ( has_filter( 'related_posts_by_taxonomy_posts_meta_query' ) ) {
-			?>
-			<a class="breadcrumb-item smoothscroll" href="#similar-shows">Similar Shows</a>
-			<?php
+			$rpbt_shortcode = do_shortcode( '[related_posts_by_tax title="" format="thumbnails" link_caption="true" posts_per_page="6" post_class="similar-shows"]' );
+			if ( ! empty( $rpbt_shortcode ) ) {
+				?>
+				<a class="breadcrumb-item smoothscroll" href="#similar-shows">Similar Shows</a>
+				<?php
+			}
 		}
 		?>
 	</nav>
@@ -207,14 +210,14 @@ if ( $related ) {
 </section>
 
 <?php
-if ( has_filter( 'related_posts_by_taxonomy_posts_meta_query' ) ) {
+if ( has_filter( 'related_posts_by_taxonomy_posts_meta_query' ) && ! empty( $rpbt_shortcode ) ) {
 	?>
 	<section name="similar-shows" id="related-posts" class="showschar-section">
 		<h2>Similar Shows</h2>
 		<div class="card-body">
 			<p>Looking for more TV shows like this one?</p>
 			<?php
-			echo do_shortcode( '[related_posts_by_tax title="" format="thumbnails" link_caption="true" posts_per_page="6" post_class="similar-shows"]' );
+				echo wp_kses_post( $rpbt_shortcode );
 			?>
 		</div>
 	</section>
