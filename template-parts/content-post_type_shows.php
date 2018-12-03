@@ -215,7 +215,7 @@ if ( has_filter( 'related_posts_by_taxonomy_posts_meta_query' ) && ! empty( $rpb
 	<section name="similar-shows" id="related-posts" class="showschar-section">
 		<h2>Similar Shows</h2>
 		<div class="card-body">
-			<p>Looking for more TV shows like this one?</p>
+			<p>If you like <?php echo get_the_title(); ?> you may also like these shows.</p>
 			<?php
 				echo wp_kses_post( $rpbt_shortcode );
 			?>
