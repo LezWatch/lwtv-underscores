@@ -7,10 +7,11 @@
  * @package LezWatch.TV
  */
 
-$show_id  = $post->ID;
-$slug     = get_post_field( 'post_name', get_post( $show_id ) );
-$get_tags = get_term_by( 'name', $slug, 'post_tag' );
-$related  = LWTV_Related_Posts::are_there_posts( $slug );
+$show_id        = $post->ID;
+$slug           = get_post_field( 'post_name', get_post( $show_id ) );
+$get_tags       = get_term_by( 'name', $slug, 'post_tag' );
+$related        = LWTV_Related_Posts::are_there_posts( $slug );
+$rpbt_shortcode = LWTV_Shows_Like_This::generate( $show_id );
 
 // Microformats Fix.
 lwtv_microformats_fix( $post->ID );
@@ -55,13 +56,10 @@ the_post_thumbnail(
 		<a class="breadcrumb-item smoothscroll" href="#characters">Characters</a>
 		<?php
 		// Similar Shows
-		if ( has_filter( 'related_posts_by_taxonomy_posts_meta_query' ) ) {
-			$rpbt_shortcode = do_shortcode( '[related_posts_by_tax title="" format="thumbnails" image_size="postloop-img" link_caption="true" posts_per_page="6" columns="2" post_class="similar-shows"]' );
-			if ( ! empty( $rpbt_shortcode ) ) {
-				?>
-				<a class="breadcrumb-item smoothscroll" href="#similar-shows">Similar Shows</a>
-				<?php
-			}
+		if ( false !== $rpbt_shortcode ) {
+			?>
+			<a class="breadcrumb-item smoothscroll" href="#similar-shows">Similar Shows</a>
+			<?php
 		}
 		?>
 	</nav>
@@ -210,7 +208,7 @@ if ( $related ) {
 </section>
 
 <?php
-if ( has_filter( 'related_posts_by_taxonomy_posts_meta_query' ) && ! empty( $rpbt_shortcode ) ) {
+if ( false !== $rpbt_shortcode ) {
 	?>
 	<section name="similar-shows" id="related-posts" class="showschar-section">
 		<h2>Similar Shows</h2>
