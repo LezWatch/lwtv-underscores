@@ -832,6 +832,14 @@ section {
   padding: 20px 0;
 }
 
+/* Tables */
+.wp-block-table {
+  padding: 5px;
+}
+.wp-block-table tr {
+  padding: 5px;
+}
+
 /* =Sub pages
 ----------------------------------------------- */
 /* Subheaders */
@@ -1343,6 +1351,11 @@ section#characters .card {
   font-size: 1.875rem;
   font-weight: 500;
   padding: 0.8rem;
+}
+
+/* Related Posts by Taxonomy Code */
+.rpbt_shortcode figure.similar-shows a {
+  font-style: italic;
 }
 
 /* =Archive Pages (posts / shows / characters / taxonomies)

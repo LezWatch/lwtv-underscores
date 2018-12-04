@@ -7,10 +7,11 @@
  * @package LezWatch.TV
  */
 
-$show_id  = $post->ID;
-$slug     = get_post_field( 'post_name', get_post( $show_id ) );
-$get_tags = get_term_by( 'name', $slug, 'post_tag' );
-$related  = LWTV_Related_Posts::are_there_posts( $slug );
+$show_id        = $post->ID;
+$slug           = get_post_field( 'post_name', get_post( $show_id ) );
+$get_tags       = get_term_by( 'name', $slug, 'post_tag' );
+$related        = LWTV_Related_Posts::are_there_posts( $slug );
+$rpbt_shortcode = LWTV_Shows_Like_This::generate( $show_id );
 
 // Microformats Fix.
 lwtv_microformats_fix( $post->ID );
@@ -35,23 +36,32 @@ the_post_thumbnail(
 		<h4 class="toc-title">Table of Contents</h4>
 		<a class="breadcrumb-item smoothscroll" href="#overview">Overview</a>
 		<?php
-		if ( ( get_post_meta( get_the_ID(), 'lezshows_plots', true ) ) ) {
+		if ( get_post_meta( get_the_ID(), 'lezshows_plots', true ) && '<p><br data-mce-bogus="1"></p>' !== get_post_meta( $show_id, 'lezshows_plots', true ) ) {
 			?>
 			<a class="breadcrumb-item smoothscroll" href="#timeline">Timeline</a>
 			<?php
 		}
-		if ( ( get_post_meta( get_the_ID(), 'lezshows_episodes', true ) ) ) {
+		if ( get_post_meta( get_the_ID(), 'lezshows_episodes', true ) && '<p><br data-mce-bogus="1"></p>' !== get_post_meta( $show_id, 'lezshows_episodes', true ) ) {
 			?>
 			<a class="breadcrumb-item smoothscroll" href="#episodes">Episodes</a>
 			<?php
 		}
 		if ( $related ) {
+			// Related Posts (if available)
 			?>
-			<a class="breadcrumb-item smoothscroll" href="#related-posts">Related Posts</a>
+			<a class="breadcrumb-item smoothscroll" href="#related-posts">Articles</a>
 			<?php
 		}
 		?>
 		<a class="breadcrumb-item smoothscroll" href="#characters">Characters</a>
+		<?php
+		// Similar Shows
+		if ( false !== $rpbt_shortcode ) {
+			?>
+			<a class="breadcrumb-item smoothscroll" href="#similar-shows">Similar Shows</a>
+			<?php
+		}
+		?>
 	</nav>
 </section>
 
@@ -88,7 +98,7 @@ if ( ( get_post_meta( $show_id, 'lezshows_affiliate', true ) ) ) {
 
 <?php
 // Queer Plots - Only display if they exist.
-if ( ( get_post_meta( $show_id, 'lezshows_plots', true ) ) ) {
+if ( ( get_post_meta( $show_id, 'lezshows_plots', true ) && '<p><br data-mce-bogus="1"></p>' !== get_post_meta( $show_id, 'lezshows_plots', true ) ) ) {
 	?>
 	<section name="timeline" id="timeline" class="showschar-section">
 		<h2>Queer Plotline Timeline</h2>
@@ -100,7 +110,7 @@ if ( ( get_post_meta( $show_id, 'lezshows_plots', true ) ) ) {
 }
 
 // Best Episodes - Only display if they exist.
-if ( ( get_post_meta( $show_id, 'lezshows_episodes', true ) ) ) {
+if ( ( get_post_meta( $show_id, 'lezshows_episodes', true ) && '<p><br data-mce-bogus="1"></p>' !== get_post_meta( $show_id, 'lezshows_episodes', true ) ) ) {
 	?>
 	<section name="episodes" id="episodes" class="showschar-section">
 		<h2>Notable Queer-Centric Episodes</h2>
@@ -114,7 +124,7 @@ if ( ( get_post_meta( $show_id, 'lezshows_episodes', true ) ) ) {
 if ( $related ) {
 	?>
 	<section name="related-posts" id="related-posts" class="showschar-section">
-		<h2>Related Articles</h2>
+		<h2>Articles</h2>
 		<div class="card-body">
 			<?php
 			echo LWTV_Related_Posts::related_posts( $slug ); // WPCS: XSS okay
@@ -196,3 +206,18 @@ if ( $related ) {
 		?>
 	</div>
 </section>
+
+<?php
+if ( false !== $rpbt_shortcode ) {
+	?>
+	<section name="similar-shows" id="related-posts" class="showschar-section">
+		<h2>Similar Shows</h2>
+		<div class="card-body">
+			<p>If you like <em><?php echo get_the_title(); ?></em> you may also like these shows.</p>
+			<?php
+				echo wp_kses_post( $rpbt_shortcode );
+			?>
+		</div>
+	</section>
+	<?php
+}
