@@ -10,6 +10,9 @@ $icon = '<div class="show-header-svg">';
 if ( lwtv_yikes_is_queer( $post->ID ) ) {
 	$icon .= ' <span role="img" aria-label="Queer IRL Actor" data-toggle="tooltip" title="Queer IRL Actor" class="cliche-queer-irl">' . lwtv_yikes_symbolicons( 'rainbow.svg', 'fa-cloud' ) . '</span>';
 }
+if ( lwtv_yikes_is_birthday( $post->ID ) ) {
+	$icon .= ' <span role="img" aria-label="Actor Having a Birthday" data-toggle="tooltip" title="Happy Birthday" class="happy-birthday">' . lwtv_yikes_symbolicons( 'cake.svg', 'fa-birthday-cake' ) . '</span>';
+}
 $icon .= '</div>';
 
 // Privacy
@@ -38,6 +41,24 @@ get_header(); ?>
 					<div id="content" class="site-content clearfix" role="main">
 						<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 							<div class="entry-content actor-page">
+
+								<?php
+								if ( lwtv_yikes_is_birthday( $post->ID ) ) {
+									$old = ' ';
+									$end = array( 'th', 'st', 'nd', 'rd', 'th', 'th', 'th', 'th', 'th', 'th' );
+									if ( ! get_post_meta( $post->ID, 'lezactors_death', true ) ) {
+										$age = lwtv_yikes_actordata( get_the_ID(), 'age', true );
+										$num = $age->format( '%y' );
+										if ( ( $num % 100 ) >= 11 && ( $num % 100 ) <= 13 ) {
+											$years_old = $num . 'th';
+										} else {
+											$years_old = $num . $end[ $num % 10 ];
+										}
+										$old = ' ' . $years_old . ' ';
+									}
+									echo '<div class="alert alert-info" role="alert">Happy' . esc_html( $old ) . 'Birthday, ' . get_the_title() . '!</div>';
+								}
+								?>
 								<div class="card">
 									<?php
 									while ( have_posts() ) :
