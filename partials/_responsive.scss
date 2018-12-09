@@ -200,6 +200,13 @@
     }
   }
 
+  .rpbt_shortcode {
+    .related-gallery {
+      grid-template-columns: 1fr;
+      grid-gap: 1rem;
+    }
+  }
+
 }
 
 // Small devices (landscape phones, less than 780px)

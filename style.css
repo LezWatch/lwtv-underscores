@@ -1354,7 +1354,12 @@ section#characters .card {
 }
 
 /* Related Posts by Taxonomy Code */
-.rpbt_shortcode figure.similar-shows a {
+div.rpbt_shortcode .related-gallery {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-gap: 1.6rem;
+}
+div.rpbt_shortcode .related-gallery figure.similar-shows a {
   font-style: italic;
 }
 
@@ -2125,6 +2130,11 @@ div.facetwp-facet-shows_scores input.facetwp-number {
 
   .affiliate-watch-container .btn {
     margin: 0 .4rem .4rem 0;
+  }
+
+  .rpbt_shortcode .related-gallery {
+    grid-template-columns: 1fr;
+    grid-gap: 1rem;
   }
 }
 @media (max-width: 780px) {
