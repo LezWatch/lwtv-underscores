@@ -1287,10 +1287,17 @@ section#characters {
 
 /* Related Posts by Taxonomy Code */
 
-.rpbt_shortcode {
-  figure.similar-shows {
-    a {
+div.rpbt_shortcode {
+
+  .related-gallery {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 1.6rem;
+
+    figure.similar-shows {
+      a {
         font-style: italic;
+      }
     }
   }
 }
