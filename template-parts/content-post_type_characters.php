@@ -34,7 +34,7 @@ $the_actors = array();
 
 if ( '' !== $all_actors ) {
 	foreach ( $all_actors as $each_actor ) {
-		if ( get_post_status( $each_actor ) === 'private' || get_the_title( $each_actor ) === get_the_title() ) {
+		if ( get_post_status( $each_actor ) === 'private' ) {
 			array_push( $the_actors, '<a href="/actor/unknown/">Unknown</a>' );
 		} elseif ( get_post_status( $each_actor ) !== 'publish' ) {
 			array_push( $the_actors, '<span class="disabled-show-link">' . get_the_title( $each_actor ) . '</span>' );
