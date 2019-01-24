@@ -48,6 +48,22 @@ function lwtv_yikes_filter_media_comment_status( $open, $post_id ) {
 }
 add_filter( 'comments_open', 'lwtv_yikes_filter_media_comment_status', 10, 2 );
 
+/*
+ * Auto apply alt tags
+ *
+ * If an image has no alt tags, we automagically apply the parent
+ * post title if that exists, falling back to the image title
+ * itself if not. This is for accessibility.
+ */
+function lwtv_auto_alt_fix( $attributes, $attachment ) {
+	if ( ! isset( $attributes['alt'] ) || '' === $attributes['alt'] ) {
+		$parent_titles     = get_the_title( $attachment->post_parent );
+		$attributes['alt'] = ( isset( $parent_titles ) && '' !== $parent_titles ) ? $parent_titles : get_the_title( $attachment->ID );
+	}
+	return $attributes;
+}
+add_filter( 'wp_get_attachment_image_attributes', 'lwtv_auto_alt_fix', 10, 2 );
+
 /**
  * Symbolicons Output
  *
