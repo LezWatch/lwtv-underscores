@@ -85,7 +85,7 @@ if ( 'none' !== $warning['card'] ) {
 
 <?php
 if ( ( get_post_meta( $show_id, 'lezshows_affiliate', true ) ) ) {
-	echo '<section id="affiliate-watch-link" class="affiliate-watch-container">' . LWTV_Affilliates::shows( $show_id, 'affiliate' ) . '</section>'; // WPCS: XSS okay.
+	echo '<section id="affiliate-watch-link" class="affiliate-watch-container">' . LWTV_Affilliates::shows( $show_id, 'affiliate' ) . '</section>'; // phpcs:ignore WordPress.Security.EscapeOutput.
 }
 ?>
 
@@ -127,7 +127,7 @@ if ( $related ) {
 		<h2>Articles</h2>
 		<div class="card-body">
 			<?php
-			echo LWTV_Related_Posts::related_posts( $slug ); // WPCS: XSS okay
+			echo LWTV_Related_Posts::related_posts( $slug ); // phpcs:ignore WordPress.Security.EscapeOutput
 			if ( count( LWTV_Related_Posts::count_related_posts( $slug ) ) > '5' ) {
 				$get_tags = term_exists( $slug, 'post_tag' );
 				if ( ! is_null( $get_tags ) && $get_tags >= 1 ) {

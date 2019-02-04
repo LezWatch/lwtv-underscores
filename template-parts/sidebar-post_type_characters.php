@@ -16,7 +16,7 @@ $char_id = $post->ID;
 <section id="affiliates" class="widget widget_text">
 	<?php
 	if ( class_exists( 'LWTV_Affilliates' ) ) {
-		echo LWTV_Affilliates::characters( $char_id, 'widget' ); // WPCS: XSS okay
+		echo LWTV_Affilliates::characters( $char_id, 'wide' ); // phpcs:ignore WordPress.Security.EscapeOutput
 	}
 	?>
 </section>

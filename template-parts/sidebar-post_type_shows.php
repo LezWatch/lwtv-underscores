@@ -110,7 +110,7 @@ $screentime   = ( get_post_meta( $show_id, 'lezshows_screentime_rating', true ) 
 <section id="affiliates" class="widget widget_text">
 	<?php
 	if ( class_exists( 'LWTV_Affilliates' ) ) {
-		echo LWTV_Affilliates::shows( $show_id, 'widget' ); // WPCS: XSS okay
+		echo LWTV_Affilliates::shows( $show_id, 'wide' ); // phpcs:ignore WordPress.Security.EscapeOutput
 	}
 	?>
 </section>
@@ -241,4 +241,12 @@ if ( $intersections && ! is_wp_error( $intersections ) ) {
 			?>
 		</div>
 	</div>
+</section>
+
+<section id="affiliates" class="widget widget_text">
+	<?php
+	if ( class_exists( 'LWTV_Affilliates' ) ) {
+		echo LWTV_Affilliates::shows( $show_id, 'wide' ); // phpcs:ignore WordPress.Security.EscapeOutput
+	}
+	?>
 </section>

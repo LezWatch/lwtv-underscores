@@ -92,8 +92,10 @@ get_header(); ?>
 								<div class="card col-sm-5"
 								<?php
 								if ( has_post_thumbnail() ) {
+									$alt_src = get_post_meta( get_the_ID(), '_wp_attachment_image_alt', true );
+									$alt_txt = ( isset( $alt_src ) && '' !== $alt_src ) ? $alt_src : get_the_title();
 									?>
-									style="background-image: url(<?php the_post_thumbnail_url( 'large' ); ?>);"
+									style="background-image: url(<?php the_post_thumbnail_url( 'large' ); ?>);" aria-label="<?php echo esc_html( $alt_txt ); ?>"
 									<?php
 								}
 								?>

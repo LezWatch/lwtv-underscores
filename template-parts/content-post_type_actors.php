@@ -158,7 +158,7 @@ if ( $related ) {
 		<h2>Related Articles</h2>
 		<div class="card-body">
 			<?php
-			echo LWTV_Related_Posts::related_posts( $slug ); // WPCS: XSS okay
+			echo LWTV_Related_Posts::related_posts( $slug ); // phpcs:ignore WordPress.Security.EscapeOutput
 			if ( count( LWTV_Related_Posts::count_related_posts( $slug ) ) > '5' ) {
 				$get_tags = term_exists( $slug, 'post_tag' );
 				if ( ! is_null( $get_tags ) && $get_tags >= 1 ) {
