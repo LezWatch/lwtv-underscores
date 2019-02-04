@@ -65,12 +65,15 @@ switch ( $view ) {
 						</thead>
 						<tbody>
 							<?php
-							$stations = get_terms( 'lez_actor_sexuality', array(
-								'number'     => 5,
-								'orderby'    => 'count',
-								'hide_empty' => 0,
-								'order'      => 'DESC',
-							) );
+							$stations = get_terms(
+								'lez_actor_sexuality',
+								array(
+									'number'     => 5,
+									'orderby'    => 'count',
+									'hide_empty' => 0,
+									'order'      => 'DESC',
+								)
+							);
 							foreach ( $stations as $station ) {
 								echo '<tr>
 										<th scope="row"><a href="/sexuality/' . esc_url( $station->slug ) . '">' . esc_html( $station->name ) . '</a></th>

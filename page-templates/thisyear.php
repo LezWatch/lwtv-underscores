@@ -28,7 +28,11 @@ get_header();
 							In This Year - <?php echo (int) $thisyear; ?>
 						</h1>
 					</div>
-					<div class="col-2 icon plain"><?php echo ( isset( $iconpath ) ? $iconpath : '' ); // WPCS: XSS okay. ?></div>
+					<div class="col-2 icon plain">
+					<?php
+						echo ( isset( $iconpath ) ? $iconpath : '' );  // phpcs:ignore WordPress.Security.EscapeOutput
+					?>
+					</div>
 				</div>
 				<div class="row">
 					<div class="col">

@@ -22,7 +22,7 @@ if ( class_exists( 'LWTV_Actors_Calculate' ) ) {
 <section id="affiliates" class="widget widget_text">
 	<?php
 	if ( class_exists( 'LWTV_Affilliates' ) ) {
-		echo LWTV_Affilliates::actors( $actor_id, 'widget' ); // WPCS: XSS okay
+		echo LWTV_Affilliates::actors( $actor_id, 'widget' ); // phpcs:ignore WordPress.Security.EscapeOutput
 	}
 	?>
 </section>

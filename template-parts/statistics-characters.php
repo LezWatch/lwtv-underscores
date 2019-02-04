@@ -12,7 +12,7 @@ $character_count = LWTV_Stats::generate( 'characters', 'total', 'count' );
 ?>
 
 <h2>
-	<a href="/characters/">Total Characters</a></strong> (<?php echo LWTV_Stats::generate( 'characters', 'total', 'count' ); // WPCS: XSS okay ?>)
+	<a href="/characters/">Total Characters</a></strong> (<?php echo LWTV_Stats::generate( 'characters', 'total', 'count' ); // phpcs:ignore WordPress.Security.EscapeOutput ?>)
 </h2>
 
 <ul class="nav nav-tabs">

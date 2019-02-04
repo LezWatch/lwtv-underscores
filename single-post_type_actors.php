@@ -16,7 +16,7 @@ if ( lwtv_yikes_is_birthday( $post->ID ) ) {
 $icon .= '</div>';
 
 // Privacy
-$privacy = ( 'private' === get_post_status( $post->ID ) ) ? '<p><strong>Note:</strong> <em>This post is private and not visible to non-admins. Do not make this public without confirming in #staff first.</em></p>' : '';
+$privacy = ( 'private' === get_post_status( $post->ID ) ) ? '<p><strong>Note:</strong> <em>This post is private and not visible to non-admins. <em>Do not</en> make this public without confirming in #staff first.</em></p>' : '';
 
 get_header(); ?>
 
