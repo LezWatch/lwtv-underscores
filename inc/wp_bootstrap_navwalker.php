@@ -136,8 +136,6 @@ class WP_Bootstrap_Navwalker extends Walker_Nav_Menu {
 		if ( 'current-menu-item' === $item->classes || is_array( $item->classes ) && in_array( 'current-menu-item', $item->classes, true ) ) {
 			$atts['class'] .= ' active';
 		}
-		// print_r($item);
-		//
 
 		/**
 		 * Filter the HTML attributes applied to a menu item's anchor element.
