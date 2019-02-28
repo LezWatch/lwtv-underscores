@@ -84,14 +84,30 @@ $screentime   = ( get_post_meta( $show_id, 'lezshows_screentime_rating', true ) 
 				}
 				if ( get_post_meta( $show_id, 'lezshows_airdates', true ) ) {
 					$airdates = get_post_meta( $show_id, 'lezshows_airdates', true );
-					$airdate  = $airdates['start'] . ' - ' . $airdates['finish'];
-					if ( $airdates['start'] === $airdates['finish'] || ! $airdates['finish'] ) {
-						$airdate = $airdates['start'];
+
+					// If the start is 'current' make it this year (though it really never should be.)
+					if ( 'current' === $airdates['start'] ) {
+						$airdates['start'] = date( 'Y' );
 					}
+
+					// Link the year to the year.
+					$airdate = '<a href="/this-year/' . $airdates['start'] . '/">' . $airdates['start'] . '</a>';
+
+					// If the start and end date are NOT the same, then let's show the end.
+					if ( $airdates['finish'] && $airdates['start'] !== $airdates['finish'] ) {
+						// If the end date is a number, it's a year, so link it.
+						if ( is_numeric( $airdates['finish'] ) && $airdates['finish'] <= date( 'Y' ) ) {
+							$airdates['finish'] = '<a href="/this-year/' . $airdates['finish'] . '/">' . $airdates['finish'] . '</a>';
+						}
+						// No matter what, add it.
+						$airdate .= ' - ' . $airdates['finish'];
+					}
+
+					// If the end is a number (i.e. a year) AND we have a seasons value, show it.
 					if ( is_numeric( $airdates['finish'] ) && get_post_meta( $show_id, 'lezshows_seasons', true ) ) {
 						$airdate .= ' (' . get_post_meta( $show_id, 'lezshows_seasons', true ) . ' seasons)';
 					}
-					echo '<li class="list-group-item network airdates"><strong>Airdates:</strong> ' . esc_html( $airdate ) . '</li>';
+					echo '<li class="list-group-item network airdates"><strong>Airdates:</strong> ' . wp_kses_post( $airdate ) . '</li>';
 				}
 				$genres = get_the_terms( $show_id, 'lez_genres' );
 				if ( $genres && ! is_wp_error( $genres ) ) {
