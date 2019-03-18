@@ -78,7 +78,7 @@ switch ( $view ) {
 							);
 							foreach ( $tropes as $trope ) {
 								echo '<tr>
-										<th scope="row"><a href="/trope/' . esc_url( $trope->slug ) . '">' . esc_html( $trope->name ) . '</a></th>
+										<th scope="row"><a href="' . esc_url( site_url( '/trope/' . $trope->slug ) ) . '">' . esc_html( $trope->name ) . '</a></th>
 										<td>' . (int) $trope->count . '</td>
 									</tr>';
 							}
@@ -110,7 +110,7 @@ switch ( $view ) {
 							);
 							foreach ( $genres as $genre ) {
 								echo '<tr>
-										<th scope="row"><a href="/genre/' . esc_url( $genre->slug ) . '">' . esc_html( $genre->name ) . '</a></th>
+										<th scope="row"><a href="' . esc_url( site_url( '/genre/' . $genre->slug ) ) . '">' . esc_html( $genre->name ) . '</a></th>
 										<td>' . (int) $genre->count . '</td>
 									</tr>';
 							}
