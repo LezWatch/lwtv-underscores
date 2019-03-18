@@ -6,7 +6,7 @@
  */
 
 $valid_views = array( 'overview', 'formats', 'tropes', 'genres', 'stars', 'triggers', 'on-air', 'worth-it', 'we-love-it' );
-$view        = ( ! isset( $_GET['view'] ) || ! in_array( $_GET['view'], $valid_views, true ) ) ? 'overview' : $_GET['view']; // WPCS: CSRF ok.
+$view        = ( ! isset( $_GET['view'] ) || ! in_array( $_GET['view'], $valid_views, true ) ) ? 'overview' : $_GET['view']; // phpcs:ignore WordPress.Security.NonceVerification
 
 ?>
 <h2>

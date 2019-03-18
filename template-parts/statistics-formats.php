@@ -6,8 +6,8 @@
  */
 
 // showform
-$valid_showform = ( isset( $_GET['showform'] ) ) ? term_exists( $_GET['showform'], 'lez_formats' ) : ''; // WPCS: CSRF ok.
-$showform       = ( ! isset( $_GET['showform'] ) || ! is_array( $valid_showform ) ) ? 'all' : sanitize_title( $_GET['showform'] ); // WPCS: CSRF ok.
+$valid_showform = ( isset( $_GET['showform'] ) ) ? term_exists( $_GET['showform'], 'lez_formats' ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
+$showform       = ( ! isset( $_GET['showform'] ) || ! is_array( $valid_showform ) ) ? 'all' : sanitize_title( $_GET['showform'] ); // phpcs:ignore WordPress.Security.NonceVerification
 
 // Views
 $valid_views = array(
@@ -17,11 +17,11 @@ $valid_views = array(
 	'tropes'        => 'shows',
 	'intersections' => 'shows',
 );
-$view        = ( ! isset( $_GET['view'] ) || ( ! array_key_exists( $_GET['view'], $valid_views ) ) ) ? 'overview' : sanitize_title( $_GET['view'] ); // WPCS: CSRF ok.
+$view        = ( ! isset( $_GET['view'] ) || ( ! array_key_exists( $_GET['view'], $valid_views ) ) ) ? 'overview' : sanitize_title( $_GET['view'] ); // phpcs:ignore WordPress.Security.NonceVerification
 
 // Format
 $valid_formats = array( 'bar', 'pie' );
-$format        = ( ! isset( $_GET['format'] ) || ! in_array( $_GET['format'], $valid_formats, true ) ) ? 'bar' : sanitize_title( $_GET['format'] ); // WPCS: CSRF ok.
+$format        = ( ! isset( $_GET['format'] ) || ! in_array( $_GET['format'], $valid_formats, true ) ) ? 'bar' : sanitize_title( $_GET['format'] ); // phpcs:ignore WordPress.Security.NonceVerification
 
 // Count
 $showforms   = get_terms( 'lez_formats', array( 'hide_empty' => 0 ) );

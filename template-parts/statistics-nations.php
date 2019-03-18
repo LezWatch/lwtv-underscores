@@ -6,8 +6,8 @@
  */
 
 // Country
-$valid_country = ( isset( $_GET['country'] ) ) ? term_exists( $_GET['country'], 'lez_country' ) : ''; // WPCS: CSRF ok.
-$country       = ( ! isset( $_GET['country'] ) || ! is_array( $valid_country ) ) ? 'all' : sanitize_title( $_GET['country'] ); // WPCS: CSRF ok.
+$valid_country = ( isset( $_GET['country'] ) ) ? term_exists( $_GET['country'], 'lez_country' ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
+$country       = ( ! isset( $_GET['country'] ) || ! is_array( $valid_country ) ) ? 'all' : sanitize_title( $_GET['country'] ); // phpcs:ignore WordPress.Security.NonceVerification
 
 // Views
 $valid_views = array(
@@ -18,11 +18,11 @@ $valid_views = array(
 	'intersections' => 'shows',
 	'formats'       => 'shows',
 );
-$view        = ( ! isset( $_GET['view'] ) || ( ! array_key_exists( $_GET['view'], $valid_views ) ) ) ? 'overview' : sanitize_title( $_GET['view'] ); // WPCS: CSRF ok.
+$view        = ( ! isset( $_GET['view'] ) || ( ! array_key_exists( $_GET['view'], $valid_views ) ) ) ? 'overview' : sanitize_title( $_GET['view'] ); // phpcs:ignore WordPress.Security.NonceVerification
 
 // Format
 $valid_formats = array( 'bar', 'pie' );
-$format        = ( ! isset( $_GET['format'] ) || ! in_array( $_GET['format'], $valid_formats, true ) ) ? 'bar' : sanitize_title( $_GET['format'] ); // WPCS: CSRF ok.
+$format        = ( ! isset( $_GET['format'] ) || ! in_array( $_GET['format'], $valid_formats, true ) ) ? 'bar' : sanitize_title( $_GET['format'] ); // phpcs:ignore WordPress.Security.NonceVerification
 
 // Count
 $nations     = get_terms( 'lez_country', array( 'hide_empty' => 0 ) );

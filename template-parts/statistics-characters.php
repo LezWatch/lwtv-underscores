@@ -6,7 +6,7 @@
  */
 
 $valid_views = array( 'overview', 'cliches', 'gender', 'sexuality', 'queer-irl', 'roles' );
-$view        = ( ! isset( $_GET['view'] ) || ! in_array( $_GET['view'], $valid_views, true ) ) ? 'overview' : $_GET['view']; // WPCS: CSRF okay
+$view        = ( ! isset( $_GET['view'] ) || ! in_array( $_GET['view'], $valid_views, true ) ) ? 'overview' : $_GET['view']; // phpcs:ignore WordPress.Security.NonceVerification
 
 $character_count = LWTV_Stats::generate( 'characters', 'total', 'count' );
 ?>
@@ -79,7 +79,7 @@ switch ( $view ) {
 							);
 							foreach ( $cliches as $cliche ) {
 								echo '<tr>
-										<th scope="row"><a href="/cliche/' . esc_url( $cliche->slug ) . '">' . esc_html( $cliche->name ) . '</a></th>
+										<th scope="row"><a href="' . esc_url( site_url( '/cliche/' . $cliche->slug ) ) . '">' . esc_html( $cliche->name ) . '</a></th>
 										<td>' . (int) $cliche->count . '</td>
 										<td>' . esc_html( round( ( ( $cliche->count / $character_count ) * 100 ), 1 ) ) . '%</td>
 									</tr>';
@@ -113,7 +113,7 @@ switch ( $view ) {
 							);
 							foreach ( $sexualities as $sexuality ) {
 								echo '<tr>
-										<th scope="row"><a href="/sexuality/' . esc_url( $sexuality->slug ) . '">' . esc_html( $sexuality->name ) . '</a></th>
+										<th scope="row"><a href="' . esc_url( site_url( '/sexuality/' . $sexuality->slug ) ) . '">' . esc_html( $sexuality->name ) . '</a></th>
 										<td>' . (int) $sexuality->count . '</td>
 										<td>' . esc_html( round( ( ( $sexuality->count / $character_count ) * 100 ), 1 ) ) . '%</td>
 									</tr>';
@@ -147,7 +147,7 @@ switch ( $view ) {
 							);
 							foreach ( $genders as $gender ) {
 								echo '<tr>
-										<th scope="row"><a href="/gender/' . esc_url( $gender->slug ) . '">' . esc_html( $gender->name ) . '</a></th>
+										<th scope="row"><a href="' . esc_url( site_url( '/gender/' . $gender->slug ) ) . '">' . esc_html( $gender->name ) . '</a></th>
 										<td>' . (int) $gender->count . '</td>
 										<td>' . esc_html( round( ( ( $gender->count / $character_count ) * 100 ), 1 ) ) . '%</td>
 									</tr>';
