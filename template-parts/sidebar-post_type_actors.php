@@ -4,7 +4,6 @@
  */
 
 global $post;
-
 $actor_id = $post->ID;
 
 // Do the math to make sure we're up to date.
