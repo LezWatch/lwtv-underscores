@@ -6,8 +6,8 @@
  */
 
 // Stations
-$valid_station = ( isset( $_GET['station'] ) ) ? term_exists( $_GET['station'], 'lez_stations' ) : ''; // WPCS: CSRF ok
-$station       = ( ! isset( $_GET['station'] ) || ! is_array( $valid_station ) ) ? 'all' : sanitize_title( $_GET['station'] ); // WPCS: CSRF ok
+$valid_station = ( isset( $_GET['station'] ) ) ? term_exists( $_GET['station'], 'lez_stations' ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
+$station       = ( ! isset( $_GET['station'] ) || ! is_array( $valid_station ) ) ? 'all' : sanitize_title( $_GET['station'] ); // phpcs:ignore WordPress.Security.NonceVerification
 
 // Views
 $valid_views = array(
@@ -18,7 +18,7 @@ $valid_views = array(
 	'intersections' => 'shows',
 	'formats'       => 'shows',
 );
-$view        = ( ! isset( $_GET['view'] ) || ( ! array_key_exists( $_GET['view'], $valid_views ) ) ) ? 'overview' : sanitize_title( $_GET['view'] ); // WPCS: CSRF ok
+$view        = ( ! isset( $_GET['view'] ) || ( ! array_key_exists( $_GET['view'], $valid_views ) ) ) ? 'overview' : sanitize_title( $_GET['view'] ); // phpcs:ignore WordPress.Security.NonceVerification
 
 // Count
 $all_stations = get_terms( 'lez_stations', array( 'hide_empty' => 0 ) );

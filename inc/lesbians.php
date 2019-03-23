@@ -604,7 +604,7 @@ function lwtv_yikes_actordata( $the_id, $data ) {
 					$actors_array = get_post_meta( $char_id, 'lezchars_actor', true );
 					if ( 'publish' === get_post_status( $char_id ) && isset( $actors_array ) && ! empty( $actors_array ) ) {
 						foreach ( $actors_array as $char_actor ) {
-							if ( $char_actor == $the_id ) { // WPCS: loose comparison ok.
+							if ( $char_actor == $the_id ) { // phpcs:ignore WordPress.PHP.StrictComparisons
 								$characters[ $char_id ] = array(
 									'id'      => $char_id,
 									'title'   => get_the_title( $char_id ),
@@ -654,7 +654,7 @@ function lwtv_yikes_actordata( $the_id, $data ) {
 
 					if ( 'publish' === get_post_status( $char_id ) && isset( $actors ) && ! empty( $actors ) ) {
 						foreach ( $actors as $actor ) {
-							if ( $actor == $the_id && has_term( 'dead', 'lez_cliches', $char_id ) ) {  // WPCS: loose comparison ok.
+							if ( $actor == $the_id && has_term( 'dead', 'lez_cliches', $char_id ) ) {  // phpcs:ignore WordPress.PHP.StrictComparisons
 								$dead[ $char_id ] = array(
 									'id'    => $char_id,
 									'title' => get_the_title( $char_id ),

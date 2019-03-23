@@ -23,7 +23,7 @@ get_header(); ?>
 					<div class="col-10">
 						<?php the_archive_title( '<h1 class="facetwp-page-title entry-title"><span class="facetwp-title">', '</span> (' . $count_posts . '<span class="facetwp-count"></span>)</h1>' ); ?>
 					</div>
-					<div class="col-2 icon plain"><?php echo lwtv_sanitized( $char_title ); // WPCS: XSS ok. ?></div>
+					<div class="col-2 icon plain"><?php echo lwtv_sanitized( $char_title ); // phpcs:ignore WordPress.Security.EscapeOutput ?></div>
 				</div>
 				<div class="row">
 					<div class="col">

@@ -30,7 +30,7 @@ if ( in_array( 'post_type_actors', $queery_types, true ) ) {
 
 <div class="card card-search">
 	<div class="card-header">
-		<h4><?php echo lwtv_yikes_symbolicons( 'search.svg', 'fa-search' ); // WPCS: XSS ok, sanitization ok. ?> Search the Database</h4>
+		<h4><?php echo lwtv_yikes_symbolicons( 'search.svg', 'fa-search' ); // phpcs:ignore WordPress.Security.EscapeOutput ?> Search the Database</h4>
 	</div>
 	<div class="card-body">
 		<form role="search" class="search-form" action="<?php echo esc_url( home_url( '/' ) ); ?>" method="get">

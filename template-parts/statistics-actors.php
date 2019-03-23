@@ -6,11 +6,11 @@
  */
 
 $valid_views = array( 'overview', 'gender', 'sexuality', 'roles' );
-$view        = ( ! isset( $_GET['view'] ) || ! in_array( $_GET['view'], $valid_views, true ) ) ? 'overview' : $_GET['view']; // WPCS: CSRF okay
+$view        = ( ! isset( $_GET['view'] ) || ! in_array( $_GET['view'], $valid_views, true ) ) ? 'overview' : $_GET['view']; // phpcs:ignore WordPress.Security.NonceVerification
 ?>
 
 <h2>
-	<a href="/actors/">Total Actors</a></strong> (<?php echo LWTV_Stats::generate( 'actors', 'total', 'count' ); // WPSC: XSS okay ?>)
+	<a href="/actors/">Total Actors</a></strong> (<?php echo LWTV_Stats::generate( 'actors', 'total', 'count' ); // phpcs:ignore WordPress.Security.EscapeOutput ?>)
 </h2>
 
 <ul class="nav nav-tabs">
@@ -34,7 +34,7 @@ switch ( $view ) {
 				<div class="col">
 					<div class="alert alert-success" role="info"><center>
 						<h3 class="alert-heading">Actors</h3>
-						<h5><?php echo LWTV_Stats::generate( 'actors', 'total', 'count' ); // WPSC: XSS okay ?></h5>
+						<h5><?php echo LWTV_Stats::generate( 'actors', 'total', 'count' ); // phpcs:ignore WordPress.Security.EscapeOutput ?></h5>
 					</center></div>
 				</div>
 				<div class="col">

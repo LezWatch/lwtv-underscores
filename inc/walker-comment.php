@@ -56,7 +56,7 @@ class LWTV_Walker_Comment extends Walker {
 	 * @param array  $args   Optional. Uses 'style' argument for type of HTML list. Default empty array.
 	 */
 	public function start_lvl( &$output, $depth = 0, $args = array() ) {
-		$GLOBALS['comment_depth'] = $depth + 1; // WPCS: override ok.
+		$GLOBALS['comment_depth'] = $depth + 1; // phpcs:ignore WordPress.WP.GlobalVariablesOverride
 
 		switch ( $args['style'] ) {
 			case 'div':
@@ -86,7 +86,7 @@ class LWTV_Walker_Comment extends Walker {
 	 *                       Default empty array.
 	 */
 	public function end_lvl( &$output, $depth = 0, $args = array() ) {
-		$GLOBALS['comment_depth'] = $depth + 1; // WPCS: override ok.
+		$GLOBALS['comment_depth'] = $depth + 1; // phpcs:ignore WordPress.WP.GlobalVariablesOverride
 
 		switch ( $args['style'] ) {
 			case 'div':
@@ -176,8 +176,8 @@ class LWTV_Walker_Comment extends Walker {
 	 */
 	public function start_el( &$output, $comment, $depth = 0, $args = array(), $id = 0 ) {
 		$depth++;
-		$GLOBALS['comment_depth'] = $depth; // WPCS: override ok.
-		$GLOBALS['comment']       = $comment; // WPCS: override ok.
+		$GLOBALS['comment_depth'] = $depth; // phpcs:ignore WordPress.WP.GlobalVariablesOverride
+		$GLOBALS['comment']       = $comment; // phpcs:ignore WordPress.WP.GlobalVariablesOverride
 
 		if ( ! empty( $args['callback'] ) ) {
 			ob_start();
