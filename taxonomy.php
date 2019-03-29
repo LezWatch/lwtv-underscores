@@ -34,7 +34,7 @@ get_header(); ?>
 						<?php the_archive_title( '<h1 class="facetwp-page-title entry-title">' . $title_prefix, $title_suffix . ' (' . $count_posts . '<span class="facetwp-count"></span>)</h1>' ); ?>
 					</div>
 					<div class="col-2 icon plain">
-						<?php echo lwtv_sanitized( $the_icon ); // WPCS: XSS ok. ?>
+						<?php echo lwtv_sanitized( $the_icon ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
 					</div>
 				</div>
 				<div class="row">

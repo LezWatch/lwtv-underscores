@@ -93,14 +93,14 @@ if ( ! function_exists( 'yikes_starter_entry_footer' ) ) :
 			$categories_list = get_the_category_list( esc_html__( ', ', 'yikes_starter' ) );
 			if ( $categories_list && yikes_starter_categorized_blog() ) {
 				// translators: 1 category list
-				printf( '<span class="cat-links">' . esc_html__( 'Posted in %1$s', 'yikes_starter' ) . '</span>', $categories_list ); // WPCS: XSS OK.
+				printf( '<span class="cat-links">' . esc_html__( 'Posted in %1$s', 'yikes_starter' ) . '</span>', $categories_list ); // phpcs:ignore WordPress.Security.EscapeOutput
 			}
 
 			/* translators: used between list items, there is a space after the comma */
 			$tags_list = get_the_tag_list( '', esc_html__( ', ', 'yikes_starter' ) );
 			if ( $tags_list ) {
 				// translators: 1 tags list
-				printf( '<span class="tags-links">' . esc_html__( 'Tagged %1$s', 'yikes_starter' ) . '</span>', $tags_list ); // WPCS: XSS OK.
+				printf( '<span class="tags-links">' . esc_html__( 'Tagged %1$s', 'yikes_starter' ) . '</span>', $tags_list ); // phpcs:ignore WordPress.Security.EscapeOutput
 			}
 		}
 

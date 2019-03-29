@@ -139,8 +139,7 @@ class LWTV_AMP {
 		}
 		$characters .= '</section>';
 
-		$return .= $characters;
-		$return .= '<section class="amp-wp-show-footer">';
+		$return = $characters . '<section class="amp-wp-show-footer">';
 
 		// Generate Life Stats
 		// Usage: $life
