@@ -15,7 +15,7 @@
           "type": "package",
           "package": {
             "name": "fortawesome/font-awesome-free",
-            "version": "5.2.0",
+            "version": "5.8.2",
             "source": {
               "url": "https://github.com/FortAwesome/Font-Awesome",
               "type": "git",
@@ -42,8 +42,8 @@
         "copy-file": {
             "vendor/twbs/bootstrap/dist/css/": "inc/bootstrap/css/",
             "vendor/twbs/bootstrap/dist/js/": "inc/bootstrap/js/",
-            "vendor/fortawesome/font-awesome-free/web-fonts-with-css/css/": "inc/fontawesome/css/",
-            "vendor/fortawesome/font-awesome-free/web-fonts-with-css/webfonts/": "inc/fontawesome/webfonts/"
+            "vendor/fortawesome/font-awesome-free/css/": "inc/fontawesome/css/",
+            "vendor/fortawesome/font-awesome-free/webfonts/": "inc/fontawesome/webfonts/"
         }
     }
 }
