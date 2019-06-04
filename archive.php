@@ -70,7 +70,7 @@ get_header(); ?>
 					<div id="content" class="site-content clearfix" role="main">
 						<?php
 						if ( have_posts() ) :
-						?>
+							?>
 						<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 							<div class="entry-content">
 								<div class="row site-loop main-posts-loop">

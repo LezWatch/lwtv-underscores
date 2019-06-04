@@ -85,7 +85,7 @@ if ( 'none' !== $warning['card'] ) {
 
 <?php
 if ( ( get_post_meta( $show_id, 'lezshows_affiliate', true ) ) ) {
-	echo '<section id="affiliate-watch-link" class="affiliate-watch-container">' . LWTV_Affilliates::shows( $show_id, 'affiliate' ) . '</section>'; // phpcs:ignore WordPress.Security.EscapeOutput.
+	echo '<section id="affiliate-watch-link" class="affiliate-watch-container">' . LWTV_Affilliates::shows( $show_id, 'affiliate' ) . '</section>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 }
 ?>
 
@@ -197,7 +197,7 @@ if ( $related ) {
 				foreach ( $chars_guest as $character ) {
 					$grave = ( has_term( 'dead', 'lez_cliches', $character['id'] ) ) ? '<span role="img" aria-label="RIP Tombstone" title="RIP Tombstone" class="charlist-grave-sm">' . lwtv_yikes_symbolicons( 'rest-in-peace.svg', 'fa-times-circle' ) . '</span>' : '';
 					?>
-					<li><a href="<?php the_permalink( $character['id'] ); ?>" title="<?php echo get_the_title( $character['id'] ); ?>" ><?php echo get_the_title( $character['id'] ) . ' ' . lwtv_sanitized( $grave ); ?></a></li>
+					<li><a href="<?php the_permalink( $character['id'] ); ?>" title="<?php echo esc_html( get_the_title( $character['id'] ) ); ?>" ><?php echo esc_html( get_the_title( $character['id'] ) ) . ' ' . lwtv_sanitized( $grave ); ?></a></li>
 					<?php
 				}
 				echo '</ul>';
@@ -213,7 +213,7 @@ if ( false !== $rpbt_shortcode ) {
 	<section name="similar-shows" id="related-posts" class="showschar-section">
 		<h2>Similar Shows</h2>
 		<div class="card-body">
-			<p>If you like <em><?php echo get_the_title(); ?></em> you may also like these shows.</p>
+			<p>If you like <em><?php echo esc_html( get_the_title() ); ?></em> you may also like these shows.</p>
 			<?php
 				echo wp_kses_post( $rpbt_shortcode );
 			?>

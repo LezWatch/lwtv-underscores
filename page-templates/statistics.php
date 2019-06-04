@@ -69,8 +69,8 @@ get_header(); ?>
 						<h1 class="entry-title">
 							Statistics
 							<?php
-								$title = ( 'main' !== $statstype ) ? 'on ' . ucfirst( $statstype ) : '';
-								echo wp_kses_post( $title );
+								$stattitle = ( 'main' !== $statstype ) ? 'on ' . ucfirst( $statstype ) : '';
+								echo wp_kses_post( $stattitle );
 							?>
 						</h1>
 					</div>

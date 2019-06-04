@@ -52,15 +52,15 @@ get_header(); ?>
 							<div class="entry-content facetwp-template">
 								<div class="row site-loop character-archive-loop">
 								<?php
-								if ( have_posts() ) :
+								if ( have_posts() ) {
 									/* Start the Loop */
-									while ( have_posts() ) :
+									while ( have_posts() ) {
 										the_post();
 										get_template_part( 'template-parts/excerpt', 'post_type_characters' );
-									endwhile;
-								else :
+									}
+								} else {
 									get_template_part( 'template-parts/content', 'none' );
-								endif;
+								}
 								?>
 								</div><!-- .row .site-loop -->
 								<?php echo facetwp_display( 'pager' ); ?>

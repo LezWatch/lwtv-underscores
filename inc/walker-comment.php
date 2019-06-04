@@ -392,16 +392,16 @@ class LWTV_Walker_Comment extends Walker {
 							</div><!-- .comment-metadata -->
 
 							<?php
-								comment_text();
-								$comment_args = array(
-									'add_below' => 'div-comment',
-									'depth'     => $depth,
-									'max_depth' => $args['max_depth'],
-									'before'    => '<div class="reply btn btn-default btn-sm">' . lwtv_yikes_symbolicons( 'reply.svg', 'fa-reply' ),
-									'after'     => '</div>',
-								);
-								comment_reply_link( array_merge( $args, $comment_args ) );
-								edit_comment_link( __( 'Edit' ), '<span class="edit-link">', '</span>' );
+							comment_text();
+							$comment_args = array(
+								'add_below' => 'div-comment',
+								'depth'     => $depth,
+								'max_depth' => $args['max_depth'],
+								'before'    => '<div class="reply btn btn-default btn-sm">' . lwtv_yikes_symbolicons( 'reply.svg', 'fa-reply' ),
+								'after'     => '</div>',
+							);
+							comment_reply_link( array_merge( $args, $comment_args ) );
+							edit_comment_link( __( 'Edit' ), '<span class="edit-link">', '</span>' );
 							?>
 						</div><!-- .comment-content -->
 					</div>

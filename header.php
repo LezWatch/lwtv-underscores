@@ -27,17 +27,19 @@
 				</span>
 			</a>
 				<?php
-				wp_nav_menu( array(
-					'menu'           => 'primary',
-					'theme_location' => 'primary',
-					'depth'          => 3,
-					'container'      => false,
-					'link_before'    => '<span class="menu-link-text">', // Use this for screen readers if using icons
-					'link_after'     => '</span>', // Use this for screen readers if using icons
-					'menu_class'     => 'navbar-nav ml-auto',
-					'fallback_cb'    => 'wp_page_menu',
-					'walker'         => new WP_Bootstrap_Navwalker(),
-				) );
+				wp_nav_menu(
+					array(
+						'menu'           => 'primary',
+						'theme_location' => 'primary',
+						'depth'          => 3,
+						'container'      => false,
+						'link_before'    => '<span class="menu-link-text">', // Use this for screen readers if using icons
+						'link_after'     => '</span>', // Use this for screen readers if using icons
+						'menu_class'     => 'navbar-nav ml-auto',
+						'fallback_cb'    => 'wp_page_menu',
+						'walker'         => new WP_Bootstrap_Navwalker(),
+					)
+				);
 				?>
 
 			<span class="nav-item search" id="search-btn">

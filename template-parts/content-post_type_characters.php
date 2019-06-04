@@ -147,6 +147,6 @@ $thumb_array       = array(
 	</div>
 	<div class="characters-description">
 		<hr />
-		<?php echo the_content(); ?>
+		<?php echo wp_kses_post( the_content() ); ?>
 	</div>
 </div>

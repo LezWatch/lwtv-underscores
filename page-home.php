@@ -7,13 +7,13 @@
 get_header(); ?>
 
 <?php
-	$paged                   = get_query_var( 'page' ) ? get_query_var( 'page' ) : 1;
+	$check_paged             = get_query_var( 'page' ) ? get_query_var( 'page' ) : 1;
 	$already_displayed_posts = array();
 ?>
 
 <div id="main" class="site-main" role="main">
 
-	<?php if ( 1 === $paged ) { ?>
+	<?php if ( 1 === $check_paged ) { ?>
 
 	<!-- Home page top section -->
 	<section class="home-featured-posts">
@@ -26,11 +26,13 @@ get_header(); ?>
 						<h2 class="posts-title">New Posts <?php echo lwtv_yikes_symbolicons( 'newspaper.svg', 'fa-newspaper' ); ?></h2>
 
 						<?php
-						$lastpostloop = new WP_Query( array(
-							'posts_per_page' => '1',
-							'orderby'        => 'date',
-							'order'          => 'DESC',
-						) );
+						$lastpostloop = new WP_Query(
+							array(
+								'posts_per_page' => '1',
+								'orderby'        => 'date',
+								'order'          => 'DESC',
+							)
+						);
 						?>
 
 						<!-- // The Loop -->
@@ -74,12 +76,14 @@ get_header(); ?>
 					<div class="site-loop home-featured-secondary-loop">
 
 						<?php
-						$newpostsloop = new WP_Query( array(
-							'posts_per_page' => '5',
-							'offset'         => '1',
-							'orderby'        => 'date',
-							'order'          => 'DESC',
-						) );
+						$newpostsloop = new WP_Query(
+							array(
+								'posts_per_page' => '5',
+								'offset'         => '1',
+								'orderby'        => 'date',
+								'order'          => 'DESC',
+							)
+						);
 						?>
 
 						<!-- // The Loop -->
@@ -153,20 +157,22 @@ get_header(); ?>
 						<?php
 
 						// Collect 30 loved posts (max) and then pick 3.
-						$lovedpostloop = new WP_Query( array(
-							'post_type'      => 'post_type_shows',
-							'posts_per_page' => '30',
-							'post_status'    => array( 'publish' ),
-							'no_found_rows'  => true,
-							'_loved_shuffle' => 3,
-							'meta_query'     => array(
-								array(
-									'key'     => 'lezshows_worthit_show_we_love',
-									'value'   => 'on',
-									'compare' => '=',
+						$lovedpostloop = new WP_Query(
+							array(
+								'post_type'      => 'post_type_shows',
+								'posts_per_page' => '30',
+								'post_status'    => array( 'publish' ),
+								'no_found_rows'  => true,
+								'_loved_shuffle' => 3,
+								'meta_query'     => array(
+									array(
+										'key'     => 'lezshows_worthit_show_we_love',
+										'value'   => 'on',
+										'compare' => '=',
+									),
 								),
-							),
-						) );
+							)
+						);
 
 						while ( $lovedpostloop->have_posts() ) :
 							$lovedpostloop->the_post();
@@ -225,20 +231,22 @@ get_header(); ?>
 				</div>
 			</div>
 			<?php
-			$class = ( 1 === $paged ) ? '' : 'four-across-loop';
+			$class = ( 1 === $check_paged ) ? '' : 'four-across-loop';
 			?>
 			<div class="row site-loop main-posts-loop <?php echo esc_attr( $class ); ?>">
 				<?php
 
-				$old_posts_per_page = ( 1 === $paged ) ? '6' : '12';
+				$old_posts_per_page = ( 1 === $check_paged ) ? '6' : '12';
 
-				$oldpostsloop = new WP_Query( array(
-					'posts_per_page' => $old_posts_per_page,
-					'paged'          => $paged,
-					'post__not_in'   => $already_displayed_posts,
-					'orderby'        => 'date',
-					'order'          => 'DESC',
-				) );
+				$oldpostsloop = new WP_Query(
+					array(
+						'posts_per_page' => $old_posts_per_page,
+						'paged'          => $check_paged,
+						'post__not_in'   => $already_displayed_posts,
+						'orderby'        => 'date',
+						'order'          => 'DESC',
+					)
+				);
 				?>
 
 				<!-- // The Loop -->
@@ -255,7 +263,7 @@ get_header(); ?>
 				?>
 			</div><!-- .row .home-featured-post-loop -->
 
-			<?php yikes_generate_pagination_buttons( $paged, $oldpostsloop->max_num_pages ); ?>
+			<?php yikes_generate_pagination_buttons( $check_paged, $oldpostsloop->max_num_pages ); ?>
 		</div><!-- .container -->
 	</section>
 

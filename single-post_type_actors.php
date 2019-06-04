@@ -56,7 +56,7 @@ get_header(); ?>
 										}
 										$old = ' ' . $years_old . ' ';
 									}
-									echo '<div class="alert alert-info" role="alert">Happy' . esc_html( $old ) . 'Birthday, ' . get_the_title() . '!</div>';
+									echo '<div class="alert alert-info" role="alert">Happy' . esc_html( $old ) . 'Birthday, ' . esc_html( get_the_title() ) . '!</div>';
 								}
 								?>
 								<div class="card">

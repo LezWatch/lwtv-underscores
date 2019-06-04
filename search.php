@@ -32,18 +32,18 @@ get_header(); ?>
 				<div id="primary" class="content-area">
 					<div id="content" class="site-content clearfix" role="main">
 						<?php
-						if ( have_posts() ) :
+						if ( have_posts() ) {
 							echo '<div class="row site-loop main-posts-loop four-across-loop">';
-							while ( have_posts() ) :
+							while ( have_posts() ) {
 								the_post();
 								get_template_part( 'template-parts/content', 'search' );
-							endwhile;
+							}
 							echo '</div>';
 							echo '<!-- Alt Bootstrap pagination is page_navi() -->';
 							yikes_starter_paging_nav();
-						else :
+						} else {
 							get_template_part( 'template-parts/content', 'none' );
-						endif;
+						}
 						?>
 					</div><!-- #content -->
 				</div><!-- #primary -->

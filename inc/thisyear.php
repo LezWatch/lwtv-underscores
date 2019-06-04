@@ -70,6 +70,7 @@ function lwtv_yikes_this_year_dead( $thisyear ) {
 			);
 		}
 
+		// phpcs:disable
 		// Reorder all the dead to sort by DoD
 		uasort( $death_list_array, function( $a, $b ) {
 			// Spaceship doesn't work
@@ -87,6 +88,7 @@ function lwtv_yikes_this_year_dead( $thisyear ) {
 			return $return;
 
 		});
+		// phpcs:enable
 		?>
 		<ul>
 			<?php
@@ -247,7 +249,7 @@ function lwtv_yikes_this_year_shows( $thisyear ) {
 
 /**
  * Navigation for the year
- * @param  [type]  $thisyear 
+ * @param  [type]  $thisyear
  * @return boolean           [description]
  */
 function lwtv_yikes_this_year_navigation( $thisyear ) {
