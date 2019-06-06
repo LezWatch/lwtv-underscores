@@ -14,6 +14,36 @@ require 'thisyear.php';
 // Statistics code
 require 'statistics.php';
 
+/** THE SECURITY SECTION **/
+
+/**
+ * Filter THEME updates incase some idiot ever submits lwtv-underscores as a theme.
+ * Look, this should never happen, but the last thing we want is for this theme to
+ * get updated by some rando with a grudge.
+ */
+// @codingStandardsIgnoreStart
+add_filter( 'http_request_args', function ( $response, $url ) {
+	if ( 0 === strpos( $url, 'https://api.wordpress.org/themes/update-check' ) ) {
+		$themes = json_decode( $response['body']['themes'] );
+		unset( $themes->themes->{get_option( 'template' )} );
+		unset( $themes->themes->{get_option( 'stylesheet' )} );
+		$response['body']['themes'] = json_encode( $themes );
+	}
+	return $response;
+}, 10, 2 );
+// @codingStandardsIgnoreEnd
+
+/**
+ * Disable update notifications for your theme. This doesn't change auto
+ * updates, but it does hide things.
+ */
+function lwtv_disable_theme_update_notification( $value ) {
+	if ( isset( $value ) && is_object( $value ) ) {
+		unset( $value->response['lwtv-underscores'] );
+	}
+	return $value;
+}
+add_filter( 'site_transient_update_themes', 'lwtv_disable_theme_update_notification' );
 
 /** THE GENERAL SECTION **/
 
@@ -113,7 +143,7 @@ function lwtv_yikes_jetpack_setup() {
 add_action( 'after_setup_theme', 'lwtv_yikes_jetpack_setup' );
 
 /*
- * Remove Jetpack because it's stupid.
+ * Remove Jetpack share because it's stupid.
  *
  * This stops Jetpack from adding sharing after every post
  * on a home page or archive if you use a custom loop.
@@ -326,7 +356,7 @@ function lwtv_yikes_tax_archive_title( $location, $posttype, $taxonomy ) {
 }
 
 
-/** SEARCH **/
+/** THE SEARCH SECTION **/
 
 /**
  * Filter the except length to 25 words.
