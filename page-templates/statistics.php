@@ -44,7 +44,6 @@ switch ( $statstype ) {
 		$intro = 'Data specific to queer representation by show format (i.e. TV show, web series, etc.)';
 		break;
 	case 'main':
-	default:
 		$image = lwtv_yikes_symbolicons( 'graph-bar.svg', 'fa-chart-area' );
 		$intro = '';
 		break;
@@ -74,7 +73,7 @@ get_header(); ?>
 							?>
 						</h1>
 					</div>
-					<div class="col-2 icon plain"><?php echo wp_kses_post( $image ); ?></div>
+					<div class="col-2 icon plain"><?php echo lwtv_sanitized( $image ); ?></div>
 				</div>
 				<div class="row">
 					<div class="col">
@@ -95,7 +94,17 @@ get_header(); ?>
 				<div id="primary" class="content-area">
 					<div id="content" class="site-content clearfix" role="main">
 						<?php
-							get_template_part( 'template-parts/statistics', $statstype );
+						if ( 'main' === $statstype ) {
+							the_content();
+						}
+
+						$attributes = array(
+							'page' => $statstype,
+						);
+
+						// phpcs:ignore WordPress.Security.EscapeOutput
+						echo LWTV_Stats_SSR::statistics( $attributes );
+
 						?>
 					</div><!-- #content -->
 				</div><!-- #primary -->
