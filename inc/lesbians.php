@@ -8,12 +8,6 @@
  * @package LezWatch.TV
  */
 
-// This Year code
-require 'thisyear.php';
-
-// Statistics code
-require 'statistics.php';
-
 /** THE SECURITY SECTION **/
 
 /**
