@@ -98,13 +98,14 @@ get_header(); ?>
 							the_content();
 						}
 
-						$attributes = array(
-							'page' => $statstype,
-						);
+						if ( class_exists( 'LWTV_Stats_SSR' ) ) {
+							$attributes = array(
+								'page' => $statstype,
+							);
 
-						// phpcs:ignore WordPress.Security.EscapeOutput
-						echo LWTV_Stats_SSR::statistics( $attributes );
-
+							// phpcs:ignore WordPress.Security.EscapeOutput
+							echo LWTV_Stats_SSR::statistics( $attributes );
+						}
 						?>
 					</div><!-- #content -->
 				</div><!-- #primary -->
