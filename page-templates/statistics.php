@@ -7,7 +7,7 @@
  * This uses var query data to determine what to show. All of the code is in the
  * /lwtv-plugin/statistics.php file so that it can be easily ported to any new theme.
  *
- * @package YIKES Starter
+ * @package LezWatch.TV
  */
 
 $validstat = array( 'death', 'characters', 'shows', 'main', 'actors', 'nations', 'stations', 'formats' );
