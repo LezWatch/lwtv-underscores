@@ -8,7 +8,7 @@
 // Build the icon
 $icon = '<div class="show-header-svg">';
 if ( has_term( 'dead', 'lez_cliches' ) ) {
-	$icon .= ' <span role="img" aria-label="RIP - Dead Character" data-toggle="tooltip" title="RIP - Dead Character" class="cliche-dead">' . lwtv_yikes_symbolicons( 'rest-in-peace.svg', 'fa-ban' ) . '</span>';
+	$icon .= ' <span role="img" aria-label="RIP - Dead Character" data-toggle="tooltip" title="RIP - Dead Character" class="cliche-dead">' . lwtv_symbolicons( 'rest-in-peace.svg', 'fa-ban' ) . '</span>';
 }
 $icon .= '</div>';
 
@@ -20,7 +20,7 @@ get_header(); ?>
 			<header class="archive-header">
 				<div class="row">
 					<div class="col-10"><?php the_title( '<h1 class="entry-title">', '</h1>' ); ?></div>
-					<div class="col-2 icon plain"><?php echo lwtv_sanitized( $icon ); ?></div>
+					<div class="col-2 icon plain"><?php echo $icon; // phpcs:ignore WordPress.Security.EscapeOutput ?></div>
 				</div>
 			</header><!-- .archive-header -->
 		</div><!-- .container -->

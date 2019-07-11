@@ -8,7 +8,7 @@
  */
 
 // Determine icon (Font-Awesome fallback).
-$icon        = lwtv_yikes_symbolicons( 'team.svg', 'fa-users' );
+$icon        = lwtv_symbolicons( 'team.svg', 'fa-users' );
 $count_posts = facetwp_display( 'counts' );
 $actor_title = '<span role="img" aria-label="post_type_actors" title="Actors" class="taxonomy-svg actors">' . $icon . '</span>';
 $seo_descs   = get_option( 'wpseo_titles' );
@@ -24,7 +24,7 @@ get_header(); ?>
 					<div class="col-10">
 						<?php the_archive_title( '<h1 class="facetwp-page-title entry-title"><span class="facetwp-title">', '</span>(' . $count_posts . '<span class="facetwp-count"></span>)</h1>' ); ?>
 					</div>
-					<div class="col-2 icon plain"><?php echo lwtv_sanitized( $actor_title ); ?></div>
+					<div class="col-2 icon plain"><?php echo $actor_title; // phpcs:ignore WordPress.Security.EscapeOutput ?></div>
 				</div>
 				<div class="row">
 					<div class="col">

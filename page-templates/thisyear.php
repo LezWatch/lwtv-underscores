@@ -13,7 +13,7 @@ if ( ! is_numeric( $thisyear ) || $thisyear < FIRST_LWTV_YEAR ) {
 	exit;
 }
 
-$iconpath = '<span role="img" aria-label="post_type_characters" title="Calendar" class="taxonomy-svg calendar">' . lwtv_yikes_symbolicons( 'calendar-15.svg', 'fa-calendar-alt' ) . '</span>';
+$iconpath = '<span role="img" aria-label="post_type_characters" title="Calendar" class="taxonomy-svg calendar">' . lwtv_symbolicons( 'calendar-15.svg', 'fa-calendar-alt' ) . '</span>';
 
 get_header();
 ?>
@@ -63,7 +63,7 @@ get_header();
 							</nav>
 						</section>
 						<?php
-						if ( class_exists( 'LWTV_This_Year' ) ) {
+						if ( method_exists( 'LWTV_This_Year', 'display' ) ) {
 							// phpcs:ignore WordPress.Security.EscapeOutput
 							echo LWTV_This_Year::display( $thisyear );
 						}

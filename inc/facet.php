@@ -77,9 +77,9 @@ function lwtv_yikes_facet_numeric_posts_nav( $queery = 'wp_query', $count = null
 	/** If we have previous posts, add previous navigation */
 	if ( get_previous_posts_link() ) {
 		// Add FIRST
-		printf( '<li class="page-item first mr-auto"><a href="%s" class="page-link">%s</a></li>', esc_url( get_pagenum_link( 1 ) ), lwtv_yikes_symbolicons( 'caret-left-circle.svg', 'fa-chevron-circle-left' ) . ' First' );
+		printf( '<li class="page-item first mr-auto"><a href="%s" class="page-link">%s</a></li>', esc_url( get_pagenum_link( 1 ) ), lwtv_symbolicons( 'caret-left-circle.svg', 'fa-chevron-circle-left' ) . ' First' );
 		// Add PREVIOUS
-		printf( '<li class="page-item previous">%s</li>', get_previous_posts_link( lwtv_yikes_symbolicons( 'caret-left.svg', 'fa-chevron-left' ) . ' Previous' ) );
+		printf( '<li class="page-item previous">%s</li>', get_previous_posts_link( lwtv_symbolicons( 'caret-left.svg', 'fa-chevron-left' ) . ' Previous' ) );
 	}
 
 	/** Link to current page, plus pages based on listical */
@@ -92,16 +92,16 @@ function lwtv_yikes_facet_numeric_posts_nav( $queery = 'wp_query', $count = null
 	/** Link to last page, plus next if necessary */
 	if ( ! in_array( $max, $links, true ) ) {
 		if ( ! in_array( $max - 1, $links, true ) ) {
-			printf( '<li class="page-item next">%s</li>', get_next_posts_link( 'Next ' . lwtv_yikes_symbolicons( 'caret-right.svg', 'fa-chevron-right' ) ) );
+			printf( '<li class="page-item next">%s</li>', get_next_posts_link( 'Next ' . lwtv_symbolicons( 'caret-right.svg', 'fa-chevron-right' ) ) );
 		}
 
 		$class = ( $paged === $max ) ? ' active' : '';
-		printf( '<li class="page-item last ml-auto%s"><a href="%s" class="page-link">%s</a></li>', esc_attr( $class ), esc_url( get_pagenum_link( $max ) ), 'Last ' . lwtv_yikes_symbolicons( 'caret-right-circle.svg', 'fa-chevron-circle-right' ) );
+		printf( '<li class="page-item last ml-auto%s"><a href="%s" class="page-link">%s</a></li>', esc_attr( $class ), esc_url( get_pagenum_link( $max ) ), 'Last ' . lwtv_symbolicons( 'caret-right-circle.svg', 'fa-chevron-circle-right' ) );
 	}
 
 	/** Next Post Link */
 	if ( get_next_posts_link() ) {
-		printf( '<li class="page-item next">%s</li>', get_next_posts_link( 'Next ' . lwtv_yikes_symbolicons( 'caret-right.svg', 'fa-chevron-right' ) ) );
+		printf( '<li class="page-item next">%s</li>', get_next_posts_link( 'Next ' . lwtv_symbolicons( 'caret-right.svg', 'fa-chevron-right' ) ) );
 	}
 	echo '</ul></nav>';
 
@@ -154,10 +154,10 @@ function lwtv_yikes_facetwp_pager_html( $output, $params ) {
 	if ( $page > 1 ) {
 
 		// Add link to first page
-		$navigation .= '<li class="page-item first mr-auto page-link"><a class="facetwp-page" data-page="1">' . lwtv_yikes_symbolicons( 'caret-left-circle.svg', 'fa-chevron-circle-left' ) . ' First</a></li>';
+		$navigation .= '<li class="page-item first mr-auto page-link"><a class="facetwp-page" data-page="1">' . lwtv_symbolicons( 'caret-left-circle.svg', 'fa-chevron-circle-left' ) . ' First</a></li>';
 
 		// Add link to previous page
-		$navigation .= '<li class="page-item previous page-link"><a class="facetwp-page" data-page="' . ( $page - 1 ) . '">' . lwtv_yikes_symbolicons( 'caret-left.svg', 'fa-chevron-left' ) . ' Previous</a></li>';
+		$navigation .= '<li class="page-item previous page-link"><a class="facetwp-page" data-page="' . ( $page - 1 ) . '">' . lwtv_symbolicons( 'caret-left.svg', 'fa-chevron-left' ) . ' Previous</a></li>';
 	}
 
 	/** Link to current page, plus pages in either direction if necessary */
@@ -170,11 +170,11 @@ function lwtv_yikes_facetwp_pager_html( $output, $params ) {
 	/** Link to last page and next page if necessary */
 	if ( ! in_array( $total_pages, $links, true ) ) {
 		if ( ! in_array( $total_pages - 1, $links, true ) ) {
-			$navigation .= '<li class="page-item page-link"><a class="facetwp-page" data-page="' . ( $page + 1 ) . '">Next ' . lwtv_yikes_symbolicons( 'caret-right.svg', 'fa-chevron-right' ) . '</a></li>';
+			$navigation .= '<li class="page-item page-link"><a class="facetwp-page" data-page="' . ( $page + 1 ) . '">Next ' . lwtv_symbolicons( 'caret-right.svg', 'fa-chevron-right' ) . '</a></li>';
 		}
 
 		$class       = ( $page === $total_pages ) ? ' active' : '';
-		$navigation .= '<li class="page-item last ml-auto page-link"><a data-page="' . $total_pages . '" class="facetwp-page">Last ' . lwtv_yikes_symbolicons( 'caret-right-circle.svg', 'fa-chevron-circle-right' ) . '</a></li>';
+		$navigation .= '<li class="page-item last ml-auto page-link"><a data-page="' . $total_pages . '" class="facetwp-page">Last ' . lwtv_symbolicons( 'caret-right-circle.svg', 'fa-chevron-circle-right' ) . '</a></li>';
 	}
 
 	$navigation .= '</ul></nav>';

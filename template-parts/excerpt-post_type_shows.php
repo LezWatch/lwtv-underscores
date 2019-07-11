@@ -37,9 +37,10 @@ $thumb_array       = array(
 					<?php
 					// The Game of Thrones Flag of Gratuitous Violence.
 					$warning    = lwtv_yikes_content_warning( get_the_ID() );
-					$warn_image = lwtv_yikes_symbolicons( 'warning.svg', 'fa-exclamation-triangle' );
+					$warn_image = lwtv_symbolicons( 'warning.svg', 'fa-exclamation-triangle' );
 					if ( 'none' !== $warning['card'] ) {
-						echo '<span class="callout callout-' . esc_attr( $warning['card'] ) . '" role="img" data-toggle="tooltip" aria-label="Warning - This show contains triggers" title="Warning - This show contains triggers">' . lwtv_sanitized( $warn_image ) . '</span>';
+						// phpcs:ignore WordPress.Security.EscapeOutput
+						echo '<span class="callout callout-' . esc_attr( $warning['card'] ) . '" role="img" data-toggle="tooltip" aria-label="Warning - This show contains triggers" title="Warning - This show contains triggers">' . $warn_image . '</span>';
 					}
 
 					// Stars of Queerness.
@@ -47,14 +48,16 @@ $thumb_array       = array(
 
 					// Hearts of Lurve.
 					if ( get_post_meta( get_the_ID(), 'lezshows_worthit_show_we_love', true ) ) {
-						$heart = lwtv_yikes_symbolicons( 'hearts.svg', 'fa-heart' );
-						echo ' <span role="img" aria-label="We Love This Show!" data-toggle="tooltip" title="We Love This Show!" class="callout callout-we-love">' . lwtv_sanitized( $heart ) . '</span>';
+						$heart = lwtv_symbolicons( 'hearts.svg', 'fa-heart' );
+						// phpcs:ignore WordPress.Security.EscapeOutput
+						echo ' <span role="img" aria-label="We Love This Show!" data-toggle="tooltip" title="We Love This Show!" class="callout callout-we-love">' . $heart . '</span>';
 					}
 
 					// Skulls of Death.
 					if ( has_term( 'dead-queers', 'lez_tropes', get_the_ID() ) ) {
-						$skull = lwtv_yikes_symbolicons( 'skull-crossbones.svg', 'fa-ban' );
-						echo ' <span role="img" aria-label="Warning - There is death on this show." data-toggle="tooltip" title="Warning - There is death on this show." class="callout callout-death">' . lwtv_sanitized( $skull ) . '</span>';
+						$skull = lwtv_symbolicons( 'skull-crossbones.svg', 'fa-ban' );
+						// phpcs:ignore WordPress.Security.EscapeOutput
+						echo ' <span role="img" aria-label="Warning - There is death on this show." data-toggle="tooltip" title="Warning - There is death on this show." class="callout callout-death">' . $skull . '</span>';
 					}
 					?>
 				</span>

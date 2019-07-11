@@ -44,7 +44,7 @@
 
 			<span class="nav-item search" id="search-btn">
 				<a class="nav-link" data-toggle="collapse" href="#collapseSearch">
-					<?php echo lwtv_yikes_symbolicons( 'search.svg', 'fa-search' ); ?>
+					<?php echo lwtv_symbolicons( 'search.svg', 'fa-search' ); ?>
 					<span class="screen-reader-text">Search the Site</span>
 				</a>
 			</span>

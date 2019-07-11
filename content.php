@@ -69,7 +69,7 @@
 			<?php
 		}
 
-		edit_post_link( esc_attr__( 'Edit', 'yikes_starter' ), '<div class="edit-link">' . lwtv_yikes_symbolicons( 'pencil.svg', 'fa-pencil-alt' ), '</div>' );
+		edit_post_link( esc_attr__( 'Edit', 'yikes_starter' ), '<div class="edit-link">' . lwtv_symbolicons( 'pencil.svg', 'fa-pencil-alt' ), '</div>' );
 		?>
 	</footer><!-- .entry-meta -->
 </article><!-- #post-## -->

@@ -17,35 +17,35 @@ $statstype = ( isset( $wp_query->query['statistics'] ) && in_array( $wp_query->q
 // Based on the type of stats, set our display.
 switch ( $statstype ) {
 	case 'death':
-		$image = lwtv_yikes_symbolicons( 'grim-reaper.svg', 'fa-ban' );
+		$image = lwtv_symbolicons( 'grim-reaper.svg', 'fa-ban' );
 		$intro = 'For a pure list of all dead, we have <a href="/trope/dead-queers/">shows where characters died</a> as well as <a href="/cliche/dead/">characters who have died</a> (aka the <a href="/cliche/dead/">Dead Lesbians</a> list).';
 		break;
 	case 'characters':
-		$image = lwtv_yikes_symbolicons( 'chart-bar.svg', 'fa-chart-bar' );
+		$image = lwtv_symbolicons( 'chart-bar.svg', 'fa-chart-bar' );
 		$intro = 'Data specific to queer characters.';
 		break;
 	case 'actors':
-		$image = lwtv_yikes_symbolicons( 'graph-line.svg', 'fa-chart-line' );
+		$image = lwtv_symbolicons( 'graph-line.svg', 'fa-chart-line' );
 		$intro = 'Data specific to actors who play queer characters.';
 		break;
 	case 'shows':
-		$image = lwtv_yikes_symbolicons( 'chart-pie.svg', 'fa-chart-pie' );
+		$image = lwtv_symbolicons( 'chart-pie.svg', 'fa-chart-pie' );
 		$intro = 'Data specific to TV shows with queer characters.';
 		break;
 	case 'nations':
-		$image = lwtv_yikes_symbolicons( 'globe.svg', 'fa-globe' );
+		$image = lwtv_symbolicons( 'globe.svg', 'fa-globe' );
 		$intro = 'Data specific to queer representation on shows by nation.';
 		break;
 	case 'stations':
-		$image = lwtv_yikes_symbolicons( 'satellite-signal.svg', 'fa-bullhorn' );
+		$image = lwtv_symbolicons( 'satellite-signal.svg', 'fa-bullhorn' );
 		$intro = 'Data specific to queer representation on shows by channel or station.';
 		break;
 	case 'formats':
-		$image = lwtv_yikes_symbolicons( 'graph-bar.svg', 'fa-chart-area' );
+		$image = lwtv_symbolicons( 'graph-bar.svg', 'fa-chart-area' );
 		$intro = 'Data specific to queer representation by show format (i.e. TV show, web series, etc.)';
 		break;
 	case 'main':
-		$image = lwtv_yikes_symbolicons( 'graph-bar.svg', 'fa-chart-area' );
+		$image = lwtv_symbolicons( 'graph-bar.svg', 'fa-chart-area' );
 		$intro = '';
 		break;
 }
@@ -74,7 +74,7 @@ get_header(); ?>
 							?>
 						</h1>
 					</div>
-					<div class="col-2 icon plain"><?php echo lwtv_sanitized( $image ); ?></div>
+					<div class="col-2 icon plain"><?php echo $image; // phpcs:ignore WordPress.Security.EscapeOutput ?></div>
 				</div>
 				<div class="row">
 					<div class="col">
@@ -99,7 +99,7 @@ get_header(); ?>
 							the_content();
 						}
 
-						if ( class_exists( 'LWTV_Stats_SSR' ) ) {
+						if ( method_exists( 'LWTV_Stats_SSR', 'statistics' ) ) {
 							$attributes = array(
 								'page' => $statstype,
 							);

@@ -45,7 +45,8 @@ unset( $shows, $actors, $gender, $sexuality, $cliches, $grave );
 					echo lwtv_yikes_chardata( $the_id, 'dead' );
 				}
 				if ( isset( $grave ) ) {
-					echo ' ' . lwtv_sanitized( $grave );
+					// phpcs:ignore WordPress.Security.EscapeOutput
+					echo ' ' . $grave;
 				}
 				?>
 			</a>

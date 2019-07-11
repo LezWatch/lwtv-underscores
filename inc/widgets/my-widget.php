@@ -36,12 +36,14 @@ class My_Widget extends WP_Widget {
 		$textarea2 = isset( $instance['textarea2'] ) && ! empty( trim( $instance['textarea2'] ) ) ? $instance['textarea2'] : '';
 
 		/** Output widget HTML BEGIN **/
-		echo lwtv_sanitized( $before_widget );
+		// phpcs:ignore WordPress.Security.EscapeOutput
+		echo $before_widget;
 		echo '<ul>';
 
 		// If the title is set
 		if ( $title ) {
-			echo lwtv_sanitized( $before_title . $title . $after_title );
+			// phpcs:ignore WordPress.Security.EscapeOutput
+			echo $before_title . $title . $after_title;
 		}
 
 		// If text is entered in the first textarea
@@ -55,7 +57,8 @@ class My_Widget extends WP_Widget {
 		}
 
 		echo '</ul>';
-		echo lwtv_sanitized( $after_widget );
+		// phpcs:ignore WordPress.Security.EscapeOutput
+		echo $after_widget;
 		/** Output widget HTML BEGIN **/
 	}
 

@@ -18,7 +18,7 @@ get_header(); ?>
 						printf( esc_attr__( 'Search Results for: %s', 'yikes_starter' ), '<span>' . get_search_query() . '</span>' );
 					?>
 					</h1></div>
-					<div class="col-2 icon plain"><span role="img" aria-label="Search Results" title="Search Results" class="taxonomy-svg 404"><?php echo lwtv_yikes_symbolicons( 'search.svg', 'fa-search' ); ?></span></div>
+					<div class="col-2 icon plain"><span role="img" aria-label="Search Results" title="Search Results" class="taxonomy-svg 404"><?php echo lwtv_symbolicons( 'search.svg', 'fa-search' ); ?></span></div>
 				</div>
 			</header><!-- .archive-header -->
 		</div><!-- .container -->

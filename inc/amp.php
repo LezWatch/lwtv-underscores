@@ -9,10 +9,10 @@
  */
 
 /**
- * class LWTV_AMP
+ * class LWTV_Theme_AMP
  * @since 1.0
  */
-class LWTV_AMP {
+class LWTV_Theme_AMP {
 
 	/**
 	 * Constructor
@@ -353,8 +353,8 @@ class LWTV_AMP {
 		}
 
 		// Add character info:
-		$havecharcount = LWTV_CPT_Characters::list_characters( $post_id, 'count' );
-		$havedeadcount = LWTV_CPT_Characters::list_characters( $post_id, 'dead' );
+		$havecharcount = lwtv_list_characters( $post_id, 'count' );
+		$havedeadcount = lwtv_list_characters( $post_id, 'dead' );
 		$characters    = '<section id="characters" class="shows-extras"><h2>Characters (' . (int) $havecharcount . ')</h2>';
 
 		if ( empty( $havecharcount ) ) {
@@ -362,9 +362,9 @@ class LWTV_AMP {
 		} else {
 
 			// Lists of characters
-			$regulars  = LWTV_CPT_Characters::get_chars_for_show( $post_id, $havecharcount, 'regular' );
-			$recurring = LWTV_CPT_Characters::get_chars_for_show( $post_id, $havecharcount, 'recurring' );
-			$guests    = LWTV_CPT_Characters::get_chars_for_show( $post_id, $havecharcount, 'guest' );
+			$regulars  = lwtv_get_chars_for_show( $post_id, $havecharcount, 'regular' );
+			$recurring = lwtv_get_chars_for_show( $post_id, $havecharcount, 'recurring' );
+			$guests    = lwtv_get_chars_for_show( $post_id, $havecharcount, 'guest' );
 			$all_chars = array_merge( $regulars, $recurring, $guests );
 
 			$characters .= '<ul class="character-list">';
@@ -548,4 +548,4 @@ class LWTV_AMP {
 
 }
 
-new LWTV_AMP();
+new LWTV_Theme_AMP();

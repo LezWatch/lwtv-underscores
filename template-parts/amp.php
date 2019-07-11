@@ -34,7 +34,7 @@
 	</header>
 
 	<div class="amp-wp-article-content">
-		<?php echo lwtv_sanitized( $this->get( 'post_amp_content' ) ); ?>
+		<?php echo $this->get( 'post_amp_content' ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
 	</div>
 
 </article>

@@ -8,7 +8,7 @@ global $post;
 $show_id = $post->ID;
 
 // Do the math to make sure we're up to date.
-if ( class_exists( 'LWTV_Shows_Calculate' ) ) {
+if ( method_exists( 'LWTV_Shows_Calculate', 'do_the_math' ) ) {
 	LWTV_Shows_Calculate::do_the_math( $show_id );
 }
 
@@ -46,8 +46,9 @@ $screentime   = ( get_post_meta( $show_id, 'lezshows_screentime_rating', true ) 
 						break;
 				}
 
-				$thumb_image = lwtv_yikes_symbolicons( $thumb_icon . '.svg', 'fa-' . $thumb_icon );
-				echo '<span role="img" class="show-worthit ' . esc_attr( strtolower( $thumb_rating ) ) . '">' . lwtv_sanitized( $thumb_image ) . '</span>';
+				$thumb_image = lwtv_symbolicons( $thumb_icon . '.svg', 'fa-' . $thumb_icon );
+				// phpcs:ignore WordPress.Security.EscapeOutput
+				echo '<span role="img" class="show-worthit ' . esc_attr( strtolower( $thumb_rating ) ) . '">' . $thumb_image . '</span>';
 				echo wp_kses_post( $thumb_rating );
 				?>
 			</div>
@@ -125,7 +126,7 @@ $screentime   = ( get_post_meta( $show_id, 'lezshows_screentime_rating', true ) 
 
 <section id="affiliates" class="widget widget_text">
 	<?php
-	if ( class_exists( 'LWTV_Affilliates' ) ) {
+	if ( method_exists( 'LWTV_Affilliates', 'shows' ) ) {
 		echo LWTV_Affilliates::shows( $show_id, 'wide' ); // phpcs:ignore WordPress.Security.EscapeOutput
 	}
 	?>
@@ -153,7 +154,7 @@ $screentime   = ( get_post_meta( $show_id, 'lezshows_screentime_rating', true ) 
 					<?php
 						// Echo the taxonomy icon (default to squares if empty)
 						$icon = get_term_meta( $trope->term_id, 'lez_termsmeta_icon', true );
-						echo lwtv_yikes_symbolicons( $icon . '.svg', 'fa-lemon' );
+						echo lwtv_symbolicons( $icon . '.svg', 'fa-lemon' );
 					?>
 					</a>
 					<a href="<?php echo esc_url( get_term_link( $trope->slug, 'lez_tropes' ) ); ?>" rel="show trope" class="trope-link"><?php echo esc_html( $trope->name ); ?></a>
@@ -186,7 +187,7 @@ if ( $intersections && ! is_wp_error( $intersections ) ) {
 							<?php
 							// Echo the taxonomy icon (default to squares if empty)
 							$icon = get_term_meta( $intersection->term_id, 'lez_termsmeta_icon', true );
-							echo lwtv_yikes_symbolicons( $icon . '.svg', 'fa-lemon' );
+							echo lwtv_symbolicons( $icon . '.svg', 'fa-lemon' );
 							?>
 							</a>
 							<a href="<?php echo esc_url( get_term_link( $intersection->slug, 'lez_intersections' ) ); ?>" rel="show trope" class="trope-link"><?php echo esc_html( $intersection->name ); ?>
@@ -215,7 +216,7 @@ if ( $intersections && ! is_wp_error( $intersections ) ) {
 			} else {
 				// We have some love, let's show it
 				$heart_types    = array( 'realness', 'quality', 'screentime' );
-				$heart          = lwtv_yikes_symbolicons( 'heart.svg', 'fa-heart' );
+				$heart          = lwtv_symbolicons( 'heart.svg', 'fa-heart' );
 				$positive_heart = '<span role="img" class="show-heart positive">' . $heart . '</span>';
 				$negative_heart = '<span role="img" class="show-heart negative">' . $heart . '</span>';
 
@@ -242,8 +243,10 @@ if ( $intersections && ! is_wp_error( $intersections ) ) {
 						<?php
 						if ( $rating >= '0' ) {
 							$leftover = 5 - $rating;
-							echo lwtv_sanitized( str_repeat( $positive_heart, $rating ) );
-							echo lwtv_sanitized( str_repeat( $negative_heart, $leftover ) );
+							// phpcs:ignore WordPress.Security.EscapeOutput
+							echo str_repeat( $positive_heart, $rating );
+							// phpcs:ignore WordPress.Security.EscapeOutput
+							echo str_repeat( $negative_heart, $leftover );
 						}
 						?>
 						<span class="screen-reader-text">Rating: <?php echo (int) $rating; ?> Hearts (out of 5)</span>
@@ -261,7 +264,7 @@ if ( $intersections && ! is_wp_error( $intersections ) ) {
 
 <section id="affiliates" class="widget widget_text">
 	<?php
-	if ( class_exists( 'LWTV_Affilliates' ) ) {
+	if ( method_exists( 'LWTV_Affilliates', 'shows' ) ) {
 		echo LWTV_Affilliates::shows( $show_id, 'wide' ); // phpcs:ignore WordPress.Security.EscapeOutput
 	}
 	?>

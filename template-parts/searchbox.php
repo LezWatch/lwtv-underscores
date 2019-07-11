@@ -19,7 +19,7 @@
 		<div class="col-sm-1 searchbox-close">
 			<span class="close-btn-container">
 				<a href="#collapseSearch" data-toggle="collapse">
-					<?php echo lwtv_yikes_symbolicons( 'cancel-circle.svg', 'fa-times-circle' ); ?>
+					<?php echo lwtv_symbolicons( 'cancel-circle.svg', 'fa-times-circle' ); ?>
 				</a>
 			</span>
 		</div>

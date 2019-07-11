@@ -13,7 +13,7 @@ $icon .= lwtv_yikes_show_star( get_the_ID() );
 
 // Show love if applicable.
 if ( get_post_meta( get_the_ID(), 'lezshows_worthit_show_we_love', true ) ) {
-	$heart = lwtv_yikes_symbolicons( 'hearts.svg', 'fa-heart' );
+	$heart = lwtv_symbolicons( 'hearts.svg', 'fa-heart' );
 	$icon .= ' <span role="img" aria-label="We Love This Show!" data-toggle="tooltip" title="We Love This Show!" class="show-we-love">' . $heart . '</span>';
 }
 
@@ -27,7 +27,7 @@ get_header(); ?>
 			<header class="archive-header">
 				<div class="row">
 					<div class="col-10"><?php the_title( '<h1 class="entry-title">', '</h1>' ); ?></div>
-					<div class="col-2 icon plain"><?php echo lwtv_sanitized( $icon ); ?></div>
+					<div class="col-2 icon plain"><?php echo $icon; // phpcs:ignore WordPress.Security.EscapeOutput ?></div>
 				</div>
 			</header><!-- .archive-header -->
 		</div><!-- .container -->

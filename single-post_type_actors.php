@@ -8,10 +8,10 @@
 // Build the icon
 $icon = '<div class="show-header-svg">';
 if ( lwtv_yikes_is_queer( $post->ID ) ) {
-	$icon .= ' <span role="img" aria-label="Queer IRL Actor" data-toggle="tooltip" title="Queer IRL Actor" class="cliche-queer-irl">' . lwtv_yikes_symbolicons( 'rainbow.svg', 'fa-cloud' ) . '</span>';
+	$icon .= ' <span role="img" aria-label="Queer IRL Actor" data-toggle="tooltip" title="Queer IRL Actor" class="cliche-queer-irl">' . lwtv_symbolicons( 'rainbow.svg', 'fa-cloud' ) . '</span>';
 }
 if ( lwtv_yikes_is_birthday( $post->ID ) ) {
-	$icon .= ' <span role="img" aria-label="Actor Having a Birthday" data-toggle="tooltip" title="Happy Birthday" class="happy-birthday">' . lwtv_yikes_symbolicons( 'cake.svg', 'fa-birthday-cake' ) . '</span>';
+	$icon .= ' <span role="img" aria-label="Actor Having a Birthday" data-toggle="tooltip" title="Happy Birthday" class="happy-birthday">' . lwtv_symbolicons( 'cake.svg', 'fa-birthday-cake' ) . '</span>';
 }
 $icon .= '</div>';
 

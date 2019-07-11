@@ -52,7 +52,7 @@ class LWTV_Character extends WP_Widget {
 			$thumb_title       = ( empty( $thumb_attribution ) ) ? get_the_title() : get_the_title() . ' &copy; ' . $thumb_attribution;
 
 			echo '<div class="card">';
-			echo '<div class="card-header"><h4>Recently Added Character <span class="float-right">' . lwtv_yikes_symbolicons( 'contact-card.svg', 'fa-address-card' ) . '</span></h4></div>';
+			echo '<div class="card-header"><h4>Recently Added Character <span class="float-right">' . lwtv_symbolicons( 'contact-card.svg', 'fa-address-card' ) . '</span></h4></div>';
 
 			// Featured Image
 			echo '<div class="character-image-wrapper">';

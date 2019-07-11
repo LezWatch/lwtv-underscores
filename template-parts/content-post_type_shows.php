@@ -69,13 +69,13 @@ the_post_thumbnail(
 // The Game of Thrones Flag of Gratuitous Violence.
 // This shows a notice if the show has trigger warnings.
 $warning    = lwtv_yikes_content_warning( get_the_ID() );
-$warn_image = lwtv_yikes_symbolicons( 'hand.svg', 'fa-hand-paper' );
+$warn_image = lwtv_symbolicons( 'hand.svg', 'fa-hand-paper' );
 
 if ( 'none' !== $warning['card'] ) {
 	?>
 	<section id="trigger-warning" class="trigger-warning-container">
 		<div class="alert alert-<?php echo esc_attr( $warning['card'] ); ?>" role="alert">
-			<span class="callout-<?php echo esc_attr( $warning['card'] ); ?>" role="img" aria-label="Warning Hand" title="Warning Hand"><?php echo lwtv_sanitized( $warn_image ); ?></span>
+			<span class="callout-<?php echo esc_attr( $warning['card'] ); ?>" role="img" aria-label="Warning Hand" title="Warning Hand"><?php echo $warn_image; // phpcs:ignore WordPress.Security.EscapeOutput ?></span>
 			<?php echo wp_kses_post( $warning['content'] ); ?>
 		</div>
 	</section>
@@ -127,11 +127,13 @@ if ( $related ) {
 		<h2>Articles</h2>
 		<div class="card-body">
 			<?php
-			echo LWTV_Related_Posts::related_posts( $slug ); // phpcs:ignore WordPress.Security.EscapeOutput
-			if ( count( LWTV_Related_Posts::count_related_posts( $slug ) ) > '5' ) {
-				$get_tags = term_exists( $slug, 'post_tag' );
-				if ( ! is_null( $get_tags ) && $get_tags >= 1 ) {
-					echo '<p><a href="' . esc_url( get_tag_link( $get_tags['term_id'] ) ) . '">Read More ...</a></p>';
+			if ( method_exists( 'LWTV_Related_Posts', 'related_posts' ) && method_exists( 'LWTV_Related_Posts', 'count_related_posts' ) ) {
+				echo LWTV_Related_Posts::related_posts( $slug ); // phpcs:ignore WordPress.Security.EscapeOutput
+				if ( count( LWTV_Related_Posts::count_related_posts( $slug ) ) > '5' ) {
+					$get_tags = term_exists( $slug, 'post_tag' );
+					if ( ! is_null( $get_tags ) && $get_tags >= 1 ) {
+						echo '<p><a href="' . esc_url( get_tag_link( $get_tags['term_id'] ) ) . '">Read More ...</a></p>';
+					}
 				}
 			}
 			?>
@@ -148,8 +150,8 @@ if ( $related ) {
 		<?php
 
 		// This just gets the numbers of all characters and how many are dead.
-		$havecharcount = LWTV_CPT_Characters::list_characters( $show_id, 'count' );
-		$havedeadcount = LWTV_CPT_Characters::list_characters( $show_id, 'dead' );
+		$havecharcount = lwtv_list_characters( $show_id, 'count' );
+		$havedeadcount = lwtv_list_characters( $show_id, 'dead' );
 
 		if ( empty( $havecharcount ) || '0' === $havecharcount ) {
 			echo '<p>There are no characters listed yet for this show.</p>';
@@ -164,7 +166,7 @@ if ( $related ) {
 			echo wp_kses_post( '<p>There ' . sprintf( _n( 'is <strong>%s</strong> queer character', 'are <strong>%s</strong> queer characters', $havecharcount ), $havecharcount ) . ' listed for this show; ' . $deadtext . '.</p>' );
 
 			// Get the list of REGULAR characters
-			$chars_regular = LWTV_CPT_Characters::get_chars_for_show( $show_id, $havecharcount, 'regular' );
+			$chars_regular = lwtv_get_chars_for_show( $show_id, $havecharcount, 'regular' );
 			if ( ! empty( $chars_regular ) ) {
 				?>
 				<h3 class="title-regulars"><?php echo esc_html( _n( 'Regular', 'Regulars', count( $chars_regular ) ) ); ?> (<?php echo (int) count( $chars_regular ); ?>)</h3>
@@ -176,7 +178,7 @@ if ( $related ) {
 				echo '</div></div>';
 			}
 			// Get the list of RECURRING characters
-			$chars_recurring = LWTV_CPT_Characters::get_chars_for_show( $show_id, $havecharcount, 'recurring' );
+			$chars_recurring = lwtv_get_chars_for_show( $show_id, $havecharcount, 'recurring' );
 			if ( ! empty( $chars_recurring ) ) {
 				?>
 				<h3 class="title-recurring">Recurring (<?php echo count( $chars_recurring ); ?>)</h3>
@@ -188,16 +190,16 @@ if ( $related ) {
 				echo '</div></div>';
 			}
 			// Get the list of GUEST characters
-			$chars_guest = LWTV_CPT_Characters::get_chars_for_show( $show_id, $havecharcount, 'guest' );
+			$chars_guest = lwtv_get_chars_for_show( $show_id, $havecharcount, 'guest' );
 			if ( ! empty( $chars_guest ) ) {
 				?>
 				<h3 class="title-guest"><?php echo esc_html( _n( 'Guest', 'Guests', count( $chars_guest ) ) ); ?> (<?php echo count( $chars_guest ); ?>)</h3>
 				<ul class="guest-character-list">
 				<?php
 				foreach ( $chars_guest as $character ) {
-					$grave = ( has_term( 'dead', 'lez_cliches', $character['id'] ) ) ? '<span role="img" aria-label="RIP Tombstone" title="RIP Tombstone" class="charlist-grave-sm">' . lwtv_yikes_symbolicons( 'rest-in-peace.svg', 'fa-times-circle' ) . '</span>' : '';
+					$grave = ( has_term( 'dead', 'lez_cliches', $character['id'] ) ) ? '<span role="img" aria-label="RIP Tombstone" title="RIP Tombstone" class="charlist-grave-sm">' . lwtv_symbolicons( 'rest-in-peace.svg', 'fa-times-circle' ) . '</span>' : '';
 					?>
-					<li><a href="<?php the_permalink( $character['id'] ); ?>" title="<?php echo esc_html( get_the_title( $character['id'] ) ); ?>" ><?php echo esc_html( get_the_title( $character['id'] ) ) . ' ' . lwtv_sanitized( $grave ); ?></a></li>
+					<li><a href="<?php the_permalink( $character['id'] ); ?>" title="<?php echo esc_html( get_the_title( $character['id'] ) ); ?>" ><?php echo esc_html( get_the_title( $character['id'] ) ) . ' ' . $grave; // phpcs:ignore WordPress.Security.EscapeOutput ?></a></li>
 					<?php
 				}
 				echo '</ul>';
