@@ -6,7 +6,7 @@
  * @package YIKES Starter
  */
 
-$thisyear = (int) ( isset( $wp_query->query['thisyear'] ) ) ? $wp_query->query['thisyear'] : date( 'Y' );
+$thisyear = (int) ( isset( $wp_query->query['thisyear'] ) && is_numeric( $wp_query->query['thisyear'] ) && 4 === strlen( $wp_query->query['thisyear'] ) ) ? $wp_query->query['thisyear'] : date( 'Y' );
 
 if ( ! is_numeric( $thisyear ) || $thisyear < FIRST_LWTV_YEAR ) {
 	wp_safe_redirect( '/this-year/', '301' );

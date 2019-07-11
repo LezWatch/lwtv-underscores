@@ -10,8 +10,9 @@
  * @package YIKES Starter
  */
 
-$statstype = ( isset( $wp_query->query['statistics'] ) ) ? $wp_query->query['statistics'] : 'main';
 $validstat = array( 'death', 'characters', 'shows', 'main', 'actors', 'nations', 'stations', 'formats' );
+$statstype = ( isset( $wp_query->query['statistics'] ) && in_array( $wp_query->query['statistics'], $validstat, true ) ) ? esc_attr( $wp_query->query['statistics'] ) : 'main';
+
 
 // Based on the type of stats, set our display.
 switch ( $statstype ) {
@@ -105,6 +106,8 @@ get_header(); ?>
 
 							// phpcs:ignore WordPress.Security.EscapeOutput
 							echo LWTV_Stats_SSR::statistics( $attributes );
+						} else {
+							echo '<p>After this maintenance, statistics will be right back!</p>';
 						}
 						?>
 					</div><!-- #content -->
