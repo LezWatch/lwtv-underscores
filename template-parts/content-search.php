@@ -7,16 +7,16 @@
 
 switch ( get_post_type( $post->ID ) ) {
 	case 'post_type_shows':
-		$searchicon = lwtv_yikes_symbolicons( 'tv-hd.svg', 'fa-tv' );
+		$searchicon = lwtv_symbolicons( 'tv-hd.svg', 'fa-tv' );
 		break;
 	case 'post_type_actors':
-		$searchicon = lwtv_yikes_symbolicons( 'award-academy.svg', 'fa-tv' );
+		$searchicon = lwtv_symbolicons( 'award-academy.svg', 'fa-tv' );
 		break;
 	case 'post_type_characters':
-		$searchicon = lwtv_yikes_symbolicons( 'female.svg', 'fa-female' );
+		$searchicon = lwtv_symbolicons( 'female.svg', 'fa-female' );
 		break;
 	default:
-		$searchicon = lwtv_yikes_symbolicons( 'newspaper.svg', 'fa-newspaper' );
+		$searchicon = lwtv_symbolicons( 'newspaper.svg', 'fa-newspaper' );
 }
 ?>
 
@@ -35,7 +35,8 @@ switch ( get_post_type( $post->ID ) ) {
 	<div class="card-body">
 		<h3 class="card-title">
 			<?php
-			echo lwtv_sanitized( $searchicon ) . '&nbsp;';
+			// phpcs:ignore WordPress.Security.EscapeOutput
+			echo $searchicon . '&nbsp;';
 			the_title();
 			?>
 		</h3>

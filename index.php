@@ -27,17 +27,17 @@ get_header(); ?>
 						<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 							<div class="entry-content">
 								<?php
-								if ( have_posts() ) :
+								if ( have_posts() ) {
 									echo '<div class="row site-loop main-posts-loop">';
-									while ( have_posts() ) :
+									while ( have_posts() ) {
 										the_post();
 										get_template_part( 'template-parts/content', 'posts' );
-									endwhile;
+									}
 									echo '</div>';
 									wp_bootstrap_pagination();
-								else :
+								} else {
 									get_template_part( 'template-parts/content', 'none' );
-								endif;
+								}
 								?>
 							</div>
 						</article><!-- #post-## -->

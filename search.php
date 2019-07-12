@@ -18,7 +18,7 @@ get_header(); ?>
 						printf( esc_attr__( 'Search Results for: %s', 'yikes_starter' ), '<span>' . get_search_query() . '</span>' );
 					?>
 					</h1></div>
-					<div class="col-2 icon plain"><span role="img" aria-label="Search Results" title="Search Results" class="taxonomy-svg 404"><?php echo lwtv_yikes_symbolicons( 'search.svg', 'fa-search' ); ?></span></div>
+					<div class="col-2 icon plain"><span role="img" aria-label="Search Results" title="Search Results" class="taxonomy-svg 404"><?php echo lwtv_symbolicons( 'search.svg', 'fa-search' ); ?></span></div>
 				</div>
 			</header><!-- .archive-header -->
 		</div><!-- .container -->
@@ -32,18 +32,18 @@ get_header(); ?>
 				<div id="primary" class="content-area">
 					<div id="content" class="site-content clearfix" role="main">
 						<?php
-						if ( have_posts() ) :
+						if ( have_posts() ) {
 							echo '<div class="row site-loop main-posts-loop four-across-loop">';
-							while ( have_posts() ) :
+							while ( have_posts() ) {
 								the_post();
 								get_template_part( 'template-parts/content', 'search' );
-							endwhile;
+							}
 							echo '</div>';
 							echo '<!-- Alt Bootstrap pagination is page_navi() -->';
 							yikes_starter_paging_nav();
-						else :
+						} else {
 							get_template_part( 'template-parts/content', 'none' );
-						endif;
+						}
 						?>
 					</div><!-- #content -->
 				</div><!-- #primary -->

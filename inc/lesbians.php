@@ -8,12 +8,36 @@
  * @package LezWatch.TV
  */
 
-// This Year code
-require 'thisyear.php';
+/** THE SECURITY SECTION **/
 
-// Statistics code
-require 'statistics.php';
+/**
+ * Filter THEME updates incase some idiot ever submits lwtv-underscores as a theme.
+ * Look, this should never happen, but the last thing we want is for this theme to
+ * get updated by some rando with a grudge.
+ */
+// @codingStandardsIgnoreStart
+add_filter( 'http_request_args', function ( $response, $url ) {
+	if ( 0 === strpos( $url, 'https://api.wordpress.org/themes/update-check' ) ) {
+		$themes = json_decode( $response['body']['themes'] );
+		unset( $themes->themes->{get_option( 'template' )} );
+		unset( $themes->themes->{get_option( 'stylesheet' )} );
+		$response['body']['themes'] = json_encode( $themes );
+	}
+	return $response;
+}, 10, 2 );
+// @codingStandardsIgnoreEnd
 
+/**
+ * Disable update notifications for your theme. This doesn't change auto
+ * updates, but it does hide things.
+ */
+function lwtv_disable_theme_update_notification( $value ) {
+	if ( isset( $value ) && is_object( $value ) ) {
+		unset( $value->response['lwtv-underscores'] );
+	}
+	return $value;
+}
+add_filter( 'site_transient_update_themes', 'lwtv_disable_theme_update_notification' );
 
 /** THE GENERAL SECTION **/
 
@@ -64,41 +88,6 @@ function lwtv_auto_alt_fix( $attributes, $attachment ) {
 }
 add_filter( 'wp_get_attachment_image_attributes', 'lwtv_auto_alt_fix', 10, 2 );
 
-/**
- * Symbolicons Output
- *
- * Echos the default outputtable symbolicon, based on the SVG and FA icon passed to it.
- *
- * @access public
- * @param string $svg (default: 'square.svg')
- * @param string $fontawesome (default: 'fa-square')
- * @return icon
- */
-function lwtv_yikes_symbolicons( $svg = 'square.svg', $fontawesome = 'fa-square' ) {
-
-	$return = '<i class="fas ' . $fontawesome . ' fa-fw" aria-hidden="true"></i>';
-	$square = get_template_directory_uri( '/images/square.svg' );
-
-	if ( defined( 'LP_SYMBOLICONS_PATH' ) && file_exists( LP_SYMBOLICONS_PATH . $svg ) ) {
-		$icon = LP_SYMBOLICONS_PATH . $svg;
-	} elseif ( ! wp_style_is( 'fontawesome', 'enqueued' ) ) {
-		$icon = $square;
-	}
-
-	if ( isset( $icon ) ) {
-		// @codingStandardsIgnoreStart
-		$return = '<span class="symbolicon" role="img">' . file_get_contents( $icon ) . '</span>';
-		// @codingStandardsIgnoreEnd
-	}
-
-	// Override for AMP - NO ICONS
-	if ( is_amp_endpoint() ) {
-		$return = '';
-	}
-
-	return $return;
-}
-
 /** THE JETPACK SECTION **/
 
 /**
@@ -113,7 +102,7 @@ function lwtv_yikes_jetpack_setup() {
 add_action( 'after_setup_theme', 'lwtv_yikes_jetpack_setup' );
 
 /*
- * Remove Jetpack because it's stupid.
+ * Remove Jetpack share because it's stupid.
  *
  * This stops Jetpack from adding sharing after every post
  * on a home page or archive if you use a custom loop.
@@ -277,7 +266,7 @@ function lwtv_yikes_tax_archive_title( $location, $posttype, $taxonomy ) {
 			break;
 	}
 
-	$icon = lwtv_yikes_symbolicons( $svg, $fa );
+	$icon = lwtv_symbolicons( $svg, $fa );
 
 	switch ( $posttype ) {
 		case 'post_type_characters':
@@ -326,7 +315,7 @@ function lwtv_yikes_tax_archive_title( $location, $posttype, $taxonomy ) {
 }
 
 
-/** SEARCH **/
+/** THE SEARCH SECTION **/
 
 /**
  * Filter the except length to 25 words.
@@ -361,7 +350,7 @@ function lwtv_yikes_show_star( $show_id ) {
 			$color_term = get_the_terms( $show_id, 'lez_stars' );
 			$color      = $color_term[0]->slug;
 		}
-		$star = ' <span role="img" aria-label="' . ucfirst( $color ) . ' Star Show" data-toggle="tooltip" title="' . ucfirst( $color ) . ' Star Show" class="show-star ' . $color . '">' . lwtv_yikes_symbolicons( 'star.svg', 'fa-star' ) . '</span>';
+		$star = ' <span role="img" aria-label="' . ucfirst( $color ) . ' Star Show" data-toggle="tooltip" title="' . ucfirst( $color ) . ' Star Show" class="show-star ' . $color . '">' . lwtv_symbolicons( 'star.svg', 'fa-star' ) . '</span>';
 		return $star;
 	} else {
 		return;
@@ -414,22 +403,6 @@ function lwtv_yikes_content_warning( $show_id ) {
 }
 
 /**
- * Get Characters For Show
- *
- * Get all the characters for a show, based on role type.
- *
- * @access public
- * @param mixed $show_id: Extracted from page the function is called on
- * @param mixed $role: regular (default), recurring, guest
- * @return array of characters
- */
-function lwtv_yikes_get_characters_for_show( $show_id, $havecharcount, $role = 'regular' ) {
-	$characters = LWTV_CPT_Characters::get_chars_for_show( $show_id, $havecharcount, $role );
-	return $characters;
-}
-
-
-/**
  * Character Data
  *
  * Called on character pages to generate certain data bits
@@ -456,7 +429,7 @@ function lwtv_yikes_chardata( $the_id, $data ) {
 			if ( ! empty( $term ) && 'dead' === $term->slug ) {
 				return;
 			} elseif ( has_term( 'dead', 'lez_cliches', $the_id ) ) {
-				$output = '<span role="img" aria-label="Grim Reaper" title="Grim Reaper" class="charlist-grave">' . lwtv_yikes_symbolicons( 'grim-reaper.svg', 'fa-times-circle' ) . '</span>';
+				$output = '<span role="img" aria-label="Grim Reaper" title="Grim Reaper" class="charlist-grave">' . lwtv_symbolicons( 'grim-reaper.svg', 'fa-times-circle' ) . '</span>';
 			}
 			break;
 		case 'shows':
@@ -469,7 +442,7 @@ function lwtv_yikes_chardata( $the_id, $data ) {
 				$num_shows = count( $all_shows );
 				$showsmore = ( $num_shows > 1 ) ? ' (plus ' . ( $num_shows - 1 ) . ' more)' : '';
 				$show_post = get_post( $shows_value['show'] );
-				$output   .= '<div class="card-meta-item shows">' . lwtv_yikes_symbolicons( 'tv-hd.svg', 'fa-tv' ) . '<em>';
+				$output   .= '<div class="card-meta-item shows">' . lwtv_symbolicons( 'tv-hd.svg', 'fa-tv' ) . '<em>';
 				if ( get_post_status( $shows_value['show'] ) !== 'publish' ) {
 					$output .= '<span class="disabled-show-link">' . $show_post->post_title . '</span>';
 				} else {
@@ -485,7 +458,7 @@ function lwtv_yikes_chardata( $the_id, $data ) {
 				$num_actors = count( $actors );
 				$actorsmore = ( $num_actors > 1 ) ? ' (plus ' . ( $num_actors - 1 ) . ' more)' : '';
 				$actor_post = get_post( $actor_value );
-				$output    .= '<div class="card-meta-item actors">' . lwtv_yikes_symbolicons( 'user.svg', 'fa-user' );
+				$output    .= '<div class="card-meta-item actors">' . lwtv_symbolicons( 'user.svg', 'fa-user' );
 				if ( get_post_status( $actor_value ) !== 'publish' ) {
 					$output .= '<span class="disabled-show-link">' . $actor_post->post_title . '</span>';
 				} else {
@@ -533,7 +506,7 @@ function lwtv_yikes_chardata( $the_id, $data ) {
 				foreach ( $lez_cliches as $the_cliche ) {
 					$termicon = get_term_meta( $the_cliche->term_id, 'lez_termsmeta_icon', true );
 					$tropicon = $termicon ? $termicon . '.svg' : 'square.svg';
-					$icon     = lwtv_yikes_symbolicons( $tropicon, 'fa-square' );
+					$icon     = lwtv_symbolicons( $tropicon, 'fa-square' );
 					$cliches .= '<a href="' . get_term_link( $the_cliche->slug, 'lez_cliches' ) . '" data-toggle="tooltip" data-placement="bottom" rel="tag" title="' . $the_cliche->name . '"><span role="img" aria-label="' . $the_cliche->name . '" class="character-cliche ' . $the_cliche->slug . '">' . $icon . '</span></a>&nbsp;';
 				}
 			}
@@ -696,7 +669,12 @@ function lwtv_yikes_actordata( $the_id, $data ) {
  * @return void
  */
 function lwtv_yikes_is_queer( $the_id ) {
-	$is_queer = ( 'yes' === LWTV_Loops::is_actor_queer( $the_id ) ) ? true : false;
+	if ( ! method_exists( 'LWTV_Loops', 'is_actor_queer' ) ) {
+		$is_queer = false;
+	} else {
+		$is_queer = ( 'yes' === LWTV_Loops::is_actor_queer( $the_id ) ) ? true : false;
+	}
+
 	return $is_queer;
 }
 
@@ -751,15 +729,51 @@ function lwtv_gdpr_footer() {
 }
 //add_action( 'wp_footer', 'lwtv_gdpr_footer', 5 );
 
-/** Sanitzation Section **/
+/** LWTV Plugin **/
+// This section includes all the code we call from the LWTV plugin, with sanity checks.
 
 /**
- * This function does NOTHING, and if someone submitted it to the .org repo,
- * I would slap them with a fish. The problem is there isn't a good way to
- * sanitize an SVG, so it's this or having a million WPCS comments.
- * @param  mixed $input HTML content with an SVG
- * @return mixed        Content with an SVG
+ * Check if Symbolicons exists and then call it
+ * @param  string $svg the name of the SVG symbolicon we want to run
+ * @param  string $fa  the name of the fallback Font Awesome icon
+ * @return string      Whatever we end up with
  */
-function lwtv_sanitized( $input ) {
-	return $input;
+function lwtv_symbolicons( $svg, $fa ) {
+	if ( method_exists( 'LWTV_Functions', 'symbolicons' ) ) {
+		$return = LWTV_Functions::symbolicons( $svg, $fa );
+	} else {
+		$return = '<span class="symbolicon" role="img"><svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="spinner" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="svg-inline--fa fa-spinner fa-w-16 fa-3x"><path fill="currentColor" d="M304 48c0 26.51-21.49 48-48 48s-48-21.49-48-48 21.49-48 48-48 48 21.49 48 48zm-48 368c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.49-48-48-48zm208-208c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.49-48-48-48zM96 256c0-26.51-21.49-48-48-48S0 229.49 0 256s21.49 48 48 48 48-21.49 48-48zm12.922 99.078c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48c0-26.509-21.491-48-48-48zm294.156 0c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48c0-26.509-21.49-48-48-48zM108.922 60.922c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.491-48-48-48z" class=""></path></svg></span>';
+	}
+	return $return;
+}
+
+/**
+ * List all characters
+ * @param  int     $post_id Post ID we're trying to process
+ * @param  string  $output  format of output
+ * @return mixed   number or array listing the characters
+ */
+function lwtv_list_characters( $post_id, $output ) {
+	if ( method_exists( 'LWTV_CPT_Characters', 'list_characters' ) ) {
+		$return = LWTV_CPT_Characters::list_characters( $post_id, $output );
+	} else {
+		$output = '';
+	}
+	return $return;
+}
+
+/**
+ * Data on characters
+ * @param  int    $post_id post ID
+ * @param  int    $count   number of characters
+ * @param  string $roll    role of characters
+ * @return array           List of all the characters
+ */
+function lwtv_get_chars_for_show( $post_id, $count, $roll ) {
+	if ( method_exists( 'LWTV_CPT_Characters', 'get_chars_for_show' ) ) {
+		$return = LWTV_CPT_Characters::get_chars_for_show( $post_id, $count, $roll );
+	} else {
+		$return = '';
+	}
+	return $return;
 }

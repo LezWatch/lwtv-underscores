@@ -27,10 +27,12 @@
 		<div class="entry-content">
 			<?php
 				the_content( esc_attr__( 'Continue reading <span class="meta-nav">&rarr;</span>', 'yikes_starter' ) );
-				wp_link_pages( array(
-					'before' => '<div class="page-links">' . esc_attr__( 'Pages:', 'yikes_starter' ),
-					'after'  => '</div>',
-				) );
+				wp_link_pages(
+					array(
+						'before' => '<div class="page-links">' . esc_attr__( 'Pages:', 'yikes_starter' ),
+						'after'  => '</div>',
+					)
+				);
 			?>
 		</div><!-- .entry-content -->
 	<?php } ?>
@@ -67,7 +69,7 @@
 			<?php
 		}
 
-		edit_post_link( esc_attr__( 'Edit', 'yikes_starter' ), '<div class="edit-link">' . lwtv_yikes_symbolicons( 'pencil.svg', 'fa-pencil-alt' ), '</div>' );
+		edit_post_link( esc_attr__( 'Edit', 'yikes_starter' ), '<div class="edit-link">' . lwtv_symbolicons( 'pencil.svg', 'fa-pencil-alt' ), '</div>' );
 		?>
 	</footer><!-- .entry-meta -->
 </article><!-- #post-## -->

@@ -35,7 +35,11 @@ $the_actors = array();
 if ( '' !== $all_actors ) {
 	foreach ( $all_actors as $each_actor ) {
 		if ( get_post_status( $each_actor ) === 'private' ) {
-			array_push( $the_actors, '<a href="/actor/unknown/">Unknown</a>' );
+			if ( current_user_can( 'author' ) ) {
+				array_push( $the_actors, '<a href="' . get_permalink( $each_actor ) . '">' . get_the_title( $each_actor ) . ' - PRIVATE/UNLISTED</a>' );
+			} else {
+				array_push( $the_actors, '<a href="/actor/unknown/">Unknown</a>' );
+			}
 		} elseif ( get_post_status( $each_actor ) !== 'publish' ) {
 			array_push( $the_actors, '<span class="disabled-show-link">' . get_the_title( $each_actor ) . '</span>' );
 		} else {
@@ -114,7 +118,7 @@ $thumb_array       = array(
 			<?php echo wp_kses_post( $gender_sexuality ); ?>
 		</div>
 		<div class="card-meta-item">
-			<?php echo lwtv_sanitized( $cliches ); ?>
+			<?php echo $cliches; // phpcs:ignore WordPress.Security.EscapeOutput ?>
 		</div>
 		<div class="card-meta-item">
 			<?php
@@ -147,6 +151,6 @@ $thumb_array       = array(
 	</div>
 	<div class="characters-description">
 		<hr />
-		<?php echo the_content(); ?>
+		<?php echo wp_kses_post( the_content() ); ?>
 	</div>
 </div>

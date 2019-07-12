@@ -26,11 +26,13 @@ if ( post_password_required() ) {
 		?>
 		<h2 class="comments-title">
 			<?php
-				printf( // phpcs:ignore WordPress.Security.EscapeOutput
+				// phpcs:disable
+				printf(
 					esc_html( _nx( 'One thought on &ldquo;%2$s&rdquo;', '%1$s thoughts on &ldquo;%2$s&rdquo;', get_comments_number(), 'comments title', 'yikes_starter' ) ),
 					number_format_i18n( get_comments_number() ),
 					'<span>' . get_the_title() . '</span>'
 				);
+				// phpcs:enable
 			?>
 		</h2>
 
@@ -48,13 +50,15 @@ if ( post_password_required() ) {
 
 		<ul class="comment-list">
 			<?php
-				wp_list_comments( array(
-					'style'       => 'ul',
-					'short_ping'  => true,
-					'walker'      => new LWTV_Walker_Comment(),
-					'avatar_size' => 118,
-					'reply_text'  => 'reply',
-				) );
+				wp_list_comments(
+					array(
+						'style'       => 'ul',
+						'short_ping'  => true,
+						'walker'      => new LWTV_Walker_Comment(),
+						'avatar_size' => 118,
+						'reply_text'  => 'reply',
+					)
+				);
 			?>
 		</ul><!-- .comment-list -->
 

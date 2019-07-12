@@ -1,19 +1,19 @@
 <?php
 /**
  * Template Name: This Year
- * Description: Used to show the yearly data of lezbians and what not.
+ * Description: Used to show the yearly data of lesbians and what not.
  *
- * @package YIKES Starter
+ * @package LezWatch.TV
  */
 
-$thisyear = (int) ( isset( $wp_query->query['thisyear'] ) ) ? $wp_query->query['thisyear'] : date( 'Y' );
+$thisyear = (int) ( isset( $wp_query->query['thisyear'] ) && is_numeric( $wp_query->query['thisyear'] ) && 4 === strlen( $wp_query->query['thisyear'] ) ) ? $wp_query->query['thisyear'] : date( 'Y' );
 
 if ( ! is_numeric( $thisyear ) || $thisyear < FIRST_LWTV_YEAR ) {
 	wp_safe_redirect( '/this-year/', '301' );
 	exit;
 }
 
-$iconpath = '<span role="img" aria-label="post_type_characters" title="Characters" class="taxonomy-svg characters">' . lwtv_yikes_symbolicons( 'calendar-15.svg', 'fa-calendar-alt' ) . '</span>';
+$iconpath = '<span role="img" aria-label="post_type_characters" title="Calendar" class="taxonomy-svg calendar">' . lwtv_symbolicons( 'calendar-15.svg', 'fa-calendar-alt' ) . '</span>';
 
 get_header();
 ?>
@@ -53,7 +53,6 @@ get_header();
 			<div class="col-sm-12">
 				<div id="primary" class="content-area">
 					<div id="content" class="site-content clearfix" role="main">
-
 						<section id="toc" class="toc-container card-body">
 							<nav class="breadcrumb">
 								<h4 class="toc-title">Go to:</h4>
@@ -63,23 +62,11 @@ get_header();
 								<a class="breadcrumb-item smoothscroll" href="#showsend">Shows That Ended</a>
 							</nav>
 						</section>
-
-						<div class="container thisyear-container">
-							<div class="row">
-								<div class="col">
-									<?php lwtv_yikes_this_year_dead( $thisyear ); ?>
-								</div>
-							</div>
-							<div class="row">
-								<div class="col">
-									<h2>This Years Shows</h2>
-									<?php lwtv_yikes_this_year_shows( $thisyear ); ?>
-								</div>
-							</div>
-						</div>
-
 						<?php
-							lwtv_yikes_this_year_navigation( $thisyear );
+						if ( method_exists( 'LWTV_This_Year', 'display' ) ) {
+							// phpcs:ignore WordPress.Security.EscapeOutput
+							echo LWTV_This_Year::display( $thisyear );
+						}
 						?>
 					</div><!-- #content -->
 				</div><!-- #primary -->

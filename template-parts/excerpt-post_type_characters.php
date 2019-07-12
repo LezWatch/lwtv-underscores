@@ -36,7 +36,7 @@ unset( $shows, $actors, $gender, $sexuality, $cliches, $grave );
 
 // Show a gravestone for recurring characters
 if ( ( 'recurring' === $char_role && 'post_type_shows' === get_post_type() ) || 'post_type_actors' === get_post_type() ) {
-	$grave = ( has_term( 'dead', 'lez_cliches', $the_id ) ) ? '<span role="img" aria-label="RIP Tombstone" title="RIP Tombstone" class="charlist-grave-sm">' . lwtv_yikes_symbolicons( 'rest-in-peace.svg', 'fa-ban' ) . '</span>' : '';
+	$grave = ( has_term( 'dead', 'lez_cliches', $the_id ) ) ? '<span role="img" aria-label="RIP Tombstone" title="RIP Tombstone" class="charlist-grave-sm">' . lwtv_symbolicons( 'rest-in-peace.svg', 'fa-ban' ) . '</span>' : '';
 }
 ?>
 
@@ -52,12 +52,13 @@ if ( ( 'recurring' === $char_role && 'post_type_shows' === get_post_type() ) || 
 		<h4 class="card-title">
 			<a href="<?php the_permalink( $the_id ); ?>" title="<?php the_title_attribute( $the_id ); ?>" >
 			<?php
-			echo get_the_title( $the_id );
+			echo esc_html( get_the_title( $the_id ) );
 			if ( $archive ) {
 				echo lwtv_yikes_chardata( $the_id, 'dead' );
 			}
 			if ( isset( $grave ) ) {
-				echo ' ' . lwtv_sanitized( $grave );
+				// phpcs:ignore WordPress.Security.EscapeOutput
+				echo ' ' . $grave;
 			}
 			?>
 			</a>
@@ -92,7 +93,8 @@ if ( ( 'recurring' === $char_role && 'post_type_shows' === get_post_type() ) || 
 
 			// List of Cliches
 			if ( isset( $cliches ) ) {
-				echo lwtv_sanitized( '<div class="card-meta-item cliches">Clichés: ' . $cliches . '</div>' );
+				// phpcs:ignore WordPress.Security.EscapeOutput
+				echo '<div class="card-meta-item cliches">Clichés: ' . $cliches . '</div>';
 			}
 			?>
 		</div>

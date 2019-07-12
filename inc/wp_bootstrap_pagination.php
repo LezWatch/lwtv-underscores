@@ -58,11 +58,11 @@ function wp_bootstrap_pagination( $args = array() ) {
 
 	$firstpage = esc_attr( get_pagenum_link( 1 ) );
 	if ( $firstpage && ( 1 !== $page ) ) {
-		$echo .= '<li class="page-item first mr-auto"><a href="' . $firstpage . '" class="page-link">' . lwtv_yikes_symbolicons( 'caret-left-circle.svg', 'fa-chevron-circle-left' ) . ' ' . __( 'First', 'text-domain' ) . '</a></li>';
+		$echo .= '<li class="page-item first mr-auto"><a href="' . $firstpage . '" class="page-link">' . lwtv_symbolicons( 'caret-left-circle.svg', 'fa-chevron-circle-left' ) . ' ' . __( 'First', 'text-domain' ) . '</a></li>';
 	}
 
 	if ( $previous && ( 1 !== $page ) ) {
-		$echo .= '<li class="page-item previous"><a href="' . $previous . '" title="' . __( 'previous', 'text-domain' ) . '" class="page-link">' . lwtv_yikes_symbolicons( 'caret-left-circle.svg', 'fa-chevron-circle-left' ) . ' ' . $args['previous_string'] . '</a></li>';
+		$echo .= '<li class="page-item previous"><a href="' . $previous . '" title="' . __( 'previous', 'text-domain' ) . '" class="page-link">' . lwtv_symbolicons( 'caret-left-circle.svg', 'fa-chevron-circle-left' ) . ' ' . $args['previous_string'] . '</a></li>';
 	}
 
 	if ( ! empty( $min ) && ! empty( $max ) ) {
@@ -78,15 +78,16 @@ function wp_bootstrap_pagination( $args = array() ) {
 	$next = intval( $page ) + 1;
 	$next = esc_attr( get_pagenum_link( $next ) );
 	if ( $next && ( $count !== $page ) ) {
-		$echo .= '<li class="page-item next"><a href="' . $next . '" title="' . __( 'next', 'text-domain' ) . '" class="page-link">' . $args['next_string'] . ' ' . lwtv_yikes_symbolicons( 'caret-right-circle.svg', 'fa-chevron-circle-right' ) . '</a></li>';
+		$echo .= '<li class="page-item next"><a href="' . $next . '" title="' . __( 'next', 'text-domain' ) . '" class="page-link">' . $args['next_string'] . ' ' . lwtv_symbolicons( 'caret-right-circle.svg', 'fa-chevron-circle-right' ) . '</a></li>';
 	}
 
 	$lastpage = esc_attr( get_pagenum_link( $count ) );
 	if ( $lastpage ) {
-		$echo .= '<li class="page-item last ml-auto"><a href="' . $lastpage . '" class="page-link">' . __( 'Last', 'text-domain' ) . ' ' . lwtv_yikes_symbolicons( 'caret-right-circle.svg', 'fa-chevron-circle-right' ) . '</a></li>';
+		$echo .= '<li class="page-item last ml-auto"><a href="' . $lastpage . '" class="page-link">' . __( 'Last', 'text-domain' ) . ' ' . lwtv_symbolicons( 'caret-right-circle.svg', 'fa-chevron-circle-right' ) . '</a></li>';
 	}
 
 	if ( isset( $echo ) ) {
-		echo lwtv_sanitized( $args['before_output'] . $echo . $args['after_output'] );
+		// phpcs:ignore WordPress.Security.EscapeOutput
+		echo $args['before_output'] . $echo . $args['after_output'];
 	}
 }

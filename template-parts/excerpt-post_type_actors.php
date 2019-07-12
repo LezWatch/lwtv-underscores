@@ -40,12 +40,13 @@ unset( $shows, $actors, $gender, $sexuality, $cliches, $grave );
 		<h4 class="card-title">
 			<a href="<?php the_permalink( $the_id ); ?>" title="<?php the_title_attribute( $the_id ); ?>" >
 				<?php
-				echo get_the_title( $the_id );
+				echo esc_html( get_the_title( $the_id ) );
 				if ( $archive ) {
 					echo lwtv_yikes_chardata( $the_id, 'dead' );
 				}
 				if ( isset( $grave ) ) {
-					echo ' ' . lwtv_sanitized( $grave );
+					// phpcs:ignore WordPress.Security.EscapeOutput
+					echo ' ' . $grave;
 				}
 				?>
 			</a>

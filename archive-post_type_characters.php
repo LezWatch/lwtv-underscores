@@ -7,7 +7,7 @@
  * @package LezWatch.TV
  */
 
-$icon        = lwtv_yikes_symbolicons( 'contact-card.svg', 'fa-users' );
+$icon        = lwtv_symbolicons( 'contact-card.svg', 'fa-users' );
 $count_posts = facetwp_display( 'counts' );
 $char_title  = '<span role="img" aria-label="post_type_characters" title="Characters" class="taxonomy-svg characters">' . $icon . '</span>';
 $seo_descs   = get_option( 'wpseo_titles' );
@@ -23,7 +23,7 @@ get_header(); ?>
 					<div class="col-10">
 						<?php the_archive_title( '<h1 class="facetwp-page-title entry-title"><span class="facetwp-title">', '</span> (' . $count_posts . '<span class="facetwp-count"></span>)</h1>' ); ?>
 					</div>
-					<div class="col-2 icon plain"><?php echo lwtv_sanitized( $char_title ); // phpcs:ignore WordPress.Security.EscapeOutput ?></div>
+					<div class="col-2 icon plain"><?php echo $char_title; // phpcs:ignore WordPress.Security.EscapeOutput ?></div>
 				</div>
 				<div class="row">
 					<div class="col">
@@ -52,15 +52,15 @@ get_header(); ?>
 							<div class="entry-content facetwp-template">
 								<div class="row site-loop character-archive-loop">
 								<?php
-								if ( have_posts() ) :
+								if ( have_posts() ) {
 									/* Start the Loop */
-									while ( have_posts() ) :
+									while ( have_posts() ) {
 										the_post();
 										get_template_part( 'template-parts/excerpt', 'post_type_characters' );
-									endwhile;
-								else :
+									}
+								} else {
 									get_template_part( 'template-parts/content', 'none' );
-								endif;
+								}
 								?>
 								</div><!-- .row .site-loop -->
 								<?php echo facetwp_display( 'pager' ); ?>

@@ -31,10 +31,10 @@ if ( is_author() ) {
 	}
 
 	// Add Twitter if it's there.
-	$archive_details .= ( ! empty( $user_twitter ) ) ? '<div class="author-twitter">' . lwtv_yikes_symbolicons( 'twitter.svg', 'fa-twitter' ) . '&nbsp;<a href="https://twitter.com/' . $user_twitter . '" target="_blank" rel="nofollow">@' . $user_twitter . '</a> </div>' : '';
+	$archive_details .= ( ! empty( $user_twitter ) ) ? '<div class="author-twitter">' . lwtv_symbolicons( 'twitter.svg', 'fa-twitter' ) . '&nbsp;<a href="https://twitter.com/' . $user_twitter . '" target="_blank" rel="nofollow">@' . $user_twitter . '</a> </div>' : '';
 
 	// Add favourite shows if they're there.
-	$archive_details .= ( isset( $favourites ) && ! empty( $favourites ) ) ? '<div class="author-favourites">' . lwtv_yikes_symbolicons( 'tv-hd.svg', 'fa-tv' ) . '&nbsp;Favorite ' . $fav_title . ': ' . $favourites . '</div>' : '';
+	$archive_details .= ( isset( $favourites ) && ! empty( $favourites ) ) ? '<div class="author-favourites">' . lwtv_symbolicons( 'tv-hd.svg', 'fa-tv' ) . '&nbsp;Favorite ' . $fav_title . ': ' . $favourites . '</div>' : '';
 }
 
 $icon            .= '</div>';
@@ -50,7 +50,7 @@ get_header(); ?>
 					<div class="col-10">
 						<?php the_archive_title( '<h1 class="entry-title">', '</h1>' ); ?>
 					</div>
-					<div class="col-2 icon plain"><?php echo lwtv_sanitized( $icon ); // phpcs:ignore WordPress.Security.EscapeOutput ?></div>
+					<div class="col-2 icon plain"><?php echo $icon; // phpcs:ignore WordPress.Security.EscapeOutput ?></div>
 				</div>
 				<div class="row">
 					<div class="col">
@@ -70,7 +70,7 @@ get_header(); ?>
 					<div id="content" class="site-content clearfix" role="main">
 						<?php
 						if ( have_posts() ) :
-						?>
+							?>
 						<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 							<div class="entry-content">
 								<div class="row site-loop main-posts-loop">

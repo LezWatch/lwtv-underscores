@@ -7,7 +7,7 @@ global $post;
 $actor_id = $post->ID;
 
 // Do the math to make sure we're up to date.
-if ( class_exists( 'LWTV_Actors_Calculate' ) ) {
+if ( method_exists( 'LWTV_Actors_Calculate', 'do_the_math' ) ) {
 	LWTV_Actors_Calculate::do_the_math( $actor_id );
 }
 ?>
@@ -20,7 +20,7 @@ if ( class_exists( 'LWTV_Actors_Calculate' ) ) {
 
 <section id="affiliates" class="widget widget_text">
 	<?php
-	if ( class_exists( 'LWTV_Affilliates' ) ) {
+	if ( method_exists( 'LWTV_Affilliates', 'actors' ) ) {
 		echo LWTV_Affilliates::actors( $actor_id, 'widget' ); // phpcs:ignore WordPress.Security.EscapeOutput
 	}
 	?>

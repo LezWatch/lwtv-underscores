@@ -43,7 +43,8 @@ class LWTV_Show extends WP_Widget {
 		$title = apply_filters( 'widget_title', $title, $instance, $this->id_base );
 
 		/** Output widget HTML BEGIN **/
-		echo lwtv_sanitized( $before_widget );
+		// phpcs:ignore WordPress.Security.EscapeOutput
+		echo $before_widget;
 
 		$queery = new WP_Query( $show_args );
 		while ( $queery->have_posts() ) {
@@ -53,21 +54,26 @@ class LWTV_Show extends WP_Widget {
 			$thumb_title       = ( empty( $thumb_attribution ) ) ? get_the_title() : get_the_title() . ' &copy; ' . $thumb_attribution;
 
 			echo '<div class="card">';
-			echo '<div class="card-header"><h4>Recently Added Show <span class="float-right">' . lwtv_yikes_symbolicons( 'tv-hd.svg', 'fa-tv' ) . '</span></h4></div>';
+			echo '<div class="card-header"><h4>Recently Added Show <span class="float-right">' . lwtv_symbolicons( 'tv-hd.svg', 'fa-tv' ) . '</span></h4></div>';
 
 			// Featured Image
 			echo '<a href="' . esc_url( get_the_permalink() ) . '">';
-			echo the_post_thumbnail( 'postloop-img', array(
-				'class' => 'card-img-top',
-				'alt'   => $thumb_title,
-				'title' => $thumb_title,
-			) );
+			// phpcs:ignore WordPress.Security.EscapeOutput
+			echo the_post_thumbnail(
+				'postloop-img',
+				array(
+					'class' => 'card-img-top',
+					'alt'   => $thumb_title,
+					'title' => $thumb_title,
+				)
+			);
 			echo '</a>';
 
 			// Body
 			echo '<div class="card-body">';
 
 			// Title
+			// phpcs:ignore WordPress.Security.EscapeOutput
 			echo '<h4 class="card-title">' . get_the_title() . '</h4>';
 
 			// Content
@@ -81,7 +87,8 @@ class LWTV_Show extends WP_Widget {
 				foreach ( $stations as $station ) {
 					$station_string .= $station->name . ', ';
 				}
-				echo lwtv_sanitized( trim( $station_string, ', ' ) );
+				// phpcs:ignore WordPress.Security.EscapeOutput
+				echo trim( $station_string, ', ' );
 				echo '</div>';
 			}
 
@@ -109,7 +116,8 @@ class LWTV_Show extends WP_Widget {
 
 			wp_reset_postdata();
 
-			echo lwtv_sanitized( $after_widget );
+			// phpcs:ignore WordPress.Security.EscapeOutput
+			echo $after_widget;
 			/** Output widget HTML END **/
 		}
 

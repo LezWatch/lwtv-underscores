@@ -10,7 +10,7 @@
  */
 ?>
 <!doctype html>
-<html amp <?php echo AMP_HTML_Utils::build_attributes_string( $this->get( 'html_tag_attributes' ) ); // phpcs:ignore WordPress.Security.EscapeOutput. ?>>
+<html amp <?php echo AMP_HTML_Utils::build_attributes_string( $this->get( 'html_tag_attributes' ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no">
@@ -34,7 +34,7 @@
 	</header>
 
 	<div class="amp-wp-article-content">
-		<?php echo lwtv_sanitized( $this->get( 'post_amp_content' ) ); ?>
+		<?php echo $this->get( 'post_amp_content' ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
 	</div>
 
 </article>

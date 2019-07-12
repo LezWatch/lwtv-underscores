@@ -7,11 +7,11 @@
  * @package LezWatch.TV
  */
 
-$icon         = lwtv_yikes_symbolicons( 'tv-hd.svg', 'fa-tv' );
+$icon         = lwtv_symbolicons( 'tv-hd.svg', 'fa-tv' );
 $count_posts  = facetwp_display( 'counts' );
-$title        = '<span role="img" aria-label="post_type_shows" title="Shows" class="taxonomy-svg shows">' . $icon . '</span>';
-$descriptions = get_option( 'wpseo_titles' );
-$description  = $descriptions['metadesc-ptarchive-post_type_shows'];
+$show_title   = '<span role="img" aria-label="post_type_shows" title="Shows" class="taxonomy-svg shows">' . $icon . '</span>';
+$seo_titles   = get_option( 'wpseo_titles' );
+$description  = $seo_titles['metadesc-ptarchive-post_type_shows'];
 
 get_header(); ?>
 
@@ -23,7 +23,7 @@ get_header(); ?>
 					<div class="col-10">
 						<?php the_archive_title( '<h1 class="facetwp-page-title entry-title"><span class="facetwp-title">', '</span>(' . $count_posts . '<span class="facetwp-count"></span>)</h1>' ); ?>
 					</div>
-					<div class="col-2 icon plain"><?php echo lwtv_sanitized( $title ); // phpcs:ignore WordPress.Security.EscapeOutput ?></div>
+					<div class="col-2 icon plain"><?php echo $show_title; // phpcs:ignore WordPress.Security.EscapeOutput ?></div>
 				</div>
 				<div class="row">
 					<div class="col">
@@ -51,15 +51,15 @@ get_header(); ?>
 							<div class="entry-content facetwp-template">
 								<div class="row site-loop show-archive-loop">
 									<?php
-									if ( have_posts() ) :
+									if ( have_posts() ) {
 										/* Start the Loop */
-										while ( have_posts() ) :
+										while ( have_posts() ) {
 											the_post();
 											get_template_part( 'template-parts/excerpt', 'post_type_shows' );
-										endwhile;
-									else :
+										}
+									} else {
 										get_template_part( 'template-parts/content', 'none' );
-									endif;
+									}
 									?>
 								</div><!-- .site-loop -->
 								<?php echo facetwp_display( 'pager' ); ?>

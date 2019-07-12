@@ -10,25 +10,11 @@
             "email": "contact@lezwatchtv.com"
         }
     ],
-    "repositories": [
-        {
-          "type": "package",
-          "package": {
-            "name": "fortawesome/font-awesome-free",
-            "version": "5.8.2",
-            "source": {
-              "url": "https://github.com/FortAwesome/Font-Awesome",
-              "type": "git",
-              "reference": "master"
-            }
-          }
-        }
-    ],
     "require": {
-        "php": ">=5.6.0",
-        "slowprog/composer-copy-file": "^0.2.1",
-        "twbs/bootstrap": "^4.1",
-        "fortawesome/font-awesome-free": "*"
+        "php": ">=7.3.0",
+        "slowprog/composer-copy-file": "^0.3",
+        "twbs/bootstrap": "^4.3",
+        "fortawesome/font-awesome": "^5.9"
     },
     "scripts": {
         "post-install-cmd": [
@@ -42,8 +28,8 @@
         "copy-file": {
             "vendor/twbs/bootstrap/dist/css/": "inc/bootstrap/css/",
             "vendor/twbs/bootstrap/dist/js/": "inc/bootstrap/js/",
-            "vendor/fortawesome/font-awesome-free/css/": "inc/fontawesome/css/",
-            "vendor/fortawesome/font-awesome-free/webfonts/": "inc/fontawesome/webfonts/"
+            "vendor/fortawesome/font-awesome/css/": "inc/fontawesome/css/",
+            "vendor/fortawesome/font-awesome/webfonts/": "inc/fontawesome/webfonts/"
         }
     }
 }

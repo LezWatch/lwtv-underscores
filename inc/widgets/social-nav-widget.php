@@ -39,9 +39,10 @@ class YIKES_Social_Menu_Widget extends WP_Widget {
 		 * Display nav menu
 		 */
 
-		//Get $before_widget attribute set on selected widget area (register_sidebar) and display
+		// Get $before_widget attribute set on selected widget area (register_sidebar) and display
 		$before_widget = isset( $args['before_widget'] ) ? $args['before_widget'] : '';
-		echo lwtv_sanitized( $before_widget );
+		// phpcs:ignore WordPress.Security.EscapeOutput
+		echo $before_widget;
 
 		//Check if hide_text option is set
 		$hide_text = ! empty( $instance['hide_text'] ) ? 'class="widget-hide-text"' : '';
@@ -58,13 +59,15 @@ class YIKES_Social_Menu_Widget extends WP_Widget {
 		//Display widget title
 		$before_title = isset( $args['before_title'] ) ? $args['before_title'] : '';
 		$after_title  = isset( $args['after_title'] ) ? $args['after_title'] : '';
-		echo lwtv_sanitized( $before_title . $title . $after_title );
+		// phpcs:ignore WordPress.Security.EscapeOutput
+		echo $before_title . $title . $after_title;
 
 		wp_nav_menu( apply_filters( 'widget_nav_menu_args', $nav_menu_args, $menu_id, $args, $instance ) );
 
 		//Get $after_widget attribute set on selected widget area (register_sidebar) and display
 		$after_widget = isset( $args['after_widget'] ) ? $args['after_widget'] : '';
-		echo lwtv_sanitized( $after_widget );
+		// phpcs:ignore WordPress.Security.EscapeOutput
+		echo $after_widget;
 	}
 
 	/**

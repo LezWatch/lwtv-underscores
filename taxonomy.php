@@ -34,7 +34,7 @@ get_header(); ?>
 						<?php the_archive_title( '<h1 class="facetwp-page-title entry-title">' . $title_prefix, $title_suffix . ' (' . $count_posts . '<span class="facetwp-count"></span>)</h1>' ); ?>
 					</div>
 					<div class="col-2 icon plain">
-						<?php echo lwtv_sanitized( $the_icon ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
+						<?php echo $the_icon; // phpcs:ignore WordPress.Security.EscapeOutput ?>
 					</div>
 				</div>
 				<div class="row">
@@ -74,9 +74,9 @@ get_header(); ?>
 							<div class="entry-content facetwp-template">
 								<div class="row site-loop <?php echo esc_attr( $post_type_is ); ?>-archive-loop">
 									<?php
-									if ( have_posts() ) :
+									if ( have_posts() ) {
 										/* Start the Loop */
-										while ( have_posts() ) :
+										while ( have_posts() ) {
 											the_post();
 											switch ( get_post_type( get_the_ID() ) ) {
 												case 'post_type_characters':
@@ -91,10 +91,10 @@ get_header(); ?>
 												default:
 													get_template_part( 'template-parts/content', 'posts' );
 											}
-										endwhile;
-									else :
+										}
+									} else {
 										get_template_part( 'template-parts/content', 'none' );
-									endif;
+									}
 									?>
 								</div><!-- .site-loop -->
 								<?php echo facetwp_display( 'pager' ); ?>

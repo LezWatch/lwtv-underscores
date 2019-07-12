@@ -46,25 +46,27 @@ class Filter_Top extends WP_Widget {
 			switch ( $fontawesome ) {
 				case 'fa-television':
 				case 'fa-tv':
-					$icon = lwtv_yikes_symbolicons( 'tv-hd.svg', 'fa-tv' );
+					$icon = lwtv_symbolicons( 'tv-hd.svg', 'fa-tv' );
 					break;
 				case 'fa-vcard':
 				case 'fa-address-card':
-					$icon = lwtv_yikes_symbolicons( 'contact-card.svg', 'fa-address-card' );
+					$icon = lwtv_symbolicons( 'contact-card.svg', 'fa-address-card' );
 					break;
 				case 'fa-users':
-					$icon = lwtv_yikes_symbolicons( 'award-academy.svg', 'fa-man' );
+					$icon = lwtv_symbolicons( 'award-academy.svg', 'fa-man' );
 					break;
 				default:
 					$icon = '<i class="fa ' . $fontawesome . ' float-right" aria-hidden="true"></i>';
 			}
 
-			echo '<span class="float-right">' . lwtv_sanitized( $icon ) . '</span>';
+			// phpcs:ignore WordPress.Security.EscapeOutput
+			echo '<span class="float-right">' . $icon . '</span>';
 		}
 
 		// If the title is set
 		if ( $title ) {
-			echo lwtv_sanitized( $title );
+			// phpcs:ignore WordPress.Security.EscapeOutput
+			echo $title;
 		}
 
 		echo '</h4>
