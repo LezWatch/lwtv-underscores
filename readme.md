@@ -11,7 +11,7 @@ Based on the Yikes Starter Theme, the LezWatch.TV theme has been customized for 
 ## Features
 
 * Supports three Custom Post Types and related taxonomies: Characters, Themes, Actors
-* Integrated with Symbolicons
+* Integrated with LWTV Plugin
 * Integrated with [AMP by Automattic](https://wordpress.org/plugins/amp/)
 * Additional custom image sizes: Show (960x400), Character (225x300)
 * Additional custom sidebars: Show Archives, Character Archives

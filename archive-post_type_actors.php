@@ -9,7 +9,7 @@
 
 // Determine icon (Font-Awesome fallback).
 $icon        = lwtv_symbolicons( 'team.svg', 'fa-users' );
-$count_posts = facetwp_display( 'counts' );
+$count_posts = ( function_exists( 'facetwp_display' ) ) ? facetwp_display( 'counts' ) : '';
 $actor_title = '<span role="img" aria-label="post_type_actors" title="Actors" class="taxonomy-svg actors">' . $icon . '</span>';
 $seo_descs   = get_option( 'wpseo_titles' );
 $seo_desc    = $seo_descs['metadesc-ptarchive-post_type_actors'];
@@ -30,9 +30,11 @@ get_header(); ?>
 					<div class="col">
 						<div class="archive-description">
 							<?php
-								echo '<p>' . wp_kses_post( $seo_desc ) . ' <span class="facetwp-description"></span></p>';
-								echo '<p><span class="facetwp-sorted"></span></p>';
+							echo '<p>' . wp_kses_post( $seo_desc ) . ' <span class="facetwp-description"></span></p>';
+							echo '<p><span class="facetwp-sorted"></span></p>';
+							if ( function_exists( 'facetwp_display' ) ) {
 								echo wp_kses_post( facetwp_display( 'selections' ) );
+							}
 							?>
 						</div>
 					</div>
@@ -64,7 +66,11 @@ get_header(); ?>
 								}
 								?>
 								</div><!-- .row .site-loop -->
-							<?php echo facetwp_display( 'pager' ); ?>
+							<?php
+							if ( function_exists( 'facetwp_display' ) ) {
+								echo facetwp_display( 'pager' );
+							}
+							?>
 							</div><!-- .entry-content -->
 						</article><!-- #post-## -->
 					</div><!-- #content -->
