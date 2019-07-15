@@ -12,7 +12,7 @@ $slug     = get_post_field( 'post_name', get_post( get_the_ID() ) );
 $get_tags = get_term_by( 'name', $slug, 'post_tag' );
 
 if ( method_exists( 'LWTV_Related_Posts', 'are_there_posts' ) ) {
-	$related  = LWTV_Related_Posts::are_there_posts( $slug );
+	$related = LWTV_Related_Posts::are_there_posts( $slug );
 }
 
 // Generate Life Stats

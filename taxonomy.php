@@ -16,8 +16,8 @@ $title_suffix = lwtv_yikes_tax_archive_title( 'suffix', get_post_type( get_the_I
 
 // Count Posts: If this is a show or a character taxonomy, we do extra.
 $count_posts = $the_term->count;
-if ( in_array( get_post_type( get_the_ID() ), array( 'post_type_shows', 'post_type_characters' ), true ) ) {
-	$count_posts = facetwp_display( 'counts' );
+if ( in_array( get_post_type( get_the_ID() ), array( 'post_type_shows', 'post_type_characters', 'post_type_actors' ), true ) ) {
+	$count_posts = ( function_exists( 'facetwp_display' ) ) ? facetwp_display( 'counts' ) : '';
 }
 
 // Post Type Detector.
@@ -54,7 +54,9 @@ get_header(); ?>
 							}
 
 							echo '<p><span class="facetwp-sorted"></span></p>';
-							echo facetwp_display( 'selections' );
+							if ( function_exists( 'facetwp_display' ) ) {
+								echo wp_kses_post( facetwp_display( 'selections' ) );
+							}
 							?>
 						</div>
 					</div>
@@ -97,7 +99,11 @@ get_header(); ?>
 									}
 									?>
 								</div><!-- .site-loop -->
-								<?php echo facetwp_display( 'pager' ); ?>
+								<?php
+								if ( function_exists( 'facetwp_display' ) ) {
+									echo facetwp_display( 'pager' );
+								}
+								?>
 							</div><!-- .entry-content -->
 						</article><!-- #post-## -->
 					</div><!-- #content -->

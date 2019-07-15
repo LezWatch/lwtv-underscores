@@ -8,7 +8,7 @@
  */
 
 $icon         = lwtv_symbolicons( 'tv-hd.svg', 'fa-tv' );
-$count_posts  = facetwp_display( 'counts' );
+$count_posts = ( function_exists( 'facetwp_display' ) ) ? facetwp_display( 'counts' ) : '';
 $show_title   = '<span role="img" aria-label="post_type_shows" title="Shows" class="taxonomy-svg shows">' . $icon . '</span>';
 $seo_titles   = get_option( 'wpseo_titles' );
 $description  = $seo_titles['metadesc-ptarchive-post_type_shows'];
@@ -29,9 +29,11 @@ get_header(); ?>
 					<div class="col">
 						<div class="archive-description">
 							<?php
-								echo '<p>' . wp_kses_post( $description ) . ' <span class="facetwp-description"></span></p>';
-								echo '<p><span class="facetwp-sorted"></span></p>';
-								echo facetwp_display( 'selections' );
+							echo '<p>' . wp_kses_post( $description ) . ' <span class="facetwp-description"></span></p>';
+							echo '<p><span class="facetwp-sorted"></span></p>';
+							if ( function_exists( 'facetwp_display' ) ) {
+								echo wp_kses_post( facetwp_display( 'selections' ) );
+							}
 							?>
 						</div>
 					</div>
@@ -62,7 +64,11 @@ get_header(); ?>
 									}
 									?>
 								</div><!-- .site-loop -->
-								<?php echo facetwp_display( 'pager' ); ?>
+								<?php
+								if ( function_exists( 'facetwp_display' ) ) {
+									echo facetwp_display( 'pager' );
+								}
+								?>
 							</div><!-- .entry-content -->
 						</article><!-- #post-## -->
 					</div><!-- #content -->
