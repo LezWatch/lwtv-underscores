@@ -13,19 +13,34 @@ $all_shows = lwtv_yikes_chardata( get_the_ID(), 'shows' );
 if ( '' !== $all_shows ) {
 	$show_title = array();
 	foreach ( $all_shows as $each_show ) {
-		if ( get_post_status( $each_show['show'] ) !== 'publish' ) {
-			array_push( $show_title, '<em><span class="disabled-show-link">' . get_the_title( $each_show['show'] ) . '</span></em> (' . $each_show['type'] . ' character)' );
+		$chartype = $each_show['type'] . ' character';
+		if ( isset( $each_show['appears'] ) && is_array( $each_show['appears'] ) ) {
+			sort( $each_show['appears'] );
+			$appears = ' - ' . implode( ', ', $each_show['appears'] );
 		} else {
-			array_push( $show_title, '<em><a href="' . get_permalink( $each_show['show'] ) . '">' . get_the_title( $each_show['show'] ) . '</a></em> (' . $each_show['type'] . ' character)' );
+			$appears = '';
 		}
+
+		if ( get_post_status( $each_show['show'] ) !== 'publish' ) {
+			$showlink = '<em><span class="disabled-show-link">' . get_the_title( $each_show['show'] ) . '</span></em>';
+		} else {
+			$showlink = '<em><a href="' . get_permalink( $each_show['show'] ) . '">' . get_the_title( $each_show['show'] ) . '</a></em>';
+		}
+
+		array_push( $show_title, $showlink . ' <small>(' . $chartype . $appears . ')</small>' );
 	}
 }
 
-$on_shows = ( empty( $show_title ) ) ? ' None' : ': ' . implode( ', ', $show_title );
+$on_title = 'Shows:';
+$on_shows = ' None';
 if ( isset( $show_title ) && count( $show_title ) !== 0 ) {
-	$on_title = _n( 'Show', 'Shows', count( $show_title ) );
-	$appears  = '<strong>' . $on_title . '</strong>' . $on_shows;
+	$on_shows = '<br />';
+	$on_title = _n( 'Show:', 'Shows:', count( $show_title ) );
+	foreach ( $show_title as $a_title ) {
+		$on_shows .= '&bull;&nbsp;' . $a_title . '<br />';
+	}
 }
+$appears = '<strong>' . $on_title . '</strong> ' . $on_shows;
 
 // Generate actors
 // Usage: $actors
@@ -122,6 +137,13 @@ $thumb_array       = array(
 		</div>
 		<div class="card-meta-item">
 			<?php
+			if ( isset( $dead_or_alive ) ) {
+				echo wp_kses_post( $dead_or_alive ) . '</br>';
+			}
+			?>
+		</div>
+		<div class="card-meta-item">
+			<?php
 			if ( isset( $actors ) ) {
 				echo wp_kses_post( $actors );
 			}
@@ -131,13 +153,6 @@ $thumb_array       = array(
 			<?php
 			if ( isset( $show_title ) && count( $show_title ) !== 0 ) {
 				echo wp_kses_post( $appears );
-			}
-			?>
-		</div>
-		<div class="card-meta-item">
-			<?php
-			if ( isset( $dead_or_alive ) ) {
-				echo wp_kses_post( $dead_or_alive ) . '</br>';
 			}
 			?>
 		</div>

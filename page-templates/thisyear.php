@@ -53,15 +53,6 @@ get_header();
 			<div class="col-sm-12">
 				<div id="primary" class="content-area">
 					<div id="content" class="site-content clearfix" role="main">
-						<section id="toc" class="toc-container card-body">
-							<nav class="breadcrumb">
-								<h4 class="toc-title">Go to:</h4>
-								<a class="breadcrumb-item smoothscroll" href="#died">Characters Who Died</a>
-								<a class="breadcrumb-item smoothscroll" href="#showsonair">Shows On The Air</a>
-								<a class="breadcrumb-item smoothscroll" href="#showsstart">Shows That Began</a>
-								<a class="breadcrumb-item smoothscroll" href="#showsend">Shows That Ended</a>
-							</nav>
-						</section>
 						<?php
 						if ( method_exists( 'LWTV_This_Year', 'display' ) ) {
 							// phpcs:ignore WordPress.Security.EscapeOutput
