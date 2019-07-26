@@ -27,7 +27,7 @@ if ( '' !== $all_shows ) {
 			$showlink = '<em><a href="' . get_permalink( $each_show['show'] ) . '">' . get_the_title( $each_show['show'] ) . '</a></em>';
 		}
 
-		array_push( $show_title, $showlink . ' (' . $chartype . $appears . ')' );
+		array_push( $show_title, $showlink . ' <small>(' . $chartype . $appears . ')</small>' );
 	}
 }
 
@@ -37,7 +37,7 @@ if ( isset( $show_title ) && count( $show_title ) !== 0 ) {
 	$on_shows = '<br />';
 	$on_title = _n( 'Show:', 'Shows:', count( $show_title ) );
 	foreach ( $show_title as $a_title ) {
-		$on_shows .= '&bull;' . $a_title . '<br />';
+		$on_shows .= '&bull;&nbsp;' . $a_title . '<br />';
 	}
 }
 $appears = '<strong>' . $on_title . '</strong> ' . $on_shows;
