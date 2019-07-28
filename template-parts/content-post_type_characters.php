@@ -8,10 +8,10 @@
  */
 
 // Generate list of shows
-// Usage: $appears
+// Usage: $shows_group
 $all_shows = lwtv_yikes_chardata( get_the_ID(), 'shows' );
 if ( '' !== $all_shows ) {
-	$show_title = array();
+	$appears = array();
 	foreach ( $all_shows as $each_show ) {
 		$chartype = $each_show['type'] . ' character';
 		if ( isset( $each_show['appears'] ) && is_array( $each_show['appears'] ) ) {
@@ -27,23 +27,14 @@ if ( '' !== $all_shows ) {
 			$showlink = '<em><a href="' . get_permalink( $each_show['show'] ) . '">' . get_the_title( $each_show['show'] ) . '</a></em>';
 		}
 
-		array_push( $show_title, $showlink . ' <small>(' . $chartype . $appears . ')</small>' );
+		$shows_group[] = $showlink . ' <small>(' . $chartype . $appears . ')</small>';
 	}
+} else {
+	$shows_group = array( 'None' );
 }
-
-$on_title = 'Shows:';
-$on_shows = ' None';
-if ( isset( $show_title ) && count( $show_title ) !== 0 ) {
-	$on_shows = '<br />';
-	$on_title = _n( 'Show:', 'Shows:', count( $show_title ) );
-	foreach ( $show_title as $a_title ) {
-		$on_shows .= '&bull;&nbsp;' . $a_title . '<br />';
-	}
-}
-$appears = '<strong>' . $on_title . '</strong> ' . $on_shows;
 
 // Generate actors
-// Usage: $actors
+// Usage: $the_actors
 $all_actors = lwtv_yikes_chardata( get_the_ID(), 'actors' );
 $the_actors = array();
 
@@ -51,28 +42,24 @@ if ( '' !== $all_actors ) {
 	foreach ( $all_actors as $each_actor ) {
 		if ( get_post_status( $each_actor ) === 'private' ) {
 			if ( current_user_can( 'author' ) ) {
-				array_push( $the_actors, '<a href="' . get_permalink( $each_actor ) . '">' . get_the_title( $each_actor ) . ' - PRIVATE/UNLISTED</a>' );
+				$this_actor = '<a href="' . get_permalink( $each_actor ) . '">' . get_the_title( $each_actor ) . ' - PRIVATE/UNLISTED</a>';
 			} else {
-				array_push( $the_actors, '<a href="/actor/unknown/">Unknown</a>' );
+				$this_actor = '<a href="/actor/unknown/">Unknown</a>';
 			}
 		} elseif ( get_post_status( $each_actor ) !== 'publish' ) {
-			array_push( $the_actors, '<span class="disabled-show-link">' . get_the_title( $each_actor ) . '</span>' );
+			$this_actor = '<span class="disabled-show-link">' . get_the_title( $each_actor ) . '</span>';
 		} else {
-			array_push( $the_actors, '<a href="' . get_permalink( $each_actor ) . '">' . get_the_title( $each_actor ) . '</a>' );
+			$this_actor = '<a href="' . get_permalink( $each_actor ) . '">' . get_the_title( $each_actor ) . '</a>';
 		}
+		$the_actors[] = $this_actor;
 	}
 }
 
-$is_actors = ( empty( $the_actors ) ) ? ' <a href="/actor/unknown/">Unknown</a>' : ': ' . implode( ', ', $the_actors );
-if ( isset( $the_actors ) && count( $the_actors ) !== 0 ) {
-	$actor_title = _n( 'Actor', 'Actors', count( $all_actors ) );
-	$actors      = '<strong>' . $actor_title . '</strong>' . $is_actors;
-}
+$the_actors = ( empty( $the_actors ) ) ? array( '<a href="/actor/unknown/">Unknown</a>' ) : $the_actors;
 
 // Generate Status
-// Usage: $dead_or_alive
-$doa_status    = ( has_term( 'dead', 'lez_cliches', get_the_ID() ) ) ? 'Dead' : 'Alive';
-$dead_or_alive = '<strong>Status:</strong> ' . $doa_status;
+// Usage: $doa_status
+$doa_status = ( has_term( 'dead', 'lez_cliches', get_the_ID() ) ) ? 'Dead' : 'Alive';
 
 // Generate RIP
 // Usage: $rip
@@ -81,7 +68,7 @@ if ( get_post_meta( get_the_ID(), 'lezchars_death_year', true ) ) {
 	if ( ! is_array( $character_death ) ) {
 		$character_death = array( get_post_meta( get_the_ID(), 'lezchars_death_year', true ) );
 	}
-	$echo_death = array();
+	$rip = array();
 
 	foreach ( $character_death as $death ) {
 		if ( '/' !== substr( $death, 2, 1 ) ) {
@@ -89,14 +76,13 @@ if ( get_post_meta( get_the_ID(), 'lezchars_death_year', true ) ) {
 		} else {
 			$date = date_format( date_create_from_format( 'm/d/Y', $death ), 'F d, Y' );
 		}
-		$echo_death[] = $date;
+		$rip[] = $date;
 	}
-	$rip = '<strong>RIP:</strong> ' . implode( '; ', $echo_death );
 }
 
 // Generate list of Cliches
 // Usage: $cliches
-$cliches = '<strong>Clichés:</strong> ' . lwtv_yikes_chardata( get_the_ID(), 'cliches' );
+$cliches = lwtv_yikes_chardata( get_the_ID(), 'cliches' );
 
 // Generate Gender & Sexuality & Romantic Data
 // Usage: $gender_sexuality
@@ -112,56 +98,50 @@ lwtv_microformats_fix( $post->ID );
 $thumb_attribution = get_post_meta( get_post_thumbnail_id(), 'lwtv_attribution', true );
 $thumb_title       = ( empty( $thumb_attribution ) ) ? get_the_title() : get_the_title() . ' &copy; ' . $thumb_attribution;
 $thumb_array       = array(
-	'class' => 'single-char-img',
+	'class' => 'single-char-img rounded float-left',
 	'alt'   => get_the_title(),
 	'title' => $thumb_title,
 );
 ?>
-
 <div class="card-body">
+
 	<?php the_post_thumbnail( 'character-img', $thumb_array ); ?>
 
 	<div class="card-meta">
 		<div class="card-meta-item">
-			<?php
-			if ( isset( $character_type ) ) {
-				echo '(' . esc_html( $character_type ) . ')';
-			}
-			?>
-		</div>
-		<div class="card-meta-item">
-			<?php echo wp_kses_post( $gender_sexuality ); ?>
-		</div>
-		<div class="card-meta-item">
-			<?php echo $cliches; // phpcs:ignore WordPress.Security.EscapeOutput ?>
-		</div>
-		<div class="card-meta-item">
-			<?php
-			if ( isset( $dead_or_alive ) ) {
-				echo wp_kses_post( $dead_or_alive ) . '</br>';
-			}
-			?>
-		</div>
-		<div class="card-meta-item">
-			<?php
-			if ( isset( $actors ) ) {
-				echo wp_kses_post( $actors );
-			}
-			?>
-		</div>
-		<div class="card-meta-item">
-			<?php
-			if ( isset( $show_title ) && count( $show_title ) !== 0 ) {
-				echo wp_kses_post( $appears );
-			}
-			?>
-		</div>
-		<div class="card-meta-item">
-			<?php
-			if ( isset( $rip ) ) {
-				echo wp_kses_post( $rip );
-			}
-			?>
+			<table class="table table-sm" style="width: auto !important;">
+				<tbody>
+					<tr>
+						<th scope="row" colspan="2"><center><?php echo wp_kses_post( $gender_sexuality ); ?></center></th>
+					</tr>
+					<tr>
+						<th scope="row">Clichés</th>
+						<td><?php echo $cliches; // phpcs:ignore WordPress.Security.EscapeOutput ?></td>
+					</tr>
+					<tr>
+						<th scope="row">Status</th>
+						<td><?php echo wp_kses_post( $doa_status ); ?></td>
+					</tr>
+					<tr>
+						<th scope="row"><?php echo wp_kses_post( _n( 'Actor', 'Actors', count( $all_actors ) ) ); ?></th>
+						<td>&bull; <?php echo wp_kses_post( implode( '<br />&bull; ', $the_actors ) ); ?></td>
+					</tr>
+					<tr>
+						<th scope="row"><?php echo wp_kses_post( _n( 'Show', 'Shows', count( $shows_group ) ) ); ?></th>
+						<td>&bull; <?php echo wp_kses_post( implode( '<br />&bull; ', $shows_group ) ); ?></td>
+					</tr>
+					<?php
+					if ( isset( $rip ) ) {
+						?>
+						<tr>
+							<th scope="row">RIP</th>
+							<td><?php echo wp_kses_post( implode( ' &bull; ', $rip ) ); ?></td>
+						</tr>
+						<?php
+					}
+					?>
+				</tbody>
+			</table>
 		</div>
 	</div>
 	<div class="characters-description">

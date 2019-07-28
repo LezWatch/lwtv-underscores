@@ -850,7 +850,18 @@ footer.entry-meta {
   .row {
     margin-bottom: 2em;
   }
+}
 
+.lwtv-stats {
+    .progress {
+         height:30px;
+         background-color: #d1ecf1;
+
+         .progress-bar {
+             color: #222;
+             text-align: left;
+         }
+    }
 }
 
 canvas {

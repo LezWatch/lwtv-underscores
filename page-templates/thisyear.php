@@ -38,7 +38,6 @@ get_header();
 					<div class="col">
 						<div class="archive-description">
 							<p>An overview of queer events that occurred in <?php echo (int) $thisyear; ?>.</p>
-							<p>You can review the list of TV shows that aired, began, and ended in each year, as well as all characters who died in each year, going back to <?php echo (int) FIRST_LWTV_YEAR; ?>.</p>
 						</div>
 					</div>
 				</div>
