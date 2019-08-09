@@ -105,8 +105,10 @@ $screentime   = ( get_post_meta( $show_id, 'lezshows_screentime_rating', true ) 
 					}
 
 					// If the end is a number (i.e. a year) AND we have a seasons value, show it.
-					if ( is_numeric( $airdates['finish'] ) && get_post_meta( $show_id, 'lezshows_seasons', true ) ) {
-						$airdate .= ' (' . get_post_meta( $show_id, 'lezshows_seasons', true ) . ' seasons)';
+					$season_count = get_post_meta( $show_id, 'lezshows_seasons', true );
+					if ( 'current' !== $airdates['finish'] && isset( $season_count ) ) {
+							$seasons  = _n( 'season', 'seasons', $season_count );
+							$airdate .= ' (' . $season_count . ' ' . $seasons . ')';
 					}
 					echo '<li class="list-group-item network airdates"><strong>Airdates:</strong> ' . wp_kses_post( $airdate ) . '</li>';
 				}
