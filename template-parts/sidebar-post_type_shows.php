@@ -106,7 +106,7 @@ $screentime   = ( get_post_meta( $show_id, 'lezshows_screentime_rating', true ) 
 
 					// If the end is a number (i.e. a year) AND we have a seasons value, show it.
 					$season_count = get_post_meta( $show_id, 'lezshows_seasons', true );
-					if ( 'current' !== $airdates['finish'] && isset( $season_count ) ) {
+					if ( 'current' !== $airdates['finish'] && isset( $season_count ) && $season_count >= 1 ) {
 							$seasons  = _n( 'season', 'seasons', $season_count );
 							$airdate .= ' (' . $season_count . ' ' . $seasons . ')';
 					}
