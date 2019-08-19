@@ -4,6 +4,11 @@
  *
  * @package YIKES Starter
  */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 get_header(); ?>
 
 <div class="archive-subheader">
