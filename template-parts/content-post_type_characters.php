@@ -13,7 +13,8 @@ $all_shows = lwtv_yikes_chardata( get_the_ID(), 'shows' );
 if ( '' !== $all_shows ) {
 	$appears = array();
 	foreach ( $all_shows as $each_show ) {
-		$chartype = $each_show['type'] . ' character';
+		$roletype = ( isset( $each_show['type'] ) ) ? $each_show['type'] : '';
+		$chartype = $roletype . ' character';
 		if ( isset( $each_show['appears'] ) && is_array( $each_show['appears'] ) ) {
 			sort( $each_show['appears'] );
 			$appears = ' - ' . implode( ', ', $each_show['appears'] );
@@ -21,10 +22,14 @@ if ( '' !== $all_shows ) {
 			$appears = '';
 		}
 
-		if ( get_post_status( $each_show['show'] ) !== 'publish' ) {
-			$showlink = '<em><span class="disabled-show-link">' . get_the_title( $each_show['show'] ) . '</span></em>';
+		if ( isset( $each_show['show'] ) && '' !== $each_show['show'] ) {
+			if ( get_post_status( $each_show['show'] ) !== 'publish' ) {
+				$showlink = '<em><span class="disabled-show-link">' . get_the_title( $each_show['show'] ) . '</span></em>';
+			} else {
+				$showlink = '<em><a href="' . get_permalink( $each_show['show'] ) . '">' . get_the_title( $each_show['show'] ) . '</a></em>';
+			}
 		} else {
-			$showlink = '<em><a href="' . get_permalink( $each_show['show'] ) . '">' . get_the_title( $each_show['show'] ) . '</a></em>';
+			$showlink = '';
 		}
 
 		$shows_group[] = $showlink . ' <small>(' . $chartype . $appears . ')</small>';
