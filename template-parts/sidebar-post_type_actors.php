@@ -21,7 +21,7 @@ if ( method_exists( 'LWTV_Actors_Calculate', 'do_the_math' ) ) {
 <section id="affiliates" class="widget widget_text">
 	<?php
 	if ( method_exists( 'LWTV_Affilliates', 'actors' ) ) {
-		echo LWTV_Affilliates::actors( $actor_id, 'widget' ); // phpcs:ignore WordPress.Security.EscapeOutput
+		echo LWTV_Affilliates::actors( $actor_id, 'wide' ); // phpcs:ignore WordPress.Security.EscapeOutput
 	}
 	?>
 </section>

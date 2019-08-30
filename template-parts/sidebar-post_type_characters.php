@@ -21,7 +21,7 @@ if ( class_exists( 'LWTV_Characters_Calculate' ) ) {
 
 <section id="affiliates" class="widget widget_text">
 	<?php
-	if ( class_exists( 'LWTV_Affilliates' ) ) {
+	if ( method_exists( 'LWTV_Affilliates', 'characters' ) ) {
 		echo LWTV_Affilliates::characters( $char_id, 'wide' ); // phpcs:ignore WordPress.Security.EscapeOutput
 	}
 	?>

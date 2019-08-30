@@ -132,7 +132,7 @@ $screentime   = ( get_post_meta( $show_id, 'lezshows_screentime_rating', true ) 
 <section id="affiliates" class="widget widget_text">
 	<?php
 	if ( method_exists( 'LWTV_Affilliates', 'shows' ) ) {
-		echo LWTV_Affilliates::shows( $show_id, 'wide' ); // phpcs:ignore WordPress.Security.EscapeOutput
+		echo LWTV_Affilliates::shows( $show_id, 'tiny' ); // phpcs:ignore WordPress.Security.EscapeOutput
 	}
 	?>
 </section>
