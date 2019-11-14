@@ -79,6 +79,12 @@ $screentime   = ( get_post_meta( $show_id, 'lezshows_screentime_rating', true ) 
 				if ( $countries && ! is_wp_error( $countries ) ) {
 					echo '<li class="list-group-item network country">' . get_the_term_list( $show_id, 'lez_country', '<strong>Airs In:</strong> ', ', ' ) . '</li>';
 				}
+/*
+				$next_ep = LWTV_Whats_On_JSON::whats_on_show( $post->post_name );
+				if ( isset( $next_ep['nextep'] ) ) {
+					echo '<li class="list-group-item network upcoming_ep"><strong>Next Episode:</strong> ' . esc_html( $next_ep['nextep'] ) . '</li>';
+				}
+*/
 				$formats = get_the_terms( $show_id, 'lez_formats' );
 				if ( $formats && ! is_wp_error( $formats ) ) {
 					echo '<li class="list-group-item network formats">' . get_the_term_list( $show_id, 'lez_formats', '<strong>Show Format:</strong> ', ', ' ) . '</li>';
