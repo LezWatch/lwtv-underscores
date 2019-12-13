@@ -56,6 +56,9 @@ if ( '' !== $all_actors ) {
 		} else {
 			$this_actor = '<a href="' . get_permalink( $each_actor ) . '">' . get_the_title( $each_actor ) . '</a>';
 		}
+		if ( lwtv_yikes_is_queer( $each_actor ) ) {
+			$this_actor .= ' <span role="img" aria-label="Queer IRL Actor" data-toggle="tooltip" title="Queer IRL Actor" class="character-cliche queer-irl">' . lwtv_symbolicons( 'rainbow.svg', 'fa-cloud' ) . '</span>';
+		}
 		$the_actors[] = $this_actor;
 	}
 }
@@ -129,7 +132,7 @@ $thumb_array       = array(
 					</tr>
 					<tr>
 						<th scope="row"><?php echo wp_kses_post( _n( 'Actor', 'Actors', count( $all_actors ) ) ); ?></th>
-						<td>&bull; <?php echo wp_kses_post( implode( '<br />&bull; ', $the_actors ) ); ?></td>
+						<td>&bull; <?php echo implode( '<br />&bull; ', $the_actors ); // phpcs:ignore WordPress.Security.EscapeOutput ?></td>
 					</tr>
 					<tr>
 						<th scope="row"><?php echo wp_kses_post( _n( 'Show', 'Shows', count( $shows_group ) ) ); ?></th>

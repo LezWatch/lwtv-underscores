@@ -1,7 +1,7 @@
 {
     "name": "lezwatch/lwtv-underscores",
     "description": "LezWatch.TV Theme",
-    "type": "wordpress theme",
+    "type": "wordpress-theme",
     "keywords": ["wordpress","theme"],
     "license": "GPLv3",
     "authors": [
