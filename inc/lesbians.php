@@ -681,7 +681,7 @@ function lwtv_yikes_is_queer( $the_id ) {
 
 function lwtv_yikes_is_birthday( $the_id ) {
 	$happy_birthday = false;
-	$today_is       = date( 'm-d' );
+	$today_is       = gmdate( 'm-d' );
 	$birthday       = substr( get_post_meta( $the_id, 'lezactors_birth', true ), 5 );
 	if ( $birthday === $today_is ) {
 		$happy_birthday = true;

@@ -96,7 +96,7 @@ $screentime   = ( get_post_meta( $show_id, 'lezshows_screentime_rating', true ) 
 
 					// If the start is 'current' make it this year (though it really never should be.)
 					if ( 'current' === $airdates['start'] ) {
-						$airdates['start'] = date( 'Y' );
+						$airdates['start'] = gmdate( 'Y' );
 					}
 
 					// Link the year to the year.
@@ -105,7 +105,7 @@ $screentime   = ( get_post_meta( $show_id, 'lezshows_screentime_rating', true ) 
 					// If the start and end date are NOT the same, then let's show the end.
 					if ( $airdates['finish'] && $airdates['start'] !== $airdates['finish'] ) {
 						// If the end date is a number, it's a year, so link it.
-						if ( is_numeric( $airdates['finish'] ) && $airdates['finish'] <= date( 'Y' ) ) {
+						if ( is_numeric( $airdates['finish'] ) && $airdates['finish'] <= gmdate( 'Y' ) ) {
 							$airdates['finish'] = '<a href="/this-year/shows-on-air/' . $airdates['finish'] . '/">' . $airdates['finish'] . '</a>';
 						}
 						// No matter what, add it.
