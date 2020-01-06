@@ -1057,6 +1057,24 @@ canvas {
   margin-top: 15px;
 }
 
+/* Calendar */
+.ep-calendar-heading-date {
+  float: left;
+}
+
+.ep-calendar-heading-weekday {
+  float: right;
+}
+
+.ep-calendar-dot {
+  border-radius: 50%;
+  background: #d1548e;
+  border-color: #d1548e;
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+}
+
 /* =Custom Post Types
 ----------------------------------------------- */
 /* Characters and Actors*/

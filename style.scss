@@ -895,6 +895,24 @@ canvas {
   margin-top: 15px;
 }
 
+/* Calendar */
+
+.ep-calendar-heading-date {
+  float: left;
+}
+
+.ep-calendar-heading-weekday {
+  float: right;
+}
+
+.ep-calendar-dot {
+  border-radius: 50%;
+  background: $lwtv-pink;
+  border-color: $lwtv-pink;
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+}
 
 /* =Custom Post Types
 ----------------------------------------------- */
