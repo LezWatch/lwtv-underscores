@@ -23,15 +23,23 @@ $alttext     = 'A picture of the character ' . get_the_title( $the_id );
 $char_role   = ( isset( $character['role_from'] ) ) ? $character['role_from'] : 'regular';
 $archive     = ( is_archive() || is_tax() || is_page() ) ? true : false;
 
+foreach ( $character['shows'] as $one_show ) {
+	if ( (int) $one_show['show'] === (int) $character['show_from'] ) {
+		asort( $one_show['appears'] );
+		$appears = ' - Years: ' . implode( ', ', $one_show['appears'] );
+	}
+}
+
 $thumb_attribution = get_post_meta( get_post_thumbnail_id(), 'lwtv_attribution', true );
 $thumb_title       = ( empty( $thumb_attribution ) ) ? $alttext : $alttext . ' &copy; ' . $thumb_attribution;
+$thumb_title       = ( isset( $appears ) ) ? $thumb_title . $appears : $thumb_title;
 $thumb_array       = array(
 	'class' => 'card-img-top',
 	'alt'   => $thumb_title,
 	'title' => $thumb_title,
 );
 
-// Reset to prevent Teri Polo from overtaking the world
+// The Steph Adams-Foster Takeover: Reset to prevent Teri Polo from overtaking the world
 unset( $shows, $actors, $gender, $sexuality, $cliches, $grave );
 
 // Show a gravestone for recurring characters
