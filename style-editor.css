@@ -79,7 +79,6 @@ body.wp-admin.block-editor-page .editor-styles-wrapper {
   line-height: 1.5;
   color: #222;
   /* Links */
-  /* Core blocks */
 }
 body.wp-admin.block-editor-page .editor-styles-wrapper a {
   color: #d1548e;
@@ -99,31 +98,6 @@ body.wp-admin.block-editor-page .editor-styles-wrapper a:hover, body.wp-admin.bl
   -o-transition: all 0.3s;
   transition: all 0.3s;
   text-decoration: none;
-}
-body.wp-admin.block-editor-page .editor-styles-wrapper blockquote {
-  background-color: #ebf5fa;
-  border-left: 4px solid #d1548e;
-  color: #222;
-  font-family: Georgia, Times, "Times New Roman", serif;
-  font-weight: 500;
-  font-size: 1.125rem;
-  margin: 0 0 1rem;
-  padding: 1em;
-  -webkit-font-smoothing: antialiased;
-}
-body.wp-admin.block-editor-page .editor-styles-wrapper blockquote p {
-  padding-left: 28px;
-}
-body.wp-admin.block-editor-page .editor-styles-wrapper blockquote p:last-child {
-  margin-bottom: 0;
-}
-body.wp-admin.block-editor-page .editor-styles-wrapper blockquote:before {
-  color: #d1548e;
-  content: '\201C';
-  font-size: 2.75rem;
-  font-weight: 600;
-  line-height: 1;
-  position: absolute;
 }
 
 /* =Typography
@@ -160,6 +134,60 @@ body.wp-admin.block-editor-page .editor-styles-wrapper h5, body.wp-admin.block-e
 }
 body.wp-admin.block-editor-page .editor-styles-wrapper h6, body.wp-admin.block-editor-page .editor-styles-wrapper .h6 {
   font-size: 1rem;
+}
+
+/* =Core blocks
+----------------------------------------------- */
+body.wp-admin.block-editor-page .editor-styles-wrapper {
+  /* Buttons */
+}
+body.wp-admin.block-editor-page .editor-styles-wrapper .wp-block-button .wp-block-button__link {
+  border: 1px solid transparent;
+  border-radius: 0.25rem;
+  -webkit-transition: all 0.3s;
+  -moz-transition: all 0.3s;
+  -o-transition: all 0.3s;
+  transition: all 0.3s;
+  padding: 0.375rem 0.75rem;
+}
+body.wp-admin.block-editor-page .editor-styles-wrapper .wp-block-button .wp-block-button__link, body.wp-admin.block-editor-page .editor-styles-wrapper .wp-block-button .wp-block-button__link:visited {
+  background-color: #d1548e;
+  border-color: #d1548e;
+  color: #fff;
+}
+body.wp-admin.block-editor-page .editor-styles-wrapper .wp-block-button .wp-block-button__link.active, body.wp-admin.block-editor-page .editor-styles-wrapper .wp-block-button .wp-block-button__link.focus, body.wp-admin.block-editor-page .editor-styles-wrapper .wp-block-button .wp-block-button__link:active, body.wp-admin.block-editor-page .editor-styles-wrapper .wp-block-button .wp-block-button__link:focus, body.wp-admin.block-editor-page .editor-styles-wrapper .wp-block-button .wp-block-button__link:hover {
+  background-color: #fff;
+  border-color: #d1548e;
+  color: #d1548e;
+  -webkit-transition: all 0.3s;
+  -moz-transition: all 0.3s;
+  -o-transition: all 0.3s;
+  transition: all 0.3s;
+}
+body.wp-admin.block-editor-page .editor-styles-wrapper blockquote {
+  background-color: #ebf5fa;
+  border-left: 4px solid #d1548e;
+  color: #222;
+  font-family: Georgia, Times, "Times New Roman", serif;
+  font-weight: 500;
+  font-size: 1.125rem;
+  margin: 0 0 1rem;
+  padding: 1em;
+  -webkit-font-smoothing: antialiased;
+}
+body.wp-admin.block-editor-page .editor-styles-wrapper blockquote p {
+  padding-left: 28px;
+}
+body.wp-admin.block-editor-page .editor-styles-wrapper blockquote p:last-child {
+  margin-bottom: 0;
+}
+body.wp-admin.block-editor-page .editor-styles-wrapper blockquote:before {
+  color: #d1548e;
+  content: '\201C';
+  font-size: 2.75rem;
+  font-weight: 600;
+  line-height: 1;
+  position: absolute;
 }
 
 /*# sourceMappingURL=style-editor.css.map */
