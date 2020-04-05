@@ -19,6 +19,10 @@ Based on the Yikes Starter Theme, the LezWatch.TV theme has been customized for 
 * Widget: Display featured custom post type posts with image
 * Customized search to limit to specific CPTs
 
+## Library Update
+
+To update shared libraries, run `composer update`
+
 ## Deployment
 
 Pushes to the `master` branch are automatically deployed via Codeship to:
@@ -27,4 +31,4 @@ Pushes to the `master` branch are automatically deployed via Codeship to:
 
 Pushes to the `development` branch are automatically deployed via Codeship to:
 
-* lwtv.dream.press
+* lezwatchtvcom.stage.site
