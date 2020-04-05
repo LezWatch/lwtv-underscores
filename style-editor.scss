@@ -14,14 +14,14 @@ The stylesheet for Gutenberg Blocks in the editor
 
 /* Main column width */
 body.wp-admin.block-editor-page {
-    .editor-styles-wrapper {
-        .wp-block {
-            margin: 0 auto;
-            max-width: 825px;
-            padding-left: 0;
-            padding-right: 0;
-        }
-    }
+	.editor-styles-wrapper {
+		.wp-block {
+			margin: 0 auto;
+			max-width: 825px;
+			padding-left: 0;
+			padding-right: 0;
+		}
+	}
 }
 
 
@@ -31,63 +31,34 @@ body.wp-admin.block-editor-page {
 
 body.wp-admin.block-editor-page {
 
-    /* Base styles */
-    .editor-styles-wrapper {
-        font-family: $basefontfamily;
-        font-size: $basefont;
-        line-height: $baseheight;
-        color: $basefontcolor;
+	/* Base styles */
+	.editor-styles-wrapper {
+		font-family: $basefontfamily;
+		font-size: $basefont;
+		line-height: $baseheight;
+		color: $basefontcolor;
 
-        /* Links */
+		/* Links */
 
-        a {
-            color: $link-color;
-            @include fade;
-            text-decoration: none;
+		a {
+			color: $link-color;
+			@include fade;
+			text-decoration: none;
 
-            &:visited {
-                color: $link-color;
-            }
+			&:visited {
+				color: $link-color;
+			}
 
-            &:hover, &:focus, &:active {
-                color: $link-hover-color;
-                @include fade;
-                text-decoration: none;
-            }
-        }
-
-        /* Core blocks */
-
-        blockquote {
-            background-color: $lwtv-ltgrey;
-            border-left: 4px solid $lwtv-pink;
-            color: $darkgrey;
-            font-family: Georgia, Times, "Times New Roman", serif;
-            font-weight: 500;
-            @include font-18;
-            margin: 0 0 1rem;
-            padding: 1em;
-            -webkit-font-smoothing: antialiased;
-
-            p {
-                padding-left: 28px;
-            }
-
-            p:last-child {
-                margin-bottom: 0;
-            }
-
-            &:before {
-                color: $lwtv-pink;
-                content: '\201C';
-                @include font-44;
-                font-weight: 600;
-                line-height: 1;
-                position: absolute;
-            }
-        }
-    }
+			&:hover, &:focus, &:active {
+				color: $link-hover-color;
+				@include fade;
+				text-decoration: none;
+			}
+		}
+	}
 }
+
+
 
 
 /* =Typography
@@ -96,45 +67,105 @@ body.wp-admin.block-editor-page {
 /* Headings */
 
 body.wp-admin.block-editor-page {
-    .editor-styles-wrapper {
-        .editor-post-title__input, h1, h2, h3, h4, h5, h6 {
-            margin-bottom: $headingbmargin;
-            font-family: $headingfontfamily;
-            font-weight: $headingfontweight;
-            line-height: $headingfontheight;
-            color: $headingfontcolor;
-        }
+	.editor-styles-wrapper {
+		.editor-post-title__input, h1, h2, h3, h4, h5, h6 {
+			margin-bottom: $headingbmargin;
+			font-family: $headingfontfamily;
+			font-weight: $headingfontweight;
+			line-height: $headingfontheight;
+			color: $headingfontcolor;
+		}
 
-        .editor-post-title__input { // These are the H1 styles.
-            @include h1;
-        }
-        
-        h2, h3, h4, h5, h6 {
-            margin-bottom: $headingbmargin;
-            font-family: $headingfontfamily;
-            font-weight: $headingfontweight;
-            line-height: $headingfontheight;
-            color: $headingfontcolor;
-        }
+		.editor-post-title__input { // These are the H1 styles.
+			@include h1;
+		}
+		
+		h2, h3, h4, h5, h6 {
+			margin-bottom: $headingbmargin;
+			font-family: $headingfontfamily;
+			font-weight: $headingfontweight;
+			line-height: $headingfontheight;
+			color: $headingfontcolor;
+		}
 
-        h2, .h2 {
-             @include h2;
-        }
+		h2, .h2 {
+			 @include h2;
+		}
 
-        h3, .h3 {
-             @include h3;
-        }
+		h3, .h3 {
+			 @include h3;
+		}
 
-        h4, .h4 {
-            @include h4;
-        }
+		h4, .h4 {
+			@include h4;
+		}
 
-        h5, .h5 {
-            @include h5;
-        }
+		h5, .h5 {
+			@include h5;
+		}
 
-        h6, .h6 {
-            @include h6;
-        }
-    }
+		h6, .h6 {
+			@include h6;
+		}
+	}
+}
+
+/* =Core blocks
+----------------------------------------------- */
+
+body.wp-admin.block-editor-page {
+	.editor-styles-wrapper {
+
+		/* Buttons */
+		.wp-block-button {
+			.wp-block-button__link {               
+				border: 1px solid transparent;
+				border-radius: 0.25rem;
+				@include fade;
+				padding: 0.375rem 0.75rem;
+
+				&, &:visited {
+					background-color: $lwtv-pink;
+					border-color: $lwtv-pink;
+					color: $white;
+				}
+
+				&.active, &.focus, &:active, &:focus, &:hover {
+					background-color: $white;
+					border-color: $lwtv-pink;
+					color: $lwtv-pink;
+					@include fade;
+				}
+			}
+		}
+
+		blockquote {
+			background-color: $lwtv-ltgrey;
+			border-left: 4px solid $lwtv-pink;
+			color: $darkgrey;
+			font-family: Georgia, Times, "Times New Roman", serif;
+			font-weight: 500;
+			@include font-18;
+			margin: 0 0 1rem;
+			padding: 1em;
+			-webkit-font-smoothing: antialiased;
+
+			p {
+				padding-left: 28px;
+			}
+
+			p:last-child {
+				margin-bottom: 0;
+			}
+
+			&:before {
+				color: $lwtv-pink;
+				content: '\201C';
+				@include font-44;
+				font-weight: 600;
+				line-height: 1;
+				position: absolute;
+			}
+		}
+	}
 }

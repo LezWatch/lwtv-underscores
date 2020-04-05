@@ -1143,6 +1143,10 @@ canvas {
 }
 
 /* Calendar */
+table.lwtvc tbody {
+  border-bottom: 8px solid #fff;
+}
+
 .ep-calendar-heading-date {
   float: left;
 }

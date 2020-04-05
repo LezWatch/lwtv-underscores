@@ -897,6 +897,12 @@ canvas {
 
 /* Calendar */
 
+table.lwtvc {
+  tbody {
+    border-bottom: 8px solid $white;
+  }
+}
+
 .ep-calendar-heading-date {
   float: left;
 }
