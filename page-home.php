@@ -95,20 +95,18 @@ get_header(); ?>
 							$already_displayed_posts[] = get_the_ID();
 							?>
 							<div class="card-group">
-								<a href="<?php the_permalink(); ?>" title="<?php the_title_attribute(); ?>" >
-									<div class="card col-sm-5"
-										<?php
-										if ( has_post_thumbnail() ) {
-											$alt_src = get_post_meta( get_the_ID(), '_wp_attachment_image_alt', true );
-											$alt_txt = ( isset( $alt_src ) && '' !== $alt_src ) ? $alt_src : get_the_title();
-											?>
-											style="background-image: url(<?php the_post_thumbnail_url( 'large' ); ?>);" aria-label="<?php echo esc_html( $alt_txt ); ?>"
-											<?php
-										}
+								<div class="card col-sm-5"
+									<?php
+									if ( has_post_thumbnail() ) {
+										$alt_src = get_post_meta( get_the_ID(), '_wp_attachment_image_alt', true );
+										$alt_txt = ( isset( $alt_src ) && '' !== $alt_src ) ? $alt_src : get_the_title();
 										?>
-										>
-									</div>
-								</a>
+										style="background-image: url(<?php the_post_thumbnail_url( 'large' ); ?>);" aria-label="<?php echo esc_html( $alt_txt ); ?>"
+										<?php
+									}
+									?>
+									>
+								</div>
 								<div class="card col-sm-7">
 									<div class="card-body">
 										<h3 class="card-title"><?php the_title(); ?></h3>
