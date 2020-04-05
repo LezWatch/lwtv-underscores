@@ -18,13 +18,14 @@ module.exports = function(grunt) {
             }
         },
 
-        sass: {                                  // Task
-            dist: {                              // Target
-                options: {                       // Target options
+        sass: {                                // Task
+            dist: {                            // Target
+                options: {                     // Target options
                     style: 'expanded'
                 },
-                files: {                         // Dictionary of files
-                    'style.css': 'style.scss',   // 'destination': 'source'
+                files: {                       // Dictionary of files
+                    'style.css': 'style.scss', // 'destination': 'source'
+                    'style-editor.css' : 'style-editor.scss',
                 }
             }
         },
@@ -32,18 +33,10 @@ module.exports = function(grunt) {
         // css minify contents of our directory and add .min.css extension
         cssmin: {
             target: {
-                files: [
-                    // admin css files
-                    {
-                        expand: true,
-                        cwd: '',
-                        src: [
-                            'style.css'
-                        ], // main style declaration file
-                        dest: '',
-                        ext: '.min.css'
-                    }
-                ]
+                files: {
+                    'style.min.css': ['style.css'],
+                    'style-editor.min.css': ['style-editor.css']
+                }
             }
         },
 
@@ -65,8 +58,25 @@ module.exports = function(grunt) {
                     event:['all']
                 },
             },
-        }, 
+            editor_css: {
+                files: 'style-editor.scss',
+                tasks: ['postcss','sass','cssmin'],
+                options: {
+                    spawn:false,
+                    event:['all']
+                },
+            },
+            general_js: {
+                files: 'inc/js/*.js',
+                tasks: ['uglify'],
+                options: {
+                    spawn:false,
+                    event:['all']
+                },
+            },
+        },
 
+        
         // Autoprefixer for our CSS files
         postcss: {
             options: {
@@ -78,18 +88,20 @@ module.exports = function(grunt) {
                 ]
             },
             dist: {
-              src: [ 'style.css' ]
+              src: [ 'style*.css' ]
             }
         },
+                
     });
 
+
     // load tasks
-    grunt.loadNpmTasks('grunt-contrib-uglify');
+    grunt.loadNpmTasks('grunt-contrib-uglify-es');
     grunt.loadNpmTasks('grunt-contrib-sass');
     grunt.loadNpmTasks('grunt-contrib-cssmin');
     grunt.loadNpmTasks('grunt-contrib-watch');
-    grunt.loadNpmTasks('grunt-postcss');        // CSS autoprefixer plugin (cross-browser auto pre-fixes)
-    grunt.loadNpmTasks('grunt-composer');       // Composer updates 
+    grunt.loadNpmTasks('grunt-postcss');       // CSS autoprefixer plugin (cross-browser auto pre-fixes)
+    grunt.loadNpmTasks('grunt-composer');      // Composer updates 
 
     // register task
     grunt.registerTask('update', [
