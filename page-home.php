@@ -4,6 +4,7 @@
  *
  * @package YIKES Starter
  */
+
 get_header(); ?>
 
 <?php
@@ -45,7 +46,9 @@ get_header(); ?>
 								<?php
 								if ( has_post_thumbnail() ) :
 									?>
-									<a href="<?php the_permalink(); ?>" title="<?php the_title_attribute(); ?>" ><?php the_post_thumbnail( 'large', array( 'class' => 'card-img-top' ) ); ?></a>
+									<a href="<?php the_permalink(); ?>" title="<?php the_title_attribute(); ?>" >
+										<?php the_post_thumbnail( 'large', array( 'class' => 'card-img-top' ) ); ?>
+									</a>
 									<?php
 								endif;
 								?>
@@ -74,7 +77,6 @@ get_header(); ?>
 					</div>
 
 					<div class="site-loop home-featured-secondary-loop">
-
 						<?php
 						$newpostsloop = new WP_Query(
 							array(
@@ -94,16 +96,16 @@ get_header(); ?>
 							?>
 							<div class="card-group">
 								<div class="card col-sm-5"
-								<?php
-								if ( has_post_thumbnail() ) {
-									$alt_src = get_post_meta( get_the_ID(), '_wp_attachment_image_alt', true );
-									$alt_txt = ( isset( $alt_src ) && '' !== $alt_src ) ? $alt_src : get_the_title();
-									?>
-									style="background-image: url(<?php the_post_thumbnail_url( 'large' ); ?>);" aria-label="<?php echo esc_html( $alt_txt ); ?>"
 									<?php
-								}
-								?>
-								>
+									if ( has_post_thumbnail() ) {
+										$alt_src = get_post_meta( get_the_ID(), '_wp_attachment_image_alt', true );
+										$alt_txt = ( isset( $alt_src ) && '' !== $alt_src ) ? $alt_src : get_the_title();
+										?>
+										style="background-image: url(<?php the_post_thumbnail_url( 'large' ); ?>);" aria-label="<?php echo esc_html( $alt_txt ); ?>"
+										<?php
+									}
+									?>
+									>
 								</div>
 								<div class="card col-sm-7">
 									<div class="card-body">
