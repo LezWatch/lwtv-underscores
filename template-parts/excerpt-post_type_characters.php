@@ -23,7 +23,7 @@ $alttext     = 'A picture of the character ' . get_the_title( $the_id );
 $char_role   = ( isset( $character['role_from'] ) ) ? $character['role_from'] : 'regular';
 $archive     = ( is_archive() || is_tax() || is_page() ) ? true : false;
 
-if ( isset( $character['shows'] ) && is_array( $character['shows'] ) ) {
+if ( isset( $character['shows'] ) && isset( $character['show_from'] ) && is_array( $character['shows'] ) ) {
 	foreach ( $character['shows'] as $one_show ) {
 		if ( (int) $one_show['show'] === (int) $character['show_from'] ) {
 			asort( $one_show['appears'] );
