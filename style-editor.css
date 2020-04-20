@@ -189,8 +189,9 @@ body.wp-admin.block-editor-page .editor-styles-wrapper blockquote:before {
   line-height: 1;
   position: absolute;
 }
-body.wp-admin.block-editor-page .editor-styles-wrapper .wp-block-embed .twitter-tweet {
+body.wp-admin.block-editor-page .editor-styles-wrapper .wp-block-embed {
   margin: 0 auto;
+  max-width: 550px;
 }
 
 /* =LezWatchTV blocks
