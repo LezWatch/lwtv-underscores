@@ -14,8 +14,8 @@ Based on the Yikes Starter Theme, the LezWatch.TV theme has been customized for 
 * Integrated with LWTV Plugin
 * Integrated with [AMP by Automattic](https://wordpress.org/plugins/amp/)
 * Integrated with FacetWP
-* Additional custom image sizes: Show (960x400), Character (225x300)
-* Additional custom sidebars: Show Archives, Character Archives
+* Additional custom image sizes: Show (960x400), Character (225x300), Actor (225x300)
+* Additional custom sidebars: Show, Character, and Actor Archives
 * Widget: Display featured custom post type posts with image
 * Customized search to limit to specific CPTs
 
@@ -25,7 +25,7 @@ To update shared libraries, run `composer update`
 
 ## Deployment
 
-Pushes to the `master` branch are automatically deployed via Codeship to:
+Pushes to the `main` branch are automatically deployed via Codeship to:
 
 * lezwatchtv.com
 
