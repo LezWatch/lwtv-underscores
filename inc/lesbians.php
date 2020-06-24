@@ -672,7 +672,7 @@ function lwtv_yikes_is_queer( $the_id ) {
 	if ( ! method_exists( 'LWTV_Loops', 'is_actor_queer' ) ) {
 		$is_queer = false;
 	} else {
-		$is_queer = ( 'yes' === LWTV_Loops::is_actor_queer( $the_id ) ) ? true : false;
+		$is_queer = ( 'yes' === ( new LWTV_Loops() )->is_actor_queer( $the_id ) ) ? true : false;
 	}
 
 	return $is_queer;
@@ -722,7 +722,7 @@ function lwtv_microformats_fix( $post_id ) {
  */
 function lwtv_symbolicons( $svg, $fa ) {
 	if ( method_exists( 'LWTV_Functions', 'symbolicons' ) ) {
-		$return = LWTV_Functions::symbolicons( $svg, $fa );
+		$return = ( new LWTV_Functions )->symbolicons( $svg, $fa );
 	} else {
 		$return = '<span class="symbolicon" role="img"><svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="spinner" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="svg-inline--fa fa-spinner fa-w-16 fa-3x"><path fill="currentColor" d="M304 48c0 26.51-21.49 48-48 48s-48-21.49-48-48 21.49-48 48-48 48 21.49 48 48zm-48 368c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.49-48-48-48zm208-208c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.49-48-48-48zM96 256c0-26.51-21.49-48-48-48S0 229.49 0 256s21.49 48 48 48 48-21.49 48-48zm12.922 99.078c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48c0-26.509-21.491-48-48-48zm294.156 0c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48c0-26.509-21.49-48-48-48zM108.922 60.922c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.491-48-48-48z" class=""></path></svg></span>';
 	}
@@ -737,7 +737,7 @@ function lwtv_symbolicons( $svg, $fa ) {
  */
 function lwtv_list_characters( $post_id, $output ) {
 	if ( method_exists( 'LWTV_CPT_Characters', 'list_characters' ) ) {
-		$return = LWTV_CPT_Characters::list_characters( $post_id, $output );
+		$return = ( new LWTV_CPT_Characters() )->list_characters( $post_id, $output );
 	} else {
 		$output = '';
 	}
@@ -753,7 +753,7 @@ function lwtv_list_characters( $post_id, $output ) {
  */
 function lwtv_get_chars_for_show( $post_id, $count, $roll ) {
 	if ( method_exists( 'LWTV_CPT_Characters', 'get_chars_for_show' ) ) {
-		$return = LWTV_CPT_Characters::get_chars_for_show( $post_id, $count, $roll );
+		$return = ( new LWTV_CPT_Characters() )->get_chars_for_show( $post_id, $count, $roll );
 	} else {
 		$return = '';
 	}

@@ -9,7 +9,7 @@ $show_id = $post->ID;
 
 // Do the math to make sure we're up to date.
 if ( method_exists( 'LWTV_Shows_Calculate', 'do_the_math' ) ) {
-	LWTV_Shows_Calculate::do_the_math( $show_id );
+	( new LWTV_Shows_Calculate() )->do_the_math( $show_id );
 }
 
 $thumb_rating = ( get_post_meta( $show_id, 'lezshows_worthit_rating', true ) ) ? get_post_meta( $show_id, 'lezshows_worthit_rating', true ) : 'TBD';
@@ -79,7 +79,7 @@ $screentime   = ( get_post_meta( $show_id, 'lezshows_screentime_rating', true ) 
 				if ( $countries && ! is_wp_error( $countries ) ) {
 					echo '<li class="list-group-item network country">' . get_the_term_list( $show_id, 'lez_country', '<strong>Airs In:</strong> ', ', ' ) . '</li>';
 				}
-				$next_ep = LWTV_Whats_On_JSON::whats_on_show( $post->post_name );
+				$next_ep = ( new LWTV_Whats_On_JSON() )->whats_on_show( $post->post_name );
 				if ( isset( $next_ep['nextep'] ) ) {
 					echo '<li class="list-group-item network upcoming_ep"><strong>Next Episode:</strong> ' . esc_html( $next_ep['nextep'] ) . '</li>';
 				}
@@ -137,7 +137,7 @@ $screentime   = ( get_post_meta( $show_id, 'lezshows_screentime_rating', true ) 
 <section id="affiliates" class="widget widget_text">
 	<?php
 	if ( method_exists( 'LWTV_Affilliates', 'shows' ) ) {
-		echo LWTV_Affilliates::shows( $show_id, 'tiny' ); // phpcs:ignore WordPress.Security.EscapeOutput
+		echo ( new LWTV_Affilliates() )->shows( $show_id, 'tiny' ); // phpcs:ignore WordPress.Security.EscapeOutput
 	}
 	?>
 </section>
@@ -275,7 +275,7 @@ if ( $intersections && ! is_wp_error( $intersections ) ) {
 <section id="affiliates" class="widget widget_text">
 	<?php
 	if ( method_exists( 'LWTV_Affilliates', 'shows' ) ) {
-		echo LWTV_Affilliates::shows( $show_id, 'wide' ); // phpcs:ignore WordPress.Security.EscapeOutput
+		echo ( new LWTV_Affilliates() )->shows( $show_id, 'wide' ); // phpcs:ignore WordPress.Security.EscapeOutput
 	}
 	?>
 </section>

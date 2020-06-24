@@ -8,7 +8,7 @@ $char_id = $post->ID;
 
 // Do the math to make sure we're up to date.
 if ( class_exists( 'LWTV_Characters_Calculate' ) ) {
-	LWTV_Shows_Calculate::do_the_math( $char_id );
+	( new LWTV_Shows_Calculate() )->do_the_math( $char_id );
 }
 
 ?>
@@ -22,7 +22,7 @@ if ( class_exists( 'LWTV_Characters_Calculate' ) ) {
 <section id="affiliates" class="widget widget_text">
 	<?php
 	if ( method_exists( 'LWTV_Affilliates', 'characters' ) ) {
-		echo LWTV_Affilliates::characters( $char_id, 'wide' ); // phpcs:ignore WordPress.Security.EscapeOutput
+		echo ( new LWTV_Affilliates() )->characters( $char_id, 'wide' ); // phpcs:ignore WordPress.Security.EscapeOutput
 	}
 	?>
 </section>

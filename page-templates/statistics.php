@@ -105,7 +105,7 @@ get_header(); ?>
 							);
 
 							// phpcs:ignore WordPress.Security.EscapeOutput
-							echo LWTV_Stats_SSR::statistics( $attributes );
+							echo ( new LWTV_Stats_SSR() )->statistics( $attributes );
 						} else {
 							echo '<p>After this maintenance, statistics will be right back!</p>';
 						}

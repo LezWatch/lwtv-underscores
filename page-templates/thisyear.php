@@ -55,7 +55,7 @@ get_header();
 						<?php
 						if ( method_exists( 'LWTV_This_Year', 'display' ) ) {
 							// phpcs:ignore WordPress.Security.EscapeOutput
-							echo LWTV_This_Year::display( $thisyear );
+							echo ( new LWTV_This_Year() )->display( $thisyear );
 						}
 						?>
 					</div><!-- #content -->

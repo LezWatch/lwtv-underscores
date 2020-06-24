@@ -10,8 +10,8 @@
 $show_id        = $post->ID;
 $slug           = get_post_field( 'post_name', get_post( $show_id ) );
 $get_tags       = get_term_by( 'name', $slug, 'post_tag' );
-$related        = LWTV_Related_Posts::are_there_posts( $slug );
-$rpbt_shortcode = LWTV_Shows_Like_This::generate( $show_id );
+$related        = ( new LWTV_Related_Posts() )->are_there_posts( $slug );
+$rpbt_shortcode = ( new LWTV_Shows_Like_This() )->generate( $show_id );
 
 // Microformats Fix.
 lwtv_microformats_fix( $post->ID );
@@ -85,7 +85,7 @@ if ( 'none' !== $warning['card'] ) {
 
 <?php
 if ( ( get_post_meta( $show_id, 'lezshows_affiliate', true ) ) ) {
-	echo '<section id="affiliate-watch-link" class="affiliate-watch-container">' . LWTV_Affilliates::shows( $show_id, 'affiliate' ) . '</section>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+	echo '<section id="affiliate-watch-link" class="affiliate-watch-container">' . ( new LWTV_Affilliates() )->shows( $show_id, 'affiliate' ) . '</section>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 }
 ?>
 
@@ -128,8 +128,8 @@ if ( $related ) {
 		<div class="card-body">
 			<?php
 			if ( method_exists( 'LWTV_Related_Posts', 'related_posts' ) && method_exists( 'LWTV_Related_Posts', 'count_related_posts' ) ) {
-				echo LWTV_Related_Posts::related_posts( $slug ); // phpcs:ignore WordPress.Security.EscapeOutput
-				if ( count( LWTV_Related_Posts::count_related_posts( $slug ) ) > '5' ) {
+				echo ( new LWTV_Related_Posts() )->related_posts( $slug ); // phpcs:ignore WordPress.Security.EscapeOutput
+				if ( count( ( new LWTV_Related_Posts() )->count_related_posts( $slug ) ) > '5' ) {
 					$get_tags = term_exists( $slug, 'post_tag' );
 					if ( ! is_null( $get_tags ) && $get_tags >= 1 ) {
 						echo '<p><a href="' . esc_url( get_tag_link( $get_tags['term_id'] ) ) . '">Read More ...</a></p>';

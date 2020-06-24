@@ -12,7 +12,7 @@ $slug     = get_post_field( 'post_name', get_post( get_the_ID() ) );
 $get_tags = get_term_by( 'name', $slug, 'post_tag' );
 
 if ( method_exists( 'LWTV_Related_Posts', 'are_there_posts' ) ) {
-	$related = LWTV_Related_Posts::are_there_posts( $slug );
+	$related = ( new LWTV_Related_Posts() )->are_there_posts( $slug );
 }
 
 // Generate Life Stats
@@ -162,8 +162,8 @@ if ( isset( $related ) && $related ) {
 		<div class="card-body">
 			<?php
 			if ( method_exists( 'LWTV_Related_Posts', 'related_posts' ) && method_exists( 'LWTV_Related_Posts', 'count_related_posts' ) ) {
-				echo LWTV_Related_Posts::related_posts( $slug ); // phpcs:ignore WordPress.Security.EscapeOutput
-				if ( count( LWTV_Related_Posts::count_related_posts( $slug ) ) > '5' ) {
+				echo ( new LWTV_Related_Posts() )->related_posts( $slug ); // phpcs:ignore WordPress.Security.EscapeOutput
+				if ( count( ( new LWTV_Related_Posts() )->count_related_posts( $slug ) ) > '5' ) {
 					$get_tags = term_exists( $slug, 'post_tag' );
 					if ( ! is_null( $get_tags ) && $get_tags >= 1 ) {
 						echo '<p><a href="' . esc_url( get_tag_link( $get_tags['term_id'] ) ) . '">Read More ...</a></p>';
