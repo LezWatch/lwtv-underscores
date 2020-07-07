@@ -6,39 +6,6 @@ The stylesheet for Gutenberg Blocks in the editor
 /* Base theme colors */
 /* Theme color palette */
 /* Link colors */
-@-webkit-keyframes rainbow {
-  0% {
-    background-position: 0% 82%;
-  }
-  50% {
-    background-position: 100% 19%;
-  }
-  100% {
-    background-position: 0% 82%;
-  }
-}
-@-moz-keyframes rainbow {
-  0% {
-    background-position: 0% 82%;
-  }
-  50% {
-    background-position: 100% 19%;
-  }
-  100% {
-    background-position: 0% 82%;
-  }
-}
-@-o-keyframes rainbow {
-  0% {
-    background-position: 0% 82%;
-  }
-  50% {
-    background-position: 100% 19%;
-  }
-  100% {
-    background-position: 0% 82%;
-  }
-}
 @keyframes rainbow {
   0% {
     background-position: 0% 82%;
@@ -61,7 +28,6 @@ The stylesheet for Gutenberg Blocks in the editor
    ========================================================================== */
 /* Main column width */
 body.wp-admin.block-editor-page .editor-styles-wrapper .wp-block {
-  margin: 0 auto;
   max-width: 825px;
   padding-left: 0;
   padding-right: 0;
@@ -82,9 +48,6 @@ body.wp-admin.block-editor-page .editor-styles-wrapper {
 }
 body.wp-admin.block-editor-page .editor-styles-wrapper a {
   color: #d1548e;
-  -webkit-transition: all 0.3s;
-  -moz-transition: all 0.3s;
-  -o-transition: all 0.3s;
   transition: all 0.3s;
   text-decoration: none;
 }
@@ -93,9 +56,6 @@ body.wp-admin.block-editor-page .editor-styles-wrapper a:visited {
 }
 body.wp-admin.block-editor-page .editor-styles-wrapper a:hover, body.wp-admin.block-editor-page .editor-styles-wrapper a:focus, body.wp-admin.block-editor-page .editor-styles-wrapper a:active {
   color: #8d329f;
-  -webkit-transition: all 0.3s;
-  -moz-transition: all 0.3s;
-  -o-transition: all 0.3s;
   transition: all 0.3s;
   text-decoration: none;
 }
@@ -144,9 +104,6 @@ body.wp-admin.block-editor-page .editor-styles-wrapper {
 body.wp-admin.block-editor-page .editor-styles-wrapper .wp-block-button .wp-block-button__link {
   border: 1px solid transparent;
   border-radius: 0.25rem;
-  -webkit-transition: all 0.3s;
-  -moz-transition: all 0.3s;
-  -o-transition: all 0.3s;
   transition: all 0.3s;
   padding: 0.375rem 0.75rem;
 }
@@ -159,9 +116,6 @@ body.wp-admin.block-editor-page .editor-styles-wrapper .wp-block-button .wp-bloc
   background-color: #fff;
   border-color: #d1548e;
   color: #d1548e;
-  -webkit-transition: all 0.3s;
-  -moz-transition: all 0.3s;
-  -o-transition: all 0.3s;
   transition: all 0.3s;
 }
 body.wp-admin.block-editor-page .editor-styles-wrapper blockquote {

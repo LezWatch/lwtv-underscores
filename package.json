@@ -10,6 +10,7 @@
   "license": "GPL-2.0",
   "repository": "https://github.com/lezwatch/lwtv-underscores/",
   "dependencies": {
+    "coffeescript": "^2.5.1",
     "grunt": "^1.1.0"
   },
   "devDependencies": {

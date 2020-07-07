@@ -16,7 +16,6 @@ The stylesheet for Gutenberg Blocks in the editor
 body.wp-admin.block-editor-page {
 	.editor-styles-wrapper {
 		.wp-block {
-			margin: 0 auto;
 			max-width: 825px;
 			padding-left: 0;
 			padding-right: 0;
@@ -79,7 +78,7 @@ body.wp-admin.block-editor-page {
 		.editor-post-title__input { // These are the H1 styles.
 			@include h1;
 		}
-		
+
 		h2, h3, h4, h5, h6 {
 			margin-bottom: $headingbmargin;
 			font-family: $headingfontfamily;
@@ -118,7 +117,7 @@ body.wp-admin.block-editor-page {
 
 		/* Buttons */
 		.wp-block-button {
-			.wp-block-button__link {               
+			.wp-block-button__link {
 				border: 1px solid transparent;
 				border-radius: 0.25rem;
 				@include fade;
