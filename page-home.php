@@ -32,6 +32,7 @@ get_header(); ?>
 								'posts_per_page' => '1',
 								'orderby'        => 'date',
 								'order'          => 'DESC',
+								'no_found_rows'  => true,
 							)
 						);
 						?>
@@ -84,6 +85,7 @@ get_header(); ?>
 								'offset'         => '1',
 								'orderby'        => 'date',
 								'order'          => 'DESC',
+								'no_found_rows'  => true,
 							)
 						);
 						?>
@@ -247,6 +249,7 @@ get_header(); ?>
 						'post__not_in'   => $already_displayed_posts,
 						'orderby'        => 'date',
 						'order'          => 'DESC',
+						'no_found_rows'  => true,
 					)
 				);
 				?>

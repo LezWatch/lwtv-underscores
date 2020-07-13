@@ -19,14 +19,14 @@ if ( method_exists( 'LWTV_Related_Posts', 'are_there_posts' ) ) {
 // Usage: $life
 $life = array();
 if ( get_post_meta( get_the_ID(), 'lezactors_birth', true ) ) {
-	$get_birth          = new DateTime( get_post_meta( get_the_ID(), 'lezactors_birth', true ) );
-	$age                = lwtv_yikes_actordata( get_the_ID(), 'age', true );
-	$life['age']        = $age->format( '%Y years old' );
-	$life['birth date'] = date_format( $get_birth, 'F d, Y' );
+	$get_birth    = new DateTime( get_post_meta( get_the_ID(), 'lezactors_birth', true ) );
+	$age          = lwtv_yikes_actordata( get_the_ID(), 'age', true );
+	$life['born'] = date_format( $get_birth, 'F d, Y' );
+	$life['age']  = $age->format( '%Y years old' );
 }
 if ( get_post_meta( get_the_ID(), 'lezactors_death', true ) ) {
-	$get_death     = new DateTime( get_post_meta( get_the_ID(), 'lezactors_death', true ) );
-	$life['death'] = date_format( $get_death, 'F d, Y' );
+	$get_death    = new DateTime( get_post_meta( get_the_ID(), 'lezactors_death', true ) );
+	$life['died'] = date_format( $get_death, 'F d, Y' );
 }
 
 // Generate Gender & Sexuality Data
