@@ -736,10 +736,9 @@ function lwtv_symbolicons( $svg, $fa ) {
  * @return mixed   number or array listing the characters
  */
 function lwtv_list_characters( $post_id, $output ) {
+	$return = '';
 	if ( method_exists( 'LWTV_CPT_Characters', 'list_characters' ) ) {
 		$return = ( new LWTV_CPT_Characters() )->list_characters( $post_id, $output );
-	} else {
-		$output = '';
 	}
 	return $return;
 }
@@ -752,10 +751,9 @@ function lwtv_list_characters( $post_id, $output ) {
  * @return array           List of all the characters
  */
 function lwtv_get_chars_for_show( $post_id, $count, $roll ) {
+	$return = '';
 	if ( method_exists( 'LWTV_CPT_Characters', 'get_chars_for_show' ) ) {
 		$return = ( new LWTV_CPT_Characters() )->get_chars_for_show( $post_id, $count, $roll );
-	} else {
-		$return = '';
 	}
 	return $return;
 }

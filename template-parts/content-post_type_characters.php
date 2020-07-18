@@ -9,33 +9,35 @@
 
 // Generate list of shows
 // Usage: $shows_group
-$all_shows = lwtv_yikes_chardata( get_the_ID(), 'shows' );
-if ( '' !== $all_shows ) {
-	$appears = array();
+$all_shows   = lwtv_yikes_chardata( get_the_ID(), 'shows' );
+$shows_group = array();
+
+if ( '' !== $all_shows && is_array( $all_shows ) ) {
 	foreach ( $all_shows as $each_show ) {
-		$roletype = ( isset( $each_show['type'] ) ) ? $each_show['type'] : '';
-		$chartype = $roletype . ' character';
+		$chartype = ( isset( $each_show['type'] ) ) ? $each_show['type'] . ' character' : '';
+
+		// Years appears
+		$appears = '';
 		if ( isset( $each_show['appears'] ) && is_array( $each_show['appears'] ) ) {
 			sort( $each_show['appears'] );
 			$appears = ' - ' . implode( ', ', $each_show['appears'] );
-		} else {
-			$appears = '';
 		}
 
+		// Link to Show
+		$showlink = '';
 		if ( isset( $each_show['show'] ) && '' !== $each_show['show'] ) {
 			if ( get_post_status( $each_show['show'] ) !== 'publish' ) {
 				$showlink = '<em><span class="disabled-show-link">' . get_the_title( $each_show['show'] ) . '</span></em>';
 			} else {
 				$showlink = '<em><a href="' . get_permalink( $each_show['show'] ) . '">' . get_the_title( $each_show['show'] ) . '</a></em>';
 			}
-		} else {
-			$showlink = '';
 		}
 
+		// Output ex: Legends of Tomorrow (regular character)
 		$shows_group[] = $showlink . ' <small>(' . $chartype . $appears . ')</small>';
 	}
 } else {
-	$shows_group = array( 'None' );
+	$shows_group[] = 'None';
 }
 
 // Generate actors

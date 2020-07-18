@@ -29,6 +29,7 @@ class LWTV_Character extends WP_Widget {
 			'posts_per_page' => '1',
 			'orderby'        => 'date',
 			'order'          => 'DESC',
+			'no_found_rows'  => true,
 		);
 
 		// Get what's needed from $args array ($args populated with options from widget area register_sidebar function)

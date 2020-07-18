@@ -244,10 +244,6 @@ class LWTV_Theme_AMP {
 
 		$return = '<section class="amp-wp-show-footer">';
 
-		// Generate Character Type
-		// Usage: $character_type
-		$character_type = '';
-
 		// Generate list of shows
 		// Usage: $appears
 		$all_shows  = get_post_meta( $post_id, 'lezchars_show_group', true );
