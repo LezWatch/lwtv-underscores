@@ -252,7 +252,7 @@ class LWTV_Theme_AMP {
 			$all_shows = array( $all_shows );
 		}
 		foreach ( $all_shows as $each_show ) {
-			if ( isset( $each_show['show'] ) ) {
+			if ( isset( $each_show['show'] ) && isset( $each_show['type'] ) ) {
 				array_push( $show_title, '<em><a href="' . get_permalink( $each_show['show'] ) . 'amp/">' . get_the_title( $each_show['show'] ) . '</a></em> (' . $each_show['type'] . ' character)' );
 			}
 		}
