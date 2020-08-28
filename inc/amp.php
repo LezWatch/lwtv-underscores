@@ -248,8 +248,13 @@ class LWTV_Theme_AMP {
 		// Usage: $appears
 		$all_shows  = get_post_meta( $post_id, 'lezchars_show_group', true );
 		$show_title = array();
+		if ( ! is_array( $all_shows ) ) {
+			$all_shows = array( $all_shows );
+		}
 		foreach ( $all_shows as $each_show ) {
-			array_push( $show_title, '<em><a href="' . get_permalink( $each_show['show'] ) . 'amp/">' . get_the_title( $each_show['show'] ) . '</a></em> (' . $each_show['type'] . ' character)' );
+			if ( isset( $each_show['show'] ) && isset( $each_show['type'] ) ) {
+				array_push( $show_title, '<em><a href="' . get_permalink( $each_show['show'] ) . 'amp/">' . get_the_title( $each_show['show'] ) . '</a></em> (' . $each_show['type'] . ' character)' );
+			}
 		}
 		$on_shows = ( empty( $show_title ) ) ? ' no shows.' : ': ' . implode( ', ', $show_title );
 		$appears  = '<strong>Appears on</strong>' . $on_shows;
