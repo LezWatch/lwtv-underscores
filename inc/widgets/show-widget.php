@@ -40,7 +40,7 @@ class LWTV_Show extends WP_Widget {
 		$after_title   = isset( $args['after_title'] ) ? $args['after_title'] : '';
 
 		// Get what's needed from $instanse array ($instance populated with user inputs from widget form)
-		$title = isset( $instance['title'] ) && ! empty( trim( $instance['title'] ) ) ? $instance['title'] : 'YIKES Example Widget';
+		$title = isset( $instance['title'] ) && ! empty( trim( $instance['title'] ) ) ? $instance['title'] : 'Newest Show';
 		$title = apply_filters( 'widget_title', $title, $instance, $this->id_base );
 
 		/** Output widget HTML BEGIN **/
