@@ -438,13 +438,6 @@ require get_template_directory() . '/inc/custom-header.php';
 /* Remove custom background support */
 remove_theme_support( 'custom-background' );
 
-/**
- * LWTV Additional Items
- */
-
-/* Load AMP functionality file. */
-require get_template_directory() . '/inc/amp.php';
-
 /* Load FacetWP compatibility file. */
 require get_template_directory() . '/inc/facet.php';
 

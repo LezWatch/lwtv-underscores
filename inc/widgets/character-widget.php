@@ -32,14 +32,14 @@ class LWTV_Character extends WP_Widget {
 			'no_found_rows'  => true,
 		);
 
-		// Get what's needed from $args array ($args populated with options from widget area register_sidebar function)
+		// Get what's needed from $args array (populated with options from widget area register_sidebar function)
 		$before_widget = isset( $args['before_widget'] ) ? $args['before_widget'] : '';
 		$after_widget  = isset( $args['after_widget'] ) ? $args['after_widget'] : '';
 		$before_title  = isset( $args['before_title'] ) ? $args['before_title'] : '';
 		$after_title   = isset( $args['after_title'] ) ? $args['after_title'] : '';
 
-		// Get what's needed from $instanse array ($instance populated with user inputs from widget form)
-		$title = isset( $instance['title'] ) && ! empty( trim( $instance['title'] ) ) ? $instance['title'] : 'YIKES Example Widget';
+		// Get what's needed from $instance array (populated with user inputs from widget form)
+		$title = isset( $instance['title'] ) && ! empty( trim( $instance['title'] ) ) ? $instance['title'] : 'Newest Character';
 		$title = apply_filters( 'widget_title', $title, $instance, $this->id_base );
 
 		/** Output widget HTML BEGIN **/
