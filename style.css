@@ -142,6 +142,8 @@ a:hover, a:focus, a:active {
 /* Embeds */
 figure.wp-block-embed figcaption {
   text-align: left;
+  font-size: smaller;
+  color: #ebf5fa;
 }
 figure.wp-block-embed.alignleft, figure.wp-block-embed.aligncenter, figure.wp-block-embed.alignright {
   border: 0;

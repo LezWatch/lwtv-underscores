@@ -119,6 +119,8 @@ a {
 figure.wp-block-embed {
 	figcaption {
 		text-align: left;
+		font-size: smaller;
+		color: $lwtv-ltgrey;
 	}
 
 	&.alignleft, &.aligncenter, &.alignright {
