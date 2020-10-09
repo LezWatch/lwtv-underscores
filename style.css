@@ -1737,6 +1737,14 @@ ul.comment-list li .comment-content .btn a, ul.comment-list li .comment-content 
   border-bottom: 2px solid #d1548e !important;
 }
 
+.ais-facets {
+  margin-bottom: 0px !important;
+}
+
+.ais-menu--list {
+  padding: 0 .75rem;
+}
+
 .ais-menu--count {
   display: inline-block;
   padding: .25em .4em;
@@ -1751,7 +1759,7 @@ ul.comment-list li .comment-content .btn a, ul.comment-list li .comment-content 
   position: relative;
   top: -1px;
   color: #000;
-  background-color: #d1548e;
+  background-color: #f3f3f3;
 }
 
 /*--------------------------------------------------------------

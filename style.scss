@@ -1645,6 +1645,14 @@ embed, iframe, object {
 	border-bottom: 2px solid $lwtv-pink!important;
 }
 
+.ais-facets {
+	margin-bottom: 0px!important;
+}
+
+.ais-menu--list {
+	padding: 0 .75rem;
+}
+
 .ais-menu--count {
 	display: inline-block;
 	padding: .25em .4em;
@@ -1659,7 +1667,7 @@ embed, iframe, object {
 	position: relative;
 	top: -1px;
 	color: $black;
-	background-color: $lwtv-pink;
+	background-color: $lwtv-grey;
 }
 
 /*--------------------------------------------------------------
