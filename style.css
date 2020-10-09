@@ -1728,6 +1728,11 @@ ul.comment-list li .comment-content .btn a, ul.comment-list li .comment-content 
   fill: #222;
 }
 
+/* Algolia CSS */
+#algolia-search-box .search-icon {
+  fill: #d1548e !important;
+}
+
 /*--------------------------------------------------------------
 ## Shortcodes
 --------------------------------------------------------------*/
