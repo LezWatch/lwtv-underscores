@@ -119,6 +119,8 @@ a {
 figure.wp-block-embed {
 	figcaption {
 		text-align: left;
+		font-size: smaller;
+		color: $lwtv-ltgrey;
 	}
 
 	&.alignleft, &.aligncenter, &.alignright {
@@ -1632,6 +1634,40 @@ embed, iframe, object {
 			fill: $darkgrey;
 		}
 	}
+}
+
+/* Algolia CSS */
+#algolia-search-box .search-icon {
+	fill: $lwtv-pink!important;
+}
+
+#algolia-search-box input {
+	border-bottom: 2px solid $lwtv-pink!important;
+}
+
+.ais-facets {
+	margin-bottom: 0px!important;
+}
+
+.ais-menu--list {
+	padding: 0 .75rem;
+}
+
+.ais-menu--count {
+	display: inline-block;
+	padding: .25em .4em;
+	font-size: 75%;
+	font-weight: 700;
+	line-height: 1;
+	text-align: center;
+	white-space: nowrap;
+	vertical-align: baseline;
+	border-radius: .25rem;
+	transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+	position: relative;
+	top: -1px;
+	color: $black;
+	background-color: $lwtv-grey;
 }
 
 /*--------------------------------------------------------------

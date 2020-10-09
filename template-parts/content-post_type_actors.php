@@ -18,14 +18,22 @@ if ( method_exists( 'LWTV_Related_Posts', 'are_there_posts' ) ) {
 // Generate Life Stats
 // Usage: $life
 $life = array();
-if ( get_post_meta( get_the_ID(), 'lezactors_birth', true ) ) {
-	$get_birth    = new DateTime( get_post_meta( get_the_ID(), 'lezactors_birth', true ) );
+$born = get_post_meta( get_the_ID(), 'lezactors_birth', true );
+if ( ! empty( $born ) ) {
+	$barr = explode( '-', $born );
+}
+if ( isset( $barr ) && checkdate( (int) $barr[1], (int) $barr[2], (int) $barr[0] ) ) {
+	$get_birth    = new DateTime( $born );
 	$age          = lwtv_yikes_actordata( get_the_ID(), 'age', true );
 	$life['born'] = date_format( $get_birth, 'F d, Y' );
 	$life['age']  = $age->format( '%Y years old' );
 }
-if ( get_post_meta( get_the_ID(), 'lezactors_death', true ) ) {
-	$get_death    = new DateTime( get_post_meta( get_the_ID(), 'lezactors_death', true ) );
+$died = get_post_meta( get_the_ID(), 'lezactors_death', true );
+if ( ! empty( $died ) ) {
+	$darr = explode( '-', $died );
+}
+if ( isset( $darr ) && checkdate( $darr[1], $darr[2], $darr[0] ) ) {
+	$get_death    = new DateTime( $died );
 	$life['died'] = date_format( $get_death, 'F d, Y' );
 }
 
