@@ -87,7 +87,7 @@ $screentime   = ( get_post_meta( $show_id, 'lezshows_screentime_rating', true ) 
 					if ( isset( $next_ep['summary'] ) && 'TBD' !== $next_ep['summary'] ) {
 						$collapse = 'data-toggle="collapse" href="#episodeSummary" role="button" aria-expanded="false" aria-controls="episodeSummary"';
 						echo '<br /><button class="btn btn-primary btn-sm btn-block" type="button" data-toggle="collapse" data-target="#episodeSummary" aria-expanded="false" aria-controls="episodeSummary">Read More</button></li>';
-						echo '<div class="collapse" id="episodeSummary"><div class="card card-body">' . esc_html( $next_ep['summary'] ) . '<br /><small><a href="https://tvmaze.com">Powered by TVMaze</a></small></div></div>';
+						echo '<div class="collapse" id="episodeSummary"><div class="card card-body">' . esc_html( $next_ep['summary'] ) . '<br /><small><a href="https://tvmaze.com" target="_new">Powered by TVMaze</a></small></div></div>';
 					} else {
 						echo '</li>';
 					}
