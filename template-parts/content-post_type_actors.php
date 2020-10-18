@@ -22,7 +22,7 @@ $born = get_post_meta( get_the_ID(), 'lezactors_birth', true );
 if ( ! empty( $born ) ) {
 	$barr = explode( '-', $born );
 }
-if ( isset( $barr ) && checkdate( (int) $barr[1], (int) $barr[2], (int) $barr[0] ) ) {
+if ( isset( $barr ) && isset( $barr[1] ) && isset( $barr[2] ) && checkdate( (int) $barr[1], (int) $barr[2], (int) $barr[0] ) ) {
 	$get_birth    = new DateTime( $born );
 	$age          = lwtv_yikes_actordata( get_the_ID(), 'age', true );
 	$life['born'] = date_format( $get_birth, 'F d, Y' );
@@ -32,7 +32,7 @@ $died = get_post_meta( get_the_ID(), 'lezactors_death', true );
 if ( ! empty( $died ) ) {
 	$darr = explode( '-', $died );
 }
-if ( isset( $darr ) && checkdate( $darr[1], $darr[2], $darr[0] ) ) {
+if ( isset( $darr ) && isset( $darr[1] ) && isset( $darr[2] ) && checkdate( $darr[1], $darr[2], $darr[0] ) ) {
 	$get_death    = new DateTime( $died );
 	$life['died'] = date_format( $get_death, 'F d, Y' );
 }
