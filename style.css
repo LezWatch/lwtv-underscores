@@ -1931,9 +1931,6 @@ div.facetwp-facet-shows_scores input.facetwp-number {
 .site-sidebar .widget {
   margin: 0 0 1em;
 }
-.site-sidebar .card.card-search .search-form input[type="text"] {
-  border-right: 0;
-}
 .site-sidebar .card.card-search .search-form .btn {
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
