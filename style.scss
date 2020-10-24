@@ -158,12 +158,11 @@ pre.wp-block-verse {
 
 .facetwp-pager {
 	margin-top: 2em;
-	padding: 0 40px;
 	width: 100%;
-	
+
 	.pagination {
 		li.page-item {
-			a.page-link {
+			a.facetwp-page {
 				color: $lwtv-pink;
 			}
 			svg {
@@ -174,17 +173,15 @@ pre.wp-block-verse {
 				fill: $white;
 			}
 			&.active {
-				.page-link {
-					.active,
-					.facetwp-page.active {
-						background-color: $lwtv-pink;
-						border-color: $lwtv-pink;
-						color: $white;
-					}
+				.active,
+				.facetwp-page.active {
+					background-color: $lwtv-pink;
+					border-color: $lwtv-pink;
+					color: $white;
 				}
 			}
 			&.first, &.previous, &.next, &.last {
-				a.page-link {
+				a.facetwp-page {
 					background-color: $lwtv-pink;
 					border-color: $lwtv-pink;
 					color: $white;
