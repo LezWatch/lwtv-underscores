@@ -216,33 +216,33 @@ pre.wp-block-verse {
 /* =Bootstrap Overrides
 ----------------------------------------------- */
 /* Pagination */
-.facetwp-pager nav.pagination {
+.facetwp-pager {
   margin-top: 2em;
   padding: 0 40px;
   width: 100%;
 }
-.facetwp-pager nav.pagination li.page-item a.page-link {
+.facetwp-pager .pagination li.page-item a.page-link {
   color: #d1548e;
 }
-.facetwp-pager nav.pagination li.page-item svg {
+.facetwp-pager .pagination li.page-item svg {
   width: 12px;
   height: 12px;
 }
-.facetwp-pager nav.pagination li.page-item svg * {
+.facetwp-pager .pagination li.page-item svg * {
   fill: #fff;
 }
-.facetwp-pager nav.pagination li.page-item.active .page-link .active,
-.facetwp-pager nav.pagination li.page-item.active .page-link .facetwp-page.active {
+.facetwp-pager .pagination li.page-item.active .page-link .active,
+.facetwp-pager .pagination li.page-item.active .page-link .facetwp-page.active {
   background-color: #d1548e;
   border-color: #d1548e;
   color: #fff;
 }
-.facetwp-pager nav.pagination li.page-item.first a.page-link, .facetwp-pager nav.pagination li.page-item.previous a.page-link, .facetwp-pager nav.pagination li.page-item.next a.page-link, .facetwp-pager nav.pagination li.page-item.last a.page-link {
+.facetwp-pager .pagination li.page-item.first a.page-link, .facetwp-pager .pagination li.page-item.previous a.page-link, .facetwp-pager .pagination li.page-item.next a.page-link, .facetwp-pager .pagination li.page-item.last a.page-link {
   background-color: #d1548e;
   border-color: #d1548e;
   color: #fff;
 }
-.facetwp-pager nav.pagination li.page-item:first-child .page-link, .facetwp-pager nav.pagination li.page-item:last-child .page-link {
+.facetwp-pager .pagination li.page-item:first-child .page-link, .facetwp-pager .pagination li.page-item:last-child .page-link {
   -webkit-border-radius: 0;
   -moz-border-radius: 0;
   -ms-border-radius: 0;
