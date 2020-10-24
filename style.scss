@@ -156,43 +156,45 @@ pre.wp-block-verse {
 
 /* Pagination */
 
-nav.yikes-pagination {
-	padding: 0 40px;
-	width: 100%;
-}
-
-.pagination {
+.facetwp-pager {
 	margin-top: 2em;
+	width: 100%;
 
-	li.page-item {
-		a.page-link {
-			color: $lwtv-pink;
-		}
-		svg {
-			width: 12px;
-			height: 12px;
-		}
-		svg * {
-			fill: $white;
-		}
-		&.active {
-			.page-link {
+	.pagination {
+		li.page-item {
+			a.facetwp-page {
+				color: $lwtv-pink;
+			}
+			
+			svg {
+				fill: $lwtv-pink;
+				width: 12px;
+				height: 12px;
+			}
+
+			&.active {
 				background-color: $lwtv-pink;
 				border-color: $lwtv-pink;
-				color: $white;
+				.active,
+				.facetwp-page.active {
+					color: $white;
+				}
 			}
-		}
-		&.first, &.previous, &.next, &.last {
-			a.page-link {
+			&.first, &.previous, &.next, &.last {
 				background-color: $lwtv-pink;
 				border-color: $lwtv-pink;
-				color: $white;
+				a.facetwp-page {
+					color: $white;
+				}
+				svg {
+					fill: $white;
+				}
 			}
-		}
 
-		&:first-child, &:last-child {
-			.page-link {
-				@include border-radius(0);
+			&:first-child, &:last-child {
+				.page-link {
+					@include border-radius(0);
+				}
 			}
 		}
 	}
@@ -1751,25 +1753,6 @@ div.facetwp-counts {
 a.facetwp-page {
 	padding: 0px;
 	margin-right: 0px;
-}
-
-.facetwp-pager {
-	clear: both;
-}
-
-.facetwp-pager {
-	li.page-item.page-link.active {
-		z-index: 2;
-		color: $white;
-		background-color: $lwtv-pink;
-		border-color: $lwtv-pink;
-	}
-	li.page-item svg * {
-		fill: $lwtv-pink;
-	}
-	li.page-link {
-		color: $lwtv-pink;
-	}
 }
 
 div.facetwp-facet-shows_scores input.facetwp-number {
