@@ -8,10 +8,10 @@ module.exports = function(grunt) {
             dist: {
                 files: {
                     // admin scripts
-                    'inc/js/yikes-theme-scripts.min.js': [ // widget specific script
-                        'inc/js/navigation.js' , 'inc/js/skip-link-focus-fix.js' , 'inc/js/lwtv-theme-scripts.js'
+                    'inc/js/yikes-theme-scripts.min.js': [ // theme specific script
+                        'inc/js/navigation.js' , 'inc/js/skip-link-focus-fix.js' , 'inc/js/lwtv-theme-scripts.js' , 'inc/js/a11y.js'
                     ],
-                     'inc/js/customizer.min.js': [ // widget specific script
+                     'inc/js/customizer.min.js': [ // customizer specific script
                         'inc/js/customizer.js'
                     ],
                 }
