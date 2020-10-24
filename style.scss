@@ -156,46 +156,45 @@ pre.wp-block-verse {
 
 /* Pagination */
 
-nav.yikes-pagination {
-	padding: 0 40px;
-	width: 100%;
-}
+.facetwp-pager {
+	nav.pagination {
+		margin-top: 2em;
+		padding: 0 40px;
+		width: 100%;
 
-.pagination {
-	margin-top: 2em;
-
-	li.page-item {
-		a.page-link {
-			color: $lwtv-pink;
-		}
-		svg {
-			width: 12px;
-			height: 12px;
-		}
-		svg * {
-			fill: $white;
-		}
-		&.active {
-			.page-link {
-				.active,
-				.facetwp-page.active {
+		li.page-item {
+			a.page-link {
+				color: $lwtv-pink;
+			}
+			svg {
+				width: 12px;
+				height: 12px;
+			}
+			svg * {
+				fill: $white;
+			}
+			&.active {
+				.page-link {
+					.active,
+					.facetwp-page.active {
+						background-color: $lwtv-pink;
+						border-color: $lwtv-pink;
+						color: $white;
+					}
+				}
+			}
+			&.first, &.previous, &.next, &.last {
+				a.page-link {
 					background-color: $lwtv-pink;
 					border-color: $lwtv-pink;
 					color: $white;
 				}
 			}
-		}
-		&.first, &.previous, &.next, &.last {
-			a.page-link {
-				background-color: $lwtv-pink;
-				border-color: $lwtv-pink;
-				color: $white;
-			}
-		}
 
-		&:first-child, &:last-child {
-			.page-link {
-				@include border-radius(0);
+			&:first-child, &:last-child {
+				.page-link {
+					@include border-radius(0);
+				}
 			}
 		}
 	}
@@ -1754,25 +1753,6 @@ div.facetwp-counts {
 a.facetwp-page {
 	padding: 0px;
 	margin-right: 0px;
-}
-
-.facetwp-pager {
-	clear: both;
-}
-
-.facetwp-pager {
-	li.page-item.page-link.active {
-		z-index: 2;
-		color: $white;
-		background-color: $lwtv-pink;
-		border-color: $lwtv-pink;
-	}
-	li.page-item svg * {
-		fill: $lwtv-pink;
-	}
-	li.page-link {
-		color: $lwtv-pink;
-	}
 }
 
 div.facetwp-facet-shows_scores input.facetwp-number {
