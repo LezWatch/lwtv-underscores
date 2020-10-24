@@ -230,15 +230,19 @@ pre.wp-block-verse {
 .facetwp-pager .pagination li.page-item svg * {
   fill: #fff;
 }
+.facetwp-pager .pagination li.page-item.active {
+  background-color: #d1548e;
+  border-color: #d1548e;
+}
 .facetwp-pager .pagination li.page-item.active .active,
 .facetwp-pager .pagination li.page-item.active .facetwp-page.active {
-  background-color: #d1548e;
-  border-color: #d1548e;
   color: #fff;
 }
-.facetwp-pager .pagination li.page-item.first a.facetwp-page, .facetwp-pager .pagination li.page-item.previous a.facetwp-page, .facetwp-pager .pagination li.page-item.next a.facetwp-page, .facetwp-pager .pagination li.page-item.last a.facetwp-page {
+.facetwp-pager .pagination li.page-item.first, .facetwp-pager .pagination li.page-item.previous, .facetwp-pager .pagination li.page-item.next, .facetwp-pager .pagination li.page-item.last {
   background-color: #d1548e;
   border-color: #d1548e;
+}
+.facetwp-pager .pagination li.page-item.first a.facetwp-page, .facetwp-pager .pagination li.page-item.previous a.facetwp-page, .facetwp-pager .pagination li.page-item.next a.facetwp-page, .facetwp-pager .pagination li.page-item.last a.facetwp-page {
   color: #fff;
 }
 .facetwp-pager .pagination li.page-item:first-child .page-link, .facetwp-pager .pagination li.page-item:last-child .page-link {

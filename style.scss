@@ -173,17 +173,17 @@ pre.wp-block-verse {
 				fill: $white;
 			}
 			&.active {
+				background-color: $lwtv-pink;
+				border-color: $lwtv-pink;
 				.active,
 				.facetwp-page.active {
-					background-color: $lwtv-pink;
-					border-color: $lwtv-pink;
 					color: $white;
 				}
 			}
 			&.first, &.previous, &.next, &.last {
+				background-color: $lwtv-pink;
+				border-color: $lwtv-pink;
 				a.facetwp-page {
-					background-color: $lwtv-pink;
-					border-color: $lwtv-pink;
 					color: $white;
 				}
 			}
