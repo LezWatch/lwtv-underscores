@@ -177,9 +177,12 @@ nav.yikes-pagination {
 		}
 		&.active {
 			.page-link {
-				background-color: $lwtv-pink;
-				border-color: $lwtv-pink;
-				color: $white;
+				.active,
+				.facetwp-page.active {
+					background-color: $lwtv-pink;
+					border-color: $lwtv-pink;
+					color: $white;
+				}
 			}
 		}
 		&.first, &.previous, &.next, &.last {

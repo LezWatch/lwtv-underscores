@@ -5,7 +5,7 @@
  * @package YIKES Starter
  */
 
-// Build the icon
+// Build the icon.
 $icon = '<div class="show-header-svg">';
 if ( has_term( 'dead', 'lez_cliches' ) ) {
 	$icon .= ' <span role="img" aria-label="RIP - Dead Character" data-toggle="tooltip" title="RIP - Dead Character" class="cliche-dead">' . lwtv_symbolicons( 'rest-in-peace.svg', 'fa-ban' ) . '</span>';
@@ -27,7 +27,7 @@ get_header(); ?>
 	</div><!-- /.jumbotron -->
 </div>
 
-<div id="main" class="site-main" role="main">
+<div id="main" tabindex="-1" class="site-main" role="main">
 	<div class="container">
 		<div class="row">
 			<div class="col-sm-8">

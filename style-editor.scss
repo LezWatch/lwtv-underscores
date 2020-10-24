@@ -12,13 +12,32 @@ The stylesheet for Gutenberg Blocks in the editor
    Editor Styles
    ========================================================================== */
 
-/* Main column width */
+/* Content editor width */
 body.wp-admin.block-editor-page {
 	.editor-styles-wrapper {
-		.wp-block {
+		.block-editor-block-list__layout {
+			margin: 0 auto;
 			max-width: 825px;
 			padding-left: 0;
 			padding-right: 0;
+
+			.wp-block {
+				margin-left: 0;
+				margin-right: 0;
+				max-width: 100%;
+			}
+		}
+	}
+
+	.edit-post-visual-editor__post-title-wrapper {
+		margin: 0 auto;
+		width: 825px;
+		padding-left: 0;
+		padding-right: 0;
+
+		.editor-post-title {
+			margin-left: 0;
+			margin-right: 0;
 		}
 	}
 }
@@ -88,11 +107,11 @@ body.wp-admin.block-editor-page {
 		}
 
 		h2, .h2 {
-			 @include h2;
+			@include h2;
 		}
 
 		h3, .h3 {
-			 @include h3;
+			@include h3;
 		}
 
 		h4, .h4 {
