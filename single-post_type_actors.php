@@ -5,7 +5,7 @@
  * @package YIKES Starter
  */
 
-// Build the icon
+// Build the icon.
 $icon = '<div class="show-header-svg">';
 if ( lwtv_yikes_is_queer( $post->ID ) ) {
 	$icon .= ' <span role="img" aria-label="Queer IRL Actor" data-toggle="tooltip" title="Queer IRL Actor" class="cliche-queer-irl">' . lwtv_symbolicons( 'rainbow.svg', 'fa-cloud' ) . '</span>';
@@ -15,7 +15,7 @@ if ( lwtv_yikes_is_birthday( $post->ID ) ) {
 }
 $icon .= '</div>';
 
-// Privacy
+// Privacy.
 $privacy = ( 'private' === get_post_status( $post->ID ) ) ? '<p><strong>Note:</strong> <em>This post is private and not visible to non-admins. <strong>Do not</strong> make this public without confirming in #staff first.</em></p>' : '';
 
 get_header(); ?>
@@ -26,14 +26,14 @@ get_header(); ?>
 			<header class="archive-header">
 				<div class="row">
 					<div class="col-10"><?php the_title( '<h1 class="entry-title">', '</h1>' ); ?><?php echo wp_kses_post( $privacy ); ?></div>
-					<div class="col-2 icon plain"><?php echo $icon; // WPSC: XSS okay ?></div>
+					<div class="col-2 icon plain"><?php echo $icon; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></div>
 				</div>
 			</header><!-- .archive-header -->
 		</div><!-- .container -->
 	</div><!-- /.jumbotron -->
 </div>
 
-<div id="main" class="site-main" role="main">
+<div id="main" tabindex="-1" class="site-main" role="main">
 	<div class="container">
 		<div class="row">
 			<div class="col-sm-8">
@@ -41,7 +41,6 @@ get_header(); ?>
 					<div id="content" class="site-content clearfix" role="main">
 						<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 							<div class="entry-content actor-page">
-
 								<?php
 								if ( lwtv_yikes_is_birthday( $post->ID ) ) {
 									$old = ' ';
@@ -76,9 +75,7 @@ get_header(); ?>
 			</div><!-- .col-sm-8 -->
 
 			<div class="col-sm-4 site-sidebar site-loop showschar-section">
-
 				<?php get_sidebar(); ?>
-
 			</div><!-- .col-sm-4 -->
 		</div><!-- .row -->
 	</div><!-- .container -->

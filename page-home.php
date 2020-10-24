@@ -12,8 +12,7 @@ get_header(); ?>
 	$already_displayed_posts = array();
 ?>
 
-<div id="main" class="site-main" role="main">
-
+<div id="main" tabindex="-1" class="site-main" role="main">
 	<?php if ( 1 === $check_paged ) { ?>
 
 	<!-- Home page top section -->
@@ -22,9 +21,10 @@ get_header(); ?>
 			<div class="row">
 				<!-- Newest posts -->
 				<div class="col-sm-8">
-
 					<div class="site-loop home-featured-post-loop">
-						<h2 class="posts-title">New Posts <?php echo lwtv_symbolicons( 'newspaper.svg', 'fa-newspaper' ); ?></h2>
+						<h2 class="posts-title">
+							New Posts <?php echo lwtv_symbolicons( 'newspaper.svg', 'fa-newspaper' ); ?>
+						</h2>
 
 						<?php
 						$lastpostloop = new WP_Query(
@@ -134,9 +134,7 @@ get_header(); ?>
 
 						wp_reset_postdata();
 						?>
-
 					</div><!-- .home-featured-secondary-loop -->
-
 				</div><!-- .col-sm-8 -->
 
 				<!-- Home Page Sidebar -->
@@ -168,7 +166,7 @@ get_header(); ?>
 								'post_status'    => array( 'publish' ),
 								'no_found_rows'  => true,
 								'_loved_shuffle' => 3,
-								'meta_query'     => array(
+								'meta_query'     => array( // phpcs:ignore WordPress.DB.SlowDBQuery -- Risk of slow query accepted.
 									array(
 										'key'     => 'lezshows_worthit_show_we_love',
 										'value'   => 'on',
@@ -231,7 +229,9 @@ get_header(); ?>
 		<div class="container">
 			<div class="row">
 				<div class="col">
-					<h2 class="posts-title">More Posts <?php echo lwtv_symbolicons( 'newspaper.svg', 'fa-newspaper' ); ?></h2>
+					<h2 class="posts-title">
+						More Posts <?php echo lwtv_symbolicons( 'newspaper.svg', 'fa-newspaper' ); ?>
+					</h2>
 				</div>
 			</div>
 			<?php
@@ -271,9 +271,6 @@ get_header(); ?>
 			<?php yikes_generate_pagination_buttons( $check_paged, $oldpostsloop->max_num_pages ); ?>
 		</div><!-- .container -->
 	</section>
-
 </div><!-- #main -->
 
-<?php
-
-get_footer();
+<?php get_footer(); ?>

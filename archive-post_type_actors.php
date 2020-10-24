@@ -44,10 +44,9 @@ get_header(); ?>
 	</div><!-- /.jumbotron -->
 </div>
 
-<div id="main" class="site-main" role="main">
+<div id="main" tabindex="-1" class="site-main" role="main">
 	<div class="container">
 		<div class="row">
-
 			<div class="col-sm-9">
 				<div id="primary" class="content-area">
 					<div id="content" class="site-content clearfix" role="main">

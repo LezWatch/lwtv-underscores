@@ -4,9 +4,11 @@
  *
  * @package YIKES Starter
  */
+
 ?>
 
 <footer id="colophon" class="site-footer" role="contentinfo">
+	<h2 class="screen-reader-text">Footer</h2>
 	<div class="top-footer">
 		<div class="container">
 			<div class="row footer-widgets">
@@ -33,6 +35,7 @@
 		<div class="container">
 			<div class="row">
 				<div class="col credits">
+					<h3 id="copyright-information" class="screen-reader-text">Copyright Information</h3>
 					<?php dynamic_sidebar( 'subfooter-1' ); ?>
 				</div>
 			</div><!-- .row -->

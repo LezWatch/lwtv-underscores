@@ -62,7 +62,7 @@ get_header(); ?>
 	</div><!-- /.jumbotron -->
 </div>
 
-<div id="main" class="site-main" role="main">
+<div id="main" tabindex="-1" class="site-main" role="main">
 	<div class="container">
 		<div class="row">
 			<div class="col-sm-9">
@@ -92,9 +92,7 @@ get_header(); ?>
 			</div><!-- .col-sm-9 -->
 
 			<div class="col-sm-3 site-sidebar site-loop">
-
 				<?php get_sidebar(); ?>
-
 			</div><!-- .col-sm-3 -->
 		</div><!-- .row -->
 	</div><!-- .container -->

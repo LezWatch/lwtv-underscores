@@ -4,6 +4,7 @@
  *
  * @package YIKES Starter
  */
+
 ?><!DOCTYPE html>
 <html <?php language_attributes(); ?>>
 <head>
@@ -19,28 +20,29 @@
 
 <header id="masthead" class="site-header" role="banner">
 	<nav id="site-navigation" class="navbar fixed-top navbar-expand navbar-light bg-light main-nav" role="navigation">
-		<div class="container">
+		<div class="container">			
+			<div class="screen-reader-text">
+				<a href="#main">Skip to Main Content</a>
+			</div> 
 			<a href="<?php echo esc_url( home_url( '/' ) ); ?>" title="<?php echo esc_attr( get_bloginfo( 'name', 'display' ) ); ?>" rel="home" class="navbar-brand">
 				<img src="<?php echo esc_url( get_template_directory_uri() ); ?>/images/lezwatch-logo-icon.png" alt="<?php bloginfo( 'name' ); ?>">
 				<span class="navbar-brand-text">
 					<?php bloginfo( 'name' ); ?>
 				</span>
 			</a>
-				<?php
-				wp_nav_menu(
-					array(
-						'menu'           => 'primary',
-						'theme_location' => 'primary',
-						'depth'          => 3,
-						'container'      => false,
-						'link_before'    => '<span class="menu-link-text">', // Use this for screen readers if using icons
-						'link_after'     => '</span>', // Use this for screen readers if using icons
-						'menu_class'     => 'navbar-nav ml-auto',
-						'fallback_cb'    => 'wp_page_menu',
-						'walker'         => new WP_Bootstrap_Navwalker(),
-					)
-				);
-				?>
+			<?php
+			wp_nav_menu(
+				array(
+					'menu'           => 'primary',
+					'theme_location' => 'primary',
+					'depth'          => 3,
+					'container'      => false,
+					'menu_class'     => 'navbar-nav ml-auto',
+					'fallback_cb'    => 'wp_page_menu',
+					'walker'         => new WP_Bootstrap_Navwalker(),
+				)
+			);
+			?>
 
 			<span class="nav-item search" id="search-btn">
 				<a class="nav-link" data-toggle="collapse" href="#collapseSearch">
@@ -68,7 +70,6 @@
 	<a name="top"></a>
 
 	<div class="site-subheader">
-
 		<?php
 		if ( is_front_page() && 0 == get_query_var( 'page' ) ) { // WPSC: loose comparison ok.
 			?>
@@ -110,7 +111,6 @@
 				</div><!-- .container -->
 			</div><!-- /.jumbotron -->
 			<div class="rainbow"></div>
-
 		<?php } ?>
 	</div><!-- .site-subheader -->
 </header><!-- #masthead -->
