@@ -2,170 +2,168 @@
 ----------------------------------------------- */
 
 .navbar.main-nav {
-  @include box-shadow(0 2px 30px rgba(0, 0, 0, 0.2));
-  height: 50px;
-  padding: 0;
+	@include box-shadow(0 2px 30px rgba(0, 0, 0, 0.2));
+	height: 50px;
+	padding: 0;
 
-  ul.navbar-nav > li  {
-    border-left:solid 1px $lightgrey;
+	ul.navbar-nav > li  {
+		border-left:solid 1px $lightgrey;
 
-    &:last-child {
-      border-right:solid 1px $lightgrey;
-    }
+		&:last-child {
+			border-right:solid 1px $lightgrey;
+		}
 
-    &.nav-item {
+		&.nav-item {
 
-      /* Style for inactive links */
-      & > a.nav-link,  {
-        color: $darkgrey;
-        @include font-15;
-        font-weight: 600;
-        padding: 14px 20px;
-        text-transform:uppercase;
-      }
+			/* Style for inactive links */
+			& > a.nav-link,  {
+				color: $darkgrey;
+				@include font-15;
+				font-weight: 600;
+				padding: 14px 20px;
+				text-transform:uppercase;
+			}
 
-      /* Style for active links */
-      &.current-menu-item > a.nav-link, &.current-menu-parent > a.nav-link,
-      &.current-menu-ancestor > a.nav-link, .single-post &.current_page_parent > a.nav-link,
-      &:hover > a.nav-link, &:focus > a.nav-link, &:active > a.nav-link,
-      &.show > a.nav-link.dropdown-toggle {
-        background-color: $lwtv-pink;
-        color: $white;
-      }
+			/* Style for active links */
+			&.current-menu-item > a.nav-link, &.current-menu-parent > a.nav-link,
+			&.current-menu-ancestor > a.nav-link, .single-post &.current_page_parent > a.nav-link,
+			&:hover > a.nav-link, &:focus > a.nav-link, &:active > a.nav-link,
+			&.show > a.nav-link.dropdown-toggle {
+				background-color: $lwtv-pink;
+				color: $white;
+			}
 
-      /* Use this class on a menu item to hide the text when using an icon */
-      &.hide-text > a.nav-link .menu-link-text {
-        @include screen-reader;
-      }
+			/* Use this class on a menu item to hide the text when using an icon */
+			&.hide-text > a.nav-link .menu-link-text {
+				@include screen-reader;
+			}
 
-      /* Secondary Menus */
-      ul.dropdown-menu {
-        background-color: $white;
-        border-top-left-radius: 0;
-        top: 95%;
+			/* Secondary Menus */
+			ul.dropdown-menu {
+				background-color: $white;
+				border-top-left-radius: 0;
+				top: 95%;
 
-        & li.nav-item {
+				& li.nav-item {
 
-          /* Style for inactive links on submenus */
-          a.dropdown-item {
-            background-color: $white;
-            color: $darkgrey;
-          }
+					/* Style for inactive links on submenus */
+					a.dropdown-item {
+						background-color: $white;
+						color: $darkgrey;
+					}
 
-          /* Style for active links on submenus */
-          &.current-menu-parent > a.dropdown-item,
-          &.active > a.dropdown-item, &:hover > a.dropdown-item, &:focus > a.dropdown-item {
-            background-color: $lwtv-pink;
-            color: $white;
-          }
+					/* Style for active links on submenus */
+					&.current-menu-parent > a.dropdown-item,
+					&.active > a.dropdown-item, &:hover > a.dropdown-item, &:focus > a.dropdown-item {
+						background-color: $lwtv-pink;
+						color: $white;
+					}
 
-          /* Tertiary Menus - reveal them on parent hover */
-          &.dropdown {
-            &:hover, &:focus {
-              & > ul.dropdown-menu {
-                display: block;
-                left: 100%;
-                top: -11px;
-              }
-            }
-          }
-        }
-      }
-    }
-  }
+					/* Tertiary Menus - reveal them on parent hover */
+					&.dropdown {
+						&:hover, &:focus {
+							& > ul.dropdown-menu {
+								display: block;
+								left: 100%;
+								top: -11px;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
 }
 
 /* Search button */
 
 .nav-item.search a {
+	&, &:visited {
+		background-color: $lwtv-purple;
+		color: $white;
+		padding: 14px 20px;
+	}
 
-  &, &:visited {
-    background-color: $lwtv-purple;
-    color: $white;
-    padding: 14px 20px;
-  }
-
-  &:hover, &:focus {
-    background-color: $lwtv-pink;
-  }
+	&:hover, &:focus {
+		background-color: $lwtv-pink;
+	}
 }
 
 
 /* Social Menu */
 
 .widget_yikes_social_menu_widget {
+	li {
+		a, a:visited {
+			line-height: 1;
+			padding-top: 0;
 
-  li {
-    a, a:visited {
-      line-height: 1;
-      padding-top: 0;
+			&:before {
+				display: inline-block;
+				font-style: normal;
+				font-variant: normal;
+				text-rendering: auto;
+				-webkit-font-smoothing: antialiased;
+				@include font-28;
+				width: 60px;
+				vertical-align: middle;
+			}
 
-      &:before {
-        display: inline-block;
-        font-style: normal;
-        font-variant: normal;
-        text-rendering: auto;
-        -webkit-font-smoothing: antialiased;
-        @include font-28;
-        width: 60px;
-        vertical-align: middle;
-      }
+			&:hover, &:focus {
+				&:before {
+					color: $link-hover-color;
+				}
+			}
 
-      &:hover, &:focus {
-        &:before {
-          color: $link-hover-color;
-        }
-      }
+			.svg-inline--fa {
+				width: 2rem;
+				height: 1.4rem;
+				vertical-align: middle;
+			}
+		}
 
-      .svg-inline--fa {
-        width: 2rem;
-        height: 1.4rem;
-        vertical-align: middle;
-      }
-    }
+		&.rss a::before {
+			@include fontawesome_pro("\f09e");
+		}
 
-    &.rss a::before {
-      @include fontawesome_pro("\f09e");
-    }
+		&.mail a:before {
+			@include fontawesome_pro("\f0e0");
+		}
 
-    &.mail a:before {
-      @include fontawesome_pro("\f0e0");
-    }
+		&.instagram a:before {
+			@include fontawesome_brand("\f16d");
+		}
 
-    &.instagram a:before {
-      @include fontawesome_brand("\f16d");
-    }
+		&.twitter a:before {
+			@include fontawesome_brand("\f099");
+		}
 
-    &.twitter a:before {
-      @include fontawesome_brand("\f099");
-    }
+		&.facebook a:before {
+			@include fontawesome_brand("\f082");
+		}
 
-    &.facebook a:before {
-      @include fontawesome_brand("\f082");
-    }
+		&.youtube a:before {
+			@include fontawesome_brand("\f167");
+		}
 
-    &.youtube a:before {
-      @include fontawesome_brand("\f167");
-    }
+		&.vimeo a:before {
+			@include fontawesome_brand("\f40a");
+		}
 
-    &.vimeo a:before {
-      @include fontawesome_brand("\f40a");
-    }
+		&.pinterest a:before {
+			@include fontawesome_brand("\f0d2");
+		}
 
-    &.pinterest a:before {
-      @include fontawesome_brand("\f0d2");
-    }
+		&.linkedin a:before {
+			@include fontawesome_brand("\f0e1");
+		}
 
-    &.linkedin a:before {
-      @include fontawesome_brand("\f0e1");
-    }
+		&.tumblr a:before {
+			@include fontawesome_brand("\f173");
+		}
 
-    &.tumblr a:before {
-      @include fontawesome_brand("\f173");
-    }
-
-    &.gplus a:before {
-      @include fontawesome_brand("\f0d5");
-    }
-  }
+		&.gplus a:before {
+			@include fontawesome_brand("\f0d5");
+		}
+	}
 }
