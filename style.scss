@@ -165,13 +165,13 @@ pre.wp-block-verse {
 			a.facetwp-page {
 				color: $lwtv-pink;
 			}
+			
 			svg {
+				fill: $lwtv-pink;
 				width: 12px;
 				height: 12px;
 			}
-			svg * {
-				fill: $white;
-			}
+
 			&.active {
 				background-color: $lwtv-pink;
 				border-color: $lwtv-pink;
@@ -185,6 +185,9 @@ pre.wp-block-verse {
 				border-color: $lwtv-pink;
 				a.facetwp-page {
 					color: $white;
+				}
+				svg {
+					fill: $white;
 				}
 			}
 
