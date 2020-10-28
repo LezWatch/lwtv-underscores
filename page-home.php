@@ -249,7 +249,6 @@ get_header(); ?>
 						'post__not_in'   => $already_displayed_posts,
 						'orderby'        => 'date',
 						'order'          => 'DESC',
-						'no_found_rows'  => true,
 					)
 				);
 				?>

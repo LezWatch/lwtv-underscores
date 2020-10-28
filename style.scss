@@ -156,34 +156,34 @@ pre.wp-block-verse {
 
 /* Pagination */
 
-.facetwp-pager {
+.yikes-pagination, .facetwp-pager {
 	margin-top: 2em;
 	width: 100%;
 
 	.pagination {
 		li.page-item {
-			a.facetwp-page {
+			a {
 				color: $lwtv-pink;
 			}
-			
+
 			svg {
 				fill: $lwtv-pink;
 				width: 12px;
 				height: 12px;
 			}
 
-			&.active {
-				background-color: $lwtv-pink;
-				border-color: $lwtv-pink;
-				.active,
-				.facetwp-page.active {
+			.page-link {
+				&.active {
+					background-color: $lwtv-pink;
+					border-color: $lwtv-pink;
 					color: $white;
+					font-weight: bold;
 				}
 			}
 			&.first, &.previous, &.next, &.last {
 				background-color: $lwtv-pink;
 				border-color: $lwtv-pink;
-				a.facetwp-page {
+				a {
 					color: $white;
 				}
 				svg {
@@ -194,6 +194,8 @@ pre.wp-block-verse {
 			&:first-child, &:last-child {
 				.page-link {
 					@include border-radius(0);
+					background-color: $lwtv-pink;
+					color: $white;
 				}
 			}
 		}
