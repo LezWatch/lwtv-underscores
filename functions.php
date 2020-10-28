@@ -8,10 +8,11 @@
 // Versioning for efficient developers.
 if ( ! defined( 'LWTV_THEME_VERSION' ) ) {
 	$versions = array(
-		'lwtv-underscores' => '3.1.23', // Bump this any time you make serious CSS changes.
-		'font-awesome'     => '5.15.1', // Bump when you update Font Awesome.
-		'bootstrap'        => '4.5.3',  // Bump when you update bootstrap.
-		'lwtv-blocks'      => '1.0.0',  // Bump when you update the blocks.
+		'lwtv-underscores' => '3.1.23',   // Bump this any time you make serious CSS changes.
+		'font-awesome'     => '5.15.1',   // Bump when you update Font Awesome.
+		'bootstrap'        => '4.5.3',    // Bump when you update bootstrap.
+		'lwtv-blocks'      => '1.0.0',    // Bump when you update the blocks.
+		'yikes-nav'        => '20201024', // Last date this was updated
 	);
 	define( 'LWTV_THEME_VERSION', $versions );
 }
@@ -381,10 +382,11 @@ function yikes_starter_scripts() {
 	$lwtv_underscores = $get_theme_vers['lwtv-underscores'];
 	$font_awesome     = $get_theme_vers['font-awesome'];
 	$bootstrap        = $get_theme_vers['bootstrap'];
+	$yikes_nav        = $get_theme_vers['yikes-nav'];
 
 	// combined + minified.
 	// navigation.js, skip-link-focus-fix.js & a11y.js.
-	wp_enqueue_script( 'yikes-starter-navigation', get_template_directory_uri() . '/inc/js/yikes-theme-scripts.min.js', array(), '20120206', true );
+	wp_enqueue_script( 'yikes-starter-navigation', get_template_directory_uri() . '/inc/js/yikes-theme-scripts.min.js', array(), $yikes_nav, true );
 
 	if ( is_singular() && comments_open() && get_option( 'thread_comments' ) ) {
 		wp_enqueue_script( 'comment-reply' );
