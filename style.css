@@ -188,6 +188,13 @@ pre.wp-block-verse {
   fill: #d1548e;
   width: 12px;
   height: 12px;
+  vertical-align: baseline;
+}
+.yikes-pagination .pagination li.page-item.active, .yikes-pagination .pagination li.page-item a.active, .facetwp-pager .pagination li.page-item.active, .facetwp-pager .pagination li.page-item a.active {
+  background-color: #d1548e;
+  border-color: #d1548e;
+  color: #fff;
+  font-weight: bold;
 }
 .yikes-pagination .pagination li.page-item .page-link.active, .facetwp-pager .pagination li.page-item .page-link.active {
   background-color: #d1548e;
