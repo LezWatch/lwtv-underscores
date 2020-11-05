@@ -511,6 +511,12 @@ select {
 #masthead .header-search-bar .fa {
   font-size: 2rem;
 }
+#masthead .lezwatchtv.last-death a {
+  text-decoration: underline;
+}
+#masthead .lezwatchtv.last-death a:hover {
+  color: #d6d6d6;
+}
 
 /* Change the main nav colors */
 /* =Custom Nav styles

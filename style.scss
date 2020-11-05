@@ -423,6 +423,16 @@ h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
 		}
 	}
 
+	.lezwatchtv.last-death {
+		a {
+			text-decoration: underline;
+		}
+
+		a:hover {
+			color: $lwtv-grey2;
+		}
+	}
+
 }
 
 /* Change the main nav colors */
