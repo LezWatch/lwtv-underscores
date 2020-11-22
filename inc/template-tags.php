@@ -17,7 +17,7 @@ if ( ! function_exists( 'yikes_starter_paging_nav' ) ) :
 			return;
 		}
 		?>
-		<nav aria-label="Post Pages navigation" role="navigation">
+		<nav class="yikes-pagination" aria-label="Post Pages navigation" role="navigation">
 			<ul class="pagination justify-content-between">
 			<?php
 			if ( get_previous_posts_link() ) :
@@ -49,7 +49,7 @@ if ( ! function_exists( 'yikes_starter_post_nav' ) ) :
 			return;
 		}
 		?>
-		<nav aria-label="Post Navigation" role="navigation">
+		<nav class="yikes-pagination" aria-label="Post Navigation" role="navigation">
 			<ul class="pagination justify-content-between">
 				<?php
 					previous_post_link( '<li class="page-item previous">%link</li>', lwtv_symbolicons( 'caret-left-circle.svg', 'fa-chevron-circle-left' ) . ' Previous Post' );
