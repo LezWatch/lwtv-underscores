@@ -216,20 +216,20 @@ pre.wp-block-verse {
 /* =Bootstrap Overrides
 ----------------------------------------------- */
 /* Pagination */
-.yikes-pagination,
-.facetwp-pager,
-.navigation {
+.yikes-pagination .pagination,
+.facetwp-pager .pagination,
+.pagination {
   margin-top: 2em;
   width: 100%;
 }
 .yikes-pagination .pagination li.page-item a,
 .facetwp-pager .pagination li.page-item a,
-.navigation .pagination li.page-item a {
+.pagination li.page-item a {
   color: #d1548e;
 }
 .yikes-pagination .pagination li.page-item svg,
 .facetwp-pager .pagination li.page-item svg,
-.navigation .pagination li.page-item svg {
+.pagination li.page-item svg {
   fill: #d1548e;
   width: 12px;
   height: 12px;
@@ -238,8 +238,8 @@ pre.wp-block-verse {
 .yikes-pagination .pagination li.page-item.active, .yikes-pagination .pagination li.page-item a.active,
 .facetwp-pager .pagination li.page-item.active,
 .facetwp-pager .pagination li.page-item a.active,
-.navigation .pagination li.page-item.active,
-.navigation .pagination li.page-item a.active {
+.pagination li.page-item.active,
+.pagination li.page-item a.active {
   background-color: #d1548e;
   border-color: #d1548e;
   color: #fff;
@@ -247,7 +247,7 @@ pre.wp-block-verse {
 }
 .yikes-pagination .pagination li.page-item .page-link.active,
 .facetwp-pager .pagination li.page-item .page-link.active,
-.navigation .pagination li.page-item .page-link.active {
+.pagination li.page-item .page-link.active {
   background-color: #d1548e;
   border-color: #d1548e;
   color: #fff;
@@ -258,10 +258,10 @@ pre.wp-block-verse {
 .facetwp-pager .pagination li.page-item.previous,
 .facetwp-pager .pagination li.page-item.next,
 .facetwp-pager .pagination li.page-item.last,
-.navigation .pagination li.page-item.first,
-.navigation .pagination li.page-item.previous,
-.navigation .pagination li.page-item.next,
-.navigation .pagination li.page-item.last {
+.pagination li.page-item.first,
+.pagination li.page-item.previous,
+.pagination li.page-item.next,
+.pagination li.page-item.last {
   background-color: #d1548e;
   border-color: #d1548e;
 }
@@ -270,10 +270,10 @@ pre.wp-block-verse {
 .facetwp-pager .pagination li.page-item.previous a,
 .facetwp-pager .pagination li.page-item.next a,
 .facetwp-pager .pagination li.page-item.last a,
-.navigation .pagination li.page-item.first a,
-.navigation .pagination li.page-item.previous a,
-.navigation .pagination li.page-item.next a,
-.navigation .pagination li.page-item.last a {
+.pagination li.page-item.first a,
+.pagination li.page-item.previous a,
+.pagination li.page-item.next a,
+.pagination li.page-item.last a {
   color: #fff;
 }
 .yikes-pagination .pagination li.page-item.first svg, .yikes-pagination .pagination li.page-item.previous svg, .yikes-pagination .pagination li.page-item.next svg, .yikes-pagination .pagination li.page-item.last svg,
@@ -281,17 +281,17 @@ pre.wp-block-verse {
 .facetwp-pager .pagination li.page-item.previous svg,
 .facetwp-pager .pagination li.page-item.next svg,
 .facetwp-pager .pagination li.page-item.last svg,
-.navigation .pagination li.page-item.first svg,
-.navigation .pagination li.page-item.previous svg,
-.navigation .pagination li.page-item.next svg,
-.navigation .pagination li.page-item.last svg {
+.pagination li.page-item.first svg,
+.pagination li.page-item.previous svg,
+.pagination li.page-item.next svg,
+.pagination li.page-item.last svg {
   fill: #fff;
 }
 .yikes-pagination .pagination li.page-item:first-child .page-link, .yikes-pagination .pagination li.page-item:last-child .page-link,
 .facetwp-pager .pagination li.page-item:first-child .page-link,
 .facetwp-pager .pagination li.page-item:last-child .page-link,
-.navigation .pagination li.page-item:first-child .page-link,
-.navigation .pagination li.page-item:last-child .page-link {
+.pagination li.page-item:first-child .page-link,
+.pagination li.page-item:last-child .page-link {
   -webkit-border-radius: 0;
   -moz-border-radius: 0;
   -ms-border-radius: 0;
