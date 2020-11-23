@@ -274,6 +274,8 @@ pre.wp-block-verse {
 .pagination li.page-item.previous a,
 .pagination li.page-item.next a,
 .pagination li.page-item.last a {
+  background-color: #d1548e;
+  border-color: #d1548e;
   color: #fff;
 }
 .yikes-pagination .pagination li.page-item.first svg, .yikes-pagination .pagination li.page-item.previous svg, .yikes-pagination .pagination li.page-item.next svg, .yikes-pagination .pagination li.page-item.last svg,
