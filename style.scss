@@ -156,57 +156,55 @@ pre.wp-block-verse {
 
 /* Pagination */
 
-.yikes-pagination,
-.facetwp-pager,
-.navigation {
+.yikes-pagination .pagination,
+.facetwp-pager .pagination,
+.pagination {
 	margin-top: 2em;
 	width: 100%;
 
-	.pagination {
-		li.page-item {
-			a {
-				color: $lwtv-pink;
-			}
+	li.page-item {
+		a {
+			color: $lwtv-pink;
+		}
 
-			svg {
-				fill: $lwtv-pink;
-				width: 12px;
-				height: 12px;
-				vertical-align: baseline;
-			}
+		svg {
+			fill: $lwtv-pink;
+			width: 12px;
+			height: 12px;
+			vertical-align: baseline;
+		}
 
-			&.active, a.active {
+		&.active, a.active {
+			background-color: $lwtv-pink;
+			border-color: $lwtv-pink;
+			color: $white;
+			font-weight: bold;
+		}
+
+		.page-link {
+			&.active {
 				background-color: $lwtv-pink;
 				border-color: $lwtv-pink;
 				color: $white;
 				font-weight: bold;
 			}
+		}
+		&.first, &.previous, &.next, &.last {
+			background-color: $lwtv-pink;
+			border-color: $lwtv-pink;
+			a {
+				color: $white;
+			}
+			svg {
+				fill: $white;
+			}
+		}
 
+		&:first-child, &:last-child {
 			.page-link {
-				&.active {
-					background-color: $lwtv-pink;
-					border-color: $lwtv-pink;
-					color: $white;
-					font-weight: bold;
-				}
-			}
-			&.first, &.previous, &.next, &.last {
+				@include border-radius(0);
 				background-color: $lwtv-pink;
-				border-color: $lwtv-pink;
-				a {
-					color: $white;
-				}
-				svg {
-					fill: $white;
-				}
-			}
-
-			&:first-child, &:last-child {
-				.page-link {
-					@include border-radius(0);
-					background-color: $lwtv-pink;
-					color: $white;
-				}
+				color: $white;
 			}
 		}
 	}
