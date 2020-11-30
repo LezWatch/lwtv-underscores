@@ -469,7 +469,7 @@ function lwtv_yikes_chardata( $the_id, $data ) {
 			break;
 		case 'actors':
 			$character_actors = get_post_meta( $the_id, 'lezchars_actor', true );
-			if ( ! is_array( $character_actors ) ) {
+			if ( ! is_array( $character_actors ) && ! empty( $character_actors ) ) {
 				$character_actors = array( get_post_meta( $the_id, 'lezchars_actor', true ) );
 			}
 			$output = $character_actors;
