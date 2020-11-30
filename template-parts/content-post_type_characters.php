@@ -65,7 +65,11 @@ if ( '' !== $all_actors ) {
 	}
 }
 
-$the_actors = ( empty( $the_actors ) ) ? array( '<a href="/actor/unknown/">Unknown</a>' ) : $the_actors;
+if ( empty( $the_actors ) && has_term( 'cartoon', 'lez_cliches', get_the_ID() ) ) {
+	$the_actors = array( 'None' );
+} else {
+	$the_actors = ( empty( $the_actors ) ) ? array( '<a href="/actor/unknown/">Unknown</a>' ) : $the_actors;
+}
 
 // Generate Status
 // Usage: $doa_status
