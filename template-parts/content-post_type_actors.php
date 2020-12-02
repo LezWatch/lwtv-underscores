@@ -128,7 +128,7 @@ $thumb_array       = array(
 				if ( count( $gender_sexuality ) > 0 ) {
 					echo '<ul>';
 					foreach ( $gender_sexuality as $item => $data ) {
-						echo '<li><strong>' . esc_html( ucfirst( $item ) ) . '</strong>: ' . wp_kses_post( $data ) . '</li>';
+						echo '<li><strong>' . esc_html( ucfirst( $item ) ) . '</strong>:<br />' . wp_kses_post( $data ) . '</li>';
 					}
 					echo '</ul>';
 				}
