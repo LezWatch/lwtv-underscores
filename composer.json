@@ -30,8 +30,8 @@
             "vendor/twbs/bootstrap/dist/js/": "inc/bootstrap/js/",
             "vendor/fortawesome/font-awesome/css/": "inc/fontawesome/css/",
             "vendor/fortawesome/font-awesome/webfonts/": "inc/fontawesome/webfonts/",
-            "node_modules/popper.js/dist/popper.min.js":"inc/js/popper.min.js",
-            "node_modules/popper.js/dist/popper.min.js.map":"inc/js/popper.min.js.map"
+            "node_modules/@popperjs/core/dist/umd/popper.min.js":"inc/js/popper.min.js",
+            "node_modules/@popperjs/core/dist/umd/popper.min.js.map":"inc/js/popper.min.js.map"
         }
     }
 }
