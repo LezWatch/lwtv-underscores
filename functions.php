@@ -400,9 +400,7 @@ function yikes_starter_scripts() {
 
 	wp_enqueue_style( 'open-sans', '//fonts.googleapis.com/css?family=Open+Sans:400,600,700', array(), $lwtv_underscores, false );
 	wp_enqueue_style( 'oswald', '//fonts.googleapis.com/css?family=Oswald:400,500', array(), $lwtv_underscores, false );
-	wp_enqueue_script( 'yikes-popper-script', get_template_directory_uri() . '/inc/js/popper.min.js', array(), '1.11.0', 'all', true );
-	wp_enqueue_script( 'bootstrap', get_template_directory_uri() . '/inc/bootstrap/js/bootstrap.min.js', array( 'jquery' ), $bootstrap, 'all', true );
-	wp_enqueue_script( 'lwtv-gdpr', get_template_directory_uri() . '/inc/js/gdpr.js', array( 'bootstrap' ), $lwtv_underscores, 'all', true );
+	wp_enqueue_script( 'bootstrap', get_template_directory_uri() . '/inc/bootstrap/js/bootstrap.bundle.min.js', array( 'jquery' ), $bootstrap, 'all', true );
 
 	// This has to be at the bottom to override Bootstrap 4.x.
 	wp_enqueue_style( 'yikes-starter-style', get_stylesheet_directory_uri() . '/style.min.css', array(), $lwtv_underscores );
