@@ -5,6 +5,9 @@
  * @package YIKES Starter
  */
 
+global $post;
+$show_id = $post->ID;
+
 ?>
 
 <!-- Button trigger modal -->
@@ -17,7 +20,7 @@
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h2 class="modal-title" id="suggestFormLabel">Suggest an Edit</h2>
+				<h2 class="modal-title" id="suggestFormLabel">Suggest an Edit for <?php echo esc_html( get_the_title( $show_id ) ); ?></h2>
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 					<span aria-hidden="true">&times;</span>
 				</button>

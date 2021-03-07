@@ -20,10 +20,10 @@
 
 <header id="masthead" class="site-header" role="banner">
 	<nav id="site-navigation" class="navbar fixed-top navbar-expand navbar-light bg-light main-nav" role="navigation">
-		<div class="container">			
+		<div class="container">
 			<div class="screen-reader-text">
 				<a href="#main">Skip to Main Content</a>
-			</div> 
+			</div>
 			<a href="<?php echo esc_url( home_url( '/' ) ); ?>" title="<?php echo esc_attr( get_bloginfo( 'name', 'display' ) ); ?>" rel="home" class="navbar-brand">
 				<img src="<?php echo esc_url( get_template_directory_uri() ); ?>/images/lezwatch-logo-icon.png" alt="<?php bloginfo( 'name' ); ?>">
 				<span class="navbar-brand-text">
@@ -71,7 +71,7 @@
 
 	<div class="site-subheader">
 		<?php
-		if ( is_front_page() && 0 == get_query_var( 'page' ) ) { // WPSC: loose comparison ok.
+		if ( is_front_page() && ( 0 == get_query_var( 'page' ) || '' == get_query_var( 'page' ) ) ) { // WPSC: loose comparison ok.
 			?>
 			<div class="alert alert-danger" role="alert">
 				<div class="container">
