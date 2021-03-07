@@ -8,7 +8,7 @@
 ?>
 
 <!-- Button trigger modal -->
-<button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#suggestForm">
+<button type="button" class="btn btn-lg btn-primary btn-block" data-toggle="modal" data-target="#suggestForm">
 	Suggest an Edit
 </button>
 

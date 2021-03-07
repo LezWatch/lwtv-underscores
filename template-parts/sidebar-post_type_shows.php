@@ -86,7 +86,7 @@ $screentime   = ( get_post_meta( $show_id, 'lezshows_screentime_rating', true ) 
 					echo '<li class="list-group-item network country">' . get_the_term_list( $show_id, 'lez_country', '<strong>Airs In:</strong> ', ', ' ) . '</li>';
 				}
 				$tvmaze_episode = ( new LWTV_Whats_On_JSON() )->whats_on_show( $show_id );
-				if ( isset( $tvmaze_episode['next'] ) ) {
+				if ( isset( $tvmaze_episode['next'] ) && 'TBD' !== $tvmaze_episode['next'] ) {
 					echo '<li class="list-group-item network upcoming_ep"><strong>Next Episode:</strong> ' . esc_html( $tvmaze_episode['next'] );
 
 					// If there's a valid summary, add a button to show it
