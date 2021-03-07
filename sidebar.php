@@ -12,7 +12,7 @@ if ( ! is_active_sidebar( 'sidebar-2' ) ) {
 
 <aside id="secondary" class="widget-area" role="complementary">
 	<?php
-	// Show the right sidebar for the page type:
+	// Show the right sidebar for the page type.
 	if ( ! is_singular() ) {
 		switch ( get_post_type() ) {
 			case 'post_type_actors':

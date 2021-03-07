@@ -105,15 +105,12 @@ $thumb_array       = array(
 	<div class="card-body"><?php the_post_thumbnail( 'character-img', $thumb_array ); ?>
 		<div class="card-meta">
 			<div class="card-meta-item">
-				<section id="suggest-edits" class="widget widget_suggestedits">
-					<?php get_template_part( 'template-parts/suggestedit', 'form' ); ?>
-				</section>
 				<?php
 				if ( ! empty( get_the_content() ) ) {
 					echo '<h2>Actor Bio</h2>';
 					the_content();
 				} else {
-					the_title( '<p>', ' is an actor who has played at least one character on TV. Information on this page has not yet been verified. Please <a href="/about/contact/">contact us</a> with any corrections or amendments.</p>' );
+					the_title( '<p>', ' is an actor who has played at least one queer character on TV. Information on this page has not yet been verified. Please <a href="/about/contact/">contact us</a> with any corrections or amendments.</p>' );
 				}
 				?>
 			</div>

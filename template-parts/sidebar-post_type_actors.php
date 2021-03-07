@@ -1,6 +1,8 @@
 <?php
 /**
  * The template for displaying show CPT Character Sidebar
+ *
+ * @package LezWatch.TV
  */
 
 global $post;
@@ -16,6 +18,10 @@ if ( method_exists( 'LWTV_Actors_Calculate', 'do_the_math' ) ) {
 	<div class="widget-wrap">
 		<?php get_search_form(); ?>
 	</div>
+</section>
+
+<section id="suggest-edits" class="widget widget_suggestedits">
+	<?php get_template_part( 'template-parts/suggestedit', 'form' ); ?>
 </section>
 
 <section id="affiliates" class="widget widget_text">
