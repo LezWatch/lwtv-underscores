@@ -7,7 +7,7 @@
  * @package LezWatch.TV
  */
 
-// Related Posts
+// Related Posts.
 $slug     = get_post_field( 'post_name', get_post( get_the_ID() ) );
 $get_tags = get_term_by( 'name', $slug, 'post_tag' );
 
@@ -15,8 +15,8 @@ if ( method_exists( 'LWTV_Related_Posts', 'are_there_posts' ) ) {
 	$related = ( new LWTV_Related_Posts() )->are_there_posts( $slug );
 }
 
-// Generate Life Stats
-// Usage: $life
+// Generate Life Stats.
+// Usage: $life.
 $life = array();
 $born = get_post_meta( get_the_ID(), 'lezactors_birth', true );
 if ( ! empty( $born ) ) {
@@ -37,8 +37,8 @@ if ( isset( $darr ) && isset( $darr[1] ) && isset( $darr[2] ) && checkdate( $dar
 	$life['died'] = date_format( $get_death, 'F d, Y' );
 }
 
-// Generate Gender & Sexuality Data
-// Usage: $gender_sexuality
+// Generate Gender & Sexuality Data.
+// Usage: $gender_sexuality.
 $gender_sexuality = array();
 $gender           = lwtv_yikes_actordata( get_the_ID(), 'gender', true );
 $sexuality        = lwtv_yikes_actordata( get_the_ID(), 'sexuality', true );
@@ -49,8 +49,8 @@ if ( isset( $sexuality ) && ! empty( $sexuality ) ) {
 	$gender_sexuality['Sexual Orientation'] = $sexuality;
 }
 
-// Generate URLs
-// Usage: $actor_urls
+// Generate URLs.
+// Usage: $actor_urls.
 $actor_urls = array();
 if ( get_post_meta( get_the_ID(), 'lezactors_homepage', true ) ) {
 	$actor_urls['home'] = array(
@@ -88,10 +88,10 @@ if ( get_post_meta( get_the_ID(), 'lezactors_instagram', true ) ) {
 	);
 }
 
-// Microformats Fix
+// Microformats Fix.
 lwtv_microformats_fix( $post->ID );
 
-// Thumbnail attribution
+// Thumbnail attribution.
 $thumb_attribution = get_post_meta( get_post_thumbnail_id(), 'lwtv_attribution', true );
 $thumb_title       = ( empty( $thumb_attribution ) ) ? get_the_title() : get_the_title() . ' &copy; ' . $thumb_attribution;
 $thumb_array       = array(
@@ -103,7 +103,6 @@ $thumb_array       = array(
 
 <section class="showschar-section" name="overview" id="overview">
 	<div class="card-body"><?php the_post_thumbnail( 'character-img', $thumb_array ); ?>
-
 		<div class="card-meta">
 			<div class="card-meta-item">
 				<?php
@@ -111,7 +110,7 @@ $thumb_array       = array(
 					echo '<h2>Actor Bio</h2>';
 					the_content();
 				} else {
-					the_title( '<p>', ' is an actor who has played at least one character on TV. Information on this page has not yet been verified. Please <a href="/about/contact/">contact us</a> with any corrections or amendments.</p>' );
+					the_title( '<p>', ' is an actor who has played at least one queer character on TV. Information on this page has not yet been verified. Please <a href="/about/contact/">contact us</a> with any corrections or amendments.</p>' );
 				}
 				?>
 			</div>

@@ -47,7 +47,7 @@ the_post_thumbnail(
 			<?php
 		}
 		if ( $related ) {
-			// Related Posts (if available)
+			// Related Posts (if available).
 			?>
 			<a class="breadcrumb-item smoothscroll" href="#related-posts">Articles</a>
 			<?php
@@ -55,7 +55,7 @@ the_post_thumbnail(
 		?>
 		<a class="breadcrumb-item smoothscroll" href="#characters">Characters</a>
 		<?php
-		// Similar Shows
+		// Similar Shows.
 		if ( false !== $rpbt_shortcode ) {
 			?>
 			<a class="breadcrumb-item smoothscroll" href="#similar-shows">Similar Shows</a>
@@ -158,14 +158,14 @@ if ( $related ) {
 		} else {
 			$deadtext = 'none are dead';
 			if ( $havedeadcount > '0' ) {
-				// translators: %s is the number of dead characters
+				// translators: %s is the number of dead characters.
 				$deadtext = sprintf( _n( '<strong>%s</strong> is dead', '<strong>%s</strong> are dead', $havedeadcount ), $havedeadcount );
 			}
 
-			// translators: %s is the number of characters total
+			// translators: %s is the number of characters total.
 			echo wp_kses_post( '<p>There ' . sprintf( _n( 'is <strong>%s</strong> queer character', 'are <strong>%s</strong> queer characters', $havecharcount ), $havecharcount ) . ' listed for this show; ' . $deadtext . '.</p>' );
 
-			// Get the list of REGULAR characters
+			// Get the list of REGULAR characters.
 			$chars_regular = lwtv_get_chars_for_show( $show_id, $havecharcount, 'regular' );
 			if ( ! empty( $chars_regular ) ) {
 				?>
@@ -177,7 +177,7 @@ if ( $related ) {
 				}
 				echo '</div></div>';
 			}
-			// Get the list of RECURRING characters
+			// Get the list of RECURRING characters.
 			$chars_recurring = lwtv_get_chars_for_show( $show_id, $havecharcount, 'recurring' );
 			if ( ! empty( $chars_recurring ) ) {
 				?>
@@ -189,7 +189,7 @@ if ( $related ) {
 				}
 				echo '</div></div>';
 			}
-			// Get the list of GUEST characters
+			// Get the list of GUEST characters.
 			$chars_guest = lwtv_get_chars_for_show( $show_id, $havecharcount, 'guest' );
 			if ( ! empty( $chars_guest ) ) {
 				?>
