@@ -11,7 +11,7 @@ $show_id = $post->ID;
 ?>
 
 <!-- Button trigger modal -->
-<button type="button" class="btn btn-lg btn-primary btn-block" data-toggle="modal" data-target="#suggestForm">
+<button type="button" class="btn btn-primary btn-block" data-toggle="modal" data-target="#suggestForm">
 	Suggest an Edit
 </button>
 
@@ -20,14 +20,14 @@ $show_id = $post->ID;
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h2 class="modal-title" id="suggestFormLabel">Suggest an Edit for <?php echo esc_html( get_the_title( $show_id ) ); ?></h2>
+				<h3 class="modal-title" id="suggestFormLabel">Suggest an Edit for <?php echo esc_html( get_the_title( $show_id ) ); ?></h3>
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 					<span aria-hidden="true">&times;</span>
 				</button>
 			</div>
 			<div class="modal-body">
 				<p>
-					We welcome submissions and corrections to our database. Any misattributions of gender or sexual orientation are accidental and will be corrected ASAP.
+					We welcome corrections to our database. Any misattributions of gender or sexual orientation are accidental and will be corrected ASAP.
 				</p>
 				<p>
 					<?php echo do_shortcode( '[gravityform id="1" title="false" description="false" ajax="true"]' ); ?>

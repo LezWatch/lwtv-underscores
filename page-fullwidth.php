@@ -10,11 +10,11 @@ get_header(); ?>
 <div class="archive-subheader">
 	<div class="jumbotron">
 		<div class="container">
-			<header class="archive-header">
+			<section class="archive-header">
 				<h1 class="entry-title">
 					<?php the_title(); ?></h1>
 				</h1>
-			</header><!-- .archive-header -->
+			</section><!-- .archive-header -->
 		</div><!-- .container -->
 	</div><!-- /.jumbotron -->
 </div>
@@ -24,7 +24,7 @@ get_header(); ?>
 		<div class="row">
 			<div class="col-sm-12">
 				<div id="primary" class="content-area">
-					<div id="content" class="site-content clearfix" role="main">
+					<div id="content" class="site-content clearfix">
 						<?php
 						while ( have_posts() ) :
 							the_post();

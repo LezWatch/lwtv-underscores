@@ -18,7 +18,7 @@ get_header(); ?>
 <div class="archive-subheader">
 	<div class="jumbotron">
 		<div class="container">
-			<header class="archive-header">
+			<section class="archive-header">
 				<div class="row">
 					<div class="col-10">
 						<?php the_archive_title( '<h1 class="facetwp-page-title entry-title"><span class="facetwp-title">', '</span> (' . $count_posts . '<span class="facetwp-count"></span>)</h1>' ); ?>
@@ -40,7 +40,7 @@ get_header(); ?>
 						</div>
 					</div>
 				</div>
-			</header><!-- .archive-header -->
+			</section><!-- .archive-header -->
 		</div><!-- .container -->
 	</div><!-- /.jumbotron -->
 </div>
@@ -50,7 +50,7 @@ get_header(); ?>
 		<div class="row">
 			<div class="col-sm-9">
 				<div id="primary" class="content-area">
-					<div id="content" class="site-content clearfix" role="main">
+					<div id="content" class="site-content clearfix">
 						<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 							<div class="entry-content facetwp-template">
 								<div class="row site-loop character-archive-loop">

@@ -11,12 +11,12 @@ get_header();
 <div class="archive-subheader">
 	<div class="jumbotron">
 		<div class="container">
-			<header class="archive-header">
+			<section class="archive-header">
 				<div class="row">
 					<div class="col-10"><h1 class="entry-title"><?php esc_attr_e( 'Oops! This isn\'t the page you thought it was.', 'yikes_starter' ); ?></h1></div>
 					<div class="col-2 icon plain"><span role="img" aria-label="404" title="404 - Page Not Found" class="taxonomy-svg 404"><?php echo lwtv_symbolicons( 'easter-egg-alt.svg', 'fa-gift' ); ?></span></div>
 				</div>
-			</header><!-- .archive-header -->
+			</section><!-- .archive-header -->
 		</div><!-- .container -->
 	</div><!-- /.jumbotron -->
 </div>
@@ -26,7 +26,7 @@ get_header();
 		<div class="row">
 			<div class="col">
 				<div id="primary" class="content-area">
-					<div id="content" class="site-content clearfix" role="main">
+					<div id="content" class="site-content clearfix">
 						<article id="post-0" class="post not-found">
 							<div class="entry-content clearfix">
 								<p><img src="<?php echo esc_url( get_template_directory_uri() ); ?>/images/rose.gif" alt="Rose revealing herself from Jane the Virgin" class="alignleft"/></p>
