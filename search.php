@@ -10,7 +10,7 @@ get_header(); ?>
 <div class="archive-subheader">
 	<div class="jumbotron">
 		<div class="container">
-			<header class="archive-header">
+			<section class="archive-header">
 				<div class="row">
 					<div class="col-10"><h1 class="entry-title">
 					<?php
@@ -22,7 +22,7 @@ get_header(); ?>
 						<span role="img" aria-label="Search Results" title="Search Results" class="taxonomy-svg 404"><?php echo lwtv_symbolicons( 'search.svg', 'fa-search' ); ?></span>
 					</div>
 				</div>
-			</header><!-- .archive-header -->
+			</section><!-- .archive-header -->
 		</div><!-- .container -->
 	</div><!-- /.jumbotron -->
 </div>
@@ -32,7 +32,7 @@ get_header(); ?>
 		<div class="row">
 			<div class="col">
 				<div id="primary" class="content-area">
-					<div id="content" class="site-content clearfix" role="main">
+					<div id="content" class="site-content clearfix">
 						<?php
 						if ( have_posts() ) {
 							echo '<div class="row site-loop main-posts-loop four-across-loop">';
@@ -41,7 +41,6 @@ get_header(); ?>
 								get_template_part( 'template-parts/content', 'search' );
 							}
 							echo '</div>';
-							echo '<!-- Alt Bootstrap pagination is page_navi() -->';
 							yikes_starter_paging_nav();
 						} else {
 							get_template_part( 'template-parts/content', 'none' );

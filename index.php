@@ -14,11 +14,11 @@ get_header(); ?>
 <div class="archive-subheader">
 	<div class="jumbotron">
 		<div class="container">
-			<header class="archive-header">
+			<section class="archive-header">
 				<h1 class="entry-title">
 					<?php echo wp_kses_post( yikes_starter_blog_page_title() ); ?>
 				</h1>
-			</header><!-- .archive-header -->
+			</section><!-- .archive-header -->
 		</div><!-- .container -->
 	</div><!-- /.jumbotron -->
 </div>
@@ -28,7 +28,7 @@ get_header(); ?>
 		<div class="row">
 			<div class="col-sm-9">
 				<div id="primary" class="content-area">
-					<div id="content" class="site-content clearfix" role="main">
+					<div id="content" class="site-content clearfix">
 						<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 							<div class="entry-content">
 								<?php

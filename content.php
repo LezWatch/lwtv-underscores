@@ -1,7 +1,10 @@
 <?php
 /**
+ * The template for displaying page content.
+ *
  * @package YIKES Starter
  */
+
 ?>
 
 <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>

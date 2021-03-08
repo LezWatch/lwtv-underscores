@@ -45,7 +45,7 @@ get_header(); ?>
 <div class="archive-subheader">
 	<div class="jumbotron">
 		<div class="container">
-			<header class="archive-header">
+			<section class="archive-header">
 				<div class="row">
 					<div class="col-10">
 						<?php the_archive_title( '<h1 class="entry-title">', '</h1>' ); ?>
@@ -57,7 +57,7 @@ get_header(); ?>
 						<?php the_archive_description( '<div class="archive-description">', $archive_details . '</div>' ); ?>
 					</div>
 				</div>
-			</header><!-- .archive-header -->
+			</section><!-- .archive-header -->
 		</div><!-- .container -->
 	</div><!-- /.jumbotron -->
 </div>
@@ -67,7 +67,7 @@ get_header(); ?>
 		<div class="row">
 			<div class="col-sm-9">
 				<div id="primary" class="content-area">
-					<div id="content" class="site-content clearfix" role="main">
+					<div id="content" class="site-content clearfix">
 						<?php
 						if ( have_posts() ) :
 							?>
