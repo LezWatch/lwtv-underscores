@@ -27,7 +27,7 @@ $show_id = $post->ID;
 			</div>
 			<div class="modal-body">
 				<p>
-					We welcome submissions and corrections to our database. Any misattributions of gender or sexual orientation are accidental and will be corrected ASAP.
+					We welcome corrections to our database. Any misattributions of gender or sexual orientation are accidental and will be corrected ASAP.
 				</p>
 				<p>
 					<?php echo do_shortcode( '[gravityform id="1" title="false" description="false" ajax="true"]' ); ?>
