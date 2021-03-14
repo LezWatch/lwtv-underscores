@@ -25,7 +25,7 @@ if ( ! empty( $born ) ) {
 if ( isset( $barr ) && isset( $barr[1] ) && isset( $barr[2] ) && checkdate( (int) $barr[1], (int) $barr[2], (int) $barr[0] ) ) {
 	$get_birth    = new DateTime( $born );
 	$age          = lwtv_yikes_actordata( get_the_ID(), 'age', true );
-	$life['born'] = date_format( $get_birth, 'F d, Y' );
+	$life['born'] = date_format( $get_birth, 'F j, Y' );
 	$life['age']  = $age->format( '%Y years old' );
 }
 $died = get_post_meta( get_the_ID(), 'lezactors_death', true );
@@ -34,7 +34,7 @@ if ( ! empty( $died ) ) {
 }
 if ( isset( $darr ) && isset( $darr[1] ) && isset( $darr[2] ) && checkdate( $darr[1], $darr[2], $darr[0] ) ) {
 	$get_death    = new DateTime( $died );
-	$life['died'] = date_format( $get_death, 'F d, Y' );
+	$life['died'] = date_format( $get_death, 'F j, Y' );
 }
 
 // Generate Gender & Sexuality Data.
@@ -110,7 +110,7 @@ $thumb_array       = array(
 					echo '<h2>Actor Bio</h2>';
 					the_content();
 				} else {
-					the_title( '<p>', ' is an actor who has played at least one queer character on TV. Information on this page has not yet been verified. Please <a href="/about/contact/">contact us</a> with any corrections or amendments.</p>' );
+					the_title( '<p>', ' is an actor who has played at least one queer character on TV. Information on this page has not yet been verified. Feel free to <a href="#"  data-toggle="modal" data-target="#suggestForm">suggest an edit</a> with any corrections or additions.</p>' );
 				}
 				?>
 			</div>
@@ -147,10 +147,10 @@ $thumb_array       = array(
 			<div class="card-meta-item">
 				<?php
 				if ( count( $actor_urls ) > 0 ) {
-					echo '<strong>Links:</strong> ';
-					echo '<ul class="actor-meta-links">';
+					echo '<span ID="actor-links"><strong>Actor Links:</strong></span>';
+					echo '<ul class="actor-meta-links" aria-labelledby="actor-links">';
 					foreach ( $actor_urls as $source ) {
-						echo '<li><i class="' . esc_attr( strtolower( $source['fa'] ) ) . '" aria-hidden="true"></i> <a href="' . esc_url( $source['url'] ) . '">' . esc_html( $source['name'] ) . '</a></li>';
+						echo '<li><i class="' . esc_attr( strtolower( $source['fa'] ) ) . '" aria-hidden="true"></i> <a href="' . esc_url( $source['url'] ) . '" target="_blank">' . esc_html( $source['name'] ) . '</a><span class="screen-reader-text">, opens in new tab</span></li>';
 					}
 					echo '</ul>';
 				}
@@ -161,7 +161,7 @@ $thumb_array       = array(
 </section>
 
 <?php
-// Related Posts
+// Related Posts.
 if ( isset( $related ) && $related ) {
 	?>
 	<section name="related-posts" id="related-posts" class="showschar-section">
