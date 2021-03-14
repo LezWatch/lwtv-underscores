@@ -147,7 +147,7 @@ $thumb_array       = array(
 			<div class="card-meta-item">
 				<?php
 				if ( count( $actor_urls ) > 0 ) {
-					echo '<span ID="actor-links"><strong>Actor Links:</strong></span>';
+					echo '<span ID="actor-links"><strong>Actor Links:</strong></span> ';
 					echo '<ul class="actor-meta-links" aria-labelledby="actor-links">';
 					foreach ( $actor_urls as $source ) {
 						echo '<li><i class="' . esc_attr( strtolower( $source['fa'] ) ) . '" aria-hidden="true"></i> <a href="' . esc_url( $source['url'] ) . '" target="_blank">' . esc_html( $source['name'] ) . '</a><span class="screen-reader-text">, opens in new tab</span></li>';
