@@ -1,9 +1,9 @@
 <?php
-
-	/**
-	 * Adds My Awesome widget.
-	 */
-
+/**
+ * Adds the YIKES social widget.
+ *
+ * @package LezWatch.TV
+ */
 class YIKES_Social_Menu_Widget extends WP_Widget {
 
 	/**
@@ -11,43 +11,42 @@ class YIKES_Social_Menu_Widget extends WP_Widget {
 	 */
 	public function __construct() {
 		parent::__construct(
-			'yikes_social_menu_widget', // Base ID
-			'YIKES Social Menu', // Name
-			array( 'description' => __( 'Display social media menu with flexibility', 'yikes_starter' ) ) // Args
+			'yikes_social_menu_widget', // Base ID.
+			'YIKES Social Menu',        // Name.
+			array( 'description' => __( 'Display YIKES social menu', 'yikes_starter' ) ) // Args.
 		);
 	}
 
 	/**
 	 * Front-end display of widget.
 	 */
-
 	public function widget( $args, $instance ) {
 
-		//Get menu ID for Social Nav Menu
+		// Get menu ID for Social Nav Menu.
 		$menu_name = 'social_menu';
 		$locations = get_nav_menu_locations();
 		$menu_id   = isset( $locations[ $menu_name ] ) ? $locations[ $menu_name ] : '';
 
-		//Get title
+		// Get title.
 		$title = ! empty( trim( $instance['title'] ) ) ? $instance['title'] : 'Social';
 		$title = apply_filters( 'widget_title', $title );
 
-		//Get orientation
+		// Get orientation.
 		$orientation = isset( $instance['orientation'] ) ? $instance['orientation'] : '';
 
 		/**
 		 * Display nav menu
 		 */
 
-		// Get $before_widget attribute set on selected widget area (register_sidebar) and display
+		// Get $before_widget attribute set on selected widget area (register_sidebar) and display.
 		$before_widget = isset( $args['before_widget'] ) ? $args['before_widget'] : '';
 		// phpcs:ignore WordPress.Security.EscapeOutput
 		echo $before_widget;
 
-		//Check if hide_text option is set
+		// Check if hide_text option is set.
 		$hide_text = ! empty( $instance['hide_text'] ) ? 'class="widget-hide-text"' : '';
 
-		//Set arguments to display social menu with additional options
+		// Set arguments to display social menu with additional options.
 		$nav_menu_args = array(
 			'fallback_cb' => '',
 			'menu'        => $menu_id,
@@ -56,7 +55,7 @@ class YIKES_Social_Menu_Widget extends WP_Widget {
 			'menu_class'  => $orientation,
 		);
 
-		//Display widget title
+		// Display widget title.
 		$before_title = isset( $args['before_title'] ) ? $args['before_title'] : '';
 		$after_title  = isset( $args['after_title'] ) ? $args['after_title'] : '';
 		// phpcs:ignore WordPress.Security.EscapeOutput
@@ -64,7 +63,7 @@ class YIKES_Social_Menu_Widget extends WP_Widget {
 
 		wp_nav_menu( apply_filters( 'widget_nav_menu_args', $nav_menu_args, $menu_id, $args, $instance ) );
 
-		//Get $after_widget attribute set on selected widget area (register_sidebar) and display
+		// Get $after_widget attribute set on selected widget area (register_sidebar) and display.
 		$after_widget = isset( $args['after_widget'] ) ? $args['after_widget'] : '';
 		// phpcs:ignore WordPress.Security.EscapeOutput
 		echo $after_widget;
@@ -73,7 +72,6 @@ class YIKES_Social_Menu_Widget extends WP_Widget {
 	/**
 	 * Sanitize widget form values as they are saved.
 	 */
-
 	public function update( $new_instance, $old_instance ) {
 		$instance                = $old_instance;
 		$instance['title']       = wp_strip_all_tags( $new_instance['title'] );
@@ -85,7 +83,6 @@ class YIKES_Social_Menu_Widget extends WP_Widget {
 	/**
 	 * Back-end widget form.
 	 */
-
 	public function form( $instance ) {
 		$title       = isset( $instance['title'] ) ? esc_attr( $instance['title'] ) : '';
 		$hide        = isset( $instance['hide_text'] ) ? $instance['hide_text'] : 0;
@@ -108,7 +105,9 @@ class YIKES_Social_Menu_Widget extends WP_Widget {
 	}
 }
 
-// register YIKES_Social_Menu_Widget widget
+/**
+ * Register YIKES_Social_Menu_Widget widget.
+ */
 function register_yikes_social_menu_widget() {
 	register_widget( 'YIKES_Social_Menu_Widget' );
 }

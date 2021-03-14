@@ -336,6 +336,7 @@ add_action( 'widgets_init', 'yikes_starter_widgets_init' );
  */
 // Navigation Walker.
 require_once 'inc/wp_bootstrap_navwalker.php';
+// require_once 'inc/class-wp-bootstrap-navwalker.php';
 
 /*
  * Pagination

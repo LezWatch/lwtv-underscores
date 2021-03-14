@@ -388,14 +388,14 @@ h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
 	}
 
 	.nav-item.search {
-			svg {
-				height: 15px;
-				width: 15px;
-				vertical-align: middle;
-			}
-			svg * {
-				fill: $white;
-			}
+		svg {
+			height: 15px;
+			width: 15px;
+			vertical-align: middle;
+		}
+		svg * {
+			fill: $white;
+		}
 	}
 
 	.header-search-bar {
@@ -793,10 +793,10 @@ section {
 			width: 48%;
 			list-style-type: none;
 			svg {
-					width: 20px;
-					height: 20px;
-					margin-right: 4px;
-					vertical-align: middle;
+				width: 20px;
+				height: 20px;
+				margin-right: 4px;
+				vertical-align: middle;
 			}
 		}
 	}
@@ -856,23 +856,23 @@ footer.entry-meta {
 	}
 
 	ul.statistics.percentages.dead-years {
-				padding:0;
+		padding:0;
 
-				li {
-					display: inline-block;
-					width: 33%;
-				}
+		li {
+			display: inline-block;
+			width: 33%;
+		}
 	}
 
 	ul.statistics.lists.tropes,
 	ul.statistics.lists.genres,
 	ul.statistics.lists.cliches {
-				padding:0;
+		padding:0;
 
-				li {
-					display: inline-block;
-					width: 50%;
-				}
+		li {
+			display: inline-block;
+			width: 50%;
+		}
 	}
 }
 
@@ -885,15 +885,15 @@ footer.entry-meta {
 }
 
 .lwtv-stats {
-		.progress {
-				 height:30px;
-				 background-color: #d1ecf1;
+	.progress {
+		height:3 0px;
+		background-color: $lwtv-ltblue;
 
-				 .progress-bar {
-						 color: #222;
-						 text-align: left;
-				 }
+		.progress-bar {
+			color: $darkgrey;
+			text-align: left;
 		}
+	}
 }
 
 canvas {
@@ -910,14 +910,13 @@ canvas {
 	}
 
 	ul.this-year-shows {
-				padding:0;
+		padding:0;
 
-				li {
-					display: inline-block;
-					width: 50%;
-				}
+		li {
+			display: inline-block;
+			width: 50%;
+		}
 	}
-
 }
 
 /* Advertising */
@@ -1367,7 +1366,6 @@ section#characters {
 /* Related Posts by Taxonomy Code */
 
 div.rpbt_shortcode {
-
 	.related-gallery {
 		display: grid;
 		grid-template-columns: repeat(2, 1fr);
@@ -1636,7 +1634,6 @@ embed, iframe, object {
 ----------------------------------------------- */
 
 .search-results {
-
 	.search-entry-title {
 		.fa-search {
 			font-size: 0.64em;
@@ -1661,12 +1658,14 @@ embed, iframe, object {
 }
 
 /* Algolia CSS */
-#algolia-search-box .search-icon {
-	fill: $lwtv-pink!important;
-}
+#algolia-search-box {
+	.search-icon {
+		fill: $lwtv-pink!important;
+	}
 
-#algolia-search-box input {
-	border-bottom: 2px solid $lwtv-pink!important;
+	input {
+		border-bottom: 2px solid $lwtv-pink!important;
+	}
 }
 
 .ais-facets {
@@ -1768,6 +1767,7 @@ span.svg-shortcode a {
 /*--------------------------------------------------------------
 # Facet
 --------------------------------------------------------------*/
+
 div.facetwp-counts {
 	display: inline;
 }
@@ -1783,11 +1783,12 @@ div.facetwp-facet-shows_scores input.facetwp-number {
 	margin: .2rem;
 }
 
-.facetwp-type-fselect .fs-wrap, .facetwp-type-fselect .fs-dropdown {
-		max-width: 220px;
-		min-width: 100px;
-		overflow-wrap: break-word;
-		width: auto;
+.facetwp-type-fselect .fs-wrap,
+.facetwp-type-fselect .fs-dropdown {
+	max-width: 220px;
+	min-width: 100px;
+	overflow-wrap: break-word;
+	width: auto;
 }
 
 /*--------------------------------------------------------------
@@ -1795,30 +1796,31 @@ div.facetwp-facet-shows_scores input.facetwp-number {
 --------------------------------------------------------------*/
 
 .bd-callout {
-		padding: 1.25rem;
-		margin-top: 1.25rem;
-		margin-bottom: 1.25rem;
-		border: 1px solid #eee;
-		border-left-width: .25rem;
-		border-radius: .25rem;
-		border-left-color: $lwtv-pink;
-}
+	padding: 1.25rem;
+	margin-top: 1.25rem;
+	margin-bottom: 1.25rem;
+	border: 1px solid #eee;
+	border-left-width: .25rem;
+	border-radius: .25rem;
+	border-left-color: $lwtv-pink;
 
-.bd-callout h4 {
+	h4 {
 		margin-top: 0;
-		margin-bottom: .25rem
-}
+		margin-bottom: .25rem;
+	}
 
-.bd-callout p:last-child {
+
+	p:last-child {
 		margin-bottom: 0
-}
+	}
 
-.bd-callout code {
+	code {
 		border-radius: .25rem
-}
+	}
 
-.bd-callout+.bd-callout {
+ 	&+.bd-callout {
 		margin-top: -.25rem
+	}
 }
 
 /* ==========================================================================
@@ -1992,6 +1994,17 @@ div.facetwp-facet-shows_scores input.facetwp-number {
 			a:hover, a:focus, a:active {
 				color: $link-hover-color;
 				text-decoration: none;
+			}
+		}
+
+		/* Social Nav used in the Nav widget */
+
+		ul#menu-follow-us li {
+			a { 
+				&:after {
+					content: ', opens in new tab';
+					@include screen-reader;
+				}
 			}
 		}
 	}

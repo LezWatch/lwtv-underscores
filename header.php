@@ -40,6 +40,7 @@
 					'menu_class'     => 'navbar-nav ml-auto',
 					'fallback_cb'    => 'wp_page_menu',
 					'walker'         => new WP_Bootstrap_Navwalker(),
+					'items_wrap'     => '<ul id="%1$s" class="%2$s" aria-labelledby="main-navigation">%3$s</ul>',
 				)
 			);
 			?>

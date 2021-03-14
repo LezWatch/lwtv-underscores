@@ -1195,7 +1195,7 @@ footer.entry-meta svg {
 }
 
 .lwtv-stats .progress {
-  height: 30px;
+  height: 3 0px;
   background-color: #d1ecf1;
 }
 .lwtv-stats .progress .progress-bar {
@@ -1923,7 +1923,6 @@ ul.comment-list li .comment-content .btn a, ul.comment-list li .comment-content 
 #algolia-search-box .search-icon {
   fill: #d1548e !important;
 }
-
 #algolia-search-box input {
   border-bottom: 2px solid #d1548e !important;
 }
@@ -2030,7 +2029,8 @@ div.facetwp-facet-shows_scores input.facetwp-number {
   margin: .2rem;
 }
 
-.facetwp-type-fselect .fs-wrap, .facetwp-type-fselect .fs-dropdown {
+.facetwp-type-fselect .fs-wrap,
+.facetwp-type-fselect .fs-dropdown {
   max-width: 220px;
   min-width: 100px;
   overflow-wrap: break-word;
@@ -2049,20 +2049,16 @@ div.facetwp-facet-shows_scores input.facetwp-number {
   border-radius: .25rem;
   border-left-color: #d1548e;
 }
-
 .bd-callout h4 {
   margin-top: 0;
-  margin-bottom: 0.25rem;
+  margin-bottom: .25rem;
 }
-
 .bd-callout p:last-child {
   margin-bottom: 0;
 }
-
 .bd-callout code {
   border-radius: 0.25rem;
 }
-
 .bd-callout + .bd-callout {
   margin-top: -0.25rem;
 }
@@ -2176,6 +2172,9 @@ div.facetwp-facet-shows_scores input.facetwp-number {
 
 /* =Footer
 ----------------------------------------------- */
+#colophon .footer-widgets {
+  /* Social Nav used in the Nav widget */
+}
 #colophon .footer-widgets h2.widget-title {
   border-bottom: dotted 1px #d6d6d6;
   font-size: 1.75rem;
@@ -2195,6 +2194,37 @@ div.facetwp-facet-shows_scores input.facetwp-number {
 #colophon .footer-widgets ul a:hover, #colophon .footer-widgets ul a:focus, #colophon .footer-widgets ul a:active {
   color: #8d329f;
   text-decoration: none;
+}
+#colophon .footer-widgets ul#menu-follow-us li a:after {
+  content: ', opens in new tab';
+  border: 0;
+  clip: rect(1px, 1px, 1px, 1px);
+  -webkit-clip-path: inset(50%);
+  clip-path: inset(50%);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px;
+  word-wrap: normal !important;
+}
+#colophon .footer-widgets ul#menu-follow-us li a:after:focus {
+  background-color: #eee;
+  clip: auto !important;
+  clip-path: none;
+  color: #444;
+  display: block;
+  font-size: 1em;
+  height: auto;
+  left: 5px;
+  line-height: normal;
+  padding: 15px 23px 14px;
+  text-decoration: none;
+  top: 5px;
+  width: auto;
+  z-index: 100000;
+  /* Above WP toolbar. */
 }
 
 /* ==========================================================================
