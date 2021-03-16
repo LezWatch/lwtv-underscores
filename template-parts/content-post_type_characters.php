@@ -63,6 +63,8 @@ if ( '' !== $all_actors ) {
 		}
 		$the_actors[] = $this_actor;
 	}
+} else {
+	$all_actors = array( 'none' );
 }
 
 if ( empty( $the_actors ) && has_term( 'cartoon', 'lez_cliches', get_the_ID() ) ) {
