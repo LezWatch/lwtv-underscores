@@ -63,6 +63,8 @@ if ( '' !== $all_actors ) {
 		}
 		$the_actors[] = $this_actor;
 	}
+} else {
+	$all_actors = array( 'none' );
 }
 
 if ( empty( $the_actors ) && has_term( 'cartoon', 'lez_cliches', get_the_ID() ) ) {
@@ -136,16 +138,10 @@ $thumb_array       = array(
 						<th scope="row">Status</th>
 						<td><?php echo wp_kses_post( $doa_status ); ?></td>
 					</tr>
-					<?php
-					if ( is_numeric( $all_actors ) && '' !== $all_actors ) {
-						?>
-						<tr>
-							<th scope="row"><?php echo wp_kses_post( _n( 'Actor', 'Actors', count( $all_actors ) ) ); ?></th>
-							<td>&bull; <?php echo implode( '<br />&bull; ', $the_actors ); // phpcs:ignore WordPress.Security.EscapeOutput ?></td>
-						</tr>
-						<?php
-					}
-					?>
+					<tr>
+						<th scope="row"><?php echo wp_kses_post( _n( 'Actor', 'Actors', count( $all_actors ) ) ); ?></th>
+						<td>&bull; <?php echo implode( '<br />&bull; ', $the_actors ); // phpcs:ignore WordPress.Security.EscapeOutput ?></td>
+					</tr>
 					<tr>
 						<th scope="row"><?php echo wp_kses_post( _n( 'Show', 'Shows', count( $shows_group ) ) ); ?></th>
 						<td>&bull; <?php echo wp_kses_post( implode( '<br />&bull; ', $shows_group ) ); ?></td>
