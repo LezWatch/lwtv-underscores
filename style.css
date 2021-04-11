@@ -1222,7 +1222,6 @@ canvas {
 }
 
 /* Advertising */
-.amazon-ads,
 .affiliate-ads {
   margin-top: 15px;
 }
@@ -1251,6 +1250,10 @@ table.lwtvc tbody {
 
 /* =Custom Post Types
 ----------------------------------------------- */
+.last-updated {
+  padding: 0 0 1.25rem 1.25rem;
+}
+
 /* Characters and Actors*/
 .facetwp-counts {
   display: inline;
@@ -1917,39 +1920,6 @@ ul.comment-list li .comment-content .btn a, ul.comment-list li .comment-content 
 }
 .search-results .card-title svg * {
   fill: #222;
-}
-
-/* Algolia CSS */
-#algolia-search-box .search-icon {
-  fill: #d1548e !important;
-}
-#algolia-search-box input {
-  border-bottom: 2px solid #d1548e !important;
-}
-
-.ais-facets {
-  margin-bottom: 0px !important;
-}
-
-.ais-menu--list {
-  padding: 0 .75rem;
-}
-
-.ais-menu--count {
-  display: inline-block;
-  padding: .25em .4em;
-  font-size: 75%;
-  font-weight: 700;
-  line-height: 1;
-  text-align: center;
-  white-space: nowrap;
-  vertical-align: baseline;
-  border-radius: .25rem;
-  transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
-  position: relative;
-  top: -1px;
-  color: #000;
-  background-color: #f3f3f3;
 }
 
 /*--------------------------------------------------------------

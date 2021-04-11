@@ -773,3 +773,10 @@ function lwtv_gdpr_footer() {
 	}
 }
 //add_action( 'wp_footer', 'lwtv_gdpr_footer' , 5 );
+
+function lwtv_last_updated_date( $post_id ) {
+	$updated_date  = get_the_modified_time( 'F jS, Y', $post_id );
+	$last_updated .= '<div class="last-updated"><small class="text-muted">This page was last edited on ' . $updated_date . '.</small></div>';
+
+	echo wp_kses_post( $last_updated );
+}
