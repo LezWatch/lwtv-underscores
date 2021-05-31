@@ -95,7 +95,6 @@ $screentime   = ( get_post_meta( $show_id, 'lezshows_screentime_rating', true ) 
 
 						// If there's a valid summary, add a button to show it
 						if ( isset( $tvmaze_episode['next_summary'] ) && 'TBD' !== $tvmaze_episode['next_summary'] ) {
-
 							// get TV Maze URLs
 							$tvmaze   = ( isset( $tvmaze_episode['tvmaze'] ) ) ? $tvmaze_episode['tvmaze'] : 'https://tvmaze.com/';
 							$collapse = 'data-toggle="collapse" href="#episodeSummary" role="button" aria-expanded="false" aria-controls="episodeSummary"';

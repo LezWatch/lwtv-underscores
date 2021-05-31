@@ -459,7 +459,13 @@ function lwtv_yikes_chardata( $the_id, $data ) {
 				$actorsmore = ( $num_actors > 1 ) ? ' (plus ' . ( $num_actors - 1 ) . ' more)' : '';
 				$actor_post = get_post( $actor_value );
 				$output    .= '<div class="card-meta-item actors">' . lwtv_symbolicons( 'user.svg', 'fa-user' );
-				if ( get_post_status( $actor_value ) !== 'publish' ) {
+				if ( get_post_status( $actor_value ) === 'private' ) {
+					if ( is_user_logged_in() ) {
+						$output .= '<a href="' . get_permalink( $actor_value ) . '">' . get_the_title( $actor_value ) . ' - UNLISTED</a>';
+					} else {
+						$output .= '<a href="/actor/unknown/">Unknown</a>';
+					}
+				} elseif ( get_post_status( $actor_value ) !== 'publish' ) {
 					$output .= '<span class="disabled-show-link">' . $actor_post->post_title . '</span>';
 				} else {
 					$output .= '<a href="' . get_the_permalink( $actor_post->ID ) . '">' . $actor_post->post_title . '</a>';
@@ -722,7 +728,7 @@ function lwtv_microformats_fix( $post_id ) {
  */
 function lwtv_symbolicons( $svg, $fa ) {
 	if ( method_exists( 'LWTV_Functions', 'symbolicons' ) ) {
-		$return = ( new LWTV_Functions )->symbolicons( $svg, $fa );
+		$return = ( new LWTV_Functions() )->symbolicons( $svg, $fa );
 	} else {
 		$return = '<span class="symbolicon" role="img"><svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="spinner" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="svg-inline--fa fa-spinner fa-w-16 fa-3x"><path fill="currentColor" d="M304 48c0 26.51-21.49 48-48 48s-48-21.49-48-48 21.49-48 48-48 48 21.49 48 48zm-48 368c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.49-48-48-48zm208-208c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.49-48-48-48zM96 256c0-26.51-21.49-48-48-48S0 229.49 0 256s21.49 48 48 48 48-21.49 48-48zm12.922 99.078c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48c0-26.509-21.491-48-48-48zm294.156 0c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48c0-26.509-21.49-48-48-48zM108.922 60.922c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.491-48-48-48z" class=""></path></svg></span>';
 	}
@@ -760,7 +766,7 @@ function lwtv_get_chars_for_show( $post_id, $count, $roll ) {
 
 /**
  * Echo GDPR notice if users aren't logged in
- * (logged in users alredy know what they're in for, yo)
+ * (logged in users already know what they're in for, yo)
  */
 function lwtv_gdpr_footer() {
 	if ( ! is_user_logged_in() ) {
@@ -773,3 +779,10 @@ function lwtv_gdpr_footer() {
 	}
 }
 //add_action( 'wp_footer', 'lwtv_gdpr_footer' , 5 );
+
+function lwtv_last_updated_date( $post_id ) {
+	$updated_date = get_the_modified_time( 'F jS, Y', $post_id );
+	$last_updated = '<div class="last-updated"><small class="text-muted">This page was last edited on ' . $updated_date . '.</small></div>';
+
+	echo wp_kses_post( $last_updated );
+}

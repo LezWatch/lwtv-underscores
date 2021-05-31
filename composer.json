@@ -11,9 +11,9 @@
         }
     ],
     "require": {
-        "php": ">=7.3.0",
+        "php": ">=7.4.0",
         "slowprog/composer-copy-file": "^0.3",
-        "twbs/bootstrap": "^4.3",
+        "twbs/bootstrap": "^4.6",
         "fortawesome/font-awesome": "^5.9"
     },
     "scripts": {

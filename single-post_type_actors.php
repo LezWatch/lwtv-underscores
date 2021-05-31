@@ -65,6 +65,8 @@ get_header(); ?>
 										get_template_part( 'template-parts/content', get_post_type() );
 										// Force Jetpack to display sharing links where we want them.
 										lwtv_yikes_jetpack_post_meta();
+										// Echo last updated.
+										lwtv_last_updated_date( get_the_ID() );
 									endwhile; // end of the loop.
 									?>
 								</div>
