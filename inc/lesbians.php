@@ -459,7 +459,13 @@ function lwtv_yikes_chardata( $the_id, $data ) {
 				$actorsmore = ( $num_actors > 1 ) ? ' (plus ' . ( $num_actors - 1 ) . ' more)' : '';
 				$actor_post = get_post( $actor_value );
 				$output    .= '<div class="card-meta-item actors">' . lwtv_symbolicons( 'user.svg', 'fa-user' );
-				if ( get_post_status( $actor_value ) !== 'publish' ) {
+				if ( get_post_status( $actor_value ) === 'private' ) {
+					if ( is_user_logged_in() ) {
+						$output .= '<a href="' . get_permalink( $actor_value ) . '">' . get_the_title( $actor_value ) . ' - UNLISTED</a>';
+					} else {
+						$output .= '<a href="/actor/unknown/">Unknown</a>';
+					}
+				} elseif ( get_post_status( $actor_value ) !== 'publish' ) {
 					$output .= '<span class="disabled-show-link">' . $actor_post->post_title . '</span>';
 				} else {
 					$output .= '<a href="' . get_the_permalink( $actor_post->ID ) . '">' . $actor_post->post_title . '</a>';

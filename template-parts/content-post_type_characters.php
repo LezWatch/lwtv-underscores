@@ -48,8 +48,8 @@ $the_actors = array();
 if ( '' !== $all_actors ) {
 	foreach ( $all_actors as $each_actor ) {
 		if ( get_post_status( $each_actor ) === 'private' ) {
-			if ( current_user_can( 'author' ) ) {
-				$this_actor = '<a href="' . get_permalink( $each_actor ) . '">' . get_the_title( $each_actor ) . ' - PRIVATE/UNLISTED</a>';
+			if ( is_user_logged_in() ) {
+				$this_actor = '<a href="' . get_permalink( $each_actor ) . '">' . get_the_title( $each_actor ) . ' - UNLISTED</a>';
 			} else {
 				$this_actor = '<a href="/actor/unknown/">Unknown</a>';
 			}
