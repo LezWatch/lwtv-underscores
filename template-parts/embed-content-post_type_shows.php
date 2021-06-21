@@ -105,7 +105,7 @@
 				$on_air = get_post_meta( get_the_ID(), 'lezshows_on_air', true );
 				if ( 'yes' === $on_air ) {
 					$tvmaze = ( new LWTV_Whats_On_JSON() )->whats_on_show( get_the_ID() );
-					echo '<strong>Next Episode</strong>: ' . $tvmaze['next'];
+					echo '<strong>Next Episode</strong>: ' . wp_kses_post( $tvmaze['next'] );
 				}
 
 				$stations = get_the_terms( get_the_ID(), 'lez_stations' );
@@ -134,7 +134,7 @@
 					$term_list = wp_get_post_terms( get_the_ID(), 'lez_stars', array( 'fields' => 'slugs' ) );
 					if ( ! is_wp_error( $term_list ) ) {
 						// Stars of Queerness.
-						echo '<a href="https://lezwatchtv.com/star/' . esc_attr( $term_list[0] ) . '" title="' . ucfirst( esc_attr( $term_list[0] ) ) . ' Star" target="_blank"><span class="callout callout-star-' . esc_attr( $term_list[0] ) . '">' . lwtv_yikes_show_star( get_the_ID() ) . '</span></a>';
+						echo '<a href="https://lezwatchtv.com/star/' . esc_attr( $term_list[0] ) . '" title="' . esc_attr( ucfirst( $term_list[0] ) ) . ' Star" target="_blank"><span class="callout callout-star-' . esc_attr( $term_list[0] ) . '">' . lwtv_yikes_show_star( get_the_ID() ) . '</span></a>';
 					}
 
 					// Hearts of Lurve.
