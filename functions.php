@@ -219,18 +219,6 @@ function yikes_starter_widgets_init() {
 			'after_title'   => '</h2>',
 		)
 	);
-	// Dead Character Widget.
-	register_sidebar(
-		array(
-			'name'          => __( 'Widget Area of Death', 'yikes_starter' ),
-			'id'            => 'dead-1',
-			'description'   => 'The home page header widget with the last dead character.',
-			'before_widget' => '<aside id="%1$s" class="widget %2$s">',
-			'after_widget'  => '</aside>',
-			'before_title'  => '<h2 class="widget-title">',
-			'after_title'   => '</h2>',
-		)
-	);
 	// Footer Widget 1.
 	register_sidebar(
 		array(

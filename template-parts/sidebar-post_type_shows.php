@@ -14,10 +14,11 @@ if ( method_exists( 'LWTV_Shows_Calculate', 'do_the_math' ) ) {
 	( new LWTV_Shows_Calculate() )->do_the_math( $show_id );
 }
 
+$show_score   = ( get_post_meta( $show_id, 'lezshows_the_score', true ) && is_numeric( (int) get_post_meta( $show_id, 'lezshows_the_score', true ) ) ) ? min( (int) get_post_meta( $show_id, 'lezshows_the_score', true ), 100 ) : 'TBD';
 $thumb_rating = ( get_post_meta( $show_id, 'lezshows_worthit_rating', true ) ) ? get_post_meta( $show_id, 'lezshows_worthit_rating', true ) : 'TBD';
-$realness     = ( get_post_meta( $show_id, 'lezshows_realness_rating', true ) ) ? min( (int) get_post_meta( $show_id, 'lezshows_realness_rating', true ), 5 ) : 0;
-$quality      = ( get_post_meta( $show_id, 'lezshows_quality_rating', true ) ) ? min( (int) get_post_meta( $show_id, 'lezshows_quality_rating', true ), 5 ) : 0;
-$screentime   = ( get_post_meta( $show_id, 'lezshows_screentime_rating', true ) ) ? min( (int) get_post_meta( $show_id, 'lezshows_screentime_rating', true ), 5 ) : 0;
+$realness     = ( get_post_meta( $show_id, 'lezshows_realness_rating', true ) && is_numeric( (int) get_post_meta( $show_id, 'lezshows_realness_rating', true ) ) ) ? min( (int) get_post_meta( $show_id, 'lezshows_realness_rating', true ), 5 ) : 0;
+$quality      = ( get_post_meta( $show_id, 'lezshows_quality_rating', true ) && is_numeric( (int) get_post_meta( $show_id, 'lezshows_quality_rating', true ) ) ) ? min( (int) get_post_meta( $show_id, 'lezshows_quality_rating', true ), 5 ) : 0;
+$screentime   = ( get_post_meta( $show_id, 'lezshows_screentime_rating', true ) && is_numeric( (int) get_post_meta( $show_id, 'lezshows_screentime_rating', true ) ) ) ? min( (int) get_post_meta( $show_id, 'lezshows_screentime_rating', true ), 5 ) : 0;
 ?>
 
 <section id="search" class="widget widget_search">
@@ -69,9 +70,13 @@ $screentime   = ( get_post_meta( $show_id, 'lezshows_screentime_rating', true ) 
 					echo wp_kses_post( '<p><em>This show has not yet been watched. Have you seen it? Please <a href="/about/contact/">contact us</a>.</em></p>' );
 				}
 
-				if ( get_post_meta( $show_id, 'lezshows_the_score', true ) ) {
-					echo '<strong>Show Score:</strong> ' . esc_html( round( get_post_meta( $show_id, 'lezshows_the_score', true ), 2 ) );
+				// If it's not a number, the score is TBD
+				if ( ! is_numeric( (int) $show_score ) ) {
+					$score = 'TBD';
+				} else {
+					$score = ( 0 === (int) $show_score ) ? '0' : round( $show_score, 2 );
 				}
+				echo '<strong>Show Score:</strong> ' . esc_html( $score );
 				?>
 			</div>
 

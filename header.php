@@ -78,7 +78,7 @@
 				<div class="container">
 					<div class="row">
 						<div class="col dead-widget-container">
-							<?php dynamic_sidebar( 'dead-1' ); ?>
+							<?php echo wp_kses_post( lwtv_last_death() ); ?>
 						</div>
 					</div>
 				</div>
