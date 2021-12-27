@@ -78,7 +78,7 @@
 				<div class="container">
 					<div class="row">
 						<div class="col dead-widget-container">
-							<?php echo wp_kses_post( lwtv_last_death() ); ?>
+							<center><?php echo wp_kses_post( lwtv_last_death() ); ?></center>
 						</div>
 					</div>
 				</div>
