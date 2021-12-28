@@ -122,6 +122,22 @@
 	.flag-star-bronze svg * {
 		fill: #b87333;
 	}
+
+	@media all and (max-width: 500px) {
+		.wp-embed {
+			grid-template-areas:
+				"title"
+				"image"
+				"details"
+				"excerpt"
+				"footer";
+			grid-template-columns: 100%;
+		}
+
+		.wp-embed-site-title a {
+			padding-left: 26px;
+		}
+	}
 </style>
 
 	<div <?php post_class( 'wp-embed' ); ?>>
