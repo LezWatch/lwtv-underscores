@@ -192,7 +192,7 @@
 				// List of Stations:
 				$stations = get_the_terms( get_the_ID(), 'lez_stations' );
 				if ( $stations && ! is_wp_error( $stations ) ) {
-					$station_list = get_the_term_list( get_the_ID(), 'lez_stations', '', ', ' ) . '.';
+					$station_list = get_the_term_list( get_the_ID(), 'lez_stations', '', ', ' );
 				}
 
 				// Next Episode (if none, show 'aired on...')
@@ -205,7 +205,7 @@
 					} else {
 						echo 'TBD';
 					}
-					echo ' - <strong>Airs on:</strong> ';
+					echo '<br /><strong>Airs on:</strong> ';
 				} else {
 					echo '<strong>Aired on:</strong> ';
 				}
