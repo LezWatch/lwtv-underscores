@@ -188,16 +188,30 @@
 
 			<p>
 				<?php
+
+				// List of Stations:
+				$stations = get_the_terms( get_the_ID(), 'lez_stations' );
+				if ( $stations && ! is_wp_error( $stations ) ) {
+					$station_list = get_the_term_list( get_the_ID(), 'lez_stations', '', ', ' );
+				}
+
+				// Next Episode (if none, show 'aired on...')
 				$on_air = get_post_meta( get_the_ID(), 'lezshows_on_air', true );
 				if ( 'yes' === $on_air ) {
 					$tvmaze = ( new LWTV_Whats_On_JSON() )->whats_on_show( get_the_ID() );
-					echo '<strong>Next Episode:</strong> ' . wp_kses_post( $tvmaze['next'] );
+					echo '<strong>Next Episode:</strong> ';
+					if ( isset( $tvmaze['next'] ) ) {
+						echo wp_kses_post( $tvmaze['next'] );
+					} else {
+						echo 'TBD';
+					}
+					echo '<br /><strong>Airs on:</strong> ';
+				} else {
+					echo '<strong>Aired on:</strong> ';
 				}
 
-				$stations = get_the_terms( get_the_ID(), 'lez_stations' );
-				if ( $stations && ! is_wp_error( $stations ) ) {
-					echo get_the_term_list( get_the_ID(), 'lez_stations', ' on ', ', ' ) . '.';
-				}
+				// Echo station list.
+				echo wp_kses_post( $station_list );
 				?>
 			</p>
 		</div>
