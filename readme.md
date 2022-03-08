@@ -24,7 +24,7 @@ To update shared libraries, run `composer update`
 
 ## Deployment
 
-Pushes to the `main` branch are automatically deployed via Codeship to:
+Pushes to the `production` branch are automatically deployed via Codeship to:
 
 * lezwatchtv.com
 
