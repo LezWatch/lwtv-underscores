@@ -655,6 +655,14 @@ function lwtv_yikes_actordata( $the_id, $data ) {
 				}
 			}
 			break;
+		case 'pronouns':
+			$pronoun_terms = get_the_terms( $the_id, 'lez_actor_pronouns', true );
+			if ( $pronoun_terms && ! is_wp_error( $pronoun_term ) ) {
+				foreach ( $pronoun_terms as $pronoun_term ) {
+					$output .= '<a href="' . get_term_link( $pronoun_term->slug, 'lez_actor_pronouns' ) . '" rel="tag" title="' . $pronoun_term->name . '">' . $pronoun_term->name . '</a> ';
+				}
+			}
+			break;
 		case 'sexuality':
 			$sexuality_terms = get_the_terms( $the_id, 'lez_actor_sexuality', true );
 			if ( $sexuality_terms && ! is_wp_error( $sexuality_terms ) ) {
@@ -663,7 +671,9 @@ function lwtv_yikes_actordata( $the_id, $data ) {
 				}
 			}
 			break;
-	}
+		default:
+			$output .= '';
+		}
 	return $output;
 }
 
