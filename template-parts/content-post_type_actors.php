@@ -37,16 +37,29 @@ if ( isset( $darr ) && isset( $darr[1] ) && isset( $darr[2] ) && checkdate( $dar
 	$life['died'] = date_format( $get_death, 'F j, Y' );
 }
 
-// Generate Gender & Sexuality Data.
+// Generate Gender & Sexuality & Pronoun Data.
 // Usage: $gender_sexuality.
 $gender_sexuality = array();
 $gender           = lwtv_yikes_actordata( get_the_ID(), 'gender', true );
 $sexuality        = lwtv_yikes_actordata( get_the_ID(), 'sexuality', true );
+$pronouns         = lwtv_yikes_actordata( get_the_ID(), 'sexuality', true );
 if ( isset( $gender ) && ! empty( $gender ) ) {
 	$gender_sexuality['Gender Orientation'] = $gender;
 }
 if ( isset( $sexuality ) && ! empty( $sexuality ) ) {
 	$gender_sexuality['Sexual Orientation'] = $sexuality;
+}
+
+
+$pronoun_terms = get_the_terms( $the_id, 'lez_actor_pronouns', true );
+if ( $pronoun_terms && ! is_wp_error( $pronoun_term ) ) {
+	$pronouns = '';
+	foreach ( $pronoun_terms as $pronoun_term ) {
+		$pronouns .= $pronoun_term->name;
+	}
+	if ( isset( $pronouns ) && ! empty( $pronouns ) ) {
+		$gender_sexuality['Pronouns'] = $pronouns;
+	}
 }
 
 // Generate URLs.
@@ -122,25 +135,28 @@ $thumb_array       = array(
 	<h2>Actor Information</h2>
 	<div class="card-body">
 		<div class="card-meta">
+
 			<div class="card-meta-item">
 				<?php
-				if ( count( $gender_sexuality ) > 0 ) {
-					echo '<ul>';
-					foreach ( $gender_sexuality as $item => $data ) {
-						echo '<li><strong>' . esc_html( ucfirst( $item ) ) . '</strong>:<br />' . wp_kses_post( $data ) . '</li>';
+				if ( count( $life ) > 0 ) {
+					echo '<ul class="list-group list-group-horizontal">';
+					foreach ( $life as $event => $date ) {
+						echo '<li><strong>' . esc_html( ucfirst( $event ) ) . '</strong>: ' . wp_kses_post( $date ) . '</li>';
 					}
 					echo '</ul>';
+					echo '<hr />';
 				}
 				?>
 			</div>
 			<div class="card-meta-item">
 				<?php
-				if ( count( $life ) > 0 ) {
-					echo '<ul>';
-					foreach ( $life as $event => $date ) {
-						echo '<li><strong>' . esc_html( ucfirst( $event ) ) . '</strong>: ' . wp_kses_post( $date ) . '</li>';
+				if ( count( $gender_sexuality ) > 0 ) {
+					echo '<ul class="list-group list-group-horizontal">';
+					foreach ( $gender_sexuality as $item => $data ) {
+						echo '<li><strong>' . esc_html( ucfirst( $item ) ) . '</strong>:<br />' . wp_kses_post( $data ) . '</li>';
 					}
 					echo '</ul>';
+					echo '<hr />';
 				}
 				?>
 			</div>
