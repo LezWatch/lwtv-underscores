@@ -563,6 +563,21 @@ select {
   color: #fff !important;
 }
 
+/* Blur unless hovered for Last Death */
+.hidden-death {
+  text-shadow: 0 0 8px #000;
+  color: transparent;
+  filter: blur(3px);
+  -webkit-filter: blur(3px);
+}
+
+.hidden-death:hover {
+  text-shadow: none !important;
+  color: #fff !important;
+  filter: none !important;
+  -webkit-filter: none !important;
+}
+
 /* =Menu
 ----------------------------------------------- */
 /* If using a fixed-top navbar */

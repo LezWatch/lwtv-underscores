@@ -367,6 +367,20 @@ h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
 	}
 }
 
+/* Blur unless hovered for Last Death */
+.hidden-death { 
+	text-shadow: 0 0 8px $black;
+	color: transparent;
+	filter: blur(3px);
+	-webkit-filter: blur(3px);
+}
+.hidden-death:hover { 
+	text-shadow: none!important;
+	color: $white!important;
+	filter: none!important;
+	-webkit-filter: none!important;
+}
+
 /* =Menu
 ----------------------------------------------- */
 
