@@ -381,18 +381,20 @@ function yikes_starter_scripts() {
 		wp_enqueue_script( 'comment-reply' );
 	}
 
-	wp_enqueue_style( 'bootstrap', get_template_directory_uri() . '/inc/bootstrap/css/bootstrap.css', array(), $bootstrap, 'all' );
+	// Bootstrap
+	wp_enqueue_style( 'bootstrap', get_template_directory_uri() . '/inc/bootstrap/css/bootstrap.css', array(), $bootstrap, 'all', true );
+	wp_enqueue_script( 'bootstrap', get_template_directory_uri() . '/inc/bootstrap/js/bootstrap.bundle.min.js', array( 'jquery' ), $bootstrap, 'all', true );
 
 	// Font Awesome PRO.
 	wp_enqueue_script( 'font-awesome', get_template_directory_uri() . '/inc/fa-pro/all.min.js', array(), $font_awesome, 'all', false );
 	wp_add_inline_script( 'font-awesome', 'FontAwesomeConfig = { searchPseudoElements: true };', 'before' );
 
+	// Fonts
 	wp_enqueue_style( 'open-sans', '//fonts.bunny.net/css?family=Open+Sans:400,600,700', array(), $lwtv_underscores, false );
 	wp_enqueue_style( 'oswald', '//fonts.bunny.net/css?family=Oswald:400,500', array(), $lwtv_underscores, false );
-	wp_enqueue_script( 'bootstrap', get_template_directory_uri() . '/inc/bootstrap/js/bootstrap.bundle.min.js', array( 'jquery' ), $bootstrap, 'all', true );
 
 	// This has to be at the bottom to override Bootstrap 4.x.
-	wp_enqueue_style( 'yikes-starter-style', get_stylesheet_directory_uri() . '/style.min.css', array(), $lwtv_underscores );
+	wp_enqueue_style( 'yikes-starter-style', get_stylesheet_directory_uri() . '/style.min.css', array(), $lwtv_underscores, true );
 
 }
 
@@ -402,7 +404,7 @@ add_action( 'wp_enqueue_scripts', 'yikes_starter_scripts' );
  * Enqueue block styles in the editor.
  */
 function yikes_block_editor_styles() {
-	wp_enqueue_style( 'yikes-block-editor-styles', get_stylesheet_directory_uri() . '/style-editor.min.css', array(), LWTV_THEME_VERSION['lwtv-blocks'] );
+	wp_enqueue_style( 'yikes-block-editor-styles', get_stylesheet_directory_uri() . '/style-editor.min.css', array(), LWTV_THEME_VERSION['lwtv-blocks'], true );
 }
 add_action( 'enqueue_block_editor_assets', 'yikes_block_editor_styles' );
 
