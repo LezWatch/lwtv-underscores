@@ -382,7 +382,7 @@ function yikes_starter_scripts() {
 	}
 
 	// Bootstrap
-	wp_enqueue_style( 'bootstrap', get_template_directory_uri() . '/inc/bootstrap/css/bootstrap.css', array(), $bootstrap, 'all', true );
+	wp_enqueue_style( 'bootstrap', get_template_directory_uri() . '/inc/bootstrap/css/bootstrap.css', array(), $bootstrap, 'all', false );
 	wp_enqueue_script( 'bootstrap', get_template_directory_uri() . '/inc/bootstrap/js/bootstrap.bundle.min.js', array( 'jquery' ), $bootstrap, 'all', true );
 
 	// Font Awesome PRO.
@@ -394,7 +394,7 @@ function yikes_starter_scripts() {
 	wp_enqueue_style( 'oswald', '//fonts.bunny.net/css?family=Oswald:400,500', array(), $lwtv_underscores, false );
 
 	// This has to be at the bottom to override Bootstrap 4.x.
-	wp_enqueue_style( 'yikes-starter-style', get_stylesheet_directory_uri() . '/style.min.css', array(), $lwtv_underscores, true );
+	wp_enqueue_style( 'yikes-starter-style', get_stylesheet_directory_uri() . '/style.min.css', array(), $lwtv_underscores, false );
 
 }
 
