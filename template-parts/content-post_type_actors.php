@@ -51,9 +51,8 @@ if ( isset( $sexuality ) && ! empty( $sexuality ) ) {
 	$gender_sexuality['Sexual Orientation'] = $sexuality;
 }
 
-
 $pronoun_terms = get_the_terms( $the_id, 'lez_actor_pronouns', true );
-if ( $pronoun_terms && ! is_wp_error( $pronoun_term ) ) {
+if ( $pronoun_terms && ! is_wp_error( $pronoun_terms ) ) {
 	$pronouns = '';
 	foreach ( $pronoun_terms as $pronoun_term ) {
 		$pronouns .= $pronoun_term->name;
