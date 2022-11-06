@@ -7,13 +7,7 @@
 
 global $post;
 
-$show_id = $post->ID;
-
-// Do the math to make sure we're up to date.
-if ( method_exists( 'LWTV_Shows_Calculate', 'do_the_math' ) ) {
-	( new LWTV_Shows_Calculate() )->do_the_math( $show_id );
-}
-
+$show_id      = $post->ID;
 $show_score   = ( get_post_meta( $show_id, 'lezshows_the_score', true ) && is_numeric( (int) get_post_meta( $show_id, 'lezshows_the_score', true ) ) ) ? min( (int) get_post_meta( $show_id, 'lezshows_the_score', true ), 100 ) : 'TBD';
 $thumb_rating = ( get_post_meta( $show_id, 'lezshows_worthit_rating', true ) ) ? get_post_meta( $show_id, 'lezshows_worthit_rating', true ) : 'TBD';
 $realness     = ( get_post_meta( $show_id, 'lezshows_realness_rating', true ) && is_numeric( (int) get_post_meta( $show_id, 'lezshows_realness_rating', true ) ) ) ? min( (int) get_post_meta( $show_id, 'lezshows_realness_rating', true ), 5 ) : 0;
