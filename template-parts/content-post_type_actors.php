@@ -93,6 +93,13 @@ if ( get_post_meta( $the_id, 'lezactors_twitter', true ) ) {
 		'fa'   => 'fab fa-twitter',
 	);
 }
+if ( get_post_meta( $the_id, 'lezactors_tumblr', true ) ) {
+	$actor_urls['tumblr'] = array(
+		'name' => 'tumblr',
+		'url'  => esc_url( 'https://' . get_post_meta( $the_id, 'lezactors_tumblr', true ) . '.tumblr.com' ),
+		'fa'   => 'fab fa-tumblr',
+	);
+}
 if ( get_post_meta( $the_id, 'lezactors_instagram', true ) ) {
 	$actor_urls['instagram'] = array(
 		'name' => 'Instagram',
