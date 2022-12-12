@@ -121,13 +121,13 @@ $thumb_array       = array(
 );
 ?>
 
-<section class="showschar-section" name="overview" id="overview">
+<section class="showschar-section" name="biography" id="biography">
 	<div class="card-body"><?php the_post_thumbnail( 'character-img', $thumb_array ); ?>
 		<div class="card-meta">
 			<div class="card-meta-item">
 				<?php
+				echo '<h2>Biography</h2>';
 				if ( ! empty( get_the_content() ) ) {
-					echo '<h2>Actor Bio</h2>';
 					the_content();
 				} else {
 					the_title( '<p>', ' is an actor who has played at least one queer character on TV. Information on this page has not yet been verified. Feel free to <a href="#"  data-toggle="modal" data-target="#suggestForm">suggest an edit</a> with any corrections or additions.</p>' );
@@ -138,8 +138,25 @@ $thumb_array       = array(
 	</div>
 </section>
 
+<section id="toc" class="toc-container card-body">
+	<nav class="breadcrumb">
+		<h4 class="toc-title">Table of Contents</h4>
+		<a class="breadcrumb-item smoothscroll" href="#biography">Biography</a>
+		<a class="breadcrumb-item smoothscroll" href="#vitals">Overview</a>
+		<a class="breadcrumb-item smoothscroll" href="#stats">Stats</a>
+		<?php
+		if ( isset( $related ) && $related ) {
+			?>
+			<a class="breadcrumb-item smoothscroll" href="#related-posts">Related Posts</a>
+			<?php
+		}
+		?>
+		<a class="breadcrumb-item smoothscroll" href="#characters">Characters</a>
+	</nav>
+</section>
+
 <section name="vitals" id="vitals" class="showschar-section">
-	<h2>Actor Information</h2>
+	<h2>Overview</h2>
 	<div class="card-body">
 		<div class="card-meta">
 
@@ -170,12 +187,34 @@ $thumb_array       = array(
 			<div class="card-meta-item">
 				<?php
 				if ( count( $actor_urls ) > 0 ) {
-					echo '<span ID="actor-links"><strong>Actor Links:</strong></span> ';
+					echo '<span ID="actor-links"><strong>Links:</strong></span> ';
 					echo '<ul class="actor-meta-links" aria-labelledby="actor-links">';
 					foreach ( $actor_urls as $source ) {
 						echo '<li><i class="' . esc_attr( strtolower( $source['fa'] ) ) . '" aria-hidden="true"></i> <a href="' . esc_url( $source['url'] ) . '" target="_blank">' . esc_html( $source['name'] ) . '</a><span class="screen-reader-text">, opens in new tab</span></li>';
 					}
 					echo '</ul>';
+				}
+				?>
+			</div>
+		</div>
+	</div>
+</section>
+
+<section name="stats" id="stats" class="showschar-section">
+	<h2>Character Statistics</h2>
+	<div class="card-body">
+		<div class="card-meta">
+			<div class="card-meta-item">
+				<?php
+				if ( method_exists( 'LWTV_Stats_SSR', 'statistics' ) ) {
+					$attributes = array(
+						'posttype' => get_post_type(),
+					);
+
+					// phpcs:ignore WordPress.Security.EscapeOutput
+					echo ( new LWTV_Stats_SSR() )->mini_stats( $attributes );
+				} else {
+					echo '<p>After this maintenance, statistics will be right back!</p>';
 				}
 				?>
 			</div>
@@ -193,7 +232,7 @@ if ( isset( $related ) && $related ) {
 			<?php
 			if ( method_exists( 'LWTV_Related_Posts', 'related_posts' ) && method_exists( 'LWTV_Related_Posts', 'count_related_posts' ) ) {
 				echo ( new LWTV_Related_Posts() )->related_posts( $slug ); // phpcs:ignore WordPress.Security.EscapeOutput
-				if ( count( ( new LWTV_Related_Posts() )->count_related_posts( $slug ) ) > '5' ) {
+				if ( count( ( new LWTV_Related_Posts() )->count_related_posts( $slug ) ) > '3' ) {
 					$get_tags = term_exists( $slug, 'post_tag' );
 					if ( ! is_null( $get_tags ) && $get_tags >= 1 ) {
 						echo '<p><a href="' . esc_url( get_tag_link( $get_tags['term_id'] ) ) . '">Read More ...</a></p>';

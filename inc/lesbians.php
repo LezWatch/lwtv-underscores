@@ -11,7 +11,7 @@
 /** THE SECURITY SECTION **/
 
 /**
- * Filter THEME updates incase some idiot ever submits lwtv-underscores as a theme.
+ * Filter THEME updates in case some idiot ever submits lwtv-underscores as a theme.
  * Look, this should never happen, but the last thing we want is for this theme to
  * get updated by some rando with a grudge.
  */
@@ -102,7 +102,7 @@ function lwtv_yikes_jetpack_setup() {
 add_action( 'after_setup_theme', 'lwtv_yikes_jetpack_setup' );
 
 /*
- * Remove Jetpack share because it's stupid.
+ * Remove Jetpack default share because it's stupid.
  *
  * This stops Jetpack from adding sharing after every post
  * on a home page or archive if you use a custom loop.
@@ -725,7 +725,6 @@ function lwtv_microformats_fix( $post_id ) {
 		</div>';
 	}
 }
-
 
 /** LWTV Plugin **/
 // This section includes all the code we call from the LWTV plugin, with sanity checks.
