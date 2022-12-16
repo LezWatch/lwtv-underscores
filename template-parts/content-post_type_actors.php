@@ -100,6 +100,13 @@ if ( get_post_meta( $the_id, 'lezactors_tumblr', true ) ) {
 		'fa'   => 'fab fa-tumblr',
 	);
 }
+if ( get_post_meta( $the_id, 'lezactors_mastodon', true ) ) {
+	$actor_urls['mastodon'] = array(
+		'name' => 'mastodon',
+		'url'  => esc_url( 'https://' . get_post_meta( $the_id, 'lezactors_mastodon', true ) ),
+		'fa'   => 'fab fa-mastodon',
+	);
+}
 if ( get_post_meta( $the_id, 'lezactors_instagram', true ) ) {
 	$actor_urls['instagram'] = array(
 		'name' => 'Instagram',
