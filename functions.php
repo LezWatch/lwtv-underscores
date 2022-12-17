@@ -134,6 +134,7 @@ add_filter( 'get_the_archive_title', 'yikes_archive_title' );
  * Theme Setup
  */
 function yikes_starter_add_editor_styles() {
+	add_editor_style( 'style.css' );
 	add_editor_style( 'custom-editor-style.css' );
 }
 add_action( 'admin_init', 'yikes_starter_add_editor_styles' );
