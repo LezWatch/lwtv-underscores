@@ -557,29 +557,27 @@ function lwtv_yikes_actordata( $the_id, $data ) {
 			}
 			break;
 		case 'characters':
-			$characters     = array();
-			$charactersloop = new WP_Query(
-				array(
-					'post_type'              => 'post_type_characters',
-					'post_status'            => array( 'publish' ),
-					'orderby'                => 'title',
-					'order'                  => 'ASC',
-					'posts_per_page'         => '20',
-					'no_found_rows'          => true,
-					'update_post_term_cache' => true,
-					'meta_query'             => array(
-						array(
-							'key'     => 'lezchars_actor',
-							'value'   => $the_id,
-							'compare' => 'LIKE',
-						),
-					),
-				)
-			);
-			if ( $charactersloop->have_posts() ) {
-				while ( $charactersloop->have_posts() ) {
-					$charactersloop->the_post();
-					$char_id      = get_the_ID();
+			// Get array of characters (by ID)
+			$character_array = get_post_meta( $the_id, 'lezactors_char_list', true );
+
+			// If the character list is empty, we must build it
+			if ( empty( $character_array ) ) {
+				// Loop to get the list of characters
+				$charactersloop = ( new LWTV_Loops() )->post_meta_query( 'post_type_characters', 'lezchars_actor', $post_id, 'LIKE' );
+
+				if ( $charactersloop->have_posts() ) {
+					$character_array = wp_list_pluck( $charactersloop->posts, 'ID' );
+				}
+
+				$character_array = array_unique( $characters );
+				update_post_meta( $post_id, 'lezactors_char_list', $character_array );
+
+				// Reset to end
+				wp_reset_query();
+			}
+
+			if ( is_array( $character_array ) ) {
+				foreach ( $character_array as $char_id ) {
 					$actors_array = get_post_meta( $char_id, 'lezchars_actor', true );
 					if ( 'publish' === get_post_status( $char_id ) && isset( $actors_array ) && ! empty( $actors_array ) ) {
 						foreach ( $actors_array as $char_actor ) {
@@ -595,45 +593,38 @@ function lwtv_yikes_actordata( $the_id, $data ) {
 						}
 					}
 				}
-				wp_reset_query();
 			}
 			$output = $characters;
 			break;
 		case 'dead':
-			$dead     = array();
-			$deadloop = new WP_Query(
-				array(
-					'post_type'              => 'post_type_characters',
-					'post_status'            => array( 'publish' ),
-					'orderby'                => 'title',
-					'order'                  => 'ASC',
-					'posts_per_page'         => '20',
-					'no_found_rows'          => true,
-					'update_post_term_cache' => true,
-					'meta_query'             => array(
-						array(
-							'key'     => 'lezchars_actor',
-							'value'   => $the_id,
-							'compare' => 'LIKE',
-						),
-					),
-					'tax_query'              => array(
-						'taxonomy' => 'lez_cliches',
-						'terms'    => 'dead',
-						'field'    => 'slug',
-						'operator' => 'IN',
-					),
-				)
-			);
-			if ( $deadloop->have_posts() ) {
-				while ( $deadloop->have_posts() ) {
-					$deadloop->the_post();
-					$char_id = get_the_ID();
-					$actors  = get_post_meta( $char_id, 'lezchars_actor', true );
+			$dead = array();
 
-					if ( 'publish' === get_post_status( $char_id ) && isset( $actors ) && ! empty( $actors ) ) {
+			// Get array of characters (by ID)
+			$character_array = get_post_meta( $the_id, 'lezactors_char_list', true );
+
+			// If the character list is empty, we must build it
+			if ( empty( $character_array ) ) {
+				// Loop to get the list of characters
+				$charactersloop = ( new LWTV_Loops() )->post_meta_query( 'post_type_characters', 'lezchars_actor', $post_id, 'LIKE' );
+
+				if ( $charactersloop->have_posts() ) {
+					$character_array = wp_list_pluck( $charactersloop->posts, 'ID' );
+				}
+
+				$character_array = array_unique( $characters );
+				update_post_meta( $post_id, 'lezactors_char_list', $character_array );
+
+				// Reset to end
+				wp_reset_query();
+			}
+
+			if ( is_array( $character_array ) ) {
+				foreach ( $character_array as $char_id ) {
+					$actors = get_post_meta( $char_id, 'lezchars_actor', true );
+					if ( isset( $actors ) && ! empty( $actors ) ) {
 						foreach ( $actors as $actor ) {
-							if ( $actor == $the_id && has_term( 'dead', 'lez_cliches', $char_id ) ) {  // phpcs:ignore WordPress.PHP.StrictComparisons
+							// We have to check because due to so many characters, we have some actor mis-matches.
+							if ( $actor === $the_id && has_term( 'dead', 'lez_cliches', $char_id ) ) {
 								$dead[ $char_id ] = array(
 									'id'    => $char_id,
 									'title' => get_the_title( $char_id ),
@@ -643,7 +634,6 @@ function lwtv_yikes_actordata( $the_id, $data ) {
 						}
 					}
 				}
-				wp_reset_query();
 			}
 			$output = $dead;
 			break;
@@ -800,7 +790,7 @@ function lwtv_last_death() {
 	if ( ! class_exists( 'LWTV_BYQ_JSON' ) ) {
 		$return = '<p>The LezWatch.TV API is temporarily unavailable.</p>';
 	} else {
-		$last_death = ( new LWTV_BYQ_JSON )->last_death();
+		$last_death = ( new LWTV_BYQ_JSON() )->last_death();
 		$return     = '<p>' . sprintf( 'It has been %s since the last queer female, non-binary, or transgender death on television', '<strong>' . human_time_diff( $last_death['died'], current_time( 'timestamp' ) ) . '</strong> ' );
 		$return    .= ': <span class="hidden-death"><a href="' . $last_death['url'] . '">' . $last_death['name'] . '</a></span> - ' . gmdate( 'F j, Y', $last_death['died'] ) . '</p>';
 	}
