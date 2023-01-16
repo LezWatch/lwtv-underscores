@@ -741,10 +741,23 @@ function lwtv_symbolicons( $svg, $fa ) {
  * @return mixed   number or array listing the characters
  */
 function lwtv_list_characters( $post_id, $output ) {
-	$return = '';
-	if ( method_exists( 'LWTV_CPT_Characters', 'list_characters' ) ) {
-		$return = ( new LWTV_CPT_Characters() )->list_characters( $post_id, $output );
+
+	switch ( $output ) {
+		case 'dead':
+			$return = get_post_meta( $post_id, 'lezshows_dead_count', true );
+			break;
+		default:
+			$return = get_post_meta( $post_id, 'lezshows_char_count', true );
+			break;
 	}
+
+	if ( ! isset( $return ) || empty( $return ) ) {
+		$return = '';
+		if ( method_exists( 'LWTV_CPT_Characters', 'list_characters' ) ) {
+			$return = ( new LWTV_CPT_Characters() )->list_characters( $post_id, $output );
+		}
+	}
+
 	return $return;
 }
 
