@@ -115,7 +115,7 @@ if ( ( get_post_meta( $show_id, 'lezshows_episodes', true ) && '<p><br data-mce-
 	<section name="episodes" id="episodes" class="showschar-section">
 		<h2>Notable Queer-Centric Episodes</h2>
 		<div class="card-body">
-			<?php echo wp_kses_post( apply_filters( 'the_content', get_post_meta( $show_id, 'lezshows_episodes', true ) ) ); ?>
+			<?php echo wp_kses_post( get_post_meta( $show_id, 'lezshows_episodes', true ) ); ?>
 		</div>
 	</section>
 	<?php
