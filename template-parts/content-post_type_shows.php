@@ -153,6 +153,18 @@ if ( $related ) {
 		$havecharcount = lwtv_list_characters( $show_id, 'count' );
 		$havedeadcount = lwtv_list_characters( $show_id, 'dead' );
 
+		// Get the list of characters.
+		$chars_regular   = lwtv_get_chars_for_show( $show_id, $havecharcount, 'regular' );
+		$chars_recurring = lwtv_get_chars_for_show( $show_id, $havecharcount, 'recurring' );
+		$chars_guest     = lwtv_get_chars_for_show( $show_id, $havecharcount, 'guest' );
+		$chars_total     = count( $chars_recurring ) + count( $chars_regular ) + count( $chars_guest );
+
+		// If havecharcount and chars_total are different, rerun the call.
+		if ( $chars_total !== $havecharcount ) {
+			$havecharcount = ( new LWTV_CPT_Characters() )->list_characters( $show_id, 'count' );
+			$havedeadcount = ( new LWTV_CPT_Characters() )->list_characters( $show_id, 'dead' );
+		}
+
 		if ( empty( $havecharcount ) || '0' === $havecharcount ) {
 			echo '<p>There are no characters listed yet for this show.</p>';
 		} else {
@@ -165,8 +177,7 @@ if ( $related ) {
 			// translators: %s is the number of characters total.
 			echo wp_kses_post( '<p>There ' . sprintf( _n( 'is <strong>%s</strong> queer character', 'are <strong>%s</strong> queer characters', $havecharcount ), $havecharcount ) . ' listed for this show; ' . $deadtext . '.</p>' );
 
-			// Get the list of REGULAR characters.
-			$chars_regular = lwtv_get_chars_for_show( $show_id, $havecharcount, 'regular' );
+			// If there are regulars...
 			if ( ! empty( $chars_regular ) ) {
 				?>
 				<h3 class="title-regulars"><?php echo esc_html( _n( 'Regular', 'Regulars', count( $chars_regular ) ) ); ?> (<?php echo (int) count( $chars_regular ); ?>)</h3>
@@ -177,8 +188,7 @@ if ( $related ) {
 				}
 				echo '</div></div>';
 			}
-			// Get the list of RECURRING characters.
-			$chars_recurring = lwtv_get_chars_for_show( $show_id, $havecharcount, 'recurring' );
+			// If there are recurring...
 			if ( ! empty( $chars_recurring ) ) {
 				?>
 				<h3 class="title-recurring">Recurring (<?php echo count( $chars_recurring ); ?>)</h3>
@@ -189,8 +199,7 @@ if ( $related ) {
 				}
 				echo '</div></div>';
 			}
-			// Get the list of GUEST characters.
-			$chars_guest = lwtv_get_chars_for_show( $show_id, $havecharcount, 'guest' );
+			// If there are guests...
 			if ( ! empty( $chars_guest ) ) {
 				?>
 				<h3 class="title-guest"><?php echo esc_html( _n( 'Guest', 'Guests', count( $chars_guest ) ) ); ?> (<?php echo count( $chars_guest ); ?>)</h3>
