@@ -581,7 +581,7 @@ function lwtv_yikes_actordata( $the_id, $data ) {
 					$actors_array = get_post_meta( $char_id, 'lezchars_actor', true );
 					if ( 'publish' === get_post_status( $char_id ) && isset( $actors_array ) && ! empty( $actors_array ) ) {
 						foreach ( $actors_array as $char_actor ) {
-							if ( $char_actor == $the_id ) { // phpcs:ignore WordPress.PHP.StrictComparisons
+							if ( (int) $char_actor === (int) $the_id ) {
 								$characters[ $char_id ] = array(
 									'id'      => $char_id,
 									'title'   => get_the_title( $char_id ),
@@ -624,7 +624,7 @@ function lwtv_yikes_actordata( $the_id, $data ) {
 					if ( isset( $actors ) && ! empty( $actors ) ) {
 						foreach ( $actors as $actor ) {
 							// We have to check because due to so many characters, we have some actor mis-matches.
-							if ( $actor === $the_id && has_term( 'dead', 'lez_cliches', $char_id ) ) {
+							if ( ( (int) $actor === (int) $the_id ) && has_term( 'dead', 'lez_cliches', $char_id ) ) {
 								$dead[ $char_id ] = array(
 									'id'    => $char_id,
 									'title' => get_the_title( $char_id ),
