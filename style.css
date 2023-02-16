@@ -810,6 +810,16 @@ select {
   content: "";
   font-family: "Font Awesome 5 Brands";
 }
+.widget_yikes_social_menu_widget li.mastodon a:before {
+  display: none;
+  content: "";
+  font-family: "Font Awesome 5 Brands";
+}
+.widget_yikes_social_menu_widget li.tiktok a:before {
+  display: none;
+  content: "";
+  font-family: "Font Awesome 5 Brands";
+}
 
 /* ==========================================================================
 	 Content
