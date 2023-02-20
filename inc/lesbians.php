@@ -805,7 +805,8 @@ function lwtv_last_death() {
 	} else {
 		$last_death = ( new LWTV_BYQ_JSON() )->last_death();
 		$return     = '<p>' . sprintf( 'It has been %s since the last queer female, non-binary, or transgender death on television', '<strong>' . human_time_diff( $last_death['died'], current_time( 'timestamp' ) ) . '</strong> ' );
-		$return    .= ': <span class="hidden-death"><a href="' . $last_death['url'] . '">' . $last_death['name'] . '</a></span> - ' . gmdate( 'F j, Y', $last_death['died'] ) . '</p>';
+		$return    .= ': <span><a href="' . $last_death['url'] . '">' . $last_death['name'] . '</a></span> - ' . gmdate( 'F j, Y', $last_death['died'] ) . '</p>';
+		// NOTE! Add `class="hidden-death"` to the span above if you want to blur the display of the last death.
 	}
 
 	$return = '<div class="lezwatchtv last-death">' . $return . '</div>';
