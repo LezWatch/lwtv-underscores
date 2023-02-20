@@ -7,11 +7,6 @@
 
 global $post;
 $actor_id = $post->ID;
-
-// Do the math to make sure we're up to date.
-if ( method_exists( 'LWTV_Actors_Calculate', 'do_the_math' ) ) {
-	( new LWTV_Actors_Calculate() )->do_the_math( $actor_id );
-}
 ?>
 
 <section id="search" class="widget widget-search">

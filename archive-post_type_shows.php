@@ -11,7 +11,7 @@ $icon        = lwtv_symbolicons( 'tv-hd.svg', 'fa-tv' );
 $count_posts = ( function_exists( 'facetwp_display' ) ) ? facetwp_display( 'counts' ) : '';
 $show_title  = '<span role="img" aria-label="post_type_shows" title="Shows" class="taxonomy-svg shows">' . $icon . '</span>';
 $seo_titles  = get_option( 'wpseo_titles' );
-$description = $seo_titles['metadesc-ptarchive-post_type_shows'];
+$seo_desc    = $seo_titles['metadesc-ptarchive-post_type_shows'];
 
 get_header(); ?>
 
@@ -24,15 +24,14 @@ get_header(); ?>
 						<?php the_archive_title( '<h1 class="facetwp-page-title entry-title"><span class="facetwp-title">', '</span> (' . $count_posts . '<span class="facetwp-count"></span>)</h1>' ); ?>
 					</div>
 					<div class="col-2 icon plain">
-						<?php echo $show_title; // phpcs:ignore WordPress.Security.EscapeOutput ?>
+						<?php echo wp_kses_post( $show_title ); ?>
 					</div>
 				</div>
 				<div class="row">
 					<div class="col">
 						<div class="archive-description">
 							<?php
-							echo '<p>' . wp_kses_post( $description ) . ' <span class="facetwp-description"></span></p>';
-							echo '<p><span class="facetwp-sorted"></span></p>';
+							echo '<p>' . wp_kses_post( $seo_desc ) . ' <span class="facetwp-description"></span></p>';
 							if ( function_exists( 'facetwp_display' ) ) {
 								echo wp_kses_post( facetwp_display( 'selections' ) );
 							}
@@ -52,19 +51,21 @@ get_header(); ?>
 				<div id="primary" class="content-area">
 					<div id="content" class="site-content clearfix">
 						<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
-							<div class="entry-content facetwp-template">
+							<div class="entry-content">
 								<div class="row site-loop show-archive-loop">
-									<?php
-									if ( have_posts() ) {
-										/* Start the Loop */
-										while ( have_posts() ) {
-											the_post();
-											get_template_part( 'template-parts/excerpt', 'post_type_shows' );
+									<div class="facetwp-template">
+										<?php
+										if ( have_posts() ) {
+											/* Start the Loop */
+											while ( have_posts() ) {
+												the_post();
+												get_template_part( 'template-parts/excerpt', 'post_type_shows' );
+											}
+										} else {
+											get_template_part( 'template-parts/content', 'none' );
 										}
-									} else {
-										get_template_part( 'template-parts/content', 'none' );
-									}
-									?>
+										?>
+									</div>
 								</div><!-- .site-loop -->
 								<?php
 								if ( function_exists( 'facetwp_display' ) ) {

@@ -2,7 +2,7 @@
 /**
  * Template Name: Statistics
  * Description: Used as a page template to show page contents, followed by a loop
- * to show the stats of lezbians and what not.
+ * to show the stats of lesbians and what not.
  *
  * This uses var query data to determine what to show. All of the code is in the
  * /lwtv-plugin/statistics.php file so that it can be easily ported to any new theme.

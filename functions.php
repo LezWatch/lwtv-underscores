@@ -10,7 +10,7 @@ if ( ! defined( 'LWTV_THEME_VERSION' ) ) {
 	$versions = array(
 		'lwtv-underscores' => '3.1.26',   // Bump this any time you make serious CSS changes.
 		'font-awesome'     => '5.15.4',   // Bump when you update Font Awesome.
-		'bootstrap'        => '4.6.1',    // Bump when you update bootstrap.
+		'bootstrap'        => '4.6.2',    // Bump when you update bootstrap.
 		'lwtv-blocks'      => '1.0.0',    // Bump when you update the blocks.
 		'yikes-nav'        => '20201024', // Last date this was updated.
 	);
@@ -134,6 +134,7 @@ add_filter( 'get_the_archive_title', 'yikes_archive_title' );
  * Theme Setup
  */
 function yikes_starter_add_editor_styles() {
+	add_editor_style( 'style.css' );
 	add_editor_style( 'custom-editor-style.css' );
 }
 add_action( 'admin_init', 'yikes_starter_add_editor_styles' );
@@ -381,18 +382,20 @@ function yikes_starter_scripts() {
 		wp_enqueue_script( 'comment-reply' );
 	}
 
-	wp_enqueue_style( 'bootstrap', get_template_directory_uri() . '/inc/bootstrap/css/bootstrap.css', array(), $bootstrap, 'all' );
+	// Bootstrap
+	wp_enqueue_style( 'bootstrap', get_template_directory_uri() . '/inc/bootstrap/css/bootstrap.css', array(), $bootstrap, 'all', false );
+	wp_enqueue_script( 'bootstrap', get_template_directory_uri() . '/inc/bootstrap/js/bootstrap.bundle.min.js', array( 'jquery' ), $bootstrap, 'all', true );
 
 	// Font Awesome PRO.
 	wp_enqueue_script( 'font-awesome', get_template_directory_uri() . '/inc/fa-pro/all.min.js', array(), $font_awesome, 'all', false );
 	wp_add_inline_script( 'font-awesome', 'FontAwesomeConfig = { searchPseudoElements: true };', 'before' );
 
-	wp_enqueue_style( 'open-sans', '//fonts.googleapis.com/css?family=Open+Sans:400,600,700', array(), $lwtv_underscores, false );
-	wp_enqueue_style( 'oswald', '//fonts.googleapis.com/css?family=Oswald:400,500', array(), $lwtv_underscores, false );
-	wp_enqueue_script( 'bootstrap', get_template_directory_uri() . '/inc/bootstrap/js/bootstrap.bundle.min.js', array( 'jquery' ), $bootstrap, 'all', true );
+	// Fonts
+	wp_enqueue_style( 'open-sans', '//fonts.bunny.net/css?family=Open+Sans:400,600,700', array(), $lwtv_underscores, false );
+	wp_enqueue_style( 'oswald', '//fonts.bunny.net/css?family=Oswald:400,500', array(), $lwtv_underscores, false );
 
 	// This has to be at the bottom to override Bootstrap 4.x.
-	wp_enqueue_style( 'yikes-starter-style', get_stylesheet_directory_uri() . '/style.min.css', array(), $lwtv_underscores );
+	wp_enqueue_style( 'yikes-starter-style', get_stylesheet_directory_uri() . '/style.min.css', array(), $lwtv_underscores, false );
 
 }
 
@@ -402,7 +405,7 @@ add_action( 'wp_enqueue_scripts', 'yikes_starter_scripts' );
  * Enqueue block styles in the editor.
  */
 function yikes_block_editor_styles() {
-	wp_enqueue_style( 'yikes-block-editor-styles', get_stylesheet_directory_uri() . '/style-editor.min.css', array(), LWTV_THEME_VERSION['lwtv-blocks'] );
+	wp_enqueue_style( 'yikes-block-editor-styles', get_stylesheet_directory_uri() . '/style-editor.min.css', array(), LWTV_THEME_VERSION['lwtv-blocks'], true );
 }
 add_action( 'enqueue_block_editor_assets', 'yikes_block_editor_styles' );
 

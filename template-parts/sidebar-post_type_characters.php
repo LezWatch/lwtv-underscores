@@ -7,11 +7,6 @@
 
 global $post;
 $char_id = $post->ID;
-
-// Do the math to make sure we're up to date.
-if ( class_exists( 'LWTV_Characters_Calculate' ) ) {
-	( new LWTV_Shows_Calculate() )->do_the_math( $char_id );
-}
 ?>
 
 <section id="search" class="widget widget-search">

@@ -27,5 +27,5 @@ jobs:
           ARGS: "-rlgoDzvc -i"
           REMOTE_HOST: ${{ secrets.LWTV_HOST }}
           REMOTE_USER: ${{ secrets.LWTV_USER }}
-          TARGET: ${{ secrets.LWTV_TARGET }}themes/lwtv-underscores
+          TARGET: /home/${{ secrets.LWTV_USER }}/${{ secrets.LWTV_DOMAIN }}/wp-content/themes/lwtv-underscores
           EXCLUDE: "/.git/, /.github/"
