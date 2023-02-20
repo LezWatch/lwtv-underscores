@@ -12,6 +12,11 @@ $the_id   = get_the_ID();
 $slug     = get_post_field( 'post_name', get_post( $the_id ) );
 $get_tags = get_term_by( 'name', $slug, 'post_tag' );
 
+// This just gets the numbers of all characters and how many are dead.
+$all_chars     = lwtv_yikes_actordata( $the_id, 'characters' );
+$havecharcount = count( $all_chars );
+$havedeadcount = count( lwtv_yikes_actordata( $the_id, 'dead' ) );
+
 if ( method_exists( 'LWTV_Related_Posts', 'are_there_posts' ) ) {
 	$related = ( new LWTV_Related_Posts() )->are_there_posts( $slug );
 }
@@ -227,6 +232,7 @@ $thumb_array       = array(
 					echo '<p>After this maintenance, statistics will be right back!</p>';
 				}
 				?>
+				<p><em><small>Note: Character roles may exceed the number of characters played, if the character was on multiple TV shows.</small></em></p>
 			</div>
 		</div>
 	</div>
@@ -261,12 +267,6 @@ if ( isset( $related ) && $related ) {
 	<h2>Characters</h2>
 	<div class="card-body">
 		<?php
-
-		// This just gets the numbers of all characters and how many are dead.
-		$all_chars     = lwtv_yikes_actordata( $the_id, 'characters' );
-		$havecharcount = count( $all_chars );
-		$havedeadcount = count( lwtv_yikes_actordata( $the_id, 'dead' ) );
-
 		if ( empty( $havecharcount ) || '0' === $havecharcount ) {
 			echo '<p>There are no characters listed yet for this actor.</p>';
 		} else {
