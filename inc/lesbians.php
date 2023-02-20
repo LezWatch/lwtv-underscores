@@ -154,7 +154,7 @@ function lwtv_yikes_get_post_types_by_taxonomy( $tax = 'category' ) {
 /*
  * Archive Sort Order
  *
- * Characters, shows, and certain taxonmies will use a
+ * Characters, shows, and certain taxonomies will use a
  * special order: ASC by title
  */
 function lwtv_yikes_archive_sort_order( $query ) {

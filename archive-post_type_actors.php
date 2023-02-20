@@ -31,7 +31,6 @@ get_header(); ?>
 						<div class="archive-description">
 							<?php
 							echo '<p>' . wp_kses_post( $seo_desc ) . ' <span class="facetwp-description"></span></p>';
-							echo '<p><span class="facetwp-sorted"></span></p>';
 							if ( function_exists( 'facetwp_display' ) ) {
 								echo wp_kses_post( facetwp_display( 'selections' ) );
 							}

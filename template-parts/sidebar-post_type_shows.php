@@ -8,7 +8,6 @@
 global $post;
 
 $show_id      = $post->ID;
-$show_score   = ( get_post_meta( $show_id, 'lezshows_the_score', true ) && is_numeric( (int) get_post_meta( $show_id, 'lezshows_the_score', true ) ) ) ? min( (int) get_post_meta( $show_id, 'lezshows_the_score', true ), 100 ) : 'TBD';
 $thumb_rating = ( get_post_meta( $show_id, 'lezshows_worthit_rating', true ) ) ? get_post_meta( $show_id, 'lezshows_worthit_rating', true ) : 'TBD';
 $realness     = ( get_post_meta( $show_id, 'lezshows_realness_rating', true ) && is_numeric( (int) get_post_meta( $show_id, 'lezshows_realness_rating', true ) ) ) ? min( (int) get_post_meta( $show_id, 'lezshows_realness_rating', true ), 5 ) : 0;
 $quality      = ( get_post_meta( $show_id, 'lezshows_quality_rating', true ) && is_numeric( (int) get_post_meta( $show_id, 'lezshows_quality_rating', true ) ) ) ? min( (int) get_post_meta( $show_id, 'lezshows_quality_rating', true ), 5 ) : 0;
@@ -59,18 +58,17 @@ $screentime   = ( get_post_meta( $show_id, 'lezshows_screentime_rating', true ) 
 			<div class="card-body">
 				<?php
 				if ( ( get_post_meta( $show_id, 'lezshows_worthit_details', true ) ) && 'TBD' !== $thumb_rating ) {
-					echo wp_kses_post( apply_filters( 'the_content', wp_kses_post( get_post_meta( $show_id, 'lezshows_worthit_details', true ) ) ) );
+					echo wp_kses_post( apply_filters( 'the_content', get_post_meta( $show_id, 'lezshows_worthit_details', true ) ) );
 				} else {
-					echo wp_kses_post( '<p><em>This show has not yet been watched. Have you seen it? Please <a href="/about/contact/">contact us</a>.</em></p>' );
+					echo wp_kses_post( '<p><em>This show has not yet been reviewed. Have you seen it? Please <a href="/about/contact/">let us know</a>.</em></p>' );
 				}
 
-				// If it's not a number, the score is TBD
-				if ( ! is_numeric( (int) $show_score ) ) {
-					$score = 'TBD';
-				} else {
-					$score = ( 0 === (int) $show_score ) ? '0' : round( $show_score, 2 );
+				// Collect all the scores.
+				$scores = ( new LWTV_Grading() )->all_scores( $show_id );
+				if ( isset( $scores ) ) {
+					echo '<center><h4>Show Scores</h4></center>';
+					( new LWTV_Grading() )->display( $scores );
 				}
-				echo '<strong>Show Score:</strong> ' . esc_html( $score );
 				?>
 			</div>
 
@@ -88,21 +86,7 @@ $screentime   = ( get_post_meta( $show_id, 'lezshows_screentime_rating', true ) 
 				// If the show is on air, we'll see when it airs next!
 				$on_air = get_post_meta( $show_id, 'lezshows_on_air', true );
 				if ( 'yes' === $on_air ) {
-					$tvmaze_episode = ( new LWTV_Whats_On_JSON() )->whats_on_show( $show_id );
-					if ( isset( $tvmaze_episode['next'] ) && 'TBD' !== $tvmaze_episode['next'] ) {
-						echo '<li class="list-group-item network upcoming_ep"><strong>Next Episode:</strong> ' . esc_html( $tvmaze_episode['next'] );
-
-						// If there's a valid summary, add a button to show it
-						if ( isset( $tvmaze_episode['next_summary'] ) && 'TBD' !== $tvmaze_episode['next_summary'] ) {
-							// get TV Maze URLs
-							$tvmaze   = ( isset( $tvmaze_episode['tvmaze'] ) ) ? $tvmaze_episode['tvmaze'] : 'https://tvmaze.com/';
-							$collapse = 'data-toggle="collapse" href="#episodeSummary" role="button" aria-expanded="false" aria-controls="episodeSummary"';
-							echo '<br /><button class="btn btn-primary btn-sm btn-block" type="button" data-toggle="collapse" data-target="#episodeSummary" aria-expanded="false" aria-controls="episodeSummary">Read More</button></li>';
-							echo '<div class="collapse" id="episodeSummary"><div class="card card-body">' . esc_html( stripslashes( $tvmaze_episode['next_summary'] ) ) . '<br /><small><a href="' . esc_url( $tvmaze ) . '" target="_new">Powered by TVMaze</a></small></div></div>';
-						} else {
-							echo '</li>';
-						}
-					}
+					( new LWTV_External_APIs() )->tvmaze_episodes( $show_id );
 				}
 
 				$formats = get_the_terms( $show_id, 'lez_formats' );
