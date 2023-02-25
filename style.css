@@ -217,18 +217,15 @@ pre.wp-block-verse {
 ----------------------------------------------- */
 /* Pagination */
 .yikes-pagination .pagination,
-.facetwp-pager .pagination,
 .pagination {
   margin-top: 2em;
   width: 100%;
 }
 .yikes-pagination .pagination li.page-item a,
-.facetwp-pager .pagination li.page-item a,
 .pagination li.page-item a {
   color: #d1548e;
 }
 .yikes-pagination .pagination li.page-item svg,
-.facetwp-pager .pagination li.page-item svg,
 .pagination li.page-item svg {
   fill: #d1548e;
   width: 12px;
@@ -236,8 +233,6 @@ pre.wp-block-verse {
   vertical-align: baseline;
 }
 .yikes-pagination .pagination li.page-item.active, .yikes-pagination .pagination li.page-item a.active,
-.facetwp-pager .pagination li.page-item.active,
-.facetwp-pager .pagination li.page-item a.active,
 .pagination li.page-item.active,
 .pagination li.page-item a.active {
   background-color: #d1548e;
@@ -246,7 +241,6 @@ pre.wp-block-verse {
   font-weight: bold;
 }
 .yikes-pagination .pagination li.page-item .page-link.active,
-.facetwp-pager .pagination li.page-item .page-link.active,
 .pagination li.page-item .page-link.active {
   background-color: #d1548e;
   border-color: #d1548e;
@@ -254,10 +248,6 @@ pre.wp-block-verse {
   font-weight: bold;
 }
 .yikes-pagination .pagination li.page-item.first, .yikes-pagination .pagination li.page-item.previous, .yikes-pagination .pagination li.page-item.next, .yikes-pagination .pagination li.page-item.last,
-.facetwp-pager .pagination li.page-item.first,
-.facetwp-pager .pagination li.page-item.previous,
-.facetwp-pager .pagination li.page-item.next,
-.facetwp-pager .pagination li.page-item.last,
 .pagination li.page-item.first,
 .pagination li.page-item.previous,
 .pagination li.page-item.next,
@@ -266,10 +256,6 @@ pre.wp-block-verse {
   border-color: #d1548e;
 }
 .yikes-pagination .pagination li.page-item.first a, .yikes-pagination .pagination li.page-item.previous a, .yikes-pagination .pagination li.page-item.next a, .yikes-pagination .pagination li.page-item.last a,
-.facetwp-pager .pagination li.page-item.first a,
-.facetwp-pager .pagination li.page-item.previous a,
-.facetwp-pager .pagination li.page-item.next a,
-.facetwp-pager .pagination li.page-item.last a,
 .pagination li.page-item.first a,
 .pagination li.page-item.previous a,
 .pagination li.page-item.next a,
@@ -279,10 +265,6 @@ pre.wp-block-verse {
   color: #fff;
 }
 .yikes-pagination .pagination li.page-item.first svg, .yikes-pagination .pagination li.page-item.previous svg, .yikes-pagination .pagination li.page-item.next svg, .yikes-pagination .pagination li.page-item.last svg,
-.facetwp-pager .pagination li.page-item.first svg,
-.facetwp-pager .pagination li.page-item.previous svg,
-.facetwp-pager .pagination li.page-item.next svg,
-.facetwp-pager .pagination li.page-item.last svg,
 .pagination li.page-item.first svg,
 .pagination li.page-item.previous svg,
 .pagination li.page-item.next svg,
@@ -290,8 +272,6 @@ pre.wp-block-verse {
   fill: #fff;
 }
 .yikes-pagination .pagination li.page-item:first-child .page-link, .yikes-pagination .pagination li.page-item:last-child .page-link,
-.facetwp-pager .pagination li.page-item:first-child .page-link,
-.facetwp-pager .pagination li.page-item:last-child .page-link,
 .pagination li.page-item:first-child .page-link,
 .pagination li.page-item:last-child .page-link {
   -webkit-border-radius: 0;
@@ -301,6 +281,36 @@ pre.wp-block-verse {
   border-radius: 0;
   background-color: #d1548e;
   color: #fff;
+}
+
+.facetwp-pager {
+  margin-top: 2em;
+  width: 100%;
+  display: flex;
+  padding-left: 0;
+  list-style: none;
+  border-radius: 0.25rem;
+}
+.facetwp-pager a {
+  color: #d1548e;
+}
+.facetwp-pager a:hover {
+  background-color: #ebf5fa;
+}
+.facetwp-pager .facetwp-page {
+  position: relative;
+  display: block;
+  padding: 0.5rem 0.75rem;
+  margin-left: -1px;
+  line-height: 1.25;
+  justify-content: center !important;
+  border: 1px solid #f3f3f3;
+}
+.facetwp-pager .facetwp-page.active, .facetwp-pager .facetwp-page a.active {
+  background-color: #d1548e;
+  border-color: #d1548e;
+  color: #fff;
+  font-weight: bold;
 }
 
 /* List Groups */
