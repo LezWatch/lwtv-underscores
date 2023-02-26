@@ -66,9 +66,7 @@ get_header(); ?>
 									?>
 								</div><!-- .row .site-loop -->
 								<?php
-								if ( function_exists( 'facetwp_display' ) ) {
-									echo facetwp_display( 'pager' );
-								}
+								echo do_shortcode( '[facetwp facet="pager_list"]' );
 								?>
 							</div><!-- .entry-content -->
 						</article><!-- #post-## -->
