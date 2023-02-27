@@ -215,30 +215,37 @@ $thumb_array       = array(
 	</div>
 </section>
 
-<section name="stats" id="stats" class="showschar-section">
-	<h2>Character Statistics</h2>
-	<div class="card-body">
-		<div class="card-meta">
-			<div class="card-meta-item">
-				<?php
-				if ( method_exists( 'LWTV_Stats_SSR', 'statistics' ) ) {
-					$attributes = array(
-						'posttype' => get_post_type(),
-					);
+<?php
 
-					// phpcs:ignore WordPress.Security.EscapeOutput
-					echo ( new LWTV_Stats_SSR() )->mini_stats( $attributes );
-				} else {
-					echo '<p>After this maintenance, statistics will be right back!</p>';
-				}
-				?>
-				<p><em><small>Note: Character roles may exceed the number of characters played, if the character was on multiple TV shows.</small></em></p>
+// If there are characters, show this:
+if ( 0 !== $havecharcount ) {
+	?>
+	<section name="stats" id="stats" class="showschar-section">
+		<h2>Character Statistics</h2>
+		<div class="card-body">
+			<div class="card-meta">
+				<div class="card-meta-item">
+					<?php
+					if ( method_exists( 'LWTV_Stats_SSR', 'statistics' ) ) {
+						$attributes = array(
+							'posttype' => get_post_type(),
+						);
+
+						// phpcs:ignore WordPress.Security.EscapeOutput
+						echo ( new LWTV_Stats_SSR() )->mini_stats( $attributes );
+					} else {
+						echo '<p>After this maintenance, statistics will be right back!</p>';
+					}
+					?>
+					<p><em><small>Note: Character roles may exceed the number of characters played, if the character was on multiple TV shows.</small></em></p>
+				</div>
 			</div>
 		</div>
-	</div>
-</section>
+	</section>
 
-<?php
+	<?php
+}
+
 // Related Posts.
 if ( isset( $related ) && $related ) {
 	?>
