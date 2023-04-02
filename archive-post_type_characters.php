@@ -36,6 +36,7 @@ get_header(); ?>
 								echo wp_kses_post( facetwp_display( 'selections' ) );
 							}
 							?>
+							<p><span class="facetwp-sorted"></span></p>
 						</div>
 					</div>
 				</div>
