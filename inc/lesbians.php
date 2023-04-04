@@ -439,6 +439,12 @@ function lwtv_yikes_chardata( $the_id, $data ) {
 			$all_shows   = get_post_meta( $the_id, 'lezchars_show_group', true );
 			$shows_value = isset( $all_shows[0] ) ? $all_shows[0] : '';
 			if ( ! empty( $shows_value ) ) {
+
+				// If $shows_value['show'] is an array, de-array it.
+				if ( is_array( $shows_value['show'] ) ) {
+					$shows_value['show'] = reset( $shows_value['show'] );
+				}
+
 				$num_shows = count( $all_shows );
 				$showsmore = ( $num_shows > 1 ) ? ' (plus ' . ( $num_shows - 1 ) . ' more)' : '';
 				$show_post = get_post( $shows_value['show'] );
@@ -569,6 +575,9 @@ function lwtv_yikes_actordata( $the_id, $data ) {
 					$character_array = wp_list_pluck( $charactersloop->posts, 'ID' );
 				}
 
+				if ( ! is_array( $character_array ) ) {
+					$character_array = array( $character_array );
+				}
 				$character_array = array_unique( $characters );
 				update_post_meta( $post_id, 'lezactors_char_list', $character_array );
 

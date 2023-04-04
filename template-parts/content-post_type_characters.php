@@ -26,6 +26,11 @@ if ( '' !== $all_shows && is_array( $all_shows ) ) {
 		// Link to Show
 		$showlink = '';
 		if ( isset( $each_show['show'] ) && '' !== $each_show['show'] ) {
+
+			// If it's an array, de-array it.
+			if ( is_array( $each_show['show'] ) ) {
+				$each_show['show'] = reset( $each_show['show'] );
+			}
 			if ( get_post_status( $each_show['show'] ) !== 'publish' ) {
 				$showlink = '<em><span class="disabled-show-link">' . get_the_title( $each_show['show'] ) . '</span></em>';
 			} else {
