@@ -578,7 +578,7 @@ function lwtv_yikes_actordata( $the_id, $data ) {
 				if ( ! is_array( $character_array ) ) {
 					$character_array = array( $character_array );
 				}
-				$character_array = array_unique( $characters );
+				$character_array = array_unique( $character_array );
 				update_post_meta( $post_id, 'lezactors_char_list', $character_array );
 
 				// Reset to end
@@ -620,7 +620,7 @@ function lwtv_yikes_actordata( $the_id, $data ) {
 					$character_array = wp_list_pluck( $charactersloop->posts, 'ID' );
 				}
 
-				$character_array = ( is_array( $characters ) ) ? array_unique( $characters ) : array_unique( array( $character_array ) );
+				$character_array = ( is_array( $character_array ) ) ? array_unique( $character_array ) : array_unique( array( $character_array ) );
 				update_post_meta( $post_id, 'lezactors_char_list', $character_array );
 
 				// Reset to end
