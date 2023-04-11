@@ -167,7 +167,6 @@ if ( $related ) {
 
 		if ( empty( $havecharcount ) || '0' === $havecharcount ) {
 			echo '<p>There are no characters listed yet for this show.</p>';
-			print_r( ( new LWTV_CPT_Characters() )->list_characters( $show_id, 'query' ) ); 
 		} else {
 			$deadtext = 'none are dead';
 			if ( $havedeadcount > '0' ) {

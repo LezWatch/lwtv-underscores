@@ -785,22 +785,6 @@ function lwtv_get_chars_for_show( $post_id, $count, $roll ) {
 	return $return;
 }
 
-/**
- * Echo GDPR notice if users aren't logged in
- * (logged in users already know what they're in for, yo)
- */
-function lwtv_gdpr_footer() {
-	if ( ! is_user_logged_in() ) {
-		?>
-		<div id="GDPRAlert" class="alert alert-info alert-dismissible fade collapse alert-gdpr" role="alert">
-			We use cookies to personalize content, provide features, analyze traffic, and optimize advertising. By continuing to use this website, you agree to their use. For more information, you may review our <a href="/tos/">Terms of Use</a> and <a href="/tos/privacy/">Privacy Policy</a>.
-			<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-		</div>
-		<?php
-	}
-}
-//add_action( 'wp_footer', 'lwtv_gdpr_footer' , 5 );
-
 function lwtv_last_updated_date( $post_id ) {
 	$updated_date = get_the_modified_time( 'F jS, Y', $post_id );
 	$last_updated = '<div class="last-updated"><small class="text-muted">This page was last edited on ' . $updated_date . '.</small></div>';
