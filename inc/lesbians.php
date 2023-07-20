@@ -569,7 +569,7 @@ function lwtv_yikes_actordata( $the_id, $data ) {
 			// If the character list is empty, we must build it
 			if ( empty( $character_array ) ) {
 				// Loop to get the list of characters
-				$charactersloop = ( new LWTV_Loops() )->post_meta_query( 'post_type_characters', 'lezchars_actor', $post_id, 'LIKE' );
+				$charactersloop = ( new LWTV_Loops() )->post_meta_query( 'post_type_characters', 'lezchars_actor', $the_id, 'LIKE' );
 
 				if ( $charactersloop->have_posts() ) {
 					$character_array = wp_list_pluck( $charactersloop->posts, 'ID' );
@@ -579,13 +579,14 @@ function lwtv_yikes_actordata( $the_id, $data ) {
 					$character_array = array( $character_array );
 				}
 				$character_array = array_unique( $character_array );
-				update_post_meta( $post_id, 'lezactors_char_list', $character_array );
+				update_post_meta( $the_id, 'lezactors_char_list', $character_array );
 
 				// Reset to end
 				wp_reset_query();
 			}
 
 			if ( is_array( $character_array ) ) {
+				$characters = array();
 				foreach ( $character_array as $char_id ) {
 					$actors_array = get_post_meta( $char_id, 'lezchars_actor', true );
 					if ( 'publish' === get_post_status( $char_id ) && isset( $actors_array ) && ! empty( $actors_array ) ) {
@@ -602,8 +603,9 @@ function lwtv_yikes_actordata( $the_id, $data ) {
 						}
 					}
 				}
+				$character_array = $characters;
 			}
-			$output = $characters;
+			$output = $character_array;
 			break;
 		case 'dead':
 			$dead = array();
