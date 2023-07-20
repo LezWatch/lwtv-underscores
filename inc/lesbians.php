@@ -616,14 +616,14 @@ function lwtv_yikes_actordata( $the_id, $data ) {
 			// If the character list is empty, we must build it
 			if ( empty( $character_array ) ) {
 				// Loop to get the list of characters
-				$charactersloop = ( new LWTV_Loops() )->post_meta_query( 'post_type_characters', 'lezchars_actor', $post_id, 'LIKE' );
+				$charactersloop = ( new LWTV_Loops() )->post_meta_query( 'post_type_characters', 'lezchars_actor', $the_id, 'LIKE' );
 
 				if ( $charactersloop->have_posts() ) {
 					$character_array = wp_list_pluck( $charactersloop->posts, 'ID' );
 				}
 
 				$character_array = ( is_array( $character_array ) ) ? array_unique( $character_array ) : array_unique( array( $character_array ) );
-				update_post_meta( $post_id, 'lezactors_char_list', $character_array );
+				update_post_meta( $the_id, 'lezactors_char_list', $character_array );
 
 				// Reset to end
 				wp_reset_query();
