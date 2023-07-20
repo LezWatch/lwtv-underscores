@@ -569,7 +569,7 @@ function lwtv_yikes_actordata( $the_id, $data ) {
 			// If the character list is empty, we must build it
 			if ( empty( $character_array ) ) {
 				// Loop to get the list of characters
-				$charactersloop = ( new LWTV_Loops() )->post_meta_query( 'post_type_characters', 'lezchars_actor', $post_id, 'LIKE' );
+				$charactersloop = ( new LWTV_Loops() )->post_meta_query( 'post_type_characters', 'lezchars_actor', $the_id, 'LIKE' );
 
 				if ( $charactersloop->have_posts() ) {
 					$character_array = wp_list_pluck( $charactersloop->posts, 'ID' );
@@ -578,14 +578,15 @@ function lwtv_yikes_actordata( $the_id, $data ) {
 				if ( ! is_array( $character_array ) ) {
 					$character_array = array( $character_array );
 				}
-				$character_array = array_unique( $characters );
-				update_post_meta( $post_id, 'lezactors_char_list', $character_array );
+				$character_array = array_unique( $character_array );
+				update_post_meta( $the_id, 'lezactors_char_list', $character_array );
 
 				// Reset to end
 				wp_reset_query();
 			}
 
 			if ( is_array( $character_array ) ) {
+				$characters = array();
 				foreach ( $character_array as $char_id ) {
 					$actors_array = get_post_meta( $char_id, 'lezchars_actor', true );
 					if ( 'publish' === get_post_status( $char_id ) && isset( $actors_array ) && ! empty( $actors_array ) ) {
@@ -602,8 +603,9 @@ function lwtv_yikes_actordata( $the_id, $data ) {
 						}
 					}
 				}
+				$character_array = $characters;
 			}
-			$output = $characters;
+			$output = $character_array;
 			break;
 		case 'dead':
 			$dead = array();
@@ -620,7 +622,7 @@ function lwtv_yikes_actordata( $the_id, $data ) {
 					$character_array = wp_list_pluck( $charactersloop->posts, 'ID' );
 				}
 
-				$character_array = ( is_array( $characters ) ) ? array_unique( $characters ) : array_unique( array( $character_array ) );
+				$character_array = ( is_array( $character_array ) ) ? array_unique( $character_array ) : array_unique( array( $character_array ) );
 				update_post_meta( $post_id, 'lezactors_char_list', $character_array );
 
 				// Reset to end
@@ -784,22 +786,6 @@ function lwtv_get_chars_for_show( $post_id, $count, $roll ) {
 	}
 	return $return;
 }
-
-/**
- * Echo GDPR notice if users aren't logged in
- * (logged in users already know what they're in for, yo)
- */
-function lwtv_gdpr_footer() {
-	if ( ! is_user_logged_in() ) {
-		?>
-		<div id="GDPRAlert" class="alert alert-info alert-dismissible fade collapse alert-gdpr" role="alert">
-			We use cookies to personalize content, provide features, analyze traffic, and optimize advertising. By continuing to use this website, you agree to their use. For more information, you may review our <a href="/tos/">Terms of Use</a> and <a href="/tos/privacy/">Privacy Policy</a>.
-			<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-		</div>
-		<?php
-	}
-}
-//add_action( 'wp_footer', 'lwtv_gdpr_footer' , 5 );
 
 function lwtv_last_updated_date( $post_id ) {
 	$updated_date = get_the_modified_time( 'F jS, Y', $post_id );

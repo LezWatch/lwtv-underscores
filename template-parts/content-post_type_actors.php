@@ -101,6 +101,20 @@ if ( get_post_meta( $the_id, 'lezactors_twitter', true ) ) {
 		'fa'   => 'fab fa-twitter',
 	);
 }
+if ( get_post_meta( $the_id, 'lezactors_instagram', true ) ) {
+	$actor_urls['instagram'] = array(
+		'name' => 'Instagram',
+		'url'  => esc_url( 'https://www.instagram.com/' . get_post_meta( $the_id, 'lezactors_instagram', true ) ),
+		'fa'   => 'fab fa-instagram',
+	);
+}
+if ( get_post_meta( $the_id, 'lezactors_facebook', true ) ) {
+	$actor_urls['tumblr'] = array(
+		'name' => 'tumblr',
+		'url'  => esc_url( get_post_meta( $the_id, 'lezactors_facebook', true ) ),
+		'fa'   => 'fab fa-facebook',
+	);
+}
 if ( get_post_meta( $the_id, 'lezactors_tumblr', true ) ) {
 	$actor_urls['tumblr'] = array(
 		'name' => 'tumblr',
@@ -108,18 +122,18 @@ if ( get_post_meta( $the_id, 'lezactors_tumblr', true ) ) {
 		'fa'   => 'fab fa-tumblr',
 	);
 }
+if ( get_post_meta( $the_id, 'lezactors_tiktok', true ) ) {
+	$actor_urls['tumblr'] = array(
+		'name' => 'tumblr',
+		'url'  => esc_url( 'https://tiktok.com/' . get_post_meta( $the_id, 'lezactors_tiktok', true ) ),
+		'fa'   => 'fab fa-tiktok',
+	);
+}
 if ( get_post_meta( $the_id, 'lezactors_mastodon', true ) ) {
 	$actor_urls['mastodon'] = array(
 		'name' => 'mastodon',
 		'url'  => esc_url( 'https://' . get_post_meta( $the_id, 'lezactors_mastodon', true ) ),
 		'fa'   => 'fab fa-mastodon',
-	);
-}
-if ( get_post_meta( $the_id, 'lezactors_instagram', true ) ) {
-	$actor_urls['instagram'] = array(
-		'name' => 'Instagram',
-		'url'  => esc_url( 'https://www.instagram.com/' . get_post_meta( $the_id, 'lezactors_instagram', true ) ),
-		'fa'   => 'fab fa-instagram',
 	);
 }
 
@@ -217,35 +231,6 @@ $thumb_array       = array(
 
 <?php
 
-// If there are characters, show this:
-if ( 0 !== $havecharcount ) {
-	?>
-	<section name="stats" id="stats" class="showschar-section">
-		<h2>Character Statistics</h2>
-		<div class="card-body">
-			<div class="card-meta">
-				<div class="card-meta-item">
-					<?php
-					if ( method_exists( 'LWTV_Stats_SSR', 'statistics' ) ) {
-						$attributes = array(
-							'posttype' => get_post_type(),
-						);
-
-						// phpcs:ignore WordPress.Security.EscapeOutput
-						echo ( new LWTV_Stats_SSR() )->mini_stats( $attributes );
-					} else {
-						echo '<p>After this maintenance, statistics will be right back!</p>';
-					}
-					?>
-					<p><em><small>Note: Character roles may exceed the number of characters played, if the character was on multiple TV shows.</small></em></p>
-				</div>
-			</div>
-		</div>
-	</section>
-
-	<?php
-}
-
 // Related Posts.
 if ( isset( $related ) && $related ) {
 	?>
@@ -294,3 +279,34 @@ if ( isset( $related ) && $related ) {
 		?>
 	</div>
 </section>
+
+<?php
+
+// If there are characters, show this:
+if ( 0 !== $havecharcount ) {
+	?>
+	<section name="stats" id="stats" class="showschar-section">
+		<h2>Character Statistics</h2>
+		<div class="card-body">
+			<div class="card-meta">
+				<div class="card-meta-item">
+					<?php
+					if ( method_exists( 'LWTV_Stats_SSR', 'statistics' ) ) {
+						$attributes = array(
+							'posttype' => get_post_type(),
+						);
+
+						// phpcs:ignore WordPress.Security.EscapeOutput
+						echo ( new LWTV_Stats_SSR() )->mini_stats( $attributes );
+					} else {
+						echo '<p>After this maintenance, statistics will be right back!</p>';
+					}
+					?>
+					<p><em><small>Note: Character roles may exceed the number of characters played, if the character was on multiple TV shows.</small></em></p>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<?php
+}
