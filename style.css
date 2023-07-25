@@ -331,6 +331,17 @@ pre.wp-block-verse {
   margin-bottom: 1rem;
 }
 
+.featured-image-tabs .nav-tabs {
+  border-bottom: none;
+  padding-bottom: 0.5rem;
+}
+.featured-image-tabs button {
+  color: #dedede;
+}
+.featured-image-tabs .nav-tabs .nav-link.active, .featured-image-tabs .nav-tabs .nav-item.show .nav-link {
+  border-color: #dee2e6;
+}
+
 /* Global styles for all the buttons!  */
 a.btn, button.btn, input[type="button"].btn, input[type="submit"].btn,
 button, input[type="button"], input[type="submit"], .wp-block-button .wp-block-button__link {

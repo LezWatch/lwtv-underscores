@@ -267,6 +267,20 @@ pre.wp-block-verse {
 	margin-bottom: 1rem;
 }
 
+
+.featured-image-tabs {
+	.nav-tabs {
+		border-bottom: none;
+		padding-bottom: 0.5rem;
+	}
+	button {
+		color: $lightgrey;
+	}
+	.nav-tabs .nav-link.active, .nav-tabs .nav-item.show .nav-link {
+		border-color: #dee2e6;
+	}
+}
+
 /* Global styles for all the buttons!  */
 
 a.btn, button.btn, input[type="button"].btn, input[type="submit"].btn,
