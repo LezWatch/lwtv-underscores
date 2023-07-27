@@ -84,14 +84,12 @@ $doa_status = ( has_term( 'dead', 'lez_cliches', get_the_ID() ) ) ? 'Dead' : 'Al
 
 // Generate RIP
 // Usage: $rip
-if ( get_post_meta( get_the_ID(), 'lezchars_death_year', true ) ) {
-	$character_death = get_post_meta( get_the_ID(), 'lezchars_death_year', true );
-	if ( ! is_array( $character_death ) ) {
-		$character_death = array( get_post_meta( get_the_ID(), 'lezchars_death_year', true ) );
-	}
-	$rip = array();
+$isdead = get_post_meta( get_the_ID(), 'lezchars_death_year', true );
+if ( $isdead ) {
+	$char_death = ( ! is_array( $isdead ) ) ? array( $isdead ) : $isdead;
+	$rip        = array();
 
-	foreach ( $character_death as $death ) {
+	foreach ( $char_death as $death ) {
 		if ( '/' !== substr( $death, 2, 1 ) ) {
 			$date = date_format( date_create_from_format( 'Y-m-d', $death ), 'd F Y' );
 		} else {
@@ -123,10 +121,68 @@ $thumb_array       = array(
 	'alt'   => get_the_title(),
 	'title' => $thumb_title,
 );
+
+// Alt Images
+$alt_images = get_post_meta( get_the_ID(), 'lezchars_character_image_group' );
+if ( $alt_images ) {
+	$image_tabs = array();
+	foreach ( $alt_images[0] as $an_image ) {
+		$attr_array   = array(
+			'class' => 'single-char-img rounded float-left',
+			'alt'   => get_the_title() . ' ' . $an_image['alt_image_text'],
+			'title' => $thumb_title . ' - ' . $an_image['alt_image_text'],
+		);
+		$image_tabs[] = array(
+			'title' => $an_image['alt_image_text'],
+			'slug'  => sanitize_title( $an_image['alt_image_text'] ),
+			'image' => wp_get_attachment_image( $an_image['alt_image_file_id'], 'character-img', false, $attr_array ),
+		);
+	}
+}
+
 ?>
 <div class="card-body">
 
-	<?php the_post_thumbnail( 'character-img', $thumb_array ); ?>
+	<?php
+	if ( ! isset( $image_tabs ) || ! is_array( $image_tabs ) ) {
+		the_post_thumbnail( 'character-img', $thumb_array );
+	} else {
+		?>
+		<div class="featured-image-tabs ">
+			<!-- Nav tabs -->
+			<ul class="nav nav-tabs" id="altImages" role="tablist">
+				<li class="nav-item" role="presentation">
+					<button class="nav-link active" id="primaryimage-tab" data-toggle="tab" data-target="#primaryimage" type="button" role="tab" aria-controls="primaryimage" aria-selected="true">Primary</button>
+				</li>
+				<?php
+				foreach ( $image_tabs as $a_tab ) {
+					?>
+					<li class="nav-item" role="presentation">
+						<button class="nav-link" id="<?php echo esc_attr( $a_tab['slug'] ); ?>-tab" data-toggle="tab" data-target="#<?php echo esc_attr( $a_tab['slug'] ); ?>" type="button" role="tab" aria-controls="<?php echo esc_attr( $a_tab['slug'] ); ?>" aria-selected="false"><?php echo esc_html( ucfirst( $a_tab['title'] ) ); ?></button>
+					</li>
+					<?php
+				}
+				?>
+			</ul>
+			<!-- Tab panes -->
+			<div class="tab-content" id="altImagesContent">
+				<div class="tab-pane show active" id="primaryimage" role="tabpanel" aria-labelledby="primaryimage-tab">
+					<?php the_post_thumbnail( 'character-img', $thumb_array ); ?>
+				</div>
+				<?php
+				foreach ( $image_tabs as $a_tab ) {
+					?>
+					<div class="tab-pane" id="<?php echo esc_attr( $a_tab['slug'] ); ?>" role="tabpanel" aria-labelledby="<?php echo esc_attr( $a_tab['slug'] ); ?>-tab">
+						<?php echo wp_kses_post( $a_tab['image'] ); ?>
+					</div>
+					<?php
+				}
+				?>
+			</div>
+		</div>
+		<?php
+	}
+	?>
 
 	<div class="card-meta">
 		<div class="card-meta-item">
