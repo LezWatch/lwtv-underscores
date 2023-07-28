@@ -140,14 +140,6 @@ $screentime   = ( get_post_meta( $show_id, 'lezshows_screentime_rating', true ) 
 	</div>
 </section>
 
-<section id="affiliates" class="widget widget_text">
-	<?php
-	if ( method_exists( 'LWTV_Affilliates', 'shows' ) ) {
-		echo ( new LWTV_Affilliates() )->shows( $show_id, 'tiny' ); // phpcs:ignore WordPress.Security.EscapeOutput
-	}
-	?>
-</section>
-
 <section id="ratings" class="widget widget_text">
 	<div class="card">
 		<div class="card-header">
@@ -278,10 +270,3 @@ if ( $intersections && ! is_wp_error( $intersections ) ) {
 	</div>
 </section>
 
-<section id="affiliates" class="widget widget_text">
-	<?php
-	if ( method_exists( 'LWTV_Affilliates', 'shows' ) ) {
-		echo ( new LWTV_Affilliates() )->shows( $show_id, 'wide' ); // phpcs:ignore WordPress.Security.EscapeOutput
-	}
-	?>
-</section>

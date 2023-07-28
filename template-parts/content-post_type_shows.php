@@ -84,8 +84,9 @@ if ( 'none' !== $warning['card'] ) {
 ?>
 
 <?php
+// Ways to Watch section (yes all ways-to-watch URLs are in a badly named post_meta).
 if ( ( get_post_meta( $show_id, 'lezshows_affiliate', true ) ) ) {
-	echo '<section id="affiliate-watch-link" class="affiliate-watch-container">' . ( new LWTV_Affilliates() )->shows( $show_id, 'affiliate' ) . '</section>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+	echo '<section id="affiliate-watch-link" class="affiliate-watch-container">' . ( new LWTV_Ways_To_Watch() )->ways_to_watch( $show_id ) . '</section>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 }
 ?>
 
