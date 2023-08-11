@@ -18,11 +18,3 @@ $actor_id = $post->ID;
 <section id="suggest-edits" class="widget widget_suggestedits">
 	<?php get_template_part( 'template-parts/suggestedit', 'form' ); ?>
 </section>
-
-<section id="affiliates" class="widget widget_text">
-	<?php
-	if ( method_exists( 'LWTV_Affilliates', 'actors' ) ) {
-		echo ( new LWTV_Affilliates() )->actors( $actor_id, 'wide' ); // phpcs:ignore WordPress.Security.EscapeOutput
-	}
-	?>
-</section>
