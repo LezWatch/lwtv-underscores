@@ -6,9 +6,6 @@
 header( 'Content-Type: ' . feed_content_type( 'rss-http' ) . '; charset=' . get_option( 'blog_charset' ), true );
 
 echo '<?xml version="1.0" encoding="' . esc_attr( get_option( 'blog_charset' ) ) . '"?>';
-
-$rss_posts  = ( new LWTV_Of_The_Day_RSS() )->rss_feed();
-$last_build = ( new LWTV_Of_The_Day_RSS() )->last_build();
 ?>
 <rss version="2.0"
 	xmlns:content="http://purl.org/rss/1.0/modules/content/"
@@ -24,7 +21,7 @@ $last_build = ( new LWTV_Of_The_Day_RSS() )->last_build();
 	<link><?php echo esc_url( bloginfo_rss( 'url' ) ); ?></link>
 	<description>Keep up to date with the latest featured characters and shows! Updated twice a day.</description>
 	<lastBuildDate>
-		<?php echo esc_html( mysql2date( 'D, d M Y H:i:s +0000', $last_build, false ) ); ?>
+		<?php echo esc_html( mysql2date( 'D, d M Y H:i:s +0000', ( new LWTV_Of_The_Day_RSS() )->last_build(), false ) ); ?>
 	</lastBuildDate>
 	<language>en-US</language>
 	<sy:updatePeriod><?php echo esc_html( apply_filters( 'rss_update_period', 'hourly' ) ); ?></sy:updatePeriod>
@@ -32,7 +29,7 @@ $last_build = ( new LWTV_Of_The_Day_RSS() )->last_build();
 	<?php do_action( 'rss2_head' ); ?>
 	<?php
 	// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-	echo $rss_posts;
+	( new LWTV_Of_The_Day_RSS() )->rss_feed();
 	?>
 </channel>
 </rss>
