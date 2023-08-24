@@ -464,6 +464,7 @@ function lwtv_yikes_chardata( $the_id, $data ) {
 				$num_actors = count( $actors );
 				$actorsmore = ( $num_actors > 1 ) ? ' (plus ' . ( $num_actors - 1 ) . ' more)' : '';
 				$actor_post = get_post( $actor_value );
+				$actor_name = ( ! is_null( $actor_post->post_title ) ) ? $actor_post->post_title : 'TBD';
 				$output    .= '<div class="card-meta-item actors">' . lwtv_symbolicons( 'user.svg', 'fa-user' );
 				if ( get_post_status( $actor_value ) === 'private' ) {
 					if ( is_user_logged_in() ) {
@@ -472,9 +473,9 @@ function lwtv_yikes_chardata( $the_id, $data ) {
 						$output .= '<a href="/actor/unknown/">Unknown</a>';
 					}
 				} elseif ( get_post_status( $actor_value ) !== 'publish' ) {
-					$output .= '<span class="disabled-show-link">' . $actor_post->post_title . '</span>';
+					$output .= '<span class="disabled-show-link">' . $actor_name . '</span>';
 				} else {
-					$output .= '<a href="' . get_the_permalink( $actor_post->ID ) . '">' . $actor_post->post_title . '</a>';
+					$output .= '<a href="' . get_the_permalink( $actor_post->ID ) . '">' . $actor_name . '</a>';
 				}
 				$output .= $actorsmore . '</div>';
 			}
