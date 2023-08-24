@@ -173,5 +173,10 @@
 		&.tiktok a:before {
 			@include fontawesome_brand("\e07b");
 		}
+
+		&.bluesky a:before {
+			@include fontawesome_free("\f0c8");
+		}
+
 	}
 }

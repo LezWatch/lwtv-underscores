@@ -158,7 +158,7 @@ function lwtv_yikes_get_post_types_by_taxonomy( $tax = 'category' ) {
  * special order: ASC by title
  */
 function lwtv_yikes_archive_sort_order( $query ) {
-	if ( $query->is_main_query() && ! is_admin() ) {
+	if ( $query->is_main_query() && ! is_admin() && ! is_feed() ) {
 		$posttypes  = array( 'post_type_characters', 'post_type_shows', 'post_type_actors' );
 		$taxonomies = array( 'lez_cliches', 'lez_gender', 'lez_sexuality', 'lez_tropes', 'lez_country', 'lez_stations', 'lez_formats', 'lez_genres', 'lez_stars', 'lez_triggers', 'lez_actor_gender', 'lez_actor_sexuality' );
 		if ( is_post_type_archive( $posttypes ) || is_tax( $taxonomies ) ) {
@@ -176,7 +176,7 @@ add_action( 'pre_get_posts', 'lwtv_yikes_archive_sort_order' );
  * page on archives instead of the normal 10.
  */
 function lwtv_yikes_character_archive_query( $query ) {
-	if ( $query->is_archive() && $query->is_main_query() && ! is_admin() ) {
+	if ( $query->is_archive() && $query->is_main_query() && ! is_admin() && ! is_feed() ) {
 		$taxonomies = array( 'lez_cliches', 'lez_gender', 'lez_sexuality', 'lez_romantic' );
 		if ( is_post_type_archive( 'post_type_characters' ) || is_tax( $taxonomies ) ) {
 			$query->set( 'posts_per_page', 24 );

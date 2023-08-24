@@ -841,6 +841,11 @@ select {
   content: "";
   font-family: "Font Awesome 5 Brands";
 }
+.widget_yikes_social_menu_widget li.bluesky a:before {
+  display: none;
+  content: "";
+  font-family: "Font Awesome 5 Free";
+}
 
 /* ==========================================================================
 	 Content
