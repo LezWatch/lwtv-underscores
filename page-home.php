@@ -182,7 +182,7 @@ get_header(); ?>
 							<div class="card">
 								<a href="<?php the_permalink(); ?>" title="<?php the_title_attribute(); ?>" ><?php the_post_thumbnail( 'postloop-img', array( 'class' => 'card-img-top' ) ); ?></a>
 								<div class="card-body">
-									<h4 class="card-title"><?php the_title(); ?></h4>
+									<h3 class="card-title"><?php the_title(); ?></h3>
 									<div class="card-meta">
 										<?php
 										$stations = get_the_terms( get_the_ID(), 'lez_stations' );

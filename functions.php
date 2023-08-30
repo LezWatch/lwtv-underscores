@@ -58,6 +58,17 @@ function yks_excerpt_more( $more ) {
 add_filter( 'excerpt_more', 'yks_excerpt_more' );
 
 /**
+ * Filter the except length to 20 words.
+ *
+ * @param int $length Excerpt length.
+ * @return int (Maybe) modified excerpt length.
+ */
+function lwtv_custom_excerpt_length( $length ) {
+	return 20;
+}
+add_filter( 'excerpt_length', 'lwtv_custom_excerpt_length', 999 );
+
+/**
  * Widgets
  */
 require_once 'inc/widgets/social-nav-widget.php';
@@ -324,8 +335,14 @@ add_action( 'widgets_init', 'yikes_starter_widgets_init' );
  * Bootstrap Stuff
  */
 // Navigation Walker.
-require_once 'inc/wp_bootstrap_navwalker.php';
-// require_once 'inc/class-wp-bootstrap-navwalker.php';
+/**
+ * Register Custom Navigation Walker
+ */
+function register_navwalker(){
+	require_once 'inc/class-wp-bootstrap-navwalker.php';
+	// require_once 'inc/wp_bootstrap_navwalker.php';
+}
+add_action( 'after_setup_theme', 'register_navwalker' );
 
 /*
  * Pagination
