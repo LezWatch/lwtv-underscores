@@ -4,7 +4,7 @@ module.exports = function(grunt) {
     grunt.initConfig({
     
         // js minification
-        uglify: {
+        terser: {
             dist: {
                 files: {
                     // admin scripts
@@ -68,7 +68,7 @@ module.exports = function(grunt) {
             },
             general_js: {
                 files: 'inc/js/*.js',
-                tasks: ['uglify'],
+                tasks: ['terser'],
                 options: {
                     spawn:false,
                     event:['all']
@@ -76,32 +76,27 @@ module.exports = function(grunt) {
             },
         },
 
-        
         // Autoprefixer for our CSS files
         postcss: {
             options: {
                 map: true,
-                processors: [
-                    require('autoprefixer-core')({
-                        browsers: ['last 2 versions']
-                    })
-                ]
+                processors: require('autoprefixer')
             },
             dist: {
               src: [ 'style*.css' ]
             }
         },
-                
+
     });
 
 
     // load tasks
-    grunt.loadNpmTasks('grunt-contrib-uglify-es');
+    grunt.loadNpmTasks('grunt-terser');
     grunt.loadNpmTasks('grunt-contrib-sass');
     grunt.loadNpmTasks('grunt-contrib-cssmin');
     grunt.loadNpmTasks('grunt-contrib-watch');
-    grunt.loadNpmTasks('grunt-postcss');       // CSS autoprefixer plugin (cross-browser auto pre-fixes)
-    grunt.loadNpmTasks('grunt-composer');      // Composer updates 
+    grunt.loadNpmTasks('@lodder/grunt-postcss');  // CSS autoprefixer plugin (cross-browser auto pre-fixes)
+    grunt.loadNpmTasks('grunt-composer');         // Composer updates 
 
     // register task
     grunt.registerTask('update', [
@@ -110,7 +105,7 @@ module.exports = function(grunt) {
 
     // register task
     grunt.registerTask('mika', [
-        'uglify',
+        'terser',
         'sass',
         'cssmin',
         'postcss',
@@ -118,7 +113,7 @@ module.exports = function(grunt) {
 
     // register task
     grunt.registerTask('default', [
-        'uglify',
+        'terser',
         'sass',
         'cssmin',
         'postcss',

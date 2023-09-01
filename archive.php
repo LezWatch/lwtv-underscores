@@ -12,8 +12,27 @@ if ( is_author() ) {
 	// Use the Gravatar.
 	$icon .= get_avatar( get_the_author_meta( 'user_email' ) );
 
-	// Get author's website URL.
-	$user_twitter = get_the_author_meta( 'twitter' );
+	// Get author's Socials
+	$user_socials = array(
+		'bluesky'   => get_the_author_meta( 'bluesky' ),
+		'mastodon'  => get_the_author_meta( 'mastodon' ),
+		'instagram' => get_the_author_meta( 'instagram' ),
+		'tiktok'    => get_the_author_meta( 'tiktok' ),
+		'tumblr'    => get_the_author_meta( 'tumblr' ),
+		'twitter'   => get_the_author_meta( 'twitter' ),
+		'website'   => get_the_author_meta( 'url' ),
+	);
+
+	// Get all the stupid social...
+	$bluesky   = ( ! empty( $user_socials['bluesky'] ) ) ? '<a href="' . $user_socials['bluesky'] . '" target="_blank" rel="nofollow">' . ( new LWTV_Functions() )->symbolicons( 'bluesky.svg', 'fa-instagram' ) . '</a>' : false;
+	$instagram = ( ! empty( $user_socials['instagram'] ) ) ? '<a href="https://instagram.com/' . $user_socials['instagram'] . '" target="_blank" rel="nofollow">' . ( new LWTV_Functions() )->symbolicons( 'instagram.svg', 'fa-instagram' ) . '</a>' : false;
+	$twitter   = ( ! empty( $user_socials['twitter'] ) ) ? '<a href="https://twitter.com/' . $user_socials['twitter'] . '" target="_blank" rel="nofollow">' . ( new LWTV_Functions() )->symbolicons( 'twitter.svg', 'fa-twitter' ) . '</a>' : false;
+	$tumblr    = ( ! empty( $user_socials['tumblr'] ) ) ? '<a href="' . $user_socials['tumblr'] . '" target="_blank" rel="nofollow">' . ( new LWTV_Functions() )->symbolicons( 'tumblr.svg', 'fa-tumblr' ) . '</a>' : false;
+	$website   = ( ! empty( $user_socials['website'] ) ) ? '<a href="' . $user_socials['website'] . '" target="_blank" rel="nofollow">' . ( new LWTV_Functions() )->symbolicons( 'home.svg', 'fa-home' ) . '</a>' : false;
+	$mastodon  = ( ! empty( $user_socials['mastodon'] ) ) ? '<a href="' . $user_socials['mastodon'] . '" target="_blank" rel="nofollow">' . ( new LWTV_Functions() )->symbolicons( 'mastodon.svg', 'fa-mastodon' ) . '</a>' : false;
+
+	$social_array = array( $website, $twitter, $instagram, $tumblr, $bluesky, $mastodon );
+	$social_array = array_filter( $social_array );
 
 	// Get author Fav Shows.
 	$all_fav_shows = get_the_author_meta( 'lez_user_favourite_shows' );
@@ -30,8 +49,8 @@ if ( is_author() ) {
 		$fav_title  = _n( 'Show', 'Shows', count( $show_title ) );
 	}
 
-	// Add Twitter if it's there.
-	$archive_details .= ( ! empty( $user_twitter ) ) ? '<div class="author-twitter">' . lwtv_symbolicons( 'twitter.svg', 'fa-twitter' ) . '&nbsp;<a href="https://twitter.com/' . $user_twitter . '" target="_blank" rel="nofollow">@' . $user_twitter . '</a> </div>' : '';
+	// Add Socials.
+	$archive_details .= '<div class="author-socials">' . implode( ' ', $social_array ) . '</div>';
 
 	// Add favourite shows if they're there.
 	$archive_details .= ( isset( $favourites ) && ! empty( $favourites ) ) ? '<div class="author-favourites">' . lwtv_symbolicons( 'tv-hd.svg', 'fa-tv' ) . '&nbsp;Favorite ' . $fav_title . ': ' . $favourites . '</div>' : '';
