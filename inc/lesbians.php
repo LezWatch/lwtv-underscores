@@ -464,7 +464,7 @@ function lwtv_yikes_chardata( $the_id, $data ) {
 				$num_actors = count( $actors );
 				$actorsmore = ( $num_actors > 1 ) ? ' (plus ' . ( $num_actors - 1 ) . ' more)' : '';
 				$actor_post = get_post( $actor_value );
-				$actor_name = ( ! is_null( $actor_post->post_title ) ) ? $actor_post->post_title : 'TBD';
+				$actor_name = ( isset( $actor_post->post_title ) && ! is_null( $actor_post->post_title ) ) ? $actor_post->post_title : 'TBD';
 				$output    .= '<div class="card-meta-item actors">' . lwtv_symbolicons( 'user.svg', 'fa-user' );
 				if ( get_post_status( $actor_value ) === 'private' ) {
 					if ( is_user_logged_in() ) {
@@ -796,13 +796,14 @@ function lwtv_last_updated_date( $post_id ) {
 }
 
 function lwtv_last_death() {
-	if ( ! class_exists( 'LWTV_BYQ_JSON' ) ) {
-		$return = '<p>The LezWatch.TV API is temporarily unavailable.</p>';
-	} else {
+	$return = '<p>The LezWatch.TV API is temporarily unavailable.</p>';
+	if ( class_exists( 'LWTV_BYQ_JSON' ) ) {
 		$last_death = ( new LWTV_BYQ_JSON() )->last_death();
-		$return     = '<p>' . sprintf( 'It has been %s since the last queer female, non-binary, or transgender death on television', '<strong>' . human_time_diff( $last_death['died'], current_time( 'timestamp' ) ) . '</strong> ' );
-		$return    .= ': <span><a href="' . $last_death['url'] . '">' . $last_death['name'] . '</a></span> - ' . gmdate( 'F j, Y', $last_death['died'] ) . '</p>';
-		// NOTE! Add `class="hidden-death"` to the span above if you want to blur the display of the last death.
+		if ( '' !== $last_death ) {
+			$return     = '<p>' . sprintf( 'It has been %s since the last queer female, non-binary, or transgender death on television', '<strong>' . human_time_diff( $last_death['died'], current_datetime()->format( 'Y-m-d H:i:s' ) ) . '</strong> ' );
+			$return    .= ': <span><a href="' . $last_death['url'] . '">' . $last_death['name'] . '</a></span> - ' . gmdate( 'F j, Y', $last_death['died'] ) . '</p>';
+			// NOTE! Add `class="hidden-death"` to the span above if you want to blur the display of the last death.	
+		}
 	}
 
 	$return = '<div class="lezwatchtv last-death">' . $return . '</div>';
