@@ -355,7 +355,6 @@ function lwtv_yikes_show_star( $show_id ) {
 	} else {
 		return;
 	}
-
 }
 
 /**
@@ -380,7 +379,7 @@ function lwtv_yikes_content_warning( $show_id ) {
 
 	$trigger_terms            = get_the_terms( $show_id, 'lez_triggers' );
 	$trigger                  = ( ! empty( $trigger_terms ) && ! is_wp_error( $trigger_terms ) ) ? $trigger_terms[0]->slug : get_post_meta( $show_id, 'lezshows_triggerwarning', true );
-	$warning_array['content'] = ( ! empty( $trigger_terms ) && ! is_wp_error( $trigger_terms ) ) ? term_description( $trigger_terms[0]->term_id, 'lez_triggers' ) : '<strong>WARNING</strong> This show may be upsetting to watch.';
+	$warning_array['content'] = ( ! empty( $trigger_terms ) && ! is_wp_error( $trigger_terms ) ) ? term_description( $trigger_terms[0]->term_id ) : '<strong>WARNING</strong> This show may be upsetting to watch.';
 
 	switch ( $trigger ) {
 		case 'on':
@@ -802,7 +801,7 @@ function lwtv_last_death() {
 		if ( '' !== $last_death ) {
 			$return     = '<p>' . sprintf( 'It has been %s since the last queer female, non-binary, or transgender death on television', '<strong>' . human_time_diff( $last_death['died'], current_datetime()->format( 'Y-m-d H:i:s' ) ) . '</strong> ' );
 			$return    .= ': <span><a href="' . $last_death['url'] . '">' . $last_death['name'] . '</a></span> - ' . gmdate( 'F j, Y', $last_death['died'] ) . '</p>';
-			// NOTE! Add `class="hidden-death"` to the span above if you want to blur the display of the last death.	
+			// NOTE! Add `class="hidden-death"` to the span above if you want to blur the display of the last death.
 		}
 	}
 
