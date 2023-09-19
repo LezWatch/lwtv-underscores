@@ -799,7 +799,7 @@ function lwtv_last_death() {
 	if ( class_exists( 'LWTV_BYQ_JSON' ) ) {
 		$last_death = ( new LWTV_BYQ_JSON() )->last_death();
 		if ( '' !== $last_death ) {
-			$return     = '<p>' . sprintf( 'It has been %s since the last queer female, non-binary, or transgender death on television', '<strong>' . human_time_diff( $last_death['died'], current_datetime()->format( 'Y-m-d H:i:s' ) ) . '</strong> ' );
+			$return     = '<p>' . sprintf( 'It has been %s since the last queer female, non-binary, or transgender death on television', '<strong>' . human_time_diff( $last_death['died'], (int) wp_date( 'U' ) ) . '</strong> ' );
 			$return    .= ': <span><a href="' . $last_death['url'] . '">' . $last_death['name'] . '</a></span> - ' . gmdate( 'F j, Y', $last_death['died'] ) . '</p>';
 			// NOTE! Add `class="hidden-death"` to the span above if you want to blur the display of the last death.
 		}
