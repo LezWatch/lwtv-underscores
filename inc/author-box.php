@@ -26,7 +26,8 @@ function lwtv_author_box( $content ) {
 		$user_posts = get_author_posts_url( get_the_author_meta( 'ID', $author ) );
 
 		// Get number of posts written
-		$user_post_num = ( count_user_posts( $author, 'post' ) > 1 ) ? 'Read all ' . count_user_posts( $author, 'post' ) . ' articles' : 'This is the first article';
+		$raw_count     = count_user_posts( $author, 'post' );
+		$user_post_num = ( $raw_count > 1 ) ? 'Read all ' . $raw_count . ' articles' : 'This is the first article';
 		$user_articles = $user_post_num . ' by ' . $display_name . '.';
 
 		// Get author Fav Shows
