@@ -1,7 +1,7 @@
 {
   "name": "yikes-inc-starter-theme",
   "version": "1.0.0",
-  "description": "Yikes Inc. starter theme..",
+  "description": "Yikes Inc. starter theme.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

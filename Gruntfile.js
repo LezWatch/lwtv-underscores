@@ -104,11 +104,20 @@ module.exports = function(grunt) {
     ]);
 
     // register task
-    grunt.registerTask('mika', [
+    grunt.registerTask('build', [
         'terser',
         'sass',
         'cssmin',
         'postcss',
+    ]);
+
+    // register task
+    grunt.registerTask('watch', [
+        'terser',
+        'sass',
+        'cssmin',
+        'postcss',
+        'watch',
     ]);
 
     // register task
