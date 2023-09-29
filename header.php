@@ -72,7 +72,7 @@
 
 	<div class="site-subheader">
 		<?php
-		if ( is_front_page() && ( 0 == get_query_var( 'page' ) || '' == get_query_var( 'page' ) ) ) { // WPSC: loose comparison ok.
+		if ( is_front_page() && ( 0 == get_query_var( 'page' ) || '' == get_query_var( 'page' ) ) ) { // phpcs:ignore Universal.Operators.StrictComparisons.LooseEqual
 			?>
 			<div class="alert alert-danger" role="alert">
 				<div class="container">

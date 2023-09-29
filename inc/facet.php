@@ -21,19 +21,10 @@
 add_action( 'wp_head', 'lwtv_yikes_facetwp_add_labels', 100 );
 function lwtv_yikes_facetwp_add_labels() {
 
+	// If this isn't an archive, return early.
 	if ( ! is_archive() ) {
 		return;
 	}
-
-	switch ( get_post_type() ) {
-		case 'post_type_shows':
-			//lwtv_yikes_facetwp_add_labels_shows();
-			break;
-		case 'post_type_actors':
-			//lwtv_yikes_facetwp_add_labels_actors();
-			break;
-	}
-
 	?>
 	<script>
 	(function($) {

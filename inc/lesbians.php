@@ -65,7 +65,7 @@ add_filter( 'the_posts', function( $posts, \WP_Query $query ) {
  * purposes. Why do spammers spam?
  */
 function lwtv_yikes_filter_media_comment_status( $open, $post_id ) {
-	if ( 'attachment' === get_post_type() ) {
+	if ( 'attachment' === get_post_type( $post_id ) ) {
 		return false;
 	}
 	return $open;
@@ -143,7 +143,7 @@ function lwtv_yikes_get_post_types_by_taxonomy( $tax = 'category' ) {
 	$post_types = get_post_types();
 	foreach ( $post_types as $post_type ) {
 		$taxonomies = get_object_taxonomies( $post_type );
-		if ( in_array( $tax, $taxonomies ) ) {
+		if ( in_array( $tax, $taxonomies, true ) ) {
 			// There should only be one (Highlander)
 			$out = $post_type;
 		}
@@ -324,8 +324,10 @@ function lwtv_yikes_tax_archive_title( $location, $posttype, $taxonomy ) {
  * @return int (Maybe) modified excerpt length.
  */
 function lwtv_search_custom_excerpt_length( $length ) {
-	return 25;
+	$length = 25;
+	return $length;
 }
+
 if ( is_search() ) {
 	add_filter( 'excerpt_length', 'lwtv_search_custom_excerpt_length', 999 );
 }
@@ -799,8 +801,8 @@ function lwtv_last_death() {
 	if ( class_exists( 'LWTV_BYQ_JSON' ) ) {
 		$last_death = ( new LWTV_BYQ_JSON() )->last_death();
 		if ( '' !== $last_death ) {
-			$return     = '<p>' . sprintf( 'It has been %s since the last queer female, non-binary, or transgender death on television', '<strong>' . human_time_diff( $last_death['died'], (int) wp_date( 'U' ) ) . '</strong> ' );
-			$return    .= ': <span><a href="' . $last_death['url'] . '">' . $last_death['name'] . '</a></span> - ' . gmdate( 'F j, Y', $last_death['died'] ) . '</p>';
+			$return  = '<p>' . sprintf( 'It has been %s since the last queer female, non-binary, or transgender death on television', '<strong>' . human_time_diff( $last_death['died'], (int) wp_date( 'U' ) ) . '</strong> ' );
+			$return .= ': <span><a href="' . $last_death['url'] . '">' . $last_death['name'] . '</a></span> - ' . gmdate( 'F j, Y', $last_death['died'] ) . '</p>';
 			// NOTE! Add `class="hidden-death"` to the span above if you want to blur the display of the last death.
 		}
 	}

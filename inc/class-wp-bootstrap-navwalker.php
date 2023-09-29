@@ -129,8 +129,8 @@ if ( ! class_exists( 'WP_Bootstrap_Navwalker' ) ) :
 
 			// Updating the CSS classes of a menu item in the WordPress Customizer preview results in all classes defined
 			// in that particular input box to come in as one big class string.
-			$split_on_spaces = function ( $class ) {
-				return preg_split( '/\s+/', $class );
+			$split_on_spaces = function ( $class_string ) {
+				return preg_split( '/\s+/', $class_string );
 			};
 			$classes         = $this->flatten( array_map( $split_on_spaces, $classes ) );
 
@@ -391,7 +391,7 @@ if ( ! class_exists( 'WP_Bootstrap_Navwalker' ) ) :
 		 * @return array $args The altered nav instance arguments.
 		 */
 		public function add_schema_to_navbar_ul( $args ) {
-			if ( isset( $args['items_wrap'] ) ) {
+			if ( isset( $args['items_wrap'] ) && ! is_null( $args['items_wrap'] ) ) {
 				$wrap = $args['items_wrap'];
 				if ( strpos( $wrap, 'SiteNavigationElement' ) === false ) {
 					$args['items_wrap'] = preg_replace( '/(>).*>?\%3\$s/', ' itemscope itemtype="http://www.schema.org/SiteNavigationElement"$0', $wrap );
@@ -587,13 +587,13 @@ if ( ! class_exists( 'WP_Bootstrap_Navwalker' ) ) :
 		/**
 		 * Flattens a multidimensional array to a simple array.
 		 *
-		 * @param array $array a multidimensional array.
+		 * @param array $walk_array a multidimensional array.
 		 *
 		 * @return array a simple array
 		 */
-		public function flatten( $array ) {
+		public function flatten( $walk_array ) {
 			$result = array();
-			foreach ( $array as $element ) {
+			foreach ( $walk_array as $element ) {
 				if ( is_array( $element ) ) {
 					array_push( $result, ...$this->flatten( $element ) );
 				} else {
@@ -602,7 +602,6 @@ if ( ! class_exists( 'WP_Bootstrap_Navwalker' ) ) :
 			}
 			return $result;
 		}
-
 	}
 
 endif;

@@ -49,13 +49,11 @@
 			} else {
 				$meta_text = __( '<span class="footer-entry-meta-item">' . lwtv_symbolicons( 'bookmark.svg', 'fa-bookmark' ) . '&nbsp;<a href="%3$s" title="Permalink to %4$s" rel="bookmark">Post link</a></span>', 'yikes_starter' );
 			}
-		} else {
+		} elseif ( '' !== $tag_list ) {
 			// But this blog has loads of categories so we should probably display them here
-			if ( '' !== $tag_list ) {
-				$meta_text = __( '<span class="footer-entry-meta-item">' . lwtv_symbolicons( 'folder-open.svg', 'fa-folder-open' ) . '&nbsp;%1$s</span> <span class="footer-entry-meta-item">' . lwtv_symbolicons( 'tag.svg', 'fa-tags' ) . '&nbsp;%2$s</span> <span class="footer-entry-meta-item">' . lwtv_symbolicons( 'bookmark.svg', 'fa-bookmark' ) . '&nbsp;<a href="%3$s" title="Permalink to %4$s" rel="bookmark">Post link</a></span>', 'yikes_starter' );
-			} else {
-				$meta_text = __( '<span class="footer-entry-meta-item">' . lwtv_symbolicons( 'folder-open.svg', 'fa-folder-open' ) . '&nbsp;%1$s</span> <span class="footer-entry-meta-item">' . lwtv_symbolicons( 'bookmark.svg', 'fa-bookmark' ) . '&nbsp;<a href="%3$s" title="Permalink to %4$s" rel="bookmark">Post link</a></span>', 'yikes_starter' );
-			}
+			$meta_text = __( '<span class="footer-entry-meta-item">' . lwtv_symbolicons( 'folder-open.svg', 'fa-folder-open' ) . '&nbsp;%1$s</span> <span class="footer-entry-meta-item">' . lwtv_symbolicons( 'tag.svg', 'fa-tags' ) . '&nbsp;%2$s</span> <span class="footer-entry-meta-item">' . lwtv_symbolicons( 'bookmark.svg', 'fa-bookmark' ) . '&nbsp;<a href="%3$s" title="Permalink to %4$s" rel="bookmark">Post link</a></span>', 'yikes_starter' );
+		} else {
+			$meta_text = __( '<span class="footer-entry-meta-item">' . lwtv_symbolicons( 'folder-open.svg', 'fa-folder-open' ) . '&nbsp;%1$s</span> <span class="footer-entry-meta-item">' . lwtv_symbolicons( 'bookmark.svg', 'fa-bookmark' ) . '&nbsp;<a href="%3$s" title="Permalink to %4$s" rel="bookmark">Post link</a></span>', 'yikes_starter' );
 		} // End if.
 
 		printf(

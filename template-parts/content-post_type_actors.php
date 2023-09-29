@@ -63,7 +63,7 @@ if ( $pronoun_terms && ! is_wp_error( $pronoun_terms ) ) {
 	foreach ( $pronoun_terms as $pronoun_term ) {
 		$pronouns .= $pronoun_term->name;
 		$pronouns .= ( $count < count( $pronoun_terms ) ) ? ' &bull; ' : '';
-		$count++;
+		++$count;
 	}
 	if ( isset( $pronouns ) && ! empty( $pronouns ) ) {
 		$gender_sexuality['Pronouns'] = $pronouns;
