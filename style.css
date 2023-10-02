@@ -1552,20 +1552,20 @@ h3 svg * {
   fill: #fff;
 }
 
-.archive-header .archive-header-icon .icon {
+.archive-header .icon {
   float: right;
 }
-.archive-header .archive-header-icon .icon svg {
+.archive-header .icon svg {
   height: 50px;
   margin: 5px;
   width: 50px;
   vertical-align: middle;
 }
-.archive-header .archive-header-icon .icon .fa {
+.archive-header .icon .fa {
   text-align: center;
   width: 16px;
 }
-.archive-header .archive-header-icon svg * {
+.archive-header svg * {
   fill: #fff;
 }
 .archive-header .archive-header-details, .archive-header .author-socials {

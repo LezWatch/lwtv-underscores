@@ -1461,26 +1461,23 @@ h3 svg * {
 }
 
 .archive-header {
+	.icon {
+		float: right;
 
-	.archive-header-icon {
-		.icon {
-			float: right;
-
-			svg {
-				height: 50px;
-				margin: 5px;
-				width: 50px;
-				vertical-align: middle;
-			}
-			.fa {
-				text-align: center;
-				width: 16px;
-			}
+		svg {
+			height: 50px;
+			margin: 5px;
+			width: 50px;
+			vertical-align: middle;
 		}
-
-		svg * {
-			fill: $white;
+		.fa {
+			text-align: center;
+			width: 16px;
 		}
+	}
+
+	svg * {
+		fill: $white;
 	}
 
 	.archive-header-details, .author-socials {
