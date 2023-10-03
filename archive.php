@@ -5,59 +5,25 @@
  * @package YIKES Starter
  */
 
-$icon            = '<div class="archive-header-icon">';
-$archive_details = '<div class="archive-header-details">';
+// Defaults
+$current_archive   = get_queried_object();
+$archive_icon      = lwtv_symbolicons( 'newspaper.svg', 'fa-newspaper' );
+$archive_details   = '';
+$archive_subheader = '<span class="post-count">' . $current_archive->count . ' articles</span>';
 
+// Custom details for author.
 if ( is_author() ) {
+	$author = get_the_author_meta( 'ID' );
+
 	// Use the Gravatar.
-	$icon .= get_avatar( get_the_author_meta( 'user_email' ) );
+	$archive_icon = get_avatar( get_the_author_meta( 'user_email' ), 96, '', 'Avatar for author ' . get_the_author_meta( 'display_name' ) );
 
-	// Get author's Socials
-	$user_socials = array(
-		'bluesky'   => get_the_author_meta( 'bluesky' ),
-		'mastodon'  => get_the_author_meta( 'mastodon' ),
-		'instagram' => get_the_author_meta( 'instagram' ),
-		'tiktok'    => get_the_author_meta( 'tiktok' ),
-		'tumblr'    => get_the_author_meta( 'tumblr' ),
-		'twitter'   => get_the_author_meta( 'twitter' ),
-		'website'   => get_the_author_meta( 'url' ),
-	);
+	// Add social.
+	$archive_subheader = lwtv_author_social( $author );
 
-	// Get all the stupid social...
-	$bluesky   = ( ! empty( $user_socials['bluesky'] ) ) ? '<a href="' . $user_socials['bluesky'] . '" target="_blank" rel="nofollow">' . ( new LWTV_Functions() )->symbolicons( 'bluesky.svg', 'fa-instagram' ) . '</a>' : false;
-	$instagram = ( ! empty( $user_socials['instagram'] ) ) ? '<a href="https://instagram.com/' . $user_socials['instagram'] . '" target="_blank" rel="nofollow">' . ( new LWTV_Functions() )->symbolicons( 'instagram.svg', 'fa-instagram' ) . '</a>' : false;
-	$twitter   = ( ! empty( $user_socials['twitter'] ) ) ? '<a href="https://twitter.com/' . $user_socials['twitter'] . '" target="_blank" rel="nofollow">' . ( new LWTV_Functions() )->symbolicons( 'twitter.svg', 'fa-twitter' ) . '</a>' : false;
-	$tumblr    = ( ! empty( $user_socials['tumblr'] ) ) ? '<a href="' . $user_socials['tumblr'] . '" target="_blank" rel="nofollow">' . ( new LWTV_Functions() )->symbolicons( 'tumblr.svg', 'fa-tumblr' ) . '</a>' : false;
-	$website   = ( ! empty( $user_socials['website'] ) ) ? '<a href="' . $user_socials['website'] . '" target="_blank" rel="nofollow">' . ( new LWTV_Functions() )->symbolicons( 'home.svg', 'fa-home' ) . '</a>' : false;
-	$mastodon  = ( ! empty( $user_socials['mastodon'] ) ) ? '<a href="' . $user_socials['mastodon'] . '" target="_blank" rel="nofollow">' . ( new LWTV_Functions() )->symbolicons( 'mastodon.svg', 'fa-mastodon' ) . '</a>' : false;
-
-	$social_array = array( $website, $twitter, $instagram, $tumblr, $bluesky, $mastodon );
-	$social_array = array_filter( $social_array );
-
-	// Get author Fav Shows.
-	$all_fav_shows = get_the_author_meta( 'lez_user_favourite_shows' );
-	if ( '' !== $all_fav_shows ) {
-		$show_title = array();
-		foreach ( $all_fav_shows as $each_show ) {
-			if ( 'publish' !== get_post_status( $each_show ) ) {
-				array_push( $show_title, '<em><span class="disabled-show-link">' . get_the_title( $each_show ) . '</span></em>' );
-			} else {
-				array_push( $show_title, '<em><a href="' . get_permalink( $each_show ) . '">' . get_the_title( $each_show ) . '</a></em>' );
-			}
-		}
-		$favourites = ( empty( $show_title ) ) ? '' : implode( ', ', $show_title );
-		$fav_title  = _n( 'Show', 'Shows', count( $show_title ) );
-	}
-
-	// Add Socials.
-	$archive_details .= '<div class="author-socials">' . implode( ' ', $social_array ) . '</div>';
-
-	// Add favourite shows if they're there.
-	$archive_details .= ( isset( $favourites ) && ! empty( $favourites ) ) ? '<div class="author-favourites">' . lwtv_symbolicons( 'tv-hd.svg', 'fa-tv' ) . '&nbsp;Favorite ' . $fav_title . ': ' . $favourites . '</div>' : '';
+	// Add faves.
+	$archive_details = lwtv_author_favourite_shows( $author );
 }
-
-$icon            .= '</div>';
-$archive_details .= '</div>';
 
 get_header(); ?>
 
@@ -68,12 +34,28 @@ get_header(); ?>
 				<div class="row">
 					<div class="col-10">
 						<?php the_archive_title( '<h1 class="entry-title">', '</h1>' ); ?>
+						<?php
+						if ( isset( $archive_subheader ) ) {
+							echo '<div class="archive-description">';
+							echo $archive_subheader; // phpcs:ignore WordPress.Security.EscapeOutput
+							echo '</div>';
+						}
+						?>
 					</div>
-					<div class="col-2 icon plain"><?php echo $icon; // phpcs:ignore WordPress.Security.EscapeOutput ?></div>
+					<div class="col-2 icon plain">
+						<div class="archive-header-icon">
+							<?php echo $archive_icon; // phpcs:ignore WordPress.Security.EscapeOutput ?>
+						</div>
+					</div>
 				</div>
 				<div class="row">
 					<div class="col">
-						<?php the_archive_description( '<div class="archive-description">', $archive_details . '</div>' ); ?>
+						<div class="archive-header-details">
+							<div class="archive-description">
+								<?php the_archive_description(); ?>
+								<?php echo $archive_details; // phpcs:ignore WordPress.Security.EscapeOutput ?>
+							</div>
+						</div>
 					</div>
 				</div>
 			</section><!-- .archive-header -->

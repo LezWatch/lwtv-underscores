@@ -68,7 +68,8 @@ if ( ! function_exists( 'yikes_starter_posted_on' ) ) :
 	function yikes_starter_posted_on() {
 		$time_string = '<time class="entry-date published" datetime="%1$s">%2$s</time>';
 
-		$time_string = sprintf( $time_string,
+		$time_string = sprintf(
+			$time_string,
 			esc_attr( get_the_date( 'c' ) ),
 			esc_html( get_the_date() ),
 			esc_attr( get_the_modified_date( 'c' ) ),
@@ -78,7 +79,6 @@ if ( ! function_exists( 'yikes_starter_posted_on' ) ) :
 			$byline = '<span class="author vcard"> <a class="url fn n" href="' . esc_url( get_author_posts_url( get_the_author_meta( 'ID' ) ) ) . '">' . esc_html( get_the_author() ) . '</a></span>';
 
 			echo '<span class="posted-on">' . wp_kses_post( $time_string ) . lwtv_symbolicons( 'user-circle.svg', 'fa-user-circle' ) . '</span><span class="byline"> ' . wp_kses_post( $byline ) . '</span>';
-
 	}
 endif;
 
@@ -132,13 +132,15 @@ function yikes_starter_categorized_blog() {
 	$all_the_cool_cats = get_transient( 'yikes_starter_categories' );
 	if ( false === $all_the_cool_cats ) {
 		// Create an array of all the categories that are attached to posts.
-		$all_the_cool_cats = get_categories( array(
-			'fields'     => 'ids',
-			'hide_empty' => 1,
+		$all_the_cool_cats = get_categories(
+			array(
+				'fields'     => 'ids',
+				'hide_empty' => 1,
 
-			// We only need to know if there is more than one category.
-			'number'     => 2,
-		) );
+				// We only need to know if there is more than one category.
+				'number'     => 2,
+			)
+		);
 
 		// Count the number of categories that are attached to the posts.
 		$all_the_cool_cats = count( $all_the_cool_cats );
@@ -184,7 +186,7 @@ function yikes_generate_pagination_buttons( $page_number, $max_num_pages, $view_
 				<li class="page-item previous mr-auto">
 				<?php
 				if ( 1 < $page_number ) {
-					echo '<a href="/page/' . ( $page_number - 1 ) . '" class="page-link">' . lwtv_symbolicons( 'caret-left-circle.svg', 'fa-chevron-circle-left' ) . ' <span>Previous</span></a>';
+					echo '<a href="/page/' . esc_attr( $page_number - 1 ) . '" class="page-link">' . lwtv_symbolicons( 'caret-left-circle.svg', 'fa-chevron-circle-left' ) . ' <span>Previous</span></a>';
 				}
 				?>
 			</li>
@@ -200,7 +202,7 @@ function yikes_generate_pagination_buttons( $page_number, $max_num_pages, $view_
 			<li class="page-item next ml-auto">
 				<?php
 				if ( $max_num_pages > $page_number ) {
-					echo '<a href="/page/' . ( $page_number + 1 ) . '" class="page-link"><span>Next</span> ' . lwtv_symbolicons( 'caret-right-circle.svg', 'fa-chevron-circle-right' ) . '</a>';
+					echo '<a href="/page/' . esc_attr( $page_number + 1 ) . '" class="page-link"><span>Next</span> ' . lwtv_symbolicons( 'caret-right-circle.svg', 'fa-chevron-circle-right' ) . '</a>';
 				}
 				?>
 			</li>

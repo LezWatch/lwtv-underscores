@@ -223,6 +223,12 @@ if ( $alt_images ) {
 	</div>
 	<div class="characters-description">
 		<hr />
-		<?php echo wp_kses_post( the_content() ); ?>
+		<?php
+		// Seems to be running twice, so we need this catch.
+		$post_content = the_content();
+		if ( ! empty( $post_content ) ) {
+			echo wp_kses_post( $post_content );
+		}
+		?>
 	</div>
 </div>

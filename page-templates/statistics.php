@@ -13,6 +13,9 @@
 $validstat = array( 'death', 'characters', 'shows', 'main', 'actors', 'nations', 'stations', 'formats' );
 $statstype = ( isset( $wp_query->query['statistics'] ) && in_array( $wp_query->query['statistics'], $validstat, true ) ) ? esc_attr( $wp_query->query['statistics'] ) : 'main';
 
+// Defaults:
+$image = lwtv_symbolicons( 'graph-bar.svg', 'fa-chart-area' );
+$intro = '';
 
 // Based on the type of stats, set our display.
 switch ( $statstype ) {
@@ -41,12 +44,7 @@ switch ( $statstype ) {
 		$intro = 'Data specific to queer representation on shows by channel or station.';
 		break;
 	case 'formats':
-		$image = lwtv_symbolicons( 'graph-bar.svg', 'fa-chart-area' );
 		$intro = 'Data specific to queer representation by show format (i.e. TV show, web series, etc.)';
-		break;
-	case 'main':
-		$image = lwtv_symbolicons( 'graph-bar.svg', 'fa-chart-area' );
-		$intro = '';
 		break;
 }
 

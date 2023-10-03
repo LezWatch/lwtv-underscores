@@ -1,6 +1,8 @@
 <?php
 /**
  * Template Name: Custom RSS Template - Of The Day
+ *
+ * Customizes RSS feeds for OTD - /feeds/otd/
  */
 
 header( 'Content-Type: ' . feed_content_type( 'rss-http' ) . '; charset=' . get_option( 'blog_charset' ), true );
@@ -19,7 +21,7 @@ echo '<?xml version="1.0" encoding="' . esc_attr( get_option( 'blog_charset' ) )
 	<title>LezWatch.TV Of The Day - Feed</title>
 	<atom:link href="<?php self_link(); ?>" rel="self" type="application/rss+xml" />
 	<link><?php echo esc_url( bloginfo_rss( 'url' ) ); ?></link>
-	<description>Keep up to date with the latest featured characters and shows! Updated twice a day.</description>
+	<description>Keep up to date with the latest featured characters and shows! Updated daily.</description>
 	<lastBuildDate>
 		<?php echo esc_html( mysql2date( 'D, d M Y H:i:s +0000', ( new LWTV_Of_The_Day_RSS() )->last_build(), false ) ); ?>
 	</lastBuildDate>

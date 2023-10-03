@@ -154,7 +154,6 @@ class LWTV_Walker_Comment extends Walker {
 			}
 			unset( $children_elements[ $id ] );
 		}
-
 	}
 
 	/**

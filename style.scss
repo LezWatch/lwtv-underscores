@@ -1461,7 +1461,6 @@ h3 svg * {
 }
 
 .archive-header {
-
 	.icon {
 		float: right;
 
@@ -1481,7 +1480,7 @@ h3 svg * {
 		fill: $white;
 	}
 
-	.archive-header-details {
+	.archive-header-details, .author-socials {
 		color: $white;
 		@include font-14;
 		div {
@@ -1761,12 +1760,8 @@ span.svg-shortcode a {
 		border: 1px solid $lwtv-pink;
 	}
 
-	.author-bio {
-		margin-bottom: 0.4rem;
-	}
-
 	.author-details{
-			clear: both;
+		clear: both;
 	}
 
 	.fa {
@@ -1792,6 +1787,10 @@ span.svg-shortcode a {
 		width: 20px;
 		height: 20px;
 	}
+}
+
+.author-socials, .author-archives, .author-bio, .author-favourites {
+	margin-top: 0.6rem;
 }
 
 /*--------------------------------------------------------------
@@ -1936,7 +1935,7 @@ div.facetwp-facet-shows_scores input.facetwp-number {
 	}
 
 	.widget_categories, .widget_tag_cloud,
-	.widget-tags,  {
+	.widget-tags {
 		@include box-shadow(0 1px 4px 0 rgba(0, 0, 0, 0.14));
 		padding-bottom: .75rem;
 
@@ -2039,8 +2038,6 @@ div.facetwp-facet-shows_scores input.facetwp-number {
 		}
 	}
 }
-
-
 
 /* ==========================================================================
 	 Footer

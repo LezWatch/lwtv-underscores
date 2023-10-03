@@ -7,7 +7,6 @@
 
 global $post;
 $show_id = $post->ID;
-
 ?>
 
 <!-- Button trigger modal -->

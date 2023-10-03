@@ -338,9 +338,8 @@ add_action( 'widgets_init', 'yikes_starter_widgets_init' );
 /**
  * Register Custom Navigation Walker
  */
-function register_navwalker(){
+function register_navwalker() {
 	require_once 'inc/class-wp-bootstrap-navwalker.php';
-	// require_once 'inc/wp_bootstrap_navwalker.php';
 }
 add_action( 'after_setup_theme', 'register_navwalker' );
 
@@ -413,7 +412,6 @@ function yikes_starter_scripts() {
 
 	// This has to be at the bottom to override Bootstrap 4.x.
 	wp_enqueue_style( 'yikes-starter-style', get_stylesheet_directory_uri() . '/style.min.css', array(), $lwtv_underscores, false );
-
 }
 
 add_action( 'wp_enqueue_scripts', 'yikes_starter_scripts' );

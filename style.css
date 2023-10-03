@@ -1568,26 +1568,26 @@ h3 svg * {
 .archive-header svg * {
   fill: #fff;
 }
-.archive-header .archive-header-details {
+.archive-header .archive-header-details, .archive-header .author-socials {
   color: #fff;
   font-size: 0.875rem;
 }
-.archive-header .archive-header-details div {
+.archive-header .archive-header-details div, .archive-header .author-socials div {
   margin-bottom: 0.4em;
 }
-.archive-header .archive-header-details a {
+.archive-header .archive-header-details a, .archive-header .author-socials a {
   text-decoration: underline;
 }
-.archive-header .archive-header-details a:hover {
+.archive-header .archive-header-details a:hover, .archive-header .author-socials a:hover {
   color: #8d329f;
 }
-.archive-header .archive-header-details svg {
+.archive-header .archive-header-details svg, .archive-header .author-socials svg {
   height: 28px;
   width: 28px;
   vertical-align: middle;
   padding-right: 5px;
 }
-.archive-header .archive-header-details svg * {
+.archive-header .archive-header-details svg *, .archive-header .author-socials svg * {
   fill: #fff;
 }
 
@@ -1888,9 +1888,6 @@ span.svg-shortcode a:hover svg {
 .author-box .avatar {
   border: 1px solid #d1548e;
 }
-.author-box .author-bio {
-  margin-bottom: 0.4rem;
-}
 .author-box .author-details {
   clear: both;
 }
@@ -1912,6 +1909,10 @@ span.svg-shortcode a:hover svg {
   vertical-align: top;
   width: 20px;
   height: 20px;
+}
+
+.author-socials, .author-archives, .author-bio, .author-favourites {
+  margin-top: 0.6rem;
 }
 
 /*--------------------------------------------------------------

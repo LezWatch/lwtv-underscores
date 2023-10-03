@@ -65,7 +65,7 @@ add_filter( 'the_posts', function( $posts, \WP_Query $query ) {
  * purposes. Why do spammers spam?
  */
 function lwtv_yikes_filter_media_comment_status( $open, $post_id ) {
-	if ( 'attachment' === get_post_type() ) {
+	if ( 'attachment' === get_post_type( $post_id ) ) {
 		return false;
 	}
 	return $open;
@@ -143,7 +143,7 @@ function lwtv_yikes_get_post_types_by_taxonomy( $tax = 'category' ) {
 	$post_types = get_post_types();
 	foreach ( $post_types as $post_type ) {
 		$taxonomies = get_object_taxonomies( $post_type );
-		if ( in_array( $tax, $taxonomies ) ) {
+		if ( in_array( $tax, $taxonomies, true ) ) {
 			// There should only be one (Highlander)
 			$out = $post_type;
 		}
@@ -324,8 +324,10 @@ function lwtv_yikes_tax_archive_title( $location, $posttype, $taxonomy ) {
  * @return int (Maybe) modified excerpt length.
  */
 function lwtv_search_custom_excerpt_length( $length ) {
-	return 25;
+	$length = 25;
+	return $length;
 }
+
 if ( is_search() ) {
 	add_filter( 'excerpt_length', 'lwtv_search_custom_excerpt_length', 999 );
 }
@@ -799,8 +801,8 @@ function lwtv_last_death() {
 	if ( class_exists( 'LWTV_BYQ_JSON' ) ) {
 		$last_death = ( new LWTV_BYQ_JSON() )->last_death();
 		if ( '' !== $last_death ) {
-			$return     = '<p>' . sprintf( 'It has been %s since the last queer female, non-binary, or transgender death on television', '<strong>' . human_time_diff( $last_death['died'], (int) wp_date( 'U' ) ) . '</strong> ' );
-			$return    .= ': <span><a href="' . $last_death['url'] . '">' . $last_death['name'] . '</a></span> - ' . gmdate( 'F j, Y', $last_death['died'] ) . '</p>';
+			$return  = '<p>' . sprintf( 'It has been %s since the last queer female, non-binary, or transgender death on television', '<strong>' . human_time_diff( $last_death['died'], (int) wp_date( 'U' ) ) . '</strong> ' );
+			$return .= ': <span><a href="' . $last_death['url'] . '">' . $last_death['name'] . '</a></span> - ' . gmdate( 'F j, Y', $last_death['died'] ) . '</p>';
 			// NOTE! Add `class="hidden-death"` to the span above if you want to blur the display of the last death.
 		}
 	}
@@ -808,4 +810,66 @@ function lwtv_last_death() {
 	$return = '<div class="lezwatchtv last-death">' . $return . '</div>';
 
 	return $return;
+}
+
+/**
+ * Author Social Media
+ *
+ * @param int     $author Author ID
+ * @return string $details Output of author social.
+ */
+function lwtv_author_social( $author ) {
+	// Get author's Socials
+	$user_socials = array(
+		'bluesky'   => get_the_author_meta( 'bluesky', $author ),
+		'mastodon'  => get_the_author_meta( 'mastodon', $author ),
+		'instagram' => get_the_author_meta( 'instagram', $author ),
+		'tiktok'    => get_the_author_meta( 'tiktok', $author ),
+		'tumblr'    => get_the_author_meta( 'tumblr', $author ),
+		'twitter'   => get_the_author_meta( 'twitter', $author ),
+		'website'   => get_the_author_meta( 'url', $author ),
+	);
+
+	// Get all the stupid social...
+	$bluesky   = ( ! empty( $user_socials['bluesky'] ) ) ? '<a href="' . $user_socials['bluesky'] . '" target="_blank" rel="nofollow">' . ( new LWTV_Functions() )->symbolicons( 'bluesky.svg', 'fa-instagram' ) . '</a>' : false;
+	$instagram = ( ! empty( $user_socials['instagram'] ) ) ? '<a href="https://instagram.com/' . $user_socials['instagram'] . '" target="_blank" rel="nofollow">' . ( new LWTV_Functions() )->symbolicons( 'instagram.svg', 'fa-instagram' ) . '</a>' : false;
+	$twitter   = ( ! empty( $user_socials['twitter'] ) ) ? '<a href="https://twitter.com/' . $user_socials['twitter'] . '" target="_blank" rel="nofollow">' . ( new LWTV_Functions() )->symbolicons( 'twitter.svg', 'fa-twitter' ) . '</a>' : false;
+	$tumblr    = ( ! empty( $user_socials['tumblr'] ) ) ? '<a href="' . $user_socials['tumblr'] . '" target="_blank" rel="nofollow">' . ( new LWTV_Functions() )->symbolicons( 'tumblr.svg', 'fa-tumblr' ) . '</a>' : false;
+	$website   = ( ! empty( $user_socials['website'] ) ) ? '<a href="' . $user_socials['website'] . '" target="_blank" rel="nofollow">' . ( new LWTV_Functions() )->symbolicons( 'home.svg', 'fa-home' ) . '</a>' : false;
+	$mastodon  = ( ! empty( $user_socials['mastodon'] ) ) ? '<a href="' . $user_socials['mastodon'] . '" target="_blank" rel="nofollow">' . ( new LWTV_Functions() )->symbolicons( 'mastodon.svg', 'fa-mastodon' ) . '</a>' : false;
+
+	$social_array = array( $website, $twitter, $instagram, $tumblr, $bluesky, $mastodon );
+	$social_array = array_filter( $social_array );
+
+	// Add Socials.
+	$details = '<div class="author-socials">' . implode( ' ', $social_array ) . '</div>';
+
+	return $details;
+}
+
+/**
+ * Author Favourite Shows
+ *
+ * @param int     $author Author ID
+ * @return string $details Output of author fav shows.
+ */
+function lwtv_author_favourite_shows( $author ) {
+	// Get author Fav Shows.
+	$all_fav_shows = get_the_author_meta( 'lez_user_favourite_shows', $author );
+	if ( '' !== $all_fav_shows ) {
+		$show_title = array();
+		foreach ( $all_fav_shows as $each_show ) {
+			if ( 'publish' !== get_post_status( $each_show ) ) {
+				array_push( $show_title, '<em><span class="disabled-show-link">' . get_the_title( $each_show ) . '</span></em>' );
+			} else {
+				array_push( $show_title, '<em><a href="' . get_permalink( $each_show ) . '">' . get_the_title( $each_show ) . '</a></em>' );
+			}
+		}
+		$favourites = ( empty( $show_title ) ) ? '' : implode( ', ', $show_title );
+		$fav_title  = _n( 'Show', 'Shows', count( $show_title ) );
+	}
+
+	$details = ( isset( $favourites ) && ! empty( $favourites ) ) ? '<div class="author-favourites">' . lwtv_symbolicons( 'tv-hd.svg', 'fa-tv' ) . '&nbsp;Favorite ' . $fav_title . ': ' . $favourites . '</div>' : '';
+
+	return $details;
 }
