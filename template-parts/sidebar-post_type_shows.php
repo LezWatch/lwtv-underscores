@@ -12,6 +12,7 @@ $thumb_rating = ( get_post_meta( $show_id, 'lezshows_worthit_rating', true ) ) ?
 $realness     = ( get_post_meta( $show_id, 'lezshows_realness_rating', true ) && is_numeric( (int) get_post_meta( $show_id, 'lezshows_realness_rating', true ) ) ) ? min( (int) get_post_meta( $show_id, 'lezshows_realness_rating', true ), 5 ) : 0;
 $quality      = ( get_post_meta( $show_id, 'lezshows_quality_rating', true ) && is_numeric( (int) get_post_meta( $show_id, 'lezshows_quality_rating', true ) ) ) ? min( (int) get_post_meta( $show_id, 'lezshows_quality_rating', true ), 5 ) : 0;
 $screentime   = ( get_post_meta( $show_id, 'lezshows_screentime_rating', true ) && is_numeric( (int) get_post_meta( $show_id, 'lezshows_screentime_rating', true ) ) ) ? min( (int) get_post_meta( $show_id, 'lezshows_screentime_rating', true ), 5 ) : 0;
+$alt_names    = ( get_post_meta( $show_id, 'lezshows_show_names', true ) ) ? get_post_meta( $show_id, 'lezshows_show_names', true ) : false;
 ?>
 
 <section id="search" class="widget widget_search">
@@ -140,7 +141,33 @@ $screentime   = ( get_post_meta( $show_id, 'lezshows_screentime_rating', true ) 
 	</div>
 </section>
 
-<section id="ratings" class="widget widget_text">
+<?php
+if ( false !== $alt_names && ! empty( $alt_names ) ) {
+	?>
+	<section id="alt-names" class="widget widget_text">
+		<div class="card">
+			<div class="card-header">
+				<h4>Also Known As</h4>
+			</div>
+
+			<ul class="name-list list-group">
+				<?php
+				foreach ( $alt_names as $aka ) {
+					?>
+						<li class="list-group-item show name lang-<?php echo esc_attr( $aka['type'] ); ?>">
+							<em><?php echo esc_html( $aka['lezshows_alt_show_name'] ); ?></em> (<?php echo esc_attr( $aka['type'] ); ?>)
+						</li>
+					<?php
+				}
+				?>
+			</ul>
+		</div>
+	</section>
+	<?php
+}
+?>
+
+<section id="tropes" class="widget widget_text">
 	<div class="card">
 		<div class="card-header">
 			<h4>Tropes</h4>
