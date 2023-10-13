@@ -22,34 +22,6 @@ jobs:
         run: |
           ls -lah ${GITHUB_WORKSPACE}
 
-      - name: Setup Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: '3.2' # Not needed with a .ruby-version file
-          bundler-cache: true # runs 'bundle install' and caches installed gems automatically
-
-      - name: Install Ruby
-        run: |
-          bundle exec rake
-
-      - name: Setup Node
-        uses: actions/setup-node@v3
-        with:
-          node-version-file: '.nvmrc'
-          cache: 'npm'
-
-      - name: Setup PHP and Composer
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.2'
-          tools: composer:v2
-
-      - name: Install dependencies
-        run: npm install && composer install
-
-      - name: Build it
-        run: npm run build
-
       - name: Deploy to LezWatch.TV Dev Server
         uses: easingthemes/ssh-deploy@main
         env:
