@@ -147,6 +147,7 @@ $endcolor: #7DB9E8;
 // Like this @include fontawesome_free("\f0ad");
 @mixin fontawesome_free($argument...) {
 	display: none;
+	font: var(--fa-font-solid);
 	content: $argument;
 	font-family: "Font Awesome 5 Free";
 }
@@ -154,6 +155,7 @@ $endcolor: #7DB9E8;
 // Like this @include fontawesome_pro("\f0ad");
 @mixin fontawesome_pro($argument...) {
 	display: none;
+	font: var(--fa-font-solid);
 	content: $argument;
 	font-family: "Font Awesome 5 Regular";
 }
@@ -161,6 +163,7 @@ $endcolor: #7DB9E8;
 // Like this @include fontawesome_brand("\f0ad");
 @mixin fontawesome_brand($argument...) {
 	display: none;
+	font: var(--fa-font-brands);
 	content: $argument;
 	font-family: "Font Awesome 5 Brands";
 }

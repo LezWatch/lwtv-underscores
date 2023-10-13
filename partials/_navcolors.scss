@@ -16,7 +16,7 @@
 		&.nav-item {
 
 			/* Style for inactive links */
-			& > a.nav-link,  {
+			& > a.nav-link {
 				color: $darkgrey;
 				@include font-15;
 				font-weight: 600;
@@ -126,6 +126,10 @@
 			@include fontawesome_pro("\f09e");
 		}
 
+		&.feed a::before {
+			@include fontawesome_free("\f09e");
+		}
+
 		&.mail a:before {
 			@include fontawesome_pro("\f0e0");
 		}
@@ -136,6 +140,10 @@
 
 		&.twitter a:before {
 			@include fontawesome_brand("\f099");
+		}
+
+		&.x-twitter a:before {
+			@include fontawesome_brand("\e61b");
 		}
 
 		&.facebook a:before {
