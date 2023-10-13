@@ -6,12 +6,10 @@
 *.bak
 *.swp
 Thumbs.db
-package-lock.json
 /node_modules/
 /.sass-cache/
 /npm-debug.log
 /vendor/
-composer.lock
 
 # large/disallowed file types
 # a CDN should be used for these

@@ -4,7 +4,8 @@
   "description": "Yikes Inc. starter theme.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "composer update && grunt build"
   },
   "author": "Yikes Inc.",
   "license": "GPL-2.0",

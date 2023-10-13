@@ -7,6 +7,7 @@ on:
 jobs:
   deploy-website:
     runs-on: ubuntu-latest
+
     steps:
       - name: Do a git checkout including submodules
         uses: actions/checkout@v2
@@ -16,6 +17,7 @@ jobs:
       - name: Verify Workspace
         run: |
           echo "GITHUB_WORKSPACE: ${GITHUB_WORKSPACE}"
+
       - name: Verify Folder
         run: |
           ls -lah ${GITHUB_WORKSPACE}
@@ -28,4 +30,4 @@ jobs:
           REMOTE_HOST: ${{ secrets.LWTV_HOST }}
           REMOTE_USER: ${{ secrets.LWTV_USER }}
           TARGET: /home/${{ secrets.LWTV_USER }}/${{ secrets.LWTV_DEV_DOMAIN }}/wp-content/themes/lwtv-underscores
-          EXCLUDE: "/.git/, /.github/"
+          EXCLUDE: "/.git/, /.github/, /.husky/, /.sass-cache/, /.vscode/, /node_modules/, /vendor/, .browserslistrc, .gitignore, .npmrc, .nvmrc, .ruby-version, composer.json, composer.lock, package-lock.json, package.json, phpcs.xml.dist"
