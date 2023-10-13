@@ -28,7 +28,7 @@ jobs:
           REMOTE_HOST: ${{ secrets.LWTV_HOST }}
           REMOTE_USER: ${{ secrets.LWTV_USER }}
           TARGET: /home/${{ secrets.LWTV_USER }}/${{ secrets.LWTV_DOMAIN }}/wp-content/themes/lwtv-underscores
-          EXCLUDE: "/.git/, /.github/"
+          EXCLUDE: "/.git/, /.github/, /.husky/, /.sass-cache/, /.vscode/, /node_modules/, /vendor/, .browserslistrc, .gitignore, .npmrc, .nvmrc, composer.json, composer.lock, package-lock.json, package.json, phpcs.xml.dist"
           SCRIPT_AFTER: |
             cd ~/lezwatchtv.com
             wp varnish purge https://lezwatchtv.com/ --wildcard
