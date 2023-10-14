@@ -126,7 +126,7 @@ class WP_Bootstrap_Navwalker extends Walker_Nav_Menu {
 
 		if ( 0 === $depth && in_array( 'menu-item-has-children', $classes, true ) ) {
 			$atts['class']      .= ' dropdown-toggle';
-			$atts['data-toggle'] = 'dropdown';
+			$atts['data-bs-target'] = 'dropdown';
 		}
 
 		if ( $depth > 0 ) {
@@ -169,7 +169,7 @@ class WP_Bootstrap_Navwalker extends Walker_Nav_Menu {
 		// New
 		/*
 		if ($depth === 0 && in_array('menu-item-has-children', $classes)) {
-			$item_output .= '<a class="nav-link dropdown-toggle"' . $attributes .'data-toggle="dropdown">';
+			$item_output .= '<a class="nav-link dropdown-toggle"' . $attributes .'data-bs-target="dropdown">';
 		} elseif ($depth === 0) {
 			$item_output .= '<a class="nav-link"' . $attributes .'>';
 		} else {

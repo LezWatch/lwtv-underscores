@@ -1153,6 +1153,55 @@ footer.entry-meta svg {
 }
 
 /* Statistics Pages */
+.statistics .card-header.actors,
+.statistics .card-header.genres,
+.statistics .card-header.gender, .thisyear .card-header.actors,
+.thisyear .card-header.genres,
+.thisyear .card-header.gender {
+  color: #856404;
+  background-color: #fff3cd;
+  border-color: #ffeeba;
+}
+.statistics .card-header.characters,
+.statistics .card-header.new-shows,
+.statistics .card-header.tropes, .thisyear .card-header.characters,
+.thisyear .card-header.new-shows,
+.thisyear .card-header.tropes {
+  color: #155724;
+  background-color: #d4edda;
+  border-color: #c3e6cb;
+}
+.statistics .card-header.dead-characters,
+.statistics .card-header.canceled-shows, .thisyear .card-header.dead-characters,
+.thisyear .card-header.canceled-shows {
+  color: #721c24;
+  background-color: #f8d7da;
+  border-color: #f5c6cb;
+}
+.statistics .card-header.shows,
+.statistics .card-header.shows-on-air,
+.statistics .card-header.sexuality, .thisyear .card-header.shows,
+.thisyear .card-header.shows-on-air,
+.thisyear .card-header.sexuality {
+  color: #0c5460;
+  background-color: #d1ecf1;
+  border-color: #bee5eb;
+}
+.statistics .progress-bar, .thisyear .progress-bar {
+  background-color: #17a2b8 !important;
+}
+.statistics button, .thisyear button {
+  color: #fff;
+  background-color: #17a2b8;
+  border-color: #17a2b8;
+}
+.statistics a.nav-link, .thisyear a.nav-link {
+  color: #d1548e;
+}
+.statistics .container .row, .thisyear .container .row {
+  margin-bottom: 4rem;
+}
+
 .chart-container .row {
   margin-bottom: 4rem;
 }
@@ -1198,13 +1247,13 @@ canvas {
 }
 
 /* This Year Pages */
-.thisyear-container .row {
+.container.thisyear .row {
   margin-bottom: 4rem;
 }
-.thisyear-container ul.this-year-shows {
+.container.thisyear ul.this-year-shows {
   padding: 0;
 }
-.thisyear-container ul.this-year-shows li {
+.container.thisyear ul.this-year-shows li {
   display: inline-block;
   width: 50%;
 }
@@ -1647,11 +1696,11 @@ h3 svg * {
   fill: #B87333;
 }
 
-.site-loop.actor-archive-loop, .site-loop.character-archive-loop, .site-loop.main-posts-loop, .site-loop.character-show-loop {
+.site-loop.actor-archive-loop, .site-loop.character-archive-loop, .site-loop.main-posts-loop, .site-loop.character-show-loop, .site-loop.shows-we-love-loop {
   grid-template-columns: repeat(3, 1fr);
   grid-gap: 1.6rem;
 }
-.site-loop.actor-archive-loop.four-across-loop, .site-loop.character-archive-loop.four-across-loop, .site-loop.main-posts-loop.four-across-loop, .site-loop.character-show-loop.four-across-loop {
+.site-loop.actor-archive-loop.four-across-loop, .site-loop.character-archive-loop.four-across-loop, .site-loop.main-posts-loop.four-across-loop, .site-loop.character-show-loop.four-across-loop, .site-loop.shows-we-love-loop.four-across-loop {
   grid-template-columns: repeat(4, 1fr);
 }
 .site-loop.character-show-loop {

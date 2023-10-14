@@ -30,6 +30,7 @@
 					<?php bloginfo( 'name' ); ?>
 				</span>
 			</a>
+			<div class="collapse navbar-collapse" id="primary">
 			<?php
 			wp_nav_menu(
 				array(
@@ -44,9 +45,10 @@
 				)
 			);
 			?>
+			</div>
 
 			<span class="nav-item search" id="search-btn">
-				<a class="nav-link" data-toggle="collapse" href="#collapseSearch">
+				<a class="nav-link" data-bs-target="collapse" role="button" href="#collapseSearch">
 					<?php echo lwtv_symbolicons( 'search.svg', 'fa-search' ); ?>
 					<span class="screen-reader-text">Search the Site</span>
 				</a>

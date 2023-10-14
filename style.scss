@@ -267,7 +267,6 @@ pre.wp-block-verse {
 	margin-bottom: 1rem;
 }
 
-
 .featured-image-tabs {
 	.nav-tabs {
 		border-bottom: none;
@@ -913,6 +912,59 @@ footer.entry-meta {
 
 /* Statistics Pages */
 
+.statistics, .thisyear {
+	.card-header.actors,
+	.card-header.genres,
+	.card-header.gender {
+		color: #856404;
+		background-color: #fff3cd;
+		border-color: #ffeeba;
+	}
+
+	.card-header.characters,
+	.card-header.new-shows,
+	.card-header.tropes {
+		color: #155724;
+		background-color: #d4edda;
+		border-color: #c3e6cb;
+	}
+
+	.card-header.dead-characters,
+	.card-header.canceled-shows {
+		color: #721c24;
+		background-color: #f8d7da;
+		border-color: #f5c6cb;
+	}
+
+	.card-header.shows,
+	.card-header.shows-on-air,
+	.card-header.sexuality {
+		color: #0c5460;
+		background-color: #d1ecf1;
+		border-color: #bee5eb;
+	}
+
+	.progress-bar {
+		background-color: #17a2b8!important;
+	}
+
+	button {
+		color: #fff;
+		background-color: #17a2b8;
+		border-color: #17a2b8;
+	}
+
+	a.nav-link {
+		color: $lwtv-pink;
+	}
+
+	.container {
+		.row {
+			margin-bottom: 4rem;
+		}
+	}
+}
+
 .chart-container {
 	.row {
 		margin-bottom: 4rem;
@@ -967,7 +1019,7 @@ canvas {
 
 /* This Year Pages */
 
-.thisyear-container {
+.container.thisyear {
 	.row {
 		margin-bottom: 4rem;
 	}
@@ -1546,7 +1598,7 @@ h3 svg * {
 
 .site-loop {
 	&.actor-archive-loop, &.character-archive-loop,
-	&.main-posts-loop, &.character-show-loop {
+	&.main-posts-loop, &.character-show-loop, &.shows-we-love-loop {
 		grid-template-columns: repeat(3, 1fr);
 		grid-gap: 1.6rem;
 

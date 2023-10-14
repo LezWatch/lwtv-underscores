@@ -40,7 +40,7 @@ $thumb_array       = array(
 					$warn_image = lwtv_symbolicons( 'warning.svg', 'fa-exclamation-triangle' );
 					if ( 'none' !== $warning['card'] ) {
 						// phpcs:ignore WordPress.Security.EscapeOutput
-						echo '<span class="callout callout-' . esc_attr( $warning['card'] ) . '" role="img" data-toggle="tooltip" aria-label="Warning - This show contains triggers" title="Warning - This show contains triggers">' . $warn_image . '</span>';
+						echo '<span class="callout callout-' . esc_attr( $warning['card'] ) . '" role="img" data-bs-target="tooltip" aria-label="Warning - This show contains triggers" title="Warning - This show contains triggers">' . $warn_image . '</span>';
 					}
 
 					// Stars of Queerness.
@@ -50,14 +50,14 @@ $thumb_array       = array(
 					if ( get_post_meta( get_the_ID(), 'lezshows_worthit_show_we_love', true ) ) {
 						$heart = lwtv_symbolicons( 'hearts.svg', 'fa-heart' );
 						// phpcs:ignore WordPress.Security.EscapeOutput
-						echo ' <span role="img" aria-label="We Love This Show!" data-toggle="tooltip" title="We Love This Show!" class="callout callout-we-love">' . $heart . '</span>';
+						echo ' <span role="img" aria-label="We Love This Show!" data-bs-target="tooltip" title="We Love This Show!" class="callout callout-we-love">' . $heart . '</span>';
 					}
 
 					// Skulls of Death.
 					if ( has_term( 'dead-queers', 'lez_tropes', get_the_ID() ) ) {
 						$skull = lwtv_symbolicons( 'skull-crossbones.svg', 'fa-ban' );
 						// phpcs:ignore WordPress.Security.EscapeOutput
-						echo ' <span role="img" aria-label="Warning - There is death on this show." data-toggle="tooltip" title="Warning - There is death on this show." class="callout callout-death">' . $skull . '</span>';
+						echo ' <span role="img" aria-label="Warning - There is death on this show." data-bs-target="tooltip" title="Warning - There is death on this show." class="callout callout-death">' . $skull . '</span>';
 					}
 					?>
 				</span>

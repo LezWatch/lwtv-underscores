@@ -159,7 +159,7 @@ $thumb_array       = array(
 				if ( ! empty( get_the_content() ) ) {
 					the_content();
 				} else {
-					the_title( '<p>', ' is an actor who has played at least one queer character on TV. Information on this page has not yet been verified. Feel free to <a href="#"  data-toggle="modal" data-target="#suggestForm">suggest an edit</a> with any corrections or additions.</p>' );
+					the_title( '<p>', ' is an actor who has played at least one queer character on TV. Information on this page has not yet been verified. Feel free to <a href="#"  data-bs-target="modal" data-target="#suggestForm">suggest an edit</a> with any corrections or additions.</p>' );
 				}
 				?>
 			</div>

@@ -92,22 +92,24 @@ get_header(); ?>
 			<div class="col-sm-12">
 				<div id="primary" class="content-area">
 					<div id="content" class="site-content clearfix" role="main">
-						<?php
-						if ( 'main' === $statstype ) {
-							the_content();
-						}
+						<div class="statistics">
+							<?php
+							if ( 'main' === $statstype ) {
+								the_content();
+							}
 
-						if ( method_exists( 'LWTV_Stats_SSR', 'statistics' ) ) {
-							$attributes = array(
-								'page' => $statstype,
-							);
+							if ( method_exists( 'LWTV_Stats_SSR', 'statistics' ) ) {
+								$attributes = array(
+									'page' => $statstype,
+								);
 
-							// phpcs:ignore WordPress.Security.EscapeOutput
-							echo ( new LWTV_Stats_SSR() )->statistics( $attributes );
-						} else {
-							echo '<p>After this maintenance, statistics will be right back!</p>';
-						}
-						?>
+								// phpcs:ignore WordPress.Security.EscapeOutput
+								echo ( new LWTV_Stats_SSR() )->statistics( $attributes );
+							} else {
+								echo '<p>After this maintenance, statistics will be right back!</p>';
+							}
+							?>
+						</div>
 					</div><!-- #content -->
 				</div><!-- #primary -->
 			</div><!-- .col-sm-12 -->

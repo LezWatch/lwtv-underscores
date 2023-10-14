@@ -147,77 +147,44 @@ get_header(); ?>
 
 	<!-- Shows We Love -->
 	<section class="home-featured-shows">
-		<div class="container site-loop">
+		<div class="container">
 			<div class="row">
 				<div class="col">
 					<h2>Shows We Love <?php echo lwtv_symbolicons( 'hearts.svg', 'fa-heart' ); ?></h2>
 				</div>
 			</div>
-			<div class="row">
-				<div class="col">
-					<div class="card-deck">
-						<?php
-
-						// Collect 30 loved posts (max) and then pick 3.
-						$lovedpostloop = new WP_Query(
+			<?php
+			$class = ( 1 === $check_paged ) ? '' : 'four-across-loop';
+			?>
+			<div class="row site-loop shows-we-love-loop <?php echo esc_attr( $class ); ?>">
+				<?php
+				// Collect 30 loved posts (max) and then pick 3.
+				$lovedpostloop = new WP_Query(
+					array(
+						'post_type'      => 'post_type_shows',
+						'posts_per_page' => '30',
+						'post_status'    => array( 'publish' ),
+						'no_found_rows'  => true,
+						'_loved_shuffle' => 3,
+						'meta_query'     => array( // phpcs:ignore WordPress.DB.SlowDBQuery -- Risk of slow query accepted.
 							array(
-								'post_type'      => 'post_type_shows',
-								'posts_per_page' => '30',
-								'post_status'    => array( 'publish' ),
-								'no_found_rows'  => true,
-								'_loved_shuffle' => 3,
-								'meta_query'     => array( // phpcs:ignore WordPress.DB.SlowDBQuery -- Risk of slow query accepted.
-									array(
-										'key'     => 'lezshows_worthit_show_we_love',
-										'value'   => 'on',
-										'compare' => '=',
-									),
-								),
-							)
-						);
+								'key'     => 'lezshows_worthit_show_we_love',
+								'value'   => 'on',
+								'compare' => '=',
+							),
+						),
+					)
+				);
 
-						while ( $lovedpostloop->have_posts() ) :
-							$lovedpostloop->the_post();
-							?>
-							<div class="card">
-								<a href="<?php the_permalink(); ?>" title="<?php the_title_attribute(); ?>" ><?php the_post_thumbnail( 'postloop-img', array( 'class' => 'card-img-top' ) ); ?></a>
-								<div class="card-body">
-									<h3 class="card-title"><?php the_title(); ?></h3>
-									<div class="card-meta">
-										<?php
-										$stations = get_the_terms( get_the_ID(), 'lez_stations' );
-										if ( $stations && ! is_wp_error( $stations ) ) {
-											echo get_the_term_list( get_the_ID(), 'lez_stations', '<strong>Network:</strong> ', ', ' ) . '<br />';
-										}
-										$airdates = get_post_meta( get_the_ID(), 'lezshows_airdates', true );
-										if ( $airdates ) {
-											$airdate = $airdates['start'] . ' - ' . $airdates['finish'];
-											if ( $airdates['start'] === $airdates['finish'] ) {
-												$airdate = $airdates['finish'];
-											}
-											echo '<strong>Airdates:</strong> ' . esc_html( $airdate ) . '<br />';
-										}
-										?>
-									</div>
-									<div class="card-text">
-										<?php the_excerpt(); ?>
-									</div>
-								</div>
-								<div class="card-footer">
-									<a href="<?php the_permalink(); ?>" class="btn btn-sm btn-outline-primary">
-										Go to Show Profile
-									</a>
-								</div>
-							</div>
-
-							<?php
-						endwhile;
-						wp_reset_postdata();
-						?>
-					<!-- End Loop -->
-
-					</div><!-- .card-deck -->
-				</div><!-- .col -->
+				while ( $lovedpostloop->have_posts() ) :
+					$lovedpostloop->the_post();
+					?>
+					<?php get_template_part( 'template-parts/content', 'loved' ); ?>
+					<?php
+				endwhile;
+				wp_reset_postdata();
+				?>
+				<!-- End Loop -->
 			</div><!-- .row -->
 		</div><!-- .container -->
 	</section>

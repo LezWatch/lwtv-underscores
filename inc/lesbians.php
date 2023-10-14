@@ -352,7 +352,7 @@ function lwtv_yikes_show_star( $show_id ) {
 			$color_term = get_the_terms( $show_id, 'lez_stars' );
 			$color      = $color_term[0]->slug;
 		}
-		$star = ' <span role="img" aria-label="' . ucfirst( $color ) . ' Star Show" data-toggle="tooltip" title="' . ucfirst( $color ) . ' Star Show" class="show-star ' . $color . '">' . lwtv_symbolicons( 'star.svg', 'fa-star' ) . '</span>';
+		$star = ' <span role="img" aria-label="' . ucfirst( $color ) . ' Star Show" data-bs-target="tooltip" title="' . ucfirst( $color ) . ' Star Show" class="show-star ' . $color . '">' . lwtv_symbolicons( 'star.svg', 'fa-star' ) . '</span>';
 		return $star;
 	} else {
 		return;
@@ -521,7 +521,7 @@ function lwtv_yikes_chardata( $the_id, $data ) {
 					$termicon = get_term_meta( $the_cliche->term_id, 'lez_termsmeta_icon', true );
 					$tropicon = $termicon ? $termicon . '.svg' : 'square.svg';
 					$icon     = lwtv_symbolicons( $tropicon, 'fa-square' );
-					$cliches .= '<a href="' . get_term_link( $the_cliche->slug, 'lez_cliches' ) . '" data-toggle="tooltip" data-placement="bottom" rel="tag" title="' . $the_cliche->name . '"><span role="img" aria-label="' . $the_cliche->name . '" class="character-cliche ' . $the_cliche->slug . '">' . $icon . '</span></a>&nbsp;';
+					$cliches .= '<a href="' . get_term_link( $the_cliche->slug, 'lez_cliches' ) . '" data-bs-target="tooltip" data-placement="bottom" rel="tag" title="' . $the_cliche->name . '"><span role="img" aria-label="' . $the_cliche->name . '" class="character-cliche ' . $the_cliche->slug . '">' . $icon . '</span></a>&nbsp;';
 				}
 			}
 			$output = $cliches;

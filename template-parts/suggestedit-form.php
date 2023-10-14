@@ -10,7 +10,7 @@ $show_id = $post->ID;
 ?>
 
 <!-- Button trigger modal -->
-<button type="button" class="btn btn-primary btn-block" data-toggle="modal" data-target="#suggestForm">
+<button type="button" class="btn btn-primary btn-block" data-bs-target="modal" data-target="#suggestForm">
 	Suggest an Edit
 </button>
 
