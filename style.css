@@ -873,6 +873,7 @@ h1.entry-title {
   border: none;
   border-radius: 0;
   box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.14);
+  padding: 0;
 }
 .site-loop .card.col-sm-3, .site-loop .card.col-sm-4, .site-loop .card.col-sm-5, .site-loop .card.col-sm-6, .site-loop .card.col-sm-7, .site-loop .card.col-sm-8, .site-loop .card.col-sm-9, .site-loop .card.col-sm-10 {
   padding: 0;
