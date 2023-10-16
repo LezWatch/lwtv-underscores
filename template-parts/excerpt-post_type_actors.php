@@ -25,7 +25,7 @@ $thumb_array       = array(
 );
 
 // The Terrible Terri Polo: If we don't reset, her stats apply to everyone.
-unset( $shows, $actors, $gender, $sexuality, $cliches, $grave );
+unset( $shows, $actors, $gender, $sexuality, $cliches );
 ?>
 
 <div class="card">
@@ -42,11 +42,10 @@ unset( $shows, $actors, $gender, $sexuality, $cliches, $grave );
 				<?php
 				echo esc_html( get_the_title( $the_id ) );
 				if ( $archive ) {
-					echo lwtv_yikes_chardata( $the_id, 'dead' );
-				}
-				if ( isset( $grave ) ) {
-					// phpcs:ignore WordPress.Security.EscapeOutput
-					echo ' ' . $grave;
+					$died = get_post_meta( $the_id, 'lezactors_death', true );
+					if ( ! empty( $died ) ) {
+						echo '<span role="img" aria-label="Grim Reaper" title="Grim Reaper" class="charlist-grave">' . lwtv_symbolicons( 'grim-reaper.svg', 'fa-times-circle' ) . '</span>';
+					}
 				}
 				?>
 			</a>
@@ -57,8 +56,15 @@ unset( $shows, $actors, $gender, $sexuality, $cliches, $grave );
 			$sexuality = lwtv_yikes_actordata( $the_id, 'sexuality' );
 
 			// Gender and Sexuality
-			if ( isset( $gender ) && isset( $sexuality ) ) {
-				echo '<div class="card-meta-item"> ' . wp_kses_post( $gender . ' ' . $sexuality ) . '</div>';
+			if ( isset( $gender ) || isset( $sexuality ) ) {
+				echo '<div class="card-meta-item gender sexuality"><p>';
+				if ( isset( $gender ) ) {
+					echo '&bull; <strong>Gender:</strong> ' . wp_kses_post( $gender ) . '<br />';
+				}
+				if ( isset( $sexuality ) ) {
+					echo '&bull; <strong>Sexuality:</strong> ' . wp_kses_post( $sexuality );
+				}
+				echo '</p></div>';
 			}
 			?>
 		</div>

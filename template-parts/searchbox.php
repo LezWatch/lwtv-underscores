@@ -23,7 +23,7 @@
 		?>
 		<div class="col-sm-1 searchbox-close">
 			<span class="close-btn-container">
-				<a href="#collapseSearch" data-bs-target="collapse">
+				<a href="#collapseSearch" data-bs-target="#collapseSearch" data-bs-toggle="collapse">
 					<?php echo lwtv_symbolicons( 'cancel-circle.svg', 'fa-times-circle' ); ?>
 				</a>
 			</span>
