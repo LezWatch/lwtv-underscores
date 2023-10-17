@@ -60,7 +60,7 @@ class Filter_Top extends WP_Widget {
 			}
 
 			// phpcs:ignore WordPress.Security.EscapeOutput
-			echo '<span class="float-right">' . $icon . '</span>';
+			echo '<span class="float-right">' . $icon . '</span>&nbsp;';
 		}
 
 		// If the title is set

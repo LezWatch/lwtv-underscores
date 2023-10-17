@@ -49,7 +49,7 @@
   div.fs-label-wrap,
   .facetwp-type-fselect .fs-wrap,
   .facetwp-type-fselect .fs-dropdown {
-	  width: inherit!important;
+    max-width: inherit!important;
   }
 
   .site-sidebar {
@@ -461,13 +461,6 @@
         margin: 0 auto;
         width: 50%;
       }
-    }
-  }
-
-  .card-group {
-    .card.col-sm-5 {
-      height: 220px;
-      margin-bottom: 0;
     }
   }
 

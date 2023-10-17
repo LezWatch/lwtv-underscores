@@ -699,18 +699,19 @@ section {
 .site-loop.show-archive-loop {
 	grid-auto-rows: 1fr;
 
-	.card-group {
+	.card-group, .show-group {
 		margin-bottom: 1.4rem;
 		width: 100%;
 	}
 
-	.card {
-		&.col-sm-5 {
+	.card, .image {
+		&.col-sm-5, &.col-md-5 {
 			background-repeat: no-repeat;
 			@include cover;
 			background-position: center top;
 		}
 	}
+
 }
 
 
@@ -1876,10 +1877,10 @@ div.facetwp-facet-shows_scores input.facetwp-number {
 
 .facetwp-type-fselect .fs-wrap,
 .facetwp-type-fselect .fs-dropdown {
-	max-width: 220px;
+	max-width: 300px;
 	min-width: 100px;
 	overflow-wrap: break-word;
-	width: auto;
+	width: -webkit-fill-available!important;
 }
 
 /*--------------------------------------------------------------
