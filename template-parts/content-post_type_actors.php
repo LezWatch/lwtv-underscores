@@ -115,18 +115,32 @@ if ( get_post_meta( $the_id, 'lezactors_facebook', true ) ) {
 		'fa'   => 'fab fa-facebook',
 	);
 }
-if ( get_post_meta( $the_id, 'lezactors_tumblr', true ) ) {
-	$actor_urls['tumblr'] = array(
-		'name' => 'Tumblr',
-		'url'  => esc_url( 'https://' . get_post_meta( $the_id, 'lezactors_tumblr', true ) . '.tumblr.com' ),
-		'fa'   => 'fab fa-tumblr',
-	);
-}
 if ( get_post_meta( $the_id, 'lezactors_tiktok', true ) ) {
 	$actor_urls['tiktok'] = array(
 		'name' => 'TikTok',
 		'url'  => esc_url( 'https://tiktok.com/' . get_post_meta( $the_id, 'lezactors_tiktok', true ) ),
 		'fa'   => 'fab fa-tiktok',
+	);
+}
+if ( get_post_meta( $the_id, 'lezactors_bluesky', true ) ) {
+	$actor_urls['bluesky'] = array(
+		'name' => 'BlueSky',
+		'url'  => esc_url( get_post_meta( $the_id, 'lezactors_bluesky', true ) ),
+		'fa'   => 'fab fa-square',
+	);
+}
+if ( get_post_meta( $the_id, 'lezactors_twitch', true ) ) {
+	$actor_urls['twitch'] = array(
+		'name' => 'Twitch',
+		'url'  => esc_url( get_post_meta( $the_id, 'lezactors_twitch', true ) ),
+		'fa'   => 'fab fa-twitch',
+	);
+}
+if ( get_post_meta( $the_id, 'lezactors_tumblr', true ) ) {
+	$actor_urls['tumblr'] = array(
+		'name' => 'Tumblr',
+		'url'  => esc_url( 'https://' . get_post_meta( $the_id, 'lezactors_tumblr', true ) . '.tumblr.com' ),
+		'fa'   => 'fab fa-tumblr',
 	);
 }
 if ( get_post_meta( $the_id, 'lezactors_mastodon', true ) ) {
