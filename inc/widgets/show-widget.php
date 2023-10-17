@@ -55,7 +55,7 @@ class LWTV_Show extends WP_Widget {
 			$thumb_title       = ( empty( $thumb_attribution ) ) ? get_the_title() : get_the_title() . ' &copy; ' . $thumb_attribution;
 
 			echo '<div class="card">';
-			echo '<div class="card-header"><h4>Recently Added Show <span class="float-right">' . lwtv_symbolicons( 'tv-hd.svg', 'fa-tv' ) . '</span></h4></div>';
+			echo '<div class="card-header"><h4><span class="float-left">' . lwtv_symbolicons( 'tv-hd.svg', 'fa-tv' ) . '</span> Recently Added Show</h4></div>';
 
 			// Featured Image
 			echo '<a href="' . esc_url( get_the_permalink() ) . '">';
@@ -121,7 +121,6 @@ class LWTV_Show extends WP_Widget {
 			echo $after_widget;
 			/** Output widget HTML END **/
 		}
-
 	}
 
 	/**
@@ -154,11 +153,10 @@ class LWTV_Show extends WP_Widget {
 		</p>
 		<?php
 	}
-
 }
 
 // Register LWTV_Show widget
-function register_lwtv_show() {
+function register_lwtv_show() { // phpcs:ignore
 	register_widget( 'LWTV_Show' );
 }
 add_action( 'widgets_init', 'register_lwtv_show' );

@@ -59,11 +59,10 @@ class Filter_Bottom extends WP_Widget {
 		$title       = isset( $instance['title'] ) ? $instance['title'] : '';
 		$fontawesome = isset( $instance['fontawesome'] ) ? $instance['fontawesome'] : '';
 	}
-
 }
 
 // Register Filter_Bottom widget
-function register_filter_bottom() {
+function register_filter_bottom() { // phpcs:ignore
 	register_widget( 'Filter_Bottom' );
 }
 add_action( 'widgets_init', 'register_filter_bottom' );

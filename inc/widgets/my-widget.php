@@ -108,11 +108,10 @@ class My_Widget extends WP_Widget {
 
 		<?php
 	}
-
 }
 
 // Register My_Widget widget
-function register_my_widget() {
+function register_my_widget() { // phpcs:ignore
 	register_widget( 'My_Widget' );
 }
 add_action( 'widgets_init', 'register_my_widget' );

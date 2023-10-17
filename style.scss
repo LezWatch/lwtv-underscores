@@ -711,7 +711,17 @@ section {
 			background-position: center top;
 		}
 	}
+}
 
+.site-loop.related-posts-by-taxonomy-loop {
+	.card, .image {
+		&.col-sm-5, &.col-md-5,
+		&.col-sm-3, &.col-md-3 {
+			background-repeat: no-repeat;
+			@include cover;
+			background-position: center top;
+		}
+	}
 }
 
 
@@ -1093,10 +1103,7 @@ table.lwtvc {
 	max-height: 300px;
 	overflow: hidden;
 
-	.character-show-loop & {
-		height: 200px;
-	}
-
+	.character-show-loop &,
 	.search-results &,
 	.character-archive-loop &, .actor-archive-loop {
 		height: 300px;
@@ -1618,6 +1625,11 @@ h3 svg * {
 		}
 	}
 
+	&.related-posts-by-taxonomy-loop {
+		grid-template-columns: repeat(2, 1fr);
+		grid-gap: 1.6rem;
+	}
+
 	&.character-show-loop, &.related-post-loop {
 		grid-gap: 1rem;
 	}
@@ -1998,11 +2010,11 @@ div.facetwp-facet-shows_scores input.facetwp-number {
 	}
 
 	.widget_categories, .widget_tag_cloud,
-	.widget-tags {
+	.widget-tags, .widget_custom_html {
 		@include box-shadow(0 1px 4px 0 rgba(0, 0, 0, 0.14));
 		padding-bottom: .75rem;
 
-		.tagcloud, .widget-tags-container {
+		.tagcloud, .widget-tags-container, .custom-html-widget {
 			padding: 0 1.25rem;
 		}
 
