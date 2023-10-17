@@ -10,9 +10,11 @@ $show_id = $post->ID;
 ?>
 
 <!-- Button trigger modal -->
-<button type="button" class="btn btn-primary btn-block" data-bs-target="modal" data-target="#suggestForm">
+<div class="d-grid gap-2">
+<button type="button" class="btn btn-primary btn-lg btn-block" data-bs-toggle="modal" data-bs-target="#suggestForm">
 	Suggest an Edit
 </button>
+</div>
 
 <!-- Modal -->
 <div class="modal fade" id="suggestForm" tabindex="-1" aria-labelledby="suggestFormLabel" aria-hidden="true">
