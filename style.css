@@ -863,6 +863,11 @@ h1.entry-title {
 .toc-container .breadcrumb {
   margin-bottom: 0;
   text-align: center;
+  background-color: #e9ecef;
+  border-radius: .25rem;
+  padding: .75rem 1rem;
+  margin-bottom: 1rem;
+  list-style: none;
 }
 .toc-container .breadcrumb .breadcrumb-item {
   display: inline-block;
