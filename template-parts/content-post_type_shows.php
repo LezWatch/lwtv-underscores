@@ -130,12 +130,6 @@ if ( $related ) {
 			<?php
 			if ( method_exists( 'LWTV_Related_Posts', 'related_posts' ) && method_exists( 'LWTV_Related_Posts', 'count_related_posts' ) ) {
 				echo ( new LWTV_Related_Posts() )->related_posts( $slug ); // phpcs:ignore WordPress.Security.EscapeOutput
-				if ( count( ( new LWTV_Related_Posts() )->count_related_posts( $slug ) ) > '5' ) {
-					$get_tags = term_exists( $slug, 'post_tag' );
-					if ( ! is_null( $get_tags ) && $get_tags >= 1 ) {
-						echo '<a href="' . esc_url( get_tag_link( $get_tags['term_id'] ) ) . '" class="btn btn-outline-primary">Read More ...</a>';
-					}
-				}
 			}
 			?>
 		</div></div>
