@@ -234,7 +234,7 @@ $thumb_array       = array(
 // Related Posts.
 if ( isset( $related ) && $related ) {
 	?>
-	<section name="related-posts" id="related-posts" class="showschar-section">
+	<section name="related-posts" id="related-posts" class="relatedposts-section">
 		<h2>Related Articles</h2>
 		<div class="card-body">
 			<?php
@@ -243,7 +243,7 @@ if ( isset( $related ) && $related ) {
 				if ( count( ( new LWTV_Related_Posts() )->count_related_posts( $slug ) ) > '3' ) {
 					$get_tags = term_exists( $slug, 'post_tag' );
 					if ( ! is_null( $get_tags ) && $get_tags >= 1 ) {
-						echo '<p><a href="' . esc_url( get_tag_link( $get_tags['term_id'] ) ) . '">Read More ...</a></p>';
+						echo '<p class="read-more"><a href="' . esc_url( get_tag_link( $get_tags['term_id'] ) ) . '" class="btn btn-outline-primary">Read More ...</a></p>';
 					}
 				}
 			}

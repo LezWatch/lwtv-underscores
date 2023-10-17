@@ -520,6 +520,11 @@ h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
 	p {
 		margin-bottom: 1.2em;
 	}
+
+	p.read-more {
+		margin-top: 1.2rem;
+		margin-bottom: 0;
+	}
 }
 
 .sticky, .bypostauthor {display: block;}
@@ -1598,7 +1603,7 @@ h3 svg * {
 
 .site-loop {
 	&.actor-archive-loop, &.character-archive-loop,
-	&.main-posts-loop, &.character-show-loop, &.shows-we-love-loop {
+	&.main-posts-loop, &.character-show-loop, &.shows-we-love-loop, &.related-post-loop {
 		grid-template-columns: repeat(3, 1fr);
 		grid-gap: 1.6rem;
 
@@ -1607,7 +1612,7 @@ h3 svg * {
 		}
 	}
 
-	&.character-show-loop {
+	&.character-show-loop, &.related-post-loop {
 		grid-gap: 1rem;
 	}
 }

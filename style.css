@@ -827,6 +827,10 @@ select {
 .entry-content p, .entry-summary p {
   margin-bottom: 1.2em;
 }
+.entry-content p.read-more, .entry-summary p.read-more {
+  margin-top: 1.2rem;
+  margin-bottom: 0;
+}
 
 .sticky, .bypostauthor {
   display: block;
@@ -1697,14 +1701,14 @@ h3 svg * {
   fill: #B87333;
 }
 
-.site-loop.actor-archive-loop, .site-loop.character-archive-loop, .site-loop.main-posts-loop, .site-loop.character-show-loop, .site-loop.shows-we-love-loop {
+.site-loop.actor-archive-loop, .site-loop.character-archive-loop, .site-loop.main-posts-loop, .site-loop.character-show-loop, .site-loop.shows-we-love-loop, .site-loop.related-post-loop {
   grid-template-columns: repeat(3, 1fr);
   grid-gap: 1.6rem;
 }
-.site-loop.actor-archive-loop.four-across-loop, .site-loop.character-archive-loop.four-across-loop, .site-loop.main-posts-loop.four-across-loop, .site-loop.character-show-loop.four-across-loop, .site-loop.shows-we-love-loop.four-across-loop {
+.site-loop.actor-archive-loop.four-across-loop, .site-loop.character-archive-loop.four-across-loop, .site-loop.main-posts-loop.four-across-loop, .site-loop.character-show-loop.four-across-loop, .site-loop.shows-we-love-loop.four-across-loop, .site-loop.related-post-loop.four-across-loop {
   grid-template-columns: repeat(4, 1fr);
 }
-.site-loop.character-show-loop {
+.site-loop.character-show-loop, .site-loop.related-post-loop {
   grid-gap: 1rem;
 }
 
