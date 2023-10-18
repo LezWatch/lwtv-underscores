@@ -51,9 +51,19 @@ if ( $related_posts ) {
 						</div>
 						<div class="col-sm-9">
 							<div class="card-body">
-								<h3 class="card-title">
+								<h5 class="card-title">
 									<a href="<?php the_permalink( $the_id ); ?>"><?php echo esc_html( get_the_title( $the_id ) ); ?></a>
-								</h3>
+								</h5>
+								<?php
+								$airdates = get_post_meta( $the_id, 'lezshows_airdates', true );
+								if ( $airdates ) {
+									$airdate = $airdates['start'] . ' - ' . $airdates['finish'];
+									if ( $airdates['start'] === $airdates['finish'] ) {
+										$airdate = $airdates['finish'];
+									}
+									echo '<h6 class="card-subtitle mb-2 text-body-secondary"><strong>Airdates:</strong> ' . esc_html( $airdate ) . '</h6>';
+								}
+								?>
 							</div>
 						</div>
 					</div><!-- .row -->
