@@ -2257,6 +2257,11 @@ div.facetwp-facet-shows_scores input.facetwp-number {
 /* responsive styles */
 /* =Responsive styles
 ----------------------------------------------- */
+@media (min-width: 1400px) {
+  .container-xxl, .container-xl, .container-lg, .container-md, .container-sm, .container {
+    max-width: 1140px;
+  }
+}
 @media (max-width: 1199px) {
   #masthead .navbar-brand {
     font-size: 1.35rem;
