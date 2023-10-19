@@ -8,8 +8,8 @@
 // Versioning for efficient developers.
 if ( ! defined( 'LWTV_THEME_VERSION' ) ) {
 	$versions = array(
-		'lwtv-underscores' => '3.1.26',   // Bump this any time you make serious CSS changes.
-		'font-awesome'     => '6.4.2',   // Bump when you update Font Awesome.
+		'lwtv-underscores' => '4.0.0',    // Bump this any time you make serious CSS changes.
+		'font-awesome'     => '6.4.2',    // Bump when you update Font Awesome.
 		'bootstrap'        => '5.3.2',    // Bump when you update bootstrap.
 		'lwtv-blocks'      => '1.0.0',    // Bump when you update the blocks.
 		'yikes-nav'        => '20201024', // Last date this was updated.
@@ -53,7 +53,8 @@ function yikes_starter_blog_page_title() {
  * @param string $more set the more ellipsis.
  */
 function yks_excerpt_more( $more ) {
-	return '...';
+	$more = '...';
+	return $more;
 }
 add_filter( 'excerpt_more', 'yks_excerpt_more' );
 
@@ -64,7 +65,8 @@ add_filter( 'excerpt_more', 'yks_excerpt_more' );
  * @return int (Maybe) modified excerpt length.
  */
 function lwtv_custom_excerpt_length( $length ) {
-	return 20;
+	$length = 20;
+	return $length;
 }
 add_filter( 'excerpt_length', 'lwtv_custom_excerpt_length', 999 );
 
@@ -87,7 +89,6 @@ function yks_the_custom_logo() {
 	}
 }
 
-
 /**
  * Images
  */
@@ -108,13 +109,11 @@ add_image_size( 'postloop-img', 525, 300, true );
  */
 require_once 'inc/walker-comment.php';
 
-
 /**
  * Authors
  */
 // Author bio box.
 require_once 'inc/author-box.php';
-
 
 /**
  * Archives
@@ -139,7 +138,6 @@ function yikes_archive_title( $title ) {
 }
 
 add_filter( 'get_the_archive_title', 'yikes_archive_title' );
-
 
 /**
  * Theme Setup
@@ -201,7 +199,6 @@ if ( ! function_exists( 'yikes_starter_setup' ) ) {
 }
 
 add_action( 'after_setup_theme', 'yikes_starter_setup' );
-
 
 /**
  * Register widgetized areas and update sidebar with default widgets

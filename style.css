@@ -269,6 +269,20 @@ pre.wp-block-verse {
   color: #fff;
   font-weight: bold;
 }
+.facetwp-pager .facetwp-page.next {
+  margin-left: auto !important;
+  background-color: #d1548e;
+  border-color: #d1548e;
+  color: #fff;
+  font-weight: bold;
+}
+.facetwp-pager .facetwp-page.prev {
+  margin-right: auto !important;
+  background-color: #d1548e;
+  border-color: #d1548e;
+  color: #fff;
+  font-weight: bold;
+}
 
 /* List Groups */
 .list-group .list-group-item {

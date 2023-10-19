@@ -236,8 +236,6 @@ pre.wp-block-verse {
 		justify-content: center !important;
 		border: 1px solid $lwtv-grey;
 
-
-
 		&.active, a.active {
 			background-color: $lwtv-pink;
 			border-color: $lwtv-pink;
@@ -245,6 +243,23 @@ pre.wp-block-verse {
 			font-weight: bold;
 		}
 	}
+
+	.facetwp-page.next {
+		margin-left: auto !important;
+		background-color: $lwtv-pink;
+		border-color: $lwtv-pink;
+		color: $white;
+		font-weight: bold;
+	}
+
+	.facetwp-page.prev {
+		margin-right: auto !important;
+		background-color: $lwtv-pink;
+		border-color: $lwtv-pink;
+		color: $white;
+		font-weight: bold;
+	}
+
 }
 
 /* List Groups */
