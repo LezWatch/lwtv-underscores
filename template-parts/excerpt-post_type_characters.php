@@ -98,7 +98,7 @@ if ( ( 'recurring' === $char_role && 'post_type_shows' === get_post_type() ) || 
 
 			// Gender and Sexuality
 			if ( isset( $gender ) && isset( $sexuality ) ) {
-				echo wp_kses_post( '<div class="card-meta-item"> ' . $gender . ' &bull; ' . $sexuality . '</div>' );
+				echo wp_kses_post( '<div class="card-meta-item gender sexuality"> ' . $gender . ' &bull; ' . $sexuality . '</div>' );
 			}
 
 			// List of Cliches

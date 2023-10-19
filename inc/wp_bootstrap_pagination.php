@@ -20,7 +20,9 @@ function wp_bootstrap_pagination( $args = array() ) {
 	);
 
 	$args['range'] = (int) $args['range'] - 1;
+	// phpcs:ignore WordPress.PHP.StrictInArray.MissingTrueStrict
 	if ( ! in_array( 'custom_query', $args ) || ! $args['custom_query'] ) {
+		// phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
 		$args['custom_query'] = @$GLOBALS['wp_query'];
 	}
 
@@ -58,7 +60,7 @@ function wp_bootstrap_pagination( $args = array() ) {
 
 	$firstpage = esc_attr( get_pagenum_link( 1 ) );
 	if ( $firstpage && ( 1 !== $page ) ) {
-		$echo .= '<li class="page-item first mr-auto"><a href="' . $firstpage . '" class="page-link">' . lwtv_symbolicons( 'caret-left-circle.svg', 'fa-chevron-circle-left' ) . ' ' . __( 'First', 'text-domain' ) . '</a></li>';
+		$echo .= '<li class="page-item first me-auto"><a href="' . $firstpage . '" class="page-link">' . lwtv_symbolicons( 'caret-left-circle.svg', 'fa-chevron-circle-left' ) . ' ' . __( 'First', 'text-domain' ) . '</a></li>';
 	}
 
 	if ( $previous && ( 1 !== $page ) ) {
@@ -83,7 +85,7 @@ function wp_bootstrap_pagination( $args = array() ) {
 
 	$lastpage = esc_attr( get_pagenum_link( $count ) );
 	if ( $lastpage ) {
-		$echo .= '<li class="page-item last ml-auto"><a href="' . $lastpage . '" class="page-link">' . __( 'Last', 'text-domain' ) . ' ' . lwtv_symbolicons( 'caret-right-circle.svg', 'fa-chevron-circle-right' ) . '</a></li>';
+		$echo .= '<li class="page-item last ms-auto"><a href="' . $lastpage . '" class="page-link">' . __( 'Last', 'text-domain' ) . ' ' . lwtv_symbolicons( 'caret-right-circle.svg', 'fa-chevron-circle-right' ) . '</a></li>';
 	}
 
 	if ( isset( $echo ) ) {

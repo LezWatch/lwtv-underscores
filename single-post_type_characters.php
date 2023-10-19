@@ -8,7 +8,7 @@
 // Build the icon.
 $icon = '<div class="show-header-svg">';
 if ( has_term( 'dead', 'lez_cliches' ) ) {
-	$icon .= ' <span role="img" aria-label="RIP - Dead Character" data-toggle="tooltip" title="RIP - Dead Character" class="cliche-dead">' . lwtv_symbolicons( 'rest-in-peace.svg', 'fa-ban' ) . '</span>';
+	$icon .= ' <span role="img" aria-label="RIP - Dead Character" data-bs-target="tooltip" title="RIP - Dead Character" class="cliche-dead">' . lwtv_symbolicons( 'rest-in-peace.svg', 'fa-ban' ) . '</span>';
 }
 $icon .= '</div>';
 

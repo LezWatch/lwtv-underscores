@@ -52,12 +52,14 @@ get_header();
 			<div class="col-sm-12">
 				<div id="primary" class="content-area">
 					<div id="content" class="site-content clearfix" role="main">
-						<?php
-						if ( method_exists( 'LWTV_This_Year', 'display' ) ) {
-							// phpcs:ignore WordPress.Security.EscapeOutput
-							echo ( new LWTV_This_Year() )->display( $thisyear );
-						}
-						?>
+						<div class="thisyear">
+							<?php
+							if ( method_exists( 'LWTV_This_Year', 'display' ) ) {
+								// phpcs:ignore WordPress.Security.EscapeOutput
+								echo ( new LWTV_This_Year() )->display( $thisyear );
+							}
+							?>
+						</div>
 					</div><!-- #content -->
 				</div><!-- #primary -->
 			</div><!-- .col-sm-12 -->

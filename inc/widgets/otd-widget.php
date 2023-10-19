@@ -104,7 +104,6 @@ class LWTV_Today_Widget extends WP_Widget {
 		$response = json_decode( $response, true );
 
 		return $response;
-
 	}
 
 	/**
@@ -195,11 +194,15 @@ class LWTV_Today_Widget extends WP_Widget {
 
 		$thumb_attribution = get_post_meta( get_post_thumbnail_id( $the_post ), 'lwtv_attribution', true );
 		$thumb_title       = ( empty( $thumb_attribution ) ) ? get_the_title( $the_post ) : get_the_title( $the_post ) . ' &copy; ' . $thumb_attribution;
-		$thumbnail         = get_the_post_thumbnail( $the_post, $thumb, array(
-			'class' => 'card-img-top',
-			'alt'   => $thumb_title,
-			'title' => $thumb_title,
-		) );
+		$thumbnail         = get_the_post_thumbnail(
+			$the_post,
+			$thumb,
+			array(
+				'class' => 'card-img-top',
+				'alt'   => $thumb_title,
+				'title' => $thumb_title,
+			)
+		);
 
 		// Featured Image
 		$image  = '<div class="' . $type . '-image-wrapper"><a href="' . get_the_permalink( $the_post ) . '">' . $image . '</a></div>';
@@ -254,11 +257,10 @@ class LWTV_Today_Widget extends WP_Widget {
 		</p>
 		<?php
 	}
-
 }
 
 // Register widget and remove the one from the plugin for reasons
-function register_lwtv_today_widget() {
+function register_lwtv_today_widget() { // phpcs:ignore
 	register_widget( 'LWTV_Today_Widget' );
 }
 add_action( 'widgets_init', 'register_lwtv_today_widget' );

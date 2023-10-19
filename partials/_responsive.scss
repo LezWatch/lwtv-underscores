@@ -2,7 +2,11 @@
 ----------------------------------------------- */
 
 // Extra large devices (large desktops)
-// No media query since the extra-large breakpoint has no upper bound on its width
+@media (min-width: 1400px) {
+  .container-xxl, .container-xl, .container-lg, .container-md, .container-sm, .container {
+    max-width: 1140px;
+  }
+}
 
 // Large devices (desktops, less than 1200px)
 @media (max-width: 1199px) {
@@ -49,7 +53,7 @@
   div.fs-label-wrap,
   .facetwp-type-fselect .fs-wrap,
   .facetwp-type-fselect .fs-dropdown {
-	  width: inherit!important;
+    max-width: inherit!important;
   }
 
   .site-sidebar {
@@ -461,13 +465,6 @@
         margin: 0 auto;
         width: 50%;
       }
-    }
-  }
-
-  .card-group {
-    .card.col-sm-5 {
-      height: 220px;
-      margin-bottom: 0;
     }
   }
 

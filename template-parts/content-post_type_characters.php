@@ -64,7 +64,7 @@ if ( '' !== $all_actors ) {
 			$this_actor = '<a href="' . get_permalink( $each_actor ) . '">' . get_the_title( $each_actor ) . '</a>';
 		}
 		if ( lwtv_yikes_is_queer( $each_actor ) ) {
-			$this_actor .= ' <span role="img" aria-label="Queer IRL Actor" data-toggle="tooltip" title="Queer IRL Actor" class="character-cliche queer-irl">' . lwtv_symbolicons( 'rainbow.svg', 'fa-cloud' ) . '</span>';
+			$this_actor .= ' <span role="img" aria-label="Queer IRL Actor" data-bs-target="tooltip" title="Queer IRL Actor" class="character-cliche queer-irl">' . lwtv_symbolicons( 'rainbow.svg', 'fa-cloud' ) . '</span>';
 		}
 		$the_actors[] = $this_actor;
 	}
@@ -152,13 +152,13 @@ if ( $alt_images ) {
 			<!-- Nav tabs -->
 			<ul class="nav nav-tabs" id="altImages" role="tablist">
 				<li class="nav-item" role="presentation">
-					<button class="nav-link active" id="primaryimage-tab" data-toggle="tab" data-target="#primaryimage" type="button" role="tab" aria-controls="primaryimage" aria-selected="true">Primary</button>
+					<button class="nav-link active" id="primaryimage-tab" data-bs-target="tab" data-target="#primaryimage" type="button" role="tab" aria-controls="primaryimage" aria-selected="true">Primary</button>
 				</li>
 				<?php
 				foreach ( $image_tabs as $a_tab ) {
 					?>
 					<li class="nav-item" role="presentation">
-						<button class="nav-link" id="<?php echo esc_attr( $a_tab['slug'] ); ?>-tab" data-toggle="tab" data-target="#<?php echo esc_attr( $a_tab['slug'] ); ?>" type="button" role="tab" aria-controls="<?php echo esc_attr( $a_tab['slug'] ); ?>" aria-selected="false"><?php echo esc_html( ucfirst( $a_tab['title'] ) ); ?></button>
+						<button class="nav-link" id="<?php echo esc_attr( $a_tab['slug'] ); ?>-tab" data-bs-target="tab" data-target="#<?php echo esc_attr( $a_tab['slug'] ); ?>" type="button" role="tab" aria-controls="<?php echo esc_attr( $a_tab['slug'] ); ?>" aria-selected="false"><?php echo esc_html( ucfirst( $a_tab['title'] ) ); ?></button>
 					</li>
 					<?php
 				}
@@ -222,7 +222,6 @@ if ( $alt_images ) {
 		</div>
 	</div>
 	<div class="characters-description">
-		<hr />
 		<?php
 		// Seems to be running twice, so we need this catch.
 		$post_content = the_content();

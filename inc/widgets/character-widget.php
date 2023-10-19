@@ -53,22 +53,25 @@ class LWTV_Character extends WP_Widget {
 			$thumb_title       = ( empty( $thumb_attribution ) ) ? get_the_title() : get_the_title() . ' &copy; ' . $thumb_attribution;
 
 			echo '<div class="card">';
-			echo '<div class="card-header"><h4>Recently Added Character <span class="float-right">' . lwtv_symbolicons( 'contact-card.svg', 'fa-address-card' ) . '</span></h4></div>';
+			echo '<div class="card-header"><h4><span class="float-left">' . lwtv_symbolicons( 'contact-card.svg', 'fa-address-card' ) . '</span> Recently Added Character</h4></div>';
 
 			// Featured Image
 			echo '<div class="character-image-wrapper">';
 			echo '<a href="' . esc_url( get_the_permalink() ) . '">';
-			echo the_post_thumbnail( 'character-img', array(
-				'class' => 'card-img-top',
-				'alt'   => $thumb_title,
-				'title' => $thumb_title,
-			) );
+			the_post_thumbnail(
+				'character-img',
+				array(
+					'class' => 'card-img-top',
+					'alt'   => $thumb_title,
+					'title' => $thumb_title,
+				)
+			);
 			echo '</a>';
 			echo '</div>';
 
 			echo '<div class="card-body">';
 				// Title
-				echo '<h4 class="card-title">' . get_the_title() . '</h4>';
+				echo '<h4 class="card-title">' . esc_html( get_the_title() ) . '</h4>';
 				echo '<div class="card-text">';
 					// Only show one show
 					echo lwtv_yikes_chardata( get_the_ID(), 'oneshow' );
@@ -89,7 +92,6 @@ class LWTV_Character extends WP_Widget {
 			echo wp_kses_post( $after_widget );
 			/** Output widget HTML END **/
 		}
-
 	}
 
 	/**
@@ -123,11 +125,10 @@ class LWTV_Character extends WP_Widget {
 
 		<?php
 	}
-
 }
 
 // Register LWTV_Character widget
-function register_lwtv_character() {
+function register_lwtv_character() { // phpcs:ignore
 	register_widget( 'LWTV_Character' );
 }
 add_action( 'widgets_init', 'register_lwtv_character' );

@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Do a git checkout including submodules
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           submodules: true
 
@@ -31,4 +31,4 @@ jobs:
           EXCLUDE: "/.git/, /.github/, /.husky/, /.sass-cache/, /.vscode/, /node_modules/, /vendor/, .browserslistrc, .gitignore, .npmrc, .nvmrc, .ruby-version, composer.json, composer.lock, package-lock.json, package.json, phpcs.xml.dist"
           SCRIPT_AFTER: |
             cd ~/lezwatchtv.com
-            wp varnish purge https://lezwatchtv.com/ --wildcard
+            wp nginx-helper purge-all

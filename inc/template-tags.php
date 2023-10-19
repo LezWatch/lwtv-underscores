@@ -183,7 +183,7 @@ function yikes_generate_pagination_buttons( $page_number, $max_num_pages, $view_
 	?>
 	<nav aria-label="Post Pages navigation" role="navigation" class="yikes-pagination">
 		<ul class="pagination justify-content-center">
-				<li class="page-item previous mr-auto">
+				<li class="page-item previous me-auto">
 				<?php
 				if ( 1 < $page_number ) {
 					echo '<a href="/page/' . esc_attr( $page_number - 1 ) . '" class="page-link">' . lwtv_symbolicons( 'caret-left-circle.svg', 'fa-chevron-circle-left' ) . ' <span>Previous</span></a>';
@@ -199,7 +199,7 @@ function yikes_generate_pagination_buttons( $page_number, $max_num_pages, $view_
 				echo '<li><a href="' . esc_attr( $view_all ) . '" class="page-link"><span>View All</span></a></li>';
 			}
 			?>
-			<li class="page-item next ml-auto">
+			<li class="page-item next ms-auto">
 				<?php
 				if ( $max_num_pages > $page_number ) {
 					echo '<a href="/page/' . esc_attr( $page_number + 1 ) . '" class="page-link"><span>Next</span> ' . lwtv_symbolicons( 'caret-right-circle.svg', 'fa-chevron-circle-right' ) . '</a>';

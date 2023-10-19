@@ -30,6 +30,7 @@
 					<?php bloginfo( 'name' ); ?>
 				</span>
 			</a>
+			<div class="collapse navbar-collapse" id="primary">
 			<?php
 			wp_nav_menu(
 				array(
@@ -37,16 +38,17 @@
 					'theme_location' => 'primary',
 					'depth'          => 3,
 					'container'      => false,
-					'menu_class'     => 'navbar-nav ml-auto',
+					'menu_class'     => 'navbar-nav ms-auto',
 					'fallback_cb'    => 'wp_page_menu',
 					'walker'         => new WP_Bootstrap_Navwalker(),
 					'items_wrap'     => '<ul id="%1$s" class="%2$s" aria-labelledby="main-navigation">%3$s</ul>',
 				)
 			);
 			?>
+			</div>
 
 			<span class="nav-item search" id="search-btn">
-				<a class="nav-link" data-toggle="collapse" href="#collapseSearch">
+				<a class="nav-link" data-bs-toggle="collapse" role="button" data-bs-target="#collapseSearch" href="#collapseSearch" aria-expanded="false">
 					<?php echo lwtv_symbolicons( 'search.svg', 'fa-search' ); ?>
 					<span class="screen-reader-text">Search the Site</span>
 				</a>

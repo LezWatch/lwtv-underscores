@@ -108,7 +108,7 @@ class YIKES_Social_Menu_Widget extends WP_Widget {
 /**
  * Register YIKES_Social_Menu_Widget widget.
  */
-function register_yikes_social_menu_widget() {
+function register_yikes_social_menu_widget() { // phpcs:ignore
 	register_widget( 'YIKES_Social_Menu_Widget' );
 }
 add_action( 'widgets_init', 'register_yikes_social_menu_widget' );

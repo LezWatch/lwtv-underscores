@@ -98,7 +98,7 @@ if ( get_post_meta( $the_id, 'lezactors_twitter', true ) ) {
 	$actor_urls['twitter'] = array(
 		'name' => 'Twitter',
 		'url'  => esc_url( 'https://twitter.com/' . get_post_meta( $the_id, 'lezactors_twitter', true ) ),
-		'fa'   => 'fab fa-twitter',
+		'fa'   => 'fab fa-x-twitter',
 	);
 }
 if ( get_post_meta( $the_id, 'lezactors_instagram', true ) ) {
@@ -115,18 +115,32 @@ if ( get_post_meta( $the_id, 'lezactors_facebook', true ) ) {
 		'fa'   => 'fab fa-facebook',
 	);
 }
-if ( get_post_meta( $the_id, 'lezactors_tumblr', true ) ) {
-	$actor_urls['tumblr'] = array(
-		'name' => 'Tumblr',
-		'url'  => esc_url( 'https://' . get_post_meta( $the_id, 'lezactors_tumblr', true ) . '.tumblr.com' ),
-		'fa'   => 'fab fa-tumblr',
-	);
-}
 if ( get_post_meta( $the_id, 'lezactors_tiktok', true ) ) {
 	$actor_urls['tiktok'] = array(
 		'name' => 'TikTok',
 		'url'  => esc_url( 'https://tiktok.com/' . get_post_meta( $the_id, 'lezactors_tiktok', true ) ),
 		'fa'   => 'fab fa-tiktok',
+	);
+}
+if ( get_post_meta( $the_id, 'lezactors_bluesky', true ) ) {
+	$actor_urls['bluesky'] = array(
+		'name' => 'BlueSky',
+		'url'  => esc_url( get_post_meta( $the_id, 'lezactors_bluesky', true ) ),
+		'fa'   => 'fab fa-square',
+	);
+}
+if ( get_post_meta( $the_id, 'lezactors_twitch', true ) ) {
+	$actor_urls['twitch'] = array(
+		'name' => 'Twitch',
+		'url'  => esc_url( get_post_meta( $the_id, 'lezactors_twitch', true ) ),
+		'fa'   => 'fab fa-twitch',
+	);
+}
+if ( get_post_meta( $the_id, 'lezactors_tumblr', true ) ) {
+	$actor_urls['tumblr'] = array(
+		'name' => 'Tumblr',
+		'url'  => esc_url( 'https://' . get_post_meta( $the_id, 'lezactors_tumblr', true ) . '.tumblr.com' ),
+		'fa'   => 'fab fa-tumblr',
 	);
 }
 if ( get_post_meta( $the_id, 'lezactors_mastodon', true ) ) {
@@ -159,7 +173,7 @@ $thumb_array       = array(
 				if ( ! empty( get_the_content() ) ) {
 					the_content();
 				} else {
-					the_title( '<p>', ' is an actor who has played at least one queer character on TV. Information on this page has not yet been verified. Feel free to <a href="#"  data-toggle="modal" data-target="#suggestForm">suggest an edit</a> with any corrections or additions.</p>' );
+					the_title( '<p>', ' is an actor who has played at least one queer character on TV. Information on this page has not yet been verified. Feel free to <a href="#" data-bs-toggle="modal" data-bs-target="#suggestForm">suggest an edit</a> with any corrections or additions.</p>' );
 				}
 				?>
 			</div>
@@ -216,7 +230,7 @@ $thumb_array       = array(
 			<div class="card-meta-item">
 				<?php
 				if ( count( $actor_urls ) > 0 ) {
-					echo '<span ID="actor-links"><strong>Links:</strong></span> ';
+					echo '<span ID="actor-links"><strong>Links: </strong></span> ';
 					echo '<ul class="actor-meta-links" aria-labelledby="actor-links">';
 					foreach ( $actor_urls as $source ) {
 						echo '<li><i class="' . esc_attr( strtolower( $source['fa'] ) ) . '" aria-hidden="true"></i> <a href="' . esc_url( $source['url'] ) . '" target="_blank">' . esc_html( $source['name'] ) . '</a><span class="screen-reader-text">, opens in new tab</span></li>';
@@ -234,18 +248,12 @@ $thumb_array       = array(
 // Related Posts.
 if ( isset( $related ) && $related ) {
 	?>
-	<section name="related-posts" id="related-posts" class="showschar-section">
+	<section name="related-posts" id="related-posts" class="relatedposts-section">
 		<h2>Related Articles</h2>
 		<div class="card-body">
 			<?php
 			if ( method_exists( 'LWTV_Related_Posts', 'related_posts' ) && method_exists( 'LWTV_Related_Posts', 'count_related_posts' ) ) {
 				echo ( new LWTV_Related_Posts() )->related_posts( $slug ); // phpcs:ignore WordPress.Security.EscapeOutput
-				if ( count( ( new LWTV_Related_Posts() )->count_related_posts( $slug ) ) > '3' ) {
-					$get_tags = term_exists( $slug, 'post_tag' );
-					if ( ! is_null( $get_tags ) && $get_tags >= 1 ) {
-						echo '<p><a href="' . esc_url( get_tag_link( $get_tags['term_id'] ) ) . '">Read More ...</a></p>';
-					}
-				}
 			}
 			?>
 		</div>

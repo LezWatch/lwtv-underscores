@@ -6,17 +6,22 @@
  */
 
 // Build the icon.
+$dead = get_post_meta( $post->ID, 'lezactors_death', true );
 $icon = '<div class="show-header-svg">';
 if ( lwtv_yikes_is_queer( $post->ID ) ) {
-	$icon .= ' <span role="img" aria-label="Queer IRL Actor" data-toggle="tooltip" title="Queer IRL Actor" class="cliche-queer-irl">' . lwtv_symbolicons( 'rainbow.svg', 'fa-cloud' ) . '</span>';
+	$icon .= ' <span role="img" aria-label="Queer IRL Actor" data-bs-target="tooltip" title="Queer IRL Actor" class="cliche-queer-irl">' . lwtv_symbolicons( 'rainbow.svg', 'fa-cloud' ) . '</span>';
 }
-if ( lwtv_yikes_is_birthday( $post->ID ) ) {
-	$icon .= ' <span role="img" aria-label="Actor Having a Birthday" data-toggle="tooltip" title="Happy Birthday" class="happy-birthday">' . lwtv_symbolicons( 'cake.svg', 'fa-birthday-cake' ) . '</span>';
+if ( lwtv_yikes_is_birthday( $post->ID ) && ! $dead ) {
+	$icon .= ' <span role="img" aria-label="Actor Having a Birthday" data-bs-target="tooltip" title="Happy Birthday" class="happy-birthday">' . lwtv_symbolicons( 'cake.svg', 'fa-birthday-cake' ) . '</span>';
 }
+if ( $dead ) {
+	$icon .= '<span role="img" aria-label="RIP - Dead Actor" data-bs-target="tooltip" title="RIP - Dead Actor" class="cliche-dead">' . lwtv_symbolicons( 'rest-in-peace.svg', 'fa-ban' ) . '</span>';
+}
+
 $icon .= '</div>';
 
 // Privacy.
-$privacy = ( 'private' === get_post_status( $post->ID ) ) ? '<p><strong>Note:</strong> <em>This post is private and not visible to non-admins. <strong>Do not</strong> make this public without confirming in #staff first.</em></p>' : '';
+$privacy = ( 'private' === get_post_status( $post->ID ) ) ? '<p><strong>Note:</strong> <em>This post is private and not visible to non-admins. <strong>Do not</strong> make this public without confirming in #editors first.</em></p>' : '';
 
 get_header(); ?>
 
@@ -42,19 +47,18 @@ get_header(); ?>
 						<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 							<div class="entry-content actor-page">
 								<?php
-								if ( lwtv_yikes_is_birthday( $post->ID ) ) {
+								// If it's their birthday and they're not dead, we wish them a happy!
+								if ( lwtv_yikes_is_birthday( $post->ID ) && ! get_post_meta( $post->ID, 'lezactors_death', true ) ) {
 									$old = ' ';
 									$end = array( 'th', 'st', 'nd', 'rd', 'th', 'th', 'th', 'th', 'th', 'th' );
-									if ( ! get_post_meta( $post->ID, 'lezactors_death', true ) ) {
-										$age = lwtv_yikes_actordata( get_the_ID(), 'age', true );
-										$num = $age->format( '%y' );
-										if ( ( $num % 100 ) >= 11 && ( $num % 100 ) <= 13 ) {
-											$years_old = $num . 'th';
-										} else {
-											$years_old = $num . $end[ $num % 10 ];
-										}
-										$old = ' ' . $years_old . ' ';
+									$age = lwtv_yikes_actordata( get_the_ID(), 'age', true );
+									$num = $age->format( '%y' );
+									if ( ( $num % 100 ) >= 11 && ( $num % 100 ) <= 13 ) {
+										$years_old = $num . 'th';
+									} else {
+										$years_old = $num . $end[ $num % 10 ];
 									}
+									$old = ' ' . $years_old . ' ';
 									echo '<div class="alert alert-info" role="alert">Happy' . esc_html( $old ) . 'Birthday, ' . esc_html( get_the_title() ) . '!</div>';
 								}
 								?>

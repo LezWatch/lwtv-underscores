@@ -37,7 +37,7 @@ get_header(); ?>
 								<p><img src="<?php echo esc_url( get_template_directory_uri() ); ?>/images/rose.gif" alt="Rose revealing herself from Jane the Virgin" class="alignleft"/></p>
 								<p><?php esc_attr_e( 'Sorry, there is no page with this address. Please try again or use the search below.', 'yikes_starter' ); ?></p>
 
-								<div class="row no-gutters">
+								<div class="row g-0">
 									<div class="col-sm-8">
 										<?php get_search_form(); ?>
 									</div>

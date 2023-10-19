@@ -7,17 +7,15 @@ on:
 jobs:
   deploy-website:
     runs-on: ubuntu-latest
-
     steps:
       - name: Do a git checkout including submodules
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           submodules: true
 
       - name: Verify Workspace
         run: |
           echo "GITHUB_WORKSPACE: ${GITHUB_WORKSPACE}"
-
       - name: Verify Folder
         run: |
           ls -lah ${GITHUB_WORKSPACE}
