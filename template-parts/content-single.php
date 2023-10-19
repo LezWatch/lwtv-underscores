@@ -8,11 +8,13 @@
 
 <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 	<header class="entry-header">
-		<?php
-		if ( has_post_thumbnail() ) {
-			the_post_thumbnail( 'large' );
-		}
-		?>
+		<div class="d-flex justify-content-center">
+			<?php
+			if ( has_post_thumbnail() ) {
+				the_post_thumbnail( 'large' );
+			}
+			?>
+		</div>
 
 		<div class="entry-meta">
 			<?php yikes_starter_posted_on(); ?>
