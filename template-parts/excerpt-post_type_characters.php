@@ -25,7 +25,8 @@ $archive     = ( is_archive() || is_tax() || is_page() ) ? true : false;
 
 if ( isset( $character['shows'] ) && isset( $character['show_from'] ) && is_array( $character['shows'] ) ) {
 	foreach ( $character['shows'] as $one_show ) {
-		if ( (int) $one_show['show'] === (int) $character['show_from'] && isset( $one_show['appears'] ) ) {
+		$one_show_id = ( is_array( $one_show['show'] ) ) ? $one_show['show'][0] : $one_show['show'];
+		if ( (int) $one_show_id === (int) $character['show_from'] && isset( $one_show['appears'] ) ) {
 			asort( $one_show['appears'] );
 			$appears = ' - Years: ' . implode( ', ', $one_show['appears'] );
 		}
@@ -42,7 +43,7 @@ $thumb_array       = array(
 );
 
 // The Steph Adams-Foster Takeover: Reset to prevent Teri Polo from overtaking the world
-unset( $shows, $actors, $gender, $sexuality, $cliches, $grave );
+unset( $shows, $actors, $gender, $sexuality, $cliches, $grave, $appears, $one_show_id );
 
 // Show a gravestone for recurring characters
 if ( ( 'recurring' === $char_role && 'post_type_shows' === get_post_type() ) || 'post_type_actors' === get_post_type() ) {
