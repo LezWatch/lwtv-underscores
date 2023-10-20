@@ -1213,9 +1213,9 @@ footer.entry-meta svg {
   border-color: #f5c6cb;
 }
 .statistics .card-header.shows,
-.statistics .card-header.shows-on-air,
+.statistics .card-header.shows-onair,
 .statistics .card-header.sexuality, .thisyear .card-header.shows,
-.thisyear .card-header.shows-on-air,
+.thisyear .card-header.shows-onair,
 .thisyear .card-header.sexuality {
   color: #0c5460;
   background-color: #d1ecf1;
@@ -1275,19 +1275,20 @@ footer.entry-meta svg {
 }
 
 canvas {
+  user-select: none;
   -moz-user-select: none;
   -webkit-user-select: none;
   -ms-user-select: none;
 }
 
 /* This Year Pages */
-.container.thisyear .row {
+.thisyear .row {
   margin-bottom: 4rem;
 }
-.container.thisyear ul.this-year-shows {
+.thisyear ul.this-year-shows {
   padding: 0;
 }
-.container.thisyear ul.this-year-shows li {
+.thisyear ul.this-year-shows li {
   display: inline-block;
   width: 50%;
 }
@@ -1335,7 +1336,7 @@ table.lwtvc tbody {
   overflow: hidden;
 }
 .character-show-loop .character-image-wrapper, .search-results .character-image-wrapper, .character-archive-loop .character-image-wrapper, .character-image-wrapper .actor-archive-loop, .character-show-loop .actor-image-wrapper, .search-results .actor-image-wrapper, .character-archive-loop .actor-image-wrapper, .actor-image-wrapper .actor-archive-loop {
-  height: 300px;
+  min-height: 250px;
 }
 
 /* Single Character & Single Actor Template */

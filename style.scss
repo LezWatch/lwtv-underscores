@@ -973,7 +973,7 @@ footer.entry-meta {
 	}
 
 	.card-header.shows,
-	.card-header.shows-on-air,
+	.card-header.shows-onair,
 	.card-header.sexuality {
 		color: #0c5460;
 		background-color: #d1ecf1;
@@ -1048,6 +1048,7 @@ footer.entry-meta {
 }
 
 canvas {
+	user-select: none;
 	-moz-user-select: none;
 	-webkit-user-select: none;
 	-ms-user-select: none;
@@ -1055,7 +1056,7 @@ canvas {
 
 /* This Year Pages */
 
-.container.thisyear {
+.thisyear {
 	.row {
 		margin-bottom: 4rem;
 	}
@@ -1067,6 +1068,7 @@ canvas {
 			display: inline-block;
 			width: 50%;
 		}
+
 	}
 }
 
@@ -1121,7 +1123,7 @@ table.lwtvc {
 	.character-show-loop &,
 	.search-results &,
 	.character-archive-loop &, .actor-archive-loop {
-		height: 300px;
+		min-height: 250px;
 	}
 }
 
