@@ -986,7 +986,7 @@ section {
 
 .site-loop.home-featured-secondary-loop,
 .site-loop.show-archive-loop {
-  grid-auto-rows: 1fr;
+  grid-auto-rows: 0.5fr;
 }
 .site-loop.home-featured-secondary-loop .card-group, .site-loop.home-featured-secondary-loop .show-group,
 .site-loop.show-archive-loop .card-group,
@@ -1611,7 +1611,7 @@ section#characters .card {
   margin-bottom: 0;
 }
 
-.show.trope svg {
+.show.trope svg, .network svg {
   width: 32px;
   height: 32px;
   vertical-align: middle;
@@ -1687,7 +1687,7 @@ h3 svg * {
   text-decoration: underline;
 }
 .archive-header .archive-header-details a:hover, .archive-header .author-socials a:hover {
-  color: #8d329f;
+  color: #fff;
 }
 .archive-header .archive-header-details svg, .archive-header .author-socials svg {
   height: 28px;
@@ -1696,6 +1696,19 @@ h3 svg * {
   padding-right: 5px;
 }
 .archive-header .archive-header-details svg *, .archive-header .author-socials svg * {
+  fill: #fff;
+}
+.archive-header .archive-header-details a.btn-outline-primary, .archive-header .author-socials a.btn-outline-primary {
+  color: #d1548e;
+  text-decoration: none;
+}
+.archive-header .archive-header-details a.btn-outline-primary svg *, .archive-header .author-socials a.btn-outline-primary svg * {
+  fill: #d1548e;
+}
+.archive-header .archive-header-details a.btn-outline-primary:hover, .archive-header .author-socials a.btn-outline-primary:hover {
+  color: #fff;
+}
+.archive-header .archive-header-details a.btn-outline-primary:hover svg *, .archive-header .author-socials a.btn-outline-primary:hover svg * {
   fill: #fff;
 }
 
