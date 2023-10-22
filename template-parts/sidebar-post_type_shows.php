@@ -133,7 +133,7 @@ $alt_names    = ( get_post_meta( $show_id, 'lezshows_show_names', true ) ) ? get
 				}
 				if ( get_post_meta( $show_id, 'lezshows_imdb', true ) ) {
 					$imdb = 'https://www.imdb.com/title/' . get_post_meta( $show_id, 'lezshows_imdb', true );
-					echo '<li class="list-group-item network imdb"><a href="' . esc_url( $imdb ) . '">IMDb</a></li>';
+					echo '<li class="list-group-item network imdb text-center">' . lwtv_symbolicons( 'imdb.svg', 'fa-imdb' ) . ' <a href="' . esc_url( $imdb ) . '">IMDb</a></li>';
 				}
 				?>
 			</ul>
