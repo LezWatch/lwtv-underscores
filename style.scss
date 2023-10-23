@@ -285,13 +285,13 @@ pre.wp-block-verse {
 .featured-image-tabs {
 	.nav-tabs {
 		border-bottom: none;
-		padding-bottom: 0.5rem;
-	}
-	button {
-		color: $lightgrey;
 	}
 	.nav-tabs .nav-link.active, .nav-tabs .nav-item.show .nav-link {
-		border-color: #dee2e6;
+		border-color: $lwtv-bordergrey;
+		border-bottom: none;
+	}
+	a.nav-link {
+		color: $medgrey;
 	}
 }
 
@@ -712,7 +712,7 @@ section {
 
 .site-loop.home-featured-secondary-loop,
 .site-loop.show-archive-loop {
-	grid-auto-rows: 1fr;
+	grid-auto-rows: 0.5fr;
 
 	.card-group, .show-group {
 		margin-bottom: 1.4rem;
@@ -1485,7 +1485,7 @@ section#characters {
 	}
 }
 
-.show.trope {
+.show.trope, .network {
 	svg {
 		width: 32px;
 		height: 32px;
@@ -1577,7 +1577,7 @@ h3 svg * {
 			text-decoration: underline;
 		}
 		a:hover {
-			color: $lwtv-purple;
+			color: $white;
 		}
 		svg {
 			height: 28px;
@@ -1587,6 +1587,22 @@ h3 svg * {
 		}
 		svg * {
 			fill: $white;
+		}
+
+		a.btn-outline-primary {
+			color: $lwtv-pink;
+			text-decoration: none;
+
+			svg * {
+				fill: $lwtv-pink;
+			}
+		}
+
+		a.btn-outline-primary:hover {
+			color: $white;
+			svg * {
+				fill: $white;
+			}
 		}
 	}
 

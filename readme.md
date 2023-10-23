@@ -34,7 +34,7 @@ To install and update:
 
 * `$ npm install` - Install all the things.
 * `$ npm update` - Updates all the things.
-* `$ grunt build` - Builds all the CSS.
+* `$ npm build` - Builds all the CSS and handles composer versions.
 
 Commits are currently not linted by default.
 
