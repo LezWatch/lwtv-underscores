@@ -96,12 +96,6 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-cssmin');
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('@lodder/grunt-postcss');  // CSS autoprefixer plugin (cross-browser auto pre-fixes)
-    grunt.loadNpmTasks('grunt-composer');         // Composer updates 
-
-    // register task
-    grunt.registerTask('update', [
-        'composer',
-    ]);
 
     // register task
     grunt.registerTask('build', [
