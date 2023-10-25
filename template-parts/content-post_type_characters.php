@@ -142,47 +142,48 @@ if ( $alt_images ) {
 
 ?>
 <div class="card-body">
-
-	<?php
-	if ( ! isset( $image_tabs ) || ! is_array( $image_tabs ) ) {
-		the_post_thumbnail( 'character-img', $thumb_array );
-	} else {
-		?>
-		<div class="featured-image-tabs ">
-			<!-- Nav tabs -->
-			<ul class="nav nav-tabs" id="v-pills-tab" role="tablist">
-				<li class="nav-item" role="presentation">
-					<a class="nav-link active" id="v-pills-primary_image-tab" data-bs-toggle="pill" href="#v-pills-primary_image" role="tab" aria-controls="v-pills-primary_image" aria-selected="true">Primary</a>
-				</li>
-				<?php
-				foreach ( $image_tabs as $a_tab ) {
-					?>
+	<div class="character-image-wrapper">
+		<?php
+		if ( ! isset( $image_tabs ) || ! is_array( $image_tabs ) ) {
+			the_post_thumbnail( 'character-img', $thumb_array );
+		} else {
+			?>
+			<div class="featured-image-tabs ">
+				<!-- Nav tabs -->
+				<ul class="nav nav-tabs" id="v-pills-tab" role="tablist">
 					<li class="nav-item" role="presentation">
-						<a class="nav-link" id="v-pills-<?php echo esc_attr( $a_tab['slug'] ); ?>-tab" data-bs-toggle="pill" href="#v-pills-<?php echo esc_attr( $a_tab['slug'] ); ?>" role="tab" aria-controls="v-pills-<?php echo esc_attr( $a_tab['slug'] ); ?>" aria-selected="false"><?php echo esc_html( ucfirst( $a_tab['title'] ) ); ?></a>
+						<a class="nav-link active" id="v-pills-primary_image-tab" data-bs-toggle="pill" href="#v-pills-primary_image" role="tab" aria-controls="v-pills-primary_image" aria-selected="true">Primary</a>
 					</li>
 					<?php
-				}
-				?>
-			</ul>
-			<!-- Tab panes -->
-			<div class="tab-content" id="altImagesContent">
-				<div class="tab-pane fade show active" id="v-pills-primary_image" role="tabpanel" aria-labelledby="v-pills-primary_image-tab">
-					<?php the_post_thumbnail( 'character-img', $thumb_array ); ?>
-				</div>
-				<?php
-				foreach ( $image_tabs as $a_tab ) {
+					foreach ( $image_tabs as $a_tab ) {
+						?>
+						<li class="nav-item" role="presentation">
+							<a class="nav-link" id="v-pills-<?php echo esc_attr( $a_tab['slug'] ); ?>-tab" data-bs-toggle="pill" href="#v-pills-<?php echo esc_attr( $a_tab['slug'] ); ?>" role="tab" aria-controls="v-pills-<?php echo esc_attr( $a_tab['slug'] ); ?>" aria-selected="false"><?php echo esc_html( ucfirst( $a_tab['title'] ) ); ?></a>
+						</li>
+						<?php
+					}
 					?>
-					<div class="tab-pane fade" id="v-pills-<?php echo esc_attr( $a_tab['slug'] ); ?>" role="tabpanel" aria-labelledby="v-pills-<?php echo esc_attr( $a_tab['slug'] ); ?>-tab">
-						<?php echo wp_kses_post( $a_tab['image'] ); ?>
+				</ul>
+				<!-- Tab panes -->
+				<div class="tab-content" id="altImagesContent">
+					<div class="tab-pane fade show active" id="v-pills-primary_image" role="tabpanel" aria-labelledby="v-pills-primary_image-tab">
+						<?php the_post_thumbnail( 'character-img', $thumb_array ); ?>
 					</div>
 					<?php
-				}
-				?>
+					foreach ( $image_tabs as $a_tab ) {
+						?>
+						<div class="tab-pane fade" id="v-pills-<?php echo esc_attr( $a_tab['slug'] ); ?>" role="tabpanel" aria-labelledby="v-pills-<?php echo esc_attr( $a_tab['slug'] ); ?>-tab">
+							<?php echo wp_kses_post( $a_tab['image'] ); ?>
+						</div>
+						<?php
+					}
+					?>
+				</div>
 			</div>
-		</div>
-		<?php
-	}
-	?>
+			<?php
+		}
+		?>
+	</div>
 
 	<div class="card-meta">
 		<div class="card-meta-item">

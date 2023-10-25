@@ -4,7 +4,7 @@ Theme URI: https://lezwatchtv.com/
 Author: Tracy Levesque, Mika Epstein
 Author URI: https://lezwatchtv.com/
 Description: LezWatch.TV Theme Episode III - Return of the Custom Theme
-Version: 3.1
+Version: 4.0.1
 License: GNU General Public License v2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Text Domain: yikes_starter
@@ -286,9 +286,12 @@ pre.wp-block-verse {
 	.nav-tabs {
 		border-bottom: none;
 	}
+	.nav-tabs .nav-link:hover, .nav-tabs .nav-link:focus {
+		border-radius: var(--bs-nav-tabs-border-radius);
+	}
 	.nav-tabs .nav-link.active, .nav-tabs .nav-item.show .nav-link {
 		border-color: $lwtv-bordergrey;
-		border-bottom: none;
+		border-radius: var(--bs-nav-tabs-border-radius);
 	}
 	a.nav-link {
 		color: $medgrey;
@@ -1136,9 +1139,14 @@ table.lwtvc {
 		@include border-radius(0);
 		@include box-shadow(0 1px 4px 0 rgba(0, 0, 0, 0.14));
 
+		.character-image-wrapper {
+			overflow: visible;
+			width: 300px;
+		}
 		.single-char-img {
 			float: left;
 			margin: 0 2rem 0 0;
+			width: 300px;
 		}
 
 		.characters-description {
@@ -1205,6 +1213,10 @@ table.lwtvc {
 	}
 
 	.card-meta-item {
+		#actor-links {
+			padding-right: 0.25rem;
+		}
+
 		ul {
 			padding: 0;
 

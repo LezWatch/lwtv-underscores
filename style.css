@@ -301,9 +301,12 @@ pre.wp-block-verse {
 .featured-image-tabs .nav-tabs {
   border-bottom: none;
 }
+.featured-image-tabs .nav-tabs .nav-link:hover, .featured-image-tabs .nav-tabs .nav-link:focus {
+  border-radius: var(--bs-nav-tabs-border-radius);
+}
 .featured-image-tabs .nav-tabs .nav-link.active, .featured-image-tabs .nav-tabs .nav-item.show .nav-link {
   border-color: rgba(0, 0, 0, 0.125);
-  border-bottom: none;
+  border-radius: var(--bs-nav-tabs-border-radius);
 }
 .featured-image-tabs a.nav-link {
   color: #999;
@@ -1345,9 +1348,14 @@ table.lwtvc tbody {
   border-radius: 0;
   box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.14);
 }
+.character-page .card .character-image-wrapper, .actor-page .card .character-image-wrapper {
+  overflow: visible;
+  width: 300px;
+}
 .character-page .card .single-char-img, .actor-page .card .single-char-img {
   float: left;
   margin: 0 2rem 0 0;
+  width: 300px;
 }
 .character-page .card .characters-description, .actor-page .card .characters-description {
   margin-top: 1.6rem;
@@ -1396,6 +1404,9 @@ table.lwtvc tbody {
 /* Single Actor Template */
 .actor-page .card .single-char-img {
   margin-bottom: 1.25rem;
+}
+.actor-page .card-meta-item #actor-links {
+  padding-right: 0.25rem;
 }
 .actor-page .card-meta-item ul {
   padding: 0;

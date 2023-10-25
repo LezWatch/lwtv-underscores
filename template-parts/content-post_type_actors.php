@@ -96,7 +96,7 @@ if ( get_post_meta( $the_id, 'lezactors_wikipedia', true ) ) {
 }
 if ( get_post_meta( $the_id, 'lezactors_twitter', true ) ) {
 	$actor_urls['twitter'] = array(
-		'name' => 'Twitter',
+		'name' => 'X (Twitter)',
 		'url'  => esc_url( 'https://twitter.com/' . get_post_meta( $the_id, 'lezactors_twitter', true ) ),
 		'fa'   => 'fab fa-x-twitter',
 	);
