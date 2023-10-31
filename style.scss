@@ -1139,10 +1139,6 @@ table.lwtvc {
 		@include border-radius(0);
 		@include box-shadow(0 1px 4px 0 rgba(0, 0, 0, 0.14));
 
-		.character-image-wrapper {
-			overflow: visible;
-			width: 300px;
-		}
 		.single-char-img {
 			float: left;
 			margin: 0 2rem 0 0;
