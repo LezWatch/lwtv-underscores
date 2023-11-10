@@ -1337,6 +1337,7 @@ table.lwtvc tbody {
 .character-image-wrapper, .actor-image-wrapper {
   max-height: 300px;
   overflow: hidden;
+  display: inline;
 }
 .character-show-loop .character-image-wrapper, .search-results .character-image-wrapper, .character-archive-loop .character-image-wrapper, .character-image-wrapper .actor-archive-loop, .character-show-loop .actor-image-wrapper, .search-results .actor-image-wrapper, .character-archive-loop .actor-image-wrapper, .actor-image-wrapper .actor-archive-loop {
   height: 275px;

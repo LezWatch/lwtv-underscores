@@ -185,50 +185,52 @@ if ( $alt_images ) {
 		?>
 	</div>
 
-	<div class="card-meta">
-		<div class="card-meta-item">
-			<table class="table table-sm" style="width: auto !important;">
-				<tbody>
-					<tr>
-						<th scope="row" colspan="2"><center><?php echo wp_kses_post( $gender_sexuality ); ?></center></th>
-					</tr>
-					<tr>
-						<th scope="row">Clichés</th>
-						<td><?php echo $cliches; // phpcs:ignore WordPress.Security.EscapeOutput ?></td>
-					</tr>
-					<tr>
-						<th scope="row">Status</th>
-						<td><?php echo wp_kses_post( $doa_status ); ?></td>
-					</tr>
-					<tr>
-						<th scope="row"><?php echo wp_kses_post( _n( 'Actor', 'Actors', count( $all_actors ) ) ); ?></th>
-						<td>&bull; <?php echo implode( '<br />&bull; ', $the_actors ); // phpcs:ignore WordPress.Security.EscapeOutput ?></td>
-					</tr>
-					<tr>
-						<th scope="row"><?php echo wp_kses_post( _n( 'Show', 'Shows', count( $shows_group ) ) ); ?></th>
-						<td>&bull; <?php echo wp_kses_post( implode( '<br />&bull; ', $shows_group ) ); ?></td>
-					</tr>
-					<?php
-					if ( isset( $rip ) ) {
-						?>
+	<div class="card-character-content">
+		<div class="card-meta">
+			<div class="card-meta-item">
+				<table class="table table-sm" style="width: auto !important;">
+					<tbody>
 						<tr>
-							<th scope="row">RIP</th>
-							<td><?php echo wp_kses_post( implode( ' &bull; ', $rip ) ); ?></td>
+							<th scope="row" colspan="2"><center><?php echo wp_kses_post( $gender_sexuality ); ?></center></th>
+						</tr>
+						<tr>
+							<th scope="row">Clichés</th>
+							<td><?php echo $cliches; // phpcs:ignore WordPress.Security.EscapeOutput ?></td>
+						</tr>
+						<tr>
+							<th scope="row">Status</th>
+							<td><?php echo wp_kses_post( $doa_status ); ?></td>
+						</tr>
+						<tr>
+							<th scope="row"><?php echo wp_kses_post( _n( 'Actor', 'Actors', count( $all_actors ) ) ); ?></th>
+							<td>&bull; <?php echo implode( '<br />&bull; ', $the_actors ); // phpcs:ignore WordPress.Security.EscapeOutput ?></td>
+						</tr>
+						<tr>
+							<th scope="row"><?php echo wp_kses_post( _n( 'Show', 'Shows', count( $shows_group ) ) ); ?></th>
+							<td>&bull; <?php echo wp_kses_post( implode( '<br />&bull; ', $shows_group ) ); ?></td>
 						</tr>
 						<?php
-					}
-					?>
-				</tbody>
-			</table>
+						if ( isset( $rip ) ) {
+							?>
+							<tr>
+								<th scope="row">RIP</th>
+								<td><?php echo wp_kses_post( implode( ' &bull; ', $rip ) ); ?></td>
+							</tr>
+							<?php
+						}
+						?>
+					</tbody>
+				</table>
+			</div>
 		</div>
-	</div>
-	<div class="characters-description">
-		<?php
-		// Seems to be running twice, so we need this catch.
-		$post_content = the_content();
-		if ( ! empty( $post_content ) ) {
-			echo wp_kses_post( $post_content );
-		}
-		?>
+		<div class="characters-description">
+			<?php
+			// Seems to be running twice, so we need this catch.
+			$post_content = the_content();
+			if ( ! empty( $post_content ) ) {
+				echo wp_kses_post( $post_content );
+			}
+			?>
+		</div>
 	</div>
 </div>
