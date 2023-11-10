@@ -42,31 +42,24 @@ if ( $related_posts ) {
 				);
 				?>
 				<div class="card mb-3">
-					<div class="row g-0">
-						<div class="image col-sm-3" title="<?php echo esc_html( $thumb_title ); ?>"
-							<?php if ( has_post_thumbnail( $the_id ) ) { ?>
-								style="background-image: url(<?php echo esc_url( get_the_post_thumbnail_url( $the_id, 'show-img' ) ); ?>);"
-							<?php } ?>
-						>
-						</div>
-						<div class="col-sm-9">
-							<div class="card-body">
-								<h5 class="card-title">
-									<a href="<?php the_permalink( $the_id ); ?>"><?php echo esc_html( get_the_title( $the_id ) ); ?></a>
-								</h5>
-								<?php
-								$airdates = get_post_meta( $the_id, 'lezshows_airdates', true );
-								if ( $airdates ) {
-									$airdate = $airdates['start'] . ' - ' . $airdates['finish'];
-									if ( $airdates['start'] === $airdates['finish'] ) {
-										$airdate = $airdates['finish'];
-									}
-									echo '<h6 class="card-subtitle mb-2 text-body-secondary"><strong>Airdates:</strong> ' . esc_html( $airdate ) . '</h6>';
-								}
-								?>
-							</div>
-						</div>
-					</div><!-- .row -->
+					<img src="<?php echo esc_url( get_the_post_thumbnail_url( $the_id, 'show-img' ) ); ?>" class="card-img-top" alt="<?php echo esc_html( $thumb_title ); ?>">
+
+					<div class="card-body">
+						<h5 class="card-title">
+							<a href="<?php the_permalink( $the_id ); ?>"><?php echo esc_html( get_the_title( $the_id ) ); ?></a>
+						</h5>
+						<?php
+						$airdates = get_post_meta( $the_id, 'lezshows_airdates', true );
+						if ( $airdates ) {
+							$airdate = $airdates['start'] . ' - ' . $airdates['finish'];
+							if ( $airdates['start'] === $airdates['finish'] ) {
+								$airdate = $airdates['finish'];
+							}
+							echo '<h6 class="card-subtitle mb-2 text-body-secondary"><strong>Airdates:</strong> ' . esc_html( $airdate ) . '</h6>';
+						}
+						?>
+					</div>
+
 				</div> <!-- .card -->
 				<?php
 			}

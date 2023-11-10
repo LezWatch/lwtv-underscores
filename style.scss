@@ -739,6 +739,10 @@ section {
 			@include cover;
 			background-position: center top;
 		}
+
+		img.card-img-top {
+			height: 150px;
+		}
 	}
 }
 
