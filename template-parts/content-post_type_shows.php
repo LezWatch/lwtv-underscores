@@ -71,7 +71,7 @@ the_post_thumbnail(
 $warning    = lwtv_yikes_content_warning( get_the_ID() );
 $warn_image = lwtv_symbolicons( 'hand.svg', 'fa-hand-paper' );
 
-if ( 'none' !== $warning['card'] ) {
+if ( is_array( $warning ) && 'none' !== $warning['card'] ) {
 	?>
 	<section id="trigger-warning" class="trigger-warning-container">
 		<div class="alert alert-<?php echo esc_attr( $warning['card'] ); ?>" role="alert">
