@@ -17,8 +17,8 @@ $all_chars     = lwtv_yikes_actordata( $the_id, 'characters' );
 $havecharcount = count( $all_chars );
 $havedeadcount = count( lwtv_yikes_actordata( $the_id, 'dead' ) );
 
-if ( method_exists( 'LWTV_Related_Posts', 'are_there_posts' ) ) {
-	$related = ( new LWTV_Related_Posts() )->are_there_posts( $slug );
+if ( method_exists( 'LWTV_CPTs_Related_Posts', 'are_there_posts' ) ) {
+	$related = ( new LWTV_CPTs_Related_Posts() )->are_there_posts( $slug );
 }
 
 // Generate Life Stats.
@@ -252,8 +252,8 @@ if ( isset( $related ) && $related ) {
 		<h2>Related Articles</h2>
 		<div class="card-body">
 			<?php
-			if ( method_exists( 'LWTV_Related_Posts', 'related_posts' ) && method_exists( 'LWTV_Related_Posts', 'count_related_posts' ) ) {
-				echo ( new LWTV_Related_Posts() )->related_posts( $slug ); // phpcs:ignore WordPress.Security.EscapeOutput
+			if ( method_exists( 'LWTV_CPTs_Related_Posts', 'related_posts' ) && method_exists( 'LWTV_CPTs_Related_Posts', 'count_related_posts' ) ) {
+				echo ( new LWTV_CPTs_Related_Posts() )->related_posts( $slug ); // phpcs:ignore WordPress.Security.EscapeOutput
 			}
 			?>
 		</div>
@@ -299,13 +299,13 @@ if ( 0 !== $havecharcount ) {
 			<div class="card-meta">
 				<div class="card-meta-item">
 					<?php
-					if ( method_exists( 'LWTV_Stats_SSR', 'statistics' ) ) {
+					if ( method_exists( 'LWTV_Statistics_Gutenberg_SSR', 'statistics' ) ) {
 						$attributes = array(
 							'posttype' => get_post_type(),
 						);
 
 						// phpcs:ignore WordPress.Security.EscapeOutput
-						echo ( new LWTV_Stats_SSR() )->mini_stats( $attributes );
+						echo ( new LWTV_Statistics_Gutenberg_SSR() )->mini_stats( $attributes );
 					} else {
 						echo '<p>After this maintenance, statistics will be right back!</p>';
 					}

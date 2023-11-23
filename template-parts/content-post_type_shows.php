@@ -10,7 +10,7 @@
 $show_id        = $post->ID;
 $slug           = get_post_field( 'post_name', get_post( $show_id ) );
 $get_tags       = get_term_by( 'name', $slug, 'post_tag' );
-$related        = ( new LWTV_Related_Posts() )->are_there_posts( $slug );
+$related        = ( new LWTV_CPTs_Related_Posts() )->are_there_posts( $slug );
 $rpbt_shortcode = ( new LWTV_Shows_Like_This() )->generate( $show_id );
 
 // Microformats Fix.
@@ -86,7 +86,7 @@ if ( is_array( $warning ) && 'none' !== $warning['card'] ) {
 <?php
 // Ways to Watch section (yes all ways-to-watch URLs are in a badly named post_meta).
 if ( ( get_post_meta( $show_id, 'lezshows_affiliate', true ) ) ) {
-	echo '<section id="affiliate-watch-link" class="affiliate-watch-container">' . ( new LWTV_Ways_To_Watch() )->ways_to_watch( $show_id ) . '</section>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+	echo '<section id="affiliate-watch-link" class="affiliate-watch-container">' . ( new LWTV_Ways_To_Watch_Output() )->ways_to_watch( $show_id ) . '</section>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 }
 ?>
 
@@ -128,8 +128,8 @@ if ( $related ) {
 		<h2>Articles</h2>
 		<div class="container"><div class="card-body">
 			<?php
-			if ( method_exists( 'LWTV_Related_Posts', 'related_posts' ) && method_exists( 'LWTV_Related_Posts', 'count_related_posts' ) ) {
-				echo ( new LWTV_Related_Posts() )->related_posts( $slug ); // phpcs:ignore WordPress.Security.EscapeOutput
+			if ( method_exists( 'LWTV_CPTs_Related_Posts', 'related_posts' ) && method_exists( 'LWTV_CPTs_Related_Posts', 'count_related_posts' ) ) {
+				echo ( new LWTV_CPTs_Related_Posts() )->related_posts( $slug ); // phpcs:ignore WordPress.Security.EscapeOutput
 			}
 			?>
 		</div></div>

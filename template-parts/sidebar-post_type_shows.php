@@ -65,10 +65,10 @@ $alt_names    = ( get_post_meta( $show_id, 'lezshows_show_names', true ) ) ? get
 				}
 
 				// Collect all the scores.
-				$scores = ( new LWTV_Grading() )->all_scores( $show_id );
+				$scores = ( new LWTV_Features_Grading() )->all_scores( $show_id );
 				if ( isset( $scores ) ) {
 					echo '<center><h4>Show Scores</h4></center>';
-					( new LWTV_Grading() )->display( $scores );
+					( new LWTV_Features_Grading() )->display( $scores );
 				}
 				?>
 			</div>
@@ -87,7 +87,7 @@ $alt_names    = ( get_post_meta( $show_id, 'lezshows_show_names', true ) ) ? get
 				// If the show is on air, we'll see when it airs next!
 				$on_air = get_post_meta( $show_id, 'lezshows_on_air', true );
 				if ( 'yes' === $on_air ) {
-					( new LWTV_External_APIs() )->tvmaze_episodes( $show_id );
+					( new LWTV_Features_External_APIs() )->tvmaze_episodes( $show_id );
 				}
 
 				$formats = get_the_terms( $show_id, 'lez_formats' );

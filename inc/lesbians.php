@@ -198,8 +198,8 @@ add_action( 'pre_get_posts', 'lwtv_yikes_character_archive_query' );
  * @return string $title_adjustment -- Adjusted title.
  */
 function lwtv_yikes_tax_archive_title( $location, $post_type, $taxonomy ) {
-	if ( class_exists( 'LWTV_Taxonomy_Archive_Title' ) ) {
-		$title_adjustment = ( new LWTV_Taxonomy_Archive_Title() )->generate( $location, $post_type, $taxonomy );
+	if ( class_exists( 'LWTV_Theme_Taxonomy_Archive_Title' ) ) {
+		$title_adjustment = ( new LWTV_Theme_Taxonomy_Archive_Title() )->generate( $location, $post_type, $taxonomy );
 	}
 
 	if ( isset( $title_adjustment ) && ! empty( $title_adjustment ) ) {
@@ -237,8 +237,8 @@ if ( is_search() ) {
  * @return void
  */
 function lwtv_yikes_show_star( $show_id ) {
-	if ( class_exists( 'LWTV_Show_Stars' ) ) {
-		$star = ( new LWTV_Show_Stars() )->generate( $show_id );
+	if ( class_exists( 'LWTV_Theme_Show_Stars' ) ) {
+		$star = ( new LWTV_Theme_Show_Stars() )->generate( $show_id );
 	}
 
 	if ( isset( $star ) && ! empty( $star ) ) {
@@ -255,8 +255,8 @@ function lwtv_yikes_show_star( $show_id ) {
  * @return void
  */
 function lwtv_yikes_content_warning( $show_id ) {
-	if ( isset( $show_id ) && class_exists( 'LWTV_Content_Warning' ) ) {
-		$warning_array = ( new LWTV_Content_Warning() )->generate( $show_id );
+	if ( isset( $show_id ) && class_exists( 'LWTV_Theme_Content_Warning' ) ) {
+		$warning_array = ( new LWTV_Theme_Content_Warning() )->generate( $show_id );
 	}
 
 	if ( isset( $warning_array ) && is_array( $warning_array ) ) {
@@ -276,8 +276,8 @@ function lwtv_yikes_content_warning( $show_id ) {
  */
 function lwtv_yikes_chardata( $the_id, $data ) {
 
-	if ( isset( $the_id ) && class_exists( 'LWTV_Data_Character' ) ) {
-		$character_data = ( new LWTV_Data_Character() )->generate( $the_id, $data );
+	if ( isset( $the_id ) && class_exists( 'LWTV_Theme_Data_Character' ) ) {
+		$character_data = ( new LWTV_Theme_Data_Character() )->generate( $the_id, $data );
 	}
 
 	if ( isset( $character_data ) ) {
@@ -296,8 +296,8 @@ function lwtv_yikes_chardata( $the_id, $data ) {
  * @return void
  */
 function lwtv_yikes_actordata( $the_id, $data ) {
-	if ( isset( $the_id ) && class_exists( 'LWTV_Data_Actor' ) ) {
-		$actor_data = ( new LWTV_Data_Actor() )->generate( $the_id, $data );
+	if ( isset( $the_id ) && class_exists( 'LWTV_Theme_Data_Actor' ) ) {
+		$actor_data = ( new LWTV_Theme_Data_Actor() )->generate( $the_id, $data );
 	}
 
 	if ( isset( $actor_data ) ) {
@@ -314,8 +314,8 @@ function lwtv_yikes_actordata( $the_id, $data ) {
  */
 function lwtv_yikes_is_queer( $the_id ) {
 	$is_queer = false;
-	if ( method_exists( 'LWTV_Loops', 'is_actor_queer' ) ) {
-		$is_queer = ( 'yes' === ( new LWTV_Loops() )->is_actor_queer( $the_id ) ) ? true : false;
+	if ( method_exists( 'LWTV_Features_Loops', 'is_actor_queer' ) ) {
+		$is_queer = ( 'yes' === ( new LWTV_Features_Loops() )->is_actor_queer( $the_id ) ) ? true : false;
 	}
 
 	return $is_queer;
@@ -330,8 +330,8 @@ function lwtv_yikes_is_queer( $the_id ) {
  */
 function lwtv_yikes_is_birthday( $the_id ) {
 	$happy_birthday = false;
-	if ( class_exists( 'LWTV_Actor_Birthday' ) ) {
-		$happy_birthday = ( new LWTV_Actor_Birthday() )->generate( $the_id );
+	if ( class_exists( 'LWTV_Theme_Actor_Birthday' ) ) {
+		$happy_birthday = ( new LWTV_Theme_Actor_Birthday() )->generate( $the_id );
 	}
 	return $happy_birthday;
 }
@@ -382,8 +382,8 @@ function lwtv_symbolicons( $svg, $fa ) {
  * @return mixed   number or array listing the characters
  */
 function lwtv_list_characters( $post_id, $output ) {
-	if ( class_exists( 'LWTV_List_Characters' ) ) {
-		return ( new LWTV_List_Characters() )->list_characters( $post_id, $output );
+	if ( class_exists( 'LWTV_Theme_List_Characters' ) ) {
+		return ( new LWTV_Theme_List_Characters() )->generate( $post_id, $output );
 	}
 }
 
@@ -423,8 +423,8 @@ function lwtv_last_updated_date( $post_id ) {
  */
 function lwtv_last_death() {
 	$return = '<p>The LezWatch.TV API is temporarily unavailable.</p>';
-	if ( class_exists( 'LWTV_BYQ_JSON' ) ) {
-		$last_death = ( new LWTV_BYQ_JSON() )->last_death();
+	if ( class_exists( 'LWTV_Rest_API_BYQ' ) ) {
+		$last_death = ( new LWTV_Rest_API_BYQ() )->last_death();
 		if ( '' !== $last_death ) {
 			$return  = '<p>' . sprintf( 'It has been %s since the last queer female, non-binary, or transgender death on television', '<strong>' . human_time_diff( $last_death['died'], (int) wp_date( 'U' ) ) . '</strong> ' );
 			$return .= ': <span><a href="' . $last_death['url'] . '">' . $last_death['name'] . '</a></span> - ' . gmdate( 'F j, Y', $last_death['died'] ) . '</p>';
@@ -445,8 +445,8 @@ function lwtv_last_death() {
  */
 function lwtv_author_social( $author ) {
 	$return = '';
-	if ( class_exists( 'LWTV_Data_Author' ) ) {
-		$return = ( new LWTV_Data_Author() )->generate( $author, 'social' );
+	if ( class_exists( 'LWTV_Theme_Data_Author' ) ) {
+		$return = ( new LWTV_Theme_Data_Author() )->generate( $author, 'social' );
 	}
 	return $return;
 }
@@ -459,8 +459,8 @@ function lwtv_author_social( $author ) {
  */
 function lwtv_author_favourite_shows( $author ) {
 	$return = '';
-	if ( class_exists( 'LWTV_Data_Author' ) ) {
-		$return = ( new LWTV_Data_Author() )->generate( $author, 'favorite_shows' );
+	if ( class_exists( 'LWTV_Theme_Data_Author' ) ) {
+		$return = ( new LWTV_Theme_Data_Author() )->generate( $author, 'favorite_shows' );
 	}
 	return $return;
 }

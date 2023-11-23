@@ -98,13 +98,13 @@ get_header(); ?>
 								the_content();
 							}
 
-							if ( method_exists( 'LWTV_Stats_SSR', 'statistics' ) ) {
+							if ( method_exists( 'LWTV_Statistics_Gutenberg_SSR', 'statistics' ) ) {
 								$attributes = array(
 									'page' => $statstype,
 								);
 
 								// phpcs:ignore WordPress.Security.EscapeOutput
-								echo ( new LWTV_Stats_SSR() )->statistics( $attributes );
+								echo ( new LWTV_Statistics_Gutenberg_SSR() )->statistics( $attributes );
 							} else {
 								echo '<p>After this maintenance, statistics will be right back!</p>';
 							}

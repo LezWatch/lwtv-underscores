@@ -24,7 +24,7 @@
 
     <rule ref="WordPress.Security.EscapeOutput">
         <properties>
-            <property name="customAutoEscapedFunctions" value="lwtv_symbolicons,get_previous_posts_link,get_next_posts_link,yikes_pagination_get_page,yikes_pagination_get_page_space_right,yikes_pagination_get_page_space_left,yikes_pagination_get_first_page,LWTV_Functions,lwtv_yikes_chardata,lwtv_yikes_show_star,LWTV_Stats,km_rpbt_related_posts_by_taxonomy_gallery" type="array" />
+            <property name="customAutoEscapedFunctions" value="lwtv_symbolicons,get_previous_posts_link,get_next_posts_link,yikes_pagination_get_page,yikes_pagination_get_page_space_right,yikes_pagination_get_page_space_left,yikes_pagination_get_first_page,LWTV_Functions,lwtv_yikes_chardata,lwtv_yikes_show_star,LWTV_Statistics,km_rpbt_related_posts_by_taxonomy_gallery" type="array" />
             <property name="customEscapingFunctions" value="facetwp_display" type="array" />
         </properties>
     </rule>
