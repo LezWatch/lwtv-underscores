@@ -11,7 +11,7 @@ $show_id        = $post->ID;
 $slug           = get_post_field( 'post_name', get_post( $show_id ) );
 $get_tags       = get_term_by( 'name', $slug, 'post_tag' );
 $related        = ( new LWTV_CPTs_Related_Posts() )->are_there_posts( $slug );
-$rpbt_shortcode = ( new LWTV_Shows_Like_This() )->generate( $show_id );
+$rpbt_shortcode = ( new LWTV_Shows_Like_This() )->make( $show_id );
 
 // Microformats Fix.
 lwtv_microformats_fix( $post->ID );

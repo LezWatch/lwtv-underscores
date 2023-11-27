@@ -199,7 +199,7 @@ add_action( 'pre_get_posts', 'lwtv_yikes_character_archive_query' );
  */
 function lwtv_yikes_tax_archive_title( $location, $post_type, $taxonomy ) {
 	if ( class_exists( 'LWTV_Theme_Taxonomy_Archive_Title' ) ) {
-		$title_adjustment = ( new LWTV_Theme_Taxonomy_Archive_Title() )->generate( $location, $post_type, $taxonomy );
+		$title_adjustment = ( new LWTV_Theme_Taxonomy_Archive_Title() )->make( $location, $post_type, $taxonomy );
 	}
 
 	if ( isset( $title_adjustment ) && ! empty( $title_adjustment ) ) {
@@ -238,7 +238,7 @@ if ( is_search() ) {
  */
 function lwtv_yikes_show_star( $show_id ) {
 	if ( class_exists( 'LWTV_Theme_Show_Stars' ) ) {
-		$star = ( new LWTV_Theme_Show_Stars() )->generate( $show_id );
+		$star = ( new LWTV_Theme_Show_Stars() )->make( $show_id );
 	}
 
 	if ( isset( $star ) && ! empty( $star ) ) {
@@ -256,7 +256,7 @@ function lwtv_yikes_show_star( $show_id ) {
  */
 function lwtv_yikes_content_warning( $show_id ) {
 	if ( isset( $show_id ) && class_exists( 'LWTV_Theme_Content_Warning' ) ) {
-		$warning_array = ( new LWTV_Theme_Content_Warning() )->generate( $show_id );
+		$warning_array = ( new LWTV_Theme_Content_Warning() )->make( $show_id );
 	}
 
 	if ( isset( $warning_array ) && is_array( $warning_array ) ) {
@@ -277,7 +277,7 @@ function lwtv_yikes_content_warning( $show_id ) {
 function lwtv_yikes_chardata( $the_id, $data ) {
 
 	if ( isset( $the_id ) && class_exists( 'LWTV_Theme_Data_Character' ) ) {
-		$character_data = ( new LWTV_Theme_Data_Character() )->generate( $the_id, $data );
+		$character_data = ( new LWTV_Theme_Data_Character() )->make( $the_id, $data );
 	}
 
 	if ( isset( $character_data ) ) {
@@ -297,7 +297,7 @@ function lwtv_yikes_chardata( $the_id, $data ) {
  */
 function lwtv_yikes_actordata( $the_id, $data ) {
 	if ( isset( $the_id ) && class_exists( 'LWTV_Theme_Data_Actor' ) ) {
-		$actor_data = ( new LWTV_Theme_Data_Actor() )->generate( $the_id, $data );
+		$actor_data = ( new LWTV_Theme_Data_Actor() )->make( $the_id, $data );
 	}
 
 	if ( isset( $actor_data ) ) {
@@ -331,7 +331,7 @@ function lwtv_yikes_is_queer( $the_id ) {
 function lwtv_yikes_is_birthday( $the_id ) {
 	$happy_birthday = false;
 	if ( class_exists( 'LWTV_Theme_Actor_Birthday' ) ) {
-		$happy_birthday = ( new LWTV_Theme_Actor_Birthday() )->generate( $the_id );
+		$happy_birthday = ( new LWTV_Theme_Actor_Birthday() )->make( $the_id );
 	}
 	return $happy_birthday;
 }
@@ -367,8 +367,8 @@ function lwtv_microformats_fix( $post_id ) {
  * @return string      Whatever we end up with
  */
 function lwtv_symbolicons( $svg, $fa ) {
-	if ( method_exists( 'LWTV_Functions', 'symbolicons' ) ) {
-		$return = ( new LWTV_Functions() )->symbolicons( $svg, $fa );
+	if ( method_exists( 'LWTV_Features', 'symbolicons' ) ) {
+		$return = ( new LWTV_Features() )->symbolicons( $svg, $fa );
 	} else {
 		$return = '<span class="symbolicon" role="img"><svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="spinner" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="svg-inline--fa fa-spinner fa-w-16 fa-3x"><path fill="currentColor" d="M304 48c0 26.51-21.49 48-48 48s-48-21.49-48-48 21.49-48 48-48 48 21.49 48 48zm-48 368c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.49-48-48-48zm208-208c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.49-48-48-48zM96 256c0-26.51-21.49-48-48-48S0 229.49 0 256s21.49 48 48 48 48-21.49 48-48zm12.922 99.078c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48c0-26.509-21.491-48-48-48zm294.156 0c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48c0-26.509-21.49-48-48-48zM108.922 60.922c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.491-48-48-48z" class=""></path></svg></span>';
 	}
@@ -383,7 +383,7 @@ function lwtv_symbolicons( $svg, $fa ) {
  */
 function lwtv_list_characters( $post_id, $output ) {
 	if ( class_exists( 'LWTV_Theme_List_Characters' ) ) {
-		return ( new LWTV_Theme_List_Characters() )->generate( $post_id, $output );
+		return ( new LWTV_Theme_List_Characters() )->make( $post_id, $output );
 	}
 }
 
@@ -446,7 +446,7 @@ function lwtv_last_death() {
 function lwtv_author_social( $author ) {
 	$return = '';
 	if ( class_exists( 'LWTV_Theme_Data_Author' ) ) {
-		$return = ( new LWTV_Theme_Data_Author() )->generate( $author, 'social' );
+		$return = ( new LWTV_Theme_Data_Author() )->make( $author, 'social' );
 	}
 	return $return;
 }
@@ -460,7 +460,7 @@ function lwtv_author_social( $author ) {
 function lwtv_author_favourite_shows( $author ) {
 	$return = '';
 	if ( class_exists( 'LWTV_Theme_Data_Author' ) ) {
-		$return = ( new LWTV_Theme_Data_Author() )->generate( $author, 'favorite_shows' );
+		$return = ( new LWTV_Theme_Data_Author() )->make( $author, 'favorite_shows' );
 	}
 	return $return;
 }
