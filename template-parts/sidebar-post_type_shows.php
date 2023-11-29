@@ -125,7 +125,13 @@ $alt_names    = ( get_post_meta( $show_id, 'lezshows_show_names', true ) ) ? get
 							$seasons  = _n( 'season', 'seasons', $season_count );
 							$airdate .= ' (' . $season_count . ' ' . $seasons . ')';
 					}
-					echo '<li class="list-group-item network airdates"><strong>' . wp_kses_post( $air_title ) . ':</strong> ' . wp_kses_post( $airdate ) . '</li>';
+					echo '<li class="list-group-item network airdates"><strong>' . wp_kses_post( $air_title ) . ':</strong> ' . wp_kses_post( $airdate );
+
+					if ( 'current' === $airdates['finish'] || empty( $airdates['finish'] ) ) {
+						echo '&nbsp;<span class="badge text-bg-success">On Air</span>';
+					}
+
+					echo '</li>';
 				}
 				$genres = get_the_terms( $show_id, 'lez_genres' );
 				if ( $genres && ! is_wp_error( $genres ) ) {
