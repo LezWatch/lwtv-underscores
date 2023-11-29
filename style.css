@@ -114,6 +114,18 @@ a:hover, a:focus, a:active {
   text-decoration: none;
 }
 
+/* Text */
+.text-bg-primary, .text-bg-primary:visited {
+  background-color: #d1548e !important;
+  border-color: #d1548e !important;
+}
+.text-bg-primary.active, .text-bg-primary.focus, .text-bg-primary:active, .text-bg-primary:focus, .text-bg-primary:hover {
+  background-color: #fff !important;
+  border-color: #d1548e !important;
+  color: #d1548e !important;
+  transition: all 0.3s;
+}
+
 /* Accessibility */
 .screen-reader-text {
   border: 0;

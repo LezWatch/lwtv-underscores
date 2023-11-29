@@ -104,6 +104,20 @@ a {
 	}
 }
 
+/* Text */
+.text-bg-primary {
+	&, &:visited {
+		background-color: $lwtv-pink !important;
+		border-color: $lwtv-pink !important;
+	}
+
+	&.active, &.focus, &:active, &:focus, &:hover {
+		background-color: $white !important;
+		border-color: $lwtv-pink !important;
+		color: $lwtv-pink !important;
+		@include fade;
+	}
+}
 
 /* Accessibility */
 

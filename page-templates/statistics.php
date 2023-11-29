@@ -14,41 +14,16 @@ $validstat = array( 'death', 'characters', 'shows', 'main', 'actors', 'nations',
 $statstype = ( isset( $wp_query->query['statistics'] ) && in_array( $wp_query->query['statistics'], $validstat, true ) ) ? esc_attr( $wp_query->query['statistics'] ) : 'main';
 
 // Defaults:
-$image = lwtv_symbolicons( 'graph-bar.svg', 'fa-chart-area' );
-$intro = '';
+$theme_defaults = array(
+	'image' => lwtv_symbolicons( 'graph-bar.svg', 'fa-chart-area' ),
+	'intro' => '',
+);
 
-// Based on the type of stats, set our display.
-switch ( $statstype ) {
-	case 'death':
-		$image = lwtv_symbolicons( 'grim-reaper.svg', 'fa-ban' );
-		$intro = 'For a pure list of all dead, we have <a href="/trope/dead-queers/">shows where characters died</a> as well as <a href="/cliche/dead/">characters who have died</a> (aka the <a href="/cliche/dead/">Dead Lesbians</a> list).';
-		break;
-	case 'characters':
-		$image = lwtv_symbolicons( 'chart-bar.svg', 'fa-chart-bar' );
-		$intro = 'Data specific to queer characters.';
-		break;
-	case 'actors':
-		$image = lwtv_symbolicons( 'graph-line.svg', 'fa-chart-line' );
-		$intro = 'Data specific to actors who play queer characters.';
-		break;
-	case 'shows':
-		$image = lwtv_symbolicons( 'chart-pie.svg', 'fa-chart-pie' );
-		$intro = 'Data specific to TV shows with queer characters.';
-		break;
-	case 'nations':
-		$image = lwtv_symbolicons( 'globe.svg', 'fa-globe' );
-		$intro = 'Data specific to queer representation on shows by nation.';
-		break;
-	case 'stations':
-		$image = lwtv_symbolicons( 'satellite-signal.svg', 'fa-bullhorn' );
-		$intro = 'Data specific to queer representation on shows by channel or station.';
-		break;
-	case 'formats':
-		$intro = 'Data specific to queer representation by show format (i.e. TV show, web series, etc.)';
-		break;
+if ( class_exists( 'LWTV_Theme_Stats_Symbolicon' ) ) {
+	$theme_defaults = ( new LWTV_Theme_Stats_Symbolicon() )->make( $statstype );
 }
 
-$image = '<span role="img" aria-label="statistics" title="Statistics" class="taxonomy-svg statistics">' . $image . '</span>';
+$image = '<span role="img" aria-label="statistics" title="Statistics" class="taxonomy-svg statistics">' . $theme_defaults['image'] . '</span>';
 
 // If there's no valid stat, we bail.
 if ( ! in_array( $statstype, $validstat, true ) ) {
@@ -77,7 +52,7 @@ get_header(); ?>
 				<div class="row">
 					<div class="col">
 						<div class="archive-description">
-							<p><?php echo wp_kses_post( $intro ); ?></p>
+							<p><?php echo wp_kses_post( $theme_defaults['intro'] ); ?></p>
 						</div>
 					</div>
 				</div>

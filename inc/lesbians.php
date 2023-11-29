@@ -314,8 +314,8 @@ function lwtv_yikes_actordata( $the_id, $data ) {
  */
 function lwtv_yikes_is_queer( $the_id ) {
 	$is_queer = false;
-	if ( method_exists( 'LWTV_Features_Loops', 'is_actor_queer' ) ) {
-		$is_queer = ( 'yes' === ( new LWTV_Features_Loops() )->is_actor_queer( $the_id ) ) ? true : false;
+	if ( method_exists( 'LWTV_Queery_Is_Actor_Queer', 'make' ) ) {
+		$is_queer = ( 'yes' === ( new LWTV_Queery_Is_Actor_Queer() )->make( $the_id ) ) ? true : false;
 	}
 
 	return $is_queer;
