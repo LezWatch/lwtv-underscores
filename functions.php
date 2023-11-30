@@ -8,7 +8,7 @@
 // Versioning for efficient developers.
 if ( ! defined( 'LWTV_THEME_VERSION' ) ) {
 	$versions = array(
-		'lwtv-underscores' => '4.0.0',    // Bump this any time you make serious CSS changes.
+		'lwtv-underscores' => '4.0.1',    // Bump this any time you make serious CSS changes.
 		'font-awesome'     => '6.4.2',    // Bump when you update Font Awesome.
 		'bootstrap'        => '5.3.2',    // Bump when you update bootstrap.
 		'lwtv-blocks'      => '1.0.0',    // Bump when you update the blocks.

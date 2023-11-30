@@ -191,127 +191,20 @@ add_action( 'pre_get_posts', 'lwtv_yikes_character_archive_query' );
  * Take the data from the taxonomy to determine a dynamic title.
  *
  * @access public
- * @param mixed $location
- * @param mixed $posttype
- * @param mixed $taxonomy
- * @return $title_prefix OR $title_suffix
+ * @param string $location
+ * @param string $post_type
+ * @param string $taxonomy
+ *
+ * @return string $title_adjustment -- Adjusted title.
  */
-function lwtv_yikes_tax_archive_title( $location, $posttype, $taxonomy ) {
-
-	// Bail if not set
-	if ( ! isset( $location ) || ! isset( $posttype ) || ! isset( $taxonomy ) ) {
-		return;
+function lwtv_yikes_tax_archive_title( $location, $post_type, $taxonomy ) {
+	if ( class_exists( 'LWTV_Theme_Taxonomy_Archive_Title' ) ) {
+		$title_adjustment = ( new LWTV_Theme_Taxonomy_Archive_Title() )->make( $location, $post_type, $taxonomy );
 	}
 
-	$title_prefix = '';
-	$title_suffix = '';
-	$term         = get_term_by( 'slug', get_query_var( 'term' ), $taxonomy );
-	$termicon     = get_term_meta( $term->term_id, 'lez_termsmeta_icon', true );
-
-	// FA defaults
-	switch ( $taxonomy ) {
-		case 'lez_cliches':
-			$fa  = 'fa-bell';
-			$svg = $termicon ? $termicon . '.svg' : 'bell.svg';
-			break;
-		case 'lez_tropes':
-			$fa  = 'fa-pastafarianism';
-			$svg = $termicon ? $termicon . '.svg' : 'octopus.svg';
-			break;
-		case 'lez_formats':
-			$fa  = 'fa-film';
-			$svg = $termicon ? $termicon . '.svg' : 'film-strip.svg';
-			break;
-		case 'lez_genres':
-			$fa  = 'fa-th-large';
-			$svg = $termicon ? $termicon . '.svg' : 'blocks.svg';
-			break;
-		case 'lez_intersections':
-			$fa  = 'fa-flag';
-			$svg = $termicon ? $termicon . '.svg' : 'flag-wave.svg';
-			break;
-		case 'lez_gender':
-		case 'lez_actor_gender':
-			$fa  = 'fa-female';
-			$svg = 'female.svg';
-			break;
-		case 'lez_sexuality':
-		case 'lez_actor_sexuality':
-			$fa  = 'fa-venus-double';
-			$svg = 'venus-double.svg';
-			break;
-		case 'lez_romantic':
-			$fa  = 'fa-heartbeat';
-			$svg = 'user-heart.svg';
-			break;
-		case 'lez_stars':
-			$fa  = 'fa-star';
-			$svg = 'star.svg';
-			break;
-		case 'lez_triggers':
-			$fa  = 'fa-exclamation-triangle';
-			$svg = 'warning.svg';
-			break;
-		case 'lez_stations':
-			$fa  = 'fa-bullhorn';
-			$svg = 'satellite-signal.svg';
-			break;
-		case 'lez_country':
-			$fa  = 'fa-globe';
-			$svg = 'globe.svg';
-			break;
-		default:
-			$fa  = 'fa-square';
-			$svg = 'square.svg';
-			break;
+	if ( isset( $title_adjustment ) && ! empty( $title_adjustment ) ) {
+		return $title_adjustment;
 	}
-
-	$icon = lwtv_symbolicons( $svg, $fa );
-
-	switch ( $posttype ) {
-		case 'post_type_characters':
-			$title_suffix = ' Characters';
-			break;
-		case 'post_type_actors':
-			$title_suffix = ' Actors';
-			break;
-		case 'post_type_shows':
-			$title_suffix = ' TV Shows';
-
-			// TV Shows are harder to have titles
-			switch ( $taxonomy ) {
-				case 'lez_stars':
-					$title_suffix = '';
-					$title_prefix = 'TV Shows with ';
-					break;
-				case 'lez_country':
-					$title_suffix = ' Based TV Shows';
-					$title_prefix = '';
-					break;
-				case 'lez_formats':
-					$title_suffix = '';
-					break;
-				case 'lez_triggers':
-					$title_prefix = 'TV Shows with ';
-					$title_suffix = ' Trigger Warnings';
-					break;
-			}
-			break;
-	}
-
-	switch ( $location ) {
-		case 'prefix':
-			$return = $title_prefix;
-			break;
-		case 'suffix':
-			$return = $title_suffix;
-			break;
-		case 'icon':
-			$return = $icon;
-			break;
-	}
-
-	return $return;
 }
 
 
@@ -344,18 +237,12 @@ if ( is_search() ) {
  * @return void
  */
 function lwtv_yikes_show_star( $show_id ) {
-	$star_terms = get_the_terms( $show_id, 'lez_stars' );
+	if ( class_exists( 'LWTV_Theme_Show_Stars' ) ) {
+		$star = ( new LWTV_Theme_Show_Stars() )->make( $show_id );
+	}
 
-	if ( get_post_meta( $show_id, 'lezshows_stars', true ) || ( ! empty( $star_terms ) && ! is_wp_error( $star_terms ) ) ) {
-		$color = esc_attr( get_post_meta( $show_id, 'lezshows_stars', true ) );
-		if ( ! empty( $star_terms ) && ! is_wp_error( $star_terms ) ) {
-			$color_term = get_the_terms( $show_id, 'lez_stars' );
-			$color      = $color_term[0]->slug;
-		}
-		$star = ' <span role="img" aria-label="' . ucfirst( $color ) . ' Star Show" data-bs-target="tooltip" title="' . ucfirst( $color ) . ' Star Show" class="show-star ' . $color . '">' . lwtv_symbolicons( 'star.svg', 'fa-star' ) . '</span>';
+	if ( isset( $star ) && ! empty( $star ) ) {
 		return $star;
-	} else {
-		return;
 	}
 }
 
@@ -368,39 +255,13 @@ function lwtv_yikes_show_star( $show_id ) {
  * @return void
  */
 function lwtv_yikes_content_warning( $show_id ) {
+	if ( isset( $show_id ) && class_exists( 'LWTV_Theme_Content_Warning' ) ) {
+		$warning_array = ( new LWTV_Theme_Content_Warning() )->make( $show_id );
+	}
 
-	$warning_array = array(
-		'card'    => 'none',
-		'content' => 'none',
-	);
-
-	// If there's no post ID passed or it's not a show, we show nothing.
-	if ( is_null( $show_id ) || get_post_type( $show_id ) !== 'post_type_shows' ) {
+	if ( isset( $warning_array ) && is_array( $warning_array ) ) {
 		return $warning_array;
 	}
-
-	$trigger_terms            = get_the_terms( $show_id, 'lez_triggers' );
-	$trigger                  = ( ! empty( $trigger_terms ) && ! is_wp_error( $trigger_terms ) ) ? $trigger_terms[0]->slug : get_post_meta( $show_id, 'lezshows_triggerwarning', true );
-	$warning_array['content'] = ( ! empty( $trigger_terms ) && ! is_wp_error( $trigger_terms ) ) ? term_description( $trigger_terms[0]->term_id ) : '<strong>WARNING</strong> This show may be upsetting to watch.';
-
-	switch ( $trigger ) {
-		case 'on':
-		case 'high':
-			$warning_array['card'] = 'danger';
-			break;
-		case 'med':
-		case 'medium':
-			$warning_array['card'] = 'warning';
-			break;
-		case 'low':
-			$warning_array['card'] = 'info';
-			break;
-		default:
-			$warning_array['card']    = 'none';
-			$warning_array['content'] = 'none';
-	}
-
-	return $warning_array;
 }
 
 /**
@@ -415,120 +276,13 @@ function lwtv_yikes_content_warning( $show_id ) {
  */
 function lwtv_yikes_chardata( $the_id, $data ) {
 
-	// Early Bail
-	$valid_data = array( 'dead', 'shows', 'actors', 'gender', 'sexuality', 'romantic', 'cliches', 'oneshow', 'oneactor' );
-	if ( ! isset( $the_id ) || ! isset( $data ) || ! in_array( $data, $valid_data, true ) ) {
-		return;
+	if ( isset( $the_id ) && class_exists( 'LWTV_Theme_Data_Character' ) ) {
+		$character_data = ( new LWTV_Theme_Data_Character() )->make( $the_id, $data );
 	}
 
-	$output = '';
-
-	switch ( $data ) {
-		case 'dead':
-			$deadpage = get_term_by( 'slug', get_query_var( 'term' ), get_query_var( 'taxonomy' ) );
-			// Show nothing on archive pages for dead
-			if ( ! empty( $term ) && 'dead' === $term->slug ) {
-				return;
-			} elseif ( has_term( 'dead', 'lez_cliches', $the_id ) ) {
-				$output = '<span role="img" aria-label="Grim Reaper" title="Grim Reaper" class="charlist-grave">' . lwtv_symbolicons( 'grim-reaper.svg', 'fa-times-circle' ) . '</span>';
-			}
-			break;
-		case 'shows':
-			$output = get_post_meta( $the_id, 'lezchars_show_group', true );
-			break;
-		case 'oneshow':
-			$all_shows   = get_post_meta( $the_id, 'lezchars_show_group', true );
-			$shows_value = isset( $all_shows[0] ) ? $all_shows[0] : '';
-			if ( ! empty( $shows_value ) ) {
-
-				// If $shows_value['show'] is an array, de-array it.
-				if ( is_array( $shows_value['show'] ) ) {
-					$shows_value['show'] = reset( $shows_value['show'] );
-				}
-
-				$num_shows = count( $all_shows );
-				$showsmore = ( $num_shows > 1 ) ? ' (plus ' . ( $num_shows - 1 ) . ' more)' : '';
-				$show_post = get_post( $shows_value['show'] );
-				$output   .= '<div class="card-meta-item shows">' . lwtv_symbolicons( 'tv-hd.svg', 'fa-tv' ) . '<em>';
-				if ( get_post_status( $shows_value['show'] ) !== 'publish' ) {
-					$output .= '<span class="disabled-show-link">' . $show_post->post_title . '</span>';
-				} else {
-					$output .= '<a href="' . get_the_permalink( $show_post->ID ) . '">' . $show_post->post_title . '</a>';
-				}
-				$output .= '</em> (' . $shows_value['type'] . ')' . $showsmore . '</div>';
-			}
-			break;
-		case 'oneactor':
-			$actors      = get_post_meta( $the_id, 'lezchars_actor', true );
-			$actor_value = isset( $actors[0] ) ? $actors[0] : '';
-			if ( ! empty( $actor_value ) ) {
-				$num_actors = count( $actors );
-				$actorsmore = ( $num_actors > 1 ) ? ' (plus ' . ( $num_actors - 1 ) . ' more)' : '';
-				$actor_post = get_post( $actor_value );
-				$actor_name = ( isset( $actor_post->post_title ) && ! is_null( $actor_post->post_title ) ) ? $actor_post->post_title : 'TBD';
-				$output    .= '<div class="card-meta-item actors">' . lwtv_symbolicons( 'user.svg', 'fa-user' );
-				if ( get_post_status( $actor_value ) === 'private' ) {
-					if ( is_user_logged_in() ) {
-						$output .= '<a href="' . get_permalink( $actor_value ) . '">' . get_the_title( $actor_value ) . ' - UNLISTED</a>';
-					} else {
-						$output .= '<a href="/actor/unknown/">Unknown</a>';
-					}
-				} elseif ( get_post_status( $actor_value ) !== 'publish' ) {
-					$output .= '<span class="disabled-show-link">' . $actor_name . '</span>';
-				} else {
-					$output .= '<a href="' . get_the_permalink( $actor_post->ID ) . '">' . $actor_name . '</a>';
-				}
-				$output .= $actorsmore . '</div>';
-			}
-			break;
-		case 'actors':
-			$character_actors = get_post_meta( $the_id, 'lezchars_actor', true );
-			if ( ! is_array( $character_actors ) && ! empty( $character_actors ) ) {
-				$character_actors = array( get_post_meta( $the_id, 'lezchars_actor', true ) );
-			}
-			$output = $character_actors;
-			break;
-		case 'gender':
-			$gender_terms = get_the_terms( $the_id, 'lez_gender', true );
-			if ( $gender_terms && ! is_wp_error( $gender_terms ) ) {
-				foreach ( $gender_terms as $gender_term ) {
-					$output .= '<a href="' . get_term_link( $gender_term->slug, 'lez_gender' ) . '" rel="tag" title="' . $gender_term->name . '">' . $gender_term->name . '</a> ';
-				}
-			}
-			break;
-		case 'sexuality':
-			$sexuality_terms = get_the_terms( $the_id, 'lez_sexuality', true );
-			if ( $sexuality_terms && ! is_wp_error( $sexuality_terms ) ) {
-				foreach ( $sexuality_terms as $sexuality_term ) {
-					$output .= '<a href="' . get_term_link( $sexuality_term->slug, 'lez_sexuality' ) . '" rel="tag" title="' . $sexuality_term->name . '">' . $sexuality_term->name . '</a> ';
-				}
-			}
-			break;
-		case 'romantic':
-			$romantic_terms = get_the_terms( $the_id, 'lez_romantic', true );
-			if ( $romantic_terms && ! is_wp_error( $romantic_terms ) ) {
-				foreach ( $romantic_terms as $romantic_term ) {
-					$output .= '<a href="' . get_term_link( $romantic_term->slug, 'lez_romantic' ) . '" rel="tag" title="' . $romantic_term->name . '">' . $romantic_term->name . '</a> ';
-				}
-			}
-			break;
-		case 'cliches':
-			$lez_cliches = get_the_terms( $the_id, 'lez_cliches' );
-			$cliches     = '';
-			if ( $lez_cliches && ! is_wp_error( $lez_cliches ) ) {
-				$cliches = '';
-				foreach ( $lez_cliches as $the_cliche ) {
-					$termicon = get_term_meta( $the_cliche->term_id, 'lez_termsmeta_icon', true );
-					$tropicon = $termicon ? $termicon . '.svg' : 'square.svg';
-					$icon     = lwtv_symbolicons( $tropicon, 'fa-square' );
-					$cliches .= '<a href="' . get_term_link( $the_cliche->slug, 'lez_cliches' ) . '" data-bs-target="tooltip" data-placement="bottom" rel="tag" title="' . $the_cliche->name . '"><span role="img" aria-label="' . $the_cliche->name . '" class="character-cliche ' . $the_cliche->slug . '">' . $icon . '</span></a>&nbsp;';
-				}
-			}
-			$output = $cliches;
-			break;
+	if ( isset( $character_data ) ) {
+		return $character_data;
 	}
-
-	return $output;
 }
 
 /**
@@ -542,168 +296,42 @@ function lwtv_yikes_chardata( $the_id, $data ) {
  * @return void
  */
 function lwtv_yikes_actordata( $the_id, $data ) {
-
-	// Early Bail
-	$valid_data = array( 'characters', 'gender', 'sexuality', 'age', 'dead' );
-	if ( ! isset( $the_id ) || ! isset( $data ) || ! in_array( $data, $valid_data, true ) ) {
-		return;
+	if ( isset( $the_id ) && class_exists( 'LWTV_Theme_Data_Actor' ) ) {
+		$actor_data = ( new LWTV_Theme_Data_Actor() )->make( $the_id, $data );
 	}
 
-	$output = '';
-
-	switch ( $data ) {
-		case 'age':
-			$end = new DateTime();
-			if ( get_post_meta( get_the_ID(), 'lezactors_death', true ) ) {
-				$end = new DateTime( get_post_meta( get_the_ID(), 'lezactors_death', true ) );
-			}
-			if ( get_post_meta( get_the_ID(), 'lezactors_birth', true ) ) {
-				$start = new DateTime( get_post_meta( get_the_ID(), 'lezactors_birth', true ) );
-			}
-			if ( isset( $start ) ) {
-				$output = $start->diff( $end );
-			}
-			break;
-		case 'characters':
-			// Get array of characters (by ID)
-			$character_array = get_post_meta( $the_id, 'lezactors_char_list', true );
-
-			// If the character list is empty, we must build it
-			if ( empty( $character_array ) ) {
-				// Loop to get the list of characters
-				$charactersloop = ( new LWTV_Loops() )->post_meta_query( 'post_type_characters', 'lezchars_actor', $the_id, 'LIKE' );
-
-				if ( $charactersloop->have_posts() ) {
-					$character_array = wp_list_pluck( $charactersloop->posts, 'ID' );
-				}
-
-				if ( ! is_array( $character_array ) ) {
-					$character_array = array( $character_array );
-				}
-				$character_array = array_unique( $character_array );
-				update_post_meta( $the_id, 'lezactors_char_list', $character_array );
-
-				// Reset to end
-				wp_reset_query();
-			}
-
-			if ( is_array( $character_array ) ) {
-				$characters = array();
-				foreach ( $character_array as $char_id ) {
-					$actors_array = get_post_meta( $char_id, 'lezchars_actor', true );
-					if ( 'publish' === get_post_status( $char_id ) && isset( $actors_array ) && ! empty( $actors_array ) ) {
-						foreach ( $actors_array as $char_actor ) {
-							if ( (int) $char_actor === (int) $the_id ) {
-								$characters[ $char_id ] = array(
-									'id'      => $char_id,
-									'title'   => get_the_title( $char_id ),
-									'url'     => get_the_permalink( $char_id ),
-									'content' => get_the_content( $char_id ),
-									'shows'   => get_post_meta( $char_id, 'lezchars_show_group', true ),
-								);
-							}
-						}
-					}
-				}
-				$character_array = $characters;
-			}
-			$output = $character_array;
-			break;
-		case 'dead':
-			$dead = array();
-
-			// Get array of characters (by ID)
-			$character_array = get_post_meta( $the_id, 'lezactors_char_list', true );
-
-			// If the character list is empty, we must build it
-			if ( empty( $character_array ) ) {
-				// Loop to get the list of characters
-				$charactersloop = ( new LWTV_Loops() )->post_meta_query( 'post_type_characters', 'lezchars_actor', $the_id, 'LIKE' );
-
-				if ( $charactersloop->have_posts() ) {
-					$character_array = wp_list_pluck( $charactersloop->posts, 'ID' );
-				}
-
-				$character_array = ( is_array( $character_array ) ) ? array_unique( $character_array ) : array_unique( array( $character_array ) );
-				update_post_meta( $the_id, 'lezactors_char_list', $character_array );
-
-				// Reset to end
-				wp_reset_query();
-			}
-
-			if ( is_array( $character_array ) ) {
-				foreach ( $character_array as $char_id ) {
-					$actors = get_post_meta( $char_id, 'lezchars_actor', true );
-					if ( isset( $actors ) && ! empty( $actors ) ) {
-						foreach ( $actors as $actor ) {
-							// We have to check because due to so many characters, we have some actor mis-matches.
-							if ( ( (int) $actor === (int) $the_id ) && has_term( 'dead', 'lez_cliches', $char_id ) ) {
-								$dead[ $char_id ] = array(
-									'id'    => $char_id,
-									'title' => get_the_title( $char_id ),
-									'url'   => get_the_permalink( $char_id ),
-								);
-							}
-						}
-					}
-				}
-			}
-			$output = $dead;
-			break;
-		case 'gender':
-			$gender_terms = get_the_terms( $the_id, 'lez_actor_gender', true );
-			if ( $gender_terms && ! is_wp_error( $gender_terms ) ) {
-				foreach ( $gender_terms as $gender_term ) {
-					$output .= '<a href="' . get_term_link( $gender_term->slug, 'lez_actor_gender' ) . '" rel="tag" title="' . $gender_term->name . '">' . $gender_term->name . '</a> ';
-				}
-			}
-			break;
-		case 'pronouns':
-			$pronoun_terms = get_the_terms( $the_id, 'lez_actor_pronouns', true );
-			if ( $pronoun_terms && ! is_wp_error( $pronoun_term ) ) {
-				foreach ( $pronoun_terms as $pronoun_term ) {
-					$output .= '<a href="' . get_term_link( $pronoun_term->slug, 'lez_actor_pronouns' ) . '" rel="tag" title="' . $pronoun_term->name . '">' . $pronoun_term->name . '</a> ';
-				}
-			}
-			break;
-		case 'sexuality':
-			$sexuality_terms = get_the_terms( $the_id, 'lez_actor_sexuality', true );
-			if ( $sexuality_terms && ! is_wp_error( $sexuality_terms ) ) {
-				foreach ( $sexuality_terms as $sexuality_term ) {
-					$output .= '<a href="' . get_term_link( $sexuality_term->slug, 'lez_actor_sexuality' ) . '" rel="tag" title="' . $sexuality_term->name . '">' . $sexuality_term->name . '</a> ';
-				}
-			}
-			break;
-		default:
-			$output .= '';
+	if ( isset( $actor_data ) ) {
+		return $actor_data;
 	}
-	return $output;
 }
 
 /**
  * Is the actor queer function
  *
  * @access public
- * @param mixed $the_id
- * @return void
+ * @param string $the_id
+ * @return bool
  */
 function lwtv_yikes_is_queer( $the_id ) {
-	if ( ! method_exists( 'LWTV_Loops', 'is_actor_queer' ) ) {
-		$is_queer = false;
-	} else {
-		$is_queer = ( 'yes' === ( new LWTV_Loops() )->is_actor_queer( $the_id ) ) ? true : false;
+	$is_queer = false;
+	if ( method_exists( 'LWTV_Queery_Is_Actor_Queer', 'make' ) ) {
+		$is_queer = ( 'yes' === ( new LWTV_Queery_Is_Actor_Queer() )->make( $the_id ) ) ? true : false;
 	}
 
 	return $is_queer;
 }
 
-
+/**
+ * Is the actor having a birthday right now?
+ *
+ * @access public
+ * @param string $the_id
+ * @return bool
+ */
 function lwtv_yikes_is_birthday( $the_id ) {
 	$happy_birthday = false;
-	$today_is       = gmdate( 'm-d' );
-	$birthday       = substr( get_post_meta( $the_id, 'lezactors_birth', true ), 5 );
-	if ( $birthday === $today_is ) {
-		$happy_birthday = true;
+	if ( class_exists( 'LWTV_Theme_Actor_Birthday' ) ) {
+		$happy_birthday = ( new LWTV_Theme_Actor_Birthday() )->make( $the_id );
 	}
 	return $happy_birthday;
 }
@@ -739,8 +367,8 @@ function lwtv_microformats_fix( $post_id ) {
  * @return string      Whatever we end up with
  */
 function lwtv_symbolicons( $svg, $fa ) {
-	if ( method_exists( 'LWTV_Functions', 'symbolicons' ) ) {
-		$return = ( new LWTV_Functions() )->symbolicons( $svg, $fa );
+	if ( method_exists( 'LWTV_Features', 'symbolicons' ) ) {
+		$return = ( new LWTV_Features() )->symbolicons( $svg, $fa );
 	} else {
 		$return = '<span class="symbolicon" role="img"><svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="spinner" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="svg-inline--fa fa-spinner fa-w-16 fa-3x"><path fill="currentColor" d="M304 48c0 26.51-21.49 48-48 48s-48-21.49-48-48 21.49-48 48-48 48 21.49 48 48zm-48 368c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.49-48-48-48zm208-208c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.49-48-48-48zM96 256c0-26.51-21.49-48-48-48S0 229.49 0 256s21.49 48 48 48 48-21.49 48-48zm12.922 99.078c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48c0-26.509-21.491-48-48-48zm294.156 0c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48c0-26.509-21.49-48-48-48zM108.922 60.922c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.491-48-48-48z" class=""></path></svg></span>';
 	}
@@ -754,24 +382,9 @@ function lwtv_symbolicons( $svg, $fa ) {
  * @return mixed   number or array listing the characters
  */
 function lwtv_list_characters( $post_id, $output ) {
-
-	switch ( $output ) {
-		case 'dead':
-			$return = get_post_meta( $post_id, 'lezshows_dead_count', true );
-			break;
-		default:
-			$return = get_post_meta( $post_id, 'lezshows_char_count', true );
-			break;
+	if ( class_exists( 'LWTV_Theme_List_Characters' ) ) {
+		return ( new LWTV_Theme_List_Characters() )->make( $post_id, $output );
 	}
-
-	if ( ! isset( $return ) || empty( $return ) ) {
-		$return = '';
-		if ( method_exists( 'LWTV_CPT_Characters', 'list_characters' ) ) {
-			$return = ( new LWTV_CPT_Characters() )->list_characters( $post_id, $output );
-		}
-	}
-
-	return $return;
 }
 
 /**
@@ -789,6 +402,13 @@ function lwtv_get_chars_for_show( $post_id, $count, $roll ) {
 	return $return;
 }
 
+/**
+ * Get Last Updated
+ *
+ * @param string $post_ID
+ *
+ * @return n/a
+ */
 function lwtv_last_updated_date( $post_id ) {
 	$updated_date = get_the_modified_time( 'F jS, Y', $post_id );
 	$last_updated = '<div class="last-updated"><small class="text-muted">This page was last edited on ' . $updated_date . '.</small></div>';
@@ -796,10 +416,15 @@ function lwtv_last_updated_date( $post_id ) {
 	echo wp_kses_post( $last_updated );
 }
 
+/**
+ * Show the last death
+ *
+ * @return n/a
+ */
 function lwtv_last_death() {
 	$return = '<p>The LezWatch.TV API is temporarily unavailable.</p>';
-	if ( class_exists( 'LWTV_BYQ_JSON' ) ) {
-		$last_death = ( new LWTV_BYQ_JSON() )->last_death();
+	if ( class_exists( 'LWTV_Rest_API_BYQ' ) ) {
+		$last_death = ( new LWTV_Rest_API_BYQ() )->last_death();
 		if ( '' !== $last_death ) {
 			$return  = '<p>' . sprintf( 'It has been %s since the last queer female, non-binary, or transgender death on television', '<strong>' . human_time_diff( $last_death['died'], (int) wp_date( 'U' ) ) . '</strong> ' );
 			$return .= ': <span><a href="' . $last_death['url'] . '">' . $last_death['name'] . '</a></span> - ' . gmdate( 'F j, Y', $last_death['died'] ) . '</p>';
@@ -819,32 +444,11 @@ function lwtv_last_death() {
  * @return string $details Output of author social.
  */
 function lwtv_author_social( $author ) {
-	// Get author's Socials
-	$user_socials = array(
-		'bluesky'   => get_the_author_meta( 'bluesky', $author ),
-		'mastodon'  => get_the_author_meta( 'mastodon', $author ),
-		'instagram' => get_the_author_meta( 'instagram', $author ),
-		'tiktok'    => get_the_author_meta( 'tiktok', $author ),
-		'tumblr'    => get_the_author_meta( 'tumblr', $author ),
-		'twitter'   => get_the_author_meta( 'twitter', $author ),
-		'website'   => get_the_author_meta( 'url', $author ),
-	);
-
-	// Get all the stupid social...
-	$bluesky   = ( ! empty( $user_socials['bluesky'] ) ) ? '<a href="' . $user_socials['bluesky'] . '" target="_blank" rel="nofollow">' . ( new LWTV_Functions() )->symbolicons( 'bluesky.svg', 'fa-square' ) . '</a>' : false;
-	$instagram = ( ! empty( $user_socials['instagram'] ) ) ? '<a href="https://instagram.com/' . $user_socials['instagram'] . '" target="_blank" rel="nofollow">' . ( new LWTV_Functions() )->symbolicons( 'instagram.svg', 'fa-instagram' ) . '</a>' : false;
-	$twitter   = ( ! empty( $user_socials['twitter'] ) ) ? '<a href="https://twitter.com/' . $user_socials['twitter'] . '" target="_blank" rel="nofollow">' . ( new LWTV_Functions() )->symbolicons( 'x-twitter.svg', 'fa-twitter' ) . '</a>' : false;
-	$tumblr    = ( ! empty( $user_socials['tumblr'] ) ) ? '<a href="' . $user_socials['tumblr'] . '" target="_blank" rel="nofollow">' . ( new LWTV_Functions() )->symbolicons( 'tumblr.svg', 'fa-tumblr' ) . '</a>' : false;
-	$website   = ( ! empty( $user_socials['website'] ) ) ? '<a href="' . $user_socials['website'] . '" target="_blank" rel="nofollow">' . ( new LWTV_Functions() )->symbolicons( 'home.svg', 'fa-home' ) . '</a>' : false;
-	$mastodon  = ( ! empty( $user_socials['mastodon'] ) ) ? '<a href="' . $user_socials['mastodon'] . '" target="_blank" rel="nofollow">' . ( new LWTV_Functions() )->symbolicons( 'mastodon.svg', 'fa-mastodon' ) . '</a>' : false;
-
-	$social_array = array( $website, $twitter, $instagram, $tumblr, $bluesky, $mastodon );
-	$social_array = array_filter( $social_array );
-
-	// Add Socials.
-	$details = '<div class="author-socials">' . implode( ' ', $social_array ) . '</div>';
-
-	return $details;
+	$return = '';
+	if ( class_exists( 'LWTV_Theme_Data_Author' ) ) {
+		$return = ( new LWTV_Theme_Data_Author() )->make( $author, 'social' );
+	}
+	return $return;
 }
 
 /**
@@ -854,22 +458,9 @@ function lwtv_author_social( $author ) {
  * @return string $details Output of author fav shows.
  */
 function lwtv_author_favourite_shows( $author ) {
-	// Get author Fav Shows.
-	$all_fav_shows = get_the_author_meta( 'lez_user_favourite_shows', $author );
-	if ( '' !== $all_fav_shows ) {
-		$show_title = array();
-		foreach ( $all_fav_shows as $each_show ) {
-			if ( 'publish' !== get_post_status( $each_show ) ) {
-				array_push( $show_title, '<em><span class="disabled-show-link">' . get_the_title( $each_show ) . '</span></em>' );
-			} else {
-				array_push( $show_title, '<em><a href="' . get_permalink( $each_show ) . '">' . get_the_title( $each_show ) . '</a></em>' );
-			}
-		}
-		$favourites = ( empty( $show_title ) ) ? '' : implode( ', ', $show_title );
-		$fav_title  = _n( 'Show', 'Shows', count( $show_title ) );
+	$return = '';
+	if ( class_exists( 'LWTV_Theme_Data_Author' ) ) {
+		$return = ( new LWTV_Theme_Data_Author() )->make( $author, 'favorite_shows' );
 	}
-
-	$details = ( isset( $favourites ) && ! empty( $favourites ) ) ? '<div class="author-favourites">' . lwtv_symbolicons( 'tv-hd.svg', 'fa-tv' ) . '&nbsp;Favorite ' . $fav_title . ': ' . $favourites . '</div>' : '';
-
-	return $details;
+	return $return;
 }

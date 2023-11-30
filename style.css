@@ -5,7 +5,7 @@ Theme URI: https://lezwatchtv.com/
 Author: Tracy Levesque, Mika Epstein
 Author URI: https://lezwatchtv.com/
 Description: LezWatch.TV Theme Episode III - Return of the Custom Theme
-Version: 3.1
+Version: 4.0.1
 License: GNU General Public License v2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Text Domain: yikes_starter
@@ -112,6 +112,18 @@ a:visited {
 a:hover, a:focus, a:active {
   color: #8d329f;
   text-decoration: none;
+}
+
+/* Text */
+.text-bg-primary, .text-bg-primary:visited {
+  background-color: #d1548e !important;
+  border-color: #d1548e !important;
+}
+.text-bg-primary.active, .text-bg-primary.focus, .text-bg-primary:active, .text-bg-primary:focus, .text-bg-primary:hover {
+  background-color: #fff !important;
+  border-color: #d1548e !important;
+  color: #d1548e !important;
+  transition: all 0.3s;
 }
 
 /* Accessibility */
@@ -301,9 +313,12 @@ pre.wp-block-verse {
 .featured-image-tabs .nav-tabs {
   border-bottom: none;
 }
+.featured-image-tabs .nav-tabs .nav-link:hover, .featured-image-tabs .nav-tabs .nav-link:focus {
+  border-radius: var(--bs-nav-tabs-border-radius);
+}
 .featured-image-tabs .nav-tabs .nav-link.active, .featured-image-tabs .nav-tabs .nav-item.show .nav-link {
   border-color: rgba(0, 0, 0, 0.125);
-  border-bottom: none;
+  border-radius: var(--bs-nav-tabs-border-radius);
 }
 .featured-image-tabs a.nav-link {
   color: #999;
@@ -1009,6 +1024,9 @@ section {
   background-size: cover;
   background-position: center top;
 }
+.site-loop.related-posts-by-taxonomy-loop .card img.card-img-top, .site-loop.related-posts-by-taxonomy-loop .image img.card-img-top {
+  height: 150px;
+}
 
 .home-featured-shows {
   background-color: #d1548e;
@@ -1334,9 +1352,10 @@ table.lwtvc tbody {
 .character-image-wrapper, .actor-image-wrapper {
   max-height: 300px;
   overflow: hidden;
+  display: inline;
 }
 .character-show-loop .character-image-wrapper, .search-results .character-image-wrapper, .character-archive-loop .character-image-wrapper, .character-image-wrapper .actor-archive-loop, .character-show-loop .actor-image-wrapper, .search-results .actor-image-wrapper, .character-archive-loop .actor-image-wrapper, .actor-image-wrapper .actor-archive-loop {
-  min-height: 250px;
+  height: 275px;
 }
 
 /* Single Character & Single Actor Template */
@@ -1348,6 +1367,7 @@ table.lwtvc tbody {
 .character-page .card .single-char-img, .actor-page .card .single-char-img {
   float: left;
   margin: 0 2rem 0 0;
+  width: 300px;
 }
 .character-page .card .characters-description, .actor-page .card .characters-description {
   margin-top: 1.6rem;
@@ -1396,6 +1416,9 @@ table.lwtvc tbody {
 /* Single Actor Template */
 .actor-page .card .single-char-img {
   margin-bottom: 1.25rem;
+}
+.actor-page .card-meta-item #actor-links {
+  padding-right: 0.25rem;
 }
 .actor-page .card-meta-item ul {
   padding: 0;

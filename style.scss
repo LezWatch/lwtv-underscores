@@ -4,7 +4,7 @@ Theme URI: https://lezwatchtv.com/
 Author: Tracy Levesque, Mika Epstein
 Author URI: https://lezwatchtv.com/
 Description: LezWatch.TV Theme Episode III - Return of the Custom Theme
-Version: 3.1
+Version: 4.0.1
 License: GNU General Public License v2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Text Domain: yikes_starter
@@ -104,6 +104,20 @@ a {
 	}
 }
 
+/* Text */
+.text-bg-primary {
+	&, &:visited {
+		background-color: $lwtv-pink !important;
+		border-color: $lwtv-pink !important;
+	}
+
+	&.active, &.focus, &:active, &:focus, &:hover {
+		background-color: $white !important;
+		border-color: $lwtv-pink !important;
+		color: $lwtv-pink !important;
+		@include fade;
+	}
+}
 
 /* Accessibility */
 
@@ -226,7 +240,7 @@ pre.wp-block-verse {
 	a:hover {
 		background-color: $lwtv-ltgrey;
 	}
-	
+
 	.facetwp-page {
 		position: relative;
 		display: block;
@@ -286,9 +300,12 @@ pre.wp-block-verse {
 	.nav-tabs {
 		border-bottom: none;
 	}
+	.nav-tabs .nav-link:hover, .nav-tabs .nav-link:focus {
+		border-radius: var(--bs-nav-tabs-border-radius);
+	}
 	.nav-tabs .nav-link.active, .nav-tabs .nav-item.show .nav-link {
 		border-color: $lwtv-bordergrey;
-		border-bottom: none;
+		border-radius: var(--bs-nav-tabs-border-radius);
 	}
 	a.nav-link {
 		color: $medgrey;
@@ -431,13 +448,13 @@ h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
 }
 
 /* Blur unless hovered for Last Death */
-.hidden-death { 
+.hidden-death {
 	text-shadow: 0 0 8px $black;
 	color: transparent;
 	filter: blur(3px);
 	-webkit-filter: blur(3px);
 }
-.hidden-death:hover { 
+.hidden-death:hover {
 	text-shadow: none!important;
 	color: $white!important;
 	filter: none!important;
@@ -735,6 +752,10 @@ section {
 			background-repeat: no-repeat;
 			@include cover;
 			background-position: center top;
+		}
+
+		img.card-img-top {
+			height: 150px;
 		}
 	}
 }
@@ -1119,11 +1140,12 @@ table.lwtvc {
 .character-image-wrapper, .actor-image-wrapper {
 	max-height: 300px;
 	overflow: hidden;
+	display: inline;
 
 	.character-show-loop &,
 	.search-results &,
 	.character-archive-loop &, .actor-archive-loop {
-		min-height: 250px;
+		height: 275px;
 	}
 }
 
@@ -1139,6 +1161,7 @@ table.lwtvc {
 		.single-char-img {
 			float: left;
 			margin: 0 2rem 0 0;
+			width: 300px;
 		}
 
 		.characters-description {
@@ -1205,6 +1228,10 @@ table.lwtvc {
 	}
 
 	.card-meta-item {
+		#actor-links {
+			padding-right: 0.25rem;
+		}
+
 		ul {
 			padding: 0;
 

@@ -142,92 +142,95 @@ if ( $alt_images ) {
 
 ?>
 <div class="card-body">
-
-	<?php
-	if ( ! isset( $image_tabs ) || ! is_array( $image_tabs ) ) {
-		the_post_thumbnail( 'character-img', $thumb_array );
-	} else {
-		?>
-		<div class="featured-image-tabs ">
-			<!-- Nav tabs -->
-			<ul class="nav nav-tabs" id="v-pills-tab" role="tablist">
-				<li class="nav-item" role="presentation">
-					<a class="nav-link active" id="v-pills-primary_image-tab" data-bs-toggle="pill" href="#v-pills-primary_image" role="tab" aria-controls="v-pills-primary_image" aria-selected="true">Primary</a>
-				</li>
-				<?php
-				foreach ( $image_tabs as $a_tab ) {
-					?>
+	<div class="character-image-wrapper">
+		<?php
+		if ( ! isset( $image_tabs ) || ! is_array( $image_tabs ) ) {
+			the_post_thumbnail( 'character-img', $thumb_array );
+		} else {
+			?>
+			<div class="featured-image-tabs ">
+				<!-- Nav tabs -->
+				<ul class="nav nav-tabs" id="v-pills-tab" role="tablist">
 					<li class="nav-item" role="presentation">
-						<a class="nav-link" id="v-pills-<?php echo esc_attr( $a_tab['slug'] ); ?>-tab" data-bs-toggle="pill" href="#v-pills-<?php echo esc_attr( $a_tab['slug'] ); ?>" role="tab" aria-controls="v-pills-<?php echo esc_attr( $a_tab['slug'] ); ?>" aria-selected="false"><?php echo esc_html( ucfirst( $a_tab['title'] ) ); ?></a>
+						<a class="nav-link active" id="v-pills-primary_image-tab" data-bs-toggle="pill" href="#v-pills-primary_image" role="tab" aria-controls="v-pills-primary_image" aria-selected="true">Primary</a>
 					</li>
 					<?php
-				}
-				?>
-			</ul>
-			<!-- Tab panes -->
-			<div class="tab-content" id="altImagesContent">
-				<div class="tab-pane fade show active" id="v-pills-primary_image" role="tabpanel" aria-labelledby="v-pills-primary_image-tab">
-					<?php the_post_thumbnail( 'character-img', $thumb_array ); ?>
-				</div>
-				<?php
-				foreach ( $image_tabs as $a_tab ) {
-					?>
-					<div class="tab-pane fade" id="v-pills-<?php echo esc_attr( $a_tab['slug'] ); ?>" role="tabpanel" aria-labelledby="v-pills-<?php echo esc_attr( $a_tab['slug'] ); ?>-tab">
-						<?php echo wp_kses_post( $a_tab['image'] ); ?>
-					</div>
-					<?php
-				}
-				?>
-			</div>
-		</div>
-		<?php
-	}
-	?>
-
-	<div class="card-meta">
-		<div class="card-meta-item">
-			<table class="table table-sm" style="width: auto !important;">
-				<tbody>
-					<tr>
-						<th scope="row" colspan="2"><center><?php echo wp_kses_post( $gender_sexuality ); ?></center></th>
-					</tr>
-					<tr>
-						<th scope="row">Clichés</th>
-						<td><?php echo $cliches; // phpcs:ignore WordPress.Security.EscapeOutput ?></td>
-					</tr>
-					<tr>
-						<th scope="row">Status</th>
-						<td><?php echo wp_kses_post( $doa_status ); ?></td>
-					</tr>
-					<tr>
-						<th scope="row"><?php echo wp_kses_post( _n( 'Actor', 'Actors', count( $all_actors ) ) ); ?></th>
-						<td>&bull; <?php echo implode( '<br />&bull; ', $the_actors ); // phpcs:ignore WordPress.Security.EscapeOutput ?></td>
-					</tr>
-					<tr>
-						<th scope="row"><?php echo wp_kses_post( _n( 'Show', 'Shows', count( $shows_group ) ) ); ?></th>
-						<td>&bull; <?php echo wp_kses_post( implode( '<br />&bull; ', $shows_group ) ); ?></td>
-					</tr>
-					<?php
-					if ( isset( $rip ) ) {
+					foreach ( $image_tabs as $a_tab ) {
 						?>
-						<tr>
-							<th scope="row">RIP</th>
-							<td><?php echo wp_kses_post( implode( ' &bull; ', $rip ) ); ?></td>
-						</tr>
+						<li class="nav-item" role="presentation">
+							<a class="nav-link" id="v-pills-<?php echo esc_attr( $a_tab['slug'] ); ?>-tab" data-bs-toggle="pill" href="#v-pills-<?php echo esc_attr( $a_tab['slug'] ); ?>" role="tab" aria-controls="v-pills-<?php echo esc_attr( $a_tab['slug'] ); ?>" aria-selected="false"><?php echo esc_html( ucfirst( $a_tab['title'] ) ); ?></a>
+						</li>
 						<?php
 					}
 					?>
-				</tbody>
-			</table>
-		</div>
-	</div>
-	<div class="characters-description">
-		<?php
-		// Seems to be running twice, so we need this catch.
-		$post_content = the_content();
-		if ( ! empty( $post_content ) ) {
-			echo wp_kses_post( $post_content );
+				</ul>
+				<!-- Tab panes -->
+				<div class="tab-content" id="altImagesContent">
+					<div class="tab-pane fade show active" id="v-pills-primary_image" role="tabpanel" aria-labelledby="v-pills-primary_image-tab">
+						<?php the_post_thumbnail( 'character-img', $thumb_array ); ?>
+					</div>
+					<?php
+					foreach ( $image_tabs as $a_tab ) {
+						?>
+						<div class="tab-pane fade" id="v-pills-<?php echo esc_attr( $a_tab['slug'] ); ?>" role="tabpanel" aria-labelledby="v-pills-<?php echo esc_attr( $a_tab['slug'] ); ?>-tab">
+							<?php echo wp_kses_post( $a_tab['image'] ); ?>
+						</div>
+						<?php
+					}
+					?>
+				</div>
+			</div>
+			<?php
 		}
 		?>
+	</div>
+
+	<div class="card-character-content">
+		<div class="card-meta">
+			<div class="card-meta-item">
+				<table class="table table-sm" style="width: auto !important;">
+					<tbody>
+						<tr>
+							<th scope="row" colspan="2"><center><?php echo wp_kses_post( $gender_sexuality ); ?></center></th>
+						</tr>
+						<tr>
+							<th scope="row">Clichés</th>
+							<td><?php echo $cliches; // phpcs:ignore WordPress.Security.EscapeOutput ?></td>
+						</tr>
+						<tr>
+							<th scope="row">Status</th>
+							<td><?php echo wp_kses_post( $doa_status ); ?></td>
+						</tr>
+						<tr>
+							<th scope="row"><?php echo wp_kses_post( _n( 'Actor', 'Actors', count( $all_actors ) ) ); ?></th>
+							<td>&bull; <?php echo implode( '<br />&bull; ', $the_actors ); // phpcs:ignore WordPress.Security.EscapeOutput ?></td>
+						</tr>
+						<tr>
+							<th scope="row"><?php echo wp_kses_post( _n( 'Show', 'Shows', count( $shows_group ) ) ); ?></th>
+							<td>&bull; <?php echo wp_kses_post( implode( '<br />&bull; ', $shows_group ) ); ?></td>
+						</tr>
+						<?php
+						if ( isset( $rip ) ) {
+							?>
+							<tr>
+								<th scope="row">RIP</th>
+								<td><?php echo wp_kses_post( implode( ' &bull; ', $rip ) ); ?></td>
+							</tr>
+							<?php
+						}
+						?>
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<div class="characters-description">
+			<?php
+			// Seems to be running twice, so we need this catch.
+			$post_content = the_content();
+			if ( ! empty( $post_content ) ) {
+				echo wp_kses_post( $post_content );
+			}
+			?>
+		</div>
 	</div>
 </div>
