@@ -7,9 +7,10 @@
 
 // Defaults
 $current_archive   = get_queried_object();
+$current_count     = ( isset( $current_archive->count ) ) ? $current_archive->count : 0;
 $archive_icon      = lwtv_symbolicons( 'newspaper.svg', 'fa-newspaper' );
 $archive_details   = '';
-$archive_subheader = '<span class="post-count">' . sprintf( _n( '%s article', '%s articles', $current_archive->count ), number_format_i18n( $current_archive->count ) ) . '</span>';
+$archive_subheader = '<span class="post-count">' . sprintf( _n( '%s article', '%s articles', $current_count ), number_format_i18n( $current_count ) ) . '</span>';
 
 // Custom header info
 if ( is_author() ) {
