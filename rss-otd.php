@@ -21,24 +21,24 @@ echo '<?xml version="1.0" encoding="' . esc_attr( get_option( 'blog_charset' ) )
 	<title>LezWatch.TV Of The Day - Feed</title>
 	<atom:link href="<?php self_link(); ?>" rel="self" type="application/rss+xml" />
 	<link><?php echo esc_url( bloginfo_rss( 'url' ) ); ?></link>
-	<description>Keep up to date with the latest featured characters and shows! Updated daily.</description>
+	<description>Keep up to date with the latest featured characters and shows! Updated twice a day.</description>
 	<lastBuildDate>
-		<?php echo esc_html( mysql2date( 'D, d M Y H:i:s +0000', ( new LWTV_Of_The_Day_RSS() )->last_build(), false ) ); ?>
+		<?php echo esc_html( mysql2date( 'D, d M Y H:i:s +0000', lwtv_plugin()->get_rss_otd_last_build(), false ) ); ?>
 	</lastBuildDate>
 	<language>en-US</language>
 	<sy:updatePeriod><?php echo esc_html( apply_filters( 'rss_update_period', 'hourly' ) ); ?></sy:updatePeriod>
 	<sy:updateFrequency><?php echo esc_html( apply_filters( 'rss_update_frequency', '1' ) ); ?></sy:updateFrequency>
-	<generator>https://wordpress.org/?v=<?php echo floatval( ( new LWTV_Of_The_Day_RSS() )->return_wp_version() ); ?></generator>
+	<generator>https://wordpress.org/?v=<?php echo floatval( lwtv_plugin()->get_wp_version() ); ?></generator>
 	<image>
 		<url><?php echo esc_url( get_option( 'jetpack_site_icon_url' ) ); ?></url>
 		<title>LezWatch.TV Of The Day - Feed</title>
 		<link><?php echo esc_url( get_site_url() ); ?>/feed/otd/</link>
 		<width>32</width>
 		<height>32</height>
-	</image> 
+	</image>
 	<?php
 	// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-	( new LWTV_Of_The_Day_RSS() )->rss_feed();
+	lwtv_plugin()->get_rss_otd_feed();
 	?>
 </channel>
 </rss>
