@@ -14,14 +14,7 @@ $validstat = array( 'death', 'characters', 'shows', 'main', 'actors', 'nations',
 $statstype = ( isset( $wp_query->query['statistics'] ) && in_array( $wp_query->query['statistics'], $validstat, true ) ) ? esc_attr( $wp_query->query['statistics'] ) : 'main';
 
 // Defaults:
-$theme_defaults = array(
-	'image' => lwtv_symbolicons( 'graph-bar.svg', 'fa-chart-area' ),
-	'intro' => '',
-);
-
-if ( class_exists( 'LWTV_Theme_Stats_Symbolicon' ) ) {
-	$theme_defaults = ( new LWTV_Theme_Stats_Symbolicon() )->make( $statstype );
-}
+$theme_defaults = lwtv_plugin()->get_stats_symbolicon( $statstype );
 
 $image = '<span role="img" aria-label="statistics" title="Statistics" class="taxonomy-svg statistics">' . $theme_defaults['image'] . '</span>';
 
@@ -73,13 +66,14 @@ get_header(); ?>
 								the_content();
 							}
 
-							if ( method_exists( 'LWTV_Statistics_Gutenberg_SSR', 'statistics' ) ) {
-								$attributes = array(
-									'page' => $statstype,
-								);
+							$attributes = array(
+								'page' => $statstype,
+							);
+							$stats      = lwtv_plugin()->generate_stats_block( $attributes );
 
+							if ( ! empty( $stats ) ) {
 								// phpcs:ignore WordPress.Security.EscapeOutput
-								echo ( new LWTV_Statistics_Gutenberg_SSR() )->statistics( $attributes );
+								echo $stats;
 							} else {
 								echo '<p>After this maintenance, statistics will be right back!</p>';
 							}
