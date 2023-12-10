@@ -60,7 +60,7 @@ if ( $pronoun_terms && ! is_wp_error( $pronoun_terms ) ) {
 	$count    = 1;
 	foreach ( $pronoun_terms as $pronoun_term ) {
 		$pronouns .= $pronoun_term->name;
-		$pronouns .= ( $count < count( $pronoun_terms ) ) ? ' &bull; ' : '';
+		$pronouns .= ( $count < count( $pronoun_terms ) ) ? '/' : '';
 		++$count;
 	}
 	if ( isset( $pronouns ) && ! empty( $pronouns ) ) {
