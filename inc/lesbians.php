@@ -299,9 +299,8 @@ function lwtv_yikes_actordata( $the_id, $data ) {
  * @param string $the_id
  * @return bool
  */
-function lwtv_yikes_is_queer( $the_id ) {
-	$is_queer = ( 'yes' === lwtv_plugin()->is_actor_queer( $the_id ) ) ? true : false;
-	return $is_queer;
+function lwtv_yikes_is_queer( $the_id ): bool {
+	return lwtv_plugin()->is_actor_queer( $the_id );
 }
 
 /**
@@ -311,9 +310,8 @@ function lwtv_yikes_is_queer( $the_id ) {
  * @param string $the_id
  * @return bool
  */
-function lwtv_yikes_is_birthday( $the_id ) {
-	$happy_birthday = lwtv_plugin()->is_actor_birthday( $the_id );
-	return $happy_birthday;
+function lwtv_yikes_is_birthday( $the_id ): bool {
+	return lwtv_plugin()->is_actor_birthday( $the_id );
 }
 
 /** THE SEO SECTION **/
