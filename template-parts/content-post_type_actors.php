@@ -14,12 +14,10 @@ $get_tags = get_term_by( 'name', $slug, 'post_tag' );
 
 // This just gets the numbers of all characters and how many are dead.
 $all_chars     = lwtv_yikes_actordata( $the_id, 'characters' );
-$havecharcount = count( $all_chars );
+$havecharcount = ( is_array( $all_chars ) ) ? count( $all_chars ) : 0;
 $havedeadcount = count( lwtv_yikes_actordata( $the_id, 'dead' ) );
 
-if ( method_exists( 'LWTV_CPTs_Related_Posts', 'are_there_posts' ) ) {
-	$related = ( new LWTV_CPTs_Related_Posts() )->are_there_posts( $slug );
-}
+$related = lwtv_plugin()->has_cpt_related_posts( $slug );
 
 // Generate Life Stats.
 // Usage: $life.
@@ -32,7 +30,7 @@ if ( isset( $barr ) && isset( $barr[1] ) && isset( $barr[2] ) && checkdate( (int
 	$get_birth    = new DateTime( $born );
 	$age          = lwtv_yikes_actordata( $the_id, 'age', true );
 	$life['born'] = date_format( $get_birth, 'F j, Y' );
-	$life['age']  = $age->format( '%Y years old' );
+	$life['age']  = ( is_object( $age ) ) ? $age->format( '%Y years old' ) : '';
 }
 $died = get_post_meta( $the_id, 'lezactors_death', true );
 if ( ! empty( $died ) ) {
@@ -62,7 +60,7 @@ if ( $pronoun_terms && ! is_wp_error( $pronoun_terms ) ) {
 	$count    = 1;
 	foreach ( $pronoun_terms as $pronoun_term ) {
 		$pronouns .= $pronoun_term->name;
-		$pronouns .= ( $count < count( $pronoun_terms ) ) ? ' &bull; ' : '';
+		$pronouns .= ( $count < count( $pronoun_terms ) ) ? '/' : '';
 		++$count;
 	}
 	if ( isset( $pronouns ) && ! empty( $pronouns ) ) {
@@ -253,7 +251,7 @@ if ( isset( $related ) && $related ) {
 		<div class="card-body">
 			<?php
 			if ( method_exists( 'LWTV_CPTs_Related_Posts', 'related_posts' ) && method_exists( 'LWTV_CPTs_Related_Posts', 'count_related_posts' ) ) {
-				echo ( new LWTV_CPTs_Related_Posts() )->related_posts( $slug ); // phpcs:ignore WordPress.Security.EscapeOutput
+				echo lwtv_plugin()->get_cpt_related_posts( $slug ); // phpcs:ignore WordPress.Security.EscapeOutput
 			}
 			?>
 		</div>
@@ -299,13 +297,14 @@ if ( 0 !== $havecharcount ) {
 			<div class="card-meta">
 				<div class="card-meta-item">
 					<?php
-					if ( method_exists( 'LWTV_Statistics_Gutenberg_SSR', 'statistics' ) ) {
-						$attributes = array(
-							'posttype' => get_post_type(),
-						);
+					$attributes = array(
+						'posttype' => get_post_type(),
+					);
+					$stats      = lwtv_plugin()->generate_stats_block_actor( $attributes );
 
+					if ( ! empty( $stats ) ) {
 						// phpcs:ignore WordPress.Security.EscapeOutput
-						echo ( new LWTV_Statistics_Gutenberg_SSR() )->mini_stats( $attributes );
+						echo $stats;
 					} else {
 						echo '<p>After this maintenance, statistics will be right back!</p>';
 					}

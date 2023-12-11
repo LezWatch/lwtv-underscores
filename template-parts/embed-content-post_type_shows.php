@@ -17,7 +17,7 @@
 		border: 1px solid #d1548e;
 		color: #222;
 		display: grid;
-		grid-template-areas: 
+		grid-template-areas:
 		"title title"
 		"image details"
 		"excerpt excerpt"
@@ -75,7 +75,7 @@
 		align-items: center;
 		grid-area: footer;
 		display: grid;
-		grid-template-areas: 
+		grid-template-areas:
 			"site flag";
 		grid-template-columns: 50% 50%;
 		margin:  0;
@@ -198,7 +198,7 @@
 				// Next Episode (if none, show 'aired on...')
 				$on_air = get_post_meta( get_the_ID(), 'lezshows_on_air', true );
 				if ( 'yes' === $on_air ) {
-					$tvmaze = ( new LWTV_Whats_On_JSON() )->whats_on_show( get_the_ID() );
+					$tvmaze = lwtv_plugin()->get_whats_on_show( get_the_ID() );
 					echo '<strong>Next Episode:</strong> ';
 					if ( isset( $tvmaze['next'] ) ) {
 						echo wp_kses_post( $tvmaze['next'] );
@@ -222,7 +222,7 @@
 
 		<div class="wp-embed-footer">
 			<div class="wp-embed-site">
-				<?php the_embed_site_title(); ?>				
+				<?php the_embed_site_title(); ?>
 			</div>
 
 			<div class="wp-embed-flag">

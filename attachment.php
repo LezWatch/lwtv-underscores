@@ -14,7 +14,7 @@ get_header(); ?>
 				<div class="row">
 					<div class="col-10">
 						<h1 class="entry-title">
-							<?php esc_attr_e( 'Oops! This isn\'t the page you thought it was.', 'yikes_starter' ); ?>
+							<?php esc_attr_e( 'Oops! This isn\'t the page you thought it was.', 'lwtv-underscores' ); ?>
 						</h1>
 					</div>
 					<div class="col-2 icon plain">
@@ -35,7 +35,7 @@ get_header(); ?>
 						<article id="post-0" class="post not-found">
 							<div class="entry-content clearfix">
 								<p><img src="<?php echo esc_url( get_template_directory_uri() ); ?>/images/rose.gif" alt="Rose revealing herself from Jane the Virgin" class="alignleft"/></p>
-								<p><?php esc_attr_e( 'Sorry, there is no page with this address. Please try again or use the search below.', 'yikes_starter' ); ?></p>
+								<p><?php esc_attr_e( 'Sorry, there is no page with this address. Please try again or use the search below.', 'lwtv-underscores' ); ?></p>
 
 								<div class="row g-0">
 									<div class="col-sm-8">

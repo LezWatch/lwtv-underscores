@@ -13,7 +13,7 @@ class My_Widget extends WP_Widget {
 		parent::__construct(
 			'my_widget', // Base ID
 			'My Awesome Widget', // Name
-			array( 'description' => __( 'My Awesome widget I made myself', 'yikes_starter' ) ) // Args
+			array( 'description' => __( 'My Awesome widget I made myself', 'lwtv-underscores' ) ) // Args
 		);
 	}
 

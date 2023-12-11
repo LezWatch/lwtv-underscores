@@ -54,10 +54,8 @@ get_header();
 					<div id="content" class="site-content clearfix" role="main">
 						<div class="thisyear">
 							<?php
-							if ( method_exists( 'LWTV_This_Year_Display', 'make' ) ) {
-								// phpcs:ignore WordPress.Security.EscapeOutput
-								echo ( new LWTV_This_Year_Display() )->make( $thisyear );
-							}
+							// phpcs:ignore WordPress.Security.EscapeOutput
+							echo lwtv_plugin()->get_this_year_display( $thisyear );
 							?>
 						</div>
 					</div><!-- #content -->

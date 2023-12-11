@@ -198,11 +198,9 @@ add_action( 'pre_get_posts', 'lwtv_yikes_character_archive_query' );
  * @return string $title_adjustment -- Adjusted title.
  */
 function lwtv_yikes_tax_archive_title( $location, $post_type, $taxonomy ) {
-	if ( class_exists( 'LWTV_Theme_Taxonomy_Archive_Title' ) ) {
-		$title_adjustment = ( new LWTV_Theme_Taxonomy_Archive_Title() )->make( $location, $post_type, $taxonomy );
-	}
+	$title_adjustment = lwtv_plugin()->get_tax_archive_title( $location, $post_type, $taxonomy );
 
-	if ( isset( $title_adjustment ) && ! empty( $title_adjustment ) ) {
+	if ( ! empty( $title_adjustment ) ) {
 		return $title_adjustment;
 	}
 }
@@ -237,11 +235,9 @@ if ( is_search() ) {
  * @return void
  */
 function lwtv_yikes_show_star( $show_id ) {
-	if ( class_exists( 'LWTV_Theme_Show_Stars' ) ) {
-		$star = ( new LWTV_Theme_Show_Stars() )->make( $show_id );
-	}
+	$star = lwtv_plugin()->get_show_stars( $show_id );
 
-	if ( isset( $star ) && ! empty( $star ) ) {
+	if ( ! empty( $star ) ) {
 		return $star;
 	}
 }
@@ -255,11 +251,9 @@ function lwtv_yikes_show_star( $show_id ) {
  * @return void
  */
 function lwtv_yikes_content_warning( $show_id ) {
-	if ( isset( $show_id ) && class_exists( 'LWTV_Theme_Content_Warning' ) ) {
-		$warning_array = ( new LWTV_Theme_Content_Warning() )->make( $show_id );
-	}
+	$warning_array = lwtv_plugin()->get_show_content_warning( $show_id );
 
-	if ( isset( $warning_array ) && is_array( $warning_array ) ) {
+	if ( is_array( $warning_array ) && ! empty( $warning_array ) ) {
 		return $warning_array;
 	}
 }
@@ -275,14 +269,7 @@ function lwtv_yikes_content_warning( $show_id ) {
  * @return void
  */
 function lwtv_yikes_chardata( $the_id, $data ) {
-
-	if ( isset( $the_id ) && class_exists( 'LWTV_Theme_Data_Character' ) ) {
-		$character_data = ( new LWTV_Theme_Data_Character() )->make( $the_id, $data );
-	}
-
-	if ( isset( $character_data ) ) {
-		return $character_data;
-	}
+	return lwtv_plugin()->get_character_data( $the_id, $data );
 }
 
 /**
@@ -293,16 +280,16 @@ function lwtv_yikes_chardata( $the_id, $data ) {
  * @access public
  * @param mixed $the_id: the actor post ID
  * @param mixed $data:
- * @return void
+ * @return mixed
  */
 function lwtv_yikes_actordata( $the_id, $data ) {
-	if ( isset( $the_id ) && class_exists( 'LWTV_Theme_Data_Actor' ) ) {
-		$actor_data = ( new LWTV_Theme_Data_Actor() )->make( $the_id, $data );
+	$actor_data = array();
+
+	if ( isset( $the_id ) ) {
+		$actor_data = lwtv_plugin()->get_actor_data( $the_id, $data );
 	}
 
-	if ( isset( $actor_data ) ) {
-		return $actor_data;
-	}
+	return $actor_data;
 }
 
 /**
@@ -312,13 +299,8 @@ function lwtv_yikes_actordata( $the_id, $data ) {
  * @param string $the_id
  * @return bool
  */
-function lwtv_yikes_is_queer( $the_id ) {
-	$is_queer = false;
-	if ( method_exists( 'LWTV_Queery_Is_Actor_Queer', 'make' ) ) {
-		$is_queer = ( 'yes' === ( new LWTV_Queery_Is_Actor_Queer() )->make( $the_id ) ) ? true : false;
-	}
-
-	return $is_queer;
+function lwtv_yikes_is_queer( $the_id ): bool {
+	return lwtv_plugin()->is_actor_queer( $the_id );
 }
 
 /**
@@ -328,12 +310,8 @@ function lwtv_yikes_is_queer( $the_id ) {
  * @param string $the_id
  * @return bool
  */
-function lwtv_yikes_is_birthday( $the_id ) {
-	$happy_birthday = false;
-	if ( class_exists( 'LWTV_Theme_Actor_Birthday' ) ) {
-		$happy_birthday = ( new LWTV_Theme_Actor_Birthday() )->make( $the_id );
-	}
-	return $happy_birthday;
+function lwtv_yikes_is_birthday( $the_id ): bool {
+	return lwtv_plugin()->is_actor_birthday( $the_id );
 }
 
 /** THE SEO SECTION **/
@@ -367,12 +345,12 @@ function lwtv_microformats_fix( $post_id ) {
  * @return string      Whatever we end up with
  */
 function lwtv_symbolicons( $svg, $fa ) {
-	if ( method_exists( 'LWTV_Features', 'symbolicons' ) ) {
-		$return = ( new LWTV_Features() )->symbolicons( $svg, $fa );
-	} else {
-		$return = '<span class="symbolicon" role="img"><svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="spinner" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="svg-inline--fa fa-spinner fa-w-16 fa-3x"><path fill="currentColor" d="M304 48c0 26.51-21.49 48-48 48s-48-21.49-48-48 21.49-48 48-48 48 21.49 48 48zm-48 368c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.49-48-48-48zm208-208c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.49-48-48-48zM96 256c0-26.51-21.49-48-48-48S0 229.49 0 256s21.49 48 48 48 48-21.49 48-48zm12.922 99.078c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48c0-26.509-21.491-48-48-48zm294.156 0c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48c0-26.509-21.49-48-48-48zM108.922 60.922c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.491-48-48-48z" class=""></path></svg></span>';
+	$symbolicon = lwtv_plugin()->get_symbolicon( $svg, $fa );
+
+	if ( empty( $symbolicon ) ) {
+		$symbolicon = '<span class="symbolicon" role="img"><svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="spinner" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="svg-inline--fa fa-spinner fa-w-16 fa-3x"><path fill="currentColor" d="M304 48c0 26.51-21.49 48-48 48s-48-21.49-48-48 21.49-48 48-48 48 21.49 48 48zm-48 368c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.49-48-48-48zm208-208c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.49-48-48-48zM96 256c0-26.51-21.49-48-48-48S0 229.49 0 256s21.49 48 48 48 48-21.49 48-48zm12.922 99.078c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48c0-26.509-21.491-48-48-48zm294.156 0c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48c0-26.509-21.49-48-48-48zM108.922 60.922c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.491-48-48-48z" class=""></path></svg></span>';
 	}
-	return $return;
+	return $symbolicon;
 }
 
 /**
@@ -382,9 +360,7 @@ function lwtv_symbolicons( $svg, $fa ) {
  * @return mixed   number or array listing the characters
  */
 function lwtv_list_characters( $post_id, $output ) {
-	if ( class_exists( 'LWTV_Theme_List_Characters' ) ) {
-		return ( new LWTV_Theme_List_Characters() )->make( $post_id, $output );
-	}
+	return lwtv_plugin()->get_list_characters( $post_id, $output );
 }
 
 /**
@@ -395,11 +371,7 @@ function lwtv_list_characters( $post_id, $output ) {
  * @return array           List of all the characters
  */
 function lwtv_get_chars_for_show( $post_id, $count, $roll ) {
-	$return = '';
-	if ( method_exists( 'LWTV_CPT_Characters', 'get_chars_for_show' ) ) {
-		$return = ( new LWTV_CPT_Characters() )->get_chars_for_show( $post_id, $count, $roll );
-	}
-	return $return;
+	return lwtv_plugin()->get_chars_for_show( $post_id, $count, $roll );
 }
 
 /**
@@ -422,14 +394,12 @@ function lwtv_last_updated_date( $post_id ) {
  * @return n/a
  */
 function lwtv_last_death() {
-	$return = '<p>The LezWatch.TV API is temporarily unavailable.</p>';
-	if ( class_exists( 'LWTV_Rest_API_BYQ' ) ) {
-		$last_death = ( new LWTV_Rest_API_BYQ() )->last_death();
-		if ( '' !== $last_death ) {
-			$return  = '<p>' . sprintf( 'It has been %s since the last queer female, non-binary, or transgender death on television', '<strong>' . human_time_diff( $last_death['died'], (int) wp_date( 'U' ) ) . '</strong> ' );
-			$return .= ': <span><a href="' . $last_death['url'] . '">' . $last_death['name'] . '</a></span> - ' . gmdate( 'F j, Y', $last_death['died'] ) . '</p>';
-			// NOTE! Add `class="hidden-death"` to the span above if you want to blur the display of the last death.
-		}
+	$return     = '<p>The LezWatch.TV API is temporarily unavailable.</p>';
+	$last_death = lwtv_plugin()->get_json_last_death();
+	if ( '' !== $last_death ) {
+		$return  = '<p>' . sprintf( 'It has been %s since the last queer female, non-binary, or transgender death on television', '<strong>' . human_time_diff( $last_death['died'], (int) wp_date( 'U' ) ) . '</strong> ' );
+		$return .= ': <span><a href="' . $last_death['url'] . '">' . $last_death['name'] . '</a></span> - ' . gmdate( 'F j, Y', $last_death['died'] ) . '</p>';
+		// NOTE! Add `class="hidden-death"` to the span above if you want to blur the display of the last death.
 	}
 
 	$return = '<div class="lezwatchtv last-death">' . $return . '</div>';
@@ -444,11 +414,7 @@ function lwtv_last_death() {
  * @return string $details Output of author social.
  */
 function lwtv_author_social( $author ) {
-	$return = '';
-	if ( class_exists( 'LWTV_Theme_Data_Author' ) ) {
-		$return = ( new LWTV_Theme_Data_Author() )->make( $author, 'social' );
-	}
-	return $return;
+	return lwtv_plugin()->get_author_social( $author );
 }
 
 /**
@@ -458,9 +424,5 @@ function lwtv_author_social( $author ) {
  * @return string $details Output of author fav shows.
  */
 function lwtv_author_favourite_shows( $author ) {
-	$return = '';
-	if ( class_exists( 'LWTV_Theme_Data_Author' ) ) {
-		$return = ( new LWTV_Theme_Data_Author() )->make( $author, 'favorite_shows' );
-	}
-	return $return;
+	return lwtv_plugin()->get_author_favorite_shows( $author );
 }

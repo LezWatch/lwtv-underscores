@@ -5,10 +5,26 @@
  * @package YIKES Starter
  */
 
+/**
+ * Catch for if the plugin is missing, because we really, really,
+ * need it.
+ */
+if ( ! function_exists( 'lwtv_plugin' ) ) {
+	add_action( 'admin_notices', 'lwtv_admin_notice_missing_plugin' );
+}
+
+function lwtv_admin_notice_missing_plugin() {
+	?>
+	<div class="notice notice-error is-dismissible">
+		<p><?php esc_html_e( 'Error! The LWTV Plugin is missing. Please go grab an admin because everything will break.', 'lwtv-underscores' ); ?></p>
+	</div>
+	<?php
+}
+
 // Versioning for efficient developers.
 if ( ! defined( 'LWTV_THEME_VERSION' ) ) {
 	$versions = array(
-		'lwtv-underscores' => '4.0.1',    // Bump this any time you make serious CSS changes.
+		'lwtv-underscores' => '6.0.0',    // Bump this any time you make serious CSS changes.
 		'font-awesome'     => '6.4.2',    // Bump when you update Font Awesome.
 		'bootstrap'        => '5.3.2',    // Bump when you update bootstrap.
 		'lwtv-blocks'      => '1.0.0',    // Bump when you update the blocks.
@@ -30,11 +46,11 @@ if ( ! isset( $content_width ) ) {
 
 // YIKES Setup theme constants These will be used for server and web paths.
 // so we don't have to reference functions every time.
-if ( ! defined( 'YKS_THEME_PATH' ) ) {
-	define( 'YKS_THEME_PATH', get_stylesheet_directory() );
+if ( ! defined( 'LWTV_THEME_PATH' ) ) {
+	define( 'LWTV_THEME_PATH', get_stylesheet_directory() );
 }
-if ( ! defined( 'YKS_THEME_URL' ) ) {
-	define( 'YKS_THEME_URL', trailingslashit( get_stylesheet_directory_uri() ) );
+if ( ! defined( 'LWTV_THEME_URL' ) ) {
+	define( 'LWTV_THEME_URL', trailingslashit( get_stylesheet_directory_uri() ) );
 }
 
 /**
@@ -45,7 +61,6 @@ function yikes_starter_blog_page_title() {
 		return get_the_title( get_option( 'page_for_posts' ) );
 	}
 }
-
 
 /**
  * Excerpts
@@ -103,7 +118,6 @@ add_image_size( 'character-img', 350, 412, true );
 add_image_size( 'show-img', 960, 400, true );
 add_image_size( 'postloop-img', 525, 300, true );
 
-
 /**
  * Comments
  */
@@ -111,8 +125,9 @@ require_once 'inc/walker-comment.php';
 
 /**
  * Authors
+ *
+ * Add bio box.
  */
-// Author bio box.
 require_once 'inc/author-box.php';
 
 /**
@@ -136,7 +151,6 @@ function yikes_archive_title( $title ) {
 
 	return $title;
 }
-
 add_filter( 'get_the_archive_title', 'yikes_archive_title' );
 
 /**
@@ -157,8 +171,8 @@ if ( ! function_exists( 'yikes_starter_setup' ) ) {
 		 * Set up Nav menus */
 		register_nav_menus(
 			array(
-				'primary'     => __( 'Primary Menu', 'yikes_starter' ),
-				'social_menu' => __( 'Social Menu', 'yikes_starter' ),
+				'primary'     => __( 'Primary Menu', 'lwtv-underscores' ),
+				'social_menu' => __( 'Social Menu', 'lwtv-underscores' ),
 			)
 		);
 
@@ -207,7 +221,7 @@ function yikes_starter_widgets_init() {
 	// Home Sidebar.
 	register_sidebar(
 		array(
-			'name'          => __( 'Home Page Sidebar', 'yikes_starter' ),
+			'name'          => __( 'Home Page Sidebar', 'lwtv-underscores' ),
 			'id'            => 'sidebar-1',
 			'description'   => 'The sidebar for the home page',
 			'before_widget' => '<aside id="%1$s" class="widget %2$s">',
@@ -219,7 +233,7 @@ function yikes_starter_widgets_init() {
 	// Sub Page Sidebar.
 	register_sidebar(
 		array(
-			'name'          => __( 'Sub Page Sidebar', 'yikes_starter' ),
+			'name'          => __( 'Sub Page Sidebar', 'lwtv-underscores' ),
 			'id'            => 'sidebar-2',
 			'description'   => 'The sidebar for sub pages',
 			'before_widget' => '<aside id="%1$s" class="widget %2$s">',
@@ -231,7 +245,7 @@ function yikes_starter_widgets_init() {
 	// Footer Widget 1.
 	register_sidebar(
 		array(
-			'name'          => __( 'Footer Widget Area One', 'yikes_starter' ),
+			'name'          => __( 'Footer Widget Area One', 'lwtv-underscores' ),
 			'id'            => 'footer-1',
 			'description'   => 'The first footer widget area.',
 			'before_widget' => '<aside id="%1$s" class="widget %2$s">',
@@ -243,7 +257,7 @@ function yikes_starter_widgets_init() {
 	// Footer Widget 2.
 	register_sidebar(
 		array(
-			'name'          => __( 'Footer Widget Area Two', 'yikes_starter' ),
+			'name'          => __( 'Footer Widget Area Two', 'lwtv-underscores' ),
 			'id'            => 'footer-2',
 			'description'   => 'The second footer widget area.',
 			'before_widget' => '<aside id="%1$s" class="widget %2$s">',
@@ -255,7 +269,7 @@ function yikes_starter_widgets_init() {
 	// Footer Widget 3.
 	register_sidebar(
 		array(
-			'name'          => __( 'Footer Widget Area Three', 'yikes_starter' ),
+			'name'          => __( 'Footer Widget Area Three', 'lwtv-underscores' ),
 			'id'            => 'footer-3',
 			'description'   => 'The third footer widget area.',
 			'before_widget' => '<aside id="%1$s" class="widget %2$s">',
@@ -267,7 +281,7 @@ function yikes_starter_widgets_init() {
 	// Footer Widget 4.
 	register_sidebar(
 		array(
-			'name'          => __( 'Footer Widget Area Four', 'yikes_starter' ),
+			'name'          => __( 'Footer Widget Area Four', 'lwtv-underscores' ),
 			'id'            => 'footer-4',
 			'description'   => 'The third footer widget area.',
 			'before_widget' => '<aside id="%1$s" class="widget %2$s">',
@@ -279,7 +293,7 @@ function yikes_starter_widgets_init() {
 	// Credits Widget.
 	register_sidebar(
 		array(
-			'name'          => __( 'Bottom Footer Widget Area', 'yikes_starter' ),
+			'name'          => __( 'Bottom Footer Widget Area', 'lwtv-underscores' ),
 			'id'            => 'subfooter-1',
 			'description'   => 'The bottom footer credits area.',
 			'before_widget' => '<aside id="%1$s" class="widget %2$s">',
@@ -291,9 +305,9 @@ function yikes_starter_widgets_init() {
 	// Sidebar for Actor Archives.
 	register_sidebar(
 		array(
-			'name'          => esc_html__( 'Sidebar - Actor Archives', 'lwtv_yikes' ),
+			'name'          => esc_html__( 'Sidebar - Actor Archives', 'lwtv-underscores' ),
 			'id'            => 'archive-actor-sidebar',
-			'description'   => esc_html__( 'This is the sidebar for actor archives.', 'lwtv_yikes' ),
+			'description'   => esc_html__( 'This is the sidebar for actor archives.', 'lwtv-underscores' ),
 			'before_widget' => '<section id="%1$s" class="widget %2$s">',
 			'after_widget'  => '</section>',
 			'before_title'  => '<h2 class="widget-title">',
@@ -303,9 +317,9 @@ function yikes_starter_widgets_init() {
 	// Sidebar for Character Archives.
 	register_sidebar(
 		array(
-			'name'          => esc_html__( 'Sidebar - Character Archives', 'lwtv_yikes' ),
+			'name'          => esc_html__( 'Sidebar - Character Archives', 'lwtv-underscores' ),
 			'id'            => 'archive-character-sidebar',
-			'description'   => esc_html__( 'This is the sidebar for character archives.', 'lwtv_yikes' ),
+			'description'   => esc_html__( 'This is the sidebar for character archives.', 'lwtv-underscores' ),
 			'before_widget' => '<section id="%1$s" class="widget %2$s">',
 			'after_widget'  => '</section>',
 			'before_title'  => '<h2 class="widget-title">',
@@ -315,9 +329,9 @@ function yikes_starter_widgets_init() {
 	// Sidebar for Show Archives.
 	register_sidebar(
 		array(
-			'name'          => esc_html__( 'Sidebar - Show Archives', 'lwtv_yikes' ),
+			'name'          => esc_html__( 'Sidebar - Show Archives', 'lwtv-underscores' ),
 			'id'            => 'archive-show-sidebar',
-			'description'   => esc_html__( 'This is the sidebar for show archives.', 'lwtv_yikes' ),
+			'description'   => esc_html__( 'This is the sidebar for show archives.', 'lwtv-underscores' ),
 			'before_widget' => '<section id="%1$s" class="widget %2$s">',
 			'after_widget'  => '</section>',
 			'before_title'  => '<h2 class="widget-title">',

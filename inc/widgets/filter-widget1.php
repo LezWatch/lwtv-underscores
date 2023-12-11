@@ -13,7 +13,7 @@ class Filter_Top extends WP_Widget {
 		parent::__construct(
 			'filter_top', // Base ID
 			'LWTV Filter Container Top', // Name
-			array( 'description' => __( 'Used to wrap Show/Character filters.', 'yikes_starter' ) ) // Args
+			array( 'description' => __( 'Used to wrap Show/Character filters.', 'lwtv-underscores' ) ) // Args
 		);
 	}
 

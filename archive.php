@@ -7,9 +7,10 @@
 
 // Defaults
 $current_archive   = get_queried_object();
+$current_count     = ( isset( $current_archive->count ) ) ? $current_archive->count : 0;
 $archive_icon      = lwtv_symbolicons( 'newspaper.svg', 'fa-newspaper' );
 $archive_details   = '';
-$archive_subheader = '<span class="post-count">' . sprintf( _n( '%s article', '%s articles', $current_archive->count ), number_format_i18n( $current_archive->count ) ) . '</span>';
+$archive_subheader = '<span class="post-count">' . sprintf( _n( '%s article', '%s articles', $current_count ), number_format_i18n( $current_count ) ) . '</span>';
 
 // Custom header info
 if ( is_author() ) {
@@ -18,10 +19,10 @@ if ( is_author() ) {
 	$archive_icon      = get_avatar( get_the_author_meta( 'user_email' ), 96, '', 'Avatar for author ' . get_the_author_meta( 'display_name' ) );
 	$archive_subheader = lwtv_author_social( $author );
 	$archive_details   = lwtv_author_favourite_shows( $author );
-} elseif ( is_tag() && class_exists( 'LWTV_CPTs_Related_Posts' ) ) {
+} elseif ( is_tag() ) {
 	$tag_id          = get_queried_object()->term_id;
 	$archive_icon    = lwtv_symbolicons( 'tag.svg', 'fa-tag' );
-	$archive_details = ( new LWTV_CPTs_Related_Posts() )->related_archive_header( $tag_id );
+	$archive_details = lwtv_plugin()->get_related_archive_header( $tag_id );
 }
 
 get_header(); ?>

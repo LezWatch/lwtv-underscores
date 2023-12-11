@@ -13,7 +13,7 @@ class LWTV_Character extends WP_Widget {
 		parent::__construct(
 			'lwtv_character', // Base ID
 			'LWTV Recent Character', // Name
-			array( 'description' => __( 'Displays the character most recently added to the database.', 'yikes_starter' ) ) // Args
+			array( 'description' => __( 'Displays the character most recently added to the database.', 'lwtv-underscores' ) ) // Args
 		);
 	}
 

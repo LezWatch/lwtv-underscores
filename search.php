@@ -15,7 +15,7 @@ get_header(); ?>
 					<div class="col-10"><h1 class="entry-title">
 					<?php
 						// translators: %s is whatever you just searched for.
-						printf( esc_attr__( 'Search Results for: %s', 'yikes_starter' ), '<span>' . get_search_query() . '</span>' );
+						printf( esc_attr__( 'Search Results for: %s', 'lwtv-underscores' ), '<span>' . get_search_query() . '</span>' );
 					?>
 					</h1></div>
 					<div class="col-2 icon plain">
