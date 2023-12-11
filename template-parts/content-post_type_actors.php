@@ -14,8 +14,9 @@ $get_tags = get_term_by( 'name', $slug, 'post_tag' );
 
 // This just gets the numbers of all characters and how many are dead.
 $all_chars     = lwtv_yikes_actordata( $the_id, 'characters' );
+$all_dead      = lwtv_yikes_actordata( $the_id, 'dead' );
 $havecharcount = ( is_array( $all_chars ) ) ? count( $all_chars ) : 0;
-$havedeadcount = count( lwtv_yikes_actordata( $the_id, 'dead' ) );
+$havedeadcount = ( is_array( $all_dead ) ) ? count( $all_dead ) : 0;
 
 $related = lwtv_plugin()->has_cpt_related_posts( $slug );
 
