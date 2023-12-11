@@ -13,7 +13,7 @@
 	<div class="card-body">
 		<form role="search" class="search-form" action="<?php echo esc_url( home_url( '/' ) ); ?>" method="get">
 			<div class="input-group input-group-sm">
-				<input type="text" name="s" id="search" class="form-control" aria-label="Search for..." value="<?php the_search_query(); ?>" title="<?php echo esc_html_x( 'Search for:', 'label', 'yikes_starter' ); ?>" >
+				<input type="text" name="s" id="search" class="form-control" aria-label="Search for..." value="<?php the_search_query(); ?>" title="<?php echo esc_html_x( 'Search for:', 'label', 'lwtv-underscores' ); ?>" >
 				<?php
 				if ( ! class_exists( 'Jetpack_Search' ) ) {
 					?>

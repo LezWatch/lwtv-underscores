@@ -29,10 +29,10 @@
 	<?php } else { ?>
 		<div class="entry-content">
 			<?php
-				the_content( esc_attr__( 'Continue reading <span class="meta-nav">&rarr;</span>', 'yikes_starter' ) );
+				the_content( esc_attr__( 'Continue reading <span class="meta-nav">&rarr;</span>', 'lwtv-underscores' ) );
 				wp_link_pages(
 					array(
-						'before' => '<div class="page-links">' . esc_attr__( 'Pages:', 'yikes_starter' ),
+						'before' => '<div class="page-links">' . esc_attr__( 'Pages:', 'lwtv-underscores' ),
 						'after'  => '</div>',
 					)
 				);
@@ -44,7 +44,7 @@
 		<?php
 		if ( 'post' === get_post_type() ) {
 			/* translators: used between list items, there is a space after the comma */
-			$categories_list = get_the_category_list( esc_attr__( ', ', 'yikes_starter' ) );
+			$categories_list = get_the_category_list( esc_attr__( ', ', 'lwtv-underscores' ) );
 			if ( $categories_list && yikes_starter_categorized_blog() ) {
 				?>
 				<span class="cat-links">
@@ -53,7 +53,7 @@
 				<?php
 			}
 
-			$tags_list = get_the_tag_list( '', esc_attr__( ', ', 'yikes_starter' ) );
+			$tags_list = get_the_tag_list( '', esc_attr__( ', ', 'lwtv-underscores' ) );
 
 			if ( $tags_list ) {
 				?>
@@ -67,12 +67,12 @@
 		if ( ! post_password_required() && ( comments_open() || '0' !== get_comments_number() ) ) {
 			?>
 			<span class="comments-link">
-				<?php comments_popup_link( esc_attr__( 'Leave a comment', 'yikes_starter' ), esc_attr__( '1 Comment', 'yikes_starter' ), esc_attr__( '% Comments', 'yikes_starter' ) ); ?>
+				<?php comments_popup_link( esc_attr__( 'Leave a comment', 'lwtv-underscores' ), esc_attr__( '1 Comment', 'lwtv-underscores' ), esc_attr__( '% Comments', 'lwtv-underscores' ) ); ?>
 			</span>
 			<?php
 		}
 
-		edit_post_link( esc_attr__( 'Edit', 'yikes_starter' ), '<div class="edit-link">' . lwtv_symbolicons( 'pencil.svg', 'fa-pencil-alt' ), '</div>' );
+		edit_post_link( esc_attr__( 'Edit', 'lwtv-underscores' ), '<div class="edit-link">' . lwtv_symbolicons( 'pencil.svg', 'fa-pencil-alt' ), '</div>' );
 		?>
 	</footer><!-- .entry-meta -->
 </article><!-- #post-## -->

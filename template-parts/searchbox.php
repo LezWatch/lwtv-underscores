@@ -10,7 +10,7 @@
 	<div class="form-group row">
 		<label class="col-sm-3 col-form-label" for="search">Search the Site</label>
 		<div class="col-sm-7 searchbox-input">
-			<input type="text" name="s" id="search" class="form-control" placeholder="<?php echo esc_attr_x( 'Enter keywords &hellip;', 'placeholder', 'yikes_starter' ); ?>" value="<?php the_search_query(); ?>" title="<?php echo esc_attr_x( 'Search for:', 'label', 'yikes_starter' ); ?>" />
+			<input type="text" name="s" id="search" class="form-control" placeholder="<?php echo esc_attr_x( 'Enter keywords &hellip;', 'placeholder', 'lwtv-underscores' ); ?>" value="<?php the_search_query(); ?>" title="<?php echo esc_attr_x( 'Search for:', 'label', 'lwtv-underscores' ); ?>" />
 		</div>
 		<?php
 		if ( ! class_exists( 'Jetpack_Search' ) ) {

@@ -13,7 +13,7 @@ class LWTV_Show extends WP_Widget {
 		parent::__construct(
 			'lwtv_show', // Base ID
 			'LWTV Recent Show', // Name
-			array( 'description' => __( 'Displays the show most recently added to the database.', 'yikes_starter' ) ) // Args
+			array( 'description' => __( 'Displays the show most recently added to the database.', 'lwtv-underscores' ) ) // Args
 		);
 	}
 

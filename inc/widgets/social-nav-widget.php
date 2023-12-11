@@ -13,7 +13,7 @@ class YIKES_Social_Menu_Widget extends WP_Widget {
 		parent::__construct(
 			'yikes_social_menu_widget', // Base ID.
 			'YIKES Social Menu',        // Name.
-			array( 'description' => __( 'Display YIKES social menu', 'yikes_starter' ) ) // Args.
+			array( 'description' => __( 'Display YIKES social menu', 'lwtv-underscores' ) ) // Args.
 		);
 	}
 

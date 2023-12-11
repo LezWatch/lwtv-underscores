@@ -90,31 +90,31 @@ if ( ! function_exists( 'yikes_starter_entry_footer' ) ) :
 		// Hide category and tag text for pages.
 		if ( 'post' === get_post_type() ) {
 			/* translators: used between list items, there is a space after the comma */
-			$categories_list = get_the_category_list( esc_html__( ', ', 'yikes_starter' ) );
+			$categories_list = get_the_category_list( esc_html__( ', ', 'lwtv-underscores' ) );
 			if ( $categories_list && yikes_starter_categorized_blog() ) {
 				// translators: 1 category list
-				printf( '<span class="cat-links">' . esc_html__( 'Posted in %1$s', 'yikes_starter' ) . '</span>', $categories_list ); // phpcs:ignore WordPress.Security.EscapeOutput
+				printf( '<span class="cat-links">' . esc_html__( 'Posted in %1$s', 'lwtv-underscores' ) . '</span>', $categories_list ); // phpcs:ignore WordPress.Security.EscapeOutput
 			}
 
 			/* translators: used between list items, there is a space after the comma */
-			$tags_list = get_the_tag_list( '', esc_html__( ', ', 'yikes_starter' ) );
+			$tags_list = get_the_tag_list( '', esc_html__( ', ', 'lwtv-underscores' ) );
 			if ( $tags_list ) {
 				// translators: 1 tags list
-				printf( '<span class="tags-links">' . esc_html__( 'Tagged %1$s', 'yikes_starter' ) . '</span>', $tags_list ); // phpcs:ignore WordPress.Security.EscapeOutput
+				printf( '<span class="tags-links">' . esc_html__( 'Tagged %1$s', 'lwtv-underscores' ) . '</span>', $tags_list ); // phpcs:ignore WordPress.Security.EscapeOutput
 			}
 		}
 
 		if ( ! is_single() && ! post_password_required() && ( comments_open() || get_comments_number() ) ) {
 			echo '<span class="comments-link">';
 			/* translators: %s: post title */
-			comments_popup_link( sprintf( wp_kses( __( 'Leave a Comment<span class="screen-reader-text"> on %s</span>', 'yikes_starter' ), array( 'span' => array( 'class' => array() ) ) ), get_the_title() ) );
+			comments_popup_link( sprintf( wp_kses( __( 'Leave a Comment<span class="screen-reader-text"> on %s</span>', 'lwtv-underscores' ), array( 'span' => array( 'class' => array() ) ) ), get_the_title() ) );
 			echo '</span>';
 		}
 
 		edit_post_link(
 			sprintf(
 				/* translators: %s: Name of current post */
-				esc_html__( 'Edit %s', 'yikes_starter' ),
+				esc_html__( 'Edit %s', 'lwtv-underscores' ),
 				the_title( '<span class="screen-reader-text">"', '"</span>', false )
 			),
 			'<span class="edit-link">',
