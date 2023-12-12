@@ -8,7 +8,7 @@
 
 $thisyear = (int) ( isset( $wp_query->query['thisyear'] ) && is_numeric( $wp_query->query['thisyear'] ) && 4 === strlen( $wp_query->query['thisyear'] ) ) ? $wp_query->query['thisyear'] : gmdate( 'Y' );
 
-if ( ! is_numeric( $thisyear ) || $thisyear < FIRST_LWTV_YEAR ) {
+if ( ! is_numeric( $thisyear ) || $thisyear < LWTV_FIRST_YEAR ) {
 	wp_safe_redirect( '/this-year/', '301' );
 	exit;
 }

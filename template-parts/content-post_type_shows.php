@@ -68,7 +68,7 @@ the_post_thumbnail(
 <?php
 // The Game of Thrones Flag of Gratuitous Violence.
 // This shows a notice if the show has trigger warnings.
-$warning    = lwtv_yikes_content_warning( get_the_ID() );
+$warning    = lwtv_plugin()->get_show_content_warning( get_the_ID() );
 $warn_image = lwtv_symbolicons( 'hand.svg', 'fa-hand-paper' );
 
 if ( is_array( $warning ) && 'none' !== $warning['card'] ) {
@@ -145,13 +145,13 @@ if ( $related ) {
 		<?php
 
 		// This just gets the numbers of all characters and how many are dead.
-		$havecharcount = lwtv_list_characters( $show_id, 'count' );
-		$havedeadcount = lwtv_list_characters( $show_id, 'dead' );
+		$havecharcount = lwtv_plugin()->get_list_characters( $show_id, 'count' );
+		$havedeadcount = lwtv_plugin()->get_list_characters( $show_id, 'dead' );
 
 		// Get the list of characters.
-		$chars_regular   = lwtv_get_chars_for_show( $show_id, $havecharcount, 'regular' );
-		$chars_recurring = lwtv_get_chars_for_show( $show_id, $havecharcount, 'recurring' );
-		$chars_guest     = lwtv_get_chars_for_show( $show_id, $havecharcount, 'guest' );
+		$chars_regular   = lwtv_plugin()->get_chars_for_show( $show_id, $havecharcount, 'regular' );
+		$chars_recurring = lwtv_plugin()->get_chars_for_show( $show_id, $havecharcount, 'recurring' );
+		$chars_guest     = lwtv_plugin()->get_chars_for_show( $show_id, $havecharcount, 'guest' );
 		$chars_total     = count( $chars_recurring ) + count( $chars_regular ) + count( $chars_guest );
 
 		// If havecharcount and chars_total are different, rerun the call.

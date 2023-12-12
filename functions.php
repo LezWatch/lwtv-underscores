@@ -25,7 +25,7 @@ function lwtv_admin_notice_missing_plugin() {
 if ( ! defined( 'LWTV_THEME_VERSION' ) ) {
 	$versions = array(
 		'lwtv-underscores' => '6.0.0',    // Bump this any time you make serious CSS changes.
-		'font-awesome'     => '6.4.2',    // Bump when you update Font Awesome.
+		'font-awesome'     => '6.5.1',    // Bump when you update Font Awesome.
 		'bootstrap'        => '5.3.2',    // Bump when you update bootstrap.
 		'lwtv-blocks'      => '1.0.0',    // Bump when you update the blocks.
 		'yikes-nav'        => '20201024', // Last date this was updated.
@@ -117,6 +117,7 @@ function yks_the_custom_logo() {
 add_image_size( 'character-img', 350, 412, true );
 add_image_size( 'show-img', 960, 400, true );
 add_image_size( 'postloop-img', 525, 300, true );
+add_image_size( 'relatedshow-img', 340, 150, true );
 
 /**
  * Comments

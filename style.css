@@ -1026,6 +1026,7 @@ section {
 }
 .site-loop.related-posts-by-taxonomy-loop .card img.card-img-top, .site-loop.related-posts-by-taxonomy-loop .image img.card-img-top {
   height: 150px;
+  width: 340px;
 }
 
 .home-featured-shows {

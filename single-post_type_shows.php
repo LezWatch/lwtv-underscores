@@ -9,7 +9,7 @@
 $icon = '<div class="show-header-svg">';
 
 // Show star if applicable.
-$icon .= lwtv_yikes_show_star( get_the_ID() );
+$icon .= lwtv_plugin()->get_show_stars( get_the_ID() );
 
 // Show love if applicable.
 if ( get_post_meta( get_the_ID(), 'lezshows_worthit_show_we_love', true ) ) {

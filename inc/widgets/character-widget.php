@@ -74,9 +74,9 @@ class LWTV_Character extends WP_Widget {
 				echo '<h4 class="card-title">' . esc_html( get_the_title() ) . '</h4>';
 				echo '<div class="card-text">';
 					// Only show one show
-					echo lwtv_yikes_chardata( get_the_ID(), 'oneshow' );
+					echo lwtv_plugin()->get_character_data( get_the_ID(), 'oneshow' );
 					// Actor
-					echo lwtv_yikes_chardata( get_the_ID(), 'oneactor' );
+					echo lwtv_plugin()->get_character_data( get_the_ID(), 'oneactor' );
 				echo '</div>
 			</div>';
 
