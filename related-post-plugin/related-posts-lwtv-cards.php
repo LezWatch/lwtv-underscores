@@ -42,7 +42,7 @@ if ( $related_posts ) {
 				);
 				?>
 				<div class="card mb-3">
-					<img src="<?php echo esc_url( get_the_post_thumbnail_url( $the_id, 'show-img' ) ); ?>" class="card-img-top" alt="<?php echo esc_html( $thumb_title ); ?>">
+					<img src="<?php echo esc_url( get_the_post_thumbnail_url( $the_id, 'relatedshow-img' ) ); ?>" class="card-img-top" alt="<?php echo esc_html( $thumb_title ); ?>">
 
 					<div class="card-body">
 						<h5 class="card-title">

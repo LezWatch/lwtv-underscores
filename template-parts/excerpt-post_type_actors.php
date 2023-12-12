@@ -52,8 +52,8 @@ unset( $shows, $actors, $gender, $sexuality, $cliches );
 		</h4>
 		<div class="card-text">
 			<?php
-			$gender    = lwtv_yikes_actordata( $the_id, 'gender' );
-			$sexuality = lwtv_yikes_actordata( $the_id, 'sexuality' );
+			$gender    = lwtv_plugin()->get_actor_gender( $the_id );
+			$sexuality = lwtv_plugin()->get_actor_sexuality( $the_id );
 
 			// Gender and Sexuality
 			if ( isset( $gender ) || isset( $sexuality ) ) {

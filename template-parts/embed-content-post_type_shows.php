@@ -171,8 +171,8 @@
 
 			<p>
 				<?php
-				$havecharcount = lwtv_list_characters( get_the_ID(), 'count' );
-				$havedeadcount = lwtv_list_characters( get_the_ID(), 'dead' );
+				$havecharcount = lwtv_plugin()->get_list_characters( get_the_ID(), 'count' );
+				$havedeadcount = lwtv_plugin()->get_list_characters( get_the_ID(), 'dead' );
 
 				if ( ! empty( $havecharcount ) || '0' !== $havecharcount ) {
 					$deadtext = 'none are dead';
@@ -228,7 +228,7 @@
 			<div class="wp-embed-flag">
 				<?php
 				// The Game of Thrones Flag of Gratuitous Violence.
-				$warning    = lwtv_yikes_content_warning( get_the_ID() );
+				$warning    = lwtv_plugin()->get_show_content_warning( get_the_ID() );
 				$warn_image = lwtv_symbolicons( 'warning.svg', 'fa-exclamation-triangle' );
 				if ( 'none' !== $warning['card'] ) {
 					// phpcs:ignore WordPress.Security.EscapeOutput
@@ -238,7 +238,7 @@
 				$term_list = wp_get_post_terms( get_the_ID(), 'lez_stars', array( 'fields' => 'slugs' ) );
 				if ( ! is_wp_error( $term_list ) ) {
 					// Stars of Queerness.
-					echo '<a href="https://lezwatchtv.com/star/' . esc_attr( $term_list[0] ) . '" title="' . esc_attr( ucfirst( $term_list[0] ) ) . ' Star" target="_blank"><span class="flag flag-star-' . esc_attr( $term_list[0] ) . '" target="_blank">' . lwtv_yikes_show_star( get_the_ID() ) . '</span></a>';
+					echo '<a href="https://lezwatchtv.com/star/' . esc_attr( $term_list[0] ) . '" title="' . esc_attr( ucfirst( $term_list[0] ) ) . ' Star" target="_blank"><span class="flag flag-star-' . esc_attr( $term_list[0] ) . '" target="_blank">' . lwtv_plugin()->get_show_stars( get_the_ID() ) . '</span></a>';
 				}
 
 				// Hearts of Lurve.

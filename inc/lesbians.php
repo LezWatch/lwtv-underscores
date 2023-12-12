@@ -185,27 +185,6 @@ function lwtv_yikes_character_archive_query( $query ) {
 }
 add_action( 'pre_get_posts', 'lwtv_yikes_character_archive_query' );
 
-/**
- * Taxonomy Archive Title
- *
- * Take the data from the taxonomy to determine a dynamic title.
- *
- * @access public
- * @param string $location
- * @param string $post_type
- * @param string $taxonomy
- *
- * @return string $title_adjustment -- Adjusted title.
- */
-function lwtv_yikes_tax_archive_title( $location, $post_type, $taxonomy ) {
-	$title_adjustment = lwtv_plugin()->get_tax_archive_title( $location, $post_type, $taxonomy );
-
-	if ( ! empty( $title_adjustment ) ) {
-		return $title_adjustment;
-	}
-}
-
-
 /** THE SEARCH SECTION **/
 
 /**
@@ -221,97 +200,6 @@ function lwtv_search_custom_excerpt_length( $length ) {
 
 if ( is_search() ) {
 	add_filter( 'excerpt_length', 'lwtv_search_custom_excerpt_length', 999 );
-}
-
-
-/** THE DISPLAY SECTION **/
-
-/**
- * Show star
- *
- * If a show has a star, let's show it.
- *
- * @access public
- * @return void
- */
-function lwtv_yikes_show_star( $show_id ) {
-	$star = lwtv_plugin()->get_show_stars( $show_id );
-
-	if ( ! empty( $star ) ) {
-		return $star;
-	}
-}
-
-/**
- * Show content warning
- *
- * If a show has a content warning, let's show it.
- *
- * @access public
- * @return void
- */
-function lwtv_yikes_content_warning( $show_id ) {
-	$warning_array = lwtv_plugin()->get_show_content_warning( $show_id );
-
-	if ( is_array( $warning_array ) && ! empty( $warning_array ) ) {
-		return $warning_array;
-	}
-}
-
-/**
- * Character Data
- *
- * Called on character pages to generate certain data bits
- *
- * @access public
- * @param mixed $the_id: the character ID
- * @param mixed $data:
- * @return void
- */
-function lwtv_yikes_chardata( $the_id, $data ) {
-	return lwtv_plugin()->get_character_data( $the_id, $data );
-}
-
-/**
- * Actor Data
- *
- * Called on actor pages to generate certain data bits
- *
- * @access public
- * @param mixed $the_id: the actor post ID
- * @param mixed $data:
- * @return mixed
- */
-function lwtv_yikes_actordata( $the_id, $data ) {
-	$actor_data = array();
-
-	if ( isset( $the_id ) ) {
-		$actor_data = lwtv_plugin()->get_actor_data( $the_id, $data );
-	}
-
-	return $actor_data;
-}
-
-/**
- * Is the actor queer function
- *
- * @access public
- * @param string $the_id
- * @return bool
- */
-function lwtv_yikes_is_queer( $the_id ): bool {
-	return lwtv_plugin()->is_actor_queer( $the_id );
-}
-
-/**
- * Is the actor having a birthday right now?
- *
- * @access public
- * @param string $the_id
- * @return bool
- */
-function lwtv_yikes_is_birthday( $the_id ): bool {
-	return lwtv_plugin()->is_actor_birthday( $the_id );
 }
 
 /** THE SEO SECTION **/
@@ -354,27 +242,6 @@ function lwtv_symbolicons( $svg, $fa ) {
 }
 
 /**
- * List all characters
- * @param  int     $post_id Post ID we're trying to process
- * @param  string  $output  format of output
- * @return mixed   number or array listing the characters
- */
-function lwtv_list_characters( $post_id, $output ) {
-	return lwtv_plugin()->get_list_characters( $post_id, $output );
-}
-
-/**
- * Data on characters
- * @param  int    $post_id post ID
- * @param  int    $count   number of characters
- * @param  string $roll    role of characters
- * @return array           List of all the characters
- */
-function lwtv_get_chars_for_show( $post_id, $count, $roll ) {
-	return lwtv_plugin()->get_chars_for_show( $post_id, $count, $roll );
-}
-
-/**
  * Get Last Updated
  *
  * @param string $post_ID
@@ -405,24 +272,4 @@ function lwtv_last_death() {
 	$return = '<div class="lezwatchtv last-death">' . $return . '</div>';
 
 	return $return;
-}
-
-/**
- * Author Social Media
- *
- * @param int     $author Author ID
- * @return string $details Output of author social.
- */
-function lwtv_author_social( $author ) {
-	return lwtv_plugin()->get_author_social( $author );
-}
-
-/**
- * Author Favourite Shows
- *
- * @param int     $author Author ID
- * @return string $details Output of author fav shows.
- */
-function lwtv_author_favourite_shows( $author ) {
-	return lwtv_plugin()->get_author_favorite_shows( $author );
 }

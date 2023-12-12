@@ -38,7 +38,7 @@ $thumb_array       = array(
 						<span class="callout">
 							<?php
 							// The Game of Thrones Flag of Gratuitous Violence.
-							$warning    = lwtv_yikes_content_warning( get_the_ID() );
+							$warning    = lwtv_plugin()->get_show_content_warning( get_the_ID() );
 							$warn_image = lwtv_symbolicons( 'warning.svg', 'fa-exclamation-triangle' );
 							if ( 'none' !== $warning['card'] ) {
 								// phpcs:ignore WordPress.Security.EscapeOutput
@@ -46,7 +46,7 @@ $thumb_array       = array(
 							}
 
 							// Stars of Queerness.
-							echo '<span class="callout callout-star">' . lwtv_yikes_show_star( get_the_ID() ) . '</span>';
+							echo '<span class="callout callout-star">' . lwtv_plugin()->get_show_stars( get_the_ID() ) . '</span>';
 
 							// Hearts of Lurve.
 							if ( get_post_meta( get_the_ID(), 'lezshows_worthit_show_we_love', true ) ) {

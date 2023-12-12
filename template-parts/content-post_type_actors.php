@@ -13,9 +13,10 @@ $slug     = get_post_field( 'post_name', get_post( $the_id ) );
 $get_tags = get_term_by( 'name', $slug, 'post_tag' );
 
 // This just gets the numbers of all characters and how many are dead.
-$all_chars     = lwtv_yikes_actordata( $the_id, 'characters' );
+$all_chars     = lwtv_plugin()->get_actor_characters( $the_id );
+$all_dead      = lwtv_plugin()->get_actor_dead( $the_id );
 $havecharcount = ( is_array( $all_chars ) ) ? count( $all_chars ) : 0;
-$havedeadcount = count( lwtv_yikes_actordata( $the_id, 'dead' ) );
+$havedeadcount = ( is_array( $all_dead ) ) ? count( $all_dead ) : 0;
 
 $related = lwtv_plugin()->has_cpt_related_posts( $slug );
 
@@ -28,7 +29,7 @@ if ( ! empty( $born ) ) {
 }
 if ( isset( $barr ) && isset( $barr[1] ) && isset( $barr[2] ) && checkdate( (int) $barr[1], (int) $barr[2], (int) $barr[0] ) ) {
 	$get_birth    = new DateTime( $born );
-	$age          = lwtv_yikes_actordata( $the_id, 'age', true );
+	$age          = lwtv_plugin()->get_actor_age( $the_id );
 	$life['born'] = date_format( $get_birth, 'F j, Y' );
 	$life['age']  = ( is_object( $age ) ) ? $age->format( '%Y years old' ) : '';
 }
@@ -44,28 +45,17 @@ if ( isset( $darr ) && isset( $darr[1] ) && isset( $darr[2] ) && checkdate( $dar
 // Generate Gender & Sexuality & Pronoun Data.
 // Usage: $gender_sexuality.
 $gender_sexuality = array();
-$gender           = lwtv_yikes_actordata( $the_id, 'gender', true );
-$sexuality        = lwtv_yikes_actordata( $the_id, 'sexuality', true );
-$pronouns         = lwtv_yikes_actordata( $the_id, 'sexuality', true );
+$gender           = lwtv_plugin()->get_actor_gender( $the_id );
+$sexuality        = lwtv_plugin()->get_actor_sexuality( $the_id );
+$pronouns         = lwtv_plugin()->get_actor_pronouns( $the_id );
 if ( isset( $gender ) && ! empty( $gender ) ) {
 	$gender_sexuality['Gender Orientation'] = $gender;
 }
 if ( isset( $sexuality ) && ! empty( $sexuality ) ) {
 	$gender_sexuality['Sexual Orientation'] = $sexuality;
 }
-
-$pronoun_terms = get_the_terms( $the_id, 'lez_actor_pronouns', true );
-if ( $pronoun_terms && ! is_wp_error( $pronoun_terms ) ) {
-	$pronouns = '';
-	$count    = 1;
-	foreach ( $pronoun_terms as $pronoun_term ) {
-		$pronouns .= $pronoun_term->name;
-		$pronouns .= ( $count < count( $pronoun_terms ) ) ? '/' : '';
-		++$count;
-	}
-	if ( isset( $pronouns ) && ! empty( $pronouns ) ) {
-		$gender_sexuality['Pronouns'] = $pronouns;
-	}
+if ( isset( $pronouns ) && ! empty( $pronouns ) ) {
+	$gender_sexuality['Pronouns'] = $pronouns;
 }
 
 // Generate URLs.

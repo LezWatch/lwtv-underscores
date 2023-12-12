@@ -65,7 +65,7 @@ if ( ( 'recurring' === $char_role && 'post_type_shows' === get_post_type() ) || 
 			<?php
 			echo esc_html( get_the_title( $the_id ) );
 			if ( $archive ) {
-				echo lwtv_yikes_chardata( $the_id, 'dead' );
+				echo lwtv_plugin()->get_character_data( $the_id, 'dead' );
 			}
 			if ( isset( $grave ) ) {
 				// phpcs:ignore WordPress.Security.EscapeOutput
@@ -78,23 +78,23 @@ if ( ( 'recurring' === $char_role && 'post_type_shows' === get_post_type() ) || 
 			<?php
 			// If we're a regular we show it all
 			if ( 'regular' === $char_role && 'post_type_shows' === get_post_type() ) {
-				$gender    = lwtv_yikes_chardata( $the_id, 'gender' );
-				$sexuality = lwtv_yikes_chardata( $the_id, 'sexuality' );
-				$cliches   = lwtv_yikes_chardata( $the_id, 'cliches' );
+				$gender    = lwtv_plugin()->get_character_data( $the_id, 'gender' );
+				$sexuality = lwtv_plugin()->get_character_data( $the_id, 'sexuality' );
+				$cliches   = lwtv_plugin()->get_character_data( $the_id, 'cliches' );
 			}
 
 			if ( ( 'regular' === $char_role && 'post_type_shows' === get_post_type() ) || $archive ) {
-				$actors = lwtv_yikes_chardata( $the_id, 'actors' );
+				$actors = lwtv_plugin()->get_character_data( $the_id, 'actors' );
 			}
 
 			// List of Shows (will not show on show pages)
 			if ( 'post_type_characters' === get_post_type() || 'post_type_actors' === get_post_type() ) {
-				echo lwtv_yikes_chardata( $the_id, 'oneshow' );
+				echo lwtv_plugin()->get_character_data( $the_id, 'oneshow' );
 			}
 
 			// List of Actors
 			if ( 'post_type_actors' !== get_post_type() ) {
-				echo lwtv_yikes_chardata( $the_id, 'oneactor' );
+				echo lwtv_plugin()->get_character_data( $the_id, 'oneactor' );
 			}
 
 			// Gender and Sexuality

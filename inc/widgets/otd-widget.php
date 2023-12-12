@@ -163,7 +163,7 @@ class LWTV_Today_Widget extends WP_Widget {
 		switch ( $type ) {
 			case 'character':
 				$thumb = 'character-img';
-				$text  = lwtv_yikes_chardata( $the_post, 'oneshow' ) . lwtv_yikes_chardata( $the_post, 'oneactor' );
+				$text  = lwtv_plugin()->get_character_data( $the_post, 'oneshow' ) . lwtv_plugin()->get_character_data( $the_post, 'oneactor' );
 				break;
 			case 'show':
 				$text = ''; // There's a lot, keep reading...

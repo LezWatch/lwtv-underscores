@@ -9,10 +9,10 @@
 
 // Get the Term information and icons.
 $the_term     = get_term_by( 'slug', get_query_var( 'term' ), get_query_var( 'taxonomy' ) );
-$iconname     = lwtv_yikes_tax_archive_title( 'icon', get_post_type( get_the_ID() ), get_query_var( 'taxonomy' ) );
+$iconname     = lwtv_plugin()->get_tax_archive_title( 'icon', get_post_type( get_the_ID() ), get_query_var( 'taxonomy' ) );
 $the_icon     = '<span role="img" aria-label="' . $the_term->name . '" title="' . $the_term->name . '" class="taxonomy-svg ' . $the_term->slug . '"> ' . $iconname . '</span>';
-$title_prefix = lwtv_yikes_tax_archive_title( 'prefix', get_post_type( get_the_ID() ), get_query_var( 'taxonomy' ) );
-$title_suffix = lwtv_yikes_tax_archive_title( 'suffix', get_post_type( get_the_ID() ), get_query_var( 'taxonomy' ) );
+$title_prefix = lwtv_plugin()->get_tax_archive_title( 'prefix', get_post_type( get_the_ID() ), get_query_var( 'taxonomy' ) );
+$title_suffix = lwtv_plugin()->get_tax_archive_title( 'suffix', get_post_type( get_the_ID() ), get_query_var( 'taxonomy' ) );
 
 // Count Posts: If this is a show or a character taxonomy, we do extra.
 $count_posts = $the_term->count;

@@ -8,10 +8,10 @@
 // Build the icon.
 $dead = get_post_meta( $post->ID, 'lezactors_death', true );
 $icon = '<div class="show-header-svg">';
-if ( lwtv_yikes_is_queer( $post->ID ) ) {
+if ( lwtv_plugin()->is_actor_queer( $post->ID ) ) {
 	$icon .= ' <span role="img" aria-label="Queer IRL Actor" data-bs-target="tooltip" title="Queer IRL Actor" class="cliche-queer-irl">' . lwtv_symbolicons( 'rainbow.svg', 'fa-cloud' ) . '</span>';
 }
-if ( lwtv_yikes_is_birthday( $post->ID ) && ! $dead ) {
+if ( lwtv_plugin()->is_actor_birthday( $post->ID ) && ! $dead ) {
 	$icon .= ' <span role="img" aria-label="Actor Having a Birthday" data-bs-target="tooltip" title="Happy Birthday" class="happy-birthday">' . lwtv_symbolicons( 'cake.svg', 'fa-birthday-cake' ) . '</span>';
 }
 if ( $dead ) {
@@ -48,10 +48,10 @@ get_header(); ?>
 							<div class="entry-content actor-page">
 								<?php
 								// If it's their birthday and they're not dead, we wish them a happy!
-								if ( lwtv_yikes_is_birthday( $post->ID ) && ! get_post_meta( $post->ID, 'lezactors_death', true ) ) {
+								if ( lwtv_plugin()->is_actor_birthday( $post->ID ) && ! get_post_meta( $post->ID, 'lezactors_death', true ) ) {
 									$old = ' ';
 									$end = array( 'th', 'st', 'nd', 'rd', 'th', 'th', 'th', 'th', 'th', 'th' );
-									$age = lwtv_yikes_actordata( get_the_ID(), 'age', true );
+									$age = lwtv_plugin()->get_actor_age( $the_id );
 									$num = $age->format( '%y' );
 									if ( ( $num % 100 ) >= 11 && ( $num % 100 ) <= 13 ) {
 										$years_old = $num . 'th';

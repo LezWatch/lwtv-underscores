@@ -19,7 +19,7 @@ function lwtv_author_box( $content ) {
 		$author_description = ( get_the_author_meta( 'user_description', $author ) ) ? get_the_author_meta( 'user_description', $author ) : '';
 
 		// Get author's social deets.
-		$author_social = lwtv_author_social( $author );
+		$author_social = lwtv_plugin()->get_author_social( $author );
 
 		// Get link to the author archive page.
 		$author_posts = get_author_posts_url( get_the_author_meta( 'ID', $author ) );
@@ -30,7 +30,7 @@ function lwtv_author_box( $content ) {
 		$author_articles .= ' by ' . $display_name . '.';
 
 		// Get author Fav Shows.
-		$favourites = lwtv_author_favourite_shows( $author );
+		$favourites = lwtv_plugin()->get_author_favorite_shows( $author );
 
 		// Author avatar, and name.
 		$author_details  = '<div class="col-sm-3">' . get_avatar( get_the_author_meta( 'user_email' ), 190 ) . '</div>';

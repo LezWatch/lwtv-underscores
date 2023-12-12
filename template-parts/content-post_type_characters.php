@@ -9,7 +9,7 @@
 
 // Generate list of shows
 // Usage: $shows_group
-$all_shows   = lwtv_yikes_chardata( get_the_ID(), 'shows' );
+$all_shows   = lwtv_plugin()->get_character_data( get_the_ID(), 'shows' );
 $shows_group = array();
 
 if ( '' !== $all_shows && is_array( $all_shows ) ) {
@@ -47,7 +47,7 @@ if ( '' !== $all_shows && is_array( $all_shows ) ) {
 
 // Generate actors
 // Usage: $the_actors
-$all_actors = lwtv_yikes_chardata( get_the_ID(), 'actors' );
+$all_actors = lwtv_plugin()->get_character_data( get_the_ID(), 'actors' );
 $the_actors = array();
 
 if ( '' !== $all_actors ) {
@@ -63,7 +63,7 @@ if ( '' !== $all_actors ) {
 		} else {
 			$this_actor = '<a href="' . get_permalink( $each_actor ) . '">' . get_the_title( $each_actor ) . '</a>';
 		}
-		if ( lwtv_yikes_is_queer( $each_actor ) ) {
+		if ( lwtv_plugin()->is_actor_queer( $each_actor ) ) {
 			$this_actor .= ' <span role="img" aria-label="Queer IRL Actor" data-bs-target="tooltip" title="Queer IRL Actor" class="character-cliche queer-irl">' . lwtv_symbolicons( 'rainbow.svg', 'fa-cloud' ) . '</span>';
 		}
 		$the_actors[] = $this_actor;
@@ -101,13 +101,13 @@ if ( $isdead ) {
 
 // Generate list of Cliches
 // Usage: $cliches
-$cliches = lwtv_yikes_chardata( get_the_ID(), 'cliches' );
+$cliches = lwtv_plugin()->get_character_data( get_the_ID(), 'cliches' );
 
 // Generate Gender & Sexuality & Romantic Data
 // Usage: $gender_sexuality
-$gender_sexuality = lwtv_yikes_chardata( get_the_ID(), 'gender' ) . ' &bull; ' . lwtv_yikes_chardata( get_the_ID(), 'sexuality' );
-if ( ! is_null( lwtv_yikes_chardata( get_the_ID(), 'romantic' ) ) && lwtv_yikes_chardata( get_the_ID(), 'romantic' ) !== '' ) {
-	$gender_sexuality .= ' &bull; ' . lwtv_yikes_chardata( get_the_ID(), 'romantic' );
+$gender_sexuality = lwtv_plugin()->get_character_data( get_the_ID(), 'gender' ) . ' &bull; ' . lwtv_plugin()->get_character_data( get_the_ID(), 'sexuality' );
+if ( ! is_null( lwtv_plugin()->get_character_data( get_the_ID(), 'romantic' ) ) && lwtv_plugin()->get_character_data( get_the_ID(), 'romantic' ) !== '' ) {
+	$gender_sexuality .= ' &bull; ' . lwtv_plugin()->get_character_data( get_the_ID(), 'romantic' );
 }
 
 // Microformats Fix
