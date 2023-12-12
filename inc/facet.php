@@ -36,6 +36,7 @@ function lwtv_yikes_facetwp_add_labels() {
 
 			// Titles
 			if ( FWP.facets.show_loved == 'yes' ) { title.push( 'We Love' ); }
+			if ( FWP.facets.show_loved == 'no' ) { title.push( 'We Don\'t Love' ); }
 			if ( FWP.facets.show_worthit == 'yes' ) { title.push( 'That Are Worth Watching' ); }
 			if ( FWP.facets.show_worthit == 'no' ) { title.push( 'That Are Not Worth Watching' ); }
 			if ( FWP.facets.show_stars != '' && typeof FWP.facets.show_stars != 'undefined' ) {
