@@ -15,7 +15,7 @@ if ( lwtv_plugin()->is_actor_birthday( $post->ID ) && ! $dead ) {
 	$icon .= ' <span role="img" aria-label="Actor Having a Birthday" data-bs-target="tooltip" title="Happy Birthday" class="happy-birthday">' . lwtv_symbolicons( 'cake.svg', 'fa-birthday-cake' ) . '</span>';
 }
 if ( $dead ) {
-	$icon .= '<span role="img" aria-label="RIP - Dead Actor" data-bs-target="tooltip" title="RIP - Dead Actor" class="cliche-dead">' . lwtv_symbolicons( 'rest-in-peace.svg', 'fa-ban' ) . '</span>';
+	$icon .= ' <span role="img" aria-label="RIP - Dead Actor" data-bs-target="tooltip" title="RIP - Dead Actor" class="cliche-dead">' . lwtv_symbolicons( 'rest-in-peace.svg', 'fa-ban' ) . '</span>';
 }
 
 $icon .= '</div>';
@@ -48,18 +48,8 @@ get_header(); ?>
 							<div class="entry-content actor-page">
 								<?php
 								// If it's their birthday and they're not dead, we wish them a happy!
-								if ( lwtv_plugin()->is_actor_birthday( $post->ID ) && ! get_post_meta( $post->ID, 'lezactors_death', true ) ) {
-									$old = ' ';
-									$end = array( 'th', 'st', 'nd', 'rd', 'th', 'th', 'th', 'th', 'th', 'th' );
-									$age = lwtv_plugin()->get_actor_age( $the_id );
-									$num = $age->format( '%y' );
-									if ( ( $num % 100 ) >= 11 && ( $num % 100 ) <= 13 ) {
-										$years_old = $num . 'th';
-									} else {
-										$years_old = $num . $end[ $num % 10 ];
-									}
-									$old = ' ' . $years_old . ' ';
-									echo '<div class="alert alert-info" role="alert">Happy' . esc_html( $old ) . 'Birthday, ' . esc_html( get_the_title() ) . '!</div>';
+								if ( lwtv_plugin()->is_actor_birthday( $post->ID ) && ! $dead ) {
+									lwtv_plugin()->get_actor_birthday( $post->ID );
 								}
 								?>
 								<div class="card">
