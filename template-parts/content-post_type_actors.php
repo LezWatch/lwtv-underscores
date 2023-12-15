@@ -239,11 +239,10 @@ if ( isset( $related ) && $related ) {
 	<section name="related-posts" id="related-posts" class="relatedposts-section">
 		<h2>Related Articles</h2>
 		<div class="card-body">
-			<?php
-			if ( method_exists( 'LWTV_CPTs_Related_Posts', 'related_posts' ) && method_exists( 'LWTV_CPTs_Related_Posts', 'count_related_posts' ) ) {
-				echo lwtv_plugin()->get_cpt_related_posts( $slug ); // phpcs:ignore WordPress.Security.EscapeOutput
-			}
-			?>
+		<?php
+		// phpcs:ignore WordPress.Security.EscapeOutput
+		echo lwtv_plugin()->get_cpt_related_posts( $slug );
+		?>
 		</div>
 	</section>
 	<?php
@@ -267,8 +266,10 @@ if ( isset( $related ) && $related ) {
 			echo wp_kses_post( '<p>There ' . sprintf( _n( 'is <strong>%s</strong> character', 'are <strong>%s</strong> characters', $havecharcount ), $havecharcount ) . ' listed for this actor; ' . $deadtext . '.</p>' );
 
 			echo '<div class="container characters-regulars-container"><div class="row site-loop character-show-loop">';
-			foreach ( $all_chars as $character ) {
-				include locate_template( 'template-parts/excerpt-post_type_characters.php' );
+			if ( is_array( $all_chars ) ) {
+				foreach ( $all_chars as $character ) {
+					include locate_template( 'template-parts/excerpt-post_type_characters.php' );
+				}
 			}
 			echo '</div></div>';
 		}

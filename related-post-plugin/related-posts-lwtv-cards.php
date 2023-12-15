@@ -19,14 +19,12 @@
  *                           Empty array if no related posts are found.
  * @var array $rpbt_args     Widget or shortcode arguments.
  */
-?>
 
-<?php
 /**
  * Note: global $post; is used before this template by the widget and the shortcode.
  */
 
-if ( $related_posts ) {
+if ( is_array( $related_posts ) && $related_posts ) {
 	?>
 	<div class="container related-posts-by-taxonomy-container">
 		<div class="row site-loop related-posts-by-taxonomy-loop">

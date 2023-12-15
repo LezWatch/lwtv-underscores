@@ -128,9 +128,8 @@ if ( $related ) {
 		<h2>Articles</h2>
 		<div class="container"><div class="card-body">
 			<?php
-			if ( method_exists( 'LWTV_CPTs_Related_Posts', 'related_posts' ) && method_exists( 'LWTV_CPTs_Related_Posts', 'count_related_posts' ) ) {
-				echo lwtv_plugin()->get_cpt_related_posts( $slug ); // phpcs:ignore WordPress.Security.EscapeOutput
-			}
+			// phpcs:ignore WordPress.Security.EscapeOutput
+			echo lwtv_plugin()->get_cpt_related_posts( $slug );
 			?>
 		</div></div>
 	</section>
