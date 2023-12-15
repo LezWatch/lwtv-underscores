@@ -74,8 +74,10 @@ class LWTV_Character extends WP_Widget {
 				echo '<h4 class="card-title">' . esc_html( get_the_title() ) . '</h4>';
 				echo '<div class="card-text">';
 					// Only show one show
+					// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 					echo lwtv_plugin()->get_character_data( get_the_ID(), 'oneshow' );
 					// Actor
+					// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 					echo lwtv_plugin()->get_character_data( get_the_ID(), 'oneactor' );
 				echo '</div>
 			</div>';
