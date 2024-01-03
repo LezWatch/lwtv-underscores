@@ -13,6 +13,7 @@ $realness     = ( get_post_meta( $show_id, 'lezshows_realness_rating', true ) &&
 $quality      = ( get_post_meta( $show_id, 'lezshows_quality_rating', true ) && is_numeric( (int) get_post_meta( $show_id, 'lezshows_quality_rating', true ) ) ) ? min( (int) get_post_meta( $show_id, 'lezshows_quality_rating', true ), 5 ) : 0;
 $screentime   = ( get_post_meta( $show_id, 'lezshows_screentime_rating', true ) && is_numeric( (int) get_post_meta( $show_id, 'lezshows_screentime_rating', true ) ) ) ? min( (int) get_post_meta( $show_id, 'lezshows_screentime_rating', true ), 5 ) : 0;
 $alt_names    = ( get_post_meta( $show_id, 'lezshows_show_names', true ) ) ? get_post_meta( $show_id, 'lezshows_show_names', true ) : false;
+
 ?>
 
 <section id="search" class="widget widget_search">
@@ -22,6 +23,10 @@ $alt_names    = ( get_post_meta( $show_id, 'lezshows_show_names', true ) ) ? get
 <section id="suggest-edits" class="widget widget_suggestedits">
 	<?php get_template_part( 'template-parts/suggestedit', 'form' ); ?>
 </section>
+
+<?php
+lwtv_plugin()->get_admin_tools( $show_id );
+?>
 
 <section id="ratings" class="widget widget_text">
 	<div class="card">

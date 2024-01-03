@@ -19,6 +19,10 @@ $char_id = $post->ID;
 	<?php get_template_part( 'template-parts/suggestedit', 'form' ); ?>
 </section>
 
+<?php
+lwtv_plugin()->get_admin_tools( $char_id );
+?>
+
 <section id="join-slack" class="widget widget_joinslack">
 	<div class="widget-wrap">
 		<div class="card card-slack">

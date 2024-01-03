@@ -148,9 +148,9 @@ if ( $related ) {
 		$havedeadcount = lwtv_plugin()->get_list_characters( $show_id, 'dead' );
 
 		// Get the list of characters.
-		$chars_regular   = lwtv_plugin()->get_chars_for_show( $show_id, $havecharcount, 'regular' );
-		$chars_recurring = lwtv_plugin()->get_chars_for_show( $show_id, $havecharcount, 'recurring' );
-		$chars_guest     = lwtv_plugin()->get_chars_for_show( $show_id, $havecharcount, 'guest' );
+		$chars_regular   = lwtv_plugin()->get_chars_for_show( $show_id, 'regular' );
+		$chars_recurring = lwtv_plugin()->get_chars_for_show( $show_id, 'recurring' );
+		$chars_guest     = lwtv_plugin()->get_chars_for_show( $show_id, 'guest' );
 		$chars_total     = count( $chars_recurring ) + count( $chars_regular ) + count( $chars_guest );
 
 		// If havecharcount and chars_total are different, rerun the call.
