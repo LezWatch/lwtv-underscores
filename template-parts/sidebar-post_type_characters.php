@@ -7,6 +7,7 @@
 
 global $post;
 $char_id = $post->ID;
+lwtv_plugin()->generate_the_math( $char_id );
 ?>
 
 <section id="search" class="widget widget-search">

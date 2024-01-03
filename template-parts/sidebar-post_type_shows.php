@@ -13,6 +13,8 @@ $realness     = ( get_post_meta( $show_id, 'lezshows_realness_rating', true ) &&
 $quality      = ( get_post_meta( $show_id, 'lezshows_quality_rating', true ) && is_numeric( (int) get_post_meta( $show_id, 'lezshows_quality_rating', true ) ) ) ? min( (int) get_post_meta( $show_id, 'lezshows_quality_rating', true ), 5 ) : 0;
 $screentime   = ( get_post_meta( $show_id, 'lezshows_screentime_rating', true ) && is_numeric( (int) get_post_meta( $show_id, 'lezshows_screentime_rating', true ) ) ) ? min( (int) get_post_meta( $show_id, 'lezshows_screentime_rating', true ), 5 ) : 0;
 $alt_names    = ( get_post_meta( $show_id, 'lezshows_show_names', true ) ) ? get_post_meta( $show_id, 'lezshows_show_names', true ) : false;
+
+lwtv_plugin()->generate_the_math( $show_id );
 ?>
 
 <section id="search" class="widget widget_search">
