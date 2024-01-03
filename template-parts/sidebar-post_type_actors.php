@@ -7,7 +7,6 @@
 
 global $post;
 $actor_id = $post->ID;
-lwtv_plugin()->generate_the_math( $actor_id );
 ?>
 
 <section id="search" class="widget widget-search">
@@ -19,6 +18,10 @@ lwtv_plugin()->generate_the_math( $actor_id );
 <section id="suggest-edits" class="widget widget_suggestedits">
 	<?php get_template_part( 'template-parts/suggestedit', 'form' ); ?>
 </section>
+
+<?php
+lwtv_plugin()->get_admin_tools( $actor_id );
+?>
 
 <section id="join-slack" class="widget widget_joinslack">
 	<div class="widget-wrap">
