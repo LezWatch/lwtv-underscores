@@ -11,6 +11,7 @@
 $the_id   = get_the_ID();
 $slug     = get_post_field( 'post_name', get_post( $the_id ) );
 $get_tags = get_term_by( 'name', $slug, 'post_tag' );
+$related  = lwtv_plugin()->has_cpt_related_posts( $slug );
 
 // This just gets the numbers of all characters and how many are dead.
 $all_chars     = lwtv_plugin()->get_actor_characters( $the_id );
@@ -18,13 +19,11 @@ $all_dead      = lwtv_plugin()->get_actor_dead( $the_id );
 $havecharcount = ( is_array( $all_chars ) ) ? count( $all_chars ) : 0;
 $havedeadcount = ( is_array( $all_dead ) ) ? count( $all_dead ) : 0;
 
-$related = lwtv_plugin()->has_cpt_related_posts( $slug );
-
 // Generate Life Stats.
 // Usage: $life.
 $life = array();
 $born = get_post_meta( $the_id, 'lezactors_birth', true );
-if ( ! empty( $born ) ) {
+if ( ! empty( $born ) && ! lwtv_plugin()->hide_actor_data( $the_id, 'dob' ) ) {
 	$barr = explode( '-', $born );
 }
 if ( isset( $barr ) && isset( $barr[1] ) && isset( $barr[2] ) && checkdate( (int) $barr[1], (int) $barr[2], (int) $barr[0] ) ) {
@@ -82,61 +81,64 @@ if ( get_post_meta( $the_id, 'lezactors_wikipedia', true ) ) {
 		'fa'   => 'fab fa-wikipedia-w',
 	);
 }
-if ( get_post_meta( $the_id, 'lezactors_twitter', true ) ) {
-	$actor_urls['twitter'] = array(
-		'name' => 'X (Twitter)',
-		'url'  => esc_url( 'https://twitter.com/' . get_post_meta( $the_id, 'lezactors_twitter', true ) ),
-		'fa'   => 'fab fa-x-twitter',
-	);
-}
-if ( get_post_meta( $the_id, 'lezactors_instagram', true ) ) {
-	$actor_urls['instagram'] = array(
-		'name' => 'Instagram',
-		'url'  => esc_url( 'https://www.instagram.com/' . get_post_meta( $the_id, 'lezactors_instagram', true ) ),
-		'fa'   => 'fab fa-instagram',
-	);
-}
-if ( get_post_meta( $the_id, 'lezactors_facebook', true ) ) {
-	$actor_urls['facebook'] = array(
-		'name' => 'Facebook',
-		'url'  => esc_url( get_post_meta( $the_id, 'lezactors_facebook', true ) ),
-		'fa'   => 'fab fa-facebook',
-	);
-}
-if ( get_post_meta( $the_id, 'lezactors_tiktok', true ) ) {
-	$actor_urls['tiktok'] = array(
-		'name' => 'TikTok',
-		'url'  => esc_url( 'https://tiktok.com/' . get_post_meta( $the_id, 'lezactors_tiktok', true ) ),
-		'fa'   => 'fab fa-tiktok',
-	);
-}
-if ( get_post_meta( $the_id, 'lezactors_bluesky', true ) ) {
-	$actor_urls['bluesky'] = array(
-		'name' => 'BlueSky',
-		'url'  => esc_url( get_post_meta( $the_id, 'lezactors_bluesky', true ) ),
-		'fa'   => 'fab fa-square',
-	);
-}
-if ( get_post_meta( $the_id, 'lezactors_twitch', true ) ) {
-	$actor_urls['twitch'] = array(
-		'name' => 'Twitch',
-		'url'  => esc_url( get_post_meta( $the_id, 'lezactors_twitch', true ) ),
-		'fa'   => 'fab fa-twitch',
-	);
-}
-if ( get_post_meta( $the_id, 'lezactors_tumblr', true ) ) {
-	$actor_urls['tumblr'] = array(
-		'name' => 'Tumblr',
-		'url'  => esc_url( 'https://' . get_post_meta( $the_id, 'lezactors_tumblr', true ) . '.tumblr.com' ),
-		'fa'   => 'fab fa-tumblr',
-	);
-}
-if ( get_post_meta( $the_id, 'lezactors_mastodon', true ) ) {
-	$actor_urls['mastodon'] = array(
-		'name' => 'Mastodon',
-		'url'  => esc_url( get_post_meta( $the_id, 'lezactors_mastodon', true ) ),
-		'fa'   => 'fab fa-mastodon',
-	);
+
+if ( ! lwtv_plugin()->hide_actor_data( $the_id, 'socials' ) ) {
+	if ( get_post_meta( $the_id, 'lezactors_twitter', true ) ) {
+		$actor_urls['twitter'] = array(
+			'name' => 'X (Twitter)',
+			'url'  => esc_url( 'https://twitter.com/' . get_post_meta( $the_id, 'lezactors_twitter', true ) ),
+			'fa'   => 'fab fa-x-twitter',
+		);
+	}
+	if ( get_post_meta( $the_id, 'lezactors_instagram', true ) ) {
+		$actor_urls['instagram'] = array(
+			'name' => 'Instagram',
+			'url'  => esc_url( 'https://www.instagram.com/' . get_post_meta( $the_id, 'lezactors_instagram', true ) ),
+			'fa'   => 'fab fa-instagram',
+		);
+	}
+	if ( get_post_meta( $the_id, 'lezactors_facebook', true ) ) {
+		$actor_urls['facebook'] = array(
+			'name' => 'Facebook',
+			'url'  => esc_url( get_post_meta( $the_id, 'lezactors_facebook', true ) ),
+			'fa'   => 'fab fa-facebook',
+		);
+	}
+	if ( get_post_meta( $the_id, 'lezactors_tiktok', true ) ) {
+		$actor_urls['tiktok'] = array(
+			'name' => 'TikTok',
+			'url'  => esc_url( 'https://tiktok.com/' . get_post_meta( $the_id, 'lezactors_tiktok', true ) ),
+			'fa'   => 'fab fa-tiktok',
+		);
+	}
+	if ( get_post_meta( $the_id, 'lezactors_bluesky', true ) ) {
+		$actor_urls['bluesky'] = array(
+			'name' => 'BlueSky',
+			'url'  => esc_url( get_post_meta( $the_id, 'lezactors_bluesky', true ) ),
+			'fa'   => 'fab fa-square',
+		);
+	}
+	if ( get_post_meta( $the_id, 'lezactors_twitch', true ) ) {
+		$actor_urls['twitch'] = array(
+			'name' => 'Twitch',
+			'url'  => esc_url( get_post_meta( $the_id, 'lezactors_twitch', true ) ),
+			'fa'   => 'fab fa-twitch',
+		);
+	}
+	if ( get_post_meta( $the_id, 'lezactors_tumblr', true ) ) {
+		$actor_urls['tumblr'] = array(
+			'name' => 'Tumblr',
+			'url'  => esc_url( 'https://' . get_post_meta( $the_id, 'lezactors_tumblr', true ) . '.tumblr.com' ),
+			'fa'   => 'fab fa-tumblr',
+		);
+	}
+	if ( get_post_meta( $the_id, 'lezactors_mastodon', true ) ) {
+		$actor_urls['mastodon'] = array(
+			'name' => 'Mastodon',
+			'url'  => esc_url( get_post_meta( $the_id, 'lezactors_mastodon', true ) ),
+			'fa'   => 'fab fa-mastodon',
+		);
+	}
 }
 
 // Microformats Fix.
@@ -158,6 +160,10 @@ $thumb_array       = array(
 			<div class="card-meta-item">
 				<?php
 				echo '<h2>Biography</h2>';
+
+				// Actor Privacy Warning.
+				lwtv_plugin()->the_actor_privacy_warning( $the_id );
+
 				if ( ! empty( get_the_content() ) ) {
 					the_content();
 				} else {
