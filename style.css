@@ -1439,18 +1439,21 @@ table.lwtvc tbody {
   margin-left: 2rem;
 }
 
-/* Single Show / Single Character Template */
+/* Single Show/Actor/Character Template */
 h3.post-title.excerpt {
   clear: none;
   margin-top: 0;
 }
 
+.relatedposts-section,
 .showschar-section {
   padding-bottom: 0;
 }
+.relatedposts-section p:last-child,
 .showschar-section p:last-child {
   margin-bottom: 0;
 }
+.relatedposts-section h2,
 .showschar-section h2 {
   background-color: #f3f3f3;
   line-height: 1;
