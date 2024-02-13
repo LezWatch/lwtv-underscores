@@ -115,7 +115,7 @@ if ( ! lwtv_plugin()->hide_actor_data( $the_id, 'socials' ) ) {
 		$actor_urls['bluesky'] = array(
 			'name' => 'BlueSky',
 			'url'  => esc_url( get_post_meta( $the_id, 'lezactors_bluesky', true ) ),
-			'fa'   => 'fab fa-square',
+			'fa'   => 'fa-solid fa-square', // Change to fab fa-bluesky when available. See https://github.com/FortAwesome/Font-Awesome/issues/19810
 		);
 	}
 	if ( get_post_meta( $the_id, 'lezactors_twitch', true ) ) {
