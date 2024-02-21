@@ -113,40 +113,51 @@ if ( ! is_null( lwtv_plugin()->get_character_data( get_the_ID(), 'romantic' ) ) 
 // Microformats Fix
 lwtv_microformats_fix( $post->ID );
 
-// Thumbnail attribution
-$thumb_attribution = get_post_meta( get_post_thumbnail_id(), 'lwtv_attribution', true );
-$thumb_title       = ( empty( $thumb_attribution ) ) ? get_the_title() : get_the_title() . ' &copy; ' . $thumb_attribution;
-$thumb_array       = array(
-	'class' => 'single-char-img rounded float-left',
-	'alt'   => get_the_title(),
-	'title' => $thumb_title,
-);
+// If we have a post thumbnail, get the image and alt images.
+if ( has_post_thumbnail() ) {
+	// Thumbnail attribution
+	$thumb_attribution = get_post_meta( get_post_thumbnail_id(), 'lwtv_attribution', true );
+	$thumb_title       = ( empty( $thumb_attribution ) ) ? get_the_title() : get_the_title() . ' &copy; ' . $thumb_attribution;
+	$thumb_array       = array(
+		'class' => 'single-char-img rounded float-left',
+		'alt'   => get_the_title(),
+		'title' => $thumb_title,
+	);
 
-// Alt Images
-$alt_images = get_post_meta( get_the_ID(), 'lezchars_character_image_group' );
-if ( $alt_images ) {
-	$image_tabs = array();
-	foreach ( $alt_images[0] as $an_image ) {
-		$attr_array   = array(
-			'class' => 'single-char-img rounded float-left',
-			'alt'   => get_the_title() . ' ' . $an_image['alt_image_text'],
-			'title' => $thumb_title . ' - ' . $an_image['alt_image_text'],
-		);
-		$image_tabs[] = array(
-			'title' => $an_image['alt_image_text'],
-			'slug'  => sanitize_title( $an_image['alt_image_text'] ),
-			'image' => wp_get_attachment_image( $an_image['alt_image_file_id'], 'character-img', false, $attr_array ),
-		);
+	// Check post meta for alt images.
+	$alt_images = get_post_meta( get_the_ID(), 'lezchars_character_image_group' );
+
+	// If we have alt images, get them.
+	if ( $alt_images ) {
+		$image_tabs = array();
+		foreach ( $alt_images[0] as $an_image ) {
+			$attr_array   = array(
+				'class' => 'single-char-img rounded float-left',
+				'alt'   => get_the_title() . ' ' . $an_image['alt_image_text'],
+				'title' => $thumb_title . ' - ' . $an_image['alt_image_text'],
+			);
+			$image_tabs[] = array(
+				'title' => $an_image['alt_image_text'],
+				'slug'  => sanitize_title( $an_image['alt_image_text'] ),
+				'image' => wp_get_attachment_image( $an_image['alt_image_file_id'], 'character-img', false, $attr_array ),
+			);
+		}
 	}
 }
-
 ?>
 <div class="card-body">
 	<div class="character-image-wrapper">
 		<?php
-		if ( ! isset( $image_tabs ) || ! is_array( $image_tabs ) ) {
+		if ( ! has_post_thumbnail() ) {
+			// If there is no post thumbnail, use the mystery person image.
+			?>
+			<img src="<?php echo esc_url( get_template_directory_uri() ); ?>/images/mystery-person.png" class="single-char-img rounded float-left post-image" alt="We have no photo of <?php echo esc_attr( get_the_title() ); ?> at this time." title="<?php echo esc_attr( get_the_title() ); ?>" />
+			<?php
+		} elseif ( ! isset( $image_tabs ) || ! is_array( $image_tabs ) ) {
+			// If there is a post thumbnail and no image tabs, use the post thumbnail.
 			the_post_thumbnail( 'character-img', $thumb_array );
 		} else {
+			// Otherwise we have multiple images, so use the tabs.
 			?>
 			<div class="featured-image-tabs ">
 				<!-- Nav tabs -->

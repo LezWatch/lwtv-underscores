@@ -16,19 +16,28 @@ $rpbt_shortcode = lwtv_plugin()->get_shows_like_this_show( $show_id );
 // Microformats Fix.
 lwtv_microformats_fix( $post->ID );
 
-// Thumbnail attribution.
-$thumb_attribution = get_post_meta( get_post_thumbnail_id(), 'lwtv_attribution', true );
-$thumb_title       = ( empty( $thumb_attribution ) ) ? get_the_title() : get_the_title() . ' &copy; ' . $thumb_attribution;
+if ( ! has_post_thumbnail() ) {
+	// If there is no post thumbnail, use the mystery person image.
+	?>
+	<img src="<?php echo esc_url( get_template_directory_uri() ); ?>/images/mystery-show.png" class="card-img-top wp-post-image" alt="We have no photo of <?php echo esc_attr( get_the_title() ); ?> at this time." title="<?php echo esc_attr( get_the_title() ); ?>" />
+	<?php
+} else {
+	// We have a thumbnail, so let's use it.
 
-// Echo the header image.
-the_post_thumbnail(
-	'large',
-	array(
-		'class' => 'card-img-top',
-		'alt'   => get_the_title(),
-		'title' => $thumb_title,
-	)
-);
+	// Thumbnail attribution.
+	$thumb_attribution = get_post_meta( get_post_thumbnail_id(), 'lwtv_attribution', true );
+	$thumb_title       = ( empty( $thumb_attribution ) ) ? get_the_title() : get_the_title() . ' &copy; ' . $thumb_attribution;
+
+	// Echo the header image.
+	the_post_thumbnail(
+		'large',
+		array(
+			'class' => 'card-img-top',
+			'alt'   => get_the_title(),
+			'title' => $thumb_title,
+		)
+	);
+}
 ?>
 
 <section id="toc" class="toc-container card-body">

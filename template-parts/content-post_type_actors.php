@@ -143,19 +143,32 @@ if ( ! lwtv_plugin()->hide_actor_data( $the_id, 'socials' ) ) {
 
 // Microformats Fix.
 lwtv_microformats_fix( $post->ID );
-
-// Thumbnail attribution.
-$thumb_attribution = get_post_meta( get_post_thumbnail_id(), 'lwtv_attribution', true );
-$thumb_title       = ( empty( $thumb_attribution ) ) ? get_the_title() : get_the_title() . ' &copy; ' . $thumb_attribution;
-$thumb_array       = array(
-	'class' => 'single-char-img',
-	'alt'   => get_the_title(),
-	'title' => $thumb_title,
-);
 ?>
 
 <section class="showschar-section" name="biography" id="biography">
-	<div class="card-body"><?php the_post_thumbnail( 'character-img', $thumb_array ); ?>
+	<div class="card-body">
+		<?php
+		if ( ! has_post_thumbnail() ) {
+			// If there is no post thumbnail, use the mystery person image.
+			?>
+			<img src="<?php echo esc_url( get_template_directory_uri() ); ?>/images/mystery-person.jpg" class="single-char-img post-image" alt="We have no photo of <?php echo esc_attr( get_the_title() ); ?> at this time." title="Placeholder photo for <?php echo esc_attr( get_the_title() ); ?>" />
+			<?php
+		} else {
+			// Otherwise we have a post thumbnail.
+
+			// Thumbnail attribution.
+			$thumb_attribution = get_post_meta( get_post_thumbnail_id(), 'lwtv_attribution', true );
+			$thumb_title       = ( empty( $thumb_attribution ) ) ? get_the_title() : get_the_title() . ' &copy; ' . $thumb_attribution;
+			$thumb_array       = array(
+				'class' => 'single-char-img rounded float-left',
+				'alt'   => get_the_title(),
+				'title' => $thumb_title,
+			);
+
+			// Output Thumbnail.
+			the_post_thumbnail( 'character-img', $thumb_array );
+		}
+		?>
 		<div class="card-meta">
 			<div class="card-meta-item">
 				<?php
