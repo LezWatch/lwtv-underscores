@@ -105,7 +105,7 @@
 	}
 
 	.flag-death svg * {
-		fill: #222y;
+		fill: #222;
 	}
 	.flag-danger svg *, .flag-we-love svg * {
 		fill: #c0392b;
@@ -171,8 +171,8 @@
 
 			<p>
 				<?php
-				$havecharcount = lwtv_plugin()->get_list_characters( get_the_ID(), 'count' );
-				$havedeadcount = lwtv_plugin()->get_list_characters( get_the_ID(), 'dead' );
+				$havecharcount = lwtv_plugin()->get_characters_list( get_the_ID(), 'count' );
+				$havedeadcount = lwtv_plugin()->get_characters_list( get_the_ID(), 'dead' );
 
 				if ( ! empty( $havecharcount ) || '0' !== $havecharcount ) {
 					$deadtext = 'none are dead';

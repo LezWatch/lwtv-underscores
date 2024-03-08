@@ -14,10 +14,16 @@
 <link rel="pingback" href="<?php bloginfo( 'pingback_url' ); ?>">
 
 <?php
-$image = wp_get_attachment_image_src( get_theme_mod( 'custom_logo' ), 'full' );
+
+if ( is_front_page() ) {
+	$image = wp_get_attachment_image_src( get_theme_mod( 'custom_logo' ), 'full' );
+	?>
+	<!-- Preload the LCP image with a high fetchpriority so it starts loading with the stylesheet. -->
+	<link rel="preload" fetchpriority="high" as="image" href="<?php echo esc_url( $image[0] ); ?>" type="image/png">
+	<?php
+}
+
 ?>
-<!-- Preload the LCP image with a high fetchpriority so it starts loading with the stylesheet. -->
-<link rel="preload" fetchpriority="high" as="image" href="<?php echo esc_url( $image[0] ); ?>" type="image/png">
 
 <?php wp_head(); ?>
 </head>
