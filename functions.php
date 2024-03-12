@@ -95,14 +95,6 @@ require_once 'inc/widgets/filter-widget1.php';
 require_once 'inc/widgets/filter-widget2.php';
 require_once 'inc/widgets/otd-widget.php';
 
-/**
- * Theme Logo
- */
-function yks_the_custom_logo() {
-	if ( function_exists( 'the_custom_logo' ) ) {
-		the_custom_logo();
-	}
-}
 
 /**
  * Images
@@ -419,8 +411,8 @@ function yikes_starter_scripts() {
 	wp_add_inline_script( 'font-awesome', 'FontAwesomeConfig = { searchPseudoElements: true };', 'before' );
 
 	// Fonts
-	wp_enqueue_style( 'open-sans', '//fonts.bunny.net/css?family=Open+Sans:400,600,700', array(), $lwtv_underscores, false );
-	wp_enqueue_style( 'oswald', '//fonts.bunny.net/css?family=Oswald:400,500', array(), $lwtv_underscores, false );
+	wp_enqueue_style( 'open-sans', '//fonts.googleapis.com/css?family=Open+Sans:400,600,700', array(), $lwtv_underscores, false );
+	wp_enqueue_style( 'oswald', '//fonts.googleapis.com/css?family=Oswald:400,500', array(), $lwtv_underscores, false );
 
 	// This has to be at the bottom to override Bootstrap 4.x.
 	wp_enqueue_style( 'yikes-starter-style', get_stylesheet_directory_uri() . '/style.min.css', array(), $bootstrap, false );

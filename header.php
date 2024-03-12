@@ -13,6 +13,18 @@
 <link rel="profile" href="http://gmpg.org/xfn/11">
 <link rel="pingback" href="<?php bloginfo( 'pingback_url' ); ?>">
 
+<?php
+
+if ( is_front_page() ) {
+	$image = wp_get_attachment_image_src( get_theme_mod( 'custom_logo' ), 'full' );
+	?>
+	<!-- Preload the LCP image with a high fetchpriority so it starts loading with the stylesheet. -->
+	<link rel="preload" fetchpriority="high" as="image" href="<?php echo esc_url( $image[0] ); ?>" type="image/png">
+	<?php
+}
+
+?>
+
 <?php wp_head(); ?>
 </head>
 
@@ -25,7 +37,7 @@
 				<a href="#main">Skip to Main Content</a>
 			</div>
 			<a href="<?php echo esc_url( home_url( '/' ) ); ?>" title="<?php echo esc_attr( get_bloginfo( 'name', 'display' ) ); ?>" rel="home" class="navbar-brand">
-				<img src="<?php echo esc_url( get_template_directory_uri() ); ?>/images/lezwatch-logo-icon.png" alt="<?php bloginfo( 'name' ); ?>">
+				<img src="<?php echo esc_url( get_template_directory_uri() ); ?>/images/lezwatch-logo-icon.png" alt="<?php bloginfo( 'name' ); ?>" width="72px" height="80px">
 				<span class="navbar-brand-text">
 					<?php bloginfo( 'name' ); ?>
 				</span>
@@ -94,7 +106,7 @@
 					<div class="row">
 						<div class="col-sm-3">
 							<div class="header-logo">
-								<?php yks_the_custom_logo(); ?>
+								<?php the_custom_logo(); ?>
 							</div>
 						</div>
 
