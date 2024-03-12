@@ -36,7 +36,6 @@ unset( $shows, $actors, $gender, $sexuality, $cliches );
 			<img src="<?php echo esc_url( get_template_directory_uri() ); ?>/images/mystery-woman.jpg" class="single-char-img rounded float-left" alt="<?php echo esc_attr( get_the_title() ); ?>" title="<?php echo esc_attr( get_the_title() ); ?>" />
 			<?php
 		} else {
-			the_post_thumbnail( 'character-img', $thumb_array );
 			?>
 				<a href="<?php the_permalink( $the_id ); ?>" title="<?php get_the_title( $the_id ); ?>" >
 					<?php echo get_the_post_thumbnail( $the_id, 'character-img', $thumb_array ); ?>
