@@ -151,10 +151,9 @@ if ( has_post_thumbnail() ) {
 		if ( ! has_post_thumbnail() ) {
 			// If there is no post thumbnail, use the mystery person image.
 			?>
-			<img src="<?php echo esc_url( get_template_directory_uri() ); ?>/images/mystery-person.png" class="single-char-img rounded float-left post-image" alt="We have no photo of <?php echo esc_attr( get_the_title() ); ?> at this time." title="<?php echo esc_attr( get_the_title() ); ?>" />
+			<img src="<?php echo esc_url( get_template_directory_uri() ); ?>/images/mystery-woman.png" class="single-char-img rounded float-left post-image" alt="We have no photo of <?php echo esc_attr( get_the_title() ); ?> at this time." title="<?php echo esc_attr( get_the_title() ); ?>" />
 			<?php
 		} elseif ( ! isset( $image_tabs ) || ! is_array( $image_tabs ) ) {
-			// If there is a post thumbnail and no image tabs, use the post thumbnail.
 			the_post_thumbnail( 'character-img', $thumb_array );
 		} else {
 			// Otherwise we have multiple images, so use the tabs.
