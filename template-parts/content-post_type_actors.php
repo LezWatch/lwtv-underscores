@@ -155,7 +155,17 @@ $thumb_array       = array(
 ?>
 
 <section class="showschar-section" name="biography" id="biography">
-	<div class="card-body"><?php the_post_thumbnail( 'character-img', $thumb_array ); ?>
+	<div class="card-body">
+		<div class="actor-image-wrapper">
+			<?php
+			if ( ! has_post_thumbnail() ) {
+				?>
+				<img src="<?php echo esc_url( get_template_directory_uri() ); ?>/images/mystery-woman.jpg" class="single-char-img rounded float-left" alt="<?php echo esc_attr( get_the_title() ); ?>" title="<?php echo esc_attr( get_the_title() ); ?>" />
+				<?php
+			} else {
+				the_post_thumbnail( 'character-img', $thumb_array );
+			}
+			?>
 		<div class="card-meta">
 			<div class="card-meta-item">
 				<?php
