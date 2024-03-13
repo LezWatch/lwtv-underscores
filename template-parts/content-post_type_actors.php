@@ -166,6 +166,7 @@ $thumb_array       = array(
 				the_post_thumbnail( 'character-img', $thumb_array );
 			}
 			?>
+		</div>
 		<div class="card-meta">
 			<div class="card-meta-item">
 				<?php
