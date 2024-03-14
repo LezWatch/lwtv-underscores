@@ -24,9 +24,9 @@ function lwtv_admin_notice_missing_plugin() {
 // Versioning for efficient developers.
 if ( ! defined( 'LWTV_THEME_VERSION' ) ) {
 	$versions = array(
-		'lwtv-underscores' => '6.0.0',    // Bump this any time you make serious CSS changes.
+		'lwtv-underscores' => '6.0.1',    // Bump this any time you make serious CSS changes.
 		'font-awesome'     => '6.5.1',    // Bump when you update Font Awesome.
-		'bootstrap'        => '5.3.2',    // Bump when you update bootstrap.
+		'bootstrap'        => '5.3.3',    // Bump when you update bootstrap.
 		'lwtv-blocks'      => '1.0.0',    // Bump when you update the blocks.
 		'yikes-nav'        => '20201024', // Last date this was updated.
 	);

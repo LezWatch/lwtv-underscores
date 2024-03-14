@@ -14,15 +14,24 @@
 <link rel="pingback" href="<?php bloginfo( 'pingback_url' ); ?>">
 
 <?php
-
 if ( is_front_page() ) {
-	$image = wp_get_attachment_image_src( get_theme_mod( 'custom_logo' ), 'full' );
 	?>
-	<!-- Preload the LCP image with a high fetchpriority so it starts loading with the stylesheet. -->
-	<link rel="preload" fetchpriority="high" as="image" href="<?php echo esc_url( $image[0] ); ?>" type="image/png">
+	<!-- Preload the LCP images with a high fetchpriority so it starts loading with the stylesheet. -->
 	<?php
-}
+	$image = wp_get_attachment_image_src( get_theme_mod( 'custom_logo' ), 'full' );
 
+	if ( get_header_image() ) {
+		?>
+		<link rel="preload" fetchpriority="high" as="image" href="<?php header_image(); ?>" type="image/jpg">
+		<?php
+	}
+
+	if ( false !== $image ) {
+		?>
+		<link rel="preload" fetchpriority="high" as="image" href="<?php echo esc_url( $image[0] ); ?>" type="image/png">
+		<?php
+	}
+}
 ?>
 
 <?php wp_head(); ?>
