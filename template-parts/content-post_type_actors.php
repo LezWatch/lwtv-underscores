@@ -28,9 +28,7 @@ if ( ! empty( $born ) && ! lwtv_plugin()->hide_actor_data( $the_id, 'dob' ) ) {
 }
 if ( isset( $barr ) && isset( $barr[1] ) && isset( $barr[2] ) && checkdate( (int) $barr[1], (int) $barr[2], (int) $barr[0] ) ) {
 	$get_birth    = new DateTime( $born );
-	$age          = lwtv_plugin()->get_actor_age( $the_id );
 	$life['born'] = date_format( $get_birth, 'F j, Y' );
-	$life['age']  = ( is_object( $age ) ) ? $age->format( '%Y years old' ) : '';
 }
 $died = get_post_meta( $the_id, 'lezactors_death', true );
 if ( ! empty( $died ) ) {
@@ -39,6 +37,10 @@ if ( ! empty( $died ) ) {
 if ( isset( $darr ) && isset( $darr[1] ) && isset( $darr[2] ) && checkdate( $darr[1], $darr[2], $darr[0] ) ) {
 	$get_death    = new DateTime( $died );
 	$life['died'] = date_format( $get_death, 'F j, Y' );
+}
+if ( isset( $life['born'] ) ) {
+	$age         = lwtv_plugin()->get_actor_age( $the_id );
+	$life['age'] = ( is_object( $age ) ) ? $age->format( '%Y years old' ) : '';
 }
 
 // Generate Gender & Sexuality & Pronoun Data.
