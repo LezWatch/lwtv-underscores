@@ -628,9 +628,11 @@ select {
   box-shadow: 0 2px 30px rgba(0, 0, 0, 0.2);
   height: 50px;
   padding: 0;
+  background-color: #fff;
 }
 .navbar.main-nav ul.navbar-nav > li {
   border-left: solid 1px #dedede;
+  background-color: #fff;
 }
 .navbar.main-nav ul.navbar-nav > li:last-child {
   border-right: solid 1px #dedede;
@@ -2503,7 +2505,7 @@ div.facetwp-facet-shows_scores input.facetwp-number {
     display: none;
   }
   #masthead #search-btn {
-    position: relative;
+    display: none;
   }
   #masthead .header-search-bar label {
     font-size: 1rem;
