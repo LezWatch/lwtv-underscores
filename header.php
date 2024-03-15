@@ -20,9 +20,18 @@ if ( is_front_page() ) {
 	<?php
 	$image = wp_get_attachment_image_src( get_theme_mod( 'custom_logo' ), 'full' );
 
-	if ( get_header_image() ) {
+	if ( has_header_image() ) {
+		$header_image = get_header_image();
+
+		if ( str_ends_with( $header_image, 'webp' ) ) {
+			$image_type = 'webp';
+		} elseif ( str_ends_with( $header_image, 'png' ) ) {
+			$image_type = 'png';
+		} else {
+			$image_type = 'jpeg';
+		}
 		?>
-		<link rel="preload" fetchpriority="high" as="image" href="<?php header_image(); ?>" type="image/jpg">
+		<link rel="preload" fetchpriority="high" as="image" href="<?php echo esc_url( $header_image ); ?>" type="image/<?php echo esc_attr( $image_type ); ?>">
 		<?php
 	}
 
@@ -46,7 +55,7 @@ if ( is_front_page() ) {
 				<a href="#main">Skip to Main Content</a>
 			</div>
 			<a href="<?php echo esc_url( home_url( '/' ) ); ?>" title="<?php echo esc_attr( get_bloginfo( 'name', 'display' ) ); ?>" rel="home" class="navbar-brand">
-				<img src="<?php echo esc_url( get_template_directory_uri() ); ?>/images/lezwatch-logo-icon.png" alt="<?php bloginfo( 'name' ); ?>" width="72px" height="80px">
+				<img src="<?php echo esc_url( get_template_directory_uri() ); ?>/images/lezwatch-logo-icon.png" alt="Return to <?php bloginfo( 'name' ); ?> homepage" width="72px" height="80px">
 				<span class="navbar-brand-text">
 					<?php bloginfo( 'name' ); ?>
 				</span>
