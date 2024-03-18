@@ -12,7 +12,7 @@
         socialMenuAriaLabel();
         gravityFormWidgetAriaLabel();
     }
-    
+
     // Add aria-labelledby attributes to menu widgets (<ul>s) with headings.
     function widgetMenuAriaLabels() {
 
@@ -43,12 +43,12 @@
             }
             list.setAttribute(`aria-labelledby`, heading.id);
         });
-        
+
     }
 
     // Add aria-labelledby attribute to social navigation menu (<ul>).
     function socialMenuAriaLabel() {
-        const socialId = `social-navigation`;
+        const socialId = `yikes_social_menu_widget-2`;
         let socialMenu = document.getElementById(socialId);
         if ( 0 === socialMenu.length ) {
             return;
@@ -72,7 +72,7 @@
             return;
         }
         list.setAttribute(`aria-labelledby`, headingId);
-       
+
     }
 
     function gravityFormWidgetAriaLabel() {
