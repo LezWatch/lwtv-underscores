@@ -90,6 +90,12 @@
     padding: 14px;
   }
 
+  .navbar.main-nav {
+    .dropdown-menu {
+      border-top-right-radius: 0;
+    }
+  }
+
   .jumbotron.jumbotron-fluid {
     padding: 2rem;
 
@@ -243,7 +249,7 @@
     }
 
     #search-btn {
-	  position: relative;
+      display: none;
     }
 
     .header-search-bar {
@@ -429,15 +435,13 @@
     position: relative;
 
     .dropdown-menu {
-      @include font-14;
+      @include font-18;
     }
 
     ul.navbar-nav {
-      display: block;
       width: 100%;
 
       & > li {
-        display: inline-block;
 
         &:first-child {
           border-left: 0;
@@ -449,8 +453,7 @@
       }
 
       & > li.nav-item > a.nav-link {
-        @include font-13;
-        padding: 14px 11px;
+        @include font-18;
       }
     }
   }

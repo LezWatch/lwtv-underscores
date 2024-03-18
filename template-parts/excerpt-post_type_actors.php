@@ -13,11 +13,11 @@ global $post;
 
 $the_id      = ( isset( $actor['id'] ) ) ? $actor['id'] : $post->ID;
 $the_content = ( isset( $actor['content'] ) ) ? $actor['content'] : get_the_content();
-$alttext     = 'A picture of the actor ' . get_the_title( $the_id );
+$alt_text    = 'A picture of the actor ' . get_the_title( $the_id );
 $archive     = ( is_archive() || is_tax() || is_page() ) ? true : false;
 
 $thumb_attribution = get_post_meta( get_post_thumbnail_id(), 'lwtv_attribution', true );
-$thumb_title       = ( empty( $thumb_attribution ) ) ? $alttext : $alttext . ' &copy; ' . $thumb_attribution;
+$thumb_title       = ( empty( $thumb_attribution ) ) ? $alt_text : $alt_text . ' &copy; ' . $thumb_attribution;
 $thumb_array       = array(
 	'class' => 'card-img-top',
 	'alt'   => $thumb_title,
@@ -29,13 +29,21 @@ unset( $shows, $actors, $gender, $sexuality, $cliches );
 ?>
 
 <div class="card">
-	<?php if ( has_post_thumbnail( $the_id ) ) : ?>
-		<div class="actor-image-wrapper">
-			<a href="<?php the_permalink( $the_id ); ?>" title="<?php get_the_title( $the_id ); ?>" >
-				<?php echo get_the_post_thumbnail( $the_id, 'character-img', $thumb_array ); ?>
-			</a>
-		</div>
-	<?php endif; ?>
+	<div class="actor-image-wrapper">
+		<?php
+		if ( ! has_post_thumbnail() ) {
+			?>
+			<img src="<?php echo esc_url( get_template_directory_uri() ); ?>/images/mystery-woman.jpg" class="single-char-img rounded float-left" alt="<?php echo esc_attr( get_the_title() ); ?>" title="<?php echo esc_attr( get_the_title() ); ?>" />
+			<?php
+		} else {
+			?>
+				<a href="<?php the_permalink( $the_id ); ?>" title="<?php get_the_title( $the_id ); ?>" >
+					<?php echo get_the_post_thumbnail( $the_id, 'character-img', $thumb_array ); ?>
+				</a>
+			<?php
+		}
+		?>
+	</div>
 	<div class="card-body">
 		<h4 class="card-title">
 			<a href="<?php the_permalink( $the_id ); ?>" title="<?php the_title_attribute( $the_id ); ?>" >

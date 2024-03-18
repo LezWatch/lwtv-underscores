@@ -144,7 +144,11 @@ if ( $alt_images ) {
 <div class="card-body">
 	<div class="character-image-wrapper">
 		<?php
-		if ( ! isset( $image_tabs ) || ! is_array( $image_tabs ) ) {
+		if ( ! has_post_thumbnail() ) {
+			?>
+			<img src="<?php echo esc_url( get_template_directory_uri() ); ?>/images/mystery-woman.jpg" class="single-char-img rounded float-left" alt="<?php echo esc_attr( get_the_title() ); ?>" title="<?php echo esc_attr( get_the_title() ); ?>" />
+			<?php
+		} elseif ( ! isset( $image_tabs ) || ! is_array( $image_tabs ) ) {
 			the_post_thumbnail( 'character-img', $thumb_array );
 		} else {
 			?>

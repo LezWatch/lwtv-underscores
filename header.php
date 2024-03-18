@@ -13,38 +13,71 @@
 <link rel="profile" href="http://gmpg.org/xfn/11">
 <link rel="pingback" href="<?php bloginfo( 'pingback_url' ); ?>">
 
+<?php
+if ( is_front_page() ) {
+	?>
+	<!-- Preload the LCP images with a high fetchpriority so it starts loading with the stylesheet. -->
+	<?php
+	$image = wp_get_attachment_image_src( get_theme_mod( 'custom_logo' ), 'full' );
+
+	if ( has_header_image() ) {
+		$header_image = get_header_image();
+
+		if ( str_ends_with( $header_image, 'webp' ) ) {
+			$image_type = 'webp';
+		} elseif ( str_ends_with( $header_image, 'png' ) ) {
+			$image_type = 'png';
+		} else {
+			$image_type = 'jpeg';
+		}
+		?>
+		<link rel="preload" fetchpriority="high" as="image" href="<?php echo esc_url( $header_image ); ?>" type="image/<?php echo esc_attr( $image_type ); ?>">
+		<?php
+	}
+
+	if ( false !== $image ) {
+		?>
+		<link rel="preload" fetchpriority="high" as="image" href="<?php echo esc_url( $image[0] ); ?>" type="image/png">
+		<?php
+	}
+}
+?>
+
 <?php wp_head(); ?>
 </head>
 
 <body <?php body_class(); ?>>
 
 <header id="masthead" class="site-header" role="banner">
-	<nav id="site-navigation" class="navbar fixed-top navbar-expand navbar-light bg-light main-nav" role="navigation">
+	<nav id="site-navigation" class="navbar fixed-top navbar-expand-md navbar-light bg-light main-nav" role="navigation">
 		<div class="container">
 			<div class="screen-reader-text">
 				<a href="#main">Skip to Main Content</a>
 			</div>
-			<a href="<?php echo esc_url( home_url( '/' ) ); ?>" title="<?php echo esc_attr( get_bloginfo( 'name', 'display' ) ); ?>" rel="home" class="navbar-brand">
-				<img src="<?php echo esc_url( get_template_directory_uri() ); ?>/images/lezwatch-logo-icon.png" alt="<?php bloginfo( 'name' ); ?>">
+			<a class="navbar-brand" href="<?php echo esc_url( home_url( '/' ) ); ?>" title="<?php echo esc_attr( get_bloginfo( 'name', 'display' ) ); ?>" rel="home" class="navbar-brand">
+				<img src="<?php echo esc_url( get_template_directory_uri() ); ?>/images/lezwatch-logo-icon.png" alt="Return to <?php bloginfo( 'name' ); ?> homepage" width="72px" height="80px">
 				<span class="navbar-brand-text">
 					<?php bloginfo( 'name' ); ?>
 				</span>
 			</a>
-			<div class="collapse navbar-collapse" id="primary">
-			<?php
-			wp_nav_menu(
-				array(
-					'menu'           => 'primary',
-					'theme_location' => 'primary',
-					'depth'          => 3,
-					'container'      => false,
-					'menu_class'     => 'navbar-nav ms-auto',
-					'fallback_cb'    => 'wp_page_menu',
-					'walker'         => new WP_Bootstrap_Navwalker(),
-					'items_wrap'     => '<ul id="%1$s" class="%2$s" aria-labelledby="main-navigation">%3$s</ul>',
-				)
-			);
-			?>
+			<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggleLWTV" aria-controls="navbarToggleLWTV" aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<div class="collapse navbar-collapse" id="navbarToggleLWTV">
+				<?php
+				wp_nav_menu(
+					array(
+						'menu'           => 'primary',
+						'theme_location' => 'primary',
+						'depth'          => 3,
+						'container'      => false,
+						'menu_class'     => 'navbar-nav ms-auto',
+						'fallback_cb'    => 'wp_page_menu',
+						'walker'         => new WP_Bootstrap_Navwalker(),
+						'items_wrap'     => '<ul id="%1$s" class="%2$s" aria-labelledby="main-navigation">%3$s</ul>',
+					)
+				);
+				?>
 			</div>
 
 			<span class="nav-item search" id="search-btn">
@@ -94,7 +127,7 @@
 					<div class="row">
 						<div class="col-sm-3">
 							<div class="header-logo">
-								<?php yks_the_custom_logo(); ?>
+								<?php the_custom_logo(); ?>
 							</div>
 						</div>
 
