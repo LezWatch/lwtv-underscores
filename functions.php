@@ -28,7 +28,7 @@ if ( ! defined( 'LWTV_THEME_VERSION' ) ) {
 		'font-awesome'     => '6.5.1',    // Bump when you update Font Awesome.
 		'bootstrap'        => '5.3.3',    // Bump when you update bootstrap.
 		'lwtv-blocks'      => '1.0.0',    // Bump when you update the blocks.
-		'yikes-nav'        => '20201024', // Last date this was updated.
+		'yikes-nav'        => '20240318', // Last date this was updated.
 	);
 	define( 'LWTV_THEME_VERSION', $versions );
 }
