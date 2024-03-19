@@ -1328,6 +1328,12 @@ section#characters {
 	}
 }
 
+.show-header-svg .show-we-love,
+.show-header-svg .show-star {
+	background-color: $lwtv-grey;
+	display: inline-block;
+	border-radius: 10px;
+}
 
 /* Trigger Warning */
 .trigger-warning-container {
