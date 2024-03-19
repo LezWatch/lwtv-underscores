@@ -14,8 +14,16 @@ $get_tags = get_term_by( 'name', $slug, 'post_tag' );
 $related  = lwtv_plugin()->has_cpt_related_posts( $slug );
 
 // This just gets the numbers of all characters and how many are dead.
-$all_chars     = lwtv_plugin()->get_actor_characters( $the_id );
-$all_dead      = lwtv_plugin()->get_actor_dead( $the_id );
+$all_chars = get_post_meta( $the_id, 'lezactors_char_list', true );
+if ( ! $all_chars ) {
+	$all_chars = lwtv_plugin()->get_actor_characters( $the_id );
+}
+
+$all_dead = get_post_meta( $the_id, 'lezactors_dead_list', true );
+if ( ! $all_chars ) {
+	$all_chars = lwtv_plugin()->get_actor_dead( $the_id );
+}
+
 $havecharcount = ( is_array( $all_chars ) ) ? count( $all_chars ) : 0;
 $havedeadcount = ( is_array( $all_dead ) ) ? count( $all_dead ) : 0;
 

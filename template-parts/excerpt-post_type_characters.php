@@ -25,8 +25,7 @@ $archive     = ( is_archive() || is_tax() || is_page() ) ? true : false;
 
 if ( isset( $character['shows'] ) && isset( $character['show_from'] ) && is_array( $character['shows'] ) ) {
 	foreach ( $character['shows'] as $one_show ) {
-		$one_show_id = ( is_array( $one_show['show'] ) ) ? $one_show['show'][0] : $one_show['show'];
-		if ( (int) $one_show_id === (int) $character['show_from'] && isset( $one_show['appears'] ) ) {
+		if ( (int) $one_show['show'] === (int) $character['show_from'] && isset( $one_show['appears'] ) ) {
 			asort( $one_show['appears'] );
 			$appears = ' - Years: ' . implode( ', ', $one_show['appears'] );
 		}
