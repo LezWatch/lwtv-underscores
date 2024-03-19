@@ -17,11 +17,16 @@
 
 global $post;
 
-$the_id      = ( isset( $character['id'] ) ) ? $character['id'] : $post->ID;
-$the_content = ( isset( $character['content'] ) ) ? $character['content'] : get_the_content();
-$alt_text    = 'A picture of the character ' . get_the_title( $the_id );
-$char_role   = ( isset( $character['role_from'] ) ) ? $character['role_from'] : 'regular';
-$archive     = ( is_archive() || is_tax() || is_page() ) ? true : false;
+// The Mirror Gaze Reflection: Make sure the character is a character.
+$the_id = $character['id'] ?? $character;
+
+if ( 'post_type_characters' !== get_post_type( $the_id ) ) {
+	return;
+}
+
+$alt_text  = 'A picture of the character ' . get_the_title( $the_id );
+$char_role = $character['role_from'] ?? 'regular';
+$archive   = ( is_archive() || is_tax() || is_page() ) ? true : false;
 
 if ( isset( $character['shows'] ) && isset( $character['show_from'] ) && is_array( $character['shows'] ) ) {
 	foreach ( $character['shows'] as $one_show ) {
@@ -32,7 +37,7 @@ if ( isset( $character['shows'] ) && isset( $character['show_from'] ) && is_arra
 	}
 }
 
-$thumb_attribution = get_post_meta( get_post_thumbnail_id(), 'lwtv_attribution', true );
+$thumb_attribution = get_post_meta( get_post_thumbnail_id( $the_id ), 'lwtv_attribution', true );
 $thumb_title       = ( empty( $thumb_attribution ) ) ? $alt_text : $alt_text . ' &copy; ' . $thumb_attribution;
 $thumb_title       = ( isset( $appears ) ) ? $thumb_title . $appears : $thumb_title;
 $thumb_array       = array(
@@ -53,7 +58,7 @@ if ( ( 'recurring' === $char_role && 'post_type_shows' === get_post_type() ) || 
 <div class="card">
 	<div class="character-image-wrapper">
 		<?php
-		if ( ! has_post_thumbnail() ) {
+		if ( ! has_post_thumbnail( $the_id ) ) {
 			?>
 			<img src="<?php echo esc_url( get_template_directory_uri() ); ?>/images/mystery-woman.jpg" class="single-char-img rounded float-left" alt="<?php echo esc_attr( get_the_title() ); ?>" title="<?php echo esc_attr( get_the_title() ); ?>" />
 			<?php
