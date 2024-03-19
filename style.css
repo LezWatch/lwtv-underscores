@@ -1494,6 +1494,13 @@ section#characters .card {
   color: #c0392b !important;
 }
 
+.show-header-svg .show-we-love,
+.show-header-svg .show-star {
+  background-color: #f3f3f3;
+  display: inline-block;
+  border-radius: 10px;
+}
+
 /* Trigger Warning */
 .trigger-warning-container .alert {
   border-radius: 0;

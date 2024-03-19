@@ -144,14 +144,11 @@ if ( $related ) {
 		<?php
 
 		// This just gets the numbers of all characters and how many are dead.
-		$havecharcount = lwtv_plugin()->get_characters_list( $show_id, 'count' );
-		$havedeadcount = lwtv_plugin()->get_characters_list( $show_id, 'dead' );
+		$havecharcount = get_post_meta( $show_id, 'lezshows_char_count', true );
+		$havedeadcount = get_post_meta( $show_id, 'lezshows_dead_count', true );
 
 		// Get the list of characters.
-		$chars_regular   = lwtv_plugin()->get_chars_for_show( $show_id, 'regular' );
-		$chars_recurring = lwtv_plugin()->get_chars_for_show( $show_id, 'recurring' );
-		$chars_guest     = lwtv_plugin()->get_chars_for_show( $show_id, 'guest' );
-		$chars_total     = count( $chars_recurring ) + count( $chars_regular ) + count( $chars_guest );
+		$chars_by_role = lwtv_plugin()->get_chars_for_show( $show_id, 'all' );
 
 		if ( empty( $havecharcount ) || '0' === $havecharcount ) {
 			echo '<p>There are no characters listed yet for this show.</p>';
@@ -166,34 +163,34 @@ if ( $related ) {
 			echo wp_kses_post( '<p>There ' . sprintf( _n( 'is <strong>%s</strong> queer character', 'are <strong>%s</strong> queer characters', $havecharcount ), $havecharcount ) . ' listed for this show; ' . $deadtext . '.</p>' );
 
 			// If there are regulars...
-			if ( ! empty( $chars_regular ) ) {
+			if ( isset( $chars_by_role['regular'] ) && is_array( $chars_by_role['regular'] ) ) {
 				?>
-				<h3 class="title-regulars"><?php echo esc_html( _n( 'Regular', 'Regulars', count( $chars_regular ) ) ); ?> (<?php echo (int) count( $chars_regular ); ?>)</h3>
+				<h3 class="title-regulars"><?php echo esc_html( _n( 'Regular', 'Regulars', count( $chars_by_role['regular'] ) ) ); ?> (<?php echo (int) count( $chars_by_role['regular'] ); ?>)</h3>
 				<div class="container characters-regulars-container"><div class="row site-loop character-show-loop">
 				<?php
-				foreach ( $chars_regular as $character ) {
+				foreach ( $chars_by_role['regular'] as $character ) {
 					include locate_template( 'template-parts/excerpt-post_type_characters.php' );
 				}
 				echo '</div></div>';
 			}
 			// If there are recurring...
-			if ( ! empty( $chars_recurring ) ) {
+			if ( isset( $chars_by_role['recurring'] ) && is_array( $chars_by_role['recurring'] ) ) {
 				?>
-				<h3 class="title-recurring">Recurring (<?php echo count( $chars_recurring ); ?>)</h3>
+				<h3 class="title-recurring">Recurring (<?php echo count( $chars_by_role['recurring'] ); ?>)</h3>
 				<div class="container characters-recurring-container"><div class="row site-loop character-show-loop">
 				<?php
-				foreach ( $chars_recurring as $character ) {
+				foreach ( $chars_by_role['recurring'] as $character ) {
 					include locate_template( 'template-parts/excerpt-post_type_characters.php' );
 				}
 				echo '</div></div>';
 			}
 			// If there are guests...
-			if ( ! empty( $chars_guest ) ) {
+			if ( isset( $chars_by_role['guest'] ) && is_array( $chars_by_role['guest'] ) ) {
 				?>
-				<h3 class="title-guest"><?php echo esc_html( _n( 'Guest', 'Guests', count( $chars_guest ) ) ); ?> (<?php echo count( $chars_guest ); ?>)</h3>
+				<h3 class="title-guest"><?php echo esc_html( _n( 'Guest', 'Guests', count( $chars_by_role['guest'] ) ) ); ?> (<?php echo count( $chars_by_role['guest'] ); ?>)</h3>
 				<ul class="guest-character-list">
 				<?php
-				foreach ( $chars_guest as $character ) {
+				foreach ( $chars_by_role['guest'] as $character ) {
 					$grave = ( has_term( 'dead', 'lez_cliches', $character['id'] ) ) ? '<span role="img" aria-label="RIP Tombstone" title="RIP Tombstone" class="charlist-grave-sm">' . lwtv_symbolicons( 'rest-in-peace.svg', 'fa-times-circle' ) . '</span>' : '';
 					?>
 					<li><a href="<?php the_permalink( $character['id'] ); ?>" title="<?php echo esc_html( get_the_title( $character['id'] ) ); ?>" ><?php echo esc_html( get_the_title( $character['id'] ) ) . ' ' . $grave; // phpcs:ignore WordPress.Security.EscapeOutput ?></a></li>
