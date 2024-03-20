@@ -16,14 +16,6 @@ $the_content = ( isset( $actor['content'] ) ) ? $actor['content'] : get_the_cont
 $alt_text    = 'A picture of the actor ' . get_the_title( $the_id );
 $archive     = ( is_archive() || is_tax() || is_page() ) ? true : false;
 
-$thumb_attribution = get_post_meta( get_post_thumbnail_id(), 'lwtv_attribution', true );
-$thumb_title       = ( empty( $thumb_attribution ) ) ? $alt_text : $alt_text . ' &copy; ' . $thumb_attribution;
-$thumb_array       = array(
-	'class' => 'card-img-top',
-	'alt'   => $thumb_title,
-	'title' => $thumb_title,
-);
-
 // The Terrible Terri Polo: If we don't reset, her stats apply to everyone.
 unset( $shows, $actors, $gender, $sexuality, $cliches );
 ?>
@@ -31,17 +23,14 @@ unset( $shows, $actors, $gender, $sexuality, $cliches );
 <div class="card">
 	<div class="actor-image-wrapper">
 		<?php
-		if ( ! has_post_thumbnail() ) {
-			?>
-			<img src="<?php echo esc_url( get_template_directory_uri() ); ?>/images/mystery-woman.jpg" class="single-char-img rounded float-left" alt="<?php echo esc_attr( get_the_title() ); ?>" title="<?php echo esc_attr( get_the_title() ); ?>" />
-			<?php
-		} else {
-			?>
-				<a href="<?php the_permalink( $the_id ); ?>" title="<?php get_the_title( $the_id ); ?>" >
-					<?php echo get_the_post_thumbnail( $the_id, 'character-img', $thumb_array ); ?>
-				</a>
-			<?php
-		}
+		get_template_part(
+			'template-parts/partials/output',
+			'image',
+			array(
+				'to_show' => $the_id,
+				'format'  => 'excerpt',
+			)
+		);
 		?>
 	</div>
 	<div class="card-body">

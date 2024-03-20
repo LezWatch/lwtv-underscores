@@ -169,7 +169,7 @@ if ( $related ) {
 				<div class="container characters-regulars-container"><div class="row site-loop character-show-loop">
 				<?php
 				foreach ( $chars_by_role['regular'] as $character ) {
-					include locate_template( 'template-parts/excerpt-post_type_characters.php' );
+					get_template_part( 'template-parts/excerpt', 'post_type_characters', array( 'character' => $character ) );
 				}
 				echo '</div></div>';
 			}
@@ -180,7 +180,7 @@ if ( $related ) {
 				<div class="container characters-recurring-container"><div class="row site-loop character-show-loop">
 				<?php
 				foreach ( $chars_by_role['recurring'] as $character ) {
-					include locate_template( 'template-parts/excerpt-post_type_characters.php' );
+					get_template_part( 'template-parts/excerpt', 'post_type_characters', array( 'character' => $character ) );
 				}
 				echo '</div></div>';
 			}

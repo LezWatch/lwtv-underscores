@@ -14,16 +14,8 @@ $get_tags = get_term_by( 'name', $slug, 'post_tag' );
 $related  = lwtv_plugin()->has_cpt_related_posts( $slug );
 
 // This just gets the numbers of all characters and how many are dead.
-$all_chars = get_post_meta( $the_id, 'lezactors_char_list', true );
-if ( ! $all_chars ) {
-	$all_chars = lwtv_plugin()->get_actor_characters( $the_id );
-}
-
-$all_dead = get_post_meta( $the_id, 'lezactors_dead_list', true );
-if ( ! $all_chars ) {
-	$all_chars = lwtv_plugin()->get_actor_dead( $the_id );
-}
-
+$all_chars     = get_post_meta( $the_id, 'lezactors_char_list', true );
+$all_dead      = get_post_meta( $the_id, 'lezactors_dead_list', true );
 $havecharcount = ( is_array( $all_chars ) ) ? count( $all_chars ) : 0;
 $havedeadcount = ( is_array( $all_dead ) ) ? count( $all_dead ) : 0;
 
@@ -67,114 +59,23 @@ if ( isset( $pronouns ) && ! empty( $pronouns ) ) {
 	$gender_sexuality['Pronouns'] = $pronouns;
 }
 
-// Generate URLs.
-// Usage: $actor_urls.
-$actor_urls = array();
-if ( get_post_meta( $the_id, 'lezactors_homepage', true ) ) {
-	$actor_urls['home'] = array(
-		'name' => 'Website',
-		'url'  => esc_url( get_post_meta( $the_id, 'lezactors_homepage', true ) ),
-		'fa'   => 'fas fa-home',
-	);
-}
-if ( get_post_meta( $the_id, 'lezactors_imdb', true ) ) {
-	$actor_urls['imdb'] = array(
-		'name' => 'IMDb',
-		'url'  => esc_url( 'https://www.imdb.com/name/' . get_post_meta( $the_id, 'lezactors_imdb', true ) ),
-		'fa'   => 'fab fa-imdb',
-	);
-}
-if ( get_post_meta( $the_id, 'lezactors_wikipedia', true ) ) {
-	$actor_urls['wikipedia'] = array(
-		'name' => 'WikiPedia',
-		'url'  => esc_url( get_post_meta( $the_id, 'lezactors_wikipedia', true ) ),
-		'fa'   => 'fab fa-wikipedia-w',
-	);
-}
-
-if ( ! lwtv_plugin()->hide_actor_data( $the_id, 'socials' ) ) {
-	if ( get_post_meta( $the_id, 'lezactors_twitter', true ) ) {
-		$actor_urls['twitter'] = array(
-			'name' => 'X (Twitter)',
-			'url'  => esc_url( 'https://twitter.com/' . get_post_meta( $the_id, 'lezactors_twitter', true ) ),
-			'fa'   => 'fab fa-x-twitter',
-		);
-	}
-	if ( get_post_meta( $the_id, 'lezactors_instagram', true ) ) {
-		$actor_urls['instagram'] = array(
-			'name' => 'Instagram',
-			'url'  => esc_url( 'https://www.instagram.com/' . get_post_meta( $the_id, 'lezactors_instagram', true ) ),
-			'fa'   => 'fab fa-instagram',
-		);
-	}
-	if ( get_post_meta( $the_id, 'lezactors_facebook', true ) ) {
-		$actor_urls['facebook'] = array(
-			'name' => 'Facebook',
-			'url'  => esc_url( get_post_meta( $the_id, 'lezactors_facebook', true ) ),
-			'fa'   => 'fab fa-facebook',
-		);
-	}
-	if ( get_post_meta( $the_id, 'lezactors_tiktok', true ) ) {
-		$actor_urls['tiktok'] = array(
-			'name' => 'TikTok',
-			'url'  => esc_url( 'https://tiktok.com/' . get_post_meta( $the_id, 'lezactors_tiktok', true ) ),
-			'fa'   => 'fab fa-tiktok',
-		);
-	}
-	if ( get_post_meta( $the_id, 'lezactors_bluesky', true ) ) {
-		$actor_urls['bluesky'] = array(
-			'name' => 'BlueSky',
-			'url'  => esc_url( get_post_meta( $the_id, 'lezactors_bluesky', true ) ),
-			'fa'   => 'fab fa-square',
-		);
-	}
-	if ( get_post_meta( $the_id, 'lezactors_twitch', true ) ) {
-		$actor_urls['twitch'] = array(
-			'name' => 'Twitch',
-			'url'  => esc_url( get_post_meta( $the_id, 'lezactors_twitch', true ) ),
-			'fa'   => 'fab fa-twitch',
-		);
-	}
-	if ( get_post_meta( $the_id, 'lezactors_tumblr', true ) ) {
-		$actor_urls['tumblr'] = array(
-			'name' => 'Tumblr',
-			'url'  => esc_url( 'https://' . get_post_meta( $the_id, 'lezactors_tumblr', true ) . '.tumblr.com' ),
-			'fa'   => 'fab fa-tumblr',
-		);
-	}
-	if ( get_post_meta( $the_id, 'lezactors_mastodon', true ) ) {
-		$actor_urls['mastodon'] = array(
-			'name' => 'Mastodon',
-			'url'  => esc_url( get_post_meta( $the_id, 'lezactors_mastodon', true ) ),
-			'fa'   => 'fab fa-mastodon',
-		);
-	}
-}
-
 // Microformats Fix.
 lwtv_microformats_fix( $post->ID );
 
-// Thumbnail attribution.
-$thumb_attribution = get_post_meta( get_post_thumbnail_id(), 'lwtv_attribution', true );
-$thumb_title       = ( empty( $thumb_attribution ) ) ? get_the_title() : get_the_title() . ' &copy; ' . $thumb_attribution;
-$thumb_array       = array(
-	'class' => 'single-char-img',
-	'alt'   => get_the_title(),
-	'title' => $thumb_title,
-);
 ?>
 
 <section class="showschar-section" name="biography" id="biography">
 	<div class="card-body">
 		<div class="actor-image-wrapper">
 			<?php
-			if ( ! has_post_thumbnail() ) {
-				?>
-				<img src="<?php echo esc_url( get_template_directory_uri() ); ?>/images/mystery-woman.jpg" class="single-char-img rounded float-left" alt="<?php echo esc_attr( get_the_title() ); ?>" title="<?php echo esc_attr( get_the_title() ); ?>" />
-				<?php
-			} else {
-				the_post_thumbnail( 'character-img', $thumb_array );
-			}
+			get_template_part(
+				'template-parts/partials/output',
+				'image',
+				array(
+					'to_show' => $the_id,
+					'format'  => 'excerpt',
+				)
+			);
 			?>
 		</div>
 		<div class="card-meta">
@@ -243,16 +144,7 @@ $thumb_array       = array(
 				?>
 			</div>
 			<div class="card-meta-item">
-				<?php
-				if ( count( $actor_urls ) > 0 ) {
-					echo '<span ID="actor-links"><strong>Links: </strong></span> ';
-					echo '<ul class="actor-meta-links" aria-labelledby="actor-links">';
-					foreach ( $actor_urls as $source ) {
-						echo '<li><i class="' . esc_attr( strtolower( $source['fa'] ) ) . '" aria-hidden="true"></i> <a href="' . esc_url( $source['url'] ) . '" target="_blank">' . esc_html( $source['name'] ) . '</a><span class="screen-reader-text">, opens in new tab</span></li>';
-					}
-					echo '</ul>';
-				}
-				?>
+				<?php get_template_part( 'template-parts/partials/output', 'socials', array( 'to_show' => $post->ID ) ); ?>
 			</div>
 		</div>
 	</div>
@@ -295,7 +187,7 @@ if ( isset( $related ) && $related ) {
 			echo '<div class="container characters-regulars-container"><div class="row site-loop character-show-loop">';
 			if ( is_array( $all_chars ) ) {
 				foreach ( $all_chars as $character ) {
-					include locate_template( 'template-parts/excerpt-post_type_characters.php' );
+					get_template_part( 'template-parts/excerpt', 'post_type_characters', array( 'character' => $character ) );
 				}
 			}
 			echo '</div></div>';
@@ -308,30 +200,5 @@ if ( isset( $related ) && $related ) {
 
 // If there are characters, show this:
 if ( 0 !== $havecharcount ) {
-	?>
-	<section name="stats" id="stats" class="showschar-section">
-		<h2>Character Statistics</h2>
-		<div class="card-body">
-			<div class="card-meta">
-				<div class="card-meta-item">
-					<?php
-					$attributes = array(
-						'posttype' => get_post_type(),
-					);
-					$stats      = lwtv_plugin()->generate_stats_block_actor( $attributes );
-
-					if ( ! empty( $stats ) ) {
-						// phpcs:ignore WordPress.Security.EscapeOutput
-						echo $stats;
-					} else {
-						echo '<p>After this maintenance, statistics will be right back!</p>';
-					}
-					?>
-					<p><em><small>Note: Character roles may exceed the number of characters played, if the character was on multiple TV shows.</small></em></p>
-				</div>
-			</div>
-		</div>
-	</section>
-
-	<?php
+	get_template_part( 'template-parts/partials/output', 'actor-stats', array( 'to_show' => $post->ID ) );
 }

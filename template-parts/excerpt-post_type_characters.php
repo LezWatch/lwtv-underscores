@@ -15,39 +15,28 @@
  * @package LezWatch.TV
  */
 
-global $post;
+$character = $args['character'] ?? null;
 
 // The Mirror Gaze Reflection: Make sure the character is a character.
-$the_id = $character['id'] ?? $character;
-
-if ( 'post_type_characters' !== get_post_type( $the_id ) ) {
+// If there is no character variable, something went wrong, bail out!
+if ( ! isset( $character ) || empty( $character ) ) {
 	return;
 }
 
-$alt_text  = 'A picture of the character ' . get_the_title( $the_id );
-$char_role = $character['role_from'] ?? 'regular';
-$archive   = ( is_archive() || is_tax() || is_page() ) ? true : false;
+// If the array with ID is set, use it. Otherwise use the variable directly.
+$the_id = $character['id'] ?? $character;
 
-if ( isset( $character['shows'] ) && isset( $character['show_from'] ) && is_array( $character['shows'] ) ) {
-	foreach ( $character['shows'] as $one_show ) {
-		if ( (int) $one_show['show'] === (int) $character['show_from'] && isset( $one_show['appears'] ) ) {
-			asort( $one_show['appears'] );
-			$appears = ' - Years: ' . implode( ', ', $one_show['appears'] );
-		}
-	}
+// If this is not a character, something's wrong, bail out!
+if ( empty( $the_id ) || 'post_type_characters' !== get_post_type( $the_id ) ) {
+	return;
 }
 
-$thumb_attribution = get_post_meta( get_post_thumbnail_id( $the_id ), 'lwtv_attribution', true );
-$thumb_title       = ( empty( $thumb_attribution ) ) ? $alt_text : $alt_text . ' &copy; ' . $thumb_attribution;
-$thumb_title       = ( isset( $appears ) ) ? $thumb_title . $appears : $thumb_title;
-$thumb_array       = array(
-	'class' => 'card-img-top',
-	'alt'   => $thumb_title,
-	'title' => $thumb_title,
-);
-
 // The Steph Adams-Foster Takeover: Reset to prevent Teri Polo from overtaking the world
-unset( $shows, $actors, $gender, $sexuality, $cliches, $grave, $appears, $one_show_id );
+unset( $grave, $char_role, $archive, $cliches );
+
+$char_role = $character['role_from'] ?? 'regular';
+$archive   = ( is_archive() || is_tax() || is_page() ) ? true : false;
+$cliches   = lwtv_plugin()->get_character_data( $the_id, 'cliches' );
 
 // Show a gravestone for recurring characters
 if ( ( 'recurring' === $char_role && 'post_type_shows' === get_post_type() ) || 'post_type_actors' === get_post_type() ) {
@@ -58,17 +47,14 @@ if ( ( 'recurring' === $char_role && 'post_type_shows' === get_post_type() ) || 
 <div class="card">
 	<div class="character-image-wrapper">
 		<?php
-		if ( ! has_post_thumbnail( $the_id ) ) {
-			?>
-			<img src="<?php echo esc_url( get_template_directory_uri() ); ?>/images/mystery-woman.jpg" class="single-char-img rounded float-left" alt="<?php echo esc_attr( get_the_title() ); ?>" title="<?php echo esc_attr( get_the_title() ); ?>" />
-			<?php
-		} else {
-			?>
-				<a href="<?php the_permalink( $the_id ); ?>" title="<?php get_the_title( $the_id ); ?>" >
-					<?php echo get_the_post_thumbnail( $the_id, 'character-img', $thumb_array ); ?>
-				</a>
-			<?php
-		}
+		get_template_part(
+			'template-parts/partials/output',
+			'image',
+			array(
+				'to_show' => $the_id,
+				'format'  => 'excerpt',
+			)
+		);
 		?>
 	</div>
 	<div class="card-body">
@@ -88,36 +74,42 @@ if ( ( 'recurring' === $char_role && 'post_type_shows' === get_post_type() ) || 
 		</h4>
 		<div class="card-text">
 			<?php
-			// If we're a regular we show it all
-			if ( 'regular' === $char_role && 'post_type_shows' === get_post_type() ) {
-				$gender    = lwtv_plugin()->get_character_data( $the_id, 'gender' );
-				$sexuality = lwtv_plugin()->get_character_data( $the_id, 'sexuality' );
-				$cliches   = lwtv_plugin()->get_character_data( $the_id, 'cliches' );
-			}
-
-			if ( ( 'regular' === $char_role && 'post_type_shows' === get_post_type() ) || $archive ) {
-				$actors = lwtv_plugin()->get_character_data( $the_id, 'actors' );
-			}
-
 			// List of Shows (will not show on show pages)
 			if ( 'post_type_characters' === get_post_type() || 'post_type_actors' === get_post_type() ) {
 				echo lwtv_plugin()->get_character_data( $the_id, 'oneshow' );
 			}
 
-			// List of Actors
-			if ( 'post_type_actors' !== get_post_type() ) {
-				echo lwtv_plugin()->get_character_data( $the_id, 'oneactor' );
+			// Actor information
+			if ( ( 'regular' === $char_role && 'post_type_shows' === get_post_type() ) || $archive ) {
+				get_template_part(
+					'template-parts/partials/output',
+					'character-actors',
+					array(
+						'character' => $the_id,
+						'format'    => 'oneactor',
+					)
+				);
 			}
 
 			// Gender and Sexuality
-			if ( isset( $gender ) && isset( $sexuality ) ) {
-				echo wp_kses_post( '<div class="card-meta-item gender sexuality"> ' . $gender . ' &bull; ' . $sexuality . '</div>' );
+			if ( 'regular' === $char_role && 'post_type_shows' === get_post_type() ) {
+				get_template_part(
+					'template-parts/partials/output',
+					'gender-sexuality',
+					array(
+						'character' => $the_id,
+						'format'    => 'simple',
+					)
+				);
 			}
 
 			// List of Cliches
 			if ( isset( $cliches ) ) {
-				// phpcs:ignore WordPress.Security.EscapeOutput
-				echo '<div class="card-meta-item cliches">Clichés: ' . $cliches . '</div>';
+				?>
+				<div class="card-meta-item cliches">
+					Clichés: <?php echo $cliches; // phpcs:ignore WordPress.Security.EscapeOutput ?>
+				</div>
+				<?php
 			}
 			?>
 		</div>
