@@ -146,20 +146,29 @@
 				<?php the_title(); ?>
 			</a>
 			<?php
-			$airdates = get_post_meta( get_the_ID(), 'lezshows_airdates', true );
-			if ( $airdates ) {
-				$airdate = $airdates['start'] . ' - ' . $airdates['finish'];
-				if ( $airdates['start'] === $airdates['finish'] ) {
-					$airdate = $airdates['finish'];
-				}
-				echo ' (' . esc_html( $airdate ) . ')';
-			}
+			get_template_part(
+				'template-parts/partials/shows',
+				'airdates',
+				array(
+					'show_id' => $show_id,
+					'format'  => 'embed',
+				)
+			);
 			?>
 		</h3>
 
 		<div class="wp-embed-featured-image">
 			<a href="<?php the_permalink(); ?>" target="_top">
-				<?php echo wp_get_attachment_image( get_post_thumbnail_id(), 'medium' ); ?>
+				<?php
+				get_template_part(
+					'template-parts/partials/shows',
+					'image',
+					array(
+						'show_id' => get_the_ID(),
+						'size'    => 'medium',
+					)
+				);
+				?>
 			</a>
 		</div>
 

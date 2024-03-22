@@ -8,10 +8,7 @@
  */
 
 // Related Posts.
-$the_id   = get_the_ID();
-$slug     = get_post_field( 'post_name', get_post( $the_id ) );
-$get_tags = get_term_by( 'name', $slug, 'post_tag' );
-$related  = lwtv_plugin()->has_cpt_related_posts( $slug );
+$the_id = get_the_ID();
 
 // This just gets the numbers of all characters and how many are dead.
 $all_chars     = get_post_meta( $the_id, 'lezactors_char_list', true );
@@ -19,49 +16,8 @@ $all_dead      = get_post_meta( $the_id, 'lezactors_dead_list', true );
 $havecharcount = ( is_array( $all_chars ) ) ? count( $all_chars ) : 0;
 $havedeadcount = ( is_array( $all_dead ) ) ? count( $all_dead ) : 0;
 
-// Generate Life Stats.
-// Usage: $life.
-$life = array();
-$born = get_post_meta( $the_id, 'lezactors_birth', true );
-if ( ! empty( $born ) && ! lwtv_plugin()->hide_actor_data( $the_id, 'dob' ) ) {
-	$barr = explode( '-', $born );
-}
-if ( isset( $barr ) && isset( $barr[1] ) && isset( $barr[2] ) && checkdate( (int) $barr[1], (int) $barr[2], (int) $barr[0] ) ) {
-	$get_birth    = new DateTime( $born );
-	$life['born'] = date_format( $get_birth, 'F j, Y' );
-}
-$died = get_post_meta( $the_id, 'lezactors_death', true );
-if ( ! empty( $died ) ) {
-	$darr = explode( '-', $died );
-}
-if ( isset( $darr ) && isset( $darr[1] ) && isset( $darr[2] ) && checkdate( $darr[1], $darr[2], $darr[0] ) ) {
-	$get_death    = new DateTime( $died );
-	$life['died'] = date_format( $get_death, 'F j, Y' );
-}
-if ( isset( $life['born'] ) ) {
-	$age         = lwtv_plugin()->get_actor_age( $the_id );
-	$life['age'] = ( is_object( $age ) ) ? $age->format( '%Y years old' ) : '';
-}
-
-// Generate Gender & Sexuality & Pronoun Data.
-// Usage: $gender_sexuality.
-$gender_sexuality = array();
-$gender           = lwtv_plugin()->get_actor_gender( $the_id );
-$sexuality        = lwtv_plugin()->get_actor_sexuality( $the_id );
-$pronouns         = lwtv_plugin()->get_actor_pronouns( $the_id );
-if ( isset( $gender ) && ! empty( $gender ) ) {
-	$gender_sexuality['Gender Orientation'] = $gender;
-}
-if ( isset( $sexuality ) && ! empty( $sexuality ) ) {
-	$gender_sexuality['Sexual Orientation'] = $sexuality;
-}
-if ( isset( $pronouns ) && ! empty( $pronouns ) ) {
-	$gender_sexuality['Pronouns'] = $pronouns;
-}
-
 // Microformats Fix.
-lwtv_microformats_fix( $post->ID );
-
+lwtv_microformats_fix( $the_id );
 ?>
 
 <section class="showschar-section" name="biography" id="biography">
@@ -69,8 +25,8 @@ lwtv_microformats_fix( $post->ID );
 		<div class="actor-image-wrapper">
 			<?php
 			get_template_part(
-				'template-parts/partials/output',
-				'image',
+				'template-parts/partials/image',
+				'headshot',
 				array(
 					'to_show' => $the_id,
 					'format'  => 'excerpt',
@@ -120,55 +76,20 @@ lwtv_microformats_fix( $post->ID );
 		<div class="card-meta">
 
 			<div class="card-meta-item">
-				<?php
-				if ( count( $life ) > 0 ) {
-					echo '<ul class="list-group list-group-horizontal">';
-					foreach ( $life as $event => $date ) {
-						echo '<li><strong>' . esc_html( ucfirst( $event ) ) . '</strong>: ' . wp_kses_post( $date ) . '</li>';
-					}
-					echo '</ul>';
-					echo '<hr />';
-				}
-				?>
+				<?php get_template_part( 'template-parts/partials/actors', 'life', array( 'actor' => $the_id ) ); ?>
 			</div>
 			<div class="card-meta-item">
-				<?php
-				if ( count( $gender_sexuality ) > 0 ) {
-					echo '<ul class="list-group list-group-horizontal">';
-					foreach ( $gender_sexuality as $item => $data ) {
-						echo '<li><strong>' . esc_html( ucfirst( $item ) ) . '</strong>:<br />' . wp_kses_post( $data ) . '</li>';
-					}
-					echo '</ul>';
-					echo '<hr />';
-				}
-				?>
+				<?php get_template_part( 'template-parts/partials/actors', 'gender-sexuality', array( 'actor' => $the_id ) ); ?>
 			</div>
 			<div class="card-meta-item">
-				<?php get_template_part( 'template-parts/partials/output', 'socials', array( 'to_show' => $post->ID ) ); ?>
+				<?php get_template_part( 'template-parts/partials/actors', 'socials', array( 'actor' => $the_id ) ); ?>
 			</div>
 		</div>
 	</div>
 </section>
 
-<?php
+<?php get_template_part( 'template-parts/partials/related', 'posts', array( 'to_check' => $the_id ) ); ?>
 
-// Related Posts.
-if ( isset( $related ) && $related ) {
-	?>
-	<section name="related-posts" id="related-posts" class="relatedposts-section">
-		<h2>Related Articles</h2>
-		<div class="card-body">
-		<?php
-		// phpcs:ignore WordPress.Security.EscapeOutput
-		echo lwtv_plugin()->get_cpt_related_posts( $slug );
-		?>
-		</div>
-	</section>
-	<?php
-}
-
-// Great big characters section!
-?>
 <section name="characters" id="characters" class="showschar-section">
 	<h2>Characters</h2>
 	<div class="card-body">
@@ -197,8 +118,7 @@ if ( isset( $related ) && $related ) {
 </section>
 
 <?php
-
 // If there are characters, show this:
 if ( 0 !== $havecharcount ) {
-	get_template_part( 'template-parts/partials/output', 'actor-stats', array( 'to_show' => $post->ID ) );
+	get_template_part( 'template-parts/partials/actors', 'stats', array( 'to_show' => $the_id ) );
 }

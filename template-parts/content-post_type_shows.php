@@ -14,21 +14,9 @@ $related        = lwtv_plugin()->has_cpt_related_posts( $slug );
 $rpbt_shortcode = lwtv_plugin()->get_shows_like_this_show( $show_id );
 
 // Microformats Fix.
-lwtv_microformats_fix( $post->ID );
+lwtv_microformats_fix( $show_id );
 
-// Thumbnail attribution.
-$thumb_attribution = get_post_meta( get_post_thumbnail_id(), 'lwtv_attribution', true );
-$thumb_title       = ( empty( $thumb_attribution ) ) ? get_the_title() : get_the_title() . ' &copy; ' . $thumb_attribution;
-
-// Echo the header image.
-the_post_thumbnail(
-	'large',
-	array(
-		'class' => 'card-img-top',
-		'alt'   => get_the_title(),
-		'title' => $thumb_title,
-	)
-);
+get_template_part( 'template-parts/partials/shows', 'image', array( 'show_id' => $show_id ) );
 ?>
 
 <section id="toc" class="toc-container card-body">
@@ -36,12 +24,12 @@ the_post_thumbnail(
 		<h4 class="toc-title">Table of Contents</h4>
 		<a class="breadcrumb-item smoothscroll" href="#overview">Overview</a>
 		<?php
-		if ( get_post_meta( get_the_ID(), 'lezshows_plots', true ) && '<p><br data-mce-bogus="1"></p>' !== get_post_meta( $show_id, 'lezshows_plots', true ) ) {
+		if ( get_post_meta( $show_id, 'lezshows_plots', true ) && '<p><br data-mce-bogus="1"></p>' !== get_post_meta( $show_id, 'lezshows_plots', true ) ) {
 			?>
 			<a class="breadcrumb-item smoothscroll" href="#timeline">Timeline</a>
 			<?php
 		}
-		if ( get_post_meta( get_the_ID(), 'lezshows_episodes', true ) && '<p><br data-mce-bogus="1"></p>' !== get_post_meta( $show_id, 'lezshows_episodes', true ) ) {
+		if ( get_post_meta( $show_id, 'lezshows_episodes', true ) && '<p><br data-mce-bogus="1"></p>' !== get_post_meta( $show_id, 'lezshows_episodes', true ) ) {
 			?>
 			<a class="breadcrumb-item smoothscroll" href="#episodes">Episodes</a>
 			<?php
@@ -68,7 +56,7 @@ the_post_thumbnail(
 <?php
 // The Game of Thrones Flag of Gratuitous Violence.
 // This shows a notice if the show has trigger warnings.
-$warning    = lwtv_plugin()->get_show_content_warning( get_the_ID() );
+$warning    = lwtv_plugin()->get_show_content_warning( $show_id );
 $warn_image = lwtv_symbolicons( 'hand.svg', 'fa-hand-paper' );
 
 if ( is_array( $warning ) && 'none' !== $warning['card'] ) {
@@ -122,19 +110,7 @@ if ( ( get_post_meta( $show_id, 'lezshows_episodes', true ) && '<p><br data-mce-
 	<?php
 }
 
-if ( $related ) {
-	?>
-	<section name="related-posts" id="related-posts" class="showschar-section">
-		<h2>Articles</h2>
-		<div class="container"><div class="card-body">
-			<?php
-			// phpcs:ignore WordPress.Security.EscapeOutput
-			echo lwtv_plugin()->get_cpt_related_posts( $slug );
-			?>
-		</div></div>
-	</section>
-	<?php
-}
+get_template_part( 'template-parts/partials/related', 'posts', array( 'to_check' => $the_id ) );
 
 // Great big characters section!
 ?>
@@ -205,15 +181,12 @@ if ( $related ) {
 
 <?php
 if ( false !== $rpbt_shortcode ) {
-	?>
-	<section name="similar-shows" id="related-posts" class="showschar-section">
-		<h2>Similar Shows</h2>
-		<div class="card-body">
-			<p>If you like <em><?php echo esc_html( get_the_title() ); ?></em> you may also like these shows.</p>
-			<?php
-				echo wp_kses_post( $rpbt_shortcode );
-			?>
-		</div>
-	</section>
-	<?php
+	get_template_part(
+		'template-parts/partials/shows',
+		'like-this',
+		array(
+			'show_id' => $the_id,
+			'similar' => $rpbt_shortcode,
+		)
+	);
 }

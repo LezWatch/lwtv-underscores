@@ -14,11 +14,6 @@ global $post;
 // Thumbnail attribution.
 $thumb_attribution = get_post_meta( get_post_thumbnail_id(), 'lwtv_attribution', true );
 $thumb_title       = ( empty( $thumb_attribution ) ) ? get_the_title() : get_the_title() . ' &copy; ' . $thumb_attribution;
-$thumb_array       = array(
-	'class' => 'card-img-top',
-	'alt'   => $thumb_title,
-	'title' => $thumb_title,
-);
 ?>
 
 <div class="show-group" id="post-<?php the_ID(); ?>">

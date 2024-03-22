@@ -9,12 +9,23 @@
  * @package LezWatch.TV
  */
 
-global $post;
+$actor = $args['actor'] ?? null;
 
-$the_id      = ( isset( $actor['id'] ) ) ? $actor['id'] : $post->ID;
-$the_content = ( isset( $actor['content'] ) ) ? $actor['content'] : get_the_content();
-$alt_text    = 'A picture of the actor ' . get_the_title( $the_id );
-$archive     = ( is_archive() || is_tax() || is_page() ) ? true : false;
+// The Mirror Gaze Reflection: Make sure the actor is a actor.
+// If there is no actor variable, something went wrong, bail out!
+if ( ! isset( $actor ) || empty( $actor ) ) {
+	return;
+}
+
+// If the array with ID is set, use it. Otherwise use the variable directly.
+$the_id = $actor['id'] ?? $actor;
+
+// If this is not a actor, something's wrong, bail out!
+if ( empty( $the_id ) || 'post_type_actors' !== get_post_type( $the_id ) ) {
+	return;
+}
+
+$archive = ( is_archive() || is_tax() || is_page() ) ? true : false;
 
 // The Terrible Terri Polo: If we don't reset, her stats apply to everyone.
 unset( $shows, $actors, $gender, $sexuality, $cliches );
@@ -24,8 +35,8 @@ unset( $shows, $actors, $gender, $sexuality, $cliches );
 	<div class="actor-image-wrapper">
 		<?php
 		get_template_part(
-			'template-parts/partials/output',
-			'image',
+			'template-parts/partials/image',
+			'headshot',
 			array(
 				'to_show' => $the_id,
 				'format'  => 'excerpt',
@@ -49,20 +60,14 @@ unset( $shows, $actors, $gender, $sexuality, $cliches );
 		</h4>
 		<div class="card-text">
 			<?php
-			$gender    = lwtv_plugin()->get_actor_gender( $the_id );
-			$sexuality = lwtv_plugin()->get_actor_sexuality( $the_id );
-
-			// Gender and Sexuality
-			if ( isset( $gender ) || isset( $sexuality ) ) {
-				echo '<div class="card-meta-item gender sexuality"><p>';
-				if ( isset( $gender ) ) {
-					echo '&bull; <strong>Gender:</strong> ' . wp_kses_post( $gender ) . '<br />';
-				}
-				if ( isset( $sexuality ) ) {
-					echo '&bull; <strong>Sexuality:</strong> ' . wp_kses_post( $sexuality );
-				}
-				echo '</p></div>';
-			}
+			get_template_part(
+				'template-parts/partials/actors',
+				'gender-sexuality',
+				array(
+					'actor'  => $the_id,
+					'format' => 'excerpt',
+				)
+			);
 			?>
 		</div>
 	</div>
