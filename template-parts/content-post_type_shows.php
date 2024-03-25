@@ -110,7 +110,7 @@ if ( ( get_post_meta( $show_id, 'lezshows_episodes', true ) && '<p><br data-mce-
 	<?php
 }
 
-get_template_part( 'template-parts/partials/related', 'posts', array( 'to_check' => $the_id ) );
+get_template_part( 'template-parts/partials/related', 'posts', array( 'to_check' => $show_id ) );
 
 // Great big characters section!
 ?>
@@ -185,7 +185,7 @@ if ( false !== $rpbt_shortcode ) {
 		'template-parts/partials/shows',
 		'like-this',
 		array(
-			'show_id' => $the_id,
+			'show_id' => $show_id,
 			'similar' => $rpbt_shortcode,
 		)
 	);
