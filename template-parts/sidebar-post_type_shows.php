@@ -5,9 +5,12 @@
  * @package LezWatch.TV
  */
 
-global $post;
+$show_id = $args['the_post_id'] ?? null;
 
-$show_id      = $post->ID;
+if ( is_null( $show_id ) || empty( $show_id ) ) {
+	return;
+}
+
 $thumb_rating = ( get_post_meta( $show_id, 'lezshows_worthit_rating', true ) ) ? get_post_meta( $show_id, 'lezshows_worthit_rating', true ) : 'TBD';
 $realness     = ( get_post_meta( $show_id, 'lezshows_realness_rating', true ) && is_numeric( (int) get_post_meta( $show_id, 'lezshows_realness_rating', true ) ) ) ? min( (int) get_post_meta( $show_id, 'lezshows_realness_rating', true ), 5 ) : 0;
 $quality      = ( get_post_meta( $show_id, 'lezshows_quality_rating', true ) && is_numeric( (int) get_post_meta( $show_id, 'lezshows_quality_rating', true ) ) ) ? min( (int) get_post_meta( $show_id, 'lezshows_quality_rating', true ), 5 ) : 0;
@@ -21,7 +24,7 @@ $alt_names    = ( get_post_meta( $show_id, 'lezshows_show_names', true ) ) ? get
 </section>
 
 <section id="suggest-edits" class="widget widget_suggestedits">
-	<?php get_template_part( 'template-parts/suggestedit', 'form' ); ?>
+	<?php get_template_part( 'template-parts/partials/form', 'suggest-edit', array( 'for_post' => $show_id ) ); ?>
 </section>
 
 <?php
@@ -100,44 +103,9 @@ lwtv_plugin()->get_admin_tools( $show_id );
 					echo '<li class="list-group-item network formats">' . get_the_term_list( $show_id, 'lez_formats', '<strong>Show Format:</strong> ', ', ' ) . '</li>';
 				}
 
-				if ( get_post_meta( $show_id, 'lezshows_airdates', true ) ) {
-					$airdates  = get_post_meta( $show_id, 'lezshows_airdates', true );
-					$air_title = 'Airdate';
+				// Airdates:
+				get_template_part( 'template-parts/partials/shows', 'airdates', array( 'show_id' => $show_id ) );
 
-					// If the start is 'current' make it this year (though it really never should be.)
-					if ( 'current' === $airdates['start'] ) {
-						$airdates['start'] = gmdate( 'Y' );
-					}
-
-					// Link the year to the year.
-					$airdate = '<a href="/this-year/' . $airdates['start'] . '/shows-on-air/">' . $airdates['start'] . '</a>';
-
-					// If the start and end date are NOT the same, then let's show the end.
-					if ( $airdates['finish'] && $airdates['start'] !== $airdates['finish'] ) {
-						// If the end date is a number, it's a year, so link it.
-						if ( is_numeric( $airdates['finish'] ) && $airdates['finish'] <= gmdate( 'Y' ) ) {
-							$airdates['finish'] = '<a href="/this-year/' . $airdates['finish'] . '/shows-on-air/">' . $airdates['finish'] . '</a>';
-						}
-						// No matter what, add it.
-						$airdate  .= ' - ' . $airdates['finish'];
-						$air_title = 'Airdates';
-					}
-
-					// If the end is a number (i.e. a year) AND we have a seasons value,
-					// and it's NOT a TV movie, show it.
-					$season_count = get_post_meta( $show_id, 'lezshows_seasons', true );
-					if ( ! has_term( 'movie', 'lez_formats' ) && 'current' !== $airdates['finish'] && isset( $season_count ) && $season_count >= 1 ) {
-							$seasons  = _n( 'season', 'seasons', $season_count );
-							$airdate .= ' (' . $season_count . ' ' . $seasons . ')';
-					}
-					echo '<li class="list-group-item network airdates"><strong>' . wp_kses_post( $air_title ) . ':</strong> ' . wp_kses_post( $airdate );
-
-					if ( 'current' === $airdates['finish'] || empty( $airdates['finish'] ) ) {
-						echo '&nbsp;<span class="badge text-bg-success">On Air</span>';
-					}
-
-					echo '</li>';
-				}
 				$genres = get_the_terms( $show_id, 'lez_genres' );
 				if ( $genres && ! is_wp_error( $genres ) ) {
 					echo '<li class="list-group-item network genres">' . get_the_term_list( $show_id, 'lez_genres', '<strong>Genres:</strong> ', ', ' ) . '</li>';
@@ -308,20 +276,5 @@ if ( $intersections && ! is_wp_error( $intersections ) ) {
 	</div>
 </section>
 
-<section id="join-slack" class="widget widget_joinslack">
-	<div class="widget-wrap">
-		<div class="card card-slack">
-			<div class="card-header">
-				<h4 class="widget-title">Join Our Community!</h4>
-			</div>
-			<div class="card-body">
-				<a href="https://lezwatchtv.com/slack/">
-					<img src="<?php echo esc_url( get_template_directory_uri() ); ?>/images/Slack-logo-RGB.png" alt="Slack" style="margin-bottom: 1rem;">
-				</a>
-				<p>The LezWatch.TV Slack is a free safe space to chat with other wlw TV fans in real time.</p>
-				<p style="text-align:center;"><a href="https://lezwatchtv.com/slack/" class="btn btn-primary">Join Us!</a></p>
-			</div>
-		</div>
-	</div>
-</section>
-
+<?php
+get_template_part( 'template-parts/partials/sidebar', 'slack' );

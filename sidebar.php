@@ -33,7 +33,7 @@ if ( ! is_active_sidebar( 'sidebar-2' ) ) {
 			case 'post_type_actors':
 			case 'post_type_characters':
 			case 'post_type_shows':
-				get_template_part( 'template-parts/sidebar', get_post_type() );
+				get_template_part( 'template-parts/sidebar', get_post_type(), array( 'the_post_id' => get_the_ID() ) );
 				break;
 			default:
 				dynamic_sidebar( 'sidebar-2' );

@@ -5,8 +5,11 @@
  * @package YIKES Starter
  */
 
-global $post;
-$show_id = $post->ID;
+$for_post = $args['for_post'] ?? null;
+
+if ( is_null( $for_post ) || empty( $for_post ) ) {
+	return;
+}
 ?>
 
 <!-- Button trigger modal -->
@@ -21,14 +24,14 @@ $show_id = $post->ID;
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h3 class="modal-title" id="suggestFormLabel">Suggest an Edit for <?php echo esc_html( get_the_title( $show_id ) ); ?></h3>
+				<h3 class="modal-title" id="suggestFormLabel">Suggest an Edit for <?php echo esc_html( get_the_title( $for_post ) ); ?></h3>
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 					<span aria-hidden="true">&times;</span>
 				</button>
 			</div>
 			<div class="modal-body">
 				<p>
-					We welcome corrections to our database. Any misattributions of gender or sexual orientation are accidental and will be corrected ASAP.
+					We welcome corrections and additions to our database. Any misattributions of gender or sexual orientation are unintentional and will be corrected as soon as possible.
 				</p>
 				<p>
 					<?php echo do_shortcode( '[gravityform id="1" title="false" description="false" ajax="true"]' ); ?>

@@ -13,35 +13,7 @@
 <link rel="profile" href="http://gmpg.org/xfn/11">
 <link rel="pingback" href="<?php bloginfo( 'pingback_url' ); ?>">
 
-<?php
-if ( is_front_page() ) {
-	?>
-	<!-- Preload the LCP images with a high fetchpriority so it starts loading with the stylesheet. -->
-	<?php
-	$image = wp_get_attachment_image_src( get_theme_mod( 'custom_logo' ), 'full' );
-
-	if ( has_header_image() ) {
-		$header_image = get_header_image();
-
-		if ( str_ends_with( $header_image, 'webp' ) ) {
-			$image_type = 'webp';
-		} elseif ( str_ends_with( $header_image, 'png' ) ) {
-			$image_type = 'png';
-		} else {
-			$image_type = 'jpeg';
-		}
-		?>
-		<link rel="preload" fetchpriority="high" as="image" href="<?php echo esc_url( $header_image ); ?>" type="image/<?php echo esc_attr( $image_type ); ?>">
-		<?php
-	}
-
-	if ( false !== $image ) {
-		?>
-		<link rel="preload" fetchpriority="high" as="image" href="<?php echo esc_url( $image[0] ); ?>" type="image/png">
-		<?php
-	}
-}
-?>
+<?php get_template_part( 'template-parts/header', 'lcp', array( 'post_id' => get_the_ID() ) ); ?>
 
 <?php wp_head(); ?>
 </head>

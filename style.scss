@@ -1180,6 +1180,18 @@ table.lwtvc {
 				padding: 0;
 			}
 		}
+
+		#characterActors.accordion, #characterShows.accordion {
+			--bs-accordion-btn-focus-box-shadow: 0 0 0 0.2rem $lwtv-grey2;
+			button {
+				font-family: "Open Sans", sans-serif;
+				font-size: $basefont;
+				padding: .2rem 0;
+			}
+			.accordion-button:not(.collapsed) {
+				background-color: $lwtv-grey2;
+			}
+		}
 	}
 }
 

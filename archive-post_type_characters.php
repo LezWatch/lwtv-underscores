@@ -59,7 +59,7 @@ get_header(); ?>
 										/* Start the Loop */
 										while ( have_posts() ) {
 											the_post();
-											get_template_part( 'template-parts/excerpt', 'post_type_characters' );
+											get_template_part( 'template-parts/excerpt', 'post_type_characters', array( 'character' => get_the_ID() ) );
 										}
 									} else {
 										get_template_part( 'template-parts/content', 'none' );

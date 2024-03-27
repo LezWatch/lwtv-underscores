@@ -5,19 +5,6 @@
  * @package YIKES Starter
  */
 
-switch ( get_post_type( $post->ID ) ) {
-	case 'post_type_shows':
-		$searchicon = lwtv_symbolicons( 'tv-hd.svg', 'fa-tv' );
-		break;
-	case 'post_type_actors':
-		$searchicon = lwtv_symbolicons( 'award-academy.svg', 'fa-tv' );
-		break;
-	case 'post_type_characters':
-		$searchicon = lwtv_symbolicons( 'female.svg', 'fa-female' );
-		break;
-	default:
-		$searchicon = lwtv_symbolicons( 'newspaper.svg', 'fa-newspaper' );
-}
 ?>
 
 <div class="card">
@@ -36,7 +23,7 @@ switch ( get_post_type( $post->ID ) ) {
 		<h3 class="card-title">
 			<?php
 			// phpcs:ignore WordPress.Security.EscapeOutput
-			echo $searchicon . '&nbsp;';
+			echo lwtv_symbolicons( 'newspaper.svg', 'fa-newspaper' ) . '&nbsp;';
 			the_title();
 			?>
 		</h3>
