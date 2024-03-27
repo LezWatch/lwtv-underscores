@@ -7,17 +7,17 @@
  * @package LezWatch.TV
  */
 
-// Related Posts.
-$the_id = get_the_ID();
+// The Post ID, which we'll pass to templates.
+$actor_id = get_the_ID();
 
 // This just gets the numbers of all characters and how many are dead.
-$all_chars     = get_post_meta( $the_id, 'lezactors_char_list', true );
-$all_dead      = get_post_meta( $the_id, 'lezactors_dead_list', true );
+$all_chars     = get_post_meta( $actor_id, 'lezactors_char_list', true );
+$all_dead      = get_post_meta( $actor_id, 'lezactors_dead_list', true );
 $havecharcount = ( is_array( $all_chars ) ) ? count( $all_chars ) : 0;
 $havedeadcount = ( is_array( $all_dead ) ) ? count( $all_dead ) : 0;
 
 // Microformats Fix.
-lwtv_microformats_fix( $the_id );
+lwtv_microformats_fix( $actor_id );
 ?>
 
 <section class="showschar-section" name="biography" id="biography">
@@ -28,7 +28,7 @@ lwtv_microformats_fix( $the_id );
 				'template-parts/partials/image',
 				'headshot',
 				array(
-					'to_show' => $the_id,
+					'to_show' => $actor_id,
 					'format'  => 'excerpt',
 				)
 			);
@@ -40,7 +40,7 @@ lwtv_microformats_fix( $the_id );
 				echo '<h2>Biography</h2>';
 
 				// Actor Privacy Warning.
-				lwtv_plugin()->the_actor_privacy_warning( $the_id );
+				lwtv_plugin()->the_actor_privacy_warning( $actor_id );
 
 				if ( ! empty( get_the_content() ) ) {
 					the_content();
@@ -74,21 +74,20 @@ lwtv_microformats_fix( $the_id );
 	<h2>Overview</h2>
 	<div class="card-body">
 		<div class="card-meta">
-
 			<div class="card-meta-item">
-				<?php get_template_part( 'template-parts/partials/actors', 'life', array( 'actor' => $the_id ) ); ?>
+				<?php get_template_part( 'template-parts/partials/actors', 'life', array( 'actor' => $actor_id ) ); ?>
 			</div>
 			<div class="card-meta-item">
-				<?php get_template_part( 'template-parts/partials/actors', 'gender-sexuality', array( 'actor' => $the_id ) ); ?>
+				<?php get_template_part( 'template-parts/partials/actors', 'gender-sexuality', array( 'actor' => $actor_id ) ); ?>
 			</div>
 			<div class="card-meta-item">
-				<?php get_template_part( 'template-parts/partials/actors', 'socials', array( 'actor' => $the_id ) ); ?>
+				<?php get_template_part( 'template-parts/partials/actors', 'socials', array( 'actor' => $actor_id ) ); ?>
 			</div>
 		</div>
 	</div>
 </section>
 
-<?php get_template_part( 'template-parts/partials/related', 'posts', array( 'to_check' => $the_id ) ); ?>
+<?php get_template_part( 'template-parts/partials/related', 'articles', array( 'to_check' => $actor_id ) ); ?>
 
 <section name="characters" id="characters" class="showschar-section">
 	<h2>Characters</h2>
@@ -120,5 +119,5 @@ lwtv_microformats_fix( $the_id );
 <?php
 // If there are characters, show this:
 if ( 0 !== $havecharcount ) {
-	get_template_part( 'template-parts/partials/actors', 'stats', array( 'to_show' => $the_id ) );
+	get_template_part( 'template-parts/partials/actors', 'stats', compact( 'actor_id' ) );
 }

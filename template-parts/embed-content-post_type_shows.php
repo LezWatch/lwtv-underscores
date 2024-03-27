@@ -150,7 +150,7 @@
 				'template-parts/partials/shows',
 				'airdates',
 				array(
-					'show_id' => $show_id,
+					'show_id' => get_the_ID(),
 					'format'  => 'embed',
 				)
 			);
@@ -161,8 +161,8 @@
 			<a href="<?php the_permalink(); ?>" target="_top">
 				<?php
 				get_template_part(
-					'template-parts/partials/shows',
-					'image',
+					'template-parts/partials/image',
+					'show',
 					array(
 						'show_id' => get_the_ID(),
 						'size'    => 'medium',

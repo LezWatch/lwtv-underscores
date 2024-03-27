@@ -8,7 +8,7 @@
  */
 
 $show_id = $args['show_id'] ?? null;
-$similar = $args['similar'] ?? false;
+$similar = $args['rpbt_shortcode'] ?? false;
 
 if ( is_null( $show_id ) || empty( $show_id ) || ! $similar ) {
 	return;

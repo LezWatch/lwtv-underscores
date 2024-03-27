@@ -10,6 +10,10 @@
 $character = $args['character'] ?? null;
 $format    = $args['format'] ?? 'actors';
 
+if ( ! $character ) {
+	return;
+}
+
 $all_actors = lwtv_plugin()->get_character_data( $character, $format );
 
 if ( 'oneactor' === $format ) {

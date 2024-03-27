@@ -12,90 +12,79 @@ $actor = $args['actor'] ?? null;
 // Generate URLs.
 // Usage: $actor_urls.
 $actor_urls = array();
-if ( get_post_meta( $actor, 'lezactors_homepage', true ) ) {
-	$actor_urls['home'] = array(
-		'name' => 'Website',
-		'url'  => esc_url( get_post_meta( $actor, 'lezactors_homepage', true ) ),
+
+// Social Media and other external links.
+$maybe_social = array(
+	'website'   => array(
+		'meta' => 'lezactors_homepage',
 		'fa'   => 'fas fa-home',
-	);
-}
-if ( get_post_meta( $actor, 'lezactors_imdb', true ) ) {
-	$actor_urls['imdb'] = array(
-		'name' => 'IMDb',
-		'url'  => esc_url( 'https://www.imdb.com/name/' . get_post_meta( $actor, 'lezactors_imdb', true ) ),
-		'fa'   => 'fab fa-imdb',
-	);
-}
-if ( get_post_meta( $actor, 'lezactors_wikipedia', true ) ) {
-	$actor_urls['wikipedia'] = array(
-		'name' => 'WikiPedia',
-		'url'  => esc_url( get_post_meta( $actor, 'lezactors_wikipedia', true ) ),
+		'hide' => false,
+	),
+	'imdb'      => array(
+		'label' => 'IMDb',
+		'meta'  => 'lezactors_imdb',
+		'fa'    => 'fab fa-imdb',
+		'hide'  => false,
+	),
+	'wikipedia' => array(
+		'meta' => 'lezactors_wikipedia',
 		'fa'   => 'fab fa-wikipedia-w',
-	);
-}
+		'hide' => false,
+	),
+	'twitter'   => array(
+		'meta' => 'lezactors_twitter',
+		'fa'   => 'fab fa-x-twitter',
+		'hide' => true,
+	),
+	'instagram' => array(
+		'meta' => 'lezactors_instagram',
+		'fa'   => 'fab fa-instagram',
+		'hide' => true,
+	),
+	'facebook'  => array(
+		'meta' => 'lezactors_facebook',
+		'fa'   => 'fab fa-facebook',
+		'hide' => true,
+	),
+	'tiktok'    => array(
+		'meta' => 'lezactors_tiktok',
+		'fa'   => 'fab fa-tiktok',
+		'hide' => true,
+	),
+	'bluesky'   => array(
+		'meta' => 'lezactors_bluesky',
+		'fa'   => 'fab fa-square',
+		'hide' => true,
+	),
+	'twitch'    => array(
+		'meta' => 'lezactors_twitch',
+		'fa'   => 'fab fa-twitch',
+		'hide' => true,
+	),
+	'tumblr'    => array(
+		'meta' => 'lezactors_tumblr',
+		'fa'   => 'fab fa-tumblr',
+		'hide' => true,
+	),
+	'mastodon'  => array(
+		'meta' => 'lezactors_mastodon',
+		'fa'   => 'fab fa-mastodon',
+		'hide' => true,
+	),
+);
 
-if ( ! lwtv_plugin()->hide_actor_data( $actor, 'socials' ) ) {
-	if ( get_post_meta( $actor, 'lezactors_twitter', true ) ) {
-		$actor_urls['twitter'] = array(
-			'name' => 'X (Twitter)',
-			'url'  => esc_url( 'https://twitter.com/' . get_post_meta( $actor, 'lezactors_twitter', true ) ),
-			'fa'   => 'fab fa-x-twitter',
-		);
+foreach ( $maybe_social as $social => $data ) {
+	// If we're hiding social media content, and this has hide set to true, skip it.
+	if ( lwtv_plugin()->hide_actor_data( $actor, 'socials' ) && $data['hide'] ) {
+		continue;
 	}
 
-	if ( get_post_meta( $actor, 'lezactors_instagram', true ) ) {
-		$actor_urls['instagram'] = array(
-			'name' => 'Instagram',
-			'url'  => esc_url( 'https://www.instagram.com/' . get_post_meta( $actor, 'lezactors_instagram', true ) ),
-			'fa'   => 'fab fa-instagram',
-		);
-	}
-
-	if ( get_post_meta( $actor, 'lezactors_facebook', true ) ) {
-		$actor_urls['facebook'] = array(
-			'name' => 'Facebook',
-			'url'  => esc_url( get_post_meta( $actor, 'lezactors_facebook', true ) ),
-			'fa'   => 'fab fa-facebook',
-		);
-	}
-
-	if ( get_post_meta( $actor, 'lezactors_tiktok', true ) ) {
-		$actor_urls['tiktok'] = array(
-			'name' => 'TikTok',
-			'url'  => esc_url( 'https://tiktok.com/' . get_post_meta( $actor, 'lezactors_tiktok', true ) ),
-			'fa'   => 'fab fa-tiktok',
-		);
-	}
-
-	if ( get_post_meta( $actor, 'lezactors_bluesky', true ) ) {
-		$actor_urls['bluesky'] = array(
-			'name' => 'BlueSky',
-			'url'  => esc_url( get_post_meta( $actor, 'lezactors_bluesky', true ) ),
-			'fa'   => 'fab fa-square',
-		);
-	}
-
-	if ( get_post_meta( $actor, 'lezactors_twitch', true ) ) {
-		$actor_urls['twitch'] = array(
-			'name' => 'Twitch',
-			'url'  => esc_url( get_post_meta( $actor, 'lezactors_twitch', true ) ),
-			'fa'   => 'fab fa-twitch',
-		);
-	}
-
-	if ( get_post_meta( $actor, 'lezactors_tumblr', true ) ) {
-		$actor_urls['tumblr'] = array(
-			'name' => 'Tumblr',
-			'url'  => esc_url( 'https://' . get_post_meta( $actor, 'lezactors_tumblr', true ) . '.tumblr.com' ),
-			'fa'   => 'fab fa-tumblr',
-		);
-	}
-
-	if ( get_post_meta( $actor, 'lezactors_mastodon', true ) ) {
-		$actor_urls['mastodon'] = array(
-			'name' => 'Mastodon',
-			'url'  => esc_url( get_post_meta( $actor, 'lezactors_mastodon', true ) ),
-			'fa'   => 'fab fa-mastodon',
+	if ( get_post_meta( $actor, $data['meta'], true ) ) {
+		$name                  = ( isset( $data['label'] ) ) ? $data['label'] : ucwords( $social );
+		$actor_urls[ $social ] = array(
+			'name' => $name,
+			'url'  => esc_url( get_post_meta( $actor, $data['meta'], true ) ),
+			'fa'   => $data['fa'],
 		);
 	}
 }

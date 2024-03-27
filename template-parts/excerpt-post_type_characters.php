@@ -16,6 +16,7 @@
  */
 
 $character = $args['character'] ?? null;
+$format    = $args['format'] ?? null;
 
 // The Mirror Gaze Reflection: Make sure the character is a character.
 // If there is no character variable, something went wrong, bail out!

@@ -31,7 +31,7 @@ if ( is_null( $for_post ) || empty( $for_post ) ) {
 			</div>
 			<div class="modal-body">
 				<p>
-					We welcome corrections to our database. Any misattributions of gender or sexual orientation are accidental and will be corrected ASAP.
+					We welcome corrections and additions to our database. Any misattributions of gender or sexual orientation are unintentional and will be corrected as soon as possible.
 				</p>
 				<p>
 					<?php echo do_shortcode( '[gravityform id="1" title="false" description="false" ajax="true"]' ); ?>

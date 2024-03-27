@@ -7,15 +7,15 @@
  * @package LezWatch.TV
  */
 
- $character_id = $post->ID;
+$character = $post->ID;
 
 // Generate Status
 // Usage: $doa_status
-$doa_status = ( has_term( 'dead', 'lez_cliches', $character_id ) ) ? 'Dead' : 'Alive';
+$doa_status = ( has_term( 'dead', 'lez_cliches', $character ) ) ? 'Dead' : 'Alive';
 
 // Generate RIP
 // Usage: $rip
-$is_dead = get_post_meta( $character_id, 'lezchars_death_year', true );
+$is_dead = get_post_meta( $character, 'lezchars_death_year', true );
 if ( $is_dead ) {
 	$char_death = ( ! is_array( $is_dead ) ) ? array( $is_dead ) : $is_dead;
 	$rip        = array();
@@ -31,7 +31,7 @@ if ( $is_dead ) {
 }
 
 // Microformats Fix
-lwtv_microformats_fix( $character_id );
+lwtv_microformats_fix( $character );
 ?>
 <div class="card-body">
 	<div class="character-image-wrapper">
@@ -54,22 +54,22 @@ lwtv_microformats_fix( $character_id );
 					<tbody>
 						<tr>
 							<th scope="row" colspan="2"><center>
-								<?php get_template_part( 'template-parts/partials/characters', 'gender-sexuality', array( 'character' => $character_id ) ); ?>
+								<?php get_template_part( 'template-parts/partials/characters', 'gender-sexuality', compact( 'character' ) ); ?>
 							</center></th>
 						</tr>
 						<tr>
 							<th scope="row">Clichés</th>
-							<td><?php echo lwtv_plugin()->get_character_data( $character_id, 'cliches' ); ?></td>
+							<td><?php echo lwtv_plugin()->get_character_data( $character, 'cliches' ); ?></td>
 						</tr>
 						<tr>
 							<th scope="row">Status</th>
 							<td><?php echo wp_kses_post( $doa_status ); ?></td>
 						</tr>
 						<tr>
-							<?php get_template_part( 'template-parts/partials/characters', 'actors', array( 'character' => $character_id ) ); ?>
+							<?php get_template_part( 'template-parts/partials/characters', 'actors', compact( 'character' ) ); ?>
 						</tr>
 						<tr>
-							<?php get_template_part( 'template-parts/partials/characters', 'shows', array( 'character' => $character_id ) ); ?>
+							<?php get_template_part( 'template-parts/partials/characters', 'shows', compact( 'character' ) ); ?>
 						</tr>
 						<?php
 						if ( isset( $rip ) ) {

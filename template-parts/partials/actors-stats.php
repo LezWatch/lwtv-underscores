@@ -7,7 +7,7 @@
  * @package LezWatch.TV
  */
 
-$this_id = $args['to_show'] ?? null;
+$this_id = $args['actor_id'] ?? null;
 ?>
 
 <section name="stats" id="stats" class="showschar-section">

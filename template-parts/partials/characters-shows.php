@@ -9,6 +9,9 @@
 
 $character = $args['character'] ?? null;
 
+if ( ! $character ) {
+	return;
+}
 
 // Generate list of shows
 // Usage: $shows_group

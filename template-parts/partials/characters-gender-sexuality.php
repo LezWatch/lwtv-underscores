@@ -13,18 +13,33 @@ $format    = $args['format'] ?? 'full';
 if ( ! isset( $character ) || empty( $character ) ) {
 	return;
 }
-$gender_sexuality  = lwtv_plugin()->get_character_data( $character, 'gender' );
-$gender_sexuality .= ' &bull; ';
-$gender_sexuality .= lwtv_plugin()->get_character_data( $character, 'sexuality' );
 
-if ( 'full' === $format ) {
-	$romantic = lwtv_plugin()->get_character_data( $character, 'romantic' );
+$gender_sexuality = array(
+	'gender'    => array(
+		'data'  => lwtv_plugin()->get_character_data( $character, 'gender' ),
+		'label' => 'Gender Orientation',
+	),
+	'sexuality' => array(
+		'data'  => lwtv_plugin()->get_character_data( $character, 'sexuality' ),
+		'label' => 'Sexual Orientation',
+	),
+	'romantic'  => array(
+		'data'  => lwtv_plugin()->get_character_data( $character, 'romantic' ),
+		'label' => 'Romantic Orientation',
+	),
+);
+
+
+if ( ! 'full' === $format ) {
+	unset( $gender_sexuality['romantic'] );
 }
 
-if ( isset( $romantic ) && ! is_null( $romantic ) && '' !== $romantic ) {
-	$gender_sexuality .= ' &bull; ' . lwtv_plugin()->get_character_data( $character, 'romantic' );
+foreach ( $gender_sexuality as $key => $data ) {
+	if ( empty( $data['data'] ) ) {
+		unset( $gender_sexuality[ $key ] );
+	}
 }
 
 echo '<div class="card-meta-item gender sexuality">';
-echo wp_kses_post( $gender_sexuality );
+echo wp_kses_post( implode( '&nbsp;&bull;&nbsp;', array_column( $gender_sexuality, 'data' ) ) );
 echo '</div>';

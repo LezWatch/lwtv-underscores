@@ -24,6 +24,7 @@ if ( 'current' === $airdates['start'] ) {
 	$airdates['start'] = gmdate( 'Y' );
 }
 
+// If this is for an embedded post, return early.
 if ( 'embed' === $format ) {
 	$airdate = $airdates['start'] . ' - ' . $airdates['finish'];
 	if ( $airdates['start'] === $airdates['finish'] ) {
@@ -56,7 +57,6 @@ if ( ! has_term( 'movie', 'lez_formats' ) && 'current' !== $airdates['finish'] &
 		$seasons  = _n( 'season', 'seasons', $season_count );
 		$airdate .= ' (' . $season_count . ' ' . $seasons . ')';
 }
-
 
 echo '<li class="list-group-item network airdates"><strong>' . wp_kses_post( $air_title ) . ':</strong> ' . wp_kses_post( $airdate );
 
