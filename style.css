@@ -5,7 +5,7 @@ Theme URI: https://lezwatchtv.com/
 Author: Tracy Levesque, Mika Epstein
 Author URI: https://lezwatchtv.com/
 Description: LezWatch.TV Theme Episode III - Return of the Custom Theme
-Version: 6.0.2
+Version: 6.0.3
 License: GNU General Public License v2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Text Domain: yikes_starter
@@ -1384,6 +1384,17 @@ table.lwtvc tbody {
   margin-top: 0;
   margin-bottom: 1rem;
   padding: 0;
+}
+.character-page .card #characterActors.accordion, .character-page .card #characterShows.accordion, .actor-page .card #characterActors.accordion, .actor-page .card #characterShows.accordion {
+  --bs-accordion-btn-focus-box-shadow: 0 0 0 0.2rem $lwtv-grey2;
+}
+.character-page .card #characterActors.accordion button, .character-page .card #characterShows.accordion button, .actor-page .card #characterActors.accordion button, .actor-page .card #characterShows.accordion button {
+  font-family: "Open Sans", sans-serif;
+  font-size: 16px;
+  padding: .2rem 0;
+}
+.character-page .card #characterActors.accordion .accordion-button:not(.collapsed), .character-page .card #characterShows.accordion .accordion-button:not(.collapsed), .actor-page .card #characterActors.accordion .accordion-button:not(.collapsed), .actor-page .card #characterShows.accordion .accordion-button:not(.collapsed) {
+  background-color: #d6d6d6;
 }
 
 .character-cliche svg {

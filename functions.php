@@ -24,7 +24,7 @@ function lwtv_admin_notice_missing_plugin() {
 // Versioning for efficient developers.
 if ( ! defined( 'LWTV_THEME_VERSION' ) ) {
 	$versions = array(
-		'lwtv-underscores' => '6.0.2',    // Bump this any time you make serious CSS changes.
+		'lwtv-underscores' => '6.0.3',    // Bump this any time you make serious CSS changes.
 		'font-awesome'     => '6.5.1',    // Bump when you update Font Awesome.
 		'bootstrap'        => '5.3.3',    // Bump when you update bootstrap.
 		'lwtv-blocks'      => '1.0.0',    // Bump when you update the blocks.
@@ -103,13 +103,17 @@ require_once 'inc/widgets/otd-widget.php';
 /*
  * Custom Image Sizes
  *
- * character-img - used on show and character pages
- * show-img - used as header image for shows
+ * character-img   - Used on show and character pages
+ * show-img        - Used as header image for shows
+ * postloop-img    - Used in the post loop
+ * relatedshow-img - Used in the related shows section
+ * headshot-tiny   - Used on relationships lists
  */
 add_image_size( 'character-img', 350, 412, true );
 add_image_size( 'show-img', 960, 400, true );
 add_image_size( 'postloop-img', 525, 300, true );
 add_image_size( 'relatedshow-img', 340, 150, true );
+add_image_size( 'headshot-tiny', 50, 50, true );
 
 /**
  * Comments

@@ -8,27 +8,28 @@
  */
 
 $show_id        = $post->ID;
-$slug           = get_post_field( 'post_name', get_post( $show_id ) );
-$get_tags       = get_term_by( 'name', $slug, 'post_tag' );
-$related        = lwtv_plugin()->has_cpt_related_posts( $slug );
 $rpbt_shortcode = lwtv_plugin()->get_shows_like_this_show( $show_id );
+$maybe_has      = array(
+	'timeline' => array(
+		'title'   => 'Timeline',
+		'section' => 'Queer Plotline Timeline',
+		'meta'    => get_post_meta( $show_id, 'lezshows_plots', true ),
+	),
+	'episodes' => array(
+		'title'   => 'Episodes',
+		'section' => 'Notable Queer-Centric Episodes',
+		'meta'    => get_post_meta( $show_id, 'lezshows_episodes', true ),
+	),
+	'related'  => array(
+		'title' => 'Articles',
+		'meta'  => lwtv_plugin()->has_cpt_related_posts( $show_id ), // true-falsey
+	),
+);
 
 // Microformats Fix.
-lwtv_microformats_fix( $post->ID );
+lwtv_microformats_fix( $show_id );
 
-// Thumbnail attribution.
-$thumb_attribution = get_post_meta( get_post_thumbnail_id(), 'lwtv_attribution', true );
-$thumb_title       = ( empty( $thumb_attribution ) ) ? get_the_title() : get_the_title() . ' &copy; ' . $thumb_attribution;
-
-// Echo the header image.
-the_post_thumbnail(
-	'large',
-	array(
-		'class' => 'card-img-top',
-		'alt'   => get_the_title(),
-		'title' => $thumb_title,
-	)
-);
+get_template_part( 'template-parts/partials/image', 'show', array( 'show_id' => $show_id ) );
 ?>
 
 <section id="toc" class="toc-container card-body">
@@ -36,21 +37,12 @@ the_post_thumbnail(
 		<h4 class="toc-title">Table of Contents</h4>
 		<a class="breadcrumb-item smoothscroll" href="#overview">Overview</a>
 		<?php
-		if ( get_post_meta( get_the_ID(), 'lezshows_plots', true ) && '<p><br data-mce-bogus="1"></p>' !== get_post_meta( $show_id, 'lezshows_plots', true ) ) {
-			?>
-			<a class="breadcrumb-item smoothscroll" href="#timeline">Timeline</a>
-			<?php
-		}
-		if ( get_post_meta( get_the_ID(), 'lezshows_episodes', true ) && '<p><br data-mce-bogus="1"></p>' !== get_post_meta( $show_id, 'lezshows_episodes', true ) ) {
-			?>
-			<a class="breadcrumb-item smoothscroll" href="#episodes">Episodes</a>
-			<?php
-		}
-		if ( $related ) {
-			// Related Posts (if available).
-			?>
-			<a class="breadcrumb-item smoothscroll" href="#related-posts">Articles</a>
-			<?php
+		foreach ( $maybe_has as $key => $value ) {
+			if ( $value['meta'] && '<p><br data-mce-bogus="1"></p>' !== $value['meta'] ) {
+				?>
+				<a class="breadcrumb-item smoothscroll" href="#<?php echo esc_attr( $key ); ?>"><?php echo esc_html( $value['title'] ); ?></a>
+				<?php
+			}
 		}
 		?>
 		<a class="breadcrumb-item smoothscroll" href="#characters">Characters</a>
@@ -66,28 +58,11 @@ the_post_thumbnail(
 </section>
 
 <?php
-// The Game of Thrones Flag of Gratuitous Violence.
-// This shows a notice if the show has trigger warnings.
-$warning    = lwtv_plugin()->get_show_content_warning( get_the_ID() );
-$warn_image = lwtv_symbolicons( 'hand.svg', 'fa-hand-paper' );
+// Warnings:
+get_template_part( 'template-parts/partials/shows', 'warning', compact( 'show_id' ) );
 
-if ( is_array( $warning ) && 'none' !== $warning['card'] ) {
-	?>
-	<section id="trigger-warning" class="trigger-warning-container">
-		<div class="alert alert-<?php echo esc_attr( $warning['card'] ); ?>" role="alert">
-			<span class="callout-<?php echo esc_attr( $warning['card'] ); ?>" role="img" aria-label="Warning Hand" title="Warning Hand"><?php echo $warn_image; // phpcs:ignore WordPress.Security.EscapeOutput ?></span>
-			<?php echo wp_kses_post( $warning['content'] ); ?>
-		</div>
-	</section>
-	<?php
-}
-?>
-
-<?php
-// Ways to Watch section (yes all ways-to-watch URLs are in a badly named post_meta).
-if ( ( get_post_meta( $show_id, 'lezshows_affiliate', true ) ) ) {
-	echo '<section id="affiliate-watch-link" class="affiliate-watch-container">' . lwtv_plugin()->get_ways_to_watch( $show_id ) . '</section>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-}
+// Ways to Watch:
+get_template_part( 'template-parts/partials/shows', 'ways-to-watch', compact( 'show_id' ) );
 ?>
 
 <section class="showschar-section" name="overview" id="overview">
@@ -98,43 +73,32 @@ if ( ( get_post_meta( $show_id, 'lezshows_affiliate', true ) ) ) {
 </section>
 
 <?php
-// Queer Plots - Only display if they exist.
-if ( ( get_post_meta( $show_id, 'lezshows_plots', true ) && '<p><br data-mce-bogus="1"></p>' !== get_post_meta( $show_id, 'lezshows_plots', true ) ) ) {
-	?>
-	<section name="timeline" id="timeline" class="showschar-section">
-		<h2>Queer Plotline Timeline</h2>
-		<div class="card-body">
-			<?php echo wp_kses_post( apply_filters( 'the_content', get_post_meta( $show_id, 'lezshows_plots', true ) ) ); ?>
-		</div>
-	</section>
-	<?php
+// Loop through the sections as maybe_has and, if there's content, display it.
+foreach ( $maybe_has as $key => $value ) {
+	if ( $value['meta'] && '<p><br data-mce-bogus="1"></p>' !== $value['meta'] ) {
+		// if there's no section title, don't use.
+		if ( ! isset( $value['section'] ) ) {
+			continue;
+		}
+		?>
+		<section name="<?php echo esc_attr( $key ); ?>" id="<?php echo esc_attr( $key ); ?>" class="showschar-section">
+			<h2><?php echo esc_html( $value['section'] ); ?></h2>
+			<div class="card-body">
+				<?php echo wp_kses_post( apply_filters( 'the_content', $value['meta'] ) ); ?>
+			</div>
+		</section>
+		<?php
+	}
 }
 
-// Best Episodes - Only display if they exist.
-if ( ( get_post_meta( $show_id, 'lezshows_episodes', true ) && '<p><br data-mce-bogus="1"></p>' !== get_post_meta( $show_id, 'lezshows_episodes', true ) ) ) {
-	?>
-	<section name="episodes" id="episodes" class="showschar-section">
-		<h2>Notable Queer-Centric Episodes</h2>
-		<div class="card-body">
-			<?php echo wp_kses_post( get_post_meta( $show_id, 'lezshows_episodes', true ) ); ?>
-		</div>
-	</section>
-	<?php
-}
-
-if ( $related ) {
-	?>
-	<section name="related-posts" id="related-posts" class="showschar-section">
-		<h2>Articles</h2>
-		<div class="container"><div class="card-body">
-			<?php
-			// phpcs:ignore WordPress.Security.EscapeOutput
-			echo lwtv_plugin()->get_cpt_related_posts( $slug );
-			?>
-		</div></div>
-	</section>
-	<?php
-}
+// Related Articles:
+get_template_part(
+	'template-parts/partials/related',
+	'articles',
+	array(
+		'to_show' => $show_id,
+	),
+);
 
 // Great big characters section!
 ?>
@@ -169,7 +133,7 @@ if ( $related ) {
 				<div class="container characters-regulars-container"><div class="row site-loop character-show-loop">
 				<?php
 				foreach ( $chars_by_role['regular'] as $character ) {
-					include locate_template( 'template-parts/excerpt-post_type_characters.php' );
+					get_template_part( 'template-parts/excerpt', 'post_type_characters', compact( 'character' ) );
 				}
 				echo '</div></div>';
 			}
@@ -180,7 +144,7 @@ if ( $related ) {
 				<div class="container characters-recurring-container"><div class="row site-loop character-show-loop">
 				<?php
 				foreach ( $chars_by_role['recurring'] as $character ) {
-					include locate_template( 'template-parts/excerpt-post_type_characters.php' );
+					get_template_part( 'template-parts/excerpt', 'post_type_characters', compact( 'character' ) );
 				}
 				echo '</div></div>';
 			}
@@ -205,15 +169,5 @@ if ( $related ) {
 
 <?php
 if ( false !== $rpbt_shortcode ) {
-	?>
-	<section name="similar-shows" id="related-posts" class="showschar-section">
-		<h2>Similar Shows</h2>
-		<div class="card-body">
-			<p>If you like <em><?php echo esc_html( get_the_title() ); ?></em> you may also like these shows.</p>
-			<?php
-				echo wp_kses_post( $rpbt_shortcode );
-			?>
-		</div>
-	</section>
-	<?php
+	get_template_part( 'template-parts/partials/shows', 'like-this', compact( 'show_id', 'rpbt_shortcode' ) );
 }
