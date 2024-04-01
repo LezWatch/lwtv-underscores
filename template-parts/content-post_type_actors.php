@@ -87,7 +87,11 @@ lwtv_microformats_fix( $actor_id );
 	</div>
 </section>
 
-<?php get_template_part( 'template-parts/partials/related', 'articles', array( 'to_check' => $actor_id ) ); ?>
+<?php
+if ( isset( $related ) && $related ) {
+	get_template_part( 'template-parts/partials/related', 'articles', array( 'to_check' => $actor_id ) );
+}
+?>
 
 <section name="characters" id="characters" class="showschar-section">
 	<h2>Characters</h2>

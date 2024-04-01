@@ -91,14 +91,11 @@ foreach ( $maybe_has as $key => $value ) {
 	}
 }
 
-// Related Articles:
-get_template_part(
-	'template-parts/partials/related',
-	'articles',
-	array(
-		'to_show' => $show_id,
-	),
-);
+if ( $maybe_has['related']['meta'] ) {
+	// Related Articles.
+	get_template_part( 'template-parts/partials/related', 'articles', array( 'to_show' => $show_id ) );
+}
+
 
 // Great big characters section!
 ?>
