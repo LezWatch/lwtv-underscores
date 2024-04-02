@@ -44,7 +44,7 @@ if ( 'full' === $format ) {
 	unset( $gender_sexuality['pronouns'] );
 	echo '<div class="card-meta-item gender sexuality"><p>';
 	foreach ( $gender_sexuality as $item => $key ) {
-		if ( empty( $key['data'] ) ) {
+		if ( empty( $key['data'] ) || ! isset( $key['item'] ) ) {
 			continue;
 		}
 		echo '&bull; <strong>' . esc_html( ucfirst( $key['item'] ) ) . ':</strong> ' . wp_kses_post( $key['data'] ) . '<br />';
