@@ -1152,7 +1152,6 @@ table.lwtvc {
 
 
 /* Single Character & Single Actor Template */
-
 .character-page , .actor-page {
 	.card {
 		border: none;
@@ -1191,6 +1190,16 @@ table.lwtvc {
 			.accordion-button:not(.collapsed) {
 				background-color: $lwtv-grey2;
 			}
+		}
+	}
+}
+
+.show-page {
+	.card {
+		.single-char-img {
+			float: left;
+			margin: 0 2rem 0 0;
+			width: 300px;
 		}
 	}
 }
