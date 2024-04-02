@@ -53,7 +53,7 @@ $maybe_social = array(
 	),
 	'bluesky'   => array(
 		'meta' => 'lezactors_bluesky',
-		'fa'   => 'fab fa-square',
+		'fa'   => 'fab fa-bluesky',
 		'hide' => true,
 	),
 	'twitch'    => array(
