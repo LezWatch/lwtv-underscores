@@ -12,13 +12,27 @@ $format  = $args['format'] ?? 'full';
 
 $thumb_class = ( 'full' === $format ) ? 'rounded float-left' : 'float-left';
 
+// Show Meta
+$show_meta    = get_post_meta( $this_id, 'lezchars_show_group', true );
+$show_appears = '';
+
+if ( isset( $show_meta ) && ! empty( $show_meta ) ) {
+	foreach ( $show_meta as $show ) {
+		$show_id = ( is_array( $show['show'] ) ) ? $show['show'][0] : $show['show'];
+		if ( (int) get_the_ID() === (int) $show_id ) {
+			sort( $show['appears'] );
+			$show_appears = ' (' . implode( ', ', $show['appears'] ) . ')';
+		}
+	}
+}
+
 // Thumbnail attribution
 $thumb_attribution = get_post_meta( get_post_thumbnail_id( $this_id ), 'lwtv_attribution', true );
 $thumb_title       = ( empty( $thumb_attribution ) ) ? get_the_title( $this_id ) : get_the_title( $this_id ) . ' &copy; ' . $thumb_attribution;
 $thumb_array       = array(
 	'class' => 'single-char-img ' . $thumb_class,
-	'alt'   => get_the_title(),
-	'title' => $thumb_title,
+	'alt'   => get_the_title( $this_id ),
+	'title' => $thumb_title . $show_appears,
 );
 
 // Alt Images
@@ -29,7 +43,7 @@ if ( $alt_images ) {
 		$attr_array   = array(
 			'class' => 'single-char-img ' . $thumb_class,
 			'alt'   => get_the_title( $this_id ) . ' ' . $an_image['alt_image_text'],
-			'title' => $thumb_title . ' - ' . $an_image['alt_image_text'],
+			'title' => $thumb_title . ' - ' . $an_image['alt_image_text'] . $show_appears,
 		);
 		$image_tabs[] = array(
 			'title' => $an_image['alt_image_text'],
@@ -44,7 +58,13 @@ if ( ! has_post_thumbnail( $this_id ) ) {
 	<img src="<?php echo esc_url( get_template_directory_uri() ); ?>/images/mystery-woman.jpg" class="single-char-img rounded float-left" alt="<?php echo esc_attr( get_the_title() ); ?>" title="<?php echo esc_attr( get_the_title() ); ?>" />
 	<?php
 } elseif ( ! isset( $image_tabs ) || ! is_array( $image_tabs ) ) {
+	if ( 'excerpt' === $format ) {
+		echo '<a href="' . esc_url( get_permalink( $this_id ) ) . '" title="' . esc_attr( $thumb_title ) . '">';
+	}
 	echo get_the_post_thumbnail( $this_id, 'character-img', $thumb_array );
+	if ( 'excerpt' === $format ) {
+		echo '</a>';
+	}
 } else {
 	?>
 	<div class="featured-image-tabs ">

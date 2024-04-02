@@ -5,7 +5,7 @@ Theme URI: https://lezwatchtv.com/
 Author: Tracy Levesque, Mika Epstein
 Author URI: https://lezwatchtv.com/
 Description: LezWatch.TV Theme Episode III - Return of the Custom Theme
-Version: 6.0.3
+Version: 6.0.4
 License: GNU General Public License v2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Text Domain: yikes_starter
@@ -834,9 +834,9 @@ select {
 }
 .widget_yikes_social_menu_widget li.bluesky a:before {
   display: none;
-  font: var(--fa-font-solid);
-  content: "";
-  font-family: "Font Awesome 5 Free";
+  font: var(--fa-font-brands);
+  content: "";
+  font-family: "Font Awesome 5 Brands";
 }
 
 /* ==========================================================================
@@ -1395,6 +1395,12 @@ table.lwtvc tbody {
 }
 .character-page .card #characterActors.accordion .accordion-button:not(.collapsed), .character-page .card #characterShows.accordion .accordion-button:not(.collapsed), .actor-page .card #characterActors.accordion .accordion-button:not(.collapsed), .actor-page .card #characterShows.accordion .accordion-button:not(.collapsed) {
   background-color: #d6d6d6;
+}
+
+.show-page .card .single-char-img {
+  float: left;
+  margin: 0 2rem 0 0;
+  width: 300px;
 }
 
 .character-cliche svg {
@@ -2421,6 +2427,7 @@ div.facetwp-facet-shows_scores input.facetwp-number {
   }
 
   .actor-page .card .single-char-img,
+  .show-page .card .single-char-img,
   .character-page .card .single-char-img {
     float: none;
     margin: 0 0 2rem 0;

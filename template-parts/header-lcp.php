@@ -31,7 +31,7 @@ if ( is_front_page() ) {
 // Page with Thumbnail
 if ( has_post_thumbnail( $this_id ) ) {
 	$featured_size = array(
-		'posts'                => 'large',
+		'post'                 => 'large',
 		'page'                 => 'large',
 		'post_type_actors'     => 'character-img',
 		'post_type_shows'      => 'show-img',
