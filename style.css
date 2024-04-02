@@ -1397,6 +1397,12 @@ table.lwtvc tbody {
   background-color: #d6d6d6;
 }
 
+.show-page .card .single-char-img {
+  float: left;
+  margin: 0 2rem 0 0;
+  width: 300px;
+}
+
 .character-cliche svg {
   height: 15px;
   width: 15px;
@@ -2421,6 +2427,7 @@ div.facetwp-facet-shows_scores input.facetwp-number {
   }
 
   .actor-page .card .single-char-img,
+  .show-page .card .single-char-img,
   .character-page .card .single-char-img {
     float: none;
     margin: 0 0 2rem 0;
