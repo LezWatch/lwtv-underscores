@@ -40,8 +40,8 @@ lwtv_microformats_fix( $character );
 			'template-parts/partials/image',
 			'headshot',
 			array(
-				'character' => $post->ID,
-				'format'    => 'full',
+				'to_show' => $post->ID,
+				'format'  => 'full',
 			)
 		);
 		?>
