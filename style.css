@@ -1440,6 +1440,9 @@ table.lwtvc tbody {
 .actor-page .card-meta-item #actor-links {
   padding-right: 0.25rem;
 }
+.actor-page .card-meta-item .shows, .actor-page .card-meta-item .cliches {
+  margin-bottom: 0.15rem;
+}
 .actor-page .card-meta-item ul {
   padding: 0;
 }
