@@ -754,9 +754,10 @@ section {
 			background-position: center top;
 		}
 
-		img.card-img-top {
-			height: 150px;
-			width: 340px;
+		.show-like-this-image-wrapper {
+			max-height: 125px;
+			overflow: hidden;
+			display: inline;
 		}
 	}
 }
@@ -1148,6 +1149,12 @@ table.lwtvc {
 	.character-archive-loop &, .actor-archive-loop {
 		height: 275px;
 	}
+}
+
+.related-article-image-wrapper {
+	max-height: 100px;
+	overflow: hidden;
+	display: inline;
 }
 
 

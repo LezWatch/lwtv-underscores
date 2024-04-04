@@ -1026,9 +1026,10 @@ section {
   background-size: cover;
   background-position: center top;
 }
-.site-loop.related-posts-by-taxonomy-loop .card img.card-img-top, .site-loop.related-posts-by-taxonomy-loop .image img.card-img-top {
-  height: 150px;
-  width: 340px;
+.site-loop.related-posts-by-taxonomy-loop .card .show-like-this-image-wrapper, .site-loop.related-posts-by-taxonomy-loop .image .show-like-this-image-wrapper {
+  max-height: 125px;
+  overflow: hidden;
+  display: inline;
 }
 
 .home-featured-shows {
@@ -1359,6 +1360,12 @@ table.lwtvc tbody {
 }
 .character-show-loop .character-image-wrapper, .search-results .character-image-wrapper, .character-archive-loop .character-image-wrapper, .character-image-wrapper .actor-archive-loop, .character-show-loop .actor-image-wrapper, .search-results .actor-image-wrapper, .character-archive-loop .actor-image-wrapper, .actor-image-wrapper .actor-archive-loop {
   height: 275px;
+}
+
+.related-article-image-wrapper {
+  max-height: 100px;
+  overflow: hidden;
+  display: inline;
 }
 
 /* Single Character & Single Actor Template */
