@@ -5,7 +5,7 @@ Theme URI: https://lezwatchtv.com/
 Author: Tracy Levesque, Mika Epstein
 Author URI: https://lezwatchtv.com/
 Description: LezWatch.TV Theme Episode III - Return of the Custom Theme
-Version: 6.0.4
+Version: 6.0.5
 License: GNU General Public License v2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Text Domain: yikes_starter
@@ -1026,9 +1026,10 @@ section {
   background-size: cover;
   background-position: center top;
 }
-.site-loop.related-posts-by-taxonomy-loop .card img.card-img-top, .site-loop.related-posts-by-taxonomy-loop .image img.card-img-top {
-  height: 150px;
-  width: 340px;
+.site-loop.related-posts-by-taxonomy-loop .card .show-like-this-image-wrapper, .site-loop.related-posts-by-taxonomy-loop .image .show-like-this-image-wrapper {
+  max-height: 125px;
+  overflow: hidden;
+  display: inline;
 }
 
 .home-featured-shows {
@@ -1361,6 +1362,12 @@ table.lwtvc tbody {
   height: 275px;
 }
 
+.related-article-image-wrapper {
+  max-height: 100px;
+  overflow: hidden;
+  display: inline;
+}
+
 /* Single Character & Single Actor Template */
 .character-page .card, .actor-page .card {
   border: none;
@@ -1439,6 +1446,9 @@ table.lwtvc tbody {
 }
 .actor-page .card-meta-item #actor-links {
   padding-right: 0.25rem;
+}
+.actor-page .card-meta-item .shows, .actor-page .card-meta-item .cliches {
+  margin-bottom: 0.15rem;
 }
 .actor-page .card-meta-item ul {
   padding: 0;

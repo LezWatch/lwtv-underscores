@@ -17,57 +17,78 @@ $actor_urls = array();
 $maybe_social = array(
 	'website'   => array(
 		'meta' => 'lezactors_homepage',
+		'base' => '',
+		'post' => '',
 		'fa'   => 'fas fa-home',
 		'hide' => false,
 	),
 	'imdb'      => array(
 		'label' => 'IMDb',
 		'meta'  => 'lezactors_imdb',
+		'base'  => 'https://imdb.com/name/',
+		'post' => '',
 		'fa'    => 'fab fa-imdb',
 		'hide'  => false,
 	),
 	'wikipedia' => array(
 		'meta' => 'lezactors_wikipedia',
+		'base' => '',
+		'post' => '',
 		'fa'   => 'fab fa-wikipedia-w',
 		'hide' => false,
 	),
 	'twitter'   => array(
 		'meta' => 'lezactors_twitter',
+		'base' => 'https://twitter.com/',
+		'post' => '',
 		'fa'   => 'fab fa-x-twitter',
 		'hide' => true,
 	),
 	'instagram' => array(
 		'meta' => 'lezactors_instagram',
+		'base' => 'https://instagram.com/',
+		'post' => '',
 		'fa'   => 'fab fa-instagram',
 		'hide' => true,
 	),
 	'facebook'  => array(
 		'meta' => 'lezactors_facebook',
+		'base' => '',
+		'post' => '',
 		'fa'   => 'fab fa-facebook',
 		'hide' => true,
 	),
 	'tiktok'    => array(
 		'meta' => 'lezactors_tiktok',
 		'fa'   => 'fab fa-tiktok',
+		'base' => 'https://tiktok.com/',
 		'hide' => true,
 	),
 	'bluesky'   => array(
 		'meta' => 'lezactors_bluesky',
-		'fa'   => 'fab fa-bluesky',
+		'base' => '',
+		'post' => '',
+		'fa'   => 'fab fa-square',
 		'hide' => true,
 	),
 	'twitch'    => array(
 		'meta' => 'lezactors_twitch',
+		'base' => '',
+		'post' => '',
 		'fa'   => 'fab fa-twitch',
 		'hide' => true,
 	),
 	'tumblr'    => array(
 		'meta' => 'lezactors_tumblr',
+		'base' => 'https://',
+		'post' => '.tumblr.com/',
 		'fa'   => 'fab fa-tumblr',
 		'hide' => true,
 	),
 	'mastodon'  => array(
 		'meta' => 'lezactors_mastodon',
+		'base' => '',
+		'post' => '',
 		'fa'   => 'fab fa-mastodon',
 		'hide' => true,
 	),
@@ -83,7 +104,7 @@ foreach ( $maybe_social as $social => $data ) {
 		$name                  = ( isset( $data['label'] ) ) ? $data['label'] : ucwords( $social );
 		$actor_urls[ $social ] = array(
 			'name' => $name,
-			'url'  => esc_url( get_post_meta( $actor, $data['meta'], true ) ),
+			'url'  => $data['base'] . get_post_meta( $actor, $data['meta'], true ) . $data['post'],
 			'fa'   => $data['fa'],
 		);
 	}
