@@ -25,7 +25,7 @@ $maybe_social = array(
 	'imdb'      => array(
 		'label' => 'IMDb',
 		'meta'  => 'lezactors_imdb',
-		'base'  => 'https://imdb.com',
+		'base'  => 'https://imdb.com/',
 		'post' => '',
 		'fa'    => 'fab fa-imdb',
 		'hide'  => false,
@@ -39,14 +39,14 @@ $maybe_social = array(
 	),
 	'twitter'   => array(
 		'meta' => 'lezactors_twitter',
-		'base' => 'https://twitter.com',
+		'base' => 'https://twitter.com/',
 		'post' => '',
 		'fa'   => 'fab fa-x-twitter',
 		'hide' => true,
 	),
 	'instagram' => array(
 		'meta' => 'lezactors_instagram',
-		'base' => 'https://instagram.com',
+		'base' => 'https://instagram.com/',
 		'post' => '',
 		'fa'   => 'fab fa-instagram',
 		'hide' => true,
@@ -61,7 +61,7 @@ $maybe_social = array(
 	'tiktok'    => array(
 		'meta' => 'lezactors_tiktok',
 		'fa'   => 'fab fa-tiktok',
-		'base' => 'https://tiktok.com',
+		'base' => 'https://tiktok.com/',
 		'hide' => true,
 	),
 	'bluesky'   => array(
@@ -81,7 +81,7 @@ $maybe_social = array(
 	'tumblr'    => array(
 		'meta' => 'lezactors_tumblr',
 		'base' => 'https://',
-		'post' => '.tumblr.com',
+		'post' => '.tumblr.com/',
 		'fa'   => 'fab fa-tumblr',
 		'hide' => true,
 	),
