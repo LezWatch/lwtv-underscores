@@ -16,6 +16,9 @@ $all_dead      = get_post_meta( $actor_id, 'lezactors_dead_list', true );
 $havecharcount = ( is_array( $all_chars ) ) ? count( $all_chars ) : 0;
 $havedeadcount = ( is_array( $all_dead ) ) ? count( $all_dead ) : 0;
 
+// Get the related articles.
+$related = lwtv_plugin()->get_cpt_related_posts( $actor_id );
+
 // Microformats Fix.
 lwtv_microformats_fix( $actor_id );
 ?>
@@ -58,14 +61,6 @@ lwtv_microformats_fix( $actor_id );
 		<h4 class="toc-title">Table of Contents</h4>
 		<a class="breadcrumb-item smoothscroll" href="#biography">Biography</a>
 		<a class="breadcrumb-item smoothscroll" href="#vitals">Overview</a>
-		<a class="breadcrumb-item smoothscroll" href="#stats">Stats</a>
-		<?php
-		if ( isset( $related ) && $related ) {
-			?>
-			<a class="breadcrumb-item smoothscroll" href="#related-posts">Related Posts</a>
-			<?php
-		}
-		?>
 		<a class="breadcrumb-item smoothscroll" href="#characters">Characters</a>
 	</nav>
 </section>
@@ -87,11 +82,21 @@ lwtv_microformats_fix( $actor_id );
 	</div>
 </section>
 
-<?php
-if ( isset( $related ) && $related ) {
-	get_template_part( 'template-parts/partials/related', 'articles', array( 'to_check' => $actor_id ) );
-}
-?>
+<section name="overlays" id="overlays" class="showschar-section">
+	<div class="card-body">
+		<div class="d-grid gap-2 col-6 mx-auto">
+		<?php
+		if ( 0 !== $havecharcount ) {
+			get_template_part( 'template-parts/overlays/statistics', 'actors', compact( 'actor_id' ) );
+		}
+
+		if ( isset( $related ) && $related ) {
+			get_template_part( 'template-parts/overlays/related-articles', '', array( 'to_show' => $actor_id ) );
+		}
+		?>
+		</div>
+	</div>
+</section>
 
 <section name="characters" id="characters" class="showschar-section">
 	<h2>Characters</h2>
@@ -119,9 +124,3 @@ if ( isset( $related ) && $related ) {
 		?>
 	</div>
 </section>
-
-<?php
-// If there are characters, show this:
-if ( 0 !== $havecharcount ) {
-	get_template_part( 'template-parts/partials/actors', 'stats', compact( 'actor_id' ) );
-}

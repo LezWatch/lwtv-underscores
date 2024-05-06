@@ -18,6 +18,9 @@ $show_appears = '';
 
 if ( isset( $show_meta ) && ! empty( $show_meta ) ) {
 	foreach ( $show_meta as $show ) {
+		if ( ! isset( $show['show'] ) ) {
+			continue;
+		}
 		$show_id = ( is_array( $show['show'] ) ) ? $show['show'][0] : $show['show'];
 		if ( (int) get_the_ID() === (int) $show_id ) {
 			sort( $show['appears'] );
