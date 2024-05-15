@@ -2040,19 +2040,25 @@ div.facetwp-facet-shows_scores input.facetwp-number {
 
 		span {
 			padding: 1.15rem;
-		}
+			color: $lwtv-pink;
 
-		svg {
-			height: 50px;
-			width: 50px;
-			vertical-align: middle;
-		}
-		svg * {
-			fill: $darkgrey;
-		}
+			&:hover {
+				color: $darkgrey;
 
-		&:hover svg * {
-			fill: $lwtv-pink;
+				svg *{
+					fill: $darkgrey;
+				}
+			}
+
+			svg {
+				height: 50px;
+				width: 50px;
+				vertical-align: middle;
+			}
+			svg * {
+				fill: $lwtv-pink;
+			}
+
 		}
 	}
 

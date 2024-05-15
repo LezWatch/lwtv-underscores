@@ -2164,16 +2164,20 @@ div.facetwp-facet-shows_scores input.facetwp-number {
 }
 .overlay-section .col span {
   padding: 1.15rem;
+  color: #CB3E85;
 }
-.overlay-section .col svg {
+.overlay-section .col span:hover {
+  color: #222;
+}
+.overlay-section .col span:hover svg * {
+  fill: #222;
+}
+.overlay-section .col span svg {
   height: 50px;
   width: 50px;
   vertical-align: middle;
 }
-.overlay-section .col svg * {
-  fill: #222;
-}
-.overlay-section .col:hover svg * {
+.overlay-section .col span svg * {
   fill: #CB3E85;
 }
 .overlay-section .modal {
