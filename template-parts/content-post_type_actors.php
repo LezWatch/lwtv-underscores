@@ -82,9 +82,9 @@ lwtv_microformats_fix( $actor_id );
 	</div>
 </section>
 
-<section name="overlays" id="overlays" class="showschar-section">
-	<div class="card-body">
-		<div class="d-grid gap-2 col-6 mx-auto">
+<section name="overlays" id="overlays" class="overlay-section">
+	<div class="container">
+		<div class="row">
 		<?php
 		if ( 0 !== $havecharcount ) {
 			get_template_part( 'template-parts/overlays/statistics', 'actors', compact( 'actor_id' ) );
@@ -96,6 +96,7 @@ lwtv_microformats_fix( $actor_id );
 		?>
 		</div>
 	</div>
+	<p>&nbsp;</p>
 </section>
 
 <section name="characters" id="characters" class="showschar-section">

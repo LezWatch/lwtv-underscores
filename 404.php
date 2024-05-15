@@ -29,7 +29,7 @@ get_header();
 					<div id="content" class="site-content clearfix">
 						<article id="post-0" class="post not-found">
 							<div class="entry-content clearfix">
-								<p><img src="<?php echo esc_url( get_template_directory_uri() ); ?>/images/rose.gif" alt="Rose revealing herself from Jane the Virgin" class="alignleft"/></p>
+								<p><img src="<?php echo esc_url( get_template_directory_uri() ); ?>/images/rose.gif" alt="Rose revealing herself by peeling off a face mask in Jane the Virgin" class="alignleft"/></p>
 								<p><?php esc_attr_e( 'Sorry, there is no page with this address. Please try again or use the search below.', 'lwtv-underscores' ); ?></p>
 
 								<div class="row g-0">

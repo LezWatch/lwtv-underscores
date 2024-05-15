@@ -18,7 +18,7 @@ $show_appears = '';
 
 if ( isset( $show_meta ) && ! empty( $show_meta ) ) {
 	foreach ( $show_meta as $show ) {
-		if ( ! isset( $show['show'] ) ) {
+		if ( ! isset( $show['show'] ) || ! is_array( $show['appears'] ) ) {
 			continue;
 		}
 		$show_id = ( is_array( $show['show'] ) ) ? $show['show'][0] : $show['show'];
