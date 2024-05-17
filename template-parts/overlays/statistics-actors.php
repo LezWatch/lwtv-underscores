@@ -13,18 +13,17 @@ $this_id = $args['actor_id'] ?? null;
 
 <div class="col">
 	<div class="card text-center">
-		<span data-bs-toggle="modal" data-bs-target="#statisticsModal">
-			<?php echo lwtv_symbolicons( 'presentation-alt.svg', 'fa-chart-line' ); ?>
-			<p>Statistics</p>
+		<span data-bs-toggle="modal" data-bs-target="#statistics">
+			<h5><?php echo lwtv_symbolicons( 'presentation-alt.svg', 'fa-chart-line' ); ?> Statistics</h5>
 		</span>
 	</div>
 </div>
 
-<div class="modal fade" id="statisticsModal" tabindex="-1" aria-labelledby="statisticsModalLabel" aria-hidden="true">
+<div class="modal fade" id="statistics" tabindex="-1" aria-labelledby="statisticsLabel" aria-hidden="true">
 	<div class="modal-dialog modal-lg">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h3 class="modal-title fs-5" id="statisticsModalLabel">Character Statistics</h3>
+				<h3 class="modal-title fs-5" id="statisticsLabel">Character Statistics</h3>
 				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 			</div>
 			<div class="modal-body">

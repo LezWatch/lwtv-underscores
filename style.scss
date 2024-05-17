@@ -2039,7 +2039,7 @@ div.facetwp-facet-shows_scores input.facetwp-number {
 		cursor: pointer;
 
 		span {
-			padding: 1.15rem;
+			padding-top: 1rem;
 			color: $lwtv-pink;
 
 			&:hover {
@@ -2051,8 +2051,8 @@ div.facetwp-facet-shows_scores input.facetwp-number {
 			}
 
 			svg {
-				height: 50px;
-				width: 50px;
+				height: 30px;
+				width: 30px;
 				vertical-align: middle;
 			}
 			svg * {
