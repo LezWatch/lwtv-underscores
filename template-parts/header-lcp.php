@@ -21,15 +21,11 @@ if ( false !== $logo ) {
 	<?php
 }
 
-// Front Page
-if ( is_front_page() ) {
-	if ( has_header_image() ) {
-		$featured_image = get_header_image();
-	}
-}
-
-// Page with Thumbnail
-if ( has_post_thumbnail( $this_id ) ) {
+if ( is_front_page() && has_header_image() ) {
+	// Front page
+	$featured_image = get_header_image();
+} elseif ( has_post_thumbnail( $this_id ) ) {
+	// Regular post/page
 	$featured_size = array(
 		'post'                 => 'large',
 		'page'                 => 'large',
