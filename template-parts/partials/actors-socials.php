@@ -60,8 +60,9 @@ $maybe_social = array(
 	),
 	'tiktok'    => array(
 		'meta' => 'lezactors_tiktok',
-		'fa'   => 'fab fa-tiktok',
 		'base' => 'https://tiktok.com/',
+		'post' => '',
+		'fa'   => 'fab fa-tiktok',
 		'hide' => true,
 	),
 	'bluesky'   => array(
