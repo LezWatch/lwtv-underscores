@@ -58,4 +58,3 @@ $this_id = $args['actor_id'] ?? null;
 		</div>
 	</div>
 </div>
-
