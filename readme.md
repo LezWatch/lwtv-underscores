@@ -22,19 +22,18 @@ It's recommended to use [Homebrew](https://brew.sh) on macOS or [Chocolatey](htt
 
 ## Contributing
 
-All code must pass through the `development` branch for testing. As such, any pull requests should be made to both **production** and **development**, which will push the code automatically to the appropriate server.
+All pull requests should be made to **production**.
 
 1. Using the `production` branch as base, create a new branch with a descriptive name like `fixing-charts` or `fix/chartjs421` or `feature/latest-posts` . Commit your work to that branch until it's ready for full testing
 2. Open [a pull request](https://help.github.com/en/desktop/contributing-to-projects/creating-a-pull-request) from your feature branch to the `production` branch.
-3. Open [a pull request](https://help.github.com/en/desktop/contributing-to-projects/creating-a-pull-request) from your feature branch to the `development` branch.
 3. If you are not a main developer, your pull request will be reviewed before it can be merged. If there are issues or changes needed, you may be asked to do so, or they may be done for you.
-4. When the code passes review, it will be merged into the `development` branch and can be tested on the dev server.
-5. Once the code passes tests, the production PR can be merged into the `production` branch, which will auto deploy.
+4. When the code passes review, run `npm run merge-to-develop` to push it to **development** (no extra PR needed).
+5. Once the code passes tests and is approved, the branch can be merged into `production` and the job is done!
 
 To install and update:
 
 * `$ npm install` - Install all the things.
-* `$ npm update` - Updates all the things.
+* `$ npm updater` - Updates all the things.
 * `$ npm build` - Builds all the CSS and handles composer versions.
 
 Commits are currently not linted by default.

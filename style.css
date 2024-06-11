@@ -5,7 +5,7 @@ Theme URI: https://lezwatchtv.com/
 Author: Tracy Levesque, Mika Epstein
 Author URI: https://lezwatchtv.com/
 Description: LezWatch.TV Theme Episode III - Return of the Custom Theme
-Version: 6.0.4
+Version: 6.0.5
 License: GNU General Public License v2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Text Domain: yikes_starter
@@ -130,7 +130,6 @@ a:hover, a:focus, a:active {
 .screen-reader-text {
   border: 0;
   clip: rect(1px, 1px, 1px, 1px);
-  -webkit-clip-path: inset(50%);
   clip-path: inset(50%);
   height: 1px;
   margin: -1px;
@@ -143,8 +142,7 @@ a:hover, a:focus, a:active {
 .screen-reader-text:focus {
   background-color: #eee;
   clip: auto !important;
-  -webkit-clip-path: none;
-          clip-path: none;
+  clip-path: none;
   color: #444;
   display: block;
   font-size: 1em;
@@ -657,7 +655,6 @@ select {
 .navbar.main-nav ul.navbar-nav > li.nav-item.hide-text > a.nav-link .menu-link-text {
   border: 0;
   clip: rect(1px, 1px, 1px, 1px);
-  -webkit-clip-path: inset(50%);
   clip-path: inset(50%);
   height: 1px;
   margin: -1px;
@@ -670,8 +667,7 @@ select {
 .navbar.main-nav ul.navbar-nav > li.nav-item.hide-text > a.nav-link .menu-link-text:focus {
   background-color: #eee;
   clip: auto !important;
-  -webkit-clip-path: none;
-          clip-path: none;
+  clip-path: none;
   color: #444;
   display: block;
   font-size: 1em;
@@ -1474,14 +1470,17 @@ h3.post-title.excerpt {
   margin-top: 0;
 }
 
+.overlay-section,
 .relatedposts-section,
 .showschar-section {
   padding-bottom: 0;
 }
+.overlay-section p:last-child,
 .relatedposts-section p:last-child,
 .showschar-section p:last-child {
   margin-bottom: 0;
 }
+.overlay-section h2,
 .relatedposts-section h2,
 .showschar-section h2 {
   background-color: #f3f3f3;
@@ -2156,6 +2155,36 @@ div.facetwp-facet-shows_scores input.facetwp-number {
 }
 
 /* ==========================================================================
+	 Modal Overlays
+	 ========================================================================== */
+/* =Global
+----------------------------------------------- */
+.overlay-section .col {
+  cursor: pointer;
+}
+.overlay-section .col span {
+  padding-top: 1rem;
+  color: #CB3E85;
+}
+.overlay-section .col span:hover {
+  color: #222;
+}
+.overlay-section .col span:hover svg * {
+  fill: #222;
+}
+.overlay-section .col span svg {
+  height: 30px;
+  width: 30px;
+  vertical-align: middle;
+}
+.overlay-section .col span svg * {
+  fill: #CB3E85;
+}
+.overlay-section .modal {
+  padding-block-start: 10px;
+}
+
+/* ==========================================================================
 	 Widgetized Areas
 	 ========================================================================== */
 /* =Global
@@ -2287,7 +2316,6 @@ div.facetwp-facet-shows_scores input.facetwp-number {
   content: ', opens in new tab';
   border: 0;
   clip: rect(1px, 1px, 1px, 1px);
-  -webkit-clip-path: inset(50%);
   clip-path: inset(50%);
   height: 1px;
   margin: -1px;
@@ -2300,8 +2328,7 @@ div.facetwp-facet-shows_scores input.facetwp-number {
 #colophon .footer-widgets ul#menu-follow-us li a:after:focus {
   background-color: #eee;
   clip: auto !important;
-  -webkit-clip-path: none;
-          clip-path: none;
+  clip-path: none;
   color: #444;
   display: block;
   font-size: 1em;

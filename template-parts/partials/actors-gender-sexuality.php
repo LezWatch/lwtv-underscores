@@ -25,7 +25,7 @@ $gender_sexuality = array(
 		'label' => 'Sexual Orientation',
 	),
 	'pronouns'  => array(
-		'data'  => lwtv_plugin()->get_actor_pronouns( $actor ),
+		'data'  => strtolower( lwtv_plugin()->get_actor_pronouns( $actor ) ),
 		'label' => 'Pronouns',
 	),
 );

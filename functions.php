@@ -24,7 +24,7 @@ function lwtv_admin_notice_missing_plugin() {
 // Versioning for efficient developers.
 if ( ! defined( 'LWTV_THEME_VERSION' ) ) {
 	$versions = array(
-		'lwtv-underscores' => '6.0.4',    // Bump this any time you make serious CSS changes.
+		'lwtv-underscores' => '6.0.5',    // Bump this any time you make serious CSS changes.
 		'font-awesome'     => '6.5.2',    // Bump when you update Font Awesome.
 		'bootstrap'        => '5.3.3',    // Bump when you update bootstrap.
 		'lwtv-blocks'      => '1.0.0',    // Bump when you update the blocks.
@@ -418,7 +418,7 @@ function yikes_starter_scripts() {
 	wp_enqueue_style( 'open-sans', '//fonts.googleapis.com/css?family=Open+Sans:400,600,700', array(), $lwtv_underscores, false );
 	wp_enqueue_style( 'oswald', '//fonts.googleapis.com/css?family=Oswald:400,500', array(), $lwtv_underscores, false );
 
-	// This has to be at the bottom to override Bootstrap 4.x.
+	// This has to be at the bottom to override Bootstrap.
 	wp_enqueue_style( 'yikes-starter-style', get_stylesheet_directory_uri() . '/style.min.css', array(), $bootstrap, false );
 }
 
