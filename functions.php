@@ -418,7 +418,7 @@ function yikes_starter_scripts() {
 	wp_enqueue_style( 'open-sans', '//fonts.googleapis.com/css?family=Open+Sans:400,600,700', array(), $lwtv_underscores, false );
 	wp_enqueue_style( 'oswald', '//fonts.googleapis.com/css?family=Oswald:400,500', array(), $lwtv_underscores, false );
 
-	// This has to be at the bottom to override Bootstrap 4.x.
+	// This has to be at the bottom to override Bootstrap.
 	wp_enqueue_style( 'yikes-starter-style', get_stylesheet_directory_uri() . '/style.min.css', array(), $bootstrap, false );
 }
 

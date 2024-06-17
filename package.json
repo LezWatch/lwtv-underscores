@@ -5,7 +5,10 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "composer update && grunt build"
+    "build": "composer update && grunt build",
+    "clean": "rm -rf node_modules vendor blocks/node_modules",
+    "merge-to-develop": "currentBranch=$(git rev-parse --abbrev-ref HEAD) && git checkout development && git pull && git merge $currentBranch && git push origin development && git checkout $currentBranch",
+    "updater": "npm update && composer update"
   },
   "author": "Yikes Inc.",
   "license": "GPL-2.0",

@@ -103,7 +103,7 @@ get_header(); ?>
 										$alt_src = get_post_meta( get_the_ID(), '_wp_attachment_image_alt', true );
 										$alt_txt = ( isset( $alt_src ) && '' !== $alt_src ) ? $alt_src : get_the_title();
 										?>
-										style="background-image: url(<?php the_post_thumbnail_url( 'large' ); ?>);" aria-label="<?php echo esc_html( $alt_txt ); ?>"
+										style="background-image: url(<?php the_post_thumbnail_url( 'large' ); ?>);"
 										<?php
 									}
 									?>
