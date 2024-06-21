@@ -164,7 +164,7 @@ if ( false !== $alt_names && ! empty( $alt_names ) ) {
 			foreach ( $tropes as $trope ) {
 				?>
 				<li class="list-group-item show trope trope-<?php echo esc_attr( $trope->slug ); ?>">
-					<a href="<?php echo esc_url( get_term_link( $trope->slug, 'lez_tropes' ) ); ?>" rel="show trope">
+					<a href="<?php echo esc_url( get_term_link( $trope->slug, 'lez_tropes' ) ); ?>" rel="show trope" aria-label="Read more about the trope <?php echo esc_attr( $trope->name ); ?>.">
 					<?php
 						// Echo the taxonomy icon (default to squares if empty)
 						$icon = get_term_meta( $trope->term_id, 'lez_termsmeta_icon', true );
