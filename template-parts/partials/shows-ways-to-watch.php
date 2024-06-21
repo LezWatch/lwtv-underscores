@@ -12,7 +12,7 @@ if ( ! $show_id ) {
 	return;
 }
 
-// Ways to Watch section (yes all ways-to-watch URLs are in a badly named post_meta).
+// Ways to Watch section (yes old ways-to-watch URLs are in a badly named post_meta).
 $ways_to_watch = array(
 	'old' => get_post_meta( $show_id, 'lezshows_affiliate', true ),
 	'new' => get_post_meta( $show_id, 'lezshows_waystowatch', true ),
