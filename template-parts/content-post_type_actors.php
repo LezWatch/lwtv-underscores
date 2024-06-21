@@ -67,15 +67,18 @@ lwtv_microformats_fix( $actor_id );
 
 <section name="vitals" id="vitals" class="showschar-section">
 	<h2>Overview</h2>
-	<div class="card-body">
-		<div class="card-meta">
-			<div class="card-meta-item">
+
+	<div class="overview-container">
+		<div class="row align-items-start">
+			<div class="col">
 				<?php get_template_part( 'template-parts/partials/actors', 'life', array( 'actor' => $actor_id ) ); ?>
 			</div>
-			<div class="card-meta-item">
+			<div class="col">
 				<?php get_template_part( 'template-parts/partials/actors', 'gender-sexuality', array( 'actor' => $actor_id ) ); ?>
 			</div>
-			<div class="card-meta-item">
+		</div>
+		<div class="row align-items-start">
+			<div class="col">
 				<?php get_template_part( 'template-parts/partials/actors', 'socials', array( 'actor' => $actor_id ) ); ?>
 			</div>
 		</div>

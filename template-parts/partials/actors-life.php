@@ -48,18 +48,14 @@ if ( isset( $born ) ) {
 
 // Output everything.
 if ( count( $life_array['dates'] ) > 0 ) {
-	echo '<ul class="list-group list-group-horizontal">';
+	echo '<ul class="list-group list-group-flush">';
 	foreach ( $life_array['dates'] as $event => $date ) {
-		echo '<li><strong>' . esc_html( ucfirst( $event ) ) . '</strong>: ' . wp_kses_post( $date ) . '</li>';
+		echo '<li class="list-group-item"><strong>' . esc_html( ucfirst( $event ) ) . '</strong>:</br>' . wp_kses_post( $date ) . '</li>';
 	}
-	echo '</ul>';
 
 	if ( ! empty( $life_array['age'] ) ) {
-		echo '</br>';
-		echo '<ul class="list-group list-group-horizontal">';
-		echo '<li><strong>Age</strong>: ' . wp_kses_post( $life_array['age'] ) . '</li>';
-		echo '</ul>';
+		echo '<li class="list-group-item"><strong>Age</strong>:</br>' . wp_kses_post( $life_array['age'] ) . '</li>';
 	}
 
-	echo '<hr />';
+	echo '</ul>';
 }

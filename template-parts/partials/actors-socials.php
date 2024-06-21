@@ -15,14 +15,14 @@ $actor_urls = array();
 
 // Social Media and other external links.
 $maybe_social = array(
-	'website'   => array(
+	'website'     => array(
 		'meta' => 'lezactors_homepage',
 		'base' => '',
 		'post' => '',
 		'fa'   => 'fas fa-home',
 		'hide' => false,
 	),
-	'imdb'      => array(
+	'imdb'        => array(
 		'label' => 'IMDb',
 		'meta'  => 'lezactors_imdb',
 		'base'  => 'https://imdb.com/name/',
@@ -30,63 +30,63 @@ $maybe_social = array(
 		'fa'    => 'fab fa-imdb',
 		'hide'  => false,
 	),
-	'wikipedia' => array(
+	'wikipedia'   => array(
 		'meta' => 'lezactors_wikipedia',
 		'base' => '',
 		'post' => '',
 		'fa'   => 'fab fa-wikipedia-w',
 		'hide' => false,
 	),
-	'twitter'   => array(
+	'x (Twitter)' => array(
 		'meta' => 'lezactors_twitter',
 		'base' => 'https://twitter.com/',
 		'post' => '',
 		'fa'   => 'fab fa-x-twitter',
 		'hide' => true,
 	),
-	'instagram' => array(
+	'instagram'   => array(
 		'meta' => 'lezactors_instagram',
 		'base' => 'https://instagram.com/',
 		'post' => '',
 		'fa'   => 'fab fa-instagram',
 		'hide' => true,
 	),
-	'facebook'  => array(
+	'facebook'    => array(
 		'meta' => 'lezactors_facebook',
 		'base' => '',
 		'post' => '',
 		'fa'   => 'fab fa-facebook',
 		'hide' => true,
 	),
-	'tiktok'    => array(
+	'tiktok'      => array(
 		'meta' => 'lezactors_tiktok',
 		'base' => 'https://tiktok.com/',
 		'post' => '',
 		'fa'   => 'fab fa-tiktok',
 		'hide' => true,
 	),
-	'bluesky'   => array(
+	'bluesky'     => array(
 		'meta' => 'lezactors_bluesky',
 		'base' => '',
 		'post' => '',
 		'fa'   => 'fab fa-square',
 		'hide' => true,
 	),
-	'twitch'    => array(
+	'twitch'      => array(
 		'meta' => 'lezactors_twitch',
 		'base' => '',
 		'post' => '',
 		'fa'   => 'fab fa-twitch',
 		'hide' => true,
 	),
-	'tumblr'    => array(
+	'tumblr'      => array(
 		'meta' => 'lezactors_tumblr',
 		'base' => 'https://',
 		'post' => '.tumblr.com/',
 		'fa'   => 'fab fa-tumblr',
 		'hide' => true,
 	),
-	'mastodon'  => array(
+	'mastodon'    => array(
 		'meta' => 'lezactors_mastodon',
 		'base' => '',
 		'post' => '',
@@ -112,10 +112,20 @@ foreach ( $maybe_social as $social => $data ) {
 }
 
 if ( count( $actor_urls ) > 0 ) {
-	echo '<span ID="actor-links"><strong>Links: </strong></span> ';
-	echo '<ul class="actor-meta-links" aria-labelledby="actor-links">';
-	foreach ( $actor_urls as $source ) {
-		echo '<li><i class="' . esc_attr( strtolower( $source['fa'] ) ) . '" aria-hidden="true"></i> <a href="' . esc_url( $source['url'] ) . '" target="_blank">' . esc_html( $source['name'] ) . '</a><span class="screen-reader-text">, opens in new tab</span></li>';
-	}
-	echo '</ul>';
+	?>
+	<div class="card-body">
+		<div class="card-meta">
+			<div class="card-meta-item">
+				<span ID="actor-links"><strong>Links: </strong></span>
+				<ul class="actor-meta-links" aria-labelledby="actor-links">
+					<?php
+					foreach ( $actor_urls as $source ) {
+						echo '<li><i class="' . esc_attr( strtolower( $source['fa'] ) ) . '" aria-hidden="true"></i> <a href="' . esc_url( $source['url'] ) . '" target="_blank">' . esc_html( $source['name'] ) . '</a><span class="screen-reader-text">, opens in new tab</span></li>';
+					}
+					?>
+				</ul>
+			</div>
+		</div>
+	</div>
+	<?php
 }
