@@ -1931,6 +1931,7 @@ span.svg-shortcode a {
 .author-box {
 	background-color: $lwtv-ltgrey;
 	@include font-14;
+	padding-bottom: 0.6rem;
 
 	.avatar {
 		border: 1px solid $lwtv-pink;
@@ -1945,10 +1946,34 @@ span.svg-shortcode a {
 		width: 16px;
 	}
 
+	hr {
+		margin: 0.4rem 0!important;
+	}
+
 	svg {
-		width: 15px;
-		height: 15px;
-		vertical-align: middle;
+		width: 20px;
+		height: 20px;
+		vertical-align: baseline;
+		margin-right: 5px;
+	}
+
+	.author_box_social {
+		margin-left: 0.6rem;
+	}
+
+	.author_name {
+		font-weight: 900;
+		margin-top: 0.4rem;
+		margin-bottom: 0.4rem;
+
+		&.author_box_compact {
+			@include font-20;
+		}
+
+		&.author_box_large {
+			@include font-24;
+		}
+
 	}
 }
 

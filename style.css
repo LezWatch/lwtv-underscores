@@ -2071,6 +2071,7 @@ span.svg-shortcode a:hover svg {
 .author-box {
   background-color: #ebf5fa;
   font-size: 0.875rem;
+  padding-bottom: 0.6rem;
 }
 .author-box .avatar {
   border: 1px solid #CB3E85;
@@ -2082,10 +2083,28 @@ span.svg-shortcode a:hover svg {
   text-align: center;
   width: 16px;
 }
+.author-box hr {
+  margin: 0.4rem 0 !important;
+}
 .author-box svg {
-  width: 15px;
-  height: 15px;
-  vertical-align: middle;
+  width: 20px;
+  height: 20px;
+  vertical-align: baseline;
+  margin-right: 5px;
+}
+.author-box .author_box_social {
+  margin-left: 0.6rem;
+}
+.author-box .author_name {
+  font-weight: 900;
+  margin-top: 0.4rem;
+  margin-bottom: 0.4rem;
+}
+.author-box .author_name.author_box_compact {
+  font-size: 1.25rem;
+}
+.author-box .author_name.author_box_large {
+  font-size: 1.5rem;
 }
 
 .screener-worthit, .screener-worthit svg *, .screener-warn, .screener-warn svg *, .screener-star, .screener-star svg * {
