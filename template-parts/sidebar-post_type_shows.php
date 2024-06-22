@@ -57,7 +57,7 @@ lwtv_plugin()->get_admin_tools( $show_id );
 
 				$thumb_image = lwtv_symbolicons( $thumb_icon . '.svg', 'fa-' . $thumb_icon );
 				// phpcs:ignore WordPress.Security.EscapeOutput
-				echo '<span role="img" class="show-worthit ' . esc_attr( strtolower( $thumb_rating ) ) . '">' . $thumb_image . '</span>';
+				echo '<span role="img" class="show-worthit ' . esc_attr( strtolower( $thumb_rating ) ) . '" aria-label="This show has an overall review of ' . esc_attr( $thumb_rating ) . ' ">' . $thumb_image . '</span>';
 				echo wp_kses_post( $thumb_rating );
 				?>
 			</div>
@@ -191,20 +191,20 @@ if ( $intersections && ! is_wp_error( $intersections ) ) {
 			<div class="card-header">
 				<h4>Intersectionality</h4>
 			</div>
-				<ul class="trope-list list-group">
+				<ul class="intersectionality-list list-group">
 					<?php
 					// loop over each returned trope
 					foreach ( $intersections as $intersection ) {
 						?>
-						<li class="list-group-item show trope trope-<?php echo esc_attr( $intersection->slug ); ?>">
-							<a href="<?php echo esc_url( get_term_link( $intersection->slug, 'lez_intersections' ) ); ?>" rel="show trope">
+						<li class="list-group-item show intersection intersection-<?php echo esc_attr( $intersection->slug ); ?>">
+							<a href="<?php echo esc_url( get_term_link( $intersection->slug, 'lez_intersections' ) ); ?>" rel="show intersection" aria-label="Read more about the postivie intersectionality representation of <?php echo esc_attr( $intersection->name ); ?>.">
 							<?php
 							// Echo the taxonomy icon (default to squares if empty)
 							$icon = get_term_meta( $intersection->term_id, 'lez_termsmeta_icon', true );
 							echo lwtv_symbolicons( $icon . '.svg', 'fa-lemon' );
 							?>
 							</a>
-							<a href="<?php echo esc_url( get_term_link( $intersection->slug, 'lez_intersections' ) ); ?>" rel="show trope" class="trope-link"><?php echo esc_html( $intersection->name ); ?>
+							<a href="<?php echo esc_url( get_term_link( $intersection->slug, 'lez_intersections' ) ); ?>" rel="show intersection" class="intersection-link"><?php echo esc_html( $intersection->name ); ?>
 							</a>
 						</li>
 						<?php
