@@ -1400,6 +1400,7 @@ section#characters {
 }
 
 /* Affiliate Watch */
+.ways-to-watch-container,
 .affiliate-watch-container {
 	background-color: $lwtv-grey;
 	margin-bottom: 1.25rem;
@@ -1553,12 +1554,14 @@ section#characters {
 	}
 }
 
-.show.trope, .network {
-	svg {
-		width: 32px;
-		height: 32px;
-		vertical-align: middle;
-		margin-right: 10px;
+.show{
+	.trope, .network, .intersection {
+		svg {
+			width: 32px;
+			height: 32px;
+			vertical-align: middle;
+			margin-right: 10px;
+		}
 	}
 }
 
