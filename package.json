@@ -1,7 +1,7 @@
 {
   "name": "yikes-inc-starter-theme",
-  "version": "1.0.0",
-  "description": "Yikes Inc. starter theme.",
+  "version": "6.1.0",
+  "description": "LezWatch.TV Custom Theme.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -10,7 +10,7 @@
     "merge-to-develop": "currentBranch=$(git rev-parse --abbrev-ref HEAD) && git checkout development && git pull && git merge $currentBranch && git push origin development && git checkout $currentBranch",
     "updater": "npm update && composer update"
   },
-  "author": "Yikes Inc.",
+  "author": "LezWatch.TV, Yikes Inc.",
   "license": "GPL-2.0",
   "repository": "https://github.com/lezwatch/lwtv-underscores/",
   "dependencies": {
