@@ -120,7 +120,7 @@ lwtv_microformats_fix( $actor_id );
 			echo '<div class="container characters-regulars-container"><div class="row site-loop character-show-loop">';
 			if ( is_array( $all_chars ) ) {
 				foreach ( $all_chars as $character ) {
-					get_template_part( 'template-parts/excerpt/characters', array( 'character' => $character ) );
+					get_template_part( 'template-parts/excerpt/characters', '', array( 'character' => $character ) );
 				}
 			}
 			echo '</div></div>';

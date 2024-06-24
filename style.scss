@@ -1265,7 +1265,7 @@ table.lwtvc {
 
 /* Single Actor Template */
 
-.actor-page {
+.actor-page.overview-container {
 	.card {
 		.single-char-img {
 			margin-bottom: 1.25rem;
@@ -1285,8 +1285,10 @@ table.lwtvc {
 			padding: 0;
 
 			li {
-				display: inline-block;
-				width: 50%;
+				.list-group-item {
+					width: 50%;
+					display: inline-block;
+				}
 			}
 
 			&.actor-meta-links {
@@ -1302,6 +1304,19 @@ table.lwtvc {
 
 	.actor-orientation {
 		margin-left: 2rem;
+	}
+}
+
+
+ul.actor-meta-links {
+	display: flex;
+	flex-wrap: wrap;
+	list-style: none;
+
+	li {
+		padding-right: 1rem;
+		padding-bottom: 0.5rem;
+		width: auto;
 	}
 }
 

@@ -1450,31 +1450,42 @@ table.lwtvc tbody {
 }
 
 /* Single Actor Template */
-.actor-page .card .single-char-img {
+.actor-page.overview-container .card .single-char-img {
   margin-bottom: 1.25rem;
 }
-.actor-page .card-meta-item #actor-links {
+.actor-page.overview-container .card-meta-item #actor-links {
   padding-right: 0.25rem;
 }
-.actor-page .card-meta-item .shows, .actor-page .card-meta-item .cliches {
+.actor-page.overview-container .card-meta-item .shows, .actor-page.overview-container .card-meta-item .cliches {
   margin-bottom: 0.15rem;
 }
-.actor-page .card-meta-item ul {
+.actor-page.overview-container .card-meta-item ul {
   padding: 0;
 }
-.actor-page .card-meta-item ul li {
-  display: inline-block;
+.actor-page.overview-container .card-meta-item ul li .list-group-item {
   width: 50%;
+  display: inline-block;
 }
-.actor-page .card-meta-item ul.actor-meta-links {
+.actor-page.overview-container .card-meta-item ul.actor-meta-links {
   display: inline;
 }
-.actor-page .card-meta-item ul.actor-meta-links li {
+.actor-page.overview-container .card-meta-item ul.actor-meta-links li {
   padding-right: 1rem;
   width: auto;
 }
-.actor-page .actor-orientation {
+.actor-page.overview-container .actor-orientation {
   margin-left: 2rem;
+}
+
+ul.actor-meta-links {
+  display: flex;
+  flex-wrap: wrap;
+  list-style: none;
+}
+ul.actor-meta-links li {
+  padding-right: 1rem;
+  padding-bottom: 0.5rem;
+  width: auto;
 }
 
 /* Single Show/Actor/Character Template */
