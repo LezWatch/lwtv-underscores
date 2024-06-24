@@ -19,7 +19,7 @@ if ( is_null( $actor_id ) || empty( $actor_id ) ) {
 </section>
 
 <section id="suggest-edits" class="widget widget_suggestedits">
-	<?php get_template_part( 'template-parts/partials/form', 'suggest-edit', array( 'for_post' => $actor_id ) ); ?>
+	<?php get_template_part( 'template-parts/overlays/form', 'suggest-edit', array( 'for_post' => $actor_id ) ); ?>
 </section>
 
 <?php

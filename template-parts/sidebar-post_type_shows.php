@@ -24,7 +24,7 @@ $alt_names    = ( get_post_meta( $show_id, 'lezshows_show_names', true ) ) ? get
 </section>
 
 <section id="suggest-edits" class="widget widget_suggestedits">
-	<?php get_template_part( 'template-parts/partials/form', 'suggest-edit', array( 'for_post' => $show_id ) ); ?>
+	<?php get_template_part( 'template-parts/overlays/form', 'suggest-edit', array( 'for_post' => $show_id ) ); ?>
 </section>
 
 <?php
