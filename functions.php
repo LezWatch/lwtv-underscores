@@ -125,7 +125,9 @@ require_once 'inc/walker-comment.php';
  *
  * Add bio box.
  */
-require_once 'inc/author-box.php';
+if ( ! is_singular( 'post' ) ) {
+	require_once 'inc/author-box.php';
+}
 
 /**
  * Archives

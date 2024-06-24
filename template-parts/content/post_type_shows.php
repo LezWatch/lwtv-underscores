@@ -130,7 +130,7 @@ if ( $maybe_has['related-posts']['meta'] ) {
 				<div class="container characters-regulars-container"><div class="row site-loop character-show-loop">
 				<?php
 				foreach ( $chars_by_role['regular'] as $character ) {
-					get_template_part( 'template-parts/excerpt', 'post_type_characters', compact( 'character' ) );
+					get_template_part( 'template-parts/excerpt/characters', compact( 'character' ) );
 				}
 				echo '</div></div>';
 			}
@@ -141,7 +141,7 @@ if ( $maybe_has['related-posts']['meta'] ) {
 				<div class="container characters-recurring-container"><div class="row site-loop character-show-loop">
 				<?php
 				foreach ( $chars_by_role['recurring'] as $character ) {
-					get_template_part( 'template-parts/excerpt', 'post_type_characters', compact( 'character' ) );
+					get_template_part( 'template-parts/excerpt/characters', compact( 'character' ) );
 				}
 				echo '</div></div>';
 			}

@@ -39,7 +39,6 @@ if ( is_front_page() && has_header_image() ) {
 
 if ( isset( $featured_image ) && ! empty( $featured_image ) ) {
 	$image_type = substr( $featured_image, strrpos( $featured_image, '.' ) + 1 );
-
 	?>
 	<link rel="preload" fetchpriority="high" as="image" href="<?php echo esc_url( $featured_image ); ?>" type="image/<?php echo esc_attr( $image_type ); ?>">
 	<?php

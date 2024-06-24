@@ -28,11 +28,11 @@ get_header(); ?>
 							the_post();
 							// Check for custom post types.
 							if ( 'post' === get_post_type() ) {
-								get_template_part( 'template-parts/content', 'single' );
+								get_template_part( 'template-parts/content/single' );
 							} else {
 								// NOTE! We use single-post_type_{shows|character}.php for the
 								// individual CPTs.
-								get_template_part( 'template-parts/content', get_post_type() );
+								get_template_part( 'template-parts/content/' . get_post_type() );
 							}
 
 							// Force Jetpack to display sharing links where we want them.

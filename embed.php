@@ -17,10 +17,8 @@ if ( have_posts() ) :
 		the_post();
 
 		switch ( get_post_type() ) {
-			//case 'post_type_actors':
-			//case 'post_type_characters':
 			case 'post_type_shows':
-				get_template_part( 'template-parts/embed-content', get_post_type() );
+				get_template_part( 'template-parts/embed/' . get_post_type() );
 				break;
 			default:
 				get_template_part( 'embed', 'content' );

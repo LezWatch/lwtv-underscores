@@ -13,7 +13,7 @@
 <link rel="profile" href="http://gmpg.org/xfn/11">
 <link rel="pingback" href="<?php bloginfo( 'pingback_url' ); ?>">
 
-<?php get_template_part( 'template-parts/header', 'lcp', array( 'post_id' => get_the_ID() ) ); ?>
+<?php get_template_part( 'template-parts/header/lcp', '', array( 'post_id' => get_the_ID() ) ); ?>
 
 <?php wp_head(); ?>
 </head>

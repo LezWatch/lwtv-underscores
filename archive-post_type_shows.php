@@ -60,10 +60,10 @@ get_header(); ?>
 											/* Start the Loop */
 											while ( have_posts() ) {
 												the_post();
-												get_template_part( 'template-parts/excerpt', 'post_type_shows' );
+												get_template_part( 'template-parts/excerpt/shows' );
 											}
 										} else {
-											get_template_part( 'template-parts/content', 'none' );
+											get_template_part( 'template-parts/content/none' );
 										}
 										?>
 									</div>

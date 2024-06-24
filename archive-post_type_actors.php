@@ -58,10 +58,10 @@ get_header(); ?>
 									/* Start the Loop */
 									while ( have_posts() ) :
 										the_post();
-										get_template_part( 'template-parts/excerpt', 'post_type_actors', array( 'actor' => get_the_ID() ) );
+										get_template_part( 'template-parts/excerpt/actors', array( 'actor' => get_the_ID() ) );
 									endwhile;
 								} else {
-									get_template_part( 'template-parts/content', 'none' );
+									get_template_part( 'template-parts/content/none' );
 								}
 								?>
 								</div><!-- .row .site-loop -->
