@@ -47,9 +47,9 @@ if ( is_array( $related_posts ) && $related_posts ) {
 					</div>
 
 					<div class="card-body">
-						<h5 class="card-title">
+						<span class="card-title similar-shows-header">
 							<a href="<?php the_permalink( $the_id ); ?>"><?php echo esc_html( get_the_title( $the_id ) ); ?></a>
-						</h5>
+						</span>
 						<?php
 						$airdates = get_post_meta( $the_id, 'lezshows_airdates', true );
 						if ( $airdates ) {
@@ -57,7 +57,7 @@ if ( is_array( $related_posts ) && $related_posts ) {
 							if ( $airdates['start'] === $airdates['finish'] ) {
 								$airdate = $airdates['finish'];
 							}
-							echo '<h6 class="card-subtitle mb-2 text-body-secondary"><strong>Airdates:</strong> ' . esc_html( $airdate ) . '</h6>';
+							echo '<span class="card-subtitle mb-2 text-body-secondary similar-shows-airdates"><strong>Airdates:</strong> ' . esc_html( $airdate ) . '</span>';
 						}
 						?>
 					</div>

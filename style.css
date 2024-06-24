@@ -885,7 +885,10 @@ h1.entry-title {
   font-size: 1.25rem;
   line-height: 1;
   margin: 0 0.6rem 0 0;
-  vertical-align: top;
+  font-family: Oswald, sans-serif;
+  font-size: 1.25rem;
+  font-weight: 400;
+  vertical-align: middle;
 }
 .toc-container .breadcrumb {
   margin-bottom: 0;
@@ -1358,10 +1361,20 @@ table.lwtvc tbody {
   height: 275px;
 }
 
-.related-article-image-wrapper {
+.related-post-container .related-article-image-wrapper {
   max-height: 100px;
   overflow: hidden;
   display: inline;
+}
+.related-post-container .related-article-header {
+  font-family: "Oswald", sans-serif;
+  font-weight: 400;
+  line-height: 1.3;
+  font-size: 1.25rem;
+  font-size: 1rem;
+  margin-top: 0;
+  margin-bottom: 1rem;
+  text-decoration: none;
 }
 
 /* Single Character & Single Actor Template */
@@ -1552,11 +1565,13 @@ section#characters .card {
 }
 
 /* Affiliate Watch */
+.ways-to-watch-container,
 .affiliate-watch-container {
   background-color: #f3f3f3;
   margin-bottom: 1.25rem;
   padding: 0.6rem;
 }
+.ways-to-watch-container svg,
 .affiliate-watch-container svg {
   display: inline-block;
   margin: 0 10px;
@@ -1564,15 +1579,18 @@ section#characters .card {
   width: 25px;
   vertical-align: middle;
 }
+.ways-to-watch-container svg *,
 .affiliate-watch-container svg * {
   fill: #CB3E85;
 }
+.ways-to-watch-container .how-to-watch,
 .affiliate-watch-container .how-to-watch {
   font-family: 'Oswald', sans-serif;
   font-size: 1.25rem;
   font-weight: 400;
   vertical-align: middle;
 }
+.ways-to-watch-container .btn,
 .affiliate-watch-container .btn {
   margin: 0 0.4rem;
 }
@@ -1673,7 +1691,14 @@ section#characters .card {
   margin-bottom: 0;
 }
 
-.show.trope svg, .network svg {
+.show .trope svg, .show .network svg, .show .intersection svg {
+  width: 32px;
+  height: 32px;
+  vertical-align: middle;
+  margin-right: 10px;
+}
+
+.trope-list svg, .intersectionality-list svg {
   width: 32px;
   height: 32px;
   vertical-align: middle;
@@ -1706,6 +1731,24 @@ div.rpbt_shortcode .related-gallery {
 }
 div.rpbt_shortcode .related-gallery figure.similar-shows a {
   font-style: italic;
+}
+div.rpbt_shortcode .similar-shows-header {
+  font-family: "Oswald", sans-serif;
+  font-weight: 400;
+  line-height: 1.3;
+  font-size: 1.25rem;
+  font-size: 1rem;
+  text-decoration: none;
+}
+div.rpbt_shortcode .similar-shows-airdates {
+  font-family: "Oswald", sans-serif;
+  font-weight: 400;
+  line-height: 1.3;
+  font-size: 1rem;
+  text-decoration: none;
+}
+div.rpbt_shortcode span {
+  display: block;
 }
 
 /* =Archive Pages (posts / shows / characters / taxonomies)

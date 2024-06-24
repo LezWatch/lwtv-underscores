@@ -10,17 +10,17 @@
 $show_id        = $post->ID;
 $rpbt_shortcode = lwtv_plugin()->get_shows_like_this_show( $show_id );
 $maybe_has      = array(
-	'timeline' => array(
+	'timeline'      => array(
 		'title'   => 'Timeline',
 		'section' => 'Queer Plotline Timeline',
 		'meta'    => get_post_meta( $show_id, 'lezshows_plots', true ),
 	),
-	'episodes' => array(
+	'episodes'      => array(
 		'title'   => 'Episodes',
 		'section' => 'Notable Queer-Centric Episodes',
 		'meta'    => get_post_meta( $show_id, 'lezshows_episodes', true ),
 	),
-	'related'  => array(
+	'related-posts' => array(
 		'title' => 'Articles',
 		'meta'  => lwtv_plugin()->has_cpt_related_posts( $show_id ), // true-falsey
 	),
@@ -34,7 +34,7 @@ get_template_part( 'template-parts/partials/image', 'show', array( 'show_id' => 
 
 <section id="toc" class="toc-container card-body">
 	<nav class="breadcrumb">
-		<h4 class="toc-title">Table of Contents</h4>
+		<span class="toc-title">Table of Contents</span>
 		<a class="breadcrumb-item smoothscroll" href="#overview">Overview</a>
 		<?php
 		foreach ( $maybe_has as $key => $value ) {
@@ -91,7 +91,7 @@ foreach ( $maybe_has as $key => $value ) {
 	}
 }
 
-if ( $maybe_has['related']['meta'] ) {
+if ( $maybe_has['related-posts']['meta'] ) {
 	// Related Articles.
 	get_template_part( 'template-parts/partials/related', 'articles', array( 'to_show' => $show_id ) );
 }

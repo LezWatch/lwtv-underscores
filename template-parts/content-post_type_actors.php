@@ -58,7 +58,7 @@ lwtv_microformats_fix( $actor_id );
 
 <section id="toc" class="toc-container card-body">
 	<nav class="breadcrumb">
-		<h4 class="toc-title">Table of Contents</h4>
+		<span class="toc-title">Table of Contents</span>
 		<a class="breadcrumb-item smoothscroll" href="#biography">Biography</a>
 		<a class="breadcrumb-item smoothscroll" href="#vitals">Overview</a>
 		<a class="breadcrumb-item smoothscroll" href="#characters">Characters</a>

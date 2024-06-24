@@ -585,7 +585,10 @@ h1.entry-title {
 		@include font-20;
 		line-height: 1;
 		margin: 0 0.6rem 0 0;
-		vertical-align: top;
+		font-family: Oswald, sans-serif;
+		font-size: 1.25rem;
+		font-weight: 400;
+		vertical-align: middle;
 	}
 
 	.breadcrumb {
@@ -1151,10 +1154,23 @@ table.lwtvc {
 	}
 }
 
-.related-article-image-wrapper {
-	max-height: 100px;
-	overflow: hidden;
-	display: inline;
+.related-post-container {
+	.related-article-image-wrapper {
+		max-height: 100px;
+		overflow: hidden;
+		display: inline;
+	}
+
+	.related-article-header {
+		font-family: $headingfontfamily;
+		font-weight: $headingfontweight;
+		line-height: $headingfontheight;
+		@include font-20;
+		font-size: 1rem;
+		margin-top: 0;
+		margin-bottom: 1rem;
+		text-decoration: none;
+	}
 }
 
 
@@ -1554,7 +1570,7 @@ section#characters {
 	}
 }
 
-.show{
+.show {
 	.trope, .network, .intersection {
 		svg {
 			width: 32px;
@@ -1562,6 +1578,15 @@ section#characters {
 			vertical-align: middle;
 			margin-right: 10px;
 		}
+	}
+}
+
+.trope-list, .intersectionality-list {
+	svg {
+		width: 32px;
+		height: 32px;
+		vertical-align: middle;
+		margin-right: 10px;
 	}
 }
 
@@ -1600,6 +1625,27 @@ div.rpbt_shortcode {
 				font-style: italic;
 			}
 		}
+	}
+
+	.similar-shows-header {
+		font-family: $headingfontfamily;
+		font-weight: $headingfontweight;
+		line-height: $headingfontheight;
+		@include font-20;
+		font-size: 1rem;
+		text-decoration: none;
+	}
+
+	.similar-shows-airdates {
+		font-family: $headingfontfamily;
+		font-weight: $headingfontweight;
+		line-height: $headingfontheight;
+		font-size: 1rem;
+		text-decoration: none;
+	}
+
+	span {
+		display: block;
 	}
 }
 

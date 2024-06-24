@@ -257,8 +257,10 @@ if ( $intersections && ! is_wp_error( $intersections ) ) {
 						<?php
 						if ( $rating >= '0' ) {
 							$leftover = 5 - $rating;
+
 							// phpcs:ignore WordPress.Security.EscapeOutput
 							echo str_repeat( $positive_heart, $rating );
+
 							// phpcs:ignore WordPress.Security.EscapeOutput
 							echo str_repeat( $negative_heart, $leftover );
 						}
