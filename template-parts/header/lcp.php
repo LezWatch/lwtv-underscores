@@ -24,6 +24,8 @@ if ( false !== $logo ) {
 if ( is_front_page() && has_header_image() ) {
 	// Front page
 	$featured_image = get_header_image();
+} elseif ( is_404() ) {
+	$featured_image = get_template_directory_uri() . '/images/rose.gif';
 } elseif ( has_post_thumbnail( $this_id ) ) {
 	// Regular post/page
 	$featured_size = array(
