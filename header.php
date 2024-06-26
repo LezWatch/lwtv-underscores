@@ -67,7 +67,7 @@
 				<div class="col">
 					<div class="search-body">
 						<div class="search-box">
-							<?php get_template_part( 'template-parts/searchbox' ); ?>
+							<?php get_template_part( 'template-parts/header/searchbox' ); ?>
 						</div>
 					</div>
 				</div>
