@@ -222,3 +222,25 @@ $endcolor: #7DB9E8;
 	-o-animation: rainbow 18s ease infinite;
 	animation: rainbow 18s ease infinite;
 }
+
+// scss-docs-start color-mode-mixin
+@mixin color-mode($mode: light, $root: false) {
+	@if $color-mode-type == "media-query" {
+	  @if $root == true {
+		@media (prefers-color-scheme: $mode) {
+		  :root {
+			@content;
+		  }
+		}
+	  } @else {
+		@media (prefers-color-scheme: $mode) {
+		  @content;
+		}
+	  }
+	} @else {
+	  [data-bs-theme="#{$mode}"] {
+		@content;
+	  }
+	}
+  }
+  // scss-docs-end color-mode-mixin

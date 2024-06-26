@@ -2,14 +2,14 @@
 module.exports = function(grunt) {
 
     grunt.initConfig({
-    
+
         // js minification
         terser: {
             dist: {
                 files: {
                     // admin scripts
                     'inc/js/yikes-theme-scripts.min.js': [ // theme specific script
-                        'inc/js/navigation.js' , 'inc/js/skip-link-focus-fix.js' , 'inc/js/lwtv-theme-scripts.js' , 'inc/js/a11y.js'
+                        'inc/js/navigation.js' , 'inc/js/skip-link-focus-fix.js' , 'inc/js/lwtv-theme-scripts.js' , 'inc/js/a11y.js', 'inc/js/bootstrap-color-mode.js'
                     ],
                      'inc/js/customizer.min.js': [ // customizer specific script
                         'inc/js/customizer.js'
@@ -29,7 +29,7 @@ module.exports = function(grunt) {
                 }
             }
         },
-        
+
         // css minify contents of our directory and add .min.css extension
         cssmin: {
             target: {

@@ -401,7 +401,7 @@ function yikes_starter_scripts() {
 	$yikes_nav        = $get_theme_vers['yikes-nav'];
 
 	// combined + minified.
-	// navigation.js, skip-link-focus-fix.js & a11y.js.
+	// navigation.js, skip-link-focus-fix.js, a11y.js, bootstrap-color-mode.
 	wp_enqueue_script( 'yikes-starter-navigation', get_template_directory_uri() . '/inc/js/yikes-theme-scripts.min.js', array(), $yikes_nav, true );
 
 	if ( is_singular() && comments_open() && get_option( 'thread_comments' ) ) {

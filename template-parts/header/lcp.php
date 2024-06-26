@@ -38,11 +38,11 @@ if ( is_front_page() && has_header_image() ) {
 
 	$featured_image = get_the_post_thumbnail_url( $this_id, $featured_size[ get_post_type( $this_id ) ] );
 } else {
-	// Collect all images and use the first one.
-	$all_images = &get_children( 'post_type=attachment&post_mime_type=image&post_parent=' . $this_id );
+	// Collect all attached images and use the first one.
+	$all_images = get_attached_media( 'image', $this_id ) ?? array();
 
 	foreach ( $all_images as $img ) {
-		$img_src = wp_get_attachment_image_src( $img->ID, $size );
+		$img_src = wp_get_attachment_image_src( $img->ID, 'large' );
 		break;
 	}
 

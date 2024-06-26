@@ -11,6 +11,8 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Text Domain: yikes_starter
 Tags: gay, lwtv, lezwatch
 */
+/* =Mixins
+----------------------------------------------- */
 /* =Color Variables for our theme
 ----------------------------------------------- */
 /* Base theme colors */
@@ -27,11 +29,165 @@ Tags: gay, lwtv, lezwatch
     background-position: 0% 82%;
   }
 }
+[data-bs-theme="dark"] {
+  /* Link colors */
+  --bs-body-color: $lwtv-dkgrey;
+  --bs-body-color-rgb: rgba( to-rgb( $lwtv-dkgrey ), 1);
+}
+[data-bs-theme="dark"] .text-widget, [data-bs-theme="dark"] .widget_categories, [data-bs-theme="dark"] .widget_tag_cloud,
+[data-bs-theme="dark"] .list-group-item,
+[data-bs-theme="dark"] .bg-light {
+  background-color: #404040 !important;
+}
+[data-bs-theme="dark"] .entry-header .entry-meta {
+  color: #ebf5fa;
+}
+[data-bs-theme="dark"] .entry-header .entry-meta svg * {
+  fill: #ebf5fa;
+}
+[data-bs-theme="dark"] .similar-shows-airdates {
+  color: #fff !important;
+}
+[data-bs-theme="dark"] a.btn-outline-primary, [data-bs-theme="dark"] a.btn-outline-primary:visited, [data-bs-theme="dark"] button.btn-outline-primary, [data-bs-theme="dark"] button.btn-outline-primary:visited, [data-bs-theme="dark"] input[type="button"].btn-outline-primary, [data-bs-theme="dark"] input[type="button"].btn-outline-primary:visited, [data-bs-theme="dark"] input[type="submit"].btn-outline-primary, [data-bs-theme="dark"] input[type="submit"].btn-outline-primary:visited {
+  color: #000;
+  border-color: #9E2968;
+  background-color: #EECEE3;
+  text-decoration: none;
+}
+[data-bs-theme="dark"] .navbar.main-nav {
+  background-color: #404040;
+}
+[data-bs-theme="dark"] .navbar.main-nav ul.navbar-nav > li {
+  border-left: solid 1px #dedede;
+  background-color: #404040;
+}
+[data-bs-theme="dark"] .navbar.main-nav ul.navbar-nav > li.nav-item {
+  /* Style for inactive links */
+  /* Secondary Menus */
+}
+[data-bs-theme="dark"] .navbar.main-nav ul.navbar-nav > li.nav-item > a.nav-link {
+  color: #fff;
+  text-decoration: none;
+}
+[data-bs-theme="dark"] .navbar.main-nav ul.navbar-nav > li.nav-item ul.dropdown-menu {
+  background-color: #404040;
+}
+[data-bs-theme="dark"] .navbar.main-nav ul.navbar-nav > li.nav-item ul.dropdown-menu li.nav-item {
+  /* Style for inactive links on submenus */
+}
+[data-bs-theme="dark"] .navbar.main-nav ul.navbar-nav > li.nav-item ul.dropdown-menu li.nav-item a.dropdown-item {
+  background-color: #404040;
+  color: #fff;
+  text-decoration: none;
+}
+[data-bs-theme="dark"] #colophon .top-footer {
+  background-color: #404040;
+  color: #fff;
+}
+[data-bs-theme="dark"] #colophon .top-footer a {
+  color: #fff;
+}
+[data-bs-theme="dark"] #colophon .top-footer a:visited {
+  color: #fff;
+}
+[data-bs-theme="dark"] #colophon .top-footer a:hover, [data-bs-theme="dark"] #colophon .top-footer a:focus, [data-bs-theme="dark"] #colophon .top-footer a:active {
+  color: #EECEE3;
+}
+[data-bs-theme="dark"] a {
+  color: #EECEE3;
+  -webkit-text-decoration: wavy underline;
+          text-decoration: wavy underline;
+}
+[data-bs-theme="dark"] a:visited {
+  color: #EECEE3;
+}
+[data-bs-theme="dark"] a:hover, [data-bs-theme="dark"] a:focus, [data-bs-theme="dark"] a:active {
+  color: #E0D2FE;
+}
+[data-bs-theme="dark"] #main {
+  background-color: #333;
+  color: #fff;
+}
+[data-bs-theme="dark"] #masthead .navbar-brand {
+  color: #EECEE3;
+  text-decoration: none;
+}
+[data-bs-theme="dark"] #masthead .header-search-bar {
+  background-color: #404040;
+}
+[data-bs-theme="dark"] .author-box,
+[data-bs-theme="dark"] .site-loop .card .card-footer,
+[data-bs-theme="dark"] .site-loop .card .card-body,
+[data-bs-theme="dark"] .actor-image-wrapper .actor-archive-loop,
+[data-bs-theme="dark"] .character-archive-loop .actor-image-wrapper, [data-bs-theme="dark"] .character-archive-loop .character-image-wrapper,
+[data-bs-theme="dark"] .character-image-wrapper .actor-archive-loop, [data-bs-theme="dark"] .character-show-loop .actor-image-wrapper,
+[data-bs-theme="dark"] .character-show-loop .character-image-wrapper, [data-bs-theme="dark"] .search-results .actor-image-wrapper,
+[data-bs-theme="dark"] .search-results .character-image-wrapper {
+  background-color: #404040;
+}
+[data-bs-theme="dark"] blockquote {
+  background-color: #404040;
+  border-left: 4px solid #EECEE3;
+  color: #ebf5fa;
+}
+[data-bs-theme="dark"] blockquote:before {
+  color: #EECEE3;
+}
+[data-bs-theme="dark"] .toc-container .breadcrumb,
+[data-bs-theme="dark"] .affiliate-watch-container, [data-bs-theme="dark"] .ways-to-watch-container,
+[data-bs-theme="dark"] .overlay-section h2, [data-bs-theme="dark"] .relatedposts-section h2, [data-bs-theme="dark"] .showschar-section h2 {
+  background-color: #333;
+  color: #f3f3f3;
+}
+[data-bs-theme="dark"] .toc-container .breadcrumb svg *,
+[data-bs-theme="dark"] .affiliate-watch-container svg *, [data-bs-theme="dark"] .ways-to-watch-container svg *,
+[data-bs-theme="dark"] .overlay-section h2 svg *, [data-bs-theme="dark"] .relatedposts-section h2 svg *, [data-bs-theme="dark"] .showschar-section h2 svg * {
+  fill: #f3f3f3;
+}
+[data-bs-theme="dark"] .character-cliche svg, [data-bs-theme="dark"] .character-actor svg, [data-bs-theme="dark"] .character-show svg {
+  fill: #ebf5fa;
+}
+[data-bs-theme="dark"] .card-meta-item.actors svg, [data-bs-theme="dark"] .card-meta-item.cliches svg, [data-bs-theme="dark"] .card-meta-item.shows svg,
+[data-bs-theme="dark"] .intersectionality-list svg, [data-bs-theme="dark"] .trope-list svg {
+  fill: #ebf5fa;
+}
+[data-bs-theme="dark"] .site-loop .card {
+  box-shadow: 0 1px 4px 0 rgba(255, 255, 255, 0.14);
+}
+[data-bs-theme="dark"] .overlay-section .col .card {
+  background-color: #404040;
+}
+[data-bs-theme="dark"] .overlay-section .col span {
+  color: #EECEE3;
+}
+[data-bs-theme="dark"] .overlay-section .col span:hover {
+  color: #9E2968;
+  background-color: #333;
+}
+[data-bs-theme="dark"] .overlay-section .col span:hover svg * {
+  fill: #9E2968;
+}
+[data-bs-theme="dark"] .overlay-section .col span svg * {
+  fill: #EECEE3;
+}
+[data-bs-theme="dark"] .author-bio-box,
+[data-bs-theme="dark"] .related-shows {
+  background-color: #435260;
+}
+[data-bs-theme="dark"] .author-bio-box svg *,
+[data-bs-theme="dark"] .related-shows svg * {
+  fill: #f3f3f3;
+}
+[data-bs-theme="dark"] .entry-meta {
+  color: #ebf5fa;
+}
+[data-bs-theme="dark"] .entry-meta svg * {
+  fill: #ebf5fa;
+}
+
 /* =Font Styles
 ----------------------------------------------- */
 /* =Helper Mixins
------------------------------------------------ */
-/* =Mixins
 ----------------------------------------------- */
 /* ==========================================================================
 	 Layout
@@ -1525,10 +1681,10 @@ section#characters .card {
   color: #FFD700;
 }
 .showlist-star.silver svg *, .show-star.silver svg *, .screener-star.silver svg * {
-  fill: #C0C0C0;
+  fill: #999;
 }
 .showlist-star.silver i.fa, .show-star.silver i.fa, .screener-star.silver i.fa {
-  color: #C0C0C0;
+  color: #999;
 }
 .showlist-star.bronze svg *, .show-star.bronze svg *, .screener-star.bronze svg * {
   fill: #B87333;
@@ -1851,7 +2007,7 @@ h3 svg * {
   fill: #FFD700;
 }
 .archive .callout-star-silver svg * {
-  fill: #C0C0C0;
+  fill: #999;
 }
 .archive .callout-star-bronze svg * {
   fill: #B87333;

@@ -11,10 +11,11 @@ Text Domain: yikes_starter
 Tags: gay, lwtv, lezwatch
 */
 
+@import 'partials/mixins';
 @import 'partials/colors';
+@import 'partials/colors-dark';
 @import 'partials/fonts';
 @import 'partials/helpers';
-@import 'partials/mixins';
 
 /* ==========================================================================
 	 Layout
