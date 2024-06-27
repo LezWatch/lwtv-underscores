@@ -204,4 +204,12 @@ $color-mode-type: data;
 			fill: $lwtv-ltgrey;
 		}
 	}
+
+	.dark-mode-toggle {
+		color: $white;
+		svg * {
+			fill: $lwtv-ltgrey;
+		}
+	}
 }
+

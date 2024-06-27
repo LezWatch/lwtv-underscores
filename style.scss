@@ -532,6 +532,27 @@ h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
 
 	.dark-mode-toggle {
 		padding: 0.5rem;
+
+		.form-check {
+			padding-left: 0.5em;
+		}
+
+		.bi {
+			width: 1em;
+			height: 1em;
+			vertical-align: -.125em;
+			fill: $lwtv-pink;
+		}
+
+		.my-1 {
+			margin-top: .25rem !important;
+			margin-bottom: .25rem !important;
+		}
+
+		.dropdown-menu-end[data-bs-popper] {
+			right: 10rem;
+			left: auto;
+		}
 	}
 
 }

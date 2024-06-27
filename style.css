@@ -184,6 +184,12 @@ Tags: gay, lwtv, lezwatch
 [data-bs-theme="dark"] .entry-meta svg * {
   fill: #ebf5fa;
 }
+[data-bs-theme="dark"] .dark-mode-toggle {
+  color: #fff;
+}
+[data-bs-theme="dark"] .dark-mode-toggle svg * {
+  fill: #ebf5fa;
+}
 
 /* =Font Styles
 ----------------------------------------------- */
@@ -776,6 +782,23 @@ select {
 }
 #masthead .dark-mode-toggle {
   padding: 0.5rem;
+}
+#masthead .dark-mode-toggle .form-check {
+  padding-left: 0.5em;
+}
+#masthead .dark-mode-toggle .bi {
+  width: 1em;
+  height: 1em;
+  vertical-align: -.125em;
+  fill: #CB3E85;
+}
+#masthead .dark-mode-toggle .my-1 {
+  margin-top: .25rem !important;
+  margin-bottom: .25rem !important;
+}
+#masthead .dark-mode-toggle .dropdown-menu-end[data-bs-popper] {
+  right: 10rem;
+  left: auto;
 }
 
 /* Change the main nav colors */
