@@ -530,6 +530,10 @@ h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
 		}
 	}
 
+	.dark-mode-toggle {
+		padding: 0.5rem;
+	}
+
 }
 
 /* Change the main nav colors */
@@ -2240,7 +2244,7 @@ div.facetwp-facet-shows_scores input.facetwp-number {
 	}
 
 	.widget_categories, .widget_tag_cloud,
-	.widget-tags, .widget_custom_html {
+	.widget-tags, .widget_custom_html, .widget_text {
 		@include box-shadow(0 1px 4px 0 rgba(0, 0, 0, 0.14));
 		padding-bottom: .75rem;
 

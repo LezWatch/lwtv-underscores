@@ -16,7 +16,8 @@ $color-mode-type: data;
 	--bs-body-color-rgb: rgba( to-rgb( $lwtv-dkgrey ), 1);
 
 	.text-widget, .widget_categories, .widget_tag_cloud,
-	.list-group-item,
+	.widget-tags, .widget_custom_html, .widget_text
+	.list-group-item, .widget_editor_tools .card,
 	.bg-light {
 		background-color: $lwtv-medgrey !important;
 	}

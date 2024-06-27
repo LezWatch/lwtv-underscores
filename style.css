@@ -35,7 +35,8 @@ Tags: gay, lwtv, lezwatch
   --bs-body-color-rgb: rgba( to-rgb( $lwtv-dkgrey ), 1);
 }
 [data-bs-theme="dark"] .text-widget, [data-bs-theme="dark"] .widget_categories, [data-bs-theme="dark"] .widget_tag_cloud,
-[data-bs-theme="dark"] .list-group-item,
+[data-bs-theme="dark"] .widget-tags, [data-bs-theme="dark"] .widget_custom_html, [data-bs-theme="dark"] .widget_text
+.list-group-item, [data-bs-theme="dark"] .widget_editor_tools .card,
 [data-bs-theme="dark"] .bg-light {
   background-color: #404040 !important;
 }
@@ -95,8 +96,7 @@ Tags: gay, lwtv, lezwatch
 }
 [data-bs-theme="dark"] a {
   color: #EECEE3;
-  -webkit-text-decoration: wavy underline;
-          text-decoration: wavy underline;
+  text-decoration: underline;
 }
 [data-bs-theme="dark"] a:visited {
   color: #EECEE3;
@@ -773,6 +773,9 @@ select {
 }
 #masthead .lezwatchtv.last-death a:hover {
   color: #d6d6d6;
+}
+#masthead .dark-mode-toggle {
+  padding: 0.5rem;
 }
 
 /* Change the main nav colors */
@@ -2467,18 +2470,18 @@ div.facetwp-facet-shows_scores input.facetwp-number {
   margin-left: 0.5rem;
 }
 .site-sidebar .widget_categories, .site-sidebar .widget_tag_cloud,
-.site-sidebar .widget-tags, .site-sidebar .widget_custom_html {
+.site-sidebar .widget-tags, .site-sidebar .widget_custom_html, .site-sidebar .widget_text {
   box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.14);
   padding-bottom: .75rem;
 }
 .site-sidebar .widget_categories .tagcloud, .site-sidebar .widget_categories .widget-tags-container, .site-sidebar .widget_categories .custom-html-widget, .site-sidebar .widget_tag_cloud .tagcloud, .site-sidebar .widget_tag_cloud .widget-tags-container, .site-sidebar .widget_tag_cloud .custom-html-widget,
 .site-sidebar .widget-tags .tagcloud,
 .site-sidebar .widget-tags .widget-tags-container,
-.site-sidebar .widget-tags .custom-html-widget, .site-sidebar .widget_custom_html .tagcloud, .site-sidebar .widget_custom_html .widget-tags-container, .site-sidebar .widget_custom_html .custom-html-widget {
+.site-sidebar .widget-tags .custom-html-widget, .site-sidebar .widget_custom_html .tagcloud, .site-sidebar .widget_custom_html .widget-tags-container, .site-sidebar .widget_custom_html .custom-html-widget, .site-sidebar .widget_text .tagcloud, .site-sidebar .widget_text .widget-tags-container, .site-sidebar .widget_text .custom-html-widget {
   padding: 0 1.25rem;
 }
 .site-sidebar .widget_categories h2.widget-title, .site-sidebar .widget_tag_cloud h2.widget-title,
-.site-sidebar .widget-tags h2.widget-title, .site-sidebar .widget_custom_html h2.widget-title {
+.site-sidebar .widget-tags h2.widget-title, .site-sidebar .widget_custom_html h2.widget-title, .site-sidebar .widget_text h2.widget-title {
   background: linear-gradient(60deg, #ab47bc, #8e24aa);
   color: #fff;
   font-size: 1.5rem;

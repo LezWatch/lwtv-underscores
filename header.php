@@ -58,6 +58,10 @@
 					<span class="screen-reader-text">Search the Site</span>
 				</a>
 			</span>
+
+			<span class="dark-mode-toggle">
+				<?php get_template_part( 'template-parts/header/dark-mode' ); ?>
+			</span>
 		</div>
 	</nav><!-- #site-navigation -->
 
