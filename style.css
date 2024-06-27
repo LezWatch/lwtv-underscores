@@ -797,7 +797,7 @@ select {
   margin-bottom: .25rem !important;
 }
 #masthead .dark-mode-toggle .dropdown-menu-end[data-bs-popper] {
-  right: 10rem;
+  right: 1rem;
   left: auto;
 }
 
