@@ -38,12 +38,12 @@ get_header(); ?>
 							echo '<div class="row site-loop main-posts-loop four-across-loop">';
 							while ( have_posts() ) {
 								the_post();
-								get_template_part( 'template-parts/content', 'search' );
+								get_template_part( 'template-parts/content/search' );
 							}
 							echo '</div>';
 							yikes_starter_paging_nav();
 						} else {
-							get_template_part( 'template-parts/content', 'none' );
+							get_template_part( 'template-parts/content/none' );
 						}
 						?>
 					</div><!-- #content -->

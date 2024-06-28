@@ -5,9 +5,9 @@
  * @package LezWatch.TV
  */
 
-$char_id = $args['the_post_id'] ?? null;
+$actor_id = $args['the_post_id'] ?? null;
 
-if ( is_null( $char_id ) || empty( $char_id ) ) {
+if ( is_null( $actor_id ) || empty( $actor_id ) ) {
 	return;
 }
 ?>
@@ -19,10 +19,11 @@ if ( is_null( $char_id ) || empty( $char_id ) ) {
 </section>
 
 <section id="suggest-edits" class="widget widget_suggestedits">
-	<?php get_template_part( 'template-parts/partials/form', 'suggest-edit', array( 'for_post' => $char_id ) ); ?>
+	<?php get_template_part( 'template-parts/overlays/form', 'suggest-edit', array( 'for_post' => $actor_id ) ); ?>
 </section>
 
 <?php
-lwtv_plugin()->get_admin_tools( $char_id );
+lwtv_plugin()->get_admin_tools( $actor_id );
 
 get_template_part( 'template-parts/partials/sidebar', 'slack' );
+

@@ -1,0 +1,215 @@
+$color-mode-type: data;
+
+@include color-mode(dark) {
+
+	/* Link colors */
+	$link-color:         $lwtv-ltpink;
+	$link-hover-color:   $lwtv-ltpurple;
+	$link-focus-color:   $link-hover-color;
+	$link-active-color:  $link-hover-color;
+	$link-visited-color: $link-color;
+
+	// Overridden colors
+	$lwtv-medgrey: #404040;
+
+	--bs-body-color: $lwtv-dkgrey;
+	--bs-body-color-rgb: rgba( to-rgb( $lwtv-dkgrey ), 1);
+
+	.text-widget, .widget_categories, .widget_tag_cloud,
+	.widget-tags, .widget_custom_html, .widget_text
+	.list-group-item, .widget_editor_tools .card,
+	.bg-light {
+		background-color: $lwtv-medgrey !important;
+	}
+
+	.entry-header .entry-meta {
+		color: $lwtv-ltgrey;
+
+		svg * {
+			fill: $lwtv-ltgrey;
+		}
+	}
+
+	.similar-shows-airdates {
+		color: $white !important;
+	}
+
+	a.btn-outline-primary, a.btn-outline-primary:visited, button.btn-outline-primary, button.btn-outline-primary:visited, input[type="button"].btn-outline-primary, input[type="button"].btn-outline-primary:visited, input[type="submit"].btn-outline-primary, input[type="submit"].btn-outline-primary:visited {
+		color: $black;
+		border-color: $lwtv-dkpink;
+		background-color: $lwtv-ltpink;
+		text-decoration: none;
+	}
+
+	.navbar.main-nav {
+		background-color: $lwtv-medgrey;
+
+		ul.navbar-nav > li  {
+			border-left:solid 1px $lightgrey;
+			background-color: $lwtv-medgrey;
+
+			&.nav-item {
+				/* Style for inactive links */
+				& > a.nav-link {
+					color: $white;
+					text-decoration: none;
+				}
+
+				/* Secondary Menus */
+				ul.dropdown-menu {
+					background-color: $lwtv-medgrey;
+
+					& li.nav-item {
+
+						/* Style for inactive links on submenus */
+						a.dropdown-item {
+							background-color: $lwtv-medgrey;
+							color: $white;
+							text-decoration: none;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	#colophon .top-footer {
+		background-color: $lwtv-medgrey;
+		color: $white;
+
+		a {
+			color: $white;
+
+			&:visited {
+				color: $white;
+			}
+
+			&:hover, &:focus, &:active {
+				color: $lwtv-ltpink;
+			}
+		}
+
+	}
+
+	a {
+		color: $link-color;
+		text-decoration: underline;
+
+		&:visited {
+			color: $link-color;
+		}
+
+		&:hover, &:focus, &:active {
+			color: $link-hover-color;
+		}
+	}
+
+	#main {
+		background-color: $lwtv-dkgrey;
+		color: $white;
+	}
+
+	#masthead .navbar-brand {
+		color: $lwtv-ltpink;
+		text-decoration: none;
+	}
+
+	#masthead .header-search-bar {
+		background-color: $lwtv-medgrey;
+	}
+
+	.author-box,
+	.site-loop .card .card-footer,
+	.site-loop .card .card-body,
+	.actor-image-wrapper .actor-archive-loop,
+	.character-archive-loop .actor-image-wrapper, .character-archive-loop .character-image-wrapper,
+	.character-image-wrapper .actor-archive-loop, .character-show-loop .actor-image-wrapper,
+	.character-show-loop .character-image-wrapper, .search-results .actor-image-wrapper,
+	.search-results .character-image-wrapper {
+		background-color: $lwtv-medgrey;
+	}
+
+	blockquote {
+		background-color: $lwtv-medgrey;
+		border-left: 4px solid $lwtv-ltpink;
+		color: $lwtv-ltgrey;
+		&:before {
+			color: $lwtv-ltpink;
+		}
+	}
+
+	.toc-container .breadcrumb,
+	.affiliate-watch-container, .ways-to-watch-container,
+	.overlay-section h2, .relatedposts-section h2, .showschar-section h2 {
+		background-color: $lwtv-dkgrey;
+		color: $lwtv-grey;
+
+		svg * {
+			fill: $lwtv-grey;
+		}
+	}
+
+	.character-cliche svg, .character-actor svg, .character-show svg {
+		fill: $lwtv-ltgrey;
+	}
+
+	.card-meta-item.actors svg, .card-meta-item.cliches svg, .card-meta-item.shows svg,
+	.intersectionality-list svg, .trope-list svg {
+		fill: $lwtv-ltgrey;
+	}
+
+	.site-loop .card {
+		box-shadow: 0 1px 4px 0 rgba( $white, 0.14 );
+	}
+
+	.overlay-section {
+		.col {
+			.card {
+				background-color: $lwtv-medgrey;
+			}
+
+			span {
+				color: $lwtv-ltpink;
+
+				&:hover {
+					color: $lwtv-dkpink;
+					background-color: $lwtv-dkgrey;
+
+					svg *{
+						fill: $lwtv-dkpink;
+					}
+				}
+
+				svg * {
+					fill: $lwtv-ltpink;
+				}
+
+			}
+		}
+	}
+
+	.author-bio-box,
+	.related-shows {
+		background-color: $lwtv-dkblue;
+
+		svg * {
+			fill: $lwtv-grey;
+		}
+	}
+
+	.entry-meta {
+		color: $lwtv-ltgrey;
+
+		svg * {
+			fill: $lwtv-ltgrey;
+		}
+	}
+
+	.dark-mode-toggle {
+		color: $white;
+		svg * {
+			fill: $lwtv-ltgrey;
+		}
+	}
+}
+

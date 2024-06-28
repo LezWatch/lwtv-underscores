@@ -10,10 +10,12 @@
 
 // Large devices (desktops, less than 1200px)
 @media (max-width: 1199px) {
-
-  #masthead .navbar-brand {
-    font-size: 1.35rem;
+  #masthead {
+    .navbar-brand {
+      font-size: 1.35rem;
+    }
   }
+
   .navbar.main-nav{
     .container {
       max-width: 100%;
@@ -61,19 +63,50 @@
       margin-left: .5rem;
     }
   }
-
 }
 
-// Medium devices (tablets, less than 992px)
-@media (max-width: 991px) {
+// Large devices (desktops, less than 1099px)
+@media (max-width: 1099px) {
+  #masthead {
+    .navbar-brand {
+      font-size: 1.35rem;
+    }
+
+    .navbar-brand-text {
+      span {
+        display: none;
+      }
+      &:after {
+        content: 'LWTV';
+      }
+    }
+  }
+}
+
+// Medium devices (tablets, less than 990px)
+@media (max-width: 990px) {
 
   #masthead {
     .navbar-brand {
       font-size: 1rem;
+    }
 
-      img {
-        margin-left: 1rem;
+    .navbar-brand-text {
+      span {
+        display: contents;
       }
+
+      &:after {
+        content: '';
+      }
+    }
+
+    img {
+      margin-left: 1rem;
+    }
+
+    #search-btn {
+      display: none;
     }
 
     .header-search-bar {
@@ -81,6 +114,16 @@
 
       .col-sm-1.searchbox-button {
         padding-left: 0;
+      }
+    }
+
+    .dark-mode-toggle {
+      .dropdown-menu {
+        position: static;
+      }
+
+      button {
+        padding: 1rem !important;
       }
     }
   }
@@ -205,7 +248,7 @@
     height: 25px!important;
   }
 
-  .affiliate-watch-container {
+  .ways-to-watch-container {
     .btn {
       margin: 0 .4rem .4rem 0;
     }
@@ -247,10 +290,6 @@
       .navbar-brand-text {
         display: none;
       }
-    }
-
-    #search-btn {
-      display: none;
     }
 
     .header-search-bar {
@@ -370,9 +409,10 @@
 @media (max-width: 575px) {
 
   #masthead {
-	.fixed-top.main-nav {
-		margin-top: 0px;
-	}
+    .fixed-top.main-nav {
+      margin-top: 0px!important;
+    }
+
     .header-search-bar {
 
       padding: 0;

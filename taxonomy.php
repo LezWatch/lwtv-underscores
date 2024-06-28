@@ -82,20 +82,20 @@ get_header(); ?>
 											the_post();
 											switch ( get_post_type( get_the_ID() ) ) {
 												case 'post_type_characters':
-													get_template_part( 'template-parts/excerpt', 'post_type_characters', array( 'character' => get_the_ID() ) );
+													get_template_part( 'template-parts/excerpt/characters', '', array( 'character' => get_the_ID() ) );
 													break;
 												case 'post_type_shows':
-													get_template_part( 'template-parts/excerpt', 'post_type_shows' );
+													get_template_part( 'template-parts/excerpt/shows' );
 													break;
 												case 'post_type_actors':
-													get_template_part( 'template-parts/excerpt', 'post_type_actors' );
+													get_template_part( 'template-parts/excerpt/actors' );
 													break;
 												default:
-													get_template_part( 'template-parts/content', 'posts' );
+													get_template_part( 'template-parts/content/posts' );
 											}
 										}
 									} else {
-										get_template_part( 'template-parts/content', 'none' );
+										get_template_part( 'template-parts/content/none' );
 									}
 									?>
 								</div><!-- .site-loop -->

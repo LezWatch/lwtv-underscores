@@ -24,9 +24,10 @@ function lwtv_admin_notice_missing_plugin() {
 // Versioning for efficient developers.
 if ( ! defined( 'LWTV_THEME_VERSION' ) ) {
 	$versions = array(
-		'lwtv-underscores' => '6.0.5',    // Bump this any time you make serious CSS changes.
+		'lwtv-underscores' => '6.1.1',    // Bump this any time you make serious CSS changes.
 		'font-awesome'     => '6.5.2',    // Bump when you update Font Awesome.
 		'bootstrap'        => '5.3.3',    // Bump when you update bootstrap.
+		'bootstrap_dark'   => '1.0',      // Bump when you update the dark mode.
 		'lwtv-blocks'      => '1.0.0',    // Bump when you update the blocks.
 		'yikes-nav'        => '20240318', // Last date this was updated.
 	);
@@ -125,7 +126,9 @@ require_once 'inc/walker-comment.php';
  *
  * Add bio box.
  */
-require_once 'inc/author-box.php';
+if ( ! is_singular( 'post' ) ) {
+	require_once 'inc/author-box.php';
+}
 
 /**
  * Archives
@@ -396,11 +399,13 @@ function yikes_starter_scripts() {
 	$lwtv_underscores = $get_theme_vers['lwtv-underscores'];
 	$font_awesome     = $get_theme_vers['font-awesome'];
 	$bootstrap        = $get_theme_vers['bootstrap'];
+	$bootstrap_dark   = $get_theme_vers['bootstrap_dark'];
 	$yikes_nav        = $get_theme_vers['yikes-nav'];
 
 	// combined + minified.
-	// navigation.js, skip-link-focus-fix.js & a11y.js.
+	// navigation.js, skip-link-focus-fix.js, a11y.js, bootstrap-color-mode.
 	wp_enqueue_script( 'yikes-starter-navigation', get_template_directory_uri() . '/inc/js/yikes-theme-scripts.min.js', array(), $yikes_nav, true );
+	wp_enqueue_script( 'lwtv-dark-mode', get_template_directory_uri() . '/inc/js/bootstrap-color-mode.min.js', array(), $bootstrap_dark, false );
 
 	if ( is_singular() && comments_open() && get_option( 'thread_comments' ) ) {
 		wp_enqueue_script( 'comment-reply' );
