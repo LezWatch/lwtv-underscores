@@ -1,8 +1,8 @@
 <?php
 /**
- * The template for displaying search forms in YIKES Starter
+ * The template for displaying search forms in the header.
  *
- * @package YIKES Starter
+ * @package LWTV Underscores
  */
 ?>
 

@@ -780,11 +780,21 @@ select {
 #masthead .lezwatchtv.last-death a:hover {
   color: #d6d6d6;
 }
-#masthead .dark-mode-toggle {
-  padding: 0.5rem;
+#masthead .offcanvas-body {
+  height: 50px;
+  margin-top: -1px;
+}
+#masthead .offcanvas-header {
+  background-color: #8d329f;
+  color: #fff;
+  font-size: 1.5rem;
+}
+#masthead .dark-mode-toggle button {
+  height: 51px;
+  border-radius: 0;
 }
 #masthead .dark-mode-toggle .form-check {
-  padding-left: 0.5em;
+  padding-left: 0;
 }
 #masthead .dark-mode-toggle .bi {
   width: 1em;
@@ -799,6 +809,15 @@ select {
 #masthead .dark-mode-toggle .dropdown-menu-end[data-bs-popper] {
   right: 1rem;
   left: auto;
+}
+#masthead .dark-mode-toggle .nav-link:focus, #masthead .dark-mode-toggle .nav-link:hover {
+  background-color: #CB3E85;
+}
+#masthead .dark-mode-toggle .nav-link:focus svg *, #masthead .dark-mode-toggle .nav-link:hover svg * {
+  fill: #ebf5fa;
+}
+#masthead div#navbarToggleLWTV.offcanvas.offcanvas-end {
+  top: 2rem;
 }
 
 /* Change the main nav colors */
@@ -2679,18 +2698,44 @@ div.facetwp-facet-shows_scores input.facetwp-number {
     margin-left: .5rem;
   }
 }
-@media (max-width: 991px) {
+@media (max-width: 1099px) {
+  #masthead .navbar-brand {
+    font-size: 1.35rem;
+  }
+  #masthead .navbar-brand-text span {
+    display: none;
+  }
+  #masthead .navbar-brand-text:after {
+    content: 'LWTV';
+  }
+}
+@media (max-width: 990px) {
   #masthead .navbar-brand {
     font-size: 1rem;
   }
-  #masthead .navbar-brand img {
+  #masthead .navbar-brand-text span {
+    display: contents;
+  }
+  #masthead .navbar-brand-text:after {
+    content: '';
+  }
+  #masthead img {
     margin-left: 1rem;
+  }
+  #masthead #search-btn {
+    display: none;
   }
   #masthead .header-search-bar {
     padding: 20px 0 0 0;
   }
   #masthead .header-search-bar .col-sm-1.searchbox-button {
     padding-left: 0;
+  }
+  #masthead .dark-mode-toggle .dropdown-menu {
+    position: static;
+  }
+  #masthead .dark-mode-toggle button {
+    padding: 1rem !important;
   }
 
   .navbar.main-nav ul.navbar-nav > li.nav-item > a.nav-link {
@@ -2825,9 +2870,6 @@ div.facetwp-facet-shows_scores input.facetwp-number {
   #masthead .navbar-brand .navbar-brand-text {
     display: none;
   }
-  #masthead #search-btn {
-    display: none;
-  }
   #masthead .header-search-bar label {
     font-size: 1rem;
   }
@@ -2920,7 +2962,7 @@ div.facetwp-facet-shows_scores input.facetwp-number {
 }
 @media (max-width: 575px) {
   #masthead .fixed-top.main-nav {
-    margin-top: 0px;
+    margin-top: 0px !important;
   }
   #masthead .header-search-bar {
     padding: 0;

@@ -467,8 +467,12 @@ h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
 
 /* If using a fixed-top navbar */
 
-.admin-bar .fixed-top.main-nav {margin-top: 32px;}
-.site-subheader {margin-top: 50px;}
+.admin-bar .fixed-top.main-nav {
+	margin-top: 32px;
+}
+.site-subheader {
+	margin-top: 50px;
+}
 
 #masthead {
 	.navbar-brand {
@@ -530,11 +534,26 @@ h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
 		}
 	}
 
+	.offcanvas-body {
+		height: 50px;
+		margin-top: -1px;
+	}
+
+	.offcanvas-header {
+		background-color: $lwtv-purple;
+		color: $white;
+		@include font-24;
+	}
+
 	.dark-mode-toggle {
-		padding: 0.5rem;
+
+		button {
+			height: 51px;
+			border-radius: 0;
+		}
 
 		.form-check {
-			padding-left: 0.5em;
+			padding-left: 0;
 		}
 
 		.bi {
@@ -553,6 +572,18 @@ h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
 			right: 1rem;
 			left: auto;
 		}
+
+		.nav-link:focus, .nav-link:hover {
+			background-color: $lwtv-pink;
+
+			svg * {
+			  fill: $lwtv-ltgrey;
+			}
+		  }
+	}
+
+	div#navbarToggleLWTV.offcanvas.offcanvas-end {
+		top: 2rem;
 	}
 
 }
