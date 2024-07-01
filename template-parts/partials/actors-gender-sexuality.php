@@ -24,22 +24,24 @@ $gender_sexuality = array(
 		'data'  => lwtv_plugin()->get_actor_sexuality( $actor ),
 		'label' => 'Sexual Orientation',
 	),
-	'pronouns'  => array(
-		'data'  => strtolower( lwtv_plugin()->get_actor_pronouns( $actor ) ),
-		'label' => 'Pronouns',
-	),
 );
 
 if ( 'full' === $format ) {
-	echo '<ul class="list-group list-group-horizontal">';
+	$pronouns = strtolower( lwtv_plugin()->get_actor_pronouns( $actor ) );
+
+	echo '<ul class="list-group list-group-flush">';
+
 	foreach ( $gender_sexuality as $item => $key ) {
 		if ( empty( $key['data'] ) ) {
 			continue;
 		}
-		echo '<li><strong>' . esc_html( ucfirst( $key['label'] ) ) . '</strong>:<br />' . wp_kses_post( $key['data'] ) . '</li>';
+		echo '<li class="list-group-item"><strong>' . esc_html( ucfirst( $key['label'] ) ) . '</strong>:<br />' . wp_kses_post( $key['data'] ) . '</li>';
 	}
+	if ( ! empty( $pronouns ) ) {
+		echo '<li class="list-group-item"><strong>Pronouns</strong>:<br />' . wp_kses_post( $pronouns ) . '</li>';
+	}
+
 	echo '</ul>';
-	echo '<hr />';
 } else {
 	unset( $gender_sexuality['pronouns'] );
 	echo '<div class="card-meta-item gender sexuality"><p>';

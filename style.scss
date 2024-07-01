@@ -4,17 +4,18 @@ Theme URI: https://lezwatchtv.com/
 Author: Tracy Levesque, Mika Epstein
 Author URI: https://lezwatchtv.com/
 Description: LezWatch.TV Theme Episode III - Return of the Custom Theme
-Version: 6.1.0
+Version: 6.1.1
 License: GNU General Public License v2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Text Domain: yikes_starter
 Tags: gay, lwtv, lezwatch
 */
 
+@import 'partials/mixins';
 @import 'partials/colors';
+@import 'partials/colors-dark';
 @import 'partials/fonts';
 @import 'partials/helpers';
-@import 'partials/mixins';
 
 /* ==========================================================================
 	 Layout
@@ -182,8 +183,8 @@ pre.wp-block-verse {
 
 		svg {
 			fill: $lwtv-pink;
-			width: 12px;
-			height: 12px;
+			width: 14px;
+			height: 14px;
 			vertical-align: baseline;
 		}
 
@@ -466,8 +467,12 @@ h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
 
 /* If using a fixed-top navbar */
 
-.admin-bar .fixed-top.main-nav {margin-top: 32px;}
-.site-subheader {margin-top: 50px;}
+.admin-bar .fixed-top.main-nav {
+	margin-top: 32px;
+}
+.site-subheader {
+	margin-top: 50px;
+}
 
 #masthead {
 	.navbar-brand {
@@ -529,6 +534,58 @@ h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
 		}
 	}
 
+	.offcanvas-body {
+		height: 50px;
+		margin-top: -1px;
+	}
+
+	.offcanvas-header {
+		background-color: $lwtv-purple;
+		color: $white;
+		@include font-24;
+	}
+
+	.dark-mode-toggle {
+
+		button {
+			height: 51px;
+			border-radius: 0;
+		}
+
+		.form-check {
+			padding-left: 0;
+		}
+
+		.bi {
+			width: 1em;
+			height: 1em;
+			vertical-align: -.125em;
+			fill: $lwtv-pink;
+		}
+
+		.my-1 {
+			margin-top: .25rem !important;
+			margin-bottom: .25rem !important;
+		}
+
+		.dropdown-menu-end[data-bs-popper] {
+			right: 1rem;
+			left: auto;
+		}
+
+		.nav-link:focus, .nav-link:hover {
+			background-color: $lwtv-pink;
+
+			svg * {
+			  fill: $lwtv-ltgrey;
+			}
+		  }
+	}
+
+	div#navbarToggleLWTV.offcanvas.offcanvas-end {
+		top: 2rem;
+	}
+
 }
 
 /* Change the main nav colors */
@@ -585,7 +642,10 @@ h1.entry-title {
 		@include font-20;
 		line-height: 1;
 		margin: 0 0.6rem 0 0;
-		vertical-align: top;
+		font-family: Oswald, sans-serif;
+		font-size: 1.25rem;
+		font-weight: 400;
+		vertical-align: middle;
 	}
 
 	.breadcrumb {
@@ -940,12 +1000,12 @@ section {
 
 	.fa {
 		text-align: center;
-		width: 16px;
+		width: 20px;
 	}
 
 	svg {
-		width: 15px;
-		height: 15px;
+		width: 20px;
+		height: 20px;
 		vertical-align: middle;
 	}
 }
@@ -1151,10 +1211,23 @@ table.lwtvc {
 	}
 }
 
-.related-article-image-wrapper {
-	max-height: 100px;
-	overflow: hidden;
-	display: inline;
+.related-post-container {
+	.related-article-image-wrapper {
+		max-height: 100px;
+		overflow: hidden;
+		display: inline;
+	}
+
+	.related-article-header {
+		font-family: $headingfontfamily;
+		font-weight: $headingfontweight;
+		line-height: $headingfontheight;
+		@include font-20;
+		font-size: 1rem;
+		margin-top: 0;
+		margin-bottom: 1rem;
+		text-decoration: none;
+	}
 }
 
 
@@ -1249,7 +1322,7 @@ table.lwtvc {
 
 /* Single Actor Template */
 
-.actor-page {
+.actor-page.overview-container {
 	.card {
 		.single-char-img {
 			margin-bottom: 1.25rem;
@@ -1269,8 +1342,10 @@ table.lwtvc {
 			padding: 0;
 
 			li {
-				display: inline-block;
-				width: 50%;
+				.list-group-item {
+					width: 50%;
+					display: inline-block;
+				}
 			}
 
 			&.actor-meta-links {
@@ -1286,6 +1361,19 @@ table.lwtvc {
 
 	.actor-orientation {
 		margin-left: 2rem;
+	}
+}
+
+
+ul.actor-meta-links {
+	display: flex;
+	flex-wrap: wrap;
+	list-style: none;
+
+	li {
+		padding-right: 1rem;
+		padding-bottom: 0.5rem;
+		width: auto;
 	}
 }
 
@@ -1400,7 +1488,8 @@ section#characters {
 }
 
 /* Affiliate Watch */
-.ways-to-watch-container {
+.ways-to-watch-container,
+.affiliate-watch-container {
 	background-color: $lwtv-grey;
 	margin-bottom: 1.25rem;
 	padding: 0.6rem;
@@ -1531,7 +1620,7 @@ section#characters {
 	}
 
 	&.worthit-yes {
-		background: $green;
+		background: $lwtv-green;
 	}
 
 	&.worthit-no {
@@ -1553,7 +1642,18 @@ section#characters {
 	}
 }
 
-.show.trope, .network {
+.show {
+	.trope, .network, .intersection {
+		svg {
+			width: 32px;
+			height: 32px;
+			vertical-align: middle;
+			margin-right: 10px;
+		}
+	}
+}
+
+.trope-list, .intersectionality-list {
 	svg {
 		width: 32px;
 		height: 32px;
@@ -1597,6 +1697,27 @@ div.rpbt_shortcode {
 				font-style: italic;
 			}
 		}
+	}
+
+	.similar-shows-header {
+		font-family: $headingfontfamily;
+		font-weight: $headingfontweight;
+		line-height: $headingfontheight;
+		@include font-20;
+		font-size: 1rem;
+		text-decoration: none;
+	}
+
+	.similar-shows-airdates {
+		font-family: $headingfontfamily;
+		font-weight: $headingfontweight;
+		line-height: $headingfontheight;
+		font-size: 1rem;
+		text-decoration: none;
+	}
+
+	span {
+		display: block;
 	}
 }
 
@@ -1931,6 +2052,7 @@ span.svg-shortcode a {
 .author-box {
 	background-color: $lwtv-ltgrey;
 	@include font-14;
+	padding-bottom: 0.6rem;
 
 	.avatar {
 		border: 1px solid $lwtv-pink;
@@ -1945,10 +2067,34 @@ span.svg-shortcode a {
 		width: 16px;
 	}
 
+	hr {
+		margin: 0.4rem 0!important;
+	}
+
 	svg {
-		width: 15px;
-		height: 15px;
-		vertical-align: middle;
+		width: 20px;
+		height: 20px;
+		vertical-align: baseline;
+		margin-right: 5px;
+	}
+
+	.author_box_social {
+		margin-left: 0.6rem;
+	}
+
+	.author_name {
+		font-weight: 900;
+		margin-top: 0.4rem;
+		margin-bottom: 0.4rem;
+
+		&.author_box_compact {
+			@include font-20;
+		}
+
+		&.author_box_large {
+			@include font-24;
+		}
+
 	}
 }
 
@@ -2150,7 +2296,7 @@ div.facetwp-facet-shows_scores input.facetwp-number {
 	}
 
 	.widget_categories, .widget_tag_cloud,
-	.widget-tags, .widget_custom_html {
+	.widget-tags, .widget_custom_html, .widget_text {
 		@include box-shadow(0 1px 4px 0 rgba(0, 0, 0, 0.14));
 		padding-bottom: .75rem;
 

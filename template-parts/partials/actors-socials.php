@@ -38,11 +38,12 @@ $maybe_social = array(
 		'hide' => false,
 	),
 	'twitter'   => array(
-		'meta' => 'lezactors_twitter',
-		'base' => 'https://twitter.com/',
-		'post' => '',
-		'fa'   => 'fab fa-x-twitter',
-		'hide' => true,
+		'label' => 'X (Twitter)',
+		'meta'  => 'lezactors_twitter',
+		'base'  => 'https://twitter.com/',
+		'post'  => '',
+		'fa'    => 'fab fa-x-twitter',
+		'hide'  => true,
 	),
 	'instagram' => array(
 		'meta' => 'lezactors_instagram',
@@ -59,11 +60,12 @@ $maybe_social = array(
 		'hide' => true,
 	),
 	'tiktok'    => array(
-		'meta' => 'lezactors_tiktok',
-		'base' => 'https://tiktok.com/',
-		'post' => '',
-		'fa'   => 'fab fa-tiktok',
-		'hide' => true,
+		'label' => 'TikTok',
+		'meta'  => 'lezactors_tiktok',
+		'base'  => 'https://tiktok.com/',
+		'post'  => '',
+		'fa'    => 'fab fa-tiktok',
+		'hide'  => true,
 	),
 	'bluesky'   => array(
 		'meta' => 'lezactors_bluesky',
@@ -112,10 +114,20 @@ foreach ( $maybe_social as $social => $data ) {
 }
 
 if ( count( $actor_urls ) > 0 ) {
-	echo '<span ID="actor-links"><strong>Links: </strong></span> ';
-	echo '<ul class="actor-meta-links" aria-labelledby="actor-links">';
-	foreach ( $actor_urls as $source ) {
-		echo '<li><i class="' . esc_attr( strtolower( $source['fa'] ) ) . '" aria-hidden="true"></i> <a href="' . esc_url( $source['url'] ) . '" target="_blank">' . esc_html( $source['name'] ) . '</a><span class="screen-reader-text">, opens in new tab</span></li>';
-	}
-	echo '</ul>';
+	?>
+	<div class="card-body">
+		<div class="card-meta">
+			<div class="card-meta-item">
+				<span ID="actor-links"><strong>Links: </strong></span>
+				<ul class="actor-meta-links" aria-labelledby="actor-links">
+					<?php
+					foreach ( $actor_urls as $source ) {
+						echo '<li><i class="' . esc_attr( strtolower( $source['fa'] ) ) . '" aria-hidden="true"></i> <a href="' . esc_url( $source['url'] ) . '" target="_blank">' . esc_html( $source['name'] ) . '</a><span class="screen-reader-text">, opens in new tab</span></li>';
+					}
+					?>
+				</ul>
+			</div>
+		</div>
+	</div>
+	<?php
 }

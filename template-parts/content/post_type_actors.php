@@ -58,7 +58,7 @@ lwtv_microformats_fix( $actor_id );
 
 <section id="toc" class="toc-container card-body">
 	<nav class="breadcrumb">
-		<h4 class="toc-title">Table of Contents</h4>
+		<span class="toc-title">Table of Contents</span>
 		<a class="breadcrumb-item smoothscroll" href="#biography">Biography</a>
 		<a class="breadcrumb-item smoothscroll" href="#vitals">Overview</a>
 		<a class="breadcrumb-item smoothscroll" href="#characters">Characters</a>
@@ -67,15 +67,18 @@ lwtv_microformats_fix( $actor_id );
 
 <section name="vitals" id="vitals" class="showschar-section">
 	<h2>Overview</h2>
-	<div class="card-body">
-		<div class="card-meta">
-			<div class="card-meta-item">
+
+	<div class="overview-container">
+		<div class="row align-items-start">
+			<div class="col">
 				<?php get_template_part( 'template-parts/partials/actors', 'life', array( 'actor' => $actor_id ) ); ?>
 			</div>
-			<div class="card-meta-item">
+			<div class="col">
 				<?php get_template_part( 'template-parts/partials/actors', 'gender-sexuality', array( 'actor' => $actor_id ) ); ?>
 			</div>
-			<div class="card-meta-item">
+		</div>
+		<div class="row align-items-start">
+			<div class="col">
 				<?php get_template_part( 'template-parts/partials/actors', 'socials', array( 'actor' => $actor_id ) ); ?>
 			</div>
 		</div>
@@ -117,7 +120,7 @@ lwtv_microformats_fix( $actor_id );
 			echo '<div class="container characters-regulars-container"><div class="row site-loop character-show-loop">';
 			if ( is_array( $all_chars ) ) {
 				foreach ( $all_chars as $character ) {
-					get_template_part( 'template-parts/excerpt', 'post_type_characters', array( 'character' => $character ) );
+					get_template_part( 'template-parts/excerpt/characters', '', array( 'character' => $character ) );
 				}
 			}
 			echo '</div></div>';

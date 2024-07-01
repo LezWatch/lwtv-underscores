@@ -13,7 +13,7 @@
 <link rel="profile" href="http://gmpg.org/xfn/11">
 <link rel="pingback" href="<?php bloginfo( 'pingback_url' ); ?>">
 
-<?php get_template_part( 'template-parts/header', 'lcp', array( 'post_id' => get_the_ID() ) ); ?>
+<?php get_template_part( 'template-parts/header/lcp', '', array( 'post_id' => get_the_ID() ) ); ?>
 
 <?php wp_head(); ?>
 </head>
@@ -21,45 +21,8 @@
 <body <?php body_class(); ?>>
 
 <header id="masthead" class="site-header" role="banner">
-	<nav id="site-navigation" class="navbar fixed-top navbar-expand-md navbar-light bg-light main-nav" role="navigation">
-		<div class="container">
-			<div class="screen-reader-text">
-				<a href="#main">Skip to Main Content</a>
-			</div>
-			<a class="navbar-brand" href="<?php echo esc_url( home_url( '/' ) ); ?>" title="<?php echo esc_attr( get_bloginfo( 'name', 'display' ) ); ?>" rel="home" class="navbar-brand">
-				<img src="<?php echo esc_url( get_template_directory_uri() ); ?>/images/lezwatch-logo-icon.png" alt="Return to <?php bloginfo( 'name' ); ?> homepage" width="72px" height="80px">
-				<span class="navbar-brand-text">
-					<?php bloginfo( 'name' ); ?>
-				</span>
-			</a>
-			<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggleLWTV" aria-controls="navbarToggleLWTV" aria-expanded="false" aria-label="Toggle navigation">
-				<span class="navbar-toggler-icon"></span>
-			</button>
-			<div class="collapse navbar-collapse" id="navbarToggleLWTV">
-				<?php
-				wp_nav_menu(
-					array(
-						'menu'           => 'primary',
-						'theme_location' => 'primary',
-						'depth'          => 3,
-						'container'      => false,
-						'menu_class'     => 'navbar-nav ms-auto',
-						'fallback_cb'    => 'wp_page_menu',
-						'walker'         => new WP_Bootstrap_Navwalker(),
-						'items_wrap'     => '<ul id="%1$s" class="%2$s" aria-labelledby="main-navigation">%3$s</ul>',
-					)
-				);
-				?>
-			</div>
 
-			<span class="nav-item search" id="search-btn">
-				<a class="nav-link" data-bs-toggle="collapse" role="button" data-bs-target="#collapseSearch" href="#collapseSearch" aria-expanded="false">
-					<?php echo lwtv_symbolicons( 'search.svg', 'fa-search' ); ?>
-					<span class="screen-reader-text">Search the Site</span>
-				</a>
-			</span>
-		</div>
-	</nav><!-- #site-navigation -->
+	<?php get_template_part( 'template-parts/header/navbar' ); ?>
 
 	<div class="collapse fixed-top header-search-bar" id="collapseSearch">
 		<div class="container">
@@ -67,7 +30,7 @@
 				<div class="col">
 					<div class="search-body">
 						<div class="search-box">
-							<?php get_template_part( 'template-parts/searchbox' ); ?>
+							<?php get_template_part( 'template-parts/header/searchbox' ); ?>
 						</div>
 					</div>
 				</div>
@@ -81,15 +44,9 @@
 		<?php
 		if ( is_front_page() && ( 0 == get_query_var( 'page' ) || '' == get_query_var( 'page' ) ) ) { // phpcs:ignore Universal.Operators.StrictComparisons.LooseEqual
 			?>
-			<div class="alert alert-danger" role="alert">
-				<div class="container">
-					<div class="row">
-						<div class="col dead-widget-container">
-							<center><?php echo wp_kses_post( lwtv_last_death() ); ?></center>
-						</div>
-					</div>
-				</div>
-			</div>
+
+			<?php get_template_part( 'template-parts/header/last-death' ); ?>
+
 			<div class="jumbotron jumbotron-fluid"
 				<?php if ( get_header_image() ) : ?>
 					style="background-image: url(<?php header_image(); ?>);"

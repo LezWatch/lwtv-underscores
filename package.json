@@ -1,7 +1,7 @@
 {
   "name": "yikes-inc-starter-theme",
-  "version": "6.1.0",
-  "description": "LezWatch.TV Custom Theme.",
+  "version": "6.1.1",
+  "description": "LezWatch.TV Custom Theme (based on Yikes Inc. starter theme).",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",

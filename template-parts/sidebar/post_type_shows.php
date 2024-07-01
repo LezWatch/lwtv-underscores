@@ -24,7 +24,7 @@ $alt_names    = ( get_post_meta( $show_id, 'lezshows_show_names', true ) ) ? get
 </section>
 
 <section id="suggest-edits" class="widget widget_suggestedits">
-	<?php get_template_part( 'template-parts/partials/form', 'suggest-edit', array( 'for_post' => $show_id ) ); ?>
+	<?php get_template_part( 'template-parts/overlays/form', 'suggest-edit', array( 'for_post' => $show_id ) ); ?>
 </section>
 
 <?php
@@ -57,7 +57,7 @@ lwtv_plugin()->get_admin_tools( $show_id );
 
 				$thumb_image = lwtv_symbolicons( $thumb_icon . '.svg', 'fa-' . $thumb_icon );
 				// phpcs:ignore WordPress.Security.EscapeOutput
-				echo '<span role="img" class="show-worthit ' . esc_attr( strtolower( $thumb_rating ) ) . '">' . $thumb_image . '</span>';
+				echo '<span role="img" class="show-worthit ' . esc_attr( strtolower( $thumb_rating ) ) . '" aria-label="This show has an overall review of ' . esc_attr( $thumb_rating ) . ' ">' . $thumb_image . '</span>';
 				echo wp_kses_post( $thumb_rating );
 				?>
 			</div>
@@ -164,7 +164,7 @@ if ( false !== $alt_names && ! empty( $alt_names ) ) {
 			foreach ( $tropes as $trope ) {
 				?>
 				<li class="list-group-item show trope trope-<?php echo esc_attr( $trope->slug ); ?>">
-					<a href="<?php echo esc_url( get_term_link( $trope->slug, 'lez_tropes' ) ); ?>" rel="show trope">
+					<a href="<?php echo esc_url( get_term_link( $trope->slug, 'lez_tropes' ) ); ?>" rel="show trope" aria-label="Read more about the trope <?php echo esc_attr( $trope->name ); ?>.">
 					<?php
 						// Echo the taxonomy icon (default to squares if empty)
 						$icon = get_term_meta( $trope->term_id, 'lez_termsmeta_icon', true );
@@ -191,20 +191,20 @@ if ( $intersections && ! is_wp_error( $intersections ) ) {
 			<div class="card-header">
 				<h4>Intersectionality</h4>
 			</div>
-				<ul class="trope-list list-group">
+				<ul class="intersectionality-list list-group">
 					<?php
 					// loop over each returned trope
 					foreach ( $intersections as $intersection ) {
 						?>
-						<li class="list-group-item show trope trope-<?php echo esc_attr( $intersection->slug ); ?>">
-							<a href="<?php echo esc_url( get_term_link( $intersection->slug, 'lez_intersections' ) ); ?>" rel="show trope">
+						<li class="list-group-item show intersection intersection-<?php echo esc_attr( $intersection->slug ); ?>">
+							<a href="<?php echo esc_url( get_term_link( $intersection->slug, 'lez_intersections' ) ); ?>" rel="show intersection" aria-label="Read more about the postivie intersectionality representation of <?php echo esc_attr( $intersection->name ); ?>.">
 							<?php
 							// Echo the taxonomy icon (default to squares if empty)
 							$icon = get_term_meta( $intersection->term_id, 'lez_termsmeta_icon', true );
 							echo lwtv_symbolicons( $icon . '.svg', 'fa-lemon' );
 							?>
 							</a>
-							<a href="<?php echo esc_url( get_term_link( $intersection->slug, 'lez_intersections' ) ); ?>" rel="show trope" class="trope-link"><?php echo esc_html( $intersection->name ); ?>
+							<a href="<?php echo esc_url( get_term_link( $intersection->slug, 'lez_intersections' ) ); ?>" rel="show intersection" class="intersection-link"><?php echo esc_html( $intersection->name ); ?>
 							</a>
 						</li>
 						<?php
@@ -257,8 +257,10 @@ if ( $intersections && ! is_wp_error( $intersections ) ) {
 						<?php
 						if ( $rating >= '0' ) {
 							$leftover = 5 - $rating;
+
 							// phpcs:ignore WordPress.Security.EscapeOutput
 							echo str_repeat( $positive_heart, $rating );
+
 							// phpcs:ignore WordPress.Security.EscapeOutput
 							echo str_repeat( $negative_heart, $leftover );
 						}

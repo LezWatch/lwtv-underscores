@@ -46,7 +46,7 @@ get_header(); ?>
 									<?php
 									while ( have_posts() ) :
 										the_post();
-										get_template_part( 'template-parts/content', get_post_type() );
+										get_template_part( 'template-parts/content/' . get_post_type() );
 										// Force Jetpack share links to display ONCE.
 										lwtv_yikes_jetpack_post_meta();
 										// Echo last updated.

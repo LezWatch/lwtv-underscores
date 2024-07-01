@@ -179,7 +179,7 @@ get_header(); ?>
 				while ( $lovedpostloop->have_posts() ) :
 					$lovedpostloop->the_post();
 					?>
-					<?php get_template_part( 'template-parts/content', 'loved' ); ?>
+					<?php get_template_part( 'template-parts/content/loved' ); ?>
 					<?php
 				endwhile;
 				wp_reset_postdata();
@@ -226,7 +226,7 @@ get_header(); ?>
 					$oldpostsloop->the_post();
 					?>
 
-					<?php get_template_part( 'template-parts/content', 'posts' ); ?>
+					<?php get_template_part( 'template-parts/content/posts' ); ?>
 					<?php
 				endwhile;
 

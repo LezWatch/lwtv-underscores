@@ -78,10 +78,10 @@ get_header(); ?>
 									<?php
 									while ( have_posts() ) :
 										the_post();
-										get_template_part( 'template-parts/content', 'posts' );
+										get_template_part( 'template-parts/content/posts' );
 									endwhile;
 									else :
-										get_template_part( 'template-parts/content', 'none' );
+										get_template_part( 'template-parts/content/none' );
 									endif;
 									?>
 								</div>
