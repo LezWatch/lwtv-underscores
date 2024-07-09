@@ -26,6 +26,9 @@ if ( ! empty( $born ) && ! lwtv_plugin()->hide_actor_data( $actor, 'dob' ) ) {
 
 		$life_array['dates']['born'] = date_format( $get_birth, 'F j, Y' );
 	}
+} else {
+	// Fallback to Unknown.
+	$life_array['dates']['born'] = 'Unknown';
 }
 
 // If they have a death date, let's parse it.
@@ -40,9 +43,10 @@ if ( ! empty( $died ) ) {
 
 // If they have a birth date, let's calculate their age.
 if ( isset( $born ) ) {
-	$age = lwtv_plugin()->get_actor_age( $actor );
+	// If the birthdate is unknown, we can't calculate age.
+	$age = 'Unknown' !== $life_array['dates']['born'] ? lwtv_plugin()->get_actor_age( $actor ) : null;
 
-	$life_array['age'] = ( is_object( $age ) ) ? $age->format( '%Y years old' ) : null;
+	$life_array['age'] = ( is_object( $age ) ) ? $age->format( '%Y years old' ) : 'Unknown';
 }
 
 
