@@ -1232,7 +1232,7 @@ table.lwtvc {
 
 
 /* Single Character & Single Actor Template */
-.character-page , .actor-page {
+.character-page, .actor-page {
 	.card {
 		border: none;
 		@include border-radius(0);
@@ -1281,6 +1281,15 @@ table.lwtvc {
 			margin: 0 2rem 0 0;
 			width: 300px;
 		}
+	}
+}
+
+.cliche-list {
+	svg {
+		width: 32px;
+		height: 32px;
+		vertical-align: middle;
+		margin-right: 10px;
 	}
 }
 
@@ -1592,6 +1601,7 @@ section#characters {
 
 /* ratings icons */
 
+.worthit-icons,
 .ratings-icons {
 	padding: 5px;
 	text-align: center;

@@ -54,22 +54,18 @@ lwtv_microformats_fix( $character );
 					<tbody>
 						<tr>
 							<th scope="row" colspan="2"><center>
-								<?php get_template_part( 'template-parts/partials/characters', 'gender-sexuality', compact( 'character' ) ); ?>
+								<?php get_template_part( 'template-parts/partials/characters/gender-sexuality', '', compact( 'character' ) ); ?>
 							</center></th>
-						</tr>
-						<tr>
-							<th scope="row">Clichés</th>
-							<td><?php echo lwtv_plugin()->get_character_data( $character, 'cliches' ); ?></td>
 						</tr>
 						<tr>
 							<th scope="row">Status</th>
 							<td><?php echo wp_kses_post( $doa_status ); ?></td>
 						</tr>
 						<tr>
-							<?php get_template_part( 'template-parts/partials/characters', 'actors', compact( 'character' ) ); ?>
+							<?php get_template_part( 'template-parts/partials/characters/actors', '', compact( 'character' ) ); ?>
 						</tr>
 						<tr>
-							<?php get_template_part( 'template-parts/partials/characters', 'shows', compact( 'character' ) ); ?>
+							<?php get_template_part( 'template-parts/partials/characters/shows', '', compact( 'character' ) ); ?>
 						</tr>
 						<?php
 						if ( isset( $rip ) ) {

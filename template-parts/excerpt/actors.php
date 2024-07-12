@@ -61,8 +61,8 @@ unset( $shows, $actors, $gender, $sexuality, $cliches );
 		<div class="card-text">
 			<?php
 			get_template_part(
-				'template-parts/partials/actors',
-				'gender-sexuality',
+				'template-parts/partials/actors/gender-sexuality',
+				'',
 				array(
 					'actor'  => $the_id,
 					'format' => 'excerpt',
