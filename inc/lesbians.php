@@ -264,7 +264,15 @@ function lwtv_last_death() {
 	$return     = '<p>The LezWatch.TV API is temporarily unavailable.</p>';
 	$last_death = lwtv_plugin()->get_json_last_death();
 	if ( '' !== $last_death ) {
-		$return  = '<p>' . sprintf( 'It has been %s since the last queer female, non-binary, or transgender death on television', '<strong>' . human_time_diff( $last_death['died'], (int) wp_date( 'U' ) ) . '</strong> ' );
+		$died_time = human_time_diff( $last_death['died'], (int) wp_date( 'U' ) );
+
+		// If the death was within 24 hours, be more vague.
+		$seconds = (int) time() - (int) $last_death['died'];
+		if ( DAY_IN_SECONDS >= $seconds ) {
+			$died_time = 'less than 24 hours';
+		}
+
+		$return  = '<p>' . sprintf( 'It has been %s since the last queer female, non-binary, or transgender death on television', '<strong>' . $died_time . '</strong> ' );
 		$return .= ': <span><a href="' . $last_death['url'] . '">' . $last_death['name'] . '</a></span> - ' . gmdate( 'F j, Y', $last_death['died'] ) . '</p>';
 		// NOTE! Add `class="hidden-death"` to the span above if you want to blur the display of the last death.
 	}

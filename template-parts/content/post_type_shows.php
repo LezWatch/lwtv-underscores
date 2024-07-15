@@ -59,10 +59,10 @@ get_template_part( 'template-parts/partials/image', 'show', array( 'show_id' => 
 
 <?php
 // Warnings:
-get_template_part( 'template-parts/partials/shows', 'warning', compact( 'show_id' ) );
+get_template_part( 'template-parts/partials/shows/warning', '', compact( 'show_id' ) );
 
 // Ways to Watch:
-get_template_part( 'template-parts/partials/shows', 'ways-to-watch', compact( 'show_id' ) );
+get_template_part( 'template-parts/partials/shows/ways-to-watch', '', compact( 'show_id' ) );
 ?>
 
 <section class="showschar-section" name="overview" id="overview">
@@ -168,5 +168,5 @@ if ( $maybe_has['related-posts']['meta'] ) {
 
 <?php
 if ( false !== $rpbt_shortcode ) {
-	get_template_part( 'template-parts/partials/shows', 'like-this', compact( 'show_id', 'rpbt_shortcode' ) );
+	get_template_part( 'template-parts/partials/shows/like-this', '', compact( 'show_id', 'rpbt_shortcode' ) );
 }

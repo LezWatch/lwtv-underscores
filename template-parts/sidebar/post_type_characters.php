@@ -25,4 +25,6 @@ if ( is_null( $char_id ) || empty( $char_id ) ) {
 <?php
 lwtv_plugin()->get_admin_tools( $char_id );
 
+get_template_part( 'template-parts/partials/characters/card', 'cliches', array( 'char_id' => $char_id ) );
+
 get_template_part( 'template-parts/partials/sidebar', 'slack' );

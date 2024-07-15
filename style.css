@@ -148,7 +148,7 @@ Tags: gay, lwtv, lezwatch
   fill: #ebf5fa;
 }
 [data-bs-theme="dark"] .card-meta-item.actors svg, [data-bs-theme="dark"] .card-meta-item.cliches svg, [data-bs-theme="dark"] .card-meta-item.shows svg,
-[data-bs-theme="dark"] .intersectionality-list svg, [data-bs-theme="dark"] .trope-list svg {
+[data-bs-theme="dark"] .intersectionality-list svg, [data-bs-theme="dark"] .trope-list svg, [data-bs-theme="dark"] .cliche-list svg {
   fill: #ebf5fa;
 }
 [data-bs-theme="dark"] .site-loop .card {
@@ -189,6 +189,34 @@ Tags: gay, lwtv, lezwatch
 }
 [data-bs-theme="dark"] .dark-mode-toggle svg * {
   fill: #ebf5fa;
+}
+[data-bs-theme="dark"] div.facetwp-facet select {
+  background-color: #404040;
+  color: #fff;
+}
+[data-bs-theme="dark"] div.facetwp-facet .fs-search, [data-bs-theme="dark"] div.facetwp-facet .fs-wrap .fs-search input,
+[data-bs-theme="dark"] div.facetwp-facet .fs-dropdown .fs-options, [data-bs-theme="dark"] div.facetwp-facet .fs-dropdown .fs-no-results {
+  background-color: #404040;
+  color: #fff;
+}
+[data-bs-theme="dark"] div.facetwp-facet .facetwp-type-fselect .fs-dropdown, [data-bs-theme="dark"] div.facetwp-facet .facetwp-type-fselect .fs-wrap,
+[data-bs-theme="dark"] div.facetwp-facet .fs-label-wrap .fs-label {
+  background-color: #404040;
+  color: #fff;
+  border-color: #ebf5fa;
+}
+[data-bs-theme="dark"] div.facetwp-facet .fs-arrow {
+  border-top: 5px solid #fff;
+}
+[data-bs-theme="dark"] .archive .callout-death svg * {
+  fill: #fff;
+}
+[data-bs-theme="dark"] .facetwp-pager a {
+  color: #EECEE3;
+}
+[data-bs-theme="dark"] .facetwp-pager a:hover {
+  color: #9E2968;
+  background-color: #fff;
 }
 
 /* =Font Styles
@@ -1620,6 +1648,13 @@ table.lwtvc tbody {
   width: 300px;
 }
 
+.cliche-list svg {
+  width: 32px;
+  height: 32px;
+  vertical-align: middle;
+  margin-right: 10px;
+}
+
 .character-cliche svg {
   height: 15px;
   width: 15px;
@@ -1865,36 +1900,45 @@ section#characters .card {
 }
 
 /* ratings icons */
+.worthit-icons,
 .ratings-icons {
   padding: 5px;
   text-align: center;
 }
+.worthit-icons svg,
 .ratings-icons svg {
   width: 60px;
   height: 60px;
   vertical-align: middle;
   margin: 2px;
 }
+.worthit-icons .show-heart svg,
 .ratings-icons .show-heart svg {
   width: 30px;
   height: 30px;
   vertical-align: middle;
 }
+.worthit-icons .show-heart.positive svg,
 .ratings-icons .show-heart.positive svg {
   fill: #c0392b;
 }
+.worthit-icons .show-heart.negative svg,
 .ratings-icons .show-heart.negative svg {
   fill: #d6d6d6;
 }
+.worthit-icons.worthit-yes,
 .ratings-icons.worthit-yes {
   background: #047a49;
 }
+.worthit-icons.worthit-no,
 .ratings-icons.worthit-no {
   background: #c0392b;
 }
+.worthit-icons.worthit-meh,
 .ratings-icons.worthit-meh {
   background: #f1c40f;
 }
+.worthit-icons.worthit-tbd,
 .ratings-icons.worthit-tbd {
   background: #e51e24;
 }

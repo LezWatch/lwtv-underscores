@@ -154,7 +154,7 @@ $color-mode-type: data;
 	}
 
 	.card-meta-item.actors svg, .card-meta-item.cliches svg, .card-meta-item.shows svg,
-	.intersectionality-list svg, .trope-list svg {
+	.intersectionality-list svg, .trope-list svg, .cliche-list svg {
 		fill: $lwtv-ltgrey;
 	}
 
@@ -209,6 +209,45 @@ $color-mode-type: data;
 		color: $white;
 		svg * {
 			fill: $lwtv-ltgrey;
+		}
+	}
+
+	div.facetwp-facet {
+		select {
+			background-color: $lwtv-medgrey;
+			color: $white;
+		}
+
+		.fs-search, .fs-wrap .fs-search input,
+		.fs-dropdown .fs-options, .fs-dropdown .fs-no-results {
+			background-color: $lwtv-medgrey;
+			color: $white;
+		}
+
+		.facetwp-type-fselect .fs-dropdown, .facetwp-type-fselect .fs-wrap,
+		.fs-label-wrap .fs-label {
+			background-color: $lwtv-medgrey;
+			color: $white;
+			border-color: $lwtv-ltgrey;
+		}
+
+		.fs-arrow {
+			border-top: 5px solid $white;
+		}
+	}
+
+	.archive .callout-death svg * {
+		fill: $white;
+	}
+
+	.facetwp-pager {
+		a {
+			color: $lwtv-ltpink;
+		}
+
+		a:hover {
+			color: $lwtv-dkpink;
+			background-color: $white;
 		}
 	}
 }
