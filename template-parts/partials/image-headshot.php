@@ -16,11 +16,12 @@ $thumb_class = ( 'full' === $format ) ? 'rounded float-left' : 'float-left';
 $show_meta    = get_post_meta( $this_id, 'lezchars_show_group', true );
 $show_appears = '';
 
-if ( isset( $show_meta ) && ! empty( $show_meta ) ) {
+if ( isset( $show_meta ) && ! empty( $show_meta ) && is_array( $show_meta ) ) {
 	foreach ( $show_meta as $show ) {
-		if ( ! isset( $show['show'] ) || ! isset( $show['appears'] ) || ! is_array( $show['appears'] ) ) {
+		if ( ! is_array( $show ) || ! isset( $show['show'] ) || ! isset( $show['appears'] ) ) {
 			continue;
 		}
+
 		$show_id = ( is_array( $show['show'] ) ) ? $show['show'][0] : $show['show'];
 		if ( (int) get_the_ID() === (int) $show_id ) {
 			sort( $show['appears'] );

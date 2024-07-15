@@ -38,7 +38,10 @@ $this_id = $args['actor_id'] ?? null;
 							$stats      = lwtv_plugin()->generate_stats_block_actor( $attributes );
 
 							if ( ! empty( $stats ) ) {
-								// phpcs:ignore WordPress.Security.EscapeOutput
+								?>
+								<p>Statistics are updated daily.</p>
+								<?php
+								// phpcs:ignore WordPress.Security.EscapeOutput -- Escaped in the function
 								echo $stats;
 								?>
 								<p><em><small>Note: Character roles may exceed the number of characters played, if the character appeared on multiple TV shows.</small></em></p>

@@ -147,8 +147,8 @@
 			</a>
 			<?php
 			get_template_part(
-				'template-parts/partials/shows',
-				'airdates',
+				'template-parts/partials/shows/airdates',
+				'',
 				array(
 					'show_id' => get_the_ID(),
 					'format'  => 'embed',

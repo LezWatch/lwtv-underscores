@@ -83,8 +83,8 @@ if ( ( 'recurring' === $char_role && 'post_type_shows' === get_post_type() ) || 
 			// Actor information
 			if ( ( 'regular' === $char_role && 'post_type_shows' === get_post_type() ) || $archive ) {
 				get_template_part(
-					'template-parts/partials/characters',
-					'actors',
+					'template-parts/partials/characters/actors',
+					'',
 					array(
 						'character' => $the_id,
 						'format'    => 'oneactor',
@@ -95,8 +95,8 @@ if ( ( 'recurring' === $char_role && 'post_type_shows' === get_post_type() ) || 
 			// Gender and Sexuality
 			if ( 'regular' === $char_role && 'post_type_shows' === get_post_type() ) {
 				get_template_part(
-					'template-parts/partials/characters',
-					'gender-sexuality',
+					'template-parts/partials/characters/gender-sexuality',
+					'',
 					array(
 						'character' => $the_id,
 						'format'    => 'simple',
