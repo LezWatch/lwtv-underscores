@@ -225,7 +225,8 @@ $color-mode-type: data;
 		}
 
 		.facetwp-type-fselect .fs-dropdown, .facetwp-type-fselect .fs-wrap,
-		.fs-label-wrap .fs-label {
+		.fs-label-wrap .fs-label
+		.facetwp-type-autocomplete .fs-dropdown, .facetwp-type-autocomplete .fs-wrap {
 			background-color: $lwtv-medgrey;
 			color: $white;
 			border-color: $lwtv-ltgrey;
