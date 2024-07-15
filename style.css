@@ -200,7 +200,8 @@ Tags: gay, lwtv, lezwatch
   color: #fff;
 }
 [data-bs-theme="dark"] div.facetwp-facet .facetwp-type-fselect .fs-dropdown, [data-bs-theme="dark"] div.facetwp-facet .facetwp-type-fselect .fs-wrap,
-[data-bs-theme="dark"] div.facetwp-facet .fs-label-wrap .fs-label {
+[data-bs-theme="dark"] div.facetwp-facet .fs-label-wrap .fs-label
+.facetwp-type-autocomplete .fs-dropdown, [data-bs-theme="dark"] div.facetwp-facet .facetwp-type-autocomplete .fs-wrap {
   background-color: #404040;
   color: #fff;
   border-color: #ebf5fa;
