@@ -209,7 +209,8 @@ Tags: gay, lwtv, lezwatch
 [data-bs-theme="dark"] div.facetwp-facet .fs-arrow {
   border-top: 5px solid #fff;
 }
-[data-bs-theme="dark"] .archive .callout-death svg * {
+[data-bs-theme="dark"] .archive .callout-death svg *,
+[data-bs-theme="dark"] .charlist-grave svg * {
   fill: #fff;
 }
 [data-bs-theme="dark"] .facetwp-pager a {

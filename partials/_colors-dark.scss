@@ -237,7 +237,8 @@ $color-mode-type: data;
 		}
 	}
 
-	.archive .callout-death svg * {
+	.archive .callout-death svg *,
+	.charlist-grave svg * {
 		fill: $white;
 	}
 
