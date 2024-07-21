@@ -18,15 +18,16 @@ if ( ! isset( $actor ) || empty( $actor ) ) {
 $gender_sexuality = array(
 	'gender'    => array(
 		'data'  => lwtv_plugin()->get_actor_gender( $actor ),
-		'label' => 'Gender Orientation',
+		'label' => ( 'full' === $format ) ? 'Gender Orientation' : 'Gender',
 	),
 	'sexuality' => array(
 		'data'  => lwtv_plugin()->get_actor_sexuality( $actor ),
-		'label' => 'Sexual Orientation',
+		'label' => ( 'full' === $format ) ? 'Sexual Orientation' : 'Sexuality',
 	),
 );
 
 if ( 'full' === $format ) {
+	// Used on Actor pages.
 	$pronouns = strtolower( lwtv_plugin()->get_actor_pronouns( $actor ) );
 
 	echo '<ul class="list-group list-group-flush">';
@@ -43,12 +44,13 @@ if ( 'full' === $format ) {
 
 	echo '</ul>';
 } else {
+	// Used on cards.
 	unset( $gender_sexuality['pronouns'] );
 	echo '<div class="card-meta-item gender sexuality"><p>';
 	foreach ( $gender_sexuality as $item => $key ) {
-		$gen_data  = ( empty( $key['data'] ) ? 'Unknown' : $key['data'];
-		$gen_label = str_replace( ' Orientation', '', $key['label'] );
-		echo '&bull; <strong>' . esc_html( ucfirst( $gen_label ) ) . ':</strong> ' . wp_kses_post( $gen_data ) . '<br />';
+		$gen_data  = empty( $key['data'] ) ? 'Unknown' : $key['data'];
+		$gen_label = $key['label'];
+		echo '&bull; <strong>' . esc_html( $gen_label ) . ':</strong> ' . wp_kses_post( $gen_data ) . '<br />';
 	}
 	echo '</p></div>';
 }
