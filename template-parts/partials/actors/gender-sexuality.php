@@ -46,11 +46,9 @@ if ( 'full' === $format ) {
 	unset( $gender_sexuality['pronouns'] );
 	echo '<div class="card-meta-item gender sexuality"><p>';
 	foreach ( $gender_sexuality as $item => $key ) {
-		$gen_data = $key['data'];
-		if ( empty( $key['data'] ) || ! isset( $key['item'] ) ) {
-			$gen_data = 'Unknown';
-		}
-		echo '&bull; <strong>' . esc_html( ucfirst( $key['item'] ) ) . ':</strong> ' . wp_kses_post( $gen_data ) . '<br />';
+		$gen_data  = ( empty( $key['data'] ) ? 'Unknown' : $key['data'];
+		$gen_label = str_replace( ' Orientation', '', $key['label'] );
+		echo '&bull; <strong>' . esc_html( ucfirst( $gen_label ) ) . ':</strong> ' . wp_kses_post( $gen_data ) . '<br />';
 	}
 	echo '</p></div>';
 }
