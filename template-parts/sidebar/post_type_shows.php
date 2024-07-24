@@ -26,7 +26,7 @@ lwtv_plugin()->get_admin_tools( $show_id );
 get_template_part( 'template-parts/partials/shows/card', 'worthit', array( 'show_id' => $show_id ) );
 get_template_part( 'template-parts/partials/shows/card', 'altnames', array( 'show_id' => $show_id ) );
 get_template_part( 'template-parts/partials/shows/card', 'tropes', array( 'show_id' => $show_id ) );
-get_template_part( 'template-parts/partials/shows/card', 'intersectionality', array( 'show_id' => $show_id ) );
+get_template_part( 'template-parts/partials/shows/card', 'intersections', array( 'show_id' => $show_id ) );
 get_template_part( 'template-parts/partials/shows/card', 'ratings', array( 'show_id' => $show_id ) );
 
 get_template_part( 'template-parts/partials/sidebar', 'slack' );
