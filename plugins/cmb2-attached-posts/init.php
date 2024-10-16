@@ -446,8 +446,10 @@ class LWTV_Fork_CMB2_Attached_Posts_Field {
 			'wp-backbone',
 		);
 
-		wp_enqueue_script( 'cmb2-attached-posts-field', plugins_url( 'js/attached-posts.js', __FILE__ ), $requirements, self::VERSION, true );
-		wp_enqueue_style( 'cmb2-attached-posts-field', plugins_url( 'css/attached-posts-admin.css', __FILE__ ), array(), self::VERSION );
+		$asset_path = apply_filters( 'cmb2_attached_posts_asset_path', plugins_url( '', __FILE__ ) );
+
+		wp_enqueue_script( 'cmb2-attached-posts-field', $asset_path . 'js/attached-posts.js', $requirements, self::VERSION, true );
+		wp_enqueue_style( 'cmb2-attached-posts-field', $asset_path . 'css/attached-posts-admin.css', array(), self::VERSION );
 
 		if ( ! $once ) {
 			$subject = ( ! is_null( get_edit_post_link( get_the_ID() ) ) ) ? get_edit_post_link( get_the_ID() ) : get_home_url();

@@ -284,7 +284,7 @@ class LWTV_Fork_CMB2_Field_Select2 {
 	 * Enqueue scripts and styles
 		*/
 	public function setup_admin_scripts() {
-		$asset_path = apply_filters( 'pw_cmb2_field_select2_asset_path', plugins_url( '', __FILE__  ) );
+		$asset_path = apply_filters( 'pw_cmb2_field_select2_asset_path', plugins_url( '', __FILE__ ) );
 
 		wp_register_script( 'select2', $asset_path . '/js/select2.min.js', array( 'jquery-ui-sortable' ), '4.0.13' );
 		wp_enqueue_script( 'pw-select2-init', $asset_path . '/js/script.js', array( 'cmb2-scripts', 'select2' ), self::VERSION );

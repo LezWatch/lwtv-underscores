@@ -71,8 +71,9 @@ if ( ! class_exists( 'Forked\CMB2\CMB2Grid\Cmb2GridPlugin' ) ) {
 		}
 
 		public function admin_enqueue_scripts() {
-			$suffix = ( ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '' : '.min' );
-			wp_enqueue_style( 'cmb2_grid_bootstrap_light', plugins_url( 'assets/css/bootstrap' . $suffix . '.css', __FILE__ ), null, self::VERSION );
+			$suffix     = ( ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '' : '.min' );
+			$asset_path = apply_filters( 'cmb2_grid_asset_path', plugins_url( '', __FILE__ ) );
+			wp_enqueue_style( 'cmb2_grid_bootstrap_light', $asset_path . 'assets/css/bootstrap' . $suffix . '.css', null, self::VERSION );
 		}
 
 		public function wpHead() {

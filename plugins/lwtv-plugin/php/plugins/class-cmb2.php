@@ -46,8 +46,31 @@ class CMB2 {
 	 * Init
 	 */
 	public function admin_init() {
-
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ), 10 );
+		add_filter( 'pw_cmb2_field_select2_asset_path', array( $this, 'pw_cmb2_field_select2_asset_path' ) );
+		add_filter( 'cmb2_attached_posts_asset_path', array( $this, 'cmb2_attached_posts_asset_path' ) );
+		add_filter( 'cmb2_grid_asset_path', array( $this, 'cmb2_grid_asset_path' ) );
+	}
+
+	/**
+	 * Get the asset path for the grid field type
+	 */
+	public function cmb2_grid_asset_path() {
+		return LWTV_THEME_URL . '/plugins/cmb2-grid/';
+	}
+
+	/**
+	 * Get the asset path for the attached posts field type
+	 */
+	public function cmb2_attached_posts_asset_path() {
+		return LWTV_THEME_URL . '/plugins/cmb2-attached-posts/';
+	}
+
+	/**
+	 * Get the asset path for the select2 field type
+	 */
+	public function pw_cmb2_field_select2_asset_path() {
+		return LWTV_THEME_URL . '/plugins/cmb-field-select2/';
 	}
 
 	/**
