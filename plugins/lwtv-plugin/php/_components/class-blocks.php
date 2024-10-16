@@ -64,18 +64,11 @@ class Blocks implements Component {
 	 */
 	// phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
 	public function action_add_block_category( $block_categories, $block_editor_context ) {
-		if ( ! empty( $block_editor_context->post ) ) {
-			array_push(
-				$block_categories,
-				array(
-					array(
-						'slug'  => 'lezwatch',
-						'title' => 'LezWatch.TV Library',
-						'icon'  => 'smiley',
-					),
-				)
-			);
-		}
+		$block_categories[] = array(
+			'slug'  => 'lezwatch',
+			'title' => 'LezWatch.TV Blocks',
+			'icon'  => 'smiley',
+		);
 
 		return $block_categories;
 	}
