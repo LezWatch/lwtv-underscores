@@ -8,7 +8,7 @@
  */
 
 // Determine icon (Font-Awesome fallback).
-$icon        = lwtv_symbolicons( 'team.svg', 'fa-users' );
+$icon        = lwtv_plugin()->get_symbolicon( 'team.svg', 'fa-users' );
 $count_posts = ( function_exists( 'facetwp_display' ) ) ? facetwp_display( 'counts' ) : '';
 $actor_title = '<span role="img" aria-label="post_type_actors" title="Actors" class="taxonomy-svg actors">' . $icon . '</span>';
 $seo_descs   = get_option( 'wpseo_titles' );

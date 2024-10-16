@@ -17,7 +17,7 @@ if ( ! $this_id ) {
 <div class="col">
 	<div class="card text-center">
 		<span data-bs-toggle="modal" data-bs-target="#articles">
-			<h5><?php echo lwtv_symbolicons( 'newspaper.svg', 'fa-newspaper' ); ?> Related Articles</h5>
+			<h5><?php echo lwtv_plugin()->get_symbolicon( 'newspaper.svg', 'fa-newspaper' ); ?> Related Articles</h5>
 		</span>
 	</div>
 </div>

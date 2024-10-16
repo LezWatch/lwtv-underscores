@@ -154,7 +154,7 @@ if ( $maybe_has['related-posts']['meta'] ) {
 				foreach ( $chars_by_role['guest'] as $character ) {
 					// Remove any parenthesis from the character display name.
 					$guest_char_title = ( str_contains( get_the_title( $character['id'] ), ')' ) ) ? strstr( get_the_title( $character['id'] ), '(', true ) : get_the_title( $character['id'] );
-					$grave            = ( has_term( 'dead', 'lez_cliches', $character['id'] ) ) ? '<span role="img" aria-label="RIP Tombstone" title="RIP Tombstone" class="charlist-grave-sm">' . lwtv_symbolicons( 'rest-in-peace.svg', 'fa-times-circle' ) . '</span>' : '';
+					$grave            = ( has_term( 'dead', 'lez_cliches', $character['id'] ) ) ? '<span role="img" aria-label="RIP Tombstone" title="RIP Tombstone" class="charlist-grave-sm">' . lwtv_plugin()->get_symbolicon( 'rest-in-peace.svg', 'fa-times-circle' ) . '</span>' : '';
 					?>
 					<li><a href="<?php the_permalink( $character['id'] ); ?>" title="<?php echo esc_html( $guest_char_title ); ?>" ><?php echo esc_html( $guest_char_title ) . ' ' . $grave; // phpcs:ignore WordPress.Security.EscapeOutput ?></a></li>
 					<?php

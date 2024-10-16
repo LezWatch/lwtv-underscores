@@ -23,7 +23,7 @@
 		<h3 class="card-title">
 			<?php
 			// phpcs:ignore WordPress.Security.EscapeOutput
-			echo lwtv_symbolicons( 'newspaper.svg', 'fa-newspaper' ) . '&nbsp;';
+			echo lwtv_plugin()->get_symbolicon( 'newspaper.svg', 'fa-newspaper' ) . '&nbsp;';
 			the_title();
 			?>
 		</h3>

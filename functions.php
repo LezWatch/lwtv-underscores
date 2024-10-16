@@ -5,26 +5,13 @@
  * @package YIKES Starter
  */
 
-/**
- * Catch for if the plugin is missing, because we really, really,
- * need it.
- */
-if ( ! function_exists( 'lwtv_plugin' ) ) {
-	add_action( 'admin_notices', 'lwtv_admin_notice_missing_plugin' );
-}
-
-function lwtv_admin_notice_missing_plugin() {
-	?>
-	<div class="notice notice-error is-dismissible">
-		<p><?php esc_html_e( 'Error! The LWTV Plugin is missing. Please go grab an admin because everything will break.', 'lwtv-underscores' ); ?></p>
-	</div>
-	<?php
-}
+// Block AI image indexing.
+//header( 'X-Robots-Tag: noimageai, noimageindex', true );
 
 // Versioning for efficient developers.
 if ( ! defined( 'LWTV_THEME_VERSION' ) ) {
 	$versions = array(
-		'lwtv-underscores' => '6.1.1',    // Bump this any time you make serious CSS changes.
+		'lwtv-underscores' => '6.2.0',    // Bump this any time you make serious CSS changes.
 		'font-awesome'     => '6.5.2',    // Bump when you update Font Awesome.
 		'bootstrap'        => '5.3.3',    // Bump when you update bootstrap.
 		'bootstrap_dark'   => '1.0',      // Bump when you update the dark mode.
@@ -458,8 +445,7 @@ require get_template_directory() . '/inc/custom-header.php';
 /* Remove custom background support */
 remove_theme_support( 'custom-background' );
 
-/* Load FacetWP compatibility file. */
-require get_template_directory() . '/inc/facet.php';
-
-/* Load Mika's Queer compatibility file. */
-require get_template_directory() . '/inc/lesbians.php';
+/**
+ * Special Lesbian Items
+ */
+require get_template_directory() . '/plugins/index.php';

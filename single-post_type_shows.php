@@ -13,7 +13,7 @@ $icon .= lwtv_plugin()->get_show_stars( get_the_ID() );
 
 // Show love if applicable.
 if ( get_post_meta( get_the_ID(), 'lezshows_worthit_show_we_love', true ) ) {
-	$heart = lwtv_symbolicons( 'hearts.svg', 'fa-heart' );
+	$heart = lwtv_plugin()->get_symbolicon( 'hearts.svg', 'fa-heart' );
 	$icon .= ' <span role="img" aria-label="We Love This Show!" data-bs-target="tooltip" title="We Love This Show!" class="show-we-love">' . $heart . '</span>';
 }
 
@@ -48,7 +48,7 @@ get_header(); ?>
 										the_post();
 										get_template_part( 'template-parts/content/' . get_post_type() );
 										// Force Jetpack share links to display ONCE.
-										lwtv_yikes_jetpack_post_meta();
+										lwtv_plugin()->jetpack_post_meta();
 										// Echo last updated.
 										lwtv_last_updated_date( get_the_ID() );
 									endwhile; // end of the loop.

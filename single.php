@@ -36,7 +36,7 @@ get_header(); ?>
 							}
 
 							// Force Jetpack to display sharing links where we want them.
-							lwtv_yikes_jetpack_post_meta();
+							lwtv_plugin()->jetpack_post_meta();
 
 							// If comments are open or we have at least one comment, load up the comment template.
 							if ( comments_open() || '0' !== get_comments_number() ) {

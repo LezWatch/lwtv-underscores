@@ -43,7 +43,7 @@ function lwtv_author_box( $content ) {
 		$author_details .= '<div class="author-bio">' . nl2br( $author_description ) . '</div>';
 
 		// Add link to author page with article counts.
-		$author_details .= '<div class="author-archives">' . lwtv_symbolicons( 'newspaper.svg', 'fa-newspaper' ) . '&nbsp;<a href="' . $author_posts . '">' . $author_articles . '</a></div>';
+		$author_details .= '<div class="author-archives">' . lwtv_plugin()->get_symbolicon( 'newspaper.svg', 'fa-newspaper' ) . '&nbsp;<a href="' . $author_posts . '">' . $author_articles . '</a></div>';
 
 		// Add favourite shows if they exist.
 		$author_details .= ( isset( $favourites ) && ! empty( $favourites ) ) ? $favourites : '';

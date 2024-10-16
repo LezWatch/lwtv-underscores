@@ -19,7 +19,7 @@ get_header(); ?>
 					?>
 					</h1></div>
 					<div class="col-2 icon plain">
-						<span role="img" aria-label="Search Results" title="Search Results" class="taxonomy-svg 404"><?php echo lwtv_symbolicons( 'search.svg', 'fa-search' ); ?></span>
+						<span role="img" aria-label="Search Results" title="Search Results" class="taxonomy-svg 404"><?php echo lwtv_plugin()->get_symbolicon( 'search.svg', 'fa-search' ); ?></span>
 					</div>
 				</div>
 			</section><!-- .archive-header -->

@@ -8,7 +8,7 @@
 // Defaults
 $current_archive   = get_queried_object();
 $current_count     = ( isset( $current_archive->count ) ) ? $current_archive->count : 0;
-$archive_icon      = lwtv_symbolicons( 'newspaper.svg', 'fa-newspaper' );
+$archive_icon      = lwtv_plugin()->get_symbolicon( 'newspaper.svg', 'fa-newspaper' );
 $archive_details   = '';
 $archive_subheader = '<span class="post-count">' . sprintf( _n( '%s article', '%s articles', $current_count ), number_format_i18n( $current_count ) ) . '</span>';
 
@@ -21,7 +21,7 @@ if ( is_author() ) {
 	$archive_details   = lwtv_plugin()->get_author_favorite_shows( $author );
 } elseif ( is_tag() ) {
 	$tag_id          = get_queried_object()->term_id;
-	$archive_icon    = lwtv_symbolicons( 'tag.svg', 'fa-tag' );
+	$archive_icon    = lwtv_plugin()->get_symbolicon( 'tag.svg', 'fa-tag' );
 	$archive_details = lwtv_plugin()->get_related_archive_header( $tag_id );
 }
 

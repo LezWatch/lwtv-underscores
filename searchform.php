@@ -8,7 +8,7 @@
 
 <div class="card card-search">
 	<div class="card-header">
-		<h4><?php echo lwtv_symbolicons( 'search.svg', 'fa-search' ); // phpcs:ignore WordPress.Security.EscapeOutput ?> Search the Database</h4>
+		<h4><?php echo lwtv_plugin()->get_symbolicon( 'search.svg', 'fa-search' ); // phpcs:ignore WordPress.Security.EscapeOutput ?> Search the Database</h4>
 	</div>
 	<div class="card-body">
 		<form role="search" class="search-form" action="<?php echo esc_url( home_url( '/' ) ); ?>" method="get">

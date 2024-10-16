@@ -1,5 +1,34 @@
 {
+	"css.validate": false,
+	"less.validate": false,
+	"scss.validate": false,
+	"stylelint.validate": [
+		"css",
+		"scss"
+	],
+	"editor.codeActionsOnSave": {
+		"source.fixAll.stylelint": "explicit",
+		"source.fixAll.eslint": "explicit"
+	},
+	"eslint.format.enable": true,
+	"[javascript]": {
+		"editor.defaultFormatter": "dbaeumer.vscode-eslint"
+	},
 	"cSpell.words": [
-		"lwtv"
+		"lezchars",
+		"lezpress",
+		"lezwatch",
+		"lezwatchtv",
+		"lwtv",
+		"pagename",
+		"queery",
+		"symbolicons",
+		"SYMBOLICONS",
+		"Templater",
+		"thisyear",
+		"tvmaze",
+		"wpdb",
+		"wpseo",
+		"Yoast"
 	]
 }

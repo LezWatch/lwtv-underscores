@@ -44,7 +44,7 @@ if ( 'actors' === $format ) {
 			);
 
 			if ( lwtv_plugin()->is_actor_queer( $each_actor ) ) {
-				$the_actors[ $each_actor ]['queer'] = ' <span role="img" aria-label="Queer IRL Actor" data-bs-target="tooltip" title="Queer IRL Actor" class="character-cliche queer-irl">' . lwtv_symbolicons( 'rainbow.svg', 'fa-cloud' ) . '</span>';
+				$the_actors[ $each_actor ]['queer'] = ' <span role="img" aria-label="Queer IRL Actor" data-bs-target="tooltip" title="Queer IRL Actor" class="character-cliche queer-irl">' . lwtv_plugin()->get_symbolicon( 'rainbow.svg', 'fa-cloud' ) . '</span>';
 			}
 		}
 	} else {
