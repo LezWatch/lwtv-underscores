@@ -66,14 +66,14 @@ class Statistics implements Component, Templater {
 		}
 
 		// Enqueue files shared:
-		wp_enqueue_script( 'chartjs', LWTV_PLUGIN_URL . 'assets/js/chart.min.js', array( 'jquery' ), self::VERSIONING['chartjs'], false );
-		wp_enqueue_script( 'chartjs-plugin-annotation', LWTV_PLUGIN_URL . 'assets/js/chartjs-plugin-annotation.min.js', array( 'chartjs' ), self::VERSIONING['chartjs-plugin-annotation'], false );
-		wp_enqueue_script( 'palette', LWTV_PLUGIN_URL . 'assets/js/palette.min.js', array(), self::VERSIONING['palette'], false );
+		wp_enqueue_script( 'chartjs', LWTV_THEME_URL . 'inc/js/chart.min.js', array( 'jquery' ), self::VERSIONING['chartjs'], false );
+		wp_enqueue_script( 'chartjs-plugin-annotation', LWTV_THEME_URL . 'inc/js/chartjs-plugin-annotation.min.js', array( 'chartjs' ), self::VERSIONING['chartjs-plugin-annotation'], false );
+		wp_enqueue_script( 'palette', LWTV_THEME_URL . 'inc/js/palette.min.js', array(), self::VERSIONING['palette'], false );
 
 		// Custom extra for stats pages:
 		if ( is_page( array( 'statistics' ) ) ) {
-			wp_enqueue_script( 'tablesorter', LWTV_PLUGIN_URL . 'assets/js/jquery.tablesorter.min.js', array( 'jquery' ), self::VERSIONING['tablesorter'], false );
-			wp_enqueue_style( 'tablesorter', LWTV_PLUGIN_URL . 'assets/css/theme.bootstrap_4.min.css', array(), self::VERSIONING['tablesorter-bootstrap'], false );
+			wp_enqueue_script( 'tablesorter', LWTV_THEME_URL . 'inc/js/jquery.tablesorter.min.js', array( 'jquery' ), self::VERSIONING['tablesorter'], false );
+			wp_enqueue_style( 'tablesorter', LWTV_THEME_URL . 'inc/css/theme.bootstrap_4.min.css', array(), self::VERSIONING['tablesorter-bootstrap'], false );
 
 			$statistics = get_query_var( 'statistics', 'none' );
 			$stat_view  = get_query_var( 'view', 'main' );

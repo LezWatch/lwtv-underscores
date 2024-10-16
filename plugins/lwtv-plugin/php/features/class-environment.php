@@ -31,7 +31,7 @@ class Environment {
 	 * Init
 	 */
 	public function init() {
-		wp_register_style( 'ui-labs-identity', plugins_url( 'assets/css/environment.css', dirname( __DIR__, 1 ) ), false, LWTV_PLUGIN_VERSION );
+		wp_register_style( 'ui-labs-identity', LWTV_PLUGIN_URL . '/assets/css/environment.css', false, LWTV_PLUGIN_VERSION );
 
 		if ( 'uilabs-production' !== $this->default_env_type ) {
 			wp_enqueue_style( 'ui-labs-identity' );

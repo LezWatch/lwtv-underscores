@@ -70,7 +70,7 @@ class Author_Box {
 	 */
 	public function make( array $attributes ) {
 
-		wp_enqueue_style( 'author-box-shortcode', plugins_url( 'assets/css/author-box.css', __DIR__ ), array(), self::$version );
+		wp_enqueue_style( 'author-box-shortcode', LWTV_PLUGIN_URL . '/assets/css/author-box.css', array(), self::$version );
 
 		// Default to large
 		$format = ( isset( $attributes['format'] ) ) ? sanitize_text_field( $attributes['format'] ) : 'large';

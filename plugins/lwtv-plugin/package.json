@@ -1,6 +1,6 @@
 {
   "name": "@lwtv/plugin",
-  "version": "6.1.0",
+  "version": "6.2.0",
   "description": "LezWatch.TV Plugin",
   "main": "index.js",
   "author": "LezWatch.TV",

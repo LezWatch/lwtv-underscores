@@ -15,7 +15,7 @@ class TVMaze {
 	 */
 	public function get_all_data( int $show_id ): array {
 		return array(
-			'image' => plugins_url( '/assets/images/scores/tvmaze.png', dirname( __DIR__, 1 ) ),
+			'image' => LWTV_PLUGIN_URL . '/assets/images/scores/tvmaze.png',
 			'name'  => 'TV Maze',
 			'score' => $this->get_score( $show_id ),
 			'color' => lwtv_plugin()->get_grade_color( $this->get_score( $show_id ) ),

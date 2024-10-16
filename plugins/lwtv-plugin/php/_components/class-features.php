@@ -141,7 +141,7 @@ class Features implements Component, Templater {
 		}
 
 		// Post Statues
-		wp_register_style( 'ui-labs-post-statuses', plugins_url( 'assets/css/post-statuses.css', dirname( __DIR__ ) ), false, LWTV_PLUGIN_VERSION );
+		wp_register_style( 'ui-labs-post-statuses', LWTV_PLUGIN_URL . '/assets/css/post-statuses.css', false, LWTV_PLUGIN_VERSION );
 		wp_enqueue_style( 'ui-labs-post-statuses' );
 
 		// After Theme Setup...
@@ -265,9 +265,9 @@ class Features implements Component, Templater {
 	 * @return array $defaults  Updated defaults.
 	 */
 	public function default_avatar( $defaults ): array {
-		$toaster              = plugins_url( 'assets/images/toaster.png', dirname( __DIR__, 1 ) );
+		$toaster              = LWTV_PLUGIN_URL . '/assets/images/toaster.png';
 		$defaults[ $toaster ] = 'Toaster';
-		$unicorn              = plugins_url( 'assets/images/unicorn.png', dirname( __DIR__, 1 ) );
+		$unicorn              = LWTV_PLUGIN_URL . '/assets/images/unicorn.png';
 		$defaults[ $unicorn ] = 'Unicorn';
 		return $defaults;
 	}
@@ -300,7 +300,7 @@ class Features implements Component, Templater {
 	 */
 	public function admin_enqueue_scripts(): void {
 		if ( is_admin() ) {
-			wp_enqueue_style( 'lwtv_data_check_admin', plugins_url( 'assets/css/wp-admin.css', dirname( __DIR__, 1 ) ), array(), LWTV_PLUGIN_VERSION );
+			wp_enqueue_style( 'lwtv_data_check_admin', LWTV_PLUGIN_URL . '/assets/css/wp-admin.css', array(), LWTV_PLUGIN_VERSION );
 		}
 	}
 
@@ -310,7 +310,7 @@ class Features implements Component, Templater {
 	public function login_logos(): void {
 		?>
 		<style type="text/css">
-			#login h1 a, .login h1 a { background-image: url(<?php echo esc_url( plugins_url( 'assets/images/lezwatchtv.png', dirname( __DIR__, 1 ) ) ); ?>);
+			#login h1 a, .login h1 a { background-image: url(<?php echo esc_url( LWTV_PLUGIN_URL . '/assets/images/lezwatchtv.png' ); ?>);
 				height:80px;
 				width:80px;
 				background-size: 80px 80px;
@@ -342,7 +342,7 @@ class Features implements Component, Templater {
 	 * @return string $error Updated Error.
 	 */
 	public function login_errors( $error ): string {
-		$diane = '<br /><img src="' . plugins_url( '/assets/images/diane-fuck-off.gif', dirname( __DIR__, 1 ) ) . '" />';
+		$diane = '<br /><img src="' . LWTV_PLUGIN_URL . '/assets/images/diane-fuck-off.gif" />';
 		$error = $error . $diane;
 		return $error;
 	}

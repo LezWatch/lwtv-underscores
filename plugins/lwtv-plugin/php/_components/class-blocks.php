@@ -95,7 +95,7 @@ class Blocks implements Component {
 
 				wp_enqueue_style(
 					'lwtv-gutenberg-style-' . $css_folder, // Handle.
-					plugins_url( 'lwtv-plugin/php/blocks/build/' . $css_folder . '/style-block.css' ),
+					LWTV_PLUGIN_URL . '/php/blocks/build/' . $css_folder . '/style-block.css',
 					array( 'wp-editor' ),
 					filemtime( $local_css_file )
 				);
@@ -118,7 +118,7 @@ class Blocks implements Component {
 
 				wp_enqueue_style(
 					'lwtv-gutenberg-style-' . $css_folder, // Handle.
-					plugins_url( 'lwtv-plugin/php/blocks/build/' . $css_folder . '/block.css' ),
+					LWTV_PLUGIN_URL . '/php/blocks/build/' . $css_folder . '/block.css',
 					array( 'wp-editor' ),
 					filemtime( $local_css_file )
 				);

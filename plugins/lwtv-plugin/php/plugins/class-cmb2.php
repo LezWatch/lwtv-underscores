@@ -79,7 +79,7 @@ class CMB2 {
 	 * @return void
 	 */
 	public function admin_enqueue_scripts( $hook ) {
-		wp_register_style( 'cmb-styles', plugins_url( '/assets/css/cmb2.css', dirname( __DIR__ ) ), array(), LWTV_PLUGIN_VERSION );
+		wp_register_style( 'cmb-styles', LWTV_PLUGIN_URL . '/assets/css/cmb2.css', array(), LWTV_PLUGIN_VERSION );
 		$post_array = array( 'edit-tags.php', 'post.php', 'post-new.php', 'term.php', 'page-new.php', 'page.php' );
 		if ( in_array( $hook, $post_array, true ) ) {
 			wp_enqueue_style( 'cmb-styles' );

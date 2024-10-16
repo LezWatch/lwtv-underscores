@@ -99,7 +99,7 @@ class Admin_Menu implements Component {
 		// Load only on /admin.php?page=lwtv_data_check
 		$my_hooks = array( 'toplevel_page_lwtv', 'lezwatch-tv_page_lwtv_data_check', 'lezwatch-tv_page_lwtv_monitor_check', 'lezwatch-tv_page_lwtv_exclusion_check' );
 		if ( in_array( $hook, $my_hooks, true ) ) {
-				wp_enqueue_style( 'lwtv_data_check_admin', plugins_url( 'assets/css/lwtv-tools.css', dirname( __DIR__, 1 ) ), array(), '1.0.0' );
+				wp_enqueue_style( 'lwtv_data_check_admin', LWTV_PLUGIN_URL . '/assets/css/lwtv-tools.css', array(), '1.0.0' );
 		}
 	}
 }

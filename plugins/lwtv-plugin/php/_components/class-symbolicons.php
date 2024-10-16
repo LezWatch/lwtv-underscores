@@ -42,7 +42,7 @@ class Symbolicons implements Component, Templater {
 	 * admin_enqueue_scripts
 	 */
 	public function admin_enqueue_scripts() {
-		wp_register_style( 'symbolicons-admin', plugins_url( 'assets/css/symbolicons-admin.css', dirname( __DIR__, 1 ) ), array(), LWTV_PLUGIN_VERSION );
+		wp_register_style( 'symbolicons-admin', LWTV_PLUGIN_URL . '/assets/css/symbolicons-admin.css', array(), LWTV_PLUGIN_VERSION );
 		wp_enqueue_style( 'symbolicons-admin' );
 	}
 

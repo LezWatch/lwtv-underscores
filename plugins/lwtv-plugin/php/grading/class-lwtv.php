@@ -17,7 +17,7 @@ class LWTV {
 		$score = $this->get_score( $show_id );
 
 		return array(
-			'image' => plugins_url( '/assets/images/scores/lwtv.png', dirname( __DIR__, 1 ) ),
+			'image' => LWTV_PLUGIN_URL . '/assets/images/scores/lwtv.png',
 			'name'  => 'LezWatchTV',
 			'score' => $score,
 			'color' => lwtv_plugin()->get_grade_color( $score ),
