@@ -8,6 +8,7 @@ Version: 1.1.0
 namespace LWTV\Plugins;
 
 use LWTV\Plugins\FacetWP\Indexing;
+use LWTV\Plugins\FacetWP\Labels;
 use LWTV\Plugins\FacetWP\Pagination;
 
 class FacetWP {
@@ -21,6 +22,7 @@ class FacetWP {
 		require_once LWTV_THEME_PATH . '/plugins/facetwp-cmb2/cmb2.php';
 
 		new Indexing();
+		new Labels();
 		new Pagination();
 
 		// Reset Shortcode
