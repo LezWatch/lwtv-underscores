@@ -537,7 +537,7 @@ Stored in `/wp-cli/` -- All code for WP-CLI
 
 #### Node Scripts
 
-Stored in `/node_scripts/` -  Scripts used by NPM (for anything in `node_modules`). _This is removed by the builder script when pushed to production._
+Scripts used by NPM (for anything in `node_modules`). _This is removed by the builder script when pushed to production._
 
 * `postinstall.js` - script run at the end of NPM to move files to the correct location.
 
