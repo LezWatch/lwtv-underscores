@@ -3,6 +3,9 @@
   "version": "6.1.0",
   "description": "LezWatch.TV Plugin",
   "main": "index.js",
+  "author": "LezWatch.TV",
+  "license": "GPL-2.0",
+  "repository": "https://github.com/lezwatch/lwtv-plugin/",
   "workspaces": [
     "php/blocks"
   ],
@@ -16,23 +19,15 @@
     "start": "npm-run-all2 start:*",
     "start:blocks": "npm run start --workspaces",
     "preinstall": "composer install",
-    "postinstall": "( node ./node_scripts/postinstall.js ) && ( cd ./php/blocks && npm install --ignore-scripts )",
+    "postinstall": "cd ./php/blocks && npm install --ignore-scripts",
     "prepare": "husky install",
-    "updater": "npm update --workspaces && composer update && ( node ./node_scripts/postinstall.js )",
+    "updater": "npm update --workspaces && composer update && ( node ./postinstall.js )",
     "clean": "rm -rf node_modules vendor blocks/node_modules",
     "merge-to-develop": "currentBranch=$(git rev-parse --abbrev-ref HEAD) && git checkout development && git pull && git merge $currentBranch && git push origin development && git checkout $currentBranch",
     "merge-to-prod": "currentBranch=$(git rev-parse --abbrev-ref HEAD) && git checkout production && git pull && git merge $currentBranch && git push origin production && git checkout $currentBranch"
   },
-  "author": "LezWatch.TV",
-  "license": "GPL-2.0",
-  "repository": "https://github.com/lezwatch/lwtv-plugin/",
   "dependencies": {
-    "@npmcli/fs": "^3",
-    "@wordpress/scripts": "^27",
-    "chart.js": "^4",
-    "chartjs-plugin-annotation": "^3",
-    "postinstall": "*",
-    "tablesorter": "^2"
+    "@wordpress/scripts": "^27"
   },
   "devDependencies": {
     "@types/node": "^18.19",
