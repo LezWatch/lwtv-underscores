@@ -22,12 +22,11 @@ The blocks will automagically build anytime anyone runs `npm run build` from the
 
 All JS and CSS from blocks defined in `blocks/*/block.json` get pushed to the `blocks/build/` folder via the build process. PHP scans this directory and registers blocks in `php/class-blocks.php`. The overall code is called from the `/blocks/src/blocks.php` file.
 
-The subfolders are _NOT_ stored in Git, because they're not needed to be. We run the build via actions 
-
+The build subfolders are _NOT_ stored in Git, because they're not needed to be. We run the build via actions
 
 ### Getting Started
 
-From the main plugin folder, run `npm install`
+From the main theme folder, run `npm install`
 
 This will install everything you need to go!
 

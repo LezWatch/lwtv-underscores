@@ -22,7 +22,7 @@ class Blocks implements Component {
 	 */
 	public function __construct() {
 		add_action( 'init', array( $this, 'action_register_blocks' ), 10 );
-		add_filter( 'block_categories_all', array( $this, 'action_add_block_category' ), 10, 2 );
+		add_filter( 'block_categories_all', array( $this, 'action_add_block_category' ) );
 
 		// Enqueues.
 		add_action( 'enqueue_block_assets', array( $this, 'block_assets' ) );
@@ -59,11 +59,9 @@ class Blocks implements Component {
 	/**
 	 * Adding a new (custom) block category.
 	 *
-	 * @param   array                   $block_categories       Array of categories for block types.
-	 * @param   WP_Block_Editor_Context $block_editor_context   The current block editor context.
+	 * @param   array $block_categories       Array of categories for block types.
 	 */
-	// phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
-	public function action_add_block_category( $block_categories, $block_editor_context ) {
+	public function action_add_block_category( $block_categories ) {
 		$block_categories[] = array(
 			'slug'  => 'lezwatch',
 			'title' => 'LezWatch.TV Blocks',
