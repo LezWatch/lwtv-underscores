@@ -21,6 +21,7 @@ use LWTV\Theme\Show_Characters;
 use LWTV\Theme\Show_Stars;
 use LWTV\Theme\Stats_Symbolicon;
 use LWTV\Theme\Taxonomy_Archive_Title;
+use LWTV\Theme\Theme_Config;
 use LWTV\Theme\TVMaze;
 use LWTV\Theme\Ways_To_Watch;
 
@@ -32,7 +33,7 @@ class Theme implements Component, Templater {
 	 * Call the sub plugins
 	 */
 	public function init(): void {
-		// Null
+		new Theme_Config();
 	}
 
 	/**
