@@ -47,14 +47,18 @@
 		if ( ! yikes_starter_categorized_blog() ) {
 			// This blog only has 1 category so we just need to worry about tags in the meta text
 			if ( '' !== $tag_list ) {
+				// phpcs:ignore WordPress.WP.I18n.NonSingularStringLiteralText
 				$meta_text = __( '<span class="footer-entry-meta-item">' . lwtv_plugin()->get_symbolicon( 'tag.svg', 'fa-tags' ) . '&nbsp;%2$s</span> <span class="footer-entry-meta-item">' . lwtv_plugin()->get_symbolicon( 'bookmark.svg', 'fa-bookmark' ) . '&nbsp;<a href="%3$s" title="Permalink to %4$s" rel="bookmark">Post link</a></span>', 'lwtv-underscores' );
 			} else {
+				// phpcs:ignore WordPress.WP.I18n.NonSingularStringLiteralText
 				$meta_text = __( '<span class="footer-entry-meta-item">' . lwtv_plugin()->get_symbolicon( 'bookmark.svg', 'fa-bookmark' ) . '&nbsp;<a href="%3$s" title="Permalink to %4$s" rel="bookmark">Post link</a></span>', 'lwtv-underscores' );
 			}
 		} elseif ( '' !== $tag_list ) {
 			// But this blog has loads of categories so we should probably display them here
+			// phpcs:ignore WordPress.WP.I18n.NonSingularStringLiteralText
 			$meta_text = __( '<span class="footer-entry-meta-item">' . lwtv_plugin()->get_symbolicon( 'folder-open.svg', 'fa-folder-open' ) . '&nbsp;%1$s</span> <span class="footer-entry-meta-item">' . lwtv_plugin()->get_symbolicon( 'tag.svg', 'fa-tags' ) . '&nbsp;%2$s</span> <span class="footer-entry-meta-item">' . lwtv_plugin()->get_symbolicon( 'bookmark.svg', 'fa-bookmark' ) . '&nbsp;<a href="%3$s" title="Permalink to %4$s" rel="bookmark">Post link</a></span>', 'lwtv-underscores' );
 		} else {
+			// phpcs:ignore WordPress.WP.I18n.NonSingularStringLiteralText
 			$meta_text = __( '<span class="footer-entry-meta-item">' . lwtv_plugin()->get_symbolicon( 'folder-open.svg', 'fa-folder-open' ) . '&nbsp;%1$s</span> <span class="footer-entry-meta-item">' . lwtv_plugin()->get_symbolicon( 'bookmark.svg', 'fa-bookmark' ) . '&nbsp;<a href="%3$s" title="Permalink to %4$s" rel="bookmark">Post link</a></span>', 'lwtv-underscores' );
 		} // End if.
 

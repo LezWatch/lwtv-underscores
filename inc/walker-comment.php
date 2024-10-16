@@ -174,7 +174,7 @@ class LWTV_Walker_Comment extends Walker {
 	 * @param int        $id      Optional. ID of the current comment. Default 0 (unused).
 	 */
 	public function start_el( &$output, $comment, $depth = 0, $args = array(), $id = 0 ) {
-		$depth++;
+		++$depth;
 		$GLOBALS['comment_depth'] = $depth; // phpcs:ignore WordPress.WP.GlobalVariablesOverride
 		$GLOBALS['comment']       = $comment; // phpcs:ignore WordPress.WP.GlobalVariablesOverride
 
@@ -299,6 +299,7 @@ class LWTV_Walker_Comment extends Walker {
 				<?php
 					/* translators: %s: comment author link */
 					$comment_author_link = sprintf(
+						// translators: %s: comment author link
 						__( '<cite class="author">%s</cite> <span class="says">says:</span>' ),
 						get_comment_author_link( $comment )
 					);
@@ -369,6 +370,7 @@ class LWTV_Walker_Comment extends Walker {
 										<?php
 											/* translators: 1: comment date, 2: comment time */
 											$comment_date = sprintf(
+												// translators: 1: comment date, 2: comment time
 												__( '%1$s at %2$s' ),
 												get_comment_date( '', $comment ),
 												get_comment_time( 'h:i A' )
@@ -382,6 +384,7 @@ class LWTV_Walker_Comment extends Walker {
 									<?php
 										/* translators: %s: comment author link */
 										$comment_name = sprintf(
+											// translators: %s: comment author link
 											__( '<strong class="fn">%s</strong> <span class="says">says:</span>' ),
 											get_comment_author_link()
 										);

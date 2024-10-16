@@ -293,7 +293,7 @@ function yikes_pagination_get_first_page( $page_number, $max_num_pages, $active_
 }
 
 function yikes_pagination_get_page( $page_number, $max_num_pages, $active_flag, $last_page = false, $last_page_override = false ) {
-	if ( $page_number <= $max_num_pages && false === $last_page || ( true === $last_page && $max_num_pages > 5 ) || true === $last_page_override ) {
+	if ( ( $page_number <= $max_num_pages && false === $last_page ) || ( true === $last_page && $max_num_pages > 5 ) || true === $last_page_override ) {
 		$active = ( true === $active_flag ) ? 'active' : false;
 		return '<li class="page-item"><a class="page-link ' . $active . '" href="' . get_pagenum_link( $page_number ) . '" >' . $page_number . '</a></li>';
 	}

@@ -6,10 +6,12 @@
  */
 
 // Defaults
-$current_archive   = get_queried_object();
-$current_count     = ( isset( $current_archive->count ) ) ? $current_archive->count : 0;
-$archive_icon      = lwtv_plugin()->get_symbolicon( 'newspaper.svg', 'fa-newspaper' );
-$archive_details   = '';
+$current_archive = get_queried_object();
+$current_count   = ( isset( $current_archive->count ) ) ? $current_archive->count : 0;
+$archive_icon    = lwtv_plugin()->get_symbolicon( 'newspaper.svg', 'fa-newspaper' );
+$archive_details = '';
+
+// translators: %s is the number of articles.
 $archive_subheader = '<span class="post-count">' . sprintf( _n( '%s article', '%s articles', $current_count ), number_format_i18n( $current_count ) ) . '</span>';
 
 // Custom header info

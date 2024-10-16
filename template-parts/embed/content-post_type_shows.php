@@ -190,7 +190,8 @@
 						$deadtext = sprintf( _n( '<strong>%s</strong> is dead', '<strong>%s</strong> are dead', $havedeadcount ), $havedeadcount );
 					}
 
-					echo wp_kses_post( sprintf( _n( 'is <strong>%s</strong> queer character', '<strong>%s</strong> queer characters', $havecharcount ), $havecharcount ) . ' - ' . $deadtext );
+					// translators: %s is the number of queer characters.
+					echo wp_kses_post( sprintf( _n( '<strong>%s</strong> queer character', '<strong>%s</strong> queer characters', $havecharcount ), $havecharcount ) . ' - ' . $deadtext );
 				}
 				?>
 			</p>
