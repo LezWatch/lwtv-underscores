@@ -1,0 +1,86 @@
+/*------------------------------------------------------------------------------
+  1.0 - Post Statuses
+------------------------------------------------------------------------------*/
+.post-state .draft,
+.post-state .password-protected,
+.post-state .protected,
+.post-state .pending,
+.post-state .scheduled,
+.post-state .sticky,
+.post-state .private,
+.status-draft .post-state,
+.status-password-protected .post-state,
+.status-protected .post-state,
+.status-pending .post-state,
+.status-scheduled .post-state,
+.status-sticky .post-state,
+.status-private .post-state {
+	position:relative;
+	padding: 1px 5px;
+	font-size: 90%;
+	font-weight: bold;
+	border-radius: 4px;
+	-moz-border-radius: 4px;
+	-webkit-border-radius: 4px;
+}
+
+/* Pending */
+.status-pending .post-state,
+.post-state .pending {
+	color: #fff;
+	text-shadow: rgba(255,255,255,0.6) 0 1px 0;
+	background: #f03cc3;
+	border: 1px solid #413200;
+}
+
+/* Draft */
+.status-draft .post-state,
+.post-state .draft {
+	color: #fff;
+	text-shadow: rgba(0,0,0,0.7) 0 -1px 0;
+	background: #8a2424;
+	border: 1px solid #451313;
+}
+
+/* Sticky */
+.status-sticky .post-state,
+.post-state .sticky {
+	color: #fff;
+	text-shadow: rgba(0,0,0,0.7) 0 -1px 0;
+	background: #72aee6;
+	border: 1px solid #043959;
+}
+
+/* Private */
+.status-private .post-state,
+.post-state .private {
+	text-shadow: rgba(255,255,255,1) 0 1px 0;
+	background: #f0f0f1;
+	border: 1px solid #2c3338;
+}
+
+/* Password Protected */
+.status-password-protected .post-state,
+.status-protected .post-state,
+.post-state .password-protected,
+.post-state .protected {
+	color: #fff;
+	text-shadow:rgba(0,0,0,1) 0 -1px 0;
+	background: #2c3338;
+	border: 1px solid #101517;
+}
+
+/* Scheduled Posts */
+.status-scheduled .post-state,
+.post-state .scheduled {
+	color: #fff;
+	text-shadow: rgba(0,0,0,1) 0 -1px 0;
+	background: #005c12;
+	border: 1px solid #003008;
+}
+
+/* Remove invisibility cloak for non-linked post titles. (non-admin users) */
+.author-other strong,
+.alternate.author-other strong {
+	color: #555;
+}

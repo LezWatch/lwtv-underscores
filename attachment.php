@@ -18,7 +18,7 @@ get_header(); ?>
 						</h1>
 					</div>
 					<div class="col-2 icon plain">
-						<span role="img" aria-label="404" title="404 - Page Not Found" class="taxonomy-svg 404"><?php echo lwtv_symbolicons( 'easter-egg-alt.svg', 'fa-gift' ); ?></span>
+						<span role="img" aria-label="404" title="404 - Page Not Found" class="taxonomy-svg 404"><?php echo lwtv_plugin()->get_symbolicon( 'easter-egg-alt.svg', 'fa-gift' ); ?></span>
 					</div>
 				</div>
 			</section><!-- .archive-header -->

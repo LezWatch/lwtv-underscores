@@ -174,7 +174,7 @@ class LWTV_Walker_Comment extends Walker {
 	 * @param int        $id      Optional. ID of the current comment. Default 0 (unused).
 	 */
 	public function start_el( &$output, $comment, $depth = 0, $args = array(), $id = 0 ) {
-		$depth++;
+		++$depth;
 		$GLOBALS['comment_depth'] = $depth; // phpcs:ignore WordPress.WP.GlobalVariablesOverride
 		$GLOBALS['comment']       = $comment; // phpcs:ignore WordPress.WP.GlobalVariablesOverride
 
@@ -245,7 +245,7 @@ class LWTV_Walker_Comment extends Walker {
 		?>
 		<<?php echo wp_kses_post( $tag ); ?> id="comment-<?php comment_ID(); ?>" <?php comment_class( '', $comment ); ?>>
 			<div class="comment-body">
-				<?php echo lwtv_symbolicons( 'share.svg', 'fa-share-square' ); ?>
+				<?php echo lwtv_plugin()->get_symbolicon( 'share.svg', 'fa-share-square' ); ?>
 				<?php esc_html_e( 'Pingback:' ); ?> <?php comment_author_link( $comment ); ?> <?php edit_comment_link( __( 'Edit' ), '<span class="edit-link">', '</span>' ); ?>
 			</div>
 		<?php
@@ -299,6 +299,7 @@ class LWTV_Walker_Comment extends Walker {
 				<?php
 					/* translators: %s: comment author link */
 					$comment_author_link = sprintf(
+						// translators: %s: comment author link
 						__( '<cite class="author">%s</cite> <span class="says">says:</span>' ),
 						get_comment_author_link( $comment )
 					);
@@ -363,12 +364,13 @@ class LWTV_Walker_Comment extends Walker {
 					<div class="col-sm-10">
 						<div class="comment-content clearfix">
 							<div class="comment-metadata">
-								<?php echo lwtv_symbolicons( 'clock.svg', 'fa-clock' ); ?>
+								<?php echo lwtv_plugin()->get_symbolicon( 'clock.svg', 'fa-clock' ); ?>
 								<a href="<?php echo esc_url( get_comment_link( $comment, $args ) ); ?>">
 									<time datetime="<?php comment_time( 'c' ); ?>">
 										<?php
 											/* translators: 1: comment date, 2: comment time */
 											$comment_date = sprintf(
+												// translators: 1: comment date, 2: comment time
 												__( '%1$s at %2$s' ),
 												get_comment_date( '', $comment ),
 												get_comment_time( 'h:i A' )
@@ -382,6 +384,7 @@ class LWTV_Walker_Comment extends Walker {
 									<?php
 										/* translators: %s: comment author link */
 										$comment_name = sprintf(
+											// translators: %s: comment author link
 											__( '<strong class="fn">%s</strong> <span class="says">says:</span>' ),
 											get_comment_author_link()
 										);
@@ -396,7 +399,7 @@ class LWTV_Walker_Comment extends Walker {
 								'add_below' => 'div-comment',
 								'depth'     => $depth,
 								'max_depth' => $args['max_depth'],
-								'before'    => '<div class="reply btn btn-default btn-sm">' . lwtv_symbolicons( 'reply.svg', 'fa-reply' ),
+								'before'    => '<div class="reply btn btn-default btn-sm">' . lwtv_plugin()->get_symbolicon( 'reply.svg', 'fa-reply' ),
 								'after'     => '</div>',
 							);
 							comment_reply_link( array_merge( $args, $comment_args ) );

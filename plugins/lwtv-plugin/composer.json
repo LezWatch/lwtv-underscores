@@ -1,0 +1,58 @@
+{
+  "name": "lezwatch/lwtv-plugin",
+  "description": "LezWatch.TV Plugin",
+  "type": "wordpress-plugin",
+  "keywords": [
+    "wordpress",
+    "plugin"
+  ],
+  "license": "GPL-3.0-or-later",
+  "prefer-stable": true,
+  "minimum-stability": "dev",
+  "authors": [
+    {
+      "name": "LezWatch.TV",
+      "email": "contact@lezwatchtv.com"
+    },
+    {
+      "name": "Mika A. Epstein",
+      "email": "mika@lezwatchtv.com"
+    }
+  ],
+  "config": {
+    "preferred-install": "dist",
+    "platform": {
+      "php": "8.2"
+    },
+    "allow-plugins": {
+      "dealerdirect/phpcodesniffer-composer-installer": true
+    }
+  },
+  "require": {
+    "php": ">=8.2",
+    "johngrogg/ics-parser": "^3"
+  },
+  "scripts": {
+    "lint": "phpcs",
+    "lint-fix": "phpcbf",
+    "post-update-cmd": [
+      "cp -r ./vendor/johngrogg/ics-parser/src/ICal/ ./php/calendar/ICal/"
+    ],
+    "test": "phpunit"
+  },
+  "require-dev": {
+    "wp-coding-standards/wpcs": "^3.0",
+    "10up/wp_mock": "^1.0",
+    "phpunit/phpunit": "^9.6",
+    "aldavigdis/wp-tests-strapon": "*",
+    "yoast/phpunit-polyfills": "^2.0",
+    "phpcompatibility/phpcompatibility-wp": "*",
+    "php-stubs/wp-cli-stubs": "^2.9"
+  },
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "https://github.com/aldavigdis/wp-tests-strapon.git"
+    }
+  ]
+}

@@ -9,13 +9,13 @@
 $dead = get_post_meta( $post->ID, 'lezactors_death', true );
 $icon = '<div class="show-header-svg">';
 if ( lwtv_plugin()->is_actor_queer( $post->ID ) ) {
-	$icon .= ' <span role="img" aria-label="Queer IRL Actor" data-bs-target="tooltip" title="Queer IRL Actor" class="cliche-queer-irl">' . lwtv_symbolicons( 'rainbow.svg', 'fa-cloud' ) . '</span>';
+	$icon .= ' <span role="img" aria-label="Queer IRL Actor" data-bs-target="tooltip" title="Queer IRL Actor" class="cliche-queer-irl">' . lwtv_plugin()->get_symbolicon( 'rainbow.svg', 'fa-cloud' ) . '</span>';
 }
 if ( lwtv_plugin()->is_actor_birthday( $post->ID ) && ! $dead ) {
-	$icon .= ' <span role="img" aria-label="Actor Having a Birthday" data-bs-target="tooltip" title="Happy Birthday" class="happy-birthday">' . lwtv_symbolicons( 'cake.svg', 'fa-birthday-cake' ) . '</span>';
+	$icon .= ' <span role="img" aria-label="Actor Having a Birthday" data-bs-target="tooltip" title="Happy Birthday" class="happy-birthday">' . lwtv_plugin()->get_symbolicon( 'cake.svg', 'fa-birthday-cake' ) . '</span>';
 }
 if ( $dead ) {
-	$icon .= ' <span role="img" aria-label="RIP - Dead Actor" data-bs-target="tooltip" title="RIP - Dead Actor" class="cliche-dead">' . lwtv_symbolicons( 'rest-in-peace.svg', 'fa-ban' ) . '</span>';
+	$icon .= ' <span role="img" aria-label="RIP - Dead Actor" data-bs-target="tooltip" title="RIP - Dead Actor" class="cliche-dead">' . lwtv_plugin()->get_symbolicon( 'rest-in-peace.svg', 'fa-ban' ) . '</span>';
 }
 
 $icon .= '</div>';
@@ -58,7 +58,7 @@ get_header(); ?>
 										the_post();
 										get_template_part( 'template-parts/content/' . get_post_type() );
 										// Force Jetpack to display sharing links where we want them.
-										lwtv_yikes_jetpack_post_meta();
+										lwtv_plugin()->jetpack_post_meta();
 										// Echo last updated.
 										lwtv_last_updated_date( get_the_ID() );
 									endwhile; // end of the loop.

@@ -22,7 +22,7 @@ if ( ! class_exists( 'WP_Bootstrap_Navwalker' ) ) :
 	/**
 	 * WP_Bootstrap_Navwalker class.
 	 */
-	class WP_Bootstrap_Navwalker extends Walker_Nav_Menu {
+	class WP_Bootstrap_Navwalker4 extends Walker_Nav_Menu {
 
 		/**
 		 * Whether the items_wrap contains schema microdata or not.

@@ -8,7 +8,7 @@
 // Build the icon.
 $icon = '<div class="show-header-svg">';
 if ( has_term( 'dead', 'lez_cliches' ) ) {
-	$icon .= ' <span role="img" aria-label="RIP - Dead Character" data-bs-target="tooltip" title="RIP - Dead Character" class="cliche-dead">' . lwtv_symbolicons( 'rest-in-peace.svg', 'fa-ban' ) . '</span>';
+	$icon .= ' <span role="img" aria-label="RIP - Dead Character" data-bs-target="tooltip" title="RIP - Dead Character" class="cliche-dead">' . lwtv_plugin()->get_symbolicon( 'rest-in-peace.svg', 'fa-ban' ) . '</span>';
 }
 $icon .= '</div>';
 
@@ -41,7 +41,7 @@ get_header(); ?>
 										the_post();
 										get_template_part( 'template-parts/content/' . get_post_type() );
 										// Force Jetpack to display sharing links where we want them.
-										lwtv_yikes_jetpack_post_meta();
+										lwtv_plugin()->jetpack_post_meta();
 										// Echo last updated.
 										lwtv_last_updated_date( get_the_ID() );
 									endwhile;

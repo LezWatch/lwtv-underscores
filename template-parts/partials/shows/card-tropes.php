@@ -30,7 +30,7 @@ $tropes = get_the_terms( $show_id, 'lez_tropes' );
 				<?php
 					// Echo the taxonomy icon (default to squares if empty)
 					$icon = get_term_meta( $trope->term_id, 'lez_termsmeta_icon', true );
-					echo lwtv_symbolicons( $icon . '.svg', 'fa-lemon' );
+					echo lwtv_plugin()->get_symbolicon( $icon . '.svg', 'fa-lemon' );
 				?>
 				</a>
 				<a href="<?php echo esc_url( get_term_link( $trope->slug, 'lez_tropes' ) ); ?>" rel="show trope" class="trope-link"><?php echo esc_html( $trope->name ); ?></a>
@@ -46,7 +46,7 @@ $tropes = get_the_terms( $show_id, 'lez_tropes' );
 					<?php
 						// Echo the taxonomy icon (default to squares if empty)
 						$icon = get_term_meta( $trope->term_id, 'lez_termsmeta_icon', true );
-						echo lwtv_symbolicons( $icon . '.svg', 'fa-lemon' );
+						echo lwtv_plugin()->get_symbolicon( $icon . '.svg', 'fa-lemon' );
 					?>
 					</a>
 					<a href="<?php echo esc_url( get_term_link( $trope->slug, 'lez_tropes' ) ); ?>" rel="show trope" class="trope-link"><?php echo esc_html( $trope->name ); ?></a>

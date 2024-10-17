@@ -1,0 +1,110 @@
+.cmb2-wrap .cmb-row.cmb-repeat-row {
+    border-bottom: none!important;
+}
+.cmb2-metabox>.cmb-row .cmb-repeat-table .cmb-row>.cmb-td {
+    padding: 10px 20px 0 0!important;
+}
+
+.cmb-type-taxonomy-multicheck-inline .cmb2-checkbox-list.cmb2-list li {
+	display: inline-block;
+	width: 33%;
+}
+
+.cmb2-id-lezchars-show-group .cmb-inline li {
+	width: 80px;
+}
+
+#notes_metabox p.cmb2-metabox-description {
+	padding-bottom: 0px!important;
+}
+
+#notes_metabox .cmb-th label:after {
+	border-bottom: 0px!important;
+	padding-top: 0px!important;
+}
+
+#notes_metabox .cmb-th {
+	float: left!important;
+}
+
+#notes_metabox .cmb-td {
+	/* width: 40%!important;
+	margin-left: 15px; */
+	float: left!important;
+}
+
+.cmb2-icon svg {
+    width: 30px;
+    height: 30px;
+    vertical-align: middle;
+}
+
+.lwtv #characters:before {
+	content: "\f484";
+	position: relative;
+	top: -1px;
+	font: 400 20px/1 dashicons;
+	speak: none;
+	display: inline-block;
+	margin-left: -1px;
+	padding-right: 3px;
+	vertical-align: top;
+	-webkit-font-smoothing: antialiased;
+	color: #d1548e;
+}
+
+.lwtv #score:before {
+	content: "\f529";
+	position: relative;
+	top: -1px;
+	font: 400 20px/1 dashicons;
+	speak: none;
+	display: inline-block;
+	margin-left: -1px;
+	padding-right: 3px;
+	vertical-align: top;
+	-webkit-font-smoothing: antialiased;
+	color: #d1548e;
+}
+
+.lwtv #loved:before {
+	content: "\f487";
+	position: relative;
+	top: -1px;
+	font: 400 20px/1 dashicons;
+	speak: none;
+	display: inline-block;
+	margin-left: -1px;
+	padding-right: 3px;
+	vertical-align: top;
+	-webkit-font-smoothing: antialiased;
+	color: #d1548e;
+}
+
+.select2-container--default .select2-selection--multiple .select2-selection__choice {
+	padding: 5px!important;
+}
+
+.cmb2-metabox-lezwatchurls_edit input#lezwatchurls_all_0 {
+	width: 400px!important;
+}
+
+body.post-type-post_type_shows .cmb2-text-url {
+	width: 90%;
+}
+
+.select2-container .select2-selection--single .select2-selection__rendered {
+	min-width: 200px;
+}
+
+div.post-titles-container input {
+	min-width: 300px;
+}
+
+.cmb2-post-search-button button {
+	margin-left: 10px;
+}
+
+div#lezchars_show_group_repeat .cmb-type-custom-attached-posts .connected {
+	min-height: 110px;
+}

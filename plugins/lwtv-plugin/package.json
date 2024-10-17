@@ -1,0 +1,31 @@
+{
+  "name": "@lwtv/plugin",
+  "version": "6.2.0",
+  "description": "LezWatch.TV Plugin",
+  "main": "index.js",
+  "author": "LezWatch.TV",
+  "license": "GPL-2.0",
+  "repository": "https://github.com/lezwatch/lwtv-plugin/",
+  "scripts": {
+    "build": "npm run build",
+    "lint:css": "",
+    "lint:js": "",
+    "start": "npm-run-all2 start:*",
+    "preinstall": "composer install",
+    "postinstall": "cd ./php/blocks && npm install --ignore-scripts",
+    "updater": "npm update --workspaces && composer update && ( node ./postinstall.js )",
+    "clean": "rm -rf node_modules vendor blocks/node_modules"
+  },
+  "dependencies": {
+    "@wordpress/scripts": "^27"
+  },
+  "devDependencies": {
+    "@types/node": "^18.19",
+    "eslint-plugin-prettier": "^5.2",
+    "lint-staged": "^15",
+    "npm-run-all2": "^6.2"
+  },
+  "lint-staged": {
+    "*.php": "npm run lint:phpcs"
+  }
+}

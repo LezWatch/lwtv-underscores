@@ -1,25 +1,49 @@
 {
-  "name": "yikes-inc-starter-theme",
-  "version": "6.1.1",
-  "description": "LezWatch.TV Custom Theme (based on Yikes Inc. starter theme).",
+  "name": "lwtv-underscores",
+  "version": "6.2.0",
+  "description": "LezWatch.TV Custom Theme.",
   "main": "index.js",
+  "workspaces": [
+    "./plugins/lwtv-plugin",
+    "./plugins/lwtv-plugin/php/blocks"
+  ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "composer update && grunt build",
-    "clean": "rm -rf node_modules vendor blocks/node_modules",
+    "build": "npm-run-all build:*",
+    "build:composer": "composer update",
+    "build:grunt": "grunt build",
+    "build:workspaces": "npm run build",
+    "lint": "npm-run-all lint:*",
+    "lint:css": "npm run lint:css --workspaces",
+    "lint:js": "npm run lint:js --workspaces",
+    "lint:phpcs": "composer lint",
+    "start": "npm-run-all start:*",
+    "start:blocks": "npm run start",
+    "preinstall": "composer install",
+    "postinstall": "node ./postinstall.js",
+    "prepare": "husky",
+    "updater": "npm update && composer update",
+    "clean": "rm -rf node_modules vendor",
     "merge-to-develop": "currentBranch=$(git rev-parse --abbrev-ref HEAD) && git checkout development && git pull && git merge $currentBranch && git push origin development && git checkout $currentBranch",
-    "updater": "npm update && composer update"
+    "merge-to-prod": "currentBranch=$(git rev-parse --abbrev-ref HEAD) && git checkout production && git pull && git merge $currentBranch && git push origin production && git checkout $currentBranch"
   },
-  "author": "LezWatch.TV, Yikes Inc.",
+  "author": "LezWatch.TV",
   "license": "GPL-2.0",
   "repository": "https://github.com/lezwatch/lwtv-underscores/",
   "dependencies": {
+    "@npmcli/fs": "^4",
     "@popperjs/core": "^2.11.8",
-    "coffeescript": "^2.7.0"
+    "@wordpress/scripts": "^27",
+    "chart.js": "^4",
+    "chartjs-plugin-annotation": "^3",
+    "coffeescript": "^2.7.0",
+    "postinstall": "*",
+    "tablesorter": "^2"
   },
   "devDependencies": {
     "@lodder/grunt-postcss": "^3.1.1",
+    "@types/node": "^18.19",
     "autoprefixer": "^10.4.15",
+    "eslint-plugin-prettier": "^5.2",
     "grunt": "^1.6.1",
     "grunt-auto-install": "^0.3.1",
     "grunt-contrib-cssmin": "^5.0.0",
@@ -27,6 +51,12 @@
     "grunt-contrib-uglify": "^5.2.2",
     "grunt-contrib-watch": "^1.1.0",
     "grunt-terser": "^2.0.0",
+    "husky": "^9.1.6",
+    "lint-staged": "^15",
+    "npm-run-all2": "^6.2.3",
     "postcss": "^8.4.29"
+  },
+  "lint-staged": {
+    "*.php": "npm run lint:phpcs"
   }
 }
