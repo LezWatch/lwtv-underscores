@@ -45,29 +45,32 @@ class Theme implements Component, Templater {
 	 */
 	public function get_template_tags(): array {
 		return array(
-			'get_stats_symbolicon'      => array( $this, 'get_stats_symbolicon' ),
-			'get_characters_list'       => array( $this, 'get_characters_list' ),
-			'get_list_characters'       => array( $this, 'get_characters_list' ), // THIS IS DEPRECATED!!
-			'get_chars_for_show'        => array( $this, 'get_chars_for_show' ),
-			'get_chars_relationships'   => array( $this, 'get_chars_relationships' ),
-			'get_author_social'         => array( $this, 'get_author_social' ),
-			'get_author_favorite_shows' => array( $this, 'get_author_favorite_shows' ),
-			'get_tax_archive_title'     => array( $this, 'get_tax_archive_title' ),
-			'get_show_stars'            => array( $this, 'get_show_stars' ),
-			'get_show_content_warning'  => array( $this, 'get_show_content_warning' ),
-			'get_character_data'        => array( $this, 'get_character_data' ),
-			'get_actor_data'            => array( $this, 'get_actor_data' ),
-			'is_actor_birthday'         => array( $this, 'is_actor_birthday' ),
-			'get_ways_to_watch'         => array( $this, 'get_ways_to_watch' ),
-			'get_tvmaze_episodes'       => array( $this, 'get_tvmaze_episodes' ),
-			'get_actor_pronouns'        => array( $this, 'get_actor_pronouns' ),
-			'get_actor_gender'          => array( $this, 'get_actor_gender' ),
-			'get_actor_sexuality'       => array( $this, 'get_actor_sexuality' ),
-			'get_actor_characters'      => array( $this, 'get_actor_characters' ),
-			'get_actor_dead'            => array( $this, 'get_actor_dead' ),
-			'get_actor_age'             => array( $this, 'get_actor_age' ),
-			'get_actor_birthday'        => array( $this, 'get_actor_birthday' ),
-			'get_admin_tools'           => array( $this, 'get_admin_tools' ),
+			'get_actor_age'              => array( $this, 'get_actor_age' ),
+			'get_actor_birthday'         => array( $this, 'get_actor_birthday' ),
+			'get_actor_characters'       => array( $this, 'get_actor_characters' ),
+			'get_actor_data'             => array( $this, 'get_actor_data' ),
+			'get_actor_dead'             => array( $this, 'get_actor_dead' ),
+			'get_actor_gender'           => array( $this, 'get_actor_gender' ),
+			'get_actor_pronouns'         => array( $this, 'get_actor_pronouns' ),
+			'get_actor_sexuality'        => array( $this, 'get_actor_sexuality' ),
+			'get_admin_tools'            => array( $this, 'get_admin_tools' ),
+			'get_author_social'          => array( $this, 'get_author_social' ),
+			'get_author_favorite_shows'  => array( $this, 'get_author_favorite_shows' ),
+			'get_character_data'         => array( $this, 'get_character_data' ),
+			'get_characters_list'        => array( $this, 'get_characters_list' ),
+			'get_chars_for_show'         => array( $this, 'get_chars_for_show' ),
+			'get_chars_relationships'    => array( $this, 'get_chars_relationships' ),
+			'get_last_updated'           => array( $this, 'get_last_updated' ),
+			'get_last_death'             => array( $this, 'get_last_death' ),
+			'get_microformats_fix'       => array( $this, 'get_microformats_fix' ),
+			'get_post_types_by_taxonomy' => array( $this, 'get_post_types_by_taxonomy' ),
+			'get_show_stars'             => array( $this, 'get_show_stars' ),
+			'get_show_content_warning'   => array( $this, 'get_show_content_warning' ),
+			'get_stats_symbolicon'       => array( $this, 'get_stats_symbolicon' ),
+			'get_tax_archive_title'      => array( $this, 'get_tax_archive_title' ),
+			'get_tvmaze_episodes'        => array( $this, 'get_tvmaze_episodes' ),
+			'get_ways_to_watch'          => array( $this, 'get_ways_to_watch' ),
+			'is_actor_birthday'          => array( $this, 'is_actor_birthday' ),
 		);
 	}
 
@@ -322,5 +325,82 @@ class Theme implements Component, Templater {
 			</section>
 			<?php
 		}
+	}
+
+	/**
+	 * Get the last updated date
+	 *
+	 * @param  int $post_id
+	 * @return string
+	 */
+	public function get_last_updated( $post_id ) {
+		$updated_date = get_the_modified_time( 'F jS, Y', $post_id );
+		$last_updated = '<div class="last-updated"><small class="text-muted">This page was last edited on ' . $updated_date . '.</small></div>';
+		echo wp_kses_post( $last_updated );
+	}
+
+	/**
+	 * Show the last death
+	 *
+	 * @return string
+	 */
+	public function get_last_death() {
+		$return     = '<p>The LezWatch.TV API is temporarily unavailable.</p>';
+		$last_death = lwtv_plugin()->get_json_last_death();
+		if ( '' !== $last_death ) {
+			$died_time = human_time_diff( $last_death['died'], (int) wp_date( 'U' ) );
+
+			// If the death was within 24 hours, be more vague.
+			$seconds = (int) time() - (int) $last_death['died'];
+			if ( DAY_IN_SECONDS >= $seconds ) {
+				$died_time = 'less than 24 hours';
+			}
+
+			$return  = '<p>' . sprintf( 'It has been %s since the last queer female, non-binary, or transgender death on television', '<strong>' . $died_time . '</strong> ' );
+			$return .= ': <span><a href="' . $last_death['url'] . '">' . $last_death['name'] . '</a></span> - ' . gmdate( 'F j, Y', $last_death['died'] ) . '</p>';
+			// NOTE! Add `class="hidden-death"` to the span above if you want to blur the display of the last death.
+		}
+
+		$return = '<div class="lezwatchtv last-death">' . $return . '</div>';
+
+		return $return;
+	}
+
+	/**
+	 * Fix microformats
+	 *
+	 * We have to have author, updated, and entry-title IN the hentry data.
+	 *
+	 * @param mixed $post_id
+	 * @return void
+	 */
+	public function get_microformats_fix( $post_id ) {
+		$valid_types = array( 'post_type_authors', 'post_type_characters', 'post_type_shows' );
+		if ( in_array( get_post_type( $post_id ), $valid_types, true ) ) {
+			echo '<div class="hatom-extra" style="display:none;visibility:hidden;">
+				<span class="entry-title">' . esc_html( get_the_title( $post_id ) ) . '</span>
+				<span class="updated">' . esc_html( get_the_modified_time( 'F jS, Y', $post_id ) ) . '</span>
+				<span class="author vcard"><span class="fn">' . esc_html( get_option( 'blogname' ) ) . '</span></span>
+			</div>';
+		}
+	}
+
+	/**
+	 * Get post types by taxonomy
+	 *
+	 * @param  string $tax
+	 * @return string
+	 */
+	public function get_post_types_by_taxonomy( $tax ) {
+		$out        = '';
+		$post_types = get_post_types();
+		foreach ( $post_types as $post_type ) {
+			$taxonomies = get_object_taxonomies( $post_type );
+			if ( in_array( $tax, $taxonomies, true ) ) {
+				// There should only be one (Highlander)
+				$out = $post_type;
+			}
+		}
+		return $out;
 	}
 }

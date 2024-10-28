@@ -120,16 +120,19 @@ use LWTV\_Helpers\Utils;
  * @method string get_author_favorite_shows( $author_id )                   \_Components\Theme
  * @method array  get_character_data( $character_id, $data )                \_Components\Theme
  * @method mixed  get_characters_list( $post_id, $format )                  \_Components\Theme
+ * @method string get_chars_for_show( $show_id )                            \_Components\Theme
+ * @method string get_chars_relationships( $post_id, $format )              \_Components\Theme
+ * @method string get_last_updated( $post_id )                              \_Components\Theme
+ * @method string get_last_death( $post_id )                                \_Components\Theme
  * @method string get_show_content_warning( $show_id )                      \_Components\Theme
+ * @method string get_microformats_fix( $post_id )                          \_Components\Theme
+ * @method string get_post_types_by_taxonomy( $tax )                        \_Components\Theme
  * @method string get_show_stars( $show_id )                                \_Components\Theme
  * @method string get_stats_symbolicon( $stat_type )                        \_Components\Theme
  * @method array  get_tax_archive_title( $location, $post_type, $taxonomy ) \_Components\Theme
  * @method string get_tvmaze_episodes( $show_id )                           \_Components\Theme
  * @method string get_ways_to_watch( $show_id )                             \_Components\Theme
  * @method bool   is_actor_birthday( $actor_id )                            \_Components\Theme
- *
- * DEPRECATED - Can be deleted after Shadow Taxonomy is fully implemented.
- * @method mixed  get_list_characters( $post_id, $format )                  \_Components\Theme
  *
  * THIS YEAR
  * @method string get_this_year_display( $year ) \_Components\This_Year

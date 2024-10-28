@@ -50,7 +50,7 @@ get_header(); ?>
 										// Force Jetpack share links to display ONCE.
 										lwtv_plugin()->jetpack_post_meta();
 										// Echo last updated.
-										lwtv_last_updated_date( get_the_ID() );
+										lwtv_plugin()->get_last_updated( get_the_ID() );
 									endwhile; // end of the loop.
 									?>
 								</div>

@@ -34,6 +34,3 @@ if ( ! defined( 'LWTV_SYMBOLICONS_URL' ) ) {
 
 // Load the lwtv plugin
 require_once __DIR__ . '/lwtv-plugin/functions.php';
-
-// Load Addons
-require_once __DIR__ . '/lesbians.php';

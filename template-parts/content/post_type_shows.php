@@ -27,7 +27,7 @@ $maybe_has      = array(
 );
 
 // Microformats Fix.
-lwtv_microformats_fix( $show_id );
+lwtv_plugin()->get_microformats_fix( $show_id );
 
 get_template_part( 'template-parts/partials/image', 'show', array( 'show_id' => $show_id ) );
 ?>
