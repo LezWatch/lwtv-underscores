@@ -5,28 +5,12 @@ Theme URI: https://lezwatchtv.com/
 Author: Tracy Levesque, Mika Epstein
 Author URI: https://lezwatchtv.com/
 Description: LezWatch.TV Theme Episode III - Return of the Custom Theme
-Version: 6.1.1
+Version: 6.2.0
 License: GNU General Public License v2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Text Domain: yikes_starter
 Tags: gay, lwtv, lezwatch
 */
-/* =Color Variables for our theme
------------------------------------------------ */
-/* Base theme colors */
-/* Theme color palette */
-/* Link colors */
-@keyframes rainbow {
-  0% {
-    background-position: 0% 82%;
-  }
-  50% {
-    background-position: 100% 19%;
-  }
-  100% {
-    background-position: 0% 82%;
-  }
-}
 /* =Mixins
 ----------------------------------------------- */
 /* =Color Variables for our theme
@@ -237,22 +221,6 @@ Tags: gay, lwtv, lezwatch
   background-color: #fff;
 }
 
-/* =Color Variables for our theme
------------------------------------------------ */
-/* Base theme colors */
-/* Theme color palette */
-/* Link colors */
-@keyframes rainbow {
-  0% {
-    background-position: 0% 82%;
-  }
-  50% {
-    background-position: 100% 19%;
-  }
-  100% {
-    background-position: 0% 82%;
-  }
-}
 /* =Font Styles
 ----------------------------------------------- */
 /* =Helper Mixins
@@ -1015,7 +983,7 @@ select {
   display: none;
   font: var(--fa-font-solid);
   content: "\f0e0";
-  font-family: "Font Awesome 5 Free";
+  font-family: "Font Awesome 5 Regular";
 }
 .widget_yikes_social_menu_widget li.instagram a:before {
   display: none;

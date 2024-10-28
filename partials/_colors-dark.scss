@@ -1,13 +1,10 @@
-@use "colors";
-@use "mixins";
-
 $color-mode-type: data;
 
-@include mixins.color-mode(dark) {
+@include color-mode(dark) {
 
 	/* Link colors */
-	$link-color:         colors.$lwtv-ltpink;
-	$link-hover-color:   colors.$lwtv-ltpurple;
+	$link-color:         $lwtv-ltpink;
+	$link-hover-color:   $lwtv-ltpurple;
 	$link-focus-color:   $link-hover-color;
 	$link-active-color:  $link-hover-color;
 	$link-visited-color: $link-color;
@@ -26,21 +23,21 @@ $color-mode-type: data;
 	}
 
 	.entry-header .entry-meta {
-		color: colors.$lwtv-ltgrey;
+		color: $lwtv-ltgrey;
 
 		svg * {
-			fill: colors.$lwtv-ltgrey;
+			fill: $lwtv-ltgrey;
 		}
 	}
 
 	.similar-shows-airdates {
-		color: colors.$white !important;
+		color: $white !important;
 	}
 
 	a.btn-outline-primary, a.btn-outline-primary:visited, button.btn-outline-primary, button.btn-outline-primary:visited, input[type="button"].btn-outline-primary, input[type="button"].btn-outline-primary:visited, input[type="submit"].btn-outline-primary, input[type="submit"].btn-outline-primary:visited {
-		color: colors.$black;
-		border-color: colors.$lwtv-dkpink;
-		background-color: colors.$lwtv-ltpink;
+		color: $black;
+		border-color: $lwtv-dkpink;
+		background-color: $lwtv-ltpink;
 		text-decoration: none;
 	}
 
@@ -48,13 +45,13 @@ $color-mode-type: data;
 		background-color: $lwtv-medgrey;
 
 		ul.navbar-nav > li  {
-			border-left:solid 1px colors.$lightgrey;
+			border-left:solid 1px $lightgrey;
 			background-color: $lwtv-medgrey;
 
 			&.nav-item {
 				/* Style for inactive links */
 				& > a.nav-link {
-					color: colors.$white;
+					color: $white;
 					text-decoration: none;
 				}
 
@@ -67,7 +64,7 @@ $color-mode-type: data;
 						/* Style for inactive links on submenus */
 						a.dropdown-item {
 							background-color: $lwtv-medgrey;
-							color: colors.$white;
+							color: $white;
 							text-decoration: none;
 						}
 					}
@@ -78,17 +75,17 @@ $color-mode-type: data;
 
 	#colophon .top-footer {
 		background-color: $lwtv-medgrey;
-		color: colors.$white;
+		color: $white;
 
 		a {
-			color: colors.$white;
+			color: $white;
 
 			&:visited {
-				color: colors.$white;
+				color: $white;
 			}
 
 			&:hover, &:focus, &:active {
-				color: colors.$lwtv-ltpink;
+				color: $lwtv-ltpink;
 			}
 		}
 
@@ -108,12 +105,12 @@ $color-mode-type: data;
 	}
 
 	#main {
-		background-color: colors.$lwtv-dkgrey;
-		color: colors.$white;
+		background-color: $lwtv-dkgrey;
+		color: $white;
 	}
 
 	#masthead .navbar-brand {
-		color: colors.$lwtv-ltpink;
+		color: $lwtv-ltpink;
 		text-decoration: none;
 	}
 
@@ -134,35 +131,35 @@ $color-mode-type: data;
 
 	blockquote {
 		background-color: $lwtv-medgrey;
-		border-left: 4px solid colors.$lwtv-ltpink;
-		color: colors.$lwtv-ltgrey;
+		border-left: 4px solid $lwtv-ltpink;
+		color: $lwtv-ltgrey;
 		&:before {
-			color: colors.$lwtv-ltpink;
+			color: $lwtv-ltpink;
 		}
 	}
 
 	.toc-container .breadcrumb,
 	.affiliate-watch-container, .ways-to-watch-container,
 	.overlay-section h2, .relatedposts-section h2, .showschar-section h2 {
-		background-color: colors.$lwtv-dkgrey;
-		color: colors.$lwtv-grey;
+		background-color: $lwtv-dkgrey;
+		color: $lwtv-grey;
 
 		svg * {
-			fill: colors.$lwtv-grey;
+			fill: $lwtv-grey;
 		}
 	}
 
 	.character-cliche svg, .character-actor svg, .character-show svg {
-		fill: colors.$lwtv-ltgrey;
+		fill: $lwtv-ltgrey;
 	}
 
 	.card-meta-item.actors svg, .card-meta-item.cliches svg, .card-meta-item.shows svg,
 	.intersectionality-list svg, .trope-list svg, .cliche-list svg {
-		fill: colors.$lwtv-ltgrey;
+		fill: $lwtv-ltgrey;
 	}
 
 	.site-loop .card {
-		box-shadow: 0 1px 4px 0 rgba( colors.$white, 0.14 );
+		box-shadow: 0 1px 4px 0 rgba( $white, 0.14 );
 	}
 
 	.overlay-section {
@@ -172,19 +169,19 @@ $color-mode-type: data;
 			}
 
 			span {
-				color: colors.$lwtv-ltpink;
+				color: $lwtv-ltpink;
 
 				&:hover {
-					color: colors.$lwtv-dkpink;
-					background-color: colors.$lwtv-dkgrey;
+					color: $lwtv-dkpink;
+					background-color: $lwtv-dkgrey;
 
 					svg *{
-						fill: colors.$lwtv-dkpink;
+						fill: $lwtv-dkpink;
 					}
 				}
 
 				svg * {
-					fill: colors.$lwtv-ltpink;
+					fill: $lwtv-ltpink;
 				}
 
 			}
@@ -193,67 +190,66 @@ $color-mode-type: data;
 
 	.author-bio-box,
 	.related-shows {
-		background-color: colors.$lwtv-dkblue;
+		background-color: $lwtv-dkblue;
 
 		svg * {
-			fill: colors.$lwtv-grey;
+			fill: $lwtv-grey;
 		}
 	}
 
 	.entry-meta {
-		color: colors.$lwtv-ltgrey;
+		color: $lwtv-ltgrey;
 
 		svg * {
-			fill: colors.$lwtv-ltgrey;
+			fill: $lwtv-ltgrey;
 		}
 	}
 
 	.dark-mode-toggle {
-		color: colors.$white;
+		color: $white;
 		svg * {
-			fill: colors.$lwtv-ltgrey;
+			fill: $lwtv-ltgrey;
 		}
 	}
 
 	div.facetwp-facet {
 		select {
 			background-color: $lwtv-medgrey;
-			color: colors.$white;
+			color: $white;
 		}
 
 		.fs-search, .fs-wrap .fs-search input,
 		.fs-dropdown .fs-options, .fs-dropdown .fs-no-results {
 			background-color: $lwtv-medgrey;
-			color: colors.$white;
+			color: $white;
 		}
 
 		.facetwp-type-fselect .fs-dropdown, .facetwp-type-fselect .fs-wrap,
 		.fs-label-wrap .fs-label
 		.facetwp-type-autocomplete .fs-dropdown, .facetwp-type-autocomplete .fs-wrap {
 			background-color: $lwtv-medgrey;
-			color: colors.$white;
-			border-color: colors.$lwtv-ltgrey;
+			color: $white;
+			border-color: $lwtv-ltgrey;
 		}
 
 		.fs-arrow {
-			border-top: 5px solid colors.$white;
+			border-top: 5px solid $white;
 		}
 	}
 
 	.archive .callout-death svg *,
 	.charlist-grave svg * {
-		fill: colors.$white;
+		fill: $white;
 	}
 
 	.facetwp-pager {
 		a {
-			color: colors.$lwtv-ltpink;
+			color: $lwtv-ltpink;
 		}
 
 		a:hover {
-			color: colors.$lwtv-dkpink;
-			background-color: colors.$white;
+			color: $lwtv-dkpink;
+			background-color: $white;
 		}
 	}
 }
-

@@ -4,19 +4,18 @@ Theme URI: https://lezwatchtv.com/
 Author: Tracy Levesque, Mika Epstein
 Author URI: https://lezwatchtv.com/
 Description: LezWatch.TV Theme Episode III - Return of the Custom Theme
-Version: 6.1.1
+Version: 6.2.0
 License: GNU General Public License v2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Text Domain: yikes_starter
 Tags: gay, lwtv, lezwatch
 */
 
-@use "sass:meta";
-@use 'partials/mixins';
-@use 'partials/colors';
-@use 'partials/colors-dark';
-@use 'partials/fonts';
-@use 'partials/helpers';
+@import 'partials/mixins';
+@import 'partials/colors';
+@import 'partials/colors-dark';
+@import 'partials/fonts';
+@import 'partials/helpers';
 
 /* ==========================================================================
 	 Layout
@@ -25,7 +24,7 @@ Tags: gay, lwtv, lezwatch
 #masthead {}
 
 #main {
-	background-color: colors.$white;
+	background-color: $white;
 
 	.home &, .search-results &,
 	.page-template-statistics &,
@@ -44,11 +43,11 @@ Tags: gay, lwtv, lezwatch
 	 ========================================================================== */
 
 body {
-	font-family: fonts.$basefontfamily;
-	font-size: fonts.$basefont;
-	line-height: fonts.$baseheight;
-	color: colors.$darkgrey;
-	background-color: colors.$lwtv-dkgrey;
+	font-family: $basefontfamily;
+	font-size: $basefont;
+	line-height: $baseheight;
+	color: $darkgrey;
+	background-color: $lwtv-dkgrey;
 }
 
 p {
@@ -57,12 +56,12 @@ p {
 }
 
 blockquote {
-	background-color: colors.$lwtv-ltgrey;
-	border-left: 4px solid colors.$lwtv-pink;
-	color: colors.$darkgrey;
+	background-color: $lwtv-ltgrey;
+	border-left: 4px solid $lwtv-pink;
+	color: $darkgrey;
 	font-family: Georgia, Times, "Times New Roman", serif;
 	font-weight: 500;
-	@include fonts.font-18;
+	@include font-18;
 	margin: 0 0 1rem;
 	padding: 1em;
 	-webkit-font-smoothing: antialiased;
@@ -76,9 +75,9 @@ blockquote {
 	}
 
 	&:before {
-		color: colors.$lwtv-pink;
+		color: $lwtv-pink;
 		content: '\201C';
-		@include fonts.font-44;
+		@include font-44;
 		font-weight: 600;
 		line-height: 1;
 		position: absolute;
@@ -86,22 +85,22 @@ blockquote {
 }
 
 .rainbow {
-	@include mixins.rainbows;
+	@include rainbows;
 }
 
 /* Links */
 
 a {
-	color: colors.$link-color;
+	color: $link-color;
 	text-decoration: none;
-	@include mixins.box-transition(background 0.3s ease-in-out);
+	@include box-transition(background 0.3s ease-in-out);
 
 	&:visited {
-		color: colors.$link-color;
+		color: $link-color;
 	}
 
 	&:hover, &:focus, &:active {
-		color: colors.$link-hover-color;
+		color: $link-hover-color;
 		text-decoration: none;
 	}
 }
@@ -109,22 +108,22 @@ a {
 /* Text */
 .text-bg-primary {
 	&, &:visited {
-		background-color: colors.$lwtv-pink !important;
-		border-color: colors.$lwtv-pink !important;
+		background-color: $lwtv-pink !important;
+		border-color: $lwtv-pink !important;
 	}
 
 	&.active, &.focus, &:active, &:focus, &:hover {
-		background-color: colors.$white !important;
-		border-color: colors.$lwtv-pink !important;
-		color: colors.$lwtv-pink !important;
-		@include mixins.fade;
+		background-color: $white !important;
+		border-color: $lwtv-pink !important;
+		color: $lwtv-pink !important;
+		@include fade;
 	}
 }
 
 /* Accessibility */
 
 .screen-reader-text {
-	@include mixins.screen-reader;
+	@include screen-reader;
 }
 
 /* =Gutenberg
@@ -136,7 +135,7 @@ figure.wp-block-embed {
 	figcaption {
 		text-align: left;
 		font-size: smaller;
-		color: colors.$lwtv-ltgrey;
+		color: $lwtv-ltgrey;
 	}
 
 	&.alignleft, &.aligncenter, &.alignright {
@@ -179,49 +178,49 @@ pre.wp-block-verse {
 
 	li.page-item {
 		a {
-			color: colors.$lwtv-pink;
+			color: $lwtv-pink;
 		}
 
 		svg {
-			fill: colors.$lwtv-pink;
+			fill: $lwtv-pink;
 			width: 14px;
 			height: 14px;
 			vertical-align: baseline;
 		}
 
 		&.active, a.active {
-			background-color: colors.$lwtv-pink;
-			border-color: colors.$lwtv-pink;
-			color: colors.$white;
+			background-color: $lwtv-pink;
+			border-color: $lwtv-pink;
+			color: $white;
 			font-weight: bold;
 		}
 
 		.page-link {
 			&.active {
-				background-color: colors.$lwtv-pink;
-				border-color: colors.$lwtv-pink;
-				color: colors.$white;
+				background-color: $lwtv-pink;
+				border-color: $lwtv-pink;
+				color: $white;
 				font-weight: bold;
 			}
 		}
 		&.first, &.previous, &.next, &.last {
-			background-color: colors.$lwtv-pink;
-			border-color: colors.$lwtv-pink;
+			background-color: $lwtv-pink;
+			border-color: $lwtv-pink;
 			a {
-				background-color: colors.$lwtv-pink;
-				border-color: colors.$lwtv-pink;
-				color: colors.$white;
+				background-color: $lwtv-pink;
+				border-color: $lwtv-pink;
+				color: $white;
 			}
 			svg {
-				fill: colors.$white;
+				fill: $white;
 			}
 		}
 
 		&:first-child, &:last-child {
 			.page-link {
-				@include mixins.border-radius(0);
-				background-color: colors.$lwtv-pink;
-				color: colors.$white;
+				@include border-radius(0);
+				background-color: $lwtv-pink;
+				color: $white;
 			}
 		}
 	}
@@ -236,11 +235,11 @@ pre.wp-block-verse {
 	border-radius: 0.25rem;
 
 	a {
-		color: colors.$lwtv-pink;
+		color: $lwtv-pink;
 	}
 
 	a:hover {
-		background-color: colors.$lwtv-ltgrey;
+		background-color: $lwtv-ltgrey;
 	}
 
 	.facetwp-page {
@@ -250,29 +249,29 @@ pre.wp-block-verse {
 		margin-left: -1px;
 		line-height: 1.25;
 		justify-content: center !important;
-		border: 1px solid colors.$lwtv-grey;
+		border: 1px solid $lwtv-grey;
 
 		&.active, a.active {
-			background-color: colors.$lwtv-pink;
-			border-color: colors.$lwtv-pink;
-			color: colors.$white;
+			background-color: $lwtv-pink;
+			border-color: $lwtv-pink;
+			color: $white;
 			font-weight: bold;
 		}
 	}
 
 	.facetwp-page.next {
 		margin-left: auto !important;
-		background-color: colors.$lwtv-pink;
-		border-color: colors.$lwtv-pink;
-		color: colors.$white;
+		background-color: $lwtv-pink;
+		border-color: $lwtv-pink;
+		color: $white;
 		font-weight: bold;
 	}
 
 	.facetwp-page.prev {
 		margin-right: auto !important;
-		background-color: colors.$lwtv-pink;
-		border-color: colors.$lwtv-pink;
-		color: colors.$white;
+		background-color: $lwtv-pink;
+		border-color: $lwtv-pink;
+		color: $white;
 		font-weight: bold;
 	}
 
@@ -286,7 +285,7 @@ pre.wp-block-verse {
 		border-right: 0;
 
 		&:first-child, &:last-child {
-			@include mixins.border-radius(0);
+			@include border-radius(0);
 		}
 	}
 }
@@ -306,11 +305,11 @@ pre.wp-block-verse {
 		border-radius: var(--bs-nav-tabs-border-radius);
 	}
 	.nav-tabs .nav-link.active, .nav-tabs .nav-item.show .nav-link {
-		border-color: colors.$lwtv-bordergrey;
+		border-color: $lwtv-bordergrey;
 		border-radius: var(--bs-nav-tabs-border-radius);
 	}
 	a.nav-link {
-		color: colors.$medgrey;
+		color: $medgrey;
 	}
 }
 
@@ -320,7 +319,7 @@ a.btn, button.btn, input[type="button"].btn, input[type="submit"].btn,
 button, input[type="button"], input[type="submit"], .wp-block-button .wp-block-button__link {
 	border: 1px solid transparent;
 	border-radius: 0.25rem;
-	@include mixins.fade;
+	@include fade;
 	padding: 0.375rem 0.75rem;
 }
 
@@ -330,16 +329,16 @@ button, input[type="button"], input[type="submit"], .wp-block-button .wp-block-b
 a.btn-primary, button.btn-primary, input[type="button"].btn-primary, input[type="submit"].btn-primary,
 .show > .btn-primary.dropdown-toggle {
 	&, &:visited {
-		background-color: colors.$lwtv-pink;
-		border-color: colors.$lwtv-pink;
-		color: colors.$white;
+		background-color: $lwtv-pink;
+		border-color: $lwtv-pink;
+		color: $white;
 	}
 
 	&.active, &.focus, &:active, &:focus, &:hover {
-		background-color: colors.$white;
-		border-color: colors.$lwtv-pink;
-		color: colors.$lwtv-pink;
-		@include mixins.fade;
+		background-color: $white;
+		border-color: $lwtv-pink;
+		color: $lwtv-pink;
+		@include fade;
 	}
 }
 
@@ -347,16 +346,16 @@ a.btn-outline-primary, button.btn-outline-primary,
 input[type="button"].btn-outline-primary,
 input[type="submit"].btn-outline-primary {
 	&, &:visited {
-		background-color: colors.$white;
-		border-color: colors.$lwtv-pink;
-		color: colors.$lwtv-pink;
+		background-color: $white;
+		border-color: $lwtv-pink;
+		color: $lwtv-pink;
 	}
 
 	&.active, &.focus, &:active, &:focus, &:hover {
-		background-color: colors.$lwtv-pink;
-		border-color: colors.$lwtv-pink;
+		background-color: $lwtv-pink;
+		border-color: $lwtv-pink;
 		box-shadow: 0 0 0 2px rgba(141, 50, 159,.5);
-		color: colors.$white;
+		color: $white;
 	}
 }
 
@@ -367,7 +366,7 @@ input[type="submit"].btn-outline-primary {
 		vertical-align: middle;
 	}
 	svg * {
-		fill: colors.$lwtv-pink;
+		fill: $lwtv-pink;
 	}
 }
 
@@ -379,30 +378,30 @@ input[type="submit"].btn-outline-primary {
 
 h1, h2, h3, h4, h5, h6,
 .h1, .h2, .h3, .h4, .h5, .h6 {
-	margin-bottom: fonts.$headingbmargin;
-	font-family: fonts.$headingfontfamily;
-	font-weight: fonts.$headingfontweight;
-	line-height: fonts.$headingfontheight;
+	margin-bottom: $headingbmargin;
+	font-family: $headingfontfamily;
+	font-weight: $headingfontweight;
+	line-height: $headingfontheight;
 }
 
 h1, .h1 {
-	@include fonts.font-44;
+	@include font-44;
 }
 
 h2, .h2 {
-	@include fonts.font-32;
+	@include font-32;
 }
 
 h3, .h3 {
-	@include fonts.font-28;
+	@include font-28;
 }
 
 h4, .h4 {
-	@include fonts.font-24;
+	@include font-24;
 }
 
 h5, .h5 {
-	@include fonts.font-20;
+	@include font-20;
 }
 
 h6, .h6 {
@@ -424,7 +423,7 @@ h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
 
 /* styles that makes comments and Gravity forms Bootstrappy */
 
-@include meta.load-css('partials/forms');
+@import 'partials/forms';
 
 
 /* ==========================================================================
@@ -435,30 +434,30 @@ h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
 /* If using Jumbotron */
 .jumbotron.jumbotron-fluid {
 	background-size: contain;
-	color: colors.$white;
-	@include fonts.font-18;
+	color: $white;
+	@include font-18;
 	margin-bottom: 0;
 	max-height: 600px;
 
 	h1.site-description {
-		@include fonts.font-40;
+		@include font-40;
 	}
 
 	a.badge, a.badge:visited {
-		color: colors.$white !important;
+		color: $white !important;
 	}
 }
 
 /* Blur unless hovered for Last Death */
 .hidden-death {
-	text-shadow: 0 0 8px colors.$black;
+	text-shadow: 0 0 8px $black;
 	color: transparent;
 	filter: blur(3px);
 	-webkit-filter: blur(3px);
 }
 .hidden-death:hover {
 	text-shadow: none!important;
-	color: colors.$white!important;
+	color: $white!important;
 	filter: none!important;
 	-webkit-filter: none!important;
 }
@@ -477,9 +476,9 @@ h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
 
 #masthead {
 	.navbar-brand {
-		@include fonts.font-26;
+		@include font-26;
 		font-weight: 600;
-		color: colors.$lwtv-pink;
+		color: $lwtv-pink;
 
 		img {
 			height: 40px;
@@ -494,13 +493,13 @@ h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
 			vertical-align: middle;
 		}
 		svg * {
-			fill: colors.$white;
+			fill: $white;
 		}
 	}
 
 	.header-search-bar {
-		background-color: colors.$lwtv-dkgrey;
-		@include mixins.box-shadow(0 2px 30px rgba(0, 0, 0, 0.2));
+		background-color: $lwtv-dkgrey;
+		@include box-shadow(0 2px 30px rgba(0, 0, 0, 0.2));
 		margin-top: 50px;
 		padding: 10px 0;
 		z-index: 9999;
@@ -513,15 +512,15 @@ h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
 			margin-bottom: 0;
 
 			label {
-				color: colors.$white;
-				@include fonts.font-20;
+				color: $white;
+				@include font-20;
 				font-weight: 600;
 				text-align: right;
 			}
 		}
 
 		.fa {
-			@include fonts.font-32;
+			@include font-32;
 		}
 	}
 
@@ -531,7 +530,7 @@ h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
 		}
 
 		a:hover {
-			color: colors.$lwtv-grey2;
+			color: $lwtv-grey2;
 		}
 	}
 
@@ -541,9 +540,9 @@ h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
 	}
 
 	.offcanvas-header {
-		background-color: colors.$lwtv-purple;
-		color: colors.$white;
-		@include fonts.font-24;
+		background-color: $lwtv-purple;
+		color: $white;
+		@include font-24;
 	}
 
 	.dark-mode-toggle {
@@ -561,7 +560,7 @@ h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
 			width: 1em;
 			height: 1em;
 			vertical-align: -.125em;
-			fill: colors.$lwtv-pink;
+			fill: $lwtv-pink;
 		}
 
 		.my-1 {
@@ -575,10 +574,10 @@ h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
 		}
 
 		.nav-link:focus, .nav-link:hover {
-			background-color: colors.$lwtv-pink;
+			background-color: $lwtv-pink;
 
 			svg * {
-			  fill: colors.$lwtv-ltgrey;
+			  fill: $lwtv-ltgrey;
 			}
 		  }
 	}
@@ -591,7 +590,7 @@ h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
 
 /* Change the main nav colors */
 
-@include meta.load-css('partials/navcolors');
+@import 'partials/navcolors';
 
 
 
@@ -622,7 +621,7 @@ h1.entry-title {
 	margin-bottom: 0;
 
 	.no-results & {
-		@include fonts.font-32;
+		@include font-32;
 		margin-top: 20px;
 	}
 }
@@ -640,7 +639,7 @@ h1.entry-title {
 .toc-container {
 	.toc-title {
 		display: inline-block;
-		@include fonts.font-20;
+		@include font-20;
 		line-height: 1;
 		margin: 0 0.6rem 0 0;
 		font-family: Oswald, sans-serif;
@@ -672,8 +671,8 @@ h1.entry-title {
 
 	.card {
 		border: none;
-		@include mixins.border-radius(0);
-		@include mixins.box-shadow(0 1px 4px 0 rgba(0, 0, 0, 0.14));
+		@include border-radius(0);
+		@include box-shadow(0 1px 4px 0 rgba(0, 0, 0, 0.14));
 		padding: 0;
 
 		&.col-sm-3, &.col-sm-4, &.col-sm-5, &.col-sm-6,
@@ -682,9 +681,9 @@ h1.entry-title {
 		}
 
 		.card-header {
-			background: colors.$lwtv-gradient;
-			@include mixins.border-radius(0);
-			color: colors.$white;
+			background: $lwtv-gradient;
+			@include border-radius(0);
+			color: $white;
 
 			h3, h4, h5 {
 				margin-bottom: 0;
@@ -692,23 +691,23 @@ h1.entry-title {
 		}
 
 		.card-img-top, .card-img {
-			@include mixins.border-radius(0);
+			@include border-radius(0);
 		}
 
 		.card-body {
-			@include fonts.font-14;
+			@include font-14;
 
 			p:last-child, ul:last-of-type {
 				margin-bottom: 0;
 			}
 
 			.card-title {
-				@include fonts.font-20;
+				@include font-20;
 			}
 
 			.card-meta {
 				margin-bottom: 0.75rem;
-				@include fonts.font-14;
+				@include font-14;
 
 				.fa {
 					margin-left: 0.6em;
@@ -742,9 +741,9 @@ h1.entry-title {
 		}
 
 		.card-footer {
-			background-color: colors.$white;
+			background-color: $white;
 			border: 0;
-			@include mixins.border-radius(0);
+			@include border-radius(0);
 			padding-top: 0;
 		}
 	}
@@ -755,7 +754,7 @@ h1.entry-title {
 ----------------------------------------------- */
 
 h2.posts-title {
-	color: colors.$lwtv-pink;
+	color: $lwtv-pink;
 	font-weight: 500;
 
 	svg {
@@ -765,7 +764,7 @@ h2.posts-title {
 	}
 
 	svg * {
-		fill: colors.$lwtv-pink;
+		fill: $lwtv-pink;
 	}
 }
 
@@ -780,10 +779,10 @@ section {
 	margin-bottom: 1.4rem;
 
 	.card-body {
-		font-size: fonts.$basefont;
+		font-size: $basefont;
 
 		.card-title {
-			@include fonts.font-28;
+			@include font-28;
 		}
 	}
 }
@@ -800,7 +799,7 @@ section {
 	.card, .image {
 		&.col-sm-5, &.col-md-5 {
 			background-repeat: no-repeat;
-			@include mixins.cover;
+			@include cover;
 			background-position: center top;
 		}
 	}
@@ -811,7 +810,7 @@ section {
 		&.col-sm-5, &.col-md-5,
 		&.col-sm-3, &.col-md-3 {
 			background-repeat: no-repeat;
-			@include mixins.cover;
+			@include cover;
 			background-position: center top;
 		}
 
@@ -825,11 +824,11 @@ section {
 
 
 .home-featured-shows {
-	background-color: colors.$lwtv-pink;
+	background-color: $lwtv-pink;
 	padding: 20px 0 30px;
 
 	h2 {
-		color: colors.$white;
+		color: $white;
 
 		svg {
 			width: 30px;
@@ -838,7 +837,7 @@ section {
 		}
 
 		svg * {
-			fill: colors.$white;
+			fill: $white;
 		}
 	}
 
@@ -866,11 +865,11 @@ section {
 
 /* Subheaders */
 .archive-subheader .jumbotron {
-	background: colors.$lwtv-pink;
+	background: $lwtv-pink;
 	background-size: contain;
-	@include mixins.border-radius(0);
-	color: colors.$white;
-	@include fonts.font-18;
+	@include border-radius(0);
+	color: $white;
+	@include font-18;
 	margin-bottom: 0;
 	padding: 3rem 2rem;
 
@@ -903,9 +902,9 @@ section {
 	}
 
 	.entry-meta {
-		border-bottom: 1px solid colors.$lwtv-pink;
-		color: colors.$lwtv-medgrey;
-		font-size: fonts.$basefont;
+		border-bottom: 1px solid $lwtv-pink;
+		color: $lwtv-medgrey;
+		font-size: $basefont;
 		font-weight: 600;
 		margin-top: .75rem;
 		padding-bottom: 1rem;
@@ -916,7 +915,7 @@ section {
 			vertical-align: middle;
 		}
 		svg * {
-			fill: colors.$lwtv-medgrey;
+			fill: $lwtv-medgrey;
 		}
 		.fa {
 			margin-left: 0.6em;
@@ -926,14 +925,14 @@ section {
 
 .listicle {
 	counter-reset: listicle-counter;
-	border-bottom: 1px solid colors.$lwtv-grey2;
+	border-bottom: 1px solid $lwtv-grey2;
 	margin-bottom: 2rem;
 
 	& dt:before {
 		content: counter(listicle-counter);
 		counter-increment: listicle-counter;
 		font-family: 'Oswald', sans-serif;
-		@include fonts.font-32;
+		@include font-32;
 		font-weight: 600;
 		margin-right: 6px;
 	}
@@ -944,7 +943,7 @@ section {
 
 	dt {
 		font-family: 'Oswald', sans-serif;
-		@include fonts.font-32;
+		@include font-32;
 		font-weight: 400;
 		line-height: 1.1;
 		margin-bottom: 1rem;
@@ -960,8 +959,8 @@ section {
 }
 
 .related-shows {
-	background-color: colors.$lwtv-ltgrey;
-	border-left: 4px solid colors.$lwtv-pink;
+	background-color: $lwtv-ltgrey;
+	border-left: 4px solid $lwtv-pink;
 	margin: 2rem 0;
 	padding: 1em;
 	clear: both;
@@ -985,14 +984,14 @@ section {
 }
 
 .author-bio-box {
-	background-color: colors.$lwtv-ltgrey;
-	@include fonts.font-14;
+	background-color: $lwtv-ltgrey;
+	@include font-14;
 	padding: 1em;
-	border-top: 1px solid colors.$lwtv-purple;
+	border-top: 1px solid $lwtv-purple;
 	margin-top: 4rem;
 
 	.avatar {
-		border: 1px solid colors.$lwtv-pink;
+		border: 1px solid $lwtv-pink;
 	}
 
 	.author-bio {
@@ -1075,7 +1074,7 @@ footer.entry-meta {
 	}
 
 	a.nav-link {
-		color: colors.$lwtv-pink;
+		color: $lwtv-pink;
 	}
 
 	.container {
@@ -1122,10 +1121,10 @@ footer.entry-meta {
 .lwtv-stats {
 	.progress {
 		height:3 0px;
-		background-color: colors.$lwtv-ltblue;
+		background-color: $lwtv-ltblue;
 
 		.progress-bar {
-			color: colors.$darkgrey;
+			color: $darkgrey;
 			text-align: left;
 		}
 	}
@@ -1166,7 +1165,7 @@ canvas {
 
 table.lwtvc {
 	tbody {
-		border-bottom: 8px solid colors.$white;
+		border-bottom: 8px solid $white;
 	}
 }
 
@@ -1180,8 +1179,8 @@ table.lwtvc {
 
 .ep-calendar-dot {
 	border-radius: 50%;
-	background: colors.$lwtv-pink;
-	border-color: colors.$lwtv-pink;
+	background: $lwtv-pink;
+	border-color: $lwtv-pink;
 	display: inline-block;
 	width: 10px;
 	height: 10px;
@@ -1220,10 +1219,10 @@ table.lwtvc {
 	}
 
 	.related-article-header {
-		font-family: fonts.$headingfontfamily;
-		font-weight: fonts.$headingfontweight;
-		line-height: fonts.$headingfontheight;
-		@include fonts.font-20;
+		font-family: $headingfontfamily;
+		font-weight: $headingfontweight;
+		line-height: $headingfontheight;
+		@include font-20;
 		font-size: 1rem;
 		margin-top: 0;
 		margin-bottom: 1rem;
@@ -1236,8 +1235,8 @@ table.lwtvc {
 .character-page, .actor-page {
 	.card {
 		border: none;
-		@include mixins.border-radius(0);
-		@include mixins.box-shadow(0 1px 4px 0 rgba(0, 0, 0, 0.14));
+		@include border-radius(0);
+		@include box-shadow(0 1px 4px 0 rgba(0, 0, 0, 0.14));
 
 		.single-char-img {
 			float: left;
@@ -1254,7 +1253,7 @@ table.lwtvc {
 
 			h2 {
 				background-color: transparent;
-				@include fonts.font-28;
+				@include font-28;
 				margin-top: 0;
 				margin-bottom: 1rem;
 				padding: 0;
@@ -1265,11 +1264,11 @@ table.lwtvc {
 			--bs-accordion-btn-focus-box-shadow: 0 0 0 0.2rem $lwtv-grey2;
 			button {
 				font-family: "Open Sans", sans-serif;
-				font-size: fonts.$basefont;
+				font-size: $basefont;
 				padding: .2rem 0;
 			}
 			.accordion-button:not(.collapsed) {
-				background-color: colors.$lwtv-grey2;
+				background-color: $lwtv-grey2;
 			}
 		}
 	}
@@ -1313,7 +1312,7 @@ table.lwtvc {
 	}
 
 	svg * {
-		fill: colors.$medgrey;
+		fill: $medgrey;
 	}
 }
 
@@ -1326,7 +1325,7 @@ table.lwtvc {
 	}
 
 	svg * {
-		fill: colors.$darkgrey;
+		fill: $darkgrey;
 	}
 }
 
@@ -1405,7 +1404,7 @@ h3.post-title.excerpt {
 	}
 
 	h2 {
-			background-color: colors.$lwtv-grey;
+			background-color: $lwtv-grey;
 			line-height: 1;
 			margin-bottom: 0;
 			padding: .75rem 1.25rem .9rem;
@@ -1423,28 +1422,28 @@ section#characters {
 .showlist-star, .show-star, .screener-star {
 	&.gold {
 		svg * {
-			fill: colors.$lwtv-gold;
+			fill: $lwtv-gold;
 		}
 		i.fa {
-			color: colors.$lwtv-gold;
+			color: $lwtv-gold;
 		}
 	}
 
 	&.silver {
 		svg * {
-			fill: colors.$lwtv-silver
+			fill: $lwtv-silver
 		}
 		i.fa {
-			color: colors.$lwtv-silver
+			color: $lwtv-silver
 		}
 	}
 
 	&.bronze {
 		svg * {
-			fill: colors.$lwtv-bronze
+			fill: $lwtv-bronze
 		}
 		i.fa {
-			color: colors.$lwtv-bronze
+			color: $lwtv-bronze
 		}
 	}
 
@@ -1452,16 +1451,16 @@ section#characters {
 
 .show-we-love {
 	svg * {
-		fill: colors.$red!important;
+		fill: $red!important;
 	}
 	i.fa {
-		color: colors.$red!important;
+		color: $red!important;
 	}
 }
 
 .show-header-svg .show-we-love,
 .show-header-svg .show-star {
-	background-color: colors.$lwtv-grey;
+	background-color: $lwtv-grey;
 	display: inline-block;
 	border-radius: 10px;
 }
@@ -1469,7 +1468,7 @@ section#characters {
 /* Trigger Warning */
 .trigger-warning-container {
 	.alert {
-		@include mixins.border-radius(0);
+		@include border-radius(0);
 		border-left: 0;
 		border-right: 0;
 		margin-bottom: 0;
@@ -1488,11 +1487,11 @@ section#characters {
 	}
 
 	.callout-danger svg * {
-		fill: colors.$red;
+		fill: $red;
 	}
 
 	.callout-info svg *, .callout-warning svg * {
-		fill: colors.$lwtv-yellow;
+		fill: $lwtv-yellow;
 	}
 
 }
@@ -1500,7 +1499,7 @@ section#characters {
 /* Affiliate Watch */
 .ways-to-watch-container,
 .affiliate-watch-container {
-	background-color: colors.$lwtv-grey;
+	background-color: $lwtv-grey;
 	margin-bottom: 1.25rem;
 	padding: 0.6rem;
 
@@ -1512,12 +1511,12 @@ section#characters {
 		vertical-align: middle;
 	}
 	svg * {
-		fill: colors.$lwtv-pink;
+		fill: $lwtv-pink;
 	}
 
 	.how-to-watch {
 		font-family: 'Oswald', sans-serif;
-		@include fonts.font-20;
+		@include font-20;
 		font-weight: 400;
 		vertical-align: middle;
 	}
@@ -1540,7 +1539,7 @@ section#characters {
 			padding-left: 26px;
 
 			&:before {
-				@include mixins.fontawesome_pro("\f26c");
+				@include fontawesome_pro("\f26c");
 				font-weight: 700;
 				left: 20px;
 				position: absolute;
@@ -1623,27 +1622,27 @@ section#characters {
 	}
 
 	.show-heart.positive svg {
-		fill: colors.$red;
+		fill: $red;
 	}
 
 	.show-heart.negative svg {
-		fill: colors.$lwtv-grey2;
+		fill: $lwtv-grey2;
 	}
 
 	&.worthit-yes {
-		background: colors.$lwtv-green;
+		background: $lwtv-green;
 	}
 
 	&.worthit-no {
-		background: colors.$red;
+		background: $red;
 	}
 
 	&.worthit-meh {
-		background: colors.$lwtv-yellow;
+		background: $lwtv-yellow;
 	}
 
 	&.worthit-tbd {
-		background: colors.$lwtv-orange;
+		background: $lwtv-orange;
 	}
 }
 
@@ -1676,8 +1675,8 @@ section#characters {
 
 .show-worthit {
 	& , & svg * {
-		fill: colors.$white;
-		color: colors.$white;
+		fill: $white;
+		color: $white;
 	}
 
 	svg {
@@ -1689,8 +1688,8 @@ section#characters {
 }
 
 .worthit {
-	color: colors.$white;
-	@include fonts.font-30;
+	color: $white;
+	@include font-30;
 	font-weight: 500;
 	padding: 0.8rem;
 }
@@ -1711,18 +1710,18 @@ div.rpbt_shortcode {
 	}
 
 	.similar-shows-header {
-		font-family: fonts.$headingfontfamily;
-		font-weight: fonts.$headingfontweight;
-		line-height: fonts.$headingfontheight;
-		@include fonts.font-20;
+		font-family: $headingfontfamily;
+		font-weight: $headingfontweight;
+		line-height: $headingfontheight;
+		@include font-20;
 		font-size: 1rem;
 		text-decoration: none;
 	}
 
 	.similar-shows-airdates {
-		font-family: fonts.$headingfontfamily;
-		font-weight: fonts.$headingfontweight;
-		line-height: fonts.$headingfontheight;
+		font-family: $headingfontfamily;
+		font-weight: $headingfontweight;
+		line-height: $headingfontheight;
 		font-size: 1rem;
 		text-decoration: none;
 	}
@@ -1738,13 +1737,13 @@ div.rpbt_shortcode {
 .taxonomy-description, .archive-description {
 	margin-top: 0.6rem;
 	a, a:visited {
-		color: colors.$white;
+		color: $white;
 	}
 }
 
 h1 svg *,
 h3 svg * {
-	fill: colors.$white;
+	fill: $white;
 }
 
 .archive-header {
@@ -1764,12 +1763,12 @@ h3 svg * {
 	}
 
 	svg * {
-		fill: colors.$white;
+		fill: $white;
 	}
 
 	.archive-header-details, .author-socials {
-		color: colors.$white;
-		@include fonts.font-14;
+		color: $white;
+		@include font-14;
 		div {
 			margin-bottom: 0.4em;
 		}
@@ -1777,7 +1776,7 @@ h3 svg * {
 			text-decoration: underline;
 		}
 		a:hover {
-			color: colors.$white;
+			color: $white;
 		}
 		svg {
 			height: 28px;
@@ -1786,22 +1785,22 @@ h3 svg * {
 			padding-right: 5px;
 		}
 		svg * {
-			fill: colors.$white;
+			fill: $white;
 		}
 
 		a.btn-outline-primary {
-			color: colors.$lwtv-pink;
+			color: $lwtv-pink;
 			text-decoration: none;
 
 			svg * {
-				fill: colors.$lwtv-pink;
+				fill: $lwtv-pink;
 			}
 		}
 
 		a.btn-outline-primary:hover {
-			color: colors.$white;
+			color: $white;
 			svg * {
-				fill: colors.$white;
+				fill: $white;
 			}
 		}
 	}
@@ -1821,29 +1820,29 @@ h3 svg * {
 	}
 
 	.callout-death svg * {
-		fill: colors.$darkgrey;
+		fill: $darkgrey;
 	}
 
 	.callout-danger svg *,
 	.callout-we-love svg * {
-		fill: colors.$red;
+		fill: $red;
 	}
 
 	.callout-info, .callout-warning svg * {
-		fill: colors.$lwtv-yellow;
+		fill: $lwtv-yellow;
 	}
 
 
 	.callout-star-gold svg * {
-		fill: colors.$lwtv-gold;
+		fill: $lwtv-gold;
 	}
 
 	.callout-star-silver svg * {
-		fill: colors.$lwtv-silver;
+		fill: $lwtv-silver;
 	}
 
 	.callout-star-bronze svg * {
-		fill: colors.$lwtv-bronze;
+		fill: $lwtv-bronze;
 	}
 }
 
@@ -1877,20 +1876,20 @@ img {
 	height: auto;
 }
 
-.alignnone {@include mixins.images;}
+.alignnone {@include images;}
 .alignright {@extend .alignnone; float: right; margin: 0 0 2em 2em;}
 .alignleft {@extend .alignnone; float: left; margin: 0 2em 2em 0;}
 .aligncenter {@extend .alignnone; margin: 2em auto; display: block;}
 
-.img-noborder {@include mixins.images-noborder;}
+.img-noborder {@include images-noborder;}
 
 .comment-content img.wp-smiley {
-	@include helpers.no-border;
+	@include no-border;
 	margin: 0 1em;
 }
 
 .wp-caption {
-	border: 1px solid colors.$lightgrey;
+	border: 1px solid $lightgrey;
 	margin-bottom: 1.5em;
 	max-width: 100%;
 	img[class*="wp-image-"] {
@@ -1901,7 +1900,7 @@ img {
 }
 
 .wp-caption .wp-caption-text {
-	@include fonts.font-14;
+	@include font-14;
 	line-height: 1.2;
 	margin: .6em 0 .2em 0;
 	text-align: center;
@@ -1948,7 +1947,7 @@ img {
 
 .gallery-caption {
 	display: block;
-	@include fonts.font-14;
+	@include font-14;
 	padding-top: 0.3rem;
 }
 
@@ -1965,7 +1964,7 @@ embed, iframe, object {
 
 /* Pretty comments */
 
-@include meta.load-css('partials/comments');
+@import 'partials/comments';
 
 
 
@@ -1976,11 +1975,11 @@ embed, iframe, object {
 
 .card.card-search {
 	border: none;
-	@include mixins.border-radius(0);
+	@include border-radius(0);
 
 	.card-header {
 		background-color: transparent;
-		@include mixins.border-radius(0);
+		@include border-radius(0);
 
 		.fa {
 			float: none !important;
@@ -2025,7 +2024,7 @@ embed, iframe, object {
 			vertical-align: middle;
 		}
 		svg * {
-			fill: colors.$darkgrey;
+			fill: $darkgrey;
 		}
 	}
 }
@@ -2043,11 +2042,11 @@ span.svg-shortcode a {
 		text-decoration: none;
 
 	svg {
-		fill: colors.$lwtv-pink;
+		fill: $lwtv-pink;
 	}
 
 	&:hover svg {
-		fill: colors.$darkgrey;
+		fill: $darkgrey;
 	}
 }
 
@@ -2061,12 +2060,12 @@ span.svg-shortcode a {
 }
 
 .author-box {
-	background-color: colors.$lwtv-ltgrey;
-	@include fonts.font-14;
+	background-color: $lwtv-ltgrey;
+	@include font-14;
 	padding-bottom: 0.6rem;
 
 	.avatar {
-		border: 1px solid colors.$lwtv-pink;
+		border: 1px solid $lwtv-pink;
 	}
 
 	.author-details{
@@ -2099,11 +2098,11 @@ span.svg-shortcode a {
 		margin-bottom: 0.4rem;
 
 		&.author_box_compact {
-			@include fonts.font-20;
+			@include font-20;
 		}
 
 		&.author_box_large {
-			@include fonts.font-24;
+			@include font-24;
 		}
 
 	}
@@ -2111,8 +2110,8 @@ span.svg-shortcode a {
 
 .screener-worthit, .screener-warn, .screener-star {
 	& , & svg * {
-		fill: colors.$white;
-		color: colors.$white;
+		fill: $white;
+		color: $white;
 	}
 
 	svg {
@@ -2164,7 +2163,7 @@ div.facetwp-facet-shows_scores input.facetwp-number {
 	border: 1px solid #eee;
 	border-left-width: .25rem;
 	border-radius: .25rem;
-	border-left-color: colors.$lwtv-pink;
+	border-left-color: $lwtv-pink;
 
 	h4 {
 		margin-top: 0;
@@ -2197,13 +2196,13 @@ div.facetwp-facet-shows_scores input.facetwp-number {
 
 		span {
 			padding-top: 1rem;
-			color: colors.$lwtv-pink;
+			color: $lwtv-pink;
 
 			&:hover {
-				color: colors.$darkgrey;
+				color: $darkgrey;
 
 				svg *{
-					fill: colors.$darkgrey;
+					fill: $darkgrey;
 				}
 			}
 
@@ -2213,7 +2212,7 @@ div.facetwp-facet-shows_scores input.facetwp-number {
 				vertical-align: middle;
 			}
 			svg * {
-				fill: colors.$lwtv-pink;
+				fill: $lwtv-pink;
 			}
 
 		}
@@ -2242,14 +2241,14 @@ div.facetwp-facet-shows_scores input.facetwp-number {
 /* The Widget Area of Death */
 
 .home .alert-danger {
-	background-color: colors.$lwtv-red;
+	background-color: $lwtv-red;
 	border: 0;
 	border-color: transparent;
-	@include mixins.border-radius(0);
-	color: colors.$white;
+	@include border-radius(0);
+	color: $white;
 
 	a, a:visited {
-		color: colors.$white;
+		color: $white;
 	}
 
 	&, p {
@@ -2293,7 +2292,7 @@ div.facetwp-facet-shows_scores input.facetwp-number {
 			vertical-align: middle;
 		}
 		svg * {
-			fill: colors.$white;
+			fill: $white;
 		}
 	}
 
@@ -2308,7 +2307,7 @@ div.facetwp-facet-shows_scores input.facetwp-number {
 
 	.widget_categories, .widget_tag_cloud,
 	.widget-tags, .widget_custom_html, .widget_text {
-		@include mixins.box-shadow(0 1px 4px 0 rgba(0, 0, 0, 0.14));
+		@include box-shadow(0 1px 4px 0 rgba(0, 0, 0, 0.14));
 		padding-bottom: .75rem;
 
 		.tagcloud, .widget-tags-container, .custom-html-widget {
@@ -2316,9 +2315,9 @@ div.facetwp-facet-shows_scores input.facetwp-number {
 		}
 
 		h2.widget-title {
-			background: colors.$lwtv-gradient;
-			color: colors.$white;
-			@include fonts.font-24;
+			background: $lwtv-gradient;
+			color: $white;
+			@include font-24;
 			padding: .75rem 1.25rem;
 		}
 	}
@@ -2333,7 +2332,7 @@ div.facetwp-facet-shows_scores input.facetwp-number {
 			padding: 0;
 
 			.widget {
-				border-bottom: 1px solid colors.$lwtv-bordergrey;
+				border-bottom: 1px solid $lwtv-bordergrey;
 				margin-bottom: 0;
 				padding: .75rem 1.25rem;
 
@@ -2358,7 +2357,7 @@ div.facetwp-facet-shows_scores input.facetwp-number {
 
 		h2.widget-title {
 			font-family: 'Open Sans', sans-serif;
-			font-size: fonts.$basefont;
+			font-size: $basefont;
 			font-weight: 700;
 			margin-bottom: .5rem;
 			text-transform: uppercase;
@@ -2374,8 +2373,8 @@ div.facetwp-facet-shows_scores input.facetwp-number {
 	.footer-widgets {
 
 		h2.widget-title {
-			border-bottom: dotted 1px colors.$lwtv-grey2;
-			@include fonts.font-28;
+			border-bottom: dotted 1px $lwtv-grey2;
+			@include font-28;
 			padding-bottom: 15px;
 			margin-bottom: 20px;
 		}
@@ -2389,11 +2388,11 @@ div.facetwp-facet-shows_scores input.facetwp-number {
 			}
 
 			a, a:visited {
-				color: colors.$darkgrey;
+				color: $darkgrey;
 			}
 
 			a:hover, a:focus, a:active {
-				color: colors.$link-hover-color;
+				color: $link-hover-color;
 				text-decoration: none;
 			}
 		}
@@ -2404,7 +2403,7 @@ div.facetwp-facet-shows_scores input.facetwp-number {
 			a {
 				&:after {
 					content: ', opens in new tab';
-					@include mixins.screen-reader;
+					@include screen-reader;
 				}
 			}
 		}
@@ -2418,18 +2417,18 @@ div.facetwp-facet-shows_scores input.facetwp-number {
 #colophon {
 
 	.top-footer {
-		background-color: colors.$lwtv-grey;
-		@include fonts.font-14;
+		background-color: $lwtv-grey;
+		@include font-14;
 		padding: 20px 0 0;
 	}
 
 	.bottom-footer {
-		background-color: colors.$lwtv-dkgrey;
-		@include fonts.font-12;
+		background-color: $lwtv-dkgrey;
+		@include font-12;
 		padding: 16px 0;
 
 		&, a, a:visited {
-			color: colors.$white;
+			color: $white;
 		}
 
 		.credits {
@@ -2453,4 +2452,4 @@ div.facetwp-facet-shows_scores input.facetwp-number {
 
 /* responsive styles */
 
-@include meta.load-css('partials/responsive');
+@import 'partials/responsive';

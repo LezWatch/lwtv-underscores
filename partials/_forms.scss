@@ -4,8 +4,8 @@
 /* Text inputs */
 
 textarea, select, input[type="text"], input[type="date"],
-input[type="datetime-local"], input[type="email"], input[type="month"], 
-input[type="number"], input[type="password"], input[type="search"], 
+input[type="datetime-local"], input[type="email"], input[type="month"],
+input[type="number"], input[type="password"], input[type="search"],
 input[type="tel"], input[type="time"], input[type="url"], input[type="week"]  {
   display: block;
   width: 100%;
@@ -22,7 +22,7 @@ input[type="tel"], input[type="time"], input[type="url"], input[type="week"]  {
 
   &::-ms-expand {
     background-color: transparent;
-    border: 0; 
+    border: 0;
   }
 
   &:focus {
@@ -35,17 +35,17 @@ input[type="tel"], input[type="time"], input[type="url"], input[type="week"]  {
   &::-webkit-input-placeholder {
     color: #868e96;
     opacity: 1;
-  } 
+  }
 
   &:-ms-input-placeholder {
     color: #868e96;
     opacity: 1;
-  } 
+  }
 
   &::placeholder {
     color: #868e96;
     opacity: 1;
-  } 
+  }
 
   &:disabled, .form-control[readonly] {
     background-color: #e9ecef;
