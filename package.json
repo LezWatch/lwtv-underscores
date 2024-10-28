@@ -11,7 +11,7 @@
     "build": "npm-run-all build:*",
     "build:composer": "composer update",
     "build:grunt": "grunt build",
-    "build:workspaces": "npm run build",
+    "build:workspace": "npm run build:workspace --workspaces",
     "lint": "npm-run-all lint:*",
     "lint:css": "npm run lint:css --workspaces",
     "lint:js": "npm run lint:js --workspaces",
@@ -32,7 +32,7 @@
   "dependencies": {
     "@npmcli/fs": "^4",
     "@popperjs/core": "^2.11.8",
-    "@wordpress/scripts": "^27",
+    "@wordpress/scripts": "^28",
     "chart.js": "^4",
     "chartjs-plugin-annotation": "^3",
     "coffeescript": "^2.7.0",

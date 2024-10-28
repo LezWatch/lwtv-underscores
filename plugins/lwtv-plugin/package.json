@@ -7,17 +7,18 @@
   "license": "GPL-2.0",
   "repository": "https://github.com/lezwatch/lwtv-plugin/",
   "scripts": {
-    "build": "npm run build",
+    "build:workspace": "",
     "lint:css": "",
     "lint:js": "",
-    "start": "npm-run-all2 start:*",
+    "lint:phpcs": "composer lint",
+    "start": "npm run start",
     "preinstall": "composer install",
     "postinstall": "cd ./php/blocks && npm install --ignore-scripts",
-    "updater": "npm update --workspaces && composer update && ( node ./postinstall.js )",
+    "updater": "npm update && composer update && ( node ./postinstall.js )",
     "clean": "rm -rf node_modules vendor blocks/node_modules"
   },
   "dependencies": {
-    "@wordpress/scripts": "^27"
+    "@wordpress/scripts": "^28"
   },
   "devDependencies": {
     "@types/node": "^18.19",

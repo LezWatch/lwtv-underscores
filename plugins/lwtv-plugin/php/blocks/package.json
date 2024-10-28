@@ -8,6 +8,7 @@
 	"private": "true",
 	"scripts": {
 		"build": "wp-scripts build",
+		"build:workspace": "wp-scripts build",
 		"format": "wp-scripts format",
 		"lint:css": "wp-scripts lint-style",
 		"lint:js": "wp-scripts lint-js",
@@ -15,11 +16,11 @@
 		"packages-update": "wp-scripts packages-update"
 	},
 	"dependencies": {
-		"@wordpress/blocks": "^13",
-		"@wordpress/i18n": "^5",
+		"@wordpress/blocks": "^13.10.0",
+		"@wordpress/i18n": "^5.10.0",
 		"package.json": "^2"
 	},
 	"devDependencies": {
-		"@wordpress/scripts": "^28"
+		"@wordpress/scripts": "^30.3.0"
 	}
 }
