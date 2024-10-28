@@ -1,3 +1,5 @@
+@use "fonts";
+
 /* =Responsive styles
 ----------------------------------------------- */
 
@@ -143,7 +145,7 @@
     padding: 2rem;
 
     h1.site-description {
-      @include font-28;
+      @include fonts.font-28;
     }
   }
 
@@ -280,7 +282,7 @@
 
   #masthead {
     .navbar-brand {
-      @include font-12;
+      @include fonts.font-12;
 
       img {
         height: 30px;
@@ -308,11 +310,11 @@
   }
 
   .navbar.main-nav ul.navbar-nav > li.nav-item > a.nav-link {
-    @include font-13;
+    @include fonts.font-13;
   }
 
   .dead-widget-container {
-    @include font-14;
+    @include fonts.font-14;
     line-height: 1.1;
   }
 
@@ -320,11 +322,11 @@
     padding: 2rem 1rem;
 
     h1.site-description {
-      @include font-24;
+      @include fonts.font-24;
     }
 
     p {
-      font-size: $basefont;
+      font-size: fonts.$basefont;
       line-height: 1.2;
     }
   }
@@ -399,7 +401,7 @@
   }
 
   .navbar.main-nav ul.navbar-nav > li.nav-item > a.nav-link {
-    @include font-12;
+    @include fonts.font-12;
     padding: 14px 12px;
   }
 }
@@ -424,7 +426,7 @@
         }
 
         input {
-          @include font-14;
+          @include fonts.font-14;
         }
       }
 
@@ -439,7 +441,7 @@
         text-align: center;
 
         .btn {
-          @include font-14;
+          @include fonts.font-14;
           width: 60%;
         }
       }
@@ -476,7 +478,7 @@
     position: relative;
 
     .dropdown-menu {
-      @include font-18;
+      @include fonts.font-18;
     }
 
     ul.navbar-nav {
@@ -494,7 +496,7 @@
       }
 
       & > li.nav-item > a.nav-link {
-        @include font-18;
+        @include fonts.font-18;
       }
     }
   }
@@ -687,7 +689,7 @@
 // iPhone 5 (portrait phones, less than 320px)
 @media (max-width: 320px) {
   .navbar.main-nav ul.navbar-nav > li.nav-item > a.nav-link {
-    @include font-12;
+    @include fonts.font-12;
     padding: 6px 4px;
   }
 

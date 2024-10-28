@@ -1,26 +1,30 @@
+@use "colors";
+@use "fonts";
+@use "mixins";
+
 /* =Custom Nav styles
 ----------------------------------------------- */
 
 .navbar.main-nav {
-	@include box-shadow(0 2px 30px rgba(0, 0, 0, 0.2));
+	@include mixins.box-shadow(0 2px 30px rgba(0, 0, 0, 0.2));
 	height: 50px;
 	padding: 0;
-	background-color: $white;
+	background-color: colors.$white;
 
 	ul.navbar-nav > li  {
-		border-left:solid 1px $lightgrey;
-		background-color: $white;
+		border-left:solid 1px colors.$lightgrey;
+		background-color: colors.$white;
 
 		&:last-child {
-			border-right:solid 1px $lightgrey;
+			border-right:solid 1px colors.$lightgrey;
 		}
 
 		&.nav-item {
 
 			/* Style for inactive links */
 			& > a.nav-link {
-				color: $darkgrey;
-				@include font-15;
+				color: colors.$darkgrey;
+				@include fonts.font-15;
 				font-weight: 600;
 				padding: 14px 20px;
 				text-transform:uppercase;
@@ -31,18 +35,18 @@
 			&.current-menu-ancestor > a.nav-link, .single-post &.current_page_parent > a.nav-link,
 			&:hover > a.nav-link, &:focus > a.nav-link, &:active > a.nav-link,
 			&.show > a.nav-link.dropdown-toggle {
-				background-color: $lwtv-pink;
-				color: $white;
+				background-color: colors.$lwtv-pink;
+				color: colors.$white;
 			}
 
 			/* Use this class on a menu item to hide the text when using an icon */
 			&.hide-text > a.nav-link .menu-link-text {
-				@include screen-reader;
+				@include mixins.screen-reader;
 			}
 
 			/* Secondary Menus */
 			ul.dropdown-menu {
-				background-color: $white;
+				background-color: colors.$white;
 				border-top-left-radius: 0;
 				top: 95%;
 
@@ -50,15 +54,15 @@
 
 					/* Style for inactive links on submenus */
 					a.dropdown-item {
-						background-color: $white;
-						color: $darkgrey;
+						background-color: colors.$white;
+						color: colors.$darkgrey;
 					}
 
 					/* Style for active links on submenus */
 					&.current-menu-parent > a.dropdown-item,
 					&.active > a.dropdown-item, &:hover > a.dropdown-item, &:focus > a.dropdown-item {
-						background-color: $lwtv-pink;
-						color: $white;
+						background-color: colors.$lwtv-pink;
+						color: colors.$white;
 					}
 
 					/* Tertiary Menus - reveal them on parent hover */
@@ -81,13 +85,13 @@
 
 .nav-item.search a {
 	&, &:visited {
-		background-color: $lwtv-purple;
-		color: $white;
+		background-color: colors.$lwtv-purple;
+		color: colors.$white;
 		padding: 14px 20px;
 	}
 
 	&:hover, &:focus {
-		background-color: $lwtv-pink;
+		background-color: colors.$lwtv-pink;
 	}
 }
 
@@ -106,14 +110,14 @@
 				font-variant: normal;
 				text-rendering: auto;
 				-webkit-font-smoothing: antialiased;
-				@include font-28;
+				@include fonts.font-28;
 				width: 60px;
 				vertical-align: middle;
 			}
 
 			&:hover, &:focus {
 				&:before {
-					color: $link-hover-color;
+					color: colors.$link-hover-color;
 				}
 			}
 
@@ -125,67 +129,67 @@
 		}
 
 		&.rss a::before {
-			@include fontawesome_pro("\f09e");
+			@include mixins.fontawesome_pro("\f09e");
 		}
 
 		&.feed a::before {
-			@include fontawesome_free("\f09e");
+			@include mixins.fontawesome_free("\f09e");
 		}
 
 		&.mail a:before {
-			@include fontawesome_pro("\f0e0");
+			@include mixins.fontawesome_free("\f0e0");
 		}
 
 		&.instagram a:before {
-			@include fontawesome_brand("\f16d");
+			@include mixins.fontawesome_brand("\f16d");
 		}
 
 		&.twitter a:before {
-			@include fontawesome_brand("\f099");
+			@include mixins.fontawesome_brand("\f099");
 		}
 
 		&.x-twitter a:before {
-			@include fontawesome_brand("\e61b");
+			@include mixins.fontawesome_brand("\e61b");
 		}
 
 		&.facebook a:before {
-			@include fontawesome_brand("\f082");
+			@include mixins.fontawesome_brand("\f082");
 		}
 
 		&.youtube a:before {
-			@include fontawesome_brand("\f167");
+			@include mixins.fontawesome_brand("\f167");
 		}
 
 		&.vimeo a:before {
-			@include fontawesome_brand("\f40a");
+			@include mixins.fontawesome_brand("\f40a");
 		}
 
 		&.pinterest a:before {
-			@include fontawesome_brand("\f0d2");
+			@include mixins.fontawesome_brand("\f0d2");
 		}
 
 		&.linkedin a:before {
-			@include fontawesome_brand("\f0e1");
+			@include mixins.fontawesome_brand("\f0e1");
 		}
 
 		&.tumblr a:before {
-			@include fontawesome_brand("\f173");
+			@include mixins.fontawesome_brand("\f173");
 		}
 
 		&.gplus a:before {
-			@include fontawesome_brand("\f0d5");
+			@include mixins.fontawesome_brand("\f0d5");
 		}
 
 		&.mastodon a:before {
-			@include fontawesome_brand("\f4f6");
+			@include mixins.fontawesome_brand("\f4f6");
 		}
 
 		&.tiktok a:before {
-			@include fontawesome_brand("\e07b");
+			@include mixins.fontawesome_brand("\e07b");
 		}
 
 		&.bluesky a:before {
-			@include fontawesome_brand("\e671");
+			@include mixins.fontawesome_brand("\e671");
 		}
 
 	}

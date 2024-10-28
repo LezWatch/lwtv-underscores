@@ -1,3 +1,4 @@
+@charset "UTF-8";
 /*
 The stylesheet for Gutenberg Blocks in the editor
 */
@@ -17,10 +18,16 @@ The stylesheet for Gutenberg Blocks in the editor
     background-position: 0% 82%;
   }
 }
+/*
+The stylesheet for Gutenberg Blocks in the editor
+*/
 /* =Font Styles
 ----------------------------------------------- */
 /* =Helper Mixins
 ----------------------------------------------- */
+/*
+The stylesheet for Gutenberg Blocks in the editor
+*/
 /* =Mixins
 ----------------------------------------------- */
 /* ==========================================================================
@@ -155,7 +162,7 @@ body.wp-admin.block-editor-page .editor-styles-wrapper blockquote p:last-child {
 }
 body.wp-admin.block-editor-page .editor-styles-wrapper blockquote:before {
   color: #CB3E85;
-  content: '\201C';
+  content: "“";
   font-size: 2.75rem;
   font-weight: 600;
   line-height: 1;

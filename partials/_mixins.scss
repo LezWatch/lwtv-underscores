@@ -1,3 +1,7 @@
+@use "colors-dark";
+
+@use "colors";
+
 /* =Mixins
 ----------------------------------------------- */
 
@@ -22,7 +26,7 @@
 }
 
 @mixin bottom-shadow {
-	@include box-shadow(0px 9px 9px -9px $black);
+	@include box-shadow(0px 9px 9px -9px colors.$black);
 }
 
 @mixin card-shadow {
@@ -69,7 +73,7 @@ $endcolor: #7DB9E8;
 }
 
 @mixin images {
-	border: 1px solid $lwtv-grey2;
+	border: 1px solid colors.$lwtv-grey2;
 	padding: 6px;
 }
 
@@ -121,10 +125,10 @@ $endcolor: #7DB9E8;
 	padding: 6px 12px;
 	font-size: 14px;
 	line-height: 1.428571429;
-	color: $darkgrey;
+	color: colors.$darkgrey;
 	vertical-align: middle;
-	background-color: $white;
-	border: 1px solid $lightgrey;
+	background-color: colors.$white;
+	border: 1px solid colors.$lightgrey;
 	@include border-radius(4px);
 	@include box-shadow(inset 0 1px 1px rgba(0, 0, 0, 0.075));
 	@include box-transition(border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s);
@@ -169,8 +173,8 @@ $endcolor: #7DB9E8;
 }
 
 @mixin text-shadow {
-	text-shadow: -1px -2px 3px $black;
-	text-shadow: 2px 3px 3px $black;
+	text-shadow: -1px -2px 3px colors.$black;
+	text-shadow: 2px 3px 3px colors.$black;
 }
 
 @mixin screen-reader {
@@ -225,7 +229,7 @@ $endcolor: #7DB9E8;
 
 // scss-docs-start color-mode-mixin
 @mixin color-mode($mode: light, $root: false) {
-	@if $color-mode-type == "media-query" {
+	@if colors-dark.$color-mode-type == "media-query" {
 	  @if $root == true {
 		@media (prefers-color-scheme: $mode) {
 		  :root {

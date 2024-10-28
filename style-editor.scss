@@ -3,10 +3,10 @@
 The stylesheet for Gutenberg Blocks in the editor
 */
 
-@import 'partials/colors';
-@import 'partials/fonts';
-@import 'partials/helpers';
-@import 'partials/mixins';
+@use 'partials/colors';
+@use 'partials/fonts';
+@use 'partials/helpers';
+@use 'partials/mixins';
 
 /* ==========================================================================
    Editor Styles
@@ -53,25 +53,25 @@ body.wp-admin.block-editor-page {
 
 	/* Base styles */
 	.editor-styles-wrapper {
-		font-family: $basefontfamily;
-		font-size: $basefont;
-		line-height: $baseheight;
-		color: $basefontcolor;
+		font-family: fonts.$basefontfamily;
+		font-size: fonts.$basefont;
+		line-height: fonts.$baseheight;
+		color: fonts.$basefontcolor;
 
 		/* Links */
 
 		a {
-			color: $link-color;
-			@include fade;
+			color: colors.$link-color;
+			@include mixins.fade;
 			text-decoration: none;
 
 			&:visited {
-				color: $link-color;
+				color: colors.$link-color;
 			}
 
 			&:hover, &:focus, &:active {
-				color: $link-hover-color;
-				@include fade;
+				color: colors.$link-hover-color;
+				@include mixins.fade;
 				text-decoration: none;
 			}
 		}
@@ -89,43 +89,43 @@ body.wp-admin.block-editor-page {
 body.wp-admin.block-editor-page {
 	.editor-styles-wrapper {
 		.editor-post-title__input, h1, h2, h3, h4, h5, h6 {
-			margin-bottom: $headingbmargin;
-			font-family: $headingfontfamily;
-			font-weight: $headingfontweight;
-			line-height: $headingfontheight;
-			color: $headingfontcolor;
+			margin-bottom: fonts.$headingbmargin;
+			font-family: fonts.$headingfontfamily;
+			font-weight: fonts.$headingfontweight;
+			line-height: fonts.$headingfontheight;
+			color: fonts.$headingfontcolor;
 		}
 
 		.editor-post-title__input { // These are the H1 styles.
-			@include h1;
+			@include fonts.h1;
 		}
 
 		h2, h3, h4, h5, h6 {
-			margin-bottom: $headingbmargin;
-			font-family: $headingfontfamily;
-			font-weight: $headingfontweight;
-			line-height: $headingfontheight;
-			color: $headingfontcolor;
+			margin-bottom: fonts.$headingbmargin;
+			font-family: fonts.$headingfontfamily;
+			font-weight: fonts.$headingfontweight;
+			line-height: fonts.$headingfontheight;
+			color: fonts.$headingfontcolor;
 		}
 
 		h2, .h2 {
-			@include h2;
+			@include fonts.h2;
 		}
 
 		h3, .h3 {
-			@include h3;
+			@include fonts.h3;
 		}
 
 		h4, .h4 {
-			@include h4;
+			@include fonts.h4;
 		}
 
 		h5, .h5 {
-			@include h5;
+			@include fonts.h5;
 		}
 
 		h6, .h6 {
-			@include h6;
+			@include fonts.h6;
 		}
 	}
 }
@@ -141,31 +141,31 @@ body.wp-admin.block-editor-page {
 			.wp-block-button__link {
 				border: 1px solid transparent;
 				border-radius: 0.25rem;
-				@include fade;
+				@include mixins.fade;
 				padding: 0.375rem 0.75rem;
 
 				&, &:visited {
-					background-color: $lwtv-pink;
-					border-color: $lwtv-pink;
-					color: $white;
+					background-color: colors.$lwtv-pink;
+					border-color: colors.$lwtv-pink;
+					color: colors.$white;
 				}
 
 				&.active, &.focus, &:active, &:focus, &:hover {
-					background-color: $white;
-					border-color: $lwtv-pink;
-					color: $lwtv-pink;
-					@include fade;
+					background-color: colors.$white;
+					border-color: colors.$lwtv-pink;
+					color: colors.$lwtv-pink;
+					@include mixins.fade;
 				}
 			}
 		}
 
 		blockquote {
-			background-color: $lwtv-ltgrey;
-			border-left: 4px solid $lwtv-pink;
-			color: $darkgrey;
+			background-color: colors.$lwtv-ltgrey;
+			border-left: 4px solid colors.$lwtv-pink;
+			color: colors.$darkgrey;
 			font-family: Georgia, Times, "Times New Roman", serif;
 			font-weight: 500;
-			@include font-18;
+			@include fonts.font-18;
 			margin: 0 0 1rem;
 			padding: 1em;
 			-webkit-font-smoothing: antialiased;
@@ -179,9 +179,9 @@ body.wp-admin.block-editor-page {
 			}
 
 			&:before {
-				color: $lwtv-pink;
+				color: colors.$lwtv-pink;
 				content: '\201C';
-				@include font-44;
+				@include fonts.font-44;
 				font-weight: 600;
 				line-height: 1;
 				position: absolute;
