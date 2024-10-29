@@ -20,7 +20,7 @@ $havedeadcount = ( is_array( $all_dead ) ) ? count( $all_dead ) : 0;
 $related = lwtv_plugin()->get_cpt_related_posts( $actor_id );
 
 // Microformats Fix.
-lwtv_microformats_fix( $actor_id );
+lwtv_plugin()->get_microformats_fix( $actor_id );
 ?>
 
 <section class="showschar-section" name="biography" id="biography">

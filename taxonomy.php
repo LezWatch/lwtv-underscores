@@ -21,7 +21,7 @@ if ( in_array( get_post_type( get_the_ID() ), array( 'post_type_shows', 'post_ty
 }
 
 // Post Type Detector.
-$post_type_is = rtrim( str_replace( 'post_type_', '', lwtv_yikes_get_post_types_by_taxonomy( $the_term->taxonomy ) ), 's' );
+$post_type_is = rtrim( str_replace( 'post_type_', '', lwtv_plugin()->get_post_types_by_taxonomy( $the_term->taxonomy ) ), 's' );
 
 get_header(); ?>
 

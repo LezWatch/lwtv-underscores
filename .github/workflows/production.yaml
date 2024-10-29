@@ -20,6 +20,27 @@ jobs:
         run: |
           ls -lah ${GITHUB_WORKSPACE}
 
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+
+      - name: Setup PHP and Composer
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          tools: composer:v2
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Build it
+        run: npm run build
+
       - name: Deploy to LezWatch.TV Production Server
         uses: easingthemes/ssh-deploy@main
         env:
@@ -28,7 +49,7 @@ jobs:
           REMOTE_HOST: ${{ secrets.LWTV_HOST }}
           REMOTE_USER: ${{ secrets.LWTV_USER }}
           TARGET: /home/${{ secrets.LWTV_USER }}/${{ secrets.LWTV_DOMAIN }}/wp-content/themes/lwtv-underscores
-          EXCLUDE: "/.git/, /.github/, /.husky/, /.sass-cache/, /.vscode/, /node_modules/, /vendor/, .browserslistrc, .gitignore, .npmrc, .nvmrc, .ruby-version, composer.json, composer.lock, package-lock.json, package.json, phpcs.xml.dist"
+          EXCLUDE: "/.git/, /.github/, /.husky/, /.sass-cache/, /.vscode/, /node_modules/, /vendor/, .browserslistrc, .gitignore, .npmrc, .nvmrc, .ruby-version, composer.json, composer.lock, package-lock.json, package.json, phpcs.xml.dist, postinstall.js, /plugins/lwtv-plugin/node_modules/, /plugins/lwtv-plugin/vendor/, /plugins/lwtv-plugin/.gitignore, /plugins/lwtv-plugin/composer.json, /plugins/lwtv-plugin/composer.lock, /plugins/lwtv-plugin/package-lock.json, /plugins/lwtv-plugin/package.json, /plugins/lwtv-plugin/php/blocks/node_modules/, /plugins/lwtv-plugin/php/blocks/.gitignore, /plugins/lwtv-plugin/php/blocks/package-lock.json, /plugins/lwtv-plugin/php/blocks/package.json, /plugins/lwtv-plugin/php/blocks/.eslint, /plugins/lwtv-plugin/php/src/"
           SCRIPT_AFTER: |
             cd ~/lezwatchtv.com
             wp nginx-helper purge-all

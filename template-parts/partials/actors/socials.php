@@ -26,7 +26,7 @@ $maybe_social = array(
 		'label' => 'IMDb',
 		'meta'  => 'lezactors_imdb',
 		'base'  => 'https://imdb.com/name/',
-		'post' => '',
+		'post'  => '',
 		'fa'    => 'fab fa-imdb',
 		'hide'  => false,
 	),

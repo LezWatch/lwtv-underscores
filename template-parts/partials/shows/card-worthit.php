@@ -39,7 +39,7 @@ $thumb_rating = ( get_post_meta( $show_id, 'lezshows_worthit_rating', true ) ) ?
 						break;
 				}
 
-				$thumb_image = lwtv_symbolicons( $thumb_icon . '.svg', 'fa-' . $thumb_icon );
+				$thumb_image = lwtv_plugin()->get_symbolicon( $thumb_icon . '.svg', 'fa-' . $thumb_icon );
 				// phpcs:ignore WordPress.Security.EscapeOutput
 				echo '<span role="img" class="show-worthit ' . esc_attr( strtolower( $thumb_rating ) ) . '" aria-label="This show has an overall review of ' . esc_attr( $thumb_rating ) . ' ">' . $thumb_image . '</span>';
 				echo wp_kses_post( $thumb_rating );
@@ -96,7 +96,7 @@ $thumb_rating = ( get_post_meta( $show_id, 'lezshows_worthit_rating', true ) ) ?
 				}
 				if ( get_post_meta( $show_id, 'lezshows_imdb', true ) ) {
 					$imdb = 'https://www.imdb.com/title/' . get_post_meta( $show_id, 'lezshows_imdb', true );
-					echo '<li class="list-group-item network imdb text-center">' . lwtv_symbolicons( 'imdb.svg', 'fa-imdb' ) . ' <a href="' . esc_url( $imdb ) . '">IMDb</a></li>';
+					echo '<li class="list-group-item network imdb text-center">' . lwtv_plugin()->get_symbolicon( 'imdb.svg', 'fa-imdb' ) . ' <a href="' . esc_url( $imdb ) . '">IMDb</a></li>';
 				}
 				?>
 			</ul>

@@ -22,13 +22,13 @@ if ( ! function_exists( 'yikes_starter_paging_nav' ) ) :
 			<?php
 			if ( get_previous_posts_link() ) :
 				?>
-				<li class="page-item previous"><?php previous_posts_link( lwtv_symbolicons( 'caret-left-circle.svg', 'fa-chevron-circle-left' ) . ' Previous' ); ?></li>
+				<li class="page-item previous"><?php previous_posts_link( lwtv_plugin()->get_symbolicon( 'caret-left-circle.svg', 'fa-chevron-circle-left' ) . ' Previous' ); ?></li>
 				<?php
 			endif;
 
 			if ( get_next_posts_link() ) :
 				?>
-				<li class="page-item next"><?php next_posts_link( 'Next ' . lwtv_symbolicons( 'caret-right-circle.svg', 'fa-chevron-circle-right' ) ); ?></li>
+				<li class="page-item next"><?php next_posts_link( 'Next ' . lwtv_plugin()->get_symbolicon( 'caret-right-circle.svg', 'fa-chevron-circle-right' ) ); ?></li>
 				<?php endif; ?>
 			</ul>
 		</nav><!-- .navigation -->
@@ -52,8 +52,8 @@ if ( ! function_exists( 'yikes_starter_post_nav' ) ) :
 		<nav class="yikes-pagination" aria-label="Post Navigation" role="navigation">
 			<ul class="pagination justify-content-between">
 				<?php
-					previous_post_link( '<li class="page-item previous">%link</li>', lwtv_symbolicons( 'caret-left-circle.svg', 'fa-chevron-circle-left' ) . ' Previous Post' );
-					next_post_link( '<li class="page-item next">%link</li>', 'Next Post ' . lwtv_symbolicons( 'caret-right-circle.svg', 'fa-chevron-circle-right' ) );
+					previous_post_link( '<li class="page-item previous">%link</li>', lwtv_plugin()->get_symbolicon( 'caret-left-circle.svg', 'fa-chevron-circle-left' ) . ' Previous Post' );
+					next_post_link( '<li class="page-item next">%link</li>', 'Next Post ' . lwtv_plugin()->get_symbolicon( 'caret-right-circle.svg', 'fa-chevron-circle-right' ) );
 				?>
 			</ul>
 		</nav><!-- .navigation -->
@@ -78,7 +78,7 @@ if ( ! function_exists( 'yikes_starter_posted_on' ) ) :
 
 			$byline = '<span class="author vcard"> <a class="url fn n" href="' . esc_url( get_author_posts_url( get_the_author_meta( 'ID' ) ) ) . '">' . esc_html( get_the_author() ) . '</a></span>';
 
-			echo '<span class="posted-on">' . wp_kses_post( $time_string ) . lwtv_symbolicons( 'user-circle.svg', 'fa-user-circle' ) . '</span><span class="byline"> ' . wp_kses_post( $byline ) . '</span>';
+			echo '<span class="posted-on">' . wp_kses_post( $time_string ) . lwtv_plugin()->get_symbolicon( 'user-circle.svg', 'fa-user-circle' ) . '</span><span class="byline"> ' . wp_kses_post( $byline ) . '</span>';
 	}
 endif;
 
@@ -186,7 +186,7 @@ function yikes_generate_pagination_buttons( $page_number, $max_num_pages, $view_
 				<li class="page-item previous me-auto">
 				<?php
 				if ( 1 < $page_number ) {
-					echo '<a href="/page/' . esc_attr( $page_number - 1 ) . '" class="page-link">' . lwtv_symbolicons( 'caret-left-circle.svg', 'fa-chevron-circle-left' ) . ' <span>Previous</span></a>';
+					echo '<a href="/page/' . esc_attr( $page_number - 1 ) . '" class="page-link">' . lwtv_plugin()->get_symbolicon( 'caret-left-circle.svg', 'fa-chevron-circle-left' ) . ' <span>Previous</span></a>';
 				}
 				?>
 			</li>
@@ -202,7 +202,7 @@ function yikes_generate_pagination_buttons( $page_number, $max_num_pages, $view_
 			<li class="page-item next ms-auto">
 				<?php
 				if ( $max_num_pages > $page_number ) {
-					echo '<a href="/page/' . esc_attr( $page_number + 1 ) . '" class="page-link"><span>Next</span> ' . lwtv_symbolicons( 'caret-right-circle.svg', 'fa-chevron-circle-right' ) . '</a>';
+					echo '<a href="/page/' . esc_attr( $page_number + 1 ) . '" class="page-link"><span>Next</span> ' . lwtv_plugin()->get_symbolicon( 'caret-right-circle.svg', 'fa-chevron-circle-right' ) . '</a>';
 				}
 				?>
 			</li>
@@ -293,7 +293,7 @@ function yikes_pagination_get_first_page( $page_number, $max_num_pages, $active_
 }
 
 function yikes_pagination_get_page( $page_number, $max_num_pages, $active_flag, $last_page = false, $last_page_override = false ) {
-	if ( $page_number <= $max_num_pages && false === $last_page || ( true === $last_page && $max_num_pages > 5 ) || true === $last_page_override ) {
+	if ( ( $page_number <= $max_num_pages && false === $last_page ) || ( true === $last_page && $max_num_pages > 5 ) || true === $last_page_override ) {
 		$active = ( true === $active_flag ) ? 'active' : false;
 		return '<li class="page-item"><a class="page-link ' . $active . '" href="' . get_pagenum_link( $page_number ) . '" >' . $page_number . '</a></li>';
 	}

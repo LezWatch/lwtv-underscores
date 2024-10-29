@@ -64,22 +64,22 @@ class LWTV_Today_Widget extends WP_Widget {
 			case 'everything':
 				$content = self::display_all();
 				$title   = 'Today ...';
-				$icon    = lwtv_symbolicons( 'calendar-alt.svg', 'calendar-alt' );
+				$icon    = lwtv_plugin()->get_symbolicon( 'calendar-alt.svg', 'calendar-alt' );
 				break;
 			case 'death':
 				$content = self::display_death();
 				$title   = 'Death of the Day';
-				$icon    = lwtv_symbolicons( 'book-dead.svg', 'fa-skull' );
+				$icon    = lwtv_plugin()->get_symbolicon( 'book-dead.svg', 'fa-skull' );
 				break;
 			case 'character':
 				$content = self::display_show_char( $type );
 				$title   = 'Character of the Day';
-				$icon    = lwtv_symbolicons( 'contact-card.svg', 'fa-address-card' );
+				$icon    = lwtv_plugin()->get_symbolicon( 'contact-card.svg', 'fa-address-card' );
 				break;
 			case 'show':
 				$content = self::display_show_char( $type );
 				$title   = 'Show of the Day';
-				$icon    = lwtv_symbolicons( 'tv-hd.svg', 'fa-tv' );
+				$icon    = lwtv_plugin()->get_symbolicon( 'tv-hd.svg', 'fa-tv' );
 				break;
 		}
 

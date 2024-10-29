@@ -51,7 +51,7 @@
 
 				<span class="nav-item search" id="search-btn">
 					<a class="nav-link" data-bs-toggle="collapse" role="button" data-bs-target="#collapseSearch" href="#collapseSearch" aria-expanded="false">
-						<?php echo lwtv_symbolicons( 'search.svg', 'fa-search' ); ?>
+						<?php echo lwtv_plugin()->get_symbolicon( 'search.svg', 'fa-search' ); ?>
 						<span class="screen-reader-text">Search the Site</span>
 					</a>
 				</span>

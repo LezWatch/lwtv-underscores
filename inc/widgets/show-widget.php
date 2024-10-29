@@ -55,7 +55,7 @@ class LWTV_Show extends WP_Widget {
 			$thumb_title       = ( empty( $thumb_attribution ) ) ? get_the_title() : get_the_title() . ' &copy; ' . $thumb_attribution;
 
 			echo '<div class="card">';
-			echo '<div class="card-header"><h4><span class="float-left">' . lwtv_symbolicons( 'tv-hd.svg', 'fa-tv' ) . '</span> Recently Added Show</h4></div>';
+			echo '<div class="card-header"><h4><span class="float-left">' . lwtv_plugin()->get_symbolicon( 'tv-hd.svg', 'fa-tv' ) . '</span> Recently Added Show</h4></div>';
 
 			// Featured Image
 			echo '<a href="' . esc_url( get_the_permalink() ) . '">';
