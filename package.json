@@ -44,14 +44,14 @@
     "chart.js": "^4",
     "chartjs-plugin-annotation": "^3",
     "coffeescript": "^2.7.0",
-    "package.json": "0.0.0",
+    "pkg.json": "^2.0.8",
     "postinstall": "*",
     "tablesorter": "^2"
   },
   "devDependencies": {
     "@lodder/grunt-postcss": "^3.1.1",
-    "@types/node": "^18.19",
-    "@wordpress/scripts": "^26.12.0",
+    "@types/node": "^22.8.4",
+    "@wordpress/scripts": "^30.3.0",
     "autoprefixer": "^10.4.15",
     "eslint-plugin-prettier": "^5.2",
     "grunt": "^1.6.1",
