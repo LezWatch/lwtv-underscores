@@ -12,6 +12,7 @@
     "build:composer": "composer update",
     "build:grunt": "grunt build",
     "build:workspace": "npm run build:workspace --workspaces",
+    "build:scripts": "node ./postinstall.js",
     "lint": "npm-run-all lint:*",
     "lint:css": "wp-scripts lint-style '**/*.scss'",
     "lint:js": "wp-scripts lint-js 'plugins/lwtv-plugin/php/blocks/**/*.js'",
@@ -22,7 +23,8 @@
     "start": "npm-run-all start:*",
     "start:blocks": "npm run start",
     "preinstall": "composer install",
-    "postinstall": "node ./postinstall.js && npm-run-all postinstall:*",
+    "postinstall": "npm-run-all postinstall:*",
+    "postinstall:scripts": "node ./postinstall.js",
     "postinstall:blocks": "cd ./plugins/lwtv-plugin/php/blocks && npm install --ignore-scripts",
     "postinstall:plugin": "cd ./plugins/lwtv-plugin && npm install --ignore-scripts",
     "prepare": "husky",
@@ -67,6 +69,8 @@
     "postcss": "^8.4.29"
   },
   "lint-staged": {
-    "*.php": "npm run lint:phpcs"
+    "*.php": "npm run lint:php",
+    "*.js": "npm run lint:js",
+    "*.scss": "npm run lint:css"
   }
 }

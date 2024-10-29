@@ -11,8 +11,11 @@ The 100% Original Theme for LezWatch.TV
 		<img alt="Issues" src="https://img.shields.io/github/issues/LezWatch/lwtv-underscores">
 	</a>
 	<a href="https://github.com/LezWatch/lwtv-underscores/pulls">
-		<img alt="PRs" src="https://img.shields.io/github/pulls/LezWatch/lwtv-underscores">
+		<img alt="PRs" src="https://img.shields.io/github/issues-pr-raw/LezWatch/lwtv-underscores">
 	</a>
+        <a href="https://github.com/LezWatch/lwtv-underscores/blob/production/LICENSE">
+        <img src="https://img.shields.io/github/license/LezWatch/lwtv-underscores" alt="License">
+    </a>
 </p>
 
 
@@ -74,8 +77,6 @@ To fix lint issues automatically:
 * `$ npm run fix` - Fix everything
 * `$ npm run fix:css` - Fix all SCSS files in all folders
 * `$ npm run fix:js` - Fix all Block JS files only
-
-Commits are currently not linted by default however when code is pushed out to servers, it is automatically linted.
 
 ## CSS & JS
 
