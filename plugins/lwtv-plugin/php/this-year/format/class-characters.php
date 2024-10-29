@@ -4,10 +4,12 @@ namespace LWTV\This_Year\Format;
 
 class Characters {
 	/**
-	 * List of shows for the year.
+	 * List of Characters on air separated by show
 	 *
 	 * @access public
 	 * @param string $this_year
+	 * @param int    $count
+	 * @param array  $build_data
 	 *
 	 * @return void
 	 */
