@@ -60,7 +60,22 @@ To install and update:
 * `$ npm run updater` - Updates all the things.
 * `$ npm run build` - Builds all the CSS and handles composer versions.
 
-Commits are currently not linted by default.
+## Linting
+
+To run linting:
+
+* `$ npm run lint` - Lint everything
+* `$ npm run lint:css` - Lint all SCSS files in all folders
+* `$ npm run lint:js` - Lint all Block JS files only
+* `$ npm run lint:php` - Lint all PHP files (excludes 3rd party plugins)
+
+To fix lint issues automatically:
+
+* `$ npm run fix` - Fix everything
+* `$ npm run fix:css` - Fix all SCSS files in all folders
+* `$ npm run fix:js` - Fix all Block JS files only
+
+Commits are currently not linted by default however when code is pushed out to servers, it is automatically linted.
 
 ## CSS & JS
 
@@ -68,12 +83,12 @@ If you're updating CSS you have a couple options, since it's all SCSS.
 
 ### Grunt
 
-1. `grunt watch` - run grunt and leave open for ongoing changes.
-2. `grunt build` - run the build process once.
+1. `$ grunt watch` - run grunt and leave open for ongoing changes.
+2. `$cgrunt build` - run the build process once.
 
 ### NPM
 
-`npm run build` will build all the CSS and JS, as well as update all the libraries.
+`$ npm run build` will build all the CSS and JS, as well as update all the libraries.
 
 ## Libraries
 
