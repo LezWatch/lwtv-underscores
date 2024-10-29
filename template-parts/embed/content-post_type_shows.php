@@ -190,7 +190,8 @@
 						$deadtext = sprintf( _n( '<strong>%s</strong> is dead', '<strong>%s</strong> are dead', $havedeadcount ), $havedeadcount );
 					}
 
-					echo wp_kses_post( sprintf( _n( 'is <strong>%s</strong> queer character', '<strong>%s</strong> queer characters', $havecharcount ), $havecharcount ) . ' - ' . $deadtext );
+					// translators: %s is the number of queer characters.
+					echo wp_kses_post( sprintf( _n( '<strong>%s</strong> queer character', '<strong>%s</strong> queer characters', $havecharcount ), $havecharcount ) . ' - ' . $deadtext );
 				}
 				?>
 			</p>
@@ -238,7 +239,7 @@
 				<?php
 				// The Game of Thrones Flag of Gratuitous Violence.
 				$warning    = lwtv_plugin()->get_show_content_warning( get_the_ID() );
-				$warn_image = lwtv_symbolicons( 'warning.svg', 'fa-exclamation-triangle' );
+				$warn_image = lwtv_plugin()->get_symbolicon( 'warning.svg', 'fa-exclamation-triangle' );
 				if ( 'none' !== $warning['card'] ) {
 					// phpcs:ignore WordPress.Security.EscapeOutput
 					echo '<span class="flag flag-' . esc_attr( $warning['card'] ) . '" title="Content Warning">' . $warn_image . '</span>';
@@ -252,14 +253,14 @@
 
 				// Hearts of Lurve.
 				if ( get_post_meta( get_the_ID(), 'lezshows_worthit_show_we_love', true ) ) {
-					$heart = lwtv_symbolicons( 'hearts.svg', 'fa-heart' );
+					$heart = lwtv_plugin()->get_symbolicon( 'hearts.svg', 'fa-heart' );
 					// phpcs:ignore WordPress.Security.EscapeOutput
 					echo ' <a href="https://lezwatchtv.com/shows/?fwp_show_loved=yes" title="We Love This Show!" target="_blank"><span role="img" class="flag flag-we-love" title="We Love This Show!">' . $heart . '</span></a>';
 				}
 
 				// Skulls of Death.
 				if ( has_term( 'dead-queers', 'lez_tropes', get_the_ID() ) ) {
-					$skull = lwtv_symbolicons( 'skull-crossbones.svg', 'fa-ban' );
+					$skull = lwtv_plugin()->get_symbolicon( 'skull-crossbones.svg', 'fa-ban' );
 					// phpcs:ignore WordPress.Security.EscapeOutput
 					echo ' <span role="img" title="Warning - There is death on this show." class="flag flag-death">' . $skull . '</span>';
 				}

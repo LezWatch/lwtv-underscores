@@ -16,7 +16,7 @@ if ( ! $show_id ) {
 // The Game of Thrones Flag of Gratuitous Violence.
 // This shows a notice if the show has trigger warnings.
 $warning    = lwtv_plugin()->get_show_content_warning( $show_id );
-$warn_image = lwtv_symbolicons( 'hand.svg', 'fa-hand-paper' );
+$warn_image = lwtv_plugin()->get_symbolicon( 'hand.svg', 'fa-hand-paper' );
 
 if ( is_array( $warning ) && 'none' !== $warning['card'] ) {
 	?>

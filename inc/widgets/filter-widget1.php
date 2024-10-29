@@ -46,14 +46,14 @@ class Filter_Top extends WP_Widget {
 			switch ( $fontawesome ) {
 				case 'fa-television':
 				case 'fa-tv':
-					$icon = lwtv_symbolicons( 'tv-hd.svg', 'fa-tv' );
+					$icon = lwtv_plugin()->get_symbolicon( 'tv-hd.svg', 'fa-tv' );
 					break;
 				case 'fa-vcard':
 				case 'fa-address-card':
-					$icon = lwtv_symbolicons( 'contact-card.svg', 'fa-address-card' );
+					$icon = lwtv_plugin()->get_symbolicon( 'contact-card.svg', 'fa-address-card' );
 					break;
 				case 'fa-users':
-					$icon = lwtv_symbolicons( 'award-academy.svg', 'fa-man' );
+					$icon = lwtv_plugin()->get_symbolicon( 'award-academy.svg', 'fa-man' );
 					break;
 				default:
 					$icon = '<i class="fa ' . $fontawesome . ' float-right" aria-hidden="true"></i>';

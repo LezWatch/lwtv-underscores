@@ -14,7 +14,7 @@ $this_id = $args['actor_id'] ?? null;
 <div class="col">
 	<div class="card text-center">
 		<span data-bs-toggle="modal" data-bs-target="#statistics">
-			<h5><?php echo lwtv_symbolicons( 'presentation-alt.svg', 'fa-chart-line' ); ?> Statistics</h5>
+			<h5><?php echo lwtv_plugin()->get_symbolicon( 'presentation-alt.svg', 'fa-chart-line' ); ?> Statistics</h5>
 		</span>
 	</div>
 </div>

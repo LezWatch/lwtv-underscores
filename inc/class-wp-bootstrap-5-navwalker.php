@@ -144,8 +144,8 @@ class WP_Bootstrap_Navwalker extends Walker_Nav_Menu {
 		 * Customizer preview results in all classes defined in that
 		 * particular input box to come in as one big class string.
 		 */
-		$split_on_spaces = function ( $class ) {
-			return preg_split( '/\s+/', $class );
+		$split_on_spaces = function ( $a_class ) {
+			return preg_split( '/\s+/', $a_class );
 		};
 		$classes         = $this->flatten( array_map( $split_on_spaces, $classes ) );
 
@@ -639,9 +639,9 @@ class WP_Bootstrap_Navwalker extends Walker_Nav_Menu {
 	 * @param array $array A multidimensional array.
 	 * @return array A simple array.
 	 */
-	public function flatten( $array ) {
+	public function flatten( $an_array ) {
 		$result = array();
-		foreach ( $array as $element ) {
+		foreach ( $an_array as $element ) {
 			if ( is_array( $element ) ) {
 				array_push( $result, ...$this->flatten( $element ) );
 			} else {

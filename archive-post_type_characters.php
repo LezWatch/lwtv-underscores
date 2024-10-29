@@ -7,7 +7,7 @@
  * @package LezWatch.TV
  */
 
-$icon        = lwtv_symbolicons( 'contact-card.svg', 'fa-users' );
+$icon        = lwtv_plugin()->get_symbolicon( 'contact-card.svg', 'fa-users' );
 $count_posts = ( function_exists( 'facetwp_display' ) ) ? facetwp_display( 'counts' ) : '';
 $char_title  = '<span role="img" aria-label="post_type_characters" title="Characters" class="taxonomy-svg characters">' . $icon . '</span>';
 $seo_descs   = get_option( 'wpseo_titles' );

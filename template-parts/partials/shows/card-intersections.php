@@ -32,7 +32,7 @@ if ( $intersections && ! is_wp_error( $intersections ) ) {
 							<?php
 							// Echo the taxonomy icon (default to squares if empty)
 							$icon = get_term_meta( $intersection->term_id, 'lez_termsmeta_icon', true );
-							echo lwtv_symbolicons( $icon . '.svg', 'fa-lemon' );
+							echo lwtv_plugin()->get_symbolicon( $icon . '.svg', 'fa-lemon' );
 							?>
 							</a>
 							<a href="<?php echo esc_url( get_term_link( $intersection->slug, 'lez_intersections' ) ); ?>" rel="show intersection" class="intersection-link"><?php echo esc_html( $intersection->name ); ?>

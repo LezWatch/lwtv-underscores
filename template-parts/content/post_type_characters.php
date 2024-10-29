@@ -31,7 +31,7 @@ if ( $is_dead ) {
 }
 
 // Microformats Fix
-lwtv_microformats_fix( $character );
+lwtv_plugin()->get_microformats_fix( $character );
 ?>
 <div class="card-body">
 	<div class="character-image-wrapper">

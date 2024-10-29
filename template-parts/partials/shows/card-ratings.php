@@ -31,7 +31,7 @@ $screentime = ( get_post_meta( $show_id, 'lezshows_screentime_rating', true ) &&
 			} else {
 				// We have some love, let's show it
 				$heart_types    = array( 'realness', 'quality', 'screentime' );
-				$heart          = lwtv_symbolicons( 'heart.svg', 'fa-heart' );
+				$heart          = lwtv_plugin()->get_symbolicon( 'heart.svg', 'fa-heart' );
 				$positive_heart = '<span role="img" class="show-heart positive">' . $heart . '</span>';
 				$negative_heart = '<span role="img" class="show-heart negative">' . $heart . '</span>';
 

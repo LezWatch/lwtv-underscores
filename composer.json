@@ -11,7 +11,7 @@
         }
     ],
     "require": {
-        "php": ">=8.1.0",
+        "php": ">=8.2",
         "slowprog/composer-copy-file": "^0.3",
         "twbs/bootstrap": "^5.3",
         "fortawesome/font-awesome": "^6.4.0"
@@ -22,7 +22,15 @@
         ],
         "post-update-cmd": [
             "SlowProg\\CopyFile\\ScriptHandler::copy"
-        ]
+        ],
+        "lint": "phpcs",
+        "lint-fix": "phpcbf"
+    },
+    "require-dev": {
+        "wp-coding-standards/wpcs": "^3.0",
+        "yoast/phpunit-polyfills": "^2.0",
+        "phpcompatibility/phpcompatibility-wp": "*",
+        "php-stubs/wp-cli-stubs": "^2.9"
     },
     "extra" : {
         "copy-file": {
@@ -33,6 +41,11 @@
             "vendor/fortawesome/font-awesome/webfonts/": "inc/fontawesome/webfonts/",
             "node_modules/@popperjs/core/dist/umd/popper.min.js":"inc/js/popper.min.js",
             "node_modules/@popperjs/core/dist/umd/popper.min.js.map":"inc/js/popper.min.js.map"
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
         }
     }
 }

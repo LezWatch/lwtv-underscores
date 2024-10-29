@@ -23,7 +23,7 @@ get_header(); ?>
 				<div class="col-sm-8">
 					<div class="site-loop home-featured-post-loop">
 						<h2 class="posts-title">
-							New Posts <?php echo lwtv_symbolicons( 'newspaper.svg', 'fa-newspaper' ); ?>
+							New Posts <?php echo lwtv_plugin()->get_symbolicon( 'newspaper.svg', 'fa-newspaper' ); ?>
 						</h2>
 
 						<?php
@@ -57,7 +57,7 @@ get_header(); ?>
 									<h3 class="card-title"><?php the_title(); ?></h3>
 									<div class="card-meta text-muted">
 										<?php the_date(); ?>
-										<?php echo lwtv_symbolicons( 'user-circle.svg', 'fa-user-circle' ); ?>
+										<?php echo lwtv_plugin()->get_symbolicon( 'user-circle.svg', 'fa-user-circle' ); ?>
 										<?php the_author(); ?>
 									</div>
 									<div class="card-text">
@@ -114,7 +114,7 @@ get_header(); ?>
 										<h3 class="card-title"><?php the_title(); ?></h3>
 										<div class="card-meta text-muted">
 											<?php the_date(); ?>
-											<?php echo lwtv_symbolicons( 'user-circle.svg', 'fa-user-circle' ); ?>
+											<?php echo lwtv_plugin()->get_symbolicon( 'user-circle.svg', 'fa-user-circle' ); ?>
 											<?php the_author(); ?>
 										</div>
 										<div class="card-text">
@@ -150,7 +150,7 @@ get_header(); ?>
 		<div class="container">
 			<div class="row">
 				<div class="col">
-					<h2>Shows We Love <?php echo lwtv_symbolicons( 'hearts.svg', 'fa-heart' ); ?></h2>
+					<h2>Shows We Love <?php echo lwtv_plugin()->get_symbolicon( 'hearts.svg', 'fa-heart' ); ?></h2>
 				</div>
 			</div>
 			<?php
@@ -197,7 +197,7 @@ get_header(); ?>
 			<div class="row">
 				<div class="col">
 					<h2 class="posts-title">
-						More Posts <?php echo lwtv_symbolicons( 'newspaper.svg', 'fa-newspaper' ); ?>
+						More Posts <?php echo lwtv_plugin()->get_symbolicon( 'newspaper.svg', 'fa-newspaper' ); ?>
 					</h2>
 				</div>
 			</div>

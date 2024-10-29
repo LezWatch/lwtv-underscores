@@ -72,7 +72,7 @@
 			<?php
 		}
 
-		edit_post_link( esc_attr__( 'Edit', 'lwtv-underscores' ), '<div class="edit-link">' . lwtv_symbolicons( 'pencil.svg', 'fa-pencil-alt' ), '</div>' );
+		edit_post_link( esc_attr__( 'Edit', 'lwtv-underscores' ), '<div class="edit-link">' . lwtv_plugin()->get_symbolicon( 'pencil.svg', 'fa-pencil-alt' ), '</div>' );
 		?>
 	</footer><!-- .entry-meta -->
 </article><!-- #post-## -->
