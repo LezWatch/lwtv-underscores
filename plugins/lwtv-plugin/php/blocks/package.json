@@ -13,6 +13,8 @@
 		"lint:css": "wp-scripts lint-style",
 		"lint:js": "wp-scripts lint-js",
 		"start": "wp-scripts start",
+		"updater:workspace": "npm update",
+		"clean:workspace": "rm -rf node_modules",
 		"packages-update": "wp-scripts packages-update"
 	},
 	"dependencies": {
