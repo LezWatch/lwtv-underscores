@@ -2,6 +2,7 @@
 ----------------------------------------------- */
 
 /* stylelint-disable font-family-no-missing-generic-family-keyword */
+/* stylelint-disable value-keyword-case */
 
 @mixin border-radius($arguement...) {
 	-webkit-border-radius: $arguement;

@@ -42,10 +42,6 @@
 		<exclude-pattern>class-gf-approvals.php</exclude-pattern>
 	</rule>
 
-	<!-- Unit Tests -->
-	<exclude-pattern>*/tests/*</exclude-pattern>
-	<exclude-pattern>*/bin/*</exclude-pattern>
-
 	<!-- Node and Vendor -->
 	<exclude-pattern>*/vendor/*</exclude-pattern>
 	<exclude-pattern>*/node_modules/*</exclude-pattern>
