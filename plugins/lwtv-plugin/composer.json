@@ -45,7 +45,7 @@
     "10up/wp_mock": "^1.0",
     "phpunit/phpunit": "^9.6",
     "aldavigdis/wp-tests-strapon": "*",
-    "yoast/phpunit-polyfills": "^2.0",
+    "yoast/phpunit-polyfills": "^3.0",
     "phpcompatibility/phpcompatibility-wp": "*",
     "php-stubs/wp-cli-stubs": "^2.9"
   },

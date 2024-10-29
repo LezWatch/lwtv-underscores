@@ -28,7 +28,7 @@
     },
     "require-dev": {
         "wp-coding-standards/wpcs": "^3.0",
-        "yoast/phpunit-polyfills": "^2.0",
+        "yoast/phpunit-polyfills": "^3.0",
         "phpcompatibility/phpcompatibility-wp": "*",
         "php-stubs/wp-cli-stubs": "^2.9"
     },
