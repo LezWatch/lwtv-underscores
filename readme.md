@@ -28,9 +28,10 @@ Usage documentation can be found at [docs.lezwatchtv.com](https://docs.lezwatcht
 
 # Requirements
 
-- PHP 8.1 or higher
+- PHP 8.2 or higher
 - [Grunt](https://gruntjs.com)
-- [Node.js](https://nodejs.org) version 18+
+- [Node.js](https://nodejs.org) version 22+
+- [NVM](https://github.com/nvm-sh/nvm)
 
 It's recommended to use [Homebrew](https://brew.sh) on macOS or [Chocolatey](https://chocolatey.org) for Windows to install the project dependencies.
 
@@ -38,9 +39,10 @@ It's recommended to use [Homebrew](https://brew.sh) on macOS or [Chocolatey](htt
 
 1. Clone this repository: `git clone git@github.com:lezwatch/lwtv-underscores`
 2. Move into the project directory: `cd lwtv-underscores`
-3. Install the project dependencies: `npm install`
-4. Update all the things (npm, composer, etc): `npm run updater`
-5. Run an initial build: `npm run build`
+3. Set NPM to the correct version: `nvm use`
+4. Install the project dependencies: `npm install`
+5. Update all the things (npm, composer, etc): `npm run updater`
+6. Run an initial build: `npm run build`
 
 # Contributing
 

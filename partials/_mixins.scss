@@ -1,6 +1,8 @@
 /* =Mixins
 ----------------------------------------------- */
 
+/* stylelint-disable font-family-no-missing-generic-family-keyword */
+
 @mixin border-radius($arguement...) {
 	-webkit-border-radius: $arguement;
 	-moz-border-radius: $arguement;
@@ -22,36 +24,37 @@
 }
 
 @mixin bottom-shadow {
-	@include box-shadow(0px 9px 9px -9px $black);
+
+	@include box-shadow(0 9px 9px -9px $black);
 }
 
 @mixin card-shadow {
-	box-shadow: 0 12px 20px -10px rgba(156, 39, 176, 0.28), 0 4px 20px 0px rgba(0, 0, 0, 0.12), 0 7px 8px -5px rgba(156, 39, 176, 0.2);
+	box-shadow: 0 12px 20px -10px rgba(156, 39, 176, 0.28), 0 4px 20px 0 rgba(0, 0, 0, 0.12), 0 7px 8px -5px rgba(156, 39, 176, 0.2);
 }
 
-$startcolor: #1E5799;
-$endcolor: #7DB9E8;
+$startcolor: #1e5799;
+$endcolor: #7db9e8;
 
 @mixin box-gradient-vertical {
 	background: $startcolor; /* Old browsers */
 	background: -moz-linear-gradient(top, $startcolor 0%, $endcolor 100%); /* FF3.6+ */
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,$startcolor), color-stop(100%,$endcolor)); /* Chrome,Safari4+ */
-	background: -webkit-linear-gradient(top, $startcolor 0%,$endcolor 100%); /* Chrome10+,Safari5.1+ */
-	background: -o-linear-gradient(top, $startcolor 0%,$endcolor 100%); /* Opera 11.10+ */
-	background: -ms-linear-gradient(top, $startcolor 0%,$endcolor 100%); /* IE10+ */
-	background: linear-gradient(to bottom, $startcolor 0%,$endcolor 100%); /* W3C */
-		filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='$startcolor', endColorstr='$endcolor',GradientType=0 ); /* IE6-8 */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, $startcolor), color-stop(100%, $endcolor)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top, $startcolor 0%, $endcolor 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top, $startcolor 0%, $endcolor 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top, $startcolor 0%, $endcolor 100%); /* IE10+ */
+	background: linear-gradient(to bottom, $startcolor 0%, $endcolor 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="$startcolor", endColorstr="$endcolor", GradientType=0); /* IE6-8 */
 }
 
 @mixin box-gradient-horizontal {
 	background: $startcolor; /* Old browsers */
 	background: -moz-linear-gradient(left, $startcolor 0%, $endcolor 100%); /* FF3.6+ */
-	background: -webkit-gradient(linear, left top, right top, color-stop(0%,$startcolor), color-stop(100%,$endcolor)); /* Chrome,Safari4+ */
-	background: -webkit-linear-gradient(left, $startcolor 0%,$endcolor 100%); /* Chrome10+,Safari5.1+ */
-	background: -o-linear-gradient(left, $startcolor 0%,$endcolor 100%); /* Opera 11.10+ */
-	background: -ms-linear-gradient(left, $startcolor 0%,$endcolor 100%); /* IE10+ */
-	background: linear-gradient(to right, $startcolor 0%,$endcolor 100%); /* W3C */
-	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='$startcolor', endColorstr='$endcolor',GradientType=1 ); /* IE6-8 */
+	background: -webkit-gradient(linear, left top, right top, color-stop(0%, $startcolor), color-stop(100%, $endcolor)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(left, $startcolor 0%, $endcolor 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(left, $startcolor 0%, $endcolor 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(left, $startcolor 0%, $endcolor 100%); /* IE10+ */
+	background: linear-gradient(to right, $startcolor 0%, $endcolor 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="$startcolor", endColorstr="$endcolor", GradientType=1); /* IE6-8 */
 }
 
 @mixin box-transition($arguement...) {
@@ -74,13 +77,13 @@ $endcolor: #7DB9E8;
 }
 
 @mixin images-noborder {
-	border: 0px !important;
+	border: 0 !important;
 	-webkit-box-shadow: none !important;
 	box-shadow: none !important;
-	padding: 0px !important;
+	padding: 0 !important;
 }
 
-//  background-image: url(images/bg.jpg);
+/* background-image: url(images/bg.jpg);background-image */
 @mixin cover {
 	-webkit-background-size: cover;
 	-moz-background-size: cover;
@@ -89,24 +92,60 @@ $endcolor: #7DB9E8;
 }
 
 @mixin placeholdercolor($arguement...) {
-	::-webkit-input-placeholder {color: $arguement;}
-	:-moz-placeholder {color: $arguement;}
-	::-moz-placeholder {color: $arguement;}
-	:-ms-input-placeholder {color: $arguement;}
+
+	::-webkit-input-placeholder {
+		color: $arguement;
+	}
+
+	:-moz-placeholder {
+		color: $arguement;
+	}
+
+	::-moz-placeholder {
+		color: $arguement;
+	}
+
+	:-ms-input-placeholder {
+		color: $arguement;
+	}
 }
 
 @mixin placeholderweight($arguement...) {
-	::-webkit-input-placeholder {font-weight: $arguement;}
-	:-moz-placeholder {font-weight: $arguement;}
-	::-moz-placeholder {font-weight: $arguement;}
-	:-ms-input-placeholder {font-weight: $arguement;}
+
+	::-webkit-input-placeholder {
+		font-weight: $arguement;
+	}
+
+	:-moz-placeholder {
+		font-weight: $arguement;
+	}
+
+	::-moz-placeholder {
+		font-weight: $arguement;
+	}
+
+	:-ms-input-placeholder {
+		font-weight: $arguement;
+	}
 }
 
 @mixin placeholdersize($arguement...) {
-	::-webkit-input-placeholder {font-size: $arguement;}
-	:-moz-placeholder {font-size: $arguement;}
-	::-moz-placeholder {font-size: $arguement;}
-	:-ms-input-placeholder {font-size: $arguement;}
+
+	::-webkit-input-placeholder {
+		font-size: $arguement;
+	}
+
+	:-moz-placeholder {
+		font-size: $arguement;
+	}
+
+	::-moz-placeholder {
+		font-size: $arguement;
+	}
+
+	:-ms-input-placeholder {
+		font-size: $arguement;
+	}
 }
 
 @mixin box-transform($arguement...) {
@@ -125,6 +164,7 @@ $endcolor: #7DB9E8;
 	vertical-align: middle;
 	background-color: $white;
 	border: 1px solid $lightgrey;
+
 	@include border-radius(4px);
 	@include box-shadow(inset 0 1px 1px rgba(0, 0, 0, 0.075));
 	@include box-transition(border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s);
@@ -132,8 +172,9 @@ $endcolor: #7DB9E8;
 	&:focus {
 		border-color: $lightblue;
 		outline: 0;
+
 		@include box-shadow(inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(102, 175, 233, 0.6));
-  	}
+	}
 }
 
 @mixin vertical-align {
@@ -144,7 +185,7 @@ $endcolor: #7DB9E8;
 	transform: translateY(-50%);
 }
 
-// Like this @include fontawesome_free("\f0ad");
+/* Like this @include fontawesome_free("\f0ad"); */
 @mixin fontawesome_free($argument...) {
 	display: none;
 	font: var(--fa-font-solid);
@@ -152,7 +193,7 @@ $endcolor: #7DB9E8;
 	font-family: "Font Awesome 5 Free";
 }
 
-// Like this @include fontawesome_pro("\f0ad");
+/* Like this @include fontawesome_pro("\f0ad"); */
 @mixin fontawesome_pro($argument...) {
 	display: none;
 	font: var(--fa-font-solid);
@@ -160,7 +201,7 @@ $endcolor: #7DB9E8;
 	font-family: "Font Awesome 5 Regular";
 }
 
-// Like this @include fontawesome_brand("\f0ad");
+/* Like this @include fontawesome_brand("\f0ad"); */
 @mixin fontawesome_brand($argument...) {
 	display: none;
 	font: var(--fa-font-brands);
@@ -208,7 +249,7 @@ $endcolor: #7DB9E8;
 	box-shadow: 0 2px 30px rgba(0, 0, 0, 0.2);
 	height: 5px;
 	width: 100%;
-	left:0;
+	left: 0;
 	right: 0;
 	top: 0;
 	bottom: 0;
@@ -225,22 +266,26 @@ $endcolor: #7DB9E8;
 
 // scss-docs-start color-mode-mixin
 @mixin color-mode($mode: light, $root: false) {
+
 	@if $color-mode-type == "media-query" {
-	  @if $root == true {
-		@media (prefers-color-scheme: $mode) {
-		  :root {
-			@content;
-		  }
+
+		@if $root == true {
+
+			@media (prefers-color-scheme: $mode) {
+
+				:root {
+					@content;
+				}
+			}
+		} @else {
+
+			@media (prefers-color-scheme: $mode) {
+				@content;
+			}
 		}
-	  } @else {
-		@media (prefers-color-scheme: $mode) {
-		  @content;
-		}
-	  }
 	} @else {
-	  [data-bs-theme="#{$mode}"] {
-		@content;
-	  }
+		[data-bs-theme="#{$mode}"] {
+			@content;
+		}
 	}
-  }
-  // scss-docs-end color-mode-mixin
+}

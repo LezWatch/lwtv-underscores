@@ -8,8 +8,6 @@
   "repository": "https://github.com/lezwatch/lwtv-plugin/",
   "scripts": {
     "build:workspace": "",
-    "lint:css": "",
-    "lint:js": "",
     "lint:phpcs": "composer lint",
     "start": "npm run start",
     "preinstall": "composer install",
@@ -18,7 +16,7 @@
     "clean": "rm -rf node_modules vendor blocks/node_modules"
   },
   "dependencies": {
-    "@wordpress/scripts": "^28"
+    "@wordpress/scripts": "^30"
   },
   "devDependencies": {
     "@types/node": "^18.19",

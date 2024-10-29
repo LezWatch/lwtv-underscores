@@ -1,3 +1,6 @@
+/* =Styling for Dark Mode
+----------------------------------------------- */
+/* stylelint-disable no-descending-specificity */
 $color-mode-type: data;
 
 @include color-mode(dark) {
@@ -9,15 +12,20 @@ $color-mode-type: data;
 	$link-active-color:  $link-hover-color;
 	$link-visited-color: $link-color;
 
-	// Overridden colors
+	/* Overridden colors */
 	$lwtv-medgrey: #404040;
 
 	--bs-body-color: $lwtv-dkgrey;
-	--bs-body-color-rgb: rgba( to-rgb( $lwtv-dkgrey ), 1);
+	--bs-body-color-rgb: rgba(to-rgb($lwtv-dkgrey), 1);
 
-	.text-widget, .widget_categories, .widget_tag_cloud,
-	.widget-tags, .widget_custom_html, .widget_text
-	.list-group-item, .widget_editor_tools .card,
+	.text-widget,
+	.widget_categories,
+	.widget_tag_cloud,
+	.widget-tags,
+	.widget_custom_html,
+	.widget_text
+	.list-group-item,
+	.widget_editor_tools .card,
 	.bg-light {
 		background-color: $lwtv-medgrey !important;
 	}
@@ -34,7 +42,14 @@ $color-mode-type: data;
 		color: $white !important;
 	}
 
-	a.btn-outline-primary, a.btn-outline-primary:visited, button.btn-outline-primary, button.btn-outline-primary:visited, input[type="button"].btn-outline-primary, input[type="button"].btn-outline-primary:visited, input[type="submit"].btn-outline-primary, input[type="submit"].btn-outline-primary:visited {
+	a.btn-outline-primary,
+	a.btn-outline-primary:visited,
+	button.btn-outline-primary,
+	button.btn-outline-primary:visited,
+	input[type="button"].btn-outline-primary,
+	input[type="button"].btn-outline-primary:visited,
+	input[type="submit"].btn-outline-primary,
+	input[type="submit"].btn-outline-primary:visited {
 		color: $black;
 		border-color: $lwtv-dkpink;
 		background-color: $lwtv-ltpink;
@@ -44,13 +59,14 @@ $color-mode-type: data;
 	.navbar.main-nav {
 		background-color: $lwtv-medgrey;
 
-		ul.navbar-nav > li  {
-			border-left:solid 1px $lightgrey;
+		ul.navbar-nav > li {
+			border-left: solid 1px $lightgrey;
 			background-color: $lwtv-medgrey;
 
 			&.nav-item {
+
 				/* Style for inactive links */
-				& > a.nav-link {
+				a.nav-link {
 					color: $white;
 					text-decoration: none;
 				}
@@ -59,7 +75,7 @@ $color-mode-type: data;
 				ul.dropdown-menu {
 					background-color: $lwtv-medgrey;
 
-					& li.nav-item {
+					li.nav-item {
 
 						/* Style for inactive links on submenus */
 						a.dropdown-item {
@@ -84,7 +100,9 @@ $color-mode-type: data;
 				color: $white;
 			}
 
-			&:hover, &:focus, &:active {
+			&:hover,
+			&:focus,
+			&:active {
 				color: $lwtv-ltpink;
 			}
 		}
@@ -99,7 +117,9 @@ $color-mode-type: data;
 			color: $link-color;
 		}
 
-		&:hover, &:focus, &:active {
+		&:hover,
+		&:focus,
+		&:active {
 			color: $link-hover-color;
 		}
 	}
@@ -122,9 +142,12 @@ $color-mode-type: data;
 	.site-loop .card .card-footer,
 	.site-loop .card .card-body,
 	.actor-image-wrapper .actor-archive-loop,
-	.character-archive-loop .actor-image-wrapper, .character-archive-loop .character-image-wrapper,
-	.character-image-wrapper .actor-archive-loop, .character-show-loop .actor-image-wrapper,
-	.character-show-loop .character-image-wrapper, .search-results .actor-image-wrapper,
+	.character-archive-loop .actor-image-wrapper,
+	.character-archive-loop .character-image-wrapper,
+	.character-image-wrapper .actor-archive-loop,
+	.character-show-loop .actor-image-wrapper,
+	.character-show-loop .character-image-wrapper,
+	.search-results .actor-image-wrapper,
 	.search-results .character-image-wrapper {
 		background-color: $lwtv-medgrey;
 	}
@@ -133,14 +156,18 @@ $color-mode-type: data;
 		background-color: $lwtv-medgrey;
 		border-left: 4px solid $lwtv-ltpink;
 		color: $lwtv-ltgrey;
-		&:before {
+
+		&::before {
 			color: $lwtv-ltpink;
 		}
 	}
 
 	.toc-container .breadcrumb,
-	.affiliate-watch-container, .ways-to-watch-container,
-	.overlay-section h2, .relatedposts-section h2, .showschar-section h2 {
+	.affiliate-watch-container,
+	.ways-to-watch-container,
+	.overlay-section h2,
+	.relatedposts-section h2,
+	.showschar-section h2 {
 		background-color: $lwtv-dkgrey;
 		color: $lwtv-grey;
 
@@ -149,21 +176,29 @@ $color-mode-type: data;
 		}
 	}
 
-	.character-cliche svg, .character-actor svg, .character-show svg {
+	.character-cliche svg,
+	.character-actor svg,
+	.character-show svg {
 		fill: $lwtv-ltgrey;
 	}
 
-	.card-meta-item.actors svg, .card-meta-item.cliches svg, .card-meta-item.shows svg,
-	.intersectionality-list svg, .trope-list svg, .cliche-list svg {
+	.card-meta-item.actors svg,
+	.card-meta-item.cliches svg,
+	.card-meta-item.shows svg,
+	.intersectionality-list svg,
+	.trope-list svg,
+	.cliche-list svg {
 		fill: $lwtv-ltgrey;
 	}
 
 	.site-loop .card {
-		box-shadow: 0 1px 4px 0 rgba( $white, 0.14 );
+		box-shadow: 0 1px 4px 0 rgba($white, 0.14);
 	}
 
 	.overlay-section {
+
 		.col {
+
 			.card {
 				background-color: $lwtv-medgrey;
 			}
@@ -175,7 +210,7 @@ $color-mode-type: data;
 					color: $lwtv-dkpink;
 					background-color: $lwtv-dkgrey;
 
-					svg *{
+					svg * {
 						fill: $lwtv-dkpink;
 					}
 				}
@@ -207,26 +242,32 @@ $color-mode-type: data;
 
 	.dark-mode-toggle {
 		color: $white;
+
 		svg * {
 			fill: $lwtv-ltgrey;
 		}
 	}
 
 	div.facetwp-facet {
+
 		select {
 			background-color: $lwtv-medgrey;
 			color: $white;
 		}
 
-		.fs-search, .fs-wrap .fs-search input,
-		.fs-dropdown .fs-options, .fs-dropdown .fs-no-results {
+		.fs-search,
+		.fs-wrap .fs-search input,
+		.fs-dropdown .fs-options,
+		.fs-dropdown .fs-no-results {
 			background-color: $lwtv-medgrey;
 			color: $white;
 		}
 
-		.facetwp-type-fselect .fs-dropdown, .facetwp-type-fselect .fs-wrap,
+		.facetwp-type-fselect .fs-dropdown,
+		.facetwp-type-fselect .fs-wrap,
 		.fs-label-wrap .fs-label
-		.facetwp-type-autocomplete .fs-dropdown, .facetwp-type-autocomplete .fs-wrap {
+		.facetwp-type-autocomplete .fs-dropdown,
+		.facetwp-type-autocomplete .fs-wrap {
 			background-color: $lwtv-medgrey;
 			color: $white;
 			border-color: $lwtv-ltgrey;
@@ -243,6 +284,7 @@ $color-mode-type: data;
 	}
 
 	.facetwp-pager {
+
 		a {
 			color: $lwtv-ltpink;
 		}
