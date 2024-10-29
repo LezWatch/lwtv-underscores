@@ -20,9 +20,9 @@
 	"dependencies": {
 		"@wordpress/blocks": "^13.10.0",
 		"@wordpress/i18n": "^5.10.0",
-		"package.json": "^2"
+		"package.json": "^0.0.0"
 	},
 	"devDependencies": {
-		"@wordpress/scripts": "^30.3.0"
+		"@wordpress/scripts": "^26.12.0"
 	}
 }

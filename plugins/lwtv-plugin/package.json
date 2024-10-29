@@ -10,19 +10,7 @@
     "build:workspace": "",
     "start": "npm run start",
     "preinstall": "composer install",
-    "updater:workspace": "npm update && composer update",
+    "updater:workspace": "composer update && npm update",
     "clean:workspace": "rm -rf node_modules"
-  },
-  "dependencies": {
-    "@wordpress/scripts": "^30"
-  },
-  "devDependencies": {
-    "@types/node": "^18.19",
-    "eslint-plugin-prettier": "^5.2",
-    "lint-staged": "^15",
-    "npm-run-all2": "^7.0.1"
-  },
-  "lint-staged": {
-    "*.php": "npm run lint:phpcs"
   }
 }
