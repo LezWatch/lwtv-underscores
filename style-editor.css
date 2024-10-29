@@ -27,6 +27,7 @@ The stylesheet for Gutenberg Blocks in the editor
 /* =Mixins
 ----------------------------------------------- */
 /* stylelint-disable font-family-no-missing-generic-family-keyword */
+/* stylelint-disable value-keyword-case */
 /* background-image: url(images/bg.jpg);background-image */
 /* Like this @include fontawesome_free("\f0ad"); */
 /* Like this @include fontawesome_pro("\f0ad"); */
