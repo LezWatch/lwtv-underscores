@@ -46,7 +46,6 @@
     "chart.js": "^4",
     "chartjs-plugin-annotation": "^3",
     "coffeescript": "^2.7.0",
-    "pkg.json": "^2.0.8",
     "postinstall": "*",
     "tablesorter": "^2"
   },
