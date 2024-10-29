@@ -1,4 +1,3 @@
-@charset "UTF-8";
 /* stylelint-disable  no-duplicate-selectors */
 /*
 The stylesheet for Gutenberg Blocks in the editor
@@ -103,7 +102,8 @@ body.wp-admin.block-editor-page .editor-styles-wrapper h6 {
   line-height: 1.3;
   color: #222;
 }
-body.wp-admin.block-editor-page .editor-styles-wrapper .editor-post-title__input { /* These are the H1 styles. */
+body.wp-admin.block-editor-page .editor-styles-wrapper .editor-post-title__input {
+  /* These are the H1 styles. */
   font-size: 2.5rem;
 }
 body.wp-admin.block-editor-page .editor-styles-wrapper h2,
@@ -179,7 +179,7 @@ body.wp-admin.block-editor-page .editor-styles-wrapper blockquote p:last-child {
 }
 body.wp-admin.block-editor-page .editor-styles-wrapper blockquote::before {
   color: #cb3e85;
-  content: "“";
+  content: "\201C";
   font-size: 2.75rem;
   font-weight: 600;
   line-height: 1;
