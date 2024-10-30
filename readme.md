@@ -4,20 +4,11 @@ The 100% Original Theme for LezWatch.TV
 
 <!-- Badges -->
 <p align="center">
-	<a href="https://wordpress.org">
-		<img src="https://img.shields.io/badge/wordpress-6.6-blue" alt="WordPress">
-	</a>
-	<a href="https://github.com/LezWatch/lwtv-underscores/issues">
-		<img alt="Issues" src="https://img.shields.io/github/issues/LezWatch/lwtv-underscores">
-	</a>
-	<a href="https://github.com/LezWatch/lwtv-underscores/pulls">
-		<img alt="PRs" src="https://img.shields.io/github/issues-pr-raw/LezWatch/lwtv-underscores">
-	</a>
-        <a href="https://github.com/LezWatch/lwtv-underscores/blob/production/LICENSE">
-        <img src="https://img.shields.io/github/license/LezWatch/lwtv-underscores" alt="License">
-    </a>
+	<a href="https://wordpress.org"><img src="https://img.shields.io/badge/wordpress-6.6-blue" alt="WordPress"></a>
+	<a href="https://github.com/LezWatch/lwtv-underscores/issues"><img alt="Issues" src="https://img.shields.io/github/issues/LezWatch/lwtv-underscores"></a>
+	<a href="https://github.com/LezWatch/lwtv-underscores/pulls"><img alt="PRs" src="https://img.shields.io/github/issues-pr-raw/LezWatch/lwtv-underscores"></a>
+	<a href="https://github.com/LezWatch/lwtv-underscores/blob/production/LICENSE"><img src="https://img.shields.io/github/license/LezWatch/lwtv-underscores" alt="License"></a>
 </p>
-
 
 # Description
 
