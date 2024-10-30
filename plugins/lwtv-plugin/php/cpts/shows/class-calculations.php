@@ -445,9 +445,17 @@ class Calculations {
 		// Cheat and update the show 'on-air' ness.
 		$on_air   = 'no';
 		$airdates = get_post_meta( $post_id, 'lezshows_airdates', true );
-		if ( ! isset( $airdates['finish'] ) || 'current' === lcfirst( $airdates['finish'] ) || $airdates['finish'] >= gmdate( 'Y' ) ) {
+
+		// If there is no finish date, or the finish date is current, it's on air.
+		if ( ! isset( $airdates['finish'] ) || 'current' === lcfirst( $airdates['finish'] ) ) {
 			$on_air = 'yes';
 		}
+
+		// If there is a finish date and it's in the future, it's on air.
+		if ( isset( $airdates['finish'] ) && $airdates['finish'] >= gmdate( 'Y' ) ) {
+			$on_air = 'yes';
+		}
+
 		update_post_meta( $post_id, 'lezshows_on_air', $on_air );
 	}
 }
