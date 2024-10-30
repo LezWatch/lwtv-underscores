@@ -50,6 +50,7 @@ $thumb_rating = ( get_post_meta( $show_id, 'lezshows_worthit_rating', true ) ) ?
 		<div class="ratings-details">
 			<div class="card-body">
 				<?php
+				// Worthit Review:
 				if ( ( get_post_meta( $show_id, 'lezshows_worthit_details', true ) ) && 'TBD' !== $thumb_rating ) {
 					echo wp_kses_post( apply_filters( 'the_content', get_post_meta( $show_id, 'lezshows_worthit_details', true ) ) );
 				} else {
@@ -67,10 +68,13 @@ $thumb_rating = ( get_post_meta( $show_id, 'lezshows_worthit_rating', true ) ) ?
 
 			<ul class="network-data list-group">
 				<?php
+				// Networks/Stations:
 				$stations = get_the_terms( $show_id, 'lez_stations' );
 				if ( $stations && ! is_wp_error( $stations ) ) {
 					echo '<li class="list-group-item network names">' . get_the_term_list( $show_id, 'lez_stations', '<strong>Airs On:</strong> ', ', ' ) . '</li>';
 				}
+
+				// Countries:
 				$countries = get_the_terms( $show_id, 'lez_country' );
 				if ( $countries && ! is_wp_error( $countries ) ) {
 					echo '<li class="list-group-item network country">' . get_the_term_list( $show_id, 'lez_country', '<strong>Airs In:</strong> ', ', ' ) . '</li>';
@@ -82,6 +86,7 @@ $thumb_rating = ( get_post_meta( $show_id, 'lezshows_worthit_rating', true ) ) ?
 					lwtv_plugin()->get_tvmaze_episodes( $show_id );
 				}
 
+				// Formats:
 				$formats = get_the_terms( $show_id, 'lez_formats' );
 				if ( $formats && ! is_wp_error( $formats ) ) {
 					echo '<li class="list-group-item network formats">' . get_the_term_list( $show_id, 'lez_formats', '<strong>Show Format:</strong> ', ', ' ) . '</li>';
@@ -90,13 +95,20 @@ $thumb_rating = ( get_post_meta( $show_id, 'lezshows_worthit_rating', true ) ) ?
 				// Airdates:
 				get_template_part( 'template-parts/partials/shows/airdates', '', array( 'show_id' => $show_id ) );
 
+				// Genres:
 				$genres = get_the_terms( $show_id, 'lez_genres' );
 				if ( $genres && ! is_wp_error( $genres ) ) {
 					echo '<li class="list-group-item network genres">' . get_the_term_list( $show_id, 'lez_genres', '<strong>Genres:</strong> ', ', ' ) . '</li>';
 				}
-				if ( get_post_meta( $show_id, 'lezshows_imdb', true ) ) {
-					$imdb = 'https://www.imdb.com/title/' . get_post_meta( $show_id, 'lezshows_imdb', true );
-					echo '<li class="list-group-item network imdb text-center">' . lwtv_plugin()->get_symbolicon( 'imdb.svg', 'fa-imdb' ) . ' <a href="' . esc_url( $imdb ) . '">IMDb</a></li>';
+
+				// Remote URLs
+				$imdb_data = get_post_meta( $show_id, 'lezshows_imdb', true );
+				if ( $imdb_data ) {
+					$imdb = 'https://www.imdb.com/title/' . $imdb_data;
+
+					echo '<li class="list-group-item network imdb text-center">';
+					echo lwtv_plugin()->get_symbolicon( 'imdb.svg', 'fa-imdb' ) . ' <a href="' . esc_url( $imdb ) . '">IMDb</a>';
+					echo '</li>';
 				}
 				?>
 			</ul>
