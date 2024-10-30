@@ -11,6 +11,7 @@ Thumbs.db
 /npm-debug.log
 /vendor/
 debug.log
+/inc/dist/
 
 # large/disallowed file types
 # a CDN should be used for these

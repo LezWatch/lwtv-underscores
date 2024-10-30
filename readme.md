@@ -76,7 +76,7 @@ If you're updating CSS you have a couple options, since it's all SCSS.
 ### Grunt
 
 1. `$ grunt watch` - run grunt and leave open for ongoing changes.
-2. `$cgrunt build` - run the build process once.
+2. `$ grunt build` - run the build process once.
 
 ### NPM
 
@@ -621,4 +621,4 @@ The following folders/files are for use by Developers. They are not pushed to th
 * `package-lock.json` - Saved package.json data
 * `package.json` - NPM configuration, commands, and libraries used
 * `phpcs.xml.dist` - PHPCS configuration
-* `postinstall.js` - script run at the end of NPM to move files to the correct location.
+* `pointsbuild.js` - script run at the end of NPM to move files to the correct location.

@@ -46,6 +46,9 @@
 	<exclude-pattern>*/vendor/*</exclude-pattern>
 	<exclude-pattern>*/node_modules/*</exclude-pattern>
 
+	<!-- Unused files -->
+	<exclude-pattern>/inc/dist/*</exclude-pattern>
+
 	<!-- Blocks -->
 	<exclude-pattern>*/blocks/build/*</exclude-pattern>
 
