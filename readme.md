@@ -85,7 +85,7 @@ If you're updating CSS you have a couple options, since it's all SCSS.
 ### Grunt
 
 1. `$ grunt watch` - run grunt and leave open for ongoing changes.
-2. `$cgrunt build` - run the build process once.
+2. `$ grunt build` - run the build process once.
 
 ### NPM
 

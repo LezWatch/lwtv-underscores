@@ -26,6 +26,12 @@ $gender_sexuality = array(
 	),
 );
 
+// If there's no data, bail out.
+$filtered = array_filter( $gender_sexuality );
+if ( empty( $filtered ) ) {
+	return;
+}
+
 if ( 'full' === $format ) {
 	$pronouns = strtolower( lwtv_plugin()->get_actor_pronouns( $actor ) );
 
@@ -43,14 +49,12 @@ if ( 'full' === $format ) {
 
 	echo '</ul>';
 } else {
-	unset( $gender_sexuality['pronouns'] );
 	echo '<div class="card-meta-item gender sexuality"><p>';
 	foreach ( $gender_sexuality as $item => $key ) {
 		$gen_data = $key['data'];
-		if ( empty( $key['data'] ) || ! isset( $key['item'] ) ) {
-			$gen_data = 'Unknown';
+		if ( ! empty( $key['data'] ) ) {
+			echo '&bull; ' . wp_kses_post( $gen_data ) . '<br />';
 		}
-		echo '&bull; <strong>' . esc_html( ucfirst( $key['item'] ) ) . ':</strong> ' . wp_kses_post( $gen_data ) . '<br />';
 	}
 	echo '</p></div>';
 }

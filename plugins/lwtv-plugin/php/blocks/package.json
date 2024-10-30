@@ -13,16 +13,16 @@
 		"lint:css": "wp-scripts lint-style",
 		"lint:js": "wp-scripts lint-js",
 		"start": "wp-scripts start",
-		"updater:workspace": "npm update",
+		"updater:workspace": "npm update && npm run packages-update",
 		"clean:workspace": "rm -rf node_modules",
 		"packages-update": "wp-scripts packages-update"
 	},
 	"dependencies": {
-		"@wordpress/babel-plugin-import-jsx-pragma": "^4.41.0",
-		"@wordpress/blocks": "^13.10.0",
-		"@wordpress/i18n": "^5.10.0"
+		"@wordpress/babel-plugin-import-jsx-pragma": "^5.11.0",
+		"@wordpress/blocks": "^14.0.0",
+		"@wordpress/i18n": "^5.11.0"
 	},
 	"devDependencies": {
-		"@wordpress/scripts": "^26.12.0"
+		"@wordpress/scripts": "^30.4.0"
 	}
 }
