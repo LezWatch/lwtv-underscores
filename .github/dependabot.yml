@@ -1,23 +1,26 @@
-version: 2
+version: 3
 
 updates:
   - package-ecosystem: "npm"
     directory: "/"
     schedule:
       interval: "weekly"
-    target-branch: "development"
+    target-branch: "production"
     ignore:
        - dependency-name: "@types/node"
          update-types: ["version-update:semver-major"]
+    versioning-strategy: increase
 
   - package-ecosystem: "composer"
     directory: "/"
     schedule:
       interval: "weekly"
-    target-branch: "development"
+    target-branch: "production"
+    versioning-strategy: increase
 
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "weekly"
-    target-branch: "development"
+    target-branch: "production"
+    versioning-strategy: increase
