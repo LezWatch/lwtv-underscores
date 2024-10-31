@@ -16,10 +16,10 @@ class Is_Show_On_Air {
 	 * @param  int  $year    - Year they may be on air
 	 * @return bool
 	 */
-	public function make( $post_id, $year ): bool {
+	public function make( $post_id, $year = null ): bool {
 
 		// Defaults
-		$this_year = gmdate( 'Y' );
+		$this_year = $year ?? gmdate( 'Y' );
 
 		// Get the data.
 		if ( get_post_meta( $post_id, 'lezshows_airdates', true ) ) {
@@ -39,7 +39,7 @@ class Is_Show_On_Air {
 			// if START is equal to or LESS than $year
 			// AND if END is qual to or GREATER than $year
 			// Then the show was on air.
-			if ( $airdates['start'] <= $year && $airdates['finish'] >= $year ) {
+			if ( $airdates['start'] <= $this_year && $airdates['finish'] >= $this_year ) {
 				return true;
 			}
 		}
