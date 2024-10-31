@@ -1,10 +1,12 @@
 <?php
-namespace Forked\CMB2\CMB2Grid\DesignPatterns;
 /**
  * Description of Singleton.
  *
  * Pablo Pacheco <pablo.pacheco@origgami.com.br>
  */
+
+namespace Forked\CMB2\CMB2Grid\DesignPatterns;
+
 if ( ! class_exists( 'Forked\CMB2\CMB2Grid\DesignPatterns\Singleton' ) ) {
 
 	abstract class Singleton {

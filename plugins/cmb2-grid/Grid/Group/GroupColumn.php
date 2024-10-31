@@ -42,26 +42,28 @@ if ( ! class_exists( 'Forked\CMB2\CMB2Grid\Grid\Group\GroupColumn' ) ) {
 			$field = cmb2_get_field( $grid->getCmb2Obj(), $this->getParentFieldId() );
 			$this->setField( $field );
 
-			//parent::__construct( $field, $grid );
+			// parent::__construct( $field, $grid );
 
-			/* $this->setGrid( $grid );
-			  if ( is_string( $field ) ) {
-			  $this->setFieldId( $field );
-			  } elseif ( is_array( $field ) ) {
-			  $this->setFieldId( $field[0] );
-			  }
-			  $fieldId = $this->getFieldId();
+			/*
+			$this->setGrid( $grid );
+			if ( is_string( $field ) ) {
+				$this->setFieldId( $field );
+			} elseif ( is_array( $field ) ) {
+				$this->setFieldId( $field[0] );
+			}
+			$fieldId = $this->getFieldId();
 
 
-			  $field = cmb2_get_field( $grid->getCmb2Obj(), $fieldId );
+			$field = cmb2_get_field( $grid->getCmb2Obj(), $fieldId );
 
-			  $this->setField( $field );
+			$this->setField( $field );
 
-			  if ( is_array( $field ) ) {
-			  if ( isset( $field['class'] ) ) {
-			  $this->setColumnClass( $field['class'] );
-			  }
-			  } */
+			if ( is_array( $field ) ) {
+				if ( isset( $field['class'] ) ) {
+					$this->setColumnClass( $field['class'] );
+				}
+			}
+			*/
 		}
 
 		function getParentFieldId() {
