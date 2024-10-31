@@ -20,8 +20,10 @@ if ( ! $airdates ) {
 }
 
 // If the start is 'current' make it this year (though it really never should be.)
+$this_year = gmdate( 'Y' );
+
 if ( 'current' === $airdates['start'] ) {
-	$airdates['start'] = gmdate( 'Y' );
+	$airdates['start'] = $this_year;
 }
 
 // If this is for an embedded post, return early.
@@ -60,7 +62,7 @@ if ( ! has_term( 'movie', 'lez_formats' ) && 'current' !== $airdates['finish'] &
 
 echo '<li class="list-group-item network airdates"><strong>' . wp_kses_post( $air_title ) . ':</strong> ' . wp_kses_post( $airdate );
 
-if ( 'current' === $airdates['finish'] || empty( $airdates['finish'] ) ) {
+if ( 'current' === $airdates['finish'] || $airdates['finish'] >= $this_year || empty( $airdates['finish'] ) ) {
 	echo '&nbsp;<span class="badge text-bg-success">On Air</span>';
 }
 

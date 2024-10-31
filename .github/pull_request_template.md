@@ -4,7 +4,7 @@ Thank you for helping out making the world just a little bit more queer.
 
 - [ ] There is a descriptive commit message with a short title (first line)
 - [ ] There is a description of your changes
-- [ ] Initial pull request targets the `development` branch
+- [ ] Initial pull request targets the `production` branch
 
 Example of a great PR:
 
