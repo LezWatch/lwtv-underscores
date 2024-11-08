@@ -37,24 +37,24 @@ $thumb_title       = ( empty( $thumb_attribution ) ) ? get_the_title() : get_the
 							$warn_image = lwtv_plugin()->get_symbolicon( 'warning.svg', 'fa-exclamation-triangle' );
 							if ( 'none' !== $warning['card'] ) {
 								// phpcs:ignore WordPress.Security.EscapeOutput
-								echo '<span class="callout callout-' . esc_attr( $warning['card'] ) . '" role="img" data-bs-target="tooltip" aria-label="Warning - This show contains triggers" title="Warning - This show contains triggers">' . $warn_image . '</span>';
+								echo '<span class="callout callout-' . esc_attr( $warning['card'] ) . '" role="img" data-bs-target="tooltip" aria-label="Warning - This show contains triggers" title="Warning - This show contains triggers" style="max-width: 25px; max-height: 25px">' . $warn_image . '</span>';
 							}
 
 							// Stars of Queerness.
-							echo '<span class="callout callout-star">' . lwtv_plugin()->get_show_stars( get_the_ID() ) . '</span>';
+							echo '<span class="callout callout-star" style="max-width: 25px; max-height: 25px">' . lwtv_plugin()->get_show_stars( get_the_ID() ) . '</span>';
 
 							// Hearts of Lurve.
 							if ( get_post_meta( get_the_ID(), 'lezshows_worthit_show_we_love', true ) ) {
 								$heart = lwtv_plugin()->get_symbolicon( 'hearts.svg', 'fa-heart' );
 								// phpcs:ignore WordPress.Security.EscapeOutput
-								echo ' <span role="img" aria-label="We Love This Show!" data-bs-target="tooltip" title="We Love This Show!" class="callout callout-we-love">' . $heart . '</span>';
+								echo ' <span role="img" aria-label="We Love This Show!" data-bs-target="tooltip" title="We Love This Show!" class="callout callout-we-love" style="max-width: 25px; max-height: 25px">' . $heart . '</span>';
 							}
 
 							// Skulls of Death.
 							if ( has_term( 'dead-queers', 'lez_tropes', get_the_ID() ) ) {
 								$skull = lwtv_plugin()->get_symbolicon( 'skull-crossbones.svg', 'fa-ban' );
 								// phpcs:ignore WordPress.Security.EscapeOutput
-								echo ' <span role="img" aria-label="Warning - There is death on this show." data-bs-target="tooltip" title="Warning - There is death on this show." class="callout callout-death">' . $skull . '</span>';
+								echo ' <span role="img" aria-label="Warning - There is death on this show." data-bs-target="tooltip" title="Warning - There is death on this show." class="callout callout-death" style="max-width: 25px; max-height: 25px">' . $skull . '</span>';
 							}
 							?>
 						</span>
