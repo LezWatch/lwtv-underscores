@@ -5,7 +5,7 @@
  *
  * https://gist.githubusercontent.com/Clorith/3def2df9ddf47e0e7452d28cf76fb134/raw/958d1ce12fe811474a1d5827de3eae2b53c6f09b/disable-fullscreen-snippet.php
  *
- * @version 1.0 Feb 11, 2022.
+ * @version 1.1 - 08 Nov 2024
  * @package library
  */
 
@@ -24,7 +24,7 @@ class Gutenberg {
 		$screen = get_current_screen();
 
 		// Only add script in editor views.
-		if ( 'edit' !== $screen->parent_base ) {
+		if ( 'edit' !== $screen->parent_base && 'post' !== $screen->base ) {
 			return;
 		}
 
@@ -51,7 +51,7 @@ class Gutenberg {
 					featureDeclaration = JSON.parse( userPreference );
 				}
 
-				// Loop over the available features that are defines as overrideable.
+				// Loop over the available features that are defines as over-rideable.
 				for ( const [ key, value ] of Object.entries( featureDeclaration ) ) {
 					previousState[ key ] = value;
 

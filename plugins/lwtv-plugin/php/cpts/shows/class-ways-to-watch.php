@@ -30,7 +30,7 @@ class Ways_To_Watch {
 	 * Brute Force hide the term description since we're not using it and it takes up space.
 	 */
 	public function hide_description_row() {
-		echo '<style> .term-description-wrap, .term-slug-wrap { display:none; } #lezwatchurls_all_repeat { width: 150%; }</style>';
+		echo '<style> .term-description-wrap, .term-slug-wrap { display:none; } </style>';
 	}
 
 	/**
