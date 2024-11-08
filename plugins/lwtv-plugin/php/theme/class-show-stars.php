@@ -26,7 +26,7 @@ class Show_Stars {
 			}
 
 			$icon = lwtv_plugin()->get_symbolicon( 'star.svg', 'fa-star' );
-			$star = ' <span role="img" aria-label="' . ucfirst( $color ) . ' Star Show" data-bs-target="tooltip" title="' . ucfirst( $color ) . ' Star Show" class="show-star ' . $color . '">' . $icon . '</span>';
+			$star = ' <span role="img" aria-label="' . ucfirst( $color ) . ' Star Show" data-bs-target="tooltip" title="' . ucfirst( $color ) . ' Star Show" class="show-star ' . $color . '" style="max-width: 15px; max-height: 15px">' . $icon . '</span>';
 
 			return $star;
 		} else {
