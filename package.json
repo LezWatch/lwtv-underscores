@@ -67,7 +67,7 @@
     "lint-staged": "^15",
     "npm-run-all2": "^7.0.1",
     "path": "^0.12.7",
-    "postcss": "^8.4.29",
+    "postcss": "^8.4.48",
     "terser": "^5.36.0",
     "terser-webpack-plugin": "^5.3.10",
     "webpack": "^5.96.1"
