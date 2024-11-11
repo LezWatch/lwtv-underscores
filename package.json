@@ -50,7 +50,7 @@
   },
   "devDependencies": {
     "@lodder/grunt-postcss": "^3.1.1",
-    "@parcel/watcher": "^2.4.1",
+    "@parcel/watcher": "^2.5.0",
     "@types/node": "^22",
     "@wordpress/scripts": "^30",
     "autoprefixer": "^10.4.15",
