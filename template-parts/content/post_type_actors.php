@@ -77,9 +77,13 @@ lwtv_plugin()->get_microformats_fix( $actor_id );
 				<?php get_template_part( 'template-parts/partials/actors/gender-sexuality', '', array( 'actor' => $actor_id ) ); ?>
 			</div>
 		</div>
+		<hr>
 		<div class="row align-items-start">
 			<div class="col">
-				<?php get_template_part( 'template-parts/partials/actors/socials', '', array( 'actor' => $actor_id ) ); ?>
+				<?php get_template_part( 'template-parts/partials/actors/links', '', array( 'actor' => $actor_id ) ); ?>
+			</div>
+			<div class="col">
+				<?php get_template_part( 'template-parts/partials/actors/social', '', array( 'actor' => $actor_id ) ); ?>
 			</div>
 		</div>
 	</div>
