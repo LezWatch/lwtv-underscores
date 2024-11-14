@@ -50,8 +50,9 @@ class User_Profiles {
 	public function user_contactmethods() {
 		// Add moar contact methods and reorder:
 		$methods['twitter']   = 'Twitter username (without @ so "mytwitter")';
-		$methods['facebook']  = 'Facebook profile URL';
-		$methods['instagram'] = 'Instagram profile URL';
+		$methods['facebook']  = 'Facebook profile UR';
+		$methods['instagram'] = 'Instagram profile ID (ex. "my_cool_insta")';
+		$methods['threads']   = 'Threads profile ID  (ex "my_cool_threader")';
 		$methods['tumblr']    = 'Tumblr profile URL (ex. https://my-site.tumblr.com )';
 		$methods['tiktok']    = 'TikTok URL (ex. https://tiktok.com/@myname)';
 		$methods['mastodon']  = 'Mastodon URL (ex. https://mastodon.site/@myname )';

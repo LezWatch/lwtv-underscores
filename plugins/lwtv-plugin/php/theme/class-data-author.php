@@ -38,6 +38,7 @@ class Data_Author {
 			'bluesky'   => get_the_author_meta( 'bluesky', $author ),
 			'mastodon'  => get_the_author_meta( 'mastodon', $author ),
 			'instagram' => get_the_author_meta( 'instagram', $author ),
+			'threads'   => get_the_author_meta( 'threads', $author ),
 			'tiktok'    => get_the_author_meta( 'tiktok', $author ),
 			'tumblr'    => get_the_author_meta( 'tumblr', $author ),
 			'twitter'   => get_the_author_meta( 'twitter', $author ),
@@ -47,13 +48,14 @@ class Data_Author {
 		// Get all the stupid social...
 		$bluesky   = ( ! empty( $user_socials['bluesky'] ) ) ? '<a href="' . $user_socials['bluesky'] . '" target="_blank" rel="nofollow">' . lwtv_plugin()->get_symbolicon( 'bluesky.svg', 'fa-bluesky' ) . '</a>' : false;
 		$instagram = ( ! empty( $user_socials['instagram'] ) ) ? '<a href="https://instagram.com/' . $user_socials['instagram'] . '" target="_blank" rel="nofollow">' . lwtv_plugin()->get_symbolicon( 'instagram.svg', 'fa-instagram' ) . '</a>' : false;
+		$threads   = ( ! empty( $user_socials['threads'] ) ) ? '<a href="https://threads.net/' . $user_socials['threads'] . '" target="_blank" rel="nofollow">' . lwtv_plugin()->get_symbolicon( 'threads.svg', 'fa-threads' ) . '</a>' : false;
 		$twitter   = ( ! empty( $user_socials['twitter'] ) ) ? '<a href="https://twitter.com/' . $user_socials['twitter'] . '" target="_blank" rel="nofollow">' . lwtv_plugin()->get_symbolicon( 'x-twitter.svg', 'fa-x-twitter' ) . '</a>' : false;
 		$tumblr    = ( ! empty( $user_socials['tumblr'] ) ) ? '<a href="' . $user_socials['tumblr'] . '" target="_blank" rel="nofollow">' . lwtv_plugin()->get_symbolicon( 'tumblr.svg', 'fa-tumblr' ) . '</a>' : false;
 		$website   = ( ! empty( $user_socials['website'] ) ) ? '<a href="' . $user_socials['website'] . '" target="_blank" rel="nofollow">' . lwtv_plugin()->get_symbolicon( 'home.svg', 'fa-home' ) . '</a>' : false;
 		$mastodon  = ( ! empty( $user_socials['mastodon'] ) ) ? '<a href="' . $user_socials['mastodon'] . '" target="_blank" rel="nofollow">' . lwtv_plugin()->get_symbolicon( 'mastodon.svg', 'fa-mastodon' ) . '</a>' : false;
 
 		// Set the array in order and remove any empty ones.
-		$social_array = array( $website, $twitter, $instagram, $tumblr, $bluesky, $mastodon );
+		$social_array = array( $website, $twitter, $instagram, $threads, $tumblr, $bluesky, $mastodon );
 		$social_array = array_filter( $social_array );
 
 		// Add Socials.

@@ -370,6 +370,17 @@ class CMB2_Metaboxes {
 				),
 			)
 		);
+		// Field: Bluesky URL
+		$field_bluesky = $cmb_actorside_social->add_field(
+			array(
+				'name'       => 'BlueSky',
+				'id'         => self::PREFIX . 'bluesky',
+				'type'       => 'text',
+				'attributes' => array(
+					'placeholder' => 'Ex: https://bsky.app/profile/jerilryan.bsky.social',
+				),
+			)
+		);
 		// Field: Instagram ID
 		$field_instagram = $cmb_actorside_social->add_field(
 			array(
@@ -379,6 +390,15 @@ class CMB2_Metaboxes {
 				'attributes' => array(
 					'placeholder' => 'Ex: whododatlikedat',
 				),
+			)
+		);
+		// Field: Threads
+		$field_threads = $cmb_actorside_social->add_field(
+			array(
+				'name' => 'Threads',
+				'id'   => self::PREFIX . 'has_threads',
+				'desc' => 'Check if the actor has a threads account.',
+				'type' => 'checkbox',
 			)
 		);
 		// Field: Tumblr ID
@@ -425,21 +445,21 @@ class CMB2_Metaboxes {
 				),
 			)
 		);
-		// Field: Bluesky URL
-		$field_bluesky = $cmb_actorside_social->add_field(
+		// Field: Youtube URL
+		$field_youtube = $cmb_actorside_social->add_field(
 			array(
-				'name'       => 'BlueSky',
-				'id'         => self::PREFIX . 'bluesky',
+				'name'       => 'YouTube Channel',
+				'id'         => self::PREFIX . 'youtube',
 				'type'       => 'text',
 				'attributes' => array(
-					'placeholder' => 'Ex: https://bsky.app/profile/jerilryan.bsky.social',
+					'placeholder' => 'Ex: https://www.youtube.com/channel/UCZurPHz2JX2zFW0qPOnuMwQ',
 				),
 			)
 		);
 		// Field: Twitch URL
 		$field_twitch = $cmb_actorside_social->add_field(
 			array(
-				'name'       => 'Twitch',
+				'name'       => 'Twitch Channel',
 				'id'         => self::PREFIX . 'twitch',
 				'type'       => 'text',
 				'attributes' => array(
@@ -459,12 +479,14 @@ class CMB2_Metaboxes {
 			$row4                  = $grid_actorside_social->addRow();
 			$row5                  = $grid_actorside_social->addRow();
 			$row6                  = $grid_actorside_social->addRow();
+			$row7                  = $grid_actorside_social->addRow();
 			$row1->addColumns( array( $field_imdb, $field_wiki ) );
 			$row2->addColumns( array( $field_home ) );
-			$row3->addColumns( array( $field_twitter, $field_instagram ) );
-			$row4->addColumns( array( $field_tumblr, $field_mastodon ) );
+			$row3->addColumns( array( $field_twitter, $field_bluesky ) );
+			$row4->addColumns( array( $field_instagram, $field_threads ) );
 			$row5->addColumns( array( $field_facebook, $field_tiktok ) );
-			$row6->addColumns( array( $field_bluesky, $field_twitch ) );
+			$row6->addColumns( array( $field_tumblr, $field_mastodon ) );
+			$row7->addColumns( array( $field_youtube, $field_twitch ) );
 		}
 	}
 
@@ -492,8 +514,9 @@ class CMB2_Metaboxes {
 				'name'       => 'WikiData ID',
 				'id'         => self::PREFIX . 'wikidata_qid',
 				'type'       => 'text',
+				'desc'       => 'Enter the WikiData QID for this actor to override the automated check.',
 				'attributes' => array(
-					'placeholder' => 'Ex: Q2933359 - use to override the search',
+					'placeholder' => 'Ex: Q2933359',
 				),
 			)
 		);
@@ -532,7 +555,7 @@ class CMB2_Metaboxes {
 			)
 		);
 
-		// Actor Sidebar Grid
+		// Actor Misc Admin Sidebar Grid
 		if ( ! is_admin() ) {
 			return;
 		} else {

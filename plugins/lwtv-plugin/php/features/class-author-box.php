@@ -30,7 +30,12 @@ class Author_Box {
 			'icon' => 'instagram.svg',
 			'meta' => 'instagram',
 		),
-		'tictok'    => array(
+		'threads'   => array(
+			'name' => 'Threads',
+			'icon' => 'threads.svg',
+			'meta' => 'threads',
+		),
+		'tiktok'    => array(
 			'name' => 'TikTok',
 			'icon' => 'tiktok.svg',
 			'meta' => 'tiktok',
