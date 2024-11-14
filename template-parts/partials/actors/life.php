@@ -53,13 +53,11 @@ if ( isset( $born ) ) {
 // Output everything.
 if ( count( $life_array['dates'] ) > 0 ) {
 	echo '<ul class="list-group list-group-flush">';
-	foreach ( $life_array['dates'] as $event => $date ) {
-		echo '<li class="list-group-item"><strong>' . esc_html( ucfirst( $event ) ) . '</strong>:</br>' . wp_kses_post( $date ) . '</li>';
-	}
-
 	if ( ! empty( $life_array['age'] ) ) {
 		echo '<li class="list-group-item"><strong>Age</strong>:</br>' . wp_kses_post( $life_array['age'] ) . '</li>';
 	}
-
+	foreach ( $life_array['dates'] as $event => $date ) {
+		echo '<li class="list-group-item"><strong>' . esc_html( ucfirst( $event ) ) . '</strong>:</br>' . wp_kses_post( $date ) . '</li>';
+	}
 	echo '</ul>';
 }
