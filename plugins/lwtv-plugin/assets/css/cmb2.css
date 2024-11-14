@@ -108,3 +108,18 @@ div.post-titles-container input {
 div#lezchars_show_group_repeat .cmb-type-custom-attached-posts .connected {
 	min-height: 110px;
 }
+
+div.cmb2-id-lezchars-romantic select.cmb2_select2,
+div.cmb2-id-lezchars-sexuality select.cmb2_select2,
+div.cmb2-id-lezchars-gender select.cmb2_select2 {
+	width: 90%!important;
+}
+
+.cmb2-wrap input.cmb2-text-medium {
+	width: 100%!important;
+}
+
+.cmb2-wrap input.cmb2-text-small,
+.cmb2-wrap input.cmb2-timepicker {
+	width: 50%!important;
+}

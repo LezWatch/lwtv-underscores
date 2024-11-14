@@ -149,6 +149,9 @@ class Features implements Component, Templater {
 
 		// Block pingbacks.
 		add_filter( 'xmlrpc_methods', array( $this, 'remove_xmlrpc_methods' ) );
+
+		// Fuck off Gutenberg Alerts
+		add_action( 'enqueue_block_editor_assets', array( $this, 'disable_gutenberg_things' ) );
 	}
 
 	/**
@@ -410,5 +413,16 @@ class Features implements Component, Templater {
 	 */
 	public function check_missed_schedule(): void {
 		( new Missed_Schedule() )->missed_schedule();
+	}
+
+	/**
+	 * Disable Parts of Gutenberg.
+	 *
+	 * For some reason, parts of Gutenberg don't properly adhere to local storage, so we force it.
+	 *
+	 * @return void
+	 */
+	public function disable_gutenberg_things(): void {
+		wp_enqueue_script( 'disable_gutenberg', LWTV_PLUGIN_URL . '/assets/js/gutenberg.js', array( 'wp-blocks' ), '1.0.0', true );
 	}
 }
