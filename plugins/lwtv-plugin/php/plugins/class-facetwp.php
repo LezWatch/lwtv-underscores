@@ -9,7 +9,6 @@ namespace LWTV\Plugins;
 
 use LWTV\Plugins\FacetWP\Indexing;
 use LWTV\Plugins\FacetWP\Labels;
-use LWTV\Plugins\FacetWP\Order_By;
 use LWTV\Plugins\FacetWP\Pagination;
 
 class FacetWP {
@@ -24,7 +23,6 @@ class FacetWP {
 
 		new Indexing();
 		new Labels();
-		new Order_By();
 		new Pagination();
 
 		// Reset Shortcode

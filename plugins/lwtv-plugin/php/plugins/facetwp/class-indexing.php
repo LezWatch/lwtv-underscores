@@ -11,7 +11,6 @@ class Indexing {
 	 * Constructor
 	 */
 	public function __construct() {
-
 		// Filter data before saving it
 		add_filter( 'facetwp_index_row', array( $this, 'facetwp_index_row' ), 10, 2 );
 
@@ -43,6 +42,13 @@ class Indexing {
 
 	/**
 	 * Force Facet to show sometimes
+	 *
+	 * @since 1.1
+	 *
+	 * @param bool $is_main_query
+	 * @param WP_Query $query
+	 *
+	 * @return bool
 	 */
 	public function facetwp_is_main_query( $is_main_query, $query ) {
 		if ( is_admin() ) {
@@ -57,10 +63,12 @@ class Indexing {
 	 * Filter Data before it's saved
 	 * Useful for serialized data but also capitalizing stars
 	 *
-	 * @since 1.1
+	 * @param array $params
+	 * @param object $facet_class
+	 *
+	 * @return array
 	 */
 	public function facetwp_index_row( $params, $facet_class ) {
-
 		switch ( get_post_type( $params['post_id'] ) ) {
 			case 'post_type_shows':
 				$params = $this->facetwp_index_row_shows( $params, $facet_class );
@@ -78,6 +86,11 @@ class Indexing {
 
 	/**
 	 * Indexing for Actors
+	 *
+	 * @param array $params
+	 * @param object $facet_class
+	 *
+	 * @return array
 	 */
 	public function facetwp_index_row_actors( $params, $facet_class ) {
 		// Is Queer
@@ -95,9 +108,13 @@ class Indexing {
 
 	/**
 	 * Indexing for Characters
+	 *
+	 * @param array $params
+	 * @param object $facet_class
+	 *
+	 * @return array
 	 */
 	public function facetwp_index_row_characters( $params, $facet_class ) {
-
 		switch ( $params['facet_name'] ) {
 			case 'char_actors':
 				$params = $this->facetwp_index_row_characters_actors( $params, $facet_class );
@@ -118,10 +135,14 @@ class Indexing {
 
 	/**
 	 * Indexing for Characters - Actors
-	 *
 	 * Saves one value for each actor
 	 *
 	 * EXAMPLE INPUT: a:1:{i:0;s:13:"Rachel Bilson";}
+	 *
+	 * @param array $params
+	 * @param object $facet_class
+	 *
+	 * @return array
 	 */
 	public function facetwp_index_row_characters_actors( $params, $facet_class ) {
 		$values = (array) $params['facet_value'];
@@ -140,10 +161,14 @@ class Indexing {
 
 	/**
 	 * Indexing for Characters - Shows
-	 *
 	 * Saves one value for each show
 	 *
 	 * EXAMPLE INPUT: a:1:{i:0;a:3:{s:4:"show";s:3:"655";s:4:"type";s:9:"recurring";s:7:"appears";a:1:{i:0;s:4:"2017";}}}
+	 *
+	 * @param array $params
+	 * @param object $facet_class
+	 *
+	 * @return array
 	 */
 	public function facetwp_index_row_characters_shows( $params, $facet_class ) {
 		$values = (array) $params['facet_value'];
@@ -162,10 +187,14 @@ class Indexing {
 
 	/**
 	 * Indexing for Characters - Roles
-	 *
 	 * Saves one value for each show.
 	 *
 	 * EXAMPLE INPUT: a:1:{i:0;a:3:{s:4:"show";s:3:"655";s:4:"type";s:9:"recurring";s:7:"appears";a:1:{i:0;s:4:"2017";}}}
+	 *
+	 * @param array $params
+	 * @param object $facet_class
+	 *
+	 * @return array
 	 */
 	public function facetwp_index_row_characters_roles( $params, $facet_class ) {
 		$values = (array) $params['facet_value'];
@@ -189,6 +218,11 @@ class Indexing {
 	 * Years is a sub array of the array, because I was thinking clever and forgot what a metric PITA this is.
 	 *
 	 * EXAMPLE INPUT: a:1:{i:0;a:3:{s:4:"show";s:3:"655";s:4:"type";s:9:"recurring";s:7:"appears";a:1:{i:0;s:4:"2017";}}}
+	 *
+	 * @param array $params
+	 * @param object $facet_class
+	 *
+	 * @return array
 	 */
 	public function facetwp_index_row_characters_years( $params, $facet_class ) {
 		$values = (array) $params['facet_value'];
@@ -209,6 +243,11 @@ class Indexing {
 
 	/**
 	 * Indexing for Shows
+	 *
+	 * @param array $params
+	 * @param object $facet_class
+	 *
+	 * @return array
 	 */
 	public function facetwp_index_row_shows( $params, $facet_class ) {
 		switch ( $params['facet_name'] ) {
@@ -228,7 +267,7 @@ class Indexing {
 				$params = $this->facetwp_index_row_shows_airdates( $params, $facet_class );
 				break;
 			case 'all_the_missing':
-				$params = $this->facetwp_index_row_shows_missing( $params, $facet_class );
+				$params = $this->facetwp_index_row_shows_empty( $params, $facet_class );
 				break;
 		}
 		return $params;
@@ -236,30 +275,53 @@ class Indexing {
 
 	/**
 	 * Indexing for Stars
+	 *
+	 * Capitalize the first letter of the stars
+	 *
+	 * @param array $params
+	 * @param object $facet_class
+	 *
+	 * @return array
 	 */
 	public function facetwp_index_row_shows_stars( $params, $facet_class ) {
 		$params['facet_value']         = $params['facet_value'];
 		$params['facet_display_value'] = ucfirst( $params['facet_display_value'] );
 		$facet_class->insert( $params );
+
 		// skip default indexing
 		$params['facet_value'] = '';
+
 		return $params;
 	}
 
 	/**
 	 * Indexing for Loved
+	 * Change 'on' to 'yes'
+	 *
+	 * @param array $params
+	 * @param object $facet_class
+	 *
+	 * @return array
 	 */
 	public function facetwp_index_row_shows_loved( $params, $facet_class ) {
 		$params['facet_value']         = ( 'on' === $params['facet_value'] ) ? 'yes' : 'no';
 		$params['facet_display_value'] = ( 'on' === $params['facet_display_value'] ) ? 'Yes' : 'No';
 		$facet_class->insert( $params );
+
 		// skip default indexing
 		$params['facet_value'] = '';
+
 		return $params;
 	}
 
 	/**
 	 * Indexing for Death
+	 * Change 'on' to 'yes'
+	 *
+	 * @param array $params
+	 * @param object $facet_class
+	 *
+	 * @return array
 	 */
 	public function facetwp_index_row_shows_death( $params, $facet_class ) {
 		$params['facet_value']         = ( $params['facet_value'] >= 1 ) ? 'yes' : 'no';
@@ -273,6 +335,12 @@ class Indexing {
 
 	/**
 	 * Indexing for Trigger Warning
+	 * Change 'on' to 'high'
+	 *
+	 * @param array $params
+	 * @param object $facet_class
+	 *
+	 * @return array
 	 */
 	public function facetwp_index_row_shows_trigger_warning( $params, $facet_class ) {
 		$params['facet_value']         = ( 'on' === $params['facet_display_value'] ) ? 'high' : $params['facet_display_value'];
@@ -291,6 +359,11 @@ class Indexing {
 	 * Also saves on_air as yes or no
 	 *
 	 * a:2:{s:5:"start";s:4:"1994";s:6:"finish";s:4:"2009";}
+	 *
+	 * @param array $params
+	 * @param object $facet_class
+	 *
+	 * @return array
 	 */
 	public function facetwp_index_row_shows_airdates( $params, $facet_class ) {
 		// Parse start and end dates  (use 'now' if 'current' or empty)
@@ -335,43 +408,65 @@ class Indexing {
 	}
 
 	/**
-	 * Indexing for Missing
+	 * Indexing for Empty Data
 	 *
 	 * There are a few things that we want to make sure are always indexed when they LACK data.
+	 *
+	 * @param array $params
+	 * @param object $facet_class
+	 *
+	 * @return array
 	 */
-	public function facetwp_index_row_shows_missing( $params, $facet_class ) {
+	public function facetwp_index_row_shows_empty( $params, $facet_class ) {
 
-		// If we do not love the show...
-		$loved = get_post_meta( $params['post_id'], 'lezshows_worthit_show_we_love', true );
-		if ( empty( $loved ) ) {
-			$params_loved                        = $params;
-			$params_loved['facet_name']          = 'show_loved';
-			$params_loved['facet_source']        = 'cf/lezshows_worthit_show_we_love';
-			$params_loved['facet_value']         = 'no';
-			$params_loved['facet_display_value'] = 'No';
-			$facet_class->insert( $params_loved );
-		}
+		$missing_data = array(
+			'show_stars'           => array(
+				'type'    => 'terms',
+				'key'     => 'lez_stars',
+				'source'  => 'tax/lez_stars',
+				'value'   => 'none',
+				'display' => 'None',
+			),
+			'show_loved'           => array(
+				'type'    => 'post_meta',
+				'key'     => 'lezshows_worthit_show_we_love',
+				'source'  => 'cf/lezshows_worthit_show_we_love',
+				'value'   => 'no',
+				'display' => 'No',
+			),
+			'show_trigger_warning' => array(
+				'type'    => 'terms',
+				'key'     => 'lez_triggers',
+				'source'  => 'tax/lez_triggers',
+				'value'   => 'none',
+				'display' => 'None',
+			),
+		);
 
-		// If there are no warnings
-		$warn = get_the_terms( $params['post_id'], 'lez_triggers' );
-		if ( empty( $warn ) ) {
-			$params_warn                        = $params;
-			$params_warn['facet_name']          = 'show_trigger_warning';
-			$params_warn['facet_source']        = 'tax/lez_triggers';
-			$params_warn['facet_value']         = 'none';
-			$params_warn['facet_display_value'] = 'None';
-			$facet_class->insert( $params_warn );
-		}
+		foreach ( $missing_data as $name => $data ) {
+			switch ( $data['type'] ) {
+				case 'terms':
+					$raw_data = get_the_terms( $params['post_id'], $data['key'] );
+					break;
+				case 'post_meta':
+					$raw_data = get_post_meta( $params['post_id'], $data['key'], true );
+					break;
+			}
 
-		// If there are no stars
-		$stars = get_the_terms( $params['post_id'], 'lez_stars' );
-		if ( empty( $stars ) ) {
-			$params_stars                        = $params;
-			$params_stars['facet_name']          = 'show_stars';
-			$params_stars['facet_source']        = 'tax/lez_stars';
-			$params_stars['facet_value']         = 'none';
-			$params_stars['facet_display_value'] = 'None';
-			$facet_class->insert( $params_stars );
+			// If there's no raw data, break early.
+			if ( ! isset( $raw_data ) ) {
+				return $params;
+			}
+
+			// If the raw data is empty, we need to force-add a null value.
+			if ( empty( $raw_data ) ) {
+				$params_new                        = $params;
+				$params_new['facet_name']          = $name;
+				$params_new['facet_source']        = $data['source'];
+				$params_new['facet_value']         = $data['value'];
+				$params_new['facet_display_value'] = $data['display'];
+				$facet_class->insert( $params_new );
+			}
 		}
 
 		// skip default indexing
