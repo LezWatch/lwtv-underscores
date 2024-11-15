@@ -15,29 +15,76 @@ class Indexing {
 		add_filter( 'facetwp_index_row', array( $this, 'facetwp_index_row' ), 10, 2 );
 
 		// Filter Facet output
-		add_filter(
-			'facetwp_facet_html',
-			function ( $output, $params ) {
-				if ( 'show_airdates' === $params['facet']['name'] ) {
-					$output = str_replace( 'Min', 'First Year', $output );
-					$output = str_replace( 'Max', 'Last Year', $output );
-				}
-				return $output;
-			},
-			10,
-			2,
-		);
+		add_filter( 'facetwp_facet_html', array( $this, 'facetwp_facet_html' ), 10, 2 );
 
 		// Adding a weird filter...
-		add_filter(
-			'facetwp_facet_sources',
-			function ( $sources ) {
-				$sources['custom_fields']['choices']['cf/lwtv_data'] = 'lwtv_data';
-				return $sources;
-			}
-		);
+		add_filter( 'facetwp_facet_sources', array( $this, 'facetwp_facet_sources' ), 10, 2 );
 
+		// Force Facet to show sometimes
 		add_filter( 'facetwp_is_main_query', array( $this, 'facetwp_is_main_query' ), 10, 2 );
+	}
+
+	/**
+	 * Filter Data before it's saved
+	 *
+	 * This is how we break apart arrays and save them as individual values, as well as
+	 * reformatting some of the data.
+	 *
+	 * @param array $params
+	 * @param object $facet_class
+	 *
+	 * @return array
+	 */
+	public function facetwp_index_row( $params, $facet_class ) {
+		switch ( get_post_type( $params['post_id'] ) ) {
+			case 'post_type_actors':
+				$params = $this->facetwp_index_row_actors( $params, $facet_class );
+				break;
+			case 'post_type_characters':
+				$params = $this->facetwp_index_row_characters( $params, $facet_class );
+				break;
+			case 'post_type_shows':
+				$params = $this->facetwp_index_row_shows( $params, $facet_class );
+				break;
+		}
+
+		return $params;
+	}
+
+	/**
+	 * Filter Facet output
+	 *
+	 * Sometimes the default labels are not what we want.
+	 *
+	 * @param string $output
+	 * @param array $params
+	 *
+	 * @return string
+	 */
+	public function facetwp_facet_html( $output, $params ) {
+		// Change the labels for the airdates facet
+		if ( 'show_airdates' === $params['facet']['name'] ) {
+			$output = str_replace( 'Min', 'First Year', $output );
+			$output = str_replace( 'Max', 'Last Year', $output );
+		}
+
+		return $output;
+	}
+
+	/**
+	 * Filter Facet Sources
+	 *
+	 * I don't remember WHY this is needed.
+	 *
+	 * @param array $sources
+	 * @param array $params
+	 *
+	 * @return array
+	 */
+	public function facetwp_facet_sources( $sources ) {
+		$sources['custom_fields']['choices']['cf/lwtv_data'] = 'lwtv_data';
+
+		return $sources;
 	}
 
 	/**
@@ -60,31 +107,6 @@ class Indexing {
 	}
 
 	/**
-	 * Filter Data before it's saved
-	 * Useful for serialized data but also capitalizing stars
-	 *
-	 * @param array $params
-	 * @param object $facet_class
-	 *
-	 * @return array
-	 */
-	public function facetwp_index_row( $params, $facet_class ) {
-		switch ( get_post_type( $params['post_id'] ) ) {
-			case 'post_type_shows':
-				$params = $this->facetwp_index_row_shows( $params, $facet_class );
-				break;
-			case 'post_type_actors':
-				$params = $this->facetwp_index_row_actors( $params, $facet_class );
-				break;
-			case 'post_type_characters':
-				$params = $this->facetwp_index_row_characters( $params, $facet_class );
-				break;
-		}
-
-		return $params;
-	}
-
-	/**
 	 * Indexing for Actors
 	 *
 	 * @param array $params
@@ -93,15 +115,33 @@ class Indexing {
 	 * @return array
 	 */
 	public function facetwp_index_row_actors( $params, $facet_class ) {
-		// Is Queer
-		// Change 'on' to 'yes'
-		if ( 'is_queer' === $params['facet_name'] ) {
-			$params['facet_value']         = ( '1' === $params['facet_value'] ) ? 'yes' : 'no';
-			$params['facet_display_value'] = ( '1' === $params['facet_display_value'] ) ? 'Is Queer' : 'Is Not Queer';
-			$facet_class->insert( $params );
-			// skip default indexing
-			$params['facet_value'] = '';
+		switch ( $params['facet_name'] ) {
+			case 'is_queer':
+				$params = $this->facetwp_index_row_actors_queer( $params, $facet_class );
+				break;
 		}
+
+		return $params;
+	}
+
+	/**
+	 * Indexing for Actors - Queer
+	 * Change 'on' to 'yes'
+	 *
+	 * This is a checkbox, so it's a little different than the others.
+	 *
+	 * @param array $params
+	 * @param object $facet_class
+	 *
+	 * @return array
+	 */
+	public function facetwp_index_row_actors_queer( $params, $facet_class ) {
+		$params['facet_value']         = ( '1' === $params['facet_value'] ) ? 'yes' : 'no';
+		$params['facet_display_value'] = ( '1' === $params['facet_display_value'] ) ? 'Is Queer' : 'Is Not Queer';
+		$facet_class->insert( $params );
+
+		// skip default indexing
+		$params['facet_value'] = '';
 
 		return $params;
 	}
@@ -327,6 +367,7 @@ class Indexing {
 		$params['facet_value']         = ( $params['facet_value'] >= 1 ) ? 'yes' : 'no';
 		$params['facet_display_value'] = ( $params['facet_display_value'] >= 1 ) ? 'Yes' : 'No';
 		$facet_class->insert( $params );
+
 		// skip default indexing
 		$params['facet_value'] = '';
 
@@ -346,6 +387,7 @@ class Indexing {
 		$params['facet_value']         = ( 'on' === $params['facet_display_value'] ) ? 'high' : $params['facet_display_value'];
 		$params['facet_display_value'] = ( 'on' === $params['facet_display_value'] ) ? 'High' : ucfirst( $params['facet_display_value'] );
 		$facet_class->insert( $params );
+
 		// skip default indexing
 		$params['facet_value'] = '';
 
@@ -358,7 +400,7 @@ class Indexing {
 	 * Saves two values for two sources
 	 * Also saves on_air as yes or no
 	 *
-	 * a:2:{s:5:"start";s:4:"1994";s:6:"finish";s:4:"2009";}
+	 * EXAMPLE INPUT: a:2:{s:5:"start";s:4:"1994";s:6:"finish";s:4:"2009";}
 	 *
 	 * @param array $params
 	 * @param object $facet_class
@@ -366,13 +408,15 @@ class Indexing {
 	 * @return array
 	 */
 	public function facetwp_index_row_shows_airdates( $params, $facet_class ) {
-		// Parse start and end dates  (use 'now' if 'current' or empty)
+		// Parse start and end dates (use the current year if 'current' or empty)
 		$values = (array) $params['facet_value'];
 		$start  = ( isset( $values['start'] ) ) ? $values['start'] : '';
 		$end    = ( isset( $values['finish'] ) && lcfirst( $values['finish'] ) !== 'current' ) ? $values['finish'] : gmdate( 'Y' );
 
-		$params_start = $params;
-		$params_end   = $params;
+		// Build default params
+		$params_start  = $params;
+		$params_end    = $params;
+		$params_on_air = $params;
 
 		// Add start date
 		$params_start['facet_value']         = $start;
@@ -384,18 +428,20 @@ class Indexing {
 		$params_end['facet_display_value'] = $end;
 		$facet_class->insert( $params_end );
 
-		// Extra check for is it currently on air
-		$params_on_air = $params;
-		$on_air        = 'no';
-		$on_air_meta   = get_post_meta( $params['post_id'], 'lezshows_on_air', true );
+		// Based on the dates, is this on air?
+		$on_air      = 'no';
+		$on_air_meta = get_post_meta( $params['post_id'], 'lezshows_on_air', true );
 
 		// phpcs:ignore WordPress.PHP.StrictInArray.MissingTrueStrict
 		if ( isset( $on_air_meta ) && in_array( $on_air_meta, array( 'yes', 'no' ) ) ) {
+			// If the meta is set and is either yes or no, use that.
 			$on_air = $on_air_meta;
 		} elseif ( 'current' === lcfirst( $end ) || $end > gmdate( 'Y' ) ) {
+			// If the end date is 'current' or in the future, it's on air.
 			$on_air = 'yes';
 		}
 
+		// Add on air status
 		$params_on_air['facet_name']          = 'show_on_air';
 		$params_on_air['facet_value']         = $on_air;
 		$params_on_air['facet_display_value'] = ucfirst( $on_air );
@@ -458,7 +504,7 @@ class Indexing {
 				return $params;
 			}
 
-			// If the raw data is empty, we need to force-add a null value.
+			// If the raw data is empty, then it's really 'none' and we need to force-add the value.
 			if ( empty( $raw_data ) ) {
 				$params_new                        = $params;
 				$params_new['facet_name']          = $name;
