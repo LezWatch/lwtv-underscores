@@ -1,6 +1,6 @@
 {
   "name": "lwtv-underscores",
-  "version": "6.2.0",
+  "version": "6.2.2",
   "description": "LezWatch.TV Custom Theme.",
   "main": "index.js",
   "workspaces": [
@@ -12,7 +12,7 @@
     "build:composer": "composer update",
     "build:assets": "wp-scripts build",
     "build:workspace": "npm run build:workspace --workspaces",
-    "build:mover": "node ./pointsbuild.js",
+    "build:mover": "node ./postbuild.js",
     "lint": "npm-run-all lint:*",
     "lint:css": "wp-scripts lint-style '**/*.scss'",
     "lint:js": "wp-scripts lint-js 'plugins/lwtv-plugin/php/blocks/src/**/*.js'",
