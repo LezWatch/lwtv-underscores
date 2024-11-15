@@ -11,11 +11,11 @@
 // Versioning for efficient developers.
 if ( ! defined( 'LWTV_THEME_VERSION' ) ) {
 	$versions = array(
-		'lwtv-underscores' => '6.2.0',    // Bump this any time you make serious CSS changes.
+		'lwtv-underscores' => '6.2.2',    // Bump this any time you make serious CSS changes.
 		'font-awesome'     => '6.6.0',    // Bump when you update Font Awesome.
 		'bootstrap'        => '5.3.3',    // Bump when you update bootstrap.
-		'bootstrap_dark'   => '1.0',      // Bump when you update the dark mode.
-		'lwtv-blocks'      => '1.0.0',    // Bump when you update the blocks.
+		'bootstrap_dark'   => '1.1.0',      // Bump when you update the dark mode.
+		'lwtv-blocks'      => '1.0.2',    // Bump when you update the blocks.
 		'yikes-nav'        => '20240318', // Last date this was updated.
 	);
 	define( 'LWTV_THEME_VERSION', $versions );
@@ -82,7 +82,6 @@ require_once 'inc/widgets/show-widget.php';
 require_once 'inc/widgets/filter-widget1.php';
 require_once 'inc/widgets/filter-widget2.php';
 require_once 'inc/widgets/otd-widget.php';
-
 
 /**
  * Images
