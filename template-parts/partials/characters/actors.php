@@ -48,27 +48,46 @@ if ( 'actors' === $format ) {
 			}
 		}
 	} else {
-		$all_actors = array( 'none' );
+		$the_actors[0] = array(
+			'link'  => '',
+			'name'  => 'None',
+			'queer' => false,
+		);
 	}
 
 	// If there are no actors, and it's a cartoon, show that. Else show unknown.
 	if ( empty( $the_actors ) && has_term( 'cartoon', 'lez_cliches', $character ) ) {
-		$the_actors = array( 'None' );
-	} else {
-		$the_actors = ( empty( $the_actors ) ) ? array( '<a href="/actor/unknown/">Unknown</a>' ) : $the_actors;
+		$the_actors[0] = array(
+			'link'  => '',
+			'name'  => 'None',
+			'queer' => false,
+		);
+	} elseif ( empty( $the_actors ) ) {
+		$the_actors[0] = array(
+			'link'  => '<a href="/actor/unknown/">Unknown</a>',
+			'name'  => 'Unknown',
+			'queer' => false,
+		);
 	}
 	?>
 
 	<th scope="row"><?php echo wp_kses_post( _n( 'Actor', 'Actors', count( $the_actors ) ) ); ?></th>
 	<td>
 	<?php
-	// If we have two or fewer shows, just list them.
+	// If we have two or fewer actors, just list them.
 	if ( 2 >= count( $the_actors ) ) {
 		foreach ( $the_actors as $actor_id => $actor ) {
-			echo '&bull; ' . wp_kses_post( $actor['link'] );
+			echo '&bull; ';
+			if ( ! empty( $actor['link'] ) ) {
+				echo wp_kses_post( $actor['link'] );
+			} else {
+				echo esc_html( $actor['name'] );
+			}
+
 			if ( false !== $actor['queer'] ) {
 				echo $actor['queer']; // phpcs:ignore WordPress.Security.EscapeOutput
 			}
+
 			echo '</br>';
 		}
 	} else {
@@ -88,11 +107,19 @@ if ( 'actors' === $format ) {
 					<div class="accordion-body">
 					<?php
 					foreach ( $the_actors as $actor_id => $actor ) {
-						if ( 'None' === $actor ) {
-							echo 'None';
-							continue;
+						echo '&bull; ';
+
+						if ( ! empty( $actor['link'] ) ) {
+							echo wp_kses_post( $actor['link'] );
+						} else {
+							echo esc_html( $actor['name'] );
 						}
-						echo '&bull; ' . wp_kses_post( $actor['link'] ) . ' ' . $actor['queer'] . '<br />'; // phpcs:ignore WordPress.Security.EscapeOutput
+
+						if ( false !== $actor['queer'] ) {
+							echo $actor['queer']; // phpcs:ignore WordPress.Security.EscapeOutput
+						}
+
+						echo '</br>';
 					}
 					?>
 					</div>
