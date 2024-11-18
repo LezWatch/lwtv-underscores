@@ -509,8 +509,75 @@ class LWTV_Fork_CMB2_Attached_Posts_Field {
 			&& ! empty( $_POST['search_types'] )
 		) {
 			add_action( 'pre_get_posts', array( $this, 'modify_query' ) );
+
+			add_action( 'wp_ajax_find_posts', array( $this, 'wp_ajax_find_posts' ), 0 );
 		}
 		// @codingStandardsIgnoreEnd
+	}
+
+	/**
+	 * AJAX handler for finding posts.
+	 *
+	 * @since  3.1.0
+	 *
+	 * @return void
+	 */
+	public function wp_ajax_find_posts() {
+		check_ajax_referer( 'find-posts' );
+
+		$post_types = get_post_types( array( 'public' => true ), 'objects' );
+		unset( $post_types['attachment'] );
+
+		$args = array(
+			'post_type'      => array_keys( $post_types ),
+			'post_status'    => 'any',
+			'posts_per_page' => 50,
+		);
+
+		$search = wp_unslash( $_POST['ps'] );
+
+		if ( '' !== $search ) {
+			$args['s'] = $search;
+		}
+
+		$posts = get_posts( $args );
+
+		if ( ! $posts ) {
+			wp_send_json_error( __( 'No items found.' ) );
+		}
+
+		$html = '<table class="widefat"><thead><tr><th class="found-radio"><br /></th><th>' . __( 'Title' ) . '</th><th class="no-break">' . __( 'Queer' ) . '</th><th class="no-break">' . __( 'Status' ) . '</th></tr></thead><tbody>';
+		$alt  = '';
+		foreach ( $posts as $post ) {
+			$title = trim( $post->post_title ) ? $post->post_title : __( '(no title)' );
+			$alt   = ( 'alternate' === $alt ) ? '' : 'alternate';
+
+			switch ( $post->post_status ) {
+				case 'publish':
+				case 'private':
+					$stat = __( 'Published' );
+					break;
+				case 'future':
+					$stat = __( 'Scheduled' );
+					break;
+				case 'pending':
+					$stat = __( 'Pending Review' );
+					break;
+				case 'draft':
+					$stat = __( 'Draft' );
+					break;
+			}
+
+			$queer_meta = get_post_meta( $post->ID, 'lezactors_queer', true );
+			$is_queer   = ( ! empty( $queer_meta ) && $queer_meta ) ? 'Yes' : 'No';
+
+			$html .= '<tr class="' . trim( 'found-posts ' . $alt ) . '"><td class="found-radio"><input type="radio" id="found-' . $post->ID . '" name="found_post_id" value="' . esc_attr( $post->ID ) . '"></td>';
+			$html .= '<td><label for="found-' . $post->ID . '">' . esc_html( $title ) . '</label></td><td class="no-break">' . esc_html( $is_queer ) . '</td><td class="no-break">' . esc_html( $stat ) . ' </td></tr>' . "\n\n";
+		}
+
+		$html .= '</tbody></table>';
+
+		wp_send_json_success( $html );
 	}
 
 	/**
