@@ -3,7 +3,7 @@
  * Plugin Name: FORKED -- CMB2 Field Type: Attached Posts
  * Plugin URI: https://github.com/WebDevStudios/cmb2-attached-posts
  * Description: Attached posts field type for CMB2.
- * Version: 3.0-FORK
+ * Version: 3.1.0-FORK
  * Author: WebDevStudios, Ipstenu
  * License: GPLv2+
  */
@@ -68,7 +68,7 @@ if ( ! class_exists( 'LWTV_Fork_CMB2_Attached_Posts_Field_300', false ) ) {
 		 * @var   string
 		 * @since 1.2.3
 		 */
-		const VERSION = '3.0';
+		const VERSION = '3.1.0';
 
 		/**
 		 * Current version hook priority.
