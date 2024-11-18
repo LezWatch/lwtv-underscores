@@ -19,7 +19,7 @@
 	},
 	"dependencies": {
 		"@wordpress/babel-plugin-import-jsx-pragma": "^5.11",
-		"@wordpress/blocks": "^14.0",
+		"@wordpress/blocks": "^14.1",
 		"@wordpress/i18n": "^5.11"
 	},
 	"devDependencies": {
