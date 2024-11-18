@@ -18,7 +18,7 @@
 		"packages-update": "wp-scripts packages-update"
 	},
 	"dependencies": {
-		"@wordpress/babel-plugin-import-jsx-pragma": "^5.11",
+		"@wordpress/babel-plugin-import-jsx-pragma": "^5.12",
 		"@wordpress/blocks": "^14.0",
 		"@wordpress/i18n": "^5.11"
 	},
