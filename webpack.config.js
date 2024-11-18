@@ -21,7 +21,7 @@ module.exports = {
 	...{
 		entry: {
 			// 'destination': [ 'source1', 'source2', ... ]
-			'/js/yikes-theme-scripts.min': [ './inc/js/navigation.js', './inc/js/skip-link-focus-fix.js' , './inc/js/lwtv-theme-scripts.js' , './inc/js/a11y.js' ],
+			'/js/yikes-theme-scripts.min': [ './inc/js/navigation.js', './inc/js/skip-link-focus-fix.js' , './inc/js/lwtv-theme-scripts.js' , './inc/js/a11y.js', './inc/js/searchbox.js' ],
 			'/js/customizer.min': [ './inc/js/customizer.js' ],
 			'/js/bootstrap-color-mode.min': [ './inc/js/bootstrap-color-mode.js' ],
 			'css/style': './style.scss',

@@ -1,6 +1,6 @@
 // jQuery dismissable - sets localStorage a year
 
-jQuery(document).ready(function($) {
+jQuery(function($) {
 	var gdpr = localStorage.getItem('gdpr-alerted') || '';
 	var year = new Date().setFullYear(new Date().getFullYear() + 1);
 
