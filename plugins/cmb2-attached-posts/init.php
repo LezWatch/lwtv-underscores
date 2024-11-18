@@ -546,7 +546,11 @@ class LWTV_Fork_CMB2_Attached_Posts_Field {
 			wp_send_json_error( __( 'No items found.' ) );
 		}
 
-		$html = '<table class="widefat"><thead><tr><th class="found-radio"><br /></th><th>' . __( 'Title' ) . '</th><th class="no-break">' . __( 'Queer' ) . '</th><th class="no-break">' . __( 'Status' ) . '</th></tr></thead><tbody>';
+		$this_post_type = get_post_type( $posts[0]->ID );
+
+		$queer_head = ( 'post_type_actors' === $this_post_type ) ? '<th class="no-break">Queer</th>' : '';
+
+		$html = '<table class="widefat"><thead><tr><th class="found-radio"><br /></th><th>Title</th>' . $queer_head . '<th class="no-break">Status</th></tr></thead><tbody>';
 		$alt  = '';
 		foreach ( $posts as $post ) {
 			$title = trim( $post->post_title ) ? $post->post_title : __( '(no title)' );
@@ -568,11 +572,15 @@ class LWTV_Fork_CMB2_Attached_Posts_Field {
 					break;
 			}
 
-			$queer_meta = get_post_meta( $post->ID, 'lezactors_queer', true );
-			$is_queer   = ( ! empty( $queer_meta ) && $queer_meta ) ? 'Yes' : 'No';
+			$queer_row = '';
+			if ( 'post_type_actors' === $this_post_type ) {
+				$queer_meta = get_post_meta( $post->ID, 'lezactors_queer', true );
+				$is_queer   = ( ! empty( $queer_meta ) && $queer_meta ) ? '<strong>Yes</strong>' : 'No';
+				$queer_row  = '<td class="no-break">' . $is_queer . '</td>';
+			}
 
 			$html .= '<tr class="' . trim( 'found-posts ' . $alt ) . '"><td class="found-radio"><input type="radio" id="found-' . $post->ID . '" name="found_post_id" value="' . esc_attr( $post->ID ) . '"></td>';
-			$html .= '<td><label for="found-' . $post->ID . '">' . esc_html( $title ) . '</label></td><td class="no-break">' . esc_html( $is_queer ) . '</td><td class="no-break">' . esc_html( $stat ) . ' </td></tr>' . "\n\n";
+			$html .= '<td><label for="found-' . $post->ID . '">' . esc_html( $title ) . '</label></td>' . $queer_row . '<td class="no-break">' . esc_html( $stat ) . ' </td></tr>' . "\n\n";
 		}
 
 		$html .= '</tbody></table>';
