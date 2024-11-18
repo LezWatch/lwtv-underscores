@@ -453,7 +453,7 @@ window.CMBAP = window.CMBAP || {};
 		// If more than one custom_attached_posts update cache with current metabox context
 		if ( app.$.attachedBoxes > 1 ) {
 			var $wrap            = $this.closest(' .attached-posts-wrap' );
-			app.$.retrievedPosts = $wrap.find( '.retrieved' );	
+			app.$.retrievedPosts = $wrap.find( '.retrieved' );
 		}
 	}
 
