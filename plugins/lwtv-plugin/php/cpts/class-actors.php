@@ -59,25 +59,8 @@ class Actors {
 		// Save Hooks
 		add_action( 'save_post_post_type_actors', array( $this, 'save_post_meta' ), 10, 3 );
 
-		// phpcs:disable
 		// Hide taxonomies from Gutenberg.
-		// While this isn't the official API for this need, it works.
-		// https://github.com/WordPress/gutenberg/issues/6912#issuecomment-428403380
-		add_filter( 'rest_prepare_taxonomy', function( $response, $taxonomy ) {
-
-			$all_tax_array = array();
-			foreach ( self::ALL_TAXONOMIES as $actor_tax => $actor_array ) {
-				if ( ! isset( $actor_array['hide'] ) || false !== $actor_array['hide'] ) {
-					$all_tax_array[] = $actor_tax;
-				}
-			}
-
-			if ( in_array( $taxonomy->name, $all_tax_array ) ) {
-				$response->data['visibility']['show_ui'] = false;
-			}
-			return $response;
-		}, 10, 2 );
-		// phpcs:enable
+		add_filter( 'rest_prepare_taxonomy', array( $this, 'hide_taxonomies_from_gutenberg' ), 10, 2 );
 	}
 
 	/**
@@ -86,6 +69,33 @@ class Actors {
 	public function admin_init() {
 		add_action( 'dashboard_glance_items', array( $this, 'dashboard_glance_items' ) );
 		add_filter( 'enter_title_here', array( $this, 'custom_enter_title' ) );
+	}
+
+	/**
+	 * Hide Taxonomies from Gutenberg
+	 *
+	 * https://github.com/WordPress/gutenberg/issues/6912#issuecomment-428403380
+	 *
+	 * @param  object $response
+	 * @param  object $taxonomy
+	 * @return object
+	 */
+	public function hide_taxonomies_from_gutenberg( $response, $taxonomy ) {
+		$all_tax_array = array();
+
+		// Build an array of all taxonomies that should be hidden.
+		foreach ( self::ALL_TAXONOMIES as $actor_tax => $actor_array ) {
+			if ( ! isset( $actor_array['hide'] ) || false !== $actor_array['hide'] ) {
+				$all_tax_array[] = $actor_tax;
+			}
+		}
+
+		// False Positive
+		// phpcs:ignore WordPress.PHP.StrictInArray.MissingTrueStrict
+		if ( in_array( $taxonomy->name, $all_tax_array ) ) {
+			$response->data['visibility']['show_ui'] = false;
+		}
+		return $response;
 	}
 
 	/**
