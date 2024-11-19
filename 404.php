@@ -14,7 +14,12 @@ get_header();
 			<section class="archive-header">
 				<div class="row">
 					<div class="col-10"><h1 class="entry-title"><?php esc_attr_e( 'Oops! This isn\'t the page you thought it was.', 'lwtv-underscores' ); ?></h1></div>
-					<div class="col-2 icon plain"><span role="img" aria-label="404" title="404 - Page Not Found" class="taxonomy-svg 404"><?php echo lwtv_plugin()->get_symbolicon( 'easter-egg-alt.svg', 'fa-gift' ); ?></span></div>
+					<div class="col-2 icon plain"><span role="img" aria-label="404" title="404 - Page Not Found" class="taxonomy-svg 404">
+						<?php
+						// phpcs:ignore WordPress.Security.EscapeOutput -- We're outputting SVGs
+						echo lwtv_plugin()->get_symbolicon( svg: 'easter-egg-alt.svg', fontawesome: 'fa-gift', max_size: '50' );
+						?>
+					</span></div>
 				</div>
 			</section><!-- .archive-header -->
 		</div><!-- .container -->
