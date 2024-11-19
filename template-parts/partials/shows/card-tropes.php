@@ -26,11 +26,12 @@ $tropes = get_the_terms( $show_id, 'lez_tropes' );
 			$trope = get_term_by( 'slug', 'none', 'lez_tropes' );
 			?>
 			<li class="list-group-item show trope trope-<?php echo esc_attr( $trope->slug ); ?>">
-				<a href="<?php echo esc_url( get_term_link( $trope->slug, 'lez_tropes' ) ); ?>" rel="show trope" class="trope-link" aria-label="Read more about the trope <?php echo esc_attr( $trope->name ); ?>." style="max-width: 32px; max-height: 32px">
+				<a href="<?php echo esc_url( get_term_link( $trope->slug, 'lez_tropes' ) ); ?>" rel="show trope" class="trope-link" aria-label="Read more about the trope <?php echo esc_attr( $trope->name ); ?>.">
 				<?php
 					// Echo the taxonomy icon (default to squares if empty)
 					$icon = get_term_meta( $trope->term_id, 'lez_termsmeta_icon', true );
-					echo lwtv_plugin()->get_symbolicon( $icon . '.svg', 'fa-lemon' );
+					// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+					echo lwtv_plugin()->get_symbolicon( svg: $icon . '.svg', fontawesome: 'fa-lemon', max_size: '32' );
 				?>
 				</a>
 				<a href="<?php echo esc_url( get_term_link( $trope->slug, 'lez_tropes' ) ); ?>" rel="show trope"><?php echo esc_html( $trope->name ); ?></a>
@@ -42,11 +43,12 @@ $tropes = get_the_terms( $show_id, 'lez_tropes' );
 			foreach ( $tropes as $trope ) {
 				?>
 				<li class="list-group-item show trope trope-<?php echo esc_attr( $trope->slug ); ?>">
-					<a href="<?php echo esc_url( get_term_link( $trope->slug, 'lez_tropes' ) ); ?>" rel="show trope" aria-label="Read more about the trope <?php echo esc_attr( $trope->name ); ?>." style="max-width: 32px; max-height: 32px">
+					<a href="<?php echo esc_url( get_term_link( $trope->slug, 'lez_tropes' ) ); ?>" rel="show trope" aria-label="Read more about the trope <?php echo esc_attr( $trope->name ); ?>.">
 					<?php
 						// Echo the taxonomy icon (default to squares if empty)
 						$icon = get_term_meta( $trope->term_id, 'lez_termsmeta_icon', true );
-						echo lwtv_plugin()->get_symbolicon( $icon . '.svg', 'fa-lemon' );
+						// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+						echo lwtv_plugin()->get_symbolicon( svg: $icon . '.svg', fontawesome: 'fa-lemon', max_size: '32' );
 					?>
 					</a>
 					<a href="<?php echo esc_url( get_term_link( $trope->slug, 'lez_tropes' ) ); ?>" rel="show trope" class="trope-link"><?php echo esc_html( $trope->name ); ?></a>

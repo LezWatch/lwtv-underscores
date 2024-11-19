@@ -52,7 +52,8 @@ unset( $shows, $actors, $gender, $sexuality, $cliches );
 				if ( $archive ) {
 					$died = get_post_meta( $the_id, 'lezactors_death', true );
 					if ( ! empty( $died ) ) {
-						echo '<span role="img" aria-label="Grim Reaper" title="Grim Reaper" class="charlist-grave">' . lwtv_plugin()->get_symbolicon( 'grim-reaper.svg', 'fa-times-circle' ) . '</span>';
+						// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+						echo '<span role="img" aria-label="Grim Reaper" title="Grim Reaper" class="charlist-grave">' . lwtv_plugin()->get_symbolicon( svg: 'grim-reaper.svg', fontawesome: 'fa-times-circle' ) . '</span>';
 					}
 				}
 				?>

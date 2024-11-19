@@ -64,22 +64,22 @@ class LWTV_Today_Widget extends WP_Widget {
 			case 'everything':
 				$content = self::display_all();
 				$title   = 'Today ...';
-				$icon    = lwtv_plugin()->get_symbolicon( 'calendar-alt.svg', 'calendar-alt' );
+				$icon    = lwtv_plugin()->get_symbolicon( svg: 'calendar-alt.svg', fontawesome: 'calendar-alt' );
 				break;
 			case 'death':
 				$content = self::display_death();
 				$title   = 'Death of the Day';
-				$icon    = lwtv_plugin()->get_symbolicon( 'book-dead.svg', 'fa-skull' );
+				$icon    = lwtv_plugin()->get_symbolicon( svg: 'book-dead.svg', fontawesome: 'fa-skull' );
 				break;
 			case 'character':
 				$content = self::display_show_char( $type );
 				$title   = 'Character of the Day';
-				$icon    = lwtv_plugin()->get_symbolicon( 'contact-card.svg', 'fa-address-card' );
+				$icon    = lwtv_plugin()->get_symbolicon( svg: 'contact-card.svg', fontawesome: 'fa-address-card' );
 				break;
 			case 'show':
 				$content = self::display_show_char( $type );
 				$title   = 'Show of the Day';
-				$icon    = lwtv_plugin()->get_symbolicon( 'tv-hd.svg', 'fa-tv' );
+				$icon    = lwtv_plugin()->get_symbolicon( svg: 'tv-hd.svg', fontawesome: 'fa-tv' );
 				break;
 		}
 
@@ -205,7 +205,7 @@ class LWTV_Today_Widget extends WP_Widget {
 		);
 
 		// Featured Image
-		$image  = '<div class="' . $type . '-image-wrapper"><a href="' . get_the_permalink( $the_post ) . '">' . $image . '</a></div>';
+		$image  = '<div class="' . $type . '-image-wrapper"><a href="' . get_the_permalink( $the_post ) . '">' . $thumbnail . '</a></div>';
 		$body   = '<div class="card-body"><h4 class="card-title">' . get_the_title( $the_post ) . '</h4><div class="card-text">' . $text . '</div></div>';
 		$button = '<div class="card-footer"><a href="' . get_the_permalink( $the_post ) . '" class="btn btn-outline-primary">' . esc_attr( ucfirst( $type ) ) . ' Profile</a>
 		</div>';

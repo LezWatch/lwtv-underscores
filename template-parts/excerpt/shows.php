@@ -34,27 +34,27 @@ $thumb_title       = ( empty( $thumb_attribution ) ) ? get_the_title() : get_the
 							<?php
 							// The Game of Thrones Flag of Gratuitous Violence.
 							$warning    = lwtv_plugin()->get_show_content_warning( get_the_ID() );
-							$warn_image = lwtv_plugin()->get_symbolicon( 'warning.svg', 'fa-exclamation-triangle' );
+							$warn_image = lwtv_plugin()->get_symbolicon( svg: 'warning.svg', fontawesome: 'fa-exclamation-triangle', max_size: '25' );
 							if ( 'none' !== $warning['card'] ) {
 								// phpcs:ignore WordPress.Security.EscapeOutput
-								echo '<span class="callout callout-' . esc_attr( $warning['card'] ) . '" role="img" data-bs-target="tooltip" aria-label="Warning - This show contains triggers" title="Warning - This show contains triggers" style="max-width: 25px; max-height: 25px">' . $warn_image . '</span>';
+								echo '<span class="callout callout-' . esc_attr( $warning['card'] ) . '" role="img" data-bs-target="tooltip" aria-label="Warning - This show contains triggers" title="Warning - This show contains triggers">' . $warn_image . '</span>';
 							}
 
 							// Stars of Queerness.
-							echo '<span class="callout callout-star" style="max-width: 25px; max-height: 25px">' . lwtv_plugin()->get_show_stars( get_the_ID() ) . '</span>';
+							echo '<span class="callout callout-star">' . lwtv_plugin()->get_show_stars( get_the_ID() ) . '</span>';
 
 							// Hearts of Lurve.
 							if ( get_post_meta( get_the_ID(), 'lezshows_worthit_show_we_love', true ) ) {
-								$heart = lwtv_plugin()->get_symbolicon( 'hearts.svg', 'fa-heart' );
+								$heart = lwtv_plugin()->get_symbolicon( svg: 'hearts.svg', fontawesome: 'fa-heart', max_size: '25' );
 								// phpcs:ignore WordPress.Security.EscapeOutput
-								echo ' <span role="img" aria-label="We Love This Show!" data-bs-target="tooltip" title="We Love This Show!" class="callout callout-we-love" style="max-width: 25px; max-height: 25px">' . $heart . '</span>';
+								echo ' <span role="img" aria-label="We Love This Show!" data-bs-target="tooltip" title="We Love This Show!" class="callout callout-we-love">' . $heart . '</span>';
 							}
 
 							// Skulls of Death.
 							if ( has_term( 'dead-queers', 'lez_tropes', get_the_ID() ) ) {
-								$skull = lwtv_plugin()->get_symbolicon( 'skull-crossbones.svg', 'fa-ban' );
+								$skull = lwtv_plugin()->get_symbolicon( svg: 'skull-crossbones.svg', fontawesome: 'fa-times-circle', max_size: '25' );
 								// phpcs:ignore WordPress.Security.EscapeOutput
-								echo ' <span role="img" aria-label="Warning - There is death on this show." data-bs-target="tooltip" title="Warning - There is death on this show." class="callout callout-death" style="max-width: 25px; max-height: 25px">' . $skull . '</span>';
+								echo ' <span role="img" aria-label="Warning - There is death on this show." data-bs-target="tooltip" title="Warning - There is death on this show." class="callout callout-death">' . $skull . '</span>';
 							}
 							?>
 						</span>

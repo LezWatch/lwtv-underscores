@@ -9,13 +9,13 @@
 $dead = get_post_meta( $post->ID, 'lezactors_death', true );
 $icon = '<div class="show-header-svg">';
 if ( lwtv_plugin()->is_actor_queer( $post->ID ) ) {
-	$icon .= ' <span role="img" aria-label="Queer IRL Actor" data-bs-target="tooltip" title="Queer IRL Actor" class="cliche-queer-irl" style="max-width: 50px; max-height: 50px">' . lwtv_plugin()->get_symbolicon( 'rainbow.svg', 'fa-cloud' ) . '</span>';
+	$icon .= ' <span role="img" aria-label="Queer IRL Actor" data-bs-target="tooltip" title="Queer IRL Actor" class="cliche-queer-irl">' . lwtv_plugin()->get_symbolicon( svg: 'rainbow.svg', fontawesome: 'fa-cloud', max_size: '50' ) . '</span>';
 }
 if ( lwtv_plugin()->is_actor_birthday( $post->ID ) && ! $dead ) {
-	$icon .= ' <span role="img" aria-label="Actor Having a Birthday" data-bs-target="tooltip" title="Happy Birthday" class="happy-birthday" style="max-width: 50px; max-height: 50px">' . lwtv_plugin()->get_symbolicon( 'cake.svg', 'fa-birthday-cake' ) . '</span>';
+	$icon .= ' <span role="img" aria-label="Actor Having a Birthday" data-bs-target="tooltip" title="Happy Birthday" class="happy-birthday">' . lwtv_plugin()->get_symbolicon( svg: 'cake.svg', fontawesome: 'fa-birthday-cake', max_size: '50' ) . '</span>';
 }
 if ( $dead ) {
-	$icon .= ' <span role="img" aria-label="RIP - Dead Actor" data-bs-target="tooltip" title="RIP - Dead Actor" class="cliche-dead" style="max-width: 50px; max-height: 50px">' . lwtv_plugin()->get_symbolicon( 'rest-in-peace.svg', 'fa-ban' ) . '</span>';
+	$icon .= ' <span role="img" aria-label="RIP - Dead Actor" data-bs-target="tooltip" title="RIP - Dead Actor" class="cliche-dead">' . lwtv_plugin()->get_symbolicon( svg: 'rest-in-peace.svg', fontawesome: 'fa-ban', max_size: '50' ) . '</span>';
 }
 
 $icon .= '</div>';

@@ -15,6 +15,7 @@
 		"editor.defaultFormatter": "dbaeumer.vscode-eslint"
 	},
 	"cSpell.words": [
+		"imdb",
 		"lezactors",
 		"lezchars",
 		"lezpress",
@@ -27,6 +28,7 @@
 		"SYMBOLICONS",
 		"Templater",
 		"thisyear",
+		"TMDB",
 		"tvmaze",
 		"wpdb",
 		"wpseo",

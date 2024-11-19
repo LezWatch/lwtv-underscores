@@ -29,6 +29,15 @@ $maybe_external = array(
 		'hide'     => false,
 		'use_meta' => true,
 	),
+	'tmdb'      => array(
+		'label'    => 'TMDB',
+		'meta'     => 'lezactors_tmdb_id',
+		'base'     => 'https://themoviedb.org/person/',
+		'post'     => '',
+		'fa'       => 'fas fa-grip-lines',
+		'hide'     => false,
+		'use_meta' => true,
+	),
 	'wikipedia' => array(
 		'meta'     => 'lezactors_wikipedia',
 		'base'     => '',

@@ -286,6 +286,9 @@ class Shows {
 		// unhook this function so it doesn't loop infinitely
 		remove_action( 'save_post_post_type_shows', array( $this, 'save_post_meta' ) );
 
+		// Add TMDB ID if possible.
+		$this->generate_tmdb_id( $post_id );
+
 		// Save show scores
 		lwtv_plugin()->calculate_show_data( $post_id );
 
@@ -353,5 +356,38 @@ class Shows {
 			$input = 'Add show';
 		}
 		return $input;
+	}
+
+	/**
+	 * Generate the TMDB ID for a TV show and save it.
+	 *
+	 * @param int $post_id
+	 *
+	 * @return void
+	 */
+	public function generate_tmdb_id( $post_id ): void {
+		$tmdb_id   = get_post_meta( $post_id, 'lezshows_tmdb_id', true );
+		$tmdb_data = false;
+
+		// If the TMDB ID is already set, move on.
+		if ( ( isset( $tmdb_id ) && ! empty( $tmdb_id ) ) ) {
+			return;
+		}
+
+		// Get the TMDB ID from the data.
+		$tmdb_data = lwtv_plugin()->get_tmdb_info( $post_id );
+
+		if ( isset( $tmdb_data['id'] ) ) {
+			$tmdb_id = $tmdb_data['id'];
+		} elseif ( isset( $tmdb_data['tv_results'][0]['id'] ) ) {
+			$tmdb_id = $tmdb_data['tv_results'][0]['id'];
+		} else {
+			$tmdb_id = false;
+		}
+
+		// If we have a TMDB ID, save it.
+		if ( false !== $tmdb_id ) {
+			update_post_meta( $post_id, 'lezshows_tmdb_id', $tmdb_id );
+		}
 	}
 }

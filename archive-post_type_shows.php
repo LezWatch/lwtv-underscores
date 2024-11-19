@@ -7,7 +7,7 @@
  * @package LezWatch.TV
  */
 
-$icon        = lwtv_plugin()->get_symbolicon( 'tv-hd.svg', 'fa-tv' );
+$icon        = lwtv_plugin()->get_symbolicon( svg: 'tv-hd.svg', fontawesome: 'fa-tv', max_size: '50' );
 $count_posts = ( function_exists( 'facetwp_display' ) ) ? facetwp_display( 'counts' ) : '';
 $show_title  = '<span role="img" aria-label="post_type_shows" title="Shows" class="taxonomy-svg shows">' . $icon . '</span>';
 $seo_titles  = get_option( 'wpseo_titles' );
