@@ -66,7 +66,7 @@ $thumb_rating = ( get_post_meta( $show_id, 'lezshows_worthit_rating', true ) ) ?
 				?>
 			</div>
 
-			<ul class="network-data list-group">
+			<ul class="network-list list-group">
 				<?php
 				// Networks/Stations:
 				$stations = get_the_terms( $show_id, 'lez_stations' );
@@ -89,7 +89,7 @@ $thumb_rating = ( get_post_meta( $show_id, 'lezshows_worthit_rating', true ) ) ?
 				// Formats:
 				$formats = get_the_terms( $show_id, 'lez_formats' );
 				if ( $formats && ! is_wp_error( $formats ) ) {
-					echo '<li class="list-group-item network formats">' . get_the_term_list( $show_id, 'lez_formats', '<strong>Show Format:</strong> ', ', ' ) . '</li>';
+					echo '<li class="list-group-item formats">' . get_the_term_list( $show_id, 'lez_formats', '<strong>Show Format:</strong> ', ', ' ) . '</li>';
 				}
 
 				// Airdates:
@@ -98,17 +98,28 @@ $thumb_rating = ( get_post_meta( $show_id, 'lezshows_worthit_rating', true ) ) ?
 				// Genres:
 				$genres = get_the_terms( $show_id, 'lez_genres' );
 				if ( $genres && ! is_wp_error( $genres ) ) {
-					echo '<li class="list-group-item network genres">' . get_the_term_list( $show_id, 'lez_genres', '<strong>Genres:</strong> ', ', ' ) . '</li>';
+					echo '<li class="list-group-item genres">' . get_the_term_list( $show_id, 'lez_genres', '<strong>Genres:</strong> ', ', ' ) . '</li>';
 				}
 
 				// Remote URLs
-				$imdb_data = get_post_meta( $show_id, 'lezshows_imdb', true );
-				if ( $imdb_data ) {
-					$imdb = 'https://www.imdb.com/title/' . $imdb_data;
+				$imdb_id = get_post_meta( $show_id, 'lezshows_imdb', true );
+				$tmdb_id = get_post_meta( $show_id, 'lezshows_tmdb_id', true );
+				if ( $imdb_id || $tmdb_id ) {
+					echo '<li class="list-group-item imdb text-center">';
 
-					echo '<li class="list-group-item network imdb text-center"><span style="max-width: 15px; max-height: 15px">';
-					echo lwtv_plugin()->get_symbolicon( 'imdb.svg', 'fa-imdb' ) . ' <a href="' . esc_url( $imdb ) . '">IMDb</a>';
-					echo '</span></li>';
+					if ( $imdb_id ) {
+						// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+						echo lwtv_plugin()->get_symbolicon( svg: 'imdb.svg', fontawesome: 'fa-imdb', max_size: '20' );
+						echo '&nbsp;<a href="' . esc_url( 'https://www.imdb.com/title/' . $imdb_id ) . '">IMDb</a>';
+					}
+
+					if ( $tmdb_id ) {
+						// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+						echo lwtv_plugin()->get_symbolicon( svg: 'tmdb.svg', fontawesome: 'fa-grip-lines', max_size: '20' );
+						echo '&nbsp;<a href="' . esc_url( 'https://www.themoviedb.org/tv/' . $tmdb_id ) . '">TMDB</a>';
+					}
+
+					echo '</li>';
 				}
 				?>
 			</ul>
