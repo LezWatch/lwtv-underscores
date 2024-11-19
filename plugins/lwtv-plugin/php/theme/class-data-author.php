@@ -46,13 +46,13 @@ class Data_Author {
 		);
 
 		// Get all the stupid social...
-		$bluesky   = ( ! empty( $user_socials['bluesky'] ) ) ? '<a href="' . $user_socials['bluesky'] . '" target="_blank" rel="nofollow">' . lwtv_plugin()->get_symbolicon( 'bluesky.svg', 'fa-bluesky' ) . '</a>' : false;
-		$instagram = ( ! empty( $user_socials['instagram'] ) ) ? '<a href="https://instagram.com/' . $user_socials['instagram'] . '" target="_blank" rel="nofollow">' . lwtv_plugin()->get_symbolicon( 'instagram.svg', 'fa-instagram' ) . '</a>' : false;
-		$threads   = ( ! empty( $user_socials['threads'] ) ) ? '<a href="https://threads.net/' . $user_socials['threads'] . '" target="_blank" rel="nofollow">' . lwtv_plugin()->get_symbolicon( 'threads.svg', 'fa-threads' ) . '</a>' : false;
-		$twitter   = ( ! empty( $user_socials['twitter'] ) ) ? '<a href="https://twitter.com/' . $user_socials['twitter'] . '" target="_blank" rel="nofollow">' . lwtv_plugin()->get_symbolicon( 'x-twitter.svg', 'fa-x-twitter' ) . '</a>' : false;
-		$tumblr    = ( ! empty( $user_socials['tumblr'] ) ) ? '<a href="' . $user_socials['tumblr'] . '" target="_blank" rel="nofollow">' . lwtv_plugin()->get_symbolicon( 'tumblr.svg', 'fa-tumblr' ) . '</a>' : false;
-		$website   = ( ! empty( $user_socials['website'] ) ) ? '<a href="' . $user_socials['website'] . '" target="_blank" rel="nofollow">' . lwtv_plugin()->get_symbolicon( 'home.svg', 'fa-home' ) . '</a>' : false;
-		$mastodon  = ( ! empty( $user_socials['mastodon'] ) ) ? '<a href="' . $user_socials['mastodon'] . '" target="_blank" rel="nofollow">' . lwtv_plugin()->get_symbolicon( 'mastodon.svg', 'fa-mastodon' ) . '</a>' : false;
+		$bluesky   = ( ! empty( $user_socials['bluesky'] ) ) ? '<a href="' . $user_socials['bluesky'] . '" target="_blank" rel="nofollow">' . lwtv_plugin()->get_symbolicon( svg: 'bluesky.svg', fontawesome: 'fa-bluesky' ) . '</a>' : false;
+		$instagram = ( ! empty( $user_socials['instagram'] ) ) ? '<a href="https://instagram.com/' . $user_socials['instagram'] . '" target="_blank" rel="nofollow">' . lwtv_plugin()->get_symbolicon( svg: 'instagram.svg', fontawesome: 'fa-instagram' ) . '</a>' : false;
+		$threads   = ( ! empty( $user_socials['threads'] ) ) ? '<a href="https://threads.net/' . $user_socials['threads'] . '" target="_blank" rel="nofollow">' . lwtv_plugin()->get_symbolicon( svg: 'threads.svg', fontawesome: 'fa-threads' ) . '</a>' : false;
+		$twitter   = ( ! empty( $user_socials['twitter'] ) ) ? '<a href="https://twitter.com/' . $user_socials['twitter'] . '" target="_blank" rel="nofollow">' . lwtv_plugin()->get_symbolicon( svg: 'x-twitter.svg', fontawesome: 'fa-x-twitter' ) . '</a>' : false;
+		$tumblr    = ( ! empty( $user_socials['tumblr'] ) ) ? '<a href="' . $user_socials['tumblr'] . '" target="_blank" rel="nofollow">' . lwtv_plugin()->get_symbolicon( svg: 'tumblr.svg', fontawesome: 'fa-tumblr' ) . '</a>' : false;
+		$website   = ( ! empty( $user_socials['website'] ) ) ? '<a href="' . $user_socials['website'] . '" target="_blank" rel="nofollow">' . lwtv_plugin()->get_symbolicon( svg: 'home.svg', fontawesome: 'fa-home' ) . '</a>' : false;
+		$mastodon  = ( ! empty( $user_socials['mastodon'] ) ) ? '<a href="' . $user_socials['mastodon'] . '" target="_blank" rel="nofollow">' . lwtv_plugin()->get_symbolicon( svg: 'mastodon.svg', fontawesome: 'fa-mastodon' ) . '</a>' : false;
 
 		// Set the array in order and remove any empty ones.
 		$social_array = array( $website, $twitter, $instagram, $threads, $tumblr, $bluesky, $mastodon );
@@ -87,7 +87,7 @@ class Data_Author {
 			$fav_title  = _n( 'Show', 'Shows', count( $show_title ) );
 		}
 
-		$details = ( isset( $favourites ) && ! empty( $favourites ) ) ? '<div class="author-favourites">' . lwtv_plugin()->get_symbolicon( 'tv-hd.svg', 'fa-tv' ) . '&nbsp;Favorite ' . $fav_title . ': ' . $favourites . '</div>' : '';
+		$details = ( isset( $favourites ) && ! empty( $favourites ) ) ? '<div class="author-favourites">' . lwtv_plugin()->get_symbolicon( svg: 'tv-hd.svg', fontawesome: 'fa-tv' ) . '&nbsp;Favorite ' . $fav_title . ': ' . $favourites . '</div>' : '';
 
 		return $details;
 	}
