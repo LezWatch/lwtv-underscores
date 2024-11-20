@@ -79,15 +79,15 @@ class Blocks {
 		// Get the show list.
 		$show_tabs = array(
 			'list'     => $this->get_shows_list( $calendar, $today, $tz ),
-			'weekly'   => $this->get_shows_weekly( $calendar, $today, $tz ),
-			'calendar' => '<div class="lwtvc calendar">coming soon</div>',
+			'grid'     => $this->get_shows_grid( $calendar, $today, $tz ),
+			'calendar' => $this->get_shows_calendar( $calendar, $today, $tz ),
 		);
 
 		// Build the tabs
 		$tab_list = '';
 		foreach ( $show_tabs as $tab => $content ) {
 			$tab_list .= '<li class="nav-item" role="presentation">';
-			$tab_list .= '<button class="nav-link' . ( 'list' === $tab ? ' active' : '' ) . '" id="' . $tab . '-tab" data-bs-toggle="tab" data-bs-target="#' . $tab . '-tab-pane" type="button" role="tab" aria-controls="' . $tab . '-tab-pane" aria-selected="' . ( 'list' === $tab ? 'true' : 'false' ) . '">' . ucfirst( $tab ) . '</button>';
+			$tab_list .= '<a class="nav-link' . ( 'list' === $tab ? ' active' : '' ) . '" id="' . $tab . '-tab" data-bs-toggle="tab" data-bs-target="#' . $tab . '-tab-pane" type="button" role="tab" aria-controls="' . $tab . '-tab-pane" aria-selected="' . ( 'list' === $tab ? 'true' : 'false' ) . '">' . ucfirst( $tab ) . '</a>';
 			$tab_list .= '</li>';
 		}
 		$navigation .= '<ul class="nav nav-tabs" id="myTab" role="tablist">' . $tab_list . '</ul>';
@@ -234,14 +234,32 @@ class Blocks {
 	 * @param  object $tz
 	 * @return string
 	 */
-	private function get_shows_weekly( $calendar, $today, $tz ) {
+	private function get_shows_grid( $calendar, $today, $tz ) {
 		$weekly = '<div>';
 
+		// Header Sub Navigation
+		$weekly .= '<div class="ep-calendar-subnav text-bg-light p-3"><ul class="nav justify-content-center">';
 		foreach ( $calendar as $day => $shows ) {
 			$show_day = new \DateTime( $day, $tz );
 
+			$link_color = ( $day === $today->format( 'Y-m-d' ) ) ? 'link-info' : 'link-dark';
+
+			$weekly .= '<li class="nav-item"><a class="' . $link_color . ' link-offset-2 nav-link" href="#' . strtolower( $show_day->format( 'ldS' ) ) . '">' . $show_day->format( 'l' ) . '</a></li>';
+		}
+		$weekly .= '</ul></div>';
+
+		// Grid Itself.
+		foreach ( $calendar as $day => $shows ) {
+			$show_day = new \DateTime( $day, $tz );
+
+			$today_link = strtolower( $show_day->format( 'ldS' ) );
+			$today_date = $show_day->format( 'l dS' );
+			if ( $day === $today->format( 'Y-m-d' ) ) {
+				$today_date .= '&nbsp;&nbsp;<button type="button" class="btn btn-info btn-sm" disabled><a name="today">Today</a></button>';
+			}
+
 			$weekly .= '<div class="ep-calendar-day">';
-			$weekly .= '<h3 class="ep-calendar-day-heading">&nbsp;</br>' . $show_day->format( 'l dS' ) . '</h3>';
+			$weekly .= '<h3 class="ep-calendar-day-heading"><a name="' . $today_link . '">&nbsp;</a></br>' . $today_date . '</h3>';
 
 			$weekly .= '<div class="container text-center"><div class="row row-cols-1 row-cols-md-2 g-4">';
 
@@ -254,9 +272,9 @@ class Blocks {
 				// Build output
 				$show_content = '';
 				if ( is_array( $show['title'] ) ) {
-					$show_content .= $this->display_card_weekly_multiple( $show );
+					$show_content .= $this->display_card_grid_multiple( $show );
 				} else {
-					$show_content .= $this->display_card_weekly( $show );
+					$show_content .= $this->display_card_grid( $show );
 				}
 
 				$weekly .= $show_content;
@@ -276,7 +294,7 @@ class Blocks {
 	 * @param  array  $show
 	 * @return string
 	 */
-	private function display_card_weekly( array $show ): string {
+	private function display_card_grid( array $show ): string {
 		$image = ( isset( $show['show_id'] ) ) ? get_the_post_thumbnail( $show['show_id'], array( 100, 100, true ), array( 'class' => 'calendar-show-img card-img-top' ) ) : '';
 		$date  = new \DateTime( '@' . $show['timestamp'] );
 
@@ -300,7 +318,7 @@ class Blocks {
 	 * @param  array  $show
 	 * @return string
 	 */
-	private function display_card_weekly_multiple( array $show ): string {
+	private function display_card_grid_multiple( array $show ): string {
 		$all_episodes = '';
 		foreach ( $show['title'] as $one_show ) {
 			$episode = array(
@@ -310,10 +328,31 @@ class Blocks {
 				'show_id'   => $show['show_id'],
 			);
 
-			$all_episodes .= $this->display_card_weekly( $episode );
+			$all_episodes .= $this->display_card_grid( $episode );
 		}
 
 		return $all_episodes;
+	}
+
+	/**
+	 * Generate the weekly calendar of shows.
+	 *
+	 * @param  array  $calendar
+	 * @param  object $today
+	 * @param  object $tz
+	 * @return string
+	 */
+	private function get_shows_calendar( $calendar, $today, $tz ) {
+
+		if ( ! $calendar || ! $tz ) {
+			return '<p>There are no shows on the air for the week starting ' . $today->format( 'F d, Y' ) . '.</p>';
+		}
+
+		$table = '<table class="table">';
+
+		$table .= '</table>';
+
+		return $table;
 	}
 
 	/**
