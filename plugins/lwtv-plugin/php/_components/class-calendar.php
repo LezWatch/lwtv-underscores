@@ -57,8 +57,8 @@ class Calendar implements Component, Templater {
 	 *
 	 * @return string — The display name
 	 */
-	public function get_show_name_for_calendar( $show_name, $source = 'lwtv' ): string {
-		return ( new Names() )->make( $show_name, $source );
+	public function get_show_name_for_calendar( $show_name, $source = 'lwtv', $output = 'name' ): string {
+		return ( new Names() )->make( $show_name, $source, $output );
 	}
 
 	public function get_tvmaze_ics() {

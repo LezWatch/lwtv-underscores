@@ -7,6 +7,10 @@
     "./plugins/lwtv-plugin",
     "./plugins/lwtv-plugin/php/blocks"
   ],
+  "engines": {
+    "node": ">=19.0.0",
+    "npm": ">=10.0.0"
+  },
   "scripts": {
     "build": "npm-run-all build:*",
     "build:composer": "composer update",
