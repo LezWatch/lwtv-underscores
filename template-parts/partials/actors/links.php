@@ -17,6 +17,7 @@ $maybe_external = array(
 		'base'     => '',
 		'post'     => '',
 		'fa'       => 'fas fa-home',
+		'svg'      => 'home.svg',
 		'hide'     => false,
 		'use_meta' => true,
 	),
@@ -26,6 +27,17 @@ $maybe_external = array(
 		'base'     => 'https://imdb.com/name/',
 		'post'     => '',
 		'fa'       => 'fab fa-imdb',
+		'svg'      => 'imdb.svg',
+		'hide'     => false,
+		'use_meta' => true,
+	),
+	'tmdb'      => array(
+		'label'    => 'TMDB',
+		'meta'     => 'lezactors_tmdb_id',
+		'base'     => 'https://themoviedb.org/person/',
+		'post'     => '',
+		'fa'       => 'fas fa-grip-lines',
+		'svg'      => 'tmdb.svg',
 		'hide'     => false,
 		'use_meta' => true,
 	),
@@ -34,6 +46,7 @@ $maybe_external = array(
 		'base'     => '',
 		'post'     => '',
 		'fa'       => 'fab fa-wikipedia-w',
+		'svg'      => 'wikipedia.svg',
 		'hide'     => false,
 		'use_meta' => true,
 	),
@@ -52,6 +65,7 @@ foreach ( $maybe_external as $site => $data ) {
 			'name' => $name,
 			'url'  => $data['base'] . $external_url . $data['post'],
 			'fa'   => $data['fa'],
+			'svg'  => $data['svg'],
 		);
 	}
 }
@@ -65,7 +79,10 @@ if ( count( $external_urls ) > 0 ) {
 				<ul class="actor-meta-links" aria-labelledby="actor-links">
 					<?php
 					foreach ( $external_urls as $source ) {
-						echo '<li><i class="' . esc_attr( strtolower( $source['fa'] ) ) . '" aria-hidden="true"></i> <a href="' . esc_url( $source['url'] ) . '" target="_blank">' . esc_html( $source['name'] ) . '</a><span class="screen-reader-text">, opens in new tab</span></li>';
+						$icon = lwtv_plugin()->get_symbolicon( svg: $source['svg'], fontawesome: $source['fa'], max_size: '20' );
+
+						// phpcs:ignore WordPress.Security.EscapeOutput
+						echo '<li>' . $icon . ' <a href="' . esc_url( $source['url'] ) . '" target="_blank">' . esc_html( $source['name'] ) . '</a><span class="screen-reader-text">, opens in new tab</span></li>';
 					}
 					?>
 				</ul>

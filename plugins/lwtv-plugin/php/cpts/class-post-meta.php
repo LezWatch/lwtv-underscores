@@ -40,6 +40,9 @@ class Post_Meta {
 		'lezactors_tiktok'              => array(
 			'post_type' => 'post_type_actors',
 		),
+		'lezactors_tmdb_id'             => array(
+			'post_type' => 'post_type_actors',
+		),
 		'lezactors_tumblr'              => array(
 			'post_type' => 'post_type_actors',
 		),
@@ -110,6 +113,9 @@ class Post_Meta {
 			'items_type' => 'string',
 		),
 		'lezshows_imdb'                 => array(
+			'post_type' => 'post_type_shows',
+		),
+		'lezshows_tmdb_id'              => array(
 			'post_type' => 'post_type_shows',
 		),
 		'lezshows_episodes'             => array(

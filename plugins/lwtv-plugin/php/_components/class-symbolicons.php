@@ -154,16 +154,22 @@ class Symbolicons implements Component, Templater {
 	 * @param string $svg_class   (default: 'symbolicon') - SVG styling class name.
 	 * @return icon
 	 */
-	public function get_symbolicon( $svg = 'square.svg', $fontawesome = 'fa-square', $svg_class = 'symbolicon' ) {
+	public function get_symbolicon( $svg = 'square.svg', $fontawesome = 'fa-square', $svg_class = 'symbolicon', $max_size = '32' ) {
 
-		$return = '<span class="symbolicon" role="img"><svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="spinner" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="svg-inline--fa fa-spinner fa-w-16 fa-3x"><path fill="currentColor" d="M304 48c0 26.51-21.49 48-48 48s-48-21.49-48-48 21.49-48 48-48 48 21.49 48 48zm-48 368c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.49-48-48-48zm208-208c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.49-48-48-48zM96 256c0-26.51-21.49-48-48-48S0 229.49 0 256s21.49 48 48 48 48-21.49 48-48zm12.922 99.078c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48c0-26.509-21.491-48-48-48zm294.156 0c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48c0-26.509-21.49-48-48-48zM108.922 60.922c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.491-48-48-48z" class=""></path></svg></span>';
+		// Font Awesome fallback.
+		$return = '<i class="' . esc_attr( strtolower( $fontawesome ) ) . '" aria-hidden="true"></i>';
 
-		$icon = $this->get_icon_file( $svg );
+		$raw_icon = $this->get_icon_file( $svg );
 
-		if ( ! empty( $icon ) ) {
-			// @codingStandardsIgnoreStart
-			$return = '<span class="' . $svg_class . '" role="img" data-no-image-dimensions="true">' . trim( file_get_contents( $icon ) ) . '</span>';
-			// @codingStandardsIgnoreEnd
+		if ( ! empty( $raw_icon ) ) {
+			$icon = trim( file_get_contents( $raw_icon ) );
+
+			// Add in a height if it's not there to prevent GIANT IMAGES. CSS will override.
+			if ( ! str_contains( $icon, 'height="' ) ) {
+				$icon = str_replace( '<svg', '<svg height="' . $max_size . 'px"', $icon );
+			}
+
+			$return = '<span class="' . $svg_class . '" role="img" data-no-image-dimensions="true">' . $icon . '</span>';
 		}
 
 		return $return;
@@ -176,7 +182,7 @@ class Symbolicons implements Component, Templater {
 	 * @return string
 	 */
 	public function get_icon_file( $svg ) {
-		$icon = plugin_dir_path( dirname( __DIR__, 1 ) ) . 'assets/images/square.svg';
+		$icon = LWTV_THEME_PATH . '/images/square.svg';
 
 		if ( defined( 'LWTV_SYMBOLICONS_PATH' ) && file_exists( LWTV_SYMBOLICONS_PATH . $svg ) ) {
 			$icon = LWTV_SYMBOLICONS_PATH . $svg;

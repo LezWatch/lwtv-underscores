@@ -22,13 +22,13 @@ if ( ! function_exists( 'yikes_starter_paging_nav' ) ) :
 			<?php
 			if ( get_previous_posts_link() ) :
 				?>
-				<li class="page-item previous"><?php previous_posts_link( lwtv_plugin()->get_symbolicon( 'caret-left-circle.svg', 'fa-chevron-circle-left' ) . ' Previous' ); ?></li>
+				<li class="page-item previous"><?php previous_posts_link( lwtv_plugin()->get_symbolicon( svg: 'caret-left-circle.svg', fontawesome: 'fa-chevron-circle-left' ) . ' Previous' ); ?></li>
 				<?php
 			endif;
 
 			if ( get_next_posts_link() ) :
 				?>
-				<li class="page-item next"><?php next_posts_link( 'Next ' . lwtv_plugin()->get_symbolicon( 'caret-right-circle.svg', 'fa-chevron-circle-right' ) ); ?></li>
+				<li class="page-item next"><?php next_posts_link( 'Next ' . lwtv_plugin()->get_symbolicon( svg: 'caret-right-circle.svg', fontawesome: 'fa-chevron-circle-right' ) ); ?></li>
 				<?php endif; ?>
 			</ul>
 		</nav><!-- .navigation -->

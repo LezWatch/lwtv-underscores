@@ -53,37 +53,23 @@ class TMDB {
 	 * @return array
 	 */
 	public function update_scores( int $show_id ): array {
-		$score   = 'TBD';
-		$url     = $this->get_url( $show_id );
-		$imdb_id = get_post_meta( $show_id, 'lezshows_imdb', true );
-		$recheck = false;
+		$score = 'TBD';
+		$url   = $this->get_url( $show_id );
 
 		// Only call their service once a day.
 		$transient = lwtv_plugin()->get_transient( 'lwtv_3rd_scores_tmdb_' . $show_id );
 		if ( false === $transient ) {
-			$recheck = true;
-		} else {
-			$score   = $transient;
-			$recheck = ( 'TBD' !== $score ) ? false : true;
-		}
+			$tmdb_data = lwtv_plugin()->get_tmdb_info( $show_id );
 
-		// Make sure the API is defined
-		if ( defined( 'TMDB_API' ) && $imdb_id && $recheck ) {
-			$response = wp_remote_get( 'https://api.themoviedb.org/3/find/' . $imdb_id . '?api_key=' . TMDB_API . '&external_source=imdb_id' );
-
-			// Check the response:
-			if ( is_array( $response ) && ! is_wp_error( $response ) ) {
-				$body = json_decode( $response['body'], true ); // use the content
-
-				// If there's a status message, it's an error:
-				if ( ! isset( $body['status_message'] ) ) {
-					$score = ( isset( $body['tv_results'][0]['vote_average'] ) ) ? round( $body['tv_results'][0]['vote_average'] * 10 ) : 'TBD';
-					$url   = ( isset( $body['tv_results'][0]['id'] ) ) ? 'https://themoviedb.org/tv/' . $body['tv_results'][0]['id'] : '';
-				}
+			if ( $tmdb_data ) {
+				$score = ( isset( $tmdb_data['tv_results'][0]['vote_average'] ) ) ? round( $tmdb_data['tv_results'][0]['vote_average'] * 10 ) : 'TBD';
+				$url   = ( isset( $tmdb_data['tv_results'][0]['id'] ) ) ? 'https://themoviedb.org/tv/' . $tmdb_data['tv_results'][0]['id'] : '';
 			}
 
 			// Set transient and don't re-check until tomorrow.
 			set_transient( 'lwtv_3rd_scores_tmdb_' . $show_id, $score, 24 * HOUR_IN_SECONDS );
+		} else {
+			$score = $transient;
 		}
 
 		return array(

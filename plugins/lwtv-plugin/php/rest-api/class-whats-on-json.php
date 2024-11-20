@@ -446,10 +446,9 @@ class Whats_On_JSON {
 			$return = 'Error: The calendar is empty.';
 		} else {
 			foreach ( $whats_on as $episode ) {
-				$showtime  = new \DateTime( $episode->dtstart, $tvmaze_tz );
-				$timestamp = $showtime->getTimestamp();
-				$offset    = $lwtv_tz->getOffset( $showtime );
-				$interval  = \DateInterval::createFromDateString( (string) $offset . 'seconds' );
+				$showtime = new \DateTime( $episode->dtstart, $tvmaze_tz );
+				$offset   = $lwtv_tz->getOffset( $showtime );
+				$interval = \DateInterval::createFromDateString( (string) $offset . 'seconds' );
 				$showtime->add( $interval );
 
 				// Reformat the show name and episode name

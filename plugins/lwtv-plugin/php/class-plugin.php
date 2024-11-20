@@ -28,6 +28,7 @@ use LWTV\_Helpers\Utils;
  * @method string get_related_archive_header( $tag_id )                 \_Components\CPTs
  * @method array  get_shows_like_this_show( $show_id )                  \_Components\CPTs
  * @method bool   has_cpt_related_posts( $show_id )                     \_Components\CPTs
+ * @method void   get_tmdb_info( $post_id )                             \_Components\CPTs
  *
  * DEBUGGER
  * @method array  check_actors_wikidata( $actors, $items ) \_Components\Debugger

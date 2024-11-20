@@ -63,8 +63,8 @@ class Data_Character {
 			foreach ( $lez_cliches as $the_cliche ) {
 				$termicon = get_term_meta( $the_cliche->term_id, 'lez_termsmeta_icon', true );
 				$tropicon = $termicon ? $termicon . '.svg' : 'square.svg';
-				$icon     = lwtv_plugin()->get_symbolicon( $tropicon, 'fa-square' );
-				$cliches .= '<a href="' . get_term_link( $the_cliche->slug, 'lez_cliches' ) . '" data-bs-target="tooltip" data-placement="bottom" rel="tag" title="' . $the_cliche->name . '"><span role="img" aria-label="' . $the_cliche->name . '" class="character-cliche ' . $the_cliche->slug . '" style="max-width: 15px; max-height: 15px">' . $icon . '</span></a>&nbsp;';
+				$icon     = lwtv_plugin()->get_symbolicon( svg: $tropicon, fontawesome: 'fa-square', max_size: '15' );
+				$cliches .= '<a href="' . get_term_link( $the_cliche->slug, 'lez_cliches' ) . '" data-bs-target="tooltip" data-placement="bottom" rel="tag" title="' . $the_cliche->name . '"><span role="img" aria-label="' . $the_cliche->name . '" class="character-cliche ' . $the_cliche->slug . '">' . $icon . '</span></a>&nbsp;';
 			}
 
 			return $cliches;
@@ -81,7 +81,7 @@ class Data_Character {
 	 */
 	public function dead( $character_id, $format ) {
 		$deadpage = get_term_by( 'slug', get_query_var( 'term' ), get_query_var( 'taxonomy' ) );
-		$icon     = lwtv_plugin()->get_symbolicon( 'grim-reaper.svg', 'fa-times-circle' );
+		$icon     = lwtv_plugin()->get_symbolicon( svg: 'grim-reaper.svg', fontawesome: 'fa-times-circle' );
 
 		// Show nothing on ARCHIVE pages for dead
 		if ( ! empty( $term ) && $format === $term->slug ) {
@@ -109,7 +109,7 @@ class Data_Character {
 			$actor_more = ( $num_actors > 1 ) ? ' (plus ' . ( $num_actors - 1 ) . ' more)' : '';
 			$actor_post = get_post( $actor_value );
 			$actor_name = ( isset( $actor_post->post_title ) && ! is_null( $actor_post->post_title ) ) ? $actor_post->post_title : 'TBD';
-			$icon       = lwtv_plugin()->get_symbolicon( 'user.svg', 'fa-user' );
+			$icon       = lwtv_plugin()->get_symbolicon( svg: 'user.svg', fontawesome: 'fa-user' );
 			$output     = '<div class="card-meta-item actors">' . $icon;
 			if ( get_post_status( $actor_value ) === 'private' ) {
 				if ( is_user_logged_in() ) {
@@ -150,7 +150,7 @@ class Data_Character {
 			$num_shows = count( $all_shows );
 			$show_more = ( $num_shows > 1 ) ? ' (plus ' . ( $num_shows - 1 ) . ' more)' : '';
 			$show_post = get_post( $shows_value['show'] );
-			$icon      = lwtv_plugin()->get_symbolicon( 'tv-hd.svg', 'fa-tv' );
+			$icon      = lwtv_plugin()->get_symbolicon( svg: 'tv-hd.svg', fontawesome: 'fa-tv' );
 			$output    = '<div class="card-meta-item shows">' . $icon . '<em>';
 			if ( get_post_status( $shows_value['show'] ) !== 'publish' ) {
 				$output .= '<span class="disabled-show-link">' . $show_post->post_title . '</span>';
