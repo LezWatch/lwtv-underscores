@@ -1,3 +1,11 @@
+# Ignore temporary OS files
+.DS_Store
+.DS_Store?
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+.phpunit.result.cache
 *~
 .DS_Store
 .svn
@@ -5,13 +13,21 @@
 .htaccess
 *.bak
 *.swp
-Thumbs.db
+
+
 /node_modules/
 /.sass-cache/
 /npm-debug.log
 /vendor/
 debug.log
 /inc/dist/
+
+## Plugin files to ignore
+/plugins/**/.git
+/plugins/**/vendor/
+/plugins/**/node_modules/
+/plugins/lwtv-plugin/php/blocks/build/*
+
 
 # large/disallowed file types
 # a CDN should be used for these
