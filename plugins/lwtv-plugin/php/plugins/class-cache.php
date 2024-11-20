@@ -19,7 +19,9 @@ class Cache {
 	public function collect_urls_for_characters( $post_id ) {
 
 		// defaults:
-		$clean_urls = array();
+		$clean_urls = array(
+			get_permalink( $post_id ),
+		);
 
 		// Generate list of shows to purge
 		$shows = get_post_meta( $post_id, 'lezchars_show_group', true );
@@ -70,9 +72,10 @@ class Cache {
 	 * @return array   array of URLs
 	 */
 	public function collect_cache_urls_for_actors_or_shows( $post_id ) {
-
-		// Default
-		$clean_urls = array();
+		// Add the post URL to the list of URLs to clean.
+		$clean_urls = array(
+			get_permalink( $post_id ),
+		);
 
 		// Get the shadow characters.
 		$shadow_chars = \Shadow_Taxonomy\Core\get_the_posts( $post_id, Characters::SHADOW_TAXONOMY, Characters::SLUG );
@@ -111,7 +114,6 @@ class Cache {
 	 * @return void
 	 */
 	public function clean_urls( $post_id, $clear_urls ) {
-
 		// If it's not an array, or it's empty, we don't have anything to clear.
 		if ( ! is_array( $clear_urls ) || empty( $clear_urls ) ) {
 			return;
@@ -124,16 +126,35 @@ class Cache {
 			$clear_urls[] = home_url();
 		}
 
-		// WP Rocket.
-		if ( function_exists( 'rocket_clean_files' ) ) {
-			rocket_clean_files( $clear_urls );
-		}
+		$this->clear_nginx_helper( $clear_urls );
+		$this->clear_wp_rocket( $clear_urls );
+	}
 
-		foreach ( $clear_urls as $url ) {
-			// Nginx Helper.
-			if ( is_plugin_active( 'nginx-helper/nginx-helper.php' ) ) {
+	/**
+	 * Clear the Nginx Helper Cache
+	 *
+	 * @param  array  $clear_urls - URLs to clear
+	 * @return void
+	 */
+	private function clear_nginx_helper( $clear_urls ) {
+		if ( is_plugin_active( 'nginx-helper/nginx-helper.php' ) ) {
+			foreach ( $clear_urls as $url ) {
+				// add /purge/ to the URL
+				$url = str_replace( home_url(), home_url() . '/purge/', $url );
 				wp_remote_get( $url );
 			}
+		}
+	}
+
+	/**
+	 * Clear the WP Rocket Cache
+	 *
+	 * @param  array  $clear_urls - URLs to clear
+	 * @return void
+	 */
+	private function clear_wp_rocket( $clear_urls ) {
+		if ( is_plugin_active( 'wp-rocket/wp-rocket.php' ) ) {
+			rocket_clean_files( $clear_urls );
 		}
 	}
 }
