@@ -7,7 +7,7 @@
 
 namespace LWTV\Blocks;
 
-use LWTV\Calendar\Blocks as CalendarBlocks;
+use LWTV\Calendar\Display as CalendarBlocks;
 use LWTV\Features\Shortcodes;
 
 class Serverside {

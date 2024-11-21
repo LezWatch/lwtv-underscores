@@ -34,3 +34,22 @@ table.lwtvc {
 	max-height: 100px;
 	float: left;
 }
+
+ul#calendarTab a.nav-link {
+	color: $lwtv-pink;
+	border-color: $lwtv-grey2;
+	margin-right: 0.5rem;
+
+	&.active {
+		background-color: $lwtv-pink;
+		border-color: $lwtv-pink;
+		color: $white;
+	}
+
+	&:hover,
+	&:focus,
+	&:active {
+		background-color: $lwtv-grey2;
+		color: $lwtv-pink;
+	}
+}

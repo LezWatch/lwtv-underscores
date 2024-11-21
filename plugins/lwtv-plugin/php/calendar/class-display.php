@@ -7,7 +7,7 @@
 
 namespace LWTV\Calendar;
 
-class Blocks {
+class Display {
 
 	/**
 	 * Make the Calendar
@@ -15,6 +15,8 @@ class Blocks {
 	 * @return string
 	 */
 	public function make() {
+		wp_enqueue_script( 'lwtv-calendar', LWTV_PLUGIN_URL . '/assets/js/calendar-tabs.js', array( 'jquery' ), LWTV_THEME_VERSION['lwtv-underscores'], true );
+
 		// Build out start and end dates.
 		$tz    = new \DateTimeZone( LWTV_TIMEZONE );
 		$today = new \DateTime( 'today', $tz );
@@ -22,6 +24,7 @@ class Blocks {
 		// Query Variables.
 		$get_tvdate = isset( $_GET['tvdate'] ) ? sanitize_text_field( $_GET['tvdate'] ) : 'today'; // phpcs:ignore WordPress.Security.NonceVerification
 		$date_query = ( ( strtotime( $get_tvdate ) !== false ) && ( $get_tvdate !== $today->format( 'Y-m-d' ) ) ) ? $get_tvdate : 'today';
+		$get_tvview = isset( $_GET['tvview'] ) ? sanitize_text_field( $_GET['tvview'] ) : 'list'; // phpcs:ignore WordPress.Security.NonceVerification
 
 		// Get the dates
 		$start_datetime = self::start_datetime( $date_query, $tz );
@@ -42,13 +45,13 @@ class Blocks {
 		if ( isset( $calendar['none'] ) || empty( $calendar ) || ! array( $calendar ) ) {
 			$return .= $this->get_empty_calendar( $start_datetime, $end_datetime, $today );
 		} else {
-			$return .= $this->get_tab_navigation( $calendar, $today, $tz );
+			$return .= $this->get_tab_navigation( $calendar, $today, $tz, $get_tvview );
 		}
 
 		/**
 		 * Footer Section.
 		 */
-		$return .= $this->get_footer( $date_query, $today, $prev_datetime, $end_datetime );
+		$return .= $this->get_footer( $date_query, $today, $prev_datetime, $end_datetime, $get_tvview );
 
 		return '<div class="lwtv-calendar-block">' . $return . '</div>';
 	}
@@ -70,9 +73,10 @@ class Blocks {
 	 * @param  array  $calendar The calendar
 	 * @param  object $today    Today's date
 	 * @param  object $tz       Timezone
+	 * @param  string $tv_view  The view
 	 * @return string           The tab navigation
 	 */
-	private function get_tab_navigation( $calendar, $today, $tz ) {
+	private function get_tab_navigation( $calendar, $today, $tz, $tv_view = 'list' ) {
 		$navigation  = '<p>All times are displayed as US/Eastern, but are reflective of their original air date and time.</p>';
 		$navigation .= '<p>Be advised, airdates and times are subject to change without notice. Always check your local listings.<p>';
 
@@ -86,18 +90,21 @@ class Blocks {
 		// Build the tabs
 		$tab_list = '';
 		foreach ( $show_tabs as $tab => $content ) {
+			// Active tab
+			$active = ( $tab === $tv_view ) ? ' active' : '';
+
 			$tab_list .= '<li class="nav-item" role="presentation">';
-			$tab_list .= '<a class="nav-link' . ( 'list' === $tab ? ' active' : '' ) . '" id="' . $tab . '-tab" data-bs-toggle="tab" data-bs-target="#' . $tab . '-tab-pane" type="button" role="tab" aria-controls="' . $tab . '-tab-pane" aria-selected="' . ( 'list' === $tab ? 'true' : 'false' ) . '">' . ucfirst( $tab ) . '</a>';
+			$tab_list .= '<a class="nav-link' . $active . '" id="' . $tab . '-tab" data-bs-toggle="tab" data-bs-target="#' . $tab . '-tab-pane" type="button" role="tab" aria-controls="' . $tab . '-tab-pane" aria-selected="' . ( $tv_view === $tab ? 'true' : 'false' ) . '">' . ucfirst( $tab ) . '</a>';
 			$tab_list .= '</li>';
 		}
-		$navigation .= '<ul class="nav nav-tabs" id="myTab" role="tablist">' . $tab_list . '</ul>';
+		$navigation .= '<ul class="nav nav-tabs" id="calendarTab" role="tablist">' . $tab_list . '</ul>';
 
 		// Tab Content
 		$tab_content = '';
 		foreach ( $show_tabs as $tab => $content ) {
-			$tab_content .= '<div class="tab-pane fade' . ( 'list' === $tab ? ' show active' : '' ) . '" id="' . $tab . '-tab-pane" role="tabpanel" aria-labelledby="' . $tab . '-tab" tabindex="0">' . $content . '</div>';
+			$tab_content .= '<div class="tab-pane fade' . ( $tv_view === $tab ? ' show active' : '' ) . '" id="' . $tab . '-tab-pane" role="tabpanel" aria-labelledby="' . $tab . '-tab" tabindex="0">' . $content . '</div>';
 		}
-		$navigation .= '<div class="tab-content" id="myTabContent">' . $tab_content . '</div>';
+		$navigation .= '<div class="tab-content" id="calendarTabContent">' . $tab_content . '</div>';
 
 		return $navigation;
 	}
@@ -109,9 +116,11 @@ class Blocks {
 	 * @param  object $today         Today's date
 	 * @param  object $prev_datetime Last week
 	 * @param  object $end_datetime  Next week
+	 * @param  string $get_tvview    The view
+	 *
 	 * @return string                The footer
 	 */
-	private function get_footer( $date_query, $today, $prev_datetime, $end_datetime ) {
+	private function get_footer( $date_query, $today, $prev_datetime, $end_datetime, $get_tvview ) {
 		// NEXT week: Since we set this to Saturday, we have to add a day for the links.
 		$end_datetime->modify( '+1 day' );
 
@@ -119,7 +128,7 @@ class Blocks {
 		$today->modify( 'last Sunday' );
 
 		// Add Navigation:
-		$footer = $this->get_footer_navigation( $date_query, $today->format( 'Y-m-d' ), $prev_datetime->format( 'Y-m-d' ), $end_datetime->format( 'Y-m-d' ) );
+		$footer = $this->get_footer_navigation( $date_query, $today->format( 'Y-m-d' ), $prev_datetime->format( 'Y-m-d' ), $end_datetime->format( 'Y-m-d' ), $get_tvview );
 
 		// Powered by:
 		$footer .= '<p><small><a href="https://www.tvmaze.com" target="_new">Powered by TVMaze.</a></small></p>';
@@ -201,17 +210,30 @@ class Blocks {
 	 *
 	 * All dates are 'Y-m-d'
 	 *
-	 * @param  string $date  The date we're building nav for
-	 * @param  string $today Today's date
-	 * @param  string $last  Last week
-	 * @param  string $next  Next week
+	 * @param  string $date    The date we're building nav for
+	 * @param  string $today   Today's date
+	 * @param  string $last    Last week
+	 * @param  string $next    Next week
+	 * @param  string $tv_view The view
+	 *
 	 * @return string       HTML output for the navigation
 	 */
-	private function get_footer_navigation( $date, $today, $last, $next ) {
+	private function get_footer_navigation( $date, $today, $last, $next, $tv_view ) {
+
+		// Query Args
+		$last_query_args = array(
+			'tvdate' => $last,
+			'tvview' => $tv_view,
+		);
+		$next_query_args = array(
+			'tvdate' => $next,
+			'tvview' => $tv_view,
+		);
+
 		// echo previous and next links:
-		$last_week      = add_query_arg( 'tvdate', $last, get_permalink() );
+		$last_week      = add_query_arg( $last_query_args, get_permalink() );
 		$last_week_icon = lwtv_plugin()->get_symbolicon( svg: 'caret-left-circle.svg', fontawesome: 'fa-chevron-circle-left' );
-		$next_week      = add_query_arg( 'tvdate', $next, get_permalink() );
+		$next_week      = add_query_arg( $next_query_args, get_permalink() );
 		$next_week_icon = lwtv_plugin()->get_symbolicon( svg: 'caret-right-circle.svg', fontawesome: 'fa-chevron-circle-right' );
 
 		$navigation = '<nav aria-label="Calendar Navigation" role="navigation" class="yikes-pagination"><ul class="pagination justify-content-center"><li class="page-item first me-auto"><a href="' . $last_week . '" class="page-link">' . $last_week_icon . ' Last Week</a></li>';
