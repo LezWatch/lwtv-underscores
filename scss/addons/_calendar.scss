@@ -1,0 +1,36 @@
+/* Calendar */
+
+table.lwtvc {
+
+	tbody {
+		border-bottom: 8px solid $white;
+	}
+}
+
+.ep-calendar-heading-date {
+	float: left;
+}
+
+.ep-calendar-heading-weekday {
+	float: right;
+}
+
+.ep-calendar-dot {
+	border-radius: 50%;
+	background: $lwtv-pink;
+	border-color: $lwtv-pink;
+	display: inline-block;
+	width: 10px;
+	height: 10px;
+}
+
+.ep-calendar-dot-past {
+	background: $lwtv-grey2;
+	border-color: $lwtv-grey2;
+}
+
+.calendar-show-img {
+	width: 30%;
+	max-height: 100px;
+	float: left;
+}

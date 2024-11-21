@@ -4,6 +4,7 @@
  */
 
 const { cp } = require( '@npmcli/fs' );
+var fs = require( 'fs' );
 
 console.log('Building and merging JS and CSS...');
 
@@ -21,8 +22,32 @@ console.log('Building and merging JS and CSS...');
 	console.log('JS files have been moved.');
 
 	// CSS Themes
+	fs.unlink( 'style.css', function (err) {
+		if (err) throw err;
+		console.log('Old style.css deleted!');
+		cp('scss/_header.scss', 'style.css');
+	});
+
+
+	fs.readFile( 'inc/dist/css/style.css', 'utf8', (err, styleCSS) => {
+		if (err) {
+			console.error('Error reading source file:', err);
+			return;
+		}
+
+		fs.appendFile( 'style.css', styleCSS, (err) => {
+			if (err) {
+				console.error('Error appending to target file:', err);
+				return;
+			}
+
+			console.log('Content appended successfully.');
+		  });
+	});
+
 	await cp('inc/dist/css/style.min.css', 'style.min.css');
 	await cp('inc/dist/css/style-editor.min.css', 'style-editor.min.css');
+	await cp('inc/dist/css/style-editor.css', 'style-editor.css');
 
 	// CSS Plugins
 	await cp('node_modules/tablesorter/dist/css/theme.bootstrap_4.min.css', 'plugins/lwtv-plugin/assets/css/theme.bootstrap_4.min.css');

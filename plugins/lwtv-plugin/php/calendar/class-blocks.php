@@ -263,18 +263,27 @@ class Blocks {
 
 			$weekly .= '<div class="container text-center"><div class="row row-cols-1 row-cols-md-2 g-4">';
 
+			$is_when = array(
+				'today' => ( $day === $today->format( 'Y-m-d' ) ) ? true : false,
+				'past'  => ( $show_day < $today ) ? true : false,
+				'soon'  => ( $show_day > $today ) ? true : false,
+			);
+
 			foreach ( $shows as $show ) {
 
 				// Show Name (may be URL if we have a link)
 				$show['show_name'] = self::show_name( $show['show_name'] );
 				$show['show_id']   = self::show_name( $show['show_name'], 'lwtv', 'id' );
 
+				// Show Timezone
+				$show['native_tz'] = lwtv_plugin()->get_tvmaze_show_timezone( $show['show_id'] ) ?? '';
+
 				// Build output
 				$show_content = '';
 				if ( is_array( $show['title'] ) ) {
-					$show_content .= $this->display_card_grid_multiple( $show );
+					$show_content .= $this->display_card_grid_multiple( $show, $tz, $is_when );
 				} else {
-					$show_content .= $this->display_card_grid( $show );
+					$show_content .= $this->display_card_grid( $show, $tz, $is_when );
 				}
 
 				$weekly .= $show_content;
@@ -292,19 +301,40 @@ class Blocks {
 	 * Generate display for single episode in a day.
 	 *
 	 * @param  array  $show
+	 * @param  object $tz
+	 * @param  array   $is_today
+	 *
 	 * @return string
 	 */
-	private function display_card_grid( array $show ): string {
-		$image = ( isset( $show['show_id'] ) ) ? get_the_post_thumbnail( $show['show_id'], array( 100, 100, true ), array( 'class' => 'calendar-show-img card-img-top' ) ) : '';
-		$date  = new \DateTime( '@' . $show['timestamp'] );
+	private function display_card_grid( array $show, object $tz, array $is_when ): string {
+		$image     = ( isset( $show['show_id'] ) ) ? get_the_post_thumbnail( $show['show_id'], array( 100, 100, true ), array( 'class' => 'calendar-show-img card-img' ) ) : '';
+		$date      = new \DateTime( '@' . $show['timestamp'] );
+		$show_time = new \DateTime( '@' . $show['timestamp'], $tz );
+		$date->setTimeZone( new \DateTimeZone( LWTV_TIMEZONE ) );
+
+		$lwtv_date   = $show_time->format( '@ g:i A' ) . ' (' . $date->format( 'T' ) . ')';
+		$native_date = '';
+		if ( ! empty( $show['native_tz'] ) ) {
+			$native_tz_time = new \DateTime( '@' . $show['timestamp'] );
+			$native_tz_time->setTimeZone( new \DateTimeZone( $show['native_tz'] ) );
+			$native_date = ( $date->format( 'T' ) !== $native_tz_time->format( 'T' ) ) ? ' / ' . $native_tz_time->format( '@ H:i' ) . ' (' . $native_tz_time->format( 'T' ) . ')' : '';
+		}
+
+		$card_class = match ( true ) {
+			$is_when['today'] => 'card border-info',
+			$is_when['soon']  => 'card border-secondary',
+			default           => 'card',
+		};
+
+		$head_class = ( $is_when['today'] ) ? 'card-header bg-info' : 'card-header';
 
 		$card  = '<div class="col"><div class="container ep-calendar-weekly">';
-		$card .= '<div class="card" style="width: 18rem;">
-			<div class="card-header"><strong>' . $date->format( 'H:i' ) . '</strong></div>
+		$card .= '<div class="' . $card_class . '" style="width: 18rem;">
+			<div class="' . $head_class . '"><strong>' . $lwtv_date . $native_date . '</strong></div>
 			<div class="card-body" style="flex-direction: row;">
 				' . $image . '
 				<p class="card-title">' . $show['show_name'] . '</p>
-				<p class="card-text">' . $show['title'] . '</p>
+				<p class="card-text"><small>' . $show['title'] . '</small></p>
 			</div>
 		</div>';
 		$card .= '</div></div>';
@@ -316,9 +346,12 @@ class Blocks {
 	 * Generate display for multiple episodes for a show in a day.
 	 *
 	 * @param  array  $show
+	 * @param  object $tz
+	 * @param  array   $is_today
+	 *
 	 * @return string
 	 */
-	private function display_card_grid_multiple( array $show ): string {
+	private function display_card_grid_multiple( array $show, object $tz, array $is_when ): string {
 		$all_episodes = '';
 		foreach ( $show['title'] as $one_show ) {
 			$episode = array(
@@ -328,7 +361,7 @@ class Blocks {
 				'show_id'   => $show['show_id'],
 			);
 
-			$all_episodes .= $this->display_card_grid( $episode );
+			$all_episodes .= $this->display_card_grid( $episode, $tz, $is_when );
 		}
 
 		return $all_episodes;
@@ -379,19 +412,26 @@ class Blocks {
 			$table .= '<thead class="thead-light"><tr class="table-secondary lwtvc-heading' . $highlight . '" data-date="' . $show_day->format( 'Y-m-d' ) . '"><th colspan="3"><span class="ep-calendar-heading-date">' . $today_date . '</span><span class="ep-calendar-heading-weekday">' . $show_day->format( 'l' ) . '</span></th></tr></thead><tbody>';
 
 			foreach ( $shows as $show ) {
+				$date      = new \DateTime( '@' . $show['timestamp'] );
+				$show_time = new \DateTime( '@' . $show['timestamp'], $tz );
+				$date->setTimeZone( new \DateTimeZone( LWTV_TIMEZONE ) );
+				$lwtv_date = $show_time->format( '@ g:i A' ) . ' (' . $date->format( 'T' ) . ')';
+
+				// Determine if the show is airing now, soon, or later.
+				$dot_time = ( $show_time < $today ) ? 'ep-calendar-dot ep-calendar-dot-past' : 'ep-calendar-dot';
+
 				// Show Name (may be URL if we have a link)
 				$show['show_name'] = self::show_name( $show['show_name'] );
+				$show['show_id']   = self::show_name( $show['show_name'], 'lwtv', 'id' );
+				$show['native_tz'] = lwtv_plugin()->get_tvmaze_show_timezone( $show['show_id'] );
 
 				// Build output
 				$show_content  = '<div class="ep-calendar-title">';
 				$show_content .= ( is_array( $show['title'] ) ) ? $this->display_multiple_episodes_list( $show ) : $this->display_single_episode_list( $show );
 				$show_content .= '</div>';
 
-				// Set the showtime from the timestamp
-				$show_time = new \DateTime( '@' . $show['timestamp'], $tz );
-
 				// Return it all!
-				$table .= '<tr class="ep-calendar-item' . $highlight . '"><td class="ep-calendar-item-time">' . $show_time->format( 'g:i A' ) . '</td><td class="ep-calendar-marker"><span class="ep-calendar-dot"></span></td><td class="ep-calendar-item-title">' . $show_content . '</td></tr>';
+				$table .= '<tr class="ep-calendar-item' . $highlight . '"><td class="ep-calendar-item-time">' . $lwtv_date . '</td><td class="ep-calendar-marker"><span class="' . $dot_time . '"></span></td><td class="ep-calendar-item-title">' . $show_content . '</td></tr>';
 			}
 
 			$table .= '</tbody>';

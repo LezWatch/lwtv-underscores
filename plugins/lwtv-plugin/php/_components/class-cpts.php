@@ -155,6 +155,21 @@ class CPTs implements Component, Templater {
 	}
 
 	/**
+	 * Get TVMaze Info for actor or show
+	 *
+	 * @param  int   $post_id
+	 * @return mixed the response body or false
+	 */
+	public function get_tvmaze_info( $post_id ): mixed {
+		// If it's not a show, bail early.
+		if ( 'post_type_shows' !== get_post_type( $post_id ) ) {
+			return false;
+		}
+
+		return ( new Shows() )->get_tvmaze_info( $post_id );
+	}
+
+	/**
 	 * Related Content Archive
 	 *
 	 * @param  int $tag_id

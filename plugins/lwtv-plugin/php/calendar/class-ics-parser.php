@@ -1,6 +1,6 @@
 <?php
 /*
-Description: ICS Parser
+Description: ICS Parser Wrapper for LWTV
 
 https://github.com/u01jmg3/ics-parser
 
