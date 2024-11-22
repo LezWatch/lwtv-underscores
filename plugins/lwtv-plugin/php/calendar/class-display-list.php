@@ -17,6 +17,17 @@ class Display_List {
 	 */
 	public function get_shows( $calendar, $today, $tz ) {
 
+		// Header Sub Navigation
+		$header = '<div class="ep-calendar-subnav text-bg-light p-3"><ul class="nav justify-content-center">';
+		foreach ( $calendar as $day => $shows ) {
+			$show_day = new \DateTime( $day, $tz );
+
+			$link_color = ( $day === $today->format( 'Y-m-d' ) ) ? 'link-info' : 'link-dark';
+
+			$header .= '<li class="nav-item"><a class="' . $link_color . ' link-offset-2 nav-link" href="#' . strtolower( $show_day->format( 'ldS' ) ) . '">' . $show_day->format( 'l' ) . '</a></li>';
+		}
+		$header .= '</ul></div>';
+
 		$table = '<table class="table">';
 
 		foreach ( $calendar as $day => $shows ) {
@@ -56,7 +67,7 @@ class Display_List {
 
 		$table .= '</table>';
 
-		return $table;
+		return $header . $table;
 	}
 
 	/**
