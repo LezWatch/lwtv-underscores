@@ -6,6 +6,7 @@ jQuery(function($) {
 			var nextTab  = e.target.getAttribute('id').replace( '-tab', '' );
 			const params = new URLSearchParams( window.location.search )
 
+			// Update the URL query string with the new tab view.
 			params.set( 'tvview', nextTab )
 
 			// Update the URL visibly without changing the browser history.
