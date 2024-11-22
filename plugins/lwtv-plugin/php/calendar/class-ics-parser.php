@@ -1,6 +1,6 @@
 <?php
 /*
-Description: ICS Parser
+Description: ICS Parser Wrapper for LWTV
 
 https://github.com/u01jmg3/ics-parser
 
@@ -51,6 +51,7 @@ class ICS_Parser {
 	 */
 	public function query_vars( $vars ): array {
 		$vars[] = 'tvdate';
+		$vars[] = 'tvview';
 		return $vars;
 	}
 

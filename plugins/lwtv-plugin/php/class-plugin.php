@@ -17,8 +17,12 @@ use LWTV\_Helpers\Utils;
  * i.e. lwtv_plugin()->calculate_character_data( $post_id );
  *
  * CALENDAR
+ * @method array  generate_calendar( $when, $timespan )              \_Components\Calendar
+ * @method void   download_tvmaze()                                  \_Components\Calendar
  * @method string get_show_name_for_calendar( $show_name, $source ) \_Components\Calendar
- * @method array  generate_ics_by_date( $url, $when, $date )        \_Components\Calendar
+ * @method array  generate_ics_by_date( $url, $when, $date )         \_Components\Calendar
+ * @method void   get_tvmaze_info( $post_id )                        \_Components\Calendar
+ * @method string get_tvmaze_show_timezone( $show_id )               \_Components\Calendar
  *
  * CPTs
  * @method void   calculate_actor_data( $post_id )                      \_Components\CPTs
@@ -27,8 +31,10 @@ use LWTV\_Helpers\Utils;
  * @method array  get_cpt_related_posts( $show_id )                     \_Components\CPTs
  * @method string get_related_archive_header( $tag_id )                 \_Components\CPTs
  * @method array  get_shows_like_this_show( $show_id )                  \_Components\CPTs
- * @method bool   has_cpt_related_posts( $show_id )                     \_Components\CPTs
  * @method void   get_tmdb_info( $post_id )                             \_Components\CPTs
+ * @method bool   has_cpt_related_posts( $show_id )                     \_Components\CPTs
+ * @method void   hide_actor_data( $post_id )                           \_Components\CPTs
+ * @method string the_actor_privacy_warning( $post_id )                 \_Components\CPTs
  *
  * DEBUGGER
  * @method array  check_actors_wikidata( $actors, $items ) \_Components\Debugger

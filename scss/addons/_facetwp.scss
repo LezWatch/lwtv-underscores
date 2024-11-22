@@ -1,0 +1,111 @@
+/**
+ * FacetWP Customization
+ */
+
+
+/* =Navigation
+----------------------------------------------- */
+.facetwp-pager {
+	margin-top: 2em;
+	width: 100%;
+	display: flex;
+	padding-left: 0;
+	list-style: none;
+	border-radius: 0.25rem;
+
+	a {
+		color: $lwtv-pink;
+	}
+
+	a:hover {
+		background-color: $lwtv-ltgrey;
+	}
+
+	.facetwp-page {
+		position: relative;
+		display: block;
+		padding: 0.5rem 0.75rem;
+		margin-left: -1px;
+		line-height: 1.25;
+		justify-content: center !important;
+		border: 1px solid $lwtv-grey;
+
+		&.active,
+		a.active {
+			background-color: $lwtv-pink;
+			border-color: $lwtv-pink;
+			color: $white;
+			font-weight: 700;
+		}
+	}
+
+	.facetwp-page.next {
+		margin-left: auto !important;
+		background-color: $lwtv-pink;
+		border-color: $lwtv-pink;
+		color: $white;
+		font-weight: 700;
+	}
+
+	.facetwp-page.prev {
+		margin-right: auto !important;
+		background-color: $lwtv-pink;
+		border-color: $lwtv-pink;
+		color: $white;
+		font-weight: 700;
+	}
+
+}
+
+/* =Sidebars
+----------------------------------------------- */
+
+.site-sidebar {
+
+	&.showchars-sidebar {
+
+		.card-filter .card-body {
+			padding: 0;
+
+			.widget {
+
+				.facetwp-facet {
+					margin-bottom: 2rem;
+
+					&:last-of-type {
+						margin-bottom: 0;
+					}
+
+					.facetwp-autocomplete-update {
+						font-size: 14px;
+						margin-top: 0.4rem;
+					}
+				}
+			}
+		}
+	}
+}
+
+/* =Subheaders
+----------------------------------------------- */
+
+.archive-subheader .jumbotron {
+	.facetwp-selections li {
+		margin-top: 0;
+		margin-bottom: 1rem;
+	}
+
+	.facetwp-selection-label {
+		font-weight: 700;
+	}
+
+	.facetwp-title {
+		text-transform: capitalize;
+	}
+
+	li[data-facet="show_loved"],
+	li[data-facet="show_stars"],
+	li[data-facet="show_worthit"] {
+		display: none;
+	}
+}

@@ -1,0 +1,132 @@
+
+/* Statistics Pages */
+
+.statistics,
+.thisyear {
+
+	.card-header.actors,
+	.card-header.genres,
+	.card-header.gender {
+		color: #856404;
+		background-color: #fff3cd;
+		border-color: #ffeeba;
+	}
+
+	.card-header.characters,
+	.card-header.new-shows,
+	.card-header.tropes {
+		color: #155724;
+		background-color: #d4edda;
+		border-color: #c3e6cb;
+	}
+
+	.card-header.dead-characters,
+	.card-header.canceled-shows {
+		color: #721c24;
+		background-color: #f8d7da;
+		border-color: #f5c6cb;
+	}
+
+	.card-header.shows,
+	.card-header.shows-onair,
+	.card-header.sexuality {
+		color: #0c5460;
+		background-color: #d1ecf1;
+		border-color: #bee5eb;
+	}
+
+	.progress-bar {
+		background-color: #17a2b8 !important;
+	}
+
+	button {
+		color: #fff;
+		background-color: #17a2b8;
+		border-color: #17a2b8;
+	}
+
+	a.nav-link {
+		color: $lwtv-pink;
+	}
+
+	.container {
+
+		.row {
+			margin-bottom: 4rem;
+		}
+	}
+}
+
+.chart-container {
+
+	.row {
+		margin-bottom: 4rem;
+	}
+
+	ul.statistics.percentages.dead-years {
+		padding: 0;
+
+		li {
+			display: inline-block;
+			width: 33%;
+		}
+	}
+
+	ul.statistics.lists.tropes,
+	ul.statistics.lists.genres,
+	ul.statistics.lists.cliches {
+		padding: 0;
+
+		li {
+			display: inline-block;
+			width: 50%;
+		}
+	}
+}
+
+.percentage-container {
+	margin-top: 2rem;
+
+	.row {
+		margin-bottom: 2em;
+	}
+}
+
+.lwtv-stats {
+
+	.progress {
+		height: 3 0;
+		background-color: $lwtv-ltblue;
+
+		.progress-bar {
+			color: $darkgrey;
+			text-align: left;
+		}
+	}
+}
+
+canvas {
+	user-select: none;
+	-moz-user-select: none;
+	-webkit-user-select: none;
+	-ms-user-select: none;
+}
+
+/* This Year Pages */
+
+.thisyear {
+
+	.row {
+		margin-bottom: 4rem;
+	}
+
+	ul.this-year-shows {
+		padding: 0;
+
+		li {
+			display: inline-block;
+			width: 50%;
+		}
+
+	}
+}
