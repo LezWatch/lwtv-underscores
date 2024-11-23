@@ -40,7 +40,7 @@ class Display_Grid {
 			}
 
 			$weekly .= '<div class="ep-calendar-day">';
-			$weekly .= '<h3 class="ep-calendar-day-heading"><a name="' . $today_link . '">&nbsp;</a></br>' . $today_date . '</h3>';
+			$weekly .= '<h3 class="ep-calendar-day-heading" id="' . $today_link . '"></br>' . $today_date . '</h3>';
 
 			$weekly .= '<div class="container text-center"><div class="row row-cols-1 row-cols-md-3 g-4">';
 
