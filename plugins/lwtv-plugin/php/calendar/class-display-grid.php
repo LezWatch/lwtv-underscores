@@ -53,7 +53,7 @@ class Display_Grid {
 			foreach ( $shows as $show ) {
 
 				// Show Name (may be URL if we have a link)
-				$show['show_name'] = lwtv_plugin()->get_show_name_for_calendar( $show['show_name'] );
+				$show['show_name'] = lwtv_plugin()->get_show_name_for_calendar( $show['show_name'], 'tvmaze' );
 				$show['show_id']   = lwtv_plugin()->get_show_name_for_calendar( $show['show_name'], 'lwtv', 'id' );
 				$show['native_tz'] = lwtv_plugin()->get_tvmaze_show_timezone( $show['show_id'] ) ?? '';
 
