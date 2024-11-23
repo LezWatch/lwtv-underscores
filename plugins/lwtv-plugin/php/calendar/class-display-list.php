@@ -33,13 +33,14 @@ class Display_List {
 		foreach ( $calendar as $day => $shows ) {
 			$highlight = ( $day === $today->format( 'Y-m-d' ) ) ? ' table-info' : '';
 			$show_day  = new \DateTime( $day, $tz );
-
-			$today_date = $show_day->format( 'F d, Y' );
+			
+			$today_link = strtolower( $show_day->format( 'ldS' ) );
+			$today_date = $show_day->format( 'l dS' );
 			if ( $day === $today->format( 'Y-m-d' ) ) {
 				$today_date .= '&nbsp;&nbsp;<button type="button" class="btn btn-info btn-sm" disabled><a name="today">Today</a></button>';
 			}
 
-			$table .= '<thead class="thead-light"><tr class="table-secondary lwtvc-heading' . $highlight . '" data-date="' . $show_day->format( 'Y-m-d' ) . '"><th colspan="3"><span class="ep-calendar-heading-date">' . $today_date . '</span><span class="ep-calendar-heading-weekday">' . $show_day->format( 'l' ) . '</span></th></tr></thead><tbody>';
+			$table .= '<thead class="thead-light" id="' . $today_link . '"><tr class="table-secondary lwtvc-heading' . $highlight . '" data-date="' . $show_day->format( 'Y-m-d' ) . '"><th colspan="3"><span class="ep-calendar-heading-date">' . $today_date . '</span><span class="ep-calendar-heading-weekday">' . $show_day->format( 'l' ) . '</span></th></tr></thead><tbody>';
 
 			foreach ( $shows as $show ) {
 				$show_time = new \DateTime( '@' . $show['timestamp'], $tz );
