@@ -17,6 +17,17 @@ class Display_List {
 	 */
 	public function get_shows( $calendar, $today, $tz ) {
 
+		// Header Sub Navigation
+		$header = '<div class="ep-calendar-subnav text-bg-light p-3"><ul class="nav justify-content-center">';
+		foreach ( $calendar as $day => $shows ) {
+			$show_day = new \DateTime( $day, $tz );
+
+			$link_color = ( $day === $today->format( 'Y-m-d' ) ) ? 'link-info' : 'link-dark';
+
+			$header .= '<li class="nav-item"><a class="' . $link_color . ' link-offset-2 nav-link" href="#' . strtolower( $show_day->format( 'ldS' ) ) . '">' . $show_day->format( 'l' ) . '</a></li>';
+		}
+		$header .= '</ul></div>';
+
 		$table = '<table class="table">';
 
 		foreach ( $calendar as $day => $shows ) {
@@ -38,7 +49,7 @@ class Display_List {
 				$dot_time = ( $show_time <= $today ) ? 'ep-calendar-dot ep-calendar-dot-past' : 'ep-calendar-dot';
 
 				// Show Name (may be URL if we have a link)
-				$show['show_name'] = lwtv_plugin()->get_show_name_for_calendar( $show['show_name'] );
+				$show['show_name'] = lwtv_plugin()->get_show_name_for_calendar( $show['show_name'], 'tvmaze' );
 				$show['show_id']   = lwtv_plugin()->get_show_name_for_calendar( $show['show_name'], 'lwtv', 'id' );
 				$show['native_tz'] = lwtv_plugin()->get_tvmaze_show_timezone( $show['show_id'] );
 
@@ -56,7 +67,7 @@ class Display_List {
 
 		$table .= '</table>';
 
-		return $table;
+		return $header . $table;
 	}
 
 	/**
