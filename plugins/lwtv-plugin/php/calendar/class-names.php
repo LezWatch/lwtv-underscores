@@ -14,13 +14,13 @@ class Names {
 	 * Since TV Maze sometimes uses different names than we do, we have to make
 	 * a related array that can handle two names.
 	 *
-	 * @TODO: Make this something we have UX access to.
+	 * Names can be customized in the admin area using the TVMaze CPT.
 	 *
 	 * @param  string $showname Display Name of the show
 	 * @param  string $source   lwtv or tvmaze
 	 * @return string           The display name
 	 */
-	public function make( $name, $source ) {
+	public function make( $name, $source, $output ) {
 
 		// Set Defaults:
 		$check_name = array(
@@ -40,12 +40,12 @@ class Names {
 		switch ( $source ) {
 			case 'lwtv':
 				// Return only the name
-				return $check_name['name'];
+				return ( 'name' === $output ) ? $check_name['name'] : $check_name['id'];
 			case 'tvmaze':
 				if ( 0 === $check_name['id'] ) {
-					return $check_name['name'];
+					return ( 'name' === $output ) ? $check_name['name'] : $check_name['id'];
 				} else {
-					return '<a href="' . get_permalink( $check_name['id'] ) . '">' . $check_name['name'] . '</a>';
+					return ( 'name' === $output ) ? '<a href="' . get_permalink( $check_name['id'] ) . '">' . $check_name['name'] . '</a>' : $check_name['id'];
 				}
 		}
 	}

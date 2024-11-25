@@ -1,0 +1,88 @@
+/* Calendar */
+
+table.lwtvc {
+
+	tbody {
+		border-bottom: 8px solid $white;
+	}
+}
+
+.ep-calendar-calendar td {
+	padding: 0px;
+}
+
+.ep-calendar-heading-date {
+	float: left;
+}
+.ep-calendar-heading-backtotop,
+.ep-calendar-heading-weekday {
+	float: right;
+}
+
+.ep-calendar-heading-backtotop {
+	a {
+		color: $lwtv-ltpink;
+	}
+}
+
+.ep-calendar-dot {
+	border-radius: 50%;
+	background: $lwtv-pink;
+	border-color: $lwtv-pink;
+	display: inline-block;
+	width: 10px;
+	height: 10px;
+}
+
+.ep-calendar-dot-past {
+	background: $lwtv-grey2;
+	border-color: $lwtv-grey2;
+}
+
+.calendar-show-img {
+	width: 30%;
+	max-height: 100px;
+	float: left;
+}
+
+ul#calendarTab a.nav-link {
+	color: $lwtv-pink;
+	border-color: $lwtv-grey2;
+	margin-right: 0.5rem;
+
+	&.active {
+		background-color: $lwtv-pink;
+		border-color: $lwtv-pink;
+		color: $white;
+	}
+
+	&:hover,
+	&:focus,
+	&:active {
+		background-color: $lwtv-grey2;
+		color: $lwtv-pink;
+	}
+}
+
+/* On Page ToC */
+h3.ep-calendar-day-heading,
+thead.dayjump {
+	scroll-margin-top: 55px;
+	line-height: 2;
+	margin: 1rem 0;
+	padding: .5rem;
+	background-color: $lwtv-grey2;
+}
+
+.ep-calendar-subnav {
+	.link-primary a {
+		color: $lwtv-pink;
+
+		&:hover,
+		&:focus,
+		&:active {
+			background-color: $lwtv-grey2;
+			color: $lwtv-pink;
+		}
+	}
+}

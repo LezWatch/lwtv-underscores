@@ -397,7 +397,7 @@ class CMB2_Metaboxes {
 			array(
 				'name' => 'Threads',
 				'id'   => self::PREFIX . 'has_threads',
-				'desc' => 'Check if the actor has a threads account.',
+				'desc' => 'Check box if the actor has a threads account.',
 				'type' => 'checkbox',
 			)
 		);

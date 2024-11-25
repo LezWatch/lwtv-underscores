@@ -294,4 +294,17 @@ $color-mode-type: data;
 			background-color: $white;
 		}
 	}
+
+	.ep-calendar-title {
+		a:visited, a, {
+			color: $lwtv-pink;
+		}
+	}
+
+	h3.ep-calendar-day-heading {
+		background-color: $lwtv-medgrey;
+	}
+
+	/** Add future dark mode styles here inside the group */
+
 }

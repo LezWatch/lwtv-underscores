@@ -118,6 +118,9 @@ class Post_Meta {
 		'lezshows_tmdb_id'              => array(
 			'post_type' => 'post_type_shows',
 		),
+		'lezshows_tvmaze_id'            => array(
+			'post_type' => 'post_type_shows',
+		),
 		'lezshows_episodes'             => array(
 			'post_type' => 'post_type_shows',
 		),

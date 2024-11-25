@@ -7,14 +7,19 @@
     "./plugins/lwtv-plugin",
     "./plugins/lwtv-plugin/php/blocks"
   ],
+  "engines": {
+    "node": ">=19.0.0",
+    "npm": ">=10.0.0"
+  },
   "scripts": {
     "build": "npm-run-all build:*",
     "build:composer": "composer update",
-    "build:assets": "wp-scripts build",
+    "build:assets": "wp-scripts build style.scss --webpack-no-externals",
     "build:workspace": "npm run build:workspace --workspaces",
     "build:mover": "node ./postbuild.js",
+    "buildquick": "npm run build:assets && npm run build:mover",
     "lint": "npm-run-all lint:*",
-    "lint:css": "wp-scripts lint-style '**/*.scss'",
+    "lint:css": "wp-scripts lint-style 'style.scss'",
     "lint:js": "wp-scripts lint-js 'plugins/lwtv-plugin/php/blocks/src/**/*.js'",
     "lint:php": "composer lint",
     "fix": "npm-run-all fix:*",
@@ -75,6 +80,6 @@
   "lint-staged": {
     "*.php": "npm run lint:php",
     "plugins/lwtv-plugin/php/blocks/src/**/*.js": "npm run lint:js",
-    "*.scss": "npm run lint:css"
+    "style.scss": "npm run lint:css"
   }
 }
