@@ -19,28 +19,20 @@ class Display_Grid {
 		$weekly = '<div>';
 
 		// Header Sub Navigation
-		$weekly .= '<div class="ep-calendar-subnav text-bg-light p-3"><ul class="nav justify-content-center">';
-		foreach ( $calendar as $day => $shows ) {
-			$show_day = new \DateTime( $day, $tz );
-
-			$link_color = ( $day === $today->format( 'Y-m-d' ) ) ? 'link-info' : 'link-dark';
-
-			$weekly .= '<li class="nav-item"><a class="' . $link_color . ' link-offset-2 nav-link" href="#' . strtolower( $show_day->format( 'ldS' ) ) . '">' . $show_day->format( 'l' ) . '</a></li>';
-		}
-		$weekly .= '</ul></div>';
+		$weekly .= ( new Display() )->get_subnav( $calendar, $today, $tz );
 
 		// Grid Itself.
 		foreach ( $calendar as $day => $shows ) {
 			$show_day = new \DateTime( $day, $tz );
 
-			$today_link = strtolower( $show_day->format( 'ldS' ) );
+			$today_link = strtolower( $show_day->format( 'l' ) );
 			$today_date = $show_day->format( 'l dS' );
 			if ( $day === $today->format( 'Y-m-d' ) ) {
 				$today_date .= '&nbsp;&nbsp;<button type="button" class="btn btn-info btn-sm" disabled><a name="today">Today</a></button>';
 			}
 
-			$weekly .= '<div class="ep-calendar-day">';
-			$weekly .= '<h3 class="ep-calendar-day-heading"><a name="' . $today_link . '">&nbsp;</a></br>' . $today_date . '</h3>';
+			$weekly .= '<div class="ep-calendar-day" id="' . $today_link . '">';
+			$weekly .= '<h3 class="ep-calendar-day-heading">' . $today_date . '</h3>';
 
 			$weekly .= '<div class="container text-center"><div class="row row-cols-1 row-cols-md-3 g-4">';
 

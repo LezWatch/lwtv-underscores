@@ -190,7 +190,7 @@ class CMB2_Metaboxes {
 		$cmb_characters->add_field(
 			array(
 				'name'        => 'Date of Death',
-				'desc'        => 'If the character is dead, select when they died.',
+				'desc'        => 'If the character is dead, select the airdate of the episode when they died (if they died pre-pilot, use the pilot airdate).',
 				'id'          => self::PREFIX . 'death_year',
 				'type'        => 'text_date',
 				'date_format' => 'Y-m-d',

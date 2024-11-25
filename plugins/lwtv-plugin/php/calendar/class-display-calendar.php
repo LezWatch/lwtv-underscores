@@ -38,7 +38,7 @@ class Display_Calendar {
 	 * @return string
 	 */
 	public function get_header() {
-		$thead = '<thead class="thead-light"><tr class="table-secondary lwtvc-heading">';
+		$thead = '<thead class="ep-calendar-thead-calendar"><tr class="lwtvc-heading">';
 
 		// Calendar headers are days of the week
 		$days = array( 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat' );
@@ -141,13 +141,13 @@ class Display_Calendar {
 	 * @return string
 	 */
 	public function build_shows_for_day( $shows, $date, $today, $tz ) {
-		$highlight = ( $date === $today->format( 'Y-m-d' ) ) ? '-info' : '-light';
+		$highlight = ( $date === $today->format( 'Y-m-d' ) ) ? '-info' : '';
 		$active    = ( $date === $today->format( 'Y-m-d' ) ) ? 'active' : '';
 		$date_fmt  = new \DateTime( $date, $tz );
 
-		$cell  = '<td class="table' . $highlight . '">';
+		$cell  = '<td class="ep-calendar-td-calendar">';
 		$cell .= '<ul class="list-group">';
-		$cell .= '<li class="list-group-item list-group-item list-group-item-action ' . $active . '"><strong>' . $date_fmt->format( 'M dS' ) . '</strong></li>';
+		$cell .= '<li class="list-group-item list-group-item list-group-item-action ' . $active . '"><strong>' . $date_fmt->format( 'M jS' ) . '</strong></li>';
 
 		if ( empty( $shows ) ) {
 			$cell .= '<li class="list-group-item list-group-item-action list-group-item' . $highlight . ' disabled"><small>No Shows</small></li>';

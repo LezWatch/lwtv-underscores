@@ -255,7 +255,6 @@ h6 a {
 	Header
 ========================================================================== */
 
-
 /* If using Jumbotron */
 .jumbotron.jumbotron-fluid {
 	background-size: contain;
@@ -1249,7 +1248,7 @@ section#characters {
 
 }
 
-/* Affiliate Watch */
+/* Ways to Watch */
 .ways-to-watch-container,
 .affiliate-watch-container {
 	background-color: $lwtv-grey;
@@ -1469,46 +1468,6 @@ section#characters {
 	@include font-30;
 	font-weight: 500;
 	padding: 0.8rem;
-}
-
-/* Related Posts by Taxonomy Code */
-
-div.rpbt_shortcode {
-
-	.related-gallery {
-		display: grid;
-		grid-template-columns: repeat(2, 1fr);
-		grid-gap: 1.6rem;
-
-		figure.similar-shows {
-
-			a {
-				font-style: italic;
-			}
-		}
-	}
-
-	.similar-shows-header {
-		font-family: $headingfontfamily;
-		font-weight: $headingfontweight;
-		line-height: $headingfontheight;
-
-		@include font-20;
-		font-size: 1rem;
-		text-decoration: none;
-	}
-
-	.similar-shows-airdates {
-		font-family: $headingfontfamily;
-		font-weight: $headingfontweight;
-		line-height: $headingfontheight;
-		font-size: 1rem;
-		text-decoration: none;
-	}
-
-	span {
-		display: block;
-	}
 }
 
 /* =Archive Pages (posts / shows / characters / taxonomies)

@@ -14,9 +14,15 @@ table.lwtvc {
 .ep-calendar-heading-date {
 	float: left;
 }
-
+.ep-calendar-heading-backtotop,
 .ep-calendar-heading-weekday {
 	float: right;
+}
+
+.ep-calendar-heading-backtotop {
+	a {
+		color: $lwtv-ltpink;
+	}
 }
 
 .ep-calendar-dot {
@@ -55,5 +61,28 @@ ul#calendarTab a.nav-link {
 	&:active {
 		background-color: $lwtv-grey2;
 		color: $lwtv-pink;
+	}
+}
+
+/* On Page ToC */
+h3.ep-calendar-day-heading,
+thead.dayjump {
+	scroll-margin-top: 55px;
+	line-height: 2;
+	margin: 1rem 0;
+	padding: .5rem;
+	background-color: $lwtv-grey2;
+}
+
+.ep-calendar-subnav {
+	.link-primary a {
+		color: $lwtv-pink;
+
+		&:hover,
+		&:focus,
+		&:active {
+			background-color: $lwtv-grey2;
+			color: $lwtv-pink;
+		}
 	}
 }
