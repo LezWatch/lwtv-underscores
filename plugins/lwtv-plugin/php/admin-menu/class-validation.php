@@ -31,27 +31,27 @@ class Validation {
 	 */
 	private const TOOL_TABS = array(
 		'queer_checker'     => array(
-			'name'   => 'Queer Checker',
+			'name'   => 'Queers',
 			'desc'   => 'Checks that all characters with queer actors have the queer cliché, and all actors with queer characters are, in fact, queer.',
 			'option' => 'queercheck',
 		),
 		'dupe_checker'      => array(
-			'name'   => 'Duplicate Checker',
+			'name'   => 'Dupes',
 			'desc'   => 'Actors and Shows that are duplicates.',
 			'option' => 'duplicates',
 		),
 		'actor_checker'     => array(
-			'name'   => 'Actor Checker',
+			'name'   => 'Actors',
 			'desc'   => 'Checks that all information for actors appears correct. This includes social media and links.',
 			'option' => 'actor_problems',
 		),
 		'character_checker' => array(
-			'name'   => 'Character Checker',
+			'name'   => 'Chars',
 			'desc'   => 'Checks that all information for characters appears correct, like if they have a show and years-on-air added.',
 			'option' => 'character_problems',
 		),
 		'show_checker'      => array(
-			'name'   => 'Show Checker',
+			'name'   => 'Shows',
 			'desc'   => 'Checks that all information for shows appears correct. Like do they have characters and ratings etc, does intersectionality seem to match.',
 			'option' => 'show_problems',
 		),
