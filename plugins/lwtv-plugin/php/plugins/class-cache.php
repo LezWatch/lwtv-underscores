@@ -12,6 +12,25 @@ use LWTV\CPTs\Characters;
 class Cache {
 
 	/**
+	 * Clean Feed URLs
+	 */
+	public function clean_feed( $type = 'main' ) {
+
+		$main_feed = bloginfo( 'rss2_url' ); // /feed/
+
+		$clear_urls = match ( $type ) {
+			'characters' => array( $main_feed . '/characters/' ),
+			'shows'      => array( $main_feed . '/shows/' ),
+			'actors'     => array( $main_feed . '/actors/' ),
+			'otd'        => array( $main_feed . '/otd/' ),
+			default      => array( $main_feed ),
+		};
+
+		$this->clear_nginx_helper( $clear_urls );
+		$this->clear_wp_rocket( $clear_urls );
+	}
+
+	/**
 	 * Collect the URLs we're going to flush for characters
 	 * @param  int     $post_id ID of the character
 	 * @return array   array of URLs

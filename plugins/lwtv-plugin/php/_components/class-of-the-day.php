@@ -6,6 +6,8 @@
 
 namespace LWTV\_Components;
 
+use LWTV\Plugins\Cache;
+
 class Of_The_Day implements Component, Templater {
 
 	/**
@@ -107,6 +109,9 @@ class Of_The_Day implements Component, Templater {
 				$this->add_to_table( $a_type, $of_the_day );
 			}
 		}
+
+		// Clear the cache
+		( new Cache() )->clean_feed( 'otd' );
 	}
 
 	/**
