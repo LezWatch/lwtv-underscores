@@ -18,29 +18,20 @@ class Display_List {
 	public function get_shows( $calendar, $today, $tz ) {
 
 		// Header Sub Navigation
-		$header = '<div class="ep-calendar-subnav text-bg-light p-3"><ul class="nav justify-content-center">';
-		foreach ( $calendar as $day => $shows ) {
-			$show_day = new \DateTime( $day, $tz );
-
-			$link_color = ( $day === $today->format( 'Y-m-d' ) ) ? 'link-info' : 'link-dark';
-
-			$header .= '<li class="nav-item"><a class="' . $link_color . ' link-offset-2 nav-link" href="#' . strtolower( $show_day->format( 'ldS' ) ) . '">' . $show_day->format( 'l' ) . '</a></li>';
-		}
-		$header .= '</ul></div>';
-
-		$table = '<table class="table">';
+		$header = ( new Display() )->get_subnav( $calendar, $today, $tz );
+		$table  = '<table class="table">';
 
 		foreach ( $calendar as $day => $shows ) {
 			$highlight = ( $day === $today->format( 'Y-m-d' ) ) ? ' table-info' : '';
 			$show_day  = new \DateTime( $day, $tz );
-			
-			$today_link = strtolower( $show_day->format( 'ldS' ) );
+
+			$today_link = strtolower( $show_day->format( 'l' ) );
 			$today_date = $show_day->format( 'l dS' );
 			if ( $day === $today->format( 'Y-m-d' ) ) {
 				$today_date .= '&nbsp;&nbsp;<button type="button" class="btn btn-info btn-sm" disabled><a name="today">Today</a></button>';
 			}
 
-			$table .= '<thead class="thead-light" id="' . $today_link . '"><tr class="table-secondary lwtvc-heading' . $highlight . '" data-date="' . $show_day->format( 'Y-m-d' ) . '"><th colspan="3"><span class="ep-calendar-heading-date">' . $today_date . '</span><span class="ep-calendar-heading-weekday">' . $show_day->format( 'l' ) . '</span></th></tr></thead><tbody>';
+			$table .= '<thead class="dayjump" id="' . $today_link . '"><tr class="lwtvc-heading' . $highlight . '" data-date="' . $show_day->format( 'Y-m-d' ) . '"><th colspan="3" class="text-bg-secondary"><span class="ep-calendar-heading-date">' . $today_date . '</span><span class="ep-calendar-heading-backtotop"><a href="#caltop">Back to Top</a></span></th></tr></thead><tbody>';
 
 			foreach ( $shows as $show ) {
 				$show_time = new \DateTime( '@' . $show['timestamp'], $tz );

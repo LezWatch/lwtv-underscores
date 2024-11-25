@@ -83,6 +83,7 @@ class Display {
 	private function get_tab_navigation( $calendar, $today, $tz, $tv_view = 'list' ) {
 		$navigation  = '<p>All times are displayed as US/Eastern, but are reflective of their original air date and time.</p>';
 		$navigation .= '<p>Be advised, airdates and times are subject to change without notice. Always check your local listings.<p>';
+		$navigation .= '<a name="caltop"></a>';
 
 		// Get the show list.
 		$show_tabs = array(
@@ -272,5 +273,26 @@ class Display {
 		$lwtv_date = $show_time->format( '@ g:i A' ) . ' (' . $date->format( 'T' ) . ')';
 
 		return $lwtv_date;
+	}
+
+	/**
+	 * Get the subnav for the calendar
+	 *
+	 * @param  array  $calendar The calendar
+	 * @param  object $today    Today's date
+	 * @param  object $tz       Timezone
+	 */
+	public function get_subnav( $calendar, $today, $tz ) {
+		$header = '<div class="ep-calendar-subnav p-3 list-group nav list-group-horizontal justify-content-center">';
+		foreach ( $calendar as $day => $shows ) {
+			$show_day = new \DateTime( $day, $tz );
+
+			$link_color = ( $day === $today->format( 'Y-m-d' ) ) ? 'link-info' : 'link-subnav';
+
+			$header .= '<a href="#' . strtolower( $show_day->format( 'l' ) ) . '" class="' . $link_color . ' nav-item list-group-item-light link-offset-2 nav-link" >' . $show_day->format( 'l' ) . '</a>';
+		}
+		$header .= '</div>';
+
+		return $header;
 	}
 }
