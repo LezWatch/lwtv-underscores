@@ -29,23 +29,6 @@ class Cache {
 		$this->clear_nginx_helper( $clear_urls );
 		$this->clear_wp_rocket( $clear_urls );
 	}
-	
-		/**
-	 * Clean any url.
-	 */
-	public function clean_urls( array $urls ) {
-		
-		$clean_urls = array();
-		
-		foreach ( $urls as $url ) {
-			// If this is a URL, and it's for this site, we can add it.
-			if ( wp_http_validate_url( $url ) && str_starts_with( $url, get_home_url() ) ) {
-				$clean_urls[] = $url;
-			}
-		
-		$this->clear_nginx_helper( $clean_urls );
-		$this->clear_wp_rocket( $clean_urls );
-	}
 
 	/**
 	 * Collect the URLs we're going to flush for characters
