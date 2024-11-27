@@ -2,6 +2,8 @@
 
 namespace LWTV\Statistics\Build;
 
+use LWTV\Queeries\Tax_Two;
+
 class Dead_Taxonomy {
 
 	/*
@@ -20,7 +22,7 @@ class Dead_Taxonomy {
 		$taxonomies = get_terms( $taxonomy );
 
 		foreach ( $taxonomies as $term ) {
-			$queery = lwtv_plugin()->queery_tax_two( $post_type, $taxonomy, 'slug', $term->slug, 'lez_cliches', 'slug', 'dead' );
+			$queery = ( new Tax_Two() )->make( $post_type, $taxonomy, 'slug', $term->slug, 'lez_cliches', 'slug', 'dead' );
 
 			$array[ $term->slug ] = array(
 				'count' => ( is_object( $queery ) ) ? $queery->post_count : 0,

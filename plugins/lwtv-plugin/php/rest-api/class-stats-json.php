@@ -7,6 +7,11 @@
 
 namespace LWTV\Rest_API;
 
+use LWTV\_Components\Statistics as Base_Stats;
+use LWTV\Queeries\Is_Actor_Queer;
+use LWTV\Queeries\Post_Type;
+use LWTV\Queeries\Taxonomy as Queery_Taxonomy;
+
 class Stats_JSON {
 
 	/**
@@ -192,16 +197,16 @@ class Stats_JSON {
 				$stats_array = self::format_id( 'actor', $page );
 				break;
 			case 'queer-irl':
-				$stats_array = lwtv_plugin()->generate_statistics( 'actors', 'queer-irl', 'array' );
+				$stats_array = ( new Base_Stats() )->generate( 'actors', 'queer-irl', 'array' );
 				break;
 			case 'gender':
-				$stats_array = lwtv_plugin()->generate_statistics( 'actors', 'actor_gender', 'array' );
+				$stats_array = ( new Base_Stats() )->generate( 'actors', 'actor_gender', 'array' );
 				break;
 			case 'sexuality':
-				$stats_array = lwtv_plugin()->generate_statistics( 'actors', 'actor_sexuality', 'array' );
+				$stats_array = ( new Base_Stats() )->generate( 'actors', 'actor_sexuality', 'array' );
 				break;
 			case 'complex':
-				$queery = lwtv_plugin()->queery_post_type( 'post_type_actors', $page );
+				$queery = ( new Post_Type() )->make( 'post_type_actors', $page );
 
 				if ( ! is_object( $queery ) || ! $queery->have_posts() ) {
 					return $stats_array;
@@ -216,7 +221,7 @@ class Stats_JSON {
 						'dead_chars' => get_post_meta( $actor, 'lezactors_dead_count', true ),
 						'gender'     => implode( ', ', wp_get_post_terms( $actor, 'lez_actor_gender', array( 'fields' => 'names' ) ) ),
 						'sexuality'  => implode( ', ', wp_get_post_terms( $actor, 'lez_actor_sexuality', array( 'fields' => 'names' ) ) ),
-						'queer'      => ( lwtv_plugin()->is_actor_queer( $actor ) ) ? 'yes' : 'no',
+						'queer'      => ( ( new Is_Actor_Queer() )->make( $actor ) ) ? 'yes' : 'no',
 						'url'        => get_the_permalink( $actor ),
 					);
 				}
@@ -270,19 +275,19 @@ class Stats_JSON {
 				$stats_array = self::format_id( 'character', $page );
 				break;
 			case 'cliches':
-				$stats_array = lwtv_plugin()->generate_statistics( 'characters', 'cliches', 'array' );
+				$stats_array = ( new Base_Stats() )->generate( 'characters', 'cliches', 'array' );
 				break;
 			case 'sexuality':
-				$stats_array = lwtv_plugin()->generate_statistics( 'characters', 'sexuality', 'array' );
+				$stats_array = ( new Base_Stats() )->generate( 'characters', 'sexuality', 'array' );
 				break;
 			case 'gender':
-				$stats_array = lwtv_plugin()->generate_statistics( 'characters', 'gender', 'array' );
+				$stats_array = ( new Base_Stats() )->generate( 'characters', 'gender', 'array' );
 				break;
 			case 'romantic':
-				$stats_array = lwtv_plugin()->generate_statistics( 'characters', 'romantic', 'array' );
+				$stats_array = ( new Base_Stats() )->generate( 'characters', 'romantic', 'array' );
 				break;
 			case 'complex':
-				$charactersloop = lwtv_plugin()->queery_post_type( 'post_type_characters', $page );
+				$charactersloop = ( new Post_Type() )->make( 'post_type_characters', $page );
 
 				if ( ! is_object( $charactersloop ) || ! $charactersloop->have_posts() ) {
 					return $stats_array;
@@ -376,19 +381,19 @@ class Stats_JSON {
 		switch ( $format ) {
 			case 'complex':
 				$stats_array = array(
-					'shows'     => lwtv_plugin()->generate_statistics( 'characters', 'dead-shows', 'array' ),
-					'sexuality' => lwtv_plugin()->generate_statistics( 'characters', 'dead-sex', 'array' ),
-					'gender'    => lwtv_plugin()->generate_statistics( 'characters', 'dead-gender', 'array' ),
+					'shows'     => ( new Base_Stats() )->generate( 'characters', 'dead-shows', 'array' ),
+					'sexuality' => ( new Base_Stats() )->generate( 'characters', 'dead-sex', 'array' ),
+					'gender'    => ( new Base_Stats() )->generate( 'characters', 'dead-gender', 'array' ),
 					// phpcs:ignore
 					// Currently roles is not functional.
-					//'roles'     => lwtv_plugin()->generate_statistics( 'characters', 'dead-roles', 'array' ),
+					//'roles'     => ( new Base_Stats() )->generate( 'characters', 'dead-roles', 'array' ),
 				);
 				break;
 			case 'years':
-				$stats_array = lwtv_plugin()->generate_statistics( 'characters', 'dead-years', 'array' );
+				$stats_array = ( new Base_Stats() )->generate( 'characters', 'dead-years', 'array' );
 				break;
 			case 'list':
-				$stats_array = lwtv_plugin()->generate_statistics( 'characters', 'dead-list', 'array' );
+				$stats_array = ( new Base_Stats() )->generate( 'characters', 'dead-list', 'array' );
 				break;
 			case 'simple':
 				$dead_chars  = get_term_by( 'slug', 'dead', 'lez_cliches' );
@@ -451,34 +456,34 @@ class Stats_JSON {
 				$stats_array = self::format_slug( 'show', $page );
 				break;
 			case 'tropes':
-				$stats_array = lwtv_plugin()->generate_statistics( 'shows', 'tropes', 'array' );
+				$stats_array = ( new Base_Stats() )->generate( 'shows', 'tropes', 'array' );
 				break;
 			case 'nations':
-				$stats_array = lwtv_plugin()->generate_statistics( 'shows', 'country', 'array' );
+				$stats_array = ( new Base_Stats() )->generate( 'shows', 'country', 'array' );
 				break;
 			case 'genres':
-				$stats_array = lwtv_plugin()->generate_statistics( 'shows', 'genres', 'array' );
+				$stats_array = ( new Base_Stats() )->generate( 'shows', 'genres', 'array' );
 				break;
 			case 'triggers':
-				$stats_array = lwtv_plugin()->generate_statistics( 'shows', 'triggers', 'array' );
+				$stats_array = ( new Base_Stats() )->generate( 'shows', 'triggers', 'array' );
 				break;
 			case 'formats':
-				$stats_array = lwtv_plugin()->generate_statistics( 'shows', 'formats', 'array' );
+				$stats_array = ( new Base_Stats() )->generate( 'shows', 'formats', 'array' );
 				break;
 			case 'stars':
-				$stats_array = lwtv_plugin()->generate_statistics( 'shows', 'stars', 'array' );
+				$stats_array = ( new Base_Stats() )->generate( 'shows', 'stars', 'array' );
 				break;
 			case 'loved':
-				$stats_array = lwtv_plugin()->generate_statistics( 'shows', 'weloveit', 'array' );
+				$stats_array = ( new Base_Stats() )->generate( 'shows', 'weloveit', 'array' );
 				break;
 			case 'worth-it':
-				$stats_array = lwtv_plugin()->generate_statistics( 'shows', 'thumbs', 'array' );
+				$stats_array = ( new Base_Stats() )->generate( 'shows', 'thumbs', 'array' );
 				break;
 			case 'intersections':
-				$stats_array = lwtv_plugin()->generate_statistics( 'shows', 'intersections', 'array' );
+				$stats_array = ( new Base_Stats() )->generate( 'shows', 'intersections', 'array' );
 				break;
 			case 'complex':
-				$showsloop = lwtv_plugin()->queery_post_type( 'post_type_shows', $page );
+				$showsloop = ( new Post_Type() )->make( 'post_type_shows', $page );
 
 				if ( ! is_object( $showsloop ) || ! $showsloop->have_posts() ) {
 					return $stats_array;
@@ -568,7 +573,7 @@ class Stats_JSON {
 					'dead_chars' => get_post_meta( $id, 'lezactors_dead_count', true ),
 					'gender'     => implode( ', ', wp_get_post_terms( $id, 'lez_actor_gender', array( 'fields' => 'names' ) ) ),
 					'sexuality'  => implode( ', ', wp_get_post_terms( $id, 'lez_actor_sexuality', array( 'fields' => 'names' ) ) ),
-					'queer'      => ( lwtv_plugin()->is_actor_queer( $id ) ) ? 'yes' : 'no',
+					'queer'      => ( ( new Is_Actor_Queer() )->make( $id ) ) ? 'yes' : 'no',
 					'url'        => get_the_permalink( $id ),
 				);
 				break;
@@ -676,7 +681,7 @@ class Stats_JSON {
 			$slug = ( ! isset( $the_tax->slug ) ) ? $the_tax['slug'] : $the_tax->slug;
 
 			// Get the posts for this singular term (i.e. a specific station)
-			$queery = lwtv_plugin()->queery_taxonomy( 'post_type_shows', 'lez_' . $type, 'slug', $slug, 'IN' );
+			$queery = ( new Queery_Taxonomy() )->make( 'post_type_shows', 'lez_' . $type, 'slug', $slug, 'IN' );
 
 			if ( ! is_object( $queery ) || ! $queery->have_posts() ) {
 				return;
@@ -714,9 +719,9 @@ class Stats_JSON {
 
 				// Only run this if we're complex...
 				if ( 'complex' === $format ) {
-					$return[ $slug ]['onair']           = lwtv_plugin()->generate_shows_count( 'onair', $type, $slug );
-					$return[ $slug ]['avg_score']       = lwtv_plugin()->generate_shows_count( 'score', $type, $slug );
-					$return[ $slug ]['avg_onair_score'] = lwtv_plugin()->generate_shows_count( 'onairscore', $type, $slug );
+					$return[ $slug ]['onair']           = ( new Base_Stats() )->count_shows( 'onair', $type, $slug );
+					$return[ $slug ]['avg_score']       = ( new Base_Stats() )->count_shows( 'score', $type, $slug );
+					$return[ $slug ]['avg_onair_score'] = ( new Base_Stats() )->count_shows( 'onairscore', $type, $slug );
 				}
 
 				// Character counts

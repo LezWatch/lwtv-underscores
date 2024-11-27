@@ -7,11 +7,8 @@
  */
 namespace LWTV\_Components;
 
-use LWTV\Statistics\Gutenberg_SSR;
-use LWTV\Statistics\Matcher;
-use LWTV\Statistics\Query_Vars;
-use LWTV\Statistics\The_Array;
-use LWTV\Statistics\The_Output;
+use LWTV\Queeries\Taxonomy as Queery_Taxonomy;
+use LWTV\Statistics\{ Gutenberg_SSR, Matcher, Query_Vars, The_Array, The_Output };
 use LWTV\Statistics\Build\Dead_Basic as Build_Dead_Basic;
 use LWTV\Statistics\Build\Taxonomy_Breakdowns as Build_Taxonomy_Breakdowns;
 
@@ -232,10 +229,10 @@ class Statistics implements Component, Templater {
 			// Build Pre-Array based on station or nation
 			switch ( $details[0] ) {
 				case 'stations':
-					$prearray = lwtv_plugin()->queery_taxonomy( 'post_type_shows', 'lez_stations', 'slug', $minor );
+					$prearray = ( new Queery_Taxonomy() )->make( 'post_type_shows', 'lez_stations', 'slug', $minor );
 					break;
 				case 'country':
-					$prearray = lwtv_plugin()->queery_taxonomy( 'post_type_shows', 'lez_country', 'slug', $minor );
+					$prearray = ( new Queery_Taxonomy() )->make( 'post_type_shows', 'lez_country', 'slug', $minor );
 					break;
 			}
 
@@ -264,7 +261,7 @@ class Statistics implements Component, Templater {
 	 * @return array        [total number, on-air, total score, on-air score]
 	 */
 	public function count_shows( $type, $tax, $term ) {
-		$queery = lwtv_plugin()->queery_taxonomy( 'post_type_shows', 'lez_' . $tax, 'slug', $term );
+		$queery = ( new Queery_Taxonomy() )->make( 'post_type_shows', 'lez_' . $tax, 'slug', $term );
 		$return = 0;
 
 		if ( ! is_object( $queery ) ) {

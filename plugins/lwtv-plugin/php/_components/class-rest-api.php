@@ -46,36 +46,8 @@ class Rest_API implements Component, Templater {
 	 */
 	public function get_template_tags(): array {
 		return array(
-			'generate_tvshow_calendar'    => array( $this, 'generate_tvshow_calendar' ),
-			'get_whats_on_date'           => array( $this, 'get_whats_on_date' ),
-			'get_whats_on_show'           => array( $this, 'get_whats_on_show' ),
-			'get_what_happened_on_date'   => array( $this, 'get_what_happened_on_date' ),
-			'get_json_statistics'         => array( $this, 'get_json_statistics' ),
-			'get_json_similar_show'       => array( $this, 'get_json_similar_show' ),
-			'get_json_export'             => array( $this, 'get_json_export' ),
-			'get_json_last_death'         => array( $this, 'get_json_last_death' ),
-			'get_list_of_dead_characters' => array( $this, 'get_json_last_death' ),
+			'get_whats_on_show' => array( $this, 'get_whats_on_show' ),
 		);
-	}
-
-	/**
-	 * Generate TV Shows Calendar
-	 *
-	 * @param  string $date
-	 * @return void
-	 */
-	public static function generate_tvshow_calendar( $date ) {
-		return ( new Whats_On_JSON() )->generate_tvshow_calendar( $date );
-	}
-
-	/**
-	 * Get whats on TV for a date
-	 *
-	 * @param mixed $date
-	 * @return array
-	 */
-	public function get_whats_on_date( $date ) {
-		return ( new Whats_On_JSON() )->whats_on_date( $date );
 	}
 
 	/**
@@ -86,71 +58,5 @@ class Rest_API implements Component, Templater {
 	 */
 	public function get_whats_on_show( $show ) {
 		return ( new Whats_On_JSON() )->whats_on_show( $show );
-	}
-
-	/**
-	 * Get What Happened on a date
-	 *
-	 * @param bool $date
-	 * @return \WP_Error|array
-	 */
-	public function get_what_happened_on_date( $date = false ) {
-		return ( new What_Happened_JSON() )->what_happened( $date );
-	}
-
-	/**
-	 * Generate Statistics
-	 *
-	 * @param string $stat_type
-	 * @param string $format
-	 * @param int    $page
-	 *
-	 * @return array with stats data
-	 */
-	public function get_json_statistics( $stat_type = 'characters', $format = 'simple', $page = 1 ) {
-		return ( new Stats_JSON() )->statistics( $stat_type, $format, $page );
-	}
-
-	/**
-	 * Similar Show
-	 *
-	 * @param string $show_slug
-	 *
-	 * @return mixed
-	 */
-	public function get_json_similar_show( $show_slug ) {
-		return ( new Shows_Like_JSON() )->similar_show( $show_slug );
-	}
-
-	/**
-	 * Export custom JSON
-	 *
-	 * @param  string $type
-	 * @param  string $item
-	 * @param  string $tax
-	 * @param  string $term
-	 *
-	 * @return array|string|WP_Error
-	 */
-	public function get_json_export( $type = 'actor', $item = 'unknown', $tax = '', $term = '' ) {
-		return ( new Export_JSON() )->export( $type, $item, $tax, $term );
-	}
-
-	/**
-	 * Get the last Death
-	 *
-	 * @return array with last dead character data
-	 */
-	public function get_json_last_death() {
-		return ( new BYQ() )->last_death();
-	}
-
-	/**
-	 * Generate List of Dead
-	 *
-	 * @return array with a list of the dead
-	 */
-	public function get_list_of_dead_characters( $dead_chars_loop ): array {
-		return ( new BYQ() )->list_of_dead_characters( $dead_chars_loop );
 	}
 }

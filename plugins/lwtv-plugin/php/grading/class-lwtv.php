@@ -5,6 +5,9 @@
 
 namespace LWTV\Grading;
 
+use LWTV\_Components\Grading as Grading_Component;
+use LWTV\CPTs\Shows;
+
 class LWTV {
 
 	/**
@@ -20,9 +23,9 @@ class LWTV {
 			'image' => LWTV_PLUGIN_URL . '/assets/images/scores/lwtv.png',
 			'name'  => 'LezWatchTV',
 			'score' => $score,
-			'color' => lwtv_plugin()->get_grade_color( $score ),
+			'color' => ( new Grading_Component() )->color( $score ),
 			'bg'    => '#d1548e',
-			'url'   => $this->get_url( $show_id ),
+			'url'   => site_url( '/about/scoring-queer-shows/' ),
 		);
 	}
 
@@ -37,23 +40,12 @@ class LWTV {
 	}
 
 	/**
-	 * Get the LWTV URL (never changes)
-	 *
-	 * @param  int    $show_id
-	 * @return string
-	 */
-	// phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found
-	public function get_url( int $show_id ): string {
-		return site_url( '/about/scoring-queer-shows/' );
-	}
-
-	/**
 	 * Update the LWTV scores
 	 *
 	 * @param  int  $show_id
 	 * @return void
 	 */
 	public function update_scores( int $show_id ): void {
-		lwtv_plugin()->calculate_show_data( $show_id );
+		( new Shows() )->do_the_math( $show_id );
 	}
 }

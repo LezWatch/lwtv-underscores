@@ -5,6 +5,9 @@
 
 namespace LWTV\Grading;
 
+use LWTV\_Components\CPTs;
+use LWTV\_Components\Grading as Grading_Component;
+
 class TMDB {
 
 	/**
@@ -18,7 +21,7 @@ class TMDB {
 			'image' => LWTV_PLUGIN_URL . '/assets/images/scores/tmdb.png',
 			'name'  => 'The Movie Database',
 			'score' => $this->get_score( $show_id ),
-			'color' => lwtv_plugin()->get_grade_color( $this->get_score( $show_id ) ),
+			'color' => ( new Grading_Component() )->color( $this->get_score( $show_id ) ),
 			'bg'    => '#0d253f',
 			'url'   => $this->get_url( $show_id ),
 		);
@@ -59,7 +62,7 @@ class TMDB {
 		// Only call their service once a day.
 		$transient = lwtv_plugin()->get_transient( 'lwtv_3rd_scores_tmdb_' . $show_id );
 		if ( false === $transient ) {
-			$tmdb_data = lwtv_plugin()->get_tmdb_info( $show_id );
+			$tmdb_data = ( new CPTs() )->get_tmdb_info( $show_id );
 
 			if ( $tmdb_data ) {
 				$score = ( isset( $tmdb_data['tv_results'][0]['vote_average'] ) ) ? round( $tmdb_data['tv_results'][0]['vote_average'] * 10 ) : 'TBD';

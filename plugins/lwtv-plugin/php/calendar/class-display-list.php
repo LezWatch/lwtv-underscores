@@ -5,6 +5,8 @@
 
 namespace LWTV\Calendar;
 
+use LWTV\_Components\Calendar as Build_Calendar;
+
 class Display_List {
 
 	/**
@@ -41,9 +43,9 @@ class Display_List {
 				$dot_time = ( $show_time <= $today ) ? 'ep-calendar-dot ep-calendar-dot-past' : 'ep-calendar-dot';
 
 				// Show Name (may be URL if we have a link)
-				$show['show_name'] = lwtv_plugin()->get_show_name_for_calendar( $show['show_name'], 'tvmaze' );
-				$show['show_id']   = lwtv_plugin()->get_show_name_for_calendar( $show['show_name'], 'lwtv', 'id' );
-				$show['native_tz'] = lwtv_plugin()->get_tvmaze_show_timezone( $show['show_id'] );
+				$show['show_name'] = ( new Names() )->make( $show['show_name'], 'tvmaze', 'name' );
+				$show['show_id']   = ( new Names() )->make( $show['show_name'], 'lwtv', 'id' );
+				$show['native_tz'] = ( new TVMaze() )->get_timezone( $show['show_id'] );
 
 				// Build output
 				$show_content  = '<div class="ep-calendar-title">';

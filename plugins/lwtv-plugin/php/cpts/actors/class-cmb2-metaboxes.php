@@ -5,6 +5,8 @@
 
 namespace LWTV\CPTs\Actors;
 
+use LWTV\_Components\Debugger;
+
 class CMB2_Metaboxes {
 
 	// prefix for all custom fields
@@ -49,7 +51,7 @@ class CMB2_Metaboxes {
 		if ( ! isset( $post->ID ) || 'draft' === get_post_status( $post->ID ) || 'auto-draft' === get_post_status( $post->ID ) || '' === get_the_title( $post->ID ) ) {
 			$wikidata = 'auto-draft';
 		} else {
-			lwtv_plugin()->check_actors_wikidata( $post->ID );
+			( new Debugger() )->check_actors_wikidata( $post->ID );
 			$wikidata     = get_post_meta( $post->ID, 'lezactors_saved_wikidata', true );
 			$wikidata_qid = get_post_meta( $post->ID, 'lezactors_wikidata_qid', true );
 
@@ -59,7 +61,7 @@ class CMB2_Metaboxes {
 		}
 
 		// If Wikidata isn't empty AND there's a valid Q code, we go
-		if ( ! empty( $wikidata ) && ! empty( $wikidata_qid ) && lwtv_plugin()->validate_wikidata_id( $wikidata_qid ) ) {
+		if ( ! empty( $wikidata ) && ! empty( $wikidata_qid ) && ( new Debugger() )->validate_wikidata_id( $wikidata_qid ) ) {
 
 			// Build URL
 			$wikidata_url = 'https://www.wikidata.org/wiki/' . $wikidata_qid;
@@ -145,7 +147,7 @@ class CMB2_Metaboxes {
 		}
 
 		// Rerun the wiki:
-		lwtv_plugin()->check_actors_wikidata( $post_id );
+		( new Debugger() )->check_actors_wikidata( $post_id );
 	}
 
 	/*

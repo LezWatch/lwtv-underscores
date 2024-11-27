@@ -5,6 +5,8 @@
 
 namespace LWTV\Calendar;
 
+use LWTV\_Components\Calendar as Build_Calendar;
+
 class Display_Calendar {
 
 	/**
@@ -92,12 +94,12 @@ class Display_Calendar {
 		$prev_datetime = ( new Display() )->build_datetime( $date_query, $tz, 'previous' );
 
 		// If the calendar is empty, assume it's this week.
-		$calendar = ( $calendar ) ?? lwtv_plugin()->generate_tvshow_calendar( $this_datetime->format( 'Y-m-d' ) );
+		$calendar = ( $calendar ) ?? ( new Build_Calendar() )->generate_tvmaze_calendar( 'week', $this_datetime->format( 'Y-m-d' ) );
 
 		// Get the calendar week.
 		$calendar_week = match ( $week ) {
-			'previous' => lwtv_plugin()->generate_tvshow_calendar( $prev_datetime->format( 'Y-m-d' ) ),
-			'next'     => lwtv_plugin()->generate_tvshow_calendar( $next_datetime->format( 'Y-m-d' ) ),
+			'previous' => ( new Build_Calendar() )->generate_tvmaze_calendar( 'week', $prev_datetime->format( 'Y-m-d' ) ),
+			'next'     => ( new Build_Calendar() )->generate_tvmaze_calendar( 'week', $next_datetime->format( 'Y-m-d' ) ),
 			default    => $calendar,
 		};
 
@@ -153,7 +155,7 @@ class Display_Calendar {
 			$cell .= '<li class="list-group-item list-group-item-action list-group-item' . $highlight . ' disabled"><small>No Shows</small></li>';
 		} else {
 			foreach ( $shows as $show ) {
-				$show['show_name'] = lwtv_plugin()->get_show_name_for_calendar( $show['show_name'], 'tvmaze' );
+				$show['show_name'] = ( new Names() )->make( $show['show_name'], 'tvmaze', 'name' );
 				$lwtv_date         = ( new Display() )->get_showtime( $show, $tz );
 				$show_content      = ( is_array( $show['title'] ) ) ? $show['show_name'] . ' <span class="badge text-bg-secondary badge-pill">' . count( $show['title'] ) . '</span>' : $show['show_name'];
 				$cell             .= '<li class="list-group-item list-group-item-action list-group-item' . $highlight . '"><small>' . $lwtv_date . '</br>' . $show_content . '</small></li>';

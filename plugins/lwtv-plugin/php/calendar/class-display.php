@@ -7,6 +7,7 @@
 
 namespace LWTV\Calendar;
 
+use LWTV\_Components\Calendar as Build_Calendar;
 use LWTV\Calendar\Display_List;
 
 class Display {
@@ -42,7 +43,7 @@ class Display {
 		/**
 		 * Calendar itself
 		 */
-		$calendar = lwtv_plugin()->generate_tvshow_calendar( $start_datetime->format( 'Y-m-d' ) );
+		$calendar = ( new Build_Calendar() )->generate_tvmaze_calendar( 'week', $start_datetime->format( 'Y-m-d' ) );
 
 		// If we have no shows, we need to display a message.
 		if ( isset( $calendar['none'] ) || empty( $calendar ) || ! array( $calendar ) ) {

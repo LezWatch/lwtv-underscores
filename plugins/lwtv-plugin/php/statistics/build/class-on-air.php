@@ -2,6 +2,10 @@
 
 namespace LWTV\Statistics\Build;
 
+use LWTV\Queeries\Is_Show_On_Air;
+use LWTV\Queeries\Post_Meta;
+use LWTV\Queeries\Post_Type;
+
 class On_Air {
 
 	/*
@@ -41,11 +45,11 @@ class On_Air {
 				switch ( $post_type ) {
 					case 'post_type_characters':
 						// It doesn't matter which show they're on, just that they're on that year.
-						$year_queery = ( false === $data ) ? lwtv_plugin()->queery_post_meta( 'post_type_characters', 'lezchars_show_group', $year, 'LIKE' ) : $data;
+						$year_queery = ( false === $data ) ? ( new Post_Meta() )->make( 'post_type_characters', 'lezchars_show_group', $year, 'LIKE' ) : $data;
 						break;
 					case 'post_type_shows':
 						$year_queery = 0;
-						$show_queery = ( false === $data ) ? lwtv_plugin()->queery_post_type( 'post_type_shows' ) : $data;
+						$show_queery = ( false === $data ) ? ( new Post_Type() )->make( 'post_type_shows' ) : $data;
 						$allshows    = array();
 
 						if ( is_object( $show_queery ) && $show_queery->have_posts() ) {
@@ -54,7 +58,7 @@ class On_Air {
 						}
 
 						foreach ( $allshows as $post_id ) {
-							$on_air = lwtv_plugin()->is_show_on_air( $post_id, $year );
+							$on_air = ( new Is_Show_On_Air() )->make( $post_id, $year );
 							if ( false !== $on_air ) {
 								++$year_queery;
 							}

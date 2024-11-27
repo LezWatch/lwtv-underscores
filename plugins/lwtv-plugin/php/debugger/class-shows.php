@@ -5,7 +5,9 @@
 
 namespace LWTV\Debugger;
 
+use LWTV\Debugger\Characters as Characters_Debugger;
 use LWTV\CPTs\Shows\Ways_To_Watch;
+use LWTV\Queeries\Post_Type;
 
 class Shows {
 
@@ -86,7 +88,7 @@ class Shows {
 			}
 		} else {
 			// Get all the shows
-			$the_loop = lwtv_plugin()->queery_post_type( 'post_type_shows' );
+			$the_loop = ( new Post_Type() )->make( 'post_type_shows' );
 
 			if ( is_object( $the_loop ) && $the_loop->have_posts() ) {
 				$shows = wp_list_pluck( $the_loop->posts, 'ID' );
@@ -228,7 +230,7 @@ class Shows {
 		}
 
 		$items    = array();
-		$problems = lwtv_plugin()->check_disabled_characters( $show_id );
+		$problems = ( new Characters_Debugger() )->check_disabled_characters( $show_id );
 
 		// if there are problems, we put them in items.
 		if ( ! empty( $problems ) ) {
@@ -263,7 +265,7 @@ class Shows {
 			}
 		} else {
 			// Get all the shows
-			$the_loop = lwtv_plugin()->queery_post_type( 'post_type_shows' );
+			$the_loop = ( new Post_Type() )->make( 'post_type_shows' );
 
 			if ( is_object( $the_loop ) && $the_loop->have_posts() ) {
 				$shows = wp_list_pluck( $the_loop->posts, 'ID' );
@@ -293,7 +295,7 @@ class Shows {
 				if ( ! has_term( 'web-series', 'lez_formats', $show_id ) ) {
 					$problems[] = 'IMDb ID is not set.';
 				}
-			} elseif ( lwtv_plugin()->validate_imdb( $imdb, 'show' ) === false ) {
+			} elseif ( ( new Debug_Tool() )->validate_imdb( $imdb, 'show' ) === false ) {
 				// - IMDb IDs should be valid for the space they're in, e.g. "nm"
 				// and digits for people (props Jamie).
 				$problems[] = 'IMDb ID is invalid (ex: tt12345) -- ' . $imdb;
@@ -348,7 +350,7 @@ class Shows {
 			}
 		} else {
 			// Get all the shows
-			$the_loop = lwtv_plugin()->queery_post_type( 'post_type_shows' );
+			$the_loop = ( new Post_Type() )->make( 'post_type_shows' );
 
 			if ( is_object( $the_loop ) && $the_loop->have_posts() ) {
 				$shows = wp_list_pluck( $the_loop->posts, 'ID' );

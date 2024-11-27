@@ -7,6 +7,7 @@
 namespace LWTV\Validator;
 
 use LWTV\Admin_Menu\Validation;
+use LWTV\Debugger\Queers as Queers_Debugger;
 
 class Queer_Checker {
 	/**
@@ -18,12 +19,12 @@ class Queer_Checker {
 
 		// If rerun was clicked, gotta check 'em all.
 		if ( ( isset( $_POST['rerun'] ) && check_admin_referer( 'run_queer_checker_clicked' ) ) || false === $items ) {
-			$items = lwtv_plugin()->find_queer_chars();
+			$items = ( new Queers_Debugger() )->find_queer_chars();
 		}
 
 		// If recheck was clicked, only check the problem children.
 		if ( isset( $_POST['recheck'] ) && check_admin_referer( 'run_queer_checker_clicked' ) && false !== $items ) {
-			$items = lwtv_plugin()->find_queer_chars( $items );
+			$items = ( new Queers_Debugger() )->find_queer_chars( $items );
 		}
 
 		// Get the last run time.

@@ -2,6 +2,8 @@
 
 namespace LWTV\Statistics\Build;
 
+use LWTV\Queeries\Taxonomy as Queery_Taxonomy;
+
 class Dead_Role {
 
 	/*
@@ -18,7 +20,7 @@ class Dead_Role {
 
 		if ( false === $array ) {
 			$array        = array();
-			$all_the_dead = lwtv_plugin()->queery_taxonomy( 'post_type_characters', 'lez_cliches', 'slug', 'dead' );
+			$all_the_dead = ( new Queery_Taxonomy() )->make( 'post_type_characters', 'lez_cliches', 'slug', 'dead' );
 			$by_role      = array(
 				'regular'   => 0,
 				'guest'     => 0,

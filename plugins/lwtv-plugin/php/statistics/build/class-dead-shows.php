@@ -2,6 +2,9 @@
 
 namespace LWTV\Statistics\Build;
 
+use LWTV\Queeries\Post_Meta;
+use LWTV\Queeries\Taxonomy as Queery_Taxonomy;
+
 class Dead_Shows {
 
 	/*
@@ -23,13 +26,13 @@ class Dead_Shows {
 		if ( false === $array ) {
 
 			// Shows With Dead Query
-			$dead_shows_query = lwtv_plugin()->queery_taxonomy( 'post_type_shows', 'lez_tropes', 'slug', 'dead-queers' );
+			$dead_shows_query = ( new Queery_Taxonomy() )->make( 'post_type_shows', 'lez_tropes', 'slug', 'dead-queers' );
 			if ( is_object( $dead_shows_query ) && $dead_shows_query->have_posts() ) {
 				$dead_shows = wp_list_pluck( $dead_shows_query->posts, 'ID' );
 			}
 
 			// Shows With NO Dead Query
-			$alive_shows_query = lwtv_plugin()->queery_taxonomy( 'post_type_shows', 'lez_tropes', 'slug', 'dead-queers', 'NOT IN' );
+			$alive_shows_query = ( new Queery_Taxonomy() )->make( 'post_type_shows', 'lez_tropes', 'slug', 'dead-queers', 'NOT IN' );
 			if ( is_object( $alive_shows_query ) && $alive_shows_query->have_posts() ) {
 				$alive_shows = wp_list_pluck( $alive_shows_query->posts, 'ID' );
 			}
@@ -60,7 +63,7 @@ class Dead_Shows {
 					$show_name = strtolower( $show_name );
 
 					// Loop of characters who MIGHT be in this show
-					$this_show_characters_query = lwtv_plugin()->queery_post_meta( 'post_type_characters', 'lezchars_show_group', $show_id, 'LIKE' );
+					$this_show_characters_query = ( new Post_Meta() )->make( 'post_type_characters', 'lezchars_show_group', $show_id, 'LIKE' );
 
 					$fulldeathcount = get_post_meta( $show_id, 'lezshows_dead_count', true );
 					$allcharcount   = get_post_meta( $show_id, 'lezshows_char_count', true );

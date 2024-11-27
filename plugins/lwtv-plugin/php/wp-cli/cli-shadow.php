@@ -10,6 +10,8 @@ if ( ! defined( 'ABSPATH' ) && ! defined( 'WP_CLI' ) ) {
 	die();
 }
 
+use LWTV\Queeries\Post_Type;
+
 /**
  * LezWatch.TV commands to regenerate content.
  */
@@ -108,7 +110,7 @@ class WP_CLI_LWTV_Shadow {
 		if ( $post_id ) {
 			$posts_array = array( $post_id );
 		} else {
-			$posts_queery = lwtv_plugin()->queery_post_type( 'post_type_characters' );
+			$posts_queery = ( new Post_Type() )->make( 'post_type_characters' );
 
 			if ( ! is_object( $posts_queery ) || ! $posts_queery->have_posts() ) {
 				\WP_CLI::error( 'There are no posts in that post type.' );

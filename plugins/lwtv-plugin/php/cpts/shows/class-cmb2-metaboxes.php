@@ -6,6 +6,8 @@
 namespace LWTV\CPTs\Shows;
 
 use LWTV\CPTs\Shows\Ways_To_Watch;
+use LWTV\Features\Languages;
+use LWTV\Plugins\CMB2;
 
 class CMB2_Metaboxes {
 
@@ -38,7 +40,7 @@ class CMB2_Metaboxes {
 		add_action( 'wp_ajax_get_genres', array( $this, 'return_genres_options' ) );
 
 		// Allow for multiple language names to be saved.
-		$this->language_array = lwtv_plugin()->get_all_languages();
+		$this->language_array = ( new Languages() )->all_languages();
 	}
 
 	/**
@@ -59,7 +61,7 @@ class CMB2_Metaboxes {
 	/**
 	 * Create a list of all genres that the show has.
 	 *
-	 * Note: This CANNOT use lwtv_plugin()->get_cmb2_terms_list() as it
+	 * Note: This CANNOT use ( new CMB2() )->get_cmb2_terms_list() as it
 	 * lists ALL of the term, and not just the ones they have.
 	 */
 	public function cmb2_get_genres_options() {
@@ -249,8 +251,8 @@ class CMB2_Metaboxes {
 				'type'              => 'pw_multiselect',
 				'select_all_button' => false,
 				'remove_default'    => 'true',
-				'options'           => lwtv_plugin()->get_cmb2_terms_list( 'lez_stations' ),
-				'default'           => lwtv_plugin()->get_select2_defaults( 'lezshows_tvstations', 'lez_stations', $post_id, true ),
+				'options'           => ( new CMB2() )->get_cmb2_terms_list( 'lez_stations' ),
+				'default'           => ( new CMB2() )->get_select2_defaults( 'lezshows_tvstations', 'lez_stations', $post_id, true ),
 				'attributes'        => array(
 					'placeholder' => 'Ex. NBC',
 				),
@@ -266,8 +268,8 @@ class CMB2_Metaboxes {
 				'type'              => 'pw_multiselect',
 				'select_all_button' => false,
 				'remove_default'    => 'true',
-				'options'           => lwtv_plugin()->get_cmb2_terms_list( 'lez_country' ),
-				'default'           => lwtv_plugin()->get_select2_defaults( 'lezshows_tvnations', 'lez_country', $post_id, true ),
+				'options'           => ( new CMB2() )->get_cmb2_terms_list( 'lez_country' ),
+				'default'           => ( new CMB2() )->get_select2_defaults( 'lezshows_tvnations', 'lez_country', $post_id, true ),
 				'attributes'        => array(
 					'placeholder' => 'Ex. Canada',
 				),
@@ -305,8 +307,8 @@ class CMB2_Metaboxes {
 				'type'              => 'pw_multiselect',
 				'select_all_button' => false,
 				'remove_default'    => 'true',
-				'options'           => lwtv_plugin()->get_cmb2_terms_list( 'lez_genres' ),
-				'default'           => lwtv_plugin()->get_select2_defaults( 'lezshows_tvgenre', 'lez_genres', $post_id ),
+				'options'           => ( new CMB2() )->get_cmb2_terms_list( 'lez_genres' ),
+				'default'           => ( new CMB2() )->get_select2_defaults( 'lezshows_tvgenre', 'lez_genres', $post_id ),
 				'attributes'        => array(
 					'placeholder' => 'Ex. Drama',
 				),
@@ -357,8 +359,8 @@ class CMB2_Metaboxes {
 				'type'              => 'pw_multiselect',
 				'select_all_button' => false,
 				'remove_default'    => 'true',
-				'options'           => lwtv_plugin()->get_cmb2_terms_list( 'lez_intersections' ),
-				'default'           => lwtv_plugin()->get_select2_defaults( 'lezshows_intersectional', 'lez_intersections', $post_id ),
+				'options'           => ( new CMB2() )->get_cmb2_terms_list( 'lez_intersections' ),
+				'default'           => ( new CMB2() )->get_select2_defaults( 'lezshows_intersectional', 'lez_intersections', $post_id ),
 				'attributes'        => array(
 					'placeholder' => 'Ex. Disabilities',
 				),
@@ -373,8 +375,8 @@ class CMB2_Metaboxes {
 				'type'              => 'pw_multiselect',
 				'select_all_button' => false,
 				'remove_default'    => 'true',
-				'options'           => lwtv_plugin()->get_cmb2_terms_list( 'lez_tropes' ),
-				'default'           => lwtv_plugin()->get_select2_defaults( 'lezshows_tropes', 'lez_tropes', $post_id ),
+				'options'           => ( new CMB2() )->get_cmb2_terms_list( 'lez_tropes' ),
+				'default'           => ( new CMB2() )->get_select2_defaults( 'lezshows_tropes', 'lez_tropes', $post_id ),
 				'attributes'        => array(
 					'placeholder' => 'Ex. Bury Your Queers',
 				),

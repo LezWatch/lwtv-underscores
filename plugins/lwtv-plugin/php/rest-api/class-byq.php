@@ -10,6 +10,9 @@
 
 namespace LWTV\Rest_API;
 
+use LWTV\Queeries\Post_Meta;
+use LWTV\Queeries\Taxonomy as Queery_Taxonomy;
+
 class BYQ {
 
 	/**
@@ -188,7 +191,7 @@ class BYQ {
 	public function last_death() {
 		$return = '';
 		// Get all our dead queers
-		$dead_chars_loop  = lwtv_plugin()->queery_taxonomy( 'post_type_characters', 'lez_cliches', 'slug', 'dead' );
+		$dead_chars_loop  = ( new Queery_Taxonomy() )->make( 'post_type_characters', 'lez_cliches', 'slug', 'dead' );
 		$death_list_array = self::list_of_dead_characters( $dead_chars_loop );
 
 		// Extract the last death
@@ -226,7 +229,7 @@ class BYQ {
 		$type        = ( ! in_array( $type, $valid_types, true ) ) ? 'json' : $type;
 
 		// Get all our dead queers
-		$dead_chars_loop  = lwtv_plugin()->queery_post_meta( 'post_type_characters', 'lezchars_death_year', '', 'EXISTS' );
+		$dead_chars_loop  = ( new Post_Meta() )->make( 'post_type_characters', 'lezchars_death_year', '', 'EXISTS' );
 		$death_list_array = self::list_of_dead_characters( $dead_chars_loop );
 
 		$died_today_array = array();

@@ -10,6 +10,8 @@ if ( ! defined( 'ABSPATH' ) && ! defined( 'WP_CLI' ) ) {
 	die();
 }
 
+use LWTV\CPTs\{ Actors, Shows };
+
 /**
  * LezWatch.TV commands to calculate data.
  */
@@ -93,7 +95,7 @@ class WP_CLI_LWTV_Calculate {
 				// Recount characters and flag queerness
 				delete_post_meta( $post_id, 'lezactors_char_count' );
 				delete_post_meta( $post_id, 'lezactors_dead_count' );
-				lwtv_plugin()->calculate_actor_data( $post_id );
+				( new Actors() )->do_the_math( $post_id );
 				$queer = ( get_post_meta( $post_id, 'lezactors_queer', true ) ) ? 'Yes' : 'No';
 				$chars = get_post_meta( $post_id, 'lezactors_char_count', true );
 				$deads = get_post_meta( $post_id, 'lezactors_dead_count', true );
@@ -102,7 +104,7 @@ class WP_CLI_LWTV_Calculate {
 			case 'show':
 				delete_post_meta( $post_id, 'lezshows_char_count' );
 				delete_post_meta( $post_id, 'lezshows_dead_count' );
-				lwtv_plugin()->calculate_show_data( $post_id );
+				( new Shows() )->do_the_math( $post_id );
 				$chars = get_post_meta( $post_id, 'lezshows_char_count', true );
 				$dead  = get_post_meta( $post_id, 'lezshows_dead_count', true );
 				$score = 'Score (' . get_post_meta( $post_id, 'lezshows_the_score', true ) . ') Chars (' . $chars . ') Dead (' . $dead . ')';

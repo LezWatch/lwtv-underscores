@@ -5,6 +5,8 @@
 
 namespace LWTV\CPTs\Characters;
 
+use LWTV\Plugins\CMB2;
+
 class CMB2_Metaboxes {
 	public $character_roles;
 	public $years_array;
@@ -163,8 +165,8 @@ class CMB2_Metaboxes {
 				'type'              => 'pw_multiselect',
 				'select_all_button' => false,
 				'remove_default'    => 'true',
-				'options'           => lwtv_plugin()->get_cmb2_terms_list( 'lez_cliches' ),
-				'default'           => lwtv_plugin()->get_select2_defaults( 'lezchars_cliches', 'lez_cliches', $post_id, true ),
+				'options'           => ( new CMB2() )->get_cmb2_terms_list( 'lez_cliches' ),
+				'default'           => ( new CMB2() )->get_select2_defaults( 'lezchars_cliches', 'lez_cliches', $post_id, true ),
 				'attributes'        => array(
 					'placeholder' => 'Common clichés ...',
 				),
@@ -180,7 +182,7 @@ class CMB2_Metaboxes {
 				'type'              => 'pw_multiselect',
 				'select_all_button' => false,
 				'remove_default'    => 'true',
-				'options'           => lwtv_plugin()->get_cmb2_terms_list( 'shadow_tax_characters' ),
+				'options'           => ( new CMB2() )->get_cmb2_terms_list( 'shadow_tax_characters' ),
 				'attributes'        => array(
 					'placeholder' => 'List any romantic partners here...',
 				),

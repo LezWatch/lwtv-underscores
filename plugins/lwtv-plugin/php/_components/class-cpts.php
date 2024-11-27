@@ -6,12 +6,7 @@
 
 namespace LWTV\_Components;
 
-use LWTV\CPTs\Post_Meta;
-use LWTV\CPTs\Related_Posts;
-use LWTV\CPTs\Actors;
-use LWTV\CPTs\Characters;
-use LWTV\CPTs\Shows;
-use LWTV\CPTs\TVMaze;
+use LWTV\CPTs\{ Actors, Characters, Shows, Post_Meta, Related_Posts, TVMaze };
 use LWTV\CPTs\Shows\Shows_Like_This;
 
 /**
@@ -31,9 +26,8 @@ class CPTs implements Component, Templater {
 		add_filter( 'bulk_actions-edit-member', array( $this, 'remove_member_bulk_actions' ), 10, 2 );
 		add_filter( 'post_row_actions', array( $this, 'remove_quick_edit' ), 10, 2 );
 
-		// Init what we'll need.
+		// Init what we'll need - DO NOT REMOVE, it will break the theme!
 		new Post_Meta();
-		new Related_Posts();
 		new Actors();
 		new Characters();
 		new Shows();
@@ -49,47 +43,13 @@ class CPTs implements Component, Templater {
 	 */
 	public function get_template_tags(): array {
 		return array(
-			'calculate_actor_data'       => array( $this, 'calculate_actor_data' ),
-			'calculate_character_data'   => array( $this, 'calculate_character_data' ),
-			'calculate_show_data'        => array( $this, 'calculate_show_data' ),
-			'get_related_archive_header' => array( $this, 'get_related_archive_header' ),
 			'get_cpt_related_posts'      => array( $this, 'get_cpt_related_posts' ),
+			'get_related_archive_header' => array( $this, 'get_related_archive_header' ),
 			'get_shows_like_this_show'   => array( $this, 'get_shows_like_this_show' ),
-			'get_tmdb_info'              => array( $this, 'get_tmdb_info' ),
 			'has_cpt_related_posts'      => array( $this, 'has_cpt_related_posts' ),
 			'hide_actor_data'            => array( $this, 'hide_actor_data' ),
 			'the_actor_privacy_warning'  => array( $this, 'the_actor_privacy_warning' ),
 		);
-	}
-
-	/**
-	 * Calculate Actor Data
-	 *
-	 * @param  int $post_id
-	 * @return void
-	 */
-	public function calculate_actor_data( $post_id ): void {
-		( new Actors() )->do_the_math( $post_id );
-	}
-
-	/**
-	 * Calculate Character Data
-	 *
-	 * @param  int $post_id
-	 * @return void
-	 */
-	public function calculate_character_data( $post_id ): void {
-		( new Characters() )->do_the_math( $post_id );
-	}
-
-	/**
-	 * Calculate Show Data
-	 *
-	 * @param  int $post_id
-	 * @return void
-	 */
-	public function calculate_show_data( $post_id ): void {
-		( new Shows() )->do_the_math( $post_id );
 	}
 
 	/**
@@ -152,21 +112,6 @@ class CPTs implements Component, Templater {
 		}
 
 		return $body;
-	}
-
-	/**
-	 * Get TVMaze Info for actor or show
-	 *
-	 * @param  int   $post_id
-	 * @return mixed the response body or false
-	 */
-	public function get_tvmaze_info( $post_id ): mixed {
-		// If it's not a show, bail early.
-		if ( 'post_type_shows' !== get_post_type( $post_id ) ) {
-			return false;
-		}
-
-		return ( new Shows() )->get_tvmaze_info( $post_id );
 	}
 
 	/**

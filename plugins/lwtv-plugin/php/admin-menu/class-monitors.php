@@ -6,6 +6,8 @@
 
 namespace LWTV\Admin_Menu;
 
+use LWTV\_Components\Calendar;
+
 class Monitors {
 
 	/**
@@ -78,7 +80,7 @@ class Monitors {
 	 * @return array status of TVMaze
 	 */
 	public static function check_tvmaze() {
-		$filename = lwtv_plugin()->get_tvmaze_ics();
+		$filename = ( new Calendar() )->get_tvmaze_ics();
 
 		if ( ! file_exists( $filename ) ) {
 			$status = '<em>ERROR! The TVMaze calendar file is missing! Tell Mika.<em>';
