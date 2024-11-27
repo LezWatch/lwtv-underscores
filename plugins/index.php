@@ -3,10 +3,6 @@
  * Plugin Controller
  */
 
-if ( is_plugin_active( 'lwtv-plugin/functions.php' ) ) {
-	deactivate_plugins( 'lwtv-plugin/functions.php' );
-}
-
 // Define First Year with queers:
 define( 'LWTV_FIRST_YEAR', '1961' );
 

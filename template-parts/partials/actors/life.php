@@ -11,8 +11,11 @@ $actor = $args['actor'] ?? null;
 
 // Generate Life Stats.
 $life_array = array(
-	'dates' => array(),
-	'age'   => '',
+	'dates' => array(
+		'born' => 'Unknown',
+		'died' => 'Unknown',
+	),
+	'age'   => 'Unknown',
 );
 
 $born = get_post_meta( $actor, 'lezactors_birth', true );
@@ -26,9 +29,6 @@ if ( ! empty( $born ) && ! lwtv_plugin()->hide_actor_data( $actor, 'dob' ) ) {
 
 		$life_array['dates']['born'] = date_format( $get_birth, 'F j, Y' );
 	}
-} else {
-	// Fallback to Unknown.
-	$life_array['dates']['born'] = 'Unknown';
 }
 
 // If they have a death date, let's parse it.
@@ -42,9 +42,9 @@ if ( ! empty( $died ) ) {
 }
 
 // If they have a birth date, let's calculate their age.
-if ( isset( $born ) ) {
+if ( isset( $life_array['dates']['born'] ) && ( 'Unknown' !== $life_array['dates']['born'] ) ) {
 	// If the birthdate is unknown, we can't calculate age.
-	$age = 'Unknown' !== $life_array['dates']['born'] ? lwtv_plugin()->get_actor_age( $actor ) : null;
+	$age = lwtv_plugin()->get_actor_age( $actor );
 
 	$life_array['age'] = ( is_object( $age ) ) ? $age->format( '%Y years old' ) : 'Unknown';
 }
