@@ -5,6 +5,14 @@
  * These commands are 'generation' tools.
  */
 
+use LWTV\_Components\Calendar;
+use LWTV\Debugger\Actors as Actors_Debugger;
+use LWTV\Debugger\Characters as Characters_Debugger;
+use LWTV\Debugger\Shows as Shows_Debugger;
+use LWTV\Debugger\Dupes as Dupes_Debugger;
+use LWTV\Debugger\Queers as Queers_Debugger;
+use LWTV\Features\Missed_Schedule;
+
 // Bail if directly accessed
 if ( ! defined( 'ABSPATH' ) && ! defined( 'WP_CLI' ) ) {
 	die();
@@ -165,7 +173,7 @@ class WP_CLI_LWTV_Generate {
 	public function run_cron_hourly() {
 		// Check missed schedule:
 		\WP_CLI::line( 'Attempting to publish all posts that have missed schedule.' );
-		$missed_schedule = lwtv_plugin()->check_missed_schedule();
+		$missed_schedule = ( new Missed_Schedule() )->missed_schedule();
 		if ( ! empty( $missed_schedule ) ) {
 			\WP_CLI::line( $missed_schedule );
 		}
@@ -209,25 +217,25 @@ class WP_CLI_LWTV_Generate {
 		// Run a different check each day.
 		switch ( strtolower( $day ) ) {
 			case 'mon':
-				lwtv_plugin()->find_actors_problems();
+				( new Actors_Debugger() )->find_actors_problems();
 				break;
 			case 'tue':
-				lwtv_plugin()->find_actors_no_imdb();
+				( new Actors_Debugger() )->find_actors_no_imdb();
 				break;
 			case 'wed':
-				lwtv_plugin()->find_duplicates();
+				( new Dupes_Debugger() )->find_duplicates();
 				break;
 			case 'thu':
-				lwtv_plugin()->find_queer_chars();
+				( new Queers_Debugger() )->find_queer_chars();
 				break;
 			case 'fri':
-				lwtv_plugin()->find_characters_problems();
+				( new Characters_Debugger() )->find_characters_problems();
 				break;
 			case 'sat':
-				lwtv_plugin()->find_shows_problems();
+				( new Shows_Debugger() )->find_shows_problems();
 				break;
 			case 'sun':
-				lwtv_plugin()->find_shows_no_imdb();
+				( new Shows_Debugger() )->find_shows_no_imdb();
 				break;
 			default:
 				\WP_CLI::warning( 'You must provide a valid day of the week. Use the THREE letter version (Mon, Tue, etc)' );
@@ -240,9 +248,10 @@ class WP_CLI_LWTV_Generate {
 	 * Regenerate the TV Maze ICS file.
 	 */
 	public function run_tvmaze() {
-		lwtv_plugin()->download_tvmaze();
+		// Download the TV Maze ICS file.
+		( new Calendar() )->download_tvmaze();
 
-		$ics_file = lwtv_plugin()->get_tvmaze_ics();
+		$ics_file = ( new Calendar() )->get_tvmaze_ics();
 
 		if ( false === $ics_file ) {
 			\WP_CLI::warning( 'The TVMaze file is missing.' );

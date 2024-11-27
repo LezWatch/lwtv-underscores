@@ -7,6 +7,7 @@
 namespace LWTV\Validator;
 
 use LWTV\Admin_Menu\Validation;
+use LWTV\Debugger\Actors as Actors_Debugger;
 
 class Actor_Checker {
 	/**
@@ -18,12 +19,12 @@ class Actor_Checker {
 
 		// If re-run, do a whole full scan!
 		if ( ( isset( $_POST['rerun'] ) && check_admin_referer( 'run_actor_checker_clicked' ) ) || false === $items ) {
-			$items = lwtv_plugin()->find_actors_problems();
+			$items = ( new Actors_Debugger() )->find_actors_problems();
 		}
 
 		// If recheck was clicked, only check the problem children.
 		if ( isset( $_POST['recheck'] ) && check_admin_referer( 'run_actor_checker_clicked' ) && false !== $items ) {
-			$items = lwtv_plugin()->find_actors_problems( $items );
+			$items = ( new Actors_Debugger() )->find_actors_problems( $items );
 		}
 
 		// Get the last run time.

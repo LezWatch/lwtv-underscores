@@ -7,6 +7,7 @@
 namespace LWTV\Validator;
 
 use LWTV\Admin_Menu\Validation;
+use LWTV\Debugger\Dupes as Dupes_Debugger;
 
 class Duplicates {
 	/**
@@ -18,12 +19,12 @@ class Duplicates {
 
 		// If re-run, do a whole full scan!
 		if ( ( isset( $_POST['rerun'] ) && check_admin_referer( 'run_duplicate_clicked' ) ) || false === $items ) {
-			$items = lwtv_plugin()->find_duplicates();
+			$items = ( new Dupes_Debugger() )->find_duplicates();
 		}
 
 		// If recheck was clicked, only check the problem children.
 		if ( isset( $_POST['recheck'] ) && check_admin_referer( 'run_duplicate_clicked' ) && false !== $items ) {
-			$items = lwtv_plugin()->find_duplicates( $items );
+			$items = ( new Dupes_Debugger() )->find_duplicates( $items );
 		}
 
 		// Get the last run time.

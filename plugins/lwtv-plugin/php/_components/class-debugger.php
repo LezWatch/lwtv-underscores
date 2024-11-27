@@ -7,19 +7,13 @@
 
 namespace LWTV\_Components;
 
-use LWTV\Debugger\Actors;
-use LWTV\Debugger\Characters;
-use LWTV\Debugger\Dupes;
-use LWTV\Debugger\Queers;
-use LWTV\Debugger\Shows;
-
 /**
  * Class for adding primary theme support.
  *
  * Exposes template tags
  *
  */
-class Debugger implements Component, Templater {
+class Debugger implements Component {
 
 	/**
 	 * Init the component. Hooks go in here.
@@ -28,31 +22,6 @@ class Debugger implements Component, Templater {
 	 */
 	public function init(): void {
 		// Void
-	}
-
-	/**
-	 * Retrieve the template tags.
-	 *
-	 * @return array
-	 */
-	public function get_template_tags(): array {
-		return array(
-			'sanitize_social'           => array( $this, 'sanitize_social' ),
-			'validate_imdb'             => array( $this, 'validate_imdb' ),
-			'validate_wikidata_id'      => array( $this, 'validate_wikidata_id' ),
-			'format_wikidate'           => array( $this, 'format_wikidate' ),
-			'find_actors_problems'      => array( $this, 'find_actors_problems' ),
-			'find_actors_incomplete'    => array( $this, 'find_actors_incomplete' ),
-			'find_actors_no_imdb'       => array( $this, 'find_actors_no_imdb' ),
-			'check_actors_wikidata'     => array( $this, 'check_actors_wikidata' ),
-			'find_shows_bad_url'        => array( $this, 'find_shows_bad_url' ),
-			'find_shows_no_imdb'        => array( $this, 'find_shows_no_imdb' ),
-			'find_shows_problems'       => array( $this, 'find_shows_problems' ),
-			'find_characters_problems'  => array( $this, 'find_characters_problems' ),
-			'check_disabled_characters' => array( $this, 'check_disabled_characters' ),
-			'find_queer_chars'          => array( $this, 'find_queer_chars' ),
-			'find_duplicates'           => array( $this, 'find_duplicates' ),
-		);
 	}
 
 	/**
@@ -155,109 +124,5 @@ class Debugger implements Component, Templater {
 
 		// Otherwise true.
 		return true;
-	}
-
-	/**
-	 * Find Actors problems
-	 *
-	 * @param array $items - array of Actors
-	 */
-	public function find_actors_problems( $items = array() ): array {
-		return ( new Actors() )->find_actors_problems( $items );
-	}
-
-	/**
-	 * Find Incomplete Actors
-	 *
-	 * @param array $items - array of Actors
-	 */
-	public function find_actors_incomplete( $items = array() ): array {
-		return ( new Actors() )->find_actors_incomplete( $items );
-	}
-
-	/**
-	 * Find Actors without IMDb Entries
-	 *
-	 * @param array $items - array of Actors
-	 */
-	public function find_actors_no_imdb( $items = array() ): array {
-		return ( new Actors() )->find_actors_no_imdb( $items );
-	}
-
-	/**
-	 * Check Actors' WikiData
-	 *
-	 * @param int|array $actors - Post ID of actor OR array of actors
-	 * @param array     $items  - array of existing items (used for re-check)
-	 */
-	public function check_actors_wikidata( $actors = 0, $items = array() ): array {
-		return ( new Actors() )->check_actors_wikidata( $actors, $items );
-	}
-
-	/**
-	 * Find Shows with bad URLs
-	 *
-	 * @param array $items - array of Shows
-	 */
-	public function find_shows_bad_url( $items = array() ): array {
-		return ( new Shows() )->find_shows_bad_url( $items );
-	}
-
-	/**
-	 * Find Shows with no IMDb
-	 *
-	 * @param array $items - array of Shows
-	 */
-	public function find_shows_no_imdb( $items = array() ): array {
-		return ( new Shows() )->find_shows_no_imdb( $items );
-	}
-
-	/**
-	 * Find Shows with Problems
-	 *
-	 * @param array $items - array of Shows
-	 */
-	public function find_shows_problems( $items = array() ): array {
-		return ( new Shows() )->find_shows_problems( $items );
-	}
-
-	/**
-	 * Find Characters with Problems
-	 *
-	 * @param array $items - array of Characters
-	 */
-	public function find_characters_problems( $items = array() ): array {
-		return ( new Characters() )->find_characters_problems( $items );
-	}
-
-	/**
-	 * Find Characters with Disabilities
-	 *
-	 * @param array $the_id - Show ID to check
-	 */
-	public function check_disabled_characters( $the_id ): array {
-		return ( new Characters() )->check_disabled_characters( $the_id );
-	}
-
-	/**
-	 * Find Queer Characters
-	 *
-	 * Find all characters who are mismatched with their queer settings
-	 *
-	 * @param array $the_id - Show ID to check
-	 */
-	public function find_queer_chars( $items = array() ): array {
-		return ( new Queers() )->find_queerchars( $items );
-	}
-
-	/**
-	 * Find Duplicates
-	 *
-	 * Find all posts that end in -2
-	 *
-	 * @param array $items - array of Posts
-	 */
-	public function find_duplicates( $items = array() ): array {
-		return ( new Dupes() )->find_duplicates( $items );
 	}
 }

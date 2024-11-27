@@ -7,9 +7,8 @@
 
 namespace LWTV\CPTs;
 
-use LWTV\CPTs\Characters\Calculations;
-use LWTV\CPTs\Characters\CMB2_Metaboxes;
-use LWTV\CPTs\Characters\Custom_Columns;
+use LWTV\CPTs\Characters\{ Calculations, CMB2_Metaboxes, Custom_Columns };
+use LWTV\Plugins\Cache;
 
 /**
  * class LWTV_CPT_Characters
@@ -389,11 +388,11 @@ class Characters {
 		lwtv_plugin()->save_select2_taxonomy( $post_id, 'lezchars_relationship_chart', 'shadow_tax_characters' );
 
 		// Get a list of URLs to flush
-		$clear_urls = lwtv_plugin()->collect_cache_urls_for_characters( $post_id );
+		$clear_urls = ( new Cache() )->collect_urls_for_characters( $post_id );
 
 		// If we've got a list of URLs, then flush.
 		if ( isset( $clear_urls ) && ! empty( $clear_urls ) ) {
-			lwtv_plugin()->clean_cache_urls( $post_id, $clear_urls );
+			( new Cache() )->clean_related_urls_for_cpts( $post_id, $clear_urls );
 		}
 	}
 

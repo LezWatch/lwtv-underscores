@@ -65,7 +65,7 @@ class Rest_API implements Component, Templater {
 	 * @return void
 	 */
 	public static function generate_tvshow_calendar( $date ) {
-		return ( new Whats_On_JSON() )->generate_tvshow_calendar( $date );
+		return ( new Calendar() )->generate_tvmaze_calendar( 'week', $date );
 	}
 
 	/**

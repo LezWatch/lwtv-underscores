@@ -5,6 +5,7 @@
 
 namespace LWTV\Debugger;
 
+use LWTV\Debugger\Characters as Characters_Debugger;
 use LWTV\CPTs\Shows\Ways_To_Watch;
 
 class Shows {
@@ -228,7 +229,7 @@ class Shows {
 		}
 
 		$items    = array();
-		$problems = lwtv_plugin()->check_disabled_characters( $show_id );
+		$problems = ( new Characters_Debugger() )->check_disabled_characters( $show_id );
 
 		// if there are problems, we put them in items.
 		if ( ! empty( $problems ) ) {
@@ -293,7 +294,7 @@ class Shows {
 				if ( ! has_term( 'web-series', 'lez_formats', $show_id ) ) {
 					$problems[] = 'IMDb ID is not set.';
 				}
-			} elseif ( lwtv_plugin()->validate_imdb( $imdb, 'show' ) === false ) {
+			} elseif ( ( new Debug_Tool() )->validate_imdb( $imdb, 'show' ) === false ) {
 				// - IMDb IDs should be valid for the space they're in, e.g. "nm"
 				// and digits for people (props Jamie).
 				$problems[] = 'IMDb ID is invalid (ex: tt12345) -- ' . $imdb;

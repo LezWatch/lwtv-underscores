@@ -8,6 +8,9 @@
 
 namespace LWTV\Rest_API;
 
+use LWTV\_Components\Calendar;
+use LWTV\Calendar\{ ICS_Parser, TVMaze };
+
 class Whats_On_JSON {
 
 	/**
@@ -114,13 +117,13 @@ class Whats_On_JSON {
 
 		lwtv_plugin()->get_transient( 'lwtv_missed_schedule' );
 
-		$tvmaze_url = lwtv_plugin()->get_tvmaze_ics();
+		$tvmaze_url = ( new Calendar() )->get_tvmaze_ics();
 		if ( false === $tvmaze_url ) {
 			$return['none'] = 'The Calendar is down for maintenance. Come back soon.';
 			return $return;
 		}
 
-		$calendar = lwtv_plugin()->generate_ics_by_date( $tvmaze_url, $when );
+		$calendar = ( new ICS_Parser() )->generate_by_date( $tvmaze_url, $when, false );
 		$whats_on = $calendar;
 
 		if ( empty( $whats_on ) ) {
@@ -142,13 +145,13 @@ class Whats_On_JSON {
 	public function whats_on_date( $date ) {
 
 		$lwtv_tz    = new \DateTimeZone( LWTV_TIMEZONE );
-		$tvmaze_url = lwtv_plugin()->get_tvmaze_ics();
+		$tvmaze_url = ( new Calendar() )->get_tvmaze_ics();
 		if ( false === $tvmaze_url ) {
 			$return['none'] = 'The Calendar is down for maintenance. Come back soon.';
 			return $return;
 		}
 
-		$calendar = lwtv_plugin()->generate_ics_by_date( $tvmaze_url, 'date', $date );
+		$calendar = ( new ICS_Parser() )->generate_by_date( $tvmaze_url, 'date', $date );
 		$whats_on = $calendar;
 
 		if ( empty( $whats_on ) ) {
@@ -169,16 +172,16 @@ class Whats_On_JSON {
 	 * This is good for whole weeks (eg 2019-11-11)
 	 */
 	public function whats_on_week( $when = 'now' ) {
-		$tvmaze_url = lwtv_plugin()->get_tvmaze_ics();
+		$tvmaze_url = ( new Calendar() )->get_tvmaze_ics();
 		if ( false === $tvmaze_url ) {
 			$return['none'] = 'The Calendar is down for maintenance. Come back soon.';
 			return $return;
 		}
 
 		if ( 'now' === $when ) {
-			$calendar = lwtv_plugin()->generate_ics_by_date( $tvmaze_url, 'week' );
+			$calendar = ( new ICS_Parser() )->generate_by_date( $tvmaze_url, 'week' );
 		} else {
-			$calendar = lwtv_plugin()->generate_ics_by_date( $tvmaze_url, 'week', $when );
+			$calendar = ( new ICS_Parser() )->generate_by_date( $tvmaze_url, 'week', $when );
 		}
 
 		$whats_on = $calendar;
@@ -273,7 +276,7 @@ class Whats_On_JSON {
 			// CPU.
 			if ( ! is_array( $array ) || ! isset( $array['time'] ) || time() >= $array['time'] ) {
 
-				$show_info  = lwtv_plugin()->get_tvmaze_info( $show_id, $show_name );
+				$show_info  = ( new TVMaze() )->get_tvmaze_info_show( $show_id, $show_name );
 				$show_array = $this->make_show_array( $show_id, $show_name, $show_info );
 
 				$array = $show_array;
@@ -372,7 +375,7 @@ class Whats_On_JSON {
 	 * @return [type]       [description]
 	 */
 	public function generate_tvshow_calendar( $date ) {
-		return lwtv_plugin()->generate_calendar( 'week', $date );
+		return ( new Calendar() )->generate_tvmaze_calendar( 'week', $date );
 	}
 
 	/**

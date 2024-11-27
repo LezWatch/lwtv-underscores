@@ -10,7 +10,6 @@ namespace LWTV\Plugins;
 use LWTV\CPTs\Characters;
 
 class Cache {
-
 	/**
 	 * Clean Feed URLs
 	 */
@@ -26,30 +25,33 @@ class Cache {
 			default      => array( $main_feed ),
 		};
 
-		$this->clear_nginx_helper( $clear_urls );
-		$this->clear_wp_rocket( $clear_urls );
+		$this->clear_cache_plugins( $clear_urls );
 	}
-	
+
 	/**
-	 * Clean any url.
+	 * Clean any url that exists on this website.
+	 *
+	 * @param array $urls - URLs to clean
+	 *
+	 * @return void
 	 */
-	public function clean_urls( array $urls ) {
-		
+	public function clean_any_urls( array $urls ) {
 		$clean_urls = array();
-		
+
+		// Validate the URLs.
 		foreach ( $urls as $url ) {
 			// If this is a URL, and it's for this site, we can add it.
 			if ( wp_http_validate_url( $url ) && str_starts_with( $url, get_home_url() ) ) {
 				$clean_urls[] = $url;
 			}
-		
-		$this->clear_nginx_helper( $clean_urls );
-		$this->clear_wp_rocket( $clean_urls );
-	}
+		}
 
+		$this->clear_cache_plugins( $clean_urls );
+	}
 
 	/**
 	 * Collect the URLs we're going to flush for characters
+	 *
 	 * @param  int     $post_id ID of the character
 	 * @return array   array of URLs
 	 */
@@ -105,6 +107,7 @@ class Cache {
 
 	/**
 	 * Collect the URLs we're going to flush for shows or actors
+	 *
 	 * @param  int     $post_id ID of the show or actor
 	 * @return array   array of URLs
 	 */
@@ -141,16 +144,18 @@ class Cache {
 	}
 
 	/**
-	 * Clean URLs
+	 * Clean URLs related to custom post types.
+	 *
+	 * Shows, Actors, and Characters have cross-references that need to be cleared.
 	 *
 	 * It would be preferable to use the rp_nginx filter, however that runs every time
-	 * any page is updated. This method is slower and uglier, but more precise.
+	 * ANY page is updated. This method is slower and uglier, but more precise.
 	 *
 	 * @param  int    $post_id    - ID of the post
 	 * @param  array  $clear_urls - Arrays of URLs to clean
 	 * @return void
 	 */
-	public function clean_urls( $post_id, $clear_urls ) {
+	public function clean_related_urls_for_cpts( $post_id, $clear_urls ) {
 		// If it's not an array, or it's empty, we don't have anything to clear.
 		if ( ! is_array( $clear_urls ) || empty( $clear_urls ) ) {
 			return;
@@ -163,6 +168,18 @@ class Cache {
 			$clear_urls[] = home_url();
 		}
 
+		$this->clear_cache_plugins( $clear_urls );
+	}
+
+	/**
+	 * Clear the Cache
+	 *
+	 * This is a wrapper so we can call the other cache clearing functions from one place.
+	 *
+	 * @param  array  $clear_urls - URLs to clear
+	 * @return void
+	 */
+	private function clear_cache_plugins( $clear_urls ) {
 		$this->clear_nginx_helper( $clear_urls );
 		$this->clear_wp_rocket( $clear_urls );
 	}

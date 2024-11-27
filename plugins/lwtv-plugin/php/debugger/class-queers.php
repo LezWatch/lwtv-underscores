@@ -13,7 +13,7 @@ class Queers {
 	 * Find all characters who are mismatched with their queer settings
 	 * and the actor who plays them
 	 */
-	public function find_queerchars( $items = array() ) {
+	public function find_queer_chars( $items = array() ) {
 
 		// The array we will be checking.
 		$characters = array();

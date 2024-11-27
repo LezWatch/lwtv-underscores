@@ -5,6 +5,8 @@
 
 namespace LWTV\Grading;
 
+use LWTV\_Components\CPTs;
+
 class TMDB {
 
 	/**
@@ -59,7 +61,7 @@ class TMDB {
 		// Only call their service once a day.
 		$transient = lwtv_plugin()->get_transient( 'lwtv_3rd_scores_tmdb_' . $show_id );
 		if ( false === $transient ) {
-			$tmdb_data = lwtv_plugin()->get_tmdb_info( $show_id );
+			$tmdb_data = ( new CPTs() )->get_tmdb_info( $show_id );
 
 			if ( $tmdb_data ) {
 				$score = ( isset( $tmdb_data['tv_results'][0]['vote_average'] ) ) ? round( $tmdb_data['tv_results'][0]['vote_average'] * 10 ) : 'TBD';

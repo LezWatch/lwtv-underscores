@@ -7,7 +7,9 @@
 
 namespace LWTV\CPTs;
 
+use LWTV\_Components\CPTs;
 use LWTV\CPTs\Shows\{ Calculations, CMB2_Metaboxes, Custom_Columns, Shows_Like_This, Ways_To_Watch };
+use LWTV\Plugins\Cache;
 
 /**
  * class LWTV_CPT_Shows
@@ -299,11 +301,11 @@ class Shows {
 
 		// Caching
 		// Get a list of URLs to flush
-		$clear_urls = lwtv_plugin()->collect_cache_urls_for_actors_or_shows( $post_id );
+		$clear_urls = ( new Cache() )->collect_cache_urls_for_actors_or_shows( $post_id );
 
 		// If we've got a list of URLs, then flush.
 		if ( isset( $clear_urls ) && ! empty( $clear_urls ) ) {
-			lwtv_plugin()->clean_cache_urls( $post_id, $clear_urls );
+			( new Cache() )->clean_related_urls_for_cpts( $post_id, $clear_urls );
 		}
 
 		// re-hook this function
@@ -375,7 +377,7 @@ class Shows {
 		}
 
 		// Get the TMDB ID from the data.
-		$tmdb_data = lwtv_plugin()->get_tmdb_info( $post_id );
+		$tmdb_data = ( new CPTs() )->get_tmdb_info( $post_id );
 
 		if ( isset( $tmdb_data['id'] ) ) {
 			$tmdb_id = $tmdb_data['id'];

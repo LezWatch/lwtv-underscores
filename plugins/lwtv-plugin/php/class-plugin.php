@@ -14,49 +14,22 @@ use LWTV\_Helpers\Utils;
  * Class Plugin
  *
  * All methods listed below may be called via lwtv_plugin()->METHOD()
- * i.e. lwtv_plugin()->calculate_character_data( $post_id );
+ * i.e. lwtv_plugin()->display_scores( $post_id );
  *
- * CALENDAR
- * @method array  generate_calendar( $when, $timespan )              \_Components\Calendar
- * @method void   download_tvmaze()                                  \_Components\Calendar
- * @method string get_show_name_for_calendar( $show_name, $source ) \_Components\Calendar
- * @method array  generate_ics_by_date( $url, $when, $date )         \_Components\Calendar
- * @method void   get_tvmaze_info( $post_id )                        \_Components\Calendar
- * @method string get_tvmaze_show_timezone( $show_id )               \_Components\Calendar
+ * They are intended to be used in the theme files ONLY.
  *
  * CPTs
- * @method void   calculate_actor_data( $post_id )                      \_Components\CPTs
- * @method void   calculate_character_data( $post_id )                  \_Components\CPTs
- * @method void   calculate_show_data( $post_id )                       \_Components\CPTs
  * @method array  get_cpt_related_posts( $show_id )                     \_Components\CPTs
  * @method string get_related_archive_header( $tag_id )                 \_Components\CPTs
  * @method array  get_shows_like_this_show( $show_id )                  \_Components\CPTs
- * @method void   get_tmdb_info( $post_id )                             \_Components\CPTs
  * @method bool   has_cpt_related_posts( $show_id )                     \_Components\CPTs
  * @method void   hide_actor_data( $post_id )                           \_Components\CPTs
  * @method string the_actor_privacy_warning( $post_id )                 \_Components\CPTs
- *
- * DEBUGGER
- * @method array  check_actors_wikidata( $actors, $items ) \_Components\Debugger
- * @method array  check_disabled_characters( $items )      \_Components\Debugger
- * @method string format_wikidate( $date )                 \_Components\Debugger
- * @method array  find_actors_incomplete( $items )         \_Components\Debugger
- * @method array  find_actors_no_imdb( $items )            \_Components\Debugger
- * @method array  find_actors_problems( $items )           \_Components\Debugger
- * @method array  find_characters_problems( $items )       \_Components\Debugger
- * @method array  find_shows_bad_url( $items )             \_Components\Debugger
- * @method array  find_shows_no_imdb( $items )             \_Components\Debugger
- * @method array  find_shows_problems( $items )            \_Components\Debugger
- * @method array  find_queer_chars( $items )               \_Components\Debugger
- * @method string sanitize_social( $usename, $social )     \_Components\Debugger
- * @method bool   validate_imdb( $imdb, $type )            \_Components\Debugger
- * @method bool   validate_wikidata_id( $wiki_id )         \_Components\Debugger
  *
  * FEATURES
  * @method array  get_all_languages()                   \_Components\Features
  * @method array  get_spammers_list()                   \_Components\Features
  * @method bool   is_spammer( $to_check, $type, $keys ) \_Components\Features
- * @method void   check_missed_schedule()               \_Components\Features
  *
  * GRADING
  * @method string display_scores( $show_id )        \_Components\Grading
@@ -71,9 +44,6 @@ use LWTV\_Helpers\Utils;
  * @method void   set_of_the_day()         \_Components\Of_The_Day
  *
  * PLUGINS
- * @method void   clean_cache_urls( $post_id, $urls )                           \_Components\Plugins
- * @method array  collect_cache_urls_for_characters( $post_id )                 \_Components\Plugins
- * @method array  collect_cache_urls_for_actors_or_shows( $post_id )            \_Components\Plugins
  * @method array  get_cmb2_terms_list( $taxonomies, $query_args )               \_Components\Plugins
  * @method array  get_select2_defaults( $postmeta, $taxonomy, $post_id, $none ) \_Components\Plugins
  * @method array  jetpack_post_meta()                                           \_Components\Plugins

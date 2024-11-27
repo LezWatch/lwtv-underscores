@@ -10,6 +10,8 @@ if ( ! defined( 'ABSPATH' ) && ! defined( 'WP_CLI' ) ) {
 	die();
 }
 
+use LWTV\Debugger\Dupes as Dupes_Debugger;
+
 /**
  * LezWatch.TV commands to check the sanctity of content.
  */
@@ -54,7 +56,7 @@ class WP_CLI_LWTV_Dupes {
 	}
 
 	public function find_dupes() {
-		$items = lwtv_plugin()->find_duplicates();
+		$items = ( new Dupes_Debugger() )->find_duplicates();
 
 		if ( empty( $items ) ) {
 			\WP_CLI::success( 'Woohoo! No duplicates!' );

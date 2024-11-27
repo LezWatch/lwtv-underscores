@@ -2,10 +2,12 @@
 /*
  * Validation: Actor Wiki For LezWatch.TV
  *
- * CURRENTLY NOT USED
+ * CURRENTLY NOT USED as it's WAAAAY too resource intensive.
  */
 
 namespace LWTV\Validator;
+
+use LWTV\Debugger\Actors as Actors_Debugger;
 
 class Actor_Wiki {
 	/**
@@ -16,7 +18,7 @@ class Actor_Wiki {
 	public static function make() {
 		$redirect = rawurlencode( remove_query_arg( 'msg', $_SERVER['REQUEST_URI'] ) );
 		$redirect = rawurlencode( $_SERVER['REQUEST_URI'] );
-		$items    = lwtv_plugin()->check_actors_wikidata();
+		$items    = ( new Actors_Debugger() )->check_actors_wikidata();
 
 		/*
 			Instead of looping through all, let's do something else.

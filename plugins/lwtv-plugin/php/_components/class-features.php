@@ -11,7 +11,6 @@ use LWTV\Features\Dashboard;
 use LWTV\Features\Embeds;
 use LWTV\Features\Environment;
 use LWTV\Features\Languages;
-use LWTV\Features\Missed_Schedule;
 use LWTV\Features\Plugin_Age;
 use LWTV\Features\Private_Posts;
 use LWTV\Features\Roles;
@@ -39,7 +38,6 @@ class Features implements Component, Templater {
 		new Dashboard();
 		new Embeds();
 		new Environment();
-		new Missed_Schedule();
 		new Plugin_Age();
 		new Private_Posts();
 		new Roles();
@@ -57,10 +55,9 @@ class Features implements Component, Templater {
 	 */
 	public function get_template_tags(): array {
 		return array(
-			'get_all_languages'     => array( $this, 'get_all_languages' ),
-			'get_spammers_list'     => array( $this, 'get_spammers_list' ),
-			'is_spammer'            => array( $this, 'is_spammer' ),
-			'check_missed_schedule' => array( $this, 'check_missed_schedule' ),
+			'get_all_languages' => array( $this, 'get_all_languages' ),
+			'get_spammers_list' => array( $this, 'get_spammers_list' ),
+			'is_spammer'        => array( $this, 'is_spammer' ),
 		);
 	}
 
@@ -404,15 +401,6 @@ class Features implements Component, Templater {
 		}
 
 		return $headers;
-	}
-
-	/**
-	 * Check missed schedule
-	 *
-	 * @return void
-	 */
-	public function check_missed_schedule(): void {
-		( new Missed_Schedule() )->missed_schedule();
 	}
 
 	/**
