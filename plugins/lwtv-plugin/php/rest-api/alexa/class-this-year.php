@@ -7,8 +7,9 @@
 
 namespace LWTV\Rest_API\Alexa;
 
-class This_Year {
+use LWTV\Queeries\Post_Meta_And_Tax;
 
+class This_Year {
 
 	/**
 	 * what_happened function.
@@ -104,7 +105,7 @@ class This_Year {
 		$ended = ( 0 === $count_array['on_air']['ended'] ) ? 'no shows' : sprintf( _n( '%s show', '%s shows', $count_array['on_air']['ended'] ), $count_array['on_air']['ended'] );
 
 		// This Year DEATH information
-		$death_this_year_query = lwtv_plugin()->queery_post_meta_and_tax( 'post_type_characters', 'lezchars_death_year', $datetime->format( 'Y' ), 'lez_cliches', 'slug', 'dead', 'REGEXP' );
+		$death_this_year_query = ( new Post_Meta_And_Tax() )->make( 'post_type_characters', 'lezchars_death_year', $datetime->format( 'Y' ), 'lez_cliches', 'slug', 'dead', 'REGEXP' );
 
 		// Translators: %s is number of dead characters
 		$death_this_year = ( ! is_object( $death_this_year_query ) || 0 === $death_this_year_query->post_count ) ? 'no characters died' : sprintf( _n( '%s character died', '%s characters died', $death_this_year_query->post_count ), $death_this_year_query->post_count );

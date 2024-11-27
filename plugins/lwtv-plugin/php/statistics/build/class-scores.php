@@ -2,6 +2,8 @@
 
 namespace LWTV\Statistics\Build;
 
+use LWTV\Queeries\Post_Type;
+
 class Scores {
 
 	/*
@@ -16,7 +18,7 @@ class Scores {
 
 		if ( false === $array ) {
 
-			$the_queery = lwtv_plugin()->queery_post_type( $post_type );
+			$the_queery = ( new Post_Type() )->make( $post_type );
 			$array      = array();
 
 			if ( is_object( $the_queery ) && $the_queery->have_posts() ) {

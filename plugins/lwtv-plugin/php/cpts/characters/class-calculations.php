@@ -6,9 +6,8 @@
 
 namespace LWTV\CPTs\Characters;
 
-use LWTV\CPTs\Actors;
-use LWTV\CPTs\Characters;
-use LWTV\CPTs\Shows;
+use LWTV\CPTs\{ Actors, Characters, Shows };
+use LWTV\Queeries\Taxonomy as Queery_Taxonomy;
 
 class Calculations {
 
@@ -66,7 +65,7 @@ class Calculations {
 		}
 
 		// Get all shows with this character.
-		$shadow_queery = lwtv_plugin()->queery_taxonomy( Shows::SLUG, Characters::SHADOW_TAXONOMY, 'term_id', $shadow_character->term_id );
+		$shadow_queery = ( new Queery_Taxonomy() )->make( Shows::SLUG, Characters::SHADOW_TAXONOMY, 'term_id', $shadow_character->term_id );
 
 		if ( is_object( $shadow_queery ) ) {
 			if ( $shadow_queery->have_posts() ) {
@@ -116,7 +115,7 @@ class Calculations {
 		$actors = ( ! is_array( $actors ) ) ? array( $actors ) : $actors;
 
 		// Get all actors with this character taxonomy.
-		$shadow_queery = lwtv_plugin()->queery_taxonomy( Actors::SLUG, Characters::SHADOW_TAXONOMY, 'term_id', $shadow_character->term_id );
+		$shadow_queery = ( new Queery_Taxonomy() )->make( Actors::SLUG, Characters::SHADOW_TAXONOMY, 'term_id', $shadow_character->term_id );
 
 		if ( is_object( $shadow_queery ) ) {
 			if ( $shadow_queery->have_posts() ) {

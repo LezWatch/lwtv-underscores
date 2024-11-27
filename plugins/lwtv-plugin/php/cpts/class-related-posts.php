@@ -6,6 +6,8 @@
 
 namespace LWTV\CPTs;
 
+use LWTV\Queeries\Related_Posts_By_Tag;
+
 class Related_Posts {
 
 	/**
@@ -30,7 +32,7 @@ class Related_Posts {
 			return null;
 		}
 
-		$related_post_loop = lwtv_plugin()->get_related_posts_by_tag( 'post', $slug );
+		$related_post_loop = ( new Related_Posts_By_Tag() )->make( 'post', $slug );
 		if ( is_object( $related_post_loop ) && $related_post_loop->have_posts() ) {
 			$related_post_query = array_unique( wp_list_pluck( $related_post_loop->posts, 'ID' ) );
 		}
@@ -55,7 +57,7 @@ class Related_Posts {
 			return array();
 		}
 
-		$related_post_loop = lwtv_plugin()->get_related_posts_by_tag( 'post', $slug );
+		$related_post_loop = ( new Related_Posts_By_Tag() )->make( 'post', $slug );
 
 		// If this isn't an object, return empty.
 		if ( ! is_object( $related_post_loop ) ) {

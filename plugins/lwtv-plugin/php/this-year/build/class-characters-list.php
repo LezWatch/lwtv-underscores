@@ -2,6 +2,8 @@
 
 namespace LWTV\This_Year\Build;
 
+use LWTV\Queeries\Post_Meta;
+
 class Characters_List {
 
 	/**
@@ -22,7 +24,7 @@ class Characters_List {
 		}
 
 		// Get the loop
-		$loop = lwtv_plugin()->queery_post_meta( 'post_type_characters', 'lezchars_show_group', $this_year, 'REGEXP' );
+		$loop = ( new Post_Meta() )->make( 'post_type_characters', 'lezchars_show_group', $this_year, 'REGEXP' );
 
 		if ( ! is_object( $loop ) || ! $loop->have_posts() ) {
 			return;

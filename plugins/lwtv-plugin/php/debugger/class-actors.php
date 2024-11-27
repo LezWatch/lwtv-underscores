@@ -12,6 +12,7 @@
 namespace LWTV\Debugger;
 
 use LWTV\_Components\Debugger as Debug_Tool;
+use LWTV\Queeries\Post_Type;
 
 class Actors {
 
@@ -36,7 +37,7 @@ class Actors {
 			}
 		} else {
 			// Get all the actors
-			$the_loop = lwtv_plugin()->queery_post_type( 'post_type_actors' );
+			$the_loop = ( new Post_Type() )->make( 'post_type_actors' );
 
 			// Add ONLY the IDs to the array.
 			if ( is_object( $the_loop ) && $the_loop->have_posts() ) {
@@ -178,7 +179,7 @@ class Actors {
 			}
 		} else {
 			// Get all the actors
-			$the_loop = lwtv_plugin()->queery_post_type( 'post_type_actors' );
+			$the_loop = ( new Post_Type() )->make( 'post_type_actors' );
 
 			// Add ONLY the IDs to the array.
 			if ( is_object( $the_loop ) && $the_loop->have_posts() ) {
@@ -255,7 +256,7 @@ class Actors {
 			}
 		} else {
 			// Get all the actors
-			$the_loop = lwtv_plugin()->queery_post_type( 'post_type_actors' );
+			$the_loop = ( new Post_Type() )->make( 'post_type_actors' );
 
 			// Add ONLY the IDs to the array.
 			if ( is_object( $the_loop ) && $the_loop->have_posts() ) {
@@ -346,7 +347,7 @@ class Actors {
 				}
 			} else {
 				// Get all the actors
-				$the_loop = lwtv_plugin()->queery_post_type( 'post_type_actors' );
+				$the_loop = ( new Post_Type() )->make( 'post_type_actors' );
 
 				// Add ONLY the IDs to the array.
 				if ( is_object( $the_loop ) && $the_loop->have_posts() ) {

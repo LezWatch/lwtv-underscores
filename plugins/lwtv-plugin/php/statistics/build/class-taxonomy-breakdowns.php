@@ -3,6 +3,7 @@
 namespace LWTV\Statistics\Build;
 
 use LWTV\Statistics\Build\Taxonomy as Build_Taxonomy;
+use LWTV\Queeries\Taxonomy as Queery_Taxonomy;
 
 class Taxonomy_Breakdowns {
 
@@ -84,7 +85,7 @@ class Taxonomy_Breakdowns {
 			// This is the display name (used by stacked barcharts).
 			$name = ( ! isset( $the_tax->name ) ) ? $the_tax['name'] : $the_tax->name;
 			// Get the posts.
-			$queery = lwtv_plugin()->queery_taxonomy( 'post_type_shows', 'lez_' . $data_main, 'slug', $slug );
+			$queery = ( new Queery_Taxonomy() )->make( 'post_type_shows', 'lez_' . $data_main, 'slug', $slug );
 
 			if ( is_object( $queery ) && $queery->have_posts() ) {
 				$all_shows = wp_list_pluck( $queery->posts, 'ID' );

@@ -2,6 +2,8 @@
 
 namespace LWTV\This_Year\Build;
 
+use LWTV\Queeries\Post_Meta;
+
 class Characters_Dead {
 	/**
 	 * Get a list of the dead
@@ -22,7 +24,7 @@ class Characters_Dead {
 		}
 
 		// Otherwise we have no array and must build.
-		$dead_loop = lwtv_plugin()->queery_post_meta( 'post_type_characters', 'lezchars_death_year', $this_year, 'REGEXP' );
+		$dead_loop = ( new Post_Meta() )->make( 'post_type_characters', 'lezchars_death_year', $this_year, 'REGEXP' );
 
 		if ( ! is_object( $dead_loop ) || ! $dead_loop->have_posts() ) {
 			return;

@@ -2,6 +2,8 @@
 
 namespace LWTV\Statistics\Build;
 
+use LWTV\Queeries\Post_Meta_And_Tax;
+
 class Dead_Year {
 
 	/*
@@ -34,7 +36,7 @@ class Dead_Year {
 			}
 
 			foreach ( $year_deathlist_array as $year ) {
-				$year_death_query = lwtv_plugin()->queery_post_meta_and_tax( 'post_type_characters', 'lezchars_death_year', $year, 'lez_cliches', 'slug', 'dead', 'REGEXP' );
+				$year_death_query = ( new Post_Meta_And_Tax() )->make( 'post_type_characters', 'lezchars_death_year', $year, 'lez_cliches', 'slug', 'dead', 'REGEXP' );
 
 				$array[ $year ] = array(
 					'name'  => $year,

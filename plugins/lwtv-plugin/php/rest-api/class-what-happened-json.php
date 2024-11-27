@@ -8,6 +8,9 @@
 
 namespace LWTV\Rest_API;
 
+use LWTV\Queeries\Post_Meta_And_Tax;
+use LWTV\Queeries\Post_Type;
+
 class What_Happened_JSON {
 
 	/**
@@ -116,7 +119,7 @@ class What_Happened_JSON {
 		}
 
 		// Calculate death
-		$death_query_year         = lwtv_plugin()->queery_post_meta_and_tax( 'post_type_characters', 'lezchars_death_year', $datetime->format( 'Y' ), 'lez_cliches', 'slug', 'dead', 'REGEXP' );
+		$death_query_year         = ( new Post_Meta_And_Tax() )->make( 'post_type_characters', 'lezchars_death_year', $datetime->format( 'Y' ), 'lez_cliches', 'slug', 'dead', 'REGEXP' );
 		$count_array['dead_year'] = ( is_object( $death_query_year ) ) ? $death_query_year->post_count : 0;
 
 		switch ( $format ) {
@@ -124,7 +127,7 @@ class What_Happened_JSON {
 				$count_array['dead'] = $count_array['dead_year'];
 				break;
 			case 'month':
-				$death_query       = lwtv_plugin()->queery_post_meta_and_tax( 'post_type_characters', 'lezchars_death_year', $datetime->format( 'Y' ), 'lez_cliches', 'slug', 'dead', 'REGEXP' );
+				$death_query       = $death_query_year;
 				$death_list_array  = lwtv_plugin()->get_list_of_dead_characters( $death_query );
 				$death_query_count = 0;
 				foreach ( $death_list_array as $the_dead ) {
@@ -135,7 +138,7 @@ class What_Happened_JSON {
 				$count_array['dead'] = $death_query_count;
 				break;
 			case 'day':
-				$death_query         = lwtv_plugin()->queery_post_meta_and_tax( 'post_type_characters', 'lezchars_death_year', $datetime->format( 'Y-m-d' ), 'lez_cliches', 'slug', 'dead', 'LIKE' );
+				$death_query         = ( new Post_Meta_And_Tax() )->make( 'post_type_characters', 'lezchars_death_year', $datetime->format( 'Y-m-d' ), 'lez_cliches', 'slug', 'dead', 'LIKE' );
 				$count_array['dead'] = ( is_object( $death_query ) ) ? $death_query->post_count : 0;
 				break;
 			default:
@@ -214,7 +217,7 @@ class What_Happened_JSON {
 		$dt->setTimestamp( $timestamp ); //adjust the object to correct timestamp
 
 		$thisyear        = ( ! $thisyear ) ? $dt->format( 'Y' ) : $thisyear;
-		$shows_queery    = lwtv_plugin()->queery_post_type( 'post_type_shows' );
+		$shows_queery    = ( new Post_Type() )->make( 'post_type_shows' );
 		$shows_this_year = array(
 			'current' => 0,
 			'ended'   => 0,

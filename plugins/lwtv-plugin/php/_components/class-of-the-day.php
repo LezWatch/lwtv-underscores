@@ -7,6 +7,7 @@
 namespace LWTV\_Components;
 
 use LWTV\Plugins\Cache;
+use LWTV\Queeries\Post_Meta;
 
 class Of_The_Day implements Component, Templater {
 
@@ -560,7 +561,7 @@ class Of_The_Day implements Component, Templater {
 	public function birthday( $date = '', $format = 'default' ) {
 
 		// Get all our birthdays
-		$actor_loop = lwtv_plugin()->queery_post_meta( 'post_type_actors', 'lezactors_birth', $date, 'LIKE' );
+		$actor_loop = ( new Post_Meta() )->make( 'post_type_actors', 'lezactors_birth', $date, 'LIKE' );
 
 		if ( is_object( $actor_loop ) && $actor_loop->have_posts() ) {
 			foreach ( $actor_loop->posts as $actor ) {

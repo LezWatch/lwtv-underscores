@@ -2,6 +2,8 @@
 
 namespace LWTV\Statistics\Build;
 
+use LWTV\Queeries\Post_Type;
+
 class Actor_Chars {
 
 	/**
@@ -24,7 +26,7 @@ class Actor_Chars {
 		if ( false === $array ) {
 
 			// list of people
-			$all_query = lwtv_plugin()->queery_post_type( 'post_type_' . $type );
+			$all_query = ( new Post_Type() )->make( 'post_type_' . $type );
 
 			if ( is_object( $all_query ) && $all_query->have_posts() ) {
 				$all_array = wp_list_pluck( $all_query->posts, 'ID' );

@@ -2,6 +2,8 @@
 
 namespace LWTV\This_Year\Build;
 
+use LWTV\Queeries\Post_Type;
+
 class Shows_List {
 	/**
 	 * get all the shows that were active for a year
@@ -38,7 +40,7 @@ class Shows_List {
 		$shows_formats = array();
 		$shows_country = array();
 		$counted_shows = 0;
-		$shows_queery  = lwtv_plugin()->queery_post_type( 'post_type_shows' );
+		$shows_queery  = ( new Post_Type() )->make( 'post_type_shows' );
 
 		if ( ! is_object( $shows_queery ) || ! $shows_queery->have_posts() ) {
 			return;

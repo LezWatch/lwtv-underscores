@@ -7,6 +7,10 @@
 
 namespace LWTV\Rest_API;
 
+use LWTV\Queeries\Is_Actor_Queer;
+use LWTV\Queeries\Post_Type;
+use LWTV\Queeries\Taxonomy as Queery_Taxonomy;
+
 class Stats_JSON {
 
 	/**
@@ -201,7 +205,7 @@ class Stats_JSON {
 				$stats_array = lwtv_plugin()->generate_statistics( 'actors', 'actor_sexuality', 'array' );
 				break;
 			case 'complex':
-				$queery = lwtv_plugin()->queery_post_type( 'post_type_actors', $page );
+				$queery = ( new Post_Type() )->make( 'post_type_actors', $page );
 
 				if ( ! is_object( $queery ) || ! $queery->have_posts() ) {
 					return $stats_array;
@@ -216,7 +220,7 @@ class Stats_JSON {
 						'dead_chars' => get_post_meta( $actor, 'lezactors_dead_count', true ),
 						'gender'     => implode( ', ', wp_get_post_terms( $actor, 'lez_actor_gender', array( 'fields' => 'names' ) ) ),
 						'sexuality'  => implode( ', ', wp_get_post_terms( $actor, 'lez_actor_sexuality', array( 'fields' => 'names' ) ) ),
-						'queer'      => ( lwtv_plugin()->is_actor_queer( $actor ) ) ? 'yes' : 'no',
+						'queer'      => ( ( new Is_Actor_Queer() )->make( $actor ) ) ? 'yes' : 'no',
 						'url'        => get_the_permalink( $actor ),
 					);
 				}
@@ -282,7 +286,7 @@ class Stats_JSON {
 				$stats_array = lwtv_plugin()->generate_statistics( 'characters', 'romantic', 'array' );
 				break;
 			case 'complex':
-				$charactersloop = lwtv_plugin()->queery_post_type( 'post_type_characters', $page );
+				$charactersloop = ( new Post_Type() )->make( 'post_type_characters', $page );
 
 				if ( ! is_object( $charactersloop ) || ! $charactersloop->have_posts() ) {
 					return $stats_array;
@@ -478,7 +482,7 @@ class Stats_JSON {
 				$stats_array = lwtv_plugin()->generate_statistics( 'shows', 'intersections', 'array' );
 				break;
 			case 'complex':
-				$showsloop = lwtv_plugin()->queery_post_type( 'post_type_shows', $page );
+				$showsloop = ( new Post_Type() )->make( 'post_type_shows', $page );
 
 				if ( ! is_object( $showsloop ) || ! $showsloop->have_posts() ) {
 					return $stats_array;
@@ -568,7 +572,7 @@ class Stats_JSON {
 					'dead_chars' => get_post_meta( $id, 'lezactors_dead_count', true ),
 					'gender'     => implode( ', ', wp_get_post_terms( $id, 'lez_actor_gender', array( 'fields' => 'names' ) ) ),
 					'sexuality'  => implode( ', ', wp_get_post_terms( $id, 'lez_actor_sexuality', array( 'fields' => 'names' ) ) ),
-					'queer'      => ( lwtv_plugin()->is_actor_queer( $id ) ) ? 'yes' : 'no',
+					'queer'      => ( ( new Is_Actor_Queer() )->make( $id ) ) ? 'yes' : 'no',
 					'url'        => get_the_permalink( $id ),
 				);
 				break;
@@ -676,7 +680,7 @@ class Stats_JSON {
 			$slug = ( ! isset( $the_tax->slug ) ) ? $the_tax['slug'] : $the_tax->slug;
 
 			// Get the posts for this singular term (i.e. a specific station)
-			$queery = lwtv_plugin()->queery_taxonomy( 'post_type_shows', 'lez_' . $type, 'slug', $slug, 'IN' );
+			$queery = ( new Queery_Taxonomy() )->make( 'post_type_shows', 'lez_' . $type, 'slug', $slug, 'IN' );
 
 			if ( ! is_object( $queery ) || ! $queery->have_posts() ) {
 				return;

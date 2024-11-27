@@ -12,6 +12,7 @@ if ( ! defined( 'ABSPATH' ) && ! defined( 'WP_CLI' ) ) {
 
 use LWTV\Debugger\Actors as Actors_Debugger;
 use LWTV\Debugger\Queers as Queers_Debugger;
+use LWTV\Queeries\Is_Actor_Queer;
 
 /**
  * LezWatch.TV commands to check the sanctity of content.
@@ -181,7 +182,7 @@ class WP_CLI_LWTV_Check {
 		}
 
 		// Check 'em!
-		$is_queer = lwtv_plugin()->is_actor_queer( $actor_id ) ? 'is queer' : 'is NOT queer';
+		$is_queer = ( new Is_Actor_Queer() )->make( $actor_id ) ? 'is queer' : 'is NOT queer';
 
 		\WP_CLI::success( get_the_title( $actor_id ) . ' ' . $is_queer );
 	}

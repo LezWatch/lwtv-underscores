@@ -3,6 +3,7 @@
 namespace LWTV\Theme;
 
 use LWTV\CPTs\Characters;
+use LWTV\Queeries\Taxonomy as Queery_Taxonomy;
 
 class Character_Relationships {
 	/**
@@ -18,7 +19,7 @@ class Character_Relationships {
 		$term_id = get_post_meta( $char_id, sanitize_key( 'shadow_' . Characters::SHADOW_TAXONOMY . '_term_id' ), true );
 
 		// Get a list of all characters who have that shadow tax:
-		$shadow_queery = lwtv_plugin()->queery_taxonomy( Characters::SLUG, Characters::SHADOW_TAXONOMY, 'term_id', $term_id );
+		$shadow_queery = ( new Queery_Taxonomy() )->make( Characters::SLUG, Characters::SHADOW_TAXONOMY, 'term_id', $term_id );
 		$shadow_chars  = array();
 
 		// Turn $shadow_queery object into array:

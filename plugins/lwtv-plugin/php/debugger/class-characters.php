@@ -9,6 +9,8 @@
 
 namespace LWTV\Debugger;
 
+use LWTV\Queeries\Post_Type;
+
 class Characters {
 
 	/**
@@ -33,7 +35,7 @@ class Characters {
 			}
 		} else {
 			// Get all the characters
-			$the_loop = lwtv_plugin()->queery_post_type( 'post_type_characters' );
+			$the_loop = ( new Post_Type() )->make( 'post_type_characters' );
 
 			if ( is_object( $the_loop ) && $the_loop->have_posts() ) {
 				$characters = wp_list_pluck( $the_loop->posts, 'ID' );

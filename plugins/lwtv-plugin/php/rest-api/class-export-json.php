@@ -11,6 +11,9 @@
 
 namespace LWTV\Rest_API;
 
+use LWTV\Queeries\Post_Type;
+use LWTV\Queeries\Taxonomy as Queery_Taxonomy;
+
 class Export_JSON {
 	/**
 	 * Constructor
@@ -166,7 +169,7 @@ class Export_JSON {
 		$return = array();
 
 		if ( in_array( $item, array( 'characters', 'shows', 'actors' ), true ) ) {
-			$the_loop = lwtv_plugin()->queery_post_type( 'post_type_' . $item );
+			$the_loop = ( new Post_Type() )->make( 'post_type_' . $item );
 
 			if ( ! is_object( $the_loop ) || ! $the_loop->have_posts() ) {
 				return $return;
@@ -207,7 +210,7 @@ class Export_JSON {
 		$return = array();
 
 		if ( in_array( $item, array( 'characters', 'shows', 'actors' ), true ) ) {
-			$the_loop = lwtv_plugin()->queery_post_type( 'post_type_' . $item );
+			$the_loop = ( new Post_Type() )->make( 'post_type_' . $item );
 
 			if ( ! is_object( $the_loop ) || ! $the_loop->have_posts() ) {
 				return $return;
@@ -329,7 +332,7 @@ class Export_JSON {
 	 */
 	public function get_full_list_characters( $group, $term ) {
 
-		$the_loop = lwtv_plugin()->queery_taxonomy( 'post_type_characters', 'lez_' . $group, 'slug', $term );
+		$the_loop = ( new Queery_Taxonomy() )->make( 'post_type_characters', 'lez_' . $group, 'slug', $term );
 
 		if ( ! is_object( $the_loop ) || ! $the_loop->have_posts() ) {
 			return new \WP_Error( 'not_found', 'No route was found matching the URL and request method: ' . $term );

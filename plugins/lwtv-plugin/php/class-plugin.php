@@ -36,20 +36,10 @@ use LWTV\_Helpers\Utils;
  * @method string get_rss_otd_feed()       \_Components\Of_The_Day
  *
  * PLUGINS
- * @method array  jetpack_post_meta()                                           \_Components\Plugins
+ * @method array  jetpack_post_meta()                 \_Components\Plugins
  *
  * QUEERY / LOOPS
- * @method bool   is_actor_queer( $the_id )                                                                                                   \_Components\Queeries
- * @method bool   is_actor_trans( $the_id )                                                                                                   \_Components\Queeries
- * @method bool   is_show_on_air( $show_id, $year )                                                                                           \_Components\Queeries
- * @method string get_id_from_slug( $the_slug )                                                                                               \_Components\Queeries
- * @method array  get_related_posts_by_tag( $post_type, $slug )                                                                               \_Components\Queeries
- * @method array  queery_post_meta_and_tax( $post_type, $key, $value, $taxonomy, $field, $terms, $compare, $operator )                        \_Components\Queeries
- * @method array  queery_post_meta( $post_type, $key, $value, $compare )                                                                      \_Components\Queeries
- * @method array  queery_post_type( $post_type, $page )                                                                                       \_Components\Queeries
- * @method array  queery_tax_two( $post_type, $taxonomy1, $field1, $terms1, $taxonomy2, $field2, $terms2, $operator1, $operator2, $relation ) \_Components\Queeries
- * @method array  queery_taxonomy( $post_type, $taxonomy, $field, $term, $operator )                                                          \_Components\Queeries
- * @method array  queery_wp_meta( $post_type, $slug )                                                                                         \_Components\Queeries
+ * @method bool   is_actor_queer( $the_id )           \_Components\Queeries
  *
  * REST API
  * @method string generate_tvshow_calendar( $date )                 \_Components\Rest_API

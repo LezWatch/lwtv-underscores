@@ -7,6 +7,7 @@ namespace LWTV\Debugger;
 
 use LWTV\Debugger\Characters as Characters_Debugger;
 use LWTV\CPTs\Shows\Ways_To_Watch;
+use LWTV\Queeries\Post_Type;
 
 class Shows {
 
@@ -87,7 +88,7 @@ class Shows {
 			}
 		} else {
 			// Get all the shows
-			$the_loop = lwtv_plugin()->queery_post_type( 'post_type_shows' );
+			$the_loop = ( new Post_Type() )->make( 'post_type_shows' );
 
 			if ( is_object( $the_loop ) && $the_loop->have_posts() ) {
 				$shows = wp_list_pluck( $the_loop->posts, 'ID' );
@@ -264,7 +265,7 @@ class Shows {
 			}
 		} else {
 			// Get all the shows
-			$the_loop = lwtv_plugin()->queery_post_type( 'post_type_shows' );
+			$the_loop = ( new Post_Type() )->make( 'post_type_shows' );
 
 			if ( is_object( $the_loop ) && $the_loop->have_posts() ) {
 				$shows = wp_list_pluck( $the_loop->posts, 'ID' );
@@ -349,7 +350,7 @@ class Shows {
 			}
 		} else {
 			// Get all the shows
-			$the_loop = lwtv_plugin()->queery_post_type( 'post_type_shows' );
+			$the_loop = ( new Post_Type() )->make( 'post_type_shows' );
 
 			if ( is_object( $the_loop ) && $the_loop->have_posts() ) {
 				$shows = wp_list_pluck( $the_loop->posts, 'ID' );

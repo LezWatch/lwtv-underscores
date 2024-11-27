@@ -6,7 +6,7 @@
 
 namespace LWTV\CPTs\Actors;
 
-use LWTV\CPTs\Characters;
+use LWTV\Queeries\Is_Actor_Queer;
 
 class Calculations {
 
@@ -86,7 +86,7 @@ class Calculations {
 		// Calculate meta:
 		$all_chars  = self::count( $post_id, 'count' );
 		$dead_chars = self::count( $post_id, 'dead' );
-		$is_queer   = lwtv_plugin()->is_actor_queer( $post_id );
+		$is_queer   = ( new Is_Actor_Queer() )->make( $post_id );
 
 		// Update Meta:
 		update_post_meta( $post_id, 'lezactors_char_count', $all_chars );

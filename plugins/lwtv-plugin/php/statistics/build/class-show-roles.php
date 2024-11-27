@@ -2,6 +2,9 @@
 
 namespace LWTV\Statistics\Build;
 
+use LWTV\Queeries\Post_Meta;
+use LWTV\Queeries\Post_Type;
+
 class Show_Roles {
 
 	/**
@@ -21,7 +24,7 @@ class Show_Roles {
 			$array = array();
 
 			// List of shows
-			$all_shows_query = lwtv_plugin()->queery_post_type( 'post_type_shows' );
+			$all_shows_query = ( new Post_Type() )->make( 'post_type_shows' );
 
 			if ( is_object( $all_shows_query ) && $all_shows_query->have_posts() ) {
 				$show_array = wp_list_pluck( $all_shows_query->posts, 'ID' );
@@ -40,7 +43,7 @@ class Show_Roles {
 					$show_name = preg_replace( '/\s*/', '', get_the_title( $show_id ) );
 					$show_name = strtolower( $show_name );
 
-					$role_loop = lwtv_plugin()->queery_post_meta( 'post_type_characters', 'lezchars_show_group', $show_id, 'LIKE' );
+					$role_loop = ( new Post_Meta() )->make( 'post_type_characters', 'lezchars_show_group', $show_id, 'LIKE' );
 
 					if ( is_object( $role_loop ) && $role_loop->have_posts() ) {
 
