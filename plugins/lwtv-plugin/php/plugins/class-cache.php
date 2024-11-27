@@ -15,7 +15,7 @@ class Cache {
 	 */
 	public function clean_feed( $type = 'main' ) {
 
-		$main_feed = bloginfo( 'rss2_url' ); // /feed/
+		$main_feed = get_bloginfo( 'rss2_url' ); // /feed/
 
 		$clear_urls = match ( $type ) {
 			'characters' => array( $main_feed . '/characters/' ),
