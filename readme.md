@@ -20,6 +20,12 @@ Usage documentation can be found at [docs.lezwatchtv.com](https://docs.lezwatcht
 - Uses Composer for adding project dependencies.
 - Includes automated build and deploy pipelines to servers using Github actions
 
+## Scheduled Actions
+
+Server crontab is used to run CLI commands that generate and update complex content. 
+
+The command `wp lwtv generate cron daily` will run a different debugger each day, update the FacetWP cache, and so on.
+
 # Requirements
 
 - PHP 8.2 or higher
