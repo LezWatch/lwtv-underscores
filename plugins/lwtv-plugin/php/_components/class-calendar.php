@@ -8,7 +8,6 @@
 namespace LWTV\_Components;
 
 use LWTV\Calendar\{ Generate_Calendar, ICS_Parser, Names, TVMaze };
-use LWTV\Plugins\Cache;
 
 class Calendar implements Component, Templater {
 
@@ -113,9 +112,6 @@ class Calendar implements Component, Templater {
 			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents
 			file_put_contents( $ics_file, $response['body'] );
 		}
-		
-		// Clear the cache
-		( new Cache() )->clean_urls( get_home_url( null, '/about/calendar' ) );
 	}
 
 	/**
