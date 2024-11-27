@@ -9,7 +9,7 @@ namespace LWTV\CPTs;
 
 use LWTV\_Components\CPTs;
 use LWTV\CPTs\Shows\{ Calculations, CMB2_Metaboxes, Custom_Columns, Shows_Like_This, Ways_To_Watch };
-use LWTV\Plugins\Cache;
+use LWTV\Plugins\{ Cache, CMB2 };
 
 /**
  * class LWTV_CPT_Shows
@@ -292,11 +292,11 @@ class Shows {
 		$this->generate_tmdb_id( $post_id );
 
 		// Save show scores
-		lwtv_plugin()->calculate_show_data( $post_id );
+		( new Shows() )->do_the_math( $post_id );
 
 		// ALWAYS sync up data.
 		foreach ( self::SELECT2_TAXONOMIES as $postmeta => $taxonomy ) {
-			lwtv_plugin()->save_select2_taxonomy( $post_id, $postmeta, $taxonomy );
+			( new CMB2() )->select2_taxonomy_save( $post_id, $postmeta, $taxonomy );
 		}
 
 		// Caching

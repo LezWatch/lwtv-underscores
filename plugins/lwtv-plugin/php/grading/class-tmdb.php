@@ -6,6 +6,7 @@
 namespace LWTV\Grading;
 
 use LWTV\_Components\CPTs;
+use LWTV\_Components\Grading as Grading_Component;
 
 class TMDB {
 
@@ -20,7 +21,7 @@ class TMDB {
 			'image' => LWTV_PLUGIN_URL . '/assets/images/scores/tmdb.png',
 			'name'  => 'The Movie Database',
 			'score' => $this->get_score( $show_id ),
-			'color' => lwtv_plugin()->get_grade_color( $this->get_score( $show_id ) ),
+			'color' => ( new Grading_Component() )->color( $this->get_score( $show_id ) ),
 			'bg'    => '#0d253f',
 			'url'   => $this->get_url( $show_id ),
 		);

@@ -5,7 +5,7 @@
  * These commands are 'generation' tools.
  */
 
-use LWTV\_Components\Calendar;
+use LWTV\_Components\{ Calendar, Of_The_Day };
 use LWTV\Debugger\Actors as Actors_Debugger;
 use LWTV\Debugger\Characters as Characters_Debugger;
 use LWTV\Debugger\Shows as Shows_Debugger;
@@ -288,7 +288,7 @@ class WP_CLI_LWTV_Generate {
 
 		// Set it!
 		foreach ( $to_do as $otd ) {
-			lwtv_plugin()->set_of_the_day( $otd );
+			( new Of_The_Day() )->set_of_the_day( $otd );
 			\WP_CLI::success( 'The ' . $otd . ' "Of the Day" has been set.' );
 		}
 	}

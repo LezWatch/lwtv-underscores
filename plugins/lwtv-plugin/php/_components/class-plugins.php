@@ -4,7 +4,6 @@
  */
 namespace LWTV\_Components;
 
-use LWTV\Plugins\Cache;
 use LWTV\Plugins\CMB2;
 use LWTV\Plugins\Comment_Probation;
 use LWTV\Plugins\FacetWP;
@@ -44,48 +43,8 @@ class Plugins implements Component, Templater {
 	 */
 	public function get_template_tags(): array {
 		return array(
-			'get_cmb2_terms_list'   => array( $this, 'get_cmb2_terms_list' ),
-			'get_select2_defaults'  => array( $this, 'get_select2_defaults' ),
-			'jetpack_post_meta'     => array( $this, 'jetpack_post_meta' ),
-			'save_select2_taxonomy' => array( $this, 'save_select2_taxonomy' ),
+			'jetpack_post_meta' => array( $this, 'jetpack_post_meta' ),
 		);
-	}
-
-	/**
-	 * Get a list of terms
-	 *
-	 * @param  array  $taxonomies
-	 * @param  string $query_args
-	 * @return array
-	 */
-	public function get_cmb2_terms_list( $taxonomies, $query_args = '' ) {
-		return ( new CMB2() )->get_cmb2_terms_list( $taxonomies, $query_args );
-	}
-
-	/**
-	 * Save Select2 Taxonomy
-	 *
-	 * @param  int    $post_id
-	 * @param  string $post_meta
-	 * @param  string $taxonomy
-	 * @return void
-	 */
-	public function save_select2_taxonomy( $post_id, $post_meta, $taxonomy ) {
-		( new CMB2() )->select2_taxonomy_save( $post_id, $post_meta, $taxonomy );
-	}
-
-	/**
-	 * Get default data for some odd CMB2 things using select2
-	 *
-	 * @param  string  $post_meta the name of the post_meta used by CMB2
-	 * @param  string  $taxonomy  the name of the taxonomy we're using
-	 * @param  integer $post_id   post ID
-	 * @param  boolean $none      does it have a 'none'?
-	 *
-	 * @return array              An array of Term IDs
-	 */
-	public function get_select2_defaults( $post_meta, $taxonomy, $post_id = 0, $none = false ) {
-		return ( new CMB2() )->get_select2_defaults( $post_meta, $taxonomy, $post_id, $none );
 	}
 
 	/**

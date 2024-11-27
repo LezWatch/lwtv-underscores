@@ -6,7 +6,7 @@
 
 namespace LWTV\CPTs\Shows;
 
-use LWTV\CPTs\Characters;
+use LWTV\_Components\Grading;
 
 class Calculations {
 
@@ -440,7 +440,7 @@ class Calculations {
 		update_post_meta( $post_id, 'lezshows_the_score', $calculate );
 
 		// Update 3rd party scores
-		lwtv_plugin()->update_grading_scores( $post_id );
+		( new Grading() )->update_scores( $post_id );
 
 		// Cheat and update the show 'on-air' ness.
 		$on_air   = 'no';

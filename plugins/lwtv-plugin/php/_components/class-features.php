@@ -10,16 +10,14 @@ use LWTV\Features\Dashboard_Posts_In_Progress;
 use LWTV\Features\Dashboard;
 use LWTV\Features\Embeds;
 use LWTV\Features\Environment;
-use LWTV\Features\Languages;
 use LWTV\Features\Plugin_Age;
 use LWTV\Features\Private_Posts;
 use LWTV\Features\Roles;
 use LWTV\Features\Shortcodes;
-use LWTV\Features\Spammers;
 use LWTV\Features\Upgrades;
 use LWTV\Features\User_Profiles;
 
-class Features implements Component, Templater {
+class Features implements Component {
 
 	/*
 	 * Init
@@ -47,21 +45,6 @@ class Features implements Component, Templater {
 	}
 
 	/**
-	 * Gets tags to expose as methods accessible through `lwtv_plugin()`.
-	 *
-	 * @return array Associative array of $method_name => $callback_info pairs. Each $callback_info must either be
-	 *               a callable or an array with key 'callable'. This approach is used to reserve the possibility of
-	 *               adding support for further arguments in the future.
-	 */
-	public function get_template_tags(): array {
-		return array(
-			'get_all_languages' => array( $this, 'get_all_languages' ),
-			'get_spammers_list' => array( $this, 'get_spammers_list' ),
-			'is_spammer'        => array( $this, 'is_spammer' ),
-		);
-	}
-
-	/**
 	 * Prevent self pings by interlinks
 	 *
 	 * @since 1.2.0
@@ -73,32 +56,6 @@ class Features implements Component, Templater {
 				unset( $links[ $l ] );
 			}
 		}
-	}
-
-	/**
-	 * Get all languages we know.
-	 */
-	public function get_all_languages(): array {
-		return ( new Languages() )->all_languages();
-	}
-
-	/**
-	 * Get all Spammers
-	 */
-	public function get_spammers_list(): array {
-		return ( new Spammers() )->list();
-	}
-
-	/**
-	 * Is this a Spammer?
-	 *
-	 * @param  string $to_check - content to check (i.e. "John Doe", "foo@example.com")
-	 * @param  string $type     - Type of to check (email, name, URL)
-	 * @param  string $keys     - Key to check against (nearly always disallowed)
-	 * @return bool
-	 */
-	public function is_spammer( $to_check, $type = 'email', $keys = 'disallowed_keys' ): bool {
-		return ( new Spammers() )->is_spammer( $to_check, $type, $keys );
 	}
 
 	/**

@@ -5,6 +5,8 @@
 
 namespace LWTV\Plugins\Gravity_Forms;
 
+use LWTV\Features\Spammers;
+
 class Stop_Spammers {
 
 	public function __construct() {
@@ -58,8 +60,8 @@ class Stop_Spammers {
 
 			if ( is_email( $key ) ) {
 				$email              = $key;
-				$is_naughty['spam'] = lwtv_plugin()->is_spammer( $email, 'email', 'disallowed_keys' );
-				$is_naughty['mod']  = lwtv_plugin()->is_spammer( $email, 'email', 'moderated_keys' );
+				$is_naughty['spam'] = ( new Spammers() )->is_spammer( $email, 'email', 'disallowed_keys' );
+				$is_naughty['mod']  = ( new Spammers() )->is_spammer( $email, 'email', 'moderated_keys' );
 			}
 
 			if ( rest_is_ip_address( (string) $key ) && is_object( $entry ) ) {
@@ -67,8 +69,8 @@ class Stop_Spammers {
 				$gravity_forms_ip = ( isset( $entry->ip ) ) ? $entry->ip : '';
 
 				// Santa Clause time.
-				$is_naughty['spam'] = lwtv_plugin()->is_spammer( $gravity_forms_ip, 'ip', 'disallowed_keys' );
-				$is_naughty['mod']  = lwtv_plugin()->is_spammer( $gravity_forms_ip, 'ip', 'moderated_keys' );
+				$is_naughty['spam'] = ( new Spammers() )->is_spammer( $gravity_forms_ip, 'ip', 'disallowed_keys' );
+				$is_naughty['mod']  = ( new Spammers() )->is_spammer( $gravity_forms_ip, 'ip', 'moderated_keys' );
 			}
 		}
 

@@ -27,10 +27,8 @@ class Grading implements Component, Templater {
 	 */
 	public function get_template_tags(): array {
 		return array(
-			'get_grade_color'       => array( $this, 'color' ),
-			'display_scores'        => array( $this, 'display' ),
-			'get_all_scores'        => array( $this, 'all_scores' ),
-			'update_grading_scores' => array( $this, 'update_scores' ),
+			'display_scores' => array( $this, 'display' ),
+			'get_all_scores' => array( $this, 'all_scores' ),
 		);
 	}
 
@@ -64,7 +62,7 @@ class Grading implements Component, Templater {
 		// force numbers all around
 		$score = ( 'TBD' === strtoupper( $score ) || '0.00' === $score ) ? 0 : (int) $score - 1;
 
-		// Invert because I mathed the colors backwards.
+		// Invert because I math'ed the colors backwards.
 		$number = 100 - $score;
 
 		if ( $number < 50 ) {

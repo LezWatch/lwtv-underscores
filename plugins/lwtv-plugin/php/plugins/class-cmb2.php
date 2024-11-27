@@ -7,11 +7,7 @@
 
 namespace LWTV\Plugins;
 
-use LWTV\Plugins\CMB2\Attached_Posts;
-use LWTV\Plugins\CMB2\Meta_By_Role;
-use LWTV\Plugins\CMB2\Metabox_Profile;
-use LWTV\Plugins\CMB2\Symbolicons;
-use LWTV\Plugins\CMB2\Taxonomies;
+use LWTV\Plugins\CMB2\{ Attached_Posts, Meta_By_Role, Metabox_Profile, Symbolicons, Taxonomies };
 
 class CMB2 {
 	/**

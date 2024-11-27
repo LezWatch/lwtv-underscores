@@ -8,7 +8,7 @@
 namespace LWTV\CPTs;
 
 use LWTV\CPTs\Characters\{ Calculations, CMB2_Metaboxes, Custom_Columns };
-use LWTV\Plugins\Cache;
+use LWTV\Plugins\{ Cache, CMB2 };
 
 /**
  * class LWTV_CPT_Characters
@@ -384,8 +384,8 @@ class Characters {
 		$this->do_the_math( $post_id );
 
 		// Always Sync Taxonomies
-		lwtv_plugin()->save_select2_taxonomy( $post_id, 'lezchars_cliches', 'lez_cliches' );
-		lwtv_plugin()->save_select2_taxonomy( $post_id, 'lezchars_relationship_chart', 'shadow_tax_characters' );
+		( new CMB2() )->select2_taxonomy_save( $post_id, 'lezchars_cliches', 'lez_cliches' );
+		( new CMB2() )->select2_taxonomy_save( $post_id, 'lezchars_relationship_chart', 'shadow_tax_characters' );
 
 		// Get a list of URLs to flush
 		$clear_urls = ( new Cache() )->collect_urls_for_characters( $post_id );

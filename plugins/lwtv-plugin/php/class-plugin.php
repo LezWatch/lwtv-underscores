@@ -26,28 +26,17 @@ use LWTV\_Helpers\Utils;
  * @method void   hide_actor_data( $post_id )                           \_Components\CPTs
  * @method string the_actor_privacy_warning( $post_id )                 \_Components\CPTs
  *
- * FEATURES
- * @method array  get_all_languages()                   \_Components\Features
- * @method array  get_spammers_list()                   \_Components\Features
- * @method bool   is_spammer( $to_check, $type, $keys ) \_Components\Features
- *
  * GRADING
  * @method string display_scores( $show_id )        \_Components\Grading
  * @method array  get_all_scores( $show_id )        \_Components\Grading
- * @method string get_grade_color( $score )         \_Components\Grading
- * @method void   update_grading_scores( $show_id ) \_Components\Grading
  *
  * OTD
  * @method string get_wp_version()         \_Components\Of_The_Day
  * @method string get_rss_otd_last_build() \_Components\Of_The_Day
  * @method string get_rss_otd_feed()       \_Components\Of_The_Day
- * @method void   set_of_the_day()         \_Components\Of_The_Day
  *
  * PLUGINS
- * @method array  get_cmb2_terms_list( $taxonomies, $query_args )               \_Components\Plugins
- * @method array  get_select2_defaults( $postmeta, $taxonomy, $post_id, $none ) \_Components\Plugins
  * @method array  jetpack_post_meta()                                           \_Components\Plugins
- * @method void   save_select2_taxonomy( $post_id, $taxonomy, $terms )          \_Components\Plugins
  *
  * QUEERY / LOOPS
  * @method bool   is_actor_queer( $the_id )                                                                                                   \_Components\Queeries

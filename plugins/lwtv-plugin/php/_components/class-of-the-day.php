@@ -55,7 +55,6 @@ class Of_The_Day implements Component, Templater {
 			'get_wp_version'         => array( $this, 'get_wp_version' ),
 			'get_rss_otd_last_build' => array( $this, 'get_rss_otd_last_build' ),
 			'get_rss_otd_feed'       => array( $this, 'get_rss_otd_feed' ),
-			'set_of_the_day'         => array( $this, 'set_of_the_day' ),
 		);
 	}
 
