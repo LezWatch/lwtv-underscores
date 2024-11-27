@@ -5,6 +5,8 @@
 
 namespace LWTV\Rest_API\Alexa;
 
+use LWTV\Rest_API\Whats_On_JSON;
+
 class Whats_On {
 
 	public function on_a_day( $date = 'today' ) {
@@ -14,7 +16,7 @@ class Whats_On {
 		$timestamp = strtotime( 'now' );
 
 		// Get the list of what's on:
-		$data = lwtv_plugin()->get_whats_on_date( $date );
+		$data = ( new Whats_On_JSON() )->whats_on_date( $date );
 
 		$count = ( 'none' === key( $data ) ) ? 0 : count( $data );
 
@@ -45,7 +47,7 @@ class Whats_On {
 	 * @return string       Pretty language about what's on
 	 */
 	public function show( $show ) {
-		$data   = lwtv_plugin()->get_whats_on_show( $show );
+		$data   = ( new Whats_On_JSON() )->whats_on_show( $show );
 		$output = $data['pretty'];
 
 		return $output;

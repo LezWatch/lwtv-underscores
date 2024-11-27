@@ -2,6 +2,8 @@
 
 namespace LWTV\Statistics\Format;
 
+use LWTV\_Components\Statistics as Base_Stats;
+
 class Piecharts {
 	/*
 	 * Statistics Display Piecharts
@@ -23,18 +25,18 @@ class Piecharts {
 			case 'sexuality':
 			case 'dead-sex':
 				$fixname = 'sexual';
-				$count   = lwtv_plugin()->generate_statistics( 'characters', 'all', 'count' );
+				$count   = ( new Base_Stats() )->generate( 'characters', 'all', 'count' );
 				$center  = $count . ' Characters';
 				break;
 			case 'gender':
 			case 'dead-gender':
 				$fixname = 'gender';
-				$count   = lwtv_plugin()->generate_statistics( 'characters', 'all', 'count' );
+				$count   = ( new Base_Stats() )->generate( 'characters', 'all', 'count' );
 				$center  = $count . ' Characters';
 				break;
 			case 'dead-shows':
 				$fixname = 'queers are dead';
-				$count   = lwtv_plugin()->generate_statistics( 'shows', 'all', 'count' );
+				$count   = ( new Base_Stats() )->generate( 'shows', 'all', 'count' );
 				$center  = $count . ' Shows';
 				break;
 			default:

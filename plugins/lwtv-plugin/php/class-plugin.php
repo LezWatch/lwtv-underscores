@@ -42,15 +42,7 @@ use LWTV\_Helpers\Utils;
  * @method bool   is_actor_queer( $the_id )           \_Components\Queeries
  *
  * REST API
- * @method string generate_tvshow_calendar( $date )                 \_Components\Rest_API
- * @method array  get_json_statistics( $stat_type, $format, $page ) \_Components\Rest_API
- * @method mixed  get_json_similar_show( $show_slug )               \_Components\Rest_API
- * @method array  get_json_export( $type, $item, $tax, $term )      \_Components\Rest_API
- * @method array  get_json_last_death()                             \_Components\Rest_API
- * @method array  get_list_of_dead_characters( $loop )              \_Components\Rest_API
- * @method array  get_whats_on_date( $date )                        \_Components\Rest_API
  * @method array  get_whats_on_show( $show )                        \_Components\Rest_API
- * @method mixed  get_what_happened_on_date( $date )                \_Components\Rest_API
  *
  * STATISTICS
  * @method array  generate_shows_count( $type, $tax, $term )                               \_Components\Statistics

@@ -8,6 +8,7 @@
 namespace LWTV\Rest_API\Alexa;
 
 use LWTV\Queeries\Post_Meta_And_Tax;
+use LWTV\Rest_API\What_Happened_JSON;
 
 class This_Year {
 
@@ -49,7 +50,7 @@ class This_Year {
 		}
 
 		// Get the data
-		$count_array = lwtv_plugin()->get_what_happened_on_date( $date );
+		$count_array = ( new What_Happened_JSON() )->what_happened( $date );
 
 		// Language of Death
 		$dead = 'Miraculously, no characters died';

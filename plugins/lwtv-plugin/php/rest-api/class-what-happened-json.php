@@ -10,6 +10,7 @@ namespace LWTV\Rest_API;
 
 use LWTV\Queeries\Post_Meta_And_Tax;
 use LWTV\Queeries\Post_Type;
+use LWTV\Rest_API\BYQ;
 
 class What_Happened_JSON {
 
@@ -128,7 +129,7 @@ class What_Happened_JSON {
 				break;
 			case 'month':
 				$death_query       = $death_query_year;
-				$death_list_array  = lwtv_plugin()->get_list_of_dead_characters( $death_query );
+				$death_list_array  = ( new BYQ() )->list_of_dead_characters( $death_query );
 				$death_query_count = 0;
 				foreach ( $death_list_array as $the_dead ) {
 					if ( $datetime->format( 'm' ) === gmdate( 'm', $the_dead['died'] ) ) {
