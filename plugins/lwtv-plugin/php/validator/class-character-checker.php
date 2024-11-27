@@ -8,6 +8,8 @@ namespace LWTV\Validator;
 
 use LWTV\Admin_Menu\Validation;
 
+use LWTV\Debugger\Characters as Characters_Debugger;
+
 class Character_Checker {
 	/**
 	 * Output the results of character checking...
@@ -18,12 +20,12 @@ class Character_Checker {
 
 		// If rerun was clicked, gotta check 'em all.
 		if ( ( isset( $_POST['rerun'] ) && check_admin_referer( 'run_character_checker_clicked' ) ) || false === $items ) {
-			$items = lwtv_plugin()->find_characters_problems();
+			$items = ( new Characters_Debugger() )->find_characters_problems();
 		}
 
 		// If recheck was clicked, only check the problem children.
 		if ( isset( $_POST['recheck'] ) && check_admin_referer( 'run_character_checker_clicked' ) && false !== $items ) {
-			$items = lwtv_plugin()->find_characters_problems( $items );
+			$items = ( new Characters_Debugger() )->find_characters_problems( $items );
 		}
 
 		// Get the last run time.

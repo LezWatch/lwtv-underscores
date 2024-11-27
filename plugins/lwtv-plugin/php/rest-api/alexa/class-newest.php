@@ -7,6 +7,8 @@
 
 namespace LWTV\Rest_API\Alexa;
 
+use LWTV\Rest_API\BYQ;
+
 class Newest {
 
 	/**
@@ -36,7 +38,7 @@ class Newest {
 	public function latest( $posttype ) {
 
 		if ( 'death' === $posttype ) {
-			$data   = lwtv_plugin()->get_json_last_death();
+			$data   = ( new BYQ() )->last_death();
 			$name   = $data['name'];
 			$output = $name . ' on ' . gmdate( 'F j, Y', $data['died'] );
 		} else {

@@ -11,6 +11,9 @@
 
 namespace LWTV\Debugger;
 
+use LWTV\_Components\Debugger as Debug_Tool;
+use LWTV\Queeries\Post_Type;
+
 class Actors {
 
 	/**
@@ -34,7 +37,7 @@ class Actors {
 			}
 		} else {
 			// Get all the actors
-			$the_loop = lwtv_plugin()->queery_post_type( 'post_type_actors' );
+			$the_loop = ( new Post_Type() )->make( 'post_type_actors' );
 
 			// Add ONLY the IDs to the array.
 			if ( is_object( $the_loop ) && $the_loop->have_posts() ) {
@@ -93,18 +96,18 @@ class Actors {
 			// that's suspicious (props Jamie)
 			if ( ! empty( $check['insta'] ) ) {
 				// Limit - 30 symbols. Username must contains only letters, numbers, periods and underscores.
-				if ( lwtv_plugin()->sanitize_social( $check['insta'], 'instagram' ) !== $check['insta'] ) {
+				if ( ( new Debug_Tool() )->sanitize_social( $check['insta'], 'instagram' ) !== $check['insta'] ) {
 					$problems[] = 'Instagram ID is invalid -- ' . $check['insta'];
-				} elseif ( lwtv_plugin()->validate_imdb( $check['insta'], 'actor' ) ) {
+				} elseif ( ( new Debug_Tool() )->validate_imdb( $check['insta'], 'actor' ) ) {
 					// If instagram is IMDb, then it's wrong.
 					delete_post_meta( $actor_id, 'lezactors_instagram' );
 					$problems[] = 'Instagram ID was set as IMDb and has been removed - ' . $check['insta'];
 				}
 			}
 			if ( ! empty( $check['twits'] ) ) {
-				if ( lwtv_plugin()->sanitize_social( $check['twits'], 'twitter' ) !== $check['twits'] ) {
+				if ( ( new Debug_Tool() )->sanitize_social( $check['twits'], 'twitter' ) !== $check['twits'] ) {
 					$problems[] = 'Twitter ID is invalid -- ' . $check['insta'];
-				} elseif ( lwtv_plugin()->validate_imdb( $check['twits'], 'actor' ) ) {
+				} elseif ( ( new Debug_Tool() )->validate_imdb( $check['twits'], 'actor' ) ) {
 					// If Twitter is IMDb, then it's wrong.
 					delete_post_meta( $actor_id, 'lezactors_twitter' );
 					$problems[] = 'Twitter ID was set as IMDb and has been removed - ' . $check['twits'];
@@ -176,7 +179,7 @@ class Actors {
 			}
 		} else {
 			// Get all the actors
-			$the_loop = lwtv_plugin()->queery_post_type( 'post_type_actors' );
+			$the_loop = ( new Post_Type() )->make( 'post_type_actors' );
 
 			// Add ONLY the IDs to the array.
 			if ( is_object( $the_loop ) && $the_loop->have_posts() ) {
@@ -253,7 +256,7 @@ class Actors {
 			}
 		} else {
 			// Get all the actors
-			$the_loop = lwtv_plugin()->queery_post_type( 'post_type_actors' );
+			$the_loop = ( new Post_Type() )->make( 'post_type_actors' );
 
 			// Add ONLY the IDs to the array.
 			if ( is_object( $the_loop ) && $the_loop->have_posts() ) {
@@ -281,7 +284,7 @@ class Actors {
 			if ( empty( $imdb ) ) {
 				// Check for IMDb existing at all...
 				$problems[] = 'IMDb ID is not set.';
-			} elseif ( lwtv_plugin()->validate_imdb( $imdb, 'actor' ) === false ) {
+			} elseif ( ( new Debug_Tool() )->validate_imdb( $imdb, 'actor' ) === false ) {
 				// - IMDb IDs should be valid for the space they're in, e.g. "nm"
 				// and digits for people (props Jamie).
 				$problems[] = 'IMDb ID is invalid (ex: nm12345) -- ' . $imdb;
@@ -344,7 +347,7 @@ class Actors {
 				}
 			} else {
 				// Get all the actors
-				$the_loop = lwtv_plugin()->queery_post_type( 'post_type_actors' );
+				$the_loop = ( new Post_Type() )->make( 'post_type_actors' );
 
 				// Add ONLY the IDs to the array.
 				if ( is_object( $the_loop ) && $the_loop->have_posts() ) {
@@ -438,8 +441,8 @@ class Actors {
 				}
 
 				$check_wiki = array(
-					'birth'     => ( isset( $wiki_actor['claims']['P569'] ) ) ? lwtv_plugin()->format_wikidate( $wiki_actor['claims']['P569'][0]['mainsnak']['datavalue']['value']['time'] ) : '',
-					'death'     => ( isset( $wiki_actor['claims']['P570'] ) ) ? lwtv_plugin()->format_wikidate( $wiki_actor['claims']['P570'][0]['mainsnak']['datavalue']['value']['time'] ) : '',
+					'birth'     => ( isset( $wiki_actor['claims']['P569'] ) ) ? ( new Debug_Tool() )->format_wikidate( $wiki_actor['claims']['P569'][0]['mainsnak']['datavalue']['value']['time'] ) : '',
+					'death'     => ( isset( $wiki_actor['claims']['P570'] ) ) ? ( new Debug_Tool() )->format_wikidate( $wiki_actor['claims']['P570'][0]['mainsnak']['datavalue']['value']['time'] ) : '',
 					'wikipedia' => $wiki_link,
 					'imdb'      => ( isset( $wiki_actor['claims']['P345'] ) ) ? $wiki_actor['claims']['P345'][0]['mainsnak']['datavalue']['value'] : '',
 					'instagram' => ( isset( $wiki_actor['claims']['P2003'] ) ) ? $wiki_actor['claims']['P2003'][0]['mainsnak']['datavalue']['value'] : '',

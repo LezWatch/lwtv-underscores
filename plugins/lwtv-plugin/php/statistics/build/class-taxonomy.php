@@ -2,6 +2,8 @@
 
 namespace LWTV\Statistics\Build;
 
+use LWTV\Queeries\Taxonomy as Queery_Taxonomy;
+
 class Taxonomy {
 
 	/*
@@ -33,7 +35,7 @@ class Taxonomy {
 				$term_link         = get_term_link( $term, $taxonomy );
 				$term_slug         = ( '' === $terms ) ? $term->slug : $terms;
 				$term_name         = ( '' === $terms ) ? $term->name : $term_obj['name'];
-				$count_terms_query = lwtv_plugin()->queery_taxonomy( $post_type, $taxonomy, 'slug', $term_slug, $operator );
+				$count_terms_query = ( new Queery_Taxonomy() )->make( $post_type, $taxonomy, 'slug', $term_slug, $operator );
 				$term_count        = $count_terms_query->post_count;
 
 				$array[ $term_slug ] = array(

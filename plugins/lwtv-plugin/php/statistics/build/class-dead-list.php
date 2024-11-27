@@ -2,6 +2,8 @@
 
 namespace LWTV\Statistics\Build;
 
+use LWTV\Queeries\Post_Meta;
+
 class Dead_List {
 
 	/**
@@ -16,7 +18,7 @@ class Dead_List {
 
 		if ( false === $array ) {
 			$array     = array();
-			$dead_loop = lwtv_plugin()->queery_post_meta( 'post_type_characters', 'lezchars_death_year', '', '!=' );
+			$dead_loop = ( new Post_Meta() )->make( 'post_type_characters', 'lezchars_death_year', '', '!=' );
 
 			if ( is_object( $dead_loop ) && $dead_loop->have_posts() ) {
 				$queery = wp_list_pluck( $dead_loop->posts, 'ID' );

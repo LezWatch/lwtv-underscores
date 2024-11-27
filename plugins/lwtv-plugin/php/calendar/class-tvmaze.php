@@ -38,7 +38,7 @@ class TVMaze {
 		}
 
 		// Otherwise, get the show info from the TVMaze API
-		$show_info = $this->get_tvmaze_info( $show_id );
+		$show_info = $this->get_tvmaze_info_show( $show_id );
 		if ( ! $show_info ) {
 			return '';
 		}
@@ -74,8 +74,14 @@ class TVMaze {
 	 * @param  int   $show_id
 	 * @return mixed $show_info_decoded - the response body decoded or false
 	 */
-	public function get_tvmaze_info( $show_id ): mixed {
-		$show_name = get_the_title( $show_id );
+	public function get_tvmaze_info_show( $show_id, $maybe_show_name = '' ): mixed {
+		// If it's not a show, bail early.
+		if ( 'post_type_shows' !== get_post_type( $show_id ) ) {
+			return false;
+		}
+
+		// If a name is passed, use that. Otherwise, get the show name.
+		$show_name = $maybe_show_name ?? get_the_title( $show_id );
 
 		if ( get_post_meta( $show_id, 'lezshows_tvmaze_id', true ) ) {
 			// Use TV Maze ID if we have it.
@@ -85,7 +91,7 @@ class TVMaze {
 			$show_info = wp_remote_get( 'http://api.tvmaze.com/lookup/shows?imdb=' . get_post_meta( $show_id, 'lezshows_imdb', true ) );
 		} else {
 			// Check the show namer just in case we have odd versions for TV Maze.
-			$show_name = lwtv_plugin()->get_show_name_for_calendar( $show_name, 'lwtv' );
+			$show_name = ( new Names() )->make( $show_name, 'lwtv', 'name' );
 
 			// Search TV Maze API for show info:
 			$show_info = wp_remote_get( 'http://api.tvmaze.com/singlesearch/shows?q=' . $show_name );

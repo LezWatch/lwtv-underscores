@@ -7,6 +7,7 @@
 namespace LWTV\Validator;
 
 use LWTV\Admin_Menu\Validation;
+use LWTV\Debugger\Actors as Actors_Debugger;
 
 class Actor_IMDb {
 	/**
@@ -18,12 +19,12 @@ class Actor_IMDb {
 
 		// If rerun was clicked, gotta check 'em all.
 		if ( ( isset( $_POST['rerun'] ) && check_admin_referer( 'run_actor_imdb_clicked' ) ) || false === $items ) {
-			$items = lwtv_plugin()->find_actors_no_imdb();
+			$items = ( new Actors_Debugger() )->find_actors_no_imdb();
 		}
 
 		// If recheck was clicked, only check the problem children.
 		if ( isset( $_POST['recheck'] ) && check_admin_referer( 'run_actor_imdb_clicked' ) && false !== $items ) {
-			$items = lwtv_plugin()->find_actors_no_imdb( $items );
+			$items = ( new Actors_Debugger() )->find_actors_no_imdb( $items );
 		}
 
 		// Get the last run time.

@@ -5,6 +5,8 @@
 
 namespace LWTV\Debugger;
 
+use LWTV\Queeries\Get_ID_From_Slug;
+
 class Dupes {
 	/**
 	 * Find Duplicates
@@ -95,7 +97,7 @@ class Dupes {
 			'post_type' => get_post_type( $post_id ),
 		);
 		$original  = array(
-			'id'   => lwtv_plugin()->get_id_from_slug( $slugs['original'] ),
+			'id'   => ( new Get_ID_From_Slug() )->make( $slugs['original'] ),
 			'slug' => $slugs['original'],
 		);
 

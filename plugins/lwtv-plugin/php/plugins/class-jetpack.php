@@ -6,6 +6,8 @@
 
 namespace LWTV\Plugins;
 
+use LWTV\Features\Spammers;
+
 // Bail early if Jetpack isn't active.
 if ( ! class_exists( 'Jetpack' ) ) {
 	return;
@@ -91,7 +93,7 @@ class Jetpack {
 		}
 
 		$badlist    = array();
-		$disallowed = lwtv_plugin()->get_spammers_list();
+		$disallowed = ( new Spammers() )->list();
 
 		// Check the list for valid emails. Add the email _USERNAME_ to the list
 		foreach ( $disallowed as $spammer ) {
@@ -110,7 +112,7 @@ class Jetpack {
 
 		// Check if the email username is one of the bad ones
 		// Get a true/falsy
-		$is_spammer = lwtv_plugin()->is_spammer( $form['comment_author_email'] );
+		$is_spammer = ( new Spammers() )->is_spammer( $form['comment_author_email'] );
 		if ( $is_spammer ) {
 			return true;
 		}

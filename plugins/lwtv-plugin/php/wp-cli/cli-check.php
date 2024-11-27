@@ -10,6 +10,10 @@ if ( ! defined( 'ABSPATH' ) && ! defined( 'WP_CLI' ) ) {
 	die();
 }
 
+use LWTV\Debugger\Actors as Actors_Debugger;
+use LWTV\Debugger\Queers as Queers_Debugger;
+use LWTV\Queeries\Is_Actor_Queer;
+
 /**
  * LezWatch.TV commands to check the sanctity of content.
  */
@@ -135,7 +139,7 @@ class WP_CLI_LWTV_Check {
 		// Even though we only support actors...
 		if ( 'post_type_actors' === $post_type ) {
 			// Do the thing!
-			$items        = lwtv_plugin()->check_actors_wikidata( $actor_id );
+			$items        = ( new Actors_Debugger() )->check_actors_wikidata( $actor_id );
 			$return_array = array( 'id', 'name', 'wikidata', 'birth', 'death', 'imdb', 'wikipedia', 'website', 'instagram', 'twitter', 'facebook' );
 
 			if ( empty( $items ) ) {
@@ -153,7 +157,7 @@ class WP_CLI_LWTV_Check {
 	 * Check the queers.
 	 */
 	public function run_queerchecker() {
-		$items = lwtv_plugin()->find_queer_chars();
+		$items = ( new Queers_Debugger() )->find_queer_chars();
 
 		if ( ! isset( $items ) ) {
 			\WP_CLI::error( 'An unexpected error has occurred. Go get Mika.' );
@@ -178,7 +182,7 @@ class WP_CLI_LWTV_Check {
 		}
 
 		// Check 'em!
-		$is_queer = lwtv_plugin()->is_actor_queer( $actor_id ) ? 'is queer' : 'is NOT queer';
+		$is_queer = ( new Is_Actor_Queer() )->make( $actor_id ) ? 'is queer' : 'is NOT queer';
 
 		\WP_CLI::success( get_the_title( $actor_id ) . ' ' . $is_queer );
 	}

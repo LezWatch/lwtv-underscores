@@ -2,6 +2,8 @@
 
 namespace LWTV\Statistics\Build;
 
+use LWTV\Queeries\Post_Meta;
+
 class Meta {
 
 	/*
@@ -25,7 +27,7 @@ class Meta {
 
 			$array = array();
 			foreach ( $meta_array as $value ) {
-				$meta_query      = lwtv_plugin()->queery_post_meta( $post_type, $key, $value, $compare );
+				$meta_query      = ( new Post_Meta() )->make( $post_type, $key, $value, $compare );
 				$array[ $value ] = array(
 					'count' => $meta_query->post_count,
 					'name'  => ucfirst( $value ),

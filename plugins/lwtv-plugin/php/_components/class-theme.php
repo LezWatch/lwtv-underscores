@@ -7,6 +7,7 @@
  */
 namespace LWTV\_Components;
 
+use LWTV\Rest_API\BYQ;
 use LWTV\Theme\Actor_Age;
 use LWTV\Theme\Actor_Birthday;
 use LWTV\Theme\Actor_Characters;
@@ -346,7 +347,7 @@ class Theme implements Component, Templater {
 	 */
 	public function get_last_death() {
 		$return     = '<p>The LezWatch.TV API is temporarily unavailable.</p>';
-		$last_death = lwtv_plugin()->get_json_last_death();
+		$last_death = ( new BYQ() )->last_death();
 		if ( '' !== $last_death ) {
 			$died_time = human_time_diff( $last_death['died'], (int) wp_date( 'U' ) );
 

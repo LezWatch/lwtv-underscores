@@ -6,6 +6,9 @@
 
 namespace LWTV\Features;
 
+use LWTV\Queeries\Post_Meta_And_Tax;
+use LWTV\Rest_API\BYQ;
+
 class Shortcodes {
 
 	protected static $version;
@@ -114,8 +117,8 @@ class Shortcodes {
 		}
 
 		// Death count
-		$death_query       = lwtv_plugin()->queery_post_meta_and_tax( 'post_type_characters', 'lezchars_death_year', $datetime->format( 'Y' ), 'lez_cliches', 'slug', 'dead', 'REGEXP' );
-		$death_list_array  = lwtv_plugin()->get_list_of_dead_characters( $death_query );
+		$death_queery      = ( new Post_Meta_And_Tax() )->make( 'post_type_characters', 'lezchars_death_year', $datetime->format( 'Y' ), 'lez_cliches', 'slug', 'dead', 'REGEXP' );
+		$death_list_array  = ( new BYQ() )->list_of_dead_characters( $death_queery );
 		$death_query_count = 0;
 		foreach ( $death_list_array as $the_dead ) {
 			if ( is_array( $the_dead ) && isset( $the_dead['died'] ) && $datetime->format( 'm' ) === gmdate( 'm', $the_dead['died'] ) ) {

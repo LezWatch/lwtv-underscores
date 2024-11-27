@@ -5,6 +5,9 @@
 
 namespace LWTV\Debugger;
 
+use LWTV\Queeries\Is_Actor_Queer;
+use LWTV\Queeries\Post_Type;
+
 class Queers {
 
 	/**
@@ -13,7 +16,7 @@ class Queers {
 	 * Find all characters who are mismatched with their queer settings
 	 * and the actor who plays them
 	 */
-	public function find_queerchars( $items = array() ) {
+	public function find_queer_chars( $items = array() ) {
 
 		// The array we will be checking.
 		$characters = array();
@@ -29,7 +32,7 @@ class Queers {
 			}
 		} else {
 			// Get all the characters
-			$the_loop = lwtv_plugin()->queery_post_type( 'post_type_characters' );
+			$the_loop = ( new Post_Type() )->make( 'post_type_characters' );
 
 			if ( is_object( $the_loop ) && $the_loop->have_posts() ) {
 				$characters = wp_list_pluck( $the_loop->posts, 'ID' );
@@ -74,7 +77,7 @@ class Queers {
 
 				// If ANY actor is flagged as queer, we're queer.
 				foreach ( $character_actors as $actor ) {
-					$actor_queer = lwtv_plugin()->is_actor_queer( $actor );
+					$actor_queer = ( new Is_Actor_Queer() )->make( $actor );
 
 					// If queer, we're done!
 					if ( $actor_queer ) {

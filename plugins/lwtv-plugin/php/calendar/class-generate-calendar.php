@@ -21,7 +21,7 @@ class Generate_Calendar {
 		$by_day_array   = array();
 		$lwtv_tz        = new \DateTimeZone( LWTV_TIMEZONE );
 		$tvmaze_tz      = new \DateTimeZone( 'UTC' );
-		$episodes_array = lwtv_plugin()->generate_ics_by_date( $tvmaze_url, $when, $date );
+		$episodes_array = ( new ICS_Parser() )->generate_by_date( $tvmaze_url, $when, $date );
 
 		if ( empty( $episodes_array ) ) {
 			$return['none'] = 'Nothing queer is on TV that week. We\'re pretty shocked too!';

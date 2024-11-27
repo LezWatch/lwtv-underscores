@@ -2,39 +2,20 @@
 /**
  * Calendar Builder
  *
- * Adds custom post type for TVMaze Show Names
+ * Add the code to build the calendar.
  */
 
 namespace LWTV\_Components;
 
-use LWTV\Calendar\{ Generate_Calendar, ICS_Parser, Names, TVMaze };
+use LWTV\Calendar\Generate_Calendar;
+use LWTV\Plugins\Cache;
 
-class Calendar implements Component, Templater {
-
+class Calendar implements Component {
 	/**
 	 * Constructor
 	 */
 	public function init() {
-		new Names();
-	}
-
-	/**
-	 * Gets tags to expose as methods accessible through `lwtv_plugin()`.
-	 *
-	 * @return array Associative array of $method_name => $callback_info pairs. Each $callback_info must either be
-	 *               a callable or an array with key 'callable'. This approach is used to reserve the possibility of
-	 *               adding support for further arguments in the future.
-	 */
-	public function get_template_tags(): array {
-		return array(
-			'generate_calendar'          => array( $this, 'generate_calendar' ),
-			'generate_ics_by_date'       => array( $this, 'generate_ics_by_date' ),
-			'get_show_name_for_calendar' => array( $this, 'get_show_name_for_calendar' ),
-			'download_tvmaze'            => array( $this, 'download_tvmaze' ),
-			'get_tvmaze_ics'             => array( $this, 'get_tvmaze_ics' ),
-			'get_tvmaze_info'            => array( $this, 'get_tvmaze_info' ),
-			'get_tvmaze_show_timezone'   => array( $this, 'get_tvmaze_show_timezone' ),
-		);
+		// Empty
 	}
 
 	/**
@@ -45,8 +26,8 @@ class Calendar implements Component, Templater {
 	 *
 	 * @return array        array of all the shows on that day
 	 */
-	public function generate_calendar( $when, $timespan = 'week' ): array {
-		$tvmaze_url = lwtv_plugin()->get_tvmaze_ics();
+	public function generate_tvmaze_calendar( $when, $timespan = 'week' ): array {
+		$tvmaze_url = $this->get_tvmaze_ics();
 		if ( false === $tvmaze_url ) {
 			return array();
 		}
@@ -55,30 +36,10 @@ class Calendar implements Component, Templater {
 	}
 
 	/**
-	 * Generate what's on for a specific date
+	 * Get the TV Maze ICS file
 	 *
-	 * @param  string $url  URL of calendar
-	 * @param  string $when string of a day [today, tomorrow]
-	 * @param  string $date date event happens [Y-m-d]
-	 *
-	 * @return array        array of all the shows on that day
+	 * @return string|false
 	 */
-	public function generate_ics_by_date( $url, $when = 'week', $date = false ): array {
-		return ( new ICS_Parser() )->generate_by_date( $url, $when, $date );
-	}
-
-	/**
-	 * Since TV Maze sometimes uses different names than we do, we have to make a related array that can handle two names.
-	 *
-	 * @param string $show_name — Display Name of the show
-	 * @param string $source    — lwtv or tvmaze
-	 *
-	 * @return string — The display name
-	 */
-	public function get_show_name_for_calendar( $show_name, $source = 'lwtv', $output = 'name' ): string {
-		return ( new Names() )->make( $show_name, $source, $output );
-	}
-
 	public function get_tvmaze_ics() {
 		$upload_dir  = wp_upload_dir();
 		$tvmaze_file = $upload_dir['basedir'] . '/tvmaze.ics';
@@ -112,36 +73,13 @@ class Calendar implements Component, Templater {
 			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents
 			file_put_contents( $ics_file, $response['body'] );
 		}
-	}
 
-	/**
-	 * Get TVMaze Info for a show
-	 *
-	 * @param  int   $post_id
-	 * @return mixed the response body or false
-	 */
-	public function get_tvmaze_info( $post_id ): mixed {
-		// If it's not a show, bail early.
-		if ( 'post_type_shows' !== get_post_type( $post_id ) ) {
-			return false;
-		}
+		// Clear the cache
+		$calendar_urls = array(
+			get_home_url( null, '/calendar/' ),
+			get_home_url( null, '/about/calendar/' ),
+		);
 
-		return ( new TVMaze() )->get_tvmaze_info( $post_id );
-	}
-
-	/**
-	 * Get the timezone of a show
-	 *
-	 * @param string $show_name — Display Name of the show
-	 *
-	 * @return string — The timezone
-	 */
-	public function get_tvmaze_show_timezone( $show_id ): string {
-		// If it's not a show, bail early.
-		if ( 'post_type_shows' !== get_post_type( $show_id ) ) {
-			return false;
-		}
-
-		return ( new TVMaze() )->get_timezone( $show_id );
+		( new Cache() )->clean_any_urls( $calendar_urls );
 	}
 }

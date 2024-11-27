@@ -3,6 +3,7 @@
 namespace LWTV\Theme;
 
 use LWTV\CPTs\Characters;
+use LWTV\Queeries\Post_Meta;
 
 /**
  * Generate character data for actors.
@@ -139,7 +140,7 @@ class Actor_Characters {
 		// If the character list is empty, we must build it.
 		if ( empty( $character_array ) ) {
 			// Loop to get the list of characters
-			$charactersloop = lwtv_plugin()->queery_post_meta( 'post_type_characters', 'lezchars_actor', $actor_id, 'LIKE' );
+			$charactersloop = ( new Post_Meta() )->make( 'post_type_characters', 'lezchars_actor', $actor_id, 'LIKE' );
 
 			if ( ! is_object( $charactersloop ) || ! $charactersloop->have_posts() ) {
 				return;

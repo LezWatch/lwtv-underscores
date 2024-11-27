@@ -7,8 +7,8 @@
 
 namespace LWTV\Rest_API\Alexa;
 
-// Include common code
 use LWTV\Rest_API\Alexa\Common;
+use LWTV\Rest_API\Shows_Like_JSON;
 
 /**
  * class LWTV_Alexa_Shows
@@ -43,7 +43,7 @@ class Shows {
 			foreach ( $results as $show ) {
 				$show_slug = get_post_field( 'post_name', $show );
 				$show_name = get_the_title( $show );
-				$similar   = lwtv_plugin()->get_json_similar_show( $show_slug );
+				$similar   = ( new Shows_Like_JSON() )->similar_show( $show_slug );
 				foreach ( $similar['related'] as $a_show ) {
 					$related_array[] = $a_show['title'];
 				}

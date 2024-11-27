@@ -7,6 +7,7 @@
 namespace LWTV\Validator;
 
 use LWTV\Admin_Menu\Validation;
+use LWTV\Debugger\Shows as Shows_Debugger;
 
 class Show_URLs {
 	/**
@@ -18,12 +19,12 @@ class Show_URLs {
 
 		// If rerun was clicked, gotta check 'em all.
 		if ( ( isset( $_POST['rerun'] ) && check_admin_referer( 'run_show_url_clicked' ) ) || false === $items ) {
-			$items = lwtv_plugin()->find_shows_bad_url();
+			$items = ( new Shows_Debugger() )->find_shows_bad_url();
 		}
 
 		// If recheck was clicked, only check the problem children.
 		if ( isset( $_POST['recheck'] ) && check_admin_referer( 'run_show_url_clicked' ) && false !== $items ) {
-			$items = lwtv_plugin()->find_shows_bad_url( $items );
+			$items = ( new Shows_Debugger() )->find_shows_bad_url( $items );
 		}
 
 		// Get the last run time.

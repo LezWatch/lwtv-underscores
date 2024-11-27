@@ -2,6 +2,8 @@
 
 namespace LWTV\Statistics\Build;
 
+use LWTV\Queeries\Taxonomy as Queery_Taxonomy;
+
 class Dead_Complex_Taxonomy {
 
 	/**
@@ -36,7 +38,7 @@ class Dead_Complex_Taxonomy {
 				$name = ( ! isset( $the_tax->name ) ) ? $the_tax['name'] : $the_tax->name;
 
 				// Get the posts.
-				$queery = lwtv_plugin()->queery_taxonomy( 'post_type_shows', 'lez_' . $type, 'slug', $slug );
+				$queery = ( new Queery_Taxonomy() )->make( 'post_type_shows', 'lez_' . $type, 'slug', $slug );
 
 				// Process the posts.
 				if ( is_object( $queery ) && $queery->have_posts() ) {

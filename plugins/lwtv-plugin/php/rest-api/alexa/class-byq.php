@@ -9,6 +9,10 @@ Version: 1.0
 
 namespace LWTV\Rest_API\Alexa;
 
+use LWTV\Queeries\Post_Meta_And_Tax;
+use LWTV\Rest_API\Stats_JSON;
+use LWTV\Rest_API\BYQ as Rest_BYQ;
+
 class BYQ {
 
 	/**
@@ -23,7 +27,7 @@ class BYQ {
 
 		// Simple - how many have died total
 		if ( 'simple' === $type ) {
-			$data   = lwtv_plugin()->get_json_statistics( 'death', 'simple' );
+			$data   = ( new Stats_JSON() )->statistics( 'death', 'simple' );
 			$output = 'A total of ' . $data['characters']['dead'] . ' characters have died on TV.';
 		} else {
 			$date = $type;
@@ -49,12 +53,12 @@ class BYQ {
 			// Calculate death
 			switch ( $format ) {
 				case 'year':
-					$death_query = lwtv_plugin()->queery_post_meta_and_tax( 'post_type_characters', 'lezchars_death_year', $datetime->format( 'Y' ), 'lez_cliches', 'slug', 'dead', 'REGEXP' );
+					$death_query = ( new Post_Meta_And_Tax() )->make( 'post_type_characters', 'lezchars_death_year', $datetime->format( 'Y' ), 'lez_cliches', 'slug', 'dead', 'REGEXP' );
 					$death_count = ( is_object( $death_query ) ) ? $death_query->post_count : 0;
 					break;
 				case 'month':
-					$death_query      = lwtv_plugin()->queery_post_meta_and_tax( 'post_type_characters', 'lezchars_death_year', $datetime->format( 'Y' ), 'lez_cliches', 'slug', 'dead', 'REGEXP' );
-					$death_list_array = lwtv_plugin()->get_list_of_dead_characters( $death_query );
+					$death_query      = ( new Post_Meta_And_Tax() )->make( 'post_type_characters', 'lezchars_death_year', $datetime->format( 'Y' ), 'lez_cliches', 'slug', 'dead', 'REGEXP' );
+					$death_list_array = ( new Rest_BYQ() )->list_of_dead_characters( $death_query );
 					$death_count      = 0;
 					foreach ( $death_list_array as $the_dead ) {
 						if ( $datetime->format( 'm' ) === gmdate( 'm', $the_dead['died'] ) ) {
@@ -63,7 +67,7 @@ class BYQ {
 					}
 					break;
 				case 'day':
-					$death_query = lwtv_plugin()->queery_post_meta_and_tax( 'post_type_characters', 'lezchars_death_year', $datetime->format( 'm/d/Y' ), 'lez_cliches', 'slug', 'dead', 'REGEXP' );
+					$death_query = ( new Post_Meta_And_Tax() )->make( 'post_type_characters', 'lezchars_death_year', $datetime->format( 'm/d/Y' ), 'lez_cliches', 'slug', 'dead', 'REGEXP' );
 					$death_count = ( is_object( $death_query ) ) ? $death_query->post_count : 0;
 					break;
 				default:

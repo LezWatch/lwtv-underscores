@@ -2,6 +2,8 @@
 
 namespace LWTV\Statistics\Build;
 
+use LWTV\Queeries\Post_Meta_And_Tax;
+
 class Dead_Meta_Tax {
 
 	/*
@@ -26,7 +28,7 @@ class Dead_Meta_Tax {
 			$array = array();
 
 			foreach ( $meta_array as $value ) {
-				$query           = lwtv_plugin()->queery_post_meta_and_tax( $post_type, $key, $value, $taxonomy, 'slug', $field );
+				$query           = ( new Post_Meta_And_Tax() )->make( $post_type, $key, $value, $taxonomy, 'slug', $field );
 				$array[ $value ] = array(
 					'count' => $query->post_count,
 					'name'  => ucfirst( $value ),

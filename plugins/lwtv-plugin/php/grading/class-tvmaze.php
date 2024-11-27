@@ -5,6 +5,8 @@
 
 namespace LWTV\Grading;
 
+use LWTV\_Components\Grading as Grading_Component;
+
 class TVMaze {
 
 	/**
@@ -18,7 +20,7 @@ class TVMaze {
 			'image' => LWTV_PLUGIN_URL . '/assets/images/scores/tvmaze.png',
 			'name'  => 'TV Maze',
 			'score' => $this->get_score( $show_id ),
-			'color' => lwtv_plugin()->get_grade_color( $this->get_score( $show_id ) ),
+			'color' => ( new Grading_Component() )->color( $this->get_score( $show_id ) ),
 			'bg'    => '#3c948b',
 			'url'   => $this->get_url( $show_id ),
 		);

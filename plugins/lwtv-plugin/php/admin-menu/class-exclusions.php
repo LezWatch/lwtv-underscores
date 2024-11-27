@@ -6,6 +6,8 @@
 
 namespace LWTV\Admin_Menu;
 
+use LWTV\Queeries\Post_Meta;
+
 class Exclusions {
 
 	/**
@@ -234,7 +236,7 @@ class Exclusions {
 	 * @return array  Posts to check.
 	 */
 	public static function queery_loop( $post_type, $post_meta ) {
-		$queery_loop = lwtv_plugin()->queery_post_meta( $post_type, $post_meta, '', 'EXISTS' );
+		$queery_loop = ( new Post_Meta() )->make( $post_type, $post_meta, '', 'EXISTS' );
 		$queery      = array();
 
 		if ( ! is_object( $queery_loop ) || ! $queery_loop->have_posts() ) {
