@@ -61,6 +61,13 @@ lwtv_plugin()->get_microformats_fix( $actor_id );
 		<span class="toc-title">Table of Contents</span>
 		<a class="breadcrumb-item smoothscroll" href="#biography">Biography</a>
 		<a class="breadcrumb-item smoothscroll" href="#vitals">Overview</a>
+		<?php
+		if ( get_post_meta( $actor_id, 'lezactors_imdb', true ) ) {
+			// Only show external links if they have IMDb -- odds are if they don't, they'd rather we not show socials.
+			echo '<a class="breadcrumb-item smoothscroll" href="#external">Links</a>';
+		}
+		?>
+		<a class="breadcrumb-item smoothscroll" href="#overlays">Add. Info.</a>
 		<a class="breadcrumb-item smoothscroll" href="#characters">Characters</a>
 	</nav>
 </section>
@@ -77,20 +84,32 @@ lwtv_plugin()->get_microformats_fix( $actor_id );
 				<?php get_template_part( 'template-parts/partials/actors/gender-sexuality', '', array( 'actor' => $actor_id ) ); ?>
 			</div>
 		</div>
-		<hr>
-		<div class="row align-items-start">
-			<div class="col">
-				<?php get_template_part( 'template-parts/partials/actors/links', '', array( 'actor' => $actor_id ) ); ?>
-			</div>
-			<div class="col">
-				<?php get_template_part( 'template-parts/partials/actors/social', '', array( 'actor' => $actor_id ) ); ?>
-			</div>
-		</div>
 	</div>
 </section>
 
+<?php
+if ( get_post_meta( $actor_id, 'lezactors_imdb', true ) ) {
+	?>
+	<section name="external" id="external" class="external-section">
+		<h2>External Links</h2>
+		<div class="overview-container">
+			<div class="row align-items-start">
+				<div class="col">
+					<?php get_template_part( 'template-parts/partials/actors/links', '', array( 'actor' => $actor_id ) ); ?>
+				</div>
+				<div class="col">
+					<?php get_template_part( 'template-parts/partials/actors/social', '', array( 'actor' => $actor_id ) ); ?>
+				</div>
+			</div>
+		</div>
+	</section>
+	<?php
+}
+?>
+
 <section name="overlays" id="overlays" class="overlay-section">
-	<div class="container">
+	<h2>Additional Information</h2>
+	<div class="overlay-container">
 		<div class="row">
 		<?php
 		if ( 0 !== $havecharcount ) {
@@ -103,7 +122,6 @@ lwtv_plugin()->get_microformats_fix( $actor_id );
 		?>
 		</div>
 	</div>
-	<p>&nbsp;</p>
 </section>
 
 <section name="characters" id="characters" class="showschar-section">
