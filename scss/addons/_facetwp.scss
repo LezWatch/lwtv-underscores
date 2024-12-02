@@ -1,3 +1,5 @@
+@use "../partials/colors";
+
 /**
  * FacetWP Customization
  */
@@ -14,11 +16,11 @@
 	border-radius: 0.25rem;
 
 	a {
-		color: $lwtv-pink;
+		color: colors.$lwtv-pink;
 	}
 
 	a:hover {
-		background-color: $lwtv-ltgrey;
+		background-color: colors.$lwtv-ltgrey;
 	}
 
 	.facetwp-page {
@@ -28,30 +30,30 @@
 		margin-left: -1px;
 		line-height: 1.25;
 		justify-content: center !important;
-		border: 1px solid $lwtv-grey;
+		border: 1px solid colors.$lwtv-grey;
 
 		&.active,
 		a.active {
-			background-color: $lwtv-pink;
-			border-color: $lwtv-pink;
-			color: $white;
+			background-color: colors.$lwtv-pink;
+			border-color: colors.$lwtv-pink;
+			color: colors.$white;
 			font-weight: 700;
 		}
 	}
 
 	.facetwp-page.next {
 		margin-left: auto !important;
-		background-color: $lwtv-pink;
-		border-color: $lwtv-pink;
-		color: $white;
+		background-color: colors.$lwtv-pink;
+		border-color: colors.$lwtv-pink;
+		color: colors.$white;
 		font-weight: 700;
 	}
 
 	.facetwp-page.prev {
 		margin-right: auto !important;
-		background-color: $lwtv-pink;
-		border-color: $lwtv-pink;
-		color: $white;
+		background-color: colors.$lwtv-pink;
+		border-color: colors.$lwtv-pink;
+		color: colors.$white;
 		font-weight: 700;
 	}
 

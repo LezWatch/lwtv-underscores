@@ -1,3 +1,4 @@
+@use "../partials/colors";
 
 /* Statistics Pages */
 
@@ -46,7 +47,7 @@
 	}
 
 	a.nav-link {
-		color: $lwtv-pink;
+		color: colors.$lwtv-pink;
 	}
 
 	.container {
@@ -96,10 +97,10 @@
 
 	.progress {
 		height: 3 0;
-		background-color: $lwtv-ltblue;
+		background-color: colors.$lwtv-ltblue;
 
 		.progress-bar {
-			color: $darkgrey;
+			color: colors.$darkgrey;
 			text-align: left;
 		}
 	}

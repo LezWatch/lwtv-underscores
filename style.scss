@@ -6,25 +6,25 @@
 /* ==========================================================================
 	Variables
 ========================================================================== */
-@import "scss/variables";
+@use "scss/variables";
 
 /* ==========================================================================
 	Layout
 ========================================================================== */
-@import "scss/layout";
+@use "scss/layout";
 
 /* ==========================================================================
 	Specific Media STYLES
 ========================================================================== */
 
 /* responsive styles */
-@import "scss/partials/responsive";
+@use "scss/partials/responsive";
 
 /* ==========================================================================
 	Addons - for plugins and other customizations
 ========================================================================== */
-@import "scss/addons/bootstrap";
-@import "scss/addons/calendar";
-@import "scss/addons/facetwp";
-@import "scss/addons/relatedposts";
-@import "scss/addons/stats";
+@use "scss/addons/bootstrap";
+@use "scss/addons/calendar";
+@use "scss/addons/facetwp";
+@use "scss/addons/relatedposts";
+@use "scss/addons/stats";
