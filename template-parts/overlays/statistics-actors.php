@@ -8,18 +8,17 @@
  */
 
 $this_id = $args['actor_id'] ?? null;
-
 ?>
 
 <div class="col">
 	<div class="card text-center">
-		<span data-bs-toggle="modal" data-bs-target="#statistics">
+		<span data-bs-toggle="modal" data-bs-target="#statistics" id="statistics-modal">
 			<h5><?php echo lwtv_plugin()->get_symbolicon( svg: 'presentation-alt.svg', fontawesome: 'fa-chart-line' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?> Statistics</h5>
 		</span>
 	</div>
 </div>
 
-<div class="modal fade" id="statistics" tabindex="-1" aria-labelledby="statisticsLabel" aria-hidden="true">
+<div class="modal fade" data-modal-type="overlay" id="statistics" tabindex="-1" aria-labelledby="statisticsLabel" aria-hidden="true">
 	<div class="modal-dialog modal-lg">
 		<div class="modal-content">
 			<div class="modal-header">

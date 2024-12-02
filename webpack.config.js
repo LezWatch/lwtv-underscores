@@ -18,6 +18,25 @@ const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 // Add any new entry points by extending the webpack config.
 module.exports = {
 	...defaultConfig,
+	module: {
+		...defaultConfig.module,
+		rules: [
+			...defaultConfig.module.rules,
+			{
+				test: /\.s?css$/,
+				use: [
+					MiniCssExtractPlugin.loader,
+					'css-loader',
+					{
+						loader: 'sass-loader',
+						options: {
+							api: "modern",
+						},
+					},
+				],
+			},
+		],
+	},
 	...{
 		entry: {
 			// 'destination': [ 'source1', 'source2', ... ]
