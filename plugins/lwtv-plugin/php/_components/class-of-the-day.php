@@ -8,6 +8,7 @@ namespace LWTV\_Components;
 
 use LWTV\Plugins\Cache;
 use LWTV\Queeries\Post_Meta;
+use LWTV\Rest_API\BYQ;
 
 class Of_The_Day implements Component, Templater {
 
@@ -186,7 +187,7 @@ class Of_The_Day implements Component, Templater {
 		// Create the array
 		switch ( $type ) {
 			case 'death':
-				$of_the_day_array = lwtv_plugin()->on_this_day( $date, $format );
+				$of_the_day_array = ( new BYQ() )->on_this_day( $date, $format );
 				break;
 			case 'birthday':
 				$of_the_day_array = self::birthday( $date, $format );
