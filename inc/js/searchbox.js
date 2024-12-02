@@ -1,10 +1,3 @@
-jQuery(function($) {
-	const searchCollapsible = document.getElementById( 'collapseSearch' );
-	searchCollapsible.addEventListener( 'shown.bs.collapse', () => {
-		document.getElementById( 'header-search' ).focus();
-	})
-});
-
 // Search Box toggle
 jQuery(function($) {
 	$('a[href="#search"]').on('click', function(event) {
@@ -18,4 +11,12 @@ jQuery(function($) {
 			$(this).removeClass('open');
 		}
 	});
+});
+
+// Focus on seach textarea when opening via toggle
+jQuery(function($) {
+	const searchCollapsible = document.getElementById( 'collapseSearch' );
+	searchCollapsible.addEventListener( 'shown.bs.collapse', () => {
+		document.getElementById( 'header-search' ).focus();
+	})
 });

@@ -12,6 +12,7 @@ use LWTV\Debugger\Shows as Shows_Debugger;
 use LWTV\Debugger\Dupes as Dupes_Debugger;
 use LWTV\Debugger\Queers as Queers_Debugger;
 use LWTV\Features\Missed_Schedule;
+use LWTV\Plugins\Cache;
 
 // Bail if directly accessed
 if ( ! defined( 'ABSPATH' ) && ! defined( 'WP_CLI' ) ) {
@@ -264,6 +265,11 @@ class WP_CLI_LWTV_Generate {
 		} else {
 			\WP_CLI::warning( 'TVMaze is not able to be updated.' );
 		}
+
+		$tvmaze_urls = array(
+			home_url( '/wp-content/uploads/tvmaze.ics' ),
+		);
+		( new Cache() )->clean_any_urls( $tvmaze_urls );
 	}
 
 	/**
@@ -291,6 +297,9 @@ class WP_CLI_LWTV_Generate {
 			( new Of_The_Day() )->set_of_the_day( $otd );
 			\WP_CLI::success( 'The ' . $otd . ' "Of the Day" has been set.' );
 		}
+
+		// Clear the cache
+		( new Cache() )->clean_feed( 'otd' );
 	}
 
 	/**
