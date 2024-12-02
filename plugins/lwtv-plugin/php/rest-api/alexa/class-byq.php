@@ -107,7 +107,7 @@ class BYQ {
 
 		// Figure out who died on a day...
 		$this_day = gmdate( 'm-d', $timestamp );
-		$data     = lwtv_plugin()->on_this_day( $this_day );
+		$data     = ( new Rest_BYQ() )->on_this_day( $this_day );
 		$count    = ( 'none' === key( $data ) ) ? 0 : count( $data );
 		$how_many = 'No characters died ';
 		$the_dead = '';
