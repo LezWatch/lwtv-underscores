@@ -23,16 +23,11 @@ module.exports = {
 		rules: [
 			...defaultConfig.module.rules,
 			{
-				test: /\.s?css$/,
+				test: /\.css$/,
 				use: [
 					MiniCssExtractPlugin.loader,
 					'css-loader',
-					{
-						loader: 'sass-loader',
-						options: {
-							api: "modern",
-						},
-					},
+					'sass-loader',
 				],
 			},
 		],

@@ -2,8 +2,8 @@
 	Variables
 ========================================================================== */
 
-@import "partials/mixins";
-@import "partials/colors";
-@import "partials/colors-dark";
-@import "partials/fonts";
-@import "partials/helpers";
+@use "partials/colors";
+@use "partials/mixins";
+@use "partials/colors-dark";
+@use "partials/fonts";
+@use "partials/helpers";

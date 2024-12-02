@@ -1,3 +1,6 @@
+@use "../partials/colors";
+@use "../partials/mixins";
+
 
 /* =Bootstrap Overrides
 ----------------------------------------------- */
@@ -10,11 +13,11 @@
 	width: 100%;
 
 	a {
-		color: $lwtv-pink;
+		color: colors.$lwtv-pink;
 	}
 
 	svg {
-		fill: $lwtv-pink;
+		fill: colors.$lwtv-pink;
 		width: 14px;
 		height: 14px;
 		vertical-align: baseline;
@@ -25,18 +28,18 @@
 		a.active,
 		&.active
 		{
-			background-color: $lwtv-pink;
-			border-color: $lwtv-pink;
-			color: $white;
+			background-color: colors.$lwtv-pink;
+			border-color: colors.$lwtv-pink;
+			color: colors.$white;
 			font-weight: 700;
 		}
 
 		.page-link {
 
 			&.active {
-				background-color: $lwtv-pink;
-				border-color: $lwtv-pink;
-				color: $white;
+				background-color: colors.$lwtv-pink;
+				border-color: colors.$lwtv-pink;
+				color: colors.$white;
 				font-weight: 700;
 			}
 		}
@@ -45,17 +48,17 @@
 		&.previous,
 		&.next,
 		&.last {
-			background-color: $lwtv-pink;
-			border-color: $lwtv-pink;
+			background-color: colors.$lwtv-pink;
+			border-color: colors.$lwtv-pink;
 
 			a {
-				background-color: $lwtv-pink;
-				border-color: $lwtv-pink;
-				color: $white;
+				background-color: colors.$lwtv-pink;
+				border-color: colors.$lwtv-pink;
+				color: colors.$white;
 			}
 
 			svg {
-				fill: $white;
+				fill: colors.$white;
 			}
 		}
 
@@ -64,9 +67,9 @@
 
 			.page-link {
 
-				@include border-radius(0);
-				background-color: $lwtv-pink;
-				color: $white;
+				@include mixins.border-radius(0);
+				background-color: colors.$lwtv-pink;
+				color: colors.$white;
 			}
 		}
 	}
@@ -84,7 +87,7 @@
 		&:first-child,
 		&:last-child {
 
-			@include border-radius(0);
+			@include mixins.border-radius(0);
 		}
 	}
 }
@@ -109,12 +112,12 @@
 
 	.nav-tabs .nav-link.active,
 	.nav-tabs .nav-item.show .nav-link {
-		border-color: $lwtv-bordergrey;
+		border-color: colors.$lwtv-bordergrey;
 		border-radius: var(--bs-nav-tabs-border-radius);
 	}
 
 	a.nav-link {
-		color: $medgrey;
+		color: colors.$medgrey;
 	}
 }
 
@@ -131,7 +134,7 @@ input[type="submit"],
 	border: 1px solid transparent;
 	border-radius: 0.25rem;
 
-	@include fade;
+	@include mixins.fade;
 	padding: 0.375rem 0.75rem;
 }
 
@@ -148,9 +151,9 @@ input[type="submit"].btn-primary,
 
 	&,
 	&:visited {
-		background-color: $lwtv-pink;
-		border-color: $lwtv-pink;
-		color: $white;
+		background-color: colors.$lwtv-pink;
+		border-color: colors.$lwtv-pink;
+		color: colors.$white;
 	}
 
 	&.active,
@@ -158,11 +161,11 @@ input[type="submit"].btn-primary,
 	&:active,
 	&:focus,
 	&:hover {
-		background-color: $white;
-		border-color: $lwtv-pink;
-		color: $lwtv-pink;
+		background-color: colors.$white;
+		border-color: colors.$lwtv-pink;
+		color: colors.$lwtv-pink;
 
-		@include fade;
+		@include mixins.fade;
 	}
 }
 
@@ -173,9 +176,9 @@ input[type="submit"].btn-outline-primary {
 
 	&,
 	&:visited {
-		background-color: $white;
-		border-color: $lwtv-pink;
-		color: $lwtv-pink;
+		background-color: colors.$white;
+		border-color: colors.$lwtv-pink;
+		color: colors.$lwtv-pink;
 	}
 
 	&.active,
@@ -183,10 +186,10 @@ input[type="submit"].btn-outline-primary {
 	&:active,
 	&:focus,
 	&:hover {
-		background-color: $lwtv-pink;
-		border-color: $lwtv-pink;
+		background-color: colors.$lwtv-pink;
+		border-color: colors.$lwtv-pink;
 		box-shadow: 0 0 0 2px rgba(141, 50, 159, 0.5);
-		color: $white;
+		color: colors.$white;
 	}
 }
 
@@ -199,7 +202,7 @@ input[type="submit"].btn-outline-primary {
 	}
 
 	svg * {
-		fill: $lwtv-pink;
+		fill: colors.$lwtv-pink;
 	}
 }
 
@@ -226,7 +229,7 @@ input[type="submit"].btn-outline-primary {
 		}
 
 		svg * {
-			fill: $white;
+			fill: colors.$white;
 		}
 	}
 
