@@ -1,3 +1,6 @@
+@use "colors";
+@use "mixins";
+
 /* =Styling for our fancy comments walker
 ----------------------------------------------- */
 /* stylelint-disable no-descending-specificity */
@@ -7,8 +10,8 @@
 }
 
 #comments {
-	background-color: $white;
-	border: 2px solid $lwtv-pink;
+	background-color: colors.$white;
+	border: 2px solid colors.$lwtv-pink;
 	margin-top: 2rem;
 	padding: 1em;
 
@@ -65,11 +68,11 @@ ul.comment-list {
 			padding: 4px;
 			margin-bottom: 20px;
 			line-height: 1.42857143;
-			background-color: $white;
-			border: 1px solid $lightgrey;
+			background-color: colors.$white;
+			border: 1px solid colors.$lightgrey;
 
-			@include border-radius(4px);
-			@include box-transition(border 0.2s ease-in-out);
+			@include mixins.border-radius(4px);
+			@include mixins.box-transition(border 0.2s ease-in-out);
 			width: 128px;
 
 			img {
@@ -92,10 +95,10 @@ ul.comment-list {
 			padding: 1.4em;
 			margin-bottom: 20px;
 			line-height: 1.42857143;
-			background-color: $white;
-			border: 1px solid $lightgrey;
+			background-color: colors.$white;
+			border: 1px solid colors.$lightgrey;
 
-			@include border-radius(4px);
+			@include mixins.border-radius(4px);
 
 			.comment-metadata {
 				margin-bottom: 1em;
@@ -106,7 +109,7 @@ ul.comment-list {
 
 				a,
 				a:hover {
-					color: $black;
+					color: colors.$black;
 				}
 			}
 		}

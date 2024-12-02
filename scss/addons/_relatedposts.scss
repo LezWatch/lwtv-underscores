@@ -1,3 +1,5 @@
+@use "../partials/fonts";
+
 /* Related Posts by Taxonomy Code */
 
 div.rpbt_shortcode {
@@ -16,19 +18,19 @@ div.rpbt_shortcode {
 	}
 
 	.similar-shows-header {
-		font-family: $headingfontfamily;
-		font-weight: $headingfontweight;
-		line-height: $headingfontheight;
+		font-family: fonts.$headingfontfamily;
+		font-weight: fonts.$headingfontweight;
+		line-height: fonts.$headingfontheight;
 
-		@include font-20;
+		@include fonts.font-20;
 		font-size: 1rem;
 		text-decoration: none;
 	}
 
 	.similar-shows-airdates {
-		font-family: $headingfontfamily;
-		font-weight: $headingfontweight;
-		line-height: $headingfontheight;
+		font-family: fonts.$headingfontfamily;
+		font-weight: fonts.$headingfontweight;
+		line-height: fonts.$headingfontheight;
 		font-size: 1rem;
 		text-decoration: none;
 	}

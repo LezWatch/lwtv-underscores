@@ -1,3 +1,9 @@
+@use "sass:meta";
+@use "partials/colors";
+@use "partials/fonts";
+@use "partials/helpers";
+@use "partials/mixins";
+
 /* stylelint-disable no-descending-specificity */
 /* stylelint-disable no-duplicate-selectors */
 /* stylelint-disable no-invalid-position-at-import-rule */
@@ -8,7 +14,7 @@
 ========================================================================== */
 
 #main {
-	background-color: $white;
+	background-color: colors.$white;
 
 	.home &,
 	.search-results &,
@@ -24,11 +30,11 @@
 ========================================================================== */
 
 body {
-	font-family: $basefontfamily;
-	font-size: $basefont;
-	line-height: $baseheight;
-	color: $darkgrey;
-	background-color: $lwtv-dkgrey;
+	font-family: fonts.$basefontfamily;
+	font-size: fonts.$basefont;
+	line-height: fonts.$baseheight;
+	color: colors.$darkgrey;
+	background-color: colors.$lwtv-dkgrey;
 }
 
 p {
@@ -37,13 +43,13 @@ p {
 }
 
 blockquote {
-	background-color: $lwtv-ltgrey;
-	border-left: 4px solid $lwtv-pink;
-	color: $darkgrey;
+	background-color: colors.$lwtv-ltgrey;
+	border-left: 4px solid colors.$lwtv-pink;
+	color: colors.$darkgrey;
 	font-family: Georgia, Times, "Times New Roman", serif;
 	font-weight: 500;
 
-	@include font-18;
+	@include fonts.font-18;
 	margin: 0 0 1rem;
 	padding: 1em;
 	-webkit-font-smoothing: antialiased;
@@ -57,10 +63,10 @@ blockquote {
 	}
 
 	&::before {
-		color: $lwtv-pink;
+		color: colors.$lwtv-pink;
 		content: "\201C";
 
-		@include font-44;
+		@include fonts.font-44;
 		font-weight: 600;
 		line-height: 1;
 		position: absolute;
@@ -69,25 +75,25 @@ blockquote {
 
 .rainbow {
 
-	@include rainbows;
+	@include mixins.rainbows;
 }
 
 /* Links */
 
 a {
-	color: $link-color;
+	color: colors.$link-color;
 	text-decoration: none;
 
-	@include box-transition(background 0.3s ease-in-out);
+	@include mixins.box-transition(background 0.3s ease-in-out);
 
 	&:visited {
-		color: $link-color;
+		color: colors.$link-color;
 	}
 
 	&:hover,
 	&:focus,
 	&:active {
-		color: $link-hover-color;
+		color: colors.$link-hover-color;
 		text-decoration: none;
 	}
 }
@@ -97,8 +103,8 @@ a {
 
 	&,
 	&:visited {
-		background-color: $lwtv-pink !important;
-		border-color: $lwtv-pink !important;
+		background-color: colors.$lwtv-pink !important;
+		border-color: colors.$lwtv-pink !important;
 	}
 
 	&.active,
@@ -106,11 +112,11 @@ a {
 	&:active,
 	&:focus,
 	&:hover {
-		background-color: $white !important;
-		border-color: $lwtv-pink !important;
-		color: $lwtv-pink !important;
+		background-color: colors.$white !important;
+		border-color: colors.$lwtv-pink !important;
+		color: colors.$lwtv-pink !important;
 
-		@include fade;
+		@include mixins.fade;
 	}
 }
 
@@ -118,7 +124,7 @@ a {
 
 .screen-reader-text {
 
-	@include screen-reader;
+	@include mixins.screen-reader;
 }
 
 /* =Gutenberg
@@ -131,7 +137,7 @@ figure.wp-block-embed {
 	figcaption {
 		text-align: left;
 		font-size: smaller;
-		color: $lwtv-ltgrey;
+		color: colors.$lwtv-ltgrey;
 	}
 
 	&.alignleft,
@@ -183,40 +189,40 @@ h6,
 .h4,
 .h5,
 .h6 {
-	margin-bottom: $headingbmargin;
-	font-family: $headingfontfamily;
-	font-weight: $headingfontweight;
-	line-height: $headingfontheight;
+	margin-bottom: fonts.$headingbmargin;
+	font-family: fonts.$headingfontfamily;
+	font-weight: fonts.$headingfontweight;
+	line-height: fonts.$headingfontheight;
 }
 
 h1,
 .h1 {
 
-	@include font-44;
+	@include fonts.font-44;
 }
 
 h2,
 .h2 {
 
-	@include font-32;
+	@include fonts.font-32;
 }
 
 h3,
 .h3 {
 
-	@include font-28;
+	@include fonts.font-28;
 }
 
 h4,
 .h4 {
 
-	@include font-24;
+	@include fonts.font-24;
 }
 
 h5,
 .h5 {
 
-	@include font-20;
+	@include fonts.font-20;
 }
 
 h6,
@@ -248,7 +254,7 @@ h6 a {
 ----------------------------------------------- */
 
 /* styles that makes comments and Gravity forms Bootstrappy */
-@import "addons/forms";
+@include meta.load-css("addons/forms");
 
 
 /* ==========================================================================
@@ -258,26 +264,26 @@ h6 a {
 /* If using Jumbotron */
 .jumbotron.jumbotron-fluid {
 	background-size: contain;
-	color: $white;
+	color: colors.$white;
 
-	@include font-18;
+	@include fonts.font-18;
 	margin-bottom: 0;
 	max-height: 600px;
 
 	h1.site-description {
 
-		@include font-40;
+		@include fonts.font-40;
 	}
 
 	a.badge,
 	a.badge:visited {
-		color: $white !important;
+		color: colors.$white !important;
 	}
 }
 
 /* Blur unless hovered for Last Death */
 .hidden-death {
-	text-shadow: 0 0 8px $black;
+	text-shadow: 0 0 8px colors.$black;
 	color: transparent;
 	filter: blur(3px);
 	-webkit-filter: blur(3px);
@@ -285,7 +291,7 @@ h6 a {
 
 .hidden-death:hover {
 	text-shadow: none !important;
-	color: $white !important;
+	color: colors.$white !important;
 	filter: none !important;
 	-webkit-filter: none !important;
 }
@@ -307,9 +313,9 @@ h6 a {
 
 	.navbar-brand {
 
-		@include font-26;
+		@include fonts.font-26;
 		font-weight: 600;
-		color: $lwtv-pink;
+		color: colors.$lwtv-pink;
 
 		img {
 			height: 40px;
@@ -326,14 +332,14 @@ h6 a {
 		}
 
 		svg * {
-			fill: $white;
+			fill: colors.$white;
 		}
 	}
 
 	.header-search-bar {
-		background-color: $lwtv-dkgrey;
+		background-color: colors.$lwtv-dkgrey;
 
-		@include box-shadow(0 2px 30px rgba(0, 0, 0, 0.2));
+		@include mixins.box-shadow(0 2px 30px rgba(0, 0, 0, 0.2));
 		margin-top: 50px;
 		padding: 10px 0;
 		z-index: 9999;
@@ -346,9 +352,9 @@ h6 a {
 			margin-bottom: 0;
 
 			label {
-				color: $white;
+				color: colors.$white;
 
-				@include font-20;
+				@include fonts.font-20;
 				font-weight: 600;
 				text-align: right;
 			}
@@ -356,7 +362,7 @@ h6 a {
 
 		.fa {
 
-			@include font-32;
+			@include fonts.font-32;
 		}
 	}
 
@@ -367,7 +373,7 @@ h6 a {
 		}
 
 		a:hover {
-			color: $lwtv-grey2;
+			color: colors.$lwtv-grey2;
 		}
 	}
 
@@ -377,10 +383,10 @@ h6 a {
 	}
 
 	.offcanvas-header {
-		background-color: $lwtv-purple;
-		color: $white;
+		background-color: colors.$lwtv-purple;
+		color: colors.$white;
 
-		@include font-24;
+		@include fonts.font-24;
 	}
 
 	.dark-mode-toggle {
@@ -398,7 +404,7 @@ h6 a {
 			width: 1em;
 			height: 1em;
 			vertical-align: -0.125em;
-			fill: $lwtv-pink;
+			fill: colors.$lwtv-pink;
 		}
 
 		.my-1 {
@@ -413,10 +419,10 @@ h6 a {
 
 		.nav-link:focus,
 		.nav-link:hover {
-			background-color: $lwtv-pink;
+			background-color: colors.$lwtv-pink;
 
 			svg * {
-				fill: $lwtv-ltgrey;
+				fill: colors.$lwtv-ltgrey;
 			}
 		}
 	}
@@ -429,7 +435,7 @@ h6 a {
 
 /* Change the main nav colors */
 
-@import "partials/navcolors";
+@include meta.load-css("partials/navcolors");
 
 
 /* ==========================================================================
@@ -473,7 +479,7 @@ h1.entry-title {
 
 	.no-results & {
 
-		@include font-32;
+		@include fonts.font-32;
 		margin-top: 20px;
 	}
 }
@@ -493,7 +499,7 @@ h1.entry-title {
 	.toc-title {
 		display: inline-block;
 
-		@include font-20;
+		@include fonts.font-20;
 		line-height: 1;
 		margin: 0 0.6rem 0 0;
 		font-family: Oswald, sans-serif;
@@ -525,8 +531,8 @@ h1.entry-title {
 	.card {
 		border: none;
 
-		@include border-radius(0);
-		@include box-shadow(0 1px 4px 0 rgba(0, 0, 0, 0.14));
+		@include mixins.border-radius(0);
+		@include mixins.box-shadow(0 1px 4px 0 rgba(0, 0, 0, 0.14));
 		padding: 0;
 
 		&.col-sm-3,
@@ -541,10 +547,10 @@ h1.entry-title {
 		}
 
 		.card-header {
-			background: $lwtv-gradient;
+			background: colors.$lwtv-gradient;
 
-			@include border-radius(0);
-			color: $white;
+			@include mixins.border-radius(0);
+			color: colors.$white;
 
 			h3,
 			h4,
@@ -556,12 +562,12 @@ h1.entry-title {
 		.card-img-top,
 		.card-img {
 
-			@include border-radius(0);
+			@include mixins.border-radius(0);
 		}
 
 		.card-body {
 
-			@include font-14;
+			@include fonts.font-14;
 
 			p:last-child,
 			ul:last-of-type {
@@ -570,13 +576,13 @@ h1.entry-title {
 
 			.card-title {
 
-				@include font-20;
+				@include fonts.font-20;
 			}
 
 			.card-meta {
 				margin-bottom: 0.75rem;
 
-				@include font-14;
+				@include fonts.font-14;
 
 				.fa {
 					margin-left: 0.6em;
@@ -612,10 +618,10 @@ h1.entry-title {
 		}
 
 		.card-footer {
-			background-color: $white;
+			background-color: colors.$white;
 			border: 0;
 
-			@include border-radius(0);
+			@include mixins.border-radius(0);
 			padding-top: 0;
 		}
 	}
@@ -626,7 +632,7 @@ h1.entry-title {
 ----------------------------------------------- */
 
 h2.posts-title {
-	color: $lwtv-pink;
+	color: colors.$lwtv-pink;
 	font-weight: 500;
 
 	svg {
@@ -636,7 +642,7 @@ h2.posts-title {
 	}
 
 	svg * {
-		fill: $lwtv-pink;
+		fill: colors.$lwtv-pink;
 	}
 }
 
@@ -650,11 +656,11 @@ section {
 	margin-bottom: 1.4rem;
 
 	.card-body {
-		font-size: $basefont;
+		font-size: fonts.$basefont;
 
 		.card-title {
 
-			@include font-28;
+			@include fonts.font-28;
 		}
 	}
 }
@@ -678,7 +684,7 @@ section {
 		&.col-md-5 {
 			background-repeat: no-repeat;
 
-			@include cover;
+			@include mixins.cover;
 			background-position: center top;
 		}
 	}
@@ -695,7 +701,7 @@ section {
 		&.col-md-3 {
 			background-repeat: no-repeat;
 
-			@include cover;
+			@include mixins.cover;
 			background-position: center top;
 		}
 
@@ -708,11 +714,11 @@ section {
 }
 
 .home-featured-shows {
-	background-color: $lwtv-pink;
+	background-color: colors.$lwtv-pink;
 	padding: 20px 0 30px;
 
 	h2 {
-		color: $white;
+		color: colors.$white;
 
 		svg {
 			width: 30px;
@@ -721,7 +727,7 @@ section {
 		}
 
 		svg * {
-			fill: $white;
+			fill: colors.$white;
 		}
 	}
 
@@ -749,13 +755,13 @@ section {
 
 /* Subheaders */
 .archive-subheader .jumbotron {
-	background: $lwtv-pink;
+	background: colors.$lwtv-pink;
 	background-size: contain;
 
-	@include border-radius(0);
-	color: $white;
+	@include mixins.border-radius(0);
+	color: colors.$white;
 
-	@include font-18;
+	@include fonts.font-18;
 	margin-bottom: 0;
 	padding: 3rem 2rem;
 }
@@ -769,9 +775,9 @@ section {
 	}
 
 	.entry-meta {
-		border-bottom: 1px solid $lwtv-pink;
-		color: $lwtv-medgrey;
-		font-size: $basefont;
+		border-bottom: 1px solid colors.$lwtv-pink;
+		color: colors.$lwtv-medgrey;
+		font-size: fonts.$basefont;
 		font-weight: 600;
 		margin-top: 0.75rem;
 		padding-bottom: 1rem;
@@ -784,7 +790,7 @@ section {
 		}
 
 		svg * {
-			fill: $lwtv-medgrey;
+			fill: colors.$lwtv-medgrey;
 		}
 
 		.fa {
@@ -795,7 +801,7 @@ section {
 
 .listicle {
 	counter-reset: listicle-counter;
-	border-bottom: 1px solid $lwtv-grey2;
+	border-bottom: 1px solid colors.$lwtv-grey2;
 	margin-bottom: 2rem;
 
 	dt::before {
@@ -803,7 +809,7 @@ section {
 		counter-increment: listicle-counter;
 		font-family: Oswald, sans-serif;
 
-		@include font-32;
+		@include fonts.font-32;
 		font-weight: 600;
 		margin-right: 6px;
 	}
@@ -815,7 +821,7 @@ section {
 	dt {
 		font-family: Oswald, sans-serif;
 
-		@include font-32;
+		@include fonts.font-32;
 		font-weight: 400;
 		line-height: 1.1;
 		margin-bottom: 1rem;
@@ -831,8 +837,8 @@ section {
 }
 
 .related-shows {
-	background-color: $lwtv-ltgrey;
-	border-left: 4px solid $lwtv-pink;
+	background-color: colors.$lwtv-ltgrey;
+	border-left: 4px solid colors.$lwtv-pink;
 	margin: 2rem 0;
 	padding: 1em;
 	clear: both;
@@ -857,15 +863,15 @@ section {
 }
 
 .author-bio-box {
-	background-color: $lwtv-ltgrey;
+	background-color: colors.$lwtv-ltgrey;
 
-	@include font-14;
+	@include fonts.font-14;
 	padding: 1em;
-	border-top: 1px solid $lwtv-purple;
+	border-top: 1px solid colors.$lwtv-purple;
 	margin-top: 4rem;
 
 	.avatar {
-		border: 1px solid $lwtv-pink;
+		border: 1px solid colors.$lwtv-pink;
 	}
 
 	.author-bio {
@@ -939,11 +945,11 @@ footer.entry-meta {
 	}
 
 	.related-article-header {
-		font-family: $headingfontfamily;
-		font-weight: $headingfontweight;
-		line-height: $headingfontheight;
+		font-family: fonts.$headingfontfamily;
+		font-weight: fonts.$headingfontweight;
+		line-height: fonts.$headingfontheight;
 
-		@include font-20;
+		@include fonts.font-20;
 		font-size: 1rem;
 		margin-top: 0;
 		margin-bottom: 1rem;
@@ -958,8 +964,8 @@ footer.entry-meta {
 	.card {
 		border: none;
 
-		@include border-radius(0);
-		@include box-shadow(0 1px 4px 0 rgba(0, 0, 0, 0.14));
+		@include mixins.border-radius(0);
+		@include mixins.box-shadow(0 1px 4px 0 rgba(0, 0, 0, 0.14));
 
 		.single-char-img {
 			float: left;
@@ -977,7 +983,7 @@ footer.entry-meta {
 			h2 {
 				background-color: transparent;
 
-				@include font-28;
+				@include fonts.font-28;
 				margin-top: 0;
 				margin-bottom: 1rem;
 				padding: 0;
@@ -990,12 +996,12 @@ footer.entry-meta {
 
 			button {
 				font-family: "Open Sans", sans-serif;
-				font-size: $basefont;
+				font-size: fonts.$basefont;
 				padding: 0.2rem 0;
 			}
 
 			.accordion-button:not(.collapsed) {
-				background-color: $lwtv-grey2;
+				background-color: colors.$lwtv-grey2;
 			}
 		}
 	}
@@ -1043,7 +1049,7 @@ footer.entry-meta {
 	}
 
 	svg * {
-		fill: $medgrey;
+		fill: colors.$medgrey;
 	}
 }
 
@@ -1057,7 +1063,7 @@ footer.entry-meta {
 	}
 
 	svg * {
-		fill: $darkgrey;
+		fill: colors.$darkgrey;
 	}
 }
 
@@ -1142,7 +1148,7 @@ h3.post-title.excerpt {
 	}
 
 	h2 {
-		background-color: $lwtv-grey;
+		background-color: colors.$lwtv-grey;
 		line-height: 1;
 		margin-bottom: 0;
 		padding: 0.75rem 1.25rem 0.9rem;
@@ -1169,33 +1175,33 @@ section#characters {
 	&.gold {
 
 		svg * {
-			fill: $lwtv-gold;
+			fill: colors.$lwtv-gold;
 		}
 
 		i.fa {
-			color: $lwtv-gold;
+			color: colors.$lwtv-gold;
 		}
 	}
 
 	&.silver {
 
 		svg * {
-			fill: $lwtv-silver;
+			fill: colors.$lwtv-silver;
 		}
 
 		i.fa {
-			color: $lwtv-silver;
+			color: colors.$lwtv-silver;
 		}
 	}
 
 	&.bronze {
 
 		svg * {
-			fill: $lwtv-bronze;
+			fill: colors.$lwtv-bronze;
 		}
 
 		i.fa {
-			color: $lwtv-bronze;
+			color: colors.$lwtv-bronze;
 		}
 	}
 
@@ -1204,17 +1210,17 @@ section#characters {
 .show-we-love {
 
 	svg * {
-		fill: $red !important;
+		fill: colors.$red !important;
 	}
 
 	i.fa {
-		color: $red !important;
+		color: colors.$red !important;
 	}
 }
 
 .show-header-svg .show-we-love,
 .show-header-svg .show-star {
-	background-color: $lwtv-grey;
+	background-color: colors.$lwtv-grey;
 	display: inline-block;
 	border-radius: 10px;
 }
@@ -1224,7 +1230,7 @@ section#characters {
 
 	.alert {
 
-		@include border-radius(0);
+		@include mixins.border-radius(0);
 		border-left: 0;
 		border-right: 0;
 		margin-bottom: 0;
@@ -1243,12 +1249,12 @@ section#characters {
 	}
 
 	.callout-danger svg * {
-		fill: $red;
+		fill: colors.$red;
 	}
 
 	.callout-info svg *,
 	.callout-warning svg * {
-		fill: $lwtv-yellow;
+		fill: colors.$lwtv-yellow;
 	}
 
 }
@@ -1256,7 +1262,7 @@ section#characters {
 /* Ways to Watch */
 .ways-to-watch-container,
 .affiliate-watch-container {
-	background-color: $lwtv-grey;
+	background-color: colors.$lwtv-grey;
 	margin-bottom: 1.25rem;
 	padding: 0.6rem;
 
@@ -1269,13 +1275,13 @@ section#characters {
 	}
 
 	svg * {
-		fill: $lwtv-pink;
+		fill: colors.$lwtv-pink;
 	}
 
 	.how-to-watch {
 		font-family: Oswald, sans-serif;
 
-		@include font-20;
+		@include fonts.font-20;
 		font-weight: 400;
 		vertical-align: middle;
 	}
@@ -1299,7 +1305,7 @@ section#characters {
 
 			&::before {
 
-				@include fontawesome_pro("\f26c");
+				@include mixins.fontawesome_pro("\f26c");
 				font-weight: 700;
 				left: 20px;
 				position: absolute;
@@ -1384,27 +1390,27 @@ section#characters {
 	}
 
 	.show-heart.positive svg {
-		fill: $red;
+		fill: colors.$red;
 	}
 
 	.show-heart.negative svg {
-		fill: $lwtv-grey2;
+		fill: colors.$lwtv-grey2;
 	}
 
 	&.worthit-yes {
-		background: $lwtv-green;
+		background: colors.$lwtv-green;
 	}
 
 	&.worthit-no {
-		background: $red;
+		background: colors.$red;
 	}
 
 	&.worthit-meh {
-		background: $lwtv-yellow;
+		background: colors.$lwtv-yellow;
 	}
 
 	&.worthit-tbd {
-		background: $lwtv-orange;
+		background: colors.$lwtv-orange;
 	}
 }
 
@@ -1455,8 +1461,8 @@ section#characters {
 
 	&,
 	svg * {
-		fill: $white;
-		color: $white;
+		fill: colors.$white;
+		color: colors.$white;
 	}
 
 	svg {
@@ -1468,9 +1474,9 @@ section#characters {
 }
 
 .worthit {
-	color: $white;
+	color: colors.$white;
 
-	@include font-30;
+	@include fonts.font-30;
 	font-weight: 500;
 	padding: 0.8rem;
 }
@@ -1484,13 +1490,13 @@ section#characters {
 
 	a,
 	a:visited {
-		color: $white;
+		color: colors.$white;
 	}
 }
 
 h1 svg *,
 h3 svg * {
-	fill: $white;
+	fill: colors.$white;
 }
 
 .archive-header {
@@ -1512,14 +1518,14 @@ h3 svg * {
 	}
 
 	svg * {
-		fill: $white;
+		fill: colors.$white;
 	}
 
 	.archive-header-details,
 	.author-socials {
-		color: $white;
+		color: colors.$white;
 
-		@include font-14;
+		@include fonts.font-14;
 
 		div {
 			margin-bottom: 0.4em;
@@ -1530,7 +1536,7 @@ h3 svg * {
 		}
 
 		a:hover {
-			color: $white;
+			color: colors.$white;
 		}
 
 		svg {
@@ -1541,23 +1547,23 @@ h3 svg * {
 		}
 
 		svg * {
-			fill: $white;
+			fill: colors.$white;
 		}
 
 		a.btn-outline-primary {
-			color: $lwtv-pink;
+			color: colors.$lwtv-pink;
 			text-decoration: none;
 
 			svg * {
-				fill: $lwtv-pink;
+				fill: colors.$lwtv-pink;
 			}
 		}
 
 		a.btn-outline-primary:hover {
-			color: $white;
+			color: colors.$white;
 
 			svg * {
-				fill: $white;
+				fill: colors.$white;
 			}
 		}
 	}
@@ -1578,30 +1584,30 @@ h3 svg * {
 	}
 
 	.callout-death svg * {
-		fill: $darkgrey;
+		fill: colors.$darkgrey;
 	}
 
 	.callout-danger svg *,
 	.callout-we-love svg * {
-		fill: $red;
+		fill: colors.$red;
 	}
 
 	.callout-info,
 	.callout-warning svg * {
-		fill: $lwtv-yellow;
+		fill: colors.$lwtv-yellow;
 	}
 
 
 	.callout-star-gold svg * {
-		fill: $lwtv-gold;
+		fill: colors.$lwtv-gold;
 	}
 
 	.callout-star-silver svg * {
-		fill: $lwtv-silver;
+		fill: colors.$lwtv-silver;
 	}
 
 	.callout-star-bronze svg * {
-		fill: $lwtv-bronze;
+		fill: colors.$lwtv-bronze;
 	}
 }
 
@@ -1643,43 +1649,43 @@ img {
 
 .alignnone {
 
-	@include images;
+	@include mixins.images;
 }
 
 .alignright {
 
-	@include images;
+	@include mixins.images;
 	float: right;
 	margin: 0 0 2em 2em;
 }
 
 .alignleft {
 
-	@include images;
+	@include mixins.images;
 	float: left;
 	margin: 0 2em 2em 0;
 }
 
 .aligncenter {
 
-	@include images;
+	@include mixins.images;
 	margin: 2em auto;
 	display: block;
 }
 
 .img-noborder {
 
-	@include images-noborder;
+	@include mixins.images-noborder;
 }
 
 .comment-content img.wp-smiley {
 
-	@include no-border;
+	@include helpers.no-border;
 	margin: 0 1em;
 }
 
 .wp-caption {
-	border: 1px solid $lightgrey;
+	border: 1px solid colors.$lightgrey;
 	margin-bottom: 1.5em;
 	max-width: 100%;
 
@@ -1692,7 +1698,7 @@ img {
 
 .wp-caption .wp-caption-text {
 
-	@include font-14;
+	@include fonts.font-14;
 	line-height: 1.2;
 	margin: 0.6em 0 0.2em 0;
 	text-align: center;
@@ -1740,7 +1746,7 @@ img {
 .gallery-caption {
 	display: block;
 
-	@include font-14;
+	@include fonts.font-14;
 	padding-top: 0.3rem;
 }
 
@@ -1759,7 +1765,7 @@ object {
 
 /* Pretty comments */
 
-@import "partials/comments";
+@include meta.load-css("partials/comments");
 
 
 /* =Search form
@@ -1770,12 +1776,12 @@ object {
 .card.card-search {
 	border: none;
 
-	@include border-radius(0);
+	@include mixins.border-radius(0);
 
 	.card-header {
 		background-color: transparent;
 
-		@include border-radius(0);
+		@include mixins.border-radius(0);
 
 		.fa {
 			float: none !important;
@@ -1824,7 +1830,7 @@ object {
 		}
 
 		svg * {
-			fill: $darkgrey;
+			fill: colors.$darkgrey;
 		}
 	}
 }
@@ -1842,11 +1848,11 @@ span.svg-shortcode a {
 	text-decoration: none;
 
 	svg {
-		fill: $lwtv-pink;
+		fill: colors.$lwtv-pink;
 	}
 
 	&:hover svg {
-		fill: $darkgrey;
+		fill: colors.$darkgrey;
 	}
 }
 
@@ -1861,13 +1867,13 @@ span.svg-shortcode a {
 }
 
 .author-box {
-	background-color: $lwtv-ltgrey;
+	background-color: colors.$lwtv-ltgrey;
 
-	@include font-14;
+	@include fonts.font-14;
 	padding-bottom: 0.6rem;
 
 	.avatar {
-		border: 1px solid $lwtv-pink;
+		border: 1px solid colors.$lwtv-pink;
 	}
 
 	.author-details {
@@ -1901,12 +1907,12 @@ span.svg-shortcode a {
 
 		&.author_box_compact {
 
-			@include font-20;
+			@include fonts.font-20;
 		}
 
 		&.author_box_large {
 
-			@include font-24;
+			@include fonts.font-24;
 		}
 
 	}
@@ -1918,8 +1924,8 @@ span.svg-shortcode a {
 
 	&,
 	svg * {
-		fill: $white;
-		color: $white;
+		fill: colors.$white;
+		color: colors.$white;
 	}
 
 	svg {
@@ -1974,7 +1980,7 @@ div.facetwp-facet-shows_scores input.facetwp-number {
 	border: 1px solid #eee;
 	border-left-width: 0.25rem;
 	border-radius: 0.25rem;
-	border-left-color: $lwtv-pink;
+	border-left-color: colors.$lwtv-pink;
 
 	h4 {
 		margin-top: 0;
@@ -2008,13 +2014,13 @@ div.facetwp-facet-shows_scores input.facetwp-number {
 
 		span {
 			padding-top: 1rem;
-			color: $lwtv-pink;
+			color: colors.$lwtv-pink;
 
 			&:hover {
-				color: $darkgrey;
+				color: colors.$darkgrey;
 
 				svg * {
-					fill: $darkgrey;
+					fill: colors.$darkgrey;
 				}
 			}
 
@@ -2025,7 +2031,7 @@ div.facetwp-facet-shows_scores input.facetwp-number {
 			}
 
 			svg * {
-				fill: $lwtv-pink;
+				fill: colors.$lwtv-pink;
 			}
 
 		}
@@ -2054,16 +2060,16 @@ div.facetwp-facet-shows_scores input.facetwp-number {
 /* The Widget Area of Death */
 
 .home .alert-danger {
-	background-color: $lwtv-red;
+	background-color: colors.$lwtv-red;
 	border: 0;
 	border-color: transparent;
 
-	@include border-radius(0);
-	color: $white;
+	@include mixins.border-radius(0);
+	color: colors.$white;
 
 	a,
 	a:visited {
-		color: $white;
+		color: colors.$white;
 	}
 
 	&,
@@ -2100,7 +2106,7 @@ div.facetwp-facet-shows_scores input.facetwp-number {
 	.widget_custom_html,
 	.widget_text {
 
-		@include box-shadow(0 1px 4px 0 rgba(0, 0, 0, 0.14));
+		@include mixins.box-shadow(0 1px 4px 0 rgba(0, 0, 0, 0.14));
 		padding-bottom: 0.75rem;
 
 		.tagcloud,
@@ -2110,10 +2116,10 @@ div.facetwp-facet-shows_scores input.facetwp-number {
 		}
 
 		h2.widget-title {
-			background: $lwtv-gradient;
-			color: $white;
+			background: colors.$lwtv-gradient;
+			color: colors.$white;
 
-			@include font-24;
+			@include fonts.font-24;
 			padding: 0.75rem 1.25rem;
 		}
 	}
@@ -2128,7 +2134,7 @@ div.facetwp-facet-shows_scores input.facetwp-number {
 			padding: 0;
 
 			.widget {
-				border-bottom: 1px solid $lwtv-bordergrey;
+				border-bottom: 1px solid colors.$lwtv-bordergrey;
 				margin-bottom: 0;
 				padding: 0.75rem 1.25rem;
 
@@ -2140,7 +2146,7 @@ div.facetwp-facet-shows_scores input.facetwp-number {
 
 		h2.widget-title {
 			font-family: "Open Sans", sans-serif;
-			font-size: $basefont;
+			font-size: fonts.$basefont;
 			font-weight: 700;
 			margin-bottom: 0.5rem;
 			text-transform: uppercase;
@@ -2157,9 +2163,9 @@ div.facetwp-facet-shows_scores input.facetwp-number {
 	.footer-widgets {
 
 		h2.widget-title {
-			border-bottom: dotted 1px $lwtv-grey2;
+			border-bottom: dotted 1px colors.$lwtv-grey2;
 
-			@include font-28;
+			@include fonts.font-28;
 			padding-bottom: 15px;
 			margin-bottom: 20px;
 		}
@@ -2174,13 +2180,13 @@ div.facetwp-facet-shows_scores input.facetwp-number {
 
 			a,
 			a:visited {
-				color: $darkgrey;
+				color: colors.$darkgrey;
 			}
 
 			a:hover,
 			a:focus,
 			a:active {
-				color: $link-hover-color;
+				color: colors.$link-hover-color;
 				text-decoration: none;
 			}
 		}
@@ -2194,7 +2200,7 @@ div.facetwp-facet-shows_scores input.facetwp-number {
 				&::after {
 					content: ", opens in new tab";
 
-					@include screen-reader;
+					@include mixins.screen-reader;
 				}
 			}
 		}
@@ -2208,22 +2214,22 @@ div.facetwp-facet-shows_scores input.facetwp-number {
 #colophon {
 
 	.top-footer {
-		background-color: $lwtv-grey;
+		background-color: colors.$lwtv-grey;
 
-		@include font-14;
+		@include fonts.font-14;
 		padding: 20px 0 0;
 	}
 
 	.bottom-footer {
-		background-color: $lwtv-dkgrey;
+		background-color: colors.$lwtv-dkgrey;
 
-		@include font-12;
+		@include fonts.font-12;
 		padding: 16px 0;
 
 		&,
 		a,
 		a:visited {
-			color: $white;
+			color: colors.$white;
 		}
 
 		.credits {
