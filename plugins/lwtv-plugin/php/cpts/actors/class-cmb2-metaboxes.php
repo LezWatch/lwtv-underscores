@@ -6,6 +6,7 @@
 namespace LWTV\CPTs\Actors;
 
 use LWTV\_Components\Debugger;
+use LWTV\Debugger\Actors as Actors_Debugger;
 
 class CMB2_Metaboxes {
 
@@ -51,7 +52,7 @@ class CMB2_Metaboxes {
 		if ( ! isset( $post->ID ) || 'draft' === get_post_status( $post->ID ) || 'auto-draft' === get_post_status( $post->ID ) || '' === get_the_title( $post->ID ) ) {
 			$wikidata = 'auto-draft';
 		} else {
-			( new Debugger() )->check_actors_wikidata( $post->ID );
+			( new Actors_Debugger() )->check_actors_wikidata( $post->ID );
 			$wikidata     = get_post_meta( $post->ID, 'lezactors_saved_wikidata', true );
 			$wikidata_qid = get_post_meta( $post->ID, 'lezactors_wikidata_qid', true );
 

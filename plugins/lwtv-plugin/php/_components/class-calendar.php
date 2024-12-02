@@ -76,6 +76,7 @@ class Calendar implements Component {
 
 		// Clear the cache
 		$calendar_urls = array(
+			get_home_url( null, '/wp-content/uploads/tvmaze.ics' ),
 			get_home_url( null, '/calendar/' ),
 			get_home_url( null, '/about/calendar/' ),
 		);

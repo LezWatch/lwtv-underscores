@@ -114,32 +114,21 @@ class WP_CLI_LWTV_Generate {
 	 * @param string $second Secondary data (may not be used)
 	 */
 	public function run_generator( $type, $second ) {
-		// Run the appropriate checker:
-		switch ( $type ) {
-			case 'tvmaze':
-				$buildit = $this->run_tvmaze();
-				break;
-			case 'otd':
-				$buildit = $this->run_otd( $second );
-				break;
-			case 'lists':
-				$buildit = $this->run_update_lists();
-				break;
-			case 'debug':
-				$buildit = $this->run_debug_checker( $second );
-				break;
-			case 'cron':
-				$buildit = $this->run_cron_jobs( $second );
-				break;
-			default:
-				$buildit = 'none';
-		}
+		// Determine the appropriate checker:
+		$build_it = match ( $type ) {
+			'tvmaze' => $this->run_tvmaze(),
+			'otd'    => $this->run_otd( $second ),
+			'lists'  => $this->run_update_lists(),
+			'debug'  => $this->run_debug_checker( $second ),
+			'cron'   => $this->run_cron_jobs( $second ),
+			default  => 'none',
+		};
 
-		if ( 'none' === $buildit ) {
+		if ( 'none' === $build_it ) {
 			\WP_CLI::error( 'You picked an invalid tool to generate. ' . $type . ' does not exist.' );
 		}
 
-		if ( false === $buildit ) {
+		if ( false === $build_it ) {
 			\WP_CLI::error( 'There was an error running the ' . $type . ' generator.' );
 		}
 

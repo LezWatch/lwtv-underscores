@@ -163,7 +163,7 @@ class Common {
 						$endsession = false;
 					} else {
 						$this_day = gmdate( 'm-d', $timestamp );
-						$data     = lwtv_plugin()->on_this_day( $this_day );
+						$data     = ( new BYQ() )->on_this_day( $this_day );
 						$count    = ( 'none' === key( $data ) ) ? 0 : count( $data );
 						$how_many = 'No queer female, non-binary, or trans characters died';
 						$the_dead = '';
