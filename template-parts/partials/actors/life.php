@@ -13,7 +13,6 @@ $actor = $args['actor'] ?? null;
 $life_array = array(
 	'dates' => array(
 		'born' => 'Unknown',
-		'died' => 'Unknown',
 	),
 	'age'   => 'Unknown',
 );
@@ -37,6 +36,7 @@ if ( ! empty( $died ) ) {
 	if ( isset( $darr[1] ) && isset( $darr[2] ) && checkdate( (int) $darr[1], (int) $darr[2], (int) $darr[0] ) ) {
 		$get_death = new DateTime( $died );
 
+		// Add died to array.
 		$life_array['dates']['died'] = date_format( $get_death, 'F j, Y' );
 	}
 }

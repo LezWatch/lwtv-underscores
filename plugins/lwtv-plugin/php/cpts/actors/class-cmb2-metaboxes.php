@@ -85,7 +85,7 @@ class CMB2_Metaboxes {
 		}
 
 		// Output Wikidata info.
-		$this->output_wikidata( $post->ID, $wikidata, $wikidata_url );
+		$this->output_wikidata( $post->ID, $wikidata, $wikidata_url, $wikidata_qid );
 
 		// To Do: A button here to rerun the check.
 	}
@@ -93,28 +93,30 @@ class CMB2_Metaboxes {
 	/**
 	 * Outputs the Wikidata.
 	 *
-	 * @param  [type] $wikidata
-	 * @param  [type] $wikidata_url
+	 * @param  int    $post_id
+	 * @param  array  $wikidata
+	 * @param  string $wikidata_url
+	 * @param  string $wikidata_qid
 	 * @return void
 	 */
-	public function output_wikidata( $post_id, $wikidata, $wikidata_url ) {
+	public function output_wikidata( $post_id, $wikidata, $wikidata_url, $wikidata_qid = '' ) {
 
-		if ( ! $wikidata ) {
+		if ( ! $wikidata || empty( $wikidata_qid ) || empty( $wikidata_url ) ) {
 			echo '<p>No information for ' . esc_html( get_the_title( $post_id ) ) . ' found in WikiData.</p>';
 		} elseif ( 'auto-draft' === $wikidata ) {
 			echo '<p>WikiData checks pending. Once we fill in some information, it will be able to check.</p>';
 			// To Do: A button here to trigger the check
-		} elseif ( empty( $wikidata_url ) ) {
-			echo '<p>There is no WikiData available on this actor.</p>';
 		} elseif ( true === $wikidata ) {
+			echo '<p><strong>QID:</strong> <code>' . esc_html( $wikidata_qid ) . '</code></p>';
 			echo '<p>All data for ' . esc_html( get_the_title( $post_id ) ) . ' matches <a href="' . esc_url( $wikidata_url ) . '" target="_blank">WikiData!</a></p>';
 		} else {
+			echo '<p><strong>QID:</strong> <code>' . esc_html( $wikidata_qid ) . '</code></p>';
 			echo '<p>The following data does not match <a href="' . esc_url( $wikidata_url ) . '" target="_blank">WikiData</a>:</p>';
 			foreach ( $wikidata as $datatype => $result ) {
 				echo '<p><strong>' . esc_html( ucfirst( $datatype ) ) . ':</strong></p>';
 				echo '<ul>';
-				echo '<li>LezWatch: ' . esc_html( $result['ours'] ) . '</li>';
-				echo '<li>WikiData: ' . esc_html( $result['wikidata'] ) . '</li>';
+				echo '<li>LezWatch: <code>' . esc_html( $result['ours'] ) . '</code></li>';
+				echo '<li>WikiData: <code>' . esc_html( $result['wikidata'] ) . '</code></li>';
 				echo '<ul>';
 			}
 
