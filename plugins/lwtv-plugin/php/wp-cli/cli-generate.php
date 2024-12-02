@@ -12,7 +12,6 @@ use LWTV\Debugger\Shows as Shows_Debugger;
 use LWTV\Debugger\Dupes as Dupes_Debugger;
 use LWTV\Debugger\Queers as Queers_Debugger;
 use LWTV\Features\Missed_Schedule;
-use LWTV\Plugins\Cache;
 
 // Bail if directly accessed
 if ( ! defined( 'ABSPATH' ) && ! defined( 'WP_CLI' ) ) {
@@ -115,32 +114,21 @@ class WP_CLI_LWTV_Generate {
 	 * @param string $second Secondary data (may not be used)
 	 */
 	public function run_generator( $type, $second ) {
-		// Run the appropriate checker:
-		switch ( $type ) {
-			case 'tvmaze':
-				$buildit = $this->run_tvmaze();
-				break;
-			case 'otd':
-				$buildit = $this->run_otd( $second );
-				break;
-			case 'lists':
-				$buildit = $this->run_update_lists();
-				break;
-			case 'debug':
-				$buildit = $this->run_debug_checker( $second );
-				break;
-			case 'cron':
-				$buildit = $this->run_cron_jobs( $second );
-				break;
-			default:
-				$buildit = 'none';
-		}
+		// Determine the appropriate checker:
+		$build_it = match ( $type ) {
+			'tvmaze' => $this->run_tvmaze(),
+			'otd'    => $this->run_otd( $second ),
+			'lists'  => $this->run_update_lists(),
+			'debug'  => $this->run_debug_checker( $second ),
+			'cron'   => $this->run_cron_jobs( $second ),
+			default  => 'none',
+		};
 
-		if ( 'none' === $buildit ) {
+		if ( 'none' === $build_it ) {
 			\WP_CLI::error( 'You picked an invalid tool to generate. ' . $type . ' does not exist.' );
 		}
 
-		if ( false === $buildit ) {
+		if ( false === $build_it ) {
 			\WP_CLI::error( 'There was an error running the ' . $type . ' generator.' );
 		}
 
@@ -265,11 +253,6 @@ class WP_CLI_LWTV_Generate {
 		} else {
 			\WP_CLI::warning( 'TVMaze is not able to be updated.' );
 		}
-
-		$tvmaze_urls = array(
-			home_url( '/wp-content/uploads/tvmaze.ics' ),
-		);
-		( new Cache() )->clean_any_urls( $tvmaze_urls );
 	}
 
 	/**
@@ -297,9 +280,6 @@ class WP_CLI_LWTV_Generate {
 			( new Of_The_Day() )->set_of_the_day( $otd );
 			\WP_CLI::success( 'The ' . $otd . ' "Of the Day" has been set.' );
 		}
-
-		// Clear the cache
-		( new Cache() )->clean_feed( 'otd' );
 	}
 
 	/**
