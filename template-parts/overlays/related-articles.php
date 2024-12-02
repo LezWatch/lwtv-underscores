@@ -16,13 +16,13 @@ if ( ! $this_id ) {
 ?>
 <div class="col">
 	<div class="card text-center">
-		<span data-bs-toggle="modal" data-bs-target="#articles">
+		<span data-bs-toggle="modal" data-bs-target="#articles" id="articles-modal">
 			<h5><?php echo lwtv_plugin()->get_symbolicon( svg: 'newspaper.svg', fontawesome: 'fa-newspaper' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?> Related Articles</h5>
 		</span>
 	</div>
 </div>
 
-<div class="modal fade" id="articles" tabindex="-1" aria-labelledby="articlesLabel" aria-hidden="true">
+<div class="modal fade" data-modal-type="overlay" id="articles" tabindex="-1" aria-labelledby="articlesLabel" aria-hidden="true">
 	<div class="modal-dialog modal-lg">
 		<div class="modal-content">
 			<div class="modal-header">

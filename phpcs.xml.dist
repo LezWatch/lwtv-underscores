@@ -10,12 +10,12 @@
 
 	<!-- Rules: Check PHP version compatibility -->
 	<!-- https://github.com/PHPCompatibility/PHPCompatibility#sniffing-your-code-for-compatibility-with-specific-php-versions -->
-	<config name="testVersion" value="8.1-"/>
+	<config name="testVersion" value="8.1-" />
 	<!-- https://github.com/PHPCompatibility/PHPCompatibilityWP -->
 	<rule ref="PHPCompatibilityWP"/>
 
 	<!-- Rules: WordPress Coding Standards -->
-	<config name="minimum_supported_wp_version" value="6.4"/>
+	<config name="minimum_supported_wp_version" value="6.5" />
 	<rule ref="WordPress-Extra">
 		<exclude name="WordPress.Files.FileName.InvalidClassFileName" />
 		<exclude name="WordPress.Files.FileName.NotHyphenatedLowercase" />
@@ -33,8 +33,27 @@
 	<!-- Rules: LWTV Custom Commands -->
 	<rule ref="WordPress.Security.EscapeOutput">
 		<properties>
-			<property name="customAutoEscapedFunctions" value="lwtv_plugin,get_symbolicon,lwtv_symbolicons,get_previous_posts_link,get_next_posts_link,yikes_pagination_get_page,yikes_pagination_get_page_space_right,yikes_pagination_get_page_space_left,yikes_pagination_get_first_page,LWTV_Features,lwtv_yikes_chardata,lwtv_yikes_show_star,LWTV_Statistics,km_rpbt_related_posts_by_taxonomy_gallery" type="array" />
-			<property name="customEscapingFunctions" value="facetwp_display" type="array" />
+			<property name="customAutoEscapedFunctions" type="array">
+				<element value="lwtv_plugin" />
+				<element value="get_symbolicon" />
+				<element value="lwtv_symbolicons" />
+				<element value="get_previous_posts_link" />
+				<element value="get_next_posts_link" />
+				<element value="yikes_pagination_get_page" />
+				<element value="yikes_pagination_get_page_space_right" />
+				<element value="yikes_pagination_get_page_space_left" />
+				<element value="yikes_pagination_get_first_page" />
+				<element value="LWTV_Features" />
+				<element value="lwtv_yikes_chardata" />
+				<element value="lwtv_yikes_show_star" />
+				<element value="LWTV_Statistics" />
+				<element value="km_rpbt_related_posts_by_taxonomy_gallery" />
+			</property>
+			<property name="customEscapingFunctions" type="array">
+				<element value="facetwp_display" />
+				<element value="lwtv_plugin" />
+				<element value="get_symbolicon" />
+			</property>
 		</properties>
 	</rule>
 
