@@ -86,17 +86,6 @@
 		.navbar-brand {
 			font-size: 1.35rem;
 		}
-
-		.navbar-brand-text {
-
-			span {
-				display: none;
-			}
-
-			&::after {
-				content: "LWTV";
-			}
-		}
 	}
 }
 
@@ -106,6 +95,21 @@
 	.row > * {
 		width: 350px;
 	}
+
+	.page-template-page-home {
+		div.site-main {
+			.container {
+				.row > * {
+					width: 90%;
+				}
+			}
+		}
+	}
+
+	.site-loop.shows-we-love-loop {
+		grid-template-columns: repeat(2, 1fr);
+	}
+
 
 	.page-template-page-fullwidth {
 		.row > * {
@@ -345,7 +349,13 @@
 			}
 
 			.navbar-brand-text {
-				display: none;
+				span {
+					display: none;
+				}
+
+				&::after {
+					content: "LWTV";
+				}
 			}
 		}
 
