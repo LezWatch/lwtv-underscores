@@ -20,6 +20,7 @@ class CMB2_Metaboxes {
 		add_action( 'cmb2_init', array( $this, 'cmb2_metaboxes' ) );
 		add_action( 'admin_menu', array( $this, 'remove_metaboxes' ) );
 		add_action( 'add_meta_boxes', array( $this, 'add_wikidata_metabox' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'wikidata_metabox_scripts' ) );
 	}
 
 	/*
@@ -27,12 +28,12 @@ class CMB2_Metaboxes {
 	 */
 	public function add_wikidata_metabox() {
 		add_meta_box(
-			'metaboxlezactors_saved_wikidata',
-			'WikiData',
+			'post_meta_verification_meta_box', // ID
+			'WikiData Verification', // Title
 			array( $this, 'wikidata_metabox_callback' ),
-			'post_type_actors',
-			'side',
-			'high'
+			'post_type_actors', // Post type (adjust if needed)
+			'side',  // Context
+			'high' // Priority
 		);
 	}
 
@@ -42,115 +43,47 @@ class CMB2_Metaboxes {
 	 * @return echo         The MetaBox content.
 	 */
 	public function wikidata_metabox_callback( $post ) {
+		wp_nonce_field( 'post_meta_verification', 'pmv_nonce' );
 
-		wp_nonce_field( 'wikidata-metabox-save', 'wikidata_metabox_nonce' );
+		// Container for the verification results (targeted by Javascript)
+		echo '<div id="post-meta-verification-results">Generating data ...</div>';
 
-		$wikidata     = false;
-		$wikidata_url = '';
-
-		// If it's an auto draft, we do nothing. Else, we roll.
-		if ( ! isset( $post->ID ) || 'draft' === get_post_status( $post->ID ) || 'auto-draft' === get_post_status( $post->ID ) || '' === get_the_title( $post->ID ) ) {
-			$wikidata = 'auto-draft';
-		} else {
-			( new Actors_Debugger() )->check_actors_wikidata( $post->ID );
-			$wikidata     = get_post_meta( $post->ID, 'lezactors_saved_wikidata', true );
-			$wikidata_qid = get_post_meta( $post->ID, 'lezactors_wikidata_qid', true );
-
-			if ( empty( $wikidata_qid ) && isset( $wikidata['wikidata'] ) ) {
-				$wikidata_qid = $wikidata['wikidata'];
-			}
-		}
-
-		// If Wikidata isn't empty AND there's a valid Q code, we go
-		if ( ! empty( $wikidata ) && ! empty( $wikidata_qid ) && ( new Debugger() )->validate_wikidata_id( $wikidata_qid ) ) {
-
-			// Build URL
-			$wikidata_url = 'https://www.wikidata.org/wiki/' . $wikidata_qid;
-
-			// Clean array
-			unset( $wikidata['id'] );
-			unset( $wikidata['name'] );
-			unset( $wikidata['wikidata'] );
-
-			foreach ( $wikidata as $datatype => $result ) {
-				if ( 'match' === $result || 'n/a' === $result ) {
-					unset( $wikidata[ $datatype ] );
-				}
-			}
-
-			$wikidata = ( empty( $wikidata ) ) ? true : $wikidata;
-
-		} elseif ( empty( $wikidata ) ) {
-			$wikidata = false;
-		}
-
-		// Output Wikidata info.
-		$this->output_wikidata( $post->ID, $wikidata, $wikidata_url, $wikidata_qid );
-
-		// To Do: A button here to rerun the check.
+		// Pass the post ID to JavaScript (using wp_localize_script - best practice)
+		wp_localize_script(
+			'wikidata-metabox-script',
+			'pmv_params',
+			array(
+				'postId'   => $post->ID,
+				'rest_url' => 'lwtv/v1/wikidata/',
+			)
+		);
 	}
 
 	/**
-	 * Outputs the Wikidata.
-	 *
-	 * @param  int    $post_id
-	 * @param  array  $wikidata
-	 * @param  string $wikidata_url
-	 * @param  string $wikidata_qid
-	 * @return void
+	 * Enqueue the JS file for the metabox
 	 */
-	public function output_wikidata( $post_id, $wikidata, $wikidata_url, $wikidata_qid = '' ) {
+	public function wikidata_metabox_scripts() {
+		global $typenow;
 
-		if ( ! $wikidata || empty( $wikidata_qid ) || empty( $wikidata_url ) ) {
-			echo '<p>No information for ' . esc_html( get_the_title( $post_id ) ) . ' found in WikiData.</p>';
-		} elseif ( 'auto-draft' === $wikidata ) {
-			echo '<p>WikiData checks pending. Once we fill in some information, it will be able to check.</p>';
-			// To Do: A button here to trigger the check
-		} elseif ( true === $wikidata ) {
-			echo '<p><strong>QID:</strong> <code>' . esc_html( $wikidata_qid ) . '</code></p>';
-			echo '<p>All data for ' . esc_html( get_the_title( $post_id ) ) . ' matches <a href="' . esc_url( $wikidata_url ) . '" target="_blank">WikiData!</a></p>';
-		} else {
-			echo '<p><strong>QID:</strong> <code>' . esc_html( $wikidata_qid ) . '</code></p>';
-			echo '<p>The following data does not match <a href="' . esc_url( $wikidata_url ) . '" target="_blank">WikiData</a>:</p>';
-			foreach ( $wikidata as $datatype => $result ) {
-				echo '<p><strong>' . esc_html( ucfirst( $datatype ) ) . ':</strong></p>';
-				echo '<ul>';
-				echo '<li>LezWatch: <code>' . esc_html( $result['ours'] ) . '</code></li>';
-				echo '<li>WikiData: <code>' . esc_html( $result['wikidata'] ) . '</code></li>';
-				echo '<ul>';
-			}
-
-			echo '<hr>';
-			echo '<p>Please double check. WikiData is sometimes wrong about Social Media.</p>';
-			echo '<p>(Warning: This doesn\'t currently refresh on save.)</p>';
-		}
-	}
-
-	/**
-	 * Rerun the wikidata checker on save.
-	 *
-	 * Not being used yet, since the stupid thing won't re-run until a reload because
-	 * Gutenberg STILL lacks that ability.
-	 */
-	public function save_wikidata_metabox( $post_id ) {
-		//
-		// Check if our nonce is set.
-		if ( ! isset( $_POST['wikidata_metabox_nonce'] ) || ! wp_verify_nonce( $_POST['wikidata_metabox_nonce'], 'wikidata-metabox-save' ) ) {
+		// Only load on the 'post_type_actors' post type
+		if ( 'post_type_actors' !== $typenow ) {
 			return;
 		}
 
-		// If this is an autosave, our form has not been submitted, so we don't want to do anything.
-		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
-			return;
-		}
+		wp_enqueue_script(
+			'wikidata-metabox-script',
+			LWTV_PLUGIN_URL . '/assets/js/wikidata-metabox.js',
+			array( 'wp-api-fetch' ),
+			LWTV_PLUGIN_VERSION,
+			true // in footer
+		);
 
-		// Check the user's permissions.
-		if ( ! current_user_can( 'edit_post', $post_id ) ) {
-			return;
-		}
-
-		// Rerun the wiki:
-		( new Debugger() )->check_actors_wikidata( $post_id );
+		wp_enqueue_style(
+			'wikidata-metabox-style',
+			LWTV_PLUGIN_URL . '/assets/css/wikidata-metabox.css',
+			array(),
+			LWTV_PLUGIN_VERSION
+		);
 	}
 
 	/*

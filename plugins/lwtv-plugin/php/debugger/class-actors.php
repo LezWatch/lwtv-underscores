@@ -37,7 +37,7 @@ class Actors {
 			}
 		} else {
 			// Get all the actors
-			$the_loop = ( new Post_Type() )->make( 'post_type_actors' );
+			$the_loop = lwtv_plugin()->queery_post_type( 'post_type_actors' );
 
 			// Add ONLY the IDs to the array.
 			if ( is_object( $the_loop ) && $the_loop->have_posts() ) {
@@ -179,7 +179,7 @@ class Actors {
 			}
 		} else {
 			// Get all the actors
-			$the_loop = ( new Post_Type() )->make( 'post_type_actors' );
+			$the_loop = lwtv_plugin()->queery_post_type( 'post_type_actors' );
 
 			// Add ONLY the IDs to the array.
 			if ( is_object( $the_loop ) && $the_loop->have_posts() ) {
@@ -256,7 +256,7 @@ class Actors {
 			}
 		} else {
 			// Get all the actors
-			$the_loop = ( new Post_Type() )->make( 'post_type_actors' );
+			$the_loop = lwtv_plugin()->queery_post_type( 'post_type_actors' );
 
 			// Add ONLY the IDs to the array.
 			if ( is_object( $the_loop ) && $the_loop->have_posts() ) {
@@ -347,7 +347,7 @@ class Actors {
 				}
 			} else {
 				// Get all the actors
-				$the_loop = ( new Post_Type() )->make( 'post_type_actors' );
+				$the_loop = lwtv_plugin()->queery_post_type( 'post_type_actors' );
 
 				// Add ONLY the IDs to the array.
 				if ( is_object( $the_loop ) && $the_loop->have_posts() ) {
@@ -375,7 +375,6 @@ class Actors {
 			);
 
 			// What we can check for.
-			$facebook   = get_post_meta( $actor_id, 'lezactors_facebook', true );
 			$check_ours = array(
 				'birth'     => get_post_meta( $actor_id, 'lezactors_birth', true ),
 				'death'     => get_post_meta( $actor_id, 'lezactors_death', true ),
@@ -383,7 +382,7 @@ class Actors {
 				'wikipedia' => get_post_meta( $actor_id, 'lezactors_wikipedia', true ),
 				'instagram' => get_post_meta( $actor_id, 'lezactors_instagram', true ),
 				'twitter'   => get_post_meta( $actor_id, 'lezactors_twitter', true ),
-				'facebook'  => ( str_contains( $facebook, 'https://facebook.com/' ) ) ? str_replace( 'https://facebook.com/', '', $facebook ) : '',
+				'facebook'  => get_post_meta( $actor_id, 'lezactors_facebook', true ),
 				'website'   => get_post_meta( $actor_id, 'lezactors_homepage', true ),
 			);
 

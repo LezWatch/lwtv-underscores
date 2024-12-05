@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Core LezWatch.TV Plugin
  * Description: All the base code for LezWatch.TV - If this isn't active, the site dies. An ugly death.
- * Version: 6.1.0
+ * Version: 6.1.2
  *
  * @package LWTV
  */
@@ -35,7 +35,7 @@ use LWTV\Plugin;
 require_once __DIR__ . '/php/_helpers/class-autoload.php';
 
 // Plugin Version.
-define( 'LWTV_PLUGIN_VERSION', '6.1.0' );
+define( 'LWTV_PLUGIN_VERSION', '6.1.2' );
 
 /**
  * Autoloader serves for `LWTV` namespace and autoload all files under the php directory.

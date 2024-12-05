@@ -22,7 +22,7 @@ Usage documentation can be found at [docs.lezwatchtv.com](https://docs.lezwatcht
 
 ## Scheduled Actions
 
-Server crontab is used to run CLI commands that generate and update complex content. 
+Server crontab is used to run CLI commands that generate and update complex content.
 
 The command `wp lwtv generate cron daily` will run a different debugger each day, update the FacetWP cache, and so on.
 
@@ -258,6 +258,7 @@ _Source (`src`)_
 * `/pre-publish/` - Checks before a post can be published
 * `/screener/` - Screener reviews of a show as a whole
 * `/spoiler/` - Spoiler warning
+* `/validator/` - Data validation (currently for actors only)
 
 Each block is broken up by folder with the following files:
 
@@ -274,9 +275,14 @@ Each block is broken up by folder with the following files:
 Stored in `/php/calendar/`:
 
 * `/ICal` - Subfolder for the ICal Parser Library
-* `class-blocks.php` - Code called by the Blocks
+* `class-display-calendar.php` - Builds the traditional calendar display
+* `class-display-grid.php` - Builds the grid display
+* `class-display-list.php` - Builds the list display (aka the original view)
+* `class-display.php` - Code to display the calendar
+* `class-generate-calendar.php` -
 * `class-ics-parser.php` - Connection to the ICS Parser for calendar data.
 * `class-names.php` - Process TV Maze names.
+* `class-tvmaze.php` - Master control over getting TVMaze data
 
 #### Custom Post Types
 
@@ -370,8 +376,6 @@ Stored in `/php/of-the-day/` - code used to generate character and show of the d
 
 Stored in `/php/plugins/` - all files are used to enhance other plugins installed on the site.
 
-The file `_main.php` acts as an autoloader.
-
 * `class-cache.php` - Custom Cache specific to DreamPress hosting
     - Generates data used by Proxy Cache Purge to know what to flush.
 * `class-cmb2.php` - Integration with CMB2
@@ -394,18 +398,11 @@ The file `_main.php` acts as an autoloader.
     - `class-labels.php` - Custom labels when changing display options
     - `class-pagination.php` - Only show pagination if there's more than one page
 * `class-gravity-forms.php` - Gravity Forms Integration
-    - Prevents views from being counted
-    - calls other files
 * `/gravity-forms/` - Gravity Forms Folder
     - `class-gf-approvals.php` - Approval Code (forked from another plugin)
     - `class-stop-spammers.php` - Block Spammers
 * `class-gutenberg.php` - make Block Editor stop being such a dillhole and forget preferences
 * `class-jetpack.php`  - Jetpack integration
-    - Adds Post Type to sort.
-    - Show Feedback in "Right Now"
-    - Custom Icon for Feedback in "Right Now"
-    - Mark feedbacks as having been answered
-    - Protection from spammers via disallowed keys
 * `class-related-posts-by-taxonomy.php` - Filters to allow a custom layout for "Shows Like This"
 * `class-wp-rocket.php` - Integration with WP Rocket to flush content when interrelated posts are updated
 * `class-yoast.php` - Custom Yoast controls
@@ -445,6 +442,7 @@ Stored in `/php/rest-api/` - These files generate the REST API output.
 * `class-this-year-json.php` - Outputs simplified lists of what happened in a given year.
 * `class-what-happened-json.php` - Outputs data based on what happened in a given year, year-month, or specific day.
 * `class-whats-on-json.php` - What's on TV tonight (or tomorrow).
+* `class-wikidata.php` - Get the status of our data compared with WikiData (used by Gutenberg)
 
 _Alexa Skills (`/php/rest-api/alexa/`)_
 
@@ -541,7 +539,7 @@ Stored in `/php/theme/` - Code used to generate data primarily for the theme in 
 * `class-content-warning.php` - If a show has a content warning, we display it.
 * `class-data-author.php` - Generate and return data for Authors (Mika, Tracy, Etc.)
     - `function social()` - Social Media for authors
-    - `function favorite_shows()` - Favorite Showes
+    - `function favorite_shows()` - Favorite Shows
 * `class-data-character.php` - Generate character Data
     - `function actors()` - Generate data for Actors
     - `function cliches()` - Generate data for Clichés

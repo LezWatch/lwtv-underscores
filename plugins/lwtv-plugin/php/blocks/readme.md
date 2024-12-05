@@ -13,6 +13,7 @@ These are Gutenberg Blocks specific to LezWatch.TV!
 * `pre-publish` - A backend only 'block' that checks for requirements before you're allowed to post.
 * `screener` - A block to leave a screener review
 * `spoiler` - Show a spoiler warning, with custom design.
+* `validator` - Check the data on the page (not actually a block)
 
 ## Development
 
