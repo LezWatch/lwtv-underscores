@@ -11,9 +11,8 @@ if ( ! defined( 'LWTV_THEME_VERSION' ) ) {
 		'lwtv-underscores' => '6.2.7',    // Bump this any time you make serious CSS changes.
 		'font-awesome'     => '6.7.1',    // Bump when you update Font Awesome.
 		'bootstrap'        => '5.3.3',    // Bump when you update bootstrap.
-		'bootstrap_dark'   => '1.1.0',      // Bump when you update the dark mode.
-		'lwtv-blocks'      => '1.0.2',    // Bump when you update the blocks.
-		'yikes-nav'        => '20240318', // Last date this was updated.
+		'bootstrap_dark'   => '1.1.0',    // Bump when you update the dark mode.
+		'lwtv-blocks'      => '1.1.0',    // Bump when you update the blocks' CSS (or add new ones).
 	);
 	define( 'LWTV_THEME_VERSION', $versions );
 }
@@ -380,7 +379,7 @@ function yikes_starter_scripts() {
 
 	// combined + minified.
 	// navigation.js, skip-link-focus-fix.js, a11y.js, bootstrap-color-mode.
-	wp_enqueue_script( 'yikes-starter-navigation', get_template_directory_uri() . '/inc/js/yikes-theme-scripts.min.js', array(), LWTV_THEME_VERSION['yikes-nav'], true );
+	wp_enqueue_script( 'yikes-starter-navigation', get_template_directory_uri() . '/inc/js/yikes-theme-scripts.min.js', array(), LWTV_THEME_VERSION['lwtv-underscores'], true );
 	wp_enqueue_script( 'lwtv-dark-mode', get_template_directory_uri() . '/inc/js/bootstrap-color-mode.min.js', array(), LWTV_THEME_VERSION['bootstrap_dark'], false );
 
 	if ( is_singular() && comments_open() && get_option( 'thread_comments' ) ) {

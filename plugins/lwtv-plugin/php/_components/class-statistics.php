@@ -18,11 +18,10 @@ class Statistics implements Component, Templater {
 	 * Versions of scripts.
 	 */
 	const VERSIONING = array(
-		'chartjs'                   => '4.4.6',
-		'chartjs-plugin-annotation' => '3.0.1',
+		'chartjs'                   => '4.4.7',
+		'chartjs-plugin-annotation' => '3.1.0',
 		'palette'                   => '1.0.0',
-		'tablesorter'               => '2.31.3',
-		'tablesorter-bootstrap'     => '2.31.1',
+		'tablesorter'               => '2.32.0',
 	);
 
 	/*
@@ -70,7 +69,7 @@ class Statistics implements Component, Templater {
 		// Custom extra for stats pages:
 		if ( is_page( array( 'statistics' ) ) ) {
 			wp_enqueue_script( 'tablesorter', LWTV_PLUGIN_URL . '/assets/js/jquery.tablesorter.min.js', array( 'jquery' ), self::VERSIONING['tablesorter'], false );
-			wp_enqueue_style( 'tablesorter', LWTV_PLUGIN_URL . '/assets/css/theme.bootstrap_4.min.css', array(), self::VERSIONING['tablesorter-bootstrap'], false );
+			wp_enqueue_style( 'tablesorter', LWTV_PLUGIN_URL . '/assets/css/theme.bootstrap.min.css', array(), self::VERSIONING['tablesorter'], false );
 
 			$statistics = get_query_var( 'statistics', 'none' );
 			$stat_view  = get_query_var( 'view', 'main' );
