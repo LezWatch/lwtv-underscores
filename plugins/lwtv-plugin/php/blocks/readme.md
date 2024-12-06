@@ -13,6 +13,7 @@ These are Gutenberg Blocks specific to LezWatch.TV!
 * `pre-publish` - A backend only 'block' that checks for requirements before you're allowed to post.
 * `screener` - A block to leave a screener review
 * `spoiler` - Show a spoiler warning, with custom design.
+* `wikidata-actor` - Validate actor Wikidata in a sidebar panel.
 
 ## Development
 
@@ -22,7 +23,7 @@ The blocks will automagically build anytime anyone runs `npm run build` from the
 
 All JS and CSS from blocks defined in `blocks/*/block.json` get pushed to the `blocks/build/` folder via the build process. PHP scans this directory and registers blocks in `php/class-blocks.php`. The overall code is called from the `/blocks/src/blocks.php` file.
 
-The build subfolders are _NOT_ stored in Git, because they're not needed to be. We run the build via actions
+The build subfolders are _NOT_ stored in Git, because they're not needed to be. We run the build via actions on deploy.
 
 ### Getting Started
 

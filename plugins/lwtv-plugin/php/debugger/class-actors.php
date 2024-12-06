@@ -91,9 +91,9 @@ class Actors {
 			}
 
 			// - Instagram and Twitter usernames should follow whatever the
-			// actual restrictions on those are  (props Jamie)
+			//   actual restrictions on those are (props Jamie)
 			// - If Instagram or Twitter usernames are the same format as IMDb IDs,
-			// that's suspicious (props Jamie)
+			//   that's suspicious (props Jamie)
 			if ( ! empty( $check['insta'] ) ) {
 				// Limit - 30 symbols. Username must contains only letters, numbers, periods and underscores.
 				if ( ( new Debug_Tool() )->sanitize_social( $check['insta'], 'instagram' ) !== $check['insta'] ) {
@@ -428,8 +428,9 @@ class Actors {
 
 				// If there's a wikipedia URL, let's get details.
 				if ( '' !== $check_ours['wikipedia'] ) {
-					$parsed_wiki = wp_parse_url( $check_ours['wikipedia'] );
-					$wiki_lang   = $parsed_wiki['host'][0];
+					$parsed_wiki  = wp_parse_url( $check_ours['wikipedia'] );
+					$explode_host = explode( '.', $parsed_wiki['host'] );
+					$wiki_lang    = $explode_host[0];
 
 					if ( isset( $wiki_actor['sitelinks'][ $wiki_lang . 'wiki' ] ) ) {
 						$wiki_title = str_replace( ' ', '_', $wiki_actor['sitelinks'][ $wiki_lang . 'wiki' ]['title'] );
@@ -458,6 +459,7 @@ class Actors {
 						$result = 'n/a';
 					} else {
 						if ( 'facebook' === $item ) {
+							$data                = 'https://facebook.com/' . $data;
 							$check_wiki[ $item ] = 'https://facebook.com/' . $check_wiki[ $item ];
 						}
 						$result = array(
