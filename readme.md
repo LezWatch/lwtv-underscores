@@ -279,7 +279,7 @@ Stored in `/php/calendar/`:
 * `class-display-grid.php` - Builds the grid display
 * `class-display-list.php` - Builds the list display (aka the original view)
 * `class-display.php` - Code to display the calendar
-* `class-generate-calendar.php` -
+* `class-generate-calendar.php` - Code to generate the calendar data
 * `class-ics-parser.php` - Connection to the ICS Parser for calendar data.
 * `class-names.php` - Process TV Maze names.
 * `class-tvmaze.php` - Master control over getting TVMaze data

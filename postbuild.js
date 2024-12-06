@@ -45,6 +45,6 @@ console.log('Building and merging assets ...');
 	await cp( 'inc/dist/css/style-editor.css', 'style-editor.css' );
 
 	// CSS Plugins
-	await cp('node_modules/tablesorter/dist/css/theme.bootstrap_4.min.css', 'plugins/lwtv-plugin/assets/css/theme.bootstrap_4.min.css');
+	await cp('node_modules/tablesorter/dist/css/theme.bootstrap.min.css', 'plugins/lwtv-plugin/assets/css/theme.bootstrap.min.css');
 	console.log('CSS files have been moved!');
 })();

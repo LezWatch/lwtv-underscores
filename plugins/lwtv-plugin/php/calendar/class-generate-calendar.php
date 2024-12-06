@@ -1,7 +1,7 @@
 <?php
 /**
  * Name: Calendar
- * Description: Code to display the calendar
+ * Description: Code to generate the calendar
  * Version: 1.0
  */
 
