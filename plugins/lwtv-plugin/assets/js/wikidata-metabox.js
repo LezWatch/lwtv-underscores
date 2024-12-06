@@ -55,7 +55,7 @@
 	$(document).ready(function() {
 		const postId = pmv_params.postId;
 		const resultsContainer = $('#post-meta-verification-results');
-		const refreshButton = $('<button id="refresh-data" class="components-button is-primary is-compact"><span class="dashicons dashicons-update"></span> Refresh</button>');
+		const refreshButton = $('<p><button type="button" id="refresh-data" class="components-button is-primary is-compact"><span class="dashicons dashicons-update"></span> Refresh</button></p>');
 		const spinner = $('<span class="dashicons dashicons-update loading"></span>');
 
 		$('#post_meta_verification_meta_box .inside').append(refreshButton); // Append to meta box
