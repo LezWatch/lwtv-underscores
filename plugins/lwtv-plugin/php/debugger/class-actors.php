@@ -391,6 +391,7 @@ class Actors {
 
 			// Search for the actor, using the Q-ID if it's set.
 			$wikidata_id = get_post_meta( $actor_id, 'lezactors_wikidata_qid', true );
+
 			if ( ! empty( $wikidata_id ) ) {
 				$search_name = $wikidata_id;
 			} else {
@@ -459,7 +460,7 @@ class Actors {
 						$result = 'n/a';
 					} else {
 						if ( 'facebook' === $item ) {
-							$data                = 'https://facebook.com/' . $data;
+							$data                = ( ! empty( $data ) ) ? 'https://facebook.com/' . $data : '';
 							$check_wiki[ $item ] = 'https://facebook.com/' . $check_wiki[ $item ];
 						}
 						$result = array(

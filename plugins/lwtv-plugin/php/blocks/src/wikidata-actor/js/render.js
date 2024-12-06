@@ -5,9 +5,14 @@ import { useState, useEffect } from '@wordpress/element';
 import { Button, PanelRow, Spinner } from '@wordpress/components';
 
 export default function Render() {
+	const postType = useSelect((select) =>
+		select('core/editor').getCurrentPostType()
+	);
+
 	const postId = useSelect((select) =>
 		select('core/editor').getCurrentPostId()
 	);
+
 	const [apiData, setApiData] = useState(null);
 	const [isLoading, setIsLoading] = useState(true);
 	const [error, setError] = useState(null);
@@ -15,7 +20,7 @@ export default function Render() {
 	const siteURL = window.location.origin;
 
 	useEffect(() => {
-		if (postId) {
+		if (postId && postType === 'post_type_actors') {
 			const fetchData = async () => {
 				setIsLoading(true);
 				try {
@@ -39,7 +44,11 @@ export default function Render() {
 			};
 			fetchData();
 		}
-	}, [postId, siteURL, refreshCounter]);
+	}, [postId, postType, siteURL, refreshCounter]);
+
+	if (postType !== 'post_type_actors') {
+		return null;
+	}
 
 	const handleRefresh = () => {
 		setRefreshCounter((prevCounter) => prevCounter + 1);
