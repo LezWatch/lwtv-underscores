@@ -37,7 +37,7 @@ class Actors {
 			}
 		} else {
 			// Get all the actors
-			$the_loop = ( new Post_Type() )->make( 'post_type_actors' );
+			$the_loop = lwtv_plugin()->queery_post_type( 'post_type_actors' );
 
 			// Add ONLY the IDs to the array.
 			if ( is_object( $the_loop ) && $the_loop->have_posts() ) {
@@ -179,7 +179,7 @@ class Actors {
 			}
 		} else {
 			// Get all the actors
-			$the_loop = ( new Post_Type() )->make( 'post_type_actors' );
+			$the_loop = lwtv_plugin()->queery_post_type( 'post_type_actors' );
 
 			// Add ONLY the IDs to the array.
 			if ( is_object( $the_loop ) && $the_loop->have_posts() ) {
@@ -256,7 +256,7 @@ class Actors {
 			}
 		} else {
 			// Get all the actors
-			$the_loop = ( new Post_Type() )->make( 'post_type_actors' );
+			$the_loop = lwtv_plugin()->queery_post_type( 'post_type_actors' );
 
 			// Add ONLY the IDs to the array.
 			if ( is_object( $the_loop ) && $the_loop->have_posts() ) {
@@ -347,7 +347,7 @@ class Actors {
 				}
 			} else {
 				// Get all the actors
-				$the_loop = ( new Post_Type() )->make( 'post_type_actors' );
+				$the_loop = lwtv_plugin()->queery_post_type( 'post_type_actors' );
 
 				// Add ONLY the IDs to the array.
 				if ( is_object( $the_loop ) && $the_loop->have_posts() ) {
@@ -428,8 +428,9 @@ class Actors {
 
 				// If there's a wikipedia URL, let's get details.
 				if ( '' !== $check_ours['wikipedia'] ) {
-					$parsed_wiki = wp_parse_url( $check_ours['wikipedia'] );
-					$wiki_lang   = $parsed_wiki['host'][0];
+					$parsed_wiki  = wp_parse_url( $check_ours['wikipedia'] );
+					$explode_host = explode( '.', $parsed_wiki['host'] );
+					$wiki_lang    = $explode_host[0];
 
 					if ( isset( $wiki_actor['sitelinks'][ $wiki_lang . 'wiki' ] ) ) {
 						$wiki_title = str_replace( ' ', '_', $wiki_actor['sitelinks'][ $wiki_lang . 'wiki' ]['title'] );
@@ -458,6 +459,7 @@ class Actors {
 						$result = 'n/a';
 					} else {
 						if ( 'facebook' === $item ) {
+							$data                = 'https://facebook.com/' . $data;
 							$check_wiki[ $item ] = 'https://facebook.com/' . $check_wiki[ $item ];
 						}
 						$result = array(

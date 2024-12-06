@@ -15,6 +15,7 @@ use LWTV\Rest_API\IMDb_JSON;
 use LWTV\Rest_API\Fresh_JSON;
 use LWTV\Rest_API\Export_JSON;
 use LWTV\Rest_API\BYQ;
+use LWTV\Rest_API\Wikidata;
 use LWTV\Rest_API\Alexa_Skills;
 
 class Rest_API implements Component, Templater {
@@ -33,6 +34,7 @@ class Rest_API implements Component, Templater {
 		new Shows_Like_JSON();
 		new Stats_JSON();
 		new This_Year_JSON();
+		new Wikidata();
 		new What_Happened_JSON();
 		new Whats_On_JSON();
 	}
