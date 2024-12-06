@@ -258,7 +258,6 @@ _Source (`src`)_
 * `/pre-publish/` - Checks before a post can be published
 * `/screener/` - Screener reviews of a show as a whole
 * `/spoiler/` - Spoiler warning
-* `/validator/` - Data validation (currently for actors only)
 
 Each block is broken up by folder with the following files:
 
