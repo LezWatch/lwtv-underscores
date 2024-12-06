@@ -179,6 +179,10 @@ class Actor_Characters {
 		foreach ( $character_array as $char_id ) {
 			$actors_array = get_post_meta( $char_id, 'lezchars_actor', true );
 
+			if ( ! is_array( $actors_array ) ) {
+				$actors_array = array( $actors_array );
+			}
+
 			if ( ! in_array( (string) $actor_id, $actors_array, true ) ) {
 				$term_id = get_post_meta( $char_id, sanitize_key( 'shadow_' . Characters::SHADOW_TAXONOMY . '_term_id' ), true );
 				wp_remove_object_terms( (int) $actor_id, (int) $term_id, Characters::SHADOW_TAXONOMY );
