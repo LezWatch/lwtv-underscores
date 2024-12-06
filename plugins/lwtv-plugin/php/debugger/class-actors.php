@@ -37,7 +37,7 @@ class Actors {
 			}
 		} else {
 			// Get all the actors
-			$the_loop = lwtv_plugin()->queery_post_type( 'post_type_actors' );
+			$the_loop = ( new Post_Type() )->make( 'post_type_actors' );
 
 			// Add ONLY the IDs to the array.
 			if ( is_object( $the_loop ) && $the_loop->have_posts() ) {
@@ -91,9 +91,9 @@ class Actors {
 			}
 
 			// - Instagram and Twitter usernames should follow whatever the
-			// actual restrictions on those are  (props Jamie)
+			//   actual restrictions on those are (props Jamie)
 			// - If Instagram or Twitter usernames are the same format as IMDb IDs,
-			// that's suspicious (props Jamie)
+			//   that's suspicious (props Jamie)
 			if ( ! empty( $check['insta'] ) ) {
 				// Limit - 30 symbols. Username must contains only letters, numbers, periods and underscores.
 				if ( ( new Debug_Tool() )->sanitize_social( $check['insta'], 'instagram' ) !== $check['insta'] ) {
@@ -179,7 +179,7 @@ class Actors {
 			}
 		} else {
 			// Get all the actors
-			$the_loop = lwtv_plugin()->queery_post_type( 'post_type_actors' );
+			$the_loop = ( new Post_Type() )->make( 'post_type_actors' );
 
 			// Add ONLY the IDs to the array.
 			if ( is_object( $the_loop ) && $the_loop->have_posts() ) {
@@ -256,7 +256,7 @@ class Actors {
 			}
 		} else {
 			// Get all the actors
-			$the_loop = lwtv_plugin()->queery_post_type( 'post_type_actors' );
+			$the_loop = ( new Post_Type() )->make( 'post_type_actors' );
 
 			// Add ONLY the IDs to the array.
 			if ( is_object( $the_loop ) && $the_loop->have_posts() ) {
@@ -347,7 +347,7 @@ class Actors {
 				}
 			} else {
 				// Get all the actors
-				$the_loop = lwtv_plugin()->queery_post_type( 'post_type_actors' );
+				$the_loop = ( new Post_Type() )->make( 'post_type_actors' );
 
 				// Add ONLY the IDs to the array.
 				if ( is_object( $the_loop ) && $the_loop->have_posts() ) {
