@@ -1,10 +1,10 @@
 {
 	"$schema": "https://json.schemastore.org/block.json",
 	"apiVersion": 3,
-	"name": "lwtv/wikidata",
-	"textdomain": "lwtv-wikidata",
+	"name": "lwtv/wikidata-actor",
+	"textdomain": "lwtv-wikidata-actor",
 	"version": "0.0.1",
-	"title": "WikiData Check",
+	"title": "WikiData Check for Actors",
 	"category": "lezwatch",
 	"icon": "info-outline",
 	"description": "Check actor's WikiData.",

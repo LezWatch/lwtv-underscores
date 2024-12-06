@@ -258,6 +258,7 @@ _Source (`src`)_
 * `/pre-publish/` - Checks before a post can be published
 * `/screener/` - Screener reviews of a show as a whole
 * `/spoiler/` - Spoiler warning
+* `/wikidata-actor/` - Validate actor Wikidata in a sidebar panel.
 
 Each block is broken up by folder with the following files:
 

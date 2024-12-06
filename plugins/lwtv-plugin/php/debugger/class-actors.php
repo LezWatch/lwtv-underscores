@@ -375,6 +375,7 @@ class Actors {
 			);
 
 			// What we can check for.
+			$facebook   = get_post_meta( $actor_id, 'lezactors_facebook', true );
 			$check_ours = array(
 				'birth'     => get_post_meta( $actor_id, 'lezactors_birth', true ),
 				'death'     => get_post_meta( $actor_id, 'lezactors_death', true ),
@@ -382,7 +383,7 @@ class Actors {
 				'wikipedia' => get_post_meta( $actor_id, 'lezactors_wikipedia', true ),
 				'instagram' => get_post_meta( $actor_id, 'lezactors_instagram', true ),
 				'twitter'   => get_post_meta( $actor_id, 'lezactors_twitter', true ),
-				'facebook'  => get_post_meta( $actor_id, 'lezactors_facebook', true ),
+				'facebook'  => ( str_contains( $facebook, 'https://facebook.com/' ) ) ? str_replace( 'https://facebook.com/', '', $facebook ) : '',
 				'website'   => get_post_meta( $actor_id, 'lezactors_homepage', true ),
 			);
 
@@ -427,8 +428,9 @@ class Actors {
 
 				// If there's a wikipedia URL, let's get details.
 				if ( '' !== $check_ours['wikipedia'] ) {
-					$parsed_wiki = wp_parse_url( $check_ours['wikipedia'] );
-					$wiki_lang   = $parsed_wiki['host'][0];
+					$parsed_wiki  = wp_parse_url( $check_ours['wikipedia'] );
+					$explode_host = explode( '.', $parsed_wiki['host'] );
+					$wiki_lang    = $explode_host[0];
 
 					if ( isset( $wiki_actor['sitelinks'][ $wiki_lang . 'wiki' ] ) ) {
 						$wiki_title = str_replace( ' ', '_', $wiki_actor['sitelinks'][ $wiki_lang . 'wiki' ]['title'] );
@@ -457,6 +459,7 @@ class Actors {
 						$result = 'n/a';
 					} else {
 						if ( 'facebook' === $item ) {
+							$data                = 'https://facebook.com/' . $data;
 							$check_wiki[ $item ] = 'https://facebook.com/' . $check_wiki[ $item ];
 						}
 						$result = array(
