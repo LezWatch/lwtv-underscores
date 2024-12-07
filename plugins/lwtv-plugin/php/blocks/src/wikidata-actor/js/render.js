@@ -13,6 +13,10 @@ export default function Render() {
 		select('core/editor').getCurrentPostId()
 	);
 
+	const postStatus = useSelect(
+		(select) => select('core/editor').getCurrentPost().status
+	);
+
 	const [apiData, setApiData] = useState(null);
 	const [isLoading, setIsLoading] = useState(true);
 	const [error, setError] = useState(null);
@@ -20,7 +24,11 @@ export default function Render() {
 	const siteURL = window.location.origin;
 
 	useEffect(() => {
-		if (postId && postType === 'post_type_actors') {
+		if (
+			postId &&
+			postType === 'post_type_actors' &&
+			postStatus !== 'auto-draft'
+		) {
 			const fetchData = async () => {
 				setIsLoading(true);
 				try {
@@ -44,7 +52,7 @@ export default function Render() {
 			};
 			fetchData();
 		}
-	}, [postId, postType, siteURL, refreshCounter]);
+	}, [postId, postType, postStatus, siteURL, refreshCounter]);
 
 	if (postType !== 'post_type_actors') {
 		return null;
@@ -67,6 +75,22 @@ export default function Render() {
 		);
 		return Object.fromEntries(filteredEntries);
 	};
+
+	const MetadataPanelAutoSave = () => (
+		<PluginDocumentSettingPanel
+			name="lwtv-wikidata-panel"
+			title="WikiData Checker"
+			className="lwtv-wikidata-panel"
+		>
+			<PanelRow>
+				<div>
+					<p>
+						Put in the actor name and then we can run some checks.
+					</p>
+				</div>
+			</PanelRow>
+		</PluginDocumentSettingPanel>
+	);
 
 	const MetadataPanel = () => (
 		<PluginDocumentSettingPanel
@@ -172,5 +196,8 @@ export default function Render() {
 		</PluginDocumentSettingPanel>
 	);
 
+	if (postStatus === 'auto-draft') {
+		return <MetadataPanelAutoSave />;
+	}
 	return <MetadataPanel />;
 }
