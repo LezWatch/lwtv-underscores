@@ -79,8 +79,11 @@ class Avatars {
 		$words    = explode( ' ', $name );
 		$initials = strtoupper( substr( $words[0], 0, 1 ) . ( isset( $words[1] ) ? substr( $words[1], 0, 1 ) : '' ) );
 
-		// Generate random hex color
-		$random_color = '#' . str_pad( dechex( wp_rand( 0, 0xFFFFFF ) ), 6, '0', STR_PAD_LEFT );
+		// Convert the first byte of a string to a value between 0 and 255. If there are two initials, add the second byte.
+		$numberized = ord( $initials[0] ) + ( isset( $initials[1] ) ? ord( $initials[1] ) : 0 );
+
+		// Generate hex color based on initials
+		$random_color = '#' . str_pad( dechex( $numberized ), 6, '0', STR_PAD_LEFT );
 
 		// Determine if the input is a comment object
 		$is_comment_object = is_object( $id_or_email ) && isset( $id_or_email->comment_author );
