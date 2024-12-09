@@ -153,6 +153,16 @@
 		background-color: $lwtv-medgrey;
 	}
 
+	#comments,
+	ul.comment-list li .comment-content,
+	ul.comment-list li .comment-author {
+		background-color: $lwtv-medgrey;
+
+		ul.comment-list svg * {
+			fill: colors.$white;
+		}
+	}
+
 	blockquote {
 		background-color: $lwtv-medgrey;
 		border-left: 4px solid colors.$lwtv-ltpink;
