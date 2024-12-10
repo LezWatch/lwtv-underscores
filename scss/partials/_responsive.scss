@@ -108,14 +108,11 @@
 		}
 	}
 
-	.site-loop.shows-we-love-loop {
-		grid-template-columns: repeat(2, 1fr);
-
-		.card {
-			margin: 0.5rem;
+	header.archive-header {
+		.row {
+			text-align: center;
 		}
 	}
-
 
 	.page-template-page-fullwidth {
 		.row > * {
@@ -249,6 +246,14 @@
 		}
 	}
 
+	.site-loop.shows-we-love-loop {
+		grid-template-columns: repeat(2, 1fr);
+
+		.card {
+			margin: 0.5rem;
+		}
+	}
+
 	.site-loop.actor-archive-loop,
 	.site-loop.character-archive-loop,
 	.site-loop.character-show-loop,
@@ -269,6 +274,15 @@
 	.site-loop.main-posts-loop.four-across-loop {
 		grid-template-columns: repeat(3, 1fr);
 		padding-right: 1rem;
+	}
+
+	.site-loop.related-posts-by-taxonomy-loop {
+		grid-template-columns: repeat(2, 1fr);
+		grid-gap: 1rem;
+
+		.mb-3 {
+			width: 100%!important;
+		}
 	}
 
 	#characters .guest-character-list li {
