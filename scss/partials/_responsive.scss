@@ -95,7 +95,7 @@
 @media (max-width: 990px) {
 
 	.row > * {
-		width: 350px;
+		width: 950px;
 	}
 
 	.page-template-page-home {
@@ -110,6 +110,10 @@
 
 	.site-loop.shows-we-love-loop {
 		grid-template-columns: repeat(2, 1fr);
+
+		.card {
+			margin: 0.5rem;
+		}
 	}
 
 
@@ -184,8 +188,18 @@
 		padding: 2rem;
 
 		h1.site-description {
-
 			@include fonts.font-28;
+		}
+
+		.col-sm-3 {
+			-ms-flex: 0 0 25%;
+			flex: 0 0 25%;
+			max-width: 25%;
+		}
+
+		.col-sm-9 {
+			flex: 0 0 auto;
+			width: 75%;
 		}
 	}
 

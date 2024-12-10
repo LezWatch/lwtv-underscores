@@ -13,6 +13,10 @@ export default function Render() {
 		select('core/editor').getCurrentPostId()
 	);
 
+	const postStatus = useSelect(
+		(select) => select('core/editor').getCurrentPost().status
+	);
+
 	const [apiData, setApiData] = useState(null);
 	const [isLoading, setIsLoading] = useState(true);
 	const [error, setError] = useState(null);
@@ -20,7 +24,11 @@ export default function Render() {
 	const siteURL = window.location.origin;
 
 	useEffect(() => {
-		if (postId && postType === 'post_type_actors') {
+		if (
+			postId &&
+			postType === 'post_type_actors' &&
+			postStatus !== 'auto-draft'
+		) {
 			const fetchData = async () => {
 				setIsLoading(true);
 				try {
@@ -44,7 +52,7 @@ export default function Render() {
 			};
 			fetchData();
 		}
-	}, [postId, postType, siteURL, refreshCounter]);
+	}, [postId, postType, postStatus, siteURL, refreshCounter]);
 
 	if (postType !== 'post_type_actors') {
 		return null;
@@ -68,6 +76,22 @@ export default function Render() {
 		return Object.fromEntries(filteredEntries);
 	};
 
+	const MetadataPanelAutoSave = () => (
+		<PluginDocumentSettingPanel
+			name="lwtv-wikidata-panel"
+			title="WikiData Checker"
+			className="lwtv-wikidata-panel"
+		>
+			<PanelRow>
+				<div>
+					<p>
+						Put in the actor name and then we can run some checks.
+					</p>
+				</div>
+			</PanelRow>
+		</PluginDocumentSettingPanel>
+	);
+
 	const MetadataPanel = () => (
 		<PluginDocumentSettingPanel
 			name="lwtv-wikidata-panel"
@@ -85,6 +109,19 @@ export default function Render() {
 									Object.entries(item)[0];
 								const filteredData =
 									filteredPersonData(personData);
+
+								if ('error' === personData.wikidata) {
+									return (
+										<div key={key}>
+											<h3>{personData.name}</h3>
+											<p>
+												There is no information on
+												WikiData for this actor.
+											</p>
+										</div>
+									);
+								}
+
 								return (
 									<div key={key}>
 										<h3>
@@ -172,5 +209,8 @@ export default function Render() {
 		</PluginDocumentSettingPanel>
 	);
 
+	if (postStatus === 'auto-draft') {
+		return <MetadataPanelAutoSave />;
+	}
 	return <MetadataPanel />;
 }

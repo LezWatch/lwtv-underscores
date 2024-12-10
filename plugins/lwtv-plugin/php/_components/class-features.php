@@ -6,6 +6,7 @@
 
 namespace LWTV\_Components;
 
+use LWTV\Features\Avatars;
 use LWTV\Features\Dashboard_Posts_In_Progress;
 use LWTV\Features\Dashboard;
 use LWTV\Features\Embeds;
@@ -26,12 +27,12 @@ class Features implements Component {
 		add_filter( 'wp_headers', array( $this, 'modify_front_end_http_headers' ), 10, 2 );
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
 		add_action( 'pre_ping', array( $this, 'no_self_ping' ) );
-		add_filter( 'all_plugins', array( $this, 'hide_lwtv_plugin' ) );
 
 		// Instantiate actions and filters:
 		add_action( 'init', array( $this, 'instantiate_actions_and_filters' ) );
 
 		// Load them:
+		new Avatars();
 		new Dashboard_Posts_In_Progress();
 		new Dashboard();
 		new Embeds();
@@ -120,29 +121,9 @@ class Features implements Component {
 	}
 
 	/**
-	 * Hide the LWTV Plugin from the Plugin list.
+	 * Disable WP from updating this theme.
 	 *
-	 * @access public
-	 * @return array
-	 */
-	public function hide_lwtv_plugin( $plugins ): array {
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		$should_hide    = ! array_key_exists( 'show_all', $_GET );
-		$hidden_plugins = array(
-			'lwtv-plugin/functions.php',
-		);
-
-		if ( $should_hide ) {
-			foreach ( $hidden_plugins as $hidden_plugin ) {
-				unset( $plugins[ $hidden_plugin ] );
-			}
-		}
-
-		return $plugins;
-	}
-
-	/**
-	 * Disable WP from updating this plugin.
+	 * Credit: https://markjaquith.wordpress.com/2009/12/14/excluding-your-plugin-or-theme-from-update-checks/
 	 *
 	 * @access public
 	 * @param mixed $data   - array to return.
@@ -150,13 +131,15 @@ class Features implements Component {
 	 * @return array        - $data
 	 */
 	public function disable_wp_update( $data, $url ): array {
-		if ( 0 === strpos( $url, 'https://api.wordpress.org/plugins/update-check/' ) ) {
-			$my_plugin = plugin_basename( dirname( __DIR__, 1 ) );
-			$plugins   = json_decode( $data['body']['plugins'], true );
-			unset( $plugins['plugins'][ $my_plugin ] );
-			unset( $plugins['active'][ array_search( $my_plugin, $plugins['active'], true ) ] );
-			$data['body']['plugins'] = wp_json_encode( $plugins );
+		if ( 0 !== strpos( $url, 'http://api.wordpress.org/themes/update-check' ) ) {
+			return $data; // Not a theme update request. Bail immediately.
 		}
+
+		$themes = json_decode( $data['body']['themes'] );
+		unset( $themes[ get_option( 'template' ) ] );
+		unset( $themes[ get_option( 'stylesheet' ) ] );
+		$data['body']['themes'] = wp_json_encode( $themes );
+
 		return $data;
 	}
 
