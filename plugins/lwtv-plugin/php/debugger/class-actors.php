@@ -374,103 +374,39 @@ class Actors {
 				'name' => get_the_title( $actor_id ),
 			);
 
-			// What we can check for.
-			$facebook   = get_post_meta( $actor_id, 'lezactors_facebook', true );
-			$check_ours = array(
-				'birth'     => get_post_meta( $actor_id, 'lezactors_birth', true ),
-				'death'     => get_post_meta( $actor_id, 'lezactors_death', true ),
-				'imdb'      => get_post_meta( $actor_id, 'lezactors_imdb', true ),
-				'wikipedia' => get_post_meta( $actor_id, 'lezactors_wikipedia', true ),
-				'instagram' => get_post_meta( $actor_id, 'lezactors_instagram', true ),
-				'twitter'   => get_post_meta( $actor_id, 'lezactors_twitter', true ),
-				'facebook'  => ( str_contains( $facebook, 'https://facebook.com/' ) ) ? str_replace( 'https://facebook.com/', '', $facebook ) : '',
-				'website'   => get_post_meta( $actor_id, 'lezactors_homepage', true ),
-			);
-
-			$language = 'en';
+			$check_ours = $this->get_actors_wikidata_ours( $actor_id );
 
 			// Search for the actor, using the Q-ID if it's set.
 			$wikidata_id = get_post_meta( $actor_id, 'lezactors_wikidata_qid', true );
+			$wiki_claims = ( ! empty( $wikidata_id ) ) ? $this->get_actors_wikidata_by_id( $wikidata_id ) : $this->get_actors_wikidata_by_search( $actor_id );
 
-			if ( ! empty( $wikidata_id ) ) {
-				$search_name = $wikidata_id;
-			} else {
-				$search_name = str_replace( ' ', '%20', get_the_title( $actor_id ) );
+			// If we have no WikiData, we can't check anything.
+			if ( empty( $wiki_claims['wikidata'] ) ) {
+				$items[ $actor_id ]['wikidata'] = 'error';
+				continue;
 			}
 
-			// Pick language based on existing WikiPedia link.
-			if ( ! empty( $check_ours['wikipedia'] ) ) {
-				$wikiurl  = wp_parse_url( $check_ours['wikipedia'] );
-				$wikihost = explode( '.', $wikiurl['host'] );
-				$language = $wikihost[0];
-			}
+			$items[ $actor_id ]['wikidata'] = ( ! empty( $wikidata_id ) ) ? $wikidata_id : $wiki_claims['wikidata'];
+			unset( $wiki_claims['wikidata'] );
 
-			$search_queery = 'https://www.wikidata.org/w/api.php?action=wbsearchentities&search=' . $search_name . '&language=' . $language . '&format=json';
-			$search_data   = wp_remote_get( $search_queery );
+			$check_wiki = $this->process_actor_wikidata( $actor_id, $wiki_claims );
 
-			// Check for errors.
-			if ( ! is_wp_error( $search_data ) ) {
-				$search_body = json_decode( $search_data['body'], true );
-			}
+			foreach ( $check_ours as $item => $data ) {
+				$data                = $this->remove_www( $data );
+				$check_wiki[ $item ] = $this->remove_www( $check_wiki[ $item ] );
 
-			if ( isset( $search_body['search']['0']['id'] ) ) {
-				// Set the WikiData ID
-				$items[ $actor_id ]['wikidata'] = $search_body['search']['0']['id'];
-
-				// Build the data
-				$wiki_queery = 'https://www.wikidata.org/w/api.php?action=wbgetentities&ids=' . $search_body['search']['0']['id'] . '&format=json';
-				$wiki_data   = wp_remote_get( $wiki_queery );
-				if ( is_wp_error( $wiki_data ) ) {
-					return array();
-				}
-				$wiki_array = json_decode( $wiki_data['body'], true );
-				$wiki_actor = array_shift( $wiki_array['entities'] );
-				$wiki_link  = '';
-
-				// If there's a wikipedia URL, let's get details.
-				if ( '' !== $check_ours['wikipedia'] ) {
-					$parsed_wiki  = wp_parse_url( $check_ours['wikipedia'] );
-					$explode_host = explode( '.', $parsed_wiki['host'] );
-					$wiki_lang    = $explode_host[0];
-
-					if ( isset( $wiki_actor['sitelinks'][ $wiki_lang . 'wiki' ] ) ) {
-						$wiki_title = str_replace( ' ', '_', $wiki_actor['sitelinks'][ $wiki_lang . 'wiki' ]['title'] );
-						$wiki_link  = 'https://' . $wiki_lang . '.wikipedia.org/wiki/' . $wiki_title;
-					}
-				} elseif ( isset( $wiki_actor['sitelinks']['enwiki'] ) ) {
-					$wiki_title = str_replace( ' ', '_', $wiki_actor['sitelinks']['enwiki']['title'] );
-					$wiki_link  = 'https://en.wikipedia.org/wiki/' . $wiki_title;
+				if ( $data === $check_wiki[ $item ] ) {
+					$result = 'match';
+				} elseif ( '' === $check_wiki[ $item ] ) {
+					$result = 'n/a';
+				} else {
+					$result = array(
+						'ours'     => $data,
+						'wikidata' => $check_wiki[ $item ],
+					);
 				}
 
-				$check_wiki = array(
-					'birth'     => ( isset( $wiki_actor['claims']['P569'] ) ) ? ( new Debug_Tool() )->format_wikidate( $wiki_actor['claims']['P569'][0]['mainsnak']['datavalue']['value']['time'] ) : '',
-					'death'     => ( isset( $wiki_actor['claims']['P570'] ) ) ? ( new Debug_Tool() )->format_wikidate( $wiki_actor['claims']['P570'][0]['mainsnak']['datavalue']['value']['time'] ) : '',
-					'wikipedia' => $wiki_link,
-					'imdb'      => ( isset( $wiki_actor['claims']['P345'] ) ) ? $wiki_actor['claims']['P345'][0]['mainsnak']['datavalue']['value'] : '',
-					'instagram' => ( isset( $wiki_actor['claims']['P2003'] ) ) ? $wiki_actor['claims']['P2003'][0]['mainsnak']['datavalue']['value'] : '',
-					'twitter'   => ( isset( $wiki_actor['claims']['P2002'] ) ) ? $wiki_actor['claims']['P2002'][0]['mainsnak']['datavalue']['value'] : '',
-					'facebook'  => ( isset( $wiki_actor['claims']['P2013'] ) ) ? $wiki_actor['claims']['P2013'][0]['mainsnak']['datavalue']['value'] : '',
-					'website'   => ( isset( $wiki_actor['claims']['P856'] ) ) ? $wiki_actor['claims']['P856'][0]['mainsnak']['datavalue']['value'] : '',
-				);
-
-				foreach ( $check_ours as $item => $data ) {
-					if ( $data === $check_wiki[ $item ] ) {
-						$result = 'match';
-					} elseif ( '' === $check_wiki[ $item ] ) {
-						$result = 'n/a';
-					} else {
-						if ( 'facebook' === $item ) {
-							$data                = ( ! empty( $data ) ) ? 'https://facebook.com/' . $data : '';
-							$check_wiki[ $item ] = 'https://facebook.com/' . $check_wiki[ $item ];
-						}
-						$result = array(
-							'ours'     => $data,
-							'wikidata' => $check_wiki[ $item ],
-						);
-					}
-
-					$items[ $actor_id ][ $item ] = $result;
-				}
+				$items[ $actor_id ][ $item ] = $result;
 			}
 		}
 
@@ -487,5 +423,136 @@ class Actors {
 		}
 
 		return $items;
+	}
+
+	/**
+	 * Get our data for the actor.
+	 *
+	 * @param int $actor_id - The ID of the actor.
+	 *
+	 * @return array $check_ours - The data we have.
+	 */
+	public function get_actors_wikidata_ours( $actor_id ) {
+		return array(
+			'birth'     => get_post_meta( $actor_id, 'lezactors_birth', true ),
+			'death'     => get_post_meta( $actor_id, 'lezactors_death', true ),
+			'imdb'      => get_post_meta( $actor_id, 'lezactors_imdb', true ),
+			'wikipedia' => get_post_meta( $actor_id, 'lezactors_wikipedia', true ),
+			'instagram' => get_post_meta( $actor_id, 'lezactors_instagram', true ),
+			'twitter'   => get_post_meta( $actor_id, 'lezactors_twitter', true ),
+			'facebook'  => get_post_meta( $actor_id, 'lezactors_facebook', true ),
+			'website'   => get_post_meta( $actor_id, 'lezactors_homepage', true ),
+		);
+	}
+
+	/**
+	 * Use WikiData ID to search.
+	 *
+	 * @param string $wikidata_id - The Q-ID to search for.
+	 *
+	 * @return array $items - The results of the search.
+	 */
+	public function get_actors_wikidata_by_id( $wikidata_id ) {
+		$search_data = wp_remote_get( 'http://www.wikidata.org/entity/' . $wikidata_id );
+
+		// Check for errors.
+		if ( is_wp_error( $search_data ) ) {
+			return array();
+		}
+
+		$search_body = json_decode( $search_data['body'], true );
+
+		if ( empty( $search_body['entities'][ $wikidata_id ]['claims'] ) ) {
+			return array();
+		}
+
+		$claims              = $search_body['entities'][ $wikidata_id ]['claims'];
+		$claims['sitelinks'] = $search_body['entities'][ $wikidata_id ]['sitelinks'] ?? array();
+		$claims['wikidata']  = $wikidata_id;
+
+		return $claims;
+	}
+
+	/**
+	 * Use WikiData Search to find the actor.
+	 */
+	public function get_actors_wikidata_by_search( $actor_id ) {
+		$language    = 'en';
+		$search_name = str_replace( ' ', '%20', get_the_title( $actor_id ) );
+		$wikipedia   = get_post_meta( $actor_id, 'lezactors_wikipedia', true );
+
+		// Pick language based on existing WikiPedia link.
+		if ( ! empty( $wikipedia ) ) {
+			$wikiurl  = wp_parse_url( $wikipedia );
+			$wikihost = explode( '.', $wikiurl['host'] );
+			$language = $wikihost[0];
+		}
+
+		$search_queery = 'https://www.wikidata.org/w/api.php?action=wbsearchentities&search=' . $search_name . '&language=' . $language . '&format=json';
+		$search_data   = wp_remote_get( $search_queery );
+
+		// Check for errors.
+		if ( ! is_wp_error( $search_data ) ) {
+			$search_body = json_decode( $search_data['body'], true );
+		}
+
+		$wikidata_id = ( is_array( $search_body ) && ! empty( $search_body['search'] ) ) ? $search_body['search'][0]['id'] : '';
+		$claims      = ( ! empty( $wikidata_id ) ) ? $this->get_actors_wikidata_by_id( $wikidata_id ) : array();
+
+		$claims['wikidata'] = $wikidata_id;
+
+		return $claims;
+	}
+
+	/**
+	 * Process WikiData for the actor.
+	 *
+	 * Takes the raw data and formats it for comparison.
+	 *
+	 * @param int   $actor_id - The ID of the actor.
+	 * @param array $wiki_claims - The data from WikiData.
+	 *
+	 * @return array $check_wiki - The data we found.
+	 */
+	public function process_actor_wikidata( $actor_id, $wiki_claims ) {
+		$wikipedia = get_post_meta( $actor_id, 'lezactors_wikipedia', true );
+
+		if ( '' !== $wikipedia ) {
+			$parsed_wiki  = wp_parse_url( $wikipedia );
+			$explode_host = explode( '.', $parsed_wiki['host'] );
+			$wiki_lang    = $explode_host[0];
+
+			if ( isset( $wiki_claims['sitelinks'][ $wiki_lang . 'wiki' ] ) ) {
+				$wiki_title = str_replace( ' ', '_', $wiki_claims['sitelinks'][ $wiki_lang . 'wiki' ]['title'] );
+				$wiki_link  = 'https://' . $wiki_lang . '.wikipedia.org/wiki/' . $wiki_title;
+			}
+		} elseif ( isset( $wiki_claims['sitelinks']['enwiki'] ) ) {
+			$wiki_title = str_replace( ' ', '_', $wiki_claims['sitelinks']['enwiki']['title'] );
+			$wiki_link  = 'https://en.wikipedia.org/wiki/' . $wiki_title;
+		}
+
+		return array(
+			'birth'     => ( isset( $wiki_claims['P569'] ) ) ? ( new Debug_Tool() )->format_wikidate( $wiki_claims['P569'][0]['mainsnak']['datavalue']['value']['time'] ) : '',
+			'death'     => ( isset( $wiki_claims['P570'] ) ) ? ( new Debug_Tool() )->format_wikidate( $wiki_claims['P570'][0]['mainsnak']['datavalue']['value']['time'] ) : '',
+			'wikipedia' => $wiki_link ?? '',
+			'imdb'      => ( isset( $wiki_claims['P345'] ) ) ? $wiki_claims['P345'][0]['mainsnak']['datavalue']['value'] : '',
+			'instagram' => ( isset( $wiki_claims['P2003'] ) ) ? $wiki_claims['P2003'][0]['mainsnak']['datavalue']['value'] : '',
+			'twitter'   => ( isset( $wiki_claims['P2002'] ) ) ? $wiki_claims['P2002'][0]['mainsnak']['datavalue']['value'] : '',
+			'facebook'  => ( isset( $wiki_claims['P2013'] ) ) ? 'https://facebook.com/' . $wiki_claims['P2013'][0]['mainsnak']['datavalue']['value'] : '',
+			'website'   => ( isset( $wiki_claims['P856'] ) ) ? $wiki_claims['P856'][0]['mainsnak']['datavalue']['value'] : '',
+		);
+	}
+
+	/**
+	 * Remove www from URLs.
+	 *
+	 * @param string $url - The URL to clean.
+	 *
+	 * @return string $url - The cleaned URL.
+	 */
+	public function remove_www( $url ) {
+		$url = str_replace( 'www.', '', $url );
+
+		return $url;
 	}
 }

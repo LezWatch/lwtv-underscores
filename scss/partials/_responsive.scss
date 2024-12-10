@@ -95,7 +95,7 @@
 @media (max-width: 990px) {
 
 	.row > * {
-		width: 350px;
+		width: 950px;
 	}
 
 	.page-template-page-home {
@@ -108,10 +108,11 @@
 		}
 	}
 
-	.site-loop.shows-we-love-loop {
-		grid-template-columns: repeat(2, 1fr);
+	header.archive-header {
+		.row {
+			text-align: center;
+		}
 	}
-
 
 	.page-template-page-fullwidth {
 		.row > * {
@@ -184,8 +185,18 @@
 		padding: 2rem;
 
 		h1.site-description {
-
 			@include fonts.font-28;
+		}
+
+		.col-sm-3 {
+			-ms-flex: 0 0 25%;
+			flex: 0 0 25%;
+			max-width: 25%;
+		}
+
+		.col-sm-9 {
+			flex: 0 0 auto;
+			width: 75%;
 		}
 	}
 
@@ -235,6 +246,14 @@
 		}
 	}
 
+	.site-loop.shows-we-love-loop {
+		grid-template-columns: repeat(2, 1fr);
+
+		.card {
+			margin: 0.5rem;
+		}
+	}
+
 	.site-loop.actor-archive-loop,
 	.site-loop.character-archive-loop,
 	.site-loop.character-show-loop,
@@ -255,6 +274,15 @@
 	.site-loop.main-posts-loop.four-across-loop {
 		grid-template-columns: repeat(3, 1fr);
 		padding-right: 1rem;
+	}
+
+	.site-loop.related-posts-by-taxonomy-loop {
+		grid-template-columns: repeat(2, 1fr);
+		grid-gap: 1rem;
+
+		.mb-3 {
+			width: 100%!important;
+		}
 	}
 
 	#characters .guest-character-list li {
