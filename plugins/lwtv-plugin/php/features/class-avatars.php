@@ -91,13 +91,17 @@ class Avatars {
 		// Set padding style based on whether it's a comment
 		$padding_style = $is_comment_object ? 'padding:5px;' : '';
 
+		// Set position based on whether it's on an admin page
+		$position = is_admin() ? 'absolute' : 'relative';
+
 		// Create initials avatar
 		$initialized_avatar = sprintf(
-			'<div style="width:%1$spx;height:%1$spx;border-radius:50%%;background-color:%2$s;position:relative;display:inline-block;%4$s">
-			<span style="position:absolute;top:50%%;left:50%%;transform:translate(-50%%,-50%%);font-size:%3$spx;font-weight:bold;color:white;height:unset;">%5$s</span>
+			'<div style="width:%1$spx;height:%1$spx;border-radius:50%%;background-color:%2$s;position:%3$s;display:inline-block;%5$s">
+			<span style="position:absolute;top:50%%;left:50%%;transform:translate(-50%%,-50%%);font-size:%4$spx;font-weight:bold;color:white;height:unset;">%6$s</span>
 		</div>',
 			$size,
 			$random_color,
+			$position,
 			floor( $size / 2.3 ), // Adjust font size based on avatar size
 			$padding_style,
 			$initials
