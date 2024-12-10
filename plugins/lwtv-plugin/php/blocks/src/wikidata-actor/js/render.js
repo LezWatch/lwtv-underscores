@@ -109,6 +109,19 @@ export default function Render() {
 									Object.entries(item)[0];
 								const filteredData =
 									filteredPersonData(personData);
+
+								if ('error' === personData.wikidata) {
+									return (
+										<div key={key}>
+											<h3>{personData.name}</h3>
+											<p>
+												There is no information on
+												WikiData for this actor.
+											</p>
+										</div>
+									);
+								}
+
 								return (
 									<div key={key}>
 										<h3>
