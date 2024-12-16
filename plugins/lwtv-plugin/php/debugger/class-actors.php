@@ -501,6 +501,11 @@ class Actors {
 
 		$claims['wikidata'] = $wikidata_id;
 
+		// Save the Q-ID if we found one.
+		if ( ! empty( $wikidata_id ) ) {
+			update_post_meta( $actor_id, 'lezactors_wikidata_qid', $wikidata_id );
+		}
+
 		return $claims;
 	}
 
