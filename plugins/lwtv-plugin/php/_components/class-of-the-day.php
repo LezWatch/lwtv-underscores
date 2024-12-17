@@ -259,7 +259,7 @@ class Of_The_Day implements Component, Templater {
 		$return = array(
 			'id'    => $post_id,
 			'pid'   => $post_id,
-			'name'  => get_the_title( $post_id ),
+			'name'  => $this->clean_show_title( get_the_title( $post_id ), false ),
 			'url'   => get_the_permalink( $post_id ),
 			'image' => $image,
 		);
@@ -267,61 +267,123 @@ class Of_The_Day implements Component, Templater {
 		// Add custom array items based on type
 		switch ( $type ) {
 			case 'character':
-				$all_shows   = get_post_meta( $post_id, 'lezchars_show_group', true );
-				$shows_value = isset( $all_shows[0] ) ? $all_shows[0] : '';
-
-				// Set Hashtag
-				if ( ! empty( $shows_value ) ) {
-					$num_shows = count( $all_shows );
-					$showsmore = ( $num_shows > 1 ) ? ' (plus ' . ( $num_shows - 1 ) . ' more)' : '';
-					$show_post = get_post( $shows_value['show'] );
-					$show_name = trim( preg_replace( '~\([^)]+\)~', '', $show_post->post_title ) ); // Remove the (2018) from some shows, using ⌘ as delimiter because shows have all sorts of characters.
-					$show_name = str_replace( ' & ', ' and ', $show_name );
-					$show_name = sanitize_title( $show_name );
-					$hashtag   = '#' . implode( '', array_map( 'ucfirst', explode( '-', $show_name ) ) ) . ' ' . $showsmore;
-				}
-				// Set all shows but we only use the one because Sara Lance.
-				if ( '' !== $all_shows && ! empty( $shows_value ) ) {
-					$show_titles = array();
-					foreach ( $all_shows as $each_show ) {
-						// Remove the nested Array.
-						if ( is_array( $each_show['show'] ) ) {
-							$each_show['show'] = $each_show['show'][0];
-						}
-						array_push( $show_titles, get_the_title( $each_show['show'] ) );
-					}
-				}
-
-				// This shouldn't happen but it did.
-				if ( '#HelloWorld' === $hashtag ) {
-					$hashtag = '';
-				}
-
-				$return['status']  = ( has_term( 'dead', 'lez_cliches', $post_id ) ) ? 'dead' : 'alive';
-				$return['shows']   = ( empty( $show_titles ) ) ? 'n/a' : implode( ', ', $show_titles );
-				$return['hashtag'] = $hashtag;
+				$character         = $this->generate_cotd_data( $post_id );
+				$return['status']  = $character['status'];
+				$return['shows']   = $character['shows'];
+				$return['hashtag'] = $character['hashtag'];
 				break;
 			case 'show':
-				$return['loved']      = ( get_post_meta( $post_id, 'lezshows_worthit_show_we_love', true ) ) ? 'yes' : 'no';
-				$return['score']      = number_format( (float) get_post_meta( $post_id, 'lezshows_the_score', true ), 2, '.', '' );
-				$return['characters'] = get_post_meta( $post_id, 'lezshows_char_count', true );
-
-				// We need to do some crazy generation here
-				$post_data = get_post( $post_id );
-				// Remove the (2018) from some shows, using ⌘ as delimiter because shows have all sorts of characters but ONLY if they have a space.
-				$show_name = trim( preg_replace( '~\([^)]+\)~', '', $post_data->post_title ) );
-				// change & to and for "WillAndGrace" or "LawAndOrder"
-				$show_name = str_replace( ' & ', ' and ', $show_name );
-				// change @ to a for "tagged"
-				$show_name = str_replace( '@', 'a', $show_name );
-				$show_name = sanitize_title( $show_name );
-
-				// Hashtag
-				$return['hashtag'] = '#' . implode( '', array_map( 'ucfirst', explode( '-', $show_name ) ) );
+				$show                 = $this->generate_sotd_data( $post_id );
+				$return['loved']      = $show['loved'];
+				$return['score']      = $show['score'];
+				$return['characters'] = $show['characters'];
+				$return['hashtag']    = $show['hashtag'];
 				break;
 		}
 
 		return $return;
+	}
+
+	/**
+	 * Generate data for Character.
+	 *
+	 * @param int $post_id
+	 *
+	 * return array
+	 */
+	public function generate_cotd_data( int $post_id ): array {
+		$all_shows   = get_post_meta( $post_id, 'lezchars_show_group', true );
+		$shows_value = isset( $all_shows[0] ) ? $all_shows[0] : '';
+
+		$return = array(
+			'hashtag'   => '',
+			'shows'     => '',
+			'status'    => 'unknown',
+			'showcount' => 0,
+		);
+
+		// Return early if we don't have valid data.
+		if ( '' === $all_shows || empty( $shows_value ) || 'post_type_shows' !== get_post_type( $shows_value['show'] ) ) {
+			return $return;
+		}
+
+		$show_titles = array();
+
+		foreach ( $all_shows as $each_show ) {
+			// Remove the nested Array.
+			if ( is_array( $each_show['show'] ) ) {
+				$each_show['show'] = $each_show['show'][0];
+			}
+			array_push( $show_titles, get_the_title( $each_show['show'] ) );
+		}
+
+		$num_shows = count( $all_shows );
+		$showsmore = ( $num_shows > 1 ) ? ' (plus ' . ( $num_shows - 1 ) . ' more)' : '';
+
+		$show_post  = get_post( $shows_value['show'] );
+		$show_name  = $show_post->post_title;
+		$show_title = $this->clean_show_title( $show_post->post_title );
+
+		$hashtag = '#' . implode( '', array_map( 'ucfirst', explode( '-', $show_title ) ) );
+
+		// Set the Return
+		$return['hashtag']   = ( isset( $hashtag ) && '#HelloWorld' !== $hashtag ) ? $hashtag : '';
+		$return['shows']     = ( isset( $show_name ) ) ? $show_name . $showsmore : '';
+		$return['status']    = ( has_term( 'dead', 'lez_cliches', $post_id ) ) ? 'dead' : 'alive';
+		$return['showcount'] = ( isset( $num_shows ) ) ? $num_shows : 0;
+
+		return $return;
+	}
+
+	public function generate_sotd_data( int $post_id ): array {
+		$return = array(
+			'loved'      => '',
+			'score'      => 0,
+			'characters' => 0,
+			'hashtag'    => 0,
+		);
+
+		// Early return if it's not a show.
+		if ( 'post_type_shows' !== get_post_type( $post_id ) ) {
+			return $return;
+		}
+
+		$return['loved']      = ( get_post_meta( $post_id, 'lezshows_worthit_show_we_love', true ) ) ? 'yes' : 'no';
+		$return['score']      = number_format( (float) get_post_meta( $post_id, 'lezshows_the_score', true ), 2, '.', '' );
+		$return['characters'] = get_post_meta( $post_id, 'lezshows_char_count', true );
+
+		// We need to do some crazy generation here
+		$post_data  = get_post( $post_id );
+		$show_title = $this->clean_show_title( $post_data->post_title );
+
+		// Hashtag
+		$return['hashtag'] = '#' . implode( '', array_map( 'ucfirst', explode( '-', $show_title ) ) );
+
+		return $return;
+	}
+
+	/**
+	 * Clean the show title for sharing.
+	 */
+	public function clean_show_title( string $show_title, bool $sanitize = true ): string {
+
+		if ( empty( $show_title ) ) {
+			return '';
+		}
+
+		// Remove the (2018) from some shows, using ⌘ as delimiter because shows have all sorts of characters but ONLY if they have a space.
+		$show_title = trim( preg_replace( '~\([^)]+\)~', '', $show_title ) );
+		// change & to and for "WillAndGrace" or "LawAndOrder"
+		$show_title = str_replace( ' & ', ' and ', $show_title );
+		// change @ to a for "tagged"
+		$show_title = str_replace( '@', 'a', $show_title );
+
+		// If it's the title, we want to sanitize to lowercase.
+		if ( $sanitize ) {
+			$show_title = sanitize_title( $show_title );
+		}
+
+		return $show_title;
 	}
 
 	/**
