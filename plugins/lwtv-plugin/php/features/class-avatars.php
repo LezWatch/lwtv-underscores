@@ -7,6 +7,41 @@ namespace LWTV\Features;
 
 class Avatars {
 
+	/**
+	 * Letter to numbers
+	 */
+	private $letter_values = array(
+		'a' => 0xFF0000, // Red
+		'b' => 0xFFFF00, // Green
+		'c' => 0x00FF00, // Blue
+		'd' => 0x0000FF, // Yellow
+		'e' => '13', // Light Blue
+		'f' => '14', // Navy Blue
+		'g' => '15', // Dark Blue
+		'h' => '16', // Purple
+		'i' => '17', // Magenta
+		'j' => '18', // Black
+		'k' => '-1', // Dark Gray
+		'l' => '-2', // Dark Green
+		'm' => '13', // Light Blue
+		'n' => '-12', // Navy Blue
+		'o' => '-11', // Purple
+		'p' => '-10', // Magenta
+		'q' => '-9',  // Dark Green
+		'r' => '-8',   // Black
+		's' => '-7',   // Gray
+		't' => '-6',   // Navy Blue
+		'u' => '-5',   // Magenta
+		'v' => '-4',   // Purple
+		'w' => '-3',   // Dark Green
+		'x' => '-2',   // Navy Blue
+		'y' => '-1',   // Black
+		'z' => '0',
+	);
+
+	/**
+	 * Constructor.
+	 */
 	public function __construct() {
 		add_filter( 'get_avatar', array( $this, 'avatar_filter' ), 10, 6 );
 	}
@@ -75,15 +110,8 @@ class Avatars {
 			$name = ! empty( $email ) ? substr( $email, 0, 1 ) : 'L'; // Use first character of email or '?'
 		}
 
-		// Extract initials
-		$words    = explode( ' ', $name );
-		$initials = strtoupper( substr( $words[0], 0, 1 ) . ( isset( $words[1] ) ? substr( $words[1], 0, 1 ) : '' ) );
-
-		// Convert the first byte of a string to a value between 0 and 255. If there are two initials, add the second byte.
-		$numberized = ord( $initials[0] ) + ( isset( $initials[1] ) ? ord( $initials[1] ) : 0 );
-
-		// Generate hex color based on initials
-		$random_color = '#' . str_pad( dechex( $numberized ), 6, '0', STR_PAD_LEFT );
+		$initials  = $this->get_initials( $name );
+		$hex_color = $this->make_color( $initials );
 
 		// Determine if the input is a comment object
 		$is_comment_object = is_object( $id_or_email ) && isset( $id_or_email->comment_author );
@@ -91,20 +119,21 @@ class Avatars {
 		// Set padding style based on whether it's a comment
 		$padding_style = $is_comment_object ? 'padding:5px;' : '';
 
-		// Set position based on whether it's on an admin page
-		$position = is_admin() ? 'absolute' : 'relative';
+		// Tweak Size for Admin pages
+		$size  = is_admin() ? $size - 10 : $size;
+		$admin = is_admin() ? 'float: left;margin-right: 10px;margin-top: 1px;' : '';
 
 		// Create initials avatar
 		$initialized_avatar = sprintf(
-			'<div style="width:%1$spx;height:%1$spx;border-radius:50%%;background-color:%2$s;position:%3$s;display:inline-block;%5$s">
+			'<div style="width:%1$spx;height:%1$spx;border-radius:50%%;background-color:%2$s;position: relative;%3$sdisplay:inline-block;%5$s">
 			<span style="position:absolute;top:50%%;left:50%%;transform:translate(-50%%,-50%%);font-size:%4$spx;font-weight:bold;color:white;height:unset;">%6$s</span>
 		</div>',
-			$size,
-			$random_color,
-			$position,
-			floor( $size / 2.3 ), // Adjust font size based on avatar size
-			$padding_style,
-			$initials
+			$size, // %1$s
+			$hex_color, // %2$s
+			$admin, // %3$s
+			floor( $size / 2.3 ), // Adjust font size based on avatar size %4$s
+			$padding_style, // %5$s
+			$initials // %6$s
 		);
 
 		return $initialized_avatar;
@@ -124,12 +153,50 @@ class Avatars {
 		$avatar_url = 'http://www.gravatar.com/avatar/' . $hash . '?d=404';
 		$response   = wp_remote_get( $avatar_url );
 
-		if ( isset( $response['response']['code'] ) && 404 === $response['response']['code'] ) {
+		if ( is_wp_error( $response ) || ( isset( $response['response']['code'] ) && 404 === $response['response']['code'] ) ) {
 			$has_valid_avatar = false;
 		} else {
 			$has_valid_avatar = true;
 		}
 
 		return $has_valid_avatar;
+	}
+
+	/**
+	 * Generate the color based on initials
+	 */
+	public function make_color( string $initials ) {
+		$result = '';
+		foreach ( str_split( $initials ) as $char ) {
+			$char = strtolower( $char );
+			if ( array_key_exists( $char, $this->letter_values ) ) {
+				$result .= $this->letter_values[ $char ];
+			}
+		}
+
+		$clean_string = sprintf( '%02x', $result );
+		$hex_code     = substr( md5( $clean_string ), 0, 6 );
+
+		return '#' . $hex_code;
+	}
+
+	/**
+	 * Turn name into initials.
+	 *
+	 * @param string $name
+	 *
+	 * @return string
+	 */
+	public function get_initials( string $name ): string {
+		// Turn Name into Array
+		$words    = explode( ' ', $name );
+		$initials = '';
+
+		// For each word in the array, get the first letter and it's associated number
+		foreach ( $words as $word ) {
+			$initials .= strtoupper( substr( $word, 0, 1 ) );
+		}
+
+		return $initials;
 	}
 }
