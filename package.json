@@ -46,7 +46,7 @@
   "dependencies": {
     "@npmcli/fs": "^4",
     "@popperjs/core": "^2.11.8",
-    "@wordpress/components": "^28.13.0",
+    "@wordpress/components": "^29.0.0",
     "chart.js": "^4",
     "chartjs-plugin-annotation": "^3",
     "coffeescript": "^2.7.0",
@@ -57,7 +57,7 @@
     "@lodder/grunt-postcss": "^3.1",
     "@parcel/watcher": "^2.5",
     "@types/node": "^22",
-    "@wordpress/scripts": "^30.6.0",
+    "@wordpress/scripts": "^30.7.0",
     "autoprefixer": "^10.4",
     "css-minimizer-webpack-plugin": "^7.0",
     "eslint-plugin-prettier": "^5.2",
