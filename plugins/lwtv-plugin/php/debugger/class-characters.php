@@ -10,8 +10,97 @@
 namespace LWTV\Debugger;
 
 use LWTV\Queeries\Post_Type;
+use LWTV\Queeries\Taxonomy as Queery_Taxonomy;
 
 class Characters {
+
+	/**
+	 * Find Characters with Problems regarding BYQ
+	 *
+	 * @param  array $items Array of characters to check (can be empty)
+	 * @return array Characters with issues
+	 */
+	public function find_byq_problems( $items = array() ): array {
+		// The array we will be checking.
+		$characters = array();
+
+		// Are we a full scan or a recheck?
+		if ( ! empty( $items ) ) {
+			// Check only the characters from items!
+			foreach ( $items as $character_item ) {
+				if ( get_post_status( $character_item['id'] ) !== 'draft' ) {
+					// If it's NOT a draft, we'll recheck.
+					$characters[] = $character_item['id'];
+				}
+			}
+		} else {
+			$the_loop = ( new Queery_Taxonomy() )->make( 'post_type_characters', 'lez_cliches', 'slug', 'dead' );
+
+			if ( is_object( $the_loop ) && $the_loop->have_posts() ) {
+				$characters = wp_list_pluck( $the_loop->posts, 'ID' );
+			}
+		}
+
+		// If somehow characters is totally empty...
+		if ( empty( $characters ) ) {
+			return false;
+		}
+
+		// Make sure we don't have dupes.
+		$characters = array_unique( $characters );
+
+		// reset items since we recheck off $characters.
+		$items = array();
+
+		foreach ( $characters as $char_id ) {
+			$problems = array();
+
+			$shows = get_post_meta( $char_id, 'lezchars_show_group', true );
+
+			// If there are no shows, skip.
+			if ( empty( $shows ) ) {
+				continue;
+			}
+
+			// Get all the shows the character is on. If ANY of them are missing the dead-queers trope we have a problem
+			foreach ( $shows as $each_show ) {
+				// Remove the Array.
+				if ( is_array( $each_show['show'] ) ) {
+					$each_show['show'] = $each_show['show'][0];
+				}
+
+				$show_id = $each_show['show'];
+
+				if ( ! has_term( 'dead-queers', 'lez_tropes', $show_id ) ) {
+					$problems[] = 'There is no BYQ trope on the show <a href="https://lwtv.local/wp-admin/post.php?post=' . $each_show['show'] . '&action=edit">' . get_the_title( $each_show['show'] ) . '</a> (edit).';
+				}
+			}
+
+			// Check if we have any problems, and the character isn't marked dead on at least ONE show.
+			if ( ! empty( $problems ) && ( count( $shows ) - count( $problems ) ) !== 1 ) {
+				$items[] = array(
+					'url'     => get_permalink( $char_id ),
+					'id'      => $char_id,
+					'problem' => implode( '</br>', $problems ),
+				);
+			}
+		}
+
+		// Save Transient
+		set_transient( 'lwtv_debug_byq_problems', $items, WEEK_IN_SECONDS );
+
+		// Update Options
+		$option                 = get_option( 'lwtv_debugger_status' );
+		$option['byq_problems'] = array(
+			'name'  => 'Bury Your Queers Problems',
+			'count' => ( ! empty( $items ) ) ? count( $items ) : 0,
+			'last'  => time(),
+		);
+		$option['timestamp']    = time();
+		update_option( 'lwtv_debugger_status', $option );
+
+		return $items;
+	}
 
 	/**
 	 * Find Characters with Problems
@@ -132,7 +221,7 @@ class Characters {
 	 * The recheck check happens earlier.
 	 *
 	 * @param  int   $show_id post ID of show
-	 * @return array array saying what's wrong.
+	 * @return string What's wrong
 	 */
 	public function check_disabled_characters( $show_id ): array {
 
@@ -149,7 +238,6 @@ class Characters {
 
 		// Default has disabled
 		$has_disabled = false;
-		$problems     = array();
 
 		foreach ( $characters as $character ) {
 			// If someone has disabled, we're good.
@@ -159,9 +247,7 @@ class Characters {
 			}
 		}
 
-		if ( ! $has_disabled ) {
-			$problems[] = 'No character on this show is tagged as disabled. Please review.';
-		}
+		$problems = ( ! $has_disabled ) ? 'No character on this show is tagged as disabled. Please review.' : '';
 
 		return $problems;
 	}
