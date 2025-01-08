@@ -166,10 +166,6 @@ class WP_CLI_LWTV_Generate {
 		if ( ! empty( $missed_schedule ) ) {
 			\WP_CLI::line( $missed_schedule );
 		}
-
-		// Build tv maze:
-		\WP_CLI::line( 'Downloading the TV Maze ICS.' );
-		$this->run_tvmaze();
 	}
 
 	/**
@@ -183,6 +179,10 @@ class WP_CLI_LWTV_Generate {
 		// run OTD
 		\WP_CLI::line( 'Setting the "Of the Day"...' );
 		$this->run_otd();
+
+		// Build tv maze:
+		\WP_CLI::line( 'Downloading the TV Maze ICS.' );
+		$this->run_tvmaze();
 
 		// Run the debug of the day:
 		$day = gmdate( 'D' );
@@ -201,21 +201,21 @@ class WP_CLI_LWTV_Generate {
 	 */
 	public function run_debug_checker( $day = null ) {
 		// If we got here without a Day, it's today.
-		$day = ( isset( $day ) ) ? $day : gmdate( 'D' );
+		$day = ( ! isset( $day ) || is_null( $day ) ) ? gmdate( 'D' ) : $day;
 
 		// Run a different check each day.
 		switch ( strtolower( $day ) ) {
 			case 'mon':
-				( new Actors_Debugger() )->find_actors_problems();
+				( new Queers_Debugger() )->find_queer_chars();
 				break;
 			case 'tue':
-				( new Actors_Debugger() )->find_actors_no_imdb();
+				( new Characters_Debugger() )->find_byq_problems();
 				break;
 			case 'wed':
 				( new Dupes_Debugger() )->find_duplicates();
 				break;
 			case 'thu':
-				( new Queers_Debugger() )->find_queer_chars();
+				( new Actors_Debugger() )->find_actors_problems();
 				break;
 			case 'fri':
 				( new Characters_Debugger() )->find_characters_problems();
@@ -224,6 +224,7 @@ class WP_CLI_LWTV_Generate {
 				( new Shows_Debugger() )->find_shows_problems();
 				break;
 			case 'sun':
+				( new Actors_Debugger() )->find_actors_no_imdb();
 				( new Shows_Debugger() )->find_shows_no_imdb();
 				break;
 			default:
