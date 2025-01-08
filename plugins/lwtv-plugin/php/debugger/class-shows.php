@@ -218,28 +218,17 @@ class Shows {
 	 * Check shows with intersectionality
 	 * Ensure they have matching characters.
 	 *
-	 * @param int   $show_id - the show ID to check.
-	 * @return array $items  - array of problems. Can be empty.
+	 * @param int    $show_id - the show ID to check.
+	 * @return array $problems  - array of problems. Can be empty.
 	 */
-	public function check_intersection_problems( int $show_id ) {
+	public function check_intersection_problems( int $show_id ): array {
 
 		$intersections = get_post_meta( $show_id, 'lez_intersections', true );
 
 		if ( ! $intersections || is_wp_error( $intersections ) ) {
 			return array();
 		}
-
-		$items    = array();
-		$problems = ( new Characters_Debugger() )->check_disabled_characters( $show_id );
-
-		// if there are problems, we put them in items.
-		if ( ! empty( $problems ) ) {
-			$items[] = array(
-				'url'     => get_permalink( $show_id ),
-				'id'      => $show_id,
-				'problem' => implode( '</br>', $problems ),
-			);
-		}
+		$problems[] = ( new Characters_Debugger() )->check_disabled_characters( $show_id );
 
 		return $problems;
 	}

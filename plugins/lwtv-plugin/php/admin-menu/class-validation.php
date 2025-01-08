@@ -10,8 +10,9 @@ namespace LWTV\Admin_Menu;
 use LWTV\Validator\Actor_Checker;
 use LWTV\Validator\Actor_IMDb;
 use LWTV\Validator\Actor_Wiki;
-use LWTV\Validator\Duplicates;
+use LWTV\Validator\BYQ_Checker;
 use LWTV\Validator\Character_Checker;
+use LWTV\Validator\Duplicates;
 use LWTV\Validator\Queer_Checker;
 use LWTV\Validator\Show_Checker;
 use LWTV\Validator\Show_IMDb;
@@ -39,6 +40,11 @@ class Validation {
 			'name'   => 'Dupes',
 			'desc'   => 'Actors and Shows that are duplicates.',
 			'option' => 'duplicates',
+		),
+		'byq_checker'       => array(
+			'name'   => 'BYQ',
+			'desc'   => 'Checks all the shows and characters with death are reciprocal. This may be okay, because Sara Lance.',
+			'option' => 'byq_problems',
 		),
 		'actor_checker'     => array(
 			'name'   => 'Actors',
@@ -172,7 +178,7 @@ class Validation {
 					<a href="?page=lwtv_data_check&tab=tab_<?php echo esc_attr( $tab ); ?>" class="nav-tab <?php echo esc_attr( $active ); ?>">
 						<?php
 						echo esc_html( $value['name'] );
-						if ( $options[ $value['option'] ]['count'] ) {
+						if ( $options[ $value['option'] ] && $options[ $value['option'] ]['count'] ) {
 							echo ' <span class="validation-errors count-' . esc_attr( $options[ $value['option'] ]['count'] ) . '"><span class="validation-count">' . esc_attr( $options[ $value['option'] ]['count'] ) . '</span></span>';
 						}
 						?>
@@ -194,6 +200,9 @@ class Validation {
 						break;
 					case 'tab_actor_wiki':
 						( new Actor_Wiki() )->make();
+						break;
+					case 'tab_byq_checker':
+						( new BYQ_Checker() )->make();
 						break;
 					case 'tab_dupe_checker':
 						( new Duplicates() )->make();
