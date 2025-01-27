@@ -72,7 +72,7 @@ class Characters {
 				$show_id = $each_show['show'];
 
 				if ( ! has_term( 'dead-queers', 'lez_tropes', $show_id ) ) {
-					$problems[] = 'There is no BYQ trope on the show <a href="https://lwtv.local/wp-admin/post.php?post=' . $each_show['show'] . '&action=edit">' . get_the_title( $each_show['show'] ) . '</a> (edit).';
+					$problems[] = 'There is no BYQ trope on the show <a href="/wp-admin/post.php?post=' . $each_show['show'] . '&action=edit">' . get_the_title( $each_show['show'] ) . '</a> (edit).';
 				}
 			}
 
