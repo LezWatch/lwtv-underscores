@@ -19,13 +19,13 @@
 		"packages-update": "wp-scripts packages-update"
 	},
 	"dependencies": {
-		"@wordpress/api-fetch": "^7.16.0",
-		"@wordpress/babel-plugin-import-jsx-pragma": "^5.16.0",
-		"@wordpress/blocks": "^14.5.0",
-		"@wordpress/i18n": "^5.16.0",
-		"@wordpress/icons": "^10.16.0"
+		"@wordpress/api-fetch": "^7.17.0",
+		"@wordpress/babel-plugin-import-jsx-pragma": "^5.17.0",
+		"@wordpress/blocks": "^14.6.0",
+		"@wordpress/i18n": "^5.17.0",
+		"@wordpress/icons": "^10.17.0"
 	},
 	"devDependencies": {
-		"@wordpress/scripts": "^30.9.0"
+		"@wordpress/scripts": "^30.10.0"
 	}
 }
