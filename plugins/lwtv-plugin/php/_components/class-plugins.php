@@ -10,6 +10,7 @@ use LWTV\Plugins\FacetWP;
 use LWTV\Plugins\Gravity_Forms;
 use LWTV\Plugins\Jetpack;
 use LWTV\Plugins\Related_Posts_By_Taxonomy;
+use LWTV\Plugins\SearchWP;
 use LWTV\Plugins\WP_Rocket;
 use LWTV\Plugins\Yoast;
 
@@ -27,6 +28,7 @@ class Plugins implements Component, Templater {
 		new Gravity_Forms();
 		new Jetpack();
 		new Related_Posts_By_Taxonomy();
+		new SearchWP();
 		new WP_Rocket();
 		new Yoast();
 
