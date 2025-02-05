@@ -112,7 +112,7 @@ Pushes to branches are automatically deployed via Github Actions as follows:
 
 * Supports three front facing Custom Post Types and related taxonomies: Characters, Themes, Actors
 * Supports one back end Custom Post Type: TV Maze Aliases
-* Integrated with [FacetWP](https://facetwp.com), [Jetpack Instant Search](https://jetpack.com/support/search/), and [CMB2](https://cmb2.io/).
+* Integrated with [FacetWP](https://facetwp.com) and [CMB2](https://cmb2.io/).
 * Additional custom image sizes: Show (960x400), Character (225x300), Actor (225x300)
 * Additional custom sidebars: Show, Character, and Actor Archives
 * Widgets: Display latest custom post type posts (show and character) with image

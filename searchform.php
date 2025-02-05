@@ -14,15 +14,9 @@
 		<form role="search" class="search-form" action="<?php echo esc_url( home_url( '/' ) ); ?>" method="get">
 			<div class="input-group input-group-sm">
 				<input type="text" name="s" id="sidebar-search" class="form-control" aria-label="Search for..." value="<?php the_search_query(); ?>" title="<?php echo esc_html_x( 'Search for:', 'label', 'lwtv-underscores' ); ?>" >
-				<?php
-				if ( ! class_exists( 'Jetpack_Search' ) ) {
-					?>
-					<span class="input-group-btn">
-						<button class="btn btn-primary btn-sm" type="submit">Go</button>
-					</span>
-					<?php
-				}
-				?>
+				<span class="input-group-btn">
+					<button class="btn btn-primary btn-sm" type="submit">Go</button>
+				</span>
 			</div>
 		</form>
 	</div><!-- .card-body -->

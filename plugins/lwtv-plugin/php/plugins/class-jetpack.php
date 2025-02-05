@@ -22,9 +22,6 @@ class Jetpack {
 		// Jetpack extra images.
 		add_action( 'admin_init', array( $this, 'jetpack_external_images' ) );
 
-		// Allows responsive videos when using the [video] shortcode, or VideoPress
-		add_action( 'after_setup_theme', array( $this, 'jetpack_videos' ) );
-
 		// Disable jetpack sharing counts to not phone home to Facebook.
 		add_filter( 'jetpack_sharing_counts', '__return_false' );
 
@@ -35,16 +32,6 @@ class Jetpack {
 		// Kill AI in Jetpack.
 		add_filter( 'jetpack_ai_chat_enabled', array( $this, 'disable_ai' ) );
 		add_filter( 'jetpack_ai_enabled', array( $this, 'disable_ai' ) );
-	}
-
-	/**
-	 * Jetpack Videos
-	 *
-	 * This allows for responsive videos when using the [video]
-	 * shortcode, or VideoPress
-	 */
-	public function jetpack_videos() {
-		add_theme_support( 'jetpack-responsive-videos' );
 	}
 
 	/**

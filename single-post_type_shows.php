@@ -47,7 +47,7 @@ get_header(); ?>
 									while ( have_posts() ) :
 										the_post();
 										get_template_part( 'template-parts/content/' . get_post_type() );
-										// Force Jetpack share links to display ONCE.
+										// Display sharing links where we want them.
 										lwtv_plugin()->post_meta_sharing( get_the_ID() );
 										// Echo last updated.
 										lwtv_plugin()->get_last_updated( get_the_ID() );
