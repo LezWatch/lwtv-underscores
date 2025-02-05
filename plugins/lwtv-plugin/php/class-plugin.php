@@ -36,7 +36,7 @@ use LWTV\_Helpers\Utils;
  * @method string get_rss_otd_feed()       \_Components\Of_The_Day
  *
  * PLUGINS
- * @method array  jetpack_post_meta()                 \_Components\Plugins
+ * @method array  post_meta_sharing()                 \_Components\Plugins
  *
  * QUEERY / LOOPS
  * @method bool   is_actor_queer( $the_id )           \_Components\Queeries
