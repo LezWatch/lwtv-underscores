@@ -8,7 +8,6 @@ use LWTV\Plugins\CMB2;
 use LWTV\Plugins\Comment_Probation;
 use LWTV\Plugins\FacetWP;
 use LWTV\Plugins\Gravity_Forms;
-use LWTV\Plugins\Jetpack;
 use LWTV\Plugins\Related_Posts_By_Taxonomy;
 use LWTV\Plugins\SearchWP;
 use LWTV\Plugins\WP_Rocket;
@@ -26,7 +25,6 @@ class Plugins implements Component, Templater {
 		new CMB2();
 		new FacetWP();
 		new Gravity_Forms();
-		new Jetpack();
 		new Related_Posts_By_Taxonomy();
 		new SearchWP();
 		new WP_Rocket();

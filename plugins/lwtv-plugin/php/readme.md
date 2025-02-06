@@ -6,7 +6,7 @@ This plugin uses the autoload and template capabilities, as `lwtv_plugin()`.
 
 A _component_ can be thought of as a _sub-plugin_. It is an atomic, independent module that stores business logic related to a specific feature. It may expose some template tags (functions) that can be called from within the themes.
 
-All custom code needs should be added in the `/php/_components` directory. This includes all custom code needed for integration with plugins (Jetpack, ACF, etc).
+All custom code needs should be added in the `/php/_components` directory. This includes all custom code needed for integration with plugins (CMB2, FacetWP, etc).
 
 The file should be named `class-[component].php` where `[component]` clearly indicates what the component is for. The file should be a part of the Components namespace (`LWTV\_Components`).
 

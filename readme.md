@@ -402,7 +402,6 @@ Stored in `/php/plugins/` - all files are used to enhance other plugins installe
     - `class-gf-approvals.php` - Approval Code (forked from another plugin)
     - `class-stop-spammers.php` - Block Spammers
 * `class-gutenberg.php` - make Block Editor stop being such a dillhole and forget preferences
-* `class-jetpack.php`  - Jetpack integration
 * `class-related-posts-by-taxonomy.php` - Filters to allow a custom layout for "Shows Like This"
 * `class-wp-rocket.php` - Integration with WP Rocket to flush content when interrelated posts are updated
 * `class-yoast.php` - Custom Yoast controls
