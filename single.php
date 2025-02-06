@@ -35,8 +35,8 @@ get_header(); ?>
 								get_template_part( 'template-parts/content/' . get_post_type() );
 							}
 
-							// Force Jetpack to display sharing links where we want them.
-							lwtv_plugin()->jetpack_post_meta();
+							// Display sharing links where we want them.
+							lwtv_plugin()->post_meta_sharing( get_the_ID() );
 
 							// If comments are open or we have at least one comment, load up the comment template.
 							if ( comments_open() || '0' !== get_comments_number() ) {

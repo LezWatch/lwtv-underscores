@@ -30,7 +30,7 @@ echo '<?xml version="1.0" encoding="' . esc_attr( get_option( 'blog_charset' ) )
 	<sy:updateFrequency><?php echo esc_html( apply_filters( 'rss_update_frequency', '1' ) ); ?></sy:updateFrequency>
 	<generator>https://wordpress.org/?v=<?php echo floatval( lwtv_plugin()->get_wp_version() ); ?></generator>
 	<image>
-		<url><?php echo esc_url( get_option( 'jetpack_site_icon_url' ) ); ?></url>
+	<url><?php echo esc_url( get_site_icon_url( 32, includes_url( 'images/w-logo-blue-white-bg.png' ) ) ); ?></url>
 		<title>LezWatch.TV Of The Day - Feed</title>
 		<link><?php echo esc_url( get_site_url() ); ?>/feed/otd/</link>
 		<width>32</width>

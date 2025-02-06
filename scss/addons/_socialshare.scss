@@ -1,0 +1,760 @@
+/**
+ * Sharedaddy Base Styles
+ *
+ * Contains styles for modules, containers, buttons
+ */
+
+@use "../partials/mixins";
+
+/* Master container */
+#jp-post-flair {
+	padding-top: .5em;
+}
+
+
+/* Overall Sharedaddy block title */
+div.lwtvshare,
+#content div.lwtvshare,
+#main div.lwtvshare {
+	clear: both;
+}
+
+div.lwtvshare h3.lwtv-share-title {
+	margin: 0 0 1em 0;
+	display: inline-block;
+	line-height: 1.2;
+	font-size: 9pt;
+	font-weight: bold;
+}
+
+body.highlander-light h3.lwtv-share-title:before {
+	border-top: 1px solid rgba(0,0,0,.2);
+}
+
+body.highlander-dark h3.lwtv-share-title:before {
+	border-top: 1px solid rgba(255,255,255,.4);
+}
+
+
+/* Sharing services list */
+.lwtv-sharing {
+	margin-bottom: 1em;
+}
+.lwtv-share-content ul {
+	padding: 0 !important;
+	margin: 0 !important;
+	list-style: none !important;
+}
+
+.lwtv-share-content ul li {
+	display: inline-block;
+}
+
+.lwtv-share-content ul li.share-deprecated {
+	opacity: 0.5;
+}
+
+.lwtv-share-content ul li.share-deprecated a span {
+	text-decoration: line-through;
+}
+
+/* Sharing email errors */
+.lwtv-share-content .share-email-error .share-email-error-title {
+	margin: 0.5em 0;
+}
+.lwtv-share-content .share-email-error .share-email-error-text {
+	font-family: "Open Sans", sans-serif;
+	font-size: 12px;
+	margin: 0.5em 0;
+}
+
+
+/* Buttons */
+.lwtv-social-icon .lwtv-share-content ul li a.lwtv-share-button,
+.lwtv-social-text .lwtv-share-content ul li a.lwtv-share-button,
+.lwtv-share-content ul li a.lwtv-share-button,
+.lwtv-share-content ul li .option a.share-ustom,
+.lwtv-share-content ul li.preview-item div.option.option-smart-off a,
+.lwtv-share-content ul li.advanced a.share-more,
+.lwtv-social-icon-text .lwtv-share-content ul li a.lwtv-share-button,
+.lwtv-social-official .lwtv-share-content>ul>li>a.lwtv-share-button,
+#sharing_email .sharing_send,
+.lwtv-social-official .lwtv-share-content>ul>li .digg_button >a {
+	text-decoration: none !important;
+	display: inline-block;
+	font-size: 13px;
+	font-family: "Open Sans", sans-serif;
+	font-weight: 500;
+	border-radius: 4px;
+	color: #2C3338 !important;
+	background: #fff;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(0, 0, 0, 0.12);
+	text-shadow: none;
+	line-height: 23px;
+	padding: 4px 11px 3px 9px;
+}
+
+.lwtv-social-official .lwtv-share-content ul li a.lwtv-share-button,
+.lwtv-social-official .lwtv-share-content ul li.preview-item div.option.option-smart-off a {
+	align-items: center;
+	display: flex;
+	font-size: 12px;
+	line-height: 12px;
+	padding: 1px 6px 0px 5px;
+	min-height: 20px;
+}
+
+.lwtv-social-official .lwtv-share-content ul.preview li a.lwtv-share-button,
+.lwtv-social-official .lwtv-share-content ul.preview li.preview-item div.option.option-smart-off a {
+	position: relative;
+	top: 2px;
+}
+
+.lwtv-share-content ul li a.lwtv-share-button>span,
+.lwtv-share-content ul li .option a.share-ustom span,	/* Ugh. */
+.lwtv-share-content ul li.preview-item div.option.option-smart-off a span,
+.lwtv-share-content ul li.advanced a.share-more span,
+.lwtv-social-icon-text .lwtv-share-content ul li a.lwtv-share-button>span,
+.lwtv-social-official .lwtv-share-content>ul>li>a.lwtv-share-button span,
+.lwtv-social-official .lwtv-share-content>ul>li .digg_button >a span {		/* official Digg button no longer works, needs cleaning */
+	line-height: 23px;
+	margin-left: 6px;
+}
+
+/* Icon Only */
+.lwtv-social-icon .lwtv-share-content ul li a.lwtv-share-button>span {
+	margin-left: 0;
+}
+
+/* Text Only */
+.lwtv-social-text .lwtv-share-content ul li a.lwtv-share-button span {
+	margin-left: 3px;
+}
+
+.lwtv-social-official .lwtv-share-content ul li a.lwtv-share-button>span,
+.lwtv-social-official .lwtv-share-content ul li.preview-item div.option.option-smart-off a span {
+	line-height: 12px;
+	margin-left: 3px;
+}
+
+
+.lwtv-social-official .lwtv-share-content>ul>li>a.lwtv-share-button:before,
+.lwtv-social-official .lwtv-share-content>ul>li .digg_button>a:before,
+.lwtv-social-official .lwtv-share-content .sharing-hidden .inner>ul>li>a.lwtv-share-button:before,
+.lwtv-social-official .lwtv-share-content .sharing-hidden .inner>ul>li .digg_button>a:before {
+	margin-bottom: -1px;
+}
+
+.lwtv-social-icon .lwtv-share-content ul li a.lwtv-share-button:hover,
+.lwtv-social-icon .lwtv-share-content ul li a.lwtv-share-button:active,
+.lwtv-social-text .lwtv-share-content ul li a.lwtv-share-button:hover,
+.lwtv-social-text .lwtv-share-content ul li a.lwtv-share-button:active,
+.lwtv-social-icon-text .lwtv-share-content ul li a.lwtv-share-button:hover,
+.lwtv-social-icon-text .lwtv-share-content ul li a.lwtv-share-button:active,
+.lwtv-social-official .lwtv-share-content>ul>li>a.lwtv-share-button:hover,
+.lwtv-social-official .lwtv-share-content>ul>li>a.lwtv-share-button:active,
+.lwtv-social-official .lwtv-share-content>ul>li .digg_button>a:hover,
+.lwtv-social-official .lwtv-share-content>ul>li .digg_button>a:active {
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.22), 0 0 0 1px rgba(0, 0, 0, 0.22);
+}
+
+.lwtv-social-icon .lwtv-share-content ul li a.lwtv-share-button:active,
+.lwtv-social-text .lwtv-share-content ul li a.lwtv-share-button:active,
+.lwtv-social-icon-text .lwtv-share-content ul li a.lwtv-share-button:active,
+.lwtv-social-official .lwtv-share-content>ul>li>a.lwtv-share-button:active,
+.lwtv-social-official .lwtv-share-content>ul>li .digg_button>a:active {
+	box-shadow: inset 0 1px 0 rgba(0,0,0,.16);
+}
+
+/* All icons */
+.lwtv-share-content ul li a.lwtv-share-button:before {
+	display: inline-block;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	font: normal 18px/1 'social-logos';
+	vertical-align: top;
+	text-align: center;
+}
+/* text + icon styles should have relative and top position */
+.lwtv-social-icon-text ul li a.lwtv-share-button:before {
+	position: relative;
+	top: 2px;
+}
+
+/* Make it look great in Chrome and Safari */
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+	.lwtv-share-content ul li a.lwtv-share-button:before {
+		position: relative;
+		top: 2px;
+	}
+}
+
+.lwtv-social-official ul li a.lwtv-share-button:before {
+	position: relative;
+	top: -2px;
+}
+/* Make it look great in Chrome and Safari */
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+	.lwtv-social-official ul li a.lwtv-share-button:before {
+		top: 0px;
+	}
+}
+
+.lwtv-share-content ul li {
+	margin: 0 8px 12px 0;
+	padding: 0;
+}
+/* Add more pading on touch devices */
+.jp-sharing-input-touch .lwtv-share-content ul li { padding-left: 10px; }
+
+.lwtv-share-content ul li.preview-item.no-icon a.lwtv-share-button span {
+	margin-left: 0;
+}
+
+/* Text only */
+.lwtv-social-text .lwtv-share-content ul li a:before,
+.lwtv-share-content ul li.no-icon a:before {
+	display: none;
+}
+body .lwtv-social-text .lwtv-share-content ul li.share-custom a span,
+body .lwtv-share-content ul li.share-custom.no-icon a span {
+	background-image: none;
+	background-position: -500px -500px !important;	/* hack to work around !important inline style */
+	background-repeat: no-repeat !important;
+	padding-left: 0;
+	height: 0;
+	line-height: inherit;
+}
+
+.lwtv-social-icon .lwtv-share-content ul li a.share-more {
+	position: relative;
+	top: -4px;
+}
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+	.lwtv-social-icon .lwtv-share-content ul li a.share-more {
+		top: 2px;
+	}
+}
+/* Firefox specific hack to make the share more button look better on Firefox. */
+@-moz-document url-prefix() {
+	.lwtv-social-icon .lwtv-share-content ul li a.share-more {
+		top: 2px;
+	}
+}
+
+.lwtv-social-icon .lwtv-share-content ul li a.share-more span {
+	margin-left: 3px;
+}
+
+
+/* Individual icons */
+.lwtv-social-icon .lwtv-share-content ul li.share-print a:before,
+.lwtv-social-text .lwtv-share-content ul li.share-print a:before,
+.lwtv-share-content ul li.share-print div.option.option-smart-off a:before,
+.lwtv-social-icon-text .lwtv-share-content li.share-print a:before,
+.lwtv-social-official .lwtv-share-content li.share-print a:before {
+	@include mixins.fontawesome_free("\f02f");
+}
+
+.lwtv-social-icon .lwtv-share-content ul li.share-email a:before,
+.lwtv-social-text .lwtv-share-content ul li.share-email a:before,
+.lwtv-share-content ul li.share-email div.option.option-smart-off a:before,
+.lwtv-social-icon-text .lwtv-share-content li.share-email a:before,
+.lwtv-social-official .lwtv-share-content li.share-email a:before {
+	@include mixins.fontawesome_free("\f0e0");
+}
+.lwtv-social-icon .lwtv-share-content ul li.share-linkedin a:before,
+.lwtv-social-text .lwtv-share-content ul li.share-linkedin a:before,
+.lwtv-share-content ul li.share-linkedin div.option.option-smart-off a:before,
+.lwtv-social-icon-text .lwtv-share-content li.share-linkedin a:before {
+	@include mixins.fontawesome_brand("\f0e1");
+}
+.lwtv-social-icon .lwtv-share-content ul li.share-twitter a:before,
+.lwtv-social-text .lwtv-share-content ul li.share-twitter a:before,
+.lwtv-share-content ul li.share-twitter div.option.option-smart-off a:before,
+.lwtv-social-icon-text .lwtv-share-content li.share-twitter a:before {
+	@include mixins.fontawesome_brand("\e61b");
+}
+.lwtv-social-icon .lwtv-share-content ul li.share-x a:before,
+.lwtv-social-text .lwtv-share-content ul li.share-x a:before,
+.lwtv-share-content ul li.share-x div.option.option-smart-off a:before,
+.lwtv-social-icon-text .lwtv-share-content li.share-x a:before {
+	@include mixins.fontawesome_brand("\e61b");
+}
+.lwtv-social-icon .lwtv-share-content ul li.share-reddit a:before,
+.lwtv-social-text .lwtv-share-content ul li.share-reddit a:before,
+.lwtv-share-content ul li.share-reddit div.option.option-smart-off a:before,
+.lwtv-social-icon-text .lwtv-share-content li.share-reddit a:before,
+.lwtv-social-official .lwtv-share-content li.share-reddit a:before {
+	@include mixins.fontawesome_brand("\f281");
+}
+.lwtv-social-icon .lwtv-share-content ul li.share-tumblr a:before,
+.lwtv-social-text .lwtv-share-content ul li.share-tumblr a:before,
+.lwtv-share-content ul li.share-tumblr div.option.option-smart-off a:before,
+.lwtv-social-icon-text .lwtv-share-content li.share-tumblr a:before {
+	@include mixins.fontawesome_brand("\f173");
+}
+
+.lwtv-social-icon .lwtv-share-content ul li.share-pocket a:before,
+.lwtv-social-text .lwtv-share-content ul li.share-pocket a:before,
+.lwtv-share-content ul li.share-pocket div.option.option-smart-off a:before,
+.lwtv-social-icon-text .lwtv-share-content li.share-pocket a:before {
+	@include mixins.fontawesome_brand("\f265");
+}
+.lwtv-social-icon .lwtv-share-content ul li.share-pinterest a:before,
+.lwtv-social-text .lwtv-share-content ul li.share-pinterest a:before,
+.lwtv-share-content ul li.share-pinterest div.option.option-smart-off a:before,
+.lwtv-social-icon-text .lwtv-share-content li.share-pinterest a:before {
+	@include mixins.fontawesome_brand("\f231");
+}
+.lwtv-social-icon .lwtv-share-content ul li.share-facebook a:before,
+.lwtv-social-text .lwtv-share-content ul li.share-facebook a:before,
+.lwtv-share-content ul li.share-facebook div.option.option-smart-off a:before,
+.lwtv-social-icon-text .lwtv-share-content li.share-facebook a:before {
+	@include mixins.fontawesome_brand("\f39e");
+}
+.lwtv-social-icon .lwtv-share-content ul li.share-press-this a:before,
+.lwtv-social-text .lwtv-share-content ul li.share-press-this a:before,
+.lwtv-share-content ul li.share-press-this div.option.option-smart-off a:before,
+.lwtv-social-icon-text .lwtv-share-content li.share-press-this a:before,
+.lwtv-social-official .lwtv-share-content li.share-press-this a:before {
+	@include mixins.fontawesome_brand("\f205");
+}
+.lwtv-social-official .lwtv-share-content li.share-press-this a:before {
+	color: #2ba1cb;
+}
+.lwtv-social-icon .lwtv-share-content ul li.share-telegram a:before,
+.lwtv-social-text .lwtv-share-content ul li.share-telegram a:before,
+.lwtv-share-content ul li.share-telegram div.option.option-smart-off a:before,
+.lwtv-social-icon-text .lwtv-share-content li.share-telegram a:before,
+.lwtv-social-official .lwtv-share-content li.share-telegram a:before {
+	@include mixins.fontawesome_brand("\f2c6");
+}
+.lwtv-social-official .lwtv-share-content li.share-telegram a:before {
+	color: #0088cc;
+}
+
+.lwtv-social-icon .lwtv-share-content ul li.share-threads a:before,
+.lwtv-social-text .lwtv-share-content ul li.share-threads a:before,
+.lwtv-share-content ul li.share-threads div.option.option-smart-off a:before,
+.lwtv-social-icon-text .lwtv-share-content li.share-threads a:before,
+.lwtv-social-official .lwtv-share-content li.share-threads a:before {
+	@include mixins.fontawesome_brand("\e618");
+}
+.lwtv-social-official .lwtv-share-content li.share-threads a:before {
+	color: #000;
+}
+.lwtv-social-icon .lwtv-share-content ul li[class*='share-'].share-threads a.lwtv-share-button {
+	background: #000;
+	color: #fff !important;
+}
+
+.lwtv-social-icon .lwtv-share-content ul li.share-mastodon a:before,
+.lwtv-social-text .lwtv-share-content ul li.share-mastodon a:before,
+.lwtv-share-content ul li.share-mastodon div.option.option-smart-off a:before,
+.lwtv-social-icon-text .lwtv-share-content li.share-mastodon a:before,
+.lwtv-social-official .lwtv-share-content li.share-mastodon a:before {
+	@include mixins.fontawesome_brand("\f4f6");
+}
+.lwtv-social-official .lwtv-share-content li.share-mastodon a:before {
+	color: #563ACC;
+}
+.lwtv-social-icon .lwtv-share-content ul a.share-more:before,
+.lwtv-social-text .lwtv-share-content ul a.share-more:before,
+.lwtv-share-content ul li.advanced a.share-more:before,
+.lwtv-social-icon-text .lwtv-share-content a.share-more:before,
+.lwtv-social-official .lwtv-share-content a.share-more:before {
+	@include mixins.fontawesome_pro("\f1e0");
+}
+.lwtv-social-official .lwtv-share-content a.share-more:before {
+	color: #2ba1cb;
+}
+
+.lwtv-social-icon .lwtv-share-content ul li.share-jetpack-whatsapp a:before,
+.lwtv-social-text .lwtv-share-content ul li.share-jetpack-whatsapp a:before,
+.lwtv-share-content ul li.share-jetpack-whatsapp div.option.option-smart-off a:before,
+.lwtv-social-icon-text .lwtv-share-content li.share-jetpack-whatsapp a:before,
+.lwtv-social-official .lwtv-share-content li.share-jetpack-whatsapp a:before {
+	@include mixins.fontawesome_brand("\f232");
+}
+.lwtv-social-official .lwtv-share-content li.share-jetpack-whatsapp a:before {
+	color: #43d854;
+}
+.lwtv-social-icon .lwtv-share-content ul li[class*='share-'].share-jetpack-whatsapp a.lwtv-share-button {
+	background: #43d854;
+	color: #fff !important;
+}
+
+.lwtv-social-icon .lwtv-share-content ul li.share-nextdoor a:before,
+.lwtv-social-text .lwtv-share-content ul li.share-nextdoor a:before,
+.lwtv-share-content ul li.share-nextdoor div.option.option-smart-off a:before,
+.lwtv-social-icon-text .lwtv-share-content li.share-nextdoor a:before,
+.lwtv-social-official .lwtv-share-content li.share-nextdoor a:before {
+	@include mixins.fontawesome_brand("\f10c");
+}
+.lwtv-social-official .lwtv-share-content li.share-nextdoor a:before {
+	color: #8ED500;
+}
+.lwtv-social-icon .lwtv-share-content ul li[class*='share-'].share-nextdoor a.lwtv-share-button {
+	background: #8ED500;
+	color: #fff !important;
+}
+
+.lwtv-social-icon .lwtv-share-content ul li.share-bluesky a:before,
+.lwtv-social-text .lwtv-share-content ul li.share-bluesky a:before,
+.lwtv-share-content ul li.share-bluesky div.option.option-smart-off a:before,
+.lwtv-social-icon-text .lwtv-share-content li.share-bluesky a:before,
+.lwtv-social-official .lwtv-share-content li.share-bluesky a:before {
+	@include mixins.fontawesome_brand("\e671");
+}
+.lwtv-social-official .lwtv-share-content li.share-bluesky a:before {
+	color: #0085ff;
+}
+.lwtv-social-icon .lwtv-share-content ul li[class*='share-'].share-bluesky a.lwtv-share-button {
+	background: #0085ff;
+	color: #fff !important;
+}
+
+.lwtv-social-official .lwtv-share-content>ul>li>a.lwtv-share-button span {
+	line-height: 1;
+}
+
+.lwtv-social-official .lwtv-share-content ul {
+	display: flex;
+	flex-wrap: wrap;
+}
+
+.lwtv-social-official .lwtv-share-content ul:after {
+	content: ".";
+	display: block;
+	height: 0;
+	clear: both;
+	visibility: hidden;
+}
+
+.lwtv-social-official .lwtv-share-content li.share-press-this a {
+	margin: 0 0 5px 0;
+}
+
+.lwtv-social-official .lwtv-share-content ul>li {
+	display: flex;
+	max-height: 18px;
+}
+
+.lwtv-social-official .lwtv-share-content ul>li .option-smart-off {
+	margin-right: 8px;
+}
+
+.lwtv-social-official .fb-share-button > span {
+	vertical-align: top !important;
+}
+
+.lwtv-social-official .lwtv-share-content .pocket_button iframe {
+	width: 98px;
+}
+
+
+/* Individual official buttons */
+.pocket_button iframe, .pinterest_button, .twitter_button, .linkedin_button>span {
+	margin: 0 !important;
+}
+
+.linkedin_button>span, .pinterest_button a {
+	display: block !important;
+}
+
+.lwtv-social-official .lwtv-share-content .share-tumblr iframe {
+	max-width: 53px;
+	width: unset;
+}
+
+body .lwtv-social-official li.share-print ,
+body .lwtv-social-official li.share-email a,
+body .lwtv-social-official li.share-custom a,
+body .lwtv-social-official li a.share-more,
+body .lwtv-social-official li.share-digg a,
+body .lwtv-social-official li.share-press-this a
+{
+	position: relative;
+	top: 0;
+}
+
+
+/* Custom icons */
+body .lwtv-social-icon .lwtv-share-content li.share-custom>a {
+	padding: 2px 3px 0 3px;
+	position: relative;
+	top: 4px;
+}
+
+body .lwtv-social-icon .lwtv-share-content li.share-custom a span,
+body .lwtv-social-icon-text .lwtv-share-content li.share-custom a span,
+body .lwtv-social-text .lwtv-share-content li.share-custom a span,
+body .lwtv-social-official .lwtv-share-content li.share-custom a span,
+body .lwtv-share-content ul li.share-custom a.share-icon span
+{
+	background-size: 16px 16px;
+	background-repeat: no-repeat;
+	margin-left: 0;
+	padding: 0 0 0 19px;
+	display: inline-block;
+	height: 21px;
+	line-height: 16px;
+}
+
+body .lwtv-social-icon .lwtv-share-content li.share-custom a span {
+	width: 0;
+}
+
+body .lwtv-social-icon .lwtv-share-content li.share-custom a span {
+	padding-left: 16px !important;
+}
+
+
+/* Overflow Sharing dialog */
+.sharing-hidden .inner {
+	position: absolute;
+	z-index: 2;
+	border: 1px solid #ccc;
+	padding: 10px;
+	background: #fff;
+	box-shadow: 0px 5px 20px rgba(0,0,0,.2);
+	-webkit-border-radius: 2px;
+	-moz-border-radius: 2px;
+	border-radius: 2px;
+	margin-top: 5px;
+	max-width: 400px;
+}
+
+.sharing-hidden .inner ul{
+	margin: 0 !important;
+}
+
+.lwtv-social-official .lwtv-share-content .sharing-hidden ul>li.share-end {
+	clear: both;
+	margin: 0 !important;
+	height: 0 !important;
+}
+
+.sharing-hidden .inner:before, .sharing-hidden .inner:after {
+	position: absolute;
+	z-index: 1;
+	top: -8px;
+	left: 20px;
+	width: 0;
+	height: 0;
+	border-left: 6px solid transparent;
+	border-right: 6px solid transparent;
+	border-bottom: 8px solid #ccc;
+	content: "";
+	display: block;
+}
+
+.sharing-hidden .inner:after {
+	z-index: 2;
+	top: -7px;
+	border-left: 6px solid transparent;
+	border-right: 6px solid transparent;
+	border-bottom: 8px solid #fff;
+}
+
+.sharing-hidden ul {
+	margin: 0;
+}
+
+
+/**
+ * Special colorful look for "Icon Only" option
+ */
+
+.lwtv-social-icon .lwtv-share-content ul li[class*='share-'] a,
+.lwtv-social-icon .lwtv-share-content ul li[class*='share-'] a:hover,
+.lwtv-social-icon .lwtv-share-content ul li[class*='share-'] div.option a {
+	border-radius: 50%;
+	-webkit-border-radius: 50%;
+	border: 0;
+	box-shadow: none;
+	padding: 7px;
+	position: relative;
+	top: -2px;
+	line-height: 1;
+	width: auto;
+	height: auto;
+	margin-bottom: 0;
+	max-width: 32px;
+	min-width: 27px;
+}
+
+.lwtv-social-icon .lwtv-share-content ul li[class*='share-'] a.lwtv-share-button>span,
+.lwtv-social-icon .lwtv-share-content ul li[class*='share-'] div.option a span {
+	line-height: 1;
+}
+
+.lwtv-social-icon .lwtv-share-content ul li[class*='share-'] a:hover,
+.lwtv-social-icon .lwtv-share-content ul li[class*='share-'] div.option a:hover {
+	border: none;
+	opacity: .6;
+}
+
+
+
+.lwtv-social-icon .lwtv-share-content ul li[class*='share-'] a.lwtv-share-button:before {
+	top: 0;
+}
+
+.lwtv-social-icon .lwtv-share-content ul li[class*='share-'] a.lwtv-share-button.share-custom {
+	padding: 8px 8px 6px 8px;
+	top: 5px;
+}
+
+.lwtv-social-icon .lwtv-share-content ul li a.lwtv-share-button.share-more {
+	margin-left: 10px;
+}
+
+.lwtv-social-icon .lwtv-share-content ul li:first-child a.lwtv-share-button.share-more {
+	margin-left: 0;
+}
+
+
+.lwtv-social-icon .lwtv-share-button span.share-count {
+	position: absolute;
+	bottom: 0;
+	right: 0;
+	border-radius: 0;
+	background: #555;
+	font-size: 9px;
+}
+
+/* Special look colors */
+.lwtv-social-icon .lwtv-share-content ul li[class*='share-'] a.lwtv-share-button {
+	background: #e9e9e9;
+	margin-top: 2px;
+	text-indent: 0;
+}
+
+.lwtv-social-icon .lwtv-share-content ul li[class*='share-'].share-tumblr a.lwtv-share-button {
+	background: #2c4762;
+	color: #fff !important;
+
+	svg {
+		padding-left: 2px;
+	}
+}
+
+.lwtv-social-icon .lwtv-share-content ul li[class*='share-'].share-facebook a.lwtv-share-button {
+	background: #0866ff;
+	color: #fff !important;
+
+	svg {
+		padding-left: 2.5px;
+	}
+}
+
+.lwtv-social-icon .lwtv-share-content ul li[class*='share-'].share-twitter a.lwtv-share-button {
+	background: #00acee;
+	color: #fff !important;
+}
+
+.lwtv-social-icon .lwtv-share-content ul li[class*='share-'].share-x a.lwtv-share-button {
+	background: #000;
+	color: #fff !important;
+}
+
+.lwtv-social-icon .lwtv-share-content ul li[class*='share-'].share-pinterest a.lwtv-share-button {
+	background: #ca1f27;
+	color: #fff !important;
+}
+
+.lwtv-social-icon .lwtv-share-content ul li[class*='share-'].share-digg a.lwtv-share-button {
+	color: #555555 !important;
+}
+
+.lwtv-social-icon .lwtv-share-content ul li[class*='share-'].share-press-this a.lwtv-share-button {
+	background: #4f94d4;
+	color: #fff !important;
+}
+
+.lwtv-social-icon .lwtv-share-content ul li[class*='share-'].share-telegram a.lwtv-share-button {
+	background: #0088cc;
+	color: #fff !important;
+}
+
+.lwtv-social-icon .lwtv-share-content ul li[class*='share-'].share-linkedin a.lwtv-share-button {
+	background: #0077b5;
+	color: #fff !important;
+}
+
+.lwtv-social-icon .lwtv-share-content ul li[class*='share-'].share-pocket a.lwtv-share-button {
+	background: #ee4056;
+	color: #fff !important;
+}
+
+.lwtv-social-icon .lwtv-share-content ul li[class*='share-'].share-reddit a.lwtv-share-button {
+	background: #cee3f8;
+	color: #555555 !important;
+}
+
+.lwtv-social-icon .lwtv-share-content ul li[class*='share-'].share-mastodon a.lwtv-share-button {
+	background: linear-gradient(to top, #563ACC 0%, #6364FF 100%);
+	color: #fff !important;
+
+	svg {
+		padding-left: 1.5px;
+	}
+}
+
+/**
+ * Screen Reader Text for "Icon Only" option
+ */
+
+.sharing-screen-reader-text {
+	clip: rect(1px, 1px, 1px, 1px);
+	position: absolute !important;
+	height: 1px;
+	width: 1px;
+	overflow: hidden;
+}
+
+.sharing-screen-reader-text:hover,
+.sharing-screen-reader-text:active,
+.sharing-screen-reader-text:focus {
+	background-color: #f0f0f1;
+	border-radius: 3px;
+	box-shadow: 0 0 2px 2px rgba(0, 0, 0, 0.6);
+	clip: auto !important;
+	color: #21759b;
+	display: block;
+	font-size: 14px;
+	font-weight: bold;
+	height: auto;
+	left: 5px;
+	line-height: normal;
+	padding: 15px 23px 14px;
+	text-decoration: none;
+	top: 5px;
+	width: auto;
+	z-index: 100000; /* Above WP toolbar */
+}
+
+
+#jetpack-source_f_name {
+	display: none!important;
+	position: absolute !important;
+	left: -9000px;
+}
+
+.lwtv-share-content .share-customize-link {
+	margin-top: 8px;
+	line-height: 11px;
+}
+
+.lwtv-share-content .share-customize-link a {
+	font-size: 11px;
+	font-family: "Open Sans", sans-serif;
+}
+
+@media print {
+	.lwtvshare.lwtv-sharing-enabled {
+		display: none;
+	}
+}

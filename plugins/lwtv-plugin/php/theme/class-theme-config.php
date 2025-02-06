@@ -5,7 +5,7 @@
 * Weird LWTV functions and definitions
  *
  * This is crazy shit Mika wrote to force everything to play
- * nicely with each other. Including cursing at Jetpack.
+ * nicely with each other.
  */
 
 namespace LWTV\Theme;
