@@ -22,21 +22,13 @@
 
 <header id="masthead" class="site-header" role="banner">
 
-	<?php get_template_part( 'template-parts/header/navbar' ); ?>
+	<?php
+	get_template_part( 'template-parts/header/navbar' );
 
-	<div class="collapse fixed-top header-search-bar" id="collapseSearch">
-		<div class="container">
-			<div class="row">
-				<div class="col">
-					<div class="search-body">
-						<div class="search-box">
-							<?php get_template_part( 'template-parts/header/searchbox' ); ?>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+	if ( ! function_exists( 'searchwp_modal_form_trigger' ) ) {
+		get_template_part( 'template-parts/header/searchbox' );
+	}
+	?>
 
 	<a name="top"></a>
 
