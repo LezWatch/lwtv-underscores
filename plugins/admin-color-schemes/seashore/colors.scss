@@ -1,0 +1,28 @@
+$base-color: desaturate(#ece2ba, 25%);
+$text-color: desaturate(#73340f, 50%);
+$icon-color: $text-color;
+
+$highlight-color: #456a7f;
+$notification-color: #456a7f;
+
+$body-background: lighten($base-color, 13%);
+
+$button-text-color: $body-background;
+$menu-highlight-text: $body-background;
+$menu-highlight-icon: $body-background;
+
+$menu-bubble-background: #73340f;
+$menu-bubble-text: $menu-highlight-text;
+
+$menu-collapse-focus-text: $highlight-color;
+$menu-collapse-focus-icon: $highlight-color;
+
+$link: $highlight-color;
+$link-focus: $icon-color;
+
+@import "../admin";
+
+/* Dashboard welcome icons */
+[class*="welcome-panel-icon"] {
+	background-color: $menu-bubble-background;
+}

@@ -30,3 +30,6 @@ if ( ! defined( 'LWTV_SYMBOLICONS_URL' ) ) {
 
 // Load the lwtv plugin
 require_once __DIR__ . '/lwtv-plugin/functions.php';
+
+// Load Admin Color Scheme
+require_once __DIR__ . '/admin-color-schemes/admin-color-schemes.php';
