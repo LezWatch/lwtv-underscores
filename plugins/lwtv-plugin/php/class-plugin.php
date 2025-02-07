@@ -115,6 +115,7 @@ class Plugin {
 	 */
 	protected function core_components(): array {
 		return array(
+			_Components\Admin_Color_Schemes::class,
 			_Components\Admin_Menu::class,
 			_Components\Plugins::class, // Needs to be higher up for requirements later.
 			_Components\Block_Types_Allowed::class,

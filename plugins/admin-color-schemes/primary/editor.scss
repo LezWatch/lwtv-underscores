@@ -1,6 +1,0 @@
-@import "../mixins";
-
-body.admin-color-primary {
-
-	@include generate-editor-custom-properties( #240e73 );
-}

@@ -1,6 +1,0 @@
-@import "../mixins";
-
-body.admin-color-lawn {
-
-	@include generate-editor-custom-properties( #456a7f );
-}

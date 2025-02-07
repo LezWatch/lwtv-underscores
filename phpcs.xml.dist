@@ -72,7 +72,6 @@
 	<exclude-pattern>*/blocks/build/*</exclude-pattern>
 
 	<!-- Extensions - not written by us. -->
-	<exclude-pattern>*/admin-color-schemes*</exclude-pattern>
 	<exclude-pattern>*/facetwp-cmb2/*</exclude-pattern>
 	<exclude-pattern>*/cmb2-grid/*</exclude-pattern>
 	<exclude-pattern>*/cmb-field-select2/*</exclude-pattern>
