@@ -1,21 +1,8 @@
 <?php
 /**
- * Search results are contained within a div.searchwp-live-search-results
- * which you can style accordingly as you would any other element on your site.
+ * SearchWP Live Search Results Template
  *
- * Some base styles are output in wp_footer that do nothing but position the
- * results container and apply a default transition, you can disable that by
- * adding the following to your theme's functions.php:
- *
- * add_filter( 'searchwp_live_search_base_styles', '__return_false' );
- *
- * There is a separate stylesheet that is also enqueued that applies the default
- * results theme (the visual styles) but you can disable that too by adding
- * the following to your theme's functions.php:
- *
- * wp_dequeue_style( 'searchwp-live-search' );
- *
- * You can use ~/searchwp-live-search/assets/styles/style.css as a guide to customize.
+ * More Info: https://searchwp.com/documentation/extensions/live-search/#customizing-results
  */
 
 // Exit if accessed directly.
@@ -56,18 +43,44 @@ if ( ! empty( $live_search_results ) ) :
 
 				<div class="searchwp-live-search-result--info">
 					<h4 class="searchwp-live-search-result--title">
+						<?php
+						$svg                = 'newspaper.svg';
+						$fontawesome        = 'fa-newspaper';
+						$screen_reader_text = 'News Article';
+						if ( ! empty( $display_data['type'] ) ) {
+							switch ( $display_data['type'] ) {
+								case 'page':
+									$svg                = 'chalkboard.svg';
+									$fontawesome        = 'fa-file';
+									$screen_reader_text = 'Page';
+									break;
+								case 'post_type_shows':
+									$svg                = 'tv.svg';
+									$fontawesome        = 'fa-tv';
+									$screen_reader_text = 'TV Show, mini-series, or movie';
+									break;
+								case 'post_type_characters':
+									$svg                = 'rubber-stamp.svg';
+									$fontawesome        = 'fa-user';
+									$screen_reader_text = 'Character';
+									break;
+								case 'post_type_actors':
+									$svg                = 'award-academy.svg';
+									$fontawesome        = 'fa-user-tie';
+									$screen_reader_text = 'Actor';
+									break;
+							}
+						}
+						// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+						echo lwtv_plugin()->get_symbolicon( svg: $svg, fontawesome: $fontawesome ) . '&nbsp;';
+						?>
+						<span class="screen-reader-text"><?php echo esc_html( $screen_reader_text ); ?></span>
 						<a href="<?php echo esc_url( $display_data['permalink'] ); ?>">
 							<?php echo wp_kses_post( $display_data['title'] ); ?>
 						</a>
-						<?php
-						if ( ! empty( $display_data['type'] ) ) {
-							$display_type = rtrim( ucfirst( str_replace( 'post_type_', '', $display_data['type'] ) ), 's' );
-							echo '<span class="searchwp-live-search-result--type">(' . esc_html( $display_type ) . ')</span>';
-						}
-						?>
 					</h4>
 					<p class="searchwp-live-search-result--desc">
-						<?php echo esc_html( get_the_excerpt( $display_data['id'] ) ); ?>
+						<?php echo wp_kses_post( get_the_excerpt( $display_data['id'] ) ); ?>
 					</p>
 				</div>
 			</div>

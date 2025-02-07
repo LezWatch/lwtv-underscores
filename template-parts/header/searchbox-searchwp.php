@@ -6,7 +6,7 @@
  */
 
 $args = array(
-	'template' => 'Default',
+	'template' => 'LWTV',
 	'engine'   => 'default',
 	'icon'     => lwtv_plugin()->get_symbolicon( svg: 'search.svg', fontawesome: 'fa-search' ),
 );
