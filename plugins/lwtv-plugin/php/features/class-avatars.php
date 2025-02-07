@@ -86,7 +86,8 @@ class Avatars {
 
 		// If they have a user account but no gravatar, use the default.
 		if ( $user ) {
-			return $default_avatar;
+			$default_avatar = str_replace( 'wp-content/plugins/lwtv-plugin', 'wp-content/themes/lwtv-underscores/plugins/lwtv-plugin', $default_avatar );
+			return '<img alt="" src="' . $default_avatar . '" srcset="' . $default_avatar . '" class="avatar avatar-32 photo" height="32" width="32" loading="lazy" decoding="async">';
 		}
 
 		// If they don't have a user account, generate an avatar using their initials.
