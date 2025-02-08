@@ -4,7 +4,7 @@ The 100% Original Theme for LezWatch.TV
 
 <!-- Badges -->
 <p align="center">
-	<a href="https://wordpress.org"><img src="https://img.shields.io/badge/wordpress-6.6-blue" alt="WordPress"></a>
+	<a href="https://wordpress.org"><img src="https://img.shields.io/badge/wordpress-6.7-blue" alt="WordPress"></a>
 	<a href="https://github.com/LezWatch/lwtv-underscores/issues"><img alt="Issues" src="https://img.shields.io/github/issues/LezWatch/lwtv-underscores"></a>
 	<a href="https://github.com/LezWatch/lwtv-underscores/pulls"><img alt="PRs" src="https://img.shields.io/github/issues-pr-raw/LezWatch/lwtv-underscores"></a>
 	<a href="https://github.com/LezWatch/lwtv-underscores/blob/production/LICENSE"><img src="https://img.shields.io/github/license/LezWatch/lwtv-underscores" alt="License"></a>
@@ -26,10 +26,10 @@ Server crontab is used to run CLI commands that generate and update complex cont
 
 The command `wp lwtv generate cron daily` will run a different debugger each day, update the FacetWP cache, and so on.
 
-# Requirements
+# Tools
 
 - PHP 8.2 or higher
-- [Grunt](https://gruntjs.com)
+- [Grunt](https://gruntjs.com) (optional)
 - [Node.js](https://nodejs.org) version 22+
 - [NVM](https://github.com/nvm-sh/nvm)
 
@@ -44,7 +44,7 @@ It's recommended to use [Homebrew](https://brew.sh) on macOS or [Chocolatey](htt
 5. Update all the things (npm, composer, etc): `npm run updater`
 6. Run an initial build: `npm run build`
 
-# Contributing
+# Contributing 📺
 
 All pull requests should be made to **production**.
 
@@ -60,7 +60,7 @@ To install and update:
 * `$ npm run updater` - Updates all the things.
 * `$ npm run build` - Builds all the CSS and handles composer versions.
 
-## Linting
+## Linting 🧪
 
 To run linting:
 
@@ -92,7 +92,7 @@ If you're updating CSS you have a couple options, since it's all SCSS.
 
 JS and PHP libraries are included via NPM and Composer. WordPress plugins that have been forked are now included in the main code and managed by us to prevent breakage.
 
-The `vendor` and `node_module` files are not synced to Github anymore (as of 2023-August) to minimize the amount of files stored on the servers, and the following libraries have their required code moved via Composer and npm's post-install process:
+The `vendor` and `node_module` files are not synced to Github anymore (as of 2023 August) to minimize the amount of files stored on the servers, and the following libraries have their required code moved via Composer and npm's post-install process:
 
 **NPM**
 * [ChartJS](https://github.com/chartjs/Chart.js/)
@@ -202,6 +202,7 @@ Stored in `/php/`
 
 All top-level components, stored in `/php/_components/` - Many components have 'sub-components' stored in a folder of the same name. For example, `class-queeries.php` calls code stored in `/php/queeries/` and so on. As long as the proper namespaces are applied, they will be autoloaded.
 
+* `class-admin-color-schemes.php` - Admin color schemes (forked from plugin)
 * `class-admin-menu.php` - LWTV custom admin menu
 * `class-block-types-allowed.php` - Filter to remove/hide certain blocks
 * `class-blocks.php` - Gutenberg Blocks
@@ -234,6 +235,15 @@ Helper files are not used as 'code' per-sey but our code relies on them.
 
 * `class-autoload.php` - Autoloader
 * `class-utils.php` - common utility functions
+
+#### Admin Color Schemes
+
+Stored in `/php/admin-color-schemes/` -- Additional color schemes for the backend.
+
+* `editor.css` -- Manages color display along with sub folders.
+* Folders: 80s-kid, adderley, aubergine, contrast-blue, cruise, flat, kirk, lawn, modern-evergreen, primary, seashore, vineyard
+
+Each folder contains a `colors.css` and `colors-rtl.css`
 
 #### Admin Menu
 
@@ -445,7 +455,7 @@ Stored in `/php/rest-api/` - These files generate the REST API output.
 
 _Alexa Skills (`/php/rest-api/alexa/`)_
 
-* `class-byq.php` - Old BYQ code
+* `class-byq.php` - Old BYQ code (deprecated!)
 * `class-common.php` - Code used by multiple Alexa skills
 * `class-flash-brief.php` - Since the flash brief has trouble with media in post content, we've made our own special version.
 * `class-newest.php` - Generate the newest shows or characters (or deaths)
