@@ -82,6 +82,9 @@ class Features implements Component {
 
 		// Enqueue scripts.
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
+		
+		// Defer scripts.
+		add_filter( 'clean_url', array( $this, 'defer_parsing_of_js' ), 11, 1 );
 
 		// Login Page Changes.
 		add_action( 'login_enqueue_scripts', array( $this, 'login_logos' ) );
@@ -352,5 +355,27 @@ class Features implements Component {
 	 */
 	public function disable_gutenberg_things(): void {
 		wp_enqueue_script( 'disable_gutenberg', LWTV_PLUGIN_URL . '/assets/js/gutenberg.js', array( 'wp-blocks' ), '1.0.0', true );
+	}
+	
+		/**
+		 * Defer parsing of Javascript (except for jquery)
+			*
+			* @param string $url
+			* @return string 
+			*/
+		public function defer_parsing_of_js ( string $url ): string {
+			$no_defer = array( 'jquery.js', 'jquery,min.js' );
+			
+			// If its not js, bail.
+			if ( FALSE === strpos( $url, '.js' ) ) {
+				return $url;
+			}
+			
+			// If its in the no defer array, bail.
+			if ( in_array( $url, $no_defer ) ) {
+				return $url;
+			}
+			
+			return "$url' defer ";
 	}
 }
