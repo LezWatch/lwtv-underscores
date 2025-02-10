@@ -85,6 +85,9 @@ class Features implements Component {
 		
 		// Defer scripts.
 		add_filter( 'clean_url', array( $this, 'defer_parsing_of_js' ), 11, 1 );
+		
+		// No Customize in the toolbar
+		add_action( 'wp_before_admin_bar_render', array( $this, 'remove_customize' ) );
 
 		// Login Page Changes.
 		add_action( 'login_enqueue_scripts', array( $this, 'login_logos' ) );
@@ -364,6 +367,12 @@ class Features implements Component {
 			* @return string 
 			*/
 		public function defer_parsing_of_js ( string $url ): string {
+			
+			// If the plugin is active, we don't need this.
+			if ( defined( 'WPACU_PLUGIN_VERSION' ) ) {
+				return;
+			}
+			
 			$no_defer = array( 'jquery.js', 'jquery,min.js' );
 			
 			// If its not js, bail.
@@ -377,5 +386,14 @@ class Features implements Component {
 			}
 			
 			return "$url' defer ";
+	}
+	
+	/**
+	 * Remove customize from toolbar
+		*/
+	public function remove_customize() {
+		global $wp_admin_bar;
+		
+		$wp_admin_bar->remove_menu( 'customize' );
 	}
 }
