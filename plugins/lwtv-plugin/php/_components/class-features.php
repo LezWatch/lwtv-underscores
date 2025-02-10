@@ -82,10 +82,10 @@ class Features implements Component {
 
 		// Enqueue scripts.
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
-		
+
 		// Defer scripts.
 		add_filter( 'clean_url', array( $this, 'defer_parsing_of_js' ), 11, 1 );
-		
+
 		// No Customize in the toolbar
 		add_action( 'wp_before_admin_bar_render', array( $this, 'remove_customize' ) );
 
@@ -359,41 +359,41 @@ class Features implements Component {
 	public function disable_gutenberg_things(): void {
 		wp_enqueue_script( 'disable_gutenberg', LWTV_PLUGIN_URL . '/assets/js/gutenberg.js', array( 'wp-blocks' ), '1.0.0', true );
 	}
-	
-		/**
-		 * Defer parsing of Javascript (except for jquery)
-			*
-			* @param string $url
-			* @return string 
-			*/
-		public function defer_parsing_of_js ( string $url ): string {
-			
-			// If the plugin is active, we don't need this.
-			if ( defined( 'WPACU_PLUGIN_VERSION' ) ) {
-				return;
-			}
-			
-			$no_defer = array( 'jquery.js', 'jquery,min.js' );
-			
-			// If its not js, bail.
-			if ( FALSE === strpos( $url, '.js' ) ) {
-				return $url;
-			}
-			
-			// If its in the no defer array, bail.
-			if ( in_array( $url, $no_defer ) ) {
-				return $url;
-			}
-			
-			return "$url' defer ";
+
+	/**
+	 * Defer parsing of Javascript (except for jquery)
+		*
+		* @param string $url
+		* @return string
+		*/
+	public function defer_parsing_of_js( string $url ): string {
+
+		// If the plugin is active, we don't need this.
+		if ( defined( 'WPACU_PLUGIN_VERSION' ) ) {
+			return $url;
+		}
+
+		$no_defer = array( 'jquery.js', 'jquery,min.js' );
+
+		// If its not js, bail.
+		if ( false === strpos( $url, '.js' ) ) {
+			return $url;
+		}
+
+		// If its in the no defer array, bail.
+		if ( in_array( $url, $no_defer, true ) ) {
+			return $url;
+		}
+
+		return "$url' defer ";
 	}
-	
+
 	/**
 	 * Remove customize from toolbar
-		*/
+	 */
 	public function remove_customize() {
 		global $wp_admin_bar;
-		
+
 		$wp_admin_bar->remove_menu( 'customize' );
 	}
 }
