@@ -13,10 +13,12 @@ jQuery(function($) {
 	});
 });
 
-// Focus on seach textarea when opening via toggle
+// Focus on search textarea when opening via toggle
 jQuery(function($) {
-	const searchCollapsible = document.getElementById( 'collapseSearch' );
-	searchCollapsible.addEventListener( 'shown.bs.collapse', () => {
-		document.getElementById( 'header-search' ).focus();
-	})
+	if (document.getElementById('collapseSearch')) {
+		const searchCollapsible = document.getElementById( 'collapseSearch' );
+		searchCollapsible.addEventListener( 'shown.bs.collapse', () => {
+			document.getElementById( 'header-search' ).focus();
+		})
+	}
 });
