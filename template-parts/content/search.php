@@ -22,8 +22,30 @@
 	<div class="card-body">
 		<h3 class="card-title">
 			<?php
-			// phpcs:ignore WordPress.Security.EscapeOutput
-			echo lwtv_plugin()->get_symbolicon( svg: 'newspaper.svg', fontawesome: 'fa-newspaper' ) . '&nbsp;';
+			switch ( get_post_type() ) {
+				case 'page':
+					$svg         = 'chalkboard.svg';
+					$fontawesome = 'fa-file';
+					break;
+				case 'post_type_shows':
+					$svg         = 'tv.svg';
+					$fontawesome = 'fa-tv';
+					break;
+				case 'post_type_characters':
+					$svg         = 'rubber-stamp.svg';
+					$fontawesome = 'fa-user';
+					break;
+				case 'post_type_actors':
+					$svg         = 'award-academy.svg';
+					$fontawesome = 'fa-user-tie';
+					break;
+				default:
+					$svg         = 'newspaper.svg';
+					$fontawesome = 'fa-newspaper';
+					break;
+			}
+			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			echo lwtv_plugin()->get_symbolicon( svg: $svg, fontawesome: $fontawesome ) . '&nbsp;';
 			the_title();
 			?>
 		</h3>

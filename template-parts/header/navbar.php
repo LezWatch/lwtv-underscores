@@ -50,10 +50,13 @@
 				</div>
 
 				<span class="nav-item search" id="search-btn">
-					<a class="nav-link" data-bs-toggle="collapse" role="button" data-bs-target="#collapseSearch" href="#collapseSearch" aria-expanded="false">
-						<?php echo lwtv_plugin()->get_symbolicon( svg: 'search.svg', fontawesome: 'fa-search' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-						<span class="screen-reader-text">Search the Site</span>
-					</a>
+					<?php
+					if ( function_exists( 'searchwp_modal_form_trigger' ) ) {
+						get_template_part( 'template-parts/header/searchbox-searchwp' );
+					} else {
+						get_template_part( 'template-parts/header/searchbox' );
+					}
+					?>
 				</span>
 
 				<span class="dark-mode-toggle">
