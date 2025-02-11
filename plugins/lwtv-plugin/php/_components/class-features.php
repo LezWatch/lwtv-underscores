@@ -84,8 +84,8 @@ class Features implements Component {
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
 		add_filter( 'clean_url', array( $this, 'defer_parsing_of_js' ), 11, 1 );
 
-		// Cleanup toolbar
-		add_action( 'wp_before_admin_bar_render', array( $this, 'remove_customize' ) );
+		// Cleanup admin bar
+		add_action( 'wp_before_admin_bar_render', array( $this, 'cleanup_admin_bar' ) );
 		add_filter( 'admin_bar_menu', array( $this, 'remove_admin_bar_howdy' ), PHP_INT_MAX );
 
 		// Login Page Changes.
@@ -388,16 +388,26 @@ class Features implements Component {
 	}
 
 	/**
-	 * Remove customize from toolbar
+	 * Cleanup Admin Bar.
+		* How often does someone edit their theme anyway?
 	 */
-	public function remove_customize(): void {
+	public function cleanup_admin_bar(): void {
 		global $wp_admin_bar;
 
+		// Remove customizer link
 		$wp_admin_bar->remove_menu( 'customize' );
+		
+		// Remove WP logo
+		$wp_admin_bar->remove_node( 'wp-logo' );
+		
+		// Remove comments
+		$wp_admin_bar->remove_node( 'comments' );
 	}
 	
 	/**
 	 * Remove "Howdy, Person" from the admin bar.
+		*
+		* ToDo: Add in our logo? https://wordpress.stackexchange.com/a/212435
 		*
 		* @param object $wp_admin_bar
 		*/
