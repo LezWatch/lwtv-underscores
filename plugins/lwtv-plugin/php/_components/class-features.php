@@ -80,14 +80,13 @@ class Features implements Component {
 		// Force close comments on media.
 		add_filter( 'comments_open', array( $this, 'filter_media_comment_status' ), 10, 2 );
 
-		// Enqueue scripts.
+		// Enqueue and defer scripts.
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
-
-		// Defer scripts.
 		add_filter( 'clean_url', array( $this, 'defer_parsing_of_js' ), 11, 1 );
 
-		// No Customize in the toolbar
+		// Cleanup toolbar
 		add_action( 'wp_before_admin_bar_render', array( $this, 'remove_customize' ) );
+		add_filter( 'admin_bar_menu', array( $this, 'remove_admin_bar_howdy' ), PHP_INT_MAX );
 
 		// Login Page Changes.
 		add_action( 'login_enqueue_scripts', array( $this, 'login_logos' ) );
@@ -391,9 +390,25 @@ class Features implements Component {
 	/**
 	 * Remove customize from toolbar
 	 */
-	public function remove_customize() {
+	public function remove_customize(): void {
 		global $wp_admin_bar;
 
 		$wp_admin_bar->remove_menu( 'customize' );
+	}
+	
+	/**
+	 * Remove "Howdy, Person" from the admin bar.
+		*
+		* @param object $wp_admin_bar
+		*/
+	public function remove_admin_bar_howdy( $wp_admin_bar ): void {
+		$my_account = $wp_admin_bar->get_node( 'my-account' );
+		
+		if ( isset( $my_account->title ) ) {
+			$wp_admin_bar->add_node( array( 
+				'id'    => 'my-account',
+				'title' => '',
+				) );
+		}
 	}
 }
