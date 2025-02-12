@@ -11,6 +11,13 @@ body.uilabs-live {
 	padding-top: 5px;
 }
 
+#wpadminbar span.lwtv-icon svg {
+	width: 25px;
+	height: 25px;
+	padding-top: 5px!important;
+}
+
+
 body.uilabs-local #wpadminbar       {border-top: #826eb4 5px solid;}
 body.uilabs-development #wpadminbar {border-top: #46B450 5px solid;}
 body.uilabs-staging #wpadminbar     {border-top: #ffb900 5px solid;}

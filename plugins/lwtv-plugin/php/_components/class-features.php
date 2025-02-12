@@ -26,6 +26,7 @@ class Features implements Component {
 	public function init() {
 		add_filter( 'wp_headers', array( $this, 'modify_front_end_http_headers' ), 10, 2 );
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
+		add_action( 'wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ) );
 		add_action( 'pre_ping', array( $this, 'no_self_ping' ) );
 
 		// Instantiate actions and filters:
@@ -86,7 +87,7 @@ class Features implements Component {
 
 		// Cleanup admin bar
 		add_action( 'wp_before_admin_bar_render', array( $this, 'cleanup_admin_bar' ) );
-		add_filter( 'admin_bar_menu', array( $this, 'remove_admin_bar_howdy' ), PHP_INT_MAX );
+		add_filter( 'admin_bar_menu', array( $this, 'filter_admin_bar' ), PHP_INT_MAX );
 
 		// Login Page Changes.
 		add_action( 'login_enqueue_scripts', array( $this, 'login_logos' ) );
@@ -244,8 +245,24 @@ class Features implements Component {
 	 * Admin CSS
 	 */
 	public function admin_enqueue_scripts(): void {
+		// If we're in the admin, load the admin CSS.
 		if ( is_admin() ) {
 			wp_enqueue_style( 'lwtv_data_check_admin', LWTV_PLUGIN_URL . '/assets/css/wp-admin.css', array(), LWTV_PLUGIN_VERSION );
+		}
+
+		// If we're logged in, load the admin CSS.
+		if ( is_user_logged_in() ) {
+			wp_enqueue_style( 'lwtv_admin_bar', LWTV_PLUGIN_URL . '/assets/css/top-admin-bar.css', array(), LWTV_PLUGIN_VERSION );
+		}
+	}
+
+	/**
+	 * Frontend CSS
+	 */
+	public function wp_enqueue_scripts(): void {
+		// If we're logged in, load the admin CSS.
+		if ( is_user_logged_in() ) {
+			wp_enqueue_style( 'lwtv_admin_bar', LWTV_PLUGIN_URL . '/assets/css/top-admin-bar.css', array(), LWTV_PLUGIN_VERSION );
 		}
 	}
 
@@ -396,29 +413,105 @@ class Features implements Component {
 
 		// Remove customizer link
 		$wp_admin_bar->remove_menu( 'customize' );
-		
-		// Remove WP logo
-		$wp_admin_bar->remove_node( 'wp-logo' );
-		
+
+		// Remove WP Menu things we don't need.
+		$wp_admin_bar->remove_menu( 'contribute' );
+		$wp_admin_bar->remove_menu( 'wporg' );
+		$wp_admin_bar->remove_menu( 'learn' );
+		$wp_admin_bar->remove_menu( 'support-forums' );
+		$wp_admin_bar->remove_menu( 'feedback' );
+
 		// Remove comments
 		$wp_admin_bar->remove_node( 'comments' );
 	}
-	
+
 	/**
-	 * Remove "Howdy, Person" from the admin bar.
-		*
-		* ToDo: Add in our logo? https://wordpress.stackexchange.com/a/212435
-		*
-		* @param object $wp_admin_bar
-		*/
-	public function remove_admin_bar_howdy( $wp_admin_bar ): void {
+	 * Filter admin-bar output.
+	 *
+	 * ToDo: Add in our logo? https://wordpress.stackexchange.com/a/212435
+	 *
+	 * @param object $wp_admin_bar
+	 */
+	public function filter_admin_bar( $wp_admin_bar ): void {
+		// Remove Howdy and Name, only use avatar.
 		$my_account = $wp_admin_bar->get_node( 'my-account' );
-		
+
 		if ( isset( $my_account->title ) ) {
-			$wp_admin_bar->add_node( array( 
-				'id'    => 'my-account',
-				'title' => '',
-				) );
+			preg_match( '/<img.*?>/', $my_account->title, $matches );
+
+			$title = ( isset( $matches[0] ) ) ? $matches[0] : '<img src="' . LWTV_PLUGIN_URL . '/assets/images/lezwatchtv.png" alt="LezWatch.TV" class="avatar avatar-26 photo" height="26" width="26" />';
+
+			$wp_admin_bar->add_node(
+				array(
+					'id'    => 'my-account',
+					'title' => $title,
+				)
+			);
+		}
+
+		$wp_logo = $wp_admin_bar->get_node( 'wp-logo' );
+		if ( isset( $wp_logo->title ) ) {
+			$logo = file_get_contents( LWTV_THEME_PATH . '/images/lwtv-toaster.svg' );
+			$wp_admin_bar->add_node(
+				array(
+					'id'     => 'wp-logo',
+					'title'  => '<span class="lwtv-icon" role="img">' . $logo . '</span>',
+					'parent' => null,
+					'href'   => '/wp-admin/admin.php?page=lwtv',
+					'group'  => null,
+					'meta'   => array(
+						'menu_title' => 'About LWTV',
+					),
+				),
+			);
+			$wp_admin_bar->add_node(
+				array(
+					'parent' => 'wp-logo',
+					'id'     => 'about',
+					'title'  => __( 'About LWTV' ),
+					'href'   => '/about/',
+				)
+			);
+			$wp_admin_bar->add_node(
+				array(
+					'parent' => 'wp-logo-external',
+					'id'     => 'documentation',
+					'title'  => __( 'Documentation' ),
+					'href'   => 'https://docs.lezwatchtv.com/',
+				)
+			);
+			$wp_admin_bar->add_node(
+				array(
+					'parent' => 'wp-logo-external',
+					'id'     => 'slack',
+					'title'  => __( 'Slack' ),
+					'href'   => 'https://lezwatchtv.slack.com/',
+				)
+			);
+			$wp_admin_bar->add_node(
+				array(
+					'parent' => 'wp-logo-external',
+					'id'     => 'validation',
+					'title'  => __( 'Data Validation' ),
+					'href'   => '/wp-admin/admin.php?page=lwtv_data_check',
+				)
+			);
+			$wp_admin_bar->add_node(
+				array(
+					'parent' => 'wp-logo-external',
+					'id'     => 'monitors',
+					'title'  => __( 'Monitors' ),
+					'href'   => '/wp-admin/admin.php?page=lwtv_monitor_check',
+				)
+			);
+			$wp_admin_bar->add_node(
+				array(
+					'parent' => 'wp-logo-external',
+					'id'     => 'exclusions',
+					'title'  => __( 'Exclusions' ),
+					'href'   => '/wp-admin/admin.php?page=lwtv_exclusion_check',
+				)
+			);
 		}
 	}
 }

@@ -53,8 +53,15 @@ class Display {
 						/>
 						<?php
 						$x_size = ( isset( $score['alt_s'] ) ) ? '7' : '9';
+
+						// If 100, move the percentage to the left.
 						if ( 100 === (int) $score['score'] ) {
 							$x_size = '4';
+						}
+
+						// If single digit, move the percentage to the right.
+						if ( 9 >= (int) $score['score'] ) {
+							$x_size = '14';
 						}
 						?>
 						<text x="<?php echo (int) $x_size; ?>" y="23" class="percentage">
