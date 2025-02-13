@@ -23,13 +23,17 @@ class Display_Grid {
 		$weekly = '<div>';
 
 		// Header Sub Navigation
-		$weekly .= ( new Display() )->get_subnav( $calendar );
+		$subnav = ( new Display() )->get_subnav( $calendar );
+		// Replace list_ with grid_ to jump to the day.
+		$subnav = str_replace( 'list_', 'grid_', $subnav );
+
+		$weekly .= $subnav;
 
 		// Grid Itself.
 		foreach ( $calendar as $day => $shows ) {
 			$show_day = new \DateTime( $day, $tz );
 
-			$today_link = strtolower( $show_day->format( 'l' ) );
+			$today_link = 'grid_' . strtolower( $show_day->format( 'l' ) );
 			$today_date = $show_day->format( 'l dS' );
 			if ( $day === $today->format( 'Y-m-d' ) ) {
 				$today_date .= '&nbsp;&nbsp;<button type="button" class="btn btn-info btn-sm" disabled><a name="today">Today</a></button>';

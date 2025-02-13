@@ -311,7 +311,7 @@ class Display {
 	 *
 	 * @param  array  $calendar The calendar
 	 */
-	public function get_subnav( $calendar ) {
+	public function get_subnav( $calendar, $prefix = 'list' ) {
 
 		$header = '<div class="ep-calendar-subnav p-3 list-group nav list-group-horizontal justify-content-center">';
 		$today  = $this->today->format( 'Y-m-d' );
@@ -325,7 +325,7 @@ class Display {
 				$day        = $weekday;
 				$show_day   = new \DateTime( $day, $this->timezone );
 				$link_color = ( $day === $today ) ? 'link-info' : 'link-subnav';
-				$header    .= '<a href="#' . strtolower( $show_day->format( 'l' ) ) . '" class="' . $link_color . ' nav-item list-group-item-light link-offset-2 nav-link">' . $show_day->format( 'l' ) . '</a>';
+				$header    .= '<a href="#' . $prefix . '_' . strtolower( $show_day->format( 'l' ) ) . '" class="' . $link_color . ' nav-item list-group-item-light link-offset-2 nav-link">' . $show_day->format( 'l' ) . '</a>';
 			} else {
 				$header .= '<span class="link-secondary nav-item list-group-item-light link-offset-2 nav-link">' . $weekday_object->format( 'l' ) . '</span>';
 			}
