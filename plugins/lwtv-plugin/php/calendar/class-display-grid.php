@@ -29,49 +29,55 @@ class Display_Grid {
 
 		$weekly .= $subnav;
 
-		// Grid Itself.
-		foreach ( $calendar as $day => $shows ) {
-			$show_day = new \DateTime( $day, $tz );
+		$week_of_days = ( new Display() )->get_week_of_days();
 
-			$today_link = 'grid_' . strtolower( $show_day->format( 'l' ) );
-			$today_date = $show_day->format( 'l dS' );
-			if ( $day === $today->format( 'Y-m-d' ) ) {
+		// Loop through the days of the week.
+		foreach ( $week_of_days as $weekday ) {
+			$weekday_object = new \DateTime( $weekday, $tz );
+
+			$today_link = 'grid_' . strtolower( $weekday_object->format( 'l' ) );
+			$today_date = $weekday_object->format( 'l dS' );
+			if ( $weekday === $today->format( 'Y-m-d' ) ) {
 				$today_date .= '&nbsp;&nbsp;<button type="button" class="btn btn-info btn-sm" disabled><a name="today">Today</a></button>';
 			}
 
-			$weekly .= '<div class="ep-calendar-day dayjump" id="' . $today_link . '" tabindex="-1" data-date="' . $show_day->format( 'Y-m-d' ) . '">';
-			$weekly .= '<h3 class="ep-calendar-day-heading">' . $today_date . '</h3>';
-
-			$weekly .= '<div class="container text-center"><div class="row row-cols-1 row-cols-md-3 g-4">';
-
 			$is_when = array(
-				'today' => ( $day === $today->format( 'Y-m-d' ) ) ? true : false,
-				'past'  => ( $show_day < $today ) ? true : false,
-				'soon'  => ( $show_day > $today ) ? true : false,
+				'today' => ( $weekday === $today->format( 'Y-m-d' ) ) ? true : false,
+				'past'  => ( $weekday_object < $today ) ? true : false,
+				'soon'  => ( $weekday_object > $today ) ? true : false,
 			);
 
-			foreach ( $shows as $show ) {
+			// Build the Day Header:
+			$weekly .= '<div class="ep-calendar-day dayjump" id="' . $today_link . '" tabindex="-1" data-date="' . $weekday_object->format( 'Y-m-d' ) . '">';
+			$weekly .= '<h3 class="ep-calendar-day-heading">' . $today_date . '</h3>';
+			$weekly .= '<div class="container text-center"><div class="row row-cols-1 row-cols-md-3 g-4">';
 
-				// Show Name (may be URL if we have a link)
-				$show['show_name'] = ( new Names() )->make( $show['show_name'], 'tvmaze', 'name' );
-				$show['show_id']   = ( new Names() )->make( $show['show_name'], 'lwtv', 'id' );
-				$show['native_tz'] = ( new TVMaze() )->get_timezone( $show['show_id'] ) ?? '';
+			// If we have no shows, we need to display a message.
+			if ( ! isset( $calendar[ $weekday ] ) ) {
+				$weekly .= '<p><em>No shows on this day.</em></p>';
+			} else {
+				// Otherwise, we build the grid!
+				foreach ( $calendar[ $weekday ] as $show ) {
+					// Show Name (may be URL if we have a link)
+					$show['show_name'] = ( new Names() )->make( $show['show_name'], 'tvmaze', 'name' );
+					$show['show_id']   = ( new Names() )->make( $show['show_name'], 'lwtv', 'id' );
+					$show['native_tz'] = ( new TVMaze() )->get_timezone( $show['show_id'] ) ?? '';
 
-				// Build output
-				$show_content = '';
-				if ( is_array( $show['title'] ) ) {
-					$show_content .= $this->display_card_grid_multiple( $show, $tz, $is_when );
-				} else {
-					$show_content .= $this->display_card_grid( $show, $tz, $is_when );
+					// Build output
+					$show_content = '';
+					if ( is_array( $show['title'] ) ) {
+						$show_content .= $this->display_card_grid_multiple( $show, $tz, $is_when );
+					} else {
+						$show_content .= $this->display_card_grid( $show, $tz, $is_when );
+					}
+
+					$weekly .= $show_content;
 				}
-
-				$weekly .= $show_content;
 			}
-
 			$weekly .= '</div></div>'; // row, container
-
 			$weekly .= '</div>'; // ep-calendar-day
 		}
+
 		$weekly .= '</div>';
 		return $weekly;
 	}
@@ -81,7 +87,7 @@ class Display_Grid {
 	 *
 	 * @param  array  $show
 	 * @param  object $tz
-	 * @param  array   $is_today
+	 * @param  array  $is_when
 	 *
 	 * @return string
 	 */

@@ -28,7 +28,7 @@ class Display_Calendar {
 		$header  = $this->get_header();
 		$display = $this->get_3_weeks();
 
-		$table = '<table class="table table-bordered border-dark ep-calendar-calendar">' . $header . $display . '</table>';
+		$table = '<table class="table table-bordered table-striped border-dark ep-calendar-calendar">' . $header . $display . '</table>';
 
 		return $table;
 	}
@@ -42,7 +42,7 @@ class Display_Calendar {
 	 * @return string
 	 */
 	public function get_header() {
-		$thead = '<thead class="ep-calendar-thead-calendar"><tr class="lwtvc-heading">';
+		$thead = '<thead class="ep-calendar-thead-calendar table-success"><tr class="lwtvc-heading">';
 
 		// Calendar headers are days of the week
 		$days = array( 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat' );
@@ -113,11 +113,8 @@ class Display_Calendar {
 
 		// Loop through the week of days and display the shows.
 		foreach ( $week_of_days as $weekday ) {
-			if ( isset( $calendar_week[ $weekday ] ) ) {
-				$row .= $this->build_shows_for_day( $calendar_week[ $weekday ], $weekday, $today, $tz );
-			} else {
-				$row .= $this->build_shows_for_day( array(), $weekday, $today, $tz );
-			}
+			$show_array = ( isset( $calendar_week[ $weekday ] ) ) ? $calendar_week[ $weekday ] : array();
+			$row       .= $this->build_shows_for_day( $show_array, $weekday, $today, $tz );
 		}
 
 		$row .= '</tr>';
@@ -134,8 +131,8 @@ class Display_Calendar {
 	 * @return string
 	 */
 	public function build_shows_for_day( $shows, $date, $today, $tz ) {
-		$highlight = ( $date === $today->format( 'Y-m-d' ) ) ? '-info' : '';
-		$active    = ( $date === $today->format( 'Y-m-d' ) ) ? 'active' : '';
+		$highlight = ( $date === $today->format( 'Y-m-d' ) ) ? '-info' : '-light';
+		$active    = ( $date === $today->format( 'Y-m-d' ) ) ? 'active' : 'list-group-item-secondary';
 		$date_fmt  = new \DateTime( $date, $tz );
 
 		$cell  = '<td class="ep-calendar-td-calendar">';

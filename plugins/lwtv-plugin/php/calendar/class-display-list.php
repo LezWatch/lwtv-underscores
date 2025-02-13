@@ -33,7 +33,7 @@ class Display_List {
 			// If we have no shows, we need to display a message.
 			if ( ! isset( $calendar[ $weekday ] ) ) {
 				$table .= '<thead class="dayjump" id="list_' . $weekday . '"><tr class="lwtvc-heading"><th colspan="3" class="text-bg-secondary"><span class="ep-calendar-heading-date">' . $weekday_object->format( 'l jS' ) . '</span><span class="ep-calendar-heading-backtotop"><a href="#caltop">Back to Top</a></span></th></tr></thead>';
-				$table .= '<tbody><tr><td colspan="3">No shows on this day.</td></tr></tbody>';
+				$table .= '<tbody><tr><td colspan="3"><em>No shows on this day.</em></td></tr></tbody>';
 				continue;
 			}
 
