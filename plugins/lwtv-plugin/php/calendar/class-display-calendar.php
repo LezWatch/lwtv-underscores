@@ -13,18 +13,20 @@ class Display_Calendar {
 	 * Generate the weekly list of shows.
 	 *
 	 * @param  array  $calendar
-	 * @param  object $today
-	 * @param  object $tz
+	 *
 	 * @return string
 	 */
-	public function get_shows( $calendar, $today, $tz ) {
+	public function get_shows( $calendar ) {
+		$today = ( new Display() )->today;
+		$tz    = ( new Display() )->timezone;
+
 		// If we have no shows, we need to display a message.
-		if ( ! $calendar || ! $tz ) {
+		if ( ! $calendar ) {
 			return '<p>There are no shows on the air for the week starting ' . $today->format( 'F d, Y' ) . '.</p>';
 		}
 
 		$header  = $this->get_header();
-		$display = $this->get_3_weeks( $today, $tz );
+		$display = $this->get_3_weeks();
 
 		$table = '<table class="table table-bordered border-dark ep-calendar-calendar">' . $header . $display . '</table>';
 
@@ -61,12 +63,12 @@ class Display_Calendar {
 	 * @param  object $tz
 	 * @return string
 	 */
-	public function get_3_weeks( $today, $tz ) {
+	public function get_3_weeks() {
 		$tbody = '<tbody>';
 
-		$tbody .= $this->get_week( $today, $tz, 'previous' );
-		$tbody .= $this->get_week( $today, $tz, 'this' );
-		$tbody .= $this->get_week( $today, $tz, 'next' );
+		$tbody .= $this->get_week( 'previous' );
+		$tbody .= $this->get_week( 'this' );
+		$tbody .= $this->get_week( 'next' );
 
 		$tbody .= '</tbody>';
 
@@ -76,20 +78,20 @@ class Display_Calendar {
 	/**
 	 * Generate the weekly list of shows.
 	 *
-	 * @param  object $today
-	 * @param  object $tz
 	 * @param  string $week
 	 * @return string
 	 */
-	public function get_week( $today, $tz, $week = 'this' ) {
+	public function get_week( $week = 'this' ) {
+		$today = ( new Display() )->today;
+		$tz    = ( new Display() )->timezone;
+
 		// Query Variables.
-		$get_tvdate = isset( $_GET['tvdate'] ) ? sanitize_text_field( $_GET['tvdate'] ) : 'today'; // phpcs:ignore WordPress.Security.NonceVerification
-		$date_query = ( ( strtotime( $get_tvdate ) !== false ) && ( $get_tvdate !== $today->format( 'Y-m-d' ) ) ) ? $get_tvdate : 'today';
+		$get_tvdate = isset( $_GET['tvdate'] ) ? sanitize_text_field( $_GET['tvdate'] ) : $today->format( 'Y-m-d' ); // phpcs:ignore WordPress.Security.NonceVerification
 
 		// Get the dates
-		$this_datetime = ( new Display() )->build_datetime( $date_query, $tz, 'start' );
-		$next_datetime = ( new Display() )->build_datetime( $date_query, $tz, 'end' );
-		$prev_datetime = ( new Display() )->build_datetime( $date_query, $tz, 'previous' );
+		$this_datetime = ( new Display() )->build_datetime( $get_tvdate, 'start' );
+		$next_datetime = ( new Display() )->build_datetime( $get_tvdate, 'end' );
+		$prev_datetime = ( new Display() )->build_datetime( $get_tvdate, 'previous' );
 
 		// Get the calendar week.
 		$calendar_week = match ( $week ) {
@@ -107,13 +109,7 @@ class Display_Calendar {
 			default    => $this_datetime,
 		};
 
-		$week_of_days = array();
-		for ( $i = 1; $i <= 7; $i++ ) {
-			if ( 1 !== $i ) {
-				$week_datetime->modify( 'tomorrow' );
-			}
-			$week_of_days[] = $week_datetime->format( 'Y-m-d' );
-		}
+		$week_of_days = ( new Display() )->get_week_of_days( $week_datetime );
 
 		// Loop through the week of days and display the shows.
 		foreach ( $week_of_days as $weekday ) {
@@ -151,7 +147,7 @@ class Display_Calendar {
 		} else {
 			foreach ( $shows as $show ) {
 				$show['show_name'] = ( new Names() )->make( $show['show_name'], 'tvmaze', 'name' );
-				$lwtv_date         = ( new Display() )->get_showtime( $show, $tz );
+				$lwtv_date         = ( new Display() )->get_showtime( $show, true );
 				$show_content      = ( is_array( $show['title'] ) ) ? $show['show_name'] . ' <span class="badge text-bg-secondary badge-pill">' . count( $show['title'] ) . '</span>' : $show['show_name'];
 				$cell             .= '<li class="list-group-item list-group-item-action list-group-item' . $highlight . '"><small>' . $lwtv_date . '</br>' . $show_content . '</small></li>';
 			}

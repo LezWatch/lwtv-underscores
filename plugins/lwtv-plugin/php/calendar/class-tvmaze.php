@@ -15,7 +15,7 @@ class TVMaze {
 	 */
 	public function get_timezone( $show_id ) {
 		// If TV Maze is disabled, bail early
-		if ( ! defined( 'LWTV_TV_MAZE' ) || ! LWTV_TV_MAZE ) {
+		if ( ! defined( 'TV_MAZE' ) || ! TV_MAZE ) {
 			return '';
 		}
 

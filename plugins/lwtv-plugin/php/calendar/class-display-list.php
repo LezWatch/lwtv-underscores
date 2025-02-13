@@ -15,10 +15,13 @@ class Display_List {
 	 * @param  object $tz
 	 * @return string
 	 */
-	public function get_shows( $calendar, $today, $tz ) {
+	public function get_shows( $calendar ) {
+
+		$today = ( new Display() )->today;
+		$tz    = ( new Display() )->timezone;
 
 		// Header Sub Navigation
-		$header = ( new Display() )->get_subnav( $calendar, $today, $tz );
+		$header = ( new Display() )->get_subnav( $calendar );
 		$table  = '<table class="table">';
 
 		foreach ( $calendar as $day => $shows ) {
@@ -34,16 +37,16 @@ class Display_List {
 			$table .= '<thead class="dayjump" id="' . $today_link . '"><tr class="lwtvc-heading' . $highlight . '" data-date="' . $show_day->format( 'Y-m-d' ) . '"><th colspan="3" class="text-bg-secondary"><span class="ep-calendar-heading-date">' . $today_date . '</span><span class="ep-calendar-heading-backtotop"><a href="#caltop">Back to Top</a></span></th></tr></thead><tbody>';
 
 			foreach ( $shows as $show ) {
-				$show_time = new \DateTime( '@' . $show['timestamp'], $tz );
-				$lwtv_date = ( new Display() )->get_showtime( $show, $tz );
-
-				// Determine if the show is airing now, soon, or later.
-				$dot_time = ( $show_time <= $today ) ? 'ep-calendar-dot ep-calendar-dot-past' : 'ep-calendar-dot';
-
 				// Show Name (may be URL if we have a link)
 				$show['show_name'] = ( new Names() )->make( $show['show_name'], 'tvmaze', 'name' );
 				$show['show_id']   = ( new Names() )->make( $show['show_name'], 'lwtv', 'id' );
 				$show['native_tz'] = ( new TVMaze() )->get_timezone( $show['show_id'] );
+
+				$show_time = ( new Display() )->get_showtime( $show, false );
+				$lwtv_date = $show_time->format( '@ g:i A' ) . ' (' . $show_time->format( 'T' ) . ')';
+
+				// Determine if the show is airing now, soon, or later.
+				$dot_time = ( $show_time <= $today ) ? 'ep-calendar-dot ep-calendar-dot-past' : 'ep-calendar-dot';
 
 				// Build output
 				$show_content  = '<div class="ep-calendar-title">';

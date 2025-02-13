@@ -15,11 +15,15 @@ class Display_Grid {
 	 * @param  object $tz
 	 * @return string
 	 */
-	public function get_shows( $calendar, $today, $tz ) {
+	public function get_shows( $calendar ) {
+
+		$today = ( new Display() )->today;
+		$tz    = ( new Display() )->timezone;
+
 		$weekly = '<div>';
 
 		// Header Sub Navigation
-		$weekly .= ( new Display() )->get_subnav( $calendar, $today, $tz );
+		$weekly .= ( new Display() )->get_subnav( $calendar );
 
 		// Grid Itself.
 		foreach ( $calendar as $day => $shows ) {
