@@ -116,6 +116,14 @@ class ICS_Parser {
 					$end_datetime->modify( '+1 week' );
 				}
 				break;
+			default:
+				// If today is sunday, we use today. Otherwise, we use last/next Sunday.
+				if ( 'Sun' === $start_datetime->format( 'D' ) ) {
+					$end_datetime = new \DateTime( 'today + 6days', $tz );
+				} else {
+					$start_datetime = new \DateTime( 'last Sunday', $tz );
+					$end_datetime   = new \DateTime( 'next Sunday', $tz );
+				}
 		}
 
 		// We have to be off by 5 hours because of UTC and New York.

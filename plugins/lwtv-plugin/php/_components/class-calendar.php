@@ -32,7 +32,7 @@ class Calendar implements Component {
 			return array();
 		}
 
-		return ( new Generate_Calendar() )->make( $tvmaze_url, $when, $timespan );
+		return ( new Generate_Calendar() )->make( $tvmaze_url, $timespan, $when );
 	}
 
 	/**

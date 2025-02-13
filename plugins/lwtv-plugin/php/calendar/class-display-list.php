@@ -5,8 +5,6 @@
 
 namespace LWTV\Calendar;
 
-use LWTV\_Components\Calendar as Build_Calendar;
-
 class Display_List {
 
 	/**
@@ -28,7 +26,7 @@ class Display_List {
 			$show_day  = new \DateTime( $day, $tz );
 
 			$today_link = strtolower( $show_day->format( 'l' ) );
-			$today_date = $show_day->format( 'l dS' );
+			$today_date = $show_day->format( 'l jS' );
 			if ( $day === $today->format( 'Y-m-d' ) ) {
 				$today_date .= '&nbsp;&nbsp;<button type="button" class="btn btn-info btn-sm" disabled><a name="today">Today</a></button>';
 			}

@@ -5,8 +5,6 @@
 
 namespace LWTV\Calendar;
 
-use LWTV\_Components\Calendar as Build_Calendar;
-
 class Display_Grid {
 
 	/**
@@ -33,7 +31,7 @@ class Display_Grid {
 				$today_date .= '&nbsp;&nbsp;<button type="button" class="btn btn-info btn-sm" disabled><a name="today">Today</a></button>';
 			}
 
-			$weekly .= '<div class="ep-calendar-day" id="' . $today_link . '">';
+			$weekly .= '<div class="ep-calendar-day dayjump" id="' . $today_link . '" tabindex="-1" data-date="' . $show_day->format( 'Y-m-d' ) . '">';
 			$weekly .= '<h3 class="ep-calendar-day-heading">' . $today_date . '</h3>';
 
 			$weekly .= '<div class="container text-center"><div class="row row-cols-1 row-cols-md-3 g-4">';

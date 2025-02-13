@@ -406,7 +406,7 @@ class Features implements Component {
 
 	/**
 	 * Cleanup Admin Bar.
-		* How often does someone edit their theme anyway?
+	 * How often does someone edit their theme anyway?
 	 */
 	public function cleanup_admin_bar(): void {
 		global $wp_admin_bar;
@@ -427,8 +427,6 @@ class Features implements Component {
 
 	/**
 	 * Filter admin-bar output.
-	 *
-	 * ToDo: Add in our logo? https://wordpress.stackexchange.com/a/212435
 	 *
 	 * @param object $wp_admin_bar
 	 */

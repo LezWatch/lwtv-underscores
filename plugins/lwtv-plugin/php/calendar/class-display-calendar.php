@@ -24,7 +24,7 @@ class Display_Calendar {
 		}
 
 		$header  = $this->get_header();
-		$display = $this->get_3_weeks( $calendar, $today, $tz );
+		$display = $this->get_3_weeks( $today, $tz );
 
 		$table = '<table class="table table-bordered border-dark ep-calendar-calendar">' . $header . $display . '</table>';
 
@@ -57,16 +57,15 @@ class Display_Calendar {
 	/**
 	 * Generate the weekly list of shows.
 	 *
-	 * @param  array  $calendar
 	 * @param  object $today
 	 * @param  object $tz
 	 * @return string
 	 */
-	public function get_3_weeks( $calendar, $today, $tz ) {
+	public function get_3_weeks( $today, $tz ) {
 		$tbody = '<tbody>';
 
 		$tbody .= $this->get_week( $today, $tz, 'previous' );
-		$tbody .= $this->get_week( $today, $tz, 'this', $calendar );
+		$tbody .= $this->get_week( $today, $tz, 'this' );
 		$tbody .= $this->get_week( $today, $tz, 'next' );
 
 		$tbody .= '</tbody>';
@@ -80,10 +79,9 @@ class Display_Calendar {
 	 * @param  object $today
 	 * @param  object $tz
 	 * @param  string $week
-	 * @param  array  $calendar
 	 * @return string
 	 */
-	public function get_week( $today, $tz, $week = 'this', $calendar = null ) {
+	public function get_week( $today, $tz, $week = 'this' ) {
 		// Query Variables.
 		$get_tvdate = isset( $_GET['tvdate'] ) ? sanitize_text_field( $_GET['tvdate'] ) : 'today'; // phpcs:ignore WordPress.Security.NonceVerification
 		$date_query = ( ( strtotime( $get_tvdate ) !== false ) && ( $get_tvdate !== $today->format( 'Y-m-d' ) ) ) ? $get_tvdate : 'today';
@@ -93,14 +91,11 @@ class Display_Calendar {
 		$next_datetime = ( new Display() )->build_datetime( $date_query, $tz, 'end' );
 		$prev_datetime = ( new Display() )->build_datetime( $date_query, $tz, 'previous' );
 
-		// If the calendar is empty, assume it's this week.
-		$calendar = ( $calendar ) ?? ( new Build_Calendar() )->generate_tvmaze_calendar( 'week', $this_datetime->format( 'Y-m-d' ) );
-
 		// Get the calendar week.
 		$calendar_week = match ( $week ) {
-			'previous' => ( new Build_Calendar() )->generate_tvmaze_calendar( 'week', $prev_datetime->format( 'Y-m-d' ) ),
-			'next'     => ( new Build_Calendar() )->generate_tvmaze_calendar( 'week', $next_datetime->format( 'Y-m-d' ) ),
-			default    => $calendar,
+			'this'     => ( new Build_Calendar() )->generate_tvmaze_calendar( $this_datetime->format( 'Y-m-d' ) ),
+			'previous' => ( new Build_Calendar() )->generate_tvmaze_calendar( $prev_datetime->format( 'Y-m-d' ) ),
+			'next'     => ( new Build_Calendar() )->generate_tvmaze_calendar( $next_datetime->format( 'Y-m-d' ) ),
 		};
 
 		$row = '<tr>';

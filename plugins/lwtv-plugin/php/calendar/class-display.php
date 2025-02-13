@@ -23,7 +23,7 @@ class Display {
 
 		// Build out start and end dates.
 		$tz    = new \DateTimeZone( LWTV_TIMEZONE );
-		$today = new \DateTime( 'today', $tz );
+		$today = new \DateTime( 'now', $tz );
 
 		// Query Variables.
 		$get_tvdate = isset( $_GET['tvdate'] ) ? sanitize_text_field( $_GET['tvdate'] ) : 'today'; // phpcs:ignore WordPress.Security.NonceVerification
@@ -32,18 +32,18 @@ class Display {
 
 		// Get the dates
 		$start_datetime = self::build_datetime( $date_query, $tz, 'start' );
-		$end_datetime   = self::build_datetime( $date_query, $tz, 'end' );
+		$end_datetime   = self::build_datetime( $date_query, $tz, 'next' );
 		$prev_datetime  = self::build_datetime( $date_query, $tz, 'previous' );
 
 		/**
 		 * Header
 		 */
-		$return = $this->get_header( $start_datetime, $end_datetime );
+		$return = $this->get_header( $start_datetime );
 
 		/**
 		 * Calendar itself
 		 */
-		$calendar = ( new Build_Calendar() )->generate_tvmaze_calendar( 'week', $start_datetime->format( 'Y-m-d' ) );
+		$calendar = ( new Build_Calendar() )->generate_tvmaze_calendar( $start_datetime->format( 'Y-m-d' ) );
 
 		// If we have no shows, we need to display a message.
 		if ( isset( $calendar['none'] ) || empty( $calendar ) || ! array( $calendar ) ) {
@@ -64,11 +64,18 @@ class Display {
 	 * Get the header for the calendar
 	 *
 	 * @param  object $start_datetime Start date
-	 * @param  object $end_datetime   End date
 	 * @return string                 The header
 	 */
-	private function get_header( $start_datetime, $end_datetime ) {
-		$end_datetime->modify( '-1 day' );
+	private function get_header( $start_datetime ) {
+		// Make sure we always start on Sunday.
+		if ( 'Sun' !== $start_datetime->format( 'D' ) ) {
+			$start_datetime->modify( 'last Sunday' );
+		}
+
+		// Build out end date
+		$end_datetime = clone $start_datetime;
+		$end_datetime->modify( '+6 days' );
+
 		return '<h2 class="lwtv-calendar-week">Week of ' . $start_datetime->format( 'F d, Y' ) . ' - ' . $end_datetime->format( 'F d, Y' ) . ' </h2>';
 	}
 
@@ -143,12 +150,6 @@ class Display {
 	 * @return string                The footer
 	 */
 	private function get_footer( $date_query, $today, $prev_datetime, $end_datetime, $get_tvview ) {
-		// NEXT week: Since we set this to Saturday, we have to add a day for the links.
-		$end_datetime->modify( '+1 day' );
-
-		// Change today so we can check if the 'this week' button is needed
-		$today->modify( 'last Sunday' );
-
 		// Add Navigation:
 		$footer = $this->get_footer_navigation( $date_query, $today->format( 'Y-m-d' ), $prev_datetime->format( 'Y-m-d' ), $end_datetime->format( 'Y-m-d' ), $get_tvview );
 
@@ -171,20 +172,30 @@ class Display {
 	public function build_datetime( $date, $tz, $type = 'this' ) {
 		$datetime = new \DateTime( $date, $tz );
 
-		// Make sure we check on a Sunday.
-		if ( 'Sun' !== $datetime->format( 'D' ) ) {
-			switch ( $type ) {
-				case 'previous':
+		switch ( $type ) {
+			case 'start':
+				// Start on the sunday of the week.
+				if ( 'Sun' !== $datetime->format( 'D' ) ) {
 					$datetime->modify( 'last Sunday' );
-					$datetime->modify( '1 week ago' );
-					break;
-				case 'next':
-				case 'end':
+				}
+				break;
+			case 'next':
+			case 'end':
+				if ( 'Sat' !== $datetime->format( 'D' ) ) {
 					$datetime->modify( 'next Sunday' );
-					break;
-				default:
+				} else {
+					$datetime->modify( '+1 day' );
+				}
+				break;
+			case 'previous':
+				// For previous week, if it's Sunday we can use last Sunday. Otherwise, we need to go back to the previous Sunday.
+				if ( 'Sun' !== $datetime->format( 'D' ) ) {
 					$datetime->modify( 'last Sunday' );
-			}
+				}
+				$datetime->modify( '-1 week' );
+				break;
+			default:
+				$datetime->modify( 'today' );
 		}
 
 		return $datetime;
@@ -204,7 +215,6 @@ class Display {
 	 * @return string       HTML output for the navigation
 	 */
 	private function get_footer_navigation( $date, $today, $last, $next, $tv_view ) {
-
 		// Query Args
 		$last_query_args = array(
 			'tvdate' => $last,
