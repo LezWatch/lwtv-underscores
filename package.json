@@ -75,7 +75,7 @@
     "postcss": "^8.4",
     "terser": "^5.36",
     "terser-webpack-plugin": "^5.3",
-    "webpack": "^5.96"
+    "webpack": "^5.98"
   },
   "lint-staged": {
     "*.php": "npm run lint:php",
