@@ -202,6 +202,8 @@ class WP_CLI_LWTV_Generate {
 	public function run_debug_checker( $day = null ) {
 		// If we got here without a Day, it's today.
 		$day = ( ! isset( $day ) || is_null( $day ) ) ? gmdate( 'D' ) : $day;
+		
+		\WP_CLI::info( 'Running debugger for ' . $day );
 
 		// Run a different check each day.
 		switch ( strtolower( $day ) ) {
