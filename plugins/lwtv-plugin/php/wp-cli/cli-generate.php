@@ -190,8 +190,8 @@ class WP_CLI_LWTV_Generate {
 		$this->run_debug_checker( $day );
 
 		// Run the indexer
-		\WP_CLI::log( 'Running the FacetWP indexer. Please be patient, this takes time...' );
-		\FWP()->indexer->index();
+		// \WP_CLI::log( 'Running the FacetWP indexer. Please be patient, this takes time...' );
+		//\FWP()->indexer->index();
 	}
 
 	/**
