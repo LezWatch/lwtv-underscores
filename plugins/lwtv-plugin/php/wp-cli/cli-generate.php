@@ -161,10 +161,10 @@ class WP_CLI_LWTV_Generate {
 	 */
 	public function run_cron_hourly() {
 		// Check missed schedule:
-		\WP_CLI::line( 'Attempting to publish all posts that have missed schedule.' );
+		\WP_CLI::log( 'Attempting to publish all posts that have missed schedule.' );
 		$missed_schedule = ( new Missed_Schedule() )->missed_schedule();
 		if ( ! empty( $missed_schedule ) ) {
-			\WP_CLI::line( $missed_schedule );
+			\WP_CLI::log( $missed_schedule );
 		}
 	}
 
@@ -173,24 +173,24 @@ class WP_CLI_LWTV_Generate {
 	 */
 	public function run_cron_daily() {
 		// Run the update lists
-		\WP_CLI::line( 'Updating the lists...' );
+		\WP_CLI::log( 'Updating the lists...' );
 		$this->run_update_lists();
 
 		// run OTD
-		\WP_CLI::line( 'Setting the "Of the Day"...' );
+		\WP_CLI::log( 'Setting the "Of the Day"...' );
 		$this->run_otd();
 
 		// Build tv maze:
-		\WP_CLI::line( 'Downloading the TV Maze ICS.' );
+		\WP_CLI::log( 'Downloading the TV Maze ICS.' );
 		$this->run_tvmaze();
 
 		// Run the debug of the day:
 		$day = gmdate( 'D' );
-		\WP_CLI::line( sprintf( 'Running the debug checker. Day: %s ...', $day ) );
+		\WP_CLI::log( sprintf( 'Running the debug checker. Day: %s ...', $day ) );
 		$this->run_debug_checker( $day );
 
 		// Run the indexer
-		\WP_CLI::line( 'Running the FacetWP indexer. Please be patient, this takes time...' );
+		\WP_CLI::log( 'Running the FacetWP indexer. Please be patient, this takes time...' );
 		\FWP()->indexer->index();
 	}
 
@@ -203,7 +203,7 @@ class WP_CLI_LWTV_Generate {
 		// If we got here without a Day, it's today.
 		$day = ( ! isset( $day ) || is_null( $day ) ) ? gmdate( 'D' ) : $day;
 		
-		\WP_CLI::info( 'Running debugger for ' . $day );
+		\WP_CLI::log( 'Running debugger for ' . $day );
 
 		// Run a different check each day.
 		switch ( strtolower( $day ) ) {
