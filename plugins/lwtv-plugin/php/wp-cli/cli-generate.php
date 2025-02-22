@@ -142,13 +142,13 @@ class WP_CLI_LWTV_Generate {
 
 		switch ( $second ) {
 			case 'daily':
-				\WP_CLI::line( 'Running DAILY cron.' );
+				\WP_CLI::log( 'Prepping DAILY cron.' );
 				$this->run_cron_hourly();
 				$this->run_cron_daily();
 				break;
 			case 'hourly':
 			default:
-				\WP_CLI::line( 'Running HOURLY cron.' );
+				\WP_CLI::log( 'Prepping HOURLY cron.' );
 				$this->run_cron_hourly();
 				break;
 		}
@@ -202,31 +202,37 @@ class WP_CLI_LWTV_Generate {
 	public function run_debug_checker( $day = null ) {
 		// If we got here without a Day, it's today.
 		$day = ( ! isset( $day ) || is_null( $day ) ) ? gmdate( 'D' ) : $day;
-		
-		\WP_CLI::log( 'Running debugger for ' . $day );
 
 		// Run a different check each day.
 		switch ( strtolower( $day ) ) {
 			case 'mon':
+				\WP_CLI::log( 'Debugger: Checking queer characters...' );
 				( new Queers_Debugger() )->find_queer_chars();
 				break;
 			case 'tue':
+				\WP_CLI::log( 'Debugger: Checking for BYQ issues...' );
 				( new Characters_Debugger() )->find_byq_problems();
 				break;
 			case 'wed':
+				\WP_CLI::log( 'Debugger: Checking dupes...' );
 				( new Dupes_Debugger() )->find_duplicates();
 				break;
 			case 'thu':
+				\WP_CLI::log( 'Debugger: Checking all actors...' );
 				( new Actors_Debugger() )->find_actors_problems();
 				break;
 			case 'fri':
+				\WP_CLI::log( 'Debugger: Checking all characters...' );
 				( new Characters_Debugger() )->find_characters_problems();
 				break;
 			case 'sat':
+				\WP_CLI::log( 'Debugger: Checking all shows...' );
 				( new Shows_Debugger() )->find_shows_problems();
 				break;
 			case 'sun':
+				\WP_CLI::log( 'Debugger: Checking actors for iMDB...' );
 				( new Actors_Debugger() )->find_actors_no_imdb();
+				\WP_CLI::log( 'Debugger: Checking shows for iMDB...' );
 				( new Shows_Debugger() )->find_shows_no_imdb();
 				break;
 			default:
@@ -254,7 +260,7 @@ class WP_CLI_LWTV_Generate {
 		if ( file_exists( $ics_file ) && $file_time <= strtotime( '+1 sec' ) ) {
 			\WP_CLI::success( 'TVMaze updated successfully.' );
 		} else {
-			\WP_CLI::warning( 'TVMaze is not able to be updated.' );
+			\WP_CLI::warning( 'TVMaze was not able to be updated.' );
 		}
 	}
 
