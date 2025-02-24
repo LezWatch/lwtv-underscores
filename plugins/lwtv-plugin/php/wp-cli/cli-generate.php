@@ -188,10 +188,6 @@ class WP_CLI_LWTV_Generate {
 		$day = gmdate( 'D' );
 		\WP_CLI::log( sprintf( 'Running the debug checker. Day: %s ...', $day ) );
 		$this->run_debug_checker( $day );
-
-		// Run the indexer
-		// \WP_CLI::log( 'Running the FacetWP indexer. Please be patient, this takes time...' );
-		//\FWP()->indexer->index();
 	}
 
 	/**
