@@ -33,7 +33,7 @@ class Environment {
 	public function init() {
 		wp_register_style( 'ui-labs-identity', LWTV_PLUGIN_URL . '/assets/css/environment.css', false, LWTV_PLUGIN_VERSION );
 
-		if ( 'uilabs-production' !== $this->default_env_type ) {
+		if ( is_admin() && 'uilabs-production' !== $this->default_env_type ) {
 			wp_enqueue_style( 'ui-labs-identity' );
 		}
 	}

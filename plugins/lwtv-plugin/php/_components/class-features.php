@@ -26,6 +26,7 @@ class Features implements Component {
 	public function init() {
 		add_filter( 'wp_headers', array( $this, 'modify_front_end_http_headers' ), 10, 2 );
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
+		add_action( 'wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ) );
 		add_action( 'pre_ping', array( $this, 'no_self_ping' ) );
 
 		// Instantiate actions and filters:
@@ -80,8 +81,13 @@ class Features implements Component {
 		// Force close comments on media.
 		add_filter( 'comments_open', array( $this, 'filter_media_comment_status' ), 10, 2 );
 
-		// Enqueue scripts.
+		// Enqueue and defer scripts.
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
+		add_filter( 'clean_url', array( $this, 'defer_parsing_of_js' ), 11, 1 );
+
+		// Cleanup admin bar
+		add_action( 'wp_before_admin_bar_render', array( $this, 'cleanup_admin_bar' ) );
+		add_filter( 'admin_bar_menu', array( $this, 'filter_admin_bar' ), PHP_INT_MAX );
 
 		// Login Page Changes.
 		add_action( 'login_enqueue_scripts', array( $this, 'login_logos' ) );
@@ -239,8 +245,24 @@ class Features implements Component {
 	 * Admin CSS
 	 */
 	public function admin_enqueue_scripts(): void {
+		// If we're in the admin, load the admin CSS.
 		if ( is_admin() ) {
 			wp_enqueue_style( 'lwtv_data_check_admin', LWTV_PLUGIN_URL . '/assets/css/wp-admin.css', array(), LWTV_PLUGIN_VERSION );
+		}
+
+		// If we're logged in, load the admin CSS.
+		if ( is_user_logged_in() ) {
+			wp_enqueue_style( 'lwtv_admin_bar', LWTV_PLUGIN_URL . '/assets/css/top-admin-bar.css', array(), LWTV_PLUGIN_VERSION );
+		}
+	}
+
+	/**
+	 * Frontend CSS
+	 */
+	public function wp_enqueue_scripts(): void {
+		// If we're logged in, load the admin CSS.
+		if ( is_user_logged_in() ) {
+			wp_enqueue_style( 'lwtv_admin_bar', LWTV_PLUGIN_URL . '/assets/css/top-admin-bar.css', array(), LWTV_PLUGIN_VERSION );
 		}
 	}
 
@@ -352,5 +374,142 @@ class Features implements Component {
 	 */
 	public function disable_gutenberg_things(): void {
 		wp_enqueue_script( 'disable_gutenberg', LWTV_PLUGIN_URL . '/assets/js/gutenberg.js', array( 'wp-blocks' ), '1.0.0', true );
+	}
+
+	/**
+	 * Defer parsing of Javascript (except for jquery)
+		*
+		* @param string $url
+		* @return string
+		*/
+	public function defer_parsing_of_js( string $url ): string {
+
+		// If the plugin is active, we don't need this.
+		if ( defined( 'WPACU_PLUGIN_VERSION' ) ) {
+			return $url;
+		}
+
+		$no_defer = array( 'jquery.js', 'jquery,min.js' );
+
+		// If its not js, bail.
+		if ( false === strpos( $url, '.js' ) ) {
+			return $url;
+		}
+
+		// If its in the no defer array, bail.
+		if ( in_array( $url, $no_defer, true ) ) {
+			return $url;
+		}
+
+		return "$url' defer ";
+	}
+
+	/**
+	 * Cleanup Admin Bar.
+	 * How often does someone edit their theme anyway?
+	 */
+	public function cleanup_admin_bar(): void {
+		global $wp_admin_bar;
+
+		// Remove customizer link
+		$wp_admin_bar->remove_menu( 'customize' );
+
+		// Remove WP Menu things we don't need.
+		$wp_admin_bar->remove_menu( 'contribute' );
+		$wp_admin_bar->remove_menu( 'wporg' );
+		$wp_admin_bar->remove_menu( 'learn' );
+		$wp_admin_bar->remove_menu( 'support-forums' );
+		$wp_admin_bar->remove_menu( 'feedback' );
+
+		// Remove comments
+		$wp_admin_bar->remove_node( 'comments' );
+	}
+
+	/**
+	 * Filter admin-bar output.
+	 *
+	 * @param object $wp_admin_bar
+	 */
+	public function filter_admin_bar( $wp_admin_bar ): void {
+		// Remove Howdy and Name, only use avatar.
+		$my_account = $wp_admin_bar->get_node( 'my-account' );
+
+		if ( isset( $my_account->title ) ) {
+			preg_match( '/<img.*?>/', $my_account->title, $matches );
+
+			$title = ( isset( $matches[0] ) ) ? $matches[0] : '<img src="' . LWTV_PLUGIN_URL . '/assets/images/lezwatchtv.png" alt="LezWatch.TV" class="avatar avatar-26 photo" height="26" width="26" />';
+
+			$wp_admin_bar->add_node(
+				array(
+					'id'    => 'my-account',
+					'title' => $title,
+				)
+			);
+		}
+
+		$wp_logo = $wp_admin_bar->get_node( 'wp-logo' );
+		if ( isset( $wp_logo->title ) ) {
+			$logo = file_get_contents( LWTV_THEME_PATH . '/images/lwtv-toaster.svg' );
+			$wp_admin_bar->add_node(
+				array(
+					'id'     => 'wp-logo',
+					'title'  => '<span class="lwtv-icon" role="img">' . $logo . '</span>',
+					'parent' => null,
+					'href'   => '/wp-admin/admin.php?page=lwtv',
+					'group'  => null,
+					'meta'   => array(
+						'menu_title' => 'About LWTV',
+					),
+				),
+			);
+			$wp_admin_bar->add_node(
+				array(
+					'parent' => 'wp-logo',
+					'id'     => 'about',
+					'title'  => __( 'About LWTV' ),
+					'href'   => '/about/',
+				)
+			);
+			$wp_admin_bar->add_node(
+				array(
+					'parent' => 'wp-logo-external',
+					'id'     => 'documentation',
+					'title'  => __( 'Documentation' ),
+					'href'   => 'https://docs.lezwatchtv.com/',
+				)
+			);
+			$wp_admin_bar->add_node(
+				array(
+					'parent' => 'wp-logo-external',
+					'id'     => 'slack',
+					'title'  => __( 'Slack' ),
+					'href'   => 'https://lezwatchtv.slack.com/',
+				)
+			);
+			$wp_admin_bar->add_node(
+				array(
+					'parent' => 'wp-logo-external',
+					'id'     => 'validation',
+					'title'  => __( 'Data Validation' ),
+					'href'   => '/wp-admin/admin.php?page=lwtv_data_check',
+				)
+			);
+			$wp_admin_bar->add_node(
+				array(
+					'parent' => 'wp-logo-external',
+					'id'     => 'monitors',
+					'title'  => __( 'Monitors' ),
+					'href'   => '/wp-admin/admin.php?page=lwtv_monitor_check',
+				)
+			);
+			$wp_admin_bar->add_node(
+				array(
+					'parent' => 'wp-logo-external',
+					'id'     => 'exclusions',
+					'title'  => __( 'Exclusions' ),
+					'href'   => '/wp-admin/admin.php?page=lwtv_exclusion_check',
+				)
+			);
+		}
 	}
 }

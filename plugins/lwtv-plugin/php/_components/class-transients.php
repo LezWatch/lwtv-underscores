@@ -36,7 +36,7 @@ class Transients implements Component, Templater {
 	 * @return string|bool            Transient value (or false)
 	 */
 	public static function get_transient( $transient ) {
-		if ( defined( 'LWTV_DEV_SITE' ) && LWTV_DEV_SITE ) {
+		if ( defined( 'LWTV_DISABLE_TRANSIENTS' ) && LWTV_DISABLE_TRANSIENTS ) {
 			return false;
 		}
 

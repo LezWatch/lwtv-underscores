@@ -375,7 +375,7 @@ class Whats_On_JSON {
 	 * @return [type]       [description]
 	 */
 	public function generate_tvshow_calendar( $date ) {
-		return ( new Calendar() )->generate_tvmaze_calendar( 'week', $date );
+		return ( new Calendar() )->generate_tvmaze_calendar( $date );
 	}
 
 	/**

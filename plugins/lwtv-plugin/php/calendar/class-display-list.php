@@ -5,8 +5,6 @@
 
 namespace LWTV\Calendar;
 
-use LWTV\_Components\Calendar as Build_Calendar;
-
 class Display_List {
 
 	/**
@@ -17,35 +15,51 @@ class Display_List {
 	 * @param  object $tz
 	 * @return string
 	 */
-	public function get_shows( $calendar, $today, $tz ) {
+	public function get_shows( $calendar ) {
+
+		$today = ( new Display() )->today;
+		$tz    = ( new Display() )->timezone;
 
 		// Header Sub Navigation
-		$header = ( new Display() )->get_subnav( $calendar, $today, $tz );
+		$header = ( new Display() )->get_subnav( $calendar );
 		$table  = '<table class="table">';
 
-		foreach ( $calendar as $day => $shows ) {
-			$highlight = ( $day === $today->format( 'Y-m-d' ) ) ? ' table-info' : '';
-			$show_day  = new \DateTime( $day, $tz );
+		$week_of_days = ( new Display() )->get_week_of_days();
 
-			$today_link = strtolower( $show_day->format( 'l' ) );
-			$today_date = $show_day->format( 'l dS' );
-			if ( $day === $today->format( 'Y-m-d' ) ) {
-				$today_date .= '&nbsp;&nbsp;<button type="button" class="btn btn-info btn-sm" disabled><a name="today">Today</a></button>';
+		// Loop through the days of the week.
+		foreach ( $week_of_days as $weekday ) {
+			$weekday_object = new \DateTime( $weekday, $tz );
+
+			// If we have no shows, we need to display a message.
+			if ( ! isset( $calendar[ $weekday ] ) ) {
+				$table .= '<thead class="dayjump" id="list_' . $weekday . '"><tr class="lwtvc-heading"><th colspan="3" class="text-bg-secondary"><span class="ep-calendar-heading-date">' . $weekday_object->format( 'l jS' ) . '</span><span class="ep-calendar-heading-backtotop"><a href="#caltop">Back to Top</a></span></th></tr></thead>';
+				$table .= '<tbody><tr><td colspan="3"><em>No shows on this day.</em></td></tr></tbody>';
+				continue;
 			}
 
-			$table .= '<thead class="dayjump" id="' . $today_link . '"><tr class="lwtvc-heading' . $highlight . '" data-date="' . $show_day->format( 'Y-m-d' ) . '"><th colspan="3" class="text-bg-secondary"><span class="ep-calendar-heading-date">' . $today_date . '</span><span class="ep-calendar-heading-backtotop"><a href="#caltop">Back to Top</a></span></th></tr></thead><tbody>';
+			$highlight = ( $weekday === $today->format( 'l' ) ) ? ' table-info' : '';
 
-			foreach ( $shows as $show ) {
-				$show_time = new \DateTime( '@' . $show['timestamp'], $tz );
-				$lwtv_date = ( new Display() )->get_showtime( $show, $tz );
+			$show_day   = new \DateTime( $weekday, $tz );
+			$today_link = strtolower( $show_day->format( 'l' ) );
+			$today_date = $show_day->format( 'l jS' );
 
-				// Determine if the show is airing now, soon, or later.
-				$dot_time = ( $show_time <= $today ) ? 'ep-calendar-dot ep-calendar-dot-past' : 'ep-calendar-dot';
+			if ( $weekday === $today->format( 'Y-m-d' ) ) {
+				$today_date .= '&nbsp;&nbsp;<button type="button" class="btn btn-info btn-sm" disabled><strong><a name="today">Today</a></strong></button>';
+			}
 
+			$table .= '<thead class="dayjump" id="list_' . $today_link . '"><tr class="lwtvc-heading' . $highlight . '" data-date="' . $show_day->format( 'Y-m-d' ) . '"><th colspan="3" class="text-bg-secondary"><span class="ep-calendar-heading-date">' . $today_date . '</span><span class="ep-calendar-heading-backtotop"><a href="#caltop">Back to Top</a></span></th></tr></thead><tbody>';
+
+			foreach ( $calendar[ $weekday ] as $show ) {
 				// Show Name (may be URL if we have a link)
 				$show['show_name'] = ( new Names() )->make( $show['show_name'], 'tvmaze', 'name' );
 				$show['show_id']   = ( new Names() )->make( $show['show_name'], 'lwtv', 'id' );
 				$show['native_tz'] = ( new TVMaze() )->get_timezone( $show['show_id'] );
+
+				$show_time = ( new Display() )->get_showtime( $show, false );
+				$lwtv_date = $show_time->format( '@ g:i A' ) . ' (' . $show_time->format( 'T' ) . ')';
+
+				// Determine if the show is airing now, soon, or later.
+				$dot_time = ( $show_time <= $today ) ? 'ep-calendar-dot ep-calendar-dot-past' : 'ep-calendar-dot';
 
 				// Build output
 				$show_content  = '<div class="ep-calendar-title">';
@@ -54,9 +68,9 @@ class Display_List {
 
 				// Return it all!
 				$table .= '<tr class="ep-calendar-item' . $highlight . '"><td class="ep-calendar-item-time">' . $lwtv_date . '</td><td class="ep-calendar-marker"><span class="' . $dot_time . '"></span></td><td class="ep-calendar-item-title">' . $show_content . '</td></tr>';
-			}
 
-			$table .= '</tbody>';
+				$table .= '</tbody>';
+			}
 		}
 
 		$table .= '</table>';

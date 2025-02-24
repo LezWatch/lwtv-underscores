@@ -13,6 +13,24 @@ use LWTV\Calendar\Display_List;
 class Display {
 
 	/**
+	 * Timezone and Day Objects
+	 *
+	 * @var object
+	 */
+	public $timezone = null;
+	public $today    = null;
+
+	/**
+	 * Constructor
+	 *
+	 * Set the timezone and today's date.
+	 */
+	public function __construct() {
+		$this->timezone = new \DateTimeZone( LWTV_TIMEZONE );
+		$this->today    = new \DateTime( 'now', $this->timezone );
+	}
+
+	/**
 	 * Make the Calendar
 	 *
 	 * @return string
@@ -21,41 +39,39 @@ class Display {
 		// Enqueue the scripts to make the tabs work with links.
 		wp_enqueue_script( 'lwtv-calendar', LWTV_PLUGIN_URL . '/assets/js/calendar-tabs.js', array( 'jquery' ), LWTV_THEME_VERSION['lwtv-underscores'], true );
 
-		// Build out start and end dates.
-		$tz    = new \DateTimeZone( LWTV_TIMEZONE );
-		$today = new \DateTime( 'today', $tz );
+		$today = $this->today->format( 'Y-m-d' );
 
 		// Query Variables.
 		$get_tvdate = isset( $_GET['tvdate'] ) ? sanitize_text_field( $_GET['tvdate'] ) : 'today'; // phpcs:ignore WordPress.Security.NonceVerification
-		$date_query = ( ( strtotime( $get_tvdate ) !== false ) && ( $get_tvdate !== $today->format( 'Y-m-d' ) ) ) ? $get_tvdate : 'today';
+		$date_query = ( ( strtotime( $get_tvdate ) !== false ) && ( $get_tvdate !== $today ) ) ? $get_tvdate : 'today';
 		$get_tvview = isset( $_GET['tvview'] ) ? sanitize_text_field( $_GET['tvview'] ) : 'list'; // phpcs:ignore WordPress.Security.NonceVerification
 
 		// Get the dates
-		$start_datetime = self::build_datetime( $date_query, $tz, 'start' );
-		$end_datetime   = self::build_datetime( $date_query, $tz, 'end' );
-		$prev_datetime  = self::build_datetime( $date_query, $tz, 'previous' );
+		$start_datetime = self::build_datetime( $date_query, 'start' );
+		$end_datetime   = self::build_datetime( $date_query, 'next' );
+		$prev_datetime  = self::build_datetime( $date_query, 'previous' );
 
 		/**
 		 * Header
 		 */
-		$return = $this->get_header( $start_datetime, $end_datetime );
+		$return = $this->get_header( $start_datetime );
 
 		/**
 		 * Calendar itself
 		 */
-		$calendar = ( new Build_Calendar() )->generate_tvmaze_calendar( 'week', $start_datetime->format( 'Y-m-d' ) );
+		$calendar = ( new Build_Calendar() )->generate_tvmaze_calendar( $start_datetime->format( 'Y-m-d' ) );
 
 		// If we have no shows, we need to display a message.
 		if ( isset( $calendar['none'] ) || empty( $calendar ) || ! array( $calendar ) ) {
-			$return .= $this->get_empty_calendar( $start_datetime, $end_datetime, $today );
+			$return .= $this->get_empty_calendar( $start_datetime, $end_datetime );
 		} else {
-			$return .= $this->get_tab_navigation( $calendar, $today, $tz, $get_tvview );
+			$return .= $this->get_tab_navigation( $calendar, $get_tvview );
 		}
 
 		/**
 		 * Footer Section.
 		 */
-		$return .= $this->get_footer( $date_query, $today, $prev_datetime, $end_datetime, $get_tvview );
+		$return .= $this->get_footer( $date_query, $prev_datetime, $end_datetime, $get_tvview );
 
 		return '<div class="lwtv-calendar-block">' . $return . '</div>';
 	}
@@ -64,11 +80,18 @@ class Display {
 	 * Get the header for the calendar
 	 *
 	 * @param  object $start_datetime Start date
-	 * @param  object $end_datetime   End date
 	 * @return string                 The header
 	 */
-	private function get_header( $start_datetime, $end_datetime ) {
-		$end_datetime->modify( '-1 day' );
+	private function get_header( $start_datetime ) {
+		// Make sure we always start on Sunday.
+		if ( 'Sun' !== $start_datetime->format( 'D' ) ) {
+			$start_datetime->modify( 'last Sunday' );
+		}
+
+		// Build out end date
+		$end_datetime = clone $start_datetime;
+		$end_datetime->modify( '+6 days' );
+
 		return '<h2 class="lwtv-calendar-week">Week of ' . $start_datetime->format( 'F d, Y' ) . ' - ' . $end_datetime->format( 'F d, Y' ) . ' </h2>';
 	}
 
@@ -76,21 +99,19 @@ class Display {
 	 * Get the tab navigation for the calendar
 	 *
 	 * @param  array  $calendar The calendar
-	 * @param  object $today    Today's date
-	 * @param  object $tz       Timezone
 	 * @param  string $tv_view  The view
 	 * @return string           The tab navigation
 	 */
-	private function get_tab_navigation( $calendar, $today, $tz, $tv_view = 'list' ) {
+	private function get_tab_navigation( $calendar, $tv_view = 'list' ) {
 		$navigation  = '<p>All times are displayed as US/Eastern, but are reflective of their original air date and time.</p>';
 		$navigation .= '<p>Be advised, airdates and times are subject to change without notice. Always check your local listings.<p>';
 		$navigation .= '<a name="caltop"></a>';
 
 		// Get the show list.
 		$show_tabs = array(
-			'list'     => ( new Display_List() )->get_shows( $calendar, $today, $tz ),
-			'grid'     => ( new Display_Grid() )->get_shows( $calendar, $today, $tz ),
-			'calendar' => ( new Display_Calendar() )->get_shows( $calendar, $today, $tz ),
+			'list'     => ( new Display_List() )->get_shows( $calendar ),
+			'grid'     => ( new Display_Grid() )->get_shows( $calendar ),
+			'calendar' => ( new Display_Calendar() )->get_shows( $calendar ),
 		);
 
 		$tab_content = $this->get_tab_content( $show_tabs, $tv_view );
@@ -135,22 +156,15 @@ class Display {
 	 * Get the footer for the calendar
 	 *
 	 * @param  string $date_query    The date we're building nav for
-	 * @param  object $today         Today's date
 	 * @param  object $prev_datetime Last week
 	 * @param  object $end_datetime  Next week
 	 * @param  string $get_tvview    The view
 	 *
 	 * @return string                The footer
 	 */
-	private function get_footer( $date_query, $today, $prev_datetime, $end_datetime, $get_tvview ) {
-		// NEXT week: Since we set this to Saturday, we have to add a day for the links.
-		$end_datetime->modify( '+1 day' );
-
-		// Change today so we can check if the 'this week' button is needed
-		$today->modify( 'last Sunday' );
-
+	private function get_footer( $date_query, $prev_datetime, $end_datetime, $get_tvview ) {
 		// Add Navigation:
-		$footer = $this->get_footer_navigation( $date_query, $today->format( 'Y-m-d' ), $prev_datetime->format( 'Y-m-d' ), $end_datetime->format( 'Y-m-d' ), $get_tvview );
+		$footer = $this->get_footer_navigation( $date_query, $prev_datetime->format( 'Y-m-d' ), $end_datetime->format( 'Y-m-d' ), $get_tvview );
 
 		// Powered by:
 		$footer .= '<p><small><a href="https://www.tvmaze.com" target="_new">Powered by TVMaze.</a></small></p>';
@@ -164,27 +178,36 @@ class Display {
 	 * This will set up the start of the week. It's always Sunday.
 	 *
 	 * @param  string $date The date
-	 * @param  object $tz   The timezone
 	 * @param  string $type The type of date we're building
 	 * @return object       DateTime object
 	 */
-	public function build_datetime( $date, $tz, $type = 'this' ) {
-		$datetime = new \DateTime( $date, $tz );
+	public function build_datetime( $date, $type = 'this' ) {
+		$datetime = new \DateTime( $date, $this->timezone );
 
-		// Make sure we check on a Sunday.
-		if ( 'Sun' !== $datetime->format( 'D' ) ) {
-			switch ( $type ) {
-				case 'previous':
+		switch ( $type ) {
+			case 'start':
+				// Start on the sunday of the week.
+				if ( 'Sun' !== $datetime->format( 'D' ) ) {
 					$datetime->modify( 'last Sunday' );
-					$datetime->modify( '1 week ago' );
-					break;
-				case 'next':
-				case 'end':
+				}
+				break;
+			case 'next':
+			case 'end':
+				if ( 'Sat' !== $datetime->format( 'D' ) ) {
 					$datetime->modify( 'next Sunday' );
-					break;
-				default:
+				} else {
+					$datetime->modify( '+1 day' );
+				}
+				break;
+			case 'previous':
+				// For previous week, if it's Sunday we can use last Sunday. Otherwise, we need to go back to the previous Sunday.
+				if ( 'Sun' !== $datetime->format( 'D' ) ) {
 					$datetime->modify( 'last Sunday' );
-			}
+				}
+				$datetime->modify( '-1 week' );
+				break;
+			default:
+				$datetime->modify( 'today' );
 		}
 
 		return $datetime;
@@ -196,14 +219,14 @@ class Display {
 	 * All dates are 'Y-m-d'
 	 *
 	 * @param  string $date    The date we're building nav for
-	 * @param  string $today   Today's date
 	 * @param  string $last    Last week
 	 * @param  string $next    Next week
 	 * @param  string $tv_view The view
 	 *
 	 * @return string       HTML output for the navigation
 	 */
-	private function get_footer_navigation( $date, $today, $last, $next, $tv_view ) {
+	private function get_footer_navigation( $date, $last, $next, $tv_view ) {
+		$today = $this->today->format( 'Y-m-d' );
 
 		// Query Args
 		$last_query_args = array(
@@ -241,14 +264,13 @@ class Display {
 	 *
 	 * @param  object $start_datetime Start date
 	 * @param  object $end_datetime   End date
-	 * @param  object $today          Today's date
 	 * @return string                 The empty calendar
 	 */
-	private function get_empty_calendar( $start_datetime, $end_datetime, $today ) {
+	private function get_empty_calendar( $start_datetime, $end_datetime ) {
 		// We can't find anything listed
 		$empty = '<p>There are no shows on the air for the week starting ' . $start_datetime->format( 'F d, Y' ) . '.</p>';
 
-		if ( $end_datetime > $today ) {
+		if ( $end_datetime > $this->today ) {
 			// End date is in the future
 			$empty .= '<p>We only project the calendar 2-4 weeks in advance as future planned airings are subject to change without notice. Jump back to <a href="/calendar/">This Week</a></p>';
 		} else {
@@ -262,38 +284,83 @@ class Display {
 	/**
 	 * Get the showtime for the calendar
 	 *
-	 * @param  array  $calendar The calendar
-	 * @param  object $today    Today's date
-	 * @param  object $tz       Timezone
-	 * @return string           The shows
+	 * @param  array  $show      The show
+	 * @param  bool   $format    Format the time
+	 *
+	 * @return string|object     The showtime
 	 */
-	public function get_showtime( $show, $tz ) {
-		$date      = new \DateTime( '@' . $show['timestamp'] );
-		$show_time = new \DateTime( '@' . $show['timestamp'], $tz );
-		$date->setTimeZone( new \DateTimeZone( LWTV_TIMEZONE ) );
-		$lwtv_date = $show_time->format( '@ g:i A' ) . ' (' . $date->format( 'T' ) . ')';
+	public function get_showtime( $show, $format = false ): mixed {
+		$native_tz = ( ! isset( $show['native_tz'] ) || 'timezone' === $show['native_tz'] || empty( $show['native_tz'] ) ) ? $this->timezone : $show['native_tz'];
+		$show_time = new \DateTime( '@' . $show['timestamp'] );
 
-		return $lwtv_date;
+		if ( is_string( $native_tz ) || empty( $native_tz ) ) {
+			$native_tz = new \DateTimeZone( $native_tz );
+		}
+
+		$show_time->setTimezone( $native_tz );
+
+		if ( ! $format ) {
+			return $show_time;
+		}
+
+		return $show_time->format( '@ g:i A' ) . ' (' . $show_time->format( 'T' ) . ')';
 	}
 
 	/**
 	 * Get the subnav for the calendar
 	 *
 	 * @param  array  $calendar The calendar
-	 * @param  object $today    Today's date
-	 * @param  object $tz       Timezone
 	 */
-	public function get_subnav( $calendar, $today, $tz ) {
+	public function get_subnav( $calendar, $prefix = 'list' ) {
+
 		$header = '<div class="ep-calendar-subnav p-3 list-group nav list-group-horizontal justify-content-center">';
-		foreach ( $calendar as $day => $shows ) {
-			$show_day = new \DateTime( $day, $tz );
+		$today  = $this->today->format( 'Y-m-d' );
 
-			$link_color = ( $day === $today->format( 'Y-m-d' ) ) ? 'link-info' : 'link-subnav';
+		// Loop through the days of the week.
+		$week_of_days = $this->get_week_of_days();
 
-			$header .= '<a href="#' . strtolower( $show_day->format( 'l' ) ) . '" class="' . $link_color . ' nav-item list-group-item-light link-offset-2 nav-link" >' . $show_day->format( 'l' ) . '</a>';
+		foreach ( $week_of_days as $weekday ) {
+			$weekday_object = new \DateTime( $weekday, $this->timezone );
+			if ( isset( $calendar[ $weekday ] ) ) {
+				$day        = $weekday;
+				$show_day   = new \DateTime( $day, $this->timezone );
+				$link_color = ( $day === $today ) ? 'link-info' : 'link-subnav';
+				$header    .= '<a href="#' . $prefix . '_' . strtolower( $show_day->format( 'l' ) ) . '" class="' . $link_color . ' nav-item list-group-item-light link-offset-2 nav-link">' . $show_day->format( 'l' ) . '</a>';
+			} else {
+				$header .= '<span class="link-secondary nav-item list-group-item-light link-offset-2 nav-link">' . $weekday_object->format( 'l' ) . '</span>';
+			}
 		}
+
 		$header .= '</div>';
 
 		return $header;
+	}
+
+	/**
+	 * Get the days of the week
+	 *
+	 * @param  object $datetime The date
+	 *
+	 * @return array The days of the week
+	 */
+	public function get_week_of_days( $datetime = null ) {
+
+		// "Today" is the default. If a date is passed, we use that.
+		$today = ( null === $datetime ) ? $this->today : $datetime;
+
+		// If today is Sunday, we start from there. Otherwise, we find the last Sunday.
+		if ( 'Sun' !== $today->format( 'D' ) ) {
+			$today->modify( 'last Sunday' );
+		}
+
+		$week_of_days = array();
+		for ( $i = 1; $i <= 7; $i++ ) {
+			if ( 1 !== $i ) {
+				$today->modify( 'tomorrow' );
+			}
+			$week_of_days[] = $today->format( 'Y-m-d' );
+		}
+
+		return $week_of_days;
 	}
 }

@@ -142,13 +142,13 @@ class WP_CLI_LWTV_Generate {
 
 		switch ( $second ) {
 			case 'daily':
-				\WP_CLI::line( 'Running DAILY cron.' );
+				\WP_CLI::log( 'Prepping DAILY cron.' );
 				$this->run_cron_hourly();
 				$this->run_cron_daily();
 				break;
 			case 'hourly':
 			default:
-				\WP_CLI::line( 'Running HOURLY cron.' );
+				\WP_CLI::log( 'Prepping HOURLY cron.' );
 				$this->run_cron_hourly();
 				break;
 		}
@@ -161,10 +161,10 @@ class WP_CLI_LWTV_Generate {
 	 */
 	public function run_cron_hourly() {
 		// Check missed schedule:
-		\WP_CLI::line( 'Attempting to publish all posts that have missed schedule.' );
+		\WP_CLI::log( 'Attempting to publish all posts that have missed schedule.' );
 		$missed_schedule = ( new Missed_Schedule() )->missed_schedule();
 		if ( ! empty( $missed_schedule ) ) {
-			\WP_CLI::line( $missed_schedule );
+			\WP_CLI::log( $missed_schedule );
 		}
 	}
 
@@ -173,25 +173,21 @@ class WP_CLI_LWTV_Generate {
 	 */
 	public function run_cron_daily() {
 		// Run the update lists
-		\WP_CLI::line( 'Updating the lists...' );
+		\WP_CLI::log( 'Updating the lists...' );
 		$this->run_update_lists();
 
 		// run OTD
-		\WP_CLI::line( 'Setting the "Of the Day"...' );
+		\WP_CLI::log( 'Setting the "Of the Day"...' );
 		$this->run_otd();
 
 		// Build tv maze:
-		\WP_CLI::line( 'Downloading the TV Maze ICS.' );
+		\WP_CLI::log( 'Downloading the TV Maze ICS.' );
 		$this->run_tvmaze();
 
 		// Run the debug of the day:
 		$day = gmdate( 'D' );
-		\WP_CLI::line( sprintf( 'Running the debug checker. Day: %s ...', $day ) );
+		\WP_CLI::log( sprintf( 'Running the debug checker. Day: %s ...', $day ) );
 		$this->run_debug_checker( $day );
-
-		// Run the indexer
-		\WP_CLI::line( 'Running the FacetWP indexer. Please be patient, this takes time...' );
-		\FWP()->indexer->index();
 	}
 
 	/**
@@ -206,25 +202,33 @@ class WP_CLI_LWTV_Generate {
 		// Run a different check each day.
 		switch ( strtolower( $day ) ) {
 			case 'mon':
+				\WP_CLI::log( 'Debugger: Checking queer characters...' );
 				( new Queers_Debugger() )->find_queer_chars();
 				break;
 			case 'tue':
+				\WP_CLI::log( 'Debugger: Checking for BYQ issues...' );
 				( new Characters_Debugger() )->find_byq_problems();
 				break;
 			case 'wed':
+				\WP_CLI::log( 'Debugger: Checking dupes...' );
 				( new Dupes_Debugger() )->find_duplicates();
 				break;
 			case 'thu':
+				\WP_CLI::log( 'Debugger: Checking all actors...' );
 				( new Actors_Debugger() )->find_actors_problems();
 				break;
 			case 'fri':
+				\WP_CLI::log( 'Debugger: Checking all characters...' );
 				( new Characters_Debugger() )->find_characters_problems();
 				break;
 			case 'sat':
+				\WP_CLI::log( 'Debugger: Checking all shows...' );
 				( new Shows_Debugger() )->find_shows_problems();
 				break;
 			case 'sun':
+				\WP_CLI::log( 'Debugger: Checking actors for iMDB...' );
 				( new Actors_Debugger() )->find_actors_no_imdb();
+				\WP_CLI::log( 'Debugger: Checking shows for iMDB...' );
 				( new Shows_Debugger() )->find_shows_no_imdb();
 				break;
 			default:
@@ -252,7 +256,7 @@ class WP_CLI_LWTV_Generate {
 		if ( file_exists( $ics_file ) && $file_time <= strtotime( '+1 sec' ) ) {
 			\WP_CLI::success( 'TVMaze updated successfully.' );
 		} else {
-			\WP_CLI::warning( 'TVMaze is not able to be updated.' );
+			\WP_CLI::warning( 'TVMaze was not able to be updated.' );
 		}
 	}
 
