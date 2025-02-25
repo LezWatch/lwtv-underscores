@@ -1,45 +1,52 @@
+#wpadminbar span.lwtv-icon svg {
+	width: 25px;
+	height: 25px;
+	margin-top: 5px!important;
+}
+
+
 .lwtvtab .tab-block {
-  display: block;
-  margin: 30px 0;
+	display: block;
+	margin: 30px 0;
 }
 
 .lwtv-tools-table {
-  max-width: 1280px;
-  margin: 20px 0 1px;
+	max-width: 1280px;
+	margin: 20px 0 1px;
 }
 
 .lwtv-tools-table .alternate, .striped>tbody>:nth-child(odd), ul.striped>:nth-child(odd) {
-  background-color: #f9f9f9;
+	background-color: #f9f9f9;
 }
 
 .lwtv-tools-container {
-  max-width: 1280px;
-  margin: 20px 0 1px;
-  padding: 20px 20px 0;
-  border: 1px solid #e5e5e5;
-  background-color: #fdfdfd;
-  box-shadow: 0 1px 1px rgba(0,0,0,.04);
+	max-width: 1280px;
+	margin: 20px 0 1px;
+	padding: 20px 20px 0;
+	border: 1px solid #e5e5e5;
+	background-color: #fdfdfd;
+	box-shadow: 0 1px 1px rgba(0,0,0,.04);
 }
 
 .lwtv-tools-container h3 {
-  margin: -20px -20px 0;
-  padding: 1em;
-  border-bottom: 1px solid #ccc;
-  background-color: #fdfdfd;
-  font-size: 1.4em;
+	margin: -20px -20px 0;
+	padding: 1em;
+	border-bottom: 1px solid #ccc;
+	background-color: #fdfdfd;
+	font-size: 1.4em;
 }
 
 .lwtv-tools-container .dashicons-yes {
-  color: #46B450;
+	color: #46B450;
 }
 
 .lwtv-tools-container .dashicons-warning,
 .lwtv-tools-container .dashicons-no {
-  color: #DC3232;
+	color: #DC3232;
 }
 
 .lwtv-tools-container .dashicons-flag {
-  color: #826EB4;
+	color: #826EB4;
 }
 
 
