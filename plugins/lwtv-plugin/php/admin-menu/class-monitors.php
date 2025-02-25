@@ -86,7 +86,7 @@ class Monitors {
 			$status = '<em>ERROR! The TVMaze calendar file is missing! Tell Mika.<em>';
 		} else {
 			$file_time  = filemtime( $filename );
-			$time_since = human_time_diff( $file_time, strtotime( time() ) );
+			$time_since = human_time_diff( $file_time, strtotime( 'now' ) );
 
 			// If the time is less than 24 hours, we're good.
 			// If it's under 48 hours, it's a warning.
