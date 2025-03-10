@@ -122,3 +122,31 @@
 .searchwp-modal-form-lwtv .searchwp-modal-form__overlay {
 	will-change: transform;
 }
+
+/* **************************************
+ *
+ * 4) Live search results customization
+ *
+ ************************************** */
+.searchwp-live-search-result-lwtv {
+	.searchwp-live-search-result {
+		display: flex;
+		align-items: start;
+		gap: 1rem;
+	}
+
+	.searchwp-live-search-result--img {
+		flex-shrink: 0;
+	}
+
+	.searchwp-live-search-result--title {
+		flex: 1;
+	}
+
+	.searchwp-live-search-view-all-button {
+		display: block;
+		margin: 1rem;
+		text-align: center;
+		width: 80%;
+	}
+}

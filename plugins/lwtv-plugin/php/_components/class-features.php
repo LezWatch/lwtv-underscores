@@ -245,15 +245,8 @@ class Features implements Component {
 	 * Admin CSS
 	 */
 	public function admin_enqueue_scripts(): void {
-		// If we're in the admin, load the admin CSS.
-		if ( is_admin() ) {
-			wp_enqueue_style( 'lwtv_data_check_admin', LWTV_PLUGIN_URL . '/assets/css/wp-admin.css', array(), LWTV_PLUGIN_VERSION );
-		}
-
-		// If we're logged in, load the admin CSS.
-		if ( is_user_logged_in() ) {
-			wp_enqueue_style( 'lwtv_admin_bar', LWTV_PLUGIN_URL . '/assets/css/top-admin-bar.css', array(), LWTV_PLUGIN_VERSION );
-		}
+		wp_register_style( 'lwtv_data_check_admin', LWTV_PLUGIN_URL . '/assets/css/wp-admin.css', array(), LWTV_PLUGIN_VERSION );
+		wp_enqueue_style( 'lwtv_data_check_admin' );
 	}
 
 	/**

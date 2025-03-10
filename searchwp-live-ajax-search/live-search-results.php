@@ -26,11 +26,25 @@ if ( ! empty( $live_search_results ) ) :
 		<?php foreach ( $live_search_results as $search_result ) : ?>
 			<?php $display_data = SearchWP_Live_Search_Template::get_display_data( $search_result ); ?>
 
-			<div class="searchwp-live-search-result" role="option" id="" aria-selected="false">
+			<div class="searchwp-live-search-result searchwp-live-search-result-lwtv" role="option" id="" aria-selected="false">
 
-				<?php if ( $settings['swp-image-size'] ) : ?>
 				<div class="searchwp-live-search-result--img">
 					<?php if ( ! empty( $display_data['image_html'] ) ) : ?>
+						<?php
+						if ( ! empty( $display_data['type'] ) ) {
+							switch ( $display_data['type'] ) {
+								case 'post_type_shows':
+								case 'post_type_characters':
+								case 'post_type_actors':
+									$display_data['image_html'] = get_the_post_thumbnail( $display_data['id'], 'character-img' );
+									break;
+								default:
+									$display_data['image_html'] = get_the_post_thumbnail( $display_data['id'], 'post-thumbnail' );
+									break;
+							}
+						}
+						?>
+
 						<?php echo wp_kses_post( $display_data['image_html'] ); ?>
 					<?php else : ?>
 						<svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -39,46 +53,45 @@ if ( ! empty( $live_search_results ) ) :
 						</svg>
 					<?php endif; ?>
 				</div>
-				<?php endif; ?>
 
-				<div class="searchwp-live-search-result--info">
-					<h4 class="searchwp-live-search-result--title">
-						<?php
-						$svg                = 'newspaper.svg';
-						$fontawesome        = 'fa-newspaper';
-						$screen_reader_text = 'News Article';
-						if ( ! empty( $display_data['type'] ) ) {
-							switch ( $display_data['type'] ) {
-								case 'page':
-									$svg                = 'chalkboard.svg';
-									$fontawesome        = 'fa-file';
-									$screen_reader_text = 'Page';
-									break;
-								case 'post_type_shows':
-									$svg                = 'tv.svg';
-									$fontawesome        = 'fa-tv';
-									$screen_reader_text = 'TV Show, mini-series, or movie';
-									break;
-								case 'post_type_characters':
-									$svg                = 'rubber-stamp.svg';
-									$fontawesome        = 'fa-user';
-									$screen_reader_text = 'Character';
-									break;
-								case 'post_type_actors':
-									$svg                = 'award-academy.svg';
-									$fontawesome        = 'fa-user-tie';
-									$screen_reader_text = 'Actor';
-									break;
-							}
+				<h4 class="searchwp-live-search-result--title">
+					<?php
+					$svg                = 'newspaper.svg';
+					$fontawesome        = 'fa-newspaper';
+					$screen_reader_text = 'News Article';
+					if ( ! empty( $display_data['type'] ) ) {
+						switch ( $display_data['type'] ) {
+							case 'page':
+								$svg                = 'chalkboard.svg';
+								$fontawesome        = 'fa-file';
+								$screen_reader_text = 'Page';
+								break;
+							case 'post_type_shows':
+								$svg                = 'tv.svg';
+								$fontawesome        = 'fa-tv';
+								$screen_reader_text = 'TV Show, mini-series, or movie';
+								break;
+							case 'post_type_characters':
+								$svg                = 'rubber-stamp.svg';
+								$fontawesome        = 'fa-user';
+								$screen_reader_text = 'Character';
+								break;
+							case 'post_type_actors':
+								$svg                = 'award-academy.svg';
+								$fontawesome        = 'fa-user-tie';
+								$screen_reader_text = 'Actor';
+								break;
 						}
-						// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-						echo lwtv_plugin()->get_symbolicon( svg: $svg, fontawesome: $fontawesome ) . '&nbsp;';
-						?>
-						<span class="screen-reader-text"><?php echo esc_html( $screen_reader_text ); ?></span>
-						<a href="<?php echo esc_url( $display_data['permalink'] ); ?>">
-							<?php echo wp_kses_post( $display_data['title'] ); ?>
-						</a>
-					</h4>
+					}
+					// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+					echo lwtv_plugin()->get_symbolicon( svg: $svg, fontawesome: $fontawesome ) . '&nbsp;';
+					?>
+					<span class="screen-reader-text"><?php echo esc_html( $screen_reader_text ); ?></span>
+					<a href="<?php echo esc_url( $display_data['permalink'] ); ?>">
+						<?php echo wp_kses_post( $display_data['title'] ); ?>
+					</a>
+				</h4>
+				<div class="searchwp-live-search-result--info">
 					<p class="searchwp-live-search-result--desc">
 						<?php echo wp_kses_post( get_the_excerpt( $display_data['id'] ) ); ?>
 					</p>
@@ -89,11 +102,12 @@ if ( ! empty( $live_search_results ) ) :
 		<?php
 		$all_results_url = add_query_arg( 's', get_search_query(), home_url() );
 		?>
-		<div class="searchwp-live-search-view-all">
-			<a href="<?php echo esc_url( $all_results_url ); ?>">
-				<?php echo esc_html( '' ); ?>
-			</a>
-		</div>
+		<!--
+		Disabled for now, as the link is wrong...
+		<button class="searchwp-live-search-view-all-button" onclick="window.location.href='<?php echo esc_url( $all_results_url ); ?>'">
+			See all results
+		</button>
+		-->
 	</div>
 <?php else : ?>
 	<p class="searchwp-live-search-no-results" role="option">

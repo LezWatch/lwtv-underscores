@@ -86,7 +86,7 @@ class Monitors {
 			$status = '<em>ERROR! The TVMaze calendar file is missing! Tell Mika.<em>';
 		} else {
 			$file_time  = filemtime( $filename );
-			$time_since = human_time_diff( $file_time, strtotime( time() ) );
+			$time_since = human_time_diff( $file_time, strtotime( 'now' ) );
 
 			// If the time is less than 24 hours, we're good.
 			// If it's under 48 hours, it's a warning.
@@ -215,21 +215,20 @@ class Monitors {
 	 * Note: The keys are safe here, as they are the READ ONLY keys.
 	 * Frankly if anyone wants to use them to check on us, they can.
 	 *
-	 * @param  string $sitename
+	 * @param  string $site_name
 	 * @return array  Status of Uptime checker
 	 */
-	public static function check_uptime_robot( $sitename ) {
+	public static function check_uptime_robot( $site_name ) {
 		$uptime_url = 'https://api.uptimerobot.com/v2/getMonitors';
 		$api_keys   = array(
 			'lwtv'      => 'm781800598-b7f0dce51e9c3b7d9d85e200',
 			'lwtv-docs' => 'm783186644-93e4a02249e1011bac3c4923',
 		);
 
-		if ( ! isset( $api_keys[ $sitename ] ) ) {
-			$status = '<em>ERROR! The sitename (' . sanitize_text_field( $sitename ) . ') is not monitored at this time.';
+		if ( ! isset( $api_keys[ $site_name ] ) ) {
+			$status = '<em>ERROR! The site name (' . sanitize_text_field( $site_name ) . ') is not monitored at this time.';
 		} else {
-			$api_key = $api_keys[ $sitename ];
-			$request = 'api_key=' . $api_key . '&format=json&logs=1&log_types=1&logs_limit=1&all_time_uptime_ratio=1';
+			$api_key = $api_keys[ $site_name ];
 
 			$args = array(
 				'body' => array(
@@ -278,7 +277,6 @@ class Monitors {
 
 						// Check if there has been any recorded downtime:
 						if ( empty( $response['logs'] ) ) {
-							// No downtime recorded:
 							$status .= '<br />There has been no recorded downtime. Ever.';
 						} else {
 							// Date and time since last downtime:

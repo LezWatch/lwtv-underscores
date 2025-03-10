@@ -27,15 +27,13 @@
  * If not, see <https://www.gnu.org/licenses/gpl-3.0.html>.
  */
 
-// If the old plugin is active, deactivate it.
-
 use LWTV\_Helpers\Autoload;
 use LWTV\Plugin;
 
 require_once __DIR__ . '/php/_helpers/class-autoload.php';
 
 // Plugin Version.
-define( 'LWTV_PLUGIN_VERSION', '6.1.2' );
+define( 'LWTV_PLUGIN_VERSION', '6.1.3' );
 
 /**
  * Autoloader serves for `LWTV` namespace and autoload all files under the php directory.
