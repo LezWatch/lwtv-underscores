@@ -14,7 +14,7 @@ $character = $post->ID;
 $doa_status = ( has_term( 'dead', 'lez_cliches', $character ) ) ? 'Dead' : 'Alive';
 
 // Generate RIP
-// Usage: $rip
+// Usage: $rip_dates
 $is_dead = get_post_meta( $character, 'lezchars_death_year', true );
 if ( $is_dead ) {
 	$char_death = ( ! is_array( $is_dead ) ) ? array( $is_dead ) : $is_dead;
@@ -29,6 +29,16 @@ if ( $is_dead ) {
 		$rip[] = $date;
 	}
 }
+
+// Strike through all dates _EXCEPT_ the last one.
+$rip_total = count( $rip );
+$rip_dates = array_map(
+	function ( $value, $index ) use ( $rip_total ) {
+		return ( $index < $rip_total - 1 ) ? '<s>' . $value . '</s>' : $value;
+	},
+	$rip,
+	array_keys( $rip )
+);
 
 // Microformats Fix
 lwtv_plugin()->get_microformats_fix( $character );
@@ -72,7 +82,7 @@ lwtv_plugin()->get_microformats_fix( $character );
 							?>
 							<tr>
 								<th scope="row">RIP</th>
-								<td><?php echo wp_kses_post( implode( ' &bull; ', $rip ) ); ?></td>
+								<td><?php echo wp_kses_post( implode( ' &bull; ', $rip_dates ) ); ?></td>
 							</tr>
 							<?php
 						}

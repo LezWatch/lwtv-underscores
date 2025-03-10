@@ -91,12 +91,14 @@ require_once 'inc/widgets/otd-widget.php';
  * postloop-img    - Used in the post loop
  * relatedshow-img - Used in the related shows section
  * headshot-tiny   - Used on relationships lists
+ * headshot-search - Used on SearchWP Live Search
  */
 add_image_size( 'character-img', 350, 412, true );
 add_image_size( 'show-img', 960, 400, true );
 add_image_size( 'postloop-img', 525, 300, true );
 add_image_size( 'relatedshow-img', 340, 150, true );
 add_image_size( 'headshot-tiny', 50, 50, true );
+add_image_size( 'headshot-search', 100, 100, true );
 
 /**
  * Comments
