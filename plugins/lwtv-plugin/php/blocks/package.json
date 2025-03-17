@@ -20,7 +20,7 @@
 	},
 	"dependencies": {
 		"@wordpress/api-fetch": "^7.19.0",
-		"@wordpress/babel-plugin-import-jsx-pragma": "^5.19.0",
+		"@wordpress/babel-plugin-import-jsx-pragma": "^5.20.0",
 		"@wordpress/blocks": "^14.8.0",
 		"@wordpress/i18n": "^5.19.0",
 		"@wordpress/icons": "^10.19.0"
