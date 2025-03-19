@@ -7,6 +7,7 @@
 namespace LWTV\_Components;
 
 use LWTV\Features\Avatars;
+use LWTV\Features\BlockTracking;
 use LWTV\Features\Dashboard_Posts_In_Progress;
 use LWTV\Features\Dashboard;
 use LWTV\Features\Embeds;
@@ -34,6 +35,7 @@ class Features implements Component {
 
 		// Load them:
 		new Avatars();
+		new BlockTracking();
 		new Dashboard_Posts_In_Progress();
 		new Dashboard();
 		new Embeds();
@@ -217,7 +219,6 @@ class Features implements Component {
 		$defaults[ $unicorn ] = 'Unicorn';
 		return $defaults;
 	}
-
 
 	/**
 	 * Validate date format.
