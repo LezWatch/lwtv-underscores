@@ -28,7 +28,7 @@
     },
     "require-dev": {
         "wp-coding-standards/wpcs": "^3.0",
-        "yoast/phpunit-polyfills": "^3.0",
+        "yoast/phpunit-polyfills": "^4.0",
         "phpcompatibility/phpcompatibility-wp": "*",
         "php-stubs/wp-cli-stubs": "^2.9"
     },
@@ -46,6 +46,9 @@
     "config": {
         "allow-plugins": {
             "dealerdirect/phpcodesniffer-composer-installer": true
+        },
+        "platform": {
+            "php": "8.3"
         }
     }
 }

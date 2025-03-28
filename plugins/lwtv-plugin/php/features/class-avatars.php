@@ -84,6 +84,11 @@ class Avatars {
 			return $avatar;
 		}
 
+		// If the person has a local avatar, use it.
+		if ( $this->validate_local_avatar( $email, $size ) ) {
+			return $avatar;
+		}
+
 		// If they have a user account but no gravatar, use the default.
 		if ( $user ) {
 			$default_avatar = str_replace( 'wp-content/plugins/lwtv-plugin', 'wp-content/themes/lwtv-underscores/plugins/lwtv-plugin', $default_avatar );
@@ -161,6 +166,26 @@ class Avatars {
 		}
 
 		return $has_valid_avatar;
+	}
+
+	/**
+	 * Validate Local Avatar
+	 *
+	 * @param string $email
+	 *
+	 * @return bool
+	 */
+	public function validate_local_avatar( $email, $size ) {
+		if ( ! class_exists( 'Simple_Local_Avatars' ) ) {
+			return false;
+		}
+
+		$simple_local_avatar_url = ( new \Simple_Local_Avatars() )->get_simple_local_avatar_url( $email, $size );
+		if ( $simple_local_avatar_url ) {
+			return true;
+		}
+
+		return false;
 	}
 
 	/**
