@@ -3,7 +3,7 @@
 /**
  * Block Tracking
  *
- * Blocks .com and .org from tracking everything.
+ * Blocks .com and .org from tracking everything. This actually speeds up the update check.
  */
 
 namespace LWTV\Features;
