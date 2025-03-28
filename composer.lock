@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "db8e99b88e3b636645d060ed081a2f60",
+    "content-hash": "6919f9b2925475bb872f2ca0d18de69e",
     "packages": [
         {
             "name": "fortawesome/font-awesome",
@@ -2488,5 +2488,8 @@
         "php": ">=8.2"
     },
     "platform-dev": {},
+    "platform-overrides": {
+        "php": "8.3"
+    },
     "plugin-api-version": "2.6.0"
 }
