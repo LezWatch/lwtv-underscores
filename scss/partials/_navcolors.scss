@@ -13,6 +13,10 @@
 	padding: 0;
 	background-color: colors.$white;
 
+	button.navbar-toggler {
+		border: none;
+	}
+
 	ul.navbar-nav > li {
 		border-left: solid 1px colors.$lightgrey;
 		background-color: colors.$white;

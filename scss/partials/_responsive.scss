@@ -89,25 +89,15 @@
 			font-size: 1.35rem;
 		}
 	}
+
+	// Show the fourth card on the shows we love loop for iPads.
+	.shows-we-love-loop .card:nth-child(4) {
+		display: block!important;
+	}
 }
 
 // Medium devices (tablets, less than 990px)
 @media (max-width: 990px) {
-
-	.row > * {
-		width: 950px;
-	}
-
-	.page-template-page-home {
-		div.site-main {
-			.container {
-				.row > * {
-					width: 90%;
-				}
-			}
-		}
-	}
-
 	header.archive-header {
 		.row {
 			text-align: center;
@@ -251,6 +241,7 @@
 
 		.card {
 			margin: 0.5rem;
+			max-width: 255px;
 		}
 	}
 
@@ -258,7 +249,7 @@
 	.site-loop.character-archive-loop,
 	.site-loop.character-show-loop,
 	.site-loop.main-posts-loop {
-		grid-template-columns: repeat(2, 1fr);
+		grid-template-columns: repeat(2, 1fr)!important;
 		grid-gap: 1.2rem;
 		padding: 0 0 0 1rem;
 	}

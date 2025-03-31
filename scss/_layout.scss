@@ -1636,6 +1636,10 @@ h3 svg * {
 	&.related-post-loop {
 		grid-gap: 1rem;
 	}
+
+	&.shows-we-love-loop .card:nth-child(4) {
+		display: none;
+	}
 }
 
 

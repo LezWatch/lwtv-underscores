@@ -165,7 +165,7 @@ get_header(); ?>
 						'posts_per_page' => '30',
 						'post_status'    => array( 'publish' ),
 						'no_found_rows'  => true,
-						'_loved_shuffle' => 3,
+						'_loved_shuffle' => 4,
 						'meta_query'     => array( // phpcs:ignore WordPress.DB.SlowDBQuery -- Risk of slow query accepted.
 							array(
 								'key'     => 'lezshows_worthit_show_we_love',
