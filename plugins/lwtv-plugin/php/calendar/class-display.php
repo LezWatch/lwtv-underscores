@@ -59,13 +59,17 @@ class Display {
 		/**
 		 * Calendar itself
 		 */
-		$calendar = ( new Build_Calendar() )->generate_tvmaze_calendar( $start_datetime->format( 'Y-m-d' ) );
+		$cal_this_week = ( new Build_Calendar() )->generate_tvmaze_calendar( $start_datetime->format( 'Y-m-d' ) );
+		$cal_next_week = ( new Build_Calendar() )->generate_tvmaze_calendar( $end_datetime->format( 'Y-m-d' ) );
+		$cal_last_week = ( new Build_Calendar() )->generate_tvmaze_calendar( $prev_datetime->format( 'Y-m-d' ) );
+		$calendar      = array_merge( $cal_this_week, $cal_next_week, $cal_last_week );
+		ksort( $calendar );
 
 		// If we have no shows, we need to display a message.
 		if ( isset( $calendar['none'] ) || empty( $calendar ) || ! array( $calendar ) ) {
 			$return .= $this->get_empty_calendar( $start_datetime, $end_datetime );
 		} else {
-			$return .= $this->get_tab_navigation( $calendar, $get_tvview );
+			$return .= $this->get_tab_navigation( $calendar, $get_tvview, $date_query );
 		}
 
 		/**
@@ -102,16 +106,18 @@ class Display {
 	 * @param  string $tv_view  The view
 	 * @return string           The tab navigation
 	 */
-	private function get_tab_navigation( $calendar, $tv_view = 'list' ) {
+	private function get_tab_navigation( $calendar, $tv_view = 'list', $date_query = 'today' ) {
 		$navigation  = '<p>All times are displayed as US/Eastern, but are reflective of their original air date and time.</p>';
 		$navigation .= '<p>Be advised, airdates and times are subject to change without notice. Always check your local listings.<p>';
 		$navigation .= '<a name="caltop"></a>';
 
+		$current_calendar = $this->get_current_calendar( $calendar, $date_query );
+
 		// Get the show list.
 		$show_tabs = array(
-			'list'     => ( new Display_List() )->get_shows( $calendar ),
-			'grid'     => ( new Display_Grid() )->get_shows( $calendar ),
-			'calendar' => ( new Display_Calendar() )->get_shows( $calendar ),
+			'list'     => ( new Display_List() )->get_shows( $current_calendar, $date_query ),
+			'grid'     => ( new Display_Grid() )->get_shows( $current_calendar, $date_query ),
+			'calendar' => ( new Display_Calendar() )->get_shows( $current_calendar, $date_query ),
 		);
 
 		$tab_content = $this->get_tab_content( $show_tabs, $tv_view );
@@ -119,6 +125,26 @@ class Display {
 		$navigation .= '<div class="tab-content" id="calendarTabContent">' . $tab_content . '</div>';
 
 		return $navigation;
+	}
+
+	/**
+	 * Get the current calendar
+	 *
+	 * @param  array  $calendar
+	 * @param  string $date_query
+	 * @return array
+	 */
+	private function get_current_calendar( $calendar, $date_query ) {
+		$start_date = ( 'today' === $date_query ) ? $this->today : $date_query;
+		$end_date   = ( new Display() )->build_datetime( $start_date, 'end' )->format( 'Y-m-d' );
+
+		return array_filter(
+			$calendar,
+			function ( $date ) use ( $start_date, $end_date ) {
+				return $date >= $start_date && $date <= $end_date;
+			},
+			ARRAY_FILTER_USE_KEY
+		);
 	}
 
 	/**
@@ -311,13 +337,13 @@ class Display {
 	 *
 	 * @param  array  $calendar The calendar
 	 */
-	public function get_subnav( $calendar, $prefix = 'list' ) {
+	public function get_subnav( $calendar, $prefix = 'list', $date_query = null ) {
 
 		$header = '<div class="ep-calendar-subnav p-3 list-group nav list-group-horizontal justify-content-center">';
 		$today  = $this->today->format( 'Y-m-d' );
 
 		// Loop through the days of the week.
-		$week_of_days = $this->get_week_of_days();
+		$week_of_days = $this->get_week_of_days( $date_query );
 
 		foreach ( $week_of_days as $weekday ) {
 			$weekday_object = new \DateTime( $weekday, $this->timezone );

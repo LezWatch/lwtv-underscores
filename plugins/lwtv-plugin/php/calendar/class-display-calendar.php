@@ -16,9 +16,11 @@ class Display_Calendar {
 	 *
 	 * @return string
 	 */
-	public function get_shows( $calendar ) {
+	public function get_shows( $calendar, $date_query ) {
 		$today = ( new Display() )->today;
 		$tz    = ( new Display() )->timezone;
+
+		$date_query_datetime = ( new Display() )->build_datetime( $date_query );
 
 		// If we have no shows, we need to display a message.
 		if ( ! $calendar ) {
