@@ -15,28 +15,30 @@ class Display_Grid {
 	 * @param  object $tz
 	 * @return string
 	 */
-	public function get_shows( $calendar ) {
+	public function get_shows( $calendar, $date_query ) {
 
 		$today = ( new Display() )->today;
 		$tz    = ( new Display() )->timezone;
 
+		$date_query_datetime = ( new Display() )->build_datetime( $date_query );
+
 		$weekly = '<div>';
 
 		// Header Sub Navigation
-		$subnav = ( new Display() )->get_subnav( $calendar );
+		$subnav = ( new Display() )->get_subnav( $calendar, 'grid', $date_query_datetime );
 		// Replace list_ with grid_ to jump to the day.
 		$subnav = str_replace( 'list_', 'grid_', $subnav );
 
 		$weekly .= $subnav;
 
-		$week_of_days = ( new Display() )->get_week_of_days();
+		$week_of_days = ( new Display() )->get_week_of_days( $date_query_datetime );
 
 		// Loop through the days of the week.
 		foreach ( $week_of_days as $weekday ) {
 			$weekday_object = new \DateTime( $weekday, $tz );
 
 			$today_link = 'grid_' . strtolower( $weekday_object->format( 'l' ) );
-			$today_date = $weekday_object->format( 'l dS' );
+			$today_date = $weekday_object->format( 'l jS' );
 			if ( $weekday === $today->format( 'Y-m-d' ) ) {
 				$today_date .= '&nbsp;&nbsp;<button type="button" class="btn btn-info btn-sm" disabled><a name="today">Today</a></button>';
 			}

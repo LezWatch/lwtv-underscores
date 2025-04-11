@@ -15,16 +15,18 @@ class Display_List {
 	 * @param  object $tz
 	 * @return string
 	 */
-	public function get_shows( $calendar ) {
+	public function get_shows( $calendar, $date_query ) {
 
 		$today = ( new Display() )->today;
 		$tz    = ( new Display() )->timezone;
 
+		$date_query_datetime = ( new Display() )->build_datetime( $date_query );
+
 		// Header Sub Navigation
-		$header = ( new Display() )->get_subnav( $calendar );
+		$header = ( new Display() )->get_subnav( $calendar, 'list', $date_query_datetime );
 		$table  = '<table class="table">';
 
-		$week_of_days = ( new Display() )->get_week_of_days();
+		$week_of_days = ( new Display() )->get_week_of_days( $date_query_datetime );
 
 		// Loop through the days of the week.
 		foreach ( $week_of_days as $weekday ) {

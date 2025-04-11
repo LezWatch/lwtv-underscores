@@ -1,16 +1,16 @@
 <?php
 /**
- * YIKES Starter functions and definitions
+ * LWTV functions and definitions
  *
- * @package YIKES Starter
+ * @package LWTV Custom Theme
  */
 
 // Versioning for efficient developers.
 if ( ! defined( 'LWTV_THEME_VERSION' ) ) {
 	$versions = array(
-		'lwtv-underscores' => '6.3.0',    // Bump this any time you make serious CSS changes.
+		'lwtv-underscores' => '6.3.1',    // Bump this any time you make serious CSS changes.
 		'font-awesome'     => '6.7.2',    // Bump when you update Font Awesome.
-		'bootstrap'        => '5.3.3',    // Bump when you update bootstrap.
+		'bootstrap'        => '5.3.5',    // Bump when you update bootstrap.
 		'bootstrap_dark'   => '1.1.0',    // Bump when you update the dark mode.
 		'lwtv-blocks'      => '1.1.0',    // Bump when you update the blocks' CSS (or add new ones).
 	);
@@ -25,10 +25,10 @@ if ( ! isset( $content_width ) ) {
 }
 
 /**
- * YIKES Stuff
+ * LWTV Stuff
  */
 
-// YIKES Setup theme constants These will be used for server and web paths.
+// Theme constants These will be used for server and web paths.
 // so we don't have to reference functions every time.
 if ( ! defined( 'LWTV_THEME_PATH' ) ) {
 	define( 'LWTV_THEME_PATH', get_stylesheet_directory() );
@@ -40,7 +40,7 @@ if ( ! defined( 'LWTV_THEME_URL' ) ) {
 /**
  * Get the title of the Posts page.
  */
-function yikes_starter_blog_page_title() {
+function lwtv_theme_blog_page_title() {
 	if ( get_option( 'page_for_posts' ) ) {
 		return get_the_title( get_option( 'page_for_posts' ) );
 	}
@@ -51,11 +51,11 @@ function yikes_starter_blog_page_title() {
  *
  * @param string $more set the more ellipsis.
  */
-function yks_excerpt_more( $more ) {
+function lwtv_theme_excerpt_more( $more ) {
 	$more = '...';
 	return $more;
 }
-add_filter( 'excerpt_more', 'yks_excerpt_more' );
+add_filter( 'excerpt_more', 'lwtv_theme_excerpt_more' );
 
 /**
  * Filter the except length to 20 words.
@@ -140,16 +140,16 @@ add_filter( 'get_the_archive_title', 'yikes_archive_title' );
 /**
  * Theme Setup
  */
-function yikes_starter_add_editor_styles() {
+function lwtv_theme_add_editor_styles() {
 	add_editor_style( 'style.css' );
 	add_editor_style( 'custom-editor-style.css' );
 }
-add_action( 'admin_init', 'yikes_starter_add_editor_styles' );
+add_action( 'admin_init', 'lwtv_theme_add_editor_styles' );
 
-if ( ! function_exists( 'yikes_starter_setup' ) ) {
+if ( ! function_exists( 'lwtv_theme_setup' ) ) {
 	/**
 	 * Sets up theme defaults and registers support for various WordPress features. */
-	function yikes_starter_setup() {
+	function lwtv_theme_setup() {
 
 		/**
 		 * Set up Nav menus */
@@ -159,14 +159,6 @@ if ( ! function_exists( 'yikes_starter_setup' ) ) {
 				'social_menu' => __( 'Social Menu', 'lwtv-underscores' ),
 			)
 		);
-
-		/**
-		 * Make theme available for translation.
-		 * Translations can be filed in the /languages/ directory.
-		 * If you're building a theme based on yikes starter, use a find and replace
-		 * to change 'yikes_starter' to the name of your theme in all the template files
-		 */
-		load_theme_textdomain( 'yikes_starter', get_template_directory() . '/languages' );
 
 		/**
 		 * Let WordPress manage the document title.
@@ -196,12 +188,12 @@ if ( ! function_exists( 'yikes_starter_setup' ) ) {
 	}
 }
 
-add_action( 'after_setup_theme', 'yikes_starter_setup' );
+add_action( 'after_setup_theme', 'lwtv_theme_setup' );
 
 /**
  * Register widgetized areas and update sidebar with default widgets
  */
-function yikes_starter_widgets_init() {
+function lwtv_theme_widgets_init() {
 	// Home Sidebar.
 	register_sidebar(
 		array(
@@ -324,7 +316,7 @@ function yikes_starter_widgets_init() {
 	);
 }
 
-add_action( 'widgets_init', 'yikes_starter_widgets_init' );
+add_action( 'widgets_init', 'lwtv_theme_widgets_init' );
 
 /**
  * Bootstrap Stuff
@@ -377,7 +369,7 @@ function posts_link_attributes() {
 /**
  *  Scripts and styles
  */
-function yikes_starter_scripts() {
+function lwtv_theme_scripts() {
 
 	// combined + minified.
 	// navigation.js, skip-link-focus-fix.js, a11y.js, bootstrap-color-mode.
@@ -409,7 +401,7 @@ function yikes_starter_scripts() {
 	}
 }
 
-add_action( 'wp_enqueue_scripts', 'yikes_starter_scripts' );
+add_action( 'wp_enqueue_scripts', 'lwtv_theme_scripts' );
 
 /**
  * Enqueue block styles in the editor.

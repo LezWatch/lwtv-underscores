@@ -11,32 +11,32 @@
 /**
  * Set up the WordPress core custom header feature.
  *
- * @uses yikes_starter_header_style()
+ * @uses lwtv_theme_header_style()
  */
-function yikes_starter_custom_header_setup() {
+function lwtv_theme_custom_header_setup() {
 	add_theme_support(
 		'custom-header',
 		apply_filters(
-			'yikes_starter_custom_header_args',
+			'lwtv_theme_custom_header_args',
 			array(
 				'default-image'    => '',
 				'width'            => 2250,
 				'height'           => 602,
 				'flex-height'      => true,
-				'wp-head-callback' => 'yikes_starter_header_style',
+				'wp-head-callback' => 'lwtv_theme_header_style',
 			)
 		)
 	);
 }
-add_action( 'after_setup_theme', 'yikes_starter_custom_header_setup' );
+add_action( 'after_setup_theme', 'lwtv_theme_custom_header_setup' );
 
-if ( ! function_exists( 'yikes_starter_header_style' ) ) :
+if ( ! function_exists( 'lwtv_theme_header_style' ) ) :
 	/**
 	 * Styles the header image and text displayed on the blog.
 	 *
-	 * @see yikes_starter_custom_header_setup().
+	 * @see lwtv_theme_custom_header_setup().
 	 */
-	function yikes_starter_header_style() {
+	function lwtv_theme_header_style() {
 		$header_text_color = get_header_textcolor();
 
 		/*

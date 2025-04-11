@@ -41,7 +41,7 @@ get_header(); ?>
 								get_template_part( 'template-parts/content/search' );
 							}
 							echo '</div>';
-							yikes_starter_paging_nav();
+							lwtv_theme_paging_nav();
 						} else {
 							get_template_part( 'template-parts/content/none' );
 						}

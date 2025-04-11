@@ -16,7 +16,7 @@ get_header(); ?>
 		<div class="container">
 			<section class="archive-header">
 				<h1 class="entry-title">
-					<?php echo wp_kses_post( yikes_starter_blog_page_title() ); ?>
+					<?php echo wp_kses_post( lwtv_theme_blog_page_title() ); ?>
 				</h1>
 			</section><!-- .archive-header -->
 		</div><!-- .container -->

@@ -17,7 +17,7 @@
 
 		<?php if ( 'post' === get_post_type() ) { ?>
 			<div class="entry-meta">
-				<?php yikes_starter_posted_on(); ?>
+				<?php lwtv_theme_posted_on(); ?>
 			</div><!-- .entry-meta -->
 		<?php } ?>
 	</header><!-- .entry-header -->
@@ -45,7 +45,7 @@
 		if ( 'post' === get_post_type() ) {
 			/* translators: used between list items, there is a space after the comma */
 			$categories_list = get_the_category_list( esc_attr__( ', ', 'lwtv-underscores' ) );
-			if ( $categories_list && yikes_starter_categorized_blog() ) {
+			if ( $categories_list && lwtv_theme_categorized_blog() ) {
 				?>
 				<span class="cat-links">
 					<?php echo 'Posted in ' . wp_kses_post( $categories_list ); ?>
