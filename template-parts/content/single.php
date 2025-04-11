@@ -17,7 +17,7 @@
 		</div>
 
 		<div class="entry-meta">
-			<?php yikes_starter_posted_on(); ?>
+			<?php lwtv_theme_posted_on(); ?>
 		</div><!-- .entry-meta -->
 	</header><!-- .entry-header -->
 
@@ -44,7 +44,7 @@
 		/* translators: used between list items, there is a space after the comma */
 		$tag_list = get_the_tag_list( '', __( ', ', 'lwtv-underscores' ) );
 
-		if ( ! yikes_starter_categorized_blog() ) {
+		if ( ! lwtv_theme_categorized_blog() ) {
 			// This blog only has 1 category so we just need to worry about tags in the meta text
 			if ( '' !== $tag_list ) {
 				// phpcs:ignore WordPress.WP.I18n.NonSingularStringLiteralText

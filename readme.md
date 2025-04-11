@@ -1,4 +1,4 @@
-# LezWatch.TV Theme - Built on Yikes! Starter Theme
+# LezWatch.TV Custom Theme
 
 The 100% Original Theme for LezWatch.TV
 
@@ -12,7 +12,7 @@ The 100% Original Theme for LezWatch.TV
 
 # Description
 
-Based on the [Yikes!](https://YikesInc.com) Starter Theme, the LezWatch.TV theme has been customized for custom post types (shows, characters, actors) and to be as queer as possible.
+Based on the Yikes! Starter Theme and Underscores, the LezWatch.TV theme has been customized for custom post types (shows, characters, actors) and to be as queer as possible.
 
 Usage documentation can be found at [docs.lezwatchtv.com](https://docs.lezwatchtv.com)
 

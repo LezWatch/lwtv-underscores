@@ -45,7 +45,7 @@ get_header(); ?>
 
 							// Only show post nav on posts (to not break facet).
 							if ( 'post' === get_post_type() ) {
-								yikes_starter_post_nav();
+								lwtv_theme_post_nav();
 							}
 
 						endwhile;
