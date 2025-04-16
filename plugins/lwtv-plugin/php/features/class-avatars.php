@@ -1,6 +1,6 @@
 <?php
 /**
- * Avatars
+ * Avatars as SVGs, not default Gravatars.
  */
 
 namespace LWTV\Features;
@@ -8,63 +8,65 @@ namespace LWTV\Features;
 class Avatars {
 
 	/**
-	 * Letter to numbers
-	 */
-	private $letter_values = array(
-		'a' => 0xFF0000, // Red
-		'b' => 0xFFFF00, // Green
-		'c' => 0x00FF00, // Blue
-		'd' => 0x0000FF, // Yellow
-		'e' => '13', // Light Blue
-		'f' => '14', // Navy Blue
-		'g' => '15', // Dark Blue
-		'h' => '16', // Purple
-		'i' => '17', // Magenta
-		'j' => '18', // Black
-		'k' => '-1', // Dark Gray
-		'l' => '-2', // Dark Green
-		'm' => '13', // Light Blue
-		'n' => '-12', // Navy Blue
-		'o' => '-11', // Purple
-		'p' => '-10', // Magenta
-		'q' => '-9',  // Dark Green
-		'r' => '-8',   // Black
-		's' => '-7',   // Gray
-		't' => '-6',   // Navy Blue
-		'u' => '-5',   // Magenta
-		'v' => '-4',   // Purple
-		'w' => '-3',   // Dark Green
-		'x' => '-2',   // Navy Blue
-		'y' => '-1',   // Black
-		'z' => '0',
-	);
-
-	/**
 	 * Constructor.
 	 */
 	public function __construct() {
-		add_filter( 'get_avatar', array( $this, 'avatar_filter' ), 10, 6 );
+		add_filter( 'get_avatar', array( $this, 'filter_avatar' ), 10, 6 );
+		add_filter( 'get_avatar_url', array( $this, 'filter_avatar_url' ), 10, 3 );
 	}
 
 	/**
-	 * Custom avatar fallback
+	 * Filter avatar HTML.
 	 *
-	 * @param string $avatar
-	 * @param mixed  $id_or_email
-	 * @param int    $size
-	 * @param string $default
-	 * @param string $alt
-	 * @param array  $args
-	 *
-	 * @return string
+	 * @param string $avatar      Avatar HTML.
+	 * @param mixed  $id_or_email User ID, email, or comment object.
+	 * @param int    $size        Avatar size.
+	 * @param string $default_url Default avatar URL.
+	 * @param string $alt         Alt text.
+	 * @param array  $args        Avatar arguments.
+	 * @return string Filtered avatar HTML.
 	 */
-	// phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
-	public function avatar_filter( $avatar, $id_or_email, $size, $default_avatar, $alt, $args ): string {
-		// Defaults:
-		$name  = '';
-		$email = '';
-		$user  = false;
+	public function filter_avatar( $avatar, $id_or_email, $size, $default_url, $alt, $args ) {
 
+		$details = $this->get_details_from_id_or_email( $id_or_email );
+		$email   = $details['email'];
+		$name    = $details['name'];
+
+		// If the person has a gravatar, use it.
+		if ( $this->validate_gravatar( $email ) ) {
+			return $avatar;
+		}
+
+		// If the person has a local avatar, use it.
+		if ( $this->validate_local_avatar( $email, $size ) ) {
+			return $avatar;
+		}
+
+		$avatar_url = $this->get_avatar_url( $id_or_email, $args, $name );
+
+		$class = array( 'avatar', 'avatar-' . (int) $size, 'photo' );
+		if ( ! empty( $args['class'] ) ) {
+			$class = array_merge( $class, (array) $args['class'] );
+		}
+
+		return sprintf(
+			"<img alt='%s' src='%s' class='%s' height='%d' width='%d' %s/>",
+			esc_attr( $alt ),
+			esc_url( $avatar_url, array( 'http', 'https', 'data' ) ),
+			esc_attr( implode( ' ', $class ) ),
+			(int) $size,
+			(int) $size,
+			$args['extra_attr']
+		);
+	}
+
+	/**
+	 * Get details from ID or email.
+	 *
+	 * @param  mixed $id_or_email User ID, email, or comment object.
+	 * @return array
+	 */
+	public function get_details_from_id_or_email( $id_or_email, $alt = '' ): array {
 		// Check if it's a numeric user ID
 		if ( is_numeric( $id_or_email ) ) {
 			$user  = get_userdata( $id_or_email );
@@ -79,70 +81,110 @@ class Avatars {
 			$name  = $user ? $user->display_name : $alt; // Use display name or alt
 		}
 
-		// If the person has a gravatar, use it.
-		if ( $this->validate_gravatar( $email ) ) {
-			return $avatar;
-		}
+		$details = array(
+			'email' => $email,
+			'name'  => $name,
+		);
 
-		// If the person has a local avatar, use it.
-		if ( $this->validate_local_avatar( $email, $size ) ) {
-			return $avatar;
-		}
-
-		// If they have a user account but no gravatar, use the default.
-		if ( $user ) {
-			$default_avatar = str_replace( 'wp-content/plugins/lwtv-plugin', 'wp-content/themes/lwtv-underscores/plugins/lwtv-plugin', $default_avatar );
-			return '<img alt="" src="' . $default_avatar . '" srcset="' . $default_avatar . '" class="avatar avatar-32 photo" height="32" width="32" loading="lazy" decoding="async">';
-		}
-
-		// If they don't have a user account, generate an avatar using their initials.
-		return $this->generate_initials_avatar( $id_or_email, $size, $name, $email );
+		return $details;
 	}
 
 	/**
-	 * Generate initials avatar
+	 * Filter avatar URL.
 	 *
-	 * @param string $id_or_email
-	 * @param int    $size
-	 * @param string $name
-	 * @param string $email
-	 *
-	 * @return string
+	 * @param string $url         Avatar URL.
+	 * @param mixed  $id_or_email User ID, email, or comment object.
+	 * @param array  $args        Avatar arguments.
+	 * @return string Filtered avatar URL.
 	 */
-	public function generate_initials_avatar( $id_or_email, $size, $name, $email ): string {
+	public function filter_avatar_url( $url, $id_or_email, $args ) {
+		$details = $this->get_details_from_id_or_email( $id_or_email );
+		$email   = $details['email'];
 
-		// If no display name, use the first character of the email
-		if ( empty( $name ) ) {
-			$name = ! empty( $email ) ? substr( $email, 0, 1 ) : 'L'; // Use first character of email or '?'
+		// If the person has a gravatar, use it.
+		if ( $this->validate_gravatar( $email ) ) {
+			return $url;
 		}
 
-		$initials  = $this->get_initials( $name );
-		$hex_color = $this->make_color( $initials );
+		// If the person has a local avatar, use it.
+		if ( $this->validate_local_avatar( $email, $args['size'] ) ) {
+			return $url;
+		}
 
-		// Determine if the input is a comment object
-		$is_comment_object = is_object( $id_or_email ) && isset( $id_or_email->comment_author );
+		return $this->get_avatar_url( $id_or_email, $args );
+	}
 
-		// Set padding style based on whether it's a comment
-		$padding_style = $is_comment_object ? 'padding:5px;' : '';
+	/**
+	 * Get avatar URL.
+	 *
+	 * @param mixed  $id_or_email User ID, email, or comment object.
+	 * @param array  $args        Avatar arguments.
+	 * @return string Filtered avatar URL.
+	 */
+	public function get_avatar_url( $id_or_email, $args, $name = '?' ) {
+		$user = false;
 
-		// Tweak Size for Admin pages
-		$size  = is_admin() ? $size - 10 : $size;
-		$admin = is_admin() ? 'float: left;margin-right: 10px;margin-top: 1px;' : '';
+		if ( is_numeric( $id_or_email ) ) {
+			$user = get_user_by( 'id', absint( $id_or_email ) );
+		} elseif ( is_string( $id_or_email ) ) {
+			$user = get_user_by( 'email', $id_or_email );
+		} elseif ( $id_or_email instanceof \WP_User ) {
+			$user = $id_or_email;
+		} elseif ( $id_or_email instanceof \WP_Comment ) {
+			$user = get_user_by( 'id', $id_or_email->user_id );
 
-		// Create initials avatar
-		$initialized_avatar = sprintf(
-			'<div style="width:%1$spx;height:%1$spx;border-radius:50%%;background-color:%2$s;position: relative;%3$sdisplay:inline-block;%5$s">
-			<span style="position:absolute;top:50%%;left:50%%;transform:translate(-50%%,-50%%);font-size:%4$spx;font-weight:bold;color:white;height:unset;">%6$s</span>
-		</div>',
-			$size, // %1$s
-			$hex_color, // %2$s
-			$admin, // %3$s
-			floor( $size / 2.3 ), // Adjust font size based on avatar size %4$s
-			$padding_style, // %5$s
-			$initials // %6$s
+			// Special-case for comments.
+			if ( ! $user ) {
+				return $this->get_avatar_svg( $id_or_email->comment_author );
+			}
+		}
+
+		if ( ! $user ) {
+			return $this->get_avatar_svg( '?' );
+		}
+
+		return $this->get_avatar_svg( $name );
+	}
+
+	/**
+	 * Get the default avatar URL.
+	 *
+	 * @param  string|null $name Name to derive avatar from.
+	 * @return string Default avatar URL.
+	 */
+	public function get_avatar_svg( string $name = '?' ): string {
+		$initials = $this->get_initials( $name );
+
+		$tmpl = <<<"END"
+			<?xml version="1.0" encoding="UTF-8"?>
+			<svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 50 50">
+				<rect width="100%%" height="100%%" fill="%s"/>
+				<text
+					fill="#fff"
+					font-family="sans-serif"
+					font-size="26"
+					font-weight="500"
+					dominant-baseline="middle"
+					text-anchor="middle"
+					x="50%%"
+					y="55%%"
+				>
+					%s
+				</text>
+			</svg>
+			END;
+
+		// Get the color for the avatar.
+		$color = $this->make_color( $name );
+
+		$data = sprintf(
+			$tmpl,
+			esc_attr( $color ),
+			esc_xml( $initials )
 		);
 
-		return $initialized_avatar;
+		$uri = 'data:image/svg+xml;base64,' . base64_encode( $data );
+		return $uri;
 	}
 
 	/**
@@ -189,21 +231,14 @@ class Avatars {
 	}
 
 	/**
-	 * Generate the color based on initials
+	 * Generate the color based on the name.
 	 */
-	public function make_color( string $initials ) {
-		$result = '';
-		foreach ( str_split( $initials ) as $char ) {
-			$char = strtolower( $char );
-			if ( array_key_exists( $char, $this->letter_values ) ) {
-				$result .= $this->letter_values[ $char ];
-			}
-		}
+	public function make_color( string $name ) {
+		$generate_hash  = md5( strtolower( trim( $name ) ) );
+		$base_rgb_array = sscanf( $generate_hash, '%2x%2x%2x' );
 
-		$clean_string = sprintf( '%02x', $result );
-		$hex_code     = substr( md5( $clean_string ), 0, 6 );
-
-		return '#' . $hex_code;
+		// Convert RGB array to hex color string
+		return sprintf( '#%02x%02x%02x', $base_rgb_array[0], $base_rgb_array[1], $base_rgb_array[2] );
 	}
 
 	/**
@@ -217,6 +252,15 @@ class Avatars {
 		// Turn Name into Array
 		$words    = explode( ' ', $name );
 		$initials = '';
+
+		$name_length = count( $words );
+		if ( $name_length > 2 ) {
+			$raw_words = $words;
+			$words     = array(
+				$raw_words[0],
+				$raw_words[ $name_length - 1 ],
+			);
+		}
 
 		// For each word in the array, get the first letter and it's associated number
 		foreach ( $words as $word ) {
