@@ -143,7 +143,6 @@ class WP_CLI_LWTV_Generate {
 		switch ( $second ) {
 			case 'daily':
 				\WP_CLI::log( 'Prepping DAILY cron.' );
-				$this->run_cron_hourly();
 				$this->run_cron_daily();
 				break;
 			case 'hourly':
