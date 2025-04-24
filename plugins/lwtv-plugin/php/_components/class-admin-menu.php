@@ -7,7 +7,6 @@
 namespace LWTV\_Components;
 
 use LWTV\Admin_Menu\Exclusions;
-use LWTV\Admin_Menu\Monitors;
 use LWTV\Admin_Menu\Validation;
 
 class Admin_Menu implements Component {
@@ -38,8 +37,10 @@ class Admin_Menu implements Component {
 
 		add_submenu_page( 'lwtv', 'Welcome', 'Welcome', 'read', 'lwtv', array( $this, 'settings_page' ) );
 
+		//phpcs:ignore WordPress.WP.GlobalVariablesOverride
+		$submenu['lwtv'][] = array( 'Monitors', 'read', esc_url( 'https://status.lezwatch.tv/status/lwtv-admin' ) );
+
 		( new Validation() )->init();
-		( new Monitors() )->init();
 
 		// Only admins can access this part:
 		if ( current_user_can( 'activate_plugins' ) ) {
@@ -51,6 +52,9 @@ class Admin_Menu implements Component {
 
 		//phpcs:ignore WordPress.WP.GlobalVariablesOverride
 		$submenu['lwtv'][] = array( 'Slack', 'read', esc_url( 'https://lezwatchtv.slack.com/' ) );
+
+		//phpcs:ignore WordPress.WP.GlobalVariablesOverride
+		$submenu['lwtv'][] = array( 'Status Page', 'read', esc_url( 'https://status.lezwatch.tv/' ) );
 	}
 
 	/*
@@ -76,7 +80,7 @@ class Admin_Menu implements Component {
 				<?php
 				echo '<li><a href="' . esc_url( admin_url( 'admin.php?page=lwtv_data_check' ) ) . '">Data Validation</a></li>';
 
-				echo '<li><a href="' . esc_url( admin_url( 'admin.php?page=lwtv_monitor_check' ) ) . '">Monitor Status</a></li>';
+				echo '<li><a href="https://status.lezwatch.tv/" target="_blank">Monitor Status</a></li>';
 
 				// Only admins can access this part:
 				if ( current_user_can( 'activate_plugins' ) ) {
