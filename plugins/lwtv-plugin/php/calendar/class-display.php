@@ -135,8 +135,16 @@ class Display {
 	 * @return array
 	 */
 	private function get_current_calendar( $calendar, $date_query ) {
-		$start_date = ( 'today' === $date_query ) ? $this->today : $date_query;
+		$today      = $this->today->format( 'Y-m-d' );
+		$start_date = ( 'today' === $date_query ) ? $today : $date_query;
 		$end_date   = ( new Display() )->build_datetime( $start_date, 'end' )->format( 'Y-m-d' );
+
+		// If the start date is not sunday, get the previous sunday.
+		$start_datetime = new \DateTime( $start_date, $this->timezone );
+		if ( 'Sun' !== $start_datetime->format( 'D' ) ) {
+			$start_datetime->modify( 'last Sunday' );
+			$start_date = $start_datetime->format( 'Y-m-d' );
+		}
 
 		return array_filter(
 			$calendar,
@@ -203,12 +211,14 @@ class Display {
 	 *
 	 * This will set up the start of the week. It's always Sunday.
 	 *
-	 * @param  string $date The date
+	 * @param  mixed  $date The date
 	 * @param  string $type The type of date we're building
 	 * @return object       DateTime object
 	 */
 	public function build_datetime( $date, $type = 'this' ) {
-		$datetime = new \DateTime( $date, $this->timezone );
+
+		$datestring = ( 'today' === $date ) ? $this->today->format( 'Y-m-d' ) : $date;
+		$datetime   = new \DateTime( $datestring, $this->timezone );
 
 		switch ( $type ) {
 			case 'start':
