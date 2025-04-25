@@ -6,6 +6,8 @@
  *
  * This will create a check for each cron job and ping HealthChecks.io after the job runs.
  *
+ * Due to the complex nature of this feature, it is heavily integrated with lwtv-plugin->error_log().
+ *
  * @link https://health.ipstenu.com/docs/
  */
 
@@ -13,20 +15,65 @@ namespace LWTV\Features;
 
 class Health_Checks {
 
+	/**
+	 * The API base URL
+	 *
+	 * @var string
+	 */
 	private $api_url = 'https://health.ipstenu.com';
 
+	/**
+	 * The API key
+	 *
+	 * @var string
+	 */
+	private $api_key;
+
+	/**
+	 * The API headers
+	 *
+	 * @var array
+	 */
+	private $api_headers = array(
+		'X-Api-Key'    => '',
+		'Content-Type' => 'application/json',
+		'Referer'      => '',
+		'Origin'       => '',
+	);
+
+	/**
+	 * The prefix
+	 *
+	 * @var string
+	 */
+	private $prefix = '';
+
+	/**
+	 * The constructor
+	 */
 	public function __construct() {
-		$this->api_url = ( defined( 'HEALTHCHECKS_API_URL' ) ) ? HEALTHCHECKS_API_URL : $this->api_url;
+		// If the site is in dev mode, don't run.
+		if ( lwtv_plugin()->is_dev_site() ) {
+			return;
+		}
 
 		// If the API key is not defined, don't run.
 		if ( ! defined( 'HEALTHCHECKS_API_KEY' ) ) {
 			return;
+		} else {
+			$this->api_key = HEALTHCHECKS_API_KEY;
 		}
 
-		// If the site is in dev mode, don't run.
-		if ( defined( 'LWTV_DEV_SITE' ) && LWTV_DEV_SITE ) {
-			return;
-		}
+		// Set the API URL.
+		$this->api_url = ( defined( 'HEALTHCHECKS_API_URL' ) ) ? HEALTHCHECKS_API_URL : $this->api_url;
+
+		// Set the API headers.
+		$this->api_headers['X-Api-Key'] = $this->api_key;
+		$this->api_headers['Referer']   = home_url();
+		$this->api_headers['Origin']    = home_url();
+
+		// Get the prefix.
+		$this->prefix = defined( 'HEALTHCHECKS_PREFIX' ) ? HEALTHCHECKS_PREFIX : $this->get_prefix();
 
 		$this->init();
 	}
@@ -35,42 +82,68 @@ class Health_Checks {
 	 * Initialize the Health Checks
 	 */
 	public function init() {
-		add_filter( 'schedule_event', array( $this, 'maybe_register_healthcheck' ), 10, 3 );
+		add_filter( 'schedule_event', array( $this, 'maybe_register_healthcheck' ), 10, 1 );
 	}
 
 	/**
-	 * Maybe register the healthcheck
+	 * Get the prefix
 	 *
-	 * @param array  $event The event.
-	 * @param string $recurrence The recurrence of the event.
-	 * @param string $hook The hook of the event.
-	 * @return array The event.
+	 * @return string The prefix.
 	 */
-	public function maybe_register_healthcheck( $event, $recurrence = null, $hook = null ) {
-
-		// If there's no recurrence, don't run.
-		if ( empty( $recurrence ) ) {
-			return $event;
+	private function get_prefix() {
+		$prefix = 'healthchecks';
+		$domain = wp_parse_url( home_url() );
+		if ( isset( $domain['host'] ) ) {
+			$prefix = str_replace( '.', '-', $domain['host'] );
 		}
+
+		return $prefix;
+	}
+
+	/**
+	 * Maybe register the health check
+	 *
+	 * @param stdClass Object $event The event.
+	 *
+	 * @return stdClass Object The event.
+	 */
+	public function maybe_register_healthcheck( $event ) {
+		// Turn the event into an array and get the hook, recurrence, and interval.
+		$array_event = (array) $event;
+		$hook        = $array_event['hook'] ?? '';
+		$recurrence  = $array_event['schedule'] ?? '';
+		$interval    = $array_event['interval'] ?? '';
 
 		// If there's no hook, don't run.
 		if ( empty( $hook ) ) {
+			lwtv_plugin()->error_log( 'Health check', 'Hook is empty' );
 			return $event;
 		}
 
-		// If we can't get the callback function from the hook, don't run.
-		$callback = self::get_callback_function_from_hook( $hook );
-		if ( ! $callback ) {
+		// If there's no recurrence, don't run.
+		if ( empty( $recurrence ) || empty( $interval ) ) {
+			lwtv_plugin()->error_log( 'Health check', 'Recurrence is empty' );
 			return $event;
 		}
 
-		$check_name = self::generate_check_name( $callback );
+		$check_name = self::generate_check_name( $hook );
 		$check      = self::get_or_create_check( $check_name, $recurrence );
+
+		if ( empty( $check ) ) {
+			lwtv_plugin()->error_log( 'Health check', 'Check not found for ' . $check_name );
+			return $event;
+		}
+
+		if ( ! isset( $check['ping_url'] ) ) {
+			lwtv_plugin()->error_log( 'Health check', 'Ping URL not found for ' . $check_name );
+			return $event;
+		}
 
 		// Hook to ping HealthChecks after the job runs
 		add_action(
 			$hook,
 			function () use ( $check ) {
+				lwtv_plugin()->error_log( 'Health check', 'Pinging ' . $check['ping_url'] );
 				wp_remote_post( $check['ping_url'] );
 			}
 		);
@@ -79,47 +152,17 @@ class Health_Checks {
 	}
 
 	/**
-	 * Get the callback function from the hook
-	 *
-	 * @param string $hook The hook to get the callback function from.
-	 * @return string|false The callback function or false if not found.
-	 */
-	private function get_callback_function_from_hook( $hook ) {
-		$crons = _get_cron_array();
-		if ( ! is_array( $crons ) ) {
-			return false;
-		}
-
-		foreach ( $crons as $timestamp => $cron ) {
-			if ( isset( $cron[ $hook ] ) ) {
-				foreach ( $cron[ $hook ] as $job ) {
-					if ( isset( $job['function'] ) ) {
-						return is_string( $job['function'] ) ? $job['function'] : 'anonymous';
-					}
-				}
-			}
-		}
-		return false;
-	}
-
-	/**
 	 * Generate the check name
 	 *
 	 * Turns example.com to example-com and then appends the callback function name.
 	 *
-	 * @param string $callback The callback function.
+	 * @param string $hook The hook.
 	 * @return string The check name.
 	 */
-	private function generate_check_name( $callback ) {
-		if ( ! defined( 'HEALTHCHECKS_PREFIX' ) ) {
-			// If the prefix is not defined, use the domain from home URL.
-			$domain = wp_parse_url( home_url(), PHP_URL_HOST );
-			$prefix = str_replace( '.', '-', $domain );
-		} else {
-			$prefix = HEALTHCHECKS_PREFIX;
-		}
+	private function generate_check_name( $hook ) {
+		$prefix = $this->prefix;
 
-		return $prefix . '-' . strtolower( str_replace( '_', '-', $callback ) );
+		return $prefix . '-' . strtolower( str_replace( '_', '-', $hook ) );
 	}
 
 	/**
@@ -138,18 +181,22 @@ class Health_Checks {
 			}
 
 			foreach ( $list_checks['checks'] as $check ) {
-				if ( $check['name'] === $check_name ) {
+				if ( $check['slug'] === $check_name ) {
+					lwtv_plugin()->error_log( 'Health check', 'Found check for ' . $check_name );
 					return $check;
 				}
 			}
 		} catch ( \Exception $e ) {
+			lwtv_plugin()->error_log( 'Health check', 'Error listing checks: ' . $e->getMessage() );
 			return array();
 		}
 
 		// If we got here, there's no check, so we need to create one.
+		lwtv_plugin()->error_log( 'Health check', 'No check found for ' . $check_name . '. Creating...' );
 		$new_check = $this->create_check( $check_name, $recurrence );
 
 		if ( empty( $new_check ) ) {
+			lwtv_plugin()->error_log( 'Health check', 'Error creating check: ' . $check_name );
 			return array();
 		}
 
@@ -164,34 +211,40 @@ class Health_Checks {
 	 * @return array The check.
 	 */
 	private function create_check( $check_name, $recurrence ) {
+		$prefix   = $this->prefix;
 		$timeout  = self::calculate_timeout( $recurrence );
 		$slug     = sanitize_title( $check_name );
 		$schedule = self::get_schedule( $recurrence );
-
-		$headers = array(
-			'X-Api-Key'    => HEALTHCHECKS_API_KEY,
-			'Content-Type' => 'application/json',
-		);
-		$body    = array(
-			'name'     => $check_name,
+		$name     = str_replace( $prefix . '-', '', $check_name );
+		$name     = str_replace( '-', ' ', $name );
+		$body     = array(
+			'name'     => ucwords( $name ),
 			'tags'     => 'wp-cron lwtv',
 			'slug'     => $slug,
 			'timeout'  => $timeout,
-			'grace'    => 300, // 5 minutes grace period
+			'grace'    => 6000, // 1 hour grace period
 			'schedule' => $schedule,
+			'tz'       => 'America/Los_Angeles',
 		);
 
 		try {
+			// Post to the checks endpoint.
 			$create = wp_remote_post(
-				HEALTHCHECKS_API_URL,
+				$this->api_url . '/api/v3/checks/',
 				array(
-					'headers' => $headers,
+					'headers' => $this->api_headers,
 					'body'    => wp_json_encode( $body ),
 				)
 			);
 
+			if ( is_wp_error( $create ) ) {
+				lwtv_plugin()->error_log( 'Health check', 'Error creating check on ' . $check_name . ': ' . $create->get_error_message() );
+				return array();
+			}
+
 			return json_decode( wp_remote_retrieve_body( $create ), true );
 		} catch ( \Exception $e ) {
+			lwtv_plugin()->error_log( 'Health check', 'Error creating check on ' . $check_name . ': ' . $e->getMessage() );
 			return array();
 		}
 	}
@@ -203,22 +256,27 @@ class Health_Checks {
 	private function list_checks() {
 		try {
 			$response = wp_remote_get(
-				$this->api_url,
+				$this->api_url . '/api/v3/checks/',
 				array(
-					'headers' => array( 'X-Api-Key' => HEALTHCHECKS_API_KEY ),
+					'headers' => $this->api_headers,
 				)
 			);
+
 			if ( is_wp_error( $response ) ) {
+				lwtv_plugin()->error_log( 'Health check', 'Error listing checks: ' . $response->get_error_message() );
 				throw new \Exception( $response->get_error_message() );
 			}
 
 			$decoded = json_decode( wp_remote_retrieve_body( $response ), true );
+
 			if ( json_last_error() !== JSON_ERROR_NONE ) {
+				lwtv_plugin()->error_log( 'Health check', 'Invalid JSON response' );
 				throw new \Exception( 'Invalid JSON response' );
 			}
 
 			return $decoded;
 		} catch ( \Exception $e ) {
+			lwtv_plugin()->error_log( 'Health check', 'Error listing checks: ' . $e->getMessage() );
 			return array();
 		}
 
@@ -240,49 +298,67 @@ class Health_Checks {
 		$timing = array();
 		foreach ( $schedules as $timing => $details ) {
 			if ( is_numeric( $recurrence ) ) {
-				// Then recurrence is in seconds so we need to convert it to a cron schedule.
-				$minutes = ceil( $recurrence / 60 );
-				$hours   = ceil( $recurrence / 3600 );
-				$days    = ceil( $recurrence / 86400 );
-				$weeks   = ceil( $recurrence / 604800 );
-				$months  = ceil( $recurrence / 2592000 );
-
-				if ( 0 === $minutes ) {
-					// If the recurrence is 0, then we need to run the check every minute.
-					return '0 * * * *';
-				} elseif ( $minutes < 60 ) {
-					// If the recurrence is less than 60 minutes, then we need to run the check every $minutes.
-					return "0/$minutes * * * *";
-				} elseif ( $hours < 24 ) {
-					// If the recurrence is less than 24 hours, then we need to run the check every $hours.
-					return "0 */$hours * * *";
-				} elseif ( $days < 7 ) {
-					// If the recurrence is less than 7 days, then we need to run the check every $days.
-					return "0 0 */$days * *";
-				} elseif ( $weeks < 4 ) {
-					// If the recurrence is less than 4 weeks, then we need to run the check every $weeks.
-					return "0 0 * */$weeks *";
-				} elseif ( $months < 12 ) {
-					// If the recurrence is less than 12 months, then we need to run the check every $months.
-					return "0 0 1 */$months *";
-				} else {
-					// If the recurrence is greater than 12 months, then we need to run the check every year.
-					return '0 0 1 1 *';
-				}
+				return $this->get_numeric_schedule( $recurrence );
 			}
 
 			// Otherwise we have to parse the WP schedule.
 			$schedule[ $details['interval'] ] = match ( $timing ) {
-				'hourly'     => '0 * * * *',
-				'daily'      => '0 0 * * *',
-				'twicedaily' => '0 */12 * * *',
-				'weekly'     => '0 0 * * 1',
-				'monthly'    => '0 0 1 * *',
-				default      => '0 * * * *', // fallback hourly
+				'searchwp_cron_interval' => '*/5 * * * *',
+				'every_minute'           => '* * * * *',
+				'fifteen_minutes'        => '*/15 * * * *',
+				'hourly'                 => '0 * * * *',
+				'daily'                  => '0 0 * * *',
+				'twicedaily'             => '0 */12 * * *',
+				'weekly'                 => '0 0 * * 1',
+				'monthly'                => '0 0 1 * *',
+				default                  => '0 * * * *', // fallback hourly
 			};
 		}
 
-		return $schedule[ $recurrence ];
+		$default = '0 * * * *';
+
+		return $schedule[ $recurrence ] ?? $default;
+	}
+
+	/**
+	 * Get the numeric schedule
+	 *
+	 * @param string $recurrence The recurrence of the check.
+	 * @return string The schedule for the check.
+	 */
+	private function get_numeric_schedule( $recurrence ) {
+		// Then recurrence is in seconds so we need to convert it to a cron schedule.
+		$minutes = ceil( $recurrence / 60 );
+		$hours   = ceil( $recurrence / 3600 );
+		$days    = ceil( $recurrence / 86400 );
+		$weeks   = ceil( $recurrence / 604800 );
+		$months  = ceil( $recurrence / 2592000 );
+
+		if ( 0 === $minutes ) {
+			// If the recurrence is 0, then we need to run the check every minute.
+			return '* * * * *';
+		} elseif ( $minutes < 60 ) {
+			// If the recurrence is less than 60 minutes, then we need to run the check every $minutes.
+			return "0/$minutes * * * *";
+		} elseif ( $hours < 24 ) {
+			// If the recurrence is less than 24 hours, then we need to run the check every $hours.
+			return "0 */$hours * * *";
+		} elseif ( $days < 7 ) {
+			// If the recurrence is less than 7 days, then we need to run the check every $days.
+			return "0 0 */$days * *";
+		} elseif ( $weeks < 4 ) {
+			// If the recurrence is less than 4 weeks, then we need to run the check every $weeks.
+			return "0 0 * */$weeks *";
+		} elseif ( $months < 12 ) {
+			// If the recurrence is less than 12 months, then we need to run the check every $months.
+			return "0 0 1 */$months *";
+		} else {
+			// If the recurrence is greater than 12 months, then we need to run the check every year.
+			return '0 0 1 1 *';
+		}
+
+		// If we got here, then we need to run the check every hour.
+		return '0 * * * *';
 	}
 
 	/**
@@ -299,12 +375,13 @@ class Health_Checks {
 		}
 
 		$timeout = match ( $recurrence ) {
-			'hourly'     => 3600,
-			'daily'      => 86400,
-			'twicedaily' => 43200,
-			'weekly'     => 604800,
-			'monthly'    => 2592000,
-			default      => 3600, // fallback 1 hour
+			'fifteen_minutes' => 900,
+			'hourly'          => 3600,
+			'daily'           => 86400,
+			'twicedaily'      => 43200,
+			'weekly'          => 604800,
+			'monthly'         => 2592000,
+			default           => 3600, // fallback 1 hour
 		};
 
 		return max( 600, $timeout );

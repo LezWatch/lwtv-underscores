@@ -8,12 +8,11 @@
 namespace LWTV\_Components;
 
 /**
- * Class for adding primary theme support.
- *
- * Exposes template tags
+ * Class for debugging. This includes the feature methods:
+ * is_dev_site(), is_debug_mode(), and log()
  *
  */
-class Debugger implements Component {
+class Debugger implements Component, Templater {
 
 	/**
 	 * Init the component. Hooks go in here.
@@ -22,6 +21,19 @@ class Debugger implements Component {
 	 */
 	public function init(): void {
 		// Void
+	}
+
+	/**
+	 * Get the template tags.
+	 *
+	 * @return array
+	 */
+	public function get_template_tags(): array {
+		return array(
+			'is_dev_site'   => array( $this, 'is_dev_site' ),
+			'is_debug_mode' => array( $this, 'is_debug_mode' ),
+			'error_log'     => array( $this, 'error_log' ),
+		);
 	}
 
 	/**
@@ -108,7 +120,7 @@ class Debugger implements Component {
 	 * @param  string $wiki_id
 	 * @return bool
 	 */
-	public function validate_wikidata_id( $wiki_id ) {
+	public function validate_wikidata_id( $wiki_id ): bool {
 		// If it doesn't start with a Q, fail.
 		if ( ! str_starts_with( $wiki_id, 'Q' ) ) {
 			return false;
@@ -124,5 +136,39 @@ class Debugger implements Component {
 
 		// Otherwise true.
 		return true;
+	}
+
+
+	/**
+	 * Check if the site is in dev mode.
+	 *
+	 * @return bool
+	 */
+	public function is_dev_site(): bool {
+		return defined( 'LWTV_DEV_SITE' ) && LWTV_DEV_SITE;
+	}
+
+	/**
+	 * Check if the site is in debug mode.
+	 *
+	 * @return bool
+	 */
+	public function is_debug_mode(): bool {
+		return defined( 'WP_DEBUG' ) && WP_DEBUG;
+	}
+
+	/**
+	 * Log a message.
+	 *
+	 * @param string $type    The type of log message.
+	 * @param string $message The message to log.
+	 *
+	 * @return void
+	 */
+	public function error_log( $type, $message ): void {
+		if ( $this->is_debug_mode() ) {
+			// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+			error_log( '[' . ucwords( $type ) . '] ' . $message );
+		}
 	}
 }

@@ -47,9 +47,7 @@
 
 <!--
 	If you're reading this source code, hi!
-	Everything can be found at the following URLs:
-	Theme - https://github.com/lezwatch/lwtv-underscores
-	Plugin - https://github.com/lezwatch/lwtv-plugin
+	Everything can be found at https://github.com/lezwatch/lwtv-underscores
 
 	You're welcome to fork our code and make your own site with it.
 -->
