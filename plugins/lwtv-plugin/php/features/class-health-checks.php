@@ -211,6 +211,9 @@ class Health_Checks {
 	 * @return array The check.
 	 */
 	private function create_check( $check_name, $recurrence ) {
+		// Since we're creating a check, we need to delete the transient.
+		lwtv_plugin()->delete_transient( 'lwtv_healthchecks_list' );
+
 		$prefix   = $this->prefix;
 		$timeout  = self::calculate_timeout( $recurrence );
 		$slug     = sanitize_title( $check_name );
@@ -254,6 +257,13 @@ class Health_Checks {
 	 * @return array The checks.
 	 */
 	private function list_checks() {
+		// See if the transient exists.
+		$transient = lwtv_plugin()->get_transient( 'lwtv_healthchecks_list' );
+
+		if ( false !== $transient ) {
+			return $transient;
+		}
+
 		try {
 			$response = wp_remote_get(
 				$this->api_url . '/api/v3/checks/',
@@ -273,6 +283,9 @@ class Health_Checks {
 				lwtv_plugin()->error_log( 'Health check', 'Invalid JSON response' );
 				throw new \Exception( 'Invalid JSON response' );
 			}
+
+			// Set the transient.
+			lwtv_plugin()->set_transient( 'lwtv_healthchecks_list', $decoded, 60 * 60 * 24 );
 
 			return $decoded;
 		} catch ( \Exception $e ) {
