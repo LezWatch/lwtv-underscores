@@ -54,7 +54,7 @@ class Actor_Char_Role {
 			}
 
 			// save array as transient for a reason.
-			set_transient( $transient, $array, DAY_IN_SECONDS );
+			lwtv_plugin()->set_transient( $transient, $array, DAY_IN_SECONDS );
 		}
 
 		return $array;

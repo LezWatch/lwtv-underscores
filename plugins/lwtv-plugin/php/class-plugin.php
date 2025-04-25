@@ -91,7 +91,9 @@ use LWTV\_Helpers\Utils;
  * @method string get_this_year_display( $year ) \_Components\This_Year
  *
  * TRANSIENTS
- * @method string get_transient( string $slug ) \_Components\Transients
+ * @method string get_transient( string $slug )                          \_Components\Transients
+ * @method void   set_transient( string $slug, $value, int $expiration ) \_Components\Transients
+ * @method void   delete_transient( string $slug )                       \_Components\Transients
  *
  */
 

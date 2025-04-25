@@ -171,7 +171,7 @@ class Shows {
 		}
 
 		// Save Transient
-		set_transient( 'lwtv_debug_show_problems', $items, WEEK_IN_SECONDS );
+		lwtv_plugin()->set_transient( 'lwtv_debug_show_problems', $items, WEEK_IN_SECONDS );
 
 		// Update Options
 		$option                  = get_option( 'lwtv_debugger_status' );
@@ -302,7 +302,7 @@ class Shows {
 		}
 
 		// Save Transient
-		set_transient( 'lwtv_debug_show_imdb', $items, WEEK_IN_SECONDS );
+		lwtv_plugin()->set_transient( 'lwtv_debug_show_imdb', $items, WEEK_IN_SECONDS );
 
 		// Update Options
 		$option              = get_option( 'lwtv_debugger_status' );
@@ -424,7 +424,7 @@ class Shows {
 		}
 
 		// Save Transient
-		set_transient( 'lwtv_debug_show_url', $items, WEEK_IN_SECONDS );
+		lwtv_plugin()->set_transient( 'lwtv_debug_show_url', $items, WEEK_IN_SECONDS );
 
 		// Update Options
 		$option              = get_option( 'lwtv_debugger_status' );

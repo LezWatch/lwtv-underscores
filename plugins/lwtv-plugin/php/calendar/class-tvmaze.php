@@ -46,19 +46,19 @@ class TVMaze {
 		// Get the timezone from the TVMaze API
 		$networks = $show_info['network'] ?? array();
 		if ( empty( $networks ) ) {
-			set_transient( 'lezshows_tvmaze_timezone_' . $show_id, 'missing', YEAR_IN_SECONDS );
+			lwtv_plugin()->set_transient( 'lezshows_tvmaze_timezone_' . $show_id, 'missing', YEAR_IN_SECONDS );
 			return '';
 		}
 
 		$country = $networks['country'] ?? array();
 		if ( empty( $country ) ) {
-			set_transient( 'lezshows_tvmaze_timezone_' . $show_id, 'missing', MONTH_IN_SECONDS );
+			lwtv_plugin()->set_transient( 'lezshows_tvmaze_timezone_' . $show_id, 'missing', MONTH_IN_SECONDS );
 			return '';
 		}
 
 		$timezone = $country['timezone'] ?? '';
 		if ( empty( $timezone ) ) {
-			set_transient( 'lezshows_tvmaze_timezone_' . $show_id, 'missing', WEEK_IN_SECONDS );
+			lwtv_plugin()->set_transient( 'lezshows_tvmaze_timezone_' . $show_id, 'missing', WEEK_IN_SECONDS );
 			return '';
 		}
 

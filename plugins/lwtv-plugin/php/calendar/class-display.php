@@ -135,6 +135,14 @@ class Display {
 	 * @return array
 	 */
 	private function get_current_calendar( $calendar, $date_query ) {
+
+		// See if the transient exists.
+		$transient = lwtv_plugin()->get_transient( 'lwtv_calendar_' . $date_query );
+
+		if ( false !== $transient ) {
+			return $transient;
+		}
+
 		$today      = $this->today->format( 'Y-m-d' );
 		$start_date = ( 'today' === $date_query ) ? $today : $date_query;
 		$end_date   = ( new Display() )->build_datetime( $start_date, 'end' )->format( 'Y-m-d' );
@@ -146,13 +154,18 @@ class Display {
 			$start_date = $start_datetime->format( 'Y-m-d' );
 		}
 
-		return array_filter(
+		$current_calendar = array_filter(
 			$calendar,
 			function ( $date ) use ( $start_date, $end_date ) {
 				return $date >= $start_date && $date <= $end_date;
 			},
 			ARRAY_FILTER_USE_KEY
 		);
+
+		// Set the transient.
+		lwtv_plugin()->set_transient( 'lwtv_calendar_' . $date_query, $current_calendar, 60 * 60 * 24 );
+
+		return $current_calendar;
 	}
 
 	/**

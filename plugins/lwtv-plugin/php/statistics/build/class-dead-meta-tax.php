@@ -37,7 +37,7 @@ class Dead_Meta_Tax {
 			}
 
 			// save array as transient for a reason.
-			set_transient( $transient, $array, DAY_IN_SECONDS );
+			lwtv_plugin()->set_transient( $transient, $array, DAY_IN_SECONDS );
 		}
 
 		return $array;

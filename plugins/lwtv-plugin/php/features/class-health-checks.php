@@ -285,7 +285,7 @@ class Health_Checks {
 			}
 
 			// Set the transient.
-			set_transient( 'lwtv_healthchecks_list', $decoded, 60 * 60 * 24 );
+			lwtv_plugin()->set_transient( 'lwtv_healthchecks_list', $decoded, 60 * 60 * 24 );
 
 			return $decoded;
 		} catch ( \Exception $e ) {
