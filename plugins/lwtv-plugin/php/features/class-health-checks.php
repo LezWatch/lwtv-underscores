@@ -285,7 +285,7 @@ class Health_Checks {
 			}
 
 			// Set the transient.
-			lwtv_plugin()->set_transient( 'lwtv_healthchecks_list', $decoded, 60 * 60 * 24 );
+			set_transient( 'lwtv_healthchecks_list', $decoded, 60 * 60 * 24 );
 
 			return $decoded;
 		} catch ( \Exception $e ) {
@@ -305,17 +305,19 @@ class Health_Checks {
 	 * @return string The schedule for the check.
 	 */
 	private function get_schedule( $recurrence ) {
-		$schedules = wp_get_schedules();
+		$all_schedules = wp_get_schedules();
+		$schedules     = array();
+		$default       = '0 * * * *';  // fallback hourly
 
 		// Convert schedule into an array of $timing[$recurrence] = CRONTIME;
 		$timing = array();
-		foreach ( $schedules as $timing => $details ) {
+		foreach ( $all_schedules as $timing => $details ) {
 			if ( is_numeric( $recurrence ) ) {
 				return $this->get_numeric_schedule( $recurrence );
 			}
 
 			// Otherwise we have to parse the WP schedule.
-			$schedule[ $details['interval'] ] = match ( $timing ) {
+			$schedules[ $details['interval'] ] = match ( $timing ) {
 				'searchwp_cron_interval' => '*/5 * * * *',
 				'every_minute'           => '* * * * *',
 				'fifteen_minutes'        => '*/15 * * * *',
@@ -324,13 +326,11 @@ class Health_Checks {
 				'twicedaily'             => '0 */12 * * *',
 				'weekly'                 => '0 0 * * 1',
 				'monthly'                => '0 0 1 * *',
-				default                  => '0 * * * *', // fallback hourly
+				default                  => $default,
 			};
 		}
 
-		$default = '0 * * * *';
-
-		return $schedule[ $recurrence ] ?? $default;
+		return $schedules[ $recurrence ] ?? $default;
 	}
 
 	/**
