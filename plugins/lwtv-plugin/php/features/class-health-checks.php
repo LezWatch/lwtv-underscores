@@ -47,6 +47,15 @@ class Health_Checks {
 	 * @var string
 	 */
 	private $prefix = '';
+	
+	private $kill_cron = array(
+		'jetpack_sync_cron',
+		'jetpack_sync_full_cron',
+		'jetpack_clean_nonces',
+		'jp_purge_transients_cron',
+		'jetpack_waf_rules_update_cron',
+		'jetpack_v2_heartbeat',
+	);
 
 	/**
 	 * The constructor
@@ -105,7 +114,7 @@ class Health_Checks {
 	 *
 	 * @param stdClass Object $event The event.
 	 *
-	 * @return stdClass Object The event.
+	 * @return stdClass|void Object The event.
 	 */
 	public function maybe_register_healthcheck( $event ) {
 		// Turn the event into an array and get the hook, recurrence, and interval.
@@ -117,7 +126,13 @@ class Health_Checks {
 		// If there's no hook, don't run.
 		if ( empty( $hook ) ) {
 			lwtv_plugin()->error_log( 'Health check', 'Hook is empty' );
-			return $event;
+			return;
+		}
+		
+		// If this is in the kill list, don't do it!
+		if ( in_array( $hook, $this->kill_cron ) ) {
+			wp_clear_scheduled_hook( $hook );
+			return;
 		}
 
 		// If there's no recurrence, don't run.
