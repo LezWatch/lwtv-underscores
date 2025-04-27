@@ -131,6 +131,7 @@ class Health_Checks {
 		
 		// If this is in the kill list, don't do it!
 		if ( in_array( $hook, $this->kill_cron ) ) {
+			lwtv_plugin()->error_log( 'Health Check', 'On the Kill List. Unscheduling ' . $hook )
 			wp_clear_scheduled_hook( $hook );
 			return;
 		}
