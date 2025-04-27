@@ -199,7 +199,8 @@ class Health_Checks {
 			foreach ( $list_checks['checks'] as $check ) {
 				if ( $check['slug'] === $check_name ) {
 					lwtv_plugin()->error_log( 'Health check', 'Found check for ' . $check_name );
-					return $check;
+					$updated_check = $this->maybe_update_check( $check_name, $check, $recurrence );
+					return $updated_check;
 				}
 			}
 		} catch ( \Exception $e ) {
@@ -218,6 +219,21 @@ class Health_Checks {
 
 		return $new_check;
 	}
+	
+	/**
+	 * Maybe Update Check
+		*
+		* If the time and recurrance don't seem to match what we have, let's edit.
+		*/
+	private function maybe_update_check( $check_name, $check, $recurrence ) {
+			$schedule = $check['schedule'] ?? '0 10 * * *';
+			
+			// Compare the recurrance to the check.
+			// Every minute is easy
+			// For daily, check what time NOW IS to adjust the second digit.
+		
+			return $check;
+		}
 
 	/**
 	 * Create a check
