@@ -314,7 +314,7 @@ class Health_Checks {
 			'tags'     => 'wp-cron lwtv',
 			'slug'     => $slug,
 			'timeout'  => $timeout,
-			'grace'    => $interval * 1.5, // +50% of the interval
+			'grace'    => $interval * 2.5,
 			'schedule' => $schedule,
 			'tz'       => 'America/Los_Angeles',
 			'unique'   => array( 'name', 'slug' ),
