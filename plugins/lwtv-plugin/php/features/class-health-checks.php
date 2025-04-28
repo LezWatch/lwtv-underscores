@@ -2,11 +2,16 @@
 /**
  * Health Checks
  *
- * Integrate with HealthChecks.io to monitor the site.
- *
- * This will create a check for each cron job and ping HealthChecks.io after the job runs.
+ * Integrate with HealthChecks.io to monitor the site:
+ *  - Create a check for each cron job and ping HealthChecks.io after the job runs.
+ *  - If the check doesn't exist, create it.
+ *  - If the check exists, update it if the schedule isn't correct.
  *
  * Due to the complex nature of this feature, it is heavily integrated with lwtv-plugin->error_log().
+ *
+ * Security Notes:
+ *  - The API key is stored in the wp-config.php file.
+ *  - The API Urls are IP restricted.
  *
  * @link https://health.ipstenu.com/docs/
  */
@@ -47,15 +52,6 @@ class Health_Checks {
 	 * @var string
 	 */
 	private $prefix = '';
-	
-	private $kill_cron = array(
-		'jetpack_sync_cron',
-		'jetpack_sync_full_cron',
-		'jetpack_clean_nonces',
-		'jp_purge_transients_cron',
-		'jetpack_waf_rules_update_cron',
-		'jetpack_v2_heartbeat',
-	);
 
 	/**
 	 * The constructor
@@ -95,7 +91,9 @@ class Health_Checks {
 	}
 
 	/**
-	 * Get the prefix
+	 * Get the prefix.
+	 *
+	 * When there's no prefix defined, we use the domain name.
 	 *
 	 * @return string The prefix.
 	 */
@@ -117,41 +115,38 @@ class Health_Checks {
 	 * @return stdClass|void Object The event.
 	 */
 	public function maybe_register_healthcheck( $event ) {
-		// Turn the event into an array and get the hook, recurrence, and interval.
+		// If the event is false or not an object, don't run.
+		if ( false === $event || ! is_object( $event ) ) {
+			return;
+		}
+
+		// Turn the event into an array and get the hook and interval.
 		$array_event = (array) $event;
 		$hook        = $array_event['hook'] ?? '';
-		$recurrence  = $array_event['schedule'] ?? '';
 		$interval    = $array_event['interval'] ?? '';
 
-		// If there's no hook, don't run.
+		// If there's no hook, don't run (this is a sanity check and should never happen).
 		if ( empty( $hook ) ) {
-			lwtv_plugin()->error_log( 'Health check', 'Hook is empty' );
-			return;
-		}
-		
-		// If this is in the kill list, don't do it!
-		if ( in_array( $hook, $this->kill_cron ) ) {
-			lwtv_plugin()->error_log( 'Health Check', 'On the Kill List. Unscheduling ' . $hook )
-			wp_clear_scheduled_hook( $hook );
+			lwtv_plugin()->error_log( 'HealthCheck', 'Hook is empty' );
 			return;
 		}
 
-		// If there's no recurrence, don't run.
-		if ( empty( $recurrence ) || empty( $interval ) ) {
-			lwtv_plugin()->error_log( 'Health check', 'Recurrence is empty' );
+		// If there's no interval, don't run as this is a one-time event.
+		if ( empty( $interval ) ) {
+			lwtv_plugin()->error_log( 'HealthCheck', 'Interval is empty. This is a one-time event.' );
 			return $event;
 		}
 
 		$check_name = self::generate_check_name( $hook );
-		$check      = self::get_or_create_check( $check_name, $recurrence );
+		$check      = self::get_or_create_check( $check_name, $interval );
 
 		if ( empty( $check ) ) {
-			lwtv_plugin()->error_log( 'Health check', 'Check not found for ' . $check_name );
+			lwtv_plugin()->error_log( 'HealthCheck', 'Check not found for ' . $check_name );
 			return $event;
 		}
 
 		if ( ! isset( $check['ping_url'] ) ) {
-			lwtv_plugin()->error_log( 'Health check', 'Ping URL not found for ' . $check_name );
+			lwtv_plugin()->error_log( 'HealthCheck', 'Ping URL not found for ' . $check_name );
 			return $event;
 		}
 
@@ -159,7 +154,7 @@ class Health_Checks {
 		add_action(
 			$hook,
 			function () use ( $check ) {
-				lwtv_plugin()->error_log( 'Health check', 'Pinging ' . $check['ping_url'] );
+				lwtv_plugin()->error_log( 'HealthCheck', 'Pinging ' . $check['ping_url'] );
 				wp_remote_post( $check['ping_url'] );
 			}
 		);
@@ -171,8 +166,10 @@ class Health_Checks {
 	 * Generate the check name
 	 *
 	 * Turns example.com to example-com and then appends the callback function name.
+	 * For example, if the hook is lwtv_plugin_cron_job, the check name will be
+	 * example-com-lwtv-plugin-cron-job.
 	 *
-	 * @param string $hook The hook.
+	 * @param  string $hook The hook.
 	 * @return string The check name.
 	 */
 	private function generate_check_name( $hook ) {
@@ -185,10 +182,10 @@ class Health_Checks {
 	 * Get or create the check
 	 *
 	 * @param string $check_name The check name.
-	 * @param string $recurrence The recurrence of the check.
+	 * @param string $interval   The interval of the check in seconds.
 	 * @return array The check.
 	 */
-	private function get_or_create_check( $check_name, $recurrence ) {
+	private function get_or_create_check( $check_name, $interval ) {
 		try {
 			$list_checks = $this->list_checks();
 
@@ -196,74 +193,86 @@ class Health_Checks {
 				return array();
 			}
 
+			// Loop through the checks and see if we have one that matches the check name.
 			foreach ( $list_checks['checks'] as $check ) {
 				if ( $check['slug'] === $check_name ) {
-					lwtv_plugin()->error_log( 'Health check', 'Found check for ' . $check_name );
-					$updated_check = $this->maybe_update_check( $check_name, $check, $recurrence );
+					lwtv_plugin()->error_log( 'HealthCheck', 'Found check for ' . $check_name );
+					$updated_check = $this->maybe_update_check( $check, $interval );
 					return $updated_check;
 				}
 			}
 		} catch ( \Exception $e ) {
-			lwtv_plugin()->error_log( 'Health check', 'Error listing checks: ' . $e->getMessage() );
+			lwtv_plugin()->error_log( 'HealthCheck', 'Error listing checks: ' . $e->getMessage() );
 			return array();
 		}
 
 		// If we got here, there's no check, so we need to create one.
-		lwtv_plugin()->error_log( 'Health check', 'No check found for ' . $check_name . '. Creating...' );
-		$new_check = $this->create_check( $check_name, $recurrence );
+		lwtv_plugin()->error_log( 'HealthCheck', 'No check found for ' . $check_name . '. Creating...' );
+		$new_check = $this->create_check( $check_name, $interval );
 
 		if ( empty( $new_check ) ) {
-			lwtv_plugin()->error_log( 'Health check', 'Error creating check: ' . $check_name );
+			lwtv_plugin()->error_log( 'HealthCheck', 'Error creating check: ' . $check_name );
 			return array();
 		}
 
 		return $new_check;
 	}
-	
+
 	/**
 	 * Maybe Update Check
 		*
-		* If the time and recurrance don't seem to match what we have, let's edit.
+		* If the time and interval don't seem to match what we have, let's edit.
 		*/
-	private function maybe_update_check( $check_name, $check, $recurrence ) {
-			$schedule = $check['schedule'] ?? '0 10 * * *';
-			
-			// Compare the recurrance to the check.
-			// Every minute is easy
-			// For daily, check what time NOW IS to adjust the second digit.
-		
+	private function maybe_update_check( $check, $interval ) {
+		$schedule   = $check['schedule'] ?? '';
+		$check_name = $check['slug'] ?? '';
+
+		$current_schedule = self::get_schedule( $interval );
+
+		if ( $current_schedule === $schedule ) {
+			lwtv_plugin()->error_log( 'HealthCheck', 'Schedule is correct for ' . $check_name );
 			return $check;
 		}
+
+		lwtv_plugin()->error_log( 'HealthCheck', 'Schedule is incorrect for ' . $check_name . '. Updating...' );
+
+		try {
+			$body = $this->create_check_body( $check_name, $interval );
+
+			$update = wp_remote_post(
+				$this->api_url . '/api/v3/checks/' . $check_name,
+				array(
+					'headers' => $this->api_headers,
+					'body'    => wp_json_encode( $body ),
+				)
+			);
+
+			if ( is_wp_error( $update ) ) {
+				lwtv_plugin()->error_log( 'HealthCheck', 'Error updating check: ' . $check_name );
+				return $check;
+			}
+
+			return json_decode( wp_remote_retrieve_body( $update ), true );
+		} catch ( \Exception $e ) {
+			lwtv_plugin()->error_log( 'HealthCheck', 'Error updating check: ' . $check_name );
+			return $check;
+		}
+	}
 
 	/**
 	 * Create a check
 	 *
 	 * @param string $check_name The check name.
-	 * @param string $recurrence The recurrence of the check.
+	 * @param string $interval   The interval of the check in seconds.
 	 * @return array The check.
 	 */
-	private function create_check( $check_name, $recurrence ) {
+	private function create_check( $check_name, $interval ) {
 		// Since we're creating a check, we need to delete the transient.
 		lwtv_plugin()->delete_transient( 'lwtv_healthchecks_list' );
 
-		$prefix   = $this->prefix;
-		$timeout  = self::calculate_timeout( $recurrence );
-		$slug     = sanitize_title( $check_name );
-		$schedule = self::get_schedule( $recurrence );
-		$name     = str_replace( $prefix . '-', '', $check_name );
-		$name     = str_replace( '-', ' ', $name );
-		$body     = array(
-			'name'     => ucwords( $name ),
-			'tags'     => 'wp-cron lwtv',
-			'slug'     => $slug,
-			'timeout'  => $timeout,
-			'grace'    => 6000, // 1 hour grace period
-			'schedule' => $schedule,
-			'tz'       => 'America/Los_Angeles',
-		);
-
 		try {
 			// Post to the checks endpoint.
+			$body   = $this->create_check_body( $check_name, $interval );
 			$create = wp_remote_post(
 				$this->api_url . '/api/v3/checks/',
 				array(
@@ -273,15 +282,43 @@ class Health_Checks {
 			);
 
 			if ( is_wp_error( $create ) ) {
-				lwtv_plugin()->error_log( 'Health check', 'Error creating check on ' . $check_name . ': ' . $create->get_error_message() );
+				lwtv_plugin()->error_log( 'HealthCheck', 'Error creating check on ' . $check_name . ': ' . $create->get_error_message() );
 				return array();
 			}
 
 			return json_decode( wp_remote_retrieve_body( $create ), true );
 		} catch ( \Exception $e ) {
-			lwtv_plugin()->error_log( 'Health check', 'Error creating check on ' . $check_name . ': ' . $e->getMessage() );
+			lwtv_plugin()->error_log( 'HealthCheck', 'Error creating check on ' . $check_name . ': ' . $e->getMessage() );
 			return array();
 		}
+	}
+
+	/**
+	 * Create the check body
+	 *
+	 * @param string $check_name The check name.
+	 * @param string $interval   The interval of the check in seconds.
+	 *
+	 * @return array The check body.
+	 */
+	private function create_check_body( $check_name, $interval ) {
+		$slug     = sanitize_title( $check_name );
+		$prefix   = $this->prefix;
+		$schedule = self::get_schedule( $interval );
+		$timeout  = self::calculate_timeout( $interval );
+		$name     = str_replace( $prefix . '-', '', $check_name );
+		$name     = str_replace( '-', ' ', $name );
+
+		return array(
+			'name'     => ucwords( $name ),
+			'tags'     => 'wp-cron lwtv',
+			'slug'     => $slug,
+			'timeout'  => $timeout,
+			'grace'    => $interval * 1.5, // +50% of the interval
+			'schedule' => $schedule,
+			'tz'       => 'America/Los_Angeles',
+			'unique'   => array( 'name', 'slug' ),
+		);
 	}
 
 	/* Get the checks
@@ -305,14 +342,14 @@ class Health_Checks {
 			);
 
 			if ( is_wp_error( $response ) ) {
-				lwtv_plugin()->error_log( 'Health check', 'Error listing checks: ' . $response->get_error_message() );
+				lwtv_plugin()->error_log( 'HealthCheck', 'Error listing checks: ' . $response->get_error_message() );
 				throw new \Exception( $response->get_error_message() );
 			}
 
 			$decoded = json_decode( wp_remote_retrieve_body( $response ), true );
 
 			if ( json_last_error() !== JSON_ERROR_NONE ) {
-				lwtv_plugin()->error_log( 'Health check', 'Invalid JSON response' );
+				lwtv_plugin()->error_log( 'HealthCheck', 'Invalid JSON response' );
 				throw new \Exception( 'Invalid JSON response' );
 			}
 
@@ -321,7 +358,7 @@ class Health_Checks {
 
 			return $decoded;
 		} catch ( \Exception $e ) {
-			lwtv_plugin()->error_log( 'Health check', 'Error listing checks: ' . $e->getMessage() );
+			lwtv_plugin()->error_log( 'HealthCheck', 'Error listing checks: ' . $e->getMessage() );
 			return array();
 		}
 
@@ -333,102 +370,88 @@ class Health_Checks {
 	 *
 	 * Convert the WP format to regular cron.
 	 *
-	 * @param string $recurrence The recurrence of the check.
-	 * @return string The schedule for the check.
-	 */
-	private function get_schedule( $recurrence ) {
-		$all_schedules = wp_get_schedules();
-		$schedules     = array();
-		$default       = '0 * * * *';  // fallback hourly
-
-		// Convert schedule into an array of $timing[$recurrence] = CRONTIME;
-		$timing = array();
-		foreach ( $all_schedules as $timing => $details ) {
-			if ( is_numeric( $recurrence ) ) {
-				return $this->get_numeric_schedule( $recurrence );
-			}
-
-			// Otherwise we have to parse the WP schedule.
-			$schedules[ $details['interval'] ] = match ( $timing ) {
-				'searchwp_cron_interval' => '*/5 * * * *',
-				'every_minute'           => '* * * * *',
-				'fifteen_minutes'        => '*/15 * * * *',
-				'hourly'                 => '0 * * * *',
-				'daily'                  => '0 0 * * *',
-				'twicedaily'             => '0 */12 * * *',
-				'weekly'                 => '0 0 * * 1',
-				'monthly'                => '0 0 1 * *',
-				default                  => $default,
-			};
-		}
-
-		return $schedules[ $recurrence ] ?? $default;
-	}
-
-	/**
-	 * Get the numeric schedule
+	 * @param int $interval   The interval of the check in seconds.
 	 *
-	 * @param string $recurrence The recurrence of the check.
 	 * @return string The schedule for the check.
 	 */
-	private function get_numeric_schedule( $recurrence ) {
-		// Then recurrence is in seconds so we need to convert it to a cron schedule.
-		$minutes = ceil( $recurrence / 60 );
-		$hours   = ceil( $recurrence / 3600 );
-		$days    = ceil( $recurrence / 86400 );
-		$weeks   = ceil( $recurrence / 604800 );
-		$months  = ceil( $recurrence / 2592000 );
+	private function get_schedule( int $interval ) {
+		$default = '0 0 * * *';
 
-		if ( 0 === $minutes ) {
-			// If the recurrence is 0, then we need to run the check every minute.
-			return '* * * * *';
-		} elseif ( $minutes < 60 ) {
-			// If the recurrence is less than 60 minutes, then we need to run the check every $minutes.
-			return "0/$minutes * * * *";
-		} elseif ( $hours < 24 ) {
-			// If the recurrence is less than 24 hours, then we need to run the check every $hours.
-			return "0 */$hours * * *";
-		} elseif ( $days < 7 ) {
-			// If the recurrence is less than 7 days, then we need to run the check every $days.
-			return "0 0 */$days * *";
-		} elseif ( $weeks < 4 ) {
-			// If the recurrence is less than 4 weeks, then we need to run the check every $weeks.
-			return "0 0 * */$weeks *";
-		} elseif ( $months < 12 ) {
-			// If the recurrence is less than 12 months, then we need to run the check every $months.
-			return "0 0 1 */$months *";
-		} else {
-			// If the recurrence is greater than 12 months, then we need to run the check every year.
-			return '0 0 1 1 *';
+		// $interval is in seconds, so we need to convert it to cron format.
+		// For example, 600 seconds is 10 minutes which is */10 in cron format.
+		$seconds = $interval;
+
+		// If the interval is not a multiple of 60, use the default.
+		if ( 0 !== $seconds % 60 ) {
+			lwtv_plugin()->error_log( 'HealthCheck', 'Interval in seconds is not a multiple of 60: ' . $interval );
+			return $default;
 		}
 
-		// If we got here, then we need to run the check every hour.
-		return '0 * * * *';
+		// If the interval is less than 60 seconds, run every minute.
+		if ( $seconds <= 60 ) {
+			return '* * * * *';
+		}
+
+		$minutes = $seconds / 60;
+
+		// If the interval is not a multiple of 60, use the default.
+		if ( 0 !== $minutes % 60 ) {
+			lwtv_plugin()->error_log( 'HealthCheck', 'Interval in minutes is not a multiple of 60: ' . $interval );
+			return $default;
+		}
+
+		// If the interval is less than an hour (1 to 59 minutes), run every $minutes.
+		if ( $minutes < 60 ) {
+			return '*/' . $minutes . ' * * * *';
+		}
+
+		$hours = $minutes / 60;
+
+		// Check if it's an even number of days.
+		if ( 0 !== $hours % 24 ) {
+			lwtv_plugin()->error_log( 'HealthCheck', 'Interval in hours is not a multiple of 24: ' . $interval );
+			return $default;
+		}
+
+		// If the interval is less than a day (1 to 23 hours), run every $hours.
+		if ( $hours < 24 ) {
+			return '0 */' . $hours . ' * * *';
+		}
+
+		$days = $hours / 24;
+
+		// If the interval is not a multiple of 7, use the default.
+		if ( 0 !== $days % 7 ) {
+			lwtv_plugin()->error_log( 'HealthCheck', 'Interval in days is not a multiple of 7: ' . $interval );
+			return $default;
+		}
+
+		// If the interval is less than a week (1 to 6 days), run every $days.
+		if ( $days < 7 ) {
+			return '0 0 */' . $days . ' * *';
+		}
+
+		$weeks = $days / 7;
+
+		// If the interval is a week, run every week on 'today' at 00:00.
+		if ( 1 === $weeks ) {
+			$today = gmdate( 'w' );
+			return '0 0 * * ' . $today;
+		}
+
+		lwtv_plugin()->error_log( 'HealthCheck', 'Interval cannot be processed, using default. Interval: ' . $interval );
+
+		return $default;
 	}
 
 	/**
 	 * Calculate the timeout for the check
 	 *
-	 * @param string $recurrence The recurrence of the check.
+	 * @param int  $interval The interval of the check in seconds.
+	 *
 	 * @return int The timeout for the check.
 	 */
-	private function calculate_timeout( $recurrence ) {
-
-		// If the recurrence is a number, then multiply by 2 and return which is greater: 600 or the result.
-		if ( is_numeric( $recurrence ) ) {
-			return max( 600, $recurrence * 2 );
-		}
-
-		$timeout = match ( $recurrence ) {
-			'fifteen_minutes' => 900,
-			'hourly'          => 3600,
-			'daily'           => 86400,
-			'twicedaily'      => 43200,
-			'weekly'          => 604800,
-			'monthly'         => 2592000,
-			default           => 3600, // fallback 1 hour
-		};
-
-		return max( 600, $timeout );
+	private function calculate_timeout( $interval ) {
+		return max( 600, $interval * 2 );
 	}
 }
