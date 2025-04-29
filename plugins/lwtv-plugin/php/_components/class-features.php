@@ -31,6 +31,11 @@ class Features implements Component {
 		add_action( 'wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ) );
 		add_action( 'pre_ping', array( $this, 'no_self_ping' ) );
 
+		// Disable speculative loading.
+		remove_action( 'wp_head', 'wp_enable_speculative_loading' );
+		add_filter( 'wp_speculative_loading_enabled', '__return_false' );
+		add_filter( 'wp_speculation_rules_configuration', '__return_null' );
+
 		// Instantiate actions and filters:
 		add_action( 'init', array( $this, 'instantiate_actions_and_filters' ) );
 
@@ -101,7 +106,7 @@ class Features implements Component {
 
 		// When in Dev Mode...
 		if ( lwtv_plugin()->is_dev_site() ) {
-			add_action( 'wp_head', array( $this, 'add_meta_tags' ), 2 );
+			add_action( 'wp_head', array( $this, 'add_meta_tags_for_dev_site' ), 2 );
 		}
 
 		// Post Statues
@@ -308,7 +313,7 @@ class Features implements Component {
 	 * Damn it Google, GO AWAY from our dev sites!
 	 * Since: 2.1.4
 	 */
-	public function add_meta_tags(): void {
+	public function add_meta_tags_for_dev_site(): void {
 		echo '<meta name="robots" content="noindex">' . "\n";
 	}
 
