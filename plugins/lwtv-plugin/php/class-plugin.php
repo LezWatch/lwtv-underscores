@@ -26,6 +26,11 @@ use LWTV\_Helpers\Utils;
  * @method void   hide_actor_data( $post_id )                           \_Components\CPTs
  * @method string the_actor_privacy_warning( $post_id )                 \_Components\CPTs
  *
+ * DEBUGGER
+ * @method bool   is_dev_site()                \_Components\Debugger
+ * @method bool   is_debug_mode()              \_Components\Debugger
+ * @method void   error_log( $type, $message ) \_Components\Debugger
+ *
  * GRADING
  * @method string display_scores( $show_id )        \_Components\Grading
  * @method array  get_all_scores( $show_id )        \_Components\Grading
@@ -86,7 +91,9 @@ use LWTV\_Helpers\Utils;
  * @method string get_this_year_display( $year ) \_Components\This_Year
  *
  * TRANSIENTS
- * @method string get_transient( string $slug ) \_Components\Transients
+ * @method string get_transient( string $slug )                          \_Components\Transients
+ * @method void   set_transient( string $slug, $value, int $expiration ) \_Components\Transients
+ * @method void   delete_transient( string $slug )                       \_Components\Transients
  *
  */
 

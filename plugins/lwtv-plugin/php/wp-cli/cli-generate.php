@@ -299,7 +299,7 @@ class WP_CLI_LWTV_Generate {
 		$count_shows = lwtv_plugin()->get_transient( 'lwtv_count_shows' );
 		if ( false === $count_shows ) {
 			$count_shows = wp_count_posts( 'post_type_shows' )->publish;
-			set_transient( 'lwtv_count_shows', $count_shows, 24 * HOUR_IN_SECONDS );
+			lwtv_plugin()->set_transient( 'lwtv_count_shows', $count_shows, 24 * HOUR_IN_SECONDS );
 		}
 
 		\WP_CLI::success( 'Updated the show count -- ' . $count_shows . ' shows.' );
@@ -307,7 +307,7 @@ class WP_CLI_LWTV_Generate {
 		$count_actors = lwtv_plugin()->get_transient( 'lwtv_count_actors' );
 		if ( false === $count_actors ) {
 			$count_actors = wp_count_posts( 'post_type_actors' )->publish;
-			set_transient( 'lwtv_count_actors', $count_actors, 24 * HOUR_IN_SECONDS );
+			lwtv_plugin()->set_transient( 'lwtv_count_actors', $count_actors, 24 * HOUR_IN_SECONDS );
 		}
 
 		\WP_CLI::success( 'Updated the actor count -- ' . $count_actors . ' actors.' );

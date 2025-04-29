@@ -70,7 +70,7 @@ class TMDB {
 			}
 
 			// Set transient and don't re-check until tomorrow.
-			set_transient( 'lwtv_3rd_scores_tmdb_' . $show_id, $score, 24 * HOUR_IN_SECONDS );
+			lwtv_plugin()->set_transient( 'lwtv_3rd_scores_tmdb_' . $show_id, $score, 24 * HOUR_IN_SECONDS );
 		} else {
 			$score = $transient;
 		}

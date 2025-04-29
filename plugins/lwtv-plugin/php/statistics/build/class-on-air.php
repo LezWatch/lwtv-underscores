@@ -87,10 +87,10 @@ class On_Air {
 
 			if ( empty( $array ) ) {
 				// If we're empty, delete the transients.
-				delete_transient( $transient );
+				lwtv_plugin()->delete_transient( $transient );
 			} else {
 				// Otherwise save array as transient for 14 hours
-				set_transient( $transient, $array, DAY_IN_SECONDS );
+				lwtv_plugin()->set_transient( $transient, $array, DAY_IN_SECONDS );
 			}
 		}
 

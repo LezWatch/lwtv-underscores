@@ -12,6 +12,7 @@ use LWTV\Features\Dashboard_Posts_In_Progress;
 use LWTV\Features\Dashboard;
 use LWTV\Features\Embeds;
 use LWTV\Features\Environment;
+use LWTV\Features\Health_Checks;
 use LWTV\Features\Plugin_Age;
 use LWTV\Features\Private_Posts;
 use LWTV\Features\Roles;
@@ -40,6 +41,7 @@ class Features implements Component {
 		new Dashboard();
 		new Embeds();
 		new Environment();
+		new Health_Checks();
 		new Plugin_Age();
 		new Private_Posts();
 		new Roles();
@@ -98,9 +100,8 @@ class Features implements Component {
 		add_filter( 'login_errors', array( $this, 'login_errors' ) );
 
 		// When in Dev Mode...
-		if ( defined( 'LWTV_DEV_SITE' ) && LWTV_DEV_SITE ) {
+		if ( lwtv_plugin()->is_dev_site() ) {
 			add_action( 'wp_head', array( $this, 'add_meta_tags' ), 2 );
-			defined( 'JETPACK_DEV_DEBUG' ) || define( 'JETPACK_DEV_DEBUG', true );
 		}
 
 		// Post Statues

@@ -87,7 +87,7 @@ class Characters {
 		}
 
 		// Save Transient
-		set_transient( 'lwtv_debug_byq_problems', $items, WEEK_IN_SECONDS );
+		lwtv_plugin()->set_transient( 'lwtv_debug_byq_problems', $items, WEEK_IN_SECONDS );
 
 		// Update Options
 		$option                 = get_option( 'lwtv_debugger_status' );
@@ -199,7 +199,7 @@ class Characters {
 		}
 
 		// Save Transient
-		set_transient( 'lwtv_debug_character_problems', $items, WEEK_IN_SECONDS );
+		lwtv_plugin()->set_transient( 'lwtv_debug_character_problems', $items, WEEK_IN_SECONDS );
 
 		// Update Options
 		$option                       = get_option( 'lwtv_debugger_status' );

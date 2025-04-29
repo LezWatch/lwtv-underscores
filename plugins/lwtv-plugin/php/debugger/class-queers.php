@@ -111,7 +111,7 @@ class Queers {
 		}
 
 		// Save Transient
-		set_transient( 'lwtv_debug_queercheck', $items, WEEK_IN_SECONDS );
+		lwtv_plugin()->set_transient( 'lwtv_debug_queercheck', $items, WEEK_IN_SECONDS );
 
 		// Update Options
 		$option               = get_option( 'lwtv_debugger_status' );

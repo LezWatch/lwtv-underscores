@@ -26,7 +26,7 @@ class Missed_Schedule {
 		if ( false === ( $missed_transient ) ) {
 			// If there's no transient, set it for 15 minutes
 			$checktime = ( HOUR_IN_SECONDS / 4 );
-			set_transient( 'lwtv_missed_schedule', 'check_posts', $checktime );
+			lwtv_plugin()->set_transient( 'lwtv_missed_schedule', 'check_posts', $checktime );
 		} else {
 			// If there is a transient and it hasn't expired, don't run this at all.
 			return 'Missed Schedule check already running.';

@@ -343,8 +343,9 @@ Stored in `/php/features/` -- a collection of miscellaneous features.
 * `class-author-box.php` - Custom author boxes
 * `class-dashboard-posts-in-progress.php` - Forked version of a plugin to show in progress posts
 * `class-dashboard.php` - Custom column for featured images in posts lists and removal of self pings
-* `class-embeds.php` - Embeds DisneyABCPress videos, Gleam, GoFundMe, Indiegogo
+* `class-embeds.php` - Embeds DisneyABCPress videos, Gleam, GoFundMe, IndieGoGo
 * `class-environment.php` - Display notices and settings for servers
+* `class-health-checks.php` - Integration with HealthChecks.io
 * `class-languages.php` - Support for multiple languages in a dropdown (used by Shows for alt show names)
 * `class-missed-schedule.php` - Code to ensure posts don't miss scheduling
 * `class-plugin-age.php` - Display plugin age/last updated on plugin listing
@@ -621,6 +622,12 @@ Stored in `/wp-cli/` -- All code for WP-CLI
 
 ## Developer Features
 
+There is a function for logging to the error log _only_ if debug is active: `lwtv_plugin()->error_log( $TYPE, $MESSAGE )`
+
+This will output `[TYPE]: Message` into the error log.
+
+### Miscellaneous
+
 The following folders/files are for use by Developers. They are not pushed to the dev nor production servers.
 
 * `./.github/` - all Github specific files such as workflows, dependabot, and pull request templates
@@ -634,4 +641,4 @@ The following folders/files are for use by Developers. They are not pushed to th
 * `package-lock.json` - Saved package.json data
 * `package.json` - NPM configuration, commands, and libraries used
 * `phpcs.xml.dist` - PHPCS configuration
-* `pointsbuild.js` - script run at the end of NPM to move files to the correct location.
+* `postbuild.js` - script run at the end of NPM to move files to the correct location.

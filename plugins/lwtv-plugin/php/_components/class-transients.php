@@ -23,7 +23,9 @@ class Transients implements Component, Templater {
 	 */
 	public function get_template_tags(): array {
 		return array(
-			'get_transient' => array( $this, 'get_transient' ),
+			'delete_transient' => array( $this, 'delete_transient' ),
+			'get_transient'    => array( $this, 'get_transient' ),
+			'set_transient'    => array( $this, 'set_transient' ),
 		);
 	}
 
@@ -41,5 +43,33 @@ class Transients implements Component, Templater {
 		}
 
 		return get_transient( $transient );
+	}
+
+	/**
+	 * Set Transient
+	 *
+	 * A wrapper to default to false if you're developing.
+	 *
+	 * @param  string      $transient The Transient name
+	 * @return void
+	 */
+	public static function set_transient( $transient, $value, $expiration = 60 * 60 * 24 ) {
+		if ( defined( 'LWTV_DISABLE_TRANSIENTS' ) && LWTV_DISABLE_TRANSIENTS ) {
+			return;
+		}
+
+		set_transient( $transient, $value, $expiration );
+	}
+
+	/**
+	 * Delete Transient
+	 *
+	 * A wrapper to delete a transient.
+	 *
+	 * @param  string      $transient The Transient name
+	 * @return void
+	 */
+	public static function delete_transient( $transient ) {
+		delete_transient( $transient );
 	}
 }

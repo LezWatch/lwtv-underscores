@@ -128,7 +128,9 @@ endif;
  * @return bool
  */
 function lwtv_theme_categorized_blog() {
-	$all_the_cool_cats = get_transient( 'lwtv_theme_categories' );
+	$all_the_cool_cats = lwtv_plugin()->get_transient( 'lwtv_theme_categories' );
+
+	// If the transient is false, create an array of all the categories that are attached to posts.
 	if ( false === $all_the_cool_cats ) {
 		// Create an array of all the categories that are attached to posts.
 		$all_the_cool_cats = get_categories(
@@ -144,7 +146,7 @@ function lwtv_theme_categorized_blog() {
 		// Count the number of categories that are attached to the posts.
 		$all_the_cool_cats = count( $all_the_cool_cats );
 
-		set_transient( 'lwtv_theme_categories', $all_the_cool_cats );
+		lwtv_plugin()->set_transient( 'lwtv_theme_categories', $all_the_cool_cats );
 	}
 
 	if ( $all_the_cool_cats > 1 ) {
@@ -164,7 +166,7 @@ function lwtv_theme_category_transient_flusher() {
 		return;
 	}
 	// Like, beat it. Dig?
-	delete_transient( 'lwtv_theme_categories' );
+	lwtv_plugin()->delete_transient( 'lwtv_theme_categories' );
 }
 add_action( 'edit_category', 'lwtv_theme_category_transient_flusher' );
 add_action( 'save_post', 'lwtv_theme_category_transient_flusher' );
