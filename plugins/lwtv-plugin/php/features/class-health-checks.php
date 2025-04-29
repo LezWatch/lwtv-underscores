@@ -197,8 +197,7 @@ class Health_Checks {
 			foreach ( $list_checks['checks'] as $check ) {
 				if ( $check['slug'] === $check_name ) {
 					lwtv_plugin()->error_log( 'HealthCheck', 'Found check for ' . $check_name );
-					$updated_check = $this->maybe_update_check( $check, $interval );
-					return $updated_check;
+					return $check;
 				}
 			}
 		} catch ( \Exception $e ) {
@@ -216,47 +215,6 @@ class Health_Checks {
 		}
 
 		return $new_check;
-	}
-
-	/**
-	 * Maybe Update Check
-		*
-		* If the time and interval don't seem to match what we have, let's edit.
-		*/
-	private function maybe_update_check( $check, $interval ) {
-		$schedule   = $check['schedule'] ?? '';
-		$check_name = $check['slug'] ?? '';
-
-		$current_schedule = self::get_schedule( $interval );
-
-		if ( $current_schedule === $schedule ) {
-			lwtv_plugin()->error_log( 'HealthCheck', 'Schedule is correct for ' . $check_name );
-			return $check;
-		}
-
-		lwtv_plugin()->error_log( 'HealthCheck', 'Schedule is incorrect for ' . $check_name . '. Updating...' );
-
-		try {
-			$body = $this->create_check_body( $check_name, $interval );
-
-			$update = wp_remote_post(
-				$this->api_url . '/api/v3/checks/' . $check_name,
-				array(
-					'headers' => $this->api_headers,
-					'body'    => wp_json_encode( $body ),
-				)
-			);
-
-			if ( is_wp_error( $update ) ) {
-				lwtv_plugin()->error_log( 'HealthCheck', 'Error updating check: ' . $check_name );
-				return $check;
-			}
-
-			return json_decode( wp_remote_retrieve_body( $update ), true );
-		} catch ( \Exception $e ) {
-			lwtv_plugin()->error_log( 'HealthCheck', 'Error updating check: ' . $check_name );
-			return $check;
-		}
 	}
 
 	/**
