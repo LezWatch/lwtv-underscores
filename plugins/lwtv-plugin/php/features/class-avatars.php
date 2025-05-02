@@ -7,10 +7,15 @@ namespace LWTV\Features;
 
 class Avatars {
 
+	private $gravatar_enabled     = true;
+	private $local_avatar_enabled = true;
+
 	/**
 	 * Constructor.
 	 */
 	public function __construct() {
+		$this->local_avatar_enabled = is_plugin_active( 'simple-local-avatars/simple-local-avatars.php' );
+
 		add_filter( 'get_avatar', array( $this, 'filter_avatar' ), 10, 6 );
 		add_filter( 'get_avatar_url', array( $this, 'filter_avatar_url' ), 10, 3 );
 	}
@@ -33,16 +38,21 @@ class Avatars {
 		$name    = $details['name'];
 
 		// If the person has a gravatar, use it.
-		if ( $this->validate_gravatar( $email ) ) {
+		if ( $this->gravatar_enabled && $this->validate_gravatar( $email ) ) {
 			return $avatar;
 		}
 
 		// If the person has a local avatar, use it.
-		if ( $this->validate_local_avatar( $email, $size ) ) {
+		if ( $this->local_avatar_enabled && $this->validate_local_avatar( $email, $size ) ) {
 			return $avatar;
 		}
 
-		$avatar_url = $this->get_avatar_url( $id_or_email, $args, $name );
+		$svg_already = $this->validate_svg_avatar( $email );
+		if ( $svg_already ) {
+			$avatar_url = $svg_already;
+		} else {
+			$avatar_url = $this->get_avatar_url( $id_or_email, $args, $name );
+		}
 
 		$class = array( 'avatar', 'avatar-' . (int) $size, 'photo' );
 		if ( ! empty( $args['class'] ) ) {
@@ -99,7 +109,7 @@ class Avatars {
 	 */
 	public function filter_avatar_url( $url, $id_or_email, $args ) {
 		$details = $this->get_details_from_id_or_email( $id_or_email );
-		$email   = $details['email'];
+		$email   = $details['email'] ?? '';
 
 		// If the person has a gravatar, use it.
 		if ( $this->validate_gravatar( $email ) ) {
@@ -109,6 +119,11 @@ class Avatars {
 		// If the person has a local avatar, use it.
 		if ( $this->validate_local_avatar( $email, $args['size'] ) ) {
 			return $url;
+		}
+
+		$svg_already = $this->validate_svg_avatar( $email );
+		if ( $svg_already ) {
+			return $svg_already;
 		}
 
 		return $this->get_avatar_url( $id_or_email, $args );
@@ -124,6 +139,8 @@ class Avatars {
 	public function get_avatar_url( $id_or_email, $args, $name = '?' ) {
 		$user = false;
 
+		$email = $this->get_details_from_id_or_email( $id_or_email )['email'];
+
 		if ( is_numeric( $id_or_email ) ) {
 			$user = get_user_by( 'id', absint( $id_or_email ) );
 		} elseif ( is_string( $id_or_email ) ) {
@@ -135,25 +152,29 @@ class Avatars {
 
 			// Special-case for comments.
 			if ( ! $user ) {
-				return $this->get_avatar_svg( $id_or_email->comment_author );
+				$name  = $id_or_email->comment_author ?? '?';
+				$email = $id_or_email->comment_author_email ?? 'missing';
 			}
 		}
 
 		if ( ! $user ) {
-			return $this->get_avatar_svg( '?' );
+			return $this->make_avatar_svg( $name, $email );
 		}
 
-		return $this->get_avatar_svg( $name );
+		return $this->make_avatar_svg( $name, $email );
 	}
 
+
 	/**
-	 * Get the default avatar URL.
+	 * Make an avatar SVG.
 	 *
 	 * @param  string|null $name Name to derive avatar from.
+	 * @param  string|null $email Email to derive avatar from.
+	 *
 	 * @return string Default avatar URL.
 	 */
-	public function get_avatar_svg( string $name = '?' ): string {
-		$initials = $this->get_initials( $name );
+	public function make_avatar_svg( string $name = '?', string $email = 'missing' ): string {
+		$initials = empty( $name ) ? $this->get_initials( $email ) : $this->get_initials( $name );
 
 		$tmpl = <<<"END"
 			<?xml version="1.0" encoding="UTF-8"?>
@@ -175,7 +196,7 @@ class Avatars {
 			END;
 
 		// Get the color for the avatar.
-		$color = $this->make_color( $name );
+		$color = $this->make_color( $email );
 
 		$data = sprintf(
 			$tmpl,
@@ -184,7 +205,33 @@ class Avatars {
 		);
 
 		$uri = 'data:image/svg+xml;base64,' . base64_encode( $data );
+
+		// Save the SVG to the filesystem.
+		$this->save_avatar_svg( $email, $data );
+
 		return $uri;
+	}
+
+	/**
+	 * Save avatar SVG.
+	 */
+	public function save_avatar_svg( string $email, string $data ) {
+		global $wp_filesystem;
+
+		$upload_dir = wp_upload_dir();
+		$folder     = $upload_dir['basedir'] . '/svg-avatars';
+
+		// Make the uploads directory if it doesn't exist.
+		if ( ! $wp_filesystem->is_dir( $folder ) ) {
+			$wp_filesystem->mkdir( $folder, 0755, true );
+		}
+
+		// Convert the email to a filename.
+		$filename = strtolower( str_replace( '@', '-', $email ) ) . '.svg';
+
+		// Save the file.
+		$file_path = $folder . '/' . $filename;
+		$wp_filesystem->put_contents( $file_path, $data, 0644 );
 	}
 
 	/**
@@ -231,7 +278,35 @@ class Avatars {
 	}
 
 	/**
+	 * Validate SVG Avatar
+	 *
+	 * @param string $email
+	 * @param int    $size
+	 *
+	 * @return bool
+	 */
+	public function validate_svg_avatar( $email ) {
+		global $wp_filesystem;
+
+		$upload_dir = wp_upload_dir();
+		$folder     = $upload_dir['basedir'] . '/svg-avatars';
+		$url        = $upload_dir['baseurl'] . '/svg-avatars';
+
+		$filename = strtolower( str_replace( '@', '-', $email ) ) . '.svg';
+
+		if ( $wp_filesystem->exists( $folder . '/' . $filename ) ) {
+			return $url . '/' . $filename;
+		}
+
+		return false;
+	}
+
+	/**
 	 * Generate the color based on the name.
+	 *
+	 * @param string $name
+	 *
+	 * @return string
 	 */
 	public function make_color( string $name ) {
 		$generate_hash  = md5( strtolower( trim( $name ) ) );
@@ -249,6 +324,10 @@ class Avatars {
 	 * @return string
 	 */
 	public function get_initials( string $name ): string {
+		if ( str_contains( $name, '@' ) ) {
+			$name = str_replace( '@', ' ', $name );
+		}
+
 		// Turn Name into Array
 		$words    = explode( ' ', $name );
 		$initials = '';
