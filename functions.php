@@ -120,7 +120,7 @@ if ( ! is_singular( 'post' ) ) {
  * @param string $title get rid of the “Category:”, “Tag:”, “Author:”, “Archives:”
  *  and “Other taxonomy name:” in the archive title.
  */
-function yikes_archive_title( $title ) {
+function lwtv_archive_title( $title ) {
 	if ( is_category() ) {
 		$title = single_cat_title( '', false );
 	} elseif ( is_tag() ) {
@@ -135,7 +135,7 @@ function yikes_archive_title( $title ) {
 
 	return $title;
 }
-add_filter( 'get_the_archive_title', 'yikes_archive_title' );
+add_filter( 'get_the_archive_title', 'lwtv_archive_title' );
 
 /**
  * Theme Setup
@@ -406,10 +406,10 @@ add_action( 'wp_enqueue_scripts', 'lwtv_theme_scripts' );
 /**
  * Enqueue block styles in the editor.
  */
-function yikes_block_editor_styles() {
-	wp_enqueue_style( 'yikes-block-editor-styles', get_stylesheet_directory_uri() . '/style-editor.min.css', array(), LWTV_THEME_VERSION['lwtv-blocks'], true );
+function lwtv_block_editor_styles() {
+	wp_enqueue_style( 'lwtv-block-editor', get_stylesheet_directory_uri() . '/style-editor.min.css', array(), LWTV_THEME_VERSION['lwtv-blocks'], true );
 }
-add_action( 'enqueue_block_editor_assets', 'yikes_block_editor_styles' );
+add_action( 'enqueue_block_editor_assets', 'lwtv_block_editor_styles' );
 
 
 /* Custom template tags for this theme. */

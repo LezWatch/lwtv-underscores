@@ -11,7 +11,7 @@ class YIKES_Social_Menu_Widget extends WP_Widget {
 	 */
 	public function __construct() {
 		parent::__construct(
-			'yikes_social_menu_widget', // Base ID.
+			'lwtv_social_menu_widget', // Base ID.
 			'YIKES Social Menu',        // Name.
 			array( 'description' => __( 'Display YIKES social menu', 'lwtv-underscores' ) ) // Args.
 		);
@@ -108,7 +108,7 @@ class YIKES_Social_Menu_Widget extends WP_Widget {
 /**
  * Register YIKES_Social_Menu_Widget widget.
  */
-function register_yikes_social_menu_widget() { // phpcs:ignore
+function register_lwtv_social_menu_widget() { // phpcs:ignore
 	register_widget( 'YIKES_Social_Menu_Widget' );
 }
-add_action( 'widgets_init', 'register_yikes_social_menu_widget' );
+add_action( 'widgets_init', 'register_lwtv_social_menu_widget' );

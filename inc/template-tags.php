@@ -175,7 +175,7 @@ add_action( 'save_post', 'lwtv_theme_category_transient_flusher' );
  * Add Pagination where ever.
  */
 
-function yikes_generate_pagination_buttons( $page_number, $max_num_pages, $view_all = false ) {
+function lwtv_generate_pagination_buttons( $page_number, $max_num_pages, $view_all = false ) {
 
 	if ( false === $max_num_pages || 1 === (int) $max_num_pages ) {
 		return;
@@ -194,7 +194,7 @@ function yikes_generate_pagination_buttons( $page_number, $max_num_pages, $view_
 
 			<!-- Page Number Buttons -->
 			<?php
-			yikes_generate_page_number_buttons( $page_number, $max_num_pages );
+			lwtv_generate_page_number_buttons( $page_number, $max_num_pages );
 
 			if ( false !== $view_all ) {
 				echo '<li><a href="' . esc_attr( $view_all ) . '" class="page-link"><span>View All</span></a></li>';
@@ -212,98 +212,98 @@ function yikes_generate_pagination_buttons( $page_number, $max_num_pages, $view_
 	<?php
 }
 
-function yikes_generate_page_number_buttons( $page_number, $max_num_pages ) {
+function lwtv_generate_page_number_buttons( $page_number, $max_num_pages ) {
 	$page_number   = (int) $page_number;
 	$max_num_pages = (int) $max_num_pages;
 
 	if ( 1 === $page_number ) {
-		echo yikes_pagination_get_page( 1, $max_num_pages, true );
-		echo yikes_pagination_get_page( 2, $max_num_pages, false );
-		echo yikes_pagination_get_page( 3, $max_num_pages, false );
-		echo yikes_pagination_get_page( 4, $max_num_pages, false );
-		echo yikes_pagination_get_page( 5, $max_num_pages, false );
-		echo yikes_pagination_get_page_space_right();
-		echo yikes_pagination_get_page( $max_num_pages, $max_num_pages, false, true );
+		echo lwtv_pagination_get_page( 1, $max_num_pages, true );
+		echo lwtv_pagination_get_page( 2, $max_num_pages, false );
+		echo lwtv_pagination_get_page( 3, $max_num_pages, false );
+		echo lwtv_pagination_get_page( 4, $max_num_pages, false );
+		echo lwtv_pagination_get_page( 5, $max_num_pages, false );
+		echo lwtv_pagination_get_page_space_right();
+		echo lwtv_pagination_get_page( $max_num_pages, $max_num_pages, false, true );
 	} elseif ( 2 === $page_number ) {
-		echo yikes_pagination_get_page( 1, $max_num_pages, false );
-		echo yikes_pagination_get_page( 2, $max_num_pages, true );
-		echo yikes_pagination_get_page( 3, $max_num_pages, false );
-		echo yikes_pagination_get_page( 4, $max_num_pages, false );
-		echo yikes_pagination_get_page( 5, $max_num_pages, false );
-		echo yikes_pagination_get_page_space_right();
-		echo yikes_pagination_get_page( $max_num_pages, $max_num_pages, false, true );
+		echo lwtv_pagination_get_page( 1, $max_num_pages, false );
+		echo lwtv_pagination_get_page( 2, $max_num_pages, true );
+		echo lwtv_pagination_get_page( 3, $max_num_pages, false );
+		echo lwtv_pagination_get_page( 4, $max_num_pages, false );
+		echo lwtv_pagination_get_page( 5, $max_num_pages, false );
+		echo lwtv_pagination_get_page_space_right();
+		echo lwtv_pagination_get_page( $max_num_pages, $max_num_pages, false, true );
 	} elseif ( 3 === $page_number ) {
-		echo yikes_pagination_get_page( 1, $max_num_pages, false );
-		echo yikes_pagination_get_page( 2, $max_num_pages, false );
-		echo yikes_pagination_get_page( 3, $max_num_pages, true );
-		echo yikes_pagination_get_page( 4, $max_num_pages, false );
-		echo yikes_pagination_get_page( 5, $max_num_pages, false );
-		echo yikes_pagination_get_page_space_right();
-		echo yikes_pagination_get_page( $max_num_pages, $max_num_pages, false, true );
+		echo lwtv_pagination_get_page( 1, $max_num_pages, false );
+		echo lwtv_pagination_get_page( 2, $max_num_pages, false );
+		echo lwtv_pagination_get_page( 3, $max_num_pages, true );
+		echo lwtv_pagination_get_page( 4, $max_num_pages, false );
+		echo lwtv_pagination_get_page( 5, $max_num_pages, false );
+		echo lwtv_pagination_get_page_space_right();
+		echo lwtv_pagination_get_page( $max_num_pages, $max_num_pages, false, true );
 	} elseif ( 4 === $page_number ) {
-		echo yikes_pagination_get_page( 1, $max_num_pages, false );
-		echo yikes_pagination_get_page_space_left();
-		echo yikes_pagination_get_page( 2, $max_num_pages, false );
-		echo yikes_pagination_get_page( 3, $max_num_pages, false );
-		echo yikes_pagination_get_page( 4, $max_num_pages, true );
-		echo yikes_pagination_get_page( 5, $max_num_pages, false );
-		echo yikes_pagination_get_page( 6, $max_num_pages, false );
-		echo yikes_pagination_get_page_space_right();
-		echo yikes_pagination_get_page( $max_num_pages, $max_num_pages, false, true );
+		echo lwtv_pagination_get_page( 1, $max_num_pages, false );
+		echo lwtv_pagination_get_page_space_left();
+		echo lwtv_pagination_get_page( 2, $max_num_pages, false );
+		echo lwtv_pagination_get_page( 3, $max_num_pages, false );
+		echo lwtv_pagination_get_page( 4, $max_num_pages, true );
+		echo lwtv_pagination_get_page( 5, $max_num_pages, false );
+		echo lwtv_pagination_get_page( 6, $max_num_pages, false );
+		echo lwtv_pagination_get_page_space_right();
+		echo lwtv_pagination_get_page( $max_num_pages, $max_num_pages, false, true );
 	} elseif ( $page_number === $max_num_pages ) {
-		echo yikes_pagination_get_first_page( 1, $max_num_pages, false );
-		echo yikes_pagination_get_page( $page_number - 4, $max_num_pages, false );
-		echo yikes_pagination_get_page( $page_number - 3, $max_num_pages, false );
-		echo yikes_pagination_get_page( $page_number - 2, $max_num_pages, false );
-		echo yikes_pagination_get_page( $page_number - 1, $max_num_pages, false );
-		echo yikes_pagination_get_page( $max_num_pages, $max_num_pages, true, true, true );
+		echo lwtv_pagination_get_first_page( 1, $max_num_pages, false );
+		echo lwtv_pagination_get_page( $page_number - 4, $max_num_pages, false );
+		echo lwtv_pagination_get_page( $page_number - 3, $max_num_pages, false );
+		echo lwtv_pagination_get_page( $page_number - 2, $max_num_pages, false );
+		echo lwtv_pagination_get_page( $page_number - 1, $max_num_pages, false );
+		echo lwtv_pagination_get_page( $max_num_pages, $max_num_pages, true, true, true );
 	} elseif ( ( $max_num_pages - 1 ) === $page_number ) {
-		echo yikes_pagination_get_page( 1, $max_num_pages, false );
-		echo yikes_pagination_get_page_space_left();
-		echo yikes_pagination_get_page( $page_number - 3, $max_num_pages, false );
-		echo yikes_pagination_get_page( $page_number - 2, $max_num_pages, false );
-		echo yikes_pagination_get_page( $page_number - 1, $max_num_pages, false );
-		echo yikes_pagination_get_page( $page_number, $max_num_pages, true );
-		echo yikes_pagination_get_page( $max_num_pages, $max_num_pages, false, true );
+		echo lwtv_pagination_get_page( 1, $max_num_pages, false );
+		echo lwtv_pagination_get_page_space_left();
+		echo lwtv_pagination_get_page( $page_number - 3, $max_num_pages, false );
+		echo lwtv_pagination_get_page( $page_number - 2, $max_num_pages, false );
+		echo lwtv_pagination_get_page( $page_number - 1, $max_num_pages, false );
+		echo lwtv_pagination_get_page( $page_number, $max_num_pages, true );
+		echo lwtv_pagination_get_page( $max_num_pages, $max_num_pages, false, true );
 	} elseif ( ( $max_num_pages - 2 ) === $page_number ) {
-		echo yikes_pagination_get_page( 1, $max_num_pages, false );
-		echo yikes_pagination_get_page_space_left();
-		echo yikes_pagination_get_page( $page_number - 2, $max_num_pages, false );
-		echo yikes_pagination_get_page( $page_number - 1, $max_num_pages, false );
-		echo yikes_pagination_get_page( $page_number, $max_num_pages, true );
-		echo yikes_pagination_get_page( $page_number + 1, $max_num_pages, false );
-		echo yikes_pagination_get_page( $max_num_pages, $max_num_pages, false, true );
+		echo lwtv_pagination_get_page( 1, $max_num_pages, false );
+		echo lwtv_pagination_get_page_space_left();
+		echo lwtv_pagination_get_page( $page_number - 2, $max_num_pages, false );
+		echo lwtv_pagination_get_page( $page_number - 1, $max_num_pages, false );
+		echo lwtv_pagination_get_page( $page_number, $max_num_pages, true );
+		echo lwtv_pagination_get_page( $page_number + 1, $max_num_pages, false );
+		echo lwtv_pagination_get_page( $max_num_pages, $max_num_pages, false, true );
 	} else {
-		echo yikes_pagination_get_page( 1, $max_num_pages, false );
-		echo yikes_pagination_get_page_space_left();
-		echo yikes_pagination_get_page( $page_number - 2, $max_num_pages, false );
-		echo yikes_pagination_get_page( $page_number - 1, $max_num_pages, false );
-		echo yikes_pagination_get_page( $page_number, $max_num_pages, true );
-		echo yikes_pagination_get_page( $page_number + 1, $max_num_pages, false );
-		echo yikes_pagination_get_page( $page_number + 2, $max_num_pages, false );
-		echo yikes_pagination_get_page_space_right();
-		echo yikes_pagination_get_page( $max_num_pages, $max_num_pages, false, true );
+		echo lwtv_pagination_get_page( 1, $max_num_pages, false );
+		echo lwtv_pagination_get_page_space_left();
+		echo lwtv_pagination_get_page( $page_number - 2, $max_num_pages, false );
+		echo lwtv_pagination_get_page( $page_number - 1, $max_num_pages, false );
+		echo lwtv_pagination_get_page( $page_number, $max_num_pages, true );
+		echo lwtv_pagination_get_page( $page_number + 1, $max_num_pages, false );
+		echo lwtv_pagination_get_page( $page_number + 2, $max_num_pages, false );
+		echo lwtv_pagination_get_page_space_right();
+		echo lwtv_pagination_get_page( $max_num_pages, $max_num_pages, false, true );
 	}
 }
 
-function yikes_pagination_get_first_page( $page_number, $max_num_pages, $active_flag ) {
+function lwtv_pagination_get_first_page( $page_number, $max_num_pages, $active_flag ) {
 	if ( $max_num_pages > 5 ) {
 		$active = ( true === $active_flag ) ? 'class="active"' : false;
-		return '<li class="page-item"><a ' . $active . ' href="' . get_pagenum_link( $page_number ) . '" class="page-link">' . $page_number . '</a></li>' . yikes_pagination_get_page_space_left();
+		return '<li class="page-item"><a ' . $active . ' href="' . get_pagenum_link( $page_number ) . '" class="page-link">' . $page_number . '</a></li>' . lwtv_pagination_get_page_space_left();
 	}
 }
 
-function yikes_pagination_get_page( $page_number, $max_num_pages, $active_flag, $last_page = false, $last_page_override = false ) {
+function lwtv_pagination_get_page( $page_number, $max_num_pages, $active_flag, $last_page = false, $last_page_override = false ) {
 	if ( ( $page_number <= $max_num_pages && false === $last_page ) || ( true === $last_page && $max_num_pages > 5 ) || true === $last_page_override ) {
 		$active = ( true === $active_flag ) ? 'active' : false;
 		return '<li class="page-item"><a class="page-link ' . $active . '" href="' . get_pagenum_link( $page_number ) . '" >' . $page_number . '</a></li>';
 	}
 }
 
-function yikes_pagination_get_page_space_left() {
+function lwtv_pagination_get_page_space_left() {
 	return '<li class="pagination-spacer"></li>';
 }
 
-function yikes_pagination_get_page_space_right() {
+function lwtv_pagination_get_page_space_right() {
 	return '<li class="pagination-spacer"></li>';
 }

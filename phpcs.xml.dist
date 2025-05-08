@@ -39,13 +39,13 @@
 				<element value="lwtv_symbolicons" />
 				<element value="get_previous_posts_link" />
 				<element value="get_next_posts_link" />
-				<element value="yikes_pagination_get_page" />
-				<element value="yikes_pagination_get_page_space_right" />
-				<element value="yikes_pagination_get_page_space_left" />
-				<element value="yikes_pagination_get_first_page" />
+				<element value="lwtv_pagination_get_page" />
+				<element value="lwtv_pagination_get_page_space_right" />
+				<element value="lwtv_pagination_get_page_space_left" />
+				<element value="lwtv_pagination_get_first_page" />
 				<element value="LWTV_Features" />
-				<element value="lwtv_yikes_chardata" />
-				<element value="lwtv_yikes_show_star" />
+				<element value="lwtv_lwtv_chardata" />
+				<element value="lwtv_lwtv_show_star" />
 				<element value="LWTV_Statistics" />
 				<element value="km_rpbt_related_posts_by_taxonomy_gallery" />
 			</property>
