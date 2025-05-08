@@ -58,41 +58,45 @@ class TVMaze {
 	 * @return array
 	 */
 	public function update_scores( int $show_id ): array {
-		$score   = 'TBD';
-		$url     = $this->get_url( $show_id );
 		$imdb_id = get_post_meta( $show_id, 'lezshows_imdb', true );
 		$recheck = false;
+
+		$scores = array(
+			'score' => 'TBD',
+			'url'   => 'https://tvmaze.com/',
+		);
 
 		// Only call their service once a day.
 		$transient = lwtv_plugin()->get_transient( 'lwtv_3rd_scores_tvmaze_' . $show_id );
 		if ( false === $transient ) {
 			$recheck = true;
 		} else {
-			$score   = $transient;
-			$recheck = ( 'TBD' !== $score ) ? false : true;
+			$scores['score'] = $transient;
+			$recheck         = ( 'TBD' === $scores['score'] ) ? true : false;
 		}
 
 		if ( $imdb_id && $recheck ) {
-			$response = wp_remote_get( 'http://api.tvmaze.com/lookup/shows?imdb=' . $imdb_id );
+			try {
+				$response = wp_remote_get( 'http://api.tvmaze.com/lookup/shows?imdb=' . $imdb_id );
 
-			// Check the response:
-			if ( is_array( $response ) && ! is_wp_error( $response ) ) {
-				$body = json_decode( $response['body'], true ); // use the content
+				// Check the response:
+				if ( is_array( $response ) && ! is_wp_error( $response ) ) {
+					$body = json_decode( $response['body'], true ); // use the content
 
-				// TV Maze returns a null body sometimes.
-				if ( ! is_null( $body ) ) {
-					$url   = $body['url'];
-					$score = ( isset( $body['rating']['average'] ) && ! empty( $body['rating']['average'] ) ) ? round( $body['rating']['average'] * 10 ) : 'TBD';
+					// TV Maze returns a null body sometimes.
+					if ( ! is_null( $body ) ) {
+						$scores['url']   = $body['url'];
+						$scores['score'] = ( isset( $body['rating']['average'] ) && ! empty( $body['rating']['average'] ) ) ? round( $body['rating']['average'] * 10 ) : 'TBD';
+					}
 				}
-			}
 
-			// Set transient and don't re-check until tomorrow.
-			lwtv_plugin()->set_transient( 'lwtv_3rd_scores_tvmaze_' . $show_id, $score, 24 * HOUR_IN_SECONDS );
+				// Set transient and don't re-check until tomorrow.
+				lwtv_plugin()->set_transient( 'lwtv_3rd_scores_tvmaze_' . $show_id, $scores['score'], 24 * HOUR_IN_SECONDS );
+			} catch ( \Exception $e ) {
+				lwtv_plugin()->error_log( 'Error getting TV Maze data: ' . $e->getMessage() );
+			}
 		}
 
-		return array(
-			'score' => $score,
-			'url'   => $url,
-		);
+		return $scores;
 	}
 }

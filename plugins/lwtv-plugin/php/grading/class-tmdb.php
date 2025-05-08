@@ -56,28 +56,42 @@ class TMDB {
 	 * @return array
 	 */
 	public function update_scores( int $show_id ): array {
-		$score = 'TBD';
-		$url   = $this->get_url( $show_id );
+		$tmdb_id = get_post_meta( $show_id, 'lezshows_tmdb_id', true );
+		$recheck = false;
+
+		$scores = array(
+			'score' => 'TBD',
+			'url'   => 'https://themoviedb.org/tv/',
+		);
+
+		if ( $tmdb_id ) {
+			$scores['url'] .= $tmdb_id;
+		}
 
 		// Only call their service once a day.
 		$transient = lwtv_plugin()->get_transient( 'lwtv_3rd_scores_tmdb_' . $show_id );
 		if ( false === $transient ) {
-			$tmdb_data = ( new CPTs() )->get_tmdb_info( $show_id );
-
-			if ( $tmdb_data ) {
-				$score = ( isset( $tmdb_data['tv_results'][0]['vote_average'] ) ) ? round( $tmdb_data['tv_results'][0]['vote_average'] * 10 ) : 'TBD';
-				$url   = ( isset( $tmdb_data['tv_results'][0]['id'] ) ) ? 'https://themoviedb.org/tv/' . $tmdb_data['tv_results'][0]['id'] : '';
-			}
-
-			// Set transient and don't re-check until tomorrow.
-			lwtv_plugin()->set_transient( 'lwtv_3rd_scores_tmdb_' . $show_id, $score, 24 * HOUR_IN_SECONDS );
+			$recheck = true;
 		} else {
-			$score = $transient;
+			$scores['score'] = $transient;
+			$recheck         = ( 'TBD' === $scores['score'] ) ? true : false;
 		}
 
-		return array(
-			'score' => $score,
-			'url'   => $url,
-		);
+		if ( $tmdb_id && $recheck ) {
+			try {
+				$tmdb_data = ( new CPTs() )->get_tmdb_info( $show_id );
+
+				if ( $tmdb_data ) {
+					$scores['score'] = ( isset( $tmdb_data['tv_results'][0]['vote_average'] ) ) ? round( $tmdb_data['tv_results'][0]['vote_average'] * 10 ) : 'TBD';
+				}
+
+				// Set transient and don't re-check until tomorrow.
+				lwtv_plugin()->set_transient( 'lwtv_3rd_scores_tmdb_' . $show_id, $scores['score'], 24 * HOUR_IN_SECONDS );
+			} catch ( \Exception $e ) {
+				lwtv_plugin()->error_log( 'Error getting TMDB info for show score: ' . $e->getMessage() );
+			}
+		}
+
+		return $scores;
 	}
 }

@@ -61,21 +61,11 @@ class CPTs implements Component, Templater {
 	public function get_tmdb_info( $post_id ): mixed {
 		// Check if we have the API key.
 		if ( ! defined( 'TMDB_API' ) ) {
+			lwtv_plugin()->error_log( 'TMDB API not defined' );
 			return false;
 		}
 
-		$tmdb_id = match ( get_post_type( $post_id ) ) {
-			'post_type_actors'     => get_post_meta( $post_id, 'lezactors_tmdb_id', true ),
-			'post_type_shows'      => get_post_meta( $post_id, 'lezshows_tmdb_id', true ),
-			default                => false,
-		};
-
-		$imdb_id = match ( get_post_type( $post_id ) ) {
-			'post_type_actors'     => get_post_meta( $post_id, 'lezactors_imdb', true ),
-			'post_type_shows'      => get_post_meta( $post_id, 'lezshows_imdb', true ),
-			default                => false,
-		};
-
+		// Get the post type.
 		$post_type = match ( get_post_type( $post_id ) ) {
 			'post_type_actors'     => 'person',
 			'post_type_shows'      => 'tv',
@@ -84,34 +74,65 @@ class CPTs implements Component, Templater {
 
 		// If there's no post type, we shouldn't be looking here!
 		if ( ! $post_type ) {
+			lwtv_plugin()->error_log( 'Invalid post type got TMDB info: ' . get_post_type( $post_id ) );
 			return false;
 		}
 
-		if ( $tmdb_id ) {
-			// Use TMDB if we have it.
-			$response = wp_remote_get( 'https://api.themoviedb.org/3/' . $post_type . '/' . $tmdb_id . '?api_key=' . TMDB_API );
-		} elseif ( $imdb_id ) {
-			// Use IMDB if we have it.
-			$response = wp_remote_get( 'https://api.themoviedb.org/3/find/' . $imdb_id . '?api_key=' . TMDB_API . '&external_source=imdb_id' );
-		} else {
-			// We don't have either, so we can't do anything.
+		// Get the TMDB ID.
+		$tmdb_id = match ( get_post_type( $post_id ) ) {
+			'post_type_actors'     => get_post_meta( $post_id, 'lezactors_tmdb_id', true ),
+			'post_type_shows'      => get_post_meta( $post_id, 'lezshows_tmdb_id', true ),
+			default                => false,
+		};
+
+		// Get the IMDB ID.
+		$imdb_id = match ( get_post_type( $post_id ) ) {
+			'post_type_actors'     => get_post_meta( $post_id, 'lezactors_imdb', true ),
+			'post_type_shows'      => get_post_meta( $post_id, 'lezshows_imdb', true ),
+			default                => false,
+		};
+
+		// If we don't have either, bail.
+		if ( ! $tmdb_id && ! $imdb_id ) {
+			lwtv_plugin()->error_log( 'No TMDB or IMDB ID found for post ID: ' . $post_id );
 			return false;
 		}
 
-		// Bail if we don't have a response.
-		if ( ! is_array( $response ) || is_wp_error( $response ) ) {
+		try {
+			// Get the response URL.
+			$response_url = 'https://api.themoviedb.org/3/';
+
+			// If we have a TMDB ID, use it.
+			if ( $tmdb_id ) {
+				$response_url .= $post_type . '/' . $tmdb_id . '?api_key=' . TMDB_API;
+			} else {
+				// If we have an IMDB ID, use it.
+				$response_url .= 'find/' . $imdb_id . '?api_key=' . TMDB_API . '&external_source=imdb_id';
+			}
+
+			// Get the response.
+			$response = wp_remote_get( $response_url );
+
+			// Bail if we don't have a response.
+			if ( ! is_array( $response ) || is_wp_error( $response ) ) {
+				lwtv_plugin()->error_log( 'Error getting TMDB info: ' . $response );
+				return false;
+			}
+
+			// Get the body.
+			$body = json_decode( $response['body'], true ); // use the content
+
+			// If there's a status message, it's an error:
+			if ( isset( $body['status_message'] ) ) {
+				lwtv_plugin()->error_log( 'Error getting TMDB info: ' . $body['status_message'] );
+				return false;
+			}
+
+			return $body;
+		} catch ( \Exception $e ) {
+			lwtv_plugin()->error_log( 'Error getting TMDB info: ' . $e->getMessage() );
 			return false;
 		}
-
-		// Get the body.
-		$body = json_decode( $response['body'], true ); // use the content
-
-		// If there's a status message, it's an error:
-		if ( isset( $body['status_message'] ) ) {
-			return false;
-		}
-
-		return $body;
 	}
 
 	/**
