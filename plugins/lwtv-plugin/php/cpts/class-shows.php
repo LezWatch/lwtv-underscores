@@ -288,7 +288,7 @@ class Shows {
 		// unhook this function so it doesn't loop infinitely
 		remove_action( 'save_post_post_type_shows', array( $this, 'save_post_meta' ) );
 
-		lwtv_plugin()->error_log( 'Saving post meta for show ID: ' . $post_id );
+		lwtv_plugin()->error_log( 'shows', 'Saving post meta for show ID: ' . $post_id );
 
 		// Add TMDB ID if possible.
 		$this->generate_tmdb_id( $post_id );

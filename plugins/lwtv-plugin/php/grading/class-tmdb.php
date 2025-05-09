@@ -88,7 +88,7 @@ class TMDB {
 				// Set transient and don't re-check until tomorrow.
 				lwtv_plugin()->set_transient( 'lwtv_3rd_scores_tmdb_' . $show_id, $scores['score'], 24 * HOUR_IN_SECONDS );
 			} catch ( \Exception $e ) {
-				lwtv_plugin()->error_log( 'Error getting TMDB info for show score: ' . $e->getMessage() );
+				lwtv_plugin()->error_log( 'UpdateScores', 'Error getting TMDB info for show score: ' . $e->getMessage() );
 			}
 		}
 

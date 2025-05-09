@@ -93,7 +93,7 @@ class TVMaze {
 				// Set transient and don't re-check until tomorrow.
 				lwtv_plugin()->set_transient( 'lwtv_3rd_scores_tvmaze_' . $show_id, $scores['score'], 24 * HOUR_IN_SECONDS );
 			} catch ( \Exception $e ) {
-				lwtv_plugin()->error_log( 'Error getting TV Maze data: ' . $e->getMessage() );
+				lwtv_plugin()->error_log( 'TVMaze', 'Error getting TV Maze data: ' . $e->getMessage() );
 			}
 		}
 
