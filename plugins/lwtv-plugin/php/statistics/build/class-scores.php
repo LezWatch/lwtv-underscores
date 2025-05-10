@@ -36,7 +36,9 @@ class Scores {
 			}
 
 			// save array as transient for a reason.
-			lwtv_plugin()->set_transient( $transient, $array, DAY_IN_SECONDS );
+			if ( ! empty( $array) ) {
+				lwtv_plugin()->set_transient( $transient, $array, DAY_IN_SECONDS );
+			}
 		}
 
 		return $array;
