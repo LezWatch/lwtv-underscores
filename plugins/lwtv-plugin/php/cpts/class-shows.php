@@ -273,9 +273,11 @@ class Shows {
 	/*
 	 * Save post meta for shows on SHOW SAVE.
 	 *
-	 * @param int $post_id The post ID.
-	 * @param post $post The post object.
-	 * @param bool $update Whether this is an existing post being updated or not.
+	 * @param int  $post_id The post ID.
+	 * @param post $post    The post object.
+	 * @param bool $update  Whether this is an existing post being updated or not.
+	 *
+	 * @return void
 	 */
 	// phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
 	public function save_post_meta( $post_id, $post, $update ) {
@@ -287,6 +289,8 @@ class Shows {
 
 		// unhook this function so it doesn't loop infinitely
 		remove_action( 'save_post_post_type_shows', array( $this, 'save_post_meta' ) );
+
+		lwtv_plugin()->error_log( 'shows', 'Saving post meta for show ID: ' . $post_id );
 
 		// Add TMDB ID if possible.
 		$this->generate_tmdb_id( $post_id );
@@ -314,6 +318,8 @@ class Shows {
 
 	/*
 	 * Add to 'Right Now'
+	 *
+	 * @return void
 	 */
 	public function dashboard_glance_items() {
 		foreach ( array( self::SLUG ) as $post_type ) {

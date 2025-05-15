@@ -77,21 +77,17 @@
 
 
 /* List Groups */
-
 .list-group {
+	.list-group-item-primary {
+		background-color: colors.$lwtv-pink;
+		color: colors.$white;
+		border-color: colors.$lwtv-dkpink;
 
-	.list-group-item {
-		border-left: 0;
-		border-right: 0;
-
-		&:first-child,
-		&:last-child {
-
-			@include mixins.border-radius(0);
+		a {
+			color: colors.$white;
 		}
 	}
 }
-
 
 /* Buttons */
 

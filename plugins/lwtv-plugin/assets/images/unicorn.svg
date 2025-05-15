@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="28px" height="29px" viewBox="0 0 28 29" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+    <!-- Generator: Sketch 3.3 (11970) - http://www.bohemiancoding.com/sketch -->
+    <title>unicorn</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
+        <g id="Symbolicons-Color" sketch:type="MSArtboardGroup" transform="translate(-308.000000, -196.000000)">
+            <g id="unicorn" sketch:type="MSLayerGroup" transform="translate(308.000000, 196.000000)">
+                <path d="M17,4.568 L13,6.235 L16,8.235 L17,7.634 L17,4.568" id="Fill-230" fill="#C0392B" sketch:type="MSShapeGroup"></path>
+                <path d="M20.936,11.51 L14.103,5.713 L14.816,2.793 C12.107,2.132 9.435,3.218 8.232,5.279 L8.193,5.295 C4.026,6.524 0,10.557 0,18.236 C0,24.247 2,28.235 2,28.235 L18,28.235 C19.88,25.026 17.377,21.889 14.984,19.469 C14.954,19.442 13.339,17.397 13.639,15.6 L16.639,16.6 C17.107,17.352 17.371,17.859 18.298,18.085 C20.18,18.545 22.077,17.394 22.537,15.511 C23.132,13.078 20.936,11.51 20.936,11.51" id="Fill-231" fill="#BEBEBE" sketch:type="MSShapeGroup"></path>
+                <path d="M14.639,14.4 C14.639,12.633 12.848,11.2 10.639,11.2 C8.43,11.2 6.639,12.633 6.639,14.4 C6.639,16.167 8.43,17.6 10.639,17.6 C12.848,17.6 14.639,16.167 14.639,14.4" id="Fill-232" fill="#A0A0A0" sketch:type="MSShapeGroup"></path>
+                <path d="M14.639,12.8 C14.639,11.033 12.848,9.6 10.639,9.6 C8.43,9.6 6.639,11.033 6.639,12.8 C6.639,14.567 8.43,16 10.639,16 C12.848,16 14.639,14.567 14.639,12.8" id="Fill-233" fill="#BEBEBE" sketch:type="MSShapeGroup"></path>
+                <path d="M11,10.236 C11,9.409 11.639,8.333 12.465,8.333 C13.292,8.333 14,9.409 14,10.236 L11,10.236" id="Fill-234" fill="#FFFFFF" sketch:type="MSShapeGroup"></path>
+                <path d="M20,5.831 L23,4.029 L23,2.067 L20,3.318 L20,5.831" id="Fill-235" fill="#F1C40F" sketch:type="MSShapeGroup"></path>
+                <path d="M23,4.029 L26,2.226 L26,0.817 L23,2.067 L23,4.029" id="Fill-236" fill="#46A046" sketch:type="MSShapeGroup"></path>
+                <path d="M17,7.634 L20,5.831 L20,3.318 L17,4.568 L17,7.634" id="Fill-237" fill="#F39C12" sketch:type="MSShapeGroup"></path>
+                <path d="M27.306,0.273 L26,0.817 L26,2.226 L27.761,1.167 C27.966,1.04 28.057,0.778 27.962,0.547 C27.856,0.29 27.562,0.168 27.306,0.273" id="Fill-238" fill="#1EAAE1" sketch:type="MSShapeGroup"></path>
+            </g>
+        </g>
+    </g>
+</svg>

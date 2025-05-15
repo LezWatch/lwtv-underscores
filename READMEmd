@@ -12,7 +12,7 @@ The 100% Original Theme for LezWatch.TV
 
 # Description
 
-Based on the Yikes! Starter Theme and Underscores, the LezWatch.TV theme has been customized for custom post types (shows, characters, actors) and to be as queer as possible.
+Based on the Yikes! Starter Theme (circa 2018) and Underscores (circa 2016), the LezWatch.TV theme has been customized for custom post types (shows, characters, actors) and to be as queer as possible.
 
 Usage documentation can be found at [docs.lezwatchtv.com](https://docs.lezwatchtv.com)
 
@@ -42,7 +42,7 @@ It's recommended to use [Homebrew](https://brew.sh) on macOS or [Chocolatey](htt
 3. Set NPM to the correct version: `nvm use`
 4. Install the project dependencies: `npm install`
 5. Update all the things (npm, composer, etc): `npm run updater`
-6. Run an initial build: `npm run build`
+6. Run an initial build (generate CSS etc): `npm run build`
 
 # Contributing 📺
 

@@ -339,20 +339,15 @@ class Display {
 	 * @return string|object     The showtime
 	 */
 	public function get_showtime( $show, $format = false ): mixed {
-		$native_tz = ( ! isset( $show['native_tz'] ) || 'timezone' === $show['native_tz'] || empty( $show['native_tz'] ) ) ? $this->timezone : $show['native_tz'];
 		$show_time = new \DateTime( '@' . $show['timestamp'] );
-
-		if ( is_string( $native_tz ) || empty( $native_tz ) ) {
-			$native_tz = new \DateTimeZone( $native_tz );
-		}
-
-		$show_time->setTimezone( $native_tz );
 
 		if ( ! $format ) {
 			return $show_time;
 		}
 
-		return $show_time->format( '@ g:i A' ) . ' (' . $show_time->format( 'T' ) . ')';
+		$timezone = $this->get_tz_abbreviation();
+
+		return $show_time->format( '@ g:i A' ) . ' (' . $timezone . ')';
 	}
 
 	/**
@@ -411,5 +406,13 @@ class Display {
 		}
 
 		return $week_of_days;
+	}
+
+	public function get_tz_abbreviation( $timezone = null ) {
+		$timezone = ( null === $timezone ) ? $this->timezone : $timezone;
+
+		$fake_time = new \DateTime( 'now', $timezone );
+
+		return $fake_time->format( 'T' );
 	}
 }

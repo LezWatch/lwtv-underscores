@@ -372,7 +372,7 @@ class Actors {
 	 * @return void
 	 */
 	public function generate_tmdb_id( $post_id ): void {
-		$tmdb_id   = get_post_meta( $post_id, 'lezshows_tmdb_id', true );
+		$tmdb_id   = get_post_meta( $post_id, 'lezactors_tmdb_id', true );
 		$tmdb_data = false;
 
 		// If the TMDB ID is already set, move on.

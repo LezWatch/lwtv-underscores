@@ -4,7 +4,7 @@
 	 * Adds the Filter Container Top widget.
 	 */
 
-class Filter_Bottom extends WP_Widget {
+class LWTV_Filter_Bottom_Widget extends WP_Widget {
 
 	/**
 	 * Register widget with WordPress.
@@ -61,8 +61,8 @@ class Filter_Bottom extends WP_Widget {
 	}
 }
 
-// Register Filter_Bottom widget
+// Register LWTV_Filter_Bottom_Widget widget
 function register_filter_bottom() { // phpcs:ignore
-	register_widget( 'Filter_Bottom' );
+	register_widget( 'LWTV_Filter_Bottom_Widget' );
 }
 add_action( 'widgets_init', 'register_filter_bottom' );

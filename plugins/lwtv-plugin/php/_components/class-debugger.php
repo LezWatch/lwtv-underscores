@@ -138,7 +138,6 @@ class Debugger implements Component, Templater {
 		return true;
 	}
 
-
 	/**
 	 * Check if the site is in dev mode.
 	 *
@@ -165,10 +164,12 @@ class Debugger implements Component, Templater {
 	 *
 	 * @return void
 	 */
-	public function error_log( $type, $message ): void {
-		if ( $this->is_debug_mode() ) {
-			// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
-			error_log( '[' . ucwords( $type ) . '] ' . $message );
+	public function error_log( $type = 'debug', $message = '' ): void {
+		if ( ! $this->is_debug_mode() || empty( $message ) ) {
+			return;
 		}
+
+		// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+		error_log( '[' . ucwords( $type ) . '] ' . $message );
 	}
 }

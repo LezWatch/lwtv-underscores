@@ -234,7 +234,7 @@ get_header(); ?>
 				?>
 			</div><!-- .row .home-featured-post-loop -->
 
-			<?php yikes_generate_pagination_buttons( $check_paged, $oldpostsloop->max_num_pages ); ?>
+			<?php lwtv_generate_pagination_buttons( $check_paged, $oldpostsloop->max_num_pages ); ?>
 		</div><!-- .container -->
 	</section>
 </div><!-- #main -->

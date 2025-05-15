@@ -48,7 +48,7 @@
 
     // Add aria-labelledby attribute to social navigation menu (<ul>).
     function socialMenuAriaLabel() {
-        const socialId = `yikes_social_menu_widget-2`;
+        const socialId = `lwtv_social_menu_widget-2`;
         let socialMenu = document.getElementById(socialId);
         if ( 0 === socialMenu.length ) {
             return;

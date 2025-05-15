@@ -4,16 +4,16 @@
  *
  * @package LezWatch.TV
  */
-class YIKES_Social_Menu_Widget extends WP_Widget {
+class LWTV_Social_Menu_Widget extends WP_Widget {
 
 	/**
 	 * Register widget with WordPress.
 	 */
 	public function __construct() {
 		parent::__construct(
-			'yikes_social_menu_widget', // Base ID.
-			'YIKES Social Menu',        // Name.
-			array( 'description' => __( 'Display YIKES social menu', 'lwtv-underscores' ) ) // Args.
+			'lwtv_social_menu_widget', // Base ID.
+			'LWTV Social Menu',        // Name.
+			array( 'description' => __( 'Display social menu', 'lwtv-underscores' ) ) // Args.
 		);
 	}
 
@@ -106,9 +106,9 @@ class YIKES_Social_Menu_Widget extends WP_Widget {
 }
 
 /**
- * Register YIKES_Social_Menu_Widget widget.
+ * Register LWTV_Social_Menu_Widget widget.
  */
-function register_yikes_social_menu_widget() { // phpcs:ignore
-	register_widget( 'YIKES_Social_Menu_Widget' );
+function register_lwtv_social_menu_widget() { // phpcs:ignore
+	register_widget( 'LWTV_Social_Menu_Widget' );
 }
-add_action( 'widgets_init', 'register_yikes_social_menu_widget' );
+add_action( 'widgets_init', 'register_lwtv_social_menu_widget' );

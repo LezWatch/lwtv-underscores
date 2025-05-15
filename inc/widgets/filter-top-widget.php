@@ -4,7 +4,7 @@
 	 * Adds the Filter Container Top widget.
 	 */
 
-class Filter_Top extends WP_Widget {
+class LWTV_Filter_Top_Widget extends WP_Widget {
 
 	/**
 	 * Register widget with WordPress.
@@ -29,7 +29,7 @@ class Filter_Top extends WP_Widget {
 		$before_title  = isset( $args['before_title'] ) ? $args['before_title'] : '';
 		$after_title   = isset( $args['after_title'] ) ? $args['after_title'] : '';
 
-		// Get what's needed from $instanse array ($instance populated with user inputs from widget form)
+		// Get what's needed from $instance array ($instance populated with user inputs from widget form)
 		$title       = isset( $instance['title'] ) && ! empty( trim( $instance['title'] ) ) ? $instance['title'] : 'Filter';
 		$title       = apply_filters( 'widget_title', $title, $instance, $this->id_base );
 		$fontawesome = isset( $instance['fontawesome'] ) && ! empty( trim( $instance['fontawesome'] ) ) ? $instance['fontawesome'] : '';
@@ -79,7 +79,6 @@ class Filter_Top extends WP_Widget {
 	/**
 	 * Sanitize widget form values as they are saved.
 	 */
-
 	public function update( $new_instance, $old_instance ) {
 
 		// Set old settings to new $instance array
@@ -95,7 +94,6 @@ class Filter_Top extends WP_Widget {
 	/**
 	 * Back-end widget form.
 	 */
-
 	public function form( $instance ) {
 
 		$title       = isset( $instance['title'] ) ? $instance['title'] : '';
@@ -116,8 +114,8 @@ class Filter_Top extends WP_Widget {
 	}
 }
 
-// Register Filter_Top widget
+// Register LWTV_Filter_Top_Widget widget
 function register_filter_top() { // phpcs:ignore
-	register_widget( 'Filter_Top' );
+	register_widget( 'LWTV_Filter_Top_Widget' );
 }
 add_action( 'widgets_init', 'register_filter_top' );

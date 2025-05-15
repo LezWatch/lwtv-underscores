@@ -33,6 +33,7 @@ class Matcher {
 		'per-char'            => 'Actor_Chars',
 		'roles'               => 'Meta',
 		'romantic'            => 'Taxonomy',
+		'scores'              => 'Scores',
 		'sexuality'           => 'Taxonomy',
 		'stars'               => 'Complex_Taxonomy',
 		'taxonomy_breakdowns' => 'Taxonomy_Breakdowns',

@@ -10,7 +10,7 @@ if ( ! defined( 'LWTV_THEME_VERSION' ) ) {
 	$versions = array(
 		'lwtv-underscores' => '6.3.1',    // Bump this any time you make serious CSS changes.
 		'font-awesome'     => '6.7.2',    // Bump when you update Font Awesome.
-		'bootstrap'        => '5.3.5',    // Bump when you update bootstrap.
+		'bootstrap'        => '5.3.6',    // Bump when you update bootstrap.
 		'bootstrap_dark'   => '1.1.0',    // Bump when you update the dark mode.
 		'lwtv-blocks'      => '1.1.0',    // Bump when you update the blocks' CSS (or add new ones).
 	);
@@ -72,12 +72,14 @@ add_filter( 'excerpt_length', 'lwtv_custom_excerpt_length', 999 );
 /**
  * Widgets
  */
-require_once 'inc/widgets/social-nav-widget.php';
+require_once 'inc/widgets/calendar-widget.php';
 require_once 'inc/widgets/character-widget.php';
-require_once 'inc/widgets/show-widget.php';
-require_once 'inc/widgets/filter-widget1.php';
-require_once 'inc/widgets/filter-widget2.php';
+require_once 'inc/widgets/filter-top-widget.php';
+require_once 'inc/widgets/filter-bottom-widget.php';
 require_once 'inc/widgets/otd-widget.php';
+require_once 'inc/widgets/show-widget.php';
+require_once 'inc/widgets/social-nav-widget.php';
+
 
 /**
  * Images
@@ -120,7 +122,7 @@ if ( ! is_singular( 'post' ) ) {
  * @param string $title get rid of the “Category:”, “Tag:”, “Author:”, “Archives:”
  *  and “Other taxonomy name:” in the archive title.
  */
-function yikes_archive_title( $title ) {
+function lwtv_archive_title( $title ) {
 	if ( is_category() ) {
 		$title = single_cat_title( '', false );
 	} elseif ( is_tag() ) {
@@ -135,7 +137,7 @@ function yikes_archive_title( $title ) {
 
 	return $title;
 }
-add_filter( 'get_the_archive_title', 'yikes_archive_title' );
+add_filter( 'get_the_archive_title', 'lwtv_archive_title' );
 
 /**
  * Theme Setup
@@ -406,10 +408,10 @@ add_action( 'wp_enqueue_scripts', 'lwtv_theme_scripts' );
 /**
  * Enqueue block styles in the editor.
  */
-function yikes_block_editor_styles() {
-	wp_enqueue_style( 'yikes-block-editor-styles', get_stylesheet_directory_uri() . '/style-editor.min.css', array(), LWTV_THEME_VERSION['lwtv-blocks'], true );
+function lwtv_block_editor_styles() {
+	wp_enqueue_style( 'lwtv-block-editor', get_stylesheet_directory_uri() . '/style-editor.min.css', array(), LWTV_THEME_VERSION['lwtv-blocks'], true );
 }
-add_action( 'enqueue_block_editor_assets', 'yikes_block_editor_styles' );
+add_action( 'enqueue_block_editor_assets', 'lwtv_block_editor_styles' );
 
 
 /* Custom template tags for this theme. */
