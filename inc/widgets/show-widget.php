@@ -1,10 +1,10 @@
 <?php
 
-	/**
-	 * Adds The LWTV Recently Added Show widget.
-	 */
+/**
+ * Adds The LWTV Recently Added Show widget.
+ */
 
-class LWTV_Show extends WP_Widget {
+class LWTV_Show_Widget extends WP_Widget {
 
 	/**
 	 * Register widget with WordPress.
@@ -20,7 +20,6 @@ class LWTV_Show extends WP_Widget {
 	/**
 	 * Front-end display of widget.
 	 */
-
 	public function widget( $args, $instance ) {
 		global $post;
 
@@ -127,7 +126,6 @@ class LWTV_Show extends WP_Widget {
 	/**
 	 * Sanitize widget form values as they are saved.
 	 */
-
 	public function update( $new_instance, $old_instance ) {
 
 		// Set old settings to new $instance array
@@ -142,7 +140,6 @@ class LWTV_Show extends WP_Widget {
 	/**
 	 * Back-end widget form.
 	 */
-
 	public function form( $instance ) {
 
 		$title = isset( $instance['title'] ) ? $instance['title'] : '';
@@ -156,8 +153,8 @@ class LWTV_Show extends WP_Widget {
 	}
 }
 
-// Register LWTV_Show widget
+// Register LWTV_Show_Widget widget
 function register_lwtv_show() { // phpcs:ignore
-	register_widget( 'LWTV_Show' );
+	register_widget( 'LWTV_Show_Widget' );
 }
 add_action( 'widgets_init', 'register_lwtv_show' );

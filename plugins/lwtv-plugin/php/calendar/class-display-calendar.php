@@ -138,7 +138,7 @@ class Display_Calendar {
 		$date_fmt  = new \DateTime( $date, $tz );
 
 		$cell  = '<td class="ep-calendar-td-calendar">';
-		$cell .= '<ul class="list-group">';
+		$cell .= '<ul class="list-group list-group-flush">';
 		$cell .= '<li class="list-group-item list-group-item list-group-item-action ' . $active . '"><strong>' . $date_fmt->format( 'M jS' ) . '</strong></li>';
 
 		if ( empty( $shows ) ) {

@@ -138,7 +138,6 @@ class Debugger implements Component, Templater {
 		return true;
 	}
 
-
 	/**
 	 * Check if the site is in dev mode.
 	 *

@@ -273,9 +273,11 @@ class Shows {
 	/*
 	 * Save post meta for shows on SHOW SAVE.
 	 *
-	 * @param int $post_id The post ID.
-	 * @param post $post The post object.
-	 * @param bool $update Whether this is an existing post being updated or not.
+	 * @param int  $post_id The post ID.
+	 * @param post $post    The post object.
+	 * @param bool $update  Whether this is an existing post being updated or not.
+	 *
+	 * @return void
 	 */
 	// phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
 	public function save_post_meta( $post_id, $post, $update ) {
@@ -316,6 +318,8 @@ class Shows {
 
 	/*
 	 * Add to 'Right Now'
+	 *
+	 * @return void
 	 */
 	public function dashboard_glance_items() {
 		foreach ( array( self::SLUG ) as $post_type ) {

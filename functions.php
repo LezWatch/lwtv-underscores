@@ -72,12 +72,14 @@ add_filter( 'excerpt_length', 'lwtv_custom_excerpt_length', 999 );
 /**
  * Widgets
  */
-require_once 'inc/widgets/social-nav-widget.php';
+require_once 'inc/widgets/calendar-widget.php';
 require_once 'inc/widgets/character-widget.php';
-require_once 'inc/widgets/show-widget.php';
-require_once 'inc/widgets/filter-widget1.php';
-require_once 'inc/widgets/filter-widget2.php';
+require_once 'inc/widgets/filter-top-widget.php';
+require_once 'inc/widgets/filter-bottom-widget.php';
 require_once 'inc/widgets/otd-widget.php';
+require_once 'inc/widgets/show-widget.php';
+require_once 'inc/widgets/social-nav-widget.php';
+
 
 /**
  * Images

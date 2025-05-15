@@ -4,7 +4,7 @@
  * Adds The LWTV Recently Added Character widget.
  */
 
-class LWTV_Character extends WP_Widget {
+class LWTV_Character_Widget extends WP_Widget {
 
 	/**
 	 * Register widget with WordPress.
@@ -130,8 +130,8 @@ class LWTV_Character extends WP_Widget {
 	}
 }
 
-// Register LWTV_Character widget
+// Register LWTV_Character_Widget widget
 function register_lwtv_character() { // phpcs:ignore
-	register_widget( 'LWTV_Character' );
+	register_widget( 'LWTV_Character_Widget' );
 }
 add_action( 'widgets_init', 'register_lwtv_character' );

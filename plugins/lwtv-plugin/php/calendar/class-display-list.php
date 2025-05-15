@@ -58,7 +58,8 @@ class Display_List {
 				$show['native_tz'] = ( new TVMaze() )->get_timezone( $show['show_id'] );
 
 				$show_time = ( new Display() )->get_showtime( $show, false );
-				$lwtv_date = $show_time->format( '@ g:i A' ) . ' (' . $show_time->format( 'T' ) . ')';
+				$timezone  = ( new Display() )->get_tz_abbreviation();
+				$lwtv_date = $show_time->format( '@ g:i A' ) . ' (' . $timezone . ')';
 
 				// Determine if the show is airing now, soon, or later.
 				$dot_time = ( $show_time <= $today ) ? 'ep-calendar-dot ep-calendar-dot-past' : 'ep-calendar-dot';
