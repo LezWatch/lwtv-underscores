@@ -21,6 +21,7 @@ Thumbs.db
 /vendor/
 debug.log
 /inc/dist/
+/_build_scripts/webpackdist/
 
 ## Plugin files to ignore
 /plugins/**/.git

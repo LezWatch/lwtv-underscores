@@ -152,9 +152,45 @@ class Symbolicons implements Component, Templater {
 	 * @param string $svg         (default: 'square.svg') - SVG name.
 	 * @param string $fontawesome (default: 'fa-square')  - Font-Awesome icon name.
 	 * @param string $svg_class   (default: 'symbolicon') - SVG styling class name.
+	 * @param string $max_size    (default: '32')        - Maximum size of the icon.
+	 *
 	 * @return icon
 	 */
 	public function get_symbolicon( $svg = 'square.svg', $fontawesome = 'fa-square', $svg_class = 'symbolicon', $max_size = '32' ) {
+
+		// Font Awesome fallback.
+		$font_awesome_return = '<i class="' . esc_attr( strtolower( $fontawesome ) ) . '" aria-hidden="true"></i>';
+
+			// Extract icon ID from filename (strip `.svg` extension)
+		$icon_id = sanitize_title( pathinfo( $svg, PATHINFO_FILENAME ) );
+
+		// Path to your external sprite file
+		$sprite_path = LWTV_SYMBOLICONS_SPRITE_SVG;
+
+		if ( ! file_exists( $sprite_path ) ) {
+			return $font_awesome_return;
+		}
+
+		// Output SVG with <use>
+		return sprintf(
+			'<span class="%1$s" role="img" data-no-image-dimensions="true"><svg class="%1$s" role="img" style="height:%2$spx; width:auto;" aria-hidden="true"><use href="%3$s#%4$s"></use></svg></span>',
+			esc_attr( $svg_class ),
+			intval( $max_size ),
+			esc_url( $sprite_path ),
+			esc_attr( $icon_id )
+		);
+	}
+
+	/**
+	 * Old get_symbolicon function.
+	 *
+	 * @param string $svg         (default: 'square.svg') - SVG name.
+	 * @param string $fontawesome (default: 'fa-square')  - Font-Awesome icon name.
+	 * @param string $svg_class   (default: 'symbolicon') - SVG styling class name.
+	 * @param string $max_size    (default: '32')        - Maximum size of the icon.
+	 * @return icon
+	 */
+	public function old_get_symbolicon( $svg = 'square.svg', $fontawesome = 'fa-square', $svg_class = 'symbolicon', $max_size = '32' ) {
 
 		// Font Awesome fallback.
 		$return = '<i class="' . esc_attr( strtolower( $fontawesome ) ) . '" aria-hidden="true"></i>';

@@ -101,6 +101,10 @@ The `vendor` and `node_module` files are not synced to Github anymore (as of 202
 **Composer**
 * [ICal Parser](https://github.com/u01jmg3/ics-parser)
 
+## Fonts
+
+In order to speed up the site, we make use of SVG sprites to generate our font-icons. However, due to licensing reasons, we do not store the icons in this repository (the icons are fine to use on our site, but we cannot offer them as a bulk download). In order to handle this, the icons are stored locally-
+
 ## Deployment
 
 Pushes to branches are automatically deployed via Github Actions as follows:

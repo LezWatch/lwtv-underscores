@@ -14,9 +14,9 @@
   "scripts": {
     "build": "npm-run-all build:*",
     "build:composer": "composer update",
-    "build:assets": "wp-scripts build style.scss --webpack-no-externals",
+    "build:assets": "wp-scripts build --config _build_scripts/webpack.config.js --webpack-no-externals",
     "build:workspace": "npm run build:workspace --workspaces",
-    "build:mover": "node ./postbuild.js",
+    "build:mover": "node ./_build_scripts/postbuild.js",
     "buildquick": "npm run build:assets && npm run build:mover",
     "lint": "npm-run-all lint:*",
     "lint:css": "wp-scripts lint-style 'style.scss'",
@@ -51,6 +51,8 @@
     "chartjs-plugin-annotation": "^3",
     "coffeescript": "^2.7.0",
     "postinstall": "*",
+    "svg-sprite": "^2.0.4",
+    "svgo": "^3.3.2",
     "tablesorter": "^2"
   },
   "devDependencies": {
@@ -81,5 +83,10 @@
     "*.php": "npm run lint:php",
     "plugins/lwtv-plugin/php/blocks/src/**/*.js": "npm run lint:js",
     "style.scss": "npm run lint:css"
-  }
+  },
+  "browserslist": [
+    "last 2 versions",
+    ">1%",
+    "not dead"
+  ]
 }

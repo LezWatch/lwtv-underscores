@@ -27,6 +27,12 @@ if ( ! defined( 'LWTV_SYMBOLICONS_PATH' ) ) {
 if ( ! defined( 'LWTV_SYMBOLICONS_URL' ) ) {
 	define( 'LWTV_SYMBOLICONS_URL', $upload_dir['baseurl'] . '/lezpress-icons/symbolicons/' );
 }
+if ( ! defined( 'LWTV_SYMBOLICONS_SPRITE_SVG' ) ) {
+	define( 'LWTV_SYMBOLICONS_SPRITE_SVG', $upload_dir['basedir'] . '/lezpress-icons/sprite.symbol.svg' );
+}
+if ( ! defined( 'LWTV_SYMBOLICONS_SPRITE_CSS' ) ) {
+	define( 'LWTV_SYMBOLICONS_SPRITE_CSS', $upload_dir['baseurl'] . '/lezpress-icons/symbolicons.css' );
+}
 
 // Load the lwtv plugin
 require_once __DIR__ . '/lwtv-plugin/functions.php';
