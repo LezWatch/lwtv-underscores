@@ -103,9 +103,9 @@ class Symbolicons implements Component, Templater {
 
 		<h2>Symbolicons</h2>
 
-		<?php
-		echo '<p>The following are all the symbolicons you have to chose from and their file names. Let this help you be more better with your iconing.</p>';
+		<p>The following are all the symbolicons you have to chose from and their file names. Let this help you be more better with your iconing.</p>
 
+		<?php
 		// Make sure the sprite SVG and JSON files exist.
 		if ( ! file_exists( LWTV_SYMBOLICONS_SPRITE_PATH . 'sprite.symbol.svg' ) || ! file_exists( LWTV_SYMBOLICONS_SPRITE_PATH . 'symbolicons.json' ) ) {
 			echo '<p>The sprite SVG and JSON files do not exist. Please upload them to the <code>/wp-content/uploads/lezpress-icons</code> directory.</p>';
@@ -115,12 +115,14 @@ class Symbolicons implements Component, Templater {
 			// for each icon in the sprite SVG, show the icon.
 			foreach ( $sprite_json as $icon ) {
 				$name = str_replace( '.svg', '', $icon['filename'] );
-				// @codingStandardsIgnoreStart
-				echo '<span class="cmb2-icon" role="img">';
-				echo lwtv_plugin()->get_symbolicon(svg:  $icon['filename'], max_size: 100 );
-				echo '<center>' . $name . '</center>';
-				echo '</span>';
-				// @codingStandardsIgnoreEnd
+				?>
+				<div class="symbolicon-admin-container">
+					<div class="symbolicon-admin-icon">
+						<?php echo lwtv_plugin()->get_symbolicon( svg: $icon['filename'], max_size: 100 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+					</div>
+					<div class="symbolicon-admin-name"><?php echo esc_html( $name ); ?></div>
+				</div>
+				<?php
 			}
 		}
 
@@ -188,7 +190,7 @@ class Symbolicons implements Component, Templater {
 
 		// Output SVG with <use>
 		return sprintf(
-			'<span class="%1$s" role="img" data-no-image-dimensions="true"><svg class="%1$s" role="img" style="height:%2$spx;" aria-hidden="true"><use href="%3$s#%4$s"></use></svg></span>',
+			'<span class="%1$s" data-no-image-dimensions="true"><svg class="%1$s" role="img" style="height:%2$spx;" aria-hidden="true"><use href="%3$s#%4$s"></use></svg></span>',
 			esc_attr( $svg_class ),
 			intval( $max_size ),
 			esc_url( $sprite_path ),
