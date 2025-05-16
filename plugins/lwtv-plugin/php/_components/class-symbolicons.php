@@ -103,7 +103,20 @@ class Symbolicons implements Component, Templater {
 
 		<h2>Symbolicons</h2>
 
-		<p>The following are all the symbolicons you have to chose from and their file names. Let this help you be more better with your iconing.</p>
+		<!-- make an info box that explains usage -->
+		<div class="notice notice-info">
+			<p>Symbolics are used in code, not in the visual editor. To add them, use the wrapper function <code>lwtv_plugin()->get_symbolicon()</code> which has the following parameters:</p>
+			<ul>
+				<li><code>svg</code> - The name of the icon, i.e. <code>square</code>.</li>
+				<li><code>fontawesome</code> - The Font Awesome icon name, i.e. <code>fa-square</code>.</li>
+				<li><code>svg_class</code> - The SVG styling class name, i.e. <code>symbolicon</code>.</li>
+				<li><code>max_size</code> - The <em>maximum</em> size of the icon, i.e. <code>32</code>.</li>
+			</ul>
+
+			<p>You can also select a symbolicon for certain taxonomies in the <a href="<?php echo esc_url( admin_url( 'edit-tags.php?taxonomy=lez_termsmeta&post_type=lez_terms' ) ); ?>">Terms</a> page.</p>
+		</div>
+
+		<h3>Available Symbolicons</h3>
 
 		<?php
 		// Make sure the sprite SVG and JSON files exist.
