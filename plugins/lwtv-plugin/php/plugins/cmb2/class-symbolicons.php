@@ -10,7 +10,6 @@ namespace LWTV\Plugins\CMB2;
 class Symbolicons {
 
 	public $icon_taxonomies; // Taxonomies that have an icon
-	public $symbolicon_path; // Path to symbolicons
 
 	/**
 	 * Constructor
@@ -67,14 +66,13 @@ class Symbolicons {
 		);
 
 		// If we don't have symbolicons, there's not a reason to register the taxonomy box...
-		if ( defined( 'LWTV_SYMBOLICONS_PATH' ) ) {
-			$imagepath      = LWTV_SYMBOLICONS_PATH;
-			$icon_array     = array();
+		if ( defined( 'LWTV_SYMBOLICONS_PATH' ) && file_exists( LWTV_SYMBOLICONS_SPRITE_PATH . 'symbolicons.json' ) ) {
+			$icon_json      = json_decode( file_get_contents( LWTV_SYMBOLICONS_SPRITE_PATH . 'symbolicons.json' ), true );
 			$symbolicon_url = admin_url( 'themes.php?page=symbolicons' );
 
-			foreach ( glob( $imagepath . '*' ) as $filename ) {
-				$filename                = str_replace( '.svg', '', str_replace( LWTV_SYMBOLICONS_PATH, '', $filename ) );
-				$icon_array[ $filename ] = $filename;
+			$icon_array = array();
+			foreach ( $icon_json as $icon ) {
+				$icon_array[ $icon['cleanname'] ] = $icon['cleanname'];
 			}
 
 			$cmb_term_symbolicons = \new_cmb2_box(
@@ -113,11 +111,11 @@ class Symbolicons {
 			return;
 		}
 
-		if ( ! file_exists( LWTV_SYMBOLICONS_PATH . $icon . '.svg' ) ) {
+		if ( ! file_exists( LWTV_SYMBOLICONS_SPRITE_PATH . 'sprite.symbol.svg' ) ) {
 			$content = 'N/A';
 		} else {
-			$filename = LWTV_SYMBOLICONS_URL . $icon . '.svg';
-			$content  = '<span class="cmb2-icon" role="img">' . file_get_contents( $filename ) . '</span>';
+			$icon    = str_replace( '.svg', '', $icon );
+			$content = '<span class="cmb2-icon" role="img">' . lwtv_plugin()->get_symbolicon( svg: $icon . '.svg', max_size: 20 ) . '</span>';
 		}
 
 		return $content;
@@ -137,18 +135,18 @@ class Symbolicons {
 	public function terms_column_content( $value, $content, $term_id ) {
 		$icon = get_term_meta( $term_id, 'lez_termsmeta_icon', true );
 
+		// If icon ends without .svg, add it
+		if ( ! str_ends_with( $icon, '.svg' ) ) {
+			// Update the icon with the .svg extension
+			update_term_meta( $term_id, 'lez_termsmeta_icon', $icon . '.svg' );
+			$icon .= '.svg';
+		}
+
 		// Bail early if empty
-		if ( empty( $icon ) || ! defined( 'LWTV_SYMBOLICONS_PATH' ) ) {
+		if ( empty( $icon ) || ! defined( 'LWTV_SYMBOLICONS_PATH' ) || ! file_exists( LWTV_SYMBOLICONS_SPRITE_PATH . 'sprite.symbol.svg' ) ) {
 			return;
 		}
 
-		if ( ! file_exists( LWTV_SYMBOLICONS_PATH . $icon . '.svg' ) ) {
-			$content = 'N/A';
-		} else {
-			$filename = LWTV_SYMBOLICONS_URL . $icon . '.svg';
-			$content  = '<span class="cmb2-icon" role="img">' . file_get_contents( $filename ) . '</span>';
-		}
-
-		return $content;
+		return '<span class="cmb2-icon" role="img">' . lwtv_plugin()->get_symbolicon( svg: $icon, max_size: 30 ) . '</span>';
 	}
 }

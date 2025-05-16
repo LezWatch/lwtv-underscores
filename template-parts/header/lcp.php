@@ -2,12 +2,14 @@
 /**
  * The Template for inserting header images as LCP HIGH.
  *
+ * TODO: Preload the symbolicons sprite SVG. Right now it's not supported by Chrome so it's not worth it.
+ *
  * @package LezWatch.TV
  */
 
 $this_id = $args['post_id'] ?? null;
-
 ?>
+
 <!-- Preload the LCP images with a high fetchpriority so it starts loading with the stylesheet. -->
 <?php
 
