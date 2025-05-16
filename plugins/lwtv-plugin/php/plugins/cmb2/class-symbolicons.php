@@ -135,14 +135,12 @@ class Symbolicons {
 	public function terms_column_content( $value, $content, $term_id ) {
 		$icon = get_term_meta( $term_id, 'lez_termsmeta_icon', true );
 
-		// If icon ends without .svg, add it
+		// If icon ends without .svg, add it for the get_symbolicon() function
 		if ( ! str_ends_with( $icon, '.svg' ) ) {
-			// Update the icon with the .svg extension
-			update_term_meta( $term_id, 'lez_termsmeta_icon', $icon . '.svg' );
 			$icon .= '.svg';
 		}
 
-		// Bail early if empty
+		// Make sure the icon exists in the sprite SVG.
 		if ( empty( $icon ) || ! defined( 'LWTV_SYMBOLICONS_PATH' ) || ! file_exists( LWTV_SYMBOLICONS_SPRITE_PATH . 'sprite.symbol.svg' ) ) {
 			return;
 		}
