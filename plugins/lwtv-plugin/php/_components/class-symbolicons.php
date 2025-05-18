@@ -16,8 +16,8 @@ use LWTV\Grading\LWTV;
 class Symbolicons implements Component, Templater {
 
 	// Names of the files.
-	CONST $sprite_file = 'sprite.symbol.svg';
-	CONST $sprite_json = 'symbolicons.json';
+	CONST sprite_file = 'sprite.symbol.svg';
+	CONST sprite_json = 'symbolicons.json';
 
 	/*
 	 * Init
@@ -25,7 +25,6 @@ class Symbolicons implements Component, Templater {
 	public function init(): void {
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
 		add_action( 'admin_menu', array( $this, 'add_settings_page' ) );
-		add_shortcode( 'symbolicon', array( $this, 'shortcode' ) );
 	}
 
 	/**
@@ -48,43 +47,6 @@ class Symbolicons implements Component, Templater {
 	public function admin_enqueue_scripts() {
 		wp_register_style( 'symbolicons-admin', LWTV_PLUGIN_URL . '/assets/css/symbolicons-admin.css', array(), LWTV_PLUGIN_VERSION );
 		wp_enqueue_style( 'symbolicons-admin' );
-	}
-
-	/*
-	 * Shortcode
-	 *
-	 * Generate the Symbolicon via shortcode
-	 *
-	 * @param array $atts Attributes for the shortcode
-	 *   - file: Filename
-	 *   - title: Title to use (for A11y)
-	 *   - url: URL to link to (optional)
-	 * @return SVG icon of awesomeness
-	 */
-	public function shortcode( $atts ) {
-		$svg = shortcode_atts(
-			array(
-				'file'  => '',
-				'title' => '',
-				'url'   => '',
-			),
-			$atts
-		);
-
-		// Default to the square if nothing is there
-		if ( ! file_exists( LWTV_SYMBOLICONS_PATH . $svg['file'] . '.svg' ) ) {
-			$svg['file'] = 'square';
-		}
-
-		$the_icon = '<span class="symbolicon" role="img" aria-label="' . sanitize_text_field( $svg['title'] ) . '" title="' . sanitize_text_field( $svg['title'] ) . '" class="svg-shortcode ' . sanitize_text_field( $svg['title'] ) . '">' . file_get_contents( LWTV_SYMBOLICONS_PATH . $svg['file'] . '.svg' ) . '</span>';
-
-		if ( ! empty( $svg['url'] ) ) {
-			$iconpath = '<a href=' . esc_url( $svg['url'] ) . '> ' . $the_icon . ' </a>';
-		} else {
-			$iconpath = $the_icon;
-		}
-
-		return $iconpath;
 	}
 
 	/*
@@ -119,13 +81,13 @@ class Symbolicons implements Component, Templater {
 			<p>You can also select a symbolicon for certain taxonomies in the <a href="<?php echo esc_url( admin_url( 'edit-tags.php?taxonomy=lez_termsmeta&post_type=lez_terms' ) ); ?>">Terms</a> page.</p>
 		</div>
 
-		<h3>Available Symbolicons</h3>
-
 		<?php
 		// Make sure the sprite SVG and JSON files exist.
-		if ( ! file_exists( LWTV_SYMBOLICONS_SPRITE_PATH . $this->sprite_file; ) || ! file_exists( LWTV_SYMBOLICONS_SPRITE_PATH . $this->sprite_json ) ) {
-			echo '<p>The sprite SVG and JSON files do not exist. Please upload them to the <code>/wp-content/uploads/lezpress-icons</code> directory.</p>';
+		if ( ! file_exists( LWTV_SYMBOLICONS_SPRITE_PATH . $this->sprite_file ) || ! file_exists( LWTV_SYMBOLICONS_SPRITE_PATH . $this->sprite_json ) ) {
+			echo '<h3>OH NO!</h3>';
+			echo '<p>The sprite SVG and/or JSON files do not exist. Please tell an Admin to upload them to the <code>/wp-content/uploads/lezpress-icons</code> directory.</p>';
 		} else {
+		echo '<h3>Available Symbolicons</h3>';
 			$sprite_json = json_decode( file_get_contents( LWTV_SYMBOLICONS_SPRITE_PATH . $this->sprite_json ), true );
 
 			// for each icon in the sprite SVG, show the icon.
@@ -134,7 +96,7 @@ class Symbolicons implements Component, Templater {
 				?>
 				<div class="symbolicon-admin-container">
 					<div class="symbolicon-admin-icon">
-						<?php echo lwtv_plugin()->get_symbolicon( svg: $icon['filename'], max_size: 100 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+						<?php echo $this->get_symbolicon( svg: $icon['filename'], max_size: 100 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 					</div>
 					<div class="symbolicon-admin-name"><?php echo esc_html( $name ); ?></div>
 				</div>
