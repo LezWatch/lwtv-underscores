@@ -15,6 +15,10 @@ use LWTV\Grading\LWTV;
 
 class Symbolicons implements Component, Templater {
 
+	// Names of the files.
+	CONST $sprite_file = 'sprite.symbol.svg';
+	CONST $sprite_json = 'symbolicons.json';
+
 	/*
 	 * Init
 	 */
@@ -103,7 +107,6 @@ class Symbolicons implements Component, Templater {
 
 		<h2>Symbolicons</h2>
 
-		<!-- make an info box that explains usage -->
 		<div class="notice notice-info">
 			<p>Symbolics are used in code, not in the visual editor. To add them, use the wrapper function <code>lwtv_plugin()->get_symbolicon()</code> which has the following parameters:</p>
 			<ul>
@@ -120,10 +123,10 @@ class Symbolicons implements Component, Templater {
 
 		<?php
 		// Make sure the sprite SVG and JSON files exist.
-		if ( ! file_exists( LWTV_SYMBOLICONS_SPRITE_PATH . 'sprite.symbol.svg' ) || ! file_exists( LWTV_SYMBOLICONS_SPRITE_PATH . 'symbolicons.json' ) ) {
+		if ( ! file_exists( LWTV_SYMBOLICONS_SPRITE_PATH . $this->sprite_file; ) || ! file_exists( LWTV_SYMBOLICONS_SPRITE_PATH . $this->sprite_json ) ) {
 			echo '<p>The sprite SVG and JSON files do not exist. Please upload them to the <code>/wp-content/uploads/lezpress-icons</code> directory.</p>';
 		} else {
-			$sprite_json = json_decode( file_get_contents( LWTV_SYMBOLICONS_SPRITE_PATH . 'symbolicons.json' ), true );
+			$sprite_json = json_decode( file_get_contents( LWTV_SYMBOLICONS_SPRITE_PATH . $this->sprite_json ), true );
 
 			// for each icon in the sprite SVG, show the icon.
 			foreach ( $sprite_json as $icon ) {
@@ -189,16 +192,16 @@ class Symbolicons implements Component, Templater {
 
 			// Extract icon ID from filename (strip `.svg` extension)
 		$icon_id = sanitize_title( pathinfo( $svg, PATHINFO_FILENAME ) );
+		
+		$sprite_path = LWTV_SYMBOLICONS_SPRITE_URL . $this->sprite_file;
 
-		if ( ! file_exists( LWTV_SYMBOLICONS_SPRITE_PATH . 'sprite.symbol.svg' ) ) {
+		if ( ! file_exists( $sprite_path ) ) {
 			return $font_awesome_return;
 		}
 
-		$sprite_path = LWTV_SYMBOLICONS_SPRITE_URL . 'sprite.symbol.svg';
-
 		// Make sure the icon exists in the sprite SVG.
-		if ( ! str_contains( file_get_contents( LWTV_SYMBOLICONS_SPRITE_PATH . 'sprite.symbol.svg' ), $icon_id ) ) {
-			$icon_id = 'question-square';
+		if ( ! str_contains( file_get_contents( $sprite_path ), $icon_id ) ) {
+			return $font_awesome_return;
 		}
 
 		// Output SVG with <use>
