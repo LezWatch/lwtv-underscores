@@ -11,8 +11,6 @@
 
 namespace LWTV\_Components;
 
-use LWTV\Grading\LWTV;
-
 class Symbolicons implements Component, Templater {
 
 	// Names of the files.
@@ -143,7 +141,7 @@ class Symbolicons implements Component, Templater {
 	 * @param string $svg         (default: 'square.svg') - SVG name.
 	 * @param string $fontawesome (default: 'fa-square')  - Font-Awesome icon name.
 	 * @param string $svg_class   (default: 'symbolicon') - SVG styling class name.
-	 * @param string $max_size    (default: '32')        - Maximum size of the icon.
+	 * @param string $max_size    (default: '32')         - Maximum size of the icon.
 	 *
 	 * @return icon
 	 */
@@ -183,7 +181,7 @@ class Symbolicons implements Component, Templater {
 	 * @param string $svg         (default: 'square.svg') - SVG name.
 	 * @param string $fontawesome (default: 'fa-square')  - Font-Awesome icon name.
 	 * @param string $svg_class   (default: 'symbolicon') - SVG styling class name.
-	 * @param string $max_size    (default: '32')        - Maximum size of the icon.
+	 * @param string $max_size    (default: '32')         - Maximum size of the icon.
 	 * @return icon
 	 */
 	public function old_get_symbolicon( $svg = 'square.svg', $fontawesome = 'fa-square', $svg_class = 'symbolicon', $max_size = '32' ) {

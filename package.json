@@ -16,6 +16,7 @@
     "build:composer": "composer update",
     "build:assets": "wp-scripts build --config _build_scripts/webpack.config.js --webpack-no-externals",
     "build:workspace": "npm run build:workspace --workspaces",
+    "import:symbolicons": "node ./_build_scripts/symbolicons.js",
     "build:mover": "node ./_build_scripts/postbuild.js",
     "buildquick": "npm run build:assets && npm run build:mover",
     "lint": "npm-run-all lint:*",
@@ -51,6 +52,7 @@
     "chartjs-plugin-annotation": "^3",
     "coffeescript": "^2.7.0",
     "postinstall": "*",
+    "simple-git": "^3.27.0",
     "svg-sprite": "^2.0.4",
     "svgo": "^3.3.2",
     "tablesorter": "^2"
