@@ -16,8 +16,8 @@ use LWTV\Grading\LWTV;
 class Symbolicons implements Component, Templater {
 
 	// Names of the files.
-	CONST sprite_file = 'sprite.symbol.svg';
-	CONST sprite_json = 'symbolicons.json';
+	const SPRITE_FILE = 'sprite.symbol.svg';
+	const SPRITE_JSON = 'symbolicons.json';
 
 	/*
 	 * Init
@@ -83,12 +83,12 @@ class Symbolicons implements Component, Templater {
 
 		<?php
 		// Make sure the sprite SVG and JSON files exist.
-		if ( ! file_exists( LWTV_SYMBOLICONS_SPRITE_PATH . $this->sprite_file ) || ! file_exists( LWTV_SYMBOLICONS_SPRITE_PATH . $this->sprite_json ) ) {
+		if ( ! file_exists( LWTV_SYMBOLICONS_SPRITE_PATH . self::SPRITE_FILE ) || ! file_exists( LWTV_SYMBOLICONS_SPRITE_PATH . self::SPRITE_JSON ) ) {
 			echo '<h3>OH NO!</h3>';
 			echo '<p>The sprite SVG and/or JSON files do not exist. Please tell an Admin to upload them to the <code>/wp-content/uploads/lezpress-icons</code> directory.</p>';
 		} else {
-		echo '<h3>Available Symbolicons</h3>';
-			$sprite_json = json_decode( file_get_contents( LWTV_SYMBOLICONS_SPRITE_PATH . $this->sprite_json ), true );
+			echo '<h3>Available Symbolicons</h3>';
+			$sprite_json = json_decode( file_get_contents( LWTV_SYMBOLICONS_SPRITE_PATH . self::SPRITE_JSON ), true );
 
 			// for each icon in the sprite SVG, show the icon.
 			foreach ( $sprite_json as $icon ) {
@@ -154,8 +154,9 @@ class Symbolicons implements Component, Templater {
 
 			// Extract icon ID from filename (strip `.svg` extension)
 		$icon_id = sanitize_title( pathinfo( $svg, PATHINFO_FILENAME ) );
-		
-		$sprite_path = LWTV_SYMBOLICONS_SPRITE_URL . $this->sprite_file;
+
+		$sprite_path = LWTV_SYMBOLICONS_SPRITE_PATH . self::SPRITE_FILE;
+		$sprite_url  = LWTV_SYMBOLICONS_SPRITE_URL . self::SPRITE_FILE;
 
 		if ( ! file_exists( $sprite_path ) ) {
 			return $font_awesome_return;
@@ -171,7 +172,7 @@ class Symbolicons implements Component, Templater {
 			'<span class="%1$s" data-no-image-dimensions="true"><svg class="%1$s" role="img" style="height:%2$spx;" aria-hidden="true"><use href="%3$s#%4$s"></use></svg></span>',
 			esc_attr( $svg_class ),
 			intval( $max_size ),
-			esc_url( $sprite_path ),
+			esc_url( $sprite_url ),
 			esc_attr( $icon_id )
 		);
 	}
