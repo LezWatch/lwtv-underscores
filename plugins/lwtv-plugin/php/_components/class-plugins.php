@@ -74,25 +74,128 @@ class Plugins implements Component, Templater {
 				<div class="lwtv-share-content">
 					<ul data-sharing-events-added="true">
 						<li class="share-bluesky">
-							<a rel="nofollow noopener noreferrer" data-shared="sharing-bluesky-<?php echo esc_attr( $post_id ); ?>" class="share-bluesky lwtv-share-button share-icon no-text" href="https://bsky.app/intent/compose?text=<?php echo esc_url( $post_url ); ?>&text=<?php echo esc_attr( the_title() ); ?>" target="_blank" title="Click to share on Bluesky" onclick="window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=468,width=768');return false;"><span></span><span class="sharing-screen-reader-text">Click to share on Bluesky (Opens in new window)</span></a>
+							<a
+								rel="nofollow noopener noreferrer"
+								data-shared="sharing-bluesky-<?php echo esc_attr( $post_id ); ?>"
+								class="share-bluesky lwtv-share-button share-icon no-text"
+								href="https://bsky.app/intent/compose?text=<?php echo esc_url( $post_url ); ?>&text=<?php echo esc_attr( the_title() ); ?>"
+								target="_blank"
+								title="Click to share on Bluesky"
+								onclick="window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=468,width=768');return false;"
+							>
+								<?php
+								// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+								echo lwtv_plugin()->get_symbolicon( svg: 'bluesky.svg', icon: 'svg-bluesky', max_size: '20' );
+								?>
+								<span class="sharing-screen-reader-text">Click to share on Bluesky (Opens in new window)</span>
+							</a>
 						</li>
+
 						<li class="share-tumblr">
-							<a rel="nofollow noopener noreferrer" data-shared="sharing-tumblr-<?php echo esc_attr( $post_id ); ?>" class="share-tumblr lwtv-share-button share-icon no-text" href="http://www.tumblr.com/share/link?url=<?php echo rawurlencode( $post_url ); ?>" target="_blank" title="Click to share on Tumblr" onclick="window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=468,width=768');return false;"><span></span><span class="sharing-screen-reader-text">Click to share on Tumblr (Opens in new window)</span></a>
+							<a
+								rel="nofollow noopener noreferrer"
+								data-shared="sharing-tumblr-<?php echo esc_attr( $post_id ); ?>"
+								class="share-tumblr lwtv-share-button share-icon no-text"
+								href="http://www.tumblr.com/share/link?url=<?php echo rawurlencode( $post_url ); ?>"
+								target="_blank"
+								title="Click to share on Tumblr"
+								onclick="window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=468,width=768');return false;"
+							>
+								<?php
+								// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+								echo lwtv_plugin()->get_symbolicon( svg: 'tumblr-t.svg', icon: 'svg-tumblr-t', max_size: '20' );
+								?>
+								<span class="sharing-screen-reader-text">Click to share on Tumblr (Opens in new window)</span>
+							</a>
 						</li>
+
 						<li class="share-facebook">
-							<a rel="nofollow noopener noreferrer" data-shared="sharing-facebook-<?php echo esc_attr( $post_id ); ?>" class="share-facebook lwtv-share-button share-icon no-text" href="https://www.facebook.com/sharer/sharer.php?u=<?php echo esc_url( $post_url ); ?>" target="_blank" title="Click to share on Facebook" onclick="window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=468,width=768');return false;"><span></span><span class="sharing-screen-reader-text">Click to share on Facebook (Opens in new window)</span></a>
+							<a
+								rel="nofollow noopener noreferrer"
+								data-shared="sharing-facebook-<?php echo esc_attr( $post_id ); ?>"
+								class="share-facebook lwtv-share-button share-icon no-text"
+								href="https://www.facebook.com/sharer/sharer.php?u=<?php echo esc_url( $post_url ); ?>"
+								target="_blank"
+								title="Click to share on Facebook"
+								onclick="window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=468,width=768');return false;"
+							>
+								<?php
+								// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+								echo lwtv_plugin()->get_symbolicon( svg: 'facebook-f.svg', icon: 'svg-facebook-f', max_size: '20' );
+								?>
+								<span class="sharing-screen-reader-text">Click to share on Facebook (Opens in new window)</span>
+							</a>
 						</li>
+
 						<li class="share-mastodon">
-							<a rel="nofollow noopener noreferrer" data-shared="sharing-mastodon-<?php echo esc_attr( $post_id ); ?>" class="share-mastodon lwtv-share-button share-icon no-text" href="https://mastodonshare.com/share?text=<?php echo esc_attr( $title ) . rawurlencode( $post_url ); ?>" target="_blank" title="Click to share on Mastodon" onclick="window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=468,width=768');return false;"><span></span><span class="sharing-screen-reader-text">Click to share on Mastodon (Opens in new window)</span></a>
+							<a
+								rel="nofollow noopener noreferrer"
+								data-shared="sharing-mastodon-<?php echo esc_attr( $post_id ); ?>"
+								class="share-mastodon lwtv-share-button share-icon no-text"
+								href="https://mastodonshare.com/share?text=<?php echo esc_attr( $title ) . rawurlencode( $post_url ); ?>"
+								target="_blank"
+								title="Click to share on Mastodon"
+								onclick="window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=468,width=768');return false;"
+							>
+								<?php
+								// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+								echo lwtv_plugin()->get_symbolicon( svg: 'mastodon.svg', icon: 'svg-mastodon', max_size: '20' );
+								?>
+								<span class="sharing-screen-reader-text">Click to share on Mastodon (Opens in new window)</span>
+							</a>
 						</li>
+
 						<li class="share-reddit">
-							<a rel="nofollow noopener noreferrer" data-shared="sharing-reddit-<?php echo esc_attr( $post_id ); ?>" class="share-reddit lwtv-share-button share-icon no-text" href="http://www.reddit.com/submit?url=<?php echo esc_url( $post_url ); ?>&title=<?php echo esc_attr( $title ); ?>" target="_blank" title="Click to share on Reddit" onclick="window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=468,width=768');return false;"><span></span><span class="sharing-screen-reader-text">Click to share on Reddit (Opens in new window)</span></a>
+							<a
+								rel="nofollow noopener noreferrer"
+								data-shared="sharing-reddit-<?php echo esc_attr( $post_id ); ?>"
+								class="share-reddit lwtv-share-button share-icon no-text"
+								href="http://www.reddit.com/submit?url=<?php echo esc_url( $post_url ); ?>&title=<?php echo esc_attr( $title ); ?>"
+								target="_blank"
+								title="Click to share on Reddit"
+								onclick="window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=468,width=768');return false;"
+							>
+								<?php
+								// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+								echo lwtv_plugin()->get_symbolicon( svg: 'reddit.svg', icon: 'svg-reddit', max_size: '20' );
+								?>
+								<span class="sharing-screen-reader-text">Click to share on Reddit (Opens in new window)</span>
+							</a>
 						</li>
+
 						<li class="share-x">
-							<a rel="nofollow noopener noreferrer" data-shared="sharing-x-<?php echo esc_attr( $post_id ); ?>" class="share-x lwtv-share-button share-icon no-text" href="<?php echo esc_url( $post_url ); ?>&text=<?php echo esc_attr( the_title() ); ?>&via=lezwatchtv" target="_blank" title="Click to share on X/Twitter" onclick="window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=468,width=768');return false;"><span></span><span class="sharing-screen-reader-text">Click to share on X/Twitter (Opens in new window)</span></a>
+							<a
+								rel="nofollow noopener noreferrer"
+								data-shared="sharing-x-<?php echo esc_attr( $post_id ); ?>"
+								class="share-x lwtv-share-button share-icon no-text"
+								href="<?php echo esc_url( $post_url ); ?>&text=<?php echo esc_attr( the_title() ); ?>&via=lezwatchtv"
+								target="_blank"
+								title="Click to share on X/Twitter"
+								onclick="window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=468,width=768');return false;"
+							>
+								<?php
+								// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+								echo lwtv_plugin()->get_symbolicon( svg: 'x-twitter.svg', icon: 'svg-x-twitter', max_size: '20' );
+								?>
+								<span class="sharing-screen-reader-text">Click to share on X/Twitter (Opens in new window)</span>
+							</a>
 						</li>
 						<li class="share-email">
-							<a rel="nofollow noopener noreferrer" data-shared="sharing-email-<?php echo esc_attr( $post_id ); ?>" class="share-email lwtv-share-button share-icon no-text" href="mailto:?subject=%5BShared%20Post%5D%20New%20Feature%3A%20Calendar%20Views&amp;body=https%3A%2F%2Flezwatchtv.com%2F2024%2Fnew-feature-calendar-views%2F&amp;share=email&amp;nb=1" target="_blank" title="Click to email a link to a friend" data-email-share-error-title="Do you have email set up?" data-email-share-error-text="If you're having problems sharing via email, you might not have email set up for your browser. You may need to create a new email yourself." data-email-share-nonce="bf74ce8659" data-email-share-track-url="https://lezwatchtv.com/2024/new-feature-calendar-views/?share=email"><span></span><span class="sharing-screen-reader-text">Click to email a link to a friend (Opens in new window)</span></a>
+							<a
+								rel="nofollow noopener noreferrer"
+								data-shared="sharing-email-<?php echo esc_attr( $post_id ); ?>"
+								class="share-email lwtv-share-button share-icon no-text"
+								href="mailto:?subject=%5BShared%20Post%5D%20New%20Feature%3A%20Calendar%20Views&amp;body=https%3A%2F%2Flezwatchtv.com%2F2024%2Fnew-feature-calendar-views%2F&amp;share=email&amp;nb=1"
+								target="_blank"
+								title="Click to email a link to a friend"
+								onclick="window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=468,width=768');return false;"
+							>
+								<?php
+								// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+								echo lwtv_plugin()->get_symbolicon( svg: 'mail.svg', icon: 'svg-mail', max_size: '20' );
+								?>
+								<span class="sharing-screen-reader-text">Click to email a link to a friend (Opens in new window)</span>
+							</a>
 						</li>
 						<li class="share-end"></li>
 					</ul>

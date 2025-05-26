@@ -106,7 +106,7 @@
 	&:visited {
 		background-color: colors.$lwtv-purple;
 		color: colors.$white;
-		padding: 13.5px 20px;
+		padding: 12.5px 20px;
 	}
 
 	&:hover,
@@ -152,6 +152,10 @@
 				height: 1.4rem;
 				vertical-align: middle;
 			}
+
+			span {
+				margin-left: 10px;
+			}
 		}
 
 		&.rss a::before {
@@ -163,7 +167,7 @@
 		}
 
 		&.mail a::before {
-			@include mixins.symbolicon("svg-envelope");
+			@include mixins.symbolicon("svg-mail");
 		}
 
 		&.instagram a::before {
@@ -179,11 +183,11 @@
 		}
 
 		&.facebook a::before {
-			@include mixins.symbolicon("svg-facebook");
+			@include mixins.symbolicon("svg-facebook-f");
 		}
 
 		&.tumblr a::before {
-			@include mixins.symbolicon("svg-tumblr");
+			@include mixins.symbolicon("svg-tumblr-t");
 		}
 
 		&.mastodon a::before {
@@ -191,17 +195,14 @@
 		}
 
 		&.tiktok a::before {
-
 			@include mixins.symbolicon("svg-tiktok");
 		}
 
 		&.bluesky a::before {
-
 			@include mixins.symbolicon("svg-bluesky");
 		}
 
 		&.threads a::before {
-
 			@include mixins.symbolicon("svg-threads");
 		}
 

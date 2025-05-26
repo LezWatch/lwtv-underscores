@@ -32,7 +32,8 @@ $cliches = get_the_terms( $char_id, 'lez_cliches' );
 					<?php
 						// Echo the taxonomy icon (default to squares if empty)
 						$icon = get_term_meta( $cliche->term_id, 'lez_termsmeta_icon', true );
-						echo lwtv_plugin()->get_symbolicon( $icon . '.svg', 'fa-lemon' );
+						// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+						echo lwtv_plugin()->get_symbolicon( svg: $icon . '.svg', icon: 'lemon' );
 					?>
 					</a>&nbsp;
 					<a href="<?php echo esc_url( get_term_link( $cliche->slug, 'lez_cliches' ) ); ?>" rel="show cliche" class="cliche-link"><?php echo esc_html( $cliche->name ); ?></a>
@@ -47,7 +48,8 @@ $cliches = get_the_terms( $char_id, 'lez_cliches' );
 						<?php
 							// Echo the taxonomy icon (default to squares if empty)
 							$icon = get_term_meta( $cliche->term_id, 'lez_termsmeta_icon', true );
-							echo lwtv_plugin()->get_symbolicon( $icon . '.svg', 'fa-lemon' );
+							// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+							echo lwtv_plugin()->get_symbolicon( svg: $icon, icon: 'lemon' );
 						?>
 						</a>
 						<a href="<?php echo esc_url( get_term_link( $cliche->slug, 'lez_cliches' ) ); ?>" rel="show cliche" class="cliche-link"><?php echo esc_html( $cliche->name ); ?></a>

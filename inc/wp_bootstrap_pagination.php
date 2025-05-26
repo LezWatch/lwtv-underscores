@@ -80,12 +80,12 @@ function wp_bootstrap_pagination( $args = array() ) {
 	$next = intval( $page ) + 1;
 	$next = esc_attr( get_pagenum_link( $next ) );
 	if ( $next && ( $count !== $page ) ) {
-		$echo .= '<li class="page-item next"><a href="' . $next . '" title="' . __( 'next', 'text-domain' ) . '" class="page-link">' . $args['next_string'] . ' ' . lwtv_plugin()->get_symbolicon( svg: 'caret-right-circle.svg', icon: 'svg-caret-right-circle' ) . '</a></li>';
+		$echo .= '<li class="page-item next"><a href="' . $next . '" title="' . __( 'next', 'text-domain' ) . '" class="page-link">' . $args['next_string'] . ' ' . lwtv_plugin()->get_symbolicon( svg: 'caret-right-circle.svg', icon: 'svg-caret-right-circle', max_size: '16' ) . '</a></li>';
 	}
 
 	$lastpage = esc_attr( get_pagenum_link( $count ) );
 	if ( $lastpage ) {
-		$echo .= '<li class="page-item last ms-auto"><a href="' . $lastpage . '" class="page-link">' . __( 'Last', 'text-domain' ) . ' ' . lwtv_plugin()->get_symbolicon( svg: 'caret-right-circle.svg', icon: 'svg-caret-right-circle' ) . '</a></li>';
+		$echo .= '<li class="page-item last ms-auto"><a href="' . $lastpage . '" class="page-link">' . __( 'Last', 'text-domain' ) . ' ' . lwtv_plugin()->get_symbolicon( svg: 'caret-right-circle.svg', icon: 'svg-caret-right-circle', max_size: '16' ) . '</a></li>';
 	}
 
 	if ( isset( $echo ) ) {

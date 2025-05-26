@@ -25,7 +25,7 @@ class Show_Stars {
 				$color      = $color_term[0]->slug;
 			}
 
-			$icon = lwtv_plugin()->get_symbolicon( svg: 'star.svg', icon: 'svg-star', max_size: '25' );
+			$icon = lwtv_plugin()->get_symbolicon( svg: 'star.svg', icon: 'svg-star', max_size: '50' );
 			$star = ' <span role="img" aria-label="' . ucfirst( $color ) . ' Star Show" data-bs-target="tooltip" title="' . ucfirst( $color ) . ' Star Show" class="show-star ' . $color . '">' . $icon . '</span>';
 
 			return $star;

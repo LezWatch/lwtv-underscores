@@ -192,11 +192,16 @@ $endcolor: #7db9e8;
 	transform: translateY(-50%);
 }
 
+/* UPDATE THIS VERSION NUMBER WHEN YOU UPDATE THE SVG SPRITE */
+@mixin svg-common {
+	background: url("https://lezwatchtv.com/wp-content/uploads/lezpress-icons/sprite.css.svg?v=1.0.0") no-repeat;
+}
+
 /* Like this @include symbolicon("svg-zombie"); */
 @mixin symbolicon($name) {
 	$pos: map.get($symbolicons-positions, $name);
 
-	@extend %svg-common !optional;
+	@include svg-common;
 
 	display: inline-block;
 	width: 20px;
