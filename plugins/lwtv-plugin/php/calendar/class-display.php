@@ -290,9 +290,9 @@ class Display {
 		// Build navigation links:
 		$this_week      = add_query_arg( array( 'tvview' => $tv_view ), get_permalink() );
 		$last_week      = add_query_arg( $last_query_args, get_permalink() );
-		$last_week_icon = lwtv_plugin()->get_symbolicon( svg: 'caret-left-circle.svg', fontawesome: 'fa-chevron-circle-left' );
+		$last_week_icon = lwtv_plugin()->get_symbolicon( svg: 'caret-left-circle.svg', icon: 'svg-chevron-circle-left' );
 		$next_week      = add_query_arg( $next_query_args, get_permalink() );
-		$next_week_icon = lwtv_plugin()->get_symbolicon( svg: 'caret-right-circle.svg', fontawesome: 'fa-chevron-circle-right' );
+		$next_week_icon = lwtv_plugin()->get_symbolicon( svg: 'caret-right-circle.svg', icon: 'svg-chevron-circle-right' );
 
 		// Last week:
 		$navigation = '<nav aria-label="Calendar Navigation" role="navigation" class="yikes-pagination"><ul class="pagination justify-content-center"><li class="page-item first me-auto"><a href="' . $last_week . '" class="page-link">' . $last_week_icon . ' Last Week</a></li>';

@@ -57,34 +57,34 @@ if ( ! empty( $live_search_results ) ) :
 				<h4 class="searchwp-live-search-result--title">
 					<?php
 					$svg                = 'newspaper.svg';
-					$fontawesome        = 'fa-newspaper';
+					$symbolicon         = 'svg-newspaper';
 					$screen_reader_text = 'News Article';
 					if ( ! empty( $display_data['type'] ) ) {
 						switch ( $display_data['type'] ) {
 							case 'page':
 								$svg                = 'chalkboard.svg';
-								$fontawesome        = 'fa-file';
+								$symbolicon         = 'svg-chalkboard';
 								$screen_reader_text = 'Page';
 								break;
 							case 'post_type_shows':
 								$svg                = 'tv.svg';
-								$fontawesome        = 'fa-tv';
+								$symbolicon         = 'svg-tv';
 								$screen_reader_text = 'TV Show, mini-series, or movie';
 								break;
 							case 'post_type_characters':
 								$svg                = 'rubber-stamp.svg';
-								$fontawesome        = 'fa-user';
+								$symbolicon         = 'svg-user';
 								$screen_reader_text = 'Character';
 								break;
 							case 'post_type_actors':
 								$svg                = 'award-academy.svg';
-								$fontawesome        = 'fa-user-tie';
+								$symbolicon         = 'svg-user-tie';
 								$screen_reader_text = 'Actor';
 								break;
 						}
 					}
 					// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-					echo lwtv_plugin()->get_symbolicon( svg: $svg, fontawesome: $fontawesome ) . '&nbsp;';
+					echo lwtv_plugin()->get_symbolicon( svg: $svg, icon: $symbolicon ) . '&nbsp;';
 					?>
 					<span class="screen-reader-text"><?php echo esc_html( $screen_reader_text ); ?></span>
 					<a href="<?php echo esc_url( $display_data['permalink'] ); ?>">

@@ -6,7 +6,7 @@
  */
 ?>
 <a class="nav-link" data-bs-toggle="collapse" role="button" data-bs-target="#collapseSearch" href="#collapseSearch" aria-expanded="false">
-	<?php echo lwtv_plugin()->get_symbolicon( svg: 'search.svg', fontawesome: 'fa-search' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+	<?php echo lwtv_plugin()->get_symbolicon( svg: 'search.svg', icon: 'svg-search' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 	<span class="screen-reader-text">Search the Site</span>
 </a>
 
@@ -28,7 +28,7 @@
 								<div class="col-sm-1 searchbox-close">
 									<span class="close-btn-container">
 										<a href="#collapseSearch" data-bs-target="#collapseSearch" data-bs-toggle="collapse">
-											<?php echo lwtv_plugin()->get_symbolicon( svg: 'cancel-circle.svg', fontawesome: 'fa-times-circle' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+											<?php echo lwtv_plugin()->get_symbolicon( svg: 'cancel-circle.svg', icon: 'svg-times-circle' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 										</a>
 									</span>
 								</div>

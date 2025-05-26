@@ -119,7 +119,7 @@ class Author_Box {
 		}
 
 		$social_array  = array_filter( $social_array );
-		$view_articles = ( $content['postcount'] > 0 ) ? '<div class="author-archives">' . lwtv_plugin()->get_symbolicon( svg: 'newspaper.svg', fontawesome: 'fa-newspaper-o' ) . '&nbsp;<a href="' . get_author_posts_url( get_the_author_meta( 'ID', $content['id'] ) ) . '">View all articles by ' . $content['name'] . '</a></div>' : '';
+		$view_articles = ( $content['postcount'] > 0 ) ? '<div class="author-archives">' . lwtv_plugin()->get_symbolicon( svg: 'newspaper.svg', icon: 'svg-newspaper-o' ) . '&nbsp;<a href="' . get_author_posts_url( get_the_author_meta( 'ID', $content['id'] ) ) . '">View all articles by ' . $content['name'] . '</a></div>' : '';
 		$author_title  = ( '' !== $content['title'] ) ? ' (' . $content['title'] . ')' : '';
 
 		switch ( $format ) {
@@ -198,7 +198,7 @@ class Author_Box {
 			$favourites = ( empty( $show_title ) ) ? '' : implode( ', ', $show_title );
 			$fav_title  = _n( 'Show', 'Shows', count( $show_title ) );
 		}
-		$fav_shows = ( isset( $favourites ) && ! empty( $favourites ) ) ? '<div class="author-favourites">' . lwtv_plugin()->get_symbolicon( svg: 'tv-hd.svg', fontawesome: 'fa-tv' ) . '&nbsp;Favorite ' . $fav_title . ': ' . $favourites . '</div>' : '';
+		$fav_shows = ( isset( $favourites ) && ! empty( $favourites ) ) ? '<div class="author-favourites">' . lwtv_plugin()->get_symbolicon( svg: 'tv-hd.svg', icon: 'svg-tv' ) . '&nbsp;Favorite ' . $fav_title . ': ' . $favourites . '</div>' : '';
 
 		return $fav_shows;
 	}

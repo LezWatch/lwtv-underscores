@@ -54,7 +54,7 @@ class LWTV_Character_Widget extends WP_Widget {
 
 			echo '<div class="card">';
 			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-			echo '<div class="card-header"><h4><span class="float-left">' . lwtv_plugin()->get_symbolicon( svg: 'contact-card.svg', fontawesome: 'fa-address-card' ) . '</span> Recently Added Character</h4></div>';
+			echo '<div class="card-header"><h4><span class="float-left">' . lwtv_plugin()->get_symbolicon( svg: 'contact-card.svg', icon: 'svg-address-card' ) . '</span> Recently Added Character</h4></div>';
 
 			// Featured Image
 			echo '<div class="character-image-wrapper">';

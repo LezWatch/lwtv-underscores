@@ -39,7 +39,7 @@ $thumb_rating = ( get_post_meta( $show_id, 'lezshows_worthit_rating', true ) ) ?
 						break;
 				}
 
-				$thumb_image = lwtv_plugin()->get_symbolicon( svg: $thumb_icon . '.svg', fontawesome: 'fa-' . $thumb_icon, max_size: '50' );
+				$thumb_image = lwtv_plugin()->get_symbolicon( svg: $thumb_icon . '.svg', icon: 'svg-' . $thumb_icon, max_size: '50' );
 				// phpcs:ignore WordPress.Security.EscapeOutput
 				echo '<span role="img" class="show-worthit ' . esc_attr( strtolower( $thumb_rating ) ) . '" aria-label="This show has an overall review of ' . esc_attr( $thumb_rating ) . ' ">' . $thumb_image . '</span>';
 				echo wp_kses_post( $thumb_rating );
@@ -109,13 +109,13 @@ $thumb_rating = ( get_post_meta( $show_id, 'lezshows_worthit_rating', true ) ) ?
 
 					if ( $imdb_id ) {
 						// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-						echo lwtv_plugin()->get_symbolicon( svg: 'imdb.svg', fontawesome: 'fa-imdb', max_size: '20' );
+						echo lwtv_plugin()->get_symbolicon( svg: 'imdb.svg', icon: 'svg-imdb', max_size: '20' );
 						echo '&nbsp;<a href="' . esc_url( 'https://www.imdb.com/title/' . $imdb_id ) . '" target="_new">IMDb</a>';
 					}
 
 					if ( $tmdb_id ) {
 						// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-						echo lwtv_plugin()->get_symbolicon( svg: 'tmdb.svg', fontawesome: 'fa-grip-lines', max_size: '20' );
+						echo lwtv_plugin()->get_symbolicon( svg: 'tmdb.svg', icon: 'svg-grip-lines', max_size: '20' );
 						echo '&nbsp;<a href="' . esc_url( 'https://www.themoviedb.org/tv/' . $tmdb_id ) . '" target="_new">TMDB</a>';
 					}
 

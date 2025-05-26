@@ -159,9 +159,9 @@ class Related_Posts {
 		$tag         = get_tag( $tag_id );
 		$linked_post = get_term_meta( $tag->term_id, 'lez_termsmeta_linked_post', true );
 		$icons       = array(
-			'show'      => lwtv_plugin()->get_symbolicon( svg: 'tv-hd.svg', fontawesome: 'fa-tv' ),
-			'actor'     => lwtv_plugin()->get_symbolicon( svg: 'team.svg', fontawesome: 'fa-users' ),
-			'character' => lwtv_plugin()->get_symbolicon( svg: 'contact-card.svg', fontawesome: 'fa-users' ),
+			'show'      => lwtv_plugin()->get_symbolicon( svg: 'tv-hd.svg', icon: 'svg-tv' ),
+			'actor'     => lwtv_plugin()->get_symbolicon( svg: 'team.svg', icon: 'svg-users' ),
+			'character' => lwtv_plugin()->get_symbolicon( svg: 'contact-card.svg', icon: 'svg-users' ),
 		);
 
 		if ( ! empty( $linked_post ) ) {
@@ -207,9 +207,9 @@ class Related_Posts {
 				'character' => '',
 			);
 			$icons       = array(
-				'show'      => lwtv_plugin()->get_symbolicon( svg: 'tv-hd.svg', fontawesome: 'fa-tv' ),
-				'actor'     => lwtv_plugin()->get_symbolicon( svg: 'team.svg', fontawesome: 'fa-users' ),
-				'character' => lwtv_plugin()->get_symbolicon( svg: 'contact-card.svg', fontawesome: 'fa-users' ),
+				'show'      => lwtv_plugin()->get_symbolicon( svg: 'tv-hd.svg', icon: 'svg-tv' ),
+				'actor'     => lwtv_plugin()->get_symbolicon( svg: 'team.svg', icon: 'svg-users' ),
+				'character' => lwtv_plugin()->get_symbolicon( svg: 'contact-card.svg', icon: 'svg-users' ),
 			);
 			$related_out = '';
 

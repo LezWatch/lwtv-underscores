@@ -18,7 +18,7 @@ get_header(); ?>
 						</h1>
 					</div>
 					<div class="col-2 icon plain">
-						<span role="img" aria-label="404" title="404 - Page Not Found" class="taxonomy-svg 404"><?php echo lwtv_plugin()->get_symbolicon( svg: 'easter-egg-alt.svg', fontawesome: 'fa-gift' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
+						<span role="img" aria-label="404" title="404 - Page Not Found" class="taxonomy-svg 404"><?php echo lwtv_plugin()->get_symbolicon( svg: 'easter-egg-alt.svg', icon: 'svg-gift' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
 					</div>
 				</div>
 			</section><!-- .archive-header -->

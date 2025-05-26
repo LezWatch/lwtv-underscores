@@ -8,7 +8,7 @@
 $args = array(
 	'template' => 'LWTV',
 	'engine'   => 'default',
-	'icon'     => lwtv_plugin()->get_symbolicon( svg: 'search.svg', fontawesome: 'fa-search', max_size: '24' ),
+	'icon'     => lwtv_plugin()->get_symbolicon( svg: 'search.svg', icon: 'svg-search', max_size: '24' ),
 );
 
 if ( class_exists( 'SearchWP' ) ) {

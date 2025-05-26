@@ -30,9 +30,9 @@ class LWTV_Filter_Top_Widget extends WP_Widget {
 		$after_title   = isset( $args['after_title'] ) ? $args['after_title'] : '';
 
 		// Get what's needed from $instance array ($instance populated with user inputs from widget form)
-		$title       = isset( $instance['title'] ) && ! empty( trim( $instance['title'] ) ) ? $instance['title'] : 'Filter';
-		$title       = apply_filters( 'widget_title', $title, $instance, $this->id_base );
-		$fontawesome = isset( $instance['fontawesome'] ) && ! empty( trim( $instance['fontawesome'] ) ) ? $instance['fontawesome'] : '';
+		$title      = isset( $instance['title'] ) && ! empty( trim( $instance['title'] ) ) ? $instance['title'] : 'Filter';
+		$title      = apply_filters( 'widget_title', $title, $instance, $this->id_base );
+		$symbolicon = isset( $instance['symbolicon'] ) && ! empty( trim( $instance['symbolicon'] ) ) ? $instance['symbolicon'] : '';
 
 		/** Output widget HTML BEGIN **/
 
@@ -40,23 +40,23 @@ class LWTV_Filter_Top_Widget extends WP_Widget {
 				<div class="card-header">
 					<h4>';
 
-		// If a fontawesome icon is set
-		if ( $fontawesome ) {
-
-			switch ( $fontawesome ) {
+		// If a symbolicon icon is set
+		if ( $symbolicon ) {
+			switch ( $symbolicon ) {
 				case 'fa-television':
 				case 'fa-tv':
-					$icon = lwtv_plugin()->get_symbolicon( svg: 'tv-hd.svg', fontawesome: 'fa-tv' );
+					$icon = lwtv_plugin()->get_symbolicon( svg: 'tv-hd.svg', icon: 'svg-tv' );
 					break;
 				case 'fa-vcard':
 				case 'fa-address-card':
-					$icon = lwtv_plugin()->get_symbolicon( svg: 'contact-card.svg', fontawesome: 'fa-address-card' );
+					$icon = lwtv_plugin()->get_symbolicon( svg: 'contact-card.svg', icon: 'svg-address-card' );
 					break;
 				case 'fa-users':
-					$icon = lwtv_plugin()->get_symbolicon( svg: 'award-academy.svg', fontawesome: 'fa-man' );
+					$icon = lwtv_plugin()->get_symbolicon( svg: 'award-academy.svg', icon: 'svg-man' );
 					break;
 				default:
-					$icon = '<i class="fa ' . $fontawesome . ' float-right" aria-hidden="true"></i>';
+					$symbolicon = str_replace( 'fa-', 'svg-', $symbolicon );
+					$icon       = '<span class="' . $symbolicon . ' float-right" aria-hidden="true"></span>';
 			}
 
 			// phpcs:ignore WordPress.Security.EscapeOutput
@@ -85,8 +85,8 @@ class LWTV_Filter_Top_Widget extends WP_Widget {
 		$instance = $old_instance;
 
 		// Update each setting to new values entered by user
-		$instance['title']       = wp_strip_all_tags( $new_instance['title'] );
-		$instance['fontawesome'] = ( $new_instance['fontawesome'] );
+		$instance['title']      = wp_strip_all_tags( $new_instance['title'] );
+		$instance['symbolicon'] = ( $new_instance['symbolicon'] );
 
 		return $instance;
 	}
@@ -96,8 +96,8 @@ class LWTV_Filter_Top_Widget extends WP_Widget {
 	 */
 	public function form( $instance ) {
 
-		$title       = isset( $instance['title'] ) ? $instance['title'] : '';
-		$fontawesome = isset( $instance['fontawesome'] ) ? $instance['fontawesome'] : '';
+		$title      = isset( $instance['title'] ) ? $instance['title'] : '';
+		$symbolicon = isset( $instance['symbolicon'] ) ? $instance['symbolicon'] : '';
 		?>
 
 		<p>
@@ -106,8 +106,8 @@ class LWTV_Filter_Top_Widget extends WP_Widget {
 		</p>
 
 		<p>
-			<label for="<?php echo esc_attr( $this->get_field_id( 'fontawesome' ) ); ?>"><?php esc_html_e( 'FontAwesome Class:' ); ?></label>
-			<input class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'fontawesome' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'fontawesome' ) ); ?>" type="text" value="<?php echo esc_attr( $fontawesome ); ?>" />
+			<label for="<?php echo esc_attr( $this->get_field_id( 'symbolicon' ) ); ?>"><?php esc_html_e( 'FontAwesome Class:' ); ?></label>
+			<input class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'symbolicon' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'symbolicon' ) ); ?>" type="text" value="<?php echo esc_attr( $symbolicon ); ?>" />
 		</p>
 
 		<?php

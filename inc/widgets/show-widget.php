@@ -55,7 +55,7 @@ class LWTV_Show_Widget extends WP_Widget {
 
 			echo '<div class="card">';
 			// phpcs:ignore WordPress.Security.EscapeOutput
-			echo '<div class="card-header"><h4><span class="float-left">' . lwtv_plugin()->get_symbolicon( svg: 'tv-hd.svg', fontawesome: 'fa-tv' ) . '</span> Recently Added Show</h4></div>';
+			echo '<div class="card-header"><h4><span class="float-left">' . lwtv_plugin()->get_symbolicon( svg: 'tv-hd.svg', icon: 'svg-tv' ) . '</span> Recently Added Show</h4></div>';
 
 			// Featured Image
 			echo '<a href="' . esc_url( get_the_permalink() ) . '">';

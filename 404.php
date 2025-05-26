@@ -17,7 +17,7 @@ get_header();
 					<div class="col-2 icon plain"><span role="img" aria-label="404" title="404 - Page Not Found" class="taxonomy-svg 404">
 						<?php
 						// phpcs:ignore WordPress.Security.EscapeOutput -- We're outputting SVGs
-						echo lwtv_plugin()->get_symbolicon( svg: 'easter-egg-alt.svg', fontawesome: 'fa-gift', max_size: '50' );
+						echo lwtv_plugin()->get_symbolicon( svg: 'easter-egg-alt.svg', icon: 'svg-easter-egg-alt', max_size: '50' );
 						?>
 					</span></div>
 				</div>

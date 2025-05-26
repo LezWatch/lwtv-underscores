@@ -71,7 +71,7 @@ class Symbolicons implements Component, Templater {
 			<p>Symbolics are used in code, not in the visual editor. To add them, use the wrapper function <code>lwtv_plugin()->get_symbolicon()</code> which has the following parameters:</p>
 			<ul>
 				<li><code>svg</code> - The name of the icon, i.e. <code>square</code>.</li>
-				<li><code>fontawesome</code> - The Font Awesome icon name, i.e. <code>fa-square</code>.</li>
+				<li><code>icon</code> - The symbolicon icon name, i.e. <code>svg-square</code>.</li>
 				<li><code>svg_class</code> - The SVG styling class name, i.e. <code>symbolicon</code>.</li>
 				<li><code>max_size</code> - The <em>maximum</em> size of the icon, i.e. <code>32</code>.</li>
 			</ul>
@@ -139,16 +139,16 @@ class Symbolicons implements Component, Templater {
 	 *
 	 * @access public
 	 * @param string $svg         (default: 'square.svg') - SVG name.
-	 * @param string $fontawesome (default: 'fa-square')  - Font-Awesome icon name.
+	 * @param string $icon        (default: 'svg-square') - Symbolicon icon name.
 	 * @param string $svg_class   (default: 'symbolicon') - SVG styling class name.
 	 * @param string $max_size    (default: '32')         - Maximum size of the icon.
 	 *
 	 * @return icon
 	 */
-	public function get_symbolicon( $svg = 'square.svg', $fontawesome = 'fa-square', $svg_class = 'symbolicon', $max_size = '32' ) {
+	public function get_symbolicon( $svg = 'square.svg', $icon = 'svg-square', $svg_class = 'symbolicon', $max_size = '32' ) {
 
 		// Font Awesome fallback.
-		$font_awesome_return = '<i class="' . esc_attr( strtolower( $fontawesome ) ) . '" aria-hidden="true"></i>';
+		$icon_return = '<i class="' . esc_attr( strtolower( $icon ) ) . '" aria-hidden="true"></i>';
 
 			// Extract icon ID from filename (strip `.svg` extension)
 		$icon_id = sanitize_title( pathinfo( $svg, PATHINFO_FILENAME ) );
@@ -157,12 +157,12 @@ class Symbolicons implements Component, Templater {
 		$sprite_url  = LWTV_SYMBOLICONS_SPRITE_URL . self::SPRITE_FILE;
 
 		if ( ! file_exists( $sprite_path ) ) {
-			return $font_awesome_return;
+			return $icon_return;
 		}
 
 		// Make sure the icon exists in the sprite SVG.
 		if ( ! str_contains( file_get_contents( $sprite_path ), $icon_id ) ) {
-			return $font_awesome_return;
+			return $icon_return;
 		}
 
 		// Output SVG with <use>
@@ -173,53 +173,5 @@ class Symbolicons implements Component, Templater {
 			esc_url( $sprite_url ),
 			esc_attr( $icon_id )
 		);
-	}
-
-	/**
-	 * Old get_symbolicon function.
-	 *
-	 * @param string $svg         (default: 'square.svg') - SVG name.
-	 * @param string $fontawesome (default: 'fa-square')  - Font-Awesome icon name.
-	 * @param string $svg_class   (default: 'symbolicon') - SVG styling class name.
-	 * @param string $max_size    (default: '32')         - Maximum size of the icon.
-	 * @return icon
-	 */
-	public function old_get_symbolicon( $svg = 'square.svg', $fontawesome = 'fa-square', $svg_class = 'symbolicon', $max_size = '32' ) {
-
-		// Font Awesome fallback.
-		$return = '<i class="' . esc_attr( strtolower( $fontawesome ) ) . '" aria-hidden="true"></i>';
-
-		$raw_icon = $this->get_icon_file( $svg );
-
-		if ( ! empty( $raw_icon ) ) {
-			$icon = trim( file_get_contents( $raw_icon ) );
-
-			// Add in a height if it's not there to prevent GIANT IMAGES. CSS will override.
-			if ( ! str_contains( $icon, 'height="' ) ) {
-				$icon = str_replace( '<svg', '<svg height="' . $max_size . 'px"', $icon );
-			}
-
-			$return = '<span class="' . $svg_class . '" role="img" data-no-image-dimensions="true">' . $icon . '</span>';
-		}
-
-		return $return;
-	}
-
-	/**
-	 * Get the icon file by SVG name,
-	 *
-	 * @param  string $svg
-	 * @return string
-	 */
-	public function get_icon_file( $svg ) {
-		$icon = LWTV_THEME_PATH . '/images/square.svg';
-
-		if ( defined( 'LWTV_SYMBOLICONS_PATH' ) && file_exists( LWTV_SYMBOLICONS_PATH . $svg ) ) {
-			$icon = LWTV_SYMBOLICONS_PATH . $svg;
-		} elseif ( wp_style_is( 'fontawesome', 'enqueued' ) ) {
-			$icon = '';
-		}
-
-		return $icon;
 	}
 }
