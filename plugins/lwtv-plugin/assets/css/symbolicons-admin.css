@@ -8,21 +8,31 @@ span.symbolicons svg {
 	width: 100px;
 }
 
-span.cmb2-icon {
-	width: 80px;
+.symbolicon-admin-container {
+	width: 150px;
 	display: inline-block;
-	vertical-align: top;
+	background-color: #ddd;
+	padding: 10px;
+	border-radius: 5px;
 	margin: 10px;
-	word-wrap: break-word;
-}
-span.cmb2-icon svg {
-	width: 75px;
-	height: 75px;
-}
-span.cmb2-icon svg * {
-	fill: #444!important;
+	vertical-align: top;
+	text-align: center;
+
+	svg {
+		width: 75px;
+		height: 75px;
+	}
+	svg * {
+		fill: #444!important;
+	}
 }
 
+.symbolicon-admin-name {
+	font-size: 9px;
+	text-align: center;
+	display: block;
+	width: 100%;
+}
 
 span.success svg  * {
 	fill: #5cb85c!important;

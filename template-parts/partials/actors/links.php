@@ -16,7 +16,7 @@ $maybe_external = array(
 		'meta'     => 'lezactors_homepage',
 		'base'     => '',
 		'post'     => '',
-		'fa'       => 'fas fa-home',
+		'icon'     => 'svg-home',
 		'svg'      => 'home.svg',
 		'hide'     => false,
 		'use_meta' => true,
@@ -26,7 +26,7 @@ $maybe_external = array(
 		'meta'     => 'lezactors_imdb',
 		'base'     => 'https://imdb.com/name/',
 		'post'     => '',
-		'fa'       => 'fab fa-imdb',
+		'icon'     => 'svg-imdb',
 		'svg'      => 'imdb.svg',
 		'hide'     => false,
 		'use_meta' => true,
@@ -36,7 +36,7 @@ $maybe_external = array(
 		'meta'     => 'lezactors_tmdb_id',
 		'base'     => 'https://themoviedb.org/person/',
 		'post'     => '',
-		'fa'       => 'fas fa-grip-lines',
+		'icon'     => 'svg-tmdb',
 		'svg'      => 'tmdb.svg',
 		'hide'     => false,
 		'use_meta' => true,
@@ -45,7 +45,7 @@ $maybe_external = array(
 		'meta'     => 'lezactors_wikipedia',
 		'base'     => '',
 		'post'     => '',
-		'fa'       => 'fab fa-wikipedia-w',
+		'icon'     => 'svg-wikipedia',
 		'svg'      => 'wikipedia.svg',
 		'hide'     => false,
 		'use_meta' => true,
@@ -79,7 +79,7 @@ if ( count( $external_urls ) > 0 ) {
 				<ul class="actor-meta-links" aria-labelledby="actor-links">
 					<?php
 					foreach ( $external_urls as $source ) {
-						$icon = lwtv_plugin()->get_symbolicon( svg: $source['svg'], fontawesome: $source['fa'], max_size: '20' );
+						$icon = lwtv_plugin()->get_symbolicon( svg: $source['svg'], icon: $source['fa'], max_size: '20' );
 
 						// phpcs:ignore WordPress.Security.EscapeOutput
 						echo '<li>' . $icon . ' <a href="' . esc_url( $source['url'] ) . '" target="_blank">' . esc_html( $source['name'] ) . '</a><span class="screen-reader-text">, opens in new tab</span></li>';

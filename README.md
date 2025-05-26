@@ -101,6 +101,12 @@ The `vendor` and `node_module` files are not synced to Github anymore (as of 202
 **Composer**
 * [ICal Parser](https://github.com/u01jmg3/ics-parser)
 
+## Icons
+
+In order to speed up the site, we make use of SVG sprites to generate our font-icons. The icons can be found in the private [Symbolicons Repository](https://github.com/lezwatch/symbolicons-private/). When a change is pushed to development and production branches, it will auto-deploy.
+
+If the sprites are missing, the site falls back to Font Awesome.
+
 ## Deployment
 
 Pushes to branches are automatically deployed via Github Actions as follows:

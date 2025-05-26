@@ -1,4 +1,8 @@
 @use "colors";
+@use "sass:map";
+
+@use "symbolicons";
+@use "symbolicons-map" as *;
 
 /* =Mixins
 ----------------------------------------------- */
@@ -6,24 +10,24 @@
 /* stylelint-disable font-family-no-missing-generic-family-keyword */
 /* stylelint-disable value-keyword-case */
 
-@mixin border-radius($arguement...) {
-	-webkit-border-radius: $arguement;
-	-moz-border-radius: $arguement;
-	-ms-border-radius: $arguement;
-	-o-border-radius: $arguement;
-	border-radius: $arguement;
+@mixin border-radius($argument...) {
+	-webkit-border-radius: $argument;
+	-moz-border-radius: $argument;
+	-ms-border-radius: $argument;
+	-o-border-radius: $argument;
+	border-radius: $argument;
 }
 
-@mixin user-select($arguement...) {
-	-webkit-user-select: $arguement;
-	-moz-user-select: $arguement;
-	-ms-user-select: $arguement;
-	-o-user-select: $arguement;
+@mixin user-select($argument...) {
+	-webkit-user-select: $argument;
+	-moz-user-select: $argument;
+	-ms-user-select: $argument;
+	-o-user-select: $argument;
 }
 
-@mixin box-shadow($arguement...) {
-	-webkit-box-shadow: $arguement;
-	box-shadow: $arguement;
+@mixin box-shadow($argument...) {
+	-webkit-box-shadow: $argument;
+	box-shadow: $argument;
 }
 
 @mixin bottom-shadow {
@@ -60,11 +64,11 @@ $endcolor: #7db9e8;
 	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="$startcolor", endColorstr="$endcolor", GradientType=1); /* IE6-8 */
 }
 
-@mixin box-transition($arguement...) {
-	-webkit-transition: $arguement;
-	-moz-transition: $arguement;
-	-o-transition: $arguement;
-	transition: $arguement;
+@mixin box-transition($argument...) {
+	-webkit-transition: $argument;
+	-moz-transition: $argument;
+	-o-transition: $argument;
+	transition: $argument;
 }
 
 @mixin fade {
@@ -94,68 +98,68 @@ $endcolor: #7db9e8;
 	background-size: cover;
 }
 
-@mixin placeholdercolor($arguement...) {
+@mixin placeholdercolor($argument...) {
 
 	::-webkit-input-placeholder {
-		color: $arguement;
+		color: $argument;
 	}
 
 	:-moz-placeholder {
-		color: $arguement;
+		color: $argument;
 	}
 
 	::-moz-placeholder {
-		color: $arguement;
+		color: $argument;
 	}
 
 	:-ms-input-placeholder {
-		color: $arguement;
+		color: $argument;
 	}
 }
 
-@mixin placeholderweight($arguement...) {
+@mixin placeholderweight($argument...) {
 
 	::-webkit-input-placeholder {
-		font-weight: $arguement;
+		font-weight: $argument;
 	}
 
 	:-moz-placeholder {
-		font-weight: $arguement;
+		font-weight: $argument;
 	}
 
 	::-moz-placeholder {
-		font-weight: $arguement;
+		font-weight: $argument;
 	}
 
 	:-ms-input-placeholder {
-		font-weight: $arguement;
+		font-weight: $argument;
 	}
 }
 
-@mixin placeholdersize($arguement...) {
+@mixin placeholdersize($argument...) {
 
 	::-webkit-input-placeholder {
-		font-size: $arguement;
+		font-size: $argument;
 	}
 
 	:-moz-placeholder {
-		font-size: $arguement;
+		font-size: $argument;
 	}
 
 	::-moz-placeholder {
-		font-size: $arguement;
+		font-size: $argument;
 	}
 
 	:-ms-input-placeholder {
-		font-size: $arguement;
+		font-size: $argument;
 	}
 }
 
-@mixin box-transform($arguement...) {
-	-webkit-transform: $arguement;
-	-moz-transform: $arguement;
-	-ms-transform: $arguement;
-	transform: $arguement;
+@mixin box-transform($argument...) {
+	-webkit-transform: $argument;
+	-moz-transform: $argument;
+	-ms-transform: $argument;
+	transform: $argument;
 }
 
 @mixin form-input {
@@ -188,28 +192,28 @@ $endcolor: #7db9e8;
 	transform: translateY(-50%);
 }
 
-/* Like this @include fontawesome_free("\f0ad"); */
-@mixin fontawesome_free($argument...) {
-	display: none;
-	font: var(--fa-font-solid);
-	content: $argument;
-	font-family: "Font Awesome 5 Free";
+/* UPDATE THIS VERSION NUMBER WHEN YOU UPDATE THE SVG SPRITE */
+@mixin svg-common {
+	background: url("https://lezwatchtv.com/wp-content/uploads/lezpress-icons/sprite.css.svg?v=1.0.0") no-repeat;
 }
 
-/* Like this @include fontawesome_pro("\f0ad"); */
-@mixin fontawesome_pro($argument...) {
-	display: none;
-	font: var(--fa-font-solid);
-	content: $argument;
-	font-family: "Font Awesome 5 Regular";
-}
+/* Like this @include symbolicon("svg-zombie"); */
+@mixin symbolicon($name) {
+	$pos: map.get($symbolicons-positions, $name);
 
-/* Like this @include fontawesome_brand("\f0ad"); */
-@mixin fontawesome_brand($argument...) {
-	display: none;
-	font: var(--fa-font-brands);
-	content: $argument;
-	font-family: "Font Awesome 5 Brands";
+	@include svg-common;
+
+	display: inline-block;
+	width: 20px;
+	height: 20px;
+	background-repeat: no-repeat;
+	content: "";
+
+	@if $pos {
+		background-position: $pos;
+	} @else {
+		background-position: 0 0;
+	}
 }
 
 @mixin text-shadow {

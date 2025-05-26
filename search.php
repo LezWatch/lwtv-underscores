@@ -19,7 +19,7 @@ get_header(); ?>
 					?>
 					</h1></div>
 					<div class="col-2 icon plain">
-						<span role="img" aria-label="Search Results" title="Search Results" class="taxonomy-svg 404"><?php echo lwtv_plugin()->get_symbolicon( svg: 'search.svg', fontawesome: 'fa-search' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
+						<span role="img" aria-label="Search Results" title="Search Results" class="taxonomy-svg 404"><?php echo lwtv_plugin()->get_symbolicon( svg: 'search.svg', icon: 'svg-search' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
 					</div>
 				</div>
 			</section><!-- .archive-header -->

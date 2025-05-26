@@ -4,8 +4,6 @@
  * Contains styles for modules, containers, buttons
  */
 
-@use "../partials/mixins";
-
 /* Master container */
 #jp-post-flair {
 	padding-top: .5em;
@@ -248,99 +246,14 @@ body .lwtv-share-content ul li.share-custom.no-icon a span {
 
 
 /* Individual icons */
-.lwtv-social-icon .lwtv-share-content ul li.share-print a:before,
-.lwtv-social-text .lwtv-share-content ul li.share-print a:before,
-.lwtv-share-content ul li.share-print div.option.option-smart-off a:before,
-.lwtv-social-icon-text .lwtv-share-content li.share-print a:before,
-.lwtv-social-official .lwtv-share-content li.share-print a:before {
-	@include mixins.fontawesome_free("\f02f");
-}
-
-.lwtv-social-icon .lwtv-share-content ul li.share-email a:before,
-.lwtv-social-text .lwtv-share-content ul li.share-email a:before,
-.lwtv-share-content ul li.share-email div.option.option-smart-off a:before,
-.lwtv-social-icon-text .lwtv-share-content li.share-email a:before,
-.lwtv-social-official .lwtv-share-content li.share-email a:before {
-	@include mixins.fontawesome_free("\f0e0");
-}
-.lwtv-social-icon .lwtv-share-content ul li.share-linkedin a:before,
-.lwtv-social-text .lwtv-share-content ul li.share-linkedin a:before,
-.lwtv-share-content ul li.share-linkedin div.option.option-smart-off a:before,
-.lwtv-social-icon-text .lwtv-share-content li.share-linkedin a:before {
-	@include mixins.fontawesome_brand("\f0e1");
-}
-.lwtv-social-icon .lwtv-share-content ul li.share-twitter a:before,
-.lwtv-social-text .lwtv-share-content ul li.share-twitter a:before,
-.lwtv-share-content ul li.share-twitter div.option.option-smart-off a:before,
-.lwtv-social-icon-text .lwtv-share-content li.share-twitter a:before {
-	@include mixins.fontawesome_brand("\e61b");
-}
-.lwtv-social-icon .lwtv-share-content ul li.share-x a:before,
-.lwtv-social-text .lwtv-share-content ul li.share-x a:before,
-.lwtv-share-content ul li.share-x div.option.option-smart-off a:before,
-.lwtv-social-icon-text .lwtv-share-content li.share-x a:before {
-	@include mixins.fontawesome_brand("\e61b");
-}
-.lwtv-social-icon .lwtv-share-content ul li.share-reddit a:before,
-.lwtv-social-text .lwtv-share-content ul li.share-reddit a:before,
-.lwtv-share-content ul li.share-reddit div.option.option-smart-off a:before,
-.lwtv-social-icon-text .lwtv-share-content li.share-reddit a:before,
-.lwtv-social-official .lwtv-share-content li.share-reddit a:before {
-	@include mixins.fontawesome_brand("\f281");
-}
-.lwtv-social-icon .lwtv-share-content ul li.share-tumblr a:before,
-.lwtv-social-text .lwtv-share-content ul li.share-tumblr a:before,
-.lwtv-share-content ul li.share-tumblr div.option.option-smart-off a:before,
-.lwtv-social-icon-text .lwtv-share-content li.share-tumblr a:before {
-	@include mixins.fontawesome_brand("\f173");
-}
-
-.lwtv-social-icon .lwtv-share-content ul li.share-pocket a:before,
-.lwtv-social-text .lwtv-share-content ul li.share-pocket a:before,
-.lwtv-share-content ul li.share-pocket div.option.option-smart-off a:before,
-.lwtv-social-icon-text .lwtv-share-content li.share-pocket a:before {
-	@include mixins.fontawesome_brand("\f265");
-}
-.lwtv-social-icon .lwtv-share-content ul li.share-pinterest a:before,
-.lwtv-social-text .lwtv-share-content ul li.share-pinterest a:before,
-.lwtv-share-content ul li.share-pinterest div.option.option-smart-off a:before,
-.lwtv-social-icon-text .lwtv-share-content li.share-pinterest a:before {
-	@include mixins.fontawesome_brand("\f231");
-}
-.lwtv-social-icon .lwtv-share-content ul li.share-facebook a:before,
-.lwtv-social-text .lwtv-share-content ul li.share-facebook a:before,
-.lwtv-share-content ul li.share-facebook div.option.option-smart-off a:before,
-.lwtv-social-icon-text .lwtv-share-content li.share-facebook a:before {
-	@include mixins.fontawesome_brand("\f39e");
-}
-.lwtv-social-icon .lwtv-share-content ul li.share-press-this a:before,
-.lwtv-social-text .lwtv-share-content ul li.share-press-this a:before,
-.lwtv-share-content ul li.share-press-this div.option.option-smart-off a:before,
-.lwtv-social-icon-text .lwtv-share-content li.share-press-this a:before,
-.lwtv-social-official .lwtv-share-content li.share-press-this a:before {
-	@include mixins.fontawesome_brand("\f205");
-}
 .lwtv-social-official .lwtv-share-content li.share-press-this a:before {
 	color: #2ba1cb;
 }
-.lwtv-social-icon .lwtv-share-content ul li.share-telegram a:before,
-.lwtv-social-text .lwtv-share-content ul li.share-telegram a:before,
-.lwtv-share-content ul li.share-telegram div.option.option-smart-off a:before,
-.lwtv-social-icon-text .lwtv-share-content li.share-telegram a:before,
-.lwtv-social-official .lwtv-share-content li.share-telegram a:before {
-	@include mixins.fontawesome_brand("\f2c6");
-}
+
 .lwtv-social-official .lwtv-share-content li.share-telegram a:before {
 	color: #0088cc;
 }
 
-.lwtv-social-icon .lwtv-share-content ul li.share-threads a:before,
-.lwtv-social-text .lwtv-share-content ul li.share-threads a:before,
-.lwtv-share-content ul li.share-threads div.option.option-smart-off a:before,
-.lwtv-social-icon-text .lwtv-share-content li.share-threads a:before,
-.lwtv-social-official .lwtv-share-content li.share-threads a:before {
-	@include mixins.fontawesome_brand("\e618");
-}
 .lwtv-social-official .lwtv-share-content li.share-threads a:before {
 	color: #000;
 }
@@ -349,70 +262,41 @@ body .lwtv-share-content ul li.share-custom.no-icon a span {
 	color: #fff !important;
 }
 
-.lwtv-social-icon .lwtv-share-content ul li.share-mastodon a:before,
-.lwtv-social-text .lwtv-share-content ul li.share-mastodon a:before,
-.lwtv-share-content ul li.share-mastodon div.option.option-smart-off a:before,
-.lwtv-social-icon-text .lwtv-share-content li.share-mastodon a:before,
-.lwtv-social-official .lwtv-share-content li.share-mastodon a:before {
-	@include mixins.fontawesome_brand("\f4f6");
-}
 .lwtv-social-official .lwtv-share-content li.share-mastodon a:before {
 	color: #563ACC;
 }
-.lwtv-social-icon .lwtv-share-content ul a.share-more:before,
-.lwtv-social-text .lwtv-share-content ul a.share-more:before,
-.lwtv-share-content ul li.advanced a.share-more:before,
-.lwtv-social-icon-text .lwtv-share-content a.share-more:before,
-.lwtv-social-official .lwtv-share-content a.share-more:before {
-	@include mixins.fontawesome_pro("\f1e0");
-}
+
 .lwtv-social-official .lwtv-share-content a.share-more:before {
 	color: #2ba1cb;
 }
 
-.lwtv-social-icon .lwtv-share-content ul li.share-jetpack-whatsapp a:before,
-.lwtv-social-text .lwtv-share-content ul li.share-jetpack-whatsapp a:before,
-.lwtv-share-content ul li.share-jetpack-whatsapp div.option.option-smart-off a:before,
-.lwtv-social-icon-text .lwtv-share-content li.share-jetpack-whatsapp a:before,
-.lwtv-social-official .lwtv-share-content li.share-jetpack-whatsapp a:before {
-	@include mixins.fontawesome_brand("\f232");
-}
-.lwtv-social-official .lwtv-share-content li.share-jetpack-whatsapp a:before {
-	color: #43d854;
-}
-.lwtv-social-icon .lwtv-share-content ul li[class*='share-'].share-jetpack-whatsapp a.lwtv-share-button {
+.lwtv-social-icon .lwtv-share-content ul li[class*='share-'].share-whatsapp a.lwtv-share-button {
 	background: #43d854;
 	color: #fff !important;
 }
 
-.lwtv-social-icon .lwtv-share-content ul li.share-nextdoor a:before,
-.lwtv-social-text .lwtv-share-content ul li.share-nextdoor a:before,
-.lwtv-share-content ul li.share-nextdoor div.option.option-smart-off a:before,
-.lwtv-social-icon-text .lwtv-share-content li.share-nextdoor a:before,
-.lwtv-social-official .lwtv-share-content li.share-nextdoor a:before {
-	@include mixins.fontawesome_brand("\f10c");
-}
-.lwtv-social-official .lwtv-share-content li.share-nextdoor a:before {
-	color: #8ED500;
-}
 .lwtv-social-icon .lwtv-share-content ul li[class*='share-'].share-nextdoor a.lwtv-share-button {
 	background: #8ED500;
 	color: #fff !important;
 }
 
-.lwtv-social-icon .lwtv-share-content ul li.share-bluesky a:before,
-.lwtv-social-text .lwtv-share-content ul li.share-bluesky a:before,
-.lwtv-share-content ul li.share-bluesky div.option.option-smart-off a:before,
-.lwtv-social-icon-text .lwtv-share-content li.share-bluesky a:before,
-.lwtv-social-official .lwtv-share-content li.share-bluesky a:before {
-	@include mixins.fontawesome_brand("\e671");
-}
-.lwtv-social-official .lwtv-share-content li.share-bluesky a:before {
-	color: #0085ff;
-}
 .lwtv-social-icon .lwtv-share-content ul li[class*='share-'].share-bluesky a.lwtv-share-button {
 	background: #0085ff;
 	color: #fff !important;
+	svg {
+		width: 18px;
+		fill: #fff;
+	}
+}
+
+.lwtv-social-icon .lwtv-share-content ul li[class*='share-'].share-email a.lwtv-share-button {
+	background: #e9e9e9;
+	color: #555 !important;
+
+	svg {
+		width: 18px;
+		fill: #555;
+	}
 }
 
 .lwtv-social-official .lwtv-share-content>ul>li>a.lwtv-share-button span {
@@ -637,7 +521,8 @@ body .lwtv-social-icon .lwtv-share-content li.share-custom a span {
 	color: #fff !important;
 
 	svg {
-		padding-left: 2px;
+		width: 18px;
+		fill: #fff;
 	}
 }
 
@@ -646,52 +531,98 @@ body .lwtv-social-icon .lwtv-share-content li.share-custom a span {
 	color: #fff !important;
 
 	svg {
-		padding-left: 2.5px;
+		width: 18px;
+		fill: #fff;
 	}
 }
 
 .lwtv-social-icon .lwtv-share-content ul li[class*='share-'].share-twitter a.lwtv-share-button {
 	background: #00acee;
 	color: #fff !important;
+
+	svg {
+		width: 18px;
+		fill: #fff;
+	}
 }
 
 .lwtv-social-icon .lwtv-share-content ul li[class*='share-'].share-x a.lwtv-share-button {
 	background: #000;
 	color: #fff !important;
+
+	svg {
+		width: 18px;
+		fill: #fff;
+	}
 }
 
 .lwtv-social-icon .lwtv-share-content ul li[class*='share-'].share-pinterest a.lwtv-share-button {
 	background: #ca1f27;
 	color: #fff !important;
+
+	svg {
+		width: 18px;
+		fill: #fff;
+	}
 }
 
 .lwtv-social-icon .lwtv-share-content ul li[class*='share-'].share-digg a.lwtv-share-button {
 	color: #555555 !important;
+
+	svg {
+		width: 18px;
+		fill: #fff;
+	}
 }
 
 .lwtv-social-icon .lwtv-share-content ul li[class*='share-'].share-press-this a.lwtv-share-button {
 	background: #4f94d4;
 	color: #fff !important;
+
+	svg {
+		width: 18px;
+		fill: #fff;
+	}
 }
 
 .lwtv-social-icon .lwtv-share-content ul li[class*='share-'].share-telegram a.lwtv-share-button {
 	background: #0088cc;
 	color: #fff !important;
+
+	svg {
+		width: 18px;
+		fill: #fff;
+	}
 }
 
 .lwtv-social-icon .lwtv-share-content ul li[class*='share-'].share-linkedin a.lwtv-share-button {
 	background: #0077b5;
 	color: #fff !important;
+
+	svg {
+		width: 18px;
+		fill: #fff;
+	}
 }
 
 .lwtv-social-icon .lwtv-share-content ul li[class*='share-'].share-pocket a.lwtv-share-button {
 	background: #ee4056;
 	color: #fff !important;
+
+	svg {
+		width: 18px;
+		fill: #fff;
+	}
 }
 
 .lwtv-social-icon .lwtv-share-content ul li[class*='share-'].share-reddit a.lwtv-share-button {
 	background: #cee3f8;
 	color: #555555 !important;
+
+	svg {
+		width: 18px;
+		fill: #555;
+	}
 }
 
 .lwtv-social-icon .lwtv-share-content ul li[class*='share-'].share-mastodon a.lwtv-share-button {
@@ -699,7 +630,8 @@ body .lwtv-social-icon .lwtv-share-content li.share-custom a span {
 	color: #fff !important;
 
 	svg {
-		padding-left: 1.5px;
+		width: 18px;
+		fill: #fff;
 	}
 }
 

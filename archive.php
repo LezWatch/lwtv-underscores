@@ -8,7 +8,7 @@
 // Defaults
 $current_archive = get_queried_object();
 $current_count   = ( isset( $current_archive->count ) ) ? $current_archive->count : 0;
-$archive_icon    = lwtv_plugin()->get_symbolicon( svg: 'newspaper.svg', fontawesome: 'fa-newspaper' );
+$archive_icon    = lwtv_plugin()->get_symbolicon( svg: 'newspaper.svg', icon: 'svg-newspaper' );
 $archive_details = '';
 
 // translators: %s is the number of articles.
@@ -23,7 +23,7 @@ if ( is_author() ) {
 	$archive_details   = lwtv_plugin()->get_author_favorite_shows( $author );
 } elseif ( is_tag() ) {
 	$tag_id          = get_queried_object()->term_id;
-	$archive_icon    = lwtv_plugin()->get_symbolicon( svg: 'tag.svg', fontawesome: 'fa-tag' );
+	$archive_icon    = lwtv_plugin()->get_symbolicon( svg: 'tag.svg', icon: 'svg-tag' );
 	$archive_details = lwtv_plugin()->get_related_archive_header( $tag_id );
 }
 

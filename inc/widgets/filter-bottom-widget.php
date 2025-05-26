@@ -56,8 +56,8 @@ class LWTV_Filter_Bottom_Widget extends WP_Widget {
 	 */
 
 	public function form( $instance ) {
-		$title       = isset( $instance['title'] ) ? $instance['title'] : '';
-		$fontawesome = isset( $instance['fontawesome'] ) ? $instance['fontawesome'] : '';
+		$title = isset( $instance['title'] ) ? $instance['title'] : '';
+		$icon  = isset( $instance['icon'] ) ? $instance['icon'] : '';
 	}
 }
 

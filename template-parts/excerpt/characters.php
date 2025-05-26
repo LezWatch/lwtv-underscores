@@ -41,7 +41,7 @@ $cliches   = lwtv_plugin()->get_character_data( $the_id, 'cliches' );
 
 // Show a gravestone for recurring characters
 if ( ( 'recurring' === $char_role && 'post_type_shows' === get_post_type() ) || 'post_type_actors' === get_post_type() ) {
-	$grave = ( has_term( 'dead', 'lez_cliches', $the_id ) ) ? '<span role="img" aria-label="RIP Tombstone" title="RIP Tombstone" class="charlist-grave-sm">' . lwtv_plugin()->get_symbolicon( svg: 'rest-in-peace.svg', fontawesome: 'fa-ban', max_size: '15' ) . '</span>' : '';
+	$grave = ( has_term( 'dead', 'lez_cliches', $the_id ) ) ? '<span role="img" aria-label="RIP Tombstone" title="RIP Tombstone" class="charlist-grave-sm">' . lwtv_plugin()->get_symbolicon( svg: 'rest-in-peace.svg', icon: 'svg-ban', max_size: '15' ) . '</span>' : '';
 }
 ?>
 

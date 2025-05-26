@@ -192,7 +192,7 @@ class Shortcodes {
 		$trigger = ( in_array( $attributes['trigger'], array( 'high', 'medium', 'low' ), true ) ) ? $attributes['trigger'] : 'none';
 
 		if ( 'none' !== $trigger ) {
-			$warn_image = lwtv_plugin()->get_symbolicon( svg: 'warning.svg', fontawesome: 'fa-exclamation-triangle' );
+			$warn_image = lwtv_plugin()->get_symbolicon( svg: 'warning.svg', icon: 'svg-exclamation-triangle' );
 			switch ( $trigger ) {
 				case 'high':
 					$warn_color = 'danger';
@@ -212,7 +212,7 @@ class Shortcodes {
 		$star  = ( in_array( $attributes['star'], array( 'gold', 'silver', 'bronze', 'anti' ), true ) ) ? $attributes['star'] : 'none';
 
 		if ( 'none' !== $star ) {
-			$stars = '<span data-bs-toggle="tooltip" aria-label="' . ucfirst( $star ) . ' Star Show" title="' . ucfirst( $star ) . ' Star Show"><button type="button" class="btn btn-info"><span role="img" class="screener screener-star ' . $star . '">' . lwtv_plugin()->get_symbolicon( svg: 'star.svg', fontawesome: 'fa-star' ) . '</span></button></span>';
+			$stars = '<span data-bs-toggle="tooltip" aria-label="' . ucfirst( $star ) . ' Star Show" title="' . ucfirst( $star ) . ' Star Show"><button type="button" class="btn btn-info"><span role="img" class="screener screener-star ' . $star . '">' . lwtv_plugin()->get_symbolicon( svg: 'star.svg', icon: 'svg-star' ) . '</span></button></span>';
 		}
 
 		$output = '<div class="bd-callout screener-shortcode"><h5 id="' . esc_attr( $attributes['title'] ) . '">Screener Review on <em>' . esc_html( $attributes['title'] ) . '</em></h5>

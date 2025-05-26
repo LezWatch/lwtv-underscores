@@ -11,9 +11,11 @@
 
 namespace LWTV\_Components;
 
-use LWTV\Grading\LWTV;
-
 class Symbolicons implements Component, Templater {
+
+	// Names of the files.
+	const SPRITE_FILE = 'sprite.symbol.svg';
+	const SPRITE_JSON = 'symbolicons.json';
 
 	/*
 	 * Init
@@ -21,7 +23,6 @@ class Symbolicons implements Component, Templater {
 	public function init(): void {
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
 		add_action( 'admin_menu', array( $this, 'add_settings_page' ) );
-		add_shortcode( 'symbolicon', array( $this, 'shortcode' ) );
 	}
 
 	/**
@@ -47,43 +48,6 @@ class Symbolicons implements Component, Templater {
 	}
 
 	/*
-	 * Shortcode
-	 *
-	 * Generate the Symbolicon via shortcode
-	 *
-	 * @param array $atts Attributes for the shortcode
-	 *   - file: Filename
-	 *   - title: Title to use (for A11y)
-	 *   - url: URL to link to (optional)
-	 * @return SVG icon of awesomeness
-	 */
-	public function shortcode( $atts ) {
-		$svg = shortcode_atts(
-			array(
-				'file'  => '',
-				'title' => '',
-				'url'   => '',
-			),
-			$atts
-		);
-
-		// Default to the square if nothing is there
-		if ( ! file_exists( LWTV_SYMBOLICONS_PATH . $svg['file'] . '.svg' ) ) {
-			$svg['file'] = 'square';
-		}
-
-		$the_icon = '<span class="symbolicon" role="img" aria-label="' . sanitize_text_field( $svg['title'] ) . '" title="' . sanitize_text_field( $svg['title'] ) . '" class="svg-shortcode ' . sanitize_text_field( $svg['title'] ) . '">' . file_get_contents( LWTV_SYMBOLICONS_PATH . $svg['file'] . '.svg' ) . '</span>';
-
-		if ( ! empty( $svg['url'] ) ) {
-			$iconpath = '<a href=' . esc_url( $svg['url'] ) . '> ' . $the_icon . ' </a>';
-		} else {
-			$iconpath = $the_icon;
-		}
-
-		return $iconpath;
-	}
-
-	/*
 	 * Settings
 	 *
 	 * Create our settings page
@@ -103,16 +67,41 @@ class Symbolicons implements Component, Templater {
 
 		<h2>Symbolicons</h2>
 
-		<?php
-		echo '<p>The following are all the symbolicons you have to chose from and their file names. Let this help you be more better with your iconing.</p>';
+		<div class="notice notice-info">
+			<p>Symbolics are used in code, not in the visual editor. To add them, use the wrapper function <code>lwtv_plugin()->get_symbolicon()</code> which has the following parameters:</p>
+			<ul>
+				<li><code>svg</code> - The name of the icon, i.e. <code>square</code>.</li>
+				<li><code>icon</code> - The symbolicon icon name, i.e. <code>svg-square</code>.</li>
+				<li><code>svg_class</code> - The SVG styling class name, i.e. <code>symbolicon</code>.</li>
+				<li><code>max_size</code> - The <em>maximum</em> size of the icon, i.e. <code>32</code>.</li>
+			</ul>
 
-		foreach ( glob( LWTV_SYMBOLICONS_PATH . '*' ) as $filename ) {
-			$name = str_replace( LWTV_SYMBOLICONS_PATH, '', $filename );
-			$name = str_replace( '.svg', '', $name );
-			// @codingStandardsIgnoreStart
-			echo '<span class="cmb2-icon" role="img">' . file_get_contents( $filename ) . esc_html( $name ) . '</span>';
-			// @codingStandardsIgnoreEnd
+			<p>You can also select a symbolicon for certain taxonomies in the <a href="<?php echo esc_url( admin_url( 'edit-tags.php?taxonomy=lez_termsmeta&post_type=lez_terms' ) ); ?>">Terms</a> page.</p>
+		</div>
+
+		<?php
+		// Make sure the sprite SVG and JSON files exist.
+		if ( ! file_exists( LWTV_SYMBOLICONS_SPRITE_PATH . self::SPRITE_FILE ) || ! file_exists( LWTV_SYMBOLICONS_SPRITE_PATH . self::SPRITE_JSON ) ) {
+			echo '<h3>OH NO!</h3>';
+			echo '<p>The sprite SVG and/or JSON files do not exist. Please tell an Admin to upload them to the <code>/wp-content/uploads/lezpress-icons</code> directory.</p>';
+		} else {
+			echo '<h3>Available Symbolicons</h3>';
+			$sprite_json = json_decode( file_get_contents( LWTV_SYMBOLICONS_SPRITE_PATH . self::SPRITE_JSON ), true );
+
+			// for each icon in the sprite SVG, show the icon.
+			foreach ( $sprite_json as $icon ) {
+				$name = str_replace( '.svg', '', $icon['filename'] );
+				?>
+				<div class="symbolicon-admin-container">
+					<div class="symbolicon-admin-icon">
+						<?php echo $this->get_symbolicon( svg: $icon['filename'], max_size: 100 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+					</div>
+					<div class="symbolicon-admin-name"><?php echo esc_html( $name ); ?></div>
+				</div>
+				<?php
+			}
 		}
+
 		?>
 		</div>
 		<?php
@@ -150,46 +139,39 @@ class Symbolicons implements Component, Templater {
 	 *
 	 * @access public
 	 * @param string $svg         (default: 'square.svg') - SVG name.
-	 * @param string $fontawesome (default: 'fa-square')  - Font-Awesome icon name.
+	 * @param string $icon        (default: 'svg-square') - Symbolicon icon name.
 	 * @param string $svg_class   (default: 'symbolicon') - SVG styling class name.
+	 * @param string $max_size    (default: '32')         - Maximum size of the icon.
+	 *
 	 * @return icon
 	 */
-	public function get_symbolicon( $svg = 'square.svg', $fontawesome = 'fa-square', $svg_class = 'symbolicon', $max_size = '32' ) {
+	public function get_symbolicon( $svg = 'square.svg', $icon = 'svg-square', $svg_class = 'symbolicon', $max_size = '32' ) {
 
 		// Font Awesome fallback.
-		$return = '<i class="' . esc_attr( strtolower( $fontawesome ) ) . '" aria-hidden="true"></i>';
+		$icon_return = '<i class="' . esc_attr( strtolower( $icon ) ) . '" aria-hidden="true"></i>';
 
-		$raw_icon = $this->get_icon_file( $svg );
+			// Extract icon ID from filename (strip `.svg` extension)
+		$icon_id = sanitize_title( pathinfo( $svg, PATHINFO_FILENAME ) );
 
-		if ( ! empty( $raw_icon ) ) {
-			$icon = trim( file_get_contents( $raw_icon ) );
+		$sprite_path = LWTV_SYMBOLICONS_SPRITE_PATH . self::SPRITE_FILE;
+		$sprite_url  = LWTV_SYMBOLICONS_SPRITE_URL . self::SPRITE_FILE;
 
-			// Add in a height if it's not there to prevent GIANT IMAGES. CSS will override.
-			if ( ! str_contains( $icon, 'height="' ) ) {
-				$icon = str_replace( '<svg', '<svg height="' . $max_size . 'px"', $icon );
-			}
-
-			$return = '<span class="' . $svg_class . '" role="img" data-no-image-dimensions="true">' . $icon . '</span>';
+		if ( ! file_exists( $sprite_path ) ) {
+			return $icon_return;
 		}
 
-		return $return;
-	}
-
-	/**
-	 * Get the icon file by SVG name,
-	 *
-	 * @param  string $svg
-	 * @return string
-	 */
-	public function get_icon_file( $svg ) {
-		$icon = LWTV_THEME_PATH . '/images/square.svg';
-
-		if ( defined( 'LWTV_SYMBOLICONS_PATH' ) && file_exists( LWTV_SYMBOLICONS_PATH . $svg ) ) {
-			$icon = LWTV_SYMBOLICONS_PATH . $svg;
-		} elseif ( wp_style_is( 'fontawesome', 'enqueued' ) ) {
-			$icon = '';
+		// Make sure the icon exists in the sprite SVG.
+		if ( ! str_contains( file_get_contents( $sprite_path ), $icon_id ) ) {
+			return $icon_return;
 		}
 
-		return $icon;
+		// Output SVG with <use>
+		return sprintf(
+			'<span class="%1$s" data-no-image-dimensions="true"><svg class="%1$s" role="img" style="height:%2$spx;" aria-hidden="true"><use href="%3$s#%4$s"></use></svg></span>',
+			esc_attr( $svg_class ),
+			intval( $max_size ),
+			esc_url( $sprite_url ),
+			esc_attr( $icon_id )
+		);
 	}
 }

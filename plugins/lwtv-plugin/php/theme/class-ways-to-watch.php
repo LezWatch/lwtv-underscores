@@ -58,7 +58,7 @@ class Ways_To_Watch {
 		$links       = self::generate_links( $watch_urls );
 		$link_output = implode( '', $links );
 
-		$icon   = lwtv_plugin()->get_symbolicon( svg: 'tv-hd.svg', fontawesome: 'fa-tv' );
+		$icon   = lwtv_plugin()->get_symbolicon( svg: 'tv-hd.svg', icon: 'svg-tv' );
 		$output = $icon . '<span class="how-to-watch">Ways to Watch:</span> ' . $link_output;
 
 		return $output;
