@@ -13,8 +13,7 @@
     "require": {
         "php": ">=8.2",
         "slowprog/composer-copy-file": "^0.3",
-        "twbs/bootstrap": "^5.3",
-        "fortawesome/font-awesome": "^6.4.0"
+        "twbs/bootstrap": "^5.3"
     },
     "scripts": {
         "post-install-cmd": [
@@ -36,9 +35,6 @@
         "copy-file": {
             "vendor/twbs/bootstrap/dist/css/": "inc/bootstrap/css/",
             "vendor/twbs/bootstrap/dist/js/": "inc/bootstrap/js/",
-            "vendor/fortawesome/font-awesome/css/": "inc/fontawesome/css/",
-            "vendor/fortawesome/font-awesome/js/": "inc/fontawesome/js/",
-            "vendor/fortawesome/font-awesome/webfonts/": "inc/fontawesome/webfonts/",
             "node_modules/@popperjs/core/dist/umd/popper.min.js":"inc/js/popper.min.js",
             "node_modules/@popperjs/core/dist/umd/popper.min.js.map":"inc/js/popper.min.js.map"
         }

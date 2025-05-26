@@ -192,30 +192,6 @@ $endcolor: #7db9e8;
 	transform: translateY(-50%);
 }
 
-/* Like this @include fontawesome_free("\f0ad"); */
-@mixin fontawesome_free($argument...) {
-	display: none;
-	font: var(--fa-font-solid);
-	content: $argument;
-	font-family: "Font Awesome 5 Free";
-}
-
-/* Like this @include fontawesome_pro("\f0ad"); */
-@mixin fontawesome_pro($argument...) {
-	display: none;
-	font: var(--fa-font-solid);
-	content: $argument;
-	font-family: "Font Awesome 5 Regular";
-}
-
-/* Like this @include fontawesome_brand("\f0ad"); */
-@mixin fontawesome_brand($argument...) {
-	display: none;
-	font: var(--fa-font-brands);
-	content: $argument;
-	font-family: "Font Awesome 5 Brands";
-}
-
 /* Like this @include symbolicon("svg-zombie"); */
 @mixin symbolicon($name) {
 	$pos: map.get($symbolicons-positions, $name);
@@ -223,8 +199,8 @@ $endcolor: #7db9e8;
 	@extend %svg-common !optional;
 
 	display: inline-block;
-	width: 24px;
-	height: 24px;
+	width: 20px;
+	height: 20px;
 	background-repeat: no-repeat;
 	content: "";
 

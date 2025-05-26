@@ -155,88 +155,54 @@
 		}
 
 		&.rss a::before {
-
-			@include mixins.fontawesome_pro("\f09e");
+			@include mixins.symbolicon("svg-rss");
 		}
 
 		&.feed a::before {
-
-			@include mixins.fontawesome_free("\f09e");
+			@include mixins.symbolicon("svg-rss");
 		}
 
 		&.mail a::before {
-
-			@include mixins.fontawesome_free("\f0e0");
+			@include mixins.symbolicon("svg-envelope");
 		}
 
 		&.instagram a::before {
-
-			@include mixins.fontawesome_brand("\f16d");
+			@include mixins.symbolicon("svg-instagram");
 		}
 
 		&.twitter a::before {
-
-			@include mixins.fontawesome_brand("\f099");
+			@include mixins.symbolicon("svg-twitter-orig");
 		}
 
 		&.x-twitter a::before {
-
-			@include mixins.fontawesome_brand("\e61b");
+			@include mixins.symbolicon("svg-x-twitter");
 		}
 
 		&.facebook a::before {
-
-			@include mixins.fontawesome_brand("\f082");
-		}
-
-		&.youtube a::before {
-
-			@include mixins.fontawesome_brand("\f167");
-		}
-
-		&.vimeo a::before {
-
-			@include mixins.fontawesome_brand("\f40a");
-		}
-
-		&.pinterest a::before {
-
-			@include mixins.fontawesome_brand("\f0d2");
-		}
-
-		&.linkedin a::before {
-
-			@include mixins.fontawesome_brand("\f0e1");
+			@include mixins.symbolicon("svg-facebook");
 		}
 
 		&.tumblr a::before {
-
-			@include mixins.fontawesome_brand("\f173");
-		}
-
-		&.gplus a::before {
-
-			@include mixins.fontawesome_brand("\f0d5");
+			@include mixins.symbolicon("svg-tumblr");
 		}
 
 		&.mastodon a::before {
-
-			@include mixins.fontawesome_brand("\f4f6");
+			@include mixins.symbolicon("svg-mastodon");
 		}
 
 		&.tiktok a::before {
 
-			@include mixins.fontawesome_brand("\e07b");
+			@include mixins.symbolicon("svg-tiktok");
 		}
 
 		&.bluesky a::before {
 
-			@include mixins.fontawesome_brand("\e671");
+			@include mixins.symbolicon("svg-bluesky");
 		}
 
 		&.threads a::before {
 
-			@include mixins.fontawesome_brand("\e618");
+			@include mixins.symbolicon("svg-threads");
 		}
 
 	}

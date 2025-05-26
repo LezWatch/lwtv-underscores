@@ -9,10 +9,10 @@
 if ( ! defined( 'LWTV_THEME_VERSION' ) ) {
 	$versions = array(
 		'lwtv-underscores' => '6.4.0',    // Bump this any time you make serious CSS changes.
-		'font-awesome'     => '6.7.2',    // Bump when you update Font Awesome.
 		'bootstrap'        => '5.3.6',    // Bump when you update bootstrap.
 		'bootstrap_dark'   => '1.1.0',    // Bump when you update the dark mode.
 		'lwtv-blocks'      => '1.1.0',    // Bump when you update the blocks' CSS (or add new ones).
+		'symbolicons'      => '1.0.0',    // Bump when you update the symbolicons.
 	);
 	define( 'LWTV_THEME_VERSION', $versions );
 }
@@ -385,10 +385,6 @@ function lwtv_theme_scripts() {
 	// Bootstrap
 	wp_enqueue_style( 'bootstrap', get_template_directory_uri() . '/inc/bootstrap/css/bootstrap.min.css', array(), LWTV_THEME_VERSION['bootstrap'], 'all', false );
 	wp_enqueue_script( 'bootstrap', get_template_directory_uri() . '/inc/bootstrap/js/bootstrap.bundle.min.js', array( 'jquery' ), LWTV_THEME_VERSION['bootstrap'], 'all', true );
-
-	// Font Awesome PRO.
-	wp_enqueue_script( 'font-awesome', get_template_directory_uri() . '/inc/fontawesome/js/all.min.js', array(), LWTV_THEME_VERSION['font-awesome'], 'all', false );
-	wp_add_inline_script( 'font-awesome', 'FontAwesomeConfig = { searchPseudoElements: true };', 'before' );
 
 	// Fonts
 	wp_enqueue_style( 'open-sans', '//fonts.googleapis.com/css?family=Open+Sans:400,600,700', array(), LWTV_THEME_VERSION['lwtv-underscores'], false );
