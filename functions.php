@@ -8,11 +8,10 @@
 // Versioning for efficient developers.
 if ( ! defined( 'LWTV_THEME_VERSION' ) ) {
 	$versions = array(
-		'lwtv-underscores' => '6.4.0',    // Bump this any time you make serious CSS changes.
+		'lwtv-underscores' => '6.4.1',    // Bump this any time you make serious CSS changes.
 		'bootstrap'        => '5.3.6',    // Bump when you update bootstrap.
 		'bootstrap_dark'   => '1.1.0',    // Bump when you update the dark mode.
 		'lwtv-blocks'      => '1.1.0',    // Bump when you update the blocks' CSS (or add new ones).
-		'symbolicons'      => '1.0.0',    // Bump when you update the symbolicons.
 	);
 	define( 'LWTV_THEME_VERSION', $versions );
 }
