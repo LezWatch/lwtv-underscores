@@ -18,7 +18,7 @@ $maybe_social = array(
 		'meta'     => 'lezactors_twitter',
 		'base'     => 'https://twitter.com/',
 		'post'     => '',
-		'fa'       => 'fab fa-x-twitter',
+		'icon'     => 'x-twitter.svg',
 		'hide'     => true,
 		'use_meta' => true,
 	),
@@ -26,7 +26,7 @@ $maybe_social = array(
 		'meta'     => 'lezactors_bluesky',
 		'base'     => '',
 		'post'     => '',
-		'fa'       => 'fab fa-bluesky',
+		'icon'     => 'bluesky.svg',
 		'hide'     => true,
 		'use_meta' => true,
 	),
@@ -34,7 +34,7 @@ $maybe_social = array(
 		'meta'     => 'lezactors_instagram',
 		'base'     => 'https://instagram.com/',
 		'post'     => '',
-		'fa'       => 'fab fa-instagram',
+		'icon'     => 'instagram.svg',
 		'hide'     => true,
 		'use_meta' => true,
 	),
@@ -43,7 +43,7 @@ $maybe_social = array(
 		'meta'     => 'lezactors_has_threads',
 		'base'     => 'https://threads.net/',
 		'post'     => get_post_meta( $actor, 'lezactors_instagram', true ),
-		'fa'       => 'fab fa-threads',
+		'icon'     => 'threads.svg',
 		'hide'     => true,
 		'use_meta' => false,
 	),
@@ -51,7 +51,7 @@ $maybe_social = array(
 		'meta'     => 'lezactors_facebook',
 		'base'     => '',
 		'post'     => '',
-		'fa'       => 'fab fa-facebook',
+		'icon'     => 'facebook.svg',
 		'hide'     => true,
 		'use_meta' => true,
 	),
@@ -60,7 +60,7 @@ $maybe_social = array(
 		'meta'     => 'lezactors_tiktok',
 		'base'     => 'https://tiktok.com/',
 		'post'     => '',
-		'fa'       => 'fab fa-tiktok',
+		'icon'     => 'tiktok.svg',
 		'hide'     => true,
 		'use_meta' => true,
 	),
@@ -68,7 +68,7 @@ $maybe_social = array(
 		'meta'     => 'lezactors_twitch',
 		'base'     => '',
 		'post'     => '',
-		'fa'       => 'fab fa-twitch',
+		'icon'     => 'twitch.svg',
 		'hide'     => true,
 		'use_meta' => true,
 	),
@@ -76,7 +76,7 @@ $maybe_social = array(
 		'meta'     => 'lezactors_youtube',
 		'base'     => '',
 		'post'     => '',
-		'fa'       => 'fab fa-youtube',
+		'icon'     => 'youtube.svg',
 		'hide'     => true,
 		'use_meta' => true,
 	),
@@ -84,7 +84,7 @@ $maybe_social = array(
 		'meta'     => 'lezactors_tumblr',
 		'base'     => 'https://',
 		'post'     => '.tumblr.com/',
-		'fa'       => 'fab fa-tumblr',
+		'icon'     => 'tumblr.svg',
 		'hide'     => true,
 		'use_meta' => true,
 	),
@@ -92,7 +92,7 @@ $maybe_social = array(
 		'meta'     => 'lezactors_mastodon',
 		'base'     => '',
 		'post'     => '',
-		'fa'       => 'fab fa-mastodon',
+		'icon'     => 'mastodon.svg',
 		'hide'     => true,
 		'use_meta' => true,
 	),
@@ -110,7 +110,7 @@ foreach ( $maybe_social as $social => $data ) {
 		$social_urls[ $social ] = array(
 			'name' => $name,
 			'url'  => $data['base'] . $social_url . $data['post'],
-			'fa'   => $data['fa'],
+			'icon' => $data['icon'],
 		);
 	}
 }
@@ -124,7 +124,8 @@ if ( count( $social_urls ) > 0 ) {
 					<ul class="actor-meta-links" aria-labelledby="actor-links">
 						<?php
 						foreach ( $social_urls as $source ) {
-							echo '<li><i class="' . esc_attr( strtolower( $source['fa'] ) ) . '" aria-hidden="true"></i> <a href="' . esc_url( $source['url'] ) . '" target="_blank">' . esc_html( $source['name'] ) . '</a><span class="screen-reader-text">, opens in new tab</span></li>';
+							// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+							echo '<li><a href="' . esc_url( $source['url'] ) . '" target="_blank">' . lwtv_plugin()->get_symbolicon( svg: $source['icon'], icon: str_replace( '.svg', '', 'svg-' . $source['icon'] ), max_size: '20' ) . '&nbsp;' . esc_html( $source['name'] ) . '<span class="screen-reader-text">, opens in new tab</span></a></li>';
 						}
 						?>
 					</ul>

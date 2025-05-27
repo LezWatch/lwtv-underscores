@@ -167,7 +167,7 @@ class Symbolicons implements Component, Templater {
 
 		// Output SVG with <use>
 		return sprintf(
-			'<span class="%1$s" data-no-image-dimensions="true"><svg class="%1$s" role="img" style="height:%2$spx;" aria-hidden="true"><use href="%3$s#%4$s"></use></svg></span>',
+			'<span class="%1$s" data-no-image-dimensions="true"><svg class="%1$s" role="img" style="height:%2$spx;width:%2$spx;" aria-hidden="true"><use href="%3$s#%4$s"></use></svg></span>',
 			esc_attr( $svg_class ),
 			intval( $max_size ),
 			esc_url( $sprite_url ),

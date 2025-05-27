@@ -64,8 +64,7 @@ foreach ( $maybe_external as $site => $data ) {
 		$external_urls[ $site ] = array(
 			'name' => $name,
 			'url'  => $data['base'] . $external_url . $data['post'],
-			'fa'   => $data['fa'],
-			'svg'  => $data['svg'],
+			'icon' => $data['svg'],
 		);
 	}
 }
@@ -79,10 +78,8 @@ if ( count( $external_urls ) > 0 ) {
 				<ul class="actor-meta-links" aria-labelledby="actor-links">
 					<?php
 					foreach ( $external_urls as $source ) {
-						$icon = lwtv_plugin()->get_symbolicon( svg: $source['svg'], icon: $source['fa'], max_size: '20' );
-
-						// phpcs:ignore WordPress.Security.EscapeOutput
-						echo '<li>' . $icon . ' <a href="' . esc_url( $source['url'] ) . '" target="_blank">' . esc_html( $source['name'] ) . '</a><span class="screen-reader-text">, opens in new tab</span></li>';
+						// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+						echo '<li><a href="' . esc_url( $source['url'] ) . '" target="_blank">' . lwtv_plugin()->get_symbolicon( svg: $source['icon'], icon: str_replace( '.svg', '', 'svg-' . $source['icon'] ), max_size: '20' ) . '&nbsp;' . esc_html( $source['name'] ) . '<span class="screen-reader-text">, opens in new tab</span></a></li>';
 					}
 					?>
 				</ul>
