@@ -18,7 +18,7 @@
 			<h3 class="card-title"><?php the_title(); ?></h3>
 			<div class="card-meta text-muted">
 				<?php the_date(); ?>
-				<?php echo lwtv_plugin()->get_symbolicon( svg: 'user-circle.svg', icon: 'svg-user-circle' ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
+				<?php echo lwtv_plugin()->get_symbolicon( svg: 'user-circle.svg', icon: 'svg-user-circle', max_size: '20' ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
 				<?php the_author(); ?>
 			</div>
 			<div class="card-text">
