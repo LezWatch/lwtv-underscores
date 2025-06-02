@@ -73,7 +73,7 @@
     "grunt-contrib-watch": "^1.1.0",
     "grunt-terser": "^2.0.0",
     "husky": "^9.1.6",
-    "lint-staged": "^15",
+    "lint-staged": "^16",
     "npm-run-all2": "^8",
     "path": "^0.12",
     "postcss": "^8.4",
