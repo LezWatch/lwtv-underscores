@@ -200,6 +200,7 @@ $endcolor: #7db9e8;
 /* Like this @include symbolicon("svg-zombie"); */
 @mixin symbolicon($name) {
 	$pos: map.get($symbolicons-positions, $name);
+ $square_pos: map.get($symbolicons-positions, 'svg-square');
 
 	@include svg-common;
 
@@ -212,7 +213,7 @@ $endcolor: #7db9e8;
 	@if $pos {
 		background-position: $pos;
 	} @else {
-		background-position: 0 0;
+		background-position: $square_pos;
 	}
 }
 
