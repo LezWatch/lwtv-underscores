@@ -11,9 +11,30 @@ const defaultConfig = require( '@wordpress/scripts/config/webpack.config' );
 /**
  * Internal dependencies
  */
+const themePackage = require('../package.json');
 const TerserPlugin = require('terser-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
+
+/**
+ * Dynamic Variables for SASS
+ */
+const dynamicThemeVersion = themePackage.version;
+
+const spriteUrls = {
+	local: 'https://lwtv.local/wp-content/uploads/lezpress-icons/sprite.css.svg',
+	staging: 'https://lezwatchtvcom.stage.site/wp-content/uploads/lezpress-icons/sprite.css.svg',
+	production: 'https://lezwatchtv.com/wp-content/uploads/lezpress-icons/sprite.css.svg',
+};
+
+const spriteEnv = process.env.SVG_SPRITE_ENV || 'production';
+const spriteUrl = spriteUrls[spriteEnv] || spriteUrls.production;
+
+// This string will be prepended to all SCSS files
+const sassAdditionalData = `
+  $pkg-version: "${dynamicThemeVersion}";
+  $svg-sprite-url: "${spriteUrl}";
+`;
 
 // Add any new entry points by extending the webpack config.
 module.exports = {
@@ -28,6 +49,12 @@ module.exports = {
 					MiniCssExtractPlugin.loader,
 					'css-loader',
 					'sass-loader',
+					{
+						loader: 'sass-loader',
+						options: {
+							additionalData: `$svg-sprite-url: "${spriteUrl}";`,
+						},
+					},
 				],
 			},
 		],

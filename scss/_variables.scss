@@ -1,9 +1,6 @@
 /* ==========================================================================
 	Variables
 ========================================================================== */
+$theme-version: "6.4.2";
+$svg-sprite-url: "https://lezwatchtv.com/wp-content/uploads/lezpress-icons/sprite.css.svg?v=" + $theme-version;
 
-@use "partials/colors";
-@use "partials/mixins";
-@use "partials/colors-dark";
-@use "partials/fonts";
-@use "partials/helpers";
