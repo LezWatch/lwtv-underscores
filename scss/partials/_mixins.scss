@@ -1,6 +1,7 @@
 @use "colors";
 @use "sass:map";
-@use "../variables" as *;
+
+@use "../_dynamic" as *;
 
 @use "symbolicons";
 @use "symbolicons-map" as *;

@@ -40,7 +40,7 @@ jobs:
         run: npm run lint
 
       - name: Build it
-        run: npm run build
+        run: npm run create:staging
 
       - name: Deploy to LezWatch.TV Dev Server
         uses: easingthemes/ssh-deploy@main

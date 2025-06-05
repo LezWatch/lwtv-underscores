@@ -12,6 +12,10 @@ console.log( 'Building and merging assets ...' );
 process.chdir( __dirname + '/../' );
 const root = process.cwd();
 
+// Get the version from package.json
+const themePackage = require('../package.json');
+const dynamicThemeVersion = themePackage.version;
+
 (async () => {
 	// JS Files - Theme
 	await cp( root + '/_build_scripts/webpackdist/js/yikes-theme-scripts.min.js', root + '/inc/js/yikes-theme-scripts.min.js');
@@ -35,9 +39,13 @@ const root = process.cwd();
 	async function combineStyleCSS() {
 		try {
 			const header = await fs.promises.readFile( root + '/scss/_header.scss', 'utf8');
+
+			// Replace the version in const header with the dynamic version
+			const updatedHeader = header.replace( 'THEME_VERSION', dynamicThemeVersion );
+
 			const content = await fs.promises.readFile( root + '/_build_scripts/webpackdist/css/style.min.css', 'utf8');
 
-			const combinedCSS = header + content;
+			const combinedCSS = updatedHeader + content;
 
 			await fs.promises.writeFile( root + '/style.css', combinedCSS );
 			console.log( 'style.css combined successfully!' );
@@ -49,7 +57,7 @@ const root = process.cwd();
 
 	await cp( root + '/_build_scripts/webpackdist/css/style.min.css', root + '/style.min.css');
 	await cp( root + '/_build_scripts/webpackdist/css/style-editor.min.css', root + '/style-editor.min.css' );
-	await cp( root + '/_build_scripts/webpackdist/css/style-editor.css', root + '/style-editor.css' );
+	await cp( root + '/_build_scripts/webpackdist/css/style-editor.min.css', root + '/style-editor.css' );
 
 	// CSS Plugins
 	await cp( root + '/node_modules/tablesorter/dist/css/theme.bootstrap.min.css', root + '/plugins/lwtv-plugin/assets/css/theme.bootstrap.min.css');
