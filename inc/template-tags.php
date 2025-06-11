@@ -21,13 +21,13 @@ if ( ! function_exists( 'lwtv_theme_paging_nav' ) ) :
 			<?php
 			if ( get_previous_posts_link() ) :
 				?>
-				<li class="page-item previous"><?php previous_posts_link( lwtv_plugin()->get_symbolicon( svg: 'caret-left-circle.svg', icon: 'svg-chevron-circle-left', max_size: '16' ) . ' Previous' ); ?></li>
+				<li class="page-item previous"><?php previous_posts_link( lwtv_plugin()->get_symbolicon( svg: 'caret-left-circle.svg', icon: 'svg-chevron-circle-left', max_size: '14' ) . ' Previous' ); ?></li>
 				<?php
 			endif;
 
 			if ( get_next_posts_link() ) :
 				?>
-				<li class="page-item next"><?php next_posts_link( 'Next ' . lwtv_plugin()->get_symbolicon( svg: 'caret-right-circle.svg', icon: 'svg-chevron-circle-right', max_size: '16' ) ); ?></li>
+				<li class="page-item next"><?php next_posts_link( 'Next ' . lwtv_plugin()->get_symbolicon( svg: 'caret-right-circle.svg', icon: 'svg-chevron-circle-right', max_size: '14' ) ); ?></li>
 				<?php endif; ?>
 			</ul>
 		</nav><!-- .navigation -->
@@ -51,8 +51,8 @@ if ( ! function_exists( 'lwtv_theme_post_nav' ) ) :
 		<nav class="yikes-pagination" aria-label="Post Navigation" role="navigation">
 			<ul class="pagination justify-content-between">
 				<?php
-					previous_post_link( '<li class="page-item previous">%link</li>', lwtv_plugin()->get_symbolicon( svg: 'caret-left-circle.svg', icon: 'svg-chevron-circle-left', max_size: '16' ) . ' Previous Post' );
-					next_post_link( '<li class="page-item next">%link</li>', 'Next Post ' . lwtv_plugin()->get_symbolicon( svg: 'caret-right-circle.svg', icon: 'svg-chevron-circle-right', max_size: '16' ) );
+					previous_post_link( '<li class="page-item previous">%link</li>', lwtv_plugin()->get_symbolicon( svg: 'caret-left-circle.svg', icon: 'svg-chevron-circle-left', max_size: '14' ) . ' Previous Post' );
+					next_post_link( '<li class="page-item next">%link</li>', 'Next Post ' . lwtv_plugin()->get_symbolicon( svg: 'caret-right-circle.svg', icon: 'svg-chevron-circle-right', max_size: '14' ) );
 				?>
 			</ul>
 		</nav><!-- .navigation -->
@@ -188,7 +188,7 @@ function lwtv_generate_pagination_buttons( $page_number, $max_num_pages, $view_a
 				<?php
 				if ( 1 < $page_number ) {
 					// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-					echo '<a href="/page/' . esc_attr( $page_number - 1 ) . '" class="page-link">' . lwtv_plugin()->get_symbolicon( svg: 'caret-left-circle.svg', icon: 'svg-chevron-circle-left', max_size: '16' ) . ' <span>Previous</span></a>';
+					echo '<a href="/page/' . esc_attr( $page_number - 1 ) . '" class="page-link">' . lwtv_plugin()->get_symbolicon( svg: 'caret-left-circle.svg', icon: 'svg-chevron-circle-left', max_size: '14' ) . ' <span>Previous</span></a>';
 				}
 				?>
 			</li>
@@ -205,7 +205,7 @@ function lwtv_generate_pagination_buttons( $page_number, $max_num_pages, $view_a
 				<?php
 				if ( $max_num_pages > $page_number ) {
 					// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-					echo '<a href="/page/' . esc_attr( $page_number + 1 ) . '" class="page-link"><span>Next</span> ' . lwtv_plugin()->get_symbolicon( svg: 'caret-right-circle.svg', icon: 'svg-chevron-circle-right', max_size: '16' ) . '</a>';
+					echo '<a href="/page/' . esc_attr( $page_number + 1 ) . '" class="page-link"><span>Next</span> ' . lwtv_plugin()->get_symbolicon( svg: 'caret-right-circle.svg', icon: 'svg-chevron-circle-right', max_size: '14' ) . '</a>';
 				}
 				?>
 			</li>

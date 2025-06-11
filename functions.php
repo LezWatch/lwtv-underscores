@@ -7,12 +7,20 @@
 
 // Versioning for efficient developers.
 if ( ! defined( 'LWTV_THEME_VERSION' ) ) {
-	$versions = array(
-		'lwtv-underscores' => '6.4.1',    // Bump this any time you make serious CSS changes.
-		'bootstrap'        => '5.3.6',    // Bump when you update bootstrap.
-		'bootstrap_dark'   => '1.1.0',    // Bump when you update the dark mode.
-		'lwtv-blocks'      => '1.1.0',    // Bump when you update the blocks' CSS (or add new ones).
-	);
+	$versions = array();
+
+	// Automatically updated by the build script. Update ./package.json to change this.
+	$versions['lwtv-underscores'] = '6.4.2';
+
+	// Automatically updated by the build script.
+	$versions['bootstrap'] = '5.3.6';
+
+	// MANUAL. Bump when you update the dark mode css.
+	$versions['bootstrap_dark'] = '1.1.0';
+
+	// Automatically updated by the build script. Update ./plugins/lwtv-plugin/php/blocks/package.json to change this.
+	$versions['lwtv-blocks'] = '1.1.0';
+
 	define( 'LWTV_THEME_VERSION', $versions );
 }
 

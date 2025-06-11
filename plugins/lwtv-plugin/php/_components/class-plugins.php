@@ -185,7 +185,7 @@ class Plugins implements Component, Templater {
 								rel="nofollow noopener noreferrer"
 								data-shared="sharing-email-<?php echo esc_attr( $post_id ); ?>"
 								class="share-email lwtv-share-button share-icon no-text"
-								href="mailto:?subject=%5BShared%20Post%5D%20New%20Feature%3A%20Calendar%20Views&amp;body=https%3A%2F%2Flezwatchtv.com%2F2024%2Fnew-feature-calendar-views%2F&amp;share=email&amp;nb=1"
+								href="mailto:?subject=<?php echo esc_attr( $title ); ?>&amp;body=<?php echo esc_url( $post_url ); ?>&amp;share=email&amp;nb=1"
 								target="_blank"
 								title="Click to email a link to a friend"
 								onclick="window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=468,width=768');return false;"
