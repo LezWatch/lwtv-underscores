@@ -60,15 +60,6 @@ const dynamicThemeVersion = themePackage.version;
 	await cp( root + '/node_modules/tablesorter/dist/css/theme.bootstrap.min.css', root + '/plugins/lwtv-plugin/assets/css/theme.bootstrap.min.css');
 	console.log('CSS files have been moved!');
 
-	// Get the version number from functions.php
-	const functionsPhp = await fs.promises.readFile( root + '/functions.php', 'utf8');
-	const versionNumber = functionsPhp.match(/'lwtv-underscores' => '(\d+\.\d+\.\d+)'/)[1];
-
-	// If the version number in functions.php doesn't match the version number in package.json, update it.
-	if ( versionNumber !== dynamicThemeVersion ) {
-		console.log( 'Updating theme version in php...' );
-		const updatedFunctionsPhp = functionsPhp.replace( versionNumber, dynamicThemeVersion );
-		await fs.promises.writeFile( root + '/functions.php', updatedFunctionsPhp );
-	}
-
+	// Call the versioning script
+	require( './versioning' );
 })();
