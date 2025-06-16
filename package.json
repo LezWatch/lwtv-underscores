@@ -51,7 +51,7 @@
     "@npmcli/fs": "^4",
     "@popperjs/core": "^2.11.8",
     "@wordpress/components": "^29.11.0",
-    "chart.js": "^4.4",
+    "chart.js": "^4.5",
     "chartjs-plugin-annotation": "^3",
     "coffeescript": "^2.7.0",
     "postinstall": "*",
