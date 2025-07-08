@@ -159,9 +159,12 @@ This will output `[TYPE]: Message` into the error log.
 
 The following folders/files are for use by Developers. They are not pushed to the dev nor production servers.
 
+* `/_build_scripts/` - All of our build scripts and tools.
+* `/.cursor/` - Cursor specific settings
 * `./.github/` - all Github specific files such as workflows, dependabot, and pull request templates
 * `/.husky/` - all Husky commands
 * `/.vscode/` - default VSCode settings
+* `/docs/` - Structure files
 * `.editorconfig` - Basic editor configuration
 * `.gitignore` - Files and folders to be exempt from Git syncs
 * `.npmrc` - NPM configuration requirements
@@ -170,4 +173,4 @@ The following folders/files are for use by Developers. They are not pushed to th
 * `package-lock.json` - Saved package.json data
 * `package.json` - NPM configuration, commands, and libraries used
 * `phpcs.xml.dist` - PHPCS configuration
-* `postbuild.js` - script run at the end of NPM to move files to the correct location.
+

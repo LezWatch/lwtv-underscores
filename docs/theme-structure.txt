@@ -74,13 +74,13 @@ Contains all Sass (.scss) files used for theme styling, including partials and a
 ├── _layout.scss
 ├── _variables.scss
 ├── resources/
-│   ├──  _bootstrap.scss
-│   ├──  _calendar.scss
-│   ├──  _facetwp.scss
-│   ├──  _forms.scss
-│   ├──  _relatedposts.scss
-│   ├──  _searchwp.scss
-│   ├──  _socialshare.scss
+│   ├── _bootstrap.scss
+│   ├── _calendar.scss
+│   ├── _facetwp.scss
+│   ├── _forms.scss
+│   ├── _relatedposts.scss
+│   ├── _searchwp.scss
+│   ├── _socialshare.scss
 │   └── _stats.scss
 ├── partials/
 │   ├── _colors-dark.scss
