@@ -1,0 +1,172 @@
+## Main Theme PHP Files
+
+Contains all primary PHP files located in the theme's root directory. These files define the main templates, structure, and entry points for the WordPress theme.
+
+PHP Files:
+
+├── 404.php
+├── archive-post_type_actors.php
+├── archive-post_type_characters.php
+├── archive-post_type_shows.php
+├── archive.php
+├── attachment.php
+├── comments.php
+├── content.php
+├── embed.php
+├── footer.php
+├── functions.php
+├── header.php
+├── index.php
+├── page-fullwidth.php
+├── page-home.php
+├── page.php
+├── rss-otd.php
+├── search.php
+├── searchform.php
+├── sidebar.php
+├── single-post_type_actors.php
+├── single-post_type_characters.php
+├── single-post_type_shows.php
+├── single.php
+└── taxonomy.php
+
+CSS Files:
+
+├── style-editor.css
+├── style-editor.css.map
+├── style-editor.min.css
+├── style-editor.scss
+├── style.css
+├── style.css.map
+├── style.min.css
+└── style.scss
+
+## Images - `/images/`
+
+Contains all image assets used throughout the theme, including icons, banners, and graphics.
+
+Directory Structure:
+├── how-to-use-slack-banner.jpg
+├── lezwatch-logo-icon.png
+├── lwtv-toaster.svg
+├── mystery-person.jpg
+├── mystery-show.png
+├── mystery-woman.jpg
+├── rose.gif
+├── rose-orig.gif
+├── Slack-logo-RGB.png
+├── Slack-logo-inverted-RGB.png
+└── square.svg
+
+## Page Templates - `/page-templates/`
+
+Custom page templates.
+
+├── statistics.php
+└── thisyear.php
+
+## Sass Files - `/scss/`
+
+Contains all Sass (.scss) files used for theme styling, including partials and addon modules.
+
+├── _dynamic.scss
+├── _header.scss
+├── _layout.scss
+├── _variables.scss
+├── resources/
+│   ├──  _bootstrap.scss
+│   ├──  _calendar.scss
+│   ├──  _facetwp.scss
+│   ├──  _forms.scss
+│   ├──  _relatedposts.scss
+│   ├──  _searchwp.scss
+│   ├──  _socialshare.scss
+│   └── _stats.scss
+├── partials/
+│   ├── _colors-dark.scss
+│   ├── _colors.scss
+│   ├── _comments.scss
+│   ├── _fonts.scss
+│   ├── _helpers.scss
+│   ├── _mixins.scss
+│   ├── _navcolors.scss
+│   ├── _responsive.scss
+│   ├── _symbolicons-map.scss
+│   └── _symbolicons.scss
+
+## Plugin Specific files
+
+The following are custom templates for specific plugins
+
+### Search WP:
+
+├── searchwp-live-ajax-search/
+│   └── live-search-results.php
+
+├── searchwp-modal-form/
+│   └── lwtv.php
+
+## Template Parts - `/template-parts/`
+
+Contains all template part files and subfolders used for modular theme structure.
+
+├── content/
+│   ├── loved.php
+│   ├── none.php
+│   ├── page.php
+│   ├── post_type_actors.php
+│   ├── post_type_characters.php
+│   ├── post_type_shows.php
+│   ├── posts.php
+│   ├── search.php
+│   ├── single.php
+│   └── shows.php
+├── embed/
+│   └── content-post_type_shows.php
+├── excerpt/
+│   ├── actors.php
+│   ├── characters.php
+│   └── shows.php
+├── header/
+│   ├── dark-mode.php
+│   ├── last-death.php
+│   ├── lcp.php
+│   ├── navbar.php
+│   ├── searchbox-searchwp.php
+│   ├── searchbox.php
+│   └── svg.php
+├── overlays/
+│   ├── form-suggest-edit.php
+│   ├── related-articles.php
+│   └── statistics-actors.php
+├── partials/
+│   ├── actors/
+│   │   ├── gender-sexuality.php
+│   │   ├── life.php
+│   │   ├── links.php
+│   │   └── social.php
+│   ├── characters/
+│   │   ├── actors.php
+│   │   ├── card-cliches.php
+│   │   ├── gender-sexuality.php
+│   │   └── shows.php
+│   ├── shows/
+│   │   ├── airdates.php
+│   │   ├── card-altnames.php
+│   │   ├── card-intersections.php
+│   │   ├── card-ratings.php
+│   │   ├── card-tropes.php
+│   │   ├── card-worthit.php
+│   │   ├── like-this.php
+│   │   ├── warning.php
+│   │   └── ways-to-watch.php
+│   ├── image-headshot.php
+│   ├── image-show.php
+│   ├── related-articles.php
+│   └── sidebar-slack.php
+├── related-posts/
+│   └── lwtv-cards.php
+├── sidebar/
+│   ├── post_type_actors.php
+│   ├── post_type_characters.php
+│   └── post_type_shows.php
