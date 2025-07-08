@@ -49,6 +49,7 @@ class CPTs implements Component, Templater {
 			'has_cpt_related_posts'      => array( $this, 'has_cpt_related_posts' ),
 			'hide_actor_data'            => array( $this, 'hide_actor_data' ),
 			'the_actor_privacy_warning'  => array( $this, 'the_actor_privacy_warning' ),
+			'maybe_show_actor_note'      => array( $this, 'maybe_show_actor_note' ),
 		);
 	}
 
@@ -199,10 +200,22 @@ class CPTs implements Component, Templater {
 	 * The Actor Privacy Warning
 	 *
 	 * @param  int $post_id
+	 * @param  bool $return_echo
 	 * @return void
 	 */
-	public function the_actor_privacy_warning( $post_id ): void {
-		( new Actors() )->privacy_warning( $post_id );
+	public function the_actor_privacy_warning( $post_id, $return_echo = true ): void {
+		( new Actors() )->privacy_warning( $post_id, $return_echo );
+	}
+
+	/**
+	 * Maybe show the actor notes
+	 *
+	 * @param  int $post_id
+	 * @param  bool $return_echo
+	 * @return void|array
+	 */
+	public function maybe_show_actor_note( $post_id, $return_echo = true ) {
+		( new Characters() )->privacy_warning( $post_id, $return_echo );
 	}
 
 	/**

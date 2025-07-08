@@ -1171,6 +1171,22 @@ section#characters {
 	}
 }
 
+.maybe-private-note {
+	position: initial !important;
+
+	p {
+		margin: 1em !important;
+	}
+
+	p::before {
+		content: "🕵️ ";
+		display: inline-block;
+		width: 16px;
+		color: #856404;
+		padding-right: 2px;
+	}
+}
+
 /* Stars and Hearts */
 
 .showlist-star,

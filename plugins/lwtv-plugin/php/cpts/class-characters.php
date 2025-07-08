@@ -450,4 +450,42 @@ class Characters {
 
 		printf( '<div class="%1$s"><p>%2$s</p></div>', esc_attr( $class ), esc_html( $message ) );
 	}
+
+	/**
+	 * Get the privacy warning
+	 *
+	 * @param  int $post_id
+	 * @param  bool $return_echo
+	 * @return void|array
+	 */
+	public function privacy_warning( $post_id, $return_echo = true ) {
+		$return_echo = ! is_user_logged_in() ? false : $return_echo;
+
+		// For each actor, check if they have a privacy warning.
+		$actors      = lwtv_plugin()->get_character_data( $post_id, 'actors' );
+		$actor_notes = array();
+
+		if ( ! $actors ) {
+			return;
+		}
+
+		foreach ( $actors as $actor ) {
+			if ( 'private' === get_post_status( $actor ) ) {
+				$actor_notes[ $actor ] = '<a href="' . get_post_permalink( $actor ) . '"><em>' . get_the_title( $actor ) . '</em></a> has requested that all of their personal information be hidden from public view.';
+			}
+		}
+
+		// If notes are empty, or we're not returning echo, return.
+		if ( empty( $actor_notes ) || ! $return_echo ) {
+			return;
+		}
+
+		echo '<div class="maybe-private-note alert alert-danger" role="alert">';
+
+		foreach ( $actor_notes as $actor => $note ) {
+			echo '<p>&nbsp;' . wp_kses_post( $note ) . '</p>';
+		}
+
+		echo '</div>';
+	}
 }
