@@ -1,10 +1,8 @@
-## Plugin Structure
+# LWTV Plugin Structure
 
-This document describes the structure and contents of the custom plugin located in `/plugins/lwtv-plugin/`.
+This document describes the structure and contents of the custom LezWatch.TV Plugin.
 
----
-
-## Main Plugin Files - `/plugins/lwtv-plugin/`
+## Files - `/plugins/lwtv-plugin/`
 
 ├── functions.php - Main Plugin file. Loads auto-loader, components, and defines.
 ├── composer.json
@@ -65,7 +63,7 @@ This document describes the structure and contents of the custom plugin located 
 │   ├── _helpers/ - Helper files
 │   │   ├── class-autoload.php - Autoloader
 │   │   └── class-utils.php - Common utility functions
-│   ├── admin-color-schemes/ - Additional color schemes for the backend
+│   ├── admin-color-schemes/ - Additional color schemes for the backend (Each folder contains a colors.css and colors-rtl.css)
 │   │   ├── editor.css - Manages color display along with sub folders.
 │   │   ├── 80s-kid/
 │   │   ├── adderley/
@@ -78,7 +76,7 @@ This document describes the structure and contents of the custom plugin located 
 │   │   ├── modern-evergreen/
 │   │   ├── primary/
 │   │   ├── seashore/
-│   │   └── vineyard/ - Each folder contains a colors.css and colors-rtl.css
+│   │   └── vineyard/
 │   ├── admin-menu/ - Admin menu items and validation
 │   │   ├── class-exclusions.php - Lists any exclusions or overrides applied by admins (i.e. forcing someone to show as queer)
 │   │   ├── class-monitors.php - Services monitored (runs daily)
@@ -133,6 +131,8 @@ This document describes the structure and contents of the custom plugin located 
 │   │   └── class-shows.php - Find all problems with Show pages.
 │   ├── features/ - Miscellaneous features
 │   │   ├── class-author-box.php - Custom author boxes
+│   │   ├── class-avatars.php - Custom (local) avatars
+│   │   ├── class-blocktracking.php - Block WP.com and WP.org from tracking everything.
 │   │   ├── class-dashboard-posts-in-progress.php - Forked version of a plugin to show in progress posts
 │   │   ├── class-dashboard.php - Custom column for featured images in posts lists and removal of self pings
 │   │   ├── class-embeds.php - Embeds DisneyABCPress videos, Gleam, GoFundMe, IndieGoGo
@@ -187,7 +187,9 @@ This document describes the structure and contents of the custom plugin located 
 │   │   │   ├── class-gf-approvals.php - Approval Code (forked from another plugin)
 │   │   │   └── class-stop-spammers.php - Block Spammers
 │   │   ├── class-gutenberg.php - make Block Editor stop being such a dillhole and forget preferences
+│   │   ├── class-monsterinsights.php - Custom code for Monster Insights
 │   │   ├── class-related-posts-by-taxonomy.php - Filters to allow a custom layout for "Shows Like This"
+│   │   ├── class-searchwp.php - Custom integration with SearchWP
 │   │   ├── class-wp-rocket.php - Integration with WP Rocket to flush content when interrelated posts are updated
 │   │   └── class-yoast.php - Custom Yoast controls
 │   ├── queeries/ - Custom queries and arrays
@@ -311,6 +313,7 @@ This document describes the structure and contents of the custom plugin located 
 │   │   ├── class-actor-checker.php - Check actors for valid data
 │   │   ├── class-actor-imdb.php - List actors missing IMDb
 │   │   ├── class-actor-wiki.php - Check actors wiki data (NOT CURRENTLY USED)
+│   │   ├── class-byq-checker.php - Checks for BYQ (at least one person has to be dead!)
 │   │   ├── class-character-checker.php - Check characters for valid data
 │   │   ├── class-duplicates.php - Look for duplicate shows/actors/characters
 │   │   ├── class-queer-checker.php - Check that all characters for queer actors are marked properly
