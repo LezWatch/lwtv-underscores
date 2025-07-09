@@ -358,10 +358,12 @@ class Actors {
 	 * Get the privacy warning
 	 *
 	 * @param  int $post_id
+	 * @param  bool $echo
+	 *
 	 * @return mixed
 	 */
-	public function privacy_warning( $post_id ): void {
-		( new Privacy() )->get_warning( $post_id );
+	public function privacy_warning( $post_id, $return_echo = true ) {
+		return ( new Privacy() )->get_warning( $post_id, $return_echo );
 	}
 
 	/**

@@ -14,7 +14,7 @@
 	p::before {
 		content: url(./spy.svg);
 		display: inline-block;
-		width: 16px; //only one size is alright, IE scales uniformly to fit it
+		width: 16px;
 		color: #856404;
 		padding-right: 2px;
 	}

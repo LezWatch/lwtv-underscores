@@ -97,33 +97,17 @@ class Serverside {
 	/**
 	 * Render private blocks
 	 *
-	 * This requires some Dom Massaging.
+	 * @param array $attributes The block attributes.
+	 * @param string $content The block content.
 	 *
-	 * @TODO: Convert to new HTML API?
+	 * @return string The block content.
 	 */
 	public function render_private_blocks( $attributes, $content ) {
-
-		if ( is_admin() ) {
+		// If the user is logged in, on the admin or can edit published posts, show the content.
+		if ( is_admin() || ( is_user_logged_in() && current_user_can( 'edit_published_posts' ) ) ) {
 			return $content;
 		}
 
-		$dom = new \DomDocument();
-		$dom->loadXML( $content );
-
-		$finder             = new \DomXPath( $dom );
-		$secure_class       = 'wp-block-lez-library-private-note';
-		$secure_content     = $finder->query( "//div[contains(@class, '$secure_class')]" );
-		$secure_content_dom = new \DOMDocument();
-
-		foreach ( $secure_content as $node ) {
-			$secure_content_dom->appendChild( $secure_content_dom->importNode( $node, true ) );
-		}
-
-		$secure_content = trim( $secure_content_dom->saveHTML() );
-
-		// Only people who can edit published posts (author, editor, admin) can see this.
-		if ( is_user_logged_in() && current_user_can( 'edit_published_posts' ) ) {
-			return $secure_content;
-		}
+		return '';
 	}
 }
