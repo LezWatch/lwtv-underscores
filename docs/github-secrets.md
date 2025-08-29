@@ -1,3 +1,6 @@
+https://github.com/organizations/LezWatch/settings/secrets/actions
+
+
 LWTV_DEV_DOMAIN - the folder name on the server
 LWTV_DOCS_DOMAIN - the folder name on the server
 LWTV_DOCS_HOST - the domain used to access the server for rsync
