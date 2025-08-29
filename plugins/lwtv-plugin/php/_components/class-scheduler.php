@@ -12,6 +12,7 @@ namespace LWTV\_Components;
 use LWTV\Schedulers\TMDB_Task;
 use LWTV\Schedulers\Cache_Task;
 use LWTV\Schedulers\Cache_Queue;
+use LWTV\Schedulers\Calculation_Task;
 
 /**
  * Class Scheduler
@@ -26,6 +27,7 @@ class Scheduler implements Component, Templater {
 		new TMDB_Task();
 		new Cache_Task();
 		new Cache_Queue();
+		new Calculation_Task();
 
 		// Register the main cron hook
 		add_action( 'lwtv_process_deferred_tasks', array( $this, 'process_deferred_tasks' ) );

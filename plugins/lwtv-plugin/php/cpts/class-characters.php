@@ -380,8 +380,8 @@ class Characters {
 		// Fix Shows - you only get one!
 		$this->fix_shows( $post_id );
 
-		// Character scores and sync taxonomies
-		$this->do_the_math( $post_id );
+		// Schedule calculations for later processing
+		lwtv_plugin()->schedule_task( 'calculation', $post_id );
 
 		// Always Sync Taxonomies
 		( new CMB2() )->select2_taxonomy_save( $post_id, 'lezchars_cliches', 'lez_cliches' );

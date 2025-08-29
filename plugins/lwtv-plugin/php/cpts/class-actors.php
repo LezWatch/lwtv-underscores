@@ -248,8 +248,8 @@ class Actors {
 		// Schedule TMDB ID generation for later processing
 		lwtv_plugin()->schedule_task( 'tmdb', $post_id );
 
-		// Do the math:
-		$this->do_the_math( $post_id );
+		// Schedule calculations for later processing
+		lwtv_plugin()->schedule_task( 'calculation', $post_id );
 
 		// Queue cache invalidation for shutdown processing
 		lwtv_plugin()->cache_queue( $post_id );

@@ -295,8 +295,8 @@ class Shows {
 		// Schedule TMDB ID generation for later processing
 		lwtv_plugin()->schedule_task( 'tmdb', $post_id );
 
-		// Save show scores
-		( new Shows() )->do_the_math( $post_id );
+		// Schedule calculations for later processing
+		lwtv_plugin()->schedule_task( 'calculation', $post_id );
 
 		// ALWAYS sync up data.
 		foreach ( self::SELECT2_TAXONOMIES as $postmeta => $taxonomy ) {
