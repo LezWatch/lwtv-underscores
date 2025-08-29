@@ -213,7 +213,7 @@ class Avatars {
 	public function make_svg_avatar( string $name = '', string $email = '?' ): string {
 		$initials = empty( $name ) ? $this->get_initials( $email ) : $this->get_initials( $name );
 
-		$tmpl = <<<"END"
+		$tmpl = <<<'END'
 			<?xml version="1.0" encoding="UTF-8"?>
 			<svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 50 50">
 				<rect width="100%%" height="100%%" fill="%s"/>

@@ -40,7 +40,7 @@ $thumb_array       = array(
 );
 
 // Alt Images
-$alt_images = ( 'full' === $format ) ? get_post_meta( $this_id, 'lezchars_character_image_group' ) : false;
+$alt_images = ( 'full' === $format ) ? get_post_meta( $this_id, 'lezchars_character_image_group', false ) : false;
 if ( $alt_images ) {
 	$image_tabs = array();
 	foreach ( $alt_images[0] as $an_image ) {
