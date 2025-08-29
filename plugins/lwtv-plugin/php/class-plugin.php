@@ -49,6 +49,9 @@ use LWTV\_Helpers\Utils;
  * REST API
  * @method array  get_whats_on_show( $show )                        \_Components\Rest_API
  *
+ * SCHEDULER
+ * @method bool   schedule_task( string $task_type, int $post_id, int $delay = 30 ) \_Components\Scheduler
+ *
  * STATISTICS
  * @method array  generate_shows_count( $type, $tax, $term )                               \_Components\Statistics
  * @method string generate_stats_block( $attributes )                                      \_Components\Statistics
@@ -136,6 +139,7 @@ class Plugin {
 			_Components\Of_The_Day::class,
 			_Components\Queeries::class,
 			_Components\Rest_API::class,
+			_Components\Scheduler::class,
 			_Components\Statistics::class,
 			_Components\Symbolicons::class,
 			_Components\Theme::class,

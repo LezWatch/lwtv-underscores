@@ -387,13 +387,8 @@ class Characters {
 		( new CMB2() )->select2_taxonomy_save( $post_id, 'lezchars_cliches', 'lez_cliches' );
 		( new CMB2() )->select2_taxonomy_save( $post_id, 'lezchars_relationship_chart', 'shadow_tax_characters' );
 
-		// Get a list of URLs to flush
-		$clear_urls = ( new Cache() )->collect_urls_for_characters( $post_id );
-
-		// If we've got a list of URLs, then flush.
-		if ( isset( $clear_urls ) && ! empty( $clear_urls ) ) {
-			( new Cache() )->clean_related_urls_for_cpts( $post_id, $clear_urls );
-		}
+		// Queue cache invalidation for shutdown processing
+		lwtv_plugin()->cache_queue( $post_id );
 	}
 
 	/**

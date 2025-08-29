@@ -245,20 +245,14 @@ class Actors {
 		// Privacy check
 		$this->make_private( $post_id, 'check' );
 
-		// Add TMDB
-		$this->generate_tmdb_id( $post_id );
+		// Schedule TMDB ID generation for later processing
+		lwtv_plugin()->schedule_task( 'tmdb', $post_id );
 
 		// Do the math:
 		$this->do_the_math( $post_id );
 
-		// Caching
-		// Get a list of URLs to flush
-		$clear_urls = ( new Cache() )->collect_cache_urls_for_actors_or_shows( $post_id );
-
-		// If we've got a list of URLs, then flush.
-		if ( isset( $clear_urls ) && ! empty( $clear_urls ) ) {
-			( new Cache() )->clean_related_urls_for_cpts( $post_id, $clear_urls );
-		}
+		// Queue cache invalidation for shutdown processing
+		lwtv_plugin()->cache_queue( $post_id );
 
 		// re-hook this function
 		add_action( 'save_post_post_type_actors', array( $this, 'save_post_meta' ) );
@@ -396,6 +390,48 @@ class Actors {
 		// If we have a TMDB ID, save it.
 		if ( false !== $tmdb_id ) {
 			update_post_meta( $post_id, 'lezactors_tmdb_id', $tmdb_id );
+		}
+	}
+
+	/**
+	 * Process the scheduled TMDB ID generation.
+	 *
+	 * @param int    $post_id
+	 * @param string $post_type
+	 *
+	 * @return void
+	 */
+	public function process_scheduled_tmdb_id( $post_id, $post_type ): void {
+		// Only process actors in this class
+		if ( 'actor' !== $post_type || 'post_type_actors' !== get_post_type( $post_id ) ) {
+			return;
+		}
+
+		// Check if TMDB ID is still needed
+		$tmdb_id = get_post_meta( $post_id, 'lezactors_tmdb_id', true );
+		if ( isset( $tmdb_id ) && ! empty( $tmdb_id ) ) {
+			return;
+		}
+
+		lwtv_plugin()->error_log( 'actors', 'Processing scheduled TMDB ID generation for actor ID: ' . $post_id );
+
+		// Get the TMDB ID from the data.
+		$tmdb_data = ( new CPTs() )->get_tmdb_info( $post_id );
+
+		if ( isset( $tmdb_data['id'] ) ) {
+			$tmdb_id = $tmdb_data['id'];
+		} elseif ( isset( $tmdb_data['person_results'][0]['id'] ) ) {
+			$tmdb_id = $tmdb_data['person_results'][0]['id'];
+		} else {
+			$tmdb_id = false;
+		}
+
+		// If we have a TMDB ID, save it.
+		if ( false !== $tmdb_id ) {
+			update_post_meta( $post_id, 'lezactors_tmdb_id', $tmdb_id );
+			lwtv_plugin()->error_log( 'actors', 'Successfully saved TMDB ID: ' . $tmdb_id . ' for actor ID: ' . $post_id );
+		} else {
+			lwtv_plugin()->error_log( 'actors', 'No TMDB ID found for actor ID: ' . $post_id );
 		}
 	}
 }

@@ -57,6 +57,7 @@ class Plugins implements Component, Templater {
 	 */
 	public function post_meta_sharing( $post_id = 0 ) {
 		if ( function_exists( 'sharing_display' ) ) {
+			/** @disregard sharing_display() is provided by the sharing plugin **/
 			sharing_display( '', true );
 		}
 

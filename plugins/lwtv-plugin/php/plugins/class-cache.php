@@ -208,6 +208,7 @@ class Cache {
 	 */
 	private function clear_wp_rocket( $clear_urls ) {
 		if ( is_plugin_active( 'wp-rocket/wp-rocket.php' ) ) {
+			/** @disregard rocket_clean_files() is provided by the WP Rocket plugin **/
 			rocket_clean_files( $clear_urls );
 		}
 	}
