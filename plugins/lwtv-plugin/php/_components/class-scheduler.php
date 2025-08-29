@@ -54,7 +54,7 @@ class Scheduler implements Component, Templater {
 	 * @return bool  Whether the task was scheduled successfully
 	 */
 	public function schedule_task( string $task_type, int $post_id, int $delay = 30 ): bool {
-		$hook_name = 'lwtv_' . $task_type . '_task';
+		$hook_name = 'lwtv_' . $task_type . '_task_' . $post_id;
 
 		// Schedule the task
 		$scheduled = wp_schedule_single_event( time() + $delay, $hook_name, array( $post_id ) );
