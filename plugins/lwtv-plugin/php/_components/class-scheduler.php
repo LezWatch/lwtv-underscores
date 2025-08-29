@@ -75,7 +75,7 @@ class Scheduler implements Component, Templater {
 	 * @return void
 	 */
 	public function cache_queue( int $post_id ): void {
-		\LWTV\Schedulers\Cache_Queue::queue( $post_id );
+		Cache_Queue::queue( $post_id );
 	}
 
 	/**
