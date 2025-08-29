@@ -103,7 +103,7 @@ class Ways_To_Watch {
 			}
 
 			// If Hide Display is flagged, hide the display.
-			if ( get_term_meta( $terms[0]->ID, 'lezwatchurls_setting_hide_display' ) ) {
+			if ( get_term_meta( $terms[0]->ID, 'lezwatchurls_setting_hide_display', false ) ) {
 				continue;
 			}
 

@@ -698,14 +698,14 @@ class Stats_JSON {
 
 				// Get the sub taxonomy counts based on post meta
 				foreach ( $valid_subtaxes as $meta ) {
-					$char_data_array    = get_post_meta( $show_id, 'lezshows_char_' . $meta );
+					$char_data_array    = get_post_meta( $show_id, 'lezshows_char_' . $meta, false );
 					$char_data[ $meta ] = array_shift( $char_data_array );
 				}
 
 				// If we have a complex format, let's get ALL the data too!
 				if ( 'complex' === $format ) {
 					foreach ( $valid_subtaxes as $meta ) {
-						$char_data_array = get_post_meta( $show_id, 'lezshows_char_' . $meta );
+						$char_data_array = get_post_meta( $show_id, 'lezshows_char_' . $meta, false );
 						foreach ( array_shift( $char_data_array ) as $char_data_meta => $char_data_count ) {
 							$char_data[ $char_data_meta ] += $char_data_count;
 							unset( $char_data[ $meta ] );

@@ -124,7 +124,7 @@ class Taxonomy_Breakdowns {
 							}
 						} else {
 							// Otherwise, we can grab the meta-data from each show.
-							$big_data_array = get_post_meta( $show_id, 'lezshows_char_' . $data_meta );
+							$big_data_array = get_post_meta( $show_id, 'lezshows_char_' . $data_meta, false );
 							foreach ( array_shift( $big_data_array ) as $big_data_meta => $big_data_count ) {
 								if ( ! isset( $big_data[ $big_data_meta ] ) ) {
 									$big_data[ $big_data_meta ] = 0;
@@ -146,7 +146,7 @@ class Taxonomy_Breakdowns {
 							}
 						} else {
 							// We can use the post meta.
-							$big_data_array = get_post_meta( $show_id, 'lezshows_char_' . $data_meta );
+							$big_data_array = get_post_meta( $show_id, 'lezshows_char_' . $data_meta, false );
 							foreach ( array_shift( $big_data_array ) as $big_data_meta => $big_data_count ) {
 								if ( ! isset( $big_data[ $big_data_meta ] ) ) {
 									$big_data[ $big_data_meta ] = 0;
@@ -157,7 +157,7 @@ class Taxonomy_Breakdowns {
 					} elseif ( 'all' === $data_meta && 'all' !== $data_term ) {
 						// If the data_meta is "all" then we are on the OVERVIEW tab for ONE nation/station.
 						foreach ( $main_subtaxes as $meta ) {
-							$big_data_array = get_post_meta( $show_id, 'lezshows_char_' . $meta );
+							$big_data_array = get_post_meta( $show_id, 'lezshows_char_' . $meta, false );
 							foreach ( array_shift( $big_data_array ) as $big_data_meta => $big_data_count ) {
 								if ( ! isset( $big_data[ $big_data_meta ] ) ) {
 									$big_data[ $big_data_meta ] = 0;

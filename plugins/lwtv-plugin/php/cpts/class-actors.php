@@ -245,20 +245,14 @@ class Actors {
 		// Privacy check
 		$this->make_private( $post_id, 'check' );
 
-		// Add TMDB
-		$this->generate_tmdb_id( $post_id );
+		// Schedule TMDB ID generation for later processing
+		lwtv_plugin()->schedule_task( 'tmdb', $post_id );
 
 		// Do the math:
 		$this->do_the_math( $post_id );
 
-		// Caching
-		// Get a list of URLs to flush
-		$clear_urls = ( new Cache() )->collect_cache_urls_for_actors_or_shows( $post_id );
-
-		// If we've got a list of URLs, then flush.
-		if ( isset( $clear_urls ) && ! empty( $clear_urls ) ) {
-			( new Cache() )->clean_related_urls_for_cpts( $post_id, $clear_urls );
-		}
+		// Queue cache invalidation for shutdown processing
+		lwtv_plugin()->cache_queue( $post_id );
 
 		// re-hook this function
 		add_action( 'save_post_post_type_actors', array( $this, 'save_post_meta' ) );

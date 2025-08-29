@@ -292,8 +292,8 @@ class Shows {
 
 		lwtv_plugin()->error_log( 'shows', 'Saving post meta for show ID: ' . $post_id );
 
-		// Add TMDB ID if possible.
-		$this->generate_tmdb_id( $post_id );
+		// Schedule TMDB ID generation for later processing
+		lwtv_plugin()->schedule_task( 'tmdb', $post_id );
 
 		// Save show scores
 		( new Shows() )->do_the_math( $post_id );
@@ -303,14 +303,8 @@ class Shows {
 			( new CMB2() )->select2_taxonomy_save( $post_id, $postmeta, $taxonomy );
 		}
 
-		// Caching
-		// Get a list of URLs to flush
-		$clear_urls = ( new Cache() )->collect_cache_urls_for_actors_or_shows( $post_id );
-
-		// If we've got a list of URLs, then flush.
-		if ( isset( $clear_urls ) && ! empty( $clear_urls ) ) {
-			( new Cache() )->clean_related_urls_for_cpts( $post_id, $clear_urls );
-		}
+		// Queue cache invalidation for shutdown processing
+		lwtv_plugin()->cache_queue( $post_id );
 
 		// re-hook this function
 		add_action( 'save_post_post_type_shows', array( $this, 'save_post_meta' ) );
