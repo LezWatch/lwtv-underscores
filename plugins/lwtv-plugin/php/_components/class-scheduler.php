@@ -56,10 +56,15 @@ class Scheduler implements Component, Templater {
 	 * @return bool  Whether the task was scheduled successfully
 	 */
 	public function schedule_task( string $task_type, int $post_id, int $delay = 30 ): bool {
-		$hook_name = 'lwtv_' . $task_type . '_task_' . $post_id;
+		$task_name = 'lwtv_' . $task_type . '_task';
+		$hook_name = $task_name . '_' . $post_id;
 
-		// Schedule the task
-		$scheduled = wp_schedule_single_event( time() + $delay, $hook_name, array( $post_id ) );
+		// If Action Scheduler is active, use it.
+		if ( function_exists( 'as_schedule_single_action' ) ) {
+			$scheduled = as_schedule_single_action( time() + $delay, $task_name, array( $post_id ) );
+		} else {
+			$scheduled = wp_schedule_single_event( time() + $delay, $hook_name, array( $post_id ) );
+		}
 
 		if ( $scheduled ) {
 			lwtv_plugin()->error_log( 'scheduler', "Scheduled {$task_type} task for post ID: {$post_id} with {$delay}s delay" );
@@ -67,7 +72,7 @@ class Scheduler implements Component, Templater {
 			lwtv_plugin()->error_log( 'scheduler', "Failed to schedule {$task_type} task for post ID: {$post_id}" );
 		}
 
-				return $scheduled;
+		return $scheduled;
 	}
 
 	/**

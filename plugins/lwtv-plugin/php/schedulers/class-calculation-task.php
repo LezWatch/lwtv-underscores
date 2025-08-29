@@ -22,7 +22,7 @@ class Calculation_Task {
 	 * Constructor
 	 */
 	public function __construct() {
-		// Register the cron hook for calculation tasks
+		// Register Action Scheduler hook
 		add_action( 'lwtv_calculation_task', array( $this, 'process_calculation_task' ) );
 	}
 

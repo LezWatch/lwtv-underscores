@@ -51,6 +51,7 @@ This document describes the structure and contents of the custom LezWatch.TV Plu
 │   │   ├── class-plugins.php - Plugin filters and actions
 │   │   ├── class-queeries.php - Customized loops
 │   │   ├── class-rest-api.php - Rest API code
+│   │   ├── class-scheduler.php - Deferred task scheduler for performance optimization
 │   │   ├── class-statistics.php - Statistics
 │   │   ├── class-symbolicons.php - Symbolicons
 │   │   ├── class-theme.php - Theme code
@@ -192,6 +193,11 @@ This document describes the structure and contents of the custom LezWatch.TV Plu
 │   │   ├── class-searchwp.php - Custom integration with SearchWP
 │   │   ├── class-wp-rocket.php - Integration with WP Rocket to flush content when interrelated posts are updated
 │   │   └── class-yoast.php - Custom Yoast controls
+│   ├── schedulers/ - Deferred task processing for performance optimization
+│   │   ├── class-calculation-task.php - Handles deferred math operations for all CPT types
+│   │   ├── class-cache-task.php - Handles scheduled cache invalidation tasks
+│   │   ├── class-cache-queue.php - Manages immediate cache invalidation on shutdown
+│   │   └── class-tmdb-task.php - Handles deferred TMDB API calls
 │   ├── queeries/ - Custom queries and arrays
 │   │   ├── class-get-id-from-slug.php - Get post ID from slug/URL
 │   │   ├── class-is-actor-queer.php - Determine if actor is queer (yes/no)
