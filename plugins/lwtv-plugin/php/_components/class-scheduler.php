@@ -42,8 +42,10 @@ class Scheduler implements Component, Templater {
 	 */
 	public function get_template_tags(): array {
 		return array(
-			'schedule_task' => array( $this, 'schedule_task' ),
-			'cache_queue'   => array( $this, 'cache_queue' ),
+			'schedule_task'                 => array( $this, 'schedule_task' ),
+			'cache_queue'                   => array( $this, 'cache_queue' ),
+			'is_action_scheduler_available' => array( $this, 'is_action_scheduler_available' ),
+			'get_scheduler_status'          => array( $this, 'get_scheduler_status' ),
 		);
 	}
 
@@ -59,16 +61,17 @@ class Scheduler implements Component, Templater {
 		$task_name = 'lwtv_' . $task_type . '_task';
 		$hook_name = $task_name . '_' . $post_id;
 
-		// If Action Scheduler is active, use it.
+		// If Action Scheduler is active, use it with generic hook name
 		if ( function_exists( 'as_schedule_single_action' ) ) {
 			$scheduled = as_schedule_single_action( time() + $delay, $task_name, array( $post_id ) );
+			lwtv_plugin()->error_log( 'scheduler', "Scheduled {$task_type} task via Action Scheduler for post ID: {$post_id} with {$delay}s delay" );
 		} else {
+			// Fallback to WordPress cron with unique hook name
 			$scheduled = wp_schedule_single_event( time() + $delay, $hook_name, array( $post_id ) );
+			lwtv_plugin()->error_log( 'scheduler', "Scheduled {$task_type} task via WordPress cron for post ID: {$post_id} with {$delay}s delay" );
 		}
 
-		if ( $scheduled ) {
-			lwtv_plugin()->error_log( 'scheduler', "Scheduled {$task_type} task for post ID: {$post_id} with {$delay}s delay" );
-		} else {
+		if ( ! $scheduled ) {
 			lwtv_plugin()->error_log( 'scheduler', "Failed to schedule {$task_type} task for post ID: {$post_id}" );
 		}
 
@@ -95,5 +98,27 @@ class Scheduler implements Component, Templater {
 
 		// This method can be expanded to handle task queuing and prioritization
 		// For now, individual task classes handle their own processing
+	}
+
+	/**
+	 * Check if Action Scheduler is available and active
+	 *
+	 * @return bool Whether Action Scheduler is available
+	 */
+	public function is_action_scheduler_available(): bool {
+		return function_exists( 'as_schedule_single_action' );
+	}
+
+	/**
+	 * Get scheduler status information
+	 *
+	 * @return array Status information about the scheduler
+	 */
+	public function get_scheduler_status(): array {
+		return array(
+			'action_scheduler_available' => $this->is_action_scheduler_available(),
+			'wordpress_cron_enabled'     => ! defined( 'DISABLE_WP_CRON' ) || ! DISABLE_WP_CRON,
+			'current_scheduler'          => $this->is_action_scheduler_available() ? 'Action Scheduler' : 'WordPress Cron',
+		);
 	}
 }
