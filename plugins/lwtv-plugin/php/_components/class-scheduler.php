@@ -10,6 +10,7 @@
 namespace LWTV\_Components;
 
 use LWTV\Schedulers\TMDB_Task;
+use LWTV\Schedulers\TMDB_Batch_Task;
 use LWTV\Schedulers\Cache_Task;
 use LWTV\Schedulers\Cache_Queue;
 use LWTV\Schedulers\Calculation_Task;
@@ -25,6 +26,7 @@ class Scheduler implements Component, Templater {
 	public function init() {
 		// Initialize task handlers
 		new TMDB_Task();
+		new TMDB_Batch_Task();
 		new Cache_Task();
 		new Cache_Queue();
 		new Calculation_Task();
@@ -46,6 +48,8 @@ class Scheduler implements Component, Templater {
 			'cache_queue'                   => array( $this, 'cache_queue' ),
 			'is_action_scheduler_available' => array( $this, 'is_action_scheduler_available' ),
 			'get_scheduler_status'          => array( $this, 'get_scheduler_status' ),
+			'queue_tmdb_batch'              => array( $this, 'queue_tmdb_batch' ),
+			'get_tmdb_batch_status'         => array( $this, 'get_tmdb_batch_status' ),
 		);
 	}
 
@@ -120,5 +124,26 @@ class Scheduler implements Component, Templater {
 			'wordpress_cron_enabled'     => ! defined( 'DISABLE_WP_CRON' ) || ! DISABLE_WP_CRON,
 			'current_scheduler'          => $this->is_action_scheduler_available() ? 'Action Scheduler' : 'WordPress Cron',
 		);
+	}
+
+	/**
+	 * Queue a post for TMDB batch processing
+	 *
+	 * @param int $post_id The post ID to queue
+	 * @return bool Whether the post was queued successfully
+	 */
+	public function queue_tmdb_batch( int $post_id ): bool {
+		$batch_task = new TMDB_Batch_Task();
+		return $batch_task->queue_post( $post_id );
+	}
+
+	/**
+	 * Get TMDB batch processing status
+	 *
+	 * @return array Status information about TMDB batch processing
+	 */
+	public function get_tmdb_batch_status(): array {
+		$batch_task = new TMDB_Batch_Task();
+		return $batch_task->get_batch_status();
 	}
 }

@@ -63,11 +63,10 @@ class WP_CLI_LWTV_Generate {
 	 * - lists
 	 * - debug
 	 * - cron
-	 * - missed-schedule
 	 * ---
 	 *
 	 * [<second>]
-	 * : Optional. Secondary data. OTD uses [show|character], debug uses [mon|tue|wed|thu|fri|sat|sun], cron uses [daily|hourly], missed-schedule uses [status|trigger].
+	 * : Optional. Secondary data. OTD uses [show|character], debug uses [mon|tue|wed|thu|fri|sat|sun], cron uses [daily|hourly].
 	 * ---
 	 *
 	 * ## EXAMPLES
@@ -96,9 +95,7 @@ class WP_CLI_LWTV_Generate {
 	 *     $ wp lwtv generate missed-schedule status
 	 *     Success: Missed schedule status retrieved.
 	 *
-	 *     # Trigger missed schedule check
-	 *     $ wp lwtv generate missed-schedule trigger
-	 *     Success: Missed schedule check triggered.
+
 	 *
 	 * @param array $args
 	 * @param array $assoc_args
@@ -125,13 +122,12 @@ class WP_CLI_LWTV_Generate {
 	public function run_generator( $type, $second ) {
 		// Determine the appropriate checker:
 		$build_it = match ( $type ) {
-			'tvmaze'          => $this->run_tvmaze(),
-			'otd'             => $this->run_otd( $second ),
-			'lists'           => $this->run_update_lists(),
-			'debug'           => $this->run_debug_checker( $second ),
-			'cron'            => $this->run_cron_jobs( $second ),
-			'missed-schedule' => $this->run_missed_schedule( $second ),
-			default           => 'none',
+			'tvmaze' => $this->run_tvmaze(),
+			'otd'    => $this->run_otd( $second ),
+			'lists'  => $this->run_update_lists(),
+			'debug'  => $this->run_debug_checker( $second ),
+			'cron'   => $this->run_cron_jobs( $second ),
+			default  => 'none',
 		};
 
 		if ( 'none' === $build_it ) {
@@ -331,49 +327,6 @@ class WP_CLI_LWTV_Generate {
 		}
 
 		\WP_CLI::success( 'Updated the actor count -- ' . $count_actors . ' actors.' );
-	}
-
-	/**
-	 * Run missed schedule commands
-	 *
-	 * @param string $action The action to perform (status|trigger)
-	 * @return bool
-	 */
-	public function run_missed_schedule( $action = null ) {
-		$missed_schedule = new Missed_Schedule();
-
-		switch ( $action ) {
-			case 'status':
-				$status = $missed_schedule->get_scheduler_status();
-				\WP_CLI::log( 'Missed Schedule Status:' );
-				\WP_CLI::log( '  Action Scheduler Available: ' . ( $status['action_scheduler_available'] ? 'Yes' : 'No' ) );
-				\WP_CLI::log( '  Current Method: ' . $status['current_method'] );
-
-				if ( $status['action_scheduler_available'] && $status['next_scheduled_check'] ) {
-					\WP_CLI::log( '  Next Scheduled Check: ' . gmdate( 'Y-m-d H:i:s', $status['next_scheduled_check'] ) );
-				} else {
-					\WP_CLI::log( '  Next Scheduled Check: Not scheduled' );
-				}
-
-				\WP_CLI::success( 'Missed schedule status retrieved.' );
-				break;
-
-			case 'trigger':
-				\WP_CLI::log( 'Triggering missed schedule check...' );
-				$result = $missed_schedule->trigger_check();
-				\WP_CLI::log( $result );
-				\WP_CLI::success( 'Missed schedule check triggered.' );
-				break;
-
-			default:
-				\WP_CLI::log( 'Running missed schedule check...' );
-				$result = $missed_schedule->missed_schedule();
-				\WP_CLI::log( $result );
-				\WP_CLI::success( 'Missed schedule check completed.' );
-				break;
-		}
-
-		return true;
 	}
 }
 

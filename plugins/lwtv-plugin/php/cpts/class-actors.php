@@ -245,8 +245,8 @@ class Actors {
 		// Privacy check
 		$this->make_private( $post_id, 'check' );
 
-		// Schedule TMDB ID generation for later processing
-		lwtv_plugin()->schedule_task( 'tmdb', $post_id );
+		// Queue TMDB ID generation for batch processing
+		lwtv_plugin()->queue_tmdb_batch( $post_id );
 
 		// Schedule calculations for later processing
 		lwtv_plugin()->schedule_task( 'calculation', $post_id );
