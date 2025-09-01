@@ -106,11 +106,14 @@ class WP_CLI_LWTV_Scheduler {
 			case 'tmdb':
 				$this->run_tmdb_batch( $action );
 				break;
+			case 'cache':
+				$this->run_cache_batch( $action );
+				break;
 			case 'status':
 				$this->run_overall_status();
 				break;
 			default:
-				\WP_CLI::error( 'Invalid scheduler type. Use: missed, tmdb, or status' );
+				\WP_CLI::error( 'Invalid scheduler type. Use: missed, tmdb, cache, or status' );
 				break;
 		}
 	}
@@ -197,6 +200,64 @@ class WP_CLI_LWTV_Scheduler {
 	}
 
 	/**
+	 * Run cache batch commands
+	 *
+	 * @param string|null $action The action to perform (status|trigger|clear)
+	 * @return void
+	 */
+	private function run_cache_batch( ?string $action ): void {
+		switch ( $action ) {
+			case 'status':
+				$status = lwtv_plugin()->get_cache_batch_status();
+				\WP_CLI::log( 'Cache Batch Status:' );
+				\WP_CLI::log( '  Queued Posts: ' . $status['queued_count'] );
+				\WP_CLI::log( '  Action Scheduler Available: ' . ( $status['action_scheduler_available'] ? 'Yes' : 'No' ) );
+
+				if ( $status['next_scheduled'] ) {
+					\WP_CLI::log( '  Next Scheduled: ' . gmdate( 'Y-m-d H:i:s', $status['next_scheduled'] ) );
+				} else {
+					\WP_CLI::log( '  Next Scheduled: Not scheduled' );
+				}
+
+				if ( $status['last_processed'] ) {
+					\WP_CLI::log( '  Last Processed: ' . gmdate( 'Y-m-d H:i:s', $status['last_processed'] ) );
+					\WP_CLI::log( '  URLs Cleared: ' . $status['urls_cleared'] );
+				}
+
+				\WP_CLI::success( 'Cache batch status retrieved.' );
+				break;
+
+			case 'trigger':
+				\WP_CLI::log( 'Triggering cache batch processing...' );
+				$cache_batch_task = new \LWTV\Schedulers\Cache_Batch_Task();
+				$triggered        = $cache_batch_task->trigger_processing();
+				if ( $triggered ) {
+					\WP_CLI::success( 'Cache batch processing triggered.' );
+				} else {
+					\WP_CLI::error( 'Failed to trigger cache batch processing.' );
+				}
+				break;
+
+			case 'clear':
+				\WP_CLI::log( 'Clearing cache batch queue...' );
+				$cache_batch_task = new \LWTV\Schedulers\Cache_Batch_Task();
+				$cleared          = $cache_batch_task->clear_queue();
+				if ( $cleared ) {
+					\WP_CLI::success( 'Cache batch queue cleared.' );
+				} else {
+					\WP_CLI::error( 'Failed to clear cache batch queue.' );
+				}
+				break;
+
+			default:
+				\WP_CLI::log( 'Cache batch processing is handled automatically via Action Scheduler.' );
+				\WP_CLI::log( 'Use "wp lwtv scheduler cache status" to check current status.' );
+				\WP_CLI::success( 'Cache batch information displayed.' );
+				break;
+		}
+	}
+
+	/**
 	 * Run overall scheduler status
 	 *
 	 * @return void
@@ -206,6 +267,7 @@ class WP_CLI_LWTV_Scheduler {
 		$missed_schedule  = new Missed_Schedule();
 		$missed_status    = $missed_schedule->get_scheduler_status();
 		$tmdb_status      = lwtv_plugin()->get_tmdb_batch_status();
+		$cache_status     = lwtv_plugin()->get_cache_batch_status();
 
 		\WP_CLI::log( 'LezWatch.TV Scheduler Status:' );
 		\WP_CLI::log( '' );
@@ -233,6 +295,19 @@ class WP_CLI_LWTV_Scheduler {
 		}
 		\WP_CLI::log( '  API Usage: ' . $tmdb_status['current_request_count'] . '/' . \LWTV\Schedulers\TMDB_Batch_Task::RATE_LIMIT_REQUESTS );
 		\WP_CLI::log( '  Rate Limit Hits: ' . $tmdb_status['rate_limit_hits'] );
+		\WP_CLI::log( '' );
+
+		\WP_CLI::log( 'Cache Batch Processing:' );
+		\WP_CLI::log( '  Queued Posts: ' . $cache_status['queued_count'] );
+		if ( $cache_status['next_scheduled'] ) {
+			\WP_CLI::log( '  Next Processing: ' . gmdate( 'Y-m-d H:i:s', $cache_status['next_scheduled'] ) );
+		} else {
+			\WP_CLI::log( '  Next Processing: Not scheduled' );
+		}
+		if ( $cache_status['last_processed'] ) {
+			\WP_CLI::log( '  Last Processed: ' . gmdate( 'Y-m-d H:i:s', $cache_status['last_processed'] ) );
+			\WP_CLI::log( '  URLs Cleared: ' . $cache_status['urls_cleared'] );
+		}
 
 		\WP_CLI::success( 'Scheduler status retrieved.' );
 	}

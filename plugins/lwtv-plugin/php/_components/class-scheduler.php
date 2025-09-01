@@ -14,6 +14,7 @@ use LWTV\Schedulers\TMDB_Batch_Task;
 use LWTV\Schedulers\Cache_Task;
 use LWTV\Schedulers\Cache_Queue;
 use LWTV\Schedulers\Calculation_Task;
+use LWTV\Schedulers\Cache_Batch_Task;
 
 /**
  * Class Scheduler
@@ -30,6 +31,7 @@ class Scheduler implements Component, Templater {
 		new Cache_Task();
 		new Cache_Queue();
 		new Calculation_Task();
+		new Cache_Batch_Task();
 
 		// Register the main cron hook
 		add_action( 'lwtv_process_deferred_tasks', array( $this, 'process_deferred_tasks' ) );
@@ -50,6 +52,8 @@ class Scheduler implements Component, Templater {
 			'get_scheduler_status'          => array( $this, 'get_scheduler_status' ),
 			'queue_tmdb_batch'              => array( $this, 'queue_tmdb_batch' ),
 			'get_tmdb_batch_status'         => array( $this, 'get_tmdb_batch_status' ),
+			'queue_cache_batch'             => array( $this, 'queue_cache_batch' ),
+			'get_cache_batch_status'        => array( $this, 'get_cache_batch_status' ),
 		);
 	}
 
@@ -83,12 +87,21 @@ class Scheduler implements Component, Templater {
 	}
 
 	/**
-	 * Queue a post for immediate cache invalidation on shutdown
+	 * Queue a post for cache invalidation
 	 *
 	 * @param int $post_id The post ID to queue
 	 * @return void
 	 */
 	public function cache_queue( int $post_id ): void {
+		// Use Action Scheduler-based cache batch processing if available
+		if ( $this->is_action_scheduler_available() ) {
+			$success = $this->queue_cache_batch( $post_id );
+			if ( $success ) {
+				return; // Successfully queued with Action Scheduler
+			}
+		}
+
+		// Fallback to shutdown-based processing
 		Cache_Queue::queue( $post_id );
 	}
 
@@ -145,5 +158,26 @@ class Scheduler implements Component, Templater {
 	public function get_tmdb_batch_status(): array {
 		$batch_task = new TMDB_Batch_Task();
 		return $batch_task->get_batch_status();
+	}
+
+	/**
+	 * Queue a post for cache batch processing
+	 *
+	 * @param int $post_id The post ID to queue
+	 * @return bool True if successfully queued, false otherwise
+	 */
+	public function queue_cache_batch( int $post_id ): bool {
+		$cache_batch_task = new Cache_Batch_Task();
+		return $cache_batch_task->queue_post( $post_id );
+	}
+
+	/**
+	 * Get cache batch processing status
+	 *
+	 * @return array Status information
+	 */
+	public function get_cache_batch_status(): array {
+		$cache_batch_task = new Cache_Batch_Task();
+		return $cache_batch_task->get_batch_status();
 	}
 }

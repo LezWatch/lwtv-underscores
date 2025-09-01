@@ -63,10 +63,10 @@ class Health_Checks {
 		}
 
 		// If the API key is not defined, don't run.
-		if ( ! defined( 'HEALTHCHECKS_API_KEY' ) ) {
+		if ( ! defined( 'HEALTHCHECKS_API_KEY_PLUGINS_READ_WRITE' ) ) {
 			return;
 		} else {
-			$this->api_key = HEALTHCHECKS_API_KEY;
+			$this->api_key = HEALTHCHECKS_API_KEY_PLUGINS_READ_WRITE;
 		}
 
 		// Set the API URL.

@@ -198,22 +198,17 @@ SQL;
 	/**
 	 * Ping health check if available
 	 *
+	 * Uses HEALTHCHECKS_API_KEY_CORE_PING for core LWTV services.
+	 *
 	 * @return void
 	 */
 	private function ping_health_check(): void {
 		// Check if health checks are available and configured
-		if ( ! defined( 'HEALTHCHECKS_API_KEY' ) ) {
+		if ( ! defined( 'HEALTHCHECKS_API_KEY_CORE_PING' ) ) {
 			return;
 		}
 
-		// Generate health check name similar to your existing pattern
-		$prefix = defined( 'HEALTHCHECKS_PREFIX' ) ? HEALTHCHECKS_PREFIX : 'healthchecks';
-		$domain = wp_parse_url( home_url() );
-		if ( isset( $domain['host'] ) ) {
-			$prefix = str_replace( '.', '-', $domain['host'] );
-		}
-
-		$check_name = $prefix . '-missed-schedule-check';
+		$check_name = 'missed-schedule-check';
 		$check_url  = 'https://health.ipstenu.com/api/v3/checks/' . $check_name . '/ping/';
 
 		// Ping the health check
@@ -221,7 +216,7 @@ SQL;
 			$check_url,
 			array(
 				'headers' => array(
-					'X-Api-Key'    => HEALTHCHECKS_API_KEY,
+					'X-Api-Key'    => HEALTHCHECKS_API_KEY_CORE_PING,
 					'Content-Type' => 'application/json',
 				),
 			)

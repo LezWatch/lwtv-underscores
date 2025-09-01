@@ -52,6 +52,8 @@ use LWTV\_Helpers\Utils;
  * SCHEDULER
  * @method bool   schedule_task( string $task_type, int $post_id, int $delay = 30 ) \_Components\Scheduler
  * @method void   cache_queue( int $post_id ) \_Components\Scheduler
+ * @method bool   queue_cache_batch( int $post_id ) \_Components\Scheduler
+ * @method array  get_cache_batch_status() \_Components\Scheduler
  * @method bool   is_action_scheduler_available() \_Components\Scheduler
  * @method array  get_scheduler_status() \_Components\Scheduler
  *
