@@ -40,13 +40,12 @@ class Features implements Component {
 		add_action( 'init', array( $this, 'instantiate_actions_and_filters' ) );
 
 		// Load them:
-		new Avatars();
+		// new Avatars();
 		new BlockTracking();
 		new Dashboard_Posts_In_Progress();
 		new Dashboard();
 		new Embeds();
 		new Environment();
-		new Health_Checks();
 		new Plugin_Age();
 		new Private_Posts();
 		new Roles();

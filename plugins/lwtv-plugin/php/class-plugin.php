@@ -35,6 +35,9 @@ use LWTV\_Helpers\Utils;
  * @method string display_scores( $show_id )        \_Components\Grading
  * @method array  get_all_scores( $show_id )        \_Components\Grading
  *
+ * HEALTH
+ * TBD
+ *
  * OTD
  * @method string get_wp_version()         \_Components\Of_The_Day
  * @method string get_rss_otd_last_build() \_Components\Of_The_Day
@@ -141,6 +144,7 @@ class Plugin {
 			_Components\Debugger::class,
 			_Components\Features::class,
 			_Components\Grading::class,
+			_Components\Health::class,
 			_Components\Of_The_Day::class,
 			_Components\Queeries::class,
 			_Components\Rest_API::class,

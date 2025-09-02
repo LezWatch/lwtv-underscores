@@ -43,6 +43,26 @@ class Cache_Batch_Task {
 	const STATUS_TRANSIENT = 'lwtv_cache_batch_status';
 
 	/**
+	 * Priority levels based on data relationships
+	 */
+	const PRIORITY_LEVELS = array(
+		'CRITICAL' => 1, // Homepage, stats pages, archive pages
+		'HIGH'     => 2, // Shows (affects character counts, actor stats)
+		'MEDIUM'   => 3, // Characters (affects show counts, actor stats)
+		'LOW'      => 4, // Actors (affects character counts, show stats)
+		'CASCADE'  => 5, // Shadow taxonomy updates, stat recalculations
+	);
+
+	/**
+	 * Post type priority mapping
+	 */
+	const POST_TYPE_PRIORITIES = array(
+		'post_type_shows'      => 'HIGH',
+		'post_type_characters' => 'MEDIUM',
+		'post_type_actors'     => 'LOW',
+	);
+
+	/**
 	 * Initialize the cache batch task
 	 */
 	public function __construct() {
@@ -65,12 +85,19 @@ class Cache_Batch_Task {
 		// Get existing queue
 		$queue = $this->get_queue();
 
-		// Add post to queue if not already present
-		if ( ! in_array( $post_id, $queue, true ) ) {
-			$queue[] = $post_id;
+		// Add post to queue with priority if not already present
+		if ( ! $this->is_post_in_queue( $post_id, $queue ) ) {
+			$priority   = $this->get_post_priority( $post_id );
+			$queue_item = array(
+				'post_id'   => $post_id,
+				'priority'  => $priority,
+				'timestamp' => time(),
+			);
+
+			$queue[] = $queue_item;
 			$this->set_queue( $queue );
 
-			lwtv_plugin()->error_log( 'cache-batch', "Queued cache invalidation for post ID: {$post_id}" );
+			lwtv_plugin()->error_log( 'cache-batch', "Queued cache invalidation for post ID: {$post_id} with priority: {$priority}" );
 		}
 
 		// Schedule processing if not already scheduled
@@ -110,11 +137,19 @@ class Cache_Batch_Task {
 
 		lwtv_plugin()->error_log( 'cache-batch', 'Processing cache batch - ' . count( $queue ) . ' posts' );
 
-		// Collect all URLs for queued posts
+		// Sort queue by priority (CRITICAL first, then HIGH, MEDIUM, LOW, CASCADE)
+		$sorted_queue = $this->sort_queue_by_priority( $queue );
+
+		// Collect all URLs for queued posts in priority order
 		$all_urls        = array();
 		$processed_posts = array();
 
-		foreach ( $queue as $post_id ) {
+		foreach ( $sorted_queue as $item ) {
+			$post_id  = $item['post_id'];
+			$priority = $item['priority'];
+
+			lwtv_plugin()->error_log( 'cache-batch', "Processing post ID: {$post_id} with priority: {$priority}" );
+
 			$urls = ( new Cache() )->collect_cache_urls_for_actors_or_shows( $post_id );
 			if ( ! empty( $urls ) ) {
 				$all_urls = array_merge( $all_urls, $urls );
@@ -142,7 +177,12 @@ class Cache_Batch_Task {
 		}
 
 		// Clear processed posts from queue
-		$remaining_queue = array_diff( $queue, $processed_posts );
+		$remaining_queue = array_filter(
+			$queue,
+			function ( $item ) use ( $processed_posts ) {
+				return ! in_array( $item['post_id'], $processed_posts, true );
+			}
+		);
 		$this->set_queue( $remaining_queue );
 
 		// Update status
@@ -218,6 +258,66 @@ class Cache_Batch_Task {
 	}
 
 	/**
+	 * Check if a post is already in the queue
+	 *
+	 * @param int $post_id The post ID to check
+	 * @param array $queue The current queue array
+	 * @return bool True if the post is in the queue, false otherwise
+	 */
+	private function is_post_in_queue( int $post_id, array $queue ): bool {
+		foreach ( $queue as $item ) {
+			if ( $item['post_id'] === $post_id ) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Get the priority of a post for queuing
+	 *
+	 * @param int $post_id The post ID to get priority for
+	 * @return string The priority level (CRITICAL, HIGH, MEDIUM, LOW, CASCADE)
+	 */
+	private function get_post_priority( int $post_id ): string {
+		$post_type = get_post_type( $post_id );
+
+		// Use post type priority mapping
+		if ( isset( self::POST_TYPE_PRIORITIES[ $post_type ] ) ) {
+			return self::POST_TYPE_PRIORITIES[ $post_type ];
+		}
+
+		// Default to MEDIUM priority for unknown post types
+		return 'MEDIUM';
+	}
+
+	/**
+	 * Sort queue by priority
+	 *
+	 * @param array $queue The queue to sort
+	 * @return array The sorted queue
+	 */
+	private function sort_queue_by_priority( array $queue ): array {
+		usort(
+			$queue,
+			function ( $a, $b ) {
+				$priority_a = self::PRIORITY_LEVELS[ $a['priority'] ] ?? 999;
+				$priority_b = self::PRIORITY_LEVELS[ $b['priority'] ] ?? 999;
+
+				// Sort by priority (lower number = higher priority)
+				if ( $priority_a !== $priority_b ) {
+					return $priority_a - $priority_b;
+				}
+
+				// If same priority, sort by timestamp (older first)
+				return $a['timestamp'] - $b['timestamp'];
+			}
+		);
+
+		return $queue;
+	}
+
+	/**
 	 * Get cache batch status
 	 *
 	 * @return array Status information
@@ -227,9 +327,28 @@ class Cache_Batch_Task {
 		$status         = lwtv_plugin()->get_transient( self::STATUS_TRANSIENT );
 		$next_scheduled = as_next_scheduled_action( self::AS_HOOK );
 
+		// Extract post IDs from queue items for backward compatibility
+		$queued_post_ids = array_map(
+			function ( $item ) {
+				return $item['post_id'];
+			},
+			$queue
+		);
+
+		// Group by priority for status display
+		$priority_groups = array();
+		foreach ( $queue as $item ) {
+			$priority = $item['priority'];
+			if ( ! isset( $priority_groups[ $priority ] ) ) {
+				$priority_groups[ $priority ] = array();
+			}
+			$priority_groups[ $priority ][] = $item['post_id'];
+		}
+
 		return array(
-			'queued_posts'               => $queue,
+			'queued_posts'               => $queued_post_ids,
 			'queued_count'               => count( $queue ),
+			'priority_groups'            => $priority_groups,
 			'next_scheduled'             => $next_scheduled,
 			'action_scheduler_available' => lwtv_plugin()->is_action_scheduler_available(),
 			'last_processed'             => isset( $status['last_processed'] ) ? $status['last_processed'] : null,

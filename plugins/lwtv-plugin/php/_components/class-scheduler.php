@@ -15,6 +15,7 @@ use LWTV\Schedulers\Cache_Task;
 use LWTV\Schedulers\Cache_Queue;
 use LWTV\Schedulers\Calculation_Task;
 use LWTV\Schedulers\Cache_Batch_Task;
+use LWTV\Schedulers\Transient_Cleanup_Task;
 
 /**
  * Class Scheduler
@@ -32,6 +33,7 @@ class Scheduler implements Component, Templater {
 		new Cache_Queue();
 		new Calculation_Task();
 		new Cache_Batch_Task();
+		new Transient_Cleanup_Task();
 
 		// Register the main cron hook
 		add_action( 'lwtv_process_deferred_tasks', array( $this, 'process_deferred_tasks' ) );
@@ -54,6 +56,8 @@ class Scheduler implements Component, Templater {
 			'get_tmdb_batch_status'         => array( $this, 'get_tmdb_batch_status' ),
 			'queue_cache_batch'             => array( $this, 'queue_cache_batch' ),
 			'get_cache_batch_status'        => array( $this, 'get_cache_batch_status' ),
+			'queue_transient_cleanup'       => array( $this, 'queue_transient_cleanup' ),
+			'get_transient_cleanup_status'  => array( $this, 'get_transient_cleanup_status' ),
 		);
 	}
 
@@ -179,5 +183,25 @@ class Scheduler implements Component, Templater {
 	public function get_cache_batch_status(): array {
 		$cache_batch_task = new Cache_Batch_Task();
 		return $cache_batch_task->get_batch_status();
+	}
+
+	/**
+	 * Queue transient cleanup processing
+	 *
+	 * @return bool True if successfully queued, false otherwise
+	 */
+	public function queue_transient_cleanup(): bool {
+		$cleanup_task = new Transient_Cleanup_Task();
+		return $cleanup_task->trigger_cleanup();
+	}
+
+	/**
+	 * Get transient cleanup status
+	 *
+	 * @return array Status information
+	 */
+	public function get_transient_cleanup_status(): array {
+		$cleanup_task = new Transient_Cleanup_Task();
+		return $cleanup_task->get_cleanup_status();
 	}
 }

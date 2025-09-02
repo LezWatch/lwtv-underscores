@@ -29,20 +29,30 @@
 - **Monitored**: Built-in logging and status tracking
 - **Scalable**: Can handle large volumes of cache operations
 
-#### 2. **Implement Priority-Based Queue System**
+#### 2. **Implement Dependency-Aware Priority System**
 **Current**: All cache operations treated equally
-**Priority System**: Different priority levels for different types of operations
+**Dependency System**: Priority based on data relationships and cascade effects
 
 **Priority Levels**:
-- **High Priority**: Homepage, critical landing pages
-- **Medium Priority**: Individual post pages, archive pages
-- **Low Priority**: Related content, cross-references
+- **CRITICAL Priority**: Homepage, stats pages, archive pages (affects all users)
+- **HIGH Priority**: Shows (affects character counts, actor stats, multiple related pages)
+- **MEDIUM Priority**: Characters (affects show counts, actor stats, relationship pages)
+- **LOW Priority**: Actors (affects character counts, show stats, individual pages)
+- **CASCADE Priority**: Shadow taxonomy updates, stat recalculations (background sync)
 
 **Implementation**:
-- Queue items with priority metadata
-- Process high-priority items first
-- Batch similar priority items together
+- Queue items with dependency metadata
+- Process in dependency order (Shows → Characters → Actors)
+- Group related operations by data relationships
 - Allow priority escalation for urgent operations
+- Track cascade effects to prevent circular dependencies
+
+**Dependency Processing Order**:
+1. **Primary Entity**: Process the main entity being updated
+2. **Direct Relations**: Process directly related entities (characters in show, actors for character)
+3. **Indirect Relations**: Process cascade effects (actor stats, show counts)
+4. **Shadow Taxonomies**: Sync shadow taxonomy relationships
+5. **Statistics**: Update counts, stats pages, archive pages
 
 #### 3. **Add Batch Cache Operations**
 **Current**: Processes all URLs in one operation
@@ -82,11 +92,25 @@
 3. Maintain backward compatibility during transition
 4. Add basic monitoring and logging
 
-#### **Phase 2: Priority System**
-1. Implement priority levels (high/medium/low)
-2. Add priority metadata to queue items
-3. Create priority-based processing logic
-4. Add priority escalation mechanisms
+#### **Phase 2: Dependency-Aware Priority System**
+1. Implement priority levels based on data relationships (CRITICAL, HIGH, MEDIUM, LOW, CASCADE)
+2. Add priority metadata to queue items with post type mapping
+3. Create priority-based processing logic with dependency ordering
+4. Add priority escalation mechanisms for urgent operations
+5. Implement cascade effect tracking to prevent circular dependencies
+
+**Priority Implementation Details**:
+- **CRITICAL**: Homepage, stats pages, archive pages (affects all users)
+- **HIGH**: Shows (affects character counts, actor stats, multiple related pages)
+- **MEDIUM**: Characters (affects show counts, actor stats, relationship pages)
+- **LOW**: Actors (affects character counts, show stats, individual pages)
+- **CASCADE**: Shadow taxonomy updates, stat recalculations (background sync)
+
+**Processing Order**:
+1. Sort queue by priority (CRITICAL → HIGH → MEDIUM → LOW → CASCADE)
+2. Within same priority, process by timestamp (older first)
+3. Process related entities in dependency order (Shows → Characters → Actors)
+4. Handle cascade effects after primary entity processing
 
 #### **Phase 3: Batch Optimization**
 1. Implement URL batching by patterns
