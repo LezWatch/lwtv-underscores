@@ -39,12 +39,19 @@ class Scheduler implements Component, Templater {
 	 */
 	private function initialize_task_handlers(): void {
 		try {
+			// Always initialize these (they have fallbacks)
 			new TMDB_Task();
-			new TMDB_Batch_Task();
 			new Cache_Task();
 			new Cache_Queue();
 			new Calculation_Task();
-			new Cache_Batch_Task();
+
+			// Only initialize Action Scheduler-dependent tasks if AS is available
+			if ( $this->is_action_scheduler_available() ) {
+				new TMDB_Batch_Task();
+				new Cache_Batch_Task();
+			} else {
+				lwtv_plugin()->error_log( 'scheduler', 'Action Scheduler not available, skipping AS-dependent task handlers' );
+			}
 		} catch ( \Exception $e ) {
 			lwtv_plugin()->error_log( 'scheduler', 'Error initializing task handlers: ' . $e->getMessage() );
 		}
@@ -131,12 +138,13 @@ class Scheduler implements Component, Templater {
 	}
 
 	/**
-	 * Check if Action Scheduler is active and available
+	 * Check if Action Scheduler is available
 	 *
 	 * @return bool Whether Action Scheduler is available
 	 */
 	public function is_action_scheduler_available(): bool {
-		return is_plugin_active( 'action-scheduler/action-scheduler.php' ) && function_exists( 'as_schedule_single_action' );
+		// Simple check: if the function exists, Action Scheduler is available
+		return function_exists( 'as_schedule_single_action' );
 	}
 
 	/**
