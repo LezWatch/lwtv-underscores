@@ -33,88 +33,18 @@ class Scheduler implements Component, Templater {
 	}
 
 	/**
-	 * Check if we're in a critical WordPress operation that should avoid initialization
-	 *
-	 * @return bool True if we should skip initialization
-	 */
-	private function is_critical_operation(): bool {
-		// Skip during plugin activation/deactivation
-		if ( defined( 'WP_PLUGIN_DIR' ) && (
-			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			( isset( $_GET['action'] ) && in_array( $_GET['action'], array( 'activate', 'deactivate' ), true ) ) ||
-			// phpcs:ignore WordPress.Security.NonceVerification.Missing
-			( isset( $_POST['action'] ) && in_array( $_POST['action'], array( 'activate-plugin', 'deactivate-plugin' ), true ) )
-		) ) {
-			lwtv_plugin()->error_log( 'scheduler', 'Skipping scheduler initialization during plugin activation/deactivation' );
-			return true;
-		}
-
-		// Skip during any admin action that might be memory-intensive
-		if ( is_admin() && (
-			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			( isset( $_GET['action'] ) && in_array( $_GET['action'], array( 'activate', 'deactivate', 'install', 'update' ), true ) ) ||
-			// phpcs:ignore WordPress.Security.NonceVerification.Missing
-			( isset( $_POST['action'] ) && in_array( $_POST['action'], array( 'activate-plugin', 'deactivate-plugin', 'install-plugin', 'update-plugin' ), true ) )
-		) ) {
-			// phpcs:ignore
-			lwtv_plugin()->error_log( 'scheduler', 'Skipping scheduler initialization during admin action: ' . ( $_GET['action'] ?? $_POST['action'] ?? 'unknown' ) );
-			return true;
-		}
-
-		// Skip on any admin page that might be memory-intensive (plugins, updates, etc.)
-		// phpcs:ignore WordPress.Security.NonceVerification
-		if ( is_admin() && ! isset( $_GET['action'] ) && ! isset( $_POST['action'] ) ) {
-			$current_screen = get_current_screen();
-			if ( $current_screen && in_array( $current_screen->id, array( 'plugins', 'update-core', 'themes', 'upload' ), true ) ) {
-				lwtv_plugin()->error_log( 'scheduler', 'Skipping scheduler initialization on memory-intensive admin page: ' . $current_screen->id );
-				return true;
-			}
-		}
-
-		// Skip during WordPress installation/upgrade
-		if ( defined( 'WP_INSTALLING' ) && WP_INSTALLING ) {
-			return true;
-		}
-
-		// Skip during database upgrades
-		if ( defined( 'WP_DB_UPGRADE' ) && WP_DB_UPGRADE ) {
-			return true;
-		}
-
-		// Skip if memory limit is critically low
-		$memory_limit     = wp_convert_hr_to_bytes( ini_get( 'memory_limit' ) );
-		$current_memory   = memory_get_usage( true );
-		$memory_threshold = $memory_limit * 0.3; // 30% of memory limit
-
-		if ( $current_memory > $memory_threshold ) {
-			lwtv_plugin()->error_log( 'scheduler', 'Skipping scheduler initialization due to high memory usage: ' . size_format( $current_memory ) . ' / ' . size_format( $memory_limit ) );
-			return true;
-		}
-
-		// Skip if we're already at 90%+ memory usage (emergency stop)
-		if ( $current_memory > ( $memory_limit * 0.9 ) ) {
-			lwtv_plugin()->error_log( 'scheduler', 'EMERGENCY: Skipping scheduler initialization due to critical memory usage: ' . size_format( $current_memory ) . ' / ' . size_format( $memory_limit ) );
-			return true;
-		}
-		return false;
-	}
-
-	/**
 	 * Initialize task handlers with lazy loading
 	 *
 	 * @return void
 	 */
 	private function initialize_task_handlers(): void {
 		try {
-			// Initialize task handlers with error handling
 			new TMDB_Task();
 			new TMDB_Batch_Task();
 			new Cache_Task();
 			new Cache_Queue();
 			new Calculation_Task();
 			new Cache_Batch_Task();
-
-			lwtv_plugin()->error_log( 'scheduler', 'Task handlers initialized successfully' );
 		} catch ( \Exception $e ) {
 			lwtv_plugin()->error_log( 'scheduler', 'Error initializing task handlers: ' . $e->getMessage() );
 		}
@@ -153,7 +83,7 @@ class Scheduler implements Component, Templater {
 		$hook_name = $task_name . '_' . $post_id;
 
 		// If Action Scheduler is active, use it with generic hook name
-		if ( function_exists( 'as_schedule_single_action' ) ) {
+		if ( $this->is_action_scheduler_available() ) {
 			$scheduled = as_schedule_single_action( time() + $delay, $task_name, array( $post_id ) );
 			lwtv_plugin()->error_log( 'scheduler', "Scheduled {$task_type} task via Action Scheduler for post ID: {$post_id} with {$delay}s delay" );
 		} else {
@@ -201,12 +131,12 @@ class Scheduler implements Component, Templater {
 	}
 
 	/**
-	 * Check if Action Scheduler is available and active
+	 * Check if Action Scheduler is active and available
 	 *
 	 * @return bool Whether Action Scheduler is available
 	 */
 	public function is_action_scheduler_available(): bool {
-		return function_exists( 'as_schedule_single_action' );
+		return is_plugin_active( 'action-scheduler/action-scheduler.php' ) && function_exists( 'as_schedule_single_action' );
 	}
 
 	/**
