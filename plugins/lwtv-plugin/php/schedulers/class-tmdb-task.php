@@ -20,7 +20,6 @@ class TMDB_Task {
 	 * Constructor
 	 */
 	public function __construct() {
-		// Register hooks for both WordPress cron OR Action Scheduler
 		add_action( 'lwtv_tmdb_task', array( $this, 'process_tmdb_task' ) );
 	}
 

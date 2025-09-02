@@ -11,6 +11,23 @@ The Action Scheduler implementation replaces less reliable WordPress cron-based 
 - **Better Monitoring**: Complete visibility into task execution and status
 - **Scalability**: Can handle high volumes of background operations
 - **Performance**: Non-blocking operations that don't slow down page loads
+- **Memory Protection**: Built-in failsafes to prevent memory exhaustion during critical operations
+
+## Memory Protection & Failsafes
+
+### Critical Operation Detection
+The Action Scheduler implementation includes comprehensive failsafes to prevent memory exhaustion during critical WordPress operations:
+
+- **Plugin Activation/Deactivation**: Skips initialization during plugin management
+- **WordPress Installation/Upgrade**: Avoids processing during core updates
+- **Database Upgrades**: Prevents interference with schema changes
+- **Memory Threshold Monitoring**: Stops processing when memory usage exceeds 80-90% of limit
+
+### Implementation Details
+- **Lazy Loading**: Task handlers are only initialized when Action Scheduler is available
+- **Memory Checks**: Continuous monitoring during batch processing
+- **Error Handling**: Comprehensive try-catch blocks with detailed logging
+- **Graceful Degradation**: Falls back to WordPress cron when Action Scheduler is unavailable
 
 ## Migration Status
 
@@ -43,6 +60,7 @@ The Action Scheduler implementation replaces less reliable WordPress cron-based 
   - **NEW**: Implemented dependency-aware priority system
   - **NEW**: Added priority-based processing (CRITICAL → HIGH → MEDIUM → LOW → CASCADE)
   - **NEW**: Post type priority mapping (Shows=HIGH, Characters=MEDIUM, Actors=LOW)
+  - **NEW**: Advanced batch operations including URL pattern batching, time-based windows, and performance optimization
 
 ### 4. WP-CLI Command Reorganization
 - **File**: `php/wp-cli/cli-scheduler.php`
@@ -54,30 +72,25 @@ The Action Scheduler implementation replaces less reliable WordPress cron-based 
   - Improved command structure and usability
 
 ### 5. Transient Management Enhancement
-- **Status**: ✅ **COMPLETE**
+- **Status**: ✅ **COMPLETE** (Simplified)
 - **Changes**:
-  - Added Action Scheduler-based transient cleanup (`Transient_Cleanup_Task`)
-  - Implemented transient health monitoring (`Transient_Health_Monitor`)
-  - Created batch transient operations with configurable batch sizes
-  - Added WP-CLI integration for transient management
-  - Integrated with health monitoring system
-  - Added daily scheduled cleanup to prevent accumulation
+  - ~~Added Action Scheduler-based transient cleanup (`Transient_Cleanup_Task`)~~ **REMOVED**
+  - ~~Implemented transient health monitoring (`Transient_Health_Monitor`)~~ **REMOVED**
+  - ~~Created batch transient operations with configurable batch sizes~~ **REMOVED**
+  - ~~Added WP-CLI integration for transient management~~ **REMOVED**
+  - ~~Integrated with health monitoring system~~ **REMOVED**
+  - ~~Added daily scheduled cleanup to prevent accumulation~~ **REMOVED**
+  - **NEW**: Simplified approach - WordPress handles transient cleanup automatically
+  - **NEW**: Removed unnecessary Action Scheduler complexity for transient management
 
-#### 6. Dependency-Aware Priority System
+### 6. Dependency-Aware Priority System
 - **Status**: ✅ **COMPLETE**
 - **Implementation**:
   - Priority levels: CRITICAL, HIGH, MEDIUM, LOW, CASCADE
   - Post type mapping: Shows=HIGH, Characters=MEDIUM, Actors=LOW
   - Dependency-aware processing order
   - Priority-based queue sorting and processing
-
-### 7. Advanced Batch Operations
-- **Status**: 📋 **PENDING**
-- **Planned Changes**:
-  - URL pattern-based batching
-  - Time-based batching windows
-  - Plugin-specific batch operations
-  - Performance optimization
+  - Advanced batch operations with URL pattern batching and time-based windows
 
 ## Architecture
 
@@ -187,12 +200,7 @@ wp lwtv scheduler cache trigger     # Trigger processing
 wp lwtv scheduler cache clear       # Clear queue
 ```
 
-#### Transient Cleanup Operations
-```bash
-wp lwtv scheduler transient status    # Check cleanup status
-wp lwtv scheduler transient trigger   # Trigger cleanup
-wp lwtv scheduler transient cleanup  # Run immediate cleanup
-```
+
 
 ### Programmatic Usage
 
@@ -210,8 +218,6 @@ $success = lwtv_plugin()->queue_cache_batch( $post_id );
 ```php
 $tmdb_status = lwtv_plugin()->get_tmdb_batch_status();
 $cache_status = lwtv_plugin()->get_cache_batch_status();
-$transient_status = lwtv_plugin()->get_transient_cleanup_status();
-$health_status = lwtv_plugin()->get_transient_health_status();
 ```
 
 #### Check Priority Groups
@@ -221,10 +227,7 @@ $priority_groups = $cache_status['priority_groups'];
 // Returns: ['HIGH' => [123, 456], 'MEDIUM' => [789], 'LOW' => [101, 102]]
 ```
 
-#### Trigger Transient Cleanup
-```php
-$success = lwtv_plugin()->queue_transient_cleanup();
-```
+
 
 ## Monitoring
 
@@ -245,6 +248,11 @@ $success = lwtv_plugin()->queue_transient_cleanup();
 
 ### Common Issues
 
+#### Memory Exhaustion During Plugin Activation
+- **Symptom**: `PHP Fatal error: Allowed memory size exhausted` when adding plugins
+- **Solution**: The failsafes should prevent this automatically. Check error logs for memory usage warnings
+- **Prevention**: Failsafes skip initialization during plugin activation/deactivation
+
 #### Action Scheduler Not Available
 - **Symptom**: Tasks fall back to WordPress cron
 - **Solution**: Ensure WooCommerce or Action Scheduler plugin is active
@@ -260,6 +268,11 @@ $success = lwtv_plugin()->queue_transient_cleanup();
 #### Priority Processing Issues
 - **Symptom**: Low priority items never get processed
 - **Solution**: Check queue size and adjust batch processing frequency
+
+#### High Memory Usage
+- **Symptom**: Tasks stop processing due to memory threshold
+- **Solution**: Check error logs for memory usage warnings, consider increasing PHP memory limit
+- **Prevention**: Tasks automatically stop when memory usage exceeds 90% of limit
 
 ### Debug Commands
 ```bash

@@ -109,14 +109,11 @@ class WP_CLI_LWTV_Scheduler {
 			case 'cache':
 				$this->run_cache_batch( $action );
 				break;
-			case 'transient':
-				$this->run_transient_cleanup( $action );
-				break;
 			case 'status':
 				$this->run_overall_status();
 				break;
 			default:
-				\WP_CLI::error( 'Invalid scheduler type. Use: missed, tmdb, cache, transient, or status' );
+				\WP_CLI::error( 'Invalid scheduler type. Use: missed, tmdb, cache, or status' );
 				break;
 		}
 	}
@@ -202,82 +199,7 @@ class WP_CLI_LWTV_Scheduler {
 		}
 	}
 
-	/**
-	 * Run transient cleanup commands
-	 *
-	 * @param string|null $action The action to perform (status|trigger|cleanup|pattern)
-	 * @return void
-	 */
-	private function run_transient_cleanup( ?string $action ): void {
-		switch ( $action ) {
-			case 'status':
-				$status = lwtv_plugin()->get_transient_cleanup_status();
-				\WP_CLI::log( 'Transient Cleanup Status:' );
-				\WP_CLI::log( '  Status: ' . $status['status'] );
-				\WP_CLI::log( '  Action Scheduler Available: ' . ( $status['action_scheduler_available'] ? 'Yes' : 'No' ) );
 
-				if ( $status['next_scheduled'] ) {
-					\WP_CLI::log( '  Next Scheduled: ' . gmdate( 'Y-m-d H:i:s', $status['next_scheduled'] ) );
-				} else {
-					\WP_CLI::log( '  Next Scheduled: Not scheduled' );
-				}
-
-				if ( $status['daily_scheduled'] ) {
-					\WP_CLI::log( '  Daily Schedule: ' . gmdate( 'Y-m-d H:i:s', $status['daily_scheduled'] ) );
-				} else {
-					\WP_CLI::log( '  Daily Schedule: Not scheduled' );
-				}
-
-				if ( $status['last_triggered'] ) {
-					\WP_CLI::log( '  Last Triggered: ' . gmdate( 'Y-m-d H:i:s', $status['last_triggered'] ) );
-				}
-
-				if ( $status['completed_at'] ) {
-					\WP_CLI::log( '  Last Completed: ' . gmdate( 'Y-m-d H:i:s', $status['completed_at'] ) );
-					\WP_CLI::log( '  Total Cleaned: ' . $status['cleaned_count'] );
-					\WP_CLI::log( '  Batches Processed: ' . $status['batches_processed'] );
-				}
-
-				// Get current expired count
-				$cleanup_task  = new \LWTV\Schedulers\Transient_Cleanup_Task();
-				$expired_count = $cleanup_task->get_expired_count();
-				\WP_CLI::log( '  Current Expired: ' . $expired_count );
-
-				\WP_CLI::success( 'Transient cleanup status retrieved.' );
-				break;
-
-			case 'trigger':
-				\WP_CLI::log( 'Triggering transient cleanup...' );
-				$triggered = lwtv_plugin()->queue_transient_cleanup();
-				if ( $triggered ) {
-					\WP_CLI::success( 'Transient cleanup triggered.' );
-				} else {
-					\WP_CLI::error( 'Failed to trigger transient cleanup.' );
-				}
-				break;
-
-			case 'cleanup':
-				\WP_CLI::log( 'Running immediate transient cleanup...' );
-				$cleanup_task = new \LWTV\Schedulers\Transient_Cleanup_Task();
-				$cleanup_task->process_cleanup();
-				\WP_CLI::success( 'Transient cleanup completed.' );
-				break;
-
-			case 'pattern':
-				\WP_CLI::log( 'Please specify a pattern to clean up.' );
-				\WP_CLI::log( 'Example: wp lwtv scheduler transient pattern wpseo' );
-				\WP_CLI::success( 'Pattern cleanup information displayed.' );
-				break;
-
-			default:
-				\WP_CLI::log( 'Transient cleanup is handled automatically via Action Scheduler.' );
-				\WP_CLI::log( 'Use "wp lwtv scheduler transient status" to check current status.' );
-				\WP_CLI::log( 'Use "wp lwtv scheduler transient trigger" to trigger cleanup.' );
-				\WP_CLI::log( 'Use "wp lwtv scheduler transient cleanup" to run immediate cleanup.' );
-				\WP_CLI::success( 'Transient cleanup information displayed.' );
-				break;
-		}
-	}
 
 	/**
 	 * Run cache batch commands

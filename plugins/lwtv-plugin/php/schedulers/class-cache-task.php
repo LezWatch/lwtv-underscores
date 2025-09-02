@@ -20,7 +20,6 @@ class Cache_Task {
 	 * Constructor
 	 */
 	public function __construct() {
-		// Register hooks for both WordPress OR and Action Scheduler
 		add_action( 'lwtv_cache_task', array( $this, 'process_cache_task' ) );
 	}
 

@@ -66,6 +66,12 @@ class Cache_Batch_Task {
 	 * Initialize the cache batch task
 	 */
 	public function __construct() {
+		// Only initialize if Action Scheduler is available
+		if ( ! lwtv_plugin()->is_action_scheduler_available() ) {
+			lwtv_plugin()->error_log( 'scheduler', 'Action Scheduler not available, skipping batch task handler initialization' );
+			return;
+		}
+
 		// Register Action Scheduler hook
 		add_action( self::AS_HOOK, array( $this, 'process_cache_batch' ) );
 	}
@@ -77,11 +83,6 @@ class Cache_Batch_Task {
 	 * @return bool True if successfully queued, false otherwise
 	 */
 	public function queue_post( int $post_id ): bool {
-		if ( ! lwtv_plugin()->is_action_scheduler_available() ) {
-			lwtv_plugin()->error_log( 'cache-batch', "Action Scheduler not available, falling back to shutdown processing for post ID: {$post_id}" );
-			return false;
-		}
-
 		// Get existing queue
 		$queue = $this->get_queue();
 
