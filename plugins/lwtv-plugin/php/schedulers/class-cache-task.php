@@ -20,7 +20,6 @@ class Cache_Task {
 	 * Constructor
 	 */
 	public function __construct() {
-		// Register the cron hook for cache tasks
 		add_action( 'lwtv_cache_task', array( $this, 'process_cache_task' ) );
 	}
 

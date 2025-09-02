@@ -6,13 +6,11 @@
 
 namespace LWTV\_Components;
 
-use LWTV\Features\Avatars;
 use LWTV\Features\BlockTracking;
 use LWTV\Features\Dashboard_Posts_In_Progress;
 use LWTV\Features\Dashboard;
 use LWTV\Features\Embeds;
 use LWTV\Features\Environment;
-use LWTV\Features\Health_Checks;
 use LWTV\Features\Plugin_Age;
 use LWTV\Features\Private_Posts;
 use LWTV\Features\Roles;
@@ -40,13 +38,11 @@ class Features implements Component {
 		add_action( 'init', array( $this, 'instantiate_actions_and_filters' ) );
 
 		// Load them:
-		new Avatars();
 		new BlockTracking();
 		new Dashboard_Posts_In_Progress();
 		new Dashboard();
 		new Embeds();
 		new Environment();
-		new Health_Checks();
 		new Plugin_Age();
 		new Private_Posts();
 		new Roles();

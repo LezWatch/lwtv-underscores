@@ -51,6 +51,7 @@ This document describes the structure and contents of the custom LezWatch.TV Plu
 │   │   ├── class-plugins.php - Plugin filters and actions
 │   │   ├── class-queeries.php - Customized loops
 │   │   ├── class-rest-api.php - Rest API code
+│   │   ├── class-scheduler.php - Deferred task scheduler for performance optimization
 │   │   ├── class-statistics.php - Statistics
 │   │   ├── class-symbolicons.php - Symbolicons
 │   │   ├── class-theme.php - Theme code
@@ -139,7 +140,7 @@ This document describes the structure and contents of the custom LezWatch.TV Plu
 │   │   ├── class-environment.php - Display notices and settings for servers
 │   │   ├── class-health-checks.php - Integration with HealthChecks.io
 │   │   ├── class-languages.php - Support for multiple languages in a dropdown (used by Shows for alt show names)
-│   │   ├── class-missed-schedule.php - Code to ensure posts don't miss scheduling
+│   │   ├── class-missed-schedule.php - Code to ensure posts don't miss scheduling (Action Scheduler enhanced)
 │   │   ├── class-plugin-age.php - Display plugin age/last updated on plugin listing
 │   │   ├── class-private-posts.php - Shows alert that a page is hidden if the post is set private.
 │   │   ├── class-roles.php - Custom roles created for curation of content
@@ -192,6 +193,13 @@ This document describes the structure and contents of the custom LezWatch.TV Plu
 │   │   ├── class-searchwp.php - Custom integration with SearchWP
 │   │   ├── class-wp-rocket.php - Integration with WP Rocket to flush content when interrelated posts are updated
 │   │   └── class-yoast.php - Custom Yoast controls
+│   ├── schedulers/ - Deferred task processing for performance optimization
+│   │   ├── class-calculation-task.php - Handles deferred math operations for all CPT types
+│   │   ├── class-cache-task.php - Handles scheduled cache invalidation tasks
+│   │   ├── class-cache-queue.php - Manages immediate cache invalidation on shutdown (legacy)
+│   │   ├── class-cache-batch-task.php - Action Scheduler-based cache batch processing
+│   │   ├── class-tmdb-task.php - Handles deferred TMDB API calls (legacy)
+│   │   └── class-tmdb-batch-task.php - Action Scheduler-based TMDB batch processing
 │   ├── queeries/ - Custom queries and arrays
 │   │   ├── class-get-id-from-slug.php - Get post ID from slug/URL
 │   │   ├── class-is-actor-queer.php - Determine if actor is queer (yes/no)
@@ -325,4 +333,5 @@ This document describes the structure and contents of the custom LezWatch.TV Plu
 │       ├── cli-check.php - Data validation checkers - wp lwtv CHECK [queerchars|wiki] [id]
 │       ├── cli-dupes.php - List all duplicate content - wp lwtv dupes
 │       ├── cli-generate.php - Generate custom content - wp lwtv GENERATE [otd|tvmaze]
+│       ├── cli-scheduler.php - Action Scheduler management - wp lwtv SCHEDULER [missed|tmdb|cache|status] [action]
 │       └── cli-shadow.php - Build out shadow taxonomy connections - wp lwtv shadow [shows|actors] [ID (optional)]

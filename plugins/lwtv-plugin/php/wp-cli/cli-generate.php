@@ -91,6 +91,12 @@ class WP_CLI_LWTV_Generate {
 	 *     $ wp lwtv generate cron daily
 	 *     Success: Cron jobs triggered successfully.
 	 *
+	 *     # Check missed schedule status
+	 *     $ wp lwtv generate missed-schedule status
+	 *     Success: Missed schedule status retrieved.
+	 *
+
+	 *
 	 * @param array $args
 	 * @param array $assoc_args
 	 */
@@ -161,9 +167,19 @@ class WP_CLI_LWTV_Generate {
 	public function run_cron_hourly() {
 		// Check missed schedule:
 		\WP_CLI::log( 'Attempting to publish all posts that have missed schedule.' );
-		$missed_schedule = ( new Missed_Schedule() )->missed_schedule();
-		if ( ! empty( $missed_schedule ) ) {
-			\WP_CLI::log( $missed_schedule );
+		$missed_schedule = new Missed_Schedule();
+
+		// Show scheduler status
+		$status = $missed_schedule->get_scheduler_status();
+		\WP_CLI::log( 'Missed Schedule Status: ' . $status['current_method'] );
+
+		if ( $status['action_scheduler_available'] && $status['next_scheduled_check'] ) {
+			\WP_CLI::log( 'Next scheduled check: ' . gmdate( 'Y-m-d H:i:s', $status['next_scheduled_check'] ) );
+		}
+
+		$result = $missed_schedule->missed_schedule();
+		if ( ! empty( $result ) ) {
+			\WP_CLI::log( $result );
 		}
 	}
 

@@ -20,7 +20,6 @@ class TMDB_Task {
 	 * Constructor
 	 */
 	public function __construct() {
-		// Register the cron hook for TMDB tasks
 		add_action( 'lwtv_tmdb_task', array( $this, 'process_tmdb_task' ) );
 	}
 

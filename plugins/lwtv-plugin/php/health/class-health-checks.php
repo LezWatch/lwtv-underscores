@@ -13,10 +13,16 @@
  *  - The API key is stored in the wp-config.php file.
  *  - The API Urls are IP restricted.
  *
+ * Defines:
+ *  - HEALTHCHECKS_API_KEY_PLUGINS_READ_WRITE - The API key for the plugins read/write/ping API.
+ *  - HEALTHCHECKS_API_KEY_CORE_PING - The API key for the core ping API.
+ *  - HEALTHCHECKS_API_URL - The API URL for the healthchecks.io API.
+ *  - HEALTHCHECKS_PREFIX - The prefix for the healthchecks.io checks.
+ *
  * @link https://health.ipstenu.com/docs/
  */
 
-namespace LWTV\Features;
+namespace LWTV\Health;
 
 class Health_Checks {
 
@@ -63,10 +69,10 @@ class Health_Checks {
 		}
 
 		// If the API key is not defined, don't run.
-		if ( ! defined( 'HEALTHCHECKS_API_KEY' ) ) {
+		if ( ! defined( 'HEALTHCHECKS_API_KEY_PLUGINS_READ_WRITE' ) ) {
 			return;
 		} else {
-			$this->api_key = HEALTHCHECKS_API_KEY;
+			$this->api_key = HEALTHCHECKS_API_KEY_PLUGINS_READ_WRITE;
 		}
 
 		// Set the API URL.
@@ -411,5 +417,52 @@ class Health_Checks {
 	 */
 	private function calculate_timeout( $interval ) {
 		return max( 600, $interval * 2 );
+	}
+
+	/**
+	 * Get health status information
+	 *
+	 * @return array Health status information
+	 */
+	public function get_health_status(): array {
+		// Check if health checks are enabled
+		if ( lwtv_plugin()->is_dev_site() ) {
+			return array(
+				'status'       => 'disabled',
+				'message'      => 'Health checks disabled in development mode',
+				'checks_count' => 0,
+				'last_updated' => time(),
+			);
+		}
+
+		if ( ! defined( 'HEALTHCHECKS_API_KEY_PLUGINS_READ_WRITE' ) ) {
+			return array(
+				'status'       => 'disabled',
+				'message'      => 'Health checks API key not configured',
+				'checks_count' => 0,
+				'last_updated' => time(),
+			);
+		}
+
+		try {
+			$checks       = $this->list_checks();
+			$checks_count = isset( $checks['checks'] ) ? count( $checks['checks'] ) : 0;
+
+			return array(
+				'status'       => 'active',
+				'message'      => 'Health checks are active',
+				'checks_count' => $checks_count,
+				'api_url'      => $this->api_url,
+				'prefix'       => $this->prefix,
+				'last_updated' => time(),
+			);
+		} catch ( \Exception $e ) {
+			return array(
+				'status'       => 'error',
+				'message'      => 'Error retrieving health checks: ' . $e->getMessage(),
+				'checks_count' => 0,
+				'last_updated' => time(),
+			);
+		}
 	}
 }
