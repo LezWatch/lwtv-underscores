@@ -39,20 +39,5 @@ class ActionScheduler {
 				return $statuses;
 			}
 		);
-
-		add_action( 'current_screen', $this->restore_screen_title(), 1 );
-	}
-
-	/**
-	 * Restore the screen title
-	 *
-	 * @return void
-	 */
-	private function restore_screen_title() {
-		$screen = get_current_screen();
-		if ( $screen && 'tools_page_action-scheduler' === $screen->id && empty( $GLOBALS['title'] ) ) {
-			//phpcs:ignore WordPress.WP.GlobalVariablesOverride
-			$GLOBALS['title'] = __( 'Scheduled Actions', 'action-scheduler' );
-		}
 	}
 }
