@@ -45,6 +45,9 @@ class Admin_Menu implements Component {
 		// Only admins can access this part:
 		if ( current_user_can( 'activate_plugins' ) ) {
 			( new Exclusions() )->init();
+
+			//phpcs:ignore WordPress.WP.GlobalVariablesOverride
+			$submenu['action-scheduler'][] = array( 'Scheduled Actions', 'read', admin_url( 'tools.php?page=action-scheduler' ) );
 		}
 
 		//phpcs:ignore WordPress.WP.GlobalVariablesOverride
