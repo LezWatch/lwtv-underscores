@@ -6,6 +6,8 @@
 
 namespace LWTV\Calendar;
 
+use LWTV\_Helpers\{ Calendar_Object_Pool, Calendar_Meta_Batcher };
+
 class Names {
 
 	/**
@@ -66,10 +68,10 @@ class Names {
 		// If there is a TV Maze entry already, we use it.
 		if ( isset( $tvmaze_obj->ID ) && 0 !== $tvmaze_obj->ID && 'publish' === get_post_status( $tvmaze_obj->ID ) ) {
 			$post_id = $tvmaze_obj->ID;
-			$show    = get_post_meta( $post_id, 'leztvmaze_our_show', false );
+			$show    = Calendar_Meta_Batcher::get_meta( $post_id, 'leztvmaze_our_show', array() );
 
-			if ( isset( $show[0][0] ) && 0 !== $show[0][0] ) {
-				$show_id   = $show[0][0];
+			if ( isset( $show[0] ) && 0 !== $show[0] ) {
+				$show_id   = $show[0];
 				$show_name = get_the_title( $show_id );
 			}
 		}

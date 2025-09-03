@@ -5,6 +5,8 @@
 
 namespace LWTV\Calendar;
 
+use LWTV\_Helpers\Calendar_Object_Pool;
+
 class Display_List {
 
 	/**
@@ -17,16 +19,17 @@ class Display_List {
 	 */
 	public function get_shows( $calendar, $date_query ) {
 
-		$today = ( new Display() )->today;
-		$tz    = ( new Display() )->timezone;
+		$display = Calendar_Object_Pool::get_display();
+		$today   = $display->today;
+		$tz      = $display->timezone;
 
-		$date_query_datetime = ( new Display() )->build_datetime( $date_query );
+		$date_query_datetime = $display->build_datetime( $date_query );
 
 		// Header Sub Navigation
-		$header = ( new Display() )->get_subnav( $calendar, 'list', $date_query_datetime );
+		$header = $display->get_subnav( $calendar, 'list', $date_query_datetime );
 		$table  = '<table class="table">';
 
-		$week_of_days = ( new Display() )->get_week_of_days( $date_query_datetime );
+		$week_of_days = $display->get_week_of_days( $date_query_datetime );
 
 		// Loop through the days of the week.
 		foreach ( $week_of_days as $weekday ) {
@@ -52,17 +55,11 @@ class Display_List {
 			$table .= '<thead class="dayjump" id="list_' . $today_link . '"><tr class="lwtvc-heading' . $highlight . '" data-date="' . $show_day->format( 'Y-m-d' ) . '"><th colspan="3" class="text-bg-secondary"><span class="ep-calendar-heading-date">' . $today_date . '</span><span class="ep-calendar-heading-backtotop"><a href="#caltop">Back to Top</a></span></th></tr></thead><tbody>';
 
 			foreach ( $calendar[ $weekday ] as $show ) {
-				// Show Name (may be URL if we have a link)
-				$show['show_name'] = ( new Names() )->make( $show['show_name'], 'tvmaze', 'name' );
-				$show['show_id']   = ( new Names() )->make( $show['show_name'], 'lwtv', 'id' );
-				$show['native_tz'] = ( new TVMaze() )->get_timezone( $show['show_id'] );
-
-				$show_time = ( new Display() )->get_showtime( $show, false );
-				$timezone  = ( new Display() )->get_tz_abbreviation();
-				$lwtv_date = $show_time->format( '@ g:i A' ) . ' (' . $timezone . ')';
-
-				// Determine if the show is airing now, soon, or later.
-				$dot_time = ( $show_time <= $today ) ? 'ep-calendar-dot ep-calendar-dot-past' : 'ep-calendar-dot';
+				// Use pre-processed data from Data Processor
+				$show_name = $show['show_name'];
+				$show_id   = $show['show_id'];
+				$lwtv_date = $show['time_data']['lwtv_date'];
+				$dot_time  = $show['display_data']['dot_class'];
 
 				// Build output
 				$show_content  = '<div class="ep-calendar-title">';
@@ -88,7 +85,7 @@ class Display_List {
 	 * @return string
 	 */
 	private function display_multiple_episodes_list( array $show ): string {
-		$show_content  = '<em>' . $show['show_name'] . ' <span class="badge text-bg-secondary badge-pill">' . count( $show['title'] ) . '</span></em>';
+		$show_content  = '<em>' . $show['show_name'] . $show['episode_badge'] . '</em>';
 		$show_content .= '<ul>';
 
 		foreach ( $show['title'] as $one_show ) {

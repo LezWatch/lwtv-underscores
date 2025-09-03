@@ -6,6 +6,7 @@
 namespace LWTV\Calendar;
 
 use LWTV\_Components\Calendar as Build_Calendar;
+use LWTV\_Helpers\Calendar_Object_Pool;
 
 class Display_Calendar {
 
@@ -17,10 +18,11 @@ class Display_Calendar {
 	 * @return string
 	 */
 	public function get_shows( $calendar, $date_query ) {
-		$today = ( new Display() )->today;
-		$tz    = ( new Display() )->timezone;
+		$display = Calendar_Object_Pool::get_display();
+		$today   = $display->today;
+		$tz      = $display->timezone;
 
-		$date_query_datetime = ( new Display() )->build_datetime( $date_query );
+		$date_query_datetime = $display->build_datetime( $date_query );
 
 		// If we have no shows, we need to display a message.
 		if ( ! $calendar ) {
@@ -28,7 +30,7 @@ class Display_Calendar {
 		}
 
 		$header  = $this->get_header();
-		$display = $this->get_3_weeks();
+		$display = $this->get_3_weeks( $calendar );
 
 		$table = '<table class="table table-bordered table-striped border-dark ep-calendar-calendar">' . $header . $display . '</table>';
 
@@ -61,16 +63,15 @@ class Display_Calendar {
 	/**
 	 * Generate the weekly list of shows.
 	 *
-	 * @param  object $today
-	 * @param  object $tz
+	 * @param  array  $calendar Processed calendar data
 	 * @return string
 	 */
-	public function get_3_weeks() {
+	public function get_3_weeks( $calendar ) {
 		$tbody = '<tbody>';
 
-		$tbody .= $this->get_week( 'previous' );
-		$tbody .= $this->get_week( 'this' );
-		$tbody .= $this->get_week( 'next' );
+		$tbody .= $this->get_week( 'previous', $calendar );
+		$tbody .= $this->get_week( 'this', $calendar );
+		$tbody .= $this->get_week( 'next', $calendar );
 
 		$tbody .= '</tbody>';
 
@@ -81,26 +82,24 @@ class Display_Calendar {
 	 * Generate the weekly list of shows.
 	 *
 	 * @param  string $week
+	 * @param  array  $calendar Processed calendar data
 	 * @return string
 	 */
-	public function get_week( $week = 'this' ) {
-		$today = ( new Display() )->today;
-		$tz    = ( new Display() )->timezone;
+	public function get_week( $week = 'this', $calendar = array() ) {
+		$display = Calendar_Object_Pool::get_display();
+		$today   = $display->today;
+		$tz      = $display->timezone;
 
 		// Query Variables.
 		$get_tvdate = isset( $_GET['tvdate'] ) ? sanitize_text_field( $_GET['tvdate'] ) : $today->format( 'Y-m-d' ); // phpcs:ignore WordPress.Security.NonceVerification
 
 		// Get the dates
-		$this_datetime = ( new Display() )->build_datetime( $get_tvdate, 'start' );
-		$next_datetime = ( new Display() )->build_datetime( $get_tvdate, 'end' );
-		$prev_datetime = ( new Display() )->build_datetime( $get_tvdate, 'previous' );
+		$this_datetime = $display->build_datetime( $get_tvdate, 'start' );
+		$next_datetime = $display->build_datetime( $get_tvdate, 'end' );
+		$prev_datetime = $display->build_datetime( $get_tvdate, 'previous' );
 
-		// Get the calendar week.
-		$calendar_week = match ( $week ) {
-			'this'     => ( new Build_Calendar() )->generate_tvmaze_calendar( $this_datetime->format( 'Y-m-d' ) ),
-			'previous' => ( new Build_Calendar() )->generate_tvmaze_calendar( $prev_datetime->format( 'Y-m-d' ) ),
-			'next'     => ( new Build_Calendar() )->generate_tvmaze_calendar( $next_datetime->format( 'Y-m-d' ) ),
-		};
+		// Use processed calendar data instead of generating new data
+		$calendar_week = $calendar;
 
 		$row = '<tr>';
 
@@ -111,7 +110,7 @@ class Display_Calendar {
 			default    => $this_datetime,
 		};
 
-		$week_of_days = ( new Display() )->get_week_of_days( $week_datetime );
+		$week_of_days = $display->get_week_of_days( $week_datetime );
 
 		// Loop through the week of days and display the shows.
 		foreach ( $week_of_days as $weekday ) {
@@ -145,10 +144,11 @@ class Display_Calendar {
 			$cell .= '<li class="list-group-item list-group-item-action list-group-item' . $highlight . ' disabled"><small>No Shows</small></li>';
 		} else {
 			foreach ( $shows as $show ) {
-				$show['show_name'] = ( new Names() )->make( $show['show_name'], 'tvmaze', 'name' );
-				$lwtv_date         = ( new Display() )->get_showtime( $show, true );
-				$show_content      = ( is_array( $show['title'] ) ) ? $show['show_name'] . ' <span class="badge text-bg-secondary badge-pill">' . count( $show['title'] ) . '</span>' : $show['show_name'];
-				$cell             .= '<li class="list-group-item list-group-item-action list-group-item' . $highlight . '"><small>' . $lwtv_date . '</br>' . $show_content . '</small></li>';
+				// Use pre-processed data from Data Processor
+				$show_name    = $show['show_name'];
+				$lwtv_date    = $show['time_data']['formatted_time'];
+				$show_content = ( is_array( $show['title'] ) ) ? $show_name . $show['episode_badge'] : $show_name;
+				$cell        .= '<li class="list-group-item list-group-item-action list-group-item' . $highlight . '"><small>' . $lwtv_date . '</br>' . $show_content . '</small></li>';
 			}
 		}
 

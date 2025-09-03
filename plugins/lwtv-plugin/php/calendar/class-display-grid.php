@@ -5,6 +5,8 @@
 
 namespace LWTV\Calendar;
 
+use LWTV\_Helpers\{ Calendar_Object_Pool, Calendar_Meta_Batcher };
+
 class Display_Grid {
 
 	/**
@@ -17,21 +19,22 @@ class Display_Grid {
 	 */
 	public function get_shows( $calendar, $date_query ) {
 
-		$today = ( new Display() )->today;
-		$tz    = ( new Display() )->timezone;
+		$display = Calendar_Object_Pool::get_display();
+		$today   = $display->today;
+		$tz      = $display->timezone;
 
-		$date_query_datetime = ( new Display() )->build_datetime( $date_query );
+		$date_query_datetime = $display->build_datetime( $date_query );
 
 		$weekly = '<div>';
 
 		// Header Sub Navigation
-		$subnav = ( new Display() )->get_subnav( $calendar, 'grid', $date_query_datetime );
+		$subnav = $display->get_subnav( $calendar, 'grid', $date_query_datetime );
 		// Replace list_ with grid_ to jump to the day.
 		$subnav = str_replace( 'list_', 'grid_', $subnav );
 
 		$weekly .= $subnav;
 
-		$week_of_days = ( new Display() )->get_week_of_days( $date_query_datetime );
+		$week_of_days = $display->get_week_of_days( $date_query_datetime );
 
 		// Loop through the days of the week.
 		foreach ( $week_of_days as $weekday ) {
@@ -60,10 +63,11 @@ class Display_Grid {
 			} else {
 				// Otherwise, we build the grid!
 				foreach ( $calendar[ $weekday ] as $show ) {
-					// Show Name (may be URL if we have a link)
-					$show['show_name'] = ( new Names() )->make( $show['show_name'], 'tvmaze', 'name' );
-					$show['show_id']   = ( new Names() )->make( $show['show_name'], 'lwtv', 'id' );
-					$show['native_tz'] = ( new TVMaze() )->get_timezone( $show['show_id'] ) ?? '';
+					// Use pre-processed data from Data Processor
+					$show_name   = $show['show_name'];
+					$show_id     = $show['show_id'];
+					$lwtv_date   = $show['time_data']['lwtv_date'];
+					$native_date = $this->get_native_date( $show );
 
 					// Build output
 					$show_content = '';
@@ -94,18 +98,9 @@ class Display_Grid {
 	 * @return string
 	 */
 	private function display_card_grid( array $show, object $tz, array $is_when ): string {
-		$image     = ( isset( $show['show_id'] ) ) ? get_the_post_thumbnail( $show['show_id'], array( 100, 100, true ), array( 'class' => 'calendar-show-img card-img' ) ) : '';
-		$date      = new \DateTime( '@' . $show['timestamp'] );
-		$show_time = new \DateTime( '@' . $show['timestamp'], $tz );
-		$date->setTimeZone( new \DateTimeZone( LWTV_TIMEZONE ) );
-
-		$lwtv_date   = $show_time->format( '@ g:i A' ) . ' (' . $date->format( 'T' ) . ')';
-		$native_date = '';
-		if ( ! empty( $show['native_tz'] ) ) {
-			$native_tz_time = new \DateTime( '@' . $show['timestamp'] );
-			$native_tz_time->setTimeZone( new \DateTimeZone( $show['native_tz'] ) );
-			$native_date = ( $date->format( 'T' ) !== $native_tz_time->format( 'T' ) ) ? ' / ' . $native_tz_time->format( '@ H:i' ) . ' (' . $native_tz_time->format( 'T' ) . ')' : '';
-		}
+		$image       = ( isset( $show['show_id'] ) ) ? Calendar_Meta_Batcher::get_thumbnail( $show['show_id'], 'thumbnail', array( 'class' => 'calendar-show-img card-img' ) ) : '';
+		$lwtv_date   = $show['time_data']['lwtv_date'];
+		$native_date = $this->get_native_date( $show );
 
 		$card_class = match ( true ) {
 			$is_when['today'] => 'card border-info',
@@ -117,7 +112,7 @@ class Display_Grid {
 
 		$card  = '<div class="col ep-calendar-grid-col"><div class="container ep-calendar-weekly">';
 		$card .= '<div class="' . $card_class . '" style="width: 18rem; display: inline-block;">
-			<div class="' . $head_class . '"><strong>' . $lwtv_date . $native_date . '</strong></div>
+			<div class="' . $head_class . '"><strong>' . $lwtv_date . $native_date . $show['episode_badge'] . '</strong></div>
 			<div class="card-body" style="flex-direction: row;">
 				' . $image . '
 				<p class="card-title">' . $show['show_name'] . '</p>
@@ -134,23 +129,63 @@ class Display_Grid {
 	 *
 	 * @param  array  $show
 	 * @param  object $tz
-	 * @param  array   $is_today
+	 * @param  array  $is_when
 	 *
 	 * @return string
 	 */
 	private function display_card_grid_multiple( array $show, object $tz, array $is_when ): string {
-		$all_episodes = '';
-		foreach ( $show['title'] as $one_show ) {
-			$episode = array(
-				'show_name' => $show['show_name'],
-				'title'     => $one_show,
-				'timestamp' => $show['timestamp'],
-				'show_id'   => $show['show_id'],
-			);
+		$image       = ( isset( $show['show_id'] ) ) ? Calendar_Meta_Batcher::get_thumbnail( $show['show_id'], 'thumbnail', array( 'class' => 'calendar-show-img card-img' ) ) : '';
+		$lwtv_date   = $show['time_data']['lwtv_date'];
+		$native_date = $this->get_native_date( $show );
 
-			$all_episodes .= $this->display_card_grid( $episode, $tz, $is_when );
+		$card_class = match ( true ) {
+			$is_when['today'] => 'card border-info',
+			$is_when['soon']  => 'card border-secondary',
+			default           => 'card',
+		};
+
+		$head_class = ( $is_when['today'] ) ? 'card-header bg-info' : 'card-header';
+
+		// Build episode list
+		$episodes       = count( $show['title'] );
+		$ep_badge_class = ( $is_when['today'] ) ? 'badge text-bg-info' : 'badge text-bg-secondary';
+		$episodes_badge = ' <span class="' . $ep_badge_class . ' rounded-pill">' . $episodes . ' Episodes</span>';
+
+		$card  = '<div class="col ep-calendar-grid-col"><div class="container ep-calendar-weekly">';
+		$card .= '<div class="' . $card_class . '" style="width: 18rem; display: inline-block;">
+			<div class="' . $head_class . '"><strong>' . $lwtv_date . $native_date . '</strong></div>
+			<div class="card-body" style="flex-direction: row;">
+				' . $image . '
+				<p class="card-title">' . $show['show_name'] . '</p>
+				<p class="card-text"><small><ul class="list-unstyled mb-0">' . $episodes_badge . '</ul></small></p>
+			</div>
+		</div>';
+		$card .= '</div></div>';
+
+		return $card;
+	}
+
+	/**
+	 * Get native timezone date for display
+	 *
+	 * @param  array $show Processed show data
+	 * @return string
+	 */
+	private function get_native_date( array $show ): string {
+		if ( empty( $show['native_tz'] ) ) {
+			return '';
 		}
 
-		return $all_episodes;
+		// Validate timezone before using it
+		if ( ! in_array( $show['native_tz'], timezone_identifiers_list(), true ) ) {
+			return '';
+		}
+
+		$date = new \DateTime( '@' . $show['timestamp'] );
+		$date->setTimeZone( new \DateTimeZone( LWTV_TIMEZONE ) );
+		$native_tz_time = new \DateTime( '@' . $show['timestamp'] );
+		$native_tz_time->setTimeZone( new \DateTimeZone( $show['native_tz'] ) );
+
+		return ( $date->format( 'T' ) !== $native_tz_time->format( 'T' ) ) ? ' / ' . $native_tz_time->format( '@ H:i' ) . ' (' . $native_tz_time->format( 'T' ) . ')' : '';
 	}
 }

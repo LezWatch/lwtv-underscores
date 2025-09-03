@@ -9,6 +9,7 @@ namespace LWTV\Calendar;
 
 use LWTV\_Components\Calendar as Build_Calendar;
 use LWTV\Calendar\Display_List;
+use LWTV\Calendar\Data_Processor;
 
 class Display {
 
@@ -63,13 +64,23 @@ class Display {
 		$cal_next_week = ( new Build_Calendar() )->generate_tvmaze_calendar( $end_datetime->format( 'Y-m-d' ) );
 		$cal_last_week = ( new Build_Calendar() )->generate_tvmaze_calendar( $prev_datetime->format( 'Y-m-d' ) );
 		$calendar      = array_merge( $cal_this_week, $cal_next_week, $cal_last_week );
-		ksort( $calendar );
+
+		// Check if we have valid calendar data
+		if ( empty( $calendar ) ) {
+			return $this->get_tvmaze_error_message();
+		}
+
+		// Process calendar data using Data Processor
+		$data_processor     = new Data_Processor();
+		$processed_calendar = $data_processor->process_calendar_data( $calendar, $date_query );
+
+		ksort( $processed_calendar );
 
 		// If we have no shows, we need to display a message.
-		if ( isset( $calendar['none'] ) || empty( $calendar ) || ! array( $calendar ) ) {
+		if ( isset( $calendar['none'] ) || empty( $calendar ) || ! is_array( $calendar ) ) {
 			$return .= $this->get_empty_calendar( $start_datetime, $end_datetime );
 		} else {
-			$return .= $this->get_tab_navigation( $calendar, $get_tvview, $date_query );
+			$return .= $this->get_tab_navigation( $calendar, $get_tvview, $date_query, $processed_calendar );
 		}
 
 		/**
@@ -106,66 +117,22 @@ class Display {
 	 * @param  string $tv_view  The view
 	 * @return string           The tab navigation
 	 */
-	private function get_tab_navigation( $calendar, $tv_view = 'list', $date_query = 'today' ) {
+	private function get_tab_navigation( $calendar, $tv_view = 'list', $date_query = 'today', $processed_calendar = array() ) {
 		$navigation  = '<p>All times are displayed as US/Eastern, but are reflective of their original air date and time.</p>';
 		$navigation .= '<p>Be advised, airdates and times are subject to change without notice. Always check your local listings.<p>';
 		$navigation .= '<a name="caltop"></a>';
 
-		$current_calendar = $this->get_current_calendar( $calendar, $date_query );
-
 		// Get the show list.
 		$show_tabs = array(
-			'list'     => ( new Display_List() )->get_shows( $current_calendar, $date_query ),
-			'grid'     => ( new Display_Grid() )->get_shows( $current_calendar, $date_query ),
-			'calendar' => ( new Display_Calendar() )->get_shows( $current_calendar, $date_query ),
+			'list'     => ( new Display_List() )->get_shows( $processed_calendar, $date_query ),
+			'grid'     => ( new Display_Grid() )->get_shows( $processed_calendar, $date_query ),
+			'calendar' => ( new Display_Calendar() )->get_shows( $processed_calendar, $date_query ),
 		);
 
 		$tab_content = $this->get_tab_content( $show_tabs, $tv_view );
-
 		$navigation .= '<div class="tab-content" id="calendarTabContent">' . $tab_content . '</div>';
 
 		return $navigation;
-	}
-
-	/**
-	 * Get the current calendar
-	 *
-	 * @param  array  $calendar
-	 * @param  string $date_query
-	 * @return array
-	 */
-	private function get_current_calendar( $calendar, $date_query ) {
-
-		// See if the transient exists.
-		$transient = lwtv_plugin()->get_transient( 'lwtv_calendar_' . $date_query );
-
-		if ( false !== $transient ) {
-			return $transient;
-		}
-
-		$today      = $this->today->format( 'Y-m-d' );
-		$start_date = ( 'today' === $date_query ) ? $today : $date_query;
-		$end_date   = ( new Display() )->build_datetime( $start_date, 'end' )->format( 'Y-m-d' );
-
-		// If the start date is not sunday, get the previous sunday.
-		$start_datetime = new \DateTime( $start_date, $this->timezone );
-		if ( 'Sun' !== $start_datetime->format( 'D' ) ) {
-			$start_datetime->modify( 'last Sunday' );
-			$start_date = $start_datetime->format( 'Y-m-d' );
-		}
-
-		$current_calendar = array_filter(
-			$calendar,
-			function ( $date ) use ( $start_date, $end_date ) {
-				return $date >= $start_date && $date <= $end_date;
-			},
-			ARRAY_FILTER_USE_KEY
-		);
-
-		// Set the transient.
-		lwtv_plugin()->set_transient( 'lwtv_calendar_' . $date_query, $current_calendar, 60 * 60 * 24 );
-
-		return $current_calendar;
 	}
 
 	/**
@@ -414,5 +381,27 @@ class Display {
 		$fake_time = new \DateTime( 'now', $timezone );
 
 		return $fake_time->format( 'T' );
+	}
+
+	/**
+	 * Get TVMaze error message when calendar data is unavailable
+	 *
+	 * @return string
+	 */
+	private function get_tvmaze_error_message(): string {
+		$error_message  = '<div class="alert alert-warning" role="alert">';
+		$error_message .= '<h4 class="alert-heading">Calendar Temporarily Unavailable</h4>';
+		$error_message .= '<p>The TV schedule data is currently unavailable. This could be due to:</p>';
+		$error_message .= '<ul>';
+		$error_message .= '<li>TVMaze service maintenance</li>';
+		$error_message .= '<li>Network connectivity issues</li>';
+		$error_message .= '<li>Data synchronization delays</li>';
+		$error_message .= '</ul>';
+		$error_message .= '<p><strong>Please check back later.</strong></p>';
+		$error_message .= '<hr>';
+		$error_message .= '<p class="mb-0"><small>Powered by <a href="https://www.tvmaze.com" target="_blank">TVMaze</a></small></p>';
+		$error_message .= '</div>';
+
+		return $error_message;
 	}
 }
