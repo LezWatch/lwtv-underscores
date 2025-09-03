@@ -143,16 +143,14 @@ class Display {
 			return $transient;
 		}
 
-		$today      = $this->today->format( 'Y-m-d' );
-		$start_date = ( 'today' === $date_query ) ? $today : $date_query;
-		$end_date   = ( new Display() )->build_datetime( $start_date, 'end' )->format( 'Y-m-d' );
+		$today = $this->today->format( 'Y-m-d' );
 
-		// If the start date is not sunday, get the previous sunday.
-		$start_datetime = new \DateTime( $start_date, $this->timezone );
-		if ( 'Sun' !== $start_datetime->format( 'D' ) ) {
-			$start_datetime->modify( 'last Sunday' );
-			$start_date = $start_datetime->format( 'Y-m-d' );
-		}
+		// Use the same logic as the Calendar view - get the full week regardless of the query
+		$start_datetime = $this->build_datetime( $date_query, 'start' );
+		$end_datetime   = $this->build_datetime( $date_query, 'end' );
+
+		$start_date = $start_datetime->format( 'Y-m-d' );
+		$end_date   = $end_datetime->format( 'Y-m-d' );
 
 		$current_calendar = array_filter(
 			$calendar,

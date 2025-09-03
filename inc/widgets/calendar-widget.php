@@ -70,8 +70,6 @@ class LWTV_Calendar_Widget extends WP_Widget {
 			return '<div class="alert alert-info">' . __( 'No Shows Found for today', 'lwtv-underscores' ) . '</div>';
 		}
 
-		$today = '2025-05-15';
-
 		$shows = $calendar[ $today ];
 
 		// Output the calendar.
