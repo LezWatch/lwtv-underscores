@@ -112,7 +112,7 @@ class Display_Grid {
 
 		$card  = '<div class="col ep-calendar-grid-col"><div class="container ep-calendar-weekly">';
 		$card .= '<div class="' . $card_class . '" style="width: 18rem; display: inline-block;">
-			<div class="' . $head_class . '"><strong>' . $lwtv_date . $native_date . '</strong></div>
+			<div class="' . $head_class . '"><strong>' . $lwtv_date . $native_date . $show['episode_badge'] . '</strong></div>
 			<div class="card-body" style="flex-direction: row;">
 				' . $image . '
 				<p class="card-title">' . $show['show_name'] . '</p>
@@ -129,24 +129,40 @@ class Display_Grid {
 	 *
 	 * @param  array  $show
 	 * @param  object $tz
-	 * @param  array   $is_today
+	 * @param  array  $is_when
 	 *
 	 * @return string
 	 */
 	private function display_card_grid_multiple( array $show, object $tz, array $is_when ): string {
-		$all_episodes = '';
-		foreach ( $show['title'] as $one_show ) {
-			$episode = array(
-				'show_name' => $show['show_name'],
-				'title'     => $one_show,
-				'timestamp' => $show['timestamp'],
-				'show_id'   => $show['show_id'],
-			);
+		$image       = ( isset( $show['show_id'] ) ) ? Calendar_Meta_Batcher::get_thumbnail( $show['show_id'], 'thumbnail', array( 'class' => 'calendar-show-img card-img' ) ) : '';
+		$lwtv_date   = $show['time_data']['lwtv_date'];
+		$native_date = $this->get_native_date( $show );
 
-			$all_episodes .= $this->display_card_grid( $episode, $tz, $is_when );
-		}
+		$card_class = match ( true ) {
+			$is_when['today'] => 'card border-info',
+			$is_when['soon']  => 'card border-secondary',
+			default           => 'card',
+		};
 
-		return $all_episodes;
+		$head_class = ( $is_when['today'] ) ? 'card-header bg-info' : 'card-header';
+
+		// Build episode list
+		$episodes       = count( $show['title'] );
+		$ep_badge_class = ( $is_when['today'] ) ? 'badge text-bg-info' : 'badge text-bg-secondary';
+		$episodes_badge = ' <span class="' . $ep_badge_class . ' rounded-pill">' . $episodes . ' Episodes</span>';
+
+		$card  = '<div class="col ep-calendar-grid-col"><div class="container ep-calendar-weekly">';
+		$card .= '<div class="' . $card_class . '" style="width: 18rem; display: inline-block;">
+			<div class="' . $head_class . '"><strong>' . $lwtv_date . $native_date . '</strong></div>
+			<div class="card-body" style="flex-direction: row;">
+				' . $image . '
+				<p class="card-title">' . $show['show_name'] . '</p>
+				<p class="card-text"><small><ul class="list-unstyled mb-0">' . $episodes_badge . '</ul></small></p>
+			</div>
+		</div>';
+		$card .= '</div></div>';
+
+		return $card;
 	}
 
 	/**
