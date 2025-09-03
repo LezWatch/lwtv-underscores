@@ -56,9 +56,6 @@ class Characters {
 		// WP-Admin alert if the shadow taxonomy is empty.
 		add_action( 'admin_notices', array( $this, 'admin_notices_shadowtax__error' ) );
 
-		// Yoast Hooks
-		add_action( 'wpseo_register_extra_replacements', array( $this, 'yoast_seo_register_extra_replacements' ) );
-
 		// phpcs:disable
 		// Hide taxonomies from Gutenberg.
 		// While this isn't the official API for this need, it works.
@@ -264,80 +261,6 @@ class Characters {
 			$input = 'Add character';
 		}
 		return $input;
-	}
-
-	/*
-	 * Extra Meta Variables for Yoast and Actors
-	 *
-	 * List of actors who played a character, for use on character pages
-	 */
-	public function yoast_retrieve_actors_replacement() {
-		global $post;
-
-		$return = 'Unknown';
-		if ( is_object( $post ) ) {
-			$actors     = array();
-			$actors_ids = get_post_meta( $post->ID, 'lezchars_actor', true );
-			if ( ! is_array( $actors_ids ) ) {
-				$actors_ids = array( get_post_meta( $post->ID, 'lezchars_actor', true ) );
-			}
-			if ( '' !== $actors_ids && ! is_null( $actors_ids ) ) {
-				foreach ( $actors_ids as $each_actor ) {
-					array_push( $actors, get_the_title( $each_actor ) );
-				}
-			}
-			$return = implode( ', ', $actors );
-		}
-
-		return $return;
-	}
-
-	/*
-	 * Extra Meta Variables for Yoast and Characters
-	 *
-	 * List of shows featuring a character, for use on character pages
-	 */
-	public function yoast_retrieve_shows_replacement() {
-		global $post;
-
-		$shows_string = '';
-		if ( is_object( $post ) ) {
-			$shows_ids    = get_post_meta( $post->ID, 'lezchars_show_group', true );
-			$shows_titles = array();
-
-			if ( ! is_array( $shows_ids ) ) {
-				$shows_ids = array( $shows_ids );
-			}
-
-			if ( '' !== $shows_ids && ! is_null( $shows_ids ) ) {
-				foreach ( $shows_ids as $each_show ) {
-
-					if ( ! isset( $each_show['show'] ) ) {
-						continue;
-					}
-
-					// De-Array.
-					if ( is_array( $each_show['show'] ) ) {
-						$each_show['show'] = $each_show['show'][0];
-					}
-
-					// Get titles.
-					if ( isset( $each_show['show'] ) ) {
-						array_push( $shows_titles, get_the_title( $each_show['show'] ) );
-					}
-				}
-			}
-			$shows_string = implode( ', ', $shows_titles );
-		}
-		return $shows_string;
-	}
-
-	/*
-	 * Extra Replacement Functions for Yoast SEO
-	 */
-	public function yoast_seo_register_extra_replacements() {
-		\wpseo_register_var_replacement( '%%actors%%', array( $this, 'yoast_retrieve_actors_replacement' ), 'basic', 'A list of actors who played the character, separated by commas.' );
-		\wpseo_register_var_replacement( '%%shows%%', array( $this, 'yoast_retrieve_shows_replacement' ), 'basic', 'A list of shows the character was on, separated by commas.' );
 	}
 
 	/*

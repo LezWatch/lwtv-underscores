@@ -4,6 +4,7 @@
  */
 namespace LWTV\_Components;
 
+use LWTV\Plugins\AIOSEO;
 use LWTV\Plugins\CMB2;
 use LWTV\Plugins\Comment_Probation;
 use LWTV\Plugins\FacetWP;
@@ -22,6 +23,7 @@ class Plugins implements Component, Templater {
 	 * Call the sub plugins
 	 */
 	public function init(): void {
+		new AIOSEO();
 		new Comment_Probation();
 		new CMB2();
 		new FacetWP();

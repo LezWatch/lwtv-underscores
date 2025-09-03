@@ -44,7 +44,6 @@ class This_Year implements Component, Templater {
 	 */
 	public function init() {
 		add_action( 'init', array( $this, 'init' ) );
-		add_action( 'wpseo_register_extra_replacements', array( $this, 'yoast_seo_register_extra_replacements' ) );
 
 		// Plugin requires permalink usage - Only setup handling if permalinks enabled
 		if ( '' !== get_option( 'permalink_structure' ) ) {
@@ -114,25 +113,6 @@ class This_Year implements Component, Templater {
 			$templates = get_stylesheet_directory() . '/page-templates/thisyear.php';
 		}
 		return $templates;
-	}
-
-	/*
-	 * Extra Replacement Functions for Yoast SEO
-	 */
-	public function yoast_seo_register_extra_replacements() {
-		\wpseo_register_var_replacement( '%%thisyear%%', array( $this, 'yoast_retrieve_year_replacement' ), 'basic', 'The year.' );
-	}
-
-	/*
-	 * Extra Meta Variables for Yoast and Year pages
-	 *
-	 * @return string  The year.
-	 */
-	public function yoast_retrieve_year_replacement() {
-		$this_year = get_query_var( 'thisyear', 'none' );
-		$return    = ( 'none' !== $this_year ) ? ucfirst( $this_year ) : gmdate( 'Y' );
-		$return    = '(' . $return . ')';
-		return $return;
 	}
 
 	/**

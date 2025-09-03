@@ -16,9 +16,6 @@ class Query_Vars {
 	 */
 	public function __construct() {
 		add_action( 'init', array( $this, 'init' ) );
-
-		// Some Yoasty things
-		add_action( 'wpseo_register_extra_replacements', array( $this, 'yoast_seo_register_extra_replacements' ) );
 	}
 
 	/**
@@ -96,23 +93,5 @@ class Query_Vars {
 			$templates = get_stylesheet_directory() . '/page-templates/statistics.php';
 		}
 		return $templates;
-	}
-
-	/*
-	 * Extra Replacement Functions for Yoast SEO
-	 */
-	public function yoast_seo_register_extra_replacements() {
-		\wpseo_register_var_replacement( '%%statistics%%', array( $this, 'yoast_retrieve_stats_replacement' ), 'basic', 'The type of stats page we\'re on.' );
-	}
-
-	/*
-	 * Extra Meta Variables for Yoast and Stats pages
-	 *
-	 * The type of stats page we're on
-	 */
-	public function yoast_retrieve_stats_replacement() {
-		$statistics = get_query_var( 'statistics', 'none' );
-		$return     = ( 'none' !== $statistics ) ? 'on ' . ucfirst( $statistics ) : '';
-		return $return;
 	}
 }
