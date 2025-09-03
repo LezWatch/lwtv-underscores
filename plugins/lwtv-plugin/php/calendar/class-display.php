@@ -63,6 +63,12 @@ class Display {
 		$cal_next_week = ( new Build_Calendar() )->generate_tvmaze_calendar( $end_datetime->format( 'Y-m-d' ) );
 		$cal_last_week = ( new Build_Calendar() )->generate_tvmaze_calendar( $prev_datetime->format( 'Y-m-d' ) );
 		$calendar      = array_merge( $cal_this_week, $cal_next_week, $cal_last_week );
+
+		// Check if we have valid calendar data
+		if ( empty( $calendar ) ) {
+			return $this->get_tvmaze_error_message();
+		}
+
 		ksort( $calendar );
 
 		// If we have no shows, we need to display a message.
@@ -412,5 +418,27 @@ class Display {
 		$fake_time = new \DateTime( 'now', $timezone );
 
 		return $fake_time->format( 'T' );
+	}
+
+	/**
+	 * Get TVMaze error message when calendar data is unavailable
+	 *
+	 * @return string
+	 */
+	private function get_tvmaze_error_message(): string {
+		$error_message  = '<div class="alert alert-warning" role="alert">';
+		$error_message .= '<h4 class="alert-heading">Calendar Temporarily Unavailable</h4>';
+		$error_message .= '<p>The TV schedule data is currently unavailable. This could be due to:</p>';
+		$error_message .= '<ul>';
+		$error_message .= '<li>TVMaze service maintenance</li>';
+		$error_message .= '<li>Network connectivity issues</li>';
+		$error_message .= '<li>Data synchronization delays</li>';
+		$error_message .= '</ul>';
+		$error_message .= '<p><strong>Please check back later.</strong></p>';
+		$error_message .= '<hr>';
+		$error_message .= '<p class="mb-0"><small>Powered by <a href="https://www.tvmaze.com" target="_blank">TVMaze</a></small></p>';
+		$error_message .= '</div>';
+
+		return $error_message;
 	}
 }

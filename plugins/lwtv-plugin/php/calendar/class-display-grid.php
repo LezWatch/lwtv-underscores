@@ -5,6 +5,8 @@
 
 namespace LWTV\Calendar;
 
+use LWTV\_Helpers\Calendar_Object_Pool;
+
 class Display_Grid {
 
 	/**
@@ -17,21 +19,22 @@ class Display_Grid {
 	 */
 	public function get_shows( $calendar, $date_query ) {
 
-		$today = ( new Display() )->today;
-		$tz    = ( new Display() )->timezone;
+		$display = Calendar_Object_Pool::get_display();
+		$today   = $display->today;
+		$tz      = $display->timezone;
 
-		$date_query_datetime = ( new Display() )->build_datetime( $date_query );
+		$date_query_datetime = $display->build_datetime( $date_query );
 
 		$weekly = '<div>';
 
 		// Header Sub Navigation
-		$subnav = ( new Display() )->get_subnav( $calendar, 'grid', $date_query_datetime );
+		$subnav = $display->get_subnav( $calendar, 'grid', $date_query_datetime );
 		// Replace list_ with grid_ to jump to the day.
 		$subnav = str_replace( 'list_', 'grid_', $subnav );
 
 		$weekly .= $subnav;
 
-		$week_of_days = ( new Display() )->get_week_of_days( $date_query_datetime );
+		$week_of_days = $display->get_week_of_days( $date_query_datetime );
 
 		// Loop through the days of the week.
 		foreach ( $week_of_days as $weekday ) {
@@ -61,9 +64,12 @@ class Display_Grid {
 				// Otherwise, we build the grid!
 				foreach ( $calendar[ $weekday ] as $show ) {
 					// Show Name (may be URL if we have a link)
-					$show['show_name'] = ( new Names() )->make( $show['show_name'], 'tvmaze', 'name' );
-					$show['show_id']   = ( new Names() )->make( $show['show_name'], 'lwtv', 'id' );
-					$show['native_tz'] = ( new TVMaze() )->get_timezone( $show['show_id'] ) ?? '';
+					$names  = Calendar_Object_Pool::get_names();
+					$tvmaze = Calendar_Object_Pool::get_tvmaze();
+
+					$show['show_name'] = $names->make( $show['show_name'], 'tvmaze', 'name' );
+					$show['show_id']   = $names->make( $show['show_name'], 'lwtv', 'id' );
+					$show['native_tz'] = $tvmaze->get_timezone( $show['show_id'] ) ?? '';
 
 					// Build output
 					$show_content = '';

@@ -29,10 +29,24 @@ class Calendar implements Component {
 	public function generate_tvmaze_calendar( $when, $timespan = 'week' ): array {
 		$tvmaze_url = $this->get_tvmaze_ics();
 		if ( false === $tvmaze_url ) {
+			lwtv_plugin()->error_log( 'calendar', 'TVMaze ICS file not found or inaccessible' );
 			return array();
 		}
 
-		return ( new Generate_Calendar() )->make( $tvmaze_url, $timespan, $when );
+		// Check if file is readable and has content
+		if ( ! is_readable( $tvmaze_url ) || filesize( $tvmaze_url ) === 0 ) {
+			lwtv_plugin()->error_log( 'calendar', 'TVMaze ICS file is not readable or empty' );
+			return array();
+		}
+
+		$calendar_data = ( new Generate_Calendar() )->make( $tvmaze_url, $timespan, $when );
+
+		// Log if no calendar data was generated
+		if ( empty( $calendar_data ) ) {
+			lwtv_plugin()->error_log( 'calendar', 'No calendar data generated from TVMaze ICS file' );
+		}
+
+		return $calendar_data;
 	}
 
 	/**

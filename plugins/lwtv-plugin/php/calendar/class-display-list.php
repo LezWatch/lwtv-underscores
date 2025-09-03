@@ -5,6 +5,8 @@
 
 namespace LWTV\Calendar;
 
+use LWTV\_Helpers\Calendar_Object_Pool;
+
 class Display_List {
 
 	/**
@@ -17,16 +19,17 @@ class Display_List {
 	 */
 	public function get_shows( $calendar, $date_query ) {
 
-		$today = ( new Display() )->today;
-		$tz    = ( new Display() )->timezone;
+		$display = Calendar_Object_Pool::get_display();
+		$today   = $display->today;
+		$tz      = $display->timezone;
 
-		$date_query_datetime = ( new Display() )->build_datetime( $date_query );
+		$date_query_datetime = $display->build_datetime( $date_query );
 
 		// Header Sub Navigation
-		$header = ( new Display() )->get_subnav( $calendar, 'list', $date_query_datetime );
+		$header = $display->get_subnav( $calendar, 'list', $date_query_datetime );
 		$table  = '<table class="table">';
 
-		$week_of_days = ( new Display() )->get_week_of_days( $date_query_datetime );
+		$week_of_days = $display->get_week_of_days( $date_query_datetime );
 
 		// Loop through the days of the week.
 		foreach ( $week_of_days as $weekday ) {
@@ -53,12 +56,15 @@ class Display_List {
 
 			foreach ( $calendar[ $weekday ] as $show ) {
 				// Show Name (may be URL if we have a link)
-				$show['show_name'] = ( new Names() )->make( $show['show_name'], 'tvmaze', 'name' );
-				$show['show_id']   = ( new Names() )->make( $show['show_name'], 'lwtv', 'id' );
-				$show['native_tz'] = ( new TVMaze() )->get_timezone( $show['show_id'] );
+				$names  = Calendar_Object_Pool::get_names();
+				$tvmaze = Calendar_Object_Pool::get_tvmaze();
 
-				$show_time = ( new Display() )->get_showtime( $show, false );
-				$timezone  = ( new Display() )->get_tz_abbreviation();
+				$show['show_name'] = $names->make( $show['show_name'], 'tvmaze', 'name' );
+				$show['show_id']   = $names->make( $show['show_name'], 'lwtv', 'id' );
+				$show['native_tz'] = $tvmaze->get_timezone( $show['show_id'] );
+
+				$show_time = $display->get_showtime( $show, false );
+				$timezone  = $display->get_tz_abbreviation();
 				$lwtv_date = $show_time->format( '@ g:i A' ) . ' (' . $timezone . ')';
 
 				// Determine if the show is airing now, soon, or later.

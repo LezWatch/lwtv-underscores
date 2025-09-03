@@ -5,6 +5,8 @@
 
 namespace LWTV\Calendar;
 
+use LWTV\_Helpers\Calendar_Object_Pool;
+
 class TVMaze {
 
 	/**
@@ -91,7 +93,8 @@ class TVMaze {
 			$show_info = wp_remote_get( 'http://api.tvmaze.com/lookup/shows?imdb=' . get_post_meta( $show_id, 'lezshows_imdb', true ) );
 		} else {
 			// Check the show namer just in case we have odd versions for TV Maze.
-			$show_name = ( new Names() )->make( $show_name, 'lwtv', 'name' );
+			$names     = Calendar_Object_Pool::get_names();
+			$show_name = $names->make( $show_name, 'lwtv', 'name' );
 
 			// Search TV Maze API for show info:
 			$show_info = wp_remote_get( 'http://api.tvmaze.com/singlesearch/shows?q=' . $show_name );

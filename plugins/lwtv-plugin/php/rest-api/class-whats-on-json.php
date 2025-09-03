@@ -413,7 +413,7 @@ class Whats_On_JSON {
 						$on_array[ $show_name ]['title'] = array( $on_array[ $show_name ]['title'] );
 					}
 
-					++$on_array[ $show_name ]['count'];
+					$on_array[ $show_name ]['count'] = (int) $on_array[ $show_name ]['count'] + 1;
 					$on_array[ $show_name ]['show']  = $show_name;
 					$on_array[ $show_name ]['title'] = $on_array[ $show_name ]['count'] . ' episodes';
 				} else {
