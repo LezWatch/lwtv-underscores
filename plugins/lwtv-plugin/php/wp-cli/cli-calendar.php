@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) && ! defined( 'WP_CLI' ) ) {
 /**
  * Calendar Database CLI Commands
  */
-class CLI_Calendar {
+class WP_CLI_LWTV_Calendar {
 
 	/**
 	 * Construct to obviate facet from munging results.
@@ -181,5 +181,4 @@ class CLI_Calendar {
 	}
 }
 
-// Register CLI commands
-WP_CLI::add_command( 'calendar', 'LWTV\WP_CLI\Calendar_Database_CLI' );
+\WP_CLI::add_command( 'lwtv calendar', 'WP_CLI_LWTV_Calendar' );

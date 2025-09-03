@@ -102,7 +102,7 @@ class Data_Processor {
 		// Process episode count for multiple episodes
 		if ( is_array( $show['title'] ) ) {
 			$processed_show['episode_count'] = count( $show['title'] );
-			$processed_show['episode_badge'] = ' <span class="badge text-bg-primary rounded-pill">' . count( $show['title'] ) . '</span>';
+			$processed_show['episode_badge'] = ' <span class="badge text-bg-secondary rounded-pill">' . count( $show['title'] ) . '</span>';
 		} else {
 			$processed_show['episode_count'] = 1;
 			$processed_show['episode_badge'] = '';

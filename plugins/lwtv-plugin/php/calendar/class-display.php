@@ -77,7 +77,7 @@ class Display {
 		ksort( $processed_calendar );
 
 		// If we have no shows, we need to display a message.
-		if ( isset( $calendar['none'] ) || empty( $calendar ) || ! array( $calendar ) ) {
+		if ( isset( $calendar['none'] ) || empty( $calendar ) || ! is_array( $calendar ) ) {
 			$return .= $this->get_empty_calendar( $start_datetime, $end_datetime );
 		} else {
 			$return .= $this->get_tab_navigation( $calendar, $get_tvview, $date_query, $processed_calendar );
