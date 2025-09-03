@@ -354,12 +354,14 @@ class Characters {
 		if ( ! is_array( $actors_ids ) ) {
 			$actors_ids = array( get_post_meta( $post_id, 'lezchars_actor', true ) );
 		}
-		if ( '' !== $actors_ids && ! is_null( $actors_ids ) ) {
+		if ( '' !== $actors_ids && ! is_null( $actors_ids ) && ! empty( $actors_ids[0] ) ) {
 			foreach ( $actors_ids as $each_actor ) {
-				array_push( $actors, get_the_title( $each_actor ) );
+				if ( ! empty( $each_actor ) ) {
+					array_push( $actors, get_the_title( $each_actor ) );
+				}
 			}
 		}
-		$actors_string = implode( ', ', $actors );
+		$actors_string = ! empty( $actors ) ? implode( ', ', $actors ) : 'Unknown';
 		update_post_meta( $post_id, 'lwtv_aioseo_actors', $actors_string );
 
 		// Generate lwtv_aioseo_shows field - same data as Yoast %%shows%% but stored as post meta
@@ -370,7 +372,7 @@ class Characters {
 			$shows_ids = array( $shows_ids );
 		}
 
-		if ( '' !== $shows_ids && ! is_null( $shows_ids ) ) {
+		if ( '' !== $shows_ids && ! is_null( $shows_ids ) && ! empty( $shows_ids[0] ) ) {
 			foreach ( $shows_ids as $each_show ) {
 
 				if ( ! isset( $each_show['show'] ) ) {
@@ -383,12 +385,12 @@ class Characters {
 				}
 
 				// Get titles.
-				if ( isset( $each_show['show'] ) ) {
+				if ( isset( $each_show['show'] ) && ! empty( $each_show['show'] ) ) {
 					array_push( $shows_titles, get_the_title( $each_show['show'] ) );
 				}
 			}
 		}
-		$shows_string = implode( ', ', $shows_titles );
+		$shows_string = ! empty( $shows_titles ) ? implode( ', ', $shows_titles ) : '';
 		update_post_meta( $post_id, 'lwtv_aioseo_shows', $shows_string );
 	}
 

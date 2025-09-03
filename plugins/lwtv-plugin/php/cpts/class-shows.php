@@ -407,7 +407,7 @@ class Shows {
 		// Generate lwtv_aioseo_formats field - from lez_formats taxonomy
 		$formats = get_the_terms( $post_id, 'lez_formats' );
 		$formats_string = '';
-		if ( $formats && ! is_wp_error( $formats ) ) {
+		if ( $formats && ! is_wp_error( $formats ) && ! empty( $formats ) ) {
 			$format_names = array();
 			foreach ( $formats as $format ) {
 				$format_names[] = $format->name;
@@ -419,7 +419,7 @@ class Shows {
 		// Generate lwtv_aioseo_stations field - from lez_stations taxonomy
 		$stations = get_the_terms( $post_id, 'lez_stations' );
 		$stations_string = '';
-		if ( $stations && ! is_wp_error( $stations ) ) {
+		if ( $stations && ! is_wp_error( $stations ) && ! empty( $stations ) ) {
 			$station_names = array();
 			foreach ( $stations as $station ) {
 				$station_names[] = $station->name;
@@ -431,7 +431,7 @@ class Shows {
 		// Generate lwtv_aioseo_tropes field - from lez_tropes taxonomy
 		$tropes = get_the_terms( $post_id, 'lez_tropes' );
 		$tropes_string = '';
-		if ( $tropes && ! is_wp_error( $tropes ) ) {
+		if ( $tropes && ! is_wp_error( $tropes ) && ! empty( $tropes ) ) {
 			$trope_names = array();
 			foreach ( $tropes as $trope ) {
 				$trope_names[] = $trope->name;
