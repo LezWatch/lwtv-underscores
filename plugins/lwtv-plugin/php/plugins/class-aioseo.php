@@ -3,8 +3,7 @@
 /**
  * AIOSEO Plugin
  *
- * Adds extra replacements for AIOSEO
- * Enables sitemap caching
+ * Custom code for AIOSEO
  *
  * @package LezWatch.TV Plugin
  *
