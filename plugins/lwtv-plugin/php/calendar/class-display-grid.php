@@ -5,7 +5,7 @@
 
 namespace LWTV\Calendar;
 
-use LWTV\_Helpers\Calendar_Object_Pool;
+use LWTV\_Helpers\{ Calendar_Object_Pool, Calendar_Meta_Batcher };
 
 class Display_Grid {
 
@@ -98,7 +98,7 @@ class Display_Grid {
 	 * @return string
 	 */
 	private function display_card_grid( array $show, object $tz, array $is_when ): string {
-		$image       = ( isset( $show['show_id'] ) ) ? get_the_post_thumbnail( $show['show_id'], array( 100, 100, true ), array( 'class' => 'calendar-show-img card-img' ) ) : '';
+		$image       = ( isset( $show['show_id'] ) ) ? Calendar_Meta_Batcher::get_thumbnail( $show['show_id'], 'thumbnail', array( 'class' => 'calendar-show-img card-img' ) ) : '';
 		$lwtv_date   = $show['time_data']['lwtv_date'];
 		$native_date = $this->get_native_date( $show );
 

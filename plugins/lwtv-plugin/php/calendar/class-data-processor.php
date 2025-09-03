@@ -11,7 +11,7 @@
 
 namespace LWTV\Calendar;
 
-use LWTV\_Helpers\Calendar_Object_Pool;
+use LWTV\_Helpers\{ Calendar_Object_Pool, Calendar_Meta_Batcher };
 
 class Data_Processor {
 
@@ -30,6 +30,9 @@ class Data_Processor {
 		if ( false !== $cached_data && is_array( $cached_data ) ) {
 			return $cached_data;
 		}
+
+		// Batch load all meta data for calendar shows
+		Calendar_Meta_Batcher::batch_load_calendar_data( $raw_calendar );
 
 		// Get shared instances from object pool
 		$display = Calendar_Object_Pool::get_display();

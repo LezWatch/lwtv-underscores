@@ -5,7 +5,7 @@
 
 namespace LWTV\Calendar;
 
-use LWTV\_Helpers\Calendar_Object_Pool;
+use LWTV\_Helpers\{ Calendar_Object_Pool, Calendar_Meta_Batcher };
 
 class TVMaze {
 
@@ -28,8 +28,9 @@ class TVMaze {
 		}
 
 		// If the timezone is set in the show's meta, use that
-		if ( get_post_meta( $show_id, 'lezshows_tvmaze_timezone', true ) ) {
-			return get_post_meta( $show_id, 'lezshows_tvmaze_timezone', true );
+		$timezone = Calendar_Meta_Batcher::get_meta( $show_id, 'lezshows_tvmaze_timezone' );
+		if ( $timezone ) {
+			return $timezone;
 		}
 
 		// Check if there's a transient for the timezone.
@@ -85,12 +86,15 @@ class TVMaze {
 		// If a name is passed, use that. Otherwise, get the show name.
 		$show_name = $maybe_show_name ?? get_the_title( $show_id );
 
-		if ( get_post_meta( $show_id, 'lezshows_tvmaze_id', true ) ) {
+		$tvmaze_id = Calendar_Meta_Batcher::get_meta( $show_id, 'lezshows_tvmaze_id' );
+		$imdb_id   = Calendar_Meta_Batcher::get_meta( $show_id, 'lezshows_imdb' );
+
+		if ( $tvmaze_id ) {
 			// Use TV Maze ID if we have it.
-			$show_info = wp_remote_get( 'http://api.tvmaze.com/shows/' . get_post_meta( $show_id, 'lezshows_tvmaze_id', true ) );
-		} elseif ( get_post_meta( $show_id, 'lezshows_imdb', true ) ) {
+			$show_info = wp_remote_get( 'http://api.tvmaze.com/shows/' . $tvmaze_id );
+		} elseif ( $imdb_id ) {
 			// Use IMDB if we can.
-			$show_info = wp_remote_get( 'http://api.tvmaze.com/lookup/shows?imdb=' . get_post_meta( $show_id, 'lezshows_imdb', true ) );
+			$show_info = wp_remote_get( 'http://api.tvmaze.com/lookup/shows?imdb=' . $imdb_id );
 		} else {
 			// Check the show namer just in case we have odd versions for TV Maze.
 			$names     = Calendar_Object_Pool::get_names();
