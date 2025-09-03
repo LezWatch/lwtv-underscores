@@ -55,20 +55,11 @@ class Display_List {
 			$table .= '<thead class="dayjump" id="list_' . $today_link . '"><tr class="lwtvc-heading' . $highlight . '" data-date="' . $show_day->format( 'Y-m-d' ) . '"><th colspan="3" class="text-bg-secondary"><span class="ep-calendar-heading-date">' . $today_date . '</span><span class="ep-calendar-heading-backtotop"><a href="#caltop">Back to Top</a></span></th></tr></thead><tbody>';
 
 			foreach ( $calendar[ $weekday ] as $show ) {
-				// Show Name (may be URL if we have a link)
-				$names  = Calendar_Object_Pool::get_names();
-				$tvmaze = Calendar_Object_Pool::get_tvmaze();
-
-				$show['show_name'] = $names->make( $show['show_name'], 'tvmaze', 'name' );
-				$show['show_id']   = $names->make( $show['show_name'], 'lwtv', 'id' );
-				$show['native_tz'] = $tvmaze->get_timezone( $show['show_id'] );
-
-				$show_time = $display->get_showtime( $show, false );
-				$timezone  = $display->get_tz_abbreviation();
-				$lwtv_date = $show_time->format( '@ g:i A' ) . ' (' . $timezone . ')';
-
-				// Determine if the show is airing now, soon, or later.
-				$dot_time = ( $show_time <= $today ) ? 'ep-calendar-dot ep-calendar-dot-past' : 'ep-calendar-dot';
+				// Use pre-processed data from Data Processor
+				$show_name = $show['show_name'];
+				$show_id   = $show['show_id'];
+				$lwtv_date = $show['time_data']['lwtv_date'];
+				$dot_time  = $show['display_data']['dot_class'];
 
 				// Build output
 				$show_content  = '<div class="ep-calendar-title">';
@@ -94,7 +85,7 @@ class Display_List {
 	 * @return string
 	 */
 	private function display_multiple_episodes_list( array $show ): string {
-		$show_content  = '<em>' . $show['show_name'] . ' <span class="badge text-bg-secondary badge-pill">' . count( $show['title'] ) . '</span></em>';
+		$show_content  = '<em>' . $show['show_name'] . $show['episode_badge'] . '</em>';
 		$show_content .= '<ul>';
 
 		foreach ( $show['title'] as $one_show ) {

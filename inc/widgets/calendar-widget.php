@@ -5,8 +5,7 @@
  */
 
 use LWTV\_Components\Calendar as Build_Calendar;
-use LWTV\Calendar\{ Display, Names };
-use LWTV\_Helpers\Calendar_Object_Pool;
+use LWTV\Calendar\Data_Processor;
 
 class LWTV_Calendar_Widget extends WP_Widget {
 
@@ -72,11 +71,15 @@ class LWTV_Calendar_Widget extends WP_Widget {
 			return '<div class="alert alert-warning">' . __( 'Calendar data temporarily unavailable. Please check back later.', 'lwtv-underscores' ) . '</div>';
 		}
 
-		if ( ! isset( $calendar[ $today ] ) ) {
+		// Process calendar data using Data Processor
+		$data_processor     = new Data_Processor();
+		$processed_calendar = $data_processor->process_calendar_data( $calendar, 'today' );
+
+		if ( ! isset( $processed_calendar[ $today ] ) ) {
 			return '<div class="alert alert-info">' . __( 'No Shows Found for today', 'lwtv-underscores' ) . '</div>';
 		}
 
-		$shows = $calendar[ $today ];
+		$shows = $processed_calendar[ $today ];
 
 		// Output the calendar.
 		$output     = '<div class="list-group">';
@@ -89,15 +92,13 @@ class LWTV_Calendar_Widget extends WP_Widget {
 				$output .= '<div class="collapse" id="collapseCalendar">';
 			}
 
-			$names     = Calendar_Object_Pool::get_names();
-			$display   = Calendar_Object_Pool::get_display();
-			$show_name = $names->make( $show['show_name'], 'tvmaze', 'name' );
-			$show_id   = $names->make( $show['show_name'], 'lwtv', 'id' );
-			$show_time = $display->get_showtime( $show, false );
-			$lwtv_date = $show_time->format( '@ g:i A' ) . ' (' . $display->get_tz_abbreviation() . ')';
+			// Use pre-processed data from Data Processor
+			$show_name = $show['show_name'];
+			$show_id   = $show['show_id'];
+			$lwtv_date = $show['time_data']['lwtv_date'];
+			$episodes  = $show['episode_badge'];
 
-			$episodes = ( is_array( $show['title'] ) ) ? ' <span class="badge text-bg-primary rounded-pill">' . count( $show['title'] ) . '</span>' : '';
-			$output  .= '<li class="list-group-item"><a href="' . home_url( '/show/' . $show_id . '/' ) . '">' . $show_name . '</a> ' . $lwtv_date . $episodes . '</li>';
+			$output .= '<li class="list-group-item"><a href="' . home_url( '/show/' . $show_id . '/' ) . '">' . $show_name . '</a> ' . $lwtv_date . $episodes . '</li>';
 
 			++$show_count;
 		}

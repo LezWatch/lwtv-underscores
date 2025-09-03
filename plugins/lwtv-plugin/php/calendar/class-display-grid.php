@@ -63,13 +63,11 @@ class Display_Grid {
 			} else {
 				// Otherwise, we build the grid!
 				foreach ( $calendar[ $weekday ] as $show ) {
-					// Show Name (may be URL if we have a link)
-					$names  = Calendar_Object_Pool::get_names();
-					$tvmaze = Calendar_Object_Pool::get_tvmaze();
-
-					$show['show_name'] = $names->make( $show['show_name'], 'tvmaze', 'name' );
-					$show['show_id']   = $names->make( $show['show_name'], 'lwtv', 'id' );
-					$show['native_tz'] = $tvmaze->get_timezone( $show['show_id'] ) ?? '';
+					// Use pre-processed data from Data Processor
+					$show_name   = $show['show_name'];
+					$show_id     = $show['show_id'];
+					$lwtv_date   = $show['time_data']['lwtv_date'];
+					$native_date = $this->get_native_date( $show );
 
 					// Build output
 					$show_content = '';
@@ -100,18 +98,9 @@ class Display_Grid {
 	 * @return string
 	 */
 	private function display_card_grid( array $show, object $tz, array $is_when ): string {
-		$image     = ( isset( $show['show_id'] ) ) ? get_the_post_thumbnail( $show['show_id'], array( 100, 100, true ), array( 'class' => 'calendar-show-img card-img' ) ) : '';
-		$date      = new \DateTime( '@' . $show['timestamp'] );
-		$show_time = new \DateTime( '@' . $show['timestamp'], $tz );
-		$date->setTimeZone( new \DateTimeZone( LWTV_TIMEZONE ) );
-
-		$lwtv_date   = $show_time->format( '@ g:i A' ) . ' (' . $date->format( 'T' ) . ')';
-		$native_date = '';
-		if ( ! empty( $show['native_tz'] ) ) {
-			$native_tz_time = new \DateTime( '@' . $show['timestamp'] );
-			$native_tz_time->setTimeZone( new \DateTimeZone( $show['native_tz'] ) );
-			$native_date = ( $date->format( 'T' ) !== $native_tz_time->format( 'T' ) ) ? ' / ' . $native_tz_time->format( '@ H:i' ) . ' (' . $native_tz_time->format( 'T' ) . ')' : '';
-		}
+		$image       = ( isset( $show['show_id'] ) ) ? get_the_post_thumbnail( $show['show_id'], array( 100, 100, true ), array( 'class' => 'calendar-show-img card-img' ) ) : '';
+		$lwtv_date   = $show['time_data']['lwtv_date'];
+		$native_date = $this->get_native_date( $show );
 
 		$card_class = match ( true ) {
 			$is_when['today'] => 'card border-info',
@@ -158,5 +147,29 @@ class Display_Grid {
 		}
 
 		return $all_episodes;
+	}
+
+	/**
+	 * Get native timezone date for display
+	 *
+	 * @param  array $show Processed show data
+	 * @return string
+	 */
+	private function get_native_date( array $show ): string {
+		if ( empty( $show['native_tz'] ) ) {
+			return '';
+		}
+
+		// Validate timezone before using it
+		if ( ! in_array( $show['native_tz'], timezone_identifiers_list(), true ) ) {
+			return '';
+		}
+
+		$date = new \DateTime( '@' . $show['timestamp'] );
+		$date->setTimeZone( new \DateTimeZone( LWTV_TIMEZONE ) );
+		$native_tz_time = new \DateTime( '@' . $show['timestamp'] );
+		$native_tz_time->setTimeZone( new \DateTimeZone( $show['native_tz'] ) );
+
+		return ( $date->format( 'T' ) !== $native_tz_time->format( 'T' ) ) ? ' / ' . $native_tz_time->format( '@ H:i' ) . ' (' . $native_tz_time->format( 'T' ) . ')' : '';
 	}
 }

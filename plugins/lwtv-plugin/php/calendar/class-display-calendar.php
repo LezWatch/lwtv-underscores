@@ -30,7 +30,7 @@ class Display_Calendar {
 		}
 
 		$header  = $this->get_header();
-		$display = $this->get_3_weeks();
+		$display = $this->get_3_weeks( $calendar );
 
 		$table = '<table class="table table-bordered table-striped border-dark ep-calendar-calendar">' . $header . $display . '</table>';
 
@@ -63,16 +63,15 @@ class Display_Calendar {
 	/**
 	 * Generate the weekly list of shows.
 	 *
-	 * @param  object $today
-	 * @param  object $tz
+	 * @param  array  $calendar Processed calendar data
 	 * @return string
 	 */
-	public function get_3_weeks() {
+	public function get_3_weeks( $calendar ) {
 		$tbody = '<tbody>';
 
-		$tbody .= $this->get_week( 'previous' );
-		$tbody .= $this->get_week( 'this' );
-		$tbody .= $this->get_week( 'next' );
+		$tbody .= $this->get_week( 'previous', $calendar );
+		$tbody .= $this->get_week( 'this', $calendar );
+		$tbody .= $this->get_week( 'next', $calendar );
 
 		$tbody .= '</tbody>';
 
@@ -83,9 +82,10 @@ class Display_Calendar {
 	 * Generate the weekly list of shows.
 	 *
 	 * @param  string $week
+	 * @param  array  $calendar Processed calendar data
 	 * @return string
 	 */
-	public function get_week( $week = 'this' ) {
+	public function get_week( $week = 'this', $calendar = array() ) {
 		$display = Calendar_Object_Pool::get_display();
 		$today   = $display->today;
 		$tz      = $display->timezone;
@@ -98,12 +98,8 @@ class Display_Calendar {
 		$next_datetime = $display->build_datetime( $get_tvdate, 'end' );
 		$prev_datetime = $display->build_datetime( $get_tvdate, 'previous' );
 
-		// Get the calendar week.
-		$calendar_week = match ( $week ) {
-			'this'     => ( new Build_Calendar() )->generate_tvmaze_calendar( $this_datetime->format( 'Y-m-d' ) ),
-			'previous' => ( new Build_Calendar() )->generate_tvmaze_calendar( $prev_datetime->format( 'Y-m-d' ) ),
-			'next'     => ( new Build_Calendar() )->generate_tvmaze_calendar( $next_datetime->format( 'Y-m-d' ) ),
-		};
+		// Use processed calendar data instead of generating new data
+		$calendar_week = $calendar;
 
 		$row = '<tr>';
 
@@ -148,12 +144,11 @@ class Display_Calendar {
 			$cell .= '<li class="list-group-item list-group-item-action list-group-item' . $highlight . ' disabled"><small>No Shows</small></li>';
 		} else {
 			foreach ( $shows as $show ) {
-				$names             = Calendar_Object_Pool::get_names();
-				$display           = Calendar_Object_Pool::get_display();
-				$show['show_name'] = $names->make( $show['show_name'], 'tvmaze', 'name' );
-				$lwtv_date         = $display->get_showtime( $show, true );
-				$show_content      = ( is_array( $show['title'] ) ) ? $show['show_name'] . ' <span class="badge text-bg-secondary badge-pill">' . count( $show['title'] ) . '</span>' : $show['show_name'];
-				$cell             .= '<li class="list-group-item list-group-item-action list-group-item' . $highlight . '"><small>' . $lwtv_date . '</br>' . $show_content . '</small></li>';
+				// Use pre-processed data from Data Processor
+				$show_name    = $show['show_name'];
+				$lwtv_date    = $show['time_data']['formatted_time'];
+				$show_content = ( is_array( $show['title'] ) ) ? $show_name . $show['episode_badge'] : $show_name;
+				$cell        .= '<li class="list-group-item list-group-item-action list-group-item' . $highlight . '"><small>' . $lwtv_date . '</br>' . $show_content . '</small></li>';
 			}
 		}
 

@@ -9,6 +9,7 @@ namespace LWTV\Calendar;
 
 use LWTV\_Components\Calendar as Build_Calendar;
 use LWTV\Calendar\Display_List;
+use LWTV\Calendar\Data_Processor;
 
 class Display {
 
@@ -69,13 +70,17 @@ class Display {
 			return $this->get_tvmaze_error_message();
 		}
 
-		ksort( $calendar );
+		// Process calendar data using Data Processor
+		$data_processor     = new Data_Processor();
+		$processed_calendar = $data_processor->process_calendar_data( $calendar, $date_query );
+
+		ksort( $processed_calendar );
 
 		// If we have no shows, we need to display a message.
 		if ( isset( $calendar['none'] ) || empty( $calendar ) || ! array( $calendar ) ) {
 			$return .= $this->get_empty_calendar( $start_datetime, $end_datetime );
 		} else {
-			$return .= $this->get_tab_navigation( $calendar, $get_tvview, $date_query );
+			$return .= $this->get_tab_navigation( $calendar, $get_tvview, $date_query, $processed_calendar );
 		}
 
 		/**
@@ -112,64 +117,22 @@ class Display {
 	 * @param  string $tv_view  The view
 	 * @return string           The tab navigation
 	 */
-	private function get_tab_navigation( $calendar, $tv_view = 'list', $date_query = 'today' ) {
+	private function get_tab_navigation( $calendar, $tv_view = 'list', $date_query = 'today', $processed_calendar = array() ) {
 		$navigation  = '<p>All times are displayed as US/Eastern, but are reflective of their original air date and time.</p>';
 		$navigation .= '<p>Be advised, airdates and times are subject to change without notice. Always check your local listings.<p>';
 		$navigation .= '<a name="caltop"></a>';
 
-		$current_calendar = $this->get_current_calendar( $calendar, $date_query );
-
 		// Get the show list.
 		$show_tabs = array(
-			'list'     => ( new Display_List() )->get_shows( $current_calendar, $date_query ),
-			'grid'     => ( new Display_Grid() )->get_shows( $current_calendar, $date_query ),
-			'calendar' => ( new Display_Calendar() )->get_shows( $current_calendar, $date_query ),
+			'list'     => ( new Display_List() )->get_shows( $processed_calendar, $date_query ),
+			'grid'     => ( new Display_Grid() )->get_shows( $processed_calendar, $date_query ),
+			'calendar' => ( new Display_Calendar() )->get_shows( $processed_calendar, $date_query ),
 		);
 
 		$tab_content = $this->get_tab_content( $show_tabs, $tv_view );
-
 		$navigation .= '<div class="tab-content" id="calendarTabContent">' . $tab_content . '</div>';
 
 		return $navigation;
-	}
-
-	/**
-	 * Get the current calendar
-	 *
-	 * @param  array  $calendar
-	 * @param  string $date_query
-	 * @return array
-	 */
-	private function get_current_calendar( $calendar, $date_query ) {
-
-		// See if the transient exists.
-		$transient = lwtv_plugin()->get_transient( 'lwtv_calendar_' . $date_query );
-
-		if ( false !== $transient ) {
-			return $transient;
-		}
-
-		$today = $this->today->format( 'Y-m-d' );
-
-		// Use the same logic as the Calendar view - get the full week regardless of the query
-		$start_datetime = $this->build_datetime( $date_query, 'start' );
-		$end_datetime   = $this->build_datetime( $date_query, 'end' );
-
-		$start_date = $start_datetime->format( 'Y-m-d' );
-		$end_date   = $end_datetime->format( 'Y-m-d' );
-
-		$current_calendar = array_filter(
-			$calendar,
-			function ( $date ) use ( $start_date, $end_date ) {
-				return $date >= $start_date && $date <= $end_date;
-			},
-			ARRAY_FILTER_USE_KEY
-		);
-
-		// Set the transient.
-		lwtv_plugin()->set_transient( 'lwtv_calendar_' . $date_query, $current_calendar, 60 * 60 * 24 );
-
-		return $current_calendar;
 	}
 
 	/**
