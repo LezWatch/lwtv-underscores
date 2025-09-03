@@ -303,6 +303,9 @@ class Shows {
 			( new CMB2() )->select2_taxonomy_save( $post_id, $postmeta, $taxonomy );
 		}
 
+		// Update AIOSEO custom fields
+		$this->update_aioseo_custom_fields( $post_id );
+
 		// Queue cache invalidation for shutdown processing
 		lwtv_plugin()->cache_queue( $post_id );
 
@@ -391,5 +394,50 @@ class Shows {
 		if ( false !== $tmdb_id ) {
 			update_post_meta( $post_id, 'lezshows_tmdb_id', $tmdb_id );
 		}
+	}
+
+	/**
+	 * Update AIOSEO custom fields for shows
+	 *
+	 * Creates custom fields that AIOSEO can use with its Custom Field smart tag
+	 *
+	 * @param int $post_id The post ID.
+	 */
+	public function update_aioseo_custom_fields( $post_id ) {
+		// Generate lwtv_aioseo_formats field - from lez_formats taxonomy
+		$formats = get_the_terms( $post_id, 'lez_formats' );
+		$formats_string = '';
+		if ( $formats && ! is_wp_error( $formats ) ) {
+			$format_names = array();
+			foreach ( $formats as $format ) {
+				$format_names[] = $format->name;
+			}
+			$formats_string = implode( ', ', $format_names );
+		}
+		update_post_meta( $post_id, 'lwtv_aioseo_formats', $formats_string );
+
+		// Generate lwtv_aioseo_stations field - from lez_stations taxonomy
+		$stations = get_the_terms( $post_id, 'lez_stations' );
+		$stations_string = '';
+		if ( $stations && ! is_wp_error( $stations ) ) {
+			$station_names = array();
+			foreach ( $stations as $station ) {
+				$station_names[] = $station->name;
+			}
+			$stations_string = implode( ', ', $station_names );
+		}
+		update_post_meta( $post_id, 'lwtv_aioseo_stations', $stations_string );
+
+		// Generate lwtv_aioseo_tropes field - from lez_tropes taxonomy
+		$tropes = get_the_terms( $post_id, 'lez_tropes' );
+		$tropes_string = '';
+		if ( $tropes && ! is_wp_error( $tropes ) ) {
+			$trope_names = array();
+			foreach ( $tropes as $trope ) {
+				$trope_names[] = $trope->name;
+			}
+			$tropes_string = implode( ', ', $trope_names );
+		}
+		update_post_meta( $post_id, 'lwtv_aioseo_tropes', $tropes_string );
 	}
 }

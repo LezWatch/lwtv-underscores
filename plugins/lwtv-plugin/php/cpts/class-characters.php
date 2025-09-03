@@ -340,6 +340,58 @@ class Characters {
 		\wpseo_register_var_replacement( '%%shows%%', array( $this, 'yoast_retrieve_shows_replacement' ), 'basic', 'A list of shows the character was on, separated by commas.' );
 	}
 
+	/**
+	 * Update AIOSEO custom fields for characters
+	 *
+	 * Creates custom fields that AIOSEO can use with its Custom Field smart tag
+	 *
+	 * @param int $post_id The post ID.
+	 */
+	public function update_aioseo_custom_fields( $post_id ) {
+		// Generate lwtv_aioseo_actors field - same data as Yoast %%actors%% but stored as post meta
+		$actors = array();
+		$actors_ids = get_post_meta( $post_id, 'lezchars_actor', true );
+		if ( ! is_array( $actors_ids ) ) {
+			$actors_ids = array( get_post_meta( $post_id, 'lezchars_actor', true ) );
+		}
+		if ( '' !== $actors_ids && ! is_null( $actors_ids ) ) {
+			foreach ( $actors_ids as $each_actor ) {
+				array_push( $actors, get_the_title( $each_actor ) );
+			}
+		}
+		$actors_string = implode( ', ', $actors );
+		update_post_meta( $post_id, 'lwtv_aioseo_actors', $actors_string );
+
+		// Generate lwtv_aioseo_shows field - same data as Yoast %%shows%% but stored as post meta
+		$shows_ids    = get_post_meta( $post_id, 'lezchars_show_group', true );
+		$shows_titles = array();
+
+		if ( ! is_array( $shows_ids ) ) {
+			$shows_ids = array( $shows_ids );
+		}
+
+		if ( '' !== $shows_ids && ! is_null( $shows_ids ) ) {
+			foreach ( $shows_ids as $each_show ) {
+
+				if ( ! isset( $each_show['show'] ) ) {
+					continue;
+				}
+
+				// De-Array.
+				if ( is_array( $each_show['show'] ) ) {
+					$each_show['show'] = $each_show['show'][0];
+				}
+
+				// Get titles.
+				if ( isset( $each_show['show'] ) ) {
+					array_push( $shows_titles, get_the_title( $each_show['show'] ) );
+				}
+			}
+		}
+		$shows_string = implode( ', ', $shows_titles );
+		update_post_meta( $post_id, 'lwtv_aioseo_shows', $shows_string );
+	}
+
 	/*
 	 * Save post meta for characters
 	 *
@@ -386,6 +438,9 @@ class Characters {
 		// Always Sync Taxonomies
 		( new CMB2() )->select2_taxonomy_save( $post_id, 'lezchars_cliches', 'lez_cliches' );
 		( new CMB2() )->select2_taxonomy_save( $post_id, 'lezchars_relationship_chart', 'shadow_tax_characters' );
+
+		// Update AIOSEO custom fields
+		$this->update_aioseo_custom_fields( $post_id );
 
 		// Queue cache invalidation for shutdown processing
 		lwtv_plugin()->cache_queue( $post_id );

@@ -254,6 +254,9 @@ class Actors {
 		// Queue cache invalidation for shutdown processing
 		lwtv_plugin()->cache_queue( $post_id );
 
+		// Update AIOSEO custom fields
+		$this->update_aioseo_custom_fields( $post_id );
+
 		// re-hook this function
 		add_action( 'save_post_post_type_actors', array( $this, 'save_post_meta' ) );
 	}
@@ -298,6 +301,25 @@ class Actors {
 	public function yoast_seo_register_extra() {
 		\wpseo_register_var_replacement( '%%characters%%', array( $this, 'yoast_retrieve_characters_replacement' ), 'basic', 'Information on how many characters an actor plays.' );
 		\wpseo_register_var_replacement( '%%is_queer%%', array( $this, 'yoast_retrieve_queer_replacement' ), 'basic', 'Output if the actor is queer IRL.' );
+	}
+
+	/**
+	 * Update AIOSEO custom fields for actors
+	 *
+	 * Creates custom fields that AIOSEO can use with its Custom Field smart tag
+	 *
+	 * @param int $post_id The post ID.
+	 */
+	public function update_aioseo_custom_fields( $post_id ) {
+		// Generate lwtv_aioseo_characters field - same data as Yoast %%characters%% but stored as post meta
+		$char_count = get_post_meta( $post_id, 'lezactors_char_count', true );
+		$characters = ( 0 === $char_count ) ? 'no characters' : sprintf( _n( '%s character', '%s characters', $char_count ), $char_count );
+		update_post_meta( $post_id, 'lwtv_aioseo_characters', $characters );
+
+		// Generate lwtv_aioseo_is_queer field - same data as Yoast %%is_queer%% but stored as post meta
+		$is_queer = get_post_meta( $post_id, 'lezactors_queer', true );
+		$queer_text = ( $is_queer ) ? 'a queer actor' : 'an actor';
+		update_post_meta( $post_id, 'lwtv_aioseo_is_queer', $queer_text );
 	}
 
 	/*
