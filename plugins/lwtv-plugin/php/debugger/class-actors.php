@@ -47,7 +47,7 @@ class Actors {
 
 		// If somehow actors is totally empty...
 		if ( empty( $actors ) ) {
-			return false;
+			return array();
 		}
 
 		// Make sure we don't have dupes.
@@ -189,7 +189,7 @@ class Actors {
 
 		// If somehow actors is totally empty...
 		if ( empty( $actors ) ) {
-			return false;
+			return array();
 		}
 
 		// Make sure we don't have dupes.
@@ -266,7 +266,7 @@ class Actors {
 
 		// If somehow actors is totally empty...
 		if ( empty( $actors ) ) {
-			return false;
+			return array();
 		}
 
 		// Make sure we don't have dupes.

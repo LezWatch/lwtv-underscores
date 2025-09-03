@@ -52,9 +52,6 @@ class Actors {
 		add_action( 'init', array( $this, 'create_post_type' ), 0 );
 		add_action( 'init', array( $this, 'create_taxonomies' ), 0 );
 
-		// Yoast Hooks
-		add_action( 'wpseo_register_extra_replacements', array( $this, 'yoast_seo_register_extra' ) );
-
 		// Save Hooks
 		add_action( 'save_post_post_type_actors', array( $this, 'save_post_meta' ), 10, 3 );
 
@@ -256,48 +253,6 @@ class Actors {
 
 		// re-hook this function
 		add_action( 'save_post_post_type_actors', array( $this, 'save_post_meta' ) );
-	}
-
-	/*
-	 * Extra Meta Variables for Yoast and Characters
-	 *
-	 * Information on how many queer characters an actor plays
-	 */
-	public function yoast_retrieve_characters_replacement() {
-		global $post;
-
-		$characters = '0';
-		if ( is_object( $post ) ) {
-			$char_count = get_post_meta( $post->ID, 'lezactors_char_count', true );
-			// translators: %s is the number of characters
-			$characters = ( 0 === $char_count ) ? 'no characters' : sprintf( _n( '%s character', '%s characters', $char_count ), $char_count );
-		}
-
-		return $characters;
-	}
-
-	/*
-	 * Extra Meta Variables for Yoast and Queer
-	 *
-	 * List of actors who played a character, for use on character pages
-	 */
-	public function yoast_retrieve_queer_replacement() {
-		global $post;
-
-		$queer = 'an actor';
-		if ( is_object( $post ) ) {
-			$is_queer = get_post_meta( $post->ID, 'lezactors_queer', true );
-			$queer    = ( $is_queer ) ? 'a queer actor' : 'an actor';
-		}
-		return $queer;
-	}
-
-	/*
-	 * Extra Replacement Functions for Yoast SEO
-	 */
-	public function yoast_seo_register_extra() {
-		\wpseo_register_var_replacement( '%%characters%%', array( $this, 'yoast_retrieve_characters_replacement' ), 'basic', 'Information on how many characters an actor plays.' );
-		\wpseo_register_var_replacement( '%%is_queer%%', array( $this, 'yoast_retrieve_queer_replacement' ), 'basic', 'Output if the actor is queer IRL.' );
 	}
 
 	/*
