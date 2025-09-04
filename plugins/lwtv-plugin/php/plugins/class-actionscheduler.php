@@ -61,6 +61,24 @@ class ActionScheduler {
 				return $statuses;
 			}
 		);
+
+		// Set the next scan time to 60 minutes from now for aioseo_seo_analyzer_posts_next_scan
+		add_filter(
+			'aioseo_seo_analyzer_posts_next_scan',
+			function ( $next_scan ) {
+				$next_scan = strtotime( '+60 minutes' );
+				return $next_scan;
+			}
+		);
+
+		// Set the next scan time to 60 minutes from now for aioseo_seo_analyzer_terms_next_scan
+		add_filter(
+			'aioseo_seo_analyzer_terms_next_scan',
+			function ( $next_scan ) {
+				$next_scan = strtotime( '+60 minutes' );
+				return $next_scan;
+			}
+		);
 	}
 
 	/**
