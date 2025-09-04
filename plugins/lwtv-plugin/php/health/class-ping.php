@@ -24,9 +24,9 @@ class Ping {
 	 * @param string $check_name The name of the health check.
 	 * @param string $check_url  The URL of the health check.
 	 *
-	 * @return void
+	 * @return array|\WP_Error The response from wp_remote_post or a WP_Error object on failure.
 	 */
-	public function ping( $check_name = '', $check_url = '' ): object {
+	public function ping( $check_name = '', $check_url = '' ): array|\WP_Error {
 
 		if ( empty( $check_url ) && empty( $check_name ) ) {
 			lwtv_plugin()->error_log( 'HealthCheck', 'No check URL or name provided. Skipping ping.' );
