@@ -23,12 +23,19 @@
 
 namespace LWTV\Features;
 
+use LWTV\Health\Ping;
+
 class Missed_Schedule {
 
 	/**
 	 * Action Scheduler hook name
 	 */
 	const AS_HOOK = 'lwtv_missed_schedule_check';
+
+	/**
+	 * Action Scheduler group name
+	 */
+	const AS_GROUP = 'lwtv';
 
 	/**
 	 * Constructor.
@@ -54,7 +61,7 @@ class Missed_Schedule {
 	private function init_action_scheduler(): void {
 		// Only schedule if no existing actions are scheduled
 		if ( ! as_next_scheduled_action( self::AS_HOOK ) ) {
-			as_schedule_recurring_action( time(), HOUR_IN_SECONDS, self::AS_HOOK );
+			as_schedule_recurring_action( time(), HOUR_IN_SECONDS, self::AS_HOOK, array(), self::AS_GROUP );
 			lwtv_plugin()->error_log( 'missed-schedule', 'Scheduled recurring missed schedule check via Action Scheduler' );
 		}
 	}
@@ -187,7 +194,7 @@ SQL;
 	public function trigger_check(): string {
 		if ( $this->is_action_scheduler_available() ) {
 			// Schedule an immediate action
-			as_schedule_single_action( time(), self::AS_HOOK );
+			as_schedule_single_action( time(), self::AS_HOOK, array(), self::AS_GROUP );
 			return 'Missed schedule check scheduled via Action Scheduler.';
 		}
 
@@ -208,24 +215,18 @@ SQL;
 			return;
 		}
 
-		$check_name = 'missed-schedule-check';
-		$check_url  = 'https://health.ipstenu.com/api/v3/checks/' . $check_name . '/ping/';
+		try {
+			$response = ( new Ping() )->ping( 'missed-schedule-check' );
 
-		// Ping the health check
-		$response = wp_remote_post(
-			$check_url,
-			array(
-				'headers' => array(
-					'X-Api-Key'    => HEALTHCHECKS_API_KEY_CORE_PING,
-					'Content-Type' => 'application/json',
-				),
-			)
-		);
-
-		if ( ! is_wp_error( $response ) ) {
-			lwtv_plugin()->error_log( 'missed-schedule', 'Health check pinged successfully' );
-		} else {
-			lwtv_plugin()->error_log( 'missed-schedule', 'Failed to ping health check: ' . $response->get_error_message() );
+			if ( ! is_object( $response ) ) {
+				lwtv_plugin()->error_log( 'missed-schedule', 'Failed to ping health check. Invalid response.' );
+			} elseif ( ! is_wp_error( $response ) ) {
+				lwtv_plugin()->error_log( 'missed-schedule', 'Health check pinged successfully' );
+			} else {
+				lwtv_plugin()->error_log( 'missed-schedule', 'Failed to ping health check: ' . $response->get_error_message() );
+			}
+		} catch ( \Exception $e ) {
+			lwtv_plugin()->error_log( 'missed-schedule', 'Failed to ping health check: ' . $e->getMessage() );
 		}
 	}
 }

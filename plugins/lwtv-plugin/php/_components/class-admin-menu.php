@@ -47,7 +47,7 @@ class Admin_Menu implements Component {
 			( new Exclusions() )->init();
 
 			//phpcs:ignore WordPress.WP.GlobalVariablesOverride
-			$submenu['action-scheduler'][] = array( 'Scheduled Actions', 'read', admin_url( 'tools.php?page=action-scheduler' ) );
+			$submenu['lwtv'][] = array( 'Scheduled Actions', 'read', admin_url( 'tools.php?page=action-scheduler' ) );
 		}
 
 		//phpcs:ignore WordPress.WP.GlobalVariablesOverride

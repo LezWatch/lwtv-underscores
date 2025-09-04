@@ -24,6 +24,8 @@
 
 namespace LWTV\Health;
 
+use LWTV\Health\Ping;
+
 class Health_Checks {
 
 	/**
@@ -31,7 +33,15 @@ class Health_Checks {
 	 *
 	 * @var string
 	 */
-	private $api_url = 'https://health.ipstenu.com';
+	public const API_URL     = 'https://health.ipstenu.com';
+	public const API_VERSION = 'api/v3/checks/';
+
+	/**
+	 * The API URL
+	 *
+	 * @var string
+	 */
+	private $api_url;
 
 	/**
 	 * The API key
@@ -76,7 +86,8 @@ class Health_Checks {
 		}
 
 		// Set the API URL.
-		$this->api_url = ( defined( 'HEALTHCHECKS_API_URL' ) ) ? HEALTHCHECKS_API_URL : $this->api_url;
+		$this->api_url  = ( defined( 'HEALTHCHECKS_API_URL' ) ) ? HEALTHCHECKS_API_URL : self::API_URL;
+		$this->api_url .= self::API_VERSION;
 
 		// Set the API headers.
 		$this->api_headers['X-Api-Key'] = $this->api_key;
@@ -143,27 +154,30 @@ class Health_Checks {
 			return $event;
 		}
 
-		$check_name = self::generate_check_name( $hook );
-		$check      = self::get_or_create_check( $check_name, $interval );
+		try {
+			$check_name = self::generate_check_name( $hook );
+			$check      = self::get_or_create_check( $check_name, $interval );
 
-		if ( empty( $check ) ) {
-			lwtv_plugin()->error_log( 'HealthCheck', 'Check not found for ' . $check_name );
-			return $event;
-		}
-
-		if ( ! isset( $check['ping_url'] ) ) {
-			lwtv_plugin()->error_log( 'HealthCheck', 'Ping URL not found for ' . $check_name );
-			return $event;
-		}
-
-		// Hook to ping HealthChecks after the job runs
-		add_action(
-			$hook,
-			function () use ( $check ) {
-				lwtv_plugin()->error_log( 'HealthCheck', 'Pinging ' . $check['ping_url'] );
-				wp_remote_post( $check['ping_url'] );
+			if ( empty( $check ) ) {
+				lwtv_plugin()->error_log( 'HealthCheck', 'Check not found for ' . $check_name );
+				return $event;
 			}
-		);
+
+			if ( ! isset( $check['ping_url'] ) ) {
+				lwtv_plugin()->error_log( 'HealthCheck', 'Ping URL not found for ' . $check_name );
+				return $event;
+			}
+
+			// Hook to ping HealthChecks after the job runs
+			add_action(
+				$hook,
+				function () use ( $check, $check_name ) {
+					( new Ping() )->ping( $check_name, $check['ping_url'] );
+				}
+			);
+		} catch ( \Exception $e ) {
+			lwtv_plugin()->error_log( 'HealthCheck', 'Error maybe registering healthcheck: ' . $e->getMessage() );
+		}
 
 		return $event;
 	}
@@ -238,7 +252,7 @@ class Health_Checks {
 			// Post to the checks endpoint.
 			$body   = $this->create_check_body( $check_name, $interval );
 			$create = wp_remote_post(
-				$this->api_url . '/api/v3/checks/',
+				$this->api_url,
 				array(
 					'headers' => $this->api_headers,
 					'body'    => wp_json_encode( $body ),
@@ -273,6 +287,8 @@ class Health_Checks {
 		$name     = str_replace( $prefix . '-', '', $check_name );
 		$name     = str_replace( '-', ' ', $name );
 
+		// TODO: Get the plugin name and add that to the tags.
+
 		return array(
 			'name'     => ucwords( $name ),
 			'tags'     => 'wp-cron lwtv',
@@ -299,7 +315,7 @@ class Health_Checks {
 
 		try {
 			$response = wp_remote_get(
-				$this->api_url . '/api/v3/checks/',
+				$this->api_url,
 				array(
 					'headers' => $this->api_headers,
 				)

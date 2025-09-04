@@ -23,6 +23,11 @@ class Cache_Batch_Task {
 	const AS_HOOK = 'lwtv_cache_batch_task';
 
 	/**
+	 * Action Scheduler group name
+	 */
+	const AS_GROUP = 'lwtv';
+
+	/**
 	 * Batch size for processing URLs
 	 */
 	const BATCH_SIZE = 50;
@@ -103,7 +108,8 @@ class Cache_Batch_Task {
 
 		// Schedule processing if not already scheduled
 		if ( ! $this->is_processing_scheduled() ) {
-			as_schedule_single_action( time(), self::AS_HOOK );
+			as_schedule_single_action( time(), self::AS_HOOK, array(), self::AS_GROUP );
+
 			$this->update_status(
 				array(
 					'next_processing' => time(),
@@ -198,7 +204,7 @@ class Cache_Batch_Task {
 
 		// Schedule next processing if queue is not empty
 		if ( ! empty( $remaining_queue ) ) {
-			as_schedule_single_action( time() + 30, self::AS_HOOK ); // 30 second delay
+			as_schedule_single_action( time() + 30, self::AS_HOOK, array(), self::AS_GROUP ); // 30 second delay
 			$this->update_status(
 				array(
 					'next_processing' => time() + 30,
@@ -415,7 +421,8 @@ class Cache_Batch_Task {
 		}
 
 		// Schedule immediate processing
-		as_schedule_single_action( time(), self::AS_HOOK );
+		as_schedule_single_action( time(), self::AS_HOOK, array(), self::AS_GROUP );
+
 		$this->update_status(
 			array(
 				'next_processing' => time(),
