@@ -82,16 +82,19 @@ class Scheduler implements Component, Templater {
 	 *
 	 * @param string $task_type The type of task to schedule
 	 * @param int    $post_id  The post ID to process
+	 * @param int    $priority The priority of the task (default: 0)
 	 * @param int    $delay    Delay in seconds (default: 30)
+	 * @param string $group    The group to schedule the task in (default: 'lwtv')
+	 * @param bool   $unique   Whether the task should be unique (default: true)
 	 * @return bool  Whether the task was scheduled successfully
 	 */
-	public function schedule_task( string $task_type, int $post_id, int $delay = 30 ): bool {
+	public function schedule_task( string $task_type, int $post_id, int $priority = 0, int $delay = 30, string $group = 'lwtv', bool $unique = true ): bool {
 		$task_name = 'lwtv_' . $task_type . '_task';
 		$hook_name = $task_name . '_' . $post_id;
 
 		// If Action Scheduler is active, use it with generic hook name
 		if ( $this->is_action_scheduler_available() ) {
-			$scheduled = as_schedule_single_action( time() + $delay, $task_name, array( $post_id ) );
+			$scheduled = as_schedule_single_action( time() + $delay, $task_name, array( $post_id ), $group, $unique, $priority );
 			lwtv_plugin()->error_log( 'scheduler', "Scheduled {$task_type} task via Action Scheduler for post ID: {$post_id} with {$delay}s delay" );
 		} else {
 			// Fallback to WordPress cron with unique hook name

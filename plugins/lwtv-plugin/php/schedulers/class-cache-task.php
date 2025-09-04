@@ -45,8 +45,8 @@ class Cache_Task {
 		// If we've got a list of URLs, then flush.
 		if ( isset( $clear_urls ) && ! empty( $clear_urls ) ) {
 			( new Cache() )->clean_related_urls_for_cpts( $post_id, $clear_urls );
-			// phpcs:ignore Squiz.Strings.DoubleQuoteUsage.NotRequired
-			lwtv_plugin()->error_log( 'cache-task', "Successfully cleared cache for {$post_type} ID: {$post_id} - " . count( $clear_urls ) . " URLs" );
+			$clear_url_count = count( $clear_urls );
+			lwtv_plugin()->error_log( 'cache-task', "Successfully cleared cache for {$post_type} ID: {$post_id} - {$clear_url_count} URLs" );
 		} else {
 			lwtv_plugin()->error_log( 'cache-task', "No cache URLs to clear for {$post_type} ID: {$post_id}" );
 		}
