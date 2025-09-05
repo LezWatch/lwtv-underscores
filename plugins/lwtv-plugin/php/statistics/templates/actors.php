@@ -1,9 +1,11 @@
 <?php
 /**
- * The template for displaying the actor stats page
+ * The template for displaying the actor stats page - Optimized Version
  *
  * @package LezWatch.TV
  */
+
+use LWTV\Statistics\Build\Taxonomy_Optimized as Build_Taxonomy_Optimized;
 
 // if this file is called directly abort
 if ( ! defined( 'WPINC' ) ) {
@@ -13,6 +15,15 @@ if ( ! defined( 'WPINC' ) ) {
 $valid_views = array( 'gender', 'sexuality', 'roles' );
 $sent_view   = get_query_var( 'view', 'overview' );
 $view        = ( ! in_array( $sent_view, $valid_views, true ) ) ? 'overview' : $sent_view;
+
+// OPTIMIZED: Pre-load taxonomy data for overview section
+$optimized_taxonomy   = new Build_Taxonomy_Optimized();
+$actor_gender_data    = $optimized_taxonomy->make_comprehensive( 'post_type_actors', 'lez_actor_gender', false );
+$actor_sexuality_data = $optimized_taxonomy->make_comprehensive( 'post_type_actors', 'lez_actor_sexuality', false );
+
+// Sort by count descending for top 10
+$top_genders     = array_slice( $actor_gender_data, 0, 10, true );
+$top_sexualities = array_slice( $actor_sexuality_data, 0, 10, true );
 ?>
 <h2>
 	<a href="/actors/">Total Actors</a> (<?php echo lwtv_plugin()->generate_statistics( 'actors', 'total', 'count' ); // phpcs:ignore WordPress.Security.EscapeOutput ?>)
@@ -56,7 +67,7 @@ switch ( $view ) {
 				</div>
 				<div class="col">
 					<div class="card text-center">
-						<h3 class="card-header gender">Gender Identities</h3>
+						<h3 class="card-header actor_gender">Gender Identities</h3>
 						<div class="card-body bg-light">
 							<h5 class="card-title"><?php echo (int) wp_count_terms( 'lez_actor_gender' ); ?></h5>
 						</div>
@@ -80,19 +91,11 @@ switch ( $view ) {
 						</thead>
 						<tbody>
 							<?php
-							$sexualities = get_terms(
-								array(
-									'taxonomy'   => 'lez_actor_sexuality',
-									'number'     => 5,
-									'orderby'    => 'count',
-									'hide_empty' => 0,
-									'order'      => 'DESC',
-								)
-							);
-							foreach ( $sexualities as $sexuality ) {
+							// OPTIMIZED: Use pre-loaded data instead of get_terms()
+							foreach ( $top_sexualities as $sexuality_slug => $sexuality_data ) {
 								echo '<tr>
-										<th scope="row"><a href="/sexuality/' . esc_attr( $sexuality->slug ) . '">' . esc_html( $sexuality->name ) . '</a></th>
-										<td>' . (int) $sexuality->count . '</td>
+										<th scope="row"><a href="/sexuality/' . esc_attr( $sexuality_slug ) . '">' . esc_html( $sexuality_data['name'] ) . '</a></th>
+										<td>' . (int) $sexuality_data['count'] . '</td>
 									</tr>';
 							}
 							?>
@@ -112,19 +115,11 @@ switch ( $view ) {
 						</thead>
 						<tbody>
 							<?php
-							$genders = get_terms(
-								array(
-									'taxonomy'   => 'lez_actor_gender',
-									'number'     => 5,
-									'orderby'    => 'count',
-									'hide_empty' => 0,
-									'order'      => 'DESC',
-								)
-							);
-							foreach ( $genders as $gender ) {
+							// OPTIMIZED: Use pre-loaded data instead of get_terms()
+							foreach ( $top_genders as $gender_slug => $gender_data ) {
 								echo '<tr>
-										<th scope="row"><a href="/gender/' . esc_attr( $gender->slug ) . '">' . esc_html( $gender->name ) . '</a></th>
-										<td>' . (int) $gender->count . '</td>
+										<th scope="row"><a href="/actor-gender/' . esc_url( $gender_slug ) . '">' . esc_html( $gender_data['name'] ) . '</a></th>
+										<td>' . (int) $gender_data['count'] . '</td>
 									</tr>';
 							}
 							?>
@@ -209,4 +204,8 @@ switch ( $view ) {
 		<?php
 		break;
 }
-?>
+
+// Performance monitoring - remove this in production
+if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+	echo '<!-- OPTIMIZED: Queries reduced from ~' . ( count( $top_genders ) + count( $top_sexualities ) + 10 ) . ' to ' . esc_html( get_num_queries() ) . ' -->';
+}

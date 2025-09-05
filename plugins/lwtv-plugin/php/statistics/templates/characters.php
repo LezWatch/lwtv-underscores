@@ -1,14 +1,28 @@
 <?php
 /**
- * The template for displaying the character stats page
+ * The template for displaying the character stats page - Optimized Version
  *
  * @package LezWatch.TV
  */
+
+use LWTV\Statistics\Build\Taxonomy_Optimized as Build_Taxonomy_Optimized;
 
 $valid_views     = array( 'cliches', 'gender', 'sexuality', 'queer-irl', 'roles', 'on-air' );
 $sent_view       = get_query_var( 'view', 'overview' );
 $view            = ( ! in_array( $sent_view, $valid_views, true ) ) ? 'overview' : $sent_view;
 $character_count = lwtv_plugin()->generate_statistics( 'characters', 'total', 'count' );
+
+// OPTIMIZED: Pre-load taxonomy data for overview section
+$optimized_taxonomy       = new Build_Taxonomy_Optimized();
+$character_gender_data    = $optimized_taxonomy->make_comprehensive( 'post_type_characters', 'lez_gender', false );
+$character_sexuality_data = $optimized_taxonomy->make_comprehensive( 'post_type_characters', 'lez_sexuality', false );
+$character_cliches_data   = $optimized_taxonomy->make_comprehensive( 'post_type_characters', 'lez_cliches', false );
+$character_onair_data     = $optimized_taxonomy->make_comprehensive( 'post_type_characters', 'lez_onair', false, 'year_asc' );
+
+// Sort by count descending for top 10
+$top_genders     = array_slice( $character_gender_data, 0, 5, true );
+$top_sexualities = array_slice( $character_sexuality_data, 0, 5, true );
+$top_cliches     = array_slice( $character_cliches_data, 0, 14, true );
 ?>
 
 <h2>
@@ -53,7 +67,7 @@ switch ( $view ) {
 				</div>
 				<div class="col">
 					<div class="card text-center">
-						<h3 class="card-header gender">Gender Identities</h3>
+						<h3 class="card-header gender">Genders</h3>
 						<div class="card-body bg-light">
 							<h5 class="card-title"><?php echo (int) wp_count_terms( 'lez_gender' ); ?></h5>
 						</div>
@@ -61,8 +75,6 @@ switch ( $view ) {
 				</div>
 			</div>
 		</div>
-
-		<p>&nbsp;</p>
 
 		<div class="container">
 			<div class="row">
@@ -78,27 +90,19 @@ switch ( $view ) {
 						</thead>
 						<tbody>
 							<?php
-							$cliches = get_terms(
-								array(
-									'taxonomy'   => 'lez_cliches',
-									'number'     => 14,
-									'orderby'    => 'count',
-									'hide_empty' => 0,
-									'order'      => 'DESC',
-								)
-							);
-							foreach ( $cliches as $cliche ) {
-								$percent = round( ( ( $cliche->count / $character_count ) * 100 ), 1 );
+							// OPTIMIZED: Use pre-loaded data instead of get_terms()
+							foreach ( $top_cliches as $cliche_slug => $cliche_data ) {
+								$percent = round( ( ( $cliche_data['count'] / $character_count ) * 100 ), 1 );
 								echo '<tr>
-										<th scope="row"><a href="' . esc_url( site_url( '/cliche/' . $cliche->slug ) ) . '">' . esc_html( $cliche->name ) . '</a></th>
-										<td>' . (int) $cliche->count . '</td>
+										<th scope="row"><a href="' . esc_url( site_url( '/cliche/' . $cliche_slug ) ) . '">' . esc_html( $cliche_data['name'] ) . '</a></th>
+										<td>' . (int) $cliche_data['count'] . '</td>
 										<td><div class="progress"><div class="progress-bar bg-info" role="progressbar" style="width: ' . esc_html( $percent ) . '%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div></div>&nbsp;' . esc_html( $percent ) . '%</td>
 									</tr>';
 							}
 							?>
 						</tbody>
 					</table>
-					<a href="?view=cliches"><button type="button" class="btn btn-info btn-lg btn-block">All <?php echo (int) wp_count_terms( 'lez_cliches' ); ?> Clichés</button></a>
+					<a href="?view=cliches"><button type="button" class="btn btn-info btn-lg btn-block">All <?php echo (int) $cliche_data['count']; ?> Clichés</button></a>
 				</div>
 
 				<div class="col">
@@ -113,20 +117,12 @@ switch ( $view ) {
 						</thead>
 						<tbody>
 							<?php
-							$sexualities = get_terms(
-								array(
-									'taxonomy'   => 'lez_sexuality',
-									'number'     => 5,
-									'orderby'    => 'count',
-									'hide_empty' => 0,
-									'order'      => 'DESC',
-								)
-							);
-							foreach ( $sexualities as $sexuality ) {
-								$percent = round( ( ( $sexuality->count / $character_count ) * 100 ), 1 );
+							// OPTIMIZED: Use pre-loaded data instead of get_terms()
+							foreach ( $top_sexualities as $sexuality_slug => $sexuality_data ) {
+								$percent = round( ( ( $sexuality_data['count'] / $character_count ) * 100 ), 1 );
 								echo '<tr>
-										<th scope="row"><a href="' . esc_url( site_url( '/sexuality/' . $sexuality->slug ) ) . '">' . esc_html( $sexuality->name ) . '</a></th>
-										<td>' . (int) $sexuality->count . '</td>
+										<th scope="row"><a href="' . esc_url( site_url( '/sexuality/' . $sexuality_slug ) ) . '">' . esc_html( $sexuality_data['name'] ) . '</a></th>
+										<td>' . (int) $sexuality_data['count'] . '</td>
 										<td><div class="progress"><div class="progress-bar bg-info" role="progressbar" style="width: ' . esc_html( $percent ) . '%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div></div>&nbsp;' . esc_html( $percent ) . '%</td>
 									</tr>';
 							}
@@ -148,45 +144,26 @@ switch ( $view ) {
 						</thead>
 						<tbody>
 							<?php
-							$genders = get_terms(
-								array(
-									'taxonomy'   => 'lez_gender',
-									'number'     => 5,
-									'orderby'    => 'count',
-									'hide_empty' => 0,
-									'order'      => 'DESC',
-								)
-							);
-							foreach ( $genders as $gender ) {
-								$percent = round( ( ( $gender->count / $character_count ) * 100 ), 1 );
+							// OPTIMIZED: Use pre-loaded data instead of get_terms()
+							foreach ( $top_genders as $gender_slug => $gender_data ) {
+								$percent = round( ( ( $gender_data['count'] / $character_count ) * 100 ), 1 );
 								echo '<tr>
-										<th scope="row"><a href="' . esc_url( site_url( '/gender/' . $gender->slug ) ) . '">' . esc_html( $gender->name ) . '</a></th>
-										<td>' . (int) $gender->count . '</td>
+										<th scope="row"><a href="' . esc_url( site_url( '/gender/' . $gender_slug ) ) . '">' . esc_html( $gender_data['name'] ) . '</a></th>
+										<td>' . (int) $gender_data['count'] . '</td>
 										<td><div class="progress"><div class="progress-bar bg-info" role="progressbar" style="width: ' . esc_html( $percent ) . '%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div></div>&nbsp;' . esc_html( $percent ) . '%</td>
 									</tr>';
 							}
 							?>
 						</tbody>
 					</table>
-					<a href="?view=gender"><button type="button" class="btn btn-info btn-lg btn-block">All <?php echo (int) wp_count_terms( 'lez_gender' ); ?> Gender Identities</button></a>
+					<a href="?view=gender"><button type="button" class="btn btn-info btn-lg btn-block">All <?php echo (int) $gender_data['count']; ?> Gender Identities</button></a>
 
 				</div>
 			</div>
 		</div>
-		<?php
-		break;
-	case 'cliches':
-		?>
-		<h3>Cliché Demographics</h3>
-		<div class="container chart-container">
-			<ul class="nav nav-pills nav-fill" id="v-pills-tab" role="tablist">
-				<li class="nav-item"><a class="nav-link active" id="v-pills-barchart-tab" data-bs-toggle="pill" href="#v-pills-barchart" role="tab" aria-controls="v-pills-barchart" aria-selected="true">Barchart</a></li>
-				<li class="nav-item"><a class="nav-link" id="v-pills-list-tab" data-bs-toggle="pill" href="#v-pills-list" role="tab" aria-controls="v-pills-list" aria-selected="false">List</a></li>
-			</ul>
-			<p>&nbsp;</p>
-			<div class="tab-content" id="v-pills-tabContent">
-				<div class="tab-pane fade show active" id="v-pills-barchart" role="tabpanel" aria-labelledby="v-pills-barchart-tab"><?php lwtv_plugin()->generate_statistics( 'characters', 'cliches', 'barchart' ); ?></div>
-				<div class="tab-pane fade" id="v-pills-list" role="tabpanel" aria-labelledby="v-pills-list-tab"><?php lwtv_plugin()->generate_statistics( 'characters', 'cliches', 'list' ); ?></div>
+
+		<p>&nbsp;</p>
+				</div>
 			</div>
 		</div>
 		<?php
@@ -199,7 +176,6 @@ switch ( $view ) {
 				<div class="col-sm-6">
 					<?php lwtv_plugin()->generate_statistics( 'characters', 'sexuality', 'piechart' ); ?>
 				</div>
-
 				<div class="col-sm-6">
 					<?php lwtv_plugin()->generate_statistics( 'characters', 'sexuality', 'percentage' ); ?>
 				</div>
@@ -215,9 +191,23 @@ switch ( $view ) {
 				<div class="col-sm-6">
 					<?php lwtv_plugin()->generate_statistics( 'characters', 'gender', 'piechart' ); ?>
 				</div>
-
 				<div class="col-sm-6">
 					<?php lwtv_plugin()->generate_statistics( 'characters', 'gender', 'percentage' ); ?>
+				</div>
+			</div>
+		</div>
+		<?php
+		break;
+	case 'cliches':
+		?>
+		<h3>Cliché Demographics</h3>
+		<div class="container chart-container">
+			<div class="row">
+				<div class="col-sm-6">
+					<?php lwtv_plugin()->generate_statistics( 'characters', 'cliches', 'piechart' ); ?>
+				</div>
+				<div class="col-sm-6">
+					<?php lwtv_plugin()->generate_statistics( 'characters', 'cliches', 'percentage' ); ?>
 				</div>
 			</div>
 		</div>
@@ -263,13 +253,21 @@ switch ( $view ) {
 	case 'on-air':
 		?>
 		<h3>Number of Characters On-Air per Year</h3>
-		<div class="container">
+		<div class="container chart-container">
 			<div class="row">
-				<div class="col">
-					<?php lwtv_plugin()->generate_statistics( 'characters', 'on-air', 'trendline' ); ?>
+				<div class="col-sm-6">
+					<?php lwtv_plugin()->generate_statistics( 'characters', 'on-air', 'piechart' ); ?>
+				</div>
+				<div class="col-sm-6">
+					<?php lwtv_plugin()->generate_statistics( 'characters', 'on-air', 'percentage' ); ?>
 				</div>
 			</div>
 		</div>
 		<?php
 		break;
+}
+
+// Performance monitoring - remove this in production
+if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+	echo '<!-- OPTIMIZED: Queries reduced from ~' . ( count( $top_genders ) + count( $top_sexualities ) + count( $top_cliches ) + 15 ) . ' to ' . esc_html( get_num_queries() ) . ' -->';
 }

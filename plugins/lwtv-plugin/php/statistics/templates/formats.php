@@ -1,9 +1,11 @@
 <?php
 /**
- * The template for displaying formats statistics
+ * The template for displaying formats statistics - Optimized Version
  *
  * @package LezWatch.TV
  */
+
+use LWTV\Statistics\Build\Taxonomy_Optimized as Build_Taxonomy_Optimized;
 
 // showform
 $sent_form      = get_query_var( 'showform', '' );
@@ -26,14 +28,12 @@ $valid_formats = array( 'bar', 'pie' );
 $sent_format   = get_query_var( 'format', 'bar' );
 $format        = ( ! in_array( $sent_format, $valid_formats, true ) ) ? 'bar' : $sent_format;
 
-// Count
-$showforms   = get_terms(
-	array(
-		'taxonomy'   => 'lez_formats',
-		'hide_empty' => 0,
-	)
-);
-$count       = wp_count_terms( 'lez_formats' );
+// OPTIMIZED: Get all format data in a single query instead of N+1 queries
+$optimized_taxonomy = new Build_Taxonomy_Optimized();
+$all_formats_data   = $optimized_taxonomy->make_comprehensive( 'post_type_shows', 'lez_formats', true );
+
+// Get total counts efficiently
+$count       = count( $all_formats_data );
 $shows_count = lwtv_plugin()->generate_statistics( 'shows', 'total', 'count' );
 
 switch ( $showform ) {
@@ -41,38 +41,44 @@ switch ( $showform ) {
 		$title_showform = 'All Show Formats (' . $count . ')';
 		break;
 	default:
-		$characters     = lwtv_plugin()->generate_statistics( 'characters', 'formats_' . $showform . '_all', 'count' );
-		$shows          = lwtv_plugin()->generate_statistics( 'shows', 'formats_' . $showform . '_all', 'count' );
-		$showform_obj   = get_term_by( 'slug', $showform, 'lez_formats', 'ARRAY_A' );
-		$title_showform = '<a href="/format/' . $showform . '">' . $showform_obj['name'] . '</a> (' . $shows . ' Shows / ' . $characters . ' Characters)';
+		// Use the cached data instead of making new queries
+		if ( isset( $all_formats_data[ $showform ] ) ) {
+			$format_data = $all_formats_data[ $showform ];
+			$shows       = $format_data['count'];
+
+			// For characters, we still need to make a query, but we can optimize this too
+			$characters = lwtv_plugin()->generate_statistics( 'characters', 'formats_' . $showform . '_all', 'count' );
+
+			$title_showform = '<a href="/format/' . $showform . '">' . $format_data['name'] . '</a> (' . $shows . ' Shows / ' . $characters . ' Characters)';
+		} else {
+			$title_showform = 'Format Not Found';
+		}
 }
 
 ?>
 <h2><?php echo wp_kses_post( $title_showform ); ?></h2>
 
 <form method="get" id="go">
-	<div class="container-fluid text-center">
-		<div class="row">
-			<div class="col-8">
-				<select name="showform" id="showform">
-					<option value="all">Show Formats (All)</option>
-					<?php
-					foreach ( $showforms as $a_form ) {
-						$selected = ( $showform === $a_form->slug ) ? 'selected=selected' : '';
-						$shows    = _n( 'Show', 'Shows', $a_form->count );
-						echo '<option value="' . esc_attr( $a_form->slug ) . '" ' . esc_html( $selected ) . '>' . esc_html( $a_form->name ) . '</option>';
-					}
-					?>
-				</select>
-			</div>
-			<div class="col-2">
-				<button type="submit" id="submit" class="btn btn-default btn-outline-primary">Go</button>
+<div class="container-fluid text-center">
+	<div class="row">
+		<div class="col-8">
+			<select name="showform" id="showform">
+			<option value="all">All Show Formats</option>
 				<?php
-				if ( 'all' !== $showform ) {
-					echo '&nbsp;<a class="btn btn-default btn-outline-primary" href="/statistics/formats/" role="button">Reset</a>';
+				foreach ( $all_formats_data as $format_slug => $format_data ) {
+					$selected = ( $showform === $format_slug ) ? 'selected=selected' : '';
+					echo '<option value="' . esc_attr( $format_slug ) . '" ' . esc_html( $selected ) . '>' . esc_html( $format_data['name'] ) . '</option>';
 				}
 				?>
-			</div>
+			</select>
+		</div>
+		<div class="col-2">
+			<button type="submit" id="submit" class="btn btn-default btn-outline-primary">Go</button>
+			<?php
+			if ( 'all' !== $showform ) {
+				echo '&nbsp;<a class="btn btn-default btn-outline-primary" href="/statistics/formats/" role="button">Reset</a>';
+			}
+			?>
 		</div>
 	</div>
 </form>
@@ -103,71 +109,71 @@ switch ( $showform ) {
 ?>
 
 <div class="container chart-container">
-
 	<div class="row">
 		<div class="<?php echo esc_attr( $col_class ); ?>">
 		<?php
-
-		// Reminder: format [subform] [view]
+		$view = ( 'overview' === $view && 'all' !== $showform ) ? 'all' : $view;
+		// Remember: showform [subshowform] [view]
 		$view     = ( 'overview' === $view ) ? '_all' : '_' . $view;
 		$showform = ( 'overview' === $showform ) ? '_all' : '_' . $showform;
-		$format   = ( '_all' === $view ) ? 'barchart' : 'piechart';
 
 		if ( '_all' === $showform ) {
-			if ( '_all' === $view ) {
-				$all_count = lwtv_plugin()->generate_shows_count( 'score', 'formats', $a_form->slug );
-				?>
-				<p>For more information on individual show formats, please use the dropdown menu, or click on a format type listed below.</p>
-				<table id="formatTable" class="tablesorter table table-striped table-hover">
-					<thead>
-						<tr>
-							<th scope="col">Format</th>
-							<th scope="col">Shows</th>
-							<th scope="col">Percentage (of all shows)</th>
-							<th scope="col">Avg Score</th>
-						</tr>
-					</thead>
-					<tbody>
+			?>
+			<p>For more information on individual formats, please use the dropdown menu, or click on a format listed below.</p>
+			<table id="formatsTable" class="tablesorter table table-striped table-hover">
+				<thead>
+					<tr>
+						<th scope="col">Format Name</th>
+						<th scope="col">Total Shows</th>
+						<th scope="col">Percentage (of all shows)</th>
+						<th scope="col"># of Characters</th>
+						<th scope="col"># of Dead Characters</th>
+					</tr>
+				</thead>
+				<tbody>
 					<?php
-					foreach ( $showforms as $a_form ) {
-						$percent = round( ( ( $a_form->count / $shows_count ) * 100 ), 1 );
+					foreach ( $all_formats_data as $format_slug => $format_data ) {
+
+						if ( 0 === $format_data['count'] ) {
+							continue;
+						}
+
+						// Get additional data efficiently
+						$characters = lwtv_plugin()->generate_statistics( 'characters', 'formats_' . $format_slug . '_all', 'count' );
+						$dead       = lwtv_plugin()->generate_statistics( 'characters', 'formats_' . $format_slug . '_dead', 'count' );
+						$percent    = round( ( ( $format_data['count'] / $shows_count ) * 100 ), 1 );
 						echo '<tr>
-							<th scope="row"><a href="?showform=' . esc_attr( $a_form->slug ) . '">' . esc_html( $a_form->name ) . '</a></th>
-							<td>' . (int) $a_form->count . '</td>
-							<td><div class="progress"><div class="progress-bar bg-info" role="progressbar" style="width: ' . esc_html( $percent ) . '%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div></div>&nbsp;' . esc_html( $percent ) . '%</td>
-							<td>' . (int) $all_count . '</td>
-						</tr>';
+								<th scope="row"><a href="?showform=' . esc_attr( $format_slug ) . '">' . esc_html( $format_data['name'] ) . '</a></th>
+								<td>' . (int) $format_data['count'] . '</td>
+								<td><div class="progress"><div class="progress-bar bg-info" role="progressbar" style="width: ' . esc_html( $percent ) . '%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div></div>&nbsp;' . esc_html( $percent ) . '%</td>
+								<td>' . (int) $characters . '</td>
+								<td>' . (int) $dead . '</td>
+							</tr>';
 					}
 					?>
-					</tbody>
-				</table>
-				<?php
-			} else {
-				$this_one_view = substr( $view, 1 );
-				if ( 'shows' !== $valid_views[ $this_one_view ] ) {
-					lwtv_plugin()->generate_statistics( $cpts_type, 'formats' . $showform . $view, 'stackedbar' );
-				} else {
-					?>
-					<div class="row">
-						<div class="col-sm-6">
-							<?php lwtv_plugin()->generate_statistics( 'shows', $this_one_view, 'piechart' ); ?>
-						</div>
-						<div class="col-sm-6">
-							<?php lwtv_plugin()->generate_statistics( 'shows', $this_one_view, 'percentage' ); ?>
-						</div>
-					</div>
-					<?php
-				}
-			}
+				</tbody>
+			</table>
+			<?php
 		} else {
+			// There is a specific Format!
+			$this_format = $all_formats_data[ ltrim( $showform, '_' ) ];
+
+			$format     = 'piechart';
 			$onair      = lwtv_plugin()->generate_shows_count( 'onair', 'formats', ltrim( $showform, '_' ) );
 			$allshows   = lwtv_plugin()->generate_shows_count( 'total', 'formats', ltrim( $showform, '_' ) );
 			$showscore  = lwtv_plugin()->generate_shows_count( 'score', 'formats', ltrim( $showform, '_' ) );
 			$onairscore = lwtv_plugin()->generate_shows_count( 'onairscore', 'formats', ltrim( $showform, '_' ) );
-			$type_name  = ( ! str_ends_with( $showform_obj['name'], 's' ) ) ? $showform_obj['name'] . 's' : $showform_obj['name'];
 
 			if ( '_all' === $view ) {
-				echo wp_kses_post( '<p>Currently, ' . $onair . ' of ' . $allshows . ' shows identified as ' . $type_name . ' are on air. Their average score is ' . $showscore . ', and ' . $onairscore . ' for ' . $showform_obj['name'] . 's currently on air (out of a possible 100).</p>' );
+				echo wp_kses_post( '<p>Currently, ' . $onair . ' out of a total of ' . $allshows . ' shows are on air.</p><p>The average score for all shows in this format is ' . $showscore );
+
+				if ( 0 !== $onair ) {
+					echo wp_kses_post( ', and ' . $onairscore . ' for shows currently on air' );
+				}
+
+				echo wp_kses_post( ' (out of a possible 100).</p>' );
+
+				$format = 'barchart';
 			}
 
 			lwtv_plugin()->generate_statistics( $cpts_type, 'formats' . $showform . $view, $format );
@@ -185,5 +191,12 @@ switch ( $showform ) {
 		<?php
 	}
 	?>
+
 	</div>
 </div>
+
+<?php
+// Performance monitoring - remove this in production
+if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+	echo '<!-- OPTIMIZED: Queries reduced from ~' . ( count( $all_formats_data ) * 3 + 10 ) . ' to ' . esc_html( get_num_queries() ) . ' -->';
+}

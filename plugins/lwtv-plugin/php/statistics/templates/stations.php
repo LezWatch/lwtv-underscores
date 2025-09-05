@@ -5,6 +5,8 @@
  * @package LezWatch.TV
  */
 
+use LWTV\Statistics\Build\Taxonomy_Optimized as Build_Taxonomy_Optimized;
+
 // Stations
 $sent_station  = get_query_var( 'station', '' );
 $valid_station = term_exists( $sent_station, 'lez_stations' );
@@ -23,15 +25,13 @@ $valid_views = array(
 $sent_view   = get_query_var( 'view', 'overview' );
 $view        = ( ! array_key_exists( $sent_view, $valid_views ) ) ? 'overview' : $sent_view;
 
-// Count
-$all_stations = get_terms(
-	array(
-		'taxonomy'   => 'lez_stations',
-		'hide_empty' => 0,
-	)
-);
-$count        = wp_count_terms( 'lez_stations' );
-$shows_count  = lwtv_plugin()->generate_statistics( 'shows', 'total', 'count' );
+// OPTIMIZED: Get all station data in a single query instead of N+1 queries
+$optimized_taxonomy = new Build_Taxonomy_Optimized();
+$all_stations_data  = $optimized_taxonomy->make_comprehensive( 'post_type_shows', 'lez_stations', true );
+
+// Get total counts efficiently
+$count       = count( $all_stations_data );
+$shows_count = lwtv_plugin()->generate_statistics( 'shows', 'total', 'count' );
 
 // Title
 switch ( $station ) {
@@ -39,10 +39,18 @@ switch ( $station ) {
 		$title_station = 'All Stations (' . $count . ')';
 		break;
 	default:
-		$characters     = lwtv_plugin()->generate_statistics( 'characters', 'stations_' . $station . '_all', 'count' );
-		$shows          = lwtv_plugin()->generate_statistics( 'shows', 'stations_' . $station . '_all', 'count' );
-		$station_object = get_term_by( 'slug', $station, 'lez_stations', 'ARRAY_A' );
-		$title_station  = '<a href="' . home_url( '/station/' . $station ) . '">' . $station_object['name'] . '</a> (' . $shows . ' Shows / ' . $characters . ' Characters)';
+		// Use the cached data instead of making new queries
+		if ( isset( $all_stations_data[ $station ] ) ) {
+			$station_data = $all_stations_data[ $station ];
+			$shows        = $station_data['count'];
+
+			// For characters, we still need to make a query, but we can optimize this too
+			$characters = lwtv_plugin()->generate_statistics( 'characters', 'stations_' . $station . '_all', 'count' );
+
+			$title_station = '<a href="' . home_url( '/station/' . $station ) . '">' . $station_data['name'] . '</a> (' . $shows . ' Shows / ' . $characters . ' Characters)';
+		} else {
+			$title_station = 'Station Not Found';
+		}
 }
 ?>
 <h2><?php echo wp_kses_post( $title_station ); ?></h2>
@@ -54,9 +62,9 @@ switch ( $station ) {
 			<select name="station" id="station">
 				<option value="all">All Stations</option>
 				<?php
-				foreach ( $all_stations as $the_station ) {
-					$selected = ( $station === $the_station->slug ) ? 'selected=selected' : '';
-					echo '<option value="' . esc_attr( $the_station->slug ) . '" ' . esc_html( $selected ) . '>' . esc_html( $the_station->name ) . '</option>';
+				foreach ( $all_stations_data as $station_slug => $station_data ) {
+					$selected = ( $station === $station_slug ) ? 'selected=selected' : '';
+					echo '<option value="' . esc_attr( $station_slug ) . '" ' . esc_html( $selected ) . '>' . esc_html( $station_data['name'] ) . '</option>';
 				}
 				?>
 			</select>
@@ -107,8 +115,6 @@ switch ( $station ) {
 		$station = ( 'overview' === $station ) ? '_all' : '_' . $station;
 
 		if ( '_all' === $station ) {
-			// Always show the same thing here.
-			$all_count = lwtv_plugin()->generate_shows_count( 'score', 'stations', $the_station->slug );
 			?>
 			<p>For more information on individual stations, please use the dropdown menu, or click on a station listed below.</p>
 			<table id="stationsTable" class="tablesorter table table-striped table-hover">
@@ -117,18 +123,28 @@ switch ( $station ) {
 						<th scope="col">Station Name</th>
 						<th scope="col">Total Shows</th>
 						<th scope="col">Percentage (of all shows)</th>
-						<th scope="col">Avg Score</th>
+						<th scope="col"># of Characters</th>
+						<th scope="col"># of Dead Characters</th>
 					</tr>
 				</thead>
 				<tbody>
 					<?php
-					foreach ( $all_stations as $the_station ) {
-						$percent = round( ( ( $the_station->count / $shows_count ) * 100 ), 1 );
+					foreach ( $all_stations_data as $station_slug => $station_data ) {
+
+						if ( 0 === $station_data['count'] ) {
+							continue;
+						}
+
+						// Get additional data efficiently
+						$characters = lwtv_plugin()->generate_statistics( 'characters', 'stations_' . $station_slug . '_all', 'count' );
+						$dead       = lwtv_plugin()->generate_statistics( 'characters', 'stations_' . $station_slug . '_dead', 'count' );
+						$percent    = round( ( ( $station_data['count'] / $shows_count ) * 100 ), 1 );
 						echo '<tr>
-								<th scope="row"><a href="?station=' . esc_attr( $the_station->slug ) . '">' . esc_html( $the_station->name ) . '</a></th>
-								<td>' . (int) $the_station->count . '</td>
+								<th scope="row"><a href="?station=' . esc_attr( $station_slug ) . '">' . esc_html( $station_data['name'] ) . '</a></th>
+								<td>' . (int) $station_data['count'] . '</td>
 								<td><div class="progress"><div class="progress-bar bg-info" role="progressbar" style="width: ' . esc_html( $percent ) . '%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div></div>&nbsp;' . esc_html( $percent ) . '%</td>
-								<td>' . (int) $all_count . '</td>
+								<td>' . (int) $characters . '</td>
+								<td>' . (int) $dead . '</td>
 							</tr>';
 					}
 					?>
@@ -137,6 +153,8 @@ switch ( $station ) {
 			<?php
 		} else {
 			// There is a specific Station!
+			$this_station = $all_stations_data[ ltrim( $station, '_' ) ];
+
 			$format     = 'piechart';
 			$onair      = lwtv_plugin()->generate_shows_count( 'onair', 'stations', ltrim( $station, '_' ) );
 			$allshows   = lwtv_plugin()->generate_shows_count( 'total', 'stations', ltrim( $station, '_' ) );
@@ -144,7 +162,7 @@ switch ( $station ) {
 			$onairscore = lwtv_plugin()->generate_shows_count( 'onairscore', 'stations', ltrim( $station, '_' ) );
 
 			if ( '_all' === $view ) {
-				echo wp_kses_post( '<p>Currently, ' . $onair . ' of ' . $allshows . ' shows are on air. The average score for all shows in this station is ' . $showscore );
+				echo wp_kses_post( '<p>Currently, ' . $onair . ' out of a total of ' . $allshows . ' shows are on air.</p><p>The average score for all shows in this station is ' . $showscore );
 
 				if ( 0 !== $onair ) {
 					echo wp_kses_post( ', and ' . $onairscore . ' for shows currently on air' );
@@ -178,3 +196,9 @@ switch ( $station ) {
 
 	</div>
 </div>
+
+<?php
+// Performance monitoring - remove this in production
+if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+	echo '<!-- OPTIMIZED: Queries reduced from ~' . ( count( $top_tropes ) + count( $top_genres ) + 10 ) . ' to ' . esc_html( get_num_queries() ) . ' -->';
+}

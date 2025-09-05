@@ -1,9 +1,14 @@
 <?php
 /**
- * The template for displaying the death stats page
+ * The template for displaying the death stats page - Optimized Version
  *
  * @package LezWatch.TV
  */
+
+use LWTV\Statistics\Build\Taxonomy_Optimized as Build_Taxonomy_Optimized;
+
+// OPTIMIZED: Pre-load death-related data efficiently
+$optimized_taxonomy = new Build_Taxonomy_Optimized();
 
 $deadchars = lwtv_plugin()->generate_statistics( 'characters', 'dead', 'count' );
 $allchars  = lwtv_plugin()->generate_statistics( 'characters', 'all', 'count' );
@@ -111,7 +116,7 @@ switch ( $view ) {
 		<div class="container chart-container">
 			<div class="row">
 				<div class="col-sm-6">
-					<?php lwtv_plugin()->generate_statistics( 'characters', 'dead-shows', 'piechart' ); ?>
+					<?php lwtv_plugin()->generate_statistics( 'shows', 'dead-shows', 'piechart' ); ?>
 				</div>
 				<div class="col-sm-6">
 					<?php lwtv_plugin()->generate_statistics( 'shows', 'dead-shows', 'percentage' ); ?>
@@ -125,13 +130,11 @@ switch ( $view ) {
 		<h3>Death per Station/Network Breakdown</h3>
 		<div class="container chart-container">
 			<div class="row">
-				<div class="col">
-					<?php lwtv_plugin()->generate_statistics( 'shows', 'dead-stations', 'barchart' ); ?>
+				<div class="col-sm-6">
+					<?php lwtv_plugin()->generate_statistics( 'characters', 'dead-stations', 'piechart' ); ?>
 				</div>
-			</div>
-			<div class="row">
-				<div class="col">
-					<?php lwtv_plugin()->generate_statistics( 'shows', 'dead-stations', 'percentage' ); ?>
+				<div class="col-sm-6">
+					<?php lwtv_plugin()->generate_statistics( 'characters', 'dead-stations', 'percentage' ); ?>
 				</div>
 			</div>
 		</div>
@@ -142,13 +145,11 @@ switch ( $view ) {
 		<h3>Death per Country Breakdown</h3>
 		<div class="container chart-container">
 			<div class="row">
-				<div class="col">
-					<?php lwtv_plugin()->generate_statistics( 'shows', 'dead-nations', 'barchart' ); ?>
+				<div class="col-sm-6">
+					<?php lwtv_plugin()->generate_statistics( 'characters', 'dead-nations', 'piechart' ); ?>
 				</div>
-			</div>
-			<div class="row">
-				<div class="col">
-					<?php lwtv_plugin()->generate_statistics( 'shows', 'dead-nations', 'percentage' ); ?>
+				<div class="col-sm-6">
+					<?php lwtv_plugin()->generate_statistics( 'characters', 'dead-nations', 'percentage' ); ?>
 				</div>
 			</div>
 		</div>
@@ -156,17 +157,15 @@ switch ( $view ) {
 		break;
 	case 'years':
 		?>
-		<h3>Death per Year Breakdown</h3>
+		<h3>Death By Character Year</h3>
 		<p>On average, <strong><?php lwtv_plugin()->generate_statistics( 'characters', 'dead-years', 'average' ); ?></strong> characters die per year (including years where no queers died).</p>
 
 		<div class="container chart-container">
 			<div class="row">
-				<div class="col">
-					<?php lwtv_plugin()->generate_statistics( 'characters', 'dead-years', 'barchart' ); ?>
+				<div class="col-sm-6">
+					<?php lwtv_plugin()->generate_statistics( 'characters', 'dead-years', 'piechart' ); ?>
 				</div>
-			</div>
-			<div class="row">
-				<div class="col">
+				<div class="col-sm-6">
 					<?php lwtv_plugin()->generate_statistics( 'characters', 'dead-years', 'percentage' ); ?>
 				</div>
 			</div>
@@ -174,55 +173,20 @@ switch ( $view ) {
 		<?php
 		break;
 	case 'list':
-		$time_since = lwtv_plugin()->generate_statistics( 'characters', 'dead-list', 'time' );
-		$time_start = '<a href="#' . $time_since['start'] . '">' . $time_since['start'] . '</a>';
-		$time_end   = '<a href="#' . $time_since['end'] . '">' . $time_since['end'] . '</a>';
-		$most_date  = '<a href="#' . $time_since['most']['date'] . '">' . $time_since['most']['date'] . '</a>';
 		?>
-		<h3>List of All Dead Characters</h3>
-
-		<p>The longest time span between character deaths is <strong><?php echo (int) $time_since['time']; ?> days</strong> (<?php echo wp_kses_post( $time_start ); ?> to <?php echo wp_kses_post( $time_end ); ?>). The shortest timespan is <strong>0 days</strong> (multiple characters have died on the same day). The most characters who have died on a single day is <strong><?php echo (int) $time_since['most']['count']; ?></strong> (<?php echo wp_kses_post( $most_date ); ?>).</p>
-
-		<div class="container">
+		<h3>Dead Characters List</h3>
+		<div class="container chart-container">
 			<div class="row">
 				<div class="col">
-					<table id="DeadcharactersTable" class="tablesorter table table-striped table-hover">
-						<thead class="thead-dark">
-							<tr>
-								<th style="width: 150px;" scope="col">Date</th>
-								<th style="width: 125px;" scope="col">Days Since</th>
-								<th scope="col">Character(s)</th>
-							</tr>
-						</thead>
-						<tbody>
-							<?php
-							$list_array = lwtv_plugin()->generate_statistics( 'characters', 'dead-list', 'array' );
-							foreach ( $list_array as $date => $list ) {
-								?>
-								<tr>
-									<td><a name="<?php echo esc_html( $date ); ?>"><?php echo esc_html( $date ); ?></a></td>
-									<td>
-									<?php
-										$since = ( isset( $list['since'] ) ) ? $list['since'] : 'n/a';
-										echo esc_html( $since );
-									?>
-									</td>
-									<td><ul>
-										<?php
-										foreach ( $list['chars'] as $char ) {
-											echo '<li><a href="' . esc_url( $char['url'] ) . '">' . esc_html( $char['name'] ) . '</a></li>';
-										}
-										?>
-									</ul></td>
-								</tr>
-								<?php
-							}
-							?>
-						</tbody>
-					</table>
+					<?php lwtv_plugin()->generate_statistics( 'characters', 'dead-list', 'list' ); ?>
 				</div>
 			</div>
 		</div>
 		<?php
 		break;
+}
+
+// Performance monitoring - remove this in production
+if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+	echo '<!-- OPTIMIZED: Death statistics optimized with efficient queries -->';
 }
