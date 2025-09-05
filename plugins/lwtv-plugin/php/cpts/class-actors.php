@@ -9,7 +9,6 @@ namespace LWTV\CPTs;
 
 use LWTV\_Components\CPTs;
 use LWTV\CPTs\Actors\{ Calculations, CMB2_Metaboxes, Custom_Columns, Privacy };
-use LWTV\Plugins\Cache;
 
 /**
  * class LWTV_CPT_Actors
@@ -38,6 +37,11 @@ class Actors {
 		'lez_actor_romantic'  => array( 'name' => 'romantic orientation' ),
 		'lez_actor_pronouns'  => array( 'name' => 'pronoun' ),
 	);
+
+	/**
+	 * Taxonomies that use Select2
+	 */
+	const SELECT2_TAXONOMIES = array();
 
 	/**
 	 * Constructor
@@ -92,16 +96,6 @@ class Actors {
 			$response->data['visibility']['show_ui'] = false;
 		}
 		return $response;
-	}
-
-	/**
-	 * Do The Math
-	 *
-	 * @param  int  $post_id
-	 * @return void
-	 */
-	public static function do_the_math( $show_id ) {
-		( new Calculations() )->do_the_math( $show_id );
 	}
 
 	/*

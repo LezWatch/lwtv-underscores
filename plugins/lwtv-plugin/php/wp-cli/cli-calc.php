@@ -10,7 +10,8 @@ if ( ! defined( 'ABSPATH' ) && ! defined( 'WP_CLI' ) ) {
 	die();
 }
 
-use LWTV\CPTs\{ Actors, Shows };
+use LWTV\CPTs\Actors\Calculations as Actors;
+use LWTV\CPTs\Shows\Calculations as Shows;
 
 /**
  * LezWatch.TV commands to calculate data.

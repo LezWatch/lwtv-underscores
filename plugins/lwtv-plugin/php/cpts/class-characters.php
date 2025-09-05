@@ -8,7 +8,6 @@
 namespace LWTV\CPTs;
 
 use LWTV\CPTs\Characters\{ Calculations, CMB2_Metaboxes, Custom_Columns };
-use LWTV\Plugins\{ Cache, CMB2 };
 
 /**
  * class LWTV_CPT_Characters
@@ -38,6 +37,14 @@ class Characters {
 	 * Shadow Taxonomy
 	 */
 	const SHADOW_TAXONOMY = 'shadow_tax_characters';
+
+	/**
+	 * Taxonomies that use Select2
+	 */
+	const SELECT2_TAXONOMIES = array(
+		'lezchars_cliches'            => 'lez_cliches',
+		'lezchars_relationship_chart' => 'shadow_tax_characters',
+	);
 
 	/**
 	 * Constructor
@@ -278,65 +285,20 @@ class Characters {
 		// unhook this function so it doesn't loop infinitely
 		remove_action( 'save_post_post_type_characters', array( $this, 'save_post_meta' ) );
 
-		$this->update_char_meta( $post_id );
-
-		// re-hook this function
-		add_action( 'save_post_post_type_characters', array( $this, 'save_post_meta' ) );
-	}
-
-	/**
-	 * Do The Math
-	 *
-	 * @param  int  $post_id
-	 * @return void
-	 */
-	public static function do_the_math( $show_id ) {
-		( new Calculations() )->do_the_math( $show_id );
-	}
-
-	/*
-	 * Update post meta for characters
-	 *
-	 * @param int $post_id The post ID.
-	 */
-	public function update_char_meta( $post_id ) {
-		// Fix Shows - you only get one!
-		$this->fix_shows( $post_id );
+		// Schedule Fix Shows - you only get one!
+		lwtv_plugin()->schedule_task( 'fixcharshows', $post_id );
 
 		// Schedule calculations for later processing
 		lwtv_plugin()->schedule_task( 'calculation', $post_id );
 
-		// Always Sync Taxonomies
-		( new CMB2() )->select2_taxonomy_save( $post_id, 'lezchars_cliches', 'lez_cliches' );
-		( new CMB2() )->select2_taxonomy_save( $post_id, 'lezchars_relationship_chart', 'shadow_tax_characters' );
+		// Schedule taxonomy sync for later processing
+		lwtv_plugin()->schedule_task( 'taxsync', $post_id );
 
 		// Queue cache invalidation for shutdown processing
 		lwtv_plugin()->cache_queue( $post_id );
-	}
 
-	/**
-	 * Fix shows.
-	 *
-	 * At some point the show-group made an array for each show in a group, which is just
-	 * wrong. This makes sure to DE-array them.
-	 *
-	 * @param  int  $post_id
-	 * @return void
-	 */
-	public function fix_shows( $post_id ) {
-		$all_shows = get_post_meta( $post_id, 'lezchars_show_group', true );
-		$new_shows = array();
-
-		if ( is_array( $all_shows ) ) {
-			foreach ( $all_shows as $each_show ) {
-				// If it's an array, de-array it.
-				if ( isset( $each_show['show'] ) && is_array( $each_show['show'] ) ) {
-					$each_show['show'] = reset( $each_show['show'] );
-				}
-				$new_shows[] = $each_show;
-			}
-			update_post_meta( $post_id, 'lezchars_show_group', $new_shows );
-		}
+		// re-hook this function
+		add_action( 'save_post_post_type_characters', array( $this, 'save_post_meta' ) );
 	}
 
 	/**
