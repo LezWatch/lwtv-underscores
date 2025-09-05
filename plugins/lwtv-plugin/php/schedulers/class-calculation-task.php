@@ -9,9 +9,9 @@
 
 namespace LWTV\Schedulers;
 
-use LWTV\CPTs\Actors;
-use LWTV\CPTs\Shows;
-use LWTV\CPTs\Characters;
+use LWTV\CPTs\Actors\Calculations as Actors;
+use LWTV\CPTs\Shows\Calculations as Shows;
+use LWTV\CPTs\Characters\Calculations as Characters;
 
 /**
  * Class Calculation_Task

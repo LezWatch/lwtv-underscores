@@ -123,16 +123,6 @@ class Shows {
 	}
 
 	/**
-	 * Do The Math
-	 *
-	 * @param  int  $post_id
-	 * @return void
-	 */
-	public static function do_the_math( $show_id ) {
-		( new Calculations() )->do_the_math( $show_id );
-	}
-
-	/**
 	 * Remove some Text Editor buttons
 	 */
 	public function quicktags_settings( $buttons ) {
@@ -298,10 +288,8 @@ class Shows {
 		// Schedule calculations for later processing
 		lwtv_plugin()->schedule_task( 'calculation', $post_id );
 
-		// ALWAYS sync up data.
-		foreach ( self::SELECT2_TAXONOMIES as $postmeta => $taxonomy ) {
-			( new CMB2() )->select2_taxonomy_save( $post_id, $postmeta, $taxonomy );
-		}
+		// Schedule taxonomy sync for later processing
+		lwtv_plugin()->schedule_task( 'taxsync', $post_id );
 
 		// Queue cache invalidation for shutdown processing
 		lwtv_plugin()->cache_queue( $post_id );
