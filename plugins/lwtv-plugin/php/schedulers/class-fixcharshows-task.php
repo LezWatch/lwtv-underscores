@@ -1,4 +1,18 @@
 <?php
+/**
+ * Task handler for fixing character show group meta data on posts.
+ *
+ * This scheduled task processes posts to ensure that the 'lezchars_show_group'
+ * post meta is properly formatted, converting any nested arrays in the 'show'
+ * field to scalar values. This helps maintain data consistency for character
+ * show group associations.
+ *
+ * Usage:
+ *   - The task is triggered via the 'lwtv_fixcharshows_task' action hook.
+ *   - Intended for use in scheduled or batch operations to clean up post meta.
+ *
+ * @package LWTV\Schedulers
+ */
 
 namespace LWTV\Schedulers;
 
@@ -17,7 +31,7 @@ class FixCharShows_Task {
 	 * @param int $post_id The post ID to process
 	 * @return void
 	 */
-	public function process_fix_char_shows_task( $post_id ) {
+	public function process_fix_char_shows_task( int $post_id ): void {
 		$all_shows = get_post_meta( $post_id, 'lezchars_show_group', true );
 		$new_shows = array();
 
