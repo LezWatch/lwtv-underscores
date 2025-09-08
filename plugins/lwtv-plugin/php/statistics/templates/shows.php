@@ -11,6 +11,9 @@ $valid_views = array( 'formats', 'tropes', 'genres', 'intersectionality', 'stars
 $sent_view   = get_query_var( 'view', 'overview' );
 $view        = ( ! in_array( $sent_view, $valid_views, true ) ) ? 'overview' : $sent_view;
 
+// OPTIMIZED: Cache shows count to avoid redundant calls
+$shows_count = lwtv_plugin()->generate_statistics( 'shows', 'total', 'count' );
+
 // OPTIMIZED: Pre-load taxonomy data for overview section
 $optimized_taxonomy = new Build_Taxonomy_Optimized();
 $tropes_data        = $optimized_taxonomy->make_comprehensive( 'post_type_shows', 'lez_tropes', false );
@@ -21,7 +24,7 @@ $top_tropes = array_slice( $tropes_data, 0, 10, true );
 $top_genres = array_slice( $genres_data, 0, 10, true );
 ?>
 <h2>
-	<a href="/shows/">Total Shows</a> (<?php echo (int) lwtv_plugin()->generate_statistics( 'shows', 'total', 'count' ); ?>)
+	<a href="/shows/">Total Shows</a> (<?php echo (int) $shows_count; ?>)
 </h2>
 
 <ul class="nav nav-tabs">
@@ -48,7 +51,7 @@ switch ( $view ) {
 					<div class="card text-center">
 						<h3 class="card-header shows">Shows</h3>
 						<div class="card-body bg-light">
-							<h5 class="card-title"><?php echo (int) lwtv_plugin()->generate_statistics( 'shows', 'total', 'count' ); ?></h5>
+							<h5 class="card-title"><?php echo (int) $shows_count; ?></h5>
 						</div>
 					</div>
 				</div>

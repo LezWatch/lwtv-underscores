@@ -26,7 +26,7 @@ $top_cliches     = array_slice( $character_cliches_data, 0, 14, true );
 ?>
 
 <h2>
-	<a href="/characters/">Total Characters</a> (<?php echo lwtv_plugin()->generate_statistics( 'characters', 'total', 'count' ); // phpcs:ignore WordPress.Security.EscapeOutput ?>)
+	<a href="/characters/">Total Characters</a> (<?php echo (int) $character_count; ?>)
 </h2>
 
 <ul class="nav nav-tabs">

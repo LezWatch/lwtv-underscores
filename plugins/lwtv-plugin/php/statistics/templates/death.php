@@ -15,6 +15,9 @@ $allchars  = lwtv_plugin()->generate_statistics( 'characters', 'all', 'count' );
 $deadshows = lwtv_plugin()->generate_statistics( 'shows', 'dead', 'count' );
 $allshows  = lwtv_plugin()->generate_statistics( 'shows', 'all', 'count' );
 
+// OPTIMIZED: Cache dead-years average to avoid redundant calls
+$dead_years_average = lwtv_plugin()->generate_statistics( 'characters', 'dead-years', 'average' );
+
 $deadchar_percent = round( ( $deadchars / $allchars ) * 100, 2 );
 $deadshow_percent = round( ( $deadshows / $allshows ) * 100, 2 );
 
@@ -62,7 +65,7 @@ switch ( $view ) {
 			</div>
 		</div>
 
-		<p>&nbsp;<br/>On average, <strong><?php lwtv_plugin()->generate_statistics( 'characters', 'dead-years', 'average' ); ?></strong> characters die per year (including years where no queers died).</p>
+		<p>&nbsp;<br/>On average, <strong><?php echo esc_html( $dead_years_average ); ?></strong> characters die per year (including years where no queers died).</p>
 
 		<div class="container">
 			<div class="row">
@@ -158,7 +161,7 @@ switch ( $view ) {
 	case 'years':
 		?>
 		<h3>Death By Character Year</h3>
-		<p>On average, <strong><?php lwtv_plugin()->generate_statistics( 'characters', 'dead-years', 'average' ); ?></strong> characters die per year (including years where no queers died).</p>
+		<p>On average, <strong><?php echo esc_html( $dead_years_average ); ?></strong> characters die per year (including years where no queers died).</p>
 
 		<div class="container chart-container">
 			<div class="row">
