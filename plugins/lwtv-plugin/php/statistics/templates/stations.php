@@ -29,6 +29,9 @@ $view        = ( ! array_key_exists( $sent_view, $valid_views ) ) ? 'overview' :
 $optimized_taxonomy = new Build_Taxonomy_Optimized();
 $all_stations_data  = $optimized_taxonomy->make_comprehensive( 'post_type_shows', 'lez_stations', true );
 
+// OPTIMIZED: Pre-load all character counts in a single query to eliminate N+1 pattern
+$character_counts = $optimized_taxonomy->get_bulk_character_counts( 'lez_stations', array_keys( $all_stations_data ) );
+
 // Get total counts efficiently
 $count       = count( $all_stations_data );
 $shows_count = lwtv_plugin()->generate_statistics( 'shows', 'total', 'count' );
@@ -44,8 +47,8 @@ switch ( $station ) {
 			$station_data = $all_stations_data[ $station ];
 			$shows        = $station_data['count'];
 
-			// For characters, we still need to make a query, but we can optimize this too
-			$characters = lwtv_plugin()->generate_statistics( 'characters', 'stations_' . $station . '_all', 'count' );
+			// OPTIMIZED: Use pre-loaded character counts instead of individual query
+			$characters = $character_counts[ $station ]['total'] ?? 0;
 
 			$title_station = '<a href="' . home_url( '/station/' . $station ) . '">' . $station_data['name'] . '</a> (' . $shows . ' Shows / ' . $characters . ' Characters)';
 		} else {
@@ -135,9 +138,9 @@ switch ( $station ) {
 							continue;
 						}
 
-						// Get additional data efficiently
-						$characters = lwtv_plugin()->generate_statistics( 'characters', 'stations_' . $station_slug . '_all', 'count' );
-						$dead       = lwtv_plugin()->generate_statistics( 'characters', 'stations_' . $station_slug . '_dead', 'count' );
+						// OPTIMIZED: Use pre-loaded character counts instead of individual queries
+						$characters = $character_counts[ $station_slug ]['total'] ?? 0;
+						$dead       = $character_counts[ $station_slug ]['dead'] ?? 0;
 						$percent    = round( ( ( $station_data['count'] / $shows_count ) * 100 ), 1 );
 						echo '<tr>
 								<th scope="row"><a href="?station=' . esc_attr( $station_slug ) . '">' . esc_html( $station_data['name'] ) . '</a></th>
@@ -198,7 +201,7 @@ switch ( $station ) {
 </div>
 
 <?php
-// Performance monitoring - remove this in production
+// Performance monitoring
 if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-	echo '<!-- OPTIMIZED: Queries reduced from ~' . ( count( $top_tropes ) + count( $top_genres ) + 10 ) . ' to ' . esc_html( get_num_queries() ) . ' -->';
+	echo '<!-- OPTIMIZED: Character count N+1 queries eliminated. Queries reduced from ~' . ( count( $all_stations_data ) * 3 + 10 ) . ' to ' . esc_html( get_num_queries() ) . ' -->';
 }

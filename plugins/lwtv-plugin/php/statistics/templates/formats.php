@@ -32,6 +32,9 @@ $format        = ( ! in_array( $sent_format, $valid_formats, true ) ) ? 'bar' : 
 $optimized_taxonomy = new Build_Taxonomy_Optimized();
 $all_formats_data   = $optimized_taxonomy->make_comprehensive( 'post_type_shows', 'lez_formats', true );
 
+// OPTIMIZED: Pre-load all character counts in a single query to eliminate N+1 pattern
+$character_counts = $optimized_taxonomy->get_bulk_character_counts( 'lez_formats', array_keys( $all_formats_data ) );
+
 // Get total counts efficiently
 $count       = count( $all_formats_data );
 $shows_count = lwtv_plugin()->generate_statistics( 'shows', 'total', 'count' );
@@ -46,8 +49,8 @@ switch ( $showform ) {
 			$format_data = $all_formats_data[ $showform ];
 			$shows       = $format_data['count'];
 
-			// For characters, we still need to make a query, but we can optimize this too
-			$characters = lwtv_plugin()->generate_statistics( 'characters', 'formats_' . $showform . '_all', 'count' );
+			// OPTIMIZED: Use pre-loaded character counts instead of individual query
+			$characters = $character_counts[ $showform ]['total'] ?? 0;
 
 			$title_showform = '<a href="/format/' . $showform . '">' . $format_data['name'] . '</a> (' . $shows . ' Shows / ' . $characters . ' Characters)';
 		} else {
@@ -138,9 +141,9 @@ switch ( $showform ) {
 							continue;
 						}
 
-						// Get additional data efficiently
-						$characters = lwtv_plugin()->generate_statistics( 'characters', 'formats_' . $format_slug . '_all', 'count' );
-						$dead       = lwtv_plugin()->generate_statistics( 'characters', 'formats_' . $format_slug . '_dead', 'count' );
+						// OPTIMIZED: Use pre-loaded character counts instead of individual queries
+						$characters = $character_counts[ $format_slug ]['total'] ?? 0;
+						$dead       = $character_counts[ $format_slug ]['dead'] ?? 0;
 						$percent    = round( ( ( $format_data['count'] / $shows_count ) * 100 ), 1 );
 						echo '<tr>
 								<th scope="row"><a href="?showform=' . esc_attr( $format_slug ) . '">' . esc_html( $format_data['name'] ) . '</a></th>
@@ -196,7 +199,7 @@ switch ( $showform ) {
 </div>
 
 <?php
-// Performance monitoring - remove this in production
+// Performance monitoring
 if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-	echo '<!-- OPTIMIZED: Queries reduced from ~' . ( count( $all_formats_data ) * 3 + 10 ) . ' to ' . esc_html( get_num_queries() ) . ' -->';
+	echo '<!-- OPTIMIZED: Character count N+1 queries eliminated. Queries reduced from ~' . ( count( $all_formats_data ) * 3 + 10 ) . ' to ' . esc_html( get_num_queries() ) . ' -->';
 }

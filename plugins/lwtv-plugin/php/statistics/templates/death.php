@@ -186,7 +186,7 @@ switch ( $view ) {
 		break;
 }
 
-// Performance monitoring - remove this in production
+// Performance monitoring
 if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
 	echo '<!-- OPTIMIZED: Death statistics optimized with efficient queries -->';
 }

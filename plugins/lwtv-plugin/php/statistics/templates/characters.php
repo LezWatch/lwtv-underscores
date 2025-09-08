@@ -267,7 +267,7 @@ switch ( $view ) {
 		break;
 }
 
-// Performance monitoring - remove this in production
+// Performance monitoring
 if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
 	echo '<!-- OPTIMIZED: Queries reduced from ~' . ( count( $top_genders ) + count( $top_sexualities ) + count( $top_cliches ) + 15 ) . ' to ' . esc_html( get_num_queries() ) . ' -->';
 }

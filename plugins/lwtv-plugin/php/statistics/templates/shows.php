@@ -265,7 +265,7 @@ switch ( $view ) {
 		break;
 }
 
-// Performance monitoring - remove this in production
+// Performance monitoring
 if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
 	echo '<!-- OPTIMIZED: Queries reduced from ~' . ( count( $top_tropes ) + count( $top_genres ) + 10 ) . ' to ' . esc_html( get_num_queries() ) . ' -->';
 }

@@ -139,4 +139,90 @@ class Taxonomy_Optimized {
 
 		return $array;
 	}
+
+	/**
+	 * Get bulk character counts for multiple taxonomy terms in a single query
+	 *
+	 * Eliminates N+1 query patterns by getting character counts for all terms at once.
+	 * Returns both total character counts and dead character counts.
+	 *
+	 * @param string $taxonomy Taxonomy to query (lez_formats, lez_country, lez_stations)
+	 * @param array $terms Array of term slugs to get counts for
+	 * @param string $post_type Post type to query (default: post_type_characters)
+	 * @return array Array of term_slug => ['total' => int, 'dead' => int]
+	 */
+	public function get_bulk_character_counts( $taxonomy, $terms, $post_type = 'post_type_characters' ) {
+		if ( empty( $terms ) ) {
+			return array();
+		}
+
+		// Create cache key
+		$cache_key   = 'bulk_char_counts_' . $taxonomy . '_' . md5( wp_json_encode( $terms ) );
+		$cached_data = lwtv_plugin()->get_transient( $cache_key );
+
+		if ( false !== $cached_data ) {
+			return $cached_data;
+		}
+
+		global $wpdb;
+
+		// Sanitize term slugs
+		$term_slugs        = array_map( 'sanitize_text_field', $terms );
+		$term_placeholders = implode( ',', array_fill( 0, count( $term_slugs ), '%s' ) );
+
+		// Prepare parameters: post_type, taxonomy, then all term slugs
+		$parameters = array_merge( array( $post_type, $taxonomy ), $term_slugs );
+
+		// Single query to get both total and dead character counts
+		// Characters are linked to shows through lezchars_show_group meta field (serialized array)
+		// phpcs:disable
+		$query = $wpdb->prepare(
+			"SELECT
+				t.slug,
+				COUNT(DISTINCT CASE WHEN chars.post_status = 'publish' THEN chars.ID END) as total_chars,
+				COUNT(DISTINCT CASE WHEN chars.post_status = 'publish' AND chars_death.meta_value = 'dead' THEN chars.ID END) as dead_chars
+			FROM {$wpdb->terms} t
+			INNER JOIN {$wpdb->term_taxonomy} tt ON t.term_id = tt.term_id
+			LEFT JOIN {$wpdb->term_relationships} tr ON tt.term_taxonomy_id = tr.term_taxonomy_id
+			LEFT JOIN {$wpdb->posts} shows ON tr.object_id = shows.ID
+			LEFT JOIN {$wpdb->posts} chars ON chars.post_type = %s AND chars.post_status = 'publish'
+			LEFT JOIN {$wpdb->postmeta} char_shows ON chars.ID = char_shows.post_id AND char_shows.meta_key = 'lezchars_show_group'
+			LEFT JOIN {$wpdb->postmeta} chars_death ON chars.ID = chars_death.post_id AND chars_death.meta_key = 'lez_char_death'
+			WHERE tt.taxonomy = %s
+			AND shows.post_type = 'post_type_shows'
+			AND shows.post_status = 'publish'
+			AND char_shows.meta_value LIKE CONCAT('%%s:', shows.ID, ';%%')
+			AND t.slug IN ($term_placeholders)
+			GROUP BY t.slug",
+			$parameters
+		);
+		// phpcs:enable
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- This is a prepared query (see above)
+		$results = $wpdb->get_results( $query, ARRAY_A );
+
+		// Format results
+		$formatted = array();
+		foreach ( $results as $row ) {
+			$formatted[ $row['slug'] ] = array(
+				'total' => (int) $row['total_chars'],
+				'dead'  => (int) $row['dead_chars'],
+			);
+		}
+
+		// Add zero counts for terms that weren't found
+		foreach ( $term_slugs as $slug ) {
+			if ( ! isset( $formatted[ $slug ] ) ) {
+				$formatted[ $slug ] = array(
+					'total' => 0,
+					'dead'  => 0,
+				);
+			}
+		}
+
+		// Cache for 1 hour since character counts change less frequently
+		lwtv_plugin()->set_transient( $cache_key, $formatted, HOUR_IN_SECONDS );
+
+		return $formatted;
+	}
 }

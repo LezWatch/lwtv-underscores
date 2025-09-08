@@ -32,6 +32,9 @@ $format        = ( ! in_array( $sent_format, $valid_formats, true ) ) ? 'bar' : 
 $optimized_taxonomy = new Build_Taxonomy_Optimized();
 $all_countries_data = $optimized_taxonomy->make_comprehensive( 'post_type_shows', 'lez_country', true );
 
+// OPTIMIZED: Pre-load all character counts in a single query to eliminate N+1 pattern
+$character_counts = $optimized_taxonomy->get_bulk_character_counts( 'lez_country', array_keys( $all_countries_data ) );
+
 // Get total counts efficiently
 $count       = count( $all_countries_data );
 $shows_count = lwtv_plugin()->generate_statistics( 'shows', 'total', 'count' );
@@ -46,8 +49,8 @@ switch ( $country ) {
 			$country_data = $all_countries_data[ $country ];
 			$shows        = $country_data['count'];
 
-			// For characters, we still need to make a query, but we can optimize this too
-			$characters = lwtv_plugin()->generate_statistics( 'characters', 'country_' . $country . '_all', 'count' );
+			// OPTIMIZED: Use pre-loaded character counts instead of individual query
+			$characters = $character_counts[ $country ]['total'] ?? 0;
 
 			$title_country = '<a href="' . home_url( '/country/' . $country ) . '">' . $country_data['name'] . '</a> (' . $shows . ' Shows / ' . $characters . ' Characters)';
 		} else {
@@ -138,9 +141,9 @@ switch ( $country ) {
 							continue;
 						}
 
-						// Get additional data efficiently
-						$characters = lwtv_plugin()->generate_statistics( 'characters', 'country_' . $country_slug . '_all', 'count' );
-						$dead       = lwtv_plugin()->generate_statistics( 'characters', 'country_' . $country_slug . '_dead', 'count' );
+						// OPTIMIZED: Use pre-loaded character counts instead of individual queries
+						$characters = $character_counts[ $country_slug ]['total'] ?? 0;
+						$dead       = $character_counts[ $country_slug ]['dead'] ?? 0;
 						$percent    = round( ( ( $country_data['count'] / $shows_count ) * 100 ), 1 );
 						echo '<tr>
 								<th scope="row"><a href="?country=' . esc_attr( $country_slug ) . '">' . esc_html( $country_data['name'] ) . '</a></th>
@@ -201,8 +204,8 @@ switch ( $country ) {
 </div>
 
 <?php
-// Performance monitoring - remove this in production
+// Performance monitoring
 if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-	echo '<!-- OPTIMIZED: Queries reduced from ~' . ( count( $all_countries_data ) * 3 + 10 ) . ' to ' . esc_html( get_num_queries() ) . ' -->';
+	echo '<!-- OPTIMIZED: Character count N+1 queries eliminated. Queries reduced from ~' . ( count( $all_countries_data ) * 3 + 10 ) . ' to ' . esc_html( get_num_queries() ) . ' -->';
 }
 ?>
