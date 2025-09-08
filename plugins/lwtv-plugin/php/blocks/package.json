@@ -21,7 +21,7 @@
 	"dependencies": {
 		"@wordpress/api-fetch": "^7.29.0",
 		"@wordpress/babel-plugin-import-jsx-pragma": "^5.29.0",
-		"@wordpress/blocks": "^15.2.0",
+		"@wordpress/blocks": "^15.3.0",
 		"@wordpress/i18n": "^6.2.0",
 		"@wordpress/icons": "^10.29.0"
 	},
