@@ -28,9 +28,9 @@ class Cache_Batch_Task {
 	const AS_GROUP = 'lwtv';
 
 	/**
-	 * Batch size for processing URLs
+	 * Batch size for processing URLs (optimized for 4-core, 4GB server)
 	 */
-	const BATCH_SIZE = 50;
+	const BATCH_SIZE = 75;
 
 	/**
 	 * Delay between batches in seconds

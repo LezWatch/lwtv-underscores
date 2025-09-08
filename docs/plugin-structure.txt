@@ -51,12 +51,12 @@ This document describes the structure and contents of the custom LezWatch.TV Plu
 │   │   ├── class-plugins.php - Plugin filters and actions
 │   │   ├── class-queeries.php - Customized loops
 │   │   ├── class-rest-api.php - Rest API code
-│   │   ├── class-scheduler.php - Deferred task scheduler for performance optimization
+│   │   ├── class-scheduler.php - Deferred task scheduler for performance optimization with Action Scheduler integration
 │   │   ├── class-statistics.php - Statistics
 │   │   ├── class-symbolicons.php - Symbolicons
 │   │   ├── class-theme.php - Theme code
 │   │   ├── class-this-year.php - This Year features
-│   │   ├── class-transients.php - Transients
+│   │   ├── class-transients.php - Transients with intelligent cache invalidation and tiered caching system
 │   │   ├── class-wp-cli.php - WP CLI code
 │   │   ├── interface-component.php - Interface for classes that act as plugin components.
 │   │   ├── interface-conditional.php - Interface for classes that are conditional.
@@ -103,11 +103,11 @@ This document describes the structure and contents of the custom LezWatch.TV Plu
 │   │   ├── class-names.php - Process TV Maze names.
 │   │   └── class-tvmaze.php - Master control over getting TVMaze data
 │   ├── cpts/ - Custom Post Types
-│   │   ├── class-actors.php - Actor CPT code
-│   │   ├── class-characters.php - Character CPT code
+│   │   ├── class-actors.php - Actor CPT code with smart cache invalidation
+│   │   ├── class-characters.php - Character CPT code with smart cache invalidation
 │   │   ├── class-post-meta.php - Registers post-meta so it can be properly used and hidden from Gutenberg
 │   │   ├── class-related-posts.php - Displays related shows and posts (based on tags)
-│   │   ├── class-shows.php - Show CPT code
+│   │   ├── class-shows.php - Show CPT code with smart cache invalidation
 │   │   ├── class-tvmaze.php - TVMaze CPT which helps link our show names to the ones used by TVMaze
 │   │   ├── actors/
 │   │   │   ├── class-calculations.php - Does the math for various data points used to generate show scores, stores count of number of characters for faster retrieval later
@@ -119,7 +119,7 @@ This document describes the structure and contents of the custom LezWatch.TV Plu
 │   │   │   ├── class-cmb2-metaboxes.php - CMB2 code to make display nicer
 │   │   │   └── class-custom-columns.php - Define columns for post listing
 │   │   └── shows/
-│   │       ├── class-calculations.php - Show score math
+│   │       ├── class-calculations.php - Show score math with intelligent cache invalidation
 │   │       ├── class-cmb2-metaboxes.php - CMB2 code to make display nicer
 │   │       ├── class-custom-columns.php - Define columns for post listing
 │   │       ├── class-shows-link-this.php - Calculations for 'shows like this' (uses Related Posts by Taxonomy)
@@ -198,6 +198,8 @@ This document describes the structure and contents of the custom LezWatch.TV Plu
 │   │   ├── class-cache-task.php - Handles scheduled cache invalidation tasks
 │   │   ├── class-cache-queue.php - Manages immediate cache invalidation on shutdown (legacy)
 │   │   ├── class-cache-batch-task.php - Action Scheduler-based cache batch processing
+│   │   ├── class-statistics-cache-warming.php - Background cache warming for statistics after content changes
+│   │   ├── class-taxsync-task.php - Handles deferred taxonomy synchronization
 │   │   ├── class-tmdb-task.php - Handles deferred TMDB API calls (legacy)
 │   │   └── class-tmdb-batch-task.php - Action Scheduler-based TMDB batch processing
 │   ├── queeries/ - Custom queries and arrays
