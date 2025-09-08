@@ -35,6 +35,9 @@ $all_countries_data = $optimized_taxonomy->make_comprehensive( 'post_type_shows'
 // OPTIMIZED: Pre-load all character counts in a single query to eliminate N+1 pattern
 $character_counts = $optimized_taxonomy->get_bulk_character_counts( 'lez_country', array_keys( $all_countries_data ) );
 
+// OPTIMIZED: Pre-load all show counts in a single query to eliminate multiple show count queries
+$show_counts = $optimized_taxonomy->get_bulk_show_counts( 'lez_country', array_keys( $all_countries_data ) );
+
 // Get total counts efficiently
 $count       = count( $all_countries_data );
 $shows_count = lwtv_plugin()->generate_statistics( 'shows', 'total', 'count' );
@@ -50,7 +53,9 @@ switch ( $country ) {
 			$shows        = $country_data['count'];
 
 			// OPTIMIZED: Use pre-loaded character counts instead of individual query
-			$characters = $character_counts[ $country ]['total'] ?? 0;
+			// Strip any underscore prefix from country slug for character counts lookup
+			$country_slug = ltrim( $country, '_' );
+			$characters   = $character_counts[ $country_slug ]['total'] ?? 0;
 
 			$title_country = '<a href="' . home_url( '/country/' . $country ) . '">' . $country_data['name'] . '</a> (' . $shows . ' Shows / ' . $characters . ' Characters)';
 		} else {
@@ -160,12 +165,13 @@ switch ( $country ) {
 		} else {
 			// There is a specific Country!
 			$this_country = $all_countries_data[ ltrim( $country, '_' ) ];
-
-			$format     = 'piechart';
-			$onair      = lwtv_plugin()->generate_shows_count( 'onair', 'country', ltrim( $country, '_' ) );
-			$allshows   = lwtv_plugin()->generate_shows_count( 'total', 'country', ltrim( $country, '_' ) );
-			$showscore  = lwtv_plugin()->generate_shows_count( 'score', 'country', ltrim( $country, '_' ) );
-			$onairscore = lwtv_plugin()->generate_shows_count( 'onairscore', 'country', ltrim( $country, '_' ) );
+			$format       = 'piechart';
+			// OPTIMIZED: Use pre-loaded show counts instead of individual queries
+			$country_slug = ltrim( $country, '_' );
+			$onair        = $show_counts[ $country_slug ]['onair'] ?? 0;
+			$allshows     = $show_counts[ $country_slug ]['total'] ?? 0;
+			$showscore    = $show_counts[ $country_slug ]['score'] ?? 0;
+			$onairscore   = $show_counts[ $country_slug ]['onairscore'] ?? 0;
 
 			if ( '_all' === $view ) {
 				echo wp_kses_post( '<p>Currently, ' . $onair . ' out of a total of ' . $allshows . ' shows are on air.</p><p>The average score for all shows in this country is ' . $showscore );

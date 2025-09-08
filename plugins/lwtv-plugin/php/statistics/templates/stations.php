@@ -32,6 +32,9 @@ $all_stations_data  = $optimized_taxonomy->make_comprehensive( 'post_type_shows'
 // OPTIMIZED: Pre-load all character counts in a single query to eliminate N+1 pattern
 $character_counts = $optimized_taxonomy->get_bulk_character_counts( 'lez_stations', array_keys( $all_stations_data ) );
 
+// OPTIMIZED: Pre-load all show counts in a single query to eliminate multiple show count queries
+$show_counts = $optimized_taxonomy->get_bulk_show_counts( 'lez_stations', array_keys( $all_stations_data ) );
+
 // Get total counts efficiently
 $count       = count( $all_stations_data );
 $shows_count = lwtv_plugin()->generate_statistics( 'shows', 'total', 'count' );
@@ -48,7 +51,9 @@ switch ( $station ) {
 			$shows        = $station_data['count'];
 
 			// OPTIMIZED: Use pre-loaded character counts instead of individual query
-			$characters = $character_counts[ $station ]['total'] ?? 0;
+			// Strip any underscore prefix from station slug for character counts lookup
+			$station_slug = ltrim( $station, '_' );
+			$characters   = $character_counts[ $station_slug ]['total'] ?? 0;
 
 			$title_station = '<a href="' . home_url( '/station/' . $station ) . '">' . $station_data['name'] . '</a> (' . $shows . ' Shows / ' . $characters . ' Characters)';
 		} else {
@@ -157,12 +162,13 @@ switch ( $station ) {
 		} else {
 			// There is a specific Station!
 			$this_station = $all_stations_data[ ltrim( $station, '_' ) ];
-
-			$format     = 'piechart';
-			$onair      = lwtv_plugin()->generate_shows_count( 'onair', 'stations', ltrim( $station, '_' ) );
-			$allshows   = lwtv_plugin()->generate_shows_count( 'total', 'stations', ltrim( $station, '_' ) );
-			$showscore  = lwtv_plugin()->generate_shows_count( 'score', 'stations', ltrim( $station, '_' ) );
-			$onairscore = lwtv_plugin()->generate_shows_count( 'onairscore', 'stations', ltrim( $station, '_' ) );
+			$format       = 'piechart';
+			// OPTIMIZED: Use pre-loaded show counts instead of individual queries
+			$station_slug = ltrim( $station, '_' );
+			$onair        = $show_counts[ $station_slug ]['onair'] ?? 0;
+			$allshows     = $show_counts[ $station_slug ]['total'] ?? 0;
+			$showscore    = $show_counts[ $station_slug ]['score'] ?? 0;
+			$onairscore   = $show_counts[ $station_slug ]['onairscore'] ?? 0;
 
 			if ( '_all' === $view ) {
 				echo wp_kses_post( '<p>Currently, ' . $onair . ' out of a total of ' . $allshows . ' shows are on air.</p><p>The average score for all shows in this station is ' . $showscore );

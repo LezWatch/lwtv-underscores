@@ -35,6 +35,9 @@ $all_formats_data   = $optimized_taxonomy->make_comprehensive( 'post_type_shows'
 // OPTIMIZED: Pre-load all character counts in a single query to eliminate N+1 pattern
 $character_counts = $optimized_taxonomy->get_bulk_character_counts( 'lez_formats', array_keys( $all_formats_data ) );
 
+// OPTIMIZED: Pre-load all show counts in a single query to eliminate multiple show count queries
+$show_counts = $optimized_taxonomy->get_bulk_show_counts( 'lez_formats', array_keys( $all_formats_data ) );
+
 // Get total counts efficiently
 $count       = count( $all_formats_data );
 $shows_count = lwtv_plugin()->generate_statistics( 'shows', 'total', 'count' );
@@ -50,7 +53,9 @@ switch ( $showform ) {
 			$shows       = $format_data['count'];
 
 			// OPTIMIZED: Use pre-loaded character counts instead of individual query
-			$characters = $character_counts[ $showform ]['total'] ?? 0;
+			// Strip any underscore prefix from format slug for character counts lookup
+			$format_slug = ltrim( $showform, '_' );
+			$characters  = $character_counts[ $format_slug ]['total'] ?? 0;
 
 			$title_showform = '<a href="/format/' . $showform . '">' . $format_data['name'] . '</a> (' . $shows . ' Shows / ' . $characters . ' Characters)';
 		} else {
@@ -160,12 +165,13 @@ switch ( $showform ) {
 		} else {
 			// There is a specific Format!
 			$this_format = $all_formats_data[ ltrim( $showform, '_' ) ];
-
-			$format     = 'piechart';
-			$onair      = lwtv_plugin()->generate_shows_count( 'onair', 'formats', ltrim( $showform, '_' ) );
-			$allshows   = lwtv_plugin()->generate_shows_count( 'total', 'formats', ltrim( $showform, '_' ) );
-			$showscore  = lwtv_plugin()->generate_shows_count( 'score', 'formats', ltrim( $showform, '_' ) );
-			$onairscore = lwtv_plugin()->generate_shows_count( 'onairscore', 'formats', ltrim( $showform, '_' ) );
+			$format      = 'piechart';
+			// OPTIMIZED: Use pre-loaded show counts instead of individual queries
+			$format_slug = ltrim( $showform, '_' );
+			$onair       = $show_counts[ $format_slug ]['onair'] ?? 0;
+			$allshows    = $show_counts[ $format_slug ]['total'] ?? 0;
+			$showscore   = $show_counts[ $format_slug ]['score'] ?? 0;
+			$onairscore  = $show_counts[ $format_slug ]['onairscore'] ?? 0;
 
 			if ( '_all' === $view ) {
 				echo wp_kses_post( '<p>Currently, ' . $onair . ' out of a total of ' . $allshows . ' shows are on air.</p><p>The average score for all shows in this format is ' . $showscore );

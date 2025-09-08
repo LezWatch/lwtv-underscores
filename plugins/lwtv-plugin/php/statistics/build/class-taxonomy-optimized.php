@@ -175,6 +175,8 @@ class Taxonomy_Optimized {
 
 		// Single query to get both total and dead character counts
 		// Characters are linked to shows through lezchars_show_group meta field (serialized array)
+		// The format is: a:1:{i:0;a:3:{s:4:"show";a:1:{i:0;s:3:"655";}s:4:"type";s:9:"recurring";s:7:"appears";a:1:{i:0;s:4:"2017";}}}
+		// We need to match: s:3:"655"; where 655 is the show ID
 		// phpcs:disable
 		$query = $wpdb->prepare(
 			"SELECT
@@ -191,7 +193,7 @@ class Taxonomy_Optimized {
 			WHERE tt.taxonomy = %s
 			AND shows.post_type = 'post_type_shows'
 			AND shows.post_status = 'publish'
-			AND char_shows.meta_value LIKE CONCAT('%%s:', shows.ID, ';%%')
+			AND char_shows.meta_value COLLATE utf8mb4_unicode_ci LIKE CONCAT('%%s:', LENGTH(CAST(shows.ID AS CHAR)), ':\"', CAST(shows.ID AS CHAR), '\";%%') COLLATE utf8mb4_unicode_ci
 			AND t.slug IN ($term_placeholders)
 			GROUP BY t.slug",
 			$parameters
@@ -221,6 +223,100 @@ class Taxonomy_Optimized {
 		}
 
 		// Cache for 1 hour since character counts change less frequently
+		lwtv_plugin()->set_transient( $cache_key, $formatted, HOUR_IN_SECONDS );
+
+		return $formatted;
+	}
+
+	/**
+	 * Get bulk show counts for multiple taxonomy terms in a single query
+	 *
+	 * Eliminates multiple show count queries by getting all metrics at once.
+	 * Returns onair, total, score, and onairscore for each term.
+	 *
+	 * @param string $taxonomy Taxonomy to query (lez_formats, lez_country, lez_stations)
+	 * @param array $terms Array of term slugs to get counts for
+	 * @return array Array of term_slug => ['onair' => int, 'total' => int, 'score' => float, 'onairscore' => float]
+	 */
+	public function get_bulk_show_counts( $taxonomy, $terms ) {
+		if ( empty( $terms ) ) {
+			return array();
+		}
+
+		// Create cache key
+		$cache_key   = 'bulk_show_counts_' . $taxonomy . '_' . md5( wp_json_encode( $terms ) );
+		$cached_data = lwtv_plugin()->get_transient( $cache_key );
+
+		if ( false !== $cached_data ) {
+			return $cached_data;
+		}
+
+		global $wpdb;
+
+		// Sanitize term slugs
+		$term_slugs        = array_map( 'sanitize_text_field', $terms );
+		$term_placeholders = implode( ',', array_fill( 0, count( $term_slugs ), '%s' ) );
+
+		// Prepare parameters: taxonomy, then all term slugs
+		$parameters = array_merge( array( $taxonomy ), $term_slugs );
+
+		// Get current year for on-air calculations
+		$timestamp = time();
+		$dt        = new \DateTime( 'now', new \DateTimeZone( LWTV_TIMEZONE ) );
+		$dt->setTimestamp( $timestamp );
+		$current_year = $dt->format( 'Y' );
+
+		// Single query to get all show metrics for all terms
+		// phpcs:disable
+		$query = $wpdb->prepare(
+			"SELECT
+				t.slug,
+				COUNT(DISTINCT shows.ID) as total_shows,
+				COUNT(DISTINCT CASE WHEN onair.meta_value = 'yes' THEN shows.ID END) as onair_shows,
+				AVG(CASE WHEN scores.meta_value IS NOT NULL THEN CAST(scores.meta_value AS DECIMAL(5,2)) END) as avg_score,
+				AVG(CASE WHEN scores.meta_value IS NOT NULL AND onair.meta_value = 'yes' THEN CAST(scores.meta_value AS DECIMAL(5,2)) END) as avg_onair_score
+			FROM {$wpdb->terms} t
+			INNER JOIN {$wpdb->term_taxonomy} tt ON t.term_id = tt.term_id
+			LEFT JOIN {$wpdb->term_relationships} tr ON tt.term_taxonomy_id = tr.term_taxonomy_id
+			LEFT JOIN {$wpdb->posts} shows ON tr.object_id = shows.ID
+			LEFT JOIN {$wpdb->postmeta} onair ON shows.ID = onair.post_id AND onair.meta_key = 'lezshows_on_air'
+			LEFT JOIN {$wpdb->postmeta} scores ON shows.ID = scores.post_id AND scores.meta_key = 'lezshows_the_score'
+			WHERE tt.taxonomy = %s
+			AND shows.post_type = 'post_type_shows'
+			AND shows.post_status = 'publish'
+			AND t.slug IN ($term_placeholders)
+			GROUP BY t.slug",
+			$parameters
+		);
+		// phpcs:enable
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- This is a prepared query (see above)
+		$results = $wpdb->get_results( $query, ARRAY_A );
+
+		// Format results
+		$formatted = array();
+		foreach ( $results as $row ) {
+			$formatted[ $row['slug'] ] = array(
+				'onair'      => (int) $row['onair_shows'],
+				'total'      => (int) $row['total_shows'],
+				'score'      => round( (float) $row['avg_score'], 2 ),
+				'onairscore' => round( (float) $row['avg_onair_score'], 2 ),
+			);
+		}
+
+		// Add zero counts for terms that weren't found
+		foreach ( $term_slugs as $slug ) {
+			if ( ! isset( $formatted[ $slug ] ) ) {
+				$formatted[ $slug ] = array(
+					'onair'      => 0,
+					'total'      => 0,
+					'score'      => 0.0,
+					'onairscore' => 0.0,
+				);
+			}
+		}
+
+		// Cache for 1 hour since show counts change less frequently
 		lwtv_plugin()->set_transient( $cache_key, $formatted, HOUR_IN_SECONDS );
 
 		return $formatted;
