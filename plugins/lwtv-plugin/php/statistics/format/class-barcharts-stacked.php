@@ -18,8 +18,9 @@ class Barcharts_Stacked {
 	 */
 	public function make( $subject, $data, $data_array ) {
 
-		$count  = count( $data_array );
-		$height = max( ( $count * 20 ), 30 ) + 20;
+		$count     = count( $data_array );
+		$step_size = '1';
+		$height    = max( ( $count * 20 ), 30 ) + 20;
 
 		// [main-term-subtax]
 		// [main taxonomy]-[term of main]-[subtaxonomy to parse]
@@ -129,8 +130,22 @@ class Barcharts_Stacked {
 			options: {
 				indexAxis: 'y',
 				scales: {
-					x: { stacked: true },
-					y: { stacked: true }
+					x: {
+						stacked: true,
+						ticks: {
+							stepSize: 1,
+							precision: 0,
+							callback: function(value) {if (value % 1 === 0) {return value;}},
+						}
+					},
+					y: {
+						stacked: true,
+						ticks: {
+							stepSize: 1,
+							precision: 0,
+							callback: function(value) {if (value % 1 === 0) {return value;}},
+						}
+					}
 				},
 				tooltips: {
 					mode: 'index',

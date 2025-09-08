@@ -78,7 +78,17 @@ class Trendline {
 							}
 						}
 					}
-				}
+				},
+				scales: {
+					y: {
+						ticks: {
+							beginAtZero: true,
+							stepSize: 1,
+							precision: 0,
+							callback: function(value) {if (value % 1 === 0) {return value;}},
+						}
+					},
+				},
 			}
 		});
 		</script>

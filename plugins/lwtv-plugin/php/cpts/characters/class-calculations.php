@@ -146,6 +146,17 @@ class Calculations {
 	 */
 	public function do_the_math( $character_id ) {
 
+		if ( ! isset( $character_id ) || 'post_type_characters' !== get_post_type( $character_id ) ) {
+			// delete the meta fields
+			delete_post_meta( $character_id, 'lezchars_death_year' );
+			delete_post_meta( $character_id, 'lezchars_last_death' );
+			delete_post_meta( $character_id, 'lezchars_show_group' );
+			delete_post_meta( $character_id, 'lezchars_actor' );
+			delete_post_meta( $character_id, 'lezchars_dead_list' );
+			delete_post_meta( $character_id, 'lezchars_queer_override' );
+			return;
+		}
+
 		// Calculate Death
 		self::death( $character_id );
 

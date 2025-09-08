@@ -43,7 +43,7 @@ class Characters {
 
 		// If somehow characters is totally empty...
 		if ( empty( $characters ) ) {
-			return false;
+			return array();
 		}
 
 		// Make sure we don't have dupes.
@@ -133,7 +133,7 @@ class Characters {
 
 		// If somehow characters is totally empty...
 		if ( empty( $characters ) ) {
-			return false;
+			return array();
 		}
 
 		// Make sure we don't have dupes.
@@ -221,9 +221,9 @@ class Characters {
 	 * The recheck check happens earlier.
 	 *
 	 * @param  int   $show_id post ID of show
-	 * @return string What's wrong
+	 * @return array|string What's wrong
 	 */
-	public function check_disabled_characters( $show_id ): array {
+	public function check_disabled_characters( $show_id ): array|string {
 
 		// The array we will be checking.
 		$characters = lwtv_plugin()->get_characters_list( $show_id, 'query' );

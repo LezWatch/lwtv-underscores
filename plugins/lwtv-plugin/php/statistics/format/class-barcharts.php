@@ -28,7 +28,7 @@ class Barcharts {
 		}
 
 		$count     = count( $data_array );
-		$step_size = '5';
+		$step_size = '1';
 		$height    = max( ( $count * 20 ), 30 ) + 20;
 		$rand      = substr( md5( microtime() ), wp_rand( 0, 26 ), 5 );
 		$bar_id    = ucfirst( $subject ) . $rand;
@@ -105,12 +105,15 @@ class Barcharts {
 					}
 				},
 				scales: {
-					xAxes: [{
+					x: {
 						ticks: {
 							beginAtZero: true,
 							stepSize: <?php echo (int) $step_size; ?>,
+							precision: 0,
+							callback: function(value) {if (value % 1 === 0) {return value;}},
 						}
-					}]
+					},
+
 				},
 			}
 		});

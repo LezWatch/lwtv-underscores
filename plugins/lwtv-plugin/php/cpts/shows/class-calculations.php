@@ -83,7 +83,7 @@ class Calculations {
 	 */
 	public function count_queers( $post_id, $type = 'count' ) {
 
-		if ( ! isset( $post_id ) ) {
+		if ( ! isset( $post_id ) || 'post_type_shows' !== get_post_type( $post_id ) ) {
 			return;
 		}
 
@@ -185,7 +185,7 @@ class Calculations {
 	 */
 	public function show_tropes_score( $post_id ) {
 
-		if ( ! isset( $post_id ) ) {
+		if ( ! isset( $post_id ) || 'post_type_shows' !== get_post_type( $post_id ) ) {
 			return;
 		}
 
@@ -304,6 +304,10 @@ class Calculations {
 	 */
 	public function show_character_score( $post_id ) {
 
+		if ( ! isset( $post_id ) || 'post_type_shows' !== get_post_type( $post_id ) ) {
+			return;
+		}
+
 		// Base Score
 		$score = array(
 			'alive' => 0,
@@ -331,6 +335,10 @@ class Calculations {
 	 * Calculate show character data.
 	 */
 	public function show_character_data( $show_id ) {
+
+		if ( ! isset( $show_id ) || 'post_type_shows' !== get_post_type( $show_id ) ) {
+			return;
+		}
 
 		// What role each character has
 		$role_data = array(
@@ -418,6 +426,21 @@ class Calculations {
 	 * @return void
 	 */
 	public function do_the_math( $post_id ) {
+
+		if ( ! isset( $post_id ) || 'post_type_shows' !== get_post_type( $post_id ) ) {
+			// delete the meta fields
+			delete_post_meta( $post_id, 'lezshows_char_roles' );
+			delete_post_meta( $post_id, 'lezshows_char_gender' );
+			delete_post_meta( $post_id, 'lezshows_char_sexuality' );
+			delete_post_meta( $post_id, 'lezshows_char_romantic' );
+			delete_post_meta( $post_id, 'lezshows_char_count' );
+			delete_post_meta( $post_id, 'lezshows_dead_count' );
+			delete_post_meta( $post_id, 'lezshows_the_score' );
+			delete_post_meta( $post_id, 'lezshows_on_air' );
+			delete_post_meta( $post_id, 'lezshows_on_air_score' );
+			delete_post_meta( $post_id, 'lezshows_score' );
+			return;
+		}
 
 		// Generate character data
 		self::show_character_data( $post_id );

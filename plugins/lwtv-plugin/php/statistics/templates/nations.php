@@ -13,12 +13,11 @@ $valid_country = term_exists( $sent_country, 'lez_country' );
 $country       = ( '' === $sent_country || ! is_array( $valid_country ) ) ? 'all' : sanitize_title( $sent_country );
 
 $valid_views = array(
-	'sexuality'     => 'characters',
-	'gender'        => 'characters',
-	'tropes'        => 'shows',
-	'intersections' => 'shows',
-	'formats'       => 'shows',
-	'on-air'        => 'shows',
+	'sexuality' => 'characters',
+	'gender'    => 'characters',
+	'tropes'    => 'shows',
+	'formats'   => 'shows',
+	'on-air'    => 'shows',
 );
 $sent_view   = get_query_var( 'view', 'overview' );
 $view        = ( ! array_key_exists( $sent_view, $valid_views ) ) ? 'overview' : $sent_view;
