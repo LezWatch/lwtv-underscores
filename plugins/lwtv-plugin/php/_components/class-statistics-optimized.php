@@ -76,8 +76,10 @@ class Statistics_Optimized implements Component, Templater {
 
 			switch ( $statistics ) {
 				case 'nations':
+					wp_add_inline_script( 'tablesorter', 'jQuery(document).ready(function($){ $("#nationsTable").tablesorter({ theme : "bootstrap", }); });' );
+					break;
 				case 'stations':
-					wp_add_inline_script( 'tablesorter', 'jQuery(document).ready(function($){ $("#' . $statistics . 'Table").tablesorter({ theme : "bootstrap", }); });' );
+					wp_add_inline_script( 'tablesorter', 'jQuery(document).ready(function($){ $("#stationsTable").tablesorter({ theme : "bootstrap", }); });' );
 					break;
 				case 'death':
 					wp_add_inline_script( 'tablesorter', 'jQuery(document).ready(function($){ $("#charactersTable").tablesorter({ theme : "bootstrap", }); });' );

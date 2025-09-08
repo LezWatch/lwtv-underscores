@@ -133,7 +133,7 @@ class Barcharts_Stacked {
 					x: {
 						stacked: true,
 						ticks: {
-							stepSize: 1,
+							stepSize: <?php echo (int) $step_size; ?>,
 							precision: 0,
 							callback: function(value) {if (value % 1 === 0) {return value;}},
 						}
@@ -141,7 +141,7 @@ class Barcharts_Stacked {
 					y: {
 						stacked: true,
 						ticks: {
-							stepSize: 1,
+							stepSize: <?php echo (int) $step_size; ?>,
 							precision: 0,
 							callback: function(value) {if (value % 1 === 0) {return value;}},
 						}
