@@ -8,7 +8,8 @@
 namespace LWTV\CPTs;
 
 use LWTV\_Components\CPTs;
-use LWTV\CPTs\Actors\{ Calculations, CMB2_Metaboxes, Custom_Columns, Privacy };
+use LWTV\CPTs\Actors\{ CMB2_Metaboxes, Custom_Columns, Privacy };
+use LWTV\Plugins\CMB2;
 
 /**
  * class LWTV_CPT_Actors
@@ -247,6 +248,29 @@ class Actors {
 
 		// re-hook this function
 		add_action( 'save_post_post_type_actors', array( $this, 'save_post_meta' ) );
+	}
+
+	/**
+	 * Sync taxonomies
+	 *
+	 * @param int $post_id The post ID
+	 * @return void
+	 */
+	public function sync_taxonomies( $post_id ) {
+		$success_count = 0;
+		$total_count   = count( self::SELECT2_TAXONOMIES );
+
+		foreach ( self::SELECT2_TAXONOMIES as $postmeta => $taxonomy ) {
+			try {
+				( new CMB2() )->select2_taxonomy_save( $post_id, $postmeta, $taxonomy );
+				++$success_count;
+				lwtv_plugin()->error_log( 'taxsync-task', "Synced taxonomy {$taxonomy} for character ID: {$post_id}" );
+			} catch ( \Exception $e ) {
+				lwtv_plugin()->error_log( 'taxsync-task', "Failed to sync taxonomy {$taxonomy} for character ID: {$post_id}: " . $e->getMessage() );
+			}
+		}
+
+		lwtv_plugin()->error_log( 'taxsync-task', "Completed character taxonomy sync for ID: {$post_id} - {$success_count}/{$total_count} successful" );
 	}
 
 	/*
