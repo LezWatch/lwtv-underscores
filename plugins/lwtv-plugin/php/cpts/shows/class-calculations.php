@@ -465,6 +465,9 @@ class Calculations {
 		// Update 3rd party scores
 		( new Grading() )->update_scores( $post_id );
 
+		// Invalidate score-related caches
+		lwtv_plugin()->invalidate_statistics_cache( 'score', $post_id );
+
 		// Cheat and update the show 'on-air' ness.
 		$on_air   = 'no';
 		$airdates = get_post_meta( $post_id, 'lezshows_airdates', true );

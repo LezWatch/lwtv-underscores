@@ -298,6 +298,9 @@ class Characters {
 		// Queue cache invalidation for shutdown processing
 		lwtv_plugin()->cache_queue( $post_id );
 
+		// Smart statistics cache invalidation
+		lwtv_plugin()->invalidate_statistics_cache( 'post_type_characters', $post_id );
+
 		// re-hook this function
 		add_action( 'save_post_post_type_characters', array( $this, 'save_post_meta' ) );
 	}
