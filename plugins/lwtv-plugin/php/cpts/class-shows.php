@@ -289,13 +289,36 @@ class Shows {
 		lwtv_plugin()->schedule_task( 'calculation', $post_id );
 
 		// Schedule taxonomy sync for later processing
-		lwtv_plugin()->schedule_task( 'taxsync', $post_id );
+		$this->sync_taxonomies( $post_id );
 
 		// Queue cache invalidation for shutdown processing
 		lwtv_plugin()->cache_queue( $post_id );
 
 		// re-hook this function
 		add_action( 'save_post_post_type_shows', array( $this, 'save_post_meta' ) );
+	}
+
+	/**
+	 * Sync taxonomies
+	 *
+	 * @param int $post_id The post ID
+	 * @return void
+	 */
+	public function sync_taxonomies( $post_id ) {
+		$success_count = 0;
+		$total_count   = count( self::SELECT2_TAXONOMIES );
+
+		foreach ( self::SELECT2_TAXONOMIES as $postmeta => $taxonomy ) {
+			try {
+				( new CMB2() )->select2_taxonomy_save( $post_id, $postmeta, $taxonomy );
+				++$success_count;
+				lwtv_plugin()->error_log( 'taxsync-task', "Synced taxonomy {$taxonomy} for show ID: {$post_id}" );
+			} catch ( \Exception $e ) {
+				lwtv_plugin()->error_log( 'taxsync-task', "Failed to sync taxonomy {$taxonomy} for show ID: {$post_id}: " . $e->getMessage() );
+			}
+		}
+
+		lwtv_plugin()->error_log( 'taxsync-task', "Completed show taxonomy sync for ID: {$post_id} - {$success_count}/{$total_count} successful" );
 	}
 
 	/*
