@@ -18,7 +18,6 @@ The Statistics system consists of:
 
 #### 1. Database Query Problems
 - **N+1 Query Pattern**: Each statistic generates 5-20 individual database queries
-- **Inefficient WP_Query Usage**: `posts_per_page` set to total count for every query
 - **Missing Query Optimization**: No `no_found_rows`, `update_post_meta_cache` optimization
 - **No Database Indexing**: Frequently queried meta keys lack proper indexes
 

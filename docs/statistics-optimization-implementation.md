@@ -13,9 +13,6 @@ This guide shows how to implement the optimized Statistics system that eliminate
 4. **`class-statistics-optimized.php`** - Main optimized statistics class
 5. **`class-matcher-optimized.php`** - Updated matcher with optimized classes
 
-### Example Files
-6. **`stations-optimized.php`** - Example template showing optimization
-
 ## Performance Improvements
 
 ### Before Optimization
