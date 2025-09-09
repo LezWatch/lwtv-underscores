@@ -170,13 +170,10 @@ class Taxonomy_Optimized {
 		$term_slugs        = array_map( 'sanitize_text_field', $terms );
 		$term_placeholders = implode( ',', array_fill( 0, count( $term_slugs ), '%s' ) );
 
-		// Prepare parameters: post_type, taxonomy, then all term slugs
-		$parameters = array_merge( array( $post_type, $taxonomy ), $term_slugs );
-
 		// Single query to get both total and dead character counts
 		// Characters are linked to shows through lezchars_show_group meta field (serialized array)
 		// The format is: a:1:{i:0;a:3:{s:4:"show";a:1:{i:0;s:3:"655";}s:4:"type";s:9:"recurring";s:7:"appears";a:1:{i:0;s:4:"2017";}}}
-		// We need to match: s:3:"655"; where 655 is the show ID
+		// We need to match characters that are linked to shows belonging to the specific station
 		// phpcs:disable
 		$query = $wpdb->prepare(
 			"SELECT
@@ -193,15 +190,23 @@ class Taxonomy_Optimized {
 			WHERE tt.taxonomy = %s
 			AND shows.post_type = 'post_type_shows'
 			AND shows.post_status = 'publish'
+			AND char_shows.meta_value IS NOT NULL
+			AND char_shows.meta_value != ''
 			AND char_shows.meta_value COLLATE utf8mb4_unicode_ci LIKE CONCAT('%%s:', LENGTH(CAST(shows.ID AS CHAR)), ':\"', CAST(shows.ID AS CHAR), '\";%%') COLLATE utf8mb4_unicode_ci
 			AND t.slug IN ($term_placeholders)
 			GROUP BY t.slug",
-			$parameters
+			array_merge( array( $post_type, $taxonomy ), $term_slugs )
 		);
 		// phpcs:enable
 
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- This is a prepared query (see above)
 		$results = $wpdb->get_results( $query, ARRAY_A );
+
+		// Handle query failure
+		if ( false === $results || empty( $results ) || is_null( $results ) ) {
+			lwtv_plugin()->error_log( 'character-count-error', 'Query failed: ' . $wpdb->last_error );
+			return array();
+		}
 
 		// Format results
 		$formatted = array();

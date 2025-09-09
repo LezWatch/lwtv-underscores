@@ -2,16 +2,13 @@
 
 namespace LWTV\Statistics\Build;
 
-use LWTV\Queeries\Is_Show_On_Air;
-use LWTV\Queeries\Post_Meta;
-use LWTV\Queeries\Post_Type;
-
 class On_Air {
 
-	/*
-	 * Statistics On Air
+	/**
+	 * Statistics On Air - Optimized with single query
 	 *
 	 * Trying to do math of who's on what year.
+	 * Now optimized with single query instead of N+1 pattern.
 	 *
 	 * @param string $post_type  Post Type of data (show or character)
 	 * @param array  $data       Array of data to loop at.
@@ -21,89 +18,311 @@ class On_Air {
 	 */
 	public function make( $post_type, $data = false, $minor = false ) {
 
-		$transient = 'on_air_stats_' . $post_type;
-		$transient = ( false !== $minor ) ? $transient . '_' . $minor : $transient;
-		$array     = lwtv_plugin()->get_transient( $transient );
+		// Debug logging
+		lwtv_plugin()->error_log( 'on-air-debug', 'On_Air make called with post_type: ' . $post_type . ', minor: ' . $minor );
 
-		if ( false === $array ) {
+		try {
+			$transient = 'on_air_stats_' . $post_type;
+			$transient = ( false !== $minor ) ? $transient . '_' . $minor : $transient;
+			$array     = lwtv_plugin()->get_transient( $transient );
 
+			lwtv_plugin()->error_log( 'on-air-debug', 'Transient key: ' . $transient . ', cached: ' . ( false !== $array ? 'yes' : 'no' ) );
+
+			if ( false === $array ) {
+				$array = $this->build_on_air_optimized( $post_type, $data );
+
+				if ( empty( $array ) ) {
+					// If we're empty, delete the transients.
+					lwtv_plugin()->delete_transient( $transient );
+				} else {
+					// Otherwise save array as transient for 14 hours
+					lwtv_plugin()->set_transient( $transient, $array, DAY_IN_SECONDS );
+				}
+			}
+
+			// Fallback if empty so we don't throw errors.
+			if ( empty( $array ) ) {
+				$timestamp = time();
+				$dt        = new \DateTime( 'now', new \DateTimeZone( LWTV_TIMEZONE ) );
+				$dt->setTimestamp( $timestamp );
+				$this_year = $dt->format( 'Y' );
+
+				$array[ $this_year ] = array(
+					'name'  => $this_year,
+					'count' => 0,
+					'url'   => home_url( '/this-year/' ),
+				);
+			}
+
+			return $array;
+
+		} catch ( \Exception $e ) {
+			lwtv_plugin()->error_log( 'on-air-error', 'Error building on air statistics: ' . $e->getMessage() );
+
+			$timestamp = time();
+			$dt        = new \DateTime( 'now', new \DateTimeZone( LWTV_TIMEZONE ) );
+			$dt->setTimestamp( $timestamp );
+			$this_year = $dt->format( 'Y' );
+
+			return array(
+				$this_year => array(
+					'name'  => $this_year,
+					'count' => 0,
+					'url'   => home_url( '/this-year/' ),
+				),
+			);
+		}
+	}
+
+	/**
+	 * Build on air statistics using optimized single query
+	 *
+	 * @param string $post_type Post type to query
+	 * @param mixed  $data Filtered data (WP_Query object or array)
+	 *
+	 * @return array
+	 */
+	private function build_on_air_optimized( $post_type, $data = false ) {
+
+		// Debug logging
+		lwtv_plugin()->error_log( 'on-air-debug', 'build_on_air_optimized called with post_type: ' . $post_type . ', data type: ' . gettype( $data ) );
+
+		try {
 			$array = array();
 
 			// Create the date with regards to timezones
 			$timestamp = time();
-			$dt        = new \DateTime( 'now', new \DateTimeZone( LWTV_TIMEZONE ) ); //first argument "must" be a string
-			$dt->setTimestamp( $timestamp ); //adjust the object to correct timestamp
+			$dt        = new \DateTime( 'now', new \DateTimeZone( LWTV_TIMEZONE ) );
+			$dt->setTimestamp( $timestamp );
 			$this_year = $dt->format( 'Y' );
 
 			// Array of Years
 			$year_first = LWTV_FIRST_YEAR;
-			$year_array = array();
-			foreach ( range( $this_year, $year_first ) as $x ) {
-				$year_array[ $x ] = $x;
+			$year_range = range( $this_year, $year_first );
+
+			if ( 'post_type_characters' === $post_type ) {
+				$array = $this->build_characters_on_air_optimized( $year_range, $data );
+			} elseif ( 'post_type_shows' === $post_type ) {
+				$array = $this->build_shows_on_air_optimized( $year_range, $data );
 			}
-			foreach ( $year_array as $year ) {
-				switch ( $post_type ) {
-					case 'post_type_characters':
-						// It doesn't matter which show they're on, just that they're on that year.
-						$year_queery = ( false === $data ) ? ( new Post_Meta() )->make( 'post_type_characters', 'lezchars_show_group', $year, 'LIKE' ) : $data;
-						break;
-					case 'post_type_shows':
-						$year_queery = 0;
-						$show_queery = ( false === $data ) ? ( new Post_Type() )->make( 'post_type_shows' ) : $data;
-						$allshows    = array();
 
-						if ( is_object( $show_queery ) && $show_queery->have_posts() ) {
-							$allshows = wp_list_pluck( $show_queery->posts, 'ID' );
-							$allshows = ( ! is_array( $allshows ) ) ? array( $allshows ) : $allshows;
-						}
+			// Debug the result
+			// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_print_r
+			lwtv_plugin()->error_log( 'on-air-debug', 'build_on_air_optimized result: ' . print_r( $array, true ) );
 
-						foreach ( $allshows as $post_id ) {
-							$on_air = ( new Is_Show_On_Air() )->make( $post_id, $year );
-							if ( false !== $on_air ) {
-								++$year_queery;
-							}
-						}
-						break;
+			return $array;
+
+		} catch ( \Exception $e ) {
+			lwtv_plugin()->error_log( 'on-air-error', 'Error building on air statistics: ' . $e->getMessage() );
+			return array();
+		}
+	}
+
+	/**
+	 * Build characters on air statistics using optimized single query
+	 *
+	 * @param array $year_range Array of years
+	 * @param array $filtered_data Filtered data (WP_Query object or array)
+	 * @return array
+	 */
+	// phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
+	private function build_characters_on_air_optimized( $year_range, $filtered_data = false ) {
+		global $wpdb;
+
+		try {
+			$array = array();
+
+			// Single optimized query to get character on air counts by year
+			// phpcs:disable
+			$queery = "SELECT
+				SUBSTRING_INDEX(SUBSTRING_INDEX(show_meta.meta_value, '\"', 4), '\"', -1) as air_year,
+				COUNT(DISTINCT chars.ID) as char_count
+			FROM {$wpdb->posts} chars
+			INNER JOIN {$wpdb->postmeta} show_meta ON chars.ID = show_meta.post_id AND show_meta.meta_key = 'lezchars_show_group'
+			WHERE chars.post_type = 'post_type_characters'
+			AND chars.post_status = 'publish'
+			AND show_meta.meta_value IS NOT NULL
+			AND show_meta.meta_value != ''
+			AND SUBSTRING_INDEX(SUBSTRING_INDEX(show_meta.meta_value, '\"', 4), '\"', -1) REGEXP '^[0-9]{4}$'
+			GROUP BY air_year
+			ORDER BY air_year DESC";
+			// phpcs:enable
+
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- There's no need to prepare this query
+			$results = $wpdb->get_results( $queery, ARRAY_A );
+
+			// Build base array with all years
+			foreach ( $year_range as $year ) {
+				$array[ $year ] = array(
+					'name'  => $year,
+					'count' => 0,
+					'url'   => home_url( '/this-year/' . $year . '/' ),
+				);
+			}
+
+			// Update counts with actual data
+			foreach ( $results as $row ) {
+				$air_year = (int) $row['air_year'];
+				if ( isset( $array[ $air_year ] ) ) {
+					$array[ $air_year ]['count'] = (int) $row['char_count'];
 				}
+			}
 
-				// If we have values for $year_queery we add to the array
-				if ( ! empty( $year_queery ) ) {
-					$count = 0;
+			return $array;
 
-					// Shows spits back a number, characters an object
-					if ( is_numeric( $year_queery ) ) {
-						$count = $year_queery;
-					} elseif ( is_object( $year_queery ) ) {
-						$count = $year_queery->post_count;
+		} catch ( \Exception $e ) {
+			lwtv_plugin()->error_log( 'on-air-error', 'Error building characters on air statistics: ' . $e->getMessage() );
+			return array();
+		}
+	}
+
+	/**
+	 * Build shows on air statistics using optimized single query
+	 *
+	 * @param array $year_range Array of years
+	 * @param array $filtered_data Filtered data (WP_Query object or array)
+	 * @return array
+	 */
+	private function build_shows_on_air_optimized( $year_range, $filtered_data = false ) {
+		global $wpdb;
+
+		try {
+			$array = array();
+
+			// Debug the filtered data
+			lwtv_plugin()->error_log( 'on-air-debug', 'build_shows_on_air_optimized received filtered_data type: ' . gettype( $filtered_data ) );
+			if ( $filtered_data ) {
+				if ( is_object( $filtered_data ) ) {
+					lwtv_plugin()->error_log( 'on-air-debug', 'filtered_data is object, class: ' . get_class( $filtered_data ) );
+					if ( isset( $filtered_data->posts ) ) {
+						lwtv_plugin()->error_log( 'on-air-debug', 'filtered_data has posts property with ' . count( $filtered_data->posts ) . ' items' );
+					}
+				} elseif ( is_array( $filtered_data ) ) {
+					lwtv_plugin()->error_log( 'on-air-debug', 'filtered_data is array with ' . count( $filtered_data ) . ' items' );
+				}
+			}
+
+			// Extract show IDs from filtered data if provided
+			$show_ids = array();
+			if ( $filtered_data && is_object( $filtered_data ) && isset( $filtered_data->posts ) ) {
+				// It's a WP_Query object
+				foreach ( $filtered_data->posts as $post ) {
+					$show_ids[] = $post->ID;
+				}
+				lwtv_plugin()->error_log( 'on-air-debug', 'Extracted ' . count( $show_ids ) . ' show IDs from WP_Query object' );
+			} elseif ( $filtered_data && is_array( $filtered_data ) ) {
+				// It's an array of post IDs
+				$show_ids = $filtered_data;
+				lwtv_plugin()->error_log( 'on-air-debug', 'Using ' . count( $show_ids ) . ' show IDs from array' );
+			} else {
+				lwtv_plugin()->error_log( 'on-air-debug', 'No filtered data provided, querying all shows' );
+			}
+
+			// Build WHERE clause for show IDs if we have filtered data
+			$where_clause = '';
+			if ( ! empty( $show_ids ) ) {
+				$show_ids_placeholders = implode( ',', array_fill( 0, count( $show_ids ), '%d' ) );
+				$where_clause          = "AND shows.ID IN ({$show_ids_placeholders})";
+			}
+
+			// Query to get all shows with their airdates meta data
+			// phpcs:disable
+			$queery = "SELECT
+				shows.ID,
+				air_meta.meta_value as airdates_serialized
+			FROM {$wpdb->posts} shows
+			INNER JOIN {$wpdb->postmeta} air_meta ON shows.ID = air_meta.post_id AND air_meta.meta_key = 'lezshows_airdates'
+			WHERE shows.post_type = 'post_type_shows'
+			AND shows.post_status = 'publish'
+			AND air_meta.meta_value IS NOT NULL
+			AND air_meta.meta_value != ''
+			{$where_clause}";
+			// phpcs:enable
+
+			// Execute query with or without prepared statement
+			if ( ! empty( $show_ids ) ) {
+				// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- This is a prepared query (see above)
+				$results = $wpdb->get_results( $wpdb->prepare( $queery, ...$show_ids ), ARRAY_A );
+				lwtv_plugin()->error_log( 'on-air-debug', 'Query executed with ' . count( $show_ids ) . ' show IDs, returned ' . count( $results ) . ' results' );
+			} else {
+				// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- There's no need to prepare this query
+				$results = $wpdb->get_results( $queery, ARRAY_A );
+				lwtv_plugin()->error_log( 'on-air-debug', 'Query executed without filtering, returned ' . count( $results ) . ' results' );
+			}
+
+			// If we have filtered data, determine the actual year range from the shows' airdates
+			$actual_year_range = $year_range;
+			if ( ! empty( $results ) ) {
+				$earliest_start = null;
+				$latest_finish  = null;
+
+				// First pass: find the actual year range from the shows' airdates
+				foreach ( $results as $row ) {
+					$airdates_serialized = $row['airdates_serialized'];
+					$airdates            = maybe_unserialize( $airdates_serialized );
+
+					if ( ! is_array( $airdates ) || ! isset( $airdates['start'] ) || ! isset( $airdates['finish'] ) ) {
+						continue;
 					}
 
-					$array[ $year ] = array(
-						'name'  => $year,
-						'count' => $count,
-						'url'   => home_url( '/this-year/' . $year . '/' ),
-					);
+					$start_year  = (int) $airdates['start'];
+					$finish_year = ( 'current' === $airdates['finish'] ) ? (int) gmdate( 'Y' ) : (int) $airdates['finish'];
+
+					if ( null === $earliest_start || $start_year < $earliest_start ) {
+						$earliest_start = $start_year;
+					}
+					if ( null === $latest_finish || $finish_year > $latest_finish ) {
+						$latest_finish = $finish_year;
+					}
+				}
+
+				// If we found valid years, use the actual range
+				if ( null !== $earliest_start && null !== $latest_finish ) {
+					$actual_year_range = range( $latest_finish, $earliest_start );
+					lwtv_plugin()->error_log( 'on-air-debug', 'Using actual year range from shows: ' . $earliest_start . ' to ' . $latest_finish );
 				}
 			}
 
-			if ( empty( $array ) ) {
-				// If we're empty, delete the transients.
-				lwtv_plugin()->delete_transient( $transient );
-			} else {
-				// Otherwise save array as transient for 14 hours
-				lwtv_plugin()->set_transient( $transient, $array, DAY_IN_SECONDS );
+			// Build base array with actual year range
+			foreach ( $actual_year_range as $year ) {
+				$array[ $year ] = array(
+					'name'  => $year,
+					'count' => 0,
+					'url'   => home_url( '/this-year/' . $year . '/' ),
+				);
 			}
-		}
 
-		// Fallback if empty so we don't throw errors.
-		// It should be impossible to get here, but ...
-		if ( empty( $array ) ) {
-			$array[ $this_year ] = array(
-				'name'  => $this_year,
-				'count' => 0,
-				'url'   => home_url( '/this-year/' ),
-			);
-		}
+			// Process each show's airdates to determine which years it was on air
+			$year_counts = array();
+			foreach ( $results as $row ) {
+				$airdates_serialized = $row['airdates_serialized'];
+				$airdates            = maybe_unserialize( $airdates_serialized );
 
-		return $array;
+				if ( ! is_array( $airdates ) || ! isset( $airdates['start'] ) || ! isset( $airdates['finish'] ) ) {
+					continue;
+				}
+
+				$start_year  = (int) $airdates['start'];
+				$finish_year = ( 'current' === $airdates['finish'] ) ? (int) gmdate( 'Y' ) : (int) $airdates['finish'];
+
+				// A show is "on air" for any year between start and finish (inclusive)
+				for ( $year = $start_year; $year <= $finish_year; $year++ ) {
+					if ( isset( $array[ $year ] ) ) {
+						$year_counts[ $year ] = ( $year_counts[ $year ] ?? 0 ) + 1;
+					}
+				}
+			}
+
+			// Update counts with actual data
+			foreach ( $year_counts as $year => $count ) {
+				$array[ $year ]['count'] = $count;
+			}
+
+			return $array;
+
+		} catch ( \Exception $e ) {
+			lwtv_plugin()->error_log( 'on-air-error', 'Error building shows on air statistics: ' . $e->getMessage() );
+			return array();
+		}
 	}
 }

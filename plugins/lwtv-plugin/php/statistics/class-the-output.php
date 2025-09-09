@@ -7,7 +7,7 @@
 
 namespace LWTV\Statistics;
 
-use LWTV\Statistics\Matcher;
+use LWTV\Statistics\Matcher_Optimized as Matcher;
 
 class The_Output {
 	/**

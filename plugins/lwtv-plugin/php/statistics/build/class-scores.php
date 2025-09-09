@@ -9,26 +9,32 @@ class Scores {
 	 */
 	const OPTIMAL_CHUNK_SIZE = 100;
 
-	/*
+	/**
 	 * Statistics Scores - Optimized with lazy loading
 	 *
+	 * @param string $post_type Post type to process
 	 * @return array
 	 */
 	public function make( $post_type ) {
+		try {
+			$transient = 'scores_' . $post_type;
+			$array     = lwtv_plugin()->get_transient( $transient );
 
-		$transient = 'scores_' . $post_type;
-		$array     = lwtv_plugin()->get_transient( $transient );
+			if ( false === $array ) {
+				$array = $this->build_scores_lazy( $post_type );
 
-		if ( false === $array ) {
-			$array = $this->build_scores_lazy( $post_type );
-
-			// save array as transient.
-			if ( ! empty( $array ) ) {
-				lwtv_plugin()->set_transient( $transient, $array, DAY_IN_SECONDS );
+				// save array as transient.
+				if ( ! empty( $array ) ) {
+					lwtv_plugin()->set_transient( $transient, $array, DAY_IN_SECONDS );
+				}
 			}
-		}
 
-		return $array;
+			return $array;
+
+		} catch ( \Exception $e ) {
+			lwtv_plugin()->error_log( 'scores-error', 'Error building scores statistics: ' . $e->getMessage() );
+			return array();
+		}
 	}
 
 	/**
@@ -38,27 +44,39 @@ class Scores {
 	 * @return array
 	 */
 	private function build_scores_lazy( $post_type ) {
-		$results_array = array();
-		$chunk_size    = self::OPTIMAL_CHUNK_SIZE;
-		$offset        = 0;
-		$total_count   = $this->get_total_count( $post_type );
-
-		do {
-			$chunk = $this->get_scores_chunk( $post_type, $chunk_size, $offset );
-
-			if ( empty( $chunk ) ) {
-				break;
+		try {
+			// Validate input
+			if ( empty( $post_type ) ) {
+				lwtv_plugin()->error_log( 'scores-error', 'Invalid post_type provided' );
+				return array();
 			}
 
-			$this->process_scores_chunk( $chunk, $results_array );
+			$results_array = array();
+			$chunk_size    = self::OPTIMAL_CHUNK_SIZE;
+			$offset        = 0;
+			$total_count   = $this->get_total_count( $post_type );
 
-			// Memory cleanup between chunks
-			unset( $chunk );
-			$offset += $chunk_size;
+			do {
+				$chunk = $this->get_scores_chunk( $post_type, $chunk_size, $offset );
 
-		} while ( $offset < $total_count );
+				if ( empty( $chunk ) ) {
+					break;
+				}
 
-		return $results_array;
+				$this->process_scores_chunk( $chunk, $results_array );
+
+				// Memory cleanup between chunks
+				unset( $chunk );
+				$offset += $chunk_size;
+
+			} while ( $offset < $total_count );
+
+			return $results_array;
+
+		} catch ( \Exception $e ) {
+			lwtv_plugin()->error_log( 'scores-error', 'Error building scores lazy: ' . $e->getMessage() );
+			return array();
+		}
 	}
 
 	/**
@@ -72,22 +90,28 @@ class Scores {
 	private function get_scores_chunk( $post_type, $limit, $offset ) {
 		global $wpdb;
 
-		// Single optimized queery with LIMIT/OFFSET instead of loading all posts
-		$queery = $wpdb->prepare(
-			"SELECT p.ID, pm.meta_value as score
-			 FROM {$wpdb->posts} p
-			 LEFT JOIN {$wpdb->postmeta} pm ON p.ID = pm.post_id AND pm.meta_key = 'lezshows_the_score'
-			 WHERE p.post_type = %s
-			 AND p.post_status = 'publish'
-			 ORDER BY p.ID
-			 LIMIT %d OFFSET %d",
-			$post_type,
-			$limit,
-			$offset
-		);
+		try {
+			// Single optimized queery with LIMIT/OFFSET and permalink data
+			$queery = $wpdb->prepare(
+				"SELECT p.ID, p.post_name, pm.meta_value as score
+				 FROM {$wpdb->posts} p
+				 LEFT JOIN {$wpdb->postmeta} pm ON p.ID = pm.post_id AND pm.meta_key = 'lezshows_the_score'
+				 WHERE p.post_type = %s
+				 AND p.post_status = 'publish'
+				 ORDER BY p.ID
+				 LIMIT %d OFFSET %d",
+				$post_type,
+				$limit,
+				$offset
+			);
 
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- This is a prepared query (see above)
-		return $wpdb->get_results( $queery, ARRAY_A );
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- This is a prepared query (see above)
+			return $wpdb->get_results( $queery, ARRAY_A );
+
+		} catch ( \Exception $e ) {
+			lwtv_plugin()->error_log( 'scores-error', 'Error getting scores chunk: ' . $e->getMessage() );
+			return array();
+		}
 	}
 
 	/**
@@ -98,13 +122,22 @@ class Scores {
 	 * @return void
 	 */
 	private function process_scores_chunk( $chunk, &$results_array ) {
-		foreach ( $chunk as $row ) {
-			$show_id                   = (int) $row['ID'];
-			$results_array[ $show_id ] = array(
-				'id'    => $show_id,
-				'count' => $row['score'] ? $row['score'] : 0,
-				'url'   => get_the_permalink( $show_id ),
-			);
+		try {
+			foreach ( $chunk as $row ) {
+				$show_id   = (int) $row['ID'];
+				$post_name = $row['post_name'];
+
+				// Build permalink directly instead of calling get_the_permalink()
+				$permalink = home_url( '/' . $post_name . '/' );
+
+				$results_array[ $show_id ] = array(
+					'id'    => $show_id,
+					'count' => $row['score'] ? $row['score'] : 0,
+					'url'   => $permalink,
+				);
+			}
+		} catch ( \Exception $e ) {
+			lwtv_plugin()->error_log( 'scores-error', 'Error processing scores chunk: ' . $e->getMessage() );
 		}
 	}
 
@@ -117,14 +150,20 @@ class Scores {
 	private function get_total_count( $post_type ): int {
 		global $wpdb;
 
-		$count = $wpdb->get_var(
-			$wpdb->prepare(
-				"SELECT COUNT(*) FROM {$wpdb->posts}
-				 WHERE post_type = %s AND post_status = 'publish'",
-				$post_type
-			)
-		);
+		try {
+			$count = $wpdb->get_var(
+				$wpdb->prepare(
+					"SELECT COUNT(*) FROM {$wpdb->posts}
+					 WHERE post_type = %s AND post_status = 'publish'",
+					$post_type
+				)
+			);
 
-		return (int) $count;
+			return (int) $count;
+
+		} catch ( \Exception $e ) {
+			lwtv_plugin()->error_log( 'scores-error', 'Error getting total count: ' . $e->getMessage() );
+			return 0;
+		}
 	}
 }

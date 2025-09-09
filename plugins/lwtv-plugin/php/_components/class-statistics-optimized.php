@@ -8,7 +8,7 @@
 namespace LWTV\_Components;
 
 use LWTV\Queeries\Taxonomy as Queery_Taxonomy;
-use LWTV\Statistics\{ Gutenberg_SSR, Matcher, Query_Vars, The_Array_Optimized, The_Output };
+use LWTV\Statistics\{ Gutenberg_SSR, Matcher_Optimized as Matcher, Query_Vars, The_Array, The_Output };
 use LWTV\Statistics\Build\Dead_Basic as Build_Dead_Basic;
 use LWTV\Statistics\Build\Taxonomy_Breakdowns as Build_Taxonomy_Breakdowns;
 
@@ -115,6 +115,7 @@ class Statistics_Optimized implements Component, Templater {
 	public function generate( $subject, $data, $format, $post_id = false, $custom_array = array() ) {
 		// Bail early if we're not an approved subject matter.
 		if ( ! in_array( $subject, array( 'characters', 'shows', 'actors' ), true ) ) {
+			lwtv_plugin()->error_log( 'statistics-debug', 'Returning early - subject not in approved array: ' . $subject );
 			return;
 		}
 
@@ -162,10 +163,12 @@ class Statistics_Optimized implements Component, Templater {
 		}
 
 		// OPTIMIZED: Use optimized array builder
-		$build_array = ( new The_Array_Optimized() )->make( $subject, $data, $format, $post_id, $custom_array, $count, $maybe_deep, $data_original );
+		$build_array = ( new The_Array() )->make( $subject, $data, $format, $post_id, $custom_array, $count, $maybe_deep, $data_original );
 
 		// If the array is empty, bail.
 		if ( empty( $build_array ) || ! is_array( $build_array ) ) {
+			// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_print_r
+			lwtv_plugin()->error_log( 'statistics-debug', 'Returning early - build_array is empty: ' . print_r( $build_array, true ) );
 			return;
 		}
 
@@ -214,11 +217,13 @@ class Statistics_Optimized implements Component, Templater {
 	 * @return array Customized array.
 	 */
 	public function maybe_deep( $data, $format, $count, $subject ) {
+
 		$details = explode( '_', $data );
 		$valid   = array( 'nations', 'stations', 'formats', 'country' );
 
 		// If the details don't match what we know to be true, we are false.
 		if ( ! in_array( $details[0], $valid, true ) ) {
+			lwtv_plugin()->error_log( 'statistics-debug', 'Returning false - first detail does not match: ' . $details[0] );
 			return false;
 		}
 
@@ -239,17 +244,22 @@ class Statistics_Optimized implements Component, Templater {
 
 			$count = $this->count_shows( 'total', 'stations', $minor );
 		} else {
+			lwtv_plugin()->error_log( 'statistics-debug', 'Using taxonomy_breakdowns for data: ' . $data );
 			$run_data  = 'taxonomy_breakdowns';
 			$pre_count = $count;
 			$count     = ( new Build_Taxonomy_Breakdowns() )->make( $pre_count, 'count', $data, $subject );
 		}
 
-		return array(
-			'data'      => $run_data,
-			'minor'     => $minor,
-			'pre_array' => isset( $pre_array ) ? $pre_array : false,
-			'count'     => $count,
+		$return_data = array(
+			'data'     => $run_data,
+			'minor'    => $minor,
+			'prearray' => isset( $pre_array ) ? $pre_array : false,
+			'count'    => $count,
 		);
+
+		// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_print_r
+		lwtv_plugin()->error_log( 'statistics-debug', 'Returning data: ' . print_r( $return_data, true ) );
+		return $return_data;
 	}
 
 	/*

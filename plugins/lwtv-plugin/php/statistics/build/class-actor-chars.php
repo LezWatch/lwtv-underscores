@@ -2,12 +2,10 @@
 
 namespace LWTV\Statistics\Build;
 
-use LWTV\Queeries\Post_Type;
-
 class Actor_Chars {
 
 	/**
-	 * Statistics: Actors and Characters
+	 * Statistics: Actors and Characters - Optimized with proper filtering
 	 *
 	 * @access public
 	 * @static
@@ -24,56 +22,96 @@ class Actor_Chars {
 		$array     = lwtv_plugin()->get_transient( $transient );
 
 		if ( false === $array ) {
-
-			// list of people
-			$all_query = ( new Post_Type() )->make( 'post_type_' . $type );
-
-			if ( is_object( $all_query ) && $all_query->have_posts() ) {
-				$all_array = wp_list_pluck( $all_query->posts, 'ID' );
-			}
-
-			$array = array();
-			if ( is_array( $all_array ) ) {
-				foreach ( $all_array as $all_one ) {
-					// The data we parse depends on the data type
-					switch ( $type ) {
-						case 'characters':
-							$data = get_post_meta( $all_one, 'lezchars_actor', true );
-							$name = 'actors';
-							break;
-						case 'actors':
-							$data = get_post_meta( $all_one, 'lezactors_char_count', true );
-							$name = 'characters';
-							break;
-					}
-					// Now that we have the data, let's count and store
-					if ( is_numeric( $data ) ) {
-						$key = $data;
-					} elseif ( is_array( $data ) ) {
-						$key = count( $data );
-					} else {
-						$key = 0;
-					}
-
-					// Check key
-					if ( ! array_key_exists( $key, $array ) && is_numeric( $key ) ) {
-						$array[ $key ] = array(
-							'name'  => $key . ' ' . $name,
-							'count' => '1',
-							'url'   => '',
-						);
-					} else {
-						++$array[ $key ]['count'];
-					}
-				}
-			}
-
-			ksort( $array );
+			$array = $this->build_actor_chars_optimized( $type );
 
 			// save array as transient for a reason.
-			lwtv_plugin()->set_transient( $transient, $array, DAY_IN_SECONDS );
+			if ( ! empty( $array ) ) {
+				lwtv_plugin()->set_transient( $transient, $array, DAY_IN_SECONDS );
+			}
 		}
 
 		return $array;
+	}
+
+	/**
+	 * Build actor-character statistics with proper filtering
+	 *
+	 * @param string $type Post type (characters or actors)
+	 * @return array
+	 */
+	private function build_actor_chars_optimized( $type ) {
+		global $wpdb;
+
+		try {
+			$results_array = array();
+
+			if ( 'actors' === $type ) {
+				// For actors: Only include actors who have characters
+				// phpcs:disable
+				$queery = "SELECT
+					p.ID,
+					COALESCE(char_count.meta_value, 0) as char_count
+					FROM {$wpdb->posts} p
+					LEFT JOIN {$wpdb->postmeta} char_count ON p.ID = char_count.post_id AND char_count.meta_key = 'lezactors_char_count'
+					WHERE p.post_type = 'post_type_actors'
+					AND p.post_status = 'publish'
+					AND COALESCE(char_count.meta_value, 0) > 0
+					ORDER BY CAST(char_count.meta_value AS UNSIGNED) DESC";
+				// phpcs:enable
+
+				// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- There's no need to prepare this query
+				$results = $wpdb->get_results( $queery, ARRAY_A );
+
+				foreach ( $results as $row ) {
+					$char_count = (int) $row['char_count'];
+
+					if ( ! isset( $results_array[ $char_count ] ) ) {
+						$results_array[ $char_count ] = array(
+							'name'  => $char_count . ' characters',
+							'count' => 0,
+							'url'   => '',
+						);
+					}
+					++$results_array[ $char_count ]['count'];
+				}
+			} else {
+				// For characters: Include all characters (they can exist without actors)
+				// Single optimized query to count actors per character
+				// phpcs:disable
+				$queery = "SELECT
+					COUNT(DISTINCT actor_meta.meta_value) as actor_count,
+					COUNT(*) as character_count
+					FROM {$wpdb->posts} p
+					LEFT JOIN {$wpdb->postmeta} actor_meta ON p.ID = actor_meta.post_id AND actor_meta.meta_key = 'lezchars_actor'
+					WHERE p.post_type = 'post_type_characters'
+					AND p.post_status = 'publish'
+					GROUP BY p.ID
+					ORDER BY actor_count DESC";
+				// phpcs:enable
+
+				// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- There's no need to prepare this query
+				$results = $wpdb->get_results( $queery, ARRAY_A );
+
+				foreach ( $results as $row ) {
+					$actor_count = (int) $row['actor_count'];
+
+					if ( ! isset( $results_array[ $actor_count ] ) ) {
+						$results_array[ $actor_count ] = array(
+							'name'  => $actor_count . ' actors',
+							'count' => 0,
+							'url'   => '',
+						);
+					}
+					++$results_array[ $actor_count ]['count'];
+				}
+			}
+
+			ksort( $results_array );
+			return $results_array;
+
+		} catch ( \Exception $e ) {
+			lwtv_plugin()->error_log( 'actor-chars-error', 'Error building actor-character statistics: ' . $e->getMessage() );
+			return array();
+		}
 	}
 }

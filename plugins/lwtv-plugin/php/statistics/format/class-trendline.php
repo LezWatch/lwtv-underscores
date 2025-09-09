@@ -20,6 +20,9 @@ class Trendline {
 	 */
 	public function make( $subject, $data, $data_array ) {
 
+		// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_print_r
+		lwtv_plugin()->error_log( 'statistics-debug', 'Trendline data array: ' . print_r( $data_array, true ) );
+
 		$data_array = array_reverse( $data_array );
 		$trend      = self::calculate_trendline( $data_array );
 

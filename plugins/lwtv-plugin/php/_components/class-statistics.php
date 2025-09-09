@@ -8,7 +8,7 @@
 namespace LWTV\_Components;
 
 use LWTV\Queeries\Taxonomy as Queery_Taxonomy;
-use LWTV\Statistics\{ Gutenberg_SSR, Matcher, Query_Vars, The_Array, The_Output };
+use LWTV\Statistics\{ Gutenberg_SSR, Matcher_Optimized as Matcher, Query_Vars, The_Array_Optimized as The_Array, The_Output };
 use LWTV\Statistics\Build\Dead_Basic as Build_Dead_Basic;
 use LWTV\Statistics\Build\Taxonomy_Breakdowns as Build_Taxonomy_Breakdowns;
 

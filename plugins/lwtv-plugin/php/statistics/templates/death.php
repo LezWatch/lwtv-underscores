@@ -15,8 +15,16 @@ $allchars  = lwtv_plugin()->generate_statistics( 'characters', 'all', 'count' );
 $deadshows = lwtv_plugin()->generate_statistics( 'shows', 'dead', 'count' );
 $allshows  = lwtv_plugin()->generate_statistics( 'shows', 'all', 'count' );
 
-// OPTIMIZED: Cache dead-years average to avoid redundant calls
-$dead_years_average = lwtv_plugin()->generate_statistics( 'characters', 'dead-years', 'average' );
+// OPTIMIZED: Get dead-years average directly without output buffering
+$dead_years_data    = lwtv_plugin()->generate_statistics( 'characters', 'dead-years', 'array' );
+$dead_years_average = 0;
+if ( ! empty( $dead_years_data ) ) {
+	$sum = 0;
+	foreach ( $dead_years_data as $item ) {
+		$sum += (float) $item['count'];
+	}
+	$dead_years_average = round( $sum / ( gmdate( 'Y' ) - LWTV_FIRST_YEAR ) );
+}
 
 $deadchar_percent = round( ( $deadchars / $allchars ) * 100, 2 );
 $deadshow_percent = round( ( $deadshows / $allshows ) * 100, 2 );

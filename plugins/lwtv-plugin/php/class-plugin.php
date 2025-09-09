@@ -60,7 +60,7 @@ use LWTV\_Helpers\Utils;
  * @method bool   is_action_scheduler_available() \_Components\Scheduler
  * @method array  get_scheduler_status() \_Components\Scheduler
  *
- * STATISTICS
+ * STATISTICS OPTIMIZED
  * @method array  generate_shows_count( $type, $tax, $term )                               \_Components\Statistics
  * @method string generate_stats_block( $attributes )                                      \_Components\Statistics
  * @method string generate_stats_block_actor( $attributes )                                \_Components\Statistics
@@ -149,7 +149,7 @@ class Plugin {
 			_Components\Queeries::class,
 			_Components\Rest_API::class,
 			_Components\Scheduler::class,
-			_Components\Statistics::class,
+			_Components\Statistics_Optimized::class,
 			_Components\Symbolicons::class,
 			_Components\Theme::class,
 			_Components\This_Year::class,
