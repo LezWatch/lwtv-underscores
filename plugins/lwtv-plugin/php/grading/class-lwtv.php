@@ -6,7 +6,7 @@
 namespace LWTV\Grading;
 
 use LWTV\_Components\Grading as Grading_Component;
-use LWTV\CPTs\Shows\Calculations;
+use LWTV\CPTs\Shows\Calculations as Shows_Calculations;
 
 class LWTV {
 
@@ -48,6 +48,6 @@ class LWTV {
 	 * @return void
 	 */
 	public function update_scores( int $show_id ): void {
-		( new Calculations() )->do_the_math( $show_id );
+		( new Shows_Calculations() )->do_the_math( $show_id );
 	}
 }

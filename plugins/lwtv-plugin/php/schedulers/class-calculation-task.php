@@ -9,9 +9,9 @@
 
 namespace LWTV\Schedulers;
 
-use LWTV\CPTs\Actors\Calculations as Actors;
-use LWTV\CPTs\Shows\Calculations as Shows;
-use LWTV\CPTs\Characters\Calculations as Characters;
+use LWTV\CPTs\Actors\Calculations as Actors_Calculations;
+use LWTV\CPTs\Shows\Calculations as Shows_Calculations;
+use LWTV\CPTs\Characters\Calculations as Characters_Calculations;
 
 /**
  * Class Calculation_Task
@@ -69,7 +69,7 @@ class Calculation_Task {
 		lwtv_plugin()->error_log( 'calculation-task', "Processing actor calculations for ID: {$post_id}" );
 
 		// Run the math calculations
-		( new Actors() )->do_the_math( $post_id );
+		( new Actors_Calculations() )->do_the_math( $post_id );
 
 		lwtv_plugin()->error_log( 'calculation-task', "Completed actor calculations for ID: {$post_id}" );
 	}
@@ -84,7 +84,7 @@ class Calculation_Task {
 		lwtv_plugin()->error_log( 'calculation-task', "Processing show calculations for ID: {$post_id}" );
 
 		// Run the math calculations
-		( new Shows() )->do_the_math( $post_id );
+		( new Shows_Calculations() )->do_the_math( $post_id );
 
 		lwtv_plugin()->error_log( 'calculation-task', "Completed show calculations for ID: {$post_id}" );
 	}
@@ -99,7 +99,7 @@ class Calculation_Task {
 		lwtv_plugin()->error_log( 'calculation-task', "Processing character calculations for ID: {$post_id}" );
 
 		// Run the math calculations
-		( new Characters() )->do_the_math( $post_id );
+		( new Characters_Calculations() )->do_the_math( $post_id );
 
 		lwtv_plugin()->error_log( 'calculation-task', "Completed character calculations for ID: {$post_id}" );
 	}
