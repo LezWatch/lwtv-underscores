@@ -2,9 +2,9 @@
 
 namespace LWTV\Theme;
 
-use LWTV\CPTs\Actors\Calculations as Actors;
-use LWTV\CPTs\Shows\Calculations as Shows;
-use LWTV\CPTs\Characters\Calculations as Characters;
+use LWTV\CPTs\Actors\Calculations as Actors_Calculations;
+use LWTV\CPTs\Shows\Calculations as Shows_Calculations;
+use LWTV\CPTs\Characters\Calculations as Characters_Calculations;
 
 class Do_Math {
 	/**
@@ -19,13 +19,13 @@ class Do_Math {
 
 		switch ( $post_type ) {
 			case 'post_type_shows':
-				( new Shows() )->do_the_math( $post_id );
+				( new Shows_Calculations() )->do_the_math( $post_id );
 				break;
 			case 'post_type_characters':
-				( new Characters() )->do_the_math( $post_id );
+				( new Characters_Calculations() )->do_the_math( $post_id );
 				break;
 			case 'post_type_actors':
-				( new Actors() )->do_the_math( $post_id );
+				( new Actors_Calculations() )->do_the_math( $post_id );
 				break;
 			default:
 				break;

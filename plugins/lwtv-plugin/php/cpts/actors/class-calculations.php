@@ -17,8 +17,7 @@ class Calculations {
 	 */
 	public function count( $post_id, $type = 'count' ) {
 
-		$type_array        = array( 'count', 'none', 'dead' );
-		$character_checked = array();
+		$type_array = array( 'count', 'none', 'dead' );
 
 		// If this isn't an actor post or a valid request, return nothing
 		if ( 'post_type_actors' !== get_post_type( $post_id ) || ! in_array( $type, $type_array, true ) ) {
