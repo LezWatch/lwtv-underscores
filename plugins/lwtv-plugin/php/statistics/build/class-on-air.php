@@ -106,9 +106,8 @@ class On_Air {
 				$array = $this->build_shows_on_air_optimized( $year_range, $data );
 			}
 
-			// Debug the result
-			// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_print_r
-			lwtv_plugin()->error_log( 'on-air-debug', 'build_on_air_optimized result: ' . print_r( $array, true ) );
+			// Debug the result.
+			//lwtv_plugin()->error_log( 'on-air-debug', 'build_on_air_optimized result: ' . wp_json_encode( $array ) );
 
 			return $array;
 

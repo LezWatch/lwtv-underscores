@@ -37,7 +37,7 @@ $show_counts = $optimized_taxonomy->get_bulk_show_counts( 'lez_stations', array_
 
 // Get total counts efficiently
 $count       = count( $all_stations_data );
-$shows_count = lwtv_plugin()->generate_statistics( 'shows', 'total', 'count' );
+$shows_count = lwtv_plugin()->generate_station_statistics( 'all', 'all', 'count' );
 
 // Title
 switch ( $station ) {
@@ -170,6 +170,9 @@ switch ( $station ) {
 			$showscore    = $show_counts[ $station_slug ]['score'] ?? 0;
 			$onairscore   = $show_counts[ $station_slug ]['onairscore'] ?? 0;
 
+			// Initialize custom_data array
+			$custom_data = array();
+
 			if ( '_all' === $view ) {
 				echo wp_kses_post( '<p>Currently, ' . $onair . ' out of a total of ' . $allshows . ' shows are on air.</p><p>The average score for all shows in this station is ' . $showscore );
 
@@ -180,6 +183,12 @@ switch ( $station ) {
 				echo wp_kses_post( ' (out of a possible 100).</p>' );
 
 				$format = 'barchart';
+				// Pass the counts as custom data for the barchart
+				$custom_data = array(
+					'total'      => $allshows,
+					'characters' => $character_counts[ $station_slug ]['total'] ?? 0,
+					'dead'       => $character_counts[ $station_slug ]['dead'] ?? 0,
+				);
 			}
 
 			if ( '_on-air' === $view ) {
@@ -187,7 +196,14 @@ switch ( $station ) {
 				echo wp_kses_post( '<h4>Shows On-Air Per Year</h4>' );
 			}
 
-			lwtv_plugin()->generate_statistics( $cpts_type, 'stations' . $station . $view, $format );
+			// Pass custom data if it exists
+			if ( ! empty( $custom_data ) ) {
+				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+				echo lwtv_plugin()->generate_station_statistics( $station, $view, $format, $custom_data );
+			} else {
+				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+				echo lwtv_plugin()->generate_station_statistics( $station, $view, $format );
+			}
 		}
 		?>
 		</div>
@@ -197,7 +213,7 @@ switch ( $station ) {
 		$format = ( 'shows' === $cpts_type ) ? 'list' : 'percentage';
 		?>
 		<div class="<?php echo esc_attr( $col_class ); ?>">
-			<?php lwtv_plugin()->generate_statistics( $cpts_type, 'stations' . $station . $view, $format ); ?>
+			<?php lwtv_plugin()->generate_station_statistics( $station, $view, $format ); ?>
 		</div>
 		<?php
 	}
