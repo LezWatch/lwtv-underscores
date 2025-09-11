@@ -68,6 +68,7 @@ use LWTV\_Helpers\Utils;
  * @method mixed  generate_nation_statistics( $nation, $view, $format, $custom_data, $bar_direction )   \_Components\Statistics
  * @method mixed  generate_station_statistics( $station, $view, $format, $custom_data, $bar_direction ) \_Components\Statistics
  * @method mixed  generate_total_counts( [shows|characters|actors] )                                    \_Components\Statistics
+ * @method mixed  generate_total_dead( [characters] )                                                   \_Components\Statistics
  *
  * SYMBOLICONS
  * @method string get_icon_svg( string $slug )   \_Components\Symbolicons

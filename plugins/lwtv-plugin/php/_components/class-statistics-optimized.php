@@ -10,6 +10,7 @@ namespace LWTV\_Components;
 use LWTV\Queeries\Taxonomy as Queery_Taxonomy;
 use LWTV\Statistics\{ Gutenberg_SSR, Matcher_Optimized as Matcher, Query_Vars, The_Array, The_Output };
 use LWTV\Statistics\Build\Dead_Basic as Build_Dead_Basic;
+use LWTV\Statistics\Build\Dead as Build_Dead;
 use LWTV\Statistics\Build\Stations as Build_Stations;
 use LWTV\Statistics\Build\Nations as Build_Nations;
 use LWTV\Statistics\Build\Taxonomy_Breakdowns as Build_Taxonomy_Breakdowns;
@@ -51,6 +52,7 @@ class Statistics_Optimized implements Component, Templater {
 			'generate_stats_block'        => array( $this, 'generate_stats_block' ),
 			'generate_stats_block_actor'  => array( $this, 'generate_stats_block_actor' ),
 			'generate_total_counts'       => array( $this, 'generate_total_counts' ),
+			'generate_total_dead'         => array( $this, 'generate_total_dead' ),
 		);
 	}
 
@@ -484,5 +486,21 @@ class Statistics_Optimized implements Component, Templater {
 	 */
 	public function generate_total_counts( $subject ) {
 		return wp_count_posts( 'post_type_' . $subject )->publish;
+	}
+
+	/**
+	 * Generate total dead
+	 *
+	 * @return int Total dead
+	 */
+	public function generate_total_dead( $subject ) {
+		switch ( $subject ) {
+			case 'characters':
+				return ( new Build_Dead() )->total_dead_characters();
+			case 'shows':
+				return ( new Build_Dead() )->total_dead_shows();
+			default:
+				return 0;
+		}
 	}
 }

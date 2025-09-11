@@ -121,7 +121,6 @@ switch ( $nation ) {
 		$nation = ( 'overview' === $nation ) ? '_all' : '_' . $nation;
 
 		if ( '_all' === $nation ) {
-			// Include the all nations template with required data
 			include plugin_dir_path( __FILE__ ) . 'nations/all.php';
 		} else {
 			include plugin_dir_path( __FILE__ ) . 'nations/single.php';

@@ -492,4 +492,38 @@ class Stations {
 
 		return $aggregated_data;
 	}
+
+	/**
+	 * Get top X stations
+	 *
+	 * @param int $number Number of stations to get
+	 * @return array Array of top X stations
+	 */
+	public function get_top_stations( $number ): array {
+		global $wpdb;
+
+		$queery = $wpdb->prepare(
+			"SELECT
+				t.slug,
+				t.name,
+				t.term_id,
+				COUNT(DISTINCT p.ID) as count
+			FROM {$wpdb->terms} t
+			INNER JOIN {$wpdb->term_taxonomy} tt ON t.term_id = tt.term_id
+			LEFT JOIN {$wpdb->term_relationships} tr ON tt.term_taxonomy_id = tr.term_taxonomy_id
+			LEFT JOIN {$wpdb->posts} p ON tr.object_id = p.ID AND p.post_status = 'publish'
+			WHERE tt.taxonomy = %s
+			AND p.post_type = 'post_type_shows'
+			GROUP BY t.term_id, t.slug, t.name
+			ORDER BY count DESC, t.name ASC
+			LIMIT %d",
+			'lez_stations',
+			$number
+		);
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- This is a prepared query (see above)
+		$results = $wpdb->get_results( $queery, ARRAY_A );
+
+		return $results;
+	}
 }
