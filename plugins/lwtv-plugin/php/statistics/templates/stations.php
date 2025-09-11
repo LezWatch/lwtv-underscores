@@ -36,8 +36,9 @@ $character_counts = $optimized_taxonomy->get_bulk_character_counts( 'lez_station
 $show_counts = $optimized_taxonomy->get_bulk_show_counts( 'lez_stations', array_keys( $all_stations_data ) );
 
 // Get total counts efficiently
-$count       = count( $all_stations_data );
-$shows_count = lwtv_plugin()->generate_station_statistics( 'all', 'all', 'count' );
+$count           = count( $all_stations_data );
+$shows_count     = lwtv_plugin()->generate_station_statistics( 'all', 'all', 'count' );
+$all_shows_count = lwtv_plugin()->generate_total_counts( 'shows' );
 
 // Title
 switch ( $station ) {

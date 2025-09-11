@@ -61,10 +61,13 @@ use LWTV\_Helpers\Utils;
  * @method array  get_scheduler_status() \_Components\Scheduler
  *
  * STATISTICS OPTIMIZED
- * @method array  generate_shows_count( $type, $tax, $term )                               \_Components\Statistics
- * @method string generate_stats_block( $attributes )                                      \_Components\Statistics
- * @method string generate_stats_block_actor( $attributes )                                \_Components\Statistics
- * @method mixed  generate_statistics( $subject, $data, $format, $post_id, $custom_array ) \_Components\Statistics
+ * @method array  generate_shows_count( $type, $tax, $term )                                            \_Components\Statistics
+ * @method string generate_stats_block( $attributes )                                                   \_Components\Statistics
+ * @method string generate_stats_block_actor( $attributes )                                             \_Components\Statistics
+ * @method mixed  generate_statistics( $subject, $data, $format, $post_id, $custom_array )              \_Components\Statistics
+ * @method mixed  generate_nation_statistics( $nation, $view, $format, $custom_data, $bar_direction )   \_Components\Statistics
+ * @method mixed  generate_station_statistics( $station, $view, $format, $custom_data, $bar_direction ) \_Components\Statistics
+ * @method mixed  generate_total_counts( [shows|characters|actors] )                                    \_Components\Statistics
  *
  * SYMBOLICONS
  * @method string get_icon_svg( string $slug )   \_Components\Symbolicons

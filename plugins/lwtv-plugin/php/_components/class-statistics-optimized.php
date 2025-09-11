@@ -11,6 +11,7 @@ use LWTV\Queeries\Taxonomy as Queery_Taxonomy;
 use LWTV\Statistics\{ Gutenberg_SSR, Matcher_Optimized as Matcher, Query_Vars, The_Array, The_Output };
 use LWTV\Statistics\Build\Dead_Basic as Build_Dead_Basic;
 use LWTV\Statistics\Build\Stations as Build_Stations;
+use LWTV\Statistics\Build\Nations as Build_Nations;
 use LWTV\Statistics\Build\Taxonomy_Breakdowns as Build_Taxonomy_Breakdowns;
 use LWTV\Statistics\Format\{ Barcharts_Optimized, Lists_Optimized, Percentage_Optimized, Piecharts_Optimized, Trendline_Optimized };
 
@@ -45,9 +46,11 @@ class Statistics_Optimized implements Component, Templater {
 		return array(
 			'generate_statistics'         => array( $this, 'generate' ),
 			'generate_station_statistics' => array( $this, 'generate_station_statistics' ),
+			'generate_nation_statistics'  => array( $this, 'generate_nation_statistics' ),
 			'generate_shows_count'        => array( $this, 'count_shows' ),
 			'generate_stats_block'        => array( $this, 'generate_stats_block' ),
 			'generate_stats_block_actor'  => array( $this, 'generate_stats_block_actor' ),
+			'generate_total_counts'       => array( $this, 'generate_total_counts' ),
 		);
 	}
 
@@ -413,6 +416,50 @@ class Statistics_Optimized implements Component, Templater {
 	}
 
 	/**
+	 * Generate nation-specific statistics
+	 *
+	 * @param string $nation Nation slug (e.g., 'usa', 'canada')
+	 * @param string $view View type ('all', 'gender', 'sexuality', 'tropes', 'on-air')
+	 * @param string $format Output format ('array', 'barchart', 'trendline', etc.)
+	 * @param array  $custom_data Optional custom data (counts, etc.)
+	 * @param string $bar_direction Direction of the barchart ('vertical', 'horizontal')
+	 * @return mixed Nation statistics data
+	 */
+	public function generate_nation_statistics( $nation, $view = 'all', $format = 'array', $custom_data = array(), $bar_direction = 'vertical' ) {
+		// Handle main stations page (summary view)
+		if ( 'all' === $nation ) {
+			$nations_builder = new Build_Nations();
+			$data            = $nations_builder->get_nation_summaries();
+
+			if ( 'count' === $format ) {
+				return count( $data );
+			}
+
+			return $data;
+		}
+
+		// Handle individual station pages
+		$station_data = new Build_Nations()->get_nation_details( $nation, $format, $view );
+		$data         = $station_data['formatted'] ?? $station_data;
+
+		// Handle different output formats
+		switch ( $format ) {
+			case 'barchart':
+				return ( new Barcharts_Optimized() )->format( $data, $nation, $view, 'nation', $custom_data, $bar_direction );
+			case 'trendline':
+				return ( new Trendline_Optimized() )->format( $data, $nation, $view, 'nation' );
+			case 'piechart':
+				return ( new Piecharts_Optimized() )->format( $data, $nation, $view, 'nation' );
+			case 'percentage':
+				return ( new Percentage_Optimized() )->format( $data, $nation, $view, 'nation' );
+			case 'list':
+				return ( new Lists_Optimized() )->format( $data, $nation, $view, 'nation' );
+			default:
+				return $data;
+		}
+	}
+
+	/**
 	 * Batch generate multiple statistics efficiently
 	 *
 	 * @param string $subject Post type subject
@@ -428,5 +475,14 @@ class Statistics_Optimized implements Component, Templater {
 		}
 
 		return $results;
+	}
+
+	/**
+	 * Generate total counts
+	 *
+	 * @return int Total counts
+	 */
+	public function generate_total_counts( $subject ) {
+		return wp_count_posts( 'post_type_' . $subject )->publish;
 	}
 }

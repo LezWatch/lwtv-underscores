@@ -70,9 +70,19 @@ class Trendline_Optimized {
 						}
 					}
 				},
-				}
-			});
-		</script>';
+				scales: {
+					y: {
+						ticks: {
+							beginAtZero: true,
+							stepSize: 1,
+							precision: 0,
+							callback: function(value) {if (value % 1 === 0) {return value;}},
+						}
+					},
+				},
+			}
+		});
+	</script>';
 
 		return $canvas_output . $script_output;
 	}

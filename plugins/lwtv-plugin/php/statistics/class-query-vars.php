@@ -80,6 +80,7 @@ class Query_Vars {
 		$vars[] = 'format';
 		$vars[] = 'country';
 		$vars[] = 'station';
+		$vars[] = 'nation';
 		return $vars;
 	}
 

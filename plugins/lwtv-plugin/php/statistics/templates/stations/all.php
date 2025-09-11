@@ -7,7 +7,8 @@
  * Required variables:
  * @var array $all_stations_data - Station data array
  * @var array $character_counts - Character counts array
- * @var int   $shows_count - Total shows count
+ * @var int   $shows_count - Total shows count for this station
+ * @var int   $all_shows_count - Total shows count for all shows
  */
 
 ?>
@@ -33,7 +34,7 @@
 			// OPTIMIZED: Use pre-loaded character counts instead of individual queries
 			$characters = $character_counts[ $station_slug ]['total'] ?? 0;
 			$dead       = $character_counts[ $station_slug ]['dead'] ?? 0;
-			$percent    = round( ( ( $station_data['count'] / $shows_count ) * 100 ), 1 );
+			$percent    = round( ( ( $station_data['count'] / $all_shows_count ) * 100 ), 1 );
 			echo '<tr>
 					<th scope="row"><a href="?station=' . esc_attr( $station_slug ) . '">' . esc_html( $station_data['name'] ) . '</a></th>
 					<td>' . (int) $station_data['count'] . '</td>
