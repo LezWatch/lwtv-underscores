@@ -115,98 +115,19 @@ switch ( $station ) {
 
 <div class="container">
 	<div class="row">
-		<div class="<?php echo esc_attr( $col_class ); ?>">
 		<?php
-		$view = ( 'overview' === $view && 'all' !== $station ) ? 'all' : $view;
 		// Remember: station [substation] [view]
+		$view    = ( 'overview' === $view && 'all' !== $station ) ? 'all' : $view;
 		$view    = ( 'overview' === $view ) ? '_all' : '_' . $view;
 		$station = ( 'overview' === $station ) ? '_all' : '_' . $station;
 
 		if ( '_all' === $station ) {
-			?>
-			<p>For more information on individual stations, please use the dropdown menu, or click on a station listed below.</p>
-			<table id="stationsTable" class="tablesorter table table-striped table-hover">
-				<thead>
-					<tr>
-						<th scope="col">Station Name</th>
-						<th scope="col">Total Shows</th>
-						<th scope="col">Percentage (of all shows)</th>
-						<th scope="col"># of Characters</th>
-						<th scope="col"># of Dead Characters</th>
-					</tr>
-				</thead>
-				<tbody>
-					<?php
-					foreach ( $all_stations_data as $station_slug => $station_data ) {
-
-						if ( 0 === $station_data['count'] ) {
-							continue;
-						}
-
-						// OPTIMIZED: Use pre-loaded character counts instead of individual queries
-						$characters = $character_counts[ $station_slug ]['total'] ?? 0;
-						$dead       = $character_counts[ $station_slug ]['dead'] ?? 0;
-						$percent    = round( ( ( $station_data['count'] / $shows_count ) * 100 ), 1 );
-						echo '<tr>
-								<th scope="row"><a href="?station=' . esc_attr( $station_slug ) . '">' . esc_html( $station_data['name'] ) . '</a></th>
-								<td>' . (int) $station_data['count'] . '</td>
-								<td><div class="progress"><div class="progress-bar bg-info" role="progressbar" style="width: ' . esc_html( $percent ) . '%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div></div>&nbsp;' . esc_html( $percent ) . '%</td>
-								<td>' . (int) $characters . '</td>
-								<td>' . (int) $dead . '</td>
-							</tr>';
-					}
-					?>
-				</tbody>
-			</table>
-			<?php
+			// Include the all stations template with required data
+			include plugin_dir_path( __FILE__ ) . 'stations/all.php';
 		} else {
-			// There is a specific Station!
-			$this_station = $all_stations_data[ ltrim( $station, '_' ) ];
-			$format       = 'piechart';
-			// OPTIMIZED: Use pre-loaded show counts instead of individual queries
-			$station_slug = ltrim( $station, '_' );
-			$onair        = $show_counts[ $station_slug ]['onair'] ?? 0;
-			$allshows     = $show_counts[ $station_slug ]['total'] ?? 0;
-			$showscore    = $show_counts[ $station_slug ]['score'] ?? 0;
-			$onairscore   = $show_counts[ $station_slug ]['onairscore'] ?? 0;
-
-			// Initialize custom_data array
-			$custom_data = array();
-
-			if ( '_all' === $view ) {
-				echo wp_kses_post( '<p>Currently, ' . $onair . ' out of a total of ' . $allshows . ' shows are on air.</p><p>The average score for all shows in this station is ' . $showscore );
-
-				if ( 0 !== $onair ) {
-					echo wp_kses_post( ', and ' . $onairscore . ' for shows currently on air' );
-				}
-
-				echo wp_kses_post( ' (out of a possible 100).</p>' );
-
-				$format = 'barchart';
-				// Pass the counts as custom data for the barchart
-				$custom_data = array(
-					'total'      => $allshows,
-					'characters' => $character_counts[ $station_slug ]['total'] ?? 0,
-					'dead'       => $character_counts[ $station_slug ]['dead'] ?? 0,
-				);
-			}
-
-			if ( '_on-air' === $view ) {
-				$format = 'trendline';
-				echo wp_kses_post( '<h4>Shows On-Air Per Year</h4>' );
-			}
-
-			// Pass custom data if it exists
-			if ( ! empty( $custom_data ) ) {
-				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-				echo lwtv_plugin()->generate_station_statistics( $station, $view, $format, $custom_data );
-			} else {
-				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-				echo lwtv_plugin()->generate_station_statistics( $station, $view, $format );
-			}
+			include plugin_dir_path( __FILE__ ) . 'stations/single.php';
 		}
 		?>
-		</div>
 
 	<?php
 	if ( '_all' !== $station && '_all' !== $view && '_on-air' !== $view ) {

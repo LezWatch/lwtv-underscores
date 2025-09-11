@@ -12,6 +12,7 @@ use LWTV\Statistics\{ Gutenberg_SSR, Matcher_Optimized as Matcher, Query_Vars, T
 use LWTV\Statistics\Build\Dead_Basic as Build_Dead_Basic;
 use LWTV\Statistics\Build\Stations as Build_Stations;
 use LWTV\Statistics\Build\Taxonomy_Breakdowns as Build_Taxonomy_Breakdowns;
+use LWTV\Statistics\Format\{ Barcharts_Optimized, Lists_Optimized, Percentage_Optimized, Piecharts_Optimized, Trendline_Optimized };
 
 class Statistics_Optimized implements Component, Templater {
 
@@ -374,14 +375,14 @@ class Statistics_Optimized implements Component, Templater {
 	 * @param string $view View type ('all', 'gender', 'sexuality', 'tropes', 'on-air')
 	 * @param string $format Output format ('array', 'barchart', 'trendline', etc.)
 	 * @param array  $custom_data Optional custom data (counts, etc.)
+	 * @param string $bar_direction Direction of the barchart ('vertical', 'horizontal')
 	 * @return mixed Station statistics data
 	 */
-	public function generate_station_statistics( $station, $view = 'all', $format = 'array', $custom_data = array() ) {
-		$stations_builder = new Build_Stations();
-
+	public function generate_station_statistics( $station, $view = 'all', $format = 'array', $custom_data = array(), $bar_direction = 'vertical' ) {
 		// Handle main stations page (summary view)
 		if ( 'all' === $station ) {
-			$data = $stations_builder->get_station_summaries();
+			$stations_builder = new Build_Stations();
+			$data             = $stations_builder->get_station_summaries();
 
 			if ( 'count' === $format ) {
 				return count( $data );
@@ -391,318 +392,24 @@ class Statistics_Optimized implements Component, Templater {
 		}
 
 		// Handle individual station pages
-		// Remove underscore prefix if present (template adds _ prefix)
-		$clean_station = ltrim( $station, '_' );
-		$station_data  = $stations_builder->get_station_details( $clean_station );
+		$station_data = new Build_Stations()->get_station_details( $station, $format, $view );
+		$data         = $station_data['formatted'] ?? $station_data;
 
-		if ( empty( $station_data ) ) {
-			lwtv_plugin()->error_log( 'stations-error', 'No data found for station: ' . $clean_station );
-			return 'count' === $format ? 0 : array();
-		}
-
-		// Get specific view data
-		$data = array();
-		switch ( $view ) {
-			case 'gender':
-				$data = $station_data['gender'] ?? array();
-				break;
-			case 'sexuality':
-				$data = $station_data['sexuality'] ?? array();
-				break;
-			case 'tropes':
-				$data = $station_data['tropes'] ?? array();
-				break;
-			case 'on-air':
-				$data = $station_data['on_air'] ?? array();
-				break;
-			case 'all':
-			default:
-				$data = $station_data;
-				break;
-		}
-
-		// If format is 'array', return raw data
-		if ( 'array' === $format ) {
-			return $data;
-		}
-
-		// Handle formatted output
-		return $this->format_station_data( $data, $format, $clean_station, $view, $custom_data );
-	}
-
-	/**
-	 * Format station data for output
-	 *
-	 * @param array  $data Data to format
-	 * @param string $format Output format
-	 * @param string $station Station slug
-	 * @param string $view View type
-	 * @param array  $custom_data Optional custom data
-	 * @return mixed Formatted output
-	 */
-	private function format_station_data( $data, $format, $station, $view, $custom_data = array() ) {
 		// Handle different output formats
 		switch ( $format ) {
 			case 'barchart':
-				return $this->format_barchart( $data, $station, $view, $custom_data );
+				return ( new Barcharts_Optimized() )->format( $data, $station, $view, 'station', $custom_data, $bar_direction );
 			case 'trendline':
-				return $this->format_trendline( $data, $station, $view );
+				return ( new Trendline_Optimized() )->format( $data, $station, $view, 'station' );
 			case 'piechart':
-				return $this->format_piechart( $data, $station, $view );
+				return ( new Piecharts_Optimized() )->format( $data, $station, $view, 'station' );
 			case 'percentage':
-				return $this->format_percentage( $data, $station, $view );
+				return ( new Percentage_Optimized() )->format( $data, $station, $view, 'station' );
 			case 'list':
-				return $this->format_list( $data, $station, $view );
+				return ( new Lists_Optimized() )->format( $data, $station, $view, 'station' );
 			default:
 				return $data;
 		}
-	}
-
-	/**
-	 * Format data as barchart
-	 *
-	 * @param array  $data Data to format
-	 * @param string $station Station slug
-	 * @param string $view View type
-	 * @param array  $custom_data Optional custom data
-	 * @return string HTML output
-	 */
-	private function format_barchart( $data, $station, $view, $custom_data = array() ) {
-		if ( empty( $data ) ) {
-			return '<p>No data available for this station.</p>';
-		}
-
-		// For overview (all) view, show basic stats
-		if ( 'all' === $view || '_all' === $view ) {
-			// Use custom data if provided (from template)
-			if ( ! empty( $custom_data ) ) {
-				$chart_data = array(
-					array(
-						'name'  => 'Shows',
-						'count' => (int) ( $custom_data['total'] ?? 0 ),
-					),
-					array(
-						'name'  => 'Characters',
-						'count' => (int) ( $custom_data['characters'] ?? 0 ),
-					),
-					array(
-						'name'  => 'Dead Characters',
-						'count' => (int) ( $custom_data['dead'] ?? 0 ),
-					),
-				);
-			} elseif ( isset( $data['basic'] ) ) {
-				// Check if we have basic data structure
-				$basic      = $data['basic'];
-				$chart_data = array(
-					array(
-						'name'  => 'Shows',
-						'count' => (int) $basic['show_count'],
-					),
-					array(
-						'name'  => 'Characters',
-						'count' => (int) $basic['character_count'],
-					),
-					array(
-						'name'  => 'Dead Characters',
-						'count' => (int) $basic['dead_count'],
-					),
-				);
-			} else {
-				// Fallback: create basic chart from available data
-				$chart_data = array(
-					array(
-						'name'  => 'Shows',
-						'count' => 0,
-					),
-					array(
-						'name'  => 'Characters',
-						'count' => 0,
-					),
-					array(
-						'name'  => 'Dead Characters',
-						'count' => 0,
-					),
-					array(
-						'name'  => 'Dead Characters',
-						'count' => 0,
-					),
-				);
-			}
-		} else {
-			// For specific views, use the data directly
-			$chart_data = $data;
-		}
-
-		// Generate ChartJS barchart
-		$chart_id = 'station_' . $station . '_' . $view;
-		$output   = '<div id="container" style="width: 100%;">
-			<canvas id="' . esc_attr( $chart_id ) . '" width="700" aria-label="Station statistics for ' . esc_attr( $station ) . '"></canvas>
-		</div>
-
-		<script>
-		var ctx = document.getElementById("' . esc_attr( $chart_id ) . '").getContext("2d");
-		var chart = new Chart(ctx, {
-			type: "bar",
-			data: {
-				labels: [';
-
-		foreach ( $chart_data as $item ) {
-			$output .= '"' . esc_js( $item['name'] ) . '", ';
-		}
-
-		$output .= '],
-				datasets: [{
-					label: "Count",
-					data: [';
-
-		foreach ( $chart_data as $item ) {
-			$output .= (int) $item['count'] . ', ';
-		}
-
-		$output .= '],
-					backgroundColor: "rgba(255,99,132,0.2)",
-					borderColor: "rgba(255,99,132,1)",
-					borderWidth: 2
-				}]
-			},
-			options: {
-				scales: {
-					y: {
-						beginAtZero: true
-					}
-				}
-			}
-		});
-		</script>';
-
-		return $output;
-	}
-
-	/**
-	 * Format data as trendline
-	 *
-	 * @param array  $data Data to format
-	 * @param string $station Station slug
-	 * @param string $view View type
-	 * @return string HTML output
-	 */
-	private function format_trendline( $data, $station, $view ) {
-		if ( empty( $data ) ) {
-			return '<p>No data available for this station.</p>';
-		}
-
-		// Use existing Trendline formatter
-		$trendline_formatter = new \LWTV\Statistics\Format\Trendline();
-		ob_start();
-		$trendline_formatter->make( 'shows', 'stations_' . $station . '_on-air', $data );
-		return ob_get_clean();
-	}
-
-	/**
-	 * Format data as piechart
-	 *
-	 * @param array  $data Data to format
-	 * @param string $station Station slug
-	 * @param string $view View type
-	 * @return string HTML output
-	 */
-	private function format_piechart( $data, $station, $view ) {
-		if ( empty( $data ) ) {
-			return '<p>No data available for this station.</p>';
-		}
-
-		// Generate ChartJS piechart
-		$chart_id = 'station_' . $station . '_' . $view . '_pie';
-		$output   = '<div id="container" style="width: 100%;">
-			<canvas id="' . esc_attr( $chart_id ) . '" width="700" aria-label="Station pie chart for ' . esc_attr( $station ) . '"></canvas>
-		</div>
-
-		<script>
-		var ctx = document.getElementById("' . esc_attr( $chart_id ) . '").getContext("2d");
-		var chart = new Chart(ctx, {
-			type: "pie",
-			data: {
-				labels: [';
-
-		foreach ( $data as $item ) {
-			$output .= '"' . esc_js( $item['name'] ) . '", ';
-		}
-
-		$output .= '],
-				datasets: [{
-					data: [';
-
-		foreach ( $data as $item ) {
-			$output .= (int) $item['count'] . ', ';
-		}
-
-		$output .= '],
-					backgroundColor: [
-						"#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0", "#9966FF",
-						"#FF9F40", "#FF6384", "#C9CBCF", "#4BC0C0", "#FF6384"
-					]
-				}]
-			}
-		});
-		</script>';
-
-		return $output;
-	}
-
-	/**
-	 * Format data as percentage list
-	 *
-	 * @param array  $data Data to format
-	 * @param string $station Station slug
-	 * @param string $view View type
-	 * @return string HTML output
-	 */
-	private function format_percentage( $data, $station, $view ) {
-		if ( empty( $data ) ) {
-			return '<p>No data available for this station.</p>';
-		}
-
-		$total  = array_sum( array_column( $data, 'count' ) );
-		$output = '<ul class="list-group">';
-
-		foreach ( $data as $item ) {
-			$percentage = $total > 0 ? round( ( $item['count'] / $total ) * 100, 1 ) : 0;
-			$url        = isset( $item['url'] ) ? $item['url'] : '#';
-			$output    .= '<li class="list-group-item d-flex justify-content-between align-items-center">
-				<a href="' . esc_url( $url ) . '">' . esc_html( $item['name'] ) . '</a>
-				<span class="badge badge-primary badge-pill">' . (int) $item['count'] . ' (' . $percentage . '%)</span>
-			</li>';
-		}
-
-		$output .= '</ul>';
-		return $output;
-	}
-
-	/**
-	 * Format data as simple list
-	 *
-	 * @param array  $data Data to format
-	 * @param string $station Station slug
-	 * @param string $view View type
-	 * @return string HTML output
-	 */
-	private function format_list( $data, $station, $view ) {
-		if ( empty( $data ) ) {
-			return '<p>No data available for this station.</p>';
-		}
-
-		$output = '<ul class="list-group">';
-
-		foreach ( $data as $item ) {
-			$url     = isset( $item['url'] ) ? $item['url'] : '#';
-			$output .= '<li class="list-group-item d-flex justify-content-between align-items-center">
-				<a href="' . esc_url( $url ) . '">' . esc_html( $item['name'] ) . '</a>
-				<span class="badge badge-primary badge-pill">' . (int) $item['count'] . '</span>
-			</li>';
-		}
-
-		$output .= '</ul>';
-		return $output;
 	}
 
 	/**

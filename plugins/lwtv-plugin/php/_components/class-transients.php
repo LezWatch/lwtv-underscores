@@ -57,10 +57,6 @@ class Transients implements Component, Templater {
 	 * @return void
 	 */
 	public static function set_transient( $transient, $value, $expiration = 60 * 60 * 24 ) {
-		if ( defined( 'LWTV_DISABLE_TRANSIENTS' ) && LWTV_DISABLE_TRANSIENTS ) {
-			return;
-		}
-
 		set_transient( $transient, $value, $expiration );
 	}
 
