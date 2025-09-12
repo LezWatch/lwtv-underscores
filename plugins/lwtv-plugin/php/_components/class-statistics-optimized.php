@@ -509,6 +509,10 @@ class Statistics_Optimized implements Component, Templater {
 				$view     = 'we_love_it';
 				$all_data = ( new Build_We_Love_It() )->generate( $format );
 				break;
+			case 'worth-it':
+				$view     = 'worth_it';
+				$all_data = ( new Build_Worth_It() )->generate( $format );
+				break;
 		}
 
 		if ( empty( $all_data ) ) {

@@ -87,6 +87,7 @@ class Percentage_Optimized {
 				}
 				break;
 			case 'we_love_it':
+			case 'worth_it':
 				foreach ( $data as $item ) {
 					$url         = $item['url'];
 					$table_body .= '<tr><td><a href="' . esc_url( $url ) . '">' . ucfirst( $item['name'] ) . '</a></td><td>' . (int) $item['count'] . '</td>';
@@ -125,6 +126,7 @@ class Percentage_Optimized {
 			case 'formats':
 			case 'shows':
 			case 'we_love_it':
+			case 'worth_it':
 				return array_sum( array_column( $data, 'count' ) );
 			default:
 				return array_sum( $data );

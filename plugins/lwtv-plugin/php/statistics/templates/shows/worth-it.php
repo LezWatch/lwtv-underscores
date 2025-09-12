@@ -5,21 +5,15 @@
  * @package LezWatch.TV
  */
 ?>
-<h3>Worth It Rating Breakdown</h3>
+<h3>Worth It Ratings</h3>
 
 <div class="container chart-container">
 	<div class="row">
 		<div class="col-sm-6">
-			<?php
-			// ToDo: Convert this to use the new optimized function
-			lwtv_plugin()->generate_statistics( 'shows', 'thumbs', 'piechart' );
-			?>
+			<?php echo lwtv_plugin()->generate_shows_statistics( 'piechart', 'worth-it' ); ?>
 		</div>
 		<div class="col-sm-6">
-			<?php
-			// ToDo: Convert this to use the new optimized function
-			lwtv_plugin()->generate_statistics( 'shows', 'thumbs', 'percentage' );
-			?>
+			<?php echo lwtv_plugin()->generate_shows_statistics( 'percentage', 'worth-it' ); ?>
 		</div>
 	</div>
 </div>
