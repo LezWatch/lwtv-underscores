@@ -37,40 +37,45 @@ class Nations {
 			return $cached_data;
 		}
 
-		// Single optimized query to get basic nation data
-		$query = $wpdb->prepare(
-			"SELECT
-				t.slug,
-				t.name,
-				COUNT(DISTINCT p.ID) as show_count,
-				SUM(DISTINCT COALESCE(char_count.meta_value, 0)) as character_count,
-				SUM(DISTINCT COALESCE(dead_count.meta_value, 0)) as dead_count
-			FROM {$wpdb->terms} t
-			INNER JOIN {$wpdb->term_taxonomy} tt ON t.term_id = tt.term_id
-			LEFT JOIN {$wpdb->term_relationships} tr ON tt.term_taxonomy_id = tr.term_taxonomy_id
-			LEFT JOIN {$wpdb->posts} p ON tr.object_id = p.ID
-			LEFT JOIN {$wpdb->postmeta} char_count ON p.ID = char_count.post_id AND char_count.meta_key = 'lezshows_char_count'
-			LEFT JOIN {$wpdb->postmeta} dead_count ON p.ID = dead_count.post_id AND dead_count.meta_key = 'lezshows_dead_count'
-			WHERE tt.taxonomy = %s
-			AND p.post_type = 'post_type_shows'
-			AND p.post_status = 'publish'
-			GROUP BY t.slug, t.name
-			ORDER BY t.name",
-			'lez_country'
-		);
+		try {
+			// Single optimized query to get basic nation data
+			$query = $wpdb->prepare(
+				"SELECT
+					t.slug,
+					t.name,
+					COUNT(DISTINCT p.ID) as show_count,
+					SUM(DISTINCT COALESCE(char_count.meta_value, 0)) as character_count,
+					SUM(DISTINCT COALESCE(dead_count.meta_value, 0)) as dead_count
+				FROM {$wpdb->terms} t
+				INNER JOIN {$wpdb->term_taxonomy} tt ON t.term_id = tt.term_id
+				LEFT JOIN {$wpdb->term_relationships} tr ON tt.term_taxonomy_id = tr.term_taxonomy_id
+				LEFT JOIN {$wpdb->posts} p ON tr.object_id = p.ID
+				LEFT JOIN {$wpdb->postmeta} char_count ON p.ID = char_count.post_id AND char_count.meta_key = 'lezshows_char_count'
+				LEFT JOIN {$wpdb->postmeta} dead_count ON p.ID = dead_count.post_id AND dead_count.meta_key = 'lezshows_dead_count'
+				WHERE tt.taxonomy = %s
+				AND p.post_type = 'post_type_shows'
+				AND p.post_status = 'publish'
+				GROUP BY t.slug, t.name
+				ORDER BY t.name",
+				'lez_country'
+			);
 
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- This is a prepared query (see above)
-		$results = $wpdb->get_results( $query, ARRAY_A );
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- This is a prepared query (see above)
+			$results = $wpdb->get_results( $query, ARRAY_A );
 
-		if ( false === $results ) {
-			lwtv_plugin()->error_log( 'nations-error', 'Query failed: ' . $wpdb->last_error );
+			if ( false === $results ) {
+				lwtv_plugin()->error_log( 'nations-error', 'Query failed: ' . $wpdb->last_error );
+				return array();
+			}
+
+			// Cache the results
+			lwtv_plugin()->set_transient( $cache_key, $results, DAY_IN_SECONDS );
+
+			return $results;
+		} catch ( \Exception $e ) {
+			lwtv_plugin()->error_log( 'nations-error', 'Query failed: ' . $e->getMessage() );
 			return array();
 		}
-
-		// Cache the results
-		lwtv_plugin()->set_transient( $cache_key, $results, HOUR_IN_SECONDS );
-
-		return $results;
 	}
 
 	/**
@@ -83,8 +88,6 @@ class Nations {
 	 * @return array Station detailed data
 	 */
 	public function get_nation_details( $nation_slug, $format, $view ) {
-		lwtv_plugin()->error_log( 'nations-debug', 'Getting nation details for ' . $nation_slug . ' with format: ' . $format . ' and view: ' . $view );
-
 		// Sanitize input
 		$nation_slug = sanitize_text_field( $nation_slug );
 
@@ -97,33 +100,38 @@ class Nations {
 			return $cached_data;
 		}
 
-		// Get basic nation data
-		$basic_data = $this->get_nation_basic_data( $nation_slug );
+		try {
+			// Get basic nation data
+			$basic_data = $this->get_nation_basic_data( $nation_slug );
 
-		if ( empty( $basic_data ) ) {
-			lwtv_plugin()->error_log( 'nations-error', 'Basic data query failed for nation: ' . $nation_slug );
+			if ( empty( $basic_data ) ) {
+				lwtv_plugin()->error_log( 'nations-error', 'Basic data query failed for nation: ' . $nation_slug );
+				return array();
+			}
+
+			lwtv_plugin()->error_log( 'nations-debug', 'Basic data query results for ' . $nation_slug . ': ' . wp_json_encode( $basic_data ) );
+
+			// Get detailed breakdowns
+			$detailed_data = array(
+				'basic'     => $basic_data,
+				'gender'    => $this->get_gender_breakdown( $nation_slug ),
+				'sexuality' => $this->get_sexuality_breakdown( $nation_slug ),
+				'tropes'    => $this->get_tropes_breakdown( $nation_slug ),
+				'formats'   => $this->get_formats_breakdown( $nation_slug ),
+				'on_air'    => $this->get_onair_breakdown( $nation_slug ),
+			);
+
+			// Cache the results
+			lwtv_plugin()->set_transient( $cache_key, $detailed_data, DAY_IN_SECONDS );
+
+			// Format the results
+			$return_data = $this->prepare_nation_data( $detailed_data, $nation_slug, $format, $view );
+
+			return $return_data;
+		} catch ( \Exception $e ) {
+			lwtv_plugin()->error_log( 'nations-error', 'Query failed: ' . $e->getMessage() );
 			return array();
 		}
-
-		lwtv_plugin()->error_log( 'nations-debug', 'Basic data query results for ' . $nation_slug . ': ' . wp_json_encode( $basic_data ) );
-
-		// Get detailed breakdowns
-		$detailed_data = array(
-			'basic'     => $basic_data,
-			'gender'    => $this->get_gender_breakdown( $nation_slug ),
-			'sexuality' => $this->get_sexuality_breakdown( $nation_slug ),
-			'tropes'    => $this->get_tropes_breakdown( $nation_slug ),
-			'formats'   => $this->get_formats_breakdown( $nation_slug ),
-			'on_air'    => $this->get_onair_breakdown( $nation_slug ),
-		);
-
-		// Cache the results
-		lwtv_plugin()->set_transient( $cache_key, $detailed_data, HOUR_IN_SECONDS );
-
-		// Format the results
-		$return_data = $this->prepare_nation_data( $detailed_data, $nation_slug, $format, $view );
-
-		return $return_data;
 	}
 
 	/**
@@ -166,8 +174,6 @@ class Nations {
 				break;
 		}
 
-		lwtv_plugin()->error_log( 'nations-debug', 'Prepared nation data: ' . $format . ' ' . $view );
-
 		// If format is 'array', return raw data
 		if ( 'array' === $format ) {
 			return $data;
@@ -192,53 +198,70 @@ class Nations {
 		// remove underscore prefix
 		$nation_slug = ltrim( $nation_slug, '_' );
 
-		$query = $wpdb->prepare(
-			"SELECT
-				t.slug,
-				t.name,
-				COUNT(DISTINCT p.ID) as show_count,
-				SUM(DISTINCT COALESCE(char_count.meta_value, 0)) as character_count,
-				SUM(DISTINCT COALESCE(dead_count.meta_value, 0)) as dead_count,
-				(SELECT COUNT(DISTINCT dead_p.ID)
-				 FROM {$wpdb->posts} dead_p
-				 INNER JOIN {$wpdb->term_relationships} dead_tr ON dead_p.ID = dead_tr.object_id
-				 INNER JOIN {$wpdb->term_taxonomy} dead_tt ON dead_tr.term_taxonomy_id = dead_tt.term_taxonomy_id
-				 INNER JOIN {$wpdb->terms} dead_t ON dead_tt.term_id = dead_t.term_id
-				 INNER JOIN {$wpdb->term_relationships} nation_dead_tr ON dead_p.ID = nation_dead_tr.object_id
-				 INNER JOIN {$wpdb->term_taxonomy} nation_dead_tt ON nation_dead_tr.term_taxonomy_id = nation_dead_tt.term_taxonomy_id
-				 INNER JOIN {$wpdb->terms} nation_dead_t ON nation_dead_tt.term_id = nation_dead_t.term_id
-				 WHERE dead_tt.taxonomy = 'lez_tropes'
-				 AND dead_t.slug = 'dead-queers'
-				 AND nation_dead_tt.taxonomy = 'lez_country'
-				 AND nation_dead_t.slug = %s
-				 AND dead_p.post_type = 'post_type_shows'
-				 AND dead_p.post_status = 'publish'
-				) as dead_show_count
-			FROM {$wpdb->terms} t
-			INNER JOIN {$wpdb->term_taxonomy} tt ON t.term_id = tt.term_id
-			LEFT JOIN {$wpdb->term_relationships} tr ON tt.term_taxonomy_id = tr.term_taxonomy_id
-			LEFT JOIN {$wpdb->posts} p ON tr.object_id = p.ID
-			LEFT JOIN {$wpdb->postmeta} char_count ON p.ID = char_count.post_id AND char_count.meta_key = 'lezshows_char_count'
-			LEFT JOIN {$wpdb->postmeta} dead_count ON p.ID = dead_count.post_id AND dead_count.meta_key = 'lezshows_dead_count'
-			WHERE tt.taxonomy = %s
-			AND t.slug = %s
-			AND p.post_type = 'post_type_shows'
-			AND p.post_status = 'publish'
-			GROUP BY t.slug, t.name",
-			$nation_slug,
-			'lez_country',
-			$nation_slug
-		);
+		// Create cache key
+		$cache_key   = 'nation_basic_data_' . $nation_slug;
+		$cached_data = lwtv_plugin()->get_transient( $cache_key );
 
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- This is a prepared query (see above)
-		$results = $wpdb->get_results( $query, ARRAY_A );
-
-		if ( false === $results || empty( $results ) ) {
-			lwtv_plugin()->error_log( 'nations-error', 'Basic data query failed for nation: ' . $nation_slug . ' - Last error: ' . $wpdb->last_error );
-			return array();
+		// If cached data is found, return it
+		if ( false !== $cached_data ) {
+			lwtv_plugin()->error_log( 'formats-debug', 'Cached data found for ' . $cache_key );
+			return $cached_data;
 		}
 
-		return $results[0];
+		try {
+			$query = $wpdb->prepare(
+				"SELECT
+					t.slug,
+					t.name,
+					COUNT(DISTINCT p.ID) as show_count,
+					SUM(DISTINCT COALESCE(char_count.meta_value, 0)) as character_count,
+					SUM(DISTINCT COALESCE(dead_count.meta_value, 0)) as dead_count,
+					(SELECT COUNT(DISTINCT dead_p.ID)
+					FROM {$wpdb->posts} dead_p
+					INNER JOIN {$wpdb->term_relationships} dead_tr ON dead_p.ID = dead_tr.object_id
+					INNER JOIN {$wpdb->term_taxonomy} dead_tt ON dead_tr.term_taxonomy_id = dead_tt.term_taxonomy_id
+					INNER JOIN {$wpdb->terms} dead_t ON dead_tt.term_id = dead_t.term_id
+					INNER JOIN {$wpdb->term_relationships} nation_dead_tr ON dead_p.ID = nation_dead_tr.object_id
+					INNER JOIN {$wpdb->term_taxonomy} nation_dead_tt ON nation_dead_tr.term_taxonomy_id = nation_dead_tt.term_taxonomy_id
+					INNER JOIN {$wpdb->terms} nation_dead_t ON nation_dead_tt.term_id = nation_dead_t.term_id
+					WHERE dead_tt.taxonomy = 'lez_tropes'
+					AND dead_t.slug = 'dead-queers'
+					AND nation_dead_tt.taxonomy = 'lez_country'
+					AND nation_dead_t.slug = %s
+					AND dead_p.post_type = 'post_type_shows'
+					AND dead_p.post_status = 'publish'
+					) as dead_show_count
+				FROM {$wpdb->terms} t
+				INNER JOIN {$wpdb->term_taxonomy} tt ON t.term_id = tt.term_id
+				LEFT JOIN {$wpdb->term_relationships} tr ON tt.term_taxonomy_id = tr.term_taxonomy_id
+				LEFT JOIN {$wpdb->posts} p ON tr.object_id = p.ID
+				LEFT JOIN {$wpdb->postmeta} char_count ON p.ID = char_count.post_id AND char_count.meta_key = 'lezshows_char_count'
+				LEFT JOIN {$wpdb->postmeta} dead_count ON p.ID = dead_count.post_id AND dead_count.meta_key = 'lezshows_dead_count'
+				WHERE tt.taxonomy = %s
+				AND t.slug = %s
+				AND p.post_type = 'post_type_shows'
+				AND p.post_status = 'publish'
+				GROUP BY t.slug, t.name",
+				$nation_slug,
+				'lez_country',
+				$nation_slug
+			);
+
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- This is a prepared query (see above)
+			$results = $wpdb->get_results( $query, ARRAY_A );
+
+			if ( false === $results || empty( $results ) ) {
+				lwtv_plugin()->error_log( 'nations-error', 'Basic data query failed for nation: ' . $nation_slug . ' - Last error: ' . $wpdb->last_error );
+				return array();
+			}
+
+			lwtv_plugin()->set_transient( $cache_key, $results[0], DAY_IN_SECONDS );
+
+			return $results[0];
+		} catch ( \Exception $e ) {
+			lwtv_plugin()->error_log( 'nations-error', 'Query failed: ' . $e->getMessage() );
+			return array();
+		}
 	}
 
 	/**
@@ -276,49 +299,66 @@ class Nations {
 
 		$nation_slug = ltrim( $nation_slug, '_' );
 
-		$query = $wpdb->prepare(
-			"SELECT
-				t.slug,
-				t.name,
-				COUNT(DISTINCT p.ID) as show_count
-			FROM {$wpdb->terms} t
-			INNER JOIN {$wpdb->term_taxonomy} tt ON t.term_id = tt.term_id
-			INNER JOIN {$wpdb->term_relationships} tr ON tt.term_taxonomy_id = tr.term_taxonomy_id
-			INNER JOIN {$wpdb->posts} p ON tr.object_id = p.ID
-			INNER JOIN {$wpdb->term_relationships} nation_tr ON p.ID = nation_tr.object_id
-			INNER JOIN {$wpdb->term_taxonomy} nation_tt ON nation_tr.term_taxonomy_id = nation_tt.term_taxonomy_id
-			INNER JOIN {$wpdb->terms} nation_term ON nation_tt.term_id = nation_term.term_id
-			WHERE tt.taxonomy = %s
-			AND nation_tt.taxonomy = %s
-			AND nation_term.slug = %s
-			AND p.post_type = 'post_type_shows'
-			AND p.post_status = 'publish'
-			GROUP BY t.slug, t.name
-			ORDER BY show_count DESC",
-			'lez_tropes',
-			'lez_country',
-			$nation_slug
-		);
+		// Create cache key
+		$cache_key   = 'nation_tropes_' . $nation_slug;
+		$cached_data = lwtv_plugin()->get_transient( $cache_key );
 
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- This is a prepared query (see above)
-		$results = $wpdb->get_results( $query, ARRAY_A );
+		// If cached data is found, return it
+		if ( false !== $cached_data ) {
+			lwtv_plugin()->error_log( 'formats-debug', 'Cached data found for ' . $cache_key );
+			return $cached_data;
+		}
 
-		if ( false === $results ) {
-			lwtv_plugin()->error_log( 'nations-error', 'Tropes breakdown query failed for nation: ' . $nation_slug );
+		try {
+			$query = $wpdb->prepare(
+				"SELECT
+					t.slug,
+					t.name,
+					COUNT(DISTINCT p.ID) as show_count
+				FROM {$wpdb->terms} t
+				INNER JOIN {$wpdb->term_taxonomy} tt ON t.term_id = tt.term_id
+				INNER JOIN {$wpdb->term_relationships} tr ON tt.term_taxonomy_id = tr.term_taxonomy_id
+				INNER JOIN {$wpdb->posts} p ON tr.object_id = p.ID
+				INNER JOIN {$wpdb->term_relationships} nation_tr ON p.ID = nation_tr.object_id
+				INNER JOIN {$wpdb->term_taxonomy} nation_tt ON nation_tr.term_taxonomy_id = nation_tt.term_taxonomy_id
+				INNER JOIN {$wpdb->terms} nation_term ON nation_tt.term_id = nation_term.term_id
+				WHERE tt.taxonomy = %s
+				AND nation_tt.taxonomy = %s
+				AND nation_term.slug = %s
+				AND p.post_type = 'post_type_shows'
+				AND p.post_status = 'publish'
+				GROUP BY t.slug, t.name
+				ORDER BY show_count DESC",
+				'lez_tropes',
+				'lez_country',
+				$nation_slug
+			);
+
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- This is a prepared query (see above)
+			$results = $wpdb->get_results( $query, ARRAY_A );
+
+			if ( false === $results ) {
+				lwtv_plugin()->error_log( 'nations-error', 'Tropes breakdown query failed for nation: ' . $nation_slug );
+				return array();
+			}
+
+			// Format results for consistency with other breakdowns
+			$formatted_results = array();
+			foreach ( $results as $row ) {
+				$formatted_results[] = array(
+					'name'  => $row['name'],
+					'count' => (int) $row['show_count'],
+					'url'   => home_url( '/trope/' . $row['slug'] . '/' ),
+				);
+			}
+
+			lwtv_plugin()->set_transient( $cache_key, $formatted_results, DAY_IN_SECONDS );
+
+			return $formatted_results;
+		} catch ( \Exception $e ) {
+			lwtv_plugin()->error_log( 'nations-error', 'Tropes breakdown query failed for nation: ' . $nation_slug . ' - Last error: ' . $wpdb->last_error );
 			return array();
 		}
-
-		// Format results for consistency with other breakdowns
-		$formatted_results = array();
-		foreach ( $results as $row ) {
-			$formatted_results[] = array(
-				'name'  => $row['name'],
-				'count' => (int) $row['show_count'],
-				'url'   => home_url( '/trope/' . $row['slug'] . '/' ),
-			);
-		}
-
-		return $formatted_results;
 	}
 
 	/**
@@ -332,49 +372,66 @@ class Nations {
 
 		$nation_slug = ltrim( $nation_slug, '_' );
 
-		$query = $wpdb->prepare(
-			"SELECT
-				t.slug,
-				t.name,
-				COUNT(DISTINCT p.ID) as show_count
-			FROM {$wpdb->terms} t
-			INNER JOIN {$wpdb->term_taxonomy} tt ON t.term_id = tt.term_id
-			INNER JOIN {$wpdb->term_relationships} tr ON tt.term_taxonomy_id = tr.term_taxonomy_id
-			INNER JOIN {$wpdb->posts} p ON tr.object_id = p.ID
-			INNER JOIN {$wpdb->term_relationships} nation_tr ON p.ID = nation_tr.object_id
-			INNER JOIN {$wpdb->term_taxonomy} nation_tt ON nation_tr.term_taxonomy_id = nation_tt.term_taxonomy_id
-			INNER JOIN {$wpdb->terms} nation_term ON nation_tt.term_id = nation_term.term_id
-			WHERE tt.taxonomy = %s
-			AND nation_tt.taxonomy = %s
-			AND nation_term.slug = %s
-			AND p.post_type = 'post_type_shows'
-			AND p.post_status = 'publish'
-			GROUP BY t.slug, t.name
-			ORDER BY show_count DESC",
-			'lez_formats',
-			'lez_country',
-			$nation_slug
-		);
+		// Create cache key
+		$cache_key   = 'nation_formats_' . $nation_slug;
+		$cached_data = lwtv_plugin()->get_transient( $cache_key );
 
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- This is a prepared query (see above)
-		$results = $wpdb->get_results( $query, ARRAY_A );
+		// If cached data is found, return it
+		if ( false !== $cached_data ) {
+			lwtv_plugin()->error_log( 'formats-debug', 'Cached data found for ' . $cache_key );
+			return $cached_data;
+		}
 
-		if ( false === $results ) {
-			lwtv_plugin()->error_log( 'nations-error', 'Formats breakdown query failed for nation: ' . $nation_slug );
+		try {
+			$query = $wpdb->prepare(
+				"SELECT
+					t.slug,
+					t.name,
+					COUNT(DISTINCT p.ID) as show_count
+				FROM {$wpdb->terms} t
+				INNER JOIN {$wpdb->term_taxonomy} tt ON t.term_id = tt.term_id
+				INNER JOIN {$wpdb->term_relationships} tr ON tt.term_taxonomy_id = tr.term_taxonomy_id
+				INNER JOIN {$wpdb->posts} p ON tr.object_id = p.ID
+				INNER JOIN {$wpdb->term_relationships} nation_tr ON p.ID = nation_tr.object_id
+				INNER JOIN {$wpdb->term_taxonomy} nation_tt ON nation_tr.term_taxonomy_id = nation_tt.term_taxonomy_id
+				INNER JOIN {$wpdb->terms} nation_term ON nation_tt.term_id = nation_term.term_id
+				WHERE tt.taxonomy = %s
+				AND nation_tt.taxonomy = %s
+				AND nation_term.slug = %s
+				AND p.post_type = 'post_type_shows'
+				AND p.post_status = 'publish'
+				GROUP BY t.slug, t.name
+				ORDER BY show_count DESC",
+				'lez_formats',
+				'lez_country',
+				$nation_slug
+			);
+
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- This is a prepared query (see above)
+			$results = $wpdb->get_results( $query, ARRAY_A );
+
+			if ( false === $results ) {
+				lwtv_plugin()->error_log( 'nations-error', 'Formats breakdown query failed for nation: ' . $nation_slug );
+				return array();
+			}
+
+			// Format results for consistency with other breakdowns
+			$formatted_results = array();
+			foreach ( $results as $row ) {
+				$formatted_results[] = array(
+					'name'  => $row['name'],
+					'count' => (int) $row['show_count'],
+					'url'   => home_url( '/format/' . $row['slug'] . '/' ),
+				);
+			}
+
+			lwtv_plugin()->set_transient( $cache_key, $formatted_results, DAY_IN_SECONDS );
+
+			return $formatted_results;
+		} catch ( \Exception $e ) {
+			lwtv_plugin()->error_log( 'nations-error', 'Formats breakdown query failed for nation: ' . $nation_slug . ' - Last error: ' . $wpdb->last_error );
 			return array();
 		}
-
-		// Format results for consistency with other breakdowns
-		$formatted_results = array();
-		foreach ( $results as $row ) {
-			$formatted_results[] = array(
-				'name'  => $row['name'],
-				'count' => (int) $row['show_count'],
-				'url'   => home_url( '/format/' . $row['slug'] . '/' ),
-			);
-		}
-
-		return $formatted_results;
 	}
 
 	/**
@@ -411,28 +468,46 @@ class Nations {
 	private function get_nation_shows( $nation_slug ) {
 		global $wpdb;
 
-		$query = $wpdb->prepare(
-			"SELECT DISTINCT p.ID
-			FROM {$wpdb->posts} p
-			INNER JOIN {$wpdb->term_relationships} tr ON p.ID = tr.object_id
-			INNER JOIN {$wpdb->term_taxonomy} tt ON tr.term_taxonomy_id = tt.term_taxonomy_id
-			INNER JOIN {$wpdb->terms} t ON tt.term_id = t.term_id
-			WHERE tt.taxonomy = %s
-			AND t.slug = %s
-			AND p.post_type = 'post_type_shows'
-			AND p.post_status = 'publish'",
-			'lez_country',
-			$nation_slug
-		);
+		// Create cache key
+		$cache_key   = 'nation_shows_' . $nation_slug;
+		$cached_data = lwtv_plugin()->get_transient( $cache_key );
 
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- This is a prepared query (see above)
-		$results = $wpdb->get_results( $query, ARRAY_A );
-
-		if ( false === $results ) {
-			return array();
+		// If cached data is found, return it
+		if ( false !== $cached_data ) {
+			lwtv_plugin()->error_log( 'formats-debug', 'Cached data found for ' . $cache_key );
+			return $cached_data;
 		}
 
-		return array_column( $results, 'ID' );
+		try {
+
+			$query = $wpdb->prepare(
+				"SELECT DISTINCT p.ID
+				FROM {$wpdb->posts} p
+				INNER JOIN {$wpdb->term_relationships} tr ON p.ID = tr.object_id
+				INNER JOIN {$wpdb->term_taxonomy} tt ON tr.term_taxonomy_id = tt.term_taxonomy_id
+				INNER JOIN {$wpdb->terms} t ON tt.term_id = t.term_id
+				WHERE tt.taxonomy = %s
+				AND t.slug = %s
+				AND p.post_type = 'post_type_shows'
+				AND p.post_status = 'publish'",
+				'lez_country',
+				$nation_slug
+			);
+
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- This is a prepared query (see above)
+			$results = $wpdb->get_results( $query, ARRAY_A );
+
+			if ( false === $results ) {
+				return array();
+			}
+
+			lwtv_plugin()->set_transient( $cache_key, $results, DAY_IN_SECONDS );
+
+			return array_column( $results, 'ID' );
+		} catch ( \Exception $e ) {
+			lwtv_plugin()->error_log( 'nations-error', 'Shows query failed for nation: ' . $nation_slug . ' - Last error: ' . $wpdb->last_error );
+			return array();
+		}
 	}
 
 	/**
@@ -447,50 +522,66 @@ class Nations {
 
 		$nation_slug = ltrim( $nation_slug, '_' );
 
-		lwtv_plugin()->error_log( 'nations-debug', 'Parsing meta breakdown for nation: ' . $nation_slug . ' with meta key: ' . $meta_key );
+		// Create cache key
+		$cache_key   = 'nation_meta_breakdown_' . $nation_slug . '_' . $meta_key;
+		$cached_data = lwtv_plugin()->get_transient( $cache_key );
 
-		$query = $wpdb->prepare(
-			"SELECT meta_value
-			FROM {$wpdb->posts} p
-			INNER JOIN {$wpdb->term_relationships} tr ON p.ID = tr.object_id
-			INNER JOIN {$wpdb->term_taxonomy} tt ON tr.term_taxonomy_id = tt.term_taxonomy_id
-			INNER JOIN {$wpdb->terms} t ON tt.term_id = t.term_id
-			INNER JOIN {$wpdb->postmeta} pm ON p.ID = pm.post_id
-			WHERE tt.taxonomy = %s
-			AND t.slug = %s
-			AND p.post_type = 'post_type_shows'
-			AND p.post_status = 'publish'
-			AND pm.meta_key = %s
-			AND pm.meta_value IS NOT NULL
-			AND pm.meta_value != ''",
-			'lez_country',
-			$nation_slug,
-			$meta_key
-		);
-
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- This is a prepared query (see above)
-		$results = $wpdb->get_results( $query, ARRAY_A );
-
-		if ( false === $results || empty( $results ) ) {
-			lwtv_plugin()->error_log( 'nations-error', 'Meta breakdown query failed for nation: ' . $nation_slug );
-			return array();
+		// If cached data is found, return it
+		if ( false !== $cached_data ) {
+			lwtv_plugin()->error_log( 'formats-debug', 'Cached data found for ' . $cache_key );
+			return $cached_data;
 		}
 
-		// Parse and aggregate the serialized data
-		$aggregated_data = array();
-		foreach ( $results as $row ) {
-			$meta_data = maybe_unserialize( $row['meta_value'] );
-			if ( is_array( $meta_data ) ) {
-				foreach ( $meta_data as $key => $value ) {
-					if ( ! isset( $aggregated_data[ $key ] ) ) {
-						$aggregated_data[ $key ] = 0;
+		try {
+
+			$query = $wpdb->prepare(
+				"SELECT meta_value
+				FROM {$wpdb->posts} p
+				INNER JOIN {$wpdb->term_relationships} tr ON p.ID = tr.object_id
+				INNER JOIN {$wpdb->term_taxonomy} tt ON tr.term_taxonomy_id = tt.term_taxonomy_id
+				INNER JOIN {$wpdb->terms} t ON tt.term_id = t.term_id
+				INNER JOIN {$wpdb->postmeta} pm ON p.ID = pm.post_id
+				WHERE tt.taxonomy = %s
+				AND t.slug = %s
+				AND p.post_type = 'post_type_shows'
+				AND p.post_status = 'publish'
+				AND pm.meta_key = %s
+				AND pm.meta_value IS NOT NULL
+				AND pm.meta_value != ''",
+				'lez_country',
+				$nation_slug,
+				$meta_key
+			);
+
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- This is a prepared query (see above)
+			$results = $wpdb->get_results( $query, ARRAY_A );
+
+			if ( false === $results || empty( $results ) ) {
+				lwtv_plugin()->error_log( 'nations-error', 'Meta breakdown query failed for nation: ' . $nation_slug );
+				return array();
+			}
+
+			// Parse and aggregate the serialized data
+			$aggregated_data = array();
+			foreach ( $results as $row ) {
+				$meta_data = maybe_unserialize( $row['meta_value'] );
+				if ( is_array( $meta_data ) ) {
+					foreach ( $meta_data as $key => $value ) {
+						if ( ! isset( $aggregated_data[ $key ] ) ) {
+							$aggregated_data[ $key ] = 0;
+						}
+						$aggregated_data[ $key ] += (int) $value;
 					}
-					$aggregated_data[ $key ] += (int) $value;
 				}
 			}
-		}
 
-		return $aggregated_data;
+			lwtv_plugin()->set_transient( $cache_key, $aggregated_data, DAY_IN_SECONDS );
+
+			return $aggregated_data;
+		} catch ( \Exception $e ) {
+			lwtv_plugin()->error_log( 'nations-error', 'Meta breakdown query failed for nation: ' . $nation_slug . ' - Last error: ' . $wpdb->last_error );
+			return array();
+		}
 	}
 
 	/**
@@ -502,28 +593,46 @@ class Nations {
 	public function get_top_nations( $number ): array {
 		global $wpdb;
 
-		$queery = $wpdb->prepare(
-			"SELECT
-				t.slug,
-				t.name,
-				t.term_id,
-				COUNT(DISTINCT p.ID) as count
-			FROM {$wpdb->terms} t
-			INNER JOIN {$wpdb->term_taxonomy} tt ON t.term_id = tt.term_id
-			LEFT JOIN {$wpdb->term_relationships} tr ON tt.term_taxonomy_id = tr.term_taxonomy_id
-			LEFT JOIN {$wpdb->posts} p ON tr.object_id = p.ID AND p.post_status = 'publish'
-			WHERE tt.taxonomy = %s
-			AND p.post_type = 'post_type_shows'
-			GROUP BY t.term_id, t.slug, t.name
-			ORDER BY count DESC, t.name ASC
-			LIMIT %d",
-			'lez_country',
-			$number
-		);
+		// Create cache key
+		$cache_key   = 'top_nations_' . $number;
+		$cached_data = lwtv_plugin()->get_transient( $cache_key );
 
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- This is a prepared query (see above)
-		$results = $wpdb->get_results( $queery, ARRAY_A );
+		// If cached data is found, return it
+		if ( false !== $cached_data ) {
+			lwtv_plugin()->error_log( 'formats-debug', 'Cached data found for ' . $cache_key );
+			return (array) $cached_data;
+		}
 
-		return $results;
+		try {
+
+			$queery = $wpdb->prepare(
+				"SELECT
+					t.slug,
+					t.name,
+					t.term_id,
+					COUNT(DISTINCT p.ID) as count
+				FROM {$wpdb->terms} t
+				INNER JOIN {$wpdb->term_taxonomy} tt ON t.term_id = tt.term_id
+				LEFT JOIN {$wpdb->term_relationships} tr ON tt.term_taxonomy_id = tr.term_taxonomy_id
+				LEFT JOIN {$wpdb->posts} p ON tr.object_id = p.ID AND p.post_status = 'publish'
+				WHERE tt.taxonomy = %s
+				AND p.post_type = 'post_type_shows'
+				GROUP BY t.term_id, t.slug, t.name
+				ORDER BY count DESC, t.name ASC
+				LIMIT %d",
+				'lez_country',
+				$number
+			);
+
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- This is a prepared query (see above)
+			$results = $wpdb->get_results( $queery, ARRAY_A );
+
+			lwtv_plugin()->set_transient( $cache_key, $results, DAY_IN_SECONDS );
+
+			return $results;
+		} catch ( \Exception $e ) {
+			lwtv_plugin()->error_log( 'nations-error', 'Top nations query failed for number: ' . $number . ' - Last error: ' . $wpdb->last_error );
+			return array();
+		}
 	}
 }

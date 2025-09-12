@@ -13,6 +13,8 @@ use LWTV\Statistics\Build\Dead_Basic as Build_Dead_Basic;
 use LWTV\Statistics\Build\Dead as Build_Dead;
 use LWTV\Statistics\Build\Stations as Build_Stations;
 use LWTV\Statistics\Build\Nations as Build_Nations;
+use LWTV\Statistics\Build\Formats as Build_Formats;
+use LWTV\Statistics\Build\Taxonomy_Optimized as Build_Taxonomy_Optimized;
 use LWTV\Statistics\Build\Taxonomy_Breakdowns as Build_Taxonomy_Breakdowns;
 use LWTV\Statistics\Format\{ Barcharts_Optimized, Lists_Optimized, Percentage_Optimized, Piecharts_Optimized, Trendline_Optimized };
 
@@ -48,6 +50,7 @@ class Statistics_Optimized implements Component, Templater {
 			'generate_statistics'         => array( $this, 'generate' ),
 			'generate_station_statistics' => array( $this, 'generate_station_statistics' ),
 			'generate_nation_statistics'  => array( $this, 'generate_nation_statistics' ),
+			'generate_shows_statistics'   => array( $this, 'generate_shows_statistics' ),
 			'generate_shows_count'        => array( $this, 'count_shows' ),
 			'generate_stats_block'        => array( $this, 'generate_stats_block' ),
 			'generate_stats_block_actor'  => array( $this, 'generate_stats_block_actor' ),
@@ -84,10 +87,8 @@ class Statistics_Optimized implements Component, Templater {
 
 			switch ( $statistics ) {
 				case 'nations':
-					wp_add_inline_script( 'tablesorter', 'jQuery(document).ready(function($){ $("#nationsTable").tablesorter({ theme : "bootstrap", }); });' );
-					break;
 				case 'stations':
-					wp_add_inline_script( 'tablesorter', 'jQuery(document).ready(function($){ $("#stationsTable").tablesorter({ theme : "bootstrap", }); });' );
+					wp_add_inline_script( 'tablesorter', 'jQuery(document).ready(function($){ $("#' . $statistics . 'Table").tablesorter({ theme : "bootstrap", }); });' );
 					break;
 				case 'death':
 					wp_add_inline_script( 'tablesorter', 'jQuery(document).ready(function($){ $("#charactersTable").tablesorter({ theme : "bootstrap", }); });' );
@@ -96,14 +97,17 @@ class Statistics_Optimized implements Component, Templater {
 			}
 
 			switch ( $stat_view ) {
-				case 'gender':
-				case 'sexuality':
-				case 'cliches':
-					wp_add_inline_script( 'tablesorter', 'jQuery(document).ready(function($){ $("#charactersTable").tablesorter({ theme : "bootstrap", }); });' );
-					break;
 				case 'tropes':
 				case 'genres':
-					wp_add_inline_script( 'tablesorter', 'jQuery(document).ready(function($){ $("#showsTable").tablesorter({ theme : "bootstrap", }); });' );
+				case 'formats':
+				case 'intersectionality':
+				case 'stars':
+				case 'triggers':
+					wp_add_inline_script( 'tablesorter', 'jQuery(document).ready(function($){ $("#' . $stat_view . 'Table").tablesorter({ theme : "bootstrap", }); });' );
+					wp_add_inline_script( 'tablesorter', 'jQuery(document).ready(function($){ $("#showTable").tablesorter({ theme : "bootstrap", }); });' );
+					break;
+				default:
+					wp_add_inline_script( 'tablesorter', 'jQuery(document).ready(function($){ $("#' . $stat_view . 'Table").tablesorter({ theme : "bootstrap", }); });' );
 					break;
 			}
 		}
@@ -456,6 +460,47 @@ class Statistics_Optimized implements Component, Templater {
 				return ( new Percentage_Optimized() )->format( $data, $nation, $view, 'nation' );
 			case 'list':
 				return ( new Lists_Optimized() )->format( $data, $nation, $view, 'nation' );
+			default:
+				return $data;
+		}
+	}
+
+	/**
+	 * Generate statistics for shows
+	 *
+	 * @param string $format Output format
+	 * @param string $type View type (what subpage we're on, so formats, tropes, genres, etc)
+	 * @return array statistics data
+	 */
+	public function generate_shows_statistics( $format = 'list', $type = 'formats' ) {
+
+		switch ( $type ) {
+			case 'formats':
+				$all_data = ( new Build_Formats() )->generate( $format );
+				break;
+			case 'tropes':
+			case 'genres':
+			case 'intersections':
+			case 'stars':
+			case 'triggers':
+				$all_data = ( new Build_Taxonomy_Optimized() )->make_comprehensive( 'post_type_shows', 'lez_' . $type, true );
+				break;
+		}
+
+		$view          = 'shows';
+		$data          = array();
+		$data[ $view ] = $all_data;
+
+		// Handle different output formats
+		switch ( $format ) {
+			case 'barchart':
+				return ( new Barcharts_Optimized() )->format( $data, $format, $view, $type );
+			case 'piechart':
+				return ( new Piecharts_Optimized() )->format( $data, $format, $view, $type );
+			case 'percentage':
+				return ( new Percentage_Optimized() )->format( $data, $format, $view, $type );
+			case 'list':
+				return ( new Lists_Optimized() )->format( $data, $format, $view, $type );
 			default:
 				return $data;
 		}

@@ -35,14 +35,15 @@ class Percentage_Optimized {
 		}
 
 		// Make a table
-		$table_start  = '<table id="' . esc_attr( $type . 'sTable' ) . '" class="tablesorter table table-striped table-hover">';
+		$table_id     = $this->get_table_id( $view, $type );
+		$table_start  = '<table id="' . esc_attr( $table_id ) . '" class="tablesorter table table-striped table-hover">';
 		$table_header = '<thead><tr><th scope="col">' . ucfirst( $clean_view ) . '</th><th scope="col">' . $count_title . '</th>';
 		if ( $show_percent ) {
 			$table_header .= '<th scope="col">Percentage</th>';
 		}
 		$table_header .= '</tr></thead>';
 		$table_body    = '<tbody>';
-		$table_body   .= $this->format_data_for_chart( $data, $clean_view, $show_percent, $count_total );
+		$table_body   .= $this->format_data_for_chart( $data, $clean_view, $show_percent, $count_total, $type );
 		$table_body   .= '</tbody>';
 		$table_end     = '</table>';
 
@@ -58,16 +59,23 @@ class Percentage_Optimized {
 	 * @param string $clean_view Clean view
 	 * @param bool $show_percent Show percent
 	 * @param int $count_total Count total
+	 * @param string $type Type of context
 	 * @return array Formatted data
 	 */
-	private function format_data_for_chart( $data, $clean_view, $show_percent, $count_total ) {
+	private function format_data_for_chart( $data, $clean_view, $show_percent, $count_total, $type ) {
 
 		$table_body = '';
 
 		switch ( $clean_view ) {
 			case 'tropes':
 			case 'formats':
+			case 'shows':
 				foreach ( $data as $item ) {
+
+					if ( 'stars' === $type && 0 === $item['count'] ) {
+						continue;
+					}
+
 					$url         = $item['url'];
 					$table_body .= '<tr><td><a href="' . esc_url( $url ) . '">' . ucfirst( $item['name'] ) . '</a></td><td>' . (int) $item['count'] . '</td>';
 					if ( $show_percent ) {
@@ -103,9 +111,32 @@ class Percentage_Optimized {
 		switch ( $clean_view ) {
 			case 'tropes':
 			case 'formats':
+			case 'shows':
 				return array_sum( array_column( $data, 'count' ) );
 			default:
 				return array_sum( $data );
 		}
+	}
+
+	/**
+	 * Get table id
+	 *
+	 * @param string $view View type
+	 * @param string $type Type of context
+	 * @return string Table id
+	 */
+	private function get_table_id( $view, $type ) {
+		// remove any trailing s's from $type
+		$table_type = isset( $view ) ? $view : $type;
+
+		// remove any underscores
+		$table_type = str_replace( '_', '', $table_type );
+
+		// remove any trailing s's but ONLY if there are two!
+		if ( substr_count( $table_type, 's' ) >= 2 ) {
+			$table_type = rtrim( $table_type, 's' );
+		}
+
+		return $table_type . 'Table';
 	}
 }

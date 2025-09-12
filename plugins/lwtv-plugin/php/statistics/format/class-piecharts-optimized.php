@@ -19,11 +19,10 @@ class Piecharts_Optimized {
 			return '<p>No data available for this piechart.</p>';
 		}
 
-		$data = Shared::sort_data( $data, $clean_view );
-
 		// Generate ChartJS piechart
 		$chart_id            = $type . $context . $view . '_pie';
 		$position_or_display = 'display: false';
+
 		// We show empty sets for these:
 		$show_zero = array( 'actor_char_dead', 'actor_char_roles' );
 
@@ -38,7 +37,7 @@ class Piecharts_Optimized {
 			$position_or_display = "position: 'top'";
 		}
 
-		$formatting_data = self::format_data_for_chart( $data, $clean_view );
+		$formatting_data = self::format_data_for_chart( $data, $clean_view, $type );
 
 		$chart_labels = $formatting_data['labels'];
 		$chart_data   = $formatting_data['data'];
@@ -85,14 +84,25 @@ class Piecharts_Optimized {
 	 *
 	 * @param array  $data Data to format
 	 * @param string $clean_view Clean view
+	 * @param string $type Type of context
 	 * @return array Formatted data
 	 */
-	private function format_data_for_chart( $data, $clean_view ) {
+	private function format_data_for_chart( $data, $clean_view, $type ) {
 
 		$labels  = '';
 		$dataset = '';
 
+		// Get the right data.
+		if ( isset( $data[ $clean_view ] ) && is_array( $data[ $clean_view ] ) ) {
+			$data = $data[ $clean_view ];
+		}
+
 		switch ( $clean_view ) {
+			case 'shows':
+				$reformatted = $this->format_post_type_data_for_chart( $data, $type );
+				$labels      = $reformatted['labels'];
+				$dataset     = $reformatted['data'];
+				break;
 			case 'tropes':
 			case 'formats':
 				foreach ( $data as $item ) {
@@ -104,6 +114,42 @@ class Piecharts_Optimized {
 				foreach ( $data as $name => $count ) {
 					$labels  .= '"' . esc_js( $name ) . '", ';
 					$dataset .= '"' . esc_js( $count ) . '", ';
+				}
+				break;
+		}
+
+		return array(
+			'labels' => $labels,
+			'data'   => $dataset,
+		);
+	}
+
+	/**
+	 * Format post type data for chart
+	 *
+	 * @param array $data Data to format
+	 * @return array Formatted data
+	 */
+	private function format_post_type_data_for_chart( $data, $type ) {
+		$labels  = '';
+		$dataset = '';
+
+		switch ( $type ) {
+			case 'formats':
+				foreach ( $data as $name => $count ) {
+					$labels  .= '"' . esc_js( $name ) . '", ';
+					$dataset .= '"' . esc_js( $count ) . '", ';
+				}
+				break;
+			default:
+				foreach ( $data as $item => $item_data ) {
+
+					if ( 'stars' === $type && 0 === $item_data['count'] ) {
+						continue;
+					}
+
+					$labels  .= '"' . esc_js( $item_data['name'] ) . '", ';
+					$dataset .= '"' . esc_js( $item_data['count'] ) . '", ';
 				}
 				break;
 		}
