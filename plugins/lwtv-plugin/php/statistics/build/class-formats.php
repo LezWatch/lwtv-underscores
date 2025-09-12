@@ -1,6 +1,6 @@
 <?php
 /**
- * Formats Statistics Build Class
+ * Formats Statistics Build Class - Optimized Version
  *
  * @package LezWatch.TV
  */

@@ -16,6 +16,7 @@ class Piecharts_Optimized {
 		$clean_view = ltrim( $view, '_' );
 
 		if ( empty( $data ) || ! isset( $data[ $clean_view ] ) ) {
+			lwtv_plugin()->error_log( 'piecharts-debug', 'No data available for this piechart: ' . $type );
 			return '<p>No data available for this piechart.</p>';
 		}
 

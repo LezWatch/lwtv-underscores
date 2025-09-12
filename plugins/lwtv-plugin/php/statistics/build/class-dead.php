@@ -1,6 +1,6 @@
 <?php
 /**
- * Dead Statistics Build Class
+ * Dead Statistics Build Class - Optimized Version
  *
  * @package LezWatch.TV
  */

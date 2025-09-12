@@ -11,10 +11,12 @@ use LWTV\Queeries\Taxonomy as Queery_Taxonomy;
 use LWTV\Statistics\{ Gutenberg_SSR, Matcher_Optimized as Matcher, Query_Vars, The_Array, The_Output };
 use LWTV\Statistics\Build\Dead_Basic as Build_Dead_Basic;
 use LWTV\Statistics\Build\Dead as Build_Dead;
-use LWTV\Statistics\Build\Stations as Build_Stations;
-use LWTV\Statistics\Build\Nations as Build_Nations;
 use LWTV\Statistics\Build\Formats as Build_Formats;
+use LWTV\Statistics\Build\Nations as Build_Nations;
 use LWTV\Statistics\Build\On_Air_Optimized as Build_On_Air;
+use LWTV\Statistics\Build\Stations as Build_Stations;
+use LWTV\Statistics\Build\We_Love_It as Build_We_Love_It;
+use LWTV\Statistics\Build\Worth_It as Build_Worth_It;
 use LWTV\Statistics\Build\Taxonomy_Optimized as Build_Taxonomy_Optimized;
 use LWTV\Statistics\Build\Taxonomy_Breakdowns as Build_Taxonomy_Breakdowns;
 use LWTV\Statistics\Format\{ Barcharts_Optimized, Lists_Optimized, Percentage_Optimized, Piecharts_Optimized, Trendline_Optimized };
@@ -86,6 +88,9 @@ class Statistics_Optimized implements Component, Templater {
 			$statistics = get_query_var( 'statistics', 'none' );
 			$stat_view  = get_query_var( 'view', 'main' );
 
+			lwtv_plugin()->error_log( 'statistics-debug', 'statistics: ' . $statistics );
+			lwtv_plugin()->error_log( 'statistics-debug', 'stat_view: ' . $stat_view );
+
 			switch ( $statistics ) {
 				case 'nations':
 				case 'stations':
@@ -105,6 +110,10 @@ class Statistics_Optimized implements Component, Templater {
 				case 'stars':
 				case 'triggers':
 					wp_add_inline_script( 'tablesorter', 'jQuery(document).ready(function($){ $("#' . $stat_view . 'Table").tablesorter({ theme : "bootstrap", }); });' );
+					wp_add_inline_script( 'tablesorter', 'jQuery(document).ready(function($){ $("#showTable").tablesorter({ theme : "bootstrap", }); });' );
+					break;
+				case 'we-love-it':
+					wp_add_inline_script( 'tablesorter', 'jQuery(document).ready(function($){ $("#weloveitTable").tablesorter({ theme : "bootstrap", }); });' );
 					wp_add_inline_script( 'tablesorter', 'jQuery(document).ready(function($){ $("#showTable").tablesorter({ theme : "bootstrap", }); });' );
 					break;
 				default:
@@ -379,7 +388,7 @@ class Statistics_Optimized implements Component, Templater {
 	 * Handle output for different formats
 	 *
 	 * @param array $data Data to format
-	 * @param string $station Station slug
+	 * @param string $context Context (Station, Nation, etc.)
 	 * @param string $view View type
 	 * @param string $format Output format
 	 * @param string $source_type Source type
@@ -387,18 +396,18 @@ class Statistics_Optimized implements Component, Templater {
 	 * @param string $bar_direction Direction of the barchart
 	 * @return mixed Formatted data
 	 */
-	public function handle_output( $data, $station, $view, $format, $source_type, $custom_data = array(), $bar_direction = 'horizontal' ) {
+	public function handle_output( $data, $context, $view, $format, $source_type, $custom_data = array(), $bar_direction = 'horizontal' ) {
 		switch ( $format ) {
 			case 'barchart':
-				return ( new Barcharts_Optimized() )->format( $data, $station, $view, $source_type, $custom_data, $bar_direction );
+				return ( new Barcharts_Optimized() )->format( $data, $context, $view, $source_type, $custom_data, $bar_direction );
 			case 'trendline':
-				return ( new Trendline_Optimized() )->format( $data, $station, $view, $source_type );
+				return ( new Trendline_Optimized() )->format( $data, $context, $view, $source_type );
 			case 'piechart':
-				return ( new Piecharts_Optimized() )->format( $data, $station, $view, $source_type );
+				return ( new Piecharts_Optimized() )->format( $data, $context, $view, $source_type );
 			case 'percentage':
-				return ( new Percentage_Optimized() )->format( $data, $station, $view, $source_type );
+				return ( new Percentage_Optimized() )->format( $data, $context, $view, $source_type );
 			case 'list':
-				return ( new Lists_Optimized() )->format( $data, $station, $view, $source_type );
+				return ( new Lists_Optimized() )->format( $data, $context, $view, $source_type );
 			default:
 				return $data;
 		}
@@ -496,6 +505,10 @@ class Statistics_Optimized implements Component, Templater {
 				$view     = 'on_air';
 				$all_data = ( new Build_On_Air() )->generate( 'shows' );
 				break;
+			case 'we-love-it':
+				$view     = 'we_love_it';
+				$all_data = ( new Build_We_Love_It() )->generate( $format );
+				break;
 		}
 
 		if ( empty( $all_data ) ) {
@@ -506,7 +519,7 @@ class Statistics_Optimized implements Component, Templater {
 		$data          = array();
 		$data[ $view ] = $all_data;
 
-		return $this->handle_output( $data, 'all', 'on-air', $format, 'shows' );
+		return $this->handle_output( $data, 'all', $view, $format, 'shows' );
 	}
 
 	/**

@@ -1,6 +1,6 @@
 <?php
 /**
- * Nations Statistics Builder
+ * Nations Statistics Builder - Optimized Version
  *
  * Handles nation-specific statistics generation with optimized queries
  * and proper caching strategy.

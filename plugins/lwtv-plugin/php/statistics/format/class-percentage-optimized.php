@@ -35,9 +35,10 @@ class Percentage_Optimized {
 		}
 
 		// Make a table
-		$table_id     = $this->get_table_id( $view, $type );
-		$table_start  = '<table id="' . esc_attr( $table_id ) . '" class="tablesorter table table-striped table-hover">';
-		$table_header = '<thead><tr><th scope="col">' . ucfirst( $clean_view ) . '</th><th scope="col">' . $count_title . '</th>';
+		$readable_view = $this->get_readable_view( $clean_view );
+		$table_id      = $this->get_table_id( $view, $type );
+		$table_start   = '<table id="' . esc_attr( $table_id ) . '" class="tablesorter table table-striped table-hover">';
+		$table_header  = '<thead><tr><th scope="col">' . ucfirst( $readable_view ) . '</th><th scope="col">' . $count_title . '</th>';
 		if ( $show_percent ) {
 			$table_header .= '<th scope="col">Percentage</th>';
 		}
@@ -85,6 +86,17 @@ class Percentage_Optimized {
 					$table_body .= '</tr>';
 				}
 				break;
+			case 'we_love_it':
+				foreach ( $data as $item ) {
+					$url         = $item['url'];
+					$table_body .= '<tr><td><a href="' . esc_url( $url ) . '">' . ucfirst( $item['name'] ) . '</a></td><td>' . (int) $item['count'] . '</td>';
+					if ( $show_percent ) {
+						$first_count = round( ( ( $item['count'] / $count_total ) * 100 ), 1 );
+						$table_body .= '<td><div class="progress"><div class="progress-bar bg-info" role="progressbar" style="width: ' . esc_html( $first_count ) . '%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div></div>&nbsp;' . esc_html( $first_count ) . '%</td>';
+					}
+					$table_body .= '</tr>';
+				}
+				break;
 			default:
 				foreach ( $data as $name => $count ) {
 					$url         = home_url( "/{$clean_view}/{$name}" );
@@ -112,6 +124,7 @@ class Percentage_Optimized {
 			case 'tropes':
 			case 'formats':
 			case 'shows':
+			case 'we_love_it':
 				return array_sum( array_column( $data, 'count' ) );
 			default:
 				return array_sum( $data );
@@ -138,5 +151,17 @@ class Percentage_Optimized {
 		}
 
 		return $table_type . 'Table';
+	}
+
+	/**
+	 * Get readable view
+	 *
+	 * @param string $clean_view Clean view
+	 * @return string Readable view
+	 */
+	private function get_readable_view( $clean_view ) {
+		// Break - and _ into spaces
+		$readable_view = str_replace( array( '-', '_' ), ' ', $clean_view );
+		return ucwords( $readable_view );
 	}
 }
