@@ -9,16 +9,9 @@
 
 <div class="container chart-container">
 	<div class="row">
-		<div class="col-sm-6">
+		<div class="col-sm-12">
 			<?php
-			// ToDo: Convert this to use the new optimized function
-			lwtv_plugin()->generate_statistics( 'shows', 'on-air', 'piechart' );
-			?>
-		</div>
-		<div class="col-sm-6">
-			<?php
-			// ToDo: Convert this to use the new optimized function
-			lwtv_plugin()->generate_statistics( 'shows', 'on-air', 'percentage' );
+			echo lwtv_plugin()->generate_shows_statistics( 'trendline', 'on-air' );
 			?>
 		</div>
 	</div>

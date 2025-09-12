@@ -11,7 +11,7 @@
 $actor_id = get_the_ID();
 
 // Is this actor created less than 24 hours ago?
-$is_new = ( time() - get_the_time( 'U' ) ) < DAY_IN_SECONDS;
+$is_new = ( time() - get_the_time( 'U', $actor_id ) ) < DAY_IN_SECONDS;
 
 // This just gets the numbers of all characters and how many are dead.
 $all_chars      = get_post_meta( $actor_id, 'lezactors_char_list', true );

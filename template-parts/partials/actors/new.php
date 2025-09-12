@@ -14,7 +14,7 @@
 		<div class="row">
 			<div class="col-12">
 				<h2>Under Construction</h2>
-				<p>This actor is new and all data is still being calculated. Please check back soon for more information.</p>
+				<p>This actor is new and their data is still being calculated. Please check back soon for more information.</p>
 			</div>
 		</div>
 	</div>

@@ -14,6 +14,7 @@ use LWTV\Statistics\Build\Dead as Build_Dead;
 use LWTV\Statistics\Build\Stations as Build_Stations;
 use LWTV\Statistics\Build\Nations as Build_Nations;
 use LWTV\Statistics\Build\Formats as Build_Formats;
+use LWTV\Statistics\Build\On_Air_Optimized as Build_On_Air;
 use LWTV\Statistics\Build\Taxonomy_Optimized as Build_Taxonomy_Optimized;
 use LWTV\Statistics\Build\Taxonomy_Breakdowns as Build_Taxonomy_Breakdowns;
 use LWTV\Statistics\Format\{ Barcharts_Optimized, Lists_Optimized, Percentage_Optimized, Piecharts_Optimized, Trendline_Optimized };
@@ -375,6 +376,35 @@ class Statistics_Optimized implements Component, Templater {
 	}
 
 	/**
+	 * Handle output for different formats
+	 *
+	 * @param array $data Data to format
+	 * @param string $station Station slug
+	 * @param string $view View type
+	 * @param string $format Output format
+	 * @param string $source_type Source type
+	 * @param array $custom_data Custom data
+	 * @param string $bar_direction Direction of the barchart
+	 * @return mixed Formatted data
+	 */
+	public function handle_output( $data, $station, $view, $format, $source_type, $custom_data = array(), $bar_direction = 'horizontal' ) {
+		switch ( $format ) {
+			case 'barchart':
+				return ( new Barcharts_Optimized() )->format( $data, $station, $view, $source_type, $custom_data, $bar_direction );
+			case 'trendline':
+				return ( new Trendline_Optimized() )->format( $data, $station, $view, $source_type );
+			case 'piechart':
+				return ( new Piecharts_Optimized() )->format( $data, $station, $view, $source_type );
+			case 'percentage':
+				return ( new Percentage_Optimized() )->format( $data, $station, $view, $source_type );
+			case 'list':
+				return ( new Lists_Optimized() )->format( $data, $station, $view, $source_type );
+			default:
+				return $data;
+		}
+	}
+
+	/**
 	 * Generate station-specific statistics
 	 *
 	 * Direct method for station statistics that bypasses the generic
@@ -404,21 +434,7 @@ class Statistics_Optimized implements Component, Templater {
 		$station_data = new Build_Stations()->get_station_details( $station, $format, $view );
 		$data         = $station_data['formatted'] ?? $station_data;
 
-		// Handle different output formats
-		switch ( $format ) {
-			case 'barchart':
-				return ( new Barcharts_Optimized() )->format( $data, $station, $view, 'station', $custom_data, $bar_direction );
-			case 'trendline':
-				return ( new Trendline_Optimized() )->format( $data, $station, $view, 'station' );
-			case 'piechart':
-				return ( new Piecharts_Optimized() )->format( $data, $station, $view, 'station' );
-			case 'percentage':
-				return ( new Percentage_Optimized() )->format( $data, $station, $view, 'station' );
-			case 'list':
-				return ( new Lists_Optimized() )->format( $data, $station, $view, 'station' );
-			default:
-				return $data;
-		}
+		return $this->handle_output( $data, $station, $view, $format, 'station', $custom_data, $bar_direction );
 	}
 
 	/**
@@ -448,21 +464,7 @@ class Statistics_Optimized implements Component, Templater {
 		$station_data = new Build_Nations()->get_nation_details( $nation, $format, $view );
 		$data         = $station_data['formatted'] ?? $station_data;
 
-		// Handle different output formats
-		switch ( $format ) {
-			case 'barchart':
-				return ( new Barcharts_Optimized() )->format( $data, $nation, $view, 'nation', $custom_data, $bar_direction );
-			case 'trendline':
-				return ( new Trendline_Optimized() )->format( $data, $nation, $view, 'nation' );
-			case 'piechart':
-				return ( new Piecharts_Optimized() )->format( $data, $nation, $view, 'nation' );
-			case 'percentage':
-				return ( new Percentage_Optimized() )->format( $data, $nation, $view, 'nation' );
-			case 'list':
-				return ( new Lists_Optimized() )->format( $data, $nation, $view, 'nation' );
-			default:
-				return $data;
-		}
+		return $this->handle_output( $data, $nation, $view, $format, 'nation', $custom_data, $bar_direction );
 	}
 
 	/**
@@ -474,6 +476,10 @@ class Statistics_Optimized implements Component, Templater {
 	 */
 	public function generate_shows_statistics( $format = 'list', $type = 'formats' ) {
 
+		lwtv_plugin()->error_log( 'shows-debug', 'Generating shows statistics for type: ' . $type );
+
+		$all_data = array();
+		$view     = 'shows';
 		switch ( $type ) {
 			case 'formats':
 				$all_data = ( new Build_Formats() )->generate( $format );
@@ -485,25 +491,22 @@ class Statistics_Optimized implements Component, Templater {
 			case 'triggers':
 				$all_data = ( new Build_Taxonomy_Optimized() )->make_comprehensive( 'post_type_shows', 'lez_' . $type, true );
 				break;
+			case 'on-air':
+			case 'on_air':
+				$view     = 'on_air';
+				$all_data = ( new Build_On_Air() )->generate( 'shows' );
+				break;
 		}
 
-		$view          = 'shows';
+		if ( empty( $all_data ) ) {
+			lwtv_plugin()->error_log( 'shows-debug', 'All data is empty' );
+			return array();
+		}
+
 		$data          = array();
 		$data[ $view ] = $all_data;
 
-		// Handle different output formats
-		switch ( $format ) {
-			case 'barchart':
-				return ( new Barcharts_Optimized() )->format( $data, $format, $view, $type );
-			case 'piechart':
-				return ( new Piecharts_Optimized() )->format( $data, $format, $view, $type );
-			case 'percentage':
-				return ( new Percentage_Optimized() )->format( $data, $format, $view, $type );
-			case 'list':
-				return ( new Lists_Optimized() )->format( $data, $format, $view, $type );
-			default:
-				return $data;
-		}
+		return $this->handle_output( $data, 'all', 'on-air', $format, 'shows' );
 	}
 
 	/**

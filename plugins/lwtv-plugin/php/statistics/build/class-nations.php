@@ -11,7 +11,7 @@
 
 namespace LWTV\Statistics\Build;
 
-use LWTV\Statistics\Build\On_Air as Build_On_Air;
+use LWTV\Statistics\Build\On_Air_Optimized as Build_On_Air;
 
 /**
  * Nations class

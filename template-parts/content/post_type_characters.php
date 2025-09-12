@@ -9,6 +9,9 @@
 
 $character = $post->ID;
 
+// Is this character created less than 24 hours ago?
+$is_new = ( time() - get_the_time( 'U', $character ) ) < DAY_IN_SECONDS;
+
 // Generate Status
 // Usage: $doa_status
 $doa_status = ( has_term( 'dead', 'lez_cliches', $character ) ) ? 'Dead' : 'Alive';
