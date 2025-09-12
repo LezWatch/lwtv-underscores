@@ -90,6 +90,9 @@ class Piecharts_Optimized {
 	 */
 	private function format_data_for_chart( $data, $clean_view, $type ) {
 
+		lwtv_plugin()->error_log( 'piecharts-debug', 'format_data_for_chart Clean view: ' . $clean_view );
+		lwtv_plugin()->error_log( 'piecharts-debug', 'format_data_for_chart Type: ' . $type );
+
 		$labels  = '';
 		$dataset = '';
 
@@ -100,6 +103,8 @@ class Piecharts_Optimized {
 
 		switch ( $clean_view ) {
 			case 'shows':
+			case 'characters':
+			case 'actors':
 				$reformatted = $this->format_post_type_data_for_chart( $data, $type );
 				$labels      = $reformatted['labels'];
 				$dataset     = $reformatted['data'];

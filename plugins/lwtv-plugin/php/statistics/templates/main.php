@@ -1,6 +1,6 @@
 <?php
 /**
- * The template for displaying the main stats page
+ * The template for displaying the main stats page -- Optimized Version
  *
  * @package LezWatch.TV
  */

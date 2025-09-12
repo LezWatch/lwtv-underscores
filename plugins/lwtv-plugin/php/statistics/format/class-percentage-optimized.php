@@ -71,9 +71,11 @@ class Percentage_Optimized {
 			case 'tropes':
 			case 'formats':
 			case 'shows':
+			case 'characters':
+			case 'actors':
 				foreach ( $data as $item ) {
 
-					if ( 'stars' === $type && 0 === $item['count'] ) {
+					if ( in_array( $type, array( 'stars', 'actors' ), true ) && 0 === $item['count'] ) {
 						continue;
 					}
 

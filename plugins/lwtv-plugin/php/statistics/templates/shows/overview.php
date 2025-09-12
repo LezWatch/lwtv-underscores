@@ -40,8 +40,6 @@
 	</div>
 </div>
 
-<p>&nbsp;</p>
-
 <div class="container">
 	<div class="row">
 		<div class="col">
@@ -65,7 +63,7 @@
 					?>
 				</tbody>
 			</table>
-			<a href="?view=tropes"><button type="button" class="btn btn-lg btn-block">All <?php echo (int) wp_count_terms( 'lez_tropes' ); ?> Tropes</button></a>
+			<a href="?view=tropes"><button type="button" class="btn btn-lg btn-block">All <?php echo (int) $count_tropes; ?> Tropes</button></a>
 		</div>
 
 		<div class="col">
@@ -89,7 +87,7 @@
 					?>
 				</tbody>
 			</table>
-			<a href="?view=genres"><button type="button" class="btn btn-lg btn-block">All <?php echo (int) wp_count_terms( 'lez_genres' ); ?> Genres</button></a>
+			<a href="?view=genres"><button type="button" class="btn btn-lg btn-block">All <?php echo (int) $count_genres; ?> Genres</button></a>
 		</div>
 	</div>
 </div>

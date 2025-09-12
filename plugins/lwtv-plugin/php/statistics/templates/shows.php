@@ -14,7 +14,7 @@ $view        = ( ! in_array( $sent_view, $valid_views, true ) ) ? 'overview' : $
 $baseurl = '/statistics/shows/';
 
 // OPTIMIZED: Cache shows count to avoid redundant calls
-$shows_count = lwtv_plugin()->generate_statistics( 'shows', 'total', 'count' );
+$shows_count = lwtv_plugin()->generate_total_counts( 'shows' );
 
 // OPTIMIZED: Pre-load taxonomy data for overview section
 $optimized_taxonomy = new Build_Taxonomy_Optimized();
@@ -22,6 +22,19 @@ $tropes_data        = $optimized_taxonomy->make_comprehensive( 'post_type_shows'
 $genres_data        = $optimized_taxonomy->make_comprehensive( 'post_type_shows', 'lez_genres', false );
 
 // Sort by count descending for top 10
+uasort(
+	$tropes_data,
+	function ( $a, $b ) {
+		return $b['count'] <=> $a['count'];
+	}
+);
+uasort(
+	$genres_data,
+	function ( $a, $b ) {
+		return $b['count'] <=> $a['count'];
+	}
+);
+
 $top_tropes = array_slice( $tropes_data, 0, 10, true );
 $top_genres = array_slice( $genres_data, 0, 10, true );
 

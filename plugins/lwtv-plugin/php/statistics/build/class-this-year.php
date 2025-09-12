@@ -1,4 +1,9 @@
 <?php
+/**
+ * This Year Statistics Build Class - OLD Version
+ *
+ * @package LezWatch.TV
+ */
 
 namespace LWTV\Statistics\Build;
 

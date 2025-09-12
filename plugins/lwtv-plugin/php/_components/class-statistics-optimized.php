@@ -8,8 +8,7 @@
 namespace LWTV\_Components;
 
 use LWTV\Queeries\Taxonomy as Queery_Taxonomy;
-use LWTV\Statistics\{ Gutenberg_SSR, Matcher_Optimized as Matcher, Query_Vars, The_Array, The_Output };
-use LWTV\Statistics\Build\Dead_Basic as Build_Dead_Basic;
+use LWTV\Statistics\{ Gutenberg_SSR, Query_Vars };
 use LWTV\Statistics\Build\Dead as Build_Dead;
 use LWTV\Statistics\Build\Formats as Build_Formats;
 use LWTV\Statistics\Build\Nations as Build_Nations;
@@ -18,7 +17,6 @@ use LWTV\Statistics\Build\Stations as Build_Stations;
 use LWTV\Statistics\Build\We_Love_It as Build_We_Love_It;
 use LWTV\Statistics\Build\Worth_It as Build_Worth_It;
 use LWTV\Statistics\Build\Taxonomy_Optimized as Build_Taxonomy_Optimized;
-use LWTV\Statistics\Build\Taxonomy_Breakdowns as Build_Taxonomy_Breakdowns;
 use LWTV\Statistics\Format\{ Barcharts_Optimized, Lists_Optimized, Percentage_Optimized, Piecharts_Optimized, Trendline_Optimized };
 
 class Statistics_Optimized implements Component, Templater {
@@ -50,15 +48,17 @@ class Statistics_Optimized implements Component, Templater {
 	 */
 	public function get_template_tags(): array {
 		return array(
-			'generate_statistics'         => array( $this, 'generate' ),
-			'generate_station_statistics' => array( $this, 'generate_station_statistics' ),
-			'generate_nation_statistics'  => array( $this, 'generate_nation_statistics' ),
-			'generate_shows_statistics'   => array( $this, 'generate_shows_statistics' ),
-			'generate_shows_count'        => array( $this, 'count_shows' ),
-			'generate_stats_block'        => array( $this, 'generate_stats_block' ),
-			'generate_stats_block_actor'  => array( $this, 'generate_stats_block_actor' ),
-			'generate_total_counts'       => array( $this, 'generate_total_counts' ),
-			'generate_total_dead'         => array( $this, 'generate_total_dead' ),
+			'generate_statistics'            => array( $this, 'generate' ),
+			'generate_station_statistics'    => array( $this, 'generate_station_statistics' ),
+			'generate_nation_statistics'     => array( $this, 'generate_nation_statistics' ),
+			'generate_shows_statistics'      => array( $this, 'generate_shows_statistics' ),
+			'generate_actors_statistics'     => array( $this, 'generate_actors_statistics' ),
+			'generate_characters_statistics' => array( $this, 'generate_characters_statistics' ),
+			'generate_shows_count'           => array( $this, 'count_shows' ),
+			'generate_stats_block'           => array( $this, 'generate_stats_block' ),
+			'generate_stats_block_actor'     => array( $this, 'generate_stats_block_actor' ),
+			'generate_total_counts'          => array( $this, 'generate_total_counts' ),
+			'generate_total_dead'            => array( $this, 'generate_total_dead' ),
 		);
 	}
 
@@ -121,167 +121,6 @@ class Statistics_Optimized implements Component, Templater {
 					break;
 			}
 		}
-	}
-
-	/*
-	 * Generate: Statistics Base Code - Optimized Version
-	 *
-	 * @param string $subject      'actors', 'characters', or 'shows'.
-	 * @param string $data         The type stats being run.
-	 * @param string $format       The format of the output.
-	 * @param int    $post_id      Post ID (optional)
-	 * @param array  $custom_array Extra array of data (optional)
-	 *
-	 * @return mixed/na -- Value or the formatted output.
-	 */
-	public function generate( $subject, $data, $format, $post_id = false, $custom_array = array() ) {
-		// Bail early if we're not an approved subject matter.
-		if ( ! in_array( $subject, array( 'characters', 'shows', 'actors' ), true ) ) {
-			lwtv_plugin()->error_log( 'statistics-debug', 'Returning early - subject not in approved array: ' . $subject );
-			return;
-		}
-
-		/**
-		 * Count may change based on what we're counting.
-		 *
-		 * Default is the number of posts.
-		 * Dead is number of dead.
-		 * Deep data is just weird.
-		 */
-
-		// Default
-		$count         = wp_count_posts( 'post_type_' . $subject )->publish;
-		$data_original = null;
-
-		// If dead ...
-		if ( 'dead' === $data ) {
-			$count = ( new Build_Dead_Basic() )->make( $subject, 'count' );
-		}
-
-		// If there isn't an EXACT match for the data, we may have DEEP data.
-		if ( ! isset( Matcher::BUILD_CLASS_MATCHER[ $data ] ) ) {
-			// Data for if this is complex and weird.
-			$maybe_deep = $this->maybe_deep( $data, $format, $count, $subject );
-			if ( false !== $maybe_deep ) {
-				$data_original = $data;
-				$data          = $maybe_deep['data'];
-				$count         = $maybe_deep['count'];
-			}
-
-			// Data if this is a year:
-			$maybe_year = $this->maybe_year( $data );
-
-			if ( false !== $maybe_year ) {
-				$data_original = $data;
-				$data          = 'this-year';
-			}
-		} else {
-			$maybe_deep = false;
-		}
-
-		// Return early if count:
-		if ( 'count' === $format ) {
-			return $count;
-		}
-
-		// OPTIMIZED: Use optimized array builder
-		$build_array = ( new The_Array() )->make( $subject, $data, $format, $post_id, $custom_array, $count, $maybe_deep, $data_original );
-
-		// If the array is empty, bail.
-		if ( empty( $build_array ) || ! is_array( $build_array ) ) {
-			// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_print_r
-			lwtv_plugin()->error_log( 'statistics-debug', 'Returning early - build_array is empty: ' . print_r( $build_array, true ) );
-			return;
-		}
-
-		// Return Array if array is format.
-		// Also if we're dead-list and time. It's just a thing.
-		if ( 'array' === $format || ( 'time' === $format && 'dead-list' === $data ) ) {
-			return $build_array;
-		}
-
-		// Otherwise, build it!
-		( new The_Output() )->make( $subject, $data, $build_array, $count, $format, $data_original );
-	}
-
-	/**
-	 * Custom check for years. Since that comes as 'sexuality_year_YYYY' we need to check:
-	 *
-	 * 1. Is this between LWTV_FIRST_YEAR and this year?
-	 * 2. Is the data in our approved subsets?
-	 *
-	 * If so, yes.
-	 *
-	 * @param string $data Data to check
-	 *
-	 * @return bool
-	 */
-	public function maybe_year( $data ) {
-		$maybe_year = substr( $data, -4 );
-
-		if ( $maybe_year <= gmdate( 'Y' ) && $maybe_year >= LWTV_FIRST_YEAR ) {
-			$years_array = array( 'sexuality_year', 'gender_year' );
-			$maybe_case  = substr( $data, 0, -5 );
-			if ( in_array( $maybe_case, $years_array, true ) ) {
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	/**
-	 * Deep Dive for custom data that is extra complex.
-	 *
-	 * @param string $data   Data we're looking for.
-	 * @param string $format Output format.
-	 *
-	 * @return array Customized array.
-	 */
-	public function maybe_deep( $data, $format, $count, $subject ) {
-
-		$details = explode( '_', $data );
-		$valid   = array( 'nations', 'stations', 'formats', 'country' );
-
-		// If the details don't match what we know to be true, we are false.
-		if ( ! in_array( $details[0], $valid, true ) ) {
-			lwtv_plugin()->error_log( 'statistics-debug', 'Returning false - first detail does not match: ' . $details[0] );
-			return false;
-		}
-
-		$minor = $details[1]; // station or nation name.
-
-		if ( 'trendline' === $format && 'on-air' === $details[2] ) {
-			$run_data = 'on-air';
-
-			// Build Pre-Array based on station or nation
-			switch ( $details[0] ) {
-				case 'stations':
-					$pre_array = ( new Queery_Taxonomy() )->make( 'post_type_shows', 'lez_stations', 'slug', $minor );
-					break;
-				case 'country':
-					$pre_array = ( new Queery_Taxonomy() )->make( 'post_type_shows', 'lez_country', 'slug', $minor );
-					break;
-			}
-
-			$count = $this->count_shows( 'total', 'stations', $minor );
-		} else {
-			lwtv_plugin()->error_log( 'statistics-debug', 'Using taxonomy_breakdowns for data: ' . $data );
-			$run_data  = 'taxonomy_breakdowns';
-			$pre_count = $count;
-			$count     = ( new Build_Taxonomy_Breakdowns() )->make( $pre_count, 'count', $data, $subject );
-		}
-
-		$return_data = array(
-			'data'     => $run_data,
-			'minor'    => $minor,
-			'prearray' => isset( $pre_array ) ? $pre_array : false,
-			'count'    => $count,
-		);
-
-		// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_print_r
-		lwtv_plugin()->error_log( 'statistics-debug', 'Returning data: ' . print_r( $return_data, true ) );
-		return $return_data;
 	}
 
 	/*
@@ -443,7 +282,7 @@ class Statistics_Optimized implements Component, Templater {
 		$station_data = new Build_Stations()->get_station_details( $station, $format, $view );
 		$data         = $station_data['formatted'] ?? $station_data;
 
-		return $this->handle_output( $data, $station, $view, $format, 'station', $custom_data, $bar_direction );
+		return self::handle_output( $data, $station, $view, $format, 'station', $custom_data, $bar_direction );
 	}
 
 	/**
@@ -473,7 +312,7 @@ class Statistics_Optimized implements Component, Templater {
 		$station_data = new Build_Nations()->get_nation_details( $nation, $format, $view );
 		$data         = $station_data['formatted'] ?? $station_data;
 
-		return $this->handle_output( $data, $nation, $view, $format, 'nation', $custom_data, $bar_direction );
+		return self::handle_output( $data, $nation, $view, $format, 'nation', $custom_data, $bar_direction );
 	}
 
 	/**
@@ -484,9 +323,6 @@ class Statistics_Optimized implements Component, Templater {
 	 * @return array statistics data
 	 */
 	public function generate_shows_statistics( $format = 'list', $type = 'formats' ) {
-
-		lwtv_plugin()->error_log( 'shows-debug', 'Generating shows statistics for type: ' . $type );
-
 		$all_data = array();
 		$view     = 'shows';
 		switch ( $type ) {
@@ -523,25 +359,57 @@ class Statistics_Optimized implements Component, Templater {
 		$data          = array();
 		$data[ $view ] = $all_data;
 
-		return $this->handle_output( $data, 'all', $view, $format, 'shows' );
+		return self::handle_output( $data, 'all', $view, $format, 'shows' );
 	}
 
 	/**
-	 * Batch generate multiple statistics efficiently
+	 * Generate actors statistics
 	 *
-	 * @param string $subject Post type subject
-	 * @param array $data_types Array of data types to generate
 	 * @param string $format Output format
-	 * @return array Multi-dimensional array of statistics
+	 * @param string $type View type (what subpage we're on, so gender, sexuality, etc)
+	 * @return array actors statistics data
 	 */
-	public function batch_generate( $subject, $data_types, $format = 'array' ) {
-		$results = array();
+	public function generate_actors_statistics( $format = 'list', $type = 'gender' ) {
+		$all_data = array();
+		$view     = 'actors';
 
-		foreach ( $data_types as $data_type ) {
-			$results[ $data_type ] = $this->generate( $subject, $data_type, $format );
+		switch ( $type ) {
+			case 'gender':
+				$all_data = ( new Build_Taxonomy_Optimized() )->make_comprehensive( 'post_type_actors', 'lez_actor_gender', true );
+				break;
+			case 'sexuality':
+				$all_data = ( new Build_Taxonomy_Optimized() )->make_comprehensive( 'post_type_actors', 'lez_actor_sexuality', true );
+				break;
+			case 'roles':
+				// TBD
+				break;
 		}
 
-		return $results;
+		if ( empty( $all_data ) ) {
+			lwtv_plugin()->error_log( 'actors-debug', 'All data is empty' );
+			return array();
+		}
+
+		$data          = array();
+		$data[ $view ] = $all_data;
+
+		return self::handle_output( $data, 'all', $view, $format, 'actors' );
+	}
+
+	/**
+	 * Generate characters statistics
+	 *
+	 * @param string $format Output format
+	 * @param string $type View type (what subpage we're on, so gender, sexuality, etc)
+	 * @return array characters statistics data
+	 */
+	public function generate_characters_statistics( $format = 'list', $type = 'gender' ) {
+		$all_data = array();
+		$view     = 'characters';
+
+		// TO DO: Implement this.
+
+		return $all_data;
 	}
 
 	/**

@@ -1,6 +1,6 @@
 <?php
 /**
- * The template for displaying station statistics
+ * The template for displaying station statistics -- Optimized Version
  *
  * @package LezWatch.TV
  */

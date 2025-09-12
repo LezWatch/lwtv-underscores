@@ -1,4 +1,11 @@
 <?php
+/**
+ * Yes/No Statistics Build Class - OLD Version
+ *
+ * This may not be needed anymore.
+ *
+ * @package LezWatch.TV
+ */
 
 namespace LWTV\Statistics\Build;
 

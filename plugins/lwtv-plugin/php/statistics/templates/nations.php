@@ -1,6 +1,6 @@
 <?php
 /**
- * The template for displaying nation statistics
+ * The template for displaying nation statistics -- Optimized Version
  *
  * @package LezWatch.TV
  */
