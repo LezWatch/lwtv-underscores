@@ -90,9 +90,6 @@ class Piecharts_Optimized {
 	 */
 	private function format_data_for_chart( $data, $clean_view, $type ) {
 
-		lwtv_plugin()->error_log( 'piecharts-debug', 'format_data_for_chart Clean view: ' . $clean_view );
-		lwtv_plugin()->error_log( 'piecharts-debug', 'format_data_for_chart Type: ' . $type );
-
 		$labels  = '';
 		$dataset = '';
 
@@ -142,6 +139,7 @@ class Piecharts_Optimized {
 
 		switch ( $type ) {
 			case 'formats':
+			case 'queer-irl':
 				foreach ( $data as $name => $count ) {
 					$labels  .= '"' . esc_js( $name ) . '", ';
 					$dataset .= '"' . esc_js( $count ) . '", ';

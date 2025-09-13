@@ -111,7 +111,7 @@ class Taxonomy_Optimized {
 		$cache_key = 'taxonomy_comp_' . $post_type . '_' . $taxonomy . '_' . $sort_order . '_' . ( $include_empty ? 'all' : 'nonempty' );
 		$array     = lwtv_plugin()->get_transient( $cache_key );
 
-		if ( false === $array ) {
+		if ( false === $array || empty( $array ) ) {
 			$optimized_queery = new Queery_Taxonomy_Optimized();
 			$array            = $optimized_queery->get_cached_term_counts( $post_type, $taxonomy, array(), $sort_order );
 

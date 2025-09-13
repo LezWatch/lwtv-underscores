@@ -1,4 +1,9 @@
 <?php
+/**
+ * Scores Build Class - Optimized Version
+ *
+ * @package LezWatch.TV
+ */
 
 namespace LWTV\Statistics\Build;
 

@@ -13,6 +13,7 @@ use LWTV\Statistics\Build\Dead as Build_Dead;
 use LWTV\Statistics\Build\Formats as Build_Formats;
 use LWTV\Statistics\Build\Nations as Build_Nations;
 use LWTV\Statistics\Build\On_Air_Optimized as Build_On_Air;
+use LWTV\Statistics\Build\Queer_IRL as Build_Queer_IRL;
 use LWTV\Statistics\Build\Stations as Build_Stations;
 use LWTV\Statistics\Build\We_Love_It as Build_We_Love_It;
 use LWTV\Statistics\Build\Worth_It as Build_Worth_It;
@@ -359,7 +360,7 @@ class Statistics_Optimized implements Component, Templater {
 		$data          = array();
 		$data[ $view ] = $all_data;
 
-		return self::handle_output( $data, 'all', $view, $format, 'shows' );
+		return self::handle_output( $data, 'all', $view, $format, 'shows', array(), 'horizontal' );
 	}
 
 	/**
@@ -379,9 +380,6 @@ class Statistics_Optimized implements Component, Templater {
 				break;
 			case 'sexuality':
 				$all_data = ( new Build_Taxonomy_Optimized() )->make_comprehensive( 'post_type_actors', 'lez_actor_sexuality', true );
-				break;
-			case 'roles':
-				// TBD
 				break;
 		}
 
@@ -407,9 +405,35 @@ class Statistics_Optimized implements Component, Templater {
 		$all_data = array();
 		$view     = 'characters';
 
-		// TO DO: Implement this.
+		switch ( $type ) {
+			case 'cliches':
+				$all_data = ( new Build_Taxonomy_Optimized() )->make_comprehensive( 'post_type_characters', 'lez_cliches', true );
+				break;
+			case 'gender':
+				$all_data = ( new Build_Taxonomy_Optimized() )->make_comprehensive( 'post_type_characters', 'lez_gender', true );
+				break;
+			case 'sexuality':
+				$all_data = ( new Build_Taxonomy_Optimized() )->make_comprehensive( 'post_type_characters', 'lez_sexuality', true );
+				break;
+			case 'queer-irl':
+				$view     = 'queer_irl';
+				$all_data = ( new Build_Queer_IRL() )->generate( $format );
+				break;
+			case 'on-air':
+				$view     = 'on_air';
+				$all_data = ( new Build_On_Air() )->generate( 'characters' );
+				break;
+		}
 
-		return $all_data;
+		if ( empty( $all_data ) ) {
+			lwtv_plugin()->error_log( 'characters-debug', 'All data is empty' );
+			return array();
+		}
+
+		$data          = array();
+		$data[ $view ] = $all_data;
+
+		return self::handle_output( $data, 'all', $view, $format, 'characters', array(), 'vertical' );
 	}
 
 	/**

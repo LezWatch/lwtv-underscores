@@ -44,7 +44,7 @@ class On_Air_Optimized {
 	}
 
 	/**
-	 * Build characters on air statistics using optimized single query
+	 * Build characters on air statistics by processing serialized show group data
 	 *
 	 * @param array $year_range Array of years
 	 * @param array $filtered_data Filtered data (WP_Query object or array)
@@ -57,25 +57,6 @@ class On_Air_Optimized {
 		try {
 			$array = array();
 
-			// Single optimized query to get character on air counts by year
-			// phpcs:disable
-			$queery = "SELECT
-				SUBSTRING_INDEX(SUBSTRING_INDEX(show_meta.meta_value, '\"', 4), '\"', -1) as air_year,
-				COUNT(DISTINCT chars.ID) as char_count
-			FROM {$wpdb->posts} chars
-			INNER JOIN {$wpdb->postmeta} show_meta ON chars.ID = show_meta.post_id AND show_meta.meta_key = 'lezchars_show_group'
-			WHERE chars.post_type = 'post_type_characters'
-			AND chars.post_status = 'publish'
-			AND show_meta.meta_value IS NOT NULL
-			AND show_meta.meta_value != ''
-			AND SUBSTRING_INDEX(SUBSTRING_INDEX(show_meta.meta_value, '\"', 4), '\"', -1) REGEXP '^[0-9]{4}$'
-			GROUP BY air_year
-			ORDER BY air_year DESC";
-			// phpcs:enable
-
-			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- There's no need to prepare this query
-			$results = $wpdb->get_results( $queery, ARRAY_A );
-
 			// Build base array with all years
 			foreach ( $year_range as $year ) {
 				$array[ $year ] = array(
@@ -85,12 +66,55 @@ class On_Air_Optimized {
 				);
 			}
 
-			// Update counts with actual data
+			// Get all characters with their show group data
+			$query = "SELECT
+				chars.ID,
+				show_meta.meta_value as show_group_data
+			FROM {$wpdb->posts} chars
+			INNER JOIN {$wpdb->postmeta} show_meta ON chars.ID = show_meta.post_id AND show_meta.meta_key = 'lezchars_show_group'
+			WHERE chars.post_type = 'post_type_characters'
+			AND chars.post_status = 'publish'
+			AND show_meta.meta_value IS NOT NULL
+			AND show_meta.meta_value != ''";
+
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- There's no need to prepare this query
+			$results = $wpdb->get_results( $query, ARRAY_A );
+
+			// Track character appearances per year
+			$year_counts = array();
+
+			// Process each character's show group data
 			foreach ( $results as $row ) {
-				$air_year = (int) $row['air_year'];
-				if ( isset( $array[ $air_year ] ) ) {
-					$array[ $air_year ]['count'] = (int) $row['char_count'];
+				$show_group_data = maybe_unserialize( $row['show_group_data'] );
+
+				if ( ! is_array( $show_group_data ) ) {
+					continue;
 				}
+
+				// Extract years from each show relationship
+				foreach ( $show_group_data as $show_relationship ) {
+					if ( ! is_array( $show_relationship ) || ! isset( $show_relationship['appears'] ) ) {
+						continue;
+					}
+
+					$appears_years = $show_relationship['appears'];
+					if ( ! is_array( $appears_years ) ) {
+						continue;
+					}
+
+					// Count this character for each year they appeared
+					foreach ( $appears_years as $year ) {
+						$year = (int) $year;
+						if ( isset( $array[ $year ] ) ) {
+							$year_counts[ $year ] = ( $year_counts[ $year ] ?? 0 ) + 1;
+						}
+					}
+				}
+			}
+
+			// Update counts with actual data
+			foreach ( $year_counts as $year => $count ) {
+				$array[ $year ]['count'] = $count;
 			}
 
 			// Sort array by year keys in ascending order (oldest first)

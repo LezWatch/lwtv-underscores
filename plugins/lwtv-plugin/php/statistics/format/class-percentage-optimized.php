@@ -73,9 +73,10 @@ class Percentage_Optimized {
 			case 'shows':
 			case 'characters':
 			case 'actors':
+			case 'queer_irl':
 				foreach ( $data as $item ) {
 
-					if ( in_array( $type, array( 'stars', 'actors' ), true ) && 0 === $item['count'] ) {
+					if ( in_array( $type, array( 'stars', 'actors', 'characters' ), true ) && 0 === $item['count'] ) {
 						continue;
 					}
 
@@ -123,12 +124,15 @@ class Percentage_Optimized {
 	 * @return int Count total
 	 */
 	private function get_count_total( $data, $clean_view ) {
+
+		lwtv_plugin()->error_log( 'percentage-debug', 'get_count_total Clean view: ' . $clean_view );
 		switch ( $clean_view ) {
 			case 'tropes':
 			case 'formats':
 			case 'shows':
 			case 'we_love_it':
 			case 'worth_it':
+			case 'queer_irl':
 				return array_sum( array_column( $data, 'count' ) );
 			default:
 				return array_sum( $data );
