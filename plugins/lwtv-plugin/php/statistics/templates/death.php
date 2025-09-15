@@ -7,24 +7,18 @@
 
 use LWTV\Statistics\Build\Taxonomy_Optimized as Build_Taxonomy_Optimized;
 
+$baseurl = '/statistics/death/';
+
 // OPTIMIZED: Pre-load death-related data efficiently
 $optimized_taxonomy = new Build_Taxonomy_Optimized();
 
-$deadchars = lwtv_plugin()->generate_statistics( 'characters', 'dead', 'count' );
-$allchars  = lwtv_plugin()->generate_statistics( 'characters', 'all', 'count' );
-$deadshows = lwtv_plugin()->generate_statistics( 'shows', 'dead', 'count' );
-$allshows  = lwtv_plugin()->generate_statistics( 'shows', 'all', 'count' );
+$deadchars = lwtv_plugin()->generate_total_dead( 'characters' );
+$allchars  = lwtv_plugin()->generate_total_counts( 'characters' );
+$deadshows = lwtv_plugin()->generate_total_dead( 'shows' );
+$allshows  = lwtv_plugin()->generate_total_counts( 'shows' );
 
 // OPTIMIZED: Get dead-years average directly without output buffering
-$dead_years_data    = lwtv_plugin()->generate_statistics( 'characters', 'dead-years', 'array' );
-$dead_years_average = 0;
-if ( ! empty( $dead_years_data ) ) {
-	$sum = 0;
-	foreach ( $dead_years_data as $item ) {
-		$sum += (float) $item['count'];
-	}
-	$dead_years_average = round( $sum / ( gmdate( 'Y' ) - LWTV_FIRST_YEAR ) );
-}
+$dead_years_average = lwtv_plugin()->generate_dead_statistics( 'characters', 'years', 'average' );
 
 $deadchar_percent = round( ( $deadchars / $allchars ) * 100, 2 );
 $deadshow_percent = round( ( $deadshows / $allshows ) * 100, 2 );
@@ -32,168 +26,31 @@ $deadshow_percent = round( ( $deadshows / $allshows ) * 100, 2 );
 $valid_views = array( 'characters', 'shows', 'stations', 'nations', 'years', 'list' );
 $sent_view   = get_query_var( 'view', 'overview' );
 $view        = ( ! in_array( $sent_view, $valid_views, true ) ) ? 'overview' : $sent_view;
-?>
-<ul class="nav nav-tabs">
-	<?php
-	$baseurl = '/statistics/death/';
 
-	echo '<li class="nav-item"><a class="nav-link' . esc_attr( ( 'overview' === $view ) ? ' active' : '' ) . '" href="' . esc_url( $baseurl ) . '">OVERVIEW</a></li>';
-	foreach ( $valid_views as $the_view ) {
-		$active = ( $view === $the_view ) ? ' active' : '';
-		echo '<li class="nav-item"><a class="nav-link' . esc_attr( $active ) . '" href="' . esc_url( $baseurl . $the_view . '/' ) . '">' . esc_html( strtoupper( str_replace( '-', ' ', $the_view ) ) ) . '</a></li>';
-	}
-	?>
-</ul>
-
-<p>&nbsp;</p>
-
-<?php
+// phpcs:ignore PEAR.Files.IncludingFile.UseRequire
+include plugin_dir_path( __FILE__ ) . 'death/navbar.php';
 
 switch ( $view ) {
 	case 'overview':
-		?>
-		<div class="container">
-			<div class="row">
-				<div class="col">
-					<div class="card text-center">
-						<h3 class="card-header characters">Characters</h3>
-						<div class="card-body bg-light">
-							<h5 class="card-title"><?php echo esc_html( $deadchar_percent ); ?>% (<?php echo esc_html( $deadchars ); ?>)</h5>
-						</div>
-					</div>
-				</div>
-				<div class="col">
-					<div class="card text-center">
-						<h3 class="card-header shows">Shows</h3>
-						<div class="card-body bg-light">
-							<h5 class="card-title"><?php echo esc_html( $deadshow_percent ); ?>% (<?php echo esc_html( $deadshows ); ?>)</h5>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-
-		<p>&nbsp;<br/>On average, <strong><?php echo esc_html( $dead_years_average ); ?></strong> characters die per year (including years where no queers died).</p>
-
-		<div class="container">
-			<div class="row">
-				<div class="col">
-					<?php lwtv_plugin()->generate_statistics( 'characters', 'dead-years', 'trendline' ); ?>
-				</div>
-			</div>
-		</div>
-		<?php
+		include plugin_dir_path( __FILE__ ) . 'death/overview.php';
 		break;
 	case 'characters':
-		?>
-		<h3>Death By Character Sexual Orientation</h3>
-		<div class="container chart-container">
-			<div class="row">
-				<div class="col-sm-6">
-					<?php lwtv_plugin()->generate_statistics( 'characters', 'dead-sex', 'piechart' ); ?>
-				</div>
-				<div class="col-sm-6">
-					<?php lwtv_plugin()->generate_statistics( 'characters', 'dead-sex', 'percentage' ); ?>
-				</div>
-			</div>
-		</div>
-		<h3>Death By Character Gender Identity</h3>
-		<div class="container chart-container">
-			<div class="row">
-				<div class="col-sm-6">
-					<?php lwtv_plugin()->generate_statistics( 'characters', 'dead-gender', 'piechart' ); ?>
-				</div>
-				<div class="col-sm-6">
-					<?php lwtv_plugin()->generate_statistics( 'characters', 'dead-gender', 'percentage' ); ?>
-				</div>
-			</div>
-		</div>
-		<h3>Death By Character Role</h3>
-		<div class="container chart-container">
-			<div class="row">
-				<div class="col-sm-6">
-					<?php lwtv_plugin()->generate_statistics( 'characters', 'dead-role', 'piechart' ); ?>
-				</div>
-				<div class="col-sm-6">
-					<?php lwtv_plugin()->generate_statistics( 'characters', 'dead-role', 'percentage' ); ?>
-				</div>
-			</div>
-		</div>
-		<?php
+		include plugin_dir_path( __FILE__ ) . 'death/characters.php';
 		break;
 	case 'shows':
-		?>
-		<h3>Death per Show Breakdown</h3>
-		<div class="container chart-container">
-			<div class="row">
-				<div class="col-sm-6">
-					<?php lwtv_plugin()->generate_statistics( 'shows', 'dead-shows', 'piechart' ); ?>
-				</div>
-				<div class="col-sm-6">
-					<?php lwtv_plugin()->generate_statistics( 'shows', 'dead-shows', 'percentage' ); ?>
-				</div>
-			</div>
-		</div>
-		<?php
+		include plugin_dir_path( __FILE__ ) . 'death/shows.php';
 		break;
 	case 'stations':
-		?>
-		<h3>Death per Station/Network Breakdown</h3>
-		<div class="container chart-container">
-			<div class="row">
-				<div class="col-sm-6">
-					<?php lwtv_plugin()->generate_statistics( 'characters', 'dead-stations', 'piechart' ); ?>
-				</div>
-				<div class="col-sm-6">
-					<?php lwtv_plugin()->generate_statistics( 'characters', 'dead-stations', 'percentage' ); ?>
-				</div>
-			</div>
-		</div>
-		<?php
+		include plugin_dir_path( __FILE__ ) . 'death/stations.php';
 		break;
 	case 'nations':
-		?>
-		<h3>Death per Country Breakdown</h3>
-		<div class="container chart-container">
-			<div class="row">
-				<div class="col-sm-6">
-					<?php lwtv_plugin()->generate_statistics( 'characters', 'dead-nations', 'piechart' ); ?>
-				</div>
-				<div class="col-sm-6">
-					<?php lwtv_plugin()->generate_statistics( 'characters', 'dead-nations', 'percentage' ); ?>
-				</div>
-			</div>
-		</div>
-		<?php
+		include plugin_dir_path( __FILE__ ) . 'death/nations.php';
 		break;
 	case 'years':
-		?>
-		<h3>Death By Character Year</h3>
-		<p>On average, <strong><?php echo esc_html( $dead_years_average ); ?></strong> characters die per year (including years where no queers died).</p>
-
-		<div class="container chart-container">
-			<div class="row">
-				<div class="col-sm-6">
-					<?php lwtv_plugin()->generate_statistics( 'characters', 'dead-years', 'piechart' ); ?>
-				</div>
-				<div class="col-sm-6">
-					<?php lwtv_plugin()->generate_statistics( 'characters', 'dead-years', 'percentage' ); ?>
-				</div>
-			</div>
-		</div>
-		<?php
+		include plugin_dir_path( __FILE__ ) . 'death/years.php';
 		break;
 	case 'list':
-		?>
-		<h3>Dead Characters List</h3>
-		<div class="container chart-container">
-			<div class="row">
-				<div class="col">
-					<?php lwtv_plugin()->generate_statistics( 'characters', 'dead-list', 'list' ); ?>
-				</div>
-			</div>
-		</div>
-		<?php
+		include plugin_dir_path( __FILE__ ) . 'death/list.php';
 		break;
 }
 

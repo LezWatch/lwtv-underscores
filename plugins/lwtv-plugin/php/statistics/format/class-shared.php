@@ -1,5 +1,9 @@
 <?php
-
+/**
+ * Shared functions for the new optimized statistics
+ *
+ * @package LWTV\Statistics\Format
+ */
 namespace LWTV\Statistics\Format;
 
 class Shared {
@@ -24,7 +28,7 @@ class Shared {
 		$data = $data[ $clean_view ];
 
 		// For on_air, we want to sort by the name column so the years go in ascending order (1951 -> 2025)
-		if ( 'on_air' === $clean_view ) {
+		if ( in_array( $clean_view, array( 'on_air', 'years' ), true ) ) {
 			usort(
 				$data,
 				function ( $a, $b ) {

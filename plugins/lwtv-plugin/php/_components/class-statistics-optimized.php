@@ -55,6 +55,7 @@ class Statistics_Optimized implements Component, Templater {
 			'generate_shows_statistics'      => array( $this, 'generate_shows_statistics' ),
 			'generate_actors_statistics'     => array( $this, 'generate_actors_statistics' ),
 			'generate_characters_statistics' => array( $this, 'generate_characters_statistics' ),
+			'generate_dead_statistics'       => array( $this, 'generate_dead_statistics' ),
 			'generate_shows_count'           => array( $this, 'count_shows' ),
 			'generate_stats_block'           => array( $this, 'generate_stats_block' ),
 			'generate_stats_block_actor'     => array( $this, 'generate_stats_block_actor' ),
@@ -437,11 +438,53 @@ class Statistics_Optimized implements Component, Templater {
 	}
 
 	/**
+	 * Generate dead statistics
+	 *
+	 * @param string $subject Subject type (characters/shows)
+	 * @param string $view View type (years/roles/sexuality/gender/stations/nations)
+	 * @param string $format Format type (array/count/percentage/piechart/barchart/trendline/list)
+	 *
+	 * @return array Dead statistics data
+	 */
+	public function generate_dead_statistics( $subject, $view, $format ) {
+		$all_data = array();
+
+		if ( 'count' === $format ) {
+			if ( ! in_array( $subject, array( 'characters', 'shows' ), true ) ) {
+				lwtv_plugin()->error_log( 'dead-debug', 'Invalid subject for death count: ' . $subject );
+				return 0;
+			}
+
+			return ( new Build_Dead() )->total_dead_characters( $subject );
+		}
+
+		switch ( $subject ) {
+			case 'characters':
+				$all_data = ( new Build_Dead() )->generate_characters( $view, $format );
+				break;
+			case 'shows':
+				$all_data = ( new Build_Dead() )->generate_shows( $view, $format );
+				break;
+		}
+
+		if ( empty( $all_data ) ) {
+			lwtv_plugin()->error_log( 'dead-debug', 'All data is empty' );
+			return array();
+		}
+
+		return self::handle_output( $all_data, 'all', $view, $format, 'death', array(), 'vertical' );
+	}
+
+	/**
 	 * Generate total counts
 	 *
 	 * @return int Total counts
 	 */
-	public function generate_total_counts( $subject ) {
+	public function generate_total_counts( $subject, $death = false ) {
+		if ( $death ) {
+			return ( new Build_Dead() )->total_dead_characters( $subject );
+		}
+
 		return wp_count_posts( 'post_type_' . $subject )->publish;
 	}
 
