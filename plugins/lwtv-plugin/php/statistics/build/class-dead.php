@@ -763,7 +763,6 @@ class Dead {
 			case 'count':
 				// Return just the counts
 				return $role_counts;
-
 			case 'percentage':
 				// Return percentages
 				$formatted = array();
@@ -776,7 +775,6 @@ class Dead {
 					);
 				}
 				return array( 'death' => $formatted );
-
 			case 'piechart':
 				// Return data formatted for pie charts
 				$formatted = array();
@@ -789,7 +787,6 @@ class Dead {
 					);
 				}
 				return array( 'death' => $formatted );
-
 			case 'barchart':
 				// Return data formatted for bar charts
 				$formatted = array();
@@ -800,7 +797,6 @@ class Dead {
 					);
 				}
 				return $formatted;
-
 			case 'list':
 				// Return detailed list format
 				$formatted = array();
@@ -814,7 +810,6 @@ class Dead {
 					);
 				}
 				return $formatted;
-
 			case 'array':
 			default:
 				// Return raw array format
