@@ -21,7 +21,7 @@ class Piecharts_Optimized {
 		}
 
 		// Generate ChartJS piechart
-		$chart_id            = $type . $context . $view . '_pie';
+		$chart_id            = $this->generate_chart_id( $type, $context, $view );
 		$position_or_display = 'display: false';
 
 		// We show empty sets for these:
@@ -108,6 +108,7 @@ class Piecharts_Optimized {
 				break;
 			case 'tropes':
 			case 'formats':
+			case 'death':
 				foreach ( $data as $item ) {
 					$labels  .= '"' . esc_js( $item['name'] ) . '", ';
 					$dataset .= '"' . esc_js( $item['count'] ) . '", ';
@@ -162,5 +163,17 @@ class Piecharts_Optimized {
 			'labels' => $labels,
 			'data'   => $dataset,
 		);
+	}
+
+	/**
+	 * Generate chart ID
+	 *
+	 * @param string $type Type of context
+	 * @param string $context Station/Nation etc slug - CBS, USA, etc
+	 * @param string $view View type - sexuality, gender, tropes, intersections, formats, on-air
+	 * @return string Chart ID
+	 */
+	private function generate_chart_id( $type, $context, $view ) {
+		return $type . '_' . $context . '_' . $view . '_pie';
 	}
 }

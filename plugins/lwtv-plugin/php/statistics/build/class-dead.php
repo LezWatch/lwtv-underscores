@@ -126,6 +126,13 @@ class Dead {
 			case 'all':
 				$return = $this->generate_all( $format );
 				break;
+			case 'sexuality':
+			case 'gender':
+				$return = $this->generate_characters_taxonomy( $format, 'lez_' . $view );
+				break;
+			case 'role':
+				$return = $this->generate_characters_by_roles( $format );
+				break;
 			default:
 				$return = array();
 				break;
@@ -491,5 +498,334 @@ class Dead {
 		return array(
 			'stats' => $return,
 		);
+	}
+
+	/**
+	 * Generate taxonomy data
+	 *
+	 * @param string $format Format type (array/count/percentage/piechart/barchart/trendline/list)
+	 * @param string $taxonomy Taxonomy to generate data for
+	 *
+	 * @return array Taxonomy data
+	 */
+	public function generate_characters_taxonomy( $format, $taxonomy ) {
+		global $wpdb;
+
+		// Create cache key
+		$cache_key   = 'dead_characters_taxonomy_' . $taxonomy . '_' . $format;
+		$cached_data = lwtv_plugin()->get_transient( $cache_key );
+
+		// If cached data is found, return it
+		if ( false !== $cached_data ) {
+			lwtv_plugin()->error_log( 'dead-debug', 'Cached data found for ' . $cache_key );
+			return $cached_data;
+		}
+
+		try {
+			// Single optimized query to get all dead characters and their taxonomy values
+			$query = $wpdb->prepare(
+				"SELECT
+					t.slug as term_slug,
+					t.name as term_name,
+					COUNT(DISTINCT dead_chars.ID) as count
+				FROM {$wpdb->posts} dead_chars
+				INNER JOIN {$wpdb->term_relationships} dead_tr ON dead_chars.ID = dead_tr.object_id
+				INNER JOIN {$wpdb->term_taxonomy} dead_tt ON dead_tr.term_taxonomy_id = dead_tt.term_taxonomy_id
+				INNER JOIN {$wpdb->terms} dead_t ON dead_tt.term_id = dead_t.term_id
+				LEFT JOIN {$wpdb->term_relationships} tax_tr ON dead_chars.ID = tax_tr.object_id
+				LEFT JOIN {$wpdb->term_taxonomy} tax_tt ON tax_tr.term_taxonomy_id = tax_tt.term_taxonomy_id
+				LEFT JOIN {$wpdb->terms} t ON tax_tt.term_id = t.term_id
+				WHERE dead_chars.post_type = %s
+				AND dead_chars.post_status = 'publish'
+				AND dead_tt.taxonomy = %s
+				AND dead_t.slug = %s
+				AND tax_tt.taxonomy = %s
+				GROUP BY t.term_id, t.slug, t.name
+				ORDER BY count DESC, t.name ASC",
+				'post_type_characters',
+				'lez_cliches',
+				'dead',
+				$taxonomy
+			);
+
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- This is a prepared query (see above)
+			$results = $wpdb->get_results( $query, ARRAY_A );
+
+			// Format the results based on the requested format
+			$formatted_results = $this->format_taxonomy_results( $results, $format );
+
+			// Cache the results for 1 day
+			lwtv_plugin()->set_transient( $cache_key, $formatted_results, DAY_IN_SECONDS );
+
+			return $formatted_results;
+
+		} catch ( \Exception $e ) {
+			lwtv_plugin()->error_log( 'dead-debug', 'Error getting dead characters taxonomy data for ' . $taxonomy . ': ' . $e->getMessage() );
+			return array();
+		}
+	}
+
+	/**
+	 * Format taxonomy results based on requested format
+	 *
+	 * @param array $results Raw query results
+	 * @param string $format Format type
+	 * @return array Formatted results
+	 */
+	private function format_taxonomy_results( $results, $format ) {
+		if ( empty( $results ) ) {
+			return array();
+		}
+
+		$total_count = array_sum( array_column( $results, 'count' ) );
+
+		switch ( $format ) {
+			case 'count':
+				// Return just the counts
+				$formatted = array();
+				foreach ( $results as $result ) {
+					$formatted[ $result['term_slug'] ] = (int) $result['count'];
+				}
+				return $formatted;
+
+			case 'percentage':
+				// Return percentages
+				$formatted = array();
+				foreach ( $results as $result ) {
+					$percentage                        = $total_count > 0 ? round( ( $result['count'] / $total_count ) * 100, 2 ) : 0;
+					$formatted[ $result['term_slug'] ] = array(
+						'count'      => (int) $result['count'],
+						'percentage' => $percentage,
+						'name'       => $result['term_name'],
+					);
+				}
+				return array( 'death' => $formatted );
+
+			case 'piechart':
+				// Return data formatted for pie charts
+				$formatted = array();
+				foreach ( $results as $result ) {
+					$percentage  = $total_count > 0 ? round( ( $result['count'] / $total_count ) * 100, 2 ) : 0;
+					$formatted[] = array(
+						'name'       => $result['term_name'],
+						'count'      => (int) $result['count'],
+						'percentage' => $percentage,
+					);
+				}
+				return array( 'death' => $formatted );
+
+			case 'barchart':
+				// Return data formatted for bar charts
+				$formatted = array();
+				foreach ( $results as $result ) {
+					$formatted[] = array(
+						'name'  => $result['term_name'],
+						'count' => (int) $result['count'],
+					);
+				}
+				return $formatted;
+
+			case 'list':
+				// Return detailed list format
+				$formatted = array();
+				foreach ( $results as $result ) {
+					$percentage  = $total_count > 0 ? round( ( $result['count'] / $total_count ) * 100, 2 ) : 0;
+					$formatted[] = array(
+						'slug'       => $result['term_slug'],
+						'name'       => $result['term_name'],
+						'count'      => (int) $result['count'],
+						'percentage' => $percentage,
+					);
+				}
+				return $formatted;
+
+			case 'array':
+			default:
+				// Return raw array format
+				$formatted = array();
+				foreach ( $results as $result ) {
+					$formatted[ $result['term_slug'] ] = array(
+						'name'  => $result['term_name'],
+						'count' => (int) $result['count'],
+					);
+				}
+				return $formatted;
+		}
+	}
+
+	/**
+	 * Generate characters by roles
+	 *
+	 * @param string $format Format type
+	 * @return array Characters by roles
+	 */
+	private function generate_characters_by_roles( $format ) {
+		global $wpdb;
+
+		// Create cache key
+		$cache_key   = 'dead_characters_by_roles_' . $format;
+		$cached_data = lwtv_plugin()->get_transient( $cache_key );
+
+		// If cached data is found, return it
+		if ( false !== $cached_data ) {
+			lwtv_plugin()->error_log( 'dead-debug', 'Cached data found for ' . $cache_key );
+			return $cached_data;
+		}
+
+		try {
+			// Query to get all dead characters and their show group meta data
+			$query = $wpdb->prepare(
+				"SELECT
+					p.ID,
+					p.post_title,
+					show_meta.meta_value as show_group_data
+				FROM {$wpdb->posts} p
+				INNER JOIN {$wpdb->term_relationships} tr ON p.ID = tr.object_id
+				INNER JOIN {$wpdb->term_taxonomy} tt ON tr.term_taxonomy_id = tt.term_taxonomy_id
+				INNER JOIN {$wpdb->terms} t ON tt.term_id = t.term_id
+				LEFT JOIN {$wpdb->postmeta} show_meta ON p.ID = show_meta.post_id AND show_meta.meta_key = %s
+				WHERE p.post_type = %s
+				AND p.post_status = 'publish'
+				AND tt.taxonomy = %s
+				AND t.slug = %s
+				AND show_meta.meta_value IS NOT NULL
+				AND show_meta.meta_value != ''
+				ORDER BY p.post_title ASC",
+				'lezchars_show_group',
+				'post_type_characters',
+				'lez_cliches',
+				'dead'
+			);
+
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- This is a prepared query (see above)
+			$results = $wpdb->get_results( $query, ARRAY_A );
+
+			// Initialize role counters
+			$role_counts = array(
+				'regular'   => 0,
+				'recurring' => 0,
+				'guest'     => 0,
+			);
+
+			// Process each character's show group data
+			foreach ( $results as $row ) {
+				$show_group_data = maybe_unserialize( $row['show_group_data'] );
+
+				// Ensure it's an array
+				if ( ! is_array( $show_group_data ) ) {
+					continue;
+				}
+
+				// Process each show entry
+				foreach ( $show_group_data as $show_entry ) {
+					if ( ! is_array( $show_entry ) || ! isset( $show_entry['type'] ) ) {
+						continue;
+					}
+
+					$role_type = $show_entry['type'];
+
+					// Count only valid role types
+					if ( isset( $role_counts[ $role_type ] ) ) {
+						++$role_counts[ $role_type ];
+					}
+				}
+			}
+
+			// Format results based on requested format
+			$formatted_results = $this->format_role_results( $role_counts, $format );
+
+			// Cache the results for 1 day
+			lwtv_plugin()->set_transient( $cache_key, $formatted_results, DAY_IN_SECONDS );
+
+			return $formatted_results;
+
+		} catch ( \Exception $e ) {
+			lwtv_plugin()->error_log( 'dead-debug', 'Error getting dead characters by roles: ' . $e->getMessage() );
+			return array();
+		}
+	}
+
+	/**
+	 * Format role results based on requested format
+	 *
+	 * @param array $role_counts Role counts array
+	 * @param string $format Format type
+	 * @return array Formatted results
+	 */
+	private function format_role_results( $role_counts, $format ) {
+		$total_count = array_sum( $role_counts );
+
+		if ( 0 === $total_count ) {
+			return array();
+		}
+
+		switch ( $format ) {
+			case 'count':
+				// Return just the counts
+				return $role_counts;
+
+			case 'percentage':
+				// Return percentages
+				$formatted = array();
+				foreach ( $role_counts as $role => $count ) {
+					$percentage         = $total_count > 0 ? round( ( $count / $total_count ) * 100, 2 ) : 0;
+					$formatted[ $role ] = array(
+						'count'      => $count,
+						'percentage' => $percentage,
+						'name'       => ucfirst( $role ),
+					);
+				}
+				return array( 'death' => $formatted );
+
+			case 'piechart':
+				// Return data formatted for pie charts
+				$formatted = array();
+				foreach ( $role_counts as $role => $count ) {
+					$percentage  = $total_count > 0 ? round( ( $count / $total_count ) * 100, 2 ) : 0;
+					$formatted[] = array(
+						'name'       => ucfirst( $role ),
+						'count'      => $count,
+						'percentage' => $percentage,
+					);
+				}
+				return array( 'death' => $formatted );
+
+			case 'barchart':
+				// Return data formatted for bar charts
+				$formatted = array();
+				foreach ( $role_counts as $role => $count ) {
+					$formatted[] = array(
+						'name'  => ucfirst( $role ),
+						'count' => $count,
+					);
+				}
+				return $formatted;
+
+			case 'list':
+				// Return detailed list format
+				$formatted = array();
+				foreach ( $role_counts as $role => $count ) {
+					$percentage  = $total_count > 0 ? round( ( $count / $total_count ) * 100, 2 ) : 0;
+					$formatted[] = array(
+						'slug'       => $role,
+						'name'       => ucfirst( $role ),
+						'count'      => $count,
+						'percentage' => $percentage,
+					);
+				}
+				return $formatted;
+
+			case 'array':
+			default:
+				// Return raw array format
+				$formatted = array();
+				foreach ( $role_counts as $role => $count ) {
+					$formatted[ $role ] = array(
+						'name'  => ucfirst( $role ),
+						'count' => $count,
+					);
+				}
+				return $formatted;
+		}
 	}
 }

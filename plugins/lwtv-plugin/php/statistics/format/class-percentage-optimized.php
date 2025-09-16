@@ -29,13 +29,13 @@ class Percentage_Optimized {
 		$count_total  = $this->get_count_total( $data, $clean_view );
 		$count_title  = 'Count';
 		$show_percent = false;
-		if ( in_array( $type, array( 'nation', 'station' ), true ) ) {
+		if ( in_array( $type, array( 'nation', 'station', 'death' ), true ) ) {
 			$show_percent = true;
 			$count_title  = '# of Characters';
 		}
 
 		// Make a table
-		$readable_view = $this->get_readable_view( $clean_view );
+		$readable_view = $this->get_readable_view( $clean_view, $context );
 		$table_id      = $this->get_table_id( $view, $type );
 		$table_start   = '<table id="' . esc_attr( $table_id ) . '" class="tablesorter table table-striped table-hover">';
 		$table_header  = '<thead><tr><th scope="col">' . ucfirst( $readable_view ) . '</th><th scope="col">' . $count_title . '</th>';
@@ -44,7 +44,7 @@ class Percentage_Optimized {
 		}
 		$table_header .= '</tr></thead>';
 		$table_body    = '<tbody>';
-		$table_body   .= $this->format_data_for_chart( $data, $clean_view, $show_percent, $count_total, $type );
+		$table_body   .= $this->format_data_for_chart( $data, $clean_view, $show_percent, $count_total, $type, $context );
 		$table_body   .= '</tbody>';
 		$table_end     = '</table>';
 
@@ -61,11 +61,14 @@ class Percentage_Optimized {
 	 * @param bool $show_percent Show percent
 	 * @param int $count_total Count total
 	 * @param string $type Type of context
+	 * @param string $context Context
 	 * @return array Formatted data
 	 */
-	private function format_data_for_chart( $data, $clean_view, $show_percent, $count_total, $type ) {
+	private function format_data_for_chart( $data, $clean_view, $show_percent, $count_total, $type, $context ) {
 
 		$table_body = '';
+
+		lwtv_plugin()->error_log( 'percentage-debug', 'Clean view: ' . $clean_view );
 
 		switch ( $clean_view ) {
 			case 'tropes':
@@ -101,6 +104,17 @@ class Percentage_Optimized {
 					$table_body .= '</tr>';
 				}
 				break;
+			case 'death':
+				foreach ( $data as $slug => $item ) {
+					$url         = home_url( "/{$context}/{$slug}/?fwp_char_cliches=dead" );
+					$table_body .= '<tr><td><a href="' . esc_url( $url ) . '">' . ucfirst( $item['name'] ) . '</a></td><td>' . (int) $item['count'] . '</td>';
+					if ( $show_percent ) {
+						$first_count = $item['percentage'];
+						$table_body .= '<td><div class="progress"><div class="progress-bar bg-info" role="progressbar" style="width: ' . esc_html( $first_count ) . '%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div></div>&nbsp;' . esc_html( $first_count ) . '%</td>';
+					}
+					$table_body .= '</tr>';
+				}
+				break;
 			default:
 				foreach ( $data as $name => $count ) {
 					$url         = home_url( "/{$clean_view}/{$name}" );
@@ -124,8 +138,6 @@ class Percentage_Optimized {
 	 * @return int Count total
 	 */
 	private function get_count_total( $data, $clean_view ) {
-
-		lwtv_plugin()->error_log( 'percentage-debug', 'get_count_total Clean view: ' . $clean_view );
 		switch ( $clean_view ) {
 			case 'tropes':
 			case 'formats':
@@ -133,6 +145,7 @@ class Percentage_Optimized {
 			case 'we_love_it':
 			case 'worth_it':
 			case 'queer_irl':
+			case 'death':
 				return array_sum( array_column( $data, 'count' ) );
 			default:
 				return array_sum( $data );
@@ -165,11 +178,13 @@ class Percentage_Optimized {
 	 * Get readable view
 	 *
 	 * @param string $clean_view Clean view
+	 * @param string $context Context
 	 * @return string Readable view
 	 */
-	private function get_readable_view( $clean_view ) {
+	private function get_readable_view( $clean_view, $context ) {
+		$raw_view = ( 'death' === $clean_view ) ? $context : $clean_view;
 		// Break - and _ into spaces
-		$readable_view = str_replace( array( '-', '_' ), ' ', $clean_view );
+		$readable_view = str_replace( array( '-', '_' ), ' ', $raw_view );
 		return ucwords( $readable_view );
 	}
 }

@@ -450,6 +450,7 @@ class Statistics_Optimized implements Component, Templater {
 	 */
 	public function generate_dead_statistics( $subject, $view, $format ) {
 		$all_data = array();
+		$context  = 'all';
 
 		if ( 'count' === $format ) {
 			if ( ! in_array( $subject, array( 'characters', 'shows' ), true ) ) {
@@ -463,6 +464,10 @@ class Statistics_Optimized implements Component, Templater {
 		switch ( $subject ) {
 			case 'characters':
 				$all_data = ( new Build_Dead() )->generate_characters( $view, $format );
+				if ( in_array( $format, array( 'piechart', 'percentage' ), true ) ) {
+					$context = $view;
+					$view    = 'death';
+				}
 				break;
 			case 'shows':
 				$all_data = ( new Build_Dead() )->generate_shows( $view, $format );
@@ -474,7 +479,7 @@ class Statistics_Optimized implements Component, Templater {
 			return array();
 		}
 
-		return self::handle_output( $all_data, 'all', $view, $format, 'death', array(), 'vertical' );
+		return self::handle_output( $all_data, $context, $view, $format, 'death', array(), 'vertical' );
 	}
 
 	/**
