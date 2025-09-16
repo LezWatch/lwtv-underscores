@@ -167,9 +167,14 @@ class Dead {
 	 * @return array Dead shows statistics data
 	 */
 	public function generate_shows( $view, $format ) {
+		lwtv_plugin()->error_log( 'dead-debug', 'Generating shows statistics for view: ' . $view );
 		switch ( $view ) {
 			case 'years':
 				return $this->generate_years( $format );
+			case 'per-show':
+				return $this->generate_shows_by_characters( $format );
+			default:
+				return array();
 		}
 		return array();
 	}
@@ -821,6 +826,245 @@ class Dead {
 					);
 				}
 				return $formatted;
+		}
+	}
+
+	/**
+	 * Generate shows by characters
+	 *
+	 * @param string $format Format type
+	 * @return array Shows by characters
+	 */
+	private function generate_shows_by_characters( $format ) {
+		lwtv_plugin()->error_log( 'dead-debug', 'Generating shows by characters statistics for format: ' . $format );
+
+		global $wpdb;
+
+		// Create cache key
+		$cache_key   = 'dead_shows_by_characters_' . $format;
+		$cached_data = lwtv_plugin()->get_transient( $cache_key );
+
+		// If cached data is found, return it
+		if ( false !== $cached_data ) {
+			lwtv_plugin()->error_log( 'dead-debug', 'Cached data found for ' . $cache_key );
+			return $cached_data;
+		}
+
+		try {
+			// Get total shows count using the standard method
+			$total_shows = lwtv_plugin()->generate_total_counts( 'shows' );
+
+			// Get shows with 'dead-queers' term and their character counts
+			$query = $wpdb->prepare(
+				"SELECT
+					p.ID,
+					p.post_title,
+					p.post_name,
+					COALESCE(char_count.meta_value, 0) as char_count,
+					COALESCE(dead_count.meta_value, 0) as dead_count
+				FROM {$wpdb->posts} p
+				INNER JOIN {$wpdb->term_relationships} tr ON p.ID = tr.object_id
+				INNER JOIN {$wpdb->term_taxonomy} tt ON tr.term_taxonomy_id = tt.term_taxonomy_id
+				INNER JOIN {$wpdb->terms} t ON tt.term_id = t.term_id
+				LEFT JOIN {$wpdb->postmeta} char_count ON p.ID = char_count.post_id AND char_count.meta_key = 'lezshows_char_count'
+				LEFT JOIN {$wpdb->postmeta} dead_count ON p.ID = dead_count.post_id AND dead_count.meta_key = 'lezshows_dead_count'
+				WHERE p.post_type = %s
+				AND p.post_status = 'publish'
+				AND tt.taxonomy = %s
+				AND t.slug = %s
+				ORDER BY p.post_title ASC",
+				'post_type_shows',
+				'lez_tropes',
+				'dead-queers'
+			);
+
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- This is a prepared query (see above)
+			$results = $wpdb->get_results( $query, ARRAY_A );
+
+			// Initialize counters
+			$all_dead_count  = 0;
+			$some_dead_count = 0;
+
+			// Process each show with 'dead-queers' term
+			foreach ( $results as $show ) {
+				$char_count = (int) $show['char_count'];
+				$dead_count = (int) $show['dead_count'];
+
+				if ( 0 === $char_count ) {
+					// Skip shows with no characters
+					continue;
+				}
+
+				if ( $dead_count === $char_count ) {
+					// All characters are dead
+					++$all_dead_count;
+				} else {
+					// Some characters are dead (but not all)
+					++$some_dead_count;
+				}
+			}
+
+			// Calculate shows with no death: total shows minus shows with any death
+			$shows_with_death = $all_dead_count + $some_dead_count;
+			$no_dead_count    = $total_shows - $shows_with_death;
+
+			// Format results based on requested format
+			$formatted_results = $this->format_shows_by_characters_results(
+				$all_dead_count,
+				$some_dead_count,
+				$no_dead_count,
+				$total_shows,
+				$format
+			);
+
+			// Cache the results for 1 day
+			lwtv_plugin()->set_transient( $cache_key, $formatted_results, DAY_IN_SECONDS );
+
+			return $formatted_results;
+
+		} catch ( \Exception $e ) {
+			lwtv_plugin()->error_log( 'dead-debug', 'Error getting shows by characters data: ' . $e->getMessage() );
+			return array();
+		}
+	}
+
+	/**
+	 * Format shows by characters results based on requested format
+	 *
+	 * @param int $all_dead_count All dead count
+	 * @param int $some_dead_count Some dead count
+	 * @param int $no_dead_count No dead count
+	 * @param int $total_shows Total shows
+	 * @param string $format Format type
+	 * @return array Formatted results
+	 */
+	private function format_shows_by_characters_results( $all_dead_count, $some_dead_count, $no_dead_count, $total_shows, $format ) {
+		if ( 0 === $total_shows ) {
+			return array();
+		}
+
+		switch ( $format ) {
+			case 'count':
+				// Return just the counts
+				return array(
+					'all_dead'  => $all_dead_count,
+					'some_dead' => $some_dead_count,
+					'no_dead'   => $no_dead_count,
+				);
+
+			case 'percentage':
+				// Return percentages
+				$all_percentage  = $total_shows > 0 ? round( ( $all_dead_count / $total_shows ) * 100, 1 ) : 0;
+				$some_percentage = $total_shows > 0 ? round( ( $some_dead_count / $total_shows ) * 100, 1 ) : 0;
+				$no_percentage   = $total_shows > 0 ? round( ( $no_dead_count / $total_shows ) * 100, 1 ) : 0;
+
+				return array(
+					'death' => array(
+						'all_dead'  => array(
+							'count'      => $all_dead_count,
+							'percentage' => $all_percentage,
+							'name'       => 'All characters are dead',
+						),
+						'some_dead' => array(
+							'count'      => $some_dead_count,
+							'percentage' => $some_percentage,
+							'name'       => 'Some characters are dead',
+						),
+						'no_dead'   => array(
+							'count'      => $no_dead_count,
+							'percentage' => $no_percentage,
+							'name'       => 'No characters are dead',
+						),
+					),
+				);
+
+			case 'piechart':
+				// Return data formatted for pie charts
+				$all_percentage  = $total_shows > 0 ? round( ( $all_dead_count / $total_shows ) * 100, 1 ) : 0;
+				$some_percentage = $total_shows > 0 ? round( ( $some_dead_count / $total_shows ) * 100, 1 ) : 0;
+				$no_percentage   = $total_shows > 0 ? round( ( $no_dead_count / $total_shows ) * 100, 1 ) : 0;
+
+				return array(
+					'death' => array(
+						array(
+							'name'       => 'All characters are dead',
+							'count'      => $all_dead_count,
+							'percentage' => $all_percentage,
+						),
+						array(
+							'name'       => 'Some characters are dead',
+							'count'      => $some_dead_count,
+							'percentage' => $some_percentage,
+						),
+						array(
+							'name'       => 'No characters are dead',
+							'count'      => $no_dead_count,
+							'percentage' => $no_percentage,
+						),
+					),
+				);
+
+			case 'barchart':
+				// Return data formatted for bar charts
+				return array(
+					array(
+						'name'  => 'All characters are dead',
+						'count' => $all_dead_count,
+					),
+					array(
+						'name'  => 'Some characters are dead',
+						'count' => $some_dead_count,
+					),
+					array(
+						'name'  => 'No characters are dead',
+						'count' => $no_dead_count,
+					),
+				);
+
+			case 'list':
+				// Return detailed list format
+				$all_percentage  = $total_shows > 0 ? round( ( $all_dead_count / $total_shows ) * 100, 1 ) : 0;
+				$some_percentage = $total_shows > 0 ? round( ( $some_dead_count / $total_shows ) * 100, 1 ) : 0;
+				$no_percentage   = $total_shows > 0 ? round( ( $no_dead_count / $total_shows ) * 100, 1 ) : 0;
+
+				return array(
+					array(
+						'slug'       => 'all_dead',
+						'name'       => 'All characters are dead',
+						'count'      => $all_dead_count,
+						'percentage' => $all_percentage,
+					),
+					array(
+						'slug'       => 'some_dead',
+						'name'       => 'Some characters are dead',
+						'count'      => $some_dead_count,
+						'percentage' => $some_percentage,
+					),
+					array(
+						'slug'       => 'no_dead',
+						'name'       => 'No characters are dead',
+						'count'      => $no_dead_count,
+						'percentage' => $no_percentage,
+					),
+				);
+
+			case 'array':
+			default:
+				// Return raw array format
+				return array(
+					'all_dead'  => array(
+						'name'  => 'All characters are dead',
+						'count' => $all_dead_count,
+					),
+					'some_dead' => array(
+						'name'  => 'Some characters are dead',
+						'count' => $some_dead_count,
+					),
+					'no_dead'   => array(
+						'name'  => 'No characters are dead',
+						'count' => $no_dead_count,
+					),
+				);
 		}
 	}
 }

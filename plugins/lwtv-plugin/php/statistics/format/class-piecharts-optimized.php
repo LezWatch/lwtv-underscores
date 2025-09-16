@@ -43,8 +43,7 @@ class Piecharts_Optimized {
 		$chart_labels = $formatting_data['labels'];
 		$chart_data   = $formatting_data['data'];
 
-		$chart_output = '<div id="container" style="width: 100%;"><canvas id="' . esc_attr( $chart_id ) . '" width="500px" height="500px" aria-label="Pie chart for ' . esc_attr( $context ) . '"><p>Your browser cannot display this piechart for stats on' . esc_html( $context ) . '.</p></canvas></div>';
-
+		$chart_output  = '<div id="container" style="width: 100%;"><canvas id="' . esc_attr( $chart_id ) . '" width="500px" height="500px" aria-label="Pie chart for ' . esc_attr( $context ) . '"><p>Your browser cannot display this piechart for stats on' . esc_html( $context ) . '.</p></canvas></div>';
 		$script_output = '<script>
 		var ' . esc_attr( $chart_id ) . 'Dataset = [' . $chart_data . '];
 		var ctx = document.getElementById("' . esc_attr( $chart_id ) . '").getContext("2d");
@@ -98,34 +97,41 @@ class Piecharts_Optimized {
 			$data = $data[ $clean_view ];
 		}
 
-		switch ( $clean_view ) {
-			case 'shows':
-			case 'characters':
-			case 'actors':
-				$reformatted = $this->format_post_type_data_for_chart( $data, $type );
-				$labels      = $reformatted['labels'];
-				$dataset     = $reformatted['data'];
-				break;
-			case 'tropes':
-			case 'formats':
-			case 'death':
-				foreach ( $data as $item ) {
-					$labels  .= '"' . esc_js( $item['name'] ) . '", ';
-					$dataset .= '"' . esc_js( $item['count'] ) . '", ';
-				}
-				break;
-			default:
-				foreach ( $data as $name => $count ) {
-					$labels  .= '"' . esc_js( $name ) . '", ';
-					$dataset .= '"' . esc_js( $count ) . '", ';
-				}
-				break;
+		try {
+			switch ( $clean_view ) {
+				case 'shows':
+				case 'characters':
+				case 'actors':
+					$reformatted = $this->format_post_type_data_for_chart( $data, $type );
+					$labels      = $reformatted['labels'];
+					$dataset     = $reformatted['data'];
+					break;
+				case 'tropes':
+				case 'formats':
+				case 'death':
+					foreach ( $data as $item ) {
+						$labels  .= '"' . esc_js( $item['name'] ) . '", ';
+						$dataset .= '"' . esc_js( $item['count'] ) . '", ';
+					}
+					break;
+				default:
+					foreach ( $data as $name => $count ) {
+						$labels  .= '"' . esc_js( $name ) . '", ';
+						$dataset .= '"' . esc_js( $count ) . '", ';
+					}
+					break;
+			}
+
+			$return = array(
+				'labels' => $labels,
+				'data'   => $dataset,
+			);
+		} catch ( \Exception $e ) {
+			lwtv_plugin()->error_log( 'piecharts-error', 'Error formatting data for chart: ' . $e->getMessage() );
+			return array();
 		}
 
-		return array(
-			'labels' => $labels,
-			'data'   => $dataset,
-		);
+		return $return;
 	}
 
 	/**
@@ -174,6 +180,6 @@ class Piecharts_Optimized {
 	 * @return string Chart ID
 	 */
 	private function generate_chart_id( $type, $context, $view ) {
-		return $type . '_' . $context . '_' . $view . '_pie';
+		return str_replace( '-', '_', $type . '_' . $context . '_' . $view . '_pie' );
 	}
 }

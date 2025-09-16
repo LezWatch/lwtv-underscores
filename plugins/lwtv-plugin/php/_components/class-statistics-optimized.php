@@ -100,6 +100,11 @@ class Statistics_Optimized implements Component, Templater {
 					break;
 				case 'death':
 					wp_add_inline_script( 'tablesorter', 'jQuery(document).ready(function($){ $("#DeadCharactersTable").tablesorter({ theme : "bootstrap", }); });' );
+					if ( 'characters' === $stat_view ) {
+						wp_add_inline_script( 'tablesorter', 'jQuery(document).ready(function($){ $("#sexualityTable").tablesorter({ theme : "bootstrap", }); });' );
+						wp_add_inline_script( 'tablesorter', 'jQuery(document).ready(function($){ $("#genderTable").tablesorter({ theme : "bootstrap", }); });' );
+						wp_add_inline_script( 'tablesorter', 'jQuery(document).ready(function($){ $("#roleTable").tablesorter({ theme : "bootstrap", }); });' );
+					}
 					break;
 			}
 
@@ -471,6 +476,10 @@ class Statistics_Optimized implements Component, Templater {
 				break;
 			case 'shows':
 				$all_data = ( new Build_Dead() )->generate_shows( $view, $format );
+				if ( in_array( $format, array( 'piechart', 'percentage' ), true ) ) {
+					$context = $view;
+					$view    = 'death';
+				}
 				break;
 		}
 

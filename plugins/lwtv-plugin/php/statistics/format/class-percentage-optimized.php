@@ -36,7 +36,7 @@ class Percentage_Optimized {
 
 		// Make a table
 		$readable_view = $this->get_readable_view( $clean_view, $context );
-		$table_id      = $this->get_table_id( $view, $type );
+		$table_id      = $this->get_table_id( $view, $type, $context );
 		$table_start   = '<table id="' . esc_attr( $table_id ) . '" class="tablesorter table table-striped table-hover">';
 		$table_header  = '<thead><tr><th scope="col">' . ucfirst( $readable_view ) . '</th><th scope="col">' . $count_title . '</th>';
 		if ( $show_percent ) {
@@ -159,9 +159,10 @@ class Percentage_Optimized {
 	 * @param string $type Type of context
 	 * @return string Table id
 	 */
-	private function get_table_id( $view, $type ) {
+	private function get_table_id( $view, $type, $context ) {
 		// remove any trailing s's from $type
 		$table_type = isset( $view ) ? $view : $type;
+		$table_type = ( 'death' === $table_type ) ? $context : $table_type;
 
 		// remove any underscores
 		$table_type = str_replace( '_', '', $table_type );
