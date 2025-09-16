@@ -99,8 +99,7 @@ class Statistics_Optimized implements Component, Templater {
 					wp_add_inline_script( 'tablesorter', 'jQuery(document).ready(function($){ $("#' . $statistics . 'Table").tablesorter({ theme : "bootstrap", }); });' );
 					break;
 				case 'death':
-					wp_add_inline_script( 'tablesorter', 'jQuery(document).ready(function($){ $("#charactersTable").tablesorter({ theme : "bootstrap", }); });' );
-					wp_add_inline_script( 'tablesorter', 'jQuery(document).ready(function($){ $("#showsTable").tablesorter({ theme : "bootstrap", }); });' );
+					wp_add_inline_script( 'tablesorter', 'jQuery(document).ready(function($){ $("#DeadCharactersTable").tablesorter({ theme : "bootstrap", }); });' );
 					break;
 			}
 
@@ -248,6 +247,9 @@ class Statistics_Optimized implements Component, Templater {
 			case 'percentage':
 				return ( new Percentage_Optimized() )->format( $data, $context, $view, $source_type );
 			case 'list':
+				if ( 'death' === $source_type ) {
+					return ( new Lists_Optimized() )->format_dead_list( $data, $context, $view, $source_type );
+				}
 				return ( new Lists_Optimized() )->format( $data, $context, $view, $source_type );
 			default:
 				return $data;

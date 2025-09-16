@@ -17,6 +17,8 @@ $allchars  = lwtv_plugin()->generate_total_counts( 'characters' );
 $deadshows = lwtv_plugin()->generate_total_dead( 'shows' );
 $allshows  = lwtv_plugin()->generate_total_counts( 'shows' );
 
+$deadchars_with_stats = lwtv_plugin()->generate_dead_statistics( 'characters', 'all', 'time' );
+
 // OPTIMIZED: Get dead-years average directly without output buffering
 $dead_years_average = lwtv_plugin()->generate_dead_statistics( 'characters', 'years', 'average' );
 
