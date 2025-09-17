@@ -7,7 +7,8 @@
 
 namespace LWTV\This_Year;
 
-use LWTV\This_Year\Generator;
+use LWTV\This_Year\Build\Characters;
+use LWTV\This_Year\Build\Shows;
 
 class Display {
 	/**
@@ -21,80 +22,52 @@ class Display {
 		$this_year   = ( isset( $this_year ) ) ? $this_year : gmdate( 'Y' );
 		$valid_views = array( 'characters-on-air', 'dead-characters', 'shows-on-air', 'new-shows', 'canceled-shows' );
 		$view        = get_query_var( 'view', 'overview' );
-		$baseurl     = ( gmdate( 'Y' ) !== $this_year ) ? '/this-year/' . $this_year . '/' : '/this-year/';
+		$baseurl     = '/this-year/';
 
+		// Get the characters on air count
+		$characters_on_air_count = ( new Characters() )->get_character_count_for_year( $this_year );
+		$dead_characters_count   = ( new Characters() )->get_dead_character_count_for_year( $this_year );
+		$shows_on_air_count      = ( new Shows() )->get_show_count_for_year( $this_year );
+		$new_shows_count         = ( new Shows() )->get_started_show_count_for_year( $this_year );
+		$canceled_shows_count    = ( new Shows() )->get_ended_show_count_for_year( $this_year );
+
+		if ( ! in_array( $view, $valid_views, true ) ) {
+			$view = 'overview';
+		}
 		?>
 		<div class="container">
-			<ul class="nav nav-tabs">
-				<?php
-				echo '<li class="nav-item"><a class="nav-link' . esc_attr( ( 'overview' === $view ) ? ' active' : '' ) . '" href="' . esc_url( $baseurl ) . '">OVERVIEW</a></li>';
-				foreach ( $valid_views as $the_view ) {
-					$active = ( $view === $the_view ) ? ' active' : '';
-					echo '<li class="nav-item"><a class="nav-link' . esc_attr( $active ) . '" href="' . esc_url( $baseurl . $the_view ) . '/">' . esc_html( strtoupper( str_replace( '-', ' ', $the_view ) ) ) . '</a></li>';
-				}
-				?>
-			</ul>
+			<?php include_once 'templates/navigation.php'; ?>
 
 			<p>&nbsp;</p>
 
 			<?php
-			if ( ! in_array( $view, $valid_views, true ) ) {
-				$view = 'overview';
+			switch ( $view ) {
+				case 'overview':
+					include_once 'templates/overview.php';
+					break;
+				case 'characters-on-air':
+					include_once 'templates/characters-on-air.php';
+					break;
+				case 'dead-characters':
+					include_once 'templates/dead-characters.php';
+					break;
+				case 'shows-on-air':
+					include_once 'templates/shows-on-air.php';
+					break;
+				case 'new-shows':
+					include_once 'templates/new-shows.php';
+					break;
+				case 'canceled-shows':
+					include_once 'templates/canceled-shows.php';
+					break;
+				default:
+					include_once 'templates/overview.php';
 			}
 
-			// Generate data
-			Generator::make( $this_year, $view );
-
 			// Navigation
-			self::navigation( $this_year, $view );
-
+			include_once 'templates/navigation-year.php';
 			?>
 		</div>
-		<?php
-	}
-
-	/**
-	 * Navigation for the year. This changes a little based on your sub pages.
-	 *
-	 * @param string  $this_year
-	 * @param string  $view
-	 *
-	 * @return N/A
-	 */
-	public function navigation( $this_year, $view ) {
-		$start_year = LWTV_FIRST_YEAR;
-		$baseurl    = '/this-year/';
-		$view       = ( 'overview' === $view ) ? '' : $view;
-		?>
-
-		<nav aria-label="This Year Navigation" role="navigation" class="yikes-pagination">
-			<ul class="pagination justify-content-center">
-
-				<?php
-				// If it's not the oldest year there were queers, we can show the first year we have queers.
-				if ( $this_year !== $start_year ) {
-					?>
-					<li class="page-item first me-auto"><a href="<?php echo esc_url( $baseurl . $start_year . '/' . $view ); ?>" class="page-link"><?php echo lwtv_plugin()->get_symbolicon( svg: 'caret-left-circle.svg', icon: 'svg-chevron-circle-left' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?> First (<?php echo (int) $start_year; ?>)</a></li>
-					<li class="page-item"><a href="<?php echo esc_url( $baseurl . ( $this_year - 1 ) . '/' . $view ); ?>" title="previous year" class="page-link"><?php echo lwtv_plugin()->get_symbolicon( svg: 'caret-left.svg', icon: 'svg-chevron-left' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?> Previous</a></li>
-					<li class="page-item"><a href="<?php echo esc_url( $baseurl . ( $this_year - 2 ) . '/' . $view ); ?>" class="page-link"><?php echo (int) ( $this_year - 2 ); ?></a></li>
-					<li class="page-item"><a href="<?php echo esc_url( $baseurl . ( $this_year - 1 ) . '/' . $view ); ?>" class="page-link"><?php echo (int) ( $this_year - 1 ); ?></a></li>
-					<?php
-				}
-				?>
-
-				<li class="page-item active"><span class="active page-link"><?php echo (int) $this_year; ?></span></li>
-
-				<?php
-				if ( gmdate( 'Y' ) !== $this_year ) {
-					?>
-					<li class="page-item"><a href="<?php echo esc_url( $baseurl . ( $this_year + 1 ) . '/' . $view ); ?>" class="page-link"><?php echo (int) ( $this_year + 1 ); ?></a></li>
-					<li class="page-item"><a href="<?php echo esc_url( $baseurl . ( $this_year + 1 ) . '/' . $view ); ?>" class="page-link" title="next year">Next <?php echo lwtv_plugin()->get_symbolicon( svg: 'caret-right.svg', icon: 'svg-chevron-right' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></a></li>
-					<li class="page-item last ms-auto"><a href="<?php echo esc_url( $baseurl . gmdate( 'Y' ) . '/' . $view ); ?>" class="page-link">Last (<?php echo (int) gmdate( 'Y' ); ?>) <?php echo lwtv_plugin()->get_symbolicon( svg: 'caret-right-circle.svg', icon: 'svg-chevron-circle-right' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></a></li>
-					<?php
-				}
-				?>
-			</ul>
-		</nav><!-- .navigation -->
 		<?php
 	}
 }
