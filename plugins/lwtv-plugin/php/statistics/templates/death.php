@@ -22,8 +22,8 @@ $deadchars_with_stats = lwtv_plugin()->generate_dead_statistics( 'characters', '
 // OPTIMIZED: Get dead-years average directly without output buffering
 $dead_years_average = lwtv_plugin()->generate_dead_statistics( 'characters', 'years', 'average' );
 
-$deadchar_percent = round( ( $deadchars / $allchars ) * 100, 2 );
-$deadshow_percent = round( ( $deadshows / $allshows ) * 100, 2 );
+$deadchar_percent = round( ( count( $deadchars ) / $allchars ) * 100, 2 );
+$deadshow_percent = round( ( count( $deadshows ) / $allshows ) * 100, 2 );
 
 $valid_views = array( 'characters', 'shows', 'stations', 'nations', 'years', 'list' );
 $sent_view   = get_query_var( 'view', 'overview' );

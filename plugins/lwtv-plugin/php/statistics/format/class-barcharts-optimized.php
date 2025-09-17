@@ -76,19 +76,19 @@ class Barcharts_Optimized {
 					),
 				);
 			}
+		} elseif ( isset( $data[ $view ] ) ) {
+				$chart_data = $data[ $view ];
 		} else {
-			// For specific views, use the data directly
 			$chart_data = $data;
 		}
 
 		// Get some settings
 		$index_axis = ( 'horizontal' === $bar_direction ) ? 'y' : 'x';
-		$count      = count( $chart_data );
-		$step_size  = '5';
-		$height     = max( ( $count * 20 ), 30 ) + 20;
+		$count      = $this->get_chart_data_count( $chart_data, $view );
+		$height     = ( 'x' === $index_axis ) ? 300 : max( ( $count * 20 ), 30 ) + 20;
 
 		// Generate chart ID
-		$chart_id = $type . '_' . $context . '_' . $view;
+		$chart_id = str_replace( '-', '_', $type . '_' . $context . '_' . $view );
 
 		// Generate chart labels in correct format
 		$chart_labels = $this->get_chart_labels( $chart_data, $view );
@@ -106,7 +106,6 @@ class Barcharts_Optimized {
 		var ctx = document.getElementById("' . esc_attr( $chart_id ) . '").getContext("2d");
 		var chart = new Chart(ctx, {
 			type: "bar",
-			options: {},
 			data: {
 				labels: [' . $chart_labels . '],
 				datasets: [{
@@ -126,6 +125,33 @@ class Barcharts_Optimized {
 	}
 
 	/**
+	 * Get chart data count
+	 *
+	 * @param array  $chart_data Data to format
+	 * @param string $view View type - sexuality, gender, tropes, intersections, formats, on-air
+	 * @return int Count
+	 */
+	private function get_chart_data_count( $chart_data, $view ) {
+		switch ( $view ) {
+			case 'death':
+				// remove all 0 values
+				$chart_data = array_filter(
+					$chart_data,
+					function ( $item ) {
+						return 0 !== $item['count'];
+					}
+				);
+				$count      = count( $chart_data );
+				break;
+			default:
+				$count = count( $chart_data );
+				break;
+		}
+
+		return $count;
+	}
+
+	/**
 	 * Get chart labels
 	 *
 	 * @param array  $chart_data Data to format
@@ -133,11 +159,20 @@ class Barcharts_Optimized {
 	 * @return string HTML output
 	 */
 	private function get_chart_labels( $chart_data, $view ) {
+		lwtv_plugin()->error_log( 'barcharts-debug', 'View: ' . $view );
 		$labels = '';
 		switch ( $view ) {
 			case 'on_air':
-				foreach ( $chart_data['on_air'] as $year => $item ) {
+				foreach ( $chart_data as $year => $item ) {
 					$labels .= '"' . esc_js( $year ) . '", ';
+				}
+				break;
+			case 'death':
+				foreach ( $chart_data as $item ) {
+					if ( 0 === $item['count'] ) {
+						continue;
+					}
+					$labels .= '"' . esc_js( $item['name'] ) . '", ';
 				}
 				break;
 			default:
@@ -170,7 +205,15 @@ class Barcharts_Optimized {
 		$data = '';
 		switch ( $view ) {
 			case 'on_air':
-				foreach ( $chart_data['on_air'] as $year => $item ) {
+				foreach ( $chart_data as $year => $item ) {
+					$data .= (int) ( isset( $item['count'] ) ? $item['count'] : 0 ) . ', ';
+				}
+				break;
+			case 'death':
+				foreach ( $chart_data as $item ) {
+					if ( 0 === $item['count'] ) {
+						continue;
+					}
 					$data .= (int) ( isset( $item['count'] ) ? $item['count'] : 0 ) . ', ';
 				}
 				break;
@@ -180,6 +223,7 @@ class Barcharts_Optimized {
 				}
 				break;
 		}
+
 		return $data;
 	}
 }

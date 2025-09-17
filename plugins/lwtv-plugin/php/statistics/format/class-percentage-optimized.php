@@ -156,6 +156,8 @@ class Percentage_Optimized {
 			case 'worth_it':
 			case 'queer_irl':
 			case 'death':
+			case 'on_air':
+			case 'actors':
 				return array_sum( array_column( $data, 'count' ) );
 			default:
 				return array_sum( $data );

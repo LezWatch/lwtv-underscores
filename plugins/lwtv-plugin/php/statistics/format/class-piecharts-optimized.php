@@ -10,9 +10,10 @@ class Piecharts_Optimized {
 	 * @param string $context Station/Nation etc slug - CBS, USA, etc
 	 * @param string $view View type - sexuality, gender, tropes, intersections, formats, on-air
 	 * @param string $type Type of context - station, nation, etc
+	 * @param string $stat_view Stat view - all, gender, sexuality, tropes, intersections, formats, on-air
 	 * @return string HTML output
 	 */
-	public function format( $data, $context, $view, $type ) {
+	public function format( $data, $context, $view, $type, $stat_view ) {
 		$clean_view = ltrim( $view, '_' );
 
 		if ( empty( $data ) || ! isset( $data[ $clean_view ] ) ) {
@@ -38,7 +39,7 @@ class Piecharts_Optimized {
 			$position_or_display = "position: 'top'";
 		}
 
-		$formatting_data = self::format_data_for_chart( $data, $clean_view, $type );
+		$formatting_data = self::format_data_for_chart( $data, $clean_view, $type, $stat_view );
 
 		$chart_labels = $formatting_data['labels'];
 		$chart_data   = $formatting_data['data'];
@@ -85,9 +86,10 @@ class Piecharts_Optimized {
 	 * @param array  $data Data to format
 	 * @param string $clean_view Clean view
 	 * @param string $type Type of context
+	 * @param string $stat_view Stat view - all, gender, sexuality, tropes, intersections, formats, on-air
 	 * @return array Formatted data
 	 */
-	private function format_data_for_chart( $data, $clean_view, $type ) {
+	private function format_data_for_chart( $data, $clean_view, $type, $stat_view ) {
 
 		$labels  = '';
 		$dataset = '';
@@ -102,7 +104,7 @@ class Piecharts_Optimized {
 				case 'shows':
 				case 'characters':
 				case 'actors':
-					$reformatted = $this->format_post_type_data_for_chart( $data, $type );
+					$reformatted = $this->format_post_type_data_for_chart( $data, $type, $stat_view );
 					$labels      = $reformatted['labels'];
 					$dataset     = $reformatted['data'];
 					break;
@@ -138,18 +140,27 @@ class Piecharts_Optimized {
 	 * Format post type data for chart
 	 *
 	 * @param array $data Data to format
+	 * @param string $type Type of context
+	 * @param string $stat_view Stat view - all, gender, sexuality, tropes, intersections, formats, on-air
 	 * @return array Formatted data
 	 */
-	private function format_post_type_data_for_chart( $data, $type ) {
+	private function format_post_type_data_for_chart( $data, $type, $stat_view ) {
 		$labels  = '';
 		$dataset = '';
-
 		switch ( $type ) {
 			case 'formats':
 			case 'queer-irl':
-				foreach ( $data as $name => $count ) {
-					$labels  .= '"' . esc_js( $name ) . '", ';
-					$dataset .= '"' . esc_js( $count ) . '", ';
+			case 'shows':
+				if ( in_array( $stat_view, array( 'tropes', 'genres', 'intersectionality', 'stars', 'triggers' ), true ) ) {
+					foreach ( $data as $slug => $item ) {
+						$labels  .= '"' . esc_js( $item['name'] ) . '", ';
+						$dataset .= '"' . esc_js( $item['count'] ) . '", ';
+					}
+				} else {
+					foreach ( $data as $name => $count ) {
+						$labels  .= '"' . esc_js( $name ) . '", ';
+						$dataset .= '"' . esc_js( $count ) . '", ';
+					}
 				}
 				break;
 			default:

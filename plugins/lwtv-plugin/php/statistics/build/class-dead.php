@@ -167,7 +167,7 @@ class Dead {
 	 * @return array Dead shows statistics data
 	 */
 	public function generate_shows( $view, $format ) {
-		lwtv_plugin()->error_log( 'dead-debug', 'Generating shows statistics for view: ' . $view );
+		lwtv_plugin()->error_log( 'dead-debug', 'Generating shows statistics for view ' . $view . ' and format ' . $format );
 		switch ( $view ) {
 			case 'years':
 				$return = $this->generate_years( $format );
@@ -204,20 +204,31 @@ class Dead {
 			return array();
 		}
 
-		switch ( $format ) {
-			case 'average':
-				$return = number_format( array_sum( array_column( $years, 'death_count' ) ) / count( $total_years ), 2 );
-				break;
-			case 'trendline':
-				$return = array(
-					'years' => $this->generate_trendline( $years, $total_years ),
-				);
-				break;
-			default:
-				$return = $years;
-				break;
+		try {
+			switch ( $format ) {
+				case 'average':
+					$return = number_format( array_sum( array_column( $years, 'death_count' ) ) / count( $total_years ), 2 );
+					break;
+				case 'trendline':
+					$return = array(
+						'years' => $this->format_years_trendline( $years, $total_years ),
+					);
+					break;
+				case 'barchart':
+					$return = $this->format_years_trendline( $years, $total_years );
+					break;
+				case 'percentage':
+					$return = array( 'death' => $this->format_years_percentage( $years, $total_years ) );
+					break;
+				default:
+					$return = $years;
+					break;
+			}
+			return $return;
+		} catch ( \Exception $e ) {
+			lwtv_plugin()->error_log( 'dead-debug', 'Error generating years statistics: ' . $e->getMessage() );
+			return array();
 		}
-		return $return;
 	}
 
 	/**
@@ -300,7 +311,7 @@ class Dead {
 	 *
 	 * @return array Trendline data
 	 */
-	public function generate_trendline( $years, $total_years ) {
+	public function format_years_trendline( $years, $total_years ) {
 		$trendline = array();
 
 		// Add the years data to the trendline
@@ -359,6 +370,27 @@ class Dead {
 				'end'   => '',
 			) : array();
 		}
+	}
+
+	/**
+	 * Format years percentage
+	 *
+	 * @param array $years Years data
+	 * @param array $total_years Total years data
+	 *
+	 * @return array Percentage data
+	 */
+	public function format_years_percentage( $years, $total_years ) {
+		$percentage        = array();
+		$count_total_years = count( $total_years );
+		foreach ( $years as $year ) {
+			$percentage[] = array(
+				'name'       => $year['death_year'],
+				'count'      => $year['death_count'] ?? 0,
+				'percentage' => number_format( (float) $year['death_count'] / $count_total_years, 2, '.', '' ),
+			);
+		}
+		return $percentage;
 	}
 
 	/**

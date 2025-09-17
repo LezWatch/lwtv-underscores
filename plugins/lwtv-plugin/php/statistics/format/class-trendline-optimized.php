@@ -21,7 +21,7 @@ class Trendline_Optimized {
 		$data = Shared::sort_data( $data, $clean_view );
 
 		$trend    = self::calculate_trendline( $data );
-		$chart_id = $type . $context . $clean_view . '_trendline';
+		$chart_id = str_replace( '-', '_', $type . $context . $clean_view . '_trendline' );
 
 		$labels   = '';
 		$datasets = '';
@@ -74,7 +74,7 @@ class Trendline_Optimized {
 					y: {
 						ticks: {
 							beginAtZero: true,
-							stepSize: 1,
+							stepSize: 5,
 							precision: 0,
 							callback: function(value) {if (value % 1 === 0) {return value;}},
 						}

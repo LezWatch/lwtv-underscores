@@ -90,9 +90,6 @@ class Statistics_Optimized implements Component, Templater {
 			$statistics = get_query_var( 'statistics', 'none' );
 			$stat_view  = get_query_var( 'view', 'main' );
 
-			lwtv_plugin()->error_log( 'statistics-debug', 'statistics: ' . $statistics );
-			lwtv_plugin()->error_log( 'statistics-debug', 'stat_view: ' . $stat_view );
-
 			switch ( $statistics ) {
 				case 'nations':
 				case 'stations':
@@ -249,13 +246,16 @@ class Statistics_Optimized implements Component, Templater {
 	 * @return mixed Formatted data
 	 */
 	public function handle_output( $data, $context, $view, $format, $source_type, $custom_data = array(), $bar_direction = 'horizontal' ) {
+
+		$stat_view = get_query_var( 'view', 'main' );
+
 		switch ( $format ) {
 			case 'barchart':
 				return ( new Barcharts_Optimized() )->format( $data, $context, $view, $source_type, $custom_data, $bar_direction );
 			case 'trendline':
 				return ( new Trendline_Optimized() )->format( $data, $context, $view, $source_type );
 			case 'piechart':
-				return ( new Piecharts_Optimized() )->format( $data, $context, $view, $source_type );
+				return ( new Piecharts_Optimized() )->format( $data, $context, $view, $source_type, $stat_view );
 			case 'percentage':
 				return ( new Percentage_Optimized() )->format( $data, $context, $view, $source_type );
 			case 'list':
@@ -484,7 +484,7 @@ class Statistics_Optimized implements Component, Templater {
 				break;
 			case 'shows':
 				$all_data = ( new Build_Dead() )->generate_shows( $view, $format );
-				if ( in_array( $format, array( 'piechart', 'percentage' ), true ) ) {
+				if ( in_array( $format, array( 'piechart', 'percentage', 'barchart' ), true ) ) {
 					$context = $view;
 					$view    = 'death';
 				}
