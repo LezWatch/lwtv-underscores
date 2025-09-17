@@ -81,7 +81,11 @@ class Barcharts_Optimized {
 			$chart_data = $data;
 		}
 
+		// Get some settings
 		$index_axis = ( 'horizontal' === $bar_direction ) ? 'y' : 'x';
+		$count      = count( $chart_data );
+		$step_size  = '5';
+		$height     = max( ( $count * 20 ), 30 ) + 20;
 
 		// Generate chart ID
 		$chart_id = $type . '_' . $context . '_' . $view;
@@ -92,9 +96,7 @@ class Barcharts_Optimized {
 		// Generate chart data in correct format
 		$chart_data_output = $this->get_chart_data( $chart_data, $view );
 
-		lwtv_plugin()->error_log( 'barcharts-debug', 'chart_data_output: ' . $chart_data_output );
-
-		$div_output = '<div id="container" style="width: 100%;"><canvas id="' . esc_attr( $chart_id ) . '" width="700" aria-label="Station statistics for ' . esc_attr( $context ) . '"></canvas></div>';
+		$div_output = '<div id="container" style="width: 100%"><canvas id="' . esc_attr( $chart_id ) . '" width="700" height="' . (int) $height . '" aria-label="Station statistics for ' . esc_attr( $context ) . '"></canvas></div>';
 
 		$script_output = '<script>
 		Chart.defaults.responsive = true;
@@ -150,6 +152,9 @@ class Barcharts_Optimized {
 				);
 				break;
 		}
+
+		// For each label, look for &amp; and replace with &
+		$labels = str_replace( '&amp;', '&', $labels );
 
 		return $labels;
 	}

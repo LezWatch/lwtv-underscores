@@ -68,8 +68,6 @@ class Percentage_Optimized {
 
 		$table_body = '';
 
-		lwtv_plugin()->error_log( 'percentage-debug', 'Clean view: ' . $clean_view );
-
 		switch ( $clean_view ) {
 			case 'tropes':
 			case 'formats':
@@ -105,8 +103,20 @@ class Percentage_Optimized {
 				}
 				break;
 			case 'death':
+				$param = '';
+				if ( in_array( $context, array( 'stations', 'nations' ), true ) ) {
+					$context = rtrim( $context, 's' );
+					$param   = '?fwp_show_tropes=dead-queers';
+				} elseif ( in_array( $context, array( 'gender', 'sexuality', 'role' ), true ) ) {
+					$param = '?fwp_char_cliches=dead';
+				}
+
 				foreach ( $data as $slug => $item ) {
-					$url         = home_url( "/{$context}/{$slug}/?fwp_char_cliches=dead" );
+					if ( isset( $item['slug'] ) ) {
+						$slug = $item['slug'];
+					}
+
+					$url         = home_url( "/{$context}/{$slug}/{$param}" );
 					$table_body .= '<tr><td><a href="' . esc_url( $url ) . '">' . ucfirst( $item['name'] ) . '</a></td><td>' . (int) $item['count'] . '</td>';
 					if ( $show_percent ) {
 						$first_count = $item['percentage'];

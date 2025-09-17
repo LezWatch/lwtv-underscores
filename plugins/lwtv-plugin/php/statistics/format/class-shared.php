@@ -48,7 +48,7 @@ class Shared {
 		);
 
 		// Sort by value (count) in descending order so highest is on top
-		if ( ! in_array( $clean_view, array( 'tropes', 'formats' ), true ) ) {
+		if ( ! in_array( $clean_view, array( 'tropes', 'formats', 'death' ), true ) ) {
 			arsort( $data );
 		} else {
 			// Sort by the COUNT column

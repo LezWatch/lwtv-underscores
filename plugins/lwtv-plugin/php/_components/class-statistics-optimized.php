@@ -105,6 +105,13 @@ class Statistics_Optimized implements Component, Templater {
 						wp_add_inline_script( 'tablesorter', 'jQuery(document).ready(function($){ $("#genderTable").tablesorter({ theme : "bootstrap", }); });' );
 						wp_add_inline_script( 'tablesorter', 'jQuery(document).ready(function($){ $("#roleTable").tablesorter({ theme : "bootstrap", }); });' );
 					}
+
+					if ( 'stations' === $stat_view ) {
+						wp_add_inline_script( 'tablesorter', 'jQuery(document).ready(function($){ $("#stationTable").tablesorter({ theme : "bootstrap", }); });' );
+					}
+					if ( 'nations' === $stat_view ) {
+						wp_add_inline_script( 'tablesorter', 'jQuery(document).ready(function($){ $("#nationTable").tablesorter({ theme : "bootstrap", }); });' );
+					}
 					break;
 			}
 
@@ -454,8 +461,9 @@ class Statistics_Optimized implements Component, Templater {
 	 * @return array Dead statistics data
 	 */
 	public function generate_dead_statistics( $subject, $view, $format ) {
-		$all_data = array();
-		$context  = 'all';
+		$all_data      = array();
+		$context       = 'all';
+		$bar_direction = 'vertical';
 
 		if ( 'count' === $format ) {
 			if ( ! in_array( $subject, array( 'characters', 'shows' ), true ) ) {
@@ -480,6 +488,7 @@ class Statistics_Optimized implements Component, Templater {
 					$context = $view;
 					$view    = 'death';
 				}
+				$bar_direction = 'horizontal';
 				break;
 		}
 
@@ -488,7 +497,7 @@ class Statistics_Optimized implements Component, Templater {
 			return array();
 		}
 
-		return self::handle_output( $all_data, $context, $view, $format, 'death', array(), 'vertical' );
+		return self::handle_output( $all_data, $context, $view, $format, 'death', array(), $bar_direction );
 	}
 
 	/**

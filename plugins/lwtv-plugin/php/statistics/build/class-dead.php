@@ -170,13 +170,21 @@ class Dead {
 		lwtv_plugin()->error_log( 'dead-debug', 'Generating shows statistics for view: ' . $view );
 		switch ( $view ) {
 			case 'years':
-				return $this->generate_years( $format );
+				$return = $this->generate_years( $format );
+				break;
 			case 'per-show':
-				return $this->generate_shows_by_characters( $format );
+				$return = $this->generate_shows_by_characters( $format );
+				break;
+			case 'stations':
+			case 'nations':
+				$return = $this->generate_shows_by_taxonomy( $format, 'lez_' . $view );
+				break;
 			default:
-				return array();
+				$return = array();
+				break;
 		}
-		return array();
+
+		return $return;
 	}
 
 	/**
@@ -1066,5 +1074,116 @@ class Dead {
 					),
 				);
 		}
+	}
+
+	/**
+	 * Generate shows by taxonomy
+	 *
+	 * @param string $format Format type
+	 * @param string $taxonomy Taxonomy
+	 * @return array Shows by taxonomy
+	 */
+	private function generate_shows_by_taxonomy( $format, $taxonomy ) {
+		global $wpdb;
+
+		// Create cache key
+		$cache_key   = 'dead_shows_by_taxonomy_' . $taxonomy . '_' . $format;
+		$cached_data = lwtv_plugin()->get_transient( $cache_key );
+
+		// If cached data is found, return it
+		if ( false !== $cached_data ) {
+			lwtv_plugin()->error_log( 'dead-debug', 'Cached data found for ' . $cache_key );
+			return $cached_data;
+		}
+
+		if ( 'lez_nations' === $taxonomy ) {
+			$taxonomy = 'lez_country';
+		}
+
+		try {
+			// Single optimized query to get all shows with 'dead-queers' term and their taxonomy values
+			$query = $wpdb->prepare(
+				"SELECT
+					t.slug as term_slug,
+					t.name as term_name,
+					COUNT(DISTINCT dead_shows.ID) as count
+				FROM {$wpdb->posts} dead_shows
+				INNER JOIN {$wpdb->term_relationships} dead_tr ON dead_shows.ID = dead_tr.object_id
+				INNER JOIN {$wpdb->term_taxonomy} dead_tt ON dead_tr.term_taxonomy_id = dead_tt.term_taxonomy_id
+				INNER JOIN {$wpdb->terms} dead_t ON dead_tt.term_id = dead_t.term_id
+				LEFT JOIN {$wpdb->term_relationships} tax_tr ON dead_shows.ID = tax_tr.object_id
+				LEFT JOIN {$wpdb->term_taxonomy} tax_tt ON tax_tr.term_taxonomy_id = tax_tt.term_taxonomy_id
+				LEFT JOIN {$wpdb->terms} t ON tax_tt.term_id = t.term_id
+				WHERE dead_shows.post_type = %s
+				AND dead_shows.post_status = 'publish'
+				AND dead_tt.taxonomy = %s
+				AND dead_t.slug = %s
+				AND tax_tt.taxonomy = %s
+				GROUP BY t.term_id, t.slug, t.name
+				ORDER BY count DESC, t.name ASC",
+				'post_type_shows',
+				'lez_tropes',
+				'dead-queers',
+				$taxonomy
+			);
+
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- This is a prepared query (see above)
+			$results = $wpdb->get_results( $query, ARRAY_A );
+
+			// Format the results for barchart
+			$formatted_results = $this->format_shows_by_taxonomy_results( $results, $format );
+
+			// Cache the results for 1 day
+			lwtv_plugin()->set_transient( $cache_key, $formatted_results, DAY_IN_SECONDS );
+
+			return $formatted_results;
+
+		} catch ( \Exception $e ) {
+			lwtv_plugin()->error_log( 'dead-debug', 'Error getting dead shows taxonomy data for ' . $taxonomy . ': ' . $e->getMessage() );
+			return array();
+		}
+	}
+
+	/**
+	 * Format shows by taxonomy results
+	 *
+	 * @param array $results Raw query results
+	 * @param string $format Format type
+	 * @return array Formatted results
+	 */
+	private function format_shows_by_taxonomy_results( $results, $format ) {
+		lwtv_plugin()->error_log( 'dead-debug', 'Formatting shows by taxonomy results for format: ' . $format );
+		$formatted_results      = array();
+		$total_shows_with_death = (int) $this->total_dead_shows();
+		switch ( $format ) {
+			case 'count':
+				$formatted_results = count( $results );
+				break;
+			case 'barchart':
+				foreach ( $results as $result ) {
+					$formatted_results[] = array(
+						'name'  => $result['term_name'],
+						'count' => (int) $result['count'],
+					);
+				}
+				break;
+			case 'percentage':
+				$new_results = array();
+				foreach ( $results as $result ) {
+					$new_results[] = array(
+						'slug'       => $result['term_slug'],
+						'name'       => $result['term_name'],
+						'count'      => (int) $result['count'],
+						'percentage' => $total_shows_with_death > 0 ? round( ( $result['count'] / $total_shows_with_death ) * 100, 1 ) : 0,
+					);
+				}
+				$formatted_results = array( 'death' => $new_results );
+				break;
+			default:
+				$formatted_results = $results;
+				break;
+		}
+
+		return $formatted_results;
 	}
 }
