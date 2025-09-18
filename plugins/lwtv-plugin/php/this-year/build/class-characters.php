@@ -77,11 +77,24 @@ class Characters {
 				$appeared_in_year = $this->check_character_appeared_in_year( $show_group_data, $year );
 
 				if ( $appeared_in_year ) {
+					// Process death year data only if character is dead
+					$death_years = array();
+					if ( (bool) $row['is_dead'] ) {
+						$death_year_data = get_post_meta( $row['ID'], 'lezchars_death_year', true );
+						if ( ! empty( $death_year_data ) ) {
+							$death_year_data = maybe_unserialize( $death_year_data );
+							if ( is_array( $death_year_data ) ) {
+								$death_years = array_values( $death_year_data );
+							}
+						}
+					}
+
 					// Use slug as unique key to prevent duplicates
 					$characters[ $row['slug'] ] = array(
-						'slug' => $row['slug'],
-						'name' => $row['name'],
-						'dead' => (bool) $row['is_dead'],
+						'slug'        => $row['slug'],
+						'name'        => $row['name'],
+						'dead'        => (bool) $row['is_dead'],
+						'death_years' => $death_years,
 					);
 				}
 			}
@@ -327,10 +340,11 @@ class Characters {
 			}
 
 			$enhanced_characters[] = array(
-				'slug'  => $character['slug'],
-				'name'  => $character['name'],
-				'dead'  => $character['dead'],
-				'shows' => $shows,
+				'slug'        => $character['slug'],
+				'name'        => $character['name'],
+				'dead'        => $character['dead'],
+				'death_years' => $character['death_years'] ?? array(),
+				'shows'       => $shows,
 			);
 		}
 

@@ -110,16 +110,10 @@ class Shows {
 		// Check if year falls within the show's airing period (inclusive)
 		$on_air = ( $year >= $start_year && $year <= $finish_year );
 
-		// Check if show started in this year
-		$started = ( $year === $start_year );
-
-		// Check if show ended in this year
-		$ended = ( $year === $finish_year );
-
 		return array(
 			'on_air'  => $on_air,
-			'started' => $started,
-			'ended'   => $ended,
+			'started' => $start_year,
+			'ended'   => $finish_year,
 		);
 	}
 
@@ -361,6 +355,7 @@ class Shows {
 			foreach ( $characters as $index => $character ) {
 				$character_id = $character['character_id'];
 				if ( isset( $character_data[ $character_id ] ) ) {
+					$characters_by_show[ $show_id ][ $index ]['dead'] = $this->check_character_dead( $character_id );
 					$characters_by_show[ $show_id ][ $index ]['name'] = $character_data[ $character_id ]['name'];
 					$characters_by_show[ $show_id ][ $index ]['url']  = $character_data[ $character_id ]['permalink'];
 				}
@@ -368,6 +363,21 @@ class Shows {
 		}
 
 		return $characters_by_show;
+	}
+
+	/**
+	 * Check if a character is dead
+	 *
+	 * @param int $character_id The character ID
+	 * @return bool True if the character is dead, false otherwise
+	 */
+	private function check_character_dead( int $character_id ): bool {
+		$has_last_death = get_post_meta( $character_id, 'lezchars_last_death', true ) ? true : false;
+
+		// See if the term 'dead' is set
+		$has_dead_term = has_term( 'dead', 'lez_cliches', $character_id );
+
+		return $has_last_death && $has_dead_term;
 	}
 
 	/**

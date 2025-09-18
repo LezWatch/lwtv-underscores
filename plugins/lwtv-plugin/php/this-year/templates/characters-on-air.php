@@ -6,13 +6,14 @@
  *
  * Required variables:
  * @var array $characters_on_air
+ * @var array $characters_on_air_by_show
  */
 
-$characters_on_air         = ( new \LWTV\This_Year\Build\Characters() )->get_characters_with_shows_for_year( $this_year );
-$characters_on_air_by_show = ( new \LWTV\This_Year\Build\Shows() )->get_shows_with_characters_for_year( $this_year );
+// translators: %s is the number of characters on air
+$h2_title = sprintf( _n( '%s Character On Air', '%s Characters On Air', $characters_on_air_count ), $characters_on_air_count );
 ?>
 
-<h2><?php echo esc_html( $characters_on_air_count ); ?> Characters On Air in <?php echo esc_html( $this_year ); ?></h2>
+<h2><?php echo esc_html( $h2_title ); ?></h2>
 
 <div class="container chart-container">
 	<div class="row">
