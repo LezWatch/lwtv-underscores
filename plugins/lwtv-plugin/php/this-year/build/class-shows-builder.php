@@ -476,29 +476,6 @@ class Shows_Builder {
 	}
 
 	/**
-	 * Get character marker for alphabetical grouping
-	 *
-	 * @param string $name The name to get the marker for
-	 * @return string The marker (# for numbers, uppercase letter for alphanumeric, - for special chars)
-	 */
-	private function get_character_marker( string $name ): string {
-		$first_char = substr( $name, 0, 1 );
-
-		// Check if it's a number (0-9)
-		if ( is_numeric( $first_char ) ) {
-			return '#';
-		}
-
-		// Check if it's a basic ASCII letter (a-z, A-Z)
-		if ( preg_match( '/^[a-zA-Z]$/', $first_char ) ) {
-			return strtoupper( $first_char );
-		}
-
-		// Everything else (accented characters, symbols, etc.) goes in the - group
-		return '-';
-	}
-
-	/**
 	 * Get all shows that were on air for a given year, sorted alphabetically by name
 	 *
 	 * @param int $year The year to filter by
@@ -542,7 +519,7 @@ class Shows_Builder {
 			$format    = get_the_term_list( $show_id, 'lez_formats' );
 
 			// Build the first character marker
-			$marker = $this->get_character_marker( $show_name );
+			$marker = ( new Shared_Builder() )->get_character_marker( $show_name );
 
 			// Build the array
 			$shows_by_name[ $marker ][ $show_name ] = array(

@@ -10,6 +10,8 @@ namespace LWTV\This_Year;
 use LWTV\This_Year\Build\Characters_Builder;
 use LWTV\This_Year\Build\Shows_Builder;
 use LWTV\This_Year\Format\Dead_Characters_Formatter;
+use LWTV\This_Year\Format\New_Shows_Formatter;
+use LWTV\This_Year\Format\Canceled_Shows_Formatter;
 
 class Display {
 	/**
@@ -25,7 +27,7 @@ class Display {
 		$view        = get_query_var( 'view', 'overview' );
 		$baseurl     = '/this-year/';
 
-		// Get the characters on air count
+		// Build data we use for all templates
 		$characters_on_air_count = ( new Characters_Builder() )->get_character_count_for_year( $this_year );
 		$dead_characters_count   = ( new Characters_Builder() )->get_dead_character_count_for_year( $this_year );
 		$shows_on_air_count      = ( new Shows_Builder() )->get_show_count_for_year( $this_year );
@@ -65,9 +67,15 @@ class Display {
 					include_once 'templates/shows-on-air.php';
 					break;
 				case 'new-shows':
+					$new_shows_by_name    = ( new New_Shows_Formatter() )->format_by_name_for_year( $this_year, $shows_by_name );
+					$new_shows_by_format  = ( new New_Shows_Formatter() )->format_by_format_for_year( $this_year, $shows_by_format );
+					$new_shows_by_country = ( new New_Shows_Formatter() )->format_by_country_for_year( $this_year, $shows_by_country );
 					include_once 'templates/new-shows.php';
 					break;
 				case 'canceled-shows':
+					$canceled_shows_by_name    = ( new Canceled_Shows_Formatter() )->format_by_name_for_year( $this_year, $shows_by_name );
+					$canceled_shows_by_format  = ( new Canceled_Shows_Formatter() )->format_by_format_for_year( $this_year, $shows_by_format );
+					$canceled_shows_by_country = ( new Canceled_Shows_Formatter() )->format_by_country_for_year( $this_year, $shows_by_country );
 					include_once 'templates/canceled-shows.php';
 					break;
 				default:
