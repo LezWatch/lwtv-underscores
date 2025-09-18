@@ -10,7 +10,7 @@ namespace LWTV\This_Year\Build;
 /**
  * Shows class for building show data for a specific year
  */
-class Shows {
+class Shows_Builder {
 
 	/**
 	 * Get all shows that were on air for a given year
@@ -22,7 +22,7 @@ class Shows {
 		global $wpdb;
 
 		// Validate year input
-		if ( $year < 1900 || $year > gmdate( 'Y' ) + 1 ) {
+		if ( $year < LWTV_FIRST_YEAR || $year > gmdate( 'Y' ) + 1 ) {
 			return array();
 		}
 
@@ -185,7 +185,7 @@ class Shows {
 	 */
 	public function get_shows_with_characters_for_year( int $year ): array {
 		// Validate year input
-		if ( $year < 1900 || $year > gmdate( 'Y' ) + 1 ) {
+		if ( $year < LWTV_FIRST_YEAR || $year > gmdate( 'Y' ) + 1 ) {
 			return array();
 		}
 
@@ -473,6 +473,293 @@ class Shows {
 		}
 
 		return $taxonomy_data;
+	}
+
+	/**
+	 * Get character marker for alphabetical grouping
+	 *
+	 * @param string $name The name to get the marker for
+	 * @return string The marker (# for numbers, uppercase letter for alphanumeric, - for special chars)
+	 */
+	private function get_character_marker( string $name ): string {
+		$first_char = substr( $name, 0, 1 );
+
+		// Check if it's a number (0-9)
+		if ( is_numeric( $first_char ) ) {
+			return '#';
+		}
+
+		// Check if it's a basic ASCII letter (a-z, A-Z)
+		if ( preg_match( '/^[a-zA-Z]$/', $first_char ) ) {
+			return strtoupper( $first_char );
+		}
+
+		// Everything else (accented characters, symbols, etc.) goes in the - group
+		return '-';
+	}
+
+	/**
+	 * Get all shows that were on air for a given year, sorted alphabetically by name
+	 *
+	 * @param int $year The year to filter by
+	 * @return array Array of show data grouped by first character (A-Z, # for numbers, - for special chars)
+	 */
+	public function get_shows_for_year_by_name( int $year ): array {
+		// Validate year input
+		if ( $year < LWTV_FIRST_YEAR || $year > gmdate( 'Y' ) + 1 ) {
+			return array();
+		}
+
+		// Use WordPress caching for performance
+		$cache_key     = 'lwtv_shows_year_by_name_' . $year;
+		$cached_result = lwtv_plugin()->get_transient( $cache_key );
+
+		if ( false !== $cached_result ) {
+			return (array) $cached_result;
+		}
+
+		// Get base show data
+		$shows = $this->get_shows_for_year( $year );
+
+		if ( empty( $shows ) ) {
+			return array();
+		}
+
+		$shows_by_name = array();
+
+		foreach ( $shows as $show ) {
+			$show_id = $this->get_show_id_by_slug( $show['slug'] );
+
+			if ( ! $show_id ) {
+				continue;
+			}
+
+			$show_name = $show['name'];
+
+			// Get additional show data
+			$airdates  = get_post_meta( $show_id, 'lezshows_airdates', true );
+			$countries = get_the_term_list( $show_id, 'lez_country', '', ', ', '' );
+			$format    = get_the_term_list( $show_id, 'lez_formats' );
+
+			// Build the first character marker
+			$marker = $this->get_character_marker( $show_name );
+
+			// Build the array
+			$shows_by_name[ $marker ][ $show_name ] = array(
+				'url'      => get_permalink( $show_id ),
+				'name'     => $show_name,
+				'country'  => wp_strip_all_tags( $countries ),
+				'format'   => wp_strip_all_tags( $format ),
+				'airdates' => $airdates,
+			);
+		}
+
+		// Sort each group alphabetically by show name
+		foreach ( $shows_by_name as $marker => $shows_group ) {
+			ksort( $shows_group );
+			$shows_by_name[ $marker ] = $shows_group;
+		}
+
+		// Sort the markers (#, -, then A-Z)
+		$sorted_shows = array();
+		$markers      = array_keys( $shows_by_name );
+
+		// Custom sort: # first, then -, then alphabetical
+		usort(
+			$markers,
+			function ( $a, $b ) {
+				if ( '#' === $a && '#' !== $b ) {
+					return -1;
+				}
+				if ( '#' !== $a && '#' === $b ) {
+					return 1;
+				}
+				if ( '-' === $a && '-' !== $b && '-' !== '#' ) {
+					return -1;
+				}
+				if ( '-' !== $a && '-' === $b && '-' !== '#' ) {
+					return 1;
+				}
+				return strcmp( $a, $b );
+			}
+		);
+
+		foreach ( $markers as $marker ) {
+			$sorted_shows[ $marker ] = $shows_by_name[ $marker ];
+		}
+
+		// Cache the results for 1 day
+		lwtv_plugin()->set_transient( $cache_key, $sorted_shows, DAY_IN_SECONDS );
+
+		return $sorted_shows;
+	}
+
+	/**
+	 * Get all shows that were on air for a given year, sorted by format
+	 *
+	 * @param int $year The year to filter by
+	 * @return array Array of show data grouped by format, then alphabetically by show name
+	 */
+	public function get_shows_for_year_by_format( int $year ): array {
+		// Validate year input
+		if ( $year < LWTV_FIRST_YEAR || $year > gmdate( 'Y' ) + 1 ) {
+			return array();
+		}
+
+		// Use WordPress caching for performance
+		$cache_key     = 'lwtv_shows_year_by_format_' . $year;
+		$cached_result = lwtv_plugin()->get_transient( $cache_key );
+
+		if ( false !== $cached_result ) {
+			return (array) $cached_result;
+		}
+
+		// Get base show data
+		$shows = $this->get_shows_for_year( $year );
+
+		if ( empty( $shows ) ) {
+			return array();
+		}
+
+		$shows_by_format = array();
+
+		foreach ( $shows as $show ) {
+			$show_id = $this->get_show_id_by_slug( $show['slug'] );
+
+			if ( ! $show_id ) {
+				continue;
+			}
+
+			$show_name = $show['name'];
+
+			// Get additional show data
+			$airdates  = get_post_meta( $show_id, 'lezshows_airdates', true );
+			$countries = get_the_term_list( $show_id, 'lez_country', '', ', ', '' );
+			$formats   = get_the_terms( $show_id, 'lez_formats' );
+
+			// If no formats, skip this show
+			if ( empty( $formats ) || is_wp_error( $formats ) ) {
+				continue;
+			}
+
+			// Group by each format
+			foreach ( $formats as $format ) {
+				$format_name = $format->name;
+
+				// Build the array
+				$shows_by_format[ $format_name ][ $show_name ] = array(
+					'url'      => get_permalink( $show_id ),
+					'name'     => $show_name,
+					'country'  => wp_strip_all_tags( $countries ),
+					'format'   => wp_strip_all_tags( get_the_term_list( $show_id, 'lez_formats' ) ),
+					'airdates' => $airdates,
+				);
+			}
+		}
+
+		// Sort each format group alphabetically by show name
+		foreach ( $shows_by_format as $format_name => $format_group ) {
+			ksort( $format_group );
+			$shows_by_format[ $format_name ] = $format_group;
+		}
+
+		// Sort the formats alphabetically
+		$sorted_shows = array();
+		$format_names = array_keys( $shows_by_format );
+		sort( $format_names );
+
+		foreach ( $format_names as $format_name ) {
+			$sorted_shows[ $format_name ] = $shows_by_format[ $format_name ];
+		}
+
+		// Cache the results for 1 day
+		lwtv_plugin()->set_transient( $cache_key, $sorted_shows, DAY_IN_SECONDS );
+
+		return $sorted_shows;
+	}
+
+	/**
+	 * Get all shows that were on air for a given year, sorted by nation/country
+	 *
+	 * @param int $year The year to filter by
+	 * @return array Array of show data grouped by country, then alphabetically by show name
+	 */
+	public function get_shows_for_year_by_nation( int $year ): array {
+		// Validate year input
+		if ( $year < LWTV_FIRST_YEAR || $year > gmdate( 'Y' ) + 1 ) {
+			return array();
+		}
+
+		// Use WordPress caching for performance
+		$cache_key     = 'lwtv_shows_year_by_nation_' . $year;
+		$cached_result = lwtv_plugin()->get_transient( $cache_key );
+
+		if ( false !== $cached_result ) {
+			return (array) $cached_result;
+		}
+
+		// Get base show data
+		$shows = $this->get_shows_for_year( $year );
+
+		if ( empty( $shows ) ) {
+			return array();
+		}
+
+		$shows_by_nation = array();
+
+		foreach ( $shows as $show ) {
+			$show_id = $this->get_show_id_by_slug( $show['slug'] );
+
+			if ( ! $show_id ) {
+				continue;
+			}
+
+			$show_name = $show['name'];
+
+			// Get additional show data
+			$airdates  = get_post_meta( $show_id, 'lezshows_airdates', true );
+			$countries = get_the_terms( $show_id, 'lez_country' );
+			$format    = get_the_term_list( $show_id, 'lez_formats' );
+
+			// If no countries, skip this show
+			if ( empty( $countries ) || is_wp_error( $countries ) ) {
+				continue;
+			}
+
+			// Group by each country
+			foreach ( $countries as $country ) {
+				$country_name = $country->name;
+
+				// Build the array
+				$shows_by_nation[ $country_name ][ $show_name ] = array(
+					'url'      => get_permalink( $show_id ),
+					'name'     => $show_name,
+					'country'  => wp_strip_all_tags( get_the_term_list( $show_id, 'lez_country' ) ),
+					'format'   => wp_strip_all_tags( $format ),
+					'airdates' => $airdates,
+				);
+			}
+		}
+
+		// Sort each country group alphabetically by show name
+		foreach ( $shows_by_nation as $country_name => $country_group ) {
+			ksort( $country_group );
+			$shows_by_nation[ $country_name ] = $country_group;
+		}
+
+		// Sort the countries alphabetically
+		$sorted_shows  = array();
+		$country_names = array_keys( $shows_by_nation );
+		sort( $country_names );
+
+		foreach ( $country_names as $country_name ) {
+			$sorted_shows[ $country_name ] = $shows_by_nation[ $country_name ];
+		}
+
+		// Cache the results for 1 day
+		lwtv_plugin()->set_transient( $cache_key, $sorted_shows, DAY_IN_SECONDS );
+
+		return $sorted_shows;
 	}
 
 	/**

@@ -10,7 +10,7 @@ namespace LWTV\This_Year\Build;
 /**
  * Characters class for building character data for a specific year
  */
-class Characters {
+class Characters_Builder {
 
 	/**
 	 * Get all characters who appeared on air for a given year

@@ -7,8 +7,9 @@
 
 namespace LWTV\This_Year;
 
-use LWTV\This_Year\Build\Characters;
-use LWTV\This_Year\Build\Shows;
+use LWTV\This_Year\Build\Characters_Builder;
+use LWTV\This_Year\Build\Shows_Builder;
+use LWTV\This_Year\Format\Dead_Characters_Formatter;
 
 class Display {
 	/**
@@ -25,15 +26,18 @@ class Display {
 		$baseurl     = '/this-year/';
 
 		// Get the characters on air count
-		$characters_on_air_count = ( new Characters() )->get_character_count_for_year( $this_year );
-		$dead_characters_count   = ( new Characters() )->get_dead_character_count_for_year( $this_year );
-		$shows_on_air_count      = ( new Shows() )->get_show_count_for_year( $this_year );
-		$new_shows_count         = ( new Shows() )->get_started_show_count_for_year( $this_year );
-		$canceled_shows_count    = ( new Shows() )->get_ended_show_count_for_year( $this_year );
+		$characters_on_air_count = ( new Characters_Builder() )->get_character_count_for_year( $this_year );
+		$dead_characters_count   = ( new Characters_Builder() )->get_dead_character_count_for_year( $this_year );
+		$shows_on_air_count      = ( new Shows_Builder() )->get_show_count_for_year( $this_year );
+		$new_shows_count         = ( new Shows_Builder() )->get_started_show_count_for_year( $this_year );
+		$canceled_shows_count    = ( new Shows_Builder() )->get_ended_show_count_for_year( $this_year );
 
-		// Build the data we'll use for all the templates
-		$characters_on_air         = ( new Characters() )->get_characters_with_shows_for_year( $this_year );
-		$characters_on_air_by_show = ( new Shows() )->get_shows_with_characters_for_year( $this_year );
+		// Build the data we'll use for multiple templates
+		$characters_on_air         = ( new Characters_Builder() )->get_characters_with_shows_for_year( $this_year );
+		$characters_on_air_by_show = ( new Shows_Builder() )->get_shows_with_characters_for_year( $this_year );
+		$shows_by_name             = ( new Shows_Builder() )->get_shows_for_year_by_name( $this_year );
+		$shows_by_format           = ( new Shows_Builder() )->get_shows_for_year_by_format( $this_year );
+		$shows_by_country          = ( new Shows_Builder() )->get_shows_for_year_by_nation( $this_year );
 
 		if ( ! in_array( $view, $valid_views, true ) ) {
 			$view = 'overview';
@@ -53,6 +57,8 @@ class Display {
 					include_once 'templates/characters-on-air.php';
 					break;
 				case 'dead-characters':
+					$dead_by_date = ( new Dead_Characters_Formatter() )->format_by_date_for_year( $this_year, $characters_on_air );
+					$dead_by_show = ( new Dead_Characters_Formatter() )->format_by_show_for_year( $this_year, $characters_on_air_by_show );
 					include_once 'templates/dead-characters.php';
 					break;
 				case 'shows-on-air':

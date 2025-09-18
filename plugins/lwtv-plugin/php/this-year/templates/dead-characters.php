@@ -7,50 +7,12 @@
  * Required variables:
  * @var int $this_year
  * @var int $dead_characters_count
- * @var array $characters_on_air_by_show
- * @var array $characters_on_air
+ * @var array $dead_by_show
+ * @var array $dead_by_date
  */
 
 // translators: %s is the number of characters that died
 $h2_title = sprintf( _n( '%s Character Died', '%s Characters Died', $dead_characters_count ), $dead_characters_count );
-
-$dead_by_date = array();
-foreach ( $characters_on_air as $character ) {
-	if ( ! $character['dead'] ) {
-		continue;
-	}
-
-	// for each death year, if the year is $this_year, add the character to the $dead_characters array
-	foreach ( $character['death_years'] as $death_date ) {
-		// Get the year from the death date (it's the last 4 digits)
-		$death_year = substr( $death_date, 0, 4 );
-		if ( $death_year === $this_year ) {
-			$dead_by_date[ $death_date ][] = $character;
-		}
-	}
-}
-// Sort the $dead_by_date array by the death date
-ksort( $dead_by_date );
-
-$dead_by_show = array();
-foreach ( $characters_on_air_by_show as $show_id => $show_data ) {
-	foreach ( $show_data['characters'] as $character_item => $character ) {
-		if ( empty( $character['dead'] ) ) {
-			continue;
-		}
-
-		if ( ! isset( $dead_by_show[ $show_id ]['show'] ) ) {
-			$dead_by_show[ $show_id ]['show'] = array(
-				'name'    => $show_data['name'],
-				'url'     => '/show/' . $show_data['slug'] . '/',
-				'nations' => $show_data['nations'],
-				'formats' => $show_data['formats'],
-			);
-		}
-
-		$dead_by_show[ $show_id ]['characters'][] = $character;
-	}
-}
 
 if ( empty( $dead_by_date ) ) {
 	?>
