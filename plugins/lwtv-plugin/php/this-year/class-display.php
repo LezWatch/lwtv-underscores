@@ -31,7 +31,7 @@ class Display {
 		$new_shows_count         = ( new Shows() )->get_started_show_count_for_year( $this_year );
 		$canceled_shows_count    = ( new Shows() )->get_ended_show_count_for_year( $this_year );
 
-		// Build the data we'll use for all the tempaltes
+		// Build the data we'll use for all the templates
 		$characters_on_air         = ( new Characters() )->get_characters_with_shows_for_year( $this_year );
 		$characters_on_air_by_show = ( new Shows() )->get_shows_with_characters_for_year( $this_year );
 
