@@ -305,6 +305,14 @@ class Dead {
 	public function generate_years_data() {
 		global $wpdb;
 
+		// Create cache key with data version hash
+		$cache_key   = 'dead_years_data_' . $this->get_data_version_hash();
+		$cached_data = lwtv_plugin()->get_transient( $cache_key );
+
+		if ( false !== $cached_data ) {
+			return $cached_data;
+		}
+
 		// Get all death year meta data (serialized arrays)
 		$query = $wpdb->prepare(
 			"SELECT post_id, meta_value
@@ -360,6 +368,9 @@ class Dead {
 				return $a['death_year'] <=> $b['death_year'];
 			}
 		);
+
+		// Cache the results for 1 day
+		lwtv_plugin()->set_transient( $cache_key, $formatted_results, DAY_IN_SECONDS );
 
 		return $formatted_results;
 	}
@@ -466,6 +477,13 @@ class Dead {
 	private function build_list( $format ) {
 		global $wpdb;
 
+		$cache_key   = 'dead_list_' . $format . '_' . $this->get_data_version_hash();
+		$cached_data = lwtv_plugin()->get_transient( $cache_key );
+
+		if ( false !== $cached_data ) {
+			return $this->output_list( $cached_data, $format );
+		}
+
 		try {
 			// Single optimized query to get all dead character data
 			$queery = "SELECT
@@ -513,8 +531,40 @@ class Dead {
 			// sort by date (newest first)
 			krsort( $array );
 
+			// Cache the results for 1 day
+			lwtv_plugin()->set_transient( $cache_key, $array, DAY_IN_SECONDS );
+
+			return $this->output_list( $array, $format );
+
+		} catch ( \Exception $e ) {
+			lwtv_plugin()->error_log( 'dead-list-error', 'Error building dead list statistics: ' . $e->getMessage() );
+			return 'time' === $format ? array(
+				'most'  => array(
+					'count' => 0,
+					'date'  => '0000-00-00',
+				),
+				'time'  => 0,
+				'start' => '',
+				'end'   => '',
+			) : array();
+		}
+	}
+
+	/**
+	 * Output list data
+	 *
+	 * @param array $output_array Output array
+	 * @param string $format Format type
+	 * @return array Output array
+	 */
+	private function output_list( $output_array, $format ) {
+		if ( empty( $output_array ) ) {
+			return array();
+		}
+
+		try {
 			// calculate time since last death and most dead in a day.
-			$keys      = array_keys( $array );
+			$keys      = array_keys( $output_array );
 			$key_count = count( $keys ) - 1;
 			for ( $i = 0; $i < $key_count; $i++ ) {
 				// Check the diff
@@ -524,31 +574,30 @@ class Dead {
 				$days  = $diff->format( '%a' );
 
 				// Add the time since last death
-				$array[ $keys[ $i ] ]['since'] = $days;
+				$output_array[ $keys[ $i ] ]['since'] = $days;
 
 				// Add the most dead in a day
-				$array[ $keys[ $i ] ]['most'] = count( $array[ $keys[ $i ] ]['chars'] );
+				$output_array[ $keys[ $i ] ]['most'] = count( $output_array[ $keys[ $i ] ]['chars'] );
 			}
 
-			// Change what we output...
 			switch ( $format ) {
 				case 'array':
-					return $array;
+					return $output_array;
 				case 'time':
 					$diff_since = array(
-						'time'      => max( array_column( $array, 'since' ) ),
-						'most'      => max( array_column( $array, 'most' ) ),
+						'time'      => max( array_column( $output_array, 'since' ) ),
+						'most'      => max( array_column( $output_array, 'most' ) ),
 						'most_date' => '0000-00-00',
 					);
 					for ( $i = 0; $i < $key_count; $i++ ) {
-						if ( $diff_since['time'] === $array[ $keys[ $i ] ]['since'] ) {
+						if ( $diff_since['time'] === $output_array[ $keys[ $i ] ]['since'] ) {
 							$diff_since['end']   = $keys[ $i ];
 							$diff_since['start'] = $keys[ $i + 1 ];
 						}
 
-						if ( $diff_since['most'] === $array[ $keys[ $i ] ]['most'] ) {
-							if ( $diff_since['most_date'] < $array[ $keys[ $i ] ]['date'] ) {
-								$diff_since['most_date'] = $array[ $keys[ $i ] ]['date'];
+						if ( $diff_since['most'] === $output_array[ $keys[ $i ] ]['most'] ) {
+							if ( $diff_since['most_date'] < $output_array[ $keys[ $i ] ]['date'] ) {
+								$diff_since['most_date'] = $output_array[ $keys[ $i ] ]['date'];
 							}
 						}
 					}
@@ -564,20 +613,11 @@ class Dead {
 			}
 
 			return array(
-				'all' => $array,
+				'all' => $output_array,
 			);
-
 		} catch ( \Exception $e ) {
-			lwtv_plugin()->error_log( 'dead-list-error', 'Error building dead list statistics: ' . $e->getMessage() );
-			return 'time' === $format ? array(
-				'most'  => array(
-					'count' => 0,
-					'date'  => '0000-00-00',
-				),
-				'time'  => 0,
-				'start' => '',
-				'end'   => '',
-			) : array();
+			lwtv_plugin()->error_log( 'dead-list-error', 'Error outputting dead list: ' . $e->getMessage() );
+			return array();
 		}
 	}
 
@@ -768,7 +808,7 @@ class Dead {
 	 * @param string $format Format type
 	 * @return array Characters by roles
 	 */
-	private function generate_characters_by_roles( $format ) {
+	public function generate_characters_by_roles( $format ) {
 		global $wpdb;
 
 		// Create cache key
@@ -1281,5 +1321,19 @@ class Dead {
 		}
 
 		return $formatted_results;
+	}
+
+	public function get_data_version_hash() {
+		global $wpdb;
+		$last_modified = $wpdb->get_var(
+			$wpdb->prepare(
+				"SELECT MAX(post_modified) FROM {$wpdb->posts} WHERE post_type = %s AND post_status = 'publish'",
+				'post_type_characters'
+			)
+		);
+
+		$hash = md5( $last_modified );
+
+		return $hash;
 	}
 }

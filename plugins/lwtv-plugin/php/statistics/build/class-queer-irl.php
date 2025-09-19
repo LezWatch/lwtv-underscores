@@ -54,7 +54,7 @@ class Queer_IRL {
 	 *
 	 * @return array Queer IRL character data
 	 */
-	private function build_queer_irl_data() {
+	public function build_queer_irl_data() {
 		try {
 			global $wpdb;
 

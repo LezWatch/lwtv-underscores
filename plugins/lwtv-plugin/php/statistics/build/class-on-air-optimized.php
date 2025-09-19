@@ -58,6 +58,16 @@ class On_Air_Optimized {
 		global $wpdb;
 
 		try {
+			// Check for cached data first
+			$cache_key = 'build_characters_on_air_' . implode( '_', $year_range );
+			$array     = lwtv_plugin()->get_transient( $cache_key );
+
+			lwtv_plugin()->error_log( 'on-air-debug', 'build_characters - Cache key: ' . $cache_key . ', cached: ' . ( false !== $array ? 'yes' : 'no' ) );
+
+			if ( false !== $array ) {
+				return $array;
+			}
+
 			$array = array();
 
 			// Build base array with all years
@@ -123,6 +133,16 @@ class On_Air_Optimized {
 			// Sort array by year keys in ascending order (oldest first)
 			ksort( $array );
 
+			// Cache the results if we have data
+			if ( ! empty( $array ) ) {
+				lwtv_plugin()->set_transient( $cache_key, $array, DAY_IN_SECONDS );
+				lwtv_plugin()->error_log( 'on-air-debug', 'Cached characters on-air statistics' );
+			} else {
+				// If empty, delete any existing transient
+				lwtv_plugin()->delete_transient( $cache_key );
+				lwtv_plugin()->error_log( 'on-air-debug', 'No character data found, deleted transient' );
+			}
+
 			return $array;
 
 		} catch ( \Exception $e ) {
@@ -142,6 +162,33 @@ class On_Air_Optimized {
 		global $wpdb;
 
 		try {
+			// Create cache key that includes both year range and filtered data
+			$filtered_hash = '';
+			if ( $filtered_data ) {
+				if ( is_object( $filtered_data ) && isset( $filtered_data->posts ) ) {
+					// For WP_Query objects, hash the post IDs
+					$post_ids      = array_map(
+						function ( $post ) {
+							return $post->ID;
+						},
+						$filtered_data->posts
+					);
+					$filtered_hash = '_filtered_' . md5( implode( ',', $post_ids ) );
+				} elseif ( is_array( $filtered_data ) ) {
+					// For arrays, hash the array contents
+					$filtered_hash = '_filtered_' . md5( implode( ',', $filtered_data ) );
+				}
+			}
+
+			$cache_key = 'build_shows_on_air_' . implode( '_', $year_range ) . $filtered_hash;
+			$array     = lwtv_plugin()->get_transient( $cache_key );
+
+			lwtv_plugin()->error_log( 'on-air-debug', 'build_shows - Cache key: ' . $cache_key . ', cached: ' . ( false !== $array ? 'yes' : 'no' ) );
+
+			if ( false !== $array ) {
+				return $array;
+			}
+
 			$array = array();
 
 			// Debug the filtered data
@@ -273,6 +320,16 @@ class On_Air_Optimized {
 
 			// Sort array by year keys in ascending order (oldest first)
 			ksort( $array );
+
+			// Cache the results if we have data
+			if ( ! empty( $array ) ) {
+				lwtv_plugin()->set_transient( $cache_key, $array, DAY_IN_SECONDS );
+				lwtv_plugin()->error_log( 'on-air-debug', 'Cached shows on-air statistics' );
+			} else {
+				// If empty, delete any existing transient
+				lwtv_plugin()->delete_transient( $cache_key );
+				lwtv_plugin()->error_log( 'on-air-debug', 'No show data found, deleted transient' );
+			}
 
 			return $array;
 
