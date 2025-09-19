@@ -10,11 +10,20 @@
 
 namespace LWTV\Rest_API;
 
-use LWTV\Queeries\Post_Meta;
 use LWTV\Queeries\Taxonomy_Optimized as Queery_Taxonomy;
 use LWTV\CPTs\Characters as CPT_Characters;
 
 class BYQ {
+
+	/**
+	 * Cache duration for death data (24 hours)
+	 */
+	const DEATH_DATA_CACHE_DURATION = DAY_IN_SECONDS;
+
+	/**
+	 * Cache duration for API responses (1 hour)
+	 */
+	const API_RESPONSE_CACHE_DURATION = HOUR_IN_SECONDS;
 
 	/**
 	 * Constructor
@@ -119,17 +128,52 @@ class BYQ {
 	 * This is a separate function because otherwise I use the same call twice
 	 * and that's stupid
 	 */
-	public function list_of_dead_characters( $dead_chars_loop ) {
+	public function list_of_dead_characters( $dead_chars_loop = null ) {
+		// Generate cache key based on data modification time
+		$cache_key = 'byq_death_list_' . $this->get_data_version_hash();
+
+		// Try to get from cache first
+		$cached_result = lwtv_plugin()->get_transient( $cache_key );
+		if ( false !== $cached_result ) {
+			return $cached_result;
+		}
 
 		$death_list_array = array();
 
-		if ( $dead_chars_loop->have_posts() ) {
-			// Loop through characters to build our list
-			foreach ( $dead_chars_loop->posts as $dead_char ) {
-				// Date(s) character died
-				$died_date       = get_post_meta( $dead_char->ID, 'lezchars_death_year', true );
-				$died_date_array = array();
+		// If no loop provided, get all dead characters efficiently
+		if ( null === $dead_chars_loop ) {
+			$dead_chars_loop = ( new Queery_Taxonomy() )->get_posts_for_terms( CPT_Characters::SLUG, 'lez_cliches', 'dead' );
+		}
 
+		if ( $dead_chars_loop->have_posts() ) {
+			// Pre-fetch all meta data in one query to reduce database calls
+			$character_ids = wp_list_pluck( $dead_chars_loop->posts, 'ID' );
+			lwtv_plugin()->error_log( 'byq-debug', 'Character IDs count: ' . count( $character_ids ) );
+
+			$meta_data = $this->get_bulk_meta_data( $character_ids );
+			lwtv_plugin()->error_log( 'byq-debug', 'Meta data count: ' . count( $meta_data ) );
+
+			// Loop through characters to build our list
+			$processed_count = 0;
+			$skipped_count   = 0;
+			foreach ( $dead_chars_loop->posts as $dead_char ) {
+				$character_id = $dead_char->ID;
+
+				// Get cached meta data
+				$died_date = $meta_data[ $character_id ]['lezchars_death_year'] ?? '';
+				$show_data = $meta_data[ $character_id ]['lezchars_show_group'] ?? array();
+
+				if ( empty( $died_date ) ) {
+					++$skipped_count;
+					if ( $skipped_count <= 3 ) { // Log first 3 skipped characters
+						lwtv_plugin()->error_log( 'byq-debug', "Skipped character $character_id - no death date. Meta keys: " . implode( ', ', array_keys( $meta_data[ $character_id ] ?? array() ) ) );
+					}
+					continue; // Skip characters without death dates
+				}
+
+				++$processed_count;
+
+				$died_date_array = array();
 				if ( ! is_array( $died_date ) ) {
 					$died_date = array( $died_date );
 				}
@@ -137,34 +181,44 @@ class BYQ {
 				// For each death date, create an item in an array with the unix timestamp
 				// We default to 8pm for prime-time reasons.
 				foreach ( $died_date as $date ) {
-					$date_parse        = date_parse_from_format( 'Y-m-d', $date );
-					$died_date_array[] = mktime( '20', $date_parse['minute'], $date_parse['second'], $date_parse['month'], $date_parse['day'], $date_parse['year'] );
+					if ( empty( $date ) ) {
+						continue;
+					}
+					$date_parse = date_parse_from_format( 'Y-m-d', $date );
+					if ( $date_parse['year'] && $date_parse['month'] && $date_parse['day'] ) {
+						$died_date_array[] = mktime( 20, $date_parse['minute'], $date_parse['second'], $date_parse['month'], $date_parse['day'], $date_parse['year'] );
+					}
+				}
+
+				if ( empty( $died_date_array ) ) {
+					continue; // Skip if no valid dates
 				}
 
 				// Grab the highest date (aka most recent)
 				$died = max( $died_date_array );
 
-				// Get the post slug
-				$post_slug = get_post_field( 'post_name', get_post( $dead_char ) );
+				// Get the post slug efficiently
+				$post_slug = $dead_char->post_name;
 
-				// Get the shows
-				$all_shows = get_post_meta( $dead_char->ID, 'lezchars_show_group', true );
-				$show_ids  = array();
-				foreach ( $all_shows as $show ) {
-					// Remove the Array.
-					if ( is_array( $show['show'] ) ) {
-						$show['show'] = $show['show'][0];
+				// Process shows efficiently
+				$show_ids = array();
+				if ( is_array( $show_data ) ) {
+					foreach ( $show_data as $show ) {
+						if ( isset( $show['show'] ) ) {
+							$show_id = is_array( $show['show'] ) ? $show['show'][0] : $show['show'];
+							if ( $show_id ) {
+								$show_ids[] = $show_id;
+							}
+						}
 					}
-
-					$show_ids[] = $show['show'];
 				}
 
 				// Add this character to the array
 				$death_list_array[ $post_slug ] = array(
-					'id'    => $dead_char->ID,
+					'id'    => $character_id,
 					'slug'  => $post_slug,
-					'name'  => get_the_title( $dead_char ),
-					'url'   => get_the_permalink( $dead_char ),
+					'name'  => $dead_char->post_title,
+					'url'   => get_permalink( $character_id ),
 					'shows' => $show_ids,
 					'died'  => $died,
 					'date'  => $died_date,
@@ -174,12 +228,16 @@ class BYQ {
 			// phpcs:disable
 			// Reorder all the dead to sort by DoD
 			uasort( $death_list_array, function( $a, $b ) {
-
 				// Spaceship Needs PHP 7.1+
 				return $a['died'] <=> $b['died'];
 			});
 			// phpcs:enable
+
+			lwtv_plugin()->error_log( 'byq-debug', "Processed: $processed_count, Skipped: $skipped_count, Final array count: " . count( $death_list_array ) );
 		}
+
+		// Cache the result
+		lwtv_plugin()->set_transient( $cache_key, $death_list_array, self::DEATH_DATA_CACHE_DURATION );
 
 		return $death_list_array;
 	}
@@ -190,21 +248,40 @@ class BYQ {
 	 * @return array with last dead character data
 	 */
 	public function last_death() {
-		$return = '';
-		// Get all our dead queers
-		$dead_chars_loop  = ( new Queery_Taxonomy() )->get_posts_for_terms( CPT_Characters::SLUG, 'lez_cliches', 'dead' );
-		$death_list_array = self::list_of_dead_characters( $dead_chars_loop );
+		// Generate cache key
+		$cache_key = 'byq_last_death_' . $this->get_data_version_hash();
 
-		// Extract the last death
-		$last_death = array_slice( $death_list_array, -1, 1, true );
-		$last_death = array_shift( $last_death );
-
-		// Calculate the difference between then and now
-		if ( isset( $last_death['died'] ) && ! is_null( $last_death['died'] ) ) {
-			$diff                = abs( time() - $last_death['died'] );
-			$last_death['since'] = $diff;
-			$return              = $last_death;
+		// Try to get from cache first
+		$cached_result = lwtv_plugin()->get_transient( $cache_key );
+		if ( false !== $cached_result ) {
+			return $cached_result;
 		}
+
+		$return = '';
+
+		// Get all dead characters and find the most recent death
+		$dead_chars_loop  = ( new Queery_Taxonomy() )->get_posts_for_terms( CPT_Characters::SLUG, 'lez_cliches', 'dead' );
+		$death_list_array = $this->list_of_dead_characters( $dead_chars_loop );
+
+		// Extract the last death (most recent timestamp)
+		if ( ! empty( $death_list_array ) ) {
+			$last_death = array_slice( $death_list_array, -1, 1, true );
+			$last_death = array_shift( $last_death );
+
+			// Calculate the difference between then and now
+			if ( isset( $last_death['died'] ) && ! is_null( $last_death['died'] ) ) {
+				$diff                = abs( time() - $last_death['died'] );
+				$last_death['since'] = $diff;
+				$return              = $last_death;
+			} else {
+				lwtv_plugin()->error_log( 'byq-debug', 'Last death has no valid died timestamp' );
+			}
+		} else {
+			lwtv_plugin()->error_log( 'byq-debug', 'Death list array is empty' );
+		}
+
+		// Cache the result
+		lwtv_plugin()->set_transient( $cache_key, $return, self::API_RESPONSE_CACHE_DURATION );
 
 		return $return;
 	}
@@ -215,7 +292,6 @@ class BYQ {
 	 * @return array with character data
 	 */
 	public function on_this_day( $this_day = 'today', $type = 'json' ) {
-
 		// Default to today
 		if ( 'today' === $this_day ) {
 			// Create the date with regards to timezones
@@ -229,57 +305,240 @@ class BYQ {
 		$valid_types = array( 'json', 'tweet' );
 		$type        = ( ! in_array( $type, $valid_types, true ) ) ? 'json' : $type;
 
-		// Get all our dead queers
-		$dead_chars_loop  = ( new Post_Meta() )->make( CPT_Characters::SLUG, 'lezchars_death_year', '', 'EXISTS' );
-		$death_list_array = self::list_of_dead_characters( $dead_chars_loop );
+		// Generate cache key
+		$cache_key = 'byq_on_this_day_' . md5( $this_day . '_' . $type ) . '_' . $this->get_data_version_hash();
 
+		// Try to get from cache first
+		$cached_result = lwtv_plugin()->get_transient( $cache_key );
+		if ( false !== $cached_result ) {
+			return $cached_result;
+		}
+
+		// Use optimized query to get characters who died on this day
+		$died_today_array = $this->get_characters_died_on_date( $this_day, $type );
+
+		// Cache the result
+		lwtv_plugin()->set_transient( $cache_key, $died_today_array, self::API_RESPONSE_CACHE_DURATION );
+
+		return $died_today_array;
+	}
+
+	/**
+	 * Get characters who died on a specific date
+	 *
+	 * @param string $date Date in MM-DD format
+	 * @param string $type Response type (json or tweet)
+	 * @return array
+	 */
+	private function get_characters_died_on_date( $date, $type ) {
 		$died_today_array = array();
 
-		switch ( $type ) {
-			case 'tweet':
-				$the_dead_array = array();
-				foreach ( $death_list_array as $the_dead ) {
-					if ( gmdate( 'm-d', $the_dead['died'] ) === $this_day ) {
-						$data = $the_dead['name'] . ' (' . gmdate( 'Y', $the_dead['died'] ) . ') -- ' . $the_dead['url'];
-						array_push( $the_dead_array, $data );
+		// Parse the MM-DD date
+		$date_parts = explode( '-', $date );
+		if ( count( $date_parts ) !== 2 ) {
+			return $died_today_array;
+		}
+
+		$month = intval( $date_parts[0] );
+		$day   = intval( $date_parts[1] );
+
+		// Build date patterns to match against stored dates
+		// We need to match any year with this month-day combination
+		$date_patterns = array();
+		$current_year  = gmdate( 'Y' );
+		for ( $year = 1950; $year <= $current_year; $year++ ) {
+			$date_patterns[] = sprintf( '%04d-%02d-%02d', $year, $month, $day );
+		}
+
+		// Use REGEXP to match any of our date patterns
+		global $wpdb;
+		$date_regex = implode( '|', $date_patterns );
+
+		$query = $wpdb->prepare(
+			"SELECT DISTINCT p.ID, p.post_title, p.post_name
+			FROM {$wpdb->posts} p
+			INNER JOIN {$wpdb->postmeta} pm ON p.ID = pm.post_id
+			INNER JOIN {$wpdb->term_relationships} tr ON p.ID = tr.object_id
+			INNER JOIN {$wpdb->term_taxonomy} tt ON tr.term_taxonomy_id = tt.term_taxonomy_id
+			INNER JOIN {$wpdb->terms} t ON tt.term_id = t.term_id
+			WHERE p.post_type = %s
+			AND p.post_status = 'publish'
+			AND pm.meta_key = 'lezchars_death_year'
+			AND pm.meta_value REGEXP %s
+			AND tt.taxonomy = 'lez_cliches'
+			AND t.slug = 'dead'
+			ORDER BY p.post_title",
+			CPT_Characters::SLUG,
+			$date_regex
+		);
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- Complex regex pattern for date matching
+		$results = $wpdb->get_results( $query );
+
+		if ( ! empty( $results ) ) {
+			$characters_died_today = array();
+
+			foreach ( $results as $row ) {
+				// Get the actual death year for this character
+				$death_years = get_post_meta( $row->ID, 'lezchars_death_year', true );
+				$death_year  = '';
+
+				if ( is_array( $death_years ) ) {
+					foreach ( $death_years as $death_date ) {
+						if ( ! empty( $death_date ) ) {
+							$date_parse = date_parse_from_format( 'Y-m-d', $death_date );
+							if ( $date_parse['month'] === $month && $date_parse['day'] === $day ) {
+								$death_year = $date_parse['year'];
+								break;
+							}
+						}
+					}
+				} else {
+					$date_parse = date_parse_from_format( 'Y-m-d', $death_years );
+					if ( $date_parse['month'] === $month && $date_parse['day'] === $day ) {
+						$death_year = $date_parse['year'];
 					}
 				}
-				if ( empty( $the_dead_array ) ) {
-					$content = 'NONE';
-				} else {
-					$the_dead_string = implode( '\n', $the_dead_array );
-					$count_the_dead  = count( $the_dead_array );
-					// translators: %s is the number of characters
-					$characters = sprintf( _n( '%s character', '%s characters', $count_the_dead ), $count_the_dead );
-					$content    = 'On ' . $this_day . ', the following ' . $characters . ' died: \n' . $the_dead_string;
+
+				if ( $death_year ) {
+					$characters_died_today[] = array(
+						'id'        => $row->ID,
+						'slug'      => $row->post_name,
+						'name'      => $row->post_title,
+						'url'       => get_permalink( $row->ID ),
+						'died'      => $death_year,
+						'timestamp' => mktime( 20, 0, 0, $month, $day, $death_year ),
+					);
 				}
-				$died_today_array['content'] = $content;
-				break;
-			case 'json':
-				foreach ( $death_list_array as $the_dead ) {
-					if ( gmdate( 'm-d', $the_dead['died'] ) === $this_day ) {
+			}
+
+			switch ( $type ) {
+				case 'tweet':
+					$the_dead_array = array();
+					foreach ( $characters_died_today as $the_dead ) {
+						$data             = $the_dead['name'] . ' (' . $the_dead['died'] . ') -- ' . $the_dead['url'];
+						$the_dead_array[] = $data;
+					}
+					if ( empty( $the_dead_array ) ) {
+						$content = 'NONE';
+					} else {
+						$the_dead_string = implode( '\n', $the_dead_array );
+						$count_the_dead  = count( $the_dead_array );
+						// translators: %s is the number of characters
+						$characters = sprintf( _n( '%s character', '%s characters', $count_the_dead ), $count_the_dead );
+						$content    = 'On ' . $date . ', the following ' . $characters . ' died: \n' . $the_dead_string;
+					}
+					$died_today_array['content'] = $content;
+					break;
+				case 'json':
+					foreach ( $characters_died_today as $the_dead ) {
 						$died_today_array[ $the_dead['slug'] ] = array(
 							'id'   => $the_dead['id'],
 							'name' => $the_dead['name'],
 							'url'  => $the_dead['url'],
-							'died' => gmdate( 'Y', $the_dead['died'] ),
+							'died' => $the_dead['died'],
 						);
 					}
-				}
-				if ( empty( $died_today_array ) ) {
-					$died_today_array['none'] = array(
-						'id'   => 0,
-						'name' => 'No One',
-						'url'  => site_url( '/cliche/dead/' ),
-						'died' => 'n/a',
-					);
-				}
-				break;
-			default:
-				$died_today_array = new \WP_Error( 'invalid', 'An unexpected error has occurred.' );
+					if ( empty( $died_today_array ) ) {
+						$died_today_array['none'] = array(
+							'id'   => 0,
+							'name' => 'No One',
+							'url'  => site_url( '/cliche/dead/' ),
+							'died' => 'n/a',
+						);
+					}
+					break;
+				default:
+					$died_today_array = new \WP_Error( 'invalid', 'An unexpected error has occurred.' );
+			}
+		} elseif ( 'json' === $type ) {
+			// No results found
+			$died_today_array['none'] = array(
+				'id'   => 0,
+				'name' => 'No One',
+				'url'  => site_url( '/cliche/dead/' ),
+				'died' => 'n/a',
+			);
+		} else {
+			$died_today_array['content'] = 'NONE';
 		}
 
 		return $died_today_array;
+	}
+
+	/**
+	 * Get bulk meta data for multiple characters
+	 *
+	 * @param array $character_ids Array of character IDs
+	 * @return array Meta data organized by character ID
+	 */
+	private function get_bulk_meta_data( $character_ids ) {
+		if ( empty( $character_ids ) ) {
+			return array();
+		}
+
+		global $wpdb;
+
+		// Sanitize IDs to ensure they're integers
+		$character_ids = array_map( 'intval', $character_ids );
+		$character_ids = array_filter( $character_ids ); // Remove any invalid IDs
+
+		if ( empty( $character_ids ) ) {
+			return array();
+		}
+
+		// Create safe IN clause
+		$ids_string = implode( ',', $character_ids );
+
+		$query = "SELECT post_id, meta_key, meta_value
+			FROM {$wpdb->postmeta}
+			WHERE post_id IN ($ids_string)
+			AND meta_key IN ('lezchars_death_year', 'lezchars_show_group')";
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- IDs are sanitized integers
+		$results = $wpdb->get_results( $query );
+
+		lwtv_plugin()->error_log( 'byq-debug', 'Bulk meta query results count: ' . count( $results ) );
+		lwtv_plugin()->error_log( 'byq-debug', 'Query: ' . $query );
+
+		$meta_data = array();
+		foreach ( $results as $row ) {
+			$meta_data[ $row->post_id ][ $row->meta_key ] = maybe_unserialize( $row->meta_value );
+		}
+
+		lwtv_plugin()->error_log( 'byq-debug', 'Processed meta data count: ' . count( $meta_data ) );
+
+		return $meta_data;
+	}
+
+	/**
+	 * Get data version hash for cache invalidation
+	 *
+	 * @return string Hash based on last modification time of character data
+	 */
+	private function get_data_version_hash() {
+		$cache_key   = 'byq_data_version_hash';
+		$cached_hash = lwtv_plugin()->get_transient( $cache_key );
+
+		if ( false !== $cached_hash ) {
+			return $cached_hash;
+		}
+
+		// Get the most recent modification time of any character post
+		global $wpdb;
+		$last_modified = $wpdb->get_var(
+			$wpdb->prepare(
+				"SELECT MAX(post_modified) FROM {$wpdb->posts} WHERE post_type = %s AND post_status = 'publish'",
+				CPT_Characters::SLUG
+			)
+		);
+
+		$hash = md5( $last_modified );
+
+		// Cache for 1 hour
+		lwtv_plugin()->set_transient( $cache_key, $hash, HOUR_IN_SECONDS );
+
+		return $hash;
 	}
 
 	/**
@@ -304,8 +563,8 @@ class BYQ {
 			);
 		}
 
-		// Generate cache key
-		$cache_key = 'character_death_' . md5( $name );
+		// Generate cache key with data version hash for proper invalidation
+		$cache_key = 'character_death_' . md5( $name ) . '_' . $this->get_data_version_hash();
 
 		// Try to get from cache first
 		$cached_result = lwtv_plugin()->get_transient( $cache_key );
@@ -313,33 +572,8 @@ class BYQ {
 			return $cached_result;
 		}
 
-		// Try exact match first (most efficient)
-		$exact_args = array(
-			'post_type'      => CPT_Characters::SLUG,
-			'post_status'    => 'publish',
-			'posts_per_page' => 1,
-			'no_found_rows'  => true,
-			'title'          => $name,
-		);
-
-		$exact_query = new \WP_Query( $exact_args );
-		$character   = $exact_query->have_posts() ? $exact_query->posts[0] : null;
-		wp_reset_postdata();
-
-		// If no exact match, try partial match using WP_Query
-		if ( ! $character ) {
-			$args = array(
-				's'              => $name,
-				'post_type'      => CPT_Characters::SLUG,
-				'post_status'    => 'publish',
-				'posts_per_page' => 1,
-				'no_found_rows'  => true,
-			);
-
-			$query     = new \WP_Query( $args );
-			$character = $query->have_posts() ? $query->posts[0] : null;
-			wp_reset_postdata();
-		}
+		// Use optimized single query with LIKE for better performance
+		$character = $this->find_character_by_name( $name );
 
 		// Default result
 		$result = array(
@@ -351,47 +585,113 @@ class BYQ {
 		);
 
 		if ( $character ) {
-			$character_id = $character->ID;
+			$character_id = $character['ID'];
 
-			// Get death information
-			$death_years = get_post_meta( $character_id, 'lezchars_death_year', true );
-			$died        = 'alive';
-			if ( ! empty( $death_years ) ) {
-				if ( is_array( $death_years ) ) {
-					$died = implode( ', ', array_filter( $death_years ) );
+			// Process death information
+			$died = 'alive';
+			if ( ! empty( $character['death_years'] ) ) {
+				if ( is_array( $character['death_years'] ) ) {
+					$died = implode( ', ', array_filter( $character['death_years'] ) );
 				} else {
-					$died = $death_years;
+					$died = $character['death_years'];
 				}
 			}
 
-			// Get show information efficiently
-			$shows_data = get_post_meta( $character_id, 'lezchars_show_group', true );
-			$shows      = '';
-			if ( is_array( $shows_data ) ) {
-				$show_titles = array();
-				foreach ( $shows_data as $show ) {
-					if ( isset( $show['show'] ) ) {
-						$show_id = is_array( $show['show'] ) ? $show['show'][0] : $show['show'];
-						if ( $show_id ) {
-							$show_titles[] = get_the_title( $show_id );
-						}
-					}
-				}
-				$shows = implode( ', ', array_filter( $show_titles ) );
+			// Process show information efficiently
+			$shows = '';
+			if ( ! empty( $character['show_titles'] ) ) {
+				$shows = implode( ', ', array_filter( $character['show_titles'] ) );
 			}
 
 			$result = array(
 				'id'    => $character_id,
-				'name'  => $character->post_title,
+				'name'  => $character['post_title'],
 				'shows' => ! empty( $shows ) ? $shows : 'None',
 				'url'   => get_permalink( $character_id ),
 				'died'  => $died,
 			);
 		}
 
-		// Cache the result for 1 hour
-		lwtv_plugin()->set_transient( $cache_key, $result, HOUR_IN_SECONDS );
+		// Cache the result
+		lwtv_plugin()->set_transient( $cache_key, $result, self::API_RESPONSE_CACHE_DURATION );
 
 		return $result;
+	}
+
+	/**
+	 * Find character by name using optimized single query
+	 *
+	 * @param string $name Character name to search for
+	 * @return array|null Character data or null if not found
+	 */
+	private function find_character_by_name( $name ) {
+		global $wpdb;
+
+		// Use direct SQL for better performance than WP_Query
+		$query = $wpdb->prepare(
+			"SELECT DISTINCT p.ID, p.post_title, p.post_name,
+				pm_death.meta_value as death_years,
+				pm_shows.meta_value as show_group
+			FROM {$wpdb->posts} p
+			LEFT JOIN {$wpdb->postmeta} pm_death ON p.ID = pm_death.post_id AND pm_death.meta_key = 'lezchars_death_year'
+			LEFT JOIN {$wpdb->postmeta} pm_shows ON p.ID = pm_shows.post_id AND pm_shows.meta_key = 'lezchars_show_group'
+			WHERE p.post_type = %s
+			AND p.post_status = 'publish'
+			AND (p.post_title = %s OR p.post_title LIKE %s)
+			ORDER BY CASE WHEN p.post_title = %s THEN 1 ELSE 2 END
+			LIMIT 1",
+			CPT_Characters::SLUG,
+			$name,
+			'%' . $wpdb->esc_like( $name ) . '%',
+			$name
+		);
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- Complex query with proper escaping
+		$result = $wpdb->get_row( $query, ARRAY_A );
+
+		if ( ! $result ) {
+			return null;
+		}
+
+		// Process show data to get titles efficiently
+		$show_titles = array();
+		if ( ! empty( $result['show_group'] ) ) {
+			$shows_data = maybe_unserialize( $result['show_group'] );
+			if ( is_array( $shows_data ) ) {
+				$show_ids = array();
+				foreach ( $shows_data as $show ) {
+					if ( isset( $show['show'] ) ) {
+						$show_id = is_array( $show['show'] ) ? $show['show'][0] : $show['show'];
+						if ( $show_id ) {
+							$show_ids[] = intval( $show_id );
+						}
+					}
+				}
+
+				// Bulk fetch show titles
+				if ( ! empty( $show_ids ) ) {
+					$show_ids_string = implode( ',', array_map( 'intval', $show_ids ) );
+					$titles_query    = "SELECT ID, post_title FROM {$wpdb->posts} WHERE ID IN ($show_ids_string) AND post_status = 'publish'";
+
+					// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- IDs are sanitized integers
+					$show_results = $wpdb->get_results( $titles_query );
+
+					foreach ( $show_results as $show ) {
+						$show_titles[] = $show->post_title;
+					}
+				}
+			}
+		}
+
+		// Process death years
+		$death_years = maybe_unserialize( $result['death_years'] );
+
+		return array(
+			'ID'          => $result['ID'],
+			'post_title'  => $result['post_title'],
+			'post_name'   => $result['post_name'],
+			'death_years' => $death_years,
+			'show_titles' => $show_titles,
+		);
 	}
 }

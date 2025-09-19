@@ -286,7 +286,7 @@ class Of_The_Day implements Component, Templater {
 	}
 
 	/**
-	 * Generate data for Character.
+	 * Generate data for Character. (Optimized version)
 	 *
 	 * @param int $post_id
 	 *
@@ -308,29 +308,52 @@ class Of_The_Day implements Component, Templater {
 			return $return;
 		}
 
-		$show_titles = array();
-
+		// Extract show IDs for bulk fetching
+		$show_ids = array();
 		foreach ( $all_shows as $each_show ) {
-			// Remove the nested Array.
-			if ( is_array( $each_show['show'] ) ) {
-				$each_show['show'] = $each_show['show'][0];
+			if ( isset( $each_show['show'] ) ) {
+				$show_id = is_array( $each_show['show'] ) ? $each_show['show'][0] : $each_show['show'];
+				if ( $show_id ) {
+					$show_ids[] = intval( $show_id );
+				}
 			}
-			array_push( $show_titles, get_the_title( $each_show['show'] ) );
+		}
+
+		// Bulk fetch show titles
+		$show_titles = array();
+		if ( ! empty( $show_ids ) ) {
+			global $wpdb;
+			$ids_string   = implode( ',', array_map( 'intval', $show_ids ) );
+			$titles_query = "SELECT ID, post_title FROM {$wpdb->posts} WHERE ID IN ($ids_string) AND post_status = 'publish'";
+
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- IDs are sanitized
+			$show_results = $wpdb->get_results( $titles_query );
+
+			foreach ( $show_results as $show ) {
+				$show_titles[ $show->ID ] = $show->post_title;
+			}
 		}
 
 		$num_shows = count( $all_shows );
 		$showsmore = ( $num_shows > 1 ) ? ' (plus ' . ( $num_shows - 1 ) . ' more)' : '';
 
-		$show_post  = get_post( $shows_value['show'] );
-		$show_name  = $show_post->post_title;
-		$show_title = $this->clean_show_title( $show_post->post_title );
+		// Get the primary show data
+		$primary_show_id = is_array( $shows_value['show'] ) ? $shows_value['show'][0] : $shows_value['show'];
+		$show_name       = $show_titles[ $primary_show_id ] ?? '';
+		$show_title      = $this->clean_show_title( $show_name );
 
 		$hashtag = '#' . implode( '', array_map( 'ucfirst', explode( '-', $show_title ) ) );
+
+		// Check status efficiently
+		$status = 'alive';
+		if ( has_term( 'dead', 'lez_cliches', $post_id ) ) {
+			$status = 'dead';
+		}
 
 		// Set the Return
 		$return['hashtag']   = ( isset( $hashtag ) && '#HelloWorld' !== $hashtag ) ? $hashtag : '';
 		$return['shows']     = ( isset( $show_name ) ) ? $show_name . $showsmore : '';
-		$return['status']    = ( has_term( 'dead', 'lez_cliches', $post_id ) ) ? 'dead' : 'alive';
+		$return['status']    = $status;
 		$return['showcount'] = ( isset( $num_shows ) ) ? $num_shows : 0;
 
 		return $return;
@@ -349,13 +372,26 @@ class Of_The_Day implements Component, Templater {
 			return $return;
 		}
 
-		$return['loved']      = ( get_post_meta( $post_id, 'lezshows_worthit_show_we_love', true ) ) ? 'yes' : 'no';
-		$return['score']      = number_format( (float) get_post_meta( $post_id, 'lezshows_the_score', true ), 2, '.', '' );
-		$return['characters'] = get_post_meta( $post_id, 'lezshows_char_count', true );
+		// Bulk fetch all meta data in one query
+		global $wpdb;
+		$meta_query = "SELECT meta_key, meta_value FROM {$wpdb->postmeta}
+			WHERE post_id = %d AND meta_key IN ('lezshows_worthit_show_we_love', 'lezshows_the_score', 'lezshows_char_count')";
 
-		// We need to do some crazy generation here
-		$post_data  = get_post( $post_id );
-		$show_title = $this->clean_show_title( $post_data->post_title );
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- Prepared query with proper escaping
+		$meta_results = $wpdb->get_results( $wpdb->prepare( $meta_query, $post_id ) );
+		$meta_data    = array();
+
+		foreach ( $meta_results as $row ) {
+			$meta_data[ $row->meta_key ] = $row->meta_value;
+		}
+
+		$return['loved']      = ( ! empty( $meta_data['lezshows_worthit_show_we_love'] ) ) ? 'yes' : 'no';
+		$return['score']      = number_format( (float) ( $meta_data['lezshows_the_score'] ?? 0 ), 2, '.', '' );
+		$return['characters'] = $meta_data['lezshows_char_count'] ?? 0;
+
+		// Get post title efficiently
+		$post_title = get_the_title( $post_id );
+		$show_title = $this->clean_show_title( $post_title );
 
 		// Hashtag
 		$return['hashtag'] = '#' . implode( '', array_map( 'ucfirst', explode( '-', $show_title ) ) );
@@ -388,7 +424,7 @@ class Of_The_Day implements Component, Templater {
 	}
 
 	/**
-	 * Let's find something valid...
+	 * Let's find something valid... (Optimized version)
 	 * @param  string $type [character|show]
 	 * @return number $id   [ID of the show or character]
 	 */
@@ -400,116 +436,169 @@ class Of_The_Day implements Component, Templater {
 		}, 10, 2 );
 		// phpcs:enable
 
-		$meta_query_array = '';
-		$tax_query_array  = '';
+		// Generate cache key for eligible posts
+		$cache_key      = 'lwtv_otd_eligible_' . $type . '_' . $date . '_' . $this->get_data_version_hash( $type );
+		$eligible_posts = lwtv_plugin()->get_transient( $cache_key );
+
+		if ( false === $eligible_posts ) {
+			$eligible_posts = $this->get_eligible_posts( $type, $date );
+			// Cache for 1 hour
+			lwtv_plugin()->set_transient( $cache_key, $eligible_posts, HOUR_IN_SECONDS );
+		}
+
+		if ( empty( $eligible_posts ) ) {
+			return 0;
+		}
+
+		// Use array_rand for better performance than WP_Query with orderby => 'rand'
+		$random_key = array_rand( $eligible_posts );
+		return $eligible_posts[ $random_key ];
+	}
+
+	/**
+	 * Get eligible posts for OTD selection (optimized)
+	 *
+	 * @param string $type Post type
+	 * @param string $date Date for awareness filtering
+	 * @return array Array of eligible post IDs
+	 */
+	private function get_eligible_posts( $type, $date ) {
+		global $wpdb;
+
+		$post_type      = 'post_type_' . $type . 's';
+		$eligible_posts = array();
 
 		switch ( $type ) {
 			case 'character':
 				if ( '' === $date ) {
 					// Create the date with regards to timezones
 					$timestamp = time();
-					$dt        = new \DateTime( 'now', new \DateTimeZone( LWTV_TIMEZONE ) ); //first argument "must" be a string
-					$dt->setTimestamp( $timestamp ); //adjust the object to correct timestamp
+					$dt        = new \DateTime( 'now', new \DateTimeZone( LWTV_TIMEZONE ) );
+					$dt->setTimestamp( $timestamp );
 					$date = $dt->format( 'm-d' );
 				}
 
-				$mystery_array    = array( 10250, 11066, 79739, 87052 );
-				$meta_query_array = array(
-					array(
-						'key'     => '_thumbnail_id',
-						'value'   => $mystery_array, // Don't show if the image is Mystery woman.
-						'compare' => 'NOT IN',
-					),
-					array(
-						'key'     => '_thumbnail_id', // Images are required
-						'compare' => 'EXISTS',
-					),
-					array(
-						'key'     => 'lezchars_show_group',
-						'value'   => 're', // Only show REgulars or REcurring, but not guest.
-						'compare' => 'LIKE',
-					),
-					array(
-						'key'     => 'lezchars_cliches',
-						'field'   => 'slug',
-						'terms'   => array( 'conditional-queerness', 'phase' ), // Don't show conditionally queers, or just-a-phasers.
-						'compare' => 'NOT IN',
-					),
-				);
-				$tax_query_array  = self::character_awareness( $date );
-				break;
-			case 'show':
-				$meta_query_array = array(
-					array(
-						'key'     => 'lezshows_the_score',
-						'value'   => '50', // Shows with a score over 50.
-						'compare' => '>=',
-					),
-					array(
-						'key'     => 'lezshows_worthit_rating',
-						'value'   => 'e', // yEs or mEh, but not NO or TBD
-						'compare' => 'LIKE',
-					),
-				);
-				break;
-		}
+				// Build complex query for characters
+				$tax_query      = $this->character_awareness( $date );
+				$tax_conditions = '';
 
-		// Grab a random post
-		$valid_post = false;
-
-		while ( ! $valid_post ) {
-			$args = array(
-				'post_type'      => 'post_type_' . $type . 's',
-				'orderby'        => 'rand',
-				'posts_per_page' => '1',
-				's'              => '-TBD', // Excluding posts with "TBD" as the content
-				'tax_query'      => $tax_query_array,
-				'meta_query'     => $meta_query_array,
-				'no_found_rows'  => true,
-			);
-			$post = new \WP_Query( $args );
-
-			// Do the needful
-			if ( $post && $post->have_posts() ) {
-				while ( $post->have_posts() ) {
-					$post->the_post();
-					$id = get_the_ID();
+				if ( ! empty( $tax_query ) ) {
+					$tax_conditions = "AND p.ID IN (
+						SELECT tr.object_id
+						FROM {$wpdb->term_relationships} tr
+						INNER JOIN {$wpdb->term_taxonomy} tt ON tr.term_taxonomy_id = tt.term_taxonomy_id
+						INNER JOIN {$wpdb->terms} t ON tt.term_id = t.term_id
+						WHERE tt.taxonomy = '" . esc_sql( $tax_query[0]['taxonomy'] ) . "'
+						AND t.slug IN ('" . implode( "','", array_map( 'esc_sql', $tax_query[0]['terms'] ) ) . "')
+					)";
 				}
-				wp_reset_postdata();
-			}
 
-			switch ( $type ) {
-				case 'character':
-					// if the character is a cartoon, they MUST be a regular.
-					$is_toon = ( has_term( 'cartoon', 'lez_cliches', $id ) ) ? true : false;
-					// phpcs:ignore WordPress.PHP.StrictInArray
-					$is_regu = ( in_array( 'regular', get_post_meta( $id, 'lezchars_show_group', true ) ) ) ? true : false;
-					if ( ! $is_toon || ( $is_toon && $is_regu ) ) {
-						$valid_post = true;
+				$mystery_array  = array( 10250, 11066, 79739, 87052 );
+				$mystery_string = implode( ',', array_map( 'intval', $mystery_array ) );
+
+				$query = "SELECT DISTINCT p.ID
+					FROM {$wpdb->posts} p
+					INNER JOIN {$wpdb->postmeta} pm1 ON p.ID = pm1.post_id AND pm1.meta_key = '_thumbnail_id'
+					INNER JOIN {$wpdb->postmeta} pm2 ON p.ID = pm2.post_id AND pm2.meta_key = 'lezchars_show_group'
+					LEFT JOIN {$wpdb->postmeta} pm3 ON p.ID = pm3.post_id AND pm3.meta_key = 'lwtv_of_the_day'
+					WHERE p.post_type = %s
+					AND p.post_status = 'publish'
+					AND p.post_content NOT LIKE %s
+					AND pm1.meta_value NOT IN ($mystery_string)
+					AND pm2.meta_value LIKE %s
+					AND (pm3.meta_value IS NULL OR pm3.meta_value < %d)
+					$tax_conditions
+					ORDER BY RAND()
+					LIMIT 50";
+
+				// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- Complex query with proper escaping
+				$results = $wpdb->get_results( $wpdb->prepare( $query, $post_type, '%TBD%', '%re%', time() ) );
+
+				// Additional validation for characters
+				foreach ( $results as $row ) {
+					$post_id = $row->ID;
+
+					// Check if character is a cartoon and must be regular
+					$is_toon = has_term( 'cartoon', 'lez_cliches', $post_id );
+					if ( $is_toon ) {
+						$show_group = get_post_meta( $post_id, 'lezchars_show_group', true );
+						$is_regular = is_array( $show_group ) && in_array( 'regular', $show_group, true );
+						if ( ! $is_regular ) {
+							continue;
+						}
 					}
-					break;
-				case 'show':
-					// All shows have to have at least one regular character
-					$role_data = get_post_meta( $id, 'lezshows_char_roles', true );
+
+					// Check for conditional queerness or phase cliches
+					if ( has_term( array( 'conditional-queerness', 'phase' ), 'lez_cliches', $post_id ) ) {
+						continue;
+					}
+
+					$eligible_posts[] = $post_id;
+				}
+				break;
+
+			case 'show':
+				$query = "SELECT DISTINCT p.ID
+					FROM {$wpdb->posts} p
+					INNER JOIN {$wpdb->postmeta} pm1 ON p.ID = pm1.post_id AND pm1.meta_key = 'lezshows_the_score'
+					INNER JOIN {$wpdb->postmeta} pm2 ON p.ID = pm2.post_id AND pm2.meta_key = 'lezshows_worthit_rating'
+					INNER JOIN {$wpdb->postmeta} pm3 ON p.ID = pm3.post_id AND pm3.meta_key = 'lezshows_char_roles'
+					LEFT JOIN {$wpdb->postmeta} pm4 ON p.ID = pm4.post_id AND pm4.meta_key = 'lwtv_of_the_day'
+					WHERE p.post_type = %s
+					AND p.post_status = 'publish'
+					AND p.post_content NOT LIKE %s
+					AND CAST(pm1.meta_value AS DECIMAL(10,2)) >= 50
+					AND pm2.meta_value LIKE %s
+					AND pm3.meta_value LIKE %s
+					AND (pm4.meta_value IS NULL OR pm4.meta_value < %d)
+					ORDER BY RAND()
+					LIMIT 50";
+
+				// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- Complex query with proper escaping
+				$results = $wpdb->get_results( $wpdb->prepare( $query, $post_type, '%TBD%', '%e%', '%regular%', time() ) );
+
+				// Additional validation for shows
+				foreach ( $results as $row ) {
+					$post_id = $row->ID;
+
+					// Check if show has at least one regular character
+					$role_data = get_post_meta( $post_id, 'lezshows_char_roles', true );
 					if ( isset( $role_data['regular'] ) && 0 !== $role_data['regular'] ) {
-						$valid_post = true;
+						$eligible_posts[] = $post_id;
 					}
-					break;
-				default:
-					$valid_post = true;
-					break;
-			}
-
-			// If the time (now) is less than or equal to the last used AND it's
-			// not empty, then it's not a valid post.
-			// If it's not set at all, then we've never used it.
-			$last_used = get_post_meta( $id, 'lwtv_of_the_day', true );
-			if ( isset( $last_used ) && time() <= $last_used ) {
-				$valid_post = false;
-			}
+				}
+				break;
 		}
 
-		return $id;
+		return $eligible_posts;
+	}
+
+	/**
+	 * Get data version hash for cache invalidation
+	 *
+	 * @param string $type Post type
+	 * @return string Hash based on last modification time
+	 */
+	private function get_data_version_hash( $type ) {
+		$cache_key   = 'lwtv_otd_data_version_' . $type;
+		$cached_hash = lwtv_plugin()->get_transient( $cache_key );
+
+		if ( false !== $cached_hash ) {
+			return $cached_hash;
+		}
+
+		global $wpdb;
+		$last_modified = $wpdb->get_var(
+			$wpdb->prepare(
+				"SELECT MAX(post_modified) FROM {$wpdb->posts} WHERE post_type = %s AND post_status = 'publish'",
+				'post_type_' . $type . 's'
+			)
+		);
+
+		$hash = md5( $last_modified );
+		lwtv_plugin()->set_transient( $cache_key, $hash, HOUR_IN_SECONDS );
+
+		return $hash;
 	}
 
 	/**

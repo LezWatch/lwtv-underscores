@@ -14,7 +14,7 @@ use LWTV\Rest_API\BYQ;
 use LWTV\CPTs\Actors as CPT_Actors;
 use LWTV\CPTs\Characters as CPT_Characters;
 use LWTV\CPTs\Shows as CPT_Shows;
-
+use LWTV\Statistics\Build\Dead;
 
 class What_Happened_JSON {
 
@@ -124,12 +124,12 @@ class What_Happened_JSON {
 		}
 
 		// Calculate death
-		$death_query_year         = ( new Post_Meta_And_Tax() )->make( CPT_Characters::SLUG, 'lezchars_death_year', $datetime->format( 'Y' ), 'lez_cliches', 'slug', 'dead', 'REGEXP' );
-		$count_array['dead_year'] = ( is_object( $death_query_year ) ) ? $death_query_year->post_count : 0;
+		$death_query_year         = ( new Dead() )->get_dead_characters_for_year( $datetime->format( 'Y' ) );
+		$count_array['dead_year'] = count( $death_query_year );
 
 		switch ( $format ) {
 			case 'year':
-				$count_array['dead'] = $count_array['dead_year'];
+				$count_array['dead'] = count( $death_query_year );
 				break;
 			case 'month':
 				$death_query       = $death_query_year;
@@ -199,9 +199,10 @@ class What_Happened_JSON {
 		// Information for shows
 		$show_data             = self::count_shows( $datetime->format( 'Y' ) );
 		$count_array['on_air'] = array(
-			'current' => $show_data['current'],
-			'started' => $show_data['started'],
-			'ended'   => $show_data['ended'],
+			'for_year' => $show_data['for_year'],
+			'current'  => $show_data['current'],
+			'started'  => $show_data['started'],
+			'ended'    => $show_data['ended'],
 		);
 
 		return $count_array;

@@ -11,14 +11,23 @@ class Dead {
 	/**
 	 * Get total dead characters
 	 *
-	 * @return array Total dead
+	 * @return int Total dead count
 	 */
 	public function total_dead_characters() {
+		$characters = $this->get_dead_characters_data();
+		return count( $characters );
+	}
 
+	/**
+	 * Get dead characters data
+	 *
+	 * @return array Dead characters data
+	 */
+	public function get_dead_characters_data() {
 		global $wpdb;
 
 		// Create cache key
-		$cache_key   = 'total_dead_characters';
+		$cache_key   = 'dead_characters_data';
 		$cached_data = lwtv_plugin()->get_transient( $cache_key );
 
 		// If cached data is found, return it
@@ -50,10 +59,65 @@ class Dead {
 			// Cache the results for 1 day
 			lwtv_plugin()->set_transient( $cache_key, $results, DAY_IN_SECONDS );
 
-			return count( $results );
+			return $results;
 		} catch ( \Exception $e ) {
-			lwtv_plugin()->error_log( 'dead-debug', 'Error getting total dead characters: ' . $e->getMessage() );
-			return 0;
+			lwtv_plugin()->error_log( 'dead-debug', 'Error getting dead characters data: ' . $e->getMessage() );
+			return array();
+		}
+	}
+
+	/**
+	 * Get dead characters for a given year
+	 *
+	 * @param int $year The year to filter by
+	 * @return array Array of dead characters for the given year
+	 */
+	public function get_dead_characters_for_year( $year ) {
+		// Create cache key
+		$cache_key   = 'dead_characters_for_year_' . $year;
+		$cached_data = lwtv_plugin()->get_transient( $cache_key );
+
+		// If cached data is found, return it
+		if ( false !== $cached_data ) {
+			lwtv_plugin()->error_log( 'dead-debug', 'Cached data found for ' . $cache_key );
+			return $cached_data;
+		}
+
+		try {
+			// Reuse the existing dead characters data
+			$dead_characters = $this->get_dead_characters_data();
+			$year_characters = array();
+
+			// Loop through dead characters and check if any death year matches the specified year
+			foreach ( $dead_characters as $character ) {
+				// Get death year meta data for this character
+				$death_years = get_post_meta( $character['ID'], 'lezchars_death_year', true );
+
+				if ( ! is_array( $death_years ) ) {
+					continue;
+				}
+
+				// Check if any death year matches the specified year
+				foreach ( $death_years as $death_date ) {
+					// Extract year from Y-m-d format
+					if ( preg_match( '/^(\d{4})-\d{2}-\d{2}$/', $death_date, $matches ) ) {
+						$death_year = $matches[1];
+						if ( $death_year === $year ) {
+							$year_characters[] = $character;
+							break; // Add this character only once even if they died multiple times in the same year
+						}
+					}
+				}
+			}
+
+			// Cache the results for 1 day
+			lwtv_plugin()->set_transient( $cache_key, $year_characters, DAY_IN_SECONDS );
+
+			return $year_characters;
+
+		} catch ( \Exception $e ) {
+			lwtv_plugin()->error_log( 'dead-debug', 'Error getting dead characters for year ' . $year . ': ' . $e->getMessage() );
+			return array();
 		}
 	}
 
