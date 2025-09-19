@@ -24,24 +24,13 @@ class Piecharts_Optimized {
 		}
 
 		// Generate ChartJS piechart
-		$chart_id            = $this->generate_chart_id( $type, $context, $view );
-		$position_or_display = 'display: false';
-
-		// We show empty sets for these:
-		$show_zero = array( 'actor_char_dead', 'actor_char_roles' );
-
-		// Top Bar
-		$show_top = array( 'gender_year', 'sexuality_year' );
-		$data_top = $clean_view;
-
-		// Customize the piechart for the data
-		if ( in_array( $data, $show_zero, true ) ) {
-			$position_or_display = "position: 'bottom'";
-		} elseif ( in_array( $data_top, $show_top, true ) ) {
-			$position_or_display = "position: 'top'";
-		}
-
+		$chart_id        = $this->generate_chart_id( $type, $context, $view );
 		$formatting_data = self::format_data_for_chart( $data, $clean_view, $type, $stat_view );
+
+		// If the labels are empty, we don't want to display the piechart
+		if ( empty( $formatting_data['labels'] ) || empty( $formatting_data['data'] ) ) {
+			return '<p>No data available for this piechart.</p>';
+		}
 
 		$chart_labels = $formatting_data['labels'];
 		$chart_data   = $formatting_data['data'];
@@ -55,7 +44,7 @@ class Piecharts_Optimized {
 			options: {
 				plugins: {
 					legend: {
-						' . $position_or_display . ',
+						display: ' . ( 'actors' === $type ? 'true' : 'false' ) . ',
 						labels: {
 							boxWidth: 10,
 						}
@@ -72,8 +61,8 @@ class Piecharts_Optimized {
 			data: {
 				labels: [' . $chart_labels . '],
 				datasets: [{
-					data: ' . esc_attr( $chart_id ) . 'Dataset,
-					backgroundColor: palette("tol-rainbow", ' . esc_attr( $chart_id ) . 'Dataset.length).map(function(hex) { return "#" + hex; }),
+					data: ' . esc_attr( $chart_id ) . 'Dataset' . ( 'actors' !== $type ? ',
+					backgroundColor: palette("tol-rainbow", ' . esc_attr( $chart_id ) . 'Dataset.length).map(function(hex) { return "#" + hex; })' : '' ) . '
 				}]
 			}
 		});
