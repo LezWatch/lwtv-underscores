@@ -7,18 +7,8 @@
  */
 namespace LWTV\_Components;
 
-use LWTV\Queeries\Taxonomy as Queery_Taxonomy;
-use LWTV\Statistics\{ Gutenberg_SSR, Query_Vars };
-use LWTV\Statistics\Build\Dead as Build_Dead;
-use LWTV\Statistics\Build\Formats as Build_Formats;
-use LWTV\Statistics\Build\Nations as Build_Nations;
-use LWTV\Statistics\Build\On_Air_Optimized as Build_On_Air;
-use LWTV\Statistics\Build\Queer_IRL as Build_Queer_IRL;
-use LWTV\Statistics\Build\Stations as Build_Stations;
-use LWTV\Statistics\Build\We_Love_It as Build_We_Love_It;
-use LWTV\Statistics\Build\Worth_It as Build_Worth_It;
-use LWTV\Statistics\Build\Taxonomy_Optimized as Build_Taxonomy_Optimized;
-use LWTV\Statistics\Format\{ Barcharts_Optimized, Lists_Optimized, Percentage_Optimized, Piecharts_Optimized, Trendline_Optimized };
+use LWTV\Statistics\{ Gutenberg_SSR, Query_Vars, Stats_Counter, Stats_Handler, Stats_Generator };
+use LWTV\Statistics\Stats_Enqueues;
 
 class Statistics_Optimized implements Component, Templater {
 
@@ -61,6 +51,7 @@ class Statistics_Optimized implements Component, Templater {
 			'generate_stats_block_actor'     => array( $this, 'generate_stats_block_actor' ),
 			'generate_total_counts'          => array( $this, 'generate_total_counts' ),
 			'generate_total_dead'            => array( $this, 'generate_total_dead' ),
+			'generate_individual_actors'     => array( $this, 'generate_individual_actors' ),
 		);
 	}
 
@@ -84,52 +75,7 @@ class Statistics_Optimized implements Component, Templater {
 
 		// Custom extra for stats pages:
 		if ( is_page( array( 'statistics' ) ) ) {
-			wp_enqueue_script( 'tablesorter', LWTV_PLUGIN_URL . '/assets/js/jquery.tablesorter.min.js', array( 'jquery' ), self::VERSIONING['tablesorter'], false );
-			wp_enqueue_style( 'tablesorter', LWTV_PLUGIN_URL . '/assets/css/theme.bootstrap.min.css', array(), self::VERSIONING['tablesorter'], false );
-
-			$statistics = get_query_var( 'statistics', 'none' );
-			$stat_view  = get_query_var( 'view', 'main' );
-
-			switch ( $statistics ) {
-				case 'nations':
-				case 'stations':
-					wp_add_inline_script( 'tablesorter', 'jQuery(document).ready(function($){ $("#' . $statistics . 'Table").tablesorter({ theme : "bootstrap", }); });' );
-					break;
-				case 'death':
-					wp_add_inline_script( 'tablesorter', 'jQuery(document).ready(function($){ $("#DeadCharactersTable").tablesorter({ theme : "bootstrap", }); });' );
-					if ( 'characters' === $stat_view ) {
-						wp_add_inline_script( 'tablesorter', 'jQuery(document).ready(function($){ $("#sexualityTable").tablesorter({ theme : "bootstrap", }); });' );
-						wp_add_inline_script( 'tablesorter', 'jQuery(document).ready(function($){ $("#genderTable").tablesorter({ theme : "bootstrap", }); });' );
-						wp_add_inline_script( 'tablesorter', 'jQuery(document).ready(function($){ $("#roleTable").tablesorter({ theme : "bootstrap", }); });' );
-					}
-
-					if ( 'stations' === $stat_view ) {
-						wp_add_inline_script( 'tablesorter', 'jQuery(document).ready(function($){ $("#stationTable").tablesorter({ theme : "bootstrap", }); });' );
-					}
-					if ( 'nations' === $stat_view ) {
-						wp_add_inline_script( 'tablesorter', 'jQuery(document).ready(function($){ $("#nationTable").tablesorter({ theme : "bootstrap", }); });' );
-					}
-					break;
-			}
-
-			switch ( $stat_view ) {
-				case 'tropes':
-				case 'genres':
-				case 'formats':
-				case 'intersectionality':
-				case 'stars':
-				case 'triggers':
-					wp_add_inline_script( 'tablesorter', 'jQuery(document).ready(function($){ $("#' . $stat_view . 'Table").tablesorter({ theme : "bootstrap", }); });' );
-					wp_add_inline_script( 'tablesorter', 'jQuery(document).ready(function($){ $("#showTable").tablesorter({ theme : "bootstrap", }); });' );
-					break;
-				case 'we-love-it':
-					wp_add_inline_script( 'tablesorter', 'jQuery(document).ready(function($){ $("#weloveitTable").tablesorter({ theme : "bootstrap", }); });' );
-					wp_add_inline_script( 'tablesorter', 'jQuery(document).ready(function($){ $("#showTable").tablesorter({ theme : "bootstrap", }); });' );
-					break;
-				default:
-					wp_add_inline_script( 'tablesorter', 'jQuery(document).ready(function($){ $("#' . $stat_view . 'Table").tablesorter({ theme : "bootstrap", }); });' );
-					break;
-			}
+			( new Stats_Enqueues() )->enqueue_scripts( self::VERSIONING );
 		}
 	}
 
@@ -143,73 +89,19 @@ class Statistics_Optimized implements Component, Templater {
 	 * @return array        [total number, on-air, total score, on-air score]
 	 */
 	public function count_shows( $type, $tax, $term ) {
-		$queery = ( new Queery_Taxonomy() )->make( 'post_type_shows', 'lez_' . $tax, 'slug', $term );
-		$return = 0;
-
-		if ( ! is_object( $queery ) ) {
-			return 0;
-		}
-
-		// Create the date with regards to timezones
-		$timestamp = time();
-		$dt        = new \DateTime( 'now', new \DateTimeZone( LWTV_TIMEZONE ) ); //first argument "must" be a string
-		$dt->setTimestamp( $timestamp ); //adjust the object to correct timestamp
-		$date = $dt->format( 'Y' );
-
-		if ( $queery->have_posts() ) {
-			switch ( $type ) {
-				case 'onair':
-					// How many shows are on air.
-					$onair = 0;
-					foreach ( $queery->posts as $show ) {
-						if ( get_post_meta( $show->ID, 'lezshows_airdates', true ) ) {
-							$airdates = get_post_meta( $show->ID, 'lezshows_airdates', true );
-							$end      = $airdates['finish'];
-							if ( 'current' === lcfirst( $end ) || $end >= $date ) {
-								++$onair;
-							}
-						}
-					}
-					$return = $onair;
-					break;
-				case 'score':
-					// What's the average show score for the shows we're calculating.
-					$score = 0;
-					foreach ( $queery->posts as $show ) {
-						if ( get_post_meta( $show->ID, 'lezshows_the_score', true ) ) {
-							$this_score = get_post_meta( $show->ID, 'lezshows_the_score', true );
-							$score     += $this_score;
-						}
-					}
-					$score = ( $score / $queery->post_count );
-
-					$return = round( $score, 2 );
-					break;
-				case 'onairscore':
-					// What's the average show score for shows on air?
-					$score = 0;
-					$onair = 0;
-					foreach ( $queery->posts as $show ) {
-						if ( get_post_meta( $show->ID, 'lezshows_the_score', true ) ) {
-							$this_score = get_post_meta( $show->ID, 'lezshows_the_score', true );
-							$airdates   = get_post_meta( $show->ID, 'lezshows_airdates', true );
-							$end        = $airdates['finish'];
-							if ( 'current' === lcfirst( $end ) || $end >= $date ) {
-								$score += $this_score;
-								++$onair;
-							}
-						}
-					}
-					$score  = ( 0 !== $onair ) ? ( $score / $onair ) : $onair;
-					$return = round( $score, 2 );
-					break;
-				default:
-					// How many shows are there?
-					$return = $queery->post_count;
-			}
-		}
-		return $return;
+		return ( new Stats_Counter() )->count_shows( $type, $tax, $term );
 	}
+
+
+	/**
+	 * Generate total counts
+	 *
+	 * @return int Total counts
+	 */
+	public function generate_total_counts( $subject, $death = false ) {
+		return ( new Stats_Counter() )->generate_total_counts( $subject, $death );
+	}
+
 
 	/**
 	 * Display statistics
@@ -246,26 +138,7 @@ class Statistics_Optimized implements Component, Templater {
 	 * @return mixed Formatted data
 	 */
 	public function handle_output( $data, $context, $view, $format, $source_type, $custom_data = array(), $bar_direction = 'horizontal' ) {
-
-		$stat_view = get_query_var( 'view', 'main' );
-
-		switch ( $format ) {
-			case 'barchart':
-				return ( new Barcharts_Optimized() )->format( $data, $context, $view, $source_type, $custom_data, $bar_direction );
-			case 'trendline':
-				return ( new Trendline_Optimized() )->format( $data, $context, $view, $source_type );
-			case 'piechart':
-				return ( new Piecharts_Optimized() )->format( $data, $context, $view, $source_type, $stat_view );
-			case 'percentage':
-				return ( new Percentage_Optimized() )->format( $data, $context, $view, $source_type );
-			case 'list':
-				if ( 'death' === $source_type ) {
-					return ( new Lists_Optimized() )->format_dead_list( $data, $context, $view, $source_type );
-				}
-				return ( new Lists_Optimized() )->format( $data, $context, $view, $source_type );
-			default:
-				return $data;
-		}
+		return ( new Stats_Handler() )->handle( $data, $context, $view, $format, $source_type, $custom_data, $bar_direction );
 	}
 
 	/**
@@ -282,23 +155,7 @@ class Statistics_Optimized implements Component, Templater {
 	 * @return mixed Station statistics data
 	 */
 	public function generate_station_statistics( $station, $view = 'all', $format = 'array', $custom_data = array(), $bar_direction = 'vertical' ) {
-		// Handle main stations page (summary view)
-		if ( 'all' === $station ) {
-			$stations_builder = new Build_Stations();
-			$data             = $stations_builder->get_station_summaries();
-
-			if ( 'count' === $format ) {
-				return count( $data );
-			}
-
-			return $data;
-		}
-
-		// Handle individual station pages
-		$station_data = new Build_Stations()->get_station_details( $station, $format, $view );
-		$data         = $station_data['formatted'] ?? $station_data;
-
-		return self::handle_output( $data, $station, $view, $format, 'station', $custom_data, $bar_direction );
+		return ( new Stats_Generator() )->generate_stations( $station, $view, $format, $custom_data, $bar_direction );
 	}
 
 	/**
@@ -312,23 +169,7 @@ class Statistics_Optimized implements Component, Templater {
 	 * @return mixed Nation statistics data
 	 */
 	public function generate_nation_statistics( $nation, $view = 'all', $format = 'array', $custom_data = array(), $bar_direction = 'vertical' ) {
-		// Handle main stations page (summary view)
-		if ( 'all' === $nation ) {
-			$nations_builder = new Build_Nations();
-			$data            = $nations_builder->get_nation_summaries();
-
-			if ( 'count' === $format ) {
-				return count( $data );
-			}
-
-			return $data;
-		}
-
-		// Handle individual station pages
-		$station_data = new Build_Nations()->get_nation_details( $nation, $format, $view );
-		$data         = $station_data['formatted'] ?? $station_data;
-
-		return self::handle_output( $data, $nation, $view, $format, 'nation', $custom_data, $bar_direction );
+		return ( new Stats_Generator() )->generate_nations( $nation, $view, $format, $custom_data, $bar_direction );
 	}
 
 	/**
@@ -339,43 +180,7 @@ class Statistics_Optimized implements Component, Templater {
 	 * @return array statistics data
 	 */
 	public function generate_shows_statistics( $format = 'list', $type = 'formats' ) {
-		$all_data = array();
-		$view     = 'shows';
-		switch ( $type ) {
-			case 'formats':
-				$all_data = ( new Build_Formats() )->generate( $format );
-				break;
-			case 'tropes':
-			case 'genres':
-			case 'intersections':
-			case 'stars':
-			case 'triggers':
-				$all_data = ( new Build_Taxonomy_Optimized() )->make_comprehensive( 'post_type_shows', 'lez_' . $type, true );
-				break;
-			case 'on-air':
-			case 'on_air':
-				$view     = 'on_air';
-				$all_data = ( new Build_On_Air() )->generate( 'shows' );
-				break;
-			case 'we-love-it':
-				$view     = 'we_love_it';
-				$all_data = ( new Build_We_Love_It() )->generate( $format );
-				break;
-			case 'worth-it':
-				$view     = 'worth_it';
-				$all_data = ( new Build_Worth_It() )->generate( $format );
-				break;
-		}
-
-		if ( empty( $all_data ) ) {
-			lwtv_plugin()->error_log( 'shows-debug', 'All data is empty' );
-			return array();
-		}
-
-		$data          = array();
-		$data[ $view ] = $all_data;
-
-		return self::handle_output( $data, 'all', $view, $format, 'shows', array(), 'horizontal' );
+		return ( new Stats_Generator() )->generate_shows( $format, $type );
 	}
 
 	/**
@@ -386,27 +191,7 @@ class Statistics_Optimized implements Component, Templater {
 	 * @return array actors statistics data
 	 */
 	public function generate_actors_statistics( $format = 'list', $type = 'gender' ) {
-		$all_data = array();
-		$view     = 'actors';
-
-		switch ( $type ) {
-			case 'gender':
-				$all_data = ( new Build_Taxonomy_Optimized() )->make_comprehensive( 'post_type_actors', 'lez_actor_gender', true );
-				break;
-			case 'sexuality':
-				$all_data = ( new Build_Taxonomy_Optimized() )->make_comprehensive( 'post_type_actors', 'lez_actor_sexuality', true );
-				break;
-		}
-
-		if ( empty( $all_data ) ) {
-			lwtv_plugin()->error_log( 'actors-debug', 'All data is empty' );
-			return array();
-		}
-
-		$data          = array();
-		$data[ $view ] = $all_data;
-
-		return self::handle_output( $data, 'all', $view, $format, 'actors' );
+		return ( new Stats_Generator() )->generate_actors( $format, $type );
 	}
 
 	/**
@@ -417,38 +202,7 @@ class Statistics_Optimized implements Component, Templater {
 	 * @return array characters statistics data
 	 */
 	public function generate_characters_statistics( $format = 'list', $type = 'gender' ) {
-		$all_data = array();
-		$view     = 'characters';
-
-		switch ( $type ) {
-			case 'cliches':
-				$all_data = ( new Build_Taxonomy_Optimized() )->make_comprehensive( 'post_type_characters', 'lez_cliches', true );
-				break;
-			case 'gender':
-				$all_data = ( new Build_Taxonomy_Optimized() )->make_comprehensive( 'post_type_characters', 'lez_gender', true );
-				break;
-			case 'sexuality':
-				$all_data = ( new Build_Taxonomy_Optimized() )->make_comprehensive( 'post_type_characters', 'lez_sexuality', true );
-				break;
-			case 'queer-irl':
-				$view     = 'queer_irl';
-				$all_data = ( new Build_Queer_IRL() )->generate( $format );
-				break;
-			case 'on-air':
-				$view     = 'on_air';
-				$all_data = ( new Build_On_Air() )->generate( 'characters' );
-				break;
-		}
-
-		if ( empty( $all_data ) ) {
-			lwtv_plugin()->error_log( 'characters-debug', 'All data is empty' );
-			return array();
-		}
-
-		$data          = array();
-		$data[ $view ] = $all_data;
-
-		return self::handle_output( $data, 'all', $view, $format, 'characters', array(), 'vertical' );
+		return ( new Stats_Generator() )->generate_characters( $format, $type );
 	}
 
 	/**
@@ -461,56 +215,7 @@ class Statistics_Optimized implements Component, Templater {
 	 * @return array Dead statistics data
 	 */
 	public function generate_dead_statistics( $subject, $view, $format ) {
-		$all_data      = array();
-		$context       = 'all';
-		$bar_direction = 'vertical';
-
-		if ( 'count' === $format ) {
-			if ( ! in_array( $subject, array( 'characters', 'shows' ), true ) ) {
-				lwtv_plugin()->error_log( 'dead-debug', 'Invalid subject for death count: ' . $subject );
-				return 0;
-			}
-
-			return ( new Build_Dead() )->total_dead_characters( $subject );
-		}
-
-		switch ( $subject ) {
-			case 'characters':
-				$all_data = ( new Build_Dead() )->generate_characters( $view, $format );
-				if ( in_array( $format, array( 'piechart', 'percentage' ), true ) ) {
-					$context = $view;
-					$view    = 'death';
-				}
-				break;
-			case 'shows':
-				$all_data = ( new Build_Dead() )->generate_shows( $view, $format );
-				if ( in_array( $format, array( 'piechart', 'percentage', 'barchart' ), true ) ) {
-					$context = $view;
-					$view    = 'death';
-				}
-				$bar_direction = 'horizontal';
-				break;
-		}
-
-		if ( empty( $all_data ) ) {
-			lwtv_plugin()->error_log( 'dead-debug', 'All data is empty' );
-			return array();
-		}
-
-		return self::handle_output( $all_data, $context, $view, $format, 'death', array(), $bar_direction );
-	}
-
-	/**
-	 * Generate total counts
-	 *
-	 * @return int Total counts
-	 */
-	public function generate_total_counts( $subject, $death = false ) {
-		if ( $death ) {
-			return ( new Build_Dead() )->total_dead_characters( $subject );
-		}
-
-		return wp_count_posts( 'post_type_' . $subject )->publish;
+		return ( new Stats_Generator() )->generate_dead( $subject, $view, $format );
 	}
 
 	/**
@@ -519,13 +224,17 @@ class Statistics_Optimized implements Component, Templater {
 	 * @return int Total dead
 	 */
 	public function generate_total_dead( $subject ) {
-		switch ( $subject ) {
-			case 'characters':
-				return ( new Build_Dead() )->total_dead_characters();
-			case 'shows':
-				return ( new Build_Dead() )->total_dead_shows();
-			default:
-				return 0;
-		}
+		return ( new Stats_Generator() )->generate_total_dead( $subject );
+	}
+
+	/**
+	 * Generate individual actors statistics
+	 *
+	 * @param string $format Output format
+	 * @param string $type View type (what subpage we're on, so gender, sexuality, etc)
+	 * @return array actors statistics data
+	 */
+	public function generate_individual_actors( $actor_id, $format = 'piechart', $type = 'roles' ) {
+		return ( new Stats_Generator() )->generate_individual_actors( $actor_id, $format, $type );
 	}
 }

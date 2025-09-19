@@ -16,6 +16,8 @@ class Piecharts_Optimized {
 	public function format( $data, $context, $view, $type, $stat_view ) {
 		$clean_view = ltrim( $view, '_' );
 
+		lwtv_plugin()->error_log( 'piecharts-debug', 'STAT VIEW: ' . $stat_view );
+
 		if ( empty( $data ) || ! isset( $data[ $clean_view ] ) ) {
 			lwtv_plugin()->error_log( 'piecharts-debug', 'No data available for this piechart: ' . $type );
 			return '<p>No data available for this piechart.</p>';
@@ -145,9 +147,15 @@ class Piecharts_Optimized {
 	 * @return array Formatted data
 	 */
 	private function format_post_type_data_for_chart( $data, $type, $stat_view ) {
+
+		lwtv_plugin()->error_log( 'piecharts-debug', 'Formatting post type data for chart: ' . $type );
+		lwtv_plugin()->error_log( 'piecharts-debug', 'Data: ' . wp_json_encode( $data ) );
+		lwtv_plugin()->error_log( 'piecharts-debug', 'Stat view: ' . $stat_view );
+
 		$labels  = '';
 		$dataset = '';
 		switch ( $type ) {
+			case 'actors':
 			case 'formats':
 			case 'queer-irl':
 			case 'shows':
@@ -191,6 +199,8 @@ class Piecharts_Optimized {
 	 * @return string Chart ID
 	 */
 	private function generate_chart_id( $type, $context, $view ) {
-		return str_replace( '-', '_', $type . '_' . $context . '_' . $view . '_pie' );
+		$chart_id = str_replace( '-', '_', $type . '_' . $context . '_' . $view . '_pie' );
+		lwtv_plugin()->error_log( 'piecharts-debug', 'Chart ID: ' . $chart_id );
+		return $chart_id;
 	}
 }

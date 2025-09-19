@@ -37,7 +37,7 @@ class Query_Vars {
 			// add filter for pages
 			add_filter( 'page_template', array( $this, 'page_template' ) );
 
-			$views = array( 'actors', 'characters', 'death', 'formats', 'nations', 'shows', 'stations' );
+			$views = array( 'actors', 'characters', 'death', 'nations', 'shows', 'stations' );
 
 			foreach ( $views as $a_view ) {
 				add_rewrite_rule(
@@ -76,7 +76,6 @@ class Query_Vars {
 		$vars[] = 'statistics';
 		$vars[] = 'view';
 		$vars[] = 'for';
-		$vars[] = 'showform';
 		$vars[] = 'format';
 		$vars[] = 'country';
 		$vars[] = 'station';
