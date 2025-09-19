@@ -16,7 +16,6 @@ use LWTV\Rest_API\Fresh_JSON;
 use LWTV\Rest_API\Export_JSON;
 use LWTV\Rest_API\BYQ;
 use LWTV\Rest_API\Wikidata;
-use LWTV\Rest_API\Alexa_Skills;
 
 class Rest_API implements Component, Templater {
 
@@ -24,7 +23,6 @@ class Rest_API implements Component, Templater {
 	 * Init
 	 */
 	public function init(): void {
-		new Alexa_Skills();
 		new BYQ();
 		new Export_JSON();
 		new Fresh_JSON();
