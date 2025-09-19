@@ -47,7 +47,7 @@ class Stats_Generator {
 		}
 
 		// Handle individual station pages
-		$station_data = new Build_Nations()->get_nation_details( $nation, $format, $view );
+		$station_data = ( new Build_Nations() )->get_nation_details( $nation, $format, $view );
 		$data         = $station_data['formatted'] ?? $station_data;
 
 		return ( new Stats_Handler() )->handle( $data, $nation, $view, $format, 'nation', $custom_data, $bar_direction );
