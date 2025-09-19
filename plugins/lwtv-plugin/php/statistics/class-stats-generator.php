@@ -124,7 +124,7 @@ class Stats_Generator {
 		}
 
 		// Handle individual station pages
-		$station_data = new Build_Stations()->get_station_details( $station, $format, $view );
+		$station_data = ( new Build_Stations() )->get_station_details( $station, $format, $view );
 		$data         = $station_data['formatted'] ?? $station_data;
 
 		return ( new Stats_Handler() )->handle( $data, $station, $view, $format, 'station', $custom_data, $bar_direction );
