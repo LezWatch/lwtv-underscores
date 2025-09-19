@@ -11,8 +11,6 @@
 
 <h3>Show Format Breakdown</h3>
 
-<p>See <a href="/statistics/formats/">Format Statistics</a> for more information.</p>
-
 <div class="container chart-container">
 	<div class="row">
 		<div class="col-sm-6">
