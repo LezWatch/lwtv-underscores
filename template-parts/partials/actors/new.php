@@ -7,15 +7,16 @@
  * @package LezWatch.TV
  */
 
+$under_construction = lwtv_plugin()->get_symbolicon( svg: 'stanp-portrait.svg', icon: 'svg-square', max_size: '15' );
 ?>
 
-<section name="new" id="new" class="showschar-section">
-	<div class="container">
-		<div class="row">
-			<div class="col-12">
-				<h2>Under Construction</h2>
-				<p>This actor is new and their data is still being calculated. Please check back soon for more information.</p>
-			</div>
+<section name="newactor" id="newactor" class="showschar-section">
+	<h2>Under Construction</h2>
+
+	<div class="card-body">
+		<div class="alert alert-info" role="alert">
+			<?php echo $under_construction; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+			This actor's data is still being calculated. It will be available as soon as possible.
 		</div>
 	</div>
 </section>

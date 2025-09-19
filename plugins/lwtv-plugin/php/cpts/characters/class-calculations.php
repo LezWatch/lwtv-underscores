@@ -117,18 +117,15 @@ class Calculations {
 		$actors = ( ! is_array( $actors ) ) ? array( $actors ) : $actors;
 
 		// Get all actors with this character taxonomy.
-		$shadow_queery = ( new Shadow_Taxonomy() )->get_actors_for_character( $shadow_character->term_id );
+		$shadow_actors = ( new Shadow_Taxonomy() )->get_actors_for_character( $shadow_character->term_id );
 
-		if ( is_object( $shadow_queery ) ) {
-			if ( $shadow_queery->have_posts() ) {
-				while ( $shadow_queery->have_posts() ) {
-					$shadow_queery->the_post();
-					$actor_id = get_the_ID();
+		if ( is_array( $shadow_actors ) && ! empty( $shadow_actors ) ) {
+			foreach ( $shadow_actors as $actor_post ) {
+				$actor_id = $actor_post->ID;
 
-					// If the show has the taxonomy but the character doesn't have it in the array, remove the taxonomy.
-					if ( ! in_array( (string) $actor_id, $actors, true ) ) {
-						wp_remove_object_terms( (int) $actor_id, (int) $shadow_character->term_id, CPT_Characters::SHADOW_TAXONOMY );
-					}
+				// If the actor has the taxonomy but the character doesn't have it in the array, remove the taxonomy.
+				if ( ! in_array( (string) $actor_id, $actors, true ) ) {
+					wp_remove_object_terms( (int) $actor_id, (int) $shadow_character->term_id, CPT_Characters::SHADOW_TAXONOMY );
 				}
 			}
 		}
