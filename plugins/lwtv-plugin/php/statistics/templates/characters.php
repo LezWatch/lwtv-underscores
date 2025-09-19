@@ -7,6 +7,7 @@
 
 use LWTV\Statistics\Build\Taxonomy_Optimized as Build_Taxonomy_Optimized;
 use LWTV\Statistics\Build\On_Air_Optimized as Build_On_Air_Optimized;
+use LWTV\CPTs\Characters as CPT_Characters;
 
 $baseurl = '/statistics/characters/';
 
@@ -18,9 +19,9 @@ $character_count = lwtv_plugin()->generate_total_counts( 'characters' );
 // OPTIMIZED: Pre-load taxonomy data for overview section
 $optimized_taxonomy       = new Build_Taxonomy_Optimized();
 $optimized_onair          = new Build_On_Air_Optimized();
-$character_gender_data    = $optimized_taxonomy->make_comprehensive( 'post_type_characters', 'lez_gender', false );
-$character_sexuality_data = $optimized_taxonomy->make_comprehensive( 'post_type_characters', 'lez_sexuality', false );
-$character_cliches_data   = $optimized_taxonomy->make_comprehensive( 'post_type_characters', 'lez_cliches', false );
+$character_gender_data    = $optimized_taxonomy->make_comprehensive( CPT_Characters::SLUG, 'lez_gender', false );
+$character_sexuality_data = $optimized_taxonomy->make_comprehensive( CPT_Characters::SLUG, 'lez_sexuality', false );
+$character_cliches_data   = $optimized_taxonomy->make_comprehensive( CPT_Characters::SLUG, 'lez_cliches', false );
 $character_onair_data     = $optimized_onair->generate( 'characters' );
 
 // Sort by count descending for top 10

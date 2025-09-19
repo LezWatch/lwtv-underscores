@@ -18,6 +18,8 @@ use LWTV\Statistics\Build\Queer_IRL as Build_Queer_IRL;
 use LWTV\Statistics\Build\Dead as Build_Dead;
 use LWTV\Statistics\Build\Actors as Build_Actors;
 use LWTV\Statistics\Stats_Handler;
+use LWTV\CPTs\Actors as CPT_Actors;
+use LWTV\CPTs\Characters as CPT_Characters;
 
 class Stats_Generator {
 
@@ -141,13 +143,13 @@ class Stats_Generator {
 
 		switch ( $type ) {
 			case 'cliches':
-				$all_data = ( new Build_Taxonomy_Optimized() )->make_comprehensive( 'post_type_characters', 'lez_cliches', true );
+				$all_data = ( new Build_Taxonomy_Optimized() )->make_comprehensive( CPT_Characters::SLUG, 'lez_cliches', true );
 				break;
 			case 'gender':
-				$all_data = ( new Build_Taxonomy_Optimized() )->make_comprehensive( 'post_type_characters', 'lez_gender', true );
+				$all_data = ( new Build_Taxonomy_Optimized() )->make_comprehensive( CPT_Characters::SLUG, 'lez_gender', true );
 				break;
 			case 'sexuality':
-				$all_data = ( new Build_Taxonomy_Optimized() )->make_comprehensive( 'post_type_characters', 'lez_sexuality', true );
+				$all_data = ( new Build_Taxonomy_Optimized() )->make_comprehensive( CPT_Characters::SLUG, 'lez_sexuality', true );
 				break;
 			case 'queer-irl':
 				$view     = 'queer_irl';
@@ -183,10 +185,10 @@ class Stats_Generator {
 
 		switch ( $type ) {
 			case 'gender':
-				$all_data = ( new Build_Taxonomy_Optimized() )->make_comprehensive( 'post_type_actors', 'lez_actor_gender', true );
+				$all_data = ( new Build_Taxonomy_Optimized() )->make_comprehensive( CPT_Actors::SLUG, 'lez_actor_gender', true );
 				break;
 			case 'sexuality':
-				$all_data = ( new Build_Taxonomy_Optimized() )->make_comprehensive( 'post_type_actors', 'lez_actor_sexuality', true );
+				$all_data = ( new Build_Taxonomy_Optimized() )->make_comprehensive( CPT_Actors::SLUG, 'lez_actor_sexuality', true );
 				break;
 		}
 

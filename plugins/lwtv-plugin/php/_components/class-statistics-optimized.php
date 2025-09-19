@@ -9,6 +9,7 @@ namespace LWTV\_Components;
 
 use LWTV\Statistics\{ Gutenberg_SSR, Query_Vars, Stats_Counter, Stats_Handler, Stats_Generator };
 use LWTV\Statistics\Stats_Enqueues;
+use LWTV\CPTs\Actors as CPT_Actors;
 
 class Statistics_Optimized implements Component, Templater {
 
@@ -64,7 +65,7 @@ class Statistics_Optimized implements Component, Templater {
 	public function enqueue_scripts() {
 
 		// If it's not any of our pages, return.
-		if ( ! is_page( array( 'statistics' ) ) && 'post_type_actors' !== get_post_type() && ! is_page( array( 'this-year' ) ) ) {
+		if ( ! is_page( array( 'statistics' ) ) && CPT_Actors::SLUG !== get_post_type() && ! is_page( array( 'this-year' ) ) ) {
 			return;
 		}
 

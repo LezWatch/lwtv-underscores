@@ -7,11 +7,9 @@
 namespace LWTV\CPTs\Characters;
 
 use LWTV\CPTs\Characters as CPT_Characters;
-use LWTV\CPTs\Shows as CPT_Shows;
-use LWTV\CPTs\Actors as CPT_Actors;
 use LWTV\CPTs\Actors\Calculations as Actors_Calculations;
 use LWTV\CPTs\Shows\Calculations as Shows_Calculations;
-use LWTV\Queeries\Taxonomy as Queery_Taxonomy;
+use LWTV\Queeries\Shadow_Taxonomy;
 
 class Calculations {
 
@@ -69,7 +67,7 @@ class Calculations {
 		}
 
 		// Get all shows with this character.
-		$shadow_queery = ( new Queery_Taxonomy() )->make( CPT_Shows::SLUG, CPT_Characters::SHADOW_TAXONOMY, 'term_id', $shadow_character->term_id );
+		$shadow_queery = ( new Shadow_Taxonomy() )->get_shows_for_character( $shadow_character->term_id );
 
 		if ( is_object( $shadow_queery ) ) {
 			if ( $shadow_queery->have_posts() ) {
@@ -119,7 +117,7 @@ class Calculations {
 		$actors = ( ! is_array( $actors ) ) ? array( $actors ) : $actors;
 
 		// Get all actors with this character taxonomy.
-		$shadow_queery = ( new Queery_Taxonomy() )->make( CPT_Actors::SLUG, CPT_Characters::SHADOW_TAXONOMY, 'term_id', $shadow_character->term_id );
+		$shadow_queery = ( new Shadow_Taxonomy() )->get_actors_for_character( $shadow_character->term_id );
 
 		if ( is_object( $shadow_queery ) ) {
 			if ( $shadow_queery->have_posts() ) {
@@ -160,7 +158,7 @@ class Calculations {
 	 */
 	public function do_the_math( $character_id ) {
 
-		if ( ! isset( $character_id ) || 'post_type_characters' !== get_post_type( $character_id ) ) {
+		if ( ! isset( $character_id ) || CPT_Characters::SLUG !== get_post_type( $character_id ) ) {
 			// delete the meta fields
 			delete_post_meta( $character_id, 'lezchars_death_year' );
 			delete_post_meta( $character_id, 'lezchars_last_death' );

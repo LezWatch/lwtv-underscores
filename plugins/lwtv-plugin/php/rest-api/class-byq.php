@@ -11,7 +11,8 @@
 namespace LWTV\Rest_API;
 
 use LWTV\Queeries\Post_Meta;
-use LWTV\Queeries\Taxonomy as Queery_Taxonomy;
+use LWTV\Queeries\Taxonomy_Optimized as Queery_Taxonomy;
+use LWTV\CPTs\Characters as CPT_Characters;
 
 class BYQ {
 
@@ -191,7 +192,7 @@ class BYQ {
 	public function last_death() {
 		$return = '';
 		// Get all our dead queers
-		$dead_chars_loop  = ( new Queery_Taxonomy() )->make( 'post_type_characters', 'lez_cliches', 'slug', 'dead' );
+		$dead_chars_loop  = ( new Queery_Taxonomy() )->get_posts_for_terms( CPT_Characters::SLUG, 'lez_cliches', 'dead' );
 		$death_list_array = self::list_of_dead_characters( $dead_chars_loop );
 
 		// Extract the last death
@@ -229,7 +230,7 @@ class BYQ {
 		$type        = ( ! in_array( $type, $valid_types, true ) ) ? 'json' : $type;
 
 		// Get all our dead queers
-		$dead_chars_loop  = ( new Post_Meta() )->make( 'post_type_characters', 'lezchars_death_year', '', 'EXISTS' );
+		$dead_chars_loop  = ( new Post_Meta() )->make( CPT_Characters::SLUG, 'lezchars_death_year', '', 'EXISTS' );
 		$death_list_array = self::list_of_dead_characters( $dead_chars_loop );
 
 		$died_today_array = array();
@@ -282,38 +283,6 @@ class BYQ {
 	}
 
 	/**
-	 * Change search to only work by title
-	 *
-	 * @access public
-	 * @param mixed $search
-	 * @param mixed &$wp_query
-	 * @return void
-	 */
-	public function search_by_title_only( $search, &$wp_query ) {
-		global $wpdb;
-		if ( empty( $search ) ) {
-			return $search; // skip processing - no search term in query
-		}
-
-		$q         = $wp_query->query_vars;
-		$n         = ! empty( $q['exact'] ) ? '' : '%';
-		$search    = '';
-		$searchand = '';
-		foreach ( (array) $q['search_terms'] as $term ) {
-			$term      = esc_sql( \wpdb::esc_like( $term ) );
-			$search   .= "{$searchand}($wpdb->posts.post_title LIKE '{$n}{$term}{$n}')";
-			$searchand = ' AND ';
-		}
-		if ( ! empty( $search ) ) {
-			$search = " AND ({$search}) ";
-			if ( ! is_user_logged_in() ) {
-				$search .= " AND ($wpdb->posts.post_password = '') ";
-			}
-		}
-		return $search;
-	}
-
-	/**
 	 * Generate when a character died
 	 *
 	 * If no name is passed, kick back last death
@@ -321,41 +290,59 @@ class BYQ {
 	 * @return array with character data
 	 */
 	public function when_died( $name = 'no-name' ) {
+		// Normalize input
+		$name = str_replace( '-', ' ', $name );
 
-		// phpcs:disable
-		// Remove <!--fwp-loop--> from output
-		add_filter( 'facetwp_is_main_query', function( $is_main_query, $query ) {
-			return false;
-		}, 10, 2 );
+		// Handle special case
+		if ( 'no-name' === $name ) {
+			return array(
+				'id'    => 0,
+				'name'  => 'No Name',
+				'shows' => 'None',
+				'url'   => 'None',
+				'died'  => 'None',
+			);
+		}
 
+		// Generate cache key
+		$cache_key = 'character_death_' . md5( $name );
 
-		// Force to search ONLY by title
-		add_filter( 'posts_search', function( $search, &$wp_query ) {
-			global $wpdb;
-			if ( empty( $search ) ) {
-				return $search; // skip processing - no search term in query
-			}
+		// Try to get from cache first
+		$cached_result = lwtv_plugin()->get_transient( $cache_key );
+		if ( false !== $cached_result ) {
+			return $cached_result;
+		}
 
-			$q         = $wp_query->query_vars;
-			$n         = ! empty( $q['exact'] ) ? '' : '%';
-			$search    = '';
-			$searchand = '';
-			foreach ( (array) $q['search_terms'] as $term ) {
-				$term      = esc_sql( \wpdb::esc_like( $term ) );
-				$search   .= "{$searchand}($wpdb->posts.post_title LIKE '{$n}{$term}{$n}')";
-				$searchand = ' AND ';
-			}
-			if ( ! empty( $search ) ) {
-				$search = " AND ({$search}) ";
-				if ( ! is_user_logged_in() ) {
-					$search .= " AND ($wpdb->posts.post_password = '') ";
-				}
-			}
-			return $search;
-		}, 500, 2 );
-		// phpcs:enable
+		// Try exact match first (most efficient)
+		$exact_args = array(
+			'post_type'      => CPT_Characters::SLUG,
+			'post_status'    => 'publish',
+			'posts_per_page' => 1,
+			'no_found_rows'  => true,
+			'title'          => $name,
+		);
 
-		$noname = array(
+		$exact_query = new \WP_Query( $exact_args );
+		$character   = $exact_query->have_posts() ? $exact_query->posts[0] : null;
+		wp_reset_postdata();
+
+		// If no exact match, try partial match using WP_Query
+		if ( ! $character ) {
+			$args = array(
+				's'              => $name,
+				'post_type'      => CPT_Characters::SLUG,
+				'post_status'    => 'publish',
+				'posts_per_page' => 1,
+				'no_found_rows'  => true,
+			);
+
+			$query     = new \WP_Query( $args );
+			$character = $query->have_posts() ? $query->posts[0] : null;
+			wp_reset_postdata();
+		}
+
+		// Default result
+		$result = array(
 			'id'    => 0,
 			'name'  => 'No Name',
 			'shows' => 'None',
@@ -363,70 +350,48 @@ class BYQ {
 			'died'  => 'None',
 		);
 
-		$name = str_replace( '-', ' ', $name );
+		if ( $character ) {
+			$character_id = $character->ID;
 
-		if ( 'no-name' === $name ) {
-			$when_died_array['none'] = $noname;
-		} else {
-			$args = array(
-				's'              => $name,
-				'post_type'      => 'post_type_characters',
-				'post_status'    => 'publish',
-				'posts_per_page' => 100,
-				'no_found_rows'  => true,
-			);
-
-			$the_character = new \WP_Query( $args );
-
-			if ( $the_character->have_posts() ) {
-
-				while ( $the_character->have_posts() ) {
-
-					$the_character->the_post();
-
-					$died = 'alive';
-					if ( get_post_meta( get_the_ID(), 'lezchars_death_year', true ) ) {
-						$died = get_post_meta( get_the_ID(), 'lezchars_death_year', true );
-						if ( ! is_array( $died ) ) {
-							$died = array( $died );
-						}
-						$died = implode( ', ', $died );
-					}
-
-					$shows_all = get_post_meta( get_the_ID(), 'lezchars_show_group', true );
-					$shows     = '';
-					foreach ( $shows_all as $show ) {
-						// Remove the Array.
-						if ( is_array( $show['show'] ) ) {
-							$show['show'] = $show['show'][0];
-						}
-
-						$shows .= get_the_title( $show['show'] ) . ', ';
-					}
-					$shows = rtrim( $shows, ', ' );
-
-					$when_died_array[ get_post_field( 'post_name' ) ] = array(
-						'id'    => get_the_id(),
-						'name'  => get_the_title(),
-						'shows' => $shows,
-						'url'   => get_the_permalink(),
-						'died'  => $died,
-					);
-
+			// Get death information
+			$death_years = get_post_meta( $character_id, 'lezchars_death_year', true );
+			$died        = 'alive';
+			if ( ! empty( $death_years ) ) {
+				if ( is_array( $death_years ) ) {
+					$died = implode( ', ', array_filter( $death_years ) );
+				} else {
+					$died = $death_years;
 				}
-				wp_reset_postdata();
-			} else {
-				$when_died_array['none'] = $noname;
 			}
+
+			// Get show information efficiently
+			$shows_data = get_post_meta( $character_id, 'lezchars_show_group', true );
+			$shows      = '';
+			if ( is_array( $shows_data ) ) {
+				$show_titles = array();
+				foreach ( $shows_data as $show ) {
+					if ( isset( $show['show'] ) ) {
+						$show_id = is_array( $show['show'] ) ? $show['show'][0] : $show['show'];
+						if ( $show_id ) {
+							$show_titles[] = get_the_title( $show_id );
+						}
+					}
+				}
+				$shows = implode( ', ', array_filter( $show_titles ) );
+			}
+
+			$result = array(
+				'id'    => $character_id,
+				'name'  => $character->post_title,
+				'shows' => ! empty( $shows ) ? $shows : 'None',
+				'url'   => get_permalink( $character_id ),
+				'died'  => $died,
+			);
 		}
 
-		// If there was an exact match, use that one
-		if ( array_key_exists( $name, $when_died_array ) ) {
-			$when_died_array = $when_died_array[ $name ];
-		}
+		// Cache the result for 1 hour
+		lwtv_plugin()->set_transient( $cache_key, $result, HOUR_IN_SECONDS );
 
-		$return = $when_died_array;
-
-		return $return;
+		return $result;
 	}
 }

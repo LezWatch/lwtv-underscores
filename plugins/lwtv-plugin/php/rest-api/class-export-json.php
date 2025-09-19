@@ -13,6 +13,9 @@ namespace LWTV\Rest_API;
 
 use LWTV\Queeries\Post_Type;
 use LWTV\Queeries\Taxonomy as Queery_Taxonomy;
+use LWTV\CPTs\Characters as CPT_Characters;
+use LWTV\CPTs\Shows as CPT_Shows;
+use LWTV\CPTs\Actors as CPT_Actors;
 
 class Export_JSON {
 	/**
@@ -332,7 +335,7 @@ class Export_JSON {
 	 */
 	public function get_full_list_characters( $group, $term ) {
 
-		$the_loop = ( new Queery_Taxonomy() )->make( 'post_type_characters', 'lez_' . $group, 'slug', $term );
+		$the_loop = ( new Queery_Taxonomy() )->make( CPT_Characters::SLUG, 'lez_' . $group, 'slug', $term );
 
 		if ( ! is_object( $the_loop ) || ! $the_loop->have_posts() ) {
 			return new \WP_Error( 'not_found', 'No route was found matching the URL and request method: ' . $term );
@@ -433,7 +436,7 @@ class Export_JSON {
 			$page = get_post( $item );
 		} else {
 			// Let's get the ID by the title
-			$page = get_page_by_path( $item, OBJECT, 'post_type_shows' );
+			$page = get_page_by_path( $item, OBJECT, CPT_Shows::SLUG );
 		}
 
 		// If page doesn't exist, let's try by SQL.
@@ -444,7 +447,7 @@ class Export_JSON {
 		}
 
 		// Let's make sure.
-		if ( isset( $page ) && 'post_type_shows' === get_post_type( $page->ID ) ) {
+		if ( isset( $page ) && CPT_Shows::SLUG === get_post_type( $page->ID ) ) {
 
 			// Empty to start
 			$data = array();
@@ -531,7 +534,7 @@ class Export_JSON {
 			$page = get_post( $item );
 		} else {
 			// Let's get the ID by the title
-			$page = get_page_by_path( $item, OBJECT, 'post_type_characters' );
+			$page = get_page_by_path( $item, OBJECT, CPT_Characters::SLUG );
 		}
 
 		// If page doesn't exist, let's try by SQL.
@@ -542,7 +545,7 @@ class Export_JSON {
 		}
 
 		// Let's make sure.
-		if ( isset( $page ) && 'post_type_characters' === get_post_type( $page->ID ) ) {
+		if ( isset( $page ) && CPT_Characters::SLUG === get_post_type( $page->ID ) ) {
 
 			// Basic Data we always need
 			$return = array(
@@ -653,7 +656,7 @@ class Export_JSON {
 			$page = get_post( $item );
 		} else {
 			// Let's get the ID by the title
-			$page = get_page_by_path( $item, OBJECT, 'post_type_actors' );
+			$page = get_page_by_path( $item, OBJECT, CPT_Actors::SLUG );
 
 			// If page doesn't exist, let's try by SQL.
 			if ( null === $page ) {
@@ -664,7 +667,7 @@ class Export_JSON {
 		}
 
 		// Let's make sure.
-		if ( isset( $page ) && 'post_type_actors' === get_post_type( $page->ID ) ) {
+		if ( isset( $page ) && CPT_Actors::SLUG === get_post_type( $page->ID ) ) {
 
 			// If the actor has asked to be private, we respect that.
 			if ( lwtv_plugin()->hide_actor_data( $page->ID, 'all' ) ) {

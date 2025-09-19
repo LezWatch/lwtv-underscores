@@ -13,6 +13,7 @@ if ( ! defined( 'ABSPATH' ) && ! defined( 'WP_CLI' ) ) {
 use LWTV\Debugger\Actors as Actors_Debugger;
 use LWTV\Debugger\Queers as Queers_Debugger;
 use LWTV\Queeries\Is_Actor_Queer;
+use LWTV\CPTs\Actors as CPT_Actors;
 
 /**
  * LezWatch.TV commands to check the sanctity of content.
@@ -131,13 +132,13 @@ class WP_CLI_LWTV_Check {
 		$post_type = get_post_type( $actor_id );
 
 		// Last sanity check: Is the post ID a member of THIS post type...
-		if ( 'post_type_actors' !== $post_type ) {
+		if ( CPT_Actors::SLUG !== $post_type ) {
 			$real_post_type = rtrim( str_replace( 'post_type_', '', $post_type ), 's' );
 			\WP_CLI::error( 'You are currently checking wikidata for actors, but ' . get_the_title( $actor_id ) . ' (#' . $actor_id . ') is a ' . $real_post_type . ', not an actor.' );
 		}
 
 		// Even though we only support actors...
-		if ( 'post_type_actors' === $post_type ) {
+		if ( CPT_Actors::SLUG === $post_type ) {
 			// Do the thing!
 			$items        = ( new Actors_Debugger() )->check_actors_wikidata( $actor_id );
 			$return_array = array( 'id', 'name', 'wikidata', 'birth', 'death', 'imdb', 'wikipedia', 'website', 'instagram', 'twitter', 'facebook' );
@@ -176,7 +177,7 @@ class WP_CLI_LWTV_Check {
 		$post_type = get_post_type( $actor_id );
 
 		// Last sanity check: Is the post ID a member of THIS post type...
-		if ( 'post_type_actors' !== $post_type ) {
+		if ( CPT_Actors::SLUG !== $post_type ) {
 			$real_post_type = rtrim( str_replace( 'post_type_', '', $post_type ), 's' );
 			\WP_CLI::error( 'You are currently checking wikidata for actors, but ' . get_the_title( $actor_id ) . ' (#' . $actor_id . ') is a ' . $real_post_type . ', not an actor.' );
 		}

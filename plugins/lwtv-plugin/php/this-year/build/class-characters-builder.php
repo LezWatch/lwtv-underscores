@@ -172,6 +172,25 @@ class Characters_Builder {
 	}
 
 	/**
+	 * Get all dead characters for a specific year
+	 *
+	 * @param int $year The year to filter by
+	 * @return array Array of dead character data with slug, name, and death years
+	 */
+	public function get_dead_characters_for_year( int $year ): array {
+		$characters      = $this->get_characters_for_year( $year );
+		$dead_characters = array();
+
+		foreach ( $characters as $character ) {
+			if ( $character['dead'] ) {
+				$dead_characters[] = $character;
+			}
+		}
+
+		return $dead_characters;
+	}
+
+	/**
 	 * Clear cached data for a specific year
 	 *
 	 * @param int $year The year to clear cache for

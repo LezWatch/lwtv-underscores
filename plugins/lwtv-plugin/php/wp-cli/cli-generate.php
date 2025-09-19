@@ -12,6 +12,8 @@ use LWTV\Debugger\Shows as Shows_Debugger;
 use LWTV\Debugger\Dupes as Dupes_Debugger;
 use LWTV\Debugger\Queers as Queers_Debugger;
 use LWTV\Features\Missed_Schedule;
+use LWTV\CPTs\Shows as CPT_Shows;
+use LWTV\CPTs\Actors as CPT_Actors;
 
 // Bail if directly accessed
 if ( ! defined( 'ABSPATH' ) && ! defined( 'WP_CLI' ) ) {
@@ -314,7 +316,7 @@ class WP_CLI_LWTV_Generate {
 	public function run_update_lists() {
 		$count_shows = lwtv_plugin()->get_transient( 'lwtv_count_shows' );
 		if ( false === $count_shows ) {
-			$count_shows = wp_count_posts( 'post_type_shows' )->publish;
+			$count_shows = wp_count_posts( CPT_Shows::SLUG )->publish;
 			lwtv_plugin()->set_transient( 'lwtv_count_shows', $count_shows, 24 * HOUR_IN_SECONDS );
 		}
 
@@ -322,7 +324,7 @@ class WP_CLI_LWTV_Generate {
 
 		$count_actors = lwtv_plugin()->get_transient( 'lwtv_count_actors' );
 		if ( false === $count_actors ) {
-			$count_actors = wp_count_posts( 'post_type_actors' )->publish;
+			$count_actors = wp_count_posts( CPT_Actors::SLUG )->publish;
 			lwtv_plugin()->set_transient( 'lwtv_count_actors', $count_actors, 24 * HOUR_IN_SECONDS );
 		}
 

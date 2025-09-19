@@ -9,6 +9,9 @@
 
 namespace LWTV\Schedulers;
 
+use LWTV\CPTs\Characters as CPT_Characters;
+use LWTV\CPTs\Shows as CPT_Shows;
+
 /**
  * Class Statistics_Cache_Warming
  */
@@ -60,7 +63,7 @@ class Statistics_Cache_Warming {
 		}
 
 		// Warm actor character counts
-		if ( 'post_type_characters' === $post_type ) {
+		if ( CPT_Characters::SLUG === $post_type ) {
 			$this->warm_actor_char_counts();
 		}
 
@@ -88,7 +91,7 @@ class Statistics_Cache_Warming {
 		$this->warm_death_statistics();
 
 		// Warm score statistics
-		if ( 'post_type_shows' === $post_type ) {
+		if ( CPT_Shows::SLUG === $post_type ) {
 			$this->warm_score_statistics();
 		}
 

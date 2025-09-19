@@ -6,6 +6,7 @@
  */
 
 use LWTV\Statistics\Build\Taxonomy_Optimized as Build_Taxonomy_Optimized;
+use LWTV\CPTs\Actors as CPT_Actors;
 
 $baseurl = '/statistics/actors/';
 
@@ -18,8 +19,8 @@ $actor_count = lwtv_plugin()->generate_total_counts( 'actors' );
 
 // OPTIMIZED: Pre-load taxonomy data for overview section
 $optimized_taxonomy   = new Build_Taxonomy_Optimized();
-$actor_gender_data    = $optimized_taxonomy->make_comprehensive( 'post_type_actors', 'lez_actor_gender', false );
-$actor_sexuality_data = $optimized_taxonomy->make_comprehensive( 'post_type_actors', 'lez_actor_sexuality', false );
+$actor_gender_data    = $optimized_taxonomy->make_comprehensive( CPT_Actors::SLUG, 'lez_actor_gender', false );
+$actor_sexuality_data = $optimized_taxonomy->make_comprehensive( CPT_Actors::SLUG, 'lez_actor_sexuality', false );
 
 // Sort by count descending for top 10
 uasort(

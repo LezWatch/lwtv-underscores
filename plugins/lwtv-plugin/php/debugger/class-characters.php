@@ -11,6 +11,7 @@ namespace LWTV\Debugger;
 
 use LWTV\Queeries\Post_Type;
 use LWTV\Queeries\Taxonomy as Queery_Taxonomy;
+use LWTV\CPTs\Characters as CPT_Characters;
 
 class Characters {
 
@@ -34,7 +35,7 @@ class Characters {
 				}
 			}
 		} else {
-			$the_loop = ( new Queery_Taxonomy() )->make( 'post_type_characters', 'lez_cliches', 'slug', 'dead' );
+			$the_loop = ( new Queery_Taxonomy() )->make( CPT_Characters::SLUG, 'lez_cliches', 'slug', 'dead' );
 
 			if ( is_object( $the_loop ) && $the_loop->have_posts() ) {
 				$characters = wp_list_pluck( $the_loop->posts, 'ID' );
@@ -124,7 +125,7 @@ class Characters {
 			}
 		} else {
 			// Get all the characters
-			$the_loop = ( new Post_Type() )->make( 'post_type_characters' );
+			$the_loop = ( new Post_Type() )->make( CPT_Characters::SLUG );
 
 			if ( is_object( $the_loop ) && $the_loop->have_posts() ) {
 				$characters = wp_list_pluck( $the_loop->posts, 'ID' );

@@ -12,6 +12,7 @@ namespace LWTV\Rest_API\Alexa;
 use LWTV\Queeries\Post_Meta_And_Tax;
 use LWTV\Rest_API\Stats_JSON;
 use LWTV\Rest_API\BYQ as Rest_BYQ;
+use LWTV\CPTs\Characters as CPT_Characters;
 
 class BYQ {
 
@@ -53,11 +54,11 @@ class BYQ {
 			// Calculate death
 			switch ( $format ) {
 				case 'year':
-					$death_query = ( new Post_Meta_And_Tax() )->make( 'post_type_characters', 'lezchars_death_year', $datetime->format( 'Y' ), 'lez_cliches', 'slug', 'dead', 'REGEXP' );
+					$death_query = ( new Post_Meta_And_Tax() )->make( CPT_Characters::SLUG, 'lezchars_death_year', $datetime->format( 'Y' ), 'lez_cliches', 'slug', 'dead', 'REGEXP' );
 					$death_count = ( is_object( $death_query ) ) ? $death_query->post_count : 0;
 					break;
 				case 'month':
-					$death_query      = ( new Post_Meta_And_Tax() )->make( 'post_type_characters', 'lezchars_death_year', $datetime->format( 'Y' ), 'lez_cliches', 'slug', 'dead', 'REGEXP' );
+					$death_query      = ( new Post_Meta_And_Tax() )->make( CPT_Characters::SLUG, 'lezchars_death_year', $datetime->format( 'Y' ), 'lez_cliches', 'slug', 'dead', 'REGEXP' );
 					$death_list_array = ( new Rest_BYQ() )->list_of_dead_characters( $death_query );
 					$death_count      = 0;
 					foreach ( $death_list_array as $the_dead ) {
@@ -67,7 +68,7 @@ class BYQ {
 					}
 					break;
 				case 'day':
-					$death_query = ( new Post_Meta_And_Tax() )->make( 'post_type_characters', 'lezchars_death_year', $datetime->format( 'm/d/Y' ), 'lez_cliches', 'slug', 'dead', 'REGEXP' );
+					$death_query = ( new Post_Meta_And_Tax() )->make( CPT_Characters::SLUG, 'lezchars_death_year', $datetime->format( 'm/d/Y' ), 'lez_cliches', 'slug', 'dead', 'REGEXP' );
 					$death_count = ( is_object( $death_query ) ) ? $death_query->post_count : 0;
 					break;
 				default:

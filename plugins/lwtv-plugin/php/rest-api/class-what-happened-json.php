@@ -11,6 +11,10 @@ namespace LWTV\Rest_API;
 use LWTV\Queeries\Post_Meta_And_Tax;
 use LWTV\Queeries\Post_Type;
 use LWTV\Rest_API\BYQ;
+use LWTV\CPTs\Actors as CPT_Actors;
+use LWTV\CPTs\Characters as CPT_Characters;
+use LWTV\CPTs\Shows as CPT_Shows;
+
 
 class What_Happened_JSON {
 
@@ -120,7 +124,7 @@ class What_Happened_JSON {
 		}
 
 		// Calculate death
-		$death_query_year         = ( new Post_Meta_And_Tax() )->make( 'post_type_characters', 'lezchars_death_year', $datetime->format( 'Y' ), 'lez_cliches', 'slug', 'dead', 'REGEXP' );
+		$death_query_year         = ( new Post_Meta_And_Tax() )->make( CPT_Characters::SLUG, 'lezchars_death_year', $datetime->format( 'Y' ), 'lez_cliches', 'slug', 'dead', 'REGEXP' );
 		$count_array['dead_year'] = ( is_object( $death_query_year ) ) ? $death_query_year->post_count : 0;
 
 		switch ( $format ) {
@@ -139,7 +143,7 @@ class What_Happened_JSON {
 				$count_array['dead'] = $death_query_count;
 				break;
 			case 'day':
-				$death_query         = ( new Post_Meta_And_Tax() )->make( 'post_type_characters', 'lezchars_death_year', $datetime->format( 'Y-m-d' ), 'lez_cliches', 'slug', 'dead', 'LIKE' );
+				$death_query         = ( new Post_Meta_And_Tax() )->make( CPT_Characters::SLUG, 'lezchars_death_year', $datetime->format( 'Y-m-d' ), 'lez_cliches', 'slug', 'dead', 'LIKE' );
 				$count_array['dead'] = ( is_object( $death_query ) ) ? $death_query->post_count : 0;
 				break;
 			default:
@@ -151,9 +155,9 @@ class What_Happened_JSON {
 			// Calculate characters and shows
 			$valid_post_types = array(
 				'posts'      => 'post',
-				'shows'      => 'post_type_shows',
-				'characters' => 'post_type_characters',
-				'actors'     => 'post_type_actors',
+				'shows'      => CPT_Shows::SLUG,
+				'characters' => CPT_Characters::SLUG,
+				'actors'     => CPT_Actors::SLUG,
 			);
 
 			switch ( $format ) {
@@ -218,7 +222,7 @@ class What_Happened_JSON {
 		$dt->setTimestamp( $timestamp ); //adjust the object to correct timestamp
 
 		$thisyear        = ( ! $thisyear ) ? $dt->format( 'Y' ) : $thisyear;
-		$shows_queery    = ( new Post_Type() )->make( 'post_type_shows' );
+		$shows_queery    = ( new Post_Type() )->make( CPT_Shows::SLUG );
 		$shows_this_year = array(
 			'current' => 0,
 			'ended'   => 0,

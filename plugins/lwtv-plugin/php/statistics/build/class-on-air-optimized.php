@@ -7,6 +7,9 @@
 
 namespace LWTV\Statistics\Build;
 
+use LWTV\CPTs\Characters as CPT_Characters;
+use LWTV\CPTs\Shows as CPT_Shows;
+
 class On_Air_Optimized {
 
 	/**
@@ -373,9 +376,9 @@ class On_Air_Optimized {
 			$year_first = LWTV_FIRST_YEAR;
 			$year_range = range( $year_first, $this_year );
 
-			if ( 'post_type_characters' === $post_type ) {
+			if ( CPT_Characters::SLUG === $post_type ) {
 				$array = $this->build_characters( $year_range, $data );
-			} elseif ( 'post_type_shows' === $post_type ) {
+			} elseif ( CPT_Shows::SLUG === $post_type ) {
 				$array = $this->build_shows( $year_range, $data );
 			}
 

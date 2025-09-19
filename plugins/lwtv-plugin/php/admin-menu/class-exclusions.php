@@ -7,6 +7,7 @@
 namespace LWTV\Admin_Menu;
 
 use LWTV\Queeries\Post_Meta;
+use LWTV\CPTs\Actors as CPT_Actors;
 
 class Exclusions {
 
@@ -142,7 +143,7 @@ class Exclusions {
 	 * Output the results of queer checking...
 	 */
 	public static function tab_queer_checker() {
-		$queery = self::queery_loop( 'post_type_actors', 'lezactors_queer_override' );
+		$queery = self::queery_loop( CPT_Actors::SLUG, 'lezactors_queer_override' );
 
 		if ( empty( $queery ) || ! is_array( $queery ) ) {
 			?>

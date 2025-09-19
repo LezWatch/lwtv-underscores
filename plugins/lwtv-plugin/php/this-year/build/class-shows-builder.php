@@ -759,4 +759,42 @@ class Shows_Builder {
 			lwtv_plugin()->delete_transient( $transient_name );
 		}
 	}
+
+	/**
+	 * Get all shows that started in a specific year
+	 *
+	 * @param int $year The year to filter by
+	 * @return array Array of show data that started in the year
+	 */
+	public function get_new_shows_for_year( int $year ): array {
+		$shows     = $this->get_shows_for_year( $year );
+		$new_shows = array();
+
+		foreach ( $shows as $show ) {
+			if ( $show['started'] ) {
+				$new_shows[] = $show;
+			}
+		}
+
+		return $new_shows;
+	}
+
+	/**
+	 * Get all shows that ended in a specific year
+	 *
+	 * @param int $year The year to filter by
+	 * @return array Array of show data that ended in the year
+	 */
+	public function get_ended_shows_for_year( int $year ): array {
+		$shows       = $this->get_shows_for_year( $year );
+		$ended_shows = array();
+
+		foreach ( $shows as $show ) {
+			if ( $show['ended'] ) {
+				$ended_shows[] = $show;
+			}
+		}
+
+		return $ended_shows;
+	}
 }
