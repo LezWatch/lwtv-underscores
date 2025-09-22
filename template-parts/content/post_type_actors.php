@@ -11,7 +11,7 @@
 $actor_id = get_the_ID();
 
 // Is this actor created less than 24 hours ago?
-$is_new = ( time() - get_the_time( 'U', $actor_id ) ) < DAY_IN_SECONDS;
+$treat_as_new = lwtv_plugin()->maybe_has_new_characters( $actor_id );
 
 // This just gets the numbers of all characters and how many are dead.
 $all_chars      = get_post_meta( $actor_id, 'lezactors_char_list', true );
@@ -109,7 +109,7 @@ if ( get_post_meta( $actor_id, 'lezactors_imdb', true ) ) {
 	<?php
 }
 
-if ( $is_new || empty( $has_char_count ) || 0 === (int) $has_char_count ) {
+if ( $treat_as_new || empty( $has_char_count ) || 0 === (int) $has_char_count ) {
 	get_template_part( 'template-parts/partials/actors/new', '', compact( 'actor_id' ) );
 } else {
 	get_template_part( 'template-parts/partials/actors/additional', '', compact( 'actor_id', 'has_char_count', 'related' ) );

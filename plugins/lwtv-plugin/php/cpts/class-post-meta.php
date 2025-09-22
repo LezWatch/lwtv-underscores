@@ -187,6 +187,15 @@ class Post_Meta {
 		'leztvmaze_our_show'            => array(
 			'post_type' => CPT_TV_Maze::SLUG,
 		),
+		// Updated Characters
+		'lwtv_characters_last_updated'  => array(
+			'post_type' => array( CPT_Actors::SLUG, CPT_Shows::SLUG ),
+			'type'      => 'timestamp',
+		),
+		'lwtv_has_new_char'             => array(
+			'type'      => 'boolean',
+			'post_type' => array( CPT_Actors::SLUG, CPT_Shows::SLUG ),
+		),
 	);
 
 	/**
@@ -228,32 +237,38 @@ class Post_Meta {
 		foreach ( self::ALL_POST_META as $meta_name => $meta_data ) {
 			$post_type = $meta_data['post_type'];
 
-			// Set the type.
-			$arguments['type'] = ( isset( $meta_data['type'] ) ) ? $meta_data['type'] : 'string';
-
-			// Set Items Types:
-			if ( 'string' !== $arguments['type'] && isset( $meta_data['items_type'] ) ) {
-				$arguments['show_in_rest'] = array(
-					'schema' => array(
-						'type'                 => $meta_data['type'],
-						'items'                => array(
-							'type' => $meta_data['items_type'],
-						),
-						'additionalProperties' => array(
-							'type' => 'string',
-						),
-					),
-				);
-
-				// Set Properties.
-				if ( isset( $meta_data['properties'] ) ) {
-					$arguments['show_in_rest']['schema']['items']['properties'] = $meta_data['properties'];
-				}
-			} else {
-				$arguments['show_in_rest'] = true;
+			if ( ! is_array( $post_type ) ) {
+				$post_type = array( $post_type );
 			}
 
-			register_post_meta( $post_type, $meta_name, $arguments );
+			foreach ( $post_type as $one_post_type ) {
+				// Set the type.
+				$arguments['type'] = ( isset( $meta_data['type'] ) ) ? $meta_data['type'] : 'string';
+
+				// Set Items Types:
+				if ( 'string' !== $arguments['type'] && isset( $meta_data['items_type'] ) ) {
+					$arguments['show_in_rest'] = array(
+						'schema' => array(
+							'type'                 => $meta_data['type'],
+							'items'                => array(
+								'type' => $meta_data['items_type'],
+							),
+							'additionalProperties' => array(
+								'type' => 'string',
+							),
+						),
+					);
+
+					// Set Properties.
+					if ( isset( $meta_data['properties'] ) ) {
+						$arguments['show_in_rest']['schema']['items']['properties'] = $meta_data['properties'];
+					}
+				} else {
+					$arguments['show_in_rest'] = true;
+				}
+
+				register_post_meta( $one_post_type, $meta_name, $arguments );
+			}
 		}
 	}
 }

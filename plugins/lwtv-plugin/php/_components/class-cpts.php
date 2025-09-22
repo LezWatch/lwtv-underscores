@@ -50,6 +50,7 @@ class CPTs implements Component, Templater {
 			'hide_actor_data'            => array( $this, 'hide_actor_data' ),
 			'the_actor_privacy_warning'  => array( $this, 'the_actor_privacy_warning' ),
 			'maybe_show_actor_note'      => array( $this, 'maybe_show_actor_note' ),
+			'has_new_char'               => array( $this, 'has_new_char' ),
 		);
 	}
 
@@ -246,5 +247,24 @@ class CPTs implements Component, Templater {
 			unset( $actions['edit'] );
 		}
 		return $actions;
+	}
+
+	/**
+	 * Has new character
+	 *
+	 * Check if the post is new OR if it has a new character and
+	 * the last updated is within 24 hours.
+	 *
+	 * @param  int $post_id
+	 * @return bool
+	 */
+	public function maybe_has_new_characters( $post_id ): bool {
+		$has_new_char      = get_post_meta( $post_id, 'lwtv_has_new_char', true );
+		$char_last_updated = get_post_meta( $post_id, 'lwtv_characters_last_updated', true );
+		$pub_last_updated  = ( time() - get_the_time( 'U', $post_id ) );
+		$char_within_24h   = $char_last_updated && ( time() - $char_last_updated ) < DAY_IN_SECONDS;
+
+		// Return true if the post is new or if it has a new character and the last updated is within 24 hours.
+		return ( $pub_last_updated < DAY_IN_SECONDS ) || ( $has_new_char && $char_within_24h );
 	}
 }

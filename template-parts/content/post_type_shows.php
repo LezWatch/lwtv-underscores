@@ -11,9 +11,9 @@
 $show_id = $post->ID;
 
 // Is this show created less than 24 hours ago?
-$is_new = ( time() - get_the_time( 'U', $show_id ) ) < DAY_IN_SECONDS;
+$treat_as_new = lwtv_plugin()->maybe_has_new_characters( $show_id );
 
-
+// Get the shows like this shortcode.
 $rpbt_shortcode = lwtv_plugin()->get_shows_like_this_show( $show_id );
 $maybe_has      = array(
 	'timeline'      => array(
@@ -102,11 +102,10 @@ if ( $maybe_has['related-posts']['meta'] ) {
 	get_template_part( 'template-parts/partials/related', 'articles', array( 'to_show' => $show_id ) );
 }
 
-
 // Great big characters section!
 $havecharcount = get_post_meta( $show_id, 'lezshows_char_count', true );
 
-if ( $is_new && ( empty( $havecharcount ) || 0 === (int) $havecharcount ) ) {
+if ( $treat_as_new && ( empty( $havecharcount ) || 0 === (int) $havecharcount ) ) {
 	get_template_part( 'template-parts/partials/shows/new', '', compact( 'show_id', 'havecharcount' ) );
 } else {
 	get_template_part( 'template-parts/partials/shows/characters', '', compact( 'show_id', 'havecharcount' ) );
