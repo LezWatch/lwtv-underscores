@@ -7,6 +7,8 @@ namespace LWTV\_Components;
 
 class Transients implements Component, Templater {
 
+	const CACHE_DURATION = HOUR_IN_SECONDS / 2;
+
 	/*
 	 * Init
 	 */
@@ -218,7 +220,7 @@ class Transients implements Component, Templater {
 	private function schedule_cache_warming( string $tier, int $post_id ): void {
 		if ( lwtv_plugin()->is_action_scheduler_available() ) {
 			as_schedule_single_action(
-				time() + 60, // 1 minute delay
+				time() + self::CACHE_DURATION,
 				'lwtv_warm_statistics_cache',
 				array( $tier, $post_id ),
 				'lwtv'

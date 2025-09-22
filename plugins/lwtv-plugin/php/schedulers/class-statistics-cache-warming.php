@@ -9,6 +9,10 @@
 
 namespace LWTV\Schedulers;
 
+use LWTV\CPTs\Actors as CPT_Actors;
+use LWTV\CPTs\Shows as CPT_Shows;
+use LWTV\CPTs\Characters as CPT_Characters;
+
 use LWTV\This_Year\Build\Characters_Builder;
 use LWTV\This_Year\Build\Shows_Builder;
 use LWTV\_Components\Statistics_Optimized;
@@ -16,7 +20,11 @@ use LWTV\Statistics\Build\Dead as Dead_Stats;
 use LWTV\Statistics\Build\Stations as Stations_Stats;
 use LWTV\Statistics\Build\Nations as Nations_Stats;
 use LWTV\Statistics\Build\On_Air_Optimized as On_Air_Stats;
+use LWTV\Statistics\Build\Taxonomy_Optimized as Build_Taxonomy_Optimized;
 use LWTV\Statistics\Build\Queer_IRL as Queer_IRL_Stats;
+use LWTV\Statistics\Build\Formats as Build_Formats;
+use LWTV\Statistics\Build\We_Love_It as Build_Loved;
+use LWTV\Statistics\Build\Worth_It as Build_Worth_It;
 
 /**
  * Class Statistics_Cache_Warming
@@ -75,11 +83,7 @@ class Statistics_Cache_Warming {
 	 * @return void
 	 */
 	private function warm_derived_caches(): void {
-		// Warm death statistics
 		$this->warm_death_statistics();
-
-		// Warm role statistics
-		$this->warm_role_statistics();
 	}
 
 	/**
@@ -93,6 +97,9 @@ class Statistics_Cache_Warming {
 		$this->warm_taxonomy_statistics();
 		$this->warm_on_air_statistics();
 		$this->warm_queer_irl_statistics();
+		$this->warm_formats_statistics();
+		$this->warm_loved_statistics();
+		$this->warm_worth_it_statistics();
 	}
 
 	/**
@@ -206,17 +213,22 @@ class Statistics_Cache_Warming {
 	 * @return void
 	 */
 	private function warm_taxonomy_statistics(): void {
-		lwtv_plugin()->error_log( 'cache-warming', 'Warming taxonomy statistics caches...' );
-	}
+		$character_taxonomies = array( 'lez_gender', 'lez_sexuality' );
+		foreach ( $character_taxonomies as $taxonomy ) {
+			( new Build_Taxonomy_Optimized() )->make_comprehensive( CPT_Characters::SLUG, $taxonomy, true );
+		}
 
-	/**
-	 * Warm role statistics caches
-	 *
-	 * @return void
-	 */
-	private function warm_role_statistics(): void {
-		// This would trigger regeneration of role statistics
-		lwtv_plugin()->error_log( 'cache-warming', 'Warming role statistics caches' );
+		$show_taxonomies = array( 'lez_tropes', 'lez_genres' );
+		foreach ( $show_taxonomies as $taxonomy ) {
+			( new Build_Taxonomy_Optimized() )->make_comprehensive( CPT_Shows::SLUG, $taxonomy, true );
+		}
+
+		$actor_taxonomies = array( 'lez_actor_gender', 'lez_actor_sexuality' );
+		foreach ( $actor_taxonomies as $taxonomy ) {
+			( new Build_Taxonomy_Optimized() )->make_comprehensive( CPT_Actors::SLUG, $taxonomy, true );
+		}
+
+		lwtv_plugin()->error_log( 'cache-warming', 'Warming taxonomy statistics caches...' );
 	}
 
 	/**
@@ -226,5 +238,40 @@ class Statistics_Cache_Warming {
 	 */
 	private function warm_queer_irl_statistics(): void {
 		( new Queer_IRL_Stats() )->generate_all_data();
+
+		lwtv_plugin()->error_log( 'cache-warming', 'Warming queer IRL statistics caches...' );
+	}
+
+	/**
+	 * Warm formats statistics caches
+	 *
+	 * @return void
+	 */
+	private function warm_formats_statistics(): void {
+		( new Build_Formats() )->generate( 'array' );
+
+		lwtv_plugin()->error_log( 'cache-warming', 'Warming formats statistics caches...' );
+	}
+
+	/**
+	 * Warm loved statistics caches
+	 *
+	 * @return void
+	 */
+	private function warm_loved_statistics(): void {
+		( new Build_Loved() )->generate( 'array' );
+
+		lwtv_plugin()->error_log( 'cache-warming', 'Warming loved statistics caches...' );
+	}
+
+	/**
+	 * Warm worth it statistics caches
+	 *
+	 * @return void
+	 */
+	private function warm_worth_it_statistics(): void {
+		( new Build_Worth_It() )->generate( 'array' );
+
+		lwtv_plugin()->error_log( 'cache-warming', 'Warming worth it statistics caches...' );
 	}
 }
