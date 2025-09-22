@@ -9,12 +9,24 @@
 $has_char_count = $args['has_char_count'] ?? 0;
 $has_dead_count = $args['has_dead_count'] ?? 0;
 $all_chars      = $args['all_chars'] ?? array();
+$treat_as_new   = $args['treat_as_new'] ?? false;
+$new_icon       = lwtv_plugin()->get_symbolicon( svg: 'construction.svg', icon: 'svg-square', max_size: '15' );
 ?>
 
 <section name="characters" id="characters" class="showschar-section">
 	<h2>Characters</h2>
 	<div class="card-body">
 		<?php
+
+		if ( $treat_as_new ) {
+			?>
+			<div class="alert alert-info" role="alert">
+			<?php echo $new_icon; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+				New characters for this actor are being added! We appreciate your patience.
+			</div>
+			<?php
+		}
+
 		if ( empty( $has_char_count ) || 0 === (int) $has_char_count ) {
 			echo '<p>There are no characters listed yet for this actor.</p>';
 		} else {

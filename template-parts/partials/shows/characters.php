@@ -7,12 +7,22 @@
 
 $show_id       = $args['show_id'];
 $havecharcount = $args['havecharcount'];
+$treat_as_new  = $args['treat_as_new'] ?? false;
 $havedeadcount = get_post_meta( $show_id, 'lezshows_dead_count', true );
+$new_icon      = lwtv_plugin()->get_symbolicon( svg: 'construction.svg', icon: 'svg-construction', max_size: '15' );
 ?>
 <section name="characters" id="characters" class="showschar-section">
 	<h2>Characters</h2>
 	<div class="card-body">
 		<?php
+		if ( $treat_as_new ) {
+			?>
+			<div class="alert alert-info" role="alert">
+				<?php echo $new_icon; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+				New characters for this show are being added! We appreciate your patience.
+			</div>
+			<?php
+		}
 
 		// Get the list of characters.
 		$chars_by_role = lwtv_plugin()->get_chars_for_show( $show_id, 'all' );

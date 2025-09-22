@@ -7,7 +7,7 @@
  * @package LezWatch.TV
  */
 
-$under_construction = lwtv_plugin()->get_symbolicon( svg: 'stanp-portrait.svg', icon: 'svg-square', max_size: '15' );
+$under_construction = lwtv_plugin()->get_symbolicon( svg: 'construction.svg', icon: 'svg-construction', max_size: '15' );
 ?>
 
 <section name="newshow" id="newshow" class="showschar-section">
