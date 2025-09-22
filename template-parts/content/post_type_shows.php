@@ -105,10 +105,10 @@ if ( $maybe_has['related-posts']['meta'] ) {
 // Great big characters section!
 $havecharcount = get_post_meta( $show_id, 'lezshows_char_count', true );
 
-if ( $treat_as_new && ( empty( $havecharcount ) || 0 === (int) $havecharcount ) ) {
+if ( empty( $havecharcount ) || 0 === (int) $havecharcount ) {
 	get_template_part( 'template-parts/partials/shows/new', '', compact( 'show_id', 'havecharcount' ) );
 } else {
-	get_template_part( 'template-parts/partials/shows/characters', '', compact( 'show_id', 'havecharcount' ) );
+	get_template_part( 'template-parts/partials/shows/characters', '', compact( 'show_id', 'havecharcount', 'treat_as_new' ) );
 }
 
 if ( false !== $rpbt_shortcode ) {

@@ -109,9 +109,9 @@ if ( get_post_meta( $actor_id, 'lezactors_imdb', true ) ) {
 	<?php
 }
 
-if ( $treat_as_new || empty( $has_char_count ) || 0 === (int) $has_char_count ) {
+if ( empty( $has_char_count ) || 0 === (int) $has_char_count ) {
 	get_template_part( 'template-parts/partials/actors/new', '', compact( 'actor_id' ) );
 } else {
 	get_template_part( 'template-parts/partials/actors/additional', '', compact( 'actor_id', 'has_char_count', 'related' ) );
-	get_template_part( 'template-parts/partials/actors/characters', '', compact( 'has_char_count', 'has_dead_count', 'all_chars' ) );
+	get_template_part( 'template-parts/partials/actors/characters', '', compact( 'has_char_count', 'has_dead_count', 'all_chars', 'treat_as_new' ) );
 }
