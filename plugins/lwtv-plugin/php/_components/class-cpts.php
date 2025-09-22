@@ -50,7 +50,7 @@ class CPTs implements Component, Templater {
 			'hide_actor_data'            => array( $this, 'hide_actor_data' ),
 			'the_actor_privacy_warning'  => array( $this, 'the_actor_privacy_warning' ),
 			'maybe_show_actor_note'      => array( $this, 'maybe_show_actor_note' ),
-			'has_new_char'               => array( $this, 'has_new_char' ),
+			'maybe_has_new_characters'   => array( $this, 'maybe_has_new_characters' ),
 		);
 	}
 
