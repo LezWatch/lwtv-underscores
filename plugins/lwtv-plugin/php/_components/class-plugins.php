@@ -171,7 +171,7 @@ class Plugins implements Component, Templater {
 								rel="nofollow noopener noreferrer"
 								data-shared="sharing-x-<?php echo esc_attr( $post_id ); ?>"
 								class="share-x lwtv-share-button share-icon no-text"
-								href="<?php echo esc_url( $post_url ); ?>&text=<?php echo esc_attr( the_title() ); ?>&via=lezwatchtv"
+								href="https://x.com/intent/tweet?url=<?php echo esc_url( $post_url ); ?>&text=<?php echo esc_attr( 'I just checked out ' . $title . ' on LezWatch.TV' ); ?>&via=lezwatchtv"
 								target="_blank"
 								title="Click to share on X/Twitter"
 								onclick="window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=468,width=768');return false;"
