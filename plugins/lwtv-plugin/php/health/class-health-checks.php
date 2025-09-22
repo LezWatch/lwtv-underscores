@@ -34,7 +34,7 @@ class Health_Checks {
 	 * @var string
 	 */
 	public const API_URL     = 'https://health.ipstenu.com';
-	public const API_VERSION = 'api/v3/checks/';
+	public const API_VERSION = '/api/v3/checks/';
 
 	/**
 	 * The API URL

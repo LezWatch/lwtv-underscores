@@ -1,78 +1,88 @@
 <?php
 /**
- * The template for displaying national statistics
+ * The template for displaying nation statistics -- Optimized Version
  *
  * @package LezWatch.TV
  */
 
-// Country
-$sent_country  = get_query_var( 'country', '' );
-$valid_country = term_exists( $sent_country, 'lez_country' );
-$country       = ( '' === $sent_country || ! is_array( $valid_country ) ) ? 'all' : sanitize_title( $sent_country );
+use LWTV\Statistics\Build\Taxonomy_Optimized as Build_Taxonomy_Optimized;
 
+// Nations
+$sent_nation  = get_query_var( 'nation', '' );
+$valid_nation = term_exists( $sent_nation, 'lez_country' );
+$nation       = ( '' === $sent_nation || ! is_array( $valid_nation ) ) ? 'all' : sanitize_title( $sent_nation );
+
+// Views
 $valid_views = array(
-	'sexuality'     => 'characters',
-	'gender'        => 'characters',
-	'tropes'        => 'shows',
-	'intersections' => 'shows',
-	'formats'       => 'shows',
-	'on-air'        => 'shows',
+	'sexuality' => 'characters',
+	'gender'    => 'characters',
+	'tropes'    => 'shows',
+	// removed because there's not enough data yet.
+	// 'intersections' => 'shows',
+	'formats'   => 'shows',
+	'on-air'    => 'shows',
 );
 $sent_view   = get_query_var( 'view', 'overview' );
 $view        = ( ! array_key_exists( $sent_view, $valid_views ) ) ? 'overview' : $sent_view;
 
-// Format
-$valid_formats = array( 'bar', 'pie' );
-$sent_format   = get_query_var( 'format', 'bar' );
-$format        = ( ! in_array( $sent_format, $valid_formats, true ) ) ? 'bar' : $sent_format;
+// OPTIMIZED: Get all nation data in a single query instead of N+1 queries
+$optimized_taxonomy = new Build_Taxonomy_Optimized();
+$all_nations_data   = $optimized_taxonomy->make_comprehensive( 'post_type_shows', 'lez_country', true );
 
-// Count
-$nations     = get_terms(
-	array(
-		'taxonomy'   => 'lez_country',
-		'hide_empty' => 0,
-	)
-);
-$count       = wp_count_terms( 'lez_country' );
-$shows_count = lwtv_plugin()->generate_statistics( 'shows', 'total', 'count' );
+// OPTIMIZED: Pre-load all character counts in a single query to eliminate N+1 pattern
+$character_counts = $optimized_taxonomy->get_bulk_character_counts( 'lez_country', array_keys( $all_nations_data ) );
+$show_counts      = $optimized_taxonomy->get_bulk_show_counts( 'lez_country', array_keys( $all_nations_data ) );
 
-switch ( $country ) {
+// Get total counts efficiently
+$count           = count( $all_nations_data );
+$shows_count     = lwtv_plugin()->generate_nation_statistics( 'all', 'all', 'count' );
+$all_shows_count = lwtv_plugin()->generate_total_counts( 'shows' );
+
+// Title
+switch ( $nation ) {
 	case 'all':
-		$title_country = 'All Countries (' . $count . ')';
+		$title_nation = 'All Nations (' . $count . ')';
 		break;
 	default:
-		$characters     = lwtv_plugin()->generate_statistics( 'characters', 'country_' . $country . '_all', 'count' );
-		$shows          = lwtv_plugin()->generate_statistics( 'shows', 'country_' . $country . '_all', 'count' );
-		$country_object = get_term_by( 'slug', $country, 'lez_country', 'ARRAY_A' );
-		$title_country  = '<a href="' . home_url( '/country/' . $country ) . '">' . $country_object['name'] . '</a> (' . $shows . ' Shows / ' . $characters . ' Characters)';
-}
+		// Use the cached data instead of making new queries
+		if ( isset( $all_nations_data[ $nation ] ) ) {
+			$nation_data = $all_nations_data[ $nation ];
+			$shows       = $nation_data['count'];
 
+			// OPTIMIZED: Use pre-loaded character counts instead of individual query
+			// Strip any underscore prefix from nation slug for character counts lookup
+			$nation_slug = ltrim( $nation, '_' );
+			$characters  = $character_counts[ $nation_slug ]['total'] ?? 0;
+
+			$title_nation = '<a href="' . home_url( '/nation/' . $nation ) . '">' . $nation_data['name'] . '</a> (' . $shows . ' Shows / ' . $characters . ' Characters)';
+		} else {
+			$title_nation = 'Nation Not Found';
+		}
+}
 ?>
-<h2><?php echo wp_kses_post( $title_country ); ?></h2>
+<h2><?php echo wp_kses_post( $title_nation ); ?></h2>
 
 <form method="get" id="go">
-	<div class="container-fluid text-center">
-		<div class="row">
-			<div class="col-8">
-				<select name="country" id="country">
-					<option value="all">Country (All)</option>
-					<?php
-					foreach ( $nations as $nation ) {
-						$selected = ( $country === $nation->slug ) ? 'selected=selected' : '';
-						$shows    = _n( 'Show', 'Shows', $nation->count );
-						echo '<option value="' . esc_attr( $nation->slug ) . '" ' . esc_html( $selected ) . '>' . esc_html( $nation->name ) . '</option>';
-					}
-					?>
-				</select>
-			</div>
-			<div class="col-2">
-				<button type="submit" id="submit" class="btn btn-default btn-outline-primary">Go</button>
+<div class="container-fluid text-center">
+	<div class="row">
+		<div class="col-8">
+			<select name="nation" id="nation">
+				<option value="all">All Nations</option>
 				<?php
-				if ( 'all' !== $country ) {
-					echo '&nbsp;<a class="btn btn-default btn-outline-primary" href="/statistics/nations/" role="button">Reset</a>';
+				foreach ( $all_nations_data as $nation_slug => $nation_data ) {
+					$selected = ( $nation === $nation_slug ) ? 'selected=selected' : '';
+					echo '<option value="' . esc_attr( $nation_slug ) . '" ' . esc_html( $selected ) . '>' . esc_html( $nation_data['name'] ) . '</option>';
 				}
 				?>
-			</div>
+			</select>
+		</div>
+		<div class="col-2">
+			<button type="submit" id="submit" class="btn btn-default btn-outline-primary">Go</button>
+			<?php
+			if ( 'all' !== $nation ) {
+				echo '&nbsp;<a class="btn btn-default btn-outline-primary" href="/statistics/nations/" role="button">Reset</a>';
+			}
+			?>
 		</div>
 	</div>
 </form>
@@ -81,13 +91,12 @@ switch ( $country ) {
 	<?php
 	$baseurl   = '/statistics/nations/';
 	$query_arg = array();
-	if ( 'all' !== $country ) {
-		$query_arg['country'] = $country;
+	if ( 'all' !== $nation ) {
+		$query_arg['nation'] = $nation;
 	}
 
 	echo '<li class="nav-item"><a class="nav-link' . esc_attr( ( 'overview' === $view ) ? ' active' : '' ) . '" href="' . esc_url( add_query_arg( $query_arg, $baseurl ) ) . '">OVERVIEW</a></li>';
-
-	if ( 'all' !== $country ) {
+	if ( 'all' !== $nation ) {
 		foreach ( $valid_views as $the_view => $the_post_type ) {
 			$active = ( $view === $the_view ) ? ' active' : '';
 			echo '<li class="nav-item"><a class="nav-link' . esc_attr( $active ) . '" href="' . esc_url( add_query_arg( $query_arg, $baseurl . $the_view . '/' ) ) . '">' . esc_html( strtoupper( str_replace( '-', ' ', $the_view ) ) ) . '</a></li>';
@@ -99,89 +108,41 @@ switch ( $country ) {
 <p>&nbsp;</p>
 
 <?php
-	$col_class = ( 'all' !== $country && 'overview' !== $view && 'on-air' !== $view ) ? 'col-sm-6' : 'col';
+	$col_class = ( 'all' !== $nation && 'overview' !== $view && 'on-air' !== $view ) ? 'col-sm-6' : 'col';
 	$cpts_type = ( 'overview' === $view ) ? 'shows' : $valid_views[ $view ];
 ?>
 
-<div class="container chart-container">
-
+<div class="container">
 	<div class="row">
-		<div class="<?php echo esc_attr( $col_class ); ?>">
 		<?php
+		// Remember: nation [subnation] [view]
+		$view   = ( 'overview' === $view && 'all' !== $nation ) ? 'all' : $view;
+		$view   = ( 'overview' === $view ) ? '_all' : '_' . $view;
+		$nation = ( 'overview' === $nation ) ? '_all' : '_' . $nation;
 
-		// Reminder: country [subcountry] [view]
-		$view    = ( 'overview' === $view ) ? '_all' : '_' . $view;
-		$country = ( 'overview' === $country ) ? '_all' : '_' . $country;
-		$format  = ( '_all' === $view ) ? 'barchart' : 'piechart';
-
-		if ( '_all' === $country ) {
-			// Always show the same thing here.
-			$all_count = lwtv_plugin()->generate_shows_count( 'score', 'country', $nation->slug );
-			?>
-			<p>For more information on individual nations, please use the dropdown menu, or click on a nation listed below.</p>
-			<table id="nationsTable" class="tablesorter table table-striped table-hover">
-				<thead>
-					<tr>
-						<th scope="col">Country Name</th>
-						<th scope="col">Shows</th>
-						<th scope="col">Percentage (of all shows)</th>
-						<th scope="col">Avg Score</th>
-					</tr>
-				</thead>
-				<tbody>
-				<?php
-				foreach ( $nations as $nation ) {
-					$percent = round( ( ( $nation->count / $shows_count ) * 100 ), 1 );
-					echo '<tr>
-						<th scope="row"><a href="?country=' . esc_attr( $nation->slug ) . '">' . esc_html( $nation->name ) . '</a></th>
-						<td>' . (int) $nation->count . '</td>
-						<td><div class="progress"><div class="progress-bar bg-info" role="progressbar" style="width: ' . esc_html( $percent ) . '%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div></div>&nbsp;' . esc_html( $percent ) . '%</td>
-						<td>' . (int) $all_count . '</td>
-					</tr>';
-				}
-				?>
-				</tbody>
-			</table>
-			<?php
+		if ( '_all' === $nation ) {
+			include plugin_dir_path( __FILE__ ) . 'nations/all.php';
 		} else {
-			// We have a specific nation, let's show it.
-			$format     = 'piechart';
-			$onair      = lwtv_plugin()->generate_shows_count( 'onair', 'country', ltrim( $country, '_' ) );
-			$allshows   = lwtv_plugin()->generate_shows_count( 'total', 'country', ltrim( $country, '_' ) );
-			$showscore  = lwtv_plugin()->generate_shows_count( 'score', 'country', ltrim( $country, '_' ) );
-			$onairscore = lwtv_plugin()->generate_shows_count( 'onairscore', 'country', ltrim( $country, '_' ) );
-
-			if ( '_all' === $view ) {
-				echo wp_kses_post( '<p>Currently, ' . $onair . ' of ' . $allshows . ' shows are on air. The average score for all shows in this country is ' . $showscore );
-
-				if ( 0 !== $onair ) {
-					echo wp_kses_post( ', and ' . $onairscore . ' for shows currently on air' );
-				}
-
-				echo wp_kses_post( ' (out of a possible 100).</p>' );
-
-				$format = 'barchart';
-			}
-
-			if ( '_on-air' === $view ) {
-				$format = 'trendline';
-				echo wp_kses_post( '<h3>Shows On-Air Per Year</h3>' );
-			}
-
-			lwtv_plugin()->generate_statistics( $cpts_type, 'country' . $country . $view, $format );
+			include plugin_dir_path( __FILE__ ) . 'nations/single.php';
 		}
 		?>
-		</div>
 
 	<?php
-	if ( '_all' !== $country && '_all' !== $view && '_on-air' !== $view ) {
+	if ( '_all' !== $nation && '_all' !== $view && '_on-air' !== $view ) {
 		$format = ( 'shows' === $cpts_type ) ? 'list' : 'percentage';
 		?>
 		<div class="<?php echo esc_attr( $col_class ); ?>">
-			<?php lwtv_plugin()->generate_statistics( $cpts_type, 'country' . $country . $view, $format ); ?>
+			<?php lwtv_plugin()->generate_nation_statistics( $nation, $view, $format ); ?>
 		</div>
 		<?php
 	}
 	?>
+
 	</div>
 </div>
+
+<?php
+// Performance monitoring
+if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+	echo '<!-- OPTIMIZED: Character count N+1 queries eliminated. Queries reduced from ~' . ( count( $all_nations_data ) * 3 + 10 ) . ' to ' . esc_html( get_num_queries() ) . ' -->';
+}

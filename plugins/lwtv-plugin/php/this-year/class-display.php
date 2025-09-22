@@ -7,7 +7,11 @@
 
 namespace LWTV\This_Year;
 
-use LWTV\This_Year\Generator;
+use LWTV\This_Year\Build\Characters_Builder;
+use LWTV\This_Year\Build\Shows_Builder;
+use LWTV\This_Year\Format\Dead_Characters_Formatter;
+use LWTV\This_Year\Format\New_Shows_Formatter;
+use LWTV\This_Year\Format\Canceled_Shows_Formatter;
 
 class Display {
 	/**
@@ -21,80 +25,67 @@ class Display {
 		$this_year   = ( isset( $this_year ) ) ? $this_year : gmdate( 'Y' );
 		$valid_views = array( 'characters-on-air', 'dead-characters', 'shows-on-air', 'new-shows', 'canceled-shows' );
 		$view        = get_query_var( 'view', 'overview' );
-		$baseurl     = ( gmdate( 'Y' ) !== $this_year ) ? '/this-year/' . $this_year . '/' : '/this-year/';
+		$baseurl     = '/this-year/';
 
+		// Build data we use for all templates
+		$characters_on_air_count = ( new Characters_Builder() )->get_character_count_for_year( $this_year );
+		$dead_characters_count   = ( new Characters_Builder() )->get_dead_character_count_for_year( $this_year );
+		$shows_on_air_count      = ( new Shows_Builder() )->get_show_count_for_year( $this_year );
+		$new_shows_count         = ( new Shows_Builder() )->get_started_show_count_for_year( $this_year );
+		$canceled_shows_count    = ( new Shows_Builder() )->get_ended_show_count_for_year( $this_year );
+
+		// Build the data we'll use for multiple templates
+		$characters_on_air         = ( new Characters_Builder() )->get_characters_with_shows_for_year( $this_year );
+		$characters_on_air_by_show = ( new Shows_Builder() )->get_shows_with_characters_for_year( $this_year );
+		$shows_by_name             = ( new Shows_Builder() )->get_shows_for_year_by_name( $this_year );
+		$shows_by_format           = ( new Shows_Builder() )->get_shows_for_year_by_format( $this_year );
+		$shows_by_country          = ( new Shows_Builder() )->get_shows_for_year_by_nation( $this_year );
+
+		if ( ! in_array( $view, $valid_views, true ) ) {
+			$view = 'overview';
+		}
 		?>
 		<div class="container">
-			<ul class="nav nav-tabs">
-				<?php
-				echo '<li class="nav-item"><a class="nav-link' . esc_attr( ( 'overview' === $view ) ? ' active' : '' ) . '" href="' . esc_url( $baseurl ) . '">OVERVIEW</a></li>';
-				foreach ( $valid_views as $the_view ) {
-					$active = ( $view === $the_view ) ? ' active' : '';
-					echo '<li class="nav-item"><a class="nav-link' . esc_attr( $active ) . '" href="' . esc_url( $baseurl . $the_view ) . '/">' . esc_html( strtoupper( str_replace( '-', ' ', $the_view ) ) ) . '</a></li>';
-				}
-				?>
-			</ul>
+			<?php include_once 'templates/navigation.php'; ?>
 
 			<p>&nbsp;</p>
 
 			<?php
-			if ( ! in_array( $view, $valid_views, true ) ) {
-				$view = 'overview';
+			switch ( $view ) {
+				case 'overview':
+					include_once 'templates/overview.php';
+					break;
+				case 'characters-on-air':
+					include_once 'templates/characters-on-air.php';
+					break;
+				case 'dead-characters':
+					$dead_by_date = ( new Dead_Characters_Formatter() )->format_by_date_for_year( $this_year, $characters_on_air );
+					$dead_by_show = ( new Dead_Characters_Formatter() )->format_by_show_for_year( $this_year, $characters_on_air_by_show );
+					include_once 'templates/dead-characters.php';
+					break;
+				case 'shows-on-air':
+					include_once 'templates/shows-on-air.php';
+					break;
+				case 'new-shows':
+					$new_shows_by_name    = ( new New_Shows_Formatter() )->format_by_name_for_year( $this_year, $shows_by_name );
+					$new_shows_by_format  = ( new New_Shows_Formatter() )->format_by_format_for_year( $this_year, $shows_by_format );
+					$new_shows_by_country = ( new New_Shows_Formatter() )->format_by_country_for_year( $this_year, $shows_by_country );
+					include_once 'templates/new-shows.php';
+					break;
+				case 'canceled-shows':
+					$canceled_shows_by_name    = ( new Canceled_Shows_Formatter() )->format_by_name_for_year( $this_year, $shows_by_name );
+					$canceled_shows_by_format  = ( new Canceled_Shows_Formatter() )->format_by_format_for_year( $this_year, $shows_by_format );
+					$canceled_shows_by_country = ( new Canceled_Shows_Formatter() )->format_by_country_for_year( $this_year, $shows_by_country );
+					include_once 'templates/canceled-shows.php';
+					break;
+				default:
+					include_once 'templates/overview.php';
 			}
 
-			// Generate data
-			Generator::make( $this_year, $view );
-
 			// Navigation
-			self::navigation( $this_year, $view );
-
+			include_once 'templates/navigation-year.php';
 			?>
 		</div>
-		<?php
-	}
-
-	/**
-	 * Navigation for the year. This changes a little based on your sub pages.
-	 *
-	 * @param string  $this_year
-	 * @param string  $view
-	 *
-	 * @return N/A
-	 */
-	public function navigation( $this_year, $view ) {
-		$start_year = LWTV_FIRST_YEAR;
-		$baseurl    = '/this-year/';
-		$view       = ( 'overview' === $view ) ? '' : $view;
-		?>
-
-		<nav aria-label="This Year Navigation" role="navigation" class="yikes-pagination">
-			<ul class="pagination justify-content-center">
-
-				<?php
-				// If it's not the oldest year there were queers, we can show the first year we have queers.
-				if ( $this_year !== $start_year ) {
-					?>
-					<li class="page-item first me-auto"><a href="<?php echo esc_url( $baseurl . $start_year . '/' . $view ); ?>" class="page-link"><?php echo lwtv_plugin()->get_symbolicon( svg: 'caret-left-circle.svg', icon: 'svg-chevron-circle-left' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?> First (<?php echo (int) $start_year; ?>)</a></li>
-					<li class="page-item"><a href="<?php echo esc_url( $baseurl . ( $this_year - 1 ) . '/' . $view ); ?>" title="previous year" class="page-link"><?php echo lwtv_plugin()->get_symbolicon( svg: 'caret-left.svg', icon: 'svg-chevron-left' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?> Previous</a></li>
-					<li class="page-item"><a href="<?php echo esc_url( $baseurl . ( $this_year - 2 ) . '/' . $view ); ?>" class="page-link"><?php echo (int) ( $this_year - 2 ); ?></a></li>
-					<li class="page-item"><a href="<?php echo esc_url( $baseurl . ( $this_year - 1 ) . '/' . $view ); ?>" class="page-link"><?php echo (int) ( $this_year - 1 ); ?></a></li>
-					<?php
-				}
-				?>
-
-				<li class="page-item active"><span class="active page-link"><?php echo (int) $this_year; ?></span></li>
-
-				<?php
-				if ( gmdate( 'Y' ) !== $this_year ) {
-					?>
-					<li class="page-item"><a href="<?php echo esc_url( $baseurl . ( $this_year + 1 ) . '/' . $view ); ?>" class="page-link"><?php echo (int) ( $this_year + 1 ); ?></a></li>
-					<li class="page-item"><a href="<?php echo esc_url( $baseurl . ( $this_year + 1 ) . '/' . $view ); ?>" class="page-link" title="next year">Next <?php echo lwtv_plugin()->get_symbolicon( svg: 'caret-right.svg', icon: 'svg-chevron-right' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></a></li>
-					<li class="page-item last ms-auto"><a href="<?php echo esc_url( $baseurl . gmdate( 'Y' ) . '/' . $view ); ?>" class="page-link">Last (<?php echo (int) gmdate( 'Y' ); ?>) <?php echo lwtv_plugin()->get_symbolicon( svg: 'caret-right-circle.svg', icon: 'svg-chevron-circle-right' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></a></li>
-					<?php
-				}
-				?>
-			</ul>
-		</nav><!-- .navigation -->
 		<?php
 	}
 }

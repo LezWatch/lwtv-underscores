@@ -76,45 +76,41 @@ class IMDb_JSON {
 				break;
 		}
 
-		// WP Queery: We only want one match.
-		$queery = new \WP_Query(
-			array(
-				'post_type'      => $post_type,
-				'facetwp'        => false,
-				'posts_per_page' => 1,
-				'no_found_rows'  => true,
-				'meta_query'     => array(
-					array(
-						'key'     => $meta_key,
-						'value'   => $id,
-						'compare' => '=',
-					),
-				),
+		// Direct SQL query for better performance
+		global $wpdb;
+		$post_id = $wpdb->get_var(
+			$wpdb->prepare(
+				"SELECT p.ID
+				FROM {$wpdb->posts} p
+				INNER JOIN {$wpdb->postmeta} pm ON p.ID = pm.post_id
+				WHERE p.post_type = %s
+				AND p.post_status = 'publish'
+				AND pm.meta_key = %s
+				AND pm.meta_value = %s
+				LIMIT 1",
+				$post_type,
+				$meta_key,
+				$id
 			)
 		);
 
-		// Do the needful
-		while ( $queery->have_posts() ) {
-			$queery->the_post();
-			$post_id = get_the_ID();
-		}
-		wp_reset_postdata();
-
 		// Base Array.
 		$array = array(
-			'id'   => $post_id,
-			'name' => get_the_title( $post_id ),
-			'url'  => get_the_permalink( $post_id ),
+			'id'   => $post_id ? $post_id : 0,
+			'name' => $post_id ? get_the_title( $post_id ) : 'Not Found',
+			'url'  => $post_id ? get_the_permalink( $post_id ) : '',
 		);
 
 		// Extra bitsys.
-		switch ( $type ) {
-			case 'tt':
-				$array['score'] = get_post_meta( $post_id, 'lezshows_the_score', true );
-				break;
-			case 'nm':
-				$array['queer'] = ( get_post_meta( $post_id, 'lezactors_queer', true ) ) ? true : false;
-				break;
+		if ( $post_id ) {
+			switch ( $type ) {
+				case 'tt':
+					$array['score'] = get_post_meta( $post_id, 'lezshows_the_score', true );
+					break;
+				case 'nm':
+					$array['queer'] = ( get_post_meta( $post_id, 'lezactors_queer', true ) ) ? true : false;
+					break;
+			}
 		}
 
 		return $array;

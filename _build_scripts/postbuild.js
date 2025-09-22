@@ -57,7 +57,7 @@ const dynamicThemeVersion = themePackage.version;
 	await cp( root + '/_build_scripts/webpackdist/css/style-editor.min.css', root + '/style-editor.css' );
 
 	// CSS Plugins
-	await cp( root + '/node_modules/tablesorter/dist/css/theme.bootstrap.min.css', root + '/plugins/lwtv-plugin/assets/css/theme.bootstrap.min.css');
+	await cp( root + '/node_modules/tablesorter/dist/css/theme.bootstrap_4.min.css', root + '/plugins/lwtv-plugin/assets/css/theme.bootstrap.min.css');
 	console.log('CSS files have been moved!');
 
 	// Call the versioning script

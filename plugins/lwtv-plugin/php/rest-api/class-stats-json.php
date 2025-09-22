@@ -7,10 +7,12 @@
 
 namespace LWTV\Rest_API;
 
-use LWTV\_Components\Statistics as Base_Stats;
+use LWTV\_Components\Statistics_Optimized as Base_Stats;
 use LWTV\Queeries\Is_Actor_Queer;
 use LWTV\Queeries\Post_Type;
-use LWTV\Queeries\Taxonomy as Queery_Taxonomy;
+use LWTV\CPTs\Actors as CPT_Actors;
+use LWTV\CPTs\Characters as CPT_Characters;
+use LWTV\CPTs\Shows as CPT_Shows;
 
 class Stats_JSON {
 
@@ -147,10 +149,10 @@ class Stats_JSON {
 				$stats_array = self::get_death( $format );
 				break;
 			case 'stations':
-				$stats_array = self::get_show_taxonomy( 'stations', $format, $page );
+				$stats_array = self::get_show_taxonomy( 'stations' );
 				break;
 			case 'nations':
-				$stats_array = self::get_show_taxonomy( 'country', $format, $page );
+				$stats_array = self::get_show_taxonomy( 'country' );
 				break;
 			case 'none':
 			default:
@@ -197,16 +199,16 @@ class Stats_JSON {
 				$stats_array = self::format_id( 'actor', $page );
 				break;
 			case 'queer-irl':
-				$stats_array = ( new Base_Stats() )->generate( 'actors', 'queer-irl', 'array' );
+				$stats_array = ( new Base_Stats() )->generate_actors_statistics( 'array', 'queer-irl' );
 				break;
 			case 'gender':
-				$stats_array = ( new Base_Stats() )->generate( 'actors', 'actor_gender', 'array' );
+				$stats_array = ( new Base_Stats() )->generate_actors_statistics( 'array', 'gender' );
 				break;
 			case 'sexuality':
-				$stats_array = ( new Base_Stats() )->generate( 'actors', 'actor_sexuality', 'array' );
+				$stats_array = ( new Base_Stats() )->generate_actors_statistics( 'array', 'sexuality' );
 				break;
 			case 'complex':
-				$queery = ( new Post_Type() )->make( 'post_type_actors', $page );
+				$queery = ( new Post_Type() )->make( CPT_Actors::SLUG, $page );
 
 				if ( ! is_object( $queery ) || ! $queery->have_posts() ) {
 					return $stats_array;
@@ -228,7 +230,7 @@ class Stats_JSON {
 				break;
 			case 'simple':
 				$stats_array = array(
-					'total'     => wp_count_posts( 'post_type_actors' )->publish,
+					'total'     => wp_count_posts( CPT_Actors::SLUG )->publish,
 					'gender'    => wp_count_terms( 'lez_actor_gender' ),
 					'sexuality' => wp_count_terms( 'lez_actor_sexuality' ),
 				);
@@ -275,19 +277,19 @@ class Stats_JSON {
 				$stats_array = self::format_id( 'character', $page );
 				break;
 			case 'cliches':
-				$stats_array = ( new Base_Stats() )->generate( 'characters', 'cliches', 'array' );
+				$stats_array = ( new Base_Stats() )->generate_characters_statistics( 'array', 'cliches' );
 				break;
 			case 'sexuality':
-				$stats_array = ( new Base_Stats() )->generate( 'characters', 'sexuality', 'array' );
+				$stats_array = ( new Base_Stats() )->generate_characters_statistics( 'array', 'sexuality' );
 				break;
 			case 'gender':
-				$stats_array = ( new Base_Stats() )->generate( 'characters', 'gender', 'array' );
+				$stats_array = ( new Base_Stats() )->generate_characters_statistics( 'array', 'gender' );
 				break;
 			case 'romantic':
-				$stats_array = ( new Base_Stats() )->generate( 'characters', 'romantic', 'array' );
+				$stats_array = ( new Base_Stats() )->generate_characters_statistics( 'array', 'romantic' );
 				break;
 			case 'complex':
-				$charactersloop = ( new Post_Type() )->make( 'post_type_characters', $page );
+				$charactersloop = ( new Post_Type() )->make( CPT_Characters::SLUG, $page );
 
 				if ( ! is_object( $charactersloop ) || ! $charactersloop->have_posts() ) {
 					return $stats_array;
@@ -296,7 +298,7 @@ class Stats_JSON {
 				$characters = wp_list_pluck( $charactersloop->posts, 'ID' );
 
 				foreach ( $characters as $character ) {
-					if ( 'post_type_characters' !== get_post_type( $character ) ) {
+					if ( CPT_Characters::SLUG !== get_post_type( $character ) ) {
 						continue;
 					}
 
@@ -339,7 +341,7 @@ class Stats_JSON {
 			case 'simple':
 				$dead_count  = get_term_by( 'slug', 'dead', 'lez_cliches' );
 				$stats_array = array(
-					'total'                => (int) wp_count_posts( 'post_type_characters' )->publish,
+					'total'                => (int) wp_count_posts( CPT_Characters::SLUG )->publish,
 					'dead'                 => $dead_count->count,
 					'genders'              => (int) wp_count_terms( 'lez_gender' ),
 					'sexualities'          => (int) wp_count_terms( 'lez_sexuality' ),
@@ -381,19 +383,16 @@ class Stats_JSON {
 		switch ( $format ) {
 			case 'complex':
 				$stats_array = array(
-					'shows'     => ( new Base_Stats() )->generate( 'characters', 'dead-shows', 'array' ),
-					'sexuality' => ( new Base_Stats() )->generate( 'characters', 'dead-sex', 'array' ),
-					'gender'    => ( new Base_Stats() )->generate( 'characters', 'dead-gender', 'array' ),
-					// phpcs:ignore
-					// Currently roles is not functional.
-					//'roles'     => ( new Base_Stats() )->generate( 'characters', 'dead-roles', 'array' ),
+					'shows'     => ( new Base_Stats() )->generate_dead_statistics( 'characters', 'shows', 'array' ),
+					'sexuality' => ( new Base_Stats() )->generate_dead_statistics( 'characters', 'sexuality', 'array' ),
+					'gender'    => ( new Base_Stats() )->generate_dead_statistics( 'characters', 'gender', 'array' ),
 				);
 				break;
 			case 'years':
-				$stats_array = ( new Base_Stats() )->generate( 'characters', 'dead-years', 'array' );
+				$stats_array = ( new Base_Stats() )->generate_dead_statistics( 'characters', 'years', 'array' );
 				break;
 			case 'list':
-				$stats_array = ( new Base_Stats() )->generate( 'characters', 'dead-list', 'array' );
+				$stats_array = ( new Base_Stats() )->generate_dead_statistics( 'characters', 'list', 'array' );
 				break;
 			case 'simple':
 				$dead_chars  = get_term_by( 'slug', 'dead', 'lez_cliches' );
@@ -401,11 +400,11 @@ class Stats_JSON {
 				$stats_array = array(
 					'characters' => array(
 						'dead'  => $dead_chars->count,
-						'alive' => ( wp_count_posts( 'post_type_characters' )->publish - $dead_chars->count ),
+						'alive' => ( ( new Base_Stats() )->generate_total_counts( 'characters' ) - $dead_chars->count ),
 					),
 					'shows'      => array(
 						'death'    => $dead_shows->count,
-						'no-death' => ( wp_count_posts( 'post_type_shows' )->publish - $dead_shows->count ),
+						'no-death' => ( ( new Base_Stats() )->generate_total_counts( 'shows' ) - $dead_shows->count ),
 					),
 				);
 				break;
@@ -423,9 +422,6 @@ class Stats_JSON {
 	 * @return array
 	 */
 	public function get_shows( $format = 'simple', $page = 1 ) {
-
-		global $wpdb;
-
 		// phpcs:disable
 		// Remove <!--fwp-loop--> from output
 		add_filter(
@@ -456,34 +452,34 @@ class Stats_JSON {
 				$stats_array = self::format_slug( 'show', $page );
 				break;
 			case 'tropes':
-				$stats_array = ( new Base_Stats() )->generate( 'shows', 'tropes', 'array' );
+				$stats_array = ( new Base_Stats() )->generate_shows_statistics( 'array', 'tropes' );
 				break;
 			case 'nations':
-				$stats_array = ( new Base_Stats() )->generate( 'shows', 'country', 'array' );
+				$stats_array = ( new Base_Stats() )->generate_shows_statistics( 'array', 'nations' );
 				break;
 			case 'genres':
-				$stats_array = ( new Base_Stats() )->generate( 'shows', 'genres', 'array' );
+				$stats_array = ( new Base_Stats() )->generate_shows_statistics( 'array', 'genres' );
 				break;
 			case 'triggers':
-				$stats_array = ( new Base_Stats() )->generate( 'shows', 'triggers', 'array' );
+				$stats_array = ( new Base_Stats() )->generate_shows_statistics( 'array', 'triggers' );
 				break;
 			case 'formats':
-				$stats_array = ( new Base_Stats() )->generate( 'shows', 'formats', 'array' );
+				$stats_array = ( new Base_Stats() )->generate_shows_statistics( 'array', 'formats' );
 				break;
 			case 'stars':
-				$stats_array = ( new Base_Stats() )->generate( 'shows', 'stars', 'array' );
+				$stats_array = ( new Base_Stats() )->generate_shows_statistics( 'array', 'stars' );
 				break;
 			case 'loved':
-				$stats_array = ( new Base_Stats() )->generate( 'shows', 'weloveit', 'array' );
+				$stats_array = ( new Base_Stats() )->generate_shows_statistics( 'array', 'we-love-it' );
 				break;
 			case 'worth-it':
-				$stats_array = ( new Base_Stats() )->generate( 'shows', 'thumbs', 'array' );
+				$stats_array = ( new Base_Stats() )->generate_shows_statistics( 'array', 'worth-it' );
 				break;
 			case 'intersections':
-				$stats_array = ( new Base_Stats() )->generate( 'shows', 'intersections', 'array' );
+				$stats_array = ( new Base_Stats() )->generate_shows_statistics( 'array', 'intersections' );
 				break;
 			case 'complex':
-				$showsloop = ( new Post_Type() )->make( 'post_type_shows', $page );
+				$showsloop = ( new Post_Type() )->make( CPT_Shows::SLUG, $page );
 
 				if ( ! is_object( $showsloop ) || ! $showsloop->have_posts() ) {
 					return $stats_array;
@@ -510,7 +506,7 @@ class Stats_JSON {
 				break;
 			case 'simple':
 				$stats_array = array(
-					'total'    => wp_count_posts( 'post_type_shows' )->publish,
+					'total'    => ( new Base_Stats() )->generate_total_counts( 'shows' ),
 					'stations' => wp_count_terms( 'lez_stations' ),
 					'nations'  => wp_count_terms( 'lez_country' ),
 					'formats'  => wp_count_terms( 'lez_formats' ),
@@ -618,125 +614,22 @@ class Stats_JSON {
 	 *
 	 * @access public
 	 * @static
+	 * @param string $type Type of taxonomy (stations, country)
 	 * @return array
 	 */
-	public function get_show_taxonomy( $type, $format = 'simple', $page = 1 ) {
+	public function get_show_taxonomy( $type ) {
 
-		$valid_types   = array( 'stations', 'country' );
-		$valid_formats = array( 'simple', 'complex' );
+		$valid_types = array( 'stations', 'country' );
 
 		// Early bail
 		if ( ! in_array( $type, $valid_types, true ) ) {
 			return new \WP_Error( 'not_found', 'No route was found matching the URL and request method' );
 		}
 
-		// Get our defaults
-		$return         = array();
-		$valid_subtaxes = array( 'gender', 'sexuality', 'romantic' );
+		// Map type to method
+		$method = ( 'stations' === $type ) ? 'generate_station_statistics' : 'generate_nation_statistics';
 
-		// This is a list of all stations or nations
-		// If stats are complex, use pagination
-		switch ( $format ) {
-			case 'simple':
-				$taxonomy = get_terms( array( 'taxonomy' => 'lez_' . $type ) );
-				break;
-			case 'complex':
-				$offset   = ( $page - 1 ) * 20;
-				$taxonomy = get_terms(
-					array(
-						'taxonomy' => 'lez_' . $type,
-						'number'   => 20,
-						'offset'   => $offset,
-					)
-				);
-				break;
-		}
-
-		// Build out the default arrays for character data:
-		foreach ( $valid_subtaxes as $subtax ) {
-			$terms = get_terms(
-				array(
-					'taxonomy'   => 'lez_' . $subtax,
-					'orderby'    => 'count',
-					'order'      => 'DESC',
-					'hide_empty' => 0,
-				)
-			);
-
-			if ( ! empty( $terms ) && ! is_wp_error( $terms ) ) {
-				foreach ( $terms as $term ) {
-					$char_data[ $term->slug ] = 0;
-				}
-			}
-		}
-
-		// Parse the taxonomy
-		// Loop through the terms (i.e. USA, ABC, The CW) and generate the stats for each one
-		foreach ( $taxonomy as $the_tax ) {
-			$characters = 0;
-			$shows      = 0;
-			$dead       = 0;
-			$char_data  = array();
-
-			$slug = ( ! isset( $the_tax->slug ) ) ? $the_tax['slug'] : $the_tax->slug;
-
-			// Get the posts for this singular term (i.e. a specific station)
-			$queery = ( new Queery_Taxonomy() )->make( 'post_type_shows', 'lez_' . $type, 'slug', $slug, 'IN' );
-
-			if ( ! is_object( $queery ) || ! $queery->have_posts() ) {
-				return;
-			}
-
-			$shows_queery = wp_list_pluck( $queery->posts, 'ID' );
-
-			foreach ( $shows_queery as $show_id ) {
-
-				// Increase the show count
-				++$shows;
-				$dead       += get_post_meta( $show_id, 'lezshows_dead_count', true );
-				$characters += get_post_meta( $show_id, 'lezshows_char_count', true );
-
-				// Get the sub taxonomy counts based on post meta
-				foreach ( $valid_subtaxes as $meta ) {
-					$char_data_array    = get_post_meta( $show_id, 'lezshows_char_' . $meta, false );
-					$char_data[ $meta ] = array_shift( $char_data_array );
-				}
-
-				// If we have a complex format, let's get ALL the data too!
-				if ( 'complex' === $format ) {
-					foreach ( $valid_subtaxes as $meta ) {
-						$char_data_array = get_post_meta( $show_id, 'lezshows_char_' . $meta, false );
-						foreach ( array_shift( $char_data_array ) as $char_data_meta => $char_data_count ) {
-							$char_data[ $char_data_meta ] += $char_data_count;
-							unset( $char_data[ $meta ] );
-						}
-					}
-				}
-
-				// Build our return array
-				// Show Count
-				$return[ $slug ]['shows'] = $shows;
-
-				// Only run this if we're complex...
-				if ( 'complex' === $format ) {
-					$return[ $slug ]['onair']           = ( new Base_Stats() )->count_shows( 'onair', $type, $slug );
-					$return[ $slug ]['avg_score']       = ( new Base_Stats() )->count_shows( 'score', $type, $slug );
-					$return[ $slug ]['avg_onair_score'] = ( new Base_Stats() )->count_shows( 'onairscore', $type, $slug );
-				}
-
-				// Character counts
-				$return[ $slug ]['characters'] = $characters;
-				$return[ $slug ]['dead']       = $dead;
-
-				// If we have a complex format, we need to add that data...
-				if ( 'complex' === $format ) {
-					foreach ( $char_data as $ctax_name => $ctax_count ) {
-						$return[ $slug ][ $ctax_name ] = $ctax_count;
-					}
-				}
-			}
-		}
-
-		return $return;
+		// Use the optimized statistics system
+		return ( new Base_Stats() )->$method( 'all', 'all', 'array' );
 	}
 }

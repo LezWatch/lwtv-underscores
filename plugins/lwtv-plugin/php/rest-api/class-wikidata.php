@@ -9,6 +9,7 @@ namespace LWTV\Rest_API;
 
 use LWTV\Debugger\Actors as Debug_Actors;
 use LWTV\Queeries\Post_Meta as Queeries_Post_Meta;
+use LWTV\CPTs\Actors as CPT_Actors;
 
 class Wikidata {
 	/**
@@ -94,7 +95,7 @@ class Wikidata {
 	 * @return array
 	 */
 	private function get_by_post_id( $post_id ): array {
-		if ( get_post_type( $post_id ) !== 'post_type_actors' ) {
+		if ( get_post_type( $post_id ) !== CPT_Actors::SLUG ) {
 			return array(
 				'error' => 'Invalid post ID',
 			);
@@ -113,7 +114,7 @@ class Wikidata {
 	 */
 	private function get_by_imdb( $imdb ): array {
 		$actors = array();
-		$queery = ( new Queeries_Post_Meta() )->make( 'post_type_actors', 'lezactors_imdb', $imdb );
+		$queery = ( new Queeries_Post_Meta() )->make( CPT_Actors::SLUG, 'lezactors_imdb', $imdb );
 
 		// Add ONLY the IDs to the array.
 		if ( is_object( $queery ) && $queery->have_posts() ) {
@@ -137,7 +138,7 @@ class Wikidata {
 	 */
 	private function get_by_wikidata( $wikidata ): array {
 		$actors = array();
-		$queery = ( new Queeries_Post_Meta() )->make( 'post_type_actors', 'lezactors_wikidata_qid', $wikidata );
+		$queery = ( new Queeries_Post_Meta() )->make( CPT_Actors::SLUG, 'lezactors_wikidata_qid', $wikidata );
 
 		// Add ONLY the IDs to the array.
 		if ( is_object( $queery ) && $queery->have_posts() ) {

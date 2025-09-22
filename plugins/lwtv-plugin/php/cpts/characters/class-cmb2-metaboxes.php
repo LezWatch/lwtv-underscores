@@ -6,6 +6,7 @@
 namespace LWTV\CPTs\Characters;
 
 use LWTV\Plugins\CMB2;
+use LWTV\CPTs\Characters as CPT_Characters;
 
 class CMB2_Metaboxes {
 	public $character_roles;
@@ -64,7 +65,7 @@ class CMB2_Metaboxes {
 			array(
 				'id'           => 'chars_metabox_appearances',
 				'title'        => 'Character Appearances',
-				'object_types' => array( 'post_type_characters' ),
+				'object_types' => array( CPT_Characters::SLUG ),
 				'context'      => 'normal',
 				'priority'     => 'high',
 				'show_in_rest' => true,
@@ -149,7 +150,7 @@ class CMB2_Metaboxes {
 			array(
 				'id'           => 'chars_metabox_main',
 				'title'        => 'General Character Details',
-				'object_types' => array( 'post_type_characters' ),
+				'object_types' => array( CPT_Characters::SLUG ),
 				'context'      => 'normal',
 				'priority'     => 'high',
 				'show_in_rest' => true,
@@ -268,7 +269,7 @@ class CMB2_Metaboxes {
 			array(
 				'id'           => 'chars_metabox_grid',
 				'title'        => 'Character Sexuality and Orientation',
-				'object_types' => array( 'post_type_characters' ),
+				'object_types' => array( CPT_Characters::SLUG ),
 				'context'      => 'normal',
 				'priority'     => 'high',
 				'show_in_rest' => true,
@@ -330,7 +331,7 @@ class CMB2_Metaboxes {
 	 * Remove Metaboxes we use elsewhere
 	 */
 	public function remove_metaboxes() {
-		remove_meta_box( 'authordiv', 'post_type_characters', 'normal' );
-		remove_meta_box( 'postexcerpt', 'post_type_characters', 'normal' );
+		remove_meta_box( 'authordiv', CPT_Characters::SLUG, 'normal' );
+		remove_meta_box( 'postexcerpt', CPT_Characters::SLUG, 'normal' );
 	}
 }

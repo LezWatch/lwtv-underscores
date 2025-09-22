@@ -7,6 +7,10 @@
 
 namespace LWTV\Statistics;
 
+use LWTV\CPTs\Actors as CPT_Actors;
+use LWTV\CPTs\Characters as CPT_Characters;
+use LWTV\CPTs\Shows as CPT_Shows;
+
 class Gutenberg_SSR {
 
 	/*
@@ -49,7 +53,7 @@ class Gutenberg_SSR {
 			$atts
 		);
 
-		$valid_postypes = array( 'post_type_actors', 'post_type_characters', 'post_type_shows' );
+		$valid_postypes = array( CPT_Actors::SLUG, CPT_Characters::SLUG, CPT_Shows::SLUG );
 		$this_posttype  = ( ! in_array( sanitize_text_field( $attributes['posttype'] ), $valid_postypes, true ) ) ? 'none' : sanitize_text_field( $attributes['posttype'] );
 
 		$output = self::get_include_contents( __DIR__ . '/templates/' . $this_posttype . '.php' );

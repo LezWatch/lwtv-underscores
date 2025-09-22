@@ -1,9 +1,11 @@
 <?php
 /**
- * The template for displaying station statistics
+ * The template for displaying station statistics -- Optimized Version
  *
  * @package LezWatch.TV
  */
+
+use LWTV\Statistics\Build\Taxonomy_Optimized as Build_Taxonomy_Optimized;
 
 // Stations
 $sent_station  = get_query_var( 'station', '' );
@@ -23,15 +25,20 @@ $valid_views = array(
 $sent_view   = get_query_var( 'view', 'overview' );
 $view        = ( ! array_key_exists( $sent_view, $valid_views ) ) ? 'overview' : $sent_view;
 
-// Count
-$all_stations = get_terms(
-	array(
-		'taxonomy'   => 'lez_stations',
-		'hide_empty' => 0,
-	)
-);
-$count        = wp_count_terms( 'lez_stations' );
-$shows_count  = lwtv_plugin()->generate_statistics( 'shows', 'total', 'count' );
+// OPTIMIZED: Get all station data in a single query instead of N+1 queries
+$optimized_taxonomy = new Build_Taxonomy_Optimized();
+$all_stations_data  = $optimized_taxonomy->make_comprehensive( 'post_type_shows', 'lez_stations', true );
+
+// OPTIMIZED: Pre-load all character counts in a single query to eliminate N+1 pattern
+$character_counts = $optimized_taxonomy->get_bulk_character_counts( 'lez_stations', array_keys( $all_stations_data ) );
+
+// OPTIMIZED: Pre-load all show counts in a single query to eliminate multiple show count queries
+$show_counts = $optimized_taxonomy->get_bulk_show_counts( 'lez_stations', array_keys( $all_stations_data ) );
+
+// Get total counts efficiently
+$count           = count( $all_stations_data );
+$shows_count     = lwtv_plugin()->generate_station_statistics( 'all', 'all', 'count' );
+$all_shows_count = lwtv_plugin()->generate_total_counts( 'shows' );
 
 // Title
 switch ( $station ) {
@@ -39,10 +46,20 @@ switch ( $station ) {
 		$title_station = 'All Stations (' . $count . ')';
 		break;
 	default:
-		$characters     = lwtv_plugin()->generate_statistics( 'characters', 'stations_' . $station . '_all', 'count' );
-		$shows          = lwtv_plugin()->generate_statistics( 'shows', 'stations_' . $station . '_all', 'count' );
-		$station_object = get_term_by( 'slug', $station, 'lez_stations', 'ARRAY_A' );
-		$title_station  = '<a href="' . home_url( '/station/' . $station ) . '">' . $station_object['name'] . '</a> (' . $shows . ' Shows / ' . $characters . ' Characters)';
+		// Use the cached data instead of making new queries
+		if ( isset( $all_stations_data[ $station ] ) ) {
+			$station_data = $all_stations_data[ $station ];
+			$shows        = $station_data['count'];
+
+			// OPTIMIZED: Use pre-loaded character counts instead of individual query
+			// Strip any underscore prefix from station slug for character counts lookup
+			$station_slug = ltrim( $station, '_' );
+			$characters   = $character_counts[ $station_slug ]['total'] ?? 0;
+
+			$title_station = '<a href="' . home_url( '/station/' . $station ) . '">' . $station_data['name'] . '</a> (' . $shows . ' Shows / ' . $characters . ' Characters)';
+		} else {
+			$title_station = 'Station Not Found';
+		}
 }
 ?>
 <h2><?php echo wp_kses_post( $title_station ); ?></h2>
@@ -54,9 +71,9 @@ switch ( $station ) {
 			<select name="station" id="station">
 				<option value="all">All Stations</option>
 				<?php
-				foreach ( $all_stations as $the_station ) {
-					$selected = ( $station === $the_station->slug ) ? 'selected=selected' : '';
-					echo '<option value="' . esc_attr( $the_station->slug ) . '" ' . esc_html( $selected ) . '>' . esc_html( $the_station->name ) . '</option>';
+				foreach ( $all_stations_data as $station_slug => $station_data ) {
+					$selected = ( $station === $station_slug ) ? 'selected=selected' : '';
+					echo '<option value="' . esc_attr( $station_slug ) . '" ' . esc_html( $selected ) . '>' . esc_html( $station_data['name'] ) . '</option>';
 				}
 				?>
 			</select>
@@ -99,78 +116,26 @@ switch ( $station ) {
 
 <div class="container">
 	<div class="row">
-		<div class="<?php echo esc_attr( $col_class ); ?>">
 		<?php
-		$view = ( 'overview' === $view && 'all' !== $station ) ? 'all' : $view;
 		// Remember: station [substation] [view]
+		$view    = ( 'overview' === $view && 'all' !== $station ) ? 'all' : $view;
 		$view    = ( 'overview' === $view ) ? '_all' : '_' . $view;
 		$station = ( 'overview' === $station ) ? '_all' : '_' . $station;
 
 		if ( '_all' === $station ) {
-			// Always show the same thing here.
-			$all_count = lwtv_plugin()->generate_shows_count( 'score', 'stations', $the_station->slug );
-			?>
-			<p>For more information on individual stations, please use the dropdown menu, or click on a station listed below.</p>
-			<table id="stationsTable" class="tablesorter table table-striped table-hover">
-				<thead>
-					<tr>
-						<th scope="col">Station Name</th>
-						<th scope="col">Total Shows</th>
-						<th scope="col">Percentage (of all shows)</th>
-						<th scope="col">Avg Score</th>
-					</tr>
-				</thead>
-				<tbody>
-					<?php
-					foreach ( $all_stations as $the_station ) {
-						$percent = round( ( ( $the_station->count / $shows_count ) * 100 ), 1 );
-						echo '<tr>
-								<th scope="row"><a href="?station=' . esc_attr( $the_station->slug ) . '">' . esc_html( $the_station->name ) . '</a></th>
-								<td>' . (int) $the_station->count . '</td>
-								<td><div class="progress"><div class="progress-bar bg-info" role="progressbar" style="width: ' . esc_html( $percent ) . '%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div></div>&nbsp;' . esc_html( $percent ) . '%</td>
-								<td>' . (int) $all_count . '</td>
-							</tr>';
-					}
-					?>
-				</tbody>
-			</table>
-			<?php
+			// Include the all stations template with required data
+			include plugin_dir_path( __FILE__ ) . 'stations/all.php';
 		} else {
-			// There is a specific Station!
-			$format     = 'piechart';
-			$onair      = lwtv_plugin()->generate_shows_count( 'onair', 'stations', ltrim( $station, '_' ) );
-			$allshows   = lwtv_plugin()->generate_shows_count( 'total', 'stations', ltrim( $station, '_' ) );
-			$showscore  = lwtv_plugin()->generate_shows_count( 'score', 'stations', ltrim( $station, '_' ) );
-			$onairscore = lwtv_plugin()->generate_shows_count( 'onairscore', 'stations', ltrim( $station, '_' ) );
-
-			if ( '_all' === $view ) {
-				echo wp_kses_post( '<p>Currently, ' . $onair . ' of ' . $allshows . ' shows are on air. The average score for all shows in this station is ' . $showscore );
-
-				if ( 0 !== $onair ) {
-					echo wp_kses_post( ', and ' . $onairscore . ' for shows currently on air' );
-				}
-
-				echo wp_kses_post( ' (out of a possible 100).</p>' );
-
-				$format = 'barchart';
-			}
-
-			if ( '_on-air' === $view ) {
-				$format = 'trendline';
-				echo wp_kses_post( '<h4>Shows On-Air Per Year</h4>' );
-			}
-
-			lwtv_plugin()->generate_statistics( $cpts_type, 'stations' . $station . $view, $format );
+			include plugin_dir_path( __FILE__ ) . 'stations/single.php';
 		}
 		?>
-		</div>
 
 	<?php
 	if ( '_all' !== $station && '_all' !== $view && '_on-air' !== $view ) {
 		$format = ( 'shows' === $cpts_type ) ? 'list' : 'percentage';
 		?>
 		<div class="<?php echo esc_attr( $col_class ); ?>">
-			<?php lwtv_plugin()->generate_statistics( $cpts_type, 'stations' . $station . $view, $format ); ?>
+			<?php lwtv_plugin()->generate_station_statistics( $station, $view, $format ); ?>
 		</div>
 		<?php
 	}
@@ -178,3 +143,9 @@ switch ( $station ) {
 
 	</div>
 </div>
+
+<?php
+// Performance monitoring
+if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+	echo '<!-- OPTIMIZED: Character count N+1 queries eliminated. Queries reduced from ~' . ( count( $all_stations_data ) * 3 + 10 ) . ' to ' . esc_html( get_num_queries() ) . ' -->';
+}

@@ -60,11 +60,17 @@ use LWTV\_Helpers\Utils;
  * @method bool   is_action_scheduler_available() \_Components\Scheduler
  * @method array  get_scheduler_status() \_Components\Scheduler
  *
- * STATISTICS
- * @method array  generate_shows_count( $type, $tax, $term )                               \_Components\Statistics
- * @method string generate_stats_block( $attributes )                                      \_Components\Statistics
- * @method string generate_stats_block_actor( $attributes )                                \_Components\Statistics
- * @method mixed  generate_statistics( $subject, $data, $format, $post_id, $custom_array ) \_Components\Statistics
+ * STATISTICS OPTIMIZED
+ * @method array  generate_shows_count( $type, $tax, $term )                                              \_Components\Statistics
+ * @method string generate_stats_block( $attributes )                                                     \_Components\Statistics
+ * @method string generate_stats_block_actor( $attributes )                                               \_Components\Statistics
+ * @method mixed  generate_nation_statistics( $nation, $view, $format, $custom_data, $bar_direction )     \_Components\Statistics
+ * @method mixed  generate_station_statistics( $station, $view, $format, $custom_data, $bar_direction )   \_Components\Statistics
+ * @method mixed  generate_statistics( $subject, $data, $format, $post_id, $custom_array )                \_Components\Statistics
+ * @method mixed  generate_format_statistics( $showformat, $view, $format, $custom_data, $bar_direction ) \_Components\Statistics
+ * @method mixed  generate_total_counts( [shows|characters|actors] )                                      \_Components\Statistics
+ * @method mixed  generate_total_dead( [characters] )                                                     \_Components\Statistics
+ * @method mixed  generate_dead_statistics( $subject, $view, $format )                                    \_Components\Statistics
  *
  * SYMBOLICONS
  * @method string get_icon_svg( string $slug )   \_Components\Symbolicons
@@ -149,7 +155,7 @@ class Plugin {
 			_Components\Queeries::class,
 			_Components\Rest_API::class,
 			_Components\Scheduler::class,
-			_Components\Statistics::class,
+			_Components\Statistics_Optimized::class,
 			_Components\Symbolicons::class,
 			_Components\Theme::class,
 			_Components\This_Year::class,

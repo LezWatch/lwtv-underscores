@@ -29,10 +29,10 @@ class TMDB_Batch_Task {
 	const RATE_LIMIT_WINDOW   = 10; // seconds
 
 	/**
-	 * Batch processing limits
+	 * Batch processing limits (optimized for 4-core, 4GB server)
 	 */
-	const BATCH_SIZE            = 20;
-	const DELAY_BETWEEN_BATCHES = 3; // seconds
+	const BATCH_SIZE            = 30;
+	const DELAY_BETWEEN_BATCHES = 2; // seconds
 
 	/**
 	 * Constructor

@@ -91,6 +91,8 @@ class Characters {
 	public function admin_init() {
 		add_action( 'dashboard_glance_items', array( $this, 'dashboard_glance_items' ) );
 		add_action( 'save_post_post_type_characters', array( $this, 'save_post_meta' ), 10, 3 );
+		add_action( 'delete_post', array( $this, 'handle_character_deletion' ) );
+		add_action( 'draft_to_publish', array( $this, 'maybe_update_new_character_flags' ) );
 		add_filter( 'enter_title_here', array( $this, 'custom_enter_title' ) );
 	}
 
@@ -298,6 +300,9 @@ class Characters {
 		// Queue cache invalidation for shutdown processing
 		lwtv_plugin()->cache_queue( $post_id );
 
+		// Smart statistics cache invalidation
+		lwtv_plugin()->invalidate_statistics_cache( self::SLUG, $post_id );
+
 		// re-hook this function
 		add_action( 'save_post_post_type_characters', array( $this, 'save_post_meta' ) );
 	}
@@ -391,5 +396,85 @@ class Characters {
 		}
 
 		echo '</div>';
+	}
+
+	/**
+	 * Update show new character flags when a character is published for the first time
+	 *
+	 * @param WP_Post $post The character post object.
+	 */
+	private function maybe_update_new_character_flags( $post ) {
+		// Only handle character posts
+		if ( self::SLUG !== $post->post_type ) {
+			return;
+		}
+
+		// Get show relationships
+		$show_group  = get_post_meta( $post->ID, 'lezchars_show_group', true );
+		$actor_group = get_post_meta( $post->ID, 'lezchars_actor', true );
+
+		$show_ids = array();
+
+		// Parse show group meta
+		if ( is_array( $show_group ) ) {
+			foreach ( $show_group as $group ) {
+				if ( isset( $group['show'] ) && is_array( $group['show'] ) ) {
+					$show_ids = array_merge( $show_ids, $group['show'] );
+				}
+			}
+		}
+
+		// Parse actor group meta
+		if ( is_array( $actor_group ) ) {
+			$show_ids = array_merge( $show_ids, $actor_group );
+		}
+
+		// Remove duplicates and update meta for each show
+		$show_ids = array_unique( $show_ids );
+
+		foreach ( $show_ids as $show_id ) {
+			update_post_meta( $show_id, 'lwtv_has_new_char', true );
+			update_post_meta( $show_id, 'lwtv_characters_last_updated', time() );
+		}
+	}
+
+	/**
+	 * Handle character deletion - reset show new character flags
+	 *
+	 * @param int $post_id The post ID being deleted.
+	 */
+	public function handle_character_deletion( $post_id ) {
+		// Only handle character posts
+		if ( get_post_type( $post_id ) !== self::SLUG ) {
+			return;
+		}
+
+		// Get show relationships
+		$show_group  = get_post_meta( $post_id, 'lezchars_show_group', true );
+		$actor_group = get_post_meta( $post_id, 'lezchars_actor', true );
+
+		$update_ids = array();
+
+		// Parse show group meta
+		if ( is_array( $show_group ) ) {
+			foreach ( $show_group as $group ) {
+				if ( isset( $group['show'] ) && is_array( $group['show'] ) ) {
+					$update_ids = array_merge( $update_ids, $group['show'] );
+				}
+			}
+		}
+
+		// Parse actor group meta
+		if ( is_array( $actor_group ) ) {
+			$update_ids = array_merge( $update_ids, $actor_group );
+		}
+
+		// Remove duplicates and reset meta for each show
+		$update_ids = array_unique( $update_ids );
+
+		foreach ( $update_ids as $one_update_id ) {
+			delete_post_meta( $one_update_id, 'lwtv_has_new_char' );
+			delete_post_meta( $one_update_id, 'lwtv_characters_last_updated' );
+		}
 	}
 }

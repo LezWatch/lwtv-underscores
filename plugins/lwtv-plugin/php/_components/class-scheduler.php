@@ -17,6 +17,7 @@ use LWTV\Schedulers\Calculation_Task;
 use LWTV\Schedulers\Cache_Batch_Task;
 use LWTV\Schedulers\Taxsync_Task;
 use LWTV\Schedulers\FixCharShows_Task;
+use LWTV\Schedulers\Statistics_Cache_Warming;
 
 /**
  * Class Scheduler
@@ -48,6 +49,7 @@ class Scheduler implements Component, Templater {
 			new Calculation_Task();
 			new Taxsync_Task();
 			new FixCharShows_Task();
+			new Statistics_Cache_Warming();
 
 			// Only initialize Action Scheduler-dependent tasks if AS is available
 			if ( $this->is_action_scheduler_available() ) {

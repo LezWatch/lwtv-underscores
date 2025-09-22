@@ -7,11 +7,9 @@
 namespace LWTV\CPTs\Characters;
 
 use LWTV\CPTs\Characters as CPT_Characters;
-use LWTV\CPTs\Shows as CPT_Shows;
-use LWTV\CPTs\Actors as CPT_Actors;
 use LWTV\CPTs\Actors\Calculations as Actors_Calculations;
 use LWTV\CPTs\Shows\Calculations as Shows_Calculations;
-use LWTV\Queeries\Taxonomy as Queery_Taxonomy;
+use LWTV\Queeries\Shadow_Taxonomy;
 
 class Calculations {
 
@@ -69,7 +67,7 @@ class Calculations {
 		}
 
 		// Get all shows with this character.
-		$shadow_queery = ( new Queery_Taxonomy() )->make( CPT_Shows::SLUG, CPT_Characters::SHADOW_TAXONOMY, 'term_id', $shadow_character->term_id );
+		$shadow_queery = ( new Shadow_Taxonomy() )->get_shows_for_character( $shadow_character->term_id );
 
 		if ( is_object( $shadow_queery ) ) {
 			if ( $shadow_queery->have_posts() ) {
@@ -119,18 +117,15 @@ class Calculations {
 		$actors = ( ! is_array( $actors ) ) ? array( $actors ) : $actors;
 
 		// Get all actors with this character taxonomy.
-		$shadow_queery = ( new Queery_Taxonomy() )->make( CPT_Actors::SLUG, CPT_Characters::SHADOW_TAXONOMY, 'term_id', $shadow_character->term_id );
+		$shadow_actors = ( new Shadow_Taxonomy() )->get_actors_for_character( $shadow_character->term_id );
 
-		if ( is_object( $shadow_queery ) ) {
-			if ( $shadow_queery->have_posts() ) {
-				while ( $shadow_queery->have_posts() ) {
-					$shadow_queery->the_post();
-					$actor_id = get_the_ID();
+		if ( is_array( $shadow_actors ) && ! empty( $shadow_actors ) ) {
+			foreach ( $shadow_actors as $actor_post ) {
+				$actor_id = $actor_post->ID;
 
-					// If the show has the taxonomy but the character doesn't have it in the array, remove the taxonomy.
-					if ( ! in_array( (string) $actor_id, $actors, true ) ) {
-						wp_remove_object_terms( (int) $actor_id, (int) $shadow_character->term_id, CPT_Characters::SHADOW_TAXONOMY );
-					}
+				// If the actor has the taxonomy but the character doesn't have it in the array, remove the taxonomy.
+				if ( ! in_array( (string) $actor_id, $actors, true ) ) {
+					wp_remove_object_terms( (int) $actor_id, (int) $shadow_character->term_id, CPT_Characters::SHADOW_TAXONOMY );
 				}
 			}
 		}
@@ -159,6 +154,17 @@ class Calculations {
 	 * @return n/a
 	 */
 	public function do_the_math( $character_id ) {
+
+		if ( ! isset( $character_id ) || CPT_Characters::SLUG !== get_post_type( $character_id ) ) {
+			// delete the meta fields
+			delete_post_meta( $character_id, 'lezchars_death_year' );
+			delete_post_meta( $character_id, 'lezchars_last_death' );
+			delete_post_meta( $character_id, 'lezchars_show_group' );
+			delete_post_meta( $character_id, 'lezchars_actor' );
+			delete_post_meta( $character_id, 'lezchars_dead_list' );
+			delete_post_meta( $character_id, 'lezchars_queer_override' );
+			return;
+		}
 
 		// Calculate Death
 		self::death( $character_id );

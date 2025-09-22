@@ -13,6 +13,9 @@ namespace LWTV\Rest_API;
 
 use LWTV\Queeries\Post_Type;
 use LWTV\Queeries\Taxonomy as Queery_Taxonomy;
+use LWTV\CPTs\Characters as CPT_Characters;
+use LWTV\CPTs\Shows as CPT_Shows;
+use LWTV\CPTs\Actors as CPT_Actors;
 
 class Export_JSON {
 	/**
@@ -164,39 +167,58 @@ class Export_JSON {
 	 * @return array        json array.
 	 */
 	public function export_list( $item ) {
+		// Generate cache key
+		$cache_key = 'lwtv_export_list_' . $item . '_' . $this->get_data_version_hash( 'post_type_' . $item );
+
+		// Try to get from cache first
+		$cached_result = lwtv_plugin()->get_transient( $cache_key );
+		if ( false !== $cached_result ) {
+			return $cached_result;
+		}
 
 		// Default to empty. This will properly error later.
 		$return = array();
 
 		if ( in_array( $item, array( 'characters', 'shows', 'actors' ), true ) ) {
-			$the_loop = ( new Post_Type() )->make( 'post_type_' . $item );
+			// Use optimized query
+			$posts = get_posts(
+				array(
+					'post_type'      => 'post_type_' . $item,
+					'posts_per_page' => -1,
+					'post_status'    => 'publish',
+					'fields'         => 'ids',
+					'orderby'        => 'title',
+					'order'          => 'ASC',
+				)
+			);
 
-			if ( ! is_object( $the_loop ) || ! $the_loop->have_posts() ) {
-				return $return;
-			}
+			if ( ! empty( $posts ) ) {
+				// Bulk fetch all needed data
+				$bulk_data = $this->get_bulk_export_data( $posts, $item );
 
-			while ( $the_loop->have_posts() ) {
-				$the_loop->the_post();
-				$post = get_post();
-
-				switch ( $item ) {
-					case 'actor':
-					case 'actors':
-						$return[] = self::export_actor( $post->post_name, 'wiki' );
-						break;
-					case 'character':
-					case 'characters':
-						$return[] = self::export_character( $post->post_name, 'wiki' );
-						break;
-					case 'show':
-					case 'shows':
-						$return[] = self::export_show( $post->post_name, 'wiki' );
-						break;
+				foreach ( $posts as $post_id ) {
+					switch ( $item ) {
+						case 'actor':
+						case 'actors':
+							$return[] = $this->export_actor_optimized( $post_id, 'wiki', $bulk_data );
+							break;
+						case 'character':
+						case 'characters':
+							$return[] = $this->export_character_optimized( $post_id, 'wiki', $bulk_data );
+							break;
+						case 'show':
+						case 'shows':
+							$return[] = $this->export_show_optimized( $post_id, 'wiki', $bulk_data );
+							break;
+					}
 				}
 			}
 		}
 
-			return $return;
+		// Cache the result for 1 hour
+		lwtv_plugin()->set_transient( $cache_key, $return, HOUR_IN_SECONDS );
+
+		return $return;
 	}
 
 	/**
@@ -332,7 +354,7 @@ class Export_JSON {
 	 */
 	public function get_full_list_characters( $group, $term ) {
 
-		$the_loop = ( new Queery_Taxonomy() )->make( 'post_type_characters', 'lez_' . $group, 'slug', $term );
+		$the_loop = ( new Queery_Taxonomy() )->make( CPT_Characters::SLUG, 'lez_' . $group, 'slug', $term );
 
 		if ( ! is_object( $the_loop ) || ! $the_loop->have_posts() ) {
 			return new \WP_Error( 'not_found', 'No route was found matching the URL and request method: ' . $term );
@@ -433,7 +455,7 @@ class Export_JSON {
 			$page = get_post( $item );
 		} else {
 			// Let's get the ID by the title
-			$page = get_page_by_path( $item, OBJECT, 'post_type_shows' );
+			$page = get_page_by_path( $item, OBJECT, CPT_Shows::SLUG );
 		}
 
 		// If page doesn't exist, let's try by SQL.
@@ -444,7 +466,7 @@ class Export_JSON {
 		}
 
 		// Let's make sure.
-		if ( isset( $page ) && 'post_type_shows' === get_post_type( $page->ID ) ) {
+		if ( isset( $page ) && CPT_Shows::SLUG === get_post_type( $page->ID ) ) {
 
 			// Empty to start
 			$data = array();
@@ -531,7 +553,7 @@ class Export_JSON {
 			$page = get_post( $item );
 		} else {
 			// Let's get the ID by the title
-			$page = get_page_by_path( $item, OBJECT, 'post_type_characters' );
+			$page = get_page_by_path( $item, OBJECT, CPT_Characters::SLUG );
 		}
 
 		// If page doesn't exist, let's try by SQL.
@@ -542,7 +564,7 @@ class Export_JSON {
 		}
 
 		// Let's make sure.
-		if ( isset( $page ) && 'post_type_characters' === get_post_type( $page->ID ) ) {
+		if ( isset( $page ) && CPT_Characters::SLUG === get_post_type( $page->ID ) ) {
 
 			// Basic Data we always need
 			$return = array(
@@ -653,7 +675,7 @@ class Export_JSON {
 			$page = get_post( $item );
 		} else {
 			// Let's get the ID by the title
-			$page = get_page_by_path( $item, OBJECT, 'post_type_actors' );
+			$page = get_page_by_path( $item, OBJECT, CPT_Actors::SLUG );
 
 			// If page doesn't exist, let's try by SQL.
 			if ( null === $page ) {
@@ -664,7 +686,7 @@ class Export_JSON {
 		}
 
 		// Let's make sure.
-		if ( isset( $page ) && 'post_type_actors' === get_post_type( $page->ID ) ) {
+		if ( isset( $page ) && CPT_Actors::SLUG === get_post_type( $page->ID ) ) {
 
 			// If the actor has asked to be private, we respect that.
 			if ( lwtv_plugin()->hide_actor_data( $page->ID, 'all' ) ) {
@@ -811,5 +833,367 @@ class Export_JSON {
 			});
 			// phpcs:enable
 		}
+	}
+
+	/**
+	 * Get bulk export data for multiple posts
+	 *
+	 * @param array  $post_ids Array of post IDs
+	 * @param string $type Post type
+	 * @return array Bulk data organized by post ID
+	 */
+	private function get_bulk_export_data( $post_ids, $type ) {
+		if ( empty( $post_ids ) ) {
+			return array();
+		}
+
+		global $wpdb;
+
+		// Sanitize IDs
+		$post_ids = array_map( 'intval', $post_ids );
+		$post_ids = array_filter( $post_ids );
+
+		if ( empty( $post_ids ) ) {
+			return array();
+		}
+
+		$ids_string = implode( ',', $post_ids );
+		$bulk_data  = array();
+
+		// Get basic post data
+		$posts_query = "SELECT ID, post_title, post_name FROM {$wpdb->posts} WHERE ID IN ($ids_string)";
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- IDs are sanitized
+		$posts = $wpdb->get_results( $posts_query );
+
+		foreach ( $posts as $post ) {
+			$bulk_data[ $post->ID ] = array(
+				'post_title' => $post->post_title,
+				'post_name'  => $post->post_name,
+			);
+		}
+
+		// Get meta data based on type
+		$meta_keys = array();
+		switch ( $type ) {
+			case 'actors':
+				$meta_keys = array( 'lezactors_birth', 'lezactors_death', 'lezactors_wikipedia', 'lezactors_imdb' );
+				break;
+			case 'characters':
+				$meta_keys = array( 'lezchars_show_group', 'lezchars_actor', 'lezchars_death_year' );
+				break;
+			case 'shows':
+				$meta_keys = array( 'lezshows_airdates', 'lezshows_imdb' );
+				break;
+		}
+
+		if ( ! empty( $meta_keys ) ) {
+			$keys_string = "'" . implode( "','", array_map( 'esc_sql', $meta_keys ) ) . "'";
+			$meta_query  = "SELECT post_id, meta_key, meta_value FROM {$wpdb->postmeta} WHERE post_id IN ($ids_string) AND meta_key IN ($keys_string)";
+
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- IDs and keys are sanitized
+			$meta_results = $wpdb->get_results( $meta_query );
+
+			foreach ( $meta_results as $row ) {
+				$bulk_data[ $row->post_id ]['meta'][ $row->meta_key ] = maybe_unserialize( $row->meta_value );
+			}
+		}
+
+		// Get taxonomy data
+		$taxonomies = array();
+		switch ( $type ) {
+			case 'actors':
+				$taxonomies = array( 'lez_actor_sexuality', 'lez_actor_gender' );
+				break;
+			case 'characters':
+				$taxonomies = array( 'lez_sexuality', 'lez_gender', 'lez_cliches' );
+				break;
+			case 'shows':
+				$taxonomies = array( 'lez_formats', 'lez_country', 'lez_stations' );
+				break;
+		}
+
+		if ( ! empty( $taxonomies ) ) {
+			foreach ( $taxonomies as $taxonomy ) {
+				$tax_query = "SELECT tr.object_id, t.name, t.slug
+					FROM {$wpdb->term_relationships} tr
+					INNER JOIN {$wpdb->term_taxonomy} tt ON tr.term_taxonomy_id = tt.term_taxonomy_id
+					INNER JOIN {$wpdb->terms} t ON tt.term_id = t.term_id
+					WHERE tr.object_id IN ($ids_string) AND tt.taxonomy = '$taxonomy'";
+
+				// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- IDs and taxonomy are sanitized
+				$tax_results = $wpdb->get_results( $tax_query );
+
+				foreach ( $tax_results as $row ) {
+					$bulk_data[ $row->object_id ]['taxonomies'][ $taxonomy ][] = array(
+						'name' => $row->name,
+						'slug' => $row->slug,
+					);
+				}
+			}
+		}
+
+		return $bulk_data;
+	}
+
+	/**
+	 * Optimized actor export using bulk data
+	 *
+	 * @param int    $post_id Post ID
+	 * @param string $format Export format
+	 * @param array  $bulk_data Pre-fetched bulk data
+	 * @return array
+	 */
+	private function export_actor_optimized( $post_id, $format = 'wiki', $bulk_data = array() ) {
+		if ( ! isset( $bulk_data[ $post_id ] ) ) {
+			return array();
+		}
+
+		$data = $bulk_data[ $post_id ];
+		$meta = $data['meta'] ?? array();
+
+		// Check if actor should be hidden
+		if ( lwtv_plugin()->hide_actor_data( $post_id, 'all' ) ) {
+			return array();
+		}
+
+		$return = array(
+			'uid'  => $post_id,
+			'id'   => $data['post_name'],
+			'name' => $data['post_title'],
+		);
+
+		// Get sexuality
+		$sexuality_terms = $data['taxonomies']['lez_actor_sexuality'] ?? array();
+		$sexuality       = ! empty( $sexuality_terms ) ? implode( ', ', wp_list_pluck( $sexuality_terms, 'name' ) ) : '';
+
+		// Get gender
+		$gender_terms = $data['taxonomies']['lez_actor_gender'] ?? array();
+		$gender       = ! empty( $gender_terms ) ? implode( ', ', wp_list_pluck( $gender_terms, 'name' ) ) : '';
+
+		// Build description based on format
+		if ( 'wiki' === $format ) {
+			$description_parts = array();
+			if ( $sexuality ) {
+				$description_parts[] = $sexuality;
+			}
+			if ( $gender ) {
+				$description_parts[] = $gender;
+			}
+			$description_parts[] = 'actor';
+
+			// Add birth/death if not hidden
+			if ( ! lwtv_plugin()->hide_actor_data( $post_id, 'dob' ) && ! empty( $meta['lezactors_birth'] ) ) {
+				$birth_date          = new \DateTime( $meta['lezactors_birth'] );
+				$description_parts[] = 'b. ' . $birth_date->format( 'Y' );
+			}
+
+			if ( ! empty( $meta['lezactors_death'] ) ) {
+				$death_date          = new \DateTime( $meta['lezactors_death'] );
+				$description_parts[] = 'and died ' . $death_date->format( 'Y' );
+			}
+
+			$return['description'] = implode( ' ', $description_parts ) . '.';
+		}
+
+		return $return;
+	}
+
+	/**
+	 * Optimized character export using bulk data
+	 *
+	 * @param int    $post_id Post ID
+	 * @param string $format Export format
+	 * @param array  $bulk_data Pre-fetched bulk data
+	 * @return array
+	 */
+	private function export_character_optimized( $post_id, $format = 'wiki', $bulk_data = array() ) {
+		if ( ! isset( $bulk_data[ $post_id ] ) ) {
+			return array();
+		}
+
+		$data = $bulk_data[ $post_id ];
+		$meta = $data['meta'] ?? array();
+
+		$return = array(
+			'uid'  => $post_id,
+			'id'   => $data['post_name'],
+			'name' => $data['post_title'],
+		);
+
+		// Get sexuality
+		$sexuality_terms = $data['taxonomies']['lez_sexuality'] ?? array();
+		$sexuality       = ! empty( $sexuality_terms ) ? implode( ', ', wp_list_pluck( $sexuality_terms, 'name' ) ) : '';
+
+		// Get gender
+		$gender_terms = $data['taxonomies']['lez_gender'] ?? array();
+		$gender       = ! empty( $gender_terms ) ? implode( ', ', wp_list_pluck( $gender_terms, 'name' ) ) : '';
+
+		// Get shows
+		$shows = '';
+		if ( ! empty( $meta['lezchars_show_group'] ) ) {
+			$show_titles = array();
+			foreach ( $meta['lezchars_show_group'] as $show_data ) {
+				if ( isset( $show_data['show'] ) ) {
+					$show_id = is_array( $show_data['show'] ) ? $show_data['show'][0] : $show_data['show'];
+					if ( $show_id ) {
+						$show_titles[] = get_the_title( $show_id );
+					}
+				}
+			}
+			if ( ! empty( $show_titles ) ) {
+				if ( count( $show_titles ) > 1 && 'wiki' === $format ) {
+					$last_element = array_pop( $show_titles );
+					array_push( $show_titles, 'and ' . $last_element );
+				}
+				$shows = implode( ', ', $show_titles );
+			}
+		}
+
+		// Get actors
+		$actors = '';
+		if ( ! empty( $meta['lezchars_actor'] ) ) {
+			$actor_titles = array();
+			$all_actors   = is_array( $meta['lezchars_actor'] ) ? $meta['lezchars_actor'] : array( $meta['lezchars_actor'] );
+
+			foreach ( $all_actors as $actor_id ) {
+				if ( ! lwtv_plugin()->hide_actor_data( $actor_id, 'all' ) ) {
+					$actor_titles[] = get_the_title( $actor_id );
+				}
+			}
+
+			if ( ! empty( $actor_titles ) ) {
+				if ( count( $actor_titles ) > 1 && 'wiki' === $format ) {
+					$last_element = array_pop( $actor_titles );
+					array_push( $actor_titles, 'and ' . $last_element );
+				}
+				$actors = implode( ', ', $actor_titles );
+			}
+		}
+
+		if ( 'wiki' === $format ) {
+			$description_parts = array();
+			if ( $sexuality ) {
+				$description_parts[] = 'A ' . $sexuality;
+			}
+			if ( $gender ) {
+				$description_parts[] = $gender;
+			}
+			$description_parts[] = 'character';
+			if ( $shows ) {
+				$description_parts[] = 'on ' . $shows;
+			}
+			if ( $actors ) {
+				$description_parts[] = '. Played by ' . $actors;
+			}
+
+			$return['description'] = implode( ' ', $description_parts ) . '.';
+		}
+
+		return $return;
+	}
+
+	/**
+	 * Optimized show export using bulk data
+	 *
+	 * @param int    $post_id Post ID
+	 * @param string $format Export format
+	 * @param array  $bulk_data Pre-fetched bulk data
+	 * @return array
+	 */
+	private function export_show_optimized( $post_id, $format = 'wiki', $bulk_data = array() ) {
+		if ( ! isset( $bulk_data[ $post_id ] ) ) {
+			return array();
+		}
+
+		$data = $bulk_data[ $post_id ];
+		$meta = $data['meta'] ?? array();
+
+		$return = array(
+			'uid'  => $post_id,
+			'id'   => $data['post_name'],
+			'name' => $data['post_title'],
+		);
+
+		// Get formats
+		$format_terms = $data['taxonomies']['lez_formats'] ?? array();
+		$formats      = ! empty( $format_terms ) ? implode( ', ', wp_list_pluck( $format_terms, 'name' ) ) : '';
+
+		// Get nations
+		$nation_terms = $data['taxonomies']['lez_country'] ?? array();
+		$nations      = '';
+		if ( ! empty( $nation_terms ) ) {
+			$nation_names = wp_list_pluck( $nation_terms, 'name' );
+			if ( count( $nation_names ) > 1 && 'wiki' === $format ) {
+				$last_element = array_pop( $nation_names );
+				array_push( $nation_names, 'and ' . $last_element );
+			}
+			$nations = implode( ', ', $nation_names );
+		}
+
+		// Get stations
+		$station_terms = $data['taxonomies']['lez_stations'] ?? array();
+		$stations      = ! empty( $station_terms ) ? implode( ', ', wp_list_pluck( $station_terms, 'name' ) ) : '';
+
+		// Get airdates
+		$dates_plain = '';
+		if ( ! empty( $meta['lezshows_airdates'] ) ) {
+			$airdates           = $meta['lezshows_airdates'];
+			$airdates['finish'] = ( 'current' === $airdates['finish'] ) ? 'now' : $airdates['finish'];
+
+			if ( $airdates['start'] === $airdates['finish'] ) {
+				$dates_plain = 'in ' . $airdates['finish'];
+			} else {
+				$dates_plain = 'from ' . $airdates['start'] . '-' . $airdates['finish'];
+			}
+		}
+
+		// Get IMDB
+		$imdb = ! empty( $meta['lezshows_imdb'] ) ? 'https://imdb.com/title/' . $meta['lezshows_imdb'] : '';
+
+		if ( 'wiki' === $format ) {
+			$description_parts = array();
+			if ( $formats ) {
+				$description_parts[] = $formats;
+			}
+			$description_parts[] = 'airing';
+			if ( $nations ) {
+				$description_parts[] = 'in ' . $nations;
+			}
+			if ( $dates_plain ) {
+				$description_parts[] = $dates_plain;
+			}
+
+			$return['description'] = implode( ' ', $description_parts ) . '.';
+		}
+
+		return $return;
+	}
+
+	/**
+	 * Get data version hash for cache invalidation
+	 *
+	 * @param string $post_type Post type
+	 * @return string Hash based on last modification time
+	 */
+	private function get_data_version_hash( $post_type ) {
+		$cache_key   = 'lwtv_export_data_version_' . $post_type;
+		$cached_hash = lwtv_plugin()->get_transient( $cache_key );
+
+		if ( false !== $cached_hash ) {
+			return $cached_hash;
+		}
+
+		global $wpdb;
+		$last_modified = $wpdb->get_var(
+			$wpdb->prepare(
+				"SELECT MAX(post_modified) FROM {$wpdb->posts} WHERE post_type = %s AND post_status = 'publish'",
+				$post_type
+			)
+		);
+
+		$hash = md5( $last_modified );
+		lwtv_plugin()->set_transient( $cache_key, $hash, HOUR_IN_SECONDS );
+
+		return $hash;
 	}
 }

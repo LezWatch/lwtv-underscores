@@ -1,53 +1,181 @@
 <?php
+/**
+ * This Year Statistics Build Class - OLD Version
+ *
+ * @package LezWatch.TV
+ */
 
 namespace LWTV\Statistics\Build;
 
 class This_Year {
 
 	/**
-	 * Stats for This Year
+	 * Stats for This Year - Optimized with batch queries
 	 *
-	 * @param string $data
-	 * @param array  $year_array
+	 * @param string $data Data identifier (e.g., 'gender_year_2024')
+	 * @param array  $year_array Array of character data for the year
 	 *
 	 * @return array
 	 */
 	public function make( $data, $year_array = array() ) {
+		try {
+			// Validate input parameters
+			if ( empty( $data ) || ! is_string( $data ) ) {
+				lwtv_plugin()->error_log( 'this-year-error', 'Invalid data parameter provided' );
+				return array();
+			}
 
-		// loop through array and rebuild into format for charts.
-		$transient = 'this_year_' . $data;
-		$array     = lwtv_plugin()->get_transient( $transient );
-		$taxonomy  = substr( $data, 0, -10 );      // Remove _year_XXXX from the end.
+			// Extract taxonomy from data string (remove _year_XXXX from the end)
+			$taxonomy = substr( $data, 0, -10 );
+			if ( empty( $taxonomy ) ) {
+				lwtv_plugin()->error_log( 'this-year-error', 'Invalid data format: ' . $data );
+				return array();
+			}
 
-		// If the array is empty, we want to rebuild it.
-		if ( false === $array || empty( $array ) ) {
-			$array = array();
+			// Debug logging
+			lwtv_plugin()->error_log( 'this-year-debug', 'This_Year make called with data: ' . $data . ', taxonomy: ' . $taxonomy . ', year_array count: ' . count( $year_array ) );
 
-			// Use get_terms for the taxonomy.
-			$taxonomies = get_terms( 'lez_' . $taxonomy );
+			// Check transient cache
+			$transient = 'this_year_' . $data;
+			$array     = lwtv_plugin()->get_transient( $transient );
 
-			// Build the array we need
+			// If the array is empty, we want to rebuild it
+			if ( false === $array || empty( $array ) ) {
+				lwtv_plugin()->error_log( 'this-year-debug', 'Cache miss, rebuilding data for: ' . $transient );
+				$array = $this->build_this_year_optimized( $taxonomy, $year_array );
+
+				// Save array as transient if we have data
+				if ( ! empty( $array ) ) {
+					lwtv_plugin()->set_transient( $transient, $array, DAY_IN_SECONDS );
+					lwtv_plugin()->error_log( 'this-year-debug', 'Cached ' . count( $array ) . ' terms for: ' . $transient );
+				} else {
+					lwtv_plugin()->error_log( 'this-year-debug', 'No data to cache for: ' . $transient );
+				}
+			} else {
+				lwtv_plugin()->error_log( 'this-year-debug', 'Using cached data for: ' . $transient );
+			}
+
+			return $array;
+
+		} catch ( \Exception $e ) {
+			lwtv_plugin()->error_log( 'this-year-error', 'Error in This_Year make: ' . $e->getMessage() );
+			return array();
+		}
+	}
+
+	/**
+	 * Build this year statistics using optimized batch query
+	 *
+	 * @param string $taxonomy Taxonomy name (without lez_ prefix)
+	 * @param array  $year_array Array of character data
+	 * @return array
+	 */
+	private function build_this_year_optimized( $taxonomy, $year_array ) {
+		global $wpdb;
+
+		try {
+			$results_array = array();
+
+			// Validate taxonomy parameter
+			if ( empty( $taxonomy ) || ! is_string( $taxonomy ) ) {
+				lwtv_plugin()->error_log( 'this-year-error', 'Invalid taxonomy parameter: ' . $taxonomy );
+				return array();
+			}
+
+			// Get all terms for the taxonomy with error handling
+			$taxonomy_name = 'lez_' . $taxonomy;
+			$taxonomies    = get_terms(
+				array(
+					'taxonomy'   => $taxonomy_name,
+					'hide_empty' => false,
+				)
+			);
+
+			if ( is_wp_error( $taxonomies ) ) {
+				lwtv_plugin()->error_log( 'this-year-error', 'Failed to get terms for taxonomy: ' . $taxonomy_name . ' - ' . $taxonomies->get_error_message() );
+				return array();
+			}
+
+			if ( empty( $taxonomies ) ) {
+				lwtv_plugin()->error_log( 'this-year-debug', 'No terms found for taxonomy: ' . $taxonomy_name );
+				return array();
+			}
+
+			// Build base array with all terms
 			foreach ( $taxonomies as $term ) {
-				$array[ $term->slug ] = array(
+				$results_array[ $term->slug ] = array(
 					'name'  => $term->name,
-					'url'   => $term->link,
+					'url'   => get_term_link( $term ),
 					'count' => 0,
 				);
 			}
 
-			if ( ! empty( $year_array ) ) {
-				foreach ( $year_array as $character ) {
-					$terms = get_the_terms( $character['id'], 'lez_' . $taxonomy );
-					foreach ( $terms as $term ) {
-						++$array[ $term->slug ]['count'];
-					}
+			lwtv_plugin()->error_log( 'this-year-debug', 'Built base array with ' . count( $results_array ) . ' terms for taxonomy: ' . $taxonomy_name );
+
+			// If no character data provided, return empty counts
+			if ( empty( $year_array ) || ! is_array( $year_array ) ) {
+				lwtv_plugin()->error_log( 'this-year-debug', 'No character data provided, returning empty counts' );
+				return $results_array;
+			}
+
+			// Extract and validate character IDs
+			$character_ids = array_column( $year_array, 'id' );
+			$character_ids = array_map( 'intval', $character_ids );
+			$character_ids = array_filter(
+				$character_ids,
+				function ( $id ) {
+					return $id > 0;
+				}
+			);
+
+			if ( empty( $character_ids ) ) {
+				lwtv_plugin()->error_log( 'this-year-debug', 'No valid character IDs found in year_array' );
+				return $results_array;
+			}
+
+			lwtv_plugin()->error_log( 'this-year-debug', 'Processing ' . count( $character_ids ) . ' character IDs for taxonomy: ' . $taxonomy_name );
+
+			// Single optimized query to get all taxonomy counts
+			$placeholders = implode( ',', array_fill( 0, count( $character_ids ), '%d' ) );
+
+			// phpcs:disable
+			$queery = $wpdb->prepare(
+				"SELECT t.slug, COUNT(DISTINCT tr.object_id) as term_count
+				 FROM {$wpdb->terms} t
+				 INNER JOIN {$wpdb->term_taxonomy} tt ON t.term_id = tt.term_id
+				 INNER JOIN {$wpdb->term_relationships} tr ON tt.term_taxonomy_id = tr.term_taxonomy_id
+				 WHERE tt.taxonomy = %s
+				 AND tr.object_id IN ({$placeholders})
+				 GROUP BY t.slug
+				 ORDER BY term_count DESC",
+				array_merge( array( $taxonomy_name ), $character_ids )
+			);
+			// phpcs:enable
+
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- This is a prepared query (see above)
+			$results = $wpdb->get_results( $queery, ARRAY_A );
+
+			lwtv_plugin()->error_log( 'this-year-debug', 'Query returned ' . count( $results ) . ' results for taxonomy: ' . $taxonomy_name );
+
+			// Update counts with actual data
+			$total_count = 0;
+			foreach ( $results as $row ) {
+				if ( isset( $results_array[ $row['slug'] ] ) ) {
+					$count = (int) $row['term_count'];
+
+					$results_array[ $row['slug'] ]['count'] = $count;
+
+					$total_count += $count;
 				}
 			}
 
-			// save array as transient for a reason.
-			lwtv_plugin()->set_transient( $transient, $array, DAY_IN_SECONDS );
-		}
+			lwtv_plugin()->error_log( 'this-year-debug', 'Total character assignments: ' . $total_count . ' for taxonomy: ' . $taxonomy_name );
 
-		return $array;
+			return $results_array;
+
+		} catch ( \Exception $e ) {
+			lwtv_plugin()->error_log( 'this-year-error', 'Error building this year statistics: ' . $e->getMessage() );
+			return array();
+		}
 	}
 }

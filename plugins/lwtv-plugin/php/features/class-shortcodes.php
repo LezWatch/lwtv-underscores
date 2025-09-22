@@ -8,6 +8,8 @@ namespace LWTV\Features;
 
 use LWTV\Queeries\Post_Meta_And_Tax;
 use LWTV\Rest_API\BYQ;
+use LWTV\CPTs\Characters as CPT_Characters;
+use LWTV\CPTs\Shows as CPT_Shows;
 
 class Shortcodes {
 
@@ -92,8 +94,8 @@ class Shortcodes {
 
 		// Regular post queerys
 		$valid_post_types = array(
-			'shows'      => 'post_type_shows',
-			'characters' => 'post_type_characters',
+			'shows'      => CPT_Shows::SLUG,
+			'characters' => CPT_Characters::SLUG,
 		);
 
 		foreach ( $valid_post_types as $name => $type ) {
@@ -117,7 +119,7 @@ class Shortcodes {
 		}
 
 		// Death count
-		$death_queery      = ( new Post_Meta_And_Tax() )->make( 'post_type_characters', 'lezchars_death_year', $datetime->format( 'Y' ), 'lez_cliches', 'slug', 'dead', 'REGEXP' );
+		$death_queery      = ( new Post_Meta_And_Tax() )->make( CPT_Characters::SLUG, 'lezchars_death_year', $datetime->format( 'Y' ), 'lez_cliches', 'slug', 'dead', 'REGEXP' );
 		$death_list_array  = ( new BYQ() )->list_of_dead_characters( $death_queery );
 		$death_query_count = 0;
 		foreach ( $death_list_array as $the_dead ) {

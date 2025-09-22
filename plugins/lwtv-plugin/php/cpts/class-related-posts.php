@@ -7,6 +7,8 @@
 namespace LWTV\CPTs;
 
 use LWTV\Queeries\Related_Posts_By_Tag;
+use LWTV\CPTs\Shows as CPT_Shows;
+use LWTV\CPTs\Actors as CPT_Actors;
 
 class Related_Posts {
 
@@ -171,8 +173,8 @@ class Related_Posts {
 		} else {
 			// There's no post linked, so we're going to do it the hard way:
 			$maybe         = array(
-				'show'  => get_page_by_path( $tag->slug, OBJECT, 'post_type_shows' ),
-				'actor' => get_page_by_path( $tag->slug, OBJECT, 'post_type_actors' ),
+				'show'  => get_page_by_path( $tag->slug, OBJECT, CPT_Shows::SLUG ),
+				'actor' => get_page_by_path( $tag->slug, OBJECT, CPT_Actors::SLUG ),
 			);
 			$related_items = '';
 			foreach ( $maybe as $type => $item ) {

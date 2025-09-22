@@ -62,7 +62,13 @@ class Data_Character {
 			$cliches = '';
 			foreach ( $lez_cliches as $the_cliche ) {
 				$termicon = get_term_meta( $the_cliche->term_id, 'lez_termsmeta_icon', true );
-				$tropicon = $termicon ? $termicon . '.svg' : 'square.svg';
+				$tropicon = $termicon ? $termicon : 'square.svg';
+
+				// if tropicon doesn't end in .svg, add it
+				if ( ! str_ends_with( $tropicon, '.svg' ) ) {
+					$tropicon .= '.svg';
+				}
+
 				$icon     = lwtv_plugin()->get_symbolicon( svg: $tropicon, icon: 'svg-square', max_size: '15' );
 				$cliches .= '<a href="' . get_term_link( $the_cliche->slug, 'lez_cliches' ) . '" data-bs-target="tooltip" data-placement="bottom" rel="tag" title="' . $the_cliche->name . '"><span role="img" aria-label="' . $the_cliche->name . '" class="character-cliche ' . $the_cliche->slug . '">' . $icon . '</span></a>&nbsp;';
 			}

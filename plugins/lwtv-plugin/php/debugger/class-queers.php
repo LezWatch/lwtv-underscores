@@ -7,6 +7,7 @@ namespace LWTV\Debugger;
 
 use LWTV\Queeries\Is_Actor_Queer;
 use LWTV\Queeries\Post_Type;
+use LWTV\CPTs\Characters as CPT_Characters;
 
 class Queers {
 
@@ -32,7 +33,7 @@ class Queers {
 			}
 		} else {
 			// Get all the characters
-			$the_loop = ( new Post_Type() )->make( 'post_type_characters' );
+			$the_loop = ( new Post_Type() )->make( CPT_Characters::SLUG );
 
 			if ( is_object( $the_loop ) && $the_loop->have_posts() ) {
 				$characters = wp_list_pluck( $the_loop->posts, 'ID' );
