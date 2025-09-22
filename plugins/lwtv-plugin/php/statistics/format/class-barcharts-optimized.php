@@ -70,10 +70,6 @@ class Barcharts_Optimized {
 						'name'  => 'Dead Characters',
 						'count' => 0,
 					),
-					array(
-						'name'  => 'Dead Characters',
-						'count' => 0,
-					),
 				);
 			}
 		} elseif ( isset( $data[ $view ] ) ) {
