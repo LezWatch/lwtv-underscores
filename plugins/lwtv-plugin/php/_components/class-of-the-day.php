@@ -442,8 +442,8 @@ class Of_The_Day implements Component, Templater {
 
 		if ( false === $eligible_posts ) {
 			$eligible_posts = $this->get_eligible_posts( $type, $date );
-			// Cache for 1 hour
-			lwtv_plugin()->set_transient( $cache_key, $eligible_posts, HOUR_IN_SECONDS );
+			// Cache for 12 hours
+			lwtv_plugin()->set_transient( $cache_key, $eligible_posts, 12 * HOUR_IN_SECONDS );
 		}
 
 		if ( empty( $eligible_posts ) ) {
@@ -596,7 +596,7 @@ class Of_The_Day implements Component, Templater {
 		);
 
 		$hash = md5( $last_modified );
-		lwtv_plugin()->set_transient( $cache_key, $hash, HOUR_IN_SECONDS );
+		lwtv_plugin()->set_transient( $cache_key, $hash, DAY_IN_SECONDS );
 
 		return $hash;
 	}

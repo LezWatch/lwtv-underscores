@@ -67,7 +67,7 @@ class Related_Posts_By_Tag {
 		$query = new \WP_Query( $query_args );
 
 		// Cache the result for 30 minutes
-		lwtv_plugin()->set_transient( $cache_key, $query, 30 * MINUTE_IN_SECONDS );
+		lwtv_plugin()->set_transient( $cache_key, $query, DAY_IN_SECONDS );
 
 		return $query;
 	}

@@ -50,8 +50,8 @@ class Data_Processor {
 			}
 		}
 
-		// Cache the processed data for 1 hour
-		lwtv_plugin()->set_transient( $cache_key, $processed_data, HOUR_IN_SECONDS );
+		// Cache the processed data for 1 day
+		lwtv_plugin()->set_transient( $cache_key, $processed_data, DAY_IN_SECONDS );
 
 		return $processed_data;
 	}
