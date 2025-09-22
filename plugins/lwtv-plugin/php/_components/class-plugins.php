@@ -99,7 +99,7 @@ class Plugins implements Component, Templater {
 								rel="nofollow noopener noreferrer"
 								data-shared="sharing-tumblr-<?php echo esc_attr( $post_id ); ?>"
 								class="share-tumblr lwtv-share-button share-icon no-text"
-								href="http://www.tumblr.com/share/link?url=<?php echo rawurlencode( $post_url ); ?>"
+								href="https://www.tumblr.com/share/link?url=<?php echo rawurlencode( $post_url ); ?>"
 								target="_blank"
 								title="Click to share on Tumblr"
 								onclick="window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=468,width=768');return false;"
