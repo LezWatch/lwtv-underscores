@@ -221,8 +221,7 @@ class Taxonomy_Optimized {
 	 * @return array Cached taxonomy data
 	 */
 	public function get_cached_term_counts( $post_type, $taxonomy, $terms = array(), $sort_order = 'count_desc', $cache_duration = DAY_IN_SECONDS ) {
-		// phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.serialize_serialize
-		$cache_key = 'taxonomy_counts_' . $post_type . '_' . $taxonomy . '_' . $sort_order . '_' . md5( serialize( $terms ) );
+		$cache_key = 'taxonomy_counts_' . $post_type . '_' . $taxonomy . '_' . $sort_order . '_' . md5( wp_json_encode( $terms ) );
 
 		$cached_data = lwtv_plugin()->get_transient( $cache_key );
 

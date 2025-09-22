@@ -57,7 +57,7 @@
 					// OPTIMIZED: Use pre-loaded data instead of get_terms()
 					foreach ( $top_sexualities as $sexuality_slug => $sexuality_data ) {
 						echo '<tr>
-								<th scope="row"><a href="/actor_sexuality/' . esc_attr( $sexuality_slug ) . '">' . esc_html( $sexuality_data['name'] ) . '</a></th>
+								<th scope="row"><a href="' . esc_url( home_url( '/actor_sexuality/' . $sexuality_slug ) ) . '">' . esc_html( $sexuality_data['name'] ) . '</a></th>
 								<td>' . (int) $sexuality_data['count'] . '</td>
 							</tr>';
 					}
@@ -81,7 +81,7 @@
 					// OPTIMIZED: Use pre-loaded data instead of get_terms()
 					foreach ( $top_genders as $gender_slug => $gender_data ) {
 						echo '<tr>
-								<th scope="row"><a href="/actor_gender/' . esc_attr( $gender_slug ) . '">' . esc_html( $gender_data['name'] ) . '</a></th>
+								<th scope="row"><a href="' . esc_url( home_url( '/actor_gender/' . $gender_slug ) ) . '">' . esc_html( $gender_data['name'] ) . '</a></th>
 								<td>' . (int) $gender_data['count'] . '</td>
 							</tr>';
 					}

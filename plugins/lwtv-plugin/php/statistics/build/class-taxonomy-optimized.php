@@ -55,8 +55,7 @@ class Taxonomy_Optimized {
 	 * @return array Multi-dimensional array of taxonomy data
 	 */
 	public function batch_make( $post_type, $taxonomies ) {
-		// phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.serialize_serialize
-		$cache_key = 'batch_taxonomy_' . $post_type . '_' . md5( serialize( $taxonomies ) );
+		$cache_key = 'batch_taxonomy_' . $post_type . '_' . md5( wp_json_encode( $taxonomies ) );
 		$array     = lwtv_plugin()->get_transient( $cache_key );
 
 		if ( false === $array ) {
@@ -83,8 +82,7 @@ class Taxonomy_Optimized {
 			return array();
 		}
 
-		// phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.serialize_serialize
-		$cache_key = 'taxonomy_terms_' . $post_type . '_' . $taxonomy . '_' . md5( serialize( $terms ) );
+		$cache_key = 'taxonomy_terms_' . $post_type . '_' . $taxonomy . '_' . md5( wp_json_encode( $terms ) );
 		$array     = lwtv_plugin()->get_transient( $cache_key );
 
 		if ( false === $array ) {

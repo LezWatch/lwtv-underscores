@@ -130,10 +130,7 @@ class Scores {
 		try {
 			foreach ( $chunk as $row ) {
 				$show_id   = (int) $row['ID'];
-				$post_name = $row['post_name'];
-
-				// Build permalink directly instead of calling get_the_permalink()
-				$permalink = home_url( '/' . $post_name . '/' );
+				$permalink = get_permalink( $show_id );
 
 				$results_array[ $show_id ] = array(
 					'id'    => $show_id,

@@ -43,22 +43,17 @@ class Shared {
 		$data = array_filter(
 			$data,
 			function ( $value ) {
-				return $value > 0;
+				return $value['count'] > 0;
 			}
 		);
 
-		// Sort by value (count) in descending order so highest is on top
-		if ( ! in_array( $clean_view, array( 'tropes', 'formats', 'death' ), true ) ) {
-			arsort( $data );
-		} else {
-			// Sort by the COUNT column
-			usort(
-				$data,
-				function ( $a, $b ) {
-					return $b['count'] - $a['count'];
-				}
-			);
-		}
+		// Sort by count in descending order so highest is on top
+		usort(
+			$data,
+			function ( $a, $b ) {
+				return $b['count'] - $a['count'];
+			}
+		);
 
 		return $data;
 	}
