@@ -2,8 +2,28 @@
 /**
  * @package YIKES Starter
  */
-?>
 
+// Collect 30 loved posts (max) and then pick 3.
+$lovedpostloop = new WP_Query(
+	array(
+		'post_type'      => 'post_type_shows',
+		'posts_per_page' => '30',
+		'post_status'    => array( 'publish' ),
+		'no_found_rows'  => true,
+		'_loved_shuffle' => 4,
+		'meta_query'     => array( // phpcs:ignore WordPress.DB.SlowDBQuery -- Risk of slow query accepted.
+			array(
+				'key'     => 'lezshows_worthit_show_we_love',
+				'value'   => 'on',
+				'compare' => '=',
+			),
+		),
+	)
+);
+
+while ( $lovedpostloop->have_posts() ) :
+	$lovedpostloop->the_post();
+	?>
 	<div class="card">
 		<?php
 		if ( has_post_thumbnail() ) {
@@ -42,3 +62,6 @@
 			</a>
 		</div>
 	</div><!-- .card -->
+	<?php
+endwhile;
+wp_reset_postdata();

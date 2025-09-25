@@ -187,7 +187,7 @@ class WP_CLI_LWTV_Scheduler {
 			case 'trigger':
 				\WP_CLI::log( 'Triggering TMDB batch processing...' );
 				// Schedule immediate processing
-				as_schedule_single_action( time(), \LWTV\Schedulers\TMDB_Batch_Task::AS_HOOK );
+				as_schedule_single_action( time(), \LWTV\Schedulers\TMDB_Batch_Task::AS_HOOK, array(), \LWTV\Schedulers\TMDB_Batch_Task::AS_GROUP );
 				\WP_CLI::success( 'TMDB batch processing triggered.' );
 				break;
 

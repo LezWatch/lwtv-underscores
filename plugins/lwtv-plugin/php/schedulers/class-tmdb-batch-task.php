@@ -23,6 +23,11 @@ class TMDB_Batch_Task {
 	const AS_HOOK = 'lwtv_tmdb_batch_task';
 
 	/**
+	 * Action Scheduler group name
+	 */
+	const AS_GROUP = 'lwtv';
+
+	/**
 	 * TMDB API rate limits
 	 */
 	const RATE_LIMIT_REQUESTS = 40;
@@ -74,7 +79,7 @@ class TMDB_Batch_Task {
 
 		// Schedule batch processing if not already scheduled
 		if ( ! as_next_scheduled_action( self::AS_HOOK ) ) {
-			as_schedule_single_action( time() + 30, self::AS_HOOK );
+			as_schedule_single_action( time() + 30, self::AS_HOOK, array(), self::AS_GROUP );
 			lwtv_plugin()->error_log( 'tmdb-batch', 'Scheduled TMDB batch processing' );
 		}
 
@@ -123,7 +128,7 @@ class TMDB_Batch_Task {
 		// Schedule next batch if there are more posts in the queue
 		$remaining_posts = $this->get_queued_posts();
 		if ( ! empty( $remaining_posts ) ) {
-			as_schedule_single_action( time() + 60, self::AS_HOOK );
+			as_schedule_single_action( time() + 60, self::AS_HOOK, array(), self::AS_GROUP );
 		}
 	}
 
@@ -162,7 +167,7 @@ class TMDB_Batch_Task {
 
 			// Reschedule with exponential backoff
 			$backoff_delay = min( 300, pow( 2, $this->get_rate_limit_count() ) );
-			as_schedule_single_action( time() + $backoff_delay, self::AS_HOOK );
+			as_schedule_single_action( time() + $backoff_delay, self::AS_HOOK, array(), self::AS_GROUP );
 		}
 
 		return array(
