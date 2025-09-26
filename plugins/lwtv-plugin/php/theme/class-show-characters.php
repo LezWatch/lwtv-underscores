@@ -88,6 +88,14 @@ class Show_Characters {
 		return $build_data;
 	}
 
+	/**
+	 * Clean character array
+	 *
+	 * @param array $characters
+	 * @param int   $show_id
+	 *
+	 * @return array
+	 */
 	public function clean_character_array( $characters, $show_id ) {
 		foreach ( $characters as $char_id ) {
 			$shows_array = get_post_meta( $char_id, 'lezchars_show_group', true );

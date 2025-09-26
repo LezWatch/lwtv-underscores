@@ -103,6 +103,7 @@ use LWTV\_Helpers\Utils;
  * @method string get_tvmaze_episodes( $show_id )                           \_Components\Theme
  * @method string get_ways_to_watch( $show_id )                             \_Components\Theme
  * @method bool   is_actor_birthday( $actor_id )                            \_Components\Theme
+ * @method array  get_random_loved_shows_ids( $count )                      \_Components\Theme
  *
  * THIS YEAR
  * @method string get_this_year_display( $year ) \_Components\This_Year

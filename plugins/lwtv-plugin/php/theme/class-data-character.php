@@ -90,7 +90,7 @@ class Data_Character {
 		$icon     = lwtv_plugin()->get_symbolicon( svg: 'grim-reaper.svg', icon: 'svg-grim-reaper' );
 
 		// Show nothing on ARCHIVE pages for dead
-		if ( ! empty( $term ) && $format === $term->slug ) {
+		if ( ! empty( $deadpage ) && $format === $deadpage->slug ) {
 			return;
 		} elseif ( has_term( 'dead', 'lez_cliches', $character_id ) ) {
 			return '<span role="img" aria-label="Grim Reaper" title="Grim Reaper" class="charlist-grave">' . $icon . '</span>';
