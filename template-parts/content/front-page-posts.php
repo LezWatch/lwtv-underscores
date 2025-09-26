@@ -62,7 +62,6 @@ unset( $front_posts_ids[0] );
 				if ( has_post_thumbnail( $front_post_id ) ) {
 					$alt_src = get_post_meta( $front_post_id, '_wp_attachment_image_alt', true );
 					$alt_txt = ( isset( $alt_src ) && '' !== $alt_src ) ? $alt_src : get_the_title( $front_post_id );
-					$alt_txt = ( isset( $alt_txt ) && '' !== $alt_txt ) ? $alt_txt : get_the_title( $front_post_id );
 					?>
 					style="background-image: url(<?php echo esc_url( get_the_post_thumbnail_url( $front_post_id, 'large' ) ); ?>);"
 					<?php
@@ -83,8 +82,8 @@ unset( $front_posts_ids[0] );
 					</div>
 				</div>
 				<div class="card-footer">
-					<a href="<?php the_permalink(); ?>" class="btn btn-sm btn-outline-primary">
-						Read More <span class="screen-reader-text">about <?php the_title(); ?></span>
+					<a href="<?php echo esc_url( get_permalink( $front_post_id ) ); ?>" class="btn btn-sm btn-outline-primary">
+						Read More <span class="screen-reader-text">about <?php echo esc_html( get_the_title( $front_post_id ) ); ?></span>
 					</a>
 				</div>
 			</div><!-- .card -->
