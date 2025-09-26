@@ -10,6 +10,30 @@ use LWTV\CPTs\Characters;
 class Taxonomies {
 
 	/**
+	 * Constructor
+	 */
+	public function __construct() {
+		// Clear shadow taxonomy cache when characters are updated
+		add_action( 'save_post_post_type_characters', array( $this, 'clear_shadow_taxonomy_cache' ) );
+	}
+
+	/**
+	 * Clear shadow taxonomy cache when related posts are updated
+	 *
+	 * @return void
+	 */
+	public function clear_shadow_taxonomy_cache() {
+		// Clear all shadow taxonomy caches by deleting transients with matching pattern
+		global $wpdb;
+		$wpdb->query(
+			$wpdb->prepare(
+				"DELETE FROM {$wpdb->options} WHERE option_name LIKE %s",
+				$wpdb->esc_like( '_transient_cmb2_terms_list_' ) . '%'
+			)
+		);
+	}
+
+	/**
 	 * Get a list of terms
 	 *
 	 * Generic function to return an array of taxonomy terms formatted for CMB2.
@@ -23,40 +47,64 @@ class Taxonomies {
 	 * @return array CMB2 options array
 	 */
 	public function get_cmb2_terms_list( $taxonomies, $query_args = '' ) {
-		$defaults    = array(
+
+		$defaults = array(
 			'taxonomy'   => $taxonomies,
 			'hide_empty' => false,
 		);
-		$args        = wp_parse_args( $query_args, $defaults );
-		$terms       = get_terms( $args );
+		$args     = wp_parse_args( $query_args, $defaults );
+		$terms    = get_terms( $args );
+
+		// Create a unique cache key based on taxonomy and query args
+		$cache_key   = 'cmb2_terms_list_' . md5( $taxonomies . wp_json_encode( $query_args ) );
+		$terms_array = lwtv_plugin()->get_transient( $cache_key );
+		if ( false !== $terms_array && ! empty( $terms_array ) ) {
+			return $terms_array;
+		}
+
+		// Reset the terms array if there are no cached terms
 		$terms_array = array();
 		if ( ! empty( $terms ) ) {
 			foreach ( $terms as $term ) {
 				if ( Characters::SHADOW_TAXONOMY === $term->taxonomy ) {
-					$char_id    = get_term_meta( $term->term_id, 'shadow_shadow_tax_characters_post_id', true );
-					$shows      = get_post_meta( $char_id, 'lezchars_show_group', true );
-					$name_shows = array();
-
-					if ( is_array( $shows ) ) {
-						foreach ( $shows as $show ) {
-							if ( ! isset( $show['show'] ) ) {
-								continue;
-							}
-
-							if ( is_array( $show['show'] ) ) {
-								$show['show'] = $show['show'][0];
-							}
-							$name_shows[] = get_the_title( $show['show'] );
-						}
-					}
-
-					$terms_array[ $term->term_id ] = $term->name . ' (' . implode( ', ', $name_shows ) . ')';
+					$terms_array[ $term->term_id ] = $this->get_cmb2_terms_list_for_shadow_taxonomy( $term );
 				} else {
 					$terms_array[ $term->term_id ] = $term->name;
 				}
 			}
 		}
+
+		// Cache the processed terms for 1 hour
+		lwtv_plugin()->set_transient( $cache_key, $terms_array, HOUR_IN_SECONDS );
+
 		return $terms_array;
+	}
+
+	/**
+	 * Get the name of the character and the shows it's associated with
+	 *
+	 * @param object $term The term object
+	 * @return string The name of the character and the shows it's associated with
+	 */
+	public function get_cmb2_terms_list_for_shadow_taxonomy( $term ) {
+		$char_id    = get_term_meta( $term->term_id, 'shadow_shadow_tax_characters_post_id', true );
+		$shows      = get_post_meta( $char_id, 'lezchars_show_group', true );
+		$name_shows = array();
+
+		if ( is_array( $shows ) ) {
+			foreach ( $shows as $show ) {
+				if ( ! isset( $show['show'] ) ) {
+					continue;
+				}
+
+				if ( is_array( $show['show'] ) ) {
+					$show['show'] = $show['show'][0];
+				}
+				$name_shows[] = get_the_title( $show['show'] );
+			}
+		}
+
+		return $term->name . ' (' . implode( ', ', $name_shows ) . ')';
 	}
 
 	/**
