@@ -1,6 +1,6 @@
 <?php
 /**
- * @package YIKES Starter
+ * @package LWTV Underscores
  */
 ?>
 

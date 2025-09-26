@@ -2,131 +2,53 @@
 /**
  * Template Name: Home page
  *
- * @package YIKES Starter
+ * @package LWTV Underscores
  */
 
 get_header(); ?>
 
 <?php
-$check_paged             = get_query_var( 'page' ) ? get_query_var( 'page' ) : 1;
-$already_displayed_posts = array();
+$check_paged = get_query_var( 'page' ) ? get_query_var( 'page' ) : 1;
+
+// Get the 6 newest posts.
+$front_posts = new WP_Query(
+	array(
+		'posts_per_page' => 7,
+		'orderby'        => 'date',
+		'order'          => 'DESC',
+		'no_found_rows'  => true,
+	)
+);
+
+// Get the IDs of the posts in $front_posts
+$already_displayed_posts = wp_list_pluck( $front_posts->posts, 'ID' );
 ?>
 
 <div id="main" tabindex="-1" class="site-main" role="main">
 	<?php
 
 	if ( 1 === $check_paged ) {
-		// Get the 6 newest posts.
-		$front_posts = new WP_Query(
-			array(
-				'posts_per_page' => 6,
-				'orderby'        => 'date',
-				'order'          => 'DESC',
-				'no_found_rows'  => true,
-			)
-		);
 		?>
-
 		<!-- Home page top section -->
 		<section class="home-featured-posts">
 			<div class="container">
 				<div class="row">
 					<!-- Newest posts -->
 					<div class="col-sm-8">
-						<div class="site-loop home-featured-posts-loop">
-							<h2 class="posts-title">
-								New Posts <?php echo lwtv_plugin()->get_symbolicon( svg: 'newspaper.svg', icon: 'svg-newspaper' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-							</h2>
+						<h2 class="posts-title">
+							New Posts <?php echo lwtv_plugin()->get_symbolicon( svg: 'newspaper.svg', icon: 'svg-newspaper' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+						</h2>
 
-							<?php
-							$post_counter = 0;
-							if ( $front_posts->have_posts() ) :
-								while ( $front_posts->have_posts() ) :
-									$front_posts->the_post();
-									++$post_counter;
-									$already_displayed_posts[] = get_the_ID();
-
-									// First post gets featured layout
-									if ( 1 === $post_counter ) :
-										?>
-										<div class="card">
-											<?php
-											if ( has_post_thumbnail() ) :
-												?>
-												<a href="<?php the_permalink(); ?>" title="<?php the_title_attribute(); ?>" >
-													<?php the_post_thumbnail( 'large', array( 'class' => 'card-img-top' ) ); ?>
-												</a>
-												<?php
-											endif;
-											?>
-											<div class="card-body">
-												<h3 class="card-title"><?php the_title(); ?></h3>
-												<div class="card-meta text-muted">
-													<?php the_date(); ?>
-													<?php echo lwtv_plugin()->get_symbolicon( svg: 'user-circle.svg', icon: 'svg-user-circle', max_size: '20' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-													<?php the_author(); ?>
-												</div>
-												<div class="card-text">
-													<?php the_excerpt(); ?>
-												</div>
-											</div><!-- .card-body -->
-											<div class="card-footer">
-												<a href="<?php the_permalink(); ?>" class="btn btn-outline-primary">
-													Read More <span class="screen-reader-text">about <?php the_title(); ?></span>
-												</a>
-											</div><!-- .card-footer -->
-										</div><!-- .card -->
-										<?php
-									else :
-										// Posts 2-6 get secondary layout
-										?>
-										<div class="card-group">
-											<div class="card col-sm-5"
-												<?php
-												if ( has_post_thumbnail() ) {
-													$alt_src = get_post_meta( get_the_ID(), '_wp_attachment_image_alt', true );
-													$alt_txt = ( isset( $alt_src ) && '' !== $alt_src ) ? $alt_src : get_the_title();
-													?>
-													style="background-image: url(<?php the_post_thumbnail_url( 'large' ); ?>);"
-													<?php
-												}
-												?>
-												>
-											</div>
-											<div class="card col-sm-7">
-												<div class="card-body">
-													<h3 class="card-title"><?php the_title(); ?></h3>
-													<div class="card-meta text-muted">
-														<?php the_date(); ?>
-														<?php echo lwtv_plugin()->get_symbolicon( svg: 'user-circle.svg', icon: 'svg-user-circle', max_size: '20' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-														<?php the_author(); ?>
-													</div>
-													<div class="card-text">
-														<?php the_excerpt(); ?>
-													</div>
-												</div>
-												<div class="card-footer">
-													<a href="<?php the_permalink(); ?>" class="btn btn-sm btn-outline-primary">
-														Read More <span class="screen-reader-text">about <?php the_title(); ?></span>
-													</a>
-												</div>
-											</div><!-- .card -->
-										</div><!-- .card-group -->
-										<?php
-									endif;
-								endwhile;
-							else :
-								// Fallback if no posts found
-								?>
-								<div class="alert alert-info">
-									<p>No recent posts found. Please check back later!</p>
-								</div>
-								<?php
-							endif;
-
-							wp_reset_postdata();
-							?>
-						</div><!-- .home-featured-posts-loop -->
+						<?php
+						get_template_part(
+							'template-parts/content/front-page-posts',
+							null,
+							array(
+								'front_posts'     => $front_posts,
+								'front_posts_ids' => $already_displayed_posts,
+							)
+						);
+						?>
 					</div><!-- .col-sm-8 -->
 
 					<!-- Home Page Sidebar -->
