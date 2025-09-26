@@ -11,6 +11,8 @@ if ( ! defined( 'ABSPATH' ) && ! defined( 'WP_CLI' ) ) {
 }
 
 use LWTV\Features\Missed_Schedule;
+use LWTV\Schedulers\TMDB_Batch_Task;
+use LWTV\Schedulers\Cache_Batch_Task;
 
 /**
  * LezWatch.TV scheduler commands to manage background tasks.
@@ -178,7 +180,7 @@ class WP_CLI_LWTV_Scheduler {
 					\WP_CLI::log( '  Next Scheduled: Not scheduled' );
 				}
 
-				\WP_CLI::log( '  Current Request Count: ' . $status['current_request_count'] . '/' . \LWTV\Schedulers\TMDB_Batch_Task::RATE_LIMIT_REQUESTS );
+				\WP_CLI::log( '  Current Request Count: ' . $status['current_request_count'] . '/' . TMDB_Batch_Task::RATE_LIMIT_REQUESTS );
 				\WP_CLI::log( '  Rate Limit Hits: ' . $status['rate_limit_hits'] );
 
 				\WP_CLI::success( 'TMDB batch status retrieved.' );
@@ -187,7 +189,7 @@ class WP_CLI_LWTV_Scheduler {
 			case 'trigger':
 				\WP_CLI::log( 'Triggering TMDB batch processing...' );
 				// Schedule immediate processing
-				as_schedule_single_action( time(), \LWTV\Schedulers\TMDB_Batch_Task::AS_HOOK );
+				as_schedule_single_action( time(), TMDB_Batch_Task::AS_HOOK, array(), TMDB_Batch_Task::AS_GROUP );
 				\WP_CLI::success( 'TMDB batch processing triggered.' );
 				break;
 
@@ -231,7 +233,7 @@ class WP_CLI_LWTV_Scheduler {
 
 			case 'trigger':
 				\WP_CLI::log( 'Triggering cache batch processing...' );
-				$cache_batch_task = new \LWTV\Schedulers\Cache_Batch_Task();
+				$cache_batch_task = new Cache_Batch_Task();
 				$triggered        = $cache_batch_task->trigger_processing();
 				if ( $triggered ) {
 					\WP_CLI::success( 'Cache batch processing triggered.' );
@@ -242,7 +244,7 @@ class WP_CLI_LWTV_Scheduler {
 
 			case 'clear':
 				\WP_CLI::log( 'Clearing cache batch queue...' );
-				$cache_batch_task = new \LWTV\Schedulers\Cache_Batch_Task();
+				$cache_batch_task = new Cache_Batch_Task();
 				$cleared          = $cache_batch_task->clear_queue();
 				if ( $cleared ) {
 					\WP_CLI::success( 'Cache batch queue cleared.' );
@@ -296,7 +298,7 @@ class WP_CLI_LWTV_Scheduler {
 		} else {
 			\WP_CLI::log( '  Next Processing: Not scheduled' );
 		}
-		\WP_CLI::log( '  API Usage: ' . $tmdb_status['current_request_count'] . '/' . \LWTV\Schedulers\TMDB_Batch_Task::RATE_LIMIT_REQUESTS );
+		\WP_CLI::log( '  API Usage: ' . $tmdb_status['current_request_count'] . '/' . TMDB_Batch_Task::RATE_LIMIT_REQUESTS );
 		\WP_CLI::log( '  Rate Limit Hits: ' . $tmdb_status['rate_limit_hits'] );
 		\WP_CLI::log( '' );
 

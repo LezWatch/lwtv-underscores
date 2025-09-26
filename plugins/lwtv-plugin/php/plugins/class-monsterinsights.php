@@ -38,20 +38,36 @@ class MonsterInsights {
 	 * @param WP_Post $post The post object.
 	 */
 	public function create_site_note_on_post_publish( $post_id, $post ) {
-		if ( 'post' !== $post->post_type ) {
-			return;
+		switch ( $post->post_type ) {
+			case 'post':
+				$mi_term = 'blog-post';
+				$note    = 'New Blog Post: ' . sanitize_text_field( $post->post_title );
+				break;
+			case 'post_type_shows':
+				$mi_term = 'show';
+				$note    = 'New Show: ' . sanitize_text_field( $post->post_title );
+				break;
+			case 'post_type_actors':
+				$mi_term = 'actor';
+				$note    = 'New Actor: ' . sanitize_text_field( $post->post_title );
+				break;
+			case 'post_type_characters':
+				$mi_term = 'character';
+				$note    = 'New Character: ' . sanitize_text_field( $post->post_title );
+				break;
+			default:
+				return;
 		}
 
 		// If term doesn't exist, return
-		$term = get_term_by( 'slug', 'blog-post', 'monsterinsights_note_category' );
+		$term = get_term_by( 'slug', $mi_term, 'monsterinsights_note_category' );
 		if ( ! $term ) {
 			return;
 		}
 
-		$post_title = $post->post_title;
-		$is_sticky  = is_sticky( $post_id );
-		$note_args  = array(
-			'note'        => 'New Post: ' . sanitize_text_field( $post_title ),
+		$is_sticky = is_sticky( $post_id );
+		$note_args = array(
+			'note'        => $note,
 			'author_id'   => $post->post_author,
 			'date'        => $post->post_date,
 			'category_id' => $term->term_id,

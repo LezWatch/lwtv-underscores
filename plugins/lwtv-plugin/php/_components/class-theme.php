@@ -25,6 +25,7 @@ use LWTV\Theme\Taxonomy_Archive_Title;
 use LWTV\Theme\Theme_Config;
 use LWTV\Theme\TVMaze;
 use LWTV\Theme\Ways_To_Watch;
+use LWTV\Theme\Get_Loved;
 
 class Theme implements Component, Templater {
 
@@ -65,6 +66,7 @@ class Theme implements Component, Templater {
 			'get_last_death'             => array( $this, 'get_last_death' ),
 			'get_microformats_fix'       => array( $this, 'get_microformats_fix' ),
 			'get_post_types_by_taxonomy' => array( $this, 'get_post_types_by_taxonomy' ),
+			'get_random_loved_shows_ids' => array( $this, 'get_random_loved_shows_ids' ),
 			'get_show_stars'             => array( $this, 'get_show_stars' ),
 			'get_show_content_warning'   => array( $this, 'get_show_content_warning' ),
 			'get_stats_symbolicon'       => array( $this, 'get_stats_symbolicon' ),
@@ -403,5 +405,15 @@ class Theme implements Component, Templater {
 			}
 		}
 		return $out;
+	}
+
+	/**
+	 * Get random loved shows IDs
+	 *
+	 * @param  int $count Number of random loved shows to return
+	 * @return array Array of post IDs
+	 */
+	public function get_random_loved_shows_ids( $count ) {
+		return ( new Get_Loved() )->get_random_ids( $count );
 	}
 }

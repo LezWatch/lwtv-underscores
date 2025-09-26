@@ -2,7 +2,7 @@
 /**
  * The Template for displaying all single posts.
  *
- * @package YIKES Starter
+ * @package LWTV Underscores
  */
 
 get_header(); ?>
