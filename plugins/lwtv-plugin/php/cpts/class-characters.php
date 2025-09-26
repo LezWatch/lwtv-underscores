@@ -92,7 +92,7 @@ class Characters {
 		add_action( 'dashboard_glance_items', array( $this, 'dashboard_glance_items' ) );
 		add_action( 'save_post_post_type_characters', array( $this, 'save_post_meta' ), 10, 3 );
 		add_action( 'delete_post', array( $this, 'handle_character_deletion' ) );
-		add_action( 'draft_to_publish', array( $this, 'maybe_update_new_character_flags' ) );
+		add_action( 'transition_post_status', array( $this, 'maybe_update_new_character_flags' ) );
 		add_filter( 'enter_title_here', array( $this, 'custom_enter_title' ) );
 	}
 
@@ -401,40 +401,46 @@ class Characters {
 	/**
 	 * Update show new character flags when a character is published for the first time
 	 *
+	 * @param string $new_status The new post status.
+	 * @param string $old_status The old post status.
 	 * @param WP_Post $post The character post object.
 	 */
-	private function maybe_update_new_character_flags( $post ) {
+	private function maybe_update_new_character_flags( $new_status, $old_status, $post ) {
 		// Only handle character posts
-		if ( self::SLUG !== $post->post_type ) {
+		if ( self::SLUG !== get_post_type( $post ) ) {
 			return;
 		}
 
-		// Get show relationships
-		$show_group  = get_post_meta( $post->ID, 'lezchars_show_group', true );
-		$actor_group = get_post_meta( $post->ID, 'lezchars_actor', true );
+		// If the old status is a draft or auto-draft, and the new status is publish, update the new character flags.
+		if ( ( 'draft' === $old_status || 'auto-draft' === $old_status ) && 'publish' === $new_status ) {
 
-		$show_ids = array();
+			// Get show relationships
+			$show_group  = get_post_meta( $post->ID, 'lezchars_show_group', true );
+			$actor_group = get_post_meta( $post->ID, 'lezchars_actor', true );
 
-		// Parse show group meta
-		if ( is_array( $show_group ) ) {
-			foreach ( $show_group as $group ) {
-				if ( isset( $group['show'] ) && is_array( $group['show'] ) ) {
-					$show_ids = array_merge( $show_ids, $group['show'] );
+			$show_ids = array();
+
+			// Parse show group meta
+			if ( is_array( $show_group ) ) {
+				foreach ( $show_group as $group ) {
+					if ( isset( $group['show'] ) && is_array( $group['show'] ) ) {
+						$show_ids = array_merge( $show_ids, $group['show'] );
+					}
 				}
 			}
-		}
 
-		// Parse actor group meta
-		if ( is_array( $actor_group ) ) {
-			$show_ids = array_merge( $show_ids, $actor_group );
-		}
+			// Parse actor group meta
+			if ( is_array( $actor_group ) ) {
+				$show_ids = array_merge( $show_ids, $actor_group );
+			}
 
-		// Remove duplicates and update meta for each show
-		$show_ids = array_unique( $show_ids );
+			// Remove duplicates and update meta for each show
+			$show_ids = array_unique( $show_ids );
 
-		foreach ( $show_ids as $show_id ) {
-			update_post_meta( $show_id, 'lwtv_has_new_char', true );
-			update_post_meta( $show_id, 'lwtv_characters_last_updated', time() );
+			foreach ( $show_ids as $show_id ) {
+				update_post_meta( $show_id, 'lwtv_has_new_char', true );
+				update_post_meta( $show_id, 'lwtv_characters_last_updated', time() );
+			}
 		}
 	}
 

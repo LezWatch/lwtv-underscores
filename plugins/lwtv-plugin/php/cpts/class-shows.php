@@ -8,8 +8,8 @@
 namespace LWTV\CPTs;
 
 use LWTV\_Components\CPTs;
-use LWTV\CPTs\Shows\{ Calculations, CMB2_Metaboxes, Custom_Columns, Shows_Like_This, Ways_To_Watch };
-use LWTV\Plugins\{ Cache, CMB2 };
+use LWTV\CPTs\Shows\{ CMB2_Metaboxes, Custom_Columns, Shows_Like_This, Ways_To_Watch };
+use LWTV\Plugins\CMB2;
 
 /**
  * class LWTV_CPT_Shows
