@@ -53,7 +53,6 @@ class Taxonomies {
 			'hide_empty' => false,
 		);
 		$args     = wp_parse_args( $query_args, $defaults );
-		$terms    = get_terms( $args );
 
 		// Create a unique cache key based on taxonomy and query args
 		$cache_key   = 'cmb2_terms_list_' . md5( $taxonomies . wp_json_encode( $query_args ) );
@@ -62,8 +61,9 @@ class Taxonomies {
 			return $terms_array;
 		}
 
-		// Reset the terms array if there are no cached terms
+		// Initialize the terms array before populating it
 		$terms_array = array();
+		$terms       = get_terms( $args );
 		if ( ! empty( $terms ) ) {
 			foreach ( $terms as $term ) {
 				if ( Characters::SHADOW_TAXONOMY === $term->taxonomy ) {

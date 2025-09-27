@@ -170,14 +170,14 @@ class Characters_Builder {
 			if ( ! empty( $character['last_death'] ) ) {
 				// if last_death STARTS with the year, add to the dead count
 				if ( str_starts_with( $character['last_death'], (string) $year ) ) {
-					lwtv_plugin()->error_log( 'dead-debug', $character['name'] . ': Character is dead: ' . $character['name'] . ' with last death: ' . $character['last_death'] );
+					lwtv_plugin()->error_log( 'dead-debug', $character['name'] . ': Character is dead with last death: ' . $character['last_death'] );
 					++$dead_count;
 				}
 			} elseif ( ! empty( $character['death_years'] ) ) {
 				// Double check because last death isn't always set on older characters
 				foreach ( $character['death_years'] as $death_year ) {
 					if ( (int) $death_year === $year ) {
-						lwtv_plugin()->error_log( 'dead-debug', $character['name'] . ': Character is dead: ' . $character['name'] . ' with last death: ' . $character['last_death'] );
+						lwtv_plugin()->error_log( 'dead-debug', $character['name'] . ': Character is dead with last death: ' . $character['last_death'] );
 						++$dead_count;
 					}
 				}
