@@ -44,17 +44,20 @@ class Characters_Builder {
 				c.post_title as name,
 				show_meta.meta_value as show_group_data,
 				CASE
-					WHEN death_term.term_id IS NOT NULL THEN 1
+					WHEN EXISTS (
+						SELECT 1
+						FROM {$wpdb->term_relationships} tr
+						INNER JOIN {$wpdb->term_taxonomy} tt ON tr.term_taxonomy_id = tt.term_taxonomy_id
+						INNER JOIN {$wpdb->terms} t ON tt.term_id = t.term_id
+						WHERE tr.object_id = c.ID
+						AND tt.taxonomy = 'lez_cliches'
+						AND t.slug = 'dead'
+					) THEN 1
 					ELSE 0
 				END as is_dead
 			FROM {$wpdb->posts} c
 			INNER JOIN {$wpdb->postmeta} show_meta ON c.ID = show_meta.post_id
 				AND show_meta.meta_key = 'lezchars_show_group'
-			LEFT JOIN {$wpdb->term_relationships} death_rel ON c.ID = death_rel.object_id
-			LEFT JOIN {$wpdb->term_taxonomy} death_tax ON death_rel.term_taxonomy_id = death_tax.term_taxonomy_id
-				AND death_tax.taxonomy = 'lez_cliches'
-			LEFT JOIN {$wpdb->terms} death_term ON death_tax.term_id = death_term.term_id
-				AND death_term.slug = 'dead'
 			WHERE c.post_type = 'post_type_characters'
 				AND c.post_status = 'publish'
 				AND show_meta.meta_value IS NOT NULL
@@ -77,14 +80,15 @@ class Characters_Builder {
 				$appeared_in_year = $this->check_character_appeared_in_year( $show_group_data, $year );
 
 				if ( $appeared_in_year ) {
-					// Process death year data only if character is dead
-					$death_years = array();
 					if ( (bool) $row['is_dead'] ) {
+						$row['last_death'] = get_post_meta( $row['ID'], 'lezchars_last_death', true );
+
 						$death_year_data = get_post_meta( $row['ID'], 'lezchars_death_year', true );
+
 						if ( ! empty( $death_year_data ) ) {
 							$death_year_data = maybe_unserialize( $death_year_data );
 							if ( is_array( $death_year_data ) ) {
-								$death_years = array_values( $death_year_data );
+								$row['death_years'] = array_values( $death_year_data );
 							}
 						}
 					}
@@ -94,7 +98,8 @@ class Characters_Builder {
 						'slug'        => $row['slug'],
 						'name'        => $row['name'],
 						'dead'        => (bool) $row['is_dead'],
-						'death_years' => $death_years,
+						'death_years' => $row['death_years'] ?? array(),
+						'last_death'  => $row['last_death'] ?? '',
 					);
 				}
 			}
@@ -108,8 +113,7 @@ class Characters_Builder {
 			return array();
 		}
 
-		// Convert associative array back to indexed array
-		return array_values( $characters );
+		return $characters;
 	}
 
 	/**
@@ -163,8 +167,20 @@ class Characters_Builder {
 		$dead_count = 0;
 
 		foreach ( $characters as $character ) {
-			if ( $character['dead'] ) {
-				++$dead_count;
+			if ( ! empty( $character['last_death'] ) ) {
+				// if last_death STARTS with the year, add to the dead count
+				if ( str_starts_with( $character['last_death'], (string) $year ) ) {
+					lwtv_plugin()->error_log( 'dead-debug', $character['name'] . ': Character is dead with last death: ' . $character['last_death'] );
+					++$dead_count;
+				}
+			} elseif ( ! empty( $character['death_years'] ) ) {
+				// Double check because last death isn't always set on older characters
+				foreach ( $character['death_years'] as $death_year ) {
+					if ( (int) $death_year === $year ) {
+						lwtv_plugin()->error_log( 'dead-debug', $character['name'] . ': Character is dead with last death: ' . $character['last_death'] );
+						++$dead_count;
+					}
+				}
 			}
 		}
 

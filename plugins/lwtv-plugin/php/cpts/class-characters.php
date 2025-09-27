@@ -92,7 +92,7 @@ class Characters {
 		add_action( 'dashboard_glance_items', array( $this, 'dashboard_glance_items' ) );
 		add_action( 'save_post_post_type_characters', array( $this, 'save_post_meta' ), 10, 3 );
 		add_action( 'delete_post', array( $this, 'handle_character_deletion' ) );
-		add_action( 'transition_post_status', array( $this, 'maybe_update_new_character_flags' ) );
+		add_action( 'transition_post_status', array( $this, 'maybe_update_new_character_flags' ), 10, 3 );
 		add_filter( 'enter_title_here', array( $this, 'custom_enter_title' ) );
 	}
 
@@ -405,7 +405,7 @@ class Characters {
 	 * @param string $old_status The old post status.
 	 * @param WP_Post $post The character post object.
 	 */
-	private function maybe_update_new_character_flags( $new_status, $old_status, $post ) {
+	public function maybe_update_new_character_flags( $new_status, $old_status, $post ) {
 		// Only handle character posts
 		if ( self::SLUG !== get_post_type( $post ) ) {
 			return;

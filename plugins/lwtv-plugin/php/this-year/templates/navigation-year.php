@@ -15,6 +15,7 @@ if ( 'overview' === $view ) {
 }
 
 $start_year = LWTV_FIRST_YEAR;
+$baseurl    = str_replace( $this_year . '/', '', $baseurl );
 
 ?>
 
