@@ -64,6 +64,10 @@ class Dead_Characters_Formatter {
 						continue;
 					}
 
+					if ( ! str_starts_with( $character['last_death'], (string) $this_year ) ) {
+						continue;
+					}
+
 					if ( ! isset( $dead_by_show[ $show_id ]['show'] ) ) {
 						$dead_by_show[ $show_id ]['show'] = array(
 							'name'    => $show_data['name'],

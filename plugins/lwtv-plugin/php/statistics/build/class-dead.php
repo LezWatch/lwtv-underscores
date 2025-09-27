@@ -137,7 +137,10 @@ class Dead {
 
 		// If cached data is found, return it
 		if ( false !== $cached_data ) {
-			return $cached_data;
+			if ( is_array( $cached_data ) ) {
+				return count( $cached_data );
+			}
+			return 0;
 		}
 
 		try {

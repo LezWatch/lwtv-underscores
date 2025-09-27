@@ -355,9 +355,10 @@ class Shows_Builder {
 			foreach ( $characters as $index => $character ) {
 				$character_id = $character['character_id'];
 				if ( isset( $character_data[ $character_id ] ) ) {
-					$characters_by_show[ $show_id ][ $index ]['dead'] = $this->check_character_dead( $character_id );
-					$characters_by_show[ $show_id ][ $index ]['name'] = $character_data[ $character_id ]['name'];
-					$characters_by_show[ $show_id ][ $index ]['url']  = $character_data[ $character_id ]['permalink'];
+					$characters_by_show[ $show_id ][ $index ]['dead']       = $this->check_character_dead( $character_id );
+					$characters_by_show[ $show_id ][ $index ]['last_death'] = get_post_meta( $character_id, 'lezchars_last_death', true );
+					$characters_by_show[ $show_id ][ $index ]['name']       = $character_data[ $character_id ]['name'];
+					$characters_by_show[ $show_id ][ $index ]['url']        = $character_data[ $character_id ]['permalink'];
 				}
 			}
 		}
