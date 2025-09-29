@@ -49,7 +49,10 @@ class Lists_Optimized {
 			return '<p>No data available for this list.</p>';
 		}
 
-		$data = Shared::sort_data( $data, $view );
+		// For dead lists, the data structure is different - extract the 'all' key
+		if ( isset( $data['all'] ) ) {
+			$data = $data['all'];
+		}
 
 		$output = '<table id="listTable" class="tablesorter table table-striped table-hover">';
 		$thead  = '<thead>
