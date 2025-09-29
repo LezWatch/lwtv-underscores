@@ -319,4 +319,52 @@
 
 	/** Add future dark mode styles here inside the group */
 
+	.statistics,
+	.thisyear {
+		.card-header.actors,
+		.card-header.genres,
+		.card-header.gender {
+			color: #f1c40f;
+			background-color: #3d2f00;
+			border-color: #5a4200;
+		}
+
+		.card-header.characters,
+		.card-header.new-shows,
+		.card-header.tropes,
+		.card-header.actor_gender {
+			color: #2ecc71;
+			background-color: #0d2e1a;
+			border-color: #1a4d2e;
+		}
+
+		.card-header.dead-characters,
+		.card-header.canceled-shows {
+			color: #e74c3c;
+			background-color: #2e0d0d;
+			border-color: #4d1a1a;
+		}
+
+		.card-header.shows,
+		.card-header.shows-onair,
+		.card-header.sexuality {
+			color: #3498db;
+			background-color: #0d1a2e;
+			border-color: #1a2e4d;
+		}
+
+		.progress-bar {
+			background-color: colors.$lwtv-ltpink !important;
+		}
+
+		button {
+			color: colors.$black;
+			background-color: colors.$lwtv-ltpink;
+			border-color: colors.$lwtv-ltpink;
+		}
+
+		a.nav-link {
+			color: colors.$lwtv-ltpink;
+		}
+	}
 }
