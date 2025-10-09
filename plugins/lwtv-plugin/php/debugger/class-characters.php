@@ -10,7 +10,7 @@
 namespace LWTV\Debugger;
 
 use LWTV\Queeries\Post_Type;
-use LWTV\Queeries\Taxonomy as Queery_Taxonomy;
+use LWTV\Queeries\Taxonomy_Optimized as Queery_Taxonomy;
 use LWTV\CPTs\Characters as CPT_Characters;
 
 class Characters {
@@ -35,7 +35,7 @@ class Characters {
 				}
 			}
 		} else {
-			$the_loop = ( new Queery_Taxonomy() )->make( CPT_Characters::SLUG, 'lez_cliches', 'slug', 'dead' );
+			$the_loop = ( new Queery_Taxonomy() )->get_posts_for_terms( CPT_Characters::SLUG, 'lez_cliches', 'dead' );
 
 			if ( is_object( $the_loop ) && $the_loop->have_posts() ) {
 				$characters = wp_list_pluck( $the_loop->posts, 'ID' );
@@ -55,6 +55,12 @@ class Characters {
 
 		foreach ( $characters as $char_id ) {
 			$problems = array();
+
+			// Check for missing death year meta data
+			$death_year = get_post_meta( $char_id, 'lezchars_death_year', true );
+			if ( empty( $death_year ) ) {
+				$problems[] = 'Character marked as dead but missing lezchars_death_year meta data.';
+			}
 
 			$shows = get_post_meta( $char_id, 'lezchars_show_group', true );
 

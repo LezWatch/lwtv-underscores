@@ -43,7 +43,7 @@ class Validation {
 		),
 		'byq_checker'       => array(
 			'name'   => 'BYQ',
-			'desc'   => 'Checks all the shows and characters with death are reciprocal. This may be okay, because Sara Lance.',
+			'desc'   => 'Checks all characters with death cliché have proper death year meta data and shows have dead-queers trope. This may be okay, because Sara Lance.',
 			'option' => 'byq_problems',
 		),
 		'actor_checker'     => array(
