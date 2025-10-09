@@ -139,7 +139,6 @@ class List_JSON {
 
 		// Sanitize IDs
 		$post_ids = array_map( 'intval', $post_ids );
-		$post_ids = array_filter( $post_ids );
 
 		if ( empty( $post_ids ) ) {
 			return array();
