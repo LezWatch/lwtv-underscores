@@ -150,24 +150,53 @@ class BYQ {
 			$character_ids = wp_list_pluck( $dead_chars_loop->posts, 'ID' );
 			lwtv_plugin()->error_log( 'byq-debug', 'Character IDs count: ' . count( $character_ids ) );
 
-			$meta_data = $this->get_bulk_meta_data( $character_ids );
+			$meta_data = $this->get_bulk_death_meta_data( $character_ids );
 			lwtv_plugin()->error_log( 'byq-debug', 'Meta data count: ' . count( $meta_data ) );
 
-			// Loop through characters to build our list
+			// First pass: Fix missing lezchars_death_year meta data
+			$fixed_count   = 0;
+			$needs_refetch = false;
+			foreach ( $dead_chars_loop->posts as $dead_char ) {
+				$character_id = $dead_char->ID;
+				$died_date    = $meta_data[ $character_id ]['lezchars_death_year'] ?? '';
+
+				// If no death date in lezchars_death_year, try lezchars_last_death as fallback
+				if ( empty( $died_date ) ) {
+					$last_death = $meta_data[ $character_id ]['lezchars_last_death'] ?? '';
+					if ( ! empty( $last_death ) ) {
+						lwtv_plugin()->error_log( 'byq-debug', "Using lezchars_last_death fallback for character $character_id ({$dead_char->post_title}): $last_death" );
+
+						// Fix the missing meta by saving lezchars_death_year from lezchars_last_death
+						update_post_meta( $character_id, 'lezchars_death_year', $last_death );
+						++$fixed_count;
+						$needs_refetch = true;
+						lwtv_plugin()->error_log( 'byq-debug', "Fixed missing lezchars_death_year for character $character_id ({$dead_char->post_title}) by copying from lezchars_last_death: $last_death" );
+						// Invalidate cache since we modified meta data
+						lwtv_plugin()->invalidate_statistics_cache( CPT_Characters::SLUG, $character_id );
+					}
+				}
+			}
+
+			// If we fixed any meta data, refetch to get the complete dataset
+			if ( $needs_refetch ) {
+				lwtv_plugin()->error_log( 'byq-debug', "Refetching meta data after fixing $fixed_count characters" );
+				$meta_data = $this->get_bulk_death_meta_data( $character_ids );
+				lwtv_plugin()->error_log( 'byq-debug', 'Refetched meta data count: ' . count( $meta_data ) );
+			}
+
+			// Second pass: Build the death list with complete data
 			$processed_count = 0;
 			$skipped_count   = 0;
 			foreach ( $dead_chars_loop->posts as $dead_char ) {
 				$character_id = $dead_char->ID;
 
-				// Get cached meta data
+				// Get cached meta data (now complete after refetch)
 				$died_date = $meta_data[ $character_id ]['lezchars_death_year'] ?? '';
 				$show_data = $meta_data[ $character_id ]['lezchars_show_group'] ?? array();
 
 				if ( empty( $died_date ) ) {
 					++$skipped_count;
-					if ( $skipped_count <= 3 ) { // Log first 3 skipped characters
-						lwtv_plugin()->error_log( 'byq-debug', "Skipped character $character_id - no death date. Meta keys: " . implode( ', ', array_keys( $meta_data[ $character_id ] ?? array() ) ) );
-					}
+					lwtv_plugin()->error_log( 'byq-debug', "Skipped character $character_id ({$dead_char->post_title}) - no death date. Meta keys: " . implode( ', ', array_keys( $meta_data[ $character_id ] ?? array() ) ) );
 					continue; // Skip characters without death dates
 				}
 
@@ -213,8 +242,8 @@ class BYQ {
 					}
 				}
 
-				// Add this character to the array
-				$death_list_array[ $post_slug ] = array(
+				// Create character data array
+				$character_data = array(
 					'id'    => $character_id,
 					'slug'  => $post_slug,
 					'name'  => $dead_char->post_title,
@@ -223,17 +252,37 @@ class BYQ {
 					'died'  => $died,
 					'date'  => $died_date,
 				);
+
+				// Use Unix timestamp as key for proper chronological ordering
+				$death_timestamp_key = $died;
+				lwtv_plugin()->error_log( 'byq-debug', "Processing character {$character_id} ({$dead_char->post_title}) with death timestamp key: {$death_timestamp_key} (" . gmdate( 'Y-m-d', $died ) . ')' );
+
+				// Handle timestamp collisions by adding small increments
+				$increment     = 0;
+				$max_increment = 1000; // Maximum 1000 characters per timestamp (more than enough for any realistic scenario)
+				while ( isset( $death_list_array[ $death_timestamp_key ] ) && $increment < $max_increment ) {
+					++$increment;
+					$death_timestamp_key = $died + $increment;
+					lwtv_plugin()->error_log( 'byq-debug', "Timestamp collision detected, using incremented key: {$death_timestamp_key} (+{$increment} seconds)" );
+				}
+
+				// If we hit the maximum increment limit, use a large increment to maintain integer keys
+				if ( $increment >= $max_increment ) {
+					$death_timestamp_key = $died + 10000 + $character_id; // Use large increment + character ID to maintain integer keys
+					lwtv_plugin()->error_log( 'byq-warning', "Maximum increment limit reached for character {$character_id} ({$dead_char->post_title}). Using large increment key: {$death_timestamp_key}" );
+				}
+
+				// Store character with unique timestamp key
+				$death_list_array[ $death_timestamp_key ] = $character_data;
+				lwtv_plugin()->error_log( 'byq-debug', "Added character with unique timestamp key: {$death_timestamp_key}" );
 			}
 
-			// phpcs:disable
-			// Reorder all the dead to sort by DoD
-			uasort( $death_list_array, function( $a, $b ) {
-				// Spaceship Needs PHP 7.1+
-				return $a['died'] <=> $b['died'];
-			});
-			// phpcs:enable
+			// Sort array by timestamp keys to ensure chronological order
+			lwtv_plugin()->error_log( 'byq-debug', 'Array keys before sorting: ' . implode( ', ', array_keys( $death_list_array ) ) );
+			ksort( $death_list_array );
+			lwtv_plugin()->error_log( 'byq-debug', 'Array keys after sorting: ' . implode( ', ', array_keys( $death_list_array ) ) );
 
-			lwtv_plugin()->error_log( 'byq-debug', "Processed: $processed_count, Skipped: $skipped_count, Final array count: " . count( $death_list_array ) );
+			lwtv_plugin()->error_log( 'byq-debug', 'Total characters: ' . count( $dead_chars_loop->posts ) . ', Fixed: ' . $fixed_count . ', Processed: ' . $processed_count . ', Skipped: ' . $skipped_count . ', Final array count: ' . count( $death_list_array ) );
 		}
 
 		// Cache the result
@@ -260,19 +309,43 @@ class BYQ {
 		$return = '';
 
 		// Get all dead characters and find the most recent death
-		$dead_chars_loop  = ( new Queery_Taxonomy() )->get_posts_for_terms( CPT_Characters::SLUG, 'lez_cliches', 'dead' );
-		$death_list_array = $this->list_of_dead_characters( $dead_chars_loop );
+		$death_list_array = $this->list_of_dead_characters();
 
 		// Extract the last death (most recent timestamp)
 		if ( ! empty( $death_list_array ) ) {
-			$last_death = array_slice( $death_list_array, -1, 1, true );
-			$last_death = array_shift( $last_death );
+			// Debug: Log the array structure
+			$array_keys     = array_keys( $death_list_array );
+			$formatted_keys = array_map(
+				function ( $key ) {
+					return $key . ' (' . gmdate( 'Y-m-d', $key ) . ')';
+				},
+				$array_keys
+			);
+			lwtv_plugin()->error_log( 'byq-debug', 'Death list array keys: ' . implode( ', ', $formatted_keys ) );
+			lwtv_plugin()->error_log( 'byq-debug', 'Death list array count: ' . count( $death_list_array ) );
+
+			// Get the last (most recent) death timestamp key
+			$last_death_timestamp = array_key_last( $death_list_array );
+			lwtv_plugin()->error_log( 'byq-debug', 'Last death timestamp key: ' . $last_death_timestamp . ' (' . gmdate( 'Y-m-d', $last_death_timestamp ) . ')' );
+			$last_death_data = $death_list_array[ $last_death_timestamp ];
+			lwtv_plugin()->error_log( 'byq-debug', 'Last death data type: ' . gettype( $last_death_data ) );
+			lwtv_plugin()->error_log( 'byq-debug', 'Last death data: ' . wp_json_encode( $last_death_data ) );
+
+			// Each timestamp key now contains a single character (no more arrays)
+			if ( is_array( $last_death_data ) && isset( $last_death_data['died'] ) ) {
+				$last_death = $last_death_data;
+				lwtv_plugin()->error_log( 'byq-debug', 'Using character for this timestamp' );
+			} else {
+				lwtv_plugin()->error_log( 'byq-debug', 'Invalid data structure for last death' );
+				$last_death = null;
+			}
 
 			// Calculate the difference between then and now
-			if ( isset( $last_death['died'] ) && ! is_null( $last_death['died'] ) ) {
+			if ( $last_death && isset( $last_death['died'] ) && ! is_null( $last_death['died'] ) ) {
 				$diff                = abs( time() - $last_death['died'] );
 				$last_death['since'] = $diff;
 				$return              = $last_death;
+				lwtv_plugin()->error_log( 'byq-debug', 'Successfully found last death: ' . $last_death['name'] );
 			} else {
 				lwtv_plugin()->error_log( 'byq-debug', 'Last death has no valid died timestamp' );
 			}
@@ -472,7 +545,7 @@ class BYQ {
 	 * @param array $character_ids Array of character IDs
 	 * @return array Meta data organized by character ID
 	 */
-	private function get_bulk_meta_data( $character_ids ) {
+	private function get_bulk_death_meta_data( $character_ids ) {
 		if ( empty( $character_ids ) ) {
 			return array();
 		}
@@ -481,7 +554,6 @@ class BYQ {
 
 		// Sanitize IDs to ensure they're integers
 		$character_ids = array_map( 'intval', $character_ids );
-		$character_ids = array_filter( $character_ids ); // Remove any invalid IDs
 
 		if ( empty( $character_ids ) ) {
 			return array();
@@ -493,7 +565,7 @@ class BYQ {
 		$query = "SELECT post_id, meta_key, meta_value
 			FROM {$wpdb->postmeta}
 			WHERE post_id IN ($ids_string)
-			AND meta_key IN ('lezchars_death_year', 'lezchars_show_group')";
+			AND meta_key IN ('lezchars_death_year', 'lezchars_last_death', 'lezchars_show_group')";
 
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- IDs are sanitized integers
 		$results = $wpdb->get_results( $query );
