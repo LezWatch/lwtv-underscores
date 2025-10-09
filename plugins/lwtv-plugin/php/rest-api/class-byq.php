@@ -258,11 +258,19 @@ class BYQ {
 				lwtv_plugin()->error_log( 'byq-debug', "Processing character {$character_id} ({$dead_char->post_title}) with death timestamp key: {$death_timestamp_key} (" . gmdate( 'Y-m-d', $died ) . ')' );
 
 				// Handle timestamp collisions by adding small increments
-				$increment = 0;
-				while ( isset( $death_list_array[ $death_timestamp_key ] ) ) {
+				$increment     = 0;
+				$max_increment = 1000; // Maximum 1000 characters per timestamp (more than enough for any realistic scenario)
+				while ( isset( $death_list_array[ $death_timestamp_key ] ) && $increment < $max_increment ) {
 					++$increment;
 					$death_timestamp_key = $died + $increment;
 					lwtv_plugin()->error_log( 'byq-debug', "Timestamp collision detected, using incremented key: {$death_timestamp_key} (+{$increment} seconds)" );
+				}
+
+				// If we hit the maximum increment limit, use character ID as fallback
+				if ( $increment >= $max_increment ) {
+					$fallback_key = $died . '_' . $character_id; // Use character ID as fallback
+					lwtv_plugin()->error_log( 'byq-warning', "Maximum increment limit reached for character {$character_id} ({$dead_char->post_title}). Using fallback key: {$fallback_key}" );
+					$death_timestamp_key = $fallback_key;
 				}
 
 				// Store character with unique timestamp key
