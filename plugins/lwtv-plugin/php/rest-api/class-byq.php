@@ -317,7 +317,9 @@ class BYQ {
 			$array_keys     = array_keys( $death_list_array );
 			$formatted_keys = array_map(
 				function ( $key ) {
-					return $key . ' (' . gmdate( 'Y-m-d', $key ) . ')';
+					// Ensure we have an integer timestamp for gmdate()
+					$timestamp = is_numeric( $key ) ? intval( $key ) : 0;
+					return $key . ' (' . gmdate( 'Y-m-d', $timestamp ) . ')';
 				},
 				$array_keys
 			);
@@ -326,7 +328,8 @@ class BYQ {
 
 			// Get the last (most recent) death timestamp key
 			$last_death_timestamp = array_key_last( $death_list_array );
-			lwtv_plugin()->error_log( 'byq-debug', 'Last death timestamp key: ' . $last_death_timestamp . ' (' . gmdate( 'Y-m-d', $last_death_timestamp ) . ')' );
+			$timestamp_for_date   = is_numeric( $last_death_timestamp ) ? intval( $last_death_timestamp ) : 0;
+			lwtv_plugin()->error_log( 'byq-debug', 'Last death timestamp key: ' . $last_death_timestamp . ' (' . gmdate( 'Y-m-d', $timestamp_for_date ) . ')' );
 			$last_death_data = $death_list_array[ $last_death_timestamp ];
 			lwtv_plugin()->error_log( 'byq-debug', 'Last death data type: ' . gettype( $last_death_data ) );
 			lwtv_plugin()->error_log( 'byq-debug', 'Last death data: ' . wp_json_encode( $last_death_data ) );
