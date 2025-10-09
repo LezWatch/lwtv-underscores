@@ -266,11 +266,10 @@ class BYQ {
 					lwtv_plugin()->error_log( 'byq-debug', "Timestamp collision detected, using incremented key: {$death_timestamp_key} (+{$increment} seconds)" );
 				}
 
-				// If we hit the maximum increment limit, use character ID as fallback
+				// If we hit the maximum increment limit, use a large increment to maintain integer keys
 				if ( $increment >= $max_increment ) {
-					$fallback_key = $died . '_' . $character_id; // Use character ID as fallback
-					lwtv_plugin()->error_log( 'byq-warning', "Maximum increment limit reached for character {$character_id} ({$dead_char->post_title}). Using fallback key: {$fallback_key}" );
-					$death_timestamp_key = $fallback_key;
+					$death_timestamp_key = $died + 10000 + $character_id; // Use large increment + character ID to maintain integer keys
+					lwtv_plugin()->error_log( 'byq-warning', "Maximum increment limit reached for character {$character_id} ({$dead_char->post_title}). Using large increment key: {$death_timestamp_key}" );
 				}
 
 				// Store character with unique timestamp key
