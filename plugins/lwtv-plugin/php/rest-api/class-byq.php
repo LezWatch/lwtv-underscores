@@ -129,15 +129,6 @@ class BYQ {
 	 * and that's stupid
 	 */
 	public function list_of_dead_characters( $dead_chars_loop = null ) {
-		// Generate cache key based on data modification time
-		$cache_key = 'byq_death_list_' . $this->get_data_version_hash();
-
-		// Try to get from cache first
-		$cached_result = lwtv_plugin()->get_transient( $cache_key );
-		if ( false !== $cached_result ) {
-			return $cached_result;
-		}
-
 		$death_list_array = array();
 
 		// If no loop provided, get all dead characters efficiently
@@ -285,9 +276,6 @@ class BYQ {
 			lwtv_plugin()->error_log( 'byq-debug', 'Total characters: ' . count( $dead_chars_loop->posts ) . ', Fixed: ' . $fixed_count . ', Processed: ' . $processed_count . ', Skipped: ' . $skipped_count . ', Final array count: ' . count( $death_list_array ) );
 		}
 
-		// Cache the result
-		lwtv_plugin()->set_transient( $cache_key, $death_list_array, self::DEATH_DATA_CACHE_DURATION );
-
 		return $death_list_array;
 	}
 
@@ -297,15 +285,6 @@ class BYQ {
 	 * @return array with last dead character data
 	 */
 	public function last_death() {
-		// Generate cache key
-		$cache_key = 'byq_last_death_' . $this->get_data_version_hash();
-
-		// Try to get from cache first
-		$cached_result = lwtv_plugin()->get_transient( $cache_key );
-		if ( false !== $cached_result ) {
-			return $cached_result;
-		}
-
 		$return = '';
 
 		// Get all dead characters and find the most recent death
@@ -355,9 +334,6 @@ class BYQ {
 		} else {
 			lwtv_plugin()->error_log( 'byq-debug', 'Death list array is empty' );
 		}
-
-		// Cache the result
-		lwtv_plugin()->set_transient( $cache_key, $return, self::API_RESPONSE_CACHE_DURATION );
 
 		return $return;
 	}
