@@ -54,6 +54,8 @@ All pull requests should be made to **production**.
 4. When the code passes review, run `npm run merge-to-develop` to push it to **development** (no extra PR needed).
 5. Once the code passes tests and is approved, the branch can be merged into `production` and the job is done!
 
+If you need to update the theme version (due to changing CSS or adding features) edit the `package.json` file and change the version. When `npm run build` runs, it will automagically update all needed files.
+
 To install and update:
 
 * `$ npm install` - Install all the things.
