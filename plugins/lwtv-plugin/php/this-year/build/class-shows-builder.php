@@ -110,10 +110,16 @@ class Shows_Builder {
 		// Check if year falls within the show's airing period (inclusive)
 		$on_air = ( $year >= $start_year && $year <= $finish_year );
 
+		// Check if show started in the specified year
+		$started = ( $start_year === $year );
+
+		// Check if show ended in the specified year
+		$ended = ( $finish_year === $year );
+
 		return array(
 			'on_air'  => $on_air,
-			'started' => $start_year,
-			'ended'   => $finish_year,
+			'started' => $started,
+			'ended'   => $ended,
 		);
 	}
 
