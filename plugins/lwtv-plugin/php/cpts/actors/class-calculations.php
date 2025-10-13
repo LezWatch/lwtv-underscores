@@ -147,9 +147,15 @@ class Calculations {
 	 *
 	 * @access public
 	 * @param  int  $post_id
+	 * @param  bool $force    Force the calculation to run
 	 * @return void
 	 */
-	public function do_the_math( $post_id ): void {
+	public function do_the_math( $post_id, $force = false ): void {
+
+		// If force is true, destroy any cached data before recalculation
+		if ( $force ) {
+			lwtv_plugin()->invalidate_statistics_cache( 'post_type_actors', $post_id );
+		}
 
 		// Get all character counts in single pass to avoid redundant queries
 		$character_counts = $this->count_all_character_types( $post_id );

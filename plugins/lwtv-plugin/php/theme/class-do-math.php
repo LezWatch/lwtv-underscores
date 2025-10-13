@@ -11,21 +11,21 @@ class Do_Math {
 	 * Do the Math for a specific show/char/actor
 	 *
 	 * @param string  $post_id  Post ID
-	 *
+	 * @param bool    $force    Force the calculation to run
 	 * @return void
 	 */
-	public function make( $post_id ): void {
+	public function make( $post_id, $force = false ): void {
 		$post_type = get_post_type( $post_id );
 
 		switch ( $post_type ) {
 			case 'post_type_shows':
-				( new Shows_Calculations() )->do_the_math( $post_id );
+				( new Shows_Calculations() )->do_the_math( $post_id, $force );
 				break;
 			case 'post_type_characters':
-				( new Characters_Calculations() )->do_the_math( $post_id );
+				( new Characters_Calculations() )->do_the_math( $post_id, $force );
 				break;
 			case 'post_type_actors':
-				( new Actors_Calculations() )->do_the_math( $post_id );
+				( new Actors_Calculations() )->do_the_math( $post_id, $force );
 				break;
 			default:
 				break;
