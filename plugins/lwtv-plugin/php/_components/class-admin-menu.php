@@ -38,7 +38,7 @@ class Admin_Menu implements Component {
 		add_submenu_page( 'lwtv', 'Welcome', 'Welcome', 'read', 'lwtv', array( $this, 'settings_page' ) );
 
 		//phpcs:ignore WordPress.WP.GlobalVariablesOverride
-		$submenu['lwtv'][] = array( 'Monitors', 'read', esc_url( 'https://status.lezwatch.tv/status/lwtv-admin' ) );
+		$submenu['lwtv'][] = array( 'Monitors', 'read', esc_url( 'https://uptime.ipstenu.com/status/lwtv-admin' ) );
 
 		( new Validation() )->init();
 
@@ -57,7 +57,7 @@ class Admin_Menu implements Component {
 		$submenu['lwtv'][] = array( 'Slack', 'read', esc_url( 'https://lezwatchtv.slack.com/' ) );
 
 		//phpcs:ignore WordPress.WP.GlobalVariablesOverride
-		$submenu['lwtv'][] = array( 'Status Page', 'read', esc_url( 'https://status.lezwatch.tv/' ) );
+		$submenu['lwtv'][] = array( 'Status Page', 'read', esc_url( 'https://status.lezwatchtv.com/' ) );
 	}
 
 	/*
