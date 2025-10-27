@@ -513,10 +513,17 @@ class Calculations {
 	 *  - lezshows_the_score       Score of show data
 	 *
 	 * @access public
-	 * @param mixed $post_id
+	 * @param  int  $post_id
+	 * @param  bool $force    Force the calculation to run
 	 * @return void
 	 */
-	public function do_the_math( $post_id ) {
+	public function do_the_math( $post_id, $force = false ): void {
+
+		// If force is true, destroy any cached data before recalculation
+		if ( $force ) {
+			lwtv_plugin()->invalidate_statistics_cache( 'score', $post_id );
+			lwtv_plugin()->invalidate_statistics_cache( 'post_type_shows', $post_id );
+		}
 
 		if ( ! isset( $post_id ) || CPT_Shows::SLUG !== get_post_type( $post_id ) ) {
 			// delete the meta fields

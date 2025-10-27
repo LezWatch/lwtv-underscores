@@ -306,7 +306,7 @@ class Theme implements Component, Templater {
 		// If you're logged in and can edit posts, you can refresh the scores.
 		if ( is_user_logged_in() && current_user_can( 'edit_posts' ) ) {
 			if ( isset( $_POST['_wpnonce'] ) && wp_verify_nonce( $_POST['_wpnonce'], 'lwtv-update-math' ) ) {
-				( new Do_Math() )->make( $post_id );
+				( new Do_Math() )->make( $post_id, true );
 				sleep( 5 );
 				wp_safe_redirect( get_the_permalink( $post_id ) );
 				exit;

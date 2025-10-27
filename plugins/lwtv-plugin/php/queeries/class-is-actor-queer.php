@@ -33,9 +33,17 @@ class Is_Actor_Queer {
 		}
 
 		// Create cache key
-		$cache_key     = 'actor_queer_status_' . $the_id;
-		$cached_result = lwtv_plugin()->get_transient( $cache_key );
+		$cache_key = 'actor_queer_status_' . $the_id;
 
+		// If we're private, we aren't queer no matter what to protect identities
+		// We do this first to protect identities.
+		if ( 'private' === get_post_status( $the_id ) ) {
+			lwtv_plugin()->delete_transient( $cache_key );
+			return false;
+		}
+
+		// Get the cached result and use it if it exists
+		$cached_result = lwtv_plugin()->get_transient( $cache_key );
 		if ( false !== $cached_result ) {
 			return (bool) $cached_result;
 		}
@@ -45,12 +53,6 @@ class Is_Actor_Queer {
 		if ( 'is_queer' === $override ) {
 			lwtv_plugin()->set_transient( $cache_key, true, HOUR_IN_SECONDS );
 			return true;
-		}
-
-		// If we're private, we aren't queer no matter what to protect identities
-		if ( 'private' === get_post_status( $the_id ) ) {
-			lwtv_plugin()->set_transient( $cache_key, false, HOUR_IN_SECONDS );
-			return false;
 		}
 
 		// Get all actor taxonomies in a single query
@@ -103,7 +105,7 @@ class Is_Actor_Queer {
 	 * @return bool True if actor is queer
 	 */
 	private function check_queerness( $taxonomies ): bool {
-		// Define straight/not queer terms
+		// Define straight/not queer terms - any term NOT in these lists is queer
 		$straight_genders   = array( 'cis-man', 'cis-woman', 'cisgender', 'undefined', 'unknown' );
 		$straight_sexuality = array( 'heterosexual', 'unknown' );
 		$straight_romantics = array( 'heteroromantic' );
@@ -116,47 +118,63 @@ class Is_Actor_Queer {
 			'unknown'   => array( 'he', 'him', 'his', 'she', 'her', 'hers' ),
 		);
 
-		// Check each category - if ANY is queer, actor is queer
-
-		// Gender check
-		$gender_terms = $taxonomies['lez_actor_gender'] ?? array();
-		if ( ! empty( $gender_terms ) && ! array_intersect( $gender_terms, $straight_genders ) ) {
-			lwtv_plugin()->error_log( 'actor_queer_debug', 'Actor is queer based on gender terms: ' . wp_json_encode( $gender_terms ) );
-			return true; // Has queer gender terms
-		}
-
-		// Sexuality check
+		// Get all taxonomy terms
+		$gender_terms    = $taxonomies['lez_actor_gender'] ?? array();
+		$pronoun_terms   = $taxonomies['lez_actor_pronouns'] ?? array();
 		$sexuality_terms = $taxonomies['lez_actor_sexuality'] ?? array();
-		if ( ! empty( $sexuality_terms ) && ! array_intersect( $sexuality_terms, $straight_sexuality ) ) {
-			lwtv_plugin()->error_log( 'actor_queer_debug', 'Actor is queer based on sexuality terms: ' . wp_json_encode( $sexuality_terms ) );
-			return true; // Has queer sexuality terms
+		$romantic_terms  = $taxonomies['lez_actor_romantic'] ?? array();
+
+		// Check 1: If NOT cis gender (i.e., has non-cis gender terms), return true
+		if ( ! empty( $gender_terms ) ) {
+			// Check if ALL gender terms are NOT in the straight list
+			$non_straight_genders = array_diff( $gender_terms, $straight_genders );
+			if ( ! empty( $non_straight_genders ) ) {
+				lwtv_plugin()->error_log( 'actor_queer_debug', 'Actor is queer based on gender terms: ' . wp_json_encode( $gender_terms ) );
+				return true;
+			}
 		}
 
-		// Pronouns check
-		$pronoun_terms = $taxonomies['lez_actor_pronouns'] ?? array();
-		if ( ! empty( $pronoun_terms ) ) {
-			// Check if pronouns are queer based on gender
-			$has_queer_pronouns = true;
-			if ( ! empty( $gender_terms ) ) {
-				$primary_gender    = $gender_terms[0];
-				$straight_pronouns = $all_straight_pronouns[ $primary_gender ] ?? array();
-				if ( ! empty( $straight_pronouns ) && ! array_diff( $pronoun_terms, $straight_pronouns ) ) {
-					$has_queer_pronouns = false; // Only has straight pronouns
+		// Check 2: If cis gender BUT pronouns are NOT straight, return true
+		if ( ! empty( $pronoun_terms ) && ! empty( $gender_terms ) ) {
+			$primary_gender    = $gender_terms[0];
+			$straight_pronouns = $all_straight_pronouns[ $primary_gender ] ?? array();
+
+			// If we have straight pronouns defined for this gender, check if actor uses them
+			if ( ! empty( $straight_pronouns ) ) {
+				// Check if actor uses ONLY straight pronouns for their gender
+				$has_non_straight_pronouns = ! empty( array_diff( $pronoun_terms, $straight_pronouns ) );
+				if ( $has_non_straight_pronouns ) {
+					lwtv_plugin()->error_log( 'actor_queer_debug', 'Actor is queer based on pronouns: ' . wp_json_encode( $pronoun_terms ) . ' for gender: ' . wp_json_encode( $gender_terms ) );
+					return true;
 				}
-			}
-			if ( $has_queer_pronouns ) {
-				lwtv_plugin()->error_log( 'actor_queer_debug', 'Actor is queer based on pronouns terms: ' . wp_json_encode( $pronoun_terms ) );
-				return true; // Has queer pronouns
+			} else {
+				// No straight pronouns defined for this gender (e.g., non-binary, etc.)
+				// If they have pronouns set and we don't know what's "straight" for them, consider queer
+				lwtv_plugin()->error_log( 'actor_queer_debug', 'Actor is queer based on pronouns (no straight definition): ' . wp_json_encode( $pronoun_terms ) . ' for gender: ' . wp_json_encode( $gender_terms ) );
+				return true;
 			}
 		}
 
-		// Romantic orientation check
-		$romantic_terms = $taxonomies['lez_actor_romantic'] ?? array();
-		if ( ! empty( $romantic_terms ) && ! array_intersect( $romantic_terms, $straight_romantics ) ) {
-			lwtv_plugin()->error_log( 'actor_queer_debug', 'Actor is queer based on romantic terms: ' . wp_json_encode( $romantic_terms ) );
-			return true; // Has queer romantic terms
+		// Check 3: If cis gender AND straight pronouns BUT sexuality is NOT straight, return true
+		if ( ! empty( $sexuality_terms ) ) {
+			// Check if sexuality is NOT in straight list
+			$non_straight_sexuality = array_diff( $sexuality_terms, $straight_sexuality );
+			if ( ! empty( $non_straight_sexuality ) ) {
+				lwtv_plugin()->error_log( 'actor_queer_debug', 'Actor is queer based on sexuality terms: ' . wp_json_encode( $sexuality_terms ) );
+				return true;
+			}
 		}
 
-		return false; // No queer indicators found
+		// Check 4: Romantic orientation is NOT straight, return true
+		if ( ! empty( $romantic_terms ) ) {
+			$non_straight_romantic = array_diff( $romantic_terms, $straight_romantics );
+			if ( ! empty( $non_straight_romantic ) ) {
+				lwtv_plugin()->error_log( 'actor_queer_debug', 'Actor is queer based on romantic terms: ' . wp_json_encode( $romantic_terms ) );
+				return true;
+			}
+		}
+
+		// All checks passed - NOT queer based on available data
+		return false;
 	}
 }

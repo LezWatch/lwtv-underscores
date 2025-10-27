@@ -44,9 +44,11 @@ class Calculations {
 	 * Sync the shadow taxonomy for shows with the character.
 	 *
 	 * @param  int  $post_id
+	 * @param  mixed $shadow_character
+	 * @param  bool $force Force the calculation to run
 	 * @return void
 	 */
-	public function sync_shows( $post_id, $shadow_character ) {
+	public function sync_shows( $post_id, $shadow_character, $force = false ) {
 		$show_group         = get_post_meta( $post_id, 'lezchars_show_group', true );
 		$shows_array_simple = array();
 
@@ -96,7 +98,7 @@ class Calculations {
 			// Add the tax for the character to the show.
 			wp_add_object_terms( (int) $each_show['show'], (int) $shadow_character->term_id, CPT_Characters::SHADOW_TAXONOMY );
 
-			( new Shows_Calculations() )->do_the_math( $each_show['show'] );
+			( new Shows_Calculations() )->do_the_math( $each_show['show'], $force );
 		}
 	}
 
@@ -106,9 +108,11 @@ class Calculations {
 	 * Sync the shadow taxonomy for actors with the character.
 	 *
 	 * @param  int  $post_id
+	 * @param  mixed $shadow_character
+	 * @param  bool $force Force the calculation to run
 	 * @return void
 	 */
-	public function sync_actors( $post_id, $shadow_character ) {
+	public function sync_actors( $post_id, $shadow_character, $force = false ) {
 		$actors = get_post_meta( $post_id, 'lezchars_actor', true );
 		if ( ! $actors ) {
 			return;
@@ -139,7 +143,7 @@ class Calculations {
 
 			// Run the calculations if the relationship was established.
 			if ( in_array( (int) $shadow_character->term_id, $actor_terms, true ) ) {
-				( new Actors_Calculations() )->do_the_math( $actor );
+				( new Actors_Calculations() )->do_the_math( $actor, $force );
 			} else {
 				// Log the failure and schedule a retry
 				lwtv_plugin()->error_log( 'character-calc', "Failed to establish shadow taxonomy for actor {$actor}, scheduling retry" );
@@ -150,10 +154,17 @@ class Calculations {
 
 	/**
 	 * Does the Math
-	 * @param  int $character_id Post ID of character
-	 * @return n/a
+	 *
+	 * @param  int  $character_id Post ID of character
+	 * @param  bool $force        Force the calculation to run
+	 * @return void
 	 */
-	public function do_the_math( $character_id ) {
+	public function do_the_math( $character_id, $force = false ): void {
+
+		// If force is true, destroy any cached data before recalculation
+		if ( $force ) {
+			lwtv_plugin()->invalidate_statistics_cache( 'post_type_characters', $character_id );
+		}
 
 		if ( ! isset( $character_id ) || CPT_Characters::SLUG !== get_post_type( $character_id ) ) {
 			// delete the meta fields
@@ -173,9 +184,9 @@ class Calculations {
 		$shadow_character = \Shadow_Taxonomy\Core\get_associated_term( $character_id, CPT_Characters::SHADOW_TAXONOMY );
 
 		// Update Show data
-		self::sync_shows( $character_id, $shadow_character );
+		self::sync_shows( $character_id, $shadow_character, $force );
 
 		// Update Actor data
-		self::sync_actors( $character_id, $shadow_character );
+		self::sync_actors( $character_id, $shadow_character, $force );
 	}
 }

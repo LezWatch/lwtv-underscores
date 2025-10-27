@@ -307,6 +307,9 @@ window.CMBAP = window.CMBAP || {};
 		open: function() {
 			this.$response.html('');
 
+			// Clear the search input field to prevent cross-contamination between field instances
+			this.$input.val('');
+
 			// WP, why you so dumb? (why isn't text in its own dom node?)
 			this.$el.show().find( '#find-posts-head' ).html( this.findtxt + '<div id="find-posts-close"></div>' );
 
