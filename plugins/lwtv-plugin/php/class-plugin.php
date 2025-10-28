@@ -151,7 +151,6 @@ class Plugin {
 			_Components\Debugger::class,
 			_Components\Features::class,
 			_Components\Grading::class,
-			_Components\Health::class,
 			_Components\Of_The_Day::class,
 			_Components\Queeries::class,
 			_Components\Rest_API::class,
