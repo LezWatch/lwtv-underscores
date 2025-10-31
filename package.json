@@ -1,6 +1,6 @@
 {
   "name": "lwtv-underscores",
-  "version": "6.5.3",
+  "version": "6.5.4",
   "description": "LezWatch.TV Custom Theme.",
   "main": "index.js",
   "workspaces": [

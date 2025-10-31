@@ -3,6 +3,7 @@ import { PluginDocumentSettingPanel } from '@wordpress/editor';
 import { useSelect } from '@wordpress/data';
 import { useState, useEffect } from '@wordpress/element';
 import { Button, PanelRow, Spinner } from '@wordpress/components';
+import CopyIcon from '../../_common/svg/copy';
 
 export default function Render() {
 	const postType = useSelect((select) =>
@@ -21,7 +22,35 @@ export default function Render() {
 	const [isLoading, setIsLoading] = useState(true);
 	const [error, setError] = useState(null);
 	const [refreshCounter, setRefreshCounter] = useState(0);
+	const [showToast, setShowToast] = useState(false);
 	const siteURL = window.location.origin;
+
+	// Handle toast visibility with DOM manipulation
+	useEffect(() => {
+		if (showToast) {
+			const toast = document.createElement('div');
+			toast.id = 'lwtv-copy-toast';
+			toast.textContent = 'Copied!';
+			toast.style.cssText =
+				'position: fixed; top: 50px; right: 50px; background-color: #cb3e85; color: #fff; padding: 12px 16px; border-radius: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.3); z-index: 999999; font-size: 13px; font-weight: 500; pointer-events: none;';
+
+			document.body.appendChild(toast);
+
+			const timer = setTimeout(() => {
+				if (document.body.contains(toast)) {
+					document.body.removeChild(toast);
+				}
+				setShowToast(false);
+			}, 2500);
+
+			return () => {
+				clearTimeout(timer);
+				if (document.body.contains(toast)) {
+					document.body.removeChild(toast);
+				}
+			};
+		}
+	}, [showToast]);
 
 	useEffect(() => {
 		if (
@@ -60,6 +89,39 @@ export default function Render() {
 
 	const handleRefresh = () => {
 		setRefreshCounter((prevCounter) => prevCounter + 1);
+	};
+
+	const handleCopy = async (textToCopy) => {
+		try {
+			// eslint-disable-next-line no-undef
+			if (
+				// eslint-disable-next-line no-undef
+				typeof navigator !== 'undefined' &&
+				// eslint-disable-next-line no-undef
+				navigator.clipboard &&
+				// eslint-disable-next-line no-undef
+				navigator.clipboard.writeText
+			) {
+				// eslint-disable-next-line no-undef
+				await navigator.clipboard.writeText(textToCopy);
+			} else {
+				// Fallback for older browsers
+				const textArea = document.createElement('textarea');
+				textArea.value = textToCopy;
+				textArea.style.position = 'fixed';
+				textArea.style.opacity = '0';
+				document.body.appendChild(textArea);
+				textArea.select();
+				document.execCommand('copy');
+				document.body.removeChild(textArea);
+			}
+			setShowToast(true);
+			setTimeout(() => {
+				setShowToast(false);
+			}, 2500);
+		} catch (err) {
+			// Silently fail if copy doesn't work
+		}
 	};
 
 	const filteredPersonData = (personData) => {
@@ -173,10 +235,78 @@ export default function Render() {
 																					)}
 																			</strong>
 																			:{' '}
-																			<code>
-																				{innerValue ||
-																					'empty'}
-																			</code>
+																			<span
+																				style={{
+																					display:
+																						'inline-flex',
+																					alignItems:
+																						'center',
+																					gap: '4px',
+																				}}
+																			>
+																				{innerValue ? (
+																					<span
+																						className="wrapping-code"
+																						role="button"
+																						tabIndex={
+																							0
+																						}
+																						onClick={() =>
+																							handleCopy(
+																								innerValue
+																							)
+																						}
+																						onKeyDown={(
+																							e
+																						) => {
+																							if (
+																								e.key ===
+																									'Enter' ||
+																								e.key ===
+																									' '
+																							) {
+																								e.preventDefault();
+																								handleCopy(
+																									innerValue
+																								);
+																							}
+																						}}
+																						style={{
+																							cursor: 'pointer',
+																						}}
+																						title="Click to copy"
+																					>
+																						{
+																							innerValue
+																						}
+																					</span>
+																				) : (
+																					<code className="wrapping-code">
+																						empty
+																					</code>
+																				)}
+																				{innerValue && (
+																					<Button
+																						size="small"
+																						variant="tertiary"
+																						onClick={() =>
+																							handleCopy(
+																								innerValue
+																							)
+																						}
+																						title="Copy to clipboard"
+																						style={{
+																							minWidth:
+																								'auto',
+																							padding:
+																								'2px 4px',
+																							height: 'auto',
+																						}}
+																					>
+																						<CopyIcon />
+																					</Button>
+																				)}
+																			</span>
 																		</li>
 																	)
 																)}

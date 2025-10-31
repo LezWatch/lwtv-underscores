@@ -17,7 +17,7 @@ class Statistics_Optimized implements Component, Templater {
 	 * Versions of scripts.
 	 */
 	const VERSIONING = array(
-		'chartjs'                   => '4.5.0',
+		'chartjs'                   => '4.5.1',
 		'chartjs-plugin-annotation' => '3.1.0',
 		'palette'                   => '1.0.0',
 		'tablesorter'               => '2.32.0',

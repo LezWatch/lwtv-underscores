@@ -3,7 +3,7 @@
 	"apiVersion": 3,
 	"name": "lwtv/wikidata-actor",
 	"textdomain": "lwtv-wikidata-actor",
-	"version": "0.0.1",
+	"version": "1.0.0",
 	"title": "WikiData Check for Actors",
 	"category": "lezwatch",
 	"icon": "info-outline",
