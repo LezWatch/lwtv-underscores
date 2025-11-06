@@ -2,7 +2,7 @@
 export PATH="/usr/local/bin:/usr/bin:/bin"
 
 cd /home/wp_bg3hrq/lezwatchtv.com || {
-	/usr/bin/curl -fsS -m 10 --retry 5 -o /dev/null https://uptime.ipstenu.com/api/push/YOLHUVeoryV7I5GP?status=down&msg=debug-directory-failed
+	/usr/bin/curl -fsS -m 10 --retry 5 -o /dev/null https://uptime.ipstenu.com/api/push/YOLHUVeoryV7I5GP?status=down&msg=ontheten-directory-failed
 	exit 1
 }
 
