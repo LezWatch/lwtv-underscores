@@ -392,8 +392,8 @@ class Actors {
 			$check_wiki = $this->process_actor_wikidata( $actor_id, $wiki_claims );
 
 			foreach ( $check_ours as $item => $data ) {
-				$data                = $this->remove_www( $data );
-				$check_wiki[ $item ] = $this->remove_www( $check_wiki[ $item ] );
+				$data                = strtolower( $this->remove_www( $data ) );
+				$check_wiki[ $item ] = strtolower( $this->remove_www( $check_wiki[ $item ] ) );
 
 				if ( $data === $check_wiki[ $item ] ) {
 					$result = 'match';

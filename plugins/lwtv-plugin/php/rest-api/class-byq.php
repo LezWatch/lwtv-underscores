@@ -129,6 +129,24 @@ class BYQ {
 	 * and that's stupid
 	 */
 	public function list_of_dead_characters( $dead_chars_loop = null ) {
+		global $wp_current_filter;
+		// Prevent running during actor save operations - actors don't affect death data
+		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
+			return array();
+		}
+
+		// Death data is character-only. Only allow this during character saves or normal operations.
+		// Skip during actor/show saves or any other post type saves.
+		if ( ! empty( $wp_current_filter ) && is_array( $wp_current_filter ) ) {
+			foreach ( $wp_current_filter as $hook ) {
+				// If we're in a save_post hook that's NOT for characters, skip it
+				if ( strpos( $hook, 'save_post' ) === 0 && 'save_post_post_type_characters' !== $hook ) {
+					lwtv_plugin()->error_log( 'byq-debug', 'Skipping list_of_dead_characters during non-character save operation (hook: ' . $hook . ')' );
+					return array();
+				}
+			}
+		}
+
 		$death_list_array = array();
 
 		// If no loop provided, get all dead characters efficiently
