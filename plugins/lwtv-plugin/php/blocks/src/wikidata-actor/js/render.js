@@ -105,15 +105,10 @@ export default function Render() {
 				// eslint-disable-next-line no-undef
 				await navigator.clipboard.writeText(textToCopy);
 			} else {
-				// Fallback for older browsers
-				const textArea = document.createElement('textarea');
-				textArea.value = textToCopy;
-				textArea.style.position = 'fixed';
-				textArea.style.opacity = '0';
-				document.body.appendChild(textArea);
-				textArea.select();
-				document.execCommand('copy');
-				document.body.removeChild(textArea);
+				// eslint-disable-next-line no-undef, no-alert
+				window.alert(
+					'Copy to clipboard is not supported in your browser. Please copy manually.'
+				);
 			}
 			setShowToast(true);
 			setTimeout(() => {
