@@ -1,0 +1,230 @@
+## Main Theme PHP Files
+
+Contains all primary PHP files located in the theme's root directory. These files define the main templates, structure, and entry points for the WordPress theme.
+
+PHP Files:
+
+├── 404.php
+├── archive-post_type_actors.php
+├── archive-post_type_characters.php
+├── archive-post_type_shows.php
+├── archive.php
+├── attachment.php
+├── comments.php
+├── content.php
+├── embed.php
+├── footer.php
+├── functions.php
+├── header.php
+├── index.php
+├── page-fullwidth.php
+├── page-home.php
+├── page.php
+├── rss-otd.php
+├── search.php
+├── searchform.php
+├── sidebar.php
+├── single-post_type_actors.php
+├── single-post_type_characters.php
+├── single-post_type_shows.php
+├── single.php
+└── taxonomy.php
+
+CSS Files:
+
+├── custom-editor-style.css - Custom editor styles
+├── style-editor.css - Editor styles (compiled)
+├── style-editor.css.map - Editor styles source map
+├── style-editor.min.css - Editor styles (minified)
+├── style-editor.scss - Editor styles source
+├── style.css - Main theme stylesheet (compiled)
+├── style.css.map - Main stylesheet source map
+├── style.min.css - Main theme stylesheet (minified)
+└── style.scss - Main theme stylesheet source
+
+## Images - `/images/`
+
+Contains all image assets used throughout the theme, including icons, banners, and graphics.
+
+Directory Structure:
+├── how-to-use-slack-banner.jpg
+├── lezwatch-logo-icon.png
+├── lwtv-toaster.svg
+├── mystery-person.jpg
+├── mystery-show.png
+├── mystery-woman.jpg
+├── rose.gif
+├── rose-orig.gif
+├── Slack-logo-RGB.png
+├── Slack-logo-inverted-RGB.png
+└── square.svg
+
+## Page Templates - `/page-templates/`
+
+Custom page templates.
+
+├── statistics.php
+└── thisyear.php
+
+## Sass Files - `/scss/`
+
+Contains all Sass (.scss) files used for theme styling, including partials and addon modules.
+
+├── _dynamic.scss - Dynamic styles
+├── _header.scss - Header styles
+├── _layout.scss - Layout styles
+├── _variables.scss - Sass variables
+├── addons/ - Plugin-specific styles
+│   ├── _bootstrap.scss - Bootstrap integration
+│   ├── _calendar.scss - Calendar styles
+│   ├── _facetwp.scss - FacetWP styles
+│   ├── _forms.scss - Form styles
+│   ├── _relatedposts.scss - Related posts styles
+│   ├── _searchwp.scss - SearchWP styles
+│   ├── _socialshare.scss - Social sharing styles
+│   └── _stats.scss - Statistics styles
+└── partials/ - Style partials
+    ├── _colors-dark.scss - Dark mode colors
+    ├── _colors.scss - Color definitions
+    ├── _comments.scss - Comment styles
+    ├── _fonts.scss - Font definitions
+    ├── _helpers.scss - Helper utilities
+    ├── _mixins.scss - Sass mixins
+    ├── _navcolors.scss - Navigation colors
+    ├── _responsive.scss - Responsive breakpoints
+    ├── _symbolicons-map.scss - Symbolicons mapping
+    └── _symbolicons.scss - Symbolicons styles
+
+## Include Files - `/inc/`
+
+Contains theme functionality, widgets, and helper files.
+
+├── author-box.php - Author box functionality
+├── class-wp-bootstrap-4-navwalker.php - Bootstrap 4 navigation walker
+├── class-wp-bootstrap-5-navwalker.php - Bootstrap 5 navigation walker
+├── custom-header.php - Custom header support
+├── customizer.php - Theme customizer settings
+├── extras.php - Additional theme functions
+├── template-tags.php - Template tag functions
+├── walker-comment.php - Custom comment walker
+├── wp_bootstrap_pagination.php - Bootstrap pagination
+├── bootstrap/ - Bootstrap library files
+│   ├── css/ - Bootstrap CSS files (grid, reboot, utilities, main)
+│   └── js/ - Bootstrap JavaScript files (bundle, esm, main)
+├── css/ - Theme admin styles
+│   ├── style-admin.css - Admin styles (compiled)
+│   └── style-admin.scss - Admin styles source
+└── js/ - Theme JavaScript files
+    ├── a11y.js - Accessibility enhancements
+    ├── bootstrap-color-mode.js - Bootstrap color mode (unminified)
+    ├── bootstrap-color-mode.min.js - Bootstrap color mode (minified)
+    ├── customizer.js - Customizer JavaScript (unminified)
+    ├── customizer.min.js - Customizer JavaScript (minified)
+    ├── gdpr.js - GDPR compliance
+    ├── lwtv-theme-scripts.js - Main theme scripts
+    ├── navigation.js - Navigation functionality
+    ├── overlay-linkable.js - Overlay link functionality
+    ├── popper.min.js - Popper.js library
+    ├── popper.min.js.map - Popper.js source map
+    ├── searchbox.js - Search box functionality
+    ├── skip-link-focus-fix.js - Accessibility skip links
+    └── yikes-theme-scripts.min.js - Minified theme scripts
+└── widgets/ - Theme widgets
+    ├── calendar-widget.php - Calendar widget
+    ├── character-widget.php - Character widget
+    ├── filter-bottom-widget.php - Bottom filter widget
+    ├── filter-top-widget.php - Top filter widget
+    ├── my-widget.php - Custom widget
+    ├── otd-widget.php - "Of The Day" widget
+    ├── show-widget.php - Show widget
+    └── social-nav-widget.php - Social navigation widget
+
+## Plugin Specific files
+
+The following are custom templates for specific plugins
+
+### Search WP:
+
+├── searchwp-live-ajax-search/
+│   └── live-search-results.php - Live search results template
+
+├── searchwp-modal-form/
+│   └── lwtv.php - SearchWP modal form template
+
+## Template Parts - `/template-parts/`
+
+Contains all template part files and subfolders used for modular theme structure.
+
+├── content/ - Content templates
+│   ├── front-page-posts.php - Front page posts display
+│   ├── loved.php - "Loved" content template
+│   ├── none.php - No content found template
+│   ├── page.php - Page content template
+│   ├── post_type_actors.php - Actor post type template
+│   ├── post_type_characters.php - Character post type template
+│   ├── post_type_shows.php - Show post type template
+│   ├── posts.php - Posts archive template
+│   ├── search.php - Search results template
+│   └── single.php - Single post template
+├── embed/ - Embed templates
+│   └── content-post_type_shows.php - Show embed template
+├── excerpt/ - Excerpt templates
+│   ├── actors.php - Actor excerpt
+│   ├── characters.php - Character excerpt
+│   └── shows.php - Show excerpt
+├── header/ - Header templates
+│   ├── dark-mode.php - Dark mode toggle
+│   ├── last-death.php - Last death display
+│   ├── lcp.php - Largest Contentful Paint optimization
+│   ├── navbar.php - Navigation bar
+│   ├── searchbox-searchwp.php - SearchWP search box
+│   ├── searchbox.php - Standard search box
+│   └── svg.php - SVG icons
+├── overlays/ - Overlay templates
+│   ├── form-suggest-edit.php - Suggest edit form overlay
+│   ├── related-articles.php - Related articles overlay
+│   └── statistics-actors.php - Actor statistics overlay
+├── partials/ - Partial templates
+│   ├── actors/ - Actor partials
+│   │   ├── additional.php - Additional actor information
+│   │   ├── characters.php - Actor's characters
+│   │   ├── gender-sexuality.php - Gender and sexuality display
+│   │   ├── life.php - Life information
+│   │   ├── links.php - External links
+│   │   ├── new.php - New actor indicator
+│   │   └── social.php - Social media links
+│   ├── characters/ - Character partials
+│   │   ├── actors.php - Character's actors
+│   │   ├── card-cliches.php - Cliche card display
+│   │   ├── gender-sexuality.php - Gender and sexuality display
+│   │   └── shows.php - Character's shows
+│   ├── shows/ - Show partials
+│   │   ├── airdates.php - Air dates display
+│   │   ├── card-altnames.php - Alternative names card
+│   │   ├── card-intersections.php - Intersectionality card
+│   │   ├── card-ratings.php - Ratings card
+│   │   ├── card-tropes.php - Tropes card
+│   │   ├── card-worthit.php - "Worth It" card
+│   │   ├── characters.php - Show's characters
+│   │   ├── like-this.php - "Shows like this" display
+│   │   ├── new.php - New show indicator
+│   │   ├── warning.php - Content warning
+│   │   └── ways-to-watch.php - Ways to watch display
+│   ├── image-headshot.php - Headshot image display
+│   ├── image-show.php - Show image display
+│   ├── related-articles.php - Related articles display
+│   └── sidebar-slack.php - Slack sidebar widget
+├── related-posts/ - Related posts templates
+│   └── lwtv-cards.php - LWTV card display for related posts
+└── sidebar/ - Sidebar templates
+    ├── post_type_actors.php - Actor sidebar
+    ├── post_type_characters.php - Character sidebar
+    └── post_type_shows.php - Show sidebar
+
+## Other Files
+
+├── screenshot.png - Theme screenshot
+├── README.md - Theme readme
+├── languages/ - Translation files
+    ├── readme.txt - Translation readme
+    └── yikes-starter.pot - Translation template

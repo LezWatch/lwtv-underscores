@@ -41,7 +41,7 @@ jobs:
       - name: Build it
         run: npm run build
 
-      - name: Deploy to LezWatch.TV Production Server
+      - name: Deploy theme to LezWatch.TV Production Server
         uses: easingthemes/ssh-deploy@main
         env:
           SSH_PRIVATE_KEY: ${{ secrets.LWTV_SSH_KEY }}
@@ -49,7 +49,19 @@ jobs:
           REMOTE_HOST: ${{ secrets.LWTV_HOST }}
           REMOTE_USER: ${{ secrets.LWTV_USER }}
           TARGET: /home/${{ secrets.LWTV_USER }}/${{ secrets.LWTV_DOMAIN }}/wp-content/themes/lwtv-underscores
-          EXCLUDE: " /_build_scripts/, /.cursor/, /.git/, /.github/, /.husky/, /.sass-cache/, /.vscode/, /cron/, /docs/, /node_modules/, /vendor/, webpack.config.js, .browserslistrc, .gitignore, .npmrc, .nvmrc, .ruby-version, composer.json, composer.lock, package-lock.json, package.json, phpcs.xml.dist, /plugins/lwtv-plugin/node_modules/, /plugins/lwtv-plugin/vendor/, /plugins/lwtv-plugin/.gitignore, /plugins/lwtv-plugin/composer.json, /plugins/lwtv-plugin/composer.lock, /plugins/lwtv-plugin/package-lock.json, /plugins/lwtv-plugin/package.json, /plugins/lwtv-plugin/php/blocks/node_modules/, /plugins/lwtv-plugin/php/blocks/.gitignore, /plugins/lwtv-plugin/php/blocks/package-lock.json, /plugins/lwtv-plugin/php/blocks/package.json, /plugins/lwtv-plugin/php/blocks/.eslint, /plugins/lwtv-plugin/php/src/"
+          EXCLUDE: "/_build_scripts/, /.cursor/, /.git/, /.github/, /.husky/, /.sass-cache/, /.vscode/, /cron/, /docs/, /node_modules/, /vendor/, .gitignore, .npmrc, .nvmrc, composer.json, composer.lock, package-lock.json, package.json, phpcs.xml.dist, /plugins/lwtv-plugin/node_modules/, /plugins/lwtv-plugin/vendor/, /plugins/lwtv-plugin/.gitignore, /plugins/lwtv-plugin/composer.json, /plugins/lwtv-plugin/composer.lock, /plugins/lwtv-plugin/package-lock.json, /plugins/lwtv-plugin/package.json, /plugins/lwtv-plugin/php/blocks/node_modules/, /plugins/lwtv-plugin/php/blocks/.gitignore, /plugins/lwtv-plugin/php/blocks/package-lock.json, /plugins/lwtv-plugin/php/blocks/package.json, /plugins/lwtv-plugin/php/blocks/.eslint, /plugins/lwtv-plugin/php/src/"
           SCRIPT_AFTER: |
-            cd ~/${{ secrets.LWTV_DOMAIN }}
-            wp nginx-helper purge-all
+            /usr/bin/wp lwtv nginx-helper purge-all --path=/home/${{ secrets.LWTV_USER }}/lezwatchtv.com/
+
+      - name: Deploy Cron Jobs to LezWatch.TV Production Server
+        uses: easingthemes/ssh-deploy@main
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.LWTV_SSH_KEY }}
+          ARGS: "-rlgoDzvc -i"
+          REMOTE_HOST: ${{ secrets.LWTV_HOST }}
+          REMOTE_USER: ${{ secrets.LWTV_USER }}
+          SOURCE: ./cron
+          TARGET: /home/${{ secrets.LWTV_USER }}/cron
+          SCRIPT_AFTER: |
+            chmod +x /home/${{ secrets.LWTV_USER }}/cron/*.sh
+

@@ -1,0 +1,103 @@
+
+## Other Files
+
+├── composer.json - Composer dependencies
+├── composer.lock - Composer lock file
+├── Gruntfile.js - Grunt build configuration
+├── package.json - NPM dependencies
+├── package-lock.json - NPM lock file
+├── phpcs.xml.dist - PHP CodeSniffer configuration
+
+## Build Scripts - `/_build_scripts/`
+
+Contains build and compilation scripts for the theme.
+
+├── postbuild.js - Post-build processing
+├── symbolicons.js - Symbolicons build script
+├── versioning.js - Version management script
+├── webpack.config.js - Webpack configuration
+├── tmp-icons/ - Temporary icon processing
+│   ├── buildsvgs.js - SVG build script
+│   ├── package.json - Icon build dependencies
+│   ├── package-lock.json - Lock file
+│   ├── README.md - Icon build documentation
+│   ├── svgo-remove-all-comments.js - SVG comment removal
+│   ├── svgo.config.js - SVGO configuration
+│   └── symbolicons/ - Symbolicons source and output
+│       ├── input/ - Source SVG icons
+│       └── output/ - Generated icon files
+│           ├── sprite.css.svg - CSS sprite
+│           ├── sprite.symbol.svg - Symbol sprite
+│           ├── symbolicons-map.scss - Icon map
+│           ├── symbolicons.json - Icon data
+│           └── symbolicons.scss - Icon styles
+└── webpackdist/ - Webpack build output
+    ├── css/ - Compiled CSS
+    │   ├── style-editor-rtl.css - Editor RTL styles
+    │   ├── style-editor.js - Editor JS bundle
+    │   ├── style-editor.min.css - Editor minified styles
+    │   ├── style-rtl.css - Main RTL styles
+    │   ├── style.js - Main JS bundle
+    │   └── style.min.css - Main minified styles
+    └── js/ - Compiled JavaScript
+        ├── bootstrap-color-mode.min.js - Bootstrap color mode
+        ├── bootstrap-color-mode.min.js.LICENSE.txt - License
+        ├── customizer.min.js - Customizer scripts
+        └── yikes-theme-scripts.min.js - Theme scripts
+
+## Cursor `./cursor/rules/`
+
+Files to teach the AI how to act. It 'mostly' works.
+
+├── cursor_rules.mdc
+└── wordpress.mdc
+
+## Github `/.github/`
+
+├── ISSUE_TEMPLATE
+|   ├── BUG_REPORT.md
+├── workflows
+|   ├── development.yaml
+|   └── production.yaml
+├── CODE_OF_CONDUCT.md - Code of conduct
+├── SECURITY.md - Security policy
+├── dependabot.yml
+├── LICENSE - Theme license
+├── pull_request_template.md
+└── SECURITY.md
+
+## Husky `/.husky/`
+
+├── _ -- Subfolder for personal templates, is ignored
+└── pre-commit - Pre commit hooks
+
+## VSCode `/.vscode/`
+
+Custom settings for VSCode users.
+
+├── settings.json
+
+## Cron `/cron/`
+
+These files live on `~/cron/` on the production server.
+
+├── README.md - Cron documentation
+├── debug.sh - Debug cron job
+├── hourly.sh - Hourly cron job
+├── lists.sh - Lists cron job
+├── ontheten.sh - "On the ten" cron job
+├── otd.sh - "Of the day" cron job
+└── tvmaze.sh - TVMaze sync cron job
+
+## Documentation `/docs/`
+
+Contains documentation files.
+
+├── github/
+│   ├── actions.md - How to set up Github actions
+│   ├── secrets.md - What the secrets short-codes are
+├── structure/ - Files documenting the purpose of all the files in the repository.
+│   ├── lwtv-plugin.txt - The custom plugin
+│   ├── theme.txt - Theme files
+│   ├── tools.txt (this file)
+└── structure.txt - Parent file for the structure files.

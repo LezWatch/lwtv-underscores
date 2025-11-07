@@ -1,0 +1,9 @@
+## Structure
+
+The structure file is a file to record all the files in this repository and their purpose.
+
+Due to the size, we have split up the files:
+
+* docs/structure/theme.txt - All theme related files
+* docs/structure/lwtv-plugin.txt - All custom plugin files (/plugins/lwtv-plugin/)
+* docs/structure/tools.txt - Misc files or files for building
