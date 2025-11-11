@@ -6,7 +6,7 @@ UUID="n_XK3iMolnf23y6C"
 
 # Define the path to the ping.sh script
 # Assuming it's in the same directory.
-PING_SCRIPT="./ping.sh"
+PING_SCRIPT="$(dirname "$0")/ping.sh"
 
 cd /home/wp_bg3hrq/lezwatchtv.com || {
 	$PING_SCRIPT "$UUID" "down" "lists-directory-failed"
