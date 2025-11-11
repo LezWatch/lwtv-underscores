@@ -56,7 +56,7 @@ jobs:
 
   build-symbolicons:
     needs: deploy-website
-    uses: LezWatch/symbolicons-private/.github/workflows/production.yaml@production
+    uses: LezWatch/symbolicons-private/.github/workflows/production.yml@production
     with:
       branch: 'production'
     secrets: inherit
