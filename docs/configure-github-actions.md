@@ -6,8 +6,8 @@ Since we call workflows in other projects, go to `https://github.com/LezWatch/lw
 
 And make sure this is selected:
 
-**Allow LezWatch actions and reusable workflows**
-Any action or reusable workflow defined in a repository within LezWatch can be used.
+**Allow all actions and reusable workflows**
+Any action or reusable workflow can be used, regardless of who authored it or where it is defined.
 
 ## A reminder on how to configure deployment secrets when the server changes.
 
