@@ -10,7 +10,7 @@ if ( ! defined( 'LWTV_THEME_VERSION' ) ) {
 	$versions = array();
 
 	// Automatically updated by the build script. Update ./package.json to change this.
-	$versions['lwtv-underscores'] = '6.5.4';
+	$versions['lwtv-underscores'] = '6.5.5';
 
 	// Automatically updated by the build script.
 	$versions['bootstrap'] = '5.3.8';

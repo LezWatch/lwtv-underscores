@@ -1,0 +1,2362 @@
+[
+  {
+    "filename": "abacus.svg",
+    "cleanname": "abacus",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-abacus\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'abacus.svg', icon: 'svg-abacus' );"
+    }
+  },
+  {
+    "filename": "address-card.svg",
+    "cleanname": "address-card",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-address-card\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'address-card.svg', icon: 'svg-address-card' );"
+    }
+  },
+  {
+    "filename": "alarm-snooze.svg",
+    "cleanname": "alarm-snooze",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-alarm-snooze\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'alarm-snooze.svg', icon: 'svg-alarm-snooze' );"
+    }
+  },
+  {
+    "filename": "alien.svg",
+    "cleanname": "alien",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-alien\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'alien.svg', icon: 'svg-alien' );"
+    }
+  },
+  {
+    "filename": "anchor.svg",
+    "cleanname": "anchor",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-anchor\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'anchor.svg', icon: 'svg-anchor' );"
+    }
+  },
+  {
+    "filename": "apple-bite.svg",
+    "cleanname": "apple-bite",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-apple-bite\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'apple-bite.svg', icon: 'svg-apple-bite' );"
+    }
+  },
+  {
+    "filename": "arrow-swap.svg",
+    "cleanname": "arrow-swap",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-arrow-swap\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'arrow-swap.svg', icon: 'svg-arrow-swap' );"
+    }
+  },
+  {
+    "filename": "art-palette.svg",
+    "cleanname": "art-palette",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-art-palette\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'art-palette.svg', icon: 'svg-art-palette' );"
+    }
+  },
+  {
+    "filename": "asteroid.svg",
+    "cleanname": "asteroid",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-asteroid\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'asteroid.svg', icon: 'svg-asteroid' );"
+    }
+  },
+  {
+    "filename": "award-academy.svg",
+    "cleanname": "award-academy",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-award-academy\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'award-academy.svg', icon: 'svg-award-academy' );"
+    }
+  },
+  {
+    "filename": "baby_bottle.svg",
+    "cleanname": "baby_bottle",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-baby_bottle\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'baby_bottle.svg', icon: 'svg-baby_bottle' );"
+    }
+  },
+  {
+    "filename": "baby.svg",
+    "cleanname": "baby",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-baby\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'baby.svg', icon: 'svg-baby' );"
+    }
+  },
+  {
+    "filename": "back.svg",
+    "cleanname": "back",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-back\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'back.svg', icon: 'svg-back' );"
+    }
+  },
+  {
+    "filename": "backpack.svg",
+    "cleanname": "backpack",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-backpack\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'backpack.svg', icon: 'svg-backpack' );"
+    }
+  },
+  {
+    "filename": "badge.svg",
+    "cleanname": "badge",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-badge\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'badge.svg', icon: 'svg-badge' );"
+    }
+  },
+  {
+    "filename": "bag-dollar.svg",
+    "cleanname": "bag-dollar",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-bag-dollar\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'bag-dollar.svg', icon: 'svg-bag-dollar' );"
+    }
+  },
+  {
+    "filename": "baseball-sport.svg",
+    "cleanname": "baseball-sport",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-baseball-sport\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'baseball-sport.svg', icon: 'svg-baseball-sport' );"
+    }
+  },
+  {
+    "filename": "beer-mug.svg",
+    "cleanname": "beer-mug",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-beer-mug\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'beer-mug.svg', icon: 'svg-beer-mug' );"
+    }
+  },
+  {
+    "filename": "bell.svg",
+    "cleanname": "bell",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-bell\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'bell.svg', icon: 'svg-bell' );"
+    }
+  },
+  {
+    "filename": "blind-walking.svg",
+    "cleanname": "blind-walking",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-blind-walking\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'blind-walking.svg', icon: 'svg-blind-walking' );"
+    }
+  },
+  {
+    "filename": "blocks.svg",
+    "cleanname": "blocks",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-blocks\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'blocks.svg', icon: 'svg-blocks' );"
+    }
+  },
+  {
+    "filename": "bluesky.svg",
+    "cleanname": "bluesky",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-bluesky\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'bluesky.svg', icon: 'svg-bluesky' );"
+    }
+  },
+  {
+    "filename": "body-swap.svg",
+    "cleanname": "body-swap",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-body-swap\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'body-swap.svg', icon: 'svg-body-swap' );"
+    }
+  },
+  {
+    "filename": "bomb.svg",
+    "cleanname": "bomb",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-bomb\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'bomb.svg', icon: 'svg-bomb' );"
+    }
+  },
+  {
+    "filename": "book-dead.svg",
+    "cleanname": "book-dead",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-book-dead\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'book-dead.svg', icon: 'svg-book-dead' );"
+    }
+  },
+  {
+    "filename": "book.svg",
+    "cleanname": "book",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-book\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'book.svg', icon: 'svg-book' );"
+    }
+  },
+  {
+    "filename": "bookmark.svg",
+    "cleanname": "bookmark",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-bookmark\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'bookmark.svg', icon: 'svg-bookmark' );"
+    }
+  },
+  {
+    "filename": "books.svg",
+    "cleanname": "books",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-books\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'books.svg', icon: 'svg-books' );"
+    }
+  },
+  {
+    "filename": "boomerang.svg",
+    "cleanname": "boomerang",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-boomerang\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'boomerang.svg', icon: 'svg-boomerang' );"
+    }
+  },
+  {
+    "filename": "brain.svg",
+    "cleanname": "brain",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-brain\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'brain.svg', icon: 'svg-brain' );"
+    }
+  },
+  {
+    "filename": "butt.svg",
+    "cleanname": "butt",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-butt\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'butt.svg', icon: 'svg-butt' );"
+    }
+  },
+  {
+    "filename": "cactus.svg",
+    "cleanname": "cactus",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-cactus\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'cactus.svg', icon: 'svg-cactus' );"
+    }
+  },
+  {
+    "filename": "cake.svg",
+    "cleanname": "cake",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-cake\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'cake.svg', icon: 'svg-cake' );"
+    }
+  },
+  {
+    "filename": "calendar-15.svg",
+    "cleanname": "calendar-15",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-calendar-15\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'calendar-15.svg', icon: 'svg-calendar-15' );"
+    }
+  },
+  {
+    "filename": "calendar-alt.svg",
+    "cleanname": "calendar-alt",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-calendar-alt\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'calendar-alt.svg', icon: 'svg-calendar-alt' );"
+    }
+  },
+  {
+    "filename": "calendar-next.svg",
+    "cleanname": "calendar-next",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-calendar-next\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'calendar-next.svg', icon: 'svg-calendar-next' );"
+    }
+  },
+  {
+    "filename": "calendar-previous.svg",
+    "cleanname": "calendar-previous",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-calendar-previous\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'calendar-previous.svg', icon: 'svg-calendar-previous' );"
+    }
+  },
+  {
+    "filename": "camcorder.svg",
+    "cleanname": "camcorder",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-camcorder\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'camcorder.svg', icon: 'svg-camcorder' );"
+    }
+  },
+  {
+    "filename": "camera-movie-stand.svg",
+    "cleanname": "camera-movie-stand",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-camera-movie-stand\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'camera-movie-stand.svg', icon: 'svg-camera-movie-stand' );"
+    }
+  },
+  {
+    "filename": "camera-movie.svg",
+    "cleanname": "camera-movie",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-camera-movie\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'camera-movie.svg', icon: 'svg-camera-movie' );"
+    }
+  },
+  {
+    "filename": "camera.svg",
+    "cleanname": "camera",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-camera\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'camera.svg', icon: 'svg-camera' );"
+    }
+  },
+  {
+    "filename": "campfire-smoke.svg",
+    "cleanname": "campfire-smoke",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-campfire-smoke\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'campfire-smoke.svg', icon: 'svg-campfire-smoke' );"
+    }
+  },
+  {
+    "filename": "campfire.svg",
+    "cleanname": "campfire",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-campfire\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'campfire.svg', icon: 'svg-campfire' );"
+    }
+  },
+  {
+    "filename": "cancel-circle.svg",
+    "cleanname": "cancel-circle",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-cancel-circle\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'cancel-circle.svg', icon: 'svg-cancel-circle' );"
+    }
+  },
+  {
+    "filename": "cannon.svg",
+    "cleanname": "cannon",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-cannon\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'cannon.svg', icon: 'svg-cannon' );"
+    }
+  },
+  {
+    "filename": "card-heart.svg",
+    "cleanname": "card-heart",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-card-heart\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'card-heart.svg', icon: 'svg-card-heart' );"
+    }
+  },
+  {
+    "filename": "card-spades.svg",
+    "cleanname": "card-spades",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-card-spades\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'card-spades.svg', icon: 'svg-card-spades' );"
+    }
+  },
+  {
+    "filename": "caret-left-circle.svg",
+    "cleanname": "caret-left-circle",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-caret-left-circle\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'caret-left-circle.svg', icon: 'svg-caret-left-circle' );"
+    }
+  },
+  {
+    "filename": "caret-left.svg",
+    "cleanname": "caret-left",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-caret-left\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'caret-left.svg', icon: 'svg-caret-left' );"
+    }
+  },
+  {
+    "filename": "caret-right-circle.svg",
+    "cleanname": "caret-right-circle",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-caret-right-circle\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'caret-right-circle.svg', icon: 'svg-caret-right-circle' );"
+    }
+  },
+  {
+    "filename": "caret-right.svg",
+    "cleanname": "caret-right",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-caret-right\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'caret-right.svg', icon: 'svg-caret-right' );"
+    }
+  },
+  {
+    "filename": "carrot.svg",
+    "cleanname": "carrot",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-carrot\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'carrot.svg', icon: 'svg-carrot' );"
+    }
+  },
+  {
+    "filename": "castle.svg",
+    "cleanname": "castle",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-castle\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'castle.svg', icon: 'svg-castle' );"
+    }
+  },
+  {
+    "filename": "cat.svg",
+    "cleanname": "cat",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-cat\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'cat.svg', icon: 'svg-cat' );"
+    }
+  },
+  {
+    "filename": "cauldron.svg",
+    "cleanname": "cauldron",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-cauldron\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'cauldron.svg', icon: 'svg-cauldron' );"
+    }
+  },
+  {
+    "filename": "cctv-camera.svg",
+    "cleanname": "cctv-camera",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-cctv-camera\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'cctv-camera.svg', icon: 'svg-cctv-camera' );"
+    }
+  },
+  {
+    "filename": "censored.svg",
+    "cleanname": "censored",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-censored\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'censored.svg', icon: 'svg-censored' );"
+    }
+  },
+  {
+    "filename": "chalkboard.svg",
+    "cleanname": "chalkboard",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-chalkboard\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'chalkboard.svg', icon: 'svg-chalkboard' );"
+    }
+  },
+  {
+    "filename": "charcoal.svg",
+    "cleanname": "charcoal",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-charcoal\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'charcoal.svg', icon: 'svg-charcoal' );"
+    }
+  },
+  {
+    "filename": "chart-bar.svg",
+    "cleanname": "chart-bar",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-chart-bar\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'chart-bar.svg', icon: 'svg-chart-bar' );"
+    }
+  },
+  {
+    "filename": "chart-pie.svg",
+    "cleanname": "chart-pie",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-chart-pie\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'chart-pie.svg', icon: 'svg-chart-pie' );"
+    }
+  },
+  {
+    "filename": "child.svg",
+    "cleanname": "child",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-child\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'child.svg', icon: 'svg-child' );"
+    }
+  },
+  {
+    "filename": "church.svg",
+    "cleanname": "church",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-church\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'church.svg', icon: 'svg-church' );"
+    }
+  },
+  {
+    "filename": "city.svg",
+    "cleanname": "city",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-city\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'city.svg', icon: 'svg-city' );"
+    }
+  },
+  {
+    "filename": "clipboard-pencil.svg",
+    "cleanname": "clipboard-pencil",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-clipboard-pencil\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'clipboard-pencil.svg', icon: 'svg-clipboard-pencil' );"
+    }
+  },
+  {
+    "filename": "clock-retro.svg",
+    "cleanname": "clock-retro",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-clock-retro\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'clock-retro.svg', icon: 'svg-clock-retro' );"
+    }
+  },
+  {
+    "filename": "clock.svg",
+    "cleanname": "clock",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-clock\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'clock.svg', icon: 'svg-clock' );"
+    }
+  },
+  {
+    "filename": "clothes-hanger.svg",
+    "cleanname": "clothes-hanger",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-clothes-hanger\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'clothes-hanger.svg', icon: 'svg-clothes-hanger' );"
+    }
+  },
+  {
+    "filename": "coffin.svg",
+    "cleanname": "coffin",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-coffin\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'coffin.svg', icon: 'svg-coffin' );"
+    }
+  },
+  {
+    "filename": "construction.svg",
+    "cleanname": "construction",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-construction\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'construction.svg', icon: 'svg-construction' );"
+    }
+  },
+  {
+    "filename": "contact-card.svg",
+    "cleanname": "contact-card",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-contact-card\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'contact-card.svg', icon: 'svg-contact-card' );"
+    }
+  },
+  {
+    "filename": "couch.svg",
+    "cleanname": "couch",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-couch\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'couch.svg', icon: 'svg-couch' );"
+    }
+  },
+  {
+    "filename": "crown.svg",
+    "cleanname": "crown",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-crown\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'crown.svg', icon: 'svg-crown' );"
+    }
+  },
+  {
+    "filename": "crutches.svg",
+    "cleanname": "crutches",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-crutches\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'crutches.svg', icon: 'svg-crutches' );"
+    }
+  },
+  {
+    "filename": "crystal-ball.svg",
+    "cleanname": "crystal-ball",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-crystal-ball\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'crystal-ball.svg', icon: 'svg-crystal-ball' );"
+    }
+  },
+  {
+    "filename": "diamond-ring.svg",
+    "cleanname": "diamond-ring",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-diamond-ring\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'diamond-ring.svg', icon: 'svg-diamond-ring' );"
+    }
+  },
+  {
+    "filename": "directions-u-turn.svg",
+    "cleanname": "directions-u-turn",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-directions-u-turn\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'directions-u-turn.svg', icon: 'svg-directions-u-turn' );"
+    }
+  },
+  {
+    "filename": "donut.svg",
+    "cleanname": "donut",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-donut\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'donut.svg', icon: 'svg-donut' );"
+    }
+  },
+  {
+    "filename": "door_open.svg",
+    "cleanname": "door_open",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-door_open\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'door_open.svg', icon: 'svg-door_open' );"
+    }
+  },
+  {
+    "filename": "dumbbell.svg",
+    "cleanname": "dumbbell",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-dumbbell\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'dumbbell.svg', icon: 'svg-dumbbell' );"
+    }
+  },
+  {
+    "filename": "earth.svg",
+    "cleanname": "earth",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-earth\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'earth.svg', icon: 'svg-earth' );"
+    }
+  },
+  {
+    "filename": "easter-egg-alt.svg",
+    "cleanname": "easter-egg-alt",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-easter-egg-alt\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'easter-egg-alt.svg', icon: 'svg-easter-egg-alt' );"
+    }
+  },
+  {
+    "filename": "elevator.svg",
+    "cleanname": "elevator",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-elevator\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'elevator.svg', icon: 'svg-elevator' );"
+    }
+  },
+  {
+    "filename": "escalator.svg",
+    "cleanname": "escalator",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-escalator\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'escalator.svg', icon: 'svg-escalator' );"
+    }
+  },
+  {
+    "filename": "eye-evil.svg",
+    "cleanname": "eye-evil",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-eye-evil\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'eye-evil.svg', icon: 'svg-eye-evil' );"
+    }
+  },
+  {
+    "filename": "face-id.svg",
+    "cleanname": "face-id",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-face-id\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'face-id.svg', icon: 'svg-face-id' );"
+    }
+  },
+  {
+    "filename": "face.svg",
+    "cleanname": "face",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-face\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'face.svg', icon: 'svg-face' );"
+    }
+  },
+  {
+    "filename": "facebook-f.svg",
+    "cleanname": "facebook-f",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-facebook-f\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'facebook-f.svg', icon: 'svg-facebook-f' );"
+    }
+  },
+  {
+    "filename": "facebook.svg",
+    "cleanname": "facebook",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-facebook\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'facebook.svg', icon: 'svg-facebook' );"
+    }
+  },
+  {
+    "filename": "female.svg",
+    "cleanname": "female",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-female\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'female.svg', icon: 'svg-female' );"
+    }
+  },
+  {
+    "filename": "fence-chainlink.svg",
+    "cleanname": "fence-chainlink",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-fence-chainlink\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'fence-chainlink.svg', icon: 'svg-fence-chainlink' );"
+    }
+  },
+  {
+    "filename": "fencing.svg",
+    "cleanname": "fencing",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-fencing\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'fencing.svg', icon: 'svg-fencing' );"
+    }
+  },
+  {
+    "filename": "film-strip.svg",
+    "cleanname": "film-strip",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-film-strip\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'film-strip.svg', icon: 'svg-film-strip' );"
+    }
+  },
+  {
+    "filename": "fingerprint.svg",
+    "cleanname": "fingerprint",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-fingerprint\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'fingerprint.svg', icon: 'svg-fingerprint' );"
+    }
+  },
+  {
+    "filename": "fingers-crossed.svg",
+    "cleanname": "fingers-crossed",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-fingers-crossed\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'fingers-crossed.svg', icon: 'svg-fingers-crossed' );"
+    }
+  },
+  {
+    "filename": "fire.svg",
+    "cleanname": "fire",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-fire\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'fire.svg', icon: 'svg-fire' );"
+    }
+  },
+  {
+    "filename": "fireplace.svg",
+    "cleanname": "fireplace",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-fireplace\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'fireplace.svg', icon: 'svg-fireplace' );"
+    }
+  },
+  {
+    "filename": "fireworks.svg",
+    "cleanname": "fireworks",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-fireworks\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'fireworks.svg', icon: 'svg-fireworks' );"
+    }
+  },
+  {
+    "filename": "fish-bones.svg",
+    "cleanname": "fish-bones",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-fish-bones\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'fish-bones.svg', icon: 'svg-fish-bones' );"
+    }
+  },
+  {
+    "filename": "fish.svg",
+    "cleanname": "fish",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-fish\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'fish.svg', icon: 'svg-fish' );"
+    }
+  },
+  {
+    "filename": "fishbowl.svg",
+    "cleanname": "fishbowl",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-fishbowl\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'fishbowl.svg', icon: 'svg-fishbowl' );"
+    }
+  },
+  {
+    "filename": "fist-raised.svg",
+    "cleanname": "fist-raised",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-fist-raised\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'fist-raised.svg', icon: 'svg-fist-raised' );"
+    }
+  },
+  {
+    "filename": "fitness-watch.svg",
+    "cleanname": "fitness-watch",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-fitness-watch\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'fitness-watch.svg', icon: 'svg-fitness-watch' );"
+    }
+  },
+  {
+    "filename": "flag-wave.svg",
+    "cleanname": "flag-wave",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-flag-wave\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'flag-wave.svg', icon: 'svg-flag-wave' );"
+    }
+  },
+  {
+    "filename": "flag.svg",
+    "cleanname": "flag",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-flag\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'flag.svg', icon: 'svg-flag' );"
+    }
+  },
+  {
+    "filename": "folder-open.svg",
+    "cleanname": "folder-open",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-folder-open\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'folder-open.svg', icon: 'svg-folder-open' );"
+    }
+  },
+  {
+    "filename": "folder-upload.svg",
+    "cleanname": "folder-upload",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-folder-upload\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'folder-upload.svg', icon: 'svg-folder-upload' );"
+    }
+  },
+  {
+    "filename": "football.svg",
+    "cleanname": "football",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-football\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'football.svg', icon: 'svg-football' );"
+    }
+  },
+  {
+    "filename": "frown.svg",
+    "cleanname": "frown",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-frown\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'frown.svg', icon: 'svg-frown' );"
+    }
+  },
+  {
+    "filename": "game-controller-alt.svg",
+    "cleanname": "game-controller-alt",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-game-controller-alt\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'game-controller-alt.svg', icon: 'svg-game-controller-alt' );"
+    }
+  },
+  {
+    "filename": "gavel.svg",
+    "cleanname": "gavel",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-gavel\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'gavel.svg', icon: 'svg-gavel' );"
+    }
+  },
+  {
+    "filename": "genderless.svg",
+    "cleanname": "genderless",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-genderless\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'genderless.svg', icon: 'svg-genderless' );"
+    }
+  },
+  {
+    "filename": "ghost.svg",
+    "cleanname": "ghost",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-ghost\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'ghost.svg', icon: 'svg-ghost' );"
+    }
+  },
+  {
+    "filename": "gifts.svg",
+    "cleanname": "gifts",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-gifts\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'gifts.svg', icon: 'svg-gifts' );"
+    }
+  },
+  {
+    "filename": "gingerbread-man.svg",
+    "cleanname": "gingerbread-man",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-gingerbread-man\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'gingerbread-man.svg', icon: 'svg-gingerbread-man' );"
+    }
+  },
+  {
+    "filename": "glasses.svg",
+    "cleanname": "glasses",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-glasses\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'glasses.svg', icon: 'svg-glasses' );"
+    }
+  },
+  {
+    "filename": "globe.svg",
+    "cleanname": "globe",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-globe\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'globe.svg', icon: 'svg-globe' );"
+    }
+  },
+  {
+    "filename": "graduation-cap.svg",
+    "cleanname": "graduation-cap",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-graduation-cap\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'graduation-cap.svg', icon: 'svg-graduation-cap' );"
+    }
+  },
+  {
+    "filename": "graph-bar.svg",
+    "cleanname": "graph-bar",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-graph-bar\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'graph-bar.svg', icon: 'svg-graph-bar' );"
+    }
+  },
+  {
+    "filename": "graph-line.svg",
+    "cleanname": "graph-line",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-graph-line\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'graph-line.svg', icon: 'svg-graph-line' );"
+    }
+  },
+  {
+    "filename": "grim-reaper.svg",
+    "cleanname": "grim-reaper",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-grim-reaper\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'grim-reaper.svg', icon: 'svg-grim-reaper' );"
+    }
+  },
+  {
+    "filename": "group.svg",
+    "cleanname": "group",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-group\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'group.svg', icon: 'svg-group' );"
+    }
+  },
+  {
+    "filename": "hand-holding-skull.svg",
+    "cleanname": "hand-holding-skull",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-hand-holding-skull\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'hand-holding-skull.svg', icon: 'svg-hand-holding-skull' );"
+    }
+  },
+  {
+    "filename": "hand-middle-finger.svg",
+    "cleanname": "hand-middle-finger",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-hand-middle-finger\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'hand-middle-finger.svg', icon: 'svg-hand-middle-finger' );"
+    }
+  },
+  {
+    "filename": "hand.svg",
+    "cleanname": "hand",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-hand\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'hand.svg', icon: 'svg-hand' );"
+    }
+  },
+  {
+    "filename": "happy.svg",
+    "cleanname": "happy",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-happy\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'happy.svg', icon: 'svg-happy' );"
+    }
+  },
+  {
+    "filename": "hat-wizard.svg",
+    "cleanname": "hat-wizard",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-hat-wizard\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'hat-wizard.svg', icon: 'svg-hat-wizard' );"
+    }
+  },
+  {
+    "filename": "heart-arrow.svg",
+    "cleanname": "heart-arrow",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-heart-arrow\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'heart-arrow.svg', icon: 'svg-heart-arrow' );"
+    }
+  },
+  {
+    "filename": "heart-circle.svg",
+    "cleanname": "heart-circle",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-heart-circle\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'heart-circle.svg', icon: 'svg-heart-circle' );"
+    }
+  },
+  {
+    "filename": "heart-download.svg",
+    "cleanname": "heart-download",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-heart-download\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'heart-download.svg', icon: 'svg-heart-download' );"
+    }
+  },
+  {
+    "filename": "heart.svg",
+    "cleanname": "heart",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-heart\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'heart.svg', icon: 'svg-heart' );"
+    }
+  },
+  {
+    "filename": "hearts.svg",
+    "cleanname": "hearts",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-hearts\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'hearts.svg', icon: 'svg-hearts' );"
+    }
+  },
+  {
+    "filename": "home.svg",
+    "cleanname": "home",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-home\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'home.svg', icon: 'svg-home' );"
+    }
+  },
+  {
+    "filename": "hospital.svg",
+    "cleanname": "hospital",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-hospital\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'hospital.svg', icon: 'svg-hospital' );"
+    }
+  },
+  {
+    "filename": "hot-tub-multi.svg",
+    "cleanname": "hot-tub-multi",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-hot-tub-multi\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'hot-tub-multi.svg', icon: 'svg-hot-tub-multi' );"
+    }
+  },
+  {
+    "filename": "hourglass.svg",
+    "cleanname": "hourglass",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-hourglass\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'hourglass.svg', icon: 'svg-hourglass' );"
+    }
+  },
+  {
+    "filename": "imdb.svg",
+    "cleanname": "imdb",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-imdb\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'imdb.svg', icon: 'svg-imdb' );"
+    }
+  },
+  {
+    "filename": "instagram.svg",
+    "cleanname": "instagram",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-instagram\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'instagram.svg', icon: 'svg-instagram' );"
+    }
+  },
+  {
+    "filename": "jason-mask.svg",
+    "cleanname": "jason-mask",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-jason-mask\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'jason-mask.svg', icon: 'svg-jason-mask' );"
+    }
+  },
+  {
+    "filename": "kayak.svg",
+    "cleanname": "kayak",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-kayak\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'kayak.svg', icon: 'svg-kayak' );"
+    }
+  },
+  {
+    "filename": "keyhole-alt.svg",
+    "cleanname": "keyhole-alt",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-keyhole-alt\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'keyhole-alt.svg', icon: 'svg-keyhole-alt' );"
+    }
+  },
+  {
+    "filename": "keynote.svg",
+    "cleanname": "keynote",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-keynote\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'keynote.svg', icon: 'svg-keynote' );"
+    }
+  },
+  {
+    "filename": "kleenex.svg",
+    "cleanname": "kleenex",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-kleenex\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'kleenex.svg', icon: 'svg-kleenex' );"
+    }
+  },
+  {
+    "filename": "lamp.svg",
+    "cleanname": "lamp",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-lamp\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'lamp.svg', icon: 'svg-lamp' );"
+    }
+  },
+  {
+    "filename": "laptop.svg",
+    "cleanname": "laptop",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-laptop\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'laptop.svg', icon: 'svg-laptop' );"
+    }
+  },
+  {
+    "filename": "leaf-angle.svg",
+    "cleanname": "leaf-angle",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-leaf-angle\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'leaf-angle.svg', icon: 'svg-leaf-angle' );"
+    }
+  },
+  {
+    "filename": "library.svg",
+    "cleanname": "library",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-library\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'library.svg', icon: 'svg-library' );"
+    }
+  },
+  {
+    "filename": "lightbulb.svg",
+    "cleanname": "lightbulb",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-lightbulb\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'lightbulb.svg', icon: 'svg-lightbulb' );"
+    }
+  },
+  {
+    "filename": "lightning.svg",
+    "cleanname": "lightning",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-lightning\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'lightning.svg', icon: 'svg-lightning' );"
+    }
+  },
+  {
+    "filename": "linkedin.svg",
+    "cleanname": "linkedin",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-linkedin\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'linkedin.svg', icon: 'svg-linkedin' );"
+    }
+  },
+  {
+    "filename": "location-target.svg",
+    "cleanname": "location-target",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-location-target\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'location-target.svg', icon: 'svg-location-target' );"
+    }
+  },
+  {
+    "filename": "lock.svg",
+    "cleanname": "lock",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-lock\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'lock.svg', icon: 'svg-lock' );"
+    }
+  },
+  {
+    "filename": "mace.svg",
+    "cleanname": "mace",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-mace\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'mace.svg', icon: 'svg-mace' );"
+    }
+  },
+  {
+    "filename": "machete.svg",
+    "cleanname": "machete",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-machete\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'machete.svg', icon: 'svg-machete' );"
+    }
+  },
+  {
+    "filename": "magic-wand.svg",
+    "cleanname": "magic-wand",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-magic-wand\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'magic-wand.svg', icon: 'svg-magic-wand' );"
+    }
+  },
+  {
+    "filename": "mail.svg",
+    "cleanname": "mail",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-mail\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'mail.svg', icon: 'svg-mail' );"
+    }
+  },
+  {
+    "filename": "mailbox.svg",
+    "cleanname": "mailbox",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-mailbox\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'mailbox.svg', icon: 'svg-mailbox' );"
+    }
+  },
+  {
+    "filename": "man-fancy.svg",
+    "cleanname": "man-fancy",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-man-fancy\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'man-fancy.svg', icon: 'svg-man-fancy' );"
+    }
+  },
+  {
+    "filename": "man-woman.svg",
+    "cleanname": "man-woman",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-man-woman\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'man-woman.svg', icon: 'svg-man-woman' );"
+    }
+  },
+  {
+    "filename": "marijuana.svg",
+    "cleanname": "marijuana",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-marijuana\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'marijuana.svg', icon: 'svg-marijuana' );"
+    }
+  },
+  {
+    "filename": "mastodon.svg",
+    "cleanname": "mastodon",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-mastodon\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'mastodon.svg', icon: 'svg-mastodon' );"
+    }
+  },
+  {
+    "filename": "medal.svg",
+    "cleanname": "medal",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-medal\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'medal.svg', icon: 'svg-medal' );"
+    }
+  },
+  {
+    "filename": "meditation.svg",
+    "cleanname": "meditation",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-meditation\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'meditation.svg', icon: 'svg-meditation' );"
+    }
+  },
+  {
+    "filename": "meh.svg",
+    "cleanname": "meh",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-meh\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'meh.svg', icon: 'svg-meh' );"
+    }
+  },
+  {
+    "filename": "men.svg",
+    "cleanname": "men",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-men\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'men.svg', icon: 'svg-men' );"
+    }
+  },
+  {
+    "filename": "microscope.svg",
+    "cleanname": "microscope",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-microscope\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'microscope.svg', icon: 'svg-microscope' );"
+    }
+  },
+  {
+    "filename": "monk.svg",
+    "cleanname": "monk",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-monk\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'monk.svg', icon: 'svg-monk' );"
+    }
+  },
+  {
+    "filename": "moon.svg",
+    "cleanname": "moon",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-moon\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'moon.svg', icon: 'svg-moon' );"
+    }
+  },
+  {
+    "filename": "mountain.svg",
+    "cleanname": "mountain",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-mountain\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'mountain.svg', icon: 'svg-mountain' );"
+    }
+  },
+  {
+    "filename": "mug-heart.svg",
+    "cleanname": "mug-heart",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-mug-heart\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'mug-heart.svg', icon: 'svg-mug-heart' );"
+    }
+  },
+  {
+    "filename": "museum.svg",
+    "cleanname": "museum",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-museum\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'museum.svg', icon: 'svg-museum' );"
+    }
+  },
+  {
+    "filename": "mushroom-cloud.svg",
+    "cleanname": "mushroom-cloud",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-mushroom-cloud\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'mushroom-cloud.svg', icon: 'svg-mushroom-cloud' );"
+    }
+  },
+  {
+    "filename": "music.svg",
+    "cleanname": "music",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-music\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'music.svg', icon: 'svg-music' );"
+    }
+  },
+  {
+    "filename": "nessie.svg",
+    "cleanname": "nessie",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-nessie\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'nessie.svg', icon: 'svg-nessie' );"
+    }
+  },
+  {
+    "filename": "neuter.svg",
+    "cleanname": "neuter",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-neuter\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'neuter.svg', icon: 'svg-neuter' );"
+    }
+  },
+  {
+    "filename": "newspaper.svg",
+    "cleanname": "newspaper",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-newspaper\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'newspaper.svg', icon: 'svg-newspaper' );"
+    }
+  },
+  {
+    "filename": "nextdoor.svg",
+    "cleanname": "nextdoor",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-nextdoor\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'nextdoor.svg', icon: 'svg-nextdoor' );"
+    }
+  },
+  {
+    "filename": "ninja.svg",
+    "cleanname": "ninja",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-ninja\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'ninja.svg', icon: 'svg-ninja' );"
+    }
+  },
+  {
+    "filename": "octopus.svg",
+    "cleanname": "octopus",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-octopus\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'octopus.svg', icon: 'svg-octopus' );"
+    }
+  },
+  {
+    "filename": "pan.svg",
+    "cleanname": "pan",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-pan\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'pan.svg', icon: 'svg-pan' );"
+    }
+  },
+  {
+    "filename": "peach.svg",
+    "cleanname": "peach",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-peach\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'peach.svg', icon: 'svg-peach' );"
+    }
+  },
+  {
+    "filename": "pen-nib.svg",
+    "cleanname": "pen-nib",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-pen-nib\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'pen-nib.svg', icon: 'svg-pen-nib' );"
+    }
+  },
+  {
+    "filename": "pencil-paintbrush-pen.svg",
+    "cleanname": "pencil-paintbrush-pen",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-pencil-paintbrush-pen\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'pencil-paintbrush-pen.svg', icon: 'svg-pencil-paintbrush-pen' );"
+    }
+  },
+  {
+    "filename": "pencil.svg",
+    "cleanname": "pencil",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-pencil\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'pencil.svg', icon: 'svg-pencil' );"
+    }
+  },
+  {
+    "filename": "pills.svg",
+    "cleanname": "pills",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-pills\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'pills.svg', icon: 'svg-pills' );"
+    }
+  },
+  {
+    "filename": "pinterest.svg",
+    "cleanname": "pinterest",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-pinterest\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'pinterest.svg', icon: 'svg-pinterest' );"
+    }
+  },
+  {
+    "filename": "pocket.svg",
+    "cleanname": "pocket",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-pocket\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'pocket.svg', icon: 'svg-pocket' );"
+    }
+  },
+  {
+    "filename": "police-box.svg",
+    "cleanname": "police-box",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-police-box\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'police-box.svg', icon: 'svg-police-box' );"
+    }
+  },
+  {
+    "filename": "police.svg",
+    "cleanname": "police",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-police\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'police.svg', icon: 'svg-police' );"
+    }
+  },
+  {
+    "filename": "policeman.svg",
+    "cleanname": "policeman",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-policeman\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'policeman.svg', icon: 'svg-policeman' );"
+    }
+  },
+  {
+    "filename": "presentation-alt.svg",
+    "cleanname": "presentation-alt",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-presentation-alt\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'presentation-alt.svg', icon: 'svg-presentation-alt' );"
+    }
+  },
+  {
+    "filename": "press-this.svg",
+    "cleanname": "press-this",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-press-this\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'press-this.svg', icon: 'svg-press-this' );"
+    }
+  },
+  {
+    "filename": "printer.svg",
+    "cleanname": "printer",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-printer\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'printer.svg', icon: 'svg-printer' );"
+    }
+  },
+  {
+    "filename": "question-square.svg",
+    "cleanname": "question-square",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-question-square\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'question-square.svg', icon: 'svg-question-square' );"
+    }
+  },
+  {
+    "filename": "radioactive.svg",
+    "cleanname": "radioactive",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-radioactive\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'radioactive.svg', icon: 'svg-radioactive' );"
+    }
+  },
+  {
+    "filename": "rainbow.svg",
+    "cleanname": "rainbow",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-rainbow\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'rainbow.svg', icon: 'svg-rainbow' );"
+    }
+  },
+  {
+    "filename": "raygun.svg",
+    "cleanname": "raygun",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-raygun\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'raygun.svg', icon: 'svg-raygun' );"
+    }
+  },
+  {
+    "filename": "reddit.svg",
+    "cleanname": "reddit",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-reddit\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'reddit.svg', icon: 'svg-reddit' );"
+    }
+  },
+  {
+    "filename": "reminder.svg",
+    "cleanname": "reminder",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-reminder\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'reminder.svg', icon: 'svg-reminder' );"
+    }
+  },
+  {
+    "filename": "reply.svg",
+    "cleanname": "reply",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-reply\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'reply.svg', icon: 'svg-reply' );"
+    }
+  },
+  {
+    "filename": "rest-in-peace.svg",
+    "cleanname": "rest-in-peace",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-rest-in-peace\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'rest-in-peace.svg', icon: 'svg-rest-in-peace' );"
+    }
+  },
+  {
+    "filename": "ribbon.svg",
+    "cleanname": "ribbon",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-ribbon\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'ribbon.svg', icon: 'svg-ribbon' );"
+    }
+  },
+  {
+    "filename": "robot.svg",
+    "cleanname": "robot",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-robot\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'robot.svg', icon: 'svg-robot' );"
+    }
+  },
+  {
+    "filename": "rocket.svg",
+    "cleanname": "rocket",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-rocket\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'rocket.svg', icon: 'svg-rocket' );"
+    }
+  },
+  {
+    "filename": "rss.svg",
+    "cleanname": "rss",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-rss\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'rss.svg', icon: 'svg-rss' );"
+    }
+  },
+  {
+    "filename": "rubber-stamp.svg",
+    "cleanname": "rubber-stamp",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-rubber-stamp\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'rubber-stamp.svg', icon: 'svg-rubber-stamp' );"
+    }
+  },
+  {
+    "filename": "running.svg",
+    "cleanname": "running",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-running\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'running.svg', icon: 'svg-running' );"
+    }
+  },
+  {
+    "filename": "safe.svg",
+    "cleanname": "safe",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-safe\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'safe.svg', icon: 'svg-safe' );"
+    }
+  },
+  {
+    "filename": "sailboat.svg",
+    "cleanname": "sailboat",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-sailboat\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'sailboat.svg', icon: 'svg-sailboat' );"
+    }
+  },
+  {
+    "filename": "satellite-signal.svg",
+    "cleanname": "satellite-signal",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-satellite-signal\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'satellite-signal.svg', icon: 'svg-satellite-signal' );"
+    }
+  },
+  {
+    "filename": "sausage.svg",
+    "cleanname": "sausage",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-sausage\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'sausage.svg', icon: 'svg-sausage' );"
+    }
+  },
+  {
+    "filename": "scales.svg",
+    "cleanname": "scales",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-scales\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'scales.svg', icon: 'svg-scales' );"
+    }
+  },
+  {
+    "filename": "school.svg",
+    "cleanname": "school",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-school\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'school.svg', icon: 'svg-school' );"
+    }
+  },
+  {
+    "filename": "schoolbus.svg",
+    "cleanname": "schoolbus",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-schoolbus\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'schoolbus.svg', icon: 'svg-schoolbus' );"
+    }
+  },
+  {
+    "filename": "scissors.svg",
+    "cleanname": "scissors",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-scissors\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'scissors.svg', icon: 'svg-scissors' );"
+    }
+  },
+  {
+    "filename": "scythe.svg",
+    "cleanname": "scythe",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-scythe\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'scythe.svg', icon: 'svg-scythe' );"
+    }
+  },
+  {
+    "filename": "seahorse.svg",
+    "cleanname": "seahorse",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-seahorse\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'seahorse.svg', icon: 'svg-seahorse' );"
+    }
+  },
+  {
+    "filename": "search.svg",
+    "cleanname": "search",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-search\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'search.svg', icon: 'svg-search' );"
+    }
+  },
+  {
+    "filename": "security-camera.svg",
+    "cleanname": "security-camera",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-security-camera\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'security-camera.svg', icon: 'svg-security-camera' );"
+    }
+  },
+  {
+    "filename": "share-more.svg",
+    "cleanname": "share-more",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-share-more\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'share-more.svg', icon: 'svg-share-more' );"
+    }
+  },
+  {
+    "filename": "share.svg",
+    "cleanname": "share",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-share\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'share.svg', icon: 'svg-share' );"
+    }
+  },
+  {
+    "filename": "shoe-prints.svg",
+    "cleanname": "shoe-prints",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-shoe-prints\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'shoe-prints.svg', icon: 'svg-shoe-prints' );"
+    }
+  },
+  {
+    "filename": "shorts.svg",
+    "cleanname": "shorts",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-shorts\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'shorts.svg', icon: 'svg-shorts' );"
+    }
+  },
+  {
+    "filename": "signs.svg",
+    "cleanname": "signs",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-signs\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'signs.svg', icon: 'svg-signs' );"
+    }
+  },
+  {
+    "filename": "skull-crossbones.svg",
+    "cleanname": "skull-crossbones",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-skull-crossbones\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'skull-crossbones.svg', icon: 'svg-skull-crossbones' );"
+    }
+  },
+  {
+    "filename": "skull.svg",
+    "cleanname": "skull",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-skull\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'skull.svg', icon: 'svg-skull' );"
+    }
+  },
+  {
+    "filename": "slack.svg",
+    "cleanname": "slack",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-slack\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'slack.svg', icon: 'svg-slack' );"
+    }
+  },
+  {
+    "filename": "smile.svg",
+    "cleanname": "smile",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-smile\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'smile.svg', icon: 'svg-smile' );"
+    }
+  },
+  {
+    "filename": "snowflake-alt.svg",
+    "cleanname": "snowflake-alt",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-snowflake-alt\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'snowflake-alt.svg', icon: 'svg-snowflake-alt' );"
+    }
+  },
+  {
+    "filename": "soap.svg",
+    "cleanname": "soap",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-soap\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'soap.svg', icon: 'svg-soap' );"
+    }
+  },
+  {
+    "filename": "spy-face.svg",
+    "cleanname": "spy-face",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-spy-face\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'spy-face.svg', icon: 'svg-spy-face' );"
+    }
+  },
+  {
+    "filename": "spy.svg",
+    "cleanname": "spy",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-spy\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'spy.svg', icon: 'svg-spy' );"
+    }
+  },
+  {
+    "filename": "square.svg",
+    "cleanname": "square",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-square\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'square.svg', icon: 'svg-square' );"
+    }
+  },
+  {
+    "filename": "stanp-portrait.svg",
+    "cleanname": "stanp-portrait",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-stanp-portrait\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'stanp-portrait.svg', icon: 'svg-stanp-portrait' );"
+    }
+  },
+  {
+    "filename": "star-of-life.svg",
+    "cleanname": "star-of-life",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-star-of-life\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'star-of-life.svg', icon: 'svg-star-of-life' );"
+    }
+  },
+  {
+    "filename": "star.svg",
+    "cleanname": "star",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-star\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'star.svg', icon: 'svg-star' );"
+    }
+  },
+  {
+    "filename": "statue-of-liberty.svg",
+    "cleanname": "statue-of-liberty",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-statue-of-liberty\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'statue-of-liberty.svg', icon: 'svg-statue-of-liberty' );"
+    }
+  },
+  {
+    "filename": "stethoscope.svg",
+    "cleanname": "stethoscope",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-stethoscope\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'stethoscope.svg', icon: 'svg-stethoscope' );"
+    }
+  },
+  {
+    "filename": "sun.svg",
+    "cleanname": "sun",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-sun\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'sun.svg', icon: 'svg-sun' );"
+    }
+  },
+  {
+    "filename": "sunglasses.svg",
+    "cleanname": "sunglasses",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-sunglasses\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'sunglasses.svg', icon: 'svg-sunglasses' );"
+    }
+  },
+  {
+    "filename": "swords.svg",
+    "cleanname": "swords",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-swords\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'swords.svg', icon: 'svg-swords' );"
+    }
+  },
+  {
+    "filename": "sync.svg",
+    "cleanname": "sync",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-sync\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'sync.svg', icon: 'svg-sync' );"
+    }
+  },
+  {
+    "filename": "tag.svg",
+    "cleanname": "tag",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-tag\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'tag.svg', icon: 'svg-tag' );"
+    }
+  },
+  {
+    "filename": "tank.svg",
+    "cleanname": "tank",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-tank\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'tank.svg', icon: 'svg-tank' );"
+    }
+  },
+  {
+    "filename": "team.svg",
+    "cleanname": "team",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-team\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'team.svg', icon: 'svg-team' );"
+    }
+  },
+  {
+    "filename": "telegram.svg",
+    "cleanname": "telegram",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-telegram\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'telegram.svg', icon: 'svg-telegram' );"
+    }
+  },
+  {
+    "filename": "theater_masks.svg",
+    "cleanname": "theater_masks",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-theater_masks\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'theater_masks.svg', icon: 'svg-theater_masks' );"
+    }
+  },
+  {
+    "filename": "threads.svg",
+    "cleanname": "threads",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-threads\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'threads.svg', icon: 'svg-threads' );"
+    }
+  },
+  {
+    "filename": "thumbs-down.svg",
+    "cleanname": "thumbs-down",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-thumbs-down\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'thumbs-down.svg', icon: 'svg-thumbs-down' );"
+    }
+  },
+  {
+    "filename": "thumbs-up.svg",
+    "cleanname": "thumbs-up",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-thumbs-up\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'thumbs-up.svg', icon: 'svg-thumbs-up' );"
+    }
+  },
+  {
+    "filename": "tiktok.svg",
+    "cleanname": "tiktok",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-tiktok\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'tiktok.svg', icon: 'svg-tiktok' );"
+    }
+  },
+  {
+    "filename": "tmdb.svg",
+    "cleanname": "tmdb",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-tmdb\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'tmdb.svg', icon: 'svg-tmdb' );"
+    }
+  },
+  {
+    "filename": "toaster.svg",
+    "cleanname": "toaster",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-toaster\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'toaster.svg', icon: 'svg-toaster' );"
+    }
+  },
+  {
+    "filename": "trophy.svg",
+    "cleanname": "trophy",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-trophy\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'trophy.svg', icon: 'svg-trophy' );"
+    }
+  },
+  {
+    "filename": "tumblr-t.svg",
+    "cleanname": "tumblr-t",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-tumblr-t\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'tumblr-t.svg', icon: 'svg-tumblr-t' );"
+    }
+  },
+  {
+    "filename": "tumblr.svg",
+    "cleanname": "tumblr",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-tumblr\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'tumblr.svg', icon: 'svg-tumblr' );"
+    }
+  },
+  {
+    "filename": "turkey.svg",
+    "cleanname": "turkey",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-turkey\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'turkey.svg', icon: 'svg-turkey' );"
+    }
+  },
+  {
+    "filename": "turret.svg",
+    "cleanname": "turret",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-turret\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'turret.svg', icon: 'svg-turret' );"
+    }
+  },
+  {
+    "filename": "tv-hd.svg",
+    "cleanname": "tv-hd",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-tv-hd\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'tv-hd.svg', icon: 'svg-tv-hd' );"
+    }
+  },
+  {
+    "filename": "tv.svg",
+    "cleanname": "tv",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-tv\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'tv.svg', icon: 'svg-tv' );"
+    }
+  },
+  {
+    "filename": "twitch.svg",
+    "cleanname": "twitch",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-twitch\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'twitch.svg', icon: 'svg-twitch' );"
+    }
+  },
+  {
+    "filename": "twitter-orig.svg",
+    "cleanname": "twitter-orig",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-twitter-orig\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'twitter-orig.svg', icon: 'svg-twitter-orig' );"
+    }
+  },
+  {
+    "filename": "twitter.svg",
+    "cleanname": "twitter",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-twitter\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'twitter.svg', icon: 'svg-twitter' );"
+    }
+  },
+  {
+    "filename": "ufo.svg",
+    "cleanname": "ufo",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-ufo\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'ufo.svg', icon: 'svg-ufo' );"
+    }
+  },
+  {
+    "filename": "unicorn.svg",
+    "cleanname": "unicorn",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-unicorn\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'unicorn.svg', icon: 'svg-unicorn' );"
+    }
+  },
+  {
+    "filename": "universal-access-alt.svg",
+    "cleanname": "universal-access-alt",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-universal-access-alt\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'universal-access-alt.svg', icon: 'svg-universal-access-alt' );"
+    }
+  },
+  {
+    "filename": "universal-access-off.svg",
+    "cleanname": "universal-access-off",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-universal-access-off\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'universal-access-off.svg', icon: 'svg-universal-access-off' );"
+    }
+  },
+  {
+    "filename": "universal-access.svg",
+    "cleanname": "universal-access",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-universal-access\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'universal-access.svg', icon: 'svg-universal-access' );"
+    }
+  },
+  {
+    "filename": "user-circle.svg",
+    "cleanname": "user-circle",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-user-circle\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'user-circle.svg', icon: 'svg-user-circle' );"
+    }
+  },
+  {
+    "filename": "user-heart.svg",
+    "cleanname": "user-heart",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-user-heart\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'user-heart.svg', icon: 'svg-user-heart' );"
+    }
+  },
+  {
+    "filename": "user-tie.svg",
+    "cleanname": "user-tie",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-user-tie\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'user-tie.svg', icon: 'svg-user-tie' );"
+    }
+  },
+  {
+    "filename": "user.svg",
+    "cleanname": "user",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-user\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'user.svg', icon: 'svg-user' );"
+    }
+  },
+  {
+    "filename": "venus-double.svg",
+    "cleanname": "venus-double",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-venus-double\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'venus-double.svg', icon: 'svg-venus-double' );"
+    }
+  },
+  {
+    "filename": "vest-patches.svg",
+    "cleanname": "vest-patches",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-vest-patches\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'vest-patches.svg', icon: 'svg-vest-patches' );"
+    }
+  },
+  {
+    "filename": "vhs.svg",
+    "cleanname": "vhs",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-vhs\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'vhs.svg', icon: 'svg-vhs' );"
+    }
+  },
+  {
+    "filename": "viewmaster.svg",
+    "cleanname": "viewmaster",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-viewmaster\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'viewmaster.svg', icon: 'svg-viewmaster' );"
+    }
+  },
+  {
+    "filename": "viking-helm.svg",
+    "cleanname": "viking-helm",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-viking-helm\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'viking-helm.svg', icon: 'svg-viking-helm' );"
+    }
+  },
+  {
+    "filename": "volcano.svg",
+    "cleanname": "volcano",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-volcano\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'volcano.svg', icon: 'svg-volcano' );"
+    }
+  },
+  {
+    "filename": "warning.svg",
+    "cleanname": "warning",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-warning\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'warning.svg', icon: 'svg-warning' );"
+    }
+  },
+  {
+    "filename": "water-bottle.svg",
+    "cleanname": "water-bottle",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-water-bottle\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'water-bottle.svg', icon: 'svg-water-bottle' );"
+    }
+  },
+  {
+    "filename": "wedding-cake.svg",
+    "cleanname": "wedding-cake",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-wedding-cake\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'wedding-cake.svg', icon: 'svg-wedding-cake' );"
+    }
+  },
+  {
+    "filename": "whatsapp.svg",
+    "cleanname": "whatsapp",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-whatsapp\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'whatsapp.svg', icon: 'svg-whatsapp' );"
+    }
+  },
+  {
+    "filename": "wheelchair-alt.svg",
+    "cleanname": "wheelchair-alt",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-wheelchair-alt\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'wheelchair-alt.svg', icon: 'svg-wheelchair-alt' );"
+    }
+  },
+  {
+    "filename": "wikipedia.svg",
+    "cleanname": "wikipedia",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-wikipedia\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'wikipedia.svg', icon: 'svg-wikipedia' );"
+    }
+  },
+  {
+    "filename": "window.svg",
+    "cleanname": "window",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-window\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'window.svg', icon: 'svg-window' );"
+    }
+  },
+  {
+    "filename": "woman-fancy.svg",
+    "cleanname": "woman-fancy",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-woman-fancy\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'woman-fancy.svg', icon: 'svg-woman-fancy' );"
+    }
+  },
+  {
+    "filename": "woman-man.svg",
+    "cleanname": "woman-man",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-woman-man\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'woman-man.svg', icon: 'svg-woman-man' );"
+    }
+  },
+  {
+    "filename": "women.svg",
+    "cleanname": "women",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-women\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'women.svg', icon: 'svg-women' );"
+    }
+  },
+  {
+    "filename": "wreath.svg",
+    "cleanname": "wreath",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-wreath\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'wreath.svg', icon: 'svg-wreath' );"
+    }
+  },
+  {
+    "filename": "x-ray.svg",
+    "cleanname": "x-ray",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-x-ray\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'x-ray.svg', icon: 'svg-x-ray' );"
+    }
+  },
+  {
+    "filename": "x-twitter.svg",
+    "cleanname": "x-twitter",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-x-twitter\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'x-twitter.svg', icon: 'svg-x-twitter' );"
+    }
+  },
+  {
+    "filename": "yin-yang.svg",
+    "cleanname": "yin-yang",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-yin-yang\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'yin-yang.svg', icon: 'svg-yin-yang' );"
+    }
+  },
+  {
+    "filename": "youtube.svg",
+    "cleanname": "youtube",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-youtube\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'youtube.svg', icon: 'svg-youtube' );"
+    }
+  },
+  {
+    "filename": "zipper.svg",
+    "cleanname": "zipper",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-zipper\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'zipper.svg', icon: 'svg-zipper' );"
+    }
+  },
+  {
+    "filename": "zombie.svg",
+    "cleanname": "zombie",
+    "usage": {
+      "css": "@include mixins.symbolicon(\"svg-zombie\");",
+      "php": "lwtv_plugin()->get_symbolicon( svg: 'zombie.svg', icon: 'svg-zombie' );"
+    }
+  }
+]
