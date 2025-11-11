@@ -63,4 +63,10 @@ jobs:
           TARGET: /home/${{ secrets.LWTV_USER }}/cron-dev/
 
       - name: Copy Symbolicons
-        run: cp -r /home/${{ secrets.LWTV_USER }}/symbolicons/development/ /home/${{ secrets.LWTV_USER }}/${{ secrets.LWTV_DEV_DOMAIN }}/wp-content/themes/lwtv-underscores/symbolicons/
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.LWTV_HOST }}
+          username: ${{ secrets.LWTV_USER }}
+          key: ${{ secrets.LWTV_SSH_KEY }}
+          script: |
+            cp -r /home/${{ secrets.LWTV_USER }}/symbolicons/development/ /home/${{ secrets.LWTV_USER }}/${{ secrets.LWTV_DEV_DOMAIN }}/wp-content/themes/lwtv-underscores/symbolicons/
