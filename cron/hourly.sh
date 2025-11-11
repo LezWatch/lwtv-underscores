@@ -1,15 +1,25 @@
 #!/bin/bash
 export PATH="/usr/local/bin:/usr/bin:/bin"
 
+# Define the UUID for this specific task
+UUID="oz2Iox8OKnYD7uV2"
+
+# Define the path to the ping.sh script
+# Assuming it's in the same directory.
+PING_SCRIPT="./ping.sh"
+
 cd /home/wp_bg3hrq/lezwatchtv.com || {
-	/usr/bin/curl -fsS -m 10 --retry 5 -o /dev/null https://uptime.ipstenu.com/api/push/oz2Iox8OKnYD7uV2?status=down&msg=hourly-directory-failed
+	# Call ping.sh with UUID, status, and message
+	$PING_SCRIPT "$UUID" "down" "hourly-directory-failed"
 	exit 1
 }
 
 /usr/bin/wp lwtv generate cron hourly --path=/home/wp_bg3hrq/lezwatchtv.com/
 
 if [ $? -eq 0 ]; then
-	/usr/bin/curl -fsS -m 10 --retry 5 -o /dev/null https://uptime.ipstenu.com/api/push/oz2Iox8OKnYD7uV2?status=up&msg=hourly-completed
+	# Call ping.sh with UUID, status, and message
+	$PING_SCRIPT "$UUID" "up" "hourly-completed"
 else
-	/usr/bin/curl -fsS -m 10 --retry 5 -o /dev/null https://uptime.ipstenu.com/api/push/oz2Iox8OKnYD7uV2?status=down&msg=hourly-failed
+	# Call ping.sh with UUID, status, and message
+	$PING_SCRIPT "$UUID" "down" "hourly-failed"
 fi

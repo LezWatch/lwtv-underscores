@@ -1,15 +1,25 @@
 #!/bin/bash
 export PATH="/usr/local/bin:/usr/bin:/bin"
 
+# Define the UUID for this specific task
+UUID="xrPNV40IWEd5ShDP"
+
+# Define the path to the ping.sh script
+# Assuming it's in the same directory.
+PING_SCRIPT="./ping.sh"
+
 cd /home/wp_bg3hrq/lezwatchtv.com || {
-	/usr/bin/curl -fsS -m 10 --retry 5 -o /dev/null https://uptime.ipstenu.com/api/push/xrPNV40IWEd5ShDP?status=down&msg=otd-directory-failed
+	# Call ping.sh with UUID, status, and message
+	$PING_SCRIPT "$UUID" "down" "otd-directory-failed"
 	exit 1
 }
 
 /usr/bin/wp lwtv generate otd --path=/home/wp_bg3hrq/lezwatchtv.com/
 
 if [ $? -eq 0 ]; then
-	/usr/bin/curl -fsS -m 10 --retry 5 -o /dev/null https://uptime.ipstenu.com/api/push/xrPNV40IWEd5ShDP?status=up&msg=otd-completed
+	# Call ping.sh with UUID, status, and message
+	$PING_SCRIPT "$UUID" "up" "otd-completed"
 else
-	/usr/bin/curl -fsS -m 10 --retry 5 -o /dev/null https://uptime.ipstenu.com/api/push/xrPNV40IWEd5ShDP?status=down&msg=otd-failed
+	# Call ping.sh with UUID, status, and message
+	$PING_SCRIPT "$UUID" "down" "otd-failed"
 fi

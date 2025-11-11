@@ -1,15 +1,25 @@
 #!/bin/bash
 export PATH="/usr/local/bin:/usr/bin:/bin"
 
+# Define the UUID for this specific task
+UUID="8qGWpfC-UzrCZCyV"
+
+# Define the path to the ping.sh script
+# Assuming it's in the same directory.
+PING_SCRIPT="./ping.sh"
+
 cd /home/wp_bg3hrq/lezwatchtv.com || {
-	/usr/bin/curl -fsS -m 10 --retry 5 -o /dev/null https://uptime.ipstenu.com/api/push/8qGWpfC-UzrCZCyV?status=down&msg=debug-directory-failed
+	# Call ping.sh with UUID, status, and message
+	$PING_SCRIPT "$UUID" "down" "debug-directory-failed"
 	exit 1
 }
 
 /usr/bin/wp lwtv generate debug --path=/home/wp_bg3hrq/lezwatchtv.com/
 
 if [ $? -eq 0 ]; then
-	/usr/bin/curl -fsS -m 10 --retry 5 -o /dev/null https://uptime.ipstenu.com/api/push/8qGWpfC-UzrCZCyV?status=up&msg=debug-completed
+	# Call ping.sh with UUID, status, and message
+	$PING_SCRIPT "$UUID" "up" "debug-completed"
 else
-	/usr/bin/curl -fsS -m 10 --retry 5 -o /dev/null https://uptime.ipstenu.com/api/push/8qGWpfC-UzrCZCyV?status=down&msg=debug-failed
+	# Call ping.sh with UUID, status, and message
+	$PING_SCRIPT "$UUID" "down" "debug-failed"
 fi
