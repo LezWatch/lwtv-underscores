@@ -34,16 +34,4 @@ const path      = require('path');
 		path.join( repoPath, '/symbolicons/output/symbolicons.json' ),
 		path.join( __dirname, '../symbolicons/symbolicons.json' )
 	);
-
-	// Note: This file is NOT included in the Github repo, but is used by the theme.
-	fs.copyFileSync(
-		path.join( repoPath, '/symbolicons/output/sprite.css.svg' ),
-		path.join( __dirname, '../symbolicons/sprite.css.svg' )
-	);
-
-	// Note: This file is NOT included in the Github repo, but is used by the theme.
-	fs.copyFileSync(
-		path.join( repoPath, '/symbolicons/output/sprite.symbol.svg' ),
-		path.join( __dirname, '../symbolicons/sprite.symbol.svg' )
-	);
 })();
