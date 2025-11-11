@@ -5,23 +5,19 @@ on:
     branches: [ production ]
 
 jobs:
-  deploy-website:
+  # =======================================
+  # JOB 1: Build the theme files
+  # =======================================
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Do a git checkout including submodules
-        uses: actions/checkout@v5
+        uses: actions/checkout@v4 # It's good practice to use a more specific version
         with:
           submodules: true
 
-      - name: Verify Workspace
-        run: |
-          echo "GITHUB_WORKSPACE: ${GITHUB_WORKSPACE}"
-      - name: Verify Folder
-        run: |
-          ls -lah ${GITHUB_WORKSPACE}
-
       - name: Setup Node
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v4 # Updated to a newer version
         with:
           node-version-file: '.nvmrc'
           cache: 'npm'
@@ -40,6 +36,41 @@ jobs:
 
       - name: Build for Production
         run: npm run build
+
+      - name: Upload theme artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: theme-files-prod
+          path: . # Uploads the entire workspace
+
+      - name: Upload cron artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: cron-files-prod
+          path: cron/
+
+  # ========================================================
+  # JOB 2: Deploy the built files to the server
+  # ========================================================
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build # This ensures the 'build' job finishes first
+    steps:
+      - name: Download theme artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: theme-files-prod
+
+      - name: Download cron artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: cron-files-prod
+          path: cron/ # Specify path to restore directory structure
+
+      - name: Verify Folder Contents
+        run: |
+          ls -lah
+          ls -lah cron/
 
       - name: Deploy to LezWatch.TV Production Server
         uses: easingthemes/ssh-deploy@main
@@ -61,23 +92,29 @@ jobs:
           REMOTE_USER: ${{ secrets.LWTV_USER }}
           TARGET: /home/${{ secrets.LWTV_USER }}/cron/
 
-      - name: Copy Symbolicons Locally
+  # =====================================================================
+  # JOB 3: Run commands on the server after deployment is complete
+  # =====================================================================
+  post-deploy:
+    runs-on: ubuntu-latest
+    needs: deploy # This ensures the 'deploy' job finishes first
+    steps:
+      - name: Run Post-Deploy Commands on Remote Server
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.LWTV_HOST }}
           username: ${{ secrets.LWTV_USER }}
           key: ${{ secrets.LWTV_SSH_KEY }}
           script: |
+            echo "Setting cron permissions..."
+            chmod +x /home/${{ secrets.LWTV_USER }}/cron/*.sh
+
+            echo "Copying Symbolicons..."
             cp -r /home/${{ secrets.LWTV_USER }}/symbolicons/production/* /home/${{ secrets.LWTV_USER }}/${{ secrets.LWTV_DOMAIN }}/wp-content/themes/lwtv-underscores/symbolicons/
 
-      - name: Purge Cache and Cleanup
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.LWTV_HOST }}
-          username: ${{ secrets.LWTV_USER }}
-          key: ${{ secrets.LWTV_SSH_KEY }}
-          script: |
-            chmod +x /home/${{ secrets.LWTV_USER }}/cron/*.sh
+            echo "Cleaning up login files..."
+            rm -f /home/${{ secrets.LWTV_USER }}/logins-*.txt
+
+            echo "Purging Nginx cache..."
             cd /home/${{ secrets.LWTV_USER }}/${{ secrets.LWTV_DOMAIN }}
             wp nginx-helper purge-all
-            rm -f /home/${{ secrets.LWTV_USER }}/logins-*.txt
