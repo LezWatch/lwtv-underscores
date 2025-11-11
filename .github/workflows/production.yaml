@@ -38,9 +38,6 @@ jobs:
       - name: Lint
         run: npm run lint
 
-      - name: Build Symbolicons
-        run: npm run symbolicons:prod
-
       - name: Build for Production
         run: npm run build
 
