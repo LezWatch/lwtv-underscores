@@ -20,9 +20,9 @@ const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 const dynamicThemeVersion = themePackage.version;
 
 const spriteUrls = {
-	local: 'https://lwtv.local/wp-content/uploads/lezpress-icons/sprite.css.svg',
-	staging: 'https://lezwatchtvcom.stage.site/wp-content/uploads/lezpress-icons/sprite.css.svg',
-	production: 'https://lezwatchtv.com/wp-content/uploads/lezpress-icons/sprite.css.svg',
+	local: 'https://lwtv.local/wp-content/themes/lwtv-underscores/symbolicons/sprite.css.svg',
+	staging: 'https://lezwatchtvcom.stage.site/wp-content/themes/lwtv-underscores/symbolicons/sprite.css.svg',
+	production: 'https://lezwatchtv.com/wp-content/themes/lwtv-underscores/symbolicons/sprite.css.svg',
 };
 const spriteEnv = process.env.SVG_SPRITE_ENV || 'production';
 const spriteUrl = spriteUrls[spriteEnv] || spriteUrls.production;

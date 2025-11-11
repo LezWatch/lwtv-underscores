@@ -1,5 +1,14 @@
 # GitHub Actions: SSH Deployment Key Setup
 
+## Settings
+
+Since we call workflows in other projects, go to `https://github.com/LezWatch/lwtv-underscores/settings/actions`
+
+And make sure this is selected:
+
+**Allow all actions and reusable workflows**
+Any action or reusable workflow can be used, regardless of who authored it or where it is defined.
+
 ## A reminder on how to configure deployment secrets when the server changes.
 
 You're probably reading this because the deployment action is failing with a `Permission denied` or `Too many authentication failures` error after a server move. The problem is almost always a mix-up between the public and private SSH keys.
@@ -20,11 +29,12 @@ How to grant GitHub Actions access to a new server.
 On the LezWatch.TV Server, create a new key pair specifically for this purpose. This avoids using your personal keys.
 
 ```bash
-# -m PEM is important for compatibility with older systems/actions
-# -t rsa -b 4096 is a strong encryption standard
-# -f specifies the filename
 ssh-keygen -m PEM -t rsa -b 4096 -f github_actions_deploy_key
 ```
+
+* `-m PEM` is important for compatibility with older systems/actions
+* `-t rsa -b 4096` is a strong encryption standard
+* `-f` specifies the filename
 
 Note: This will create two files in your current directory: github_actions_deploy_key (the private key) and github_actions_deploy_key.pub (the public key).
 
