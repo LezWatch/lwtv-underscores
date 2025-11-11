@@ -39,7 +39,10 @@ jobs:
       - name: Lint
         run: npm run lint
 
-      - name: Build it
+      - name: Build Symbolicons
+        run: npm run symbolicons:dev
+
+      - name: Build for Staging
         run: npm run create:staging
 
       - name: Deploy to LezWatch.TV Development Server
