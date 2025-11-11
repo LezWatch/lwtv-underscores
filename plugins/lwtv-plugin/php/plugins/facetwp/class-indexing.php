@@ -168,6 +168,9 @@ class Indexing {
 			case 'char_years':
 				$params = $this->facetwp_index_row_characters_years( $params, $facet_class );
 				break;
+			case 'char_nations':
+				$params = $this->facetwp_index_row_characters_nations( $params, $facet_class );
+				break;
 		}
 
 		return $params;
@@ -276,6 +279,41 @@ class Indexing {
 			}
 			$facet_class->insert( $params );
 		}
+		// skip default indexing
+		$params['facet_value'] = '';
+		return $params;
+	}
+
+	/**
+	 * Indexing for Characters - Nations
+	 *
+	 * EXAMPLE INPUT: a:1:{i:0;a:3:{s:4:"show";s:3:"655";s:4:"type";s:9:"recurring";s:7:"appears";a:1:{i:0;s:4:"2017";}}}
+	 *
+	 * @param array $params
+	 * @param object $facet_class
+	 *
+	 * @return array
+	 */
+	public function facetwp_index_row_characters_nations( $params, $facet_class ) {
+		$values = (array) $params['facet_value'];
+		foreach ( $values as $val ) {
+			if ( ! isset( $val['show'] ) ) {
+				continue;
+			}
+			$show_id = (int) $val['show'];
+			// Get the show's nation
+			$nations = get_the_terms( $show_id, 'lez_country' );
+			if ( ! is_array( $nations ) ) {
+				continue;
+			}
+			// Add the nations to the array
+			foreach ( $nations as $nation ) {
+				$params['facet_value']         = $nation->slug;
+				$params['facet_display_value'] = $nation->name;
+				$facet_class->insert( $params );
+			}
+		}
+
 		// skip default indexing
 		$params['facet_value'] = '';
 		return $params;
