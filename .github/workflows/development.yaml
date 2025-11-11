@@ -59,4 +59,4 @@ jobs:
           chmod +x /home/${{ secrets.LWTV_USER }}/cron-dev/*.sh
 
       - name: Copy Symbolicons
-        run: cp -r /home/${{ secrets.LWTV_USER }}/symbolicons/development/ /home/${{ secrets.LWTV_USER }}/${{ secrets.LWTV_DEV_DOMAIN }}/wp-content/themes/lwtv-underscores/symbolicons/
+        run: cp -r /home/${{ secrets.LWTV_USER }}/symbolicons/development/* /home/${{ secrets.LWTV_USER }}/${{ secrets.LWTV_DEV_DOMAIN }}/wp-content/themes/lwtv-underscores/symbolicons/
