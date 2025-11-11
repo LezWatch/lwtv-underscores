@@ -6,7 +6,7 @@ UUID="YOLHUVeoryV7I5GP"
 
 # Define the path to the ping.sh script
 # Assuming it's in the same directory.
-PING_SCRIPT="./ping.sh"
+PING_SCRIPT="$(dirname "$0")/ping.sh"
 
 cd /home/wp_bg3hrq/lezwatchtv.com || {
 	# Call ping.sh with UUID, status, and message
