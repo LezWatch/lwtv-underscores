@@ -57,4 +57,5 @@ jobs:
     uses: LezWatch/symbolicons-private/.github/workflows/development.yml@development
     with:
       branch: 'development'
-    secrets: inherit
+    secrets:
+      token: ${{ secrets.SYMBOLICON_ACCESS_TOKEN }}

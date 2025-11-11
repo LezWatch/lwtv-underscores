@@ -59,4 +59,6 @@ jobs:
     uses: LezWatch/symbolicons-private/.github/workflows/production.yml@production
     with:
       branch: 'production'
-    secrets: inherit
+    secrets:
+      token: ${{ secrets.SYMBOLICON_ACCESS_TOKEN }}
+
