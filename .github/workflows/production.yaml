@@ -56,3 +56,10 @@ jobs:
           SCRIPT_AFTER: |
             cd ~/${{ secrets.LWTV_DOMAIN }}
             wp nginx-helper purge-all
+
+  build-symbolicons:
+    needs: deploy-website
+    uses: LezWatch/symbolicons-private/.github/workflows/production.yaml@production
+    with:
+      branch: 'production'
+    secrets: inherit
