@@ -14,4 +14,4 @@ fi
 BASEURL="https://uptime.ipstenu.com/api/push/$UUID"
 
 # Execute the curl command to send the ping
-/usr/bin/curl -fsS -m 10 --retry 5 -o /dev/null "$BASEURL?status=$STATUS&msg=$MESSAGE"
+/usr/bin/curl -X POST -m 10 --retry 5 -o /dev/null "$BASEURL?status=$STATUS&msg=$MESSAGE"

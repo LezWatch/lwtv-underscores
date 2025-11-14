@@ -2,11 +2,11 @@
 export PATH="/usr/local/bin:/usr/bin:/bin"
 
 # Define the UUID for this specific task
-UUID="n_XK3iMolnf23y6C"
+UUID="K64SlnbeEEaHlSsg"
 
 # Define the path to the ping.sh script
 # Assuming it's in the same directory.
-PING_SCRIPT="$(dirname "$0")/ping.sh"
+PING_SCRIPT="/home/wp_bg3hrq/cron/ping.sh"
 
 cd /home/wp_bg3hrq/lezwatchtv.com || {
 	$PING_SCRIPT "$UUID" "down" "lists-directory-failed"

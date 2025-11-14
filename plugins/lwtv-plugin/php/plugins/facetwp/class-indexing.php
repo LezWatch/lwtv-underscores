@@ -149,6 +149,8 @@ class Indexing {
 	/**
 	 * Indexing for Characters
 	 *
+	 * Because there are so many different facets, we need to break them out into their own functions.
+	 *
 	 * @param array $params
 	 * @param object $facet_class
 	 *
@@ -204,7 +206,8 @@ class Indexing {
 
 	/**
 	 * Indexing for Characters - Shows
-	 * Saves one value for each show
+	 *
+	 * Takes the show post meta, breaks it apart and saves one value for each show
 	 *
 	 * EXAMPLE INPUT: a:1:{i:0;a:3:{s:4:"show";s:3:"655";s:4:"type";s:9:"recurring";s:7:"appears";a:1:{i:0;s:4:"2017";}}}
 	 *
@@ -230,7 +233,8 @@ class Indexing {
 
 	/**
 	 * Indexing for Characters - Roles
-	 * Saves one value for each show.
+	 *
+	 * Takes the show post meta, breaks it apart and saves one value for each role.
 	 *
 	 * EXAMPLE INPUT: a:1:{i:0;a:3:{s:4:"show";s:3:"655";s:4:"type";s:9:"recurring";s:7:"appears";a:1:{i:0;s:4:"2017";}}}
 	 *
@@ -287,6 +291,8 @@ class Indexing {
 	/**
 	 * Indexing for Characters - Nations
 	 *
+	 * For this we need to extract the nation(s) from the show and save them as individual values.
+	 *
 	 * EXAMPLE INPUT: a:1:{i:0;a:3:{s:4:"show";s:3:"655";s:4:"type";s:9:"recurring";s:7:"appears";a:1:{i:0;s:4:"2017";}}}
 	 *
 	 * @param array $params
@@ -316,11 +322,14 @@ class Indexing {
 
 		// skip default indexing
 		$params['facet_value'] = '';
+
 		return $params;
 	}
 
 	/**
 	 * Indexing for Shows
+	 *
+	 * Because there are so many different facets, we need to break them out into their own functions.
 	 *
 	 * @param array $params
 	 * @param object $facet_class
@@ -374,6 +383,7 @@ class Indexing {
 
 	/**
 	 * Indexing for Loved
+	 *
 	 * Change 'on' to 'yes'
 	 *
 	 * @param array $params
@@ -394,6 +404,7 @@ class Indexing {
 
 	/**
 	 * Indexing for Death
+	 *
 	 * Change 'on' to 'yes'
 	 *
 	 * @param array $params
@@ -414,6 +425,7 @@ class Indexing {
 
 	/**
 	 * Indexing for Trigger Warning
+	 *
 	 * Change 'on' to 'high'
 	 *
 	 * @param array $params
@@ -435,8 +447,9 @@ class Indexing {
 	/**
 	 * Indexing for Airdates
 	 *
-	 * Saves two values for two sources
-	 * Also saves on_air as yes or no
+	 * Takes the show post meta, breaks it apart and saves two values for two sources
+	 *
+	 * Also saves on_air as yes or no based on the end date and the current year.
 	 *
 	 * EXAMPLE INPUT: a:2:{s:5:"start";s:4:"1994";s:6:"finish";s:4:"2009";}
 	 *
