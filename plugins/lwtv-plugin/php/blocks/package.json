@@ -23,7 +23,7 @@
 		"@wordpress/babel-plugin-import-jsx-pragma": "^5.34.0",
 		"@wordpress/blocks": "^15.7.0",
 		"@wordpress/i18n": "^6.7.0",
-		"@wordpress/icons": "^11.1.0"
+		"@wordpress/icons": "^11.2.0"
 	},
 	"devDependencies": {
 		"@wordpress/scripts": "^30.27.0"
