@@ -17,7 +17,7 @@ jobs:
           submodules: true
 
       - name: Setup Node
-        uses: actions/setup-node@v4 # Updated to a newer version
+        uses: actions/setup-node@v6 # Updated to a newer version
         with:
           node-version-file: '.nvmrc'
           cache: 'npm'
