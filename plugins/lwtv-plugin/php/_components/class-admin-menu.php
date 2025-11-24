@@ -38,7 +38,7 @@ class Admin_Menu implements Component {
 		add_submenu_page( 'lwtv', 'Welcome', 'Welcome', 'read', 'lwtv', array( $this, 'settings_page' ) );
 
 		//phpcs:ignore WordPress.WP.GlobalVariablesOverride
-		$submenu['lwtv'][] = array( 'Monitors', 'read', esc_url( 'https://uptime.ipstenu.com/status/lwtv-admin' ) );
+		$submenu['lwtv'][] = array( 'Admin Monitors', 'read', esc_url( 'https://adminstatus.lezwatchtv.com' ) );
 
 		( new Validation() )->init();
 
