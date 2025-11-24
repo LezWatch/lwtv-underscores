@@ -38,13 +38,13 @@ jobs:
         run: npm run create:staging
 
       - name: Upload theme artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: theme-files
           path: . # Uploads the entire workspace
 
       - name: Upload cron artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: cron-files
           path: cron/

@@ -38,13 +38,13 @@ jobs:
         run: npm run build
 
       - name: Upload theme artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: theme-files-prod
           path: . # Uploads the entire workspace
 
       - name: Upload cron artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: cron-files-prod
           path: cron/
