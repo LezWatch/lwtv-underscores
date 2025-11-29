@@ -13,7 +13,7 @@ fi
 BASEURL="https://health.ipstenu.com/ping/YngRQgrkWz3aUQkrLjMrPg"
 STATUS=""
 
-if [ "$SUCCEEDED" != true ]; then
+if [ "$SUCCEEDED" != "true" ]; then
 	STATUS="/fail"
 fi
 
