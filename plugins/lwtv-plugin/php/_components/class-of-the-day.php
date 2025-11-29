@@ -158,6 +158,10 @@ class Of_The_Day implements Component, Templater {
 			$table,
 			$array
 		);
+
+		// Fire action hook after adding to database
+		// This allows other components (like Postiz) to react to new OTD entries
+		do_action( 'lwtv_otd_added', $type, $content, (int) $data['pid'], $data );
 	}
 
 	/*
