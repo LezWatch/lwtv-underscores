@@ -64,11 +64,13 @@ class Postiz {
 
 		// Default options
 		$defaults = array(
-			'type'     => 'schedule',
-			'date'     => current_time( 'c' ), // ISO 8601 format
-			'images'   => array(),
-			'settings' => array(),
-			'group'    => wp_generate_uuid4(), // Generate unique group ID
+			'type'      => 'draft', // draft, schedule, publish - for testing, we'll use draft
+			'date'      => current_time( 'c' ), // ISO 8601 format
+			'images'    => array(),
+			'settings'  => array(),
+			'group'     => wp_generate_uuid4(), // Generate unique group ID
+			'tags'      => array(),
+			'shortLink' => false,
 		);
 
 		$options = wp_parse_args( $options, $defaults );
@@ -76,6 +78,7 @@ class Postiz {
 		// Build posts array - one for each channel
 		$posts = array();
 		foreach ( $this->channel_ids as $channel_id ) {
+			lwtv_plugin()->error_log( 'postiz', 'Building post for channel: ' . $channel_id );
 			$post_data = array(
 				'integration' => array(
 					'id' => $channel_id,
@@ -103,25 +106,20 @@ class Postiz {
 
 		// Build the payload
 		$payload = array(
-			'type'  => $options['type'],
-			'date'  => $options['date'],
-			'posts' => $posts,
+			'type'      => $options['type'],
+			'date'      => $options['date'],
+			'tags'      => $options['tags'],
+			'shortLink' => $options['shortLink'],
+			'posts'     => $posts,
 		);
+
+		lwtv_plugin()->error_log( 'postiz', 'Payload: ' . wp_json_encode( $payload ) );
 
 		// Make the API request
 		$response = $this->make_api_request( '/posts', $payload );
 
 		// Log the response for debugging
-		if ( function_exists( 'lwtv_plugin' ) && method_exists( lwtv_plugin(), 'error_log' ) ) {
-			lwtv_plugin()->error_log(
-				'postiz',
-				sprintf(
-					'Posted to Postiz: %s | Response: %s',
-					$content,
-					wp_json_encode( $response )
-				)
-			);
-		}
+		//lwtv_plugin()->error_log( 'postiz', 'Posted to Postiz: ' . $content . ' | Response: ' . wp_json_encode( $response ) );
 
 		return $response;
 	}
@@ -165,13 +163,44 @@ class Postiz {
 
 		// Check for HTTP errors
 		if ( $response_code < 200 || $response_code >= 300 ) {
-			return new \WP_Error(
-				'postiz_api_error',
-				sprintf(
+			// Extract structured error messages from the response
+			$error_messages = array();
+
+			if ( is_array( $decoded_body ) ) {
+				// Extract message field (can be array or string)
+				if ( isset( $decoded_body['message'] ) ) {
+					if ( is_array( $decoded_body['message'] ) ) {
+						$error_messages = $decoded_body['message'];
+					} else {
+						$error_messages[] = $decoded_body['message'];
+					}
+				}
+
+				// Extract error field if no messages found
+				if ( empty( $error_messages ) && isset( $decoded_body['error'] ) ) {
+					$error_messages[] = $decoded_body['error'];
+				}
+			}
+
+			// Format error message
+			if ( ! empty( $error_messages ) ) {
+				$error_message = sprintf(
+					'Postiz API returned error %d: %s',
+					$response_code,
+					implode( '; ', $error_messages )
+				);
+			} else {
+				// Fall back to raw response body if structure is unexpected
+				$error_message = sprintf(
 					'Postiz API returned error %d: %s',
 					$response_code,
 					$response_body
-				),
+				);
+			}
+
+			return new \WP_Error(
+				'postiz_api_error',
+				$error_message,
 				array(
 					'status'   => $response_code,
 					'response' => $decoded_body,
@@ -195,6 +224,7 @@ class Postiz {
 	 * @return array|WP_Error Response array or WP_Error on failure
 	 */
 	public function post_of_the_day( $type, $content, $post_id ) {
+
 		// Get featured image if available
 		$images = array();
 		if ( has_post_thumbnail( $post_id ) ) {
@@ -207,12 +237,47 @@ class Postiz {
 					'path' => $image_url,
 				);
 			}
+		} else {
+			$images[] = array(
+				'id'   => 'default',
+				'path' => get_site_icon_url(),
+			);
+		}
+
+		$title   = get_the_title( $post_id );
+		$hashtag = '#' . implode( '', array_map( 'ucfirst', explode( '-', $title ) ) );
+		$tags    = array(
+			array(
+				'value' => '#lwtv',
+				'label' => '#lwtv',
+			),
+			array(
+				'value' => $hashtag,
+				'label' => $hashtag,
+			),
+		);
+
+		switch ( $type ) {
+			case 'character':
+				$tags[] = array(
+					'value' => '#LWTVcotd',
+					'label' => '#LWTVcotd',
+				);
+				break;
+			case 'show':
+				$tags[] = array(
+					'value' => '#LWTVsotd',
+					'label' => '#LWTVsotd',
+				);
+				break;
 		}
 
 		// Options for the post
 		$options = array(
-			'images' => $images,
-			'group'  => 'otd_' . $type . '_' . gmdate( 'Y-m-d' ),
+			'group'     => 'otd_' . $type . '_' . gmdate( 'Y-m-d' ),
+			'images'    => $images,
+			'tags'      => $tags,
+			'shortLink' => false,
 		);
 
 		// Create the post
@@ -230,10 +295,13 @@ class Postiz {
 	public function handle_otd_added( $type, $content, $post_id, $data ) {
 		// Only proceed if Postiz is configured
 		if ( ! $this->is_enabled() ) {
+			lwtv_plugin()->error_log( 'postiz', 'Postiz is not configured. Skipping OTD added: ' . $type . ' - ' . $content . ' - ' . $post_id . ' - ' . wp_json_encode( $data ) );
 			return;
 		}
 
-		// Post to Postiz
+		// TODO: Check if the OTD already exists in Postiz
+
+		// If this OTD doesn't exist in Postiz, post it
 		$result = $this->post_of_the_day( $type, $content, $post_id );
 
 		// Log errors if any

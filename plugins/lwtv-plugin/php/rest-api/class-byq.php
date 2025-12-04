@@ -30,6 +30,7 @@ class BYQ {
 	 */
 	public function __construct() {
 		add_action( 'rest_api_init', array( $this, 'rest_api_init' ) );
+		add_action( 'lwtv_byq_check_cache', array( $this, 'check_and_regenerate_cache' ) );
 	}
 
 	/**
@@ -130,29 +131,80 @@ class BYQ {
 	 */
 	public function list_of_dead_characters( $dead_chars_loop = null ) {
 		global $wp_current_filter;
+
 		// Prevent running during actor save operations - actors don't affect death data
 		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
+			lwtv_plugin()->error_log( 'byq-debug', 'Skipping list_of_dead_characters during autosave operation' );
 			return array();
 		}
 
-		// Death data is character-only. Only allow this during character saves or normal operations.
-		// Skip during actor/show saves or any other post type saves.
-		if ( ! empty( $wp_current_filter ) && is_array( $wp_current_filter ) ) {
+		// Establish the cache key and check the cache
+		$cache_key   = 'byq_death_list_' . $this->get_data_version_hash();
+		$cached_list = lwtv_plugin()->get_transient( $cache_key );
+
+		// If there is no current filter, we're on a page load, so we can check the cache
+		if ( empty( $wp_current_filter ) ) {
+			lwtv_plugin()->error_log( 'byq-debug', 'wp_current_filter is empty' );
+			if ( false !== $cached_list ) {
+				lwtv_plugin()->error_log( 'byq-debug', 'Returning cached death list check on page load.' );
+				return $cached_list;
+			}
+			lwtv_plugin()->error_log( 'byq-debug', 'Returning empty array on page load because wp_current_filter is empty' );
+
+			// Schedule a cron job to check the cache again in 1 minute
+			wp_schedule_single_event( time() + 60, 'lwtv_byq_check_cache', array( $cache_key ) );
+			return array();
+		}
+
+		// Detect if we're in a character save context
+		$is_character_save = false;
+		if ( is_array( $wp_current_filter ) ) {
 			foreach ( $wp_current_filter as $hook ) {
+				lwtv_plugin()->error_log( 'byq-debug', 'hook: ' . $hook );
 				// If we're in a save_post hook that's NOT for characters, skip it
 				if ( strpos( $hook, 'save_post' ) === 0 && 'save_post_post_type_characters' !== $hook ) {
 					lwtv_plugin()->error_log( 'byq-debug', 'Skipping list_of_dead_characters during non-character save operation (hook: ' . $hook . ')' );
 					return array();
 				}
+				// If we're in a character save hook, mark it
+				if ( 'save_post_post_type_characters' === $hook ) {
+					$is_character_save = true;
+				}
 			}
 		}
 
-		$death_list_array = array();
+		// On page loads (not character saves), check cache first
+		if ( ! $is_character_save ) {
+			if ( false !== $cached_list ) {
+				lwtv_plugin()->error_log( 'byq-debug', 'Returning cached death list on page load' );
+				return $cached_list;
+			}
+		}
+
+		$death_list_array = $this->generate_death_list_array( $dead_chars_loop, $cache_key );
+		return $death_list_array;
+	}
+
+	/**
+	 * Generate the death list array
+	 *
+	 * @param object $dead_chars_loop The loop of dead characters.
+	 * @return array The death list array.
+	 */
+	private function generate_death_list_array( $dead_chars_loop = null, $cache_key = null ): array {
+
+		if ( null === $cache_key ) {
+			lwtv_plugin()->error_log( 'byq-debug', 'Cache key is null, returning empty array' );
+			return array();
+		}
 
 		// If no loop provided, get all dead characters efficiently
-		if ( null === $dead_chars_loop ) {
+		if ( null === $dead_chars_loop || ! is_object( $dead_chars_loop ) || ! $dead_chars_loop->have_posts() ) {
+			lwtv_plugin()->error_log( 'byq-debug', 'No loop provided, getting all dead characters efficiently' );
 			$dead_chars_loop = ( new Queery_Taxonomy() )->get_posts_for_terms( CPT_Characters::SLUG, 'lez_cliches', 'dead' );
 		}
+
+		$death_list_array = array();
 
 		if ( $dead_chars_loop->have_posts() ) {
 			// Pre-fetch all meta data in one query to reduce database calls
@@ -294,6 +346,10 @@ class BYQ {
 			lwtv_plugin()->error_log( 'byq-debug', 'Total characters: ' . count( $dead_chars_loop->posts ) . ', Fixed: ' . $fixed_count . ', Processed: ' . $processed_count . ', Skipped: ' . $skipped_count . ', Final array count: ' . count( $death_list_array ) );
 		}
 
+		// Cache the generated list
+		lwtv_plugin()->set_transient( $cache_key, $death_list_array, self::DEATH_DATA_CACHE_DURATION );
+		lwtv_plugin()->error_log( 'byq-debug', 'Cached death list with key: ' . $cache_key );
+
 		return $death_list_array;
 	}
 
@@ -304,6 +360,15 @@ class BYQ {
 	 */
 	public function last_death() {
 		$return = '';
+
+		$cache_key     = 'byq_last_death_' . $this->get_data_version_hash();
+		$cached_result = lwtv_plugin()->get_transient( $cache_key );
+		if ( false !== $cached_result ) {
+			lwtv_plugin()->error_log( 'byq-debug', 'Returning cached last death: ' . wp_json_encode( $cached_result ) );
+			return $cached_result;
+		} else {
+			lwtv_plugin()->error_log( 'byq-debug', 'No cached last death found, generating new one' );
+		}
 
 		// Get all dead characters and find the most recent death
 		$death_list_array = $this->list_of_dead_characters();
@@ -346,6 +411,9 @@ class BYQ {
 				$last_death['since'] = $diff;
 				$return              = $last_death;
 				lwtv_plugin()->error_log( 'byq-debug', 'Successfully found last death: ' . $last_death['name'] );
+
+				// Cache the result
+				lwtv_plugin()->set_transient( $cache_key, $last_death, self::API_RESPONSE_CACHE_DURATION );
 			} else {
 				lwtv_plugin()->error_log( 'byq-debug', 'Last death has no valid died timestamp' );
 			}
@@ -762,5 +830,80 @@ class BYQ {
 			'death_years' => $death_years,
 			'show_titles' => $show_titles,
 		);
+	}
+
+	/**
+	 * Check if character exists in cached death list with same death date
+	 *
+	 * @param int $character_id Character ID to check
+	 * @return bool True if character exists in cached list with same date, false otherwise
+	 */
+	public function is_character_in_cached_list( $character_id ) {
+		$cache_key   = 'byq_death_list_' . $this->get_data_version_hash();
+		$cached_list = lwtv_plugin()->get_transient( $cache_key );
+
+		if ( false === $cached_list || empty( $cached_list ) || ! is_array( $cached_list ) ) {
+			return false;
+		}
+
+		// Get current character death date
+		$character_death_date = get_post_meta( $character_id, 'lezchars_death_year', true );
+		if ( empty( $character_death_date ) ) {
+			$character_death_date = get_post_meta( $character_id, 'lezchars_last_death', true );
+		}
+
+		if ( empty( $character_death_date ) ) {
+			return false;
+		}
+
+		// Normalize death date to array
+		if ( ! is_array( $character_death_date ) ) {
+			$character_death_date = array( $character_death_date );
+		}
+
+		// Check if character exists in cached list with matching death date
+		foreach ( $cached_list as $death_data ) {
+			if ( isset( $death_data['id'] ) && (int) $death_data['id'] === (int) $character_id ) {
+				$cached_dates = $death_data['date'] ?? array();
+				if ( ! is_array( $cached_dates ) ) {
+					$cached_dates = array( $cached_dates );
+				}
+
+				// Compare death dates - check if any dates match
+				foreach ( $character_death_date as $char_date ) {
+					if ( in_array( $char_date, $cached_dates, true ) ) {
+						return true;
+					}
+				}
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Invalidate the death list cache
+	 *
+	 * @return void
+	 */
+	public function invalidate_death_list_cache() {
+		$cache_key = 'byq_death_list_' . $this->get_data_version_hash();
+		delete_transient( $cache_key );
+		lwtv_plugin()->error_log( 'byq-debug', 'Invalidated death list cache with key: ' . $cache_key );
+	}
+
+	/**
+	 * Check if cache exists, if not, regenerate it
+	 *
+	 * @param string $cache_key The cache key.
+	 * @return void
+	 */
+	public function check_and_regenerate_cache( $cache_key ) {
+		// Check if cache exists, if not, regenerate
+		$cached_list = lwtv_plugin()->get_transient( $cache_key );
+		if ( false === $cached_list ) {
+			// Cache still doesn't exist, regenerate it
+			$this->generate_death_list_array( null, $cache_key );
+		}
 	}
 }
