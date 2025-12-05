@@ -66,7 +66,7 @@ class Postiz {
 		$defaults = array(
 			'type'      => 'draft', // draft, schedule, publish - for testing, we'll use draft
 			'date'      => current_time( 'c' ), // ISO 8601 format
-			'images'    => array(),
+			'image'     => array(),
 			'settings'  => array(),
 			'group'     => wp_generate_uuid4(), // Generate unique group ID
 			'tags'      => array(),
@@ -313,10 +313,10 @@ class Postiz {
 			);
 		}
 
-		if ( empty( $options['group'] ) || empty( $options['images'] || empty( $options['tags'] ) ) ) {
+		if ( empty( $options['group'] ) || empty( $options['image'] || empty( $options['tags'] ) ) ) {
 			return new \WP_Error(
 				'postiz_no_required_fields',
-				'No required fields provided. Please provide a group, images, and tags for the post. Group: ' . $options['group'] . ' Images: ' . wp_json_encode( $options['images'] ) . ' Tags: ' . wp_json_encode( $options['tags'] ),
+				'No required fields provided. Please provide a group, images, and tags for the post. Group: ' . $options['group'] . ' Images: ' . wp_json_encode( $options['image'] ) . ' Tags: ' . wp_json_encode( $options['tags'] ),
 				array( 'status' => 500 )
 			);
 		}
@@ -331,7 +331,7 @@ class Postiz {
 				'value'       => array(
 					array(
 						'content' => $content,
-						'images'  => $options['images'],
+						'image'   => $options['image'],
 					),
 				),
 				'group'       => $options['group'],
