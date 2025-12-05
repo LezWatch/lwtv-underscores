@@ -23,9 +23,15 @@ class Postiz {
 	 */
 	public function __construct() {
 		// Get API configuration from constants or options
-		$this->api_url     = defined( 'POSTIZ_API_URL' ) ? POSTIZ_API_URL : 'https://postiz.ipstenu.com/api/public/v1';
-		$this->api_key     = defined( 'POSTIZ_API_KEY' ) ? POSTIZ_API_KEY : get_option( 'lwtv_postiz_api_key', '' );
-		$this->channel_ids = defined( 'POSTIZ_CHANNEL_IDS' ) ? POSTIZ_CHANNEL_IDS : get_option( 'lwtv_postiz_channel_ids', array() );
+		$this->api_key = defined( 'POSTIZ_API_KEY' ) ? POSTIZ_API_KEY : get_option( 'lwtv_postiz_api_key', '' );
+		$this->api_url = defined( 'POSTIZ_API_URL' ) ? POSTIZ_API_URL : get_option( 'lwtv_postiz_api_url', '' );
+
+		// Get channel IDs - support both constant and new channel structure from settings
+		if ( defined( 'POSTIZ_CHANNEL_IDS' ) ) {
+			$this->channel_ids = POSTIZ_CHANNEL_IDS;
+		} else {
+			$this->channel_ids = $this->extract_channel_ids_from_settings();
+		}
 
 		// Ensure channel_ids is an array
 		if ( ! is_array( $this->channel_ids ) && ! empty( $this->channel_ids ) ) {
@@ -37,12 +43,53 @@ class Postiz {
 	}
 
 	/**
+	 * Extract channel IDs from the settings option
+	 *
+	 * The settings store channels as an array of arrays with 'name', 'channel_id', and 'active' keys.
+	 * This method extracts just the channel_id values for active channels only.
+	 *
+	 * @return array Array of channel IDs
+	 */
+	private function extract_channel_ids_from_settings() {
+		$channels    = get_option( 'lwtv_postiz_channels', array() );
+		$channel_ids = array();
+
+		if ( is_array( $channels ) ) {
+			foreach ( $channels as $channel ) {
+				// Only include active channels (default to active if not set for backwards compatibility)
+				$is_active = isset( $channel['active'] ) ? $channel['active'] : true;
+
+				if ( $is_active && isset( $channel['channel_id'] ) && ! empty( $channel['channel_id'] ) ) {
+					$channel_ids[] = $channel['channel_id'];
+				}
+			}
+		}
+
+		return $channel_ids;
+	}
+
+	/**
 	 * Check if Postiz is configured and enabled
 	 *
 	 * @return bool
 	 */
 	public function is_enabled() {
 		return ! empty( $this->api_key ) && ! empty( $this->channel_ids );
+	}
+
+	/**
+	 * Check if a type is triggered and enabled
+	 *
+	 * @param string $type The type to check (otd, new_posts, new_shows)
+	 * @return bool
+	 */
+	private function is_type_triggered_enabled( $type ) {
+		$triggers = get_option( 'lwtv_postiz_triggers', array() );
+		if ( empty( $triggers ) ) {
+			return true;
+		}
+
+		return in_array( $type, $triggers, true );
 	}
 
 	/**
@@ -206,6 +253,13 @@ class Postiz {
 		// Only proceed if Postiz is configured
 		if ( ! $this->is_enabled() ) {
 			$this->log_otd_message( 'Postiz is not configured. Skipping OTD added', $type, $content, $post_id, $data );
+			return;
+		}
+
+		// I
+		$enabled = $this->is_type_triggered_enabled( 'otd' );
+		if ( ! $enabled ) {
+			$this->log_otd_message( 'OTD is not enabled in the Auto-Postingsettings. Skipping', $type, $content, $post_id, $data );
 			return;
 		}
 
