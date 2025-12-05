@@ -185,7 +185,7 @@ class Postiz {
 		// Options for the post
 		$options = array(
 			'group'     => 'otd_' . $type . '_' . gmdate( 'Y-m-d' ),
-			'images'    => $images,
+			'image'     => $images,
 			'tags'      => $tags,
 			'shortLink' => false,
 		);
