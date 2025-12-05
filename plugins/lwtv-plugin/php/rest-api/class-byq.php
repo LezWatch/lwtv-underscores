@@ -440,7 +440,7 @@ class BYQ {
 		}
 
 		// Default to JSON (i.e. what the plugin uses)
-		$valid_types = array( 'json', 'tweet' );
+		$valid_types = array( 'json', 'socialmedia' );
 		$type        = ( ! in_array( $type, $valid_types, true ) ) ? 'json' : $type;
 
 		// Generate cache key
@@ -551,7 +551,7 @@ class BYQ {
 			}
 
 			switch ( $type ) {
-				case 'tweet':
+				case 'socialmedia':
 					$the_dead_array = array();
 					foreach ( $characters_died_today as $the_dead ) {
 						$data             = $the_dead['name'] . ' (' . $the_dead['died'] . ') -- ' . $the_dead['url'];

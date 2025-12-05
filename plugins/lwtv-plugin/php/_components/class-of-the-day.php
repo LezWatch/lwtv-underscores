@@ -192,7 +192,7 @@ class Of_The_Day implements Component, Templater {
 
 		// Valid types of 'format'
 		// If there's no known format, we'll assume character
-		$valid_format = array( 'default', 'tweet', 'json', 'table' );
+		$valid_format = array( 'default', 'socialmedia', 'json', 'table' );
 		$format       = ( ! in_array( $format, $valid_format, true ) ) ? 'default' : $format;
 
 		// Create the date with regards to timezones
@@ -766,7 +766,7 @@ class Of_The_Day implements Component, Templater {
 			}
 
 			switch ( $format ) {
-				case 'tweet':
+				case 'socialmedia':
 					$birthdays = implode( ', ', $twitter_array );
 					break;
 				default:
@@ -775,7 +775,7 @@ class Of_The_Day implements Component, Templater {
 		} else {
 			// If no one has a birthday, whomp whomp
 			switch ( $format ) {
-				case 'tweet':
+				case 'socialmedia':
 					$birthdays = false;
 					break;
 				default:
