@@ -9,17 +9,17 @@ UUID="set-char-and-show-otd"
 PING_SCRIPT="/home/wp_bg3hrq/cron/ping.sh"
 
 cd /home/wp_bg3hrq/lezwatchtv.com || {
-	# Call ping.sh with UUID, status, and message
-	$PING_SCRIPT "$UUID" false
-	exit 1
+        # Call ping.sh with UUID, status, and message
+        $PING_SCRIPT "$UUID" "false"
+        exit 1
 }
 
 /usr/bin/wp lwtv generate otd --path=/home/wp_bg3hrq/lezwatchtv.com/
 
 if [ $? -eq 0 ]; then
-	SUCCEEDED="true"
+        SUCCEEDED="true"
 else
-	SUCCEEDED="false"
+        SUCCEEDED="false"
 fi
 
 $PING_SCRIPT "$UUID" "$SUCCEEDED"

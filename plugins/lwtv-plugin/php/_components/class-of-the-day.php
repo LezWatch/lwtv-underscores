@@ -102,18 +102,36 @@ class Of_The_Day implements Component, Templater {
 		}
 
 		foreach ( $types as $a_type ) {
+			$new_otd = null;
 			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-			$queery = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM `{$table}` WHERE posts_type = %s AND created = %s", $a_type, $date ) );
+			$maybe_existing_otd = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM `{$table}` WHERE posts_type = %s AND created = %s", $a_type, $date ) );
 
+			//[04-Dec-2025 19:07:35 UTC] [Byq-debug] Queery: [{"id":"1494","post_datetime":"2025-12-04 13:01:31","created":"2025-12-04","posts_id":"42546","posts_type":"show","content":"The LezWatch.TV show of the day is \"Cuckoo,\" with 2 characters and an overall score of 53.25. - #LWTVsotd #Cuckoo - https:\/\/lwtv.local\/show\/cuckoo\/"}]
 			// If there's NO entry, we can make one.
-			if ( 0 === $queery || empty( $queery ) ) {
-				$of_the_day = $this->of_the_day( $a_type, 'default' );
-				$this->add_to_table( $a_type, $of_the_day );
+			if ( 0 === $maybe_existing_otd || empty( $maybe_existing_otd ) ) {
+				$new_otd = $this->of_the_day( $a_type, 'default' );
+				$this->add_to_table( $a_type, $new_otd );
+				lwtv_plugin()->error_log( 'byq-debug', 'Added OTD to table: ' . wp_json_encode( $new_otd ) );
+			} else {
+				$new_otd = $maybe_existing_otd[0];
+
+				// Convert stdClass object to associative array
+				if ( is_object( $new_otd ) ) {
+					$new_otd = json_decode( wp_json_encode( $new_otd ), true );
+				}
+
+				lwtv_plugin()->error_log( 'byq-debug', 'OTD already exists: ' . wp_json_encode( $new_otd ) );
+			}
+
+			if ( null !== $new_otd ) {
+				do_action( 'lwtv_otd_added', $a_type, $new_otd['content'], $new_otd['posts_id'], $new_otd );
 			}
 		}
 
 		// Clear the cache
 		( new Cache() )->clean_feed( 'otd' );
+
+		return $new_otd;
 	}
 
 	/**
@@ -176,7 +194,7 @@ class Of_The_Day implements Component, Templater {
 
 		// Valid types of 'format'
 		// If there's no known format, we'll assume character
-		$valid_format = array( 'default', 'tweet', 'json', 'table' );
+		$valid_format = array( 'default', 'socialmedia', 'json', 'table' );
 		$format       = ( ! in_array( $format, $valid_format, true ) ) ? 'default' : $format;
 
 		// Create the date with regards to timezones
@@ -750,7 +768,7 @@ class Of_The_Day implements Component, Templater {
 			}
 
 			switch ( $format ) {
-				case 'tweet':
+				case 'socialmedia':
 					$birthdays = implode( ', ', $twitter_array );
 					break;
 				default:
@@ -759,7 +777,7 @@ class Of_The_Day implements Component, Templater {
 		} else {
 			// If no one has a birthday, whomp whomp
 			switch ( $format ) {
-				case 'tweet':
+				case 'socialmedia':
 					$birthdays = false;
 					break;
 				default:
