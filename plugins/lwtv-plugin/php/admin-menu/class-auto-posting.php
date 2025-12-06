@@ -170,16 +170,33 @@ class Auto_Posting {
 							<th scope="row"><?php esc_html_e( 'Channels', 'lwtv-underscores' ); ?></th>
 							<td>
 								<div id="lwtv-channels-container">
-									<?php
-									if ( ! empty( $channels ) ) {
-										foreach ( $channels as $index => $channel ) {
-											$this->render_channel_row( $index, $channel );
-										}
-									} else {
-										$this->render_channel_row( 0 );
-									}
-									?>
+									<table class="widefat fixed striped" role="presentation">
+										<thead>
+											<tr>
+												<th scope="col" class="column-name"><?php esc_html_e( 'Channel Name', 'lwtv-underscores' ); ?></th>
+												<th scope="col" class="column-channel-id"><?php esc_html_e( 'Channel ID', 'lwtv-underscores' ); ?></th>
+												<th scope="col" class="column-active"><?php esc_html_e( 'Active', 'lwtv-underscores' ); ?></th>
+												<th scope="col" class="column-actions"><?php esc_html_e( 'Actions', 'lwtv-underscores' ); ?></th>
+											</tr>
+										</thead>
+										<tbody id="lwtv-channels-tbody">
+											<?php
+											if ( empty( $channels ) ) {
+												?>
+												<tr class="no-items">
+													<td class="colspanchange" colspan="4"><?php esc_html_e( 'No channels added yet.', 'lwtv-underscores' ); ?></td>
+												</tr>
+												<?php
+											} else {
+												foreach ( $channels as $index => $channel ) {
+													$this->render_channel_row( $index, $channel );
+												}
+											}
+											?>
+										</tbody>
+									</table>
 								</div>
+								<br />
 								<button type="button" class="button" id="lwtv-add-channel"><?php esc_html_e( 'Add Channel', 'lwtv-underscores' ); ?></button>
 								<p class="description"><?php esc_html_e( 'Add the channels you want to post to. Get the Channel ID from your Postiz dashboard.', 'lwtv-underscores' ); ?></p>
 							</td>
@@ -224,21 +241,20 @@ class Auto_Posting {
 		$channel_id = isset( $channel['channel_id'] ) ? $channel['channel_id'] : '';
 		$active     = isset( $channel['active'] ) ? $channel['active'] : true; // Default to active for new channels
 		?>
-		<div class="lwtv-channel-row" style="margin-bottom: 10px; padding: 10px; background: #f9f9f9; border: 1px solid #ddd;">
-			<label>
-				<?php esc_html_e( 'Name:', 'lwtv-underscores' ); ?>
+		<tr class="lwtv-channel-row">
+			<td class="column-name" data-colname="<?php esc_attr_e( 'Channel Name', 'lwtv-underscores' ); ?>">
 				<input type="text" name="lwtv_postiz_channels[<?php echo esc_attr( $index ); ?>][name]" value="<?php echo esc_attr( $name ); ?>" class="regular-text" placeholder="<?php esc_attr_e( 'e.g., Bluesky', 'lwtv-underscores' ); ?>">
-			</label>
-			<label style="margin-left: 10px;">
-				<?php esc_html_e( 'Channel ID:', 'lwtv-underscores' ); ?>
+			</td>
+			<td class="column-channel-id" data-colname="<?php esc_attr_e( 'Channel ID', 'lwtv-underscores' ); ?>">
 				<input type="password" name="lwtv_postiz_channels[<?php echo esc_attr( $index ); ?>][channel_id]" value="<?php echo esc_attr( $channel_id ); ?>" class="regular-text" placeholder="<?php esc_attr_e( 'Channel ID from Postiz', 'lwtv-underscores' ); ?>">
-			</label>
-			<label style="margin-left: 10px;">
+			</td>
+			<td class="column-active" data-colname="<?php esc_attr_e( 'Active', 'lwtv-underscores' ); ?>">
 				<input type="checkbox" name="lwtv_postiz_channels[<?php echo esc_attr( $index ); ?>][active]" value="1" <?php checked( $active ); ?>>
-				<?php esc_html_e( 'Active', 'lwtv-underscores' ); ?>
-			</label>
-			<button type="button" class="button lwtv-remove-channel" style="margin-left: 10px;"><?php esc_html_e( 'Remove', 'lwtv-underscores' ); ?></button>
-		</div>
+			</td>
+			<td class="column-actions" data-colname="<?php esc_attr_e( 'Actions', 'lwtv-underscores' ); ?>">
+				<button type="button" class="button lwtv-remove-channel"><?php esc_html_e( 'Remove', 'lwtv-underscores' ); ?></button>
+			</td>
+		</tr>
 		<?php
 	}
 
@@ -252,41 +268,47 @@ class Auto_Posting {
 		<script type="text/javascript">
 		(function() {
 			document.addEventListener('DOMContentLoaded', function() {
-				var container = document.getElementById('lwtv-channels-container');
+				var tbody = document.getElementById('lwtv-channels-tbody');
 				var addButton = document.getElementById('lwtv-add-channel');
 
-				if (!container || !addButton) {
+				if (!tbody || !addButton) {
 					return;
 				}
 
 				// Add new channel row
 				addButton.addEventListener('click', function() {
-					var rows = container.querySelectorAll('.lwtv-channel-row');
+					// Remove "no items" row if present
+					var noItems = tbody.querySelector('.no-items');
+					if (noItems) {
+						noItems.remove();
+					}
+
+					var rows = tbody.querySelectorAll('.lwtv-channel-row');
 					var newIndex = rows.length;
 
-					var newRow = document.createElement('div');
+					var newRow = document.createElement('tr');
 					newRow.className = 'lwtv-channel-row';
-					newRow.style.cssText = 'margin-bottom: 10px; padding: 10px; background: #f9f9f9; border: 1px solid #ddd;';
-					newRow.innerHTML = '<label><?php echo esc_js( __( 'Name:', 'lwtv-underscores' ) ); ?> ' +
+					newRow.innerHTML = '<td class="column-name" data-colname="<?php echo esc_attr( __( 'Channel Name', 'lwtv-underscores' ) ); ?>">' +
 						'<input type="text" name="lwtv_postiz_channels[' + newIndex + '][name]" value="" class="regular-text" placeholder="<?php echo esc_attr( __( 'e.g., Bluesky', 'lwtv-underscores' ) ); ?>">' +
-						'</label>' +
-						'<label style="margin-left: 10px;"><?php echo esc_js( __( 'Channel ID:', 'lwtv-underscores' ) ); ?> ' +
-						'<input type="text" name="lwtv_postiz_channels[' + newIndex + '][channel_id]" value="" class="regular-text" placeholder="<?php echo esc_attr( __( 'Channel ID from Postiz', 'lwtv-underscores' ) ); ?>">' +
-						'</label>' +
-						'<label style="margin-left: 10px;">' +
-						'<input type="checkbox" name="lwtv_postiz_channels[' + newIndex + '][active]" value="1" checked> ' +
-						'<?php echo esc_js( __( 'Active', 'lwtv-underscores' ) ); ?>' +
-						'</label>' +
-						'<button type="button" class="button lwtv-remove-channel" style="margin-left: 10px;"><?php echo esc_js( __( 'Remove', 'lwtv-underscores' ) ); ?></button>';
+						'</td>' +
+						'<td class="column-channel-id" data-colname="<?php echo esc_attr( __( 'Channel ID', 'lwtv-underscores' ) ); ?>">' +
+						'<input type="password" name="lwtv_postiz_channels[' + newIndex + '][channel_id]" value="" class="regular-text" placeholder="<?php echo esc_attr( __( 'Channel ID from Postiz', 'lwtv-underscores' ) ); ?>">' +
+						'</td>' +
+						'<td class="column-active" data-colname="<?php echo esc_attr( __( 'Active', 'lwtv-underscores' ) ); ?>">' +
+						'<input type="checkbox" name="lwtv_postiz_channels[' + newIndex + '][active]" value="1" checked>' +
+						'</td>' +
+						'<td class="column-actions" data-colname="<?php echo esc_attr( __( 'Actions', 'lwtv-underscores' ) ); ?>">' +
+						'<button type="button" class="button lwtv-remove-channel"><?php echo esc_js( __( 'Remove', 'lwtv-underscores' ) ); ?></button>' +
+						'</td>';
 
-					container.appendChild(newRow);
+					tbody.appendChild(newRow);
 					reindexRows();
 				});
 
 				// Remove channel row (event delegation)
-				container.addEventListener('click', function(e) {
+				tbody.addEventListener('click', function(e) {
 					if (e.target && e.target.classList.contains('lwtv-remove-channel')) {
-						var rows = container.querySelectorAll('.lwtv-channel-row');
+						var rows = tbody.querySelectorAll('.lwtv-channel-row');
 						if (rows.length > 1) {
 							e.target.closest('.lwtv-channel-row').remove();
 							reindexRows();
@@ -295,7 +317,11 @@ class Auto_Posting {
 							var row = e.target.closest('.lwtv-channel-row');
 							var inputs = row.querySelectorAll('input');
 							inputs.forEach(function(input) {
-								input.value = '';
+								if (input.type === 'checkbox') {
+									input.checked = false;
+								} else {
+									input.value = '';
+								}
 							});
 						}
 					}
@@ -303,7 +329,7 @@ class Auto_Posting {
 
 				// Reindex all rows after add/remove
 				function reindexRows() {
-					var rows = container.querySelectorAll('.lwtv-channel-row');
+					var rows = tbody.querySelectorAll('.lwtv-channel-row');
 					rows.forEach(function(row, index) {
 						var inputs = row.querySelectorAll('input');
 						inputs.forEach(function(input) {
