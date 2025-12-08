@@ -186,7 +186,7 @@ class Auto_Posting {
 						<!-- Post Type for Postiz: Should be a dropdown for schedule, draft, publish. -->
 						<tr>
 							<th scope="row">
-								<label for="lwtv_postiz_post_type"><?php esc_html_e( 'Post Type', 'lwtv-underscores' ); ?></label>
+								<label for="lwtv_postiz_post_type"><?php esc_html_e( 'Postiz Post Type', 'lwtv-underscores' ); ?></label>
 							</th>
 							<td>
 								<select name="lwtv_postiz_post_type" id="lwtv_postiz_post_type">
