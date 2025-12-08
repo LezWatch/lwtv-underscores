@@ -193,7 +193,12 @@ This document describes the structure and contents of the custom LezWatch.TV Plu
 │   │   ├── class-searchwp.php - Custom integration with SearchWP
 │   │   ├── class-wp-rocket.php - Integration with WP Rocket to flush content when interrelated posts are updated
 │   │   └── class-yoast.php - Custom Yoast controls
+│   ├── postiz/ - Postiz social media API integration
+│   │   ├── class-new-post.php - Handles posting new blog posts and shows to social media
+│   │   ├── class-of-the-day.php - Handles posting "Of The Day" content to social media
+│   │   └── class-postiz.php - Main Postiz integration class with API communication
 │   ├── schedulers/ - Deferred task processing for performance optimization
+│   │   ├── class-byq-task.php - Action Scheduler-based BYQ cache regeneration
 │   │   ├── class-calculation-task.php - Handles deferred math operations for all CPT types
 │   │   ├── class-cache-task.php - Handles scheduled cache invalidation tasks
 │   │   ├── class-cache-queue.php - Manages immediate cache invalidation on shutdown (legacy)
