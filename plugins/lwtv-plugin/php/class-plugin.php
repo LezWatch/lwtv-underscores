@@ -152,6 +152,7 @@ class Plugin {
 			_Components\Features::class,
 			_Components\Grading::class,
 			_Components\Of_The_Day::class,
+			_Components\Postiz::class,
 			_Components\Queeries::class,
 			_Components\Rest_API::class,
 			_Components\Scheduler::class,

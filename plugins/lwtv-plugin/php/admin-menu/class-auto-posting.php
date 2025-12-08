@@ -150,7 +150,7 @@ class Auto_Posting {
 								<label for="lwtv_postiz_api_key"><?php esc_html_e( 'API Key', 'lwtv-underscores' ); ?></label>
 							</th>
 							<td>
-								<input type="password" name="lwtv_postiz_api_key" id="lwtv_postiz_api_key" value="<?php echo esc_attr( $api_key ); ?>" class="regular-text" autocomplete="off">
+								<input type="password" name="lwtv_postiz_api_key" id="lwtv_postiz_api_key" value="<?php echo esc_attr( $api_key ); ?>" autocomplete="off">
 								<p class="description"><?php esc_html_e( 'Enter your Postiz API key.', 'lwtv-underscores' ); ?></p>
 							</td>
 						</tr>
@@ -161,7 +161,7 @@ class Auto_Posting {
 								<label for="lwtv_postiz_api_url"><?php esc_html_e( 'API URL', 'lwtv-underscores' ); ?></label>
 							</th>
 							<td>
-								<input type="text" name="lwtv_postiz_api_url" id="lwtv_postiz_api_url" value="<?php echo esc_url( $api_url ); ?>" class="regular-text" autocomplete="off">
+								<input type="text" name="lwtv_postiz_api_url" id="lwtv_postiz_api_url" value="<?php echo esc_url( $api_url ); ?>" autocomplete="off">
 							</td>
 						</tr>
 
@@ -243,10 +243,10 @@ class Auto_Posting {
 		?>
 		<tr class="lwtv-channel-row">
 			<td class="column-name" data-colname="<?php esc_attr_e( 'Channel Name', 'lwtv-underscores' ); ?>">
-				<input type="text" name="lwtv_postiz_channels[<?php echo esc_attr( $index ); ?>][name]" value="<?php echo esc_attr( $name ); ?>" class="regular-text" placeholder="<?php esc_attr_e( 'e.g., Bluesky', 'lwtv-underscores' ); ?>">
+				<input type="text" name="lwtv_postiz_channels[<?php echo esc_attr( $index ); ?>][name]" value="<?php echo esc_attr( $name ); ?>" placeholder="<?php esc_attr_e( 'e.g., Bluesky', 'lwtv-underscores' ); ?>">
 			</td>
 			<td class="column-channel-id" data-colname="<?php esc_attr_e( 'Channel ID', 'lwtv-underscores' ); ?>">
-				<input type="password" name="lwtv_postiz_channels[<?php echo esc_attr( $index ); ?>][channel_id]" value="<?php echo esc_attr( $channel_id ); ?>" class="regular-text" placeholder="<?php esc_attr_e( 'Channel ID from Postiz', 'lwtv-underscores' ); ?>">
+				<input type="password" name="lwtv_postiz_channels[<?php echo esc_attr( $index ); ?>][channel_id]" value="<?php echo esc_attr( $channel_id ); ?>" placeholder="<?php esc_attr_e( 'Channel ID from Postiz', 'lwtv-underscores' ); ?>">
 			</td>
 			<td class="column-active" data-colname="<?php esc_attr_e( 'Active', 'lwtv-underscores' ); ?>">
 				<input type="checkbox" name="lwtv_postiz_channels[<?php echo esc_attr( $index ); ?>][active]" value="1" <?php checked( $active ); ?>>
@@ -289,10 +289,10 @@ class Auto_Posting {
 					var newRow = document.createElement('tr');
 					newRow.className = 'lwtv-channel-row';
 					newRow.innerHTML = '<td class="column-name" data-colname="<?php echo esc_attr( __( 'Channel Name', 'lwtv-underscores' ) ); ?>">' +
-						'<input type="text" name="lwtv_postiz_channels[' + newIndex + '][name]" value="" class="regular-text" placeholder="<?php echo esc_attr( __( 'e.g., Bluesky', 'lwtv-underscores' ) ); ?>">' +
+						'<input type="text" name="lwtv_postiz_channels[' + newIndex + '][name]" value="" placeholder="<?php echo esc_attr( __( 'e.g., Bluesky', 'lwtv-underscores' ) ); ?>">' +
 						'</td>' +
 						'<td class="column-channel-id" data-colname="<?php echo esc_attr( __( 'Channel ID', 'lwtv-underscores' ) ); ?>">' +
-						'<input type="password" name="lwtv_postiz_channels[' + newIndex + '][channel_id]" value="" class="regular-text" placeholder="<?php echo esc_attr( __( 'Channel ID from Postiz', 'lwtv-underscores' ) ); ?>">' +
+						'<input type="password" name="lwtv_postiz_channels[' + newIndex + '][channel_id]" value="" placeholder="<?php echo esc_attr( __( 'Channel ID from Postiz', 'lwtv-underscores' ) ); ?>">' +
 						'</td>' +
 						'<td class="column-active" data-colname="<?php echo esc_attr( __( 'Active', 'lwtv-underscores' ) ); ?>">' +
 						'<input type="checkbox" name="lwtv_postiz_channels[' + newIndex + '][active]" value="1" checked>' +
