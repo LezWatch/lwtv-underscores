@@ -30,10 +30,10 @@ class New_Post extends Postiz {
 		// Log errors if any
 		if ( is_wp_error( $result ) ) {
 			parent::log_new_post_message( 'Failed to post new post to Postiz: ' . $result->get_error_message(), $post_id );
+		} else {
+			// Log success
+			parent::log_new_post_message( 'New post posted to Postiz', $post_id );
 		}
-
-		// Log success
-		parent::log_new_post_message( 'New post posted to Postiz', $post_id );
 
 		return $result;
 	}
@@ -61,14 +61,24 @@ class New_Post extends Postiz {
 
 		switch ( $post_type ) {
 			case 'post':
-				return array( '#NewPost' );
+				return array(
+					array(
+						'value' => '#NewPost',
+						'label' => '#NewPost',
+					),
+				);
 			case 'post_type_shows':
 				// ToDo: See if there are any hashtags for the show in post meta
 				$show_name = get_the_title( $post_id );
 				$show_name = str_replace( ' ', '', $show_name );
 				$show_name = strtolower( $show_name );
-				$show_name = '#' . $show_name;
-				return array( $show_name );
+				$show_tag  = '#' . $show_name;
+				return array(
+					array(
+						'value' => $show_tag,
+						'label' => $show_tag,
+					),
+				);
 			default:
 				return array();
 		}
@@ -77,7 +87,6 @@ class New_Post extends Postiz {
 	/**
 	 * Post "New Post" content to Postiz
 	 *
-	 * @param string $type    Type of OTD (character, show)
 	 * @param string $content The content to post
 	 * @param int    $post_id The post ID
 	 * @return array|WP_Error Response array or WP_Error on failure
