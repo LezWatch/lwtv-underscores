@@ -14,10 +14,20 @@ class Auto_Posting {
 	/**
 	 * Option names
 	 */
-	private const OPTION_API_KEY  = 'lwtv_postiz_api_key';
-	private const OPTION_API_URL  = 'lwtv_postiz_api_url';
-	private const OPTION_CHANNELS = 'lwtv_postiz_channels';
-	private const OPTION_TRIGGERS = 'lwtv_postiz_triggers';
+	private const OPTION_API_KEY   = 'lwtv_postiz_api_key';
+	private const OPTION_API_URL   = 'lwtv_postiz_api_url';
+	private const OPTION_CHANNELS  = 'lwtv_postiz_channels';
+	private const OPTION_TRIGGERS  = 'lwtv_postiz_triggers';
+	private const OPTION_POST_TYPE = 'lwtv_postiz_post_type';
+
+	/**
+	 * Available post types
+	 */
+	private const AVAILABLE_POST_TYPES = array(
+		'draft'    => 'Draft',
+		'schedule' => 'Schedule',
+		'now'      => 'Immediately',
+	);
 
 	/**
 	 * Available triggers
@@ -101,6 +111,13 @@ class Auto_Posting {
 		}
 		update_option( self::OPTION_TRIGGERS, $triggers );
 
+		// Sanitize and save post type
+		$post_type = isset( $_POST['lwtv_postiz_post_type'] ) ? sanitize_key( $_POST['lwtv_postiz_post_type'] ) : 'schedule';
+		if ( ! array_key_exists( $post_type, self::AVAILABLE_POST_TYPES ) ) {
+			$post_type = 'schedule';
+		}
+		update_option( self::OPTION_POST_TYPE, $post_type );
+
 		// Redirect back with success message
 		wp_safe_redirect( add_query_arg( 'message', 'saved', admin_url( 'admin.php?page=lwtv_auto_posting' ) ) );
 		exit;
@@ -113,10 +130,11 @@ class Auto_Posting {
 	 */
 	public function render_page(): void {
 		// Get current values
-		$api_key  = get_option( self::OPTION_API_KEY, '' );
-		$api_url  = defined( 'POSTIZ_API_URL' ) ? POSTIZ_API_URL : get_option( self::OPTION_API_URL, '' );
-		$channels = get_option( self::OPTION_CHANNELS, array() );
-		$triggers = get_option( self::OPTION_TRIGGERS, array() );
+		$api_key   = get_option( self::OPTION_API_KEY, '' );
+		$api_url   = defined( 'POSTIZ_API_URL' ) ? POSTIZ_API_URL : get_option( self::OPTION_API_URL, '' );
+		$channels  = get_option( self::OPTION_CHANNELS, array() );
+		$triggers  = get_option( self::OPTION_TRIGGERS, array() );
+		$post_type = get_option( self::OPTION_POST_TYPE, 'schedule' );
 
 		// Ensure channels is an array
 		if ( ! is_array( $channels ) ) {
@@ -150,7 +168,7 @@ class Auto_Posting {
 								<label for="lwtv_postiz_api_key"><?php esc_html_e( 'API Key', 'lwtv-underscores' ); ?></label>
 							</th>
 							<td>
-								<input type="password" name="lwtv_postiz_api_key" id="lwtv_postiz_api_key" value="<?php echo esc_attr( $api_key ); ?>" autocomplete="off">
+								<input type="password" name="lwtv_postiz_api_key" id="lwtv_postiz_api_key" value="<?php echo esc_attr( $api_key ); ?>" class="regular-text" autocomplete="off">
 								<p class="description"><?php esc_html_e( 'Enter your Postiz API key.', 'lwtv-underscores' ); ?></p>
 							</td>
 						</tr>
@@ -161,7 +179,21 @@ class Auto_Posting {
 								<label for="lwtv_postiz_api_url"><?php esc_html_e( 'API URL', 'lwtv-underscores' ); ?></label>
 							</th>
 							<td>
-								<input type="text" name="lwtv_postiz_api_url" id="lwtv_postiz_api_url" value="<?php echo esc_url( $api_url ); ?>" autocomplete="off">
+								<input type="text" name="lwtv_postiz_api_url" id="lwtv_postiz_api_url" value="<?php echo esc_url( $api_url ); ?>" class="regular-text" autocomplete="off">
+							</td>
+						</tr>
+
+						<!-- Post Type for Postiz: Should be a dropdown for schedule, draft, publish. -->
+						<tr>
+							<th scope="row">
+								<label for="lwtv_postiz_post_type"><?php esc_html_e( 'Post Type', 'lwtv-underscores' ); ?></label>
+							</th>
+							<td>
+								<select name="lwtv_postiz_post_type" id="lwtv_postiz_post_type">
+									<?php foreach ( self::AVAILABLE_POST_TYPES as $type_key => $type_label ) : ?>
+										<option value="<?php echo esc_attr( $type_key ); ?>" <?php selected( $post_type, $type_key ); ?>><?php echo esc_html( $type_label ); ?></option>
+									<?php endforeach; ?>
+								</select>
 							</td>
 						</tr>
 

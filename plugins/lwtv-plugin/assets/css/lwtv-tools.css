@@ -65,16 +65,3 @@
 #lwtv-channels-container table tbody tr td {
 	padding-left: 10px;
 }
-
-#lwtv-channels-container th.column-name,
-#lwtv-channels-container th.column-channel-id {
-	width: 35%;
-}
-
-#lwtv-channels-container th.column-active {
-	width: 10%;
-}
-
-#lwtv-channels-container th.column-actions {
-	width: 20%;
-}

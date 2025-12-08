@@ -121,7 +121,7 @@ class Postiz {
 
 		// Default options
 		$defaults = array(
-			'type'      => 'draft', // draft, schedule, publish - for testing, we'll use draft
+			'type'      => get_option( 'lwtv_postiz_post_type', 'draft' ), // Get the value from the options
 			'date'      => current_time( 'c' ), // ISO 8601 format
 			'image'     => array(),
 			'settings'  => array(),
