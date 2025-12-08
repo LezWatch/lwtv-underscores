@@ -7,7 +7,10 @@
  * @package lwtv-plugin
  */
 
-namespace LWTV\Plugins;
+namespace LWTV\Postiz;
+
+use LWTV\Postiz\Of_The_Day;
+use LWTV\Postiz\New_Post;
 
 class Postiz {
 
@@ -23,9 +26,15 @@ class Postiz {
 	 */
 	public function __construct() {
 		// Get API configuration from constants or options
-		$this->api_url     = defined( 'POSTIZ_API_URL' ) ? POSTIZ_API_URL : 'https://postiz.ipstenu.com/api/public/v1';
-		$this->api_key     = defined( 'POSTIZ_API_KEY' ) ? POSTIZ_API_KEY : get_option( 'lwtv_postiz_api_key', '' );
-		$this->channel_ids = defined( 'POSTIZ_CHANNEL_IDS' ) ? POSTIZ_CHANNEL_IDS : get_option( 'lwtv_postiz_channel_ids', array() );
+		$this->api_key = defined( 'POSTIZ_API_KEY' ) ? POSTIZ_API_KEY : get_option( 'lwtv_postiz_api_key', '' );
+		$this->api_url = defined( 'POSTIZ_API_URL' ) ? POSTIZ_API_URL : get_option( 'lwtv_postiz_api_url', '' );
+
+		// Get channel IDs - support both constant and new channel structure from settings
+		if ( defined( 'POSTIZ_CHANNEL_IDS' ) ) {
+			$this->channel_ids = POSTIZ_CHANNEL_IDS;
+		} else {
+			$this->channel_ids = $this->extract_channel_ids_from_settings();
+		}
 
 		// Ensure channel_ids is an array
 		if ( ! is_array( $this->channel_ids ) && ! empty( $this->channel_ids ) ) {
@@ -33,7 +42,40 @@ class Postiz {
 		}
 
 		// Hook into the OTD action
-		add_action( 'lwtv_otd_added', array( $this, 'handle_otd_added' ), 10, 4 );
+		if ( $this->is_enabled() && $this->is_type_triggered_enabled( 'otd' ) ) {
+			add_action( 'lwtv_otd_added', array( new Of_The_Day(), 'handle_otd_added' ), 10, 4 );
+		}
+
+		// Hook into the new post action - this will cover ALL post types
+		if ( $this->is_enabled() && $this->is_type_triggered_enabled( 'new_posts' ) ) {
+			add_action( 'publish_post', array( new New_Post(), 'handle_new_post_added' ), 10, 4 );
+		}
+	}
+
+	/**
+	 * Extract channel IDs from the settings option
+	 *
+	 * The settings store channels as an array of arrays with 'name', 'channel_id', and 'active' keys.
+	 * This method extracts just the channel_id values for active channels only.
+	 *
+	 * @return array Array of channel IDs
+	 */
+	private function extract_channel_ids_from_settings() {
+		$channels    = get_option( 'lwtv_postiz_channels', array() );
+		$channel_ids = array();
+
+		if ( is_array( $channels ) ) {
+			foreach ( $channels as $channel ) {
+				// Only include active channels (default to active if not set for backwards compatibility)
+				$is_active = isset( $channel['active'] ) ? $channel['active'] : true;
+
+				if ( $is_active && isset( $channel['channel_id'] ) && ! empty( $channel['channel_id'] ) ) {
+					$channel_ids[] = $channel['channel_id'];
+				}
+			}
+		}
+
+		return $channel_ids;
 	}
 
 	/**
@@ -43,6 +85,21 @@ class Postiz {
 	 */
 	public function is_enabled() {
 		return ! empty( $this->api_key ) && ! empty( $this->channel_ids );
+	}
+
+	/**
+	 * Check if a type is triggered and enabled
+	 *
+	 * @param string $type The type to check (otd, new_posts, new_shows)
+	 * @return bool
+	 */
+	public function is_type_triggered_enabled( $type ) {
+		$triggers = get_option( 'lwtv_postiz_triggers', array() );
+		if ( empty( $triggers ) ) {
+			return true;
+		}
+
+		return in_array( $type, $triggers, true );
 	}
 
 	/**
@@ -64,7 +121,7 @@ class Postiz {
 
 		// Default options
 		$defaults = array(
-			'type'      => 'draft', // draft, schedule, publish - for testing, we'll use draft
+			'type'      => get_option( 'lwtv_postiz_post_type', 'draft' ), // Get the value from the options
 			'date'      => current_time( 'c' ), // ISO 8601 format
 			'image'     => array(),
 			'settings'  => array(),
@@ -169,77 +226,12 @@ class Postiz {
 	}
 
 	/**
-	 * Post "Of The Day" content to Postiz
-	 *
-	 * @param string $type    Type of OTD (character, show)
-	 * @param string $content The content to post
-	 * @param int    $post_id The post ID
-	 * @return array|WP_Error Response array or WP_Error on failure
-	 */
-	public function post_of_the_day( $type, $content, $post_id ) {
-
-		// Get Images and Tags
-		$images = $this->get_images( $post_id );
-		$tags   = $this->get_tags( $type, $post_id );
-
-		// Options for the post
-		$options = array(
-			'group'     => 'otd_' . $type . '_' . gmdate( 'Y-m-d' ),
-			'image'     => $images,
-			'tags'      => $tags,
-			'shortLink' => false,
-		);
-
-		// Create the post
-		return $this->create_post( $content, $options );
-	}
-
-	/**
-	 * Handle the lwtv_otd_added action
-	 *
-	 * @param string $type    Type of OTD (character, show)
-	 * @param string $content The content to post
-	 * @param int    $post_id The post ID
-	 * @param array  $data    Additional data about the OTD
-	 */
-	public function handle_otd_added( $type, $content, $post_id, $data ) {
-		// Only proceed if Postiz is configured
-		if ( ! $this->is_enabled() ) {
-			$this->log_otd_message( 'Postiz is not configured. Skipping OTD added', $type, $content, $post_id, $data );
-			return;
-		}
-
-		// Check if the OTD already exists in Postiz
-		$exists = $this->post_exists( $content );
-		if ( $exists ) {
-			$this->log_otd_message( 'OTD already exists in Postiz in at least one channel. Skipping', $type, $content, $post_id, $data );
-			return;
-		}
-
-		// If this OTD doesn't exist in Postiz, post it
-		$result = $this->post_of_the_day( $type, $content, $post_id );
-
-		// Log errors if any
-		if ( is_wp_error( $result ) ) {
-			if ( function_exists( 'lwtv_plugin' ) && method_exists( lwtv_plugin(), 'error_log' ) ) {
-				lwtv_plugin()->error_log(
-					'postiz',
-					sprintf(
-						'Failed to post OTD to Postiz: %s',
-						$result->get_error_message()
-					)
-				);
-			}
-		}
-	}
-
-	/**
 	 * Get the images for a post
 	 *
 	 * @param int $post_id The post ID
 	 * @return array The images
 	 */
-	private function get_images( $post_id ) {
+	public function get_images( $post_id ) {
 		$images = array();
 		if ( has_post_thumbnail( $post_id ) ) {
 			$image_id  = get_post_thumbnail_id( $post_id );
@@ -268,7 +260,7 @@ class Postiz {
 	 * @param int    $post_id The post ID
 	 * @return array The tags
 	 */
-	private function get_tags( $type, $post_id ) {
+	public function get_tags( $purpose, $post_id, $type = null ) {
 		$title   = get_the_title( $post_id );
 		$hashtag = '#' . implode( '', array_map( 'ucfirst', explode( '-', $title ) ) );
 		$tags    = array(
@@ -276,13 +268,10 @@ class Postiz {
 			$this->create_tag( $hashtag ),
 		);
 
-		switch ( $type ) {
-			case 'character':
-				$tags[] = $this->create_tag( '#LWTVcotd' );
-				break;
-			case 'show':
-				$tags[] = $this->create_tag( '#LWTVsotd' );
-				break;
+		if ( 'otd' === $purpose && null !== $type ) {
+			$tags[] = ( new Of_The_Day() )->create_tag( $type );
+		} else {
+			$tags[] = ( new New_Post() )->create_tag( $post_id );
 		}
 
 		return $tags;
@@ -295,7 +284,7 @@ class Postiz {
 	 * @param array  $options The options for the post
 	 * @return array The posts array
 	 */
-	private function build_posts( $content, $options ) {
+	public function build_posts( $content, $options ) {
 
 		if ( empty( $this->channel_ids ) ) {
 			return new \WP_Error(
@@ -352,7 +341,7 @@ class Postiz {
 	 * @param int    $post_id The post ID
 	 * @return bool True if the OTD exists, false otherwise
 	 */
-	private function post_exists( $content ) {
+	public function post_exists( $content ) {
 		// Get all posts made for the last 24 hours
 		$start_date = rawurlencode( gmdate( 'Y-m-d\TH:i:s\Z', strtotime( '-48 hours' ) ) );
 		$end_date   = rawurlencode( gmdate( 'Y-m-d\TH:i:s\Z' ) );
@@ -407,7 +396,7 @@ class Postiz {
 	 * @param array  $data    Additional data about the OTD
 	 * @return void
 	 */
-	private function log_otd_message( $message, $type, $content, $post_id, $data ) {
+	public function log_otd_message( $message, $type, $content, $post_id, $data ) {
 		if ( function_exists( 'lwtv_plugin' ) && method_exists( lwtv_plugin(), 'error_log' ) ) {
 			lwtv_plugin()->error_log(
 				'postiz',
@@ -418,6 +407,26 @@ class Postiz {
 					$content,
 					$post_id,
 					wp_json_encode( $data )
+				)
+			);
+		}
+	}
+
+	/**
+	 * Log a new post-related message with consistent formatting
+	 *
+	 * @param string $message The log message
+	 * @param int    $post_id The post ID
+	 * @return void
+	 */
+	public function log_new_post_message( $message, $post_id ) {
+		if ( function_exists( 'lwtv_plugin' ) && method_exists( lwtv_plugin(), 'error_log' ) ) {
+			lwtv_plugin()->error_log(
+				'postiz',
+				sprintf(
+					'%s: %d',
+					$message,
+					$post_id
 				)
 			);
 		}

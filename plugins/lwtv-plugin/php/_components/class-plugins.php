@@ -30,7 +30,6 @@ class Plugins implements Component, Templater {
 		new FacetWP();
 		new Gravity_Forms();
 		new MonsterInsights();
-		new Postiz();
 		new Related_Posts_By_Taxonomy();
 		new SearchWP();
 		new WP_Rocket();
