@@ -53,7 +53,7 @@ class Of_The_Day extends Postiz {
 
 		// Get Images and Tags
 		$images = parent::get_images( $post_id );
-		$tags   = parent::get_tags( 'otd', $type, $post_id );
+		$tags   = parent::get_tags( 'otd', $post_id, $type );
 
 		// Options for the post
 		$options = array(
@@ -74,6 +74,7 @@ class Of_The_Day extends Postiz {
 	 * @return array The tag
 	 */
 	public function create_tag( $type ) {
+		$tags = array();
 		switch ( $type ) {
 			case 'character':
 				$tags[] = $this->create_tag( '#LWTVcotd' );
@@ -82,5 +83,7 @@ class Of_The_Day extends Postiz {
 				$tags[] = $this->create_tag( '#LWTVsotd' );
 				break;
 		}
+
+		return $tags;
 	}
 }

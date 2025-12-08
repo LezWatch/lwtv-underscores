@@ -131,7 +131,11 @@ class Of_The_Day implements Component, Templater {
 		// Clear the cache
 		( new Cache() )->clean_feed( 'otd' );
 
-		return $new_otd;
+		if ( null !== $new_otd ) {
+			return $new_otd;
+		}
+
+		return new \WP_Error( 'no_otd', 'No OTD found', array( 'status' => 400 ) );
 	}
 
 	/**

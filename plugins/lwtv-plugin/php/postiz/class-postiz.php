@@ -42,13 +42,13 @@ class Postiz {
 		}
 
 		// Hook into the OTD action
-		if ( $this->is_enabled() && $this->is_type_triggered_enabled( 'otd' ) ) {
+		if ( $this->is_enabled() && $this->is_type_triggered_enabled( 'of_the_day' ) ) {
 			add_action( 'lwtv_otd_added', array( new Of_The_Day(), 'handle_otd_added' ), 10, 4 );
 		}
 
 		// Hook into the new post action - this will cover ALL post types
 		if ( $this->is_enabled() && $this->is_type_triggered_enabled( 'new_posts' ) ) {
-			add_action( 'publish_post', array( new New_Post(), 'handle_new_post_added' ), 10, 4 );
+			add_action( 'publish_post', array( new New_Post(), 'handle_new_post_added' ), 10, 2 );
 		}
 	}
 
@@ -134,6 +134,11 @@ class Postiz {
 
 		// Build posts array - one for each channel
 		$posts = $this->build_posts( $content, $options );
+
+		// Check for errors from build_posts
+		if ( is_wp_error( $posts ) ) {
+			return $posts;
+		}
 
 		// Build the payload
 		$payload = array(
@@ -258,6 +263,8 @@ class Postiz {
 	 *
 	 * @param string $type    Type of OTD (character, show)
 	 * @param int    $post_id The post ID
+	 * @param string $type    Type of OTD (character, show)
+	 *
 	 * @return array The tags
 	 */
 	public function get_tags( $purpose, $post_id, $type = null ) {
@@ -302,7 +309,7 @@ class Postiz {
 			);
 		}
 
-		if ( empty( $options['group'] ) || empty( $options['image'] || empty( $options['tags'] ) ) ) {
+		if ( empty( $options['group'] ) || empty( $options['image'] ) || empty( $options['tags'] ) ) {
 			return new \WP_Error(
 				'postiz_no_required_fields',
 				'No required fields provided. Please provide a group, images, and tags for the post. Group: ' . $options['group'] . ' Images: ' . wp_json_encode( $options['image'] ) . ' Tags: ' . wp_json_encode( $options['tags'] ),
