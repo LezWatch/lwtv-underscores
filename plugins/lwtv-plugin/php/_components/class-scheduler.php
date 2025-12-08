@@ -18,6 +18,7 @@ use LWTV\Schedulers\Cache_Batch_Task;
 use LWTV\Schedulers\Taxsync_Task;
 use LWTV\Schedulers\FixCharShows_Task;
 use LWTV\Schedulers\Statistics_Cache_Warming;
+use LWTV\Schedulers\BYQ_Task;
 
 /**
  * Class Scheduler
@@ -55,6 +56,7 @@ class Scheduler implements Component, Templater {
 			if ( $this->is_action_scheduler_available() ) {
 				new TMDB_Batch_Task();
 				new Cache_Batch_Task();
+				new BYQ_Task();
 			} else {
 				lwtv_plugin()->error_log( 'scheduler', 'Action Scheduler not available, skipping AS-dependent task handlers' );
 			}

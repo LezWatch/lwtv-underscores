@@ -30,7 +30,6 @@ class BYQ {
 	 */
 	public function __construct() {
 		add_action( 'rest_api_init', array( $this, 'rest_api_init' ) );
-		add_action( 'lwtv_byq_check_cache', array( $this, 'check_and_regenerate_cache' ) );
 	}
 
 	/**
@@ -151,8 +150,9 @@ class BYQ {
 			}
 			lwtv_plugin()->error_log( 'byq-debug', 'Returning empty array on page load because wp_current_filter is empty' );
 
-			// Schedule a cron job to check the cache again in 1 minute
-			wp_schedule_single_event( time() + 60, 'lwtv_byq_check_cache', array( $cache_key ) );
+			// Schedule an Action Scheduler task to check the cache again in 1 minute
+			( new \LWTV\Schedulers\BYQ_Task() )->schedule_cache_check( $cache_key );
+			lwtv_plugin()->error_log( 'byq-debug', 'Scheduling Action Scheduler task to check the cache again in 1 minute' );
 			return array();
 		}
 
@@ -191,7 +191,7 @@ class BYQ {
 	 * @param object $dead_chars_loop The loop of dead characters.
 	 * @return array The death list array.
 	 */
-	private function generate_death_list_array( $dead_chars_loop = null, $cache_key = null ): array {
+	public function generate_death_list_array( $dead_chars_loop = null, $cache_key = null ): array {
 
 		if ( null === $cache_key ) {
 			lwtv_plugin()->error_log( 'byq-debug', 'Cache key is null, returning empty array' );
@@ -890,20 +890,5 @@ class BYQ {
 		$cache_key = 'byq_death_list_' . $this->get_data_version_hash();
 		delete_transient( $cache_key );
 		lwtv_plugin()->error_log( 'byq-debug', 'Invalidated death list cache with key: ' . $cache_key );
-	}
-
-	/**
-	 * Check if cache exists, if not, regenerate it
-	 *
-	 * @param string $cache_key The cache key.
-	 * @return void
-	 */
-	public function check_and_regenerate_cache( $cache_key ) {
-		// Check if cache exists, if not, regenerate
-		$cached_list = lwtv_plugin()->get_transient( $cache_key );
-		if ( false === $cached_list ) {
-			// Cache still doesn't exist, regenerate it
-			$this->generate_death_list_array( null, $cache_key );
-		}
 	}
 }
