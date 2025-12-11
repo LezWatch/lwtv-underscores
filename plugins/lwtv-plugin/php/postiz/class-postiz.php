@@ -9,9 +9,6 @@
 
 namespace LWTV\Postiz;
 
-use LWTV\Postiz\Of_The_Day;
-use LWTV\Postiz\New_Post;
-
 class Postiz {
 
 	/**
@@ -39,16 +36,6 @@ class Postiz {
 		// Ensure channel_ids is an array
 		if ( ! is_array( $this->channel_ids ) && ! empty( $this->channel_ids ) ) {
 			$this->channel_ids = array( $this->channel_ids );
-		}
-
-		// Hook into the OTD action
-		if ( $this->is_enabled() && $this->is_type_triggered_enabled( 'of_the_day' ) ) {
-			add_action( 'lwtv_otd_added', array( new Of_The_Day(), 'handle_otd_added' ), 10, 4 );
-		}
-
-		// Hook into the new post action - this will cover ALL post types
-		if ( $this->is_enabled() && $this->is_type_triggered_enabled( 'new_posts' ) ) {
-			add_action( 'publish_post', array( new New_Post(), 'handle_new_post_added' ), 10, 2 );
 		}
 	}
 

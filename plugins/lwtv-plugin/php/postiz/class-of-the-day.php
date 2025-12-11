@@ -8,6 +8,17 @@
 namespace LWTV\Postiz;
 
 class Of_The_Day extends Postiz {
+
+	/**
+	 * Constructor - register hook for OTD posts
+	 */
+	public function __construct() {
+		$postiz = new Postiz();
+		if ( $postiz->is_enabled() && $postiz->is_type_triggered_enabled( 'of_the_day' ) ) {
+			add_action( 'lwtv_otd_added', array( $this, 'handle_otd_added' ), 10, 4 );
+		}
+	}
+
 	/**
 	 * Handle the lwtv_otd_added action
 	 *
@@ -71,19 +82,22 @@ class Of_The_Day extends Postiz {
 	 * Create a tag for the OTD
 	 *
 	 * @param string $type The type of OTD (character, show)
-	 * @return array The tag
+	 * @return array The tag array with 'value' and 'label' keys
 	 */
 	public function create_tag( $type ) {
-		$tags = array();
 		switch ( $type ) {
 			case 'character':
-				$tags[] = $this->create_tag( '#LWTVcotd' );
-				break;
+				return array(
+					'value' => '#LWTVcotd',
+					'label' => '#LWTVcotd',
+				);
 			case 'show':
-				$tags[] = $this->create_tag( '#LWTVsotd' );
-				break;
+				return array(
+					'value' => '#LWTVsotd',
+					'label' => '#LWTVsotd',
+				);
+			default:
+				return array();
 		}
-
-		return $tags;
 	}
 }
