@@ -10,6 +10,7 @@ use LWTV\Plugins\Comment_Probation;
 use LWTV\Plugins\FacetWP;
 use LWTV\Plugins\Gravity_Forms;
 use LWTV\Plugins\MonsterInsights;
+use LWTV\Plugins\Postiz;
 use LWTV\Plugins\Related_Posts_By_Taxonomy;
 use LWTV\Plugins\SearchWP;
 use LWTV\Plugins\WP_Rocket;

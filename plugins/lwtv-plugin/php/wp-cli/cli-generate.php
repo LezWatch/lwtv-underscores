@@ -299,8 +299,16 @@ class WP_CLI_LWTV_Generate {
 
 		// Set it!
 		foreach ( $to_do as $otd ) {
-			( new Of_The_Day() )->set_of_the_day( $otd );
-			\WP_CLI::success( 'The ' . $otd . ' "Of the Day" has been set.' );
+			\WP_CLI::log( 'Setting the ' . $otd . ' "Of the Day"...' );
+			$new_otd = ( new Of_The_Day() )->set_of_the_day( $otd );
+
+			if ( null === $new_otd || is_wp_error( $new_otd ) ) {
+				\WP_CLI::error( 'There was an error setting the ' . $otd . ' "Of the Day".' );
+			}
+
+			$post_id = $new_otd['posts_id'];
+
+			\WP_CLI::success( 'The ' . $otd . ' "Of the Day" has been set: ' . get_the_title( $post_id ) . ' (' . $post_id . ')' );
 		}
 	}
 

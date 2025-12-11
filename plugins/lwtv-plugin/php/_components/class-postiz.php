@@ -1,0 +1,21 @@
+<?php
+/*
+ * Postiz
+ *
+ * Integration with https://postiz.ipstenu.com/
+ *
+ * @package lwtv-plugin
+ */
+namespace LWTV\_Components;
+
+use LWTV\Postiz\Postiz as Postiz_Class;
+use LWTV\Postiz\Of_The_Day;
+use LWTV\Postiz\New_Post;
+
+class Postiz implements Component {
+	public function init(): void {
+		new Postiz_Class();
+		new Of_The_Day();
+		new New_Post();
+	}
+}

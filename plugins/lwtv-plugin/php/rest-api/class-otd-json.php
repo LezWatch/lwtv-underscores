@@ -70,6 +70,11 @@ class OTD_JSON {
 		$type   = ( isset( $params['type'] ) && '' !== $params['type'] ) ? sanitize_title_for_query( $params['type'] ) : 'unknown';
 		$format = ( isset( $params['format'] ) && '' !== $params['format'] ) ? sanitize_title_for_query( $params['format'] ) : 'default';
 
+		// Deprecation check: If Format is 'tweet' change it to 'socialmedia'
+		if ( 'tweet' === $format ) {
+			$format = 'socialmedia';
+		}
+
 		// Generate cache key
 		$cache_key = 'lwtv_otd_' . $type . '_' . $format . '_' . $this->get_data_version_hash();
 
