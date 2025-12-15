@@ -12,6 +12,7 @@ use LWTV\Debugger\Shows as Shows_Debugger;
 use LWTV\Debugger\Dupes as Dupes_Debugger;
 use LWTV\Debugger\Queers as Queers_Debugger;
 use LWTV\Features\Missed_Schedule;
+use LWTV\Rest_API\BYQ;
 use LWTV\CPTs\Shows as CPT_Shows;
 use LWTV\CPTs\Actors as CPT_Actors;
 
@@ -192,6 +193,15 @@ class WP_CLI_LWTV_Generate {
 		// Run the update lists
 		\WP_CLI::log( 'Updating the lists...' );
 		$this->run_update_lists();
+
+		// Refresh BYQ (Bury Your Queers) caches daily to ensure fresh death data
+		\WP_CLI::log( 'Refreshing BYQ death caches...' );
+		$byq_refresh = ( new BYQ() )->daily_cache_refresh();
+		if ( $byq_refresh ) {
+			\WP_CLI::success( 'BYQ caches refreshed successfully.' );
+		} else {
+			\WP_CLI::warning( 'BYQ cache refresh may have had issues - check logs.' );
+		}
 
 		// run OTD
 		\WP_CLI::log( 'Setting the "Of the Day"...' );

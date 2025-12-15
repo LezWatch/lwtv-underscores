@@ -887,8 +887,62 @@ class BYQ {
 	 * @return void
 	 */
 	public function invalidate_death_list_cache() {
-		$cache_key = 'byq_death_list_' . $this->get_data_version_hash();
-		delete_transient( $cache_key );
-		lwtv_plugin()->error_log( 'byq-debug', 'Invalidated death list cache with key: ' . $cache_key );
+		// Get the current hash BEFORE we delete it
+		$current_hash = $this->get_data_version_hash();
+
+		// Delete the hash transient first so next request generates fresh hash
+		delete_transient( 'byq_data_version_hash' );
+
+		// Delete all related caches using the OLD hash
+		$death_list_key = 'byq_death_list_' . $current_hash;
+		$last_death_key = 'byq_last_death_' . $current_hash;
+
+		delete_transient( $death_list_key );
+		delete_transient( $last_death_key );
+
+		// Also delete on_this_day caches for today (they share the hash)
+		$today          = gmdate( 'm-d' );
+		$otd_json_key   = 'byq_on_this_day_' . md5( $today . '_json' ) . '_' . $current_hash;
+		$otd_social_key = 'byq_on_this_day_' . md5( $today . '_socialmedia' ) . '_' . $current_hash;
+
+		delete_transient( $otd_json_key );
+		delete_transient( $otd_social_key );
+
+		lwtv_plugin()->error_log( 'byq-debug', 'Invalidated BYQ caches: ' . $death_list_key . ', ' . $last_death_key . ', byq_data_version_hash, and on_this_day caches' );
+	}
+
+	/**
+	 * Force a complete refresh of all BYQ caches
+	 *
+	 * This should be called during daily cron to ensure fresh data each day.
+	 * It invalidates all caches and pre-warms the death list.
+	 *
+	 * @return bool True if refresh was successful
+	 */
+	public function daily_cache_refresh(): bool {
+		lwtv_plugin()->error_log( 'byq-debug', 'Starting daily BYQ cache refresh' );
+
+		// First, invalidate all existing caches
+		$this->invalidate_death_list_cache();
+
+		// Force regenerate the death list by calling list_of_dead_characters
+		// which will query fresh data and cache it
+		$death_list = $this->generate_death_list_array( null, 'byq_death_list_' . $this->get_data_version_hash() );
+
+		if ( empty( $death_list ) ) {
+			lwtv_plugin()->error_log( 'byq-debug', 'Daily refresh: Death list is empty - this may indicate a problem' );
+			return false;
+		}
+
+		// Pre-warm the last_death cache
+		$last_death = $this->last_death();
+
+		if ( empty( $last_death ) ) {
+			lwtv_plugin()->error_log( 'byq-debug', 'Daily refresh: Last death is empty - this may indicate a problem' );
+			return false;
+		}
+
+		lwtv_plugin()->error_log( 'byq-debug', 'Daily BYQ cache refresh completed. Last death: ' . $last_death['name'] . ' (ID: ' . $last_death['id'] . ')' );
+		return true;
 	}
 }
