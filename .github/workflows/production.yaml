@@ -38,13 +38,13 @@ jobs:
         run: npm run build
 
       - name: Upload theme artifact
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: theme-files-prod
           path: . # Uploads the entire workspace
 
       - name: Upload cron artifact
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: cron-files-prod
           path: cron/
@@ -57,12 +57,12 @@ jobs:
     needs: build # This ensures the 'build' job finishes first
     steps:
       - name: Download theme artifact
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: theme-files-prod
 
       - name: Download cron artifact
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: cron-files-prod
           path: cron/ # Specify path to restore directory structure
@@ -114,7 +114,3 @@ jobs:
 
             echo "Cleaning up login files..."
             rm -f /home/${{ secrets.LWTV_USER }}/logins-*.txt
-
-            echo "Purging Nginx cache..."
-            cd /home/${{ secrets.LWTV_USER }}/${{ secrets.LWTV_DOMAIN }}
-            wp nginx-helper purge-all

@@ -9,9 +9,6 @@
 
 namespace LWTV\Postiz;
 
-use LWTV\Postiz\Of_The_Day;
-use LWTV\Postiz\New_Post;
-
 class Postiz {
 
 	/**
@@ -26,29 +23,13 @@ class Postiz {
 	 */
 	public function __construct() {
 		// Get API configuration from constants or options
-		$this->api_key = defined( 'POSTIZ_API_KEY' ) ? POSTIZ_API_KEY : get_option( 'lwtv_postiz_api_key', '' );
-		$this->api_url = defined( 'POSTIZ_API_URL' ) ? POSTIZ_API_URL : get_option( 'lwtv_postiz_api_url', '' );
-
-		// Get channel IDs - support both constant and new channel structure from settings
-		if ( defined( 'POSTIZ_CHANNEL_IDS' ) ) {
-			$this->channel_ids = POSTIZ_CHANNEL_IDS;
-		} else {
-			$this->channel_ids = $this->extract_channel_ids_from_settings();
-		}
+		$this->api_key     = get_option( 'lwtv_postiz_api_key', '' );
+		$this->api_url     = get_option( 'lwtv_postiz_api_url', '' );
+		$this->channel_ids = $this->extract_channel_ids_from_settings();
 
 		// Ensure channel_ids is an array
 		if ( ! is_array( $this->channel_ids ) && ! empty( $this->channel_ids ) ) {
 			$this->channel_ids = array( $this->channel_ids );
-		}
-
-		// Hook into the OTD action
-		if ( $this->is_enabled() && $this->is_type_triggered_enabled( 'of_the_day' ) ) {
-			add_action( 'lwtv_otd_added', array( new Of_The_Day(), 'handle_otd_added' ), 10, 4 );
-		}
-
-		// Hook into the new post action - this will cover ALL post types
-		if ( $this->is_enabled() && $this->is_type_triggered_enabled( 'new_posts' ) ) {
-			add_action( 'publish_post', array( new New_Post(), 'handle_new_post_added' ), 10, 2 );
 		}
 	}
 
@@ -65,12 +46,16 @@ class Postiz {
 		$channel_ids = array();
 
 		if ( is_array( $channels ) ) {
+			lwtv_plugin()->error_log( 'postiz', 'Found ' . count( $channels ) . ' channels in settings' );
 			foreach ( $channels as $channel ) {
 				// Only include active channels (default to active if not set for backwards compatibility)
 				$is_active = isset( $channel['active'] ) ? $channel['active'] : true;
 
 				if ( $is_active && isset( $channel['channel_id'] ) && ! empty( $channel['channel_id'] ) ) {
+					lwtv_plugin()->error_log( 'postiz', 'Found active channel: ' . $channel['name'] . ' with ID: ' . $channel['channel_id'] );
 					$channel_ids[] = $channel['channel_id'];
+				} else {
+					lwtv_plugin()->error_log( 'postiz', 'Found inactive channel: ' . $channel['name'] . ' with ID: ' . $channel['channel_id'] );
 				}
 			}
 		}
@@ -84,6 +69,7 @@ class Postiz {
 	 * @return bool
 	 */
 	public function is_enabled() {
+		lwtv_plugin()->error_log( 'postiz', 'Checking if Postiz is enabled. API key: ' . $this->api_key . ' Channel IDs: ' . wp_json_encode( $this->channel_ids ) );
 		return ! empty( $this->api_key ) && ! empty( $this->channel_ids );
 	}
 
@@ -114,7 +100,7 @@ class Postiz {
 		if ( ! $this->is_enabled() ) {
 			return new \WP_Error(
 				'postiz_not_configured',
-				'Postiz API is not configured. Please set POSTIZ_API_KEY and POSTIZ_CHANNEL_IDS.',
+				'Postiz API is not configured. Please set the API key and at least one channel.',
 				array( 'status' => 500 )
 			);
 		}
@@ -348,7 +334,35 @@ class Postiz {
 	 * @param int    $post_id The post ID
 	 * @return bool True if the OTD exists, false otherwise
 	 */
-	public function post_exists( $content ) {
+	public function post_exists( $content, $post_id ) {
+
+		// Get the last OTD date for the post
+		$last_otd_date   = get_post_meta( $post_id, 'lwtv_was_last_otd', true );
+		$lwtv_of_the_day = get_post_meta( $post_id, 'lwtv_of_the_day', true );
+		if ( empty( $last_otd_date ) || empty( $lwtv_of_the_day ) ) {
+			lwtv_plugin()->error_log( 'postiz', 'No last OTD date found for post: ' . $post_id );
+			return false;
+		}
+
+		// If lwtv_of_the_day is less than 4 months ago, return true
+		if ( $lwtv_of_the_day < strtotime( '-4 months' ) ) {
+			lwtv_plugin()->error_log( 'postiz', 'Last OTD date is less than 4 months ago for post: ' . $post_id );
+			return true;
+		}
+
+		// Get the last Postiz post date for the post
+		$last_postiz_post_date = get_post_meta( $post_id, 'lwtv_last_postiz_post', true );
+		if ( empty( $last_postiz_post_date ) ) {
+			lwtv_plugin()->error_log( 'postiz', 'No last Postiz post date found for post: ' . $post_id );
+			return false;
+		}
+
+		// If the last OTD date is greater than the last Postiz post date, return true
+		if ( $last_otd_date > $last_postiz_post_date ) {
+			lwtv_plugin()->error_log( 'postiz', 'Last OTD date is greater than last Postiz post date for post: ' . $post_id );
+			return true;
+		}
+
 		// Get all posts made for the last 24 hours
 		$start_date = rawurlencode( gmdate( 'Y-m-d\TH:i:s\Z', strtotime( '-48 hours' ) ) );
 		$end_date   = rawurlencode( gmdate( 'Y-m-d\TH:i:s\Z' ) );

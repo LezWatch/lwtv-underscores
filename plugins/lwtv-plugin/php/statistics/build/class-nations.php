@@ -522,8 +522,8 @@ class Nations {
 
 		$nation_slug = ltrim( $nation_slug, '_' );
 
-		// Create cache key
-		$cache_key   = 'nation_meta_breakdown_' . $nation_slug . '_' . $meta_key;
+		// Create cache key - unique per nation and meta_key type
+		$cache_key   = 'nation_meta_' . $nation_slug . '_' . str_replace( 'lezshows_char_', '', $meta_key );
 		$cached_data = lwtv_plugin()->get_transient( $cache_key );
 
 		// If cached data is found, return it
@@ -575,9 +575,26 @@ class Nations {
 				}
 			}
 
-			lwtv_plugin()->set_transient( $cache_key, $aggregated_data, DAY_IN_SECONDS );
+			// Determine URL prefix based on meta_key
+			$url_prefix = 'gender';
+			if ( 'lezshows_char_sexuality' === $meta_key ) {
+				$url_prefix = 'sexuality';
+			}
 
-			return $aggregated_data;
+			// Format results for consistency with other breakdowns
+			$formatted_results = array();
+			foreach ( $aggregated_data as $key => $count ) {
+				$formatted_results[] = array(
+					'name'  => ucwords( str_replace( '-', ' ', $key ) ),
+					'count' => (int) $count,
+					'url'   => home_url( '/' . $url_prefix . '/' . $key . '/' ),
+					'slug'  => $key,
+				);
+			}
+
+			lwtv_plugin()->set_transient( $cache_key, $formatted_results, DAY_IN_SECONDS );
+
+			return $formatted_results;
 		} catch ( \Exception $e ) {
 			lwtv_plugin()->error_log( 'nations-error', 'Meta breakdown query failed for nation: ' . $nation_slug . ' - Last error: ' . $wpdb->last_error );
 			return array();

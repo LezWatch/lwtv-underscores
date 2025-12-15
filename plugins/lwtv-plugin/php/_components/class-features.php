@@ -11,6 +11,7 @@ use LWTV\Features\Dashboard_Posts_In_Progress;
 use LWTV\Features\Dashboard;
 use LWTV\Features\Embeds;
 use LWTV\Features\Environment;
+use LWTV\Features\Missed_Schedule;
 use LWTV\Features\Plugin_Age;
 use LWTV\Features\Private_Posts;
 use LWTV\Features\Roles;
@@ -43,6 +44,7 @@ class Features implements Component {
 		new Dashboard();
 		new Embeds();
 		new Environment();
+		new Missed_Schedule();
 		new Plugin_Age();
 		new Private_Posts();
 		new Roles();
