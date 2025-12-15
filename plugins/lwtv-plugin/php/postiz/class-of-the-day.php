@@ -8,6 +8,19 @@
 namespace LWTV\Postiz;
 
 class Of_The_Day extends Postiz {
+
+	/**
+	 * Constructor - register hook for OTD posts
+	 */
+	public function __construct() {
+		parent::__construct();
+
+		if ( $this->is_enabled() && $this->is_type_triggered_enabled( 'of_the_day' ) ) {
+			lwtv_plugin()->error_log( 'postiz', 'Registering lwtv_otd_added action for OTD posts' );
+			add_action( 'lwtv_otd_added', array( $this, 'handle_otd_added' ), 10, 4 );
+		}
+	}
+
 	/**
 	 * Handle the lwtv_otd_added action
 	 *
@@ -17,19 +30,21 @@ class Of_The_Day extends Postiz {
 	 * @param array  $data    Additional data about the OTD
 	 */
 	public function handle_otd_added( $type, $content, $post_id, $data ) {
+		lwtv_plugin()->error_log( 'postiz', 'Handling lwtv_otd_added action for OTD: ' . wp_json_encode( $data ) );
 		// Check if the OTD already exists in Postiz
-		$exists = parent::post_exists( $content );
+		$exists = parent::post_exists( $content, $post_id );
 		if ( $exists ) {
 			parent::log_otd_message( 'OTD already exists in Postiz in at least one channel. Skipping', $type, $content, $post_id, $data );
 			return;
 		}
 
-		// If this OTD doesn't exist in Postiz, post it
-		$result = $this->post_of_the_day( $type, $content, $post_id );
+		try {
+			lwtv_plugin()->error_log( 'postiz', 'Posting OTD to Postiz' );
+			$result = $this->post_of_the_day( $type, $content, $post_id );
+			lwtv_plugin()->error_log( 'postiz', 'Result of posting OTD to Postiz: ' . wp_json_encode( $result ) );
 
-		// Log errors if any
-		if ( is_wp_error( $result ) ) {
-			if ( function_exists( 'lwtv_plugin' ) && method_exists( lwtv_plugin(), 'error_log' ) ) {
+			// Log errors if any
+			if ( is_wp_error( $result ) ) {
 				lwtv_plugin()->error_log(
 					'postiz',
 					sprintf(
@@ -37,7 +52,15 @@ class Of_The_Day extends Postiz {
 						$result->get_error_message()
 					)
 				);
+				return;
 			}
+
+			// Update the last Postiz post date for the post
+			update_post_meta( $post_id, 'lwtv_last_postiz_post', time() );
+		} catch ( \Throwable $th ) {
+			lwtv_plugin()->error_log( 'postiz', 'Error posting OTD to Postiz: ' . $th->getMessage() );
+		} catch ( \Exception $e ) {
+			lwtv_plugin()->error_log( 'postiz', 'Error posting OTD to Postiz: ' . $e->getMessage() );
 		}
 	}
 
@@ -71,19 +94,22 @@ class Of_The_Day extends Postiz {
 	 * Create a tag for the OTD
 	 *
 	 * @param string $type The type of OTD (character, show)
-	 * @return array The tag
+	 * @return array The tag array with 'value' and 'label' keys
 	 */
 	public function create_tag( $type ) {
-		$tags = array();
 		switch ( $type ) {
 			case 'character':
-				$tags[] = $this->create_tag( '#LWTVcotd' );
-				break;
+				return array(
+					'value' => '#LWTVcotd',
+					'label' => '#LWTVcotd',
+				);
 			case 'show':
-				$tags[] = $this->create_tag( '#LWTVsotd' );
-				break;
+				return array(
+					'value' => '#LWTVsotd',
+					'label' => '#LWTVsotd',
+				);
+			default:
+				return array();
 		}
-
-		return $tags;
 	}
 }

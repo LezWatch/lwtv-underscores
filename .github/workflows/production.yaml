@@ -114,7 +114,3 @@ jobs:
 
             echo "Cleaning up login files..."
             rm -f /home/${{ secrets.LWTV_USER }}/logins-*.txt
-
-            echo "Purging Nginx cache..."
-            cd /home/${{ secrets.LWTV_USER }}/${{ secrets.LWTV_DOMAIN }}
-            wp nginx-helper purge-all

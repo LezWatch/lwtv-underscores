@@ -521,8 +521,8 @@ class Stations {
 
 		$station_slug = ltrim( $station_slug, '_' );
 
-		// Create cache key
-		$cache_key   = 'station_shows_' . $station_slug;
+		// Create cache key - unique per station and meta_key type
+		$cache_key   = 'station_meta_' . $station_slug . '_' . str_replace( 'lezshows_char_', '', $meta_key );
 		$cached_data = lwtv_plugin()->get_transient( $cache_key );
 
 		// If cached data is found, return it
@@ -573,7 +573,26 @@ class Stations {
 				}
 			}
 
-			return $aggregated_data;
+			// Determine URL prefix based on meta_key
+			$url_prefix = 'gender';
+			if ( 'lezshows_char_sexuality' === $meta_key ) {
+				$url_prefix = 'sexuality';
+			}
+
+			// Format results for consistency with other breakdowns
+			$formatted_results = array();
+			foreach ( $aggregated_data as $key => $count ) {
+				$formatted_results[] = array(
+					'name'  => ucwords( str_replace( '-', ' ', $key ) ),
+					'count' => (int) $count,
+					'url'   => home_url( '/' . $url_prefix . '/' . $key . '/' ),
+					'slug'  => $key,
+				);
+			}
+
+			lwtv_plugin()->set_transient( $cache_key, $formatted_results, DAY_IN_SECONDS );
+
+			return $formatted_results;
 		} catch ( \Exception $e ) {
 			lwtv_plugin()->error_log( 'stations-error', 'Meta breakdown query failed for station: ' . $station_slug . ' - Last error: ' . $wpdb->last_error );
 			return array();
