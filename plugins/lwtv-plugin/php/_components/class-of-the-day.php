@@ -122,16 +122,15 @@ class Of_The_Day implements Component, Templater {
 
 				lwtv_plugin()->error_log( 'byq-debug', 'OTD already exists: ' . wp_json_encode( $new_otd ) );
 			}
-
-			if ( null !== $new_otd ) {
-				do_action( 'lwtv_otd_added', $a_type, $new_otd['content'], $new_otd['posts_id'], $new_otd );
-			}
 		}
 
 		// Clear the cache
 		( new Cache() )->clean_feed( 'otd' );
 
+		// If there's an OTD, trigger the action and return it
 		if ( null !== $new_otd ) {
+			lwtv_plugin()->error_log( 'byq-debug', 'Triggering lwtv_otd_added action for OTD: ' . wp_json_encode( $new_otd ) );
+			do_action( 'lwtv_otd_added', $a_type, $new_otd['content'], $new_otd['posts_id'], $new_otd );
 			return $new_otd;
 		}
 

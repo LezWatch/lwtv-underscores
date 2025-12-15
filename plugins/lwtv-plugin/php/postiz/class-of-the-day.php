@@ -13,8 +13,10 @@ class Of_The_Day extends Postiz {
 	 * Constructor - register hook for OTD posts
 	 */
 	public function __construct() {
-		$postiz = new Postiz();
-		if ( $postiz->is_enabled() && $postiz->is_type_triggered_enabled( 'of_the_day' ) ) {
+		parent::__construct();
+
+		if ( $this->is_enabled() && $this->is_type_triggered_enabled( 'of_the_day' ) ) {
+			lwtv_plugin()->error_log( 'postiz', 'Registering lwtv_otd_added action for OTD posts' );
 			add_action( 'lwtv_otd_added', array( $this, 'handle_otd_added' ), 10, 4 );
 		}
 	}
@@ -28,6 +30,7 @@ class Of_The_Day extends Postiz {
 	 * @param array  $data    Additional data about the OTD
 	 */
 	public function handle_otd_added( $type, $content, $post_id, $data ) {
+		lwtv_plugin()->error_log( 'postiz', 'Handling lwtv_otd_added action for OTD: ' . wp_json_encode( $data ) );
 		// Check if the OTD already exists in Postiz
 		$exists = parent::post_exists( $content );
 		if ( $exists ) {
@@ -35,12 +38,13 @@ class Of_The_Day extends Postiz {
 			return;
 		}
 
-		// If this OTD doesn't exist in Postiz, post it
-		$result = $this->post_of_the_day( $type, $content, $post_id );
+		try {
+			lwtv_plugin()->error_log( 'postiz', 'Posting OTD to Postiz' );
+			$result = $this->post_of_the_day( $type, $content, $post_id );
+			lwtv_plugin()->error_log( 'postiz', 'Result of posting OTD to Postiz: ' . wp_json_encode( $result ) );
 
-		// Log errors if any
-		if ( is_wp_error( $result ) ) {
-			if ( function_exists( 'lwtv_plugin' ) && method_exists( lwtv_plugin(), 'error_log' ) ) {
+			// Log errors if any
+			if ( is_wp_error( $result ) ) {
 				lwtv_plugin()->error_log(
 					'postiz',
 					sprintf(
@@ -48,7 +52,12 @@ class Of_The_Day extends Postiz {
 						$result->get_error_message()
 					)
 				);
+				return;
 			}
+		} catch ( \Throwable $th ) {
+			lwtv_plugin()->error_log( 'postiz', 'Error posting OTD to Postiz: ' . $th->getMessage() );
+		} catch ( \Exception $e ) {
+			lwtv_plugin()->error_log( 'postiz', 'Error posting OTD to Postiz: ' . $e->getMessage() );
 		}
 	}
 

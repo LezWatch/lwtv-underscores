@@ -13,8 +13,9 @@ class New_Post extends Postiz {
 	 * Constructor - register hook for new posts
 	 */
 	public function __construct() {
-		$postiz = new Postiz();
-		if ( $postiz->is_enabled() && $postiz->is_type_triggered_enabled( 'new_posts' ) ) {
+		parent::__construct();
+
+		if ( $this->is_enabled() && $this->is_type_triggered_enabled( 'new_posts' ) ) {
 			add_action( 'publish_post', array( $this, 'handle_new_post_added' ), 10, 2 );
 		}
 	}

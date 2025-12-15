@@ -23,15 +23,9 @@ class Postiz {
 	 */
 	public function __construct() {
 		// Get API configuration from constants or options
-		$this->api_key = defined( 'POSTIZ_API_KEY' ) ? POSTIZ_API_KEY : get_option( 'lwtv_postiz_api_key', '' );
-		$this->api_url = defined( 'POSTIZ_API_URL' ) ? POSTIZ_API_URL : get_option( 'lwtv_postiz_api_url', '' );
-
-		// Get channel IDs - support both constant and new channel structure from settings
-		if ( defined( 'POSTIZ_CHANNEL_IDS' ) ) {
-			$this->channel_ids = POSTIZ_CHANNEL_IDS;
-		} else {
-			$this->channel_ids = $this->extract_channel_ids_from_settings();
-		}
+		$this->api_key     = get_option( 'lwtv_postiz_api_key', '' );
+		$this->api_url     = get_option( 'lwtv_postiz_api_url', '' );
+		$this->channel_ids = $this->extract_channel_ids_from_settings();
 
 		// Ensure channel_ids is an array
 		if ( ! is_array( $this->channel_ids ) && ! empty( $this->channel_ids ) ) {
@@ -52,12 +46,16 @@ class Postiz {
 		$channel_ids = array();
 
 		if ( is_array( $channels ) ) {
+			lwtv_plugin()->error_log( 'postiz', 'Found ' . count( $channels ) . ' channels in settings' );
 			foreach ( $channels as $channel ) {
 				// Only include active channels (default to active if not set for backwards compatibility)
 				$is_active = isset( $channel['active'] ) ? $channel['active'] : true;
 
 				if ( $is_active && isset( $channel['channel_id'] ) && ! empty( $channel['channel_id'] ) ) {
+					lwtv_plugin()->error_log( 'postiz', 'Found active channel: ' . $channel['name'] . ' with ID: ' . $channel['channel_id'] );
 					$channel_ids[] = $channel['channel_id'];
+				} else {
+					lwtv_plugin()->error_log( 'postiz', 'Found inactive channel: ' . $channel['name'] . ' with ID: ' . $channel['channel_id'] );
 				}
 			}
 		}
@@ -71,6 +69,7 @@ class Postiz {
 	 * @return bool
 	 */
 	public function is_enabled() {
+		lwtv_plugin()->error_log( 'postiz', 'Checking if Postiz is enabled. API key: ' . $this->api_key . ' Channel IDs: ' . wp_json_encode( $this->channel_ids ) );
 		return ! empty( $this->api_key ) && ! empty( $this->channel_ids );
 	}
 
@@ -101,7 +100,7 @@ class Postiz {
 		if ( ! $this->is_enabled() ) {
 			return new \WP_Error(
 				'postiz_not_configured',
-				'Postiz API is not configured. Please set POSTIZ_API_KEY and POSTIZ_CHANNEL_IDS.',
+				'Postiz API is not configured. Please set the API key and at least one channel.',
 				array( 'status' => 500 )
 			);
 		}
