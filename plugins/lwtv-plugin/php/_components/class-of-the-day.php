@@ -272,6 +272,9 @@ class Of_The_Day implements Component, Templater {
 
 			// Set post_meta for the next available use (+4 months from now)
 			update_post_meta( $id, 'lwtv_of_the_day', strtotime( '+4 months' ) );
+
+			// Set the last OTD date for the post
+			update_post_meta( $id, 'lwtv_was_last_otd', time() );
 		}
 
 		$post_id = $options[ $type ]['post'];

@@ -334,7 +334,35 @@ class Postiz {
 	 * @param int    $post_id The post ID
 	 * @return bool True if the OTD exists, false otherwise
 	 */
-	public function post_exists( $content ) {
+	public function post_exists( $content, $post_id ) {
+
+		// Get the last OTD date for the post
+		$last_otd_date   = get_post_meta( $post_id, 'lwtv_was_last_otd', true );
+		$lwtv_of_the_day = get_post_meta( $post_id, 'lwtv_of_the_day', true );
+		if ( empty( $last_otd_date ) || empty( $lwtv_of_the_day ) ) {
+			lwtv_plugin()->error_log( 'postiz', 'No last OTD date found for post: ' . $post_id );
+			return false;
+		}
+
+		// If lwtv_of_the_day is less than 4 months ago, return true
+		if ( $lwtv_of_the_day < strtotime( '-4 months' ) ) {
+			lwtv_plugin()->error_log( 'postiz', 'Last OTD date is less than 4 months ago for post: ' . $post_id );
+			return true;
+		}
+
+		// Get the last Postiz post date for the post
+		$last_postiz_post_date = get_post_meta( $post_id, 'lwtv_last_postiz_post', true );
+		if ( empty( $last_postiz_post_date ) ) {
+			lwtv_plugin()->error_log( 'postiz', 'No last Postiz post date found for post: ' . $post_id );
+			return false;
+		}
+
+		// If the last OTD date is greater than the last Postiz post date, return true
+		if ( $last_otd_date > $last_postiz_post_date ) {
+			lwtv_plugin()->error_log( 'postiz', 'Last OTD date is greater than last Postiz post date for post: ' . $post_id );
+			return true;
+		}
+
 		// Get all posts made for the last 24 hours
 		$start_date = rawurlencode( gmdate( 'Y-m-d\TH:i:s\Z', strtotime( '-48 hours' ) ) );
 		$end_date   = rawurlencode( gmdate( 'Y-m-d\TH:i:s\Z' ) );

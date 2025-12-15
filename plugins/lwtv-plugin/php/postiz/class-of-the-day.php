@@ -32,7 +32,7 @@ class Of_The_Day extends Postiz {
 	public function handle_otd_added( $type, $content, $post_id, $data ) {
 		lwtv_plugin()->error_log( 'postiz', 'Handling lwtv_otd_added action for OTD: ' . wp_json_encode( $data ) );
 		// Check if the OTD already exists in Postiz
-		$exists = parent::post_exists( $content );
+		$exists = parent::post_exists( $content, $post_id );
 		if ( $exists ) {
 			parent::log_otd_message( 'OTD already exists in Postiz in at least one channel. Skipping', $type, $content, $post_id, $data );
 			return;
@@ -54,6 +54,9 @@ class Of_The_Day extends Postiz {
 				);
 				return;
 			}
+
+			// Update the last Postiz post date for the post
+			update_post_meta( $post_id, 'lwtv_last_postiz_post', time() );
 		} catch ( \Throwable $th ) {
 			lwtv_plugin()->error_log( 'postiz', 'Error posting OTD to Postiz: ' . $th->getMessage() );
 		} catch ( \Exception $e ) {
