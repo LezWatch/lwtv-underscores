@@ -10,6 +10,26 @@ namespace LWTV\Postiz;
 class Of_The_Day extends Postiz {
 
 	/**
+	 * Action Scheduler hook name
+	 */
+	const AS_HOOK = 'lwtv_postiz_otd_post';
+
+	/**
+	 * Action Scheduler group name
+	 */
+	const AS_GROUP = 'lwtv_postiz';
+
+	/**
+	 * WordPress cron hook name (fallback)
+	 */
+	const WP_CRON_HOOK = 'lwtv_postiz_otd_cron';
+
+	/**
+	 * Delay in seconds before posting (5 minutes)
+	 */
+	const DELAY_SECONDS = 300;
+
+	/**
 	 * Constructor - register hook for OTD posts
 	 */
 	public function __construct() {
@@ -18,11 +38,22 @@ class Of_The_Day extends Postiz {
 		if ( $this->is_enabled() && $this->is_type_triggered_enabled( 'of_the_day' ) ) {
 			lwtv_plugin()->error_log( 'postiz', 'Registering lwtv_otd_added action for OTD posts' );
 			add_action( 'lwtv_otd_added', array( $this, 'handle_otd_added' ), 10, 4 );
+
+			// Register Action Scheduler hook if available
+			if ( lwtv_plugin()->is_action_scheduler_available() ) {
+				add_action( self::AS_HOOK, array( $this, 'process_scheduled_otd' ), 10, 4 );
+			}
+
+			// Always register WP cron hook as fallback
+			add_action( self::WP_CRON_HOOK, array( $this, 'process_scheduled_otd' ), 10, 4 );
 		}
 	}
 
 	/**
 	 * Handle the lwtv_otd_added action
+	 *
+	 * Schedules the OTD post to be processed 5 minutes later via Action Scheduler
+	 * or WordPress cron as fallback.
 	 *
 	 * @param string $type    Type of OTD (character, show)
 	 * @param string $content The content to post
@@ -31,6 +62,34 @@ class Of_The_Day extends Postiz {
 	 */
 	public function handle_otd_added( $type, $content, $post_id, $data ) {
 		lwtv_plugin()->error_log( 'postiz', 'Handling lwtv_otd_added action for OTD: ' . wp_json_encode( $data ) );
+
+		$scheduled_time = time() + self::DELAY_SECONDS;
+		$args           = array( $type, $content, $post_id, $data );
+
+		// Use Action Scheduler if available, otherwise fall back to WP cron
+		if ( lwtv_plugin()->is_action_scheduler_available() ) {
+			as_schedule_single_action( $scheduled_time, self::AS_HOOK, $args, self::AS_GROUP );
+			lwtv_plugin()->error_log( 'postiz', 'Scheduled OTD post via Action Scheduler for ' . self::DELAY_SECONDS . ' seconds from now' );
+		} else {
+			wp_schedule_single_event( $scheduled_time, self::WP_CRON_HOOK, $args );
+			lwtv_plugin()->error_log( 'postiz', 'Scheduled OTD post via WP cron for ' . self::DELAY_SECONDS . ' seconds from now' );
+		}
+	}
+
+	/**
+	 * Process the scheduled OTD post
+	 *
+	 * This is the callback for both Action Scheduler and WP cron hooks.
+	 * Contains the actual logic to check and post to Postiz.
+	 *
+	 * @param string $type    Type of OTD (character, show)
+	 * @param string $content The content to post
+	 * @param int    $post_id The post ID
+	 * @param array  $data    Additional data about the OTD
+	 */
+	public function process_scheduled_otd( $type, $content, $post_id, $data ) {
+		lwtv_plugin()->error_log( 'postiz', 'Processing scheduled OTD post: ' . wp_json_encode( $data ) );
+
 		// Check if the OTD already exists in Postiz
 		$exists = parent::post_exists( $content, $post_id );
 		if ( $exists ) {

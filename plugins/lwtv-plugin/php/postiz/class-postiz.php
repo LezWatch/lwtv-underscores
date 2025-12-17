@@ -335,7 +335,6 @@ class Postiz {
 	 * @return bool True if the OTD exists, false otherwise
 	 */
 	public function post_exists( $content, $post_id ) {
-
 		// Get the last OTD date for the post
 		$last_otd_date   = get_post_meta( $post_id, 'lwtv_was_last_otd', true );
 		$lwtv_of_the_day = get_post_meta( $post_id, 'lwtv_of_the_day', true );

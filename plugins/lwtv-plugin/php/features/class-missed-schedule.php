@@ -47,18 +47,18 @@ class Missed_Schedule {
 		// Register Action Scheduler hook
 		add_action( self::AS_HOOK, array( $this, 'process_missed_schedule' ) );
 
-		// Initialize Action Scheduler if available
-		if ( $this->is_action_scheduler_available() ) {
-			$this->init_action_scheduler();
-		}
+		// Initialize Action Scheduler when it's ready (avoids calling AS functions before data store is initialized)
+		add_action( 'action_scheduler_init', array( $this, 'init_action_scheduler' ) );
 	}
 
 	/**
 	 * Initialize Action Scheduler recurring action
 	 *
+	 * Called via action_scheduler_init hook to ensure AS data store is ready.
+	 *
 	 * @return void
 	 */
-	private function init_action_scheduler(): void {
+	public function init_action_scheduler(): void {
 		// Only schedule if no existing actions are scheduled
 		if ( ! as_next_scheduled_action( self::AS_HOOK ) ) {
 			as_schedule_recurring_action( time(), HOUR_IN_SECONDS, self::AS_HOOK, array(), self::AS_GROUP );
