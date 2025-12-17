@@ -36,7 +36,6 @@ class Of_The_Day extends Postiz {
 		parent::__construct();
 
 		if ( $this->is_enabled() && $this->is_type_triggered_enabled( 'of_the_day' ) ) {
-			lwtv_plugin()->error_log( 'postiz', 'Registering lwtv_otd_added action for OTD posts' );
 			add_action( 'lwtv_otd_added', array( $this, 'handle_otd_added' ), 10, 4 );
 
 			// Register Action Scheduler hook if available
@@ -61,18 +60,17 @@ class Of_The_Day extends Postiz {
 	 * @param array  $data    Additional data about the OTD
 	 */
 	public function handle_otd_added( $type, $content, $post_id, $data ) {
-		lwtv_plugin()->error_log( 'postiz', 'Handling lwtv_otd_added action for OTD: ' . wp_json_encode( $data ) );
-
+		$post_title     = get_the_title( $post_id );
 		$scheduled_time = time() + self::DELAY_SECONDS;
 		$args           = array( $type, $content, $post_id, $data );
 
 		// Use Action Scheduler if available, otherwise fall back to WP cron
 		if ( lwtv_plugin()->is_action_scheduler_available() ) {
 			as_schedule_single_action( $scheduled_time, self::AS_HOOK, $args, self::AS_GROUP );
-			lwtv_plugin()->error_log( 'postiz', 'Scheduled OTD post via Action Scheduler for ' . self::DELAY_SECONDS . ' seconds from now' );
+			lwtv_plugin()->error_log( 'postiz', 'Scheduled OTD post for ' . $post_title . ' (#' . $post_id . ' ' . $content . ') via Action Scheduler for ' . self::DELAY_SECONDS . ' seconds from now' );
 		} else {
 			wp_schedule_single_event( $scheduled_time, self::WP_CRON_HOOK, $args );
-			lwtv_plugin()->error_log( 'postiz', 'Scheduled OTD post via WP cron for ' . self::DELAY_SECONDS . ' seconds from now' );
+			lwtv_plugin()->error_log( 'postiz', 'Scheduled OTD post for ' . $post_title . ' (#' . $post_id . ' ' . $content . ') via WP cron for ' . self::DELAY_SECONDS . ' seconds from now' );
 		}
 	}
 

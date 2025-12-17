@@ -109,7 +109,7 @@ class Characters_Builder {
 
 		} catch ( \Exception $e ) {
 			// Log error and return empty array
-			lwtv_plugin()->error_log( 'Error in Characters::get_characters_for_year: ' . $e->getMessage() );
+			lwtv_plugin()->error_log( 'this-year', 'Error in Characters::get_characters_for_year: ' . $e->getMessage() );
 			return array();
 		}
 
@@ -170,14 +170,14 @@ class Characters_Builder {
 			if ( ! empty( $character['last_death'] ) ) {
 				// if last_death STARTS with the year, add to the dead count
 				if ( str_starts_with( $character['last_death'], (string) $year ) ) {
-					lwtv_plugin()->error_log( 'dead-debug', $character['name'] . ': Character is dead with last death: ' . $character['last_death'] );
+					lwtv_plugin()->error_log( 'this-year', $character['name'] . ': Character is dead with last death: ' . $character['last_death'] );
 					++$dead_count;
 				}
 			} elseif ( ! empty( $character['death_years'] ) ) {
 				// Double check because last death isn't always set on older characters
 				foreach ( $character['death_years'] as $death_year ) {
 					if ( (int) $death_year === $year ) {
-						lwtv_plugin()->error_log( 'dead-debug', $character['name'] . ': Character is dead with last death: ' . $character['last_death'] );
+						lwtv_plugin()->error_log( 'this-year', $character['name'] . ': Character is dead with last death: ' . $character['last_death'] );
 						++$dead_count;
 					}
 				}

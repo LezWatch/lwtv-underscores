@@ -64,7 +64,7 @@ class Nations {
 			$results = $wpdb->get_results( $query, ARRAY_A );
 
 			if ( false === $results ) {
-				lwtv_plugin()->error_log( 'nations-error', 'Query failed: ' . $wpdb->last_error );
+				lwtv_plugin()->error_log( 'statistics', 'Query failed: ' . $wpdb->last_error );
 				return array();
 			}
 
@@ -73,7 +73,7 @@ class Nations {
 
 			return $results;
 		} catch ( \Exception $e ) {
-			lwtv_plugin()->error_log( 'nations-error', 'Query failed: ' . $e->getMessage() );
+			lwtv_plugin()->error_log( 'statistics', 'Query failed: ' . $e->getMessage() );
 			return array();
 		}
 	}
@@ -96,7 +96,7 @@ class Nations {
 		$cached_data = lwtv_plugin()->get_transient( $cache_key );
 
 		if ( false !== $cached_data ) {
-			lwtv_plugin()->error_log( 'nations-debug', 'Cached data found for ' . $nation_slug . ': ' . $cache_key );
+			lwtv_plugin()->error_log( 'statistics', 'Cached data found for ' . $nation_slug . ': ' . $cache_key );
 			return $cached_data;
 		}
 
@@ -105,11 +105,11 @@ class Nations {
 			$basic_data = $this->get_nation_basic_data( $nation_slug );
 
 			if ( empty( $basic_data ) ) {
-				lwtv_plugin()->error_log( 'nations-error', 'Basic data query failed for nation: ' . $nation_slug );
+				lwtv_plugin()->error_log( 'statistics', 'Basic data query failed for nation: ' . $nation_slug );
 				return array();
 			}
 
-			lwtv_plugin()->error_log( 'nations-debug', 'Basic data query results for ' . $nation_slug . ': ' . wp_json_encode( $basic_data ) );
+			lwtv_plugin()->error_log( 'statistics', 'Basic data query results for ' . $nation_slug . ': ' . wp_json_encode( $basic_data ) );
 
 			// Get detailed breakdowns
 			$detailed_data = array(
@@ -129,7 +129,7 @@ class Nations {
 
 			return $return_data;
 		} catch ( \Exception $e ) {
-			lwtv_plugin()->error_log( 'nations-error', 'Query failed: ' . $e->getMessage() );
+			lwtv_plugin()->error_log( 'statistics', 'Query failed: ' . $e->getMessage() );
 			return array();
 		}
 	}
@@ -146,7 +146,7 @@ class Nations {
 		$nation_data  = $detailed_data;
 
 		if ( empty( $nation_data ) ) {
-			lwtv_plugin()->error_log( 'nations-error', 'No data found for nation: ' . $clean_nation );
+			lwtv_plugin()->error_log( 'statistics', 'No data found for nation: ' . $clean_nation );
 			return 'count' === $format ? 0 : array();
 		}
 
@@ -204,7 +204,7 @@ class Nations {
 
 		// If cached data is found, return it
 		if ( false !== $cached_data ) {
-			lwtv_plugin()->error_log( 'formats-debug', 'Cached data found for ' . $cache_key );
+			lwtv_plugin()->error_log( 'statistics', 'Cached data found for ' . $cache_key );
 			return $cached_data;
 		}
 
@@ -251,7 +251,7 @@ class Nations {
 			$results = $wpdb->get_results( $query, ARRAY_A );
 
 			if ( false === $results || empty( $results ) ) {
-				lwtv_plugin()->error_log( 'nations-error', 'Basic data query failed for nation: ' . $nation_slug . ' - Last error: ' . $wpdb->last_error );
+				lwtv_plugin()->error_log( 'statistics', 'Basic data query failed for nation: ' . $nation_slug . ' - Last error: ' . $wpdb->last_error );
 				return array();
 			}
 
@@ -259,7 +259,7 @@ class Nations {
 
 			return $results[0];
 		} catch ( \Exception $e ) {
-			lwtv_plugin()->error_log( 'nations-error', 'Query failed: ' . $e->getMessage() );
+			lwtv_plugin()->error_log( 'statistics', 'Query failed: ' . $e->getMessage() );
 			return array();
 		}
 	}
@@ -305,7 +305,7 @@ class Nations {
 
 		// If cached data is found, return it
 		if ( false !== $cached_data ) {
-			lwtv_plugin()->error_log( 'formats-debug', 'Cached data found for ' . $cache_key );
+			lwtv_plugin()->error_log( 'statistics', 'Cached data found for ' . $cache_key );
 			return $cached_data;
 		}
 
@@ -338,7 +338,7 @@ class Nations {
 			$results = $wpdb->get_results( $query, ARRAY_A );
 
 			if ( false === $results ) {
-				lwtv_plugin()->error_log( 'nations-error', 'Tropes breakdown query failed for nation: ' . $nation_slug );
+				lwtv_plugin()->error_log( 'statistics', 'Tropes breakdown query failed for nation: ' . $nation_slug );
 				return array();
 			}
 
@@ -356,7 +356,7 @@ class Nations {
 
 			return $formatted_results;
 		} catch ( \Exception $e ) {
-			lwtv_plugin()->error_log( 'nations-error', 'Tropes breakdown query failed for nation: ' . $nation_slug . ' - Last error: ' . $wpdb->last_error );
+			lwtv_plugin()->error_log( 'statistics', 'Tropes breakdown query failed for nation: ' . $nation_slug . ' - Last error: ' . $wpdb->last_error );
 			return array();
 		}
 	}
@@ -378,7 +378,7 @@ class Nations {
 
 		// If cached data is found, return it
 		if ( false !== $cached_data ) {
-			lwtv_plugin()->error_log( 'formats-debug', 'Cached data found for ' . $cache_key );
+			lwtv_plugin()->error_log( 'statistics', 'Cached data found for ' . $cache_key );
 			return $cached_data;
 		}
 
@@ -411,7 +411,7 @@ class Nations {
 			$results = $wpdb->get_results( $query, ARRAY_A );
 
 			if ( false === $results ) {
-				lwtv_plugin()->error_log( 'nations-error', 'Formats breakdown query failed for nation: ' . $nation_slug );
+				lwtv_plugin()->error_log( 'statistics', 'Formats breakdown query failed for nation: ' . $nation_slug );
 				return array();
 			}
 
@@ -429,7 +429,7 @@ class Nations {
 
 			return $formatted_results;
 		} catch ( \Exception $e ) {
-			lwtv_plugin()->error_log( 'nations-error', 'Formats breakdown query failed for nation: ' . $nation_slug . ' - Last error: ' . $wpdb->last_error );
+			lwtv_plugin()->error_log( 'statistics', 'Formats breakdown query failed for nation: ' . $nation_slug . ' - Last error: ' . $wpdb->last_error );
 			return array();
 		}
 	}
@@ -474,7 +474,7 @@ class Nations {
 
 		// If cached data is found, return it
 		if ( false !== $cached_data ) {
-			lwtv_plugin()->error_log( 'formats-debug', 'Cached data found for ' . $cache_key );
+			lwtv_plugin()->error_log( 'statistics', 'Cached data found for ' . $cache_key );
 			return $cached_data;
 		}
 
@@ -505,7 +505,7 @@ class Nations {
 
 			return array_column( $results, 'ID' );
 		} catch ( \Exception $e ) {
-			lwtv_plugin()->error_log( 'nations-error', 'Shows query failed for nation: ' . $nation_slug . ' - Last error: ' . $wpdb->last_error );
+			lwtv_plugin()->error_log( 'statistics', 'Shows query failed for nation: ' . $nation_slug . ' - Last error: ' . $wpdb->last_error );
 			return array();
 		}
 	}
@@ -528,7 +528,7 @@ class Nations {
 
 		// If cached data is found, return it
 		if ( false !== $cached_data ) {
-			lwtv_plugin()->error_log( 'formats-debug', 'Cached data found for ' . $cache_key );
+			lwtv_plugin()->error_log( 'statistics', 'Cached data found for ' . $cache_key );
 			return $cached_data;
 		}
 
@@ -557,7 +557,7 @@ class Nations {
 			$results = $wpdb->get_results( $query, ARRAY_A );
 
 			if ( false === $results || empty( $results ) ) {
-				lwtv_plugin()->error_log( 'nations-error', 'Meta breakdown query failed for nation: ' . $nation_slug );
+				lwtv_plugin()->error_log( 'statistics', 'Meta breakdown query failed for nation: ' . $nation_slug );
 				return array();
 			}
 
@@ -596,7 +596,7 @@ class Nations {
 
 			return $formatted_results;
 		} catch ( \Exception $e ) {
-			lwtv_plugin()->error_log( 'nations-error', 'Meta breakdown query failed for nation: ' . $nation_slug . ' - Last error: ' . $wpdb->last_error );
+			lwtv_plugin()->error_log( 'statistics', 'Meta breakdown query failed for nation: ' . $nation_slug . ' - Last error: ' . $wpdb->last_error );
 			return array();
 		}
 	}
@@ -616,7 +616,7 @@ class Nations {
 
 		// If cached data is found, return it
 		if ( false !== $cached_data ) {
-			lwtv_plugin()->error_log( 'formats-debug', 'Cached data found for ' . $cache_key );
+			lwtv_plugin()->error_log( 'statistics', 'Cached data found for ' . $cache_key );
 			return (array) $cached_data;
 		}
 
@@ -648,7 +648,7 @@ class Nations {
 
 			return $results;
 		} catch ( \Exception $e ) {
-			lwtv_plugin()->error_log( 'nations-error', 'Top nations query failed for number: ' . $number . ' - Last error: ' . $wpdb->last_error );
+			lwtv_plugin()->error_log( 'statistics', 'Top nations query failed for number: ' . $number . ' - Last error: ' . $wpdb->last_error );
 			return array();
 		}
 	}

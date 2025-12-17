@@ -16,7 +16,7 @@ class Worth_It {
 	 * @return array Worth it statistics data
 	 */
 	public function generate( $format = 'array' ) {
-		lwtv_plugin()->error_log( 'worth-it-debug', 'Generating worth it statistics for format: ' . $format );
+		lwtv_plugin()->error_log( 'statistics', 'Generating worth it statistics for format: ' . $format );
 		$all_data = $this->generate_all_data();
 		switch ( $format ) {
 			case 'count':
@@ -42,7 +42,7 @@ class Worth_It {
 
 		// If cached data is found, return it
 		if ( false !== $cached_data ) {
-			lwtv_plugin()->error_log( 'worth-it-debug', 'Cached data found for ' . $cache_key );
+			lwtv_plugin()->error_log( 'statistics', 'Cached data found for ' . $cache_key );
 			return $cached_data;
 		}
 
@@ -81,7 +81,7 @@ class Worth_It {
 
 			return $data;
 		} catch ( \Exception $e ) {
-			lwtv_plugin()->error_log( 'worth-it-debug', 'Error generating worth it statistics: ' . $e->getMessage() );
+			lwtv_plugin()->error_log( 'statistics', 'Error generating worth it statistics: ' . $e->getMessage() );
 			return array();
 		}
 	}
@@ -126,7 +126,7 @@ class Worth_It {
 
 			return (int) $result;
 		} catch ( \Exception $e ) {
-			lwtv_plugin()->error_log( 'worth-it-debug', 'Error getting ' . $rating . ' rating count: ' . $e->getMessage() );
+			lwtv_plugin()->error_log( 'statistics', 'Error getting ' . $rating . ' rating count: ' . $e->getMessage() );
 			return 0;
 		}
 	}
@@ -143,7 +143,7 @@ class Worth_It {
 			$data[ $item['name'] ] = $item['count'];
 		}
 
-		lwtv_plugin()->error_log( 'worth-it-debug', 'Piechart data: ' . wp_json_encode( $data ) );
+		lwtv_plugin()->error_log( 'statistics', 'Piechart data: ' . wp_json_encode( $data ) );
 		return $data;
 	}
 

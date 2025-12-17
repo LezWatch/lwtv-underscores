@@ -146,7 +146,7 @@ class Calculations {
 				( new Actors_Calculations() )->do_the_math( $actor, $force );
 			} else {
 				// Log the failure and schedule a retry
-				lwtv_plugin()->error_log( 'character-calc', "Failed to establish shadow taxonomy for actor {$actor}, scheduling retry" );
+				lwtv_plugin()->error_log( 'shadow-taxonomy', "Failed to establish shadow taxonomy for actor {$actor}, scheduling retry" );
 				lwtv_plugin()->schedule_task( 'calculation', $actor, 0, 10 ); // Retry in 10 seconds
 			}
 		}

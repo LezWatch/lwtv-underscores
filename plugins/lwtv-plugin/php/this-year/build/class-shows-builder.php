@@ -82,7 +82,7 @@ class Shows_Builder {
 
 		} catch ( \Exception $e ) {
 			// Log error and return empty array
-			lwtv_plugin()->error_log( 'Error in Shows::get_shows_for_year: ' . $e->getMessage() );
+			lwtv_plugin()->error_log( 'this-year', 'Error in Shows::get_shows_for_year: ' . $e->getMessage() );
 			return array();
 		}
 

@@ -37,7 +37,7 @@ class Scores {
 			return $array;
 
 		} catch ( \Exception $e ) {
-			lwtv_plugin()->error_log( 'scores-error', 'Error building scores statistics: ' . $e->getMessage() );
+			lwtv_plugin()->error_log( 'statistics', 'Error building scores statistics: ' . $e->getMessage() );
 			return array();
 		}
 	}
@@ -52,7 +52,7 @@ class Scores {
 		try {
 			// Validate input
 			if ( empty( $post_type ) ) {
-				lwtv_plugin()->error_log( 'scores-error', 'Invalid post_type provided' );
+				lwtv_plugin()->error_log( 'statistics', 'Invalid post_type provided' );
 				return array();
 			}
 
@@ -79,7 +79,7 @@ class Scores {
 			return $results_array;
 
 		} catch ( \Exception $e ) {
-			lwtv_plugin()->error_log( 'scores-error', 'Error building scores lazy: ' . $e->getMessage() );
+			lwtv_plugin()->error_log( 'statistics', 'Error building scores lazy: ' . $e->getMessage() );
 			return array();
 		}
 	}
@@ -114,7 +114,7 @@ class Scores {
 			return $wpdb->get_results( $queery, ARRAY_A );
 
 		} catch ( \Exception $e ) {
-			lwtv_plugin()->error_log( 'scores-error', 'Error getting scores chunk: ' . $e->getMessage() );
+			lwtv_plugin()->error_log( 'statistics', 'Error getting scores chunk: ' . $e->getMessage() );
 			return array();
 		}
 	}
@@ -139,7 +139,7 @@ class Scores {
 				);
 			}
 		} catch ( \Exception $e ) {
-			lwtv_plugin()->error_log( 'scores-error', 'Error processing scores chunk: ' . $e->getMessage() );
+			lwtv_plugin()->error_log( 'statistics', 'Error processing scores chunk: ' . $e->getMessage() );
 		}
 	}
 
@@ -164,7 +164,7 @@ class Scores {
 			return (int) $count;
 
 		} catch ( \Exception $e ) {
-			lwtv_plugin()->error_log( 'scores-error', 'Error getting total count: ' . $e->getMessage() );
+			lwtv_plugin()->error_log( 'statistics', 'Error getting total count: ' . $e->getMessage() );
 			return 0;
 		}
 	}

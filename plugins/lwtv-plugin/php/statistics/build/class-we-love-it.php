@@ -16,7 +16,7 @@ class We_Love_It {
 	 * @return array We love it statistics data
 	 */
 	public function generate( $format = 'array' ) {
-		lwtv_plugin()->error_log( 'we-love-it-debug', 'Generating we love it statistics for format: ' . $format );
+		lwtv_plugin()->error_log( 'statistics', 'Generating we love it statistics for format: ' . $format );
 		$all_data = $this->generate_all_data();
 		switch ( $format ) {
 			case 'count':
@@ -42,7 +42,7 @@ class We_Love_It {
 
 		// If cached data is found, return it
 		if ( false !== $cached_data ) {
-			lwtv_plugin()->error_log( 'we-love-it-debug', 'Cached data found for ' . $cache_key );
+			lwtv_plugin()->error_log( 'statistics', 'Cached data found for ' . $cache_key );
 			return $cached_data;
 		}
 
@@ -74,7 +74,7 @@ class We_Love_It {
 
 			return $data;
 		} catch ( \Exception $e ) {
-			lwtv_plugin()->error_log( 'we-love-it-debug', 'Error generating we love it statistics: ' . $e->getMessage() );
+			lwtv_plugin()->error_log( 'statistics', 'Error generating we love it statistics: ' . $e->getMessage() );
 			return array();
 		}
 	}
@@ -113,7 +113,7 @@ class We_Love_It {
 
 			return (int) $result;
 		} catch ( \Exception $e ) {
-			lwtv_plugin()->error_log( 'we-love-it-debug', 'Error getting total shows count: ' . $e->getMessage() );
+			lwtv_plugin()->error_log( 'statistics', 'Error getting total shows count: ' . $e->getMessage() );
 			return 0;
 		}
 	}
@@ -157,7 +157,7 @@ class We_Love_It {
 
 			return (int) $result;
 		} catch ( \Exception $e ) {
-			lwtv_plugin()->error_log( 'we-love-it-debug', 'Error getting shows we love count: ' . $e->getMessage() );
+			lwtv_plugin()->error_log( 'statistics', 'Error getting shows we love count: ' . $e->getMessage() );
 			return 0;
 		}
 	}
@@ -174,7 +174,7 @@ class We_Love_It {
 			$data[ $item['name'] ] = $item['count'];
 		}
 
-		lwtv_plugin()->error_log( 'we-love-it-debug', 'Piechart data: ' . wp_json_encode( $data ) );
+		lwtv_plugin()->error_log( 'statistics', 'Piechart data: ' . wp_json_encode( $data ) );
 		return $data;
 	}
 

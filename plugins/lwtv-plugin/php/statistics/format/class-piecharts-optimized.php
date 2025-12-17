@@ -16,10 +16,10 @@ class Piecharts_Optimized {
 	public function format( $data, $context, $view, $type, $stat_view ) {
 		$clean_view = ltrim( $view, '_' );
 
-		lwtv_plugin()->error_log( 'piecharts-debug', 'STAT VIEW: ' . $stat_view );
+		lwtv_plugin()->error_log( 'statistics', 'STAT VIEW: ' . $stat_view );
 
 		if ( empty( $data ) || ! isset( $data[ $clean_view ] ) ) {
-			lwtv_plugin()->error_log( 'piecharts-debug', 'No data available for this piechart: ' . $type );
+			lwtv_plugin()->error_log( 'statistics', 'No data available for this piechart: ' . $type );
 			return '<p>No data available for this piechart.</p>';
 		}
 
@@ -120,7 +120,7 @@ class Piecharts_Optimized {
 				'data'   => $dataset,
 			);
 		} catch ( \Exception $e ) {
-			lwtv_plugin()->error_log( 'piecharts-error', 'Error formatting data for chart: ' . $e->getMessage() );
+			lwtv_plugin()->error_log( 'statistics', 'Error formatting data for chart: ' . $e->getMessage() );
 			return array();
 		}
 
@@ -137,9 +137,9 @@ class Piecharts_Optimized {
 	 */
 	private function format_post_type_data_for_chart( $data, $type, $stat_view ) {
 
-		lwtv_plugin()->error_log( 'piecharts-debug', 'Formatting post type data for chart: ' . $type );
-		lwtv_plugin()->error_log( 'piecharts-debug', 'Data: ' . wp_json_encode( $data ) );
-		lwtv_plugin()->error_log( 'piecharts-debug', 'Stat view: ' . $stat_view );
+		lwtv_plugin()->error_log( 'statistics', 'Formatting post type data for chart: ' . $type );
+		lwtv_plugin()->error_log( 'statistics', 'Data: ' . wp_json_encode( $data ) );
+		lwtv_plugin()->error_log( 'statistics', 'Stat view: ' . $stat_view );
 
 		$labels  = '';
 		$dataset = '';
@@ -189,7 +189,7 @@ class Piecharts_Optimized {
 	 */
 	private function generate_chart_id( $type, $context, $view ) {
 		$chart_id = str_replace( '-', '_', $type . '_' . $context . '_' . $view . '_pie' );
-		lwtv_plugin()->error_log( 'piecharts-debug', 'Chart ID: ' . $chart_id );
+		lwtv_plugin()->error_log( 'statistics', 'Chart ID: ' . $chart_id );
 		return $chart_id;
 	}
 }

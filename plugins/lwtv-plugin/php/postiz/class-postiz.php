@@ -12,6 +12,20 @@ namespace LWTV\Postiz;
 class Postiz {
 
 	/**
+	 * Static flag to ensure initialization logic runs only once per request.
+	 *
+	 * @var bool
+	 */
+	private static $initialized = false;
+
+	/**
+	 * Static storage for configuration data.
+	 */
+	private static $static_api_url;
+	private static $static_api_key;
+	private static $static_channel_ids;
+
+	/**
 	 * API configuration
 	 */
 	private $api_url;
@@ -22,14 +36,35 @@ class Postiz {
 	 * Initialize the Postiz integration
 	 */
 	public function __construct() {
-		// Get API configuration from constants or options
-		$this->api_key     = get_option( 'lwtv_postiz_api_key', '' );
-		$this->api_url     = get_option( 'lwtv_postiz_api_url', '' );
-		$this->channel_ids = $this->extract_channel_ids_from_settings();
+		if ( ! self::$initialized ) {
+			// --- 1. EXPENSIVE INITIALIZATION (Runs only once) ---
+			// Get API configuration from constants or options
+			$api_key     = get_option( 'lwtv_postiz_api_key', '' );
+			$api_url     = get_option( 'lwtv_postiz_api_url', '' );
+			$channel_ids = $this->extract_channel_ids_from_settings();
 
-		// Ensure channel_ids is an array
-		if ( ! is_array( $this->channel_ids ) && ! empty( $this->channel_ids ) ) {
-			$this->channel_ids = array( $this->channel_ids );
+			$this->api_key     = $api_key;
+			$this->api_url     = $api_url;
+			$this->channel_ids = $channel_ids;
+
+			// Store data statically and set instance properties
+			self::$static_api_key     = $this->api_key;
+			self::$static_api_url     = $this->api_url;
+			self::$static_channel_ids = $this->channel_ids;
+
+			// Ensure channel_ids is an array and update static/instance
+			if ( ! is_array( $this->channel_ids ) && ! empty( $this->channel_ids ) ) {
+				$this->channel_ids        = array( $this->channel_ids );
+				self::$static_channel_ids = $this->channel_ids;
+			}
+
+			self::$initialized = true;
+		} else {
+			// --- 2. FAST INITIALIZATION (Runs on subsequent instances) ---
+			// If already initialized, populate instance from static store
+			$this->api_key     = self::$static_api_key;
+			$this->api_url     = self::$static_api_url;
+			$this->channel_ids = self::$static_channel_ids;
 		}
 	}
 
@@ -46,13 +81,11 @@ class Postiz {
 		$channel_ids = array();
 
 		if ( is_array( $channels ) ) {
-			lwtv_plugin()->error_log( 'postiz', 'Found ' . count( $channels ) . ' channels in settings' );
 			foreach ( $channels as $channel ) {
 				// Only include active channels (default to active if not set for backwards compatibility)
 				$is_active = isset( $channel['active'] ) ? $channel['active'] : true;
 
 				if ( $is_active && isset( $channel['channel_id'] ) && ! empty( $channel['channel_id'] ) ) {
-					lwtv_plugin()->error_log( 'postiz', 'Found active channel: ' . $channel['name'] . ' with ID: ' . $channel['channel_id'] );
 					$channel_ids[] = $channel['channel_id'];
 				} else {
 					lwtv_plugin()->error_log( 'postiz', 'Found inactive channel: ' . $channel['name'] . ' with ID: ' . $channel['channel_id'] );
@@ -69,7 +102,6 @@ class Postiz {
 	 * @return bool
 	 */
 	public function is_enabled() {
-		lwtv_plugin()->error_log( 'postiz', 'Checking if Postiz is enabled. API key: ' . $this->api_key . ' Channel IDs: ' . wp_json_encode( $this->channel_ids ) );
 		return ! empty( $this->api_key ) && ! empty( $this->channel_ids );
 	}
 

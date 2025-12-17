@@ -325,13 +325,13 @@ class Characters {
 			try {
 				( new CMB2() )->select2_taxonomy_save( $post_id, $postmeta, $taxonomy );
 				++$success_count;
-				lwtv_plugin()->error_log( 'taxsync-task', "Synced taxonomy {$taxonomy} for character ID: {$post_id}" );
+				lwtv_plugin()->error_log( 'taxsync', "Synced taxonomy {$taxonomy} for character ID: {$post_id}" );
 			} catch ( \Exception $e ) {
-				lwtv_plugin()->error_log( 'taxsync-task', "Failed to sync taxonomy {$taxonomy} for character ID: {$post_id}: " . $e->getMessage() );
+				lwtv_plugin()->error_log( 'taxsync', "Failed to sync taxonomy {$taxonomy} for character ID: {$post_id}: " . $e->getMessage() );
 			}
 		}
 
-		lwtv_plugin()->error_log( 'taxsync-task', "Completed character taxonomy sync for ID: {$post_id} - {$success_count}/{$total_count} successful" );
+		lwtv_plugin()->error_log( 'taxsync', "Completed character taxonomy sync for ID: {$post_id} - {$success_count}/{$total_count} successful" );
 	}
 
 	/**
@@ -466,7 +466,7 @@ class Characters {
 		// If character is not in cached list or death date changed, invalidate cache
 		if ( ! $is_in_list ) {
 			( new BYQ() )->invalidate_death_list_cache();
-			lwtv_plugin()->error_log( 'byq-debug', "Invalidated BYQ cache for character {$post_id} - character not in cached list or death date changed" );
+			lwtv_plugin()->error_log( 'buryqueers', "Invalidated BYQ cache for character {$post_id} - character not in cached list or death date changed" );
 		}
 	}
 

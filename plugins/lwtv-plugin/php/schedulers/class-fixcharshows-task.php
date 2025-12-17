@@ -40,7 +40,7 @@ class FixCharShows_Task {
 			return;
 		}
 
-		lwtv_plugin()->error_log( 'FixCharShows_Task', "Processing fix character shows task for ID: {$post_id}" );
+		lwtv_plugin()->error_log( 'characters', "Processing fix character shows task for ID: {$post_id}" );
 
 		foreach ( $all_shows as $each_show ) {
 			// If it's an array, de-array it.

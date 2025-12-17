@@ -5,7 +5,8 @@
  * These commands are 'generation' tools.
  */
 
-use LWTV\_Components\{ Calendar, Of_The_Day };
+use LWTV\_Components\Calendar;
+use LWTV\_Components\Of_The_Day;
 use LWTV\Debugger\Actors as Actors_Debugger;
 use LWTV\Debugger\Characters as Characters_Debugger;
 use LWTV\Debugger\Shows as Shows_Debugger;
@@ -97,8 +98,6 @@ class WP_CLI_LWTV_Generate {
 	 *     # Check missed schedule status
 	 *     $ wp lwtv generate missed-schedule status
 	 *     Success: Missed schedule status retrieved.
-	 *
-
 	 *
 	 * @param array $args
 	 * @param array $assoc_args
@@ -313,10 +312,14 @@ class WP_CLI_LWTV_Generate {
 			$new_otd = ( new Of_The_Day() )->set_of_the_day( $otd );
 
 			if ( null === $new_otd || is_wp_error( $new_otd ) ) {
-				\WP_CLI::error( 'There was an error setting the ' . $otd . ' "Of the Day".' );
+				\WP_CLI::error( 'There was an error setting the ' . $otd . ' "Of the Day": ' . wp_json_encode( $new_otd ) );
 			}
 
 			$post_id = $new_otd['posts_id'];
+
+			if ( ! is_numeric( $post_id ) ) {
+				\WP_CLI::error( 'The ' . $otd . ' "Of the Day" has no post ID and cannot be set: ' . wp_json_encode( $new_otd ) );
+			}
 
 			\WP_CLI::success( 'The ' . $otd . ' "Of the Day" has been set: ' . get_the_title( $post_id ) . ' (' . $post_id . ')' );
 		}

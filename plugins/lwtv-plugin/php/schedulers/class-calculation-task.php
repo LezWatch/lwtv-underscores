@@ -36,11 +36,11 @@ class Calculation_Task {
 		$post_type = get_post_type( $post_id );
 
 		if ( ! $post_type ) {
-			lwtv_plugin()->error_log( 'calculation-task', "Invalid post ID: {$post_id}" );
+			lwtv_plugin()->error_log( 'calculations', "Invalid post ID: {$post_id}" );
 			return;
 		}
 
-		lwtv_plugin()->error_log( 'calculation-task', "Processing calculation task for {$post_type} ID: {$post_id}" );
+		lwtv_plugin()->error_log( 'calculations', "Processing calculation task for {$post_type} ID: {$post_id}" );
 
 		// Process calculations based on post type
 		switch ( $post_type ) {
@@ -54,7 +54,7 @@ class Calculation_Task {
 				$this->process_character_calculations( $post_id );
 				break;
 			default:
-				lwtv_plugin()->error_log( 'calculation-task', "Unsupported post type: {$post_type} for ID: {$post_id}" );
+				lwtv_plugin()->error_log( 'calculations', "Unsupported post type: {$post_type} for ID: {$post_id}" );
 				break;
 		}
 	}
@@ -66,12 +66,12 @@ class Calculation_Task {
 	 * @return void
 	 */
 	private function process_actor_calculations( int $post_id ): void {
-		lwtv_plugin()->error_log( 'calculation-task', "Processing actor calculations for ID: {$post_id}" );
+		lwtv_plugin()->error_log( 'calculations', "Processing actor calculations for ID: {$post_id}" );
 
 		// Run the math calculations
 		( new Actors_Calculations() )->do_the_math( $post_id );
 
-		lwtv_plugin()->error_log( 'calculation-task', "Completed actor calculations for ID: {$post_id}" );
+		lwtv_plugin()->error_log( 'calculations', "Completed actor calculations for ID: {$post_id}" );
 	}
 
 	/**
@@ -81,12 +81,12 @@ class Calculation_Task {
 	 * @return void
 	 */
 	private function process_show_calculations( int $post_id ): void {
-		lwtv_plugin()->error_log( 'calculation-task', "Processing show calculations for ID: {$post_id}" );
+		lwtv_plugin()->error_log( 'calculations', "Processing show calculations for ID: {$post_id}" );
 
 		// Run the math calculations
 		( new Shows_Calculations() )->do_the_math( $post_id );
 
-		lwtv_plugin()->error_log( 'calculation-task', "Completed show calculations for ID: {$post_id}" );
+		lwtv_plugin()->error_log( 'calculations', "Completed show calculations for ID: {$post_id}" );
 	}
 
 	/**
@@ -96,11 +96,11 @@ class Calculation_Task {
 	 * @return void
 	 */
 	private function process_character_calculations( int $post_id ): void {
-		lwtv_plugin()->error_log( 'calculation-task', "Processing character calculations for ID: {$post_id}" );
+		lwtv_plugin()->error_log( 'calculations', "Processing character calculations for ID: {$post_id}" );
 
 		// Run the math calculations
 		( new Characters_Calculations() )->do_the_math( $post_id );
 
-		lwtv_plugin()->error_log( 'calculation-task', "Completed character calculations for ID: {$post_id}" );
+		lwtv_plugin()->error_log( 'calculations', "Completed character calculations for ID: {$post_id}" );
 	}
 }

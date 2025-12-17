@@ -43,7 +43,7 @@ class Formats {
 
 		// If cached data is found, return it
 		if ( false !== $cached_data ) {
-			lwtv_plugin()->error_log( 'formats-debug', 'Cached data found for ' . $cache_key );
+			lwtv_plugin()->error_log( 'statistics', 'Cached data found for ' . $cache_key );
 			return $cached_data;
 		}
 
@@ -68,7 +68,7 @@ class Formats {
 
 			return $results;
 		} catch ( \Exception $e ) {
-			lwtv_plugin()->error_log( 'statistics-debug', 'Error generating formats statistics: ' . $e->getMessage() );
+			lwtv_plugin()->error_log( 'statistics', 'Error generating formats statistics: ' . $e->getMessage() );
 			return array();
 		}
 	}

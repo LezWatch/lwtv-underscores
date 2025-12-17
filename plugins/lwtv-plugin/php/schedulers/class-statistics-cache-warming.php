@@ -46,7 +46,7 @@ class Statistics_Cache_Warming {
 	 * @return void
 	 */
 	public function warm_cache_tier( string $tier, int $post_id = 0 ): void {
-		lwtv_plugin()->error_log( 'cache-warming', "Starting cache warming for tier: {$tier}, post ID: {$post_id}" );
+		lwtv_plugin()->error_log( 'statistics', "Starting cache warming for tier: {$tier}, post ID: {$post_id}" );
 
 		switch ( $tier ) {
 			case 'counts':
@@ -60,7 +60,7 @@ class Statistics_Cache_Warming {
 				break;
 		}
 
-		lwtv_plugin()->error_log( 'cache-warming', "Completed cache warming for tier: {$tier}" );
+		lwtv_plugin()->error_log( 'statistics', "Completed cache warming for tier: {$tier}" );
 	}
 
 	/**
@@ -111,7 +111,7 @@ class Statistics_Cache_Warming {
 		$this_year_characters = ( new Characters_Builder() )->get_characters_for_year( gmdate( 'Y' ) );
 		$all_characters       = ( new Statistics_Optimized() )->generate_total_counts( 'characters' );
 
-		lwtv_plugin()->error_log( 'cache-warming', 'Warming actor character count caches. This year: ' . count( $this_year_characters ) . ', All: ' . $all_characters );
+		lwtv_plugin()->error_log( 'statistics', 'Warming actor character count caches. This year: ' . count( $this_year_characters ) . ', All: ' . $all_characters );
 	}
 
 	/**
@@ -123,7 +123,7 @@ class Statistics_Cache_Warming {
 		$this_year_shows = ( new Shows_Builder() )->get_shows_for_year( gmdate( 'Y' ) );
 		$all_shows       = ( new Statistics_Optimized() )->generate_total_counts( 'shows' );
 
-		lwtv_plugin()->error_log( 'cache-warming', 'Warming shows count caches. This year: ' . count( $this_year_shows ) . ', All: ' . $all_shows );
+		lwtv_plugin()->error_log( 'statistics', 'Warming shows count caches. This year: ' . count( $this_year_shows ) . ', All: ' . $all_shows );
 	}
 
 	/**
@@ -136,7 +136,7 @@ class Statistics_Cache_Warming {
 		$all_deaths       = ( new Statistics_Optimized() )->generate_total_counts( 'characters', true );
 		$total_dead_shows = ( new Dead_Stats() )->total_dead_shows();
 
-		lwtv_plugin()->error_log( 'cache-warming', 'Warming death count caches. This year: ' . count( $this_year_deaths ) . ', Characters: ' . $all_deaths . ', Shows: ' . $total_dead_shows );
+		lwtv_plugin()->error_log( 'statistics', 'Warming death count caches. This year: ' . count( $this_year_deaths ) . ', Characters: ' . $all_deaths . ', Shows: ' . $total_dead_shows );
 	}
 
 	/**
@@ -147,7 +147,7 @@ class Statistics_Cache_Warming {
 	private function warm_actor_counts(): void {
 		$all_actors = ( new Statistics_Optimized() )->generate_total_counts( 'actors' );
 
-		lwtv_plugin()->error_log( 'cache-warming', 'Warming actor count caches. All: ' . $all_actors );
+		lwtv_plugin()->error_log( 'statistics', 'Warming actor count caches. All: ' . $all_actors );
 	}
 
 	/**
@@ -168,7 +168,7 @@ class Statistics_Cache_Warming {
 		}
 
 		// This would trigger regeneration of death-related statistics
-		lwtv_plugin()->error_log( 'cache-warming', 'Warming death statistics caches...' );
+		lwtv_plugin()->error_log( 'statistics', 'Warming death statistics caches...' );
 	}
 
 	/**
@@ -180,7 +180,7 @@ class Statistics_Cache_Warming {
 		( new Stations_Stats() )->get_station_summaries();
 		( new Stations_Stats() )->get_top_stations( 10 );
 
-		lwtv_plugin()->error_log( 'cache-warming', 'Warming station statistics caches...' );
+		lwtv_plugin()->error_log( 'statistics', 'Warming station statistics caches...' );
 	}
 
 	/**
@@ -192,7 +192,7 @@ class Statistics_Cache_Warming {
 		( new Nations_Stats() )->get_nation_summaries();
 		( new Nations_Stats() )->get_top_nations( 10 );
 
-		lwtv_plugin()->error_log( 'cache-warming', 'Warming nation statistics caches...' );
+		lwtv_plugin()->error_log( 'statistics', 'Warming nation statistics caches...' );
 	}
 
 	/**
@@ -204,7 +204,7 @@ class Statistics_Cache_Warming {
 		( new On_Air_Stats() )->generate( 'shows' );
 		( new On_Air_Stats() )->generate( 'characters' );
 
-		lwtv_plugin()->error_log( 'cache-warming', 'Warming on-air statistics caches...' );
+		lwtv_plugin()->error_log( 'statistics', 'Warming on-air statistics caches...' );
 	}
 
 	/**
@@ -228,7 +228,7 @@ class Statistics_Cache_Warming {
 			( new Build_Taxonomy_Optimized() )->make_comprehensive( CPT_Actors::SLUG, $taxonomy, true );
 		}
 
-		lwtv_plugin()->error_log( 'cache-warming', 'Warming taxonomy statistics caches...' );
+		lwtv_plugin()->error_log( 'statistics', 'Warming taxonomy statistics caches...' );
 	}
 
 	/**
@@ -239,7 +239,7 @@ class Statistics_Cache_Warming {
 	private function warm_queer_irl_statistics(): void {
 		( new Queer_IRL_Stats() )->generate_all_data();
 
-		lwtv_plugin()->error_log( 'cache-warming', 'Warming queer IRL statistics caches...' );
+		lwtv_plugin()->error_log( 'statistics', 'Warming queer IRL statistics caches...' );
 	}
 
 	/**
@@ -250,7 +250,7 @@ class Statistics_Cache_Warming {
 	private function warm_formats_statistics(): void {
 		( new Build_Formats() )->generate( 'array' );
 
-		lwtv_plugin()->error_log( 'cache-warming', 'Warming formats statistics caches...' );
+		lwtv_plugin()->error_log( 'statistics', 'Warming formats statistics caches...' );
 	}
 
 	/**
@@ -261,7 +261,7 @@ class Statistics_Cache_Warming {
 	private function warm_loved_statistics(): void {
 		( new Build_Loved() )->generate( 'array' );
 
-		lwtv_plugin()->error_log( 'cache-warming', 'Warming loved statistics caches...' );
+		lwtv_plugin()->error_log( 'statistics', 'Warming loved statistics caches...' );
 	}
 
 	/**
@@ -272,6 +272,6 @@ class Statistics_Cache_Warming {
 	private function warm_worth_it_statistics(): void {
 		( new Build_Worth_It() )->generate( 'array' );
 
-		lwtv_plugin()->error_log( 'cache-warming', 'Warming worth it statistics caches...' );
+		lwtv_plugin()->error_log( 'statistics', 'Warming worth it statistics caches...' );
 	}
 }

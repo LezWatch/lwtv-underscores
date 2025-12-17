@@ -315,13 +315,13 @@ class Shows {
 			try {
 				( new CMB2() )->select2_taxonomy_save( $post_id, $postmeta, $taxonomy );
 				++$success_count;
-				lwtv_plugin()->error_log( 'taxsync-task', "Synced taxonomy {$taxonomy} for show ID: {$post_id}" );
+				lwtv_plugin()->error_log( 'taxsync', "Synced taxonomy {$taxonomy} for show ID: {$post_id}" );
 			} catch ( \Exception $e ) {
-				lwtv_plugin()->error_log( 'taxsync-task', "Failed to sync taxonomy {$taxonomy} for show ID: {$post_id}: " . $e->getMessage() );
+				lwtv_plugin()->error_log( 'taxsync', "Failed to sync taxonomy {$taxonomy} for show ID: {$post_id}: " . $e->getMessage() );
 			}
 		}
 
-		lwtv_plugin()->error_log( 'taxsync-task', "Completed show taxonomy sync for ID: {$post_id} - {$success_count}/{$total_count} successful" );
+		lwtv_plugin()->error_log( 'taxsync', "Completed show taxonomy sync for ID: {$post_id} - {$success_count}/{$total_count} successful" );
 	}
 
 	/*

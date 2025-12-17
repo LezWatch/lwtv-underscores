@@ -21,19 +21,19 @@ class This_Year {
 		try {
 			// Validate input parameters
 			if ( empty( $data ) || ! is_string( $data ) ) {
-				lwtv_plugin()->error_log( 'this-year-error', 'Invalid data parameter provided' );
+				lwtv_plugin()->error_log( 'this-year', 'Invalid data parameter provided' );
 				return array();
 			}
 
 			// Extract taxonomy from data string (remove _year_XXXX from the end)
 			$taxonomy = substr( $data, 0, -10 );
 			if ( empty( $taxonomy ) ) {
-				lwtv_plugin()->error_log( 'this-year-error', 'Invalid data format: ' . $data );
+				lwtv_plugin()->error_log( 'this-year', 'Invalid data format: ' . $data );
 				return array();
 			}
 
 			// Debug logging
-			lwtv_plugin()->error_log( 'this-year-debug', 'This_Year make called with data: ' . $data . ', taxonomy: ' . $taxonomy . ', year_array count: ' . count( $year_array ) );
+			lwtv_plugin()->error_log( 'this-year', 'This_Year make called with data: ' . $data . ', taxonomy: ' . $taxonomy . ', year_array count: ' . count( $year_array ) );
 
 			// Check transient cache
 			$transient = 'this_year_' . $data;
@@ -41,24 +41,24 @@ class This_Year {
 
 			// If the array is empty, we want to rebuild it
 			if ( false === $array || empty( $array ) ) {
-				lwtv_plugin()->error_log( 'this-year-debug', 'Cache miss, rebuilding data for: ' . $transient );
+				lwtv_plugin()->error_log( 'this-year', 'Cache miss, rebuilding data for: ' . $transient );
 				$array = $this->build_this_year_optimized( $taxonomy, $year_array );
 
 				// Save array as transient if we have data
 				if ( ! empty( $array ) ) {
 					lwtv_plugin()->set_transient( $transient, $array, DAY_IN_SECONDS );
-					lwtv_plugin()->error_log( 'this-year-debug', 'Cached ' . count( $array ) . ' terms for: ' . $transient );
+					lwtv_plugin()->error_log( 'this-year', 'Cached ' . count( $array ) . ' terms for: ' . $transient );
 				} else {
-					lwtv_plugin()->error_log( 'this-year-debug', 'No data to cache for: ' . $transient );
+					lwtv_plugin()->error_log( 'this-year', 'No data to cache for: ' . $transient );
 				}
 			} else {
-				lwtv_plugin()->error_log( 'this-year-debug', 'Using cached data for: ' . $transient );
+				lwtv_plugin()->error_log( 'this-year', 'Using cached data for: ' . $transient );
 			}
 
 			return $array;
 
 		} catch ( \Exception $e ) {
-			lwtv_plugin()->error_log( 'this-year-error', 'Error in This_Year make: ' . $e->getMessage() );
+			lwtv_plugin()->error_log( 'this-year', 'Error in This_Year make: ' . $e->getMessage() );
 			return array();
 		}
 	}
@@ -78,7 +78,7 @@ class This_Year {
 
 			// Validate taxonomy parameter
 			if ( empty( $taxonomy ) || ! is_string( $taxonomy ) ) {
-				lwtv_plugin()->error_log( 'this-year-error', 'Invalid taxonomy parameter: ' . $taxonomy );
+				lwtv_plugin()->error_log( 'this-year', 'Invalid taxonomy parameter: ' . $taxonomy );
 				return array();
 			}
 
@@ -92,12 +92,12 @@ class This_Year {
 			);
 
 			if ( is_wp_error( $taxonomies ) ) {
-				lwtv_plugin()->error_log( 'this-year-error', 'Failed to get terms for taxonomy: ' . $taxonomy_name . ' - ' . $taxonomies->get_error_message() );
+				lwtv_plugin()->error_log( 'this-year', 'Failed to get terms for taxonomy: ' . $taxonomy_name . ' - ' . $taxonomies->get_error_message() );
 				return array();
 			}
 
 			if ( empty( $taxonomies ) ) {
-				lwtv_plugin()->error_log( 'this-year-debug', 'No terms found for taxonomy: ' . $taxonomy_name );
+				lwtv_plugin()->error_log( 'this-year', 'No terms found for taxonomy: ' . $taxonomy_name );
 				return array();
 			}
 
@@ -110,11 +110,11 @@ class This_Year {
 				);
 			}
 
-			lwtv_plugin()->error_log( 'this-year-debug', 'Built base array with ' . count( $results_array ) . ' terms for taxonomy: ' . $taxonomy_name );
+			lwtv_plugin()->error_log( 'this-year', 'Built base array with ' . count( $results_array ) . ' terms for taxonomy: ' . $taxonomy_name );
 
 			// If no character data provided, return empty counts
 			if ( empty( $year_array ) || ! is_array( $year_array ) ) {
-				lwtv_plugin()->error_log( 'this-year-debug', 'No character data provided, returning empty counts' );
+				lwtv_plugin()->error_log( 'this-year', 'No character data provided, returning empty counts' );
 				return $results_array;
 			}
 
@@ -129,11 +129,11 @@ class This_Year {
 			);
 
 			if ( empty( $character_ids ) ) {
-				lwtv_plugin()->error_log( 'this-year-debug', 'No valid character IDs found in year_array' );
+				lwtv_plugin()->error_log( 'this-year', 'No valid character IDs found in year_array' );
 				return $results_array;
 			}
 
-			lwtv_plugin()->error_log( 'this-year-debug', 'Processing ' . count( $character_ids ) . ' character IDs for taxonomy: ' . $taxonomy_name );
+			lwtv_plugin()->error_log( 'this-year', 'Processing ' . count( $character_ids ) . ' character IDs for taxonomy: ' . $taxonomy_name );
 
 			// Single optimized query to get all taxonomy counts
 			$placeholders = implode( ',', array_fill( 0, count( $character_ids ), '%d' ) );
@@ -155,7 +155,7 @@ class This_Year {
 			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- This is a prepared query (see above)
 			$results = $wpdb->get_results( $queery, ARRAY_A );
 
-			lwtv_plugin()->error_log( 'this-year-debug', 'Query returned ' . count( $results ) . ' results for taxonomy: ' . $taxonomy_name );
+			lwtv_plugin()->error_log( 'this-year', 'Query returned ' . count( $results ) . ' results for taxonomy: ' . $taxonomy_name );
 
 			// Update counts with actual data
 			$total_count = 0;
@@ -169,12 +169,12 @@ class This_Year {
 				}
 			}
 
-			lwtv_plugin()->error_log( 'this-year-debug', 'Total character assignments: ' . $total_count . ' for taxonomy: ' . $taxonomy_name );
+			lwtv_plugin()->error_log( 'this-year', 'Total character assignments: ' . $total_count . ' for taxonomy: ' . $taxonomy_name );
 
 			return $results_array;
 
 		} catch ( \Exception $e ) {
-			lwtv_plugin()->error_log( 'this-year-error', 'Error building this year statistics: ' . $e->getMessage() );
+			lwtv_plugin()->error_log( 'this-year', 'Error building this year statistics: ' . $e->getMessage() );
 			return array();
 		}
 	}

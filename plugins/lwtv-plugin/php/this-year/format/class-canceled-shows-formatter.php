@@ -26,7 +26,7 @@ class Canceled_Shows_Formatter {
 
 			return $canceled_shows_by_name;
 		} catch ( \Exception $e ) {
-			lwtv_plugin()->error_log( 'canceled-shows-formatter-debug', 'Error formatting canceled shows by name for year: ' . $e->getMessage() );
+			lwtv_plugin()->error_log( 'this-year', 'Error formatting canceled shows by name for year: ' . $e->getMessage() );
 			return array();
 		}
 	}
@@ -55,7 +55,7 @@ class Canceled_Shows_Formatter {
 
 			return $canceled_shows_by_format;
 		} catch ( \Exception $e ) {
-			lwtv_plugin()->error_log( 'canceled-shows-formatter-debug', 'Error formatting canceled shows by format for year: ' . $e->getMessage() );
+			lwtv_plugin()->error_log( 'this-year', 'Error formatting canceled shows by format for year: ' . $e->getMessage() );
 			return array();
 		}
 	}
@@ -83,7 +83,7 @@ class Canceled_Shows_Formatter {
 
 			return $canceled_shows_by_country;
 		} catch ( \Exception $e ) {
-			lwtv_plugin()->error_log( 'canceled-shows-formatter-debug', 'Error formatting canceled shows by country for year: ' . $e->getMessage() );
+			lwtv_plugin()->error_log( 'this-year', 'Error formatting canceled shows by country for year: ' . $e->getMessage() );
 			return array();
 		}
 	}

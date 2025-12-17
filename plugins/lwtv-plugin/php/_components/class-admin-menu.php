@@ -7,6 +7,7 @@
 namespace LWTV\_Components;
 
 use LWTV\Admin_Menu\Auto_Posting;
+use LWTV\Admin_Menu\Debug_Logging;
 use LWTV\Admin_Menu\Exclusions;
 use LWTV\Admin_Menu\Validation;
 
@@ -24,6 +25,13 @@ class Admin_Menu implements Component {
 	 */
 	protected $auto_posting = null;
 
+	/**
+	 * Debug_Logging instance
+	 *
+	 * @var Debug_Logging
+	 */
+	protected $debug_logging = null;
+
 	/*
 	 * Construct
 	 */
@@ -32,7 +40,8 @@ class Admin_Menu implements Component {
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
 
 		// Initialize Auto_Posting early so form handler is registered before admin_post fires
-		$this->auto_posting = new Auto_Posting();
+		$this->auto_posting  = new Auto_Posting();
+		$this->debug_logging = new Debug_Logging();
 	}
 
 	/*
@@ -61,6 +70,7 @@ class Admin_Menu implements Component {
 			( new Exclusions() )->init();
 
 			add_submenu_page( 'lwtv', 'Auto-Posting', 'Auto-Posting', 'activate_plugins', 'lwtv_auto_posting', array( $this, 'auto_posting_page' ) );
+			add_submenu_page( 'lwtv', 'Debug Logging', 'Debug Logging', 'activate_plugins', 'lwtv_debug_logging', array( $this, 'debug_logging_page' ) );
 
 			//phpcs:ignore WordPress.WP.GlobalVariablesOverride
 			$submenu['lwtv'][] = array( 'Scheduled Actions', 'read', admin_url( 'tools.php?page=action-scheduler' ) );
@@ -131,6 +141,17 @@ class Admin_Menu implements Component {
 	public function auto_posting_page(): void {
 		if ( null !== $this->auto_posting ) {
 			$this->auto_posting->render_page();
+		}
+	}
+
+	/**
+	 * Debug Logging Page
+	 *
+	 * @return void
+	 */
+	public function debug_logging_page(): void {
+		if ( null !== $this->debug_logging ) {
+			$this->debug_logging->render_page();
 		}
 	}
 }

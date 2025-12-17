@@ -56,7 +56,7 @@ class Actors {
 	 * @return array Dead statistics
 	 */
 	public function generate_dead( $actor_id ) {
-		lwtv_plugin()->error_log( 'actors-debug', 'Generating dead statistics for actor: ' . $actor_id );
+		lwtv_plugin()->error_log( 'statistics', 'Generating death statistics for actor: ' . $actor_id );
 		// Get the character list meta for this actor
 		$char_list = get_post_meta( $actor_id, 'lezactors_char_list', true );
 

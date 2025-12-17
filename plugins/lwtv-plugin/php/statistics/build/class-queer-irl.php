@@ -75,7 +75,7 @@ class Queer_IRL {
 			$result = $wpdb->get_row( $query, ARRAY_A );
 
 			if ( false === $result || is_null( $result ) ) {
-				lwtv_plugin()->error_log( 'queer-irl-error', 'Query failed: ' . $wpdb->last_error );
+				lwtv_plugin()->error_log( 'statistics', 'Query failed: ' . $wpdb->last_error );
 				return array();
 			}
 
@@ -97,7 +97,7 @@ class Queer_IRL {
 			);
 
 		} catch ( \Exception $e ) {
-			lwtv_plugin()->error_log( 'queer-irl-error', 'Error building queer IRL data: ' . $e->getMessage() );
+			lwtv_plugin()->error_log( 'statistics', 'Error building queer IRL data: ' . $e->getMessage() );
 			return array();
 		}
 	}
