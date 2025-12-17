@@ -52,7 +52,7 @@ class Scores {
 		try {
 			// Validate input
 			if ( empty( $post_type ) ) {
-				lwtv_plugin()->error_log( 'statistics', 'Invalid post_type provided' );
+				lwtv_plugin()->debug_log( 'statistics', 'Invalid post_type provided' );
 				return array();
 			}
 

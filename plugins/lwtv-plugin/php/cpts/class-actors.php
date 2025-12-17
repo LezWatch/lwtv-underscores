@@ -267,13 +267,13 @@ class Actors {
 			try {
 				( new CMB2() )->select2_taxonomy_save( $post_id, $postmeta, $taxonomy );
 				++$success_count;
-				lwtv_plugin()->error_log( 'taxsync', "Synced taxonomy {$taxonomy} for character ID: {$post_id}" );
+				lwtv_plugin()->debug_log( 'taxsync', "Synced taxonomy {$taxonomy} for character ID: {$post_id}" );
 			} catch ( \Exception $e ) {
 				lwtv_plugin()->error_log( 'taxsync', "Failed to sync taxonomy {$taxonomy} for character ID: {$post_id}: " . $e->getMessage() );
 			}
 		}
 
-		lwtv_plugin()->error_log( 'taxsync', "Completed character taxonomy sync for ID: {$post_id} - {$success_count}/{$total_count} successful" );
+		lwtv_plugin()->debug_log( 'taxsync', "Completed character taxonomy sync for ID: {$post_id} - {$success_count}/{$total_count} successful" );
 	}
 
 	/*

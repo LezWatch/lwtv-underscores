@@ -153,7 +153,7 @@ Development is fully documented in `/plugins/lwtv-plugins/php/blocks/README.md`
 
 ## Developer Features
 
-There is a function for logging to the error log _only_ if debug is active: `lwtv_plugin()->error_log( $TYPE, $MESSAGE )`
+There is a function for logging to the error log _only_ if debug is active: `lwtv_plugin()->debug_log( $TYPE, $MESSAGE )`
 
 This will output `[TYPE]: Message` into the error log.
 

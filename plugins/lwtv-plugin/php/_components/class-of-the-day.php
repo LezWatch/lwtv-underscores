@@ -111,7 +111,7 @@ class Of_The_Day implements Component, Templater {
 			if ( 0 === $maybe_existing_otd || empty( $maybe_existing_otd ) ) {
 				$new_otd = $this->of_the_day( $a_type, 'default' );
 				$this->add_to_table( $a_type, $new_otd );
-				lwtv_plugin()->error_log( 'buryqueers', 'Added OTD to table: ' . wp_json_encode( $new_otd ) );
+				lwtv_plugin()->debug_log( 'buryqueers', 'Added OTD to table: ' . wp_json_encode( $new_otd ) );
 			} else {
 				$new_otd = $maybe_existing_otd[0];
 
@@ -120,7 +120,7 @@ class Of_The_Day implements Component, Templater {
 					$new_otd = json_decode( wp_json_encode( $new_otd ), true );
 				}
 
-				lwtv_plugin()->error_log( 'buryqueers', 'OTD already exists: ' . wp_json_encode( $new_otd ) );
+				lwtv_plugin()->debug_log( 'buryqueers', 'OTD already exists: ' . wp_json_encode( $new_otd ) );
 			}
 		}
 
@@ -129,7 +129,7 @@ class Of_The_Day implements Component, Templater {
 
 		// If there's an OTD, trigger the action and return it
 		if ( null !== $new_otd ) {
-			lwtv_plugin()->error_log( 'buryqueers', 'Triggering lwtv_otd_added action for OTD: ' . wp_json_encode( $new_otd ) );
+			lwtv_plugin()->debug_log( 'buryqueers', 'Triggering lwtv_otd_added action for OTD: ' . wp_json_encode( $new_otd ) );
 			do_action( 'lwtv_otd_added', $a_type, $new_otd['content'], $new_otd['posts_id'], $new_otd );
 			return $new_otd;
 		}

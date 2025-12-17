@@ -67,10 +67,10 @@ class Of_The_Day extends Postiz {
 		// Use Action Scheduler if available, otherwise fall back to WP cron
 		if ( lwtv_plugin()->is_action_scheduler_available() ) {
 			as_schedule_single_action( $scheduled_time, self::AS_HOOK, $args, self::AS_GROUP );
-			lwtv_plugin()->error_log( 'postiz', 'Scheduled OTD post for ' . $post_title . ' (#' . $post_id . ' ' . $content . ') via Action Scheduler for ' . self::DELAY_SECONDS . ' seconds from now' );
+			lwtv_plugin()->debug_log( 'postiz', 'Scheduled OTD post for ' . $post_title . ' (#' . $post_id . ' ' . $content . ') via Action Scheduler for ' . self::DELAY_SECONDS . ' seconds from now' );
 		} else {
 			wp_schedule_single_event( $scheduled_time, self::WP_CRON_HOOK, $args );
-			lwtv_plugin()->error_log( 'postiz', 'Scheduled OTD post for ' . $post_title . ' (#' . $post_id . ' ' . $content . ') via WP cron for ' . self::DELAY_SECONDS . ' seconds from now' );
+			lwtv_plugin()->debug_log( 'postiz', 'Scheduled OTD post for ' . $post_title . ' (#' . $post_id . ' ' . $content . ') via WP cron for ' . self::DELAY_SECONDS . ' seconds from now' );
 		}
 	}
 
@@ -86,7 +86,7 @@ class Of_The_Day extends Postiz {
 	 * @param array  $data    Additional data about the OTD
 	 */
 	public function process_scheduled_otd( $type, $content, $post_id, $data ) {
-		lwtv_plugin()->error_log( 'postiz', 'Processing scheduled OTD post: ' . wp_json_encode( $data ) );
+		lwtv_plugin()->debug_log( 'postiz', 'Processing scheduled OTD post: ' . wp_json_encode( $data ) );
 
 		// Check if the OTD already exists in Postiz
 		$exists = parent::post_exists( $content, $post_id );
@@ -96,13 +96,13 @@ class Of_The_Day extends Postiz {
 		}
 
 		try {
-			lwtv_plugin()->error_log( 'postiz', 'Posting OTD to Postiz' );
+			lwtv_plugin()->debug_log( 'postiz', 'Posting OTD to Postiz' );
 			$result = $this->post_of_the_day( $type, $content, $post_id );
-			lwtv_plugin()->error_log( 'postiz', 'Result of posting OTD to Postiz: ' . wp_json_encode( $result ) );
+			lwtv_plugin()->debug_log( 'postiz', 'Result of posting OTD to Postiz: ' . wp_json_encode( $result ) );
 
 			// Log errors if any
 			if ( is_wp_error( $result ) ) {
-				lwtv_plugin()->error_log(
+				lwtv_plugin()->debug_log(
 					'postiz',
 					sprintf(
 						'Failed to post OTD to Postiz: %s',

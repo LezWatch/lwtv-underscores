@@ -202,7 +202,7 @@ class Taxonomy_Optimized {
 
 		// Handle query failure
 		if ( false === $results || empty( $results ) || is_null( $results ) ) {
-			lwtv_plugin()->error_log( 'statistics', 'Query failed: ' . $wpdb->last_error );
+			lwtv_plugin()->debug_log( 'statistics', 'Query failed: ' . $wpdb->last_error );
 			return array();
 		}
 

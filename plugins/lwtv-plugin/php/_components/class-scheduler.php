@@ -58,7 +58,7 @@ class Scheduler implements Component, Templater {
 				new Cache_Batch_Task();
 				new BYQ_Task();
 			} else {
-				lwtv_plugin()->error_log( 'scheduler', 'Action Scheduler not available, skipping AS-dependent task handlers' );
+				lwtv_plugin()->debug_log( 'scheduler', 'Action Scheduler not available, skipping AS-dependent task handlers' );
 			}
 		} catch ( \Exception $e ) {
 			lwtv_plugin()->error_log( 'scheduler', 'Error initializing task handlers: ' . $e->getMessage() );
@@ -103,15 +103,15 @@ class Scheduler implements Component, Templater {
 		// If Action Scheduler is active, use it with generic hook name
 		if ( $this->is_action_scheduler_available() ) {
 			$scheduled = as_schedule_single_action( time() + $delay, $task_name, array( $post_id ), $group, $unique, $priority );
-			lwtv_plugin()->error_log( 'scheduler', "Scheduled {$task_type} task via Action Scheduler for post ID: {$post_id} with {$delay}s delay" );
+			lwtv_plugin()->debug_log( 'scheduler', "Scheduled {$task_type} task via Action Scheduler for post ID: {$post_id} with {$delay}s delay" );
 		} else {
 			// Fallback to WordPress cron with unique hook name
 			$scheduled = wp_schedule_single_event( time() + $delay, $hook_name, array( $post_id ) );
-			lwtv_plugin()->error_log( 'scheduler', "Scheduled {$task_type} task via WordPress cron for post ID: {$post_id} with {$delay}s delay" );
+			lwtv_plugin()->debug_log( 'scheduler', "Scheduled {$task_type} task via WordPress cron for post ID: {$post_id} with {$delay}s delay" );
 		}
 
 		if ( ! $scheduled ) {
-			lwtv_plugin()->error_log( 'scheduler', "Failed to schedule {$task_type} task for post ID: {$post_id}" );
+			lwtv_plugin()->debug_log( 'scheduler', "Failed to schedule {$task_type} task for post ID: {$post_id}" );
 		}
 
 		return $scheduled;
@@ -142,7 +142,7 @@ class Scheduler implements Component, Templater {
 	 * @return void
 	 */
 	public function process_deferred_tasks(): void {
-		lwtv_plugin()->error_log( 'scheduler', 'Processing deferred tasks' );
+		lwtv_plugin()->debug_log( 'scheduler', 'Processing deferred tasks' );
 
 		// This method can be expanded to handle task queuing and prioritization
 		// For now, individual task classes handle their own processing

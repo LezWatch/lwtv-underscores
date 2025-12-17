@@ -164,11 +164,24 @@ class Debugger implements Component, Templater {
 	 *
 	 * @return void
 	 */
-	public function error_log( $type = 'debug', $message = '' ): void {
+	public function debug_log( $type = 'debug', $message = '' ): void {
 		if ( ! $this->is_debug_mode() || empty( $message ) ) {
 			return;
 		}
 
+		// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+		error_log( '[' . ucwords( $type ) . '] ' . $message, 3, WP_CONTENT_DIR . '/debug-lwtv.log', "\n" );
+	}
+
+	/**
+	 * Log a message.
+	 *
+	 * @param string $type    The type of log message.
+	 * @param string $message The message to log.
+	 *
+	 * @return void
+	 */
+	public function error_log( $type = 'debug', $message = '' ): void {
 		// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
 		error_log( '[' . ucwords( $type ) . '] ' . $message );
 	}

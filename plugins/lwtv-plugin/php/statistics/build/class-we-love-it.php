@@ -16,7 +16,7 @@ class We_Love_It {
 	 * @return array We love it statistics data
 	 */
 	public function generate( $format = 'array' ) {
-		lwtv_plugin()->error_log( 'statistics', 'Generating we love it statistics for format: ' . $format );
+		lwtv_plugin()->debug_log( 'statistics', 'Generating we love it statistics for format: ' . $format );
 		$all_data = $this->generate_all_data();
 		switch ( $format ) {
 			case 'count':
@@ -42,7 +42,7 @@ class We_Love_It {
 
 		// If cached data is found, return it
 		if ( false !== $cached_data ) {
-			lwtv_plugin()->error_log( 'statistics', 'Cached data found for ' . $cache_key );
+			lwtv_plugin()->debug_log( 'statistics', 'Cached data found for ' . $cache_key );
 			return $cached_data;
 		}
 
@@ -174,7 +174,7 @@ class We_Love_It {
 			$data[ $item['name'] ] = $item['count'];
 		}
 
-		lwtv_plugin()->error_log( 'statistics', 'Piechart data: ' . wp_json_encode( $data ) );
+		lwtv_plugin()->debug_log( 'statistics', 'Piechart data: ' . wp_json_encode( $data ) );
 		return $data;
 	}
 

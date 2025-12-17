@@ -75,7 +75,7 @@ class Queer_IRL {
 			$result = $wpdb->get_row( $query, ARRAY_A );
 
 			if ( false === $result || is_null( $result ) ) {
-				lwtv_plugin()->error_log( 'statistics', 'Query failed: ' . $wpdb->last_error );
+				lwtv_plugin()->debug_log( 'statistics', 'Query failed: ' . $wpdb->last_error );
 				return array();
 			}
 

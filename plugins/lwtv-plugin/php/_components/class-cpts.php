@@ -63,7 +63,7 @@ class CPTs implements Component, Templater {
 	public function get_tmdb_info( $post_id ): mixed {
 		// Check if we have the API key.
 		if ( ! defined( 'TMDB_API' ) ) {
-			lwtv_plugin()->error_log( 'tmdb', 'TMDB API not defined' );
+			lwtv_plugin()->debug_log( 'tmdb', 'TMDB API not defined' );
 			return false;
 		}
 
@@ -76,7 +76,7 @@ class CPTs implements Component, Templater {
 
 		// If there's no post type, we shouldn't be looking here!
 		if ( ! $post_type ) {
-			lwtv_plugin()->error_log( 'tmdb', 'Invalid post type got TMDB info: ' . get_post_type( $post_id ) );
+			lwtv_plugin()->debug_log( 'tmdb', 'Invalid post type got TMDB info: ' . get_post_type( $post_id ) );
 			return false;
 		}
 
@@ -96,7 +96,7 @@ class CPTs implements Component, Templater {
 
 		// If we don't have either, bail.
 		if ( ! $tmdb_id && ! $imdb_id ) {
-			lwtv_plugin()->error_log( 'tmdb', 'No TMDB or IMDB ID found for post ID: ' . $post_id );
+			lwtv_plugin()->debug_log( 'tmdb', 'No TMDB or IMDB ID found for post ID: ' . $post_id );
 			return false;
 		}
 
@@ -117,7 +117,7 @@ class CPTs implements Component, Templater {
 
 			// Bail if we don't have a response.
 			if ( ! is_array( $response ) || is_wp_error( $response ) ) {
-				lwtv_plugin()->error_log( 'tmdb', 'Error getting TMDB info: ' . $response );
+				lwtv_plugin()->debug_log( 'tmdb', 'Error getting TMDB info: ' . $response );
 				return false;
 			}
 
@@ -126,7 +126,7 @@ class CPTs implements Component, Templater {
 
 			// If there's a status message, it's an error:
 			if ( isset( $body['status_message'] ) ) {
-				lwtv_plugin()->error_log( 'tmdb', 'Error getting TMDB info: ' . $body['status_message'] );
+				lwtv_plugin()->debug_log( 'tmdb', 'Error getting TMDB info: ' . $body['status_message'] );
 				return false;
 			}
 

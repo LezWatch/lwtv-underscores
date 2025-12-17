@@ -57,13 +57,13 @@ class TMDB_Batch_Task {
 		$post_type = get_post_type( $post_id );
 
 		if ( ! $post_type ) {
-			lwtv_plugin()->error_log( 'tmdb', "Invalid post ID: {$post_id}" );
+			lwtv_plugin()->debug_log( 'tmdb', "Invalid post ID: {$post_id}" );
 			return false;
 		}
 
 		// Check if already has TMDB ID
 		if ( $this->has_tmdb_id( $post_id, $post_type ) ) {
-			lwtv_plugin()->error_log( 'tmdb', "Post {$post_id} already has TMDB ID" );
+			lwtv_plugin()->debug_log( 'tmdb', "Post {$post_id} already has TMDB ID" );
 			return false;
 		}
 
@@ -80,10 +80,10 @@ class TMDB_Batch_Task {
 		// Schedule batch processing if not already scheduled
 		if ( ! as_next_scheduled_action( self::AS_HOOK ) ) {
 			as_schedule_single_action( time() + 30, self::AS_HOOK, array(), self::AS_GROUP );
-			lwtv_plugin()->error_log( 'tmdb', 'Scheduled TMDB batch processing' );
+			lwtv_plugin()->debug_log( 'tmdb', 'Scheduled TMDB batch processing' );
 		}
 
-		lwtv_plugin()->error_log( 'tmdb', "Queued post {$post_id} for TMDB processing" );
+		lwtv_plugin()->debug_log( 'tmdb', "Queued post {$post_id} for TMDB processing" );
 		return true;
 	}
 
@@ -96,11 +96,11 @@ class TMDB_Batch_Task {
 		$queued_posts = $this->get_queued_posts();
 
 		if ( empty( $queued_posts ) ) {
-			lwtv_plugin()->error_log( 'tmdb', 'No posts queued for TMDB processing' );
+			lwtv_plugin()->debug_log( 'tmdb', 'No posts queued for TMDB processing' );
 			return;
 		}
 
-		lwtv_plugin()->error_log( 'tmdb', 'Processing ' . count( $queued_posts ) . ' posts for TMDB data' );
+		lwtv_plugin()->debug_log( 'tmdb', 'Processing ' . count( $queued_posts ) . ' posts for TMDB data' );
 
 		// Process in batches
 		$batches         = array_chunk( $queued_posts, self::BATCH_SIZE );
@@ -108,7 +108,7 @@ class TMDB_Batch_Task {
 		$success_count   = 0;
 
 		foreach ( $batches as $batch_index => $batch ) {
-			lwtv_plugin()->error_log( 'tmdb', 'Processing batch ' . ( $batch_index + 1 ) . ' of ' . count( $batches ) );
+			lwtv_plugin()->debug_log( 'tmdb', 'Processing batch ' . ( $batch_index + 1 ) . ' of ' . count( $batches ) );
 
 			$batch_results    = $this->process_batch( $batch );
 			$processed_count += count( $batch );
@@ -123,7 +123,7 @@ class TMDB_Batch_Task {
 		// Clear the queue
 		$this->set_queued_posts( array() );
 
-		lwtv_plugin()->error_log( 'tmdb', "Completed TMDB batch processing: {$success_count}/{$processed_count} successful" );
+		lwtv_plugin()->debug_log( 'tmdb', "Completed TMDB batch processing: {$success_count}/{$processed_count} successful" );
 
 		// Schedule next batch if there are more posts in the queue
 		$remaining_posts = $this->get_queued_posts();
@@ -145,7 +145,7 @@ class TMDB_Batch_Task {
 		foreach ( $batch as $post_data ) {
 			// Check rate limiting
 			if ( $this->is_rate_limited() ) {
-				lwtv_plugin()->error_log( 'tmdb', 'Rate limit hit, pausing batch processing' );
+				lwtv_plugin()->debug_log( 'tmdb', 'Rate limit hit, pausing batch processing' );
 				$rate_limit_hit = true;
 				break;
 			}
@@ -191,7 +191,7 @@ class TMDB_Batch_Task {
 			$tmdb_data = ( new CPTs() )->get_tmdb_info( $post_id );
 
 			if ( ! $tmdb_data ) {
-				lwtv_plugin()->error_log( 'tmdb', "No TMDB data found for post {$post_id}" );
+				lwtv_plugin()->debug_log( 'tmdb', "No TMDB data found for post {$post_id}" );
 				return false;
 			}
 
@@ -200,10 +200,10 @@ class TMDB_Batch_Task {
 
 			if ( $tmdb_id ) {
 				$this->save_tmdb_id( $post_id, $post_type, $tmdb_id );
-				lwtv_plugin()->error_log( 'tmdb', "Successfully saved TMDB ID {$tmdb_id} for post {$post_id}" );
+				lwtv_plugin()->debug_log( 'tmdb', "Successfully saved TMDB ID {$tmdb_id} for post {$post_id}" );
 				return true;
 			} else {
-				lwtv_plugin()->error_log( 'tmdb', "No TMDB ID found in data for post {$post_id}" );
+				lwtv_plugin()->debug_log( 'tmdb', "No TMDB ID found in data for post {$post_id}" );
 				return false;
 			}
 		} catch ( \Exception $e ) {

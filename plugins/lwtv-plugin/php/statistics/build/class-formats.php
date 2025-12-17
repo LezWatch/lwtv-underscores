@@ -43,7 +43,7 @@ class Formats {
 
 		// If cached data is found, return it
 		if ( false !== $cached_data ) {
-			lwtv_plugin()->error_log( 'statistics', 'Cached data found for ' . $cache_key );
+			lwtv_plugin()->debug_log( 'statistics', 'Cached data found for ' . $cache_key );
 			return $cached_data;
 		}
 

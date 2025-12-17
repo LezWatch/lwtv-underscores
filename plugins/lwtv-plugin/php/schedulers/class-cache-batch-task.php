@@ -73,7 +73,7 @@ class Cache_Batch_Task {
 	public function __construct() {
 		// Only initialize if Action Scheduler is available
 		if ( ! lwtv_plugin()->is_action_scheduler_available() ) {
-			lwtv_plugin()->error_log( 'scheduler', 'Action Scheduler not available, skipping batch task handler initialization' );
+			lwtv_plugin()->debug_log( 'scheduler', 'Action Scheduler not available, skipping batch task handler initialization' );
 			return;
 		}
 
@@ -103,7 +103,7 @@ class Cache_Batch_Task {
 			$queue[] = $queue_item;
 			$this->set_queue( $queue );
 
-			lwtv_plugin()->error_log( 'caching', "Queued cache invalidation for post ID: {$post_id} with priority: {$priority}" );
+			lwtv_plugin()->debug_log( 'caching', "Queued cache invalidation for post ID: {$post_id} with priority: {$priority}" );
 		}
 
 		// Schedule processing if not already scheduled
@@ -117,7 +117,7 @@ class Cache_Batch_Task {
 				)
 			);
 
-			lwtv_plugin()->error_log( 'caching', 'Scheduled cache batch processing' );
+			lwtv_plugin()->debug_log( 'caching', 'Scheduled cache batch processing' );
 		}
 
 		return true;
@@ -130,19 +130,19 @@ class Cache_Batch_Task {
 	 */
 	public function process_cache_batch(): void {
 		if ( ! lwtv_plugin()->is_action_scheduler_available() ) {
-			lwtv_plugin()->error_log( 'caching', 'Action Scheduler not available for cache batch processing' );
+			lwtv_plugin()->debug_log( 'caching', 'Action Scheduler not available for cache batch processing' );
 			return;
 		}
 
 		$queue = $this->get_queue();
 
 		if ( empty( $queue ) ) {
-			lwtv_plugin()->error_log( 'caching', 'Cache batch queue is empty' );
+			lwtv_plugin()->debug_log( 'caching', 'Cache batch queue is empty' );
 			$this->clear_status();
 			return;
 		}
 
-		lwtv_plugin()->error_log( 'caching', 'Processing cache batch - ' . count( $queue ) . ' posts' );
+		lwtv_plugin()->debug_log( 'caching', 'Processing cache batch - ' . count( $queue ) . ' posts' );
 
 		// Sort queue by priority (CRITICAL first, then HIGH, MEDIUM, LOW, CASCADE)
 		$sorted_queue = $this->sort_queue_by_priority( $queue );
@@ -155,7 +155,7 @@ class Cache_Batch_Task {
 			$post_id  = $item['post_id'];
 			$priority = $item['priority'];
 
-			lwtv_plugin()->error_log( 'caching', "Processing post ID: {$post_id} with priority: {$priority}" );
+			lwtv_plugin()->debug_log( 'caching', "Processing post ID: {$post_id} with priority: {$priority}" );
 
 			$urls = ( new Cache() )->collect_cache_urls_for_actors_or_shows( $post_id );
 			if ( ! empty( $urls ) ) {
@@ -174,7 +174,7 @@ class Cache_Batch_Task {
 			foreach ( $url_batches as $batch_index => $url_batch ) {
 				$result = $this->process_url_batch( $url_batch );
 
-				lwtv_plugin()->error_log( 'caching', 'Processed URL batch ' . ( $batch_index + 1 ) . ' of ' . count( $url_batches ) . ' - ' . count( $url_batch ) . ' URLs' );
+				lwtv_plugin()->debug_log( 'caching', 'Processed URL batch ' . ( $batch_index + 1 ) . ' of ' . count( $url_batches ) . ' - ' . count( $url_batch ) . ' URLs' );
 
 				// Add delay between batches to prevent overwhelming cache systems
 				if ( $batch_index < count( $url_batches ) - 1 ) {
@@ -211,10 +211,10 @@ class Cache_Batch_Task {
 				)
 			);
 
-			lwtv_plugin()->error_log( 'caching', 'Scheduled next cache batch processing - ' . count( $remaining_queue ) . ' posts remaining' );
+			lwtv_plugin()->debug_log( 'caching', 'Scheduled next cache batch processing - ' . count( $remaining_queue ) . ' posts remaining' );
 		} else {
 			$this->clear_status();
-			lwtv_plugin()->error_log( 'caching', 'Cache batch processing completed' );
+			lwtv_plugin()->debug_log( 'caching', 'Cache batch processing completed' );
 		}
 	}
 
@@ -401,7 +401,7 @@ class Cache_Batch_Task {
 			as_unschedule_all_actions( self::AS_HOOK );
 		}
 
-		lwtv_plugin()->error_log( 'caching', 'Cache batch queue cleared' );
+		lwtv_plugin()->debug_log( 'caching', 'Cache batch queue cleared' );
 		return true;
 	}
 
@@ -429,7 +429,7 @@ class Cache_Batch_Task {
 			)
 		);
 
-		lwtv_plugin()->error_log( 'caching', 'Triggered immediate cache batch processing' );
+		lwtv_plugin()->debug_log( 'caching', 'Triggered immediate cache batch processing' );
 		return true;
 	}
 }

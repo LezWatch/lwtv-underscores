@@ -16,7 +16,7 @@ class Worth_It {
 	 * @return array Worth it statistics data
 	 */
 	public function generate( $format = 'array' ) {
-		lwtv_plugin()->error_log( 'statistics', 'Generating worth it statistics for format: ' . $format );
+		lwtv_plugin()->debug_log( 'statistics', 'Generating worth it statistics for format: ' . $format );
 		$all_data = $this->generate_all_data();
 		switch ( $format ) {
 			case 'count':
@@ -42,7 +42,7 @@ class Worth_It {
 
 		// If cached data is found, return it
 		if ( false !== $cached_data ) {
-			lwtv_plugin()->error_log( 'statistics', 'Cached data found for ' . $cache_key );
+			lwtv_plugin()->debug_log( 'statistics', 'Cached data found for ' . $cache_key );
 			return $cached_data;
 		}
 
@@ -143,7 +143,7 @@ class Worth_It {
 			$data[ $item['name'] ] = $item['count'];
 		}
 
-		lwtv_plugin()->error_log( 'statistics', 'Piechart data: ' . wp_json_encode( $data ) );
+		lwtv_plugin()->debug_log( 'statistics', 'Piechart data: ' . wp_json_encode( $data ) );
 		return $data;
 	}
 

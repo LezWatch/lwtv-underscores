@@ -150,7 +150,7 @@ class Transients implements Component, Templater {
 			// 'preserve' tier is left alone
 		}
 
-		lwtv_plugin()->error_log( 'caching', "Invalidated cache for {$content_type} (post ID: {$post_id})" );
+		lwtv_plugin()->debug_log( 'caching', "Invalidated cache for {$content_type} (post ID: {$post_id})" );
 	}
 
 	/**
@@ -207,7 +207,7 @@ class Transients implements Component, Templater {
 	private function warm_cache_tier( string $tier, int $post_id ): void {
 		// For now, just log the warming request
 		// In a full implementation, this would trigger immediate cache regeneration
-		lwtv_plugin()->error_log( 'caching', "Warming {$tier} cache tier for post ID: {$post_id}" );
+		lwtv_plugin()->debug_log( 'caching', "Warming {$tier} cache tier for post ID: {$post_id}" );
 	}
 
 	/**

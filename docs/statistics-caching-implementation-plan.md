@@ -407,11 +407,11 @@ public function generate_years_data() {
     $cached_data = lwtv_plugin()->get_transient($cache_key);
 
     if (false !== $cached_data) {
-        lwtv_plugin()->error_log('dead-debug', 'Using cached years data');
+        lwtv_plugin()->debug_log('dead-debug', 'Using cached years data');
         return $cached_data;
     }
 
-    lwtv_plugin()->error_log('dead-debug', 'Cache miss, rebuilding years data');
+    lwtv_plugin()->debug_log('dead-debug', 'Cache miss, rebuilding years data');
 
     // Get all death year meta data (serialized arrays)
     $query = $wpdb->prepare(
@@ -471,7 +471,7 @@ public function generate_years_data() {
 
     // Cache for 24 hours
     lwtv_plugin()->set_transient($cache_key, $formatted_results, DAY_IN_SECONDS);
-    lwtv_plugin()->error_log('dead-debug', 'Cached ' . count($formatted_results) . ' years of death data');
+    lwtv_plugin()->debug_log('dead-debug', 'Cached ' . count($formatted_results) . ' years of death data');
 
     return $formatted_results;
 }

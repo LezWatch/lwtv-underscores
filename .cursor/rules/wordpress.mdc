@@ -27,7 +27,7 @@ PHP/WordPress
     - Custom plugin code is found in the /plugin/ folder, including Gutenberg Blocks.
   - Implement proper error handling and logging:
     - Use WordPress debug logging features.
-    - Use the lwtv_plugin()->error_log() function to handle logging errors.
+    - Use the lwtv_plugin()->debug_log() function to handle logging errors.
     - Create custom error handlers when necessary.
     - Use try-catch blocks for expected exceptions.
   - Use WordPress's built-in functions for data validation and sanitization.
