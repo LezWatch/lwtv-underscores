@@ -38,9 +38,10 @@ class Postiz {
 	public function __construct() {
 		if ( ! self::$initialized ) {
 			// --- 1. EXPENSIVE INITIALIZATION (Runs only once) ---
-			// Get API configuration from constants or options
-			$api_key     = get_option( 'lwtv_postiz_api_key', '' );
-			$api_url     = get_option( 'lwtv_postiz_api_url', '' );
+			// Get API configuration from CMB2 options (stored as array in single option)
+			$options     = get_option( 'lwtv_auto_posting_options', array() );
+			$api_key     = isset( $options['lwtv_postiz_api_key'] ) ? $options['lwtv_postiz_api_key'] : '';
+			$api_url     = isset( $options['lwtv_postiz_api_url'] ) ? $options['lwtv_postiz_api_url'] : '';
 			$channel_ids = $this->extract_channel_ids_from_settings();
 
 			$this->api_key     = $api_key;
@@ -77,7 +78,8 @@ class Postiz {
 	 * @return array Array of channel IDs
 	 */
 	private function extract_channel_ids_from_settings() {
-		$channels    = get_option( 'lwtv_postiz_channels', array() );
+		$options     = get_option( 'lwtv_auto_posting_options', array() );
+		$channels    = isset( $options['lwtv_postiz_channels'] ) ? $options['lwtv_postiz_channels'] : array();
 		$channel_ids = array();
 
 		if ( is_array( $channels ) ) {
@@ -112,7 +114,8 @@ class Postiz {
 	 * @return bool
 	 */
 	public function is_type_triggered_enabled( $type ) {
-		$triggers = get_option( 'lwtv_postiz_triggers', array() );
+		$options  = get_option( 'lwtv_auto_posting_options', array() );
+		$triggers = isset( $options['lwtv_postiz_triggers'] ) ? $options['lwtv_postiz_triggers'] : array();
 		if ( empty( $triggers ) ) {
 			return true;
 		}
@@ -138,8 +141,9 @@ class Postiz {
 		}
 
 		// Default options
-		$defaults = array(
-			'type'      => get_option( 'lwtv_postiz_post_type', 'draft' ), // Get the value from the options
+		$saved_options = get_option( 'lwtv_auto_posting_options', array() );
+		$defaults      = array(
+			'type'      => isset( $saved_options['lwtv_postiz_post_type'] ) ? $saved_options['lwtv_postiz_post_type'] : 'draft',
 			'date'      => current_time( 'c' ), // ISO 8601 format
 			'image'     => array(),
 			'settings'  => array(),

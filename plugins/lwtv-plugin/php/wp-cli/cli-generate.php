@@ -317,7 +317,7 @@ class WP_CLI_LWTV_Generate {
 
 			$post_id = $new_otd['posts_id'];
 
-			if ( ! is_numeric( $post_id ) ) {
+			if ( empty( $post_id ) ) {
 				\WP_CLI::error( 'The ' . $otd . ' "Of the Day" has no post ID and cannot be set: ' . wp_json_encode( $new_otd ) );
 			}
 
