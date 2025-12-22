@@ -315,7 +315,7 @@ class WP_CLI_LWTV_Generate {
 				\WP_CLI::error( 'There was an error setting the ' . $otd . ' "Of the Day": ' . wp_json_encode( $new_otd ) );
 			}
 
-			$post_id = $new_otd['posts_id'];
+			$post_id = $new_otd['pid'] ?? $new_otd['id'] ?? null;
 
 			if ( empty( $post_id ) ) {
 				\WP_CLI::error( 'The ' . $otd . ' "Of the Day" has no post ID and cannot be set: ' . wp_json_encode( $new_otd ) );
