@@ -16,8 +16,6 @@ use LWTV\_Helpers\Utils;
  * All methods listed below may be called via lwtv_plugin()->METHOD()
  * i.e. lwtv_plugin()->display_scores( $post_id );
  *
- * They are intended to be used in the theme files ONLY.
- *
  * CPTs
  * @method array  get_cpt_related_posts( $show_id )                     \_Components\CPTs
  * @method string get_related_archive_header( $tag_id )                 \_Components\CPTs
@@ -30,13 +28,11 @@ use LWTV\_Helpers\Utils;
  * @method bool   is_dev_site()                \_Components\Debugger
  * @method bool   is_debug_mode()              \_Components\Debugger
  * @method void   error_log( $type, $message ) \_Components\Debugger
+ * @method void   debug_log( $type, $message ) \_Components\Debugger
  *
  * GRADING
  * @method string display_scores( $show_id )        \_Components\Grading
  * @method array  get_all_scores( $show_id )        \_Components\Grading
- *
- * HEALTH
- * TBD
  *
  * OTD
  * @method string get_wp_version()         \_Components\Of_The_Day
@@ -54,11 +50,11 @@ use LWTV\_Helpers\Utils;
  *
  * SCHEDULER
  * @method bool   schedule_task( string $task_type, int $post_id, int $delay = 30 ) \_Components\Scheduler
- * @method void   cache_queue( int $post_id ) \_Components\Scheduler
- * @method bool   queue_cache_batch( int $post_id ) \_Components\Scheduler
- * @method array  get_cache_batch_status() \_Components\Scheduler
- * @method bool   is_action_scheduler_available() \_Components\Scheduler
- * @method array  get_scheduler_status() \_Components\Scheduler
+ * @method void   cache_queue( int $post_id )                                       \_Components\Scheduler
+ * @method bool   queue_cache_batch( int $post_id )                                 \_Components\Scheduler
+ * @method array  get_cache_batch_status()                                          \_Components\Scheduler
+ * @method bool   is_action_scheduler_available()                                   \_Components\Scheduler
+ * @method array  get_scheduler_status()                                            \_Components\Scheduler
  *
  * STATISTICS OPTIMIZED
  * @method array  generate_shows_count( $type, $tax, $term )                                              \_Components\Statistics
