@@ -18,7 +18,8 @@ cd /home/wp_bg3hrq/lezwatchtv.com || {
 
     # We call 'wp' directly. We use --path to ensure it finds the right site.
     # The '2>&1' at the end of the block captures all output.
-    /usr/bin/wp lwtv generate otd --path=/home/wp_bg3hrq/lezwatchtv.com/ --debug
+    # Add --debug to see more information.
+    /usr/bin/wp lwtv generate otd --path=/home/wp_bg3hrq/lezwatchtv.com/
 
     EXIT_CODE=$?
     echo "Finished with exit code $EXIT_CODE"
