@@ -49,10 +49,11 @@ This document describes the structure and contents of the custom LezWatch.TV Plu
 │   │   ├── class-grading.php - Show Scores / Grading
 │   │   ├── class-of-the-day.php - Of The Day RSS
 │   │   ├── class-plugins.php - Plugin filters and actions
+│   │   ├── class-postiz.php - Postiz social media integration component
 │   │   ├── class-queeries.php - Customized loops
 │   │   ├── class-rest-api.php - Rest API code
 │   │   ├── class-scheduler.php - Deferred task scheduler for performance optimization with Action Scheduler integration
-│   │   ├── class-statistics.php - Statistics
+│   │   ├── class-statistics-optimized.php - Statistics with optimized performance and caching
 │   │   ├── class-symbolicons.php - Symbolicons
 │   │   ├── class-theme.php - Theme code
 │   │   ├── class-this-year.php - This Year features
@@ -63,6 +64,9 @@ This document describes the structure and contents of the custom LezWatch.TV Plu
 │   │   └── interface-templater.php - Interface for classes that return template functions.
 │   ├── _helpers/ - Helper files
 │   │   ├── class-autoload.php - Autoloader
+│   │   ├── class-calendar-database-optimizer.php - Database query optimization for calendar
+│   │   ├── class-calendar-meta-batcher.php - Batch processing for calendar meta data
+│   │   ├── class-calendar-object-pool.php - Object pooling for calendar performance
 │   │   └── class-utils.php - Common utility functions
 │   ├── admin-color-schemes/ - Additional color schemes for the backend (Each folder contains a colors.css and colors-rtl.css)
 │   │   ├── editor.css - Manages color display along with sub folders.
@@ -79,8 +83,9 @@ This document describes the structure and contents of the custom LezWatch.TV Plu
 │   │   ├── seashore/
 │   │   └── vineyard/
 │   ├── admin-menu/ - Admin menu items and validation
+│   │   ├── class-auto-posting.php - Auto-posting configuration for social media
+│   │   ├── class-debug-logging.php - Debug logging settings and display
 │   │   ├── class-exclusions.php - Lists any exclusions or overrides applied by admins (i.e. forcing someone to show as queer)
-│   │   ├── class-monitors.php - Services monitored (runs daily)
 │   │   └── class-validation.php - Data consistency checks (each one runs weekly)
 │   ├── blocks/ - Gutenberg blocks
 │   │   ├── class-serverside.php - Server-side Renders: Run PHP code in JS blocks
@@ -94,6 +99,7 @@ This document describes the structure and contents of the custom LezWatch.TV Plu
 │   │       └── js/components/ - (optional) Components used blocks
 │   ├── calendar/ - Calendar display and data
 │   │   ├── ICal/ - ICal Parser Library
+│   │   ├── class-data-processor.php - Processes and transforms calendar data
 │   │   ├── class-display-calendar.php - Builds the traditional calendar display
 │   │   ├── class-display-grid.php - Builds the grid display
 │   │   ├── class-display-list.php - Builds the list display (aka the original view)
@@ -132,13 +138,11 @@ This document describes the structure and contents of the custom LezWatch.TV Plu
 │   │   └── class-shows.php - Find all problems with Show pages.
 │   ├── features/ - Miscellaneous features
 │   │   ├── class-author-box.php - Custom author boxes
-│   │   ├── class-avatars.php - Custom (local) avatars
 │   │   ├── class-blocktracking.php - Block WP.com and WP.org from tracking everything.
 │   │   ├── class-dashboard-posts-in-progress.php - Forked version of a plugin to show in progress posts
 │   │   ├── class-dashboard.php - Custom column for featured images in posts lists and removal of self pings
 │   │   ├── class-embeds.php - Embeds DisneyABCPress videos, Gleam, GoFundMe, IndieGoGo
 │   │   ├── class-environment.php - Display notices and settings for servers
-│   │   ├── class-health-checks.php - Integration with HealthChecks.io
 │   │   ├── class-languages.php - Support for multiple languages in a dropdown (used by Shows for alt show names)
 │   │   ├── class-missed-schedule.php - Code to ensure posts don't miss scheduling (Action Scheduler enhanced)
 │   │   ├── class-plugin-age.php - Display plugin age/last updated on plugin listing
@@ -168,12 +172,13 @@ This document describes the structure and contents of the custom LezWatch.TV Plu
 │   ├── of-the-day/ - Character and show of the day
 │   │   └── template.php - Backup of theme template.
 │   ├── plugins/ - Addons for other plugins
+│   │   ├── class-actionscheduler.php - Action Scheduler integration and configuration
 │   │   ├── class-cache.php - Custom Cache specific to DreamPress hosting (generates data used by Proxy Cache Purge to know what to flush)
 │   │   ├── class-cmb2.php - Integration with CMB2 (calls other files)
 │   │   ├── cmb2/
 │   │   │   ├── class-attached-posts.php - Custom code for Attached Posts
 │   │   │   ├── class-meta-by-role.php - Only allow people with certain roles to edit certain post meta.
-│   │   │   ├── class-metabox-profiles.php - Add custom metaboxes for user profiles
+│   │   │   ├── class-metabox-profile.php - Add custom metaboxes for user profiles
 │   │   │   ├── class-symbolicons.php - Symbolicon integration for taxonomies.
 │   │   │   ├── class-taxonomies.php - Custom filters for taxonomies so they display properly in meta boxes.
 │   │   │   └── class-year-range.php - Year Range -- 'date_year_range' custom field type
@@ -187,7 +192,6 @@ This document describes the structure and contents of the custom LezWatch.TV Plu
 │   │   ├── gravity-forms/
 │   │   │   ├── class-gf-approvals.php - Approval Code (forked from another plugin)
 │   │   │   └── class-stop-spammers.php - Block Spammers
-│   │   ├── class-gutenberg.php - make Block Editor stop being such a dillhole and forget preferences
 │   │   ├── class-monsterinsights.php - Custom code for Monster Insights
 │   │   ├── class-related-posts-by-taxonomy.php - Filters to allow a custom layout for "Shows Like This"
 │   │   ├── class-searchwp.php - Custom integration with SearchWP
@@ -199,108 +203,93 @@ This document describes the structure and contents of the custom LezWatch.TV Plu
 │   │   └── class-postiz.php - Main Postiz integration class with API communication
 │   ├── schedulers/ - Deferred task processing for performance optimization
 │   │   ├── class-byq-task.php - Action Scheduler-based BYQ cache regeneration
-│   │   ├── class-calculation-task.php - Handles deferred math operations for all CPT types
-│   │   ├── class-cache-task.php - Handles scheduled cache invalidation tasks
-│   │   ├── class-cache-queue.php - Manages immediate cache invalidation on shutdown (legacy)
 │   │   ├── class-cache-batch-task.php - Action Scheduler-based cache batch processing
+│   │   ├── class-cache-queue.php - Manages immediate cache invalidation on shutdown (legacy)
+│   │   ├── class-cache-task.php - Handles scheduled cache invalidation tasks
+│   │   ├── class-calculation-task.php - Handles deferred math operations for all CPT types
+│   │   ├── class-fixcharshows-task.php - Fixes character-show relationship data
 │   │   ├── class-statistics-cache-warming.php - Background cache warming for statistics after content changes
 │   │   ├── class-taxsync-task.php - Handles deferred taxonomy synchronization
-│   │   ├── class-tmdb-task.php - Handles deferred TMDB API calls (legacy)
-│   │   └── class-tmdb-batch-task.php - Action Scheduler-based TMDB batch processing
+│   │   ├── class-tmdb-batch-task.php - Action Scheduler-based TMDB batch processing
+│   │   └── class-tmdb-task.php - Handles deferred TMDB API calls (legacy)
 │   ├── queeries/ - Custom queries and arrays
 │   │   ├── class-get-id-from-slug.php - Get post ID from slug/URL
 │   │   ├── class-is-actor-queer.php - Determine if actor is queer (yes/no)
 │   │   ├── class-is-actor-trans.php - Determine if an actor is trans (yes/no)
-│   │   ├── class-is-show-on-air.php - Determine if a show is on air or not (bool)
 │   │   ├── class-post-meta-and-tax.php - Generate an array of posts that have a specific post meta AND a specific taxonomy value.
 │   │   ├── class-post-meta.php - Post Meta Array returns the whole post data. Can handle compares and likes
 │   │   ├── class-post-type.php - Generate an object of all posts in a specific post type.
 │   │   ├── class-related-posts-by-tag.php - Related Posts by Tags.
-│   │   ├── class-tax-two.php - Taxonomy Two Array is used for generating a query of posts that are in two taxonomies
-│   │   ├── class-taxonomy.php - Taxonomy Array
-│   │   └── class-wp-meta.php - SQL version of meta query _(not currently used)_
+│   │   ├── class-shadow-taxonomy.php - Shadow taxonomy query utilities
+│   │   └── class-taxonomy-optimized.php - Optimized taxonomy queries with caching
 │   ├── rest-api/ - REST API output
-│   │   ├── class-alexa-skills.php - Builds the basic Alexa API (see also Alexa Skills section below)
 │   │   ├── class-byq.php - LezWatch.TV Plugin (formerly Bury Your Queers) (Last Death, On This Day, When Died)
 │   │   ├── class-export-json.php - Export content in JSON format. Mostly used for WikiData and Universities.
-│   │   ├── class-fresh-json.php - Generates 'whats new' content
-│   │   ├── class-imdb-json.php - API to communicate with IMDb and generate information (used by Alexa)
+│   │   ├── class-imdb-json.php - API to communicate with IMDb and generate information
 │   │   ├── class-list-json.php - Generates lists
 │   │   ├── class-otd-json.php - X Of The Day API service. Every 24 hours, a new character and show of the day are spawned
-│   │   ├── class-shows-like-json.php - Similar shows.
 │   │   ├── class-stats-json.php - JSON API version of the stats (mostly)
 │   │   ├── class-this-year-json.php - Outputs simplified lists of what happened in a given year.
 │   │   ├── class-what-happened-json.php - Outputs data based on what happened in a given year, year-month, or specific day.
 │   │   ├── class-whats-on-json.php - What's on TV tonight (or tomorrow).
 │   │   ├── class-wikidata.php - Get the status of our data compared with WikiData (used by Gutenberg)
-│   │   ├── alexa/
-│   │   │   ├── class-byq.php - Old BYQ code (deprecated!)
-│   │   │   ├── class-common.php - Code used by multiple Alexa skills
-│   │   │   ├── class-flash-brief.php - Since the flash brief has trouble with media in post content, we've made our own special version.
-│   │   │   ├── class-newest.php - Generate the newest shows or characters (or deaths)
-│   │   │   ├── class-shows.php - Skills for interactions with shows (similar shows, recommended shows, etc.)
-│   │   │   ├── class-this-year.php - Gives you an idea how this year is going...
-│   │   │   ├── class-validate.php - Validates the requests as coming from Amazon
-│   │   │   ├── class-whats-on.php - Generates what's on TV stuff.
-│   │   │   └── class-who-are-you.php - Runs all code that discusses actors, characters, and shows.
 │   │   └── templates/
 │   │       └── export-json.php - uses var query data to determine what to show.
-│   ├── statistics/ - Statistics and graphs
+│   ├── statistics/ - Statistics and graphs (optimized architecture)
 │   │   ├── class-gutenberg-ssr.php - Gutenberg Server side rendering to show stats
-│   │   ├── class-matcher.php - Data Matcher (const BUILD_CLASS_MATCHER, FORMAT_CLASS_MATCHER, META_PARAMS)
-│   │   ├── class-query_vars.php - Query Variables customization (to make virtual pages) and Yoast meta
-│   │   ├── class-the-array.php - Builds the array via make()
-│   │   ├── class-the-output.php - Builds the output make()
-│   │   ├── build/
-│   │   │   ├── class-actor-char-dead.php - Stats for dead character per actor.
-│   │   │   ├── class-actor-char-role.php - Stats for character role type (regular, etc) per actor.
-│   │   │   ├── class-actor-chars.php - How many actors or characters per actor or character...
-│   │   │   ├── class-complex-taxonomy.php - How many characters are played by out queer actors, but also how many characters for each term.
-│   │   │   ├── class-dead-basic.php - Simple counts of all shows with dead, or all dead characters
-│   │   │   ├── class-dead-complex-taxonomy.php - Complex death taxonomies for stations and nations.
-│   │   │   ├── class-dead-list.php - Array for dead characters as a list
-│   │   │   ├── class-dead-meta-tax.php - Generate array to parse taxonomy content as it relates to post metas (for dead characters)
-│   │   │   ├── class-dead-role.php - Array for dead characters by role (regular, etc)
-│   │   │   ├── class-dead_shows.php - Array of shows with (and without) dead characters, but because of Sara Lance, we have to cross relate to make sure all the shows with death have actually dead characters (yes, a show can have a dead-flag but no actively dead characters)
-│   │   │   ├── class-dead-taxonomy.php - Taxonomy Array for dead characters
-│   │   │   ├── class-dead-year.php - Simple counts of death by year (Sara Lance...)
-│   │   │   ├── class-meta.php - Generate array to parse post meta data
-│   │   │   ├── class-on-air.php - Shows or characters on air per year
-│   │   │   ├── class-scores.php - Show Scores
-│   │   │   ├── class-show-roles.php - Roles of characters on Shows, with how many of each role are dead
-│   │   │   ├── class-taxonomy-breakdowns.php - generates complex arrays of cross related data from multiple taxonomies to list 'all miniseries in the USA'
-│   │   │   ├── class-taxonomy.php - Parse taxonomy content
-│   │   │   ├── class-this-year.php - Generate this year data
-│   │   │   └── class-yes-no.php - Generates data for content that has Yes/No values (shows we love, on air)
-│   │   ├── formats/
-│   │   │   ├── class-averages.php - Averages, highs, and lows (ex show scores)
-│   │   │   ├── class-barcharts-stacked.php - Stacked Barcharts (also horizontal)
-│   │   │   ├── class-barcharts.php - Horizontal barcharts
-│   │   │   ├── class-lists.php - Table lists with simple counts
-│   │   │   ├── class-percentages.php - Table lists with percentages and a bar
-│   │   │   ├── class-piecharts.php - Piecharts (actually donuts...)
-│   │   │   ├── class-trendline.php - Trendlines (against a vertical barchart) (calculate_trendline(), linear_regression())
-│   │   └── templates/
-│   │       ├── actors.php - Actor stats
-│   │       ├── characters.php - Character stats
-│   │       ├── death.php - Death stats
-│   │       ├── formats.php - Formats (tv series, web series, etc) stats
-│   │       ├── main.php - Main stats page
-│   │       ├── nations.php - Nation stats
-│   │       ├── post_type_actors.php - Partial for showing the character stats for a single actor
-│   │       ├── shows.php - Show statistics
-│   │       └── stations.php - Networks/Stations statistics
+│   │   ├── class-query-vars.php - Query Variables customization (to make virtual pages) and Yoast meta
+│   │   ├── class-stats-counter.php - Centralized counting logic for statistics
+│   │   ├── class-stats-enqueues.php - Asset enqueueing for statistics pages
+│   │   ├── class-stats-generator.php - Main statistics generation orchestrator
+│   │   ├── class-stats-handler.php - Request handling and routing for statistics
+│   │   ├── build/ - Data builders for specific stat types
+│   │   │   ├── class-actors.php - Actor statistics builder
+│   │   │   ├── class-dead.php - Death statistics builder
+│   │   │   ├── class-formats.php - Format statistics builder
+│   │   │   ├── class-nations.php - Nation statistics builder
+│   │   │   ├── class-on-air-optimized.php - On-air statistics with optimization
+│   │   │   ├── class-queer-irl.php - Queer IRL statistics builder
+│   │   │   ├── class-scores.php - Score statistics builder
+│   │   │   ├── class-stations.php - Station statistics builder
+│   │   │   ├── class-taxonomy-optimized.php - Optimized taxonomy statistics
+│   │   │   ├── class-this-year.php - This year statistics builder
+│   │   │   ├── class-we-love-it.php - "Shows We Love" statistics builder
+│   │   │   └── class-worth-it.php - "Worth It" score statistics builder
+│   │   ├── format/ - Output formatters
+│   │   │   ├── class-barcharts-optimized.php - Optimized bar chart formatting
+│   │   │   ├── class-lists-optimized.php - Optimized list formatting
+│   │   │   ├── class-percentage-optimized.php - Optimized percentage display
+│   │   │   ├── class-piecharts-optimized.php - Optimized pie chart formatting
+│   │   │   ├── class-shared.php - Shared formatting utilities
+│   │   │   └── class-trendline-optimized.php - Optimized trendline calculations
+│   │   └── templates/ - Template files organized by section
+│   │       ├── actors.php - Actor stats entry point
+│   │       ├── actors/ - Actor stat templates (gender, navbar, overview, sexuality)
+│   │       ├── characters.php - Character stats entry point
+│   │       ├── characters/ - Character stat templates (cliches, gender, navbar, on-air, overview, queer-irl, sexuality)
+│   │       ├── death.php - Death stats entry point
+│   │       ├── death/ - Death stat templates (characters, list, nations, navbar, overview, shows, stations, years)
+│   │       ├── main.php - Main stats page entry point
+│   │       ├── main/ - Main page templates (overview, top-nations, top-stations)
+│   │       ├── nations.php - Nation stats entry point
+│   │       ├── nations/ - Nation stat templates (all, single)
+│   │       ├── post_type_actors.php - Partial for showing character stats for a single actor
+│   │       ├── shows.php - Show stats entry point
+│   │       ├── shows/ - Show stat templates (formats, genres, intersectionality, navbar, on-air, overview, stars, triggers, tropes, we-love-it, worth-it)
+│   │       ├── stations.php - Station stats entry point
+│   │       └── stations/ - Station stat templates (all, single)
 │   ├── theme/ - Theme-related code
 │   │   ├── class-actor-age.php - Returns actor age.
 │   │   ├── class-actor-birthday.php - Boolean return if an actor is having a birthday.
 │   │   ├── class-actor-characters.php - List all characters for an actor.
 │   │   ├── class-actor-pronouns.php - Sort actor pronouns.
 │   │   ├── class-actor-terms.php - List simple terms for actors (i.e. gender, sexuality)
-│   │   ├── class-character-relationships - IDs of all characters a specific character (i.e. Sara Lance) has had a relationship with.
+│   │   ├── class-character-relationships.php - IDs of all characters a specific character (i.e. Sara Lance) has had a relationship with.
 │   │   ├── class-content-warning.php - If a show has a content warning, we display it.
 │   │   ├── class-data-author.php - Generate and return data for Authors (Mika, Tracy, Etc.) (social(), favorite_shows())
 │   │   ├── class-data-character.php - Generate character Data (actors(), cliches(), dead(), oneactor(), oneshow(), shows(), terms())
 │   │   ├── class-do-math.php - Generates the 'recalculate data' button for editors on the front end, to refresh interrelated content
+│   │   ├── class-get-loved.php - Retrieves "Shows We Love" data
 │   │   ├── class-show-characters.php - Generate and return list of Characters from a show
 │   │   ├── class-show-stars.php - Make show stars
 │   │   ├── class-stats-symbolicon.php - Makes the icon/title for symbolicons
@@ -308,22 +297,25 @@ This document describes the structure and contents of the custom LezWatch.TV Plu
 │   │   ├── class-theme-config.php - All theme configuration code
 │   │   ├── class-tvmaze.php - Calls to TVMaze (uses episodes() instead of make())
 │   │   └── class-ways-to-watch.php - Outputs Ways to Watch
-│   ├── this-year/ - Year-specific data
+│   ├── this-year/ - Year-specific data (restructured architecture)
 │   │   ├── class-display.php - Controls individual pages (navigation())
-│   │   ├── class-generator.php - Wrapper to generate content and arrays
-│   │   ├── class-the-array.php - Builds the array
-│   │   ├── class-the-output.php - Builds the pretty output
-│   │   ├── build/
-│   │   │   ├── class-characters-dead.php - Generates data for dead characters
-│   │   │   ├── class-characters-list.php - Generates data for all characters
-│   │   │   ├── class-overview.php - Builds the data for the overview page
-│   │   │   └── class-shows-list.php - Generates data for all show pages
-│   │   └── formats/
-│   │       ├── class-characters.php - List of Characters on air separated by show
-│   │       ├── class-chart.php - Outputs charts (currently only used on the default page)
-│   │       ├── class-dead.php - Outputs dead content
-│   │       ├── class-overview.php - Outputs front page of this-year
-│   │       └── class-shows.php - Outputs all show pages dynamically
+│   │   ├── build/ - Data builders
+│   │   │   ├── class-characters-builder.php - Builds character data for the year
+│   │   │   ├── class-shared-builder.php - Shared builder utilities
+│   │   │   └── class-shows-builder.php - Builds show data for the year
+│   │   ├── format/ - Output formatters
+│   │   │   ├── class-canceled-shows-formatter.php - Formats canceled shows display
+│   │   │   ├── class-dead-characters-formatter.php - Formats dead characters display
+│   │   │   └── class-new-shows-formatter.php - Formats new shows display
+│   │   └── templates/ - Template files
+│   │       ├── canceled-shows.php - Canceled shows template
+│   │       ├── characters-on-air.php - Characters on air template
+│   │       ├── dead-characters.php - Dead characters template
+│   │       ├── navigation.php - Main navigation template
+│   │       ├── navigation-year.php - Year-specific navigation
+│   │       ├── new-shows.php - New shows template
+│   │       ├── overview.php - Overview template
+│   │       └── shows-on-air.php - Shows on air template
 │   ├── validator/ - Data validation
 │   │   ├── class-actor-checker.php - Check actors for valid data
 │   │   ├── class-actor-imdb.php - List actors missing IMDb
@@ -338,6 +330,7 @@ This document describes the structure and contents of the custom LezWatch.TV Plu
 │   └── wp-cli/ - WP-CLI commands
 │       ├── cli-calc.php - Calculations on content (scores, character count, etc) - wp lwtv CALC [ID]
 │       ├── cli-check.php - Data validation checkers - wp lwtv CHECK [queerchars|wiki] [id]
+│       ├── cli-debug.php - Debug utilities - wp lwtv DEBUG [command]
 │       ├── cli-dupes.php - List all duplicate content - wp lwtv dupes
 │       ├── cli-generate.php - Generate custom content - wp lwtv GENERATE [otd|tvmaze]
 │       ├── cli-scheduler.php - Action Scheduler management - wp lwtv SCHEDULER [missed|tmdb|cache|status] [action]

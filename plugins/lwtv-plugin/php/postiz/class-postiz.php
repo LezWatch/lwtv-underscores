@@ -12,6 +12,20 @@ namespace LWTV\Postiz;
 class Postiz {
 
 	/**
+	 * Static flag to ensure initialization logic runs only once per request.
+	 *
+	 * @var bool
+	 */
+	private static $initialized = false;
+
+	/**
+	 * Static storage for configuration data.
+	 */
+	private static $static_api_url;
+	private static $static_api_key;
+	private static $static_channel_ids;
+
+	/**
 	 * API configuration
 	 */
 	private $api_url;
@@ -22,14 +36,36 @@ class Postiz {
 	 * Initialize the Postiz integration
 	 */
 	public function __construct() {
-		// Get API configuration from constants or options
-		$this->api_key     = get_option( 'lwtv_postiz_api_key', '' );
-		$this->api_url     = get_option( 'lwtv_postiz_api_url', '' );
-		$this->channel_ids = $this->extract_channel_ids_from_settings();
+		if ( ! self::$initialized ) {
+			// --- 1. EXPENSIVE INITIALIZATION (Runs only once) ---
+			// Get API configuration from CMB2 options (stored as array in single option)
+			$options     = get_option( 'lwtv_auto_posting_options', array() );
+			$api_key     = isset( $options['lwtv_postiz_api_key'] ) ? $options['lwtv_postiz_api_key'] : '';
+			$api_url     = isset( $options['lwtv_postiz_api_url'] ) ? $options['lwtv_postiz_api_url'] : '';
+			$channel_ids = $this->extract_channel_ids_from_settings();
 
-		// Ensure channel_ids is an array
-		if ( ! is_array( $this->channel_ids ) && ! empty( $this->channel_ids ) ) {
-			$this->channel_ids = array( $this->channel_ids );
+			$this->api_key     = $api_key;
+			$this->api_url     = $api_url;
+			$this->channel_ids = $channel_ids;
+
+			// Store data statically and set instance properties
+			self::$static_api_key     = $this->api_key;
+			self::$static_api_url     = $this->api_url;
+			self::$static_channel_ids = $this->channel_ids;
+
+			// Ensure channel_ids is an array and update static/instance
+			if ( ! is_array( $this->channel_ids ) && ! empty( $this->channel_ids ) ) {
+				$this->channel_ids        = array( $this->channel_ids );
+				self::$static_channel_ids = $this->channel_ids;
+			}
+
+			self::$initialized = true;
+		} else {
+			// --- 2. FAST INITIALIZATION (Runs on subsequent instances) ---
+			// If already initialized, populate instance from static store
+			$this->api_key     = self::$static_api_key;
+			$this->api_url     = self::$static_api_url;
+			$this->channel_ids = self::$static_channel_ids;
 		}
 	}
 
@@ -42,20 +78,19 @@ class Postiz {
 	 * @return array Array of channel IDs
 	 */
 	private function extract_channel_ids_from_settings() {
-		$channels    = get_option( 'lwtv_postiz_channels', array() );
+		$options     = get_option( 'lwtv_auto_posting_options', array() );
+		$channels    = isset( $options['lwtv_postiz_channels'] ) ? $options['lwtv_postiz_channels'] : array();
 		$channel_ids = array();
 
 		if ( is_array( $channels ) ) {
-			lwtv_plugin()->error_log( 'postiz', 'Found ' . count( $channels ) . ' channels in settings' );
 			foreach ( $channels as $channel ) {
 				// Only include active channels (default to active if not set for backwards compatibility)
 				$is_active = isset( $channel['active'] ) ? $channel['active'] : true;
 
 				if ( $is_active && isset( $channel['channel_id'] ) && ! empty( $channel['channel_id'] ) ) {
-					lwtv_plugin()->error_log( 'postiz', 'Found active channel: ' . $channel['name'] . ' with ID: ' . $channel['channel_id'] );
 					$channel_ids[] = $channel['channel_id'];
 				} else {
-					lwtv_plugin()->error_log( 'postiz', 'Found inactive channel: ' . $channel['name'] . ' with ID: ' . $channel['channel_id'] );
+					lwtv_plugin()->debug_log( 'postiz', 'Found inactive channel: ' . $channel['name'] . ' with ID: ' . $channel['channel_id'] );
 				}
 			}
 		}
@@ -69,7 +104,6 @@ class Postiz {
 	 * @return bool
 	 */
 	public function is_enabled() {
-		lwtv_plugin()->error_log( 'postiz', 'Checking if Postiz is enabled. API key: ' . $this->api_key . ' Channel IDs: ' . wp_json_encode( $this->channel_ids ) );
 		return ! empty( $this->api_key ) && ! empty( $this->channel_ids );
 	}
 
@@ -80,7 +114,8 @@ class Postiz {
 	 * @return bool
 	 */
 	public function is_type_triggered_enabled( $type ) {
-		$triggers = get_option( 'lwtv_postiz_triggers', array() );
+		$options  = get_option( 'lwtv_auto_posting_options', array() );
+		$triggers = isset( $options['lwtv_postiz_triggers'] ) ? $options['lwtv_postiz_triggers'] : array();
 		if ( empty( $triggers ) ) {
 			return true;
 		}
@@ -106,8 +141,9 @@ class Postiz {
 		}
 
 		// Default options
-		$defaults = array(
-			'type'      => get_option( 'lwtv_postiz_post_type', 'draft' ), // Get the value from the options
+		$saved_options = get_option( 'lwtv_auto_posting_options', array() );
+		$defaults      = array(
+			'type'      => isset( $saved_options['lwtv_postiz_post_type'] ) ? $saved_options['lwtv_postiz_post_type'] : 'draft',
 			'date'      => current_time( 'c' ), // ISO 8601 format
 			'image'     => array(),
 			'settings'  => array(),
@@ -152,7 +188,7 @@ class Postiz {
 	private function make_api_request( $endpoint, $data = array(), $method = 'POST' ) {
 		$url = trailingslashit( $this->api_url ) . ltrim( $endpoint, '/' );
 
-		lwtv_plugin()->error_log( 'postiz', 'Making API request to: ' . $url . ' with method: ' . $method . ' and data: ' . wp_json_encode( $data ) );
+		lwtv_plugin()->debug_log( 'postiz', 'Making API request to: ' . $url . ' with method: ' . $method . ' and data: ' . wp_json_encode( $data ) );
 
 		// For GET requests, append data as query parameters
 		if ( 'GET' === $method && ! empty( $data ) ) {
@@ -177,7 +213,7 @@ class Postiz {
 		$response = wp_remote_request( $url, $args );
 
 		// Log the response
-		lwtv_plugin()->error_log( 'postiz', 'API Response: ' . wp_json_encode( $response ) );
+		lwtv_plugin()->debug_log( 'postiz', 'API Response: ' . wp_json_encode( $response ) );
 
 		// Check for errors
 		if ( is_wp_error( $response ) ) {
@@ -207,7 +243,7 @@ class Postiz {
 			);
 		}
 
-		lwtv_plugin()->error_log( 'postiz', 'API Response: ' . wp_json_encode( $decoded_body ) );
+		lwtv_plugin()->debug_log( 'postiz', 'API Response: ' . wp_json_encode( $decoded_body ) );
 
 		return array(
 			'success' => true,
@@ -305,7 +341,7 @@ class Postiz {
 
 		$posts = array();
 		foreach ( $this->channel_ids as $channel_id ) {
-			lwtv_plugin()->error_log( 'postiz', 'Building post for channel: ' . $channel_id );
+			lwtv_plugin()->debug_log( 'postiz', 'Building post for channel: ' . $channel_id );
 			$post_data = array(
 				'integration' => array(
 					'id' => $channel_id,
@@ -335,31 +371,30 @@ class Postiz {
 	 * @return bool True if the OTD exists, false otherwise
 	 */
 	public function post_exists( $content, $post_id ) {
-
 		// Get the last OTD date for the post
 		$last_otd_date   = get_post_meta( $post_id, 'lwtv_was_last_otd', true );
 		$lwtv_of_the_day = get_post_meta( $post_id, 'lwtv_of_the_day', true );
 		if ( empty( $last_otd_date ) || empty( $lwtv_of_the_day ) ) {
-			lwtv_plugin()->error_log( 'postiz', 'No last OTD date found for post: ' . $post_id );
+			lwtv_plugin()->debug_log( 'postiz', 'No last OTD date found for post: ' . $post_id );
 			return false;
 		}
 
 		// If lwtv_of_the_day is less than 4 months ago, return true
 		if ( $lwtv_of_the_day < strtotime( '-4 months' ) ) {
-			lwtv_plugin()->error_log( 'postiz', 'Last OTD date is less than 4 months ago for post: ' . $post_id );
+			lwtv_plugin()->debug_log( 'postiz', 'Last OTD date is less than 4 months ago for post: ' . $post_id );
 			return true;
 		}
 
 		// Get the last Postiz post date for the post
 		$last_postiz_post_date = get_post_meta( $post_id, 'lwtv_last_postiz_post', true );
 		if ( empty( $last_postiz_post_date ) ) {
-			lwtv_plugin()->error_log( 'postiz', 'No last Postiz post date found for post: ' . $post_id );
+			lwtv_plugin()->debug_log( 'postiz', 'No last Postiz post date found for post: ' . $post_id );
 			return false;
 		}
 
 		// If the last OTD date is greater than the last Postiz post date, return true
 		if ( $last_otd_date > $last_postiz_post_date ) {
-			lwtv_plugin()->error_log( 'postiz', 'Last OTD date is greater than last Postiz post date for post: ' . $post_id );
+			lwtv_plugin()->debug_log( 'postiz', 'Last OTD date is greater than last Postiz post date for post: ' . $post_id );
 			return true;
 		}
 
@@ -377,13 +412,13 @@ class Postiz {
 			$response = $this->make_api_request( '/posts', $payload, 'GET' );
 
 			if ( is_wp_error( $response ) ) {
-				lwtv_plugin()->error_log( 'postiz', 'Error checking if OTD already exists in Postiz: ' . $response->get_error_message() );
+				lwtv_plugin()->debug_log( 'postiz', 'Error checking if OTD already exists in Postiz: ' . $response->get_error_message() );
 				continue;
 			}
 
 			// Check if the posts are empty
 			if ( is_null( $response['data']['posts'] ) || empty( $response['data']['posts'] ) ) {
-				lwtv_plugin()->error_log( 'postiz', 'No posts found in response: ' . wp_json_encode( $response ) );
+				lwtv_plugin()->debug_log( 'postiz', 'No posts found in response: ' . wp_json_encode( $response ) );
 				continue;
 			}
 
@@ -393,13 +428,13 @@ class Postiz {
 
 		// Loop through the posts and check if the content matches
 		foreach ( $posts as $post ) {
-			lwtv_plugin()->error_log( 'postiz', 'Checking if OTD already exists in Postiz: ' . wp_json_encode( $post ) );
+			lwtv_plugin()->debug_log( 'postiz', 'Checking if OTD already exists in Postiz: ' . wp_json_encode( $post ) );
 			if ( empty( $post['content'] ) || 'published' !== $post['status'] ) {
 				continue;
 			}
 
 			if ( $post['content'] === $content ) {
-				lwtv_plugin()->error_log( 'postiz', 'OTD already exists in Postiz: ' . wp_json_encode( $post ) );
+				lwtv_plugin()->debug_log( 'postiz', 'OTD already exists in Postiz: ' . wp_json_encode( $post ) );
 				return true;
 			}
 		}
@@ -419,7 +454,7 @@ class Postiz {
 	 */
 	public function log_otd_message( $message, $type, $content, $post_id, $data ) {
 		if ( function_exists( 'lwtv_plugin' ) && method_exists( lwtv_plugin(), 'error_log' ) ) {
-			lwtv_plugin()->error_log(
+			lwtv_plugin()->debug_log(
 				'postiz',
 				sprintf(
 					'%s: %s - %s - %d - %s',
@@ -442,7 +477,7 @@ class Postiz {
 	 */
 	public function log_new_post_message( $message, $post_id ) {
 		if ( function_exists( 'lwtv_plugin' ) && method_exists( lwtv_plugin(), 'error_log' ) ) {
-			lwtv_plugin()->error_log(
+			lwtv_plugin()->debug_log(
 				'postiz',
 				sprintf(
 					'%s: %d',

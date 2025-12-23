@@ -32,7 +32,7 @@ class Dead {
 
 		// If cached data is found, return it
 		if ( false !== $cached_data ) {
-			lwtv_plugin()->error_log( 'dead-debug', 'Cached data found for ' . $cache_key );
+			lwtv_plugin()->debug_log( 'death', 'Cached data found for ' . $cache_key );
 			return $cached_data;
 		}
 
@@ -61,7 +61,7 @@ class Dead {
 
 			return $results;
 		} catch ( \Exception $e ) {
-			lwtv_plugin()->error_log( 'dead-debug', 'Error getting dead characters data: ' . $e->getMessage() );
+			lwtv_plugin()->error_log( 'death', 'Error getting dead characters data: ' . $e->getMessage() );
 			return array();
 		}
 	}
@@ -79,7 +79,7 @@ class Dead {
 
 		// If cached data is found, return it
 		if ( false !== $cached_data ) {
-			lwtv_plugin()->error_log( 'dead-debug', 'Cached data found for ' . $cache_key );
+			lwtv_plugin()->debug_log( 'death', 'Cached data found for ' . $cache_key );
 			return $cached_data;
 		}
 
@@ -116,7 +116,7 @@ class Dead {
 			return $year_characters;
 
 		} catch ( \Exception $e ) {
-			lwtv_plugin()->error_log( 'dead-debug', 'Error getting dead characters for year ' . $year . ': ' . $e->getMessage() );
+			lwtv_plugin()->error_log( 'death', 'Error getting dead characters for year ' . $year . ': ' . $e->getMessage() );
 			return array();
 		}
 	}
@@ -169,7 +169,7 @@ class Dead {
 			// return the count of the results
 			return count( $results );
 		} catch ( \Exception $e ) {
-			lwtv_plugin()->error_log( 'dead-debug', 'Error getting total dead shows: ' . $e->getMessage() );
+			lwtv_plugin()->error_log( 'death', 'Error getting total dead shows: ' . $e->getMessage() );
 			return 0;
 		}
 	}
@@ -184,7 +184,7 @@ class Dead {
 	 * @return array Dead characters statistics data
 	 */
 	public function generate_characters( $view, $format ) {
-		lwtv_plugin()->error_log( 'dead-debug', 'Generating characters statistics for view: ' . $view );
+		lwtv_plugin()->debug_log( 'death', 'Generating characters statistics for view: ' . $view );
 		switch ( $view ) {
 			case 'years':
 			case 'trendline':
@@ -234,7 +234,7 @@ class Dead {
 	 * @return array Dead shows statistics data
 	 */
 	public function generate_shows( $view, $format ) {
-		lwtv_plugin()->error_log( 'dead-debug', 'Generating shows statistics for view ' . $view . ' and format ' . $format );
+		lwtv_plugin()->debug_log( 'death', 'Generating shows statistics for view ' . $view . ' and format ' . $format );
 		switch ( $view ) {
 			case 'years':
 				$return = $this->generate_years( $format );
@@ -267,7 +267,7 @@ class Dead {
 		$total_years = range( LWTV_FIRST_YEAR, gmdate( 'Y' ) );
 
 		if ( empty( $years ) ) {
-			lwtv_plugin()->error_log( 'dead-debug', 'Years are empty. Cannot generate years statistics for format: ' . $format );
+			lwtv_plugin()->debug_log( 'death', 'Years are empty. Cannot generate years statistics for format: ' . $format );
 			return array();
 		}
 
@@ -293,7 +293,7 @@ class Dead {
 			}
 			return $return;
 		} catch ( \Exception $e ) {
-			lwtv_plugin()->error_log( 'dead-debug', 'Error generating years statistics: ' . $e->getMessage() );
+			lwtv_plugin()->error_log( 'death', 'Error generating years statistics: ' . $e->getMessage() );
 			return array();
 		}
 	}
@@ -437,7 +437,7 @@ class Dead {
 			return $array;
 
 		} catch ( \Exception $e ) {
-			lwtv_plugin()->error_log( 'dead-list-error', 'Error building dead list: ' . $e->getMessage() );
+			lwtv_plugin()->error_log( 'death', 'Error building dead list: ' . $e->getMessage() );
 			return 'time' === $format ? array(
 				'most'  => array(
 					'count' => 0,
@@ -540,7 +540,7 @@ class Dead {
 			return $this->output_list( $array, $format );
 
 		} catch ( \Exception $e ) {
-			lwtv_plugin()->error_log( 'dead-list-error', 'Error building dead list statistics: ' . $e->getMessage() );
+			lwtv_plugin()->error_log( 'death', 'Error building dead list statistics: ' . $e->getMessage() );
 			return 'time' === $format ? array(
 				'most'  => array(
 					'count' => 0,
@@ -619,7 +619,7 @@ class Dead {
 				'all' => $output_array,
 			);
 		} catch ( \Exception $e ) {
-			lwtv_plugin()->error_log( 'dead-list-error', 'Error outputting dead list: ' . $e->getMessage() );
+			lwtv_plugin()->error_log( 'death', 'Error outputting dead list: ' . $e->getMessage() );
 			return array();
 		}
 	}
@@ -669,7 +669,7 @@ class Dead {
 
 		// If cached data is found, return it
 		if ( false !== $cached_data ) {
-			lwtv_plugin()->error_log( 'dead-debug', 'Cached data found for ' . $cache_key );
+			lwtv_plugin()->debug_log( 'death', 'Cached data found for ' . $cache_key );
 			return $cached_data;
 		}
 
@@ -712,7 +712,7 @@ class Dead {
 			return $formatted_results;
 
 		} catch ( \Exception $e ) {
-			lwtv_plugin()->error_log( 'dead-debug', 'Error getting dead characters taxonomy data for ' . $taxonomy . ': ' . $e->getMessage() );
+			lwtv_plugin()->error_log( 'death', 'Error getting dead characters taxonomy data for ' . $taxonomy . ': ' . $e->getMessage() );
 			return array();
 		}
 	}
@@ -820,7 +820,7 @@ class Dead {
 
 		// If cached data is found, return it
 		if ( false !== $cached_data ) {
-			lwtv_plugin()->error_log( 'dead-debug', 'Cached data found for ' . $cache_key );
+			lwtv_plugin()->debug_log( 'death', 'Cached data found for ' . $cache_key );
 			return $cached_data;
 		}
 
@@ -892,7 +892,7 @@ class Dead {
 			return $formatted_results;
 
 		} catch ( \Exception $e ) {
-			lwtv_plugin()->error_log( 'dead-debug', 'Error getting dead characters by roles: ' . $e->getMessage() );
+			lwtv_plugin()->error_log( 'death', 'Error getting dead characters by roles: ' . $e->getMessage() );
 			return array();
 		}
 	}
@@ -983,7 +983,7 @@ class Dead {
 	 * @return array Shows by characters
 	 */
 	private function generate_shows_by_characters( $format ) {
-		lwtv_plugin()->error_log( 'dead-debug', 'Generating shows by characters statistics for format: ' . $format );
+		lwtv_plugin()->debug_log( 'death', 'Generating shows by characters statistics for format: ' . $format );
 
 		global $wpdb;
 
@@ -993,7 +993,7 @@ class Dead {
 
 		// If cached data is found, return it
 		if ( false !== $cached_data ) {
-			lwtv_plugin()->error_log( 'dead-debug', 'Cached data found for ' . $cache_key );
+			lwtv_plugin()->debug_log( 'death', 'Cached data found for ' . $cache_key );
 			return $cached_data;
 		}
 
@@ -1070,7 +1070,7 @@ class Dead {
 			return $formatted_results;
 
 		} catch ( \Exception $e ) {
-			lwtv_plugin()->error_log( 'dead-debug', 'Error getting shows by characters data: ' . $e->getMessage() );
+			lwtv_plugin()->error_log( 'death', 'Error getting shows by characters data: ' . $e->getMessage() );
 			return array();
 		}
 	}
@@ -1231,7 +1231,7 @@ class Dead {
 
 		// If cached data is found, return it
 		if ( false !== $cached_data ) {
-			lwtv_plugin()->error_log( 'dead-debug', 'Cached data found for ' . $cache_key );
+			lwtv_plugin()->debug_log( 'death', 'Cached data found for ' . $cache_key );
 			return $cached_data;
 		}
 
@@ -1278,7 +1278,7 @@ class Dead {
 			return $formatted_results;
 
 		} catch ( \Exception $e ) {
-			lwtv_plugin()->error_log( 'dead-debug', 'Error getting dead shows taxonomy data for ' . $taxonomy . ': ' . $e->getMessage() );
+			lwtv_plugin()->error_log( 'death', 'Error getting dead shows taxonomy data for ' . $taxonomy . ': ' . $e->getMessage() );
 			return array();
 		}
 	}
@@ -1291,7 +1291,7 @@ class Dead {
 	 * @return array Formatted results
 	 */
 	private function format_shows_by_taxonomy_results( $results, $format ) {
-		lwtv_plugin()->error_log( 'dead-debug', 'Formatting shows by taxonomy results for format: ' . $format );
+		lwtv_plugin()->debug_log( 'death', 'Formatting shows by taxonomy results for format: ' . $format );
 		$formatted_results      = array();
 		$total_shows_with_death = (int) $this->total_dead_shows();
 		switch ( $format ) {

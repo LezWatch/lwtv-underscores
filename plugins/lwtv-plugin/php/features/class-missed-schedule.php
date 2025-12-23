@@ -47,22 +47,22 @@ class Missed_Schedule {
 		// Register Action Scheduler hook
 		add_action( self::AS_HOOK, array( $this, 'process_missed_schedule' ) );
 
-		// Initialize Action Scheduler if available
-		if ( $this->is_action_scheduler_available() ) {
-			$this->init_action_scheduler();
-		}
+		// Initialize Action Scheduler when it's ready (avoids calling AS functions before data store is initialized)
+		add_action( 'action_scheduler_init', array( $this, 'init_action_scheduler' ) );
 	}
 
 	/**
 	 * Initialize Action Scheduler recurring action
 	 *
+	 * Called via action_scheduler_init hook to ensure AS data store is ready.
+	 *
 	 * @return void
 	 */
-	private function init_action_scheduler(): void {
+	public function init_action_scheduler(): void {
 		// Only schedule if no existing actions are scheduled
 		if ( ! as_next_scheduled_action( self::AS_HOOK ) ) {
 			as_schedule_recurring_action( time(), HOUR_IN_SECONDS, self::AS_HOOK, array(), self::AS_GROUP );
-			lwtv_plugin()->error_log( 'missed-schedule', 'Scheduled recurring missed schedule check via Action Scheduler' );
+			lwtv_plugin()->debug_log( 'missed-schedule', 'Scheduled recurring missed schedule check via Action Scheduler' );
 		}
 	}
 
@@ -82,10 +82,7 @@ class Missed_Schedule {
 	 */
 	public function process_missed_schedule(): void {
 		$result = $this->check_and_publish_missed_posts();
-		lwtv_plugin()->error_log( 'missed-schedule', 'Action Scheduler processed missed schedule: ' . $result );
-
-		// Ping health check if available
-		$this->ping_health_check();
+		lwtv_plugin()->debug_log( 'missed-schedule', 'Action Scheduler processed missed schedule: ' . $result );
 	}
 
 	/**
@@ -157,9 +154,9 @@ SQL;
 			$result = wp_publish_post( $the_id );
 			if ( $result ) {
 				++$published_count;
-				lwtv_plugin()->error_log( 'missed-schedule', "Published missed schedule post ID: {$the_id}" );
+				lwtv_plugin()->debug_log( 'missed-schedule', "Published missed schedule post ID: {$the_id}" );
 			} else {
-				lwtv_plugin()->error_log( 'missed-schedule', "Failed to publish missed schedule post ID: {$the_id}" );
+				lwtv_plugin()->debug_log( 'missed-schedule', "Failed to publish missed schedule post ID: {$the_id}" );
 			}
 		}
 
@@ -200,33 +197,5 @@ SQL;
 
 		// Fallback to immediate execution
 		return $this->missed_schedule();
-	}
-
-	/**
-	 * Ping health check if available
-	 *
-	 * Uses HEALTHCHECKS_API_KEY_CORE_PING for core LWTV services.
-	 *
-	 * @return void
-	 */
-	private function ping_health_check(): void {
-		// Check if health checks are available and configured
-		if ( ! defined( 'HEALTHCHECKS_API_KEY_CORE_PING' ) ) {
-			return;
-		}
-
-		try {
-			$response = ( new Ping() )->ping( 'missed-schedule-check' );
-
-			if ( ! is_object( $response ) ) {
-				lwtv_plugin()->error_log( 'missed-schedule', 'Failed to ping health check. Invalid response.' );
-			} elseif ( ! is_wp_error( $response ) ) {
-				lwtv_plugin()->error_log( 'missed-schedule', 'Health check pinged successfully' );
-			} else {
-				lwtv_plugin()->error_log( 'missed-schedule', 'Failed to ping health check: ' . $response->get_error_message() );
-			}
-		} catch ( \Exception $e ) {
-			lwtv_plugin()->error_log( 'missed-schedule', 'Failed to ping health check: ' . $e->getMessage() );
-		}
 	}
 }

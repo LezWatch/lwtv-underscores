@@ -33,16 +33,16 @@ class TMDB_Task {
 		$post_type = get_post_type( $post_id );
 
 		if ( ! $post_type ) {
-			lwtv_plugin()->error_log( 'tmdb-task', "Invalid post ID: {$post_id}" );
+			lwtv_plugin()->debug_log( 'tmdb', "Invalid post ID: {$post_id}" );
 			return;
 		}
 
-		lwtv_plugin()->error_log( 'tmdb-task', "Processing TMDB task for {$post_type} ID: {$post_id}" );
+		lwtv_plugin()->debug_log( 'tmdb', "Processing TMDB task for {$post_type} ID: {$post_id}" );
 
 		// Check if TMDB ID is already set
 		$tmdb_id = $this->get_existing_tmdb_id( $post_id, $post_type );
 		if ( $tmdb_id ) {
-			lwtv_plugin()->error_log( 'tmdb-task', "TMDB ID already exists for {$post_type} ID: {$post_id}" );
+			lwtv_plugin()->debug_log( 'tmdb', "TMDB ID already exists for {$post_type} ID: {$post_id}" );
 			return;
 		}
 
@@ -50,7 +50,7 @@ class TMDB_Task {
 		$tmdb_data = ( new CPTs() )->get_tmdb_info( $post_id );
 
 		if ( ! $tmdb_data ) {
-			lwtv_plugin()->error_log( 'tmdb-task', "No TMDB data found for {$post_type} ID: {$post_id}" );
+			lwtv_plugin()->debug_log( 'tmdb', "No TMDB data found for {$post_type} ID: {$post_id}" );
 			return;
 		}
 
@@ -60,9 +60,9 @@ class TMDB_Task {
 		// Save TMDB ID if found
 		if ( $tmdb_id ) {
 			$this->save_tmdb_id( $post_id, $post_type, $tmdb_id );
-			lwtv_plugin()->error_log( 'tmdb-task', "Successfully saved TMDB ID: {$tmdb_id} for {$post_type} ID: {$post_id}" );
+			lwtv_plugin()->debug_log( 'tmdb', "Successfully saved TMDB ID: {$tmdb_id} for {$post_type} ID: {$post_id}" );
 		} else {
-			lwtv_plugin()->error_log( 'tmdb-task', "No TMDB ID found in data for {$post_type} ID: {$post_id}" );
+			lwtv_plugin()->debug_log( 'tmdb', "No TMDB ID found in data for {$post_type} ID: {$post_id}" );
 		}
 	}
 

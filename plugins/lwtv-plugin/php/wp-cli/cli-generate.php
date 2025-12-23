@@ -5,13 +5,15 @@
  * These commands are 'generation' tools.
  */
 
-use LWTV\_Components\{ Calendar, Of_The_Day };
+use LWTV\_Components\Calendar;
+use LWTV\_Components\Of_The_Day;
 use LWTV\Debugger\Actors as Actors_Debugger;
 use LWTV\Debugger\Characters as Characters_Debugger;
 use LWTV\Debugger\Shows as Shows_Debugger;
 use LWTV\Debugger\Dupes as Dupes_Debugger;
 use LWTV\Debugger\Queers as Queers_Debugger;
 use LWTV\Features\Missed_Schedule;
+use LWTV\Rest_API\BYQ;
 use LWTV\CPTs\Shows as CPT_Shows;
 use LWTV\CPTs\Actors as CPT_Actors;
 
@@ -96,8 +98,6 @@ class WP_CLI_LWTV_Generate {
 	 *     # Check missed schedule status
 	 *     $ wp lwtv generate missed-schedule status
 	 *     Success: Missed schedule status retrieved.
-	 *
-
 	 *
 	 * @param array $args
 	 * @param array $assoc_args
@@ -192,6 +192,15 @@ class WP_CLI_LWTV_Generate {
 		// Run the update lists
 		\WP_CLI::log( 'Updating the lists...' );
 		$this->run_update_lists();
+
+		// Refresh BYQ (Bury Your Queers) caches daily to ensure fresh death data
+		\WP_CLI::log( 'Refreshing BYQ death caches...' );
+		$byq_refresh = ( new BYQ() )->daily_cache_refresh();
+		if ( $byq_refresh ) {
+			\WP_CLI::success( 'BYQ caches refreshed successfully.' );
+		} else {
+			\WP_CLI::warning( 'BYQ cache refresh may have had issues - check logs.' );
+		}
 
 		// run OTD
 		\WP_CLI::log( 'Setting the "Of the Day"...' );
@@ -303,10 +312,14 @@ class WP_CLI_LWTV_Generate {
 			$new_otd = ( new Of_The_Day() )->set_of_the_day( $otd );
 
 			if ( null === $new_otd || is_wp_error( $new_otd ) ) {
-				\WP_CLI::error( 'There was an error setting the ' . $otd . ' "Of the Day".' );
+				\WP_CLI::error( 'There was an error setting the ' . $otd . ' "Of the Day": ' . wp_json_encode( $new_otd ) );
 			}
 
-			$post_id = $new_otd['posts_id'];
+			$post_id = $new_otd['pid'] ?? $new_otd['id'] ?? null;
+
+			if ( empty( $post_id ) ) {
+				\WP_CLI::error( 'The ' . $otd . ' "Of the Day" has no post ID and cannot be set: ' . wp_json_encode( $new_otd ) );
+			}
 
 			\WP_CLI::success( 'The ' . $otd . ' "Of the Day" has been set: ' . get_the_title( $post_id ) . ' (' . $post_id . ')' );
 		}

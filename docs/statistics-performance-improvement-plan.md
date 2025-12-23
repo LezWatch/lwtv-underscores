@@ -165,7 +165,7 @@ public function generate($subject, $data, $format, $post_id = false, $custom_arr
 
         return $result;
     } catch (Exception $e) {
-        lwtv_plugin()->error_log('Statistics generation failed: ' . $e->getMessage());
+        lwtv_plugin()->debug_log('Statistics generation failed: ' . $e->getMessage());
         return $this->get_fallback_result($subject, $data, $format);
     }
 }

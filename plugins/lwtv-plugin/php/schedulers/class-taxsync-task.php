@@ -37,18 +37,18 @@ class Taxsync_Task {
 		$post_type = get_post_type( $post_id );
 
 		if ( ! $post_type ) {
-			lwtv_plugin()->error_log( 'taxsync-task', "Invalid post ID: {$post_id}" );
+			lwtv_plugin()->debug_log( 'taxsync', "Invalid post ID: {$post_id}" );
 			return;
 		}
 
 		// Check if post still exists and is published
 		$post = get_post( $post_id );
 		if ( ! $post || 'publish' !== $post->post_status ) {
-			lwtv_plugin()->error_log( 'taxsync-task', "Skipping taxonomy sync for {$post_type} ID: {$post_id} - post not published or doesn't exist" );
+			lwtv_plugin()->debug_log( 'taxsync', "Skipping taxonomy sync for {$post_type} ID: {$post_id} - post not published or doesn't exist" );
 			return;
 		}
 
-		lwtv_plugin()->error_log( 'taxsync-task', "Processing taxonomy sync task for {$post_type} ID: {$post_id}" );
+		lwtv_plugin()->debug_log( 'taxsync', "Processing taxonomy sync task for {$post_type} ID: {$post_id}" );
 
 		$success     = false;
 		$error_count = 0;
@@ -66,16 +66,17 @@ class Taxsync_Task {
 					$success = $this->process_character_taxonomy_sync( $post_id );
 					break;
 				default:
-					lwtv_plugin()->error_log( 'taxsync-task', "Unsupported post type: {$post_type} for ID: {$post_id}" );
+					lwtv_plugin()->debug_log( 'taxsync', "Unsupported post type: {$post_type} for ID: {$post_id}" );
 					return;
 			}
 
 			if ( $success ) {
-				lwtv_plugin()->error_log( 'taxsync-task', "Successfully completed taxonomy sync for {$post_type} ID: {$post_id}" );
+				lwtv_plugin()->debug_log( 'taxsync', "Successfully completed taxonomy sync for {$post_type} ID: {$post_id}" );
 			} else {
 				$this->handle_taxsync_failure( $post_id, $post_type, 'Unknown error during taxonomy sync' );
 			}
 		} catch ( \Exception $e ) {
+			lwtv_plugin()->error_log( 'taxsync', 'Error processing taxonomy sync for {$post_type} ID: {$post_id}: ' . $e->getMessage() );
 			$this->handle_taxsync_failure( $post_id, $post_type, $e->getMessage() );
 		}
 	}
@@ -87,13 +88,13 @@ class Taxsync_Task {
 	 * @return bool Whether the sync was successful
 	 */
 	private function process_actor_taxonomy_sync( int $post_id ): bool {
-		lwtv_plugin()->error_log( 'taxsync-task', "Processing actor taxonomy sync for ID: {$post_id}" );
+		lwtv_plugin()->debug_log( 'taxsync', "Processing actor taxonomy sync for ID: {$post_id}" );
 
 		// Get actor taxonomy mappings from the Actors class
 		$taxonomy_mappings = Actors::SELECT2_TAXONOMIES;
 
 		if ( empty( $taxonomy_mappings ) ) {
-			lwtv_plugin()->error_log( 'taxsync-task', "No taxonomy mappings found for actor ID: {$post_id}" );
+			lwtv_plugin()->debug_log( 'taxsync', "No taxonomy mappings found for actor ID: {$post_id}" );
 			return true; // No mappings to sync, consider it successful
 		}
 
@@ -105,14 +106,14 @@ class Taxsync_Task {
 			try {
 				( new CMB2() )->select2_taxonomy_save( $post_id, $postmeta, $taxonomy );
 				++$success_count;
-				lwtv_plugin()->error_log( 'taxsync-task', "Synced taxonomy {$taxonomy} for actor ID: {$post_id}" );
+				lwtv_plugin()->debug_log( 'taxsync', "Synced taxonomy {$taxonomy} for actor ID: {$post_id}" );
 			} catch ( \Exception $e ) {
-				lwtv_plugin()->error_log( 'taxsync-task', "Failed to sync taxonomy {$taxonomy} for actor ID: {$post_id}: " . $e->getMessage() );
+				lwtv_plugin()->error_log( 'taxsync', "Failed to sync taxonomy {$taxonomy} for actor ID: {$post_id}: " . $e->getMessage() );
 			}
 		}
 
 		$success = ( $success_count === $total_count );
-		lwtv_plugin()->error_log( 'taxsync-task', "Completed actor taxonomy sync for ID: {$post_id} - {$success_count}/{$total_count} successful" );
+		lwtv_plugin()->debug_log( 'taxsync', "Completed actor taxonomy sync for ID: {$post_id} - {$success_count}/{$total_count} successful" );
 
 		return $success;
 	}
@@ -124,13 +125,13 @@ class Taxsync_Task {
 	 * @return bool Whether the sync was successful
 	 */
 	private function process_show_taxonomy_sync( int $post_id ): bool {
-		lwtv_plugin()->error_log( 'taxsync-task', "Processing show taxonomy sync for ID: {$post_id}" );
+		lwtv_plugin()->debug_log( 'taxsync', "Processing show taxonomy sync for ID: {$post_id}" );
 
 		// Get show taxonomy mappings from the Shows class
 		$taxonomy_mappings = Shows::SELECT2_TAXONOMIES;
 
 		if ( empty( $taxonomy_mappings ) ) {
-			lwtv_plugin()->error_log( 'taxsync-task', "No taxonomy mappings found for show ID: {$post_id}" );
+			lwtv_plugin()->debug_log( 'taxsync', "No taxonomy mappings found for show ID: {$post_id}" );
 			return true; // No mappings to sync, consider it successful
 		}
 
@@ -142,14 +143,14 @@ class Taxsync_Task {
 			try {
 				( new CMB2() )->select2_taxonomy_save( $post_id, $postmeta, $taxonomy );
 				++$success_count;
-				lwtv_plugin()->error_log( 'taxsync-task', "Synced taxonomy {$taxonomy} for show ID: {$post_id}" );
+				lwtv_plugin()->debug_log( 'taxsync', "Synced taxonomy {$taxonomy} for show ID: {$post_id}" );
 			} catch ( \Exception $e ) {
-				lwtv_plugin()->error_log( 'taxsync-task', "Failed to sync taxonomy {$taxonomy} for show ID: {$post_id}: " . $e->getMessage() );
+				lwtv_plugin()->error_log( 'taxsync', "Failed to sync taxonomy {$taxonomy} for show ID: {$post_id}: " . $e->getMessage() );
 			}
 		}
 
 		$success = ( $success_count === $total_count );
-		lwtv_plugin()->error_log( 'taxsync-task', "Completed show taxonomy sync for ID: {$post_id} - {$success_count}/{$total_count} successful" );
+		lwtv_plugin()->debug_log( 'taxsync', "Completed show taxonomy sync for ID: {$post_id} - {$success_count}/{$total_count} successful" );
 
 		return $success;
 	}
@@ -161,13 +162,13 @@ class Taxsync_Task {
 	 * @return bool Whether the sync was successful
 	 */
 	private function process_character_taxonomy_sync( int $post_id ): bool {
-		lwtv_plugin()->error_log( 'taxsync-task', "Processing character taxonomy sync for ID: {$post_id}" );
+		lwtv_plugin()->debug_log( 'taxsync', "Processing character taxonomy sync for ID: {$post_id}" );
 
 		// Character taxonomy mappings
 		$taxonomy_mappings = Characters::SELECT2_TAXONOMIES;
 
 		if ( empty( $taxonomy_mappings ) ) {
-			lwtv_plugin()->error_log( 'taxsync-task', "No taxonomy mappings found for character ID: {$post_id}" );
+			lwtv_plugin()->debug_log( 'taxsync', "No taxonomy mappings found for character ID: {$post_id}" );
 			return true;
 		}
 
@@ -179,14 +180,14 @@ class Taxsync_Task {
 			try {
 				( new CMB2() )->select2_taxonomy_save( $post_id, $postmeta, $taxonomy );
 				++$success_count;
-				lwtv_plugin()->error_log( 'taxsync-task', "Synced taxonomy {$taxonomy} for character ID: {$post_id}" );
+				lwtv_plugin()->debug_log( 'taxsync', "Synced taxonomy {$taxonomy} for character ID: {$post_id}" );
 			} catch ( \Exception $e ) {
-				lwtv_plugin()->error_log( 'taxsync-task', "Failed to sync taxonomy {$taxonomy} for character ID: {$post_id}: " . $e->getMessage() );
+				lwtv_plugin()->error_log( 'taxsync', "Failed to sync taxonomy {$taxonomy} for character ID: {$post_id}: " . $e->getMessage() );
 			}
 		}
 
 		$success = ( $success_count === $total_count );
-		lwtv_plugin()->error_log( 'taxsync-task', "Completed character taxonomy sync for ID: {$post_id} - {$success_count}/{$total_count} successful" );
+		lwtv_plugin()->debug_log( 'taxsync', "Completed character taxonomy sync for ID: {$post_id} - {$success_count}/{$total_count} successful" );
 
 		return $success;
 	}
@@ -204,7 +205,7 @@ class Taxsync_Task {
 		$retry_count = (int) $retry_count;
 		$max_retries = 3;
 
-		lwtv_plugin()->error_log( 'taxsync-task', "Taxonomy sync failed for {$post_type} ID: {$post_id} - {$error_msg} (attempt {$retry_count}/{$max_retries})" );
+		lwtv_plugin()->debug_log( 'taxsync', "Taxonomy sync failed for {$post_type} ID: {$post_id} - {$error_msg} (attempt {$retry_count}/{$max_retries})" );
 
 		if ( $retry_count < $max_retries ) {
 			// Increment retry count
@@ -214,10 +215,10 @@ class Taxsync_Task {
 			$delay = 30 * pow( 2, $retry_count );
 			lwtv_plugin()->schedule_task( 'taxsync', $post_id, 0, $delay );
 
-			lwtv_plugin()->error_log( 'taxsync-task', "Scheduled retry {$retry_count} for {$post_type} ID: {$post_id} in {$delay} seconds" );
+			lwtv_plugin()->debug_log( 'taxsync', "Scheduled retry {$retry_count} for {$post_type} ID: {$post_id} in {$delay} seconds" );
 		} else {
 			// Max retries reached, log final failure
-			lwtv_plugin()->error_log( 'taxsync-task', "Taxonomy sync permanently failed for {$post_type} ID: {$post_id} after {$max_retries} attempts" );
+			lwtv_plugin()->debug_log( 'taxsync', "Taxonomy sync permanently failed for {$post_type} ID: {$post_id} after {$max_retries} attempts" );
 
 			// Store failure info for admin review
 			update_post_meta(

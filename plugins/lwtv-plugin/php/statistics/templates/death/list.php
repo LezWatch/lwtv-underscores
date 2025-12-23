@@ -10,7 +10,7 @@
  */
 
 if ( empty( $deadchars_with_stats ) ) {
-	lwtv_plugin()->error_log( 'dead-debug', 'Dead characters with stats is empty' );
+	lwtv_plugin()->debug_log( 'death', 'Dead characters with stats is empty' );
 	return;
 }
 $days           = $deadchars_with_stats['time'];
