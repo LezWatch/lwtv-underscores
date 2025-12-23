@@ -487,11 +487,22 @@ class Postiz {
 		// Loop through the posts and check if the content matches
 		foreach ( $posts as $post ) {
 			lwtv_plugin()->debug_log( 'postiz', 'Checking if OTD already exists in Postiz: ' . wp_json_encode( $post ) );
+
+			// Check if the post is empty or not published
 			if ( empty( $post['content'] ) || 'published' !== $post['status'] ) {
+				lwtv_plugin()->debug_log( 'postiz', 'Post is empty or not published: ' . wp_json_encode( $post ) );
 				continue;
 			}
 
+			// Check if the content matches the content
 			if ( $post['content'] === $content ) {
+				lwtv_plugin()->debug_log( 'postiz', 'OTD already exists in Postiz: ' . wp_json_encode( $post ) );
+				return true;
+			}
+
+			// Check if the content contains the post name from the ID
+			$post_name_from_id = get_the_title( $post['id'] );
+			if ( str_contains( $post['content'], $post_name_from_id ) ) {
 				lwtv_plugin()->debug_log( 'postiz', 'OTD already exists in Postiz: ' . wp_json_encode( $post ) );
 				return true;
 			}
