@@ -24,14 +24,9 @@ class Debugger implements Component, Templater {
 	}
 
 	/**
-	 * Option name for debug mode toggle.
+	 * CMB2 option key - matches Debug_Logging::OPTION_KEY.
 	 */
-	private const OPTION_DEBUG_MODE = 'lwtv_debug_mode_enabled';
-
-	/**
-	 * Option name for enabled log topics.
-	 */
-	private const OPTION_LOG_TOPICS = 'lwtv_debug_logging_topics';
+	private const OPTION_KEY = 'lwtv_debug_logging_options';
 
 	/**
 	 * Get the template tags.
@@ -171,8 +166,9 @@ class Debugger implements Component, Templater {
 			return true;
 		}
 
-		// Check custom LWTV debug mode option
-		return (bool) get_option( self::OPTION_DEBUG_MODE, false );
+		// Check custom LWTV debug mode option (CMB2 stores as array)
+		$options = get_option( self::OPTION_KEY, array() );
+		return ! empty( $options['debug_mode'] );
 	}
 
 	/**
@@ -183,7 +179,8 @@ class Debugger implements Component, Templater {
 	 * @return bool
 	 */
 	public function is_topic_enabled( string $topic ): bool {
-		$enabled_topics = get_option( self::OPTION_LOG_TOPICS, array() );
+		$options        = get_option( self::OPTION_KEY, array() );
+		$enabled_topics = isset( $options['log_topics'] ) ? $options['log_topics'] : array();
 
 		// If no topics are configured, allow all (backwards compatibility)
 		if ( empty( $enabled_topics ) ) {
