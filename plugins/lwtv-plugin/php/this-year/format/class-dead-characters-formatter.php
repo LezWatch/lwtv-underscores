@@ -41,7 +41,7 @@ class Dead_Characters_Formatter {
 
 			return $dead_by_date;
 		} catch ( \Exception $e ) {
-			lwtv_plugin()->error_log( 'dead-characters-formatter-debug', 'Error formatting dead characters by date for year: ' . $e->getMessage() );
+			lwtv_plugin()->error_log( 'this-year', 'Error formatting dead characters by date for year: ' . $e->getMessage() );
 			return array();
 		}
 	}
@@ -83,7 +83,7 @@ class Dead_Characters_Formatter {
 
 			return $dead_by_show;
 		} catch ( \Exception $e ) {
-			lwtv_plugin()->error_log( 'dead-characters-formatter-debug', 'Error formatting dead characters by show for year ' . $this_year . ': ' . $e->getMessage() );
+			lwtv_plugin()->error_log( 'this-year', 'Error formatting dead characters by show for year ' . $this_year . ': ' . $e->getMessage() );
 			return array();
 		}
 	}

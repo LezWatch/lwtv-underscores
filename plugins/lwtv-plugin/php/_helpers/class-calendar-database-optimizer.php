@@ -86,11 +86,11 @@ class Calendar_Database_Optimizer {
 
 		// Log results
 		if ( ! empty( $results['success'] ) ) {
-			lwtv_plugin()->error_log( 'calendar', 'Database indexes created: ' . implode( ', ', $results['success'] ) );
+			lwtv_plugin()->debug_log( 'calendar', 'Database indexes created: ' . implode( ', ', $results['success'] ) );
 		}
 
 		if ( ! empty( $results['errors'] ) ) {
-			lwtv_plugin()->error_log( 'calendar', 'Database index errors: ' . implode( ', ', $results['errors'] ) );
+			lwtv_plugin()->debug_log( 'calendar', 'Database index errors: ' . implode( ', ', $results['errors'] ) );
 		}
 
 		return $results;

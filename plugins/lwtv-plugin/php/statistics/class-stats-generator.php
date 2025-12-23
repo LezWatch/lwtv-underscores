@@ -90,7 +90,7 @@ class Stats_Generator {
 		}
 
 		if ( empty( $all_data ) ) {
-			lwtv_plugin()->error_log( 'shows-debug', 'All data is empty' );
+			lwtv_plugin()->debug_log( 'statistics', 'All data for shows is empty' );
 			return array();
 		}
 
@@ -162,7 +162,7 @@ class Stats_Generator {
 		}
 
 		if ( empty( $all_data ) ) {
-			lwtv_plugin()->error_log( 'characters-debug', 'All data is empty' );
+			lwtv_plugin()->debug_log( 'statistics', 'All data for characters is empty' );
 			return array();
 		}
 
@@ -193,7 +193,7 @@ class Stats_Generator {
 		}
 
 		if ( empty( $all_data ) ) {
-			lwtv_plugin()->error_log( 'actors-debug', 'All data is empty' );
+			lwtv_plugin()->debug_log( 'statistics', 'All data for actors is empty' );
 			return array();
 		}
 
@@ -218,7 +218,7 @@ class Stats_Generator {
 
 		if ( 'count' === $format ) {
 			if ( ! in_array( $subject, array( 'characters', 'shows' ), true ) ) {
-				lwtv_plugin()->error_log( 'dead-debug', 'Invalid subject for death count: ' . $subject );
+				lwtv_plugin()->debug_log( 'statistics', 'Invalid subject for death count: ' . $subject );
 				return 0;
 			}
 
@@ -244,7 +244,7 @@ class Stats_Generator {
 		}
 
 		if ( empty( $all_data ) ) {
-			lwtv_plugin()->error_log( 'dead-debug', 'All data is empty' );
+			lwtv_plugin()->debug_log( 'statistics', 'All data for dead is empty' );
 			return array();
 		}
 
@@ -283,18 +283,18 @@ class Stats_Generator {
 		switch ( $type ) {
 			case 'roles':
 				$view = 'roles';
-				lwtv_plugin()->error_log( 'actors-debug', 'Generating ROLES statistics for actor: ' . $actor_id );
+				lwtv_plugin()->debug_log( 'statistics', 'Generating ROLES statistics for actor: ' . $actor_id );
 				$all_data[ $view ] = ( new Build_Actors() )->generate_roles( $actor_id );
 				break;
 			case 'dead':
 				$view = 'dead';
-				lwtv_plugin()->error_log( 'actors-debug', 'Generating DEAD statistics for actor: ' . $actor_id );
+				lwtv_plugin()->debug_log( 'statistics', 'Generating DEAD statistics for actor: ' . $actor_id );
 				$all_data[ $view ] = ( new Build_Actors() )->generate_dead( $actor_id );
 				break;
 		}
 
 		if ( empty( $all_data ) ) {
-			lwtv_plugin()->error_log( 'actors-debug', 'All data is empty' );
+			lwtv_plugin()->debug_log( 'statistics', 'All data for actors is empty' );
 			return array();
 		}
 

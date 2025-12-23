@@ -204,7 +204,7 @@ This document describes the structure and contents of the custom LezWatch.TV Plu
 │   │   ├── class-cache-queue.php - Manages immediate cache invalidation on shutdown (legacy)
 │   │   ├── class-cache-batch-task.php - Action Scheduler-based cache batch processing
 │   │   ├── class-statistics-cache-warming.php - Background cache warming for statistics after content changes
-│   │   ├── class-taxsync-task.php - Handles deferred taxonomy synchronization
+│   │   ├── class-taxsync.php - Handles deferred taxonomy synchronization
 │   │   ├── class-tmdb-task.php - Handles deferred TMDB API calls (legacy)
 │   │   └── class-tmdb-batch-task.php - Action Scheduler-based TMDB batch processing
 │   ├── queeries/ - Custom queries and arrays

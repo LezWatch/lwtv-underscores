@@ -155,7 +155,7 @@ class Barcharts_Optimized {
 	 * @return string HTML output
 	 */
 	private function get_chart_labels( $chart_data, $view ) {
-		lwtv_plugin()->error_log( 'barcharts-debug', 'View: ' . $view );
+		lwtv_plugin()->debug_log( 'statistics', 'View: ' . $view );
 		$labels = '';
 		switch ( $view ) {
 			case 'on_air':

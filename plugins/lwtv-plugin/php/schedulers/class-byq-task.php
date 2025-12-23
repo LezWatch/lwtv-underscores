@@ -31,7 +31,7 @@ class BYQ_Task {
 	public function __construct() {
 		// Only initialize if Action Scheduler is available
 		if ( ! lwtv_plugin()->is_action_scheduler_available() ) {
-			lwtv_plugin()->error_log( 'scheduler', 'Action Scheduler not available, skipping BYQ task handler initialization' );
+			lwtv_plugin()->debug_log( 'scheduler', 'Action Scheduler not available, skipping BYQ task handler initialization' );
 			return;
 		}
 
@@ -47,12 +47,12 @@ class BYQ_Task {
 	 */
 	public function schedule_cache_check( string $cache_key ): bool {
 		if ( ! lwtv_plugin()->is_action_scheduler_available() ) {
-			lwtv_plugin()->error_log( 'byq-task', 'Action Scheduler not available, cannot schedule cache check' );
+			lwtv_plugin()->debug_log( 'scheduler', 'Action Scheduler not available, cannot schedule cache check' );
 			return false;
 		}
 
 		as_schedule_single_action( time() + 60, self::AS_HOOK, array( $cache_key ), self::AS_GROUP );
-		lwtv_plugin()->error_log( 'byq-task', 'Scheduled BYQ cache check for key: ' . $cache_key );
+		lwtv_plugin()->debug_log( 'scheduler', 'Scheduled BYQ cache check for key: ' . $cache_key );
 
 		return true;
 	}
@@ -64,18 +64,18 @@ class BYQ_Task {
 	 * @return void
 	 */
 	public function process_cache_check( string $cache_key ): void {
-		lwtv_plugin()->error_log( 'byq-task', 'Processing BYQ cache check for key: ' . $cache_key );
+		lwtv_plugin()->debug_log( 'scheduler', 'Processing BYQ cache check for key: ' . $cache_key );
 
 		// Check if cache exists
 		$cached_list = lwtv_plugin()->get_transient( $cache_key );
 
 		if ( false === $cached_list ) {
 			// Cache still doesn't exist, regenerate it
-			lwtv_plugin()->error_log( 'byq-task', 'Cache does not exist, regenerating it' );
+			lwtv_plugin()->debug_log( 'scheduler', 'Cache does not exist, regenerating it' );
 			$byq = new \LWTV\Rest_API\BYQ();
 			$byq->generate_death_list_array( null, $cache_key );
 		} else {
-			lwtv_plugin()->error_log( 'byq-task', 'Cache exists, no regeneration needed' );
+			lwtv_plugin()->debug_log( 'scheduler', 'Cache exists, no regeneration needed' );
 		}
 	}
 }

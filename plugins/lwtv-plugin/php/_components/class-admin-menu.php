@@ -7,6 +7,7 @@
 namespace LWTV\_Components;
 
 use LWTV\Admin_Menu\Auto_Posting;
+use LWTV\Admin_Menu\Debug_Logging;
 use LWTV\Admin_Menu\Exclusions;
 use LWTV\Admin_Menu\Validation;
 
@@ -24,6 +25,13 @@ class Admin_Menu implements Component {
 	 */
 	protected $auto_posting = null;
 
+	/**
+	 * Debug_Logging instance
+	 *
+	 * @var Debug_Logging
+	 */
+	protected $debug_logging = null;
+
 	/*
 	 * Construct
 	 */
@@ -31,8 +39,7 @@ class Admin_Menu implements Component {
 		add_action( 'admin_menu', array( $this, 'add_settings_page' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
 
-		// Initialize Auto_Posting early so form handler is registered before admin_post fires
-		$this->auto_posting = new Auto_Posting();
+		( new Auto_Posting() )->init();
 	}
 
 	/*
@@ -49,6 +56,12 @@ class Admin_Menu implements Component {
 		add_submenu_page( 'lwtv', 'Welcome', 'Welcome', 'read', 'lwtv', array( $this, 'settings_page' ) );
 
 		//phpcs:ignore WordPress.WP.GlobalVariablesOverride
+		$submenu['lwtv'][] = array( 'Documentation', 'read', esc_url( 'https://docs.lezwatchtv.com/' ) );
+
+		//phpcs:ignore WordPress.WP.GlobalVariablesOverride
+		$submenu['lwtv'][] = array( 'Slack', 'read', esc_url( 'https://lezwatchtv.slack.com/' ) );
+
+		//phpcs:ignore WordPress.WP.GlobalVariablesOverride
 		$submenu['lwtv'][] = array( 'Monitors', 'read', esc_url( 'https://uptime.ipstenu.com/status/lwtv-admin' ) );
 
 		//phpcs:ignore WordPress.WP.GlobalVariablesOverride
@@ -60,17 +73,9 @@ class Admin_Menu implements Component {
 		if ( current_user_can( 'activate_plugins' ) ) {
 			( new Exclusions() )->init();
 
-			add_submenu_page( 'lwtv', 'Auto-Posting', 'Auto-Posting', 'activate_plugins', 'lwtv_auto_posting', array( $this, 'auto_posting_page' ) );
-
 			//phpcs:ignore WordPress.WP.GlobalVariablesOverride
 			$submenu['lwtv'][] = array( 'Scheduled Actions', 'read', admin_url( 'tools.php?page=action-scheduler' ) );
 		}
-
-		//phpcs:ignore WordPress.WP.GlobalVariablesOverride
-		$submenu['lwtv'][] = array( 'Documentation', 'read', esc_url( 'https://docs.lezwatchtv.com/' ) );
-
-		//phpcs:ignore WordPress.WP.GlobalVariablesOverride
-		$submenu['lwtv'][] = array( 'Slack', 'read', esc_url( 'https://lezwatchtv.slack.com/' ) );
 	}
 
 	/*
@@ -120,17 +125,6 @@ class Admin_Menu implements Component {
 		$my_hooks = array( 'toplevel_page_lwtv', 'lezwatch-tv_page_lwtv_auto_posting', 'lezwatch-tv_page_lwtv_data_check', 'lezwatch-tv_page_lwtv_monitor_check', 'lezwatch-tv_page_lwtv_exclusion_check' );
 		if ( in_array( $hook, $my_hooks, true ) ) {
 				wp_enqueue_style( 'lwtv_data_check_admin', LWTV_PLUGIN_URL . '/assets/css/lwtv-tools.css', array(), '1.2.0' );
-		}
-	}
-
-	/**
-	 * Auto-Posting Page
-	 *
-	 * @return void
-	 */
-	public function auto_posting_page(): void {
-		if ( null !== $this->auto_posting ) {
-			$this->auto_posting->render_page();
 		}
 	}
 }
