@@ -37,29 +37,24 @@ class Debug_Logging {
 	);
 
 	/**
-	 * Option name for enabled log topics.
+	 * CMB2 option key - all settings stored under this single option.
 	 */
-	private const OPTION_LOG_TOPICS = 'lwtv_debug_logging_topics';
+	public const OPTION_KEY = 'lwtv_debug_logging_options';
 
 	/**
-	 * Option name for debug mode toggle.
-	 */
-	private const OPTION_DEBUG_MODE = 'lwtv_debug_mode_enabled';
-
-	/**
-	 * Constructor - register form handler immediately.
+	 * Constructor
 	 */
 	public function __construct() {
-		add_action( 'admin_init', array( $this, 'handle_form_submission' ) );
+		// CMB2 handles form submission automatically
 	}
 
 	/**
-	 * Initialize the settings page.
+	 * Initialize the settings page
 	 *
 	 * @return void
 	 */
 	public function init(): void {
-		// Additional initialization if needed in the future
+		add_action( 'cmb2_admin_init', array( $this, 'lwtv_register_main_options_metabox' ) );
 	}
 
 	/**
@@ -67,233 +62,119 @@ class Debug_Logging {
 	 *
 	 * @return bool
 	 */
-	private function is_debug_mode_enabled(): bool {
+	public function is_debug_mode_enabled(): bool {
 		// WP_DEBUG takes precedence
 		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
 			return true;
 		}
 
-		return (bool) get_option( self::OPTION_DEBUG_MODE, false );
+		$options = get_option( self::OPTION_KEY, array() );
+		return ! empty( $options['debug_mode'] );
 	}
 
 	/**
-	 * Render the page.
+	 * Get the enabled log topics.
 	 *
-	 * @return void
+	 * @return array
 	 */
-	public function render_page(): void {
-		$debug_enabled  = $this->is_debug_mode_enabled();
-		$wp_debug_on    = defined( 'WP_DEBUG' ) && WP_DEBUG;
-		$enabled_topics = get_option( self::OPTION_LOG_TOPICS, array() );
-		$log_file       = WP_CONTENT_DIR . '/debug-lwtv.log';
-		$log_exists     = file_exists( $log_file );
-		?>
-		<div class="wrap">
-			<h1>Debug Logging</h1>
+	public function get_enabled_topics(): array {
+		$options = get_option( self::OPTION_KEY, array() );
+		$topics  = isset( $options['log_topics'] ) ? $options['log_topics'] : array();
 
-			<?php $this->render_notices(); ?>
-
-			<!-- Debug Mode Status -->
-			<div class="card" style="max-width: 800px; margin-bottom: 20px;">
-				<h2 style="margin-top: 0;">Debug Mode Status</h2>
-
-				<p>
-					<strong>Current Status:</strong>
-					<?php if ( $debug_enabled ) : ?>
-						<span style="color: #00a32a; font-weight: bold;">✓ ENABLED</span>
-					<?php else : ?>
-						<span style="color: #d63638; font-weight: bold;">✗ DISABLED</span>
-					<?php endif; ?>
-				</p>
-
-				<?php if ( $wp_debug_on ) : ?>
-					<p class="description">
-						<em>Note: WP_DEBUG is enabled in wp-config.php, so debug mode is always on.</em>
-					</p>
-				<?php else : ?>
-					<form method="post" action="">
-						<?php wp_nonce_field( 'lwtv_debug_toggle', 'lwtv_debug_nonce' ); ?>
-						<input type="hidden" name="lwtv_action" value="toggle_debug_mode">
-						<p>
-							<button type="submit" class="button <?php echo $debug_enabled ? 'button-secondary' : 'button-primary'; ?>">
-								<?php echo $debug_enabled ? 'Disable Debug Mode' : 'Enable Debug Mode'; ?>
-							</button>
-						</p>
-					</form>
-				<?php endif; ?>
-
-				<?php if ( $log_exists ) : ?>
-					<p class="description">
-						Log file: <code><?php echo esc_html( $log_file ); ?></code>
-						(<?php echo esc_html( size_format( filesize( $log_file ) ) ); ?>)
-					</p>
-				<?php else : ?>
-					<p class="description">
-						Log file will be created at: <code><?php echo esc_html( $log_file ); ?></code>
-					</p>
-				<?php endif; ?>
-			</div>
-
-			<!-- Log Topics Selection -->
-			<div class="card" style="max-width: 800px;">
-				<h2 style="margin-top: 0;">Log Topics</h2>
-
-				<p class="description">
-					Select which topics to log. If no topics are selected, <strong>all topics will be logged</strong>.
-				</p>
-
-				<form method="post" action="">
-					<?php wp_nonce_field( 'lwtv_topics_save', 'lwtv_topics_nonce' ); ?>
-					<input type="hidden" name="lwtv_action" value="save_topics">
-
-					<fieldset style="margin: 15px 0;">
-						<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
-							<?php foreach ( self::VALID_LOG_TOPICS as $topic ) : ?>
-								<label style="display: flex; align-items: center; gap: 6px;">
-									<input
-										type="checkbox"
-										name="log_topics[]"
-										value="<?php echo esc_attr( $topic ); ?>"
-										<?php checked( in_array( $topic, $enabled_topics, true ) ); ?>
-									>
-									<span><?php echo esc_html( ucwords( str_replace( '-', ' ', $topic ) ) ); ?></span>
-								</label>
-							<?php endforeach; ?>
-						</div>
-					</fieldset>
-
-					<p style="margin-top: 15px;">
-						<button type="submit" class="button button-primary">Save Topics</button>
-						<button type="button" class="button" id="lwtv-select-all">Select All</button>
-						<button type="button" class="button" id="lwtv-select-none">Clear All</button>
-					</p>
-				</form>
-			</div>
-		</div>
-
-		<script>
-		document.addEventListener('DOMContentLoaded', function() {
-			const checkboxes = document.querySelectorAll('input[name="log_topics[]"]');
-
-			document.getElementById('lwtv-select-all').addEventListener('click', function() {
-				checkboxes.forEach(function(cb) { cb.checked = true; });
-			});
-
-			document.getElementById('lwtv-select-none').addEventListener('click', function() {
-				checkboxes.forEach(function(cb) { cb.checked = false; });
-			});
-		});
-		</script>
-		<?php
-	}
-
-	/**
-	 * Render admin notices for form submission feedback.
-	 *
-	 * @return void
-	 */
-	private function render_notices(): void {
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		if ( ! isset( $_GET['lwtv_msg'] ) ) {
-			return;
+		// If no topics selected, return all valid topics
+		if ( empty( $topics ) ) {
+			return self::VALID_LOG_TOPICS;
 		}
 
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		$message = sanitize_text_field( wp_unslash( $_GET['lwtv_msg'] ) );
+		return array_intersect( $topics, self::VALID_LOG_TOPICS );
+	}
 
-		$notices = array(
-			'debug_enabled'  => array( 'success', 'Debug mode has been enabled.' ),
-			'debug_disabled' => array( 'success', 'Debug mode has been disabled.' ),
-			'topics_saved'   => array( 'success', 'Log topics have been saved.' ),
-		);
+	/**
+	 * Build description text with dynamic status info.
+	 *
+	 * @return string
+	 */
+	private function get_debug_mode_description(): string {
+		$log_file   = WP_CONTENT_DIR . '/debug-lwtv.log';
+		$log_exists = file_exists( $log_file );
 
-		if ( isset( $notices[ $message ] ) ) {
-			printf(
-				'<div class="notice notice-%s is-dismissible"><p>%s</p></div>',
-				esc_attr( $notices[ $message ][0] ),
-				esc_html( $notices[ $message ][1] )
+		$description = esc_html__( 'Enable debug logging for LWTV plugin.', 'lwtv-underscores' );
+
+		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+			$description .= '<br><strong>' . esc_html__( 'Note: WP_DEBUG is enabled in wp-config.php, so debug mode is always on.', 'lwtv-underscores' ) . '</strong>';
+		}
+
+		$description .= '<br><br>';
+
+		if ( $log_exists ) {
+			$description .= sprintf(
+				/* translators: 1: log file path, 2: file size */
+				esc_html__( 'Log file: %1$s (%2$s)', 'lwtv-underscores' ),
+				'<code>' . esc_html( $log_file ) . '</code>',
+				esc_html( size_format( filesize( $log_file ) ) )
+			);
+		} else {
+			$description .= sprintf(
+				/* translators: %s: log file path */
+				esc_html__( 'Log file will be created at: %s', 'lwtv-underscores' ),
+				'<code>' . esc_html( $log_file ) . '</code>'
 			);
 		}
+
+		return $description;
 	}
 
 	/**
-	 * Handle form submission.
+	 * Build options array for log topics multicheck field.
 	 *
-	 * @return void
+	 * @return array
 	 */
-	public function handle_form_submission(): void {
-		// Check if this is our form submission
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing
-		if ( ! isset( $_POST['lwtv_action'] ) ) {
-			return;
+	private function get_log_topics_options(): array {
+		$options = array();
+
+		foreach ( self::VALID_LOG_TOPICS as $topic ) {
+			$options[ $topic ] = ucwords( str_replace( '-', ' ', $topic ) );
 		}
 
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing
-		$action = sanitize_text_field( wp_unslash( $_POST['lwtv_action'] ) );
-
-		// Check capability
-		if ( ! current_user_can( 'activate_plugins' ) ) {
-			wp_die( 'You do not have permission to access this page.', 'Error', array( 'response' => 403 ) );
-		}
-
-		$redirect_url = admin_url( 'admin.php?page=lwtv_debug_logging' );
-
-		switch ( $action ) {
-			case 'toggle_debug_mode':
-				$this->handle_toggle_debug_mode( $redirect_url );
-				break;
-
-			case 'save_topics':
-				$this->handle_save_topics( $redirect_url );
-				break;
-		}
+		return $options;
 	}
 
 	/**
-	 * Handle debug mode toggle.
-	 *
-	 * @param string $redirect_url The URL to redirect to after processing.
+	 * Register the CMB2 options page and fields.
 	 *
 	 * @return void
 	 */
-	private function handle_toggle_debug_mode( string $redirect_url ): void {
-		// Verify nonce
-		if ( ! isset( $_POST['lwtv_debug_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['lwtv_debug_nonce'] ) ), 'lwtv_debug_toggle' ) ) {
-			wp_die( 'Security check failed.', 'Error', array( 'response' => 403 ) );
-		}
+	public function lwtv_register_main_options_metabox(): void {
+		$main_options = new_cmb2_box(
+			array(
+				'id'           => 'lwtv_debug_logging_options_page',
+				'title'        => esc_html__( 'Debug Logging', 'lwtv-underscores' ),
+				'object_types' => array( 'options-page' ),
+				'option_key'   => self::OPTION_KEY,
+				'parent_slug'  => 'lwtv',
+				'menu_title'   => esc_html__( 'Debug Logging', 'lwtv-underscores' ),
+				'capability'   => 'activate_plugins',
+				'show_names'   => true,
+			)
+		);
 
-		$current = (bool) get_option( self::OPTION_DEBUG_MODE, false );
-		$new_val = ! $current;
+		$main_options->add_field(
+			array(
+				'name' => esc_html__( 'Debug Mode', 'lwtv-underscores' ),
+				'desc' => $this->get_debug_mode_description(),
+				'id'   => 'debug_mode',
+				'type' => 'checkbox',
+			)
+		);
 
-		update_option( self::OPTION_DEBUG_MODE, $new_val );
-
-		$message = $new_val ? 'debug_enabled' : 'debug_disabled';
-		wp_safe_redirect( add_query_arg( 'lwtv_msg', $message, $redirect_url ) );
-		exit;
-	}
-
-	/**
-	 * Handle saving log topics.
-	 *
-	 * @param string $redirect_url The URL to redirect to after processing.
-	 *
-	 * @return void
-	 */
-	private function handle_save_topics( string $redirect_url ): void {
-		// Verify nonce
-		if ( ! isset( $_POST['lwtv_topics_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['lwtv_topics_nonce'] ) ), 'lwtv_topics_save' ) ) {
-			wp_die( 'Security check failed.', 'Error', array( 'response' => 403 ) );
-		}
-
-		// Get and sanitize topics
-		$submitted_topics = isset( $_POST['log_topics'] ) ? array_map( 'sanitize_text_field', wp_unslash( $_POST['log_topics'] ) ) : array();
-
-		// Only keep valid topics
-		$valid_topics = array_intersect( $submitted_topics, self::VALID_LOG_TOPICS );
-
-		update_option( self::OPTION_LOG_TOPICS, $valid_topics );
-
-		wp_safe_redirect( add_query_arg( 'lwtv_msg', 'topics_saved', $redirect_url ) );
-		exit;
+		$main_options->add_field(
+			array(
+				'name'    => esc_html__( 'Log Topics', 'lwtv-underscores' ),
+				'desc'    => esc_html__( 'Select which topics to log. If no topics are selected, all topics will be logged.', 'lwtv-underscores' ),
+				'id'      => 'log_topics',
+				'type'    => 'multicheck',
+				'options' => $this->get_log_topics_options(),
+			)
+		);
 	}
 }
