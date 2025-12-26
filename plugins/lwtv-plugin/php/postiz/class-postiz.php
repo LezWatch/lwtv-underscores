@@ -298,12 +298,70 @@ class Postiz {
 		);
 
 		if ( 'otd' === $purpose && null !== $type ) {
-			$tags[] = ( new Of_The_Day() )->create_tag( $type );
+			// Inline tag creation to avoid instantiating Of_The_Day (which registers hooks in constructor)
+			$tags[] = $this->create_otd_tag( $type );
 		} else {
-			$tags[] = ( new New_Post() )->create_tag( $post_id );
+			// Inline tag creation to avoid instantiating New_Post (which registers hooks in constructor)
+			$tags[] = $this->create_new_post_tag( $post_id );
 		}
 
 		return $tags;
+	}
+
+	/**
+	 * Create a tag for the OTD
+	 *
+	 * Inlined here to avoid instantiating Of_The_Day class which registers hooks.
+	 *
+	 * @param string $type The type of OTD (character, show)
+	 * @return array The tag array with 'value' and 'label' keys
+	 */
+	private function create_otd_tag( $type ) {
+		switch ( $type ) {
+			case 'character':
+				return array(
+					'value' => '#LWTVcotd',
+					'label' => '#LWTVcotd',
+				);
+			case 'show':
+				return array(
+					'value' => '#LWTVsotd',
+					'label' => '#LWTVsotd',
+				);
+			default:
+				return array();
+		}
+	}
+
+	/**
+	 * Create a tag for a new post
+	 *
+	 * Inlined here to avoid instantiating New_Post class which registers hooks.
+	 *
+	 * @param int $post_id The post ID
+	 * @return array The tag array
+	 */
+	private function create_new_post_tag( $post_id ) {
+		$post_type = get_post_type( $post_id );
+
+		switch ( $post_type ) {
+			case 'post':
+				return array(
+					'value' => '#NewPost',
+					'label' => '#NewPost',
+				);
+			case 'post_type_shows':
+				$show_name = get_the_title( $post_id );
+				$show_name = str_replace( ' ', '', $show_name );
+				$show_name = strtolower( $show_name );
+				$show_tag  = '#' . $show_name;
+				return array(
+					'value' => $show_tag,
+					'label' => $show_tag,
+				);
+			default:
+				return array();
+		}
 	}
 
 	/**
@@ -429,11 +487,22 @@ class Postiz {
 		// Loop through the posts and check if the content matches
 		foreach ( $posts as $post ) {
 			lwtv_plugin()->debug_log( 'postiz', 'Checking if OTD already exists in Postiz: ' . wp_json_encode( $post ) );
+
+			// Check if the post is empty or not published
 			if ( empty( $post['content'] ) || 'published' !== $post['status'] ) {
+				lwtv_plugin()->debug_log( 'postiz', 'Post is empty or not published: ' . wp_json_encode( $post ) );
 				continue;
 			}
 
+			// Check if the content matches the content
 			if ( $post['content'] === $content ) {
+				lwtv_plugin()->debug_log( 'postiz', 'OTD already exists in Postiz: ' . wp_json_encode( $post ) );
+				return true;
+			}
+
+			// Check if the content contains the post name from the ID
+			$post_name_from_id = get_the_title( $post['id'] );
+			if ( str_contains( $post['content'], $post_name_from_id ) ) {
 				lwtv_plugin()->debug_log( 'postiz', 'OTD already exists in Postiz: ' . wp_json_encode( $post ) );
 				return true;
 			}
