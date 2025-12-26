@@ -12,27 +12,48 @@ class Privacy {
 	/**
 	 * Make Private
 	 *
-	 * @param  int $post_id
+	 * Updates the post status based on privacy settings.
+	 * Only calls wp_update_post() when the status actually needs to change
+	 * to avoid expensive unnecessary database writes.
+	 *
+	 * @param  int         $post_id The post ID.
+	 * @param  string|bool $set     'check' to auto-determine, true for private, false for publish.
 	 * @return void
 	 */
 	public function make( $post_id, $set ) {
-		$privacy      = get_post_meta( $post_id, 'lezactors_make_option_private', true );
-		$privacy_date = get_post_meta( $post_id, 'lezactors_make_option_private_date', true );
-		$post_object  = get_post( $post_id );
+		$privacy        = get_post_meta( $post_id, 'lezactors_make_option_private', true );
+		$privacy_date   = get_post_meta( $post_id, 'lezactors_make_option_private_date', true );
+		$current_status = get_post_status( $post_id );
+		$new_status     = $current_status; // Default: no change
+
+		// Determine if the post should be private based on privacy meta.
+		$should_be_private = is_array( $privacy ) && in_array( 'hide_all', $privacy, true );
 
 		if ( 'check' === $set ) {
-			if ( is_array( $privacy ) && in_array( 'hide_all', $privacy, true ) && 'private' !== get_post_status( $post_id ) ) {
-				$post_object->post_status = 'private';
-			} elseif ( 'private' === get_post_status( $post_id ) ) {
-				$post_object->post_status = 'publish';
+			// Auto-determine based on privacy settings.
+			if ( $should_be_private && 'private' !== $current_status ) {
+				// Needs to be private but isn't.
+				$new_status = 'private';
+			} elseif ( ! $should_be_private && 'private' === $current_status ) {
+				// No longer needs to be private, restore to publish.
+				$new_status = 'publish';
 			}
+			// If status matches what it should be, do nothing.
 		} elseif ( true === $set ) {
-			$post_object->post_status = 'private';
+			$new_status = 'private';
 		} else {
-			$post_object->post_status = 'publish';
+			$new_status = 'publish';
 		}
 
-		wp_update_post( $post_object );
+		// ONLY update if status actually changed to avoid expensive wp_update_post().
+		if ( $new_status !== $current_status ) {
+			wp_update_post(
+				array(
+					'ID'          => $post_id,
+					'post_status' => $new_status,
+				)
+			);
+		}
 
 		// If the post is private, and $privacy_date is EMPTY, set it to the current date.
 		if ( 'private' === get_post_status( $post_id ) && empty( $privacy_date ) ) {

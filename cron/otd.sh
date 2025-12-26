@@ -18,6 +18,9 @@ cd /home/wp_bg3hrq/lezwatchtv.com || {
 
     # We call 'wp' directly. We use --path to ensure it finds the right site.
     # The '2>&1' at the end of the block captures all output.
+
+    # Flush the cache to ensure we have the latest data.
+    /usr/bin/wp cache flush --path=/home/wp_bg3hrq/lezwatchtv.com/
     # Add --debug to see more information.
     /usr/bin/wp lwtv generate otd --path=/home/wp_bg3hrq/lezwatchtv.com/
 
