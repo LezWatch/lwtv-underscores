@@ -50,7 +50,13 @@
   "dependencies": {
     "@npmcli/fs": "^5",
     "@popperjs/core": "^2.11.8",
+    "@wordpress/block-editor": "^15.10.0",
     "@wordpress/components": "^31.0.0",
+    "@wordpress/data": "^10.37.0",
+    "@wordpress/editor": "^14.37.0",
+    "@wordpress/element": "^6.37.0",
+    "@wordpress/plugins": "^7.37.0",
+    "@wordpress/server-side-render": "^6.13.0",
     "chart.js": "^4.4",
     "chartjs-plugin-annotation": "^3",
     "coffeescript": "^2.7.0",
