@@ -8,7 +8,7 @@
     "packages": [
         {
             "name": "johngrogg/ics-parser",
-            "version": "v3.5.1",
+            "version": "v3.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/u01jmg3/ics-parser.git",
@@ -60,7 +60,7 @@
             ],
             "support": {
                 "issues": "https://github.com/u01jmg3/ics-parser/issues",
-                "source": "https://github.com/u01jmg3/ics-parser/tree/v3.5.1"
+                "source": "https://github.com/u01jmg3/ics-parser/tree/v3.5.0"
             },
             "funding": [
                 {
