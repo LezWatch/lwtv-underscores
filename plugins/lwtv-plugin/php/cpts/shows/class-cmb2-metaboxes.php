@@ -654,14 +654,7 @@ class CMB2_Metaboxes {
 				),
 			)
 		);
-		// Basic Show Details Grid.
-		if ( ! is_admin() ) {
-			return;
-		} else {
-			$grid_f_plot = new \Forked\CMB2\CMB2Grid\Grid\Cmb2Grid( $cmb_f_shiplots );
-			$rows_f_plot = $grid_f_plot->addRow();
-			$rows_f_plot->addColumns( array( $field_timeline, $field_episodes ) );
-		}
+		// NO GRID - WYSIWYG fields don't work in CMB2Grid with Gutenberg.
 	}
 
 	/**
@@ -698,12 +691,7 @@ class CMB2_Metaboxes {
 			array(
 				'name'       => 'Realness Details',
 				'id'         => self::PREFIX . 'realness_details',
-				'type'       => 'wysiwyg',
-				'options'    => array(
-					'textarea_rows' => 5,
-					'media_buttons' => false,
-					'teeny'         => true,
-				),
+				'type'       => 'textarea_small',
 				'attributes' => array(
 					'placeholder' => 'Explain the rating (optional).',
 				),
@@ -724,12 +712,7 @@ class CMB2_Metaboxes {
 			array(
 				'name'       => 'Quality Details',
 				'id'         => self::PREFIX . 'quality_details',
-				'type'       => 'wysiwyg',
-				'options'    => array(
-					'textarea_rows' => 5,
-					'media_buttons' => false,
-					'teeny'         => true,
-				),
+				'type'       => 'textarea_small',
 				'attributes' => array(
 					'placeholder' => 'Explain the rating (optional).',
 				),
@@ -750,12 +733,7 @@ class CMB2_Metaboxes {
 			array(
 				'name'       => 'Screentime Details',
 				'id'         => self::PREFIX . 'screentime_details',
-				'type'       => 'wysiwyg',
-				'options'    => array(
-					'textarea_rows' => 5,
-					'media_buttons' => false,
-					'teeny'         => true,
-				),
+				'type'       => 'textarea_small',
 				'attributes' => array(
 					'placeholder' => 'Explain the rating (optional).',
 				),
