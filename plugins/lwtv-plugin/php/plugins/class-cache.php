@@ -172,6 +172,60 @@ class Cache {
 	}
 
 	/**
+	 * Invalidate object cache for related posts
+	 *
+	 * Uses WordPress clean_post_cache() to invalidate Redis object cache
+	 * for the post and its related actors/shows. This ensures that post meta
+	 * changes are immediately reflected when viewing related pages.
+	 *
+	 * @param int $post_id The post ID
+	 * @return void
+	 */
+	public function invalidate_object_cache_for_related_posts( int $post_id ): void {
+		// Clean the post's own cache
+		clean_post_cache( $post_id );
+
+		$post_type = get_post_type( $post_id );
+
+		// For characters, also clean related actors and shows
+		if ( 'post_type_characters' === $post_type ) {
+			$actors = get_post_meta( $post_id, 'lezchars_actor', true );
+			if ( is_array( $actors ) ) {
+				foreach ( $actors as $actor_id ) {
+					clean_post_cache( (int) $actor_id );
+				}
+			}
+
+			$show_group = get_post_meta( $post_id, 'lezchars_show_group', true );
+			if ( is_array( $show_group ) ) {
+				foreach ( $show_group as $show ) {
+					if ( isset( $show['show'] ) ) {
+						$show_id = is_array( $show['show'] ) ? $show['show'][0] : $show['show'];
+						clean_post_cache( (int) $show_id );
+					}
+				}
+			}
+
+			lwtv_plugin()->error_log( 'object-cache', "Invalidated object cache for character ID: {$post_id} and related actors/shows" );
+		}
+
+		// For actors/shows, also clean related characters
+		if ( in_array( $post_type, array( 'post_type_actors', 'post_type_shows' ), true ) ) {
+			$shadow_chars = \Shadow_Taxonomy\Core\get_the_posts( $post_id, Characters::SHADOW_TAXONOMY, Characters::SLUG );
+
+			if ( is_array( $shadow_chars ) ) {
+				foreach ( $shadow_chars as $item ) {
+					if ( isset( $item->ID ) && ! empty( $item->ID ) ) {
+						clean_post_cache( (int) $item->ID );
+					}
+				}
+			}
+
+			lwtv_plugin()->error_log( 'object-cache', "Invalidated object cache for {$post_type} ID: {$post_id} and related characters" );
+		}
+	}
+
+	/**
 	 * Clear the Cache
 	 *
 	 * This is a wrapper so we can call the other cache clearing functions from one place.

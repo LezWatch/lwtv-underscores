@@ -56,6 +56,9 @@ class Cache_Queue {
 			self::$urls_to_clear = array_merge( self::$urls_to_clear, $urls );
 		}
 
+		// Invalidate object cache (Redis) for this post and related posts
+		( new Cache() )->invalidate_object_cache_for_related_posts( $post_id );
+
 		lwtv_plugin()->error_log( 'cache-queue', "Queued cache invalidation for post ID: {$post_id}" );
 	}
 
