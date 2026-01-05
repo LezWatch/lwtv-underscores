@@ -33,11 +33,11 @@ class Cache_Task {
 		$post_type = get_post_type( $post_id );
 
 		if ( ! $post_type ) {
-			lwtv_plugin()->error_log( 'cache-task', "Invalid post ID: {$post_id}" );
+			lwtv_plugin()->debug_log( 'caching', "Invalid post ID: {$post_id}" );
 			return;
 		}
 
-		lwtv_plugin()->error_log( 'cache-task', "Processing cache task for {$post_type} ID: {$post_id}" );
+		lwtv_plugin()->debug_log( 'caching', "Processing cache task for {$post_type} ID: {$post_id}" );
 
 		// Get a list of URLs to flush
 		$clear_urls = ( new Cache() )->collect_cache_urls_for_actors_or_shows( $post_id );
@@ -46,9 +46,9 @@ class Cache_Task {
 		if ( isset( $clear_urls ) && ! empty( $clear_urls ) ) {
 			( new Cache() )->clean_related_urls_for_cpts( $post_id, $clear_urls );
 			$clear_url_count = count( $clear_urls );
-			lwtv_plugin()->error_log( 'cache-task', "Successfully cleared cache for {$post_type} ID: {$post_id} - {$clear_url_count} URLs" );
+			lwtv_plugin()->debug_log( 'caching', "Successfully cleared cache for {$post_type} ID: {$post_id} - {$clear_url_count} URLs" );
 		} else {
-			lwtv_plugin()->error_log( 'cache-task', "No cache URLs to clear for {$post_type} ID: {$post_id}" );
+			lwtv_plugin()->debug_log( 'caching', "No cache URLs to clear for {$post_type} ID: {$post_id}" );
 		}
 	}
 }

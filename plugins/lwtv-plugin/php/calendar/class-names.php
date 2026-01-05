@@ -63,12 +63,13 @@ class Names {
 		$show_name = $name;
 		$show_id   = 0;
 
-		$tvmaze_obj = get_page_by_path( sanitize_title( $name ), OBJECT, 'post_type_tvmaze' );
+		$sanitized_slug = sanitize_title( $name );
+		$tvmaze_obj     = get_page_by_path( $sanitized_slug, OBJECT, 'post_type_tvmaze' );
 
 		// If there is a TV Maze entry already, we use it.
 		if ( isset( $tvmaze_obj->ID ) && 0 !== $tvmaze_obj->ID && 'publish' === get_post_status( $tvmaze_obj->ID ) ) {
 			$post_id = $tvmaze_obj->ID;
-			$show    = Calendar_Meta_Batcher::get_meta( $post_id, 'leztvmaze_our_show', array() );
+			$show    = get_post_meta( $post_id, 'leztvmaze_our_show', true );
 
 			if ( isset( $show[0] ) && 0 !== $show[0] ) {
 				$show_id   = $show[0];

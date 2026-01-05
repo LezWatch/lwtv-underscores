@@ -6,6 +6,8 @@
 
 namespace LWTV\_Components;
 
+use LWTV\Admin_Menu\Auto_Posting;
+use LWTV\Admin_Menu\Debug_Logging;
 use LWTV\Admin_Menu\Exclusions;
 use LWTV\Admin_Menu\Validation;
 
@@ -16,12 +18,28 @@ class Admin_Menu implements Component {
 	 */
 	protected $page_id = null;
 
+	/**
+	 * Auto_Posting instance
+	 *
+	 * @var Auto_Posting
+	 */
+	protected $auto_posting = null;
+
+	/**
+	 * Debug_Logging instance
+	 *
+	 * @var Debug_Logging
+	 */
+	protected $debug_logging = null;
+
 	/*
 	 * Construct
 	 */
 	public function init() {
 		add_action( 'admin_menu', array( $this, 'add_settings_page' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
+		( new Auto_Posting() )->init();
+		( new Debug_Logging() )->init();
 	}
 
 	/*
@@ -37,27 +55,15 @@ class Admin_Menu implements Component {
 
 		add_submenu_page( 'lwtv', 'Welcome', 'Welcome', 'read', 'lwtv', array( $this, 'settings_page' ) );
 
-		//phpcs:ignore WordPress.WP.GlobalVariablesOverride
-		$submenu['lwtv'][] = array( 'Monitors', 'read', esc_url( 'https://status.lezwatch.tv/status/lwtv-admin' ) );
-
 		( new Validation() )->init();
 
 		// Only admins can access this part:
 		if ( current_user_can( 'activate_plugins' ) ) {
-			( new Exclusions() )->init();
-
 			//phpcs:ignore WordPress.WP.GlobalVariablesOverride
 			$submenu['lwtv'][] = array( 'Scheduled Actions', 'read', admin_url( 'tools.php?page=action-scheduler' ) );
+
+			( new Exclusions() )->init();
 		}
-
-		//phpcs:ignore WordPress.WP.GlobalVariablesOverride
-		$submenu['lwtv'][] = array( 'Documentation', 'read', esc_url( 'https://docs.lezwatchtv.com/' ) );
-
-		//phpcs:ignore WordPress.WP.GlobalVariablesOverride
-		$submenu['lwtv'][] = array( 'Slack', 'read', esc_url( 'https://lezwatchtv.slack.com/' ) );
-
-		//phpcs:ignore WordPress.WP.GlobalVariablesOverride
-		$submenu['lwtv'][] = array( 'Status Page', 'read', esc_url( 'https://status.lezwatch.tv/' ) );
 	}
 
 	/*
@@ -75,22 +81,38 @@ class Admin_Menu implements Component {
 
 				<p>If you're reading this page, it's because you're here to help make the LWTV world a little better. We love you for it.</p>
 
-				<p>There are some links to the side for handy-dandy tools that may help you along your way to better understanding everything that goes in to making LezWatch.TV so shucky-darn awesome.</p>
+				<table class="widefat striped">
+					<thead>
+						<tr><th colspan="2">Documentation and Support</th></tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td><a href="https://docs.lezwatchtv.com/" target="_blank">Documentation</a></td>
+							<td>Site specific documentation including how to use the tools, editing guides, and more.</td>
+						</tr>
+						<tr>
+							<td><a href="https://slack.lezwatchtv.com/" target="_blank">Slack</a></td>
+							<td>Our Slack workspace. This is where you can get help from the team and other editors.</td>
+						</tr>
+						<tr>
+							<td><a href="https://uptime.ipstenu.com/status/lwtv-admin" target="_blank">Admin Monitors</a></td>
+							<td>These are used to check the status of the services outside of the site (TVMaze etc).</td>
+						</tr>
+						<tr>
+							<td><a href="https://status.lezwatchtv.com/" target="_blank">Public Monitors</a></td>
+							<td>These are used to check the status of the site itself. It runs on GitHub actions and is monitored by our Admin Monitors.</td>
+						</tr>
+					</tbody>
+					<tfoot>
+						<tr>
+							<td colspan="2" class="footer">
+								<p>If you have any questions, give us a shout in the <code>#editors</code> channel in Slack! Remember, there are no bad questions, just bad documentation.</p>
+							</td>
+						</tr>
+					</tfoot>
+				</table>
 
-				<p>As always, if you have any questions, give us a shout in the <code>#editors</code> channel in Slack! Remember, there are no bad questions, just bad documentation.</p>
-
-				<ul>
-				<?php
-				echo '<li><a href="' . esc_url( admin_url( 'admin.php?page=lwtv_data_check' ) ) . '">Data Validation</a></li>';
-
-				echo '<li><a href="https://status.lezwatch.tv/" target="_blank">Monitor Status</a></li>';
-
-				// Only admins can access this part:
-				if ( current_user_can( 'activate_plugins' ) ) {
-					echo '<li><a href="' . esc_url( admin_url( 'admin.php?page=lwtv_exclusion_check' ) ) . '">Exclusion Checker</a></li>';
-				}
-				?>
-				</ul>
+				<p>&nbsp;</p>
 			</div>
 		</div>
 		<?php
@@ -104,9 +126,9 @@ class Admin_Menu implements Component {
 	 */
 	public function admin_enqueue_scripts( $hook ) {
 		// Load only on /admin.php?page=lwtv_data_check
-		$my_hooks = array( 'toplevel_page_lwtv', 'lezwatch-tv_page_lwtv_data_check', 'lezwatch-tv_page_lwtv_monitor_check', 'lezwatch-tv_page_lwtv_exclusion_check' );
+		$my_hooks = array( 'toplevel_page_lwtv', 'lezwatch-tv_page_lwtv_auto_posting', 'lezwatch-tv_page_lwtv_data_check', 'lezwatch-tv_page_lwtv_monitor_check', 'lezwatch-tv_page_lwtv_exclusion_check' );
 		if ( in_array( $hook, $my_hooks, true ) ) {
-				wp_enqueue_style( 'lwtv_data_check_admin', LWTV_PLUGIN_URL . '/assets/css/lwtv-tools.css', array(), '1.0.0' );
+				wp_enqueue_style( 'lwtv_data_check_admin', LWTV_PLUGIN_URL . '/assets/css/lwtv-tools.css', array(), '1.2.0' );
 		}
 	}
 }

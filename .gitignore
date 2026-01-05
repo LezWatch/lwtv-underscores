@@ -14,7 +14,6 @@ Thumbs.db
 *.bak
 *.swp
 
-
 /node_modules/
 /.sass-cache/
 /npm-debug.log
@@ -30,6 +29,8 @@ debug.log
 /plugins/**/node_modules/
 /plugins/lwtv-plugin/php/blocks/build/*
 
+## Symbolicons files to ignore
+/symbolicons/*.svg
 
 # large/disallowed file types
 # a CDN should be used for these

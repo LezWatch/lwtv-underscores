@@ -64,7 +64,7 @@ class Stations {
 			$results = $wpdb->get_results( $query, ARRAY_A );
 
 			if ( false === $results ) {
-				lwtv_plugin()->error_log( 'stations-error', 'Query failed: ' . $wpdb->last_error );
+				lwtv_plugin()->debug_log( 'statistics', 'Query failed: ' . $wpdb->last_error );
 				return array();
 			}
 
@@ -73,7 +73,7 @@ class Stations {
 
 			return $results;
 		} catch ( \Exception $e ) {
-			lwtv_plugin()->error_log( 'stations-error', 'Query failed: ' . $wpdb->last_error );
+			lwtv_plugin()->error_log( 'statistics', 'Query failed: ' . $wpdb->last_error );
 			return array();
 		}
 	}
@@ -88,7 +88,7 @@ class Stations {
 	 * @return array Station detailed data
 	 */
 	public function get_station_details( $station_slug, $format, $view ) {
-		lwtv_plugin()->error_log( 'stations-debug', 'Getting station details for ' . $station_slug . ' with format: ' . $format . ' and view: ' . $view );
+		lwtv_plugin()->debug_log( 'statistics', 'Getting station details for ' . $station_slug . ' with format: ' . $format . ' and view: ' . $view );
 
 		// Sanitize input
 		$station_slug = sanitize_text_field( $station_slug );
@@ -98,7 +98,7 @@ class Stations {
 		$cached_data = lwtv_plugin()->get_transient( $cache_key );
 
 		if ( false !== $cached_data ) {
-			lwtv_plugin()->error_log( 'stations-debug', 'Cached data found for ' . $station_slug . ': ' . $cache_key );
+			lwtv_plugin()->debug_log( 'statistics', 'Cached data found for ' . $station_slug . ': ' . $cache_key );
 			return $cached_data;
 		}
 
@@ -107,7 +107,7 @@ class Stations {
 			$basic_data = $this->get_station_basic_data( $station_slug );
 
 			if ( empty( $basic_data ) ) {
-				lwtv_plugin()->error_log( 'stations-error', 'Basic data query failed for station: ' . $station_slug );
+				lwtv_plugin()->debug_log( 'statistics', 'Basic data query failed for station: ' . $station_slug );
 				return array();
 			}
 
@@ -129,7 +129,7 @@ class Stations {
 
 			return $return_data;
 		} catch ( \Exception $e ) {
-			lwtv_plugin()->error_log( 'stations-error', 'Query failed: ' . $e->getMessage() );
+			lwtv_plugin()->error_log( 'statistics', 'Query failed: ' . $e->getMessage() );
 			return array();
 		}
 	}
@@ -146,7 +146,7 @@ class Stations {
 		$station_data  = $detailed_data;
 
 		if ( empty( $station_data ) ) {
-			lwtv_plugin()->error_log( 'stations-error', 'No data found for station: ' . $clean_station );
+			lwtv_plugin()->debug_log( 'statistics', 'No data found for station: ' . $clean_station );
 			return 'count' === $format ? 0 : array();
 		}
 
@@ -174,7 +174,7 @@ class Stations {
 				break;
 		}
 
-		lwtv_plugin()->error_log( 'stations-debug', 'Prepared station data: ' . $format . ' ' . $view );
+		lwtv_plugin()->debug_log( 'statistics', 'Prepared station data: ' . $format . ' ' . $view );
 
 		// If format is 'array', return raw data
 		if ( 'array' === $format ) {
@@ -206,7 +206,7 @@ class Stations {
 
 		// If cached data is found, return it
 		if ( false !== $cached_data ) {
-			lwtv_plugin()->error_log( 'formats-debug', 'Cached data found for ' . $cache_key );
+			lwtv_plugin()->debug_log( 'statistics', 'Cached data found for ' . $cache_key );
 			return $cached_data;
 		}
 
@@ -253,7 +253,7 @@ class Stations {
 			$results = $wpdb->get_results( $query, ARRAY_A );
 
 			if ( false === $results || empty( $results ) ) {
-				lwtv_plugin()->error_log( 'stations-error', 'Basic data query failed for station: ' . $station_slug . ' - Last error: ' . $wpdb->last_error );
+				lwtv_plugin()->debug_log( 'statistics', 'Basic data query failed for station: ' . $station_slug . ' - Last error: ' . $wpdb->last_error );
 				return array();
 			}
 
@@ -261,7 +261,7 @@ class Stations {
 
 			return $results[0];
 		} catch ( \Exception $e ) {
-			lwtv_plugin()->error_log( 'stations-error', 'Basic data query failed for station: ' . $station_slug . ' - Last error: ' . $e->getMessage() );
+			lwtv_plugin()->error_log( 'statistics', 'Basic data query failed for station: ' . $station_slug . ' - Last error: ' . $e->getMessage() );
 			return array();
 		}
 	}
@@ -307,7 +307,7 @@ class Stations {
 
 		// If cached data is found, return it
 		if ( false !== $cached_data ) {
-			lwtv_plugin()->error_log( 'formats-debug', 'Cached data found for ' . $cache_key );
+			lwtv_plugin()->debug_log( 'statistics', 'Cached data found for ' . $cache_key );
 			return $cached_data;
 		}
 
@@ -340,7 +340,7 @@ class Stations {
 			$results = $wpdb->get_results( $query, ARRAY_A );
 
 			if ( false === $results ) {
-				lwtv_plugin()->error_log( 'stations-error', 'Tropes breakdown query failed for station: ' . $station_slug );
+				lwtv_plugin()->debug_log( 'statistics', 'Tropes breakdown query failed for station: ' . $station_slug );
 				return array();
 			}
 
@@ -358,7 +358,7 @@ class Stations {
 
 			return $formatted_results;
 		} catch ( \Exception $e ) {
-			lwtv_plugin()->error_log( 'stations-error', 'Tropes breakdown query failed for station: ' . $station_slug . ' - Last error: ' . $wpdb->last_error );
+			lwtv_plugin()->error_log( 'statistics', 'Tropes breakdown query failed for station: ' . $station_slug . ' - Last error: ' . $wpdb->last_error );
 			return array();
 		}
 	}
@@ -380,7 +380,7 @@ class Stations {
 
 		// If cached data is found, return it
 		if ( false !== $cached_data ) {
-			lwtv_plugin()->error_log( 'formats-debug', 'Cached data found for ' . $cache_key );
+			lwtv_plugin()->debug_log( 'statistics', 'Cached data found for ' . $cache_key );
 			return $cached_data;
 		}
 
@@ -413,7 +413,7 @@ class Stations {
 			$results = $wpdb->get_results( $query, ARRAY_A );
 
 			if ( false === $results ) {
-				lwtv_plugin()->error_log( 'stations-error', 'Formats breakdown query failed for station: ' . $station_slug );
+				lwtv_plugin()->debug_log( 'statistics', 'Formats breakdown query failed for station: ' . $station_slug );
 				return array();
 			}
 
@@ -431,7 +431,7 @@ class Stations {
 
 			return $formatted_results;
 		} catch ( \Exception $e ) {
-			lwtv_plugin()->error_log( 'stations-error', 'Formats breakdown query failed for station: ' . $station_slug . ' - Last error: ' . $wpdb->last_error );
+			lwtv_plugin()->error_log( 'statistics', 'Formats breakdown query failed for station: ' . $station_slug . ' - Last error: ' . $wpdb->last_error );
 			return array();
 		}
 	}
@@ -476,7 +476,7 @@ class Stations {
 
 		// If cached data is found, return it
 		if ( false !== $cached_data ) {
-			lwtv_plugin()->error_log( 'formats-debug', 'Cached data found for ' . $cache_key );
+			lwtv_plugin()->debug_log( 'statistics', 'Cached data found for ' . $cache_key );
 			return $cached_data;
 		}
 
@@ -504,7 +504,7 @@ class Stations {
 
 			return $clean_results;
 		} catch ( \Exception $e ) {
-			lwtv_plugin()->error_log( 'stations-error', 'Shows query failed for station: ' . $station_slug . ' - Last error: ' . $wpdb->last_error );
+			lwtv_plugin()->error_log( 'statistics', 'Shows query failed for station: ' . $station_slug . ' - Last error: ' . $wpdb->last_error );
 			return array();
 		}
 	}
@@ -521,13 +521,13 @@ class Stations {
 
 		$station_slug = ltrim( $station_slug, '_' );
 
-		// Create cache key
-		$cache_key   = 'station_shows_' . $station_slug;
+		// Create cache key - unique per station and meta_key type
+		$cache_key   = 'station_meta_' . $station_slug . '_' . str_replace( 'lezshows_char_', '', $meta_key );
 		$cached_data = lwtv_plugin()->get_transient( $cache_key );
 
 		// If cached data is found, return it
 		if ( false !== $cached_data ) {
-			lwtv_plugin()->error_log( 'formats-debug', 'Cached data found for ' . $cache_key );
+			lwtv_plugin()->debug_log( 'statistics', 'Cached data found for ' . $cache_key );
 			return $cached_data;
 		}
 
@@ -555,7 +555,7 @@ class Stations {
 			$results = $wpdb->get_results( $query, ARRAY_A );
 
 			if ( false === $results || empty( $results ) ) {
-				lwtv_plugin()->error_log( 'stations-error', 'Meta breakdown query failed for station: ' . $station_slug );
+				lwtv_plugin()->debug_log( 'statistics', 'Meta breakdown query failed for station: ' . $station_slug );
 				return array();
 			}
 
@@ -573,9 +573,28 @@ class Stations {
 				}
 			}
 
-			return $aggregated_data;
+			// Determine URL prefix based on meta_key
+			$url_prefix = 'gender';
+			if ( 'lezshows_char_sexuality' === $meta_key ) {
+				$url_prefix = 'sexuality';
+			}
+
+			// Format results for consistency with other breakdowns
+			$formatted_results = array();
+			foreach ( $aggregated_data as $key => $count ) {
+				$formatted_results[] = array(
+					'name'  => ucwords( str_replace( '-', ' ', $key ) ),
+					'count' => (int) $count,
+					'url'   => home_url( '/' . $url_prefix . '/' . $key . '/' ),
+					'slug'  => $key,
+				);
+			}
+
+			lwtv_plugin()->set_transient( $cache_key, $formatted_results, DAY_IN_SECONDS );
+
+			return $formatted_results;
 		} catch ( \Exception $e ) {
-			lwtv_plugin()->error_log( 'stations-error', 'Meta breakdown query failed for station: ' . $station_slug . ' - Last error: ' . $wpdb->last_error );
+			lwtv_plugin()->error_log( 'statistics', 'Meta breakdown query failed for station: ' . $station_slug . ' - Last error: ' . $wpdb->last_error );
 			return array();
 		}
 	}
@@ -595,7 +614,7 @@ class Stations {
 
 		// If cached data is found, return it
 		if ( false !== $cached_data ) {
-			lwtv_plugin()->error_log( 'formats-debug', 'Cached data found for ' . $cache_key );
+			lwtv_plugin()->debug_log( 'statistics', 'Cached data found for ' . $cache_key );
 			return (array) $cached_data;
 		}
 
@@ -626,7 +645,7 @@ class Stations {
 
 			return $results;
 		} catch ( \Exception $e ) {
-			lwtv_plugin()->error_log( 'stations-error', 'Top stations query failed for number: ' . $number . ' - Last error: ' . $wpdb->last_error );
+			lwtv_plugin()->error_log( 'statistics', 'Top stations query failed for number: ' . $number . ' - Last error: ' . $wpdb->last_error );
 			return array();
 		}
 	}

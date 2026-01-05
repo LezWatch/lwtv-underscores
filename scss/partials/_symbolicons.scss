@@ -1402,9 +1402,19 @@
     height: 20px;
 }
 
-.svg-keynote {
+.svg-keyhole-alt {
     @extend %svg-common;
     background-position: 47.05882352941177% 68.75%;
+}
+
+.svg-keyhole-alt-dims {
+    width: 20px;
+    height: 20px;
+}
+
+.svg-keynote {
+    @extend %svg-common;
+    background-position: 52.94117647058823% 68.75%;
 }
 
 .svg-keynote-dims {
@@ -1414,7 +1424,7 @@
 
 .svg-kleenex {
     @extend %svg-common;
-    background-position: 52.94117647058823% 68.75%;
+    background-position: 58.8235294117647% 68.75%;
 }
 
 .svg-kleenex-dims {
@@ -1424,7 +1434,7 @@
 
 .svg-lamp {
     @extend %svg-common;
-    background-position: 58.8235294117647% 68.75%;
+    background-position: 64.70588235294117% 68.75%;
 }
 
 .svg-lamp-dims {
@@ -1434,7 +1444,7 @@
 
 .svg-laptop {
     @extend %svg-common;
-    background-position: 64.70588235294117% 68.75%;
+    background-position: 70.58823529411765% 0;
 }
 
 .svg-laptop-dims {
@@ -1444,7 +1454,7 @@
 
 .svg-leaf-angle {
     @extend %svg-common;
-    background-position: 70.58823529411765% 0;
+    background-position: 70.58823529411765% 6.25%;
 }
 
 .svg-leaf-angle-dims {
@@ -1454,7 +1464,7 @@
 
 .svg-library {
     @extend %svg-common;
-    background-position: 70.58823529411765% 6.25%;
+    background-position: 70.58823529411765% 12.5%;
 }
 
 .svg-library-dims {
@@ -1464,7 +1474,7 @@
 
 .svg-lightbulb {
     @extend %svg-common;
-    background-position: 70.58823529411765% 12.5%;
+    background-position: 70.58823529411765% 18.75%;
 }
 
 .svg-lightbulb-dims {
@@ -1474,7 +1484,7 @@
 
 .svg-lightning {
     @extend %svg-common;
-    background-position: 70.58823529411765% 18.75%;
+    background-position: 70.58823529411765% 25%;
 }
 
 .svg-lightning-dims {
@@ -1484,7 +1494,7 @@
 
 .svg-linkedin {
     @extend %svg-common;
-    background-position: 70.58823529411765% 25%;
+    background-position: 70.58823529411765% 31.25%;
 }
 
 .svg-linkedin-dims {
@@ -1494,7 +1504,7 @@
 
 .svg-location-target {
     @extend %svg-common;
-    background-position: 70.58823529411765% 31.25%;
+    background-position: 70.58823529411765% 37.5%;
 }
 
 .svg-location-target-dims {
@@ -1504,7 +1514,7 @@
 
 .svg-lock {
     @extend %svg-common;
-    background-position: 70.58823529411765% 37.5%;
+    background-position: 70.58823529411765% 43.75%;
 }
 
 .svg-lock-dims {
@@ -1514,7 +1524,7 @@
 
 .svg-mace {
     @extend %svg-common;
-    background-position: 70.58823529411765% 43.75%;
+    background-position: 70.58823529411765% 50%;
 }
 
 .svg-mace-dims {
@@ -1524,7 +1534,7 @@
 
 .svg-machete {
     @extend %svg-common;
-    background-position: 70.58823529411765% 50%;
+    background-position: 70.58823529411765% 56.25%;
 }
 
 .svg-machete-dims {
@@ -1534,7 +1544,7 @@
 
 .svg-magic-wand {
     @extend %svg-common;
-    background-position: 70.58823529411765% 56.25%;
+    background-position: 70.58823529411765% 62.5%;
 }
 
 .svg-magic-wand-dims {
@@ -1544,7 +1554,7 @@
 
 .svg-mail {
     @extend %svg-common;
-    background-position: 70.58823529411765% 62.5%;
+    background-position: 70.58823529411765% 68.75%;
 }
 
 .svg-mail-dims {
@@ -1554,7 +1564,7 @@
 
 .svg-mailbox {
     @extend %svg-common;
-    background-position: 70.58823529411765% 68.75%;
+    background-position: 0 75%;
 }
 
 .svg-mailbox-dims {
@@ -1564,7 +1574,7 @@
 
 .svg-man-fancy {
     @extend %svg-common;
-    background-position: 0 75%;
+    background-position: 5.882352941176471% 75%;
 }
 
 .svg-man-fancy-dims {
@@ -1574,7 +1584,7 @@
 
 .svg-man-woman {
     @extend %svg-common;
-    background-position: 5.882352941176471% 75%;
+    background-position: 11.764705882352942% 75%;
 }
 
 .svg-man-woman-dims {
@@ -1584,7 +1594,7 @@
 
 .svg-marijuana {
     @extend %svg-common;
-    background-position: 11.764705882352942% 75%;
+    background-position: 17.647058823529413% 75%;
 }
 
 .svg-marijuana-dims {
@@ -1594,7 +1604,7 @@
 
 .svg-mastodon {
     @extend %svg-common;
-    background-position: 17.647058823529413% 75%;
+    background-position: 23.529411764705884% 75%;
 }
 
 .svg-mastodon-dims {
@@ -1604,7 +1614,7 @@
 
 .svg-medal {
     @extend %svg-common;
-    background-position: 23.529411764705884% 75%;
+    background-position: 29.41176470588235% 75%;
 }
 
 .svg-medal-dims {
@@ -1614,7 +1624,7 @@
 
 .svg-meditation {
     @extend %svg-common;
-    background-position: 29.41176470588235% 75%;
+    background-position: 35.294117647058826% 75%;
 }
 
 .svg-meditation-dims {
@@ -1624,7 +1634,7 @@
 
 .svg-meh {
     @extend %svg-common;
-    background-position: 35.294117647058826% 75%;
+    background-position: 41.1764705882353% 75%;
 }
 
 .svg-meh-dims {
@@ -1634,7 +1644,7 @@
 
 .svg-men {
     @extend %svg-common;
-    background-position: 41.1764705882353% 75%;
+    background-position: 47.05882352941177% 75%;
 }
 
 .svg-men-dims {
@@ -1644,7 +1654,7 @@
 
 .svg-microscope {
     @extend %svg-common;
-    background-position: 47.05882352941177% 75%;
+    background-position: 52.94117647058823% 75%;
 }
 
 .svg-microscope-dims {
@@ -1654,7 +1664,7 @@
 
 .svg-monk {
     @extend %svg-common;
-    background-position: 52.94117647058823% 75%;
+    background-position: 58.8235294117647% 75%;
 }
 
 .svg-monk-dims {
@@ -1664,7 +1674,7 @@
 
 .svg-moon {
     @extend %svg-common;
-    background-position: 58.8235294117647% 75%;
+    background-position: 64.70588235294117% 75%;
 }
 
 .svg-moon-dims {
@@ -1674,7 +1684,7 @@
 
 .svg-mountain {
     @extend %svg-common;
-    background-position: 64.70588235294117% 75%;
+    background-position: 70.58823529411765% 75%;
 }
 
 .svg-mountain-dims {
@@ -1684,7 +1694,7 @@
 
 .svg-mug-heart {
     @extend %svg-common;
-    background-position: 70.58823529411765% 75%;
+    background-position: 76.47058823529412% 0;
 }
 
 .svg-mug-heart-dims {
@@ -1694,7 +1704,7 @@
 
 .svg-museum {
     @extend %svg-common;
-    background-position: 76.47058823529412% 0;
+    background-position: 76.47058823529412% 6.25%;
 }
 
 .svg-museum-dims {
@@ -1704,7 +1714,7 @@
 
 .svg-mushroom-cloud {
     @extend %svg-common;
-    background-position: 76.47058823529412% 6.25%;
+    background-position: 76.47058823529412% 12.5%;
 }
 
 .svg-mushroom-cloud-dims {
@@ -1714,7 +1724,7 @@
 
 .svg-music {
     @extend %svg-common;
-    background-position: 76.47058823529412% 12.5%;
+    background-position: 76.47058823529412% 18.75%;
 }
 
 .svg-music-dims {
@@ -1724,7 +1734,7 @@
 
 .svg-nessie {
     @extend %svg-common;
-    background-position: 76.47058823529412% 18.75%;
+    background-position: 76.47058823529412% 25%;
 }
 
 .svg-nessie-dims {
@@ -1734,7 +1744,7 @@
 
 .svg-neuter {
     @extend %svg-common;
-    background-position: 74.28571428571429% 25%;
+    background-position: 74.28571428571429% 31.25%;
 }
 
 .svg-neuter-dims {
@@ -1744,7 +1754,7 @@
 
 .svg-newspaper {
     @extend %svg-common;
-    background-position: 76.47058823529412% 31.25%;
+    background-position: 76.47058823529412% 37.5%;
 }
 
 .svg-newspaper-dims {
@@ -1754,7 +1764,7 @@
 
 .svg-nextdoor {
     @extend %svg-common;
-    background-position: 76.47058823529412% 37.5%;
+    background-position: 76.47058823529412% 43.75%;
 }
 
 .svg-nextdoor-dims {
@@ -1764,7 +1774,7 @@
 
 .svg-ninja {
     @extend %svg-common;
-    background-position: 76.47058823529412% 43.75%;
+    background-position: 76.47058823529412% 50%;
 }
 
 .svg-ninja-dims {
@@ -1774,7 +1784,7 @@
 
 .svg-octopus {
     @extend %svg-common;
-    background-position: 76.47058823529412% 50%;
+    background-position: 76.47058823529412% 56.25%;
 }
 
 .svg-octopus-dims {
@@ -1784,7 +1794,7 @@
 
 .svg-pan {
     @extend %svg-common;
-    background-position: 76.47058823529412% 56.25%;
+    background-position: 76.47058823529412% 62.5%;
 }
 
 .svg-pan-dims {
@@ -1794,7 +1804,7 @@
 
 .svg-peach {
     @extend %svg-common;
-    background-position: 76.47058823529412% 62.5%;
+    background-position: 76.47058823529412% 68.75%;
 }
 
 .svg-peach-dims {
@@ -1804,7 +1814,7 @@
 
 .svg-pen-nib {
     @extend %svg-common;
-    background-position: 76.47058823529412% 68.75%;
+    background-position: 76.47058823529412% 75%;
 }
 
 .svg-pen-nib-dims {
@@ -1814,7 +1824,7 @@
 
 .svg-pencil {
     @extend %svg-common;
-    background-position: 76.47058823529412% 75%;
+    background-position: 0 81.25%;
 }
 
 .svg-pencil-dims {
@@ -1824,7 +1834,7 @@
 
 .svg-pencil-paintbrush-pen {
     @extend %svg-common;
-    background-position: 0 81.25%;
+    background-position: 5.882352941176471% 81.25%;
 }
 
 .svg-pencil-paintbrush-pen-dims {
@@ -1834,7 +1844,7 @@
 
 .svg-pills {
     @extend %svg-common;
-    background-position: 5.882352941176471% 81.25%;
+    background-position: 11.764705882352942% 81.25%;
 }
 
 .svg-pills-dims {
@@ -1844,7 +1854,7 @@
 
 .svg-pinterest {
     @extend %svg-common;
-    background-position: 11.764705882352942% 81.25%;
+    background-position: 17.647058823529413% 81.25%;
 }
 
 .svg-pinterest-dims {
@@ -1854,7 +1864,7 @@
 
 .svg-pocket {
     @extend %svg-common;
-    background-position: 17.647058823529413% 81.25%;
+    background-position: 23.529411764705884% 81.25%;
 }
 
 .svg-pocket-dims {
@@ -1864,7 +1874,7 @@
 
 .svg-police {
     @extend %svg-common;
-    background-position: 23.529411764705884% 81.25%;
+    background-position: 29.41176470588235% 81.25%;
 }
 
 .svg-police-dims {
@@ -1874,7 +1884,7 @@
 
 .svg-police-box {
     @extend %svg-common;
-    background-position: 29.41176470588235% 81.25%;
+    background-position: 35.294117647058826% 81.25%;
 }
 
 .svg-police-box-dims {
@@ -1884,7 +1894,7 @@
 
 .svg-policeman {
     @extend %svg-common;
-    background-position: 35.294117647058826% 81.25%;
+    background-position: 41.1764705882353% 81.25%;
 }
 
 .svg-policeman-dims {
@@ -1894,7 +1904,7 @@
 
 .svg-presentation-alt {
     @extend %svg-common;
-    background-position: 41.1764705882353% 81.25%;
+    background-position: 47.05882352941177% 81.25%;
 }
 
 .svg-presentation-alt-dims {
@@ -1904,7 +1914,7 @@
 
 .svg-press-this {
     @extend %svg-common;
-    background-position: 47.05882352941177% 81.25%;
+    background-position: 52.94117647058823% 81.25%;
 }
 
 .svg-press-this-dims {
@@ -1914,7 +1924,7 @@
 
 .svg-printer {
     @extend %svg-common;
-    background-position: 52.94117647058823% 81.25%;
+    background-position: 58.8235294117647% 81.25%;
 }
 
 .svg-printer-dims {
@@ -1924,7 +1934,7 @@
 
 .svg-question-square {
     @extend %svg-common;
-    background-position: 58.8235294117647% 81.25%;
+    background-position: 64.70588235294117% 81.25%;
 }
 
 .svg-question-square-dims {
@@ -1934,7 +1944,7 @@
 
 .svg-radioactive {
     @extend %svg-common;
-    background-position: 64.70588235294117% 81.25%;
+    background-position: 70.58823529411765% 81.25%;
 }
 
 .svg-radioactive-dims {
@@ -1944,7 +1954,7 @@
 
 .svg-rainbow {
     @extend %svg-common;
-    background-position: 70.58823529411765% 81.25%;
+    background-position: 76.47058823529412% 81.25%;
 }
 
 .svg-rainbow-dims {
@@ -1954,7 +1964,7 @@
 
 .svg-raygun {
     @extend %svg-common;
-    background-position: 76.47058823529412% 81.25%;
+    background-position: 82.3529411764706% 0;
 }
 
 .svg-raygun-dims {
@@ -1964,7 +1974,7 @@
 
 .svg-reddit {
     @extend %svg-common;
-    background-position: 82.3529411764706% 0;
+    background-position: 82.3529411764706% 6.25%;
 }
 
 .svg-reddit-dims {
@@ -1974,7 +1984,7 @@
 
 .svg-reminder {
     @extend %svg-common;
-    background-position: 82.3529411764706% 6.25%;
+    background-position: 82.3529411764706% 12.5%;
 }
 
 .svg-reminder-dims {
@@ -1984,7 +1994,7 @@
 
 .svg-reply {
     @extend %svg-common;
-    background-position: 82.3529411764706% 12.5%;
+    background-position: 82.3529411764706% 18.75%;
 }
 
 .svg-reply-dims {
@@ -1994,7 +2004,7 @@
 
 .svg-rest-in-peace {
     @extend %svg-common;
-    background-position: 82.3529411764706% 18.75%;
+    background-position: 82.3529411764706% 25%;
 }
 
 .svg-rest-in-peace-dims {
@@ -2004,7 +2014,7 @@
 
 .svg-ribbon {
     @extend %svg-common;
-    background-position: 82.3529411764706% 25%;
+    background-position: 82.3529411764706% 31.25%;
 }
 
 .svg-ribbon-dims {
@@ -2014,7 +2024,7 @@
 
 .svg-robot {
     @extend %svg-common;
-    background-position: 82.3529411764706% 31.25%;
+    background-position: 82.3529411764706% 37.5%;
 }
 
 .svg-robot-dims {
@@ -2024,7 +2034,7 @@
 
 .svg-rocket {
     @extend %svg-common;
-    background-position: 82.3529411764706% 37.5%;
+    background-position: 82.3529411764706% 43.75%;
 }
 
 .svg-rocket-dims {
@@ -2034,7 +2044,7 @@
 
 .svg-rss {
     @extend %svg-common;
-    background-position: 82.3529411764706% 43.75%;
+    background-position: 82.3529411764706% 50%;
 }
 
 .svg-rss-dims {
@@ -2044,7 +2054,7 @@
 
 .svg-rubber-stamp {
     @extend %svg-common;
-    background-position: 82.3529411764706% 50%;
+    background-position: 82.3529411764706% 56.25%;
 }
 
 .svg-rubber-stamp-dims {
@@ -2054,7 +2064,7 @@
 
 .svg-running {
     @extend %svg-common;
-    background-position: 82.3529411764706% 56.25%;
+    background-position: 82.3529411764706% 62.5%;
 }
 
 .svg-running-dims {
@@ -2064,7 +2074,7 @@
 
 .svg-safe {
     @extend %svg-common;
-    background-position: 82.3529411764706% 62.5%;
+    background-position: 82.3529411764706% 68.75%;
 }
 
 .svg-safe-dims {
@@ -2074,7 +2084,7 @@
 
 .svg-sailboat {
     @extend %svg-common;
-    background-position: 82.3529411764706% 68.75%;
+    background-position: 82.3529411764706% 75%;
 }
 
 .svg-sailboat-dims {
@@ -2084,7 +2094,7 @@
 
 .svg-satellite-signal {
     @extend %svg-common;
-    background-position: 82.3529411764706% 75%;
+    background-position: 82.3529411764706% 81.25%;
 }
 
 .svg-satellite-signal-dims {
@@ -2094,7 +2104,7 @@
 
 .svg-sausage {
     @extend %svg-common;
-    background-position: 82.3529411764706% 81.25%;
+    background-position: 0 87.5%;
 }
 
 .svg-sausage-dims {
@@ -2104,7 +2114,7 @@
 
 .svg-scales {
     @extend %svg-common;
-    background-position: 0 87.5%;
+    background-position: 5.882352941176471% 87.5%;
 }
 
 .svg-scales-dims {
@@ -2114,7 +2124,7 @@
 
 .svg-school {
     @extend %svg-common;
-    background-position: 5.882352941176471% 87.5%;
+    background-position: 11.764705882352942% 87.5%;
 }
 
 .svg-school-dims {
@@ -2124,7 +2134,7 @@
 
 .svg-schoolbus {
     @extend %svg-common;
-    background-position: 11.764705882352942% 87.5%;
+    background-position: 17.647058823529413% 87.5%;
 }
 
 .svg-schoolbus-dims {
@@ -2134,7 +2144,7 @@
 
 .svg-scissors {
     @extend %svg-common;
-    background-position: 17.647058823529413% 87.5%;
+    background-position: 23.529411764705884% 87.5%;
 }
 
 .svg-scissors-dims {
@@ -2144,7 +2154,7 @@
 
 .svg-scythe {
     @extend %svg-common;
-    background-position: 23.529411764705884% 87.5%;
+    background-position: 29.41176470588235% 87.5%;
 }
 
 .svg-scythe-dims {
@@ -2154,7 +2164,7 @@
 
 .svg-seahorse {
     @extend %svg-common;
-    background-position: 29.41176470588235% 87.5%;
+    background-position: 35.294117647058826% 87.5%;
 }
 
 .svg-seahorse-dims {
@@ -2164,7 +2174,7 @@
 
 .svg-search {
     @extend %svg-common;
-    background-position: 35.294117647058826% 87.5%;
+    background-position: 41.1764705882353% 87.5%;
 }
 
 .svg-search-dims {
@@ -2174,7 +2184,7 @@
 
 .svg-security-camera {
     @extend %svg-common;
-    background-position: 41.1764705882353% 87.5%;
+    background-position: 47.05882352941177% 87.5%;
 }
 
 .svg-security-camera-dims {
@@ -2184,7 +2194,7 @@
 
 .svg-share {
     @extend %svg-common;
-    background-position: 47.05882352941177% 87.5%;
+    background-position: 52.94117647058823% 87.5%;
 }
 
 .svg-share-dims {
@@ -2194,7 +2204,7 @@
 
 .svg-share-more {
     @extend %svg-common;
-    background-position: 52.94117647058823% 87.5%;
+    background-position: 58.8235294117647% 87.5%;
 }
 
 .svg-share-more-dims {
@@ -2204,7 +2214,7 @@
 
 .svg-shoe-prints {
     @extend %svg-common;
-    background-position: 58.8235294117647% 87.5%;
+    background-position: 64.70588235294117% 87.5%;
 }
 
 .svg-shoe-prints-dims {
@@ -2214,7 +2224,7 @@
 
 .svg-shorts {
     @extend %svg-common;
-    background-position: 64.70588235294117% 87.5%;
+    background-position: 70.58823529411765% 87.5%;
 }
 
 .svg-shorts-dims {
@@ -2224,7 +2234,7 @@
 
 .svg-signs {
     @extend %svg-common;
-    background-position: 70.58823529411765% 87.5%;
+    background-position: 76.47058823529412% 87.5%;
 }
 
 .svg-signs-dims {
@@ -2234,7 +2244,7 @@
 
 .svg-skull {
     @extend %svg-common;
-    background-position: 76.47058823529412% 87.5%;
+    background-position: 82.3529411764706% 87.5%;
 }
 
 .svg-skull-dims {
@@ -2244,7 +2254,7 @@
 
 .svg-skull-crossbones {
     @extend %svg-common;
-    background-position: 82.3529411764706% 87.5%;
+    background-position: 88.23529411764706% 0;
 }
 
 .svg-skull-crossbones-dims {
@@ -2254,7 +2264,7 @@
 
 .svg-slack {
     @extend %svg-common;
-    background-position: 88.23529411764706% 0;
+    background-position: 88.23529411764706% 6.25%;
 }
 
 .svg-slack-dims {
@@ -2264,7 +2274,7 @@
 
 .svg-smile {
     @extend %svg-common;
-    background-position: 88.23529411764706% 6.25%;
+    background-position: 88.23529411764706% 12.5%;
 }
 
 .svg-smile-dims {
@@ -2274,7 +2284,7 @@
 
 .svg-snowflake-alt {
     @extend %svg-common;
-    background-position: 88.23529411764706% 12.5%;
+    background-position: 88.23529411764706% 18.75%;
 }
 
 .svg-snowflake-alt-dims {
@@ -2284,7 +2294,7 @@
 
 .svg-soap {
     @extend %svg-common;
-    background-position: 88.23529411764706% 18.75%;
+    background-position: 88.23529411764706% 25%;
 }
 
 .svg-soap-dims {
@@ -2294,7 +2304,7 @@
 
 .svg-spy {
     @extend %svg-common;
-    background-position: 88.23529411764706% 25%;
+    background-position: 88.23529411764706% 31.25%;
 }
 
 .svg-spy-dims {
@@ -2304,7 +2314,7 @@
 
 .svg-spy-face {
     @extend %svg-common;
-    background-position: 88.23529411764706% 31.25%;
+    background-position: 88.23529411764706% 37.5%;
 }
 
 .svg-spy-face-dims {
@@ -2314,7 +2324,7 @@
 
 .svg-square {
     @extend %svg-common;
-    background-position: 88.23529411764706% 37.5%;
+    background-position: 88.23529411764706% 43.75%;
 }
 
 .svg-square-dims {
@@ -2324,7 +2334,7 @@
 
 .svg-stanp-portrait {
     @extend %svg-common;
-    background-position: 88.23529411764706% 43.75%;
+    background-position: 88.23529411764706% 50%;
 }
 
 .svg-stanp-portrait-dims {
@@ -2334,7 +2344,7 @@
 
 .svg-star {
     @extend %svg-common;
-    background-position: 88.23529411764706% 50%;
+    background-position: 88.23529411764706% 56.25%;
 }
 
 .svg-star-dims {
@@ -2344,7 +2354,7 @@
 
 .svg-star-of-life {
     @extend %svg-common;
-    background-position: 88.23529411764706% 56.25%;
+    background-position: 88.23529411764706% 62.5%;
 }
 
 .svg-star-of-life-dims {
@@ -2354,7 +2364,7 @@
 
 .svg-statue-of-liberty {
     @extend %svg-common;
-    background-position: 88.23529411764706% 62.5%;
+    background-position: 88.23529411764706% 68.75%;
 }
 
 .svg-statue-of-liberty-dims {
@@ -2364,7 +2374,7 @@
 
 .svg-stethoscope {
     @extend %svg-common;
-    background-position: 88.23529411764706% 68.75%;
+    background-position: 88.23529411764706% 75%;
 }
 
 .svg-stethoscope-dims {
@@ -2374,7 +2384,7 @@
 
 .svg-sun {
     @extend %svg-common;
-    background-position: 88.23529411764706% 75%;
+    background-position: 88.23529411764706% 81.25%;
 }
 
 .svg-sun-dims {
@@ -2384,7 +2394,7 @@
 
 .svg-sunglasses {
     @extend %svg-common;
-    background-position: 88.23529411764706% 81.25%;
+    background-position: 88.23529411764706% 87.5%;
 }
 
 .svg-sunglasses-dims {
@@ -2394,7 +2404,7 @@
 
 .svg-swords {
     @extend %svg-common;
-    background-position: 88.23529411764706% 87.5%;
+    background-position: 0 93.75%;
 }
 
 .svg-swords-dims {
@@ -2404,7 +2414,7 @@
 
 .svg-sync {
     @extend %svg-common;
-    background-position: 0 93.75%;
+    background-position: 5.882352941176471% 93.75%;
 }
 
 .svg-sync-dims {
@@ -2414,7 +2424,7 @@
 
 .svg-tag {
     @extend %svg-common;
-    background-position: 5.882352941176471% 93.75%;
+    background-position: 11.764705882352942% 93.75%;
 }
 
 .svg-tag-dims {
@@ -2424,7 +2434,7 @@
 
 .svg-tank {
     @extend %svg-common;
-    background-position: 11.764705882352942% 93.75%;
+    background-position: 17.647058823529413% 93.75%;
 }
 
 .svg-tank-dims {
@@ -2434,7 +2444,7 @@
 
 .svg-team {
     @extend %svg-common;
-    background-position: 17.647058823529413% 93.75%;
+    background-position: 23.529411764705884% 93.75%;
 }
 
 .svg-team-dims {
@@ -2444,7 +2454,7 @@
 
 .svg-telegram {
     @extend %svg-common;
-    background-position: 23.529411764705884% 93.75%;
+    background-position: 29.41176470588235% 93.75%;
 }
 
 .svg-telegram-dims {
@@ -2454,7 +2464,7 @@
 
 .svg-theater_masks {
     @extend %svg-common;
-    background-position: 29.41176470588235% 93.75%;
+    background-position: 35.294117647058826% 93.75%;
 }
 
 .svg-theater_masks-dims {
@@ -2464,7 +2474,7 @@
 
 .svg-threads {
     @extend %svg-common;
-    background-position: 35.294117647058826% 93.75%;
+    background-position: 41.1764705882353% 93.75%;
 }
 
 .svg-threads-dims {
@@ -2474,7 +2484,7 @@
 
 .svg-thumbs-down {
     @extend %svg-common;
-    background-position: 41.1764705882353% 93.75%;
+    background-position: 47.05882352941177% 93.75%;
 }
 
 .svg-thumbs-down-dims {
@@ -2484,7 +2494,7 @@
 
 .svg-thumbs-up {
     @extend %svg-common;
-    background-position: 47.05882352941177% 93.75%;
+    background-position: 52.94117647058823% 93.75%;
 }
 
 .svg-thumbs-up-dims {
@@ -2494,7 +2504,7 @@
 
 .svg-tiktok {
     @extend %svg-common;
-    background-position: 52.94117647058823% 93.75%;
+    background-position: 58.8235294117647% 93.75%;
 }
 
 .svg-tiktok-dims {
@@ -2504,7 +2514,7 @@
 
 .svg-tmdb {
     @extend %svg-common;
-    background-position: 58.8235294117647% 93.75%;
+    background-position: 64.70588235294117% 93.75%;
 }
 
 .svg-tmdb-dims {
@@ -2514,7 +2524,7 @@
 
 .svg-toaster {
     @extend %svg-common;
-    background-position: 64.70588235294117% 93.75%;
+    background-position: 70.58823529411765% 93.75%;
 }
 
 .svg-toaster-dims {
@@ -2524,7 +2534,7 @@
 
 .svg-trophy {
     @extend %svg-common;
-    background-position: 70.58823529411765% 93.75%;
+    background-position: 76.47058823529412% 93.75%;
 }
 
 .svg-trophy-dims {
@@ -2534,7 +2544,7 @@
 
 .svg-tumblr {
     @extend %svg-common;
-    background-position: 76.47058823529412% 93.75%;
+    background-position: 82.3529411764706% 93.75%;
 }
 
 .svg-tumblr-dims {
@@ -2544,7 +2554,7 @@
 
 .svg-tumblr-t {
     @extend %svg-common;
-    background-position: 82.3529411764706% 93.75%;
+    background-position: 88.23529411764706% 93.75%;
 }
 
 .svg-tumblr-t-dims {
@@ -2554,7 +2564,7 @@
 
 .svg-turkey {
     @extend %svg-common;
-    background-position: 88.23529411764706% 93.75%;
+    background-position: 94.11764705882354% 0;
 }
 
 .svg-turkey-dims {
@@ -2564,7 +2574,7 @@
 
 .svg-turret {
     @extend %svg-common;
-    background-position: 94.11764705882354% 0;
+    background-position: 94.11764705882354% 6.25%;
 }
 
 .svg-turret-dims {
@@ -2574,7 +2584,7 @@
 
 .svg-tv {
     @extend %svg-common;
-    background-position: 94.11764705882354% 6.25%;
+    background-position: 94.11764705882354% 12.5%;
 }
 
 .svg-tv-dims {
@@ -2584,7 +2594,7 @@
 
 .svg-tv-hd {
     @extend %svg-common;
-    background-position: 94.11764705882354% 12.5%;
+    background-position: 94.11764705882354% 18.75%;
 }
 
 .svg-tv-hd-dims {
@@ -2594,7 +2604,7 @@
 
 .svg-twitch {
     @extend %svg-common;
-    background-position: 94.11764705882354% 18.75%;
+    background-position: 94.11764705882354% 25%;
 }
 
 .svg-twitch-dims {
@@ -2604,7 +2614,7 @@
 
 .svg-twitter {
     @extend %svg-common;
-    background-position: 94.11764705882354% 25%;
+    background-position: 94.11764705882354% 31.25%;
 }
 
 .svg-twitter-dims {
@@ -2614,7 +2624,7 @@
 
 .svg-twitter-orig {
     @extend %svg-common;
-    background-position: 94.11764705882354% 31.25%;
+    background-position: 94.11764705882354% 37.5%;
 }
 
 .svg-twitter-orig-dims {
@@ -2624,7 +2634,7 @@
 
 .svg-ufo {
     @extend %svg-common;
-    background-position: 94.11764705882354% 37.5%;
+    background-position: 94.11764705882354% 43.75%;
 }
 
 .svg-ufo-dims {
@@ -2634,7 +2644,7 @@
 
 .svg-unicorn {
     @extend %svg-common;
-    background-position: 94.11764705882354% 43.75%;
+    background-position: 94.11764705882354% 50%;
 }
 
 .svg-unicorn-dims {
@@ -2644,7 +2654,7 @@
 
 .svg-universal-access {
     @extend %svg-common;
-    background-position: 94.11764705882354% 50%;
+    background-position: 94.11764705882354% 56.25%;
 }
 
 .svg-universal-access-dims {
@@ -2654,7 +2664,7 @@
 
 .svg-universal-access-alt {
     @extend %svg-common;
-    background-position: 94.11764705882354% 56.25%;
+    background-position: 94.11764705882354% 62.5%;
 }
 
 .svg-universal-access-alt-dims {
@@ -2664,7 +2674,7 @@
 
 .svg-universal-access-off {
     @extend %svg-common;
-    background-position: 94.11764705882354% 62.5%;
+    background-position: 94.11764705882354% 68.75%;
 }
 
 .svg-universal-access-off-dims {
@@ -2674,7 +2684,7 @@
 
 .svg-user {
     @extend %svg-common;
-    background-position: 94.11764705882354% 68.75%;
+    background-position: 94.11764705882354% 75%;
 }
 
 .svg-user-dims {
@@ -2684,7 +2694,7 @@
 
 .svg-user-circle {
     @extend %svg-common;
-    background-position: 94.11764705882354% 75%;
+    background-position: 94.11764705882354% 81.25%;
 }
 
 .svg-user-circle-dims {
@@ -2694,7 +2704,7 @@
 
 .svg-user-heart {
     @extend %svg-common;
-    background-position: 94.11764705882354% 81.25%;
+    background-position: 94.11764705882354% 87.5%;
 }
 
 .svg-user-heart-dims {
@@ -2704,7 +2714,7 @@
 
 .svg-user-tie {
     @extend %svg-common;
-    background-position: 94.11764705882354% 87.5%;
+    background-position: 94.11764705882354% 93.75%;
 }
 
 .svg-user-tie-dims {
@@ -2714,7 +2724,7 @@
 
 .svg-venus-double {
     @extend %svg-common;
-    background-position: 94.11764705882354% 93.75%;
+    background-position: 0 100%;
 }
 
 .svg-venus-double-dims {
@@ -2724,7 +2734,7 @@
 
 .svg-vest-patches {
     @extend %svg-common;
-    background-position: 0 100%;
+    background-position: 5.882352941176471% 100%;
 }
 
 .svg-vest-patches-dims {
@@ -2734,7 +2744,7 @@
 
 .svg-vhs {
     @extend %svg-common;
-    background-position: 5.882352941176471% 100%;
+    background-position: 11.764705882352942% 100%;
 }
 
 .svg-vhs-dims {
@@ -2744,7 +2754,7 @@
 
 .svg-viewmaster {
     @extend %svg-common;
-    background-position: 11.764705882352942% 100%;
+    background-position: 17.647058823529413% 100%;
 }
 
 .svg-viewmaster-dims {
@@ -2754,7 +2764,7 @@
 
 .svg-viking-helm {
     @extend %svg-common;
-    background-position: 17.647058823529413% 100%;
+    background-position: 23.529411764705884% 100%;
 }
 
 .svg-viking-helm-dims {
@@ -2764,7 +2774,7 @@
 
 .svg-volcano {
     @extend %svg-common;
-    background-position: 23.529411764705884% 100%;
+    background-position: 29.41176470588235% 100%;
 }
 
 .svg-volcano-dims {
@@ -2774,7 +2784,7 @@
 
 .svg-warning {
     @extend %svg-common;
-    background-position: 29.41176470588235% 100%;
+    background-position: 35.294117647058826% 100%;
 }
 
 .svg-warning-dims {
@@ -2784,7 +2794,7 @@
 
 .svg-water-bottle {
     @extend %svg-common;
-    background-position: 35.294117647058826% 100%;
+    background-position: 41.1764705882353% 100%;
 }
 
 .svg-water-bottle-dims {
@@ -2794,7 +2804,7 @@
 
 .svg-wedding-cake {
     @extend %svg-common;
-    background-position: 41.1764705882353% 100%;
+    background-position: 47.05882352941177% 100%;
 }
 
 .svg-wedding-cake-dims {
@@ -2804,7 +2814,7 @@
 
 .svg-whatsapp {
     @extend %svg-common;
-    background-position: 47.05882352941177% 100%;
+    background-position: 52.94117647058823% 100%;
 }
 
 .svg-whatsapp-dims {
@@ -2814,7 +2824,7 @@
 
 .svg-wheelchair-alt {
     @extend %svg-common;
-    background-position: 52.94117647058823% 100%;
+    background-position: 58.8235294117647% 100%;
 }
 
 .svg-wheelchair-alt-dims {
@@ -2824,7 +2834,7 @@
 
 .svg-wikipedia {
     @extend %svg-common;
-    background-position: 58.8235294117647% 100%;
+    background-position: 64.70588235294117% 100%;
 }
 
 .svg-wikipedia-dims {
@@ -2834,7 +2844,7 @@
 
 .svg-window {
     @extend %svg-common;
-    background-position: 64.70588235294117% 100%;
+    background-position: 70.58823529411765% 100%;
 }
 
 .svg-window-dims {
@@ -2844,7 +2854,7 @@
 
 .svg-woman-fancy {
     @extend %svg-common;
-    background-position: 70.58823529411765% 100%;
+    background-position: 76.47058823529412% 100%;
 }
 
 .svg-woman-fancy-dims {
@@ -2854,7 +2864,7 @@
 
 .svg-woman-man {
     @extend %svg-common;
-    background-position: 76.47058823529412% 100%;
+    background-position: 82.3529411764706% 100%;
 }
 
 .svg-woman-man-dims {
@@ -2864,7 +2874,7 @@
 
 .svg-women {
     @extend %svg-common;
-    background-position: 82.3529411764706% 100%;
+    background-position: 88.23529411764706% 100%;
 }
 
 .svg-women-dims {
@@ -2874,7 +2884,7 @@
 
 .svg-wreath {
     @extend %svg-common;
-    background-position: 88.23529411764706% 100%;
+    background-position: 94.11764705882354% 100%;
 }
 
 .svg-wreath-dims {
@@ -2884,7 +2894,7 @@
 
 .svg-x-ray {
     @extend %svg-common;
-    background-position: 94.11764705882354% 100%;
+    background-position: 100% 0;
 }
 
 .svg-x-ray-dims {
@@ -2894,7 +2904,7 @@
 
 .svg-x-twitter {
     @extend %svg-common;
-    background-position: 100% 0;
+    background-position: 100% 6.25%;
 }
 
 .svg-x-twitter-dims {
@@ -2904,7 +2914,7 @@
 
 .svg-yin-yang {
     @extend %svg-common;
-    background-position: 100% 6.25%;
+    background-position: 100% 12.5%;
 }
 
 .svg-yin-yang-dims {
@@ -2914,7 +2924,7 @@
 
 .svg-youtube {
     @extend %svg-common;
-    background-position: 100% 12.5%;
+    background-position: 100% 18.75%;
 }
 
 .svg-youtube-dims {
@@ -2924,7 +2934,7 @@
 
 .svg-zipper {
     @extend %svg-common;
-    background-position: 100% 18.75%;
+    background-position: 100% 25%;
 }
 
 .svg-zipper-dims {
@@ -2934,7 +2944,7 @@
 
 .svg-zombie {
     @extend %svg-common;
-    background-position: 100% 25%;
+    background-position: 100% 31.25%;
 }
 
 .svg-zombie-dims {

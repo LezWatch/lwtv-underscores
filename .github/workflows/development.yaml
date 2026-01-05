@@ -5,21 +5,16 @@ on:
     branches: [ development ]
 
 jobs:
-  deploy-website:
+  # =======================================
+  # JOB 1: Build the theme files
+  # =======================================
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Do a git checkout including submodules
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           submodules: true
-
-      - name: Verify Workspace
-        run: |
-          echo "GITHUB_WORKSPACE: ${GITHUB_WORKSPACE}"
-
-      - name: Verify Folder
-        run: |
-          ls -lah ${GITHUB_WORKSPACE}
 
       - name: Setup Node
         uses: actions/setup-node@v6
@@ -30,7 +25,7 @@ jobs:
       - name: Setup PHP and Composer
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.3'
+          php-version: '8.4' # As per your original config
           tools: composer:v2
 
       - name: Install dependencies
@@ -39,10 +34,45 @@ jobs:
       - name: Lint
         run: npm run lint
 
-      - name: Build it
+      - name: Build for Staging
         run: npm run create:staging
 
-      - name: Deploy to LezWatch.TV Dev Server
+      - name: Upload theme artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: theme-files
+          path: . # Uploads the entire workspace
+
+      - name: Upload cron artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: cron-files
+          path: cron/
+
+  # ========================================================
+  # JOB 2: Deploy the built files to the server
+  # ========================================================
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build # This ensures the 'build' job finishes first
+    steps:
+      - name: Download theme artifact
+        uses: actions/download-artifact@v7
+        with:
+          name: theme-files
+
+      - name: Download cron artifact
+        uses: actions/download-artifact@v7
+        with:
+          name: cron-files
+          path: cron/ # Specify path to restore directory structure
+
+      - name: Verify Folder Contents
+        run: |
+          ls -lah
+          ls -lah cron/
+
+      - name: Deploy to LezWatch.TV Development Server
         uses: easingthemes/ssh-deploy@main
         env:
           SSH_PRIVATE_KEY: ${{ secrets.LWTV_SSH_KEY }}
@@ -50,4 +80,31 @@ jobs:
           REMOTE_HOST: ${{ secrets.LWTV_HOST }}
           REMOTE_USER: ${{ secrets.LWTV_USER }}
           TARGET: /home/${{ secrets.LWTV_USER }}/${{ secrets.LWTV_DEV_DOMAIN }}/wp-content/themes/lwtv-underscores
-          EXCLUDE: " /_build_scripts/, /.cursor/, /.git/, /.github/, /.husky/, /.sass-cache/, /.vscode/, /cron/, /docs/, /node_modules/, /vendor/, webpack.config.js, .browserslistrc, .gitignore, .npmrc, .nvmrc, .ruby-version, composer.json, composer.lock, package-lock.json, package.json, phpcs.xml.dist, /plugins/lwtv-plugin/node_modules/, /plugins/lwtv-plugin/vendor/, /plugins/lwtv-plugin/.gitignore, /plugins/lwtv-plugin/composer.json, /plugins/lwtv-plugin/composer.lock, /plugins/lwtv-plugin/package-lock.json, /plugins/lwtv-plugin/package.json, /plugins/lwtv-plugin/php/blocks/node_modules/, /plugins/lwtv-plugin/php/blocks/.gitignore, /plugins/lwtv-plugin/php/blocks/package-lock.json, /plugins/lwtv-plugin/php/blocks/package.json, /plugins/lwtv-plugin/php/blocks/.eslint, /plugins/lwtv-plugin/php/src/"
+          EXCLUDE: " /_build_scripts/, /.cursor/, /.git/, /.github/, /.husky/, /.sass-cache/, /.vscode/, /cron/, /docs/, /node_modules/, /scss/, /vendor/, webpack.config.js, .browserslistrc, .gitignore, .npmrc, .nvmrc, .ruby-version, composer.json, composer.lock, package-lock.json, package.json, phpcs.xml.dist, /plugins/lwtv-plugin/node_modules/, /plugins/lwtv-plugin/vendor/, /plugins/lwtv-plugin/.gitignore, /plugins/lwtv-plugin/composer.json, /plugins/lwtv-plugin/composer.lock, /plugins/lwtv-plugin/package-lock.json, /plugins/lwtv-plugin/package.json, /plugins/lwtv-plugin/php/blocks/node_modules/, /plugins/lwtv-plugin/php/blocks/.gitignore, /plugins/lwtv-plugin/php/blocks/package-lock.json, /plugins/lwtv-plugin/php/blocks/package.json, /plugins/lwtv-plugin/php/blocks/.eslint, /plugins/lwtv-plugin/php/src/"
+
+      - name: Deploy Cron to Development Server
+        uses: easingthemes/ssh-deploy@main
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.LWTV_SSH_KEY }}
+          ARGS: "-rlgoDzvc -i"
+          SOURCE: cron/
+          REMOTE_HOST: ${{ secrets.LWTV_HOST }}
+          REMOTE_USER: ${{ secrets.LWTV_USER }}
+          TARGET: /home/${{ secrets.LWTV_USER }}/cron-dev/
+
+  # =====================================================================
+  # JOB 3: Run commands on the server after deployment is complete
+  # =====================================================================
+  post-deploy:
+    runs-on: ubuntu-latest
+    needs: deploy # This ensures the 'deploy' job finishes first
+    steps:
+      - name: Copy Symbolicons Locally
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.LWTV_HOST }}
+          username: ${{ secrets.LWTV_USER }}
+          key: ${{ secrets.LWTV_SSH_KEY }}
+          script: |
+            echo "Copying Symbolicons..."
+            cp -r /home/${{ secrets.LWTV_USER }}/symbolicons/development/* /home/${{ secrets.LWTV_USER }}/${{ secrets.LWTV_DEV_DOMAIN }}/wp-content/themes/lwtv-underscores/symbolicons/

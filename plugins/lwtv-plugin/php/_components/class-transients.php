@@ -9,6 +9,20 @@ class Transients implements Component, Templater {
 
 	const CACHE_DURATION = HOUR_IN_SECONDS / 2;
 
+	/**
+	 * Queue of cache invalidation requests to process at shutdown.
+	 *
+	 * @var array
+	 */
+	private static $invalidation_queue = array();
+
+	/**
+	 * Whether the shutdown hook has been registered.
+	 *
+	 * @var bool
+	 */
+	private static $shutdown_registered = false;
+
 	/*
 	 * Init
 	 */
@@ -123,34 +137,101 @@ class Transients implements Component, Templater {
 	/**
 	 * Invalidate statistics cache based on content type
 	 *
+	 * This method queues the invalidation for processing at shutdown to avoid
+	 * blocking the save operation with expensive SQL DELETE queries.
+	 * Multiple requests are deduplicated automatically.
+	 *
 	 * @param string $content_type The type of content that changed
 	 * @param int    $post_id      The post ID that changed (optional)
 	 * @return void
 	 */
 	public function invalidate_statistics_cache( string $content_type, int $post_id = 0 ): void {
-		$dependencies = $this->get_cache_dependencies();
+		// Queue the invalidation request for deferred processing.
+		$queue_key = $content_type . '_' . $post_id;
 
-		// Determine which tiers to invalidate based on content type
-		$tiers_to_invalidate = $this->get_tiers_for_content_type( $content_type );
-
-		foreach ( $tiers_to_invalidate as $tier ) {
-			if ( ! isset( $dependencies[ $tier ] ) ) {
-				continue;
-			}
-
-			$tier_config = $dependencies[ $tier ];
-
-			if ( 'immediate' === $tier_config['priority'] ) {
-				$this->clear_cache_tier( $tier_config['patterns'] );
-				$this->warm_cache_tier( $tier, $post_id );
-			} elseif ( 'background' === $tier_config['priority'] ) {
-				$this->clear_cache_tier( $tier_config['patterns'] );
-				$this->schedule_cache_warming( $tier, $post_id );
-			}
-			// 'preserve' tier is left alone
+		// Avoid duplicate entries for the same content type and post.
+		if ( ! isset( self::$invalidation_queue[ $queue_key ] ) ) {
+			self::$invalidation_queue[ $queue_key ] = array(
+				'content_type' => $content_type,
+				'post_id'      => $post_id,
+			);
 		}
 
-		lwtv_plugin()->error_log( 'cache-invalidation', "Invalidated cache for {$content_type} (post ID: {$post_id})" );
+		// Register shutdown hook if not already done.
+		if ( ! self::$shutdown_registered ) {
+			add_action( 'shutdown', array( $this, 'process_deferred_cache_invalidation' ) );
+			self::$shutdown_registered = true;
+		}
+
+		lwtv_plugin()->debug_log( 'caching', "Queued cache invalidation for {$content_type} (post ID: {$post_id})" );
+	}
+
+	/**
+	 * Process deferred cache invalidation at shutdown
+	 *
+	 * This runs after the response is sent to the user, so it doesn't
+	 * affect perceived save performance.
+	 *
+	 * @return void
+	 */
+	public function process_deferred_cache_invalidation(): void {
+		if ( empty( self::$invalidation_queue ) ) {
+			return;
+		}
+
+		$dependencies = $this->get_cache_dependencies();
+
+		// Collect all unique patterns to clear across all queued requests.
+		$patterns_to_clear = array();
+		$warming_requests  = array();
+
+		foreach ( self::$invalidation_queue as $request ) {
+			$tiers_to_invalidate = $this->get_tiers_for_content_type( $request['content_type'] );
+
+			foreach ( $tiers_to_invalidate as $tier ) {
+				if ( ! isset( $dependencies[ $tier ] ) ) {
+					continue;
+				}
+
+				$tier_config = $dependencies[ $tier ];
+
+				// Skip 'preserve' tier.
+				if ( 'preserve' === $tier_config['priority'] ) {
+					continue;
+				}
+
+				// Collect patterns to clear (deduplicated).
+				foreach ( $tier_config['patterns'] as $pattern ) {
+					$patterns_to_clear[ $pattern ] = true;
+				}
+
+				// Track warming requests.
+				if ( 'immediate' === $tier_config['priority'] ) {
+					$warming_requests[] = array(
+						'tier'    => $tier,
+						'post_id' => $request['post_id'],
+					);
+				} elseif ( 'background' === $tier_config['priority'] ) {
+					$this->schedule_cache_warming( $tier, $request['post_id'] );
+				}
+			}
+		}
+
+		// Clear all patterns in batch.
+		if ( ! empty( $patterns_to_clear ) ) {
+			$this->clear_cache_tier( array_keys( $patterns_to_clear ) );
+		}
+
+		// Warm immediate caches.
+		foreach ( $warming_requests as $request ) {
+			$this->warm_cache_tier( $request['tier'], $request['post_id'] );
+		}
+
+		$count = count( self::$invalidation_queue );
+		lwtv_plugin()->debug_log( 'caching', "Processed {$count} deferred cache invalidation requests" );
+
+		// Clear the queue.
+		self::$invalidation_queue = array();
 	}
 
 	/**
@@ -207,7 +288,7 @@ class Transients implements Component, Templater {
 	private function warm_cache_tier( string $tier, int $post_id ): void {
 		// For now, just log the warming request
 		// In a full implementation, this would trigger immediate cache regeneration
-		lwtv_plugin()->error_log( 'cache-warming', "Warming {$tier} cache tier for post ID: {$post_id}" );
+		lwtv_plugin()->debug_log( 'caching', "Warming {$tier} cache tier for post ID: {$post_id}" );
 	}
 
 	/**

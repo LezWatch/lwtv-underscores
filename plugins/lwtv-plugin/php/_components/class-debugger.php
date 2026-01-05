@@ -24,6 +24,11 @@ class Debugger implements Component, Templater {
 	}
 
 	/**
+	 * CMB2 option key - matches Debug_Logging::OPTION_KEY.
+	 */
+	private const OPTION_KEY = 'lwtv_debug_logging_options';
+
+	/**
 	 * Get the template tags.
 	 *
 	 * @return array
@@ -32,6 +37,7 @@ class Debugger implements Component, Templater {
 		return array(
 			'is_dev_site'   => array( $this, 'is_dev_site' ),
 			'is_debug_mode' => array( $this, 'is_debug_mode' ),
+			'debug_log'     => array( $this, 'debug_log' ),
 			'error_log'     => array( $this, 'error_log' ),
 		);
 	}
@@ -150,10 +156,66 @@ class Debugger implements Component, Templater {
 	/**
 	 * Check if the site is in debug mode.
 	 *
+	 * Checks both WP_DEBUG constant and custom LWTV debug mode option.
+	 *
 	 * @return bool
 	 */
 	public function is_debug_mode(): bool {
-		return defined( 'WP_DEBUG' ) && WP_DEBUG;
+		// Check WP_DEBUG first
+		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+			return true;
+		}
+
+		// Check custom LWTV debug mode option (CMB2 stores as array)
+		$options = get_option( self::OPTION_KEY, array() );
+		return ! empty( $options['debug_mode'] );
+	}
+
+	/**
+	 * Check if a specific topic is enabled for logging.
+	 *
+	 * @param string $topic The topic to check.
+	 *
+	 * @return bool
+	 */
+	public function is_topic_enabled( string $topic ): bool {
+		$options        = get_option( self::OPTION_KEY, array() );
+		$enabled_topics = isset( $options['log_topics'] ) ? $options['log_topics'] : array();
+
+		// If no topics are configured, allow all (backwards compatibility)
+		if ( empty( $enabled_topics ) ) {
+			return true;
+		}
+
+		return in_array( $topic, $enabled_topics, true );
+	}
+
+	/**
+	 * Log a debug message to debug-lwtv.log.
+	 *
+	 * Only logs if debug mode is enabled AND the topic is enabled.
+	 *
+	 * @param string $type    The type/topic of log message.
+	 * @param string $message The message to log.
+	 *
+	 * @return void
+	 */
+	public function debug_log( $type = 'debug', $message = '' ): void {
+		// Bail if debug mode is off or message is empty
+		if ( ! $this->is_debug_mode() || empty( $message ) ) {
+			return;
+		}
+
+		// Bail if topic is not enabled
+		if ( ! $this->is_topic_enabled( $type ) ) {
+			return;
+		}
+
+		$log_file    = WP_CONTENT_DIR . '/debug-lwtv.log';
+		$log_message = '[' . gmdate( 'Y-m-d H:i:s' ) . '] [' . ucwords( $type ) . '] ' . $message . "\n";
+
+		// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+		error_log( $log_message, 3, $log_file );
 	}
 
 	/**
@@ -165,10 +227,6 @@ class Debugger implements Component, Templater {
 	 * @return void
 	 */
 	public function error_log( $type = 'debug', $message = '' ): void {
-		if ( ! $this->is_debug_mode() || empty( $message ) ) {
-			return;
-		}
-
 		// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
 		error_log( '[' . ucwords( $type ) . '] ' . $message );
 	}

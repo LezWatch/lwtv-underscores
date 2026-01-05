@@ -1,11 +1,24 @@
 #!/bin/bash
 export PATH="/usr/local/bin:/usr/bin:/bin"
 
-cd /home/wp_bg3hrq/lezwatchtv.com || exit 1
+# Define the UUID for this specific task
+UUID="generate-lists"
 
-now=$(date)
-echo $now >> /home/wp_bg3hrq/cron/lists.log 2>&1
+# Define the path to the ping.sh script
+# Assuming it's in the same directory.
+PING_SCRIPT="/home/wp_bg3hrq/cron/ping.sh"
 
-/usr/bin/wp lwtv generate lists --path=/home/wp_bg3hrq/lezwatchtv.com/ >> /home/wp_bg3hrq/cron/lists.log 2>&1
+cd /home/wp_bg3hrq/lezwatchtv.com || {
+	$PING_SCRIPT "$UUID" "false"
+	exit 1
+}
 
-/usr/bin/curl -fsS -m 10 --retry 5 -o /dev/null https://health.ipstenu.com/ping/sY19ROZQjbxP8e5HhKjnIA/lwtv-update-counts
+/usr/bin/wp lwtv generate lists --path=/home/wp_bg3hrq/lezwatchtv.com/
+
+if [ $? -eq 0 ]; then
+	SUCCEEDED="true"
+else
+	SUCCEEDED="false"
+fi
+
+$PING_SCRIPT "$UUID" "$SUCCEEDED"

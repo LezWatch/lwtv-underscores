@@ -9,6 +9,7 @@ namespace LWTV\CPTs;
 
 use LWTV\CPTs\Characters\{ CMB2_Metaboxes, Custom_Columns };
 use LWTV\Plugins\CMB2;
+use LWTV\Rest_API\BYQ;
 
 /**
  * class LWTV_CPT_Characters
@@ -303,6 +304,9 @@ class Characters {
 		// Smart statistics cache invalidation
 		lwtv_plugin()->invalidate_statistics_cache( self::SLUG, $post_id );
 
+		// Check if character has 'dead' term and invalidate BYQ cache if needed
+		$this->maybe_invalidate_byq_cache( $post_id );
+
 		// re-hook this function
 		add_action( 'save_post_post_type_characters', array( $this, 'save_post_meta' ) );
 	}
@@ -321,13 +325,13 @@ class Characters {
 			try {
 				( new CMB2() )->select2_taxonomy_save( $post_id, $postmeta, $taxonomy );
 				++$success_count;
-				lwtv_plugin()->error_log( 'taxsync-task', "Synced taxonomy {$taxonomy} for character ID: {$post_id}" );
+				lwtv_plugin()->debug_log( 'taxsync', "Synced taxonomy {$taxonomy} for character ID: {$post_id}" );
 			} catch ( \Exception $e ) {
-				lwtv_plugin()->error_log( 'taxsync-task', "Failed to sync taxonomy {$taxonomy} for character ID: {$post_id}: " . $e->getMessage() );
+				lwtv_plugin()->error_log( 'taxsync', "Failed to sync taxonomy {$taxonomy} for character ID: {$post_id}: " . $e->getMessage() );
 			}
 		}
 
-		lwtv_plugin()->error_log( 'taxsync-task', "Completed character taxonomy sync for ID: {$post_id} - {$success_count}/{$total_count} successful" );
+		lwtv_plugin()->debug_log( 'taxsync', "Completed character taxonomy sync for ID: {$post_id} - {$success_count}/{$total_count} successful" );
 	}
 
 	/**
@@ -441,6 +445,28 @@ class Characters {
 				update_post_meta( $show_id, 'lwtv_has_new_char', true );
 				update_post_meta( $show_id, 'lwtv_characters_last_updated', time() );
 			}
+		}
+	}
+
+	/**
+	 * Check if character has 'dead' term and invalidate BYQ cache if needed
+	 *
+	 * @param int $post_id The post ID.
+	 * @return void
+	 */
+	private function maybe_invalidate_byq_cache( $post_id ) {
+		// Only check if character has 'dead' term
+		if ( ! has_term( 'dead', 'lez_cliches', $post_id ) ) {
+			return;
+		}
+
+		// Check if character is already in cached list with same death date
+		$is_in_list = ( new BYQ() )->is_character_in_cached_list( $post_id );
+
+		// If character is not in cached list or death date changed, invalidate cache
+		if ( ! $is_in_list ) {
+			( new BYQ() )->invalidate_death_list_cache();
+			lwtv_plugin()->debug_log( 'buryqueers', "Invalidated BYQ cache for character {$post_id} - character not in cached list or death date changed" );
 		}
 	}
 

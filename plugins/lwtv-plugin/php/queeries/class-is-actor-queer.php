@@ -32,26 +32,15 @@ class Is_Actor_Queer {
 			return false;
 		}
 
-		// Create cache key
-		$cache_key = 'actor_queer_status_' . $the_id;
-
 		// If we're private, we aren't queer no matter what to protect identities
 		// We do this first to protect identities.
 		if ( 'private' === get_post_status( $the_id ) ) {
-			lwtv_plugin()->delete_transient( $cache_key );
 			return false;
-		}
-
-		// Get the cached result and use it if it exists
-		$cached_result = lwtv_plugin()->get_transient( $cache_key );
-		if ( false !== $cached_result ) {
-			return (bool) $cached_result;
 		}
 
 		// Check the override first
 		$override = get_post_meta( $the_id, 'lezactors_queer_override', true );
 		if ( 'is_queer' === $override ) {
-			lwtv_plugin()->set_transient( $cache_key, true, HOUR_IN_SECONDS );
 			return true;
 		}
 
@@ -61,8 +50,8 @@ class Is_Actor_Queer {
 		// Check if ANY category indicates queerness
 		$is_queer = $this->check_queerness( $taxonomies );
 
-		// Cache the result
-		lwtv_plugin()->set_transient( $cache_key, $is_queer, HOUR_IN_SECONDS );
+		// Update the post meta with the result
+		update_post_meta( $the_id, 'lezactors_queer_status', (bool) $is_queer );
 
 		return $is_queer;
 	}
@@ -126,10 +115,10 @@ class Is_Actor_Queer {
 
 		// Check 1: If NOT cis gender (i.e., has non-cis gender terms), return true
 		if ( ! empty( $gender_terms ) ) {
-			// Check if ALL gender terms are NOT in the straight list
+			// Check if gender terms are not in the straight list
 			$non_straight_genders = array_diff( $gender_terms, $straight_genders );
 			if ( ! empty( $non_straight_genders ) ) {
-				lwtv_plugin()->error_log( 'actor_queer_debug', 'Actor is queer based on gender terms: ' . wp_json_encode( $gender_terms ) );
+				lwtv_plugin()->debug_log( 'is-queer', 'Actor is queer based on gender terms: ' . wp_json_encode( $gender_terms ) );
 				return true;
 			}
 		}
@@ -144,13 +133,13 @@ class Is_Actor_Queer {
 				// Check if actor uses ONLY straight pronouns for their gender
 				$has_non_straight_pronouns = ! empty( array_diff( $pronoun_terms, $straight_pronouns ) );
 				if ( $has_non_straight_pronouns ) {
-					lwtv_plugin()->error_log( 'actor_queer_debug', 'Actor is queer based on pronouns: ' . wp_json_encode( $pronoun_terms ) . ' for gender: ' . wp_json_encode( $gender_terms ) );
+					lwtv_plugin()->debug_log( 'is-queer', 'Actor is queer based on pronouns: ' . wp_json_encode( $pronoun_terms ) . ' for gender: ' . wp_json_encode( $gender_terms ) );
 					return true;
 				}
 			} else {
 				// No straight pronouns defined for this gender (e.g., non-binary, etc.)
 				// If they have pronouns set and we don't know what's "straight" for them, consider queer
-				lwtv_plugin()->error_log( 'actor_queer_debug', 'Actor is queer based on pronouns (no straight definition): ' . wp_json_encode( $pronoun_terms ) . ' for gender: ' . wp_json_encode( $gender_terms ) );
+				lwtv_plugin()->debug_log( 'is-queer', 'Actor is queer based on pronouns (no straight definition): ' . wp_json_encode( $pronoun_terms ) . ' for gender: ' . wp_json_encode( $gender_terms ) );
 				return true;
 			}
 		}
@@ -160,7 +149,7 @@ class Is_Actor_Queer {
 			// Check if sexuality is NOT in straight list
 			$non_straight_sexuality = array_diff( $sexuality_terms, $straight_sexuality );
 			if ( ! empty( $non_straight_sexuality ) ) {
-				lwtv_plugin()->error_log( 'actor_queer_debug', 'Actor is queer based on sexuality terms: ' . wp_json_encode( $sexuality_terms ) );
+				lwtv_plugin()->debug_log( 'is-queer', 'Actor is queer based on sexuality terms: ' . wp_json_encode( $sexuality_terms ) );
 				return true;
 			}
 		}
@@ -169,7 +158,7 @@ class Is_Actor_Queer {
 		if ( ! empty( $romantic_terms ) ) {
 			$non_straight_romantic = array_diff( $romantic_terms, $straight_romantics );
 			if ( ! empty( $non_straight_romantic ) ) {
-				lwtv_plugin()->error_log( 'actor_queer_debug', 'Actor is queer based on romantic terms: ' . wp_json_encode( $romantic_terms ) );
+				lwtv_plugin()->debug_log( 'is-queer', 'Actor is queer based on romantic terms: ' . wp_json_encode( $romantic_terms ) );
 				return true;
 			}
 		}

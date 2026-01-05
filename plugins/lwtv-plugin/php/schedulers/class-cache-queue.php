@@ -72,7 +72,7 @@ class Cache_Queue {
 			return;
 		}
 
-		lwtv_plugin()->error_log( 'cache-queue', 'Processing cache queue on shutdown - ' . count( self::$post_ids_to_process ) . ' posts, ' . count( self::$urls_to_clear ) . ' URLs' );
+		lwtv_plugin()->debug_log( 'caching', 'Processing cache queue on shutdown - ' . count( self::$post_ids_to_process ) . ' posts, ' . count( self::$urls_to_clear ) . ' URLs' );
 
 		// Remove duplicates
 		$unique_urls = array_unique( self::$urls_to_clear );
@@ -80,7 +80,7 @@ class Cache_Queue {
 		// Process cache invalidation
 		if ( ! empty( $unique_urls ) ) {
 			( new Cache() )->clean_any_urls( $unique_urls );
-			lwtv_plugin()->error_log( 'cache-queue', 'Successfully cleared cache for ' . count( $unique_urls ) . ' URLs' );
+			lwtv_plugin()->debug_log( 'caching', 'Successfully cleared cache for ' . count( $unique_urls ) . ' URLs' );
 		}
 
 		// Clear the queues
