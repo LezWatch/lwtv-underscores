@@ -9,18 +9,15 @@ updates:
     ignore:
        - dependency-name: "@types/node"
          update-types: ["version-update:semver-major"]
-    versioning-strategy: increase
 
   - package-ecosystem: "composer"
     directory: "/"
     schedule:
       interval: "weekly"
     target-branch: "development"
-    versioning-strategy: increase
 
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "weekly"
     target-branch: "development"
-    versioning-strategy: increase
