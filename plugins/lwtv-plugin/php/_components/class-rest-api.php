@@ -4,6 +4,7 @@
  */
 namespace LWTV\_Components;
 
+use LWTV\Rest_API\Broom;
 use LWTV\Rest_API\Whats_On_JSON;
 use LWTV\Rest_API\What_Happened_JSON;
 use LWTV\Rest_API\This_Year_JSON;
@@ -21,6 +22,7 @@ class Rest_API implements Component, Templater {
 	 * Init
 	 */
 	public function init(): void {
+		new Broom();
 		new BYQ();
 		new Export_JSON();
 		new IMDb_JSON();
