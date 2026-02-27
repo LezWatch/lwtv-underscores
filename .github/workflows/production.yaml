@@ -57,12 +57,12 @@ jobs:
     needs: build # This ensures the 'build' job finishes first
     steps:
       - name: Download theme artifact
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
           name: theme-files-prod
 
       - name: Download cron artifact
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
           name: cron-files-prod
           path: cron/ # Specify path to restore directory structure
