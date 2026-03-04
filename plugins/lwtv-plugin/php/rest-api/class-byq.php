@@ -30,9 +30,6 @@ class BYQ {
 	 */
 	public function __construct() {
 		add_action( 'rest_api_init', array( $this, 'rest_api_init' ) );
-		add_action( 'save_post_characters', array( $this, 'on_character_save' ) );
-		add_action( 'added_post_meta', array( $this, 'on_post_meta_update' ), 10, 4 );
-		add_action( 'updated_post_meta', array( $this, 'on_post_meta_update' ), 10, 4 );
 	}
 
 	/**
@@ -949,47 +946,5 @@ class BYQ {
 
 		lwtv_plugin()->debug_log( 'buryqueers', 'Daily BYQ cache refresh completed. Last death: ' . $last_death['name'] . ' (ID: ' . $last_death['id'] . ')' );
 		return true;
-	}
-
-	/**
-	 * Action hook callback for when a character post is saved.
-	 * Invalidate the death list cache if the character is marked as dead.
-	 * @param int $post_id The post ID.
-	 */
-	public function on_character_save( int $post_id ) {
-		// If this is an autosave, don't do anything.
-		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
-			return;
-		}
-
-		// Only invalidate if the character has the 'dead' term in 'lez_cliches' taxonomy
-		if ( has_term( 'dead', 'lez_cliches', $post_id ) ) {
-			$this->invalidate_death_list_cache();
-			lwtv_plugin()->debug_log( 'buryqueers', 'BYQ cache invalidated due to character post save (dead character): ' . $post_id );
-		} else {
-			lwtv_plugin()->debug_log( 'buryqueers', 'Skipping BYQ cache invalidation for character post save (not a dead character): ' . $post_id );
-		}
-	}
-
-	/**
-	 * Action hook callback for when post meta is updated.
-	 * Invalidate the death list cache if relevant meta keys are changed AND the character is marked as dead.
-	 * @param int    $met_id    ID of the metadata entry.
-	 * @param int    $post_id    Post ID.
-	 * @param string $meta_key   Metadata key.
-	 * @param mixed  $_meta_value Unused. Metadata value.
-	 */
-	public function on_post_meta_update( int $met_id, int $post_id, string $meta_key, mixed $_meta_value ) {
-		unset( $_meta_value ); // phpcs:ignore VariableAnalysis.CodeAnalysis.VariableAnalysis.UnusedVariable
-		// Only act on 'characters' post type and specific death-related meta keys
-		if ( 'characters' === get_post_type( $post_id ) && in_array( $meta_key, array( 'lezchars_death_year', 'lezchars_last_death' ), true ) ) {
-			// Only invalidate if the character has the 'dead' term in 'lez_cliches' taxonomy
-			if ( has_term( 'dead', 'lez_cliches', $post_id ) ) {
-				$this->invalidate_death_list_cache();
-				lwtv_plugin()->debug_log( 'buryqueers', 'BYQ cache invalidated due to meta update (dead character): ' . $meta_key . ' for post ' . $post_id );
-			} else {
-				lwtv_plugin()->debug_log( 'buryqueers', 'Skipping BYQ cache invalidation for meta update (not a dead character): ' . $meta_key . ' for post ' . $post_id );
-			}
-		}
 	}
 }

@@ -457,6 +457,7 @@ class Characters {
 	private function maybe_invalidate_byq_cache( $post_id ) {
 		// Only check if character has 'dead' term
 		if ( ! has_term( 'dead', 'lez_cliches', $post_id ) ) {
+			lwtv_plugin()->debug_log( 'buryqueers', 'Skipping BYQ cache invalidation for character post save (not a dead character): ' . $post_id );
 			return;
 		}
 
