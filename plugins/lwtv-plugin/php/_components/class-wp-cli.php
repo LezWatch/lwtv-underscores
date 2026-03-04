@@ -40,7 +40,6 @@ class WP_CLI implements Component {
 				require_once $path_to_command; //phpcs:ignore WordPressVIPMinimum.Files.IncludingFile.UsingVariable
 			}
 		}
-		\WP_CLI::add_command( 'lwtv sweep-death', 'WP_CLI_LWTV_Sweep' );
 
 		$args = array(
 			'shortdesc' => 'Useful commands for LezWatch.TV.',
