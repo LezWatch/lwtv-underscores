@@ -61,7 +61,7 @@
     "chartjs-plugin-annotation": "^3",
     "coffeescript": "^2.7.0",
     "postinstall": "*",
-    "simple-git": "^3.30.0",
+    "simple-git": "^3.32.0",
     "svg-sprite": "^2.0.4",
     "svgo": "^4.0.0",
     "tablesorter": "^2"
