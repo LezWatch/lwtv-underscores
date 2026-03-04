@@ -66,7 +66,7 @@ class New_Post extends Postiz {
 
 		// Bluesky posts have a 300-character limit
 		if ( strlen( $content ) > 300 ) {
-			$content = substr( $content, 0, 300 ) . ' ...';
+			$content = substr( $content, 0, 296 ) . ' ...';
 		}
 
 		return $content;
