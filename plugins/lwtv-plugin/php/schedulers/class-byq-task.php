@@ -21,6 +21,11 @@ class BYQ_Task {
 	const AS_HOOK = 'lwtv_byq_check_cache';
 
 	/**
+	 * Action Scheduler hook name for invalidating BYQ cache
+	 */
+	const AS_INVALIDATE_HOOK = 'lwtv_byq_invalidate_cache';
+
+	/**
 	 * Action Scheduler group name
 	 */
 	const AS_GROUP = 'lwtv_byq';
@@ -37,6 +42,7 @@ class BYQ_Task {
 
 		// Register Action Scheduler hook
 		add_action( self::AS_HOOK, array( $this, 'process_cache_check' ), 10, 1 );
+		add_action( self::AS_INVALIDATE_HOOK, array( $this, 'process_invalidate_cache' ), 10, 0 );
 	}
 
 	/**
@@ -77,5 +83,15 @@ class BYQ_Task {
 		} else {
 			lwtv_plugin()->debug_log( 'scheduler', 'Cache exists, no regeneration needed' );
 		}
+	}
+
+	/**
+	 * Process the BYQ cache invalidation
+	 *
+	 * @return void
+	 */
+	public function process_invalidate_cache(): void {
+		lwtv_plugin()->debug_log( 'scheduler', 'Processing BYQ cache invalidation via Action Scheduler' );
+		( new \LWTV\Rest_API\BYQ() )->invalidate_death_list_cache();
 	}
 }
