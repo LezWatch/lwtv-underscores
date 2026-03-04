@@ -457,6 +457,7 @@ class Characters {
 	private function maybe_invalidate_byq_cache( $post_id ) {
 		// Only check if character has 'dead' term
 		if ( ! has_term( 'dead', 'lez_cliches', $post_id ) ) {
+			lwtv_plugin()->debug_log( 'buryqueers', 'Skipping BYQ cache invalidation for character post save (not a dead character): ' . $post_id );
 			return;
 		}
 
@@ -465,8 +466,9 @@ class Characters {
 
 		// If character is not in cached list or death date changed, invalidate cache
 		if ( ! $is_in_list ) {
-			( new BYQ() )->invalidate_death_list_cache();
-			lwtv_plugin()->debug_log( 'buryqueers', "Invalidated BYQ cache for character {$post_id} - character not in cached list or death date changed" );
+			// Schedule cache invalidation for 10 minutes in the future
+			as_schedule_single_action( time() + ( 10 * MINUTE_IN_SECONDS ), \LWTV\Schedulers\BYQ_Task::AS_INVALIDATE_HOOK, array(), \LWTV\Schedulers\BYQ_Task::AS_GROUP );
+			lwtv_plugin()->debug_log( 'buryqueers', "Scheduled BYQ cache invalidation for character {$post_id} - character not in cached list or death date changed" );
 		}
 	}
 
