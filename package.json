@@ -63,7 +63,7 @@
     "postinstall": "*",
     "simple-git": "^3.30.0",
     "svg-sprite": "^2.0.4",
-    "svgo": "^4.0.0",
+    "svgo": "^4.0.1",
     "tablesorter": "^2"
   },
   "devDependencies": {
