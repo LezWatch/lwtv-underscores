@@ -32,6 +32,7 @@ class WP_CLI implements Component {
 			sprintf( '%s/%s', dirname( __DIR__, 1 ) . '/wp-cli/', 'cli-generate.php' ),  // wp lwtv GENERATE [otd|tvmaze]
 			sprintf( '%s/%s', dirname( __DIR__, 1 ) . '/wp-cli/', 'cli-scheduler.php' ), // wp lwtv SCHEDULER [missed|tmdb] [status]
 			sprintf( '%s/%s', dirname( __DIR__, 1 ) . '/wp-cli/', 'cli-shadow.php' ),    // wp lwtv SHADOW [post_type] [taxonomy]
+			sprintf( '%s/%s', dirname( __DIR__, 1 ) . '/wp-cli/', 'cli-sweep.php' ),     // wp lwtv SWEEP-DEATH
 		);
 
 		foreach ( $cli_loader as $path_to_command ) {

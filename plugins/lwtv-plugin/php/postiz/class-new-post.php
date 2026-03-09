@@ -58,7 +58,17 @@ class New_Post extends Postiz {
 	 */
 	private function get_post_content( $post_id ) {
 		// Get the extracted content
-		$content = get_post_meta( $post_id, 'extracted_content', true );
+		$content = get_the_excerpt( $post_id );
+
+		if ( empty( $content ) ) {
+			$content = get_the_title( $post_id );
+		}
+
+		// Bluesky posts have a 300-character limit
+		if ( strlen( $content ) > 300 ) {
+			$content = substr( $content, 0, 296 ) . ' ...';
+		}
+
 		return $content;
 	}
 
