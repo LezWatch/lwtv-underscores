@@ -392,17 +392,19 @@ class Actors {
 			$check_wiki = $this->process_actor_wikidata( $actor_id, $wiki_claims );
 
 			foreach ( $check_ours as $item => $data ) {
-				$data                = strtolower( $this->remove_www( $data ) );
-				$check_wiki[ $item ] = strtolower( $this->remove_www( $check_wiki[ $item ] ) );
+				$ours_original = $this->remove_www( $data );
+				$wiki_original = $this->remove_www( $check_wiki[ $item ] );
+				$ours_lower    = strtolower( $ours_original );
+				$wiki_lower    = strtolower( $wiki_original );
 
-				if ( $data === $check_wiki[ $item ] ) {
+				if ( $ours_lower === $wiki_lower ) {
 					$result = 'match';
-				} elseif ( '' === $check_wiki[ $item ] ) {
+				} elseif ( '' === $wiki_lower ) {
 					$result = 'n/a';
 				} else {
 					$result = array(
-						'ours'     => $data,
-						'wikidata' => $check_wiki[ $item ],
+						'ours'     => $ours_original,
+						'wikidata' => $wiki_original,
 					);
 				}
 
