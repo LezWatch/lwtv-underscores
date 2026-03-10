@@ -66,14 +66,35 @@ class Agents {
 	}
 
 	/**
-	 * Parse prompt to extract trope and score
+	 * Semantic score mappings: high=80, low=20, default=50.
+	 *
+	 * @var array<string, array{value: int, operator: string}>
+	 */
+	private const SCORE_SEMANTICS = array(
+		'high'    => array(
+			'value'    => 80,
+			'operator' => '>=',
+		),
+		'low'     => array(
+			'value'    => 20,
+			'operator' => '<=',
+		),
+		'default' => array(
+			'value'    => 50,
+			'operator' => '>=',
+		),
+	);
+
+	/**
+	 * Parse prompt to extract trope, score, and comparison operator
 	 *
 	 * @param string $prompt The raw prompt text.
-	 * @return array{0: string|null, 1: int|null} [trope, score] or [null, null] if unparseable.
+	 * @return array{0: string|null, 1: int|null, 2: string} [trope, score, operator] or [null, null, '>='] if unparseable.
 	 */
 	private function parse_prompt( string $prompt ): array {
-		$trope = null;
-		$score = null;
+		$trope    = null;
+		$score    = null;
+		$operator = '>=';
 
 		// Structured format: trope:slow-burn,score:80
 		if ( preg_match( '/trope:([a-z0-9-]+)/i', $prompt, $trope_match ) ) {
@@ -83,7 +104,25 @@ class Agents {
 			$score = (int) $score_match[1];
 		}
 
-		// Natural language: greedy score regex
+		// Natural language: semantic terms (high/low/default) - check before numeric
+		if ( null === $score && preg_match( '/(?:with\s+)?(?:a\s+)?(high|low|default)\s+score/i', $prompt, $semantic_match ) ) {
+			$term     = strtolower( $semantic_match[1] );
+			$score    = self::SCORE_SEMANTICS[ $term ]['value'];
+			$operator = self::SCORE_SEMANTICS[ $term ]['operator'];
+		}
+		if ( null === $score && preg_match( '/score\s+(?:of\s+)?(high|low|default)/i', $prompt, $semantic_match ) ) {
+			$term     = strtolower( $semantic_match[1] );
+			$score    = self::SCORE_SEMANTICS[ $term ]['value'];
+			$operator = self::SCORE_SEMANTICS[ $term ]['operator'];
+		}
+
+		// Natural language: numeric with under/below (max score)
+		if ( null === $score && preg_match( '/(?:score|rated|rating)\s*(?:under|below)\s*(\d+)/i', $prompt, $score_match ) ) {
+			$score    = (int) $score_match[1];
+			$operator = '<=';
+		}
+
+		// Natural language: numeric with over/above/of (min score)
 		if ( null === $score && preg_match( '/(?:score|rated|rating)\s*(?:of|over|above|is)?\s*(\d+)/i', $prompt, $score_match ) ) {
 			$score = (int) $score_match[1];
 		}
@@ -120,7 +159,7 @@ class Agents {
 			}
 		}
 
-		return array( $trope, $score );
+		return array( $trope, $score, $operator );
 	}
 
 	/**
@@ -142,19 +181,19 @@ class Agents {
 			);
 		}
 
-		list( $trope, $score ) = $this->parse_prompt( $prompt );
+		list( $trope, $score, $operator ) = $this->parse_prompt( $prompt );
 
 		if ( null === $trope || null === $score ) {
 			return new \WP_REST_Response(
 				array(
 					'code'    => 'unparseable_prompt',
-					'message' => 'Could not extract trope and score from prompt. Try: "trope:slow-burn,score:80" or natural language like "Find me a slow burn show with a score over 80".',
+					'message' => 'Could not extract trope and score from prompt. Try: "trope:slow-burn,score:80" or natural language like "Find me a slow burn show with a score over 80" or "with a high score" (high=80, low=20, default=50).',
 				),
 				400
 			);
 		}
 
-		$cache_key = 'lwtv_ai_' . md5( $trope . $score );
+		$cache_key = 'lwtv_ai_' . md5( $trope . $score . $operator );
 		$cached    = function_exists( 'lwtv_plugin' ) ? lwtv_plugin()->get_transient( $cache_key ) : false;
 
 		if ( false !== $cached ) {
@@ -162,7 +201,7 @@ class Agents {
 		}
 
 		$shows = function_exists( 'lwtv_plugin' )
-			? lwtv_plugin()->get_shows_by_trope_and_score( $trope, $score )
+			? lwtv_plugin()->get_shows_by_trope_and_score( $trope, $score, $operator )
 			: array();
 
 		$results = array(

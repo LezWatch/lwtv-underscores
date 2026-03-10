@@ -70,12 +70,16 @@ trope:slow-burn,score:80
 
 ### Natural Language
 
-The endpoint recognizes phrases such as:
+**Numeric score phrases:**
 
-- "score over 80"
-- "rated 80"
-- "score of 80"
-- "rating 80"
+- "score over 80" / "score above 80" / "rated 80" → minimum score 80
+- "score under 20" / "score below 20" → maximum score 20
+
+**Semantic score terms** (high=80, low=20, default=50):
+
+- "with a high score" / "high score" / "score high" → minimum 80
+- "with a low score" / "low score" / "score low" → maximum 20
+- "with a default score" / "default score" / "score default" → minimum 50
 
 Trope names are matched against the `lez_tropes` taxonomy (e.g. "slow burn" → slug `slow-burn`).
 
@@ -110,4 +114,4 @@ Trope names are matched against the `lez_tropes` taxonomy (e.g. "slow burn" → 
 
 ## Caching
 
-Responses are cached for 1 hour per unique trope/score combination. Cache key: `lwtv_ai_{md5(trope+score)}`. This reduces MySQL load when many users query the same trope (e.g. "Slow Burn") concurrently.
+Responses are cached for 1 hour per unique trope/score/operator combination. Cache key: `lwtv_ai_{md5(trope+score+operator)}`. This reduces MySQL load when many users query the same trope (e.g. "Slow Burn") concurrently.

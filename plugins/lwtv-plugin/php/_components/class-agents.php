@@ -120,11 +120,12 @@ class Agents implements Component, Templater {
 	/**
 	 * Get shows by trope and Score (lezshows_the_score)
 	 *
-	 * @param string|int $trope Term slug or term ID from lez_tropes taxonomy.
-	 * @param int        $score Minimum score.
+	 * @param string|int $trope    Term slug or term ID from lez_tropes taxonomy.
+	 * @param int        $score    Score threshold.
+	 * @param string     $operator Comparison operator: '>=' (min score) or '<=' (max score). Default '>='.
 	 * @return array
 	 */
-	public function get_shows_by_trope_and_score( $trope, $score ) {
+	public function get_shows_by_trope_and_score( $trope, $score, $operator = '>=' ) {
 		$term = is_numeric( $trope )
 			? get_term_by( 'id', (int) $trope, 'lez_tropes' )
 			: get_term_by( 'slug', $trope, 'lez_tropes' );
@@ -132,6 +133,8 @@ class Agents implements Component, Templater {
 		if ( ! $term || is_wp_error( $term ) ) {
 			return array();
 		}
+
+		$compare = in_array( $operator, array( '>=', '<=' ), true ) ? $operator : '>=';
 
 		$shows = get_posts(
 			array(
@@ -147,7 +150,7 @@ class Agents implements Component, Templater {
 					array(
 						'key'     => 'lezshows_the_score',
 						'value'   => $score,
-						'compare' => '>=',
+						'compare' => $compare,
 						'type'    => 'NUMERIC',
 					),
 				),
