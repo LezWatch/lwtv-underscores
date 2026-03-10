@@ -39,6 +39,7 @@ This document describes the structure and contents of the custom LezWatch.TV Plu
 │   ├── _components/ - Top-level components
 │   │   ├── class-admin-color-schemes.php - Admin color schemes (forked from plugin)
 │   │   ├── class-admin-menu.php - LWTV custom admin menu
+│   │   ├── class-agents.php - AI integration (get_shows_by_trope_and_score, call_ai_server)
 │   │   ├── class-block-types-allowed.php - Filter to remove/hide certain blocks
 │   │   ├── class-blocks.php - Gutenberg Blocks
 │   │   ├── class-calendar.php - Calendar
@@ -223,6 +224,7 @@ This document describes the structure and contents of the custom LezWatch.TV Plu
 │   │   ├── class-shadow-taxonomy.php - Shadow taxonomy query utilities
 │   │   └── class-taxonomy-optimized.php - Optimized taxonomy queries with caching
 │   ├── rest-api/ - REST API output
+│   │   ├── class-agents.php - Agent API for AI integration (shows by trope and score, X-LezWatch-AI-Key auth)
 │   │   ├── class-byq.php - LezWatch.TV Plugin (formerly Bury Your Queers) (Last Death, On This Day, When Died)
 │   │   ├── class-export-json.php - Export content in JSON format. Mostly used for WikiData and Universities.
 │   │   ├── class-imdb-json.php - API to communicate with IMDb and generate information
