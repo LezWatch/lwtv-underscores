@@ -1,0 +1,152 @@
+/** LezWatch.TV AI Agent Styles */
+ #lwtv-ai-bot {
+	--purple: #6a1b9a;
+	--light: #f4f0f9;
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+}
+
+#lwtv-chat-trigger {
+	position: fixed;
+	bottom: 20px;
+	right: 20px;
+	background: var(--purple);
+	color: white;
+	border: none;
+	padding: 12px 24px;
+	border-radius: 50px;
+	cursor: pointer;
+	box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+	z-index: 9999;
+	font-weight: bold;
+	transition: transform 0.2s ease;
+}
+
+#lwtv-chat-trigger:hover {
+	transform: scale(1.05);
+	box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+}
+
+#lwtv-chat-box {
+	position: fixed;
+	bottom: 80px;
+	right: 20px;
+	width: 350px;
+	height: 480px;
+	background: white;
+	border-radius: 12px;
+	box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+	display: none;
+	flex-direction: column;
+	overflow: hidden;
+	z-index: 9999;
+	border: 1px solid #e0e0e0;
+}
+
+#lwtv-chat-box.active { display: flex; }
+
+#lwtv-chat-header {
+	background: var(--purple);
+	color: white;
+	padding: 15px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	font-weight: bold;
+}
+
+#lwtv-chat-msgs {
+	flex: 1;
+	padding: 15px;
+	overflow-y: auto;
+	background: var(--light);
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+.lwtv-msg {
+	padding: 10px 14px;
+	border-radius: 18px;
+	max-width: 85%;
+	line-height: 1.4;
+	font-size: 14px;
+	word-wrap: break-word;
+}
+
+.lwtv-msg-ai {
+	background: white;
+	align-self: flex-start;
+	border: 1px solid #ddd;
+	color: #333;
+	border-bottom-left-radius: 2px;
+	box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.lwtv-msg-user {
+	background: var(--purple);
+	color: white;
+	align-self: flex-end;
+	border-bottom-right-radius: 2px;
+	box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+#lwtv-chat-input-wrap {
+	padding: 12px;
+	border-top: 1px solid #eee;
+	display: flex;
+	gap: 8px;
+	background: white;
+	box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+#lwtv-chat-input {
+	flex: 1;
+	border: 1px solid #ddd;
+	padding: 10px;
+	border-radius: 6px;
+	outline: none;
+	font-size: 14px;
+	box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+#lwtv-chat-send {
+	background: var(--purple);
+	color: white;
+	border: none;
+	padding: 8px 16px;
+	border-radius: 6px;
+	cursor: pointer;
+	font-weight: bold;
+	box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.lwtv-show-card {
+	background: #fff;
+	border-left: 4px solid var(--purple);
+	padding: 10px;
+	margin-top: 8px;
+	font-size: 13px;
+	box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+	border-radius: 4px;
+}
+
+.lwtv-show-card a {
+	color: var(--purple);
+	text-decoration: none;
+	font-weight: bold;
+	display: block;
+	margin-bottom: 3px;
+}
+.lwtv-show-card a:hover {
+	text-decoration: underline;
+	box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.lwtv-loading {
+	font-style: italic;
+	color: #888;
+	animation: lwtvPulse 1.5s infinite;
+	box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+@keyframes lwtvPulse {
+	0% { opacity: 0.4; } 50% { opacity: 1; } 100% { opacity: 0.4; }
+}
