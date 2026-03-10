@@ -15,10 +15,11 @@ document.addEventListener('DOMContentLoaded', function() {
     // ---------------------------------------------------------
     // Note: On your staging site, ensure these match your .htpasswd
     // In production, you can likely remove the authHeader line.
+	let authHeader;
 	if (false !== lwtv_settings.staging_creds) {
-		const authHeader = 'Basic ' + btoa(lwtv_settings.staging_creds);
+		authHeader = 'Basic ' + btoa(lwtv_settings.staging_creds);
 	} else {
-		const authHeader = null;
+		authHeader = null;
 	}
     const aiKey    = lwtv_settings.ai_key;
     const endpoint = lwtv_settings.endpoint;
@@ -44,12 +45,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
         try {
             const url = `${endpoint}?prompt=${encodeURIComponent(val)}`;
-            const response = await fetch(url, {
-                headers: {
-                    'X-LezWatch-AI-Key': aiKey,
-                    'Authorization': authHeader
-                }
-            });
+            const headers = {
+                'X-LezWatch-AI-Key': aiKey
+            };
+            if (authHeader) headers['Authorization'] = authHeader;
+
+            const response = await fetch(url, { headers });
 
             const data = await response.json();
             loader.remove();
