@@ -79,24 +79,39 @@ class Agents implements Component, Templater {
 	/**
 	 * Get shows by trope and minimum "Realness" score
 	 *
-	 * @param string $trope
-	 * @param int $realness_score
+	 * @param string|int $trope Term slug or term ID from lez_tropes taxonomy.
+	 * @param int        $realness_score Minimum realness score.
 	 * @return array
 	 */
 	public function get_shows_by_trope_and_realness( $trope, $realness_score ) {
+		$term = is_numeric( $trope )
+			? get_term_by( 'id', (int) $trope, 'lez_tropes' )
+			: get_term_by( 'slug', $trope, 'lez_tropes' );
+
+		if ( ! $term || is_wp_error( $term ) ) {
+			return array();
+		}
+
 		$shows = get_posts(
 			array(
-				'post_type'    => 'post_type_shows',
-				'meta_key'     => 'lezshows_tropes',
-				'meta_value'   => $trope,
-				'meta_compare' => '=',
-				'meta_query'   => array(
+				'post_type'      => 'post_type_shows',
+				'tax_query'      => array(
+					array(
+						'taxonomy' => 'lez_tropes',
+						'field'    => 'term_id',
+						'terms'    => array( $term->term_id ),
+					),
+				),
+				'meta_query'     => array(
 					array(
 						'key'     => 'lezshows_realness_rating',
 						'value'   => $realness_score,
 						'compare' => '>=',
+						'type'    => 'NUMERIC',
 					),
 				),
+				'posts_per_page' => -1,
+				'no_found_rows'  => true,
 			)
 		);
 		return $shows;
@@ -105,24 +120,39 @@ class Agents implements Component, Templater {
 	/**
 	 * Get shows by trope and Score (lezshows_the_score)
 	 *
-	 * @param string $trope
-	 * @param int $score
+	 * @param string|int $trope Term slug or term ID from lez_tropes taxonomy.
+	 * @param int        $score Minimum score.
 	 * @return array
 	 */
 	public function get_shows_by_trope_and_score( $trope, $score ) {
+		$term = is_numeric( $trope )
+			? get_term_by( 'id', (int) $trope, 'lez_tropes' )
+			: get_term_by( 'slug', $trope, 'lez_tropes' );
+
+		if ( ! $term || is_wp_error( $term ) ) {
+			return array();
+		}
+
 		$shows = get_posts(
 			array(
-				'post_type'    => 'post_type_shows',
-				'meta_key'     => 'lezshows_tropes',
-				'meta_value'   => $trope,
-				'meta_compare' => '=',
-				'meta_query'   => array(
+				'post_type'      => 'post_type_shows',
+				'tax_query'      => array(
+					array(
+						'taxonomy' => 'lez_tropes',
+						'field'    => 'term_id',
+						'terms'    => array( $term->term_id ),
+					),
+				),
+				'meta_query'     => array(
 					array(
 						'key'     => 'lezshows_the_score',
 						'value'   => $score,
 						'compare' => '>=',
+						'type'    => 'NUMERIC',
 					),
 				),
+				'posts_per_page' => -1,
+				'no_found_rows'  => true,
 			)
 		);
 		return $shows;
