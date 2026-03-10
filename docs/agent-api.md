@@ -6,7 +6,7 @@ The Agent API allows the LezWatch.TV AI (at ai.ipstenu.com) to query show data b
 
 ## Configuration
 
-Add the following constant to your `wp-config.php` file (recommended):
+Add the following constants to your `wp-config.php` file (recommended):
 
 ```php
 /**
@@ -15,6 +15,8 @@ Add the following constant to your `wp-config.php` file (recommended):
  * Prevents public scraping of the /lwtv/v1/agent endpoint.
  */
 define( 'LWTV_AI_KEY', 'your-secret-key-here' );
+define( 'LWTV_AGENTS_USER', 'server-user-name-with-access' );
+define( 'LWTV_AGENTS_PASS', 'password' );
 ```
 
 Generate a strong random key (e.g. 32+ characters) and share it only with your AI server. If `LWTV_AI_KEY` is not defined, the endpoint returns 401 for all requests.
