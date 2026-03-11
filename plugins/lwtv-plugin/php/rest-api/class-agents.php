@@ -87,6 +87,34 @@ class Agents {
 	);
 
 	/**
+	 * Country slug aliases: natural-language terms to try when resolving lez_country.
+	 * Tried in order; first existing term wins. Handles "british" -> "uk", "american" -> "usa", etc.
+	 *
+	 * @var array<string, array<string>>
+	 */
+	private const COUNTRY_ALIASES = array(
+		'british'     => array( 'united-kingdom', 'uk', 'wales', 'scotland', 'ireland', 'england' ),
+		'american'    => array( 'usa', 'us' ),
+		'canadian'    => array( 'canada' ),
+		'australian'  => array( 'australia' ),
+		'german'      => array( 'germany', 'west-germany' ),
+		'french'      => array( 'france' ),
+		'spanish'     => array( 'spain' ),
+		'irish'       => array( 'ireland' ),
+		'scottish'    => array( 'scotland' ),
+		'welsh'       => array( 'wales' ),
+		'japanese'    => array( 'japan' ),
+		'korean'      => array( 'south-korea' ),
+		'italian'     => array( 'italy' ),
+		'dutch'       => array( 'netherlands' ),
+		'brazilian'   => array( 'brazil' ),
+		'mexican'     => array( 'mexico' ),
+		'indian'      => array( 'india' ),
+		'argentine'   => array( 'argentina' ),
+		'argentinian' => array( 'argentina' ),
+	);
+
+	/**
 	 * Taxonomy config for extraction. Order: trope > genre > format > country > station > stars > triggers > intersections.
 	 *
 	 * @var array<string, string>
@@ -258,14 +286,23 @@ class Agents {
 
 		// Resolve slugs to term IDs for tax_query
 		foreach ( self::TAXONOMY_KEYS as $key => $taxonomy ) {
-			if ( null !== $params[ $key ] ) {
-				$resolved = $this->resolve_term_id( $params[ $key ], $taxonomy );
-				if ( null !== $resolved ) {
-					$params[ $key ] = $resolved;
-				} else {
-					$params[ $key ] = null;
+			if ( null === $params[ $key ] ) {
+				continue;
+			}
+			$slug     = $params[ $key ];
+			$resolved = $this->resolve_term_id( $slug, $taxonomy );
+			if ( null === $resolved && 'country' === $key && isset( self::COUNTRY_ALIASES[ $slug ] ) ) {
+				foreach ( self::COUNTRY_ALIASES[ $slug ] as $alias ) {
+					if ( $alias === $slug ) {
+						continue;
+					}
+					$resolved = $this->resolve_term_id( $alias, $taxonomy );
+					if ( null !== $resolved ) {
+						break;
+					}
 				}
 			}
+			$params[ $key ] = $resolved ?? null;
 		}
 
 		return $params;
