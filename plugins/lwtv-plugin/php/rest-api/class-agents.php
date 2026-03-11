@@ -338,8 +338,10 @@ class Agents {
 			? lwtv_plugin()->get_shows_by_params( $params )
 			: array();
 
+		$context = trim( (string) $request->get_param( 'context' ) );
 		$results = array(
-			'shows' => array(),
+			'shows'   => array(),
+			'context' => $context,
 		);
 
 		foreach ( $shows as $post ) {
@@ -367,6 +369,16 @@ class Agents {
 				'characters' => $total_chars,
 				'dead'       => $dead_chars,
 				'tropes'     => $trope_slugs,
+			);
+		}
+
+		// Strict Mode: When 0 matches, include canonical message. Filter allows override.
+		if ( empty( $results['shows'] ) ) {
+			$results['message'] = apply_filters(
+				'lwtv_agent_no_results_message',
+				"I don't have a record of a show like that yet in our database.",
+				$prompt,
+				$context
 			);
 		}
 

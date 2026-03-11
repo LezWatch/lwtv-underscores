@@ -36,7 +36,6 @@ Environment="PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 
 [Install]
 WantedBy=default.target
-
 ```
 
 ### Management Commands
@@ -178,8 +177,12 @@ Your **"Brain"** is defined by two things: the base model (Llama 3.1) and your c
 ----
 
 # Update the Modelfile with your new content, then:
+```bash
 sudo HOME=/home/ollama-data ollama create lezwatch-bot -f /home/uptime/agents/LezWatchBot
-
 ```
+
+# Make an alias
+
+```bash
 alias ollama-admin='sudo HOME=/home/ollama-data OLLAMA_MODELS=/home/ollama-data/.ollama/models ollama'
 ```

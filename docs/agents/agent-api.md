@@ -33,7 +33,7 @@ Generate a strong random key (e.g. 32+ characters) and share it only with your A
 | Parameter | Required | Description |
 |-----------|----------|-------------|
 | `prompt` | Yes | The user's question. Supports natural language or structured format. |
-| `context` | No | Reserved for future chat-history support. |
+| `context` | No | Optional system instruction. When SearchWP returns no results, pass `The user tried to find [query] and failed. Help them find the closest match.` to guide the AI. Also used for chat-history (future). |
 
 ### Authentication
 
@@ -132,6 +132,10 @@ trope:slow-burn,genre:drama,format:web-series,country:uk,station:netflix,score:8
 | `tropes` | string[] | Array of trope slugs from lez_tropes |
 
 **Display logic for character/death line:** When `dead > 0`, show "X queer characters (Y are dead)". When `dead == 0` and `characters > 0`, show "X queer characters (none are dead)" or "X queer characters".
+
+**Ending Status badges:** When `dead === 0`, label as "Happy Ending". When `dead > 0`, label as "Tragic".
+
+**Empty results:** When no shows match, the response includes `"message": "I don't have a record of a show like that yet in our database."` (filterable via `lwtv_agent_no_results_message`).
 
 ## Error Responses
 
