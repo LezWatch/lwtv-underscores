@@ -176,24 +176,24 @@ class Agents {
 			'year_max'      => null,
 		);
 
-		// Structured format: trope:slow-burn,genre:drama,score:80
-		if ( preg_match( '/trope:([a-z0-9-]+)/i', $prompt, $m ) ) {
-			$params['trope'] = sanitize_title( $m[1] );
+		// Structured format: trope:slow-burn,genre:drama,score:80 (allows optional space after colon)
+		if ( preg_match( '/trope:\s*([a-z0-9-]+)/i', $prompt, $m ) ) {
+			$params['trope'] = sanitize_title( trim( $m[1] ) );
 		}
-		if ( preg_match( '/genre:([a-z0-9-]+)/i', $prompt, $m ) ) {
-			$params['genre'] = sanitize_title( $m[1] );
+		if ( preg_match( '/genre:\s*([a-z0-9-]+)/i', $prompt, $m ) ) {
+			$params['genre'] = sanitize_title( trim( $m[1] ) );
 		}
-		if ( preg_match( '/format:([a-z0-9-]+)/i', $prompt, $m ) ) {
-			$params['format'] = sanitize_title( $m[1] );
+		if ( preg_match( '/format:\s*([a-z0-9-]+)/i', $prompt, $m ) ) {
+			$params['format'] = sanitize_title( trim( $m[1] ) );
 		}
-		if ( preg_match( '/country:([a-z0-9-]+)/i', $prompt, $m ) ) {
-			$params['country'] = sanitize_title( $m[1] );
+		if ( preg_match( '/country:\s*([a-z0-9-]+)/i', $prompt, $m ) ) {
+			$params['country'] = sanitize_title( trim( $m[1] ) );
 		}
-		if ( preg_match( '/station:([a-z0-9-]+)/i', $prompt, $m ) ) {
-			$params['station'] = sanitize_title( $m[1] );
+		if ( preg_match( '/station:\s*([a-z0-9-]+)/i', $prompt, $m ) ) {
+			$params['station'] = sanitize_title( trim( $m[1] ) );
 		}
-		if ( preg_match( '/score:(\d+)/i', $prompt, $m ) ) {
-			$params['score'] = (int) $m[1];
+		if ( preg_match( '/score:\s*(\d+)/i', $prompt, $m ) ) {
+			$params['score'] = (int) trim( $m[1] );
 		}
 
 		// Natural language: semantic score terms (high/low/default)
