@@ -109,6 +109,11 @@ use LWTV\_Helpers\Utils;
  * @method void   set_transient( string $slug, $value, int $expiration ) \_Components\Transients
  * @method void   delete_transient( string $slug )                       \_Components\Transients
  *
+ * AGENTS
+ * @method array  get_shows_by_trope_and_score( $trope, $score, $operator = '>=' ) \_Components\Agents
+ * @method array  get_shows_by_params( array $params )                            \_Components\Agents
+ * @method array  build_agent_query_args( array $params )                          \_Components\Agents
+ *
  */
 
 class Plugin {

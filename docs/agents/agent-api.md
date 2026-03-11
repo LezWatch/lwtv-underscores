@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Agent API allows the LezWatch.TV AI (at ai.ipstenu.com) to query show data by trope and score. The endpoint parses natural-language prompts, extracts trope and minimum score, and returns matching shows with title, permalink, score, and excerpt. Responses are cached for 1 hour to protect against MySQL bottlenecks under concurrent load.
+The Agent API allows the LezWatch.TV AI (at ai.ipstenu.com) to query show data by trope, genre, format, country, station, score, worth-it rating, year, and more. The endpoint parses natural-language prompts, extracts filters, and returns matching shows with title, permalink, score, and excerpt. Responses are cached for 1 hour to protect against MySQL bottlenecks under concurrent load.
 
 ## Configuration
 
@@ -58,17 +58,26 @@ https://lezwatchtv.com/wp-json/lwtv/v1/agent?prompt=Find+me+a+slow+burn+show+wit
 
 ## Prompt Parsing
 
-The endpoint extracts **trope** and **score** from the prompt using two strategies:
+The endpoint extracts filters from the prompt. At least one filter is required (trope, genre, format, country, station, score, worth-it, or year).
 
 ### Structured Format
 
-When the AI Orchestrator pre-parses the user's intent:
-
 ```
-trope:slow-burn,score:80
+trope:slow-burn,genre:drama,format:web-series,country:uk,station:netflix,score:80
 ```
 
 ### Natural Language
+
+**Taxonomies** (matched against term names/slugs):
+
+- **Tropes** (lez_tropes): "slow burn", "literary", "dead queers"
+- **Genres** (lez_genres): "drama", "comedy", "sci-fi", "horror"
+- **Formats** (lez_formats): "web series", "movie", "tv show", "miniseries"
+- **Country** (lez_country): "british", "canadian", "american", "uk"
+- **Station** (lez_stations): "netflix", "hbo", "bbc"
+- **Stars** (lez_stars): "gold star", "by queers for queers"
+- **Triggers** (lez_triggers): "violence", "death"
+- **Intersections** (lez_intersections): "disabilities", "bipoc"
 
 **Numeric score phrases:**
 
@@ -81,7 +90,18 @@ trope:slow-burn,score:80
 - "with a low score" / "low score" / "score low" → maximum 20
 - "with a default score" / "default score" / "score default" → minimum 50
 
-Trope names are matched against the `lez_tropes` taxonomy (e.g. "slow burn" → slug `slow-burn`).
+**Worth it:**
+
+- "worth it", "worth watching", "recommended" → yes
+- "not worth it", "skip it" → no
+- "meh", "mixed" → meh
+- "tbd", "to be determined" → tbd
+
+**Year:**
+
+- "from 2020", "in 2020", "after 2019" → year_min
+- "before 2015", "pre-2015" → year_max
+- "2018 to 2022", "2018-2022" → year range
 
 ## Response Format
 
@@ -109,9 +129,9 @@ Trope names are matched against the `lez_tropes` taxonomy (e.g. "slow burn" → 
 
 | Status | Condition |
 |--------|-----------|
-| 400 | Missing or invalid `prompt`; unparseable prompt (no trope or score extracted) |
+| 400 | Missing or invalid `prompt`; unparseable prompt (no filters extracted) |
 | 401 | Missing or invalid `X-LezWatch-AI-Key` header; `LWTV_AI_KEY` not defined |
 
 ## Caching
 
-Responses are cached for 1 hour per unique trope/score/operator combination. Cache key: `lwtv_ai_{md5(trope+score+operator)}`. This reduces MySQL load when many users query the same trope (e.g. "Slow Burn") concurrently.
+Responses are cached for 1 hour per unique params combination. Cache key: `lwtv_ai_{md5(wp_json_encode(params))}`. This reduces MySQL load when many users query the same filters concurrently.
