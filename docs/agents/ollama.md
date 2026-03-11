@@ -44,8 +44,7 @@ WantedBy=default.target
 ```bash
 sudo systemctl daemon-reload  # Run after editing .service
 sudo systemctl restart ollama # Restart the brain
-systemctl status ollama       # Check health
-
+sudo systemctl status ollama  # Check health
 ```
 
 ---

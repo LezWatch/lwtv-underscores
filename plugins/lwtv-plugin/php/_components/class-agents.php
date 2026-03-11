@@ -56,7 +56,7 @@ class Agents implements Component, Templater {
 						'stream' => false, // Set to true if you build a JS stream handler
 					),
 				),
-				'timeout' => 45, // CPU inference needs time to "think"
+				'timeout' => 300, // CPU inference needs time to "think"
 			),
 		);
 
