@@ -352,11 +352,21 @@ class Agents {
 			$show_score = get_post_meta( $post->ID, 'lezshows_the_score', true );
 			$show_score = is_numeric( $show_score ) ? min( (int) $show_score, 100 ) : 0;
 
+			$total_chars = (int) get_post_meta( $post->ID, 'lezshows_char_count', true );
+			$dead_chars  = (int) get_post_meta( $post->ID, 'lezshows_dead_count', true );
+			$tropes      = get_the_terms( $post->ID, 'lez_tropes' );
+			$trope_slugs = ( $tropes && ! is_wp_error( $tropes ) )
+				? wp_list_pluck( $tropes, 'slug' )
+				: array();
+
 			$results['shows'][] = array(
-				'title'     => get_the_title( $post->ID ),
-				'permalink' => get_permalink( $post->ID ),
-				'score'     => $show_score,
-				'excerpt'   => $excerpt,
+				'title'      => get_the_title( $post->ID ),
+				'permalink'  => get_permalink( $post->ID ),
+				'score'      => $show_score,
+				'excerpt'    => $excerpt,
+				'characters' => $total_chars,
+				'dead'       => $dead_chars,
+				'tropes'     => $trope_slugs,
 			);
 		}
 

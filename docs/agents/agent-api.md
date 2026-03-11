@@ -112,18 +112,26 @@ trope:slow-burn,genre:drama,format:web-series,country:uk,station:netflix,score:8
       "title": "Show Name",
       "permalink": "https://lezwatchtv.com/shows/show-name/",
       "score": 85,
-      "excerpt": "Short excerpt text..."
+      "excerpt": "Short excerpt text...",
+      "characters": 14,
+      "dead": 2,
+      "tropes": ["law-enforcement", "outed", "coming-out"]
     }
   ]
 }
 ```
 
-| Field | Description |
-|-------|-------------|
-| `title` | Show title |
-| `permalink` | Full URL to the show page |
-| `score` | LezWatch score (0–100) |
-| `excerpt` | Short text summary (~25 words, HTML stripped) |
+| Field | Type | Description |
+|-------|------|-------------|
+| `title` | string | Show title |
+| `permalink` | string | Full URL to the show page |
+| `score` | int | LezWatch score (0–100) |
+| `excerpt` | string | Short text summary (~25 words, HTML stripped) |
+| `characters` | int | Total queer characters linked to the show |
+| `dead` | int | Count of characters with `dead` cliché (lez_cliches) |
+| `tropes` | string[] | Array of trope slugs from lez_tropes |
+
+**Display logic for character/death line:** When `dead > 0`, show "X queer characters (Y are dead)". When `dead == 0` and `characters > 0`, show "X queer characters (none are dead)" or "X queer characters".
 
 ## Error Responses
 

@@ -58,9 +58,20 @@ document.addEventListener('DOMContentLoaded', function() {
             if (data.shows && data.shows.length > 0) {
                 let html = "I found these for you:<br>";
                 data.shows.forEach(s => {
+                    let charLine = `${s.characters ?? 0} queer characters`;
+                    if ( (s.dead ?? 0) > 0 ) {
+                        charLine += ` (${s.dead} are dead)`;
+                    } else if ( (s.characters ?? 0) > 0 ) {
+                        charLine += ' (none are dead)';
+                    }
+                    const tropesLine = (s.tropes && s.tropes.length)
+                        ? `Tropes: ${s.tropes.join(', ')}`
+                        : '';
                     html += `<div class="lwtv-show-card">
                         <a href="${s.permalink}">${s.title}</a> (Score: ${s.score})<br>
-                        ${s.excerpt}
+                        ${s.excerpt}<br>
+                        ${charLine}<br>
+                        ${tropesLine ? tropesLine + '<br>' : ''}
                     </div>`;
                 });
                 appendMsg('ai', html);
