@@ -92,6 +92,18 @@ class Agents {
 	 *
 	 * @var array<string, array<string>>
 	 */
+	/**
+	 * Trope slug aliases for exclusion: colloquial names to taxonomy slugs.
+	 *
+	 * @var array<string, string>
+	 */
+	private const TROPE_ALIASES = array(
+		'bury-your-gays' => 'dead-queers',
+		'bury your gays' => 'dead-queers',
+		'dead queers'    => 'dead-queers',
+		'dead-queers'    => 'dead-queers',
+	);
+
 	private const COUNTRY_ALIASES = array(
 		'british'     => array( 'united-kingdom', 'uk', 'wales', 'scotland', 'ireland', 'england' ),
 		'american'    => array( 'usa', 'us' ),
@@ -131,13 +143,85 @@ class Agents {
 	);
 
 	/**
-	 * Extract first matching term from prompt for a taxonomy
+	 * Extract trope to exclude from "without X trope" / "exclude X trope" patterns.
 	 *
-	 * @param string $prompt   The raw prompt text.
-	 * @param string $taxonomy Taxonomy name (e.g. lez_tropes).
+	 * @param string $prompt The raw prompt text.
 	 * @return string|null Term slug or null.
 	 */
-	private function extract_taxonomy_term( string $prompt, string $taxonomy ): ?string {
+	private function extract_trope_exclude( string $prompt ): ?string {
+		$prompt_lower = strtolower( $prompt );
+
+		// Only consider exclusion when user says "without" or "exclude"
+		if ( false === strpos( $prompt_lower, 'without' ) && false === strpos( $prompt_lower, 'exclude' ) ) {
+			return null;
+		}
+
+		// Check aliases first (Bury Your Gays -> dead-queers)
+		foreach ( self::TROPE_ALIASES as $phrase => $slug ) {
+			if ( false !== strpos( $prompt_lower, strtolower( $phrase ) ) ) {
+				$term = get_term_by( 'slug', $slug, 'lez_tropes' );
+				if ( $term && ! is_wp_error( $term ) ) {
+					return $slug;
+				}
+			}
+		}
+
+		// Match "without X trope" or "exclude X trope" patterns.
+		if ( preg_match( '/without\s+(?:the\s+)?[\'"]?([^\'"]+)[\'"]?\s+trope/i', $prompt, $m ) ) {
+			$captured       = trim( $m[1] );
+			$captured_lower = strtolower( $captured );
+			$slug           = isset( self::TROPE_ALIASES[ $captured_lower ] ) ? self::TROPE_ALIASES[ $captured_lower ] : sanitize_title( $captured );
+			$term           = get_term_by( 'slug', $slug, 'lez_tropes' );
+			if ( $term && ! is_wp_error( $term ) ) {
+				return $term->slug;
+			}
+		}
+		if ( preg_match( '/exclude\s+(?:the\s+)?([a-z0-9\s-]+)\s+trope/i', $prompt, $m ) ) {
+			$captured       = trim( $m[1] );
+			$captured_lower = strtolower( $captured );
+			$slug           = isset( self::TROPE_ALIASES[ $captured_lower ] ) ? self::TROPE_ALIASES[ $captured_lower ] : sanitize_title( $captured );
+			$term           = get_term_by( 'slug', $slug, 'lez_tropes' );
+			if ( $term && ! is_wp_error( $term ) ) {
+				return $term->slug;
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * Extract first matching term from prompt for a taxonomy
+	 *
+	 * For lez_country, first checks natural-language adjectives (german, british, etc.)
+	 * since the taxonomy may use noun slugs (germany, united-kingdom).
+	 *
+	 * @param string      $prompt        The raw prompt text.
+	 * @param string      $taxonomy      Taxonomy name (e.g. lez_tropes).
+	 * @param string|null $exclude_slugs Comma-separated or single slug to skip (e.g. when used in "without X trope").
+	 * @return string|null Term slug or null.
+	 */
+	private function extract_taxonomy_term( string $prompt, string $taxonomy, ?string $exclude_slugs = null ): ?string {
+		$prompt_lower = strtolower( $prompt );
+		$exclude      = array();
+		if ( ! empty( $exclude_slugs ) ) {
+			$exclude = array_map( 'trim', explode( ',', $exclude_slugs ) );
+			$exclude = array_filter( $exclude );
+		}
+
+		// For country: check natural-language adjectives first (german, british, etc.)
+		if ( 'lez_country' === $taxonomy ) {
+			foreach ( self::COUNTRY_ALIASES as $adjective => $slugs ) {
+				if ( false !== strpos( $prompt_lower, $adjective ) ) {
+					foreach ( $slugs as $slug ) {
+						$term = get_term_by( 'slug', $slug, $taxonomy );
+						if ( $term && ! is_wp_error( $term ) ) {
+							return $slug;
+						}
+					}
+				}
+			}
+		}
+
 		$terms = get_terms(
 			array(
 				'taxonomy'   => $taxonomy,
@@ -150,8 +234,10 @@ class Agents {
 			return null;
 		}
 
-		$prompt_lower = strtolower( $prompt );
 		foreach ( $terms as $term ) {
+			if ( ! empty( $exclude ) && in_array( $term->slug, $exclude, true ) ) {
+				continue;
+			}
 			if ( false !== strpos( $prompt_lower, strtolower( $term->name ) ) ||
 				false !== strpos( $prompt_lower, strtolower( $term->slug ) ) ) {
 				return $term->slug;
@@ -190,6 +276,7 @@ class Agents {
 	private function parse_prompt( string $prompt ): array {
 		$params = array(
 			'trope'         => null,
+			'trope_exclude' => null,
 			'genre'         => null,
 			'format'        => null,
 			'country'       => null,
@@ -204,9 +291,12 @@ class Agents {
 			'year_max'      => null,
 		);
 
-		// Structured format: trope:slow-burn,genre:drama,score:80 (allows optional space after colon)
+		// Structured format: trope:slow-burn,genre:drama,trope_exclude:dead-queers,score:80 (allows optional space after colon)
 		if ( preg_match( '/trope:\s*([a-z0-9-]+)/i', $prompt, $m ) ) {
 			$params['trope'] = sanitize_title( trim( $m[1] ) );
+		}
+		if ( preg_match( '/trope_exclude:\s*([a-z0-9-]+)/i', $prompt, $m ) ) {
+			$params['trope_exclude'] = sanitize_title( trim( $m[1] ) );
 		}
 		if ( preg_match( '/genre:\s*([a-z0-9-]+)/i', $prompt, $m ) ) {
 			$params['genre'] = sanitize_title( trim( $m[1] ) );
@@ -274,10 +364,18 @@ class Agents {
 			$params['year_max'] = (int) $m[1];
 		}
 
+		// Natural language: "without X trope" / "exclude X trope" -> trope_exclude
+		if ( null === $params['trope_exclude'] ) {
+			$excluded = $this->extract_trope_exclude( $prompt );
+			if ( null !== $excluded ) {
+				$params['trope_exclude'] = $excluded;
+			}
+		}
+
 		// Natural language: taxonomy extraction (priority order: trope > genre > format > country > station > stars > triggers > intersections)
 		foreach ( self::TAXONOMY_KEYS as $key => $taxonomy ) {
 			if ( null === $params[ $key ] ) {
-				$slug = $this->extract_taxonomy_term( $prompt, $taxonomy );
+				$slug = $this->extract_taxonomy_term( $prompt, $taxonomy, $params['trope_exclude'] );
 				if ( null !== $slug ) {
 					$params[ $key ] = $slug;
 				}
@@ -315,7 +413,7 @@ class Agents {
 	 * @return bool True if at least one filter is set.
 	 */
 	private function params_has_filter( array $params ): bool {
-		$tax_keys = array( 'trope', 'genre', 'format', 'country', 'station', 'stars', 'triggers', 'intersections' );
+		$tax_keys = array( 'trope', 'trope_exclude', 'genre', 'format', 'country', 'station', 'stars', 'triggers', 'intersections' );
 		foreach ( $tax_keys as $key ) {
 			if ( ! empty( $params[ $key ] ) ) {
 				return true;

@@ -14,6 +14,7 @@ Format for structured_params: key:value pairs separated by commas. Use only the 
 
 **Taxonomies** (use slug format):
 - trope: background, true-story, surprise-queer, big-queer-wedding, bisexual-love-triangle, dead-queers, cliffhanger, coming-out, erasure, everyones-queer, fake-relationship, forbidden-love, freakout-sex, gal-pals, gaybies, happy-then-not, happy-ending, in-love-with-a-str8-girl, prison, literary-inspired, none, outed, queer-laughs, queer-for-ratings, queer-of-the-week, queerbaiting, queerbashing, law-enforcement, queerspawn, secret-spouse, sex-workers, slow-burn, subtext, teacher-student, big-bad-queers, unrequited, video-game
+- trope_exclude: dead-queers (exclude shows with Bury Your Gays). Use when user wants to avoid tragic/dead-queer shows.
 - genre: action, adult, adventure, animation, anime, anthology, biography, children, comedy, cooking, crime, dark-comedy, drama, dramedy, family, fantasy, holiday, horror, interactive, legal, medical, mockumentary, musical, mystery, period, police, political, procedural, romance, satire, school, sci-fi, short, soap-opera, sports, superhero, supernatural, teen, telenovela, thriller, utopia-dystopia, war, western
 - format: tv-show, web-series, movie, mini-series
 - country: argentina, australia, austria, belgium, brazil, canada, chile, colombia, denmark, finland, france, germany, hungary, iceland, india, ireland, israel, italy, japan, mexico, nepal, netherlands, new-zealand, norway, pakistan, philippines, poland, portugal, scotland, singapore, south-africa, south-korea, spain, sweden, switzerland, thailand, turkey, united-kingdom, usa, wales, west-germany
@@ -54,6 +55,7 @@ Format for structured_params: key:value pairs separated by commas. Use only the 
 - "comedy web series" → SEARCH_ACTION: genre:comedy,format:web-series,score:50
 - "netflix shows from 2020" → SEARCH_ACTION: station:netflix,year_min:2020,score:50
 - "ongoing shows with happy ending" → SEARCH_ACTION: status:ongoing,trope:happy-ending,score:50
+- "drama without Bury Your Gays" → SEARCH_ACTION: genre:drama,trope_exclude:dead-queers,score:50
 
 **Final Response Formatting:**
 When presenting show results to the user, you MUST use this exact structure:

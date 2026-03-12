@@ -180,6 +180,29 @@ class Agents implements Component, Templater {
 			}
 		}
 
+		// Trope exclusion (e.g. "without Bury Your Gays")
+		$trope_exclude = $params['trope_exclude'] ?? null;
+		if ( ! empty( $trope_exclude ) ) {
+			$exclude_ids = array();
+			$slugs       = is_array( $trope_exclude ) ? $trope_exclude : array( $trope_exclude );
+			foreach ( $slugs as $slug ) {
+				$term = is_numeric( $slug )
+					? get_term_by( 'id', (int) $slug, 'lez_tropes' )
+					: get_term_by( 'slug', $slug, 'lez_tropes' );
+				if ( $term && ! is_wp_error( $term ) ) {
+					$exclude_ids[] = $term->term_id;
+				}
+			}
+			if ( ! empty( $exclude_ids ) ) {
+				$tax_clauses[] = array(
+					'taxonomy' => 'lez_tropes',
+					'field'    => 'term_id',
+					'terms'    => $exclude_ids,
+					'operator' => 'NOT IN',
+				);
+			}
+		}
+
 		// Score meta
 		$score = $params['score'] ?? null;
 		if ( null !== $score && is_numeric( $score ) ) {
@@ -193,12 +216,18 @@ class Agents implements Component, Templater {
 			);
 		}
 
-		// Worth it meta
+		// Worth it meta (stored as Yes/Meh/No/TBD per CMB2 THUMBS)
 		$worthit = $params['worthit'] ?? null;
 		if ( null !== $worthit && in_array( $worthit, array( 'yes', 'no', 'meh', 'tbd' ), true ) ) {
+			$worthit_stored = array(
+				'yes' => 'Yes',
+				'no'  => 'No',
+				'meh' => 'Meh',
+				'tbd' => 'TBD',
+			)[ $worthit ];
 			$meta_clauses[] = array(
 				'key'     => 'lezshows_worthit_rating',
-				'value'   => $worthit,
+				'value'   => $worthit_stored,
 				'compare' => '=',
 			);
 		}
