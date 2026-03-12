@@ -99,10 +99,47 @@ Returns a JSON array of show objects:
 
 # Sync Server Configuration
 
+## Setup Python
+
+Run these commands in your `/home/uptime/agents` directory:
+
+1. **Install the venv tool** (if not already there):
+```bash
+sudo apt update && sudo apt install python3-venv -y
+```
+
+2. **Create the environment**:
+```bash
+cd ~/agents
+python3 -m venv venv
+```
+
+3. **Install your dependencies inside the venv**:
+```bash
+./venv/bin/pip install python-dotenv requests
+```
+
+## Add the Files
+
+Create a file `/home/uptime/agents/bin/.env` and add in values:
+
+```bash
+LWTV_AI_KEY='SECRETKEY'
+STAGING_USERNAME='USERNAME'
+STAGING_PASSWORD='PASSOWRD'
+```
+
 Copy `/docs/agents/sync-ai.py` to `/home/uptime/agents/bin/sync-ai.py`
 
-Setup Cron:
+**Run your script using the venv's Python**:
+```bash
+sudo ./venv/bin/python3 /home/uptime/agents/bin/sync-ai.py staging
+```
+
+## Setup Cron
+
+Edit cron (`sudo crontab -e`)
 
 ```shell
-0 3 * * * /usr/bin/python3 /home/uptime/agents/bin/sync-ai.py >> /var/log/lwtv-ai-sync.log 2>&1
+0 3 * * * /home/uptime/agents/venv/bin/python3 /home/uptime/agents/bin/sync-ai.py prod >> /var/log/lwtv-ai-sync.log 2>&1
 ```

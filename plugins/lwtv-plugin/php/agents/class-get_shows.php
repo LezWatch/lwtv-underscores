@@ -1,0 +1,257 @@
+<?php
+/*
+ * Shows by Trope and Score
+ *
+ * @since 6.6.0
+ */
+
+namespace LWTV\Agents;
+
+class Get_Shows {
+
+	/**
+	 * Get shows by trope and minimum "Realness" score
+	 *
+	 * @param string|int $trope Term slug or term ID from lez_tropes taxonomy.
+	 * @param int        $realness_score Minimum realness score.
+	 * @return array
+	 */
+	public function get_by_trope_and_realness( $trope, $realness_score ) {
+		$term = is_numeric( $trope )
+			? get_term_by( 'id', (int) $trope, 'lez_tropes' )
+			: get_term_by( 'slug', $trope, 'lez_tropes' );
+
+		if ( ! $term || is_wp_error( $term ) ) {
+			return array();
+		}
+
+		$shows = get_posts(
+			array(
+				'post_type'      => 'post_type_shows',
+				'tax_query'      => array(
+					array(
+						'taxonomy' => 'lez_tropes',
+						'field'    => 'term_id',
+						'terms'    => array( $term->term_id ),
+					),
+				),
+				'meta_query'     => array(
+					array(
+						'key'     => 'lezshows_realness_rating',
+						'value'   => $realness_score,
+						'compare' => '>=',
+						'type'    => 'NUMERIC',
+					),
+				),
+				'posts_per_page' => -1,
+				'no_found_rows'  => true,
+			)
+		);
+		return $shows;
+	}
+
+	/**
+	 * Get shows by trope and Score (lezshows_the_score)
+	 *
+	 * Backward-compatible wrapper for get_shows_by_params.
+	 *
+	 * @param string|int $trope    Term slug or term ID from lez_tropes taxonomy.
+	 * @param int        $score    Score threshold.
+	 * @param string     $operator Comparison operator: '>=' (min score) or '<=' (max score). Default '>='.
+	 * @return array
+	 */
+	public function get_by_trope_and_score( $trope, $score, $operator = '>=' ) {
+		$params = array(
+			'trope'    => $trope,
+			'score'    => $score,
+			'score_op' => in_array( $operator, array( '>=', '<=' ), true ) ? $operator : '>=',
+		);
+
+		return $this->get_shows_by_params( $params );
+	}
+
+	/**
+	 * Get shows by params array (trope, genre, format, score, etc.)
+	 *
+	 * Optionally applies year filter via PHP post-filter when year_min/year_max are set.
+	 *
+	 * @param array $params Params from parse_prompt or structured input.
+	 * @return array Array of WP_Post objects.
+	 */
+	public function get_shows_by_params( array $params ): array {
+		$query_args = $this->build_agent_query_args( $params );
+		$posts      = get_posts( $query_args );
+
+		$year_min  = isset( $params['year_min'] ) && is_numeric( $params['year_min'] ) ? (int) $params['year_min'] : null;
+		$year_max  = isset( $params['year_max'] ) && is_numeric( $params['year_max'] ) ? (int) $params['year_max'] : null;
+		$on_air    = $params['on_air'] ?? null;
+		$this_year = (int) gmdate( 'Y' );
+
+		if ( ( null !== $year_min || null !== $year_max || ( null !== $on_air && in_array( $on_air, array( 'yes', 'no' ), true ) ) ) && ! empty( $posts ) ) {
+			$posts = array_filter(
+				$posts,
+				function ( $post ) use ( $year_min, $year_max, $on_air, $this_year ) {
+					$airdates = get_post_meta( $post->ID, 'lezshows_airdates', true );
+					if ( ! is_array( $airdates ) || ! isset( $airdates['start'] ) || ! isset( $airdates['finish'] ) ) {
+						return false;
+					}
+
+					$start      = (int) $airdates['start'];
+					$finish_raw = $airdates['finish'] ?? '';
+					$finish     = ( 'current' === strtolower( (string) $finish_raw ) || '' === trim( (string) $finish_raw ) )
+						? $this_year
+						: (int) $finish_raw;
+
+					if ( null !== $year_min && $finish < $year_min ) {
+						return false;
+					}
+					if ( null !== $year_max && $start > $year_max ) {
+						return false;
+					}
+
+					if ( null !== $on_air && in_array( $on_air, array( 'yes', 'no' ), true ) ) {
+						$is_on_air = ( 'current' === strtolower( (string) $finish_raw ) || '' === trim( (string) $finish_raw ) || $finish >= $this_year );
+
+						if ( 'yes' === $on_air && ! $is_on_air ) {
+							update_post_meta( $post->ID, 'lezshows_on_air', 'no' );
+							return false;
+						}
+						if ( 'no' === $on_air && $is_on_air ) {
+							update_post_meta( $post->ID, 'lezshows_on_air', 'yes' );
+							return false;
+						}
+					}
+
+					return true;
+				}
+			);
+		}
+
+		return array_values( $posts );
+	}
+
+	/**
+	 * Build WP_Query args from agent params array
+	 *
+	 * @param array $params Params with keys: trope, genre, format, country, station, stars, triggers, intersections,
+	 *                      score, score_op, worthit, on_air, year_min, year_max.
+	 * @return array WP_Query-compatible args.
+	 */
+	public function build_agent_query_args( array $params ): array {
+		$tax_clauses  = array();
+		$meta_clauses = array();
+
+		lwtv_plugin()->debug_log( 'ai-agents', 'Building query args: ' . wp_json_encode( $params ) );
+
+		$taxonomies = array(
+			'trope'         => 'lez_tropes',
+			'genre'         => 'lez_genres',
+			'format'        => 'lez_formats',
+			'country'       => 'lez_country',
+			'station'       => 'lez_stations',
+			'stars'         => 'lez_stars',
+			'triggers'      => 'lez_triggers',
+			'intersections' => 'lez_intersections',
+		);
+
+		foreach ( $taxonomies as $param_key => $taxonomy ) {
+			$value = $params[ $param_key ] ?? null;
+			if ( null === $value || '' === $value ) {
+				continue;
+			}
+
+			$term = is_numeric( $value )
+				? get_term_by( 'id', (int) $value, $taxonomy )
+				: get_term_by( 'slug', $value, $taxonomy );
+
+			if ( $term && ! is_wp_error( $term ) ) {
+				$tax_clauses[] = array(
+					'taxonomy' => $taxonomy,
+					'field'    => 'term_id',
+					'terms'    => array( $term->term_id ),
+				);
+			}
+		}
+
+		// Trope exclusion (e.g. "without Bury Your Gays")
+		$trope_exclude = $params['trope_exclude'] ?? null;
+		if ( ! empty( $trope_exclude ) ) {
+			$exclude_ids = array();
+			$slugs       = is_array( $trope_exclude ) ? $trope_exclude : array( $trope_exclude );
+			foreach ( $slugs as $slug ) {
+				$term = is_numeric( $slug )
+					? get_term_by( 'id', (int) $slug, 'lez_tropes' )
+					: get_term_by( 'slug', $slug, 'lez_tropes' );
+				if ( $term && ! is_wp_error( $term ) ) {
+					$exclude_ids[] = $term->term_id;
+				}
+			}
+			if ( ! empty( $exclude_ids ) ) {
+				$tax_clauses[] = array(
+					'taxonomy' => 'lez_tropes',
+					'field'    => 'term_id',
+					'terms'    => $exclude_ids,
+					'operator' => 'NOT IN',
+				);
+			}
+		}
+
+		// Score meta
+		$score = $params['score'] ?? null;
+		if ( null !== $score && is_numeric( $score ) ) {
+			$score_op       = $params['score_op'] ?? '>=';
+			$compare        = in_array( $score_op, array( '>=', '<=' ), true ) ? $score_op : '>=';
+			$meta_clauses[] = array(
+				'key'     => 'lezshows_the_score',
+				'value'   => (int) $score,
+				'compare' => $compare,
+				'type'    => 'NUMERIC',
+			);
+		}
+
+		// Worth it meta (stored as Yes/Meh/No/TBD per CMB2 THUMBS)
+		$worthit = $params['worthit'] ?? 'yes';
+		if ( null !== $worthit && in_array( $worthit, array( 'yes', 'no', 'meh', 'tbd' ), true ) ) {
+			$worthit_stored = array(
+				'yes' => 'Yes',
+				'no'  => 'No',
+				'meh' => 'Meh',
+				'tbd' => 'TBD',
+			)[ $worthit ];
+			$meta_clauses[] = array(
+				'key'     => 'lezshows_worthit_rating',
+				'value'   => $worthit_stored,
+				'compare' => '=',
+			);
+		}
+
+		// On air meta (yes/no)
+		$on_air = $params['on_air'] ?? null;
+		if ( null !== $on_air && in_array( $on_air, array( 'yes', 'no' ), true ) ) {
+			$meta_clauses[] = array(
+				'key'     => 'lezshows_on_air',
+				'value'   => $on_air,
+				'compare' => '>=',
+			);
+		}
+
+		$query_args = array(
+			'post_type'      => 'post_type_shows',
+			'post_status'    => 'publish',
+			'posts_per_page' => -1,
+			'no_found_rows'  => true,
+		);
+
+		if ( ! empty( $tax_clauses ) ) {
+			$query_args['tax_query'] = array_merge( array( 'relation' => 'AND' ), $tax_clauses );
+		}
+
+		if ( ! empty( $meta_clauses ) ) {
+			$query_args['meta_query'] = array_merge( array( 'relation' => 'AND' ), $meta_clauses );
+		}
+
+		lwtv_plugin()->debug_log( 'ai-agents', 'Final query args: ' . wp_json_encode( $query_args ) );
+
+		return $query_args;
+	}
+}

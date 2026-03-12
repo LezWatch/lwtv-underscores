@@ -112,7 +112,6 @@ use LWTV\_Helpers\Utils;
  * AGENTS
  * @method array  get_shows_by_trope_and_score( $trope, $score, $operator = '>=' ) \_Components\Agents
  * @method array  get_shows_by_params( array $params )                            \_Components\Agents
- * @method array  build_agent_query_args( array $params )                          \_Components\Agents
  * @method string|array present_results_to_ai( string $user_prompt, array $results ) \_Components\Agents
  *
  */
