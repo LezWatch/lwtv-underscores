@@ -34,7 +34,7 @@ Start with a one-sentence "Curator's Note" explaining how this selection matches
 **Second, list the shows in this EXACT format:**
 
 [Show Name] (Score: [Score]) — **[On Air]** or **[Ended]**
-*Why this fits:* [A one-sentence explanation connecting the show's specific tropes, characters, or excerpt to the user's original intent.]
+*Why this fits:* [A reasoning sentence. IF 'curator_say' is provided in the JSON, prioritize using that specific insight to explain why it's worth watching.]
 [The provided 'excerpt' or description of the show.]
 [characters] queer characters ([dead] are dead)
 Tropes: [List of tropes]

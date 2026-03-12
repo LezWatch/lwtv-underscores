@@ -109,19 +109,20 @@ class Sync_AI {
 			$dead_count = (int) get_post_meta( $id, 'lezshows_dead_count', true );
 
 			$sync_data[] = array(
-				'id'         => (int) $id,
-				'title'      => get_the_title( $id ),
-				'slug'       => get_post_field( 'post_name', $id ),
-				'permalink'  => get_permalink( $id ),
-				'score'      => (int) get_post_meta( $id, 'lezshows_the_score', true ),
-				'on_air'     => get_post_meta( $id, 'lezshows_on_air', true ),
-				'worthit'    => strtolower( (string) get_post_meta( $id, 'lezshows_worthit_rating', true ) ),
-				'tropes'     => is_wp_error( $tropes ) ? array() : (array) $tropes,
-				'genres'     => is_wp_error( $genres ) ? array() : (array) $genres,
-				'country'    => is_wp_error( $country ) ? array() : (array) $country,
-				'excerpt'    => wp_trim_words( wp_strip_all_tags( get_post_field( 'post_content', $id ) ), 30 ),
-				'characters' => $char_count,
-				'dead'       => $dead_count,
+				'id'          => (int) $id,
+				'title'       => get_the_title( $id ),
+				'slug'        => get_post_field( 'post_name', $id ),
+				'permalink'   => get_permalink( $id ),
+				'score'       => (int) get_post_meta( $id, 'lezshows_the_score', true ),
+				'on_air'      => get_post_meta( $id, 'lezshows_on_air', true ),
+				'worthit'     => strtolower( (string) get_post_meta( $id, 'lezshows_worthit_rating', true ) ),
+				'tropes'      => is_wp_error( $tropes ) ? array() : (array) $tropes,
+				'genres'      => is_wp_error( $genres ) ? array() : (array) $genres,
+				'country'     => is_wp_error( $country ) ? array() : (array) $country,
+				'curator_say' => get_post_meta( $id, 'lezshows_worthit_details', true ),
+				'excerpt'     => wp_trim_words( wp_strip_all_tags( get_post_field( 'post_content', $id ) ), 100 ),
+				'characters'  => $char_count,
+				'dead'        => $dead_count,
 			);
 		}
 
