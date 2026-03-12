@@ -150,6 +150,8 @@ class Agents implements Component, Templater {
 		$tax_clauses  = array();
 		$meta_clauses = array();
 
+		lwtv_plugin()->debug_log( 'ai-agents', 'Building query args: ' . wp_json_encode( $params ) );
+
 		$taxonomies = array(
 			'trope'         => 'lez_tropes',
 			'genre'         => 'lez_genres',
@@ -217,7 +219,7 @@ class Agents implements Component, Templater {
 		}
 
 		// Worth it meta (stored as Yes/Meh/No/TBD per CMB2 THUMBS)
-		$worthit = $params['worthit'] ?? null;
+		$worthit = $params['worthit'] ?? 'yes';
 		if ( null !== $worthit && in_array( $worthit, array( 'yes', 'no', 'meh', 'tbd' ), true ) ) {
 			$worthit_stored = array(
 				'yes' => 'Yes',
@@ -272,19 +274,25 @@ class Agents implements Component, Templater {
 		$query_args = $this->build_agent_query_args( $params );
 		$posts      = get_posts( $query_args );
 
-		$year_min = isset( $params['year_min'] ) && is_numeric( $params['year_min'] ) ? (int) $params['year_min'] : null;
-		$year_max = isset( $params['year_max'] ) && is_numeric( $params['year_max'] ) ? (int) $params['year_max'] : null;
+		$year_min  = isset( $params['year_min'] ) && is_numeric( $params['year_min'] ) ? (int) $params['year_min'] : null;
+		$year_max  = isset( $params['year_max'] ) && is_numeric( $params['year_max'] ) ? (int) $params['year_max'] : null;
+		$on_air    = $params['on_air'] ?? null;
+		$this_year = (int) gmdate( 'Y' );
 
-		if ( ( null !== $year_min || null !== $year_max ) && ! empty( $posts ) ) {
+		if ( ( null !== $year_min || null !== $year_max || ( null !== $on_air && in_array( $on_air, array( 'yes', 'no' ), true ) ) ) && ! empty( $posts ) ) {
 			$posts = array_filter(
 				$posts,
-				function ( $post ) use ( $year_min, $year_max ) {
+				function ( $post ) use ( $year_min, $year_max, $on_air, $this_year ) {
 					$airdates = get_post_meta( $post->ID, 'lezshows_airdates', true );
 					if ( ! is_array( $airdates ) || ! isset( $airdates['start'] ) || ! isset( $airdates['finish'] ) ) {
 						return false;
 					}
-					$start  = (int) $airdates['start'];
-					$finish = 'current' === $airdates['finish'] ? (int) gmdate( 'Y' ) : (int) $airdates['finish'];
+
+					$start      = (int) $airdates['start'];
+					$finish_raw = $airdates['finish'] ?? '';
+					$finish     = ( 'current' === strtolower( (string) $finish_raw ) || '' === trim( (string) $finish_raw ) )
+						? $this_year
+						: (int) $finish_raw;
 
 					if ( null !== $year_min && $finish < $year_min ) {
 						return false;
@@ -292,6 +300,17 @@ class Agents implements Component, Templater {
 					if ( null !== $year_max && $start > $year_max ) {
 						return false;
 					}
+
+					if ( null !== $on_air && in_array( $on_air, array( 'yes', 'no' ), true ) ) {
+						$is_on_air = ( 'current' === strtolower( (string) $finish_raw ) || '' === trim( (string) $finish_raw ) || $finish >= $this_year );
+						if ( 'yes' === $on_air && ! $is_on_air ) {
+							return false;
+						}
+						if ( 'no' === $on_air && $is_on_air ) {
+							return false;
+						}
+					}
+
 					return true;
 				}
 			);

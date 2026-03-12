@@ -105,25 +105,28 @@ class Agents {
 	);
 
 	private const COUNTRY_ALIASES = array(
-		'british'     => array( 'united-kingdom', 'uk', 'wales', 'scotland', 'ireland', 'england' ),
-		'american'    => array( 'usa', 'us' ),
-		'canadian'    => array( 'canada' ),
-		'australian'  => array( 'australia' ),
-		'german'      => array( 'germany', 'west-germany' ),
-		'french'      => array( 'france' ),
-		'spanish'     => array( 'spain' ),
-		'irish'       => array( 'ireland' ),
-		'scottish'    => array( 'scotland' ),
-		'welsh'       => array( 'wales' ),
-		'japanese'    => array( 'japan' ),
-		'korean'      => array( 'south-korea' ),
-		'italian'     => array( 'italy' ),
-		'dutch'       => array( 'netherlands' ),
-		'brazilian'   => array( 'brazil' ),
-		'mexican'     => array( 'mexico' ),
-		'indian'      => array( 'india' ),
-		'argentine'   => array( 'argentina' ),
-		'argentinian' => array( 'argentina' ),
+		'british'        => array( 'united-kingdom', 'uk', 'wales', 'scotland', 'ireland', 'england' ),
+		'uk'             => array( 'uk', 'united-kingdom' ),
+		'united kingdom' => array( 'united-kingdom', 'uk' ),
+		'great britain'  => array( 'united-kingdom', 'uk' ),
+		'american'       => array( 'usa', 'us' ),
+		'canadian'       => array( 'canada' ),
+		'australian'     => array( 'australia' ),
+		'german'         => array( 'germany', 'west-germany' ),
+		'french'         => array( 'france' ),
+		'spanish'        => array( 'spain' ),
+		'irish'          => array( 'ireland' ),
+		'scottish'       => array( 'scotland' ),
+		'welsh'          => array( 'wales' ),
+		'japanese'       => array( 'japan' ),
+		'korean'         => array( 'south-korea' ),
+		'italian'        => array( 'italy' ),
+		'dutch'          => array( 'netherlands' ),
+		'brazilian'      => array( 'brazil' ),
+		'mexican'        => array( 'mexico' ),
+		'indian'         => array( 'india' ),
+		'argentine'      => array( 'argentina' ),
+		'argentinian'    => array( 'argentina' ),
 	);
 
 	/**
@@ -238,8 +241,9 @@ class Agents {
 			if ( ! empty( $exclude ) && in_array( $term->slug, $exclude, true ) ) {
 				continue;
 			}
-			if ( false !== strpos( $prompt_lower, strtolower( $term->name ) ) ||
-				false !== strpos( $prompt_lower, strtolower( $term->slug ) ) ) {
+			$pattern_name = '/\b' . preg_quote( $term->name, '/' ) . '\b/i';
+			$pattern_slug = '/\b' . preg_quote( $term->slug, '/' ) . '\b/i';
+			if ( preg_match( $pattern_name, $prompt ) || preg_match( $pattern_slug, $prompt ) ) {
 				return $term->slug;
 			}
 		}
@@ -284,7 +288,7 @@ class Agents {
 			'stars'         => null,
 			'triggers'      => null,
 			'intersections' => null,
-			'score'         => null,
+			'score'         => '50',
 			'score_op'      => '>=',
 			'worthit'       => null,
 			'on_air'        => null,
@@ -321,6 +325,9 @@ class Agents {
 		if ( preg_match( '/status:\s*(ongoing|ended)/i', $prompt, $m ) ) {
 			$params['status'] = strtolower( trim( $m[1] ) );
 		}
+		if ( preg_match( '/worthit:\s*(yes|no|meh|tbd)/i', $prompt, $m ) ) {
+			$params['worthit'] = strtolower( trim( $m[1] ) );
+		}
 
 		// Translator: status:ongoing|ended from AI -> on_air for lezshows_on_air meta
 		if ( null !== $params['status'] && null === $params['on_air'] ) {
@@ -355,14 +362,17 @@ class Agents {
 		}
 
 		// Worth it extraction (check "not worth it" before "worth it" to avoid false positive)
-		if ( preg_match( '/(?:not\s+worth\s+it|skip\s+it)/i', $prompt ) ) {
-			$params['worthit'] = 'no';
-		} elseif ( preg_match( '/(?:worth\s+it|worth\s+watching|recommended)/i', $prompt ) ) {
-			$params['worthit'] = 'yes';
-		} elseif ( preg_match( '/(?:^|\s)meh(\s|$)/i', $prompt ) || preg_match( '/\bmixed\b/i', $prompt ) ) {
-			$params['worthit'] = 'meh';
-		} elseif ( preg_match( '/(?:^|\s)tbd(\s|$)/i', $prompt ) || preg_match( '/to\s+be\s+determined/i', $prompt ) ) {
-			$params['worthit'] = 'tbd';
+		// Only run when not already set by structured format (worthit:yes etc.)
+		if ( null === $params['worthit'] ) {
+			if ( preg_match( '/(?:not\s+worth\s+it|skip\s+it)/i', $prompt ) ) {
+				$params['worthit'] = 'no';
+			} elseif ( preg_match( '/(?:worth\s+it|worth\s+watching|recommended)/i', $prompt ) ) {
+				$params['worthit'] = 'yes';
+			} elseif ( preg_match( '/(?:^|\s)meh(\s|$)/i', $prompt ) || preg_match( '/\bmixed\b/i', $prompt ) ) {
+				$params['worthit'] = 'meh';
+			} elseif ( preg_match( '/(?:^|\s)tbd(\s|$)/i', $prompt ) || preg_match( '/to\s+be\s+determined/i', $prompt ) ) {
+				$params['worthit'] = 'tbd';
+			}
 		}
 
 		// On air extraction (natural language)
@@ -397,6 +407,17 @@ class Agents {
 			$excluded = $this->extract_trope_exclude( $prompt );
 			if ( null !== $excluded ) {
 				$params['trope_exclude'] = $excluded;
+			}
+		}
+
+		// "from the UK" / "from Britain" / "from Italy" -> country (avoids "it" in "worth it")
+		if ( null === $params['country'] && preg_match( '/\bfrom\s+(?:the\s+)?([a-z0-9\s-]+?)(?:\s+that|\s+worth|\s+with|$)/i', $prompt, $m ) ) {
+			$phrase = trim( $m[1] );
+			if ( ! empty( $phrase ) && ! preg_match( '/^\d{4}$/', $phrase ) ) {
+				$slug = $this->extract_taxonomy_term( $phrase, 'lez_country' );
+				if ( null !== $slug ) {
+					$params['country'] = $slug;
+				}
 			}
 		}
 
@@ -542,15 +563,13 @@ class Agents {
 		if ( empty( $results['shows'] ) ) {
 			$results['message'] = apply_filters(
 				'lwtv_agent_no_results_message',
-				"I don't have a record of a show like that yet in our database.",
+				"I'm sorry, I can't find any shows that match your request. I'm still learning, though, so try again with a different request.",
 				$prompt,
 				$context
 			);
 		}
 
-		if ( function_exists( 'lwtv_plugin' ) ) {
-			lwtv_plugin()->set_transient( $cache_key, $results, HOUR_IN_SECONDS );
-		}
+		lwtv_plugin()->set_transient( $cache_key, $results, HOUR_IN_SECONDS );
 
 		return new \WP_REST_Response( $results, 200 );
 	}
