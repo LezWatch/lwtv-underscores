@@ -240,7 +240,7 @@ class Agents implements Component, Templater {
 			$meta_clauses[] = array(
 				'key'     => 'lezshows_on_air',
 				'value'   => $on_air,
-				'compare' => '=',
+				'compare' => '>=',
 			);
 		}
 
@@ -305,10 +305,13 @@ class Agents implements Component, Templater {
 
 					if ( null !== $on_air && in_array( $on_air, array( 'yes', 'no' ), true ) ) {
 						$is_on_air = ( 'current' === strtolower( (string) $finish_raw ) || '' === trim( (string) $finish_raw ) || $finish >= $this_year );
+
 						if ( 'yes' === $on_air && ! $is_on_air ) {
+							update_post_meta( $post->ID, 'lezshows_on_air', 'no' );
 							return false;
 						}
 						if ( 'no' === $on_air && $is_on_air ) {
+							update_post_meta( $post->ID, 'lezshows_on_air', 'yes' );
 							return false;
 						}
 					}

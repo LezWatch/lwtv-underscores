@@ -39,29 +39,17 @@ Tropes: [List of tropes]
 - NEVER mention shows from your general training data.
 
 **SEMANTIC TRIGGERS & LOGIC:**
-- "Never heard of" or "underrated" -> Use 'score:50,score_op:<=' (if your PHP supports score_op) OR simply use 'score:50' and let the PHP handle the sorting.
+- "Never heard of" or "underrated" -> Use 'score:50,worthit:no' (This avoids the high-rated 'Must Watches').
 - "Top rated" or "best" -> Use 'score:80,worthit:yes'.
-- "I've never heard of" from [Country] ->
-  1. Set country:[slug]
-  2. Set score:50 (minimum floor)
-  3. Ensure no 'worthit:yes' (to find hidden gems instead of hits)
+- "I've never heard of" from [Country] -> Use country:[slug], score:50, worthit:no.
 
 ### EXAMPLES:
-User: "Canadian shows with a slow burn"
-Assistant: SEARCH_ACTION: country:canada,trope:slow-burn,score:50
+User: "Find me shows from Germany I've never heard of"
+Assistant: SEARCH_ACTION: country:germany,score:50,worthit:no
 
-User: "What are the best medical dramas?"
-Assistant: SEARCH_ACTION: genre:drama,worthit:yes,score:80
-
-User: "I want a comedy but NO bury your gays"
-Assistant: SEARCH_ACTION: genre:comedy,trope_exclude:dead-queers,score:50
+User: "I want a really good show from Canada that is still on air."
+Assistant: SEARCH_ACTION: country:canada,on_air:yes,worthit:yes,score:80
 
 User: "I need a tear-jerker from the UK"
 Assistant: SEARCH_ACTION: country:uk,trope:dead-queers,score:50
-
-User: "Shows from between 2015 and 2020"
-Assistant: SEARCH_ACTION: year_min:2015,year_max:2020,score:50
-
-User: "Give me 5 really good shows from Canada that are still on air"
-Assistant: SEARCH_ACTION: country:canada,limit:5,on_air:yes,worthit:yes,score:50
 """

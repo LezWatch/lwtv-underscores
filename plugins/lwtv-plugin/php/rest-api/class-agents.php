@@ -545,35 +545,21 @@ class Agents {
 		// Prioritize on air: try on_air:yes first; if empty, fall back to no on_air filter.
 		$on_air_prioritize = ( $params['on_air'] ?? null ) === 'prioritize';
 		if ( $on_air_prioritize ) {
-			$params_query = array_merge( $params, array( 'on_air' => 'yes' ) );
-			$shows        = function_exists( 'lwtv_plugin' )
-				? lwtv_plugin()->get_shows_by_params( $params_query )
-				: array();
-			if ( empty( $shows ) ) {
-				$params_fallback = array_merge( $params, array( 'on_air' => null ) );
-				$shows           = function_exists( 'lwtv_plugin' )
-					? lwtv_plugin()->get_shows_by_params( $params_fallback )
-					: array();
-			}
-			// Sort fallback results so on-air shows appear first.
-			if ( ! empty( $shows ) ) {
-				usort(
-					$shows,
-					function ( $a, $b ) {
-						$a_on = get_post_meta( $a->ID, 'lezshows_on_air', true );
-						$b_on = get_post_meta( $b->ID, 'lezshows_on_air', true );
-						return ( 'yes' === $b_on ? 1 : 0 ) <=> ( 'yes' === $a_on ? 1 : 0 );
-					}
-				);
-			}
+			$shows = $this->prioritize_on_air( $params );
 		} else {
-			$shows = function_exists( 'lwtv_plugin' )
-				? lwtv_plugin()->get_shows_by_params( $params )
-				: array();
+			$shows = lwtv_plugin()->get_shows_by_params( $params ) ?? array();
 		}
 
 		$limit = (int) ( $params['limit'] ?? 3 );
 		$shows = array_slice( $shows, 0, $limit );
+
+		// Make sure the shows are sorted by score descending.
+		usort(
+			$shows,
+			function ( $a, $b ) {
+				return (int) get_post_meta( $b->ID, 'lezshows_the_score', true ) <=> (int) get_post_meta( $a->ID, 'lezshows_the_score', true );
+			}
+		);
 
 		$context = trim( (string) $request->get_param( 'context' ) );
 		$results = array(
@@ -623,5 +609,35 @@ class Agents {
 		lwtv_plugin()->set_transient( $cache_key, $results, HOUR_IN_SECONDS );
 
 		return new \WP_REST_Response( $results, 200 );
+	}
+
+	/**
+	 * Prioritize on air shows
+	 *
+	 * @param array $params Params from parse_prompt.
+	 * @return array Array of WP_Post objects.
+	 */
+	private function prioritize_on_air( array $params ): array {
+		$params_query = array_merge( $params, array( 'on_air' => 'yes' ) );
+		$shows        = lwtv_plugin()->get_shows_by_params( $params_query ) ?? array();
+
+		if ( empty( $shows ) ) {
+			$params_fallback = array_merge( $params, array( 'on_air' => null ) );
+			$shows           = lwtv_plugin()->get_shows_by_params( $params_fallback ) ?? array();
+		}
+
+		if ( ! empty( $shows ) ) {
+			// Sort fallback results so on-air shows appear first.
+			usort(
+				$shows,
+				function ( $a, $b ) {
+					$a_on = get_post_meta( $a->ID, 'lezshows_on_air', true );
+					$b_on = get_post_meta( $b->ID, 'lezshows_on_air', true );
+					return ( 'yes' === $b_on ? 1 : 0 ) <=> ( 'yes' === $a_on ? 1 : 0 );
+				}
+			);
+		}
+
+		return $shows;
 	}
 }
