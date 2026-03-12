@@ -63,7 +63,7 @@ The endpoint extracts filters from the prompt. At least one filter is required (
 ### Structured Format
 
 ```
-trope:slow-burn,genre:drama,format:web-series,country:uk,station:netflix,score:80
+trope:slow-burn,genre:drama,format:web-series,country:uk,station:netflix,score:80,limit:5
 ```
 
 ### Natural Language
@@ -97,11 +97,24 @@ trope:slow-burn,genre:drama,format:web-series,country:uk,station:netflix,score:8
 - "meh", "mixed" → meh
 - "tbd", "to be determined" → tbd
 
+**On air (structured):**
+
+- `on_air:yes` → only shows currently on air
+- `on_air:no` → only ended shows
+- `on_air:prioritize` → try on-air first; if none match, fall back to all shows (used by the "Prioritize shows on air" toggle)
+
 **Year:**
 
 - "from 2020", "in 2020", "after 2019" → year_min
 - "before 2015", "pre-2015" → year_max
 - "2018 to 2022", "2018-2022" → year range
+
+**Limit (number of shows):**
+
+- Default: 3 shows per response
+- Structured: `limit:5`
+- Natural language: "give me 5", "5 shows", "5 really good shows from Canada", "recommend 10", "top 7", "10 recommendations"
+- Max: 20 (configurable via `lwtv_agent_max_limit` filter)
 
 ## Response Format
 
@@ -115,6 +128,7 @@ trope:slow-burn,genre:drama,format:web-series,country:uk,station:netflix,score:8
       "excerpt": "Short excerpt text...",
       "characters": 14,
       "dead": 2,
+      "on_air": "yes",
       "tropes": ["law-enforcement", "outed", "coming-out"]
     }
   ]
@@ -129,11 +143,12 @@ trope:slow-burn,genre:drama,format:web-series,country:uk,station:netflix,score:8
 | `excerpt` | string | Short text summary (~25 words, HTML stripped) |
 | `characters` | int | Total queer characters linked to the show |
 | `dead` | int | Count of characters with `dead` cliché (lez_cliches) |
+| `on_air` | string | `"yes"` if show is currently on air, `"no"` if ended (from lezshows_on_air meta) |
 | `tropes` | string[] | Array of trope slugs from lez_tropes |
 
 **Display logic for character/death line:** When `dead > 0`, show "X queer characters (Y are dead)". When `dead == 0` and `characters > 0`, show "X queer characters (none are dead)" or "X queer characters".
 
-**Ending Status badges:** When `dead === 0`, label as "Happy Ending". When `dead > 0`, label as "Tragic".
+**On Air Status badges:** When `on_air === "yes"`, label as "On Air". When `on_air === "no"` or missing, label as "Ended".
 
 **Empty results:** When no shows match, the response includes `"message": "I don't have a record of a show like that yet in our database."` (filterable via `lwtv_agent_no_results_message`).
 

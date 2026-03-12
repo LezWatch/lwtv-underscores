@@ -26,10 +26,10 @@ $failed_query   = $args['failed_query'] ?? '';
 	</div>
 
 	<div class="lwtv-chat-vibe-check">
-		<label class="lwtv-happy-ending-toggle" for="lwtv-happy-ending-toggle">
-			<input type="checkbox" id="lwtv-happy-ending-toggle" aria-describedby="lwtv-happy-ending-desc">
+		<label class="lwtv-onair-toggle" for="lwtv-onair-toggle">
+			<input type="checkbox" id="lwtv-onair-toggle" aria-describedby="lwtv-happy-ending-desc">
 			<span class="lwtv-toggle-slider"></span>
-			<span id="lwtv-happy-ending-desc" class="lwtv-toggle-label"><?php esc_html_e( 'Prioritize Happy Endings', 'lwtv-underscores' ); ?></span>
+			<span id="lwtv-happy-ending-desc" class="lwtv-toggle-label"><?php esc_html_e( 'Prioritize shows on air', 'lwtv-underscores' ); ?></span>
 		</label>
 	</div>
 
@@ -44,7 +44,7 @@ $failed_query   = $args['failed_query'] ?? '';
 	<div id="lwtv-chat-msgs" class="lwtv-chat-msgs" role="log" aria-live="polite"></div>
 
 	<div id="lwtv-chat-input-wrap" class="lwtv-chat-input-wrap">
-		<input type="text" id="lwtv-chat-input" class="lwtv-chat-input" placeholder="<?php esc_attr_e( 'e.g. British drama with happy ending', 'lwtv-underscores' ); ?>" autocomplete="off" aria-label="<?php esc_attr_e( 'Search for shows', 'lwtv-underscores' ); ?>" value="<?php echo esc_attr( $initial_prompt ); ?>" data-initial-prompt="<?php echo esc_attr( $initial_prompt ); ?>" data-failed-query="<?php echo esc_attr( $failed_query ); ?>">
+		<input type="text" id="lwtv-chat-input" class="lwtv-chat-input" placeholder="<?php esc_attr_e( 'e.g. British drama', 'lwtv-underscores' ); ?>" autocomplete="off" aria-label="<?php esc_attr_e( 'Search for shows', 'lwtv-underscores' ); ?>" value="<?php echo esc_attr( $initial_prompt ); ?>" data-initial-prompt="<?php echo esc_attr( $initial_prompt ); ?>" data-failed-query="<?php echo esc_attr( $failed_query ); ?>">
 		<button type="button" id="lwtv-chat-send" class="lwtv-chat-send" aria-label="<?php esc_attr_e( 'Send', 'lwtv-underscores' ); ?>"><?php esc_html_e( 'Find', 'lwtv-underscores' ); ?></button>
 	</div>
 </div>

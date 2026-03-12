@@ -1,8 +1,8 @@
 /**
  * LezWatch.TV AI Discovery Engine
  *
- * Handles the Discovery chat UI: Happy Ending toggle, Mood Chips, show cards with
- * Ending Status badges, SearchWP bridge (failed query as context), auto-open on 404/no-results.
+ * Handles the Discovery chat UI: Prioritize shows on air toggle, Mood Chips, show cards with
+ * On Air Status badges, SearchWP bridge (failed query as context), auto-open on 404/no-results.
  */
 document.addEventListener('DOMContentLoaded', function() {
 	const trigger = document.getElementById('lwtv-chat-trigger');
@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	const input = document.getElementById('lwtv-chat-input');
 	const send = document.getElementById('lwtv-chat-send');
 	const msgs = document.getElementById('lwtv-chat-msgs');
-	const happyToggle = document.getElementById('lwtv-happy-ending-toggle');
+	const happyToggle = document.getElementById('lwtv-onair-toggle');
 
 	if (!box || !input || !send || !msgs) return;
 
@@ -42,9 +42,11 @@ document.addEventListener('DOMContentLoaded', function() {
 	}
 
 	function getEffectivePrompt(val) {
-		const happyOn = happyToggle && happyToggle.checked;
-		if (happyOn && val && !val.toLowerCase().includes('happy-ending') && !val.toLowerCase().includes('happy ending')) {
-			return val.trim() + ' trope:happy-ending';
+		const onAirOn = happyToggle && happyToggle.checked;
+		const valLower = val ? val.toLowerCase() : '';
+		const hasOnAir = valLower.includes('on_air:') || /\bon\s+air\b/.test(valLower) || /\bairing\b/.test(valLower);
+		if (onAirOn && val && !hasOnAir) {
+			return val.trim() + ' on_air:prioritize';
 		}
 		return val ? val.trim() : '';
 	}
@@ -52,9 +54,10 @@ document.addEventListener('DOMContentLoaded', function() {
 	function buildShowCardHtml(s) {
 		const dead = s.dead ?? 0;
 		const chars = s.characters ?? 0;
-		const endingBadge = dead === 0
-			? '<span class="lwtv-ending-badge lwtv-ending-happy">Happy Ending</span>'
-			: '<span class="lwtv-ending-badge lwtv-ending-tragic">Tragic</span>';
+		const onAir = s.on_air === 'yes';
+		const statusBadge = onAir
+			? '<span class="lwtv-status-badge lwtv-status-on-air">On Air</span>'
+			: '<span class="lwtv-status-badge lwtv-status-ended">Ended</span>';
 		let charLine = `${chars} queer characters`;
 		if (dead > 0) {
 			charLine += ` (${dead} are dead)`;
@@ -65,7 +68,7 @@ document.addEventListener('DOMContentLoaded', function() {
 			? `Tropes: ${s.tropes.join(', ')}`
 			: '';
 		return `<div class="lwtv-show-card">
-			<a href="${s.permalink}">${s.title}</a> (Score: ${s.score}) ${endingBadge}<br>
+			<a target="_blank" href="${s.permalink}">${s.title}</a> (Score: ${s.score}) ${statusBadge}<br>
 			${s.excerpt || ''}<br>
 			${charLine}<br>
 			${tropesLine ? tropesLine + '<br>' : ''}

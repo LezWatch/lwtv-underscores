@@ -76,7 +76,7 @@ class LWTV_AI_Discovery_Modal {
 				if ( 'lez_country' === $term->taxonomy ) {
 					$chips[] = sprintf(
 						/* translators: %s: country name */
-						__( 'Show me shows from %s I\'ve never heard of', 'lwtv-underscores' ),
+						__( 'Find me shows from %s I\'ve never heard of', 'lwtv-underscores' ),
 						$term->name
 					);
 				} elseif ( 'lez_genres' === $term->taxonomy ) {

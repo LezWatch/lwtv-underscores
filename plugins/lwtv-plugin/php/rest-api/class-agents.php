@@ -295,6 +295,7 @@ class Agents {
 			'status'        => null,
 			'year_min'      => null,
 			'year_max'      => null,
+			'limit'         => 3,
 		);
 
 		// Structured format: trope:slow-burn,genre:drama,trope_exclude:dead-queers,score:80 (allows optional space after colon)
@@ -319,7 +320,7 @@ class Agents {
 		if ( preg_match( '/score:\s*(\d+)/i', $prompt, $m ) ) {
 			$params['score'] = (int) trim( $m[1] );
 		}
-		if ( preg_match( '/on_air:\s*(yes|no)/i', $prompt, $m ) ) {
+		if ( preg_match( '/on_air:\s*(yes|no|prioritize)/i', $prompt, $m ) ) {
 			$params['on_air'] = strtolower( trim( $m[1] ) );
 		}
 		if ( preg_match( '/status:\s*(ongoing|ended)/i', $prompt, $m ) ) {
@@ -327,6 +328,22 @@ class Agents {
 		}
 		if ( preg_match( '/worthit:\s*(yes|no|meh|tbd)/i', $prompt, $m ) ) {
 			$params['worthit'] = strtolower( trim( $m[1] ) );
+		}
+		if ( preg_match( '/limit:\s*(\d+)/i', $prompt, $m ) ) {
+			$params['limit'] = (int) trim( $m[1] );
+		}
+
+		// Natural language: limit extraction (only when not set by structured format)
+		if ( ! preg_match( '/limit:\s*\d+/i', $prompt ) ) {
+			if ( preg_match( '/(?:give me|recommend|find me|show me)\s+(\d+)/i', $prompt, $m ) ) {
+				$params['limit'] = (int) $m[1];
+			} elseif ( preg_match( '/\b(\d+)\s+(?:really\s+good\s+)?shows?\b/i', $prompt, $m ) ) {
+				$params['limit'] = (int) $m[1];
+			} elseif ( preg_match( '/(?:top|best|first)\s+(\d+)/i', $prompt, $m ) ) {
+				$params['limit'] = (int) $m[1];
+			} elseif ( preg_match( '/(\d+)\s+recommendations?/i', $prompt, $m ) ) {
+				$params['limit'] = (int) $m[1];
+			}
 		}
 
 		// Translator: status:ongoing|ended from AI -> on_air for lezshows_on_air meta
@@ -452,6 +469,10 @@ class Agents {
 			$params[ $key ] = $resolved ?? null;
 		}
 
+		// Clamp limit to 1–max (filterable)
+		$max_limit       = (int) apply_filters( 'lwtv_agent_max_limit', 20 );
+		$params['limit'] = max( 1, min( $max_limit, (int) $params['limit'] ) );
+
 		return $params;
 	}
 
@@ -521,9 +542,38 @@ class Agents {
 			return new \WP_REST_Response( $cached, 200 );
 		}
 
-		$shows = function_exists( 'lwtv_plugin' )
-			? lwtv_plugin()->get_shows_by_params( $params )
-			: array();
+		// Prioritize on air: try on_air:yes first; if empty, fall back to no on_air filter.
+		$on_air_prioritize = ( $params['on_air'] ?? null ) === 'prioritize';
+		if ( $on_air_prioritize ) {
+			$params_query = array_merge( $params, array( 'on_air' => 'yes' ) );
+			$shows        = function_exists( 'lwtv_plugin' )
+				? lwtv_plugin()->get_shows_by_params( $params_query )
+				: array();
+			if ( empty( $shows ) ) {
+				$params_fallback = array_merge( $params, array( 'on_air' => null ) );
+				$shows           = function_exists( 'lwtv_plugin' )
+					? lwtv_plugin()->get_shows_by_params( $params_fallback )
+					: array();
+			}
+			// Sort fallback results so on-air shows appear first.
+			if ( ! empty( $shows ) ) {
+				usort(
+					$shows,
+					function ( $a, $b ) {
+						$a_on = get_post_meta( $a->ID, 'lezshows_on_air', true );
+						$b_on = get_post_meta( $b->ID, 'lezshows_on_air', true );
+						return ( 'yes' === $b_on ? 1 : 0 ) <=> ( 'yes' === $a_on ? 1 : 0 );
+					}
+				);
+			}
+		} else {
+			$shows = function_exists( 'lwtv_plugin' )
+				? lwtv_plugin()->get_shows_by_params( $params )
+				: array();
+		}
+
+		$limit = (int) ( $params['limit'] ?? 3 );
+		$shows = array_slice( $shows, 0, $limit );
 
 		$context = trim( (string) $request->get_param( 'context' ) );
 		$results = array(
@@ -555,6 +605,7 @@ class Agents {
 				'excerpt'    => $excerpt,
 				'characters' => $total_chars,
 				'dead'       => $dead_chars,
+				'on_air'     => get_post_meta( $post->ID, 'lezshows_on_air', true ),
 				'tropes'     => $trope_slugs,
 			);
 		}

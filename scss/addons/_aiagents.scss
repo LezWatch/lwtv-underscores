@@ -86,14 +86,14 @@
 	opacity: 1;
 }
 
-/* Happy Ending toggle (Vibe Check) */
+/* Prioritize shows on air toggle (Vibe Check) */
 .lwtv-chat-vibe-check {
 	padding: 10px 15px;
 	background: #f8f6fa;
 	border-bottom: 1px solid #eee;
 }
 
-.lwtv-happy-ending-toggle {
+.lwtv-onair-toggle {
 	display: flex;
 	align-items: center;
 	gap: 10px;
@@ -102,7 +102,7 @@
 	color: #333;
 }
 
-.lwtv-happy-ending-toggle input {
+.lwtv-onair-toggle input {
 	position: absolute;
 	opacity: 0;
 	width: 0;
@@ -132,11 +132,11 @@
 	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
-.lwtv-happy-ending-toggle input:checked + .lwtv-toggle-slider {
+.lwtv-onair-toggle input:checked + .lwtv-toggle-slider {
 	background: colors.$lwtv-pink;
 }
 
-.lwtv-happy-ending-toggle input:checked + .lwtv-toggle-slider::before {
+.lwtv-onair-toggle input:checked + .lwtv-toggle-slider::before {
 	transform: translateX(18px);
 }
 
@@ -252,8 +252,8 @@
 	text-decoration: underline;
 }
 
-/* Ending Status badges (Happy Ending / Tragic) */
-.lwtv-ending-badge {
+/* On Air Status badges (On Air / Ended) */
+.lwtv-status-badge {
 	display: inline-block;
 	padding: 2px 8px;
 	border-radius: 4px;
@@ -262,14 +262,14 @@
 	margin-left: 4px;
 }
 
-.lwtv-ending-happy {
+.lwtv-status-on-air {
 	background: #e8f5e9;
 	color: #2e7d32;
 }
 
-.lwtv-ending-tragic {
-	background: #ffebee;
-	color: #c62828;
+.lwtv-status-ended {
+	background: #eceff1;
+	color: #546e7a;
 }
 
 .lwtv-loading {

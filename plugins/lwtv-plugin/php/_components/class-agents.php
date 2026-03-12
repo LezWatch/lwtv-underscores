@@ -259,6 +259,8 @@ class Agents implements Component, Templater {
 			$query_args['meta_query'] = array_merge( array( 'relation' => 'AND' ), $meta_clauses );
 		}
 
+		lwtv_plugin()->debug_log( 'ai-agents', 'Final query args: ' . wp_json_encode( $query_args ) );
+
 		return $query_args;
 	}
 
