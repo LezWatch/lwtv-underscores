@@ -23,7 +23,25 @@ class Agents implements Component, Templater {
 			'get_shows_by_trope_and_score' => array( $this, 'get_shows_by_trope_and_score' ),
 			'get_shows_by_params'          => array( $this, 'get_shows_by_params' ),
 			'build_agent_query_args'       => array( $this, 'build_agent_query_args' ),
+			'present_results_to_ai'        => array( $this, 'present_results_to_ai' ),
 		);
+	}
+
+	/**
+	 * Send database results to Ollama for curated presentation (Curator's Note + formatted show list).
+	 *
+	 * @param string $user_prompt The user's original request.
+	 * @param array  $results     The results array (e.g. from agent REST API: shows, message, context).
+	 * @return string|array The AI-formatted response string, or error array on failure.
+	 */
+	public function present_results_to_ai( string $user_prompt, array $results ) {
+		$json   = wp_json_encode( $results );
+		$prompt = sprintf(
+			'The user originally asked for: %s. Here are the database results: %s. Please format them according to your STEP 2 rules.',
+			$user_prompt,
+			$json
+		);
+		return $this->call_ai_server( $prompt );
 	}
 
 	/**

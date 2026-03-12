@@ -99,7 +99,9 @@ document.addEventListener('DOMContentLoaded', function() {
 			const data = await response.json();
 			loader.remove();
 
-			if (data.shows && data.shows.length > 0) {
+			if (data.formatted) {
+				appendMsg('ai', data.formatted.replace(/\n/g, '<br>'));
+			} else if (data.shows && data.shows.length > 0) {
 				let html = "I found these for you:<br>";
 				data.shows.forEach(s => {
 					html += buildShowCardHtml(s);

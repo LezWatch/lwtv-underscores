@@ -604,6 +604,12 @@ class Agents {
 				$prompt,
 				$context
 			);
+		} else {
+			// Send results to Ollama for curated presentation (Curator's Note + formatted list).
+			$formatted = lwtv_plugin()->present_results_to_ai( $prompt, $results );
+			if ( is_string( $formatted ) ) {
+				$results['formatted'] = $formatted;
+			}
 		}
 
 		lwtv_plugin()->set_transient( $cache_key, $results, HOUR_IN_SECONDS );
