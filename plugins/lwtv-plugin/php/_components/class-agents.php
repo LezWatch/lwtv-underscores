@@ -143,7 +143,7 @@ class Agents implements Component, Templater {
 	 * Build WP_Query args from agent params array
 	 *
 	 * @param array $params Params with keys: trope, genre, format, country, station, stars, triggers, intersections,
-	 *                      score, score_op, worthit, year_min, year_max.
+	 *                      score, score_op, worthit, on_air, year_min, year_max.
 	 * @return array WP_Query-compatible args.
 	 */
 	public function build_agent_query_args( array $params ): array {
@@ -228,6 +228,16 @@ class Agents implements Component, Templater {
 			$meta_clauses[] = array(
 				'key'     => 'lezshows_worthit_rating',
 				'value'   => $worthit_stored,
+				'compare' => '=',
+			);
+		}
+
+		// On air meta (yes/no)
+		$on_air = $params['on_air'] ?? null;
+		if ( null !== $on_air && in_array( $on_air, array( 'yes', 'no' ), true ) ) {
+			$meta_clauses[] = array(
+				'key'     => 'lezshows_on_air',
+				'value'   => $on_air,
 				'compare' => '=',
 			);
 		}

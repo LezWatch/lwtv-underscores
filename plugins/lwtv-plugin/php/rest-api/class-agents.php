@@ -287,6 +287,7 @@ class Agents {
 			'score'         => null,
 			'score_op'      => '>=',
 			'worthit'       => null,
+			'on_air'        => null,
 			'year_min'      => null,
 			'year_max'      => null,
 		);
@@ -312,6 +313,9 @@ class Agents {
 		}
 		if ( preg_match( '/score:\s*(\d+)/i', $prompt, $m ) ) {
 			$params['score'] = (int) trim( $m[1] );
+		}
+		if ( preg_match( '/on_air:\s*(yes|no)/i', $prompt, $m ) ) {
+			$params['on_air'] = strtolower( trim( $m[1] ) );
 		}
 
 		// Natural language: semantic score terms (high/low/default)
@@ -346,6 +350,17 @@ class Agents {
 			$params['worthit'] = 'meh';
 		} elseif ( preg_match( '/(?:^|\s)tbd(\s|$)/i', $prompt ) || preg_match( '/to\s+be\s+determined/i', $prompt ) ) {
 			$params['worthit'] = 'tbd';
+		}
+
+		// On air extraction (natural language)
+		if ( null === $params['on_air'] ) {
+			$negative_on_air = preg_match( '/(?:not|no\s+longer)\s+(?:on\s+air|airing)\b|off\s+the\s+air|\b(?:ended|cancelled|canceled)\b/i', $prompt );
+			$positive_on_air = preg_match( '/(?:currently\s+)?(?:on\s+air|airing|airs?\s+now|currently\s+on)\b|\bongoing\b/i', $prompt );
+			if ( $negative_on_air ) {
+				$params['on_air'] = 'no';
+			} elseif ( $positive_on_air ) {
+				$params['on_air'] = 'yes';
+			}
 		}
 
 		// Year extraction
@@ -425,6 +440,9 @@ class Agents {
 		if ( null !== $params['worthit'] ) {
 			return true;
 		}
+		if ( null !== $params['on_air'] ) {
+			return true;
+		}
 		if ( null !== $params['year_min'] || null !== $params['year_max'] ) {
 			return true;
 		}
@@ -456,7 +474,7 @@ class Agents {
 			return new \WP_REST_Response(
 				array(
 					'code'    => 'unparseable_prompt',
-					'message' => 'Could not extract any filters from prompt. Try: trope (e.g. slow-burn), genre (e.g. drama), format (e.g. web-series), country (e.g. british), score (e.g. high/80), worth it, or year.',
+					'message' => 'Could not extract any filters from prompt. Try: trope (e.g. slow-burn), genre (e.g. drama), format (e.g. web-series), country (e.g. british), score (e.g. high/80), worth it, on air, or year.',
 				),
 				400
 			);
