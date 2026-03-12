@@ -4,7 +4,7 @@
  *
  * Eventually, some of the functionality here could be replaced by core features.
  *
- * @package YIKES_Starter
+ * @package LWTV Underscores
  */
 
 /**

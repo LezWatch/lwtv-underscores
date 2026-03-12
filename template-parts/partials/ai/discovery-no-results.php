@@ -5,7 +5,7 @@
  * Shown when SearchWP returns zero results. Passes failed_query to the AI
  * as context so it can suggest closest matches (e.g. "The L Wood" → "The L Word").
  *
- * @package YIKES Starter
+ * @package LWTV Underscores
  *
  * @param string $failed_query The search query that returned no results.
  * @param array  $mood_chips  Optional context-aware mood chips.

@@ -95,17 +95,23 @@ class Sync_AI {
 			$genres  = wp_get_post_terms( $id, 'lez_genres', array( 'fields' => 'slugs' ) );
 			$country = wp_get_post_terms( $id, 'lez_country', array( 'fields' => 'slugs' ) );
 
+			$char_count = (int) get_post_meta( $id, 'lezshows_char_count', true );
+			$dead_count = (int) get_post_meta( $id, 'lezshows_dead_count', true );
+
 			$sync_data[] = array(
-				'id'        => (int) $id,
-				'title'     => get_the_title( $id ),
-				'slug'      => get_post_field( 'post_name', $id ),
-				'permalink' => get_permalink( $id ),
-				'score'     => get_post_meta( $id, 'lezshows_the_score', true ),
-				'on_air'    => get_post_meta( $id, 'lezshows_on_air', true ),
-				'worthit'   => get_post_meta( $id, 'lezshows_worthit_rating', true ),
-				'tropes'    => is_wp_error( $tropes ) ? array() : (array) $tropes,
-				'genres'    => is_wp_error( $genres ) ? array() : (array) $genres,
-				'country'   => is_wp_error( $country ) ? array() : (array) $country,
+				'id'         => (int) $id,
+				'title'      => get_the_title( $id ),
+				'slug'       => get_post_field( 'post_name', $id ),
+				'permalink'  => get_permalink( $id ),
+				'score'      => (int) get_post_meta( $id, 'lezshows_the_score', true ),
+				'on_air'     => get_post_meta( $id, 'lezshows_on_air', true ),
+				'worthit'    => get_post_meta( $id, 'lezshows_worthit_rating', true ),
+				'tropes'     => is_wp_error( $tropes ) ? array() : (array) $tropes,
+				'genres'     => is_wp_error( $genres ) ? array() : (array) $genres,
+				'country'    => is_wp_error( $country ) ? array() : (array) $country,
+				'excerpt'    => wp_trim_words( wp_strip_all_tags( get_post_field( 'post_content', $id ) ), 30 ),
+				'characters' => $char_count,
+				'dead'       => $dead_count,
 			);
 		}
 

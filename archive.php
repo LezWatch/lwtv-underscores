@@ -2,7 +2,7 @@
 /**
  * The template for displaying Archive pages.
  *
- * @package YIKES Starter
+ * @package LWTV Underscores
  */
 
 // Defaults

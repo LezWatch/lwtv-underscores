@@ -2,7 +2,7 @@
 /**
  * Template Name: Full-width Page no sidebar
  *
- * @package YIKES Starter
+ * @package LWTV Underscores
  */
 
 get_header(); ?>

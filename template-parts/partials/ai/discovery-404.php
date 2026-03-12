@@ -4,7 +4,7 @@
  *
  * Inline Discovery panel for 404 pages. Primary CTA with search form as secondary.
  *
- * @package YIKES Starter
+ * @package LWTV Underscores
  *
  * @param array $mood_chips Optional context-aware mood chips.
  */

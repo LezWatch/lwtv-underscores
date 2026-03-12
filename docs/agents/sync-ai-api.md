@@ -96,3 +96,13 @@ Returns a JSON array of show objects:
 - **Full sync:** Omit `modified_after` to retrieve all published shows. Use for initial Ollama index build.
 - **Incremental sync:** Pass `modified_after` with yesterday's date (or last sync timestamp) for daily jobs. Only returns shows modified after that date.
 - **Invalid dates:** If `modified_after` is not parseable by `strtotime()`, it is ignored and all shows are returned. Debug logging records invalid values when enabled.
+
+# Sync Server Configuration
+
+Copy `/docs/agents/sync-ai.py` to `/home/uptime/agents/bin/sync-ai.py`
+
+Setup Cron:
+
+```shell
+0 3 * * * /usr/bin/python3 /home/uptime/agents/bin/sync-ai.py >> /var/log/lwtv-ai-sync.log 2>&1
+```

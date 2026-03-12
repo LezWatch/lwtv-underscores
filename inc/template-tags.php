@@ -16,7 +16,7 @@ if ( ! function_exists( 'lwtv_theme_paging_nav' ) ) :
 			return;
 		}
 		?>
-		<nav class="yikes-pagination" aria-label="Post Pages navigation" role="navigation">
+		<nav class="lwtv-pagination" aria-label="Post Pages navigation" role="navigation">
 			<ul class="pagination justify-content-between">
 			<?php
 			if ( get_previous_posts_link() ) :
@@ -48,7 +48,7 @@ if ( ! function_exists( 'lwtv_theme_post_nav' ) ) :
 			return;
 		}
 		?>
-		<nav class="yikes-pagination" aria-label="Post Navigation" role="navigation">
+		<nav class="lwtv-pagination" aria-label="Post Navigation" role="navigation">
 			<ul class="pagination justify-content-between">
 				<?php
 					previous_post_link( '<li class="page-item previous">%link</li>', lwtv_plugin()->get_symbolicon( svg: 'caret-left-circle.svg', icon: 'svg-chevron-circle-left', max_size: '14' ) . ' Previous Post' );
@@ -182,7 +182,7 @@ function lwtv_generate_pagination_buttons( $page_number, $max_num_pages, $view_a
 	}
 
 	?>
-	<nav aria-label="Post Pages navigation" role="navigation" class="yikes-pagination">
+	<nav aria-label="Post Pages navigation" role="navigation" class="lwtv-pagination">
 		<ul class="pagination justify-content-center">
 				<li class="page-item previous me-auto">
 				<?php

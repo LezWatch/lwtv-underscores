@@ -4,12 +4,12 @@
  *
  * Reusable Discovery chat UI. Used inline on 404/no-results or inside the floating drawer.
  *
- * @package YIKES Starter
+ * @package LWTV Underscores
  *
- * @param string $context       Context: global, 404, no-results.
- * @param string $heading      Optional heading text.
+ * @param string $context        Context: global, 404, no-results.
+ * @param string $heading        Optional heading text.
  * @param string $initial_prompt Optional pre-filled prompt.
- * @param array  $mood_chips   Optional array of quick-start prompt strings.
+ * @param array  $mood_chips     Optional array of quick-start prompt strings.
  */
 
 $context        = $args['context'] ?? 'global';

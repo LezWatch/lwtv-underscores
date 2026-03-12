@@ -5,7 +5,7 @@
  * Floating trigger button + sliding drawer containing the Discovery panel.
  * Used on global pages. Uses tv.svg icon and "Find your next favorite show" tooltip.
  *
- * @package YIKES Starter
+ * @package LWTV Underscores
  */
 
 $mood_chips = $args['mood_chips'] ?? array();
