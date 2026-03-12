@@ -288,6 +288,7 @@ class Agents {
 			'score_op'      => '>=',
 			'worthit'       => null,
 			'on_air'        => null,
+			'status'        => null,
 			'year_min'      => null,
 			'year_max'      => null,
 		);
@@ -316,6 +317,18 @@ class Agents {
 		}
 		if ( preg_match( '/on_air:\s*(yes|no)/i', $prompt, $m ) ) {
 			$params['on_air'] = strtolower( trim( $m[1] ) );
+		}
+		if ( preg_match( '/status:\s*(ongoing|ended)/i', $prompt, $m ) ) {
+			$params['status'] = strtolower( trim( $m[1] ) );
+		}
+
+		// Translator: status:ongoing|ended from AI -> on_air for lezshows_on_air meta
+		if ( null !== $params['status'] && null === $params['on_air'] ) {
+			if ( 'ongoing' === $params['status'] ) {
+				$params['on_air'] = 'yes';
+			} elseif ( 'ended' === $params['status'] ) {
+				$params['on_air'] = 'no';
+			}
 		}
 
 		// Natural language: semantic score terms (high/low/default)

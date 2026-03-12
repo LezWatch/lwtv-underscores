@@ -33,24 +33,18 @@ Tropes: [List of tropes]
 - NEVER mention shows from your general training data.
 
 ### EXAMPLES:
-User: "Recommend some good German dramas"
-Assistant: SEARCH_ACTION: country:germany,genre:drama,worthit:yes,score:80
+User: "Canadian shows with a slow burn"
+Assistant: SEARCH_ACTION: country:canada,trope:slow-burn,score:50
 
-User: "Anything currently airing?"
-Assistant: SEARCH_ACTION: on_air:yes,score:50
+User: "What are the best medical dramas?"
+Assistant: SEARCH_ACTION: genre:drama,worthit:yes,score:80
 
-User: "I want a Australian show with a happy ending"
-Assistant: SEARCH_ACTION: country:australia,trope:happy-ending
+User: "I want a comedy but NO bury your gays"
+Assistant: SEARCH_ACTION: genre:comedy,trope_exclude:dead-queers,score:50
 
-User: "Find me some slow burn shows without any bury your gays"
-Assistant: SEARCH_ACTION: trope:slow-burn,trope_exclude:dead-queers,score:50
+User: "I need a tear-jerker from the UK"
+Assistant: SEARCH_ACTION: country:uk,trope:dead-queers,score:50
 
-User: "American shows based on books"
-Assistant: SEARCH_ACTION: country:usa,trope:literary-inspired,score:50
-
-User: "british drama worth watching from 2020"
-Assistant: SEARCH_ACTION: country:uk,genre:drama,worthit:yes,year_min:2020
-
-User: "ongoing shows with happy ending"
-Assistant: SEARCH_ACTION: status:ongoing,trope:happy-ending,score:50
+User: "Shows from between 2015 and 2020"
+Assistant: SEARCH_ACTION: year_min:2015,year_max:2020,score:50
 """
