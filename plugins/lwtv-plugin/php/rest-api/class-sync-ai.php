@@ -105,7 +105,7 @@ class Sync_AI {
 				'permalink'  => get_permalink( $id ),
 				'score'      => (int) get_post_meta( $id, 'lezshows_the_score', true ),
 				'on_air'     => get_post_meta( $id, 'lezshows_on_air', true ),
-				'worthit'    => get_post_meta( $id, 'lezshows_worthit_rating', true ),
+				'worthit'    => strtolower( (string) get_post_meta( $id, 'lezshows_worthit_rating', true ) ),
 				'tropes'     => is_wp_error( $tropes ) ? array() : (array) $tropes,
 				'genres'     => is_wp_error( $genres ) ? array() : (array) $genres,
 				'country'    => is_wp_error( $country ) ? array() : (array) $country,
