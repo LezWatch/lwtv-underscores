@@ -231,6 +231,7 @@ This document describes the structure and contents of the custom LezWatch.TV Plu
 │   │   ├── class-list-json.php - Generates lists
 │   │   ├── class-otd-json.php - X Of The Day API service. Every 24 hours, a new character and show of the day are spawned
 │   │   ├── class-stats-json.php - JSON API version of the stats (mostly)
+│   │   ├── class-sync-ai.php - AI sync endpoint for Ollama (flat show metadata, X-LezWatch-AI-Key auth, modified_after filter)
 │   │   ├── class-this-year-json.php - Outputs simplified lists of what happened in a given year.
 │   │   ├── class-what-happened-json.php - Outputs data based on what happened in a given year, year-month, or specific day.
 │   │   ├── class-whats-on-json.php - What's on TV tonight (or tomorrow).
