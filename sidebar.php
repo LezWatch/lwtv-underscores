@@ -2,7 +2,7 @@
 /**
  * The Sidebar containing the main widget areas.
  *
- * @package YIKES Starter
+ * @package LWTV Underscores
  */
 
 if ( ! is_active_sidebar( 'sidebar-2' ) ) {

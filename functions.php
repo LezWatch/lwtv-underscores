@@ -10,7 +10,7 @@ if ( ! defined( 'LWTV_THEME_VERSION' ) ) {
 	$versions = array();
 
 	// Automatically updated by the build script. Update ./package.json to change this.
-	$versions['lwtv-underscores'] = '6.5.5';
+	$versions['lwtv-underscores'] = '6.6.0';
 
 	// Automatically updated by the build script.
 	$versions['bootstrap'] = '5.3.8';
@@ -75,6 +75,24 @@ function lwtv_custom_excerpt_length( $length ) {
 	return $length;
 }
 add_filter( 'excerpt_length', 'lwtv_custom_excerpt_length', 999 );
+
+/**
+ * Modals
+ */
+require_once 'inc/modals/ai-discovery.php';
+
+/**
+ * Output the floating AI Discovery widget in the footer.
+ * Only on pages where we don't have an inline panel (404, no-results).
+ */
+function lwtv_discovery_widget_footer() {
+	( new LWTV_AI_Discovery_Modal() )->output_modal();
+}
+
+// If the user is logged in, show the widget.
+if ( is_user_logged_in() ) {
+	add_action( 'wp_footer', 'lwtv_discovery_widget_footer' );
+}
 
 /**
  * Widgets
@@ -404,6 +422,7 @@ function lwtv_theme_scripts() {
 	wp_enqueue_script( 'lwtv-ai-agent', get_template_directory_uri() . '/inc/js/ai-agent.js', array(), LWTV_THEME_VERSION['lwtv-underscores'], true );
 
 	$staging_creds = defined( 'LWTV_STAGING_CREDS' ) ? LWTV_STAGING_CREDS : false;
+	$mood_chips    = ( new LWTV_AI_Discovery_Modal() )->get_mood_chips();
 
 	// Pass the key securely to the JS file
 	wp_localize_script(
@@ -413,7 +432,8 @@ function lwtv_theme_scripts() {
 			'endpoint'      => esc_url_raw( rest_url( 'lwtv/v1/agent' ) ),
 			'ai_key'        => defined( 'LWTV_AI_KEY' ) ? LWTV_AI_KEY : '',
 			'staging_creds' => $staging_creds,
-			'nonce'         => wp_create_nonce( 'wp_rest' ), // Optional: if you want to use WP Nonces too
+			'nonce'         => wp_create_nonce( 'wp_rest' ),
+			'mood_chips'    => $mood_chips,
 		)
 	);
 

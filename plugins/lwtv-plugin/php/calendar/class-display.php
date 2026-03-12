@@ -262,7 +262,7 @@ class Display {
 		$next_week_icon = lwtv_plugin()->get_symbolicon( svg: 'caret-right-circle.svg', icon: 'svg-chevron-circle-right', max_size: '14' );
 
 		// Last week:
-		$navigation = '<nav aria-label="Calendar Navigation" role="navigation" class="yikes-pagination"><ul class="pagination justify-content-center"><li class="page-item first me-auto"><a href="' . $last_week . '" class="page-link">' . $last_week_icon . ' Last Week</a></li>';
+		$navigation = '<nav aria-label="Calendar Navigation" role="navigation" class="lwtv-pagination"><ul class="pagination justify-content-center"><li class="page-item first me-auto"><a href="' . $last_week . '" class="page-link">' . $last_week_icon . ' Last Week</a></li>';
 
 		// We only show 'this week' when it's NOT this week
 		if ( 'today' !== $date && $today !== $date ) {

@@ -19,7 +19,7 @@ $baseurl    = str_replace( $this_year . '/', '', $baseurl );
 
 ?>
 
-<nav aria-label="This Year Navigation" role="navigation" class="yikes-pagination">
+<nav aria-label="This Year Navigation" role="navigation" class="lwtv-pagination">
 	<ul class="pagination justify-content-center">
 
 		<?php

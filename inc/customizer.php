@@ -1,8 +1,8 @@
 <?php
 /**
- * YIKES Starter Theme Customizer.
+ * LWTV Underscores Theme Customizer.
  *
- * @package YIKES_Starter
+ * @package LWTV Underscores
  */
 
 /**

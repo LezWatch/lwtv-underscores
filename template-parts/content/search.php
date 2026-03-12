@@ -2,7 +2,7 @@
 /**
  * The search content template
  *
- * @package YIKES Starter
+ * @package LWTV Underscores
  */
 
 ?>

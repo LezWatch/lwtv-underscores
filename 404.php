@@ -2,7 +2,7 @@
 /**
  * The template for displaying 404 pages (Not Found).
  *
- * @package YIKES Starter
+ * @package LWTV Underscores
  */
 
 get_header();
@@ -34,14 +34,8 @@ get_header();
 					<div id="content" class="site-content clearfix">
 						<article id="post-0" class="post not-found">
 							<div class="entry-content clearfix">
-								<p><img src="<?php echo esc_url( get_template_directory_uri() ); ?>/images/rose.gif" alt="Rose revealing herself by peeling off a face mask in Jane the Virgin" class="alignleft"/></p>
-								<p><?php esc_attr_e( 'Sorry, there is no page with this address. Please try again or use the search below.', 'lwtv-underscores' ); ?></p>
-
-								<div class="row g-0">
-									<div class="col-sm-8">
-										<?php get_search_form(); ?>
-									</div>
-								</div>
+								<p><img src="<?php echo esc_url( get_template_directory_uri() ); ?>/images/rose.gif" alt="<?php esc_attr_e( 'Rose revealing herself by peeling off a face mask in Jane the Virgin', 'lwtv-underscores' ); ?>" class="alignleft"/></p>
+								<?php get_template_part( 'template-parts/partials/ai/discovery-404' ); ?>
 							</div><!-- .entry-content -->
 						</article><!-- #post-0 .post .not-found -->
 					</div><!-- #content -->

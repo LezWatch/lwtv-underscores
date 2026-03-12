@@ -2,7 +2,7 @@
 /**
  * The template used for single page content
  *
- * @package YIKES Starter
+ * @package LWTV Underscores
  */
 ?>
 

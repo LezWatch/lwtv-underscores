@@ -2,7 +2,7 @@
 /**
  * The Header for our theme.
  *
- * @package YIKES Starter
+ * @package LWTV Underscores
  */
 
 ?><!DOCTYPE html>

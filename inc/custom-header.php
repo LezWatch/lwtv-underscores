@@ -5,7 +5,7 @@
  *
  * @link https://developer.wordpress.org/themes/functionality/custom-headers/
  *
- * @package YIKES_Starter
+ * @package LWTV Underscores
  */
 
 /**

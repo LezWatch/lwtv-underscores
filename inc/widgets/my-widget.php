@@ -29,8 +29,8 @@ class My_Widget extends WP_Widget {
 		$before_title  = isset( $args['before_title'] ) ? $args['before_title'] : '';
 		$after_title   = isset( $args['after_title'] ) ? $args['after_title'] : '';
 
-		// Get what's needed from $instanse array ($instance populated with user inputs from widget form)
-		$title     = isset( $instance['title'] ) && ! empty( trim( $instance['title'] ) ) ? $instance['title'] : 'YIKES Example Widget';
+		// Get what's needed from $instance array ($instance populated with user inputs from widget form)
+		$title     = isset( $instance['title'] ) && ! empty( trim( $instance['title'] ) ) ? $instance['title'] : 'LWTV Example Widget';
 		$title     = apply_filters( 'widget_title', $title, $instance, $this->id_base );
 		$textarea  = isset( $instance['textarea'] ) && ! empty( trim( $instance['textarea'] ) ) ? $instance['textarea'] : '';
 		$textarea2 = isset( $instance['textarea2'] ) && ! empty( trim( $instance['textarea2'] ) ) ? $instance['textarea2'] : '';
