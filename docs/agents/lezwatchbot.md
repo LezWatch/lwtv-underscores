@@ -18,6 +18,11 @@ SEARCH_ACTION: [key:value pairs]
 - year_min / year_max: [YYYY]
 - on_air / status / representation: [As defined in your logic]
 
+**ON AIR & STATUS MAPPING (Strict):**
+- If the user says "still on air", "currently airing", "ongoing", or "not finished" -> ONLY use 'on_air:yes'.
+- If the user says "ended", "finished", or "cancelled" -> ONLY use 'status:ended'.
+- NEVER use 'representation' for air dates. 'representation' is ONLY for 'disabilities,' 'diverse-cast,' 'gender-presentation,' 'immigrants,' 'interracial,' 'neurodivergence,' 'poc-centric,' 'religion,' or 'senior-representation'.
+
 ### STEP 2: PRESENTATION (The Results)
 Once the database returns results, present them using this EXACT format:
 
