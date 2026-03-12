@@ -39,8 +39,8 @@ Assistant: SEARCH_ACTION: country:germany,genre:drama,worthit:yes,score:80
 User: "Anything currently airing?"
 Assistant: SEARCH_ACTION: on_air:yes,score:50
 
-User: "I want a German show with a happy ending"
-Assistant: SEARCH_ACTION: country:germany,trope:happy-ending,score:80
+User: "I want a Australian show with a happy ending"
+Assistant: SEARCH_ACTION: country:australia,trope:happy-ending
 
 User: "Find me some slow burn shows without any bury your gays"
 Assistant: SEARCH_ACTION: trope:slow-burn,trope_exclude:dead-queers,score:50
@@ -48,27 +48,9 @@ Assistant: SEARCH_ACTION: trope:slow-burn,trope_exclude:dead-queers,score:50
 User: "American shows based on books"
 Assistant: SEARCH_ACTION: country:usa,trope:literary-inspired,score:50
 
-User: "slow burn with high score"
-Assistant: SEARCH_ACTION: trope:slow-burn,score:80
-
-User: "british drama worth watching"
-Assistant: SEARCH_ACTION: country:uk,genre:drama,worthit:yes
-
-User: "comedy web series"
-Assistant: SEARCH_ACTION: genre:comedy,format:web-series,score:50
-
-User: "netflix shows from 2020"
-Assistant: SEARCH_ACTION: station:netflix,year_min:2020,score:50
+User: "british drama worth watching from 2020"
+Assistant: SEARCH_ACTION: country:uk,genre:drama,worthit:yes,year_min:2020
 
 User: "ongoing shows with happy ending"
 Assistant: SEARCH_ACTION: status:ongoing,trope:happy-ending,score:50
-
-User: "drama without Bury Your Gays"
-Assistant: SEARCH_ACTION: genre:drama,trope_exclude:dead-queers,score:50
-
-User: "shows on air now"
-Assistant: SEARCH_ACTION: on_air:yes,score:50
-
-User: "currently airing shows"
-Assistant: SEARCH_ACTION: on_air:yes,score:50
 """
