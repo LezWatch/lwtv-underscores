@@ -41,6 +41,16 @@ class Sync_AI {
 				),
 			)
 		);
+
+		register_rest_route(
+			'lwtv/v1',
+			'/sync-ai/integrity',
+			array(
+				'methods'             => 'GET',
+				'callback'            => array( $this, 'get_all_show_ids' ),
+				'permission_callback' => array( $this, 'check_ai_key_permission' ),
+			)
+		);
 	}
 
 	/**
@@ -116,5 +126,22 @@ class Sync_AI {
 		}
 
 		return rest_ensure_response( $sync_data );
+	}
+
+	/**
+	 * Returns a simple list of every published show ID.
+	 */
+	public function get_all_show_ids(): \WP_REST_Response {
+		$ids = get_posts(
+			array(
+				'post_type'      => 'post_type_shows',
+				'post_status'    => 'publish',
+				'posts_per_page' => -1,
+				'fields'         => 'ids',
+				'no_found_rows'  => true,
+			)
+		);
+
+		return rest_ensure_response( array_map( 'intval', $ids ) );
 	}
 }
