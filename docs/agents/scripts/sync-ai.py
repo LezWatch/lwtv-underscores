@@ -10,7 +10,7 @@ import sys
 import tempfile
 import html
 import base64
-from datetime import datetime
+from datetime import datetime, timezone
 
 import requests
 from dotenv import load_dotenv
@@ -132,7 +132,7 @@ def sync(env, api_key, auth=None):
     atomic_write_json(CATALOG_PATH, catalog)
 
     # Update State
-    atomic_write_json(STATE_PATH, {'last_modified': datetime.utcnow().isoformat()})
+    atomic_write_json(STATE_PATH, {'last_modified': datetime.now(timezone.utc).isoformat()})
 
     # 5. Generate Insights
     generate_trope_map(catalog)

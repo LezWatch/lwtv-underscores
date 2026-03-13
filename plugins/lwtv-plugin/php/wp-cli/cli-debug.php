@@ -15,6 +15,7 @@ use LWTV\Debugger\Characters;
 use LWTV\Debugger\Dupes;
 use LWTV\Debugger\Queers;
 use LWTV\Debugger\Shows;
+use LWTV\Debugger\OnAir;
 
 /**
  * LezWatch.TV commands to debug and validate content.
@@ -64,6 +65,11 @@ class WP_CLI_LWTV_Debug {
 	 *   - actor_imdb: Find actors without IMDb data
 	 *   - show_imdb: Find shows without IMDb data
 	 *   - show_urls: Check show URL validity
+	 *   - on_air: Check on air status of shows
+	 *
+	 * [--fix-it]
+	 * : Attempt to fix issues (not available for all checks).
+	 * default: false
 	 *
 	 * [--format=<format>]
 	 * : Render output in a particular format.
@@ -89,10 +95,11 @@ class WP_CLI_LWTV_Debug {
 	public function __invoke( $args, $assoc_args = array() ) {
 
 		$this->format     = \WP_CLI\Utils\get_flag_value( $assoc_args, 'format', 'table' );
+		$this->fix_it     = \WP_CLI\Utils\get_flag_value( $assoc_args, 'fix-it', false );
 		$this->debug_type = $args[0];
 
 		try {
-			$this->run_debug_check( $this->debug_type );
+			$this->run_debug_check( $this->debug_type, $this->fix_it );
 		} catch ( \Exception $exception ) {
 			\WP_CLI::error( $exception->getMessage(), false );
 		}
@@ -102,8 +109,9 @@ class WP_CLI_LWTV_Debug {
 	 * Run the appropriate debug check based on type.
 	 *
 	 * @param string $debug_type The type of debug check to run
+	 * @param bool $fix_it Whether to attempt to fix issues
 	 */
-	public function run_debug_check( $debug_type ) {
+	public function run_debug_check( $debug_type, $fix_it ) {
 		$valid_types = array(
 			'queers',
 			'dupes',
@@ -114,6 +122,7 @@ class WP_CLI_LWTV_Debug {
 			'actor_imdb',
 			'show_imdb',
 			'show_urls',
+			'on_air',
 		);
 
 		if ( ! in_array( $debug_type, $valid_types, true ) ) {
@@ -149,6 +158,9 @@ class WP_CLI_LWTV_Debug {
 				break;
 			case 'show_urls':
 				$this->run_show_urls_check();
+				break;
+			case 'on_air':
+				$this->run_on_air_check( $fix_it );
 				break;
 		}
 	}
@@ -330,6 +342,42 @@ class WP_CLI_LWTV_Debug {
 			\WP_CLI::log( count( $items ) . ' show(s) have URL issues.' );
 			\WP_CLI\Utils\format_items( $this->format, $items, array( 'url', 'id', 'problem' ) );
 			\WP_CLI::success( 'Show URLs check complete.' );
+		}
+	}
+
+	/**
+	 * Run on air check.
+	 */
+	private function run_on_air_check( $fix_it ) {
+		\WP_CLI::log( 'Running on air check...' );
+		$items = lwtv_plugin()->get_transient( 'lwtv_debug_on_air' );
+
+		// Force fresh check if no cached data
+		if ( false === $items ) {
+			$items = ( new OnAir() )->find_on_air_problems();
+		}
+
+		if ( empty( $items ) || ! is_array( $items ) ) {
+			\WP_CLI::success( 'All shows have the correct on air status.' );
+			return;
+		}
+
+		if ( $fix_it ) {
+			\WP_CLI::log( 'Attempting to fix on air status issues for ' . count( $items ) . ' show(s)...' );
+			$progress = \WP_CLI\Utils\make_progress_bar( 'Processing shows', count( $items ) );
+
+			foreach ( $items as $item ) {
+				$progress->tick();
+				( new OnAir() )->fix_on_air_status( $item['id'] );
+			}
+
+			$progress->finish();
+			\WP_CLI::success( 'On air status issues fixed.' );
+			return;
+		} else {
+			\WP_CLI::log( count( $items ) . ' show(s) have incorrect on-air status. Use --fix-it to attempt to fix these issues.' );
+			\WP_CLI\Utils\format_items( $this->format, $items, array( 'url', 'id', 'problem' ) );
+			\WP_CLI::success( 'On air check complete.' );
 		}
 	}
 }
