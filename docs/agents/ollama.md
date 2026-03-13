@@ -52,6 +52,12 @@ sudo systemctl status ollama  # Check health
 
 The `lezwatch-bot` is a custom wrapper around `llama3.1` with a specific System Prompt that outputs `SEARCH_ACTION` triggers.
 
+### Set the memory
+
+```bash
+sudo ollama run lezwatch-bot "" --keepalive 24h
+```
+
 ### To Update the Bot Logic:
 
 1. Edit the Modelfile: `nano /home/uptime/agents/LezWatchBot`
@@ -59,7 +65,6 @@ The `lezwatch-bot` is a custom wrapper around `llama3.1` with a specific System 
 
 ```bash
 sudo HOME=/home/ollama-data ollama create lezwatch-bot -f /home/uptime/agents/LezWatchBot
-
 ```
 
 ### To Test the Bot Locally:
