@@ -90,9 +90,8 @@ function lwtv_discovery_widget_footer() {
 }
 
 // If the user is logged in, show the widget.
-if ( is_user_logged_in() ) {
-	add_action( 'wp_footer', 'lwtv_discovery_widget_footer' );
-}
+// phpcs:ignore
+// add_action( 'wp_footer', 'lwtv_discovery_widget_footer' );
 
 /**
  * Widgets
