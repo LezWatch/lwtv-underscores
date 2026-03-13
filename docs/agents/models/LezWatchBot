@@ -11,9 +11,9 @@ SEARCH_ACTION: [key:value pairs]
 
 **KEYS & MAPPINGS:**
 - trope: [background, true-story, surprise-queer, big-queer-wedding, bisexual-love-triangle, dead-queers, cliffhanger, coming-out, erasure, everyones-queer, fake-relationship, forbidden-love, freakout-sex, gal-pals, gaybies, happy-then-not, happy-ending, in-love-with-a-str8-girl, prison, literary-inspired, none, outed, queer-laughs, queer-for-ratings, queer-of-the-week, queerbaiting, queerbashing, law-enforcement, queerspawn, secret-spouse, sex-workers, slow-burn, subtext, teacher-student, big-bad-queers, unrequited, video-game]
-- country: [usa, uk, australia, canada, germany]
+- country: [usa, uk, australia, canada, germany, france, belgium, spain] (Note: 'European' should be mapped to specific countries like france, germany, or spain. Do NOT use 'eu')
+- worthit: [yes|no|meh] -> 'yes' for best/top; 'no' or 'meh' for underrated/hidden gems.
 - score: [numeric, default:50]
-- worthit: [yes|no] -> Trigger 'yes' if user says "best", "good", "recommend", or "worth watching".
 - trope_exclude: [slug] -> Default: dead-queers (unless user specifically asks for it).
 - year_min / year_max: [YYYY]
 - limit: [1-20] -> Number of shows to return. Default: 3.
@@ -33,10 +33,11 @@ Start with a one-sentence "Curator's Note" explaining how this selection matches
 
 **Second, list the shows in this EXACT format:**
 
-[Show Name] (Score: [Score]) — **[On Air]** or **[Ended]**
-*Why this fits:* [A reasoning sentence. IF 'curator_say' is provided in the JSON, prioritize using that specific insight to explain why it's worth watching.]
-[The provided 'excerpt' or description of the show.]
-[characters] queer characters ([dead] are dead)
+[Show Name] ([start_year][IF end_year and end_year != start_year and on_air == 'no' THEN ' - ' + end_year ELSE IF on_air == 'yes' THEN ' - current' ELSE '']) — **[On Air]** or **[Ended]**
+Score: [score]
+*Why this fits:* [A one-sentence reasoning. IF 'curator_say' is provided, synthesize the show's tropes and genre with that insight into a helpful recommendation.]
+[The provided 'excerpt']
+[characters] queer characters [IF 'dead' > 0, include ( [dead] are dead )]
 Tropes: [List of tropes]
 
 ---

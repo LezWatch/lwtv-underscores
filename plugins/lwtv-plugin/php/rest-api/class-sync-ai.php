@@ -108,6 +108,9 @@ class Sync_AI {
 			$char_count = (int) get_post_meta( $id, 'lezshows_char_count', true );
 			$dead_count = (int) get_post_meta( $id, 'lezshows_dead_count', true );
 
+			$start_year = get_post_meta( $id, 'lezshows_start_year', true );
+			$end_year   = get_post_meta( $id, 'lezshows_end_year', true );
+
 			$sync_data[] = array(
 				'id'          => (int) $id,
 				'title'       => get_the_title( $id ),
@@ -123,6 +126,8 @@ class Sync_AI {
 				'excerpt'     => wp_trim_words( wp_strip_all_tags( get_post_field( 'post_content', $id ) ), 100 ),
 				'characters'  => $char_count,
 				'dead'        => $dead_count,
+				'start_year'  => $start_year ? (int) $start_year : null,
+				'end_year'    => $end_year ? (int) $end_year : null,
 			);
 		}
 
