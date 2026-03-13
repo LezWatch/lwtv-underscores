@@ -56,23 +56,10 @@ Login to `ai.ipstenu.com`
 
 ### Build the VR Environment
 
-1. Create the environment:
-```Bash
-cd /home/uptime/agents/bin
-python3 -m venv ~/lezwatch-env
-```
-
-2. Activate it:
-You'll need to do this every time you want to run the bot manually (you'll see the name in parentheses once it's active):
+We use an environment for the sync, so we're going to share that:
 
 ```Bash
-source ~/lezwatch-env/bin/activate
-```
-
-3. Install your tools (no sudo or --user needed now!):
-
-```Bash
-pip install flask slack_bolt gunicorn requests python-dotenv
+/home/uptime/agents/venv/bin/pip install slack-bolt flask requests python-dotenv gunicorn
 ```
 
 ### Install the files
@@ -89,10 +76,7 @@ export SLACK_SIGNING_SECRET="your-signing-secret-here"
 Now enter the bin folder:
 
 ```bash
-cd /home/uptime/agents/bin/
-source ~/lezwatch-env/bin/activate
-pkill gunicorn
-gunicorn --bind 127.0.0.1:3000 slack_bot:flask_app --daemon
+/home/uptime/agents/venv/bin/gunicorn --bind 127.0.0.1:3000 slack_bot:flask_app --daemon
 ```
 
 You'll need to do that any time you alter the files
