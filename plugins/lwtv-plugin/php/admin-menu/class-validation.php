@@ -17,6 +17,7 @@ use LWTV\Validator\Queer_Checker;
 use LWTV\Validator\Show_Checker;
 use LWTV\Validator\Show_IMDb;
 use LWTV\Validator\Show_URLs;
+use LWTV\Validator\OnAir_Checker;
 
 class Validation {
 
@@ -71,6 +72,11 @@ class Validation {
 			'desc'   => 'Shows that have no IMDb value. This may actually be okay as not all webseries/international shows are listed.',
 			'option' => 'show_imdb',
 		),
+		'onair_checker'     => array(
+			'name'   => 'On Air',
+			'desc'   => 'Checks that all shows have the correct on-air status.',
+			'option' => 'onair_problems',
+		),
 	);
 
 	public function __construct() {
@@ -124,7 +130,7 @@ class Validation {
 	/*
 	 * Admin Notices
 	 *
-	 * @reutrn void
+	 * @return void
 	 */
 	private function admin_notices() {
 		if ( ! isset( $_GET['message'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
@@ -221,6 +227,9 @@ class Validation {
 						break;
 					case 'tab_show_urls':
 						( new Show_URLs() )->make();
+						break;
+					case 'tab_onair_checker':
+						( new OnAir_Checker() )->make();
 						break;
 					default:
 						self::tab_introduction();
