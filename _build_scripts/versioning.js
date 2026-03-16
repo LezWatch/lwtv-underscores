@@ -2,7 +2,7 @@
  * This script updates the version numbers of the theme and plugins in functions.php
  */
 
-const { cp } = require( '@npmcli/fs' );
+const { cp } = require( 'fs/promises' );
 var fs = require( 'fs' );
 
 console.log( 'Updating version numbers...' );
