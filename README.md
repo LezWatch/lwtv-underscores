@@ -159,8 +159,8 @@ The following folders/files are for use by Developers. They are not pushed to th
 
 * `/_build_scripts/` - All of our build scripts and tools.
 * `/.cursor/` - Cursor specific settings
+* `./.githooks/` - shared hooks (pre-commit etc)
 * `./.github/` - all Github specific files such as workflows, dependabot, and pull request templates
-* `/.husky/` - all Husky commands
 * `/.vscode/` - default VSCode settings
 * `/docs/` - Structure files
 * `.editorconfig` - Basic editor configuration
