@@ -189,14 +189,27 @@ def process_mention(say, event):
             loved = s.get('loved', False)
             on_air_tag = " *[ON AIR]*" if s.get('on_air') == 'yes' else ""
             loved_heart = " ❤️" if loved else ""
-
             genres = ", ".join(s.get('genres', []))
             tropes = ", ".join(s.get('tropes', []))
-            insight = s.get('curator_say', '')
+            insight = s.get('curator_say', '') + ' - ' + s.get('excerpt', '')
+
+            # Handle worthit rating
+            worthit = s.get('worthit', 'meh')
+            if worthit == 'yes':
+                worthit_rating = "🙂"
+            elif worthit == 'meh':
+                worthit_rating = "😐"
+            else:
+                worthit_rating = "☹️"
+
+            # Trigger warning handling - High, Medium, Low, None
+            trigger = s.get('triggers', 'none')
+            if trigger != 'none':
+                trigger_warning = "Trigger Warning: " + trigger
 
             # ENHANCED PROMPT: Using more data and negative constraints
             show_prompt = (
-                f"DATA:\nTitle: {title}\nGenres: {genres}\nTropes: {tropes}\nInsight: {insight}\n\n"
+                f"DATA:\nTitle: {title}\nWorthit: {worthit}\nGenres: {genres}\nTropes: {tropes}\nInsight: {insight}\n\n"
                 f"TASK: Write a punchy, 2-sentence recommendation for this show. "
                 f"Be specific to its tropes and genres. Vary your sentence structure. "
                 f"STRICT RULE: Do NOT start with 'Get ready', 'Welcome to', or 'Experience'. "
@@ -205,7 +218,7 @@ def process_mention(say, event):
             hype = call_ollama(show_prompt)
 
             # Better year handling
-            start = s.get('start_year') or "????"
+            start = s.get('start_year') or ""
             end = s.get('end_year') or ("current" if s.get('on_air') == 'yes' else "")
 
             if end and str(start) != str(end):
@@ -222,10 +235,31 @@ def process_mention(say, event):
             else:
                 on_air_tag = " *[ENDED]*"
 
+            # Character count
+            characters = s.get('characters', 0)
+            dead = s.get('dead', 0)
+            characters_display = ""
+            if characters > 0:
+                char_label = "character" if characters == 1 else "characters"
+                characters_display = f"{characters} queer {char_label}"
+
+            if dead > 0:
+                dead_verb = "is" if dead == 1 else "are"
+                characters_display += f" ({dead} {dead_verb} dead)"
+
             # Construct the block using the requested design
             message_text = (
                 f"*{title.upper()}* ({year_display}){on_air_tag}\n"
-                f"Score: {score}{loved_heart}\n"
+                f"Score: {score} {worthit_rating}{loved_heart}\n"
+            )
+
+            if trigger_warning:
+                message_text += f"{trigger_warning}\n"
+
+            if characters_display:
+                message_text += f"Characters: {characters_display}\n"
+
+            message_text += (
                 f"{hype}\n"
                 f"<{url}|View details on LezWatch.TV>"
             )
