@@ -181,13 +181,25 @@ def process_mention(say, event):
     for s in results:
         try:
             show_start = time.time()
-            # Pre-format logic
-            show_prompt = f"DATA: {s['title']}, {s.get('curator_say', '')}. Write a 1-sentence hype."
-            hype = call_ollama(show_prompt)
-
+            
             # Pull clean data
             title = s.get('title', 'Unknown Show')
             url = s.get('permalink', s.get('url', 'https://lezwatchtv.com'))
+            genres = ", ".join(s.get('genres', []))
+            tropes = ", ".join(s.get('tropes', []))
+            insight = s.get('curator_say', '')
+
+            # ENHANCED PROMPT: Using more data and negative constraints
+            show_prompt = (
+                f"DATA:\nTitle: {title}\nGenres: {genres}\nTropes: {tropes}\nInsight: {insight}\n\n"
+                f"TASK: Write a punchy, 1-sentence recommendation for this show. "
+                f"Be specific to its tropes. Vary your sentence structure. "
+                f"STRICT RULE: Do NOT start with 'Get ready', 'Welcome to', or 'Experience'. "
+                f"Avoid generic marketing fluff."
+            )
+            hype = call_ollama(show_prompt)
+
+            # Better year handling
             
             # Better year handling
             start = s.get('start_year') or "????"
