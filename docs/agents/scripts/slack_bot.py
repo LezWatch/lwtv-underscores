@@ -151,7 +151,7 @@ def process_mention(say, event):
         raw_ai = call_ollama(f"SEARCH_ACTION extraction for: {user_query}")
         params = parse_search_action(raw_ai)
         extraction_time = time.time() - step_start
-        
+
         if not params:
             say(f"I'm having trouble understanding the search criteria. (Took {extraction_time:.1f}s) 🧐", thread_ts=ts)
             return
@@ -177,11 +177,11 @@ def process_mention(say, event):
 
     # 3. Presentation
     say(f"✅ Found {len(results)} matches! Formatting... (Search took {search_time:.1f}s)", thread_ts=ts)
-    
+
     for s in results:
         try:
             show_start = time.time()
-            
+
             # Pull clean data
             title = s.get('title', 'Unknown Show')
             url = s.get('permalink', s.get('url', 'https://lezwatchtv.com'))
@@ -189,7 +189,7 @@ def process_mention(say, event):
             loved = s.get('loved', False)
             on_air_tag = " *[ON AIR]*" if s.get('on_air') == 'yes' else ""
             loved_heart = " ❤️" if loved else ""
-            
+
             genres = ", ".join(s.get('genres', []))
             tropes = ", ".join(s.get('tropes', []))
             insight = s.get('curator_say', '')
@@ -197,8 +197,8 @@ def process_mention(say, event):
             # ENHANCED PROMPT: Using more data and negative constraints
             show_prompt = (
                 f"DATA:\nTitle: {title}\nGenres: {genres}\nTropes: {tropes}\nInsight: {insight}\n\n"
-                f"TASK: Write a punchy, 1-sentence recommendation for this show. "
-                f"Be specific to its tropes. Vary your sentence structure. "
+                f"TASK: Write a punchy, 2-sentence recommendation for this show. "
+                f"Be specific to its tropes and genres. Vary your sentence structure. "
                 f"STRICT RULE: Do NOT start with 'Get ready', 'Welcome to', or 'Experience'. "
                 f"Avoid generic marketing fluff."
             )
@@ -207,9 +207,20 @@ def process_mention(say, event):
             # Better year handling
             start = s.get('start_year') or "????"
             end = s.get('end_year') or ("current" if s.get('on_air') == 'yes' else "")
-            year_display = f"{start} - {end}" if end else f"{start}"
-            
+
+            if end and str(start) != str(end):
+                year_display = f"{start} - {end}"
+            else:
+                year_display = f"{start}"
+
             format_time = time.time() - show_start
+
+            # Clarify on-air status
+            this_year = datetime.now().year
+            if s.get('end_year') == 'current' or s.get('end_year') >= this_year:
+                on_air_tag = " *[ON AIR]*"
+            else:
+                on_air_tag = " *[ENDED]*"
 
             # Construct the block using the requested design
             message_text = (
