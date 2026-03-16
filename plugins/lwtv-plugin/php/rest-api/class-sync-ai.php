@@ -127,6 +127,7 @@ class Sync_AI {
 				'excerpt'     => wp_trim_words( wp_strip_all_tags( get_post_field( 'post_content', $id ) ), 100 ),
 				'characters'  => $char_count,
 				'dead'        => $dead_count,
+				'loved'       => ( 'on' === get_post_meta( $id, 'lezshows_worthit_show_we_love', true ) ),
 				'start_year'  => $start_year ? (int) $start_year : null,
 				'end_year'    => ( $end_year && is_numeric( $end_year ) ) ? (int) $end_year : null,
 			);

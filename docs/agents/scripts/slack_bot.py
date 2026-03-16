@@ -181,14 +181,29 @@ def process_mention(say, event):
     for s in results:
         try:
             show_start = time.time()
-            # Pre-format logic
-            show_prompt = f"DATA: {s['title']}, {s.get('curator_say', '')}. Write a 1-sentence hype."
-            hype = call_ollama(show_prompt)
-
+            
             # Pull clean data
             title = s.get('title', 'Unknown Show')
             url = s.get('permalink', s.get('url', 'https://lezwatchtv.com'))
+            score = s.get('score', 0)
+            loved = s.get('loved', False)
+            on_air_tag = " *[ON AIR]*" if s.get('on_air') == 'yes' else ""
+            loved_heart = " ❤️" if loved else ""
             
+            genres = ", ".join(s.get('genres', []))
+            tropes = ", ".join(s.get('tropes', []))
+            insight = s.get('curator_say', '')
+
+            # ENHANCED PROMPT: Using more data and negative constraints
+            show_prompt = (
+                f"DATA:\nTitle: {title}\nGenres: {genres}\nTropes: {tropes}\nInsight: {insight}\n\n"
+                f"TASK: Write a punchy, 1-sentence recommendation for this show. "
+                f"Be specific to its tropes. Vary your sentence structure. "
+                f"STRICT RULE: Do NOT start with 'Get ready', 'Welcome to', or 'Experience'. "
+                f"Avoid generic marketing fluff."
+            )
+            hype = call_ollama(show_prompt)
+
             # Better year handling
             start = s.get('start_year') or "????"
             end = s.get('end_year') or ("current" if s.get('on_air') == 'yes' else "")
@@ -196,14 +211,30 @@ def process_mention(say, event):
             
             format_time = time.time() - show_start
 
-            # Construct the block
+            # Construct the block using the requested design
+            message_text = (
+                f"*{title.upper()}* ({year_display}){on_air_tag}\n"
+                f"Score: {score}{loved_heart}\n"
+                f"{hype}\n"
+                f"<{url}|View details on LezWatch.TV>"
+            )
+
             blocks = [
                 {
                     "type": "section",
                     "text": {
                         "type": "mrkdwn",
-                        "text": f"*<{url}|{title}>* ({year_display})\n{hype}\n_Generated in {format_time:.1f}s_"
+                        "text": message_text
                     }
+                },
+                {
+                    "type": "context",
+                    "elements": [
+                        {
+                            "type": "mrkdwn",
+                            "text": f"_Generated in {format_time:.1f}s_"
+                        }
+                    ]
                 }
             ]
             say(text=f"Match found: {title}", blocks=blocks, thread_ts=ts)
