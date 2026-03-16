@@ -77,7 +77,7 @@ Now enter the bin folder:
 
 ```bash
 cd ~/agents/bin
-/home/uptime/agents/venv/bin/gunicorn --bind 127.0.0.1:3000 slack_bot:flask_app --timeout 300 --pid /tmp/slack_bot.pid --daemon
+/home/uptime/agents/venv/bin/gunicorn --bind 127.0.0.1:3000 ~/agents/bin/slack_bot:flask_app --timeout 300 --pid /tmp/slack_bot.pid --daemon
 ```
 
 You'll need to do that any time you alter the files
