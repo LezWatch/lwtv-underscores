@@ -185,6 +185,11 @@ def process_mention(say, event):
             # Pull clean data
             title = s.get('title', 'Unknown Show')
             url = s.get('permalink', s.get('url', 'https://lezwatchtv.com'))
+            score = s.get('score', 0)
+            loved = s.get('loved', False)
+            on_air_tag = " *[ON AIR]*" if s.get('on_air') == 'yes' else ""
+            loved_heart = " ❤️" if loved else ""
+            
             genres = ", ".join(s.get('genres', []))
             tropes = ", ".join(s.get('tropes', []))
             insight = s.get('curator_say', '')
@@ -200,22 +205,36 @@ def process_mention(say, event):
             hype = call_ollama(show_prompt)
 
             # Better year handling
-            
-            # Better year handling
             start = s.get('start_year') or "????"
             end = s.get('end_year') or ("current" if s.get('on_air') == 'yes' else "")
             year_display = f"{start} - {end}" if end else f"{start}"
             
             format_time = time.time() - show_start
 
-            # Construct the block
+            # Construct the block using the requested design
+            message_text = (
+                f"*{title.upper()}* ({year_display}){on_air_tag}\n"
+                f"Score: {score}{loved_heart}\n"
+                f"{hype}\n"
+                f"<{url}|View details on LezWatch.TV>"
+            )
+
             blocks = [
                 {
                     "type": "section",
                     "text": {
                         "type": "mrkdwn",
-                        "text": f"*<{url}|{title}>* ({year_display})\n{hype}\n_Generated in {format_time:.1f}s_"
+                        "text": message_text
                     }
+                },
+                {
+                    "type": "context",
+                    "elements": [
+                        {
+                            "type": "mrkdwn",
+                            "text": f"_Generated in {format_time:.1f}s_"
+                        }
+                    ]
                 }
             ]
             say(text=f"Match found: {title}", blocks=blocks, thread_ts=ts)
