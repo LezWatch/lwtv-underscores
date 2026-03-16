@@ -23,6 +23,7 @@
     "create:local": "SVG_SPRITE_ENV=local npm run build",
     "create:staging": "SVG_SPRITE_ENV=staging npm run build",
     "lint": "npm-run-all lint:*",
+    "prepare": "git config core.hooksPath .githooks",
     "lint:css": "wp-scripts lint-style 'style.scss'",
     "lint:js": "wp-scripts lint-js 'plugins/lwtv-plugin/php/blocks/src/**/*.js'",
     "lint:php": "composer lint",
@@ -35,7 +36,6 @@
     "postinstall": "npm-run-all postinstall:*",
     "postinstall:blocks": "cd ./plugins/lwtv-plugin/php/blocks && npm install --ignore-scripts",
     "postinstall:plugin": "cd ./plugins/lwtv-plugin && npm install --ignore-scripts",
-    "prepare": "husky",
     "updater": "composer update && npm update && wp-scripts packages-update && npm run updater:workspace --workspaces",
     "clean": "npm-run-all clean:*",
     "clean:node": "rm -rf node_modules",
@@ -68,13 +68,15 @@
     "autoprefixer": "^10",
     "css-minimizer-webpack-plugin": "^8",
     "eslint-plugin-prettier": "^5",
-    "husky": "^9",
     "lint-staged": "^16",
     "npm-run-all2": "^8",
     "postcss": "^8",
     "terser": "^5",
     "terser-webpack-plugin": "^5",
     "webpack": "^5"
+  },
+  "overrides": {
+    "serialize-javascript": "^7.0.4"
   },
   "lint-staged": {
     "*.php": "npm run lint:php",
