@@ -14,7 +14,7 @@
 		"lint:js": "wp-scripts lint-js",
 		"fix:js": "wp-scripts lint-js --fix",
 		"start": "wp-scripts start",
-		"updater:workspace": "npm update && npm run packages-update",
+		"updater:workspace": "npm run packages-update",
 		"clean:workspace": "rm -rf node_modules",
 		"packages-update": "wp-scripts packages-update"
 	},

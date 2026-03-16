@@ -29,11 +29,12 @@ The command `wp lwtv generate cron daily` will run a different debugger each day
 # Tools
 
 - PHP 8.2 or higher
-- [Grunt](https://gruntjs.com) (optional)
 - [Node.js](https://nodejs.org) version 22+
 - [NVM](https://github.com/nvm-sh/nvm)
 
 It's recommended to use [Homebrew](https://brew.sh) on macOS or [Chocolatey](https://chocolatey.org) for Windows to install the project dependencies.
+
+**Note:** Grunt has been removed as of 2026, due to security issues with its addons and no movement from the actual source since 2023.
 
 # Setup 🛠
 
@@ -81,14 +82,9 @@ To fix lint issues automatically:
 
 If you're updating CSS you have a couple options, since it's all SCSS.
 
-### Grunt
-
-1. `$ grunt watch` - run grunt and leave open for ongoing changes.
-2. `$ grunt build` - run the build process once.
-
-### NPM
-
 `$ npm run build` will build all the CSS and JS, as well as update all the libraries.
+
+`$ npm run buildquick` will build the assets and copy files over _without_ updating libraries.
 
 ## Libraries
 
@@ -163,8 +159,8 @@ The following folders/files are for use by Developers. They are not pushed to th
 
 * `/_build_scripts/` - All of our build scripts and tools.
 * `/.cursor/` - Cursor specific settings
+* `./.githooks/` - shared hooks (pre-commit etc)
 * `./.github/` - all Github specific files such as workflows, dependabot, and pull request templates
-* `/.husky/` - all Husky commands
 * `/.vscode/` - default VSCode settings
 * `/docs/` - Structure files
 * `.editorconfig` - Basic editor configuration

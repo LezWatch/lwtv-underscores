@@ -3,7 +3,7 @@
  * Copies files into place
  */
 
-const { cp } = require( '@npmcli/fs' );
+const { cp } = require( 'fs/promises' );
 var fs = require( 'fs' );
 
 console.log( 'Building and merging assets ...' );
