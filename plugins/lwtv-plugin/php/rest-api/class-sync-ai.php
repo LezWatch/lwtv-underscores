@@ -108,8 +108,9 @@ class Sync_AI {
 			$char_count = (int) get_post_meta( $id, 'lezshows_char_count', true );
 			$dead_count = (int) get_post_meta( $id, 'lezshows_dead_count', true );
 
-			$start_year = get_post_meta( $id, 'lezshows_start_year', true );
-			$end_year   = get_post_meta( $id, 'lezshows_end_year', true );
+			$airdates   = get_post_meta( $id, 'lezshows_airdates', true );
+			$start_year = ( is_array( $airdates ) && isset( $airdates['start'] ) ) ? $airdates['start'] : null;
+			$end_year   = ( is_array( $airdates ) && isset( $airdates['finish'] ) ) ? $airdates['finish'] : null;
 
 			$sync_data[] = array(
 				'id'          => (int) $id,
@@ -127,7 +128,7 @@ class Sync_AI {
 				'characters'  => $char_count,
 				'dead'        => $dead_count,
 				'start_year'  => $start_year ? (int) $start_year : null,
-				'end_year'    => $end_year ? (int) $end_year : null,
+				'end_year'    => ( $end_year && is_numeric( $end_year ) ) ? (int) $end_year : null,
 			);
 		}
 

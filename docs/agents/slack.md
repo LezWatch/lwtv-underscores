@@ -76,7 +76,14 @@ export SLACK_SIGNING_SECRET="your-signing-secret-here"
 Now enter the bin folder:
 
 ```bash
-/home/uptime/agents/venv/bin/gunicorn --bind 127.0.0.1:3000 slack_bot:flask_app --daemon
+cd ~/agents/bin
+/home/uptime/agents/venv/bin/gunicorn --bind 127.0.0.1:3000 slack_bot:flask_app --timeout 300 --pid /tmp/slack_bot.pid --daemon
 ```
 
 You'll need to do that any time you alter the files
+
+To restart in the future, you can simply run:
+
+`kill -HUP $(cat /tmp/slack_bot.pid)`
+
+The HUP (Hangup) signal tells Gunicorn to perform a "graceful restart," reloading the code without dropping current connections.

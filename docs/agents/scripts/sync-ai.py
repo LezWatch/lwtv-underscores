@@ -32,12 +32,24 @@ CATALOG_PATH = os.path.join(DATA_DIR, 'ai-catalog.json')
 STATE_PATH = os.path.join(DATA_DIR, 'sync-state.json')
 TROPE_MAP_PATH = os.path.join(DATA_DIR, 'trope-map.json')
 
+# Permissions (default to 0664)
+FILE_MODE = int(os.environ.get('FILE_MODE', '664'), 8)
+DIR_MODE = int(os.environ.get('DIR_MODE', '775'), 8)
+
 def atomic_write_json(file_path, data):
-    os.makedirs(os.path.dirname(file_path), exist_ok=True)
+    os.makedirs(os.path.dirname(file_path), mode=DIR_MODE, exist_ok=True)
     with tempfile.NamedTemporaryFile('w', dir=os.path.dirname(file_path), delete=False) as tf:
         json.dump(data, tf, indent=4)
         temp_name = tf.name
+
+    # Set permissions before move to ensure it's never inaccessible
+    os.chmod(temp_name, FILE_MODE)
     os.replace(temp_name, file_path)
+
+    # If running as root, attempt to match the directory ownership
+    if os.getuid() == 0:
+        stat = os.stat(os.path.dirname(file_path))
+        os.chown(file_path, stat.st_uid, stat.st_gid)
 
 def generate_trope_map(catalog):
     trope_counts = {}
