@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Sync AI catalog from WordPress REST API.
-Usage: python sync-ai.py [prod|staging]
+Usage: python sync-ai.py [prod|staging] [--force]
 """
 import argparse
 import json
@@ -90,7 +90,7 @@ def cleanup_ghost_shows(catalog, api_key, env, auth=None):
 
     return catalog
 
-def sync(env, api_key, auth=None):
+def sync(env, api_key, auth=None, force=False):
     if not api_key:
         print("!! Error: LWTV_AI_KEY/API_KEY not set.")
         sys.exit(1)
@@ -99,7 +99,7 @@ def sync(env, api_key, auth=None):
 
     # 1. Load Sync State
     last_modified = ""
-    if os.path.exists(STATE_PATH):
+    if os.path.exists(STATE_PATH) and not force:
         try:
             with open(STATE_PATH, 'r') as f:
                 last_modified = json.load(f).get('last_modified', "")
@@ -153,6 +153,7 @@ def sync(env, api_key, auth=None):
 def main():
     parser = argparse.ArgumentParser(description='Sync AI catalog')
     parser.add_argument('env', nargs='?', default='prod', choices=['prod', 'staging'])
+    parser.add_argument('--force', action='store_true', help='Force a full sync')
     args = parser.parse_args()
 
     api_key = os.environ.get('API_KEY') or os.environ.get('LWTV_AI_KEY')
@@ -166,7 +167,7 @@ def main():
             sys.exit(1)
         auth = (username, password)
 
-    sync(args.env, api_key, auth)
+    sync(args.env, api_key, auth, args.force)
 
 if __name__ == "__main__":
     main()
