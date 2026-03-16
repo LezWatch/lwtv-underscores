@@ -5,7 +5,14 @@ def search_local_catalog(search_params):
     """
     Filters the local ai-catalog.json based on SEARCH_ACTION keys.
     """
-    catalog_path = os.path.join(os.path.dirname(__file__), '../data/ai-catalog.json')
+    if not os.environ.get("CATALOG_PATH"):
+        print("!! Error: CATALOG_PATH not set in environment variables.")
+        return []
+    catalog_path = os.environ.get("CATALOG_PATH")
+
+    if not os.path.exists(catalog_path):
+        print(f"!! Error: Catalog not found at {catalog_path}")
+        return []
 
     with open(catalog_path, 'r') as f:
         catalog = json.load(f)
