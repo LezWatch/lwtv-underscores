@@ -130,6 +130,8 @@ class Sync_AI {
 				'loved'       => ( 'on' === get_post_meta( $id, 'lezshows_worthit_show_we_love', true ) ),
 				'start_year'  => $start_year ? (int) $start_year : null,
 				'end_year'    => ( $end_year && is_numeric( $end_year ) ) ? (int) $end_year : null,
+				'stars'       => implode( ', ', wp_get_post_terms( $id, 'lez_stars', array( 'fields' => 'slugs' ) ) ),
+				'triggers'    => implode( ', ', wp_get_post_terms( $id, 'lez_triggers', array( 'fields' => 'slugs' ) ) ),
 			);
 		}
 
