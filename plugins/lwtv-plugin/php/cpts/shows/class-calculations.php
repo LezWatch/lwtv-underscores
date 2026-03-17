@@ -418,6 +418,7 @@ class Calculations {
 		// Update post meta for counts (NO YOU CANNOT MAKE THIS AN ARRAY)
 		update_post_meta( $post_id, 'lezshows_char_count', $number_chars );
 		update_post_meta( $post_id, 'lezshows_dead_count', $number_dead );
+		update_post_meta( $post_id, 'lezshows_queer_irl_count', (int) $all_counts['queer-irl'] );
 
 		return $score;
 	}
