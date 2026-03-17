@@ -69,6 +69,24 @@ class Sync_AI {
 				'permission_callback' => array( $this, 'check_ai_key_permission' ),
 			)
 		);
+
+		register_rest_route(
+			'lwtv/v1',
+			'/sync-ai/characters',
+			array(
+				'methods'             => 'GET',
+				'callback'            => array( $this, 'get_characters_data' ),
+				'permission_callback' => array( $this, 'check_ai_key_permission' ),
+				'args'                => array(
+					'modified_after' => array(
+						'required'          => false,
+						'type'              => 'string',
+						'sanitize_callback' => 'sanitize_text_field',
+						'description'       => 'ISO 8601 or strtotime-compatible date.',
+					),
+				),
+			)
+		);
 	}
 
 	/**
@@ -178,6 +196,54 @@ class Sync_AI {
 					'gender'    => ( get_post_meta( $id, 'lezshows_char_gender', true ) ) ? get_post_meta( $id, 'lezshows_char_gender', true ) : array(),
 					'romantic'  => ( get_post_meta( $id, 'lezshows_char_romantic', true ) ) ? get_post_meta( $id, 'lezshows_char_romantic', true ) : array(),
 				),
+			);
+		}
+
+		return rest_ensure_response( $sync_data );
+	}
+
+	/**
+	 * Get flat list of characters with AI-relevant metadata.
+	 */
+	public function get_characters_data( \WP_REST_Request $request ): \WP_REST_Response {
+		$modified_after = $request->get_param( 'modified_after' );
+
+		$args = array(
+			'post_type'      => 'post_type_characters',
+			'post_status'    => 'publish',
+			'posts_per_page' => -1,
+			'fields'         => 'ids',
+			'no_found_rows'  => true,
+		);
+
+		if ( ! empty( $modified_after ) && strtotime( $modified_after ) !== false ) {
+			$args['date_query'] = array(
+				array(
+					'column' => 'post_modified_gmt',
+					'after'  => $modified_after,
+				),
+			);
+		}
+
+		$char_ids  = get_posts( $args );
+		$sync_data = array();
+
+		foreach ( $char_ids as $id ) {
+			$gender    = wp_get_post_terms( $id, 'lez_gender', array( 'fields' => 'slugs' ) );
+			$sexuality = wp_get_post_terms( $id, 'lez_sexuality', array( 'fields' => 'slugs' ) );
+			$cliches   = wp_get_post_terms( $id, 'lez_cliches', array( 'fields' => 'slugs' ) );
+			$romantic  = wp_get_post_terms( $id, 'lez_romantic', array( 'fields' => 'slugs' ) );
+
+			$sync_data[] = array(
+				'id'        => (int) $id,
+				'title'     => get_the_title( $id ),
+				'slug'      => get_post_field( 'post_name', $id ),
+				'permalink' => get_permalink( $id ),
+				'gender'    => is_wp_error( $gender ) ? array() : (array) $gender,
+				'sexuality' => is_wp_error( $sexuality ) ? array() : (array) $sexuality,
+				'cliches'   => is_wp_error( $cliches ) ? array() : (array) $cliches,
+				'romantic'  => is_wp_error( $romantic ) ? array() : (array) $romantic,
+				'excerpt'   => wp_trim_words( wp_strip_all_tags( get_post_field( 'post_content', $id ) ), 250 ),
 			);
 		}
 
