@@ -29,9 +29,9 @@ def search_catalog_shows(params):
     target_queer_irl = params.get('queer_irl')
 
     try:
-        max_score = int(params.get('score', 100))
+        min_score = int(params.get('score', 0))
     except (ValueError, TypeError):
-        max_score = 100
+        min_score = 0
 
     # IMPORTANT: We use data.values() because your JSON is a Dict, not a List
     for show in data.values():
@@ -80,7 +80,8 @@ def search_catalog_shows(params):
 
         # 8. Score Filter
         try:
-            if show.get('score', 0) > max_score:
+            show_score = int(show.get('score', 0))
+            if show_score < min_score:
                 continue
         except (ValueError, TypeError):
             pass

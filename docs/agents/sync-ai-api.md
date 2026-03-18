@@ -133,7 +133,7 @@ Copy `/docs/agents/sync-ai.py` to `/home/uptime/agents/bin/sync-ai.py`
 
 **Run your script using the venv's Python**:
 ```bash
-sudo ./venv/bin/python3 /home/uptime/agents/bin/sync-ai.py staging
+sudo /home/uptime/agents/venv/bin/python3 /home/uptime/agents/bin/sync-ai.py staging
 ```
 
 ## Setup Cron

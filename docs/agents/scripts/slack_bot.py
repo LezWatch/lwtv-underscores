@@ -47,8 +47,31 @@ def parse_search_action(ai_output):
         for pair in re.split(r'[,\n]', text):
             if ':' in pair:
                 k, v = pair.split(':', 1)
-                key, val = k.strip().lower(), v.strip().lower().split(' ')[0].strip('.,')
-                if val == 'underrated': val = 'meh'
+                # Strip leading dashes, spaces, and other common extraction noise
+                key = k.strip().lower().lstrip('- ').strip()
+                val = v.strip().lower().split(' ')[0].strip('., ')
+                
+                # Ignore comments or empty keys/values
+                if not key or not val or key.startswith('#'):
+                    continue
+                
+                # Normalize values
+                if val in ['underrated', 'maybe']: val = 'meh'
+                if val in ['good', 'great', 'awesome', 'best']:
+                    val = 'yes'
+                    if key == 'worthit':
+                        params['score'] = '65' # Default threshold for "good"
+                if val in ['bad', 'terrible', 'avoid']: val = 'no'
+
+                # Handle score ranges (e.g., "0-100" -> "100")
+                if key == 'score' and '-' in val:
+                    val = val.split('-')[-1].strip()
+                
+                # Map common geography errors from LLM (station -> country)
+                if key == 'station' and val in ['canada', 'uk', 'usa', 'france', 'germany', 'australia', 'eu']:
+                    params['country'] = val
+                    continue
+
                 # Map alternate keys to limit
                 if key in ['limit', 'count', 'shows']:
                     params['limit'] = val

@@ -53,11 +53,30 @@ def parse_search_action(ai_output):
     for pair in pairs:
         if ':' in pair:
             k, v = pair.split(':', 1)
-            key = k.strip().lower()
-            val = v.strip().lower().split(' ')[0].strip('.,')
+            # Strip leading dashes, spaces, and other common extraction noise
+            key = k.strip().lower().lstrip('- ').strip()
+            val = v.strip().lower().split(' ')[0].strip('., ')
 
-            # Alias Mapping for "Underrated"
-            if val == 'underrated': val = 'meh'
+            # Ignore comments or empty keys/values
+            if not key or not val or key.startswith('#'):
+                continue
+
+            # Alias Mapping for Values
+            if val in ['underrated', 'maybe']: val = 'meh'
+            if val in ['good', 'great', 'awesome', 'best']:
+                val = 'yes'
+                if key == 'worthit':
+                    params['score'] = '65' # Default threshold for "good"
+            if val in ['bad', 'terrible', 'avoid']: val = 'no'
+
+            # Handle score ranges (e.g., "0-100" -> "100")
+            if key == 'score' and '-' in val:
+                val = val.split('-')[-1].strip()
+
+            # Map common geography errors from LLM (station -> country)
+            if key == 'station' and val in ['canada', 'uk', 'usa', 'france', 'germany', 'australia', 'eu']:
+                params['country'] = val
+                continue
 
             # Alias Mapping for "Limit"
             if key in ['limit', 'count', 'shows', 'characters']:
@@ -86,7 +105,7 @@ def run_chat_cycle(user_input):
         print("!! AI didn't return a SEARCH_ACTION. Here is the response:")
         print(extraction_output)
         return
-    
+
     search_type = search_params.get('type', 'shows')
     extraction_duration = time.time() - extraction_start
     print(f"   [Extraction took {extraction_duration:.2f}s]")
@@ -94,16 +113,16 @@ def run_chat_cycle(user_input):
     # LOCAL SEARCH
     search_start = time.time()
     print(f"-> Searching {search_type} catalog for: {search_params}")
-    
+
     catalog_path = CATALOG_PATHS.get(search_type)
     if search_type == 'shows':
         results = search_catalog_shows(search_params, catalog_path)
     else:
         results = search_catalog_characters(search_params, catalog_path)
-        
+
     search_duration = time.time() - search_start
     print(f"   [Search took {search_duration:.2f}s]")
-    
+
     if not results:
         print(f"AI: I don't have a record of any {search_type} like that yet in our database.")
         return
@@ -111,7 +130,7 @@ def run_chat_cycle(user_input):
     # PASS 2: Presentation
     presentation_start = time.time()
     print(f"-> Found {len(results)} matches. Generating Curated Presentation...")
-    
+
     # 1. Get the Curator's Note first
     note_prompt = f"User asked for: {user_input}. I found {len(results)} {search_type}. Write a one-sentence Curator's Note for the top of the list."
     curator_note = call_ollama(note_prompt)

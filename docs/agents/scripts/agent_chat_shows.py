@@ -80,8 +80,9 @@ def search_catalog_shows(params, catalog_path):
 
         # 9. Score Filter
         try:
-            search_score = int(params.get('score', 100))
-            if show.get('score', 100) > search_score:
+            min_score = int(params.get('score', 0))
+            show_score = int(show.get('score', 0))
+            if show_score < min_score:
                 continue
         except (ValueError, TypeError):
             pass
