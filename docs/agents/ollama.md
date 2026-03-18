@@ -122,8 +122,6 @@ Ensure these match in your `wp-config.php`:
 * `LWTV_AGENTS_USER`: Basic Auth username.
 * `LWTV_AGENTS_PASS`: Basic Auth password.
 
-**Would you like me to add a section on how to "Prune" old model blobs if the `/home/ollama-data` folder eventually gets too large?**
-
 Since LLMs are basically giant chunks of weights and tensors, a few experimental `pull` commands can easily eat up 50GB+ of space. Because we’ve moved everything to `/home/ollama-data`, you’ll want to keep an eye on the "blobs" folder.
 
 Here is the **Pruning & Maintenance** section for your documentation.

@@ -76,7 +76,6 @@ export SLACK_SIGNING_SECRET="your-signing-secret-here"
 Now enter the bin folder:
 
 ```bash
-cd ~/agents/bin
 /home/uptime/agents/venv/bin/gunicorn --bind 127.0.0.1:3000 /home/uptime/agents/bin/slack_bot:flask_app --timeout 300 --pid /tmp/slack_bot.pid --daemon
 ```
 

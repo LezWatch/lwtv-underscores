@@ -10,10 +10,14 @@ from slack_bolt import App
 from slack_bolt.adapter.flask import SlackRequestHandler
 from flask import Flask, request
 
+# Import our new modules
+from slack_bot_characters import search_catalog_characters, build_results_message_characters
+from slack_bot_shows import search_catalog_shows, build_results_message_shows
+
 # Load environment variables from .env file
 load_dotenv()
 
-# --- YOUR EXTRACTION & SEARCH LOGIC ---
+# --- SHARED UTILS ---
 def call_ollama(prompt):
     try:
         # Use the API instead of subprocess to avoid terminal hangs
@@ -43,8 +47,31 @@ def parse_search_action(ai_output):
         for pair in re.split(r'[,\n]', text):
             if ':' in pair:
                 k, v = pair.split(':', 1)
-                key, val = k.strip().lower(), v.strip().lower().split(' ')[0].strip('.,')
-                if val == 'underrated': val = 'meh'
+                # Strip leading dashes, spaces, and other common extraction noise
+                key = k.strip().lower().lstrip('- ').strip()
+                val = v.strip().lower().split(' ')[0].strip('., ')
+                
+                # Ignore comments or empty keys/values
+                if not key or not val or key.startswith('#'):
+                    continue
+                
+                # Normalize values
+                if val in ['underrated', 'maybe']: val = 'meh'
+                if val in ['good', 'great', 'awesome', 'best']:
+                    val = 'yes'
+                    if key == 'worthit':
+                        params['score'] = '65' # Default threshold for "good"
+                if val in ['bad', 'terrible', 'avoid']: val = 'no'
+
+                # Handle score ranges (e.g., "0-100" -> "100")
+                if key == 'score' and '-' in val:
+                    val = val.split('-')[-1].strip()
+                
+                # Map common geography errors from LLM (station -> country)
+                if key == 'station' and val in ['canada', 'uk', 'usa', 'france', 'germany', 'australia', 'eu']:
+                    params['country'] = val
+                    continue
+
                 # Map alternate keys to limit
                 if key in ['limit', 'count', 'shows']:
                     params['limit'] = val
@@ -53,77 +80,6 @@ def parse_search_action(ai_output):
         return params
     except:
         return {}
-
-def search_catalog(params):
-    if not os.environ.get("SLACK_BOT_TOKEN"):
-        load_dotenv() # Ensure env is loaded if called here
-
-    if not os.environ.get("CATALOG_PATH"):
-        print("!! Error: CATALOG_PATH not set.")
-        return []
-    catalog_path = os.environ.get("CATALOG_PATH")
-
-    with open(catalog_path, 'r') as f:
-        data = json.load(f)
-
-    results = []
-    # Target values from params
-    target_country = params.get('country')
-    target_genre = params.get('genre')
-    target_trope = params.get('trope')
-    target_worthit = params.get('worthit')
-    target_on_air = params.get('on_air')
-    max_score = int(params.get('score', 100))
-
-    # IMPORTANT: We use data.values() because your JSON is a Dict, not a List
-    for show in data.values():
-
-        # 1. Country Filter
-        if target_country:
-            show_countries = [c.lower() for c in show.get('country', [])]
-            # Handle 'eu' mapping if needed, but keeping it simple for now
-            if target_country.lower() not in show_countries:
-                continue
-
-        # 2. Genre Filter
-        if target_genre:
-            genres = [g.lower() for g in show.get('genres', [])]
-            if target_genre.lower() not in genres:
-                continue
-
-        # 3. Trope Filter
-        if target_trope:
-            tropes = [t.lower() for t in show.get('tropes', [])]
-            if target_trope.lower() not in tropes:
-                continue
-
-        # 4. Score Filter
-        if show.get('score', 0) > max_score:
-            continue
-
-        # 5. Worth-It Filter
-        worthit_val = str(show.get('worthit', '')).lower()
-        if target_worthit in ['no', 'meh'] and worthit_val == 'yes':
-            continue
-        if target_worthit == 'yes' and worthit_val != 'yes':
-            continue
-
-        # 6. On-Air Filter
-        if target_on_air:
-            if show.get('on_air', '').lower() != target_on_air.lower():
-                continue
-
-        results.append(show)
-
-    # Simple Sort by score if available
-    results.sort(key=lambda x: x.get('score', 0), reverse=True)
-
-    try:
-        limit = int(params.get('limit', 3))
-    except:
-        limit = 3
-
-    return results[:limit]
 
 # --- SLACK APP SETUP ---
 app = App(
@@ -140,10 +96,19 @@ def acknowledge_mention(ack, say, event):
     say(f"🔍 Checking the archives for '{user_query}'...", thread_ts=event.get('ts'))
 
 def process_mention(say, event):
-    import time
     process_start = time.time()
     user_query = event["text"].split(">")[-1].strip()
     ts = event.get('ts')
+
+    # --- PRIVACY SHORT-CIRCUIT ---
+    # We are not allowed to discuss actors.
+    # EXCEPTION: We allow representation queries about "queer actors" or "played by"
+    # as these refer to character 'queer-irl' metadata.
+    is_rep_query = any(x in user_query.lower() for x in ["queer actor", "played by", "queer irl"])
+    if "actor" in user_query.lower() and not is_rep_query:
+        if "character" not in user_query.lower() and "show" not in user_query.lower():
+            say("I am not allowed to discuss actors or provide information about them due to privacy and safety policies. I can only help you find shows and characters.", thread_ts=ts)
+            return
 
     # 1. Intent Extraction
     try:
@@ -165,126 +130,31 @@ def process_mention(say, event):
         criteria = ", ".join([f"{k}: {v}" for k, v in params.items()])
         say(f"🔍 Searching archives for: `{criteria}` (Extraction took {extraction_time:.1f}s)", thread_ts=ts)
 
-        results = search_catalog(params)
+        search_type = params.get('type')
+        if search_type == 'characters':
+            results = search_catalog_characters(params)
+        elif search_type == 'shows':
+            results = search_catalog_shows(params)
+        else:
+            say(f"I'm having trouble understanding the search criteria (Type: {search_type}). (Took {extraction_time:.1f}s) 🧐", thread_ts=ts)
+            return
+
         search_time = time.time() - step_start
     except Exception as e:
         say(f"❌ Error searching catalog: {e}", thread_ts=ts)
         return
 
     if not results:
-        say(f"I couldn't find any shows matching that! 📺 (Search took {search_time:.1f}s)", thread_ts=ts)
+        say(f"I couldn't find any {search_type} matching that! 📺 (Search took {search_time:.1f}s)", thread_ts=ts)
         return
 
     # 3. Presentation
     say(f"✅ Found {len(results)} matches! Formatting... (Search took {search_time:.1f}s)", thread_ts=ts)
 
-    for s in results:
-        try:
-            show_start = time.time()
-
-            # Pull clean data
-            title = s.get('title', 'Unknown Show')
-            url = s.get('permalink', s.get('url', 'https://lezwatchtv.com'))
-            score = s.get('score', 0)
-            loved = s.get('loved', False)
-            on_air_tag = " *[ON AIR]*" if s.get('on_air') == 'yes' else ""
-            loved_heart = " ❤️" if loved else ""
-            genres = ", ".join(s.get('genres', []))
-            tropes = ", ".join(s.get('tropes', []))
-            insight = s.get('curator_say', '') + ' - ' + s.get('excerpt', '')
-
-            # Handle worthit rating
-            worthit = s.get('worthit', 'meh')
-            if worthit == 'yes':
-                worthit_rating = "🙂"
-            elif worthit == 'meh':
-                worthit_rating = "😐"
-            else:
-                worthit_rating = "☹️"
-
-            # Trigger warning handling - High, Medium, Low, None
-            trigger = s.get('triggers', 'none')
-            if trigger != 'none':
-                trigger_warning = "Trigger Warning: " + trigger
-
-            # ENHANCED PROMPT: Using more data and negative constraints
-            show_prompt = (
-                f"DATA:\nTitle: {title}\nWorthit: {worthit}\nGenres: {genres}\nTropes: {tropes}\nInsight: {insight}\n\n"
-                f"TASK: Write a punchy, 2-sentence recommendation for this show. "
-                f"Be specific to its tropes and genres. Vary your sentence structure. "
-                f"STRICT RULE: Do NOT start with 'Get ready', 'Welcome to', or 'Experience'. "
-                f"Avoid generic marketing fluff."
-            )
-            hype = call_ollama(show_prompt)
-
-            # Better year handling
-            start = s.get('start_year') or ""
-            end = s.get('end_year') or ("current" if s.get('on_air') == 'yes' else "")
-
-            if end and str(start) != str(end):
-                year_display = f"{start} - {end}"
-            else:
-                year_display = f"{start}"
-
-            format_time = time.time() - show_start
-
-            # Clarify on-air status
-            this_year = datetime.now().year
-            if s.get('end_year') == 'current' or s.get('end_year') >= this_year:
-                on_air_tag = " *[ON AIR]*"
-            else:
-                on_air_tag = " *[ENDED]*"
-
-            # Character count
-            characters = s.get('characters', 0)
-            dead = s.get('dead', 0)
-            characters_display = ""
-            if characters > 0:
-                char_label = "character" if characters == 1 else "characters"
-                characters_display = f"{characters} queer {char_label}"
-
-            if dead > 0:
-                dead_verb = "is" if dead == 1 else "are"
-                characters_display += f" ({dead} {dead_verb} dead)"
-
-            # Construct the block using the requested design
-            message_text = (
-                f"*{title.upper()}* ({year_display}){on_air_tag}\n"
-                f"Score: {score} {worthit_rating}{loved_heart}\n"
-            )
-
-            if trigger_warning:
-                message_text += f"{trigger_warning}\n"
-
-            if characters_display:
-                message_text += f"Characters: {characters_display}\n"
-
-            message_text += (
-                f"{hype}\n"
-                f"<{url}|View details on LezWatch.TV>"
-            )
-
-            blocks = [
-                {
-                    "type": "section",
-                    "text": {
-                        "type": "mrkdwn",
-                        "text": message_text
-                    }
-                },
-                {
-                    "type": "context",
-                    "elements": [
-                        {
-                            "type": "mrkdwn",
-                            "text": f"_Generated in {format_time:.1f}s_"
-                        }
-                    ]
-                }
-            ]
-            say(text=f"Match found: {title}", blocks=blocks, thread_ts=ts)
-        except Exception as e:
-            say(f"⚠️ Error formatting show '{s.get('title', 'Unknown')}': {e}", thread_ts=ts)
+    if search_type == 'characters':
+        build_results_message_characters(results, say, ts)
+    elif search_type == 'shows':
+        build_results_message_shows(results, say, ts, call_ollama)
 
     total_time = time.time() - process_start
     say(f"🏁 Done! Total processing time: {total_time:.1f}s", thread_ts=ts)
