@@ -55,7 +55,7 @@
     "@wordpress/editor": "^14.41.0",
     "@wordpress/element": "^6.41.0",
     "@wordpress/plugins": "^7.41.0",
-    "@wordpress/server-side-render": "^6.17.0",
+    "@wordpress/server-side-render": "^6.18.0",
     "chart.js": "^4",
     "chartjs-plugin-annotation": "^3",
     "simple-git": "^3",
