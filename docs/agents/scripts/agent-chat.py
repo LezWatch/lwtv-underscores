@@ -53,25 +53,34 @@ def parse_search_action(ai_output):
     for pair in pairs:
         if ':' in pair:
             k, v = pair.split(':', 1)
-            # Strip leading dashes, spaces, and other common extraction noise
-            key = k.strip().lower().lstrip('- ').strip()
-            val = v.strip().lower().split(' ')[0].strip('., ')
+            # Strip leading dashes, asterisks, pluses, spaces, and other common extraction noise
+            key = k.strip().lower().lstrip('-*+ ').strip()
+            # Be careful not to strip spaces within values (e.g. "reality tv")
+            val = v.strip().lower().strip('., ')
 
             # Ignore comments or empty keys/values
             if not key or not val or key.startswith('#'):
                 continue
+
+            # Limit value to the first line if the LLM adds extra text
+            val = val.split('\n')[0].strip()
 
             # Alias Mapping for Values
             if val in ['underrated', 'maybe']: val = 'meh'
             if val in ['good', 'great', 'awesome', 'best']:
                 val = 'yes'
                 if key == 'worthit':
-                    params['score'] = '65' # Default threshold for "good"
+                    params['score'] = '30' # Lowered threshold to include "worthit" shows like Rookie Blue
             if val in ['bad', 'terrible', 'avoid']: val = 'no'
 
             # Handle score ranges (e.g., "0-100" -> "100")
             if key == 'score' and '-' in val:
                 val = val.split('-')[-1].strip()
+
+            # Safeguard: If we already set a 'worthit' score floor, don't let the AI 
+            # overwrite it with a hallucinated high score unless a number was actually in the query.
+            if key == 'score' and params.get('score') == '30' and int(val) > 30:
+                continue
 
             # Map common geography errors from LLM (station -> country)
             if key == 'station' and val in ['canada', 'uk', 'usa', 'france', 'germany', 'australia', 'eu']:
@@ -97,7 +106,20 @@ def run_chat_cycle(user_input):
     # PASS 1: Extraction
     extraction_start = time.time()
     print(f"-> Extracting intent for: '{user_input}'")
-    extraction_output = call_ollama(f"STEP 1: EXTRACTION. User says: {user_input}")
+
+    extraction_system_prompt = (
+        "You are a strict search intent extractor. "
+        "Extract key:value pairs ONLY. "
+        "DO NOT use bullets, dashes, or markdown lists. "
+        "DO NOT include 'score' unless the user provided a specific number. "
+        "Capturing Preferences: If the user says 'preferably about X' or 'focusing on Y', map those to 'trope'.\n"
+        "Allowed keys: type, country, genre, trope, score, limit, worthit, station.\n"
+        "Example output for 'best canadian mystery shows preferably about cops':\n"
+        "type: shows\ncountry: canada\ngenre: mystery\ntrope: law-enforcement\nlimit: 3\nworthit: yes\n"
+        "No conversational text. No markdown. Just the pairs."
+    )
+
+    extraction_output = call_ollama(f"{extraction_system_prompt}\n\nUser says: {user_input}")
 
     search_params = parse_search_action(extraction_output)
 
@@ -132,7 +154,21 @@ def run_chat_cycle(user_input):
     print(f"-> Found {len(results)} matches. Generating Curated Presentation...")
 
     # 1. Get the Curator's Note first
-    note_prompt = f"User asked for: {user_input}. I found {len(results)} {search_type}. Write a one-sentence Curator's Note for the top of the list."
+    curator_persona = (
+        "You are the Lead Curator for LezWatchTV, the world's largest database of queer representation in media. "
+        "Your task is to write a one-sentence introduction for a search results list. "
+        "Do not include spoilers or harmful content. "
+        "Be helpful, concise, and enthusiastic."
+    )
+    
+    # GROUND THE NOTE: Provide the actual show titles so it doesn't hallucinate
+    found_titles = ", ".join([s['title'] for s in results])
+    note_prompt = (
+        f"{curator_persona}\n\n"
+        f"User asked for: '{user_input}'.\n"
+        f"I found {len(results)} matches: {found_titles}.\n"
+        f"Write a one-sentence Curator's Note for the top of this list."
+    )
     curator_note = call_ollama(note_prompt)
 
     print("\n" + "="*50)

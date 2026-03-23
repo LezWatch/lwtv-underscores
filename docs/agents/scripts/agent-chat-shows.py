@@ -10,66 +10,39 @@ def search_catalog_shows(params, catalog_path):
 
     # EUROPEAN MAPPING
     eu_countries = ['austria', 'belgium', 'bulgaria', 'croatia', 'cyprus', 'czechia', 'denmark', 'estonia', 'finland', 'france', 'germany', 'greece', 'hungary', 'ireland', 'italy', 'latvia', 'lithuania', 'luxembourg', 'malta', 'netherlands', 'poland', 'portugal', 'romania', 'slovakia', 'slovenia', 'spain', 'sweden']
-
-    # SEMANTIC ALIASING: Expand search terms to match catalog tags
-    def expand_term(term):
-        if not term: return []
-        aliases = {
-            'mystery': ['mystery', 'police', 'procedural', 'legal', 'crime', 'law-enforcement'],
-            'crime': ['crime', 'police', 'procedural', 'law-enforcement'], # Removed "prison"
-            'sci-fi': ['sci-fi', 'science-fiction', 'fantasy', 'supernatural'],
-            'comedy': ['comedy', 'sitcom', 'funny', 'humor'],
-            'law-enforcement': ['law-enforcement', 'police', 'cop', 'cops', 'procedural'],
-        }
-        return [term.lower()] + [a.lower() for a in aliases.get(term.lower(), [])]
-
-    target_country = params.get('country', '').lower()
-    if target_country in ['us', 'usa', 'america']:
-        target_country = 'usa'
-
+    
+    target_country = params.get('country')
     target_genre = params.get('genre')
     target_trope = params.get('trope')
-    
-    # Expand terms for better matching
-    genre_keywords = expand_term(target_genre)
-    trope_keywords = expand_term(target_trope)
-
     target_station = params.get('station')
     target_format = params.get('format')
     target_intersection = params.get('intersection')
     target_queer_irl = params.get('queer_irl')
 
-    # Tighten matching: only match if the keyword is a full tag or a very specific substring
-    def is_match(keyword, tags):
-        for tag in tags:
-            # Check for exact match or whole-word match within the tag
-            if keyword == tag or f" {keyword} " in f" {tag} " or tag.startswith(f"{keyword} ") or tag.endswith(f" {keyword}"):
-                return True
-        return False
-
     matches = []
     for show_id, show in catalog.items():
-        # Get separate tags for strict field searching
-        genres = [g.lower() for g in show.get('genres', [])]
-        tropes = [t.lower() for t in show.get('tropes', [])]
-        
         # 1. Country Filter
         show_countries = [c.lower() for c in show.get('country', [])]
         if target_country:
+            if target_country in ['us', 'usa', 'america']:
+                target_country = 'usa'
+
             if target_country == 'eu':
                 if not any(c in eu_countries for c in show_countries):
                     continue
             elif target_country not in show_countries:
                 continue
 
-        # 2. Genre Filter (strict field check)
+        # 2. Genre Filter
         if target_genre:
-            if not any(is_match(k, genres) for k in genre_keywords):
+            genres = [g.lower() for g in show.get('genres', [])]
+            if target_genre not in genres:
                 continue
 
-        # 3. Trope Filter (strict field check)
+        # 3. Trope Filter
         if target_trope:
-            if not any(is_match(k, tropes) for k in trope_keywords):
+            tropes = [t.lower() for t in show.get('tropes', [])]
+            if target_trope not in tropes:
                 continue
 
         # 4. Station Filter
@@ -137,7 +110,7 @@ def format_show_result(s, call_ollama):
     total_chars = char_data.get('total', 0)
     dead_chars = char_data.get('dead', 0)
     queer_irl = char_data.get('queer_irl', 0)
-
+    
     deaths = ""
     if total_chars > 0:
         extra = []
@@ -153,26 +126,14 @@ def format_show_result(s, call_ollama):
     quality = ratings.get('quality', 0)
     screentime = ratings.get('screentime', 0)
 
-    # Print the header directly in Python to ensure it's never missing
-    print(f"**{s['title']}** ({years}) (Score: {s['score']}/100)")
-
-    show_persona = (
-        "You are a strict data formatter for LezWatchTV. "
-        "Write a 2-sentence summary using ONLY the DATA provided. "
-        "FORBIDDEN: Do not output any SEARCH_ACTION commands. "
-        "FORBIDDEN: Do not mention the user's requested limit or search parameters. "
-        "Sentence 1: Why it fits the user request. "
-        "Sentence 2: Summary of quality and queer characters."
-    )
     show_prompt = (
-        f"INSTRUCTION: {show_persona}\n\n"
-        f"DATA:\nTITLE: {s['title']}\n"
-        f"GENRES: {', '.join(s.get('genres', []))}\n"
+        f"DATA:\nTITLE: {s['title']}\nYEARS: {years}\nSCORE: {s['score']}\n"
         f"REALNESS: {realness}/5\nQUALITY: {quality}/5\nSCREENTIME: {screentime}/5\n"
         f"INSIGHT: {s.get('curator_say', '')}\nEXCERPT: {s.get('excerpt', '')}\n"
         f"PEOPLE: {total_chars} queer characters{deaths}\n"
         f"TROPES: {', '.join(s.get('tropes', []))}\n\n"
-        f"REQUIRED FORMAT:\nWhy this fits: [1 sentence]\nDescription: [1 sentence]"
+        f"TASK: Write a 2-sentence recommendation using only the DATA above.\n"
+        f"FORMAT:\n**Title** (Years) (Score: X)\nWhy this fits: [1 sentence]\nDescription: [1 sentence]"
     )
 
     output = call_ollama(show_prompt)
