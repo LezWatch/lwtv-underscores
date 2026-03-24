@@ -6,6 +6,7 @@
 
 namespace LWTV\_Components;
 
+use LWTV\Features\BlockAgents;
 use LWTV\Features\BlockTracking;
 use LWTV\Features\Dashboard_Posts_In_Progress;
 use LWTV\Features\Dashboard;
@@ -42,6 +43,7 @@ class Features implements Component {
 		add_action( 'init', array( $this, 'instantiate_actions_and_filters' ) );
 
 		// Load them:
+		new BlockAgents();
 		new BlockTracking();
 		new Dashboard_Posts_In_Progress();
 		new Dashboard();
