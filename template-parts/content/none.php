@@ -27,14 +27,16 @@
 			<?php get_search_form(); ?>
 
 			<?php
-			get_template_part(
-				'template-parts/partials/ai/discovery-no-results',
-				null,
-				array(
-					'failed_query' => get_search_query(),
-					'mood_chips'   => apply_filters( 'lwtv_discovery_no_results_mood_chips', array() ),
-				)
-			);
+			if ( defined( 'LWTV_USE_AGENTS' ) && true === LWTV_USE_AGENTS ) {
+				get_template_part(
+					'template-parts/partials/ai/discovery-no-results',
+					null,
+					array(
+						'failed_query' => get_search_query(),
+						'mood_chips'   => apply_filters( 'lwtv_discovery_no_results_mood_chips', array() ),
+					)
+				);
+			}
 			?>
 
 		<?php else : ?>

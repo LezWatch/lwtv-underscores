@@ -557,7 +557,9 @@ class Agents {
 		usort(
 			$shows,
 			function ( $a, $b ) {
-				return (int) get_post_meta( $b->ID, 'lezshows_the_score', true ) <=> (int) get_post_meta( $a->ID, 'lezshows_the_score', true );
+				$a_id = ( $a instanceof \WP_Post ) ? $a->ID : $a;
+				$b_id = ( $b instanceof \WP_Post ) ? $b->ID : $b;
+				return (int) get_post_meta( $b_id, 'lezshows_the_score', true ) <=> (int) get_post_meta( $a_id, 'lezshows_the_score', true );
 			}
 		);
 
@@ -568,30 +570,32 @@ class Agents {
 		);
 
 		foreach ( $shows as $post ) {
-			$excerpt = get_the_excerpt( $post->ID );
+			$post_id = ( $post instanceof \WP_Post ) ? $post->ID : $post;
+			$excerpt = get_the_excerpt( $post_id );
 			if ( empty( trim( $excerpt ) ) ) {
-				$excerpt = $post->post_content ?? '';
+				$p_content = ( $post instanceof \WP_Post ) ? $post->post_content : get_post_field( 'post_content', $post_id );
+				$excerpt   = $p_content ?? '';
 			}
 			$excerpt = wp_trim_words( wp_strip_all_tags( $excerpt ), 25 );
 
-			$show_score = get_post_meta( $post->ID, 'lezshows_the_score', true );
+			$show_score = get_post_meta( $post_id, 'lezshows_the_score', true );
 			$show_score = is_numeric( $show_score ) ? min( (int) $show_score, 100 ) : 0;
 
-			$total_chars = (int) get_post_meta( $post->ID, 'lezshows_char_count', true );
-			$dead_chars  = (int) get_post_meta( $post->ID, 'lezshows_dead_count', true );
-			$tropes      = get_the_terms( $post->ID, 'lez_tropes' );
+			$total_chars = (int) get_post_meta( $post_id, 'lezshows_char_count', true );
+			$dead_chars  = (int) get_post_meta( $post_id, 'lezshows_dead_count', true );
+			$tropes      = get_the_terms( $post_id, 'lez_tropes' );
 			$trope_slugs = ( $tropes && ! is_wp_error( $tropes ) )
 				? wp_list_pluck( $tropes, 'slug' )
 				: array();
 
 			$results['shows'][] = array(
-				'title'      => get_the_title( $post->ID ),
-				'permalink'  => get_permalink( $post->ID ),
+				'title'      => get_the_title( $post_id ),
+				'permalink'  => get_permalink( $post_id ),
 				'score'      => $show_score,
 				'excerpt'    => $excerpt,
 				'characters' => $total_chars,
 				'dead'       => $dead_chars,
-				'on_air'     => get_post_meta( $post->ID, 'lezshows_on_air', true ),
+				'on_air'     => get_post_meta( $post_id, 'lezshows_on_air', true ),
 				'tropes'     => $trope_slugs,
 			);
 		}
@@ -605,7 +609,8 @@ class Agents {
 				$context
 			);
 		} else {
-			// Send results to Ollama for curated presentation (Curator's Note + formatted list).
+			set_time_limit( 300 );
+
 			$formatted = lwtv_plugin()->present_results_to_ai( $prompt, $results );
 			if ( is_string( $formatted ) ) {
 				$results['formatted'] = $formatted;
@@ -637,8 +642,10 @@ class Agents {
 			usort(
 				$shows,
 				function ( $a, $b ) {
-					$a_on = get_post_meta( $a->ID, 'lezshows_on_air', true );
-					$b_on = get_post_meta( $b->ID, 'lezshows_on_air', true );
+					$a_id = ( $a instanceof \WP_Post ) ? $a->ID : $a;
+					$b_id = ( $b instanceof \WP_Post ) ? $b->ID : $b;
+					$a_on = get_post_meta( $a_id, 'lezshows_on_air', true );
+					$b_on = get_post_meta( $b_id, 'lezshows_on_air', true );
 					return ( 'yes' === $b_on ? 1 : 0 ) <=> ( 'yes' === $a_on ? 1 : 0 );
 				}
 			);

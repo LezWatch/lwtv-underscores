@@ -38,16 +38,18 @@ if ( empty( $failed_query ) ) {
 	</p>
 
 	<?php
-	get_template_part(
-		'template-parts/partials/ai/discovery-panel',
-		null,
-		array(
-			'context'        => 'no-results',
-			'heading'        => __( 'Find your next favorite show', 'lwtv-underscores' ),
-			'initial_prompt' => $failed_query,
-			'mood_chips'     => $mood_chips,
-			'failed_query'   => $failed_query,
-		)
-	);
+	if ( defined( 'LWTV_USE_AGENTS' ) && true === LWTV_USE_AGENTS ) {
+		get_template_part(
+			'template-parts/partials/ai/discovery-panel',
+			null,
+			array(
+				'context'        => 'no-results',
+				'heading'        => __( 'Find your next favorite show', 'lwtv-underscores' ),
+				'initial_prompt' => $failed_query,
+				'mood_chips'     => $mood_chips,
+				'failed_query'   => $failed_query,
+			)
+		);
+	}
 	?>
 </div>

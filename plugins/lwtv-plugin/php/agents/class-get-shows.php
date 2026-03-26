@@ -91,7 +91,8 @@ class Get_Shows {
 			$posts = array_filter(
 				$posts,
 				function ( $post ) use ( $year_min, $year_max, $on_air, $this_year ) {
-					$airdates = get_post_meta( $post->ID, 'lezshows_airdates', true );
+					$post_id  = ( $post instanceof \WP_Post ) ? $post->ID : $post;
+					$airdates = get_post_meta( $post_id, 'lezshows_airdates', true );
 					if ( ! is_array( $airdates ) || ! isset( $airdates['start'] ) || ! isset( $airdates['finish'] ) ) {
 						return false;
 					}
@@ -113,11 +114,11 @@ class Get_Shows {
 						$is_on_air = ( 'current' === strtolower( (string) $finish_raw ) || '' === trim( (string) $finish_raw ) || $finish >= $this_year );
 
 						if ( 'yes' === $on_air && ! $is_on_air ) {
-							update_post_meta( $post->ID, 'lezshows_on_air', 'no' );
+							update_post_meta( $post_id, 'lezshows_on_air', 'no' );
 							return false;
 						}
 						if ( 'no' === $on_air && $is_on_air ) {
-							update_post_meta( $post->ID, 'lezshows_on_air', 'yes' );
+							update_post_meta( $post_id, 'lezshows_on_air', 'yes' );
 							return false;
 						}
 					}

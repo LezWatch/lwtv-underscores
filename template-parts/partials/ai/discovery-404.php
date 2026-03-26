@@ -18,24 +18,37 @@ $mood_chips = $args['mood_chips'] ?? array(
 ?>
 
 <div class="lwtv-discovery-404-block">
-	<p class="lwtv-discovery-404-intro">
-		<?php esc_html_e( "We couldn't find that page, but tell us what you're in the mood for and we'll search the database for you.", 'lwtv-underscores' ); ?>
-	</p>
-
 	<?php
-	get_template_part(
-		'template-parts/partials/ai/discovery-panel',
-		null,
-		array(
-			'context'        => '404',
-			'heading'        => __( 'Find your next favorite show', 'lwtv-underscores' ),
-			'initial_prompt' => '',
-			'mood_chips'     => $mood_chips,
-			'failed_query'   => '',
-		)
-	);
-	?>
+	// If the URL contains /show/, then we can try to use the AI.
+	if ( defined( 'LWTV_USE_AGENTS' ) && true === LWTV_USE_AGENTS && strpos( $_SERVER['REQUEST_URI'], '/show/' ) !== false ) {
+		?>
+		<p class="lwtv-discovery-404-intro">
+			<?php esc_html_e( "We couldn't find that page, but tell us what you're in the mood for and we'll search the database for you.", 'lwtv-underscores' ); ?>
+		</p>
+		<?php
+		get_template_part(
+			'template-parts/partials/ai/discovery-panel',
+			null,
+			array(
+				'context'        => '404',
+				'heading'        => __( 'Find your next favorite show', 'lwtv-underscores' ),
+				'initial_prompt' => '',
+				'mood_chips'     => $mood_chips,
+				'failed_query'   => '',
+			)
+		);
+		?>
 
-	<p class="lwtv-discovery-404-search-label"><?php esc_html_e( 'Or try searching:', 'lwtv-underscores' ); ?></p>
-	<?php get_search_form(); ?>
+		<p class="lwtv-discovery-404-search-label"><?php esc_html_e( 'Or try searching:', 'lwtv-underscores' ); ?></p>
+		<?php
+	} else {
+		?>
+		<p class="lwtv-discovery-404-intro">
+			<?php esc_html_e( "We couldn't find that page.", 'lwtv-underscores' ); ?>
+		</p>
+		<p class="lwtv-discovery-404-search-label"><?php esc_html_e( 'Try searching:', 'lwtv-underscores' ); ?></p>
+		<?php
+	}
+	get_search_form();
+	?>
 </div>

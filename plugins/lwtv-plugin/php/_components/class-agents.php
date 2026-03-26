@@ -4,8 +4,6 @@
  */
 namespace LWTV\_Components;
 
-use ftp;
-
 class Agents implements Component, Templater {
 
 	public function init(): void {
