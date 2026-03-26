@@ -23,15 +23,17 @@ $mood_chips = $args['mood_chips'] ?? array();
 </button>
 
 <?php
-get_template_part(
-	'template-parts/partials/ai/discovery-panel',
-	null,
-	array(
-		'context'        => 'global',
-		'heading'        => __( 'Find your next favorite show', 'lwtv-underscores' ),
-		'initial_prompt' => '',
-		'mood_chips'     => $mood_chips,
-		'failed_query'   => '',
-	)
-);
+if ( defined( 'LWTV_USE_AGENTS' ) && true === LWTV_USE_AGENTS ) {
+	get_template_part(
+		'template-parts/partials/ai/discovery-panel',
+		null,
+		array(
+			'context'        => 'global',
+			'heading'        => __( 'Find your next favorite show', 'lwtv-underscores' ),
+			'initial_prompt' => '',
+			'mood_chips'     => $mood_chips,
+			'failed_query'   => '',
+		)
+	);
+}
 ?>
