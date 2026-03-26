@@ -86,18 +86,33 @@ document.addEventListener('DOMContentLoaded', function() {
 		const loader = appendMsg('ai', '<span class="lwtv-loading">Consulting the 12-core brain...</span>');
 
 		const failedQuery = input.dataset?.failedQuery || '';
-		let url = `${endpoint}?prompt=${encodeURIComponent(val)}`;
+		const separator = endpoint.includes('?') ? '&' : '?';
+		let url = `${endpoint}${separator}prompt=${encodeURIComponent(val)}`;
+
 		if (failedQuery) {
 			url += '&context=' + encodeURIComponent('The user tried to find ' + failedQuery + ' and failed. Help them find the closest match.');
 		}
 
-		const headers = { 'X-LezWatch-AI-Key': aiKey };
-		if (authHeader) headers['Authorization'] = authHeader;
+		const headers = new Headers({
+			'X-LezWatch-AI-Key': aiKey,
+			'X-WP-Nonce': (typeof lwtv_settings !== 'undefined' && lwtv_settings.nonce) ? lwtv_settings.nonce : ''
+		});
+		if (authHeader) headers.append('Authorization', authHeader);
 
 		try {
-			const response = await fetch(url, { headers });
+			const response = await fetch(url, {
+				method: 'GET',
+				headers: headers
+			});
+
+			if (!response.ok) {
+				throw new Error(`Server returned ${response.status}: ${response.statusText}`);
+			}
+
 			const data = await response.json();
 			loader.remove();
+
+			console.log(data);
 
 			if (data.formatted) {
 				appendMsg('ai', data.formatted.replace(/\n/g, '<br>'));
