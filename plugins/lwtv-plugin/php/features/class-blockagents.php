@@ -8,7 +8,7 @@
 
 namespace LWTV\Features;
 
-class BlockAgenta {
+class BlockAgents {
 
 	/**
 	 * Constructor
