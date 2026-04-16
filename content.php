@@ -2,7 +2,7 @@
 /**
  * The template for displaying page content.
  *
- * @package YIKES Starter
+ * @package LWTV Underscores
  */
 
 ?>

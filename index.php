@@ -2,7 +2,7 @@
 /**
  * The main template file.
  *
- * @package YIKES Starter
+ * @package LWTV Underscores
  */
 
 if ( ! defined( 'ABSPATH' ) ) {

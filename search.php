@@ -2,7 +2,7 @@
 /**
  * The template for displaying Search Results pages.
  *
- * @package YIKES Starter
+ * @package LWTV Underscores
  */
 
 get_header(); ?>

@@ -17,34 +17,25 @@
     },
     "scripts": {
         "post-install-cmd": [
-            "SlowProg\\CopyFile\\ScriptHandler::copy"
+            "sh _build_scripts/copy-composer-assets.sh"
         ],
         "post-update-cmd": [
-            "SlowProg\\CopyFile\\ScriptHandler::copy"
+            "sh _build_scripts/copy-composer-assets.sh"
         ],
         "lint": "phpcs",
         "lint-fix": "phpcbf"
     },
     "require-dev": {
         "wp-coding-standards/wpcs": "^3.0",
-        "yoast/phpunit-polyfills": "^4.0",
         "phpcompatibility/phpcompatibility-wp": "*",
         "php-stubs/wp-cli-stubs": "^2.9"
-    },
-    "extra" : {
-        "copy-file": {
-            "vendor/twbs/bootstrap/dist/css/": "inc/bootstrap/css/",
-            "vendor/twbs/bootstrap/dist/js/": "inc/bootstrap/js/",
-            "node_modules/@popperjs/core/dist/umd/popper.min.js":"inc/js/popper.min.js",
-            "node_modules/@popperjs/core/dist/umd/popper.min.js.map":"inc/js/popper.min.js.map"
-        }
     },
     "config": {
         "allow-plugins": {
             "dealerdirect/phpcodesniffer-composer-installer": true
         },
         "platform": {
-            "php": "8.3"
+            "php": "8.5"
         }
     }
 }

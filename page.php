@@ -2,7 +2,7 @@
 /**
  * The template for displaying all pages.
  *
- * @package YIKES Starter
+ * @package LWTV Underscores
  */
 
 get_header(); ?>

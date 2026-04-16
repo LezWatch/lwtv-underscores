@@ -1,0 +1,16 @@
+#!/bin/sh
+
+# Load common paths (Homebrew, NVM, etc.)
+export PATH="/usr/local/bin:/opt/homebrew/bin:$PATH"
+
+# If you use NVM, try to source it
+[ -s "$HOME/.nvm/nvm.sh" ] && . "$HOME/.nvm/nvm.sh"
+
+# Run the linting script
+npm exec lint-staged
+
+# Capture the exit code of the lint command
+if [ $? -ne 0 ]; then
+  echo "Linting failed! Please fix the errors before committing."
+  exit 1
+fi

@@ -5,7 +5,7 @@
  *
  * @link https://developer.wordpress.org/themes/functionality/custom-headers/
  *
- * @package YIKES_Starter
+ * @package LWTV Underscores
  */
 
 /**
@@ -48,28 +48,26 @@ if ( ! function_exists( 'lwtv_theme_header_style' ) ) :
 		}
 
 		// If we get this far, we have custom styles. Let's do this.
+
+		$custom_css = display_header_text()
+			? sprintf(
+				'.site-title a,
+				.site-description {
+					color: #%s;
+				}',
+				esc_attr( $header_text_color )
+			)
+			: '.site-title,
+				.site-description {
+					position: absolute;
+					clip: rect(1px, 1px, 1px, 1px);
+				}';
 		?>
 		<style type="text/css">
-		<?php
-		// Has the text been hidden?
-		if ( ! display_header_text() ) :
-			?>
-			.site-title,
-			.site-description {
-				position: absolute;
-				clip: rect(1px, 1px, 1px, 1px);
-			}
 			<?php
-			// If the user has set a custom color for the text use that.
-		else :
+			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $custom_css is built from esc_attr() for user input; rest is static.
+			echo $custom_css;
 			?>
-			.site-title a,
-			.site-description {
-				color: #<?php echo esc_attr( $header_text_color ); ?>;
-			}
-			<?php
-		endif;
-		?>
 		</style>
 		<?php
 	}

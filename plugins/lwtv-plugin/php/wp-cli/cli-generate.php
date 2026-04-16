@@ -12,6 +12,7 @@ use LWTV\Debugger\Characters as Characters_Debugger;
 use LWTV\Debugger\Shows as Shows_Debugger;
 use LWTV\Debugger\Dupes as Dupes_Debugger;
 use LWTV\Debugger\Queers as Queers_Debugger;
+use LWTV\Debugger\OnAir as OnAir_Debugger;
 use LWTV\Features\Missed_Schedule;
 use LWTV\Rest_API\BYQ;
 use LWTV\CPTs\Shows as CPT_Shows;
@@ -238,6 +239,8 @@ class WP_CLI_LWTV_Generate {
 			case 'wed':
 				\WP_CLI::log( 'Debugger: Checking dupes...' );
 				( new Dupes_Debugger() )->find_duplicates();
+				\WP_CLI::log( 'Debugger: Checking on air status...' );
+				( new OnAir_Debugger() )->find_on_air_problems();
 				break;
 			case 'thu':
 				\WP_CLI::log( 'Debugger: Checking all actors...' );

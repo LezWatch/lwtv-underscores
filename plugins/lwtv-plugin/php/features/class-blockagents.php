@@ -8,18 +8,18 @@
 
 namespace LWTV\Features;
 
-class BlockAgenta {
+class BlockAgents {
 
 	/**
 	 * Constructor
 	 */
 	public function __construct() {
-		if ( ! defined( 'WP_AI_SUPPORT' ) {
+		if ( ! defined( 'WP_AI_SUPPORT' ) ) {
 			define( 'WP_AI_SUPPORT', false );
 		}
 
-		// Hide the menu 
-		add_action( 'admin_menu', array( $this, 'remove_page' );
+		// Hide the menu
+		add_action( 'admin_menu', array( $this, 'remove_page' ) );
 	}
 
 	/**

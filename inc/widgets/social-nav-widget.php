@@ -1,6 +1,6 @@
 <?php
 /**
- * Adds the YIKES social widget.
+ * Adds the LWTV social widget.
  *
  * @package LezWatch.TV
  */

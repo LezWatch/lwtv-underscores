@@ -2,7 +2,7 @@
 /**
  * The template part for displaying a message that posts cannot be found.
  *
- * @package YIKES Starter
+ * @package LWTV Underscores
  */
 ?>
 

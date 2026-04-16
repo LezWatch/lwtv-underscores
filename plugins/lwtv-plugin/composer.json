@@ -22,11 +22,11 @@
   "config": {
     "preferred-install": "dist",
     "platform": {
-      "php": "8.2"
+      "php": "8.5"
     }
   },
   "require": {
-    "php": ">=8.2",
+    "php": ">=8.5",
     "johngrogg/ics-parser": "^3"
   },
   "scripts": {
