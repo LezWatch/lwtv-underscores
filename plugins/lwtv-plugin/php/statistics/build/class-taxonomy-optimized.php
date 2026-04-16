@@ -168,10 +168,11 @@ class Taxonomy_Optimized {
 		$term_slugs        = array_map( 'sanitize_text_field', $terms );
 		$term_placeholders = implode( ',', array_fill( 0, count( $term_slugs ), '%s' ) );
 
-		// Single query to get both total and dead character counts
-		// Characters are linked to shows through lezchars_show_group meta field (serialized array)
-		// The format is: a:1:{i:0;a:3:{s:4:"show";a:1:{i:0;s:3:"655";}s:4:"type";s:9:"recurring";s:7:"appears";a:1:{i:0;s:4:"2017";}}}
-		// We need to match characters that are linked to shows belonging to the specific station
+		// Single query to get both total and dead character counts.
+		// Characters are linked to shows through lezchars_show_group meta (serialized array), e.g.:
+		// a:1:{i:0;a:3:{s:4:"show";a:1:{i:0;s:3:"655";}s:4:"type";s:9:"recurring";s:7:"appears";a:1:{i:0;s:4:"2017";}}}
+		// Join postmeta and characters AFTER `shows` so each row ties one show to matching character
+		// meta — never unconstrained LEFT JOIN all published characters (cartesian explosion).
 		// phpcs:disable
 		$query = $wpdb->prepare(
 			"SELECT
@@ -182,15 +183,15 @@ class Taxonomy_Optimized {
 			INNER JOIN {$wpdb->term_taxonomy} tt ON t.term_id = tt.term_id
 			LEFT JOIN {$wpdb->term_relationships} tr ON tt.term_taxonomy_id = tr.term_taxonomy_id
 			LEFT JOIN {$wpdb->posts} shows ON tr.object_id = shows.ID
-			LEFT JOIN {$wpdb->posts} chars ON chars.post_type = %s AND chars.post_status = 'publish'
-			LEFT JOIN {$wpdb->postmeta} char_shows ON chars.ID = char_shows.post_id AND char_shows.meta_key = 'lezchars_show_group'
+			INNER JOIN {$wpdb->postmeta} char_shows ON char_shows.meta_key = 'lezchars_show_group'
+				AND char_shows.meta_value IS NOT NULL
+				AND char_shows.meta_value != ''
+				AND char_shows.meta_value COLLATE utf8mb4_unicode_ci LIKE CONCAT('%%s:', LENGTH(CAST(shows.ID AS CHAR)), ':\"', CAST(shows.ID AS CHAR), '\";%%') COLLATE utf8mb4_unicode_ci
+			INNER JOIN {$wpdb->posts} chars ON chars.ID = char_shows.post_id AND chars.post_type = %s AND chars.post_status = 'publish'
 			LEFT JOIN {$wpdb->postmeta} chars_death ON chars.ID = chars_death.post_id AND chars_death.meta_key = 'lezchars_last_death'
 			WHERE tt.taxonomy = %s
 			AND shows.post_type = 'post_type_shows'
 			AND shows.post_status = 'publish'
-			AND char_shows.meta_value IS NOT NULL
-			AND char_shows.meta_value != ''
-			AND char_shows.meta_value COLLATE utf8mb4_unicode_ci LIKE CONCAT('%%s:', LENGTH(CAST(shows.ID AS CHAR)), ':\"', CAST(shows.ID AS CHAR), '\";%%') COLLATE utf8mb4_unicode_ci
 			AND t.slug IN ($term_placeholders)
 			GROUP BY t.slug",
 			array_merge( array( $post_type, $taxonomy ), $term_slugs )
@@ -225,8 +226,8 @@ class Taxonomy_Optimized {
 			}
 		}
 
-		// Cache for 1 hour since character counts change less frequently
-		lwtv_plugin()->set_transient( $cache_key, $formatted, HOUR_IN_SECONDS );
+		// Cache for 24 hours; query is cheaper after join fix, and counts change infrequently.
+		lwtv_plugin()->set_transient( $cache_key, $formatted, DAY_IN_SECONDS );
 
 		return $formatted;
 	}
