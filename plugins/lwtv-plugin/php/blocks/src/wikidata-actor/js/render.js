@@ -93,19 +93,14 @@ export default function Render() {
 
 	const handleCopy = async (textToCopy) => {
 		try {
-			// eslint-disable-next-line no-undef
 			if (
-				// eslint-disable-next-line no-undef
 				typeof navigator !== 'undefined' &&
-				// eslint-disable-next-line no-undef
 				navigator.clipboard &&
-				// eslint-disable-next-line no-undef
 				navigator.clipboard.writeText
 			) {
-				// eslint-disable-next-line no-undef
 				await navigator.clipboard.writeText(textToCopy);
 			} else {
-				// eslint-disable-next-line no-undef, no-alert
+				// eslint-disable-next-line no-alert
 				window.alert(
 					'Copy to clipboard is not supported in your browser. Please copy manually.'
 				);
@@ -115,7 +110,13 @@ export default function Render() {
 				setShowToast(false);
 			}, 2500);
 		} catch (err) {
-			// Silently fail if copy doesn't work
+			// Display error to user
+			// eslint-disable-next-line no-alert
+			window.alert('Error: ' + err.message || 'Unknown error');
+			setShowToast(true);
+			setTimeout(() => {
+				setShowToast(false);
+			}, 2500);
 		}
 	};
 
