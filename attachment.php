@@ -2,7 +2,7 @@
 /**
  * The template for displaying image attachments.
  *
- * @package YIKES Starter
+ * @package LWTV Underscores
  */
 
 get_header(); ?>

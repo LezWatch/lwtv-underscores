@@ -1,6 +1,6 @@
 <?php
 /**
- * @package YIKES Starter
+ * @package LWTV Underscores
  */
 
 // Get 4 random loved shows directly from database

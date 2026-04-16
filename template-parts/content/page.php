@@ -2,7 +2,7 @@
 /**
  * The template used for displaying page content in page.php
  *
- * @package YIKES Starter
+ * @package LWTV Underscores
  */
 ?>
 

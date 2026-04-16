@@ -2,7 +2,7 @@
 /**
  * The template part for displaying a CTA button to a form modal to suggest edits.
  *
- * @package YIKES Starter
+ * @package LWTV Underscores
  */
 
 $for_post      = $args['for_post'] ?? null;

@@ -37,7 +37,7 @@ class Features implements Component {
 		add_filter( 'wp_speculation_rules_configuration', '__return_null' );
 
 		// Disable collab
-		add_filter( 'default_option_wp_enable_real_time_collaboration', '__return_false' ); 
+		add_filter( 'default_option_wp_enable_real_time_collaboration', '__return_false' );
 
 		// Instantiate actions and filters:
 		add_action( 'init', array( $this, 'instantiate_actions_and_filters' ) );

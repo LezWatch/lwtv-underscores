@@ -2,7 +2,7 @@
 /**
  * The Template for displaying all single character pages.
  *
- * @package YIKES Starter
+ * @package LWTV Underscores
  */
 
 // Build the icon.

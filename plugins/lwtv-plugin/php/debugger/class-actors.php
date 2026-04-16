@@ -392,8 +392,8 @@ class Actors {
 			$check_wiki = $this->process_actor_wikidata( $actor_id, $wiki_claims );
 
 			foreach ( $check_ours as $item => $data ) {
-				$ours_original = $this->remove_www( $data );
-				$wiki_original = $this->remove_www( $check_wiki[ $item ] );
+				$ours_original = $this->normalize_for_comparison( $data );
+				$wiki_original = $this->normalize_for_comparison( $check_wiki[ $item ] );
 				$ours_lower    = strtolower( $ours_original );
 				$wiki_lower    = strtolower( $wiki_original );
 
@@ -551,15 +551,24 @@ class Actors {
 	}
 
 	/**
-	 * Remove www from URLs.
+	 * Normalize data for comparison.
 	 *
-	 * @param string $url - The URL to clean.
+	 * Removes www. and trailing slashes from URLs.
 	 *
-	 * @return string $url - The cleaned URL.
+	 * @param string $value - The value to clean.
+	 *
+	 * @return string $value - The cleaned value.
 	 */
-	public function remove_www( $url ) {
-		$url = str_replace( 'www.', '', $url );
+	public function normalize_for_comparison( $value ) {
+		// remove www
+		$value = str_replace( 'www.', '', $value );
+		// remove trailing slash
+		$value = untrailingslashit( $value );
+		// remove http://
+		$value = str_replace( 'http://', '', $value );
+		// remove https://
+		$value = str_replace( 'https://', '', $value );
 
-		return $url;
+		return $value;
 	}
 }

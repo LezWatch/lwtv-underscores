@@ -1,5 +1,5 @@
 {
-  "name": "@lwtv/plugin",
+  "name": "@lwtv/lwtv-plugin",
   "version": "6.2.0",
   "description": "LezWatch.TV Plugin",
   "main": "index.js",
@@ -10,7 +10,7 @@
     "build:workspace": "",
     "start": "npm run start",
     "preinstall": "composer install",
-    "updater:workspace": "composer update && npm update",
+    "updater:workspace": "composer update",
     "clean:workspace": "rm -rf node_modules"
   }
 }

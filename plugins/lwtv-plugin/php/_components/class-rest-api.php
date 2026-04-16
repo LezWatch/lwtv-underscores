@@ -5,15 +5,15 @@
 namespace LWTV\_Components;
 
 use LWTV\Rest_API\Broom;
+use LWTV\Rest_API\BYQ;
+use LWTV\Rest_API\Export_JSON;
+use LWTV\Rest_API\IMDb_JSON;
+use LWTV\Rest_API\List_JSON;
+use LWTV\Rest_API\OTD_JSON;
+use LWTV\Rest_API\Stats_JSON;
+use LWTV\Rest_API\This_Year_JSON;
 use LWTV\Rest_API\Whats_On_JSON;
 use LWTV\Rest_API\What_Happened_JSON;
-use LWTV\Rest_API\This_Year_JSON;
-use LWTV\Rest_API\Stats_JSON;
-use LWTV\Rest_API\OTD_JSON;
-use LWTV\Rest_API\List_JSON;
-use LWTV\Rest_API\IMDb_JSON;
-use LWTV\Rest_API\Export_JSON;
-use LWTV\Rest_API\BYQ;
 use LWTV\Rest_API\Wikidata;
 
 class Rest_API implements Component, Templater {
