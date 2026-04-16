@@ -63,10 +63,10 @@ if ( ! function_exists( 'lwtv_theme_header_style' ) ) :
 				}';
 		?>
 		<style type="text/css">
-		<?php
-		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $custom_css is built from esc_attr() for user input; rest is static.
-		echo $custom_css;
-		?>
+			<?php
+			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $custom_css is built from esc_attr() for user input; rest is static.
+			echo $custom_css;
+			?>
 		</style>
 		<?php
 	}
