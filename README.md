@@ -80,8 +80,6 @@ To fix lint issues automatically:
 
 ## CSS & JS
 
-If you're updating CSS you have a couple options, since it's all SCSS.
-
 `$ npm run build` will build all the CSS and JS, as well as update all the libraries.
 
 `$ npm run buildquick` will build the assets and copy files over _without_ updating libraries.
@@ -161,6 +159,7 @@ The following folders/files are for use by Developers. They are not pushed to th
 * `/.cursor/` - Cursor specific settings
 * `./.githooks/` - shared hooks (pre-commit etc)
 * `./.github/` - all Github specific files such as workflows, dependabot, and pull request templates
+* `./.githooks/` - shared hooks (pre-commit etc)
 * `/.vscode/` - default VSCode settings
 * `/docs/` - Structure files
 * `.editorconfig` - Basic editor configuration
