@@ -12,7 +12,7 @@
 namespace LWTV\Rest_API;
 
 use LWTV\Queeries\Post_Type;
-use LWTV\Queeries\Taxonomy as Queery_Taxonomy;
+use LWTV\Queeries\Taxonomy_Optimized as Queery_Taxonomy;
 use LWTV\CPTs\Characters as CPT_Characters;
 use LWTV\CPTs\Shows as CPT_Shows;
 use LWTV\CPTs\Actors as CPT_Actors;

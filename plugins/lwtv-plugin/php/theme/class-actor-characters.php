@@ -69,7 +69,18 @@ class Actor_Characters {
 
 		$characters = $this->generate_list( $actor_id );
 
-		return count( $characters );
+		if ( ! is_array( $characters ) ) {
+			return 0;
+		}
+
+		$published = array_filter(
+			array_map( 'intval', $characters ),
+			static function ( $id ) {
+				return $id > 0 && 'publish' === get_post_status( $id );
+			}
+		);
+
+		return count( $published );
 	}
 
 	/**
@@ -239,7 +250,7 @@ class Actor_Characters {
 				if ( isset( $actors ) && ! empty( $actors ) ) {
 					foreach ( $actors as $actor ) {
 						// We have to check because due to so many characters, we have some actor mis-matches.
-						if ( ( (int) $actor === (int) $actor_id ) && has_term( 'dead', 'lez_cliches', $char_id ) ) {
+						if ( ( (int) $actor === (int) $actor_id ) && 'publish' === get_post_status( $char_id ) && has_term( 'dead', 'lez_cliches', $char_id ) ) {
 							$dead[ $char_id ] = array(
 								'id'    => $char_id,
 								'title' => get_the_title( $char_id ),
