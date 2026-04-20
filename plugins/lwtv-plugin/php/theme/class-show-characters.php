@@ -100,6 +100,12 @@ class Show_Characters {
 		foreach ( $characters as $char_id ) {
 			$shows_array = get_post_meta( $char_id, 'lezchars_show_group', true );
 
+			if ( empty( $shows_array ) || ! is_array( $shows_array ) ) {
+				continue;
+			}
+
+			$shows_array_simple = array();
+
 			foreach ( $shows_array as $char_show ) {
 				// Remove the Array if it's there.
 				if ( is_array( $char_show['show'] ) ) {
@@ -117,9 +123,9 @@ class Show_Characters {
 				// Add the tax for the character to the show.
 				wp_add_object_terms( (int) $show_id, (int) $term_id, Characters::SHADOW_TAXONOMY );
 			}
-
-			return $characters;
 		}
+
+		return $characters;
 	}
 
 	/**

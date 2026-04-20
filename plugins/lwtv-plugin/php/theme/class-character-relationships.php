@@ -3,7 +3,7 @@
 namespace LWTV\Theme;
 
 use LWTV\CPTs\Characters;
-use LWTV\Queeries\Taxonomy as Queery_Taxonomy;
+use LWTV\Queeries\Taxonomy_Optimized as Queery_Taxonomy;
 
 class Character_Relationships {
 	/**
@@ -34,12 +34,25 @@ class Character_Relationships {
 
 		// Get the post_meta for lezchars_relationship_chart for THIS character:
 		$relationships = get_post_meta( $char_id, 'lezchars_relationship_chart', true );
+		if ( ! is_array( $relationships ) ) {
+			$relationships = ( $relationships ) ? array( $relationships ) : array();
+		}
 
 		// Combine lists (all chars who ref this char, and all chars this char refs):
 		$all_chars = array_merge( $shadow_chars, $relationships );
 
 		// Remove dupes.
-		$all_chars = array_unique( $all_chars );
+		$all_chars = array_unique( array_map( 'intval', $all_chars ) );
+
+		// Only published character posts (exclude draft, pending, private, etc.).
+		$all_chars = array_values(
+			array_filter(
+				$all_chars,
+				static function ( $id ) {
+					return $id > 0 && 'publish' === get_post_status( $id );
+				}
+			)
+		);
 
 		// Output.
 		return $all_chars;
