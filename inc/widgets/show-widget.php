@@ -26,6 +26,7 @@ class LWTV_Show_Widget extends WP_Widget {
 		// start a Queery
 		$show_args = array(
 			'post_type'      => 'post_type_shows',
+			'post_status'    => 'publish',
 			'posts_per_page' => '1',
 			'orderby'        => 'date',
 			'order'          => 'DESC',

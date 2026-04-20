@@ -26,6 +26,7 @@ class LWTV_Character_Widget extends WP_Widget {
 		// start a Queery
 		$char_args = array(
 			'post_type'      => 'post_type_characters',
+			'post_status'    => 'publish',
 			'posts_per_page' => '1',
 			'orderby'        => 'date',
 			'order'          => 'DESC',

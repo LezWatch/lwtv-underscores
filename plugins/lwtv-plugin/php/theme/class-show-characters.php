@@ -100,6 +100,12 @@ class Show_Characters {
 		foreach ( $characters as $char_id ) {
 			$shows_array = get_post_meta( $char_id, 'lezchars_show_group', true );
 
+			if ( empty( $shows_array ) || ! is_array( $shows_array ) ) {
+				continue;
+			}
+
+			$shows_array_simple = array();
+
 			foreach ( $shows_array as $char_show ) {
 				// Remove the Array if it's there.
 				if ( is_array( $char_show['show'] ) ) {
@@ -117,9 +123,9 @@ class Show_Characters {
 				// Add the tax for the character to the show.
 				wp_add_object_terms( (int) $show_id, (int) $term_id, Characters::SHADOW_TAXONOMY );
 			}
-
-			return $characters;
 		}
+
+		return $characters;
 	}
 
 	/**
@@ -147,24 +153,33 @@ class Show_Characters {
 		$display = array();
 
 		foreach ( $characters as $char_id ) {
+			if ( 'publish' !== get_post_status( $char_id ) ) {
+				continue;
+			}
+
 			$shows_array = get_post_meta( $char_id, 'lezchars_show_group', true );
 
 			// If the character is in this show, AND a published character,
 			// AND has this role ON THIS SHOW we will pass the following
 			// data to the character template to determine what to display.
 			if ( isset( $shows_array ) && ! empty( $shows_array ) ) {
+				$shows_roles = array();
+
 				foreach ( $shows_array as $char_show ) {
 					// Remove the Array if it's there.
 					if ( is_array( $char_show['show'] ) ) {
 						$char_show['show'] = $char_show['show'][0];
 					}
 
-					if ( ! (int) $char_show['show'] === (int) $show_id ) {
+					if ( (int) $char_show['show'] !== (int) $show_id ) {
 						continue;
 					}
 
 					$shows_roles[ $char_show['show'] ] = $char_show['type'];
-					$shows_array_simple[]              = $char_show['show'];
+				}
+
+				if ( ! isset( $shows_roles[ $show_id ] ) ) {
+					continue;
 				}
 
 				if ( 'all' === $role ) {
@@ -297,10 +312,6 @@ class Show_Characters {
 					}
 				}
 			}
-		}
-
-		if ( empty( $new_characters ) ) {
-			$new_characters = $characters;
 		}
 
 		update_post_meta( $show_id, 'lezshows_dead_count', $char_counts['dead'] );
