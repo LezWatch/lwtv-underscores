@@ -51,7 +51,7 @@
     "@npmcli/fs": "^5",
     "@popperjs/core": "^2.11.8",
     "@wordpress/block-editor": "^15.17.0",
-    "@wordpress/components": "^32.6.0",
+    "@wordpress/components": "^33.0.0",
     "@wordpress/data": "^10.44.0",
     "@wordpress/editor": "^14.44.0",
     "@wordpress/element": "^6.44.0",
