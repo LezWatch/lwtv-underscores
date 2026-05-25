@@ -7,6 +7,10 @@
 
 namespace LWTV\Statistics\Build;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use LWTV\CPTs\Characters as CPT_Characters;
 use LWTV\CPTs\Shows as CPT_Shows;
 

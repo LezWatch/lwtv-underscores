@@ -8,6 +8,11 @@
 
 namespace LWTV\Features;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+
 // Prevent auto upgrades if we're on the dev site.
 if ( defined( 'LWTV_DEV_SITE' ) && LWTV_DEV_SITE ) {
 	return;

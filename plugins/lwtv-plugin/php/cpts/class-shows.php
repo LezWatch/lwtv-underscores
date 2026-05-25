@@ -7,6 +7,10 @@
 
 namespace LWTV\CPTs;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use LWTV\_Components\CPTs;
 use LWTV\CPTs\Shows\{ CMB2_Metaboxes, Custom_Columns, Shows_Like_This, Ways_To_Watch };
 use LWTV\Plugins\CMB2;

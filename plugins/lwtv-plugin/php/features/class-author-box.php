@@ -5,6 +5,11 @@
 
 namespace LWTV\Features;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+
 class Author_Box {
 
 	protected static $version = '3.0.0';

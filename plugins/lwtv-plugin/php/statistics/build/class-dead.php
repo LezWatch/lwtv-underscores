@@ -7,6 +7,11 @@
 
 namespace LWTV\Statistics\Build;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+
 class Dead {
 	/**
 	 * Get total dead characters

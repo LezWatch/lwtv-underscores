@@ -5,6 +5,10 @@
 
 namespace LWTV\Debugger;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use LWTV\_Components\Debugger as Debug_Tool;
 use LWTV\Debugger\Characters as Characters_Debugger;
 use LWTV\CPTs\Shows\Ways_To_Watch;

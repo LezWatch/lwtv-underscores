@@ -7,6 +7,10 @@
 
 namespace LWTV\CPTs;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 class TVMaze {
 
 	/**

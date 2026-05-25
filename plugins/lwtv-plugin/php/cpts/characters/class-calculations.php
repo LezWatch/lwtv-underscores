@@ -6,6 +6,10 @@
 
 namespace LWTV\CPTs\Characters;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use LWTV\CPTs\Characters as CPT_Characters;
 use LWTV\CPTs\Actors\Calculations as Actors_Calculations;
 use LWTV\CPTs\Shows\Calculations as Shows_Calculations;

@@ -7,6 +7,10 @@
 
 namespace LWTV\Statistics;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use LWTV\Statistics\Format\Barcharts_Optimized;
 use LWTV\Statistics\Format\Trendline_Optimized;
 use LWTV\Statistics\Format\Piecharts_Optimized;

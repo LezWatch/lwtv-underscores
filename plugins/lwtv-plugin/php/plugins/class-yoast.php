@@ -12,6 +12,11 @@
 
 namespace LWTV\Plugins;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+
 class Yoast {
 
 	public function __construct() {

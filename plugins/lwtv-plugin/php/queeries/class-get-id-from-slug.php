@@ -7,6 +7,11 @@
 
 namespace LWTV\Queeries;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+
 class Get_ID_From_Slug {
 
 	/**

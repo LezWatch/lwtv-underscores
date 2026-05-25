@@ -4,6 +4,10 @@
  */
 namespace LWTV\_Components;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use LWTV\Plugins\ActionScheduler;
 use LWTV\Plugins\CMB2;
 use LWTV\Plugins\Comment_Probation;

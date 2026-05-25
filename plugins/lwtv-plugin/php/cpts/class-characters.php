@@ -7,6 +7,10 @@
 
 namespace LWTV\CPTs;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use LWTV\CPTs\Characters\{ CMB2_Metaboxes, Custom_Columns };
 use LWTV\Plugins\CMB2;
 use LWTV\Rest_API\BYQ;

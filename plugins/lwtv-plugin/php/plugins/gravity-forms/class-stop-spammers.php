@@ -5,6 +5,10 @@
 
 namespace LWTV\Plugins\Gravity_Forms;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use LWTV\Features\Spammers;
 
 class Stop_Spammers {

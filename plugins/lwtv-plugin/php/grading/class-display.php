@@ -5,6 +5,11 @@
 
 namespace LWTV\Grading;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+
 class Display {
 
 	/**

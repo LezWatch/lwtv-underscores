@@ -9,6 +9,10 @@
 
 namespace LWTV\Schedulers;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use LWTV\CPTs\Actors as CPT_Actors;
 use LWTV\CPTs\Shows as CPT_Shows;
 use LWTV\CPTs\Characters as CPT_Characters;

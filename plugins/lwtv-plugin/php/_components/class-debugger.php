@@ -7,6 +7,10 @@
 
 namespace LWTV\_Components;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /**
  * Class for debugging. This includes the feature methods:
  * is_dev_site(), is_debug_mode(), and log()

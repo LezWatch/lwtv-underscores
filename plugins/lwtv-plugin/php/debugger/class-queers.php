@@ -5,6 +5,10 @@
 
 namespace LWTV\Debugger;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use LWTV\Queeries\Is_Actor_Queer;
 use LWTV\Queeries\Post_Type;
 use LWTV\CPTs\Characters as CPT_Characters;

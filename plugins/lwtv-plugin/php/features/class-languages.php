@@ -6,6 +6,11 @@
 
 namespace LWTV\Features;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+
 class Languages {
 
 	public function all_languages(): array {

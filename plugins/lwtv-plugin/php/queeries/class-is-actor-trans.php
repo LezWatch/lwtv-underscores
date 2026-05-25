@@ -7,6 +7,11 @@
 
 namespace LWTV\Queeries;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+
 class Is_Actor_Trans {
 
 	/**

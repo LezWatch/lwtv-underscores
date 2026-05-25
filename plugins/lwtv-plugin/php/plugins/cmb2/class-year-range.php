@@ -5,6 +5,11 @@
 
 namespace LWTV\Plugins\CMB2;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+
 class Date_Year_Range {
 
 	/**

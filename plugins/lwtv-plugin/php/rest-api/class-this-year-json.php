@@ -5,6 +5,10 @@
 
 namespace LWTV\Rest_API;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use LWTV\This_Year\Build\Characters_Builder;
 use LWTV\This_Year\Build\Shows_Builder;
 

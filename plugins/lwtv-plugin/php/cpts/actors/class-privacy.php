@@ -7,6 +7,11 @@
 
 namespace LWTV\CPTs\Actors;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+
 class Privacy {
 
 	/**

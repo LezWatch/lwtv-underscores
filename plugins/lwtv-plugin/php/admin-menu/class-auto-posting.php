@@ -9,6 +9,10 @@
 
 namespace LWTV\Admin_Menu;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 class Auto_Posting {
 
 	/**

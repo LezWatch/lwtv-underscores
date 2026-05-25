@@ -5,6 +5,10 @@
 
 namespace LWTV\CPTs\Actors;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use LWTV\_Components\Debugger;
 use LWTV\Debugger\Actors as Actors_Debugger;
 

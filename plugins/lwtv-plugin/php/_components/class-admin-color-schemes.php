@@ -11,6 +11,10 @@ namespace LWTV\_Components;
 use function add_action;
 use function wp_admin_css_color;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 class Admin_Color_Schemes implements Component {
 	/*
 	 * Construct

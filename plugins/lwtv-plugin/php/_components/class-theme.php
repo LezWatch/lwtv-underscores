@@ -7,6 +7,10 @@
  */
 namespace LWTV\_Components;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use LWTV\Rest_API\BYQ;
 use LWTV\Theme\Actor_Age;
 use LWTV\Theme\Actor_Birthday;

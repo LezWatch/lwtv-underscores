@@ -7,6 +7,10 @@
 
 namespace LWTV\Rest_API;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use LWTV\_Components\Statistics_Optimized as Base_Stats;
 use LWTV\Queeries\Is_Actor_Queer;
 use LWTV\Queeries\Post_Type;

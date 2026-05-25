@@ -11,6 +11,10 @@
 
 namespace LWTV\_Components;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 class Symbolicons implements Component, Templater {
 
 	// Names of the files.

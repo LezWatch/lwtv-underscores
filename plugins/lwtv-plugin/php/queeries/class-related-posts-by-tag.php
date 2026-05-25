@@ -7,6 +7,11 @@
 
 namespace LWTV\Queeries;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+
 class Related_Posts_By_Tag {
 
 	/**

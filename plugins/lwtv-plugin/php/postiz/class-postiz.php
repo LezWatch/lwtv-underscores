@@ -9,6 +9,11 @@
 
 namespace LWTV\Postiz;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+
 class Postiz {
 
 	/**

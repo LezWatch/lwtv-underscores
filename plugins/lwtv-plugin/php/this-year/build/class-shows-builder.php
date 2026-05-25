@@ -7,6 +7,10 @@
 
 namespace LWTV\This_Year\Build;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /**
  * Shows class for building show data for a specific year
  */

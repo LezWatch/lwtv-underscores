@@ -2,6 +2,11 @@
 
 namespace LWTV\Theme;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+
 class Taxonomy_Archive_Title {
 	/**
 	 * Taxonomy Archive Title

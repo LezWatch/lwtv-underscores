@@ -11,6 +11,11 @@
 
 namespace LWTV\Plugins;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+
 class Related_Posts_By_Taxonomy {
 	public function __construct() {
 		add_filter( 'related_posts_by_taxonomy_template_directory', array( $this, 'template_directory' ), 10, 3 );
