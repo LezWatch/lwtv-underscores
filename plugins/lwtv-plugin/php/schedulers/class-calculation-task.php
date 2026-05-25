@@ -55,7 +55,14 @@ class Calculation_Task {
 				break;
 			default:
 				lwtv_plugin()->debug_log( 'calculations', "Unsupported post type: {$post_type} for ID: {$post_id}" );
-				break;
+				return;
+		}
+
+		// Calculations update post meta (scores, counts, on_air) outside of save_post,
+		// so FacetWP won't auto-sync. Re-index the post now that meta is current.
+		if ( function_exists( 'FWP' ) && isset( FWP()->indexer ) ) {
+			FWP()->indexer->index( $post_id );
+			lwtv_plugin()->debug_log( 'calculations', "Triggered FacetWP re-index for {$post_type} ID: {$post_id}" );
 		}
 	}
 
