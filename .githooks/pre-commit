@@ -3,8 +3,9 @@
 # Load common paths (Homebrew, NVM, etc.)
 export PATH="/usr/local/bin:/opt/homebrew/bin:$PATH"
 
-# If you use NVM, try to source it
+# If you use NVM, try to source it and switch to the project version
 [ -s "$HOME/.nvm/nvm.sh" ] && . "$HOME/.nvm/nvm.sh"
+[ -f ".nvmrc" ] && nvm use --silent
 
 # Run the linting script
 npm exec lint-staged
