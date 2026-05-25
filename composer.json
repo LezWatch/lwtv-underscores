@@ -11,7 +11,7 @@
         }
     ],
     "require": {
-        "php": ">=8.2",
+        "php": ">=8.5",
         "twbs/bootstrap": "^5.3"
     },
     "scripts": {
