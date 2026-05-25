@@ -16,6 +16,11 @@
 
 namespace LWTV\Schedulers;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+
 class FixCharShows_Task {
 
 	/**

@@ -7,6 +7,10 @@
 
 namespace LWTV\Validator;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use LWTV\Debugger\Actors as Actors_Debugger;
 
 class Actor_Wiki {

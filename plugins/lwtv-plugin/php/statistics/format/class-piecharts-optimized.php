@@ -2,6 +2,11 @@
 
 namespace LWTV\Statistics\Format;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+
 class Piecharts_Optimized {
 	/**
 	 * Format data as piechart

@@ -7,6 +7,10 @@
 
 namespace LWTV\Statistics;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use LWTV\Queeries\Taxonomy_Optimized as Queery_Taxonomy;
 use LWTV\Statistics\Build\Dead as Build_Dead;
 

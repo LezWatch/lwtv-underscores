@@ -9,6 +9,11 @@
 
 namespace LWTV\Plugins;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+
 class MonsterInsights {
 
 	/**

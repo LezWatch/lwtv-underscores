@@ -11,6 +11,10 @@
 
 namespace LWTV\Statistics\Build;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use LWTV\Statistics\Build\On_Air_Optimized as Build_On_Air;
 
 /**

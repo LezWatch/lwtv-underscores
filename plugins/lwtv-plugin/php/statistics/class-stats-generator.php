@@ -7,6 +7,10 @@
 
 namespace LWTV\Statistics;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use LWTV\Statistics\Build\We_Love_It as Build_We_Love_It;
 use LWTV\Statistics\Build\Worth_It as Build_Worth_It;
 use LWTV\Statistics\Build\Nations as Build_Nations;

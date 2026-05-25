@@ -7,6 +7,11 @@
 
 namespace LWTV\Postiz;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+
 class New_Post extends Postiz {
 
 	/**

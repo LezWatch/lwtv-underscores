@@ -6,6 +6,11 @@
  */
 namespace LWTV\Statistics\Format;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+
 class Shared {
 
 	/**

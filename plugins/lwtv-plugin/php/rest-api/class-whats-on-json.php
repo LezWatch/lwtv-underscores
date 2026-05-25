@@ -8,6 +8,10 @@
 
 namespace LWTV\Rest_API;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use LWTV\_Components\Calendar;
 use LWTV\Calendar\{ ICS_Parser, TVMaze };
 

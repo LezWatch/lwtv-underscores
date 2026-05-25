@@ -7,6 +7,10 @@
 
 namespace LWTV;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use LWTV\_Components;
 use LWTV\_Helpers\Utils;
 

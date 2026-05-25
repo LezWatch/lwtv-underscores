@@ -6,6 +6,10 @@
 
 namespace LWTV\CPTs\Actors;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use LWTV\Queeries\Is_Actor_Queer;
 use LWTV\CPTs\Actors as CPT_Actors;
 

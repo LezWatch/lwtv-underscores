@@ -11,6 +11,10 @@
 
 namespace LWTV\Debugger;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use LWTV\_Components\Debugger as Debug_Tool;
 use LWTV\Queeries\Post_Type;
 

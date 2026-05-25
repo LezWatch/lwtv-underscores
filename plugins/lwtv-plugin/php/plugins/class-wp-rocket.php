@@ -7,6 +7,11 @@
 
 namespace LWTV\Plugins;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+
 class WP_Rocket {
 
 	public function __construct() {

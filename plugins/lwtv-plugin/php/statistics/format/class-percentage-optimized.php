@@ -7,6 +7,11 @@
 
 namespace LWTV\Statistics\Format;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+
 class Percentage_Optimized {
 
 	/**

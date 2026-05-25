@@ -12,6 +12,11 @@
 
 namespace LWTV\Plugins;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+
 class Comment_Probation {
 
 	const META_KEY = '_comment_probation';

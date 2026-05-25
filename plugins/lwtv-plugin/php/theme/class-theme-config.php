@@ -10,6 +10,11 @@
 
 namespace LWTV\Theme;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+
 class Theme_Config {
 	/**
 	 * Constructor

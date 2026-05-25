@@ -7,6 +7,11 @@
 
 namespace LWTV\This_Year\Format;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+
 class Dead_Characters_Formatter {
 
 	/**
