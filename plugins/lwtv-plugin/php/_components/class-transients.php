@@ -5,6 +5,10 @@
  */
 namespace LWTV\_Components;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 class Transients implements Component, Templater {
 
 	const CACHE_DURATION = HOUR_IN_SECONDS / 2;

@@ -6,6 +6,10 @@
 
 namespace LWTV\_Components;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use LWTV\Grading\Display;
 use LWTV\Grading\LWTV;
 use LWTV\Grading\TMDB;

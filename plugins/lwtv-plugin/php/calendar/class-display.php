@@ -7,6 +7,10 @@
 
 namespace LWTV\Calendar;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use LWTV\_Components\Calendar as Build_Calendar;
 use LWTV\Calendar\Display_List;
 use LWTV\Calendar\Data_Processor;
@@ -255,10 +259,10 @@ class Display {
 		);
 
 		// Build navigation links:
-		$this_week      = add_query_arg( array( 'tvview' => $tv_view ), get_permalink() );
-		$last_week      = add_query_arg( $last_query_args, get_permalink() );
+		$this_week      = esc_url( add_query_arg( array( 'tvview' => $tv_view ), get_permalink() ) );
+		$last_week      = esc_url( add_query_arg( $last_query_args, get_permalink() ) );
 		$last_week_icon = lwtv_plugin()->get_symbolicon( svg: 'caret-left-circle.svg', icon: 'svg-chevron-circle-left', max_size: '14' );
-		$next_week      = add_query_arg( $next_query_args, get_permalink() );
+		$next_week      = esc_url( add_query_arg( $next_query_args, get_permalink() ) );
 		$next_week_icon = lwtv_plugin()->get_symbolicon( svg: 'caret-right-circle.svg', icon: 'svg-chevron-circle-right', max_size: '14' );
 
 		// Last week:

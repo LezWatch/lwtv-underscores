@@ -7,6 +7,10 @@
 
 namespace LWTV\Calendar;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 class Generate_Calendar {
 
 	/**

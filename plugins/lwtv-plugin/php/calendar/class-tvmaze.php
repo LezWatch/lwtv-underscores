@@ -5,6 +5,10 @@
 
 namespace LWTV\Calendar;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use LWTV\_Helpers\{ Calendar_Object_Pool, Calendar_Meta_Batcher };
 
 class TVMaze {

@@ -6,6 +6,10 @@
 
 namespace LWTV\_Components;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use LWTV\Admin_Menu\Auto_Posting;
 use LWTV\Admin_Menu\Debug_Logging;
 use LWTV\Admin_Menu\Exclusions;

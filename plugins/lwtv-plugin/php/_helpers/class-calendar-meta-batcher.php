@@ -10,6 +10,10 @@
 
 namespace LWTV\_Helpers;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 class Calendar_Meta_Batcher {
 
 	/**

@@ -5,6 +5,10 @@
 
 namespace LWTV\CPTs\Shows;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use LWTV\CPTs\Shows\Ways_To_Watch;
 use LWTV\Features\Languages;
 use LWTV\Plugins\CMB2;

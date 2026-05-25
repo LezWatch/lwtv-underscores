@@ -9,6 +9,10 @@ Version: 1.2
 
 namespace LWTV\Calendar;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 // Include iCal parser
 require_once 'ICal/ICal.php';
 require_once 'ICal/Event.php';

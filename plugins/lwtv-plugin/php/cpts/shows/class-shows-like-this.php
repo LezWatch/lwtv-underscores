@@ -9,6 +9,10 @@
 
 namespace LWTV\CPTs\Shows;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 class Shows_Like_This {
 
 	/**
