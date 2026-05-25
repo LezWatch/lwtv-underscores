@@ -5,6 +5,10 @@
 
 namespace LWTV\Debugger;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use LWTV\_Components\Debugger as Debug_Tool;
 use LWTV\Debugger\Characters as Characters_Debugger;
 use LWTV\CPTs\Shows\Ways_To_Watch;
@@ -13,6 +17,10 @@ use LWTV\Queeries\Post_Type;
 class Shows {
 
 	const ITEMS_TO_CHECK = array(
+		'score'      => array(
+			'message' => 'Score is 0 or not set - needs characters and/or ratings.',
+			'meta'    => 'lezshows_the_score',
+		),
 		'details'    => array(
 			'message'  => 'No worthit details.',
 			'meta'     => 'lezshows_worthit_details',

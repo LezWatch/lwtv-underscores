@@ -7,6 +7,10 @@
 
 namespace LWTV\_Components;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 class Dashboard_Widgets implements Component {
 
 	/*

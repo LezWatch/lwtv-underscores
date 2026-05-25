@@ -8,6 +8,11 @@
 
 namespace LWTV\This_Year\Build;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+
 class Shared_Builder {
 	/**
 	 * Get character marker for alphabetical grouping

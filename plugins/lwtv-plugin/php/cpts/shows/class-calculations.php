@@ -6,6 +6,10 @@
 
 namespace LWTV\CPTs\Shows;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use LWTV\_Components\Grading;
 use LWTV\Queeries\Is_Actor_Trans;
 use LWTV\CPTs\Shows as CPT_Shows;

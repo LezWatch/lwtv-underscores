@@ -5,6 +5,10 @@
 
 namespace LWTV\Plugins\CMB2;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use LWTV\CPTs\Characters;
 
 class Taxonomies {

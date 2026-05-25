@@ -7,6 +7,11 @@
 
 namespace LWTV\Theme;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+
 class Get_Loved {
 
 	/**

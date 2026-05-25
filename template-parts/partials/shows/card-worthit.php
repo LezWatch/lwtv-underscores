@@ -7,6 +7,10 @@
  * @package LezWatch.TV
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 $show_id = $args['show_id'] ?? null;
 if ( ! $show_id ) {
 	return;

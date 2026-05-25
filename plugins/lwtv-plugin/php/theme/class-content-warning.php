@@ -2,6 +2,11 @@
 
 namespace LWTV\Theme;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+
 class Content_Warning {
 	/**
 	 * Show content warning

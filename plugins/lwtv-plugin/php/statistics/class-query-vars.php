@@ -8,6 +8,11 @@
 
 namespace LWTV\Statistics;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+
 class Query_Vars {
 
 	/**

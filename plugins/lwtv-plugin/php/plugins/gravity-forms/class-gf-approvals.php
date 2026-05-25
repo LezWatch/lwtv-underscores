@@ -10,6 +10,10 @@
 
 namespace LWTV\Plugins\Gravity_Forms;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use LWTV\Plugins\Gravity_Forms\Stop_Spammers;
 
 // Make sure Gravity Forms is active and already loaded.

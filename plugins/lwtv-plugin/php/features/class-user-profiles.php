@@ -5,6 +5,11 @@
 
 namespace LWTV\Features;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+
 class User_Profiles {
 
 	public function __construct() {

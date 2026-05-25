@@ -6,6 +6,10 @@
 
 namespace LWTV\Validator;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use LWTV\Admin_Menu\Validation;
 use LWTV\Debugger\Characters as Character_Debugger;
 

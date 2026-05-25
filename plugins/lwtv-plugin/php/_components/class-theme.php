@@ -7,6 +7,10 @@
  */
 namespace LWTV\_Components;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use LWTV\Rest_API\BYQ;
 use LWTV\Theme\Actor_Age;
 use LWTV\Theme\Actor_Birthday;
@@ -26,6 +30,7 @@ use LWTV\Theme\Theme_Config;
 use LWTV\Theme\TVMaze;
 use LWTV\Theme\Ways_To_Watch;
 use LWTV\Theme\Get_Loved;
+use LWTV\Grading\LWTV as LWTV_Grading;
 
 class Theme implements Component, Templater {
 
@@ -312,6 +317,9 @@ class Theme implements Component, Templater {
 				exit;
 			}
 
+			// Get the current LWTV Score
+			$show_score = (int) ( new LWTV_Grading() )->get_score( $post_id )
+
 			?>
 			<section id="editor-tools" class="widget widget_editor_tools">
 				<div class="card">
@@ -320,6 +328,15 @@ class Theme implements Component, Templater {
 						</br>
 						<center><button type="submit" class="btn btn-primary btn-block" id="submit" name="submit">
 							Refresh Data
+							<?php
+							if ( 0 === $show_score ) {
+								?>
+								<span class="position-absolute top-0 start-100 translate-middle p-2 bg-danger border border-light rounded-circle">
+									<span class="visually-hidden">RERUN!</span>
+								</span>
+								<?php
+							}
+							?>
 						</button></center>
 						<?php wp_nonce_field( 'lwtv-update-math' ); ?>
 						</br>

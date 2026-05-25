@@ -7,6 +7,11 @@
 
 namespace LWTV\Postiz;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+
 class Of_The_Day extends Postiz {
 
 	/**

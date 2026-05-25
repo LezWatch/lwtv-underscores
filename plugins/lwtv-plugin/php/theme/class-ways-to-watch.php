@@ -7,6 +7,10 @@
 
 namespace LWTV\Theme;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use LWTV\CPTs\Shows\Ways_To_Watch as Ways_To_Watch_Taxonomy;
 
 class Ways_To_Watch {

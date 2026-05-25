@@ -4,6 +4,10 @@
  */
 namespace LWTV\_Components;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use LWTV\Blocks\Serverside;
 
 class Blocks implements Component {

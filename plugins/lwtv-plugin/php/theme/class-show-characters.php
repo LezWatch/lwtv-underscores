@@ -37,6 +37,10 @@
 
 namespace LWTV\Theme;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use LWTV\CPTs\Characters;
 use LWTV\CPTs\Shows;
 

@@ -8,6 +8,10 @@
 
 namespace LWTV\Rest_API;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use LWTV\Queeries\Post_Meta_And_Tax;
 use LWTV\Queeries\Post_Type;
 use LWTV\Rest_API\BYQ;

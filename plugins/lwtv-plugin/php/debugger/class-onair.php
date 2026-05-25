@@ -9,6 +9,10 @@
 
 namespace LWTV\Debugger;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use LWTV\CPTs\Shows as CPT_Shows;
 use LWTV\Queeries\Post_Type;
 

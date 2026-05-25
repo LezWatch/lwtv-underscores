@@ -5,6 +5,10 @@
 
 namespace LWTV\CPTs\Characters;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use LWTV\Plugins\CMB2;
 use LWTV\CPTs\Characters as CPT_Characters;
 

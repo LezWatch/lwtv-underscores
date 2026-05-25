@@ -2,6 +2,11 @@
 
 namespace LWTV\Theme;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+
 class Stats_Symbolicon {
 	/**
 	 * Symbolicon for Stats pages

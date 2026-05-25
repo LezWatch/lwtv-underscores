@@ -8,6 +8,10 @@
 
 namespace LWTV\CPTs\Shows;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 class Ways_To_Watch {
 
 	// prefix for all custom fields

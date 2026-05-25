@@ -5,6 +5,10 @@
 
 namespace LWTV\Calendar;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use LWTV\_Components\Calendar as Build_Calendar;
 use LWTV\_Helpers\Calendar_Object_Pool;
 

@@ -2,6 +2,11 @@
 
 namespace LWTV\Theme;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+
 class Actor_Pronouns {
 	/**
 	 * Generate actor pronouns.

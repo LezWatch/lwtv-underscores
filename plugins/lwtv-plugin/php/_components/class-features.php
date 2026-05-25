@@ -6,6 +6,10 @@
 
 namespace LWTV\_Components;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use LWTV\Features\BlockAgents;
 use LWTV\Features\BlockTracking;
 use LWTV\Features\Dashboard_Posts_In_Progress;

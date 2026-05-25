@@ -7,6 +7,11 @@
 
 namespace LWTV\Queeries;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+
 class Post_Meta {
 
 	/**

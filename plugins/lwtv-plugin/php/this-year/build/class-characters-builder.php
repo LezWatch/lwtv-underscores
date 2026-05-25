@@ -7,6 +7,10 @@
 
 namespace LWTV\This_Year\Build;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /**
  * Characters class for building character data for a specific year
  */

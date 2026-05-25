@@ -11,8 +11,7 @@
         }
     ],
     "require": {
-        "php": ">=8.2",
-        "slowprog/composer-copy-file": "^0.3",
+        "php": ">=8.5",
         "twbs/bootstrap": "^5.3"
     },
     "scripts": {

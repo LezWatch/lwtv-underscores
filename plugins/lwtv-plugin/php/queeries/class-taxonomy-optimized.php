@@ -11,6 +11,11 @@
 
 namespace LWTV\Queeries;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+
 class Taxonomy_Optimized {
 
 	/**

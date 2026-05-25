@@ -7,6 +7,10 @@
 
 namespace LWTV\This_Year;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use LWTV\This_Year\Build\Characters_Builder;
 use LWTV\This_Year\Build\Shows_Builder;
 use LWTV\This_Year\Format\Dead_Characters_Formatter;

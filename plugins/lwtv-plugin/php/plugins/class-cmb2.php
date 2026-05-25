@@ -7,6 +7,10 @@
 
 namespace LWTV\Plugins;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use LWTV\Plugins\CMB2\{ Attached_Posts, Meta_By_Role, Metabox_Profile, Symbolicons, Taxonomies };
 
 class CMB2 {

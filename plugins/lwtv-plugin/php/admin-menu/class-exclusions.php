@@ -6,6 +6,10 @@
 
 namespace LWTV\Admin_Menu;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use LWTV\Queeries\Post_Meta;
 use LWTV\CPTs\Actors as CPT_Actors;
 

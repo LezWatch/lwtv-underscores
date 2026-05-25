@@ -7,6 +7,11 @@
 
 namespace LWTV\Statistics\Build;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+
 class Queer_IRL {
 	/**
 	 * Generate queer IRL statistics

@@ -9,6 +9,10 @@
 
 namespace LWTV\Rest_API;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use LWTV\_Components\Of_The_Day;
 
 class OTD_JSON {

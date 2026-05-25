@@ -7,6 +7,10 @@
 
 namespace LWTV\Queeries;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use LWTV\CPTs\Shows as CPT_Shows;
 use LWTV\CPTs\Characters as CPT_Characters;
 use LWTV\CPTs\Actors as CPT_Actors;

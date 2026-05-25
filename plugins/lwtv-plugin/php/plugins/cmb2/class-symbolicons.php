@@ -7,6 +7,11 @@
 
 namespace LWTV\Plugins\CMB2;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+
 class Symbolicons {
 
 	public $icon_taxonomies; // Taxonomies that have an icon

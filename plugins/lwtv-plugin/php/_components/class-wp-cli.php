@@ -9,6 +9,10 @@
 
 namespace LWTV\_Components;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 class WP_CLI implements Component {
 
 	public function init(): void {

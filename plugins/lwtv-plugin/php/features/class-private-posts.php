@@ -10,6 +10,11 @@
 
 namespace LWTV\Features;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+
 class Private_Posts {
 
 	/**

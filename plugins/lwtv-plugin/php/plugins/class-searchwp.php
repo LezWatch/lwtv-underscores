@@ -6,6 +6,11 @@
  */
 namespace LWTV\Plugins;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+
 class SearchWP {
 	/**
 	 * Constructor

@@ -2,6 +2,11 @@
 
 namespace LWTV\Theme;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+
 class Actor_Terms {
 	/**
 	 * Generate Actor Data based on terms

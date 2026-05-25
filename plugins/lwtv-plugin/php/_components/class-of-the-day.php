@@ -6,6 +6,10 @@
 
 namespace LWTV\_Components;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use LWTV\Plugins\Cache;
 use LWTV\Queeries\Post_Meta;
 use LWTV\Rest_API\BYQ;

@@ -5,6 +5,11 @@
 
 namespace LWTV\Rest_API;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+
 class List_JSON {
 
 	/**

@@ -2,6 +2,10 @@
 
 namespace LWTV\Theme;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use LWTV\CPTs\Characters;
 use LWTV\Queeries\Taxonomy_Optimized as Queery_Taxonomy;
 
