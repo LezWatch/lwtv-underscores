@@ -13,6 +13,10 @@ use LWTV\Queeries\Post_Type;
 class Shows {
 
 	const ITEMS_TO_CHECK = array(
+		'score'      => array(
+			'message' => 'Score is 0 or not set - needs characters and/or ratings.',
+			'meta'    => 'lezshows_the_score',
+		),
 		'details'    => array(
 			'message'  => 'No worthit details.',
 			'meta'     => 'lezshows_worthit_details',
