@@ -633,7 +633,8 @@ class BYQ {
 		$placeholders = implode( ',', array_fill( 0, count( $character_ids ), '%d' ) );
 
 		$query = $wpdb->prepare(
-			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $placeholders contains only '%d' format strings; $wpdb->postmeta is a trusted table name property
+			// WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $placeholders contains only '%d' format strings; $wpdb->postmeta is a trusted table name property
+			// phpcs:ignore
 			"SELECT post_id, meta_key, meta_value FROM {$wpdb->postmeta} WHERE post_id IN ({$placeholders}) AND meta_key IN ('lezchars_death_year', 'lezchars_last_death', 'lezchars_show_group')",
 			...$character_ids
 		);
