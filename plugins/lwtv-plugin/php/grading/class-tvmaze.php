@@ -5,6 +5,10 @@
 
 namespace LWTV\Grading;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use LWTV\_Components\Grading as Grading_Component;
 
 class TVMaze {

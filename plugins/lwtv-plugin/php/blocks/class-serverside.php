@@ -7,6 +7,10 @@
 
 namespace LWTV\Blocks;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use LWTV\Calendar\Display as CalendarBlocks;
 use LWTV\Features\Shortcodes;
 

@@ -6,6 +6,10 @@
 
 namespace LWTV\CPTs\Shows;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 class Custom_Columns {
 
 	/**

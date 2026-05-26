@@ -2,6 +2,10 @@
 
 namespace LWTV\Statistics\Build;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use LWTV\Queeries\Taxonomy_Optimized as Queery_Taxonomy_Optimized;
 
 class Taxonomy_Optimized {

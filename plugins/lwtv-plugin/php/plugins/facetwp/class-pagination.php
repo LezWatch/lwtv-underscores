@@ -5,6 +5,11 @@
 
 namespace LWTV\Plugins\FacetWP;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+
 class Pagination {
 
 	/**

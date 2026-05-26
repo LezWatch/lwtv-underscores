@@ -7,6 +7,10 @@
 
 namespace LWTV\Admin_Menu;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use LWTV\Validator\Actor_Checker;
 use LWTV\Validator\Actor_IMDb;
 use LWTV\Validator\Actor_Wiki;

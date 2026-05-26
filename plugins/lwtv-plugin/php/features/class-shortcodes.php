@@ -11,6 +11,10 @@ use LWTV\Rest_API\BYQ;
 use LWTV\CPTs\Characters as CPT_Characters;
 use LWTV\CPTs\Shows as CPT_Shows;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 class Shortcodes {
 
 	protected static $version;
@@ -413,7 +417,7 @@ class Shortcodes {
 		);
 		$warning    = ( '' === $attributes['warning'] ) ? $default : sanitize_text_field( $attributes['warning'] );
 
-		return '<div class="alert alert-danger" role="alert"><strong>' . $warning . '</strong></div>';
+		return '<div class="alert alert-danger" role="alert"><strong>' . esc_html( $warning ) . '</strong></div>';
 	}
 
 	/*

@@ -16,6 +16,11 @@
 
 namespace LWTV\Features;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+
 class Dashboard_Posts_In_Progress {
 
 	/**

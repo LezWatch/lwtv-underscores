@@ -7,6 +7,10 @@
  */
 namespace LWTV\_Components;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use LWTV\Statistics\{ Gutenberg_SSR, Query_Vars, Stats_Counter, Stats_Handler, Stats_Generator };
 use LWTV\Statistics\Stats_Enqueues;
 use LWTV\CPTs\Actors as CPT_Actors;

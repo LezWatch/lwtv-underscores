@@ -7,6 +7,11 @@
 
 namespace LWTV\Statistics;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+
 class Stats_Enqueues {
 
 	/**

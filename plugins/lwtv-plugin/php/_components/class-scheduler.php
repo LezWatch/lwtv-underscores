@@ -9,6 +9,10 @@
 
 namespace LWTV\_Components;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use LWTV\Schedulers\TMDB_Task;
 use LWTV\Schedulers\TMDB_Batch_Task;
 use LWTV\Schedulers\Cache_Task;

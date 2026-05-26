@@ -2,6 +2,11 @@
 
 namespace LWTV\Statistics\Format;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+
 class Trendline_Optimized {
 	/**
 	 * Format data as trendline

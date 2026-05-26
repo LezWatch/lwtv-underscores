@@ -7,6 +7,10 @@ Version: 1.1.0
 
 namespace LWTV\Plugins;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use LWTV\Plugins\FacetWP\Indexing;
 use LWTV\Plugins\FacetWP\Labels;
 use LWTV\Plugins\FacetWP\Pagination;

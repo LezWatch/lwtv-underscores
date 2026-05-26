@@ -7,6 +7,10 @@
 
 namespace LWTV\Rest_API;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use LWTV\Debugger\Actors as Debug_Actors;
 use LWTV\Queeries\Post_Meta as Queeries_Post_Meta;
 use LWTV\CPTs\Actors as CPT_Actors;

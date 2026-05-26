@@ -7,6 +7,11 @@
 
 namespace LWTV\Features;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+
 class Plugin_Age {
 
 	// Default environment.
@@ -92,7 +97,7 @@ class Plugin_Age {
 		}
 
 		$request = wp_remote_post(
-			'http://api.wordpress.org/plugins/info/1.0/',
+			'https://api.wordpress.org/plugins/info/1.2/',
 			array(
 				'body' => array(
 					'action'  => 'plugin_information',
@@ -107,11 +112,9 @@ class Plugin_Age {
 		);
 
 		if ( 200 !== wp_remote_retrieve_response_code( $request ) || empty( $request ) ) {
-			// If there's no response, return with a cacheable response
 			return false;
 		} else {
-			// phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.serialize_unserialize
-			$response = unserialize( wp_remote_retrieve_body( $request ) );
+			$response = json_decode( wp_remote_retrieve_body( $request ) );
 		}
 
 		if ( isset( $response->last_updated ) ) {

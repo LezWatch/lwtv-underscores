@@ -7,6 +7,10 @@
 
 namespace LWTV\_Components;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use LWTV\Calendar\Generate_Calendar;
 use LWTV\Plugins\Cache;
 

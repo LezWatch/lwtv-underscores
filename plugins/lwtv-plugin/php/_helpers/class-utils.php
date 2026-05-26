@@ -7,6 +7,10 @@
 
 namespace LWTV\_Helpers;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /**
  * Class Utils
  */

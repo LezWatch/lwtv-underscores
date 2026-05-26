@@ -10,6 +10,10 @@
 
 namespace LWTV\Schedulers;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /**
  * Class BYQ_Task
  */

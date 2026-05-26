@@ -4,8 +4,11 @@
  */
 namespace LWTV\_Components;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use LWTV\Rest_API\Agents;
-use LWTV\Rest_API\Broom;
 use LWTV\Rest_API\BYQ;
 use LWTV\Rest_API\Export_JSON;
 use LWTV\Rest_API\IMDb_JSON;
@@ -25,7 +28,6 @@ class Rest_API implements Component, Templater {
 	 */
 	public function init(): void {
 		new Agents();
-		new Broom();
 		new BYQ();
 		new Export_JSON();
 		new IMDb_JSON();

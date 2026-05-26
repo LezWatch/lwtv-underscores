@@ -6,6 +6,10 @@
 
 namespace LWTV\CPTs;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use LWTV\Queeries\Related_Posts_By_Tag;
 use LWTV\CPTs\Shows as CPT_Shows;
 use LWTV\CPTs\Actors as CPT_Actors;

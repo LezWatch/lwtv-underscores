@@ -5,6 +5,10 @@
 
 namespace LWTV\Debugger;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use LWTV\Queeries\Get_ID_From_Slug;
 
 class Dupes {

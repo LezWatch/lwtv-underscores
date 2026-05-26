@@ -6,6 +6,10 @@
 
 namespace LWTV\CPTs\Characters;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 class Custom_Columns {
 
 	/**

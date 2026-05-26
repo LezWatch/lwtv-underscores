@@ -6,6 +6,10 @@
 
 namespace LWTV\_Components;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use LWTV\CPTs\{ Actors, Characters, Shows, Post_Meta, Related_Posts, TVMaze };
 use LWTV\CPTs\Shows\Shows_Like_This;
 
@@ -117,7 +121,11 @@ class CPTs implements Component, Templater {
 
 			// Bail if we don't have a response.
 			if ( ! is_array( $response ) || is_wp_error( $response ) ) {
-				lwtv_plugin()->debug_log( 'tmdb', 'Error getting TMDB info: ' . $response );
+				if ( is_wp_error( $response ) ) {
+					lwtv_plugin()->debug_log( 'tmdb', 'Error getting TMDB info: ' . $response->get_error_message() );
+				} else {
+					lwtv_plugin()->debug_log( 'tmdb', 'Error getting TMDB info: Invalid response' );
+				}
 				return false;
 			}
 

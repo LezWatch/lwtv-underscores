@@ -6,6 +6,10 @@
 
 namespace LWTV\Plugins;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use LWTV\Plugins\Gravity_Forms\Stop_Spammers;
 use LWTV\Plugins\Gravity_Forms\GF_Approvals;
 

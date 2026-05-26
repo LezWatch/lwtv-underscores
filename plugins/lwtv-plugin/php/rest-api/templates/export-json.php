@@ -1,4 +1,9 @@
 <?php
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /**
  * Template Name: Export JSON
  * Description: This is a custom exporter meant for easily exporting data.

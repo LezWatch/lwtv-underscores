@@ -10,6 +10,10 @@
 
 namespace LWTV\_Helpers;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use LWTV\Calendar\{ Display, Names, TVMaze };
 
 class Calendar_Object_Pool {

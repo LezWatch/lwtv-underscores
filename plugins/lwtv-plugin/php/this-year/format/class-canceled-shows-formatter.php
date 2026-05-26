@@ -7,6 +7,11 @@
 
 namespace LWTV\This_Year\Format;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+
 class Canceled_Shows_Formatter {
 
 	public function format_by_name_for_year( $this_year, $shows_by_name ): array {

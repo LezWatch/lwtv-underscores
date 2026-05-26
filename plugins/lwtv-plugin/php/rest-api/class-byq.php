@@ -13,6 +13,10 @@ namespace LWTV\Rest_API;
 use LWTV\Queeries\Taxonomy_Optimized as Queery_Taxonomy;
 use LWTV\CPTs\Characters as CPT_Characters;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 class BYQ {
 
 	/**
@@ -626,13 +630,17 @@ class BYQ {
 			return array();
 		}
 
-		// Create safe IN clause
-		$ids_string = implode( ',', $character_ids );
+		$placeholders = implode( ',', array_fill( 0, count( $character_ids ), '%d' ) );
 
-		$query = "SELECT post_id, meta_key, meta_value
-			FROM {$wpdb->postmeta}
-			WHERE post_id IN ($ids_string)
-			AND meta_key IN ('lezchars_death_year', 'lezchars_last_death', 'lezchars_show_group')";
+		$query = $wpdb->prepare(
+			// WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $placeholders contains only '%d' format strings; $wpdb->postmeta is a trusted table name property
+			// phpcs:ignore
+			"SELECT post_id, meta_key, meta_value FROM {$wpdb->postmeta} WHERE post_id IN ({$placeholders}) AND meta_key IN ('lezchars_death_year', 'lezchars_last_death', 'lezchars_show_group')",
+			...$character_ids
+		);
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- query built with prepare() above
+		$results = $wpdb->get_results( $query );
 
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- IDs are sanitized integers
 		$results = $wpdb->get_results( $query );

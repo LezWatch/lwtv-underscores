@@ -9,6 +9,10 @@
 
 namespace LWTV\Schedulers;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use LWTV\Plugins\Cache;
 
 /**
