@@ -145,8 +145,10 @@ class BYQ {
 		$cache_key   = 'byq_death_list_' . $this->get_data_version_hash();
 		$cached_list = lwtv_plugin()->get_transient( $cache_key );
 
-		// If there is no current filter, we're on a page load, so we can check the cache
-		if ( empty( $wp_current_filter ) ) {
+		// If there is no current filter we're on a page load — but REST API requests may also
+		// have an empty filter stack and must be allowed to regenerate the list directly.
+		$is_rest = defined( 'REST_REQUEST' ) && REST_REQUEST;
+		if ( empty( $wp_current_filter ) && ! $is_rest ) {
 			lwtv_plugin()->debug_log( 'buryqueers', 'wp_current_filter is empty' );
 			if ( false !== $cached_list ) {
 				lwtv_plugin()->debug_log( 'buryqueers', 'Returning cached death list check on page load.' );
@@ -367,11 +369,17 @@ class BYQ {
 
 		$cache_key     = 'byq_last_death_' . $this->get_data_version_hash();
 		$cached_result = lwtv_plugin()->get_transient( $cache_key );
-		// ID 83580 is Frankie, the first dead character we added. When this is finally fixed, we can
-		// remove this check. For now, we know if Frankie is NOT the last death, we should be okay.
-		if ( false !== $cached_result && ! is_wp_error( $cached_result ) && '83580' !== $cached_result['id'] ) {
-			lwtv_plugin()->debug_log( 'buryqueers', 'Returning cached last death: ' . wp_json_encode( $cached_result ) );
-			return $cached_result;
+		if ( false !== $cached_result && ! is_wp_error( $cached_result ) ) {
+			// 83580 is Frankie, the first dead character added — if she appears as "last death"
+			// the death_list cache has stale/wrong data; purge both caches and regenerate.
+			if ( 83580 === (int) $cached_result['id'] ) {
+				lwtv_plugin()->debug_log( 'buryqueers', 'Stale Frankie data detected in last_death cache — purging and regenerating' );
+				delete_transient( $cache_key );
+				delete_transient( 'byq_death_list_' . $this->get_data_version_hash() );
+			} else {
+				lwtv_plugin()->debug_log( 'buryqueers', 'Returning cached last death: ' . wp_json_encode( $cached_result ) );
+				return $cached_result;
+			}
 		} else {
 			lwtv_plugin()->debug_log( 'buryqueers', 'No cached last death found, generating new one' );
 		}
@@ -640,9 +648,6 @@ class BYQ {
 		);
 
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- query built with prepare() above
-		$results = $wpdb->get_results( $query );
-
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- IDs are sanitized integers
 		$results = $wpdb->get_results( $query );
 
 		lwtv_plugin()->debug_log( 'buryqueers', 'Bulk meta query results count: ' . count( $results ) );
