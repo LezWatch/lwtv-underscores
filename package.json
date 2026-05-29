@@ -60,7 +60,7 @@
     "@wordpress/scripts": "^32.2.0",
     "autoprefixer": "^10.4",
     "css-minimizer-webpack-plugin": "^8.0",
-    "eslint-plugin-prettier": "^5.2",
+    "eslint-plugin-prettier": "^5.5",
     "lint-staged": "^16",
     "npm-run-all2": "^8",
     "postcss": "^8",
