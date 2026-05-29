@@ -61,7 +61,7 @@
     "autoprefixer": "^10.4",
     "css-minimizer-webpack-plugin": "^8.0",
     "eslint-plugin-prettier": "^5.2",
-    "lint-staged": "^16",
+    "lint-staged": "^17",
     "npm-run-all2": "^8",
     "postcss": "^8",
     "terser": "^5",
