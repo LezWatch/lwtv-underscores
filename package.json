@@ -62,7 +62,7 @@
     "css-minimizer-webpack-plugin": "^8.0",
     "eslint-plugin-prettier": "^5.2",
     "lint-staged": "^16",
-    "npm-run-all2": "^8",
+    "npm-run-all2": "^9",
     "postcss": "^8",
     "terser": "^5",
     "terser-webpack-plugin": "^5",
