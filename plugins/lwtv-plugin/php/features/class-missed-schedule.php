@@ -15,10 +15,6 @@
  * - Manual: wp lwtv generate missed-schedule [status|trigger]
  * - Legacy: wp lwtv generate cron hourly (still works)
  *
- * HEALTH CHECKS:
- * - Automatically pings health.ipstenu.com after each run
- * - Requires HEALTHCHECKS_API_KEY to be defined
- * - Check name: {domain}-missed-schedule-check
  */
 
 namespace LWTV\Features;
@@ -26,8 +22,6 @@ namespace LWTV\Features;
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
-
-use LWTV\Health\Ping;
 
 class Missed_Schedule {
 

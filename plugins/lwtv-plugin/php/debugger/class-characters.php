@@ -170,7 +170,7 @@ class Characters {
 				wp_set_object_terms( $char_id, $term->ID, 'lez_cliches', true );
 			}
 
-			if ( has_term( 'dead', 'lez_cliches' ) && empty( $check['death'] ) ) {
+			if ( has_term( 'dead', 'lez_cliches', $char_id ) && empty( $check['death'] ) ) {
 				$problems[] = 'Dead but missing date.';
 			}
 

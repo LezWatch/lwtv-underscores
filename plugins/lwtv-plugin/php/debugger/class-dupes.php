@@ -70,12 +70,9 @@ class Dupes {
 	public function get_dupes() {
 		global $wpdb;
 
-		$queery = "SELECT ID FROM {$wpdb->prefix}posts WHERE post_status='publish' AND post_type IN ('post_type_shows', 'post_type_actors') AND post_name LIKE '%-2'";
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-		$final_queery = $wpdb->prepare( $queery );
-
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-		$all_posts      = $wpdb->get_results( $final_queery );
+		// REGEXP catches any numeric suffix (-2, -3, -4, etc.), not just -2.
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$all_posts      = $wpdb->get_results( "SELECT ID FROM {$wpdb->posts} WHERE post_status='publish' AND post_type IN ('post_type_shows', 'post_type_actors') AND post_name REGEXP '-[0-9]+$'" );
 		$all_post_array = array_unique( wp_list_pluck( $all_posts, 'ID' ) );
 
 		return $all_post_array;
