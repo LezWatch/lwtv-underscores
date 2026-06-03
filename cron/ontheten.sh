@@ -19,7 +19,7 @@ cd /home/wp_bg3hrq/lezwatchtv.com || {
     # We call 'wp' directly. We use --path to ensure it finds the right site.
     # The '2>&1' at the end of the block captures all output.
 
-    /usr/bin/wp cron event run --due-now --path=/home/wp_bg3hrq/lezwatchtv.com/
+    /usr/bin/wp cron event run --due-now --path=/home/wp_bg3hrq/lezwatchtv.com/ --verbose
 
     EXIT_CODE=$?
     echo "Finished with exit code $EXIT_CODE"

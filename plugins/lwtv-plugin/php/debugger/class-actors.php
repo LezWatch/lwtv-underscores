@@ -21,6 +21,55 @@ use LWTV\Queeries\Post_Type;
 class Actors {
 
 	/**
+	 * Constructor — wire up action hooks.
+	 */
+	public function __construct() {
+		add_action( 'lwtv_shadow_tax_sync_failed', array( $this, 'flag_shadow_sync_failure' ), 10, 2 );
+	}
+
+	/**
+	 * Add a shadow taxonomy sync failure to the actor problems list.
+	 *
+	 * Called when sync_actors() has retried 3+ times without success.
+	 * Appends the actor to the lwtv_debug_actor_problems transient so it
+	 * surfaces in `wp lwtv debug actors` and the admin debugger view.
+	 *
+	 * @param int $actor_id  Post ID of the actor.
+	 * @param int $term_id   Shadow taxonomy term ID that failed to attach.
+	 * @return void
+	 */
+	public function flag_shadow_sync_failure( int $actor_id, int $term_id ): void {
+		$items = lwtv_plugin()->get_transient( 'lwtv_debug_actor_problems' );
+		if ( ! is_array( $items ) ) {
+			$items = array();
+		}
+
+		// Avoid duplicates — check if this actor is already flagged.
+		foreach ( $items as $item ) {
+			if ( isset( $item['id'] ) && (int) $item['id'] === $actor_id ) {
+				return;
+			}
+		}
+
+		$items[] = array(
+			'url'     => get_permalink( $actor_id ),
+			'id'      => $actor_id,
+			'problem' => sprintf( 'Shadow taxonomy sync failed repeatedly (term %d). Run: wp lwtv shadow actors', $term_id ),
+		);
+
+		lwtv_plugin()->set_transient( 'lwtv_debug_actor_problems', $items, WEEK_IN_SECONDS );
+
+		$option                   = get_option( 'lwtv_debugger_status' );
+		$option['actor_problems'] = array(
+			'name'  => 'Actors with Issues',
+			'count' => count( $items ),
+			'last'  => time(),
+		);
+		$option['timestamp']      = time();
+		update_option( 'lwtv_debugger_status', $option );
+	}
+
+	/**
 	 * Find Actors with problems.
 	 *
 	 * @return array $problems - array of problems. Can be empty.

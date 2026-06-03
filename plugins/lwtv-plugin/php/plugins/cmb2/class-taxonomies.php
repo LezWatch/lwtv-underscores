@@ -17,17 +17,18 @@ class Taxonomies {
 	 * Constructor
 	 */
 	public function __construct() {
-		// Clear shadow taxonomy cache when characters are updated
-		add_action( 'save_post_post_type_characters', array( $this, 'clear_shadow_taxonomy_cache' ) );
+		add_action( 'save_post_post_type_characters', array( __CLASS__, 'clear_cache' ) );
+		add_action( 'lwtv_shadow_taxonomy_synced', array( __CLASS__, 'clear_cache' ) );
 	}
 
 	/**
-	 * Clear shadow taxonomy cache when related posts are updated
+	 * Clear all CMB2 shadow taxonomy term-list transients.
+	 *
+	 * Static so it can be called directly after programmatic syncs.
 	 *
 	 * @return void
 	 */
-	public function clear_shadow_taxonomy_cache() {
-		// Clear all shadow taxonomy caches by deleting transients with matching pattern
+	public static function clear_cache(): void {
 		global $wpdb;
 		$wpdb->query(
 			$wpdb->prepare(
@@ -35,6 +36,13 @@ class Taxonomies {
 				$wpdb->esc_like( '_transient_cmb2_terms_list_' ) . '%'
 			)
 		);
+	}
+
+	/**
+	 * @deprecated Use clear_cache() instead.
+	 */
+	public function clear_shadow_taxonomy_cache(): void {
+		self::clear_cache();
 	}
 
 	/**
