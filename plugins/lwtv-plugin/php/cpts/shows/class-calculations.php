@@ -17,6 +17,14 @@ use LWTV\CPTs\Shows as CPT_Shows;
 class Calculations {
 
 	/**
+	 * Per-request cache for taxonomy term scaffolding used by show_character_data().
+	 * Populated once on first call; reused for every subsequent show in the same request.
+	 *
+	 * @var array<string, array<string, int>>|null
+	 */
+	private static ?array $tax_scaffold = null;
+
+	/**
 	 * Calculate show rating.
 	 *
 	 * @param int  $post_id Post ID
@@ -193,6 +201,10 @@ class Calculations {
 		// Batch get all taxonomy terms for all characters at once
 		$all_terms = $this->get_batch_character_terms( $characters );
 
+		// Prime the post meta cache for all characters in one query so the
+		// per-character get_post_meta( 'lezchars_actor' ) calls below are cache hits.
+		update_meta_cache( 'post', $characters );
+
 		// Process each character once
 		foreach ( $characters as $char_id ) {
 			$char_terms = $all_terms[ $char_id ] ?? array();
@@ -296,6 +308,37 @@ class Calculations {
 	}
 
 	/**
+	 * Prime the WordPress post meta and term object caches for every character
+	 * belonging to a show before either character loop runs.
+	 *
+	 * show_character_data() and count_queers_all_types() each iterate over the
+	 * same character list and call get_the_terms() / get_post_meta() per character.
+	 * Without priming, those are individual DB hits. After this method runs, every
+	 * subsequent call for these objects + taxonomies is served from the in-memory
+	 * object cache — no extra DB round-trips regardless of character count.
+	 *
+	 * @param int $post_id Show post ID.
+	 */
+	private function prime_character_caches( int $post_id ): void {
+		$characters = lwtv_plugin()->get_characters_list( $post_id, 'query' );
+		if ( empty( $characters ) || ! is_array( $characters ) ) {
+			return;
+		}
+
+		// One SELECT…IN loads all post meta for every character into the WP cache.
+		update_meta_cache( 'post', $characters );
+
+		// One query per taxonomy (batched across all character IDs) primes the term
+		// object cache used by get_the_terms() and wp_get_object_terms().
+		// Covers all taxonomies consumed by show_character_data() and
+		// count_queers_all_types() / get_batch_character_terms().
+		update_object_term_cache(
+			$characters,
+			array( 'lez_cliches', 'lez_gender', 'lez_sexuality', 'lez_romantic' )
+		);
+	}
+
+	/**
 	 * Calculate show tropes score.
 	 */
 	public function show_tropes_score( $post_id ) {
@@ -305,7 +348,7 @@ class Calculations {
 		}
 
 		$score        = 0;
-		$tropes       = wp_get_post_terms( $post_id, 'lez_tropes', true );
+		$tropes       = wp_get_post_terms( $post_id, 'lez_tropes' );
 		$count_tropes = ( $tropes ) ? count( $tropes ) : 0;
 
 		// Get all trope slugs for efficient processing
@@ -449,17 +492,25 @@ class Calculations {
 			'sexuality' => 'lez_sexuality',
 			'romantic'  => 'lez_romantic',
 		);
-		$tax_data    = array();
-
-		foreach ( $valid_taxes as $title => $taxonomy ) {
-			$terms = get_terms( $taxonomy );
-			if ( ! empty( $terms ) && ! is_wp_error( $terms ) ) {
-				$tax_data[ $title ] = array();
-				foreach ( $terms as $term ) {
-					$tax_data[ $title ][ $term->slug ] = 0;
+		// Build the zero-initialised slug scaffold once per request and reuse it.
+		// get_terms() hits the DB (or term cache) on every call; during a bulk
+		// recalculation this would repeat for every show even though the term
+		// list never changes within a single request.
+		if ( null === self::$tax_scaffold ) {
+			self::$tax_scaffold = array();
+			foreach ( $valid_taxes as $title => $taxonomy ) {
+				$terms = get_terms( $taxonomy );
+				if ( ! empty( $terms ) && ! is_wp_error( $terms ) ) {
+					self::$tax_scaffold[ $title ] = array();
+					foreach ( $terms as $term ) {
+						self::$tax_scaffold[ $title ][ $term->slug ] = 0;
+					}
 				}
 			}
 		}
+
+		// Start with the cached scaffold; each show gets its own copy to count into.
+		$tax_data = self::$tax_scaffold;
 
 		// Get array of characters (by ID)
 		$characters = lwtv_plugin()->get_characters_list( $show_id, 'query' );
@@ -482,7 +533,7 @@ class Calculations {
 
 							// Now we'll sort gender and stuff...
 							foreach ( $valid_taxes as $title => $taxonomy ) {
-								$this_term = get_the_terms( $char_id, $taxonomy, true );
+								$this_term = get_the_terms( $char_id, $taxonomy );
 								if ( $this_term && ! is_wp_error( $this_term ) ) {
 									foreach ( $this_term as $term ) {
 										++$tax_data[ $title ][ $term->slug ];
@@ -545,15 +596,38 @@ class Calculations {
 			return;
 		}
 
+		// Prime post meta and term object caches for all characters before either
+		// loop runs, so show_character_data() and count_queers_all_types() are cache hits.
+		$this->prime_character_caches( $post_id );
+
 		// Generate character data
 		self::show_character_data( $post_id );
 
 		// Get the ratings
-		$score_show_rating = self::show_score( $post_id );
-		$score_show_tropes = self::show_tropes_score( $post_id );
-		$score_chars_total = self::show_character_score( $post_id );
-		$score_chars_alive = $score_chars_total['alive'];
-		$score_chars_score = $score_chars_total['score'];
+		$score_show_rating_raw = self::show_score( $post_id );
+		$score_show_tropes_raw = self::show_tropes_score( $post_id );
+		$score_chars_total     = self::show_character_score( $post_id );
+
+		// Guard against null returns from sub-calculations before doing arithmetic.
+		// Any null here in PHP 8.1+ causes a fatal TypeError that halts execution
+		// before update_post_meta runs, leaving the show with no score.
+		if ( null === $score_show_rating_raw || null === $score_show_tropes_raw || ! is_array( $score_chars_total ) ) {
+			lwtv_plugin()->debug_log(
+				'show-score',
+				sprintf(
+					'Score calculation incomplete for show %d — show_rating=%s tropes=%s chars=%s',
+					$post_id,
+					wp_json_encode( $score_show_rating_raw ),
+					wp_json_encode( $score_show_tropes_raw ),
+					wp_json_encode( $score_chars_total )
+				)
+			);
+		}
+
+		$score_show_rating = (float) ( $score_show_rating_raw ?? 0 );
+		$score_show_tropes = (float) ( $score_show_tropes_raw ?? 0 );
+		$score_chars_alive = (float) ( $score_chars_total['alive'] ?? 0 );
+		$score_chars_score = (float) ( $score_chars_total['score'] ?? 0 );
 
 		// Calculate the full score
 		$calculate = ( $score_show_rating + $score_show_tropes + $score_chars_alive + $score_chars_score ) / 4;

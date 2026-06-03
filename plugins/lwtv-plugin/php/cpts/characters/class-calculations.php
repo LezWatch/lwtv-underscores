@@ -187,26 +187,19 @@ class Calculations {
 		}
 
 		if ( ! isset( $character_id ) || CPT_Characters::SLUG !== get_post_type( $character_id ) ) {
-			// delete the meta fields
-			delete_post_meta( $character_id, 'lezchars_death_year' );
-			delete_post_meta( $character_id, 'lezchars_last_death' );
-			delete_post_meta( $character_id, 'lezchars_show_group' );
-			delete_post_meta( $character_id, 'lezchars_actor' );
-			delete_post_meta( $character_id, 'lezchars_dead_list' );
-			delete_post_meta( $character_id, 'lezchars_queer_override' );
 			return;
 		}
 
 		// Calculate Death
-		self::death( $character_id );
+		$this->death( $character_id );
 
 		// Get the shadow tax ID
 		$shadow_character = \Shadow_Taxonomy\Core\get_associated_term( $character_id, CPT_Characters::SHADOW_TAXONOMY );
 
 		// Update Show data
-		self::sync_shows( $character_id, $shadow_character, $force );
+		$this->sync_shows( $character_id, $shadow_character, $force );
 
 		// Update Actor data
-		self::sync_actors( $character_id, $shadow_character, $force );
+		$this->sync_actors( $character_id, $shadow_character, $force );
 	}
 }
