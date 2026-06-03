@@ -153,7 +153,7 @@ class Shows {
 			}
 
 			// Double check there is an END airdate.
-			if ( array( $check['airdates'] ) ) {
+			if ( is_array( $check['airdates'] ) ) {
 				$start  = $check['airdates']['start'];
 				$finish = $check['airdates']['finish'];
 
@@ -377,12 +377,12 @@ class Shows {
 			$ways_to_watch = get_post_meta( $show_id, 'lezshows_waystowatch', true );
 
 			if ( empty( $ways_to_watch ) ) {
-				return;
+				continue;
 			}
 
 			// Parse each URL.
 			foreach ( $ways_to_watch as $url ) {
-				$response = wp_remote_get( $url );
+				$response = wp_remote_get( $url, array( 'timeout' => 10 ) );
 
 				if ( is_array( $response ) && ! is_wp_error( $response ) ) {
 					$http_code = wp_remote_retrieve_response_code( $response );
@@ -421,7 +421,7 @@ class Shows {
 
 			// If we have no problems, we're good!
 			if ( empty( $problems ) ) {
-				return;
+				continue;
 			}
 
 			$items[] = array(
@@ -436,7 +436,7 @@ class Shows {
 
 		// Update Options
 		$option              = get_option( 'lwtv_debugger_status' );
-		$option['show_imdb'] = array(
+		$option['show_url']  = array(
 			'name'  => 'Shows with bad Ways to Watch',
 			'count' => ( ! empty( $items ) ) ? count( $items ) : 0,
 			'last'  => time(),

@@ -45,6 +45,16 @@ class Characters {
 	const SHADOW_TAXONOMY = 'shadow_tax_characters';
 
 	/**
+	 * Action Scheduler hook for daily drift check.
+	 */
+	const AS_DRIFT_HOOK = 'lwtv_shadow_tax_drift_check';
+
+	/**
+	 * Action Scheduler group.
+	 */
+	const AS_GROUP = 'lwtv';
+
+	/**
 	 * Taxonomies that use Select2
 	 */
 	const SELECT2_TAXONOMIES = array(
@@ -68,6 +78,10 @@ class Characters {
 
 		// WP-Admin alert if the shadow taxonomy is empty.
 		add_action( 'admin_notices', array( $this, 'admin_notices_shadowtax__error' ) );
+
+		// Daily drift check and auto-repair.
+		add_action( self::AS_DRIFT_HOOK, array( $this, 'shadow_tax_drift_check' ) );
+		add_action( 'action_scheduler_init', array( $this, 'init_shadow_tax_drift_check' ) );
 
 		// phpcs:disable
 		// Hide taxonomies from Gutenberg.
@@ -336,6 +350,40 @@ class Characters {
 		}
 
 		lwtv_plugin()->debug_log( 'taxsync', "Completed character taxonomy sync for ID: {$post_id} - {$success_count}/{$total_count} successful" );
+	}
+
+	/**
+	 * Register the daily recurring AS action for drift detection.
+	 *
+	 * @return void
+	 */
+	public function init_shadow_tax_drift_check(): void {
+		if ( ! as_next_scheduled_action( self::AS_DRIFT_HOOK ) ) {
+			as_schedule_recurring_action( time(), DAY_IN_SECONDS, self::AS_DRIFT_HOOK, array(), self::AS_GROUP );
+			lwtv_plugin()->debug_log( 'shadow-taxonomy', 'Scheduled daily shadow taxonomy drift check via Action Scheduler' );
+		}
+	}
+
+	/**
+	 * Compare published character count to shadow term count.
+	 * If they differ, queue a taxsync task to repair the drift.
+	 *
+	 * Fires via Action Scheduler on the lwtv_shadow_tax_drift_check hook.
+	 *
+	 * @return void
+	 */
+	public function shadow_tax_drift_check(): void {
+		$num_posts = wp_count_posts( self::SLUG );
+		$num_terms = wp_count_terms( self::SHADOW_TAXONOMY );
+
+		if ( is_wp_error( $num_terms ) || (int) $num_posts->publish <= (int) $num_terms ) {
+			return;
+		}
+
+		$drift = (int) $num_posts->publish - (int) $num_terms;
+		lwtv_plugin()->debug_log( 'shadow-taxonomy', "Drift detected: {$drift} characters missing shadow terms — queuing taxsync" );
+
+		lwtv_plugin()->schedule_task( 'taxsync', 'characters', 0 );
 	}
 
 	/**

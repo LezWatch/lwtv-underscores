@@ -55,9 +55,6 @@ class Queers {
 		// reset items since we recheck off $characters.
 		$items = array();
 
-		// Reset items
-		$items = array();
-
 		// If this is WP-CLI, setup progress bar.
 		if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			$progress_bar = \WP_CLI\Utils\make_progress_bar( sprintf( 'Starting queer checker. Found %d characters...', count( $characters ) ), count( $characters ) );

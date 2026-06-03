@@ -142,16 +142,32 @@ class Calculations {
 			// Add the tax for the character to the actor.
 			wp_add_object_terms( (int) $actor, (int) $shadow_character->term_id, CPT_Characters::SHADOW_TAXONOMY );
 
-			// Verify the relationship was established before running actor calculations
+			// Verify the relationship was established before running actor calculations.
 			$actor_terms = wp_get_post_terms( (int) $actor, CPT_Characters::SHADOW_TAXONOMY, array( 'fields' => 'ids' ) );
 
-			// Run the calculations if the relationship was established.
 			if ( in_array( (int) $shadow_character->term_id, $actor_terms, true ) ) {
+				// Relationship confirmed — reset failure counter and run calculations.
+				delete_transient( 'shadow_tax_failure_' . $actor );
 				( new Actors_Calculations() )->do_the_math( $actor, $force );
 			} else {
-				// Log the failure and schedule a retry
-				lwtv_plugin()->debug_log( 'shadow-taxonomy', "Failed to establish shadow taxonomy for actor {$actor}, scheduling retry" );
-				lwtv_plugin()->schedule_task( 'calculation', $actor, 0, 10 ); // Retry in 10 seconds
+				// Check whether the shadow term itself exists. If not, a retry is warranted.
+				// If it does exist, this is a deeper DB inconsistency — don't keep retrying silently.
+				$shadow_term_exists = \Shadow_Taxonomy\Core\get_associated_term( $actor, CPT_Characters::SHADOW_TAXONOMY );
+
+				$failure_key   = 'shadow_tax_failure_' . $actor;
+				$failure_count = (int) get_transient( $failure_key );
+				++$failure_count;
+				set_transient( $failure_key, $failure_count, HOUR_IN_SECONDS );
+
+				if ( $failure_count >= 3 ) {
+					lwtv_plugin()->debug_log( 'shadow-taxonomy', "Repeated failure ({$failure_count}x) establishing shadow taxonomy for actor {$actor} — firing lwtv_shadow_tax_sync_failed" );
+					do_action( 'lwtv_shadow_tax_sync_failed', (int) $actor, (int) $shadow_character->term_id );
+				} elseif ( ! $shadow_term_exists ) {
+					lwtv_plugin()->debug_log( 'shadow-taxonomy', "Shadow term missing for actor {$actor}, scheduling retry (attempt {$failure_count})" );
+					lwtv_plugin()->schedule_task( 'calculation', $actor, 0, 10 );
+				} else {
+					lwtv_plugin()->debug_log( 'shadow-taxonomy', "Shadow term exists but wp_get_post_terms returned empty for actor {$actor} — possible DB inconsistency (attempt {$failure_count})" );
+				}
 			}
 		}
 	}
@@ -171,26 +187,19 @@ class Calculations {
 		}
 
 		if ( ! isset( $character_id ) || CPT_Characters::SLUG !== get_post_type( $character_id ) ) {
-			// delete the meta fields
-			delete_post_meta( $character_id, 'lezchars_death_year' );
-			delete_post_meta( $character_id, 'lezchars_last_death' );
-			delete_post_meta( $character_id, 'lezchars_show_group' );
-			delete_post_meta( $character_id, 'lezchars_actor' );
-			delete_post_meta( $character_id, 'lezchars_dead_list' );
-			delete_post_meta( $character_id, 'lezchars_queer_override' );
 			return;
 		}
 
 		// Calculate Death
-		self::death( $character_id );
+		$this->death( $character_id );
 
 		// Get the shadow tax ID
 		$shadow_character = \Shadow_Taxonomy\Core\get_associated_term( $character_id, CPT_Characters::SHADOW_TAXONOMY );
 
 		// Update Show data
-		self::sync_shows( $character_id, $shadow_character, $force );
+		$this->sync_shows( $character_id, $shadow_character, $force );
 
 		// Update Actor data
-		self::sync_actors( $character_id, $shadow_character, $force );
+		$this->sync_actors( $character_id, $shadow_character, $force );
 	}
 }

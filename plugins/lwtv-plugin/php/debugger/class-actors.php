@@ -21,6 +21,55 @@ use LWTV\Queeries\Post_Type;
 class Actors {
 
 	/**
+	 * Constructor — wire up action hooks.
+	 */
+	public function __construct() {
+		add_action( 'lwtv_shadow_tax_sync_failed', array( $this, 'flag_shadow_sync_failure' ), 10, 2 );
+	}
+
+	/**
+	 * Add a shadow taxonomy sync failure to the actor problems list.
+	 *
+	 * Called when sync_actors() has retried 3+ times without success.
+	 * Appends the actor to the lwtv_debug_actor_problems transient so it
+	 * surfaces in `wp lwtv debug actors` and the admin debugger view.
+	 *
+	 * @param int $actor_id  Post ID of the actor.
+	 * @param int $term_id   Shadow taxonomy term ID that failed to attach.
+	 * @return void
+	 */
+	public function flag_shadow_sync_failure( int $actor_id, int $term_id ): void {
+		$items = lwtv_plugin()->get_transient( 'lwtv_debug_actor_problems' );
+		if ( ! is_array( $items ) ) {
+			$items = array();
+		}
+
+		// Avoid duplicates — check if this actor is already flagged.
+		foreach ( $items as $item ) {
+			if ( isset( $item['id'] ) && (int) $item['id'] === $actor_id ) {
+				return;
+			}
+		}
+
+		$items[] = array(
+			'url'     => get_permalink( $actor_id ),
+			'id'      => $actor_id,
+			'problem' => sprintf( 'Shadow taxonomy sync failed repeatedly (term %d). Run: wp lwtv shadow actors', $term_id ),
+		);
+
+		lwtv_plugin()->set_transient( 'lwtv_debug_actor_problems', $items, WEEK_IN_SECONDS );
+
+		$option                   = get_option( 'lwtv_debugger_status' );
+		$option['actor_problems'] = array(
+			'name'  => 'Actors with Issues',
+			'count' => count( $items ),
+			'last'  => time(),
+		);
+		$option['timestamp']      = time();
+		update_option( 'lwtv_debugger_status', $option );
+	}
+
+	/**
 	 * Find Actors with problems.
 	 *
 	 * @return array $problems - array of problems. Can be empty.
@@ -64,16 +113,16 @@ class Actors {
 			$problems = array();
 			$warnings = array();
 
-			// What we can check for
+			$meta  = get_post_meta( $actor_id );
 			$check = array(
-				'chars' => get_post_meta( $actor_id, 'lezactors_char_count', true ),
-				'birth' => get_post_meta( $actor_id, 'lezactors_birth', true ),
-				'death' => get_post_meta( $actor_id, 'lezactors_death', true ),
-				'wiki'  => get_post_meta( $actor_id, 'lezactors_wikipedia', true ),
-				'imdb'  => get_post_meta( $actor_id, 'lezactors_imdb', true ),
-				'insta' => get_post_meta( $actor_id, 'lezactors_instagram', true ),
-				'twits' => get_post_meta( $actor_id, 'lezactors_twitter', true ),
-				'home'  => get_post_meta( $actor_id, 'lezactors_homepage', true ),
+				'chars' => $meta['lezactors_char_count'][0] ?? '',
+				'birth' => $meta['lezactors_birth'][0] ?? '',
+				'death' => $meta['lezactors_death'][0] ?? '',
+				'wiki'  => $meta['lezactors_wikipedia'][0] ?? '',
+				'imdb'  => $meta['lezactors_imdb'][0] ?? '',
+				'insta' => $meta['lezactors_instagram'][0] ?? '',
+				'twits' => $meta['lezactors_twitter'][0] ?? '',
+				'home'  => $meta['lezactors_homepage'][0] ?? '',
 				'dupes' => get_post_field( 'post_name', $actor_id ),
 			);
 
@@ -124,7 +173,7 @@ class Actors {
 				if ( strpos( $check['home'], 'wikipedia.org/' ) !== false ) {
 					if ( empty( $check['wiki'] ) ) {
 						// If there is no wiki set, move homepage to wiki and clear home page.
-						update_post_meta( $actor_id, 'lezactors_wikipedia', $check['wiki'] );
+						update_post_meta( $actor_id, 'lezactors_wikipedia', $check['home'] );
 						delete_post_meta( $actor_id, 'lezactors_homepage' );
 					} elseif ( $check['wiki'] === $check['home'] ) {
 						// If wiki === home page, delete home page.
@@ -439,15 +488,16 @@ class Actors {
 	 * @return array $check_ours - The data we have.
 	 */
 	public function get_actors_wikidata_ours( $actor_id ) {
+		$meta = get_post_meta( $actor_id );
 		return array(
-			'birth'     => get_post_meta( $actor_id, 'lezactors_birth', true ),
-			'death'     => get_post_meta( $actor_id, 'lezactors_death', true ),
-			'imdb'      => get_post_meta( $actor_id, 'lezactors_imdb', true ),
-			'wikipedia' => get_post_meta( $actor_id, 'lezactors_wikipedia', true ),
-			'instagram' => get_post_meta( $actor_id, 'lezactors_instagram', true ),
-			'twitter'   => get_post_meta( $actor_id, 'lezactors_twitter', true ),
-			'facebook'  => get_post_meta( $actor_id, 'lezactors_facebook', true ),
-			'website'   => get_post_meta( $actor_id, 'lezactors_homepage', true ),
+			'birth'     => $meta['lezactors_birth'][0] ?? '',
+			'death'     => $meta['lezactors_death'][0] ?? '',
+			'imdb'      => $meta['lezactors_imdb'][0] ?? '',
+			'wikipedia' => $meta['lezactors_wikipedia'][0] ?? '',
+			'instagram' => $meta['lezactors_instagram'][0] ?? '',
+			'twitter'   => $meta['lezactors_twitter'][0] ?? '',
+			'facebook'  => $meta['lezactors_facebook'][0] ?? '',
+			'website'   => $meta['lezactors_homepage'][0] ?? '',
 		);
 	}
 
@@ -459,7 +509,7 @@ class Actors {
 	 * @return array $items - The results of the search.
 	 */
 	public function get_actors_wikidata_by_id( $wikidata_id ) {
-		$search_data = wp_remote_get( 'http://www.wikidata.org/entity/' . $wikidata_id );
+		$search_data = wp_remote_get( 'https://www.wikidata.org/entity/' . $wikidata_id, array( 'timeout' => 15 ) );
 
 		// Check for errors.
 		if ( is_wp_error( $search_data ) ) {
@@ -495,7 +545,7 @@ class Actors {
 		}
 
 		$search_queery = 'https://www.wikidata.org/w/api.php?action=wbsearchentities&search=' . $search_name . '&language=' . $language . '&format=json';
-		$search_data   = wp_remote_get( $search_queery );
+		$search_data   = wp_remote_get( $search_queery, array( 'timeout' => 15 ) );
 
 		// Check for errors.
 		if ( ! is_wp_error( $search_data ) ) {

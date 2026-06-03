@@ -140,6 +140,7 @@ class WP_CLI_LWTV_Shadow {
 		}
 
 		\WP_CLI::line( 'Synced Characters with ' . $tax . '.' );
+		do_action( 'lwtv_shadow_taxonomy_synced' );
 	}
 
 	/**
