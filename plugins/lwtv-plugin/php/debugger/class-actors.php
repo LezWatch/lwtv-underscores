@@ -115,14 +115,14 @@ class Actors {
 
 			$meta  = get_post_meta( $actor_id );
 			$check = array(
-				'chars' => $meta['lezactors_char_count'][0]  ?? '',
-				'birth' => $meta['lezactors_birth'][0]        ?? '',
-				'death' => $meta['lezactors_death'][0]        ?? '',
-				'wiki'  => $meta['lezactors_wikipedia'][0]    ?? '',
-				'imdb'  => $meta['lezactors_imdb'][0]         ?? '',
-				'insta' => $meta['lezactors_instagram'][0]    ?? '',
-				'twits' => $meta['lezactors_twitter'][0]      ?? '',
-				'home'  => $meta['lezactors_homepage'][0]     ?? '',
+				'chars' => $meta['lezactors_char_count'][0] ?? '',
+				'birth' => $meta['lezactors_birth'][0] ?? '',
+				'death' => $meta['lezactors_death'][0] ?? '',
+				'wiki'  => $meta['lezactors_wikipedia'][0] ?? '',
+				'imdb'  => $meta['lezactors_imdb'][0] ?? '',
+				'insta' => $meta['lezactors_instagram'][0] ?? '',
+				'twits' => $meta['lezactors_twitter'][0] ?? '',
+				'home'  => $meta['lezactors_homepage'][0] ?? '',
 				'dupes' => get_post_field( 'post_name', $actor_id ),
 			);
 
@@ -490,14 +490,14 @@ class Actors {
 	public function get_actors_wikidata_ours( $actor_id ) {
 		$meta = get_post_meta( $actor_id );
 		return array(
-			'birth'     => $meta['lezactors_birth'][0]     ?? '',
-			'death'     => $meta['lezactors_death'][0]     ?? '',
-			'imdb'      => $meta['lezactors_imdb'][0]      ?? '',
+			'birth'     => $meta['lezactors_birth'][0] ?? '',
+			'death'     => $meta['lezactors_death'][0] ?? '',
+			'imdb'      => $meta['lezactors_imdb'][0] ?? '',
 			'wikipedia' => $meta['lezactors_wikipedia'][0] ?? '',
 			'instagram' => $meta['lezactors_instagram'][0] ?? '',
-			'twitter'   => $meta['lezactors_twitter'][0]   ?? '',
-			'facebook'  => $meta['lezactors_facebook'][0]  ?? '',
-			'website'   => $meta['lezactors_homepage'][0]  ?? '',
+			'twitter'   => $meta['lezactors_twitter'][0] ?? '',
+			'facebook'  => $meta['lezactors_facebook'][0] ?? '',
+			'website'   => $meta['lezactors_homepage'][0] ?? '',
 		);
 	}
 

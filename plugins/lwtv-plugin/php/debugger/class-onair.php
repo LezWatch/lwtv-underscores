@@ -89,7 +89,7 @@ class OnAir {
 			'count' => ( ! empty( $items ) ) ? count( $items ) : 0,
 			'last'  => time(),
 		);
-		$option['timestamp'] = time();
+		$option['timestamp']      = time();
 		update_option( 'lwtv_debugger_status', $option );
 		return $items;
 	}

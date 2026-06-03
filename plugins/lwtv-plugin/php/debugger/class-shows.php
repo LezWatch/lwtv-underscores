@@ -436,7 +436,7 @@ class Shows {
 
 		// Update Options
 		$option              = get_option( 'lwtv_debugger_status' );
-		$option['show_url'] = array(
+		$option['show_url']  = array(
 			'name'  => 'Shows with bad Ways to Watch',
 			'count' => ( ! empty( $items ) ) ? count( $items ) : 0,
 			'last'  => time(),
