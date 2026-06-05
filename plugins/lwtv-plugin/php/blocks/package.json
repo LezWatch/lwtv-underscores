@@ -33,6 +33,6 @@
 		"@wordpress/server-side-render": "^6.23.0"
 	},
 	"devDependencies": {
-		"@wordpress/scripts": "^32.3.0"
+		"@wordpress/scripts": "^32.4.0"
 	}
 }
