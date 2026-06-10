@@ -81,10 +81,22 @@ class WP_CLI_LWTV_Migrate {
 	 */
 	private function run_migrator( $type, $subtype = null ) {
 		if ( 'acf' === $type ) {
-			if ( 'waystowatch' === $subtype ) {
-				$this->migrate_waystowatch();
-			} else {
-				\WP_CLI::error( 'Unknown ACF migration subtype: ' . $subtype . ' does not exist.' );
+			if ( is_null( $subtype ) ) {
+				\WP_CLI::error( 'ACF migration requires a subtype. Please specify one.' );
+			}
+
+			switch ( $subtype ) {
+				case 'waystowatch':
+					$this->migrate_waystowatch();
+					break;
+				case 'shownames':
+					$this->migrate_shownames();
+					break;
+				case 'similarshows':
+					$this->migrate_similarshows();
+					break;
+				default:
+					\WP_CLI::error( 'Unknown ACF migration subtype: ' . $subtype . ' does not exist.' );
 			}
 		} else {
 			\WP_CLI::error( 'Unknown migration type: ' . $type . ' does not exist.' );
@@ -143,6 +155,134 @@ class WP_CLI_LWTV_Migrate {
 
 		if ( 0 === $post_count ) {
 			\WP_CLI::log( "No posts found with 'lezshows_waystowatch' meta key." );
+		} else {
+			\WP_CLI::success( 'Migration completed for ' . $post_count . ' post(s).' );
+		}
+	}
+
+	/**
+	 * Migrate Show Names from CMB2 group array to ACF repeater format.
+	 *
+	 * Old format: array( 0 => array( 'lezshows_alt_show_name' => 'Name', 'type' => 'en' ) )
+	 * New format: ACF repeater row meta keys + reference keys.
+	 */
+	public function migrate_shownames() {
+		$posts = get_posts(
+			array(
+				'post_type'      => 'post_type_shows',
+				'posts_per_page' => -1,
+				'meta_key'       => 'lezshows_show_names',
+				'meta_compare'   => 'EXISTS',
+			)
+		);
+
+		if ( empty( $posts ) ) {
+			\WP_CLI::log( "No posts found with 'lezshows_show_names' meta key." );
+			return;
+		}
+
+		$post_count   = 0;
+		$progress_bar = \WP_CLI\Utils\make_progress_bar( sprintf( 'Starting migration. Found %d shows ...', count( $posts ) ), count( $posts ) );
+
+		foreach ( $posts as $post ) {
+			// Already migrated: ACF reference key exists.
+			if ( get_post_meta( $post->ID, '_lezshows_show_names', true ) ) {
+				$progress_bar->tick();
+				continue;
+			}
+
+			$value = get_post_meta( $post->ID, 'lezshows_show_names', true );
+
+			if ( ! is_array( $value ) ) {
+				$progress_bar->tick();
+				continue;
+			}
+
+			$count = 0;
+			foreach ( $value as $row ) {
+				$alt_name = isset( $row['lezshows_alt_show_name'] ) ? (string) $row['lezshows_alt_show_name'] : '';
+				$type     = isset( $row['type'] ) ? (string) $row['type'] : '';
+
+				update_post_meta( $post->ID, "lezshows_show_names_{$count}_lezshows_alt_show_name", $alt_name );
+				update_post_meta( $post->ID, "_lezshows_show_names_{$count}_lezshows_alt_show_name", 'field_lwtv_lezshows_alt_show_name' );
+				update_post_meta( $post->ID, "lezshows_show_names_{$count}_type", $type );
+				update_post_meta( $post->ID, "_lezshows_show_names_{$count}_type", 'field_lwtv_lezshows_show_name_type' );
+				++$count;
+			}
+
+			update_post_meta( $post->ID, 'lezshows_show_names', $count );
+			update_post_meta( $post->ID, '_lezshows_show_names', 'field_lwtv_lezshows_show_names' );
+
+			$progress_bar->tick();
+			++$post_count;
+		}
+
+		$progress_bar->finish();
+
+		if ( 0 === $post_count ) {
+			\WP_CLI::log( 'No posts required migration.' );
+		} else {
+			\WP_CLI::success( 'Migration completed for ' . $post_count . ' post(s).' );
+		}
+	}
+
+	/**
+	 * Migrate Similar Shows from CMB2 serialized string IDs to ACF relationship format.
+	 *
+	 * Old format: serialized array of string post IDs — same shape ACF uses, but missing
+	 * the _lezshows_similar_shows reference key and IDs need to be integers.
+	 */
+	public function migrate_similarshows() {
+		$posts = get_posts(
+			array(
+				'post_type'      => 'post_type_shows',
+				'posts_per_page' => -1,
+				'meta_key'       => 'lezshows_similar_shows',
+				'meta_compare'   => 'EXISTS',
+			)
+		);
+
+		if ( empty( $posts ) ) {
+			\WP_CLI::log( "No posts found with 'lezshows_similar_shows' meta key." );
+			return;
+		}
+
+		$post_count   = 0;
+		$progress_bar = \WP_CLI\Utils\make_progress_bar( sprintf( 'Starting migration. Found %d shows ...', count( $posts ) ), count( $posts ) );
+
+		foreach ( $posts as $post ) {
+			// Already migrated: ACF reference key exists.
+			if ( get_post_meta( $post->ID, '_lezshows_similar_shows', true ) ) {
+				$progress_bar->tick();
+				continue;
+			}
+
+			$value = get_post_meta( $post->ID, 'lezshows_similar_shows', true );
+
+			if ( ! is_array( $value ) ) {
+				$progress_bar->tick();
+				continue;
+			}
+
+			// ACF relationship field stores integer IDs; CMB2 stored string IDs.
+			$ids = array_values( array_filter( array_map( 'absint', $value ) ) );
+
+			if ( empty( $ids ) ) {
+				$progress_bar->tick();
+				continue;
+			}
+
+			update_post_meta( $post->ID, 'lezshows_similar_shows', $ids );
+			update_post_meta( $post->ID, '_lezshows_similar_shows', 'field_lwtv_lezshows_similar_shows' );
+
+			$progress_bar->tick();
+			++$post_count;
+		}
+
+		$progress_bar->finish();
+
+		if ( 0 === $post_count ) {
+			\WP_CLI::log( 'No posts required migration.' );
 		} else {
 			\WP_CLI::success( 'Migration completed for ' . $post_count . ' post(s).' );
 		}
