@@ -2,6 +2,8 @@
 /*
  * Custom Post Type for actors on LWTV
  *
+ * Updated to use ACF
+ *
  * @since 1.0
  */
 
@@ -59,8 +61,8 @@ class Actors {
 		add_action( 'init', array( $this, 'create_post_type' ), 0 );
 		add_action( 'init', array( $this, 'create_taxonomies' ), 0 );
 
-		// Save Hooks - TEMP DISABLED WHILE TESTING
-		// add_action( 'save_post_post_type_actors', array( $this, 'save_post_meta' ), 10, 3 );
+		// Save Hooks
+		add_action( 'save_post_post_type_actors', array( $this, 'save_post_meta' ), 10, 3 );
 
 		// Hide taxonomies from Gutenberg.
 		add_filter( 'rest_prepare_taxonomy', array( $this, 'hide_taxonomies_from_gutenberg' ), 10, 2 );
