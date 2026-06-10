@@ -11,6 +11,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+use LWTV\Features\Languages;
+
 class ACF {
 
 	/**
@@ -19,9 +21,17 @@ class ACF {
 	 */
 	const ADMIN_ONLY_FIELDS = array(
 		'lezactors_queer_override',
-		// Shows (added in Phase 2b):
-		// 'lezshows_worthit_show_we_love',
-		// 'lezshows_byq_override',
+		'lezshows_worthit_show_we_love',
+		'lezshows_byq_override',
+	);
+
+	/**
+	 * Show boolean fields that must stay stored as 'on' for backward compat.
+	 * SQL queries in class-we-love-it.php and class-get-loved.php hardcode = 'on'.
+	 */
+	const SHOW_LEGACY_ON_FIELDS = array(
+		'lezshows_worthit_show_we_love',
+		'lezshows_byq_override',
 	);
 
 	/**
@@ -38,6 +48,32 @@ class ACF {
 		// Bridge the `excerpt` ACF textarea to post_excerpt for actors and shows.
 		add_filter( 'acf/load_value/name=excerpt', array( $this, 'load_excerpt_from_post' ), 10, 3 );
 		add_action( 'acf/save_post', array( $this, 'save_excerpt_to_post' ), 20 );
+
+		// Shows: load airdates sub-values from the legacy lezshows_airdates array.
+		add_filter( 'acf/load_value/name=lezshows_airdates_start', array( $this, 'load_airdate_start' ), 10, 3 );
+		add_filter( 'acf/load_value/name=lezshows_airdates_finish', array( $this, 'load_airdate_finish' ), 10, 3 );
+
+		// Shows: convert legacy 'on' checkbox value so true_false fields render as checked.
+		foreach ( self::SHOW_LEGACY_ON_FIELDS as $field_name ) {
+			add_filter( 'acf/load_value/name=' . $field_name, array( $this, 'load_legacy_on_as_bool' ), 10, 3 );
+		}
+
+		// Shows: populate year dropdowns for air dates.
+		add_filter( 'acf/load_field/name=lezshows_airdates_start', array( $this, 'load_airdates_start_choices' ) );
+		add_filter( 'acf/load_field/name=lezshows_airdates_finish', array( $this, 'load_airdates_finish_choices' ) );
+		add_filter( 'acf/validate_value/name=lezshows_airdates_finish', array( $this, 'validate_airdate_finish' ), 10, 4 );
+
+		// Shows: populate Primary Genre choices from the show's assigned genres.
+		add_filter( 'acf/load_field/name=lezshows_tvgenre_primary', array( $this, 'load_genre_primary_choices' ) );
+
+		// Shows: populate language choices for the show_names repeater sub-field.
+		add_filter( 'acf/load_field/key=field_lwtv_lezshows_show_name_type', array( $this, 'load_language_choices' ) );
+
+		// Shows: improve search behaviour for the Similar Shows relationship field.
+		add_filter( 'acf/fields/relationship/query/name=lezshows_similar_shows', array( $this, 'similar_shows_query' ) );
+
+		// Shows: write legacy meta keys on save for backward compat with consuming code.
+		add_action( 'acf/save_post', array( $this, 'save_show_legacy_meta' ), 20 );
 
 		// Restrict specific fields to administrators only.
 		foreach ( self::ADMIN_ONLY_FIELDS as $field_name ) {
@@ -113,6 +149,254 @@ class ACF {
 			array( '%d' )
 		);
 		clean_post_cache( $post_id );
+	}
+
+	/**
+	 * Load lezshows_airdates_start from the legacy lezshows_airdates array.
+	 *
+	 * Old data lives in lezshows_airdates['start']; new data uses the separate key.
+	 *
+	 * @param mixed $value   Current field value.
+	 * @param int   $post_id Post ID.
+	 * @param array $field   ACF field definition.
+	 * @return mixed
+	 */
+	public function load_airdate_start( $value, int $post_id, array $field ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
+		if ( empty( $value ) ) {
+			$airdates = get_post_meta( $post_id, 'lezshows_airdates', true );
+			if ( is_array( $airdates ) && ! empty( $airdates['start'] ) ) {
+				$value = $airdates['start'];
+			}
+		}
+		return $value;
+	}
+
+	/**
+	 * Load lezshows_airdates_finish from the legacy lezshows_airdates array.
+	 *
+	 * @param mixed $value   Current field value.
+	 * @param int   $post_id Post ID.
+	 * @param array $field   ACF field definition.
+	 * @return mixed
+	 */
+	public function load_airdate_finish( $value, int $post_id, array $field ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
+		if ( empty( $value ) ) {
+			$airdates = get_post_meta( $post_id, 'lezshows_airdates', true );
+			if ( is_array( $airdates ) && isset( $airdates['finish'] ) ) {
+				$value = $airdates['finish'];
+			}
+		}
+		return $value;
+	}
+
+	/**
+	 * Convert the legacy CMB2 'on' checkbox value to 1 for ACF true_false display.
+	 *
+	 * CMB2 stored checked checkboxes as the string 'on'. ACF true_false expects 1.
+	 * Without this, old shows with 'on' in meta would appear unchecked in the form.
+	 *
+	 * @param mixed $value   Current field value.
+	 * @param int   $post_id Post ID.
+	 * @param array $field   ACF field definition.
+	 * @return mixed
+	 */
+	public function load_legacy_on_as_bool( $value, int $post_id, array $field ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
+		if ( 'on' === $value ) {
+			return 1;
+		}
+		return $value;
+	}
+
+	/**
+	 * Validate that the finish year is not earlier than the start year.
+	 *
+	 * 'current' is always valid. Reads the start year from the submitted ACF form data
+	 * so both fields are checked together at save time.
+	 *
+	 * @param bool|string $valid      True if valid, or an error message string.
+	 * @param mixed       $value      The finish year value being saved.
+	 * @param array       $field      ACF field definition.
+	 * @param string      $input_name HTML input name.
+	 * @return bool|string
+	 */
+	public function validate_airdate_finish( $valid, $value, array $field, string $input_name ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
+		if ( ! $valid || 'current' === $value || empty( $value ) ) {
+			return $valid;
+		}
+
+		// phpcs:disable WordPress.Security.NonceVerification.Missing -- ACF handles nonce verification before this hook fires
+		$start = isset( $_POST['acf']['field_lwtv_lezshows_airdates_start'] )
+			? (int) sanitize_text_field( wp_unslash( $_POST['acf']['field_lwtv_lezshows_airdates_start'] ) )
+			: 0;
+		// phpcs:enable WordPress.Security.NonceVerification.Missing
+
+		if ( $start && (int) $value < $start ) {
+			return __( 'The end year cannot be earlier than the start year.', 'lwtv' );
+		}
+
+		return $valid;
+	}
+
+	/**
+	 * Populate the Air Start Year select with years from LWTV_FIRST_YEAR-10 to present.
+	 *
+	 * Replicates CMB2 date_year_range start dropdown (reverse sorted, no Current option).
+	 *
+	 * @param array $field ACF field definition.
+	 * @return array
+	 */
+	public function load_airdates_start_choices( array $field ): array {
+		$earliest         = (int) LWTV_FIRST_YEAR - 10;
+		$current          = (int) gmdate( 'Y' );
+		$field['choices'] = array();
+		for ( $year = $current; $year >= $earliest; $year-- ) {
+			$field['choices'][ (string) $year ] = (string) $year;
+		}
+		return $field;
+	}
+
+	/**
+	 * Populate the Air Finish Year select with 'Current' then years from present to LWTV_FIRST_YEAR-10.
+	 *
+	 * Replicates CMB2 date_year_range finish dropdown (Current at top, reverse sorted).
+	 *
+	 * @param array $field ACF field definition.
+	 * @return array
+	 */
+	public function load_airdates_finish_choices( array $field ): array {
+		$earliest         = (int) LWTV_FIRST_YEAR - 10;
+		$current          = (int) gmdate( 'Y' );
+		$field['choices'] = array( 'current' => 'Current' );
+		for ( $year = $current; $year >= $earliest; $year-- ) {
+			$field['choices'][ (string) $year ] = (string) $year;
+		}
+		return $field;
+	}
+
+	/**
+	 * Populate the Primary Genre select choices from the show's assigned genres.
+	 *
+	 * CMB2 used options_cb to build a dynamic list of term IDs from lez_genres.
+	 * This replicates that behaviour for ACF.
+	 *
+	 * @param array $field ACF field definition.
+	 * @return array
+	 */
+	public function load_genre_primary_choices( array $field ): array {
+		$post_id          = get_the_ID();
+		$field['choices'] = array();
+
+		if ( $post_id ) {
+			$terms = get_the_terms( $post_id, 'lez_genres' );
+			if ( $terms && ! is_wp_error( $terms ) ) {
+				// Sort alphabetically to match CMB2 ksort behaviour.
+				usort( $terms, fn( $a, $b ) => strcmp( $a->name, $b->name ) );
+				foreach ( $terms as $term ) {
+					$field['choices'][ $term->term_id ] = $term->name;
+				}
+			}
+		}
+
+		return $field;
+	}
+
+	/**
+	 * Populate the show_names language select from the full languages list.
+	 *
+	 * Scoped to field_lwtv_lezshows_show_name_type to avoid firing on any other
+	 * field named 'type'.
+	 *
+	 * @param array $field ACF field definition.
+	 * @return array
+	 */
+	public function load_language_choices( array $field ): array {
+		$field['choices'] = ( new Languages() )->all_languages();
+		return $field;
+	}
+
+	/**
+	 * Tune the WP_Query for the Similar Shows relationship field search.
+	 *
+	 * Default: newest first. On search: relevance ordering so the best match
+	 * rises to the top. For short terms (≤4 chars, e.g. "ER") also constrain
+	 * to exact title matches so common letters don't flood the results.
+	 *
+	 * @param array $args WP_Query args built by ACF for the relationship search.
+	 * @return array
+	 */
+	public function similar_shows_query( array $args ): array {
+		if ( ! empty( $args['s'] ) ) {
+			$args['orderby'] = 'relevance';
+			unset( $args['order'] );
+			if ( 4 > strlen( $args['s'] ) ) {
+				$args['title'] = $args['s'];
+			}
+		} else {
+			$args['orderby'] = 'date';
+			$args['order']   = 'DESC';
+		}
+		return $args;
+	}
+
+	/**
+	 * Write legacy meta keys on show save for backward compatibility.
+	 *
+	 * Two issues this solves:
+	 *
+	 * 1. lezshows_airdates — 10+ files read get_post_meta( $id, 'lezshows_airdates', true )
+	 *    expecting array( 'start' => year, 'finish' => year|'current' ).
+	 *    ACF now stores the values in separate keys; this hook keeps the legacy key in sync.
+	 *
+	 * 2. lezshows_worthit_show_we_love / lezshows_byq_override — SQL in
+	 *    class-we-love-it.php and class-get-loved.php hardcode pm.meta_value = 'on'.
+	 *    ACF true_false writes 1; this hook normalises back to 'on'.
+	 *
+	 * @param int $post_id Post ID.
+	 * @return void
+	 */
+	public function save_show_legacy_meta( int $post_id ): void {
+		if ( 'post_type_shows' !== get_post_type( $post_id ) ) {
+			return;
+		}
+
+		// Normalize boolean flags to legacy 'on' storage format.
+		foreach ( self::SHOW_LEGACY_ON_FIELDS as $field_name ) {
+			if ( get_field( $field_name, $post_id ) ) {
+				update_post_meta( $post_id, $field_name, 'on' );
+			} else {
+				delete_post_meta( $post_id, $field_name );
+			}
+		}
+
+		// Auto-manage the 'none' trope: assign it when no tropes are selected,
+		// remove it when at least one real trope is present.
+		$none_trope = get_term_by( 'slug', 'none', 'lez_tropes' );
+		if ( $none_trope ) {
+			$none_id = (int) $none_trope->term_id;
+			$tropes  = get_field( 'lezshows_tropes', $post_id );
+			$tropes  = is_array( $tropes ) ? array_map( 'intval', $tropes ) : array();
+
+			if ( empty( $tropes ) ) {
+				wp_set_object_terms( $post_id, $none_id, 'lez_tropes', false );
+			} elseif ( in_array( $none_id, $tropes, true ) ) {
+				$real = array_values( array_filter( $tropes, fn( $id ) => $id !== $none_id ) );
+				wp_set_object_terms( $post_id, $real, 'lez_tropes', false );
+			}
+		}
+
+		// Write the legacy lezshows_airdates array.
+		$start  = get_field( 'lezshows_airdates_start', $post_id );
+		$finish = get_field( 'lezshows_airdates_finish', $post_id );
+		if ( $start || $finish ) {
+			update_post_meta(
+				$post_id,
+				'lezshows_airdates',
+				array(
+					'start'  => (string) ( $start ?? '' ),
+					'finish' => (string) ( $finish ?? '' ),
+				)
+			);
+		}
 	}
 
 	/**

@@ -144,7 +144,7 @@ class Calculations {
 	/**
 	 * do_the_math function.
 	 *
-	 * This will update the following metakeys on save:
+	 * This will update the following meta keys on save:
 	 *  - lezactors_char_count      Number of characters
 	 *  - lezactors_dead_count      Number of dead characters
 	 *  - lezactors_queer           Are they queer? True or false

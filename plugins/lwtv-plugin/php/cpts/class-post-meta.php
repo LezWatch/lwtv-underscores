@@ -98,10 +98,12 @@ class Post_Meta {
 		),
 		// Shows
 		'lezshows_airdates'             => array(
-			'post_type' => CPT_Shows::SLUG,
+			'post_type'    => CPT_Shows::SLUG,
+			'show_in_rest' => false,
 		),
 		'lezshows_waystowatch'          => array(
-			'post_type' => CPT_Shows::SLUG,
+			'post_type'    => CPT_Shows::SLUG,
+			'show_in_rest' => false,
 		),
 		// DEPRECATED! Use 'lezshows_waystowatch' instead.
 		'lezshows_affiliate'            => array(
@@ -111,17 +113,15 @@ class Post_Meta {
 			'post_type' => CPT_Shows::SLUG,
 		),
 		'lezshows_char_list'            => array(
-			'post_type'  => CPT_Shows::SLUG,
-			'type'       => 'array',
-			'items_type' => 'string',
+			'post_type'    => CPT_Shows::SLUG,
+			'show_in_rest' => false,
 		),
 		'lezshows_dead_count'           => array(
 			'post_type' => CPT_Shows::SLUG,
 		),
 		'lezshows_dead_list'            => array(
-			'post_type'  => CPT_Shows::SLUG,
-			'type'       => 'array',
-			'items_type' => 'string',
+			'post_type'    => CPT_Shows::SLUG,
+			'show_in_rest' => false,
 		),
 		'lezshows_imdb'                 => array(
 			'post_type' => CPT_Shows::SLUG,
@@ -172,10 +172,12 @@ class Post_Meta {
 			'post_type' => CPT_Shows::SLUG,
 		),
 		'lezshows_3rd_scores'           => array(
-			'post_type' => CPT_Shows::SLUG,
+			'post_type'    => CPT_Shows::SLUG,
+			'show_in_rest' => false,
 		),
 		'lezshows_tvmaze'               => array(
-			'post_type' => CPT_Shows::SLUG,
+			'post_type'    => CPT_Shows::SLUG,
+			'show_in_rest' => false,
 		),
 		'lezshows_worthit_rating'       => array(
 			'post_type' => CPT_Shows::SLUG,
@@ -187,7 +189,8 @@ class Post_Meta {
 			'post_type' => CPT_Shows::SLUG,
 		),
 		'lezshows_similar_shows'        => array(
-			'post_type' => CPT_Shows::SLUG,
+			'post_type'    => CPT_Shows::SLUG,
+			'show_in_rest' => false,
 		),
 		// TV Maze
 		'leztvmaze_our_show'            => array(

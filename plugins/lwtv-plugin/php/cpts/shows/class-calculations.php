@@ -360,7 +360,7 @@ class Calculations {
 
 		// Death Override Checker.
 		$override = get_post_meta( $post_id, 'lezshows_byq_override', true );
-		if ( isset( $override ) && ! empty( $override ) && 'yes' === $override ) {
+		if ( ! empty( $override ) ) {
 			$has_dead = false;
 		}
 
