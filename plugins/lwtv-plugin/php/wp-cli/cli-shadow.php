@@ -107,6 +107,8 @@ class WP_CLI_LWTV_Shadow {
 	 * @param int    post_id Post ID to sync (optional)
 	 */
 	public function sync_characters( $tax, $post_id ) {
+		$posts_array = array();
+
 		if ( $post_id ) {
 			$posts_array = array( $post_id );
 		} else {

@@ -11,7 +11,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-use LWTV\CPTs\Shows\Ways_To_Watch as Ways_To_Watch_Taxonomy;
 
 class Ways_To_Watch {
 
@@ -54,10 +53,8 @@ class Ways_To_Watch {
 	 * There's some juggling for certain sites
 	 */
 	public function ways_to_watch( $id ) {
-		// Check the Ways to Watch. This will silently migrate everything.
-		( new Ways_To_Watch_Taxonomy() )->migrate_ways_to_watch( $id );
-
-		$watch_urls = get_post_meta( $id, 'lezshows_waystowatch', true );
+		$rows       = get_field( 'lezshows_waystowatch', $id );
+		$watch_urls = is_array( $rows ) ? array_filter( array_column( $rows, 'url' ) ) : array();
 
 		$links       = self::generate_links( $watch_urls );
 		$link_output = implode( '', $links );

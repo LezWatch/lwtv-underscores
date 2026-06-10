@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 use LWTV\_Components\CPTs;
-use LWTV\CPTs\Shows\{ Custom_Columns, Shows_Like_This, Ways_To_Watch };
+use LWTV\CPTs\Shows\{ Custom_Columns, Shows_Like_This };
 
 /**
  * class LWTV_CPT_Shows
@@ -65,7 +65,6 @@ class Shows {
 	public function __construct() {
 		new Custom_Columns();
 		new Shows_Like_This();
-		new Ways_To_Watch();
 
 		add_action( 'admin_init', array( $this, 'admin_init' ) );
 		add_action( 'init', array( $this, 'init' ) );

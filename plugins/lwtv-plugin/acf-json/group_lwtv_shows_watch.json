@@ -21,7 +21,7 @@
             "min": 0,
             "max": 0,
             "collapsed": "",
-            "button_label": "Add Another Link",
+            "button_label": "Add A Link",
             "rows_per_page": 20,
             "sub_fields": [
                 {
@@ -91,7 +91,7 @@
             "min": 0,
             "max": 0,
             "collapsed": "",
-            "button_label": "Add Another Name",
+            "button_label": "Add A Name",
             "rows_per_page": 20,
             "sub_fields": [
                 {
