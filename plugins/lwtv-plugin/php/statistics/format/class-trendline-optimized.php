@@ -32,7 +32,7 @@ class Trendline_Optimized {
 
 		foreach ( $data as $item ) {
 			$labels   .= '"' . wp_kses_post( $item['name'] ) . ' (' . (int) $item['count'] . ')", ';
-			$datasets .= '"' . (int) $item['count'] . '", ';
+			$datasets .= (int) $item['count'] . ', ';
 		}
 
 		$canvas_output = '<div id="container" style="width: 100%;">
