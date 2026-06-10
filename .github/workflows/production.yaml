@@ -114,3 +114,6 @@ jobs:
 
             echo "Cleaning up login files..."
             rm -f /home/${{ secrets.LWTV_USER }}/logins-*.txt
+
+            echo "Syncing ACF field groups..."
+            wp acf json sync --path=/home/${{ secrets.LWTV_USER }}/${{ secrets.LWTV_DOMAIN }}

@@ -69,6 +69,10 @@ class ACF {
 		// Shows: populate language choices for the show_names repeater sub-field.
 		add_filter( 'acf/load_field/key=field_lwtv_lezshows_show_name_type', array( $this, 'load_language_choices' ) );
 
+		// Strip dynamically-populated choices before any field group is written to JSON,
+		// so the JSON file never accumulates a stale year list.
+		add_filter( 'acf/prepare_field_group_for_export', array( $this, 'strip_dynamic_choices_for_export' ) );
+
 		// Shows: improve search behaviour for the Similar Shows relationship field.
 		add_filter( 'acf/fields/relationship/query/name=lezshows_similar_shows', array( $this, 'similar_shows_query' ) );
 
@@ -235,6 +239,36 @@ class ACF {
 		}
 
 		return $valid;
+	}
+
+	/**
+	 * Clear dynamic choices before a field group is written to local JSON.
+	 *
+	 * Fields whose choices are built entirely by acf/load_field filters at runtime
+	 * must not accumulate a stale year list in the JSON file. Choices are listed here
+	 * by field key so this is a targeted, opt-in list rather than a blanket wipe.
+	 *
+	 * @param array $field_group Field group definition about to be exported/written.
+	 * @return array
+	 */
+	public function strip_dynamic_choices_for_export( array $field_group ): array {
+		static $dynamic_keys = array(
+			'field_lwtv_lezshows_airdates_start',
+			'field_lwtv_lezshows_airdates_finish',
+		);
+
+		if ( empty( $field_group['fields'] ) ) {
+			return $field_group;
+		}
+
+		foreach ( $field_group['fields'] as &$field ) {
+			if ( in_array( $field['key'], $dynamic_keys, true ) ) {
+				$field['choices'] = array();
+			}
+		}
+		unset( $field );
+
+		return $field_group;
 	}
 
 	/**
