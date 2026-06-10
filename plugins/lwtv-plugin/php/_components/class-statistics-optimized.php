@@ -21,10 +21,10 @@ class Statistics_Optimized implements Component, Templater {
 	 * Versions of scripts.
 	 */
 	const VERSIONING = array(
-		'chartjs'                   => '4.5.1',
-		'chartjs-plugin-annotation' => '3.1.0',
-		'palette'                   => '1.0.0',
-		'tablesorter'               => '2.32.0',
+		'chartjs'                  => '4.5.1',
+		'chartjs-plugin-trendline' => '3.2.5',
+		'palette'                  => '1.0.0',
+		'tablesorter'              => '2.32.0',
 	);
 
 	/*
@@ -75,7 +75,7 @@ class Statistics_Optimized implements Component, Templater {
 
 		// Enqueue files shared:
 		wp_enqueue_script( 'chartjs', LWTV_PLUGIN_URL . '/assets/js/chart.min.js', array( 'jquery' ), self::VERSIONING['chartjs'], false );
-		wp_enqueue_script( 'chartjs-plugin-annotation', LWTV_PLUGIN_URL . '/assets/js/chartjs-plugin-annotation.min.js', array( 'chartjs' ), self::VERSIONING['chartjs-plugin-annotation'], false );
+		wp_enqueue_script( 'chartjs-plugin-trendline', LWTV_PLUGIN_URL . '/assets/js/chartjs-plugin-trendline.min.js', array( 'chartjs' ), self::VERSIONING['chartjs-plugin-trendline'], false );
 		wp_enqueue_script( 'palette', LWTV_PLUGIN_URL . '/assets/js/palette.min.js', array(), self::VERSIONING['palette'], false );
 
 		// Custom extra for stats pages:
