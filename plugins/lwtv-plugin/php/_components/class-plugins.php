@@ -8,6 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+use LWTV\Plugins\ACF;
 use LWTV\Plugins\ActionScheduler;
 use LWTV\Plugins\CMB2;
 use LWTV\Plugins\Comment_Probation;
@@ -28,6 +29,7 @@ class Plugins implements Component, Templater {
 	 * Call the sub plugins
 	 */
 	public function init(): void {
+		new ACF();
 		new ActionScheduler();
 		new Comment_Probation();
 		new CMB2();

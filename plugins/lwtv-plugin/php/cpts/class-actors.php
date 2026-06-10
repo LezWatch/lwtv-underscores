@@ -12,8 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 use LWTV\_Components\CPTs;
-use LWTV\CPTs\Actors\{ CMB2_Metaboxes, Custom_Columns, Privacy };
-use LWTV\Plugins\CMB2;
+use LWTV\CPTs\Actors\{ Custom_Columns, Privacy };
 
 /**
  * class LWTV_CPT_Actors
@@ -52,7 +51,6 @@ class Actors {
 	 * Constructor
 	 */
 	public function __construct() {
-		new CMB2_Metaboxes();
 		new Custom_Columns();
 
 		add_action( 'admin_init', array( $this, 'admin_init' ) );
@@ -61,8 +59,8 @@ class Actors {
 		add_action( 'init', array( $this, 'create_post_type' ), 0 );
 		add_action( 'init', array( $this, 'create_taxonomies' ), 0 );
 
-		// Save Hooks
-		add_action( 'save_post_post_type_actors', array( $this, 'save_post_meta' ), 10, 3 );
+		// Save Hooks - TEMP DISABLED WHILE TESTING
+		// add_action( 'save_post_post_type_actors', array( $this, 'save_post_meta' ), 10, 3 );
 
 		// Hide taxonomies from Gutenberg.
 		add_filter( 'rest_prepare_taxonomy', array( $this, 'hide_taxonomies_from_gutenberg' ), 10, 2 );
@@ -255,29 +253,6 @@ class Actors {
 
 		// re-hook this function
 		add_action( 'save_post_post_type_actors', array( $this, 'save_post_meta' ) );
-	}
-
-	/**
-	 * Sync taxonomies
-	 *
-	 * @param int $post_id The post ID
-	 * @return void
-	 */
-	public function sync_taxonomies( $post_id ) {
-		$success_count = 0;
-		$total_count   = count( self::SELECT2_TAXONOMIES );
-
-		foreach ( self::SELECT2_TAXONOMIES as $postmeta => $taxonomy ) {
-			try {
-				( new CMB2() )->select2_taxonomy_save( $post_id, $postmeta, $taxonomy );
-				++$success_count;
-				lwtv_plugin()->debug_log( 'taxsync', "Synced taxonomy {$taxonomy} for character ID: {$post_id}" );
-			} catch ( \Exception $e ) {
-				lwtv_plugin()->error_log( 'taxsync', "Failed to sync taxonomy {$taxonomy} for character ID: {$post_id}: " . $e->getMessage() );
-			}
-		}
-
-		lwtv_plugin()->debug_log( 'taxsync', "Completed character taxonomy sync for ID: {$post_id} - {$success_count}/{$total_count} successful" );
 	}
 
 	/*

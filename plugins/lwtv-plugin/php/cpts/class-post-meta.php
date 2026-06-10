@@ -68,13 +68,15 @@ class Post_Meta {
 			'post_type' => CPT_Actors::SLUG,
 		),
 		'lezactors_char_list'           => array(
-			'post_type' => CPT_Actors::SLUG,
+			'post_type'    => CPT_Actors::SLUG,
+			'show_in_rest' => false,
 		),
 		'lezactors_dead_count'          => array(
 			'post_type' => CPT_Actors::SLUG,
 		),
 		'lezactors_dead_list'           => array(
-			'post_type' => CPT_Actors::SLUG,
+			'post_type'    => CPT_Actors::SLUG,
+			'show_in_rest' => false,
 		),
 		'lezactors_saved_wikidata'      => array(
 			'post_type'  => CPT_Actors::SLUG,
@@ -250,7 +252,9 @@ class Post_Meta {
 				$arguments['type'] = ( isset( $meta_data['type'] ) ) ? $meta_data['type'] : 'string';
 
 				// Set Items Types:
-				if ( 'string' !== $arguments['type'] && isset( $meta_data['items_type'] ) ) {
+				if ( isset( $meta_data['show_in_rest'] ) && false === $meta_data['show_in_rest'] ) {
+					$arguments['show_in_rest'] = false;
+				} elseif ( 'string' !== $arguments['type'] && isset( $meta_data['items_type'] ) ) {
 					$arguments['show_in_rest'] = array(
 						'schema' => array(
 							'type'                 => $meta_data['type'],
