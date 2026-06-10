@@ -1,8 +1,8 @@
 .cmb2-wrap .cmb-row.cmb-repeat-row {
-    border-bottom: none!important;
+	border-bottom: none!important;
 }
 .cmb2-metabox>.cmb-row .cmb-repeat-table .cmb-row>.cmb-td {
-    padding: 10px 20px 0 0!important;
+	padding: 10px 20px 0 0!important;
 }
 
 .cmb-type-taxonomy-multicheck-inline .cmb2-checkbox-list.cmb2-list li {
@@ -34,9 +34,9 @@
 }
 
 .cmb2-icon svg {
-    width: 30px;
-    height: 30px;
-    vertical-align: middle;
+	width: 30px;
+	height: 30px;
+	vertical-align: middle;
 }
 
 .lwtv #characters:before {
@@ -115,11 +115,43 @@ div.cmb2-id-lezchars-gender select.cmb2_select2 {
 	width: 90%!important;
 }
 
-.cmb2-wrap input.cmb2-text-medium {
-	width: 100%!important;
+.cmb2-wrap {
+	input.cmb2-text-medium {
+		width: 100%!important;
+	}
+	input.cmb2-text-small, input.cmb2-timepicker {
+		width: 50%!important;
+	}
+
+	/* WP 7.0: repeat table .cmb-td is narrower; datepickers need explicit full width */
+	.cmb-repeat-table .cmb-td input.cmb2-datepicker {
+		width: 100%!important;
+		box-sizing: border-box;
+	}
+
+	select {
+		width: 100%;
+	}
+
+	.cmb-th label {
+		font-weight: bold;
+	}
+
+	.cmb2-metabox-description {
+		font-style: italic;
+	}
+
+	.cmb2GridRow {
+		padding: 10px 0;
+		border-bottom: 1px solid #dedede;
+	}
 }
 
-.cmb2-wrap input.cmb2-text-small,
-.cmb2-wrap input.cmb2-timepicker {
-	width: 50%!important;
+.postbox .cmb2-wrap .row {
+	margin-left: -16px;
+	margin-right: -16px;
+}
+
+.edit-post-meta-boxes-area #poststuff h2.hndle {
+	text-transform: uppercase;
 }
