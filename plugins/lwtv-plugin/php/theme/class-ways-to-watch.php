@@ -104,7 +104,7 @@ class Ways_To_Watch {
 			}
 
 			// If Hide Display is flagged, hide the display.
-			if ( get_term_meta( $terms[0]->ID, 'lezwatchurls_setting_hide_display', false ) ) {
+			if ( '1' === get_term_meta( $terms[0]->ID, 'lezwatchurls_setting_hide_display', true ) ) {
 				continue;
 			}
 
@@ -152,25 +152,42 @@ class Ways_To_Watch {
 	/**
 	 * Get Term by URL
 	 *
+	 * Searches ACF repeater subfield rows (lezwatchurls_all_N_url) for an exact URL match.
+	 *
 	 * @param  string $url
 	 * @return array
 	 */
 	public function get_term_by_url( $url ): array {
-		$args = array(
-			'hide_empty' => false, // also retrieve terms which are not used yet
-			'meta_query' => array(
-				array(
-					'key'     => 'lezwatchurls_all',
-					'value'   => $url,
-					'compare' => 'LIKE',
-				),
-			),
-			'taxonomy'   => 'lez_watch_urls',
+		global $wpdb;
+
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
+		$term_ids = $wpdb->get_col(
+			$wpdb->prepare(
+				"SELECT DISTINCT t.term_id
+				FROM {$wpdb->terms} t
+				INNER JOIN {$wpdb->term_taxonomy} tt ON t.term_id = tt.term_id
+				INNER JOIN {$wpdb->termmeta} tm ON t.term_id = tm.term_id
+				WHERE tt.taxonomy = 'lez_watch_urls'
+				AND tm.meta_key LIKE 'lezwatchurls_all_%_url'
+				AND tm.meta_value = %s",
+				$url
+			)
+		);
+		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
+
+		if ( empty( $term_ids ) ) {
+			return array();
+		}
+
+		$terms = get_terms(
+			array(
+				'taxonomy'   => 'lez_watch_urls',
+				'hide_empty' => false,
+				'include'    => $term_ids,
+			)
 		);
 
-		$terms = get_terms( $args );
-
-		return $terms;
+		return ( ! is_wp_error( $terms ) && is_array( $terms ) ) ? $terms : array();
 	}
 
 	/**

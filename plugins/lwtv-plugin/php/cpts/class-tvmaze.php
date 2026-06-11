@@ -21,7 +21,7 @@ class TVMaze {
 	const SLUG = 'post_type_tvmaze';
 
 	/**
-	 * CMB2 Prefix
+	 * Prefix
 	 */
 	const PREFIX = 'leztvmaze_';
 

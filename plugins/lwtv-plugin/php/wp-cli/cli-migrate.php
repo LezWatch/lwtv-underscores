@@ -107,6 +107,15 @@ class WP_CLI_LWTV_Migrate {
 				case 'charshowgroup':
 					$this->migrate_charshowgroup();
 					break;
+				case 'autoposting':
+					$this->migrate_autoposting();
+					break;
+				case 'watchtermurls':
+					$this->migrate_watchtermurls();
+					break;
+				case 'debuglogging':
+					$this->migrate_debuglogging();
+					break;
 				default:
 					\WP_CLI::error( 'Unknown ACF migration subtype: ' . $subtype . ' does not exist.' );
 			}
@@ -570,6 +579,184 @@ class WP_CLI_LWTV_Migrate {
 			\WP_CLI::log( 'No posts required migration.' );
 		} else {
 			\WP_CLI::success( 'Migration completed for ' . $post_count . ' post(s).' );
+		}
+	}
+
+	/**
+	 * Migrate Auto-Posting (Postiz) settings from CMB2 options page to ACF options page.
+	 *
+	 * CMB2 stores all settings under a single serialized option key.
+	 * ACF options pages store each field as its own wp_options row.
+	 *
+	 * Run AFTER syncing group_lwtv_auto_posting.json in ACF → Sync.
+	 */
+	public function migrate_autoposting() {
+		$old_options = get_option( 'lwtv_auto_posting_options', array() );
+
+		if ( empty( $old_options ) ) {
+			\WP_CLI::log( 'No auto-posting options found in lwtv_auto_posting_options. Nothing to migrate.' );
+			return;
+		}
+
+		$migrated = 0;
+
+		// Simple scalar fields.
+		$simple = array(
+			'lwtv_postiz_api_key'   => 'field_lwtv_postiz_api_key',
+			'lwtv_postiz_api_url'   => 'field_lwtv_postiz_api_url',
+			'lwtv_postiz_post_type' => 'field_lwtv_postiz_post_type',
+			'lwtv_postiz_triggers'  => 'field_lwtv_postiz_triggers',
+		);
+
+		foreach ( $simple as $key => $field_key ) {
+			if ( array_key_exists( $key, $old_options ) ) {
+				update_option( $key, $old_options[ $key ] );
+				update_option( '_' . $key, $field_key );
+				++$migrated;
+				\WP_CLI::log( "Migrated: {$key}" );
+			}
+		}
+
+		// Channels repeater.
+		$channels = $old_options['lwtv_postiz_channels'] ?? array();
+		if ( ! empty( $channels ) && is_array( $channels ) ) {
+			$count = 0;
+			foreach ( $channels as $channel ) {
+				update_option( "lwtv_postiz_channels_{$count}_name", $channel['name'] ?? '' );
+				update_option( "_lwtv_postiz_channels_{$count}_name", 'field_lwtv_postiz_channels_name' );
+
+				update_option( "lwtv_postiz_channels_{$count}_channel_id", $channel['channel_id'] ?? '' );
+				update_option( "_lwtv_postiz_channels_{$count}_channel_id", 'field_lwtv_postiz_channels_channel_id' );
+
+				// CMB2 checkbox stores 'on'; ACF true_false stores '1'/'0'.
+				$active = ( isset( $channel['active'] ) && 'on' === $channel['active'] ) ? '1' : '0';
+				update_option( "lwtv_postiz_channels_{$count}_active", $active );
+				update_option( "_lwtv_postiz_channels_{$count}_active", 'field_lwtv_postiz_channels_active' );
+
+				\WP_CLI::log( "Migrated channel {$count}: " . ( $channel['name'] ?? '(unnamed)' ) );
+				++$count;
+			}
+			update_option( 'lwtv_postiz_channels', $count );
+			update_option( '_lwtv_postiz_channels', 'field_lwtv_postiz_channels' );
+			++$migrated;
+		}
+
+		if ( 0 === $migrated ) {
+			\WP_CLI::log( 'No fields required migration.' );
+		} else {
+			\WP_CLI::success( "Migration completed. {$migrated} setting group(s) migrated." );
+		}
+	}
+
+	/**
+	 * Migrate lez_watch_urls term meta from CMB2 format to ACF repeater format.
+	 *
+	 * CMB2 repeatable text_url stores lezwatchurls_all as a serialized PHP array.
+	 * ACF repeater stores individual rows: lezwatchurls_all_N_url.
+	 * CMB2 checkbox stores lezwatchurls_setting_hide_display as 'on'; ACF true_false uses '1'.
+	 *
+	 * Run AFTER syncing group_lwtv_term_watch_urls.json in ACF → Sync.
+	 */
+	public function migrate_watchtermurls() {
+		$terms = get_terms(
+			array(
+				'taxonomy'   => 'lez_watch_urls',
+				'hide_empty' => false,
+			)
+		);
+
+		if ( is_wp_error( $terms ) || empty( $terms ) ) {
+			\WP_CLI::log( 'No lez_watch_urls terms found.' );
+			return;
+		}
+
+		$term_count   = 0;
+		$progress_bar = \WP_CLI\Utils\make_progress_bar( sprintf( 'Starting migration. Found %d terms ...', count( $terms ) ), count( $terms ) );
+
+		foreach ( $terms as $term ) {
+			$term_id = $term->term_id;
+
+			// Migrate lezwatchurls_all (serialized array → ACF repeater rows).
+			if ( ! get_term_meta( $term_id, '_lezwatchurls_all', true ) ) {
+				$value = get_term_meta( $term_id, 'lezwatchurls_all', true );
+
+				if ( is_array( $value ) ) {
+					$count = 0;
+					foreach ( $value as $url ) {
+						$url = esc_url_raw( trim( $url ) );
+						if ( empty( $url ) ) {
+							continue;
+						}
+						update_term_meta( $term_id, "lezwatchurls_all_{$count}_url", $url );
+						update_term_meta( $term_id, "_lezwatchurls_all_{$count}_url", 'field_lwtv_lezwatchurls_all_url' );
+						++$count;
+					}
+					update_term_meta( $term_id, 'lezwatchurls_all', $count );
+					update_term_meta( $term_id, '_lezwatchurls_all', 'field_lwtv_lezwatchurls_all' );
+					\WP_CLI::log( "Migrated URLs for term {$term_id}: {$term->name} ({$count} rows)" );
+					++$term_count;
+				}
+			}
+
+			// Migrate lezwatchurls_setting_hide_display: CMB2 'on' → ACF '1'.
+			$hide = get_term_meta( $term_id, 'lezwatchurls_setting_hide_display', true );
+			if ( 'on' === $hide ) {
+				update_term_meta( $term_id, 'lezwatchurls_setting_hide_display', '1' );
+				update_term_meta( $term_id, '_lezwatchurls_setting_hide_display', 'field_lwtv_lezwatchurls_setting_hide_display' );
+				\WP_CLI::log( "Migrated hide_display for term {$term_id}: {$term->name}" );
+			}
+
+			$progress_bar->tick();
+		}
+
+		$progress_bar->finish();
+
+		if ( 0 === $term_count ) {
+			\WP_CLI::log( 'No terms required URL migration.' );
+		} else {
+			\WP_CLI::success( 'Migration completed for ' . $term_count . ' term(s).' );
+		}
+	}
+
+	/**
+	 * Migrate Debug Logging settings from CMB2 options page to ACF options page.
+	 *
+	 * CMB2 stores all settings under lwtv_debug_logging_options as a serialized array.
+	 * ACF options pages store each field as its own wp_options row.
+	 *
+	 * Run AFTER syncing group_lwtv_debug_logging.json in ACF → Sync.
+	 */
+	public function migrate_debuglogging() {
+		$old_options = get_option( 'lwtv_debug_logging_options', array() );
+
+		if ( empty( $old_options ) ) {
+			\WP_CLI::log( 'No debug logging options found in lwtv_debug_logging_options. Nothing to migrate.' );
+			return;
+		}
+
+		$migrated = 0;
+
+		// debug_mode: CMB2 checkbox 'on' → ACF true_false '1'.
+		if ( array_key_exists( 'debug_mode', $old_options ) ) {
+			$value = ( 'on' === $old_options['debug_mode'] ) ? '1' : '0';
+			update_option( 'options_debug_mode', $value );
+			update_option( '_options_debug_mode', 'field_lwtv_debug_mode' );
+			++$migrated;
+			\WP_CLI::log( 'Migrated: debug_mode = ' . $value );
+		}
+
+		// log_topics: CMB2 multicheck array → ACF checkbox array (values are the same).
+		if ( array_key_exists( 'log_topics', $old_options ) && is_array( $old_options['log_topics'] ) ) {
+			update_option( 'options_log_topics', $old_options['log_topics'] );
+			update_option( '_options_log_topics', 'field_lwtv_log_topics' );
+			++$migrated;
+			\WP_CLI::log( 'Migrated: log_topics (' . count( $old_options['log_topics'] ) . ' topics)' );
+		}
+
+		if ( 0 === $migrated ) {
+			\WP_CLI::log( 'No fields required migration.' );
+		} else {
+			\WP_CLI::success( "Migration completed. {$migrated} field(s) migrated." );
 		}
 	}
 }

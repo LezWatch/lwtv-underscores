@@ -19,7 +19,6 @@ use LWTV\Schedulers\Cache_Task;
 use LWTV\Schedulers\Cache_Queue;
 use LWTV\Schedulers\Calculation_Task;
 use LWTV\Schedulers\Cache_Batch_Task;
-use LWTV\Schedulers\Taxsync_Task;
 use LWTV\Schedulers\FixCharShows_Task;
 use LWTV\Schedulers\Statistics_Cache_Warming;
 use LWTV\Schedulers\BYQ_Task;
@@ -52,7 +51,6 @@ class Scheduler implements Component, Templater {
 			new Cache_Task();
 			new Cache_Queue();
 			new Calculation_Task();
-			new Taxsync_Task();
 			new FixCharShows_Task();
 			new Statistics_Cache_Warming();
 

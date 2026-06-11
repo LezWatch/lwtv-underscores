@@ -90,6 +90,9 @@ class ACF {
 		// Terms: populate Symbolicon icon select choices dynamically.
 		add_filter( 'acf/load_field/name=lez_termsmeta_icon', array( $this, 'load_symbolicon_choices' ) );
 
+		// Debug logging: populate log_topics checkbox choices dynamically.
+		add_filter( 'acf/load_field/name=log_topics', array( $this, 'load_log_topics_choices' ) );
+
 		// Shows: write legacy meta keys on save for backward compat with consuming code.
 		add_action( 'acf/save_post', array( $this, 'save_show_legacy_meta' ), 20 );
 
@@ -287,6 +290,7 @@ class ACF {
 			'field_lwtv_lezshows_airdates_finish',
 			'field_lwtv_lezchars_show_group_appears',
 			'field_lwtv_lez_termsmeta_icon',
+			'field_lwtv_log_topics',
 		);
 
 		if ( empty( $field_group['fields'] ) ) {
@@ -608,6 +612,23 @@ class ACF {
 			}
 		}
 
+		return $field;
+	}
+
+	/**
+	 * Populate the log_topics checkbox with choices from Debug_Logging::VALID_LOG_TOPICS.
+	 *
+	 * Choices are built at runtime so adding a topic to the constant is reflected
+	 * immediately without touching the JSON file.
+	 *
+	 * @param array $field ACF field definition.
+	 * @return array
+	 */
+	public function load_log_topics_choices( array $field ): array {
+		$field['choices'] = array();
+		foreach ( \LWTV\Admin_Menu\Debug_Logging::VALID_LOG_TOPICS as $topic ) {
+			$field['choices'][ $topic ] = ucwords( str_replace( '-', ' ', $topic ) );
+		}
 		return $field;
 	}
 }

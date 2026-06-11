@@ -30,8 +30,8 @@ class Plugins implements Component, Templater {
 	public function init(): void {
 		new ACF();
 		new ActionScheduler();
-		new Comment_Probation();
 		new CMB2();
+		new Comment_Probation();
 		new FacetWP();
 		new Gravity_Forms();
 		new MonsterInsights();

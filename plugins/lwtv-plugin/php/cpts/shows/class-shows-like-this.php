@@ -166,7 +166,7 @@ class Shows_Like_This {
 			while ( $reciprocity_loop->have_posts() ) {
 				$reciprocity_loop->the_post();
 				$this_show_id = get_the_ID();
-				$shows_array  = get_field( 'lezshows_similar_shows', $this_show_id ) ?: array();
+				$shows_array  = get_field( 'lezshows_similar_shows', $this_show_id ) ? get_field( 'lezshows_similar_shows', $this_show_id ) : array();
 
 				/*
 				 * If the show is published and there's a valid show array and it's not empty
@@ -194,7 +194,7 @@ class Shows_Like_This {
 	/**
 	 * Alter Results
 	 *
-	 * Since we added in a CMB2 value for similar shows, we have to check that list here
+	 * Since we added in a custom value for similar shows, we have to check that list here
 	 * and make sure they're included.
 	 *
 	 * @param  array $results    The current results
@@ -217,7 +217,7 @@ class Shows_Like_This {
 			$results = array_unique( $results );
 
 			// What MIGHT we be adding:
-			$handpicked  = wp_parse_id_list( get_field( 'lezshows_similar_shows', $post_id ) ?: array() );
+			$handpicked  = wp_parse_id_list( get_field( 'lezshows_similar_shows', $post_id ) ? get_field( 'lezshows_similar_shows', $post_id ) : array() );
 			$reciprocity = self::reciprocity( $post_id );
 			$combo_list  = array_merge( $handpicked, $reciprocity );
 

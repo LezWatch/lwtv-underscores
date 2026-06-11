@@ -18,7 +18,7 @@ class Show_Stars {
 	 * @param  string $show_id
 	 * @return mixed  Star (or not)
 	 */
-	public function make( $show_id ) {
+	public function make( $show_id, $size = 50 ) {
 
 		$star_terms = get_the_terms( $show_id, 'lez_stars' );
 
@@ -30,7 +30,7 @@ class Show_Stars {
 				$color      = $color_term[0]->slug;
 			}
 
-			$icon = lwtv_plugin()->get_symbolicon( svg: 'star.svg', icon: 'svg-star', max_size: '50' );
+			$icon = lwtv_plugin()->get_symbolicon( svg: 'star.svg', icon: 'svg-star', max_size: $size );
 			$star = ' <span role="img" aria-label="' . ucfirst( $color ) . ' Star Show" data-bs-target="tooltip" title="' . ucfirst( $color ) . ' Star Show" class="show-star ' . $color . '">' . $icon . '</span>';
 
 			return $star;

@@ -170,8 +170,8 @@ class Theme implements Component, Templater {
 	 *
 	 * @return string
 	 */
-	public function get_show_stars( $show_id ) {
-		return ( new Show_Stars() )->make( $show_id );
+	public function get_show_stars( $show_id, $size = 50 ) {
+		return ( new Show_Stars() )->make( $show_id, $size );
 	}
 
 	/**

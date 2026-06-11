@@ -1,8 +1,7 @@
 <?php
 /*
- * Library: CMB2 Add Ons
- * Description: Addons for CMB2 that make life worth living
- * Version: 2.0.3
+ * Library: CMB2
+ * Description: A force disable of CMB2 since we're moving to ACF and want to make sure there are no conflicts.
  */
 
 namespace LWTV\Plugins;
@@ -12,9 +11,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class CMB2 {
+
 	/**
-	 * Constructor
-	 *
 	 * As CMB2 is being phased out, this exists only to make sure it's DISabled.
 	 */
 	public function __construct() {
