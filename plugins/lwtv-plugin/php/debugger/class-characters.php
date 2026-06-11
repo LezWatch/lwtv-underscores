@@ -61,7 +61,8 @@ class Characters {
 			$problems = array();
 
 			// Check for missing death year meta data
-			$death_year = get_post_meta( $char_id, 'lezchars_death_year', true );
+			$death_rows = get_field( 'lezchars_death_year', $char_id );
+			$death_year = is_array( $death_rows ) ? array_filter( array_column( $death_rows, 'date' ) ) : array();
 			if ( empty( $death_year ) ) {
 				$problems[] = 'Character marked as dead but missing lezchars_death_year meta data.';
 			}

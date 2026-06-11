@@ -87,13 +87,9 @@ class Characters_Builder {
 					if ( (bool) $row['is_dead'] ) {
 						$row['last_death'] = get_post_meta( $row['ID'], 'lezchars_last_death', true );
 
-						$death_year_data = get_post_meta( $row['ID'], 'lezchars_death_year', true );
-
-						if ( ! empty( $death_year_data ) ) {
-							$death_year_data = maybe_unserialize( $death_year_data );
-							if ( is_array( $death_year_data ) ) {
-								$row['death_years'] = array_values( $death_year_data );
-							}
+						$death_rows = get_field( 'lezchars_death_year', $row['ID'] );
+						if ( is_array( $death_rows ) ) {
+							$row['death_years'] = array_values( array_filter( array_column( $death_rows, 'date' ) ) );
 						}
 					}
 

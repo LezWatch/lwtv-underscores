@@ -11,8 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-use LWTV\CPTs\Characters\{ CMB2_Metaboxes, Custom_Columns };
-use LWTV\Plugins\CMB2;
+use LWTV\CPTs\Characters\Custom_Columns;
 use LWTV\Rest_API\BYQ;
 
 /**
@@ -66,7 +65,6 @@ class Characters {
 	 * Constructor
 	 */
 	public function __construct() {
-		new CMB2_Metaboxes();
 		new Custom_Columns();
 
 		add_action( 'admin_init', array( $this, 'admin_init' ) );
@@ -313,9 +311,6 @@ class Characters {
 		// Schedule calculations for later processing
 		lwtv_plugin()->schedule_task( 'calculation', $post_id );
 
-		// Schedule taxonomy sync for later processing
-		$this->sync_taxonomies( $post_id );
-
 		// Queue cache invalidation for shutdown processing
 		lwtv_plugin()->cache_queue( $post_id );
 
@@ -327,29 +322,6 @@ class Characters {
 
 		// re-hook this function
 		add_action( 'save_post_post_type_characters', array( $this, 'save_post_meta' ) );
-	}
-
-	/**
-	 * Sync taxonomies
-	 *
-	 * @param int $post_id The post ID
-	 * @return void
-	 */
-	public function sync_taxonomies( $post_id ) {
-		$success_count = 0;
-		$total_count   = count( self::SELECT2_TAXONOMIES );
-
-		foreach ( self::SELECT2_TAXONOMIES as $postmeta => $taxonomy ) {
-			try {
-				( new CMB2() )->select2_taxonomy_save( $post_id, $postmeta, $taxonomy );
-				++$success_count;
-				lwtv_plugin()->debug_log( 'taxsync', "Synced taxonomy {$taxonomy} for character ID: {$post_id}" );
-			} catch ( \Exception $e ) {
-				lwtv_plugin()->error_log( 'taxsync', "Failed to sync taxonomy {$taxonomy} for character ID: {$post_id}: " . $e->getMessage() );
-			}
-		}
-
-		lwtv_plugin()->debug_log( 'taxsync', "Completed character taxonomy sync for ID: {$post_id} - {$success_count}/{$total_count} successful" );
 	}
 
 	/**

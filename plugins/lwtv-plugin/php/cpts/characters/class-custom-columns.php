@@ -48,11 +48,12 @@ class Custom_Columns {
 	 */
 	public function manage_posts_custom_column( $column, $post_id ) {
 
-		$character_show_ids = get_post_meta( $post_id, 'lezchars_show_group', true );
+		// Use ACF data after migration; fall back to raw meta before migration runs.
+		$character_show_ids = get_field( 'lezchars_show_group', $post_id ) ? get_field( 'lezchars_show_group', $post_id ) : get_post_meta( $post_id, 'lezchars_show_group', true );
 		$show_title         = array();
 		$role_array         = array();
 
-		if ( '' !== $character_show_ids ) {
+		if ( is_array( $character_show_ids ) ) {
 			foreach ( $character_show_ids as $each_show ) {
 
 				/**
@@ -79,7 +80,8 @@ class Custom_Columns {
 			}
 		}
 
-		$character_death = get_post_meta( $post_id, 'lezchars_death_year', true );
+		$death_rows      = get_field( 'lezchars_death_year', $post_id );
+		$character_death = is_array( $death_rows ) ? array_filter( array_column( $death_rows, 'date' ) ) : array();
 
 		if ( empty( $character_death ) ) {
 			$character_death = array( 'Alive' );

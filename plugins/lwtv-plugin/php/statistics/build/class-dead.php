@@ -96,9 +96,10 @@ class Dead {
 			// Loop through dead characters and check if any death year matches the specified year
 			foreach ( $dead_characters as $character ) {
 				// Get death year meta data for this character
-				$death_years = get_post_meta( $character['ID'], 'lezchars_death_year', true );
+				$death_rows  = get_field( 'lezchars_death_year', $character['ID'] );
+				$death_years = is_array( $death_rows ) ? array_filter( array_column( $death_rows, 'date' ) ) : array();
 
-				if ( ! is_array( $death_years ) ) {
+				if ( empty( $death_years ) ) {
 					continue;
 				}
 
@@ -321,42 +322,25 @@ class Dead {
 			return $cached_data;
 		}
 
-		// Get all death year meta data (serialized arrays)
-		$query = $wpdb->prepare(
-			"SELECT post_id, meta_value
-			FROM {$wpdb->postmeta}
-			WHERE meta_key = %s
-			AND meta_value IS NOT NULL
+		// Query individual ACF repeater row keys — one row per death date after migration.
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
+		$results = $wpdb->get_results(
+			"SELECT post_id, meta_value FROM {$wpdb->postmeta}
+			WHERE meta_key LIKE 'lezchars_death_year_%_date'
 			AND meta_value != ''",
-			'lezchars_death_year'
+			ARRAY_A
 		);
-
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- This is a prepared query (see above)
-		$results = $wpdb->get_results( $query, ARRAY_A );
+		// phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
 
 		$year_counts = array();
 
 		foreach ( $results as $row ) {
-			// Unserialize the meta value
-			$death_dates = maybe_unserialize( $row['meta_value'] );
-
-			// Ensure it's an array
-			if ( ! is_array( $death_dates ) ) {
-				continue;
-			}
-
-			// Extract years from each death date
-			foreach ( $death_dates as $death_date ) {
-				// Extract year from Y-m-d format
-				if ( preg_match( '/^(\d{4})-\d{2}-\d{2}$/', $death_date, $matches ) ) {
-					$year = $matches[1];
-
-					// Count this year
-					if ( ! isset( $year_counts[ $year ] ) ) {
-						$year_counts[ $year ] = 0;
-					}
-					++$year_counts[ $year ];
+			if ( preg_match( '/^(\d{4})-\d{2}-\d{2}$/', $row['meta_value'], $matches ) ) {
+				$year = $matches[1];
+				if ( ! isset( $year_counts[ $year ] ) ) {
+					$year_counts[ $year ] = 0;
 				}
+				++$year_counts[ $year ];
 			}
 		}
 

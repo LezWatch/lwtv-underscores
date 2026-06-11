@@ -147,8 +147,23 @@ class What_Happened_JSON {
 				$count_array['dead'] = $death_query_count;
 				break;
 			case 'day':
-				$death_query         = ( new Post_Meta_And_Tax() )->make( CPT_Characters::SLUG, 'lezchars_death_year', $datetime->format( 'Y-m-d' ), 'lez_cliches', 'slug', 'dead', 'LIKE' );
-				$count_array['dead'] = ( is_object( $death_query ) ) ? $death_query->post_count : 0;
+				global $wpdb;
+				$date = $datetime->format( 'Y-m-d' );
+				// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
+				$dead_ids = $wpdb->get_col(
+					$wpdb->prepare(
+						"SELECT DISTINCT pm.post_id FROM {$wpdb->postmeta} pm
+						INNER JOIN {$wpdb->term_relationships} tr ON pm.post_id = tr.object_id
+						INNER JOIN {$wpdb->term_taxonomy} tt ON tr.term_taxonomy_id = tt.term_taxonomy_id
+						INNER JOIN {$wpdb->terms} t ON tt.term_id = t.term_id
+						WHERE pm.meta_key LIKE 'lezchars_death_year_%%_date'
+						AND pm.meta_value = %s
+						AND tt.taxonomy = 'lez_cliches' AND t.slug = 'dead'",
+						$date
+					)
+				);
+				// phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
+				$count_array['dead'] = count( $dead_ids );
 				break;
 			default:
 				$count_array['dead'] = 0;

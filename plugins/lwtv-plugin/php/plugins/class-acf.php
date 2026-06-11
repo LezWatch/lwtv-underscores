@@ -69,12 +69,18 @@ class ACF {
 		// Shows: populate language choices for the show_names repeater sub-field.
 		add_filter( 'acf/load_field/key=field_lwtv_lezshows_show_name_type', array( $this, 'load_language_choices' ) );
 
+		// Characters: populate year choices for the show_group appears sub-field.
+		add_filter( 'acf/load_field/key=field_lwtv_lezchars_show_group_appears', array( $this, 'load_appears_choices' ) );
+
 		// Strip dynamically-populated choices before any field group is written to JSON,
 		// so the JSON file never accumulates a stale year list.
 		add_filter( 'acf/prepare_field_group_for_export', array( $this, 'strip_dynamic_choices_for_export' ) );
 
 		// Shows: improve search behaviour for the Similar Shows relationship field.
 		add_filter( 'acf/fields/relationship/query/name=lezshows_similar_shows', array( $this, 'similar_shows_query' ) );
+
+		// Characters: improve search for the Actor relationship field.
+		add_filter( 'acf/fields/relationship/query/name=lezchars_actor', array( $this, 'actor_query' ) );
 
 		// Shows: write legacy meta keys on save for backward compat with consuming code.
 		add_action( 'acf/save_post', array( $this, 'save_show_legacy_meta' ), 20 );
@@ -255,6 +261,7 @@ class ACF {
 		static $dynamic_keys = array(
 			'field_lwtv_lezshows_airdates_start',
 			'field_lwtv_lezshows_airdates_finish',
+			'field_lwtv_lezchars_show_group_appears',
 		);
 
 		if ( empty( $field_group['fields'] ) ) {
@@ -264,6 +271,14 @@ class ACF {
 		foreach ( $field_group['fields'] as &$field ) {
 			if ( in_array( $field['key'], $dynamic_keys, true ) ) {
 				$field['choices'] = array();
+			}
+			if ( ! empty( $field['sub_fields'] ) ) {
+				foreach ( $field['sub_fields'] as &$sub_field ) {
+					if ( in_array( $sub_field['key'], $dynamic_keys, true ) ) {
+						$sub_field['choices'] = array();
+					}
+				}
+				unset( $sub_field );
 			}
 		}
 		unset( $field );
@@ -346,6 +361,43 @@ class ACF {
 	public function load_language_choices( array $field ): array {
 		$field['choices'] = ( new Languages() )->all_languages();
 		return $field;
+	}
+
+	/**
+	 * Populate the 'Years Appears' multi-select with years from LWTV_FIRST_YEAR to next year.
+	 *
+	 * Replicates CMB2 pw_multiselect years_array (reverse sorted, includes upcoming year).
+	 *
+	 * @param array $field ACF field definition.
+	 * @return array
+	 */
+	public function load_appears_choices( array $field ): array {
+		$earliest         = (int) LWTV_FIRST_YEAR;
+		$latest           = (int) gmdate( 'Y' ) + 1;
+		$field['choices'] = array();
+		for ( $year = $latest; $year >= $earliest; $year-- ) {
+			$field['choices'][ (string) $year ] = (string) $year;
+		}
+		return $field;
+	}
+
+	/**
+	 * Tune the WP_Query for the Actor relationship field search.
+	 *
+	 * Default: newest first. On search: relevance ordering.
+	 *
+	 * @param array $args WP_Query args built by ACF for the relationship search.
+	 * @return array
+	 */
+	public function actor_query( array $args ): array {
+		if ( ! empty( $args['s'] ) ) {
+			$args['orderby'] = 'relevance';
+			unset( $args['order'] );
+		} else {
+			$args['orderby'] = 'date';
+			$args['order']   = 'DESC';
+		}
+		return $args;
 	}
 
 	/**

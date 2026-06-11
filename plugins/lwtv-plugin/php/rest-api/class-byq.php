@@ -532,10 +532,11 @@ class BYQ {
 
 			foreach ( $results as $row ) {
 				// Get the actual death year for this character
-				$death_years = get_post_meta( $row->ID, 'lezchars_death_year', true );
+				$death_rows  = get_field( 'lezchars_death_year', $row->ID );
+				$death_years = is_array( $death_rows ) ? array_filter( array_column( $death_rows, 'date' ) ) : array();
 				$death_year  = '';
 
-				if ( is_array( $death_years ) ) {
+				if ( ! empty( $death_years ) ) {
 					foreach ( $death_years as $death_date ) {
 						if ( ! empty( $death_date ) ) {
 							$date_parse = date_parse_from_format( 'Y-m-d', $death_date );
@@ -546,7 +547,7 @@ class BYQ {
 						}
 					}
 				} else {
-					$date_parse = date_parse_from_format( 'Y-m-d', $death_years );
+					$date_parse = date_parse_from_format( 'Y-m-d', '' );
 					if ( $date_parse['month'] === $month && $date_parse['day'] === $day ) {
 						$death_year = $date_parse['year'];
 					}
@@ -862,18 +863,18 @@ class BYQ {
 		}
 
 		// Get current character death date
-		$character_death_date = get_post_meta( $character_id, 'lezchars_death_year', true );
+		$death_rows           = get_field( 'lezchars_death_year', $character_id );
+		$character_death_date = is_array( $death_rows ) ? array_filter( array_column( $death_rows, 'date' ) ) : array();
+
 		if ( empty( $character_death_date ) ) {
-			$character_death_date = get_post_meta( $character_id, 'lezchars_last_death', true );
+			$last = get_post_meta( $character_id, 'lezchars_last_death', true );
+			if ( ! empty( $last ) ) {
+				$character_death_date = array( $last );
+			}
 		}
 
 		if ( empty( $character_death_date ) ) {
 			return false;
-		}
-
-		// Normalize death date to array
-		if ( ! is_array( $character_death_date ) ) {
-			$character_death_date = array( $character_death_date );
 		}
 
 		// Check if character exists in cached list with matching death date

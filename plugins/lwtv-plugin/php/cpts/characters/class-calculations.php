@@ -26,10 +26,11 @@ class Calculations {
 	 */
 	public function death( $post_id ) {
 		// get the most recent death and save it as a new meta
-		$character_death = get_post_meta( $post_id, 'lezchars_death_year', true );
+		$death_rows      = get_field( 'lezchars_death_year', $post_id );
+		$character_death = is_array( $death_rows ) ? array_filter( array_column( $death_rows, 'date' ) ) : array();
 		$last_char_death = get_post_meta( $post_id, 'lezchars_last_death', true );
 		$newest_death    = '0000-00-00';
-		if ( '' !== $character_death ) {
+		if ( ! empty( $character_death ) ) {
 			foreach ( $character_death as $death ) {
 				if ( $death > $newest_death ) {
 					$newest_death = $death;

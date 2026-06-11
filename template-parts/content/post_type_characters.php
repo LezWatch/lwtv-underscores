@@ -18,10 +18,10 @@ $doa_status = ( has_term( 'dead', 'lez_cliches', $character ) ) ? 'Dead' : 'Aliv
 
 // Generate RIP
 // Usage: $rip_dates
-$is_dead = get_post_meta( $character, 'lezchars_death_year', true );
-if ( $is_dead ) {
-	$char_death = ( ! is_array( $is_dead ) ) ? array( $is_dead ) : $is_dead;
-	$rip        = array();
+$death_rows = get_field( 'lezchars_death_year', $character );
+$char_death = is_array( $death_rows ) ? array_filter( array_column( $death_rows, 'date' ) ) : array();
+if ( ! empty( $char_death ) ) {
+	$rip = array();
 
 	foreach ( $char_death as $death ) {
 		$date  = date_format( date_create_from_format( 'Y-m-d', $death ), 'd F Y' );

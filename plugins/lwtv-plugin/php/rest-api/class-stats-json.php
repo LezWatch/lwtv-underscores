@@ -306,8 +306,8 @@ class Stats_JSON {
 						continue;
 					}
 
-					$died   = get_post_meta( $character, 'lezchars_death_year', true );
-					$died   = ( ! is_array( $died ) ) ? array( $died ) : $died;
+					$death_rows = get_field( 'lezchars_death_year', $character );
+					$died       = is_array( $death_rows ) ? array_filter( array_column( $death_rows, 'date' ) ) : array();
 					$shows  = count( get_post_meta( $character, 'lezchars_show_group', true ) );
 					$actors = count( get_post_meta( $character, 'lezchars_actor', true ) );
 					$gender = implode(
@@ -578,8 +578,8 @@ class Stats_JSON {
 				);
 				break;
 			case 'character':
-				$died        = get_post_meta( $id, 'lezchars_death_year', true );
-				$died        = ( ! is_array( $died ) ) ? array( $died ) : $died;
+				$death_rows  = get_field( 'lezchars_death_year', $id );
+				$died        = is_array( $death_rows ) ? array_filter( array_column( $death_rows, 'date' ) ) : array();
 				$stats_array = array(
 					'id'        => $id,
 					'name'      => get_the_title( $id ),
