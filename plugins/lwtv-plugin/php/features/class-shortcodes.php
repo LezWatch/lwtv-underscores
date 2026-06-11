@@ -6,8 +6,6 @@
 
 namespace LWTV\Features;
 
-use LWTV\Queeries\Post_Meta_And_Tax;
-use LWTV\Rest_API\BYQ;
 use LWTV\CPTs\Characters as CPT_Characters;
 use LWTV\CPTs\Shows as CPT_Shows;
 
@@ -122,16 +120,24 @@ class Shortcodes {
 			wp_reset_postdata();
 		}
 
-		// Death count
-		$death_queery      = ( new Post_Meta_And_Tax() )->make( CPT_Characters::SLUG, 'lezchars_death_year', $datetime->format( 'Y' ), 'lez_cliches', 'slug', 'dead', 'REGEXP' );
-		$death_list_array  = ( new BYQ() )->list_of_dead_characters( $death_queery );
-		$death_query_count = 0;
-		foreach ( $death_list_array as $the_dead ) {
-			if ( is_array( $the_dead ) && isset( $the_dead['died'] ) && $datetime->format( 'm' ) === gmdate( 'm', $the_dead['died'] ) ) {
-				++$death_query_count;
-			}
-		}
-		$count_array['dead'] = $death_query_count;
+		// Death count: query row meta keys for the exact year-month.
+		global $wpdb;
+		$like = $wpdb->esc_like( $datetime->format( 'Y-m' ) . '-' ) . '%';
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
+		$dead_ids = $wpdb->get_col(
+			$wpdb->prepare(
+				"SELECT DISTINCT pm.post_id FROM {$wpdb->postmeta} pm
+				INNER JOIN {$wpdb->term_relationships} tr ON pm.post_id = tr.object_id
+				INNER JOIN {$wpdb->term_taxonomy} tt ON tr.term_taxonomy_id = tt.term_taxonomy_id
+				INNER JOIN {$wpdb->terms} t ON tt.term_id = t.term_id
+				WHERE pm.meta_key LIKE 'lezchars_death_year_%%_date'
+				AND pm.meta_value LIKE %s
+				AND tt.taxonomy = 'lez_cliches' AND t.slug = 'dead'",
+				$like
+			)
+		);
+		// phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
+		$count_array['dead'] = count( $dead_ids );
 
 		$output = '<ul>';
 		foreach ( $count_array as $topic => $count ) {

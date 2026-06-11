@@ -208,15 +208,17 @@ class Indexing {
 	 * Indexing for Characters - Shows
 	 * Saves one value for each show
 	 *
-	 * EXAMPLE INPUT: a:1:{i:0;a:3:{s:4:"show";s:3:"655";s:4:"type";s:9:"recurring";s:7:"appears";a:1:{i:0;s:4:"2017";}}}
-	 *
 	 * @param array $params
 	 * @param object $facet_class
 	 *
 	 * @return array
 	 */
 	public function facetwp_index_row_characters_shows( $params, $facet_class ) {
-		$values = (array) $params['facet_value'];
+		$values = get_field( 'lezchars_show_group', $params['post_id'] );
+		if ( ! is_array( $values ) ) {
+			$params['facet_value'] = '';
+			return $params;
+		}
 		foreach ( $values as $val ) {
 			if ( ! isset( $val['show'] ) ) {
 				continue;
@@ -234,15 +236,17 @@ class Indexing {
 	 * Indexing for Characters - Roles
 	 * Saves one value for each show.
 	 *
-	 * EXAMPLE INPUT: a:1:{i:0;a:3:{s:4:"show";s:3:"655";s:4:"type";s:9:"recurring";s:7:"appears";a:1:{i:0;s:4:"2017";}}}
-	 *
 	 * @param array $params
 	 * @param object $facet_class
 	 *
 	 * @return array
 	 */
 	public function facetwp_index_row_characters_roles( $params, $facet_class ) {
-		$values = (array) $params['facet_value'];
+		$values = get_field( 'lezchars_show_group', $params['post_id'] );
+		if ( ! is_array( $values ) ) {
+			$params['facet_value'] = '';
+			return $params;
+		}
 		foreach ( $values as $val ) {
 			if ( ! isset( $val['type'] ) ) {
 				continue;
@@ -259,10 +263,7 @@ class Indexing {
 	/**
 	 * Indexing for Characters - Years
 	 *
-	 * Saves one value for each year
-	 * Years is a sub array of the array, because I was thinking clever and forgot what a metric PITA this is.
-	 *
-	 * EXAMPLE INPUT: a:1:{i:0;a:3:{s:4:"show";s:3:"655";s:4:"type";s:9:"recurring";s:7:"appears";a:1:{i:0;s:4:"2017";}}}
+	 * Saves one value for each year a character appeared.
 	 *
 	 * @param array $params
 	 * @param object $facet_class
@@ -270,16 +271,20 @@ class Indexing {
 	 * @return array
 	 */
 	public function facetwp_index_row_characters_years( $params, $facet_class ) {
-		$values = (array) $params['facet_value'];
+		$values = get_field( 'lezchars_show_group', $params['post_id'] );
+		if ( ! is_array( $values ) ) {
+			$params['facet_value'] = '';
+			return $params;
+		}
 		foreach ( $values as $val ) {
-			if ( ! isset( $val['appears'] ) ) {
+			if ( ! isset( $val['appears'] ) || ! is_array( $val['appears'] ) ) {
 				continue;
 			}
 			foreach ( $val['appears'] as $year ) {
 				$params['facet_value']         = $year;
 				$params['facet_display_value'] = $year;
+				$facet_class->insert( $params );
 			}
-			$facet_class->insert( $params );
 		}
 		// skip default indexing
 		$params['facet_value'] = '';
@@ -405,7 +410,8 @@ class Indexing {
 	 * Saves two values for two sources
 	 * Also saves on_air as yes or no
 	 *
-	 * EXAMPLE INPUT: a:2:{s:5:"start";s:4:"1994";s:6:"finish";s:4:"2009";}
+	 * Reads from new ACF flat fields (lezshows_airdates_start / lezshows_airdates_finish)
+	 * first, then falls back to the legacy serialized lezshows_airdates array.
 	 *
 	 * @param array $params
 	 * @param object $facet_class
@@ -413,10 +419,26 @@ class Indexing {
 	 * @return array
 	 */
 	public function facetwp_index_row_shows_airdates( $params, $facet_class ) {
-		// Parse start and end dates (use the current year if 'current' or empty)
-		$values = (array) $params['facet_value'];
-		$start  = ( isset( $values['start'] ) ) ? $values['start'] : '';
-		$end    = ( isset( $values['finish'] ) && lcfirst( $values['finish'] ) !== 'current' ) ? $values['finish'] : gmdate( 'Y' );
+		$post_id = $params['post_id'];
+
+		// Read from new ACF flat fields first, fall back to legacy serialized array.
+		$start   = get_post_meta( $post_id, 'lezshows_airdates_start', true );
+		$raw_end = get_post_meta( $post_id, 'lezshows_airdates_finish', true );
+
+		if ( empty( $start ) || empty( $raw_end ) ) {
+			$legacy = get_post_meta( $post_id, 'lezshows_airdates', true );
+			if ( is_array( $legacy ) ) {
+				if ( empty( $start ) ) {
+					$start = $legacy['start'] ?? '';
+				}
+				if ( empty( $raw_end ) ) {
+					$raw_end = $legacy['finish'] ?? '';
+				}
+			}
+		}
+
+		// Normalize 'current' or empty end to the current year for facet storage.
+		$end = ( ! empty( $raw_end ) && 'current' !== lcfirst( $raw_end ) ) ? $raw_end : gmdate( 'Y' );
 
 		// Build default params
 		$params_start  = $params;
@@ -435,13 +457,13 @@ class Indexing {
 
 		// Based on the dates, is this on air?
 		$on_air      = 'no';
-		$on_air_meta = get_post_meta( $params['post_id'], 'lezshows_on_air', true );
+		$on_air_meta = get_post_meta( $post_id, 'lezshows_on_air', true );
 
 		// phpcs:ignore WordPress.PHP.StrictInArray.MissingTrueStrict
 		if ( isset( $on_air_meta ) && in_array( $on_air_meta, array( 'yes', 'no' ) ) ) {
 			// If the meta is set and is either yes or no, use that.
 			$on_air = $on_air_meta;
-		} elseif ( 'current' === lcfirst( $end ) || $end > gmdate( 'Y' ) ) {
+		} elseif ( 'current' === lcfirst( $raw_end ) || $end > gmdate( 'Y' ) ) {
 			// If the end date is 'current' or in the future, it's on air.
 			$on_air = 'yes';
 		}

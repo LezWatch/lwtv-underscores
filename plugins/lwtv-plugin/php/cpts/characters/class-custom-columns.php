@@ -45,6 +45,9 @@ class Custom_Columns {
 
 	/*
 	 * Add Custom Column Content
+	 *
+	 * @param string $column The column name
+	 * @param int    $post_id The post ID of the character
 	 */
 	public function manage_posts_custom_column( $column, $post_id ) {
 
