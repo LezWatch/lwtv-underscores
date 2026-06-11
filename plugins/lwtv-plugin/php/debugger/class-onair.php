@@ -101,14 +101,22 @@ class OnAir {
 	 * @return bool True if the show is on air, false otherwise
 	 */
 	public function check_if_on_air( $show_id ) {
-		$year     = gmdate( 'Y' );
-		$airdates = get_post_meta( $show_id, 'lezshows_airdates', true );
-		if ( ! is_array( $airdates ) || ! isset( $airdates['start'] ) || ! isset( $airdates['finish'] ) ) {
+		$year   = gmdate( 'Y' );
+		$start  = get_post_meta( $show_id, 'lezshows_airdates_start', true );
+		$finish = get_post_meta( $show_id, 'lezshows_airdates_finish', true );
+		if ( empty( $start ) || empty( $finish ) ) {
+			$legacy = get_post_meta( $show_id, 'lezshows_airdates', true );
+			if ( is_array( $legacy ) ) {
+				$start  = $start  ?: ( $legacy['start']  ?? '' );
+				$finish = $finish ?: ( $legacy['finish'] ?? '' );
+			}
+		}
+		if ( empty( $start ) || empty( $finish ) ) {
 			return 'no';
 		}
 
-		$start  = (int) $airdates['start'];
-		$finish = (int) $airdates['finish'];
+		$start  = (int) $start;
+		$finish = (int) $finish;
 
 		return ( $start <= $year && $finish >= $year ) ? 'yes' : 'no';
 	}
@@ -120,15 +128,23 @@ class OnAir {
 	 * @return bool True if the on air status was fixed, false otherwise
 	 */
 	public function fix_on_air_status( $show_id ): bool {
-		$airdates = get_post_meta( $show_id, 'lezshows_airdates', true );
-		if ( ! is_array( $airdates ) || ! isset( $airdates['start'] ) || ! isset( $airdates['finish'] ) ) {
+		$start  = get_post_meta( $show_id, 'lezshows_airdates_start', true );
+		$finish = get_post_meta( $show_id, 'lezshows_airdates_finish', true );
+		if ( empty( $start ) || empty( $finish ) ) {
+			$legacy = get_post_meta( $show_id, 'lezshows_airdates', true );
+			if ( is_array( $legacy ) ) {
+				$start  = $start  ?: ( $legacy['start']  ?? '' );
+				$finish = $finish ?: ( $legacy['finish'] ?? '' );
+			}
+		}
+		if ( empty( $start ) || empty( $finish ) ) {
 			// No airdates, can't fix, assume not on air.
 			update_post_meta( $show_id, 'lezshows_on_air', 'no' );
 			return false;
 		}
 
-		$start  = (int) $airdates['start'];
-		$finish = (int) $airdates['finish'];
+		$start  = (int) $start;
+		$finish = (int) $finish;
 		$year   = gmdate( 'Y' );
 
 		// If the start date is before the current year and the finish date

@@ -67,7 +67,7 @@ class Characters {
 				$problems[] = 'Character marked as dead but missing lezchars_death_year meta data.';
 			}
 
-			$shows = get_post_meta( $char_id, 'lezchars_show_group', true );
+			$shows = get_field( 'lezchars_show_group', $char_id );
 
 			// If there are no shows, skip.
 			if ( empty( $shows ) ) {
@@ -161,8 +161,8 @@ class Characters {
 			$check = array(
 				'cliche' => get_the_terms( $char_id, 'lez_cliches' ),
 				'death'  => get_post_meta( $char_id, 'lezchars_last_death', true ),
-				'shows'  => get_post_meta( $char_id, 'lezchars_show_group', true ),
-				'actors' => get_post_meta( $char_id, 'lezchars_actor', true ),
+				'shows'  => get_field( 'lezchars_show_group', $char_id ),
+				'actors' => get_field( 'lezchars_actor', $char_id ) ?: array(),
 			);
 
 			// If there's no Cliche, we add 'None'

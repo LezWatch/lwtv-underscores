@@ -1,6 +1,6 @@
 {
     "key": "group_lwtv_chars_queerness",
-    "title": "Character Sexuality and Orientation",
+    "title": "Character Details (Queerness)",
     "fields": [
         {
             "key": "field_lwtv_lezchars_gender",
@@ -95,14 +95,12 @@
     "style": "default",
     "label_placement": "top",
     "instruction_placement": "label",
-    "hide_on_screen": [
-        "custom_fields"
-    ],
+    "hide_on_screen": "",
     "active": true,
     "description": "Gender identity, sexual orientation, and romantic orientation",
     "show_in_rest": 1,
-    "display_title": "",
+    "display_title": "Sexuality and Orientation",
     "allow_ai_access": false,
     "ai_description": "",
-    "modified": 1781200000
+    "modified": 1781194921
 }

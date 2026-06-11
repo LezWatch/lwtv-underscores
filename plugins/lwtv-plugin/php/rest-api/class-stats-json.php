@@ -308,8 +308,8 @@ class Stats_JSON {
 
 					$death_rows = get_field( 'lezchars_death_year', $character );
 					$died       = is_array( $death_rows ) ? array_filter( array_column( $death_rows, 'date' ) ) : array();
-					$shows  = count( get_post_meta( $character, 'lezchars_show_group', true ) );
-					$actors = count( get_post_meta( $character, 'lezchars_actor', true ) );
+					$shows  = count( get_field( 'lezchars_show_group', $character ) ?: array() );
+					$actors = count( get_field( 'lezchars_actor', $character ) ?: array() );
 					$gender = implode(
 						', ',
 						wp_get_post_terms(
@@ -584,8 +584,8 @@ class Stats_JSON {
 					'id'        => $id,
 					'name'      => get_the_title( $id ),
 					'died'      => $died,
-					'actors'    => count( get_post_meta( $id, 'lezchars_actor', true ) ),
-					'shows'     => count( get_post_meta( $id, 'lezchars_show_group', true ) ),
+					'actors'    => count( get_field( 'lezchars_actor', $id ) ?: array() ),
+					'shows'     => count( get_field( 'lezchars_show_group', $id ) ?: array() ),
 					'gender'    => implode( ', ', wp_get_post_terms( $id, 'lez_gender', array( 'fields' => 'names' ) ) ),
 					'sexuality' => implode( ', ', wp_get_post_terms( $id, 'lez_sexuality', array( 'fields' => 'names' ) ) ),
 					'url'       => get_the_permalink(),

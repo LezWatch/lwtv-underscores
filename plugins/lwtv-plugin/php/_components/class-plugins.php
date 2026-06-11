@@ -19,7 +19,6 @@ use LWTV\Plugins\Postiz;
 use LWTV\Plugins\Related_Posts_By_Taxonomy;
 use LWTV\Plugins\SearchWP;
 use LWTV\Plugins\WP_Rocket;
-use LWTV\Plugins\Yoast;
 
 class Plugins implements Component, Templater {
 
@@ -39,7 +38,6 @@ class Plugins implements Component, Templater {
 		new Related_Posts_By_Taxonomy();
 		new SearchWP();
 		new WP_Rocket();
-		new Yoast();
 
 		// Shadow Taxonomy
 		require_once LWTV_THEME_PATH . '/plugins/shadow-taxonomy/index.php';

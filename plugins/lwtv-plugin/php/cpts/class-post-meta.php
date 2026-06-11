@@ -88,13 +88,16 @@ class Post_Meta {
 		),
 		// Characters
 		'lezchars_death_year'           => array(
-			'post_type' => CPT_Characters::SLUG,
+			'post_type'    => CPT_Characters::SLUG,
+			'show_in_rest' => false,
 		),
 		'lezchars_actor'                => array(
-			'post_type' => CPT_Characters::SLUG,
+			'post_type'    => CPT_Characters::SLUG,
+			'show_in_rest' => false,
 		),
 		'lezchars_show_group'           => array(
-			'post_type' => CPT_Characters::SLUG,
+			'post_type'    => CPT_Characters::SLUG,
+			'show_in_rest' => false,
 		),
 		// Shows
 		'lezshows_airdates'             => array(

@@ -443,16 +443,16 @@ class Characters {
 		if ( ( 'draft' === $old_status || 'auto-draft' === $old_status ) && 'publish' === $new_status ) {
 
 			// Get show relationships
-			$show_group  = get_post_meta( $post->ID, 'lezchars_show_group', true );
-			$actor_group = get_post_meta( $post->ID, 'lezchars_actor', true );
+			$show_group  = get_field( 'lezchars_show_group', $post->ID );
+			$actor_group = get_field( 'lezchars_actor', $post->ID );
 
 			$show_ids = array();
 
-			// Parse show group meta
+			// Parse show group rows (ACF returns int; pre-migration CMB2 may return array).
 			if ( is_array( $show_group ) ) {
 				foreach ( $show_group as $group ) {
-					if ( isset( $group['show'] ) && is_array( $group['show'] ) ) {
-						$show_ids = array_merge( $show_ids, $group['show'] );
+					if ( isset( $group['show'] ) ) {
+						$show_ids[] = (int) ( is_array( $group['show'] ) ? $group['show'][0] : $group['show'] );
 					}
 				}
 			}
@@ -508,16 +508,16 @@ class Characters {
 		}
 
 		// Get show relationships
-		$show_group  = get_post_meta( $post_id, 'lezchars_show_group', true );
-		$actor_group = get_post_meta( $post_id, 'lezchars_actor', true );
+		$show_group  = get_field( 'lezchars_show_group', $post_id );
+		$actor_group = get_field( 'lezchars_actor', $post_id );
 
 		$update_ids = array();
 
-		// Parse show group meta
+		// Parse show group rows (ACF returns int; pre-migration CMB2 may return array).
 		if ( is_array( $show_group ) ) {
 			foreach ( $show_group as $group ) {
-				if ( isset( $group['show'] ) && is_array( $group['show'] ) ) {
-					$update_ids = array_merge( $update_ids, $group['show'] );
+				if ( isset( $group['show'] ) ) {
+					$update_ids[] = (int) ( is_array( $group['show'] ) ? $group['show'][0] : $group['show'] );
 				}
 			}
 		}

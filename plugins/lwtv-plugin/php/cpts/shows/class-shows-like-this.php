@@ -166,7 +166,7 @@ class Shows_Like_This {
 			while ( $reciprocity_loop->have_posts() ) {
 				$reciprocity_loop->the_post();
 				$this_show_id = get_the_ID();
-				$shows_array  = get_post_meta( $this_show_id, 'lezshows_similar_shows', true );
+				$shows_array  = get_field( 'lezshows_similar_shows', $this_show_id ) ?: array();
 
 				/*
 				 * If the show is published and there's a valid show array and it's not empty
@@ -217,7 +217,7 @@ class Shows_Like_This {
 			$results = array_unique( $results );
 
 			// What MIGHT we be adding:
-			$handpicked  = ( get_post_meta( $post_id, 'lezshows_similar_shows', true ) ) ? wp_parse_id_list( get_post_meta( $post_id, 'lezshows_similar_shows', true ) ) : array();
+			$handpicked  = wp_parse_id_list( get_field( 'lezshows_similar_shows', $post_id ) ?: array() );
 			$reciprocity = self::reciprocity( $post_id );
 			$combo_list  = array_merge( $handpicked, $reciprocity );
 

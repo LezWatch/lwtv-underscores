@@ -192,13 +192,9 @@ class Actor_Characters {
 		$dead       = array();
 		// Rebuild the character array in format:
 		foreach ( $character_array as $char_id ) {
-			$actors_array = get_post_meta( $char_id, 'lezchars_actor', true );
+			$actors_array = get_field( 'lezchars_actor', $char_id ) ?: array();
 
-			if ( ! is_array( $actors_array ) ) {
-				$actors_array = array( $actors_array );
-			}
-
-			if ( ! in_array( (string) $actor_id, $actors_array, true ) ) {
+			if ( ! in_array( $actor_id, $actors_array, true ) ) {
 				$term_id = get_post_meta( $char_id, sanitize_key( 'shadow_' . Characters::SHADOW_TAXONOMY . '_term_id' ), true );
 				wp_remove_object_terms( (int) $actor_id, (int) $term_id, Characters::SHADOW_TAXONOMY );
 			}
@@ -210,7 +206,7 @@ class Actor_Characters {
 							'id'    => $char_id,
 							'title' => get_the_title( $char_id ),
 							'url'   => get_the_permalink( $char_id ),
-							'shows' => get_post_meta( $char_id, 'lezchars_show_group', true ),
+							'shows' => get_field( 'lezchars_show_group', $char_id ),
 						);
 
 						if ( has_term( 'dead', 'lez_cliches', $char_id ) ) {
@@ -250,8 +246,8 @@ class Actor_Characters {
 
 		if ( is_array( $character_array ) ) {
 			foreach ( $character_array as $char_id ) {
-				$actors = get_post_meta( $char_id, 'lezchars_actor', true );
-				if ( isset( $actors ) && ! empty( $actors ) ) {
+				$actors = get_field( 'lezchars_actor', $char_id ) ?: array();
+				if ( ! empty( $actors ) ) {
 					foreach ( $actors as $actor ) {
 						// We have to check because due to so many characters, we have some actor mis-matches.
 						if ( ( (int) $actor === (int) $actor_id ) && 'publish' === get_post_status( $char_id ) && has_term( 'dead', 'lez_cliches', $char_id ) ) {

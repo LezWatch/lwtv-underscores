@@ -36,6 +36,7 @@ class Custom_Columns {
 	 * Used by quick edit, etc
 	 */
 	public function manage_posts_columns( $columns ) {
+		unset( $columns['taxonomy-lez_watch_urls'] );
 		$columns['shows-airdate']    = 'Airdates';
 		$columns['shows-worthit']    = 'Worth It?';
 		$columns['shows-queercount'] = '#';
@@ -49,13 +50,17 @@ class Custom_Columns {
 		switch ( $column ) {
 			case 'shows-airdate':
 				$airdate = 'N/A';
-
-				if ( get_post_meta( $post_id, 'lezshows_airdates', true ) ) {
-					$airdates = get_post_meta( $post_id, 'lezshows_airdates', true );
-					$airdate  = $airdates['start'] . ' - ' . $airdates['finish'];
-					if ( $airdates['start'] === $airdates['finish'] ) {
-						$airdate = $airdates['finish'];
+				$start   = get_post_meta( $post_id, 'lezshows_airdates_start', true );
+				$finish  = get_post_meta( $post_id, 'lezshows_airdates_finish', true );
+				if ( empty( $start ) || empty( $finish ) ) {
+					$legacy = get_post_meta( $post_id, 'lezshows_airdates', true );
+					if ( is_array( $legacy ) ) {
+						$start  = $start  ?: ( $legacy['start']  ?? '' );
+						$finish = $finish ?: ( $legacy['finish'] ?? '' );
 					}
+				}
+				if ( ! empty( $start ) && ! empty( $finish ) ) {
+					$airdate = ( $start === $finish ) ? $finish : $start . ' - ' . $finish;
 				}
 
 				$output = $airdate;

@@ -102,7 +102,7 @@ class Show_Characters {
 	 */
 	public function clean_character_array( $characters, $show_id ) {
 		foreach ( $characters as $char_id ) {
-			$shows_array = get_post_meta( $char_id, 'lezchars_show_group', true );
+			$shows_array = get_field( 'lezchars_show_group', $char_id );
 
 			if ( empty( $shows_array ) || ! is_array( $shows_array ) ) {
 				continue;
@@ -111,16 +111,16 @@ class Show_Characters {
 			$shows_array_simple = array();
 
 			foreach ( $shows_array as $char_show ) {
-				// Remove the Array if it's there.
+				// Remove the Array (pre-migration CMB2 data).
 				if ( is_array( $char_show['show'] ) ) {
 					$char_show['show'] = $char_show['show'][0];
 				}
-				$shows_array_simple[] = $char_show['show'];
+				$shows_array_simple[] = (int) $char_show['show'];
 			}
 
 			// If the show is not in the simple array for this character, remove the character.
 			$term_id = get_post_meta( $char_id, sanitize_key( 'shadow_' . Characters::SHADOW_TAXONOMY . '_term_id' ), true );
-			if ( ! in_array( (string) $show_id, $shows_array_simple, true ) ) {
+			if ( ! in_array( (int) $show_id, $shows_array_simple, true ) ) {
 				wp_remove_object_terms( (int) $show_id, (int) $term_id, Characters::SHADOW_TAXONOMY );
 				unset( $characters[ $char_id ] );
 			} else {
@@ -161,7 +161,7 @@ class Show_Characters {
 				continue;
 			}
 
-			$shows_array = get_post_meta( $char_id, 'lezchars_show_group', true );
+			$shows_array = get_field( 'lezchars_show_group', $char_id );
 
 			// If the character is in this show, AND a published character,
 			// AND has this role ON THIS SHOW we will pass the following
@@ -254,12 +254,12 @@ class Show_Characters {
 
 			foreach ( $characters as $char_id ) {
 				// Get the list of shows.
-				$shows_array = get_post_meta( $char_id, 'lezchars_show_group', true );
+				$shows_array = get_field( 'lezchars_show_group', $char_id );
 
 				// If the character is in this show, AND a published character
 				// we will pass the following data to the character template
 				// to determine what to display.
-				if ( '' !== $shows_array && ! empty( $shows_array ) && 'publish' === get_post_status( $char_id ) ) {
+				if ( ! empty( $shows_array ) && is_array( $shows_array ) && 'publish' === get_post_status( $char_id ) ) {
 					foreach ( $shows_array as $char_show ) {
 						// De-array the show (there was an old issue with this, but it's fixed now).
 						if ( is_array( $char_show['show'] ) ) {
@@ -268,10 +268,7 @@ class Show_Characters {
 
 						if ( (int) $char_show['show'] === (int) $show_id ) {
 							// Get a list of actors (we need this twice later)
-							$actors_ids = get_post_meta( $char_id, 'lezchars_actor', true );
-							if ( ! is_array( $actors_ids ) ) {
-								$actors_ids = array( $actors_ids );
-							}
+							$actors_ids = get_field( 'lezchars_actor', $char_id ) ?: array();
 
 							// The Queer Clone Calculations: The post query gets too many IDs
 							// So we don't **REALLY** count then via this method unless the show

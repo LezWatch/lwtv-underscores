@@ -21,10 +21,6 @@ class FacetWP {
 	 * Constructor
 	 */
 	public function __construct() {
-
-		// Include extra Plugins
-		require_once LWTV_THEME_PATH . '/plugins/facetwp-cmb2/cmb2.php';
-
 		new Indexing();
 		new Labels();
 		new Pagination();

@@ -1,0 +1,58 @@
+{
+    "key": "group_lwtv_term_tags",
+    "title": "Term — Post Tags",
+    "fields": [
+        {
+            "key": "field_lwtv_lez_termsmeta_linked_post",
+            "label": "Related Actor/Show (Optional)",
+            "name": "lez_termsmeta_linked_post",
+            "aria-label": "",
+            "type": "relationship",
+            "instructions": "If this tag relates to an actor or show, you can link them here.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "post_type": [
+                "post_type_shows",
+                "post_type_actors"
+            ],
+            "taxonomy": "",
+            "filters": [
+                "search"
+            ],
+            "return_format": "id",
+            "min": "",
+            "max": 1,
+            "allow_in_bindings": 0,
+            "bidirectional": 0,
+            "bidirectional_target": [],
+            "elements": []
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "taxonomy",
+                "operator": "==",
+                "value": "post_tag"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": [],
+    "active": true,
+    "description": "Links a post tag to a specific show or actor",
+    "show_in_rest": 0,
+    "display_title": "Linked Post",
+    "allow_ai_access": false,
+    "ai_description": "",
+    "modified": 1781128739
+}

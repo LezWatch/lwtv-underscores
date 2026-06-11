@@ -477,17 +477,16 @@ class Dead {
 		}
 
 		try {
-			// Single optimized query to get all dead character data
+			// Query individual ACF repeater row keys (lezchars_death_year_N_date).
 			$queery = "SELECT
 				p.ID,
 				p.post_title,
-				p.post_name,
-				p.post_status,
-				death_meta.meta_value as death_years
+				death_meta.meta_value as died_date
 			FROM {$wpdb->posts} p
-			INNER JOIN {$wpdb->postmeta} death_meta ON p.ID = death_meta.post_id AND death_meta.meta_key = 'lezchars_death_year'
+			INNER JOIN {$wpdb->postmeta} death_meta ON p.ID = death_meta.post_id
 			WHERE p.post_type = 'post_type_characters'
 			AND p.post_status = 'publish'
+			AND death_meta.meta_key LIKE 'lezchars_death_year_%_date'
 			AND death_meta.meta_value IS NOT NULL
 			AND death_meta.meta_value != ''
 			ORDER BY p.post_title";
@@ -498,26 +497,23 @@ class Dead {
 			$array = array();
 
 			foreach ( $results as $row ) {
-				$char_id     = (int) $row['ID'];
-				$death_years = maybe_unserialize( $row['death_years'] );
+				$char_id   = (int) $row['ID'];
+				$died_date = $row['died_date'];
 
-				if ( ! is_array( $death_years ) ) {
+				if ( empty( $died_date ) ) {
 					continue;
 				}
 
-				foreach ( $death_years as $died_date ) {
-					// If there's no entry, add it.
-					if ( ! isset( $array[ $died_date ] ) ) {
-						$array[ $died_date ] = array(
-							'date' => $died_date,
-						);
-					}
-
-					$array[ $died_date ]['chars'][ $char_id ] = array(
-						'name' => $row['post_title'],
-						'url'  => get_permalink( $char_id ),
+				if ( ! isset( $array[ $died_date ] ) ) {
+					$array[ $died_date ] = array(
+						'date' => $died_date,
 					);
 				}
+
+				$array[ $died_date ]['chars'][ $char_id ] = array(
+					'name' => $row['post_title'],
+					'url'  => get_permalink( $char_id ),
+				);
 			}
 
 			// sort by date (newest first)

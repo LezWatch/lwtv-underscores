@@ -95,7 +95,7 @@ class Calculations {
 		foreach ( $character_ids as $char_id ) {
 			$character_data[ $char_id ] = array(
 				'status'  => get_post_status( $char_id ),
-				'actors'  => get_post_meta( $char_id, 'lezchars_actor', true ),
+				'actors'  => get_field( 'lezchars_actor', $char_id ),
 				'is_dead' => false,
 			);
 		}

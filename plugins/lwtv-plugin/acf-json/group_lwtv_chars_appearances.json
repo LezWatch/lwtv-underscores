@@ -30,25 +30,27 @@
                     "name": "show",
                     "aria-label": "",
                     "type": "post_object",
-                    "instructions": "Select one show. Add another row for additional shows.",
+                    "instructions": "Select one show and one show only. If the character is on multiple shows, add another row.",
                     "required": 0,
                     "conditional_logic": 0,
                     "wrapper": {
-                        "width": "",
+                        "width": "50",
                         "class": "",
                         "id": ""
                     },
                     "post_type": [
                         "post_type_shows"
                     ],
+                    "post_status": "",
                     "taxonomy": "",
                     "return_format": "id",
                     "multiple": 0,
                     "allow_null": 0,
                     "allow_in_bindings": 0,
+                    "bidirectional": 0,
                     "ui": 1,
-                    "ajax": 1,
-                    "placeholder": "Search for a show…"
+                    "bidirectional_target": [],
+                    "parent_repeater": "field_lwtv_lezchars_show_group"
                 },
                 {
                     "key": "field_lwtv_lezchars_show_group_type",
@@ -60,7 +62,7 @@
                     "required": 0,
                     "conditional_logic": 0,
                     "wrapper": {
-                        "width": "",
+                        "width": "50",
                         "class": "",
                         "id": ""
                     },
@@ -69,7 +71,7 @@
                         "recurring": "Recurring Character",
                         "guest": "Guest Character"
                     },
-                    "default_value": "",
+                    "default_value": false,
                     "return_format": "value",
                     "multiple": 0,
                     "allow_null": 0,
@@ -78,7 +80,8 @@
                     "ajax": 0,
                     "placeholder": "",
                     "create_options": 0,
-                    "save_options": 0
+                    "save_options": 0,
+                    "parent_repeater": "field_lwtv_lezchars_show_group"
                 },
                 {
                     "key": "field_lwtv_lezchars_show_group_appears",
@@ -94,8 +97,8 @@
                         "class": "",
                         "id": ""
                     },
-                    "choices": {},
-                    "default_value": false,
+                    "choices": [],
+                    "default_value": [],
                     "return_format": "value",
                     "multiple": 1,
                     "allow_null": 1,
@@ -104,7 +107,8 @@
                     "ajax": 0,
                     "placeholder": "Years…",
                     "create_options": 0,
-                    "save_options": 0
+                    "save_options": 0,
+                    "parent_repeater": "field_lwtv_lezchars_show_group"
                 }
             ]
         }
@@ -123,14 +127,12 @@
     "style": "default",
     "label_placement": "top",
     "instruction_placement": "label",
-    "hide_on_screen": [
-        "custom_fields"
-    ],
+    "hide_on_screen": "",
     "active": true,
     "description": "Show appearances, character role, and years active per show",
     "show_in_rest": 0,
     "display_title": "",
     "allow_ai_access": false,
     "ai_description": "",
-    "modified": 1781200000
+    "modified": 1781202757
 }

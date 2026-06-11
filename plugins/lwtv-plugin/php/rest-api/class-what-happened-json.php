@@ -259,24 +259,29 @@ class What_Happened_JSON {
 			$show_id = get_the_ID();
 
 			// Shows Currently Airing
-			if ( get_post_meta( $show_id, 'lezshows_airdates', true ) ) {
-				$airdates = get_post_meta( $show_id, 'lezshows_airdates', true );
-
+			$ad_start  = get_post_meta( $show_id, 'lezshows_airdates_start', true );
+			$ad_finish = get_post_meta( $show_id, 'lezshows_airdates_finish', true );
+			if ( empty( $ad_start ) || empty( $ad_finish ) ) {
+				$legacy    = get_post_meta( $show_id, 'lezshows_airdates', true );
+				$ad_start  = $ad_start  ?: ( is_array( $legacy ) ? ( $legacy['start']  ?? '' ) : '' );
+				$ad_finish = $ad_finish ?: ( is_array( $legacy ) ? ( $legacy['finish'] ?? '' ) : '' );
+			}
+			if ( ! empty( $ad_start ) && ! empty( $ad_finish ) ) {
 				if (
-					( 'current' === $airdates['finish'] && $thisyear === $dt->format( 'Y' ) )
-					|| ( $airdates['finish'] >= $thisyear && $airdates['start'] <= $thisyear ) // Airdates between
+					( 'current' === $ad_finish && $thisyear === $dt->format( 'Y' ) )
+					|| ( $ad_finish >= $thisyear && $ad_start <= $thisyear ) // Airdates between
 				) {
 					// Currently Airing Shows shows for the current year only
 					++$shows_this_year['current'];
 				}
 
 				// Shows that ended this year
-				if ( $airdates['finish'] === $thisyear ) {
+				if ( $ad_finish === $thisyear ) {
 					++$shows_this_year['ended'];
 				}
 
 				// Shows that STARTED this year
-				if ( $airdates['start'] === $thisyear ) {
+				if ( $ad_start === $thisyear ) {
 					++$shows_this_year['started'];
 				}
 			}

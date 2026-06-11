@@ -13,10 +13,10 @@ $format  = $args['format'] ?? 'full';
 $thumb_class = ( 'full' === $format ) ? 'rounded float-left' : 'float-left';
 
 // Show Meta
-$show_meta    = get_post_meta( $this_id, 'lezchars_show_group', true );
+$show_meta    = get_field( 'lezchars_show_group', $this_id );
 $show_appears = '';
 
-if ( isset( $show_meta ) && ! empty( $show_meta ) && is_array( $show_meta ) ) {
+if ( is_array( $show_meta ) && ! empty( $show_meta ) ) {
 	foreach ( $show_meta as $show ) {
 		if ( ! is_array( $show ) || ! isset( $show['show'] ) || ! isset( $show['appears'] ) ) {
 			continue;
@@ -40,10 +40,10 @@ $thumb_array       = array(
 );
 
 // Alt Images
-$alt_images = ( 'full' === $format ) ? get_post_meta( $this_id, 'lezchars_character_image_group', false ) : false;
-if ( $alt_images ) {
+$alt_images = ( 'full' === $format ) ? get_field( 'lezchars_character_image_group', $this_id ) : false;
+if ( is_array( $alt_images ) && ! empty( $alt_images ) ) {
 	$image_tabs = array();
-	foreach ( $alt_images[0] as $an_image ) {
+	foreach ( $alt_images as $an_image ) {
 		$attr_array   = array(
 			'class' => 'single-char-img ' . $thumb_class,
 			'alt'   => get_the_title( $this_id ) . ' ' . $an_image['alt_image_text'],
@@ -52,7 +52,7 @@ if ( $alt_images ) {
 		$image_tabs[] = array(
 			'title' => $an_image['alt_image_text'],
 			'slug'  => sanitize_title( $an_image['alt_image_text'] ),
-			'image' => wp_get_attachment_image( $an_image['alt_image_file_id'], 'character-img', false, $attr_array ),
+			'image' => wp_get_attachment_image( $an_image['alt_image_file'], 'character-img', false, $attr_array ),
 		);
 	}
 }

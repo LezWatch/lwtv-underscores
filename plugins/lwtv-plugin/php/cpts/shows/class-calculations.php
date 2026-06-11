@@ -201,8 +201,8 @@ class Calculations {
 		// Batch get all taxonomy terms for all characters at once
 		$all_terms = $this->get_batch_character_terms( $characters );
 
-		// Prime the post meta cache for all characters in one query so the
-		// per-character get_post_meta( 'lezchars_actor' ) calls below are cache hits.
+		// Prime the post meta cache for all characters in one query so ACF's
+		// get_field( 'lezchars_actor' ) calls below are cache hits.
 		update_meta_cache( 'post', $characters );
 
 		// Process each character once
@@ -224,10 +224,7 @@ class Calculations {
 			}
 
 			// Check for trans actors (trans-irl)
-			$actors_ids = get_post_meta( $char_id, 'lezchars_actor', true );
-			if ( ! is_array( $actors_ids ) ) {
-				$actors_ids = array( $actors_ids );
-			}
+			$actors_ids = get_field( 'lezchars_actor', $char_id ) ?: array();
 			foreach ( $actors_ids as $actor ) {
 				if ( ( new Is_Actor_Trans() )->make( $actor ) ) {
 					++$counts['trans-irl'];
@@ -517,11 +514,11 @@ class Calculations {
 
 		if ( is_array( $characters ) ) {
 			foreach ( $characters as $char_id ) {
-				$shows_array = get_post_meta( $char_id, 'lezchars_show_group', true );
+				$shows_array = get_field( 'lezchars_show_group', $char_id );
 
 				if ( is_array( $shows_array ) && ! empty( $shows_array ) ) {
 					foreach ( $shows_array as $char_show ) {
-						// Remove the array if it's there.
+						// Remove the array (pre-migration CMB2 data).
 						if ( is_array( $char_show['show'] ) ) {
 							$char_show['show'] = $char_show['show'][0];
 						}
@@ -646,16 +643,20 @@ class Calculations {
 		lwtv_plugin()->invalidate_statistics_cache( 'score', $post_id );
 
 		// Cheat and update the show 'on-air' ness.
-		$on_air   = 'no';
-		$airdates = get_post_meta( $post_id, 'lezshows_airdates', true );
+		$on_air  = 'no';
+		$finish  = get_post_meta( $post_id, 'lezshows_airdates_finish', true );
+		if ( empty( $finish ) ) {
+			$legacy = get_post_meta( $post_id, 'lezshows_airdates', true );
+			$finish = is_array( $legacy ) ? ( $legacy['finish'] ?? '' ) : '';
+		}
 
 		// If there is no finish date, or the finish date is current, it's on air.
-		if ( ! isset( $airdates['finish'] ) || 'current' === lcfirst( $airdates['finish'] ) ) {
+		if ( empty( $finish ) || 'current' === lcfirst( $finish ) ) {
 			$on_air = 'yes';
 		}
 
 		// If there is a finish date and it's in the future, it's on air.
-		if ( isset( $airdates['finish'] ) && $airdates['finish'] >= gmdate( 'Y' ) ) {
+		if ( ! empty( $finish ) && $finish >= gmdate( 'Y' ) ) {
 			$on_air = 'yes';
 		}
 

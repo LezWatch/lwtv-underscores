@@ -44,6 +44,7 @@ class ACF {
 
 		add_filter( 'acf/settings/save_json', array( $this, 'save_json_path' ) );
 		add_filter( 'acf/settings/load_json', array( $this, 'load_json_paths' ) );
+		add_action( 'acf/update_field_group', array( $this, 'prevent_json_sync_loop' ), 1 );
 
 		// Bridge the `excerpt` ACF textarea to post_excerpt for actors and shows.
 		add_filter( 'acf/load_value/name=excerpt', array( $this, 'load_excerpt_from_post' ), 10, 3 );
@@ -76,11 +77,18 @@ class ACF {
 		// so the JSON file never accumulates a stale year list.
 		add_filter( 'acf/prepare_field_group_for_export', array( $this, 'strip_dynamic_choices_for_export' ) );
 
-		// Shows: improve search behaviour for the Similar Shows relationship field.
+		// Shows: improve search behaviour for the Similar Shows and Favorite Shows relationship fields.
 		add_filter( 'acf/fields/relationship/query/name=lezshows_similar_shows', array( $this, 'similar_shows_query' ) );
+		add_filter( 'acf/fields/relationship/query/name=lez_user_favourite_shows', array( $this, 'similar_shows_query' ) );
 
 		// Characters: improve search for the Actor relationship field.
 		add_filter( 'acf/fields/relationship/query/name=lezchars_actor', array( $this, 'actor_query' ) );
+
+		// Characters: annotate actor picker results with queer status and draft flag.
+		add_filter( 'acf/fields/relationship/result/name=lezchars_actor', array( $this, 'actor_relationship_label' ), 10, 4 );
+
+		// Terms: populate Symbolicon icon select choices dynamically.
+		add_filter( 'acf/load_field/name=lez_termsmeta_icon', array( $this, 'load_symbolicon_choices' ) );
 
 		// Shows: write legacy meta keys on save for backward compat with consuming code.
 		add_action( 'acf/save_post', array( $this, 'save_show_legacy_meta' ), 20 );
@@ -111,6 +119,22 @@ class ACF {
 	public function load_json_paths( array $paths ): array {
 		$paths[] = LWTV_PLUGIN_PATH . '/acf-json';
 		return $paths;
+	}
+
+	/**
+	 * Prevent the infinite sync loop when syncing from local JSON.
+	 *
+	 * When ACF syncs a JSON-local field group to the DB, it immediately re-triggers
+	 * save_json and writes a new file with modified = time(), which is always greater
+	 * than the original JSON's modified timestamp, creating a perpetual sync notice.
+	 * Suppress the save_json path for this request when the group originated from JSON.
+	 *
+	 * @param array $group The field group being updated.
+	 */
+	public function prevent_json_sync_loop( array $group ): void {
+		if ( isset( $group['local'] ) && 'json' === $group['local'] ) {
+			remove_filter( 'acf/settings/save_json', array( $this, 'save_json_path' ) );
+		}
 	}
 
 	/**
@@ -262,6 +286,7 @@ class ACF {
 			'field_lwtv_lezshows_airdates_start',
 			'field_lwtv_lezshows_airdates_finish',
 			'field_lwtv_lezchars_show_group_appears',
+			'field_lwtv_lez_termsmeta_icon',
 		);
 
 		if ( empty( $field_group['fields'] ) ) {
@@ -523,5 +548,66 @@ class ACF {
 			return $field;
 		}
 		return false;
+	}
+
+	/**
+	 * Annotate actor relationship results with queer status and draft flag.
+	 *
+	 * Replicates the CMB2 cmb2_attached_posts_title_filter behaviour for the
+	 * lezchars_actor ACF relationship field so editors can quickly identify
+	 * queer actors and unpublished drafts in the picker.
+	 *
+	 * @param string   $title   The post title shown in the relationship picker.
+	 * @param \WP_Post $post    The post object for the result.
+	 * @param array    $field   ACF field definition.
+	 * @param int      $post_id The post being edited.
+	 * @return string
+	 */
+	public function actor_relationship_label( string $title, \WP_Post $post, array $field, int $post_id ): string { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
+		$additional = array();
+
+		if ( 'publish' !== $post->post_status ) {
+			$additional[] = 'Draft';
+		}
+
+		$is_queer = get_post_meta( $post->ID, 'lezactors_queer', true );
+		if ( ! empty( $is_queer ) && ! str_contains( $title, 'Queer' ) ) {
+			$additional[] = 'Queer';
+		}
+
+		if ( ! empty( $additional ) ) {
+			$title .= ' (' . implode( ', ', array_unique( $additional ) ) . ')';
+		}
+
+		return $title;
+	}
+
+	/**
+	 * Populate the Symbolicon icon select with choices from symbolicons.json.
+	 *
+	 * Choices are built at runtime so the JSON file never accumulates a stale
+	 * icon list. The field_lwtv_lez_termsmeta_icon key is included in
+	 * strip_dynamic_choices_for_export so the JSON stays clean on save.
+	 *
+	 * @param array $field ACF field definition.
+	 * @return array
+	 */
+	public function load_symbolicon_choices( array $field ): array {
+		$field['choices'] = array();
+
+		if ( ! defined( 'LWTV_SYMBOLICONS_PATH' ) || ! file_exists( LWTV_SYMBOLICONS_SPRITE_PATH . 'symbolicons.json' ) ) {
+			return $field;
+		}
+
+		$icon_json = json_decode( file_get_contents( LWTV_SYMBOLICONS_SPRITE_PATH . 'symbolicons.json' ), true ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+		if ( is_array( $icon_json ) ) {
+			foreach ( $icon_json as $icon ) {
+				if ( isset( $icon['cleanname'] ) ) {
+					$field['choices'][ $icon['cleanname'] ] = $icon['cleanname'];
+				}
+			}
+		}
+
+		return $field;
 	}
 }

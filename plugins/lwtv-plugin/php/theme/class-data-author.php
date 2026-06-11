@@ -78,8 +78,8 @@ class Data_Author {
 	 */
 	public function favorite_shows( $author ) {
 		// Get author Fav Shows.
-		$all_fav_shows = get_the_author_meta( 'lez_user_favourite_shows', $author );
-		if ( '' !== $all_fav_shows && is_array( $all_fav_shows ) ) {
+		$all_fav_shows = get_field( 'lez_user_favourite_shows', 'user_' . (int) $author ) ?: array();
+		if ( ! empty( $all_fav_shows ) ) {
 			$show_title = array();
 			foreach ( $all_fav_shows as $each_show ) {
 				if ( 'publish' !== get_post_status( $each_show ) ) {
