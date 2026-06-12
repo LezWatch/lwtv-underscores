@@ -55,7 +55,12 @@ $lwtv_show_scope = count( $lwtv_search_engines ) > 1;
 				</div>
 				<?php endif; ?>
 
-				<?php echo get_search_form(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+				<?php
+				// Flag so searchform.php knows not to render its own scope selector.
+				$GLOBALS['lwtv_in_modal'] = true;
+				echo get_search_form(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+				$GLOBALS['lwtv_in_modal'] = false;
+				?>
 
 			</main>
 		</div>
@@ -78,12 +83,18 @@ $lwtv_show_scope = count( $lwtv_search_engines ) > 1;
 		//    for both full-text search and the searchwp\query\args engine swap.
 		$form.find( 'input[name="swpmfe"]' ).val( newHash );
 
-		// 2. Update jQuery's internal data cache for the live-search engine.
-		//    The live-search plugin reads $input.data('swpengine') on every
-		//    AJAX call — NOT the HTML attribute — so we must update the jQuery
-		//    cache directly, not just setAttribute().
+		// 2. Update the engine on the live-search input. The live-search plugin
+		//    reads $input.data('swpengine') on every AJAX call, so we update
+		//    jQuery's cache. We also set the HTML attribute and re-initialize
+		//    in case the plugin initialized before the modal entered the DOM.
 		var $liveInput = $form.find( 'input[data-swplive="true"]' );
-		$liveInput.data( 'swpengine', newEngine );
+		$liveInput
+			.attr( 'data-swpengine', newEngine )
+			.data( 'swpengine', newEngine );
+
+		if ( typeof $.fn.searchwp_live_search === 'function' ) {
+			$liveInput.searchwp_live_search();
+		}
 
 		// 3. Re-fire live search immediately if the field already has text,
 		//    so results update without the user re-typing.
