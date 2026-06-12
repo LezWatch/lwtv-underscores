@@ -543,8 +543,7 @@ class Of_The_Day implements Component, Templater {
 					AND pm2.meta_value LIKE %s
 					AND (pm3.meta_value IS NULL OR pm3.meta_value < %d)
 					$tax_conditions
-					ORDER BY RAND()
-					LIMIT 50";
+					ORDER BY p.ID";
 
 				// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- Complex query with proper escaping
 				$results = $wpdb->get_results( $wpdb->prepare( $query, $post_type, '%TBD%', '%re%', time() ) );
@@ -594,8 +593,7 @@ class Of_The_Day implements Component, Templater {
 					AND pm2.meta_value LIKE %s
 					AND pm3.meta_value LIKE %s
 					AND (pm4.meta_value IS NULL OR pm4.meta_value < %d)
-					ORDER BY RAND()
-					LIMIT 50";
+					ORDER BY p.ID";
 
 				// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- Complex query with proper escaping
 				$results = $wpdb->get_results( $wpdb->prepare( $query, $post_type, '%TBD%', '%e%', '%regular%', time() ) );

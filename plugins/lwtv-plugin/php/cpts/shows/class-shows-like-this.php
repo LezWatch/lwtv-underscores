@@ -61,7 +61,7 @@ class Shows_Like_This {
 				}
 
 				// Now. Get the primary
-				$primary    = ( get_post_meta( $show_id, 'lezshows_tvgenre_primary', true ) ) ? get_post_meta( $show_id, 'lezshows_tvgenre_primary', true ) : false;
+				$primary    = get_post_meta( $show_id, 'lezshows_tvgenre_primary', true ) ?: false;
 				$taxonomies = 'lez_genres';
 
 				// If we have a primary, then we default to JUST that.
@@ -112,7 +112,7 @@ class Shows_Like_This {
 			 * If not empty it could be the meta query for post_thumbnails ( key '_thumbnail_id' )
 			 * or some other meta query (from the shortcode or widget).
 			 */
-			$worthit = ( get_post_meta( $post_id, 'lezshows_worthit_rating', true ) ) ? get_post_meta( $post_id, 'lezshows_worthit_rating', true ) : false;
+			$worthit = get_post_meta( $post_id, 'lezshows_worthit_rating', true ) ?: false;
 
 			// We should match up the worth-it value as well as the score.
 			// After all, some low scores have a thumbs up.
@@ -166,7 +166,7 @@ class Shows_Like_This {
 			while ( $reciprocity_loop->have_posts() ) {
 				$reciprocity_loop->the_post();
 				$this_show_id = get_the_ID();
-				$shows_array  = get_field( 'lezshows_similar_shows', $this_show_id ) ? get_field( 'lezshows_similar_shows', $this_show_id ) : array();
+				$shows_array  = get_field( 'lezshows_similar_shows', $this_show_id ) ?: array();
 
 				/*
 				 * If the show is published and there's a valid show array and it's not empty
@@ -217,7 +217,7 @@ class Shows_Like_This {
 			$results = array_unique( $results );
 
 			// What MIGHT we be adding:
-			$handpicked  = wp_parse_id_list( get_field( 'lezshows_similar_shows', $post_id ) ? get_field( 'lezshows_similar_shows', $post_id ) : array() );
+			$handpicked  = wp_parse_id_list( get_field( 'lezshows_similar_shows', $post_id ) ?: array() );
 			$reciprocity = self::reciprocity( $post_id );
 			$combo_list  = array_merge( $handpicked, $reciprocity );
 

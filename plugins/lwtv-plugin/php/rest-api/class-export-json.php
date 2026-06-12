@@ -368,6 +368,7 @@ class Export_JSON {
 		$characters = array();
 
 		$characters_list = wp_list_pluck( $the_loop->posts, 'ID' );
+		update_object_term_cache( $characters_list, CPT_Characters::SLUG );
 
 		foreach ( $characters_list as $character ) {
 			// Gender -- array of all applicable
@@ -465,7 +466,7 @@ class Export_JSON {
 		// If page doesn't exist, let's try by SQL.
 		if ( ! isset( $page ) || null === $page ) {
 			global $wpdb;
-			$item_id = $wpdb->get_var( "SELECT ID FROM $wpdb->posts WHERE post_name = '" . esc_sql( $item ) . "'" );
+			$item_id = $wpdb->get_var( $wpdb->prepare( "SELECT ID FROM {$wpdb->posts} WHERE post_name = %s", $item ) );
 			$page    = get_post( $item_id );
 		}
 
@@ -507,7 +508,7 @@ class Export_JSON {
 			$ad_finish = get_post_meta( $page->ID, 'lezshows_airdates_finish', true );
 			if ( empty( $ad_start ) || empty( $ad_finish ) ) {
 				$legacy    = get_post_meta( $page->ID, 'lezshows_airdates', true );
-				$ad_start  = $ad_start  ?: ( is_array( $legacy ) ? ( $legacy['start']  ?? '' ) : '' );
+				$ad_start  = $ad_start ?: ( is_array( $legacy ) ? ( $legacy['start'] ?? '' ) : '' );
 				$ad_finish = $ad_finish ?: ( is_array( $legacy ) ? ( $legacy['finish'] ?? '' ) : '' );
 			}
 			if ( ! empty( $ad_start ) && ! empty( $ad_finish ) ) {
@@ -569,7 +570,7 @@ class Export_JSON {
 		// If page doesn't exist, let's try by SQL.
 		if ( ! isset( $page ) || null === $page ) {
 			global $wpdb;
-			$item_id = $wpdb->get_var( "SELECT ID FROM $wpdb->posts WHERE post_name = '" . esc_sql( $item ) . "'" );
+			$item_id = $wpdb->get_var( $wpdb->prepare( "SELECT ID FROM {$wpdb->posts} WHERE post_name = %s", $item ) );
 			$page    = get_post( $item_id );
 		}
 
@@ -684,7 +685,7 @@ class Export_JSON {
 			// If page doesn't exist, let's try by SQL.
 			if ( null === $page ) {
 				global $wpdb;
-				$item_id = $wpdb->get_var( "SELECT ID FROM $wpdb->posts WHERE post_name = '" . esc_sql( $item ) . "'" );
+				$item_id = $wpdb->get_var( $wpdb->prepare( "SELECT ID FROM {$wpdb->posts} WHERE post_name = %s", $item ) );
 				$page    = get_post( $item_id );
 			}
 		}
@@ -931,22 +932,21 @@ class Export_JSON {
 		}
 
 		if ( ! empty( $taxonomies ) ) {
-			foreach ( $taxonomies as $taxonomy ) {
-				$tax_query = "SELECT tr.object_id, t.name, t.slug
-					FROM {$wpdb->term_relationships} tr
-					INNER JOIN {$wpdb->term_taxonomy} tt ON tr.term_taxonomy_id = tt.term_taxonomy_id
-					INNER JOIN {$wpdb->terms} t ON tt.term_id = t.term_id
-					WHERE tr.object_id IN ($ids_string) AND tt.taxonomy = '$taxonomy'";
+			$tax_placeholders = implode( ', ', array_fill( 0, count( $taxonomies ), '%s' ) );
+			$tax_query        = "SELECT tr.object_id, tt.taxonomy, t.name, t.slug
+				FROM {$wpdb->term_relationships} tr
+				INNER JOIN {$wpdb->term_taxonomy} tt ON tr.term_taxonomy_id = tt.term_taxonomy_id
+				INNER JOIN {$wpdb->terms} t ON tt.term_id = t.term_id
+				WHERE tr.object_id IN ($ids_string) AND tt.taxonomy IN ($tax_placeholders)";
 
-				// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- IDs and taxonomy are sanitized
-				$tax_results = $wpdb->get_results( $tax_query );
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- IDs are sanitized; taxonomies are internal constants
+			$tax_results = $wpdb->get_results( $wpdb->prepare( $tax_query, ...$taxonomies ) );
 
-				foreach ( $tax_results as $row ) {
-					$bulk_data[ $row->object_id ]['taxonomies'][ $taxonomy ][] = array(
-						'name' => $row->name,
-						'slug' => $row->slug,
-					);
-				}
+			foreach ( $tax_results as $row ) {
+				$bulk_data[ $row->object_id ]['taxonomies'][ $row->taxonomy ][] = array(
+					'name' => $row->name,
+					'slug' => $row->slug,
+				);
 			}
 		}
 

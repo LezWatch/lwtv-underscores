@@ -323,14 +323,18 @@ class Dead {
 		}
 
 		// Query individual ACF repeater row keys — one row per death date after migration.
-		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
-		$results = $wpdb->get_results(
-			"SELECT post_id, meta_value FROM {$wpdb->postmeta}
-			WHERE meta_key LIKE 'lezchars_death_year_%_date'
-			AND meta_value != ''",
-			ARRAY_A
-		);
-		// phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
+		$raw_cache_key = 'lwtv_dead_years_raw';
+		$results       = wp_cache_get( $raw_cache_key );
+		if ( false === $results ) {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
+			$results = $wpdb->get_results(
+				"SELECT post_id, meta_value FROM {$wpdb->postmeta}
+				WHERE meta_key LIKE 'lezchars_death_year_%_date'
+				AND meta_value != ''",
+				ARRAY_A
+			);
+			wp_cache_set( $raw_cache_key, $results );
+		}
 
 		$year_counts = array();
 

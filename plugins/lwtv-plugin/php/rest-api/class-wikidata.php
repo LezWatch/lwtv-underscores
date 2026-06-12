@@ -169,8 +169,13 @@ class Wikidata {
 
 		$actors = array();
 
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-		$possible_ids = $wpdb->get_col( "select ID from $wpdb->posts where post_type = 'post_type_actors' AND post_name LIKE '%" . $slug . "%' " );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
+		$possible_ids = $wpdb->get_col(
+			$wpdb->prepare(
+				"SELECT ID FROM {$wpdb->posts} WHERE post_type = 'post_type_actors' AND post_name LIKE %s",
+				$wpdb->esc_like( $slug ) . '%'
+			)
+		);
 
 		if ( ! $possible_ids ) {
 			return array(
