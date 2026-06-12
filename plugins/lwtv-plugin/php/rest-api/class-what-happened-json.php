@@ -117,6 +117,10 @@ class What_Happened_JSON {
 			$datetime = $dt->createFromFormat( 'Y', $date );
 		}
 
+		if ( empty( $format ) || empty( $datetime ) ) {
+			return new \WP_Error( 'invalid_date', 'The date provided is not valid.' );
+		}
+
 		// If it's the future, be smarter than Alexa...
 		if ( $datetime->format( 'Y' ) > gmdate( 'Y' ) ) {
 			$datetime->modify( '-1 year' );
@@ -148,7 +152,8 @@ class What_Happened_JSON {
 				break;
 			case 'day':
 				global $wpdb;
-				$date = $datetime->format( 'Y-m-d' );
+				$date          = $datetime->format( 'Y-m-d' );
+				$meta_key_like = $wpdb->esc_like( 'lezchars_death_year_' ) . '%' . $wpdb->esc_like( '_date' );
 				// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
 				$dead_ids = $wpdb->get_col(
 					$wpdb->prepare(
@@ -156,9 +161,10 @@ class What_Happened_JSON {
 						INNER JOIN {$wpdb->term_relationships} tr ON pm.post_id = tr.object_id
 						INNER JOIN {$wpdb->term_taxonomy} tt ON tr.term_taxonomy_id = tt.term_taxonomy_id
 						INNER JOIN {$wpdb->terms} t ON tt.term_id = t.term_id
-						WHERE pm.meta_key LIKE 'lezchars_death_year_%%_date'
+						WHERE pm.meta_key LIKE %s
 						AND pm.meta_value = %s
 						AND tt.taxonomy = 'lez_cliches' AND t.slug = 'dead'",
+						$meta_key_like,
 						$date
 					)
 				);
@@ -216,7 +222,17 @@ class What_Happened_JSON {
 		}
 
 		// Information for shows
-		$show_data             = self::count_shows( $datetime->format( 'Y' ) );
+		$show_data = self::count_shows( $datetime->format( 'Y' ) );
+
+		if ( is_null( $show_data ) ) {
+			$show_data = array(
+				'for_year' => $datetime->format( 'Y' ),
+				'current'  => 0,
+				'started'  => 0,
+				'ended'    => 0,
+			);
+		}
+
 		$count_array['on_air'] = array(
 			'for_year' => $show_data['for_year'],
 			'current'  => $show_data['current'],
@@ -263,7 +279,7 @@ class What_Happened_JSON {
 			$ad_finish = get_post_meta( $show_id, 'lezshows_airdates_finish', true );
 			if ( empty( $ad_start ) || empty( $ad_finish ) ) {
 				$legacy    = get_post_meta( $show_id, 'lezshows_airdates', true );
-				$ad_start  = $ad_start  ?: ( is_array( $legacy ) ? ( $legacy['start']  ?? '' ) : '' );
+				$ad_start  = $ad_start ?: ( is_array( $legacy ) ? ( $legacy['start'] ?? '' ) : '' );
 				$ad_finish = $ad_finish ?: ( is_array( $legacy ) ? ( $legacy['finish'] ?? '' ) : '' );
 			}
 			if ( ! empty( $ad_start ) && ! empty( $ad_finish ) ) {

@@ -529,10 +529,13 @@ class Shows_Builder {
 			$ad_finish = get_post_meta( $show_id, 'lezshows_airdates_finish', true );
 			if ( empty( $ad_start ) || empty( $ad_finish ) ) {
 				$legacy    = get_post_meta( $show_id, 'lezshows_airdates', true );
-				$ad_start  = $ad_start  ?: ( is_array( $legacy ) ? ( $legacy['start']  ?? '' ) : '' );
+				$ad_start  = $ad_start ?: ( is_array( $legacy ) ? ( $legacy['start'] ?? '' ) : '' );
 				$ad_finish = $ad_finish ?: ( is_array( $legacy ) ? ( $legacy['finish'] ?? '' ) : '' );
 			}
-			$airdates = array( 'start' => $ad_start, 'finish' => $ad_finish );
+			$airdates  = array(
+				'start'  => $ad_start,
+				'finish' => $ad_finish,
+			);
 			$countries = get_the_term_list( $show_id, 'lez_country', '', ', ', '' );
 			$format    = get_the_term_list( $show_id, 'lez_formats' );
 
@@ -632,10 +635,13 @@ class Shows_Builder {
 			$ad_finish = get_post_meta( $show_id, 'lezshows_airdates_finish', true );
 			if ( empty( $ad_start ) || empty( $ad_finish ) ) {
 				$legacy    = get_post_meta( $show_id, 'lezshows_airdates', true );
-				$ad_start  = $ad_start  ?: ( is_array( $legacy ) ? ( $legacy['start']  ?? '' ) : '' );
+				$ad_start  = $ad_start ?: ( is_array( $legacy ) ? ( $legacy['start'] ?? '' ) : '' );
 				$ad_finish = $ad_finish ?: ( is_array( $legacy ) ? ( $legacy['finish'] ?? '' ) : '' );
 			}
-			$airdates = array( 'start' => $ad_start, 'finish' => $ad_finish );
+			$airdates  = array(
+				'start'  => $ad_start,
+				'finish' => $ad_finish,
+			);
 			$countries = get_the_term_list( $show_id, 'lez_country', '', ', ', '' );
 			$formats   = get_the_terms( $show_id, 'lez_formats' );
 
@@ -723,10 +729,13 @@ class Shows_Builder {
 			$ad_finish = get_post_meta( $show_id, 'lezshows_airdates_finish', true );
 			if ( empty( $ad_start ) || empty( $ad_finish ) ) {
 				$legacy    = get_post_meta( $show_id, 'lezshows_airdates', true );
-				$ad_start  = $ad_start  ?: ( is_array( $legacy ) ? ( $legacy['start']  ?? '' ) : '' );
+				$ad_start  = $ad_start ?: ( is_array( $legacy ) ? ( $legacy['start'] ?? '' ) : '' );
 				$ad_finish = $ad_finish ?: ( is_array( $legacy ) ? ( $legacy['finish'] ?? '' ) : '' );
 			}
-			$airdates = array( 'start' => $ad_start, 'finish' => $ad_finish );
+			$airdates  = array(
+				'start'  => $ad_start,
+				'finish' => $ad_finish,
+			);
 			$countries = get_the_terms( $show_id, 'lez_country' );
 			$format    = get_the_term_list( $show_id, 'lez_formats' );
 

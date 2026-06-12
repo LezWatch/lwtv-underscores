@@ -157,7 +157,7 @@ class WP_CLI_LWTV_Check {
 		// Even though we only support actors...
 		if ( CPT_Actors::SLUG === $post_type ) {
 			// Do the thing!
-			$items        = ( new Actors_Debugger() )->check_actors_wikidata( $actor_id );
+			$items = ( new Actors_Debugger() )->check_actors_wikidata( $actor_id );
 
 			if ( empty( $items ) ) {
 				\WP_CLI::error( 'Something has gone horribly wrong. Go get Mika.' );

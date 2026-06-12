@@ -107,7 +107,7 @@ class OnAir {
 		if ( empty( $start ) || empty( $finish ) ) {
 			$legacy = get_post_meta( $show_id, 'lezshows_airdates', true );
 			if ( is_array( $legacy ) ) {
-				$start  = $start  ?: ( $legacy['start']  ?? '' );
+				$start  = $start ?: ( $legacy['start'] ?? '' );
 				$finish = $finish ?: ( $legacy['finish'] ?? '' );
 			}
 		}
@@ -133,7 +133,7 @@ class OnAir {
 		if ( empty( $start ) || empty( $finish ) ) {
 			$legacy = get_post_meta( $show_id, 'lezshows_airdates', true );
 			if ( is_array( $legacy ) ) {
-				$start  = $start  ?: ( $legacy['start']  ?? '' );
+				$start  = $start ?: ( $legacy['start'] ?? '' );
 				$finish = $finish ?: ( $legacy['finish'] ?? '' );
 			}
 		}

@@ -308,9 +308,9 @@ class Stats_JSON {
 
 					$death_rows = get_field( 'lezchars_death_year', $character );
 					$died       = is_array( $death_rows ) ? array_filter( array_column( $death_rows, 'date' ) ) : array();
-					$shows  = count( get_field( 'lezchars_show_group', $character ) ?: array() );
-					$actors = count( get_field( 'lezchars_actor', $character ) ?: array() );
-					$gender = implode(
+					$shows      = count( get_field( 'lezchars_show_group', $character ) ?: array() );
+					$actors     = count( get_field( 'lezchars_actor', $character ) ?: array() );
+					$gender     = implode(
 						', ',
 						wp_get_post_terms(
 							$character,
@@ -320,7 +320,7 @@ class Stats_JSON {
 							)
 						)
 					);
-					$sexual = implode(
+					$sexual     = implode(
 						', ',
 						wp_get_post_terms(
 							$character,

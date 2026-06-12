@@ -643,8 +643,8 @@ class Calculations {
 		lwtv_plugin()->invalidate_statistics_cache( 'score', $post_id );
 
 		// Cheat and update the show 'on-air' ness.
-		$on_air  = 'no';
-		$finish  = get_post_meta( $post_id, 'lezshows_airdates_finish', true );
+		$on_air = 'no';
+		$finish = get_post_meta( $post_id, 'lezshows_airdates_finish', true );
 		if ( empty( $finish ) ) {
 			$legacy = get_post_meta( $post_id, 'lezshows_airdates', true );
 			$finish = is_array( $legacy ) ? ( $legacy['finish'] ?? '' ) : '';

@@ -6,7 +6,7 @@
 .searchwp-modal-form-lwtv {
 
 	.searchwp-modal-form__overlay {
-		background: rgba(45, 45, 45 ,0.6);
+		background: rgba(45, 45, 45, 0.6);
 		position: fixed;
 		top: 0;
 		left: 0;
@@ -42,6 +42,7 @@
  *
  ************************************** */
 .searchwp-modal-form-lwtv {
+
 	.searchwp-modal-form__content .search-form {
 		display: flex;
 		align-items: center;
@@ -75,23 +76,47 @@
  *
  ***************************************** */
 @keyframes searchwpModalFadeIn {
-	from { opacity: 0; }
-	to { opacity: 1; }
+
+	from {
+		opacity: 0;
+	}
+
+	to {
+		opacity: 1;
+	}
 }
 
 @keyframes searchwpModalFadeOut {
-	from { opacity: 1; }
-	to { opacity: 0; }
+
+	from {
+		opacity: 1;
+	}
+
+	to {
+		opacity: 0;
+	}
 }
 
 @keyframes searchwpModalSlideIn {
-	from { transform: translateY(15%); }
-	to { transform: translateY(0); }
+
+	from {
+		transform: translateY(15%);
+	}
+
+	to {
+		transform: translateY(0);
+	}
 }
 
 @keyframes searchwpModalSlideOut {
-	from { transform: translateY(0); }
-	to { transform: translateY(-10%); }
+
+	from {
+		transform: translateY(0);
+	}
+
+	to {
+		transform: translateY(-10%);
+	}
 }
 
 .searchwp-modal-form {
@@ -103,19 +128,19 @@
 }
 
 .searchwp-modal-form[aria-hidden="false"] .searchwp-modal-form-lwtv .searchwp-modal-form__overlay {
-	animation: searchwpModalFadeIn .3s cubic-bezier(0.0, 0.0, 0.2, 1);
+	animation: searchwpModalFadeIn 0.3s cubic-bezier(0, 0, 0.2, 1);
 }
 
 .searchwp-modal-form[aria-hidden="false"] .searchwp-modal-form-lwtv .searchwp-modal-form__container {
-	animation: searchwpModalSlideIn .3s cubic-bezier(0, 0, .2, 1);
+	animation: searchwpModalSlideIn 0.3s cubic-bezier(0, 0, 0.2, 1);
 }
 
 .searchwp-modal-form[aria-hidden="true"] .searchwp-modal-form-lwtv .searchwp-modal-form__overlay {
-	animation: searchwpModalFadeOut .3s cubic-bezier(0.0, 0.0, 0.2, 1);
+	animation: searchwpModalFadeOut 0.3s cubic-bezier(0, 0, 0.2, 1);
 }
 
 .searchwp-modal-form[aria-hidden="true"] .searchwp-modal-form-lwtv .searchwp-modal-form__container {
-	animation: searchwpModalSlideOut .3s cubic-bezier(0, 0, .2, 1);
+	animation: searchwpModalSlideOut 0.3s cubic-bezier(0, 0, 0.2, 1);
 }
 
 .searchwp-modal-form-lwtv .searchwp-modal-form__container,
@@ -183,6 +208,7 @@
  *
  ************************************** */
 .searchwp-live-search-result-lwtv {
+
 	.searchwp-live-search-result {
 		display: flex;
 		align-items: start;

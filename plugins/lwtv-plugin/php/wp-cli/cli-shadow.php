@@ -185,7 +185,7 @@ class WP_CLI_LWTV_Shadow {
 	public function sync_characters_to_actors( $one_post ) {
 		$shadow_cpt       = 'shadow_tax_characters';
 		$shadow_character = \Shadow_Taxonomy\Core\get_associated_term( $one_post, $shadow_cpt );
-		$actors = get_field( 'lezchars_actor', $one_post ) ?: array();
+		$actors           = get_field( 'lezchars_actor', $one_post ) ?: array();
 
 		if ( empty( $actors ) ) {
 			return;

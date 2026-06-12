@@ -6,7 +6,7 @@
  */
 
 // Build scope options — only when not inside the modal (which has its own selector).
-$lwtv_sidebar_engines = array();
+$lwtv_sidebar_engines    = array();
 $lwtv_show_sidebar_scope = empty( $GLOBALS['lwtv_in_modal'] ) && class_exists( 'SearchWP' );
 
 if ( $lwtv_show_sidebar_scope ) {

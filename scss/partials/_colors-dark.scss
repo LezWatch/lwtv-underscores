@@ -16,8 +16,8 @@
 	/* Overridden colors */
 	$lwtv-medgrey: #404040;
 
-	--bs-body-color: $lwtv-dkgrey;
-	--bs-body-color-rgb: rgba(to-rgb($lwtv-dkgrey), 1);
+	--bs-body-color: #{$lwtv-dkgrey};
+	--bs-body-color-rgb: rgba(to-rgb(#{$lwtv-dkgrey}), 1);
 
 	.text-widget,
 	.widget_categories,
@@ -308,7 +308,9 @@
 	}
 
 	.ep-calendar-title {
-		a:visited, a, {
+
+		a:visited,
+ a, {
 			color: colors.$lwtv-pink;
 		}
 	}
@@ -321,6 +323,7 @@
 
 	.statistics,
 	.thisyear {
+
 		.card-header.actors,
 		.card-header.genres,
 		.card-header.gender {

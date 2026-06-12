@@ -38,7 +38,7 @@ class SearchWP {
 	 * @param mixed $query The SearchWP query object.
 	 * @return array
 	 */
-	public function maybe_switch_engine( array $args, $query ): array {
+	public function maybe_switch_engine( array $args, $_query ): array {
 		$allowed = array( 'shows', 'characters', 'actors' );
 		$scope   = sanitize_text_field( wp_unslash( $_REQUEST['lwtv_scope'] ?? '' ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
