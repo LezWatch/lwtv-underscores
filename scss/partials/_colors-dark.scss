@@ -16,8 +16,8 @@
 	/* Overridden colors */
 	$lwtv-medgrey: #404040;
 
-	--bs-body-color: #{$lwtv-dkgrey};
-	--bs-body-color-rgb: rgba(to-rgb(#{$lwtv-dkgrey}), 1);
+	--bs-body-color: #{colors.$lwtv-dkgrey};
+	--bs-body-color-rgb: rgba(to-rgb(#{colors.$lwtv-dkgrey}), 1);
 
 	.text-widget,
 	.widget_categories,
