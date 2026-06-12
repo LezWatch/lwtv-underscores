@@ -353,9 +353,7 @@ class Characters {
 		}
 
 		$drift = (int) $num_posts->publish - (int) $num_terms;
-		lwtv_plugin()->debug_log( 'shadow-taxonomy', "Drift detected: {$drift} characters missing shadow terms — queuing taxsync" );
-
-		lwtv_plugin()->schedule_task( 'taxsync', 'characters', 0 );
+		lwtv_plugin()->debug_log( 'shadow-taxonomy', "Drift detected: {$drift} characters missing shadow terms — manual shadow taxonomy sync needed" );
 	}
 
 	/**

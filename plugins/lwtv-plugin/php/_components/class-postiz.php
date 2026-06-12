@@ -18,7 +18,6 @@ use LWTV\Postiz\New_Post;
 
 class Postiz implements Component {
 	public function init(): void {
-		new Postiz_Class();
 		new Of_The_Day();
 		new New_Post();
 	}

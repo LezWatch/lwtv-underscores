@@ -165,8 +165,12 @@ class ACF {
 	 * @param int $post_id Post ID.
 	 * @return void
 	 */
-	public function save_excerpt_to_post( int $post_id ): void {
-		$cpts = array( 'post_type_actors', 'post_type_shows' );
+	public function save_excerpt_to_post( int|string $post_id ): void {
+		if ( ! is_numeric( $post_id ) || $post_id < 1 ) {
+			return;
+		}
+		$post_id = (int) $post_id;
+		$cpts    = array( 'post_type_actors', 'post_type_shows' );
 		if ( ! in_array( get_post_type( $post_id ), $cpts, true ) ) {
 			return;
 		}
@@ -469,7 +473,11 @@ class ACF {
 	 * @param int $post_id Post ID.
 	 * @return void
 	 */
-	public function save_show_legacy_meta( int $post_id ): void {
+	public function save_show_legacy_meta( int|string $post_id ): void {
+		if ( ! is_numeric( $post_id ) || $post_id < 1 ) {
+			return;
+		}
+		$post_id = (int) $post_id;
 		if ( 'post_type_shows' !== get_post_type( $post_id ) ) {
 			return;
 		}
