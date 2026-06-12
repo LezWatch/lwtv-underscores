@@ -1,0 +1,106 @@
+{
+    "key": "group_lwtv_chars_queerness",
+    "title": "Character Details (Queerness)",
+    "fields": [
+        {
+            "key": "field_lwtv_lezchars_gender",
+            "label": "Gender",
+            "name": "lezchars_gender",
+            "aria-label": "",
+            "type": "taxonomy",
+            "instructions": "Gender identity",
+            "required": 1,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "taxonomy": "lez_gender",
+            "add_term": 0,
+            "save_terms": 1,
+            "load_terms": 1,
+            "return_format": "id",
+            "field_type": "select",
+            "allow_null": 0,
+            "allow_in_bindings": 0,
+            "bidirectional": 0,
+            "multiple": 0,
+            "bidirectional_target": []
+        },
+        {
+            "key": "field_lwtv_lezchars_sexuality",
+            "label": "Sexuality",
+            "name": "lezchars_sexuality",
+            "aria-label": "",
+            "type": "taxonomy",
+            "instructions": "Sexual orientation",
+            "required": 1,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "taxonomy": "lez_sexuality",
+            "add_term": 0,
+            "save_terms": 1,
+            "load_terms": 1,
+            "return_format": "id",
+            "field_type": "select",
+            "allow_null": 0,
+            "allow_in_bindings": 0,
+            "bidirectional": 0,
+            "multiple": 0,
+            "bidirectional_target": []
+        },
+        {
+            "key": "field_lwtv_lezchars_romantic",
+            "label": "Romantic",
+            "name": "lezchars_romantic",
+            "aria-label": "",
+            "type": "taxonomy",
+            "instructions": "Romantic orientation",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "taxonomy": "lez_romantic",
+            "add_term": 0,
+            "save_terms": 1,
+            "load_terms": 1,
+            "return_format": "id",
+            "field_type": "select",
+            "allow_null": 1,
+            "allow_in_bindings": 0,
+            "bidirectional": 0,
+            "multiple": 0,
+            "bidirectional_target": []
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "post_type",
+                "operator": "==",
+                "value": "post_type_characters"
+            }
+        ]
+    ],
+    "menu_order": 10,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": true,
+    "description": "Gender identity, sexual orientation, and romantic orientation",
+    "show_in_rest": 1,
+    "display_title": "Sexuality and Orientation",
+    "allow_ai_access": false,
+    "ai_description": "",
+    "modified": 1781194921
+}

@@ -306,11 +306,11 @@ class Stats_JSON {
 						continue;
 					}
 
-					$died   = get_post_meta( $character, 'lezchars_death_year', true );
-					$died   = ( ! is_array( $died ) ) ? array( $died ) : $died;
-					$shows  = count( get_post_meta( $character, 'lezchars_show_group', true ) );
-					$actors = count( get_post_meta( $character, 'lezchars_actor', true ) );
-					$gender = implode(
+					$death_rows = get_field( 'lezchars_death_year', $character );
+					$died       = is_array( $death_rows ) ? array_filter( array_column( $death_rows, 'date' ) ) : array();
+					$shows      = count( get_field( 'lezchars_show_group', $character ) ?: array() );
+					$actors     = count( get_field( 'lezchars_actor', $character ) ?: array() );
+					$gender     = implode(
 						', ',
 						wp_get_post_terms(
 							$character,
@@ -320,7 +320,7 @@ class Stats_JSON {
 							)
 						)
 					);
-					$sexual = implode(
+					$sexual     = implode(
 						', ',
 						wp_get_post_terms(
 							$character,
@@ -578,14 +578,14 @@ class Stats_JSON {
 				);
 				break;
 			case 'character':
-				$died        = get_post_meta( $id, 'lezchars_death_year', true );
-				$died        = ( ! is_array( $died ) ) ? array( $died ) : $died;
+				$death_rows  = get_field( 'lezchars_death_year', $id );
+				$died        = is_array( $death_rows ) ? array_filter( array_column( $death_rows, 'date' ) ) : array();
 				$stats_array = array(
 					'id'        => $id,
 					'name'      => get_the_title( $id ),
 					'died'      => $died,
-					'actors'    => count( get_post_meta( $id, 'lezchars_actor', true ) ),
-					'shows'     => count( get_post_meta( $id, 'lezchars_show_group', true ) ),
+					'actors'    => count( get_field( 'lezchars_actor', $id ) ?: array() ),
+					'shows'     => count( get_field( 'lezchars_show_group', $id ) ?: array() ),
 					'gender'    => implode( ', ', wp_get_post_terms( $id, 'lez_gender', array( 'fields' => 'names' ) ) ),
 					'sexuality' => implode( ', ', wp_get_post_terms( $id, 'lez_sexuality', array( 'fields' => 'names' ) ) ),
 					'url'       => get_the_permalink(),

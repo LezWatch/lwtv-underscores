@@ -28,6 +28,7 @@
 		<exclude name="WordPress.WP.AlternativeFunctions.file_system_read_file_get_contents" />
 		<exclude name="WordPress.WP.DeprecatedFunctions.sanitize_urlFound" />
 		<exclude name="WordPress.PHP.DisallowShortTernary.Found" />
+		<exclude name="Universal.Operators.DisallowShortTernary.Found" />
 	</rule>
 
 	<!-- Rules: LWTV Custom Commands -->
@@ -72,9 +73,6 @@
 	<exclude-pattern>*/blocks/build/*</exclude-pattern>
 
 	<!-- Extensions - not written by us. -->
-	<exclude-pattern>*/facetwp-cmb2/*</exclude-pattern>
-	<exclude-pattern>*/cmb2-grid/*</exclude-pattern>
-	<exclude-pattern>*/cmb-field-select2/*</exclude-pattern>
 	<exclude-pattern>*/shadow-taxonomy/*</exclude-pattern>
 
 	<!-- External Libraries -->

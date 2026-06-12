@@ -21,7 +21,7 @@ class TVMaze {
 	const SLUG = 'post_type_tvmaze';
 
 	/**
-	 * CMB2 Prefix
+	 * Prefix
 	 */
 	const PREFIX = 'leztvmaze_';
 
@@ -30,7 +30,6 @@ class TVMaze {
 	 */
 	public function __construct() {
 		add_action( 'admin_init', array( $this, 'admin_init' ) );
-		add_action( 'cmb2_init', array( $this, 'cmb2_metaboxes' ) );
 		add_action( 'init', array( $this, 'create_post_type' ), 0 );
 	}
 
@@ -105,44 +104,5 @@ class TVMaze {
 			$input = 'Add TVMaze Name';
 		}
 		return $input;
-	}
-
-	/**
-	 * CMB2 Metaboxes
-	 */
-	public function cmb2_metaboxes() {
-
-		// MetaBox Group: Character Main Data
-		$tvmaze_grid = \new_cmb2_box(
-			array(
-				'id'           => self::PREFIX . 'metabox_main',
-				'title'        => 'TVMaze Names',
-				'object_types' => array( self::SLUG ),
-				'context'      => 'normal',
-				'priority'     => 'high',
-				'show_in_rest' => false,
-				'show_names'   => true, // Show field names on the left
-			)
-		);
-
-		// Field: Show
-		$tvmaze_grid->add_field(
-			array(
-				'name'       => 'TV Show',
-				'id'         => self::PREFIX . 'our_show',
-				'desc'       => 'Select one show. Each TVMaze show can only link to ONE show.',
-				'type'       => 'custom_attached_posts', // This field type
-				'post_type'  => 'post_type_shows',
-				'options'    => array(
-					'query_args' => array(
-						'posts_per_page' => 5,
-						'post_type'      => 'post_type_shows',
-					), // override the get_posts args
-				),
-				'attributes' => array(
-					'data-max-items' => 1,
-				),
-			)
-		);
 	}
 }

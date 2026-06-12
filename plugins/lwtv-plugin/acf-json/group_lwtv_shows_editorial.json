@@ -1,0 +1,70 @@
+{
+    "key": "group_lwtv_shows_editorial",
+    "title": "Show Editorial Section",
+    "fields": [
+        {
+            "key": "field_lwtv_lezshows_worthit_show_we_love",
+            "label": "Show We Love",
+            "name": "lezshows_worthit_show_we_love",
+            "aria-label": "",
+            "type": "true_false",
+            "instructions": "This is a show we officially love.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "message": "Show We Love",
+            "default_value": 0,
+            "allow_in_bindings": 1,
+            "ui": 1,
+            "ui_on_text": "Yes",
+            "ui_off_text": "No"
+        },
+        {
+            "key": "field_lwtv_lezshows_byq_override",
+            "label": "BYQ Override",
+            "name": "lezshows_byq_override",
+            "aria-label": "",
+            "type": "true_false",
+            "instructions": "Do NOT treat Bury Your Queers as a negative for this show.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "message": "Override BYQ",
+            "default_value": 0,
+            "allow_in_bindings": 1,
+            "ui": 1,
+            "ui_on_text": "Yes",
+            "ui_off_text": "No"
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "post_type",
+                "operator": "==",
+                "value": "post_type_shows"
+            }
+        ]
+    ],
+    "menu_order": 40,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": true,
+    "description": "Admin-only editorial flags (Show We Love, BYQ Override)",
+    "show_in_rest": 1,
+    "display_title": "Editorial Section (Staff Only)",
+    "allow_ai_access": false,
+    "ai_description": "",
+    "modified": 1781127972
+}

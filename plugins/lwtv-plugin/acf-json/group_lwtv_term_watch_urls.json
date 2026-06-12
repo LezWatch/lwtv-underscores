@@ -1,0 +1,91 @@
+{
+    "key": "group_lwtv_term_watch_urls",
+    "title": "Watch URL Settings",
+    "fields": [
+        {
+            "key": "field_lwtv_lezwatchurls_setting_hide_display",
+            "label": "Hide Display",
+            "name": "lezwatchurls_setting_hide_display",
+            "aria-label": "",
+            "type": "true_false",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "message": "Do not show this watch URL on the front end.",
+            "default_value": 0,
+            "ui": 1,
+            "ui_on_text": "",
+            "ui_off_text": "",
+            "allow_in_bindings": 0
+        },
+        {
+            "key": "field_lwtv_lezwatchurls_all",
+            "label": "URLs",
+            "name": "lezwatchurls_all",
+            "aria-label": "",
+            "type": "repeater",
+            "instructions": "URLs used by this provider.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "layout": "table",
+            "pagination": 0,
+            "min": 0,
+            "max": 0,
+            "collapsed": "",
+            "button_label": "Add Another URL",
+            "rows_per_page": 20,
+            "sub_fields": [
+                {
+                    "key": "field_lwtv_lezwatchurls_all_url",
+                    "label": "URL",
+                    "name": "url",
+                    "aria-label": "",
+                    "type": "url",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": "https://paramountplus.com/",
+                    "parent_repeater": "field_lwtv_lezwatchurls_all"
+                }
+            ]
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "taxonomy",
+                "operator": "==",
+                "value": "lez_watch_urls"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": [],
+    "active": true,
+    "description": "Settings and URLs for watch URL taxonomy terms",
+    "show_in_rest": 0,
+    "display_title": "Watch URL Settings",
+    "allow_ai_access": false,
+    "ai_description": "",
+    "modified": 1749600000
+}

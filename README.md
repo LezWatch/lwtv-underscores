@@ -10,7 +10,7 @@ The 100% Original Theme for LezWatch.TV
 	<a href="https://github.com/LezWatch/lwtv-underscores/blob/production/LICENSE"><img src="https://img.shields.io/github/license/LezWatch/lwtv-underscores" alt="License"></a>
 </p>
 
-# Description
+## Description
 
 Based on the Yikes! Starter Theme (circa 2018) and Underscores (circa 2016), the LezWatch.TV theme has been customized for custom post types (shows, characters, actors) and to be as queer as possible.
 
@@ -26,7 +26,7 @@ Server crontab is used to run CLI commands that generate and update complex cont
 
 The command `wp lwtv generate cron daily` will run a different debugger each day, update the FacetWP cache, and so on.
 
-# Tools
+## Tools
 
 - PHP 8.2 or higher
 - [Node.js](https://nodejs.org) version 22+
@@ -36,7 +36,7 @@ It's recommended to use [Homebrew](https://brew.sh) on macOS or [Chocolatey](htt
 
 **Note:** Grunt has been removed as of 2026, due to security issues with its addons and no movement from the actual source since 2023.
 
-# Setup 🛠
+## Setup 🛠
 
 1. Clone this repository: `git clone git@github.com:lezwatch/lwtv-underscores`
 2. Move into the project directory: `cd lwtv-underscores`
@@ -45,7 +45,7 @@ It's recommended to use [Homebrew](https://brew.sh) on macOS or [Chocolatey](htt
 5. Update all the things (npm, composer, etc): `npm run updater`
 6. Run an initial build (generate CSS etc): `npm run build`
 
-# Contributing 📺
+## Contributing 📺
 
 All pull requests should be made to **production**.
 
@@ -59,115 +59,102 @@ If you need to update the theme version (due to changing CSS or adding features)
 
 To install and update:
 
-* `$ npm install` - Install all the things.
-* `$ npm run updater` - Updates all the things.
-* `$ npm run build` - Builds all the CSS and handles composer versions.
+- `$ npm install` - Install all the things.
+- `$ npm run updater` - Updates all the things.
+- `$ npm run build` - Builds all the CSS and handles composer versions.
 
-## Linting 🧪
+### Linting 🧪
 
 To run linting:
 
-* `$ npm run lint` - Lint everything
-* `$ npm run lint:css` - Lint all SCSS files in all folders
-* `$ npm run lint:js` - Lint all Block JS files only
-* `$ npm run lint:php` - Lint all PHP files (excludes 3rd party plugins)
+- `$ npm run lint` - Lint everything
+- `$ npm run lint:css` - Lint all SCSS files in all folders
+- `$ npm run lint:js` - Lint all Block JS files only
+- `$ npm run lint:php` - Lint all PHP files (excludes 3rd party plugins)
 
 To fix lint issues automatically:
 
-* `$ npm run fix` - Fix everything
-* `$ npm run fix:css` - Fix all SCSS files in all folders
-* `$ npm run fix:js` - Fix all Block JS files only
+- `$ npm run fix` - Fix everything
+- `$ npm run fix:css` - Fix all SCSS files in all folders
+- `$ npm run fix:js` - Fix all Block JS files only
 
-## CSS & JS
+### CSS & JS
 
 `$ npm run build` will build all the CSS and JS, as well as update all the libraries.
 
 `$ npm run buildquick` will build the assets and copy files over _without_ updating libraries.
 
-## Libraries
+### Libraries
 
 JS and PHP libraries are included via NPM and Composer. WordPress plugins that have been forked are now included in the main code and managed by us to prevent breakage.
 
-The `vendor` and `node_module` files are not synced to Github anymore (as of 2023 August) to minimize the amount of files stored on the servers, and the following libraries have their required code moved via Composer and npm's post-install process:
-
-**NPM**
-* [ChartJS](https://github.com/chartjs/Chart.js/)
-* [TableSorter (Mottie Fork)](https://github.com/Mottie/tablesorter)
-
-**Composer**
-* [ICal Parser](https://github.com/u01jmg3/ics-parser)
-
-## Icons
+### Icons
 
 In order to speed up the site, we make use of SVG sprites to generate our font-icons. The icons can be found in the private [Symbolicons Repository](https://github.com/lezwatch/symbolicons-private/). When a change is pushed to development and production branches, it will auto-deploy.
 
 If the sprites are missing, the site falls back to Font Awesome.
 
-## Deployment
+### Deployment
 
 Pushes to branches are automatically deployed via Github Actions as follows:
 
-* Development: [lezwatchtvcom.stage.site](https://lezwatchtvcom.stage.site) (password required - Ask Mika)
-* Production: [lezwatchtv.com](https://lezwatchtv.com)
+- Development: [lezwatchtvcom.stage.site](https://lezwatchtvcom.stage.site) (password required - Ask Mika)
+- Production: [lezwatchtv.com](https://lezwatchtv.com)
 
-# Theme Features
+## Theme Features
 
-* Supports three front facing Custom Post Types and related taxonomies: Characters, Themes, Actors
-* Supports one back end Custom Post Type: TV Maze Aliases
-* Integrated with [FacetWP](https://facetwp.com) and [CMB2](https://cmb2.io/).
-* Additional custom image sizes: Show (960x400), Character (225x300), Actor (225x300)
-* Additional custom sidebars: Show, Character, and Actor Archives
-* Widgets: Display latest custom post type posts (show and character) with image
-* Internal plugins (`/plugins/`)
+**Note:** CMB2 has been removed as of 2026 and replaced with ACF Pro.
 
-# Plugins
+- Supports three front facing Custom Post Types and related taxonomies: Characters, Themes, Actors
+- Supports one back end Custom Post Type: TV Maze Aliases
+- Integrated with [ACF Pro](https://www.advancedcustomfields.com/pro/)
+- Integrated with [FacetWP](https://facetwp.com)
+- Additional custom image sizes: Show (960x400), Character (225x300), Actor (225x300)
+- Additional custom sidebars: Show, Character, and Actor Archives
+- Widgets: Display latest custom post type posts (show and character) with image
+- Internal plugins (`/plugins/`)
+
+## Plugins
 
 The following plugins are forked from their original versions to support newer versions of WordPress and PHP. They are stored in the `/plugins/` folder:
 
-* `cmb-field-select2` - Forked from [MustardBees](https://github.com/mustardBees/cmb-field-select2)
-* `cmb2-attached-posts` - Forked from [WebDevStudios](https://github.com/WebDevStudios/cmb2-attached-posts)
-* `cmb2-grid` - Forked from [Oraggami](https://github.com/origgami/CMB2-grid)
-* `facetwp-cmb2` - Forked from [WebDevStudios](https://github.com/WebDevStudios/facetwp-cmb2)
-* `shadow-taxonomy` - By [PatelUtkarsh](https://github.com/patelutkarsh/shadow-taxonomy)
+- `shadow-taxonomy` - By [PatelUtkarsh](https://github.com/patelutkarsh/shadow-taxonomy)
 
-## LWTV Plugin (`/plugins/lwtv-plugin/`)
+### LWTV Plugin (`/plugins/lwtv-plugin/`)
 
 Formerly hosted as it's own, separate, plugin, it has been combined with the theme since everything is interconnected. For the plugin, we use Namespaces and auto-loading in order to properly generate and call new content dynamically.
 
-### Components
+#### Components
 
 A _component_ can be thought of as a _sub-plugin_. It is an atomic, independent module that stores business logic related to a specific feature. It may expose some template tags (functions) that can be called from within the theme.
 
 All Components are stored in `/plugins/lwtv-plugins/php/` and the details of their use in `/plugins/lwtv-plugins/php/readme.md`
 
-### Blocks
+#### Blocks
 
 Development is fully documented in `/plugins/lwtv-plugins/php/blocks/README.md`
 
-
-## Developer Features
+### Developer Features
 
 There is a function for logging to the error log _only_ if debug is active: `lwtv_plugin()->debug_log( $TYPE, $MESSAGE )`
 
 This will output `[TYPE]: Message` into the error log.
 
-### Miscellaneous
+## Miscellaneous
 
 The following folders/files are for use by Developers. They are not pushed to the dev nor production servers.
 
-* `/_build_scripts/` - All of our build scripts and tools.
-* `/.cursor/` - Cursor specific settings
-* `./.githooks/` - shared hooks (pre-commit etc)
-* `./.github/` - all Github specific files such as workflows, dependabot, and pull request templates
-* `./.githooks/` - shared hooks (pre-commit etc)
-* `/.vscode/` - default VSCode settings
-* `/docs/` - Structure files
-* `.editorconfig` - Basic editor configuration
-* `.gitignore` - Files and folders to be exempt from Git syncs
-* `.npmrc` - NPM configuration requirements
-* `.nvmrc` - NVM version control
-* `composer.json` - Composer settings, includes all libraries used
-* `package-lock.json` - Saved package.json data
-* `package.json` - NPM configuration, commands, and libraries used
-* `phpcs.xml.dist` - PHPCS configuration
-
+- `/_build_scripts/` - All of our build scripts and tools.
+- `/.cursor/` - Cursor specific settings
+- `./.github/` - all Github specific files such as workflows, dependabot, and pull request templates
+- `./.githooks/` - shared hooks (pre-commit etc)
+- `/.vscode/` - default VSCode settings
+- `/docs/` - Structure files
+- `.editorconfig` - Basic editor configuration
+- `.gitignore` - Files and folders to be exempt from Git syncs
+- `.npmrc` - NPM configuration requirements
+- `.nvmrc` - NVM version control
+- `composer.json` - Composer settings, includes all libraries used
+- `package-lock.json` - Saved package.json data
+- `package.json` - NPM configuration, commands, and libraries used
+- `phpcs.xml.dist` - PHPCS configuration

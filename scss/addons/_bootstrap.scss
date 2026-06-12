@@ -26,8 +26,7 @@
 	li.page-item {
 
 		a.active,
-		&.active
-		{
+		&.active {
 			background-color: colors.$lwtv-pink;
 			border-color: colors.$lwtv-pink;
 			color: colors.$white;
@@ -79,6 +78,7 @@
 
 /* List Groups */
 .list-group {
+
 	.list-group-item-primary {
 		background-color: colors.$lwtv-pink;
 		color: colors.$white;

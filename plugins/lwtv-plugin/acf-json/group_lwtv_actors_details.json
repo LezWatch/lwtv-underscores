@@ -1,0 +1,163 @@
+{
+    "key": "group_lwtv_actors_details",
+    "title": "Actor Details",
+    "fields": [
+        {
+            "key": "field_lwtv_lezactors_gender",
+            "label": "Gender",
+            "name": "lezactors_gender",
+            "aria-label": "",
+            "type": "taxonomy",
+            "instructions": "Gender Identity",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "taxonomy": "lez_actor_gender",
+            "add_term": 0,
+            "save_terms": 1,
+            "load_terms": 1,
+            "return_format": "id",
+            "field_type": "select",
+            "allow_null": 0,
+            "bidirectional": 0,
+            "multiple": 0,
+            "bidirectional_target": []
+        },
+        {
+            "key": "field_lwtv_lezactors_sexuality",
+            "label": "Sexuality",
+            "name": "lezactors_sexuality",
+            "aria-label": "",
+            "type": "taxonomy",
+            "instructions": "Sexual Orientation",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "taxonomy": "lez_actor_sexuality",
+            "add_term": 0,
+            "save_terms": 1,
+            "load_terms": 1,
+            "return_format": "id",
+            "field_type": "select",
+            "allow_null": 0,
+            "bidirectional": 0,
+            "multiple": 0,
+            "bidirectional_target": []
+        },
+        {
+            "key": "field_lwtv_lezactors_romantic",
+            "label": "Romantic Nature",
+            "name": "lezactors_romantic",
+            "aria-label": "",
+            "type": "taxonomy",
+            "instructions": "AKA affectional orientation",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "taxonomy": "lez_actor_romantic",
+            "add_term": 0,
+            "save_terms": 1,
+            "load_terms": 1,
+            "return_format": "id",
+            "field_type": "select",
+            "allow_null": 1,
+            "allow_in_bindings": 1,
+            "bidirectional": 0,
+            "multiple": 0,
+            "bidirectional_target": []
+        },
+        {
+            "key": "field_lwtv_lezactors_queer_override",
+            "label": "Queer Override",
+            "name": "lezactors_queer_override",
+            "aria-label": "",
+            "type": "select",
+            "instructions": "Allow manual intervention to force someone to be marked as queer or not.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "choices": {
+                "undefined": "No Selection (Default)",
+                "is_queer": "Is Queer",
+                "not_queer": "Is NOT Queer"
+            },
+            "default_value": "undefined",
+            "return_format": "value",
+            "multiple": 0,
+            "allow_null": 0,
+            "allow_in_bindings": 1,
+            "ui": 0,
+            "ajax": 0,
+            "placeholder": "",
+            "create_options": 0,
+            "save_options": 0
+        },
+        {
+            "key": "field_lwtv_lezactors_pronouns",
+            "label": "Pronouns",
+            "name": "lezactors_pronouns",
+            "aria-label": "",
+            "type": "taxonomy",
+            "instructions": "Pronouns (Optional)",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "lwtv-acf-col-3",
+                "id": ""
+            },
+            "taxonomy": "lez_actor_pronouns",
+            "add_term": 0,
+            "save_terms": 1,
+            "load_terms": 1,
+            "return_format": "id",
+            "field_type": "checkbox",
+            "allow_in_bindings": 1,
+            "bidirectional": 0,
+            "multiple": 0,
+            "allow_null": 0,
+            "bidirectional_target": []
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "post_type",
+                "operator": "==",
+                "value": "post_type_actors"
+            }
+        ]
+    ],
+    "menu_order": 10,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": [
+        "excerpt",
+        "author"
+    ],
+    "active": true,
+    "description": "Gender, Sexuality, and Pronoun Data",
+    "show_in_rest": 1,
+    "display_title": "",
+    "allow_ai_access": false,
+    "ai_description": "",
+    "modified": 1781120637
+}

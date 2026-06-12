@@ -41,7 +41,7 @@ $thumb_title       = ( empty( $thumb_attribution ) ) ? get_the_title() : get_the
 							}
 
 							// Stars of Queerness.
-							echo '<span class="callout callout-star">' . lwtv_plugin()->get_show_stars( get_the_ID() ) . '</span>';
+							echo '<span class="callout callout-star">' . lwtv_plugin()->get_show_stars( get_the_ID(), 25 ) . '</span>';
 
 							// Hearts of Lurve.
 							if ( get_post_meta( get_the_ID(), 'lezshows_worthit_show_we_love', true ) ) {

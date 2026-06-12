@@ -1,0 +1,205 @@
+{
+    "key": "group_lwtv_auto_posting",
+    "title": "Auto-Posting Options",
+    "fields": [
+        {
+            "key": "field_lwtv_postiz_api_key",
+            "label": "API Key",
+            "name": "lwtv_postiz_api_key",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "Enter your Postiz API key.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_lwtv_postiz_api_url",
+            "label": "API URL",
+            "name": "lwtv_postiz_api_url",
+            "aria-label": "",
+            "type": "url",
+            "instructions": "Enter your Postiz API URL.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": "https://..."
+        },
+        {
+            "key": "field_lwtv_postiz_post_type",
+            "label": "Post Type",
+            "name": "lwtv_postiz_post_type",
+            "aria-label": "",
+            "type": "select",
+            "instructions": "Posts are sent to Postiz five minutes after the post triggers (otd, new posts, new shows).",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "choices": {
+                "draft": "Draft",
+                "schedule": "Schedule",
+                "now": "Immediately"
+            },
+            "default_value": "schedule",
+            "return_format": "value",
+            "multiple": 0,
+            "allow_null": 0,
+            "allow_in_bindings": 0,
+            "ajax": 0,
+            "placeholder": "",
+            "allow_custom": 0
+        },
+        {
+            "key": "field_lwtv_postiz_triggers",
+            "label": "Triggers",
+            "name": "lwtv_postiz_triggers",
+            "aria-label": "",
+            "type": "checkbox",
+            "instructions": "Select which events should trigger automatic posts.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "choices": {
+                "new_posts": "New Posts",
+                "new_shows": "New Shows",
+                "of_the_day": "Of The Day"
+            },
+            "default_value": [],
+            "return_format": "value",
+            "allow_custom": 0,
+            "save_custom": 0,
+            "layout": "vertical",
+            "toggle": 0,
+            "allow_in_bindings": 0
+        },
+        {
+            "key": "field_lwtv_postiz_channels",
+            "label": "Channels",
+            "name": "lwtv_postiz_channels",
+            "aria-label": "",
+            "type": "repeater",
+            "instructions": "Add the channels you want to post to. Get the Channel ID from your Postiz dashboard.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "layout": "table",
+            "pagination": 0,
+            "min": 0,
+            "max": 0,
+            "collapsed": "",
+            "button_label": "Add Channel",
+            "rows_per_page": 20,
+            "sub_fields": [
+                {
+                    "key": "field_lwtv_postiz_channels_name",
+                    "label": "Channel Name",
+                    "name": "name",
+                    "aria-label": "",
+                    "type": "text",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "parent_repeater": "field_lwtv_postiz_channels"
+                },
+                {
+                    "key": "field_lwtv_postiz_channels_channel_id",
+                    "label": "Channel ID",
+                    "name": "channel_id",
+                    "aria-label": "",
+                    "type": "text",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "parent_repeater": "field_lwtv_postiz_channels"
+                },
+                {
+                    "key": "field_lwtv_postiz_channels_active",
+                    "label": "Active",
+                    "name": "active",
+                    "aria-label": "",
+                    "type": "true_false",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "message": "",
+                    "default_value": 1,
+                    "ui": 1,
+                    "ui_on_text": "",
+                    "ui_off_text": "",
+                    "allow_in_bindings": 0,
+                    "parent_repeater": "field_lwtv_postiz_channels"
+                }
+            ]
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "options_page",
+                "operator": "==",
+                "value": "lwtv-auto-posting"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": [],
+    "active": true,
+    "description": "Postiz auto-posting settings",
+    "show_in_rest": 0,
+    "display_title": "Auto-Posting Options",
+    "allow_ai_access": false,
+    "ai_description": "",
+    "modified": 1781222400
+}

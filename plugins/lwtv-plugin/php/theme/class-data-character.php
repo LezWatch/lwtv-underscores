@@ -44,10 +44,7 @@ class Data_Character {
 	 */
 	public function actors( $character_id, $format ) {
 		$format           = rtrim( $format, 's' );
-		$character_actors = get_post_meta( $character_id, 'lezchars_actor', true );
-		if ( ! is_array( $character_actors ) && ! empty( $character_actors ) ) {
-			$character_actors = array( get_post_meta( $character_id, 'lezchars_actor', true ) );
-		}
+		$character_actors = get_field( 'lezchars_actor', $character_id ) ?: array();
 
 		return $character_actors;
 	}
@@ -112,7 +109,7 @@ class Data_Character {
 	 */
 	public function oneactor( $character_id, $format ) {
 		$output      = $format;
-		$actors      = get_post_meta( $character_id, 'lezchars_actor', true );
+		$actors      = get_field( 'lezchars_actor', $character_id ) ?: array();
 		$actor_value = isset( $actors[0] ) ? $actors[0] : '';
 
 		if ( ! empty( $actor_value ) ) {
@@ -149,7 +146,7 @@ class Data_Character {
 	 */
 	public function oneshow( $character_id, $format ) {
 		$output      = $format;
-		$all_shows   = get_post_meta( $character_id, 'lezchars_show_group', true );
+		$all_shows   = get_field( 'lezchars_show_group', $character_id );
 		$shows_value = isset( $all_shows[0] ) ? $all_shows[0] : '';
 
 		if ( ! empty( $shows_value ) ) {
@@ -184,7 +181,7 @@ class Data_Character {
 	 */
 	public function shows( $character_id, $format ) {
 		$format = rtrim( $format, 's' );
-		return get_post_meta( $character_id, 'lezchars_' . $format . '_group', true );
+		return get_field( 'lezchars_' . $format . '_group', $character_id ) ?: array();
 	}
 
 	/**

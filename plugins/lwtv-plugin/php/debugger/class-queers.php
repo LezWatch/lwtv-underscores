@@ -70,7 +70,7 @@ class Queers {
 			$problems = array();
 
 			// Get the actors...
-			$character_actors = get_post_meta( $character, 'lezchars_actor', true );
+			$character_actors = get_field( 'lezchars_actor', $character ) ?: array();
 
 			if ( ! empty( $character_actors ) && is_array( $character_actors ) ) {
 				// Get the defaults

@@ -188,7 +188,7 @@ class Validation {
 					<a href="?page=lwtv_data_check&tab=tab_<?php echo esc_attr( $tab ); ?>" class="nav-tab <?php echo esc_attr( $active ); ?>">
 						<?php
 						echo esc_html( $value['name'] );
-						if ( $options[ $value['option'] ] && $options[ $value['option'] ]['count'] ) {
+						if ( isset( $options[ $value['option'] ] ) && $options[ $value['option'] ]['count'] ) {
 							echo ' <span class="validation-errors count-' . esc_attr( $options[ $value['option'] ]['count'] ) . '"><span class="validation-count">' . esc_attr( $options[ $value['option'] ]['count'] ) . '</span></span>';
 						}
 						?>

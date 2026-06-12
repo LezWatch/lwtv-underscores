@@ -368,6 +368,7 @@ class Export_JSON {
 		$characters = array();
 
 		$characters_list = wp_list_pluck( $the_loop->posts, 'ID' );
+		update_object_term_cache( $characters_list, CPT_Characters::SLUG );
 
 		foreach ( $characters_list as $character ) {
 			// Gender -- array of all applicable
@@ -399,9 +400,9 @@ class Export_JSON {
 			$cliches_clean = implode( '; ', $cliches );
 
 			// Shows
-			$shows_full  = get_post_meta( $character, 'lezchars_show_group', true );
+			$shows_full  = get_field( 'lezchars_show_group', $character );
 			$shows_array = array();
-			foreach ( $shows_full as $show ) {
+			foreach ( (array) $shows_full as $show ) {
 				// Remove the Array.
 				if ( is_array( $show['show'] ) ) {
 					$show['show'] = $show['show'][0];
@@ -465,7 +466,7 @@ class Export_JSON {
 		// If page doesn't exist, let's try by SQL.
 		if ( ! isset( $page ) || null === $page ) {
 			global $wpdb;
-			$item_id = $wpdb->get_var( "SELECT ID FROM $wpdb->posts WHERE post_name = '" . esc_sql( $item ) . "'" );
+			$item_id = $wpdb->get_var( $wpdb->prepare( "SELECT ID FROM {$wpdb->posts} WHERE post_name = %s", $item ) );
 			$page    = get_post( $item_id );
 		}
 
@@ -503,13 +504,19 @@ class Export_JSON {
 			$data['stations'] = ( $station_terms && ! is_wp_error( $station_terms ) ) ? join( ', ', wp_list_pluck( $station_terms, 'name' ) ) : '';
 
 			// Airdates
-			$airdates = get_post_meta( $page->ID, 'lezshows_airdates', true );
-			if ( $airdates ) {
-				$airdates['finish']  = ( 'current' === $airdates['finish'] ) ? 'now' : $airdates['finish'];
-				$data['dates_raw']   = $airdates['start'] . '-' . $airdates['finish'];
+			$ad_start  = get_post_meta( $page->ID, 'lezshows_airdates_start', true );
+			$ad_finish = get_post_meta( $page->ID, 'lezshows_airdates_finish', true );
+			if ( empty( $ad_start ) || empty( $ad_finish ) ) {
+				$legacy    = get_post_meta( $page->ID, 'lezshows_airdates', true );
+				$ad_start  = $ad_start ?: ( is_array( $legacy ) ? ( $legacy['start'] ?? '' ) : '' );
+				$ad_finish = $ad_finish ?: ( is_array( $legacy ) ? ( $legacy['finish'] ?? '' ) : '' );
+			}
+			if ( ! empty( $ad_start ) && ! empty( $ad_finish ) ) {
+				$ad_finish           = ( 'current' === $ad_finish ) ? 'now' : $ad_finish;
+				$data['dates_raw']   = $ad_start . '-' . $ad_finish;
 				$data['dates_plain'] = 'from ' . $data['dates_raw'];
-				if ( $airdates['start'] === $airdates['finish'] ) {
-					$data['dates_raw']   = $airdates['finish'];
+				if ( $ad_start === $ad_finish ) {
+					$data['dates_raw']   = $ad_finish;
 					$data['dates_plain'] = 'in ' . $data['dates_raw'];
 				}
 			}
@@ -563,7 +570,7 @@ class Export_JSON {
 		// If page doesn't exist, let's try by SQL.
 		if ( ! isset( $page ) || null === $page ) {
 			global $wpdb;
-			$item_id = $wpdb->get_var( "SELECT ID FROM $wpdb->posts WHERE post_name = '" . esc_sql( $item ) . "'" );
+			$item_id = $wpdb->get_var( $wpdb->prepare( "SELECT ID FROM {$wpdb->posts} WHERE post_name = %s", $item ) );
 			$page    = get_post( $item_id );
 		}
 
@@ -592,8 +599,8 @@ class Export_JSON {
 			$data['gender'] = ( isset( $gender_string ) ) ? $gender_string : '';
 
 			// Shows
-			$all_shows = get_post_meta( $page->ID, 'lezchars_show_group', true );
-			if ( '' !== $all_shows ) {
+			$all_shows = get_field( 'lezchars_show_group', $page->ID );
+			if ( ! empty( $all_shows ) ) {
 				foreach ( $all_shows as $a_show ) {
 					// Remove the Array.
 					if ( is_array( $a_show['show'] ) ) {
@@ -614,13 +621,7 @@ class Export_JSON {
 			$data['show'] = ( isset( $show ) ) ? $show : '';
 
 			// Actors
-			$all_actors = get_post_meta( $page->ID, 'lezchars_actor', true );
-
-			// If all_actors is not an array, it's a string. Let's make it an array.
-			// This is a hold over from ye olde days.
-			if ( ! is_array( $all_actors ) ) {
-				$all_actors = array( get_post_meta( $page->ID, 'lezchars_actor', true ) );
-			}
+			$all_actors = get_field( 'lezchars_actor', $page->ID ) ?: array();
 
 			// Add each actor's name to the array.
 			foreach ( $all_actors as $an_actor ) {
@@ -684,7 +685,7 @@ class Export_JSON {
 			// If page doesn't exist, let's try by SQL.
 			if ( null === $page ) {
 				global $wpdb;
-				$item_id = $wpdb->get_var( "SELECT ID FROM $wpdb->posts WHERE post_name = '" . esc_sql( $item ) . "'" );
+				$item_id = $wpdb->get_var( $wpdb->prepare( "SELECT ID FROM {$wpdb->posts} WHERE post_name = %s", $item ) );
 				$page    = get_post( $item_id );
 			}
 		}
@@ -883,7 +884,7 @@ class Export_JSON {
 				$meta_keys = array( 'lezactors_birth', 'lezactors_death', 'lezactors_wikipedia', 'lezactors_imdb' );
 				break;
 			case 'characters':
-				$meta_keys = array( 'lezchars_show_group', 'lezchars_actor', 'lezchars_death_year' );
+				$meta_keys = array( 'lezchars_actor' );
 				break;
 			case 'shows':
 				$meta_keys = array( 'lezshows_airdates', 'lezshows_imdb' );
@@ -902,6 +903,20 @@ class Export_JSON {
 			}
 		}
 
+		// For characters, fetch ACF repeater show group subfields in bulk.
+		// lezchars_show_group stores a count in its parent key post-migration;
+		// actual show IDs live in lezchars_show_group_{n}_show rows.
+		if ( 'characters' === $type ) {
+			// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
+			$show_group_query   = "SELECT post_id, meta_value FROM {$wpdb->postmeta} WHERE post_id IN ($ids_string) AND meta_key LIKE 'lezchars_show_group_%_show'";
+			$show_group_results = $wpdb->get_results( $show_group_query );
+			// phpcs:enable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
+
+			foreach ( $show_group_results as $row ) {
+				$bulk_data[ $row->post_id ]['meta']['lezchars_show_group'][] = array( 'show' => (int) $row->meta_value );
+			}
+		}
+
 		// Get taxonomy data
 		$taxonomies = array();
 		switch ( $type ) {
@@ -917,22 +932,21 @@ class Export_JSON {
 		}
 
 		if ( ! empty( $taxonomies ) ) {
-			foreach ( $taxonomies as $taxonomy ) {
-				$tax_query = "SELECT tr.object_id, t.name, t.slug
-					FROM {$wpdb->term_relationships} tr
-					INNER JOIN {$wpdb->term_taxonomy} tt ON tr.term_taxonomy_id = tt.term_taxonomy_id
-					INNER JOIN {$wpdb->terms} t ON tt.term_id = t.term_id
-					WHERE tr.object_id IN ($ids_string) AND tt.taxonomy = '$taxonomy'";
+			$tax_placeholders = implode( ', ', array_fill( 0, count( $taxonomies ), '%s' ) );
+			$tax_query        = "SELECT tr.object_id, tt.taxonomy, t.name, t.slug
+				FROM {$wpdb->term_relationships} tr
+				INNER JOIN {$wpdb->term_taxonomy} tt ON tr.term_taxonomy_id = tt.term_taxonomy_id
+				INNER JOIN {$wpdb->terms} t ON tt.term_id = t.term_id
+				WHERE tr.object_id IN ($ids_string) AND tt.taxonomy IN ($tax_placeholders)";
 
-				// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- IDs and taxonomy are sanitized
-				$tax_results = $wpdb->get_results( $tax_query );
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- IDs are sanitized; taxonomies are internal constants
+			$tax_results = $wpdb->get_results( $wpdb->prepare( $tax_query, ...$taxonomies ) );
 
-				foreach ( $tax_results as $row ) {
-					$bulk_data[ $row->object_id ]['taxonomies'][ $taxonomy ][] = array(
-						'name' => $row->name,
-						'slug' => $row->slug,
-					);
-				}
+			foreach ( $tax_results as $row ) {
+				$bulk_data[ $row->object_id ]['taxonomies'][ $row->taxonomy ][] = array(
+					'name' => $row->name,
+					'slug' => $row->slug,
+				);
 			}
 		}
 

@@ -131,13 +131,16 @@ class Percentage_Optimized {
 				}
 				break;
 			default:
-				foreach ( $data as $name => $count ) {
-					$url         = home_url( "/{$clean_view}/{$name}" );
+				foreach ( $data as $item ) {
+					$name        = $item['name'] ?? '';
+					$count       = $item['count'] ?? 0;
+					$url         = $item['url'] ?? home_url( "/{$clean_view}/{$name}" );
 					$table_body .= '<tr><td><a href="' . esc_url( $url ) . '">' . ucfirst( $name ) . '</a></td><td>' . (int) $count . '</td>';
 					if ( $show_percent ) {
 						$first_count = round( ( ( $count / $count_total ) * 100 ), 1 );
 						$table_body .= '<td><div class="progress"><div class="progress-bar bg-info" role="progressbar" style="width: ' . esc_html( $first_count ) . '%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div></div>&nbsp;' . esc_html( $first_count ) . '%</td>';
 					}
+					$table_body .= '</tr>';
 				}
 				break;
 		}
@@ -165,7 +168,7 @@ class Percentage_Optimized {
 			case 'actors':
 				return array_sum( array_column( $data, 'count' ) );
 			default:
-				return array_sum( $data );
+				return array_sum( array_column( $data, 'count' ) );
 		}
 	}
 

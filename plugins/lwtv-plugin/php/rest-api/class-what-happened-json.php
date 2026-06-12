@@ -117,6 +117,10 @@ class What_Happened_JSON {
 			$datetime = $dt->createFromFormat( 'Y', $date );
 		}
 
+		if ( empty( $format ) || empty( $datetime ) ) {
+			return new \WP_Error( 'invalid_date', 'The date provided is not valid.' );
+		}
+
 		// If it's the future, be smarter than Alexa...
 		if ( $datetime->format( 'Y' ) > gmdate( 'Y' ) ) {
 			$datetime->modify( '-1 year' );
@@ -147,8 +151,25 @@ class What_Happened_JSON {
 				$count_array['dead'] = $death_query_count;
 				break;
 			case 'day':
-				$death_query         = ( new Post_Meta_And_Tax() )->make( CPT_Characters::SLUG, 'lezchars_death_year', $datetime->format( 'Y-m-d' ), 'lez_cliches', 'slug', 'dead', 'LIKE' );
-				$count_array['dead'] = ( is_object( $death_query ) ) ? $death_query->post_count : 0;
+				global $wpdb;
+				$date          = $datetime->format( 'Y-m-d' );
+				$meta_key_like = $wpdb->esc_like( 'lezchars_death_year_' ) . '%' . $wpdb->esc_like( '_date' );
+				// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
+				$dead_ids = $wpdb->get_col(
+					$wpdb->prepare(
+						"SELECT DISTINCT pm.post_id FROM {$wpdb->postmeta} pm
+						INNER JOIN {$wpdb->term_relationships} tr ON pm.post_id = tr.object_id
+						INNER JOIN {$wpdb->term_taxonomy} tt ON tr.term_taxonomy_id = tt.term_taxonomy_id
+						INNER JOIN {$wpdb->terms} t ON tt.term_id = t.term_id
+						WHERE pm.meta_key LIKE %s
+						AND pm.meta_value = %s
+						AND tt.taxonomy = 'lez_cliches' AND t.slug = 'dead'",
+						$meta_key_like,
+						$date
+					)
+				);
+				// phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
+				$count_array['dead'] = count( $dead_ids );
 				break;
 			default:
 				$count_array['dead'] = 0;
@@ -201,7 +222,17 @@ class What_Happened_JSON {
 		}
 
 		// Information for shows
-		$show_data             = self::count_shows( $datetime->format( 'Y' ) );
+		$show_data = self::count_shows( $datetime->format( 'Y' ) );
+
+		if ( is_null( $show_data ) ) {
+			$show_data = array(
+				'for_year' => $datetime->format( 'Y' ),
+				'current'  => 0,
+				'started'  => 0,
+				'ended'    => 0,
+			);
+		}
+
 		$count_array['on_air'] = array(
 			'for_year' => $show_data['for_year'],
 			'current'  => $show_data['current'],
@@ -244,24 +275,29 @@ class What_Happened_JSON {
 			$show_id = get_the_ID();
 
 			// Shows Currently Airing
-			if ( get_post_meta( $show_id, 'lezshows_airdates', true ) ) {
-				$airdates = get_post_meta( $show_id, 'lezshows_airdates', true );
-
+			$ad_start  = get_post_meta( $show_id, 'lezshows_airdates_start', true );
+			$ad_finish = get_post_meta( $show_id, 'lezshows_airdates_finish', true );
+			if ( empty( $ad_start ) || empty( $ad_finish ) ) {
+				$legacy    = get_post_meta( $show_id, 'lezshows_airdates', true );
+				$ad_start  = $ad_start ?: ( is_array( $legacy ) ? ( $legacy['start'] ?? '' ) : '' );
+				$ad_finish = $ad_finish ?: ( is_array( $legacy ) ? ( $legacy['finish'] ?? '' ) : '' );
+			}
+			if ( ! empty( $ad_start ) && ! empty( $ad_finish ) ) {
 				if (
-					( 'current' === $airdates['finish'] && $thisyear === $dt->format( 'Y' ) )
-					|| ( $airdates['finish'] >= $thisyear && $airdates['start'] <= $thisyear ) // Airdates between
+					( 'current' === $ad_finish && $thisyear === $dt->format( 'Y' ) )
+					|| ( $ad_finish >= $thisyear && $ad_start <= $thisyear ) // Airdates between
 				) {
 					// Currently Airing Shows shows for the current year only
 					++$shows_this_year['current'];
 				}
 
 				// Shows that ended this year
-				if ( $airdates['finish'] === $thisyear ) {
+				if ( $ad_finish === $thisyear ) {
 					++$shows_this_year['ended'];
 				}
 
 				// Shows that STARTED this year
-				if ( $airdates['start'] === $thisyear ) {
+				if ( $ad_start === $thisyear ) {
 					++$shows_this_year['started'];
 				}
 			}

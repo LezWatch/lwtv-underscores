@@ -18,6 +18,7 @@ use LWTV\Features\Embeds;
 use LWTV\Features\Environment;
 use LWTV\Features\Missed_Schedule;
 use LWTV\Features\Plugin_Age;
+use LWTV\Features\Post_Editor;
 use LWTV\Features\Private_Posts;
 use LWTV\Features\Roles;
 use LWTV\Features\Shortcodes;
@@ -55,6 +56,7 @@ class Features implements Component {
 		new Environment();
 		new Missed_Schedule();
 		new Plugin_Age();
+		new Post_Editor();
 		new Private_Posts();
 		new Roles();
 		new Shortcodes();

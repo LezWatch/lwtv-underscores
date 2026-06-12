@@ -10,18 +10,20 @@ table.lwtvc {
 }
 
 .ep-calendar-calendar td {
-	padding: 0px;
+	padding: 0;
 }
 
 .ep-calendar-heading-date {
 	float: left;
 }
+
 .ep-calendar-heading-backtotop,
 .ep-calendar-heading-weekday {
 	float: right;
 }
 
 .ep-calendar-heading-backtotop {
+
 	a {
 		color: colors.$lwtv-ltpink;
 	}
@@ -72,11 +74,12 @@ thead.dayjump {
 	scroll-margin-top: 55px;
 	line-height: 2;
 	margin: 1rem 0;
-	padding: .5rem;
+	padding: 0.5rem;
 	background-color: colors.$lwtv-grey2;
 }
 
 .ep-calendar-subnav {
+
 	.link-primary a {
 		color: colors.$lwtv-pink;
 

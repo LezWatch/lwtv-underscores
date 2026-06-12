@@ -90,7 +90,7 @@ Statistics live in `plugins/lwtv-plugin/php/statistics/`. They consume the inter
 
 ### Excluded from linting
 
-`vendor/`, `node_modules/`, `inc/dist/`, `blocks/build/`, and several bundled third-party libraries (`facetwp-cmb2`, `cmb2-grid`, `cmb-field-select2`, `shadow-taxonomy`, `ICal`).
+`vendor/`, `node_modules/`, `inc/dist/`, `blocks/build/`, and several bundled third-party libraries (`shadow-taxonomy`, `ICal`).
 
 ---
 

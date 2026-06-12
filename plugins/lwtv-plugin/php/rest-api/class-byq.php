@@ -220,45 +220,22 @@ class BYQ {
 			$meta_data = $this->get_bulk_death_meta_data( $character_ids );
 			lwtv_plugin()->debug_log( 'buryqueers', 'Meta data count: ' . count( $meta_data ) );
 
-			// First pass: Fix missing lezchars_death_year meta data
-			$fixed_count   = 0;
-			$needs_refetch = false;
-			foreach ( $dead_chars_loop->posts as $dead_char ) {
-				$character_id = $dead_char->ID;
-				$died_date    = $meta_data[ $character_id ]['lezchars_death_year'] ?? '';
-
-				// If no death date in lezchars_death_year, try lezchars_last_death as fallback
-				if ( empty( $died_date ) ) {
-					$last_death = $meta_data[ $character_id ]['lezchars_last_death'] ?? '';
-					if ( ! empty( $last_death ) ) {
-						lwtv_plugin()->debug_log( 'buryqueers', "Using lezchars_last_death fallback for character $character_id ({$dead_char->post_title}): $last_death" );
-
-						// Fix the missing meta by saving lezchars_death_year from lezchars_last_death
-						update_post_meta( $character_id, 'lezchars_death_year', $last_death );
-						++$fixed_count;
-						$needs_refetch = true;
-						lwtv_plugin()->debug_log( 'buryqueers', "Fixed missing lezchars_death_year for character $character_id ({$dead_char->post_title}) by copying from lezchars_last_death: $last_death" );
-						// Invalidate cache since we modified meta data
-						lwtv_plugin()->invalidate_statistics_cache( CPT_Characters::SLUG, $character_id );
-					}
-				}
-			}
-
-			// If we fixed any meta data, refetch to get the complete dataset
-			if ( $needs_refetch ) {
-				lwtv_plugin()->debug_log( 'buryqueers', "Refetching meta data after fixing $fixed_count characters" );
-				$meta_data = $this->get_bulk_death_meta_data( $character_ids );
-				lwtv_plugin()->debug_log( 'buryqueers', 'Refetched meta data count: ' . count( $meta_data ) );
-			}
-
-			// Second pass: Build the death list with complete data
+			// Build the death list
 			$processed_count = 0;
 			$skipped_count   = 0;
 			foreach ( $dead_chars_loop->posts as $dead_char ) {
 				$character_id = $dead_char->ID;
 
-				// Get cached meta data (now complete after refetch)
 				$died_date = $meta_data[ $character_id ]['lezchars_death_year'] ?? '';
+
+				// Fallback: if no ACF repeater date rows exist, try lezchars_last_death.
+				if ( empty( $died_date ) ) {
+					$last_death = $meta_data[ $character_id ]['lezchars_last_death'] ?? '';
+					if ( ! empty( $last_death ) ) {
+						$died_date = array( $last_death );
+						lwtv_plugin()->debug_log( 'buryqueers', "Using lezchars_last_death fallback for character $character_id ({$dead_char->post_title}): $last_death" );
+					}
+				}
 				$show_data = $meta_data[ $character_id ]['lezchars_show_group'] ?? array();
 
 				if ( empty( $died_date ) ) {
@@ -506,6 +483,7 @@ class BYQ {
 		global $wpdb;
 		$date_regex = implode( '|', $date_patterns );
 
+		// phpcs:disable WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery -- meta_key pattern, not a user-supplied value
 		$query = $wpdb->prepare(
 			"SELECT DISTINCT p.ID, p.post_title, p.post_name
 			FROM {$wpdb->posts} p
@@ -515,7 +493,7 @@ class BYQ {
 			INNER JOIN {$wpdb->terms} t ON tt.term_id = t.term_id
 			WHERE p.post_type = %s
 			AND p.post_status = 'publish'
-			AND pm.meta_key = 'lezchars_death_year'
+			AND pm.meta_key LIKE 'lezchars_death_year_%_date'
 			AND pm.meta_value REGEXP %s
 			AND tt.taxonomy = 'lez_cliches'
 			AND t.slug = 'dead'
@@ -523,6 +501,7 @@ class BYQ {
 			CPT_Characters::SLUG,
 			$date_regex
 		);
+		// phpcs:enable WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
 
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- Complex regex pattern for date matching
 		$results = $wpdb->get_results( $query );
@@ -532,10 +511,11 @@ class BYQ {
 
 			foreach ( $results as $row ) {
 				// Get the actual death year for this character
-				$death_years = get_post_meta( $row->ID, 'lezchars_death_year', true );
+				$death_rows  = get_field( 'lezchars_death_year', $row->ID );
+				$death_years = is_array( $death_rows ) ? array_filter( array_column( $death_rows, 'date' ) ) : array();
 				$death_year  = '';
 
-				if ( is_array( $death_years ) ) {
+				if ( ! empty( $death_years ) ) {
 					foreach ( $death_years as $death_date ) {
 						if ( ! empty( $death_date ) ) {
 							$date_parse = date_parse_from_format( 'Y-m-d', $death_date );
@@ -546,7 +526,7 @@ class BYQ {
 						}
 					}
 				} else {
-					$date_parse = date_parse_from_format( 'Y-m-d', $death_years );
+					$date_parse = date_parse_from_format( 'Y-m-d', '' );
 					if ( $date_parse['month'] === $month && $date_parse['day'] === $day ) {
 						$death_year = $date_parse['year'];
 					}
@@ -640,22 +620,38 @@ class BYQ {
 
 		$placeholders = implode( ',', array_fill( 0, count( $character_ids ), '%d' ) );
 
+		// Query ACF repeater subfields — lezchars_death_year and lezchars_show_group now
+		// store a count integer in their parent key; actual values live in indexed subfields.
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 		$query = $wpdb->prepare(
-			// WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $placeholders contains only '%d' format strings; $wpdb->postmeta is a trusted table name property
-			// phpcs:ignore
-			"SELECT post_id, meta_key, meta_value FROM {$wpdb->postmeta} WHERE post_id IN ({$placeholders}) AND meta_key IN ('lezchars_death_year', 'lezchars_last_death', 'lezchars_show_group')",
+			"SELECT post_id, meta_key, meta_value FROM {$wpdb->postmeta}
+			WHERE post_id IN ({$placeholders})
+			AND (
+				meta_key LIKE 'lezchars_death_year_%_date'
+				OR meta_key LIKE 'lezchars_show_group_%_show'
+				OR meta_key = 'lezchars_last_death'
+			)",
 			...$character_ids
 		);
+		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- query built with prepare() above
 		$results = $wpdb->get_results( $query );
 
 		lwtv_plugin()->debug_log( 'buryqueers', 'Bulk meta query results count: ' . count( $results ) );
-		lwtv_plugin()->debug_log( 'buryqueers', 'Query: ' . $query );
 
 		$meta_data = array();
 		foreach ( $results as $row ) {
-			$meta_data[ $row->post_id ][ $row->meta_key ] = maybe_unserialize( $row->meta_value );
+			$post_id = (int) $row->post_id;
+			$value   = maybe_unserialize( $row->meta_value );
+
+			if ( preg_match( '/^lezchars_death_year_\d+_date$/', $row->meta_key ) ) {
+				$meta_data[ $post_id ]['lezchars_death_year'][] = $value;
+			} elseif ( preg_match( '/^lezchars_show_group_\d+_show$/', $row->meta_key ) ) {
+				$meta_data[ $post_id ]['lezchars_show_group'][] = array( 'show' => $value );
+			} elseif ( 'lezchars_last_death' === $row->meta_key ) {
+				$meta_data[ $post_id ]['lezchars_last_death'] = $value;
+			}
 		}
 
 		lwtv_plugin()->debug_log( 'buryqueers', 'Processed meta data count: ' . count( $meta_data ) );
@@ -781,12 +777,8 @@ class BYQ {
 
 		// Use direct SQL for better performance than WP_Query
 		$query = $wpdb->prepare(
-			"SELECT DISTINCT p.ID, p.post_title, p.post_name,
-				pm_death.meta_value as death_years,
-				pm_shows.meta_value as show_group
+			"SELECT DISTINCT p.ID, p.post_title, p.post_name
 			FROM {$wpdb->posts} p
-			LEFT JOIN {$wpdb->postmeta} pm_death ON p.ID = pm_death.post_id AND pm_death.meta_key = 'lezchars_death_year'
-			LEFT JOIN {$wpdb->postmeta} pm_shows ON p.ID = pm_shows.post_id AND pm_shows.meta_key = 'lezchars_show_group'
 			WHERE p.post_type = %s
 			AND p.post_status = 'publish'
 			AND (p.post_title = %s OR p.post_title LIKE %s)
@@ -805,38 +797,37 @@ class BYQ {
 			return null;
 		}
 
-		// Process show data to get titles efficiently
+		$character_id = (int) $result['ID'];
+
+		// Fetch show titles via ACF.
 		$show_titles = array();
-		if ( ! empty( $result['show_group'] ) ) {
-			$shows_data = maybe_unserialize( $result['show_group'] );
-			if ( is_array( $shows_data ) ) {
-				$show_ids = array();
-				foreach ( $shows_data as $show ) {
-					if ( isset( $show['show'] ) ) {
-						$show_id = is_array( $show['show'] ) ? $show['show'][0] : $show['show'];
-						if ( $show_id ) {
-							$show_ids[] = intval( $show_id );
-						}
+		$shows_data  = get_field( 'lezchars_show_group', $character_id );
+		if ( is_array( $shows_data ) ) {
+			$show_ids = array();
+			foreach ( $shows_data as $show ) {
+				if ( isset( $show['show'] ) ) {
+					$show_id = is_array( $show['show'] ) ? $show['show'][0] : $show['show'];
+					if ( $show_id ) {
+						$show_ids[] = intval( $show_id );
 					}
 				}
+			}
 
-				// Bulk fetch show titles
-				if ( ! empty( $show_ids ) ) {
-					$show_ids_string = implode( ',', array_map( 'intval', $show_ids ) );
-					$titles_query    = "SELECT ID, post_title FROM {$wpdb->posts} WHERE ID IN ($show_ids_string) AND post_status = 'publish'";
+			if ( ! empty( $show_ids ) ) {
+				$show_ids_string = implode( ',', array_map( 'intval', $show_ids ) );
+				$titles_query    = "SELECT ID, post_title FROM {$wpdb->posts} WHERE ID IN ($show_ids_string) AND post_status = 'publish'";
 
-					// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- IDs are sanitized integers
-					$show_results = $wpdb->get_results( $titles_query );
-
-					foreach ( $show_results as $show ) {
-						$show_titles[] = $show->post_title;
-					}
+				// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- IDs are sanitized integers
+				$show_results = $wpdb->get_results( $titles_query );
+				foreach ( $show_results as $show ) {
+					$show_titles[] = $show->post_title;
 				}
 			}
 		}
 
-		// Process death years
-		$death_years = maybe_unserialize( $result['death_years'] );
+		// Fetch death dates via ACF repeater.
+		$death_rows  = get_field( 'lezchars_death_year', $character_id );
+		$death_years = is_array( $death_rows ) ? array_filter( array_column( $death_rows, 'date' ) ) : array();
 
 		return array(
 			'ID'          => $result['ID'],
@@ -862,18 +853,18 @@ class BYQ {
 		}
 
 		// Get current character death date
-		$character_death_date = get_post_meta( $character_id, 'lezchars_death_year', true );
+		$death_rows           = get_field( 'lezchars_death_year', $character_id );
+		$character_death_date = is_array( $death_rows ) ? array_filter( array_column( $death_rows, 'date' ) ) : array();
+
 		if ( empty( $character_death_date ) ) {
-			$character_death_date = get_post_meta( $character_id, 'lezchars_last_death', true );
+			$last = get_post_meta( $character_id, 'lezchars_last_death', true );
+			if ( ! empty( $last ) ) {
+				$character_death_date = array( $last );
+			}
 		}
 
 		if ( empty( $character_death_date ) ) {
 			return false;
-		}
-
-		// Normalize death date to array
-		if ( ! is_array( $character_death_date ) ) {
-			$character_death_date = array( $character_death_date );
 		}
 
 		// Check if character exists in cached list with matching death date
