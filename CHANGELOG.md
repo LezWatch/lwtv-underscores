@@ -4,13 +4,306 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [6.6.0] — 2026-06-03
+
+### Added
+
+- On Air debugger and validator: flags shows whose on-air metadata disagrees with computed airdate logic
+- Shadow taxonomy drift check: runs daily via Action Scheduler; queues a repair task when character count exceeds shadow term count
+- `shadow_tax_drift_check()` scheduled via Action Scheduler to catch sync gaps automatically
+- `lwtv_shadow_tax_sync_failed` action hook; fires after 3 consecutive shadow taxonomy sync failures and appends affected actors to the debug problems transient
+- Cron: `--verbose` flag added to `ontheten.sh`
+
+### Fixed
+
+- BYQ `/last-death` endpoint intermittently returning Frankie (character ID 83580, the first dead character ever entered) instead of the actual most recent death. Four compounding bugs fixed:
+  - Broken type comparison (`'83580' !== $id` was always `true` due to string/int mismatch) — corrected to `83580 === (int) $id`
+  - On detection of stale Frankie data, only `byq_last_death_*` was cleared; `byq_death_list_*` was not, causing immediate re-caching of stale data
+  - `list_of_dead_characters()` returned empty on REST API calls (empty filter stack) and deferred to Action Scheduler, leaving the endpoint with nothing; REST requests now bypass the guard and regenerate in-request
+  - Duplicate `$wpdb->get_results()` call in `get_bulk_death_meta_data()` — first result was silently overwritten; redundant call removed
+- Draft/unpublished characters no longer appear on show pages, in widgets, or in character counts (fixes case where a draft character was showing up unexpectedly)
+- Clipboard copy in WikiData block now surfaces an error alert on failure instead of silently doing nothing
+- Show score calculation: guarded sub-calculations against `null` returns before arithmetic; logs incomplete scores instead of writing zero silently
+- `wp_get_post_terms()` and `get_the_terms()` calls had incorrect second argument (`true`) — removed
+- Shadow taxonomy sync: replaced single-shot retry with a transient-backed failure counter (3 strikes before action fires)
+- Debugger: `has_term()` was missing `$char_id` argument, always checking the current post in the loop instead of the correct character
+- Debugger: `update_post_meta` was writing `$check['wiki']` (empty) instead of `$check['home']` when migrating homepage to Wikipedia field
+- Debugger: dupe-slug query expanded from `LIKE '%-2'` to `REGEXP '-[0-9]+$'` to catch `-3`, `-4`, and beyond
+- `class-onair.php` was missing `update_option` call for `lwtv_debugger_status`
+- Wikidata `wp_remote_get()` calls upgraded to HTTPS with a 15-second timeout
+
+### Improved
+
+- Build stack modernized: Grunt retired in favor of npm scripts and `_build_scripts` tooling
+- Theme/package renamed from “YIKES Starter” to “LWTV Underscores” throughout
+- PHP requirement raised to **8.5** across `composer.json` and CI workflows
+- Composer asset copying replaced (SlowProg `copy-file` hooks → `_build_scripts/copy-composer-assets.sh`)
+- Git hooks migrated from Husky to `.githooks/pre-commit`
+- Show score: `get_terms()` now runs once per request during bulk recalculation via `$tax_scaffold` static cache
+- Show score: `prime_character_caches()` batch-primes post meta and term object caches before character loops
+- Debugger: all actor post meta fetched in one `get_post_meta($id)` call instead of per-key queries
+- Cron scripts: output redirected to temp file; only appended to log on failure, keeping logs clean on success; tmpfile cleaned up on exit
+- Shadow taxonomy sync: `self::` static calls in `Calculations::do_the_math()` corrected to `$this->`
+- Dependabot target branch changed to `development`; versioning strategy simplified
+
+## [6.5.6] — 2026-04-16
+
+### Added
+
+- AI agent blocking: `BlockAgents` class added to prevent AI crawlers from accessing actor data (liability concern re: hallucinations)
+- WordPress Collaboration feature explicitly disabled (too resource-heavy)
+- REST API `Broom` component initialized for data management endpoint
+- New `wp lwtv sweep-death` WP-CLI command to manually invalidate the BYQ death list cache and flush object cache
+
+### Fixed
+
+- Cache invalidation for the BYQ death list now correctly fires when a character is saved; invalidation deferred 10 minutes via Action Scheduler to avoid blocking saves
+- OTD posts to Postiz: fixed hook registration occurring on wrong class instance (parent instead of child `Of_The_Day`/`New_Post`), which caused posts to silently not send
+- Infinite recursion bug in `create_tag()` — method was calling itself instead of returning tag arrays
+- Statistics cache key collisions in Nations and Stations (`nation_meta_{slug}_{type}` and `station_meta_{slug}_{type}` formats now used)
+- Actor privacy status only written to DB when it actually changes (removes unnecessary `wp_update_post()` calls)
+- Cache now flushed before OTD generation in cron to ensure fresh data
+- Postiz: deprecated constants-based API config removed in favor of options-only approach
+- Bluesky posts now truncated to 296 characters with ellipsis (platform limit compliance)
+- CMB2 text boxes for Notable Episodes and Timeline were uneditable due to CMB2Grid incompatibility — WYSIWYG fields replaced with `textarea_small`
+- CMB2 notable episodes and timeline fields fixed (gridding was preventing editing)
+- SQL query in taxonomy optimization improved: LEFT JOINs → INNER JOINs; cache duration extended from 1 hour to 24 hours
+
+### Added (infrastructure)
+
+- Postiz social media API integration for automated posting of “Of The Day” content to configured channels
+- “Of The Day” format renamed from `tweet` to `socialmedia` (backward-compatible deprecation in place)
+- `lwtv_otd_added` action hook fires after OTD entry is created/found, enabling integrations
+- Debug Logging admin page: toggle debug mode and select which topics to log
+- Action Scheduler integration for `Missed_Schedule` and `Of_The_Day` with WP cron fallback
+- BYQ daily cache refresh: runs automatically during updates via WP-CLI
+- `ping.sh` centralized health check script for all cron jobs; endpoint moved to `health.ipstenu.com`
+- GitHub Actions workflows refactored to three-job structure (build → deploy → post-deploy) with artifact upload/download
+- Object cache invalidation for related posts when post meta changes
+- `lwtv_last_postiz_post` and `lwtv_was_last_otd` post meta added to track posting history and prevent duplicates
+
+## [6.5.5] — 2025-11-11
+
+### Fixed
+
+- Excessive looping when saving a character: death stats were recalculating for ALL characters on every actor or show save. Now only fires when saving a character post directly
+- Queer Checker no longer caches its result (was causing significant lag and stale data)
+- SVG icon positions corrected in SCSS for proper rendering and alignment
+- Cron scripts: centralized health-check pings into a reusable `ping.sh` script
+
+### Improved
+
+- GitHub Actions deployment refactored: three-job pipeline (build, deploy, post-deploy) with explicit artifact steps for theme and cron files, making deployments more modular
+- Symbolicons build integrated into deployment: deployment now pulls down and copies symbolicon files to theme directory
+- `CODE_OF_CONDUCT.md` and `SECURITY.md` moved to `.github/`
+- PHP version bumped to match environment across composer and workflow configs
+- Dependency updates: `dealerdirect/phpcodesniffer-composer-installer`, `phpcsstandards/phpcsutils`, and various npm packages
+
+## [6.5.4] — 2025-10-31
+
+### Added
+
+- WikiData sidebar is now clickable (links out from the metabox)
+- Note added to character edit page clarifying qualifying characters (not cis-men), surfaced more prominently in the UI
+- Copy-to-clipboard button with toast notification added to WikiData Actor block
+- Deployment workflow updated to use staging directory for atomic updates
+- New `ontheten.sh` cron script
+
+### Fixed
+
+- Death caching removed entirely for `last_death` — the underlying post meta is too mutable for reliable caching; was causing stale data
+- Attached posts JS fixed
+- Romantic partners field removed from characters CPT (was causing performance issues at save time)
+- Queer actor detection logic improved
+- Shows now use air start date correctly (not publish date)
+- Internal health check pings removed from cron jobs (replaced in 6.5.5 with centralized ping)
+- WikiData check made case-agnostic
+- Uptime monitor links fixed
+- Weird death calculation loop fixed
+
+### Improved
+
+- “Is actor queer” logic improved
+- Dev scripts made smarter about which environment they target
+- Library updates
+
+## [6.5.2] — 2025-10-09
+
+### Added
+
+- Checker added for BYQ and characters to catch data issues proactively
+
+### Fixed
+
+- Last Death tracking overhauled: was using character names as sort keys, which could break ordering. Now uses timestamps with a `+1` bump for same-second duplicates — fixes #455
+- Three characters had death dates missing entirely; debugger now catches this case
+- Death data always cast to `int` (timestamps are always integers)
+- Stats dark mode display fixed
+- Characters missing from list views — fixes #452
+- Lists not listing content — fixes #452
+- Death cache not persisting correctly between requests
+
+### Improved
+
+- Licence files updated
+- Library version bumps
+
+## [6.5.1] — 2025-09-29
+
+### Fixed
+
+- Characters missing from dead character list view — fixes #452
+- Stats dark mode broken
+- URL fix snuck in for a broken link
+
+### Improved
+
+- Library updates
+
+## [6.5.0] — 2025-09-05
+
+This version is a major performance refactor of the statistics system and post-save pipeline.
+
+### Added
+
+- **Action Scheduler integration**: TMDB API calls, cache invalidation, taxonomy sync, and `fix_shows` all moved from synchronous save-time execution to scheduled background tasks
+- **Stats system refactor** (resolves long-standing N+1 query problems):
+  - Character count queries in table loops consolidated
+  - Multiple show count queries batched
+  - Transient cache improved and extended
+  - Stations and Nations fully optimized
+  - Shows, Actors, Characters, Dead characters, Dead shows, This Year — all rebuilt
+  - Death overview and “list your dead” pages added
+  - Basic Stats views completed
+- Cache warming added
+- `transition_post_status` hook used to improve new character flagging
+- Front page “Loved Shows” moved to a direct SQL call (faster for meta queries)
+- MonsterInsights Site Notes added for shows, characters, etc.
+- Action Scheduler menu link added to Tools (several plugins remove it; this restores it)
+- AIOSEO stub added then removed (decided against it)
+- Alexa Skills sunset — zero usage in 3 years
+
+### Fixed
+
+- Sync restored to on-demand after scheduling caused unexpected issues — scheduling reverted for taxonomy sync specifically
+- Character sync issues fixed
+- Dead character flag no longer shows on the dead characters page itself
+- CSS fix for stats pages
+- Scores improved and recalculation logic corrected
+- Actor/character query fixes
+
+### Improved
+
+- Cron backup copy kept server-side in case of deploy issues
+- Component architecture: more functions moved to components
+- Twitter linking fixed; HTTPS enforced
+- Various API deprecations cleaned up
+
+## [6.4.3] — 2025-08-29
+
+### Added
+
+- First pass at Action Scheduler integration (prep work before full adoption in 6.5.0):
+  - New scheduling component added
+  - TMDB API calls scheduled instead of running at post-save time
+  - Cache invalidation moved to `shutdown` hook (runs after everything else completes)
+- Calendar performance improvements:
+  - Pre-processes calendar data once to eliminate redundant processing across views
+  - Batch post meta queries replace individual `get_post_meta()` calls
+  - Shared instances of calendar objects to reduce redundant creation
+  - Fallback display if calendar file is missing or invalid
+
+### Fixed
+
+- Private note filter that stopped working (broken upstream); improved to also auto-alert on character pages when the actor is marked private
+- Calendar grid layout tweaked
+
+### Improved
+
+- WP Block Libraries bumped
+- SVGO updated
+- Linting applied
+- Unused code removed
+
+## [6.4.2] — 2025-07-08
+
+### Added
+
+- Privacy notes now auto-generated on character pages when the associated actor is marked private
+
+### Fixed
+
+- A filter for private actor notes that had stopped working upstream — restored and improved
+
+### Improved
+
+- WP Block Libraries updated
+- SVGO bumped
+
+## [6.4.0] — 2025-05-26
+
+### Added
+
+- **Symbolicons migrated to SVG sprite**: Font Awesome dependency removed for custom icons; build now generates and integrates an SVG sprite from the private symbolicons repo
+- Symbolicon admin page updated with improved display
+- Build process: new commands for local and staging environments; build now auto-updates stylesheet version from `package.json` and auto-updates `functions.php` file versions from source files
+- Icon sizes forced in contexts where they need to be explicit; icon colors default to black
+- Actor page layout improved
+- Max size attributes standardized across character, home, post, single, and author templates
+
+### Fixed
+
+- CSS output corrected following symbolicon changes
+- Symbolicon path resolution fixed
+
+### Improved
+
+- Build scripts moved to their own folder
+- Default symbolicon shape set to square via mixin
+- Package updates
+
+## [6.3.1] — 2025-05-14
+
+### Added
+
+- Calendar widget added to the sidebar
+- Cursor rules file added (`.mdc`) so AI tooling assists with WordPress conventions correctly
+
+### Fixed
+
+- SpecLoading disabled — was degrading site performance because it can’t predict user behaviour on this site
+- Timezone math corrected in calendar calculations
+- Avatar speed improved; gravatar detection made more reliable
+- TMDB logic and caching improved
+- Scores now saved to transients to reduce database load
+
+## [6.3.0] — 2025-03-31
+
+### Added
+
+- HealthChecks.io integration: cron jobs now auto-create and ping health check instances; scheduling math improved to use intervals correctly
+- Transient support added to HealthChecks to prevent excess pings on creation
+- Avatars moved from CSS-generated to SVG
+
+### Fixed
+
+- Calendar not showing previous/next week links — date math was wrong; fixed
+- iPad layout: “Loved” list bumped to 4 columns on iPad, 3 elsewhere; CSS overflow fixed; button border removed
+- Calendar fixed after HealthChecks changes
+- Gravatar detection improved for speed
+- TMDB logic improvements
+- Scores: only saved when not empty; matcher now includes scores correctly
+
+### Improved
+
+- Library version bumps
+- Debugging improvements across several components
+- Unused code removed from shows component
 
 ## [6.2.8] — 2024-12-23
 
 - Updated FontAwesome to latest release
 - Bumped NPM audit dependencies
-
------
 
 ## [6.2.7] — 2024-12-10
 
@@ -28,8 +321,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 - WikiData checker improvements and QID saving
 - Admin display fixes for avatar feature
-
------
 
 ## [6.2.6] — 2024-12-02
 
@@ -53,8 +344,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Block version bumped
 - NPM security audit fixes
 
------
-
 ## [6.2.5] — 2024-12-02
 
 ### Added
@@ -73,8 +362,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - CSS build corrected so webpack output is cleaner
 - Added `SECURITY.md` and `CONTRIBUTING.md`
 - JS search box documented
-
------
 
 ## [6.2.4] — 2024-11-25
 
@@ -116,8 +403,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Console.log removed from search form fix
 - Dependabot: webpack 5.96.1, @types/node 22.8.7, and several other NPM packages
 
------
-
 ## [6.2.0] — 2024-10-29
 
 ### Added
@@ -147,8 +432,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - minimist updated to 1.2.8 (security)
 - CMB2 Grid updated; CSS updated accordingly
 
------
-
 ## [6.1.1] — 2024-06-24
 
 ### Added
@@ -172,8 +455,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Character cliché card added as layout experiment
 - Icon size increased for accessibility
 - CSS version bumped to force cache refresh
-
------
 
 ## [6.1.0] — 2024-06-24
 
@@ -200,8 +481,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Mobile age display fixed
 - Package dependencies updated
 
------
-
 ## [6.0.5] — 2024-06-19
 
 ### Added
@@ -220,8 +499,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 - CSS improvements for overlays and layout
 - Style polish pass
-
------
 
 ## [6.0.4] — 2024-04-04
 
@@ -244,8 +521,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Card image cleanup
 - Minor fixes pass
 
------
-
 ## [6.0.3] — 2024-04-02
 
 ### Fixed
@@ -253,8 +528,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Related articles display
 - Character template rendering corrected
 - Data loading reduced by passing data to templates instead of re-fetching
-
------
 
 ## [6.0.2] — 2024-03-18
 
