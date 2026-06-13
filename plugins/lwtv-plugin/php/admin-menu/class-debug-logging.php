@@ -86,6 +86,9 @@ class Debug_Logging {
 		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
 			return true;
 		}
+		if ( ! function_exists( 'get_field' ) ) {
+			return false;
+		}
 		return (bool) get_field( 'debug_mode', 'option' );
 	}
 
@@ -95,6 +98,9 @@ class Debug_Logging {
 	 * @return array
 	 */
 	public function get_enabled_topics(): array {
+		if ( ! function_exists( 'get_field' ) ) {
+			return self::VALID_LOG_TOPICS;
+		}
 		$topics = get_field( 'log_topics', 'option' );
 		$topics = is_array( $topics ) ? $topics : array();
 

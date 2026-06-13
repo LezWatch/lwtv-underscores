@@ -12,7 +12,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-use LWTV\Postiz\Postiz as Postiz_Class;
 use LWTV\Postiz\Of_The_Day;
 use LWTV\Postiz\New_Post;
 

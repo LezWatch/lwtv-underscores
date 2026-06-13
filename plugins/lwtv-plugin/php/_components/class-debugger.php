@@ -165,6 +165,9 @@ class Debugger implements Component, Templater {
 			return true;
 		}
 
+		if ( ! function_exists( 'get_field' ) ) {
+			return false;
+		}
 		return (bool) get_field( 'debug_mode', 'option' );
 	}
 
@@ -176,6 +179,9 @@ class Debugger implements Component, Templater {
 	 * @return bool
 	 */
 	public function is_topic_enabled( string $topic ): bool {
+		if ( ! function_exists( 'get_field' ) ) {
+			return true;
+		}
 		$enabled_topics = get_field( 'log_topics', 'option' );
 		$enabled_topics = is_array( $enabled_topics ) ? $enabled_topics : array();
 
