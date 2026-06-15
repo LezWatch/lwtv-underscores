@@ -4,7 +4,7 @@ The ACF Migration has a lot of code that needs to be converted. In order to make
 
 ## 1. Deploy & build
 
-Push the code to the DEVELOPMENT branch.
+Push the code to the desired branch.
 
 ## 2. Sync ACF field groups
 
@@ -25,6 +25,7 @@ wp lwtv migrate acf charshowgroup
 wp lwtv migrate acf autoposting
 wp lwtv migrate acf watchtermurls
 wp lwtv migrate acf debuglogging
+wp lwtv migrate acf charimages-to-gallery
 ```
 
 ## 4. Re-index FacetWP

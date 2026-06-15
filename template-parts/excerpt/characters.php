@@ -54,6 +54,7 @@ if ( ( 'recurring' === $char_role && 'post_type_shows' === get_post_type() ) || 
 			array(
 				'to_show' => $the_id,
 				'format'  => 'excerpt',
+				'rounded' => false,
 			)
 		);
 		?>

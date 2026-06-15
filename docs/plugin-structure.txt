@@ -7,18 +7,41 @@ This document describes the structure and contents of the custom LezWatch.TV Plu
 ├── functions.php - Main Plugin file. Loads auto-loader, components, and defines.
 ├── composer.json
 ├── composer.lock
+├── package.json
 ├── readme.md
 ├── vendor/ - Composer dependencies (not stored in GitHub)
+├── acf-json/ - ACF field group definitions (JSON sync files)
+│   ├── group_lwtv_actors_details.json
+│   ├── group_lwtv_actors_life.json
+│   ├── group_lwtv_actors_misc.json
+│   ├── group_lwtv_actors_socials.json
+│   ├── group_lwtv_auto_posting.json
+│   ├── group_lwtv_chars_appearances.json
+│   ├── group_lwtv_chars_general.json
+│   ├── group_lwtv_chars_queerness.json
+│   ├── group_lwtv_debug_logging.json
+│   ├── group_lwtv_shows_details.json
+│   ├── group_lwtv_shows_editorial.json
+│   ├── group_lwtv_shows_ratings.json
+│   ├── group_lwtv_shows_relationships.json
+│   ├── group_lwtv_shows_summary.json
+│   ├── group_lwtv_shows_watch.json
+│   ├── group_lwtv_shows_worthit.json
+│   ├── group_lwtv_term_symbolicons.json
+│   ├── group_lwtv_term_tags.json
+│   ├── group_lwtv_term_watch_urls.json
+│   ├── group_lwtv_tvmaze.json
+│   └── group_lwtv_user_profile.json
 ├── assets/ - Plugin assets
 │   ├── css/
 │   │   ├── author-box.css - CSS for the Author Box (will be moved eventually)
-│   │   ├── cmb2.css - CMB2 Styling
 │   │   ├── environment.css - Custom styling for server environment
 │   │   ├── lwtv-tools.css - Style for the LWTV admin pages
 │   │   ├── plugin-age.css - Style to display plugin age
 │   │   ├── post-statuses.css - Styling for display of post statuses
 │   │   ├── symbolicons-admin.css - Symbolicons CSS
-│   │   ├── theme.bootstrap_4.min.css - Tablesorter CSS for Bootstrap themes
+│   │   ├── theme.bootstrap.min.css - Tablesorter CSS for Bootstrap themes
+│   │   ├── top-admin-bar.css - Style the WP admin bar to have our logo
 │   │   └── wp-admin.css - WP Admin CSS
 │   ├── images/
 │   │   ├── diane-fuck-off.gif - Diane flipping people off
@@ -27,6 +50,7 @@ This document describes the structure and contents of the custom LezWatch.TV Plu
 │   │   ├── square.svg - Plain square logo (for fallback)
 │   │   ├── toaster.png - A toaster icon (used when no featured image is found)
 │   │   ├── unicorn.png - Unicorn (used if a toaster cannot be loaded)
+│   │   ├── unicorn.svg - Unicorn (used if a toaster cannot be loaded)
 │   │   └── scores/
 │   │   │   ├── circle.svg
 │   │   │   ├── imdb.png
@@ -34,8 +58,21 @@ This document describes the structure and contents of the custom LezWatch.TV Plu
 │   │   │   ├── tmdb.png
 │   │   │   ├── tmdb.svg
 │   │   │   └── tvmaze.png
+│   └── js/
+│       ├── calendar-tabs.js - Tab switching logic for calendar views
+│       ├── chart.min.js - Chart.js library (minified)
+│       ├── chart.min.js.map - Source map for Chart.js
+│       ├── chart.umd.js.map - Source map for Chart.js UMD build
+│       ├── chartjs-plugin-trendline.min.js - Chart.js trendline plugin
+│       ├── facetwp-pagination.js - FacetWP pagination customizations
+│       ├── gutenberg.js - Gutenberg editor customizations
+│       ├── jquery.tablesorter.js - Tablesorter jQuery plugin
+│       ├── jquery.tablesorter.min.js - Tablesorter jQuery plugin (minified)
+│       ├── palette.js - Color palette utility
+│       └── palette.min.js - Color palette utility (minified)
 ├── php/
 │   ├── class-plugin.php - Main plugin file. All new components will be added there
+│   ├── readme.md
 │   ├── _components/ - Top-level components
 │   │   ├── class-admin-color-schemes.php - Admin color schemes (forked from plugin)
 │   │   ├── class-admin-menu.php - LWTV custom admin menu
@@ -89,14 +126,15 @@ This document describes the structure and contents of the custom LezWatch.TV Plu
 │   │   └── class-validation.php - Data consistency checks (each one runs weekly)
 │   ├── blocks/ - Gutenberg blocks
 │   │   ├── class-serverside.php - Server-side Renders: Run PHP code in JS blocks
-│   │   └── src/ - Block source code (per block)
-│   │       ├── block.js - Main block caller
-│   │       ├── block.json - Schema definition file
-│   │       ├── css/editor.scss - Style for Editor
-│   │       ├── css/style.scss - Style for Front end
-│   │       ├── js/edit.js - Editor code
-│   │       ├── js/save.js - Save code
-│   │       └── js/components/ - (optional) Components used blocks
+│   │   └── src/ - Block source code (one directory per block)
+│   │       ├── _common/ - Shared block utilities (block.js, block.json, style.scss, SVG icons)
+│   │       ├── _serverside/ - Server-side rendered blocks (author-box, glossary, private-note, tvshow-calendar)
+│   │       ├── featured-image/ - Featured image block
+│   │       ├── grade/ - Show grade display block
+│   │       ├── pre-publish/ - Pre-publish checklist block
+│   │       ├── screener/ - Screener info block (queer/star/trigger/worth components)
+│   │       ├── spoiler/ - Spoiler block
+│   │       └── wikidata-actor/ - WikiData actor lookup block
 │   ├── calendar/ - Calendar display and data
 │   │   ├── ICal/ - ICal Parser Library
 │   │   ├── class-data-processor.php - Processes and transforms calendar data
@@ -117,27 +155,26 @@ This document describes the structure and contents of the custom LezWatch.TV Plu
 │   │   ├── class-tvmaze.php - TVMaze CPT which helps link our show names to the ones used by TVMaze
 │   │   ├── actors/
 │   │   │   ├── class-calculations.php - Does the math for various data points used to generate show scores, stores count of number of characters for faster retrieval later
-│   │   │   ├── class-cmb2-metaboxes.php - CMB2 code to make display nicer
 │   │   │   ├── class-custom-columns.php - Define columns for post listing
 │   │   │   └── class-privacy.php - Code to allow sections of an actor page to be hidden from output
 │   │   ├── characters/
 │   │   │   ├── class-calculations.php - Does the math for various data points used to generate show scores
-│   │   │   ├── class-cmb2-metaboxes.php - CMB2 code to make display nicer
 │   │   │   └── class-custom-columns.php - Define columns for post listing
 │   │   └── shows/
 │   │       ├── class-calculations.php - Show score math with intelligent cache invalidation
-│   │       ├── class-cmb2-metaboxes.php - CMB2 code to make display nicer
 │   │       ├── class-custom-columns.php - Define columns for post listing
-│   │       ├── class-shows-link-this.php - Calculations for 'shows like this' (uses Related Posts by Taxonomy)
+│   │       ├── class-shows-like-this.php - Calculations for 'shows like this' (uses Related Posts by Taxonomy)
 │   │       └── class-ways-to-watch.php - Taxonomy to allow editors to customize the 'ways to watch' on the fly, based on networks and links
 │   ├── debugger/ - Debugging tools
 │   │   ├── class-actors.php - Find all problems with Actor pages.
 │   │   ├── class-characters.php - Find all problems with Character pages.
 │   │   ├── class-dupes.php - Find all duplicate content based on names, IMDB, etc.
+│   │   ├── class-onair.php - Makes sure that on-air data is correct.
 │   │   ├── class-queers.php - Find all problems with Queer data (i.e. are actors queer, are characters played by queer actors)
 │   │   └── class-shows.php - Find all problems with Show pages.
 │   ├── features/ - Miscellaneous features
 │   │   ├── class-author-box.php - Custom author boxes
+│   │   ├── class-blockagents.php - Block use of AI agents (prevents hallucinations about show/character data)
 │   │   ├── class-blocktracking.php - Block WP.com and WP.org from tracking everything.
 │   │   ├── class-dashboard-posts-in-progress.php - Forked version of a plugin to show in progress posts
 │   │   ├── class-dashboard.php - Custom column for featured images in posts lists and removal of self pings
@@ -146,6 +183,7 @@ This document describes the structure and contents of the custom LezWatch.TV Plu
 │   │   ├── class-languages.php - Support for multiple languages in a dropdown (used by Shows for alt show names)
 │   │   ├── class-missed-schedule.php - Code to ensure posts don't miss scheduling (Action Scheduler enhanced)
 │   │   ├── class-plugin-age.php - Display plugin age/last updated on plugin listing
+│   │   ├── class-post-editor.php - Gutenberg customizations (In progress)
 │   │   ├── class-private-posts.php - Shows alert that a page is hidden if the post is set private.
 │   │   ├── class-roles.php - Custom roles created for curation of content
 │   │   ├── class-shortcodes.php - Various shortcodes (see below)
@@ -172,16 +210,10 @@ This document describes the structure and contents of the custom LezWatch.TV Plu
 │   ├── of-the-day/ - Character and show of the day
 │   │   └── template.php - Backup of theme template.
 │   ├── plugins/ - Addons for other plugins
+│   │   ├── class-acf.php - ACF Pro integration
 │   │   ├── class-actionscheduler.php - Action Scheduler integration and configuration
 │   │   ├── class-cache.php - Custom Cache specific to DreamPress hosting (generates data used by Proxy Cache Purge to know what to flush)
-│   │   ├── class-cmb2.php - Integration with CMB2 (calls other files)
-│   │   ├── cmb2/
-│   │   │   ├── class-attached-posts.php - Custom code for Attached Posts
-│   │   │   ├── class-meta-by-role.php - Only allow people with certain roles to edit certain post meta.
-│   │   │   ├── class-metabox-profile.php - Add custom metaboxes for user profiles
-│   │   │   ├── class-symbolicons.php - Symbolicon integration for taxonomies.
-│   │   │   ├── class-taxonomies.php - Custom filters for taxonomies so they display properly in meta boxes.
-│   │   │   └── class-year-range.php - Year Range -- 'date_year_range' custom field type
+│   │   ├── class-cmb2.php - Disabled CMB2 if it's running.
 │   │   ├── class-comment-probation.php - Fork of abandoned plugin
 │   │   ├── class-facetwp.php - Facet WP (calls other files, Reset Shortcode)
 │   │   ├── facetwp/
@@ -195,8 +227,7 @@ This document describes the structure and contents of the custom LezWatch.TV Plu
 │   │   ├── class-monsterinsights.php - Custom code for Monster Insights
 │   │   ├── class-related-posts-by-taxonomy.php - Filters to allow a custom layout for "Shows Like This"
 │   │   ├── class-searchwp.php - Custom integration with SearchWP
-│   │   ├── class-wp-rocket.php - Integration with WP Rocket to flush content when interrelated posts are updated
-│   │   └── class-yoast.php - Custom Yoast controls
+│   │   └── class-wp-rocket.php - Integration with WP Rocket to flush content when interrelated posts are updated
 │   ├── postiz/ - Postiz social media API integration
 │   │   ├── class-new-post.php - Handles posting new blog posts and shows to social media
 │   │   ├── class-of-the-day.php - Handles posting "Of The Day" content to social media
@@ -324,6 +355,7 @@ This document describes the structure and contents of the custom LezWatch.TV Plu
 │   │   ├── class-character-checker.php - Check characters for valid data
 │   │   ├── class-duplicates.php - Look for duplicate shows/actors/characters
 │   │   ├── class-queer-checker.php - Check that all characters for queer actors are marked properly
+│   │   ├── class-onair-checker.php - Check on-air status of shows
 │   │   ├── class-show-checker.php - Check shows for valid data
 │   │   ├── class-show-imdb.php - List shows missing IMDb
 │   │   └── class-show-urls.php - Check Ways-To-Watch URLs
@@ -333,5 +365,7 @@ This document describes the structure and contents of the custom LezWatch.TV Plu
 │       ├── cli-debug.php - Debug utilities - wp lwtv DEBUG [command]
 │       ├── cli-dupes.php - List all duplicate content - wp lwtv dupes
 │       ├── cli-generate.php - Generate custom content - wp lwtv GENERATE [otd|tvmaze]
+│       ├── cli-migrate.php - Migrate data between formats - wp lwtv MIGRATE [action]
 │       ├── cli-scheduler.php - Action Scheduler management - wp lwtv SCHEDULER [missed|tmdb|cache|status] [action]
-│       └── cli-shadow.php - Build out shadow taxonomy connections - wp lwtv shadow [shows|actors] [ID (optional)]
+│       ├── cli-shadow.php - Build out shadow taxonomy connections - wp lwtv shadow [shows|actors] [ID (optional)]
+│       └── cli-sweep.php - BYQ sweep commands - wp lwtv sweep
