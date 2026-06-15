@@ -30,13 +30,13 @@ switch ( $export_type ) {
 		foreach ( $return as $item ) {
 			$echo = wp_json_encode( $item, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE );
 			if ( '[]' !== $echo ) {
-				echo '<pre>' . wp_kses_post( $echo ) . '</pre>';
+				echo '<pre>' . esc_html( $echo ) . '</pre>';
 			}
 		}
 		break;
 	case 'wikidata':
 		$return = ( new Export_JSON() )->export( $a_post_type, esc_attr( $wp_query->query['name'] ) );
 		$echo   = wp_json_encode( $return, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE );
-		echo '<pre>' . wp_kses_post( $echo ) . '</pre>';
+		echo '<pre>' . esc_html( $echo ) . '</pre>';
 		break;
 }
