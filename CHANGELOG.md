@@ -4,7 +4,20 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [7.0.1] — 2026-06-15
+
+### Added
+
+- WP-CLI `migrate acf airdates` subcommand to backfill legacy CMB2 airdate data into ACF-compatible separate meta keys for all shows
+
+### Changed
+
+- ACF field editor is now hidden on production environments, preventing accidental field group edits outside of development
+
+### Fixed
+
+- Shows with a `current` finish date were incorrectly marked as off-air due to the value being cast to an integer (`0`) before the string check
+- BYQ death list endpoint returned an empty array on page load and REST API requests due to an overly broad `wp_current_filter` guard
 
 ## [7.0.0] — 2026-06-15
 
