@@ -25,7 +25,7 @@ const dynamicThemeVersion = themePackage.version;
 	// JS Files - Plugins
 	await cp( root + '/node_modules/chart.js/dist/chart.umd.js', root + '/plugins/lwtv-plugin/assets/js/chart.min.js');
 	await cp( root + '/node_modules/chart.js/dist/chart.umd.js.map', root + '/plugins/lwtv-plugin/assets/js/chart.min.js.map');
-	await cp( root + '/node_modules/chartjs-plugin-annotation/dist/chartjs-plugin-annotation.min.js', root + '/plugins/lwtv-plugin/assets/js/chartjs-plugin-annotation.min.js');
+	await cp( root + '/node_modules/chartjs-plugin-trendline/dist/chartjs-plugin-trendline.min.js', root + '/plugins/lwtv-plugin/assets/js/chartjs-plugin-trendline.min.js');
 	await cp( root + '/node_modules/tablesorter/dist/js/jquery.tablesorter.min.js', root + '/plugins/lwtv-plugin/assets/js/jquery.tablesorter.min.js');
 	console.log('JS files have been moved!');
 

@@ -68,13 +68,15 @@ class Post_Meta {
 			'post_type' => CPT_Actors::SLUG,
 		),
 		'lezactors_char_list'           => array(
-			'post_type' => CPT_Actors::SLUG,
+			'post_type'    => CPT_Actors::SLUG,
+			'show_in_rest' => false,
 		),
 		'lezactors_dead_count'          => array(
 			'post_type' => CPT_Actors::SLUG,
 		),
 		'lezactors_dead_list'           => array(
-			'post_type' => CPT_Actors::SLUG,
+			'post_type'    => CPT_Actors::SLUG,
+			'show_in_rest' => false,
 		),
 		'lezactors_saved_wikidata'      => array(
 			'post_type'  => CPT_Actors::SLUG,
@@ -86,20 +88,25 @@ class Post_Meta {
 		),
 		// Characters
 		'lezchars_death_year'           => array(
-			'post_type' => CPT_Characters::SLUG,
+			'post_type'    => CPT_Characters::SLUG,
+			'show_in_rest' => false,
 		),
 		'lezchars_actor'                => array(
-			'post_type' => CPT_Characters::SLUG,
+			'post_type'    => CPT_Characters::SLUG,
+			'show_in_rest' => false,
 		),
 		'lezchars_show_group'           => array(
-			'post_type' => CPT_Characters::SLUG,
+			'post_type'    => CPT_Characters::SLUG,
+			'show_in_rest' => false,
 		),
 		// Shows
 		'lezshows_airdates'             => array(
-			'post_type' => CPT_Shows::SLUG,
+			'post_type'    => CPT_Shows::SLUG,
+			'show_in_rest' => false,
 		),
 		'lezshows_waystowatch'          => array(
-			'post_type' => CPT_Shows::SLUG,
+			'post_type'    => CPT_Shows::SLUG,
+			'show_in_rest' => false,
 		),
 		// DEPRECATED! Use 'lezshows_waystowatch' instead.
 		'lezshows_affiliate'            => array(
@@ -109,17 +116,15 @@ class Post_Meta {
 			'post_type' => CPT_Shows::SLUG,
 		),
 		'lezshows_char_list'            => array(
-			'post_type'  => CPT_Shows::SLUG,
-			'type'       => 'array',
-			'items_type' => 'string',
+			'post_type'    => CPT_Shows::SLUG,
+			'show_in_rest' => false,
 		),
 		'lezshows_dead_count'           => array(
 			'post_type' => CPT_Shows::SLUG,
 		),
 		'lezshows_dead_list'            => array(
-			'post_type'  => CPT_Shows::SLUG,
-			'type'       => 'array',
-			'items_type' => 'string',
+			'post_type'    => CPT_Shows::SLUG,
+			'show_in_rest' => false,
 		),
 		'lezshows_imdb'                 => array(
 			'post_type' => CPT_Shows::SLUG,
@@ -170,10 +175,12 @@ class Post_Meta {
 			'post_type' => CPT_Shows::SLUG,
 		),
 		'lezshows_3rd_scores'           => array(
-			'post_type' => CPT_Shows::SLUG,
+			'post_type'    => CPT_Shows::SLUG,
+			'show_in_rest' => false,
 		),
 		'lezshows_tvmaze'               => array(
-			'post_type' => CPT_Shows::SLUG,
+			'post_type'    => CPT_Shows::SLUG,
+			'show_in_rest' => false,
 		),
 		'lezshows_worthit_rating'       => array(
 			'post_type' => CPT_Shows::SLUG,
@@ -185,7 +192,8 @@ class Post_Meta {
 			'post_type' => CPT_Shows::SLUG,
 		),
 		'lezshows_similar_shows'        => array(
-			'post_type' => CPT_Shows::SLUG,
+			'post_type'    => CPT_Shows::SLUG,
+			'show_in_rest' => false,
 		),
 		// TV Maze
 		'leztvmaze_our_show'            => array(
@@ -250,7 +258,9 @@ class Post_Meta {
 				$arguments['type'] = ( isset( $meta_data['type'] ) ) ? $meta_data['type'] : 'string';
 
 				// Set Items Types:
-				if ( 'string' !== $arguments['type'] && isset( $meta_data['items_type'] ) ) {
+				if ( isset( $meta_data['show_in_rest'] ) && false === $meta_data['show_in_rest'] ) {
+					$arguments['show_in_rest'] = false;
+				} elseif ( 'string' !== $arguments['type'] && isset( $meta_data['items_type'] ) ) {
 					$arguments['show_in_rest'] = array(
 						'schema' => array(
 							'type'                 => $meta_data['type'],

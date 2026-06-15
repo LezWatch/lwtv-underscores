@@ -71,6 +71,10 @@ class Of_The_Day extends Postiz {
 
 		// Use Action Scheduler if available, otherwise fall back to WP cron
 		if ( lwtv_plugin()->is_action_scheduler_available() ) {
+			if ( as_has_scheduled_action( self::AS_HOOK, $args, self::AS_GROUP ) ) {
+				lwtv_plugin()->debug_log( 'postiz', 'OTD post already scheduled for ' . $post_title . ' (#' . $post_id . '). Skipping duplicate.' );
+				return;
+			}
 			as_schedule_single_action( $scheduled_time, self::AS_HOOK, $args, self::AS_GROUP );
 			lwtv_plugin()->debug_log( 'postiz', 'Scheduled OTD post for ' . $post_title . ' (#' . $post_id . ' ' . $content . ') via Action Scheduler for ' . self::DELAY_SECONDS . ' seconds from now' );
 		} else {

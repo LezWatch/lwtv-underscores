@@ -17,8 +17,9 @@ class Actor_Birthday {
 	 * @return bool
 	 */
 	public function make( $the_id ) {
-		$today_is = gmdate( 'm-d' );
-		$birthday = substr( get_post_meta( $the_id, 'lezactors_birth', true ), 5 );
+		$today_is  = gmdate( 'm-d' );
+		$birth_raw = get_post_meta( $the_id, 'lezactors_birth', true );
+		$birthday  = $birth_raw ? gmdate( 'm-d', strtotime( $birth_raw ) ) : '';
 		if ( $birthday === $today_is ) {
 			return true;
 		}

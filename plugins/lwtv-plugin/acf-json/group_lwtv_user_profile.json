@@ -1,0 +1,57 @@
+{
+    "key": "group_lwtv_user_profile",
+    "title": "User Profile",
+    "fields": [
+        {
+            "key": "field_lwtv_lez_user_favourite_shows",
+            "label": "Favorite Shows",
+            "name": "lez_user_favourite_shows",
+            "aria-label": "",
+            "type": "relationship",
+            "instructions": "Select up to 10 of your most loved shows. Most loved show first.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "post_type": [
+                "post_type_shows"
+            ],
+            "taxonomy": "",
+            "filters": [
+                "search"
+            ],
+            "return_format": "id",
+            "min": "",
+            "max": 10,
+            "allow_in_bindings": 0,
+            "bidirectional": 0,
+            "bidirectional_target": [],
+            "elements": []
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "user_form",
+                "operator": "==",
+                "value": "all"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": [],
+    "active": true,
+    "description": "User profile fields — favorite shows",
+    "show_in_rest": 0,
+    "display_title": "Favorite Shows",
+    "allow_ai_access": false,
+    "ai_description": "",
+    "modified": 1781128739
+}

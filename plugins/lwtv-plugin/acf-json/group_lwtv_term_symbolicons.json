@@ -1,0 +1,80 @@
+{
+    "key": "group_lwtv_term_symbolicons",
+    "title": "Term — Symbolicon",
+    "fields": [
+        {
+            "key": "field_lwtv_lez_termsmeta_icon",
+            "label": "Custom Icon",
+            "name": "lez_termsmeta_icon",
+            "aria-label": "",
+            "type": "select",
+            "instructions": "Select the icon for this term. Check the Symbolicons List admin page if you need to browse options.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "choices": {},
+            "default_value": "",
+            "return_format": "value",
+            "multiple": 0,
+            "allow_null": 1,
+            "allow_in_bindings": 0,
+            "ajax": 0,
+            "placeholder": "",
+            "allow_custom": 0
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "taxonomy",
+                "operator": "==",
+                "value": "lez_cliches"
+            }
+        ],
+        [
+            {
+                "param": "taxonomy",
+                "operator": "==",
+                "value": "lez_tropes"
+            }
+        ],
+        [
+            {
+                "param": "taxonomy",
+                "operator": "==",
+                "value": "lez_formats"
+            }
+        ],
+        [
+            {
+                "param": "taxonomy",
+                "operator": "==",
+                "value": "lez_genres"
+            }
+        ],
+        [
+            {
+                "param": "taxonomy",
+                "operator": "==",
+                "value": "lez_intersections"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": [],
+    "active": true,
+    "description": "Symbolicon icon selector for icon-bearing taxonomies",
+    "show_in_rest": 0,
+    "display_title": "Symbolicon",
+    "allow_ai_access": false,
+    "ai_description": "",
+    "modified": 1781128739
+}

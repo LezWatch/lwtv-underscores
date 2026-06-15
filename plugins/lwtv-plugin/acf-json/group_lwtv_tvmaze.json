@@ -1,0 +1,56 @@
+{
+    "key": "group_lwtv_tvmaze",
+    "title": "TVMaze Details",
+    "fields": [
+        {
+            "key": "field_lwtv_leztvmaze_our_show",
+            "label": "TV Show",
+            "name": "leztvmaze_our_show",
+            "aria-label": "",
+            "type": "post_object",
+            "instructions": "Select one show. Each TVMaze entry can only link to ONE show.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "post_type": [
+                "post_type_shows"
+            ],
+            "taxonomy": "",
+            "return_format": "id",
+            "multiple": 0,
+            "allow_null": 1,
+            "allow_in_bindings": 0,
+            "ui": 1,
+            "ajax": 1,
+            "placeholder": "Search for a show…"
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "post_type",
+                "operator": "==",
+                "value": "post_type_tvmaze"
+            }
+        ]
+    ],
+    "menu_order": 10,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": [
+        "custom_fields"
+    ],
+    "active": true,
+    "description": "Links a TVMaze entry to its corresponding show",
+    "show_in_rest": 0,
+    "display_title": "",
+    "allow_ai_access": false,
+    "ai_description": "",
+    "modified": 1781125800
+}

@@ -159,50 +159,62 @@
 		}
 
 		&.rss a::before {
+
 			@include mixins.symbolicon("svg-rss");
 		}
 
 		&.feed a::before {
+
 			@include mixins.symbolicon("svg-rss");
 		}
 
 		&.mail a::before {
+
 			@include mixins.symbolicon("svg-mail");
 		}
 
 		&.instagram a::before {
+
 			@include mixins.symbolicon("svg-instagram");
 		}
 
 		&.twitter a::before {
+
 			@include mixins.symbolicon("svg-twitter-orig");
 		}
 
 		&.x-twitter a::before {
+
 			@include mixins.symbolicon("svg-x-twitter");
 		}
 
 		&.facebook a::before {
+
 			@include mixins.symbolicon("svg-facebook-f");
 		}
 
 		&.tumblr a::before {
+
 			@include mixins.symbolicon("svg-tumblr-t");
 		}
 
 		&.mastodon a::before {
+
 			@include mixins.symbolicon("svg-mastodon");
 		}
 
 		&.tiktok a::before {
+
 			@include mixins.symbolicon("svg-tiktok");
 		}
 
 		&.bluesky a::before {
+
 			@include mixins.symbolicon("svg-bluesky");
 		}
 
 		&.threads a::before {
+
 			@include mixins.symbolicon("svg-threads");
 		}
 

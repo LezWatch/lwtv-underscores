@@ -40,17 +40,19 @@ class Stats_Counter {
 		$date = $dt->format( 'Y' );
 
 		if ( $queery->have_posts() ) {
+			update_meta_cache( 'post', wp_list_pluck( $queery->posts, 'ID' ) );
 			switch ( $type ) {
 				case 'onair':
 					// How many shows are on air.
 					$onair = 0;
 					foreach ( $queery->posts as $show ) {
-						if ( get_post_meta( $show->ID, 'lezshows_airdates', true ) ) {
-							$airdates = get_post_meta( $show->ID, 'lezshows_airdates', true );
-							$end      = $airdates['finish'];
-							if ( 'current' === lcfirst( $end ) || $end >= $date ) {
-								++$onair;
-							}
+						$end = get_post_meta( $show->ID, 'lezshows_airdates_finish', true );
+						if ( empty( $end ) ) {
+							$legacy = get_post_meta( $show->ID, 'lezshows_airdates', true );
+							$end    = is_array( $legacy ) ? ( $legacy['finish'] ?? '' ) : '';
+						}
+						if ( ! empty( $end ) && ( 'current' === lcfirst( $end ) || $end >= $date ) ) {
+							++$onair;
 						}
 					}
 					$return = $onair;
@@ -59,9 +61,9 @@ class Stats_Counter {
 					// What's the average show score for the shows we're calculating.
 					$score = 0;
 					foreach ( $queery->posts as $show ) {
-						if ( get_post_meta( $show->ID, 'lezshows_the_score', true ) ) {
-							$this_score = get_post_meta( $show->ID, 'lezshows_the_score', true );
-							$score     += $this_score;
+						$this_score = get_post_meta( $show->ID, 'lezshows_the_score', true );
+						if ( $this_score ) {
+							$score += $this_score;
 						}
 					}
 					$score = ( $score / $queery->post_count );
@@ -73,11 +75,14 @@ class Stats_Counter {
 					$score = 0;
 					$onair = 0;
 					foreach ( $queery->posts as $show ) {
-						if ( get_post_meta( $show->ID, 'lezshows_the_score', true ) ) {
-							$this_score = get_post_meta( $show->ID, 'lezshows_the_score', true );
-							$airdates   = get_post_meta( $show->ID, 'lezshows_airdates', true );
-							$end        = $airdates['finish'];
-							if ( 'current' === lcfirst( $end ) || $end >= $date ) {
+						$this_score = get_post_meta( $show->ID, 'lezshows_the_score', true );
+						if ( $this_score ) {
+							$end = get_post_meta( $show->ID, 'lezshows_airdates_finish', true );
+							if ( empty( $end ) ) {
+								$legacy = get_post_meta( $show->ID, 'lezshows_airdates', true );
+								$end    = is_array( $legacy ) ? ( $legacy['finish'] ?? '' ) : '';
+							}
+							if ( ! empty( $end ) && ( 'current' === lcfirst( $end ) || $end >= $date ) ) {
 								$score += $this_score;
 								++$onair;
 							}

@@ -328,7 +328,7 @@ class Of_The_Day implements Component, Templater {
 	 * return array
 	 */
 	public function generate_cotd_data( int $post_id ): array {
-		$all_shows   = get_post_meta( $post_id, 'lezchars_show_group', true );
+		$all_shows   = get_field( 'lezchars_show_group', $post_id );
 		$shows_value = isset( $all_shows[0] ) ? $all_shows[0] : '';
 
 		$return = array(
@@ -339,7 +339,7 @@ class Of_The_Day implements Component, Templater {
 		);
 
 		// Return early if we don't have valid data.
-		if ( '' === $all_shows || empty( $shows_value ) || 'post_type_shows' !== get_post_type( $shows_value['show'] ) ) {
+		if ( empty( $all_shows ) || empty( $shows_value ) || 'post_type_shows' !== get_post_type( $shows_value['show'] ) ) {
 			return $return;
 		}
 
@@ -543,8 +543,7 @@ class Of_The_Day implements Component, Templater {
 					AND pm2.meta_value LIKE %s
 					AND (pm3.meta_value IS NULL OR pm3.meta_value < %d)
 					$tax_conditions
-					ORDER BY RAND()
-					LIMIT 50";
+					ORDER BY p.ID";
 
 				// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- Complex query with proper escaping
 				$results = $wpdb->get_results( $wpdb->prepare( $query, $post_type, '%TBD%', '%re%', time() ) );
@@ -556,8 +555,16 @@ class Of_The_Day implements Component, Templater {
 					// Check if character is a cartoon and must be regular
 					$is_toon = has_term( 'cartoon', 'lez_cliches', $post_id );
 					if ( $is_toon ) {
-						$show_group = get_post_meta( $post_id, 'lezchars_show_group', true );
-						$is_regular = is_array( $show_group ) && in_array( 'regular', $show_group, true );
+						$show_group = get_field( 'lezchars_show_group', $post_id );
+						$is_regular = false;
+						if ( is_array( $show_group ) ) {
+							foreach ( $show_group as $sg_row ) {
+								if ( isset( $sg_row['type'] ) && 'regular' === $sg_row['type'] ) {
+									$is_regular = true;
+									break;
+								}
+							}
+						}
 						if ( ! $is_regular ) {
 							continue;
 						}
@@ -586,8 +593,7 @@ class Of_The_Day implements Component, Templater {
 					AND pm2.meta_value LIKE %s
 					AND pm3.meta_value LIKE %s
 					AND (pm4.meta_value IS NULL OR pm4.meta_value < %d)
-					ORDER BY RAND()
-					LIMIT 50";
+					ORDER BY p.ID";
 
 				// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- Complex query with proper escaping
 				$results = $wpdb->get_results( $wpdb->prepare( $query, $post_type, '%TBD%', '%e%', '%regular%', time() ) );

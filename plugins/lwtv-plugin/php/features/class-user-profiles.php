@@ -66,21 +66,15 @@ class User_Profiles {
 		return $methods;
 	}
 
+	/**
+	 * Add extra fields to user profiles in the admin
+	 *
+	 * @param mixed $user The WP_User object of the user being edited
+	 * @return void
+	 * @access public
+	 */
 	public function extra_profile_fields( $user ) {
 		?>
-		<style>
-		.yoast-settings {
-			display: none;
-		}
-		h2#yoast-seo-schema {
-			visibility: hidden;
-		}
-		h2#yoast-seo-schema:before {
-			visibility: visible;
-			content: 'LezWatch.TV Customizations';
-		}
-		</style>
-
 		<table class="form-table">
 
 			<?php

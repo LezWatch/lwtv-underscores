@@ -374,7 +374,8 @@ class Shows {
 			// Check the Ways to Watch - this updates us to the new method.
 			( new Ways_To_Watch() )->migrate_ways_to_watch( $show_id );
 
-			$ways_to_watch = get_post_meta( $show_id, 'lezshows_waystowatch', true );
+			$wtw_rows      = get_field( 'lezshows_waystowatch', $show_id );
+			$ways_to_watch = is_array( $wtw_rows ) ? array_filter( array_column( $wtw_rows, 'url' ) ) : array();
 
 			if ( empty( $ways_to_watch ) ) {
 				continue;

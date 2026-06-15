@@ -1,8 +1,6 @@
 @use "colors";
 @use "sass:map";
-
 @use "../_dynamic" as *;
-
 @use "symbolicons";
 @use "symbolicons-map" as *;
 
@@ -201,7 +199,7 @@ $endcolor: #7db9e8;
 /* Like this @include symbolicon("svg-zombie"); */
 @mixin symbolicon($name) {
 	$pos: map.get($symbolicons-positions, $name);
- $square_pos: map.get($symbolicons-positions, 'svg-square');
+	$square_pos: map.get($symbolicons-positions, "svg-square");
 
 	@include svg-common;
 

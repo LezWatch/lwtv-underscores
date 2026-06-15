@@ -107,6 +107,8 @@ class WP_CLI_LWTV_Shadow {
 	 * @param int    post_id Post ID to sync (optional)
 	 */
 	public function sync_characters( $tax, $post_id ) {
+		$posts_array = array();
+
 		if ( $post_id ) {
 			$posts_array = array( $post_id );
 		} else {
@@ -152,10 +154,10 @@ class WP_CLI_LWTV_Shadow {
 	 */
 	public function sync_characters_to_shows( $one_post ) {
 		$shadow_cpt       = 'shadow_tax_characters';
-		$show_group       = get_post_meta( $one_post, 'lezchars_show_group', true );
+		$show_group       = get_field( 'lezchars_show_group', $one_post );
 		$shadow_character = \Shadow_Taxonomy\Core\get_associated_term( $one_post, $shadow_cpt );
 
-		if ( ! $show_group ) {
+		if ( ! is_array( $show_group ) ) {
 			return;
 		}
 
@@ -183,14 +185,11 @@ class WP_CLI_LWTV_Shadow {
 	public function sync_characters_to_actors( $one_post ) {
 		$shadow_cpt       = 'shadow_tax_characters';
 		$shadow_character = \Shadow_Taxonomy\Core\get_associated_term( $one_post, $shadow_cpt );
-		$actors           = get_post_meta( $one_post, 'lezchars_actor', true );
+		$actors           = get_field( 'lezchars_actor', $one_post ) ?: array();
 
-		if ( ! $actors ) {
+		if ( empty( $actors ) ) {
 			return;
 		}
-
-		// Force it to be an array.
-		$actors = ( ! is_array( $actors ) ) ? array( $actors ) : $actors;
 
 		foreach ( $actors as $actor ) {
 			wp_add_object_terms( (int) $actor, (int) $shadow_character->term_id, $shadow_cpt );

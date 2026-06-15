@@ -8,6 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+use LWTV\Plugins\ACF;
 use LWTV\Plugins\ActionScheduler;
 use LWTV\Plugins\CMB2;
 use LWTV\Plugins\Comment_Probation;
@@ -18,7 +19,6 @@ use LWTV\Plugins\Postiz;
 use LWTV\Plugins\Related_Posts_By_Taxonomy;
 use LWTV\Plugins\SearchWP;
 use LWTV\Plugins\WP_Rocket;
-use LWTV\Plugins\Yoast;
 
 class Plugins implements Component, Templater {
 
@@ -28,16 +28,16 @@ class Plugins implements Component, Templater {
 	 * Call the sub plugins
 	 */
 	public function init(): void {
+		new ACF();
 		new ActionScheduler();
-		new Comment_Probation();
 		new CMB2();
+		new Comment_Probation();
 		new FacetWP();
 		new Gravity_Forms();
 		new MonsterInsights();
 		new Related_Posts_By_Taxonomy();
 		new SearchWP();
 		new WP_Rocket();
-		new Yoast();
 
 		// Shadow Taxonomy
 		require_once LWTV_THEME_PATH . '/plugins/shadow-taxonomy/index.php';

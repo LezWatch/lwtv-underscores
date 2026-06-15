@@ -59,6 +59,36 @@ class OnAir_Checker {
 				</div>
 			</div>
 			<?php
+		} else {
+			$button  = 'Recheck';
+			$is_name = 'recheck';
+
+			$count = count( $items );
+			// translators: %s is the number of dupes.
+			$have = _n( 'on-air check', 'on-air checks', $count );
+			?>
+			<div class="lwtv-tools-container lwtv-tools-container__alert">
+				<h3><span class="dashicons dashicons-warning"></span> Problems (<?php echo (int) $count; ?>)</h3>
+				<div id="lwtv-tools-alerts">
+					<p>The following miss-matched <?php echo esc_html( $have ); ?> been found. Please review and update as needed.</p>
+					<?php echo wp_kses_post( $last_run ); ?>
+				</div>
+			</div>
+
+			<div class="lwtv-tools-table">
+				<table class="widefat fixed" cellspacing="0">
+					<thead><tr>
+						<th id="character" class="manage-column column-character" scope="col">Duplicate</th>
+						<th id="problem" class="manage-column column-problem" scope="col">Problem</th>
+						<th id="date" class="manage-column column-date" scope="col">Last Updated</th>
+					</tr></thead>
+
+					<tbody>
+						<?php ( new Validation() )->table_content( $items ); ?>
+					</tbody>
+				</table>
+			</div>
+			<?php
 		}
 
 		?>

@@ -9,23 +9,27 @@
 
 $this_id = $args['to_show'] ?? null;
 $format  = $args['format'] ?? 'full';
+$rounded = $args['rounded'] ?? true;
 
-$thumb_class = ( 'full' === $format ) ? 'rounded float-left' : 'float-left';
+$thumb_class      = ( $rounded ) ? 'rounded float-left' : 'float-left';
+$post_format      = get_post_format( $this_id );
+$additional_title = '';
 
-// Show Meta
-$show_meta    = get_post_meta( $this_id, 'lezchars_show_group', true );
-$show_appears = '';
+if ( 'post_type_characters' === get_post_type( $this_id ) ) {
+	// Show Meta
+	$show_meta = get_field( 'lezchars_show_group', $this_id );
 
-if ( isset( $show_meta ) && ! empty( $show_meta ) && is_array( $show_meta ) ) {
-	foreach ( $show_meta as $show ) {
-		if ( ! is_array( $show ) || ! isset( $show['show'] ) || ! isset( $show['appears'] ) ) {
-			continue;
-		}
+	if ( is_array( $show_meta ) && ! empty( $show_meta ) ) {
+		foreach ( $show_meta as $show ) {
+			if ( ! is_array( $show ) || ! isset( $show['show'] ) || ! isset( $show['appears'] ) ) {
+				continue;
+			}
 
-		$show_id = ( is_array( $show['show'] ) ) ? $show['show'][0] : $show['show'];
-		if ( (int) get_the_ID() === (int) $show_id ) {
-			sort( $show['appears'] );
-			$show_appears = ' (' . implode( ', ', $show['appears'] ) . ')';
+			$show_id = ( is_array( $show['show'] ) ) ? $show['show'][0] : $show['show'];
+			if ( (int) get_the_ID() === (int) $show_id ) {
+				sort( $show['appears'] );
+				$additional_title = ' (' . implode( ', ', $show['appears'] ) . ')';
+			}
 		}
 	}
 }
@@ -36,23 +40,25 @@ $thumb_title       = ( empty( $thumb_attribution ) ) ? get_the_title( $this_id )
 $thumb_array       = array(
 	'class' => 'single-char-img ' . $thumb_class,
 	'alt'   => get_the_title( $this_id ),
-	'title' => $thumb_title . $show_appears,
+	'title' => $thumb_title . $additional_title,
 );
 
 // Alt Images
-$alt_images = ( 'full' === $format ) ? get_post_meta( $this_id, 'lezchars_character_image_group', false ) : false;
-if ( $alt_images ) {
+$alt_images = ( 'full' === $format ) ? get_field( 'lezchars_character_image_group', $this_id ) : false;
+if ( is_array( $alt_images ) && ! empty( $alt_images ) ) {
 	$image_tabs = array();
-	foreach ( $alt_images[0] as $an_image ) {
+	foreach ( $alt_images as $attach_id ) {
+		$attach_title = get_the_title( $attach_id );
+		$thumb_class  = str_replace( 'rounded ', 'rounded-bottom ', $thumb_class );
 		$attr_array   = array(
 			'class' => 'single-char-img ' . $thumb_class,
-			'alt'   => get_the_title( $this_id ) . ' ' . $an_image['alt_image_text'],
-			'title' => $thumb_title . ' - ' . $an_image['alt_image_text'] . $show_appears,
+			'alt'   => get_the_title( $this_id ) . ' ' . $attach_title,
+			'title' => $thumb_title . ' - ' . $attach_title . $additional_title,
 		);
 		$image_tabs[] = array(
-			'title' => $an_image['alt_image_text'],
-			'slug'  => sanitize_title( $an_image['alt_image_text'] ),
-			'image' => wp_get_attachment_image( $an_image['alt_image_file_id'], 'character-img', false, $attr_array ),
+			'title' => $attach_title,
+			'slug'  => sanitize_title( $attach_title ),
+			'image' => wp_get_attachment_image( $attach_id, 'character-img', false, $attr_array ),
 		);
 	}
 }
@@ -70,32 +76,33 @@ if ( ! has_post_thumbnail( $this_id ) ) {
 		echo '</a>';
 	}
 } else {
+	$thumb_array['class'] = str_replace( 'rounded ', 'rounded-bottom ', $thumb_array['class'] );
 	?>
-	<div class="featured-image-tabs ">
+	<div class="featured-image-tabs">
 		<!-- Nav tabs -->
-		<ul class="nav nav-tabs" id="v-pills-tab" role="tablist">
+		<ul class="nav nav-tabs" id="char-image-tabs" role="tablist">
 			<li class="nav-item" role="presentation">
-				<a class="nav-link active" id="v-pills-primary_image-tab" data-bs-toggle="pill" href="#v-pills-primary_image" role="tab" aria-controls="v-pills-primary_image" aria-selected="true">Primary</a>
+				<a class="nav-link active" id="char-tab-primary_image" data-bs-toggle="tab" href="#char-pane-primary_image" role="tab" aria-controls="char-pane-primary_image" aria-selected="true"><?php esc_html_e( 'Primary', 'lwtv' ); ?></a>
 			</li>
 			<?php
 			foreach ( $image_tabs as $a_tab ) {
 				?>
 				<li class="nav-item" role="presentation">
-					<a class="nav-link" id="v-pills-<?php echo esc_attr( $a_tab['slug'] ); ?>-tab" data-bs-toggle="pill" href="#v-pills-<?php echo esc_attr( $a_tab['slug'] ); ?>" role="tab" aria-controls="v-pills-<?php echo esc_attr( $a_tab['slug'] ); ?>" aria-selected="false"><?php echo esc_html( ucfirst( $a_tab['title'] ) ); ?></a>
+					<a class="nav-link" id="char-tab-<?php echo esc_attr( $a_tab['slug'] ); ?>" data-bs-toggle="tab" href="#char-pane-<?php echo esc_attr( $a_tab['slug'] ); ?>" role="tab" aria-controls="char-pane-<?php echo esc_attr( $a_tab['slug'] ); ?>" aria-selected="false"><?php echo esc_html( ucfirst( $a_tab['title'] ) ); ?></a>
 				</li>
 				<?php
 			}
 			?>
 		</ul>
 		<!-- Tab panes -->
-		<div class="tab-content" id="altImagesContent">
-			<div class="tab-pane fade show active" id="v-pills-primary_image" role="tabpanel" aria-labelledby="v-pills-primary_image-tab">
+		<div class="tab-content" id="char-image-tabs-content">
+			<div class="tab-pane fade show active" id="char-pane-primary_image" role="tabpanel" aria-labelledby="char-tab-primary_image">
 				<?php echo get_the_post_thumbnail( $this_id, 'character-img', $thumb_array ); ?>
 			</div>
 			<?php
 			foreach ( $image_tabs as $a_tab ) {
 				?>
-				<div class="tab-pane fade" id="v-pills-<?php echo esc_attr( $a_tab['slug'] ); ?>" role="tabpanel" aria-labelledby="v-pills-<?php echo esc_attr( $a_tab['slug'] ); ?>-tab">
+				<div class="tab-pane fade" id="char-pane-<?php echo esc_attr( $a_tab['slug'] ); ?>" role="tabpanel" aria-labelledby="char-tab-<?php echo esc_attr( $a_tab['slug'] ); ?>">
 					<?php echo wp_kses_post( $a_tab['image'] ); ?>
 				</div>
 				<?php

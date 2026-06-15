@@ -12,8 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 use LWTV\_Components\CPTs;
-use LWTV\CPTs\Shows\{ CMB2_Metaboxes, Custom_Columns, Shows_Like_This, Ways_To_Watch };
-use LWTV\Plugins\CMB2;
+use LWTV\CPTs\Shows\{ Custom_Columns, Shows_Like_This };
 
 /**
  * class LWTV_CPT_Shows
@@ -64,10 +63,8 @@ class Shows {
 	 * Constructor
 	 */
 	public function __construct() {
-		new CMB2_Metaboxes();
 		new Custom_Columns();
 		new Shows_Like_This();
-		new Ways_To_Watch();
 
 		add_action( 'admin_init', array( $this, 'admin_init' ) );
 		add_action( 'init', array( $this, 'init' ) );
@@ -100,20 +97,6 @@ class Shows {
 	 */
 	public function init() {
 		// Things that only run for this post type
-		// phpcs:ignore WordPress.Security.NonceVerification
-		$post_id = ( isset( $_GET['post'] ) ) ? intval( $_GET['post'] ) : 0;
-		if ( 0 !== $post_id ) {
-			// phpcs:ignore WordPress.Security.NonceVerification
-			$post_type = ( isset( $_GET['post_type'] ) ) ? sanitize_text_field( $_GET['post_type'] ) : 0;
-			switch ( $post_type ) {
-				case self::SLUG:
-					if ( is_admin() ) {
-						// Filter buttons not needed on the teeny MCE
-						add_filter( 'teeny_mce_buttons', array( $this, 'teeny_mce_buttons' ) );
-					}
-					break;
-			}
-		}
 	}
 
 	/**
@@ -124,23 +107,6 @@ class Shows {
 		add_action( 'save_post_post_type_shows', array( $this, 'save_post_meta' ), 12, 3 );
 		add_action( 'dashboard_glance_items', array( $this, 'dashboard_glance_items' ) );
 		add_filter( 'enter_title_here', array( $this, 'custom_enter_title' ) );
-	}
-
-	/**
-	 * Remove some Text Editor buttons
-	 */
-	public function quicktags_settings( $buttons ) {
-		$remove             = array( 'del', 'ins', 'img', 'code', 'block' );
-		$buttons['buttons'] = implode( ',', array_diff( explode( ',', $buttons['buttons'] ), $remove ) );
-		return $buttons;
-	}
-
-	/**
-	 * Remove some TEENY MCE buttons (not TinyMCE, TeenyMCE)
-	 */
-	public function teeny_mce_buttons( $buttons ) {
-		$remove = array( 'alignleft', 'aligncenter', 'alignright', 'undo', 'redo', 'fullscreen' );
-		return array_diff( $buttons, $remove );
 	}
 
 	/**
@@ -292,9 +258,6 @@ class Shows {
 		// Schedule calculations for later processing
 		lwtv_plugin()->schedule_task( 'calculation', $post_id );
 
-		// Schedule taxonomy sync for later processing
-		$this->sync_taxonomies( $post_id );
-
 		// Queue cache invalidation for shutdown processing
 		lwtv_plugin()->cache_queue( $post_id );
 
@@ -303,29 +266,6 @@ class Shows {
 
 		// re-hook this function
 		add_action( 'save_post_post_type_shows', array( $this, 'save_post_meta' ) );
-	}
-
-	/**
-	 * Sync taxonomies
-	 *
-	 * @param int $post_id The post ID
-	 * @return void
-	 */
-	public function sync_taxonomies( $post_id ) {
-		$success_count = 0;
-		$total_count   = count( self::SELECT2_TAXONOMIES );
-
-		foreach ( self::SELECT2_TAXONOMIES as $postmeta => $taxonomy ) {
-			try {
-				( new CMB2() )->select2_taxonomy_save( $post_id, $postmeta, $taxonomy );
-				++$success_count;
-				lwtv_plugin()->debug_log( 'taxsync', "Synced taxonomy {$taxonomy} for show ID: {$post_id}" );
-			} catch ( \Exception $e ) {
-				lwtv_plugin()->error_log( 'taxsync', "Failed to sync taxonomy {$taxonomy} for show ID: {$post_id}: " . $e->getMessage() );
-			}
-		}
-
-		lwtv_plugin()->debug_log( 'taxsync', "Completed show taxonomy sync for ID: {$post_id} - {$success_count}/{$total_count} successful" );
 	}
 
 	/*

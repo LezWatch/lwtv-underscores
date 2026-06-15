@@ -95,7 +95,7 @@ class Calculations {
 		foreach ( $character_ids as $char_id ) {
 			$character_data[ $char_id ] = array(
 				'status'  => get_post_status( $char_id ),
-				'actors'  => get_post_meta( $char_id, 'lezchars_actor', true ),
+				'actors'  => get_field( 'lezchars_actor', $char_id ),
 				'is_dead' => false,
 			);
 		}
@@ -144,7 +144,7 @@ class Calculations {
 	/**
 	 * do_the_math function.
 	 *
-	 * This will update the following metakeys on save:
+	 * This will update the following meta keys on save:
 	 *  - lezactors_char_count      Number of characters
 	 *  - lezactors_dead_count      Number of dead characters
 	 *  - lezactors_queer           Are they queer? True or false

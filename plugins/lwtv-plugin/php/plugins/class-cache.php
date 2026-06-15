@@ -67,7 +67,7 @@ class Cache {
 		);
 
 		// Generate list of shows to purge
-		$shows = get_post_meta( $post_id, 'lezchars_show_group', true );
+		$shows = get_field( 'lezchars_show_group', $post_id );
 		if ( ! empty( $shows ) ) {
 			foreach ( $shows as $show ) {
 
@@ -88,12 +88,8 @@ class Cache {
 		}
 
 		// Generate List of Actors
-		$actors = get_post_meta( $post_id, 'lezchars_actor', true );
+		$actors = get_field( 'lezchars_actor', $post_id ) ?: array();
 		if ( ! empty( $actors ) ) {
-			if ( ! is_array( $actors ) ) {
-				$actors = array( $actors );
-			}
-
 			foreach ( $actors as $actor ) {
 				// If the actor is live, we'll flush them.
 				if ( isset( $actor ) && 'publish' === get_post_status( $actor ) ) {
@@ -193,14 +189,14 @@ class Cache {
 
 		// For characters, also clean related actors and shows
 		if ( 'post_type_characters' === $post_type ) {
-			$actors = get_post_meta( $post_id, 'lezchars_actor', true );
-			if ( is_array( $actors ) ) {
+			$actors = get_field( 'lezchars_actor', $post_id ) ?: array();
+			if ( ! empty( $actors ) ) {
 				foreach ( $actors as $actor_id ) {
 					clean_post_cache( (int) $actor_id );
 				}
 			}
 
-			$show_group = get_post_meta( $post_id, 'lezchars_show_group', true );
+			$show_group = get_field( 'lezchars_show_group', $post_id );
 			if ( is_array( $show_group ) ) {
 				foreach ( $show_group as $show ) {
 					if ( isset( $show['show'] ) ) {

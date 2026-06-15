@@ -10,7 +10,7 @@ if ( ! defined( 'LWTV_THEME_VERSION' ) ) {
 	$versions = array();
 
 	// Automatically updated by the build script. Update ./package.json to change this.
-	$versions['lwtv-underscores'] = '6.6.0';
+	$versions['lwtv-underscores'] = '7.0.0';
 
 	// Automatically updated by the build script.
 	$versions['bootstrap'] = '5.3.8';
@@ -113,15 +113,6 @@ add_image_size( 'headshot-search', 100, 100, true );
  * Comments
  */
 require_once 'inc/walker-comment.php';
-
-/**
- * Authors
- *
- * Add bio box.
- */
-if ( ! is_singular( 'post' ) ) {
-	require_once 'inc/author-box.php';
-}
 
 /**
  * Archives

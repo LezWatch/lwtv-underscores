@@ -113,9 +113,9 @@ class Piecharts_Optimized {
 					}
 					break;
 				default:
-					foreach ( $data as $name => $count ) {
-						$labels  .= '"' . esc_js( $name ) . '", ';
-						$dataset .= '"' . esc_js( $count ) . '", ';
+					foreach ( $data as $item ) {
+						$labels  .= '"' . esc_js( $item['name'] ) . '", ';
+						$dataset .= '"' . esc_js( $item['count'] ) . '", ';
 					}
 					break;
 			}
@@ -159,9 +159,9 @@ class Piecharts_Optimized {
 						$dataset .= '"' . esc_js( $item['count'] ) . '", ';
 					}
 				} else {
-					foreach ( $data as $name => $count ) {
-						$labels  .= '"' . esc_js( $name ) . '", ';
-						$dataset .= '"' . esc_js( $count ) . '", ';
+					foreach ( $data as $item ) {
+						$labels  .= '"' . esc_js( $item['name'] ) . '", ';
+						$dataset .= '"' . esc_js( $item['count'] ) . '", ';
 					}
 				}
 				break;

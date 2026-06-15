@@ -43,10 +43,8 @@ class Postiz {
 	public function __construct() {
 		if ( ! self::$initialized ) {
 			// --- 1. EXPENSIVE INITIALIZATION (Runs only once) ---
-			// Get API configuration from CMB2 options (stored as array in single option)
-			$options     = get_option( 'lwtv_auto_posting_options', array() );
-			$api_key     = isset( $options['lwtv_postiz_api_key'] ) ? $options['lwtv_postiz_api_key'] : '';
-			$api_url     = isset( $options['lwtv_postiz_api_url'] ) ? $options['lwtv_postiz_api_url'] : '';
+			$api_key     = (string) get_field( 'lwtv_postiz_api_key', 'option' );
+			$api_url     = (string) get_field( 'lwtv_postiz_api_url', 'option' );
 			$channel_ids = $this->extract_channel_ids_from_settings();
 
 			$this->api_key     = $api_key;
@@ -83,9 +81,9 @@ class Postiz {
 	 * @return array Array of channel IDs
 	 */
 	private function extract_channel_ids_from_settings() {
-		$options     = get_option( 'lwtv_auto_posting_options', array() );
-		$channels    = isset( $options['lwtv_postiz_channels'] ) ? $options['lwtv_postiz_channels'] : array();
-		$channel_ids = array();
+		$raw_channels = get_field( 'lwtv_postiz_channels', 'option' );
+		$channels     = is_array( $raw_channels ) ? $raw_channels : array();
+		$channel_ids  = array();
 
 		if ( is_array( $channels ) ) {
 			foreach ( $channels as $channel ) {
@@ -119,8 +117,8 @@ class Postiz {
 	 * @return bool
 	 */
 	public function is_type_triggered_enabled( $type ) {
-		$options  = get_option( 'lwtv_auto_posting_options', array() );
-		$triggers = isset( $options['lwtv_postiz_triggers'] ) ? $options['lwtv_postiz_triggers'] : array();
+		$raw_triggers = get_field( 'lwtv_postiz_triggers', 'option' );
+		$triggers     = is_array( $raw_triggers ) ? $raw_triggers : array();
 		if ( empty( $triggers ) ) {
 			return true;
 		}
@@ -146,9 +144,9 @@ class Postiz {
 		}
 
 		// Default options
-		$saved_options = get_option( 'lwtv_auto_posting_options', array() );
-		$defaults      = array(
-			'type'      => isset( $saved_options['lwtv_postiz_post_type'] ) ? $saved_options['lwtv_postiz_post_type'] : 'draft',
+		$post_type = get_field( 'lwtv_postiz_post_type', 'option' );
+		$defaults  = array(
+			'type'      => $post_type ? $post_type : 'draft',
 			'date'      => current_time( 'c' ), // ISO 8601 format
 			'image'     => array(),
 			'settings'  => array(),
@@ -493,9 +491,10 @@ class Postiz {
 		foreach ( $posts as $post ) {
 			lwtv_plugin()->debug_log( 'postiz', 'Checking if OTD already exists in Postiz: ' . wp_json_encode( $post ) );
 
-			// Check if the post is empty or not published
-			if ( empty( $post['content'] ) || 'published' !== $post['status'] ) {
-				lwtv_plugin()->debug_log( 'postiz', 'Post is empty or not published: ' . wp_json_encode( $post ) );
+			// Check if the post is empty or not in an active state (published, scheduled, or queued)
+			$active_statuses = array( 'published', 'scheduled', 'queue' );
+			if ( empty( $post['content'] ) || ! in_array( $post['status'], $active_statuses, true ) ) {
+				lwtv_plugin()->debug_log( 'postiz', 'Post is empty or not in an active state: ' . wp_json_encode( $post ) );
 				continue;
 			}
 

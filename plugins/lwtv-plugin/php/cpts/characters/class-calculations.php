@@ -26,10 +26,11 @@ class Calculations {
 	 */
 	public function death( $post_id ) {
 		// get the most recent death and save it as a new meta
-		$character_death = get_post_meta( $post_id, 'lezchars_death_year', true );
+		$death_rows      = get_field( 'lezchars_death_year', $post_id );
+		$character_death = is_array( $death_rows ) ? array_filter( array_column( $death_rows, 'date' ) ) : array();
 		$last_char_death = get_post_meta( $post_id, 'lezchars_last_death', true );
 		$newest_death    = '0000-00-00';
-		if ( '' !== $character_death ) {
+		if ( ! empty( $character_death ) ) {
 			foreach ( $character_death as $death ) {
 				if ( $death > $newest_death ) {
 					$newest_death = $death;
@@ -53,15 +54,15 @@ class Calculations {
 	 * @return void
 	 */
 	public function sync_shows( $post_id, $shadow_character, $force = false ) {
-		$show_group         = get_post_meta( $post_id, 'lezchars_show_group', true );
+		$show_group         = get_field( 'lezchars_show_group', $post_id );
 		$shows_array_simple = array();
 
-		if ( ! $show_group ) {
+		if ( ! is_array( $show_group ) ) {
 			return;
 		}
 
 		foreach ( $show_group as $char_show ) {
-			// Remove the Array if it's there.
+			// Remove the Array if it's there (pre-migration CMB2 data).
 			if ( is_array( $char_show['show'] ) ) {
 				if ( ! isset( $char_show['show'][0] ) ) {
 					continue;
@@ -69,7 +70,7 @@ class Calculations {
 
 				$char_show['show'] = $char_show['show'][0];
 			}
-			$shows_array_simple[] = $char_show['show'];
+			$shows_array_simple[] = (int) $char_show['show'];
 		}
 
 		// Get all shows with this character.
@@ -82,7 +83,7 @@ class Calculations {
 					$show_id = get_the_ID();
 
 					// If the show has the taxonomy but the character doesn't have it in the array, remove the taxonomy.
-					if ( ! in_array( (string) $show_id, $shows_array_simple, true ) ) {
+					if ( ! in_array( $show_id, $shows_array_simple, true ) ) {
 						wp_remove_object_terms( (int) $show_id, (int) $shadow_character->term_id, CPT_Characters::SHADOW_TAXONOMY );
 					}
 				}
@@ -94,7 +95,7 @@ class Calculations {
 				continue;
 			}
 
-			// Remove the Array.
+			// Remove the Array (pre-migration CMB2 data).
 			if ( is_array( $each_show['show'] ) ) {
 				$each_show['show'] = $each_show['show'][0];
 			}
@@ -117,12 +118,10 @@ class Calculations {
 	 * @return void
 	 */
 	public function sync_actors( $post_id, $shadow_character, $force = false ) {
-		$actors = get_post_meta( $post_id, 'lezchars_actor', true );
-		if ( ! $actors ) {
+		$actors = get_field( 'lezchars_actor', $post_id );
+		if ( ! is_array( $actors ) || empty( $actors ) ) {
 			return;
 		}
-
-		$actors = ( ! is_array( $actors ) ) ? array( $actors ) : $actors;
 
 		// Get all actors with this character taxonomy.
 		$shadow_actors = ( new Shadow_Taxonomy() )->get_actors_for_character( $shadow_character->term_id );
