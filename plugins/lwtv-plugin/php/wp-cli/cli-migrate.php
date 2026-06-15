@@ -54,7 +54,7 @@ class WP_CLI_LWTV_Migrate {
 	 *
 	 *
 	 * [<subtype>]
-	 * : Optional. Secondary data. ACF uses [waystowatch].
+	 * : Optional. Secondary data. ACF uses [airdates|waystowatch|shownames|similarshows|charactor|chardeath|charimages|charimages-to-gallery|charshowgroup|autoposting|watchtermurls|debuglogging].
 	 * ---
 	 *
 	 * @param string $migrate_type         The type of migrator to run.
@@ -115,6 +115,9 @@ class WP_CLI_LWTV_Migrate {
 					break;
 				case 'watchtermurls':
 					$this->migrate_watchtermurls();
+					break;
+				case 'airdates':
+					$this->migrate_airdates();
 					break;
 				case 'debuglogging':
 					$this->migrate_debuglogging();
@@ -813,6 +816,89 @@ class WP_CLI_LWTV_Migrate {
 			\WP_CLI::log( 'No terms required URL migration.' );
 		} else {
 			\WP_CLI::success( 'Migration completed for ' . $term_count . ' term(s).' );
+		}
+	}
+
+	/**
+	 * Migrate lezshows_airdates start/finish to separate ACF meta keys.
+	 *
+	 * CMB2 stored both dates as one serialized array: lezshows_airdates['start'] / ['finish'].
+	 * ACF uses separate keys: lezshows_airdates_start and lezshows_airdates_finish.
+	 * The load_value filters bridge the gap at display time, but the separate keys must
+	 * exist in the DB for direct get_post_meta() reads (on-air checker, calculations) to
+	 * work correctly without relying on the legacy fallback.
+	 *
+	 * Skips shows where the separate key already has a non-empty value.
+	 */
+	public function migrate_airdates() {
+		$posts = get_posts(
+			array(
+				'post_type'      => 'post_type_shows',
+				'posts_per_page' => -1,
+				'meta_key'       => 'lezshows_airdates',
+				'meta_compare'   => 'EXISTS',
+			)
+		);
+
+		if ( empty( $posts ) ) {
+			\WP_CLI::log( "No posts found with 'lezshows_airdates' meta key." );
+			return;
+		}
+
+		$post_count   = 0;
+		$skip_count   = 0;
+		$progress_bar = \WP_CLI\Utils\make_progress_bar( sprintf( 'Starting migration. Found %d shows ...', count( $posts ) ), count( $posts ) );
+
+		foreach ( $posts as $post ) {
+			$legacy = get_post_meta( $post->ID, 'lezshows_airdates', true );
+
+			if ( ! is_array( $legacy ) ) {
+				$progress_bar->tick();
+				continue;
+			}
+
+			$legacy_start  = isset( $legacy['start'] ) ? (string) $legacy['start'] : '';
+			$legacy_finish = isset( $legacy['finish'] ) ? (string) $legacy['finish'] : '';
+
+			if ( empty( $legacy_start ) && empty( $legacy_finish ) ) {
+				$progress_bar->tick();
+				continue;
+			}
+
+			$current_start  = get_post_meta( $post->ID, 'lezshows_airdates_start', true );
+			$current_finish = get_post_meta( $post->ID, 'lezshows_airdates_finish', true );
+
+			$wrote = false;
+
+			if ( empty( $current_start ) && ! empty( $legacy_start ) ) {
+				update_post_meta( $post->ID, 'lezshows_airdates_start', $legacy_start );
+				update_post_meta( $post->ID, '_lezshows_airdates_start', 'field_lwtv_lezshows_airdates_start' );
+				$wrote = true;
+			}
+
+			if ( empty( $current_finish ) && ! empty( $legacy_finish ) ) {
+				update_post_meta( $post->ID, 'lezshows_airdates_finish', $legacy_finish );
+				update_post_meta( $post->ID, '_lezshows_airdates_finish', 'field_lwtv_lezshows_airdates_finish' );
+				$wrote = true;
+			}
+
+			if ( $wrote ) {
+				++$post_count;
+			} else {
+				++$skip_count;
+			}
+
+			$progress_bar->tick();
+		}
+
+		$progress_bar->finish();
+
+		\WP_CLI::log( sprintf( '%d show(s) skipped (separate keys already populated).', $skip_count ) );
+
+		if ( 0 === $post_count ) {
+			\WP_CLI::log( 'No posts required migration.' );
+		} else {
+			\WP_CLI::success( 'Migration completed for ' . $post_count . ' post(s).' );
 		}
 	}
 

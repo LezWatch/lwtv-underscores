@@ -115,7 +115,13 @@ class OnAir {
 			return 'no';
 		}
 
-		$start  = (int) $start;
+		$start = (int) $start;
+
+		// 'current' means the show is still airing — match the logic in fix_on_air_status().
+		if ( 'current' === strtolower( (string) $finish ) ) {
+			return 'yes';
+		}
+
 		$finish = (int) $finish;
 
 		return ( $start <= $year && $finish >= $year ) ? 'yes' : 'no';
@@ -143,19 +149,16 @@ class OnAir {
 			return false;
 		}
 
-		$start  = (int) $start;
-		$finish = (int) $finish;
-		$year   = gmdate( 'Y' );
-
-		// If the start date is before the current year and the finish date
-		// is after the current year, or the finish date is current, then the
-		// show is on air.
-		if ( $start <= $year && ( $finish >= $year || 'current' === strtolower( $finish ) ) ) {
+		if ( 'current' === strtolower( (string) $finish ) ) {
 			update_post_meta( $show_id, 'lezshows_on_air', 'yes' );
-		} else {
-			update_post_meta( $show_id, 'lezshows_on_air', 'no' );
+			return true;
 		}
 
+		$start  = (int) $start;
+		$finish = (int) $finish;
+		$year   = (int) gmdate( 'Y' );
+
+		update_post_meta( $show_id, 'lezshows_on_air', ( $start <= $year && $finish >= $year ) ? 'yes' : 'no' );
 		return true;
 	}
 }
