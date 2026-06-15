@@ -145,23 +145,6 @@ class BYQ {
 		$cache_key   = 'byq_death_list_' . $this->get_data_version_hash();
 		$cached_list = lwtv_plugin()->get_transient( $cache_key );
 
-		// If there is no current filter we're on a page load — but REST API requests may also
-		// have an empty filter stack and must be allowed to regenerate the list directly.
-		$is_rest = defined( 'REST_REQUEST' ) && REST_REQUEST;
-		if ( empty( $wp_current_filter ) && ! $is_rest ) {
-			lwtv_plugin()->debug_log( 'buryqueers', 'wp_current_filter is empty' );
-			if ( false !== $cached_list ) {
-				lwtv_plugin()->debug_log( 'buryqueers', 'Returning cached death list check on page load.' );
-				return $cached_list;
-			}
-			lwtv_plugin()->debug_log( 'buryqueers', 'Returning empty array on page load because wp_current_filter is empty' );
-
-			// Schedule an Action Scheduler task to check the cache again in 1 minute
-			( new \LWTV\Schedulers\BYQ_Task() )->schedule_cache_check( $cache_key );
-			lwtv_plugin()->debug_log( 'buryqueers', 'Scheduling Action Scheduler task to check the cache again in 1 minute' );
-			return array();
-		}
-
 		// Detect if we're in a character save context
 		$is_character_save = false;
 		if ( is_array( $wp_current_filter ) ) {
@@ -326,7 +309,7 @@ class BYQ {
 			ksort( $death_list_array );
 			lwtv_plugin()->debug_log( 'buryqueers', 'Array keys after sorting: ' . implode( ', ', array_keys( $death_list_array ) ) );
 
-			lwtv_plugin()->debug_log( 'buryqueers', 'Total characters: ' . count( $dead_chars_loop->posts ) . ', Fixed: ' . $fixed_count . ', Processed: ' . $processed_count . ', Skipped: ' . $skipped_count . ', Final array count: ' . count( $death_list_array ) );
+			lwtv_plugin()->debug_log( 'buryqueers', 'Total characters: ' . count( $dead_chars_loop->posts ) . ', Processed: ' . $processed_count . ', Skipped: ' . $skipped_count . ', Final array count: ' . count( $death_list_array ) );
 		}
 
 		// Cache the generated list

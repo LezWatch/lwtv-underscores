@@ -42,6 +42,12 @@ class ACF {
 			return;
 		}
 
+		// Only allow fields to be edited on development
+		if ( wp_get_environment_type() === 'production' ) {
+			add_filter( 'acf/settings/show_admin', '__return_false' );
+		}
+
+		// Set up JSON sync for field groups defined in this plugin.
 		add_filter( 'acf/settings/save_json', array( $this, 'save_json_path' ) );
 		add_filter( 'acf/settings/load_json', array( $this, 'load_json_paths' ) );
 		add_action( 'acf/update_field_group', array( $this, 'prevent_json_sync_loop' ), 1 );
