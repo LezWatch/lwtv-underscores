@@ -6,6 +6,31 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [7.0.0] — 2026-06-15
+
+### Added
+
+- SearchWP integration with a search scope selector in the search modal, allowing users to choose which search engine to query
+- Linear and exponential trendlines on charts via chartjs-plugin-trendline
+- Post editor single-scroll layout for small screens in the block editor
+- WP-CLI commands to migrate CMB2 data to ACF for show names, similar shows, auto-posting settings, watch term URLs, and debug logging
+
+### Changed
+
+- All CPT custom fields for actors, characters, and shows migrated from CMB2 to ACF Pro
+- Plugin settings (auto-posting, debug logging, watch URLs) migrated from CMB2 to ACF
+- TVMaze integration refactored to use ACF fields instead of CMB2 metaboxes
+
+### Fixed
+
+- Duplicate posts appearing in character and show queries
+- Character image display: rounded styling is now configurable, alt text uses attachment IDs directly, and tab navigation IDs are consistent
+
+### Removed
+
+- CMB2 metaboxes for actors, characters, shows, and TVMaze (fully replaced by ACF Pro)
+- Deprecated `Taxsync_Task` class
+
 ## [6.6.0] — 2026-06-03
 
 ### Added
