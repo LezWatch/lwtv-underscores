@@ -28,6 +28,24 @@ wp lwtv migrate acf debuglogging
 wp lwtv migrate acf charimages-to-gallery
 ```
 
+You may also need to run this:
+
+```bash
+wp eval '
+$field = acf_get_field("field_lwtv_lezchars_character_image_group");
+$field["type"] = "gallery";
+$field["return_format"] = "id";
+$field["library"] = "all";
+$field["min"] = 0;
+$field["max"] = 0;
+$field["insert"] = "append";
+$field["preview_size"] = "medium";
+unset($field["sub_fields"], $field["layout"], $field["pagination"], $field["collapsed"], $field["button_label"], $field["rows_per_page"]);
+acf_update_field($field);
+echo acf_get_field("field_lwtv_lezchars_character_image_group")["type"];
+'
+```
+
 ## 4. Re-index FacetWP
 
 ```bash

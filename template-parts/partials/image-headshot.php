@@ -49,6 +49,7 @@ if ( is_array( $alt_images ) && ! empty( $alt_images ) ) {
 	$image_tabs = array();
 	foreach ( $alt_images as $attach_id ) {
 		$attach_title = get_the_title( $attach_id );
+		$thumb_class  = str_replace( 'rounded ', 'rounded-bottom ', $thumb_class );
 		$attr_array   = array(
 			'class' => 'single-char-img ' . $thumb_class,
 			'alt'   => get_the_title( $this_id ) . ' ' . $attach_title,
@@ -75,7 +76,7 @@ if ( ! has_post_thumbnail( $this_id ) ) {
 		echo '</a>';
 	}
 } else {
-	$thumb_array['class'] = str_replace( 'rounded', 'rounded-bottom', $thumb_array['class'] );
+	$thumb_array['class'] = str_replace( 'rounded ', 'rounded-bottom ', $thumb_array['class'] );
 	?>
 	<div class="featured-image-tabs">
 		<!-- Nav tabs -->
