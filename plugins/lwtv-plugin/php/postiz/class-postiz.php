@@ -491,9 +491,10 @@ class Postiz {
 		foreach ( $posts as $post ) {
 			lwtv_plugin()->debug_log( 'postiz', 'Checking if OTD already exists in Postiz: ' . wp_json_encode( $post ) );
 
-			// Check if the post is empty or not published
-			if ( empty( $post['content'] ) || 'published' !== $post['status'] ) {
-				lwtv_plugin()->debug_log( 'postiz', 'Post is empty or not published: ' . wp_json_encode( $post ) );
+			// Check if the post is empty or not in an active state (published, scheduled, or queued)
+			$active_statuses = array( 'published', 'scheduled', 'queue' );
+			if ( empty( $post['content'] ) || ! in_array( $post['status'], $active_statuses, true ) ) {
+				lwtv_plugin()->debug_log( 'postiz', 'Post is empty or not in an active state: ' . wp_json_encode( $post ) );
 				continue;
 			}
 

@@ -97,20 +97,9 @@
 }
 
 .featured-image-tabs {
-
-	.nav-tabs {
-		border-bottom: none;
-	}
-
-	.nav-tabs .nav-link:hover,
-	.nav-tabs .nav-link:focus {
-		border-radius: var(--bs-nav-tabs-border-radius);
-	}
-
 	.nav-tabs .nav-link.active,
 	.nav-tabs .nav-item.show .nav-link {
 		border-color: colors.$lwtv-bordergrey;
-		border-radius: var(--bs-nav-tabs-border-radius);
 	}
 
 	a.nav-link {

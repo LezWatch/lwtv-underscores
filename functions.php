@@ -133,15 +133,6 @@ add_image_size( 'headshot-search', 100, 100, true );
 require_once 'inc/walker-comment.php';
 
 /**
- * Authors
- *
- * Add bio box.
- */
-if ( ! is_singular( 'post' ) ) {
-	require_once 'inc/author-box.php';
-}
-
-/**
  * Archives
  *
  * @param string $title get rid of the “Category:”, “Tag:”, “Author:”, “Archives:”

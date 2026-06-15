@@ -4,7 +4,7 @@ The 100% Original Theme for LezWatch.TV
 
 <!-- Badges -->
 <p align="center">
-	<a href="https://wordpress.org"><img src="https://img.shields.io/badge/wordpress-6.7-blue" alt="WordPress"></a>
+	<a href="https://wordpress.org"><img src="https://img.shields.io/badge/wordpress-7.0-blue" alt="WordPress"></a>
 	<a href="https://github.com/LezWatch/lwtv-underscores/issues"><img alt="Issues" src="https://img.shields.io/github/issues/LezWatch/lwtv-underscores"></a>
 	<a href="https://github.com/LezWatch/lwtv-underscores/pulls"><img alt="PRs" src="https://img.shields.io/github/issues-pr-raw/LezWatch/lwtv-underscores"></a>
 	<a href="https://github.com/LezWatch/lwtv-underscores/blob/production/LICENSE"><img src="https://img.shields.io/github/license/LezWatch/lwtv-underscores" alt="License"></a>
@@ -28,13 +28,11 @@ The command `wp lwtv generate cron daily` will run a different debugger each day
 
 ## Tools
 
-- PHP 8.2 or higher
+- PHP 8.4 or higher
 - [Node.js](https://nodejs.org) version 22+
 - [NVM](https://github.com/nvm-sh/nvm)
 
 It's recommended to use [Homebrew](https://brew.sh) on macOS or [Chocolatey](https://chocolatey.org) for Windows to install the project dependencies.
-
-**Note:** Grunt has been removed as of 2026, due to security issues with its addons and no movement from the actual source since 2023.
 
 ## Setup 🛠
 
@@ -103,8 +101,6 @@ Pushes to branches are automatically deployed via Github Actions as follows:
 
 ## Theme Features
 
-**Note:** CMB2 has been removed as of 2026 and replaced with ACF Pro.
-
 - Supports three front facing Custom Post Types and related taxonomies: Characters, Themes, Actors
 - Supports one back end Custom Post Type: TV Maze Aliases
 - Integrated with [ACF Pro](https://www.advancedcustomfields.com/pro/)
@@ -116,13 +112,17 @@ Pushes to branches are automatically deployed via Github Actions as follows:
 
 ## Plugins
 
+As everything is interconnected, we include some required plugins with the theme.
+
+### Forked Plugins
+
 The following plugins are forked from their original versions to support newer versions of WordPress and PHP. They are stored in the `/plugins/` folder:
 
 - `shadow-taxonomy` - By [PatelUtkarsh](https://github.com/patelutkarsh/shadow-taxonomy)
 
 ### LWTV Plugin (`/plugins/lwtv-plugin/`)
 
-Formerly hosted as it's own, separate, plugin, it has been combined with the theme since everything is interconnected. For the plugin, we use Namespaces and auto-loading in order to properly generate and call new content dynamically.
+For the plugin, we use Namespaces and auto-loading in order to properly generate and call new content dynamically.
 
 #### Components
 

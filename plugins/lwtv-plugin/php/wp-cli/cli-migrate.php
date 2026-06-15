@@ -104,6 +104,9 @@ class WP_CLI_LWTV_Migrate {
 				case 'charimages':
 					$this->migrate_charimages();
 					break;
+				case 'charimages-to-gallery':
+					$this->migrate_charimages_to_gallery();
+					break;
 				case 'charshowgroup':
 					$this->migrate_charshowgroup();
 					break;
@@ -485,6 +488,101 @@ class WP_CLI_LWTV_Migrate {
 			}
 
 			update_post_meta( $post->ID, 'lezchars_character_image_group', $count );
+			update_post_meta( $post->ID, '_lezchars_character_image_group', 'field_lwtv_lezchars_character_image_group' );
+
+			$progress_bar->tick();
+			++$post_count;
+		}
+
+		$progress_bar->finish();
+
+		if ( 0 === $post_count ) {
+			\WP_CLI::log( 'No posts required migration.' );
+		} else {
+			\WP_CLI::success( 'Migration completed for ' . $post_count . ' post(s).' );
+		}
+	}
+
+	/**
+	 * Migrate lezchars_character_image_group from ACF repeater format to ACF Gallery field.
+	 *
+	 * Old format: ACF repeater rows; lezchars_character_image_group = integer count,
+	 *             sub-fields lezchars_character_image_group_{N}_alt_image_file (attach ID)
+	 *             and lezchars_character_image_group_{N}_alt_image_text (label string).
+	 * New format: ACF Gallery field; lezchars_character_image_group = serialized array of attach IDs.
+	 *
+	 * Also copies alt_image_text to the attachment title when the attachment title
+	 * looks like a raw filename (no spaces), preserving the "Crossover"/"Flashback" labels
+	 * for the front-end tab UI.
+	 */
+	public function migrate_charimages_to_gallery() {
+		$posts = get_posts(
+			array(
+				'post_type'      => 'post_type_characters',
+				'posts_per_page' => -1,
+				'meta_key'       => 'lezchars_character_image_group',
+				'meta_compare'   => 'EXISTS',
+			)
+		);
+
+		if ( empty( $posts ) ) {
+			\WP_CLI::log( "No posts found with 'lezchars_character_image_group' meta key." );
+			return;
+		}
+
+		$post_count   = 0;
+		$progress_bar = \WP_CLI\Utils\make_progress_bar( sprintf( 'Starting migration. Found %d characters ...', count( $posts ) ), count( $posts ) );
+
+		foreach ( $posts as $post ) {
+			$raw = get_post_meta( $post->ID, 'lezchars_character_image_group', true );
+
+			// Already migrated: Gallery stores a serialized array; repeater stores an integer count.
+			if ( ! is_numeric( $raw ) ) {
+				$progress_bar->tick();
+				continue;
+			}
+
+			$count = (int) $raw;
+			if ( $count <= 0 ) {
+				$progress_bar->tick();
+				continue;
+			}
+
+			$ids = array();
+			for ( $i = 0; $i < $count; $i++ ) {
+				$attach_id = absint( get_post_meta( $post->ID, "lezchars_character_image_group_{$i}_alt_image_file", true ) );
+				if ( empty( $attach_id ) ) {
+					continue;
+				}
+
+				$label = (string) get_post_meta( $post->ID, "lezchars_character_image_group_{$i}_alt_image_text", true );
+				if ( ! empty( $label ) ) {
+					$current_title = get_the_title( $attach_id );
+					// Only overwrite if the attachment title looks like a raw filename (no spaces).
+					if ( ! str_contains( $current_title, ' ' ) ) {
+						wp_update_post(
+							array(
+								'ID'         => $attach_id,
+								'post_title' => $label,
+							)
+						);
+					}
+				}
+
+				$ids[] = $attach_id;
+
+				delete_post_meta( $post->ID, "lezchars_character_image_group_{$i}_alt_image_text" );
+				delete_post_meta( $post->ID, "_lezchars_character_image_group_{$i}_alt_image_text" );
+				delete_post_meta( $post->ID, "lezchars_character_image_group_{$i}_alt_image_file" );
+				delete_post_meta( $post->ID, "_lezchars_character_image_group_{$i}_alt_image_file" );
+			}
+
+			if ( empty( $ids ) ) {
+				$progress_bar->tick();
+				continue;
+			}
+
+			update_post_meta( $post->ID, 'lezchars_character_image_group', $ids );
 			update_post_meta( $post->ID, '_lezchars_character_image_group', 'field_lwtv_lezchars_character_image_group' );
 
 			$progress_bar->tick();
