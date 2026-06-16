@@ -17,7 +17,7 @@ TMPFILE=$(mktemp)
 {
     echo "--- Start: $(date) ---"
     echo "User: $(whoami)"
-    /usr/bin/wp cron event run --due-now --path=/home/wp_bg3hrq/lezwatchtv.com/ --verbose
+    /usr/bin/wp cron event run --due-now --path=/home/wp_bg3hrq/lezwatchtv.com/
 } > "$TMPFILE" 2>&1
 EXIT_CODE=$?
 
