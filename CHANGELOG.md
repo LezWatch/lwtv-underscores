@@ -6,7 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
-TBD
+## [7.0.3] - 2026-06-16
+
+### Fixed
+
+- Cron Scripts (`--verbose` isn't a thing)
+- OTD now knows how to handle ACF fields.
 
 ## [7.0.2] - 2026-06-16
 
