@@ -862,13 +862,12 @@ class Export_JSON {
 			return array();
 		}
 
-		$ids_string = implode( ',', $post_ids );
-		$bulk_data  = array();
+		$bulk_data       = array();
+		$id_placeholders = implode( ',', array_fill( 0, count( $post_ids ), '%d' ) );
 
 		// Get basic post data
-		$posts_query = "SELECT ID, post_title, post_name FROM {$wpdb->posts} WHERE ID IN ($ids_string)";
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- IDs are sanitized
-		$posts = $wpdb->get_results( $posts_query );
+		$posts_query = $wpdb->prepare( "SELECT ID, post_title, post_name FROM {$wpdb->posts} WHERE ID IN ($id_placeholders)", ...$post_ids ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
+		$posts       = $wpdb->get_results( $posts_query ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 
 		foreach ( $posts as $post ) {
 			$bulk_data[ $post->ID ] = array(
@@ -892,11 +891,9 @@ class Export_JSON {
 		}
 
 		if ( ! empty( $meta_keys ) ) {
-			$keys_string = "'" . implode( "','", array_map( 'esc_sql', $meta_keys ) ) . "'";
-			$meta_query  = "SELECT post_id, meta_key, meta_value FROM {$wpdb->postmeta} WHERE post_id IN ($ids_string) AND meta_key IN ($keys_string)";
-
-			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- IDs and keys are sanitized
-			$meta_results = $wpdb->get_results( $meta_query );
+			$key_placeholders = implode( ',', array_fill( 0, count( $meta_keys ), '%s' ) );
+			$meta_query       = $wpdb->prepare( "SELECT post_id, meta_key, meta_value FROM {$wpdb->postmeta} WHERE post_id IN ($id_placeholders) AND meta_key IN ($key_placeholders)", ...array_merge( $post_ids, $meta_keys ) ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
+			$meta_results     = $wpdb->get_results( $meta_query ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 
 			foreach ( $meta_results as $row ) {
 				$bulk_data[ $row->post_id ]['meta'][ $row->meta_key ] = maybe_unserialize( $row->meta_value );
@@ -907,10 +904,8 @@ class Export_JSON {
 		// lezchars_show_group stores a count in its parent key post-migration;
 		// actual show IDs live in lezchars_show_group_{n}_show rows.
 		if ( 'characters' === $type ) {
-			// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
-			$show_group_query   = "SELECT post_id, meta_value FROM {$wpdb->postmeta} WHERE post_id IN ($ids_string) AND meta_key LIKE 'lezchars_show_group_%_show'";
-			$show_group_results = $wpdb->get_results( $show_group_query );
-			// phpcs:enable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
+			$show_group_query   = $wpdb->prepare( "SELECT post_id, meta_value FROM {$wpdb->postmeta} WHERE post_id IN ($id_placeholders) AND meta_key LIKE %s", ...array_merge( $post_ids, array( 'lezchars_show_group_%_show' ) ) ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
+			$show_group_results = $wpdb->get_results( $show_group_query ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 
 			foreach ( $show_group_results as $row ) {
 				$bulk_data[ $row->post_id ]['meta']['lezchars_show_group'][] = array( 'show' => (int) $row->meta_value );

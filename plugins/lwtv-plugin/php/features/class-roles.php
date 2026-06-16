@@ -38,6 +38,9 @@ class Roles {
 		return false;
 	}
 
+	/**
+	 * Create custom roles
+	 */
 	public function create_roles() {
 		if ( ! self::role_exists( 'data_editor' ) ) {
 			$de_capabilities = array(
@@ -48,7 +51,7 @@ class Roles {
 				'publish_posts'     => false,
 				'upload_files'      => true,
 				'manage_categories' => true, // so they can add sexualities etc
-				'unfiltered_html'   => true,
+				'unfiltered_html'   => true, // required for the content they need to add. We will be trusting these users, so this is not a problem.
 			);
 			add_role( 'data_editor', 'Data Editor', $de_capabilities );
 		}
