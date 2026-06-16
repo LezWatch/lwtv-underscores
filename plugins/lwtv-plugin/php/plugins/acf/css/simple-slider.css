@@ -1,0 +1,20 @@
+.lwtv-number-slider {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 2px 0;
+}
+
+.lwtv-number-slider input[type="range"] {
+	flex: 1;
+	accent-color: #2271b1;
+	cursor: pointer;
+}
+
+.lwtv-number-slider .lwtv-slider-value {
+	min-width: 1.5em;
+	font-size: 1.2em;
+	font-weight: 600;
+	text-align: center;
+	color: #1d2327;
+}

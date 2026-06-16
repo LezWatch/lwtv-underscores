@@ -87,6 +87,10 @@ class ACF {
 		add_filter( 'acf/fields/relationship/query/name=lezshows_similar_shows', array( $this, 'similar_shows_query' ) );
 		add_filter( 'acf/fields/relationship/query/name=lez_user_favourite_shows', array( $this, 'similar_shows_query' ) );
 
+		// Actors: default Gender to cisgender and Sexuality to unknown on new posts.
+		add_filter( 'acf/load_value/name=lezactors_gender', array( $this, 'load_actor_gender_default' ), 10, 3 );
+		add_filter( 'acf/load_value/name=lezactors_sexuality', array( $this, 'load_actor_sexuality_default' ), 10, 3 );
+
 		// Characters: improve search for the Actor relationship field.
 		add_filter( 'acf/fields/relationship/query/name=lezchars_actor', array( $this, 'actor_query' ) );
 
@@ -108,6 +112,9 @@ class ACF {
 		}
 
 		add_action( 'acf/input/admin_head', array( $this, 'admin_head_styles' ) );
+
+		// Register the number_slider custom field type (used for show ratings).
+		add_action( 'acf/include_field_types', array( $this, 'register_number_slider' ) );
 	}
 
 	/**
@@ -644,5 +651,52 @@ class ACF {
 			$field['choices'][ $topic ] = ucwords( str_replace( '-', ' ', $topic ) );
 		}
 		return $field;
+	}
+
+	/**
+	 * Default the Gender field to cisgender for new actor posts.
+	 *
+	 * @param mixed $value   Current field value.
+	 * @param int   $post_id Post ID.
+	 * @param array $field   ACF field definition.
+	 * @return mixed
+	 */
+	public function load_actor_gender_default( $value, int $post_id, array $field ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
+		if ( empty( $value ) ) {
+			$term = get_term_by( 'slug', 'cisgender', 'lez_actor_gender' );
+			if ( $term ) {
+				$value = $term->term_id;
+			}
+		}
+		return $value;
+	}
+
+	/**
+	 * Default the Sexuality field to unknown for new actor posts.
+	 *
+	 * @param mixed $value   Current field value.
+	 * @param int   $post_id Post ID.
+	 * @param array $field   ACF field definition.
+	 * @return mixed
+	 */
+	public function load_actor_sexuality_default( $value, int $post_id, array $field ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
+		if ( empty( $value ) ) {
+			$term = get_term_by( 'slug', 'unknown', 'lez_actor_sexuality' );
+			if ( $term ) {
+				$value = $term->term_id;
+			}
+		}
+		return $value;
+	}
+
+	/**
+	 * Register the number_slider ACF field type.
+	 *
+	 * Included via acf/include_field_types so it is only loaded when ACF is
+	 * ready to accept custom field types.
+	 */
+	public function register_number_slider(): void {
+		require_once __DIR__ . '/acf/class-number-slider.php';
+		new \acf_field_number_slider();
 	}
 }

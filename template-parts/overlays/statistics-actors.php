@@ -39,6 +39,11 @@ $this_id = $args['actor_id'] ?? null;
 							if ( ! empty( $stats ) ) {
 								?>
 								<p>Statistics are updated daily.</p>
+								<div id="lwtv-stats-spinner" class="text-center py-4" aria-hidden="true">
+									<div class="spinner-border" role="status">
+										<span class="visually-hidden"><?php esc_html_e( 'Loading&hellip;', 'lwtv' ); ?></span>
+									</div>
+								</div>
 								<?php
 								// phpcs:ignore WordPress.Security.EscapeOutput -- Escaped in the function
 								echo $stats;

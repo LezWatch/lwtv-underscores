@@ -4,12 +4,27 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+TBD
+
 ## [7.0.2] - 2026-06-TBD
 
-### Improved
+### Added
 
-- `wp_kses_post()` changes to `esc_html()` for exporting JSON
-- NPM security audit fixes
+- Draggable number slider for show Quality, Realness, and Screentime ratings, replacing radio buttons (0–5 scale)
+- Actor Gender and Sexuality fields default to "Cisgender" and "Unknown" on new actor posts
+
+### Fixed
+
+- JSON export SQL queries now use prepared statements instead of raw value interpolation
+- Taxonomy term shortcode output now escapes slugs, URLs, and term names against XSS
+- Actor statistics overlay restored with loading spinner
+- NPM Update
+
+### Removed
+
+- Deprecated IP-based Gravity Forms location population, superseded by NGINX
 
 ## [7.0.1] — 2026-06-15
 
