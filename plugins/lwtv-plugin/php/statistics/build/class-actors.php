@@ -27,9 +27,18 @@ class Actors {
 		// If no meta exists, return empty counts
 		if ( empty( $char_list ) ) {
 			return array(
-				'regular'   => 0,
-				'recurring' => 0,
-				'guest'     => 0,
+				array(
+					'name'  => __( 'Regular', 'lwtv' ),
+					'count' => 0,
+				),
+				array(
+					'name'  => __( 'Recurring', 'lwtv' ),
+					'count' => 0,
+				),
+				array(
+					'name'  => __( 'Guest', 'lwtv' ),
+					'count' => 0,
+				),
 			);
 		}
 
@@ -51,7 +60,20 @@ class Actors {
 			}
 		}
 
-		return $role_counts;
+		return array(
+			array(
+				'name'  => __( 'Regular', 'lwtv' ),
+				'count' => $role_counts['regular'],
+			),
+			array(
+				'name'  => __( 'Recurring', 'lwtv' ),
+				'count' => $role_counts['recurring'],
+			),
+			array(
+				'name'  => __( 'Guest', 'lwtv' ),
+				'count' => $role_counts['guest'],
+			),
+		);
 	}
 
 	/**
@@ -68,8 +90,14 @@ class Actors {
 		// If no meta exists, return empty counts
 		if ( empty( $char_list ) ) {
 			return array(
-				'alive' => 0,
-				'dead'  => 0,
+				array(
+					'name'  => __( 'Alive', 'lwtv' ),
+					'count' => 0,
+				),
+				array(
+					'name'  => __( 'Dead', 'lwtv' ),
+					'count' => 0,
+				),
 			);
 		}
 
@@ -94,8 +122,14 @@ class Actors {
 		}
 
 		return array(
-			'alive' => $alive_count,
-			'dead'  => $dead_count,
+			array(
+				'name'  => __( 'Alive', 'lwtv' ),
+				'count' => $alive_count,
+			),
+			array(
+				'name'  => __( 'Dead', 'lwtv' ),
+				'count' => $dead_count,
+			),
 		);
 	}
 }
