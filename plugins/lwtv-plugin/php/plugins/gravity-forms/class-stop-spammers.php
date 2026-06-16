@@ -16,9 +16,6 @@ class Stop_Spammers {
 	public function __construct() {
 		// Check all Gravity Forms ... forms for spammers.
 		add_action( 'gform_entry_is_spam', array( $this, 'gform_entry_is_spam' ), 10, 3 );
-
-		// Check location.
-		add_filter( 'gform_field_value_lwtvlocation', array( $this, 'populate_lwtvlocation' ) );
 	}
 
 	/**
@@ -143,41 +140,5 @@ class Stop_Spammers {
 		}
 
 		return $return;
-	}
-
-	/**
-	 * DEPRECATED: No longer needed with NGINX
-	 *
-	 * Get the IP and process it.
-	 *
-	 * To actually use this, though, you need a HIDDEN field, which has the following:
-	 *
-	 * 1. Set ALLOW FIELD TO BE POPULATED DYNAMICALLY
-	 * 2. Parameter Name == lwtvlocation
-	 */
-	// phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found
-	public function populate_lwtvlocation( $value ) {
-		if ( array_key_exists( 'HTTP_X_FORWARDED_FOR', $_SERVER ) ) {
-			$ip = (string) $_SERVER['HTTP_X_FORWARDED_FOR'];
-		} elseif ( array_key_exists( 'REMOTE_ADDR', $_SERVER ) ) {
-			$ip = (string) $_SERVER['REMOTE_ADDR'];
-		} elseif ( array_key_exists( 'HTTP_CLIENT_IP', $_SERVER ) ) {
-			$ip = (string) $_SERVER['HTTP_CLIENT_IP'];
-		} else {
-			// Honestly one of those should exist...
-			return;
-		}
-
-		// If there's a comma we have multiple proxies and want to grab the first. If not, trust.
-		if ( str_contains( $ip, ',' ) ) {
-			$ips     = array_values( array_filter( explode( ',', $ip ) ) );
-			$real_ip = reset( $ips );
-		} else {
-			$real_ip = $ip;
-		}
-
-		$location = self::check_ip_location( $real_ip );
-
-		return $location['full'] . ' (Note: Unreliable)';
 	}
 }

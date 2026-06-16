@@ -19,20 +19,20 @@
 		"packages-update": "wp-scripts packages-update"
 	},
 	"dependencies": {
-		"@wordpress/api-fetch": "^7.48.0",
-		"@wordpress/babel-plugin-import-jsx-pragma": "^5.48.0",
-		"@wordpress/block-editor": "^15.21.0",
-		"@wordpress/blocks": "^15.21.0",
-		"@wordpress/components": "^35.0.0",
-		"@wordpress/data": "^10.48.0",
-		"@wordpress/editor": "^14.48.0",
-		"@wordpress/element": "^8.0.0",
-		"@wordpress/i18n": "^6.21.0",
-		"@wordpress/icons": "^14.0.0",
-		"@wordpress/plugins": "^7.48.0",
-		"@wordpress/server-side-render": "^6.24.0"
+		"@wordpress/api-fetch": "^7.48.1",
+		"@wordpress/babel-plugin-import-jsx-pragma": "^5.48.1",
+		"@wordpress/block-editor": "^15.21.1",
+		"@wordpress/blocks": "^15.21.1",
+		"@wordpress/components": "^35.0.1",
+		"@wordpress/data": "^10.48.1",
+		"@wordpress/editor": "^14.48.1",
+		"@wordpress/element": "^8.0.1",
+		"@wordpress/i18n": "^6.21.1",
+		"@wordpress/icons": "^14.0.1",
+		"@wordpress/plugins": "^7.48.1",
+		"@wordpress/server-side-render": "^6.24.1"
 	},
 	"devDependencies": {
-		"@wordpress/scripts": "^32.4.0"
+		"@wordpress/scripts": "^32.4.1"
 	}
 }

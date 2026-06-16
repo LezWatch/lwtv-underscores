@@ -41,12 +41,19 @@ class Piecharts_Optimized {
 		$chart_data   = $formatting_data['data'];
 
 		$chart_output  = '<div id="container" style="width: 100%;"><canvas id="' . esc_attr( $chart_id ) . '" width="500px" height="500px" aria-label="Pie chart for ' . esc_attr( $context ) . '"><p>Your browser cannot display this piechart for stats on' . esc_html( $context ) . '.</p></canvas></div>';
+		$on_complete   = 'actors' === $type ? '
+				animation: {
+					onComplete: function() {
+						var spinner = document.getElementById("lwtv-stats-spinner");
+						if (spinner) { spinner.remove(); }
+					}
+				},' : '';
 		$script_output = '<script>
 		var ' . esc_attr( $chart_id ) . 'Dataset = [' . $chart_data . '];
 		var ctx = document.getElementById("' . esc_attr( $chart_id ) . '").getContext("2d");
 		var chart = new Chart(ctx, {
 			type: "pie",
-			options: {
+			options: {' . $on_complete . '
 				plugins: {
 					legend: {
 						display: ' . ( 'actors' === $type ? 'true' : 'false' ) . ',
