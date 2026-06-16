@@ -289,9 +289,8 @@ class Of_The_Day implements Component, Templater {
 		);
 		$options = get_option( 'lwtv_otd', $default );
 
-		// If there's no ID or the timestamp has past, we need a new ID
-		// Or if we're in dev mode.
-		if ( 'none' === $options[ $type ]['post'] || time() >= $options[ $type ]['time'] || ( defined( 'LWTV_DEV_SITE' ) && LWTV_DEV_SITE ) ) {
+		// If there's no ID, the ID is invalid, the timestamp has passed, or we're in dev mode, get a new ID.
+		if ( 'none' === $options[ $type ]['post'] || empty( $options[ $type ]['post'] ) || 0 === (int) $options[ $type ]['post'] || time() >= $options[ $type ]['time'] || ( defined( 'LWTV_DEV_SITE' ) && LWTV_DEV_SITE ) ) {
 			// Get the show ID
 			$id = self::find_char_show( $type, $date );
 
@@ -566,13 +565,13 @@ class Of_The_Day implements Component, Templater {
 					AND p.post_status = 'publish'
 					AND p.post_content NOT LIKE %s
 					AND pm1.meta_value NOT IN ($mystery_string)
-					AND pm2.meta_value LIKE %s
+					AND pm2.meta_value > 0
 					AND (pm3.meta_value IS NULL OR pm3.meta_value < %d)
 					$tax_conditions
 					ORDER BY p.ID";
 
 				// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- Complex query with proper escaping
-				$results = $wpdb->get_results( $wpdb->prepare( $query, $post_type, '%TBD%', '%re%', time() ) );
+				$results = $wpdb->get_results( $wpdb->prepare( $query, $post_type, '%TBD%', time() ) );
 
 				// Additional validation for characters
 				foreach ( $results as $row ) {
