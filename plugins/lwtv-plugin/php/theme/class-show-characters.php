@@ -268,7 +268,8 @@ class Show_Characters {
 
 						if ( (int) $char_show['show'] === (int) $show_id ) {
 							// Get a list of actors (we need this twice later)
-							$actors_ids = get_field( 'lezchars_actor', $char_id ) ? get_field( 'lezchars_actor', $char_id ) : array();
+							$actor_field = get_field( 'lezchars_actor', $char_id );
+							$actors_ids  = ( $actor_field && is_array( $actor_field ) ) ? $actor_field : array();
 
 							// The Queer Clone Calculations: The post query gets too many IDs
 							// So we don't **REALLY** count then via this method unless the show

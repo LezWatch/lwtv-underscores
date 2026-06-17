@@ -588,7 +588,7 @@ class Stats_JSON {
 					'shows'     => count( get_field( 'lezchars_show_group', $id ) ?: array() ),
 					'gender'    => implode( ', ', wp_get_post_terms( $id, 'lez_gender', array( 'fields' => 'names' ) ) ),
 					'sexuality' => implode( ', ', wp_get_post_terms( $id, 'lez_sexuality', array( 'fields' => 'names' ) ) ),
-					'url'       => get_the_permalink(),
+					'url'       => get_the_permalink( $id ),
 				);
 				break;
 			case 'show':
