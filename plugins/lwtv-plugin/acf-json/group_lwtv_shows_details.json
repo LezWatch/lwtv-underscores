@@ -1,6 +1,6 @@
 {
     "key": "group_lwtv_shows_details",
-    "title": "Show Details (Basic)",
+    "title": "Show Details #2 (Basic)",
     "fields": [
         {
             "key": "field_lwtv_lezshows_airdates_start",
@@ -9,18 +9,18 @@
             "aria-label": "",
             "type": "select",
             "instructions": "First year the show aired.",
-            "required": 0,
+            "required": 1,
             "conditional_logic": 0,
             "wrapper": {
-                "width": "50",
+                "width": "40",
                 "class": "",
                 "id": ""
             },
-            "choices": {},
+            "choices": [],
             "default_value": false,
             "return_format": "value",
             "multiple": 0,
-            "allow_null": 1,
+            "allow_null": 0,
             "allow_in_bindings": 1,
             "ui": 0,
             "ajax": 0,
@@ -34,15 +34,15 @@
             "name": "lezshows_airdates_finish",
             "aria-label": "",
             "type": "select",
-            "instructions": "Year the show ended. Defaults to Current for still-airing shows.",
+            "instructions": "Year the show ended. Current is still-airing.",
             "required": 0,
             "conditional_logic": 0,
             "wrapper": {
-                "width": "50",
+                "width": "40",
                 "class": "",
                 "id": ""
             },
-            "choices": {},
+            "choices": [],
             "default_value": "current",
             "return_format": "value",
             "multiple": 0,
@@ -60,11 +60,11 @@
             "name": "lezshows_seasons",
             "aria-label": "",
             "type": "number",
-            "instructions": "",
+            "instructions": "Optional for MiniSeries",
             "required": 0,
             "conditional_logic": 0,
             "wrapper": {
-                "width": "",
+                "width": "20",
                 "class": "",
                 "id": ""
             },
@@ -84,7 +84,7 @@
             "aria-label": "",
             "type": "taxonomy",
             "instructions": "",
-            "required": 0,
+            "required": 1,
             "conditional_logic": 0,
             "wrapper": {
                 "width": "50",
@@ -110,7 +110,7 @@
             "aria-label": "",
             "type": "taxonomy",
             "instructions": "",
-            "required": 0,
+            "required": 1,
             "conditional_logic": 0,
             "wrapper": {
                 "width": "50",
@@ -136,7 +136,7 @@
             "aria-label": "",
             "type": "taxonomy",
             "instructions": "",
-            "required": 0,
+            "required": 1,
             "conditional_logic": 0,
             "wrapper": {
                 "width": "50",
@@ -183,7 +183,7 @@
             "aria-label": "",
             "type": "taxonomy",
             "instructions": "Select all applicable genres. The Primary Genre field below will update on next save.",
-            "required": 0,
+            "required": 1,
             "conditional_logic": 0,
             "wrapper": {
                 "width": "50",
@@ -227,32 +227,6 @@
             "placeholder": "None (please choose one)",
             "create_options": 0,
             "save_options": 0
-        },
-        {
-            "key": "field_lwtv_lezshows_intersectional",
-            "label": "Intersectionality",
-            "name": "lezshows_intersectional",
-            "aria-label": "",
-            "type": "taxonomy",
-            "instructions": "Positive representation only!",
-            "required": 0,
-            "conditional_logic": 0,
-            "wrapper": {
-                "width": "",
-                "class": "lwtv-acf-col-2",
-                "id": ""
-            },
-            "taxonomy": "lez_intersections",
-            "add_term": 0,
-            "save_terms": 1,
-            "load_terms": 1,
-            "return_format": "id",
-            "field_type": "multi_select",
-            "allow_null": 1,
-            "allow_in_bindings": 1,
-            "bidirectional": 0,
-            "multiple": 0,
-            "bidirectional_target": []
         },
         {
             "key": "field_lwtv_lezshows_stars",
@@ -307,16 +281,42 @@
             "bidirectional_target": []
         },
         {
+            "key": "field_lwtv_lezshows_intersectional",
+            "label": "Intersectionality",
+            "name": "lezshows_intersectional",
+            "aria-label": "",
+            "type": "taxonomy",
+            "instructions": "Positive representation only!",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "50",
+                "class": "lwtv-acf-col-2",
+                "id": ""
+            },
+            "taxonomy": "lez_intersections",
+            "add_term": 0,
+            "save_terms": 1,
+            "load_terms": 1,
+            "return_format": "id",
+            "field_type": "multi_select",
+            "allow_null": 1,
+            "allow_in_bindings": 1,
+            "bidirectional": 0,
+            "multiple": 0,
+            "bidirectional_target": []
+        },
+        {
             "key": "field_lwtv_lezshows_tropes",
             "label": "Trope Plots",
             "name": "lezshows_tropes",
             "aria-label": "",
             "type": "taxonomy",
-            "instructions": "",
-            "required": 0,
+            "instructions": "Use 'None' for no-tropes!",
+            "required": 1,
             "conditional_logic": 0,
             "wrapper": {
-                "width": "",
+                "width": "50",
                 "class": "lwtv-acf-col-3",
                 "id": ""
             },
@@ -354,5 +354,5 @@
     "display_title": "Basic Details",
     "allow_ai_access": false,
     "ai_description": "",
-    "modified": 1781129328
+    "modified": 1781717636
 }

@@ -1,6 +1,6 @@
 {
     "key": "group_lwtv_auto_posting",
-    "title": "Auto-Posting Options",
+    "title": "Options - Auto-Posting",
     "fields": [
         {
             "key": "field_lwtv_postiz_api_key",
@@ -19,7 +19,8 @@
             "default_value": "",
             "placeholder": "",
             "prepend": "",
-            "append": ""
+            "append": "",
+            "maxlength": ""
         },
         {
             "key": "field_lwtv_postiz_api_url",
@@ -36,7 +37,7 @@
                 "id": ""
             },
             "default_value": "",
-            "placeholder": "https://..."
+            "placeholder": "https:\/\/..."
         },
         {
             "key": "field_lwtv_postiz_post_type",
@@ -64,7 +65,10 @@
             "allow_in_bindings": 0,
             "ajax": 0,
             "placeholder": "",
-            "allow_custom": 0
+            "allow_custom": 0,
+            "ui": 0,
+            "create_options": 0,
+            "save_options": 0
         },
         {
             "key": "field_lwtv_postiz_triggers",
@@ -91,7 +95,8 @@
             "save_custom": 0,
             "layout": "vertical",
             "toggle": 0,
-            "allow_in_bindings": 0
+            "allow_in_bindings": 0,
+            "custom_choice_button_text": "Add new choice"
         },
         {
             "key": "field_lwtv_postiz_channels",
@@ -133,7 +138,8 @@
                     "placeholder": "",
                     "prepend": "",
                     "append": "",
-                    "parent_repeater": "field_lwtv_postiz_channels"
+                    "parent_repeater": "field_lwtv_postiz_channels",
+                    "maxlength": ""
                 },
                 {
                     "key": "field_lwtv_postiz_channels_channel_id",
@@ -153,7 +159,8 @@
                     "placeholder": "",
                     "prepend": "",
                     "append": "",
-                    "parent_repeater": "field_lwtv_postiz_channels"
+                    "parent_repeater": "field_lwtv_postiz_channels",
+                    "maxlength": ""
                 },
                 {
                     "key": "field_lwtv_postiz_channels_active",
@@ -194,12 +201,12 @@
     "style": "default",
     "label_placement": "top",
     "instruction_placement": "label",
-    "hide_on_screen": [],
+    "hide_on_screen": "",
     "active": true,
     "description": "Postiz auto-posting settings",
     "show_in_rest": 0,
     "display_title": "Auto-Posting Options",
     "allow_ai_access": false,
     "ai_description": "",
-    "modified": 1781222400
+    "modified": 1781716683
 }

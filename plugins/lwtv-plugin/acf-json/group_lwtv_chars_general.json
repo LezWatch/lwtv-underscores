@@ -1,6 +1,6 @@
 {
     "key": "group_lwtv_chars_general",
-    "title": "Character Details (General)",
+    "title": "Character Details #2 (General)",
     "fields": [
         {
             "key": "field_lwtv_lezchars_cliches",
@@ -9,7 +9,7 @@
             "aria-label": "",
             "type": "taxonomy",
             "instructions": "",
-            "required": 0,
+            "required": 1,
             "conditional_logic": 0,
             "wrapper": {
                 "width": "",
@@ -79,8 +79,8 @@
             "name": "lezchars_actor",
             "aria-label": "",
             "type": "relationship",
-            "instructions": "Select all actors who have played this character. Most recent actor first.",
-            "required": 0,
+            "instructions": "Select all actors who have played this character, most recent actor first. If there is no actor, use \"None\" and if the actor is unknown, use \"Unknown\"",
+            "required": 1,
             "conditional_logic": 0,
             "wrapper": {
                 "width": "",
@@ -90,46 +90,46 @@
             "post_type": [
                 "post_type_actors"
             ],
+            "post_status": "",
             "taxonomy": "",
             "filters": [
                 "search"
             ],
             "return_format": "id",
-            "min": "",
+            "min": 1,
             "max": "",
             "allow_in_bindings": 0,
+            "elements": "",
             "bidirectional": 0,
-            "bidirectional_target": [],
-            "elements": []
+            "bidirectional_target": []
         },
         {
-            “key”: “field_lwtv_lezchars_character_image_group”,
-            “label”: “Alternate Character Images”,
-            “name”: “lezchars_character_image_group”,
-            “aria-label”: “”,
-            “type”: “gallery”,
-            “instructions”: “Alternate images (crossovers, flashbacks, cartoon versions, etc.)”,
-            “required”: 0,
-            “conditional_logic”: 0,
-            “wrapper”: {
-                “width”: “”,
-                “class”: “”,
-                “id”: “”
+            "key": "field_lwtv_lezchars_character_image_group",
+            "label": "Alternate Character Images",
+            "name": "lezchars_character_image_group",
+            "aria-label": "",
+            "type": "gallery",
+            "instructions": "Alternate images (crossovers, flashbacks, cartoon versions, etc.)",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
             },
-            “return_format”: “id”,
-            “library”: “all”,
-            “min”: 0,
-            “max”: 0,
-            “insert”: “append”,
-            “min_width”: “”,
-            “min_height”: “”,
-            “min_size”: “”,
-            “max_width”: “”,
-            “max_height”: “”,
-            “max_size”: “”,
-            “mime_types”: “”,
-            “allow_in_bindings”: 0,
-            “preview_size”: “medium”
+            "return_format": "id",
+            "library": "all",
+            "min": "",
+            "max": "",
+            "min_width": "",
+            "min_height": "",
+            "min_size": "",
+            "max_width": "",
+            "max_height": "",
+            "max_size": "",
+            "mime_types": "",
+            "insert": "append",
+            "preview_size": "thumbnail"
         }
     ],
     "location": [
@@ -153,5 +153,5 @@
     "display_title": "General Details",
     "allow_ai_access": false,
     "ai_description": "",
-    "modified": 1781549813
+    "modified": 1781717568
 }

@@ -1,6 +1,6 @@
 {
     "key": "group_lwtv_actors_life",
-    "title": "Actor Life Data",
+    "title": "Actor Details #3 (Life Data)",
     "fields": [
         {
             "key": "field_lwtv_lezactors_birth",
@@ -64,5 +64,5 @@
     "display_title": "",
     "allow_ai_access": false,
     "ai_description": "",
-    "modified": 1781120841
+    "modified": 1781716867
 }

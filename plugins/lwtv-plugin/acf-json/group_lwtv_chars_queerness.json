@@ -1,6 +1,6 @@
 {
     "key": "group_lwtv_chars_queerness",
-    "title": "Character Details (Queerness)",
+    "title": "Character Details #1 (Queerness)",
     "fields": [
         {
             "key": "field_lwtv_lezchars_gender",
@@ -102,5 +102,5 @@
     "display_title": "Sexuality and Orientation",
     "allow_ai_access": false,
     "ai_description": "",
-    "modified": 1781194921
+    "modified": 1781716553
 }

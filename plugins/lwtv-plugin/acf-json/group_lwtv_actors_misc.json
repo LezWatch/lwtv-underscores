@@ -1,6 +1,6 @@
 {
     "key": "group_lwtv_actors_misc",
-    "title": "Actor Admin Tools",
+    "title": "Actor Details #4 (Admin Tools)",
     "fields": [
         {
             "key": "field_lwtv_lezactors_wikidata_qid",
@@ -115,5 +115,5 @@
     "display_title": "",
     "allow_ai_access": false,
     "ai_description": "",
-    "modified": 1781121187
+    "modified": 1781716895
 }
