@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [7.0.4] - 2026-06-17
+
+### Fixed
+
+- Failed Action Scheduler actions now respect the configured 3-day retention period after the Action Scheduler update introduced a dedicated `action_scheduler_retention_period_for_failed` filter
+
 ## [7.0.3] - 2026-06-16
 
 ### Fixed
