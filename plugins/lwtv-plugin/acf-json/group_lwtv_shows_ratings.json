@@ -1,6 +1,6 @@
 {
     "key": "group_lwtv_shows_ratings",
-    "title": "Show Details (Relativistic Ratings)",
+    "title": "Show Details #5 (Relativistic Ratings)",
     "fields": [
         {
             "key": "field_lwtv_lezshows_quality_rating",
@@ -9,20 +9,20 @@
             "aria-label": "",
             "type": "number_slider",
             "instructions": "How good is the show for queers? (1 = low, 5 = The L Word)",
-            "required": 0,
+            "required": 1,
             "conditional_logic": 0,
             "wrapper": {
                 "width": "30",
                 "class": "",
                 "id": ""
             },
+            "default_value": 0,
             "slider_min_value": 0,
             "slider_max_value": 5,
             "increment_value": 1,
-            "slider_units": "",
             "slider_append": "",
-            "default_value": 0,
-            "allow_in_bindings": 1
+            "allow_in_bindings": 1,
+            "slider_units": ""
         },
         {
             "key": "field_lwtv_lezshows_quality_details",
@@ -52,20 +52,20 @@
             "aria-label": "",
             "type": "number_slider",
             "instructions": "How realistic are the queers? (1 = low, 5 = The L Word)",
-            "required": 0,
+            "required": 1,
             "conditional_logic": 0,
             "wrapper": {
                 "width": "30",
                 "class": "",
                 "id": ""
             },
+            "default_value": 0,
             "slider_min_value": 0,
             "slider_max_value": 5,
             "increment_value": 1,
-            "slider_units": "",
             "slider_append": "",
-            "default_value": 0,
-            "allow_in_bindings": 1
+            "allow_in_bindings": 1,
+            "slider_units": ""
         },
         {
             "key": "field_lwtv_lezshows_realness_details",
@@ -95,20 +95,20 @@
             "aria-label": "",
             "type": "number_slider",
             "instructions": "How much air-time do the queers get? (1 = low, 5 = The L Word)",
-            "required": 0,
+            "required": 1,
             "conditional_logic": 0,
             "wrapper": {
                 "width": "30",
                 "class": "",
                 "id": ""
             },
+            "default_value": 0,
             "slider_min_value": 0,
             "slider_max_value": 5,
             "increment_value": 1,
-            "slider_units": "",
             "slider_append": "",
-            "default_value": 0,
-            "allow_in_bindings": 1
+            "allow_in_bindings": 1,
+            "slider_units": ""
         },
         {
             "key": "field_lwtv_lezshows_screentime_details",
@@ -153,5 +153,5 @@
     "display_title": "Relativistic Ratings",
     "allow_ai_access": false,
     "ai_description": "",
-    "modified": 1781632293
+    "modified": 1781717671
 }

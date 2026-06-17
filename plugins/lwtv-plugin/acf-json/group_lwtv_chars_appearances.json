@@ -1,6 +1,6 @@
 {
     "key": "group_lwtv_chars_appearances",
-    "title": "Character Appearances",
+    "title": "Character Details #3 (Appearances)",
     "fields": [
         {
             "key": "field_lwtv_lezchars_show_group",
@@ -9,7 +9,7 @@
             "aria-label": "",
             "type": "repeater",
             "instructions": "Add one row per show. Use 'Add Another Show' for crossovers and recurring appearances.",
-            "required": 0,
+            "required": 1,
             "conditional_logic": 0,
             "wrapper": {
                 "width": "",
@@ -18,7 +18,7 @@
             },
             "layout": "block",
             "pagination": 0,
-            "min": 0,
+            "min": 1,
             "max": 0,
             "collapsed": "field_lwtv_lezchars_show_group_show",
             "button_label": "Add A Show",
@@ -134,5 +134,5 @@
     "display_title": "",
     "allow_ai_access": false,
     "ai_description": "",
-    "modified": 1781202757
+    "modified": 1781716654
 }

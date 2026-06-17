@@ -1,6 +1,6 @@
 {
     "key": "group_lwtv_shows_worthit",
-    "title": "Show Details (Worth Watching)",
+    "title": "Show Details #3 (Worth Watching)",
     "fields": [
         {
             "key": "field_lwtv_lezshows_worthit_rating",
@@ -9,7 +9,7 @@
             "aria-label": "",
             "type": "select",
             "instructions": "Is this show worth watching?",
-            "required": 0,
+            "required": 1,
             "conditional_logic": 0,
             "wrapper": {
                 "width": "30",
@@ -76,5 +76,5 @@
     "display_title": "Worth Watching Details",
     "allow_ai_access": false,
     "ai_description": "",
-    "modified": 1781128739
+    "modified": 1781717650
 }

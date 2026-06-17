@@ -1,6 +1,6 @@
 {
     "key": "group_lwtv_actors_socials",
-    "title": "Actor Social Media",
+    "title": "Actor Details #2 (Social Media)",
     "fields": [
         {
             "key": "field_lwtv_lezactors_imdb",
@@ -12,12 +12,13 @@
             "required": 0,
             "conditional_logic": 0,
             "wrapper": {
-                "width": "",
+                "width": "20",
                 "class": "",
                 "id": ""
             },
             "default_value": "",
             "maxlength": "",
+            "allow_in_bindings": 1,
             "placeholder": "Ex: nm6087250",
             "prepend": "",
             "append": ""
@@ -32,11 +33,12 @@
             "required": 0,
             "conditional_logic": 0,
             "wrapper": {
-                "width": "",
+                "width": "40",
                 "class": "",
                 "id": ""
             },
             "default_value": "",
+            "allow_in_bindings": 1,
             "placeholder": "https:\/\/en.wikipedia.org\/wiki\/Caity_Lotz"
         },
         {
@@ -49,11 +51,12 @@
             "required": 0,
             "conditional_logic": 0,
             "wrapper": {
-                "width": "",
+                "width": "40",
                 "class": "",
                 "id": ""
             },
             "default_value": "",
+            "allow_in_bindings": 1,
             "placeholder": "https:\/\/actorname.com"
         },
         {
@@ -288,5 +291,5 @@
     "display_title": "",
     "allow_ai_access": false,
     "ai_description": "",
-    "modified": 1781120984
+    "modified": 1781716819
 }

@@ -1,6 +1,6 @@
 {
     "key": "group_lwtv_shows_editorial",
-    "title": "Show Editorial Section",
+    "title": "Show Details #3.5 (Editorial Section)",
     "fields": [
         {
             "key": "field_lwtv_lezshows_worthit_show_we_love",
@@ -66,5 +66,5 @@
     "display_title": "Editorial Section (Staff Only)",
     "allow_ai_access": false,
     "ai_description": "",
-    "modified": 1781127972
+    "modified": 1781716082
 }

@@ -1,6 +1,6 @@
 {
     "key": "group_lwtv_debug_logging",
-    "title": "Debug Logging Options",
+    "title": "Options - Debug Logging",
     "fields": [
         {
             "key": "field_lwtv_debug_mode",
@@ -8,7 +8,7 @@
             "name": "debug_mode",
             "aria-label": "",
             "type": "true_false",
-            "instructions": "Enable debug logging for LWTV plugin. Log file: wp-content/debug-lwtv.log",
+            "instructions": "Enable debug logging for LWTV plugin. Log file: wp-content\/debug-lwtv.log",
             "required": 0,
             "conditional_logic": 0,
             "wrapper": {
@@ -44,7 +44,8 @@
             "save_custom": 0,
             "layout": "vertical",
             "toggle": 0,
-            "allow_in_bindings": 0
+            "allow_in_bindings": 0,
+            "custom_choice_button_text": "Add new choice"
         }
     ],
     "location": [
@@ -61,12 +62,12 @@
     "style": "default",
     "label_placement": "top",
     "instruction_placement": "label",
-    "hide_on_screen": [],
+    "hide_on_screen": "",
     "active": true,
     "description": "Debug logging settings",
     "show_in_rest": 0,
     "display_title": "Debug Logging Options",
     "allow_ai_access": false,
     "ai_description": "",
-    "modified": 1749600000
+    "modified": 1781716678
 }

@@ -1,6 +1,6 @@
 {
     "key": "group_lwtv_shows_relationships",
-    "title": "Show Plots and Relationship Details",
+    "title": "Show Details #6 (Plots and Relationship Details)",
     "fields": [
         {
             "key": "field_lwtv_lezshows_ships",
@@ -33,15 +33,16 @@
             "required": 0,
             "conditional_logic": 0,
             "wrapper": {
-                "width": "",
+                "width": "50",
                 "class": "",
                 "id": ""
             },
             "default_value": "",
+            "allow_in_bindings": 1,
             "tabs": "all",
             "toolbar": "basic",
             "media_upload": 0,
-            "delay": 0
+            "delay": 1
         },
         {
             "key": "field_lwtv_lezshows_episodes",
@@ -53,15 +54,16 @@
             "required": 0,
             "conditional_logic": 0,
             "wrapper": {
-                "width": "",
+                "width": "50",
                 "class": "",
                 "id": ""
             },
             "default_value": "",
+            "allow_in_bindings": 1,
             "tabs": "all",
             "toolbar": "basic",
             "media_upload": 0,
-            "delay": 0
+            "delay": 1
         }
     ],
     "location": [
@@ -85,5 +87,5 @@
     "display_title": "Plots and Relationship Details",
     "allow_ai_access": false,
     "ai_description": "",
-    "modified": 1781128708
+    "modified": 1781716099
 }
