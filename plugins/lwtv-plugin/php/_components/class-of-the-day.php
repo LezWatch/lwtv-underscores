@@ -113,9 +113,14 @@ class Of_The_Day implements Component, Templater {
 			//[04-Dec-2025 19:07:35 UTC] [Byq-debug] Queery: [{"id":"1494","post_datetime":"2025-12-04 13:01:31","created":"2025-12-04","posts_id":"42546","posts_type":"show","content":"The LezWatch.TV show of the day is \"Cuckoo,\" with 2 characters and an overall score of 53.25. - #LWTVsotd #Cuckoo - https:\/\/lwtv.local\/show\/cuckoo\/"}]
 			// If there's NO entry, we can make one.
 			if ( 0 === $maybe_existing_otd || empty( $maybe_existing_otd ) ) {
-				$new_otd            = $this->of_the_day( $a_type, 'default' );
-				$new_otd['content'] = $this->add_to_table( $a_type, $new_otd );
-				lwtv_plugin()->debug_log( 'postiz', 'Added OTD to table: ' . wp_json_encode( $new_otd ) );
+				$new_otd = $this->of_the_day( $a_type, 'default' );
+				if ( ! is_wp_error( $new_otd ) && ! empty( $new_otd ) ) {
+					$new_otd['content'] = $this->add_to_table( $a_type, $new_otd );
+					lwtv_plugin()->debug_log( 'postiz', 'Added OTD to table: ' . wp_json_encode( $new_otd ) );
+				} else {
+					lwtv_plugin()->debug_log( 'postiz', 'No eligible ' . $a_type . ' found for OTD.' );
+					$new_otd = null;
+				}
 			} else {
 				$new_otd = $maybe_existing_otd[0];
 
@@ -128,7 +133,21 @@ class Of_The_Day implements Component, Templater {
 				// Add 'pid' for consistency with CLI and Postiz code
 				$new_otd['pid'] = $new_otd['posts_id'];
 
-				lwtv_plugin()->debug_log( 'postiz', 'OTD already exists: ' . wp_json_encode( $new_otd ) );
+				// If the stored row has no valid post ID, treat it as missing and regenerate.
+				if ( empty( $new_otd['pid'] ) || 0 === (int) $new_otd['pid'] ) {
+					$wpdb->delete( $table, array( 'id' => $new_otd['id'] ) );
+					$regenerated = $this->of_the_day( $a_type, 'default' );
+					if ( ! is_wp_error( $regenerated ) && ! empty( $regenerated ) ) {
+						$regenerated['content'] = $this->add_to_table( $a_type, $regenerated );
+						$new_otd                = $regenerated;
+						lwtv_plugin()->debug_log( 'postiz', 'Re-generated OTD (replaced invalid row): ' . wp_json_encode( $new_otd ) );
+					} else {
+						lwtv_plugin()->debug_log( 'postiz', 'No eligible ' . $a_type . ' found for OTD during regeneration.' );
+						$new_otd = null;
+					}
+				} else {
+					lwtv_plugin()->debug_log( 'postiz', 'OTD already exists: ' . wp_json_encode( $new_otd ) );
+				}
 			}
 		}
 
@@ -270,9 +289,8 @@ class Of_The_Day implements Component, Templater {
 		);
 		$options = get_option( 'lwtv_otd', $default );
 
-		// If there's no ID or the timestamp has past, we need a new ID
-		// Or if we're in dev mode.
-		if ( 'none' === $options[ $type ]['post'] || time() >= $options[ $type ]['time'] || ( defined( 'LWTV_DEV_SITE' ) && LWTV_DEV_SITE ) ) {
+		// If there's no ID, the ID is invalid, the timestamp has passed, or we're in dev mode, get a new ID.
+		if ( 'none' === $options[ $type ]['post'] || empty( $options[ $type ]['post'] ) || 0 === (int) $options[ $type ]['post'] || time() >= $options[ $type ]['time'] || ( defined( 'LWTV_DEV_SITE' ) && LWTV_DEV_SITE ) ) {
 			// Get the show ID
 			$id = self::find_char_show( $type, $date );
 
@@ -289,7 +307,12 @@ class Of_The_Day implements Component, Templater {
 		}
 
 		$post_id = $options[ $type ]['post'];
-		$image   = ( has_post_thumbnail( $post_id ) ) ? get_the_post_thumbnail_url( $post_id, 'full' ) : get_site_icon_url();
+
+		if ( empty( $post_id ) || 0 === (int) $post_id ) {
+			return array();
+		}
+
+		$image = ( has_post_thumbnail( $post_id ) ) ? get_the_post_thumbnail_url( $post_id, 'full' ) : get_site_icon_url();
 
 		// Build the Base Array:
 		$return = array(
@@ -477,8 +500,10 @@ class Of_The_Day implements Component, Templater {
 
 		if ( false === $eligible_posts ) {
 			$eligible_posts = $this->get_eligible_posts( $type, $date );
-			// Cache for 12 hours
-			lwtv_plugin()->set_transient( $cache_key, $eligible_posts, 12 * HOUR_IN_SECONDS );
+			// Only cache non-empty results — an empty result may be a transient data issue.
+			if ( ! empty( $eligible_posts ) ) {
+				lwtv_plugin()->set_transient( $cache_key, $eligible_posts, 12 * HOUR_IN_SECONDS );
+			}
 		}
 
 		if ( empty( $eligible_posts ) ) {
@@ -540,13 +565,13 @@ class Of_The_Day implements Component, Templater {
 					AND p.post_status = 'publish'
 					AND p.post_content NOT LIKE %s
 					AND pm1.meta_value NOT IN ($mystery_string)
-					AND pm2.meta_value LIKE %s
+					AND pm2.meta_value > 0
 					AND (pm3.meta_value IS NULL OR pm3.meta_value < %d)
 					$tax_conditions
 					ORDER BY p.ID";
 
 				// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- Complex query with proper escaping
-				$results = $wpdb->get_results( $wpdb->prepare( $query, $post_type, '%TBD%', '%re%', time() ) );
+				$results = $wpdb->get_results( $wpdb->prepare( $query, $post_type, '%TBD%', time() ) );
 
 				// Additional validation for characters
 				foreach ( $results as $row ) {
