@@ -1,7 +1,25 @@
 {
     "key": "group_lwtv_actors_details",
-    "title": "Actor Details #1 (Basics)",
+    "title": "Actor Details",
     "fields": [
+        {
+            "key": "field_6a330b6c4888b",
+            "label": "Gender\/Sexuality",
+            "name": "",
+            "aria-label": "",
+            "type": "tab",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "placement": "top",
+            "endpoint": 0,
+            "selected": 0
+        },
         {
             "key": "field_lwtv_lezactors_gender",
             "label": "Gender",
@@ -135,6 +153,476 @@
             "multiple": 0,
             "allow_null": 0,
             "bidirectional_target": []
+        },
+        {
+            "key": "field_6a330c45ece78",
+            "label": "Life Details",
+            "name": "",
+            "aria-label": "",
+            "type": "tab",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "placement": "top",
+            "endpoint": 0,
+            "selected": 0
+        },
+        {
+            "key": "field_lwtv_lezactors_birth",
+            "label": "Date of Birth",
+            "name": "lezactors_birth",
+            "aria-label": "",
+            "type": "date_picker",
+            "instructions": "If known",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "display_format": "Y-m-d",
+            "return_format": "Y-m-d",
+            "first_day": 1,
+            "default_to_current_date": 0,
+            "allow_in_bindings": 1
+        },
+        {
+            "key": "field_lwtv_lezactors_death",
+            "label": "Date of Death",
+            "name": "lezactors_death",
+            "aria-label": "",
+            "type": "date_picker",
+            "instructions": "If applicable",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "display_format": "Y-m-d",
+            "return_format": "Y-m-d",
+            "first_day": 1,
+            "default_to_current_date": 0,
+            "allow_in_bindings": 1
+        },
+        {
+            "key": "field_6a3317b4b7c5f",
+            "label": "Verified Sources",
+            "name": "",
+            "aria-label": "",
+            "type": "tab",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "placement": "top",
+            "endpoint": 0,
+            "selected": 0
+        },
+        {
+            "key": "field_lwtv_lezactors_imdb",
+            "label": "IMDb",
+            "name": "lezactors_imdb",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "Actor's IMDb ID",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "allow_in_bindings": 1,
+            "placeholder": "Ex: nm6087250",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_lwtv_lezactors_wikidata_qid",
+            "label": "WikiData ID",
+            "name": "lezactors_wikidata_qid",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "Enter a WikiData QID for this actor to override the automated check.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "allow_in_bindings": 1,
+            "placeholder": "Ex: Q2933359",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_lwtv_lezactors_wikipedia",
+            "label": "WikiPedia URL",
+            "name": "lezactors_wikipedia",
+            "aria-label": "",
+            "type": "url",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "allow_in_bindings": 1,
+            "placeholder": "https:\/\/en.wikipedia.org\/wiki\/Caity_Lotz"
+        },
+        {
+            "key": "field_lwtv_lezactors_homepage",
+            "label": "Homepage URL",
+            "name": "lezactors_homepage",
+            "aria-label": "",
+            "type": "url",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "allow_in_bindings": 1,
+            "placeholder": "https:\/\/actorname.com"
+        },
+        {
+            "key": "field_6a330bf0ad7ba",
+            "label": "Social Media",
+            "name": "",
+            "aria-label": "",
+            "type": "tab",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "placement": "top",
+            "endpoint": 0,
+            "selected": 0
+        },
+        {
+            "key": "field_lwtv_lezactors_twitter",
+            "label": "X (Twitter)",
+            "name": "lezactors_twitter",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "allow_in_bindings": 1,
+            "placeholder": "Ex: aliliebert - without the @",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_lwtv_lezactors_bluesky",
+            "label": "BlueSky",
+            "name": "lezactors_bluesky",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "allow_in_bindings": 1,
+            "placeholder": "Ex: https:\/\/bsky.app\/profile\/jerilryan.bsky.social",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_lwtv_lezactors_instagram",
+            "label": "Instagram",
+            "name": "lezactors_instagram",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "allow_in_bindings": 1,
+            "placeholder": "Ex: whododatlikedat",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_lwtv_lezactors_has_threads",
+            "label": "Threads",
+            "name": "lezactors_has_threads",
+            "aria-label": "",
+            "type": "true_false",
+            "instructions": "Check if the actor has a Threads account.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "message": "",
+            "default_value": 0,
+            "allow_in_bindings": 1,
+            "ui": 0,
+            "ui_on_text": "",
+            "ui_off_text": ""
+        },
+        {
+            "key": "field_lwtv_lezactors_tumblr",
+            "label": "Tumblr",
+            "name": "lezactors_tumblr",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "allow_in_bindings": 1,
+            "placeholder": "Ex: tiredandlonelymuse (remove .tumblr.com)",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_lwtv_lezactors_mastodon",
+            "label": "Mastodon",
+            "name": "lezactors_mastodon",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "allow_in_bindings": 1,
+            "placeholder": "Ex: https:\/\/mastodon.instance\/@username",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_lwtv_lezactors_facebook",
+            "label": "Facebook",
+            "name": "lezactors_facebook",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "allow_in_bindings": 1,
+            "placeholder": "Ex: https:\/\/facebook.com\/username",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_lwtv_lezactors_tiktok",
+            "label": "TikTok",
+            "name": "lezactors_tiktok",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "allow_in_bindings": 1,
+            "placeholder": "Ex: @reesewitherspoon - WITH the @",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_lwtv_lezactors_youtube",
+            "label": "YouTube Channel",
+            "name": "lezactors_youtube",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "allow_in_bindings": 1,
+            "placeholder": "Ex: https:\/\/www.youtube.com\/channel\/UCZurPHz2JX2zFW0qPOnuMwQ",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_lwtv_lezactors_twitch",
+            "label": "Twitch Channel",
+            "name": "lezactors_twitch",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "allow_in_bindings": 1,
+            "placeholder": "Ex: https:\/\/www.twitch.tv\/criticalrole",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_6a330c60ece79",
+            "label": "Administrative",
+            "name": "",
+            "aria-label": "",
+            "type": "tab",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "placement": "top",
+            "endpoint": 0,
+            "selected": 0
+        },
+        {
+            "key": "field_lwtv_actors_excerpt",
+            "label": "Additional Notes",
+            "name": "excerpt",
+            "aria-label": "",
+            "type": "textarea",
+            "instructions": "Enter any terms here that should be used for search. For example, if someone changed their name, you would list their deadname here so it can be searched.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "100",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "allow_in_bindings": 1,
+            "rows": 4,
+            "placeholder": "",
+            "new_lines": ""
+        },
+        {
+            "key": "field_lwtv_lezactors_make_private",
+            "label": "Make specific data private",
+            "name": "lezactors_make_option_private",
+            "aria-label": "",
+            "type": "checkbox",
+            "instructions": "Check the boxes for the data you want to make private. If \"All\" is selected, the page will be private.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "30",
+                "class": "",
+                "id": ""
+            },
+            "choices": {
+                "hide_all": "Hide All",
+                "hide_dob": "Date of Birth",
+                "hide_socials": "Social Media"
+            },
+            "default_value": [],
+            "return_format": "value",
+            "allow_custom": 0,
+            "allow_in_bindings": 1,
+            "layout": "vertical",
+            "toggle": 0,
+            "save_custom": 0,
+            "custom_choice_button_text": "Add new choice"
+        },
+        {
+            "key": "field_lwtv_lezactors_private_notes",
+            "label": "Details on why an actor is private",
+            "name": "lezactors_make_option_private_notes",
+            "aria-label": "",
+            "type": "textarea",
+            "instructions": "If we got an email or any such notes, we can put them here.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "70",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "allow_in_bindings": 1,
+            "rows": 6,
+            "placeholder": "",
+            "new_lines": ""
         }
     ],
     "location": [
@@ -153,13 +641,18 @@
     "instruction_placement": "label",
     "hide_on_screen": [
         "excerpt",
-        "author"
+        "discussion",
+        "comments",
+        "author",
+        "page_attributes",
+        "categories",
+        "tags"
     ],
     "active": true,
-    "description": "Gender, Sexuality, and Pronoun Data",
+    "description": "All information about Actors",
     "show_in_rest": 1,
     "display_title": "",
     "allow_ai_access": false,
     "ai_description": "",
-    "modified": 1781717491
+    "modified": 1781733811
 }

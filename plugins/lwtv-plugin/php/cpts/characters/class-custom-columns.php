@@ -52,7 +52,8 @@ class Custom_Columns {
 	public function manage_posts_custom_column( $column, $post_id ) {
 
 		// Use ACF data after migration; fall back to raw meta before migration runs.
-		$character_show_ids = get_field( 'lezchars_show_group', $post_id ) ? get_field( 'lezchars_show_group', $post_id ) : get_post_meta( $post_id, 'lezchars_show_group', true );
+		$char_show_group    = get_field( 'lezchars_show_group', $post_id );
+		$character_show_ids = $char_show_group ? $char_show_group : get_post_meta( $post_id, 'lezchars_show_group', true );
 		$show_title         = array();
 		$role_array         = array();
 
