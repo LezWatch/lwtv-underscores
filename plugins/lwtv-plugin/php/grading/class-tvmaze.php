@@ -37,9 +37,7 @@ class TVMaze {
 	 * @return float
 	 */
 	public function get_score( int $show_id ): float {
-		// External scores
 		$external = get_post_meta( $show_id, 'lezshows_3rd_scores', true );
-
 		return ( isset( $external['tvmaze']['score'] ) ) ? round( (int) $external['tvmaze']['score'] ) : '0.00';
 	}
 

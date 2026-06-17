@@ -91,6 +91,9 @@ class ACF {
 		add_filter( 'acf/load_value/name=lezactors_gender', array( $this, 'load_actor_gender_default' ), 10, 3 );
 		add_filter( 'acf/load_value/name=lezactors_sexuality', array( $this, 'load_actor_sexuality_default' ), 10, 3 );
 
+		// Characters: improve search for the Show post_object field.
+		add_filter( 'acf/fields/post_object/query/key=field_lwtv_lezchars_show_group_show', array( $this, 'show_post_object_query' ) );
+
 		// Characters: improve search for the Actor relationship field.
 		add_filter( 'acf/fields/relationship/query/name=lezchars_actor', array( $this, 'actor_query' ) );
 
@@ -425,6 +428,30 @@ class ACF {
 			$field['choices'][ (string) $year ] = (string) $year;
 		}
 		return $field;
+	}
+
+	/**
+	 * Tune the WP_Query for the Characters → Show post_object field search.
+	 *
+	 * Default: newest first. On search: relevance ordering.
+	 * For short terms (≤4 chars, e.g. "ER") also constrain to exact title matches
+	 * so common letters don't flood the results.
+	 *
+	 * @param array $args WP_Query args built by ACF for the post_object search.
+	 * @return array
+	 */
+	public function show_post_object_query( array $args ): array {
+		if ( ! empty( $args['s'] ) ) {
+			$args['orderby'] = 'relevance';
+			unset( $args['order'] );
+			if ( 4 > strlen( $args['s'] ) ) {
+				$args['title'] = $args['s'];
+			}
+		} else {
+			$args['orderby'] = 'date';
+			$args['order']   = 'DESC';
+		}
+		return $args;
 	}
 
 	/**

@@ -100,7 +100,7 @@
         },
         {
             "key": "field_6a330ebd6d5d5",
-            "label": "General",
+            "label": "General Info.",
             "name": "",
             "aria-label": "",
             "type": "tab",
@@ -118,7 +118,7 @@
         },
         {
             "key": "field_lwtv_lezchars_cliches",
-            "label": "Clichés",
+            "label": "Character Clichés",
             "name": "lezchars_cliches",
             "aria-label": "",
             "type": "taxonomy",
@@ -148,7 +148,7 @@
             "name": "lezchars_death_year",
             "aria-label": "",
             "type": "repeater",
-            "instructions": "If the character has died, add the episode airdate when it happened. Use pilot date for pre-pilot deaths. Multiple entries for characters who die more than once.",
+            "instructions": "If the character is dead, add the episode airdate when they died. Use pilot date for pre-pilot deaths. Multiple entries for characters who die more than once.",
             "required": 0,
             "conditional_logic": 0,
             "wrapper": {
@@ -160,8 +160,8 @@
             "pagination": 0,
             "min": 0,
             "max": 0,
-            "collapsed": "field_lwtv_lezchars_death_year_date",
-            "button_label": "Add Date",
+            "collapsed": "",
+            "button_label": "Add Death Date",
             "rows_per_page": 20,
             "sub_fields": [
                 {
@@ -188,26 +188,8 @@
             ]
         },
         {
-            "key": "field_6a331a012b65f",
-            "label": "Actors",
-            "name": "",
-            "aria-label": "",
-            "type": "tab",
-            "instructions": "",
-            "required": 0,
-            "conditional_logic": 0,
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "placement": "top",
-            "endpoint": 0,
-            "selected": 0
-        },
-        {
             "key": "field_lwtv_lezchars_actor",
-            "label": "Name(s)",
+            "label": "Actor Name(s)",
             "name": "lezchars_actor",
             "aria-label": "",
             "type": "relationship",
@@ -234,24 +216,6 @@
             "elements": "",
             "bidirectional": 0,
             "bidirectional_target": []
-        },
-        {
-            "key": "field_6a331a70211af",
-            "label": "Alternate Images",
-            "name": "",
-            "aria-label": "",
-            "type": "tab",
-            "instructions": "",
-            "required": 0,
-            "conditional_logic": 0,
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "placement": "top",
-            "endpoint": 0,
-            "selected": 0
         },
         {
             "key": "field_lwtv_lezchars_character_image_group",
@@ -301,7 +265,7 @@
         },
         {
             "key": "field_lwtv_lezchars_show_group",
-            "label": "Shows, Roles, and Years",
+            "label": "Show Appearances",
             "name": "lezchars_show_group",
             "aria-label": "",
             "type": "repeater",
@@ -431,5 +395,5 @@
     "display_title": "",
     "allow_ai_access": false,
     "ai_description": "",
-    "modified": 1781734178
+    "modified": 1781731036
 }

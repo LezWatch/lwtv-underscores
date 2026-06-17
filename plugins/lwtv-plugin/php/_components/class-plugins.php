@@ -10,7 +10,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 use LWTV\Plugins\ACF;
 use LWTV\Plugins\ActionScheduler;
-use LWTV\Plugins\CMB2;
 use LWTV\Plugins\Comment_Probation;
 use LWTV\Plugins\FacetWP;
 use LWTV\Plugins\Gravity_Forms;
@@ -30,7 +29,6 @@ class Plugins implements Component, Templater {
 	public function init(): void {
 		new ACF();
 		new ActionScheduler();
-		new CMB2();
 		new Comment_Probation();
 		new FacetWP();
 		new Gravity_Forms();

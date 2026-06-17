@@ -1,6 +1,6 @@
 {
     "key": "group_lwtv_term_watch_urls",
-    "title": "Watch URL Settings",
+    "title": "Terms - Watch URL Settings",
     "fields": [
         {
             "key": "field_lwtv_lezwatchurls_setting_hide_display",
@@ -30,7 +30,7 @@
             "aria-label": "",
             "type": "repeater",
             "instructions": "URLs used by this provider.",
-            "required": 0,
+            "required": 1,
             "conditional_logic": 0,
             "wrapper": {
                 "width": "",
@@ -39,7 +39,7 @@
             },
             "layout": "table",
             "pagination": 0,
-            "min": 0,
+            "min": 1,
             "max": 0,
             "collapsed": "",
             "button_label": "Add Another URL",
@@ -60,7 +60,7 @@
                         "id": ""
                     },
                     "default_value": "",
-                    "placeholder": "https://paramountplus.com/",
+                    "placeholder": "https:\/\/paramountplus.com\/",
                     "parent_repeater": "field_lwtv_lezwatchurls_all"
                 }
             ]
@@ -80,12 +80,12 @@
     "style": "default",
     "label_placement": "top",
     "instruction_placement": "label",
-    "hide_on_screen": [],
+    "hide_on_screen": "",
     "active": true,
     "description": "Settings and URLs for watch URL taxonomy terms",
     "show_in_rest": 0,
     "display_title": "Watch URL Settings",
     "allow_ai_access": false,
     "ai_description": "",
-    "modified": 1749600000
+    "modified": 1781717460
 }

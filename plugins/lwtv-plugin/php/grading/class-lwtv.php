@@ -40,7 +40,8 @@ class LWTV {
 	 * @return float
 	 */
 	public function get_score( int $show_id ): float {
-		return ( get_post_meta( $show_id, 'lezshows_the_score', true ) && is_numeric( (int) get_post_meta( $show_id, 'lezshows_the_score', true ) ) ) ? round( min( (int) get_post_meta( $show_id, 'lezshows_the_score', true ), 100 ) ) : '0.00';
+		$score = get_post_meta( $show_id, 'lezshows_the_score', true );
+		return ( $score && is_numeric( (int) $score ) ) ? round( min( (int) $score, 100 ) ) : '0.00';
 	}
 
 	/**
