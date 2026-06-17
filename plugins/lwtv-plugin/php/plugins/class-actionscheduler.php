@@ -36,6 +36,13 @@ class ActionScheduler {
 	private $retention_period = 3 * DAY_IN_SECONDS;
 
 	/**
+	 * Retention period for failed actions
+	 *
+	 * @var int
+	 */
+	private $retention_period_for_failed = 3 * DAY_IN_SECONDS;
+
+	/**
 	 * Concurrent queues
 	 *
 	 * @var int
@@ -58,6 +65,7 @@ class ActionScheduler {
 	private function run_filters() {
 		$this->cleanup_batch_size();
 		$this->retention_period();
+		$this->retention_period_for_failed();
 		$this->default_cleaner_statuses();
 		$this->aioseo_seo_analyzer_next_scan();
 		$this->concurrent_queues();
@@ -88,7 +96,19 @@ class ActionScheduler {
 	}
 
 	/**
-	 * Tell AS to clean up failed actions
+	 * Adjust retention period for failed actions (AS 3.x dedicated filter)
+	 */
+	private function retention_period_for_failed() {
+		add_filter(
+			'action_scheduler_retention_period_for_failed',
+			function () {
+				return $this->retention_period_for_failed;
+			}
+		);
+	}
+
+	/**
+	 * Tell AS to clean up failed actions (safety net for older AS versions)
 	 */
 	private function default_cleaner_statuses() {
 		add_filter(
