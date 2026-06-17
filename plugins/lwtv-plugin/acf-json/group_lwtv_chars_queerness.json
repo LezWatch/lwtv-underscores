@@ -1,0 +1,435 @@
+{
+    "key": "group_lwtv_chars_queerness",
+    "title": "Character Details",
+    "fields": [
+        {
+            "key": "field_6a330e9c6d5d4",
+            "label": "Queerness",
+            "name": "",
+            "aria-label": "",
+            "type": "tab",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "placement": "top",
+            "endpoint": 0,
+            "selected": 0
+        },
+        {
+            "key": "field_lwtv_lezchars_gender",
+            "label": "Gender",
+            "name": "lezchars_gender",
+            "aria-label": "",
+            "type": "taxonomy",
+            "instructions": "Gender identity",
+            "required": 1,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "taxonomy": "lez_gender",
+            "add_term": 0,
+            "save_terms": 1,
+            "load_terms": 1,
+            "return_format": "id",
+            "field_type": "select",
+            "allow_null": 0,
+            "allow_in_bindings": 0,
+            "bidirectional": 0,
+            "multiple": 0,
+            "bidirectional_target": []
+        },
+        {
+            "key": "field_lwtv_lezchars_sexuality",
+            "label": "Sexuality",
+            "name": "lezchars_sexuality",
+            "aria-label": "",
+            "type": "taxonomy",
+            "instructions": "Sexual orientation",
+            "required": 1,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "taxonomy": "lez_sexuality",
+            "add_term": 0,
+            "save_terms": 1,
+            "load_terms": 1,
+            "return_format": "id",
+            "field_type": "select",
+            "allow_null": 0,
+            "allow_in_bindings": 0,
+            "bidirectional": 0,
+            "multiple": 0,
+            "bidirectional_target": []
+        },
+        {
+            "key": "field_lwtv_lezchars_romantic",
+            "label": "Romantic",
+            "name": "lezchars_romantic",
+            "aria-label": "",
+            "type": "taxonomy",
+            "instructions": "Romantic orientation",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "taxonomy": "lez_romantic",
+            "add_term": 0,
+            "save_terms": 1,
+            "load_terms": 1,
+            "return_format": "id",
+            "field_type": "select",
+            "allow_null": 1,
+            "allow_in_bindings": 0,
+            "bidirectional": 0,
+            "multiple": 0,
+            "bidirectional_target": []
+        },
+        {
+            "key": "field_6a330ebd6d5d5",
+            "label": "General",
+            "name": "",
+            "aria-label": "",
+            "type": "tab",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "placement": "top",
+            "endpoint": 0,
+            "selected": 0
+        },
+        {
+            "key": "field_lwtv_lezchars_cliches",
+            "label": "Clichés",
+            "name": "lezchars_cliches",
+            "aria-label": "",
+            "type": "taxonomy",
+            "instructions": "",
+            "required": 1,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "taxonomy": "lez_cliches",
+            "add_term": 0,
+            "save_terms": 1,
+            "load_terms": 1,
+            "return_format": "id",
+            "field_type": "multi_select",
+            "allow_null": 1,
+            "allow_in_bindings": 0,
+            "bidirectional": 0,
+            "multiple": 0,
+            "bidirectional_target": []
+        },
+        {
+            "key": "field_lwtv_lezchars_death_year",
+            "label": "Date(s) of Death",
+            "name": "lezchars_death_year",
+            "aria-label": "",
+            "type": "repeater",
+            "instructions": "If the character has died, add the episode airdate when it happened. Use pilot date for pre-pilot deaths. Multiple entries for characters who die more than once.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "layout": "table",
+            "pagination": 0,
+            "min": 0,
+            "max": 0,
+            "collapsed": "field_lwtv_lezchars_death_year_date",
+            "button_label": "Add Date",
+            "rows_per_page": 20,
+            "sub_fields": [
+                {
+                    "key": "field_lwtv_lezchars_death_year_date",
+                    "label": "Date",
+                    "name": "date",
+                    "aria-label": "",
+                    "type": "date_picker",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "display_format": "Y-m-d",
+                    "return_format": "Y-m-d",
+                    "first_day": 1,
+                    "allow_in_bindings": 0,
+                    "default_to_current_date": 0,
+                    "parent_repeater": "field_lwtv_lezchars_death_year"
+                }
+            ]
+        },
+        {
+            "key": "field_6a331a012b65f",
+            "label": "Actors",
+            "name": "",
+            "aria-label": "",
+            "type": "tab",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "placement": "top",
+            "endpoint": 0,
+            "selected": 0
+        },
+        {
+            "key": "field_lwtv_lezchars_actor",
+            "label": "Name(s)",
+            "name": "lezchars_actor",
+            "aria-label": "",
+            "type": "relationship",
+            "instructions": "Select all actors who have played this character, most recent actor first. If there is no actor, use \"None\" and if the actor is unknown, use \"Unknown\"",
+            "required": 1,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "post_type": [
+                "post_type_actors"
+            ],
+            "post_status": "",
+            "taxonomy": "",
+            "filters": [
+                "search"
+            ],
+            "return_format": "id",
+            "min": 1,
+            "max": "",
+            "allow_in_bindings": 0,
+            "elements": "",
+            "bidirectional": 0,
+            "bidirectional_target": []
+        },
+        {
+            "key": "field_6a331a70211af",
+            "label": "Alternate Images",
+            "name": "",
+            "aria-label": "",
+            "type": "tab",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "placement": "top",
+            "endpoint": 0,
+            "selected": 0
+        },
+        {
+            "key": "field_lwtv_lezchars_character_image_group",
+            "label": "Alternate Character Images",
+            "name": "lezchars_character_image_group",
+            "aria-label": "",
+            "type": "gallery",
+            "instructions": "Alternate images (crossovers, flashbacks, cartoon versions, etc.)",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "return_format": "id",
+            "library": "all",
+            "min": "",
+            "max": "",
+            "min_width": "",
+            "min_height": "",
+            "min_size": "",
+            "max_width": "",
+            "max_height": "",
+            "max_size": "",
+            "mime_types": "",
+            "insert": "append",
+            "preview_size": "thumbnail"
+        },
+        {
+            "key": "field_6a330ece6d5d6",
+            "label": "Appearances",
+            "name": "",
+            "aria-label": "",
+            "type": "tab",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "placement": "top",
+            "endpoint": 0,
+            "selected": 0
+        },
+        {
+            "key": "field_lwtv_lezchars_show_group",
+            "label": "Shows, Roles, and Years",
+            "name": "lezchars_show_group",
+            "aria-label": "",
+            "type": "repeater",
+            "instructions": "Add one row per show. Use 'Add Another Show' for crossovers and recurring appearances.",
+            "required": 1,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "layout": "block",
+            "pagination": 0,
+            "min": 1,
+            "max": 0,
+            "collapsed": "field_lwtv_lezchars_show_group_show",
+            "button_label": "Add A Show",
+            "rows_per_page": 20,
+            "sub_fields": [
+                {
+                    "key": "field_lwtv_lezchars_show_group_show",
+                    "label": "TV Show",
+                    "name": "show",
+                    "aria-label": "",
+                    "type": "post_object",
+                    "instructions": "Select one show and one show only. If the character is on multiple shows, add another row.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "50",
+                        "class": "",
+                        "id": ""
+                    },
+                    "post_type": [
+                        "post_type_shows"
+                    ],
+                    "post_status": "",
+                    "taxonomy": "",
+                    "return_format": "id",
+                    "multiple": 0,
+                    "allow_null": 0,
+                    "allow_in_bindings": 0,
+                    "bidirectional": 0,
+                    "ui": 1,
+                    "bidirectional_target": [],
+                    "parent_repeater": "field_lwtv_lezchars_show_group"
+                },
+                {
+                    "key": "field_lwtv_lezchars_show_group_type",
+                    "label": "Character Type",
+                    "name": "type",
+                    "aria-label": "",
+                    "type": "select",
+                    "instructions": "Mains are in credits. Recurring have their own plots. Guests appear once or twice.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "50",
+                        "class": "",
+                        "id": ""
+                    },
+                    "choices": {
+                        "regular": "Regular\/Main Character",
+                        "recurring": "Recurring Character",
+                        "guest": "Guest Character"
+                    },
+                    "default_value": false,
+                    "return_format": "value",
+                    "multiple": 0,
+                    "allow_null": 0,
+                    "allow_in_bindings": 0,
+                    "ui": 0,
+                    "ajax": 0,
+                    "placeholder": "",
+                    "create_options": 0,
+                    "save_options": 0,
+                    "parent_repeater": "field_lwtv_lezchars_show_group"
+                },
+                {
+                    "key": "field_lwtv_lezchars_show_group_appears",
+                    "label": "Years Appears",
+                    "name": "appears",
+                    "aria-label": "",
+                    "type": "select",
+                    "instructions": "Select all years this character appears in this show.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "choices": [],
+                    "default_value": [],
+                    "return_format": "value",
+                    "multiple": 1,
+                    "allow_null": 1,
+                    "allow_in_bindings": 0,
+                    "ui": 1,
+                    "ajax": 0,
+                    "placeholder": "Years…",
+                    "create_options": 0,
+                    "save_options": 0,
+                    "parent_repeater": "field_lwtv_lezchars_show_group"
+                }
+            ]
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "post_type",
+                "operator": "==",
+                "value": "post_type_characters"
+            }
+        ]
+    ],
+    "menu_order": 10,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": true,
+    "description": "Character Details: Queerness, General Info, and Appearances",
+    "show_in_rest": 1,
+    "display_title": "",
+    "allow_ai_access": false,
+    "ai_description": "",
+    "modified": 1781734178
+}
