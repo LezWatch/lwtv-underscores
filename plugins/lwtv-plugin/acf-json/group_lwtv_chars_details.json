@@ -1,5 +1,5 @@
 {
-    "key": "group_lwtv_chars_queerness",
+    "key": "group_lwtv_chars_details",
     "title": "Character Details",
     "fields": [
         {
@@ -188,6 +188,24 @@
             ]
         },
         {
+            "key": "field_6a331a012b65f",
+            "label": "Actors",
+            "name": "",
+            "aria-label": "",
+            "type": "tab",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "placement": "top",
+            "endpoint": 0,
+            "selected": 0
+        },
+        {
             "key": "field_lwtv_lezchars_actor",
             "label": "Actor Name(s)",
             "name": "lezchars_actor",
@@ -216,6 +234,24 @@
             "elements": "",
             "bidirectional": 0,
             "bidirectional_target": []
+        },
+        {
+            "key": "field_6a331a70211af",
+            "label": "Alternate Images",
+            "name": "",
+            "aria-label": "",
+            "type": "tab",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "placement": "top",
+            "endpoint": 0,
+            "selected": 0
         },
         {
             "key": "field_lwtv_lezchars_character_image_group",
@@ -395,5 +431,5 @@
     "display_title": "",
     "allow_ai_access": false,
     "ai_description": "",
-    "modified": 1781731036
+    "modified": 1781800090
 }
