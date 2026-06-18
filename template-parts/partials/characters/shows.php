@@ -31,22 +31,24 @@ if ( '' !== $all_shows && is_array( $all_shows ) ) {
 
 		// Link to Show
 		$show_link = '';
-		if ( isset( $each_show['show'] ) && '' !== $each_show['show'] ) {
+		$show_id   = isset( $each_show['show'] ) ? (int) $each_show['show'] : 0;
 
+		if ( $show_id ) {
 			// If it's an array, de-array it.
 			if ( is_array( $each_show['show'] ) ) {
-				$each_show['show'] = reset( $each_show['show'] );
+				$show_id = (int) reset( $each_show['show'] );
 			}
-			if ( get_post_status( $each_show['show'] ) !== 'publish' ) {
-				$show_link = '<em><span class="disabled-show-link">' . get_the_title( $each_show['show'] ) . '</span></em>';
+			if ( 'publish' !== get_post_status( $show_id ) ) {
+				$show_link = '<em><span class="disabled-show-link">' . get_the_title( $show_id ) . '</span></em>';
 			} else {
-				$show_link = '<em><a href="' . get_permalink( $each_show['show'] ) . '">' . get_the_title( $each_show['show'] ) . '</a></em>';
+				$show_link = '<em><a href="' . get_permalink( $show_id ) . '">' . get_the_title( $show_id ) . '</a></em>';
 			}
 		}
 
 		// Output ex: Legends of Tomorrow (regular character)
+		$show_name     = $show_id ? get_the_title( $show_id ) : '';
 		$shows_group[] = array(
-			'name'    => get_the_title( $each_show['show'] ),
+			'name'    => $show_name,
 			'link'    => $show_link,
 			'type'    => $char_type,
 			'appears' => $appears,
