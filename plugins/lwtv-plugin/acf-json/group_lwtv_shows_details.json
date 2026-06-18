@@ -3,6 +3,27 @@
     "title": "Show Details",
     "fields": [
         {
+            "key": "field_lwtv_shows_excerpt",
+            "label": "Excerpt",
+            "name": "excerpt",
+            "aria-label": "",
+            "type": "textarea",
+            "instructions": "One to two sentence summary of what the show is about. Used on the show list and front page for new shows.",
+            "required": 1,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "allow_in_bindings": 1,
+            "rows": 4,
+            "placeholder": "",
+            "new_lines": ""
+        },
+        {
             "key": "field_6a330fbdded19",
             "label": "Airing Details",
             "name": "",
@@ -1053,5 +1074,5 @@
     "display_title": "Basic Details",
     "allow_ai_access": false,
     "ai_description": "",
-    "modified": 1781732683
+    "modified": 1781732685
 }
