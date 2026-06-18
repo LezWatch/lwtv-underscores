@@ -1,0 +1,112 @@
+{
+    "key": "group_lwtv_debugging",
+    "title": "Options - Debugging Tools",
+    "fields": [
+        {
+            "key": "field_6a3407d7d2ab2",
+            "label": "Enable ACF UX",
+            "name": "enable_acf_ux",
+            "aria-label": "",
+            "type": "true_false",
+            "instructions": "By default, ACF's UX is hidden. Enabling this will make it visible for Admins.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "message": "",
+            "default_value": 0,
+            "allow_in_bindings": 0,
+            "ui_on_text": "",
+            "ui_off_text": "",
+            "ui": 1
+        },
+        {
+            "key": "field_6a3408ee3bef1",
+            "label": "Logging",
+            "name": "logging",
+            "aria-label": "",
+            "type": "group",
+            "instructions": "Managing logging options. Use with caution as this can get pretty spammy.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "layout": "block",
+            "sub_fields": [
+                {
+                    "key": "field_lwtv_debug_mode",
+                    "label": "Toggle Logging",
+                    "name": "debug_mode",
+                    "aria-label": "",
+                    "type": "true_false",
+                    "instructions": "Manage debug logging options. Logs to file: wp-content\/debug-lwtv.log",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "message": "",
+                    "default_value": 0,
+                    "allow_in_bindings": 0,
+                    "ui_on_text": "",
+                    "ui_off_text": "",
+                    "ui": 1
+                },
+                {
+                    "key": "field_lwtv_log_topics",
+                    "label": "Log Topics",
+                    "name": "log_topics",
+                    "aria-label": "",
+                    "type": "checkbox",
+                    "instructions": "Select which topics to log. If no topics are selected, all topics will be logged.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "lwtv-acf-col-3",
+                        "id": ""
+                    },
+                    "choices": [],
+                    "default_value": [],
+                    "return_format": "value",
+                    "allow_custom": 0,
+                    "save_custom": 0,
+                    "layout": "vertical",
+                    "toggle": 0,
+                    "allow_in_bindings": 0,
+                    "custom_choice_button_text": "Add new choice"
+                }
+            ]
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "options_page",
+                "operator": "==",
+                "value": "lwtv-debugging"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": true,
+    "description": "Debug Settings",
+    "show_in_rest": 0,
+    "display_title": "Debug Settings",
+    "allow_ai_access": false,
+    "ai_description": "",
+    "modified": 1781795168
+}

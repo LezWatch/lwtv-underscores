@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 use LWTV\Admin_Menu\Auto_Posting;
-use LWTV\Admin_Menu\Debug_Logging;
+use LWTV\Admin_Menu\Debugging;
 use LWTV\Admin_Menu\Exclusions;
 use LWTV\Admin_Menu\Validation;
 
@@ -30,11 +30,11 @@ class Admin_Menu implements Component {
 	protected $auto_posting = null;
 
 	/**
-	 * Debug_Logging instance
+	 * Debugging instance
 	 *
-	 * @var Debug_Logging
+	 * @var Debugging
 	 */
-	protected $debug_logging = null;
+	protected $debugging = null;
 
 	/*
 	 * Construct
@@ -43,7 +43,7 @@ class Admin_Menu implements Component {
 		add_action( 'admin_menu', array( $this, 'add_settings_page' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
 		( new Auto_Posting() )->init();
-		( new Debug_Logging() )->init();
+		( new Debugging() )->init();
 	}
 
 	/*
@@ -55,7 +55,7 @@ class Admin_Menu implements Component {
 		global $submenu;
 
 		// Add main menu
-		add_menu_page( 'lwtv-plugin', 'LezWatch.TV', 'read', 'lwtv', array( $this, 'settings_page' ), lwtv_plugin()->get_icon_svg(), 2 );
+		add_menu_page( 'lwtv-plugin', 'LezWatch.TV', 'read', 'lwtv', array( $this, 'settings_page' ), lwtv_plugin()->get_icon_svg( true ), 2 );
 
 		add_submenu_page( 'lwtv', 'Welcome', 'Welcome', 'read', 'lwtv', array( $this, 'settings_page' ) );
 

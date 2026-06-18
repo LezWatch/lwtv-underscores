@@ -12,21 +12,10 @@ This document describes the structure and contents of the custom LezWatch.TV Plu
 ├── vendor/ - Composer dependencies (not stored in GitHub)
 ├── acf-json/ - ACF field group definitions (JSON sync files)
 │   ├── group_lwtv_actors_details.json
-│   ├── group_lwtv_actors_life.json
-│   ├── group_lwtv_actors_misc.json
-│   ├── group_lwtv_actors_socials.json
 │   ├── group_lwtv_auto_posting.json
-│   ├── group_lwtv_chars_appearances.json
-│   ├── group_lwtv_chars_general.json
-│   ├── group_lwtv_chars_queerness.json
-│   ├── group_lwtv_debug_logging.json
+│   ├── group_lwtv_chars_details.json
+│   ├── group_lwtv_debugging.json
 │   ├── group_lwtv_shows_details.json
-│   ├── group_lwtv_shows_editorial.json
-│   ├── group_lwtv_shows_ratings.json
-│   ├── group_lwtv_shows_relationships.json
-│   ├── group_lwtv_shows_summary.json
-│   ├── group_lwtv_shows_watch.json
-│   ├── group_lwtv_shows_worthit.json
 │   ├── group_lwtv_term_symbolicons.json
 │   ├── group_lwtv_term_tags.json
 │   ├── group_lwtv_term_watch_urls.json
@@ -121,7 +110,7 @@ This document describes the structure and contents of the custom LezWatch.TV Plu
 │   │   └── vineyard/
 │   ├── admin-menu/ - Admin menu items and validation
 │   │   ├── class-auto-posting.php - Auto-posting configuration for social media
-│   │   ├── class-debug-logging.php - Debug logging settings and display
+│   │   ├── class-debugging.php - Debug logging settings and display
 │   │   ├── class-exclusions.php - Lists any exclusions or overrides applied by admins (i.e. forcing someone to show as queer)
 │   │   └── class-validation.php - Data consistency checks (each one runs weekly)
 │   ├── blocks/ - Gutenberg blocks
