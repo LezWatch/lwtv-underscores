@@ -4,7 +4,19 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [7.0.6] - 2026-06-18
+
+### Added
+
+- Administrators can now enable ACF field group editing on production via a new "Enable ACF UX" toggle in Debugging Tools
+
+### Changed
+
+- Debugging Tools options page consolidates debug mode, log topics, and the new ACF UX toggle into a single ACF field group
+
+### Removed
+
+- Separate character queerness ACF field group removed; fields now live within the consolidated Characters field group
 
 ## [7.0.5] - 2026-06-17
 
