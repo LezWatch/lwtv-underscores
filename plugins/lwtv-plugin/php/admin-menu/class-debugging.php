@@ -1,6 +1,6 @@
 <?php
 /**
- * Debug Logging Settings Page
+ * Debug Settings Page
  *
  * Provides admin UI to toggle debug mode and select which topics to log.
  *
@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Debug_Logging {
+class Debugging {
 
 	/**
 	 * Valid log topics that can be enabled/disabled.
@@ -68,11 +68,11 @@ class Debug_Logging {
 		}
 		acf_add_options_sub_page(
 			array(
-				'page_title'  => __( 'Debug Logging', 'lwtv' ),
-				'menu_title'  => __( 'Debug Logging', 'lwtv' ),
+				'page_title'  => __( 'Debuging Tools', 'lwtv' ),
+				'menu_title'  => __( 'Debuging Tools', 'lwtv' ),
 				'parent_slug' => 'lwtv',
 				'capability'  => 'activate_plugins',
-				'menu_slug'   => 'lwtv-debug-logging',
+				'menu_slug'   => 'lwtv-debugging',
 				'post_id'     => 'option',
 			)
 		);

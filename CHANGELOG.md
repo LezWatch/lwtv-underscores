@@ -6,6 +6,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [7.0.5] - 2026-06-17
+
+### Added
+
+- ACF field groups for Actors, Characters, and Shows consolidated into unified tabbed layouts, replacing multiple separate metabox panels
+- Improved show search in the Character Appearances field: relevance ordering on search, exact-title matching for short terms
+
+### Changed
+
+- Post editor meta boxes restored to visible and scrollable layout under WordPress 7.0's revised block editor
+
+### Removed
+
+- CMB2 compatibility shim removed now that the ACF migration is complete
+
 ## [7.0.4] - 2026-06-17
 
 ### Fixed
