@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### Fixed
 
 - Updated character details ACF group and improve show linking logic
+- Improve Accessibility colors
 
 ## [7.0.6] - 2026-06-18
 
