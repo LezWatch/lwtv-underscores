@@ -42,9 +42,12 @@ class ACF {
 			return;
 		}
 
-		// Only allow fields to be edited on development
+		// Only allow fields to be edited on development, unless an admin has explicitly enabled it.
 		if ( wp_get_environment_type() === 'production' ) {
-			add_filter( 'acf/settings/show_admin', '__return_false' );
+			$acf_ux_enabled = function_exists( 'get_field' ) && get_field( 'enable_acf_ux', 'option' );
+			if ( ! $acf_ux_enabled || ! current_user_can( 'manage_options' ) ) {
+				add_filter( 'acf/settings/show_admin', '__return_false' );
+			}
 		}
 
 		// Set up JSON sync for field groups defined in this plugin.
@@ -664,7 +667,7 @@ class ACF {
 	}
 
 	/**
-	 * Populate the log_topics checkbox with choices from Debug_Logging::VALID_LOG_TOPICS.
+	 * Populate the log_topics checkbox with choices from Debugging::VALID_LOG_TOPICS.
 	 *
 	 * Choices are built at runtime so adding a topic to the constant is reflected
 	 * immediately without touching the JSON file.
@@ -674,7 +677,7 @@ class ACF {
 	 */
 	public function load_log_topics_choices( array $field ): array {
 		$field['choices'] = array();
-		foreach ( \LWTV\Admin_Menu\Debug_Logging::VALID_LOG_TOPICS as $topic ) {
+		foreach ( \LWTV\Admin_Menu\Debugging::VALID_LOG_TOPICS as $topic ) {
 			$field['choices'][ $topic ] = ucwords( str_replace( '-', ' ', $topic ) );
 		}
 		return $field;
