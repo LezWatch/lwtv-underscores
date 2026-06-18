@@ -303,6 +303,7 @@ class Shortcodes {
 			),
 			$atts
 		);
+		$output     = '';
 
 		$year = ( '' === $attributes['year'] || false === ctype_digit( $attributes['year'] ) ) ? gmdate( 'Y' ) : intval( $attributes['year'] );
 		$text = ( '' === $attributes['text'] ) ? '&copy;' : sanitize_text_field( $attributes['text'] );

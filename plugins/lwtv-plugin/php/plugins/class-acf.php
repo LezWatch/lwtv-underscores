@@ -42,14 +42,6 @@ class ACF {
 			return;
 		}
 
-		// Only allow fields to be edited on development, unless an admin has explicitly enabled it.
-		if ( wp_get_environment_type() === 'production' ) {
-			$acf_ux_enabled = function_exists( 'get_field' ) && get_field( 'enable_acf_ux', 'option' );
-			if ( ! $acf_ux_enabled || ! current_user_can( 'manage_options' ) ) {
-				add_filter( 'acf/settings/show_admin', '__return_false' );
-			}
-		}
-
 		// Set up JSON sync for field groups defined in this plugin.
 		add_filter( 'acf/settings/save_json', array( $this, 'save_json_path' ) );
 		add_filter( 'acf/settings/load_json', array( $this, 'load_json_paths' ) );
@@ -440,10 +432,18 @@ class ACF {
 	 * For short terms (≤4 chars, e.g. "ER") also constrain to exact title matches
 	 * so common letters don't flood the results.
 	 *
+	 * post_status is explicitly set to include drafts so that:
+	 * (a) admins can pre-attach characters to shows before the show is published,
+	 * (b) a previously-selected draft show still renders in the picker on re-edit
+	 *     (ACF's default is publish-only, which would make the field appear empty
+	 *     and silently clear the stored value on the next save).
+	 *
 	 * @param array $args WP_Query args built by ACF for the post_object search.
 	 * @return array
 	 */
 	public function show_post_object_query( array $args ): array {
+		$args['post_status'] = array( 'publish', 'draft', 'private', 'pending' );
+
 		if ( ! empty( $args['s'] ) ) {
 			$args['orderby'] = 'relevance';
 			unset( $args['order'] );

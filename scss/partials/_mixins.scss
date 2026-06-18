@@ -234,7 +234,8 @@ $endcolor: #7db9e8;
 	width: 1px;
 	word-wrap: normal !important;
 
-	&:focus {
+	&:focus,
+	&:focus-within {
 		background-color: #eee;
 		clip: auto !important;
 		clip-path: none;

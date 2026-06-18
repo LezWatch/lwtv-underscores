@@ -155,15 +155,23 @@ class Data_Character {
 				$shows_value['show'] = reset( $shows_value['show'] );
 			}
 
+			$show_id = (int) ( $shows_value['show'] ?? 0 );
+			if ( ! $show_id ) {
+				return $output;
+			}
+
 			$num_shows = count( $all_shows );
 			$show_more = ( $num_shows > 1 ) ? ' (plus ' . ( $num_shows - 1 ) . ' more)' : '';
-			$show_post = get_post( $shows_value['show'] );
-			$icon      = lwtv_plugin()->get_symbolicon( svg: 'tv-hd.svg', icon: 'svg-tv', max_size: '15' );
-			$output    = '<div class="card-meta-item shows">' . $icon . '<em>';
-			if ( get_post_status( $shows_value['show'] ) !== 'publish' ) {
-				$output .= '<span class="disabled-show-link">' . $show_post->post_title . '</span>';
+			$show_post = get_post( $show_id );
+			if ( ! $show_post ) {
+				return $output;
+			}
+			$icon   = lwtv_plugin()->get_symbolicon( svg: 'tv-hd.svg', icon: 'svg-tv', max_size: '15' );
+			$output = '<div class="card-meta-item shows">' . $icon . '<em>';
+			if ( 'publish' !== get_post_status( $show_id ) ) {
+				$output .= '<span class="disabled-show-link">' . esc_html( $show_post->post_title ) . '</span>';
 			} else {
-				$output .= '<a href="' . get_the_permalink( $show_post->ID ) . '">' . $show_post->post_title . '</a>';
+				$output .= '<a href="' . get_the_permalink( $show_post->ID ) . '">' . esc_html( $show_post->post_title ) . '</a>';
 			}
 			$output .= '</em> (' . $shows_value['type'] . ')' . $show_more . '</div>';
 
