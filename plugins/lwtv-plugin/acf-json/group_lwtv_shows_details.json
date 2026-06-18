@@ -20,7 +20,7 @@
             "maxlength": "",
             "allow_in_bindings": 1,
             "rows": 4,
-            "placeholder": "",
+            "placeholder": "A person does a thing!",
             "new_lines": ""
         },
         {
@@ -1074,5 +1074,5 @@
     "display_title": "Basic Details",
     "allow_ai_access": false,
     "ai_description": "",
-    "modified": 1781732685
+    "modified": 1781807618
 }

@@ -23,7 +23,7 @@ class acf_field_number_slider extends acf_field {
 		$this->name     = 'number_slider';
 		$this->label    = __( 'Number Slider', 'lwtv' );
 		$this->category = 'basic';
-		$this->version  = '1.0.0';
+		$this->version  = '1.0.2';
 		$this->defaults = array(
 			'slider_min_value' => 0,
 			'slider_max_value' => 100,
@@ -118,11 +118,10 @@ class acf_field_number_slider extends acf_field {
 	 * Enqueue slider JS and CSS on ACF admin screens.
 	 */
 	public function input_admin_enqueue_scripts() {
-		$url     = plugins_url( '', __FILE__ );
 		$version = $this->version;
 
-		wp_enqueue_script( 'acf-number-slider-input', $url . '/js/input.js', array( 'jquery' ), $version, true );
-		wp_enqueue_style( 'acf-number-slider', $url . '/css/simple-slider.css', array(), $version );
+		wp_enqueue_script( 'acf-number-slider-input', LWTV_PLUGIN_URL . '/php/plugins/acf/js/input.js', array( 'jquery', 'acf-input' ), $version, true );
+		wp_enqueue_style( 'acf-number-slider', LWTV_PLUGIN_URL . '/php/plugins/acf/css/simple-slider.css', array(), $version );
 	}
 
 	/**

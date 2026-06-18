@@ -235,7 +235,6 @@ class Cache {
 	 */
 	private function clear_cache_plugins( $clear_urls ) {
 		$this->clear_nginx_helper( $clear_urls );
-		$this->clear_wp_rocket( $clear_urls );
 	}
 
 	/**
@@ -251,19 +250,6 @@ class Cache {
 				$url = str_replace( home_url(), home_url() . '/purge/', $url );
 				wp_remote_get( $url );
 			}
-		}
-	}
-
-	/**
-	 * Clear the WP Rocket Cache
-	 *
-	 * @param  array  $clear_urls - URLs to clear
-	 * @return void
-	 */
-	private function clear_wp_rocket( $clear_urls ) {
-		if ( is_plugin_active( 'wp-rocket/wp-rocket.php' ) ) {
-			/** @disregard rocket_clean_files() is provided by the WP Rocket plugin **/
-			rocket_clean_files( $clear_urls );
 		}
 	}
 }
