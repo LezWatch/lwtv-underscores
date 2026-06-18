@@ -16,6 +16,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 // phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedClassFound,PEAR.NamingConventions.ValidClassName -- ACF field type classes must match the snake-case field name.
 class acf_field_number_slider extends acf_field {
 
+	public string $version;
+
 	/**
 	 * Set up field type metadata.
 	 */
