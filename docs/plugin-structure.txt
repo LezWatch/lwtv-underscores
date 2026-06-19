@@ -201,9 +201,14 @@ This document describes the structure and contents of the custom LezWatch.TV Plu
 │   │   └── template.php - Backup of theme template.
 │   ├── plugins/ - Addons for other plugins
 │   │   ├── class-acf.php - ACF Pro integration
+│   │   ├── acf/
+│   │   │   ├── class-number-slider.php - ACF number slider field type (jQuery Simple Slider, forked from Q Studio)
+│   │   │   ├── css/
+│   │   │   │   └── simple-slider.css - Simple slider styles
+│   │   │   └── js/
+│   │   │       └── input.js - Simple slider input logic
 │   │   ├── class-actionscheduler.php - Action Scheduler integration and configuration
 │   │   ├── class-cache.php - Custom Cache specific to DreamPress hosting (generates data used by Proxy Cache Purge to know what to flush)
-│   │   ├── class-cmb2.php - Disabled CMB2 if it's running.
 │   │   ├── class-comment-probation.php - Fork of abandoned plugin
 │   │   ├── class-facetwp.php - Facet WP (calls other files, Reset Shortcode)
 │   │   ├── facetwp/
@@ -216,8 +221,7 @@ This document describes the structure and contents of the custom LezWatch.TV Plu
 │   │   │   └── class-stop-spammers.php - Block Spammers
 │   │   ├── class-monsterinsights.php - Custom code for Monster Insights
 │   │   ├── class-related-posts-by-taxonomy.php - Filters to allow a custom layout for "Shows Like This"
-│   │   ├── class-searchwp.php - Custom integration with SearchWP
-│   │   └── class-wp-rocket.php - Integration with WP Rocket to flush content when interrelated posts are updated
+│   │   └── class-searchwp.php - Custom integration with SearchWP
 │   ├── postiz/ - Postiz social media API integration
 │   │   ├── class-new-post.php - Handles posting new blog posts and shows to social media
 │   │   ├── class-of-the-day.php - Handles posting "Of The Day" content to social media

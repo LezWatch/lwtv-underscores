@@ -105,17 +105,20 @@ class Of_The_Day implements Component, Templater {
 			$types = array( $type );
 		}
 
+		$is_new = false;
+
 		foreach ( $types as $a_type ) {
 			$new_otd = null;
 			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 			$maybe_existing_otd = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM `{$table}` WHERE posts_type = %s AND created = %s", $a_type, $date ) );
 
-			//[04-Dec-2025 19:07:35 UTC] [Byq-debug] Queery: [{"id":"1494","post_datetime":"2025-12-04 13:01:31","created":"2025-12-04","posts_id":"42546","posts_type":"show","content":"The LezWatch.TV show of the day is \"Cuckoo,\" with 2 characters and an overall score of 53.25. - #LWTVsotd #Cuckoo - https:\/\/lwtv.local\/show\/cuckoo\/"}]
 			// If there's NO entry, we can make one.
 			if ( 0 === $maybe_existing_otd || empty( $maybe_existing_otd ) ) {
 				$new_otd = $this->of_the_day( $a_type, 'default' );
 				if ( ! is_wp_error( $new_otd ) && ! empty( $new_otd ) ) {
-					$new_otd['content'] = $this->add_to_table( $a_type, $new_otd );
+					$new_otd['content']  = $this->add_to_table( $a_type, $new_otd );
+					$new_otd['posts_id'] = $new_otd['pid'];
+					$is_new              = true;
 					lwtv_plugin()->debug_log( 'postiz', 'Added OTD to table: ' . wp_json_encode( $new_otd ) );
 				} else {
 					lwtv_plugin()->debug_log( 'postiz', 'No eligible ' . $a_type . ' found for OTD.' );
@@ -138,8 +141,10 @@ class Of_The_Day implements Component, Templater {
 					$wpdb->delete( $table, array( 'id' => $new_otd['id'] ) );
 					$regenerated = $this->of_the_day( $a_type, 'default' );
 					if ( ! is_wp_error( $regenerated ) && ! empty( $regenerated ) ) {
-						$regenerated['content'] = $this->add_to_table( $a_type, $regenerated );
-						$new_otd                = $regenerated;
+						$regenerated['content']  = $this->add_to_table( $a_type, $regenerated );
+						$regenerated['posts_id'] = $regenerated['pid'];
+						$new_otd                 = $regenerated;
+						$is_new                  = true;
 						lwtv_plugin()->debug_log( 'postiz', 'Re-generated OTD (replaced invalid row): ' . wp_json_encode( $new_otd ) );
 					} else {
 						lwtv_plugin()->debug_log( 'postiz', 'No eligible ' . $a_type . ' found for OTD during regeneration.' );
@@ -154,10 +159,13 @@ class Of_The_Day implements Component, Templater {
 		// Clear the cache
 		( new Cache() )->clean_feed( 'otd' );
 
-		// If there's an OTD, trigger the action and return it
 		if ( null !== $new_otd ) {
-			lwtv_plugin()->debug_log( 'postiz', 'Triggering lwtv_otd_added action for OTD: ' . wp_json_encode( $new_otd ) );
-			do_action( 'lwtv_otd_added', $a_type, $new_otd['content'], $new_otd['posts_id'], $new_otd );
+			// Only trigger the Postiz action for newly created (or regenerated) entries.
+			// Firing for existing entries would cause duplicate social media posts if set_of_the_day() runs more than once per day.
+			if ( $is_new ) {
+				lwtv_plugin()->debug_log( 'postiz', 'Triggering lwtv_otd_added action for OTD: ' . wp_json_encode( $new_otd ) );
+				do_action( 'lwtv_otd_added', $a_type, $new_otd['content'], $new_otd['posts_id'], $new_otd );
+			}
 			return $new_otd;
 		}
 

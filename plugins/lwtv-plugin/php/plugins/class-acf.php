@@ -42,6 +42,9 @@ class ACF {
 			return;
 		}
 
+		// Only allow fields to be edited on development, unless an admin has explicitly enabled it.
+		add_filter( 'acf/settings/show_admin', array( $this, 'show_admin' ) );
+
 		// Set up JSON sync for field groups defined in this plugin.
 		add_filter( 'acf/settings/save_json', array( $this, 'save_json_path' ) );
 		add_filter( 'acf/settings/load_json', array( $this, 'load_json_paths' ) );
@@ -112,7 +115,7 @@ class ACF {
 		add_action( 'acf/input/admin_head', array( $this, 'admin_head_styles' ) );
 
 		// Register the number_slider custom field type (used for show ratings).
-		add_action( 'acf/include_field_types', array( $this, 'register_number_slider' ) );
+		add_action( 'acf/init', array( $this, 'register_number_slider' ) );
 	}
 
 	/**
@@ -432,18 +435,10 @@ class ACF {
 	 * For short terms (≤4 chars, e.g. "ER") also constrain to exact title matches
 	 * so common letters don't flood the results.
 	 *
-	 * post_status is explicitly set to include drafts so that:
-	 * (a) admins can pre-attach characters to shows before the show is published,
-	 * (b) a previously-selected draft show still renders in the picker on re-edit
-	 *     (ACF's default is publish-only, which would make the field appear empty
-	 *     and silently clear the stored value on the next save).
-	 *
 	 * @param array $args WP_Query args built by ACF for the post_object search.
 	 * @return array
 	 */
 	public function show_post_object_query( array $args ): array {
-		$args['post_status'] = array( 'publish', 'draft', 'private', 'pending' );
-
 		if ( ! empty( $args['s'] ) ) {
 			$args['orderby'] = 'relevance';
 			unset( $args['order'] );
@@ -722,11 +717,30 @@ class ACF {
 	/**
 	 * Register the number_slider ACF field type.
 	 *
-	 * Included via acf/include_field_types so it is only loaded when ACF is
-	 * ready to accept custom field types.
+	 * Uses acf/init + acf_register_field_type() (ACF 5.8.9+/6.x).
+	 * The legacy acf/include_field_types hook was dropped in ACF 6.x.
 	 */
 	public function register_number_slider(): void {
+		if ( ! function_exists( 'acf_register_field_type' ) ) {
+			return;
+		}
 		require_once __DIR__ . '/acf/class-number-slider.php';
-		new \acf_field_number_slider();
+		acf_register_field_type( new \acf_field_number_slider() );
+	}
+
+	/**
+	 * Show Admin UX
+	 *
+	 * If the toggle is on, and you're in WP-Admin, show the Admin UX to
+	 * admins only.
+	 */
+	public function show_admin() {
+		$acf_ux_enabled = function_exists( 'get_field' ) && get_field( 'enable_acf_ux', 'option' );
+
+		if ( wp_get_environment_type() !== 'production' || ( is_admin() && $acf_ux_enabled ) ) {
+			return current_user_can( 'manage_options' );
+		}
+
+		return false;
 	}
 }
