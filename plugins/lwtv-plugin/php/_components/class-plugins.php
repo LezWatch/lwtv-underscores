@@ -14,10 +14,8 @@ use LWTV\Plugins\Comment_Probation;
 use LWTV\Plugins\FacetWP;
 use LWTV\Plugins\Gravity_Forms;
 use LWTV\Plugins\MonsterInsights;
-use LWTV\Plugins\Postiz;
 use LWTV\Plugins\Related_Posts_By_Taxonomy;
 use LWTV\Plugins\SearchWP;
-use LWTV\Plugins\WP_Rocket;
 
 class Plugins implements Component, Templater {
 
@@ -35,7 +33,6 @@ class Plugins implements Component, Templater {
 		new MonsterInsights();
 		new Related_Posts_By_Taxonomy();
 		new SearchWP();
-		new WP_Rocket();
 
 		// Shadow Taxonomy
 		require_once LWTV_THEME_PATH . '/plugins/shadow-taxonomy/index.php';
