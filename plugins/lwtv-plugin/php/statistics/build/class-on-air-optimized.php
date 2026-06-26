@@ -83,16 +83,18 @@ class On_Air_Optimized {
 				);
 			}
 
-			// Get all characters with their show group data
+			// Get all characters' 'appears' data from ACF repeater sub-fields.
+			// ACF stores repeater rows as individual meta keys: lezchars_show_group_0_appears, _1_appears, etc.
 			$query = "SELECT
 				chars.ID,
-				show_meta.meta_value as show_group_data
+				appears_meta.meta_value as appears_data
 			FROM {$wpdb->posts} chars
-			INNER JOIN {$wpdb->postmeta} show_meta ON chars.ID = show_meta.post_id AND show_meta.meta_key = 'lezchars_show_group'
+			INNER JOIN {$wpdb->postmeta} appears_meta ON chars.ID = appears_meta.post_id
 			WHERE chars.post_type = 'post_type_characters'
 			AND chars.post_status = 'publish'
-			AND show_meta.meta_value IS NOT NULL
-			AND show_meta.meta_value != ''";
+			AND appears_meta.meta_key LIKE 'lezchars_show_group_%_appears'
+			AND appears_meta.meta_value IS NOT NULL
+			AND appears_meta.meta_value != ''";
 
 			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- There's no need to prepare this query
 			$results = $wpdb->get_results( $query, ARRAY_A );
@@ -100,31 +102,23 @@ class On_Air_Optimized {
 			// Track character appearances per year
 			$year_counts = array();
 
-			// Process each character's show group data
+			// Each row is one show relationship; appears_data is a serialized array of year strings
 			foreach ( $results as $row ) {
-				$show_group_data = maybe_unserialize( $row['show_group_data'] );
+				$appears_years = maybe_unserialize( $row['appears_data'] );
 
-				if ( ! is_array( $show_group_data ) ) {
+				// ACF multi-select serializes values; a plain string means a single un-serialized year
+				if ( is_string( $appears_years ) && '' !== $appears_years ) {
+					$appears_years = array( $appears_years );
+				}
+
+				if ( ! is_array( $appears_years ) ) {
 					continue;
 				}
 
-				// Extract years from each show relationship
-				foreach ( $show_group_data as $show_relationship ) {
-					if ( ! is_array( $show_relationship ) || ! isset( $show_relationship['appears'] ) ) {
-						continue;
-					}
-
-					$appears_years = $show_relationship['appears'];
-					if ( ! is_array( $appears_years ) ) {
-						continue;
-					}
-
-					// Count this character for each year they appeared
-					foreach ( $appears_years as $year ) {
-						$year = (int) $year;
-						if ( isset( $array[ $year ] ) ) {
-							$year_counts[ $year ] = ( $year_counts[ $year ] ?? 0 ) + 1;
-						}
+				foreach ( $appears_years as $year ) {
+					$year = (int) $year;
+					if ( isset( $array[ $year ] ) ) {
+						$year_counts[ $year ] = ( $year_counts[ $year ] ?? 0 ) + 1;
 					}
 				}
 			}

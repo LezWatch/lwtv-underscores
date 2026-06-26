@@ -41,12 +41,13 @@ class Characters_Builder {
 		$characters = array();
 
 		try {
-			// Query to get all characters with their show group data and death status
+			// Query to get all characters with show group data and death status.
+			// Join on ACF repeater sub-field keys (lezchars_show_group_0_appears, etc.) to filter
+			// to characters who have show relationships; DISTINCT avoids duplicates from multiple rows.
 			$query = "SELECT DISTINCT
 				c.ID,
 				c.post_name as slug,
 				c.post_title as name,
-				show_meta.meta_value as show_group_data,
 				CASE
 					WHEN EXISTS (
 						SELECT 1
@@ -60,12 +61,12 @@ class Characters_Builder {
 					ELSE 0
 				END as is_dead
 			FROM {$wpdb->posts} c
-			INNER JOIN {$wpdb->postmeta} show_meta ON c.ID = show_meta.post_id
-				AND show_meta.meta_key = 'lezchars_show_group'
+			INNER JOIN {$wpdb->postmeta} appears_meta ON c.ID = appears_meta.post_id
 			WHERE c.post_type = 'post_type_characters'
 				AND c.post_status = 'publish'
-				AND show_meta.meta_value IS NOT NULL
-				AND show_meta.meta_value != ''
+				AND appears_meta.meta_key LIKE 'lezchars_show_group_%_appears'
+				AND appears_meta.meta_value IS NOT NULL
+				AND appears_meta.meta_value != ''
 			ORDER BY c.post_title ASC";
 
 			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- No user input in query
@@ -73,7 +74,7 @@ class Characters_Builder {
 
 			// Process each character's data
 			foreach ( $results as $row ) {
-				$show_group_data = maybe_unserialize( $row['show_group_data'] );
+				$show_group_data = get_field( 'lezchars_show_group', $row['ID'] );
 
 				// Skip if data is not properly formatted
 				if ( ! is_array( $show_group_data ) ) {
@@ -279,35 +280,18 @@ class Characters_Builder {
 	 * @return array Enhanced character data with shows
 	 */
 	private function enhance_characters_with_shows( array $characters, array $character_ids, int $year ): array {
-		global $wpdb;
-
-		// Get all show group data for these characters
-		$placeholders = implode( ',', array_fill( 0, count( $character_ids ), '%d' ) );
-
-		// phpcs:disable
-		$query = $wpdb->prepare(
-			"SELECT post_id, meta_value
-			FROM {$wpdb->postmeta}
-			WHERE post_id IN ($placeholders)
-			AND meta_key = 'lezchars_show_group'",
-			$character_ids
-		);
-		// phpcs:enable
-
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- Query is prepared above
-		$show_group_results = $wpdb->get_results( $query, ARRAY_A );
-
-		// Process show group data and collect unique show IDs
+		// Get show group data for each character using ACF API (handles ACF repeater format)
 		$show_ids            = array();
 		$character_show_data = array();
 
-		foreach ( $show_group_results as $row ) {
-			$show_group_data = maybe_unserialize( $row['meta_value'] );
+		foreach ( array_filter( $character_ids ) as $character_id ) {
+			$character_id    = (int) $character_id;
+			$show_group_data = get_field( 'lezchars_show_group', $character_id );
+
 			if ( ! is_array( $show_group_data ) ) {
 				continue;
 			}
 
-			$character_id                         = (int) $row['post_id'];
 			$character_show_data[ $character_id ] = array();
 
 			foreach ( $show_group_data as $show_relationship ) {

@@ -85,10 +85,12 @@ class Formats {
 	 * @return array Piechart data
 	 */
 	public function format_piechart( $all_formats_data ) {
-		// Data should be a straight up array of name => count
 		$data = array();
 		foreach ( $all_formats_data as $format ) {
-			$data[ $format['name'] ] = $format['count'];
+			$data[] = array(
+				'name'  => $format['name'],
+				'count' => $format['count'],
+			);
 		}
 		return $data;
 	}
