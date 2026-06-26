@@ -23,7 +23,7 @@
 		"@wordpress/babel-plugin-import-jsx-pragma": "^5.48.1",
 		"@wordpress/block-editor": "^15.21.1",
 		"@wordpress/blocks": "^15.21.1",
-		"@wordpress/components": "^35.0.1",
+		"@wordpress/components": "^36.0.0",
 		"@wordpress/data": "^10.48.1",
 		"@wordpress/editor": "^14.48.1",
 		"@wordpress/element": "^8.0.1",
