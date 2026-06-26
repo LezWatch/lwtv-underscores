@@ -30,7 +30,7 @@
 		"@wordpress/i18n": "^6.21.1",
 		"@wordpress/icons": "^14.0.1",
 		"@wordpress/plugins": "^7.48.1",
-		"@wordpress/server-side-render": "^6.24.1"
+		"@wordpress/server-side-render": "^6.25.0"
 	},
 	"devDependencies": {
 		"@wordpress/scripts": "^32.4.1"
