@@ -354,8 +354,9 @@ class Indexing {
 	 * @return array
 	 */
 	public function facetwp_index_row_shows_loved( $params, $facet_class ) {
-		$params['facet_value']         = ( 'on' === $params['facet_value'] ) ? 'yes' : 'no';
-		$params['facet_display_value'] = ( 'on' === $params['facet_display_value'] ) ? 'Yes' : 'No';
+		// ACF true_false stores 1; CMB2/legacy stored 'on'; treat any truthy value as loved.
+		$params['facet_value']         = ( ! empty( $params['facet_value'] ) ) ? 'yes' : 'no';
+		$params['facet_display_value'] = ( 'yes' === $params['facet_value'] ) ? 'Yes' : 'No';
 		$facet_class->insert( $params );
 
 		// skip default indexing

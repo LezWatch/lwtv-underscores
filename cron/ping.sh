@@ -10,7 +10,7 @@ if [ -z "$UUID" ] || [ -z "$SUCCEEDED" ]; then
 	exit 1
 fi
 
-BASEURL="https://health.ipstenu.com/ping/YngRQgrkWz3aUQkrLjMrPg"
+BASEURL="https://health.ipstenu.com/ping/wxhnd3lkkwsuh6rxgtqnsa"
 STATUS=""
 
 if [ "$SUCCEEDED" != "true" ]; then
