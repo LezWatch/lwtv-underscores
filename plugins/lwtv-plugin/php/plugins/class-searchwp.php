@@ -25,6 +25,9 @@ class SearchWP {
 			add_filter( 'searchwp\indexer\alternate', '__return_true' );
 		}
 
+		// We know Cron works.
+		add_filter( 'searchwp\utils\cron_operational', '__return_true' );
+
 		add_filter( 'searchwp\query\args', array( $this, 'maybe_switch_engine' ), 10, 2 );
 	}
 
