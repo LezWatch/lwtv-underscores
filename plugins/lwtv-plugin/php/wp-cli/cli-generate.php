@@ -245,6 +245,8 @@ class WP_CLI_LWTV_Generate {
 			case 'thu':
 				\WP_CLI::log( 'Debugger: Checking all actors...' );
 				( new Actors_Debugger() )->find_actors_problems();
+				\WP_CLI::log( 'Debugger: Checking actors for iMDB...' );
+				( new Actors_Debugger() )->find_actors_no_imdb();
 				break;
 			case 'fri':
 				\WP_CLI::log( 'Debugger: Checking all characters...' );
@@ -253,12 +255,17 @@ class WP_CLI_LWTV_Generate {
 			case 'sat':
 				\WP_CLI::log( 'Debugger: Checking all shows...' );
 				( new Shows_Debugger() )->find_shows_problems();
-				break;
-			case 'sun':
-				\WP_CLI::log( 'Debugger: Checking actors for iMDB...' );
-				( new Actors_Debugger() )->find_actors_no_imdb();
 				\WP_CLI::log( 'Debugger: Checking shows for iMDB...' );
 				( new Shows_Debugger() )->find_shows_no_imdb();
+				break;
+			case 'sun':
+				\WP_CLI::log( 'Debugger: Force re-indexing FacetWP...' );
+				if ( function_exists( 'FWP' ) ) {
+					FWP()->indexer->index( true );
+					\WP_CLI::log( 'FacetWP re-index complete.' );
+				} else {
+					\WP_CLI::warning( 'FacetWP is not active; skipping reindex.' );
+				}
 				break;
 			default:
 				\WP_CLI::warning( 'You must provide a valid day of the week. Use the THREE letter version (Mon, Tue, etc)' );
