@@ -88,7 +88,7 @@ get_header(); ?>
 													get_template_part( 'template-parts/excerpt/shows' );
 													break;
 												case 'post_type_actors':
-													get_template_part( 'template-parts/excerpt/actors' );
+													get_template_part( 'template-parts/excerpt/actors', '', array( 'actor' => get_the_ID() ) );
 													break;
 												default:
 													get_template_part( 'template-parts/content/posts' );

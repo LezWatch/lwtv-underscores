@@ -292,30 +292,45 @@ class Shows_Builder {
 			return array();
 		}
 
+		// Filter out null values that get_show_id_by_slug() may return
+		$show_ids = array_values( array_filter( $show_ids ) );
+		if ( empty( $show_ids ) ) {
+			return array();
+		}
+
 		global $wpdb;
 
-		// Get ALL character show group data (much simpler than trying to match serialized patterns)
-		$query = "SELECT post_id, meta_value
+		// ACF repeater fields store sub-fields as separate meta keys (lezchars_show_group_N_show),
+		// not as a single serialized value under lezchars_show_group. Query sub-field keys to find
+		// which characters are linked to our target shows.
+		$placeholders = implode( ',', array_fill( 0, count( $show_ids ), '%d' ) );
+
+		// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
+		$query                   = $wpdb->prepare(
+			"SELECT DISTINCT post_id
 			FROM {$wpdb->postmeta}
-			WHERE meta_key = 'lezchars_show_group'
-			AND meta_value IS NOT NULL
-			AND meta_value != ''";
+			WHERE meta_key REGEXP 'lezchars_show_group_[0-9]+_show'
+			AND meta_value IN ($placeholders)",
+			$show_ids
+		);
+		$candidate_character_ids = $wpdb->get_col( $query );
+		// phpcs:enable
 
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- No user input in query
-		$show_group_results = $wpdb->get_results( $query, ARRAY_A );
+		if ( empty( $candidate_character_ids ) ) {
+			return array();
+		}
 
-		// Process show group data and collect characters by show
+		// Process show group data using ACF API (handles repeater sub-field assembly)
 		$characters_by_show = array();
 		$character_ids      = array();
 
-		foreach ( $show_group_results as $row ) {
-			$show_group_data = maybe_unserialize( $row['meta_value'] );
+		foreach ( $candidate_character_ids as $character_id ) {
+			$character_id    = (int) $character_id;
+			$show_group_data = get_field( 'lezchars_show_group', $character_id );
+
 			if ( ! is_array( $show_group_data ) ) {
 				continue;
 			}
-
-			$character_id    = (int) $row['post_id'];
-			$character_ids[] = $character_id;
 
 			foreach ( $show_group_data as $show_relationship ) {
 				if ( ! is_array( $show_relationship ) || ! isset( $show_relationship['show'] ) || ! isset( $show_relationship['type'] ) ) {
@@ -331,28 +346,34 @@ class Shows_Builder {
 				$character_type = $show_relationship['type'];
 
 				// Only process if this show is in our target show IDs
-				if ( in_array( $show_id, $show_ids, true ) ) {
-					// Check if character appeared in this show during the specified year
-					if ( isset( $show_relationship['appears'] ) && is_array( $show_relationship['appears'] ) ) {
-						$appeared_in_year = false;
-						foreach ( $show_relationship['appears'] as $appears_year ) {
-							if ( (int) $appears_year === $year ) {
-								$appeared_in_year = true;
-								break;
-							}
-						}
+				if ( ! in_array( $show_id, $show_ids, true ) ) {
+					continue;
+				}
 
-						if ( $appeared_in_year ) {
-							if ( ! isset( $characters_by_show[ $show_id ] ) ) {
-								$characters_by_show[ $show_id ] = array();
-							}
+				// Check if character appeared in this show during the specified year
+				if ( ! isset( $show_relationship['appears'] ) || ! is_array( $show_relationship['appears'] ) ) {
+					continue;
+				}
 
-							$characters_by_show[ $show_id ][] = array(
-								'character_id' => $character_id,
-								'type'         => $character_type,
-							);
-						}
+				$appeared_in_year = false;
+				foreach ( $show_relationship['appears'] as $appears_year ) {
+					if ( (int) $appears_year === $year ) {
+						$appeared_in_year = true;
+						break;
 					}
+				}
+
+				if ( $appeared_in_year ) {
+					if ( ! isset( $characters_by_show[ $show_id ] ) ) {
+						$characters_by_show[ $show_id ] = array();
+					}
+
+					$characters_by_show[ $show_id ][] = array(
+						'character_id' => $character_id,
+						'type'         => $character_type,
+					);
+
+					$character_ids[] = $character_id;
 				}
 			}
 		}

@@ -814,31 +814,21 @@ class Dead {
 		}
 
 		try {
-			// Query to get all dead characters and their show group meta data
-			$query = $wpdb->prepare(
-				"SELECT
-					p.ID,
-					p.post_title,
-					show_meta.meta_value as show_group_data
-				FROM {$wpdb->posts} p
-				INNER JOIN {$wpdb->term_relationships} tr ON p.ID = tr.object_id
-				INNER JOIN {$wpdb->term_taxonomy} tt ON tr.term_taxonomy_id = tt.term_taxonomy_id
-				INNER JOIN {$wpdb->terms} t ON tt.term_id = t.term_id
-				LEFT JOIN {$wpdb->postmeta} show_meta ON p.ID = show_meta.post_id AND show_meta.meta_key = %s
-				WHERE p.post_type = %s
-				AND p.post_status = 'publish'
-				AND tt.taxonomy = %s
-				AND t.slug = %s
-				AND show_meta.meta_value IS NOT NULL
-				AND show_meta.meta_value != ''
-				ORDER BY p.post_title ASC",
-				'lezchars_show_group',
-				'post_type_characters',
-				'lez_cliches',
-				'dead'
-			);
+			// ACF repeater fields store sub-fields as separate meta keys (lezchars_show_group_N_type),
+			// not as a serialized value under lezchars_show_group. Query sub-field keys directly.
+			$query = "SELECT pm_type.meta_value as role_type
+				FROM {$wpdb->postmeta} pm_type
+				INNER JOIN {$wpdb->posts} p ON p.ID = pm_type.post_id
+					AND p.post_type = 'post_type_characters'
+					AND p.post_status = 'publish'
+				INNER JOIN {$wpdb->term_relationships} tr ON tr.object_id = pm_type.post_id
+				INNER JOIN {$wpdb->term_taxonomy} tt ON tt.term_taxonomy_id = tr.term_taxonomy_id
+					AND tt.taxonomy = 'lez_cliches'
+				INNER JOIN {$wpdb->terms} t ON t.term_id = tt.term_id
+					AND t.slug = 'dead'
+				WHERE pm_type.meta_key REGEXP 'lezchars_show_group_[0-9]+_type'";
 
-			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- This is a prepared query (see above)
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- No user input in query
 			$results = $wpdb->get_results( $query, ARRAY_A );
 
 			// Initialize role counters
@@ -848,27 +838,10 @@ class Dead {
 				'guest'     => 0,
 			);
 
-			// Process each character's show group data
 			foreach ( $results as $row ) {
-				$show_group_data = maybe_unserialize( $row['show_group_data'] );
-
-				// Ensure it's an array
-				if ( ! is_array( $show_group_data ) ) {
-					continue;
-				}
-
-				// Process each show entry
-				foreach ( $show_group_data as $show_entry ) {
-					if ( ! is_array( $show_entry ) || ! isset( $show_entry['type'] ) ) {
-						continue;
-					}
-
-					$role_type = $show_entry['type'];
-
-					// Count only valid role types
-					if ( isset( $role_counts[ $role_type ] ) ) {
-						++$role_counts[ $role_type ];
-					}
+				$role_type = $row['role_type'];
+				if ( isset( $role_counts[ $role_type ] ) ) {
+					++$role_counts[ $role_type ];
 				}
 			}
 

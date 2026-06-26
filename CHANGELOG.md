@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [7.0.10] - 2026-06-26
+
+### Fixed
+
+- Dead character role-type counts (regular/recurring/guest) now return correct results after ACF migrated repeater data from a single serialized meta value to individual sub-field meta rows.
+- Taxonomy statistics pages now correctly count characters and deaths per show.
+- "This Year" character lists now populate for shows airing in the current year.
+- Actor excerpt cards on taxonomy archive pages now render with the correct post context.
+
 ## [7.0.9] - 2026-06-25
 
 ### Changed

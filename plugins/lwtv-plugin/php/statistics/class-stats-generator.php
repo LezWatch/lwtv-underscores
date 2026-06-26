@@ -249,7 +249,6 @@ class Stats_Generator {
 
 		if ( empty( $all_data ) ) {
 			lwtv_plugin()->debug_log( 'statistics', 'All data for dead is empty' );
-			return array();
 		}
 
 		return ( new Stats_Handler() )->handle( $all_data, $context, $view, $format, 'death', array(), $bar_direction );
