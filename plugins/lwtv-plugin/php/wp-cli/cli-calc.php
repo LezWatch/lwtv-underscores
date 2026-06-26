@@ -11,6 +11,7 @@ if ( ! defined( 'ABSPATH' ) && ! defined( 'WP_CLI' ) ) {
 }
 
 use LWTV\CPTs\Actors\Calculations as Actors_Calculations;
+use LWTV\CPTs\Characters\Calculations as Characters_Calculations;
 use LWTV\CPTs\Shows\Calculations as Shows_Calculations;
 
 /**
@@ -77,7 +78,7 @@ class WP_CLI_LWTV_Calculate {
 			\WP_CLI::error( $post_id . ' is not a valid post.' );
 		}
 
-		$valid_types = array( 'actor', 'show' );
+		$valid_types = array( 'actor', 'character', 'show' );
 		$post_type   = rtrim( str_replace( 'post_type_', '', get_post_type( $post_id ) ), 's' );
 
 		// Last sanity check: Is the post ID a member of THIS post type...
@@ -90,6 +91,8 @@ class WP_CLI_LWTV_Calculate {
 			\WP_CLI::error( 'You can only run calculations on ' . $display_types . ' post types, but ' . get_the_title( $post_id ) . ' (#' . $post_id . ') is a ' . $post_type . '.' );
 		}
 
+		$score = '';
+
 		// Switch to run the commands since they're different.
 		switch ( $post_type ) {
 			case 'actor':
@@ -101,6 +104,11 @@ class WP_CLI_LWTV_Calculate {
 				$chars = get_post_meta( $post_id, 'lezactors_char_count', true );
 				$deads = get_post_meta( $post_id, 'lezactors_dead_count', true );
 				$score = 'Is Queer (' . $queer . ') Chars (' . $chars . ') Dead (' . $deads . ')';
+				break;
+			case 'character':
+				( new Characters_Calculations() )->do_the_math( $post_id, true );
+				$last_death = get_post_meta( $post_id, 'lezchars_last_death', true );
+				$score      = 'Last Death (' . ( $last_death ?: 'none' ) . ')';
 				break;
 			case 'show':
 				delete_post_meta( $post_id, 'lezshows_char_count' );

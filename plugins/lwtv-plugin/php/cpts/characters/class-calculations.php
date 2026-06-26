@@ -30,16 +30,22 @@ class Calculations {
 		$character_death = is_array( $death_rows ) ? array_filter( array_column( $death_rows, 'date' ) ) : array();
 		$last_char_death = get_post_meta( $post_id, 'lezchars_last_death', true );
 		$newest_death    = '0000-00-00';
-		if ( ! empty( $character_death ) ) {
-			foreach ( $character_death as $death ) {
-				if ( $death > $newest_death ) {
-					$newest_death = $death;
-				}
+
+		foreach ( $character_death as $death ) {
+			if ( $death > $newest_death ) {
+				$newest_death = $death;
 			}
-			// If there's a newest death AND it isn't equal last death, save it
-			if ( '0000-00-00' !== $newest_death && $newest_death !== $last_char_death ) {
-				update_post_meta( $post_id, 'lezchars_last_death', $newest_death );
+		}
+
+		if ( '0000-00-00' === $newest_death ) {
+			// No death dates — remove the meta entirely so FacetWP doesn't index this character
+			// in death-sorted results. Clears stale or corrupted values (e.g. 'L') left over
+			// from incomplete saves or data migrations.
+			if ( '' !== $last_char_death ) {
+				delete_post_meta( $post_id, 'lezchars_last_death' );
 			}
+		} elseif ( $newest_death !== $last_char_death ) {
+			update_post_meta( $post_id, 'lezchars_last_death', $newest_death );
 		}
 	}
 
