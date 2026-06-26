@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [7.0.9] - 2026-06-25
+
+### Changed
+
+- WP-CLI weekly debug cron consolidates actor checks (problems + iMDB) on Thursdays and shows checks (problems + iMDB) on Saturdays; Sundays now trigger a FacetWP force re-index instead.
+
+### Fixed
+
+- "Shows We Love" FacetWP facet now correctly indexes shows flagged as loved; ACF stores the `true_false` field as `1` rather than the legacy `on` value, which had caused all loved shows to be indexed as `no`.
+
 ## [7.0.8] - 2026-06-19
 
 ### Fixed
