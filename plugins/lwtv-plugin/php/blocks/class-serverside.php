@@ -31,10 +31,10 @@ class Serverside {
 		register_block_type(
 			'lwtv/author-box',
 			array(
+				'api_version'     => 3,
 				'attributes'      => array(
-					'api_version' => 3,
-					'users'       => array( 'type' => 'string' ),
-					'format'      => array( 'type' => 'string' ),
+					'users'  => array( 'type' => 'string' ),
+					'format' => array( 'type' => 'string' ),
 				),
 				'render_callback' => array( $this, 'render_author_box' ),
 			)
@@ -44,9 +44,9 @@ class Serverside {
 		register_block_type(
 			'lez-library/glossary',
 			array(
+				'api_version'     => 3,
 				'attributes'      => array(
-					'api_version' => 3,
-					'taxonomy'    => array( 'type' => 'string' ),
+					'taxonomy' => array( 'type' => 'string' ),
 				),
 				'render_callback' => array( $this, 'render_glossary' ),
 			)
@@ -56,9 +56,7 @@ class Serverside {
 		register_block_type(
 			'lwtv/tvshow-calendar',
 			array(
-				'attributes'      => array(
-					'api_version' => 3,
-				),
+				'api_version'     => 3,
 				'render_callback' => array( $this, 'render_tvshow_calendar' ),
 			)
 		);
@@ -67,9 +65,7 @@ class Serverside {
 		register_block_type(
 			'lez-library/private-note',
 			array(
-				'attributes'      => array(
-					'api_version' => 3,
-				),
+				'api_version'     => 3,
 				'render_callback' => array( $this, 'render_private_blocks' ),
 			)
 		);

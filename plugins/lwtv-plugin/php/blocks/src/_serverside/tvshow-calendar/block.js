@@ -11,11 +11,11 @@ import ServerSideRender from '@wordpress/server-side-render';
 
 // Register block
 registerBlockType('lwtv/tvshow-calendar', {
+	apiVersion: 3,
 	title: 'TV Shows Calendar',
 	icon: Icon,
 	category: 'lezwatch',
 	keywords: ['calendar', 'tv shows'],
-	className: false,
 	edit() {
 		return <ServerSideRender block="lwtv/tvshow-calendar" />;
 	},
