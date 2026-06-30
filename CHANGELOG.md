@@ -8,7 +8,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Changed
 
-- Gutenberg API versions compatibility. No code changes.
+- Server side blocks (`author-box`, `glossary`, `tvshow-calendar`, `private-note`) now correctly declare `api_version` at the block-registration level rather than as a block attribute.
+
+### Fixed
+
+- Character/Show of the Day no longer runs twice during the daily cron.
+- Saving only the "None!" trope no longer silently clears trope data; mixed selections correctly drop "None!" and keep the real tropes.
+- Glossary block no longer throws a JavaScript error due to incorrect `this.props` usage.
+
+### Removed
+
+- Stale Gutenberg meta-box CSS workarounds that are no longer needed.
 
 ### Updated
 
@@ -18,11 +28,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - @wordpress/plugins: ^7.49.0 -> ^7.49.1
 - @wordpress/scripts: ^32.5.0 -> ^32.5.1
 - @wordpress/server-side-render: ^6.25.0 -> ^6.25.1
-
-### Fixed
-
-- Race condition with character of the day double running.
-- "None!" trope being removed if it was the only trope on a show.
 
 ## [7.0.10] - 2026-06-26
 
