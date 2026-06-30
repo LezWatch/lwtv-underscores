@@ -14,6 +14,7 @@ import { Fragment } from '@wordpress/element';
 import { InnerBlocks } from '@wordpress/block-editor';
 
 registerBlockType('lez-library/private-note', {
+	apiVersion: 3,
 	title: 'Private Note',
 	icon: Icon,
 	category: 'lezwatch',

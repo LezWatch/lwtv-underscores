@@ -203,10 +203,6 @@ class WP_CLI_LWTV_Generate {
 			\WP_CLI::warning( 'BYQ cache refresh may have had issues - check logs.' );
 		}
 
-		// run OTD
-		\WP_CLI::log( 'Setting the "Of the Day"...' );
-		$this->run_otd();
-
 		// Build tv maze:
 		\WP_CLI::log( 'Downloading the TV Maze ICS.' );
 		$this->run_tvmaze();

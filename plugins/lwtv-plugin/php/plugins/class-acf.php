@@ -541,7 +541,11 @@ class ACF {
 				wp_set_object_terms( $post_id, $none_id, 'lez_tropes', false );
 			} elseif ( in_array( $none_id, $tropes, true ) ) {
 				$real = array_values( array_filter( $tropes, fn( $id ) => $id !== $none_id ) );
-				wp_set_object_terms( $post_id, $real, 'lez_tropes', false );
+				if ( ! empty( $real ) ) {
+					// "None!" was checked alongside real tropes — drop it and keep the real ones.
+					wp_set_object_terms( $post_id, $real, 'lez_tropes', false );
+				}
+				// else: only "None!" was selected — ACF already set it correctly, leave it.
 			}
 		}
 

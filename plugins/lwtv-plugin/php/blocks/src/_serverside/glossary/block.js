@@ -10,20 +10,18 @@ import { registerBlockType } from '@wordpress/blocks';
 import { Fragment } from '@wordpress/element';
 import { InspectorControls } from '@wordpress/block-editor';
 import { PanelBody, SelectControl } from '@wordpress/components';
-import { ServerSideRender } from '@wordpress/server-side-render';
+import ServerSideRender from '@wordpress/server-side-render';
 
 registerBlockType('lez-library/glossary', {
+	apiVersion: 3,
 	title: 'Glossary',
 	icon: Icon,
 	category: 'lezwatch',
-	className: false,
 	attributes: {
-		taxonomy: {
-			type: 'string',
-		},
+		taxonomy: { type: 'string' },
 	},
 	edit: (props) => {
-		const { attributes, setAttributes } = this.props;
+		const { attributes, setAttributes } = props;
 		const { taxonomy } = attributes;
 
 		return (
