@@ -4,9 +4,25 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [7.0.11] - TBD
+## [7.0.11] - 2026-06-30
 
-TBD
+### Changed
+
+- Gutenberg API versions compatibility. No code changes.
+
+### Updated
+
+- @wordpress/block-editor: ^15.22.0 -> ^15.22.1
+- @wordpress/components: ^36.0.0 -> ^36.0.1
+- @wordpress/editor: ^14.49.0 -> ^14.49.1
+- @wordpress/plugins: ^7.49.0 -> ^7.49.1
+- @wordpress/scripts: ^32.5.0 -> ^32.5.1
+- @wordpress/server-side-render: ^6.25.0 -> ^6.25.1
+
+### Fixed
+
+- Race condition with character of the day double running.
+- "None!" trope being removed if it was the only trope on a show.
 
 ## [7.0.10] - 2026-06-26
 
