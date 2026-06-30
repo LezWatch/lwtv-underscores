@@ -1,8 +1,13 @@
-.lwtv-calendar-block {
+div.lwtv-calendar-block {
 
 	svg {
 		width: 12px;
 		height: 12px;
 		vertical-align: baseline;
+	}
+
+	nav.lwtv-pagination,
+	div#calendarTabContent {
+		display: none!important;
 	}
 }

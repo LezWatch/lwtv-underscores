@@ -10,7 +10,7 @@ if ( ! defined( 'LWTV_THEME_VERSION' ) ) {
 	$versions = array();
 
 	// Automatically updated by the build script. Update ./package.json to change this.
-	$versions['lwtv-underscores'] = '7.0.7';
+	$versions['lwtv-underscores'] = '7.0.11';
 
 	// Automatically updated by the build script.
 	$versions['bootstrap'] = '5.3.8';
@@ -442,7 +442,7 @@ add_action( 'wp_enqueue_scripts', 'lwtv_theme_scripts' );
 function lwtv_block_editor_styles() {
 	wp_enqueue_style( 'lwtv-block-editor', get_stylesheet_directory_uri() . '/style-editor.min.css', array(), LWTV_THEME_VERSION['lwtv-blocks'], true );
 }
-add_action( 'enqueue_block_editor_assets', 'lwtv_block_editor_styles' );
+add_action( 'enqueue_block_assets', 'lwtv_block_editor_styles' );
 
 
 /* Custom template tags for this theme. */

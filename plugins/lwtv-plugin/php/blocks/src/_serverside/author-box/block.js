@@ -13,18 +13,13 @@ import Icon from '../../_common/svg/team-member';
 
 // Register block
 registerBlockType('lwtv/author-box', {
+	apiVersion: 3,
 	title: 'Team Member',
 	icon: Icon,
 	category: 'lezwatch',
-	className: false,
 	attributes: {
-		users: {
-			type: 'string',
-		},
-		format: {
-			type: 'string',
-			default: 'large',
-		},
+		users: { type: 'string' },
+		format: { type: 'string', default: 'large' },
 	},
 	edit,
 	save() {

@@ -36,36 +36,7 @@ class Post_Editor {
 		}
 		?>
 		<style>
-			/* WP 7.0 meta boxes fix - show them + normal scrolling */
-			.edit-post-meta-boxes-main.is-resizable {
-				height: auto !important;
-				max-height: 900% !important;  /* allows expansion */
-				overflow: visible !important;
-			}
 
-			.edit-post-meta-boxes-main__presenter {
-				display: none !important;
-			}
-
-			.components-resizable-box__container.editor-resizable-editor {
-				height: auto !important;
-			}
-
-			.editor-visual-editor {
-				overflow: visible !important;
-			}
-
-			.block-editor-iframe__scale-container iframe {
-				min-height: 75vh !important;  /* keeps Gutenberg tall */
-			}
-
-			.edit-post-layout__metaboxes {
-				margin-bottom: 2rem;
-			}
-
-			:root :where(.editor-styles-wrapper)::after {
-				height: 10vh !important;
-			}
 		</style>
 		<?php
 	}
