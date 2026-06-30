@@ -20,7 +20,7 @@ registerBlockType('lez-library/glossary', {
 	attributes: {
 		taxonomy: { type: 'string' },
 	},
-	edit: ( props ) => {
+	edit: (props) => {
 		const { attributes, setAttributes } = props;
 		const { taxonomy } = attributes;
 
