@@ -12,7 +12,7 @@ if ( ! $show_id ) {
 	return;
 }
 
-$alt_names = ( get_post_meta( $show_id, 'lezshows_show_names', true ) ) ? get_post_meta( $show_id, 'lezshows_show_names', true ) : false;
+$alt_names = get_field( 'lezshows_show_names', $show_id );
 
 if ( false !== $alt_names && ! empty( $alt_names ) ) {
 	?>

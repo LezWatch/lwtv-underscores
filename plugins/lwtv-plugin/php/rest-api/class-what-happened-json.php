@@ -152,7 +152,10 @@ class What_Happened_JSON {
 				break;
 			case 'day':
 				global $wpdb;
-				$date          = $datetime->format( 'Y-m-d' );
+				// ACF's date_picker stores raw postmeta as Ymd; legacy pre-migration
+				// rows that haven't been re-saved may still be in Y-m-d format.
+				$date_ymd      = $datetime->format( 'Ymd' );
+				$date_legacy   = $datetime->format( 'Y-m-d' );
 				$meta_key_like = $wpdb->esc_like( 'lezchars_death_year_' ) . '%' . $wpdb->esc_like( '_date' );
 				// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
 				$dead_ids = $wpdb->get_col(
@@ -162,10 +165,11 @@ class What_Happened_JSON {
 						INNER JOIN {$wpdb->term_taxonomy} tt ON tr.term_taxonomy_id = tt.term_taxonomy_id
 						INNER JOIN {$wpdb->terms} t ON tt.term_id = t.term_id
 						WHERE pm.meta_key LIKE %s
-						AND pm.meta_value = %s
+						AND pm.meta_value IN ( %s, %s )
 						AND tt.taxonomy = 'lez_cliches' AND t.slug = 'dead'",
 						$meta_key_like,
-						$date
+						$date_ymd,
+						$date_legacy
 					)
 				);
 				// phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching

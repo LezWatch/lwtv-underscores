@@ -339,7 +339,9 @@ class Dead {
 		$year_counts = array();
 
 		foreach ( $results as $row ) {
-			if ( preg_match( '/^(\d{4})-\d{2}-\d{2}$/', $row['meta_value'], $matches ) ) {
+			// ACF's date_picker stores raw postmeta as Ymd; legacy pre-migration
+			// rows that haven't been re-saved may still be in Y-m-d format.
+			if ( preg_match( '/^(\d{4})-?\d{2}-?\d{2}$/', $row['meta_value'], $matches ) ) {
 				$year = $matches[1];
 				if ( ! isset( $year_counts[ $year ] ) ) {
 					$year_counts[ $year ] = 0;

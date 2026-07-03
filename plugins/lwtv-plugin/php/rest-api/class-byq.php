@@ -455,11 +455,14 @@ class BYQ {
 		$day   = intval( $date_parts[1] );
 
 		// Build date patterns to match against stored dates
-		// We need to match any year with this month-day combination
+		// We need to match any year with this month-day combination.
+		// ACF's date_picker stores raw postmeta as Ymd; legacy pre-migration
+		// rows that haven't been re-saved may still be in Y-m-d format, so
+		// the separator between each part is optional.
 		$date_patterns = array();
 		$current_year  = gmdate( 'Y' );
 		for ( $year = 1950; $year <= $current_year; $year++ ) {
-			$date_patterns[] = sprintf( '%04d-%02d-%02d', $year, $month, $day );
+			$date_patterns[] = sprintf( '^%04d-?%02d-?%02d$', $year, $month, $day );
 		}
 
 		// Use REGEXP to match any of our date patterns

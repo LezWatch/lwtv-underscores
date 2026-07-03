@@ -22,22 +22,24 @@ $died = get_post_meta( $actor, 'lezactors_death', true );
 
 // If they have a birthday, let's parse it.
 if ( ! empty( $born ) && ! lwtv_plugin()->hide_actor_data( $actor, 'dob' ) ) {
-	$barr = explode( '-', $born );
-	if ( isset( $barr[1] ) && isset( $barr[2] ) && checkdate( (int) $barr[1], (int) $barr[2], (int) $barr[0] ) ) {
+	try {
 		$get_birth = new DateTime( $born );
 
 		$life_array['dates']['born'] = date_format( $get_birth, 'F j, Y' );
+	} catch ( Exception $e ) {
+		lwtv_plugin()->error_log( 'actors', 'Invalid lezactors_birth date for actor ' . $actor . ': ' . $e->getMessage() );
 	}
 }
 
 // If they have a death date, let's parse it.
 if ( ! empty( $died ) ) {
-	$darr = explode( '-', $died );
-	if ( isset( $darr[1] ) && isset( $darr[2] ) && checkdate( (int) $darr[1], (int) $darr[2], (int) $darr[0] ) ) {
+	try {
 		$get_death = new DateTime( $died );
 
 		// Add died to array.
 		$life_array['dates']['died'] = date_format( $get_death, 'F j, Y' );
+	} catch ( Exception $e ) {
+		lwtv_plugin()->error_log( 'actors', 'Invalid lezactors_death date for actor ' . $actor . ': ' . $e->getMessage() );
 	}
 }
 
