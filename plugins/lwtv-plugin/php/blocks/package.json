@@ -26,7 +26,7 @@
 		"@wordpress/components": "^36.0.1",
 		"@wordpress/data": "^10.49.0",
 		"@wordpress/editor": "^14.49.1",
-		"@wordpress/element": "^8.1.0",
+		"@wordpress/element": "^8.2.0",
 		"@wordpress/i18n": "^6.22.0",
 		"@wordpress/icons": "^15.0.0",
 		"@wordpress/plugins": "^7.49.1",
