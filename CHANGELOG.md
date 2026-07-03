@@ -4,6 +4,35 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [7.0.12] - 2026-07-03
+
+### Changed
+
+- `lezactors_saved_wikidata` is no longer exposed via the REST API.
+
+### Fixed
+
+- Legacy "Ways to Watch" URLs now migrate correctly into the ACF repeater format instead of being dumped into the repeater's raw count field.
+- Actor birth/death dates in invalid or unparsable formats no longer break the actor profile page.
+- Death-date lookups (death count shortcode, "What Happened Today", Born/Died on This Day, and dead-character-by-year statistics) now match dates regardless of legacy or current storage format.
+- Show alternate names now read correctly from ACF.
+
+### Updated
+
+- @wordpress/api-fetch: ^7.49.0 -> ^7.50.0
+- @wordpress/babel-plugin-import-jsx-pragma: ^5.49.0 -> ^5.50.0
+- @wordpress/block-editor: ^15.22.1 -> ^15.23.0
+- @wordpress/blocks: ^15.22.0 -> ^15.23.0
+- @wordpress/components: ^36.0.1 -> ^36.1.0
+- @wordpress/data: ^10.49.0 -> ^10.50.0
+- @wordpress/editor: ^14.49.1 -> ^14.50.0
+- @wordpress/element: ^8.1.0 -> ^8.2.0
+- @wordpress/i18n: ^6.22.0 -> ^6.23.0
+- @wordpress/icons: ^15.0.0 -> ^15.1.0
+- @wordpress/plugins: ^7.49.1 -> ^7.50.0
+- @wordpress/scripts: ^32.5.1 -> ^32.6.0
+- @wordpress/server-side-render: ^6.25.1 -> ^6.26.0
+
 ## [7.0.11] - 2026-06-30
 
 ### Changed

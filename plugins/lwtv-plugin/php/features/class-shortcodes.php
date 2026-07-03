@@ -121,8 +121,11 @@ class Shortcodes {
 		}
 
 		// Death count: query row meta keys for the exact year-month.
+		// ACF's date_picker stores raw postmeta as Ymd; legacy pre-migration
+		// rows that haven't been re-saved may still be in Y-m-d format.
 		global $wpdb;
-		$like          = $wpdb->esc_like( $datetime->format( 'Y-m' ) . '-' ) . '%';
+		$like_ymd      = $wpdb->esc_like( $datetime->format( 'Ym' ) ) . '%';
+		$like_legacy   = $wpdb->esc_like( $datetime->format( 'Y-m' ) . '-' ) . '%';
 		$meta_key_like = $wpdb->esc_like( 'lezchars_death_year_' ) . '%' . $wpdb->esc_like( '_date' );
 		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
 		$dead_ids = $wpdb->get_col(
@@ -132,10 +135,11 @@ class Shortcodes {
 				INNER JOIN {$wpdb->term_taxonomy} tt ON tr.term_taxonomy_id = tt.term_taxonomy_id
 				INNER JOIN {$wpdb->terms} t ON tt.term_id = t.term_id
 				WHERE pm.meta_key LIKE %s
-				AND pm.meta_value LIKE %s
+				AND ( pm.meta_value LIKE %s OR pm.meta_value LIKE %s )
 				AND tt.taxonomy = 'lez_cliches' AND t.slug = 'dead'",
 				$meta_key_like,
-				$like
+				$like_ymd,
+				$like_legacy
 			)
 		);
 		// phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching

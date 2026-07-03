@@ -79,9 +79,10 @@ class Post_Meta {
 			'show_in_rest' => false,
 		),
 		'lezactors_saved_wikidata'      => array(
-			'post_type'  => CPT_Actors::SLUG,
-			'type'       => 'object',
-			'items_type' => 'string',
+			'post_type'    => CPT_Actors::SLUG,
+			'type'         => 'object',
+			'items_type'   => 'string',
+			'show_in_rest' => false,
 		),
 		'lezactors_queer_override'      => array(
 			'post_type' => CPT_Actors::SLUG,
