@@ -62,10 +62,26 @@ class Ways_To_Watch {
 	 */
 	public function migrate_ways_to_watch( int $show_id ): void {
 		$old_watch_urls = get_post_meta( $show_id, 'lezshows_affiliate', true );
-		$new_watch_urls = get_post_meta( $show_id, 'lezshows_waystowatch', true );
+		$new_watch_urls = get_field( 'lezshows_waystowatch', $show_id );
 
 		if ( empty( $new_watch_urls ) && ! empty( $old_watch_urls ) ) {
-			update_post_meta( $show_id, 'lezshows_waystowatch', $old_watch_urls );
+			// Write the ACF repeater's indexed subfield rows directly rather than
+			// dumping the legacy flat value into the repeater's raw count key.
+			$count = 0;
+			foreach ( (array) $old_watch_urls as $url ) {
+				$url = esc_url_raw( trim( $url ) );
+
+				if ( empty( $url ) ) {
+					continue;
+				}
+
+				$key = "lezshows_waystowatch_{$count}_url";
+				update_post_meta( $show_id, $key, $url );
+				update_post_meta( $show_id, "_$key", 'field_lwtv_lezshows_waystowatch_url' );
+				++$count;
+			}
+			update_post_meta( $show_id, 'lezshows_waystowatch', $count );
+			update_post_meta( $show_id, '_lezshows_waystowatch', 'field_lwtv_lezshows_waystowatch' );
 			delete_post_meta( $show_id, 'lezshows_affiliate' );
 		}
 	}
