@@ -445,10 +445,8 @@ class Actors {
 			$check_wiki = $this->process_actor_wikidata( $actor_id, $wiki_claims );
 
 			foreach ( $check_ours as $item => $data ) {
-				$ours_original = $this->normalize_for_comparison( $data );
-				$wiki_original = $this->normalize_for_comparison( $check_wiki[ $item ] );
-				$ours_lower    = strtolower( $ours_original );
-				$wiki_lower    = strtolower( $wiki_original );
+				$ours_lower = strtolower( $this->normalize_for_comparison( $data ) );
+				$wiki_lower = strtolower( $this->normalize_for_comparison( $check_wiki[ $item ] ) );
 
 				if ( $ours_lower === $wiki_lower ) {
 					$result = 'match';
@@ -456,8 +454,8 @@ class Actors {
 					$result = 'n/a';
 				} else {
 					$result = array(
-						'ours'     => $ours_original,
-						'wikidata' => $wiki_original,
+						'ours'     => $data,
+						'wikidata' => $check_wiki[ $item ],
 					);
 				}
 
