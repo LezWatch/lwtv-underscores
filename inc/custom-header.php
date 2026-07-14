@@ -48,7 +48,6 @@ if ( ! function_exists( 'lwtv_theme_header_style' ) ) :
 		}
 
 		// If we get this far, we have custom styles. Let's do this.
-
 		$custom_css = display_header_text()
 			? sprintf(
 				'.site-title a,
