@@ -445,17 +445,35 @@ class Actors {
 			$check_wiki = $this->process_actor_wikidata( $actor_id, $wiki_claims );
 
 			foreach ( $check_ours as $item => $data ) {
-				$ours_lower = strtolower( $this->normalize_for_comparison( $data ) );
-				$wiki_lower = strtolower( $this->normalize_for_comparison( $check_wiki[ $item ] ) );
+				// Dates (birth/death) are stored raw as Ymd by the ACF date_picker
+				// (e.g. 19760525) while WikiData returns Y-m-d (e.g. 1976-05-25).
+				// Normalize both to digits-only so equivalent dates match.
+				if ( in_array( $item, array( 'birth', 'death' ), true ) ) {
+					$ours_lower = preg_replace( '/\D/', '', (string) $data );
+					$wiki_lower = preg_replace( '/\D/', '', (string) $check_wiki[ $item ] );
+				} else {
+					$ours_lower = strtolower( $this->normalize_for_comparison( $data ) );
+					$wiki_lower = strtolower( $this->normalize_for_comparison( $check_wiki[ $item ] ) );
+				}
 
 				if ( $ours_lower === $wiki_lower ) {
 					$result = 'match';
 				} elseif ( '' === $wiki_lower ) {
 					$result = 'n/a';
 				} else {
+					$ours_value = $data;
+					$wiki_value = $check_wiki[ $item ];
+
+					// URL fields are compared scheme-less, but the copied value
+					// needs its https:// back so it can be pasted in directly.
+					if ( in_array( $item, array( 'wikipedia', 'facebook', 'website' ), true ) ) {
+						$ours_value = $this->ensure_url_scheme( $ours_value );
+						$wiki_value = $this->ensure_url_scheme( $wiki_value );
+					}
+
 					$result = array(
-						'ours'     => $data,
-						'wikidata' => $check_wiki[ $item ],
+						'ours'     => $ours_value,
+						'wikidata' => $wiki_value,
 					);
 				}
 
@@ -488,8 +506,8 @@ class Actors {
 	public function get_actors_wikidata_ours( $actor_id ) {
 		$meta = get_post_meta( $actor_id );
 		return array(
-			'birth'     => $meta['lezactors_birth'][0] ?? '',
-			'death'     => $meta['lezactors_death'][0] ?? '',
+			'birth'     => $this->format_our_date( $meta['lezactors_birth'][0] ?? '' ),
+			'death'     => $this->format_our_date( $meta['lezactors_death'][0] ?? '' ),
 			'imdb'      => $meta['lezactors_imdb'][0] ?? '',
 			'wikipedia' => $meta['lezactors_wikipedia'][0] ?? '',
 			'instagram' => $meta['lezactors_instagram'][0] ?? '',
@@ -600,6 +618,45 @@ class Actors {
 			'facebook'  => ( isset( $wiki_claims['P2013'] ) ) ? 'https://facebook.com/' . $wiki_claims['P2013'][0]['mainsnak']['datavalue']['value'] : '',
 			'website'   => ( isset( $wiki_claims['P856'] ) ) ? $wiki_claims['P856'][0]['mainsnak']['datavalue']['value'] : '',
 		);
+	}
+
+	/**
+	 * Format our raw date for display.
+	 *
+	 * ACF date_picker stores dates raw as Ymd (e.g. 19760525). Convert to
+	 * Y-m-d (e.g. 1976-05-25) to match WikiData's format for display.
+	 *
+	 * @param string $value - The raw date value.
+	 *
+	 * @return string $value - The formatted date, or the original value if not a plain Ymd string.
+	 */
+	public function format_our_date( $value ) {
+		if ( preg_match( '/^\d{8}$/', (string) $value ) ) {
+			return substr( $value, 0, 4 ) . '-' . substr( $value, 4, 2 ) . '-' . substr( $value, 6, 2 );
+		}
+		return $value;
+	}
+
+	/**
+	 * Ensure a URL has a scheme.
+	 *
+	 * We compare URLs scheme-less (we always use https and WikiData is
+	 * inconsistent), which leaves stored/copied values without a scheme.
+	 * This puts https:// back so the value is pasteable as-is. Empty values
+	 * and values that already have a scheme are returned untouched.
+	 *
+	 * @param string $value - The URL to check.
+	 *
+	 * @return string $value - The URL with an https:// scheme.
+	 */
+	public function ensure_url_scheme( $value ) {
+		$value = trim( (string) $value );
+
+		if ( '' === $value || preg_match( '#^https?://#i', $value ) ) {
+			return $value;
+		}
+
+		return 'https://' . ltrim( $value, '/' );
 	}
 
 	/**
