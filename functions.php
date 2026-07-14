@@ -77,6 +77,24 @@ function lwtv_custom_excerpt_length( $length ) {
 add_filter( 'excerpt_length', 'lwtv_custom_excerpt_length', 999 );
 
 /**
+ * Modals
+ */
+require_once 'inc/modals/ai-discovery.php';
+
+/**
+ * Output the floating AI Discovery widget in the footer.
+ * Only on pages where we don't have an inline panel (404, no-results).
+ */
+function lwtv_discovery_widget_footer() {
+	( new LWTV_AI_Discovery_Modal() )->output_modal();
+}
+
+// If the user is logged in, show the widget.
+if ( defined( 'LWTV_USE_AGENTS' ) && true === LWTV_USE_AGENTS ) {
+	add_action( 'wp_footer', 'lwtv_discovery_widget_footer' );
+}
+
+/**
  * Widgets
  */
 require_once 'inc/widgets/calendar-widget.php';
@@ -372,7 +390,7 @@ function posts_link_attributes() {
 function lwtv_theme_scripts() {
 
 	// combined + minified.
-	// navigation.js, skip-link-focus-fix.js, a11y.js, bootstrap-color-mode.
+	// navigation.js, skip-link-focus-fix.js, a11y.js, bootstrap-color-mode etc.
 	wp_enqueue_script( 'yikes-starter-navigation', get_template_directory_uri() . '/inc/js/yikes-theme-scripts.min.js', array(), LWTV_THEME_VERSION['lwtv-underscores'], true );
 	wp_enqueue_script( 'lwtv-dark-mode', get_template_directory_uri() . '/inc/js/bootstrap-color-mode.min.js', array(), LWTV_THEME_VERSION['bootstrap_dark'], false );
 
@@ -390,6 +408,25 @@ function lwtv_theme_scripts() {
 
 	// This has to be at the bottom to override Bootstrap.
 	wp_enqueue_style( 'yikes-starter-style', get_stylesheet_directory_uri() . '/style.min.css', array(), LWTV_THEME_VERSION['lwtv-underscores'], false );
+
+	// AI Agent JS.
+	wp_enqueue_script( 'lwtv-ai-agent', get_template_directory_uri() . '/inc/js/ai-agent.js', array(), LWTV_THEME_VERSION['lwtv-underscores'], true );
+
+	$staging_creds = defined( 'LWTV_STAGING_CREDS' ) ? LWTV_STAGING_CREDS : false;
+	$mood_chips    = ( new LWTV_AI_Discovery_Modal() )->get_mood_chips();
+
+	// Pass the key securely to the JS file
+	wp_localize_script(
+		'lwtv-ai-agent',
+		'lwtv_settings',
+		array(
+			'endpoint'      => esc_url_raw( rest_url( 'lwtv/v1/agent' ) ),
+			'ai_key'        => defined( 'LWTV_AI_KEY' ) ? LWTV_AI_KEY : '',
+			'staging_creds' => $staging_creds,
+			'nonce'         => wp_create_nonce( 'wp_rest' ),
+			'mood_chips'    => $mood_chips,
+		)
+	);
 
 	// Overlay JS.
 	if ( get_post_type( get_the_ID() ) === 'post_type_actors' ) {

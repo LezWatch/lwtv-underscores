@@ -20,6 +20,7 @@ class Debugging {
 	 */
 	public const VALID_LOG_TOPICS = array(
 		'actors',
+		'ai-agents',
 		'buryqueers',
 		'caching',
 		'characters',
