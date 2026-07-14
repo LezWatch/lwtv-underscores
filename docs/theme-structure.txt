@@ -140,11 +140,6 @@ Contains all template part files and subfolders used for modular theme structure
 │   ├── related-articles.php
 │   └── statistics-actors.php
 ├── partials/
-│   ├── ai/
-│   │   ├── discovery-404.php
-│   │   ├── discovery-no-results.php
-│   │   ├── discovery-panel.php
-│   │   └── discovery-widget.php
 │   ├── actors/
 │   │   ├── gender-sexuality.php
 │   │   ├── life.php
