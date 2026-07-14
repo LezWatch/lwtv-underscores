@@ -23,8 +23,11 @@ class Stats_Enqueues {
 		wp_enqueue_script( 'tablesorter', LWTV_PLUGIN_URL . '/assets/js/jquery.tablesorter.min.js', array( 'jquery' ), $versioning['tablesorter'], false );
 		wp_enqueue_style( 'tablesorter', LWTV_PLUGIN_URL . '/assets/css/theme.bootstrap.min.css', array(), $versioning['tablesorter'], false );
 
-		$statistics = get_query_var( 'statistics', 'none' );
-		$stat_view  = get_query_var( 'view', 'main' );
+		// Both are public query vars that get interpolated into inline JS selectors
+		// below, so sanitize to key-safe characters (a-z0-9, dash, underscore) to
+		// prevent reflected XSS via e.g. /statistics/?view=<payload>.
+		$statistics = sanitize_key( get_query_var( 'statistics', 'none' ) );
+		$stat_view  = sanitize_key( get_query_var( 'view', 'main' ) );
 
 		switch ( $statistics ) {
 			case 'nations':

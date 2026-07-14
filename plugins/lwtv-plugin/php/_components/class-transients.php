@@ -100,13 +100,25 @@ class Transients implements Component, Templater {
 	 * @return array
 	 */
 	public function get_cache_dependencies(): array {
+		// NOTE: Patterns use a single '*' as the wildcard. clear_cache_tier() and
+		// get_cache_statistics() translate '*' -> SQL LIKE '%'; any other regex-style
+		// metacharacter (e.g. '.') is treated literally by LIKE and will match nothing.
 		return array(
 			// Tier 1: Critical Counts (1 hour cache)
 			'counts'  => array(
 				'patterns' => array(
-					'taxonomy_opt_.*_count_.*',
-					'actor_chars_.*',
-					'stats_meta_.*',
+					'taxonomy_opt_*',
+					'taxonomy_comp_*',
+					'taxonomy_counts_*',
+					'taxonomy_terms_*',
+					'batch_taxonomy_*',
+					'bulk_char_counts_*',
+					'bulk_show_counts_*',
+					'actor_chars_*',
+					'stats_meta_*',
+					'total_shows_count',
+					'total_formats',
+					'total_dead_shows',
 				),
 				'priority' => 'immediate',
 				'duration' => HOUR_IN_SECONDS,
@@ -115,23 +127,35 @@ class Transients implements Component, Templater {
 			// Tier 2: Derived Statistics (24 hour cache)
 			'derived' => array(
 				'patterns' => array(
-					'scores_.*',
-					'dead_.*',
-					'show_roles_.*',
-					'on_air_stats_.*',
-					'this_year_.*',
-					'actor_char_.*',
-					'complex_taxonomy_.*',
+					'scores_*',
+					'dead_*',
+					'show_roles_*',
+					'on_air_stats_*',
+					'build_characters_on_air_*',
+					'build_shows_on_air_*',
+					'this_year_*',
+					'actor_char_*',
+					'complex_taxonomy_*',
+					'queer_irl_characters',
+					'cliche_leaders_characters_*',
+					'worth_it_*',
+					'we_love_it_data',
+					'shows_we_love_count',
+					'nation_*',
+					'station_*',
+					'top_nations_*',
+					'top_stations_*',
 				),
 				'priority' => 'background',
 				'duration' => DAY_IN_SECONDS,
 			),
 
 			// Tier 3: Stable Data (7 day cache)
+			// Reserved for caches that should survive content edits. The 'preserve'
+			// priority is skipped by process_deferred_cache_invalidation(), so any
+			// pattern listed here is intentionally never cleared on save_post.
 			'stable'  => array(
-				'patterns' => array(
-					'taxonomy_opt_.*(?!.*count).*',
-				),
+				'patterns' => array(),
 				'priority' => 'preserve',
 				'duration' => WEEK_IN_SECONDS,
 			),

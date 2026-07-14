@@ -268,6 +268,7 @@ This document describes the structure and contents of the custom LezWatch.TV Plu
 │   │   ├── class-stats-handler.php - Request handling and routing for statistics
 │   │   ├── build/ - Data builders for specific stat types
 │   │   │   ├── class-actors.php - Actor statistics builder
+│   │   │   ├── class-cliche-leaders - Cliche leaders builder
 │   │   │   ├── class-dead.php - Death statistics builder
 │   │   │   ├── class-formats.php - Format statistics builder
 │   │   │   ├── class-nations.php - Nation statistics builder
@@ -290,7 +291,7 @@ This document describes the structure and contents of the custom LezWatch.TV Plu
 │   │       ├── actors.php - Actor stats entry point
 │   │       ├── actors/ - Actor stat templates (gender, navbar, overview, sexuality)
 │   │       ├── characters.php - Character stats entry point
-│   │       ├── characters/ - Character stat templates (cliches, gender, navbar, on-air, overview, queer-irl, sexuality)
+│   │       ├── characters/ - Character stat templates (cliches, most-cliches, gender, navbar, on-air, overview, queer-irl, sexuality)
 │   │       ├── death.php - Death stats entry point
 │   │       ├── death/ - Death stat templates (characters, list, nations, navbar, overview, shows, stations, years)
 │   │       ├── main.php - Main stats page entry point

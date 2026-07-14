@@ -48,8 +48,8 @@ class Nations {
 					t.slug,
 					t.name,
 					COUNT(DISTINCT p.ID) as show_count,
-					SUM(DISTINCT COALESCE(char_count.meta_value, 0)) as character_count,
-					SUM(DISTINCT COALESCE(dead_count.meta_value, 0)) as dead_count
+					SUM(COALESCE(char_count.meta_value, 0)) as character_count,
+					SUM(COALESCE(dead_count.meta_value, 0)) as dead_count
 				FROM {$wpdb->terms} t
 				INNER JOIN {$wpdb->term_taxonomy} tt ON t.term_id = tt.term_id
 				LEFT JOIN {$wpdb->term_relationships} tr ON tt.term_taxonomy_id = tr.term_taxonomy_id
@@ -218,8 +218,8 @@ class Nations {
 					t.slug,
 					t.name,
 					COUNT(DISTINCT p.ID) as show_count,
-					SUM(DISTINCT COALESCE(char_count.meta_value, 0)) as character_count,
-					SUM(DISTINCT COALESCE(dead_count.meta_value, 0)) as dead_count,
+					SUM(COALESCE(char_count.meta_value, 0)) as character_count,
+					SUM(COALESCE(dead_count.meta_value, 0)) as dead_count,
 					(SELECT COUNT(DISTINCT dead_p.ID)
 					FROM {$wpdb->posts} dead_p
 					INNER JOIN {$wpdb->term_relationships} dead_tr ON dead_p.ID = dead_tr.object_id
