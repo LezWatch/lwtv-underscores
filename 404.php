@@ -35,7 +35,6 @@ get_header();
 						<article id="post-0" class="post not-found">
 							<div class="entry-content clearfix">
 								<p><img src="<?php echo esc_url( get_template_directory_uri() ); ?>/images/rose.gif" alt="<?php esc_attr_e( 'Rose revealing herself by peeling off a face mask in Jane the Virgin', 'lwtv-underscores' ); ?>" class="alignleft"/></p>
-								<?php get_template_part( 'template-parts/partials/ai/discovery-404' ); ?>
 							</div><!-- .entry-content -->
 						</article><!-- #post-0 .post .not-found -->
 					</div><!-- #content -->

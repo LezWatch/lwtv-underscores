@@ -4,6 +4,25 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [7.0.13] - 2026-07-14
+
+### Added
+
+- New Shows, Characters, and Actors no longer reuse a slug that an active AIOSEO redirect still points away from.
+
+### Changed
+
+- "Of the Day" content is now safe when the same cron runs on more than one server at once, so duplicate entries for the same day are no longer created.
+
+### Fixed
+
+- The actor WikiData debugger now matches birth and death dates regardless of storage format, and copied URLs keep their `https://` scheme so they can be pasted in directly.
+
+### Updated
+
+- @wordpress/scripts: ^32.6.0 -> ^33.0.0
+- Bumped terser from 5.48.0 to 5.49.0.
+
 ## [7.0.12] - 2026-07-03
 
 ### Changed
