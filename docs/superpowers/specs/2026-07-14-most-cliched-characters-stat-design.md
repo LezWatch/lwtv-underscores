@@ -16,9 +16,9 @@ of the most clichéd characters. This groups `lez_cliches` *by character (object
 ## Requirements
 
 - Lives as a **new tab** under `/statistics/characters/`, separate from the existing clichés page.
-- Displays **both** a bar chart (top 20) and a ranked table.
-- Scope is **top 20 characters**, but **ties at the cutoff are included** (if characters tie at
-  the 20th-place count, keep them all — list may run slightly over 20).
+- Displays **both** a bar chart and a ranked table.
+- Scope is a **hard top 25 characters**. Ties on cliché count are broken by **most-recently-added
+  character first** (`post_date DESC`), so exactly 25 are shown.
 - Table rows show **Rank / Character (linked) / number of clichés** — count only, no per-character
   cliché name listing.
 - Does not modify the existing clichés popularity page.
@@ -49,23 +49,24 @@ New build class: `plugins/lwtv-plugin/php/statistics/build/class-cliche-leaders.
 - Class: `Cliche_Leaders`
 - Method: `generate()`
 
-Query (single `$wpdb` prepared query):
+Query (single `$wpdb` query, no user input):
 
 ```sql
-SELECT p.ID, p.post_title, COUNT(tr.term_taxonomy_id) AS cliche_count
-FROM {posts} p
-INNER JOIN {term_relationships} tr ON p.ID = tr.object_id
+SELECT chars.ID AS id, chars.post_title AS name, COUNT(tr.term_taxonomy_id) AS cliche_count
+FROM {posts} chars
+INNER JOIN {term_relationships} tr ON chars.ID = tr.object_id
 INNER JOIN {term_taxonomy} tt ON tr.term_taxonomy_id = tt.term_taxonomy_id
 WHERE tt.taxonomy = 'lez_cliches'
-  AND p.post_type = 'post_type_characters'
-  AND p.post_status = 'publish'
-GROUP BY p.ID
-ORDER BY cliche_count DESC
+  AND chars.post_type = 'post_type_characters'
+  AND chars.post_status = 'publish'
+GROUP BY chars.ID
+ORDER BY cliche_count DESC, chars.post_date DESC
+LIMIT 25
 ```
 
-**Top-20-with-ties logic (in PHP):** read the `cliche_count` at index 19 (the 20th row). Keep
-every character whose count is `>=` that threshold. This includes all boundary ties; the result
-may run 20–23 rows.
+**Hard top 25:** the `LIMIT 25` caps the list; `ORDER BY cliche_count DESC, post_date DESC` means
+ties on count are broken by most-recently-added character first. No PHP post-processing of the
+cutoff is needed.
 
 Return shape — array keyed by character ID:
 
@@ -84,7 +85,9 @@ This `name` + `count` shape is exactly what `Format\Barcharts_Optimized::format(
 the chart needs no special handling.
 
 **Caching:** store the result in a transient for `WEEK_IN_SECONDS`, matching every other stats
-build class. Use `lwtv_plugin()->get_transient()` / `set_transient()`.
+build class. Use `lwtv_plugin()->get_transient()` / `set_transient()`. The transient key includes
+the `TOP_LIMIT` value (`cliche_leaders_characters_top25`) so a change to the limit naturally
+invalidates the old cache.
 
 ### 3. Generator wiring
 

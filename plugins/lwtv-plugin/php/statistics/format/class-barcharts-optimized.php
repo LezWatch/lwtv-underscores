@@ -189,8 +189,15 @@ class Barcharts_Optimized {
 				break;
 		}
 
-		// For each label, look for &amp; and replace with &
-		$labels = str_replace( '&amp;', '&', $labels );
+		// Chart.js renders labels onto a <canvas>, which does not decode HTML
+		// entities, so undo the ones esc_js() introduced. Double quotes must stay
+		// escaped (\") to remain valid inside the double-quoted JS string; the
+		// others can decode to their literal characters.
+		$labels = str_replace(
+			array( '&amp;', '&quot;', '&lt;', '&gt;' ),
+			array( '&', '\\"', '<', '>' ),
+			$labels
+		);
 
 		return $labels;
 	}

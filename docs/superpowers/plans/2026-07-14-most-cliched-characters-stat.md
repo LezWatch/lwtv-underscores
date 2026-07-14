@@ -2,6 +2,8 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
+> **Post-execution amendment (2026-07-14):** During review the scope changed from "top 20 with ties at the cutoff" to a **hard top 25**, with count ties broken by **most-recently-added character first** (`ORDER BY cliche_count DESC, post_date DESC LIMIT 25`). The build class therefore has `TOP_LIMIT = 25`, no PHP tie-threshold logic, and a transient key that includes the limit (`cliche_leaders_characters_top25`). The Task 1 code block below reflects the original top-20-with-ties draft; the design spec (`docs/superpowers/specs/2026-07-14-most-cliched-characters-stat-design.md`) and the implemented `class-cliche-leaders.php` are authoritative.
+
 **Goal:** Add a `/statistics/characters/most-cliches/` view that ranks characters by how many `lez_cliches` terms each carries, shown as a bar chart plus a ranked table (top 20, ties at the cutoff included).
 
 **Architecture:** A new build class runs one grouped SQL query that counts `lez_cliches` terms per published character and returns a top-20-with-ties array keyed by character ID. The existing stats generator exposes it through the existing `Stats_Handler` barchart path; a new template renders both that chart and a ranked table. Routing reuses the generic `statistics/characters/{view}` rewrite already in place — no new rewrite rule.

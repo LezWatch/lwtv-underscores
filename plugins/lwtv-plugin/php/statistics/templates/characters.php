@@ -16,7 +16,7 @@ use LWTV\CPTs\Characters as CPT_Characters;
 
 $baseurl = '/statistics/characters/';
 
-$valid_views     = array( 'cliches', 'gender', 'sexuality', 'queer-irl', 'on-air' );
+$valid_views     = array( 'cliches', 'most-cliches', 'gender', 'sexuality', 'queer-irl', 'on-air' );
 $sent_view       = get_query_var( 'view', 'overview' );
 $view            = ( ! in_array( $sent_view, $valid_views, true ) ) ? 'overview' : $sent_view;
 $character_count = lwtv_plugin()->generate_total_counts( 'characters' );
@@ -87,6 +87,10 @@ switch ( $view ) {
 	case 'cliches':
 		// phpcs:ignore PEAR.Files.IncludingFile.UseRequire
 		include plugin_dir_path( __FILE__ ) . 'characters/cliches.php';
+		break;
+	case 'most-cliches':
+		// phpcs:ignore PEAR.Files.IncludingFile.UseRequire
+		include plugin_dir_path( __FILE__ ) . 'characters/most-cliches.php';
 		break;
 	case 'queer-irl':
 		// phpcs:ignore PEAR.Files.IncludingFile.UseRequire
