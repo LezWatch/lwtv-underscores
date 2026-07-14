@@ -25,20 +25,6 @@
 
 			<p><?php esc_attr_e( 'Sorry, but nothing matched your search terms. Please try again with some different keywords.', 'lwtv-underscores' ); ?></p>
 			<?php get_search_form(); ?>
-
-			<?php
-			if ( defined( 'LWTV_USE_AGENTS' ) && true === LWTV_USE_AGENTS ) {
-				get_template_part(
-					'template-parts/partials/ai/discovery-no-results',
-					null,
-					array(
-						'failed_query' => get_search_query(),
-						'mood_chips'   => apply_filters( 'lwtv_discovery_no_results_mood_chips', array() ),
-					)
-				);
-			}
-			?>
-
 		<?php else : ?>
 
 			<p><?php esc_attr_e( 'It seems we can&rsquo;t find what you&rsquo;re looking for. Perhaps searching can help.', 'lwtv-underscores' ); ?></p>
