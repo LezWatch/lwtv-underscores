@@ -113,11 +113,6 @@ use LWTV\_Helpers\Utils;
  * @method void   set_transient( string $slug, $value, int $expiration ) \_Components\Transients
  * @method void   delete_transient( string $slug )                       \_Components\Transients
  *
- * AGENTS
- * @method array  get_shows_by_trope_and_score( $trope, $score, $operator = '>=' ) \_Components\Agents
- * @method array  get_shows_by_params( array $params )                            \_Components\Agents
- * @method string|array present_results_to_ai( string $user_prompt, array $results ) \_Components\Agents
- *
  */
 
 class Plugin {
@@ -148,7 +143,6 @@ class Plugin {
 			_Components\Admin_Color_Schemes::class,
 			_Components\Admin_Menu::class,
 			_Components\Plugins::class, // Needs to be higher up for requirements later.
-			_Components\Agents::class,
 			_Components\Block_Types_Allowed::class,
 			_Components\Blocks::class,
 			_Components\Calendar::class,
