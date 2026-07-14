@@ -18,6 +18,12 @@ use LWTV\CPTs\Actors as CPT_Actors;
 class Of_The_Day implements Component, Templater {
 
 	/**
+	 * Schema version. Bump this and adjust maybe_upgrade_table() whenever the
+	 * table structure changes, so existing installs get ALTERed by dbDelta.
+	 */
+	const DB_VERSION = '1.1';
+
+	/**
 	 * Initialize
 	 */
 	public function init() {
@@ -27,14 +33,46 @@ class Of_The_Day implements Component, Templater {
 
 	/**
 	 * Required steps.
-	 * Build out table if it doesn't exist.
+	 * Build out table if it doesn't exist, and upgrade it if it's out of date.
 	 */
 	public function __construct() {
+		$this->maybe_upgrade_table();
+	}
+
+	/**
+	 * Create or upgrade the lwtv_otd table.
+	 *
+	 * Runs only once per DB_VERSION bump (guarded by an option), since this
+	 * class is instantiated on nearly every request (including the public
+	 * REST endpoint).
+	 *
+	 * Two DreamPress nodes run the same cron schedule, so two processes can
+	 * call set_of_the_day() for the same type/date at (near) the same time.
+	 * A UNIQUE KEY on (posts_type, created) turns that race into a clean
+	 * DB-level rejection instead of two rows. Any duplicates already created
+	 * by the race have to be cleared out first, or adding the key will fail.
+	 */
+	private function maybe_upgrade_table() {
+		if ( get_option( 'lwtv_otd_db_version' ) === self::DB_VERSION ) {
+			return;
+		}
+
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 		global $wpdb;
 
 		$this_table_name = $wpdb->prefix . 'lwtv_otd';
 		$charset_collate = $wpdb->get_charset_collate();
+
+		// Collapse any existing duplicate rows (same type + day) down to the earliest one.
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$wpdb->query(
+			"DELETE t1 FROM {$this_table_name} t1
+			INNER JOIN {$this_table_name} t2
+				ON t1.posts_type = t2.posts_type
+				AND t1.created = t2.created
+				AND t1.id > t2.id"
+		);
+		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 
 		$sql = "CREATE TABLE $this_table_name (
 			id mediumint(9) NOT NULL AUTO_INCREMENT,
@@ -43,11 +81,13 @@ class Of_The_Day implements Component, Templater {
 			posts_id bigint(20) NOT NULL,
 			posts_type text NOT NULL,
 			content text NOT NULL,
-			UNIQUE KEY id (id)
+			UNIQUE KEY id (id),
+			UNIQUE KEY posts_type_created (posts_type(20),created)
 		) $charset_collate;";
 
-		// Make sure our table exists.
-		maybe_create_table( $this_table_name, $sql );
+		dbDelta( $sql );
+
+		update_option( 'lwtv_otd_db_version', self::DB_VERSION );
 	}
 
 	/**
@@ -108,44 +148,52 @@ class Of_The_Day implements Component, Templater {
 		$is_new = false;
 
 		foreach ( $types as $a_type ) {
-			$new_otd = null;
-			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-			$maybe_existing_otd = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM `{$table}` WHERE posts_type = %s AND created = %s", $a_type, $date ) );
+			$new_otd            = null;
+			$maybe_existing_otd = $this->get_otd_row( $table, $a_type, $date );
 
 			// If there's NO entry, we can make one.
-			if ( 0 === $maybe_existing_otd || empty( $maybe_existing_otd ) ) {
-				$new_otd = $this->of_the_day( $a_type, 'default' );
-				if ( ! is_wp_error( $new_otd ) && ! empty( $new_otd ) ) {
-					$new_otd['content']  = $this->add_to_table( $a_type, $new_otd );
-					$new_otd['posts_id'] = $new_otd['pid'];
-					$is_new              = true;
-					lwtv_plugin()->debug_log( 'postiz', 'Added OTD to table: ' . wp_json_encode( $new_otd ) );
+			if ( empty( $maybe_existing_otd ) ) {
+				$candidate = $this->of_the_day( $a_type, 'default' );
+				if ( ! is_wp_error( $candidate ) && ! empty( $candidate ) ) {
+					$inserted = $this->add_to_table( $a_type, $candidate );
+
+					if ( false === $inserted ) {
+						// Unique-key collision: another process already wrote today's row for
+						// this type (two DreamPress nodes can run the same cron at once).
+						// Use whatever it wrote instead of creating a second row.
+						$new_otd = $this->get_otd_row( $table, $a_type, $date );
+						lwtv_plugin()->debug_log( 'postiz', 'OTD insert collided with another process; using existing row: ' . wp_json_encode( $new_otd ) );
+					} else {
+						$candidate['content']  = $inserted;
+						$candidate['posts_id'] = $candidate['pid'];
+						$new_otd               = $candidate;
+						$is_new                = true;
+						lwtv_plugin()->debug_log( 'postiz', 'Added OTD to table: ' . wp_json_encode( $new_otd ) );
+					}
 				} else {
 					lwtv_plugin()->debug_log( 'postiz', 'No eligible ' . $a_type . ' found for OTD.' );
 					$new_otd = null;
 				}
 			} else {
-				$new_otd = $maybe_existing_otd[0];
-
-				// Convert stdClass object to associative array
-				if ( is_object( $new_otd ) ) {
-					$new_otd = json_decode( wp_json_encode( $new_otd ), true );
-				}
-
-				// Normalize keys: DB uses 'posts_id', but of_the_day() returns 'pid'
-				// Add 'pid' for consistency with CLI and Postiz code
-				$new_otd['pid'] = $new_otd['posts_id'];
+				$new_otd = $maybe_existing_otd;
 
 				// If the stored row has no valid post ID, treat it as missing and regenerate.
 				if ( empty( $new_otd['pid'] ) || 0 === (int) $new_otd['pid'] ) {
 					$wpdb->delete( $table, array( 'id' => $new_otd['id'] ) );
 					$regenerated = $this->of_the_day( $a_type, 'default' );
 					if ( ! is_wp_error( $regenerated ) && ! empty( $regenerated ) ) {
-						$regenerated['content']  = $this->add_to_table( $a_type, $regenerated );
-						$regenerated['posts_id'] = $regenerated['pid'];
-						$new_otd                 = $regenerated;
-						$is_new                  = true;
-						lwtv_plugin()->debug_log( 'postiz', 'Re-generated OTD (replaced invalid row): ' . wp_json_encode( $new_otd ) );
+						$inserted = $this->add_to_table( $a_type, $regenerated );
+
+						if ( false === $inserted ) {
+							$new_otd = $this->get_otd_row( $table, $a_type, $date );
+							lwtv_plugin()->debug_log( 'postiz', 'OTD regeneration collided with another process; using existing row: ' . wp_json_encode( $new_otd ) );
+						} else {
+							$regenerated['content']  = $inserted;
+							$regenerated['posts_id'] = $regenerated['pid'];
+							$new_otd                 = $regenerated;
+							$is_new                  = true;
+							lwtv_plugin()->debug_log( 'postiz', 'Re-generated OTD (replaced invalid row): ' . wp_json_encode( $new_otd ) );
+						}
 					} else {
 						lwtv_plugin()->debug_log( 'postiz', 'No eligible ' . $a_type . ' found for OTD during regeneration.' );
 						$new_otd = null;
@@ -173,11 +221,36 @@ class Of_The_Day implements Component, Templater {
 	}
 
 	/**
+	 * Fetch today's OTD row for a type, normalized with 'pid' set.
+	 *
+	 * @param string $table Table name.
+	 * @param string $type  'character' or 'show'.
+	 * @param string $date  Y-m-d.
+	 * @return array|null
+	 */
+	private function get_otd_row( $table, $type, $date ) {
+		global $wpdb;
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$row = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM `{$table}` WHERE posts_type = %s AND created = %s", $type, $date ), ARRAY_A );
+
+		if ( empty( $row ) ) {
+			return null;
+		}
+
+		// Normalize keys: DB uses 'posts_id', but of_the_day() returns 'pid'.
+		$row['pid'] = $row['posts_id'];
+
+		return $row;
+	}
+
+	/**
 	 * Add the OTD to the table
 	 *
 	 * @param string $type type of content
 	 * @param array  $data OTD array
-	 * @return string The generated content string
+	 * @return string|false The generated content string, or false if the row already
+	 *                       exists (unique key collision from a concurrent process).
 	 */
 	public function add_to_table( $type, $data ) {
 		global $wpdb;
@@ -210,11 +283,17 @@ class Of_The_Day implements Component, Templater {
 			'content'       => $content,
 		);
 
-		// Add to the DB
-		$wpdb->insert(
+		// Add to the DB. This can fail on the posts_type_created unique key if another
+		// process already inserted today's row for this type (e.g. two DreamPress
+		// nodes running the same cron at once) — that's expected, not an error.
+		$inserted = $wpdb->insert(
 			$table,
 			$array
 		);
+
+		if ( false === $inserted ) {
+			return false;
+		}
 
 		return $content;
 	}

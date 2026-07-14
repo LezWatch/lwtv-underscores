@@ -57,7 +57,7 @@
   "devDependencies": {
     "@parcel/watcher": "^2",
     "@types/node": "^22",
-    "@wordpress/scripts": "^32.6.0",
+    "@wordpress/scripts": "^33.0.0",
     "autoprefixer": "^10.4",
     "css-minimizer-webpack-plugin": "^8.0",
     "eslint-plugin-prettier": "^5.5",
