@@ -217,7 +217,13 @@ canvas {
 		width: 38px;
 		height: 38px;
 		border-radius: 8px;
-		background-color: rgba(0, 0, 0, 0.06);
+		color: inherit; // inherits the card-header type color.
+		background-color: rgba(0, 0, 0, 0.06); // fallback for no color-mix support.
+		background-color: color-mix(in srgb, currentColor 12%, transparent);
+
+		svg {
+			fill: currentColor; // sprite paths have no fill; take the type color.
+		}
 	}
 
 	.lwtv-metric-number {
