@@ -56,6 +56,7 @@ class Statistics_Optimized implements Component, Templater {
 			'generate_stats_block_actor'     => array( $this, 'generate_stats_block_actor' ),
 			'generate_total_counts'          => array( $this, 'generate_total_counts' ),
 			'generate_total_dead'            => array( $this, 'generate_total_dead' ),
+			'generate_growth_series'         => array( $this, 'generate_growth_series' ),
 			'generate_individual_actors'     => array( $this, 'generate_individual_actors' ),
 		);
 	}
@@ -105,6 +106,16 @@ class Statistics_Optimized implements Component, Templater {
 	 */
 	public function generate_total_counts( $subject, $death = false ) {
 		return ( new Stats_Counter() )->generate_total_counts( $subject, $death );
+	}
+
+	/**
+	 * Generate cumulative growth series for the overview sparklines.
+	 *
+	 * @param string $subject One of: shows, characters, actors, dead.
+	 * @return array
+	 */
+	public function generate_growth_series( $subject ) {
+		return ( new Stats_Counter() )->get_growth_series( $subject );
 	}
 
 

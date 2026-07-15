@@ -111,4 +111,84 @@ class Stats_Counter {
 
 		return wp_count_posts( 'post_type_' . $subject )->publish;
 	}
+
+	/**
+	 * Cumulative growth series for a subject, one entry per year.
+	 *
+	 * @param string $subject One of: shows, characters, actors, dead.
+	 * @return array<int,array{year:int,count:int}> Year-ordered, cumulative counts.
+	 */
+	public function get_growth_series( $subject ) {
+		$valid = array( 'shows', 'characters', 'actors', 'dead' );
+		if ( ! in_array( $subject, $valid, true ) ) {
+			return array();
+		}
+
+		$cache_key   = 'stats_growth_series_' . $subject;
+		$cached_data = lwtv_plugin()->get_transient( $cache_key );
+		if ( false !== $cached_data ) {
+			return (array) $cached_data;
+		}
+
+		$per_year = array();
+
+		if ( 'dead' === $subject ) {
+			// Reuse the death-year data (character death counts per year).
+			$years = ( new Build_Dead() )->generate_years_data();
+			foreach ( $years as $row ) {
+				$year              = (int) $row['death_year'];
+				$per_year[ $year ] = ( $per_year[ $year ] ?? 0 ) + (int) $row['death_count'];
+			}
+		} else {
+			global $wpdb;
+			$post_type = 'post_type_' . $subject;
+			// One grouped query: published entries per creation year.
+			$results = $wpdb->get_results(
+				$wpdb->prepare(
+					"SELECT YEAR(post_date) AS post_year, COUNT(*) AS total
+					FROM {$wpdb->posts}
+					WHERE post_type = %s AND post_status = 'publish'
+					GROUP BY YEAR(post_date)
+					ORDER BY post_year ASC",
+					$post_type
+				),
+				ARRAY_A
+			);
+			if ( ! is_array( $results ) ) {
+				lwtv_plugin()->error_log( 'statistics', 'Growth series query failed for ' . $subject . ' - ' . $wpdb->last_error );
+				return array();
+			}
+			foreach ( $results as $row ) {
+				$per_year[ (int) $row['post_year'] ] = (int) $row['total'];
+			}
+		}
+
+		$series = $this->cumulate( $per_year );
+
+		if ( ! empty( $series ) ) {
+			lwtv_plugin()->set_transient( $cache_key, $series, DAY_IN_SECONDS );
+		}
+
+		return $series;
+	}
+
+	/**
+	 * Turn a year=>count map into a year-ordered cumulative series.
+	 *
+	 * @param array<int,int> $per_year Map of year => count for that year.
+	 * @return array<int,array{year:int,count:int}>
+	 */
+	private function cumulate( array $per_year ) {
+		ksort( $per_year );
+		$running = 0;
+		$series  = array();
+		foreach ( $per_year as $year => $count ) {
+			$running += (int) $count;
+			$series[] = array(
+				'year'  => (int) $year,
+				'count' => $running,
+			);
+		}
+		return $series;
+	}
 }
