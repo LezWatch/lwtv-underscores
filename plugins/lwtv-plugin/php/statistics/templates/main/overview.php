@@ -58,7 +58,7 @@ $stats_cards = array(
 		'class'   => 'characters',
 		'label'   => __( 'Characters', 'lwtv' ),
 		'count'   => $stats_characters,
-		'caption' => __( 'Queer characters tracked', 'lwtv' ),
+		'caption' => __( 'Characters tracked since 2014', 'lwtv' ),
 		'svg'     => 'user.svg',
 		'icon'    => 'svg-user',
 	),
@@ -94,7 +94,7 @@ $stats_cards = array(
 		<div class="lwtv-metric-card bg-light card-header <?php echo esc_attr( $stats_card['class'] ); ?>">
 			<div class="lwtv-metric-top">
 				<span class="lwtv-stats-eyebrow"><?php echo esc_html( $stats_card['label'] ); ?></span>
-				<span class="lwtv-metric-icon">
+				<span class="lwtv-metric-icon <?php echo esc_attr( $stats_card['type'] ); ?>">
 					<?php echo lwtv_plugin()->get_symbolicon( svg: $stats_card['svg'], icon: $stats_card['icon'], max_size: '20' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 				</span>
 			</div>

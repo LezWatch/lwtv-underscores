@@ -9,43 +9,43 @@
 	.card-header.actors,
 	.card-header.genres,
 	.card-header.gender {
-		color: #856404;
-		background-color: #fff3cd;
-		border-color: #ffeeba;
+		color: colors.$lwtv-stats-yellow;
+		background-color: colors.$lwtv-stats-yellow-background;
+		border-color: colors.$lwtv-stats-yellow-border;
 	}
 
 	.card-header.characters,
 	.card-header.new-shows,
 	.card-header.tropes,
 	.card-header.actor_gender {
-		color: #155724;
-		background-color: #d4edda;
-		border-color: #c3e6cb;
+		color: colors.$lwtv-stats-green;
+		background-color: colors.$lwtv-stats-green-background;
+		border-color: colors.$lwtv-stats-green-border;
 	}
 
 	.card-header.dead-characters,
 	.card-header.canceled-shows {
-		color: #721c24;
-		background-color: #f8d7da;
-		border-color: #f5c6cb;
+		color: colors.$lwtv-stats-red;
+		background-color: colors.$lwtv-stats-red-background;
+		border-color: colors.$lwtv-stats-red-border;
 	}
 
 	.card-header.shows,
 	.card-header.shows-onair,
 	.card-header.sexuality {
-		color: #0c5460;
-		background-color: #d1ecf1;
-		border-color: #bee5eb;
+		color: colors.$lwtv-stats-blue;
+		background-color: colors.$lwtv-stats-blue-background;
+		border-color: colors.$lwtv-stats-blue-border;
 	}
 
 	.progress-bar {
-		background-color: #17a2b8 !important;
+		background-color: colors.$lwtv-stats-progressbar !important;
 	}
 
 	button {
 		color: #fff;
-		background-color: #17a2b8;
-		border-color: #17a2b8;
+		background-color: colors.$lwtv-stats-progressbar;
+		border-color: colors.$lwtv-stats-progressbar;
 	}
 
 	a.nav-link {
@@ -155,7 +155,6 @@ canvas {
 
 	.lwtv-stats-tab {
 		padding: 6px 14px;
-		font-size: 0.875rem;
 		font-weight: 500;
 		color: colors.$lwtv-medgrey;
 		text-decoration: none;
@@ -169,11 +168,11 @@ canvas {
 			color: colors.$lwtv-dkgrey;
 			background-color: colors.$white;
 			box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+			border: 1px solid colors.$lwtv-pink;
 		}
 	}
 
 	.lwtv-stats-eyebrow {
-		font-size: 0.625rem;
 		font-weight: 700;
 		letter-spacing: 0.08em;
 		text-transform: uppercase;
@@ -199,7 +198,7 @@ canvas {
 		border: 1px solid colors.$lwtv-bordergrey;
 		border-radius: 14px;
 
-		// .card-header base sets display:block etc.; reassert what we need.
+		// .card-header base sets display:block etc.;.card-headerbasesetsdisplay.card-headerbasesetsdisplay.card-headerbasesetsdisplay.card-headerbasesetsdisplay.card-headerbasesetsdisplay.card-headerbasesetsdisplay.card-headerbasesetsdisplay.card-headerbasesetsdisplay.card-headerbasesetsdisplay.card-headerbasesetsdisplay.card-headerbasesetsdisplay.card-headerbasesetsdisplay.card-headerbasesetsdisplay.card-headerbasesetsdisplay.card-headerbasesetsdisplay.card-headerbasesetsdisplay.card-headerbasesetsdisplay.card-headerbasesetsdisplay reassert what we need.
 		.lwtv-stats-eyebrow {
 			color: inherit; // inherits the card-header type color (shows/characters/etc).
 		}
@@ -219,12 +218,27 @@ canvas {
 		height: 38px;
 		border-radius: 8px;
 		color: inherit; // inherits the card-header type color.
-		background-color: rgba(0, 0, 0, 0.06); // fallback for no color-mix support.
-		background-color: color-mix(in srgb, currentColor 12%, transparent);
+		background-color: rgba(0, 0, 0, 0.06);
 
 		svg {
 			fill: currentColor; // sprite paths have no fill; take the type color.
 		}
+	}
+
+	.lwtv-metric-icon.shows {
+		background-color: colors.$lwtv-stats-blue-background;
+	}
+
+	.lwtv-metric-icon.actors {
+		background-color: colors.$lwtv-stats-yellow-background;
+	}
+
+	.lwtv-metric-icon.characters {
+		background-color: colors.$lwtv-stats-green-background;
+	}
+
+	.lwtv-metric-icon.dead {
+		background-color: colors.$lwtv-stats-red-background;
 	}
 
 	.lwtv-metric-number {
@@ -243,12 +257,12 @@ canvas {
 	}
 
 	.lwtv-metric-caption {
-		font-size: 0.75rem;
+		font-size: 0.85rem;
 		color: colors.$lwtv-medgrey;
 	}
 
 	.card-header.lwtv-metric-card {
-		background-color: transparent; // .bg-light provides the surface.
+		background-color: transparent;
 		border-color: colors.$lwtv-bordergrey;
 	}
 
@@ -258,7 +272,7 @@ canvas {
 		gap: 16px;
 		padding: 16px 20px;
 		margin-bottom: 1.5rem;
-		border: 1px solid; // border-color comes from .card-header.dead-characters.
+		border: 1px solid;
 		border-left-width: 3px;
 		border-radius: 14px;
 	}
@@ -271,7 +285,6 @@ canvas {
 		height: 38px;
 		border-radius: 8px;
 		color: inherit; // inherits the card-header type color.
-		background-color: rgba(0, 0, 0, 0.06); // fallback for no color-mix support.
 		background-color: color-mix(in srgb, currentColor 12%, transparent);
 		flex: 0 0 auto;
 
@@ -292,7 +305,7 @@ canvas {
 
 	.lwtv-byg-desc {
 		margin: 0;
-		font-size: 0.8125rem;
+		font-size: 0.9125rem;
 		color: colors.$lwtv-medgrey;
 	}
 
@@ -337,26 +350,25 @@ canvas {
 
 	.lwtv-panel-title {
 		margin: 0;
-		font-size: 1rem;
+		font-size: 1.4rem;
 		font-weight: 600;
 	}
 
 	.lwtv-panel-sub {
 		margin: 0;
-		font-size: 0.75rem;
+		font-size: 0.95rem;
 		color: colors.$lwtv-medgrey;
 	}
 
 	.lwtv-bar-row {
 		display: grid;
-		grid-template-columns: 88px 1fr auto;
+		grid-template-columns: 88px 1fr 84px;
 		gap: 10px;
 		align-items: center;
 		margin-bottom: 0.6rem;
 	}
 
 	.lwtv-bar-name {
-		font-size: 0.8125rem;
 		font-weight: 500;
 	}
 
@@ -371,16 +383,17 @@ canvas {
 	}
 
 	.lwtv-bar-label {
-		font-size: 0.75rem;
+		font-size: 0.85rem;
 		color: colors.$lwtv-medgrey;
 		font-variant-numeric: tabular-nums;
+		text-align: right;
 		white-space: nowrap;
 	}
 
 	.lwtv-panel-foot {
 		display: inline-block;
 		margin-top: 0.75rem;
-		font-size: 0.8125rem;
+		font-size: 0.9125rem;
 	}
 
 	.lwtv-atw-headline {
@@ -415,7 +428,7 @@ canvas {
 		align-items: center;
 		gap: 8px;
 		padding: 3px 0;
-		font-size: 0.8125rem;
+		font-size: 0.9125rem;
 	}
 
 	.lwtv-legend-dot {

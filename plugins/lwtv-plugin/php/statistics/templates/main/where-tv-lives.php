@@ -26,7 +26,7 @@ $wtl_top      = ! empty( $wtl_stations ) ? max( array_map( fn( $s ) => (int) $s[
 				<?php
 				printf(
 					/* translators: 1: number shown (7), 2: total networks. */
-					esc_html__( 'Shows by network — top %1$d of %2$s stations & networks', 'lwtv' ),
+					esc_html__( 'Shows by network. The top %1$d of %2$s stations & networks:', 'lwtv' ),
 					(int) count( $wtl_stations ),
 					esc_html( number_format_i18n( $stats_total_stations ) )
 				);

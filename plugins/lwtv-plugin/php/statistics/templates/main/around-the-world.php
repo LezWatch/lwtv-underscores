@@ -51,7 +51,7 @@ $atw_n_in_ten = ( $atw_top_pct > 0 ) ? (int) round( $atw_top_pct / 10 ) : 0;
 				<?php
 				printf(
 					/* translators: 1: total shows, 2: total nations. */
-					esc_html__( '%1$s shows across %2$s nations', 'lwtv' ),
+					esc_html__( '%1$s shows across %2$s nations:', 'lwtv' ),
 					esc_html( number_format_i18n( $stats_shows ) ),
 					esc_html( number_format_i18n( $stats_total_nations ) )
 				);

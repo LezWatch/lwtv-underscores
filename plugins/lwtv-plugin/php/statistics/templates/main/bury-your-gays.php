@@ -25,7 +25,7 @@ if ( $stats_dead <= 0 ) {
 			<?php
 			printf(
 				/* translators: 1: number of dead characters, 2: the "1 in N" ratio. */
-				wp_kses_post( __( '<strong data-count-to="%1$d">%3$s</strong> characters &mdash; 1 in %2$d &mdash; have been killed off.', 'lwtv' ) ),
+				wp_kses_post( __( '<strong data-count-to="%1$d">%3$s</strong> characters (1 in %2$d) have been killed off.', 'lwtv' ) ),
 				(int) $stats_dead,
 				(int) $stats_dead_ratio,
 				esc_html( number_format_i18n( $stats_dead ) )
