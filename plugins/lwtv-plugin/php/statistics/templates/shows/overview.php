@@ -13,6 +13,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @var array $top_tropes    slug => ['name','count', …], top 10 by count.
  * @var array $top_genres    slug => ['name','count', …], top 10 by count.
  * @var array $shows_growth  cumulative growth series for shows.
+ * @var int   $trope_buried  count of shows tagged with the buried/dead-queers trope.
+ * @var int   $trope_happy   count of shows tagged with the happy-ending trope.
  */
 
 // phpcs:ignore PEAR.Files.IncludingFile.UseRequire
@@ -85,6 +87,22 @@ $shows_cards = array(
 		<?php
 	}
 	?>
+</div>
+
+<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'The Trope Gap', 'lwtv' ); ?></p>
+<div class="lwtv-pullstats">
+	<div class="lwtv-byg card-header dead-characters">
+		<div class="lwtv-byg-body">
+			<span class="lwtv-stats-eyebrow"><?php esc_html_e( 'Bury Your Queers', 'lwtv' ); ?></span>
+			<p class="lwtv-byg-line"><strong data-count-to="<?php echo (int) $trope_buried; ?>"><?php echo esc_html( number_format_i18n( $trope_buried ) ); ?></strong> <?php esc_html_e( 'shows kill a queer character.', 'lwtv' ); ?></p>
+		</div>
+	</div>
+	<div class="lwtv-byg card-header characters">
+		<div class="lwtv-byg-body">
+			<span class="lwtv-stats-eyebrow"><?php esc_html_e( 'Happy Endings', 'lwtv' ); ?></span>
+			<p class="lwtv-byg-line"><strong data-count-to="<?php echo (int) $trope_happy; ?>"><?php echo esc_html( number_format_i18n( $trope_happy ) ); ?></strong> <?php esc_html_e( 'shows give them a happy ending.', 'lwtv' ); ?></p>
+		</div>
+	</div>
 </div>
 
 <?php

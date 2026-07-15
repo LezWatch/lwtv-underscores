@@ -325,6 +325,17 @@ canvas {
 		}
 	}
 
+	.lwtv-pullstats {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 16px;
+		margin-bottom: 1.5rem;
+
+		@media (max-width: 575px) {
+			grid-template-columns: 1fr;
+		}
+	}
+
 	.lwtv-panels {
 		display: grid;
 		grid-template-columns: 1.5fr 1fr;
