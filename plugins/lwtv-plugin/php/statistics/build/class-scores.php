@@ -133,6 +133,13 @@ class Scores {
 	 */
 	private function process_scores_chunk( $chunk, &$results_array ) {
 		try {
+			// Prime the post cache for the whole chunk in one query so the
+			// get_permalink() call below doesn't run a get_post() query per row.
+			$post_ids = array_map( 'intval', wp_list_pluck( $chunk, 'ID' ) );
+			if ( ! empty( $post_ids ) ) {
+				_prime_post_caches( $post_ids, false, false );
+			}
+
 			foreach ( $chunk as $row ) {
 				$show_id   = (int) $row['ID'];
 				$permalink = get_permalink( $show_id );

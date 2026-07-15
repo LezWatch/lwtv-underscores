@@ -105,6 +105,18 @@ class Actors {
 		$alive_count = 0;
 		$dead_count  = 0;
 
+		// Prime the term-relationship cache for every character in one query so
+		// the per-character has_term() checks below don't each hit the database.
+		$character_ids = array();
+		foreach ( $char_list as $character ) {
+			if ( isset( $character['id'] ) ) {
+				$character_ids[] = (int) $character['id'];
+			}
+		}
+		if ( ! empty( $character_ids ) ) {
+			update_object_term_cache( $character_ids, 'post_type_characters' );
+		}
+
 		// Extract character IDs and check their death status
 		foreach ( $char_list as $character ) {
 			if ( isset( $character['id'] ) ) {

@@ -248,6 +248,12 @@ class On_Air_Optimized {
 				lwtv_plugin()->debug_log( 'statistics', 'Query executed without filtering, returned ' . count( $results ) . ' results' );
 			}
 
+			// Current year in the site's timezone, used for shows still airing
+			// ( 'finish' === 'current' ). Matches how the rest of this class derives
+			// "now" (via LWTV_TIMEZONE) instead of gmdate()'s UTC year, which can be
+			// a year ahead around the New Year boundary.
+			$current_year = (int) ( new \DateTime( 'now', new \DateTimeZone( LWTV_TIMEZONE ) ) )->format( 'Y' );
+
 			// If we have filtered data, determine the actual year range from the shows' airdates
 			$actual_year_range = $year_range;
 			if ( ! empty( $results ) ) {
@@ -264,7 +270,7 @@ class On_Air_Optimized {
 					}
 
 					$start_year  = (int) $airdates['start'];
-					$finish_year = ( 'current' === $airdates['finish'] ) ? (int) gmdate( 'Y' ) : (int) $airdates['finish'];
+					$finish_year = ( 'current' === $airdates['finish'] ) ? $current_year : (int) $airdates['finish'];
 
 					if ( null === $earliest_start || $start_year < $earliest_start ) {
 						$earliest_start = $start_year;
@@ -301,7 +307,7 @@ class On_Air_Optimized {
 				}
 
 				$start_year  = (int) $airdates['start'];
-				$finish_year = ( 'current' === $airdates['finish'] ) ? (int) gmdate( 'Y' ) : (int) $airdates['finish'];
+				$finish_year = ( 'current' === $airdates['finish'] ) ? $current_year : (int) $airdates['finish'];
 
 				// A show is "on air" for any year between start and finish (inclusive)
 				for ( $year = $start_year; $year <= $finish_year; $year++ ) {
@@ -370,7 +376,7 @@ class On_Air_Optimized {
 					// If we're empty, delete the transients.
 					lwtv_plugin()->delete_transient( $transient );
 				} else {
-					// Otherwise save array as transient for 14 hours
+					// Otherwise save array as transient for 1 day
 					lwtv_plugin()->set_transient( $transient, $array, DAY_IN_SECONDS );
 				}
 			}

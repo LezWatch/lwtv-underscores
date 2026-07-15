@@ -113,7 +113,9 @@ class Taxonomy_Optimized {
 		$cache_key = 'taxonomy_comp_' . $post_type . '_' . $taxonomy . '_' . $sort_order . '_' . ( $include_empty ? 'all' : 'nonempty' );
 		$array     = lwtv_plugin()->get_transient( $cache_key );
 
-		if ( false === $array || empty( $array ) ) {
+		// Only a true cache miss (false) triggers a rebuild; a cached empty array
+		// is a valid result (a taxonomy with no non-empty terms) and is reused.
+		if ( false === $array ) {
 			$optimized_queery = new Queery_Taxonomy_Optimized();
 			$array            = $optimized_queery->get_cached_term_counts( $post_type, $taxonomy, array(), $sort_order );
 
@@ -263,12 +265,6 @@ class Taxonomy_Optimized {
 
 		// Prepare parameters: taxonomy, then all term slugs
 		$parameters = array_merge( array( $taxonomy ), $term_slugs );
-
-		// Get current year for on-air calculations
-		$timestamp = time();
-		$dt        = new \DateTime( 'now', new \DateTimeZone( LWTV_TIMEZONE ) );
-		$dt->setTimestamp( $timestamp );
-		$current_year = $dt->format( 'Y' );
 
 		// Single query to get all show metrics for all terms
 		// phpcs:disable
