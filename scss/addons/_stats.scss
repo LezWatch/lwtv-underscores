@@ -132,3 +132,42 @@ canvas {
 
 	}
 }
+
+/* Statistics Overview redesign */
+
+.statistics {
+
+	.lwtv-stats-overview {
+		max-width: 1120px;
+		margin: 0 auto;
+	}
+
+	.lwtv-stats-tabs {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 4px;
+		padding: 4px;
+		margin-bottom: 1.5rem;
+		background-color: colors.$lwtv-grey;
+		border-radius: 10px;
+	}
+
+	.lwtv-stats-tab {
+		padding: 6px 14px;
+		font-size: 0.875rem;
+		font-weight: 500;
+		color: colors.$lwtv-medgrey;
+		text-decoration: none;
+		border-radius: 8px;
+
+		&:hover {
+			color: colors.$lwtv-purple;
+		}
+
+		&.is-active {
+			color: colors.$lwtv-dkgrey;
+			background-color: colors.$white;
+			box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+		}
+	}
+}

@@ -369,5 +369,18 @@
 		a.nav-link {
 			color: colors.$lwtv-ltpink;
 		}
+
+		.lwtv-stats-tabs {
+			background-color: $lwtv-medgrey;
+		}
+
+		.lwtv-stats-tab {
+			color: colors.$lwtv-ltpink;
+
+			&.is-active {
+				color: colors.$lwtv-dkgrey;
+				background-color: colors.$lwtv-ltpink;
+			}
+		}
 	}
 }
