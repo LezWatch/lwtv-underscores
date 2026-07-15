@@ -28,6 +28,10 @@ $ranked_total = (int) ( $ranked['total'] ?? 0 );
 		<?php
 		foreach ( $ranked_rows as $ranked_slug => $ranked_row ) {
 			$ranked_count = (int) $ranked_row['count'];
+			// Skip terms with no shows — they add empty "0 · 0.0%" rows.
+			if ( $ranked_count <= 0 ) {
+				continue;
+			}
 			$ranked_pct   = ( $ranked_total > 0 ) ? round( ( $ranked_count / $ranked_total ) * 100, 1 ) : 0;
 			$ranked_width = ( $ranked_top > 0 ) ? round( ( $ranked_count / $ranked_top ) * 100, 1 ) : 0;
 			$ranked_href  = ( ! empty( $ranked['base'] ) ) ? site_url( $ranked['base'] . $ranked_slug ) : ( $ranked_row['url'] ?? '#' );
