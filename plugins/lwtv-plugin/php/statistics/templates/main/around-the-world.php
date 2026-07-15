@@ -75,7 +75,7 @@ $atw_n_in_ten = ( $atw_top_pct > 0 ) ? (int) round( $atw_top_pct / 10 ) : 0;
 
 	<div class="lwtv-share-bar" role="img" aria-label="<?php esc_attr_e( 'Share of shows by nation', 'lwtv' ); ?>">
 		<?php
-		foreach ( $atw_rows as $atw_index => $atw_row ) {
+		foreach ( $atw_rows as $atw_row ) {
 			printf(
 				'<span class="lwtv-share-seg" style="width:0" data-grow-to="%1$s"></span>',
 				esc_attr( $atw_row['pct'] )
