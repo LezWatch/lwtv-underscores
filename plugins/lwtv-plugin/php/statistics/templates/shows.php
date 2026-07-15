@@ -50,17 +50,11 @@ if ( 'overview' === $view ) {
 	$count_genres = count( $genres_data );
 }
 ?>
-<h2>
-	<a href="/shows/">Total Shows</a> (<?php echo (int) $shows_count; ?>)
-</h2>
-
-<?php
-// phpcs:ignore PEAR.Files.IncludingFile.UseRequire
-include plugin_dir_path( __FILE__ ) . 'shows/navbar.php';
-?>
-
-<p>&nbsp;</p>
-
+<div class="lwtv-stats-overview">
+	<?php
+	// phpcs:ignore PEAR.Files.IncludingFile.UseRequire
+	include plugin_dir_path( __FILE__ ) . 'shows/subnav.php';
+	?>
 <?php
 
 switch ( $view ) {
@@ -110,3 +104,6 @@ switch ( $view ) {
 if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
 	echo '<!-- OPTIMIZED: ' . esc_html( get_num_queries() ) . ' queries for view "' . esc_html( $view ) . '" -->';
 }
+?>
+</div><!-- .lwtv-stats-overview -->
+<?php

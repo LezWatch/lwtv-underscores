@@ -414,5 +414,14 @@
 			outline: 1px solid rgba(255, 255, 255, 0.15);
 			outline-offset: -1px;
 		}
+
+		.lwtv-shows-subnav-item {
+			color: colors.$lwtv-ltpink;
+
+			&.is-active {
+				color: colors.$white;
+				border-bottom-color: colors.$lwtv-pink;
+			}
+		}
 	}
 }
