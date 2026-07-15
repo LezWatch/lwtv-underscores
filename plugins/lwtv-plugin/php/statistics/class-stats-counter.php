@@ -133,11 +133,31 @@ class Stats_Counter {
 		$per_year = array();
 
 		if ( 'dead' === $subject ) {
-			// Reuse the death-year data (character death counts per year).
-			$years = ( new Build_Dead() )->generate_years_data();
-			foreach ( $years as $row ) {
-				$year              = (int) $row['death_year'];
-				$per_year[ $year ] = ( $per_year[ $year ] ?? 0 ) + (int) $row['death_count'];
+			global $wpdb;
+			// Distinct published characters tagged dead, grouped by entry year —
+			// same "database growth by post_date" shape as the other subjects,
+			// so the final total matches generate_total_dead( 'characters' ).
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- static query, no untrusted input
+			$results = $wpdb->get_results(
+				"SELECT YEAR(p.post_date) AS post_year, COUNT(DISTINCT p.ID) AS total
+				FROM {$wpdb->posts} p
+				INNER JOIN {$wpdb->term_relationships} tr ON p.ID = tr.object_id
+				INNER JOIN {$wpdb->term_taxonomy} tt ON tr.term_taxonomy_id = tt.term_taxonomy_id
+				INNER JOIN {$wpdb->terms} t ON tt.term_id = t.term_id
+				WHERE p.post_type = 'post_type_characters'
+				AND p.post_status = 'publish'
+				AND tt.taxonomy = 'lez_cliches'
+				AND t.slug = 'dead'
+				GROUP BY YEAR(p.post_date)
+				ORDER BY post_year ASC",
+				ARRAY_A
+			);
+			if ( ! is_array( $results ) ) {
+				lwtv_plugin()->error_log( 'statistics', 'Growth series query failed for ' . $subject . ' - ' . $wpdb->last_error );
+				return array();
+			}
+			foreach ( $results as $row ) {
+				$per_year[ (int) $row['post_year'] ] = (int) $row['total'];
 			}
 		} else {
 			global $wpdb;
