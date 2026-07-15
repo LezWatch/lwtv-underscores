@@ -191,6 +191,10 @@ canvas {
 		margin-bottom: 1.5rem;
 	}
 
+	.lwtv-metric-grid--3 {
+		grid-template-columns: repeat(3, 1fr);
+	}
+
 	.lwtv-metric-card {
 		display: flex;
 		flex-direction: column;
@@ -380,6 +384,19 @@ canvas {
 			border-radius: 999px;
 			transition: none; // width is JS-driven.
 		}
+	}
+
+	// Ranked-bar family fills (override the default teal progressbar within a family list).
+	.lwtv-bars--characters .progress-bar {
+		background-color: colors.$lwtv-stats-green !important;
+	}
+
+	.lwtv-bars--actors .progress-bar {
+		background-color: colors.$lwtv-stats-yellow !important;
+	}
+
+	.lwtv-bars--shows .progress-bar {
+		background-color: colors.$lwtv-stats-blue !important;
 	}
 
 	.lwtv-bar-label {

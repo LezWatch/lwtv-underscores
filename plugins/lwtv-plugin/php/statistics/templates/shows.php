@@ -48,6 +48,9 @@ if ( 'overview' === $view ) {
 	// Get total counts efficiently
 	$count_tropes = count( $tropes_data );
 	$count_genres = count( $genres_data );
+
+	// Growth series for the Shows metric-card sparkline (real, cumulative).
+	$shows_growth = lwtv_plugin()->generate_growth_series( 'shows' );
 }
 ?>
 <div class="lwtv-stats-overview">

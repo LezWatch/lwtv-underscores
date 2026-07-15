@@ -360,6 +360,12 @@
 			background-color: colors.$lwtv-ltpink !important;
 		}
 
+		.lwtv-bars--characters .progress-bar,
+		.lwtv-bars--actors .progress-bar,
+		.lwtv-bars--shows .progress-bar {
+			background-color: colors.$lwtv-ltpink !important;
+		}
+
 		button {
 			color: colors.$black;
 			background-color: colors.$lwtv-ltpink;
