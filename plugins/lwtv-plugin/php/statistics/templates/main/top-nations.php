@@ -36,20 +36,11 @@ $formatted_amount = new \NumberFormatter( 'en_US', \NumberFormatter::SPELLOUT );
 	</thead>
 	<tbody>
 		<?php
-		$nations = get_terms(
-			array(
-				'taxonomy'   => 'lez_country',
-				'number'     => 10,
-				'orderby'    => 'count',
-				'hide_empty' => 0,
-				'order'      => 'DESC',
-			)
-		);
 		foreach ( $nations as $nation ) {
-			$percent = round( ( ( $nation->count / $shows ) * 100 ), 1 );
+			$percent = $shows ? round( ( ( $nation['count'] / $shows ) * 100 ), 1 ) : 0;
 			echo '<tr>
-					<th scope="row"><a href="' . esc_url( site_url( 'statistics/nations/?country=' . $nation->slug ) ) . '">' . esc_html( $nation->name ) . '</a></th>
-					<td>' . (int) $nation->count . '</td>
+					<th scope="row"><a href="' . esc_url( site_url( 'statistics/nations/?country=' . $nation['slug'] ) ) . '">' . esc_html( $nation['name'] ) . '</a></th>
+					<td>' . (int) $nation['count'] . '</td>
 					<td><div class="progress"><div class="progress-bar" role="progressbar" style="width: ' . esc_html( $percent ) . '%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div></div>&nbsp;' . esc_html( $percent ) . '%</td>
 				</tr>';
 		}

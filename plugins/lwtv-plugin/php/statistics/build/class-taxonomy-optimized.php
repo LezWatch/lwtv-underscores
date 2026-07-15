@@ -297,6 +297,12 @@ class Taxonomy_Optimized {
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- This is a prepared query (see above)
 		$results = $wpdb->get_results( $query, ARRAY_A );
 
+		// Bail on query failure so we don't cache a bogus all-zero result set.
+		if ( ! is_array( $results ) ) {
+			lwtv_plugin()->debug_log( 'statistics', 'Bulk show counts query failed: ' . $wpdb->last_error );
+			return array();
+		}
+
 		// Format results
 		$formatted = array();
 		foreach ( $results as $row ) {

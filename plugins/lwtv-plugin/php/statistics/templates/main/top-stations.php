@@ -37,7 +37,7 @@ $formatted_amount = new \NumberFormatter( 'en_US', \NumberFormatter::SPELLOUT );
 	<tbody>
 		<?php
 		foreach ( $stations as $station ) {
-			$percent = round( ( ( $station['count'] / $shows ) * 100 ), 1 );
+			$percent = $shows ? round( ( ( $station['count'] / $shows ) * 100 ), 1 ) : 0;
 			echo '<tr>
 					<th scope="row"><a href="' . esc_url( site_url( 'statistics/stations/?station=' . $station['slug'] ) ) . '">' . esc_html( $station['name'] ) . '</a></th>
 					<td>' . (int) $station['count'] . '</td>

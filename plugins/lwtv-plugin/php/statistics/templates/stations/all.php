@@ -39,7 +39,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			// OPTIMIZED: Use pre-loaded character counts instead of individual queries
 			$characters = $character_counts[ $station_slug ]['total'] ?? 0;
 			$dead       = $character_counts[ $station_slug ]['dead'] ?? 0;
-			$percent    = round( ( ( $station_data['count'] / $all_shows_count ) * 100 ), 1 );
+			$percent    = $all_shows_count ? round( ( ( $station_data['count'] / $all_shows_count ) * 100 ), 1 ) : 0;
 			echo '<tr>
 					<th scope="row"><a href="?station=' . esc_attr( $station_slug ) . '">' . esc_html( $station_data['name'] ) . '</a></th>
 					<td>' . (int) $station_data['count'] . '</td>

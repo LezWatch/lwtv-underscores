@@ -66,7 +66,7 @@ class Stats_Counter {
 							$score += $this_score;
 						}
 					}
-					$score = ( $score / $queery->post_count );
+					$score = ( $queery->post_count > 0 ) ? ( $score / $queery->post_count ) : 0;
 
 					$return = round( $score, 2 );
 					break;

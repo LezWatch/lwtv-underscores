@@ -65,7 +65,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<?php
 					// OPTIMIZED: Use pre-loaded data instead of get_terms()
 					foreach ( $top_cliches as $cliche_slug => $cliche_data ) {
-						$percent = round( ( ( $cliche_data['count'] / $character_count ) * 100 ), 1 );
+						$percent = $character_count ? round( ( ( $cliche_data['count'] / $character_count ) * 100 ), 1 ) : 0;
 						echo '<tr>
 								<th scope="row"><a href="' . esc_url( site_url( '/cliche/' . $cliche_slug ) ) . '">' . esc_html( $cliche_data['name'] ) . '</a></th>
 								<td>' . (int) $cliche_data['count'] . '</td>
@@ -92,7 +92,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<?php
 					// OPTIMIZED: Use pre-loaded data instead of get_terms()
 					foreach ( $top_sexualities as $sexuality_slug => $sexuality_data ) {
-						$percent = round( ( ( $sexuality_data['count'] / $character_count ) * 100 ), 1 );
+						$percent = $character_count ? round( ( ( $sexuality_data['count'] / $character_count ) * 100 ), 1 ) : 0;
 						echo '<tr>
 								<th scope="row"><a href="' . esc_url( site_url( '/sexuality/' . $sexuality_slug ) ) . '">' . esc_html( $sexuality_data['name'] ) . '</a></th>
 								<td>' . (int) $sexuality_data['count'] . '</td>
@@ -119,7 +119,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<?php
 					// OPTIMIZED: Use pre-loaded data instead of get_terms()
 					foreach ( $top_genders as $gender_slug => $gender_data ) {
-						$percent = round( ( ( $gender_data['count'] / $character_count ) * 100 ), 1 );
+						$percent = $character_count ? round( ( ( $gender_data['count'] / $character_count ) * 100 ), 1 ) : 0;
 						echo '<tr>
 								<th scope="row"><a href="' . esc_url( site_url( '/gender/' . $gender_slug ) ) . '">' . esc_html( $gender_data['name'] ) . '</a></th>
 								<td>' . (int) $gender_data['count'] . '</td>

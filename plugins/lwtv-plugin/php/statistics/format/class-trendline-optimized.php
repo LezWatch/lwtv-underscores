@@ -31,9 +31,18 @@ class Trendline_Optimized {
 		$datasets = '';
 
 		foreach ( $data as $item ) {
-			$labels   .= '"' . wp_kses_post( $item['name'] ) . ' (' . (int) $item['count'] . ')", ';
+			$labels   .= '"' . esc_js( $item['name'] ) . ' (' . (int) $item['count'] . ')", ';
 			$datasets .= (int) $item['count'] . ', ';
 		}
+
+		// Chart.js renders labels onto a <canvas>, which does not decode HTML
+		// entities, so undo the ones esc_js() introduced. Double quotes stay
+		// escaped (\") to remain valid inside the double-quoted JS string.
+		$labels = str_replace(
+			array( '&amp;', '&quot;', '&lt;', '&gt;' ),
+			array( '&', '\\"', '<', '>' ),
+			$labels
+		);
 
 		$canvas_output = '<div id="container" style="width: 100%;">
 			<canvas id="' . esc_attr( $chart_id ) . '" width="700" aria-label="A trendline for stats on ' . esc_html( $context ) . '" />

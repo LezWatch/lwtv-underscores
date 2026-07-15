@@ -69,6 +69,12 @@ class Formats {
 			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- This is a prepared query (see above)
 			$results = $wpdb->get_results( $queery, ARRAY_A );
 
+			// Don't cache a failed query; return empty so the next call retries.
+			if ( ! is_array( $results ) ) {
+				lwtv_plugin()->debug_log( 'statistics', 'Formats query failed: ' . $wpdb->last_error );
+				return array();
+			}
+
 			lwtv_plugin()->set_transient( $cache_key, $results, HOUR_IN_SECONDS );
 
 			return $results;

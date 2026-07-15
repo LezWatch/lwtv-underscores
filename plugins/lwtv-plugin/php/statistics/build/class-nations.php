@@ -99,9 +99,11 @@ class Nations {
 		$cache_key   = 'nation_details_' . $nation_slug;
 		$cached_data = lwtv_plugin()->get_transient( $cache_key );
 
+		// The cache stores the format-independent raw breakdowns; always run them
+		// through prepare_nation_data() so the return shape matches on hit and miss.
 		if ( false !== $cached_data ) {
 			lwtv_plugin()->debug_log( 'statistics', 'Cached data found for ' . $nation_slug . ': ' . $cache_key );
-			return $cached_data;
+			return $this->prepare_nation_data( $cached_data, $nation_slug, $format, $view );
 		}
 
 		try {
@@ -501,13 +503,16 @@ class Nations {
 			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- This is a prepared query (see above)
 			$results = $wpdb->get_results( $query, ARRAY_A );
 
-			if ( false === $results ) {
+			if ( ! is_array( $results ) ) {
 				return array();
 			}
 
-			lwtv_plugin()->set_transient( $cache_key, $results, DAY_IN_SECONDS );
+			// Cache the flat ID list (not raw rows) so the cache-hit and cache-miss
+			// return shapes match; callers expect a flat array of show IDs.
+			$show_ids = array_column( $results, 'ID' );
+			lwtv_plugin()->set_transient( $cache_key, $show_ids, DAY_IN_SECONDS );
 
-			return array_column( $results, 'ID' );
+			return $show_ids;
 		} catch ( \Exception $e ) {
 			lwtv_plugin()->error_log( 'statistics', 'Shows query failed for nation: ' . $nation_slug . ' - Last error: ' . $wpdb->last_error );
 			return array();
@@ -647,6 +652,12 @@ class Nations {
 
 			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- This is a prepared query (see above)
 			$results = $wpdb->get_results( $queery, ARRAY_A );
+
+			// Don't cache a failed query; return empty so the next call retries.
+			if ( ! is_array( $results ) ) {
+				lwtv_plugin()->error_log( 'statistics', 'Top nations query failed for number: ' . $number . ' - Last error: ' . $wpdb->last_error );
+				return array();
+			}
 
 			lwtv_plugin()->set_transient( $cache_key, $results, DAY_IN_SECONDS );
 

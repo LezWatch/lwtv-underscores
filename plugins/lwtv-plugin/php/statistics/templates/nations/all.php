@@ -38,7 +38,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			// OPTIMIZED: Use pre-loaded character counts instead of individual queries
 			$characters = $character_counts[ $nation_slug ]['total'] ?? 0;
 			$dead       = $character_counts[ $nation_slug ]['dead'] ?? 0;
-			$percent    = round( ( ( $nation_data['count'] / $all_shows_count ) * 100 ), 1 );
+			$percent    = $all_shows_count ? round( ( ( $nation_data['count'] / $all_shows_count ) * 100 ), 1 ) : 0;
 			echo '<tr>
 					<th scope="row"><a href="?nation=' . esc_attr( $nation_slug ) . '">' . esc_html( $nation_data['name'] ) . '</a></th>
 					<td>' . (int) $nation_data['count'] . '</td>

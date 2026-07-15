@@ -132,17 +132,6 @@ switch ( $nation ) {
 		}
 		?>
 
-	<?php
-	if ( '_all' !== $nation && '_all' !== $view && '_on-air' !== $view ) {
-		$format = ( 'shows' === $cpts_type ) ? 'list' : 'percentage';
-		?>
-		<div class="<?php echo esc_attr( $col_class ); ?>">
-			<?php lwtv_plugin()->generate_nation_statistics( $nation, $view, $format ); ?>
-		</div>
-		<?php
-	}
-	?>
-
 	</div>
 </div>
 

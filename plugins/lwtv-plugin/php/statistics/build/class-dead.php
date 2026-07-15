@@ -61,6 +61,13 @@ class Dead {
 			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- This is a prepared query (see above)
 			$results = $wpdb->get_results( $queery, ARRAY_A );
 
+			// $wpdb->get_results returns null on error; don't cache that (callers
+			// run count()/foreach on this) — return empty and retry next time.
+			if ( ! is_array( $results ) ) {
+				lwtv_plugin()->debug_log( 'death', 'Dead characters query failed: ' . $wpdb->last_error );
+				return array();
+			}
+
 			// Cache the results for 1 day
 			lwtv_plugin()->set_transient( $cache_key, $results, DAY_IN_SECONDS );
 
@@ -78,6 +85,8 @@ class Dead {
 	 * @return array Array of dead characters for the given year
 	 */
 	public function get_dead_characters_for_year( $year ) {
+		$year = (string) $year;
+
 		// Create cache key
 		$cache_key   = 'dead_characters_for_year_' . $year;
 		$cached_data = lwtv_plugin()->get_transient( $cache_key );
@@ -91,28 +100,23 @@ class Dead {
 		try {
 			// Reuse the existing dead characters data
 			$dead_characters = $this->get_dead_characters_data();
-			$year_characters = array();
 
-			// Loop through dead characters and check if any death year matches the specified year
-			foreach ( $dead_characters as $character ) {
-				// Get death year meta data for this character
-				$death_rows  = get_field( 'lezchars_death_year', $character['ID'] );
-				$death_years = is_array( $death_rows ) ? array_filter( array_column( $death_rows, 'date' ) ) : array();
-
-				if ( empty( $death_years ) ) {
-					continue;
+			// Build the set of character IDs that died in $year from a single
+			// postmeta scan (shared request cache) rather than a get_field() call
+			// per character, which was an N+1 over every dead character.
+			$died_this_year = array();
+			foreach ( $this->get_death_date_rows() as $row ) {
+				// ACF date_picker raw postmeta is Ymd; legacy rows may still be Y-m-d.
+				if ( preg_match( '/^(\d{4})-?\d{2}-?\d{2}$/', $row['meta_value'], $matches ) && $matches[1] === $year ) {
+					$died_this_year[ (int) $row['post_id'] ] = true;
 				}
+			}
 
-				// Check if any death year matches the specified year
-				foreach ( $death_years as $death_date ) {
-					// Extract year from Y-m-d format
-					if ( preg_match( '/^(\d{4})-\d{2}-\d{2}$/', $death_date, $matches ) ) {
-						$death_year = $matches[1];
-						if ( $death_year === $year ) {
-							$year_characters[] = $character;
-							break; // Add this character only once even if they died multiple times in the same year
-						}
-					}
+			// Preserve get_dead_characters_data()'s post_title ordering.
+			$year_characters = array();
+			foreach ( $dead_characters as $character ) {
+				if ( isset( $died_this_year[ (int) $character['ID'] ] ) ) {
+					$year_characters[] = $character;
 				}
 			}
 
@@ -125,6 +129,40 @@ class Dead {
 			lwtv_plugin()->error_log( 'death', 'Error getting dead characters for year ' . $year . ': ' . $e->getMessage() );
 			return array();
 		}
+	}
+
+	/**
+	 * Get all raw death-date rows from postmeta.
+	 *
+	 * ACF stores each death date as an individual repeater row key
+	 * (lezchars_death_year_N_date). A single postmeta scan returns them all,
+	 * request-cached so repeated callers within one request share the result.
+	 *
+	 * @return array List of [ 'post_id' => string, 'meta_value' => string ] rows.
+	 */
+	private function get_death_date_rows() {
+		global $wpdb;
+
+		$raw_cache_key = 'lwtv_dead_years_raw';
+		$results       = wp_cache_get( $raw_cache_key );
+
+		if ( false === $results ) {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
+			$results = $wpdb->get_results(
+				"SELECT post_id, meta_value FROM {$wpdb->postmeta}
+				WHERE meta_key LIKE 'lezchars_death_year_%_date'
+				AND meta_value != ''",
+				ARRAY_A
+			);
+
+			if ( ! is_array( $results ) ) {
+				$results = array();
+			}
+
+			wp_cache_set( $raw_cache_key, $results );
+		}
+
+		return $results;
 	}
 
 	/**
@@ -312,8 +350,6 @@ class Dead {
 	 * @return array Years data
 	 */
 	public function generate_years_data() {
-		global $wpdb;
-
 		// Create cache key with data version hash
 		$cache_key   = 'dead_years_data_' . $this->get_data_version_hash();
 		$cached_data = lwtv_plugin()->get_transient( $cache_key );
@@ -323,18 +359,7 @@ class Dead {
 		}
 
 		// Query individual ACF repeater row keys — one row per death date after migration.
-		$raw_cache_key = 'lwtv_dead_years_raw';
-		$results       = wp_cache_get( $raw_cache_key );
-		if ( false === $results ) {
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
-			$results = $wpdb->get_results(
-				"SELECT post_id, meta_value FROM {$wpdb->postmeta}
-				WHERE meta_key LIKE 'lezchars_death_year_%_date'
-				AND meta_value != ''",
-				ARRAY_A
-			);
-			wp_cache_set( $raw_cache_key, $results );
-		}
+		$results = $this->get_death_date_rows();
 
 		$year_counts = array();
 
@@ -385,24 +410,22 @@ class Dead {
 	 * @return array Trendline data
 	 */
 	public function format_years_trendline( $years, $total_years ) {
-		$trendline = array();
-
-		// Add the years data to the trendline
+		// Map year => death count for lookup. Keys are cast to string so the
+		// integer years from range() match the string years parsed from meta.
+		$counts_by_year = array();
 		foreach ( $years as $year ) {
-			$trendline[] = array(
-				'name'  => $year['death_year'],
-				'count' => $year['death_count'] ?? 0,
-			);
+			$counts_by_year[ (string) $year['death_year'] ] = $year['death_count'] ?? 0;
 		}
 
-		// Add 0 for years that are not in the years data
+		// One entry per year across the full range, zero-filled where nobody died.
+		// $total_years is range( LWTV_FIRST_YEAR, current year ), so this yields a
+		// single row per year — no duplicates.
+		$trendline = array();
 		foreach ( $total_years as $year ) {
-			if ( ! isset( $trendline[ $year ] ) ) {
-				$trendline[] = array(
-					'name'  => $year,
-					'count' => 0,
-				);
-			}
+			$trendline[] = array(
+				'name'  => $year,
+				'count' => $counts_by_year[ (string) $year ] ?? 0,
+			);
 		}
 
 		return $trendline;
@@ -460,7 +483,7 @@ class Dead {
 			$percentage[] = array(
 				'name'       => $year['death_year'],
 				'count'      => $year['death_count'] ?? 0,
-				'percentage' => number_format( (float) $year['death_count'] / $count_total_years, 2, '.', '' ),
+				'percentage' => $count_total_years ? number_format( (float) $year['death_count'] / $count_total_years, 2, '.', '' ) : '0.00',
 			);
 		}
 		return $percentage;
@@ -578,10 +601,17 @@ class Dead {
 				case 'array':
 					return $output_array;
 				case 'time':
+					// With a single (or zero) death date the loop above never runs, so
+					// 'since'/'most' may be absent; guard max() against an empty column
+					// (a PHP 8 ValueError) and default start/end.
+					$since_col  = array_column( $output_array, 'since' );
+					$most_col   = array_column( $output_array, 'most' );
 					$diff_since = array(
-						'time'      => max( array_column( $output_array, 'since' ) ),
-						'most'      => max( array_column( $output_array, 'most' ) ),
+						'time'      => $since_col ? max( $since_col ) : 0,
+						'most'      => $most_col ? max( $most_col ) : 0,
 						'most_date' => '0000-00-00',
+						'start'     => '',
+						'end'       => '',
 					);
 					for ( $i = 0; $i < $key_count; $i++ ) {
 						if ( $diff_since['time'] === $output_array[ $keys[ $i ] ]['since'] ) {
@@ -625,12 +655,15 @@ class Dead {
 	public function generate_stats( $format ) {
 		$list_of_dead = $this->generate_list( $format );
 
-		// find the entry with the highest 'since' value
-		$highest_since = max( array_column( $list_of_dead, 'since' ) );
+		// find the entry with the highest 'since' value (guard max() against an
+		// empty column, e.g. when generate_list() returned the 'time' summary shape).
+		$since_col     = array_column( $list_of_dead, 'since' );
+		$highest_since = $since_col ? max( $since_col ) : 0;
 
 		// find the entry with the highest 'most' value
-		$most_dead      = max( array_column( $list_of_dead, 'most' ) );
-		$most_dead_date = array_search( $most_dead, array_column( $list_of_dead, 'most' ), true );
+		$most_col       = array_column( $list_of_dead, 'most' );
+		$most_dead      = $most_col ? max( $most_col ) : 0;
+		$most_dead_date = $most_col ? array_search( $most_dead, $most_col, true ) : false;
 
 		$return = array(
 			'highest_since'  => $highest_since,

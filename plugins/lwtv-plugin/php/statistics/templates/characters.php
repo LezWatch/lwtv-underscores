@@ -21,42 +21,45 @@ $sent_view       = get_query_var( 'view', 'overview' );
 $view            = ( ! in_array( $sent_view, $valid_views, true ) ) ? 'overview' : $sent_view;
 $character_count = lwtv_plugin()->generate_total_counts( 'characters' );
 
-// OPTIMIZED: Pre-load taxonomy data for overview section
-$optimized_taxonomy       = new Build_Taxonomy_Optimized();
-$optimized_onair          = new Build_On_Air_Optimized();
-$character_gender_data    = $optimized_taxonomy->make_comprehensive( CPT_Characters::SLUG, 'lez_gender', false );
-$character_sexuality_data = $optimized_taxonomy->make_comprehensive( CPT_Characters::SLUG, 'lez_sexuality', false );
-$character_cliches_data   = $optimized_taxonomy->make_comprehensive( CPT_Characters::SLUG, 'lez_cliches', false );
-$character_onair_data     = $optimized_onair->generate( 'characters' );
+// OPTIMIZED: Only the overview view consumes these aggregated datasets; the
+// subpages build their own data, so skip this work (and its queries) for them.
+if ( 'overview' === $view ) {
+	$optimized_taxonomy       = new Build_Taxonomy_Optimized();
+	$optimized_onair          = new Build_On_Air_Optimized();
+	$character_gender_data    = $optimized_taxonomy->make_comprehensive( CPT_Characters::SLUG, 'lez_gender', false );
+	$character_sexuality_data = $optimized_taxonomy->make_comprehensive( CPT_Characters::SLUG, 'lez_sexuality', false );
+	$character_cliches_data   = $optimized_taxonomy->make_comprehensive( CPT_Characters::SLUG, 'lez_cliches', false );
+	$character_onair_data     = $optimized_onair->generate( 'characters' );
 
-// Sort by count descending for top 10
-uasort(
-	$character_gender_data,
-	function ( $a, $b ) {
-		return $b['count'] <=> $a['count'];
-	}
-);
-uasort(
-	$character_sexuality_data,
-	function ( $a, $b ) {
-		return $b['count'] <=> $a['count'];
-	}
-);
-uasort(
-	$character_cliches_data,
-	function ( $a, $b ) {
-		return $b['count'] <=> $a['count'];
-	}
-);
+	// Sort by count descending for top 10
+	uasort(
+		$character_gender_data,
+		function ( $a, $b ) {
+			return $b['count'] <=> $a['count'];
+		}
+	);
+	uasort(
+		$character_sexuality_data,
+		function ( $a, $b ) {
+			return $b['count'] <=> $a['count'];
+		}
+	);
+	uasort(
+		$character_cliches_data,
+		function ( $a, $b ) {
+			return $b['count'] <=> $a['count'];
+		}
+	);
 
-$top_genders     = array_slice( $character_gender_data, 0, 5, true );
-$top_sexualities = array_slice( $character_sexuality_data, 0, 5, true );
-$top_cliches     = array_slice( $character_cliches_data, 0, 14, true );
+	$top_genders     = array_slice( $character_gender_data, 0, 5, true );
+	$top_sexualities = array_slice( $character_sexuality_data, 0, 5, true );
+	$top_cliches     = array_slice( $character_cliches_data, 0, 14, true );
 
-// Get total counts efficiently
-$count_genders     = count( $character_gender_data );
-$count_sexualities = count( $character_sexuality_data );
-$count_cliches     = count( $character_cliches_data );
+	// Get total counts efficiently
+	$count_genders     = count( $character_gender_data );
+	$count_sexualities = count( $character_sexuality_data );
+	$count_cliches     = count( $character_cliches_data );
+}
 ?>
 
 <h2>
@@ -104,5 +107,5 @@ switch ( $view ) {
 
 // Performance monitoring
 if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-	echo '<!-- OPTIMIZED: Queries reduced from ~' . ( count( $top_genders ) + count( $top_sexualities ) + count( $top_cliches ) + 15 ) . ' to ' . esc_html( get_num_queries() ) . ' -->';
+	echo '<!-- OPTIMIZED: ' . esc_html( get_num_queries() ) . ' queries for view "' . esc_html( $view ) . '" -->';
 }

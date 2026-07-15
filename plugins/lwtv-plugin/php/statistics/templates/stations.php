@@ -135,17 +135,6 @@ switch ( $station ) {
 		}
 		?>
 
-	<?php
-	if ( '_all' !== $station && '_all' !== $view && '_on-air' !== $view ) {
-		$format = ( 'shows' === $cpts_type ) ? 'list' : 'percentage';
-		?>
-		<div class="<?php echo esc_attr( $col_class ); ?>">
-			<?php lwtv_plugin()->generate_station_statistics( $station, $view, $format ); ?>
-		</div>
-		<?php
-	}
-	?>
-
 	</div>
 </div>
 

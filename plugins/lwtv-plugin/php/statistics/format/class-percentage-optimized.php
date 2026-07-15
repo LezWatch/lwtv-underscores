@@ -87,9 +87,9 @@ class Percentage_Optimized {
 					}
 
 					$url         = $item['url'];
-					$table_body .= '<tr><td><a href="' . esc_url( $url ) . '">' . ucfirst( $item['name'] ) . '</a></td><td>' . (int) $item['count'] . '</td>';
+					$table_body .= '<tr><td><a href="' . esc_url( $url ) . '">' . esc_html( ucfirst( $item['name'] ) ) . '</a></td><td>' . (int) $item['count'] . '</td>';
 					if ( $show_percent ) {
-						$first_count = round( ( ( $item['count'] / $count_total ) * 100 ), 1 );
+						$first_count = $count_total ? round( ( ( $item['count'] / $count_total ) * 100 ), 1 ) : 0;
 						$table_body .= '<td><div class="progress"><div class="progress-bar bg-info" role="progressbar" style="width: ' . esc_html( $first_count ) . '%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div></div>&nbsp;' . esc_html( $first_count ) . '%</td>';
 					}
 					$table_body .= '</tr>';
@@ -99,9 +99,9 @@ class Percentage_Optimized {
 			case 'worth_it':
 				foreach ( $data as $item ) {
 					$url         = $item['url'];
-					$table_body .= '<tr><td><a href="' . esc_url( $url ) . '">' . ucfirst( $item['name'] ) . '</a></td><td>' . (int) $item['count'] . '</td>';
+					$table_body .= '<tr><td><a href="' . esc_url( $url ) . '">' . esc_html( ucfirst( $item['name'] ) ) . '</a></td><td>' . (int) $item['count'] . '</td>';
 					if ( $show_percent ) {
-						$first_count = round( ( ( $item['count'] / $count_total ) * 100 ), 1 );
+						$first_count = $count_total ? round( ( ( $item['count'] / $count_total ) * 100 ), 1 ) : 0;
 						$table_body .= '<td><div class="progress"><div class="progress-bar bg-info" role="progressbar" style="width: ' . esc_html( $first_count ) . '%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div></div>&nbsp;' . esc_html( $first_count ) . '%</td>';
 					}
 					$table_body .= '</tr>';
@@ -122,7 +122,7 @@ class Percentage_Optimized {
 					}
 
 					$url         = home_url( "/{$context}/{$slug}/{$param}" );
-					$table_body .= '<tr><td><a href="' . esc_url( $url ) . '">' . ucfirst( $item['name'] ) . '</a></td><td>' . (int) $item['count'] . '</td>';
+					$table_body .= '<tr><td><a href="' . esc_url( $url ) . '">' . esc_html( ucfirst( $item['name'] ) ) . '</a></td><td>' . (int) $item['count'] . '</td>';
 					if ( $show_percent ) {
 						$first_count = $item['percentage'];
 						$table_body .= '<td><div class="progress"><div class="progress-bar bg-info" role="progressbar" style="width: ' . esc_html( $first_count ) . '%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div></div>&nbsp;' . esc_html( $first_count ) . '%</td>';
@@ -135,9 +135,9 @@ class Percentage_Optimized {
 					$name        = $item['name'] ?? '';
 					$count       = $item['count'] ?? 0;
 					$url         = $item['url'] ?? home_url( "/{$clean_view}/{$name}" );
-					$table_body .= '<tr><td><a href="' . esc_url( $url ) . '">' . ucfirst( $name ) . '</a></td><td>' . (int) $count . '</td>';
+					$table_body .= '<tr><td><a href="' . esc_url( $url ) . '">' . esc_html( ucfirst( $name ) ) . '</a></td><td>' . (int) $count . '</td>';
 					if ( $show_percent ) {
-						$first_count = round( ( ( $count / $count_total ) * 100 ), 1 );
+						$first_count = $count_total ? round( ( ( $count / $count_total ) * 100 ), 1 ) : 0;
 						$table_body .= '<td><div class="progress"><div class="progress-bar bg-info" role="progressbar" style="width: ' . esc_html( $first_count ) . '%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div></div>&nbsp;' . esc_html( $first_count ) . '%</td>';
 					}
 					$table_body .= '</tr>';
