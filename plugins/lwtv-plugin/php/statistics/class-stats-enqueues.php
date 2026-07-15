@@ -29,6 +29,17 @@ class Stats_Enqueues {
 		$statistics = sanitize_key( get_query_var( 'statistics', 'none' ) );
 		$stat_view  = sanitize_key( get_query_var( 'view', 'main' ) );
 
+		// Overview page only: count-up + bar-grow animations. No jQuery dependency.
+		if ( 'none' === $statistics ) {
+			wp_enqueue_script(
+				'lwtv-stats-overview',
+				LWTV_PLUGIN_URL . '/assets/js/statistics-overview.js',
+				array(),
+				$versioning['stats-overview'],
+				true
+			);
+		}
+
 		switch ( $statistics ) {
 			case 'nations':
 			case 'stations':

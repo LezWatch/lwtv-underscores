@@ -25,6 +25,7 @@ class Statistics_Optimized implements Component, Templater {
 		'chartjs-plugin-trendline' => '3.2.5',
 		'palette'                  => '1.0.0',
 		'tablesorter'              => '2.32.0',
+		'stats-overview'           => '1.0.0',
 	);
 
 	/*
