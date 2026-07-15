@@ -409,5 +409,10 @@
 		.lwtv-panel-icon {
 			color: colors.$lwtv-ltpink;
 		}
+
+		.lwtv-share-seg:nth-child(5) {
+			outline: 1px solid rgba(255, 255, 255, 0.15);
+			outline-offset: -1px;
+		}
 	}
 }

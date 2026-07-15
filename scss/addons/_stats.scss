@@ -1,3 +1,4 @@
+@use "sass:color";
 @use "../partials/colors";
 
 /* Statistics Pages */
@@ -380,6 +381,89 @@ canvas {
 		display: inline-block;
 		margin-top: 0.75rem;
 		font-size: 0.8125rem;
+	}
+
+	.lwtv-atw-headline {
+		margin: 0 0 0.75rem;
+		font-size: 1.25rem;
+		font-weight: 700;
+		line-height: 1.25;
+	}
+
+	.lwtv-share-bar {
+		display: flex;
+		width: 100%;
+		height: 14px;
+		overflow: hidden;
+		border-radius: 999px;
+		margin-bottom: 1rem;
+	}
+
+	.lwtv-share-seg {
+		height: 100%;
+		transition: none; // width is JS-driven.
+	}
+
+	.lwtv-legend {
+		padding: 0;
+		margin: 0 0 0.5rem;
+		list-style: none;
+	}
+
+	.lwtv-legend-row {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		padding: 3px 0;
+		font-size: 0.8125rem;
+	}
+
+	.lwtv-legend-dot {
+		width: 10px;
+		height: 10px;
+		border-radius: 50%;
+		flex: 0 0 auto;
+	}
+
+	.lwtv-legend-name {
+		flex: 1 1 auto;
+	}
+
+	.lwtv-legend-pct {
+		color: colors.$lwtv-medgrey;
+		font-variant-numeric: tabular-nums;
+	}
+
+	// Raspberry ramp: darkest (largest share) → lightest (others).
+	$ramp-1: colors.$lwtv-dkpink;
+	$ramp-2: colors.$lwtv-pink;
+	$ramp-3: color.mix(colors.$lwtv-pink, colors.$lwtv-ltpink, 55%);
+	$ramp-4: color.mix(colors.$lwtv-pink, colors.$lwtv-ltpink, 25%);
+	$ramp-5: colors.$lwtv-ltpink;
+
+	.lwtv-share-seg:nth-child(1),
+	.lwtv-legend-row:nth-child(1) .lwtv-legend-dot {
+		background-color: $ramp-1;
+	}
+
+	.lwtv-share-seg:nth-child(2),
+	.lwtv-legend-row:nth-child(2) .lwtv-legend-dot {
+		background-color: $ramp-2;
+	}
+
+	.lwtv-share-seg:nth-child(3),
+	.lwtv-legend-row:nth-child(3) .lwtv-legend-dot {
+		background-color: $ramp-3;
+	}
+
+	.lwtv-share-seg:nth-child(4),
+	.lwtv-legend-row:nth-child(4) .lwtv-legend-dot {
+		background-color: $ramp-4;
+	}
+
+	.lwtv-share-seg:nth-child(5),
+	.lwtv-legend-row:nth-child(5) .lwtv-legend-dot {
+		background-color: $ramp-5;
 	}
 
 	@media (max-width: 767px) {

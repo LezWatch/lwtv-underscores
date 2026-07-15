@@ -50,7 +50,8 @@ $stats_partials = plugin_dir_path( __FILE__ ) . 'main/';
 	echo '<div class="lwtv-panels">';
 	// phpcs:ignore PEAR.Files.IncludingFile.UseRequire
 	include $stats_partials . 'where-tv-lives.php';
-	// around-the-world.php added in Task 7.
+	// phpcs:ignore PEAR.Files.IncludingFile.UseRequire
+	include $stats_partials . 'around-the-world.php';
 	echo '</div>';
 	?>
 </div>
