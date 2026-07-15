@@ -47,8 +47,10 @@ $stats_partials = plugin_dir_path( __FILE__ ) . 'main/';
 	include $stats_partials . 'overview.php';
 	// phpcs:ignore PEAR.Files.IncludingFile.UseRequire
 	include $stats_partials . 'bury-your-gays.php';
-	// Remaining panels are added in later tasks:
-	// include $stats_partials . 'where-tv-lives.php';
-	// include $stats_partials . 'around-the-world.php';
+	echo '<div class="lwtv-panels">';
+	// phpcs:ignore PEAR.Files.IncludingFile.UseRequire
+	include $stats_partials . 'where-tv-lives.php';
+	// around-the-world.php added in Task 7.
+	echo '</div>';
 	?>
 </div>

@@ -307,6 +307,81 @@ canvas {
 		}
 	}
 
+	.lwtv-panels {
+		display: grid;
+		grid-template-columns: 1.5fr 1fr;
+		gap: 16px;
+	}
+
+	.lwtv-panel {
+		padding: 20px;
+		border: 1px solid colors.$lwtv-bordergrey;
+		border-radius: 14px;
+	}
+
+	.lwtv-panel-head {
+		display: flex;
+		gap: 10px;
+		align-items: flex-start;
+		margin-bottom: 1rem;
+	}
+
+	.lwtv-panel-icon {
+		color: colors.$lwtv-dkpink;
+
+		svg {
+			fill: currentColor; // sprite paths have no fill; take the icon color.
+		}
+	}
+
+	.lwtv-panel-title {
+		margin: 0;
+		font-size: 1rem;
+		font-weight: 600;
+	}
+
+	.lwtv-panel-sub {
+		margin: 0;
+		font-size: 0.75rem;
+		color: colors.$lwtv-medgrey;
+	}
+
+	.lwtv-bar-row {
+		display: grid;
+		grid-template-columns: 88px 1fr auto;
+		gap: 10px;
+		align-items: center;
+		margin-bottom: 0.6rem;
+	}
+
+	.lwtv-bar-name {
+		font-size: 0.8125rem;
+		font-weight: 500;
+	}
+
+	.lwtv-bar-track {
+		height: 8px;
+		border-radius: 999px;
+
+		.progress-bar {
+			border-radius: 999px;
+			transition: none; // width is JS-driven.
+		}
+	}
+
+	.lwtv-bar-label {
+		font-size: 0.75rem;
+		color: colors.$lwtv-medgrey;
+		font-variant-numeric: tabular-nums;
+		white-space: nowrap;
+	}
+
+	.lwtv-panel-foot {
+		display: inline-block;
+		margin-top: 0.75rem;
+		font-size: 0.8125rem;
+	}
+
 	@media (max-width: 767px) {
 
 		.lwtv-metric-grid {
@@ -325,6 +400,13 @@ canvas {
 
 		.lwtv-byg {
 			flex-wrap: wrap;
+		}
+	}
+
+	@media (max-width: 767px) {
+
+		.lwtv-panels {
+			grid-template-columns: 1fr;
 		}
 	}
 }
