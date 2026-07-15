@@ -62,6 +62,10 @@ get_header(); ?>
 					<div id="content" class="site-content clearfix" role="main">
 						<div class="statistics">
 							<?php
+							// Shared stats section tab bar (all views).
+							// phpcs:ignore PEAR.Files.IncludingFile.UseRequire
+							include LWTV_PLUGIN_PATH . '/php/statistics/templates/main/tabbar.php';
+
 							if ( 'main' === $statstype ) {
 								the_content();
 							}

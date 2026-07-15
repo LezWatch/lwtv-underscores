@@ -42,8 +42,6 @@ $stats_partials = plugin_dir_path( __FILE__ ) . 'main/';
 <div class="lwtv-stats-overview">
 	<?php
 	// phpcs:ignore PEAR.Files.IncludingFile.UseRequire
-	include $stats_partials . 'tabbar.php';
-	// phpcs:ignore PEAR.Files.IncludingFile.UseRequire
 	include $stats_partials . 'overview.php';
 	// phpcs:ignore PEAR.Files.IncludingFile.UseRequire
 	include $stats_partials . 'bury-your-gays.php';

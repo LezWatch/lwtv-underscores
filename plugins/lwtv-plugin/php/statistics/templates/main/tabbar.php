@@ -3,7 +3,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 /**
- * Statistics section tab bar (overview view).
+ * Statistics section tab bar (shared across stats views).
  *
  * @package LezWatch.TV
  */
@@ -42,12 +42,24 @@ $lwtv_stats_tabs = array(
 		'url'   => home_url( '/this-year/' ),
 	),
 );
+
+// Map the current stats section to its tab URL for active-state.
+$lwtv_stats_active = home_url( '/statistics/' );
+switch ( $statstype ?? 'main' ) {
+	case 'shows':
+	case 'characters':
+	case 'actors':
+	case 'nations':
+	case 'stations':
+	case 'death':
+		$lwtv_stats_active = home_url( '/statistics/' . $statstype . '/' );
+		break;
+}
 ?>
 <nav class="lwtv-stats-tabs" aria-label="<?php esc_attr_e( 'Statistics sections', 'lwtv' ); ?>">
 	<?php
 	foreach ( $lwtv_stats_tabs as $lwtv_stats_tab ) {
-		// Overview is the active tab on this view.
-		$lwtv_is_active   = ( home_url( '/statistics/' ) === $lwtv_stats_tab['url'] );
+		$lwtv_is_active   = ( $lwtv_stats_active === $lwtv_stats_tab['url'] );
 		$lwtv_tab_classes = 'lwtv-stats-tab' . ( $lwtv_is_active ? ' is-active' : '' );
 		printf(
 			'<a class="%1$s" href="%2$s"%3$s>%4$s</a>',
