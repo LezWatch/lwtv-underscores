@@ -550,4 +550,229 @@ canvas {
 			border-bottom-color: colors.$lwtv-pink;
 		}
 	}
+
+	.lwtv-donut-card {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 28px;
+		align-items: center;
+		padding: 24px;
+		border: 1px solid colors.$lwtv-bordergrey;
+		border-radius: 14px;
+	}
+
+	.lwtv-donut-figure {
+		position: relative;
+		flex: 0 0 auto;
+		width: 180px;
+		height: 180px;
+	}
+
+	.lwtv-donut {
+		width: 100%;
+		height: 100%;
+	}
+
+	.lwtv-donut-track {
+		stroke: colors.$lwtv-ltgrey;
+	}
+
+	.lwtv-donut-center {
+		position: absolute;
+		inset: 0;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.lwtv-donut-center-num {
+		font-size: 1.875rem;
+		font-weight: 700;
+		line-height: 1;
+		font-variant-numeric: tabular-nums;
+		color: colors.$lwtv-dkgrey;
+	}
+
+	.lwtv-donut-center-sub {
+		font-size: 0.75rem;
+		color: colors.$lwtv-medgrey;
+	}
+
+	.lwtv-donut-body {
+		flex: 1 1 320px;
+	}
+
+	.lwtv-donut-headline {
+		margin: 0 0 0.25rem;
+		font-size: 1.25rem;
+		font-weight: 700;
+	}
+
+	.lwtv-donut-desc {
+		margin: 0 0 1rem;
+		font-size: 0.8125rem;
+		color: colors.$lwtv-medgrey;
+	}
+
+	.lwtv-donut-legend {
+		padding: 0;
+		margin: 0;
+		list-style: none;
+	}
+
+	.lwtv-donut-legend-row {
+		display: grid;
+		grid-template-columns: 12px 96px 1fr 96px;
+		gap: 10px;
+		align-items: center;
+		padding: 3px 0;
+		font-size: 0.8125rem;
+	}
+
+	.lwtv-donut-dot {
+		width: 12px;
+		height: 12px;
+		border-radius: 50%;
+	}
+
+	.lwtv-donut-legend-track {
+		height: 8px;
+		border-radius: 999px;
+
+		.progress-bar {
+			border-radius: 999px;
+			transition: none;
+		}
+	}
+
+	.lwtv-donut-legend-val {
+		font-size: 0.75rem;
+		color: colors.$lwtv-medgrey;
+		font-variant-numeric: tabular-nums;
+		text-align: right;
+		white-space: nowrap;
+	}
+
+	// Segment/dot colors — stroke for ring, background for dots/mini-bars.
+	.lwtv-donut-seg--dkpink {
+		stroke: colors.$lwtv-dkpink;
+		background-color: colors.$lwtv-dkpink;
+	}
+
+	.lwtv-donut-seg--pink {
+		stroke: colors.$lwtv-pink;
+		background-color: colors.$lwtv-pink;
+	}
+
+	.lwtv-donut-seg--mid {
+		stroke: color.mix(colors.$lwtv-pink, colors.$lwtv-ltpink, 55%);
+		background-color: color.mix(colors.$lwtv-pink, colors.$lwtv-ltpink, 55%);
+	}
+
+	.lwtv-donut-seg--ltpink {
+		stroke: colors.$lwtv-ltpink;
+		background-color: colors.$lwtv-ltpink;
+	}
+
+	.lwtv-donut-seg--green {
+		stroke: colors.$lwtv-stats-green;
+		background-color: colors.$lwtv-stats-green;
+	}
+
+	.lwtv-donut-seg--amber {
+		stroke: colors.$lwtv-stats-yellow;
+		background-color: colors.$lwtv-stats-yellow;
+	}
+
+	.lwtv-donut-seg--red {
+		stroke: colors.$lwtv-red;
+		background-color: colors.$lwtv-red;
+	}
+
+	.lwtv-donut-seg--grey {
+		stroke: colors.$lwtv-medgrey;
+		background-color: colors.$lwtv-medgrey;
+	}
+
+	.lwtv-donut-seg--gold {
+		stroke: colors.$lwtv-gold;
+		background-color: colors.$lwtv-gold;
+	}
+
+	.lwtv-donut-seg--silver {
+		stroke: colors.$lwtv-silver;
+		background-color: colors.$lwtv-silver;
+	}
+
+	.lwtv-donut-seg--bronze {
+		stroke: colors.$lwtv-bronze;
+		background-color: colors.$lwtv-bronze;
+	}
+
+	.lwtv-donut-seg--sev-med {
+		stroke: color.mix(colors.$lwtv-red, colors.$lwtv-yellow, 65%);
+		background-color: color.mix(colors.$lwtv-red, colors.$lwtv-yellow, 65%);
+	}
+
+	.lwtv-donut-seg--sev-low {
+		stroke: color.mix(colors.$lwtv-red, colors.$lwtv-yellow, 25%);
+		background-color: color.mix(colors.$lwtv-red, colors.$lwtv-yellow, 25%);
+	}
+
+	// Legend mini-bar fill must use the segment color, overriding the base teal.
+	.lwtv-donut-legend-track .progress-bar {
+
+		&.lwtv-donut-seg--dkpink {
+			background-color: colors.$lwtv-dkpink !important;
+		}
+
+		&.lwtv-donut-seg--pink {
+			background-color: colors.$lwtv-pink !important;
+		}
+
+		&.lwtv-donut-seg--mid {
+			background-color: color.mix(colors.$lwtv-pink, colors.$lwtv-ltpink, 55%) !important;
+		}
+
+		&.lwtv-donut-seg--ltpink {
+			background-color: colors.$lwtv-ltpink !important;
+		}
+
+		&.lwtv-donut-seg--green {
+			background-color: colors.$lwtv-stats-green !important;
+		}
+
+		&.lwtv-donut-seg--amber {
+			background-color: colors.$lwtv-stats-yellow !important;
+		}
+
+		&.lwtv-donut-seg--red {
+			background-color: colors.$lwtv-red !important;
+		}
+
+		&.lwtv-donut-seg--grey {
+			background-color: colors.$lwtv-medgrey !important;
+		}
+
+		&.lwtv-donut-seg--gold {
+			background-color: colors.$lwtv-gold !important;
+		}
+
+		&.lwtv-donut-seg--silver {
+			background-color: colors.$lwtv-silver !important;
+		}
+
+		&.lwtv-donut-seg--bronze {
+			background-color: colors.$lwtv-bronze !important;
+		}
+
+		&.lwtv-donut-seg--sev-med {
+			background-color: color.mix(colors.$lwtv-red, colors.$lwtv-yellow, 65%) !important;
+		}
+
+		&.lwtv-donut-seg--sev-low {
+			background-color: color.mix(colors.$lwtv-red, colors.$lwtv-yellow, 25%) !important;
+		}
+	}
 }

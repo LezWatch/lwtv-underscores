@@ -429,5 +429,13 @@
 				border-bottom-color: colors.$lwtv-pink;
 			}
 		}
+
+		.lwtv-donut-track {
+			stroke: colors.$lwtv-medgrey;
+		}
+
+		.lwtv-donut-center-num {
+			color: colors.$white;
+		}
 	}
 }
