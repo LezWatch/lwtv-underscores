@@ -1,25 +1,22 @@
 <?php
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
-
 /**
- * The template for displaying tropes statistics
+ * Shows → Tropes: ranked bars (green).
  *
  * @package LezWatch.TV
+ *
+ * @var int $shows_count
  */
-?>
-<h3>Trope Breakdown</h3>
 
-<div class="container chart-container">
-	<div class="row">
-		<div class="col-sm-6">
-			<?php echo lwtv_plugin()->generate_shows_statistics( 'piechart', 'tropes' ); ?>
-		</div>
-		<div class="col-sm-6">
-			<?php echo lwtv_plugin()->generate_shows_statistics( 'percentage', 'tropes' ); ?>
-		</div>
-	</div>
-</div>
-<?php
+$tropes_raw = lwtv_plugin()->generate_shows_statistics( 'array', 'tropes' );
+$ranked     = array(
+	'rows'    => is_array( $tropes_raw ) ? (array) reset( $tropes_raw ) : array(),
+	'total'   => (int) $shows_count,
+	'family'  => 'characters',
+	'eyebrow' => __( 'Trope Breakdown', 'lwtv' ),
+	'base'    => '/trope/',
+);
+// phpcs:ignore PEAR.Files.IncludingFile.UseRequire
+include plugin_dir_path( __DIR__ ) . 'partials/ranked-bars.php';

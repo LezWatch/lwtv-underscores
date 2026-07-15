@@ -1,26 +1,22 @@
 <?php
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
-
 /**
- * The template for displaying intersectionality statistics
+ * Shows → Intersectionality: ranked bars (blue).
  *
  * @package LezWatch.TV
+ *
+ * @var int $shows_count
  */
 
-?>
-<h3>Intersectionality Breakdown</h3>
-
-<div class="container chart-container">
-	<div class="row">
-		<div class="col-sm-6">
-			<?php echo lwtv_plugin()->generate_shows_statistics( 'piechart', 'intersections' ); ?>
-		</div>
-		<div class="col-sm-6">
-			<?php echo lwtv_plugin()->generate_shows_statistics( 'percentage', 'intersections' ); ?>
-		</div>
-	</div>
-</div>
-<?php
+$inter_raw = lwtv_plugin()->generate_shows_statistics( 'array', 'intersections' );
+$ranked    = array(
+	'rows'    => is_array( $inter_raw ) ? (array) reset( $inter_raw ) : array(),
+	'total'   => (int) $shows_count,
+	'family'  => 'shows',
+	'eyebrow' => __( 'Intersectionality Breakdown', 'lwtv' ),
+	'base'    => '',
+);
+// phpcs:ignore PEAR.Files.IncludingFile.UseRequire
+include plugin_dir_path( __DIR__ ) . 'partials/ranked-bars.php';

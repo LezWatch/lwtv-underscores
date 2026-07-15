@@ -1,25 +1,22 @@
 <?php
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
-
 /**
- * The template for displaying genres statistics
+ * Shows → Genres: ranked bars (amber). Shares add up past 100% (multi-value taxonomy).
  *
  * @package LezWatch.TV
+ *
+ * @var int $shows_count
  */
-?>
-<h3>Genre Breakdown</h3>
 
-<div class="container chart-container">
-	<div class="row">
-		<div class="col-sm-6">
-			<?php echo lwtv_plugin()->generate_shows_statistics( 'piechart', 'genres' ); ?>
-		</div>
-		<div class="col-sm-6">
-			<?php echo lwtv_plugin()->generate_shows_statistics( 'percentage', 'genres' ); ?>
-		</div>
-	</div>
-</div>
-<?php
+$genres_raw = lwtv_plugin()->generate_shows_statistics( 'array', 'genres' );
+$ranked     = array(
+	'rows'    => is_array( $genres_raw ) ? (array) reset( $genres_raw ) : array(),
+	'total'   => (int) $shows_count,
+	'family'  => 'actors',
+	'eyebrow' => __( 'Genre Breakdown', 'lwtv' ),
+	'base'    => '/genre/',
+);
+// phpcs:ignore PEAR.Files.IncludingFile.UseRequire
+include plugin_dir_path( __DIR__ ) . 'partials/ranked-bars.php';
