@@ -382,5 +382,18 @@
 				background-color: colors.$lwtv-ltpink;
 			}
 		}
+
+		.card-header.lwtv-metric-card {
+			background-color: transparent;
+			border-color: colors.$lwtv-bordergrey;
+		}
+
+		.lwtv-metric-number {
+			color: colors.$white;
+		}
+
+		.lwtv-metric-icon {
+			background-color: rgba(255, 255, 255, 0.08);
+		}
 	}
 }

@@ -170,4 +170,92 @@ canvas {
 			box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
 		}
 	}
+
+	.lwtv-stats-eyebrow {
+		font-size: 0.625rem;
+		font-weight: 700;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		color: colors.$lwtv-medgrey;
+
+		&--section {
+			display: block;
+			margin-bottom: 0.75rem;
+		}
+	}
+
+	.lwtv-metric-grid {
+		display: grid;
+		grid-template-columns: repeat(4, 1fr);
+		gap: 16px;
+		margin-bottom: 1.5rem;
+	}
+
+	.lwtv-metric-card {
+		display: flex;
+		flex-direction: column;
+		padding: 18px;
+		border: 1px solid colors.$lwtv-bordergrey;
+		border-radius: 14px;
+
+		// .card-header base sets display:block etc.; reassert what we need.
+		.lwtv-stats-eyebrow {
+			color: inherit; // inherits the card-header type color (shows/characters/etc).
+		}
+	}
+
+	.lwtv-metric-top {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+	}
+
+	.lwtv-metric-icon {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 38px;
+		height: 38px;
+		border-radius: 8px;
+		background-color: rgba(0, 0, 0, 0.06);
+	}
+
+	.lwtv-metric-number {
+		font-size: 2.5rem;
+		font-weight: 700;
+		line-height: 1.1;
+		font-variant-numeric: tabular-nums;
+		color: colors.$lwtv-dkgrey;
+	}
+
+	.lwtv-sparkline {
+		width: 100%;
+		height: 26px;
+		margin: 6px 0;
+		// stroke uses currentColor => the card-header type color.
+	}
+
+	.lwtv-metric-caption {
+		font-size: 0.75rem;
+		color: colors.$lwtv-medgrey;
+	}
+
+	.card-header.lwtv-metric-card {
+		background-color: transparent; // .bg-light provides the surface.
+		border-color: colors.$lwtv-bordergrey;
+	}
+
+	@media (max-width: 767px) {
+
+		.lwtv-metric-grid {
+			grid-template-columns: repeat(2, 1fr);
+		}
+	}
+
+	@media (max-width: 420px) {
+
+		.lwtv-metric-grid {
+			grid-template-columns: 1fr;
+		}
+	}
 }

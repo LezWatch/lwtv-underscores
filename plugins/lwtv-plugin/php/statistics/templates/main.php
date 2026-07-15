@@ -36,14 +36,6 @@ $stats_total_nations  = (int) wp_count_terms( array( 'taxonomy' => 'lez_country'
 // Derived: "1 in N" ratio for the death band (guard against divide-by-zero).
 $stats_dead_ratio = ( $stats_dead > 0 ) ? (int) round( $stats_characters / $stats_dead ) : 0;
 
-// Backward-compatible aliases for the old main/overview.php partial, which is
-// unchanged this task and still expects these variable names. Remove once
-// Task 4 replaces overview.php with the new metric cards.
-$shows      = $stats_shows;
-$characters = $stats_characters;
-$actors     = $stats_actors;
-$dead_chars = $stats_dead;
-
 $stats_partials = plugin_dir_path( __FILE__ ) . 'main/';
 ?>
 
