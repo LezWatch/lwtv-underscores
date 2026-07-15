@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 
 $stars_raw   = lwtv_plugin()->generate_shows_statistics( 'array', 'stars' );
-$stars_data  = is_array( $stars_raw ) ? (array) reset( $stars_raw ) : array();
+$stars_data  = ( is_array( $stars_raw ) && ! empty( $stars_raw ) ) ? (array) reset( $stars_raw ) : array();
 $stars_total = (int) $shows_count;
 
 $stars_order = array(

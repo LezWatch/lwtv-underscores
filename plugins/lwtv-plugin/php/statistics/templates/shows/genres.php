@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 $genres_raw = lwtv_plugin()->generate_shows_statistics( 'array', 'genres' );
 $ranked     = array(
-	'rows'    => is_array( $genres_raw ) ? (array) reset( $genres_raw ) : array(),
+	'rows'    => ( is_array( $genres_raw ) && ! empty( $genres_raw ) ) ? (array) reset( $genres_raw ) : array(),
 	'total'   => (int) $shows_count,
 	'family'  => 'actors',
 	'eyebrow' => __( 'Genre Breakdown', 'lwtv' ),

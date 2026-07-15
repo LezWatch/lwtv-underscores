@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 
 $worth_raw   = lwtv_plugin()->generate_shows_statistics( 'array', 'worth-it' );
-$worth_data  = is_array( $worth_raw ) ? (array) reset( $worth_raw ) : array();
+$worth_data  = ( is_array( $worth_raw ) && ! empty( $worth_raw ) ) ? (array) reset( $worth_raw ) : array();
 $worth_total = (int) $shows_count;
 
 $worth_order = array(

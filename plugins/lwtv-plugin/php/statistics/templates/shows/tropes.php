@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 $tropes_raw = lwtv_plugin()->generate_shows_statistics( 'array', 'tropes' );
 $ranked     = array(
-	'rows'    => is_array( $tropes_raw ) ? (array) reset( $tropes_raw ) : array(),
+	'rows'    => ( is_array( $tropes_raw ) && ! empty( $tropes_raw ) ) ? (array) reset( $tropes_raw ) : array(),
 	'total'   => (int) $shows_count,
 	'family'  => 'characters',
 	'eyebrow' => __( 'Trope Breakdown', 'lwtv' ),

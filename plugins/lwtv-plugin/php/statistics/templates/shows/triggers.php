@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 
 $trig_raw   = lwtv_plugin()->generate_shows_statistics( 'array', 'triggers' );
-$trig_data  = is_array( $trig_raw ) ? (array) reset( $trig_raw ) : array();
+$trig_data  = ( is_array( $trig_raw ) && ! empty( $trig_raw ) ) ? (array) reset( $trig_raw ) : array();
 $trig_total = (int) $shows_count;
 
 $trig_order = array(

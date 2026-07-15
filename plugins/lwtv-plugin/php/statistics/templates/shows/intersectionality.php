@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 $inter_raw = lwtv_plugin()->generate_shows_statistics( 'array', 'intersections' );
 $ranked    = array(
-	'rows'    => is_array( $inter_raw ) ? (array) reset( $inter_raw ) : array(),
+	'rows'    => ( is_array( $inter_raw ) && ! empty( $inter_raw ) ) ? (array) reset( $inter_raw ) : array(),
 	'total'   => (int) $shows_count,
 	'family'  => 'shows',
 	'eyebrow' => __( 'Intersectionality Breakdown', 'lwtv' ),

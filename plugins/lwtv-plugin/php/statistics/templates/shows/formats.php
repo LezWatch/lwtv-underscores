@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 
 $formats_raw   = lwtv_plugin()->generate_shows_statistics( 'array', 'formats' );
-$formats_data  = is_array( $formats_raw ) ? (array) reset( $formats_raw ) : array();
+$formats_data  = ( is_array( $formats_raw ) && ! empty( $formats_raw ) ) ? (array) reset( $formats_raw ) : array();
 $formats_total = (int) $shows_count;
 
 // Raspberry ramp classes, darkest (largest) first.

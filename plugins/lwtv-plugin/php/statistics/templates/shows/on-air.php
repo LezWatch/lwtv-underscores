@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 
 $onair_raw  = lwtv_plugin()->generate_shows_statistics( 'array', 'on-air' );
-$onair_data = is_array( $onair_raw ) ? (array) reset( $onair_raw ) : array();
+$onair_data = ( is_array( $onair_raw ) && ! empty( $onair_raw ) ) ? (array) reset( $onair_raw ) : array();
 
 $onair_points = array();
 foreach ( $onair_data as $onair_row ) {

@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 
 $love_raw   = lwtv_plugin()->generate_shows_statistics( 'array', 'we-love-it' );
-$love_data  = is_array( $love_raw ) ? (array) reset( $love_raw ) : array();
+$love_data  = ( is_array( $love_raw ) && ! empty( $love_raw ) ) ? (array) reset( $love_raw ) : array();
 $love_total = (int) $shows_count;
 
 $love_loved  = isset( $love_data['we_love'] ) ? (int) $love_data['we_love']['count'] : 0;
