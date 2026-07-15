@@ -396,5 +396,14 @@
 			background-color: rgba(255, 255, 255, 0.08); // fallback for no color-mix.
 			background-color: color-mix(in srgb, currentColor 15%, transparent);
 		}
+
+		.lwtv-byg-icon {
+			background-color: rgba(255, 255, 255, 0.08); // fallback for no color-mix.
+			background-color: color-mix(in srgb, currentColor 15%, transparent);
+		}
+
+		.lwtv-byg-desc {
+			color: colors.$lwtv-ltpink;
+		}
 	}
 }

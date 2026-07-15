@@ -251,6 +251,62 @@ canvas {
 		border-color: colors.$lwtv-bordergrey;
 	}
 
+	.lwtv-byg {
+		display: flex;
+		align-items: center;
+		gap: 16px;
+		padding: 16px 20px;
+		margin-bottom: 1.5rem;
+		border: 1px solid; // border-color comes from .card-header.dead-characters.
+		border-left-width: 3px;
+		border-radius: 14px;
+	}
+
+	.lwtv-byg-icon {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 38px;
+		height: 38px;
+		border-radius: 8px;
+		color: inherit; // inherits the card-header type color.
+		background-color: rgba(0, 0, 0, 0.06); // fallback for no color-mix support.
+		background-color: color-mix(in srgb, currentColor 12%, transparent);
+		flex: 0 0 auto;
+
+		svg {
+			fill: currentColor; // sprite paths have no fill; take the type color.
+		}
+	}
+
+	.lwtv-byg-body {
+		flex: 1 1 auto;
+	}
+
+	.lwtv-byg-line {
+		margin: 0.15rem 0;
+		font-size: 1.125rem;
+		font-weight: 600;
+	}
+
+	.lwtv-byg-desc {
+		margin: 0;
+		font-size: 0.8125rem;
+		color: colors.$lwtv-medgrey;
+	}
+
+	.lwtv-byg-btn {
+		flex: 0 0 auto;
+		color: colors.$white;
+		background-color: colors.$lwtv-dkpink;
+		border-color: colors.$lwtv-dkpink;
+
+		&:hover {
+			color: colors.$white;
+			background-color: colors.$lwtv-pink;
+		}
+	}
+
 	@media (max-width: 767px) {
 
 		.lwtv-metric-grid {
@@ -262,6 +318,13 @@ canvas {
 
 		.lwtv-metric-grid {
 			grid-template-columns: 1fr;
+		}
+	}
+
+	@media (max-width: 575px) {
+
+		.lwtv-byg {
+			flex-wrap: wrap;
 		}
 	}
 }
