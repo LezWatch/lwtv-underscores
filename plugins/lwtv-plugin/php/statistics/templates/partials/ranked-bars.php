@@ -11,7 +11,10 @@ if ( ! defined( 'ABSPATH' ) ) {
  *   @type array  $rows    slug => ['name','count','url'(optional)].
  *   @type int    $total   Denominator for pct (all shows).
  *   @type string $family  Color family: characters|actors|shows.
- *   @type string $eyebrow Section eyebrow.
+ *   @type string $title   Panel heading.
+ *   @type string $sub     Panel sub-line (optional).
+ *   @type string $svg     Header icon sprite file (optional).
+ *   @type string $icon    Header icon FA fallback (optional).
  *   @type string $base    URL base for row links (e.g. '/trope/'); '' to use row 'url'.
  * }
  */
@@ -20,9 +23,18 @@ $ranked_rows = $ranked['rows'] ?? array();
 uasort( $ranked_rows, fn( $a, $b ) => (int) $b['count'] <=> (int) $a['count'] );
 $ranked_total = (int) ( $ranked['total'] ?? 0 );
 ?>
-<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php echo esc_html( $ranked['eyebrow'] ?? '' ); ?></p>
-
 <section class="lwtv-panel bg-light">
+	<header class="lwtv-panel-head">
+		<span class="lwtv-panel-icon <?php echo esc_attr( $ranked['family'] ?? 'shows' ); ?>">
+			<?php echo lwtv_plugin()->get_symbolicon( svg: $ranked['svg'] ?? 'tag.svg', icon: $ranked['icon'] ?? 'svg-tag', max_size: '20' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+		</span>
+		<div>
+			<h2 class="lwtv-panel-title"><?php echo esc_html( $ranked['title'] ?? ( $ranked['eyebrow'] ?? '' ) ); ?></h2>
+			<?php if ( ! empty( $ranked['sub'] ) ) : ?>
+				<p class="lwtv-panel-sub"><?php echo esc_html( $ranked['sub'] ); ?></p>
+			<?php endif; ?>
+		</div>
+	</header>
 	<div class="lwtv-bars lwtv-bars--<?php echo esc_attr( $ranked['family'] ?? 'shows' ); ?>">
 		<?php
 		foreach ( $ranked_rows as $ranked_slug => $ranked_row ) {
