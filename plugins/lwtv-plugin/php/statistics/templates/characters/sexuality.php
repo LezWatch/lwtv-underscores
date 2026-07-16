@@ -49,7 +49,7 @@ $donut = array(
 	'center_sub'  => __( 'characters', 'lwtv' ),
 	'eyebrow'     => __( 'Sexual Orientation', 'lwtv' ),
 	'headline'    => __( 'Two in three are lesbian or bisexual', 'lwtv' ),
-	'description' => __( 'Lesbian and bisexual characters make up the bulk of the catalogue. The long tail — pansexual, asexual, demisexual and more — is where the fastest growth is happening.', 'lwtv' ),
+	'description' => __( 'Lesbian and bisexual characters make up the bulk of the characters.', 'lwtv' ),
 );
 
 // phpcs:ignore PEAR.Files.IncludingFile.UseRequire

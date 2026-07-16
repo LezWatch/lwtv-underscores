@@ -60,7 +60,7 @@ $donut = array(
 	'center'      => $gen_cis,
 	'center_sub'  => __( 'cisgender', 'lwtv' ),
 	'eyebrow'     => __( 'Gender Identity', 'lwtv' ),
-	'headline'    => __( 'Most characters are cisgender — but not all', 'lwtv' ),
+	'headline'    => __( 'Most characters are cisgender', 'lwtv' ),
 	'description' => __( 'Cisgender characters dominate, but the database tracks a growing range of trans, non-binary and genderqueer identities.', 'lwtv' ),
 );
 

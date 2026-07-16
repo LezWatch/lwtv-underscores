@@ -405,6 +405,7 @@
 		.lwtv-donut-desc,
 		.lwtv-donut-center-num,
 		.lwtv-leader-name,
+		.lwtv-leader-rank,
 		.lwtv-leader-value,
 		.lwtv-metric-number,
 		.lwtv-panel-sub,
@@ -412,6 +413,11 @@
 		.lwtv-tail-name,
 		.lwtv-trend-current-sub,
 		.lwtv-trend-desc {
+			color: colors.$white;
+		}
+
+		a.lwtv-tail-name, a.lwtv-tail-name:visited,
+		a.lwtv-leader-name, a.lwtv-leader-name:visited {
 			color: colors.$white;
 		}
 
@@ -442,6 +448,7 @@
 			color: #2ecc71;
 		}
 
+		.lwtv-panel-icon.gender,
 		.lwtv-panel-icon.actors {
 			color: #f1c40f;
 		}
@@ -450,20 +457,16 @@
 			color: #3498db;
 		}
 
-		.lwtv-panel-icon.gender {
-			color: #f1c40f;
-		}
-
 		// Neutral leader-bar tracks in dark (the light family tints are too bright).
 		.lwtv-bars--characters .lwtv-leader-track,
 		.lwtv-bars--actors .lwtv-leader-track,
 		.lwtv-bars--shows .lwtv-leader-track {
-			background-color: $lwtv-medgrey;
+			background-color: colors.$lwtv-ltgrey;
 		}
 
 		.lwtv-bars--sexuality .lwtv-leader-track,
 		.lwtv-bars--gender .lwtv-leader-track {
-			background-color: $lwtv-medgrey;
+			background-color: colors.$lwtv-ltgrey;
 		}
 
 		// Tail separators need a light-on-dark border to stay visible.
