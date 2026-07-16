@@ -76,6 +76,7 @@ $stats_cards = array(
 			<span class="lwtv-metric-number" data-count-to="<?php echo (int) $stats_card['count']; ?>"><?php echo esc_html( number_format_i18n( $stats_card['count'] ) ); ?></span>
 			<?php if ( '' !== $stats_points ) : ?>
 				<svg class="lwtv-sparkline" viewBox="0 0 120 26" preserveAspectRatio="none" aria-hidden="true">
+					<polygon class="lwtv-sparkline-area" points="<?php echo esc_attr( $stats_points . ' 120,26 0,26' ); ?>" fill="currentColor" fill-opacity="0.15" stroke="none" />
 					<polyline points="<?php echo esc_attr( $stats_points ); ?>" fill="none" stroke="currentColor" stroke-width="1.5" />
 				</svg>
 			<?php endif; ?>
