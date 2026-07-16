@@ -31,6 +31,7 @@
 		background-color: $lwtv-medgrey !important;
 	}
 
+	.card-text, .card-title,
 	.entry-header .entry-meta {
 		color: colors.$lwtv-ltgrey;
 
@@ -442,7 +443,8 @@
 
 		// Neutral leader-bar tracks in dark (the light family tints are too bright).
 		.lwtv-bars--characters .lwtv-leader-track,
-		.lwtv-bars--actors .lwtv-leader-track {
+		.lwtv-bars--actors .lwtv-leader-track,
+		.lwtv-bars--shows .lwtv-leader-track {
 			background-color: $lwtv-medgrey;
 		}
 

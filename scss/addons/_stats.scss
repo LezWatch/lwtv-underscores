@@ -491,6 +491,10 @@ canvas {
 		background-color: colors.$lwtv-stats-yellow-background;
 	}
 
+	.lwtv-bars--shows .lwtv-leader-track {
+		background-color: colors.$lwtv-stats-blue-background;
+	}
+
 	// Overview panel: tail rows (name + count, no bar).
 	.lwtv-tail {
 		padding: 0;
