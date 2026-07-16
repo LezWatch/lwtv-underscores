@@ -911,6 +911,8 @@ canvas {
 		background-color: colors.$lwtv-medgrey;
 	}
 
+	.lwtv-donut-seg--bordergrey { stroke: colors.$lwtv-bordergrey; background-color: colors.$lwtv-bordergrey; }
+
 	.lwtv-donut-seg--gold {
 		stroke: colors.$lwtv-gold;
 		background-color: colors.$lwtv-gold;
@@ -974,6 +976,8 @@ canvas {
 		&.lwtv-donut-seg--grey {
 			background-color: colors.$lwtv-medgrey !important;
 		}
+
+		&.lwtv-donut-seg--bordergrey { background-color: colors.$lwtv-bordergrey !important; }
 
 		&.lwtv-donut-seg--gold {
 			background-color: colors.$lwtv-gold !important;
