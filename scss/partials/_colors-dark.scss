@@ -493,6 +493,16 @@
 			stroke: colors.$lwtv-medgrey;
 		}
 
+		// Faint neutral fill for the donut "Unknown" segment — the light
+		// translucent-black bordergrey is invisible on the dark ring/card.
+		.lwtv-donut-seg--bordergrey {
+			stroke: rgba(255, 255, 255, 0.22);
+		}
+
+		.lwtv-donut-legend-track .progress-bar.lwtv-donut-seg--bordergrey {
+			background-color: rgba(255, 255, 255, 0.22) !important;
+		}
+
 		.lwtv-trend-current-num {
 			color: colors.$lwtv-pink;
 		}
