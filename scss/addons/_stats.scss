@@ -451,9 +451,18 @@ canvas {
 		margin-bottom: 6px;
 	}
 
+	.lwtv-tail-name {
+		font-size: 0.825rem;
+	}
+
 	.lwtv-leader-name {
-		font-size: 0.95rem;
+		font-size: 0.90rem;
 		font-weight: 500;
+	}
+
+	a.lwtv-tail-name, a.lwtv-tail-name:visited,
+	a.lwtv-leader-name, a.lwtv-leader-name:visited {
+		color: colors.$lwtv-medgrey;
 	}
 
 	.lwtv-leader-value {
@@ -673,7 +682,7 @@ canvas {
 
 	.lwtv-stats-subnav-item {
 		padding: 8px 2px;
-		font-size: 0.875rem;
+		font-size: 0.95rem;
 		white-space: nowrap;
 		color: colors.$lwtv-medgrey;
 		text-decoration: none;

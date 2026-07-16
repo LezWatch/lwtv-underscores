@@ -34,14 +34,36 @@ foreach ( $formats_data as $formats_row ) {
 $formats_lead = $formats_segments[0] ?? array( 'pct' => 0 );
 $formats_in10 = ( $formats_lead['pct'] > 0 ) ? (int) round( $formats_lead['pct'] / 10 ) : 0;
 
+switch ( $formats_lead['label'] ) {
+	case 'TV Show':
+		$formats_top = 'TV series';
+		$description = __( 'TV series include linear (over air, like ABC, NBC, CTV) and streaming (like Netflix).', 'lwtv' );
+		break;
+	case 'Web Series':
+		$formats_top = 'web series';
+		$description = __( 'Web-Series are streaming only but not on a distributor, so think YouTube web-series.', 'lwtv' );
+		break;
+	case 'Mini-Series':
+		$formats_top = 'mini-series';
+		$description = __( 'Mini-series (or limited release series) are usually found on traditional linear TV, but have been growing on streamers.', 'lwtv' );
+		break;
+	case 'TV Movie':
+		$formats_top = 'made for TV movies';
+		$description = __( 'Most Made for TV movies are on traditional linear TV, but have been growing on streamers.', 'lwtv' );
+		break;
+	default:
+		$formats_top = '';
+		$description = '';
+}
+
 $donut = array(
 	'segments'    => $formats_segments,
 	'center'      => $formats_total,
 	'center_sub'  => __( 'shows', 'lwtv' ),
 	'eyebrow'     => __( 'Format Breakdown', 'lwtv' ),
-	/* translators: %d: "N in ten" figure for the leading format. */
-	'headline'    => ( $formats_in10 > 0 ) ? sprintf( __( '%d in ten are full TV series', 'lwtv' ), $formats_in10 ) : __( 'Format breakdown', 'lwtv' ),
-	'description' => __( 'Feature films and short-form web series make up most of the rest; true mini-series stay rare.', 'lwtv' ),
+	// translators: %1$1d is "N in ten" figure for the leading format, %2$2s is the leading format
+	'headline'    => ( $formats_in10 > 0 ) ? sprintf( __( '%1$1d in 10 are %2$2s', 'lwtv' ), $formats_in10, $formats_top ) : __( 'Format breakdown', 'lwtv' ),
+	'description' => $description,
 );
 
 // phpcs:ignore PEAR.Files.IncludingFile.UseRequire

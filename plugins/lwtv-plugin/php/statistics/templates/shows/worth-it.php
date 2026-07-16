@@ -21,17 +21,24 @@ $worth_order = array(
 	'tbd' => array( __( 'TBD', 'lwtv' ), 'grey' ),
 );
 
-$worth_segments = array();
-$worth_yes      = 0;
+$worth_segments    = array();
+$worth_yes         = 0;
+$worth_yes_percent = 0;
+$worth_no_percent  = 0;
 foreach ( $worth_order as $worth_key => $worth_meta ) {
-	$worth_count = isset( $worth_data[ $worth_key ] ) ? (int) $worth_data[ $worth_key ]['count'] : 0;
+	$worth_count   = isset( $worth_data[ $worth_key ] ) ? (int) $worth_data[ $worth_key ]['count'] : 0;
+	$worth_percent = ( $worth_total > 0 ) ? round( ( $worth_count / $worth_total ) * 100, 1 ) : 0;
 	if ( 'yes' === $worth_key ) {
-		$worth_yes = $worth_count;
+		$worth_yes         = $worth_count;
+		$worth_yes_percent = $worth_percent;
+	}
+	if ( 'no' === $worth_key ) {
+		$worth_no_percent = $worth_percent;
 	}
 	$worth_segments[] = array(
 		'label' => $worth_meta[0],
 		'count' => $worth_count,
-		'pct'   => ( $worth_total > 0 ) ? round( ( $worth_count / $worth_total ) * 100, 1 ) : 0,
+		'pct'   => $worth_percent,
 		'class' => $worth_meta[1],
 	);
 }
@@ -41,8 +48,9 @@ $donut = array(
 	'center'      => $worth_yes,
 	'center_sub'  => __( 'rated “Yes”', 'lwtv' ),
 	'eyebrow'     => __( 'Worth It Ratings', 'lwtv' ),
-	'headline'    => __( 'Just under half are a clear yes', 'lwtv' ),
-	'description' => __( 'Our editors rate every show. Roughly one in ten is a hard “no” — the rest sit somewhere in the middle or await review.', 'lwtv' ),
+	// translators: %s is the percentage of shows we think are worth watching.
+	'headline'    => sprintf( __( 'Over half (%s%%) are a clear yes', 'lwtv' ), $worth_yes_percent ),
+	'description' => __( 'Our editors rate every show. Roughly one in ten is a hard "no." The rest sit somewhere in the middle or await review.', 'lwtv' ),
 );
 
 // phpcs:ignore PEAR.Files.IncludingFile.UseRequire

@@ -195,7 +195,7 @@ Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>"
 
 **Interfaces:**
 - Consumes: `$view` (current shows view slug), `$baseurl` (`/statistics/shows/`).
-- Produces: the `.lwtv-shows-subnav` markup + `.lwtv-stats-overview` container around shows output; stats JS loaded on shows pages.
+- Produces: the `.lwtv-stats-subnav` markup + `.lwtv-stats-overview` container around shows output; stats JS loaded on shows pages.
 
 - [ ] **Step 1: Create `subnav.php`**
 
@@ -226,13 +226,13 @@ $lwtv_shows_subnav = array(
 	'we-love-it'        => __( 'We Love It', 'lwtv' ),
 );
 ?>
-<nav class="lwtv-shows-subnav" aria-label="<?php esc_attr_e( 'Shows statistics views', 'lwtv' ); ?>">
+<nav class="lwtv-stats-subnav" aria-label="<?php esc_attr_e( 'Shows statistics views', 'lwtv' ); ?>">
 	<?php
 	foreach ( $lwtv_shows_subnav as $lwtv_slug => $lwtv_label ) {
 		$lwtv_is_active = ( $view === $lwtv_slug );
 		$lwtv_url       = ( 'overview' === $lwtv_slug ) ? $baseurl : $baseurl . $lwtv_slug . '/';
 		printf(
-			'<a class="lwtv-shows-subnav-item%1$s" href="%2$s"%3$s>%4$s</a>',
+			'<a class="lwtv-stats-subnav-item%1$s" href="%2$s"%3$s>%4$s</a>',
 			$lwtv_is_active ? ' is-active' : '',
 			esc_url( $lwtv_url ),
 			$lwtv_is_active ? ' aria-current="page"' : '',
@@ -306,7 +306,7 @@ with:
 - [ ] **Step 4: Sub-nav SCSS (light) — append inside the `.statistics { … }` overview block in `scss/addons/_stats.scss`**
 
 ```scss
-	.lwtv-shows-subnav {
+	.lwtv-stats-subnav {
 		display: flex;
 		gap: 20px;
 		margin-bottom: 1.5rem;
@@ -314,7 +314,7 @@ with:
 		border-bottom: 1px solid colors.$lwtv-bordergrey;
 	}
 
-	.lwtv-shows-subnav-item {
+	.lwtv-stats-subnav-item {
 		padding: 8px 2px;
 		font-size: 0.875rem;
 		white-space: nowrap;
@@ -337,7 +337,7 @@ with:
 - [ ] **Step 5: Sub-nav SCSS (dark) — inside the dark `.statistics` block in `scss/partials/_colors-dark.scss`**
 
 ```scss
-		.lwtv-shows-subnav-item {
+		.lwtv-stats-subnav-item {
 			color: colors.$lwtv-ltpink;
 
 			&.is-active {
@@ -357,8 +357,8 @@ source ~/.nvm/nvm.sh; nvm use && npm run buildquick
 - [ ] **Step 7: Verify**
 
 ```bash
-curl -sk https://lwtv.local/statistics/shows/formats/ | grep -o 'lwtv-shows-subnav-item is-active[^>]*>[^<]*'   # -> Formats
-curl -sk https://lwtv.local/statistics/shows/ | grep -c 'lwtv-shows-subnav\b'                                   # -> 1
+curl -sk https://lwtv.local/statistics/shows/formats/ | grep -o 'lwtv-stats-subnav-item is-active[^>]*>[^<]*'   # -> Formats
+curl -sk https://lwtv.local/statistics/shows/ | grep -c 'lwtv-stats-subnav\b'                                   # -> 1
 curl -sk https://lwtv.local/statistics/shows/ | grep -o 'statistics-overview.js[^"]*'                            # -> present (JS enqueued)
 ```
 Expected: sub-nav renders with the right active item; the JS is enqueued on shows; the page still renders its (old) view body below with no PHP fatal.
