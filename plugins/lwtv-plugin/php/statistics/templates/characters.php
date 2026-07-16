@@ -61,18 +61,11 @@ if ( 'overview' === $view ) {
 	$count_cliches     = count( $character_cliches_data );
 }
 ?>
-
-<h2>
-	<a href="/characters/">Total Characters</a> (<?php echo (int) $character_count; ?>)
-</h2>
-
-<?php
-// phpcs:ignore PEAR.Files.IncludingFile.UseRequire
-include plugin_dir_path( __FILE__ ) . 'characters/navbar.php';
-?>
-
-<p>&nbsp;</p>
-
+<div class="lwtv-stats-overview">
+	<?php
+	// phpcs:ignore PEAR.Files.IncludingFile.UseRequire
+	include plugin_dir_path( __FILE__ ) . 'characters/subnav.php';
+	?>
 <?php
 switch ( $view ) {
 	case 'overview':
@@ -109,3 +102,6 @@ switch ( $view ) {
 if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
 	echo '<!-- OPTIMIZED: ' . esc_html( get_num_queries() ) . ' queries for view "' . esc_html( $view ) . '" -->';
 }
+?>
+</div><!-- .lwtv-stats-overview -->
+<?php
