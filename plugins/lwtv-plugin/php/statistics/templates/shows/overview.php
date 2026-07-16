@@ -148,7 +148,6 @@ $shows_panels = array(
 		$shows_rows    = is_array( $shows_panel['rows'] ) ? $shows_panel['rows'] : array();
 		$shows_leaders = array_slice( $shows_rows, 0, 5, true );
 		$shows_tail    = array_slice( $shows_rows, 5, null, true );
-		$shows_top     = ! empty( $shows_leaders ) ? max( array_map( fn( $r ) => (int) $r['count'], $shows_leaders ) ) : 0;
 		?>
 		<section class="lwtv-panel bg-light">
 			<header class="lwtv-panel-head">
@@ -165,8 +164,8 @@ $shows_panels = array(
 				<?php
 				foreach ( $shows_leaders as $shows_slug => $shows_row ) {
 					$shows_count_row = (int) $shows_row['count'];
-					$shows_pct       = ( $shows_count > 0 ) ? round( ( $shows_count_row / $shows_count ) * 100, 1 ) : 0;
-					$shows_width     = ( $shows_top > 0 ) ? round( ( $shows_count_row / $shows_top ) * 100, 1 ) : 0;
+					// Bar width is the true share of all shows, so it matches the label.
+					$shows_pct = ( $shows_count > 0 ) ? round( ( $shows_count_row / $shows_count ) * 100, 1 ) : 0;
 					?>
 					<div class="lwtv-leader-row">
 						<div class="lwtv-leader-head">
@@ -174,7 +173,7 @@ $shows_panels = array(
 							<span class="lwtv-leader-value"><?php echo esc_html( number_format_i18n( $shows_count_row ) . ' · ' . $shows_pct . '%' ); ?></span>
 						</div>
 						<div class="progress lwtv-leader-track">
-							<div class="progress-bar" role="progressbar" style="width:0" data-grow-to="<?php echo esc_attr( (string) $shows_width ); ?>" aria-valuenow="<?php echo esc_attr( (string) $shows_count_row ); ?>" aria-valuemin="0" aria-valuemax="<?php echo esc_attr( (string) $shows_top ); ?>"></div>
+							<div class="progress-bar" role="progressbar" style="width:0" data-grow-to="<?php echo esc_attr( (string) $shows_pct ); ?>" aria-valuenow="<?php echo esc_attr( (string) $shows_count_row ); ?>" aria-valuemin="0" aria-valuemax="<?php echo esc_attr( (string) $shows_count ); ?>"></div>
 						</div>
 					</div>
 					<?php
