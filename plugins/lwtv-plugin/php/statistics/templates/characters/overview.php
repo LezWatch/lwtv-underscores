@@ -145,3 +145,106 @@ $char_dead_ratio = ( $char_dead > 0 ) ? (int) round( $character_count / $char_de
 		<a class="lwtv-tropegap-link" href="<?php echo esc_url( $baseurl . 'queer-irl/' ); ?>"><?php esc_html_e( 'See the breakdown', 'lwtv' ); ?> <span aria-hidden="true">&#8599;</span></a>
 	</div>
 </div>
+
+<?php
+$char_panels = array(
+	array(
+		'title'  => __( 'Top Clichés', 'lwtv' ),
+		'family' => 'characters',
+		'svg'    => 'tag.svg',
+		'icon'   => 'svg-tag',
+		'rows'   => $top_cliches,
+		'base'   => '/cliche/',
+		'count'  => (int) $count_cliches,
+		/* translators: %s: total clichés. */
+		'sub'    => sprintf( __( '%s clichés tracked', 'lwtv' ), number_format_i18n( (int) $count_cliches ) ),
+		/* translators: %s: total clichés. */
+		'all'    => sprintf( __( 'View all %s clichés →', 'lwtv' ), number_format_i18n( (int) $count_cliches ) ),
+		'more'   => $baseurl . 'cliches/',
+	),
+	array(
+		'title'  => __( 'Top Sexual Orientations', 'lwtv' ),
+		'family' => 'sexuality',
+		'svg'    => 'heart.svg',
+		'icon'   => 'svg-heart',
+		'rows'   => $top_sexualities,
+		'base'   => '/sexuality/',
+		'count'  => (int) $count_sexualities,
+		/* translators: %s: total orientations. */
+		'sub'    => sprintf( __( '%s orientations tracked', 'lwtv' ), number_format_i18n( (int) $count_sexualities ) ),
+		/* translators: %s: total orientations. */
+		'all'    => sprintf( __( 'View all %s orientations →', 'lwtv' ), number_format_i18n( (int) $count_sexualities ) ),
+		'more'   => $baseurl . 'sexuality/',
+	),
+	array(
+		'title'  => __( 'Top Gender Identities', 'lwtv' ),
+		'family' => 'gender',
+		'svg'    => 'venus-double.svg',
+		'icon'   => 'svg-venus-double',
+		'rows'   => $top_genders,
+		'base'   => '/gender/',
+		'count'  => (int) $count_genders,
+		/* translators: %s: total identities. */
+		'sub'    => sprintf( __( '%s identities tracked', 'lwtv' ), number_format_i18n( (int) $count_genders ) ),
+		/* translators: %s: total identities. */
+		'all'    => sprintf( __( 'View all %s identities →', 'lwtv' ), number_format_i18n( (int) $count_genders ) ),
+		'more'   => $baseurl . 'gender/',
+	),
+);
+?>
+<div class="lwtv-panels lwtv-panels--3">
+	<?php
+	foreach ( $char_panels as $char_panel ) {
+		$char_rows    = is_array( $char_panel['rows'] ) ? $char_panel['rows'] : array();
+		$char_leaders = array_slice( $char_rows, 0, 5, true );
+		$char_tail    = array_slice( $char_rows, 5, 5, true );
+		?>
+		<section class="lwtv-panel bg-light">
+			<header class="lwtv-panel-head">
+				<span class="lwtv-panel-icon <?php echo esc_attr( $char_panel['family'] ); ?>">
+					<?php echo lwtv_plugin()->get_symbolicon( svg: $char_panel['svg'], icon: $char_panel['icon'], max_size: '20' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+				</span>
+				<div>
+					<h2 class="lwtv-panel-title"><?php echo esc_html( $char_panel['title'] ); ?></h2>
+					<p class="lwtv-panel-sub"><?php echo esc_html( $char_panel['sub'] ); ?></p>
+				</div>
+			</header>
+			<div class="lwtv-leaders lwtv-bars--<?php echo esc_attr( $char_panel['family'] ); ?>">
+				<?php
+				foreach ( $char_leaders as $char_slug => $char_row ) {
+					$char_row_count = (int) $char_row['count'];
+					$char_pct       = ( $character_count > 0 ) ? round( ( $char_row_count / $character_count ) * 100, 1 ) : 0;
+					?>
+					<div class="lwtv-leader-row">
+						<div class="lwtv-leader-head">
+							<a class="lwtv-leader-name" href="<?php echo esc_url( site_url( $char_panel['base'] . $char_slug ) ); ?>"><?php echo esc_html( $char_row['name'] ); ?></a>
+							<span class="lwtv-leader-value"><?php echo esc_html( number_format_i18n( $char_row_count ) . ' · ' . $char_pct . '%' ); ?></span>
+						</div>
+						<div class="progress lwtv-leader-track">
+							<div class="progress-bar" role="progressbar" style="width:0" data-grow-to="<?php echo esc_attr( (string) $char_pct ); ?>" aria-valuenow="<?php echo esc_attr( (string) $char_row_count ); ?>" aria-valuemin="0" aria-valuemax="<?php echo esc_attr( (string) $character_count ); ?>"></div>
+						</div>
+					</div>
+					<?php
+				}
+				?>
+			</div>
+			<?php if ( ! empty( $char_tail ) ) : ?>
+				<ul class="lwtv-tail">
+					<?php
+					foreach ( $char_tail as $char_slug => $char_row ) {
+						?>
+						<li class="lwtv-tail-row">
+							<a class="lwtv-tail-name" href="<?php echo esc_url( site_url( $char_panel['base'] . $char_slug ) ); ?>"><?php echo esc_html( $char_row['name'] ); ?></a>
+							<span class="lwtv-tail-count"><?php echo esc_html( number_format_i18n( (int) $char_row['count'] ) ); ?></span>
+						</li>
+						<?php
+					}
+					?>
+				</ul>
+			<?php endif; ?>
+			<a class="lwtv-panel-foot" href="<?php echo esc_url( $char_panel['more'] ); ?>"><?php echo esc_html( $char_panel['all'] ); ?></a>
+		</section>
+		<?php
+	}
+	?>
+</div>

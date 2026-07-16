@@ -400,6 +400,14 @@ canvas {
 		gap: 16px;
 	}
 
+	.lwtv-panels--3 {
+		grid-template-columns: repeat(3, 1fr);
+
+		@media (max-width: 991px) {
+			grid-template-columns: 1fr;
+		}
+	}
+
 	.lwtv-panel {
 		padding: 20px;
 		border: 1px solid colors.$lwtv-bordergrey;
@@ -428,6 +436,14 @@ canvas {
 		&.actors {
 			color: colors.$lwtv-stats-yellow;
 		}
+	}
+
+	.lwtv-panel-icon.sexuality {
+		color: colors.$lwtv-stats-blue;
+	}
+
+	.lwtv-panel-icon.gender {
+		color: colors.$lwtv-stats-yellow;
 	}
 
 	.lwtv-panel-title {
@@ -503,6 +519,14 @@ canvas {
 		background-color: colors.$lwtv-stats-blue-background;
 	}
 
+	.lwtv-bars--sexuality .lwtv-leader-track {
+		background-color: colors.$lwtv-stats-blue-background;
+	}
+
+	.lwtv-bars--gender .lwtv-leader-track {
+		background-color: colors.$lwtv-stats-yellow-background;
+	}
+
 	// Overview panel: tail rows (name + count, no bar).
 	.lwtv-tail {
 		padding: 0;
@@ -559,6 +583,14 @@ canvas {
 
 	.lwtv-bars--shows .progress-bar {
 		background-color: colors.$lwtv-stats-blue !important;
+	}
+
+	.lwtv-bars--sexuality .progress-bar {
+		background-color: colors.$lwtv-stats-blue !important;
+	}
+
+	.lwtv-bars--gender .progress-bar {
+		background-color: colors.$lwtv-stats-yellow !important;
 	}
 
 	.lwtv-bar-label {

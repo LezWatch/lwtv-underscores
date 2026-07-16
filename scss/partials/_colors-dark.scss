@@ -367,6 +367,11 @@
 			background-color: colors.$lwtv-ltpink !important;
 		}
 
+		.lwtv-bars--sexuality .progress-bar,
+		.lwtv-bars--gender .progress-bar {
+			background-color: colors.$lwtv-ltpink !important;
+		}
+
 		button {
 			color: colors.$black;
 			background-color: colors.$lwtv-ltpink;
@@ -441,10 +446,23 @@
 			color: #f1c40f;
 		}
 
+		.lwtv-panel-icon.sexuality {
+			color: #3498db;
+		}
+
+		.lwtv-panel-icon.gender {
+			color: #f1c40f;
+		}
+
 		// Neutral leader-bar tracks in dark (the light family tints are too bright).
 		.lwtv-bars--characters .lwtv-leader-track,
 		.lwtv-bars--actors .lwtv-leader-track,
 		.lwtv-bars--shows .lwtv-leader-track {
+			background-color: $lwtv-medgrey;
+		}
+
+		.lwtv-bars--sexuality .lwtv-leader-track,
+		.lwtv-bars--gender .lwtv-leader-track {
 			background-color: $lwtv-medgrey;
 		}
 
