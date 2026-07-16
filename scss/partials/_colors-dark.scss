@@ -420,6 +420,27 @@
 			color: colors.$lwtv-ltpink;
 		}
 
+		// Family-colored overview header icons (mirror the dark card-header greens/ambers).
+		.lwtv-panel-icon.characters {
+			color: #2ecc71;
+		}
+
+		.lwtv-panel-icon.actors {
+			color: #f1c40f;
+		}
+
+		// Neutral leader-bar tracks in dark (the light family tints are too bright).
+		.lwtv-bars--characters .lwtv-leader-track,
+		.lwtv-bars--actors .lwtv-leader-track {
+			background-color: $lwtv-medgrey;
+		}
+
+		// Tail separators need a light-on-dark border to stay visible.
+		.lwtv-tail,
+		.lwtv-tail-row {
+			border-color: rgba(255, 255, 255, 0.12);
+		}
+
 		.lwtv-share-seg:nth-child(5) {
 			outline: 1px solid rgba(255, 255, 255, 0.15);
 			outline-offset: -1px;

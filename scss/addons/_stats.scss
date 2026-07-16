@@ -411,6 +411,15 @@ canvas {
 		svg {
 			fill: currentColor; // sprite paths have no fill; take the icon color.
 		}
+
+		// Family-colored header icons for the shows overview panels.
+		&.characters {
+			color: colors.$lwtv-stats-green;
+		}
+
+		&.actors {
+			color: colors.$lwtv-stats-yellow;
+		}
 	}
 
 	.lwtv-panel-title {
@@ -423,6 +432,76 @@ canvas {
 		margin: 0;
 		font-size: 0.95rem;
 		color: colors.$lwtv-medgrey;
+	}
+
+	// Overview panel: top-5 leader bars (name + value, full-width bar beneath).
+	.lwtv-leaders {
+		margin-bottom: 1rem;
+	}
+
+	.lwtv-leader-row {
+		margin-bottom: 0.75rem;
+	}
+
+	.lwtv-leader-head {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 10px;
+		margin-bottom: 6px;
+	}
+
+	.lwtv-leader-name {
+		font-size: 0.95rem;
+		font-weight: 500;
+	}
+
+	.lwtv-leader-value {
+		font-size: 0.8125rem;
+		color: colors.$lwtv-medgrey;
+		font-variant-numeric: tabular-nums;
+		white-space: nowrap;
+	}
+
+	.lwtv-leader-track {
+		height: 8px;
+		border-radius: 999px;
+
+		.progress-bar {
+			border-radius: 999px;
+			transition: none;
+		}
+	}
+
+	.lwtv-bars--characters .lwtv-leader-track {
+		background-color: colors.$lwtv-stats-green-background;
+	}
+
+	.lwtv-bars--actors .lwtv-leader-track {
+		background-color: colors.$lwtv-stats-yellow-background;
+	}
+
+	// Overview panel: tail rows (name + count, no bar).
+	.lwtv-tail {
+		padding: 0;
+		margin: 0;
+		list-style: none;
+		border-top: 1px solid colors.$lwtv-bordergrey;
+	}
+
+	.lwtv-tail-row {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 10px;
+		padding: 9px 0;
+		font-size: 0.95rem;
+		border-bottom: 1px solid colors.$lwtv-bordergrey;
+	}
+
+	.lwtv-tail-count {
+		color: colors.$lwtv-medgrey;
+		font-variant-numeric: tabular-nums;
 	}
 
 	.lwtv-bar-row {

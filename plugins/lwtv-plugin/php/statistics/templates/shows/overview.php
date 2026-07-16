@@ -94,7 +94,7 @@ $shows_cards = array(
 	<div class="lwtv-tropegap card-header dead-characters">
 		<div class="lwtv-tropegap-top">
 			<span class="lwtv-stats-eyebrow"><?php esc_html_e( 'Bury Your Queers', 'lwtv' ); ?></span>
-			<span class="lwtv-tropegap-icon"><?php echo lwtv_plugin()->get_symbolicon( svg: 'skull.svg', icon: 'svg-skull', max_size: '22' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
+			<span class="lwtv-tropegap-icon"><?php echo lwtv_plugin()->get_symbolicon( svg: 'hand-holding-skull.svg', icon: 'svg-skull', max_size: '22' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
 		</div>
 		<span class="lwtv-tropegap-number" data-count-to="<?php echo (int) $trope_buried; ?>"><?php echo esc_html( number_format_i18n( $trope_buried ) ); ?></span>
 		<p class="lwtv-tropegap-desc"><?php esc_html_e( 'shows kill off a queer character — the most common harmful trope in the catalogue.', 'lwtv' ); ?></p>
@@ -103,7 +103,7 @@ $shows_cards = array(
 	<div class="lwtv-tropegap card-header characters">
 		<div class="lwtv-tropegap-top">
 			<span class="lwtv-stats-eyebrow"><?php esc_html_e( 'Happy Endings', 'lwtv' ); ?></span>
-			<span class="lwtv-tropegap-icon"><?php echo lwtv_plugin()->get_symbolicon( svg: 'hearts.svg', icon: 'svg-heart', max_size: '22' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
+			<span class="lwtv-tropegap-icon"><?php echo lwtv_plugin()->get_symbolicon( svg: 'heart-circle.svg', icon: 'svg-heart', max_size: '22' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
 		</div>
 		<span class="lwtv-tropegap-number" data-count-to="<?php echo (int) $trope_happy; ?>"><?php echo esc_html( number_format_i18n( $trope_happy ) ); ?></span>
 		<p class="lwtv-tropegap-desc"><?php esc_html_e( 'shows give their queer characters a happy ending.', 'lwtv' ); ?></p>
@@ -112,63 +112,92 @@ $shows_cards = array(
 </div>
 
 <?php
-// Top tropes / top genres panels (leader bars).
+// Top tropes / top genres panels: top-5 leader bars + a tail name/count table.
 $shows_panels = array(
 	array(
-		'eyebrow' => __( 'Top Tropes', 'lwtv' ),
-		'family'  => 'characters',
-		'rows'    => $top_tropes,
-		'base'    => '/trope/',
-		'more'    => array(
-			'label' => $count_tropes,
-			'url'   => $baseurl . 'tropes/',
-		),
+		'title'  => __( 'Top Tropes', 'lwtv' ),
+		'family' => 'characters',
+		'svg'    => 'tag.svg',
+		'icon'   => 'svg-tag',
+		'rows'   => $top_tropes,
+		'base'   => '/trope/',
+		/* translators: %s: total number of tropes. */
+		'sub'    => sprintf( __( 'Most common of %s tropes, by number of shows', 'lwtv' ), number_format_i18n( (int) $count_tropes ) ),
+		/* translators: %s: total number of tropes. */
+		'all'    => sprintf( __( 'View all %s tropes →', 'lwtv' ), number_format_i18n( (int) $count_tropes ) ),
+		'more'   => $baseurl . 'tropes/',
 	),
 	array(
-		'eyebrow' => __( 'Top Genres', 'lwtv' ),
-		'family'  => 'actors',
-		'rows'    => $top_genres,
-		'base'    => '/genre/',
-		'more'    => array(
-			'label' => $count_genres,
-			'url'   => $baseurl . 'genres/',
-		),
+		'title'  => __( 'Top Genres', 'lwtv' ),
+		'family' => 'actors',
+		'svg'    => 'theater_masks.svg',
+		'icon'   => 'svg-theater-masks',
+		'rows'   => $top_genres,
+		'base'   => '/genre/',
+		/* translators: %s: total number of genres. */
+		'sub'    => sprintf( __( 'Most common of %s genres, by number of shows', 'lwtv' ), number_format_i18n( (int) $count_genres ) ),
+		/* translators: %s: total number of genres. */
+		'all'    => sprintf( __( 'View all %s genres →', 'lwtv' ), number_format_i18n( (int) $count_genres ) ),
+		'more'   => $baseurl . 'genres/',
 	),
 );
 ?>
 <div class="lwtv-panels">
 	<?php
 	foreach ( $shows_panels as $shows_panel ) {
-		$shows_top = ! empty( $shows_panel['rows'] ) ? max( array_map( fn( $r ) => (int) $r['count'], $shows_panel['rows'] ) ) : 0;
+		$shows_rows    = is_array( $shows_panel['rows'] ) ? $shows_panel['rows'] : array();
+		$shows_leaders = array_slice( $shows_rows, 0, 5, true );
+		$shows_tail    = array_slice( $shows_rows, 5, null, true );
+		$shows_top     = ! empty( $shows_leaders ) ? max( array_map( fn( $r ) => (int) $r['count'], $shows_leaders ) ) : 0;
 		?>
 		<section class="lwtv-panel bg-light">
-			<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php echo esc_html( $shows_panel['eyebrow'] ); ?></p>
-			<div class="lwtv-bars lwtv-bars--<?php echo esc_attr( $shows_panel['family'] ); ?>">
+			<header class="lwtv-panel-head">
+				<span class="lwtv-panel-icon <?php echo esc_attr( $shows_panel['family'] ); ?>">
+					<?php echo lwtv_plugin()->get_symbolicon( svg: $shows_panel['svg'], icon: $shows_panel['icon'], max_size: '20' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+				</span>
+				<div>
+					<h2 class="lwtv-panel-title"><?php echo esc_html( $shows_panel['title'] ); ?></h2>
+					<p class="lwtv-panel-sub"><?php echo esc_html( $shows_panel['sub'] ); ?></p>
+				</div>
+			</header>
+
+			<div class="lwtv-leaders lwtv-bars--<?php echo esc_attr( $shows_panel['family'] ); ?>">
 				<?php
-				foreach ( $shows_panel['rows'] as $shows_slug => $shows_row ) {
-					$shows_pct   = ( $shows_count > 0 ) ? round( ( (int) $shows_row['count'] / $shows_count ) * 100, 1 ) : 0;
-					$shows_width = ( $shows_top > 0 ) ? round( ( (int) $shows_row['count'] / $shows_top ) * 100, 1 ) : 0;
+				foreach ( $shows_leaders as $shows_slug => $shows_row ) {
+					$shows_count_row = (int) $shows_row['count'];
+					$shows_pct       = ( $shows_count > 0 ) ? round( ( $shows_count_row / $shows_count ) * 100, 1 ) : 0;
+					$shows_width     = ( $shows_top > 0 ) ? round( ( $shows_count_row / $shows_top ) * 100, 1 ) : 0;
 					?>
-					<div class="lwtv-bar-row">
-						<a class="lwtv-bar-name" href="<?php echo esc_url( site_url( $shows_panel['base'] . $shows_slug ) ); ?>"><?php echo esc_html( $shows_row['name'] ); ?></a>
-						<div class="progress lwtv-bar-track">
-							<div class="progress-bar" role="progressbar" style="width:0" data-grow-to="<?php echo esc_attr( $shows_width ); ?>" aria-valuenow="<?php echo esc_attr( (int) $shows_row['count'] ); ?>" aria-valuemin="0" aria-valuemax="<?php echo esc_attr( $shows_top ); ?>"></div>
+					<div class="lwtv-leader-row">
+						<div class="lwtv-leader-head">
+							<a class="lwtv-leader-name" href="<?php echo esc_url( site_url( $shows_panel['base'] . $shows_slug ) ); ?>"><?php echo esc_html( $shows_row['name'] ); ?></a>
+							<span class="lwtv-leader-value"><?php echo esc_html( number_format_i18n( $shows_count_row ) . ' · ' . $shows_pct . '%' ); ?></span>
 						</div>
-						<span class="lwtv-bar-label"><?php echo esc_html( number_format_i18n( (int) $shows_row['count'] ) . ' · ' . $shows_pct . '%' ); ?></span>
+						<div class="progress lwtv-leader-track">
+							<div class="progress-bar" role="progressbar" style="width:0" data-grow-to="<?php echo esc_attr( (string) $shows_width ); ?>" aria-valuenow="<?php echo esc_attr( (string) $shows_count_row ); ?>" aria-valuemin="0" aria-valuemax="<?php echo esc_attr( (string) $shows_top ); ?>"></div>
+						</div>
 					</div>
 					<?php
 				}
 				?>
 			</div>
-			<a class="lwtv-panel-foot" href="<?php echo esc_url( $shows_panel['more']['url'] ); ?>">
-				<?php
-				printf(
-					/* translators: %s: total count. */
-					esc_html__( 'View all %s →', 'lwtv' ),
-					esc_html( number_format_i18n( (int) $shows_panel['more']['label'] ) )
-				);
-				?>
-			</a>
+
+			<?php if ( ! empty( $shows_tail ) ) : ?>
+				<ul class="lwtv-tail">
+					<?php
+					foreach ( $shows_tail as $shows_slug => $shows_row ) {
+						?>
+						<li class="lwtv-tail-row">
+							<a class="lwtv-tail-name" href="<?php echo esc_url( site_url( $shows_panel['base'] . $shows_slug ) ); ?>"><?php echo esc_html( $shows_row['name'] ); ?></a>
+							<span class="lwtv-tail-count"><?php echo esc_html( number_format_i18n( (int) $shows_row['count'] ) ); ?></span>
+						</li>
+						<?php
+					}
+					?>
+				</ul>
+			<?php endif; ?>
+
+			<a class="lwtv-panel-foot" href="<?php echo esc_url( $shows_panel['more'] ); ?>"><?php echo esc_html( $shows_panel['all'] ); ?></a>
 		</section>
 		<?php
 	}
