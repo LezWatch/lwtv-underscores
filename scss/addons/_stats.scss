@@ -873,6 +873,11 @@ canvas {
 		background-color: color.mix(colors.$lwtv-pink, colors.$lwtv-ltpink, 55%);
 	}
 
+	.lwtv-donut-seg--mid2 {
+		stroke: color.mix(colors.$lwtv-pink, colors.$lwtv-ltpink, 25%);
+		background-color: color.mix(colors.$lwtv-pink, colors.$lwtv-ltpink, 25%);
+	}
+
 	.lwtv-donut-seg--ltpink {
 		stroke: colors.$lwtv-ltpink;
 		background-color: colors.$lwtv-ltpink;
@@ -936,6 +941,10 @@ canvas {
 
 		&.lwtv-donut-seg--mid {
 			background-color: color.mix(colors.$lwtv-pink, colors.$lwtv-ltpink, 55%) !important;
+		}
+
+		&.lwtv-donut-seg--mid2 {
+			background-color: color.mix(colors.$lwtv-pink, colors.$lwtv-ltpink, 25%) !important;
 		}
 
 		&.lwtv-donut-seg--ltpink {
