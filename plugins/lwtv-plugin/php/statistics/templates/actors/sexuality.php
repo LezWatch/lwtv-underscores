@@ -61,13 +61,20 @@ $sex_segments[] = array(
 	'class' => 'bordergrey',
 );
 
+// Headline from the leading slice.
+$sex_lead = $sex_segments[0] ?? array( 'pct' => 0 );
+$sex_in10 = ( $sex_lead['pct'] > 0 ) ? (int) round( $sex_lead['pct'] / 10 ) : 0;
+
+// translators: %1$1d is the X-in-10 number for the largest Gender Demographic, %2$2s is the name of the gender.
+$headline = ( $sex_in10 > 0 ) ? sprintf( __( '%1$1d in 10 actors are %2$2s', 'lwtv' ), $sex_in10, lcfirst( $sex_lead['label'] ) ) : __( 'Sexuality Breakdown:', 'lwtv' );
+
 $donut = array(
 	'segments'    => $sex_segments,
 	'center'      => $sex_total,
 	'center_sub'  => __( 'actors', 'lwtv' ),
 	'eyebrow'     => __( 'Actor Sexual Orientation', 'lwtv' ),
-	'headline'    => __( 'More than half the actors are straight', 'lwtv' ),
-	'description' => __( 'Queer roles are still mostly played by straight actors, with openly-LGBTQ+ performers making up the rest — and a large share whose orientation is unrecorded.', 'lwtv' ),
+	'headline'    => $headline,
+	'description' => __( 'Queer roles are still mostly played by straight actors.', 'lwtv' ),
 );
 
 // phpcs:ignore PEAR.Files.IncludingFile.UseRequire

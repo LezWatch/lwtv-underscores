@@ -50,6 +50,7 @@ foreach ( $gen_data as $gen_row ) {
 	);
 	++$gen_i;
 }
+
 $gen_other = max( 0, $gen_total - $gen_named );
 if ( $gen_other > 0 ) {
 	$gen_segments[] = array(
@@ -60,13 +61,20 @@ if ( $gen_other > 0 ) {
 	);
 }
 
+// Headline from the leading slice.
+$gen_lead = $gen_segments[0] ?? array( 'pct' => 0 );
+$gen_in10 = ( $gen_lead['pct'] > 0 ) ? (int) round( $gen_lead['pct'] / 10 ) : 0;
+
+// translators: %1$1d is the X-in-10 number for the largest Gender Demographic, %2$2s is the name of the gender.
+$headline = ( $gen_in10 > 0 ) ? sprintf( __( '%1$1d in 10 actors are %2$2s', 'lwtv' ), $gen_in10, $gen_lead['label'] ) : __( 'Gender breakdown', 'lwtv' );
+
 $donut = array(
 	'segments'    => $gen_segments,
 	'center'      => $gen_cis,
 	'center_sub'  => __( 'cisgender', 'lwtv' ),
 	'eyebrow'     => __( 'Actor Gender Identity', 'lwtv' ),
-	'headline'    => __( 'Nine in ten actors are cisgender', 'lwtv' ),
-	'description' => __( 'Trans and non-binary actors remain a small share of the total — a figure worth watching as casting for trans and non-binary roles evolves.', 'lwtv' ),
+	'headline'    => $headline,
+	'description' => __( 'Trans and non-binary actors remain a small share of the total.', 'lwtv' ),
 );
 
 // phpcs:ignore PEAR.Files.IncludingFile.UseRequire

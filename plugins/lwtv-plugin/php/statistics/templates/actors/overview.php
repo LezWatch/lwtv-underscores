@@ -105,7 +105,7 @@ $actor_trans_ratio = ( $actor_transnb > 0 ) ? (int) round( (int) $actor_count / 
 			<?php
 			printf(
 				/* translators: %d: the "1 in N" ratio of openly-LGBTQ+ actors. */
-				esc_html__( 'actors are openly LGBTQ+ — about one in %d.', 'lwtv' ),
+				esc_html__( 'actors are openly LGBTQ+, making up about 1 in %d.', 'lwtv' ),
 				(int) $actor_lgbtq_ratio
 			);
 			?>
@@ -122,7 +122,7 @@ $actor_trans_ratio = ( $actor_transnb > 0 ) ? (int) round( (int) $actor_count / 
 			<?php
 			printf(
 				/* translators: %d: the "1 in N" ratio of trans/non-binary actors. */
-				esc_html__( 'actors are trans or non-binary — roughly one in %d.', 'lwtv' ),
+				esc_html__( 'actors are trans or non-binary, which is roughly 1 in %d.', 'lwtv' ),
 				(int) $actor_trans_ratio
 			);
 			?>
