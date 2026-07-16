@@ -51,14 +51,23 @@ if ( 'overview' === $view ) {
 		}
 	);
 
-	$top_genders     = array_slice( $character_gender_data, 0, 5, true );
-	$top_sexualities = array_slice( $character_sexuality_data, 0, 5, true );
-	$top_cliches     = array_slice( $character_cliches_data, 0, 14, true );
+	$top_genders     = array_slice( $character_gender_data, 0, 10, true );
+	$top_sexualities = array_slice( $character_sexuality_data, 0, 10, true );
+	$top_cliches     = array_slice( $character_cliches_data, 0, 10, true );
 
 	// Get total counts efficiently
 	$count_genders     = count( $character_gender_data );
 	$count_sexualities = count( $character_sexuality_data );
 	$count_cliches     = count( $character_cliches_data );
+
+	// Redesign overview extras.
+	$char_growth = lwtv_plugin()->generate_growth_series( 'characters' );
+	$char_dead   = isset( $character_cliches_data['dead'] ) ? (int) $character_cliches_data['dead']['count'] : 0;
+
+	$char_queer_raw  = lwtv_plugin()->generate_characters_statistics( 'array', 'queer-irl' );
+	$char_queer_data = ( is_array( $char_queer_raw ) && ! empty( $char_queer_raw ) ) ? (array) reset( $char_queer_raw ) : array();
+	$char_queer_yes  = isset( $char_queer_data['queer'] ) ? (int) $char_queer_data['queer']['count'] : 0;
+	$char_queer_no   = isset( $char_queer_data['not_queer'] ) ? (int) $char_queer_data['not_queer']['count'] : 0;
 }
 ?>
 <div class="lwtv-stats-overview">
