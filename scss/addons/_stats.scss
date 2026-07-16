@@ -408,6 +408,14 @@ canvas {
 		}
 	}
 
+	.lwtv-panels--2 {
+		grid-template-columns: 1fr 1fr;
+
+		@media (max-width: 767px) {
+			grid-template-columns: 1fr;
+		}
+	}
+
 	.lwtv-panel {
 		padding: 20px;
 		border: 1px solid colors.$lwtv-bordergrey;
