@@ -91,17 +91,23 @@ $shows_cards = array(
 
 <p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'The Trope Gap', 'lwtv' ); ?></p>
 <div class="lwtv-pullstats">
-	<div class="lwtv-byg card-header dead-characters">
-		<div class="lwtv-byg-body">
+	<div class="lwtv-tropegap card-header dead-characters">
+		<div class="lwtv-tropegap-top">
 			<span class="lwtv-stats-eyebrow"><?php esc_html_e( 'Bury Your Queers', 'lwtv' ); ?></span>
-			<p class="lwtv-byg-line"><strong data-count-to="<?php echo (int) $trope_buried; ?>"><?php echo esc_html( number_format_i18n( $trope_buried ) ); ?></strong> <?php esc_html_e( 'shows kill a queer character.', 'lwtv' ); ?></p>
+			<span class="lwtv-tropegap-icon"><?php echo lwtv_plugin()->get_symbolicon( svg: 'skull.svg', icon: 'svg-skull', max_size: '22' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
 		</div>
+		<span class="lwtv-tropegap-number" data-count-to="<?php echo (int) $trope_buried; ?>"><?php echo esc_html( number_format_i18n( $trope_buried ) ); ?></span>
+		<p class="lwtv-tropegap-desc"><?php esc_html_e( 'shows kill off a queer character — the most common harmful trope in the catalogue.', 'lwtv' ); ?></p>
+		<a class="lwtv-tropegap-link" href="<?php echo esc_url( site_url( '/trope/dead-queers/' ) ); ?>"><?php esc_html_e( 'See these shows', 'lwtv' ); ?> <span aria-hidden="true">&#8599;</span></a>
 	</div>
-	<div class="lwtv-byg card-header characters">
-		<div class="lwtv-byg-body">
+	<div class="lwtv-tropegap card-header characters">
+		<div class="lwtv-tropegap-top">
 			<span class="lwtv-stats-eyebrow"><?php esc_html_e( 'Happy Endings', 'lwtv' ); ?></span>
-			<p class="lwtv-byg-line"><strong data-count-to="<?php echo (int) $trope_happy; ?>"><?php echo esc_html( number_format_i18n( $trope_happy ) ); ?></strong> <?php esc_html_e( 'shows give them a happy ending.', 'lwtv' ); ?></p>
+			<span class="lwtv-tropegap-icon"><?php echo lwtv_plugin()->get_symbolicon( svg: 'hearts.svg', icon: 'svg-heart', max_size: '22' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
 		</div>
+		<span class="lwtv-tropegap-number" data-count-to="<?php echo (int) $trope_happy; ?>"><?php echo esc_html( number_format_i18n( $trope_happy ) ); ?></span>
+		<p class="lwtv-tropegap-desc"><?php esc_html_e( 'shows give their queer characters a happy ending.', 'lwtv' ); ?></p>
+		<a class="lwtv-tropegap-link" href="<?php echo esc_url( site_url( '/trope/happy-ending/' ) ); ?>"><?php esc_html_e( 'See these shows', 'lwtv' ); ?> <span aria-hidden="true">&#8599;</span></a>
 	</div>
 </div>
 

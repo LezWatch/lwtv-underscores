@@ -412,6 +412,10 @@
 			color: colors.$lwtv-ltpink;
 		}
 
+		.lwtv-tropegap-desc {
+			color: colors.$lwtv-ltgrey;
+		}
+
 		.lwtv-panel-icon {
 			color: colors.$lwtv-ltpink;
 		}
@@ -421,7 +425,7 @@
 			outline-offset: -1px;
 		}
 
-		.lwtv-shows-subnav-item {
+		.lwtv-stats-subnav-item {
 			color: colors.$lwtv-ltpink;
 
 			&.is-active {
@@ -440,6 +444,10 @@
 
 		.lwtv-trend-current-num {
 			color: colors.$lwtv-pink;
+		}
+
+		.lwtv-stats-eyebrow, .lwtv-metric-caption, .lwtv-bar-label {
+			color: colors.$lwtv-grey;
 		}
 	}
 }
