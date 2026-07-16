@@ -16,12 +16,16 @@ if ( ! defined( 'ABSPATH' ) ) {
  *   @type string $svg     Header icon sprite file (optional).
  *   @type string $icon    Header icon FA fallback (optional).
  *   @type string $base    URL base for row links (e.g. '/trope/'); '' to use row 'url'.
+ *   @type string $mode    'share' (default) | 'leaderboard'.
  * }
  */
 
 $ranked_rows = $ranked['rows'] ?? array();
 uasort( $ranked_rows, fn( $a, $b ) => (int) $b['count'] <=> (int) $a['count'] );
 $ranked_total = (int) ( $ranked['total'] ?? 0 );
+$ranked_mode  = ( isset( $ranked['mode'] ) && 'leaderboard' === $ranked['mode'] ) ? 'leaderboard' : 'share';
+$ranked_top   = ! empty( $ranked_rows ) ? max( array_map( fn( $r ) => (int) $r['count'], $ranked_rows ) ) : 0;
+$ranked_rank  = 0;
 ?>
 <section class="lwtv-panel bg-light">
 	<header class="lwtv-panel-head">
@@ -39,21 +43,36 @@ $ranked_total = (int) ( $ranked['total'] ?? 0 );
 		<?php
 		foreach ( $ranked_rows as $ranked_slug => $ranked_row ) {
 			$ranked_count = (int) $ranked_row['count'];
-			// Skip terms with no shows — they add empty "0 · 0.0%" rows.
-			if ( $ranked_count <= 0 ) {
+			// Share mode skips empty terms; leaderboard keeps every ranked row.
+			if ( 'share' === $ranked_mode && $ranked_count <= 0 ) {
 				continue;
 			}
-			// Bar width is the true share of all shows, so it matches the label.
-			$ranked_pct  = ( $ranked_total > 0 ) ? round( ( $ranked_count / $ranked_total ) * 100, 1 ) : 0;
+			++$ranked_rank;
+			if ( 'leaderboard' === $ranked_mode ) {
+				// Bar relative to the top count; label is the raw count.
+				$ranked_width = ( $ranked_top > 0 ) ? round( ( $ranked_count / $ranked_top ) * 100, 1 ) : 0;
+				$ranked_label = number_format_i18n( $ranked_count );
+			} else {
+				// Bar is the true share of the total; label is count · pct%.
+				$ranked_width = ( $ranked_total > 0 ) ? round( ( $ranked_count / $ranked_total ) * 100, 1 ) : 0;
+				$ranked_label = number_format_i18n( $ranked_count ) . ' · ' . $ranked_width . '%';
+			}
 			$ranked_href = ( ! empty( $ranked['base'] ) ) ? site_url( $ranked['base'] . $ranked_slug ) : ( $ranked_row['url'] ?? '#' );
 			?>
 			<div class="lwtv-leader-row">
 				<div class="lwtv-leader-head">
-					<a class="lwtv-leader-name" href="<?php echo esc_url( $ranked_href ); ?>"><?php echo esc_html( $ranked_row['name'] ); ?></a>
-					<span class="lwtv-leader-value"><?php echo esc_html( number_format_i18n( $ranked_count ) . ' · ' . $ranked_pct . '%' ); ?></span>
+					<?php if ( 'leaderboard' === $ranked_mode ) : ?>
+						<span class="lwtv-leader-name">
+							<span class="lwtv-leader-rank"><?php echo esc_html( number_format_i18n( $ranked_rank ) ); ?></span>
+							<a href="<?php echo esc_url( $ranked_href ); ?>"><?php echo esc_html( $ranked_row['name'] ); ?></a>
+						</span>
+					<?php else : ?>
+						<a class="lwtv-leader-name" href="<?php echo esc_url( $ranked_href ); ?>"><?php echo esc_html( $ranked_row['name'] ); ?></a>
+					<?php endif; ?>
+					<span class="lwtv-leader-value"><?php echo esc_html( $ranked_label ); ?></span>
 				</div>
 				<div class="progress lwtv-leader-track">
-					<div class="progress-bar" role="progressbar" style="width:0" data-grow-to="<?php echo esc_attr( (string) $ranked_pct ); ?>" aria-valuenow="<?php echo esc_attr( (string) $ranked_count ); ?>" aria-valuemin="0" aria-valuemax="<?php echo esc_attr( (string) $ranked_total ); ?>"></div>
+					<div class="progress-bar" role="progressbar" style="width:0" data-grow-to="<?php echo esc_attr( (string) $ranked_width ); ?>" aria-valuenow="<?php echo esc_attr( (string) $ranked_count ); ?>" aria-valuemin="0" aria-valuemax="<?php echo esc_attr( (string) ( 'leaderboard' === $ranked_mode ? $ranked_top : $ranked_total ) ); ?>"></div>
 				</div>
 			</div>
 			<?php

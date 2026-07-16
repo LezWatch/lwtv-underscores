@@ -482,6 +482,16 @@ canvas {
 	.lwtv-leader-name {
 		font-size: 0.90rem;
 		font-weight: 500;
+		display: inline-flex;
+		align-items: baseline;
+		gap: 8px;
+	}
+
+	.lwtv-leader-rank {
+		min-width: 1.5em;
+		font-variant-numeric: tabular-nums;
+		font-weight: 700;
+		color: colors.$lwtv-medgrey;
 	}
 
 	a.lwtv-tail-name, a.lwtv-tail-name:visited,
