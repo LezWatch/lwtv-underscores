@@ -394,7 +394,18 @@
 			border-color: colors.$lwtv-bordergrey;
 		}
 
-		.lwtv-metric-number {
+		.lwtv-donut-legend-val,
+		.lwtv-donut-center-sub,
+		.lwtv-donut-desc,
+		.lwtv-donut-center-num,
+		.lwtv-leader-name,
+		.lwtv-leader-value,
+		.lwtv-metric-number,
+		.lwtv-panel-sub,
+		.lwtv-tail-count,
+		.lwtv-tail-name,
+		.lwtv-trend-current-sub,
+		.lwtv-trend-desc {
 			color: colors.$white;
 		}
 
@@ -457,10 +468,6 @@
 
 		.lwtv-donut-track {
 			stroke: colors.$lwtv-medgrey;
-		}
-
-		.lwtv-donut-center-num {
-			color: colors.$white;
 		}
 
 		.lwtv-trend-current-num {
