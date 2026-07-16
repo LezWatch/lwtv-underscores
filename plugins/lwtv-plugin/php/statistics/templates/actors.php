@@ -48,19 +48,12 @@ $top_sexualities = array_slice( $actor_sexuality_data, 0, 10, true );
 $count_genders     = count( $actor_gender_data );
 $count_sexualities = count( $actor_sexuality_data );
 ?>
-<h2>
-	<a href="/actors/">Total Actors</a> (<?php echo (int) $actor_count; ?>)
-</h2>
-
+<div class="lwtv-stats-overview">
+	<?php
+	// phpcs:ignore PEAR.Files.IncludingFile.UseRequire
+	include plugin_dir_path( __FILE__ ) . 'actors/subnav.php';
+	?>
 <?php
-// phpcs:ignore PEAR.Files.IncludingFile.UseRequire
-include plugin_dir_path( __FILE__ ) . 'actors/navbar.php';
-?>
-
-<p>&nbsp;</p>
-
-<?php
-
 switch ( $view ) {
 	case 'overview':
 		// phpcs:ignore PEAR.Files.IncludingFile.UseRequire
@@ -84,3 +77,6 @@ switch ( $view ) {
 if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
 	echo '<!-- OPTIMIZED: Queries reduced from ~' . ( count( $top_genders ) + count( $top_sexualities ) + 10 ) . ' to ' . esc_html( get_num_queries() ) . ' -->';
 }
+?>
+</div><!-- .lwtv-stats-overview -->
+<?php

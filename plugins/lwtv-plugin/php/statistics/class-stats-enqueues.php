@@ -30,7 +30,7 @@ class Stats_Enqueues {
 		$stat_view  = sanitize_key( get_query_var( 'view', 'main' ) );
 
 		// Overview + Shows + Characters: count-up + bar-grow animations. No jQuery dependency.
-		if ( in_array( $statistics, array( 'none', 'shows', 'characters' ), true ) ) {
+		if ( in_array( $statistics, array( 'none', 'shows', 'characters', 'actors' ), true ) ) {
 			wp_enqueue_script(
 				'lwtv-stats-overview',
 				LWTV_PLUGIN_URL . '/assets/js/statistics-overview.js',
