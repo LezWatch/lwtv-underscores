@@ -249,6 +249,10 @@ canvas {
 		background-color: colors.$lwtv-stats-red-background;
 	}
 
+	.lwtv-metric-icon.gender {
+		background-color: colors.$lwtv-stats-yellow-background;
+	}
+
 	.lwtv-metric-number {
 		font-size: 2.5rem;
 		font-weight: 700;
