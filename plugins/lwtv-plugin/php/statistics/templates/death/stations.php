@@ -1,35 +1,40 @@
 <?php
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
-
 /**
- * The template for displaying the death stations statistics - Optimized Version
+ * Death → Stations: dead characters by network.
  *
  * @package LezWatch.TV
  */
 
+$dst_raw  = lwtv_plugin()->generate_dead_statistics( 'shows', 'stations', 'array' );
+$dst_raw  = is_array( $dst_raw ) ? $dst_raw : array();
+$dst_rows = array();
+$dst_tot  = 0;
+foreach ( $dst_raw as $dst_r ) {
+	$dst_tot += (int) $dst_r['count'];
+}
+foreach ( $dst_raw as $dst_r ) {
+	$dst_rows[] = array(
+		'name'  => $dst_r['term_name'],
+		'count' => (int) $dst_r['count'],
+		'url'   => site_url( '/station/' . $dst_r['term_slug'] ),
+	);
+}
 ?>
-<h3>Death per Station/Network Breakdown</h3>
-
-<div class="container chart-container">
-	<p class="d-inline-flex gap-1">
-		<button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#chartCollapse,#listCollapse" aria-expanded="true" aria-controls="chartCollapse">Chart</button>
-		<button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#listCollapse,#chartCollapse" aria-expanded="false" aria-controls="listCollapse">List</button>
-	</p>
-
-	<div class="row collapse show" id="chartCollapse">
-		<div class="col-sm-12">
-			<h2><a name="chart">Chart</a></h2>
-			<?php echo lwtv_plugin()->generate_dead_statistics( 'shows', 'stations', 'barchart' ); ?>
-		</div>
-	</div>
-	<div class="row collapse" id="listCollapse">
-		<div class="col-sm-12">
-			<h2><a name="list">List</a></h2>
-			<?php echo lwtv_plugin()->generate_dead_statistics( 'shows', 'stations', 'percentage' ); ?>
-		</div>
-	</div>
-</div>
+<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'Deaths By Network', 'lwtv' ); ?></p>
 <?php
+$ranked = array(
+	'rows'   => array_slice( $dst_rows, 0, 15 ),
+	'total'  => $dst_tot,
+	'family' => 'characters',
+	'title'  => __( 'Networks with the most on-screen deaths', 'lwtv' ),
+	'sub'    => __( 'Bigger catalogues carry more deaths — this ranks raw totals, not rates.', 'lwtv' ),
+	'svg'    => 'satellite-signal.svg',
+	'icon'   => 'svg-satellite-signal',
+	'base'   => '',
+	'mode'   => 'share',
+);
+// phpcs:ignore PEAR.Files.IncludingFile.UseRequire
+include plugin_dir_path( __DIR__ ) . 'partials/ranked-bars.php';

@@ -1,35 +1,40 @@
 <?php
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
-
 /**
- * The template for displaying the death stations statistics - Optimized Version
+ * Death → Nations: dead characters by country.
  *
  * @package LezWatch.TV
  */
 
+$dn_raw  = lwtv_plugin()->generate_dead_statistics( 'shows', 'nations', 'array' );
+$dn_raw  = is_array( $dn_raw ) ? $dn_raw : array();
+$dn_rows = array();
+$dn_tot  = 0;
+foreach ( $dn_raw as $dn_r ) {
+	$dn_tot += (int) $dn_r['count'];
+}
+foreach ( $dn_raw as $dn_r ) {
+	$dn_rows[] = array(
+		'name'  => $dn_r['term_name'],
+		'count' => (int) $dn_r['count'],
+		'url'   => site_url( '/country/' . $dn_r['term_slug'] ),
+	);
+}
 ?>
-<h3>Death per Country Breakdown</h3>
-
-<div class="container chart-container">
-	<p class="d-inline-flex gap-1">
-		<button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#chartCollapse,#listCollapse" aria-expanded="true" aria-controls="chartCollapse">Chart</button>
-		<button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#listCollapse,#chartCollapse" aria-expanded="false" aria-controls="listCollapse">List</button>
-	</p>
-
-	<div class="row collapse show" id="chartCollapse">
-		<div class="col-sm-12">
-			<h2><a name="chart">Chart</a></h2>
-			<?php echo lwtv_plugin()->generate_dead_statistics( 'shows', 'nations', 'barchart' ); ?>
-		</div>
-	</div>
-	<div class="row collapse" id="listCollapse">
-		<div class="col-sm-12">
-			<h2><a name="list">List</a></h2>
-			<?php echo lwtv_plugin()->generate_dead_statistics( 'shows', 'nations', 'percentage' ); ?>
-		</div>
-	</div>
-</div>
+<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'Deaths By Country', 'lwtv' ); ?></p>
 <?php
+$ranked = array(
+	'rows'   => array_slice( $dn_rows, 0, 15 ),
+	'total'  => $dn_tot,
+	'family' => 'characters',
+	'title'  => __( 'Countries with the most on-screen deaths', 'lwtv' ),
+	'sub'    => __( 'Tracks catalogue size by country, not a death rate.', 'lwtv' ),
+	'svg'    => 'globe.svg',
+	'icon'   => 'svg-globe',
+	'base'   => '',
+	'mode'   => 'share',
+);
+// phpcs:ignore PEAR.Files.IncludingFile.UseRequire
+include plugin_dir_path( __DIR__ ) . 'partials/ranked-bars.php';
