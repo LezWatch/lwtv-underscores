@@ -865,6 +865,55 @@ canvas {
 		white-space: nowrap;
 	}
 
+	.lwtv-donut-center-num--green { color: colors.$lwtv-stats-green; }
+	.lwtv-donut-center-num--red { color: colors.$lwtv-red; }
+
+	.lwtv-donut-card--compact {
+		flex-direction: column;
+		align-items: stretch;
+		gap: 16px;
+		padding: 20px;
+
+		.lwtv-stats-eyebrow {
+			margin: 0;
+		}
+
+		.lwtv-donut-figure {
+			align-self: center;
+			width: 150px;
+			height: 150px;
+		}
+	}
+
+	.lwtv-donut-legend--compact .lwtv-donut-legend-row {
+		grid-template-columns: 12px 1fr auto;
+	}
+
+	.lwtv-actor-stats-grid {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 20px;
+
+		@media (max-width: 575px) {
+			grid-template-columns: 1fr;
+		}
+	}
+
+	.lwtv-actor-stats-caption {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		margin-bottom: 16px;
+		font-size: 0.9rem;
+	}
+
+	.lwtv-actor-stats-dot {
+		width: 8px;
+		height: 8px;
+		border-radius: 50%;
+		background-color: colors.$lwtv-stats-green;
+	}
+
 	// Segment/dot colors — stroke for ring, background for dots/mini-bars.
 	.lwtv-donut-seg--dkpink {
 		stroke: colors.$lwtv-dkpink;
@@ -874,6 +923,11 @@ canvas {
 	.lwtv-donut-seg--pink {
 		stroke: colors.$lwtv-pink;
 		background-color: colors.$lwtv-pink;
+	}
+
+	.lwtv-donut-seg--blue {
+		stroke: colors.$lwtv-stats-blue;
+		background-color: colors.$lwtv-stats-blue;
 	}
 
 	.lwtv-donut-seg--mid {
@@ -948,6 +1002,8 @@ canvas {
 		&.lwtv-donut-seg--pink {
 			background-color: colors.$lwtv-pink !important;
 		}
+
+		&.lwtv-donut-seg--blue { background-color: colors.$lwtv-stats-blue !important; }
 
 		&.lwtv-donut-seg--mid {
 			background-color: color.mix(colors.$lwtv-pink, colors.$lwtv-ltpink, 55%) !important;

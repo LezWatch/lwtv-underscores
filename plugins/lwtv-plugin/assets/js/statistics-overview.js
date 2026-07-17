@@ -1,6 +1,7 @@
 /**
- * Statistics Overview animations: count-up numbers and grow-in bars.
+ * Statistics animations: count-up numbers and grow-in bars.
  * Reads targets from data attributes; respects prefers-reduced-motion.
+ * Exposes window.lwtvStatsCountUp(root) so modals can replay on open.
  */
 ( function () {
 	'use strict';
@@ -11,23 +12,29 @@
 		return 1 - Math.pow( 1 - t, 3 );
 	}
 
-	function run() {
-		var reduce = window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches;
+	function finalText( el ) {
+		var target = parseInt( el.getAttribute( 'data-count-to' ), 10 ) || 0;
+		return target.toLocaleString() + ( el.getAttribute( 'data-count-suffix' ) || '' );
+	}
 
-		var numbers = Array.prototype.slice.call( document.querySelectorAll( '[data-count-to]' ) );
-		var bars    = Array.prototype.slice.call( document.querySelectorAll( '[data-grow-to]' ) );
+	function animate( root ) {
+		root = root || document;
+		var reduce  = window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches;
+		var numbers = Array.prototype.slice.call( root.querySelectorAll( '[data-count-to]' ) );
+		var bars    = Array.prototype.slice.call( root.querySelectorAll( '[data-grow-to]' ) );
 
 		if ( reduce ) {
 			bars.forEach( function ( el ) {
 				el.style.width = parseFloat( el.getAttribute( 'data-grow-to' ) ) + '%';
 			} );
-			// Numbers already contain their final text server-side; leave as-is.
+			numbers.forEach( function ( el ) {
+				el.textContent = finalText( el );
+			} );
 			return;
 		}
 
-		// Reset numbers to 0 before animating.
 		numbers.forEach( function ( el ) {
-			el.textContent = ( 0 ).toLocaleString();
+			el.textContent = ( 0 ).toLocaleString() + ( el.getAttribute( 'data-count-suffix' ) || '' );
 		} );
 
 		var start = null;
@@ -40,7 +47,7 @@
 
 			numbers.forEach( function ( el ) {
 				var target = parseInt( el.getAttribute( 'data-count-to' ), 10 ) || 0;
-				el.textContent = Math.round( e * target ).toLocaleString();
+				el.textContent = Math.round( e * target ).toLocaleString() + ( el.getAttribute( 'data-count-suffix' ) || '' );
 			} );
 			bars.forEach( function ( el ) {
 				var target = parseFloat( el.getAttribute( 'data-grow-to' ) ) || 0;
@@ -54,9 +61,24 @@
 		window.requestAnimationFrame( step );
 	}
 
+	window.lwtvStatsCountUp = animate;
+
+	function init() {
+		// Static pages (e.g. /statistics/): animate the whole document once.
+		animate( document );
+
+		// Bootstrap modals (e.g. actor Character Statistics): replay scoped to
+		// the modal each time it opens.
+		document.addEventListener( 'shown.bs.modal', function ( ev ) {
+			if ( ev.target && ev.target.querySelector( '[data-count-to],[data-grow-to]' ) ) {
+				animate( ev.target );
+			}
+		} );
+	}
+
 	if ( 'loading' === document.readyState ) {
-		document.addEventListener( 'DOMContentLoaded', run );
+		document.addEventListener( 'DOMContentLoaded', init );
 	} else {
-		run();
+		init();
 	}
 } )();
