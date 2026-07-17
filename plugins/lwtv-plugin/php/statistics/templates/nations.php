@@ -43,75 +43,52 @@ $count           = count( $all_nations_data );
 $shows_count     = lwtv_plugin()->generate_nation_statistics( 'all', 'all', 'count' );
 $all_shows_count = lwtv_plugin()->generate_total_counts( 'shows' );
 
-// Title
-switch ( $nation ) {
-	case 'all':
-		$title_nation = 'All Nations (' . $count . ')';
-		break;
-	default:
-		// Use the cached data instead of making new queries
-		if ( isset( $all_nations_data[ $nation ] ) ) {
-			$nation_data = $all_nations_data[ $nation ];
-			$shows       = $nation_data['count'];
-
-			// OPTIMIZED: Use pre-loaded character counts instead of individual query
-			// Strip any underscore prefix from nation slug for character counts lookup
-			$nation_slug = ltrim( $nation, '_' );
-			$characters  = $character_counts[ $nation_slug ]['total'] ?? 0;
-
-			$title_nation = '<a href="' . home_url( '/nation/' . $nation ) . '">' . $nation_data['name'] . '</a> (' . $shows . ' Shows / ' . $characters . ' Characters)';
-		} else {
-			$title_nation = 'Nation Not Found';
-		}
-}
 ?>
-<h2><?php echo wp_kses_post( $title_nation ); ?></h2>
-
-<form method="get" id="go">
-<div class="container-fluid text-center">
-	<div class="row">
-		<div class="col-8">
-			<select name="nation" id="nation">
-				<option value="all">All Nations</option>
+<div class="lwtv-stats-overview">
+	<div class="lwtv-nations-picker">
+		<form method="get" id="go" class="lwtv-nations-pickerform">
+			<label for="nation" class="lwtv-stats-eyebrow"><?php esc_html_e( 'Nation', 'lwtv' ); ?></label>
+			<select name="nation" id="nation" class="form-select lwtv-nations-select">
+				<option value="all"><?php esc_html_e( 'All Nations', 'lwtv' ); ?></option>
 				<?php
-				foreach ( $all_nations_data as $nation_slug => $nation_data ) {
-					$selected = ( $nation === $nation_slug ) ? 'selected=selected' : '';
-					echo '<option value="' . esc_attr( $nation_slug ) . '" ' . esc_html( $selected ) . '>' . esc_html( $nation_data['name'] ) . '</option>';
+				foreach ( $all_nations_data as $lwtv_n_slug => $lwtv_n_data ) {
+					printf(
+						'<option value="%1$s"%2$s>%3$s</option>',
+						esc_attr( $lwtv_n_slug ),
+						selected( $nation, $lwtv_n_slug, false ),
+						esc_html( $lwtv_n_data['name'] )
+					);
 				}
 				?>
 			</select>
-		</div>
-		<div class="col-2">
-			<button type="submit" id="submit" class="btn btn-default btn-outline-primary">Go</button>
-			<?php
-			if ( 'all' !== $nation ) {
-				echo '&nbsp;<a class="btn btn-default btn-outline-primary" href="/statistics/nations/" role="button">Reset</a>';
-			}
-			?>
-		</div>
+			<button type="submit" id="submit" class="btn btn-outline-primary btn-sm"><?php esc_html_e( 'Go', 'lwtv' ); ?></button>
+			<?php if ( 'all' !== $nation ) : ?>
+				<a class="lwtv-nations-reset" href="/statistics/nations/"><?php esc_html_e( 'Reset to all nations', 'lwtv' ); ?></a>
+			<?php endif; ?>
+		</form>
 	</div>
-</form>
 
-<ul class="nav nav-tabs">
 	<?php
-	$baseurl   = '/statistics/nations/';
-	$query_arg = array();
+	// Nation sub-nav (single nation only). The primary tab bar is in the page shell.
 	if ( 'all' !== $nation ) {
-		$query_arg['nation'] = $nation;
-	}
-
-	echo '<li class="nav-item"><a class="nav-link' . esc_attr( ( 'overview' === $view ) ? ' active' : '' ) . '" href="' . esc_url( add_query_arg( $query_arg, $baseurl ) ) . '">OVERVIEW</a></li>';
-	if ( 'all' !== $nation ) {
-		foreach ( $valid_views as $the_view => $the_post_type ) {
-			$active = ( $view === $the_view ) ? ' active' : '';
-			echo '<li class="nav-item"><a class="nav-link' . esc_attr( $active ) . '" href="' . esc_url( add_query_arg( $query_arg, $baseurl . $the_view . '/' ) ) . '">' . esc_html( strtoupper( str_replace( '-', ' ', $the_view ) ) ) . '</a></li>';
+		$lwtv_sub_base  = '/statistics/nations/';
+		$lwtv_sub_query = array( 'nation' => $nation );
+		$lwtv_subnav    = array_merge( array( 'overview' => 'shows' ), $valid_views );
+		echo '<nav class="lwtv-stats-subnav" aria-label="' . esc_attr__( 'Nation statistics views', 'lwtv' ) . '">';
+		foreach ( $lwtv_subnav as $lwtv_v => $lwtv_pt ) {
+			$lwtv_is  = ( $view === $lwtv_v );
+			$lwtv_url = ( 'overview' === $lwtv_v ) ? add_query_arg( $lwtv_sub_query, $lwtv_sub_base ) : add_query_arg( $lwtv_sub_query, $lwtv_sub_base . $lwtv_v . '/' );
+			printf(
+				'<a class="lwtv-stats-subnav-item%1$s" href="%2$s"%3$s>%4$s</a>',
+				$lwtv_is ? ' is-active' : '',
+				esc_url( $lwtv_url ),
+				$lwtv_is ? ' aria-current="page"' : '',
+				esc_html( ucwords( str_replace( '-', ' ', $lwtv_v ) ) )
+			);
 		}
+		echo '</nav>';
 	}
 	?>
-</ul>
-
-<p>&nbsp;</p>
-
 <?php
 	$col_class = ( 'all' !== $nation && 'overview' !== $view && 'on-air' !== $view ) ? 'col-sm-6' : 'col';
 	$cpts_type = ( 'overview' === $view ) ? 'shows' : $valid_views[ $view ];
@@ -134,6 +111,7 @@ switch ( $nation ) {
 
 	</div>
 </div>
+</div><!-- .lwtv-stats-overview -->
 
 <?php
 // Performance monitoring

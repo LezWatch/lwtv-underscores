@@ -766,6 +766,35 @@ canvas {
 		}
 	}
 
+	.lwtv-nations-picker {
+		margin-bottom: 24px;
+	}
+
+	.lwtv-nations-pickerform {
+		display: flex;
+		align-items: center;
+		gap: 12px;
+		flex-wrap: wrap;
+
+		label {
+			margin: 0;
+		}
+	}
+
+	.lwtv-nations-select {
+		width: auto;
+		min-width: 220px;
+	}
+
+	.lwtv-nations-reset {
+		font-size: 0.85rem;
+		color: colors.$lwtv-pink;
+
+		&:hover {
+			color: colors.$lwtv-purple;
+		}
+	}
+
 	.lwtv-donut-card {
 		display: flex;
 		flex-wrap: wrap;
