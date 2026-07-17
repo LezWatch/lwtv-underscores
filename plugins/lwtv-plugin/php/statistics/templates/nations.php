@@ -48,7 +48,7 @@ $all_shows_count = lwtv_plugin()->generate_total_counts( 'shows' );
 	<div class="lwtv-nations-picker">
 		<form method="get" id="go" class="lwtv-nations-pickerform">
 			<label for="nation" class="lwtv-stats-eyebrow"><?php esc_html_e( 'Nation', 'lwtv' ); ?></label>
-			<select name="nation" id="nation" class="form-select lwtv-nations-select">
+			<select name="nation" id="nation" class="form-select lwtv-nations-select" onchange="this.form.submit()">
 				<option value="all"><?php esc_html_e( 'All Nations', 'lwtv' ); ?></option>
 				<?php
 				foreach ( $all_nations_data as $lwtv_n_slug => $lwtv_n_data ) {
@@ -61,7 +61,7 @@ $all_shows_count = lwtv_plugin()->generate_total_counts( 'shows' );
 				}
 				?>
 			</select>
-			<button type="submit" id="submit" class="btn btn-outline-primary btn-sm"><?php esc_html_e( 'Go', 'lwtv' ); ?></button>
+			<noscript><button type="submit" id="submit" class="btn btn-outline-primary btn-sm"><?php esc_html_e( 'Go', 'lwtv' ); ?></button></noscript>
 			<?php if ( 'all' !== $nation ) : ?>
 				<a class="lwtv-nations-reset" href="/statistics/nations/"><?php esc_html_e( 'Reset to all nations', 'lwtv' ); ?></a>
 			<?php endif; ?>

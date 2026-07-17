@@ -29,8 +29,9 @@ class Stats_Enqueues {
 		$statistics = sanitize_key( get_query_var( 'statistics', 'none' ) );
 		$stat_view  = sanitize_key( get_query_var( 'view', 'main' ) );
 
-		// Overview + Shows + Characters: count-up + bar-grow animations. No jQuery dependency.
-		if ( in_array( $statistics, array( 'none', 'shows', 'characters', 'actors' ), true ) ) {
+		// Overview + Shows + Characters + Actors + Nations: count-up + bar-grow
+		// animations. No jQuery dependency.
+		if ( in_array( $statistics, array( 'none', 'shows', 'characters', 'actors', 'nations' ), true ) ) {
 			wp_enqueue_script(
 				'lwtv-stats-overview',
 				LWTV_PLUGIN_URL . '/assets/js/statistics-overview.js',
