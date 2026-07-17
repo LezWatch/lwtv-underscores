@@ -209,13 +209,43 @@ switch ( $view ) {
 			'year'  => 0,
 			'count' => 0,
 		);
-		$trend     = array(
+
+		// Best year = highest on-air count; on a tie, the most recent year (points
+		// are ordered ascending, so >= lets a later equal year win).
+		$lwtv_best_year  = 0;
+		$lwtv_best_count = 0;
+		foreach ( $lwtv_points as $lwtv_pt ) {
+			if ( (int) $lwtv_pt['count'] >= $lwtv_best_count ) {
+				$lwtv_best_count = (int) $lwtv_pt['count'];
+				$lwtv_best_year  = (int) $lwtv_pt['year'];
+			}
+		}
+
+		$lwtv_callouts = array();
+		if ( $lwtv_best_count > 0 ) {
+			$lwtv_callouts[] = array(
+				'label' => __( 'Best Year', 'lwtv' ),
+				'svg'   => 'fireworks.svg',
+				'icon'  => 'svg-fireworks',
+				// Raw values — the trendline partial escapes the assembled text with esc_html().
+				'text'  => sprintf(
+					/* translators: 1: year, 2: nation name, 3: number of shows on air. */
+					_n( 'In %1$s, %2$s had %3$s show on air.', 'In %1$s, %2$s had %3$s shows on air.', $lwtv_best_count, 'lwtv' ),
+					(string) $lwtv_best_year,
+					$lwtv_name,
+					number_format_i18n( $lwtv_best_count )
+				),
+			);
+		}
+
+		$trend = array(
 			'points'       => $lwtv_points,
 			'eyebrow'      => sprintf( /* translators: %s nation */ __( 'Shows On Air Per Year — %s', 'lwtv' ), $lwtv_name ),
 			'headline'     => __( 'On-air over time', 'lwtv' ),
 			'description'  => sprintf( /* translators: %s nation */ __( 'Shows from %s active in each year, from the first tracked title to today.', 'lwtv' ), $lwtv_name ),
 			'current'      => (int) $lwtv_last['count'],
 			'current_year' => (int) $lwtv_last['year'],
+			'callouts'     => $lwtv_callouts,
 		);
 		// phpcs:ignore PEAR.Files.IncludingFile.UseRequire
 		include plugin_dir_path( __DIR__ ) . 'partials/trendline.php';

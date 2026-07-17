@@ -431,6 +431,11 @@
 			color: colors.$lwtv-ltgrey;
 		}
 
+		.lwtv-trend-callout {
+			border-color: rgba(255, 255, 255, 0.12);
+			border-left-color: colors.$lwtv-pink;
+		}
+
 		a.lwtv-tail-name, a.lwtv-tail-name:visited,
 		a.lwtv-leader-name, a.lwtv-leader-name:visited {
 			color: colors.$white;

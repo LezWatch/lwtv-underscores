@@ -49,6 +49,24 @@ $trend_end_year   = $trend_n ? (int) ( $trend_points[ $trend_n - 1 ]['year'] ?? 
 ?>
 <p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php echo esc_html( $trend['eyebrow'] ?? '' ); ?></p>
 
+<?php if ( ! empty( $trend['callouts'] ) && is_array( $trend['callouts'] ) ) : ?>
+	<div class="lwtv-trend-callouts">
+		<?php foreach ( $trend['callouts'] as $trend_callout ) : ?>
+			<div class="lwtv-trend-callout">
+				<div class="lwtv-trend-callout-body">
+					<span class="lwtv-stats-eyebrow"><?php echo esc_html( $trend_callout['label'] ?? '' ); ?></span>
+					<p class="lwtv-trend-callout-text"><?php echo esc_html( $trend_callout['text'] ?? '' ); ?></p>
+				</div>
+				<?php if ( ! empty( $trend_callout['svg'] ) ) : ?>
+					<span class="lwtv-trend-callout-icon">
+						<?php echo lwtv_plugin()->get_symbolicon( svg: $trend_callout['svg'], icon: $trend_callout['icon'] ?? '', max_size: '24' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+					</span>
+				<?php endif; ?>
+			</div>
+		<?php endforeach; ?>
+	</div>
+<?php endif; ?>
+
 <section class="lwtv-trend-card bg-light">
 	<div class="lwtv-trend-head">
 		<div>

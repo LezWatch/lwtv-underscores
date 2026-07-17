@@ -1308,6 +1308,42 @@ canvas {
 		color: colors.$lwtv-medgrey;
 	}
 
+	.lwtv-trend-callouts {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 16px;
+		margin-bottom: 16px;
+	}
+
+	.lwtv-trend-callout {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 16px;
+		flex: 1 1 220px;
+		padding: 14px 18px;
+		border: 1px solid colors.$lwtv-bordergrey;
+		border-left: 3px solid colors.$lwtv-pink;
+		border-radius: 12px;
+	}
+
+	.lwtv-trend-callout-text {
+		margin: 4px 0 0;
+		font-size: 0.95rem;
+		font-weight: 600;
+	}
+
+	.lwtv-trend-callout-icon {
+		flex: 0 0 auto;
+		color: colors.$lwtv-pink;
+
+		svg {
+			width: 24px;
+			height: 24px;
+			fill: currentColor; // sprite paths have no fill; take the pink.
+		}
+	}
+
 	.lwtv-articles-intro {
 		margin-bottom: 16px;
 		font-size: 0.9rem;
