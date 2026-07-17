@@ -809,6 +809,81 @@ canvas {
 		}
 	}
 
+	.lwtv-nations-lb {
+		margin-top: 4px;
+	}
+
+	.lwtv-nations-lb-head,
+	.lwtv-nations-lb-row {
+		display: grid;
+		grid-template-columns: 18px 148px 1fr 104px 66px 60px;
+		gap: 12px;
+		align-items: center;
+		padding: 10px 0;
+	}
+
+	.lwtv-nations-lb-row {
+		border-top: 1px solid colors.$lwtv-bordergrey;
+	}
+
+	.lwtv-nations-lb-head {
+		font-size: 0.7rem;
+		font-weight: 700;
+		letter-spacing: 0.04em;
+		text-transform: uppercase;
+		color: colors.$lwtv-medgrey;
+	}
+
+	.lwtv-nations-lb-num {
+		text-align: right;
+		font-size: 0.8rem;
+		font-variant-numeric: tabular-nums;
+		white-space: nowrap;
+	}
+
+	.lwtv-nations-lb-rank {
+		font-size: 0.75rem;
+		font-weight: 700;
+		color: colors.$lwtv-medgrey;
+		font-variant-numeric: tabular-nums;
+	}
+
+	.lwtv-nations-lb-name {
+		font-weight: 600;
+		color: colors.$lwtv-pink;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+
+		&:hover {
+			color: colors.$lwtv-purple;
+		}
+	}
+
+	.lwtv-nations-lb-track {
+		height: 8px;
+		background-color: colors.$lwtv-ltgrey;
+		border-radius: 999px;
+		overflow: hidden;
+	}
+
+	.lwtv-nations-lb-bar {
+		display: block;
+		height: 100%;
+		border-radius: 999px;
+		transition: none;
+	}
+
+	.lwtv-nations-lb-bar--1 { background-color: $ramp-1; }
+	.lwtv-nations-lb-bar--2 { background-color: $ramp-2; }
+	.lwtv-nations-lb-bar--3 { background-color: $ramp-3; }
+	.lwtv-nations-lb-bar--4 { background-color: $ramp-4; }
+	.lwtv-nations-lb-bar--5 { background-color: $ramp-5; }
+
+	.lwtv-nations-lb-dead {
+		color: colors.$lwtv-stats-red;
+	}
+
 	.lwtv-donut-card {
 		display: flex;
 		flex-wrap: wrap;
