@@ -511,4 +511,49 @@
 			color: colors.$lwtv-grey;
 		}
 	}
+
+	.lwtv-actor-stats-modal {
+		.lwtv-donut-track {
+			stroke: colors.$lwtv-medgrey;
+		}
+
+		.lwtv-donut-card {
+			border-color: rgba(255, 255, 255, 0.12);
+		}
+
+		.lwtv-donut-center-num,
+		.lwtv-donut-center-sub,
+		.lwtv-donut-legend-name,
+		.lwtv-donut-legend-val {
+			color: colors.$white;
+		}
+
+		.lwtv-donut-center-num--green {
+			color: #2ecc71;
+		}
+
+		.lwtv-donut-center-num--red {
+			color: #e74c3c;
+		}
+
+		.lwtv-donut-seg--blue {
+			stroke: #3498db;
+			background-color: #3498db;
+		}
+
+		.lwtv-donut-seg--amber {
+			stroke: #f1c40f;
+			background-color: #f1c40f;
+		}
+
+		.lwtv-donut-seg--green {
+			stroke: #2ecc71;
+			background-color: #2ecc71;
+		}
+
+		.lwtv-donut-seg--red {
+			stroke: #e74c3c;
+			background-color: #e74c3c;
+		}
+	}
 }

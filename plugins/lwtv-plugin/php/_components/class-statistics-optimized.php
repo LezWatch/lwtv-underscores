@@ -25,7 +25,7 @@ class Statistics_Optimized implements Component, Templater {
 		'chartjs-plugin-trendline' => '3.2.5',
 		'palette'                  => '1.0.0',
 		'tablesorter'              => '2.32.0',
-		'stats-overview'           => '1.0.0',
+		'stats-overview'           => '1.1.0',
 	);
 
 	/*
@@ -69,20 +69,29 @@ class Statistics_Optimized implements Component, Templater {
 	 * @return void
 	 */
 	public function enqueue_scripts() {
+		$is_stats_page = is_page( array( 'statistics' ) ) || is_page( array( 'this-year' ) );
+		$is_actor      = CPT_Actors::SLUG === get_post_type();
 
 		// If it's not any of our pages, return.
-		if ( ! is_page( array( 'statistics' ) ) && CPT_Actors::SLUG !== get_post_type() && ! is_page( array( 'this-year' ) ) ) {
+		if ( ! $is_stats_page && ! $is_actor ) {
 			return;
 		}
 
-		// Enqueue files shared:
-		wp_enqueue_script( 'chartjs', LWTV_PLUGIN_URL . '/assets/js/chart.min.js', array( 'jquery' ), self::VERSIONING['chartjs'], false );
-		wp_enqueue_script( 'chartjs-plugin-trendline', LWTV_PLUGIN_URL . '/assets/js/chartjs-plugin-trendline.min.js', array( 'chartjs' ), self::VERSIONING['chartjs-plugin-trendline'], false );
-		wp_enqueue_script( 'palette', LWTV_PLUGIN_URL . '/assets/js/palette.min.js', array(), self::VERSIONING['palette'], false );
+		// Chart.js only where charts still render (statistics + this-year).
+		if ( $is_stats_page ) {
+			wp_enqueue_script( 'chartjs', LWTV_PLUGIN_URL . '/assets/js/chart.min.js', array( 'jquery' ), self::VERSIONING['chartjs'], false );
+			wp_enqueue_script( 'chartjs-plugin-trendline', LWTV_PLUGIN_URL . '/assets/js/chartjs-plugin-trendline.min.js', array( 'chartjs' ), self::VERSIONING['chartjs-plugin-trendline'], false );
+			wp_enqueue_script( 'palette', LWTV_PLUGIN_URL . '/assets/js/palette.min.js', array(), self::VERSIONING['palette'], false );
+		}
 
-		// Custom extra for stats pages:
+		// Custom extra for the statistics landing pages.
 		if ( is_page( array( 'statistics' ) ) ) {
 			( new Stats_Enqueues() )->enqueue_scripts( self::VERSIONING );
+		}
+
+		// Actor pages: server-rendered donut modals use count-up, no Chart.js.
+		if ( $is_actor ) {
+			wp_enqueue_script( 'lwtv-stats-overview', LWTV_PLUGIN_URL . '/assets/js/statistics-overview.js', array(), self::VERSIONING['stats-overview'], true );
 		}
 	}
 
