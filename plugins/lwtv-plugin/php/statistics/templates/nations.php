@@ -113,8 +113,3 @@ $all_shows_count = lwtv_plugin()->generate_total_counts( 'shows' );
 </div>
 </div><!-- .lwtv-stats-overview -->
 
-<?php
-// Performance monitoring
-if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-	echo '<!-- OPTIMIZED: Character count N+1 queries eliminated. Queries reduced from ~' . ( count( $all_nations_data ) * 3 + 10 ) . ' to ' . esc_html( get_num_queries() ) . ' -->';
-}

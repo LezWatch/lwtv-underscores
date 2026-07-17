@@ -102,7 +102,7 @@ $lwtv_build_segments = function ( $items, $topn, $grey_match = '' ) {
 
 <div class="lwtv-nation-profile bg-light">
 	<div class="lwtv-nation-profile-id">
-		<span class="lwtv-stats-eyebrow sexuality"><?php esc_html_e( 'Nation Profile', 'lwtv' ); ?></span>
+		<span class="lwtv-stats-eyebrow sexuality"><?php esc_html_e( 'National Profile', 'lwtv' ); ?></span>
 		<h2 class="lwtv-nation-profile-name"><?php echo esc_html( $lwtv_name ); ?></h2>
 	</div>
 	<div class="lwtv-nation-profile-figs">
