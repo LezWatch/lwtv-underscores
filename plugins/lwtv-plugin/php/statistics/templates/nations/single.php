@@ -27,6 +27,74 @@ $lwtv_score   = (float) ( $show_counts[ $lwtv_slug ]['score'] ?? 0 );
 $lwtv_oascore = (float) ( $show_counts[ $lwtv_slug ]['onairscore'] ?? 0 );
 $lwtv_chars   = (int) ( $character_counts[ $lwtv_slug ]['total'] ?? 0 );
 $lwtv_dead    = (int) ( $character_counts[ $lwtv_slug ]['dead'] ?? 0 );
+
+/**
+ * Build donut segments from a [name,count,...] list: top N ramp + grey remainder.
+ *
+ * @param array  $items      Items with 'name' + 'count'.
+ * @param int    $topn       Number of ramped segments before folding into Other.
+ * @param string $grey_match Optional lowercase name to force into the grey slot first (e.g. 'cisgender').
+ * @return array [ segments, total ]
+ */
+$lwtv_build_segments = function ( $items, $topn, $grey_match = '' ) {
+	$items = is_array( $items ) ? $items : array();
+	$total = 0;
+	foreach ( $items as $it ) {
+		$total += (int) $it['count'];
+	}
+	$ramp     = array( 'dkpink', 'pink', 'mid', 'mid2', 'ltpink' );
+	$segments = array();
+	$grey_val = 0;
+
+	// Pull the grey-matched item (cisgender) out first, if present.
+	if ( '' !== $grey_match ) {
+		foreach ( $items as $k => $it ) {
+			if ( strtolower( $it['name'] ) === $grey_match ) {
+				$grey_val = (int) $it['count'];
+				unset( $items[ $k ] );
+				break;
+			}
+		}
+	}
+
+	uasort( $items, fn( $a, $b ) => (int) $b['count'] <=> (int) $a['count'] );
+
+	if ( '' !== $grey_match ) {
+		$segments[] = array(
+			'label' => ucfirst( $grey_match ),
+			'count' => $grey_val,
+			'pct'   => ( $total > 0 ) ? round( ( $grey_val / $total ) * 100, 1 ) : 0,
+			'class' => 'grey',
+		);
+	}
+
+	$i     = 0;
+	$named = $grey_val;
+	foreach ( $items as $it ) {
+		if ( $i >= $topn || (int) $it['count'] <= 0 ) {
+			break;
+		}
+		$c          = (int) $it['count'];
+		$named     += $c;
+		$segments[] = array(
+			'label' => $it['name'],
+			'count' => $c,
+			'pct'   => ( $total > 0 ) ? round( ( $c / $total ) * 100, 1 ) : 0,
+			'class' => $ramp[ $i ],
+		);
+		++$i;
+	}
+	$other = max( 0, $total - $named );
+	if ( $other > 0 ) {
+		$segments[] = array(
+			'label' => __( 'Other', 'lwtv' ),
+			'count' => $other,
+			'pct'   => ( $total > 0 ) ? round( ( $other / $total ) * 100, 1 ) : 0,
+			'class' => 'grey',
+		);
+	}
+	return array( $segments, $total );
+};
 ?>
 <div class="lwtv-nation-profile bg-light">
 	<div class="lwtv-nation-profile-id">
@@ -117,6 +185,41 @@ switch ( $view ) {
 		echo wp_kses_post( '<h4>Shows On-Air Per Year</h4>' );
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in the function. (Replaced in Task 6.)
 		echo lwtv_plugin()->generate_nation_statistics( $nation, $view, 'trendline' );
+		break;
+
+	case '_sexuality':
+	case '_gender':
+	case '_formats':
+		$lwtv_raw  = lwtv_plugin()->generate_nation_statistics( $nation, ltrim( $view, '_' ), 'array' );
+		$lwtv_list = ( is_array( $lwtv_raw ) && ! empty( $lwtv_raw ) ) ? $lwtv_raw : array();
+
+		if ( '_gender' === $view ) {
+			list( $lwtv_segs, $lwtv_tot ) = $lwtv_build_segments( $lwtv_list, 4, 'cisgender' );
+			$lwtv_eyebrow                 = sprintf( /* translators: %s nation */ __( 'Character Gender — %s', 'lwtv' ), $lwtv_name );
+			$lwtv_headline                = __( 'Gender identities', 'lwtv' );
+			$lwtv_sub                     = __( 'characters', 'lwtv' );
+		} elseif ( '_formats' === $view ) {
+			list( $lwtv_segs, $lwtv_tot ) = $lwtv_build_segments( $lwtv_list, 5 );
+			$lwtv_eyebrow                 = sprintf( /* translators: %s nation */ __( 'Show Formats — %s', 'lwtv' ), $lwtv_name );
+			$lwtv_headline                = __( 'How these shows are made', 'lwtv' );
+			$lwtv_sub                     = __( 'shows', 'lwtv' );
+		} else {
+			list( $lwtv_segs, $lwtv_tot ) = $lwtv_build_segments( $lwtv_list, 5 );
+			$lwtv_eyebrow                 = sprintf( /* translators: %s nation */ __( 'Character Sexual Orientation — %s', 'lwtv' ), $lwtv_name );
+			$lwtv_headline                = __( 'Sexual orientations', 'lwtv' );
+			$lwtv_sub                     = __( 'characters', 'lwtv' );
+		}
+
+		$donut = array(
+			'segments'    => $lwtv_segs,
+			'center'      => $lwtv_tot,
+			'center_sub'  => $lwtv_sub,
+			'eyebrow'     => $lwtv_eyebrow,
+			'headline'    => $lwtv_headline,
+			'description' => '',
+		);
+		// phpcs:ignore PEAR.Files.IncludingFile.UseRequire
+		include plugin_dir_path( __DIR__ ) . 'partials/donut.php';
 		break;
 
 	default:
