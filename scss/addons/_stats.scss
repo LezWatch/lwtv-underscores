@@ -1453,4 +1453,102 @@ canvas {
 		font-size: 0.75rem;
 		color: colors.$lwtv-medgrey;
 	}
+
+	.lwtv-yearbars-card {
+		padding: 20px 24px;
+		border: 1px solid colors.$lwtv-bordergrey;
+		border-radius: 14px;
+	}
+
+	.lwtv-yearbars-head {
+		display: flex;
+		align-items: flex-start;
+		justify-content: space-between;
+		gap: 16px;
+		margin-bottom: 16px;
+	}
+
+	.lwtv-yearbars-headline {
+		margin: 2px 0 0;
+		font-size: 1.125rem;
+		font-weight: 700;
+	}
+
+	.lwtv-yearbars-desc {
+		margin: 4px 0 0;
+		font-size: 0.9rem;
+		color: colors.$lwtv-medgrey;
+	}
+
+	.lwtv-yearbars-avg {
+		text-align: right;
+		flex: 0 0 auto;
+	}
+
+	.lwtv-yearbars-avg-num {
+		display: block;
+		font-size: 2rem;
+		font-weight: 700;
+		line-height: 1;
+		color: colors.$lwtv-stats-red;
+		font-variant-numeric: tabular-nums;
+	}
+
+	.lwtv-yearbars-avg-sub {
+		font-size: 0.7rem;
+		color: colors.$lwtv-medgrey;
+	}
+
+	.lwtv-yearbars {
+		display: flex;
+		align-items: flex-end;
+		gap: 2px;
+		height: 220px;
+	}
+
+	.lwtv-yearbar {
+		position: relative;
+		flex: 1 1 0;
+		min-width: 3px;
+		background-color: rgba(colors.$lwtv-stats-red, 0.35);
+		border-radius: 3px 3px 0 0;
+
+		.lwtv-yearbar-val {
+			position: absolute;
+			top: -1.1rem;
+			left: 50%;
+			transform: translateX(-50%);
+			font-size: 0.65rem;
+			color: colors.$lwtv-medgrey;
+			opacity: 0;
+		}
+
+		&:hover .lwtv-yearbar-val {
+			opacity: 1;
+		}
+	}
+
+	.lwtv-yearbar--peak {
+		background-color: colors.$lwtv-stats-red;
+
+		.lwtv-yearbar-val {
+			opacity: 1;
+			font-weight: 700;
+			color: colors.$lwtv-stats-red;
+		}
+	}
+
+	.lwtv-yearbars-axis {
+		display: flex;
+		justify-content: space-between;
+		margin-top: 6px;
+		font-size: 0.7rem;
+		font-variant-numeric: tabular-nums;
+		color: colors.$lwtv-medgrey;
+	}
+
+	.lwtv-yearbars-axis-peak {
+		color: colors.$lwtv-stats-red;
+		font-weight: 700;
+	}
 }

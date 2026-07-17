@@ -102,6 +102,51 @@ if ( ! function_exists( 'lwtv_stats_shortfall_phrase' ) ) {
 	}
 }
 
+if ( ! function_exists( 'lwtv_stats_year_series' ) ) {
+	/**
+	 * Dense-fill a sparse [ ['death_year','death_count'], … ] series and find the peak.
+	 *
+	 * @param array $sparse Ascending sparse per-year rows.
+	 * @return array [ 'rows' => [ ['year'=>int,'count'=>int], … ] dense, 'peak_year'=>int, 'peak_count'=>int ]
+	 */
+	function lwtv_stats_year_series( $sparse ) {
+		$map = array();
+		$min = 0;
+		$max = 0;
+		foreach ( (array) $sparse as $row ) {
+			$y = (int) ( $row['death_year'] ?? 0 );
+			$c = (int) ( $row['death_count'] ?? 0 );
+			if ( $y <= 0 ) {
+				continue;
+			}
+			$map[ $y ] = $c;
+			$min       = ( 0 === $min ) ? $y : min( $min, $y );
+			$max       = max( $max, $y );
+		}
+		$now        = (int) gmdate( 'Y' );
+		$max        = max( $max, $now );
+		$rows       = array();
+		$peak_year  = $min;
+		$peak_count = 0;
+		for ( $y = $min; $y <= $max; $y++ ) {
+			$c      = $map[ $y ] ?? 0;
+			$rows[] = array(
+				'year'  => $y,
+				'count' => $c,
+			);
+			if ( $c > $peak_count ) {
+				$peak_count = $c;
+				$peak_year  = $y;
+			}
+		}
+		return array(
+			'rows'       => $rows,
+			'peak_year'  => $peak_year,
+			'peak_count' => $peak_count,
+		);
+	}
+}
+
 if ( ! function_exists( 'lwtv_stats_ratio_phrase' ) ) {
 	/**
 	 * "one in N" phrasing for a percentage — e.g. 9 -> "one in 11", 50 -> "one in 2".
