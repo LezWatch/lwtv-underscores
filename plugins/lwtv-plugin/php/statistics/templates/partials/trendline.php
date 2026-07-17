@@ -85,7 +85,7 @@ $trend_end_year   = $trend_n ? (int) ( $trend_points[ $trend_n - 1 ]['year'] ?? 
 					(int) ( $trend['current_year'] ?? 0 )
 				);
 
-				if ( gmdate( 'Y' ) !== (int) ( $trend['current_year'] ) ) {
+				if ( (int) gmdate( 'Y' ) !== (int) ( $trend['current_year'] ) ) {
 					echo '<br />';
 					esc_html_e( ' (the last year a show aired)', 'lwtv' );
 				}

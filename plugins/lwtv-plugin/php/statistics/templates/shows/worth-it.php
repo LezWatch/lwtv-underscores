@@ -66,7 +66,7 @@ $donut = array(
 	/* translators: 1: a fraction phrase like "Over half", 2: the percentage. */
 	'headline'    => sprintf( __( '%1$s (%2$s%%) are a clear yes', 'lwtv' ), $worth_lead, $worth_yes_percent ),
 	/* translators: %s: a clause like "about one in 11 is a hard no". */
-	'description' => sprintf( __( 'Our editors rate every show — %s. The rest sit somewhere in the middle or await review.', 'lwtv' ), $worth_no_clause ),
+	'description' => sprintf( __( 'Our editors rate every show. %s. The rest sit somewhere in the middle or await review.', 'lwtv' ), $worth_no_clause ),
 );
 
 // phpcs:ignore PEAR.Files.IncludingFile.UseRequire

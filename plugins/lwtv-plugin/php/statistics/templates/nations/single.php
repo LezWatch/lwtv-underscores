@@ -184,7 +184,7 @@ switch ( $view ) {
 
 				if ( 0 === (int) $on_air_now ) {
 					/* translators: 1: nation name, 2: total shows. */
-					printf( esc_html__( 'None of %1$s of %2$s\'s shows are currently on air.', 'lwtv' ), esc_html( $lwtv_name ), esc_html( number_format_i18n( $lwtv_shows ) ) );
+					printf( esc_html__( 'None of %1$s of %2$s shows are currently on air.', 'lwtv' ), esc_html( $lwtv_name ), esc_html( number_format_i18n( $lwtv_shows ) ) );
 				} else {
 					/* translators: 1: on-air count, 2: nation name, 3: total shows. */
 					printf( esc_html__( '%1$s of %2$s\'s %3$s shows are currently on air.', 'lwtv' ), esc_html( $on_air_now ), esc_html( $lwtv_name ), esc_html( number_format_i18n( $lwtv_shows ) ) );
