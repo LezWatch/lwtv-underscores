@@ -327,4 +327,46 @@ class Taxonomy_Optimized {
 
 		return $formatted;
 	}
+
+	/**
+	 * Bulk earliest show start-year per term (one grouped query).
+	 *
+	 * @param string $taxonomy Taxonomy slug (e.g. 'lez_country').
+	 * @param array  $slugs    Term slugs to include.
+	 * @return array           [ slug => (int) earliest year | 0 ].
+	 */
+	public function get_bulk_first_years( $taxonomy, $slugs ) {
+		global $wpdb;
+
+		$first_years = array();
+		foreach ( $slugs as $slug ) {
+			$first_years[ ltrim( $slug, '_' ) ] = 0;
+		}
+		if ( empty( $slugs ) ) {
+			return $first_years;
+		}
+
+		$results = $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT t.slug AS slug, MIN( CAST( pm.meta_value AS UNSIGNED ) ) AS first_year
+				 FROM {$wpdb->terms} t
+				 INNER JOIN {$wpdb->term_taxonomy} tt ON tt.term_id = t.term_id AND tt.taxonomy = %s
+				 INNER JOIN {$wpdb->term_relationships} tr ON tr.term_taxonomy_id = tt.term_taxonomy_id
+				 INNER JOIN {$wpdb->posts} p ON p.ID = tr.object_id AND p.post_type = 'post_type_shows' AND p.post_status = 'publish'
+				 INNER JOIN {$wpdb->postmeta} pm ON pm.post_id = p.ID AND pm.meta_key = 'lezshows_airdates_start'
+				 WHERE pm.meta_value != ''
+				 GROUP BY t.slug",
+				$taxonomy
+			),
+			ARRAY_A
+		);
+
+		if ( $results ) {
+			foreach ( $results as $row ) {
+				$first_years[ $row['slug'] ] = (int) $row['first_year'];
+			}
+		}
+
+		return $first_years;
+	}
 }

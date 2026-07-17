@@ -38,6 +38,12 @@
 		border-color: colors.$lwtv-stats-blue-border;
 	}
 
+	.card-header.nations-new {
+		color: colors.$lwtv-pink;
+		background-color: rgba(colors.$lwtv-pink, 0.14);
+		border-color: rgba(colors.$lwtv-pink, 0.28);
+	}
+
 	.progress-bar {
 		background-color: colors.$lwtv-stats-progressbar !important;
 	}
@@ -199,6 +205,10 @@ canvas {
 		grid-template-columns: repeat(3, 1fr);
 	}
 
+	.lwtv-metric-grid--4 {
+		grid-template-columns: repeat(4, 1fr);
+	}
+
 	.lwtv-metric-card {
 		display: flex;
 		flex-direction: column;
@@ -254,6 +264,11 @@ canvas {
 
 	.lwtv-metric-icon.gender {
 		background-color: colors.$lwtv-stats-yellow-background;
+	}
+
+	.lwtv-metric-icon.nations-new {
+		color: colors.$lwtv-pink;
+		background-color: rgba(colors.$lwtv-pink, 0.14);
 	}
 
 	.lwtv-metric-number {
