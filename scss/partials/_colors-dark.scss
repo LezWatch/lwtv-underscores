@@ -516,6 +516,24 @@
 		.lwtv-stats-eyebrow, .lwtv-metric-caption, .lwtv-bar-label {
 			color: colors.$lwtv-grey;
 		}
+
+		// Nations profile + leaderboard: the new classes have no dark treatment,
+		// so lift their labels/borders off the dark surface.
+		.lwtv-nation-profile,
+		.lwtv-nations-lb-row {
+			border-color: rgba(255, 255, 255, 0.12);
+		}
+
+		.lwtv-nation-profile .lwtv-stats-eyebrow.sexuality {
+			color: #3498db;
+		}
+
+		.lwtv-nation-profile-figs em,
+		.lwtv-nation-score,
+		.lwtv-nation-sentence,
+		.lwtv-nations-lb-head {
+			color: colors.$lwtv-ltgrey;
+		}
 	}
 
 	.lwtv-actor-stats-modal {
