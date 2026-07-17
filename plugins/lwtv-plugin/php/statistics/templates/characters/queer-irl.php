@@ -10,6 +10,9 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @var int $character_count
  */
 
+// phpcs:ignore PEAR.Files.IncludingFile.UseRequire
+require_once plugin_dir_path( __DIR__ ) . 'partials/phrases.php';
+
 $qirl_raw  = lwtv_plugin()->generate_characters_statistics( 'array', 'queer-irl' );
 $qirl_data = ( is_array( $qirl_raw ) && ! empty( $qirl_raw ) ) ? (array) reset( $qirl_raw ) : array();
 
@@ -35,7 +38,8 @@ $donut = array(
 	'center'      => $qirl_yes,
 	'center_sub'  => __( 'queer actors', 'lwtv' ),
 	'eyebrow'     => __( 'Queer IRL', 'lwtv' ),
-	'headline'    => __( 'Fewer than a third are played by queer actors', 'lwtv' ),
+	/* translators: %s: a shortfall phrase like "Fewer than a quarter". */
+	'headline'    => sprintf( __( '%s are played by queer actors', 'lwtv' ), lwtv_stats_shortfall_phrase( ( $qirl_tot > 0 ) ? round( ( $qirl_yes / $qirl_tot ) * 100, 1 ) : 0 ) ),
 	'description' => __( 'Most queer and trans characters are still played by straight or cisgender actors.', 'lwtv' ),
 );
 

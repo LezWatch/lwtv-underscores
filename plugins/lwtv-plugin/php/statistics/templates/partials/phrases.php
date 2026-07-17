@@ -57,6 +57,51 @@ if ( ! function_exists( 'lwtv_stats_fraction_phrase' ) ) {
 	}
 }
 
+if ( ! function_exists( 'lwtv_stats_shortfall_phrase' ) ) {
+	/**
+	 * Natural "fewer than a fraction" lead phrase for a percentage — the
+	 * negative-framed counterpart to lwtv_stats_fraction_phrase(). e.g. 23 ->
+	 * "Fewer than a quarter", 30 -> "Fewer than a third". For emphasising how
+	 * SMALL a share is ("%s are played by queer actors").
+	 *
+	 * The ladder is ordered low -> high; the first ceiling the percent is under
+	 * wins. Filter `lwtv_stats_shortfall_ladder` to tune or extend it.
+	 *
+	 * @param float $pct Percentage, 0-100.
+	 * @return string Translated phrase (no surrounding punctuation).
+	 */
+	function lwtv_stats_shortfall_phrase( $pct ) {
+		$pct = (float) $pct;
+
+		// Each rung: [ exclusive ceiling percent, phrase ]. Low -> high.
+		$ladder = array(
+			array( 10, __( 'Very few', 'lwtv' ) ),
+			array( 25, __( 'Fewer than a quarter', 'lwtv' ) ),
+			array( 33, __( 'Fewer than a third', 'lwtv' ) ),
+			array( 50, __( 'Fewer than half', 'lwtv' ) ),
+			array( 66, __( 'Fewer than two thirds', 'lwtv' ) ),
+			array( 75, __( 'Fewer than three quarters', 'lwtv' ) ),
+			array( 90, __( 'Most', 'lwtv' ) ),
+		);
+
+		/**
+		 * Filter the shortfall-phrase ladder.
+		 *
+		 * @param array $ladder Rungs of [ float $ceiling_pct, string $phrase ], ordered low -> high.
+		 * @param float $pct    The percentage being described.
+		 */
+		$ladder = apply_filters( 'lwtv_stats_shortfall_ladder', $ladder, $pct );
+
+		foreach ( $ladder as $rung ) {
+			if ( $pct < (float) $rung[0] ) {
+				return $rung[1];
+			}
+		}
+
+		return __( 'Nearly all', 'lwtv' );
+	}
+}
+
 if ( ! function_exists( 'lwtv_stats_ratio_phrase' ) ) {
 	/**
 	 * "one in N" phrasing for a percentage — e.g. 9 -> "one in 11", 50 -> "one in 2".

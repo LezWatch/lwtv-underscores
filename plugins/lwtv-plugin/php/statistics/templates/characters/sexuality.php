@@ -10,9 +10,16 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @var int $character_count
  */
 
+// phpcs:ignore PEAR.Files.IncludingFile.UseRequire
+require_once plugin_dir_path( __DIR__ ) . 'partials/phrases.php';
+
 $sex_raw   = lwtv_plugin()->generate_characters_statistics( 'array', 'sexuality' );
 $sex_data  = ( is_array( $sex_raw ) && ! empty( $sex_raw ) ) ? (array) reset( $sex_raw ) : array();
 $sex_total = (int) $character_count;
+
+// Lesbian ("homosexual" slug) + bisexual share, for the headline.
+$sex_lesbi     = (int) ( $sex_data['homosexual']['count'] ?? 0 ) + (int) ( $sex_data['bisexual']['count'] ?? 0 );
+$sex_lesbi_pct = ( $sex_total > 0 ) ? round( ( $sex_lesbi / $sex_total ) * 100, 1 ) : 0;
 
 uasort( $sex_data, fn( $a, $b ) => (int) $b['count'] <=> (int) $a['count'] );
 $sex_ramp     = array( 'dkpink', 'pink', 'mid', 'mid2', 'ltpink' );
@@ -48,7 +55,8 @@ $donut = array(
 	'center'      => $sex_total,
 	'center_sub'  => __( 'characters', 'lwtv' ),
 	'eyebrow'     => __( 'Sexual Orientation', 'lwtv' ),
-	'headline'    => __( 'Two in three are lesbian or bisexual', 'lwtv' ),
+	/* translators: %s: a fraction phrase like "Over three quarters". */
+	'headline'    => sprintf( __( '%s are lesbian or bisexual', 'lwtv' ), lwtv_stats_fraction_phrase( $sex_lesbi_pct ) ),
 	'description' => __( 'Lesbian and bisexual characters make up the bulk of the characters.', 'lwtv' ),
 );
 

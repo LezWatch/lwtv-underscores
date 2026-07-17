@@ -10,6 +10,9 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @var int $character_count
  */
 
+// phpcs:ignore PEAR.Files.IncludingFile.UseRequire
+require_once plugin_dir_path( __DIR__ ) . 'partials/phrases.php';
+
 $gen_raw   = lwtv_plugin()->generate_characters_statistics( 'array', 'gender' );
 $gen_data  = ( is_array( $gen_raw ) && ! empty( $gen_raw ) ) ? (array) reset( $gen_raw ) : array();
 $gen_total = (int) $character_count;
@@ -60,7 +63,8 @@ $donut = array(
 	'center'      => $gen_cis,
 	'center_sub'  => __( 'cisgender', 'lwtv' ),
 	'eyebrow'     => __( 'Gender Identity', 'lwtv' ),
-	'headline'    => __( 'Most characters are cisgender', 'lwtv' ),
+	/* translators: %s: a fraction phrase like "Over three quarters". */
+	'headline'    => sprintf( __( '%s are cisgender', 'lwtv' ), lwtv_stats_fraction_phrase( ( $gen_total > 0 ) ? round( ( $gen_cis / $gen_total ) * 100, 1 ) : 0 ) ),
 	'description' => __( 'Cisgender characters dominate, but the database tracks a growing range of trans, non-binary and genderqueer identities.', 'lwtv' ),
 );
 
