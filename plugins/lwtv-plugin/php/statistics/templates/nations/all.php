@@ -110,9 +110,9 @@ $lwtv_cards = array(
 </div>
 
 <?php
-// Ranked nation leaderboard (Task 3 partial).
+// Ranked nation leaderboard (shared partial; nation defaults reproduce prior output).
 $leaderboard_rows  = $lwtv_ranked;
 $leaderboard_chars = $character_counts;
 $leaderboard_all   = (int) $all_shows_count;
 // phpcs:ignore PEAR.Files.IncludingFile.UseRequire
-include plugin_dir_path( __DIR__ ) . 'nations/leaderboard.php';
+include plugin_dir_path( __DIR__ ) . 'partials/leaderboard.php';
