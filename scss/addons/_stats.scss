@@ -136,7 +136,11 @@ canvas {
 
 /* Statistics Overview redesign */
 
-.statistics {
+// Scoped to the statistics pages and to the actor-page overlay modals, which
+// reuse the donut/compact/article components outside the .statistics wrapper.
+.statistics,
+.lwtv-actor-stats-modal,
+.lwtv-actor-articles-modal {
 
 	.lwtv-stats-overview {
 		max-width: 1120px;
