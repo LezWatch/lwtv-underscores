@@ -1119,4 +1119,114 @@ canvas {
 	.lwtv-trend-peak {
 		fill: colors.$lwtv-pink;
 	}
+
+	.lwtv-articles-intro {
+		margin-bottom: 16px;
+		font-size: 0.9rem;
+		color: colors.$lwtv-medgrey;
+	}
+
+	.lwtv-article-list {
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+	}
+
+	.lwtv-article-card {
+		display: flex;
+		gap: 16px;
+		padding: 12px;
+		border: 1px solid colors.$lwtv-bordergrey;
+		border-radius: 10px;
+		transition: transform 0.15s ease, box-shadow 0.15s ease;
+
+		&:hover {
+			transform: translateY(-1px);
+			box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+		}
+	}
+
+	.lwtv-article-thumb {
+		position: relative;
+		flex: 0 0 auto;
+		width: 132px;
+		height: 88px;
+		overflow: hidden;
+		border-radius: 8px;
+		background-color: colors.$lwtv-ltgrey;
+
+		.lwtv-article-thumb-img {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+		}
+	}
+
+	.lwtv-article-thumb-empty {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 100%;
+		height: 100%;
+		color: colors.$lwtv-medgrey;
+	}
+
+	.lwtv-article-tag {
+		position: absolute;
+		top: 6px;
+		left: 6px;
+		padding: 2px 8px;
+		font-size: 0.625rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.04em;
+		color: colors.$white;
+		border-radius: 6px;
+		background-color: colors.$lwtv-medgrey;
+	}
+
+	.lwtv-article-tag--pink { background-color: colors.$lwtv-pink; }
+	.lwtv-article-tag--blue { background-color: colors.$lwtv-stats-blue; }
+	.lwtv-article-tag--dkpink { background-color: colors.$lwtv-dkpink; }
+
+	.lwtv-article-info {
+		flex: 1 1 auto;
+		min-width: 0;
+	}
+
+	.lwtv-article-title {
+		margin: 0 0 4px;
+		font-size: 1rem;
+		font-weight: 700;
+		line-height: 1.3;
+
+		a {
+			color: colors.$lwtv-pink;
+			text-decoration: none;
+
+			&:hover {
+				color: colors.$lwtv-purple;
+			}
+		}
+	}
+
+	.lwtv-article-excerpt {
+		margin: 0 0 6px;
+		font-size: 0.8125rem;
+		line-height: 1.5;
+		color: colors.$lwtv-medgrey;
+		display: -webkit-box;
+		-webkit-line-clamp: 2;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
+	}
+
+	.lwtv-article-date {
+		display: flex;
+		align-items: center;
+		gap: 5px;
+		margin: 0;
+		font-size: 0.75rem;
+		color: colors.$lwtv-medgrey;
+	}
 }

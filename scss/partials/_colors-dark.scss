@@ -556,4 +556,24 @@
 			background-color: #e74c3c;
 		}
 	}
+
+	.lwtv-actor-articles-modal {
+		.lwtv-article-card {
+			border-color: rgba(255, 255, 255, 0.12);
+
+			&:hover {
+				box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+			}
+		}
+
+		.lwtv-articles-intro,
+		.lwtv-article-excerpt,
+		.lwtv-article-date {
+			color: colors.$lwtv-ltgrey;
+		}
+
+		.lwtv-article-title a {
+			color: colors.$lwtv-ltpink;
+		}
+	}
 }
