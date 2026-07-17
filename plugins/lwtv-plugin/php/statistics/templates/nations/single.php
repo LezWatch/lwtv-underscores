@@ -182,9 +182,47 @@ switch ( $view ) {
 		break;
 
 	case '_on-air':
-		echo wp_kses_post( '<h4>Shows On-Air Per Year</h4>' );
-		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in the function. (Replaced in Task 6.)
-		echo lwtv_plugin()->generate_nation_statistics( $nation, $view, 'trendline' );
+		$lwtv_oaraw  = lwtv_plugin()->generate_nation_statistics( $nation, ltrim( $view, '_' ), 'array' );
+		$lwtv_oaraw  = ( is_array( $lwtv_oaraw ) && ! empty( $lwtv_oaraw ) ) ? $lwtv_oaraw : array();
+		$lwtv_points = array();
+		foreach ( $lwtv_oaraw as $lwtv_oa_item ) {
+			$lwtv_points[] = array(
+				'year'  => (int) $lwtv_oa_item['name'],
+				'count' => (int) $lwtv_oa_item['count'],
+			);
+		}
+		$lwtv_last = ! empty( $lwtv_points ) ? end( $lwtv_points ) : array(
+			'year'  => 0,
+			'count' => 0,
+		);
+		$trend     = array(
+			'points'       => $lwtv_points,
+			'eyebrow'      => sprintf( /* translators: %s nation */ __( 'Shows On Air Per Year — %s', 'lwtv' ), $lwtv_name ),
+			'headline'     => __( 'On-air over time', 'lwtv' ),
+			'description'  => sprintf( /* translators: %s nation */ __( 'Shows from %s active in each year, from the first tracked title to today.', 'lwtv' ), $lwtv_name ),
+			'current'      => (int) $lwtv_last['count'],
+			'current_year' => (int) $lwtv_last['year'],
+		);
+		// phpcs:ignore PEAR.Files.IncludingFile.UseRequire
+		include plugin_dir_path( __DIR__ ) . 'partials/trendline.php';
+		break;
+
+	case '_tropes':
+		$lwtv_traw  = lwtv_plugin()->generate_nation_statistics( $nation, ltrim( $view, '_' ), 'array' );
+		$lwtv_trows = ( is_array( $lwtv_traw ) && ! empty( $lwtv_traw ) ) ? $lwtv_traw : array();
+		$ranked     = array(
+			'rows'   => $lwtv_trows,
+			'total'  => $lwtv_shows,
+			'family' => 'characters',
+			'title'  => sprintf( /* translators: %s nation */ __( 'Most common tropes in %s', 'lwtv' ), $lwtv_name ),
+			'sub'    => __( 'Shows can carry several, so shares add past 100%.', 'lwtv' ),
+			'svg'    => 'tag.svg',
+			'icon'   => 'svg-tag',
+			'base'   => '',
+			'mode'   => 'share',
+		);
+		// phpcs:ignore PEAR.Files.IncludingFile.UseRequire
+		include plugin_dir_path( __DIR__ ) . 'partials/ranked-bars.php';
 		break;
 
 	case '_sexuality':
@@ -223,12 +261,7 @@ switch ( $view ) {
 		break;
 
 	default:
-		// Sexuality / Gender / Tropes / Formats — current output until Tasks 5–6.
-		?>
-		<div class="row">
-			<div class="col-sm-6"><?php echo lwtv_plugin()->generate_nation_statistics( $nation, $view, 'piechart' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></div>
-			<div class="col-sm-6"><?php echo lwtv_plugin()->generate_nation_statistics( $nation, $view, 'percentage' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></div>
-		</div>
-		<?php
+		// Unreachable for valid views (all/sexuality/gender/tropes/formats/on-air
+		// are all handled above) — nothing left to render here.
 		break;
 }
