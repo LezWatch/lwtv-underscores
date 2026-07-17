@@ -31,7 +31,7 @@ class Stats_Enqueues {
 
 		// Overview + Shows + Characters + Actors + Nations + Stations: count-up + bar-grow
 		// animations. No jQuery dependency.
-		if ( in_array( $statistics, array( 'none', 'shows', 'characters', 'actors', 'nations', 'stations' ), true ) ) {
+		if ( in_array( $statistics, array( 'none', 'shows', 'characters', 'actors', 'nations', 'stations', 'death' ), true ) ) {
 			wp_enqueue_script(
 				'lwtv-stats-overview',
 				LWTV_PLUGIN_URL . '/assets/js/statistics-overview.js',
@@ -47,7 +47,9 @@ class Stats_Enqueues {
 				wp_add_inline_script( 'tablesorter', 'jQuery(document).ready(function($){ $("#' . $statistics . 'Table").tablesorter({ theme : "bootstrap", }); });' );
 				break;
 			case 'death':
-				wp_add_inline_script( 'tablesorter', 'jQuery(document).ready(function($){ $("#DeadCharactersTable").tablesorter({ theme : "bootstrap", }); });' );
+				if ( 'list' === $stat_view ) {
+					wp_add_inline_script( 'tablesorter', 'jQuery(document).ready(function($){ $("#DeadCharactersTable").tablesorter({ theme:"bootstrap", sortList:[[1,1]] }); });' );
+				}
 				if ( 'characters' === $stat_view ) {
 					wp_add_inline_script( 'tablesorter', 'jQuery(document).ready(function($){ $("#sexualityTable").tablesorter({ theme : "bootstrap", }); });' );
 					wp_add_inline_script( 'tablesorter', 'jQuery(document).ready(function($){ $("#genderTable").tablesorter({ theme : "bootstrap", }); });' );

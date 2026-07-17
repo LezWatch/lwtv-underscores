@@ -260,6 +260,7 @@ class Dead {
 	 */
 	public function generate_all( $format ) {
 		switch ( $format ) {
+			case 'array':
 			case 'list':
 			case 'time':
 				return $this->generate_list( $format );
