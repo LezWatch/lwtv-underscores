@@ -123,6 +123,13 @@ if ( ! function_exists( 'lwtv_stats_year_series' ) ) {
 			$min       = ( 0 === $min ) ? $y : min( $min, $y );
 			$max       = max( $max, $y );
 		}
+		if ( 0 === $min ) {
+			return array(
+				'rows'       => array(),
+				'peak_year'  => 0,
+				'peak_count' => 0,
+			);
+		}
 		$now        = (int) gmdate( 'Y' );
 		$max        = max( $max, $now );
 		$rows       = array();
