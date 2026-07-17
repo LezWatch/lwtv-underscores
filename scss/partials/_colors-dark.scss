@@ -15,9 +15,10 @@
 
 	/* Overridden colors */
 	$lwtv-medgrey: #404040;
+	$lwtv-svg:     colors.$lwtv-ltgrey!important;
 
-	--bs-body-color: #{colors.$lwtv-dkgrey};
-	--bs-body-color-rgb: rgba(to-rgb(#{colors.$lwtv-dkgrey}), 1);
+	--bs-body-color: #{colors.$lwtv-ltgrey};
+	--bs-body-color-rgb: rgba(to-rgb(#{colors.$lwtv-ltgrey}), 1);
 
 	.text-widget,
 	.widget_categories,
@@ -181,7 +182,7 @@
 	.relatedposts-section h2,
 	.external-section h2,
 	.showschar-section h2 {
-		background-color: colors.$lwtv-dkgrey;
+		background-color: colors.$lwtv-medgrey;
 		color: colors.$lwtv-grey;
 
 		svg * {
@@ -189,10 +190,15 @@
 		}
 	}
 
+	.actor-meta-links svg,
 	.character-cliche svg,
 	.character-actor svg,
 	.character-show svg {
 		fill: colors.$lwtv-ltgrey;
+	}
+
+	.widget_lwtv_social_menu_widget a::before {
+		filter: invert(50%) sepia(79%) saturate(2476%) hue-rotate(227deg) brightness(118%) contrast(119%);
 	}
 
 	.card-meta-item.actors svg,
