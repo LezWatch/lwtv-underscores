@@ -13,6 +13,12 @@
 	$link-active-color:  $link-hover-color;
 	$link-visited-color: $link-color;
 
+	/* Stats Colors */
+	$lwtv-stats-blue: #3498db;
+	$lwtv-stats-yellow: #f1c40f;
+	$lwtv-stats-green: #2ecc71;
+	$lwtv-stats-red: #e74c3c;
+
 	/* Overridden colors */
 	$lwtv-medgrey: #404040;
 	$lwtv-svg:     colors.$lwtv-ltgrey!important;
@@ -316,8 +322,7 @@
 
 	.ep-calendar-title {
 
-		a:visited,
- a, {
+		a:visited, a, {
 			color: colors.$lwtv-pink;
 		}
 	}
@@ -334,7 +339,7 @@
 		.card-header.actors,
 		.card-header.genres,
 		.card-header.gender {
-			color: #f1c40f;
+			color: $lwtv-stats-yellow;
 			background-color: #3d2f00;
 			border-color: #5a4200;
 		}
@@ -343,14 +348,14 @@
 		.card-header.new-shows,
 		.card-header.tropes,
 		.card-header.actor_gender {
-			color: #2ecc71;
+			color: $lwtv-stats-green;
 			background-color: #0d2e1a;
 			border-color: #1a4d2e;
 		}
 
 		.card-header.dead-characters,
 		.card-header.canceled-shows {
-			color: #e74c3c;
+			color: $lwtv-stats-red;
 			background-color: #2e0d0d;
 			border-color: #4d1a1a;
 		}
@@ -358,7 +363,7 @@
 		.card-header.shows,
 		.card-header.shows-onair,
 		.card-header.sexuality {
-			color: #3498db;
+			color: $lwtv-stats-blue;
 			background-color: #0d1a2e;
 			border-color: #1a2e4d;
 		}
@@ -422,6 +427,10 @@
 			color: colors.$white;
 		}
 
+		.lwtv-trend-axis {
+			color: colors.$lwtv-ltgrey;
+		}
+
 		a.lwtv-tail-name, a.lwtv-tail-name:visited,
 		a.lwtv-leader-name, a.lwtv-leader-name:visited {
 			color: colors.$white;
@@ -451,16 +460,16 @@
 
 		// Family-colored overview header icons (mirror the dark card-header greens/ambers).
 		.lwtv-panel-icon.characters {
-			color: #2ecc71;
+			color: $lwtv-stats-green;
 		}
 
 		.lwtv-panel-icon.gender,
 		.lwtv-panel-icon.actors {
-			color: #f1c40f;
+			color: $lwtv-stats-yellow;
 		}
 
 		.lwtv-panel-icon.sexuality {
-			color: #3498db;
+			color: $lwtv-stats-blue;
 		}
 
 		// Neutral leader-bar tracks in dark (the light family tints are too bright).
@@ -524,8 +533,32 @@
 			border-color: rgba(255, 255, 255, 0.12);
 		}
 
+		.lwtv-actor-articles-modal .lwtv-stats-tab:hover,
+		.lwtv-actor-stats-modal .lwtv-stats-tab:hover,
+		.lwtv-stats-tab:hover,
+		.lwtv-actor-articles-modal .lwtv-stats-subnav-item:hover,
+		.lwtv-actor-stats-modal .lwtv-stats-subnav-item:hover,
+		.lwtv-stats-subnav-item:hover,
+		.lwtv-actor-articles-modal .lwtv-nations-reset:hover,
+		.lwtv-actor-stats-modal .lwtv-nations-reset:hover,
+		.lwtv-nations-reset:hover,
+		.lwtv-nations-lb-name {
+			color: colors.$lwtv-ltpink;
+
+			&:hover {
+				color: colors.$lwtv-ltblue;
+			}
+		}
+
+		.lwtv-actor-articles-modal .lwtv-nation-profile-dead strong,
+		.lwtv-actor-stats-modal .lwtv-nation-profile-dead strong,
+		.lwtv-nation-profile-dead strong,
+		.lwtv-nations-lb-dead {
+			color: $lwtv-stats-red;
+		}
+
 		.lwtv-nation-profile .lwtv-stats-eyebrow.sexuality {
-			color: #3498db;
+			color: $lwtv-stats-blue;
 		}
 
 		.lwtv-nation-profile-figs em,
@@ -553,31 +586,31 @@
 		}
 
 		.lwtv-donut-center-num--green {
-			color: #2ecc71;
+			color: $lwtv-stats-green;
 		}
 
 		.lwtv-donut-center-num--red {
-			color: #e74c3c;
+			color: $lwtv-stats-red;
 		}
 
 		.lwtv-donut-seg--blue {
-			stroke: #3498db;
-			background-color: #3498db;
+			stroke: $lwtv-stats-blue;
+			background-color: $lwtv-stats-blue;
 		}
 
 		.lwtv-donut-seg--amber {
-			stroke: #f1c40f;
-			background-color: #f1c40f;
+			stroke: $lwtv-stats-yellow;
+			background-color: $lwtv-stats-yellow;
 		}
 
 		.lwtv-donut-seg--green {
-			stroke: #2ecc71;
-			background-color: #2ecc71;
+			stroke: $lwtv-stats-green;
+			background-color: $lwtv-stats-green;
 		}
 
 		.lwtv-donut-seg--red {
-			stroke: #e74c3c;
-			background-color: #e74c3c;
+			stroke: $lwtv-stats-red;
+			background-color: $lwtv-stats-red;
 		}
 	}
 

@@ -96,6 +96,10 @@ $lwtv_build_segments = function ( $items, $topn, $grey_match = '' ) {
 	return array( $segments, $total );
 };
 ?>
+<p class="lwtv-nation-preamble">
+	<?php esc_html_e( 'Use the tabs above to break its catalogue down by sexuality, gender, tropes, formats, and shows-on-air over time.', 'lwtv' ); ?>
+</p>
+
 <div class="lwtv-nation-profile bg-light">
 	<div class="lwtv-nation-profile-id">
 		<span class="lwtv-stats-eyebrow sexuality"><?php esc_html_e( 'Nation Profile', 'lwtv' ); ?></span>
@@ -120,7 +124,7 @@ switch ( $view ) {
 				'icon'   => 'svg-tv',
 			),
 			array(
-				'family' => 'sexuality',
+				'family' => 'shows-now',
 				'label'  => __( 'On Air Now', 'lwtv' ),
 				'count'  => $lwtv_onair,
 				'svg'    => 'tv.svg',
@@ -166,18 +170,28 @@ switch ( $view ) {
 			}
 			?>
 		</div>
-		<p class="lwtv-nation-score">
-			<?php
-			/* translators: 1: average score, 2: on-air average score. */
-			printf( esc_html__( 'Average score: %1$s / 100 (on-air %2$s / 100).', 'lwtv' ), esc_html( number_format_i18n( round( $lwtv_score ) ) ), esc_html( number_format_i18n( round( $lwtv_oascore ) ) ) );
-			?>
-		</p>
-		<p class="lwtv-nation-sentence">
-			<?php
-			/* translators: 1: on-air count, 2: nation name, 3: total shows. */
-			printf( esc_html__( '%1$s of %2$s\'s %3$s shows are currently on air. Use the tabs above to break its catalogue down by sexuality, gender, tropes, formats, and shows-on-air over time.', 'lwtv' ), esc_html( number_format_i18n( $lwtv_onair ) ), esc_html( $lwtv_name ), esc_html( number_format_i18n( $lwtv_shows ) ) );
-			?>
-		</p>
+
+		<div class="lwtv-metric-card bg-secondary-subtle">
+			<p class="lwtv-nation-score">
+				<?php
+				/* translators: 1: average score, 2: on-air average score. */
+				printf( esc_html__( 'Average score: %1$s / 100 (on-air %2$s / 100)', 'lwtv' ), esc_html( number_format_i18n( round( $lwtv_score ) ) ), esc_html( number_format_i18n( round( $lwtv_oascore ) ) ) );
+				?>
+			</p>
+			<p class="lwtv-nation-sentence">
+				<?php
+				$on_air_now = number_format_i18n( $lwtv_onair );
+
+				if ( 0 === (int) $on_air_now ) {
+					/* translators: 1: nation name, 2: total shows. */
+					printf( esc_html__( 'None of %1$s of %2$s\'s shows are currently on air.', 'lwtv' ), esc_html( $lwtv_name ), esc_html( number_format_i18n( $lwtv_shows ) ) );
+				} else {
+					/* translators: 1: on-air count, 2: nation name, 3: total shows. */
+					printf( esc_html__( '%1$s of %2$s\'s %3$s shows are currently on air.', 'lwtv' ), esc_html( $on_air_now ), esc_html( $lwtv_name ), esc_html( number_format_i18n( $lwtv_shows ) ) );
+				}
+				?>
+			</p>
+		</div>
 		<?php
 		break;
 

@@ -250,6 +250,7 @@ canvas {
 		background-color: colors.$lwtv-stats-blue-background;
 	}
 
+	.lwtv-metric-icon.shows-now,
 	.lwtv-metric-icon.actors {
 		background-color: colors.$lwtv-stats-yellow-background;
 	}
@@ -300,6 +301,10 @@ canvas {
 		color: colors.$lwtv-stats-blue;
 	}
 
+	.lwtv-nation-preamble {
+		font-size: 0.9rem;
+	}
+
 	.lwtv-nation-profile {
 		display: flex;
 		align-items: center;
@@ -345,12 +350,6 @@ canvas {
 
 	.lwtv-nation-profile-dead strong {
 		color: colors.$lwtv-stats-red;
-	}
-
-	.lwtv-nation-score,
-	.lwtv-nation-sentence {
-		font-size: 0.9rem;
-		color: colors.$lwtv-medgrey;
 	}
 
 	.lwtv-byg {
@@ -911,6 +910,7 @@ canvas {
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
+		text-decoration: none;
 
 		&:hover {
 			color: colors.$lwtv-purple;
@@ -1297,6 +1297,15 @@ canvas {
 
 	.lwtv-trend-peak {
 		fill: colors.$lwtv-pink;
+	}
+
+	.lwtv-trend-axis {
+		display: flex;
+		justify-content: space-between;
+		margin-top: 6px;
+		font-size: 0.75rem;
+		font-variant-numeric: tabular-nums;
+		color: colors.$lwtv-medgrey;
 	}
 
 	.lwtv-articles-intro {

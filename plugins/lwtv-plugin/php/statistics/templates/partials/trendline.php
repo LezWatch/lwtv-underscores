@@ -42,6 +42,10 @@ foreach ( $trend_counts as $trend_i => $trend_c ) {
 $trend_line = implode( ' ', array_map( fn( $p ) => $p[0] . ',' . $p[1], $trend_xy ) );
 $trend_area = $trend_n ? ( '0,' . $trend_h . ' ' . $trend_line . ' ' . $trend_w . ',' . $trend_h ) : '';
 $trend_peak = $trend_xy[ $trend_peak_i ] ?? array( 0, $trend_h );
+
+// First / last year for the x-axis labels below the graph.
+$trend_start_year = $trend_n ? (int) ( $trend_points[0]['year'] ?? 0 ) : 0;
+$trend_end_year   = $trend_n ? (int) ( $trend_points[ $trend_n - 1 ]['year'] ?? 0 ) : 0;
 ?>
 <p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php echo esc_html( $trend['eyebrow'] ?? '' ); ?></p>
 
@@ -62,6 +66,11 @@ $trend_peak = $trend_xy[ $trend_peak_i ] ?? array( 0, $trend_h );
 					esc_html__( 'on air in %d', 'lwtv' ),
 					(int) ( $trend['current_year'] ?? 0 )
 				);
+
+				if ( gmdate( 'Y' ) !== (int) ( $trend['current_year'] ) ) {
+					echo '<br />';
+					esc_html_e( ' (the last year a show aired)', 'lwtv' );
+				}
 				?>
 			</span>
 		</div>
@@ -73,5 +82,11 @@ $trend_peak = $trend_xy[ $trend_peak_i ] ?? array( 0, $trend_h );
 			<polyline class="lwtv-trend-line" points="<?php echo esc_attr( $trend_line ); ?>" fill="none" stroke-width="2.5" />
 			<circle class="lwtv-trend-peak" cx="<?php echo esc_attr( (string) $trend_peak[0] ); ?>" cy="<?php echo esc_attr( (string) $trend_peak[1] ); ?>" r="4" />
 		</svg>
+		<?php if ( $trend_n > 1 ) : ?>
+			<div class="lwtv-trend-axis">
+				<span><?php echo esc_html( (string) $trend_start_year ); ?></span>
+				<span><?php echo esc_html( (string) $trend_end_year ); ?></span>
+			</div>
+		<?php endif; ?>
 	<?php endif; ?>
 </section>
