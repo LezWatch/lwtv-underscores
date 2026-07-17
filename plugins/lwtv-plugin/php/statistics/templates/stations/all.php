@@ -75,7 +75,7 @@ $lwtv_cards = array(
 		'count'   => $lwtv_topshare,
 		'suffix'  => '%',
 		/* translators: %s: top station name. */
-		'caption' => $lwtv_top_name ? sprintf( __( '%s leads — no network dominates', 'lwtv' ), $lwtv_top_name ) : __( 'No single network dominates', 'lwtv' ),
+		'caption' => $lwtv_top_name ? sprintf( __( '%s leads the pack.', 'lwtv' ), $lwtv_top_name ) : __( 'No single network dominates', 'lwtv' ),
 		'svg'     => 'location-target.svg',
 		'icon'    => 'svg-location-target',
 	),

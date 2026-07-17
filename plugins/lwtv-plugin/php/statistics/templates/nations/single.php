@@ -240,9 +240,9 @@ switch ( $view ) {
 
 		$trend = array(
 			'points'       => $lwtv_points,
-			'eyebrow'      => sprintf( /* translators: %s nation */ __( 'Shows On Air Per Year — %s', 'lwtv' ), $lwtv_name ),
+			'eyebrow'      => __( 'Shows On Air Per Year', 'lwtv' ),
 			'headline'     => __( 'On-air over time', 'lwtv' ),
-			'description'  => sprintf( /* translators: %s nation */ __( 'Shows from %s active in each year, from the first tracked title to today.', 'lwtv' ), $lwtv_name ),
+			'description'  => __( 'Shows on air for each year, from the first tracked episode to today.', 'lwtv' ),
 			'current'      => (int) $lwtv_last['count'],
 			'current_year' => (int) $lwtv_last['year'],
 			'callouts'     => $lwtv_callouts,
@@ -258,7 +258,7 @@ switch ( $view ) {
 			'rows'   => $lwtv_trows,
 			'total'  => $lwtv_shows,
 			'family' => 'characters',
-			'title'  => sprintf( /* translators: %s nation */ __( 'Most common tropes in %s', 'lwtv' ), $lwtv_name ),
+			'title'  => __( 'Most common tropes', 'lwtv' ),
 			'sub'    => __( 'Shows can carry several, so shares add past 100%.', 'lwtv' ),
 			'svg'    => 'tag.svg',
 			'icon'   => 'svg-tag',
@@ -277,17 +277,17 @@ switch ( $view ) {
 
 		if ( '_gender' === $view ) {
 			list( $lwtv_segs, $lwtv_tot ) = $lwtv_build_segments( $lwtv_list, 4, 'cisgender' );
-			$lwtv_eyebrow                 = sprintf( /* translators: %s nation */ __( 'Character Gender — %s', 'lwtv' ), $lwtv_name );
+			$lwtv_eyebrow                 = __( 'Character Gender', 'lwtv' );
 			$lwtv_headline                = __( 'Gender identities', 'lwtv' );
 			$lwtv_sub                     = __( 'characters', 'lwtv' );
 		} elseif ( '_formats' === $view ) {
 			list( $lwtv_segs, $lwtv_tot ) = $lwtv_build_segments( $lwtv_list, 5 );
-			$lwtv_eyebrow                 = sprintf( /* translators: %s nation */ __( 'Show Formats — %s', 'lwtv' ), $lwtv_name );
+			$lwtv_eyebrow                 = __( 'Show Formats', 'lwtv' );
 			$lwtv_headline                = __( 'How these shows are made', 'lwtv' );
 			$lwtv_sub                     = __( 'shows', 'lwtv' );
 		} else {
 			list( $lwtv_segs, $lwtv_tot ) = $lwtv_build_segments( $lwtv_list, 5 );
-			$lwtv_eyebrow                 = sprintf( /* translators: %s nation */ __( 'Character Sexual Orientation — %s', 'lwtv' ), $lwtv_name );
+			$lwtv_eyebrow                 = __( 'Character Sexual Orientation', 'lwtv' );
 			$lwtv_headline                = __( 'Sexual orientations', 'lwtv' );
 			$lwtv_sub                     = __( 'characters', 'lwtv' );
 		}
