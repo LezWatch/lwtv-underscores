@@ -30,7 +30,6 @@ foreach ( $ds_map as $ds_key => $ds_meta ) {
 }
 $ds_alldead = isset( $ds_data['all_dead'] ) ? (int) $ds_data['all_dead']['count'] : 0;
 ?>
-<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'Which Shows Kill', 'lwtv' ); ?></p>
 <?php
 $donut = array(
 	'segments'    => $ds_seg,
@@ -38,7 +37,7 @@ $donut = array(
 	'center_sub'  => __( 'kill everyone', 'lwtv' ),
 	'eyebrow'     => __( 'Deaths Per Show', 'lwtv' ),
 	'headline'    => __( 'Most shows keep their queer characters alive', 'lwtv' ),
-	'description' => __( 'Raw per-show death counts track how large a show\'s cast is — a big ensemble will show more deaths than a two-hander.', 'lwtv' ),
+	'description' => __( 'Raw per-show death counts tend to match with how large a show\'s cast is.', 'lwtv' ),
 );
 // phpcs:ignore PEAR.Files.IncludingFile.UseRequire
 include plugin_dir_path( __DIR__ ) . 'partials/donut.php';

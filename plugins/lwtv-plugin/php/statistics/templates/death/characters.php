@@ -76,7 +76,7 @@ $dc_build = function ( $data, $topn = 5, $grey_slug = '' ) use ( $dc_ramp ) {
 $dc_sex = lwtv_plugin()->generate_dead_statistics( 'characters', 'sexuality', 'array' );
 list( $dc_sex_seg, $dc_sex_total, $dc_sex_top ) = $dc_build( $dc_sex, 5 );
 ?>
-<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'Who Dies — By Sexual Orientation', 'lwtv' ); ?></p>
+
 <?php
 $donut = array(
 	'segments'    => $dc_sex_seg,
@@ -95,7 +95,7 @@ include plugin_dir_path( __DIR__ ) . 'partials/donut.php';
 $dc_gen = lwtv_plugin()->generate_dead_statistics( 'characters', 'gender', 'array' );
 list( $dc_gen_seg, $dc_gen_total, $dc_gen_top ) = $dc_build( $dc_gen, 4, 'cisgender' );
 ?>
-<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'Who Dies — By Gender', 'lwtv' ); ?></p>
+<hr>
 <?php
 $donut = array(
 	'segments'    => $dc_gen_seg,
@@ -112,7 +112,7 @@ include plugin_dir_path( __DIR__ ) . 'partials/donut.php';
 $dc_role = lwtv_plugin()->generate_dead_statistics( 'characters', 'role', 'array' );
 list( $dc_role_seg, $dc_role_total, $dc_role_top ) = $dc_build( $dc_role, 3 );
 ?>
-<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'Who Dies — By Role', 'lwtv' ); ?></p>
+<hr>
 <?php
 $donut = array(
 	'segments'    => $dc_role_seg,

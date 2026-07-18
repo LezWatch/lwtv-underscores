@@ -23,14 +23,14 @@ foreach ( $dn_raw as $dn_r ) {
 	);
 }
 ?>
-<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'Deaths By Country', 'lwtv' ); ?></p>
+
 <?php
 $ranked = array(
 	'rows'   => array_slice( $dn_rows, 0, 15 ),
 	'total'  => $dn_tot,
 	'family' => 'characters',
 	'title'  => __( 'Countries with the most on-screen deaths', 'lwtv' ),
-	'sub'    => __( 'Tracks catalogue size by country, not a death rate.', 'lwtv' ),
+	'sub'    => __( 'The more shows in a nation, the more death. It\'s just math.', 'lwtv' ),
 	'svg'    => 'globe.svg',
 	'icon'   => 'svg-globe',
 	'base'   => '',

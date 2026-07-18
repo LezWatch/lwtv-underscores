@@ -23,14 +23,14 @@ foreach ( $dst_raw as $dst_r ) {
 	);
 }
 ?>
-<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'Deaths By Network', 'lwtv' ); ?></p>
+
 <?php
 $ranked = array(
 	'rows'   => array_slice( $dst_rows, 0, 15 ),
 	'total'  => $dst_tot,
 	'family' => 'characters',
 	'title'  => __( 'Networks with the most on-screen deaths', 'lwtv' ),
-	'sub'    => __( 'Bigger catalogues carry more deaths — this ranks raw totals, not rates.', 'lwtv' ),
+	'sub'    => __( 'More shows on a network means more deaths.', 'lwtv' ),
 	'svg'    => 'satellite-signal.svg',
 	'icon'   => 'svg-satellite-signal',
 	'base'   => '',

@@ -77,9 +77,9 @@ $yearbars      = array(
 	'peak_count'  => $death_ys['peak_count'],
 	'eyebrow'     => __( 'Deaths By Year', 'lwtv' ),
 	/* translators: %s: the deadliest year (4-digit, not a quantity — never thousands-formatted). */
-	'headline'    => sprintf( __( 'Deaths peaked in %s — and have fallen since', 'lwtv' ), $death_py_year ),
+	'headline'    => sprintf( __( 'Deaths peaked in %s.', 'lwtv' ), $death_py_year ),
 	/* translators: %s: the deadliest year (4-digit, not a quantity — never thousands-formatted). */
-	'description' => sprintf( __( '%s was the deadliest year on record for queer women on TV.', 'lwtv' ), $death_py_year ),
+	'description' => sprintf( __( '%s was the deadliest year on record.', 'lwtv' ), $death_py_year ),
 );
 // phpcs:ignore PEAR.Files.IncludingFile.UseRequire
 include plugin_dir_path( __DIR__ ) . 'partials/year-bars.php';

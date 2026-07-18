@@ -28,7 +28,7 @@ $yearbars   = array(
 	/* translators: 1: first year, 2: last year. */
 	'headline'    => sprintf( __( 'Every year, %1$s–%2$s', 'lwtv' ), (string) $first_year, (string) $last_year ),
 	/* translators: %s: the deadliest year. */
-	'description' => sprintf( __( 'One bar per year. %s towers over the rest — and nothing since has come close.', 'lwtv' ), (string) $dy['peak_year'] ),
+	'description' => sprintf( __( 'One bar per year. %s towers over the rest.', 'lwtv' ), (string) $dy['peak_year'] ),
 );
 // phpcs:ignore PEAR.Files.IncludingFile.UseRequire
 include plugin_dir_path( __DIR__ ) . 'partials/year-bars.php';
