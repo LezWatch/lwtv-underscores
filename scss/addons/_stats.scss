@@ -1551,4 +1551,54 @@ canvas {
 		color: colors.$lwtv-stats-red;
 		font-weight: 700;
 	}
+
+	.lwtv-death-gap-unit {
+		font-size: 0.8rem;
+		color: colors.$lwtv-medgrey;
+	}
+
+	.lwtv-death-list-intro {
+		margin: 8px 0 12px;
+		font-size: 0.85rem;
+		color: colors.$lwtv-medgrey;
+	}
+
+	.lwtv-death-list-wrap {
+		overflow-x: auto;
+	}
+
+	.lwtv-death-list {
+		width: 100%;
+		min-width: 600px;
+		border-collapse: collapse;
+		font-size: 0.85rem;
+
+		th, td {
+			padding: 8px 10px;
+			border-bottom: 1px solid colors.$lwtv-bordergrey;
+			text-align: left;
+		}
+
+		thead th {
+			font-size: 0.7rem;
+			font-weight: 700;
+			letter-spacing: 0.04em;
+			text-transform: uppercase;
+			color: colors.$lwtv-medgrey;
+			cursor: pointer;
+		}
+
+		td a {
+			color: colors.$lwtv-pink;
+
+			&:hover {
+				color: colors.$lwtv-purple;
+			}
+		}
+	}
+
+	.lwtv-death-list-num {
+		text-align: right !important;
+		font-variant-numeric: tabular-nums;
+	}
 }

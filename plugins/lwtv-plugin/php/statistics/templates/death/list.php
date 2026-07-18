@@ -1,39 +1,116 @@
 <?php
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
-
 /**
- * The template for displaying the death list statistics - Optimized Version
+ * Death → List: derived gap cards + the full sortable record.
  *
  * @package LezWatch.TV
  *
- * Required variables:
- * @var array $deadchars_with_stats - Dead characters with stats
- *
+ * @var array $deadchars_with_stats  'time' summary.
+ * @var array $dead_records          date-keyed records (newest first).
  */
 
-if ( empty( $deadchars_with_stats ) ) {
-	lwtv_plugin()->debug_log( 'death', 'Dead characters with stats is empty' );
+if ( empty( $dead_records ) ) {
+	lwtv_plugin()->debug_log( 'death', 'Dead records empty' );
 	return;
 }
-$days           = $deadchars_with_stats['time'];
-$start_date     = $deadchars_with_stats['start'];
-$end_date       = $deadchars_with_stats['end'];
-$most_dead      = $deadchars_with_stats['most']['count'];
-$most_dead_date = $deadchars_with_stats['most']['date'];
 
+$dl_time = (int) ( $deadchars_with_stats['time'] ?? 0 );
+$dl_most = (int) ( $deadchars_with_stats['most']['count'] ?? 0 );
+
+$dl_cards = array(
+	array(
+		'label'   => __( 'Longest Gap', 'lwtv' ),
+		'count'   => $dl_time,
+		'unit'    => __( 'days', 'lwtv' ),
+		'caption' => __( 'Between two consecutive deaths', 'lwtv' ),
+	),
+	array(
+		'label'   => __( 'Shortest Gap', 'lwtv' ),
+		'count'   => 0,
+		'unit'    => __( 'days', 'lwtv' ),
+		'caption' => __( 'Multiple have died the same day', 'lwtv' ),
+	),
+	array(
+		'label'   => __( 'Most In One Day', 'lwtv' ),
+		'count'   => $dl_most,
+		'unit'    => '',
+		'caption' => __( 'Characters killed on a single date', 'lwtv' ),
+	),
+);
+
+// Flatten date groups → one row per dead character (a date's gap applies to each).
+$dl_rows = array();
+foreach ( $dead_records as $dl_date => $dl_group ) {
+	$dl_since = isset( $dl_group['since'] ) ? (int) $dl_group['since'] : -1; // -1 => oldest row, show "—".
+
+	// The raw ACF meta backing the date key is usually Y-m-d, but a handful of
+	// rows were saved without dashes (Ymd). Normalize for display + text-sort.
+	$dl_date_display = (string) $dl_group['date'];
+	if ( false === strpos( $dl_date_display, '-' ) && 8 === strlen( $dl_date_display ) ) {
+		$dl_date_display = substr( $dl_date_display, 0, 4 ) . '-' . substr( $dl_date_display, 4, 2 ) . '-' . substr( $dl_date_display, 6, 2 );
+	}
+
+	foreach ( (array) $dl_group['chars'] as $dl_char ) {
+		$dl_rows[] = array(
+			'name'  => $dl_char['name'],
+			'url'   => $dl_char['url'],
+			'date'  => $dl_date_display,
+			'since' => $dl_since,
+		);
+	}
+}
 ?>
-<h3>List of All Dead Characters</h3>
-
-<p>The longest time span between character deaths is <strong><?php echo esc_html( $days ); ?> days</strong> (<a href="#<?php echo esc_html( $start_date ); ?>"><?php echo esc_html( $start_date ); ?></a> to <a href="#<?php echo esc_html( $end_date ); ?>"><?php echo esc_html( $end_date ); ?></a>). The shortest timespan is <strong>0 days</strong> (multiple characters have died on the same day). The most characters who have died on a single day is <strong><?php echo esc_html( $most_dead ); ?></strong> (<a href="#<?php echo esc_html( $most_dead_date ); ?>"><?php echo esc_html( $most_dead_date ); ?></a>).</p>
-
-<div class="container chart-container">
-	<div class="row">
-		<div class="col">
-			<?php echo lwtv_plugin()->generate_dead_statistics( 'characters', 'all', 'list' ); ?>
+<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'The Record', 'lwtv' ); ?></p>
+<div class="lwtv-metric-grid lwtv-metric-grid--3">
+	<?php
+	foreach ( $dl_cards as $dl_c ) {
+		?>
+		<div class="lwtv-metric-card bg-light card-header dead-characters">
+			<span class="lwtv-stats-eyebrow"><?php echo esc_html( $dl_c['label'] ); ?></span>
+			<span class="lwtv-metric-number" data-count-to="<?php echo (int) $dl_c['count']; ?>"><?php echo esc_html( number_format_i18n( $dl_c['count'] ) ); ?></span>
+			<?php
+			if ( '' !== $dl_c['unit'] ) :
+				?>
+				<span class="lwtv-death-gap-unit"><?php echo esc_html( $dl_c['unit'] ); ?></span><?php endif; ?>
+			<span class="lwtv-metric-caption"><?php echo esc_html( $dl_c['caption'] ); ?></span>
 		</div>
-	</div>
+		<?php
+	}
+	?>
 </div>
-<?php
+
+<p class="lwtv-death-list-intro">
+	<?php
+	printf(
+		/* translators: %s: number of dead characters. */
+		esc_html( _n( '%s character, newest first. Click a column heading to sort.', '%s characters, newest first. Click a column heading to sort.', count( $dl_rows ), 'lwtv' ) ),
+		esc_html( number_format_i18n( count( $dl_rows ) ) )
+	);
+	?>
+</p>
+<div class="lwtv-death-list-wrap">
+	<table id="DeadCharactersTable" class="tablesorter lwtv-death-list">
+		<thead>
+			<tr>
+				<th><?php esc_html_e( 'Name', 'lwtv' ); ?></th>
+				<th><?php esc_html_e( 'Date', 'lwtv' ); ?></th>
+				<th class="lwtv-death-list-num"><?php esc_html_e( 'Days Since Prev', 'lwtv' ); ?></th>
+			</tr>
+		</thead>
+		<tbody>
+			<?php
+			foreach ( $dl_rows as $dl_r ) {
+				?>
+				<tr>
+					<td><a href="<?php echo esc_url( $dl_r['url'] ); ?>"><?php echo esc_html( $dl_r['name'] ); ?></a></td>
+					<td><?php echo esc_html( $dl_r['date'] ); ?></td>
+					<td class="lwtv-death-list-num" data-text="<?php echo esc_attr( $dl_r['since'] >= 0 ? (string) $dl_r['since'] : '-1' ); ?>"><?php echo ( $dl_r['since'] >= 0 ) ? esc_html( number_format_i18n( $dl_r['since'] ) ) : '—'; ?></td>
+				</tr>
+				<?php
+			}
+			?>
+		</tbody>
+	</table>
+</div>

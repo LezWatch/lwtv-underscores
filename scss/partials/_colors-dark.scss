@@ -572,6 +572,11 @@
 		.lwtv-nations-lb-head {
 			color: colors.$lwtv-ltgrey;
 		}
+
+		.lwtv-death-list th,
+		.lwtv-death-list td {
+			border-bottom-color: rgba(255, 255, 255, 0.12);
+		}
 	}
 
 	.lwtv-actor-stats-modal {
