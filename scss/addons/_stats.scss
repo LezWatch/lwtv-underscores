@@ -1495,7 +1495,7 @@ canvas {
 	}
 
 	.lwtv-yearbars-avg-sub {
-		font-size: 0.7rem;
+		font-size: 0.8rem;
 		color: colors.$lwtv-medgrey;
 	}
 
@@ -1555,7 +1555,7 @@ canvas {
 		display: flex;
 		justify-content: space-between;
 		margin-top: 6px;
-		font-size: 0.7rem;
+		font-size: 0.8rem;
 		font-variant-numeric: tabular-nums;
 		color: colors.$lwtv-medgrey;
 	}
@@ -1628,9 +1628,25 @@ canvas {
 		font-variant-numeric: tabular-nums;
 	}
 
+	.lwtv-toll-numline {
+		display: flex;
+		align-items: baseline;
+		gap: 6px;
+
+		.lwtv-toll-num {
+			display: inline-block;
+		}
+	}
+
+	.lwtv-toll-unit {
+		font-size: 0.9rem;
+		font-weight: 600;
+		color: rgba(colors.$white, 0.82);
+	}
+
 	.lwtv-toll-caption {
 		margin-top: 12px;
-		font-size: 0.75rem;
+		font-size: 0.85rem;
 		color: rgba(colors.$white, 0.82);
 	}
 

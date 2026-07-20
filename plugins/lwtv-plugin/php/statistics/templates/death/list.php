@@ -21,18 +21,21 @@ $dl_most = (int) ( $deadchars_with_stats['most']['count'] ?? 0 );
 
 $dl_cards = array(
 	array(
+		'variant' => 'crimson',
 		'label'   => __( 'Longest Gap', 'lwtv' ),
 		'count'   => $dl_time,
 		'unit'    => __( 'days', 'lwtv' ),
 		'caption' => __( 'Between two consecutive deaths', 'lwtv' ),
 	),
 	array(
+		'variant' => 'raspberry',
 		'label'   => __( 'Shortest Gap', 'lwtv' ),
 		'count'   => 0,
 		'unit'    => __( 'days', 'lwtv' ),
 		'caption' => __( 'Multiple have died the same day', 'lwtv' ),
 	),
 	array(
+		'variant' => 'plum',
 		'label'   => __( 'Most In One Day', 'lwtv' ),
 		'count'   => $dl_most,
 		'unit'    => '',
@@ -63,18 +66,19 @@ foreach ( $dead_records as $dl_date => $dl_group ) {
 }
 ?>
 <p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'The Record', 'lwtv' ); ?></p>
-<div class="lwtv-metric-grid lwtv-metric-grid--3">
+<div class="lwtv-toll">
 	<?php
 	foreach ( $dl_cards as $dl_c ) {
 		?>
-		<div class="lwtv-metric-card bg-light card-header dead-characters">
-			<span class="lwtv-stats-eyebrow"><?php echo esc_html( $dl_c['label'] ); ?></span>
-			<span class="lwtv-metric-number" data-count-to="<?php echo (int) $dl_c['count']; ?>"><?php echo esc_html( number_format_i18n( $dl_c['count'] ) ); ?></span>
-			<?php
-			if ( '' !== $dl_c['unit'] ) :
-				?>
-				<span class="lwtv-death-gap-unit"><?php echo esc_html( $dl_c['unit'] ); ?></span><?php endif; ?>
-			<span class="lwtv-metric-caption"><?php echo esc_html( $dl_c['caption'] ); ?></span>
+		<div class="lwtv-toll-tile lwtv-toll-tile--<?php echo esc_attr( $dl_c['variant'] ); ?>">
+			<span class="lwtv-toll-eyebrow"><?php echo esc_html( $dl_c['label'] ); ?></span>
+			<span class="lwtv-toll-numline">
+				<span class="lwtv-toll-num" data-count-to="<?php echo (int) $dl_c['count']; ?>"><?php echo esc_html( number_format_i18n( $dl_c['count'] ) ); ?></span>
+				<?php if ( '' !== $dl_c['unit'] ) : ?>
+					<span class="lwtv-toll-unit"><?php echo esc_html( $dl_c['unit'] ); ?></span>
+				<?php endif; ?>
+			</span>
+			<span class="lwtv-toll-caption"><?php echo esc_html( $dl_c['caption'] ); ?></span>
 		</div>
 		<?php
 	}
