@@ -359,7 +359,6 @@ canvas {
 		padding: 16px 20px;
 		margin-bottom: 1.5rem;
 		border: 1px solid;
-		border-left-width: 3px;
 		border-radius: 14px;
 	}
 
@@ -423,7 +422,6 @@ canvas {
 		flex-direction: column;
 		padding: 24px;
 		border: 1px solid; // color comes from .card-header.<type>.
-		border-left-width: 4px;
 		border-radius: 14px;
 
 		.lwtv-stats-eyebrow {
@@ -1323,7 +1321,6 @@ canvas {
 		flex: 1 1 220px;
 		padding: 14px 18px;
 		border: 1px solid colors.$lwtv-bordergrey;
-		border-left: 3px solid colors.$lwtv-pink;
 		border-radius: 12px;
 	}
 
