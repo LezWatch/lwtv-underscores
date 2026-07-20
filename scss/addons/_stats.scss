@@ -1,4 +1,5 @@
 @use "sass:color";
+@use "sass:map";
 @use "../partials/colors";
 
 /* Statistics Pages */
@@ -1562,13 +1563,25 @@ canvas {
 		font-weight: 700;
 	}
 
-	// "The Toll" solid tiles (Death Overview) — bespoke crimson→plum fills,
-	// hardcoded per the handoff (same in light + dark, white text carries contrast).
+	// Solid tiles (Death Overview + Station "At A Glance") — bespoke fills,
+	// hardcoded per the handoffs (same in light + dark, white text carries
+	// contrast). Each entry: (solid fill, inset-chip surface).
 	$death-toll: (
 		crimson: (#be123c, #ffe4e6),
 		raspberry: (#9d2a61, #f6d0e2),
 		plum: (#7a1f4f, #efd3e3),
 	);
+
+	// Station "Vibrant Refresh" palette (teal / amber / green / rose).
+	$vibrant-toll: (
+		teal: (#0e7490, #cffafe),
+		amber: (#b45309, #fef3c7),
+		green: (#15803d, #dcfce7),
+		rose: (#be123c, #ffe4e6),
+	);
+
+	// Amber accent reused by the station score footer + on-air meter.
+	$v-onair: #b45309;
 
 	.lwtv-toll {
 		display: grid;
@@ -1581,6 +1594,19 @@ canvas {
 		}
 	}
 
+	// Four-up variant for the station "At A Glance" grid.
+	.lwtv-toll--4 {
+		grid-template-columns: repeat(4, 1fr);
+
+		@media (max-width: 991px) {
+			grid-template-columns: repeat(2, 1fr);
+		}
+
+		@media (max-width: 575px) {
+			grid-template-columns: 1fr;
+		}
+	}
+
 	.lwtv-toll-tile {
 		display: flex;
 		flex-direction: column;
@@ -1588,7 +1614,7 @@ canvas {
 		border-radius: 14px;
 		color: colors.$white;
 
-		@each $name, $pair in $death-toll {
+		@each $name, $pair in map.merge($death-toll, $vibrant-toll) {
 			&--#{$name} {
 				background-color: nth($pair, 1);
 
@@ -1662,6 +1688,126 @@ canvas {
 			height: 19px;
 			fill: currentColor;
 		}
+	}
+
+	// ── Station "Vibrant Refresh" (single-station Overview) ──────────────
+	// Profile header restyle: icon chip + descriptive intro line. Scoped to
+	// the --vibrant modifier so Nations (which shares the base classes) is
+	// untouched.
+	.lwtv-nation-profile--vibrant {
+		flex-direction: column;
+		align-items: stretch;
+		padding: 22px 24px;
+	}
+
+	.lwtv-nation-profile-row {
+		display: flex;
+		align-items: flex-start;
+		justify-content: space-between;
+		flex-wrap: wrap;
+		gap: 16px;
+	}
+
+	.lwtv-nation-profile-lead {
+		display: flex;
+		align-items: center;
+		gap: 12px;
+	}
+
+	.lwtv-nation-profile-chip {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		flex: 0 0 auto;
+		width: 34px;
+		height: 34px;
+		border-radius: 9px;
+		color: #a51e63;
+		background-color: #fbeaf2;
+
+		svg {
+			width: 19px;
+			height: 19px;
+			fill: currentColor;
+		}
+	}
+
+	.lwtv-nation-profile--vibrant .lwtv-nation-profile-name {
+		font-size: 1.75rem;
+		font-weight: 800;
+		letter-spacing: -0.02em;
+		line-height: 1.05;
+	}
+
+	.lwtv-nation-profile-intro {
+		margin: 14px 0 0;
+		max-width: 560px;
+		font-size: 0.9rem;
+		line-height: 1.5;
+	}
+
+	// Score footer: relabelled averages + on-air progress meter.
+	.lwtv-station-score {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		flex-wrap: wrap;
+		gap: 20px;
+	}
+
+	.lwtv-station-scores {
+		display: flex;
+		align-items: baseline;
+		flex-wrap: wrap;
+		gap: 14px;
+	}
+
+	.lwtv-station-score-num {
+		font-size: 1.75rem;
+		font-weight: 800;
+		line-height: 1;
+		font-variant-numeric: tabular-nums;
+	}
+
+	.lwtv-station-score-num--onair {
+		color: $v-onair;
+	}
+
+	.lwtv-station-score-sub {
+		font-size: 0.8rem;
+		color: colors.$lwtv-medgrey;
+	}
+
+	.lwtv-station-score-div {
+		width: 1px;
+		height: 22px;
+		background-color: colors.$lwtv-bordergrey;
+	}
+
+	.lwtv-station-meter {
+		flex: 1;
+		min-width: 180px;
+	}
+
+	.lwtv-station-meter-cap {
+		display: flex;
+		justify-content: space-between;
+		margin-bottom: 5px;
+		font-size: 0.7rem;
+		font-variant-numeric: tabular-nums;
+		color: colors.$lwtv-medgrey;
+	}
+
+	.lwtv-station-meter-track {
+		height: 8px;
+		border-radius: 999px;
+		background-color: colors.$lwtv-bordergrey;
+		overflow: hidden;
+	}
+
+	.lwtv-station-meter-fill {
+		height: 100%;
+		background-color: $v-onair;
 	}
 
 	.lwtv-death-gap-unit {

@@ -96,20 +96,39 @@ $lwtv_build_segments = function ( $items, $topn, $grey_match = '' ) {
 	return array( $segments, $total );
 };
 ?>
-<p class="lwtv-nation-preamble">
-	<?php esc_html_e( 'Use the tabs above to break its catalogue down by sexuality, gender, tropes, formats, and shows-on-air over time.', 'lwtv' ); ?>
-</p>
-
-<div class="lwtv-nation-profile bg-light">
-	<div class="lwtv-nation-profile-id">
-		<span class="lwtv-stats-eyebrow sexuality"><?php esc_html_e( 'Station Profile', 'lwtv' ); ?></span>
-		<h2 class="lwtv-nation-profile-name"><?php echo esc_html( $lwtv_name ); ?></h2>
+<div class="lwtv-nation-profile lwtv-nation-profile--vibrant bg-light">
+	<div class="lwtv-nation-profile-row">
+		<div class="lwtv-nation-profile-lead">
+			<span class="lwtv-nation-profile-chip"><?php echo lwtv_plugin()->get_symbolicon( svg: 'tv.svg', icon: 'svg-tv', max_size: '19' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
+			<div class="lwtv-nation-profile-id">
+				<span class="lwtv-stats-eyebrow sexuality"><?php esc_html_e( 'Station Profile', 'lwtv' ); ?></span>
+				<h2 class="lwtv-nation-profile-name"><?php echo esc_html( $lwtv_name ); ?></h2>
+			</div>
+		</div>
+		<div class="lwtv-nation-profile-figs">
+			<span><strong data-count-to="<?php echo (int) $lwtv_shows; ?>"><?php echo esc_html( number_format_i18n( $lwtv_shows ) ); ?></strong><em><?php esc_html_e( 'shows', 'lwtv' ); ?></em></span>
+			<span><strong data-count-to="<?php echo (int) $lwtv_chars; ?>"><?php echo esc_html( number_format_i18n( $lwtv_chars ) ); ?></strong><em><?php esc_html_e( 'characters', 'lwtv' ); ?></em></span>
+			<span class="lwtv-nation-profile-dead"><strong data-count-to="<?php echo (int) $lwtv_dead; ?>"><?php echo esc_html( number_format_i18n( $lwtv_dead ) ); ?></strong><em><?php esc_html_e( 'dead', 'lwtv' ); ?></em></span>
+		</div>
 	</div>
-	<div class="lwtv-nation-profile-figs">
-		<span><strong data-count-to="<?php echo (int) $lwtv_shows; ?>"><?php echo esc_html( number_format_i18n( $lwtv_shows ) ); ?></strong><em><?php esc_html_e( 'shows', 'lwtv' ); ?></em></span>
-		<span><strong data-count-to="<?php echo (int) $lwtv_chars; ?>"><?php echo esc_html( number_format_i18n( $lwtv_chars ) ); ?></strong><em><?php esc_html_e( 'characters', 'lwtv' ); ?></em></span>
-		<span class="lwtv-nation-profile-dead"><strong data-count-to="<?php echo (int) $lwtv_dead; ?>"><?php echo esc_html( number_format_i18n( $lwtv_dead ) ); ?></strong><em><?php esc_html_e( 'dead', 'lwtv' ); ?></em></span>
-	</div>
+	<p class="lwtv-nation-profile-intro">
+		<?php
+		if ( $lwtv_onair > 0 ) {
+			printf(
+				/* translators: 1: on-air count, 2: station name, 3: total shows. */
+				esc_html( _n( '%1$s of %2$s\'s %3$s shows is currently on air.', '%1$s of %2$s\'s %3$s shows are currently on air.', $lwtv_onair, 'lwtv' ) ),
+				esc_html( number_format_i18n( $lwtv_onair ) ),
+				esc_html( $lwtv_name ),
+				esc_html( number_format_i18n( $lwtv_shows ) )
+			);
+		} else {
+			/* translators: 1: station name, 2: total shows. */
+			printf( esc_html__( 'None of %1$s\'s %2$s shows are currently on air.', 'lwtv' ), esc_html( $lwtv_name ), esc_html( number_format_i18n( $lwtv_shows ) ) );
+		}
+		echo ' ';
+		esc_html_e( 'Use the tabs to break its catalogue down by sexuality, gender, tropes, formats, and shows on air.', 'lwtv' );
+		?>
+	</p>
 </div>
 
 <?php
@@ -117,80 +136,75 @@ switch ( $view ) {
 	case '_all':
 		$lwtv_ov_cards = array(
 			array(
-				'family' => 'shows',
-				'label'  => __( 'Shows', 'lwtv' ),
-				'count'  => $lwtv_shows,
-				'svg'    => 'tv.svg',
-				'icon'   => 'svg-tv',
+				'variant' => 'teal',
+				'label'   => __( 'Shows', 'lwtv' ),
+				'count'   => $lwtv_shows,
+				'svg'     => 'tv.svg',
+				'icon'    => 'svg-tv',
 			),
 			array(
-				'family' => 'shows-now',
-				'label'  => __( 'On Air Now', 'lwtv' ),
-				'count'  => $lwtv_onair,
-				'svg'    => 'tv.svg',
-				'icon'   => 'svg-tv',
+				'variant' => 'amber',
+				'label'   => __( 'On Air Now', 'lwtv' ),
+				'count'   => $lwtv_onair,
+				'svg'     => 'satellite-signal.svg',
+				'icon'    => 'svg-satellite-signal',
 			),
 			array(
-				'family' => 'characters',
-				'label'  => __( 'Characters', 'lwtv' ),
-				'count'  => $lwtv_chars,
-				'svg'    => 'group.svg',
-				'icon'   => 'svg-users',
+				'variant' => 'green',
+				'label'   => __( 'Characters', 'lwtv' ),
+				'count'   => $lwtv_chars,
+				'svg'     => 'man-woman.svg',
+				'icon'    => 'svg-man-woman',
 			),
 			array(
-				'family' => 'dead-characters',
-				'label'  => __( 'Dead', 'lwtv' ),
-				'count'  => $lwtv_dead,
-				'svg'    => 'skull.svg',
-				'icon'   => 'svg-skull',
+				'variant' => 'rose',
+				'label'   => __( 'Dead', 'lwtv' ),
+				'count'   => $lwtv_dead,
+				'svg'     => 'skull.svg',
+				'icon'    => 'svg-skull',
 			),
 		);
+
+		// On-air share drives the score-footer meter fill (0–100).
+		$lwtv_oapct = ( $lwtv_shows > 0 ) ? (int) round( $lwtv_onair / $lwtv_shows * 100 ) : 0;
 		?>
-		<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section">
-			<?php
-			/* translators: %s: nation name. */
-			printf( esc_html__( '%s at a Glance', 'lwtv' ), esc_html( $lwtv_name ) );
-			?>
-		</p>
-		<div class="lwtv-metric-grid lwtv-metric-grid--4">
+		<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'At a Glance', 'lwtv' ); ?></p>
+		<div class="lwtv-toll lwtv-toll--4">
 			<?php
 			foreach ( $lwtv_ov_cards as $lwtv_c ) {
-				// Icon-tile background class uses the type modifier; the .dead-characters
-				// family maps to the "dead" icon-tile modifier (see characters/overview.php).
-				$lwtv_icon_mod = ( 'dead-characters' === $lwtv_c['family'] ) ? 'dead' : $lwtv_c['family'];
 				?>
-				<div class="lwtv-metric-card bg-light card-header <?php echo esc_attr( $lwtv_c['family'] ); ?>">
-					<div class="lwtv-metric-top">
-						<span class="lwtv-stats-eyebrow"><?php echo esc_html( $lwtv_c['label'] ); ?></span>
-						<span class="lwtv-metric-icon <?php echo esc_attr( $lwtv_icon_mod ); ?>"><?php echo lwtv_plugin()->get_symbolicon( svg: $lwtv_c['svg'], icon: $lwtv_c['icon'], max_size: '20' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
+				<div class="lwtv-toll-tile lwtv-toll-tile--<?php echo esc_attr( $lwtv_c['variant'] ); ?>">
+					<div class="lwtv-toll-top">
+						<span class="lwtv-toll-eyebrow"><?php echo esc_html( $lwtv_c['label'] ); ?></span>
+						<span class="lwtv-toll-chip"><?php echo lwtv_plugin()->get_symbolicon( svg: $lwtv_c['svg'], icon: $lwtv_c['icon'], max_size: '17' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
 					</div>
-					<span class="lwtv-metric-number" data-count-to="<?php echo (int) $lwtv_c['count']; ?>"><?php echo esc_html( number_format_i18n( $lwtv_c['count'] ) ); ?></span>
+					<span class="lwtv-toll-num" data-count-to="<?php echo (int) $lwtv_c['count']; ?>"><?php echo esc_html( number_format_i18n( $lwtv_c['count'] ) ); ?></span>
 				</div>
 				<?php
 			}
 			?>
 		</div>
 
-		<div class="lwtv-metric-card bg-secondary-subtle">
-			<p class="lwtv-nation-score">
-				<?php
-				/* translators: 1: average score, 2: on-air average score. */
-				printf( esc_html__( 'Average score: %1$s / 100 (on-air %2$s / 100)', 'lwtv' ), esc_html( number_format_i18n( round( $lwtv_score ) ) ), esc_html( number_format_i18n( round( $lwtv_oascore ) ) ) );
-				?>
-			</p>
-			<p class="lwtv-nation-sentence">
-				<?php
-				$on_air_now = number_format_i18n( $lwtv_onair );
-
-				if ( 0 === (int) $on_air_now ) {
-					/* translators: 1: nation name, 2: total shows. */
-					printf( esc_html__( 'None of %1$s of %2$s\'s shows are currently on air.', 'lwtv' ), esc_html( $lwtv_name ), esc_html( number_format_i18n( $lwtv_shows ) ) );
-				} else {
-					/* translators: 1: on-air count, 2: nation name, 3: total shows. */
-					printf( esc_html__( '%1$s of %2$s\'s %3$s shows are currently on air.', 'lwtv' ), esc_html( $on_air_now ), esc_html( $lwtv_name ), esc_html( number_format_i18n( $lwtv_shows ) ) );
-				}
-				?>
-			</p>
+		<div class="lwtv-metric-card bg-light">
+			<p class="lwtv-stats-eyebrow"><?php esc_html_e( 'Average Show Score', 'lwtv' ); ?></p>
+			<div class="lwtv-station-score">
+				<div class="lwtv-station-scores">
+					<span class="lwtv-station-score-num" data-count-to="<?php echo (int) round( $lwtv_score ); ?>"><?php echo esc_html( number_format_i18n( round( $lwtv_score ) ) ); ?></span>
+					<span class="lwtv-station-score-sub"><?php esc_html_e( '/ 100 all shows', 'lwtv' ); ?></span>
+					<span class="lwtv-station-score-div" aria-hidden="true"></span>
+					<span class="lwtv-station-score-num lwtv-station-score-num--onair" data-count-to="<?php echo (int) round( $lwtv_oascore ); ?>"><?php echo esc_html( number_format_i18n( round( $lwtv_oascore ) ) ); ?></span>
+					<span class="lwtv-station-score-sub"><?php esc_html_e( '/ 100 on air', 'lwtv' ); ?></span>
+				</div>
+				<div class="lwtv-station-meter">
+					<div class="lwtv-station-meter-cap">
+						<span><?php esc_html_e( 'On air', 'lwtv' ); ?></span>
+						<span><?php printf( '%1$s / %2$s', esc_html( number_format_i18n( $lwtv_onair ) ), esc_html( number_format_i18n( $lwtv_shows ) ) ); ?></span>
+					</div>
+					<div class="lwtv-station-meter-track">
+						<div class="lwtv-station-meter-fill" style="width:<?php echo (int) $lwtv_oapct; ?>%"></div>
+					</div>
+				</div>
+			</div>
 		</div>
 		<?php
 		break;

@@ -597,6 +597,14 @@
 			color: colors.$lwtv-ltgrey;
 		}
 
+		// Station "Vibrant Refresh" profile chip (pink well + glyph) — the
+		// solid At A Glance tiles + meter carry white text and need no dark
+		// treatment; only the header chip flips.
+		.lwtv-nation-profile-chip {
+			color: #eba3c5;
+			background-color: rgba(203, 62, 133, 0.22);
+		}
+
 		.lwtv-death-list th,
 		.lwtv-death-list td {
 			border-bottom-color: rgba(255, 255, 255, 0.12);
