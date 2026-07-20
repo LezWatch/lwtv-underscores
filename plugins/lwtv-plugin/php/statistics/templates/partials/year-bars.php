@@ -16,6 +16,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  *   @type string $eyebrow
  *   @type string $headline
  *   @type string $description
+ *   @type array  $callouts    Optional [ ['label','text','svg','icon'], … ] boxes
+ *                              rendered above the chart (reuses trendline callout markup).
  * }
  */
 
@@ -25,6 +27,23 @@ $yb_pyear = (int) ( $yearbars['peak_year'] ?? 0 );
 $yb_first = ! empty( $yb_rows ) ? (int) $yb_rows[0]['year'] : 0;
 $yb_last  = ! empty( $yb_rows ) ? (int) $yb_rows[ count( $yb_rows ) - 1 ]['year'] : 0;
 ?>
+<?php if ( ! empty( $yearbars['callouts'] ) && is_array( $yearbars['callouts'] ) ) : ?>
+	<div class="lwtv-trend-callouts">
+		<?php foreach ( $yearbars['callouts'] as $yb_callout ) : ?>
+			<div class="lwtv-trend-callout">
+				<div class="lwtv-trend-callout-body">
+					<span class="lwtv-stats-eyebrow"><?php echo esc_html( $yb_callout['label'] ?? '' ); ?></span>
+					<p class="lwtv-trend-callout-text"><?php echo esc_html( $yb_callout['text'] ?? '' ); ?></p>
+				</div>
+				<?php if ( ! empty( $yb_callout['svg'] ) ) : ?>
+					<span class="lwtv-trend-callout-icon">
+						<?php echo lwtv_plugin()->get_symbolicon( svg: $yb_callout['svg'], icon: $yb_callout['icon'] ?? '', max_size: '24' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+					</span>
+				<?php endif; ?>
+			</div>
+		<?php endforeach; ?>
+	</div>
+<?php endif; ?>
 <section class="lwtv-yearbars-card bg-light">
 	<div class="lwtv-yearbars-head">
 		<div>

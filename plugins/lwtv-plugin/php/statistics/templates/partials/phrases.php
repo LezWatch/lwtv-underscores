@@ -104,18 +104,22 @@ if ( ! function_exists( 'lwtv_stats_shortfall_phrase' ) ) {
 
 if ( ! function_exists( 'lwtv_stats_year_series' ) ) {
 	/**
-	 * Dense-fill a sparse [ ['death_year','death_count'], … ] series and find the peak.
+	 * Dense-fill a sparse per-year series and find the peak. Defaults to the
+	 * Death shape ('death_year'/'death_count'); pass key names to reuse it for
+	 * other series (e.g. the on-air 'year'/'count' shape).
 	 *
-	 * @param array $sparse Ascending sparse per-year rows.
+	 * @param array  $sparse    Ascending sparse per-year rows.
+	 * @param string $year_key  Row key holding the year. Default 'death_year'.
+	 * @param string $count_key Row key holding the count. Default 'death_count'.
 	 * @return array [ 'rows' => [ ['year'=>int,'count'=>int], … ] dense, 'peak_year'=>int, 'peak_count'=>int ]
 	 */
-	function lwtv_stats_year_series( $sparse ) {
+	function lwtv_stats_year_series( $sparse, $year_key = 'death_year', $count_key = 'death_count' ) {
 		$map = array();
 		$min = 0;
 		$max = 0;
 		foreach ( (array) $sparse as $row ) {
-			$y = (int) ( $row['death_year'] ?? 0 );
-			$c = (int) ( $row['death_count'] ?? 0 );
+			$y = (int) ( $row[ $year_key ] ?? 0 );
+			$c = (int) ( $row[ $count_key ] ?? 0 );
 			if ( $y <= 0 ) {
 				continue;
 			}

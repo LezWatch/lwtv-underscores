@@ -252,17 +252,24 @@ switch ( $view ) {
 			);
 		}
 
-		$trend = array(
-			'points'       => $lwtv_points,
-			'eyebrow'      => __( 'Shows On Air Per Year', 'lwtv' ),
-			'headline'     => __( 'On-air over time', 'lwtv' ),
-			'description'  => __( 'Shows on air in each year, from the first tracked episode to today.', 'lwtv' ),
-			'current'      => (int) $lwtv_last['count'],
-			'current_year' => (int) $lwtv_last['year'],
-			'callouts'     => $lwtv_callouts,
+		// phpcs:ignore PEAR.Files.IncludingFile.UseRequire
+		require_once plugin_dir_path( __DIR__ ) . 'partials/phrases.php';
+		$lwtv_oa_series = lwtv_stats_year_series( $lwtv_points, 'year', 'count' );
+
+		$yearbars = array(
+			'rows'        => $lwtv_oa_series['rows'],
+			'peak_year'   => $lwtv_oa_series['peak_year'],
+			'peak_count'  => $lwtv_oa_series['peak_count'],
+			'stat_num'    => (int) $lwtv_last['count'],
+			/* translators: %s: the latest year (4-digit, never thousands-formatted). */
+			'stat_sub'    => sprintf( __( 'on air in %s', 'lwtv' ), (string) $lwtv_last['year'] ),
+			'eyebrow'     => __( 'Shows On Air Per Year', 'lwtv' ),
+			'headline'    => __( 'On-air over time', 'lwtv' ),
+			'description' => __( 'Shows on air in each year, from the first tracked episode to today.', 'lwtv' ),
+			'callouts'    => $lwtv_callouts,
 		);
 		// phpcs:ignore PEAR.Files.IncludingFile.UseRequire
-		include plugin_dir_path( __DIR__ ) . 'partials/trendline.php';
+		include plugin_dir_path( __DIR__ ) . 'partials/year-bars.php';
 		break;
 
 	case '_tropes':

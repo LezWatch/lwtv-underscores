@@ -37,14 +37,21 @@ $onair_last = end( $onair_points ) ?: array(
 // translators: %1$d is the year with most shows, %2$d is the number of shows it has.
 $description = sprintf( __( 'The count climbed steadily for two decades and peaked in %1$d (with %2$d); the latest dip reflects the current contraction in scripted TV', 'lwtv' ), $most_year['name'], $most_year['count'] );
 
-$trend = array(
-	'points'       => $onair_points,
-	'eyebrow'      => __( 'Shows On Air per Year', 'lwtv' ),
-	'headline'     => __( 'More queer shows are on air than ever', 'lwtv' ),
-	'description'  => $description,
-	'current'      => (int) $onair_last['count'],
-	'current_year' => (int) $onair_last['year'],
+// phpcs:ignore PEAR.Files.IncludingFile.UseRequire
+require_once plugin_dir_path( __DIR__ ) . 'partials/phrases.php';
+$onair_series = lwtv_stats_year_series( $onair_points, 'year', 'count' );
+
+$yearbars = array(
+	'rows'        => $onair_series['rows'],
+	'peak_year'   => $onair_series['peak_year'],
+	'peak_count'  => $onair_series['peak_count'],
+	'stat_num'    => (int) $onair_last['count'],
+	/* translators: %s: the latest year (4-digit, never thousands-formatted). */
+	'stat_sub'    => sprintf( __( 'on air in %s', 'lwtv' ), (string) $onair_last['year'] ),
+	'eyebrow'     => __( 'Shows On Air per Year', 'lwtv' ),
+	'headline'    => __( 'More queer shows are on air than ever', 'lwtv' ),
+	'description' => $description,
 );
 
 // phpcs:ignore PEAR.Files.IncludingFile.UseRequire
-include plugin_dir_path( __DIR__ ) . 'partials/trendline.php';
+include plugin_dir_path( __DIR__ ) . 'partials/year-bars.php';
