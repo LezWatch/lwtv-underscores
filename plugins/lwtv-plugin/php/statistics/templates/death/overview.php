@@ -87,16 +87,23 @@ foreach ( array_reverse( $death_ys['rows'] ) as $death_row ) {
 		break;
 	}
 }
+
+$stat_sub = sprintf(
+	/* translators: %s: the latest year (4-digit, never thousands-formatted). */
+	_n( 'death in %s', 'deaths in %s', (int) $death_latest['count'], 'lwtv' ),
+	(string) $death_latest['year']
+);
+
 $yearbars = array(
 	'rows'        => $death_ys['rows'],
 	'peak_year'   => $death_ys['peak_year'],
 	'peak_count'  => $death_ys['peak_count'],
 	'stat_num'    => (int) $death_latest['count'],
 	/* translators: %s: the latest year (4-digit, never thousands-formatted). */
-	'stat_sub'    => sprintf( __( 'deaths in %s', 'lwtv' ), (string) $death_latest['year'] ),
+	'stat_sub'    => $stat_sub,
 	'eyebrow'     => __( 'Deaths By Year', 'lwtv' ),
 	/* translators: %s: the deadliest year (4-digit, not a quantity — never thousands-formatted). */
-	'headline'    => sprintf( __( 'Deaths peaked in %s.', 'lwtv' ), $death_py_year ),
+	'headline'    => sprintf( __( 'Death peaked in %s.', 'lwtv' ), $death_py_year ),
 	/* translators: %s: the deadliest year (4-digit, not a quantity — never thousands-formatted). */
 	'description' => sprintf( __( '%s was the deadliest year on record.', 'lwtv' ), $death_py_year ),
 );
