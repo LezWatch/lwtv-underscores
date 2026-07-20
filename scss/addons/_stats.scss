@@ -1506,11 +1506,17 @@ canvas {
 		height: 220px;
 	}
 
+	// Death "Vibrant Refresh" — bespoke crimson→plum data-viz palette. Hardcoded
+	// hex per the design handoff (a fixed severity ramp meant to read the same in
+	// light and dark), not the theme tokens.
+	$death-bar-ramp: #edaac1, #e690ac, #e068a0, #d84f92, #c93a80, #c02e70;
+	$death-bar-peak: #a5124a;
+
 	.lwtv-yearbar {
 		position: relative;
 		flex: 1 1 0;
 		min-width: 3px;
-		background-color: rgba(colors.$lwtv-stats-red, 0.35);
+		background-color: nth($death-bar-ramp, 1);
 		border-radius: 3px 3px 0 0;
 
 		.lwtv-yearbar-val {
@@ -1528,13 +1534,20 @@ canvas {
 		}
 	}
 
+	// Ramp rose→crimson by height bucket (0 shortest → 5 tallest).
+	@for $i from 0 through 5 {
+		.lwtv-yearbar--r#{$i} {
+			background-color: nth($death-bar-ramp, $i + 1);
+		}
+	}
+
 	.lwtv-yearbar--peak {
-		background-color: colors.$lwtv-stats-red;
+		background-color: $death-bar-peak;
 
 		.lwtv-yearbar-val {
 			opacity: 1;
 			font-weight: 700;
-			color: colors.$lwtv-stats-red;
+			color: $death-bar-peak;
 		}
 	}
 
@@ -1548,8 +1561,94 @@ canvas {
 	}
 
 	.lwtv-yearbars-axis-peak {
-		color: colors.$lwtv-stats-red;
+		color: $death-bar-peak;
 		font-weight: 700;
+	}
+
+	// "The Toll" solid tiles (Death Overview) — bespoke crimson→plum fills,
+	// hardcoded per the handoff (same in light + dark, white text carries contrast).
+	$death-toll: (
+		crimson: (#be123c, #ffe4e6),
+		raspberry: (#9d2a61, #f6d0e2),
+		plum: (#7a1f4f, #efd3e3),
+	);
+
+	.lwtv-toll {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 16px;
+		margin-bottom: 20px;
+
+		@media (max-width: 767px) {
+			grid-template-columns: 1fr;
+		}
+	}
+
+	.lwtv-toll-tile {
+		display: flex;
+		flex-direction: column;
+		padding: 18px 18px 16px;
+		border-radius: 14px;
+		color: colors.$white;
+
+		@each $name, $pair in $death-toll {
+			&--#{$name} {
+				background-color: nth($pair, 1);
+
+				.lwtv-toll-chip {
+					color: nth($pair, 1);
+					background-color: nth($pair, 2);
+				}
+			}
+		}
+	}
+
+	.lwtv-toll-top {
+		display: flex;
+		align-items: flex-start;
+		justify-content: space-between;
+	}
+
+	.lwtv-toll-eyebrow {
+		display: block;
+		font-size: 0.7rem;
+		font-weight: 700;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		color: rgba(colors.$white, 0.85);
+		margin-bottom: 6px;
+	}
+
+	.lwtv-toll-num {
+		display: block;
+		font-size: 2.5rem;
+		font-weight: 800;
+		line-height: 1;
+		letter-spacing: -0.02em;
+		font-variant-numeric: tabular-nums;
+	}
+
+	.lwtv-toll-caption {
+		margin-top: 12px;
+		font-size: 0.75rem;
+		color: rgba(colors.$white, 0.82);
+	}
+
+	.lwtv-toll-chip {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		flex: 0 0 auto;
+		width: 38px;
+		height: 38px;
+		border-radius: 8px;
+		box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.05);
+
+		svg {
+			width: 19px;
+			height: 19px;
+			fill: currentColor;
+		}
 	}
 
 	.lwtv-death-gap-unit {

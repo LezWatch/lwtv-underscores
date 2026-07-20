@@ -34,7 +34,12 @@ $yb_last  = ! empty( $yb_rows ) ? (int) $yb_rows[ count( $yb_rows ) - 1 ]['year'
 				<p class="lwtv-yearbars-desc"><?php echo esc_html( $yearbars['description'] ); ?></p>
 			<?php endif; ?>
 		</div>
-		<?php if ( isset( $yearbars['average'] ) && '' !== $yearbars['average'] ) : ?>
+		<?php if ( isset( $yearbars['stat_num'] ) ) : ?>
+			<div class="lwtv-yearbars-avg">
+				<span class="lwtv-yearbars-avg-num" data-count-to="<?php echo (int) $yearbars['stat_num']; ?>"><?php echo esc_html( number_format_i18n( (int) $yearbars['stat_num'] ) ); ?></span>
+				<span class="lwtv-yearbars-avg-sub"><?php echo esc_html( $yearbars['stat_sub'] ?? '' ); ?></span>
+			</div>
+		<?php elseif ( isset( $yearbars['average'] ) && '' !== $yearbars['average'] ) : ?>
 			<div class="lwtv-yearbars-avg">
 				<span class="lwtv-yearbars-avg-num" data-count-to="<?php echo (int) round( (float) $yearbars['average'] ); ?>"><?php echo esc_html( number_format_i18n( (int) round( (float) $yearbars['average'] ) ) ); ?></span>
 				<span class="lwtv-yearbars-avg-sub"><?php esc_html_e( 'per year on average', 'lwtv' ); ?></span>
@@ -44,13 +49,19 @@ $yb_last  = ! empty( $yb_rows ) ? (int) $yb_rows[ count( $yb_rows ) - 1 ]['year'
 	<div class="lwtv-yearbars" role="img" aria-label="<?php echo esc_attr( $yearbars['eyebrow'] ?? '' ); ?>">
 		<?php
 		foreach ( $yb_rows as $yb ) {
-			$yb_year    = (int) $yb['year'];
-			$yb_count   = (int) $yb['count'];
-			$yb_height  = round( ( $yb_count / $yb_peak ) * 100, 1 );
-			$yb_is_peak = ( $yb_year === $yb_pyear );
+			$yb_year   = (int) $yb['year'];
+			$yb_count  = (int) $yb['count'];
+			$yb_height = round( ( $yb_count / $yb_peak ) * 100, 1 );
+			// Peak bar = deepest crimson; others ramp rose->crimson by height (6 buckets).
+			if ( $yb_year === $yb_pyear ) {
+				$yb_class = ' lwtv-yearbar--peak';
+			} else {
+				$yb_bucket = min( 5, (int) floor( ( $yb_count / $yb_peak ) * 6 ) );
+				$yb_class  = ' lwtv-yearbar--r' . $yb_bucket;
+			}
 			printf(
 				'<span class="lwtv-yearbar%1$s" style="height:%2$s%%" title="%3$s"><span class="lwtv-yearbar-val">%4$s</span></span>',
-				$yb_is_peak ? ' lwtv-yearbar--peak' : '',
+				esc_attr( $yb_class ),
 				esc_attr( (string) max( 2, $yb_height ) ),
 				esc_attr( $yb_year . ' — ' . number_format_i18n( $yb_count ) ),
 				esc_html( number_format_i18n( $yb_count ) )
