@@ -525,7 +525,7 @@ $shows_cards = array(
 	<?php
 	foreach ( $shows_cards as $shows_card ) {
 		?>
-		<div class="lwtv-metric-card bg-light card-header <?php echo esc_attr( $shows_card['type'] ); ?>">
+		<div class="lwtv-metric-card card-header <?php echo esc_attr( $shows_card['type'] ); ?>">
 			<div class="lwtv-metric-top">
 				<span class="lwtv-stats-eyebrow"><?php echo esc_html( $shows_card['label'] ); ?></span>
 				<span class="lwtv-metric-icon <?php echo esc_attr( $shows_card['type'] ); ?>">

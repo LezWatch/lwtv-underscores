@@ -69,7 +69,7 @@ $shows_cards = array(
 	<?php
 	foreach ( $shows_cards as $shows_card ) {
 		?>
-		<div class="lwtv-metric-card bg-light card-header <?php echo esc_attr( $shows_card['type'] ); ?>">
+		<div class="lwtv-metric-card card-header <?php echo esc_attr( $shows_card['type'] ); ?>">
 			<div class="lwtv-metric-top">
 				<span class="lwtv-stats-eyebrow"><?php echo esc_html( $shows_card['label'] ); ?></span>
 				<span class="lwtv-metric-icon <?php echo esc_attr( $shows_card['type'] ); ?>">
@@ -101,7 +101,7 @@ $shows_cards = array(
 		<p class="lwtv-tropegap-desc"><?php esc_html_e( 'shows kill off a queer character — the most common harmful trope in the catalogue.', 'lwtv' ); ?></p>
 		<a class="lwtv-tropegap-link" href="<?php echo esc_url( site_url( '/trope/dead-queers/' ) ); ?>"><?php esc_html_e( 'See these shows', 'lwtv' ); ?> <span aria-hidden="true">&#8599;</span></a>
 	</div>
-	<div class="lwtv-tropegap card-header characters">
+	<div class="lwtv-tropegap card-header happy-endings">
 		<div class="lwtv-tropegap-top">
 			<span class="lwtv-stats-eyebrow"><?php esc_html_e( 'Happy Endings', 'lwtv' ); ?></span>
 			<span class="lwtv-tropegap-icon"><?php echo lwtv_plugin()->get_symbolicon( svg: 'heart-circle.svg', icon: 'svg-heart', max_size: '22' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>

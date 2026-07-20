@@ -66,7 +66,7 @@ $stats_cards = array(
 	foreach ( $stats_cards as $stats_card ) {
 		$stats_points = lwtv_stats_sparkline_points( $stats_series[ $stats_card['type'] ] ?? array() );
 		?>
-		<div class="lwtv-metric-card bg-light card-header <?php echo esc_attr( $stats_card['class'] ); ?>">
+		<div class="lwtv-metric-card card-header <?php echo esc_attr( $stats_card['class'] ); ?>">
 			<div class="lwtv-metric-top">
 				<span class="lwtv-stats-eyebrow"><?php echo esc_html( $stats_card['label'] ); ?></span>
 				<span class="lwtv-metric-icon <?php echo esc_attr( $stats_card['type'] ); ?>">

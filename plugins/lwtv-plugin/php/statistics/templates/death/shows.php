@@ -10,9 +10,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 $ds_data  = lwtv_plugin()->generate_dead_statistics( 'shows', 'per-show', 'array' );
 $ds_map   = array(
-	'no_dead'   => array( __( 'No deaths', 'lwtv' ), 'green' ),
-	'some_dead' => array( __( 'Some deaths', 'lwtv' ), 'amber' ),
-	'all_dead'  => array( __( 'All die', 'lwtv' ), 'red' ),
+	'no_dead'   => array( __( 'No deaths', 'lwtv' ), 'magenta' ),
+	'some_dead' => array( __( 'Some deaths', 'lwtv' ), 'royal-blue' ),
+	'all_dead'  => array( __( 'All die', 'lwtv' ), 'lavender' ),
 );
 $ds_total = 0;
 foreach ( $ds_data as $ds_row ) {

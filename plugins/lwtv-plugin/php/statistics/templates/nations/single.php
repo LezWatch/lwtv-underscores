@@ -96,7 +96,7 @@ $lwtv_build_segments = function ( $items, $topn, $grey_match = '' ) {
 	return array( $segments, $total );
 };
 ?>
-<div class="lwtv-nation-profile lwtv-nation-profile--vibrant bg-light">
+<div class="lwtv-nation-profile lwtv-nation-profile--vibrant">
 	<div class="lwtv-nation-profile-row">
 		<div class="lwtv-nation-profile-lead">
 			<span class="lwtv-nation-profile-chip"><?php echo lwtv_plugin()->get_symbolicon( svg: 'globe.svg', icon: 'svg-globe', max_size: '19' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
@@ -210,15 +210,22 @@ switch ( $view ) {
 		break;
 
 	case '_on-air':
-		$lwtv_oaraw  = lwtv_plugin()->generate_nation_statistics( $nation, ltrim( $view, '_' ), 'array' );
-		$lwtv_oaraw  = ( is_array( $lwtv_oaraw ) && ! empty( $lwtv_oaraw ) ) ? $lwtv_oaraw : array();
-		$lwtv_points = array();
+		$lwtv_oaraw     = lwtv_plugin()->generate_nation_statistics( $nation, ltrim( $view, '_' ), 'array' );
+		$lwtv_oaraw     = ( is_array( $lwtv_oaraw ) && ! empty( $lwtv_oaraw ) ) ? $lwtv_oaraw : array();
+		$lwtv_points    = array();
+		$no_onair_years = array();
+
 		foreach ( $lwtv_oaraw as $lwtv_oa_item ) {
 			$lwtv_points[] = array(
 				'year'  => (int) $lwtv_oa_item['name'],
 				'count' => (int) $lwtv_oa_item['count'],
 			);
+
+			if ( 0 === (int) $lwtv_oa_item['count'] ) {
+				$no_onair_years[] = (int) $lwtv_oa_item['name'];
+			}
 		}
+
 		$lwtv_last = ! empty( $lwtv_points ) ? end( $lwtv_points ) : array(
 			'year'  => 0,
 			'count' => 0,
@@ -236,6 +243,8 @@ switch ( $view ) {
 		}
 
 		$lwtv_callouts = array();
+
+		// Add Best Year
 		if ( $lwtv_best_count > 0 ) {
 			$lwtv_callouts[] = array(
 				'label' => __( 'Best Year', 'lwtv' ),
@@ -248,6 +257,21 @@ switch ( $view ) {
 					(string) $lwtv_best_year,
 					$lwtv_name,
 					number_format_i18n( $lwtv_best_count )
+				),
+			);
+		}
+
+		// Add Worst Years
+		if ( ! empty( $no_onair_years ) ) {
+			$lwtv_callouts[] = array(
+				'label' => _n( 'Worst Year', 'Worst Years', count( $no_onair_years ), 'lwtv' ),
+				'svg'   => 'scythe.svg',
+				'icon'  => 'svg-scythe',
+				'text'  => sprintf(
+					/* translators: 1: nation name, 2: Years with no shows on air. */
+					_n( '%1$s had no shows on air in %2$s.', '%1$s had no shows on air in the following years: %2$s', count( $no_onair_years ), 'lwtv' ),
+					$lwtv_name,
+					implode( ', ', $no_onair_years )
 				),
 			);
 		}

@@ -112,6 +112,9 @@ class Statistics_Optimized implements Component, Templater {
 	/**
 	 * Generate total counts
 	 *
+	 * @param mixed $subject
+	 * @param bool  $death
+	 *
 	 * @return int Total counts
 	 */
 	public function generate_total_counts( $subject, $death = false ) {

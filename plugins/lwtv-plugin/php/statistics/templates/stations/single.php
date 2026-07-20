@@ -96,7 +96,7 @@ $lwtv_build_segments = function ( $items, $topn, $grey_match = '' ) {
 	return array( $segments, $total );
 };
 ?>
-<div class="lwtv-nation-profile lwtv-nation-profile--vibrant bg-light">
+<div class="lwtv-nation-profile lwtv-nation-profile--vibrant">
 	<div class="lwtv-nation-profile-row">
 		<div class="lwtv-nation-profile-lead">
 			<span class="lwtv-nation-profile-chip"><?php echo lwtv_plugin()->get_symbolicon( svg: 'tv.svg', icon: 'svg-tv', max_size: '19' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>

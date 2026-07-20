@@ -351,7 +351,7 @@ $lwtv_cards = array(
 	<?php
 	foreach ( $lwtv_cards as $lwtv_card ) {
 		?>
-		<div class="lwtv-metric-card bg-light card-header <?php echo esc_attr( $lwtv_card['family'] ); ?>">
+		<div class="lwtv-metric-card card-header <?php echo esc_attr( $lwtv_card['family'] ); ?>">
 			<div class="lwtv-metric-top">
 				<span class="lwtv-stats-eyebrow"><?php echo esc_html( $lwtv_card['label'] ); ?></span>
 				<span class="lwtv-metric-icon <?php echo esc_attr( $lwtv_card['family'] ); ?>">
@@ -673,7 +673,7 @@ switch ( $view ) {
 			<?php
 			foreach ( $lwtv_ov_cards as $lwtv_c ) {
 				?>
-				<div class="lwtv-metric-card bg-light card-header <?php echo esc_attr( $lwtv_c['family'] ); ?>">
+				<div class="lwtv-metric-card card-header <?php echo esc_attr( $lwtv_c['family'] ); ?>">
 					<div class="lwtv-metric-top">
 						<span class="lwtv-stats-eyebrow"><?php echo esc_html( $lwtv_c['label'] ); ?></span>
 						<span class="lwtv-metric-icon <?php echo esc_attr( $lwtv_c['family'] ); ?>"><?php echo lwtv_plugin()->get_symbolicon( svg: $lwtv_c['svg'], icon: $lwtv_c['icon'], max_size: '20' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>

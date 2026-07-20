@@ -68,7 +68,7 @@ $actor_cards = array(
 	<?php
 	foreach ( $actor_cards as $actor_card ) {
 		?>
-		<div class="lwtv-metric-card bg-light card-header <?php echo esc_attr( $actor_card['type'] ); ?>">
+		<div class="lwtv-metric-card card-header <?php echo esc_attr( $actor_card['type'] ); ?>">
 			<div class="lwtv-metric-top">
 				<span class="lwtv-stats-eyebrow"><?php echo esc_html( $actor_card['label'] ); ?></span>
 				<span class="lwtv-metric-icon <?php echo esc_attr( $actor_card['type'] ); ?>">
@@ -95,7 +95,7 @@ $actor_trans_ratio = ( $actor_transnb > 0 ) ? (int) round( (int) $actor_count / 
 ?>
 <p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'Who Plays the Roles', 'lwtv' ); ?></p>
 <div class="lwtv-pullstats">
-	<div class="lwtv-tropegap card-header characters">
+	<div class="lwtv-tropegap card-header openly-queer">
 		<div class="lwtv-tropegap-top">
 			<span class="lwtv-stats-eyebrow"><?php esc_html_e( 'Openly LGBTQ+', 'lwtv' ); ?></span>
 			<span class="lwtv-tropegap-icon"><?php echo lwtv_plugin()->get_symbolicon( svg: 'rainbow.svg', icon: 'svg-rainbow', max_size: '22' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
@@ -112,7 +112,7 @@ $actor_trans_ratio = ( $actor_transnb > 0 ) ? (int) round( (int) $actor_count / 
 		</p>
 		<a class="lwtv-tropegap-link" href="<?php echo esc_url( $baseurl . 'sexuality/' ); ?>"><?php esc_html_e( 'See the breakdown', 'lwtv' ); ?> <span aria-hidden="true">&#8599;</span></a>
 	</div>
-	<div class="lwtv-tropegap card-header sexuality">
+	<div class="lwtv-tropegap card-header trans-nb-actors">
 		<div class="lwtv-tropegap-top">
 			<span class="lwtv-stats-eyebrow"><?php esc_html_e( 'Trans &amp; Non-binary', 'lwtv' ); ?></span>
 			<span class="lwtv-tropegap-icon"><?php echo lwtv_plugin()->get_symbolicon( svg: 'group.svg', icon: 'svg-users', max_size: '22' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>

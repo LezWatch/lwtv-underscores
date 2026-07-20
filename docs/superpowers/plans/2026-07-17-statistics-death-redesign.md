@@ -357,7 +357,7 @@ $death_cards = array(
 	<?php
 	foreach ( $death_cards as $death_card ) {
 		?>
-		<div class="lwtv-metric-card bg-light card-header dead-characters">
+		<div class="lwtv-metric-card card-header dead-characters">
 			<div class="lwtv-metric-top">
 				<span class="lwtv-stats-eyebrow"><?php echo esc_html( $death_card['label'] ); ?></span>
 				<span class="lwtv-metric-icon dead"><?php echo lwtv_plugin()->get_symbolicon( svg: $death_card['svg'], icon: $death_card['icon'], max_size: '20' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
@@ -927,7 +927,7 @@ foreach ( $dead_records as $dl_date => $dl_group ) {
 	<?php
 	foreach ( $dl_cards as $dl_c ) {
 		?>
-		<div class="lwtv-metric-card bg-light card-header dead-characters">
+		<div class="lwtv-metric-card card-header dead-characters">
 			<span class="lwtv-stats-eyebrow"><?php echo esc_html( $dl_c['label'] ); ?></span>
 			<span class="lwtv-metric-number" data-count-to="<?php echo (int) $dl_c['count']; ?>"><?php echo esc_html( number_format_i18n( $dl_c['count'] ) ); ?></span>
 			<?php if ( '' !== $dl_c['unit'] ) : ?><span class="lwtv-death-gap-unit"><?php echo esc_html( $dl_c['unit'] ); ?></span><?php endif; ?>

@@ -15,7 +15,7 @@ if ( $stats_dead <= 0 ) {
 	return;
 }
 ?>
-<div class="lwtv-byg card-header dead-characters">
+<div class="lwtv-byg card-header bury-queers">
 	<span class="lwtv-byg-icon">
 		<?php echo lwtv_plugin()->get_symbolicon( svg: 'skull.svg', icon: 'svg-skull', max_size: '22' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 	</span>
@@ -32,7 +32,7 @@ if ( $stats_dead <= 0 ) {
 			);
 			?>
 		</p>
-		<p class="lwtv-byg-desc"><?php esc_html_e( 'The most-tracked trope in queer TV, quantified across the whole database.', 'lwtv' ); ?></p>
+		<p class="lwtv-byg-desc"><?php esc_html_e( 'The (sadly) best-known trope in queer TV.', 'lwtv' ); ?></p>
 	</div>
 	<a class="lwtv-byg-btn btn" href="<?php echo esc_url( home_url( '/statistics/death/' ) ); ?>">
 		<?php esc_html_e( 'Death Statistics', 'lwtv' ); ?>

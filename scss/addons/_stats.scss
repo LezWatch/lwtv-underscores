@@ -20,33 +20,54 @@
 	.card-header.tropes,
 	.card-header.actor_gender {
 		color: colors.$lwtv-stats-green;
-		background-color: colors.$lwtv-stats-green-background;
+		background-color: colors.$lwtv-gq-green;
 		border-color: colors.$lwtv-stats-green-border;
+	}
+
+	.card-header.trans-nb-actors,
+	.card-header.happy-endings,
+	.card-header.queer-actors {
+		color: colors.$lwtv-stats-royal-blue;
+		background-color: colors.$lwtv-stats-royal-blue-background;
+		border-color: colors.$lwtv-stats-royal-blue-border;
 	}
 
 	.card-header.dead-characters,
 	.card-header.canceled-shows {
-		color: colors.$lwtv-stats-red;
-		background-color: colors.$lwtv-stats-red-background;
-		border-color: colors.$lwtv-stats-red-border;
+		color: colors.$lwtv-stats-crimson;
+		background-color: colors.$lwtv-stats-crimson-background;
+		border-color: colors.$lwtv-stats-crimson-border;
+	}
+
+	.card-header.bury-queers {
+		color: colors.$lwtv-stats-plum;
+		background-color: colors.$lwtv-stats-plum-background;
+		border-color: colors.$lwtv-stats-plum-border;
+	}
+
+	.card-header.openly-queer,
+	.card-header.cliches {
+		color: colors.$lwtv-stats-purple;
+		background-color: colors.$lwtv-stats-purple-background;
+		border-color: colors.$lwtv-stats-purple-border;
 	}
 
 	.card-header.shows,
 	.card-header.shows-onair,
 	.card-header.sexuality {
-		color: colors.$lwtv-stats-blue;
-		background-color: colors.$lwtv-stats-blue-background;
-		border-color: colors.$lwtv-stats-blue-border;
+		color: colors.$lwtv-stats-teal;
+		background-color: colors.$lwtv-stats-teal-background;
+		border-color: colors.$lwtv-stats-teal-border;
 	}
 
 	.card-header.nations-new {
-		color: colors.$lwtv-pink;
-		background-color: rgba(colors.$lwtv-pink, 0.14);
+		color: colors.$lwtv-ltpink;
+		background-color: colors.$lwtv-dkpink;
 		border-color: rgba(colors.$lwtv-pink, 0.28);
 	}
 
 	.progress-bar {
-		background-color: colors.$lwtv-stats-progressbar !important;
+		background-color: colors.$lwtv-stats-progressbar;
 	}
 
 	button {
@@ -236,23 +257,19 @@ canvas {
 		height: 38px;
 		border-radius: 8px;
 		color: inherit; // inherits the card-header type color.
-		background-color: rgba(0, 0, 0, 0.06);
+		background-color: rgba(0, 0, 0, 0.50);
 
 		svg {
 			fill: currentColor; // sprite paths have no fill; take the type color.
 		}
 	}
 
-	.lwtv-metric-icon.shows {
-		background-color: colors.$lwtv-stats-blue-background;
-	}
-
+	.lwtv-metric-icon.shows
 	.lwtv-metric-icon.sexuality {
-		background-color: colors.$lwtv-stats-blue-background;
+		background-color: colors.$lwtv-bi-royal-blue;
 	}
 
-	.lwtv-metric-icon.shows-now,
-	.lwtv-metric-icon.actors {
+	.lwtv-metric-icon.shows-now {
 		background-color: colors.$lwtv-stats-yellow-background;
 	}
 
@@ -260,25 +277,11 @@ canvas {
 		background-color: colors.$lwtv-stats-green-background;
 	}
 
-	.lwtv-metric-icon.dead {
-		background-color: colors.$lwtv-stats-red-background;
-	}
-
-	.lwtv-metric-icon.gender {
-		background-color: colors.$lwtv-stats-yellow-background;
-	}
-
-	.lwtv-metric-icon.nations-new {
-		color: colors.$lwtv-pink;
-		background-color: rgba(colors.$lwtv-pink, 0.14);
-	}
-
 	.lwtv-metric-number {
 		font-size: 2.5rem;
 		font-weight: 700;
 		line-height: 1.1;
 		font-variant-numeric: tabular-nums;
-		color: colors.$lwtv-dkgrey;
 	}
 
 	.lwtv-sparkline {
@@ -290,16 +293,6 @@ canvas {
 
 	.lwtv-metric-caption {
 		font-size: 0.85rem;
-		color: colors.$lwtv-medgrey;
-	}
-
-	.card-header.lwtv-metric-card {
-		background-color: transparent;
-		border-color: colors.$lwtv-bordergrey;
-	}
-
-	.lwtv-stats-eyebrow.sexuality {
-		color: colors.$lwtv-stats-blue;
 	}
 
 	.lwtv-nation-preamble {
@@ -350,7 +343,7 @@ canvas {
 	}
 
 	.lwtv-nation-profile-dead strong {
-		color: colors.$lwtv-stats-red;
+		color: colors.$lwtv-stats-red-background;
 	}
 
 	.lwtv-byg {
@@ -381,6 +374,11 @@ canvas {
 
 	.lwtv-byg-body {
 		flex: 1 1 auto;
+
+		.lwtv-byg-desc,
+		.lwtv-stats-eyebrow {
+			color: colors.$lwtv-ltgrey;
+		}
 	}
 
 	.lwtv-byg-line {
@@ -453,7 +451,6 @@ canvas {
 		margin: 0.75rem 0 1rem;
 		font-size: 0.95rem;
 		line-height: 1.5;
-		color: colors.$lwtv-dkgrey;
 	}
 
 	.lwtv-tropegap-link {
@@ -511,20 +508,17 @@ canvas {
 
 		// Family-colored header icons for the shows overview panels.
 		&.characters {
-			color: colors.$lwtv-stats-green;
+			color: colors.$lwtv-stats-green-background;
 		}
 
+		&.gender,
 		&.actors {
-			color: colors.$lwtv-stats-yellow;
+			color: colors.$lwtv-stats-yellow-background;
 		}
-	}
 
-	.lwtv-panel-icon.sexuality {
-		color: colors.$lwtv-stats-blue;
-	}
-
-	.lwtv-panel-icon.gender {
-		color: colors.$lwtv-stats-yellow;
+		&.sexuality {
+			color: colors.$lwtv-stats-blue-background;
+		}
 	}
 
 	.lwtv-panel-title {
@@ -599,23 +593,17 @@ canvas {
 	}
 
 	.lwtv-bars--characters .lwtv-leader-track {
-		background-color: colors.$lwtv-stats-green-background;
+		background-color: colors.$lwtv-stats-green;
 	}
 
+	.lwtv-bars--gender .lwtv-leader-track,
 	.lwtv-bars--actors .lwtv-leader-track {
-		background-color: colors.$lwtv-stats-yellow-background;
+		background-color: colors.$lwtv-stats-yellow;
 	}
 
-	.lwtv-bars--shows .lwtv-leader-track {
-		background-color: colors.$lwtv-stats-blue-background;
-	}
-
+	.lwtv-bars--shows .lwtv-leader-track,
 	.lwtv-bars--sexuality .lwtv-leader-track {
-		background-color: colors.$lwtv-stats-blue-background;
-	}
-
-	.lwtv-bars--gender .lwtv-leader-track {
-		background-color: colors.$lwtv-stats-yellow-background;
+		background-color: colors.$lwtv-stats-blue;
 	}
 
 	// Overview panel: tail rows (name + count, no bar).
@@ -665,23 +653,17 @@ canvas {
 
 	// Ranked-bar family fills (override the default teal progressbar within a family list).
 	.lwtv-bars--characters .progress-bar {
-		background-color: colors.$lwtv-stats-green !important;
+		background-color: colors.$lwtv-stats-green-background;
 	}
 
+	.lwtv-bars--gender .progress-bar,
 	.lwtv-bars--actors .progress-bar {
-		background-color: colors.$lwtv-stats-yellow !important;
+		background-color: colors.$lwtv-stats-yellow-background;
 	}
 
+	.lwtv-bars--sexuality .progress-bar,
 	.lwtv-bars--shows .progress-bar {
-		background-color: colors.$lwtv-stats-blue !important;
-	}
-
-	.lwtv-bars--sexuality .progress-bar {
-		background-color: colors.$lwtv-stats-blue !important;
-	}
-
-	.lwtv-bars--gender .progress-bar {
-		background-color: colors.$lwtv-stats-yellow !important;
+		background-color: colors.$lwtv-stats-blue-background;
 	}
 
 	.lwtv-bar-label {
@@ -937,7 +919,7 @@ canvas {
 	.lwtv-nations-lb-bar--5 { background-color: $ramp-5; }
 
 	.lwtv-nations-lb-dead {
-		color: colors.$lwtv-stats-red;
+		color: colors.$lwtv-stats-red-background;
 	}
 
 	.lwtv-donut-card {
@@ -1124,13 +1106,13 @@ canvas {
 	}
 
 	.lwtv-donut-seg--green {
-		stroke: colors.$lwtv-stats-green;
-		background-color: colors.$lwtv-stats-green;
+		stroke: colors.$lwtv-stats-green-background;
+		background-color: colors.$lwtv-stats-green-background;
 	}
 
 	.lwtv-donut-seg--amber {
-		stroke: colors.$lwtv-stats-yellow;
-		background-color: colors.$lwtv-stats-yellow;
+		stroke: colors.$lwtv-stats-yellow-background;
+		background-color: colors.$lwtv-stats-yellow-background;
 	}
 
 	.lwtv-donut-seg--red {
@@ -1138,9 +1120,24 @@ canvas {
 		background-color: colors.$lwtv-red;
 	}
 
+	.lwtv-donut-seg--magenta {
+		stroke: colors.$lwtv-bi-magenta;
+		background-color: colors.$lwtv-bi-magenta;
+	}
+
+	.lwtv-donut-seg--lavender {
+		stroke: colors.$lwtv-bi-lavender;
+		background-color: colors.$lwtv-bi-lavender;
+	}
+
+	.lwtv-donut-seg--royal-blue {
+		stroke: colors.$lwtv-bi-royal-blue;
+		background-color: colors.$lwtv-bi-royal-blue;
+	}
+
 	.lwtv-donut-seg--grey {
-		stroke: colors.$lwtv-medgrey;
-		background-color: colors.$lwtv-medgrey;
+		stroke: colors.$lwtv-aro-grey;
+		background-color: colors.$lwtv-aro-grey;
 	}
 
 	.lwtv-donut-seg--bordergrey { stroke: colors.$lwtv-bordergrey; background-color: colors.$lwtv-bordergrey; }
@@ -1192,45 +1189,57 @@ canvas {
 		}
 
 		&.lwtv-donut-seg--ltpink {
-			background-color: colors.$lwtv-ltpink !important;
+			background-color: colors.$lwtv-ltpink;
 		}
 
 		&.lwtv-donut-seg--green {
-			background-color: colors.$lwtv-stats-green !important;
+			background-color: colors.$lwtv-stats-green-background;
 		}
 
 		&.lwtv-donut-seg--amber {
-			background-color: colors.$lwtv-stats-yellow !important;
+			background-color: colors.$lwtv-stats-yellow-background;
 		}
 
 		&.lwtv-donut-seg--red {
-			background-color: colors.$lwtv-red !important;
+			background-color: colors.$lwtv-red;
+		}
+
+		&.lwtv-donut-seg--magenta {
+			background-color: colors.$lwtv-bi-magenta;
+		}
+
+		&.lwtv-donut-seg--lavender {
+			background-color: colors.$lwtv-bi-lavender;
+		}
+
+		&.lwtv-donut-seg--royal-blue {
+			background-color: colors.$lwtv-bi-royal-blue;
 		}
 
 		&.lwtv-donut-seg--grey {
-			background-color: colors.$lwtv-medgrey !important;
+			background-color: colors.$lwtv-medgrey;
 		}
 
-		&.lwtv-donut-seg--bordergrey { background-color: colors.$lwtv-bordergrey !important; }
+		&.lwtv-donut-seg--bordergrey { background-color: colors.$lwtv-bordergrey; }
 
 		&.lwtv-donut-seg--gold {
-			background-color: colors.$lwtv-gold !important;
+			background-color: colors.$lwtv-gold;
 		}
 
 		&.lwtv-donut-seg--silver {
-			background-color: colors.$lwtv-silver !important;
+			background-color: colors.$lwtv-silver;
 		}
 
 		&.lwtv-donut-seg--bronze {
-			background-color: colors.$lwtv-bronze !important;
+			background-color: colors.$lwtv-bronze;
 		}
 
 		&.lwtv-donut-seg--sev-med {
-			background-color: color.mix(colors.$lwtv-red, colors.$lwtv-yellow, 65%) !important;
+			background-color: color.mix(colors.$lwtv-red, colors.$lwtv-yellow, 65%);
 		}
 
 		&.lwtv-donut-seg--sev-low {
-			background-color: color.mix(colors.$lwtv-red, colors.$lwtv-yellow, 25%) !important;
+			background-color: color.mix(colors.$lwtv-red, colors.$lwtv-yellow, 25%);
 		}
 	}
 
@@ -1567,21 +1576,21 @@ canvas {
 	// hardcoded per the handoffs (same in light + dark, white text carries
 	// contrast). Each entry: (solid fill, inset-chip surface).
 	$death-toll: (
-		crimson: (#be123c, #ffe4e6),
-		raspberry: (#9d2a61, #f6d0e2),
-		plum: (#7a1f4f, #efd3e3),
+		crimson: (colors.$lwtv-stats-crimson-background, colors.$lwtv-stats-crimson),
+		raspberry: (colors.$lwtv-stats-raspberry-background, colors.$lwtv-stats-raspberry),
+		plum: (colors.$lwtv-stats-plum-background, colors.$lwtv-stats-plum),
 	);
 
 	// Station "Vibrant Refresh" palette (teal / amber / green / rose).
 	$vibrant-toll: (
-		teal: (#0e7490, #cffafe),
-		amber: (#b45309, #fef3c7),
-		green: (#15803d, #dcfce7),
-		rose: (#be123c, #ffe4e6),
+		teal: (colors.$lwtv-stats-teal-background, colors.$lwtv-stats-teal),
+		amber: (colors.$lwtv-stats-yellow-background, colors.$lwtv-stats-yellow),
+		green: (colors.$lwtv-gq-green, colors.$lwtv-stats-green),
+		rose: (colors.$lwtv-stats-crimson-background, colors.$lwtv-stats-crimson),
 	);
 
 	// Amber accent reused by the station score footer + on-air meter.
-	$v-onair: #b45309;
+	$v-onair: colors.$lwtv-stats-yellow-background;
 
 	.lwtv-toll {
 		display: grid;
@@ -1617,10 +1626,11 @@ canvas {
 		@each $name, $pair in map.merge($death-toll, $vibrant-toll) {
 			&--#{$name} {
 				background-color: nth($pair, 1);
+				color: nth($pair, 2);
 
 				.lwtv-toll-chip {
-					color: nth($pair, 1);
-					background-color: nth($pair, 2);
+					color: nth($pair, 2);
+					background-color: rgba(0, 0, 0, 0.50);
 				}
 			}
 		}
@@ -1698,6 +1708,7 @@ canvas {
 		flex-direction: column;
 		align-items: stretch;
 		padding: 22px 24px;
+		background-color: rgba( colors.$lwtv-trans-pink, 0.45 );
 	}
 
 	.lwtv-nation-profile-row {
@@ -1722,8 +1733,8 @@ canvas {
 		width: 34px;
 		height: 34px;
 		border-radius: 9px;
-		color: #a51e63;
-		background-color: #fbeaf2;
+		color: colors.$lwtv-stats-plum-background;
+		background-color: rgba( colors.$lwtv-trans-blue, 0.45 );
 
 		svg {
 			width: 19px;

@@ -26,10 +26,10 @@ foreach ( $dn_raw as $dn_r ) {
 
 <?php
 $ranked = array(
-	'rows'   => array_slice( $dn_rows, 0, 15 ),
+	'rows'   => array_slice( $dn_rows, 0, 10 ),
 	'total'  => $dn_tot,
 	'family' => 'characters',
-	'title'  => __( 'Countries with the most on-screen deaths', 'lwtv' ),
+	'title'  => __( 'Top Ten Countries with the most on-screen deaths', 'lwtv' ),
 	'sub'    => __( 'The more shows in a nation, the more death. It\'s just math.', 'lwtv' ),
 	'svg'    => 'globe.svg',
 	'icon'   => 'svg-globe',

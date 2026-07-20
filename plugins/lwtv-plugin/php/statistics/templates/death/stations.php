@@ -26,10 +26,10 @@ foreach ( $dst_raw as $dst_r ) {
 
 <?php
 $ranked = array(
-	'rows'   => array_slice( $dst_rows, 0, 15 ),
+	'rows'   => array_slice( $dst_rows, 0, 10 ),
 	'total'  => $dst_tot,
 	'family' => 'characters',
-	'title'  => __( 'Networks with the most on-screen deaths', 'lwtv' ),
+	'title'  => __( 'Top Ten Networks with the most on-screen deaths', 'lwtv' ),
 	'sub'    => __( 'More shows on a network means more deaths.', 'lwtv' ),
 	'svg'    => 'satellite-signal.svg',
 	'icon'   => 'svg-satellite-signal',

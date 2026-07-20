@@ -313,7 +313,7 @@ $char_cards = array(
 		// family maps to the "dead" icon-tile modifier.
 		$char_icon_mod = ( 'dead-characters' === $char_card['type'] ) ? 'dead' : $char_card['type'];
 		?>
-		<div class="lwtv-metric-card bg-light card-header <?php echo esc_attr( $char_card['type'] ); ?>">
+		<div class="lwtv-metric-card card-header <?php echo esc_attr( $char_card['type'] ); ?>">
 			<div class="lwtv-metric-top">
 				<span class="lwtv-stats-eyebrow"><?php echo esc_html( $char_card['label'] ); ?></span>
 				<span class="lwtv-metric-icon <?php echo esc_attr( $char_icon_mod ); ?>">

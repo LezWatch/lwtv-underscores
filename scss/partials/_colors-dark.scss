@@ -368,7 +368,7 @@
 		.card-header.canceled-shows {
 			color: $lwtv-stats-red;
 			background-color: #2e0d0d;
-			border-color: #4d1a1a;
+			border-color: colors.$lwtv-red;
 		}
 
 		.card-header.shows,
@@ -380,7 +380,7 @@
 		}
 
 		.progress-bar {
-			background-color: colors.$lwtv-mdpink !important;
+			background-color: colors.$lwtv-mdpink;
 		}
 
 		.lwtv-bars--characters .progress-bar,
@@ -423,7 +423,6 @@
 		}
 
 		.card-header.lwtv-metric-card {
-			background-color: transparent;
 			border-color: colors.$lwtv-bordergrey;
 		}
 
@@ -611,49 +610,47 @@
 		}
 	}
 
-	.lwtv-actor-stats-modal {
-		.lwtv-donut-track {
-			stroke: colors.$lwtv-medgrey;
-		}
+	.lwtv-donut-track {
+		stroke: colors.$lwtv-medgrey;
+	}
 
-		.lwtv-donut-card {
-			border-color: rgba(255, 255, 255, 0.12);
-		}
+	.lwtv-donut-card {
+		border-color: rgba(255, 255, 255, 0.12);
+	}
 
-		.lwtv-donut-center-num,
-		.lwtv-donut-center-sub,
-		.lwtv-donut-legend-name,
-		.lwtv-donut-legend-val {
-			color: colors.$white;
-		}
+	.lwtv-donut-center-num,
+	.lwtv-donut-center-sub,
+	.lwtv-donut-legend-name,
+	.lwtv-donut-legend-val {
+		color: colors.$white;
+	}
 
-		.lwtv-donut-center-num--green {
-			color: $lwtv-stats-green;
-		}
+	.lwtv-donut-center-num--green {
+		color: $lwtv-stats-green!important;
+	}
 
-		.lwtv-donut-center-num--red {
-			color: $lwtv-stats-red;
-		}
+	.lwtv-donut-center-num--red {
+		color: $lwtv-stats-red!important;
+	}
 
-		.lwtv-donut-seg--blue {
-			stroke: $lwtv-stats-blue;
-			background-color: $lwtv-stats-blue;
-		}
+	.lwtv-donut-seg--blue {
+		stroke: $lwtv-stats-blue!important;
+		background-color: $lwtv-stats-blue!important;
+	}
 
-		.lwtv-donut-seg--amber {
-			stroke: $lwtv-stats-yellow;
-			background-color: $lwtv-stats-yellow;
-		}
+	.lwtv-donut-seg--amber {
+		stroke: $lwtv-stats-yellow!important;
+		background-color: $lwtv-stats-yellow!important;
+	}
 
-		.lwtv-donut-seg--green {
-			stroke: $lwtv-stats-green;
-			background-color: $lwtv-stats-green;
-		}
+	.lwtv-donut-seg--green {
+		stroke: $lwtv-stats-green!important;
+		background-color: $lwtv-stats-green!important;
+	}
 
-		.lwtv-donut-seg--red {
-			stroke: $lwtv-stats-red;
-			background-color: $lwtv-stats-red;
-		}
+	.lwtv-donut-seg--red {
+		stroke: $lwtv-stats-red!important;
+		background-color: $lwtv-stats-red!important;
 	}
 
 	.lwtv-actor-articles-modal {
