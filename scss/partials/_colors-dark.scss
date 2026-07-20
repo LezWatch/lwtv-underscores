@@ -118,9 +118,20 @@
 
 	}
 
+	.lwtv-death-list td a {
+		color: $link-color!important;
+
+		&:hover,
+		&:focus,
+		&:active {
+			color: $link-hover-color!important;
+		}
+	}
+
+	.lwtv-death-list td a,
 	a {
 		color: $link-color;
-		text-decoration: underline;
+		text-decoration: none;
 
 		&:visited {
 			color: $link-color;
@@ -369,18 +380,18 @@
 		}
 
 		.progress-bar {
-			background-color: colors.$lwtv-ltpink !important;
+			background-color: colors.$lwtv-mdpink !important;
 		}
 
 		.lwtv-bars--characters .progress-bar,
 		.lwtv-bars--actors .progress-bar,
 		.lwtv-bars--shows .progress-bar {
-			background-color: colors.$lwtv-ltpink !important;
+			background-color: colors.$lwtv-mdpink !important;
 		}
 
 		.lwtv-bars--sexuality .progress-bar,
 		.lwtv-bars--gender .progress-bar {
-			background-color: colors.$lwtv-ltpink !important;
+			background-color: colors.$lwtv-mdpink !important;
 		}
 
 		button {
@@ -397,6 +408,11 @@
 			background-color: $lwtv-medgrey;
 		}
 
+		.lwtv-yearbars-axis-peak,
+		.lwtv-yearbars-avg-num,
+		.lwtv-yearbar-val {
+			color: colors.$lwtv-ltpink!important;
+		}
 		.lwtv-stats-tab {
 			color: colors.$lwtv-ltpink;
 
@@ -411,6 +427,11 @@
 			border-color: colors.$lwtv-bordergrey;
 		}
 
+		.tablesorter-bootstrap:not(.table-dark) tfoot td, .tablesorter-bootstrap:not(.table-dark) tfoot th, .tablesorter-bootstrap:not(.table-dark) thead:not(.thead-dark) .tablesorter-header {
+			background-color: colors.$lwtv-grey2;
+		}
+
+		.lwtv-death-list-intro,
 		.lwtv-donut-legend-val,
 		.lwtv-donut-center-sub,
 		.lwtv-donut-desc,
@@ -423,7 +444,10 @@
 		.lwtv-tail-count,
 		.lwtv-tail-name,
 		.lwtv-trend-current-sub,
-		.lwtv-trend-desc {
+		.lwtv-trend-desc,
+		.lwtv-yearbars-avg-sub,
+		.lwtv-yearbars-axis,
+		.lwtv-yearbars-desc {
 			color: colors.$white;
 		}
 
