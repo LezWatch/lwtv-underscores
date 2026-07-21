@@ -3,7 +3,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 /**
- * Shows → On Air: area trendline of shows-on-air per year.
+ * Shows → On Air: year-over-year column chart of shows-on-air per year.
  *
  * @package LezWatch.TV
  */

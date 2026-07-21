@@ -241,7 +241,7 @@ switch ( $view ) {
 				'label' => __( 'Best Year', 'lwtv' ),
 				'svg'   => 'fireworks.svg',
 				'icon'  => 'svg-fireworks',
-				// Raw values — the trendline partial escapes the assembled text with esc_html().
+				// Raw values — the callout partial escapes the assembled text with esc_html().
 				'text'  => sprintf(
 					/* translators: 1: year, 2: nation name, 3: number of shows on air. */
 					_n( 'In %1$s, %2$s had %3$s show on air.', 'In %1$s, %2$s had %3$s shows on air.', $lwtv_best_count, 'lwtv' ),

@@ -18,7 +18,7 @@ $dl_title = (string) ( $download_csv['title'] ?? __( 'Download the data', 'lwtv'
 $dl_count = (int) ( $download_csv['count'] ?? 0 );
 $dl_page  = (string) ( $download_csv['page'] ?? __( 'row', 'lwtv' ) );
 ?>
-<div class="lwtv-download-csv-panel">
+<div class="lwtv-download-csv-panel bg-light">
 	<span class="lwtv-download-csv-icon"><?php echo lwtv_plugin()->get_symbolicon( svg: 'magic-wand.svg', icon: 'svg-magic-wand', max_size: '24' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
 	<span class="lwtv-download-csv-text">
 		<strong class="lwtv-download-csv-title"><?php echo esc_html( $dl_title ); ?></strong>

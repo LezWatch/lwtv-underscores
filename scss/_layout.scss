@@ -418,40 +418,66 @@ h6 a {
 		@include fonts.font-24;
 	}
 
+	// Dark-mode segmented control: a pill floating on the navbar, no
+	// enclosing cell or border. Vertically centered in the 50px bar.
 	.dark-mode-toggle {
+		display: flex;
+		align-items: center;
+		margin: 0 16px 0 12px;
+	}
 
-		button {
-			height: 51px;
-			border-radius: 0;
+	.dark-mode-control {
+		display: inline-flex;
+		align-items: center;
+		height: 36px;
+		padding: 2px;
+		background-color: colors.$lightgrey;
+		border-radius: 999px;
+
+		.dark-mode-segment {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			gap: 0.375rem;
+			min-width: 44px;
+			height: 32px;
+			padding: 0;
+			background-color: transparent;
+			border: 0;
+			border-radius: 999px;
+			color: colors.$lwtv-medgrey;
+			cursor: pointer;
+			transition: background-color 150ms ease-out, color 150ms ease-out;
+
+			.bi {
+				width: 16px;
+				height: 16px;
+				fill: currentColor;
+			}
+
+			&:hover {
+				color: colors.$darkgrey;
+			}
+
+			&.active {
+				background-color: colors.$lwtv-pink;
+				color: colors.$white;
+			}
+
+			&.active:hover {
+				color: colors.$white;
+			}
+
+			&:focus-visible {
+				outline: 3px solid colors.$lwtv-pink;
+				outline-offset: 2px;
+			}
 		}
 
-		.form-check {
-			padding-left: 0;
-		}
+		@media (prefers-reduced-motion: reduce) {
 
-		.bi {
-			width: 1em;
-			height: 1em;
-			vertical-align: -0.125em;
-			fill: colors.$lwtv-pink;
-		}
-
-		.my-1 {
-			margin-top: 0.25rem !important;
-			margin-bottom: 0.25rem !important;
-		}
-
-		.dropdown-menu-end[data-bs-popper] {
-			right: 1rem;
-			left: auto;
-		}
-
-		.nav-link:focus,
-		.nav-link:hover {
-			background-color: colors.$lwtv-pink;
-
-			svg * {
-				fill: colors.$lwtv-ltgrey;
+			.dark-mode-segment {
+				transition: none;
 			}
 		}
 	}
