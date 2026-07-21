@@ -217,3 +217,13 @@ $actor_panels = array(
 	}
 	?>
 </div>
+
+<?php
+$download_csv = array(
+	'page'  => 'actor',
+	'title' => 'Actors who played queer characters.',
+	'count' => $actor_count,
+);
+// phpcs:ignore PEAR.Files.IncludingFile.UseRequire
+include plugin_dir_path( __DIR__ ) . 'partials/download-csv.php';
+

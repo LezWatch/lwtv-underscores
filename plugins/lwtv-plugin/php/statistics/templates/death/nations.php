@@ -38,3 +38,12 @@ $ranked = array(
 );
 // phpcs:ignore PEAR.Files.IncludingFile.UseRequire
 include plugin_dir_path( __DIR__ ) . 'partials/ranked-bars.php';
+
+$download_csv = array(
+	'page'  => __( 'country', 'lwtv' ),
+	'title' => __( 'Deaths by country', 'lwtv' ),
+	'count' => count( $dn_raw ),
+);
+// phpcs:ignore PEAR.Files.IncludingFile.UseRequire
+include plugin_dir_path( __DIR__ ) . 'partials/download-csv.php';
+

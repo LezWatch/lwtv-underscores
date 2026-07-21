@@ -270,6 +270,16 @@ switch ( $view ) {
 		);
 		// phpcs:ignore PEAR.Files.IncludingFile.UseRequire
 		include plugin_dir_path( __DIR__ ) . 'partials/year-bars.php';
+
+		$download_csv = array(
+			'page'  => __( 'year', 'lwtv' ),
+			/* translators: %s: station name. */
+			'title' => sprintf( __( '%s: shows on air by year', 'lwtv' ), $lwtv_name ),
+			'count' => count( $lwtv_oa_series['rows'] ),
+		);
+		// phpcs:ignore PEAR.Files.IncludingFile.UseRequire
+		include plugin_dir_path( __DIR__ ) . 'partials/download-csv.php';
+
 		break;
 
 	case '_tropes':

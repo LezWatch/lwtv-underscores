@@ -125,3 +125,13 @@ $leaderboard_icon_svg = 'satellite-signal.svg';
 $leaderboard_icon_fa  = 'svg-satellite-signal';
 // phpcs:ignore PEAR.Files.IncludingFile.UseRequire
 include plugin_dir_path( __DIR__ ) . 'partials/leaderboard.php';
+
+$download_csv = array(
+	'page'  => __( 'station', 'lwtv' ),
+	'title' => __( 'Shows, characters & deaths, by station', 'lwtv' ),
+	// Count the CSV's own source (stations with >=1 published show), which the
+	// cached summaries provide — $all_stations_data also includes show-less ones.
+	'count' => count( (array) lwtv_plugin()->generate_station_statistics( 'all', 'all', 'array' ) ),
+);
+// phpcs:ignore PEAR.Files.IncludingFile.UseRequire
+include plugin_dir_path( __DIR__ ) . 'partials/download-csv.php';

@@ -72,3 +72,11 @@ $yearbars = array(
 );
 // phpcs:ignore PEAR.Files.IncludingFile.UseRequire
 include plugin_dir_path( __DIR__ ) . 'partials/year-bars.php';
+
+$download_csv = array(
+	'page'  => __( 'year', 'lwtv' ),
+	'title' => __( 'Character deaths, by year', 'lwtv' ),
+	'count' => count( $dy['rows'] ),
+);
+// phpcs:ignore PEAR.Files.IncludingFile.UseRequire
+include plugin_dir_path( __DIR__ ) . 'partials/download-csv.php';

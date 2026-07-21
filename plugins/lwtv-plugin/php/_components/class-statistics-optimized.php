@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-use LWTV\Statistics\{ Gutenberg_SSR, Query_Vars, Stats_Counter, Stats_Handler, Stats_Generator };
+use LWTV\Statistics\{ CSV_Download, Gutenberg_SSR, Query_Vars, Stats_Counter, Stats_Handler, Stats_Generator };
 use LWTV\Statistics\Stats_Enqueues;
 use LWTV\CPTs\Actors as CPT_Actors;
 
@@ -30,6 +30,7 @@ class Statistics_Optimized implements Component, Templater {
 	 */
 	public function init(): void {
 		new Query_Vars();
+		new CSV_Download();
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
 	}
 

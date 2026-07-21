@@ -116,3 +116,13 @@ $leaderboard_chars = $character_counts;
 $leaderboard_all   = (int) $all_shows_count;
 // phpcs:ignore PEAR.Files.IncludingFile.UseRequire
 include plugin_dir_path( __DIR__ ) . 'partials/leaderboard.php';
+
+$download_csv = array(
+	'page'  => __( 'nation', 'lwtv' ),
+	'title' => __( 'Shows, characters & deaths, by nation', 'lwtv' ),
+	// Count the CSV's own source (nations with >=1 published show) so the card
+	// row count matches the file exactly.
+	'count' => count( (array) lwtv_plugin()->generate_nation_statistics( 'all', 'all', 'array' ) ),
+);
+// phpcs:ignore PEAR.Files.IncludingFile.UseRequire
+include plugin_dir_path( __DIR__ ) . 'partials/download-csv.php';

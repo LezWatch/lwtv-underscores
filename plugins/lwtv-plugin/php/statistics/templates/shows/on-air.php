@@ -55,3 +55,11 @@ $yearbars = array(
 
 // phpcs:ignore PEAR.Files.IncludingFile.UseRequire
 include plugin_dir_path( __DIR__ ) . 'partials/year-bars.php';
+
+$download_csv = array(
+	'page'  => __( 'year', 'lwtv' ),
+	'title' => __( 'Shows on air, by year', 'lwtv' ),
+	'count' => count( $onair_series['rows'] ),
+);
+// phpcs:ignore PEAR.Files.IncludingFile.UseRequire
+include plugin_dir_path( __DIR__ ) . 'partials/download-csv.php';
