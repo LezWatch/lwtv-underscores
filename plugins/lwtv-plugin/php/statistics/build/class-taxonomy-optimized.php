@@ -145,6 +145,77 @@ class Taxonomy_Optimized {
 	}
 
 	/**
+	 * Average and median number of a taxonomy's terms per object, measured across
+	 * objects that carry at least one (non-excluded) term. Objects whose only
+	 * term is an excluded placeholder (e.g. a "None" term) drop out entirely.
+	 *
+	 * @param string $post_type     Post type to measure (e.g. 'post_type_shows').
+	 * @param string $taxonomy      Taxonomy to count (e.g. 'lez_tropes').
+	 * @param array  $exclude_slugs Term slugs to exclude from the count (e.g. array( 'none' )).
+	 * @return array { 'average' => float, 'median' => float, 'shows' => int, 'total' => int }.
+	 */
+	public function get_terms_per_object_stats( $post_type, $taxonomy, $exclude_slugs = array() ) {
+		$exclude_slugs = array_values( array_filter( array_map( 'sanitize_title', (array) $exclude_slugs ) ) );
+		$cache_key     = 'terms_per_object_' . $post_type . '_' . $taxonomy . ( $exclude_slugs ? '_x' . md5( implode( ',', $exclude_slugs ) ) : '' );
+		$cached_data   = lwtv_plugin()->get_transient( $cache_key );
+
+		if ( false !== $cached_data ) {
+			return $cached_data;
+		}
+
+		global $wpdb;
+
+		// Optional slug exclusion (e.g. a "None" placeholder term).
+		$exclude_where = '';
+		$prepare_args  = array( $taxonomy, $post_type );
+		if ( $exclude_slugs ) {
+			$placeholders  = implode( ',', array_fill( 0, count( $exclude_slugs ), '%s' ) );
+			$exclude_where = " WHERE t.slug NOT IN ($placeholders)";
+			$prepare_args  = array_merge( $prepare_args, $exclude_slugs );
+		}
+
+		// One row per published object that carries >=1 counted term of the
+		// taxonomy, each row = how many of that taxonomy's terms the object has.
+		// phpcs:disable
+		$query = $wpdb->prepare(
+			"SELECT COUNT(*) AS n
+			FROM {$wpdb->term_relationships} tr
+			INNER JOIN {$wpdb->term_taxonomy} tt ON tt.term_taxonomy_id = tr.term_taxonomy_id AND tt.taxonomy = %s
+			INNER JOIN {$wpdb->terms} t ON t.term_id = tt.term_id
+			INNER JOIN {$wpdb->posts} p ON p.ID = tr.object_id AND p.post_type = %s AND p.post_status = 'publish'
+			{$exclude_where}
+			GROUP BY tr.object_id",
+			$prepare_args
+		);
+		// phpcs:enable
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- This is a prepared query (see above)
+		$counts = array_map( 'intval', (array) $wpdb->get_col( $query ) );
+
+		$stats = array(
+			'average' => 0.0,
+			'median'  => 0.0,
+			'shows'   => 0,
+			'total'   => 0,
+		);
+
+		$num = count( $counts );
+		if ( $num > 0 ) {
+			sort( $counts );
+			$sum              = array_sum( $counts );
+			$mid              = intdiv( $num, 2 );
+			$stats['average'] = $sum / $num;
+			$stats['median']  = ( 0 === $num % 2 ) ? ( $counts[ $mid - 1 ] + $counts[ $mid ] ) / 2 : (float) $counts[ $mid ];
+			$stats['shows']   = $num;
+			$stats['total']   = $sum;
+		}
+
+		lwtv_plugin()->set_transient( $cache_key, $stats, WEEK_IN_SECONDS );
+
+		return $stats;
+	}
+
+	/**
 	 * Get bulk character counts for multiple taxonomy terms in a single query
 	 *
 	 * Eliminates N+1 query patterns by getting character counts for all terms at once.
