@@ -48,8 +48,8 @@ class Stations {
 					t.slug,
 					t.name,
 					COUNT(DISTINCT p.ID) as show_count,
-					SUM(DISTINCT COALESCE(char_count.meta_value, 0)) as character_count,
-					SUM(DISTINCT COALESCE(dead_count.meta_value, 0)) as dead_count
+					SUM(COALESCE(char_count.meta_value, 0)) as character_count,
+					SUM(COALESCE(dead_count.meta_value, 0)) as dead_count
 				FROM {$wpdb->terms} t
 				INNER JOIN {$wpdb->term_taxonomy} tt ON t.term_id = tt.term_id
 				LEFT JOIN {$wpdb->term_relationships} tr ON tt.term_taxonomy_id = tr.term_taxonomy_id
@@ -101,9 +101,11 @@ class Stations {
 		$cache_key   = 'station_details_' . $station_slug;
 		$cached_data = lwtv_plugin()->get_transient( $cache_key );
 
+		// The cache stores the format-independent raw breakdowns; always run them
+		// through prepare_station_data() so the return shape matches on hit and miss.
 		if ( false !== $cached_data ) {
 			lwtv_plugin()->debug_log( 'statistics', 'Cached data found for ' . $station_slug . ': ' . $cache_key );
-			return $cached_data;
+			return $this->prepare_station_data( $cached_data, $station_slug, $format, $view );
 		}
 
 		try {
@@ -220,8 +222,8 @@ class Stations {
 					t.slug,
 					t.name,
 					COUNT(DISTINCT p.ID) as show_count,
-					SUM(DISTINCT COALESCE(char_count.meta_value, 0)) as character_count,
-					SUM(DISTINCT COALESCE(dead_count.meta_value, 0)) as dead_count,
+					SUM(COALESCE(char_count.meta_value, 0)) as character_count,
+					SUM(COALESCE(dead_count.meta_value, 0)) as dead_count,
 					(SELECT COUNT(DISTINCT dead_p.ID)
 					FROM {$wpdb->posts} dead_p
 					INNER JOIN {$wpdb->term_relationships} dead_tr ON dead_p.ID = dead_tr.object_id
@@ -644,6 +646,12 @@ class Stations {
 
 			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- This is a prepared query (see above)
 			$results = $wpdb->get_results( $queery, ARRAY_A );
+
+			// Don't cache a failed query; return empty so the next call retries.
+			if ( ! is_array( $results ) ) {
+				lwtv_plugin()->error_log( 'statistics', 'Top stations query failed for number: ' . $number . ' - Last error: ' . $wpdb->last_error );
+				return array();
+			}
 
 			lwtv_plugin()->set_transient( $cache_key, $results, DAY_IN_SECONDS );
 

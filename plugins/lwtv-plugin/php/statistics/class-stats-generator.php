@@ -19,6 +19,7 @@ use LWTV\Statistics\Build\Formats as Build_Formats;
 use LWTV\Statistics\Build\Taxonomy_Optimized as Build_Taxonomy_Optimized;
 use LWTV\Statistics\Build\On_Air_Optimized as Build_On_Air;
 use LWTV\Statistics\Build\Queer_IRL as Build_Queer_IRL;
+use LWTV\Statistics\Build\Cliche_Leaders as Build_Cliche_Leaders;
 use LWTV\Statistics\Build\Dead as Build_Dead;
 use LWTV\Statistics\Build\Actors as Build_Actors;
 use LWTV\Statistics\Stats_Handler;
@@ -148,6 +149,9 @@ class Stats_Generator {
 		switch ( $type ) {
 			case 'cliches':
 				$all_data = ( new Build_Taxonomy_Optimized() )->make_comprehensive( CPT_Characters::SLUG, 'lez_cliches', true );
+				break;
+			case 'most-cliches':
+				$all_data = ( new Build_Cliche_Leaders() )->generate();
 				break;
 			case 'gender':
 				$all_data = ( new Build_Taxonomy_Optimized() )->make_comprehensive( CPT_Characters::SLUG, 'lez_gender', true );

@@ -343,7 +343,7 @@ class ACF {
 	 */
 	public function load_airdates_start_choices( array $field ): array {
 		$earliest         = (int) LWTV_FIRST_YEAR - 10;
-		$current          = (int) gmdate( 'Y' );
+		$current          = (int) gmdate( 'Y' ) + 1;
 		$field['choices'] = array();
 		for ( $year = $current; $year >= $earliest; $year-- ) {
 			$field['choices'][ (string) $year ] = (string) $year;
@@ -361,7 +361,7 @@ class ACF {
 	 */
 	public function load_airdates_finish_choices( array $field ): array {
 		$earliest         = (int) LWTV_FIRST_YEAR - 10;
-		$current          = (int) gmdate( 'Y' );
+		$current          = (int) gmdate( 'Y' ) + 1;
 		$field['choices'] = array( 'current' => 'Current' );
 		for ( $year = $current; $year >= $earliest; $year-- ) {
 			$field['choices'][ (string) $year ] = (string) $year;

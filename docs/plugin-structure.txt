@@ -49,16 +49,10 @@ This document describes the structure and contents of the custom LezWatch.TV Plu
 │   │   │   └── tvmaze.png
 │   └── js/
 │       ├── calendar-tabs.js - Tab switching logic for calendar views
-│       ├── chart.min.js - Chart.js library (minified)
-│       ├── chart.min.js.map - Source map for Chart.js
-│       ├── chart.umd.js.map - Source map for Chart.js UMD build
-│       ├── chartjs-plugin-trendline.min.js - Chart.js trendline plugin
 │       ├── facetwp-pagination.js - FacetWP pagination customizations
 │       ├── gutenberg.js - Gutenberg editor customizations
 │       ├── jquery.tablesorter.js - Tablesorter jQuery plugin
 │       ├── jquery.tablesorter.min.js - Tablesorter jQuery plugin (minified)
-│       ├── palette.js - Color palette utility
-│       └── palette.min.js - Color palette utility (minified)
 ├── php/
 │   ├── class-plugin.php - Main plugin file. All new components will be added there
 │   ├── readme.md
@@ -268,6 +262,7 @@ This document describes the structure and contents of the custom LezWatch.TV Plu
 │   │   ├── class-stats-handler.php - Request handling and routing for statistics
 │   │   ├── build/ - Data builders for specific stat types
 │   │   │   ├── class-actors.php - Actor statistics builder
+│   │   │   ├── class-cliche-leaders - Cliche leaders builder
 │   │   │   ├── class-dead.php - Death statistics builder
 │   │   │   ├── class-formats.php - Format statistics builder
 │   │   │   ├── class-nations.php - Nation statistics builder
@@ -279,25 +274,21 @@ This document describes the structure and contents of the custom LezWatch.TV Plu
 │   │   │   ├── class-this-year.php - This year statistics builder
 │   │   │   ├── class-we-love-it.php - "Shows We Love" statistics builder
 │   │   │   └── class-worth-it.php - "Worth It" score statistics builder
-│   │   ├── format/ - Output formatters
-│   │   │   ├── class-barcharts-optimized.php - Optimized bar chart formatting
+│   │   ├── format/ - Output formatters (all server-rendered; Chart.js removed)
 │   │   │   ├── class-lists-optimized.php - Optimized list formatting
 │   │   │   ├── class-percentage-optimized.php - Optimized percentage display
-│   │   │   ├── class-piecharts-optimized.php - Optimized pie chart formatting
-│   │   │   ├── class-shared.php - Shared formatting utilities
-│   │   │   └── class-trendline-optimized.php - Optimized trendline calculations
+│   │   │   └── class-shared.php - Shared formatting utilities
 │   │   └── templates/ - Template files organized by section
 │   │       ├── actors.php - Actor stats entry point
 │   │       ├── actors/ - Actor stat templates (gender, navbar, overview, sexuality)
 │   │       ├── characters.php - Character stats entry point
-│   │       ├── characters/ - Character stat templates (cliches, gender, navbar, on-air, overview, queer-irl, sexuality)
+│   │       ├── characters/ - Character stat templates (cliches, most-cliches, gender, navbar, on-air, overview, queer-irl, sexuality)
 │   │       ├── death.php - Death stats entry point
 │   │       ├── death/ - Death stat templates (characters, list, nations, navbar, overview, shows, stations, years)
 │   │       ├── main.php - Main stats page entry point
 │   │       ├── main/ - Main page templates (overview, top-nations, top-stations)
 │   │       ├── nations.php - Nation stats entry point
 │   │       ├── nations/ - Nation stat templates (all, single)
-│   │       ├── post_type_actors.php - Partial for showing character stats for a single actor
 │   │       ├── shows.php - Show stats entry point
 │   │       ├── shows/ - Show stat templates (formats, genres, intersectionality, navbar, on-air, overview, stars, triggers, tropes, we-love-it, worth-it)
 │   │       ├── stations.php - Station stats entry point
@@ -335,11 +326,13 @@ This document describes the structure and contents of the custom LezWatch.TV Plu
 │   │       ├── canceled-shows.php - Canceled shows template
 │   │       ├── characters-on-air.php - Characters on air template
 │   │       ├── dead-characters.php - Dead characters template
-│   │       ├── navigation.php - Main navigation template
-│   │       ├── navigation-year.php - Year-specific navigation
+│   │       ├── navigation.php - Section sub-nav (Overview / Characters / Dead / Shows / New / Canceled)
+│   │       ├── navigation-year.php - Year navigator (prev/next arrows + year dropdown + live chip)
 │   │       ├── new-shows.php - New shows template
-│   │       ├── overview.php - Overview template
-│   │       └── shows-on-air.php - Shows on air template
+│   │       ├── overview.php - Overview template (lead statement, metric ribbon, highlights)
+│   │       ├── shows-on-air.php - Shows on air template
+│   │       └── partials/ - Shared partials
+│   │           └── show-block.php - Shared Shows/New/Canceled block (two-column group cards)
 │   ├── validator/ - Data validation
 │   │   ├── class-actor-checker.php - Check actors for valid data
 │   │   ├── class-actor-imdb.php - List actors missing IMDb

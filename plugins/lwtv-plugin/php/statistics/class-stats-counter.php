@@ -66,7 +66,7 @@ class Stats_Counter {
 							$score += $this_score;
 						}
 					}
-					$score = ( $score / $queery->post_count );
+					$score = ( $queery->post_count > 0 ) ? ( $score / $queery->post_count ) : 0;
 
 					$return = round( $score, 2 );
 					break;
@@ -102,6 +102,9 @@ class Stats_Counter {
 	/**
 	 * Generate total counts
 	 *
+	 * @param mixed $subject
+	 * @param bool  $death
+	 *
 	 * @return int Total counts
 	 */
 	public function generate_total_counts( $subject, $death = false ) {
@@ -110,5 +113,105 @@ class Stats_Counter {
 		}
 
 		return wp_count_posts( 'post_type_' . $subject )->publish;
+	}
+
+	/**
+	 * Cumulative growth series for a subject, one entry per year.
+	 *
+	 * @param string $subject One of: shows, characters, actors, dead.
+	 * @return array<int,array{year:int,count:int}> Year-ordered, cumulative counts.
+	 */
+	public function get_growth_series( $subject ) {
+		$valid = array( 'shows', 'characters', 'actors', 'dead' );
+		if ( ! in_array( $subject, $valid, true ) ) {
+			return array();
+		}
+
+		$cache_key   = 'stats_growth_series_' . $subject;
+		$cached_data = lwtv_plugin()->get_transient( $cache_key );
+		if ( false !== $cached_data ) {
+			return (array) $cached_data;
+		}
+
+		$per_year = array();
+
+		if ( 'dead' === $subject ) {
+			global $wpdb;
+			// Distinct published characters tagged dead, grouped by entry year —
+			// same "database growth by post_date" shape as the other subjects,
+			// so the final total matches generate_total_dead( 'characters' ).
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- static query, no untrusted input
+			$results = $wpdb->get_results(
+				"SELECT YEAR(p.post_date) AS post_year, COUNT(DISTINCT p.ID) AS total
+				FROM {$wpdb->posts} p
+				INNER JOIN {$wpdb->term_relationships} tr ON p.ID = tr.object_id
+				INNER JOIN {$wpdb->term_taxonomy} tt ON tr.term_taxonomy_id = tt.term_taxonomy_id
+				INNER JOIN {$wpdb->terms} t ON tt.term_id = t.term_id
+				WHERE p.post_type = 'post_type_characters'
+				AND p.post_status = 'publish'
+				AND tt.taxonomy = 'lez_cliches'
+				AND t.slug = 'dead'
+				GROUP BY YEAR(p.post_date)
+				ORDER BY post_year ASC",
+				ARRAY_A
+			);
+			if ( ! is_array( $results ) ) {
+				lwtv_plugin()->error_log( 'statistics', 'Growth series query failed for ' . $subject . ' - ' . $wpdb->last_error );
+				return array();
+			}
+			foreach ( $results as $row ) {
+				$per_year[ (int) $row['post_year'] ] = (int) $row['total'];
+			}
+		} else {
+			global $wpdb;
+			$post_type = 'post_type_' . $subject;
+			// One grouped query: published entries per creation year.
+			$results = $wpdb->get_results(
+				$wpdb->prepare(
+					"SELECT YEAR(post_date) AS post_year, COUNT(*) AS total
+					FROM {$wpdb->posts}
+					WHERE post_type = %s AND post_status = 'publish'
+					GROUP BY YEAR(post_date)
+					ORDER BY post_year ASC",
+					$post_type
+				),
+				ARRAY_A
+			);
+			if ( ! is_array( $results ) ) {
+				lwtv_plugin()->error_log( 'statistics', 'Growth series query failed for ' . $subject . ' - ' . $wpdb->last_error );
+				return array();
+			}
+			foreach ( $results as $row ) {
+				$per_year[ (int) $row['post_year'] ] = (int) $row['total'];
+			}
+		}
+
+		$series = $this->cumulate( $per_year );
+
+		if ( ! empty( $series ) ) {
+			lwtv_plugin()->set_transient( $cache_key, $series, DAY_IN_SECONDS );
+		}
+
+		return $series;
+	}
+
+	/**
+	 * Turn a year=>count map into a year-ordered cumulative series.
+	 *
+	 * @param array<int,int> $per_year Map of year => count for that year.
+	 * @return array<int,array{year:int,count:int}>
+	 */
+	private function cumulate( array $per_year ) {
+		ksort( $per_year );
+		$running = 0;
+		$series  = array();
+		foreach ( $per_year as $year => $count ) {
+			$running += (int) $count;
+			$series[] = array(
+				'year'  => (int) $year,
+				'count' => $running,
+			);
+		}
+		return $series;
 	}
 }

@@ -1,6 +1,6 @@
 {
   "name": "lwtv-underscores",
-  "version": "7.0.13",
+  "version": "7.1.0",
   "description": "LezWatch.TV Custom Theme.",
   "main": "index.js",
   "workspaces": [
@@ -49,8 +49,6 @@
   "repository": "https://github.com/lezwatch/lwtv-underscores/",
   "dependencies": {
     "@popperjs/core": "^2.11.8",
-    "chart.js": "^4.4",
-    "chartjs-plugin-trendline": "^3",
     "simple-git": "^3",
     "tablesorter": "^2"
   },

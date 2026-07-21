@@ -63,7 +63,6 @@ use LWTV\_Helpers\Utils;
  * STATISTICS OPTIMIZED
  * @method array  generate_shows_count( $type, $tax, $term )                                              \_Components\Statistics
  * @method string generate_stats_block( $attributes )                                                     \_Components\Statistics
- * @method string generate_stats_block_actor( $attributes )                                               \_Components\Statistics
  * @method mixed  generate_nation_statistics( $nation, $view, $format, $custom_data, $bar_direction )     \_Components\Statistics
  * @method mixed  generate_station_statistics( $station, $view, $format, $custom_data, $bar_direction )   \_Components\Statistics
  * @method mixed  generate_statistics( $subject, $data, $format, $post_id, $custom_array )                \_Components\Statistics
@@ -71,6 +70,7 @@ use LWTV\_Helpers\Utils;
  * @method mixed  generate_total_counts( [shows|characters|actors] )                                      \_Components\Statistics
  * @method mixed  generate_total_dead( [characters] )                                                     \_Components\Statistics
  * @method mixed  generate_dead_statistics( $subject, $view, $format )                                    \_Components\Statistics
+ * @method array  generate_growth_series( $subject )                                                      \_Components\Statistics
  *
  * SYMBOLICONS
  * @method string get_icon_svg( string $slug )   \_Components\Symbolicons

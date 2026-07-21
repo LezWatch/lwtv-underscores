@@ -113,7 +113,9 @@ class Taxonomy_Optimized {
 		$cache_key = 'taxonomy_comp_' . $post_type . '_' . $taxonomy . '_' . $sort_order . '_' . ( $include_empty ? 'all' : 'nonempty' );
 		$array     = lwtv_plugin()->get_transient( $cache_key );
 
-		if ( false === $array || empty( $array ) ) {
+		// Only a true cache miss (false) triggers a rebuild; a cached empty array
+		// is a valid result (a taxonomy with no non-empty terms) and is reused.
+		if ( false === $array ) {
 			$optimized_queery = new Queery_Taxonomy_Optimized();
 			$array            = $optimized_queery->get_cached_term_counts( $post_type, $taxonomy, array(), $sort_order );
 
@@ -140,6 +142,77 @@ class Taxonomy_Optimized {
 		}
 
 		return $array;
+	}
+
+	/**
+	 * Average and median number of a taxonomy's terms per object, measured across
+	 * objects that carry at least one (non-excluded) term. Objects whose only
+	 * term is an excluded placeholder (e.g. a "None" term) drop out entirely.
+	 *
+	 * @param string $post_type     Post type to measure (e.g. 'post_type_shows').
+	 * @param string $taxonomy      Taxonomy to count (e.g. 'lez_tropes').
+	 * @param array  $exclude_slugs Term slugs to exclude from the count (e.g. array( 'none' )).
+	 * @return array { 'average' => float, 'median' => float, 'shows' => int, 'total' => int }.
+	 */
+	public function get_terms_per_object_stats( $post_type, $taxonomy, $exclude_slugs = array() ) {
+		$exclude_slugs = array_values( array_filter( array_map( 'sanitize_title', (array) $exclude_slugs ) ) );
+		$cache_key     = 'terms_per_object_' . $post_type . '_' . $taxonomy . ( $exclude_slugs ? '_x' . md5( implode( ',', $exclude_slugs ) ) : '' );
+		$cached_data   = lwtv_plugin()->get_transient( $cache_key );
+
+		if ( false !== $cached_data ) {
+			return $cached_data;
+		}
+
+		global $wpdb;
+
+		// Optional slug exclusion (e.g. a "None" placeholder term).
+		$exclude_where = '';
+		$prepare_args  = array( $taxonomy, $post_type );
+		if ( $exclude_slugs ) {
+			$placeholders  = implode( ',', array_fill( 0, count( $exclude_slugs ), '%s' ) );
+			$exclude_where = " WHERE t.slug NOT IN ($placeholders)";
+			$prepare_args  = array_merge( $prepare_args, $exclude_slugs );
+		}
+
+		// One row per published object that carries >=1 counted term of the
+		// taxonomy, each row = how many of that taxonomy's terms the object has.
+		// phpcs:disable
+		$query = $wpdb->prepare(
+			"SELECT COUNT(*) AS n
+			FROM {$wpdb->term_relationships} tr
+			INNER JOIN {$wpdb->term_taxonomy} tt ON tt.term_taxonomy_id = tr.term_taxonomy_id AND tt.taxonomy = %s
+			INNER JOIN {$wpdb->terms} t ON t.term_id = tt.term_id
+			INNER JOIN {$wpdb->posts} p ON p.ID = tr.object_id AND p.post_type = %s AND p.post_status = 'publish'
+			{$exclude_where}
+			GROUP BY tr.object_id",
+			$prepare_args
+		);
+		// phpcs:enable
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- This is a prepared query (see above)
+		$counts = array_map( 'intval', (array) $wpdb->get_col( $query ) );
+
+		$stats = array(
+			'average' => 0.0,
+			'median'  => 0.0,
+			'shows'   => 0,
+			'total'   => 0,
+		);
+
+		$num = count( $counts );
+		if ( $num > 0 ) {
+			sort( $counts );
+			$sum              = array_sum( $counts );
+			$mid              = intdiv( $num, 2 );
+			$stats['average'] = $sum / $num;
+			$stats['median']  = ( 0 === $num % 2 ) ? ( $counts[ $mid - 1 ] + $counts[ $mid ] ) / 2 : (float) $counts[ $mid ];
+			$stats['shows']   = $num;
+			$stats['total']   = $sum;
+		}
+
+		lwtv_plugin()->set_transient( $cache_key, $stats, WEEK_IN_SECONDS );
+
+		return $stats;
 	}
 
 	/**
@@ -264,12 +337,6 @@ class Taxonomy_Optimized {
 		// Prepare parameters: taxonomy, then all term slugs
 		$parameters = array_merge( array( $taxonomy ), $term_slugs );
 
-		// Get current year for on-air calculations
-		$timestamp = time();
-		$dt        = new \DateTime( 'now', new \DateTimeZone( LWTV_TIMEZONE ) );
-		$dt->setTimestamp( $timestamp );
-		$current_year = $dt->format( 'Y' );
-
 		// Single query to get all show metrics for all terms
 		// phpcs:disable
 		$query = $wpdb->prepare(
@@ -296,6 +363,12 @@ class Taxonomy_Optimized {
 
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- This is a prepared query (see above)
 		$results = $wpdb->get_results( $query, ARRAY_A );
+
+		// Bail on query failure so we don't cache a bogus all-zero result set.
+		if ( ! is_array( $results ) ) {
+			lwtv_plugin()->debug_log( 'statistics', 'Bulk show counts query failed: ' . $wpdb->last_error );
+			return array();
+		}
 
 		// Format results
 		$formatted = array();
@@ -324,5 +397,47 @@ class Taxonomy_Optimized {
 		lwtv_plugin()->set_transient( $cache_key, $formatted, HOUR_IN_SECONDS );
 
 		return $formatted;
+	}
+
+	/**
+	 * Bulk earliest show start-year per term (one grouped query).
+	 *
+	 * @param string $taxonomy Taxonomy slug (e.g. 'lez_country').
+	 * @param array  $slugs    Term slugs to include.
+	 * @return array           [ slug => (int) earliest year | 0 ].
+	 */
+	public function get_bulk_first_years( $taxonomy, $slugs ) {
+		global $wpdb;
+
+		$first_years = array();
+		foreach ( $slugs as $slug ) {
+			$first_years[ ltrim( $slug, '_' ) ] = 0;
+		}
+		if ( empty( $slugs ) ) {
+			return $first_years;
+		}
+
+		$results = $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT t.slug AS slug, MIN( CAST( pm.meta_value AS UNSIGNED ) ) AS first_year
+				 FROM {$wpdb->terms} t
+				 INNER JOIN {$wpdb->term_taxonomy} tt ON tt.term_id = t.term_id AND tt.taxonomy = %s
+				 INNER JOIN {$wpdb->term_relationships} tr ON tr.term_taxonomy_id = tt.term_taxonomy_id
+				 INNER JOIN {$wpdb->posts} p ON p.ID = tr.object_id AND p.post_type = 'post_type_shows' AND p.post_status = 'publish'
+				 INNER JOIN {$wpdb->postmeta} pm ON pm.post_id = p.ID AND pm.meta_key = 'lezshows_airdates_start'
+				 WHERE pm.meta_value != ''
+				 GROUP BY t.slug",
+				$taxonomy
+			),
+			ARRAY_A
+		);
+
+		if ( $results ) {
+			foreach ( $results as $row ) {
+				$first_years[ $row['slug'] ] = (int) $row['first_year'];
+			}
+		}
+
+		return $first_years;
 	}
 }
