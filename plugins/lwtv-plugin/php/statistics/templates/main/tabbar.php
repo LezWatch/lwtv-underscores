@@ -54,6 +54,9 @@ switch ( $statstype ?? 'main' ) {
 	case 'death':
 		$lwtv_stats_active = home_url( '/statistics/' . $statstype . '/' );
 		break;
+	case 'this-year':
+		$lwtv_stats_active = home_url( '/this-year/' );
+		break;
 }
 ?>
 <nav class="lwtv-stats-tabs" aria-label="<?php esc_attr_e( 'Statistics sections', 'lwtv' ); ?>">

@@ -351,8 +351,7 @@
 		.card-header.genres,
 		.card-header.gender {
 			color: $lwtv-stats-yellow;
-			background-color: #3d2f00;
-			border-color: #5a4200;
+			border-color: $lwtv-stats-yellow;
 		}
 
 		.card-header.characters,
@@ -360,14 +359,12 @@
 		.card-header.tropes,
 		.card-header.actor_gender {
 			color: $lwtv-stats-green;
-			background-color: #0d2e1a;
-			border-color: #1a4d2e;
+			border-color: $lwtv-stats-green;
 		}
 
 		.card-header.dead-characters,
 		.card-header.canceled-shows {
 			color: $lwtv-stats-red;
-			background-color: #2e0d0d;
 			border-color: colors.$lwtv-red;
 		}
 
@@ -375,8 +372,7 @@
 		.card-header.shows-onair,
 		.card-header.sexuality {
 			color: $lwtv-stats-blue;
-			background-color: #0d1a2e;
-			border-color: #1a2e4d;
+			border-color: $lwtv-stats-blue;
 		}
 
 		.progress-bar {
@@ -444,6 +440,11 @@
 		.lwtv-tail-name,
 		.lwtv-trend-current-sub,
 		.lwtv-trend-desc,
+		.lwtv-ty-highlight-desc,
+		.lwtv-ty-highlight-kicker,
+		.lwtv-ty-lead-narrative,
+		.lwtv-ty-lifebar-legend-count,
+		.lwtv-ty-yearnav-caption,
 		.lwtv-yearbars-avg-sub,
 		.lwtv-yearbars-axis,
 		.lwtv-yearbars-desc {
@@ -456,7 +457,6 @@
 
 		.lwtv-trend-callout {
 			border-color: rgba(255, 255, 255, 0.12);
-			border-left-color: colors.$lwtv-pink;
 		}
 
 		a.lwtv-tail-name, a.lwtv-tail-name:visited,
@@ -530,6 +530,190 @@
 				color: colors.$white;
 				border-bottom-color: colors.$lwtv-pink;
 			}
+		}
+
+		// Year navigator: the light-mode translucent-black border and pale
+		// green chip both need lifting against the dark page background.
+		.lwtv-ty-yearnav-arrow {
+			color: colors.$lwtv-ltgrey;
+			border-color: rgba(255, 255, 255, 0.15);
+		}
+
+		.lwtv-ty-yearnav-select {
+			color: colors.$lwtv-ltgrey;
+			background-color: transparent;
+			border-color: rgba(255, 255, 255, 0.15);
+		}
+
+		.lwtv-ty-yearnav-live {
+			color: $lwtv-stats-green;
+			background: rgba($lwtv-stats-green, 0.16);
+		}
+
+		// Overview: lead/ribbon/highlight cards need the lifted border used
+		// throughout dark mode; the lead card's light "bg-light" tint also
+		// needs swapping for the dark neutral used elsewhere (e.g. .bg-light).
+		.lwtv-ty-lead {
+			background-color: $lwtv-medgrey;
+			border-color: rgba(255, 255, 255, 0.12);
+
+			.lwtv-stats-eyebrow {
+				color: colors.$lwtv-ltpink;
+			}
+		}
+
+		.lwtv-ty-metric,
+		.lwtv-ty-highlight {
+			border-color: rgba(255, 255, 255, 0.12);
+		}
+
+		// Family label colors: the light-mode deep tokens are too dark to read
+		// against the dark card background, so swap for the vivid dark tokens.
+		.lwtv-ty-metric--green .lwtv-ty-metric-label { color: $lwtv-stats-green; }
+		.lwtv-ty-metric--red .lwtv-ty-metric-label { color: $lwtv-stats-red; }
+		.lwtv-ty-metric--blue .lwtv-ty-metric-label { color: $lwtv-stats-blue; }
+		.lwtv-ty-metric--pink .lwtv-ty-metric-label { color: colors.$lwtv-ltpink; }
+		.lwtv-ty-metric--amber .lwtv-ty-metric-label { color: $lwtv-stats-yellow; }
+
+		.lwtv-ty-highlight-chip--green {
+			color: $lwtv-stats-green;
+			background-color: rgba($lwtv-stats-green, 0.16);
+		}
+
+		.lwtv-ty-highlight-chip--red {
+			color: $lwtv-stats-red;
+			background-color: rgba($lwtv-stats-red, 0.16);
+		}
+
+		.lwtv-ty-highlight-chip--blue {
+			color: $lwtv-stats-blue;
+			background-color: rgba($lwtv-stats-blue, 0.16);
+		}
+
+		.lwtv-ty-highlight-chip--pink {
+			color: colors.$lwtv-ltpink;
+			background-color: rgba(colors.$lwtv-ltpink, 0.16);
+		}
+
+		.lwtv-ty-highlight-chip--amber {
+			color: $lwtv-stats-yellow;
+			background-color: rgba($lwtv-stats-yellow, 0.16);
+		}
+
+		// Characters On Air: pill toggle, grid rows, and cast cards need the
+		// light-mode pale-grey surfaces and translucent-black borders lifted.
+		.lwtv-ty-section-subtitle,
+		.lwtv-ty-charname-shows a,
+		.lwtv-ty-charshow-count,
+		.lwtv-ty-charshow-meta,
+		.lwtv-ty-chip-role {
+			color: colors.$white;
+		}
+
+		.lwtv-ty-pills {
+			background-color: $lwtv-medgrey;
+
+			.nav-link {
+				color: colors.$lwtv-ltpink;
+
+				&.active {
+					color: colors.$lwtv-dkgrey;
+					background-color: colors.$lwtv-ltpink;
+				}
+			}
+		}
+
+		.lwtv-ty-charname-row,
+		.lwtv-ty-charshow-card {
+			border-color: rgba(255, 255, 255, 0.12);
+		}
+
+		.lwtv-ty-chip {
+			color: colors.$lwtv-ltgrey;
+			background-color: $lwtv-medgrey;
+
+			&:hover {
+				background-color: rgba(255, 255, 255, 0.16);
+			}
+		}
+
+		// Dead Characters: red rules/title need the vivid dark red; the pale
+		// light-mode row background and translucent-black borders get lifted.
+		.lwtv-ty-dc-title,
+		.lwtv-ty-deathdate-date,
+		.lwtv-ty-deathshow-count {
+			color: colors.$lwtv-trans-pink;
+		}
+
+		.lwtv-ty-deathdate-row {
+			background-color: $lwtv-medgrey;
+			border-color: rgba(255, 255, 255, 0.12);
+		}
+
+		.lwtv-ty-deathdate-show,
+		.lwtv-ty-deathshow-meta {
+			color: colors.$white;
+		}
+
+		.lwtv-ty-deathshow-card {
+			border-color: rgba(255, 255, 255, 0.12);
+		}
+
+		// Shows On Air / New Shows / Canceled Shows: light-mode deep accent
+		// tokens are too dark to read against the dark card background, so
+		// swap for the vivid dark tokens (pink uses the existing ltpink swap).
+		.lwtv-ty-block-title--blue { color: $lwtv-stats-blue; }
+		.lwtv-ty-block-title--pink { color: colors.$lwtv-ltpink; }
+		.lwtv-ty-block-title--amber { color: $lwtv-stats-yellow; }
+
+		.lwtv-ty-group-grid--blue .lwtv-ty-group-key,
+		.lwtv-ty-group-grid--blue .lwtv-ty-group-item a {
+			color: $lwtv-stats-blue;
+		}
+
+		.lwtv-ty-group-grid--pink .lwtv-ty-group-key,
+		.lwtv-ty-group-grid--pink .lwtv-ty-group-item a {
+			color: colors.$lwtv-ltpink;
+		}
+
+		.lwtv-ty-group-grid--amber .lwtv-ty-group-key,
+		.lwtv-ty-group-grid--amber .lwtv-ty-group-item a {
+			color: $lwtv-stats-yellow;
+		}
+
+		.lwtv-ty-group-card {
+			border-color: rgba(255, 255, 255, 0.12);
+		}
+
+		.lwtv-ty-group-head {
+			border-bottom-color: rgba(255, 255, 255, 0.12);
+		}
+
+		.lwtv-ty-group-count,
+		.lwtv-ty-group-meta,
+		.lwtv-ty-group-empty,
+		.lwtv-ty-block-foot {
+			color: colors.$white;
+		}
+
+		.lwtv-ty-yearnav-arrow svg {
+			fill: colors.$white;
+		}
+
+		// Empty state: pale green chip needs lifting, same treatment as the
+		// year navigator's "Live" chip above.
+		.lwtv-ty-empty {
+			background-color: $lwtv-medgrey;
+			border-color: rgba(255, 255, 255, 0.12);
+
+			p {
+				color: colors.$white;
+			}
+		}
+
+		.lwtv-ty-empty-icon {
+			color: $lwtv-stats-green;
+			background-color: rgba($lwtv-stats-green, 0.16);
 		}
 
 		.lwtv-donut-track {

@@ -63,7 +63,6 @@ use LWTV\_Helpers\Utils;
  * STATISTICS OPTIMIZED
  * @method array  generate_shows_count( $type, $tax, $term )                                              \_Components\Statistics
  * @method string generate_stats_block( $attributes )                                                     \_Components\Statistics
- * @method string generate_stats_block_actor( $attributes )                                               \_Components\Statistics
  * @method mixed  generate_nation_statistics( $nation, $view, $format, $custom_data, $bar_direction )     \_Components\Statistics
  * @method mixed  generate_station_statistics( $station, $view, $format, $custom_data, $bar_direction )   \_Components\Statistics
  * @method mixed  generate_statistics( $subject, $data, $format, $post_id, $custom_array )                \_Components\Statistics

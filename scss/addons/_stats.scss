@@ -1,6 +1,7 @@
 @use "sass:color";
 @use "sass:map";
 @use "../partials/colors";
+@use "sass:list";
 
 /* Statistics Pages */
 
@@ -11,8 +12,8 @@
 	.card-header.genres,
 	.card-header.gender {
 		color: colors.$lwtv-stats-yellow;
-		background-color: colors.$lwtv-stats-yellow-background;
-		border-color: colors.$lwtv-stats-yellow-border;
+		background-color: colors.$lwtv-stats-yellow-deep;
+		border-color: colors.$lwtv-stats-yellow;
 	}
 
 	.card-header.characters,
@@ -21,43 +22,43 @@
 	.card-header.actor_gender {
 		color: colors.$lwtv-stats-green;
 		background-color: colors.$lwtv-gq-green;
-		border-color: colors.$lwtv-stats-green-border;
+		border-color: colors.$lwtv-stats-green;
 	}
 
 	.card-header.trans-nb-actors,
 	.card-header.happy-endings,
 	.card-header.queer-actors {
 		color: colors.$lwtv-stats-royal-blue;
-		background-color: colors.$lwtv-stats-royal-blue-background;
-		border-color: colors.$lwtv-stats-royal-blue-border;
+		background-color: colors.$lwtv-stats-royal-blue-deep;
+		border-color: colors.$lwtv-stats-royal-blue;
 	}
 
 	.card-header.dead-characters,
 	.card-header.canceled-shows {
 		color: colors.$lwtv-stats-crimson;
-		background-color: colors.$lwtv-stats-crimson-background;
-		border-color: colors.$lwtv-stats-crimson-border;
+		background-color: colors.$lwtv-stats-crimson-deep;
+		border-color: colors.$lwtv-stats-crimson;
 	}
 
 	.card-header.bury-queers {
 		color: colors.$lwtv-stats-plum;
-		background-color: colors.$lwtv-stats-plum-background;
-		border-color: colors.$lwtv-stats-plum-border;
+		background-color: colors.$lwtv-stats-plum-deep;
+		border-color: colors.$lwtv-stats-plum;
 	}
 
 	.card-header.openly-queer,
 	.card-header.cliches {
 		color: colors.$lwtv-stats-purple;
-		background-color: colors.$lwtv-stats-purple-background;
-		border-color: colors.$lwtv-stats-purple-border;
+		background-color: colors.$lwtv-stats-purple-deep;
+		border-color: colors.$lwtv-stats-purple;
 	}
 
 	.card-header.shows,
 	.card-header.shows-onair,
 	.card-header.sexuality {
 		color: colors.$lwtv-stats-teal;
-		background-color: colors.$lwtv-stats-teal-background;
-		border-color: colors.$lwtv-stats-teal-border;
+		background-color: colors.$lwtv-stats-teal-deep;
+		border-color: colors.$lwtv-stats-teal;
 	}
 
 	.card-header.nations-new {
@@ -159,6 +160,791 @@ canvas {
 			width: 50%;
 		}
 
+	}
+
+	// Year navigator: prev/next arrows + dropdown + live chip + delta caption.
+	.lwtv-ty-yearnav {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		flex-wrap: wrap;
+		gap: 12px;
+		margin-bottom: 22px;
+	}
+
+	.lwtv-ty-yearnav-controls {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+	}
+
+	.lwtv-ty-yearnav-arrow {
+		display: grid;
+		place-items: center;
+		width: 68px;
+		height: 34px;
+		color: colors.$lwtv-dkgrey;
+		text-decoration: none;
+		border: 1px solid colors.$lwtv-bordergrey;
+		border-radius: 8px;
+
+		&.is-disabled {
+			opacity: 0.35;
+		}
+	}
+
+	.lwtv-ty-yearnav-select {
+		padding: 6px 10px;
+		font-weight: 700;
+		font-variant-numeric: tabular-nums;
+		border: 1px solid colors.$lwtv-bordergrey;
+		border-radius: 8px;
+		margin: .75rem;
+	}
+
+	.lwtv-ty-yearnav-live {
+		padding: 5px 9px;
+		font-size: 0.7rem;
+		font-weight: 700;
+		letter-spacing: 0.04em;
+		text-transform: uppercase;
+		color: colors.$lwtv-stats-green-deep;
+		background: colors.$lwtv-stats-green;
+		border-radius: 8px;
+		width: stretch;
+	}
+
+	.lwtv-ty-yearnav-caption {
+		font-size: 0.85rem;
+		color: colors.$lwtv-medgrey;
+	}
+
+	// Overview: editorial lead card.
+	.lwtv-ty-lead {
+		padding: 32px;
+		margin-bottom: 20px;
+		background-color: colors.$lwtv-grey;
+		border: 1px solid colors.$lwtv-bordergrey;
+		border-radius: 14px;
+
+		.lwtv-stats-eyebrow {
+			color: colors.$lwtv-pink;
+			font-size: 1.25rem;
+		}
+	}
+
+	// When a biggest-premiere poster is present, lay the card out as text + media.
+	.lwtv-ty-lead--media {
+		display: flex;
+		align-items: center;
+		gap: 28px;
+
+		@media (max-width: 640px) {
+			flex-direction: column-reverse;
+			align-items: stretch;
+		}
+
+		.lwtv-ty-lead-body {
+			flex: 1 1 auto;
+			min-width: 0;
+		}
+	}
+
+	.lwtv-ty-lead-media {
+		flex: 0 0 auto;
+		width: 35%;
+		margin: 0;
+		text-align: center;
+
+		@media (max-width: 640px) {
+			width: 100%;
+		}
+	}
+
+	.lwtv-ty-lead-img {
+		width: 100%;
+		height: auto;
+		border-radius: 10px;
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+	}
+
+	.lwtv-ty-lead-media-cap {
+		margin: 8px 0 0;
+		font-size: 0.7rem;
+		font-weight: 700;
+		letter-spacing: 0.04em;
+		text-transform: uppercase;
+		color: colors.$lwtv-medgrey;
+	}
+
+	.lwtv-ty-lead-stat {
+		max-width: 22ch;
+		margin: 0 0 8px;
+		font-size: 1.6rem;
+		font-weight: 700;
+		line-height: 1.28;
+	}
+
+	.lwtv-ty-lead-narrative {
+		max-width: 62ch;
+		margin: 0;
+		font-size: 0.95rem;
+		line-height: 1.6;
+		color: colors.$lwtv-medgrey;
+	}
+
+	// Overview: 5-metric ribbon (count + live delta vs. the prior year).
+	.lwtv-ty-ribbon {
+		display: grid;
+		grid-template-columns: repeat(5, 1fr);
+		gap: 10px;
+		margin-bottom: 24px;
+
+		@media (max-width: 991px) {
+			grid-template-columns: repeat(2, 1fr);
+		}
+
+		@media (max-width: 575px) {
+			grid-template-columns: 1fr;
+		}
+	}
+
+	.lwtv-ty-metric {
+		padding: 14px;
+		border: 1px solid colors.$lwtv-bordergrey;
+		border-radius: 10px;
+	}
+
+	.lwtv-ty-metric-label {
+		display: block;
+		margin-bottom: 8px;
+		font-size: 0.85rem;
+		font-weight: 700;
+		line-height: 1.3;
+		letter-spacing: 0.05em;
+		text-transform: uppercase;
+	}
+
+	.lwtv-ty-metric-num {
+		display: block;
+		font-size: 1.6rem;
+		font-weight: 700;
+		line-height: 1;
+		font-variant-numeric: tabular-nums;
+		float: left;
+		margin-right: 10px;
+		color: colors.$white;
+	}
+
+	.lwtv-ty-metric-delta {
+		display: block;
+		margin-top: 6px;
+		font-size: 0.9rem;
+		font-weight: 600;
+		color: colors.$lwtv-ltgrey;
+	}
+
+	.lwtv-ty-metric--green {
+		background-color: colors.$lwtv-stats-green-deep;
+		.lwtv-ty-metric-label {
+			color: colors.$lwtv-stats-green;
+		}
+	}
+	.lwtv-ty-metric--pink {
+		background-color: colors.$lwtv-stats-raspberry-deep;
+		.lwtv-ty-metric-label {
+			color: colors.$lwtv-stats-raspberry;
+		}
+	}
+	.lwtv-ty-metric--blue {
+		background-color: colors.$lwtv-stats-blue-deep;
+		.lwtv-ty-metric-label {
+			color: colors.$lwtv-stats-blue;
+		}
+	}
+	.lwtv-ty-metric--red {
+		background-color: colors.$lwtv-stats-plum-deep;
+		.lwtv-ty-metric-label {
+			color: colors.$lwtv-stats-plum;
+		}
+	}
+	.lwtv-ty-metric--amber {
+		background-color: colors.$lwtv-stats-yellow-deep;
+		.lwtv-ty-metric-label {
+			color: colors.$lwtv-stats-yellow;
+		}
+	}
+
+	// Overview: shows lifecycle stacked bar (New / Continuing / Canceled).
+	.lwtv-ty-lifebar {
+		margin-bottom: 24px;
+	}
+
+	.lwtv-ty-lifebar-track {
+		display: flex;
+		height: 34px;
+		margin-top: 4px;
+		overflow: hidden;
+		background-color: colors.$lwtv-bordergrey;
+		border-radius: 8px;
+	}
+
+	.lwtv-ty-lifebar-seg {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		min-width: 0;
+		overflow: hidden;
+		font-size: 0.75rem;
+		font-weight: 700;
+		font-variant-numeric: tabular-nums;
+		color: colors.$white;
+
+		&--new {
+			background-color: colors.$lwtv-dkpink;
+		}
+
+		&--steady {
+			background-color: colors.$lwtv-stats-blue-deep;
+		}
+
+		&--canceled {
+			background-color: colors.$lwtv-stats-yellow-deep;
+		}
+	}
+
+	.lwtv-ty-lifebar-legend {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 10px 24px;
+		margin-top: 12px;
+		font-size: 0.85rem;
+	}
+
+	.lwtv-ty-lifebar-legend-item {
+		display: inline-flex;
+		align-items: center;
+		gap: 8px;
+	}
+
+	.lwtv-ty-lifebar-dot {
+		flex: 0 0 auto;
+		width: 12px;
+		height: 12px;
+		border-radius: 3px;
+
+		&--new {
+			background-color: colors.$lwtv-dkpink;
+		}
+
+		&--steady {
+			background-color: colors.$lwtv-stats-blue-deep;
+		}
+
+		&--canceled {
+			background-color: colors.$lwtv-stats-yellow-deep;
+		}
+	}
+
+	.lwtv-ty-lifebar-legend-count {
+		font-weight: 700;
+		font-variant-numeric: tabular-nums;
+		color: colors.$lwtv-medgrey;
+	}
+
+	// Overview: highlights of the year.
+	.lwtv-ty-highlights {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 16px;
+
+		@media (max-width: 767px) {
+			grid-template-columns: 1fr;
+		}
+	}
+
+	.lwtv-ty-highlight {
+		padding: 20px;
+		border: 1px solid colors.$lwtv-bordergrey;
+		border-radius: 14px;
+	}
+
+	.lwtv-ty-highlight-chip {
+		display: grid;
+		place-items: center;
+		width: 55px;
+		height: 55px;
+		margin: 0 10px 10px 0;
+		border-radius: 8px;
+		float: left;
+
+		svg {
+			fill: currentColor; // sprite paths have no fill; take the chip's color.
+		}
+	}
+
+	.lwtv-ty-highlight-chip--green {
+		color: colors.$lwtv-stats-green-deep;
+		background-color: colors.$lwtv-stats-green;
+	}
+
+	.lwtv-ty-highlight-chip--red {
+		color: colors.$lwtv-stats-red-deep;
+		background-color: colors.$lwtv-stats-red;
+	}
+
+	.lwtv-ty-highlight-chip--blue {
+		color: colors.$lwtv-stats-blue-deep;
+		background-color: colors.$lwtv-stats-blue;
+	}
+
+	.lwtv-ty-highlight-chip--pink {
+		color: colors.$lwtv-dkpink;
+		background-color: rgba(colors.$lwtv-dkpink, 0.12);
+	}
+
+	.lwtv-ty-highlight-chip--amber {
+		color: colors.$lwtv-stats-yellow-deep;
+		background-color: colors.$lwtv-stats-yellow;
+	}
+
+	.lwtv-ty-highlight-kicker {
+		margin: 0 0 6px;
+		font-size: 0.85rem;
+		font-weight: 700;
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+		color: colors.$lwtv-medgrey;
+	}
+
+	.lwtv-ty-highlight-title {
+		margin: 0 0 6px;
+		font-size: 1.5rem;
+		font-weight: 700;
+		line-height: 1.25;
+	}
+
+	.lwtv-ty-highlight-desc {
+		margin: 0;
+		font-size: 0.95rem;
+		line-height: 1.5;
+		color: colors.$lwtv-medgrey;
+	}
+
+	// Shared sub-view header: title + count-up on the left, pill toggle on the right.
+	.lwtv-ty-section-head {
+		display: flex;
+		align-items: baseline;
+		flex-wrap: wrap;
+		justify-content: space-between;
+		gap: 8px;
+		margin-bottom: 6px;
+
+		h2 {
+			margin: 0;
+		}
+	}
+
+	.lwtv-ty-section-subtitle {
+		margin: 0 0 20px;
+		font-size: 0.95rem;
+		color: colors.$lwtv-medgrey;
+	}
+
+	.lwtv-ty-coa-count {
+		font-variant-numeric: tabular-nums;
+	}
+
+	// Compact segmented pill toggle (Bootstrap nav-pills, styled to match
+	// the .lwtv-stats-tabs look used elsewhere on the statistics pages).
+	.lwtv-ty-pills {
+		display: flex;
+		gap: 2px;
+		padding: 3px;
+		margin: 0;
+		list-style: none;
+		background-color: colors.$lwtv-grey;
+		border-radius: 10px;
+
+		.nav-link {
+			padding: 5px 12px;
+			font-size: 0.75rem;
+			font-weight: 700;
+			color: colors.$lwtv-medgrey;
+			text-decoration: none;
+			border-radius: 8px;
+
+			&:hover {
+				color: colors.$lwtv-purple;
+			}
+
+			&.active {
+				color: colors.$lwtv-dkgrey;
+				background-color: colors.$white;
+				box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+			}
+		}
+	}
+
+	// Characters On Air — By Name: 2-col grid of character → show(s) rows.
+	.lwtv-ty-charname {
+		display: grid;
+		grid-template-columns: repeat(2, 1fr);
+		gap: 10px 16px;
+
+		@media (max-width: 767px) {
+			grid-template-columns: 1fr;
+		}
+	}
+
+	.lwtv-ty-charname-row {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 12px;
+		padding: 11px 14px;
+		border: 1px solid colors.$lwtv-bordergrey;
+		border-radius: 10px;
+	}
+
+	.lwtv-ty-charname-link {
+		flex: none;
+		font-weight: 600;
+	}
+
+	.lwtv-ty-charname-shows {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-end;
+		gap: 1px;
+		font-size: 0.75rem;
+		text-align: right;
+		font-style: italic;
+
+		a {
+			color: colors.$lwtv-medgrey;
+		}
+	}
+
+	// Characters On Air — By Show: 2-col grid of cast cards.
+	.lwtv-ty-charshow {
+		display: grid;
+		grid-template-columns: repeat(2, 1fr);
+		gap: 16px;
+
+		@media (max-width: 767px) {
+			grid-template-columns: 1fr;
+		}
+	}
+
+	.lwtv-ty-charshow-card {
+		padding: 18px 20px;
+		border: 1px solid colors.$lwtv-bordergrey;
+		border-radius: 14px;
+	}
+
+	.lwtv-ty-charshow-head {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 10px;
+		margin-bottom: 2px;
+	}
+
+	.lwtv-ty-charshow-link {
+		font-size: 0.95rem;
+		font-weight: 700;
+	}
+
+	.lwtv-ty-charshow-count {
+		font-size: 0.75rem;
+		font-variant-numeric: tabular-nums;
+		color: colors.$lwtv-medgrey;
+		background-color: rgba( colors.$lwtv-trans-blue, 0.45 )
+	}
+
+	.lwtv-ty-charshow-meta {
+		margin-bottom: 12px;
+		font-size: 0.7rem;
+		color: colors.$lwtv-medgrey;
+	}
+
+	.lwtv-ty-charshow-chips {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 6px;
+	}
+
+	.lwtv-ty-chip {
+		padding: 4px 9px;
+		font-size: 0.85rem;
+		font-weight: 600;
+		color: colors.$lwtv-dkgrey;
+		text-decoration: none;
+		background-color: colors.$lwtv-grey;
+		border-radius: 999px;
+
+		&:hover {
+			background-color: colors.$lwtv-grey2;
+		}
+	}
+
+	.lwtv-ty-chip-role {
+		margin-left: 3px;
+		font-size: 0.65rem;
+		font-weight: 400;
+		color: colors.$lwtv-medgrey;
+	}
+
+	// Dead Characters — section title in the red family.
+	.lwtv-ty-dc-title {
+		color: colors.$lwtv-stats-red-deep;
+	}
+
+	.lwtv-ty-dc-count {
+		font-variant-numeric: tabular-nums;
+	}
+
+	// Dead Characters — By Date: date-stamped rows with a red left rule.
+	.lwtv-ty-deathdate {
+		columns: 2;
+		column-gap: 16px;
+
+		@media (max-width: 767px) {
+			columns: 1;
+		}
+	}
+
+	.lwtv-ty-deathdate-row {
+		display: grid;
+		grid-template-columns: 120px 1fr;
+		gap: 16px;
+		margin-bottom: 8px;
+		padding: 14px 18px;
+		background-color: colors.$lwtv-grey;
+		border: 1px solid colors.$lwtv-stats-red-deep;
+		border-radius: 8px;
+		break-inside: avoid;
+
+		@media (max-width: 767px) {
+			grid-template-columns: 1fr;
+			gap: 4px;
+		}
+	}
+
+	.lwtv-ty-deathdate-date {
+		font-size: 0.8rem;
+		font-weight: 700;
+		font-variant-numeric: tabular-nums;
+		color: colors.$lwtv-stats-red-deep;
+	}
+
+	.lwtv-ty-deathdate-chars {
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+	}
+
+	.lwtv-ty-deathdate-char {
+		font-size: 0.85rem;
+		line-height: 1.4;
+	}
+
+	.lwtv-ty-deathdate-show {
+		color: colors.$lwtv-medgrey;
+	}
+
+	// Dead Characters — By Show: 2-col grid of cards with a red top rule.
+	.lwtv-ty-deathshow {
+		display: grid;
+		grid-template-columns: repeat(2, 1fr);
+		gap: 16px;
+
+		@media (max-width: 767px) {
+			grid-template-columns: 1fr;
+		}
+	}
+
+	.lwtv-ty-deathshow-card {
+		padding: 18px 20px;
+		border: 1px solid colors.$lwtv-stats-red-deep;
+		border-radius: 14px;
+	}
+
+	.lwtv-ty-deathshow-head {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 10px;
+		margin-bottom: 2px;
+	}
+
+	.lwtv-ty-deathshow-link {
+		font-size: 0.95rem;
+		font-weight: 700;
+	}
+
+	.lwtv-ty-deathshow-count {
+		font-size: 0.75rem;
+		font-weight: 700;
+		font-variant-numeric: tabular-nums;
+		color: colors.$lwtv-stats-red-deep;
+		background-color: rgba( colors.$lwtv-trans-blue, 0.45 );
+	}
+
+	.lwtv-ty-deathshow-meta {
+		margin-bottom: 12px;
+		font-size: 0.7rem;
+		color: colors.$lwtv-medgrey;
+	}
+
+	.lwtv-ty-deathshow-chars {
+		display: flex;
+		flex-direction: column;
+		gap: 6px;
+	}
+
+	.lwtv-ty-deathshow-charlink {
+		font-size: 0.85rem;
+		font-weight: 500;
+	}
+
+	// Dead Characters — empty state (zero deaths this year).
+	.lwtv-ty-empty {
+		padding: 56px 32px;
+		text-align: center;
+		background-color: colors.$white;
+		border: 1px solid colors.$lwtv-bordergrey;
+		border-radius: 14px;
+
+		h2 {
+			margin: 0 0 8px;
+			font-size: 1.25rem;
+		}
+
+		p {
+			max-width: 380px;
+			margin: 0 auto;
+			font-size: 0.875rem;
+			line-height: 1.55;
+			color: colors.$lwtv-medgrey;
+		}
+	}
+
+	.lwtv-ty-empty-icon {
+		display: grid;
+		width: 56px;
+		height: 56px;
+		margin: 0 auto 18px;
+		color: colors.$lwtv-stats-green-deep;
+		background-color: colors.$lwtv-stats-green;
+		border-radius: 50%;
+		place-items: center;
+
+		svg {
+			fill: currentColor; // sprite paths have no fill; take the chip's color.
+		}
+	}
+
+	// Shows On Air / New Shows / Canceled Shows — shared block title, driven
+	// by an accent modifier (blue/pink/amber) set per view.
+	.lwtv-ty-block-title {
+		font-size: 1.725rem;
+		font-weight: 700;
+		letter-spacing: -0.01em;
+	}
+
+	.lwtv-ty-block-title--blue { color: colors.$lwtv-stats-blue-deep; }
+	.lwtv-ty-block-title--pink { color: colors.$lwtv-dkpink; }
+	.lwtv-ty-block-title--amber { color: colors.$lwtv-stats-yellow-deep; }
+
+	.lwtv-ty-sb-count {
+		font-variant-numeric: tabular-nums;
+	}
+
+	.lwtv-ty-block-foot {
+		margin: 20px 0 0;
+		font-size: 0.80rem;
+		color: colors.$lwtv-medgrey;
+	}
+
+	// Shows On Air / New Shows / Canceled Shows — two-column group cards.
+	.lwtv-ty-group-grid {
+		display: grid;
+		grid-template-columns: repeat(2, 1fr);
+		gap: 16px;
+
+		@media (max-width: 767px) {
+			grid-template-columns: 1fr;
+		}
+	}
+
+	.lwtv-ty-group-card {
+		padding: 16px 20px;
+		border: 1px solid colors.$lwtv-bordergrey;
+		border-radius: 14px;
+	}
+
+	.lwtv-ty-group-head {
+		display: flex;
+		align-items: baseline;
+		gap: 8px;
+		margin-bottom: 12px;
+		padding-bottom: 10px;
+		border-bottom: 1px solid colors.$lwtv-bordergrey;
+		justify-content: space-between;
+	}
+
+	.lwtv-ty-group-key {
+		font-size: 1.45rem;
+		font-weight: 700;
+	}
+
+	.lwtv-ty-group-count {
+		font-size: 0.75rem;
+		font-variant-numeric: tabular-nums;
+		color: colors.$lwtv-medgrey;
+		background-color: rgba( colors.$lwtv-trans-blue, 0.45 );
+	}
+
+	.lwtv-ty-group-list {
+		columns: 2;
+		column-gap: 28px;
+	}
+
+	.lwtv-ty-group-item {
+		margin-bottom: 8px;
+		font-size: 0.95rem;
+		line-height: 1.35;
+		break-inside: avoid;
+	}
+
+	.lwtv-ty-group-meta {
+		font-size: 0.75rem;
+		color: colors.$lwtv-medgrey;
+	}
+
+	.lwtv-ty-group-empty {
+		margin: 0;
+		font-size: 0.85rem;
+		color: colors.$lwtv-medgrey;
+	}
+
+	// Accent follows the view: group key + show links pick up the same color
+	// as the block title above them.
+	.lwtv-ty-group-grid--blue .lwtv-ty-group-key,
+	.lwtv-ty-group-grid--blue .lwtv-ty-group-item a {
+		color: colors.$lwtv-stats-blue-deep;
+	}
+
+	.lwtv-ty-group-grid--pink .lwtv-ty-group-key,
+	.lwtv-ty-group-grid--pink .lwtv-ty-group-item a {
+		color: colors.$lwtv-dkpink;
+	}
+
+	.lwtv-ty-group-grid--amber .lwtv-ty-group-key,
+	.lwtv-ty-group-grid--amber .lwtv-ty-group-item a {
+		color: colors.$lwtv-stats-yellow-deep;
 	}
 }
 
@@ -270,11 +1056,11 @@ canvas {
 	}
 
 	.lwtv-metric-icon.shows-now {
-		background-color: colors.$lwtv-stats-yellow-background;
+		background-color: colors.$lwtv-stats-yellow-deep;
 	}
 
 	.lwtv-metric-icon.characters {
-		background-color: colors.$lwtv-stats-green-background;
+		background-color: colors.$lwtv-stats-green-deep;
 	}
 
 	.lwtv-metric-number {
@@ -343,7 +1129,7 @@ canvas {
 	}
 
 	.lwtv-nation-profile-dead strong {
-		color: colors.$lwtv-stats-red-background;
+		color: colors.$lwtv-stats-red-deep;
 	}
 
 	.lwtv-byg {
@@ -508,16 +1294,16 @@ canvas {
 
 		// Family-colored header icons for the shows overview panels.
 		&.characters {
-			color: colors.$lwtv-stats-green-background;
+			color: colors.$lwtv-stats-green-deep;
 		}
 
 		&.gender,
 		&.actors {
-			color: colors.$lwtv-stats-yellow-background;
+			color: colors.$lwtv-stats-yellow-deep;
 		}
 
 		&.sexuality {
-			color: colors.$lwtv-stats-blue-background;
+			color: colors.$lwtv-stats-blue-deep;
 		}
 	}
 
@@ -653,17 +1439,17 @@ canvas {
 
 	// Ranked-bar family fills (override the default teal progressbar within a family list).
 	.lwtv-bars--characters .progress-bar {
-		background-color: colors.$lwtv-stats-green-background;
+		background-color: colors.$lwtv-stats-green-deep;
 	}
 
 	.lwtv-bars--gender .progress-bar,
 	.lwtv-bars--actors .progress-bar {
-		background-color: colors.$lwtv-stats-yellow-background;
+		background-color: colors.$lwtv-stats-yellow-deep;
 	}
 
 	.lwtv-bars--sexuality .progress-bar,
 	.lwtv-bars--shows .progress-bar {
-		background-color: colors.$lwtv-stats-blue-background;
+		background-color: colors.$lwtv-stats-blue-deep;
 	}
 
 	.lwtv-bar-label {
@@ -919,7 +1705,7 @@ canvas {
 	.lwtv-nations-lb-bar--5 { background-color: $ramp-5; }
 
 	.lwtv-nations-lb-dead {
-		color: colors.$lwtv-stats-red-background;
+		color: colors.$lwtv-stats-red-deep;
 	}
 
 	.lwtv-donut-card {
@@ -1106,13 +1892,13 @@ canvas {
 	}
 
 	.lwtv-donut-seg--green {
-		stroke: colors.$lwtv-stats-green-background;
-		background-color: colors.$lwtv-stats-green-background;
+		stroke: colors.$lwtv-stats-green-deep;
+		background-color: colors.$lwtv-stats-green-deep;
 	}
 
 	.lwtv-donut-seg--amber {
-		stroke: colors.$lwtv-stats-yellow-background;
-		background-color: colors.$lwtv-stats-yellow-background;
+		stroke: colors.$lwtv-stats-yellow-deep;
+		background-color: colors.$lwtv-stats-yellow-deep;
 	}
 
 	.lwtv-donut-seg--red {
@@ -1193,11 +1979,11 @@ canvas {
 		}
 
 		&.lwtv-donut-seg--green {
-			background-color: colors.$lwtv-stats-green-background;
+			background-color: colors.$lwtv-stats-green-deep;
 		}
 
 		&.lwtv-donut-seg--amber {
-			background-color: colors.$lwtv-stats-yellow-background;
+			background-color: colors.$lwtv-stats-yellow-deep;
 		}
 
 		&.lwtv-donut-seg--red {
@@ -1523,7 +2309,7 @@ canvas {
 		position: relative;
 		flex: 1 1 0;
 		min-width: 3px;
-		background-color: nth($death-bar-ramp, 1);
+		background-color: list.nth($death-bar-ramp, 1);
 		border-radius: 3px 3px 0 0;
 
 		.lwtv-yearbar-val {
@@ -1544,7 +2330,7 @@ canvas {
 	// Ramp rose→crimson by height bucket (0 shortest → 5 tallest).
 	@for $i from 0 through 5 {
 		.lwtv-yearbar--r#{$i} {
-			background-color: nth($death-bar-ramp, $i + 1);
+			background-color: list.nth($death-bar-ramp, $i + 1);
 		}
 	}
 
@@ -1576,21 +2362,21 @@ canvas {
 	// hardcoded per the handoffs (same in light + dark, white text carries
 	// contrast). Each entry: (solid fill, inset-chip surface).
 	$death-toll: (
-		crimson: (colors.$lwtv-stats-crimson-background, colors.$lwtv-stats-crimson),
-		raspberry: (colors.$lwtv-stats-raspberry-background, colors.$lwtv-stats-raspberry),
-		plum: (colors.$lwtv-stats-plum-background, colors.$lwtv-stats-plum),
+		"crimson": (colors.$lwtv-stats-crimson-deep, colors.$lwtv-stats-crimson),
+		"raspberry": (colors.$lwtv-stats-raspberry-deep, colors.$lwtv-stats-raspberry),
+		"plum": (colors.$lwtv-stats-plum-deep, colors.$lwtv-stats-plum),
 	);
 
 	// Station "Vibrant Refresh" palette (teal / amber / green / rose).
 	$vibrant-toll: (
-		teal: (colors.$lwtv-stats-teal-background, colors.$lwtv-stats-teal),
-		amber: (colors.$lwtv-stats-yellow-background, colors.$lwtv-stats-yellow),
-		green: (colors.$lwtv-gq-green, colors.$lwtv-stats-green),
-		rose: (colors.$lwtv-stats-crimson-background, colors.$lwtv-stats-crimson),
+		"teal": (colors.$lwtv-stats-teal-deep, colors.$lwtv-stats-teal),
+		"amber": (colors.$lwtv-stats-yellow-deep, colors.$lwtv-stats-yellow),
+		"green": (colors.$lwtv-gq-green, colors.$lwtv-stats-green),
+		"rose": (colors.$lwtv-stats-crimson-deep, colors.$lwtv-stats-crimson),
 	);
 
 	// Amber accent reused by the station score footer + on-air meter.
-	$v-onair: colors.$lwtv-stats-yellow-background;
+	$v-onair: colors.$lwtv-stats-yellow-deep;
 
 	.lwtv-toll {
 		display: grid;
@@ -1625,11 +2411,11 @@ canvas {
 
 		@each $name, $pair in map.merge($death-toll, $vibrant-toll) {
 			&--#{$name} {
-				background-color: nth($pair, 1);
-				color: nth($pair, 2);
+				background-color: list.nth($pair, 1);
+				color: list.nth($pair, 2);
 
 				.lwtv-toll-chip {
-					color: nth($pair, 2);
+					color: list.nth($pair, 2);
 					background-color: rgba(0, 0, 0, 0.50);
 				}
 			}
@@ -1733,7 +2519,7 @@ canvas {
 		width: 34px;
 		height: 34px;
 		border-radius: 9px;
-		color: colors.$lwtv-stats-plum-background;
+		color: colors.$lwtv-stats-plum-deep;
 		background-color: rgba( colors.$lwtv-trans-blue, 0.45 );
 
 		svg {
