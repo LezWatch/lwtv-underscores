@@ -120,7 +120,7 @@ if ( 1 === $lwtv_coa_unused_n ) {
 				if ( 1 === count( $lwtv_coa_bottom ) ) {
 					printf(
 						/* translators: 1: starting letter, 2: number of characters whose names begin with it. */
-						esc_html( _n( 'Just %2$s character\'s name begins with %1$s — the rarest.', 'Just %2$s characters\' names begin with %1$s — the rarest.', $lwtv_coa_min, 'lwtv' ) ),
+						esc_html( _n( 'Just %2$s character\'s name begins with %1$s, making it the rarest.', 'Just %2$s characters\' names begin with %1$s.', $lwtv_coa_min, 'lwtv' ) ),
 						esc_html( $lwtv_coa_bottom[0] ),
 						esc_html( number_format_i18n( $lwtv_coa_min ) )
 					);
