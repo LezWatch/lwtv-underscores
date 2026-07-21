@@ -33,10 +33,17 @@ class Dead_Characters_Formatter {
 
 				// for each death year, if the year is $this_year, add the character to the $dead_characters array
 				foreach ( $character['death_years'] as $death_date ) {
-					// Get the year from the death date (it's the last 4 digits)
+					// Get the year from the death date (it's the first 4 digits).
 					$death_year = substr( $death_date, 0, 4 );
 					if ( $death_year === $this_year ) {
-						$dead_by_date[ $death_date ][] = $character;
+						// ACF's date_picker stores raw meta as Ymd; a handful of legacy
+						// rows are still Y-m-d. Normalize to Y-m-d so both spellings of
+						// the same day group together instead of fragmenting into two rows.
+						$death_key = (string) $death_date;
+						if ( false === strpos( $death_key, '-' ) && 8 === strlen( $death_key ) ) {
+							$death_key = substr( $death_key, 0, 4 ) . '-' . substr( $death_key, 4, 2 ) . '-' . substr( $death_key, 6, 2 );
+						}
+						$dead_by_date[ $death_key ][] = $character;
 					}
 				}
 			}

@@ -3,7 +3,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 /**
- * Characters → On Air: area trendline of characters-on-air per year.
+ * Characters → On Air: year-over-year column chart of characters-on-air per year.
  *
  * @package LezWatch.TV
  */
@@ -31,7 +31,7 @@ foreach ( $onair_data as $onair_row ) {
 		$onair_most['year']  = $onair_row['name'];
 	}
 
-	if ( $onair_row['count'] < $onair_most['count'] ) {
+	if ( 0 === (int) $onair_least['count'] || $onair_row['count'] < $onair_least['count'] ) {
 		$onair_least['count'] = $onair_row['count'];
 		$onair_least['year']  = $onair_row['name'];
 	}
