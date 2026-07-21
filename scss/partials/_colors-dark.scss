@@ -276,11 +276,23 @@
 		}
 	}
 
-	.dark-mode-toggle {
-		color: colors.$white;
+	// Nested under #masthead so these out-specify the light-mode
+	// #masthead rules in _layout.scss (the [data-bs-theme=dark] ancestor
+	// alone loses the specificity tie against an id selector).
+	#masthead .dark-mode-control {
+		background-color: colors.$lwtv-dkgrey;
 
-		svg * {
-			fill: colors.$lwtv-ltgrey;
+		.dark-mode-segment {
+			color: colors.$lwtv-grey2;
+
+			&:hover {
+				color: colors.$white;
+			}
+
+			&.active {
+				background-color: colors.$lwtv-pink;
+				color: colors.$white;
+			}
 		}
 	}
 
@@ -431,6 +443,7 @@
 		.lwtv-donut-center-sub,
 		.lwtv-donut-desc,
 		.lwtv-donut-center-num,
+		.lwtv-download-csv-meta,
 		.lwtv-leader-name,
 		.lwtv-leader-rank,
 		.lwtv-leader-value,
