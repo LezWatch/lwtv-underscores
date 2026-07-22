@@ -28,7 +28,7 @@ $stats_series = array(
 );
 
 // Panels data.
-$stats_top_stations   = ( new Build_Stations() )->get_top_stations( 7 );
+$stats_top_stations   = ( new Build_Stations() )->get_top_stations( 4 );
 $stats_top_nations    = ( new Build_Nations() )->get_top_nations( 4 );
 $stats_total_stations = (int) wp_count_terms( array( 'taxonomy' => 'lez_stations' ) );
 $stats_total_nations  = (int) wp_count_terms( array( 'taxonomy' => 'lez_country' ) );

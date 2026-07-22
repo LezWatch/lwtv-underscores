@@ -84,6 +84,8 @@ $yearbars = array(
 	'headline'    => __( 'More queer characters on screen than ever', 'lwtv' ),
 	'description' => $description,
 	'callouts'    => $lwtv_callouts,
+	/* translators: %s: year. */
+	'hover_sub'   => __( 'on air in %s', 'lwtv' ),
 );
 
 // phpcs:ignore PEAR.Files.IncludingFile.UseRequire

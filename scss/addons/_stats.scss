@@ -1535,6 +1535,7 @@ canvas {
 		font-size: 0.9125rem;
 	}
 
+	.lwtv-wtl-headline,
 	.lwtv-atw-headline {
 		margin: 0 0 0.75rem;
 		font-size: 1.25rem;
@@ -2398,6 +2399,8 @@ canvas {
 		background-color: list.nth($death-bar-ramp, 1);
 		border-radius: 3px 3px 0 0;
 
+		// Only the peak bar carries an on-bar label now; every other year's value
+		// is shown in the corner readout on hover (see statistics-overview.js).
 		.lwtv-yearbar-val {
 			position: absolute;
 			top: -1.1rem;
@@ -2405,11 +2408,19 @@ canvas {
 			transform: translateX(-50%);
 			font-size: 0.65rem;
 			color: colors.$lwtv-medgrey;
-			opacity: 0;
+			white-space: nowrap;
 		}
 
-		&:hover .lwtv-yearbar-val {
-			opacity: 1;
+		// Keep the peak label in-bounds if the peak is the first or last year.
+		&:first-child .lwtv-yearbar-val {
+			left: 0;
+			transform: none;
+		}
+
+		&:last-child .lwtv-yearbar-val {
+			right: 0;
+			left: auto;
+			transform: none;
 		}
 	}
 

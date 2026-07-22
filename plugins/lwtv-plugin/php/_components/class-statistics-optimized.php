@@ -22,7 +22,7 @@ class Statistics_Optimized implements Component, Templater {
 	 */
 	const VERSIONING = array(
 		'tablesorter'    => '2.32.0',
-		'stats-overview' => '1.1.0',
+		'stats-overview' => '1.2.0',
 	);
 
 	/*

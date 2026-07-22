@@ -51,6 +51,8 @@ $yearbars = array(
 	'eyebrow'     => __( 'Shows On Air per Year', 'lwtv' ),
 	'headline'    => __( 'More queer shows are on air than ever', 'lwtv' ),
 	'description' => $description,
+	/* translators: %s: year. */
+	'hover_sub'   => __( 'on air in %s', 'lwtv' ),
 );
 
 // phpcs:ignore PEAR.Files.IncludingFile.UseRequire
