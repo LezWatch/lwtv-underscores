@@ -1648,12 +1648,29 @@ canvas {
 
 	.lwtv-stats-subnav {
 		display: flex;
+		flex-wrap: nowrap;
 		gap: 20px;
 		margin-bottom: 1.5rem;
+		// Too many views to fit one row on tablets/phones (e.g. Shows has 10).
+		// Scroll the tab strip horizontally instead of spilling off the page;
+		// overflow-x is contained here so the page body never scrolls sideways.
+		overflow-x: auto;
+		-webkit-overflow-scrolling: touch;
+		scrollbar-width: thin;
 		border-bottom: 1px solid colors.$lwtv-bordergrey;
+
+		&::-webkit-scrollbar {
+			height: 4px;
+		}
+
+		&::-webkit-scrollbar-thumb {
+			background-color: colors.$lwtv-bordergrey;
+			border-radius: 2px;
+		}
 	}
 
 	.lwtv-stats-subnav-item {
+		flex: 0 0 auto; // keep each label's full width; scroll rather than squish.
 		padding: 8px 2px;
 		font-size: 0.95rem;
 		white-space: nowrap;

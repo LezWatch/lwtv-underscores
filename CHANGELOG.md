@@ -19,6 +19,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 - Statistics now render server-side with count-up and bar-grow animations instead of relying on JavaScript charts.
 - Donut chart headlines and descriptions are now written from the real underlying data.
+- Dark Mode toggle is now a true navbar toggle.
 
 ### Fixed
 
@@ -27,7 +28,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Removed
 
-- Chart.js and its trendline and palette assets are gone from the statistics section.
+- Chart.js and its trendline and palette assets (replaced with inline SVGs).
 
 ## [7.0.13] - 2026-07-14
 
