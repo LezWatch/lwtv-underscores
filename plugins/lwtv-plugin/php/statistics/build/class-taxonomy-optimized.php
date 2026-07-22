@@ -400,7 +400,15 @@ class Taxonomy_Optimized {
 	}
 
 	/**
-	 * Bulk earliest show start-year per term (one grouped query).
+	 * Bulk earliest show start-year per term.
+	 *
+	 * Reads the earliest start year from the ACF key (lezshows_airdates_start) and
+	 * folds in the legacy serialized lezshows_airdates['start'] value for any show
+	 * that has not been migrated to the new key yet. Without the legacy fallback a
+	 * pre-migration (or rolled-back) database returns 0 for every term, which is how
+	 * the "New Since 2020" counters silently zeroed out. Every other reader of the
+	 * air-date meta already falls back to the legacy array, so this brings the bulk
+	 * query in line with them.
 	 *
 	 * @param string $taxonomy Taxonomy slug (e.g. 'lez_country').
 	 * @param array  $slugs    Term slugs to include.
@@ -417,6 +425,21 @@ class Taxonomy_Optimized {
 			return $first_years;
 		}
 
+		// Fold a candidate year into the running per-term minimum. Zero/unknown
+		// years never win, so they cannot mask a genuine debut year.
+		$fold = static function ( &$years, $slug, $year ) {
+			$slug = ltrim( $slug, '_' );
+			$year = (int) $year;
+			if ( $year <= 0 ) {
+				return;
+			}
+			$current = $years[ $slug ] ?? 0;
+			if ( 0 === $current || $year < $current ) {
+				$years[ $slug ] = $year;
+			}
+		};
+
+		// Primary: earliest start year from the migrated ACF key.
 		$results = $wpdb->get_results(
 			$wpdb->prepare(
 				"SELECT t.slug AS slug, MIN( CAST( pm.meta_value AS UNSIGNED ) ) AS first_year
@@ -425,7 +448,7 @@ class Taxonomy_Optimized {
 				 INNER JOIN {$wpdb->term_relationships} tr ON tr.term_taxonomy_id = tt.term_taxonomy_id
 				 INNER JOIN {$wpdb->posts} p ON p.ID = tr.object_id AND p.post_type = 'post_type_shows' AND p.post_status = 'publish'
 				 INNER JOIN {$wpdb->postmeta} pm ON pm.post_id = p.ID AND pm.meta_key = 'lezshows_airdates_start'
-				 WHERE pm.meta_value != ''
+				 WHERE pm.meta_value != '' AND CAST( pm.meta_value AS UNSIGNED ) > 0
 				 GROUP BY t.slug",
 				$taxonomy
 			),
@@ -434,7 +457,35 @@ class Taxonomy_Optimized {
 
 		if ( $results ) {
 			foreach ( $results as $row ) {
-				$first_years[ $row['slug'] ] = (int) $row['first_year'];
+				$fold( $first_years, $row['slug'], $row['first_year'] );
+			}
+		}
+
+		// Fallback: shows not yet migrated still carry the legacy serialized array.
+		// The migrated key is unserializable in SQL, so read the raw legacy meta for
+		// shows that lack a usable new key and fold the start year in via PHP.
+		$legacy_rows = $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT t.slug AS slug, legacy.meta_value AS airdates
+				 FROM {$wpdb->terms} t
+				 INNER JOIN {$wpdb->term_taxonomy} tt ON tt.term_id = t.term_id AND tt.taxonomy = %s
+				 INNER JOIN {$wpdb->term_relationships} tr ON tr.term_taxonomy_id = tt.term_taxonomy_id
+				 INNER JOIN {$wpdb->posts} p ON p.ID = tr.object_id AND p.post_type = 'post_type_shows' AND p.post_status = 'publish'
+				 INNER JOIN {$wpdb->postmeta} legacy ON legacy.post_id = p.ID AND legacy.meta_key = 'lezshows_airdates'
+				 LEFT JOIN {$wpdb->postmeta} migrated ON migrated.post_id = p.ID AND migrated.meta_key = 'lezshows_airdates_start' AND migrated.meta_value != '' AND CAST( migrated.meta_value AS UNSIGNED ) > 0
+				 WHERE migrated.post_id IS NULL AND legacy.meta_value != ''",
+				$taxonomy
+			),
+			ARRAY_A
+		);
+
+		if ( $legacy_rows ) {
+			foreach ( $legacy_rows as $row ) {
+				$airdates = maybe_unserialize( $row['airdates'] );
+				if ( ! is_array( $airdates ) || empty( $airdates['start'] ) ) {
+					continue;
+				}
+				$fold( $first_years, $row['slug'], $airdates['start'] );
 			}
 		}
 

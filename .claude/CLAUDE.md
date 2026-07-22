@@ -57,7 +57,6 @@ Statistics live in `plugins/lwtv-plugin/php/statistics/`. They consume the inter
 
 - `class-stats-generator.php` — builds the raw data arrays
 - `class-stats-handler.php` — routes requests
-- `class-stats-enqueues.php` — enqueues Chart.js assets
 - `class-gutenberg-ssr.php` — server-side rendered stat blocks
 
 ---
@@ -73,6 +72,7 @@ Statistics live in `plugins/lwtv-plugin/php/statistics/`. They consume the inter
 - **Fix:** `composer lint-fix` (runs `phpcbf`)
 
 **Active exclusions** (do not re-add these rules):
+
 - `WordPress.Files.FileName.InvalidClassFileName` / `NotHyphenatedLowercase` — we use `class-*.php` names
 - `WordPress.PHP.DisallowShortTernary.Found` — short ternary (`?:`) is allowed
 - `WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents` — allowed
@@ -82,6 +82,8 @@ Statistics live in `plugins/lwtv-plugin/php/statistics/`. They consume the inter
 `lwtv_plugin`, `get_symbolicon`, `lwtv_symbolicons`, `LWTV_Features`, `LWTV_Statistics`, and several pagination helpers — see `phpcs.xml.dist` for the full list.
 
 ### JavaScript / CSS
+
+Always remember to run `nvm use` so you're on the correct version as set by `.nvmrc`.
 
 - **Lint JS:** `npm run lint:js`
 - **Lint CSS:** `npm run lint:css`
@@ -151,5 +153,5 @@ npm run symbolicons:prod  # production branch
 
 1. **Show score integrity** — the calculation in `class-calculations.php` feeds the site's core value proposition. Changes here are high-stakes.
 2. **CPT relationships** — shows ↔ characters ↔ actors linkages are the backbone of statistics and cross-referencing.
-3. **Statistics accuracy** — Chart.js visualizations reflect real counts; don't short-circuit queries in ways that silently drop data.
+3. **Statistics accuracy** — Data visualizations reflect real counts; don't short-circuit queries in ways that silently drop data.
 4. **Accessibility & representation** — the site serves a community. UI text, labels, and taxonomy terms should reflect current inclusive language norms.

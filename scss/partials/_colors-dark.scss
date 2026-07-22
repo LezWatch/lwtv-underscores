@@ -758,6 +758,13 @@
 			border-color: rgba(255, 255, 255, 0.12);
 		}
 
+		// The --vibrant profile box uses the light "bg-light" surface in light
+		// mode; swap it for the dark neutral so it matches .bg-light / the
+		// lead card here instead of showing a pale panel on the dark page.
+		.lwtv-nation-profile--vibrant {
+			background-color: $lwtv-medgrey;
+		}
+
 		.lwtv-actor-articles-modal .lwtv-stats-tab:hover,
 		.lwtv-actor-stats-modal .lwtv-stats-tab:hover,
 		.lwtv-stats-tab:hover,
