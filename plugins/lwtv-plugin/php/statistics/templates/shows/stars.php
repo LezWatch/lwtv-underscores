@@ -78,7 +78,7 @@ if ( $stars_anti > 0 ) {
 	/* translators: %s: number of shows flagged "anti". */
 	$stars_anti_clause = sprintf( _n( '%s show carries an “anti” flag.', '%s shows carry an “anti” flag.', $stars_anti, 'lwtv' ), number_format_i18n( $stars_anti ) );
 } else {
-	$stars_anti_clause = __( 'No shows have yet to earn an “anti” flag.', 'lwtv' );
+	$stars_anti_clause = __( 'No shows have yet earned an “anti” flag.', 'lwtv' );
 }
 
 $donut = array(
@@ -99,7 +99,7 @@ if ( (int) $inter_stats['shows'] > 0 && (int) $shows_count > 0 ) {
 
 	$lwtv_callouts[] = array(
 		'label' => __( 'Shows with stars', 'lwtv' ),
-		'icon'  => 'chart-pie.svg',
+		'icon'  => 'fireworks.svg',
 		/* translators: %s: percentage of all shows carrying at least one star (one decimal). */
 		'text'  => sprintf( __( '%s%% of all shows have a star.', 'lwtv' ), number_format_i18n( $inter_pct, 1 ) ),
 	);

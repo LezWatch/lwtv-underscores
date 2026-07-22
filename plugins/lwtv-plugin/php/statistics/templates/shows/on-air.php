@@ -34,6 +34,59 @@ $onair_last = end( $onair_points ) ?: array(
 	'count' => 0,
 );
 
+// Biggest year-over-year decline. A raw "fewest shows" year is meaningless here —
+// the sparse early decades are a wall of 0s and 1s — so the counterpoint to the
+// best year is the sharpest drop instead. The current (final) year is still in
+// progress, so its partial count is excluded to stop it masquerading as the
+// steepest fall.
+$onair_drop     = array(
+	'year' => 0,
+	'size' => 0,
+);
+$onair_complete = $onair_points;
+array_pop( $onair_complete );
+$onair_prev = null;
+foreach ( $onair_complete as $onair_point ) {
+	if ( null !== $onair_prev ) {
+		$onair_delta = $onair_prev['count'] - $onair_point['count'];
+		if ( $onair_delta > $onair_drop['size'] ) {
+			$onair_drop['size'] = $onair_delta;
+			$onair_drop['year'] = $onair_point['year'];
+		}
+	}
+	$onair_prev = $onair_point;
+}
+
+$lwtv_callouts = array(
+	array(
+		'label' => __( 'Best Year', 'lwtv' ),
+		'svg'   => 'fireworks.svg',
+		'icon'  => 'svg-fireworks',
+		'text'  => sprintf(
+			/* translators: 1: year, 2: number of shows on air. */
+			_n( 'In %1$s, there was %2$s show on air.', 'In %1$s, there were %2$s shows on air.', $most_year['count'], 'lwtv' ),
+			(string) $most_year['name'],
+			number_format_i18n( $most_year['count'] )
+		),
+	),
+);
+
+// Only pair the best year with a decline callout when there actually was a drop
+// between completed years; otherwise the best year stands on its own.
+if ( $onair_drop['size'] > 0 ) {
+	$lwtv_callouts[] = array(
+		'label' => __( 'Biggest Drop', 'lwtv' ),
+		'svg'   => 'nessie.svg',
+		'icon'  => 'svg-nessie',
+		'text'  => sprintf(
+			/* translators: 1: year, 2: number of fewer shows on air than the year before. */
+			_n( 'In %1$s, %2$s fewer show was on air than the year before.', 'In %1$s, %2$s fewer shows were on air than the year before.', $onair_drop['size'], 'lwtv' ),
+			(string) $onair_drop['year'],
+			number_format_i18n( $onair_drop['size'] )
+		),
+	);
+}
+
 // translators: %1$d is the year with most shows, %2$d is the number of shows it has.
 $description = sprintf( __( 'The count climbed steadily for two decades and peaked in %1$d (with %2$d); the latest dip reflects the current contraction in scripted TV', 'lwtv' ), $most_year['name'], $most_year['count'] );
 
@@ -51,6 +104,7 @@ $yearbars = array(
 	'eyebrow'     => __( 'Shows On Air per Year', 'lwtv' ),
 	'headline'    => __( 'More queer shows are on air than ever', 'lwtv' ),
 	'description' => $description,
+	'callouts'    => $lwtv_callouts,
 	/* translators: %s: year. */
 	'hover_sub'   => __( 'on air in %s', 'lwtv' ),
 );

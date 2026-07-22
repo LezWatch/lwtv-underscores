@@ -20,8 +20,9 @@
 	$lwtv-red-light: #e74c3c;
 
 	/* Overridden colors */
-	$lwtv-grey-medium: #404040;
-	$lwtv-svg:     colors.$lwtv-grey-light!important;
+	$lwtv-grey-medium: #6a5d5d;
+	$lwtv-grey-deep: #404040;
+	$lwtv-svg: colors.$lwtv-grey-light!important;
 
 	--bs-body-color: #{colors.$lwtv-grey-light};
 	--bs-body-color-rgb: rgba(to-rgb(#{colors.$lwtv-grey-light}), 1);
@@ -99,7 +100,7 @@
 	}
 
 	#colophon .top-footer {
-		background-color: colors.$lwtv-grey-light;
+		background-color: $lwtv-grey-medium;
 		color: colors.$white;
 
 		a {

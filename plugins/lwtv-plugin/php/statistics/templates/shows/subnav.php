@@ -19,9 +19,9 @@ $lwtv_shows_subnav = array(
 	'intersectionality' => __( 'Intersectionality', 'lwtv' ),
 	'stars'             => __( 'Stars', 'lwtv' ),
 	'triggers'          => __( 'Triggers', 'lwtv' ),
-	'on-air'            => __( 'On Air', 'lwtv' ),
 	'worth-it'          => __( 'Worth It', 'lwtv' ),
 	'we-love-it'        => __( 'We Love It', 'lwtv' ),
+	'on-air'            => __( 'On Air', 'lwtv' ),
 );
 ?>
 <nav class="lwtv-stats-subnav" aria-label="<?php esc_attr_e( 'Shows statistics views', 'lwtv' ); ?>">
