@@ -5,11 +5,11 @@
  * which makes it higher in priority.
  */
 
-$lwtv-bordergrey: rgba(0, 0, 0, 0.125);
+$lwtv-grey-border: rgba(0, 0, 0, 0.125);
 $lwtv-pink: #d1548e;
 
 .bd-callout.show-grade {
-	border: 1px solid $lwtv-bordergrey;
+	border: 1px solid $lwtv-grey-border;
 	border-left-width: 0.25rem;
 	border-radius: 0.25rem;
 	border-left-color: $lwtv-pink;

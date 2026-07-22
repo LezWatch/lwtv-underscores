@@ -58,7 +58,8 @@ array_unshift(
 	)
 );
 
-$trig_none_pct = ( $trig_total > 0 ) ? round( ( $trig_none / $trig_total ) * 100, 1 ) : 0;
+$trig_none_pct  = ( $trig_total > 0 ) ? round( ( $trig_none / $trig_total ) * 100, 1 ) : 0;
+$trig_top_label = '';
 
 if ( '' === $trig_top_key ) {
 	$trig_desc = __( 'Hardly any shows carry a content warning yet.', 'lwtv' );
@@ -77,6 +78,31 @@ $donut = array(
 	'headline'    => sprintf( __( '%s carry no warning at all', 'lwtv' ), lwtv_stats_fraction_phrase( $trig_none_pct ) ),
 	'description' => $trig_desc,
 );
+
+// Callouts: coverage, then average + median stars per show (across shows that have at least one).
+$inter_stats   = ( new \LWTV\Statistics\Build\Taxonomy_Optimized() )->get_terms_per_object_stats( 'post_type_shows', 'lez_triggers' );
+$lwtv_callouts = array();
+if ( (int) $inter_stats['shows'] > 0 && (int) $shows_count > 0 ) {
+	$inter_with = (int) $inter_stats['shows'];
+	$inter_pct  = round( ( $inter_with / (int) $shows_count ) * 100, 1 );
+
+	$lwtv_callouts[] = array(
+		'label' => __( 'Shows with triggers', 'lwtv' ),
+		'icon'  => 'warning.svg',
+		/* translators: %s: percentage of all shows carrying at least one trigger (one decimal). */
+		'text'  => sprintf( __( '%s%% of all shows have a warning.', 'lwtv' ), number_format_i18n( $inter_pct, 1 ) ),
+	);
+
+	$lwtv_callouts[] = array(
+		'label' => __( 'Biggest warnings', 'lwtv' ),
+		'icon'  => 'volcano.svg',
+		/* translators: 1: Name of the most common trigger, 2: number of shows with that trigger. */
+		'text'  => sprintf( __( 'The most common warning is "%1$s", seen on %2$s shows.', 'lwtv' ), $trig_top_label, $trig_top_val ),
+	);
+
+	// phpcs:ignore PEAR.Files.IncludingFile.UseRequire
+	include plugin_dir_path( __DIR__ ) . 'partials/callouts.php';
+}
 
 // phpcs:ignore PEAR.Files.IncludingFile.UseRequire
 include plugin_dir_path( __DIR__ ) . 'partials/donut.php';

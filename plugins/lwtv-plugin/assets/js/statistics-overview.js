@@ -63,9 +63,44 @@
 
 	window.lwtvStatsCountUp = animate;
 
+	// Year-bar charts: hovering a bar shows that year's value in the corner
+	// readout (top-right), so 3-digit numbers stay readable instead of being
+	// cramped onto a thin bar. Leaving the strip restores the default readout.
+	function wireYearbars( root ) {
+		root = root || document;
+		var cards = Array.prototype.slice.call( root.querySelectorAll( '.lwtv-yearbars-card' ) );
+
+		cards.forEach( function ( card ) {
+			var strip = card.querySelector( '.lwtv-yearbars' );
+			var numEl = card.querySelector( '.lwtv-yearbars-avg-num' );
+			var subEl = card.querySelector( '.lwtv-yearbars-avg-sub' );
+			if ( ! strip || ! numEl || ! subEl ) {
+				return;
+			}
+
+			// Cache the default from data-count-to (textContent may be mid-animation).
+			var defNum = numEl.getAttribute( 'data-count-to' ) ? finalText( numEl ) : numEl.textContent;
+			var defSub = subEl.textContent;
+			var fmt    = strip.getAttribute( 'data-hover-sub' ) || '%s';
+
+			Array.prototype.slice.call( strip.querySelectorAll( '.lwtv-yearbar' ) ).forEach( function ( bar ) {
+				bar.addEventListener( 'mouseenter', function () {
+					numEl.textContent = ( parseInt( bar.getAttribute( 'data-count' ), 10 ) || 0 ).toLocaleString();
+					subEl.textContent = fmt.replace( '%s', bar.getAttribute( 'data-year' ) || '' );
+				} );
+			} );
+
+			strip.addEventListener( 'mouseleave', function () {
+				numEl.textContent = defNum;
+				subEl.textContent = defSub;
+			} );
+		} );
+	}
+
 	function init() {
 		// Static pages (e.g. /statistics/): animate the whole document once.
 		animate( document );
+		wireYearbars( document );
 
 		// Bootstrap modals (e.g. actor Character Statistics): replay scoped to
 		// the modal each time it opens.

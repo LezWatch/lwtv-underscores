@@ -251,7 +251,9 @@ class On_Air_Optimized {
 			// Current year in the site's timezone, used for shows still airing
 			// ( 'finish' === 'current' ). Matches how the rest of this class derives
 			// "now" (via LWTV_TIMEZONE) instead of gmdate()'s UTC year, which can be
-			// a year ahead around the New Year boundary.
+			// a year ahead around the New Year boundary. Explicit finish years are
+			// also capped to it (see below), so a show with a known future end date is
+			// never counted as on air in a year that hasn't happened yet.
 			$current_year = (int) ( new \DateTime( 'now', new \DateTimeZone( LWTV_TIMEZONE ) ) )->format( 'Y' );
 
 			// If we have filtered data, determine the actual year range from the shows' airdates
@@ -270,7 +272,7 @@ class On_Air_Optimized {
 					}
 
 					$start_year  = (int) $airdates['start'];
-					$finish_year = ( 'current' === $airdates['finish'] ) ? $current_year : (int) $airdates['finish'];
+					$finish_year = ( 'current' === $airdates['finish'] ) ? $current_year : min( $current_year, (int) $airdates['finish'] );
 
 					if ( null === $earliest_start || $start_year < $earliest_start ) {
 						$earliest_start = $start_year;
@@ -307,7 +309,7 @@ class On_Air_Optimized {
 				}
 
 				$start_year  = (int) $airdates['start'];
-				$finish_year = ( 'current' === $airdates['finish'] ) ? $current_year : (int) $airdates['finish'];
+				$finish_year = ( 'current' === $airdates['finish'] ) ? $current_year : min( $current_year, (int) $airdates['finish'] );
 
 				// A show is "on air" for any year between start and finish (inclusive)
 				for ( $year = $start_year; $year <= $finish_year; $year++ ) {

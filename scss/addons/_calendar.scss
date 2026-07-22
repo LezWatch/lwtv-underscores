@@ -25,7 +25,7 @@ table.lwtvc {
 .ep-calendar-heading-backtotop {
 
 	a {
-		color: colors.$lwtv-ltpink;
+		color: colors.$lwtv-pink-light;
 	}
 }
 
@@ -39,8 +39,8 @@ table.lwtvc {
 }
 
 .ep-calendar-dot-past {
-	background: colors.$lwtv-grey2;
-	border-color: colors.$lwtv-grey2;
+	background: colors.$lwtv-grey-alt;
+	border-color: colors.$lwtv-grey-alt;
 }
 
 .calendar-show-img {
@@ -51,7 +51,7 @@ table.lwtvc {
 
 ul#calendarTab a.nav-link {
 	color: colors.$lwtv-pink;
-	border-color: colors.$lwtv-grey2;
+	border-color: colors.$lwtv-grey-alt;
 	margin-right: 0.5rem;
 
 	&.active {
@@ -63,7 +63,7 @@ ul#calendarTab a.nav-link {
 	&:hover,
 	&:focus,
 	&:active {
-		background-color: colors.$lwtv-grey2;
+		background-color: colors.$lwtv-grey-alt;
 		color: colors.$lwtv-pink;
 	}
 }
@@ -75,7 +75,7 @@ thead.dayjump {
 	line-height: 2;
 	margin: 1rem 0;
 	padding: 0.5rem;
-	background-color: colors.$lwtv-grey2;
+	background-color: colors.$lwtv-grey-alt;
 }
 
 .ep-calendar-subnav {
@@ -86,7 +86,7 @@ thead.dayjump {
 		&:hover,
 		&:focus,
 		&:active {
-			background-color: colors.$lwtv-grey2;
+			background-color: colors.$lwtv-grey-alt;
 			color: colors.$lwtv-pink;
 		}
 	}

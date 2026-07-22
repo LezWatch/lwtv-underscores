@@ -36,7 +36,7 @@
 }
 
 @mixin card-shadow {
-	box-shadow: 0 12px 20px -10px rgba(156, 39, 176, 0.28), 0 4px 20px 0 rgba(0, 0, 0, 0.12), 0 7px 8px -5px rgba(156, 39, 176, 0.2);
+	box-shadow: 0 12px 20px -10px rgba(156, 39, 176, 0.28), 0 4px 20px 0 rgba(colors.$black, 0.12), 0 7px 8px -5px rgba(156, 39, 176, 0.2);
 }
 
 $startcolor: #1e5799;
@@ -79,7 +79,7 @@ $endcolor: #7db9e8;
 }
 
 @mixin images {
-	border: 1px solid colors.$lwtv-grey2;
+	border: 1px solid colors.$lwtv-grey-alt;
 	padding: 6px;
 }
 
@@ -167,20 +167,20 @@ $endcolor: #7db9e8;
 	padding: 6px 12px;
 	font-size: 14px;
 	line-height: 1.428571429;
-	color: colors.$darkgrey;
+	color: colors.$lwtv-grey-deep;
 	vertical-align: middle;
 	background-color: colors.$white;
-	border: 1px solid colors.$lightgrey;
+	border: 1px solid colors.$lwtv-grey-light;
 
 	@include border-radius(4px);
-	@include box-shadow(inset 0 1px 1px rgba(0, 0, 0, 0.075));
+	@include box-shadow(inset 0 1px 1px rgba(colors.$black, 0.075));
 	@include box-transition(border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s);
 
 	&:focus {
 		border-color: $lightblue;
 		outline: 0;
 
-		@include box-shadow(inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(102, 175, 233, 0.6));
+		@include box-shadow(inset 0 1px 1px rgba(colors.$black, 0.075), 0 0 8px rgba(102, 175, 233, 0.6));
 	}
 }
 
@@ -254,7 +254,7 @@ $endcolor: #7db9e8;
 }
 
 @mixin rainbows {
-	box-shadow: 0 2px 30px rgba(0, 0, 0, 0.2);
+	box-shadow: 0 2px 30px rgba(colors.$black, 0.2);
 	height: 5px;
 	width: 100%;
 	left: 0;

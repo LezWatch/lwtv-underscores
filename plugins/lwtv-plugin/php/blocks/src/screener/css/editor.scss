@@ -5,16 +5,17 @@
  * which makes it higher in priority.
  */
 
-$lwtv-bordergrey: rgba(0, 0, 0, 0.125);
-$lwtv-pink: #d1548e;
+
+$lwtv-pink: #cb3e85;
 $white: #fff;
 $black: #000;
-$lightgrey: #dedede;
-$medgrey: #999;
-$darkgrey: #222;
-$green: #5cb85c;
-$blue: #06c;
-$red: #c0392b;
+$lwtv-grey-light: #f3f3f3;
+$lwtv-grey-medium: #999;
+$lwtv-grey-deep: #333;
+$lwtv-grey-border: rgba(0, 0, 0, 0.125);
+$lwtv-green: #047a49;
+$lwtv-blue: #06c;
+$lwtv-red: #c0392b;
 
 /* Bootstrap */
 $bs-red:	 #dc3545 !default;
@@ -27,7 +28,7 @@ $bs-cyan:	#17a2b8 !default;
 	padding: 1.25rem;
 	margin-top: 1.25rem;
 	margin-bottom: 1.25rem;
-	border: 0.06rem solid $lwtv-bordergrey;
+	border: 0.06rem solid $lwtv-grey-border;
 	border-left-width: 0.25rem;
 	border-radius: 0.25rem;
 	border-left-color: $lwtv-pink;
@@ -38,13 +39,13 @@ $bs-cyan:	#17a2b8 !default;
 		line-height: 1.1;
 		font-size: 1.25rem;
 		margin-bottom: 1rem;
-		background-color: $lightgrey;
+		background-color: $lwtv-grey-light;
 		padding: 5px;
 
 		.block-editor-plain-text {
 			width: 50% !important;
 			vertical-align: middle !important;
-			color: $darkgrey;
+			color: $lwtv-grey-deep;
 			font-style: italic;
 			display: inline;
 		}
@@ -62,14 +63,14 @@ $bs-cyan:	#17a2b8 !default;
 	.btn-dark,
 	.btn-anti {
 		color: $white;
-		background-color: $darkgrey;
-		border-color: $darkgrey;
+		background-color: $lwtv-grey-deep;
+		border-color: $lwtv-grey-deep;
 	}
 
 	.btn-none {
 		color: $black;
-		background-color: $lightgrey;
-		border-color: $lightgrey;
+		background-color: $lwtv-grey-light;
+		border-color: $lwtv-grey-light;
 	}
 
 	.btn-info,
@@ -104,8 +105,8 @@ $bs-cyan:	#17a2b8 !default;
 
 	.btn-tbd {
 		color: $white;
-		background-color: $blue;
-		border-color: $blue;
+		background-color: $lwtv-blue;
+		border-color: $lwtv-blue;
 	}
 
 	.btn form {

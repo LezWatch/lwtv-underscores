@@ -69,20 +69,17 @@ $stars_none_phrase = lcfirst( lwtv_stats_fraction_phrase( $stars_none_pct ) );
 
 if ( $most_stars['count'] > 0 ) {
 	/* translators: 1: star name (gold/silver/bronze), 2: how many shows carry it. */
-	$stars_common = sprintf( __( 'Of those that do, %1$s is the most common with %2$s.', 'lwtv' ), lcfirst( $most_stars['name'] ), number_format_i18n( $most_stars['count'] ) );
+	$stars_common = sprintf( __( 'Of all the stars, %1$s is the most common with %2$s.', 'lwtv' ), lcfirst( $most_stars['name'] ), number_format_i18n( $most_stars['count'] ) );
 } else {
-	$stars_common = __( 'None have earned one yet.', 'lwtv' );
+	$stars_common = __( 'Not a single show has a star yet, which is weird.', 'lwtv' );
 }
 
 if ( $stars_anti > 0 ) {
 	/* translators: %s: number of shows flagged "anti". */
-	$stars_anti_clause = sprintf( _n( '%s carries an “anti” flag.', '%s carry an “anti” flag.', $stars_anti, 'lwtv' ), number_format_i18n( $stars_anti ) );
+	$stars_anti_clause = sprintf( _n( '%s show carries an “anti” flag.', '%s shows carry an “anti” flag.', $stars_anti, 'lwtv' ), number_format_i18n( $stars_anti ) );
 } else {
-	$stars_anti_clause = __( 'None have yet to earn an “anti” flag.', 'lwtv' );
+	$stars_anti_clause = __( 'No shows have yet earned an “anti” flag.', 'lwtv' );
 }
-
-/* translators: 1: fraction phrase (e.g. "nearly all"), 2: "most common star" clause, 3: "anti" clause. */
-$description = sprintf( __( 'A star is a mark of distinction, so %1$s carry none. %2$s %3$s', 'lwtv' ), $stars_none_phrase, $stars_common, $stars_anti_clause );
 
 $donut = array(
 	'segments'    => $stars_segments,
@@ -90,9 +87,38 @@ $donut = array(
 	'center_sub'  => __( 'no star', 'lwtv' ),
 	'eyebrow'     => __( 'Star Ratings', 'lwtv' ),
 	'headline'    => __( 'Only a small share earn a star at all', 'lwtv' ),
-	'description' => $description,
+	'description' => '',
 );
 
+// Callouts: coverage, then average + median stars per show (across shows that have at least one).
+$inter_stats   = ( new \LWTV\Statistics\Build\Taxonomy_Optimized() )->get_terms_per_object_stats( 'post_type_shows', 'lez_stars' );
+$lwtv_callouts = array();
+if ( (int) $inter_stats['shows'] > 0 && (int) $shows_count > 0 ) {
+	$inter_with = (int) $inter_stats['shows'];
+	$inter_pct  = round( ( $inter_with / (int) $shows_count ) * 100, 1 );
+
+	$lwtv_callouts[] = array(
+		'label' => __( 'Shows with stars', 'lwtv' ),
+		'icon'  => 'fireworks.svg',
+		/* translators: %s: percentage of all shows carrying at least one star (one decimal). */
+		'text'  => sprintf( __( '%s%% of all shows have a star.', 'lwtv' ), number_format_i18n( $inter_pct, 1 ) ),
+	);
+
+	$lwtv_callouts[] = array(
+		'label' => __( 'Brightest stars', 'lwtv' ),
+		'icon'  => 'star.svg',
+		'text'  => ucfirst( $stars_common ),
+	);
+
+	$lwtv_callouts[] = array(
+		'label' => __( 'Darkest nights', 'lwtv' ),
+		'icon'  => 'eye-evil.svg',
+		'text'  => ucfirst( $stars_anti_clause ),
+	);
+
+	// phpcs:ignore PEAR.Files.IncludingFile.UseRequire
+	include plugin_dir_path( __DIR__ ) . 'partials/callouts.php';
+}
 
 // phpcs:ignore PEAR.Files.IncludingFile.UseRequire
 include plugin_dir_path( __DIR__ ) . 'partials/donut.php';

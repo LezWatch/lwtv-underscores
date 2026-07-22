@@ -18,14 +18,17 @@ if ( ! defined( 'ABSPATH' ) ) {
  *   @type string $description
  *   @type array  $callouts    Optional [ ['label','text','svg','icon'], … ] boxes
  *                              rendered above the chart (reuses trendline callout markup).
+ *   @type string $hover_sub   Optional printf format for the corner readout sub-line on
+ *                              hover; %s is the year. Defaults to the year alone ('%s').
  * }
  */
 
-$yb_rows  = $yearbars['rows'] ?? array();
-$yb_peak  = max( 1, (int) ( $yearbars['peak_count'] ?? 0 ) );
-$yb_pyear = (int) ( $yearbars['peak_year'] ?? 0 );
-$yb_first = ! empty( $yb_rows ) ? (int) $yb_rows[0]['year'] : 0;
-$yb_last  = ! empty( $yb_rows ) ? (int) $yb_rows[ count( $yb_rows ) - 1 ]['year'] : 0;
+$yb_rows      = $yearbars['rows'] ?? array();
+$yb_peak      = max( 1, (int) ( $yearbars['peak_count'] ?? 0 ) );
+$yb_pyear     = (int) ( $yearbars['peak_year'] ?? 0 );
+$yb_first     = ! empty( $yb_rows ) ? (int) $yb_rows[0]['year'] : 0;
+$yb_last      = ! empty( $yb_rows ) ? (int) $yb_rows[ count( $yb_rows ) - 1 ]['year'] : 0;
+$yb_hover_sub = $yearbars['hover_sub'] ?? '%s';
 ?>
 <?php if ( ! empty( $yearbars['callouts'] ) && is_array( $yearbars['callouts'] ) ) : ?>
 	<div class="lwtv-trend-callouts">
@@ -65,7 +68,7 @@ $yb_last  = ! empty( $yb_rows ) ? (int) $yb_rows[ count( $yb_rows ) - 1 ]['year'
 			</div>
 		<?php endif; ?>
 	</div>
-	<div class="lwtv-yearbars" role="img" aria-label="<?php echo esc_attr( $yearbars['eyebrow'] ?? '' ); ?>">
+	<div class="lwtv-yearbars" role="img" aria-label="<?php echo esc_attr( $yearbars['eyebrow'] ?? '' ); ?>" data-hover-sub="<?php echo esc_attr( $yb_hover_sub ); ?>">
 		<?php
 		foreach ( $yb_rows as $yb ) {
 			$yb_year   = (int) $yb['year'];
@@ -78,13 +81,14 @@ $yb_last  = ! empty( $yb_rows ) ? (int) $yb_rows[ count( $yb_rows ) - 1 ]['year'
 				$yb_bucket = min( 5, (int) floor( ( $yb_count / $yb_peak ) * 6 ) );
 				$yb_class  = ' lwtv-yearbar--r' . $yb_bucket;
 			}
-			printf(
-				'<span class="lwtv-yearbar%1$s" style="height:%2$s%%" title="%3$s"><span class="lwtv-yearbar-val">%4$s</span></span>',
-				esc_attr( $yb_class ),
-				esc_attr( (string) max( 2, $yb_height ) ),
-				esc_attr( $yb_year . ' — ' . number_format_i18n( $yb_count ) ),
-				esc_html( number_format_i18n( $yb_count ) )
-			);
+			// data-year/data-count feed the corner readout on hover (see
+			// statistics-overview.js). The on-bar value label is kept only for the
+			// peak — every other year's number lives in the readout, off to the side.
+			echo '<span class="lwtv-yearbar' . esc_attr( $yb_class ) . '" style="height:' . esc_attr( (string) max( 2, $yb_height ) ) . '%" title="' . esc_attr( $yb_year . ' — ' . number_format_i18n( $yb_count ) ) . '" data-year="' . esc_attr( (string) $yb_year ) . '" data-count="' . esc_attr( (string) $yb_count ) . '">';
+			if ( $yb_year === $yb_pyear ) {
+				echo '<span class="lwtv-yearbar-val">' . esc_html( number_format_i18n( $yb_count ) ) . '</span>';
+			}
+			echo '</span>';
 		}
 		?>
 	</div>

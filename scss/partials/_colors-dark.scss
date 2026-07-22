@@ -7,24 +7,25 @@
 @include mixins.color-mode(dark) {
 
 	/* Link colors */
-	$link-color:         colors.$lwtv-ltpink;
-	$link-hover-color:   colors.$lwtv-ltpurple;
+	$link-color:         colors.$lwtv-pink-light;
+	$link-hover-color:   colors.$lwtv-purple-light;
 	$link-focus-color:   $link-hover-color;
 	$link-active-color:  $link-hover-color;
 	$link-visited-color: $link-color;
 
 	/* Stats Colors */
-	$lwtv-stats-blue: #3498db;
-	$lwtv-stats-yellow: #f1c40f;
-	$lwtv-stats-green: #2ecc71;
-	$lwtv-stats-red: #e74c3c;
+	$lwtv-blue-light: #3498db;
+	$lwtv-yellow-light: #f1c40f;
+	$lwtv-green-light: #2ecc71;
+	$lwtv-red-light: #e74c3c;
 
 	/* Overridden colors */
-	$lwtv-medgrey: #404040;
-	$lwtv-svg:     colors.$lwtv-ltgrey!important;
+	$lwtv-grey-medium: #6a5d5d;
+	$lwtv-grey-deep: #404040;
+	$lwtv-svg: colors.$lwtv-grey-light!important;
 
-	--bs-body-color: #{colors.$lwtv-ltgrey};
-	--bs-body-color-rgb: rgba(to-rgb(#{colors.$lwtv-ltgrey}), 1);
+	--bs-body-color: #{colors.$lwtv-grey-light};
+	--bs-body-color-rgb: rgba(to-rgb(#{colors.$lwtv-grey-light}), 1);
 
 	.text-widget,
 	.widget_categories,
@@ -35,15 +36,15 @@
 	.list-group-item,
 	.widget_editor_tools .card,
 	.bg-light {
-		background-color: $lwtv-medgrey !important;
+		background-color: $lwtv-grey-medium !important;
 	}
 
 	.card-text, .card-title,
 	.entry-header .entry-meta {
-		color: colors.$lwtv-ltgrey;
+		color: colors.$lwtv-grey-light;
 
 		svg * {
-			fill: colors.$lwtv-ltgrey;
+			fill: colors.$lwtv-grey-light;
 		}
 	}
 
@@ -60,17 +61,17 @@
 	input[type="submit"].btn-outline-primary,
 	input[type="submit"].btn-outline-primary:visited {
 		color: colors.$black;
-		border-color: colors.$lwtv-dkpink;
-		background-color: colors.$lwtv-ltpink;
+		border-color: colors.$lwtv-pink-deep;
+		background-color: colors.$lwtv-pink-light;
 		text-decoration: none;
 	}
 
 	.navbar.main-nav {
-		background-color: $lwtv-medgrey;
+		background-color: $lwtv-grey-medium;
 
 		ul.navbar-nav > li {
-			border-left: solid 1px colors.$lightgrey;
-			background-color: $lwtv-medgrey;
+			border-left: solid 1px colors.$lwtv-grey-light;
+			background-color: $lwtv-grey-medium;
 
 			&.nav-item {
 
@@ -82,13 +83,13 @@
 
 				/* Secondary Menus */
 				ul.dropdown-menu {
-					background-color: $lwtv-medgrey;
+					background-color: $lwtv-grey-medium;
 
 					li.nav-item {
 
 						/* Style for inactive links on submenus */
 						a.dropdown-item {
-							background-color: $lwtv-medgrey;
+							background-color: $lwtv-grey-medium;
 							color: colors.$white;
 							text-decoration: none;
 						}
@@ -99,7 +100,7 @@
 	}
 
 	#colophon .top-footer {
-		background-color: $lwtv-medgrey;
+		background-color: $lwtv-grey-medium;
 		color: colors.$white;
 
 		a {
@@ -112,7 +113,7 @@
 			&:hover,
 			&:focus,
 			&:active {
-				color: colors.$lwtv-ltpink;
+				color: colors.$lwtv-pink-light;
 			}
 		}
 
@@ -145,17 +146,17 @@
 	}
 
 	#main {
-		background-color: colors.$lwtv-dkgrey;
+		background-color: colors.$lwtv-grey-deep;
 		color: colors.$white;
 	}
 
 	#masthead .navbar-brand {
-		color: colors.$lwtv-ltpink;
+		color: colors.$lwtv-pink-light;
 		text-decoration: none;
 	}
 
 	#masthead .header-search-bar {
-		background-color: $lwtv-medgrey;
+		background-color: $lwtv-grey-medium;
 	}
 
 	.author-box,
@@ -169,13 +170,13 @@
 	.character-show-loop .character-image-wrapper,
 	.search-results .actor-image-wrapper,
 	.search-results .character-image-wrapper {
-		background-color: $lwtv-medgrey;
+		background-color: $lwtv-grey-medium;
 	}
 
 	#comments,
 	ul.comment-list li .comment-content,
 	ul.comment-list li .comment-author {
-		background-color: $lwtv-medgrey;
+		background-color: $lwtv-grey-medium;
 
 		ul.comment-list svg * {
 			fill: colors.$white;
@@ -183,12 +184,12 @@
 	}
 
 	blockquote {
-		background-color: $lwtv-medgrey;
-		border-left: 4px solid colors.$lwtv-ltpink;
-		color: colors.$lwtv-ltgrey;
+		background-color: $lwtv-grey-medium;
+		border-left: 4px solid colors.$lwtv-pink-light;
+		color: colors.$lwtv-grey-light;
 
 		&::before {
-			color: colors.$lwtv-ltpink;
+			color: colors.$lwtv-pink-light;
 		}
 	}
 
@@ -199,7 +200,7 @@
 	.relatedposts-section h2,
 	.external-section h2,
 	.showschar-section h2 {
-		background-color: colors.$lwtv-medgrey;
+		background-color: colors.$lwtv-grey-medium;
 		color: colors.$lwtv-grey;
 
 		svg * {
@@ -211,7 +212,7 @@
 	.character-cliche svg,
 	.character-actor svg,
 	.character-show svg {
-		fill: colors.$lwtv-ltgrey;
+		fill: colors.$lwtv-grey-light;
 	}
 
 	.widget_lwtv_social_menu_widget a::before {
@@ -224,7 +225,7 @@
 	.intersectionality-list svg,
 	.trope-list svg,
 	.cliche-list svg {
-		fill: colors.$lwtv-ltgrey;
+		fill: colors.$lwtv-grey-light;
 	}
 
 	.site-loop .card {
@@ -236,23 +237,23 @@
 		.col {
 
 			.card {
-				background-color: $lwtv-medgrey;
+				background-color: $lwtv-grey-medium;
 			}
 
 			span {
-				color: colors.$lwtv-ltpink;
+				color: colors.$lwtv-pink-light;
 
 				&:hover {
-					color: colors.$lwtv-dkpink;
-					background-color: colors.$lwtv-dkgrey;
+					color: colors.$lwtv-pink-deep;
+					background-color: colors.$lwtv-grey-deep;
 
 					svg * {
-						fill: colors.$lwtv-dkpink;
+						fill: colors.$lwtv-pink-deep;
 					}
 				}
 
 				svg * {
-					fill: colors.$lwtv-ltpink;
+					fill: colors.$lwtv-pink-light;
 				}
 
 			}
@@ -261,7 +262,7 @@
 
 	.author-bio-box,
 	.related-shows {
-		background-color: colors.$lwtv-dkblue;
+		background-color: colors.$lwtv-blue-deep;
 
 		svg * {
 			fill: colors.$lwtv-grey;
@@ -269,10 +270,10 @@
 	}
 
 	.entry-meta {
-		color: colors.$lwtv-ltgrey;
+		color: colors.$lwtv-grey-light;
 
 		svg * {
-			fill: colors.$lwtv-ltgrey;
+			fill: colors.$lwtv-grey-light;
 		}
 	}
 
@@ -280,10 +281,10 @@
 	// #masthead rules in _layout.scss (the [data-bs-theme=dark] ancestor
 	// alone loses the specificity tie against an id selector).
 	#masthead .dark-mode-control {
-		background-color: colors.$lwtv-dkgrey;
+		background-color: colors.$lwtv-grey-deep;
 
 		.dark-mode-segment {
-			color: colors.$lwtv-grey2;
+			color: colors.$lwtv-grey-alt;
 
 			&:hover {
 				color: colors.$white;
@@ -299,7 +300,7 @@
 	div.facetwp-facet {
 
 		select {
-			background-color: $lwtv-medgrey;
+			background-color: $lwtv-grey-medium;
 			color: colors.$white;
 		}
 
@@ -307,7 +308,7 @@
 		.fs-wrap .fs-search input,
 		.fs-dropdown .fs-options,
 		.fs-dropdown .fs-no-results {
-			background-color: $lwtv-medgrey;
+			background-color: $lwtv-grey-medium;
 			color: colors.$white;
 		}
 
@@ -316,9 +317,9 @@
 		.fs-label-wrap .fs-label
 		.facetwp-type-autocomplete .fs-dropdown,
 		.facetwp-type-autocomplete .fs-wrap {
-			background-color: $lwtv-medgrey;
+			background-color: $lwtv-grey-medium;
 			color: colors.$white;
-			border-color: colors.$lwtv-ltgrey;
+			border-color: colors.$lwtv-grey-light;
 		}
 
 		.fs-arrow {
@@ -334,11 +335,11 @@
 	.facetwp-pager {
 
 		a {
-			color: colors.$lwtv-ltpink;
+			color: colors.$lwtv-pink-light;
 		}
 
 		a:hover {
-			color: colors.$lwtv-dkpink;
+			color: colors.$lwtv-pink-deep;
 			background-color: colors.$white;
 		}
 	}
@@ -351,7 +352,7 @@
 	}
 
 	h3.ep-calendar-day-heading {
-		background-color: $lwtv-medgrey;
+		background-color: $lwtv-grey-medium;
 	}
 
 	/** Add future dark mode styles here inside the group */
@@ -362,80 +363,80 @@
 		.card-header.actors,
 		.card-header.genres,
 		.card-header.gender {
-			color: $lwtv-stats-yellow;
-			border-color: $lwtv-stats-yellow;
+			color: $lwtv-yellow-light;
+			border-color: $lwtv-yellow-light;
 		}
 
 		.card-header.characters,
 		.card-header.new-shows,
 		.card-header.tropes,
 		.card-header.actor_gender {
-			color: $lwtv-stats-green;
-			border-color: $lwtv-stats-green;
+			color: $lwtv-green-light;
+			border-color: $lwtv-green-light;
 		}
 
 		.card-header.dead-characters,
 		.card-header.canceled-shows {
-			color: $lwtv-stats-red;
+			color: $lwtv-red-light;
 			border-color: colors.$lwtv-red;
 		}
 
 		.card-header.shows,
 		.card-header.shows-onair,
 		.card-header.sexuality {
-			color: $lwtv-stats-blue;
-			border-color: $lwtv-stats-blue;
+			color: $lwtv-blue-light;
+			border-color: $lwtv-blue-light;
 		}
 
 		.progress-bar {
-			background-color: colors.$lwtv-mdpink;
+			background-color: colors.$lwtv-pink-medium;
 		}
 
 		.lwtv-bars--characters .progress-bar,
 		.lwtv-bars--actors .progress-bar,
 		.lwtv-bars--shows .progress-bar {
-			background-color: colors.$lwtv-mdpink !important;
+			background-color: colors.$lwtv-pink-medium !important;
 		}
 
 		.lwtv-bars--sexuality .progress-bar,
 		.lwtv-bars--gender .progress-bar {
-			background-color: colors.$lwtv-mdpink !important;
+			background-color: colors.$lwtv-pink-medium !important;
 		}
 
 		button {
 			color: colors.$black;
-			background-color: colors.$lwtv-ltpink;
-			border-color: colors.$lwtv-ltpink;
+			background-color: colors.$lwtv-pink-light;
+			border-color: colors.$lwtv-pink-light;
 		}
 
 		a.nav-link {
-			color: colors.$lwtv-ltpink;
+			color: colors.$lwtv-pink-light;
 		}
 
 		.lwtv-stats-tabs {
-			background-color: $lwtv-medgrey;
+			background-color: $lwtv-grey-medium;
 		}
 
 		.lwtv-yearbars-axis-peak,
 		.lwtv-yearbars-avg-num,
 		.lwtv-yearbar-val {
-			color: colors.$lwtv-ltpink!important;
+			color: colors.$lwtv-pink-light!important;
 		}
 		.lwtv-stats-tab {
-			color: colors.$lwtv-ltpink;
+			color: colors.$lwtv-pink-light;
 
 			&.is-active {
-				color: colors.$lwtv-dkgrey;
-				background-color: colors.$lwtv-ltpink;
+				color: colors.$lwtv-grey-deep;
+				background-color: colors.$lwtv-pink-light;
 			}
 		}
 
 		.card-header.lwtv-metric-card {
-			border-color: colors.$lwtv-bordergrey;
+			border-color: colors.$lwtv-grey-border;
 		}
 
 		.tablesorter-bootstrap:not(.table-dark) tfoot td, .tablesorter-bootstrap:not(.table-dark) tfoot th, .tablesorter-bootstrap:not(.table-dark) thead:not(.thead-dark) .tablesorter-header {
-			background-color: colors.$lwtv-grey2;
+			background-color: colors.$lwtv-grey-alt;
 		}
 
 		.lwtv-death-list-intro,
@@ -465,11 +466,11 @@
 		}
 
 		.lwtv-trend-axis {
-			color: colors.$lwtv-ltgrey;
+			color: colors.$lwtv-grey-light;
 		}
 
 		.lwtv-trend-callout {
-			border-color: rgba(255, 255, 255, 0.12);
+			border-color: rgba(colors.$white, 0.12);
 		}
 
 		a.lwtv-tail-name, a.lwtv-tail-name:visited,
@@ -478,66 +479,66 @@
 		}
 
 		.lwtv-metric-icon {
-			background-color: rgba(255, 255, 255, 0.08); // fallback for no color-mix.
+			background-color: rgba(colors.$white, 0.08); // fallback for no color-mix.
 			background-color: color-mix(in srgb, currentColor 15%, transparent);
 		}
 
 		.lwtv-byg-icon {
-			background-color: rgba(255, 255, 255, 0.08); // fallback for no color-mix.
+			background-color: rgba(colors.$white, 0.08); // fallback for no color-mix.
 			background-color: color-mix(in srgb, currentColor 15%, transparent);
 		}
 
 		.lwtv-byg-desc {
-			color: colors.$lwtv-ltpink;
+			color: colors.$lwtv-pink-light;
 		}
 
 		.lwtv-tropegap-desc {
-			color: colors.$lwtv-ltgrey;
+			color: colors.$lwtv-grey-light;
 		}
 
 		.lwtv-panel-icon {
-			color: colors.$lwtv-ltpink;
+			color: colors.$lwtv-pink-light;
 		}
 
 		// Family-colored overview header icons (mirror the dark card-header greens/ambers).
 		.lwtv-panel-icon.characters {
-			color: $lwtv-stats-green;
+			color: $lwtv-green-light;
 		}
 
 		.lwtv-panel-icon.gender,
 		.lwtv-panel-icon.actors {
-			color: $lwtv-stats-yellow;
+			color: $lwtv-yellow-light;
 		}
 
 		.lwtv-panel-icon.sexuality {
-			color: $lwtv-stats-blue;
+			color: $lwtv-blue-light;
 		}
 
 		// Neutral leader-bar tracks in dark (the light family tints are too bright).
 		.lwtv-bars--characters .lwtv-leader-track,
 		.lwtv-bars--actors .lwtv-leader-track,
 		.lwtv-bars--shows .lwtv-leader-track {
-			background-color: colors.$lwtv-ltgrey;
+			background-color: colors.$lwtv-grey-light;
 		}
 
 		.lwtv-bars--sexuality .lwtv-leader-track,
 		.lwtv-bars--gender .lwtv-leader-track {
-			background-color: colors.$lwtv-ltgrey;
+			background-color: colors.$lwtv-grey-light;
 		}
 
 		// Tail separators need a light-on-dark border to stay visible.
 		.lwtv-tail,
 		.lwtv-tail-row {
-			border-color: rgba(255, 255, 255, 0.12);
+			border-color: rgba(colors.$white, 0.12);
 		}
 
 		.lwtv-share-seg:nth-child(5) {
-			outline: 1px solid rgba(255, 255, 255, 0.15);
+			outline: 1px solid rgba(colors.$white, 0.15);
 			outline-offset: -1px;
 		}
 
 		.lwtv-stats-subnav-item {
-			color: colors.$lwtv-ltpink;
+			color: colors.$lwtv-pink-light;
 
 			&.is-active {
 				color: colors.$white;
@@ -548,69 +549,69 @@
 		// Year navigator: the light-mode translucent-black border and pale
 		// green chip both need lifting against the dark page background.
 		.lwtv-ty-yearnav-arrow {
-			color: colors.$lwtv-ltgrey;
-			border-color: rgba(255, 255, 255, 0.15);
+			color: colors.$lwtv-grey-light;
+			border-color: rgba(colors.$white, 0.15);
 		}
 
 		.lwtv-ty-yearnav-select {
-			color: colors.$lwtv-ltgrey;
+			color: colors.$lwtv-grey-light;
 			background-color: transparent;
-			border-color: rgba(255, 255, 255, 0.15);
+			border-color: rgba(colors.$white, 0.15);
 		}
 
 		.lwtv-ty-yearnav-live {
-			color: $lwtv-stats-green;
-			background: rgba($lwtv-stats-green, 0.16);
+			color: $lwtv-green-light;
+			background: rgba(colors.$lwtv-green, 0.16)-light;
 		}
 
 		// Overview: lead/ribbon/highlight cards need the lifted border used
 		// throughout dark mode; the lead card's light "bg-light" tint also
 		// needs swapping for the dark neutral used elsewhere (e.g. .bg-light).
 		.lwtv-ty-lead {
-			background-color: $lwtv-medgrey;
-			border-color: rgba(255, 255, 255, 0.12);
+			background-color: $lwtv-grey-medium;
+			border-color: rgba(colors.$white, 0.12);
 
 			.lwtv-stats-eyebrow {
-				color: colors.$lwtv-ltpink;
+				color: colors.$lwtv-pink-light;
 			}
 		}
 
 		.lwtv-ty-metric,
 		.lwtv-ty-highlight {
-			border-color: rgba(255, 255, 255, 0.12);
+			border-color: rgba(colors.$white, 0.12);
 		}
 
 		// Family label colors: the light-mode deep tokens are too dark to read
 		// against the dark card background, so swap for the vivid dark tokens.
-		.lwtv-ty-metric--green .lwtv-ty-metric-label { color: $lwtv-stats-green; }
-		.lwtv-ty-metric--red .lwtv-ty-metric-label { color: $lwtv-stats-red; }
-		.lwtv-ty-metric--blue .lwtv-ty-metric-label { color: $lwtv-stats-blue; }
-		.lwtv-ty-metric--pink .lwtv-ty-metric-label { color: colors.$lwtv-ltpink; }
-		.lwtv-ty-metric--amber .lwtv-ty-metric-label { color: $lwtv-stats-yellow; }
+		.lwtv-ty-metric--green .lwtv-ty-metric-label { color: $lwtv-green-light; }
+		.lwtv-ty-metric--red .lwtv-ty-metric-label { color: $lwtv-red-light; }
+		.lwtv-ty-metric--blue .lwtv-ty-metric-label { color: $lwtv-blue-light; }
+		.lwtv-ty-metric--pink .lwtv-ty-metric-label { color: colors.$lwtv-pink-light; }
+		.lwtv-ty-metric--amber .lwtv-ty-metric-label { color: $lwtv-yellow-light; }
 
 		.lwtv-ty-highlight-chip--green {
-			color: $lwtv-stats-green;
-			background-color: rgba($lwtv-stats-green, 0.16);
+			color: $lwtv-green-light;
+			background-color: rgba(colors.$lwtv-green, 0.16)-light;
 		}
 
 		.lwtv-ty-highlight-chip--red {
-			color: $lwtv-stats-red;
-			background-color: rgba($lwtv-stats-red, 0.16);
+			color: $lwtv-red-light;
+			background-color: rgba(colors.$lwtv-red, 0.16)-light;
 		}
 
 		.lwtv-ty-highlight-chip--blue {
-			color: $lwtv-stats-blue;
-			background-color: rgba($lwtv-stats-blue, 0.16);
+			color: $lwtv-blue-light;
+			background-color: rgba(colors.$lwtv-blue, 0.16)-light;
 		}
 
 		.lwtv-ty-highlight-chip--pink {
-			color: colors.$lwtv-ltpink;
-			background-color: rgba(colors.$lwtv-ltpink, 0.16);
+			color: colors.$lwtv-pink-light;
+			background-color: rgba(colors.$lwtv-pink-light, 0.16);
 		}
 
 		.lwtv-ty-highlight-chip--amber {
-			color: $lwtv-stats-yellow;
-			background-color: rgba($lwtv-stats-yellow, 0.16);
+			color: $lwtv-yellow-light;
+			background-color: rgba(colors.$lwtv-yellow, 0.16)-light;
 		}
 
 		// Characters On Air: pill toggle, grid rows, and cast cards need the
@@ -624,29 +625,29 @@
 		}
 
 		.lwtv-ty-pills {
-			background-color: $lwtv-medgrey;
+			background-color: $lwtv-grey-medium;
 
 			.nav-link {
-				color: colors.$lwtv-ltpink;
+				color: colors.$lwtv-pink-light;
 
 				&.active {
-					color: colors.$lwtv-dkgrey;
-					background-color: colors.$lwtv-ltpink;
+					color: colors.$lwtv-grey-deep;
+					background-color: colors.$lwtv-pink-light;
 				}
 			}
 		}
 
 		.lwtv-ty-charname-row,
 		.lwtv-ty-charshow-card {
-			border-color: rgba(255, 255, 255, 0.12);
+			border-color: rgba(colors.$white, 0.12);
 		}
 
 		.lwtv-ty-chip {
-			color: colors.$lwtv-ltgrey;
-			background-color: $lwtv-medgrey;
+			color: colors.$lwtv-grey-light;
+			background-color: $lwtv-grey-medium;
 
 			&:hover {
-				background-color: rgba(255, 255, 255, 0.16);
+				background-color: rgba(colors.$white, 0.16);
 			}
 		}
 
@@ -659,8 +660,8 @@
 		}
 
 		.lwtv-ty-deathdate-row {
-			background-color: $lwtv-medgrey;
-			border-color: rgba(255, 255, 255, 0.12);
+			background-color: $lwtv-grey-medium;
+			border-color: rgba(colors.$white, 0.12);
 		}
 
 		.lwtv-ty-deathdate-show,
@@ -669,37 +670,37 @@
 		}
 
 		.lwtv-ty-deathshow-card {
-			border-color: rgba(255, 255, 255, 0.12);
+			border-color: rgba(colors.$white, 0.12);
 		}
 
 		// Shows On Air / New Shows / Canceled Shows: light-mode deep accent
 		// tokens are too dark to read against the dark card background, so
 		// swap for the vivid dark tokens (pink uses the existing ltpink swap).
-		.lwtv-ty-block-title--blue { color: $lwtv-stats-blue; }
-		.lwtv-ty-block-title--pink { color: colors.$lwtv-ltpink; }
-		.lwtv-ty-block-title--amber { color: $lwtv-stats-yellow; }
+		.lwtv-ty-block-title--blue { color: $lwtv-blue-light; }
+		.lwtv-ty-block-title--pink { color: colors.$lwtv-pink-light; }
+		.lwtv-ty-block-title--amber { color: $lwtv-yellow-light; }
 
 		.lwtv-ty-group-grid--blue .lwtv-ty-group-key,
 		.lwtv-ty-group-grid--blue .lwtv-ty-group-item a {
-			color: $lwtv-stats-blue;
+			color: $lwtv-blue-light;
 		}
 
 		.lwtv-ty-group-grid--pink .lwtv-ty-group-key,
 		.lwtv-ty-group-grid--pink .lwtv-ty-group-item a {
-			color: colors.$lwtv-ltpink;
+			color: colors.$lwtv-pink-light;
 		}
 
 		.lwtv-ty-group-grid--amber .lwtv-ty-group-key,
 		.lwtv-ty-group-grid--amber .lwtv-ty-group-item a {
-			color: $lwtv-stats-yellow;
+			color: $lwtv-yellow-light;
 		}
 
 		.lwtv-ty-group-card {
-			border-color: rgba(255, 255, 255, 0.12);
+			border-color: rgba(colors.$white, 0.12);
 		}
 
 		.lwtv-ty-group-head {
-			border-bottom-color: rgba(255, 255, 255, 0.12);
+			border-bottom-color: rgba(colors.$white, 0.12);
 		}
 
 		.lwtv-ty-group-count,
@@ -716,8 +717,8 @@
 		// Empty state: pale green chip needs lifting, same treatment as the
 		// year navigator's "Live" chip above.
 		.lwtv-ty-empty {
-			background-color: $lwtv-medgrey;
-			border-color: rgba(255, 255, 255, 0.12);
+			background-color: $lwtv-grey-medium;
+			border-color: rgba(colors.$white, 0.12);
 
 			p {
 				color: colors.$white;
@@ -725,22 +726,22 @@
 		}
 
 		.lwtv-ty-empty-icon {
-			color: $lwtv-stats-green;
-			background-color: rgba($lwtv-stats-green, 0.16);
+			color: $lwtv-green-light;
+			background-color: rgba(colors.$lwtv-green, 0.16)-light;
 		}
 
 		.lwtv-donut-track {
-			stroke: colors.$lwtv-medgrey;
+			stroke: colors.$lwtv-grey-medium;
 		}
 
 		// Faint neutral fill for the donut "Unknown" segment — the light
 		// translucent-black bordergrey is invisible on the dark ring/card.
 		.lwtv-donut-seg--bordergrey {
-			stroke: rgba(255, 255, 255, 0.22);
+			stroke: rgba(colors.$white, 0.22);
 		}
 
 		.lwtv-donut-legend-track .progress-bar.lwtv-donut-seg--bordergrey {
-			background-color: rgba(255, 255, 255, 0.22) !important;
+			background-color: rgba(colors.$white, 0.22) !important;
 		}
 
 		.lwtv-trend-current-num {
@@ -755,14 +756,14 @@
 		// so lift their labels/borders off the dark surface.
 		.lwtv-nation-profile,
 		.lwtv-nations-lb-row {
-			border-color: rgba(255, 255, 255, 0.12);
+			border-color: rgba(colors.$white, 0.12);
 		}
 
 		// The --vibrant profile box uses the light "bg-light" surface in light
 		// mode; swap it for the dark neutral so it matches .bg-light / the
 		// lead card here instead of showing a pale panel on the dark page.
 		.lwtv-nation-profile--vibrant {
-			background-color: $lwtv-medgrey;
+			background-color: $lwtv-grey-medium;
 		}
 
 		.lwtv-actor-articles-modal .lwtv-stats-tab:hover,
@@ -775,10 +776,10 @@
 		.lwtv-actor-stats-modal .lwtv-nations-reset:hover,
 		.lwtv-nations-reset:hover,
 		.lwtv-nations-lb-name {
-			color: colors.$lwtv-ltpink;
+			color: colors.$lwtv-pink-light;
 
 			&:hover {
-				color: colors.$lwtv-ltblue;
+				color: colors.$lwtv-blue-light;
 			}
 		}
 
@@ -786,18 +787,18 @@
 		.lwtv-actor-stats-modal .lwtv-nation-profile-dead strong,
 		.lwtv-nation-profile-dead strong,
 		.lwtv-nations-lb-dead {
-			color: $lwtv-stats-red;
+			color: $lwtv-red-light;
 		}
 
 		.lwtv-nation-profile .lwtv-stats-eyebrow.sexuality {
-			color: $lwtv-stats-blue;
+			color: $lwtv-blue-light;
 		}
 
 		.lwtv-nation-profile-figs em,
 		.lwtv-nation-score,
 		.lwtv-nation-sentence,
 		.lwtv-nations-lb-head {
-			color: colors.$lwtv-ltgrey;
+			color: colors.$lwtv-grey-light;
 		}
 
 		// Station "Vibrant Refresh" profile chip (pink well + glyph) — the
@@ -805,21 +806,21 @@
 		// treatment; only the header chip flips.
 		.lwtv-nation-profile-chip {
 			color: #eba3c5;
-			background-color: rgba(203, 62, 133, 0.22);
+			background-color: rgba(colors.$lwtv-pink, 0.22);
 		}
 
 		.lwtv-death-list th,
 		.lwtv-death-list td {
-			border-bottom-color: rgba(255, 255, 255, 0.12);
+			border-bottom-color: rgba(colors.$white, 0.12);
 		}
 	}
 
 	.lwtv-donut-track {
-		stroke: colors.$lwtv-medgrey;
+		stroke: colors.$lwtv-grey-medium;
 	}
 
 	.lwtv-donut-card {
-		border-color: rgba(255, 255, 255, 0.12);
+		border-color: rgba(colors.$white, 0.12);
 	}
 
 	.lwtv-donut-center-num,
@@ -830,50 +831,50 @@
 	}
 
 	.lwtv-donut-center-num--green {
-		color: $lwtv-stats-green!important;
+		color: $lwtv-green-light!important;
 	}
 
 	.lwtv-donut-center-num--red {
-		color: $lwtv-stats-red!important;
+		color: $lwtv-red-light!important;
 	}
 
 	.lwtv-donut-seg--blue {
-		stroke: $lwtv-stats-blue!important;
-		background-color: $lwtv-stats-blue!important;
+		stroke: $lwtv-blue-light!important;
+		background-color: $lwtv-blue-light!important;
 	}
 
 	.lwtv-donut-seg--amber {
-		stroke: $lwtv-stats-yellow!important;
-		background-color: $lwtv-stats-yellow!important;
+		stroke: $lwtv-yellow-light!important;
+		background-color: $lwtv-yellow-light!important;
 	}
 
 	.lwtv-donut-seg--green {
-		stroke: $lwtv-stats-green!important;
-		background-color: $lwtv-stats-green!important;
+		stroke: $lwtv-green-light!important;
+		background-color: $lwtv-green-light!important;
 	}
 
 	.lwtv-donut-seg--red {
-		stroke: $lwtv-stats-red!important;
-		background-color: $lwtv-stats-red!important;
+		stroke: $lwtv-red-light!important;
+		background-color: $lwtv-red-light!important;
 	}
 
 	.lwtv-actor-articles-modal {
 		.lwtv-article-card {
-			border-color: rgba(255, 255, 255, 0.12);
+			border-color: rgba(colors.$white, 0.12);
 
 			&:hover {
-				box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+				box-shadow: 0 6px 16px rgba(colors.$black, 0.4);
 			}
 		}
 
 		.lwtv-articles-intro,
 		.lwtv-article-excerpt,
 		.lwtv-article-date {
-			color: colors.$lwtv-ltgrey;
+			color: colors.$lwtv-grey-light;
 		}
 
 		.lwtv-article-title a {
-			color: colors.$lwtv-ltpink;
+			color: colors.$lwtv-pink-light;
 		}
 	}
 }

@@ -1,3 +1,5 @@
+@use "../partials/colors";
+
 /* ************************************
  *
  * 1) Overlay and container positioning
@@ -22,11 +24,11 @@
 		width: 100%;
 		max-width: 1000px;
 		max-height: 100vh;
-		background-color: #fff;
+		background-color: colors.$white;
 	}
 
 	.searchwp-modal-form__content {
-		background-color: #fff;
+		background-color: colors.$white;
 		padding: 2em;
 		border-radius: 2px;
 		overflow-y: auto;
@@ -175,30 +177,30 @@
 	span {
 		display: inline-block;
 		padding: 0.3em 0.85em;
-		border: 1px solid #cb3e85;
+		border: 1px solid colors.$lwtv-pink;
 		border-radius: 2em;
 		font-size: 0.875rem;
 		line-height: 1.5;
 		cursor: pointer;
-		color: #cb3e85;
-		background-color: #fff;
+		color: colors.$lwtv-pink;
+		background-color: colors.$white;
 		transition: background-color 0.15s ease, color 0.15s ease;
 		user-select: none;
 	}
 
 	input[type="radio"]:checked + span {
-		background-color: #cb3e85;
-		color: #fff;
+		background-color: colors.$lwtv-pink;
+		color: colors.$white;
 	}
 
 	input[type="radio"]:focus-visible + span {
-		outline: 2px solid #9e2968;
+		outline: 2px solid colors.$lwtv-pink-deep;
 		outline-offset: 2px;
 	}
 
 	&:hover span {
-		background-color: #eecee3;
-		color: #9e2968;
+		background-color: colors.$lwtv-pink-light;
+		color: colors.$lwtv-pink-deep;
 	}
 }
 
