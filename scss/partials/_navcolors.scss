@@ -8,7 +8,7 @@
 
 .navbar.main-nav {
 
-	@include mixins.box-shadow(0 2px 30px rgba(0, 0, 0, 0.2));
+	@include mixins.box-shadow(0 2px 30px rgba(colors.$black, 0.2));
 	height: 50px;
 	padding: 0;
 	background-color: colors.$white;
@@ -18,18 +18,18 @@
 	}
 
 	ul.navbar-nav > li {
-		border-left: solid 1px colors.$lightgrey;
+		border-left: solid 1px colors.$lwtv-grey-light;
 		background-color: colors.$white;
 
 		&:last-child {
-			border-right: solid 1px colors.$lightgrey;
+			border-right: solid 1px colors.$lwtv-grey-light;
 		}
 
 		&.nav-item {
 
 			/* Style for inactive links */
 			a.nav-link {
-				color: colors.$darkgrey;
+				color: colors.$lwtv-grey-deep;
 
 				@include fonts.font-15;
 				font-weight: 600;
@@ -67,7 +67,7 @@
 					/* Style for inactive links on submenus */
 					a.dropdown-item {
 						background-color: colors.$white;
-						color: colors.$darkgrey;
+						color: colors.$lwtv-grey-deep;
 					}
 
 					/* Style for active links on submenus */

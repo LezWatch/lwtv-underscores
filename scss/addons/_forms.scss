@@ -1,3 +1,5 @@
+@use "../partials/colors";
+
 /* =Form Styles
 ----------------------------------------------- */
 /* stylelint-disable no-descending-specificity */
@@ -24,10 +26,10 @@ input[type="week"] {
 	font-size: 1rem;
 	line-height: 1.25;
 	color: #495057;
-	background-color: #fff;
+	background-color: colors.$white;
 	background-image: none;
 	background-clip: padding-box;
-	border: 1px solid rgba(0, 0, 0, 0.15);
+	border: 1px solid rgba(colors.$black, 0.15);
 	border-radius: 0.25rem;
 	transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
 
@@ -38,7 +40,7 @@ input[type="week"] {
 
 	&:focus {
 		color: #495057;
-		background-color: #fff;
+		background-color: colors.$white;
 		border-color: #80bdff;
 		outline: none;
 	}

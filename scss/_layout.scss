@@ -33,8 +33,8 @@ body {
 	font-family: fonts.$basefontfamily;
 	font-size: fonts.$basefont;
 	line-height: fonts.$baseheight;
-	color: colors.$darkgrey;
-	background-color: colors.$lwtv-dkgrey;
+	color: colors.$lwtv-grey-deep;
+	background-color: colors.$lwtv-grey-deep;
 }
 
 p {
@@ -43,9 +43,9 @@ p {
 }
 
 blockquote {
-	background-color: colors.$lwtv-ltgrey;
+	background-color: colors.$lwtv-grey-light;
 	border-left: 4px solid colors.$lwtv-pink;
-	color: colors.$darkgrey;
+	color: colors.$lwtv-grey-deep;
 	font-family: Georgia, Times, "Times New Roman", serif;
 	font-weight: 500;
 
@@ -124,8 +124,8 @@ a {
 
 	&,
 	&:visited {
-		background-color: #16704a !important;
-		border-color: #16704a !important;
+		background-color: colors.$lwtv-green !important;
+		border-color: colors.$lwtv-green-deep !important;
 	}
 }
 
@@ -133,8 +133,8 @@ a {
 
 	&,
 	&:visited {
-		background-color: #b5283c !important;
-		border-color: #b5283c !important;
+		background-color: colors.$lwtv-red !important;
+		border-color: colors.$lwtv-red-deep !important;
 	}
 }
 
@@ -155,7 +155,7 @@ figure.wp-block-embed {
 	figcaption {
 		text-align: left;
 		font-size: smaller;
-		color: colors.$lwtv-ltgrey;
+		color: colors.$lwtv-grey-light;
 	}
 
 	&.alignleft,
@@ -289,7 +289,7 @@ h6 a {
 	max-height: 600px;
 
 	.col-sm-9 {
-		background-color: rgba(0, 0, 0, 0.55);
+		background-color: rgba(colors.$black, 0.55);
 		border-radius: 0.375rem;
 		padding: 1rem 1.5rem;
 	}
@@ -366,9 +366,9 @@ h6 a {
 	}
 
 	.header-search-bar {
-		background-color: colors.$lwtv-dkgrey;
+		background-color: colors.$lwtv-grey-deep;
 
-		@include mixins.box-shadow(0 2px 30px rgba(0, 0, 0, 0.2));
+		@include mixins.box-shadow(0 2px 30px rgba(colors.$black, 0.2));
 		margin-top: 50px;
 		padding: 10px 0;
 		z-index: 9999;
@@ -402,7 +402,7 @@ h6 a {
 		}
 
 		a:hover {
-			color: colors.$lwtv-grey2;
+			color: colors.$lwtv-grey-alt;
 		}
 	}
 
@@ -431,7 +431,7 @@ h6 a {
 		align-items: center;
 		height: 36px;
 		padding: 2px;
-		background-color: colors.$lightgrey;
+		background-color: colors.$lwtv-grey-light;
 		border-radius: 999px;
 
 		.dark-mode-segment {
@@ -445,7 +445,7 @@ h6 a {
 			background-color: transparent;
 			border: 0;
 			border-radius: 999px;
-			color: colors.$lwtv-medgrey;
+			color: colors.$lwtv-grey-medium;
 			cursor: pointer;
 			transition: background-color 150ms ease-out, color 150ms ease-out;
 
@@ -456,7 +456,7 @@ h6 a {
 			}
 
 			&:hover {
-				color: colors.$darkgrey;
+				color: colors.$lwtv-grey-deep;
 			}
 
 			&.active {
@@ -577,7 +577,7 @@ h1.entry-title {
 
 	.breadcrumb {
 		text-align: center;
-		background-color: #e9ecef;
+		background-color: colors.$lwtv-grey-light;
 		border-radius: 0.25rem;
 		padding: 0.75rem 1rem;
 		margin-bottom: 1rem;
@@ -599,7 +599,7 @@ h1.entry-title {
 		border: none;
 
 		@include mixins.border-radius(0);
-		@include mixins.box-shadow(0 1px 4px 0 rgba(0, 0, 0, 0.14));
+		@include mixins.box-shadow(0 1px 4px 0 rgba(colors.$black, 0.14));
 		padding: 0;
 
 		&.col-sm-3,
@@ -663,7 +663,7 @@ h1.entry-title {
 				}
 
 				svg * {
-					fill: #868e96;
+					fill: colors.$lwtv-grey-medium;
 				}
 			}
 
@@ -843,7 +843,7 @@ section {
 
 	.entry-meta {
 		border-bottom: 1px solid colors.$lwtv-pink;
-		color: colors.$lwtv-medgrey;
+		color: colors.$lwtv-grey-medium;
 		font-size: fonts.$basefont;
 		font-weight: 600;
 		margin-top: 0.75rem;
@@ -857,7 +857,7 @@ section {
 		}
 
 		svg * {
-			fill: colors.$lwtv-medgrey;
+			fill: colors.$lwtv-grey-medium;
 		}
 
 		.fa {
@@ -868,7 +868,7 @@ section {
 
 .listicle {
 	counter-reset: listicle-counter;
-	border-bottom: 1px solid colors.$lwtv-grey2;
+	border-bottom: 1px solid colors.$lwtv-grey-alt;
 	margin-bottom: 2rem;
 
 	dt::before {
@@ -904,7 +904,7 @@ section {
 }
 
 .related-shows {
-	background-color: colors.$lwtv-ltgrey;
+	background-color: colors.$lwtv-grey-light;
 	border-left: 4px solid colors.$lwtv-pink;
 	margin: 2rem 0;
 	padding: 1em;
@@ -930,7 +930,7 @@ section {
 }
 
 .author-bio-box {
-	background-color: colors.$lwtv-ltgrey;
+	background-color: colors.$lwtv-grey-light;
 
 	@include fonts.font-14;
 	padding: 1em;
@@ -1032,7 +1032,7 @@ footer.entry-meta {
 		border: none;
 
 		@include mixins.border-radius(0);
-		@include mixins.box-shadow(0 1px 4px 0 rgba(0, 0, 0, 0.14));
+		@include mixins.box-shadow(0 1px 4px 0 rgba(colors.$black, 0.14));
 
 		.single-char-img {
 			float: left;
@@ -1059,7 +1059,7 @@ footer.entry-meta {
 
 		#characterActors.accordion,
 		#characterShows.accordion {
-			--bs-accordion-btn-focus-box-shadow: 0 0 0 0.2rem $lwtv-grey2;
+			--bs-accordion-btn-focus-box-shadow: 0 0 0 0.2rem $lwtv-grey-alt;
 
 			button {
 				font-family: "Open Sans", sans-serif;
@@ -1068,7 +1068,7 @@ footer.entry-meta {
 			}
 
 			.accordion-button:not(.collapsed) {
-				background-color: colors.$lwtv-grey2;
+				background-color: colors.$lwtv-grey-alt;
 			}
 		}
 	}
@@ -1116,7 +1116,7 @@ footer.entry-meta {
 	}
 
 	svg * {
-		fill: colors.$medgrey;
+		fill: colors.$lwtv-grey-medium;
 	}
 }
 
@@ -1130,7 +1130,7 @@ footer.entry-meta {
 	}
 
 	svg * {
-		fill: colors.$darkgrey;
+		fill: colors.$lwtv-grey-deep;
 	}
 }
 
@@ -1176,7 +1176,7 @@ footer.entry-meta {
 					border: none !important;
 
 					svg.symbolicon {
-						color: black !important;
+						color: colors.$black !important;
 					}
 				}
 			}
@@ -1249,7 +1249,7 @@ section#characters {
 		content: "🕵️ ";
 		display: inline-block;
 		width: 16px;
-		color: #856404;
+		color: colors.$lwtv-yellow-deep;
 		padding-right: 2px;
 	}
 }
@@ -1298,17 +1298,17 @@ section#characters {
 .show-we-love {
 
 	svg * {
-		fill: colors.$red !important;
+		fill: colors.$lwtv-red !important;
 	}
 
 	i.fa {
-		color: colors.$red !important;
+		color: colors.$lwtv-red !important;
 	}
 }
 
 .show-header-svg .show-we-love,
 .show-header-svg .show-star {
-	background-color: rgba(255, 255, 255, 0.8);
+	background-color: rgba(colors.$white, 0.8);
 	display: inline-block;
 	border-radius: 10px;
 }
@@ -1337,7 +1337,7 @@ section#characters {
 	}
 
 	.callout-danger svg * {
-		fill: colors.$red;
+		fill: colors.$lwtv-red;
 	}
 
 	.callout-info svg *,
@@ -1478,11 +1478,11 @@ section#characters {
 	}
 
 	.show-heart.positive svg {
-		fill: colors.$red;
+		fill: colors.$lwtv-red;
 	}
 
 	.show-heart.negative svg {
-		fill: colors.$lwtv-grey2;
+		fill: colors.$lwtv-grey-alt;
 	}
 
 	&.worthit-yes {
@@ -1490,7 +1490,7 @@ section#characters {
 	}
 
 	&.worthit-no {
-		background: colors.$red;
+		background: colors.$lwtv-red;
 	}
 
 	&.worthit-meh {
@@ -1672,12 +1672,12 @@ h3 svg * {
 	}
 
 	.callout-death svg * {
-		fill: colors.$darkgrey;
+		fill: colors.$lwtv-grey-deep;
 	}
 
 	.callout-danger svg *,
 	.callout-we-love svg * {
-		fill: colors.$red;
+		fill: colors.$lwtv-red;
 	}
 
 	.callout-info,
@@ -1777,7 +1777,7 @@ img {
 }
 
 .wp-caption {
-	border: 1px solid colors.$lightgrey;
+	border: 1px solid colors.$lwtv-grey-light;
 	margin-bottom: 1.5em;
 	max-width: 100%;
 
@@ -1922,7 +1922,7 @@ object {
 		}
 
 		svg * {
-			fill: colors.$darkgrey;
+			fill: colors.$lwtv-grey-deep;
 		}
 	}
 }
@@ -1944,7 +1944,7 @@ span.svg-shortcode a {
 	}
 
 	&:hover svg {
-		fill: colors.$darkgrey;
+		fill: colors.$lwtv-grey-deep;
 	}
 }
 
@@ -1959,7 +1959,7 @@ span.svg-shortcode a {
 }
 
 .author-box {
-	background-color: colors.$lwtv-ltgrey;
+	background-color: colors.$lwtv-grey-light;
 
 	@include fonts.font-14;
 	padding-bottom: 0.6rem;
@@ -2069,7 +2069,7 @@ div.facetwp-facet-shows_scores input.facetwp-number {
 	padding: 1.25rem;
 	margin-top: 1.25rem;
 	margin-bottom: 1.25rem;
-	border: 1px solid #eee;
+	border: 1px solid colors.$lwtv-grey-border;
 	border-left-width: 0.25rem;
 	border-radius: 0.25rem;
 	border-left-color: colors.$lwtv-pink;
@@ -2109,10 +2109,10 @@ div.facetwp-facet-shows_scores input.facetwp-number {
 			color: colors.$lwtv-pink;
 
 			&:hover {
-				color: colors.$darkgrey;
+				color: colors.$lwtv-grey-deep;
 
 				svg * {
-					fill: colors.$darkgrey;
+					fill: colors.$lwtv-grey-deep;
 				}
 			}
 
@@ -2198,7 +2198,7 @@ div.facetwp-facet-shows_scores input.facetwp-number {
 	.widget_custom_html,
 	.widget_text {
 
-		@include mixins.box-shadow(0 1px 4px 0 rgba(0, 0, 0, 0.14));
+		@include mixins.box-shadow(0 1px 4px 0 rgba(colors.$black, 0.14));
 		padding-bottom: 0.75rem;
 
 		.tagcloud,
@@ -2226,7 +2226,7 @@ div.facetwp-facet-shows_scores input.facetwp-number {
 			padding: 0;
 
 			.widget {
-				border-bottom: 1px solid colors.$lwtv-bordergrey;
+				border-bottom: 1px solid colors.$lwtv-grey-border;
 				margin-bottom: 0;
 				padding: 0.75rem 1.25rem;
 
@@ -2255,7 +2255,7 @@ div.facetwp-facet-shows_scores input.facetwp-number {
 	.footer-widgets {
 
 		h2.widget-title {
-			border-bottom: dotted 1px colors.$lwtv-grey2;
+			border-bottom: dotted 1px colors.$lwtv-grey-alt;
 
 			@include fonts.font-28;
 			padding-bottom: 15px;
@@ -2272,7 +2272,7 @@ div.facetwp-facet-shows_scores input.facetwp-number {
 
 			a,
 			a:visited {
-				color: colors.$darkgrey;
+				color: colors.$lwtv-grey-deep;
 			}
 
 			a:hover,
@@ -2313,7 +2313,7 @@ div.facetwp-facet-shows_scores input.facetwp-number {
 	}
 
 	.bottom-footer {
-		background-color: colors.$lwtv-dkgrey;
+		background-color: colors.$lwtv-grey-deep;
 
 		@include fonts.font-12;
 		padding: 16px 0;
