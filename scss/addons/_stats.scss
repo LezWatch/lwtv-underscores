@@ -2558,12 +2558,13 @@ canvas {
 	// ── Station "Vibrant Refresh" (single-station Overview) ──────────────
 	// Profile header restyle: icon chip + descriptive intro line. Scoped to
 	// the --vibrant modifier so Nations (which shares the base classes) is
-	// untouched.
+	// untouched. Uses the neutral "bg-light" card surface rather than a pink
+	// tint, matching the .lwtv-ty-lead lead card (dark override below).
 	.lwtv-nation-profile--vibrant {
 		flex-direction: column;
 		align-items: stretch;
 		padding: 22px 24px;
-		background-color: rgba( colors.$lwtv-trans-pink, 0.45 );
+		background-color: colors.$lwtv-grey;
 	}
 
 	.lwtv-nation-profile-row {
