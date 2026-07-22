@@ -4,7 +4,21 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [UNRELEASED] [7.1.1] - 2026-07-23
+## [7.1.1] - 2026-07-22
+
+### Added
+
+- Year-bar charts now reveal each year's value in a corner readout on hover.
+- Coverage, average, and median per-show callouts on the intersectionality, stars, and triggers views.
+
+### Changed
+
+- On-air views now highlight the biggest year-over-year drop instead of a meaningless low-count year, and exclude the in-progress current year.
+- The "Where queer TV lives" panel is now a proportional stacked-share bar with a legend naming the top networks and aggregating the rest to 100%.
+- Year-bar charts label only the peak year on its bar; every other year's count appears in the hover readout.
+- Shows with a known future end date are no longer counted as on air in years that haven't happened yet.
+- Trope overview card links are restyled as buttons.
+- Color tokens are normalized onto one consistent naming scheme, which slightly shifts some greys and reds.
 
 ## [7.1.0] - 2026-07-22
 
