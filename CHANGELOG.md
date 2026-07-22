@@ -30,6 +30,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 - Chart.js and its trendline and palette assets (replaced with inline SVGs).
 
+### Updated
+
+- NPM and Composer Packages
+
 ## [7.0.13] - 2026-07-14
 
 ### Added
