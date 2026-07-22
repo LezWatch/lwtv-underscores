@@ -1685,6 +1685,7 @@ canvas {
 		&.is-active {
 			color: colors.$lwtv-grey-deep;
 			border-bottom-color: colors.$lwtv-pink;
+			border-bottom-width: 2px;
 		}
 	}
 
