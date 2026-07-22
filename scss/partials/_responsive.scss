@@ -157,15 +157,16 @@
 			}
 		}
 
+		// Search hides above (#search-btn), but the pill stays. In the
+		// offcanvas the segments grow to fit icon + visible label.
 		.dark-mode-toggle {
+			margin: 1rem 0 1rem 16px;
+			justify-content: flex-start;
+		}
 
-			.dropdown-menu {
-				position: static;
-			}
-
-			button {
-				padding: 1rem !important;
-			}
+		.dark-mode-control .dark-mode-segment {
+			min-width: 0;
+			padding: 0 12px;
 		}
 	}
 

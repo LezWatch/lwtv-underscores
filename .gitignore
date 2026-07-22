@@ -14,6 +14,7 @@ Thumbs.db
 *.bak
 *.swp
 
+/.claude/CLAUDE.local.md
 /node_modules/
 /.sass-cache/
 /npm-debug.log

@@ -22,6 +22,7 @@ $lwtv-dkgrey: #333;
 $lwtv-bordergrey: rgba(0, 0, 0, 0.125);
 $lwtv-pink: #cb3e85;
 $lwtv-ltpink: #eecee3;
+$lwtv-mdpink: #e690ac;
 $lwtv-dkpink: #9e2968;
 $lwtv-purple: #8d329f;
 $lwtv-ltpurple: #e0d2fe;
@@ -37,6 +38,47 @@ $lwtv-bronze: #b87333;
 $lwtv-orange: #e51e24;
 $lwtv-green: #047a49;
 
+$lwtv-stats-progressbar: #17a2b8;
+$lwtv-stats-yellow: #fff3cd;
+$lwtv-stats-yellow-deep: #b45309;
+$lwtv-stats-green: #d4edda;
+$lwtv-stats-green-deep: #155724;
+$lwtv-stats-plum: #efd3e3;
+$lwtv-stats-plum-deep: #7a1f4f;
+$lwtv-stats-blue: #d1ecf1;
+$lwtv-stats-blue-deep: #0c5460;
+$lwtv-stats-red: #f8d7da;
+$lwtv-stats-red-deep: #721c24;
+$lwtv-stats-purple: #f5d4f3;
+$lwtv-stats-purple-deep: #9b4f96;
+$lwtv-stats-royal-blue: #d9e6ff;
+$lwtv-stats-royal-blue-deep: #0038a8;
+$lwtv-stats-crimson: #fcd3d5;
+$lwtv-stats-crimson-deep: #be123c;
+$lwtv-stats-teal: #abdbe9;
+$lwtv-stats-teal-deep: #0e7490;
+$lwtv-stats-raspberry: #f7c3dc;
+$lwtv-stats-raspberry-deep: #9d2a61;
+
+/* Pride Flags */
+$lwtv-bi-magenta: #d60270;
+$lwtv-bi-royal-blue: #0038a8;
+$lwtv-bi-lavender: #9b4f96;
+$lwtv-trans-pink: #F5A9B8;
+$lwtv-trans-blue: #5BCEFA;
+$lwtv-pan-magenta: #FF218C;
+$lwtv-pan-yellow: #FFD800;
+$lwtv-pan-cyan: #21B1FF;
+$lwtv-aro-green: #3DA542;
+$lwtv-aro-ltgreen: #A7D379;
+$lwtv-aro-grey: #A9A9A9;
+$lwtv-ace-purple: #800080;
+$lwtv-poly-pink: #F714BA;
+$lwtv-poly-green: #01D66A;
+$lwtv-poly-blue: #1594F6;
+$lwtv-gq-lavender: #B57EDC;
+$lwtv-gq-green: #4A8123;
+
 /* Link colors */
 
 $link-color:         $lwtv-pink;
@@ -44,6 +86,10 @@ $link-hover-color:   $lwtv-purple;
 $link-focus-color:   $link-hover-color;
 $link-active-color:  $link-hover-color;
 $link-visited-color: $link-color;
+
+/* SVG */
+$lwtv-svg: $black;
+
 
 @-webkit-keyframes rainbow {
 

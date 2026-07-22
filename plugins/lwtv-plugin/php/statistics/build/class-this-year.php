@@ -30,8 +30,11 @@ class This_Year {
 				return array();
 			}
 
-			// Extract taxonomy from data string (remove _year_XXXX from the end)
-			$taxonomy = substr( $data, 0, -10 );
+			// Extract taxonomy from data string by splitting on the '_year_' marker
+			// (e.g. 'gender_year_2024' => 'gender'), instead of assuming a fixed
+			// 10-character '_year_XXXX' suffix that only holds for 4-digit years.
+			$year_pos = strrpos( $data, '_year_' );
+			$taxonomy = ( false !== $year_pos ) ? substr( $data, 0, $year_pos ) : '';
 			if ( empty( $taxonomy ) ) {
 				lwtv_plugin()->debug_log( 'this-year', 'Invalid data format: ' . $data );
 				return array();

@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-use LWTV\Statistics\{ Gutenberg_SSR, Query_Vars, Stats_Counter, Stats_Handler, Stats_Generator };
+use LWTV\Statistics\{ CSV_Download, Gutenberg_SSR, Query_Vars, Stats_Counter, Stats_Handler, Stats_Generator };
 use LWTV\Statistics\Stats_Enqueues;
 use LWTV\CPTs\Actors as CPT_Actors;
 
@@ -21,10 +21,8 @@ class Statistics_Optimized implements Component, Templater {
 	 * Versions of scripts.
 	 */
 	const VERSIONING = array(
-		'chartjs'                  => '4.5.1',
-		'chartjs-plugin-trendline' => '3.2.5',
-		'palette'                  => '1.0.0',
-		'tablesorter'              => '2.32.0',
+		'tablesorter'    => '2.32.0',
+		'stats-overview' => '1.1.0',
 	);
 
 	/*
@@ -32,6 +30,7 @@ class Statistics_Optimized implements Component, Templater {
 	 */
 	public function init(): void {
 		new Query_Vars();
+		new CSV_Download();
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
 	}
 
@@ -53,9 +52,9 @@ class Statistics_Optimized implements Component, Templater {
 			'generate_dead_statistics'       => array( $this, 'generate_dead_statistics' ),
 			'generate_shows_count'           => array( $this, 'count_shows' ),
 			'generate_stats_block'           => array( $this, 'generate_stats_block' ),
-			'generate_stats_block_actor'     => array( $this, 'generate_stats_block_actor' ),
 			'generate_total_counts'          => array( $this, 'generate_total_counts' ),
 			'generate_total_dead'            => array( $this, 'generate_total_dead' ),
+			'generate_growth_series'         => array( $this, 'generate_growth_series' ),
 			'generate_individual_actors'     => array( $this, 'generate_individual_actors' ),
 		);
 	}
@@ -67,20 +66,27 @@ class Statistics_Optimized implements Component, Templater {
 	 * @return void
 	 */
 	public function enqueue_scripts() {
+		$is_stats_page = is_page( array( 'statistics' ) ) || is_page( array( 'this-year' ) );
+		$is_actor      = CPT_Actors::SLUG === get_post_type();
 
 		// If it's not any of our pages, return.
-		if ( ! is_page( array( 'statistics' ) ) && CPT_Actors::SLUG !== get_post_type() && ! is_page( array( 'this-year' ) ) ) {
+		if ( ! $is_stats_page && ! $is_actor ) {
 			return;
 		}
 
-		// Enqueue files shared:
-		wp_enqueue_script( 'chartjs', LWTV_PLUGIN_URL . '/assets/js/chart.min.js', array( 'jquery' ), self::VERSIONING['chartjs'], false );
-		wp_enqueue_script( 'chartjs-plugin-trendline', LWTV_PLUGIN_URL . '/assets/js/chartjs-plugin-trendline.min.js', array( 'chartjs' ), self::VERSIONING['chartjs-plugin-trendline'], false );
-		wp_enqueue_script( 'palette', LWTV_PLUGIN_URL . '/assets/js/palette.min.js', array(), self::VERSIONING['palette'], false );
-
-		// Custom extra for stats pages:
+		// Custom extra for the statistics landing pages.
 		if ( is_page( array( 'statistics' ) ) ) {
 			( new Stats_Enqueues() )->enqueue_scripts( self::VERSIONING );
+		}
+
+		// Actor pages: server-rendered donut modals use count-up.
+		if ( $is_actor ) {
+			wp_enqueue_script( 'lwtv-stats-overview', LWTV_PLUGIN_URL . '/assets/js/statistics-overview.js', array(), self::VERSIONING['stats-overview'], true );
+		}
+
+		// This Year pages: count-up headline numbers.
+		if ( is_page( array( 'this-year' ) ) ) {
+			wp_enqueue_script( 'lwtv-stats-overview', LWTV_PLUGIN_URL . '/assets/js/statistics-overview.js', array(), self::VERSIONING['stats-overview'], true );
 		}
 	}
 
@@ -101,10 +107,23 @@ class Statistics_Optimized implements Component, Templater {
 	/**
 	 * Generate total counts
 	 *
+	 * @param mixed $subject
+	 * @param bool  $death
+	 *
 	 * @return int Total counts
 	 */
 	public function generate_total_counts( $subject, $death = false ) {
 		return ( new Stats_Counter() )->generate_total_counts( $subject, $death );
+	}
+
+	/**
+	 * Generate cumulative growth series for the overview sparklines.
+	 *
+	 * @param string $subject One of: shows, characters, actors, dead.
+	 * @return array
+	 */
+	public function generate_growth_series( $subject ) {
+		return ( new Stats_Counter() )->get_growth_series( $subject );
 	}
 
 
@@ -117,17 +136,6 @@ class Statistics_Optimized implements Component, Templater {
 	 */
 	public function generate_stats_block( $attributes ) {
 		return ( new Gutenberg_SSR() )->statistics( $attributes );
-	}
-
-	/**
-	 * Display Actor stats block
-	 *
-	 * @param  array $attributes
-	 *
-	 * @return string
-	 */
-	public function generate_stats_block_actor( $attributes ) {
-		return ( new Gutenberg_SSR() )->mini_stats( $attributes );
 	}
 
 	/**
@@ -154,7 +162,7 @@ class Statistics_Optimized implements Component, Templater {
 	 *
 	 * @param string $station Station slug (e.g., 'cbs', 'abc') or 'all' for summary
 	 * @param string $view View type ('all', 'gender', 'sexuality', 'tropes', 'on-air')
-	 * @param string $format Output format ('array', 'barchart', 'trendline', etc.)
+	 * @param string $format Output format ('array', 'percentage', 'list', etc.)
 	 * @param array  $custom_data Optional custom data (counts, etc.)
 	 * @param string $bar_direction Direction of the barchart ('vertical', 'horizontal')
 	 * @return mixed Station statistics data
@@ -168,7 +176,7 @@ class Statistics_Optimized implements Component, Templater {
 	 *
 	 * @param string $nation Nation slug (e.g., 'usa', 'canada')
 	 * @param string $view View type ('all', 'gender', 'sexuality', 'tropes', 'on-air')
-	 * @param string $format Output format ('array', 'barchart', 'trendline', etc.)
+	 * @param string $format Output format ('array', 'percentage', 'list', etc.)
 	 * @param array  $custom_data Optional custom data (counts, etc.)
 	 * @param string $bar_direction Direction of the barchart ('vertical', 'horizontal')
 	 * @return mixed Nation statistics data
@@ -215,7 +223,7 @@ class Statistics_Optimized implements Component, Templater {
 	 *
 	 * @param string $subject Subject type (characters/shows)
 	 * @param string $view View type (years/roles/sexuality/gender/stations/nations)
-	 * @param string $format Format type (array/count/percentage/piechart/barchart/trendline/list)
+	 * @param string $format Format type (array/count/percentage/list)
 	 *
 	 * @return array Dead statistics data
 	 */
@@ -239,7 +247,7 @@ class Statistics_Optimized implements Component, Templater {
 	 * @param string $type View type (what subpage we're on, so gender, sexuality, etc)
 	 * @return array actors statistics data
 	 */
-	public function generate_individual_actors( $actor_id, $format = 'piechart', $type = 'roles' ) {
+	public function generate_individual_actors( $actor_id, $format = 'array', $type = 'roles' ) {
 		return ( new Stats_Generator() )->generate_individual_actors( $actor_id, $format, $type );
 	}
 }

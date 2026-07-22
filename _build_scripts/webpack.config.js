@@ -116,5 +116,7 @@ module.exports = {
 		minimizer: [new TerserPlugin(), new CssMinimizerPlugin()],
 	},
 
+	performance: { hints: false },
+
 	plugins: finalPlugins,
 };

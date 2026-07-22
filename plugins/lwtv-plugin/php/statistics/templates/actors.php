@@ -47,20 +47,35 @@ $top_sexualities = array_slice( $actor_sexuality_data, 0, 10, true );
 // Get total counts efficiently
 $count_genders     = count( $actor_gender_data );
 $count_sexualities = count( $actor_sexuality_data );
+
+// Redesign overview extras.
+$actor_growth = lwtv_plugin()->generate_growth_series( 'actors' );
+
+// Group sums (stable slugs) for the donut/callout roll-ups.
+$actor_cis_slugs      = array( 'cis-woman', 'cis-man', 'cisgender' );
+$actor_gunknown_slugs = array( 'unknown', 'undefined' );
+$actor_cis_sum        = 0;
+$actor_gunknown_sum   = 0;
+foreach ( $actor_gender_data as $actor_g_slug => $actor_g_row ) {
+	if ( in_array( $actor_g_slug, $actor_cis_slugs, true ) ) {
+		$actor_cis_sum += (int) $actor_g_row['count'];
+	} elseif ( in_array( $actor_g_slug, $actor_gunknown_slugs, true ) ) {
+		$actor_gunknown_sum += (int) $actor_g_row['count'];
+	}
+}
+$actor_straight = isset( $actor_sexuality_data['heterosexual'] ) ? (int) $actor_sexuality_data['heterosexual']['count'] : 0;
+$actor_sunknown = isset( $actor_sexuality_data['unknown'] ) ? (int) $actor_sexuality_data['unknown']['count'] : 0;
+
+// Callout figures = "the rest", computed not stored.
+$actor_lgbtq   = max( 0, (int) $actor_count - $actor_straight - $actor_sunknown );
+$actor_transnb = max( 0, (int) $actor_count - $actor_cis_sum - $actor_gunknown_sum );
 ?>
-<h2>
-	<a href="/actors/">Total Actors</a> (<?php echo (int) $actor_count; ?>)
-</h2>
-
+<div class="lwtv-stats-overview">
+	<?php
+	// phpcs:ignore PEAR.Files.IncludingFile.UseRequire
+	include plugin_dir_path( __FILE__ ) . 'actors/subnav.php';
+	?>
 <?php
-// phpcs:ignore PEAR.Files.IncludingFile.UseRequire
-include plugin_dir_path( __FILE__ ) . 'actors/navbar.php';
-?>
-
-<p>&nbsp;</p>
-
-<?php
-
 switch ( $view ) {
 	case 'overview':
 		// phpcs:ignore PEAR.Files.IncludingFile.UseRequire
@@ -84,3 +99,6 @@ switch ( $view ) {
 if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
 	echo '<!-- OPTIMIZED: Queries reduced from ~' . ( count( $top_genders ) + count( $top_sexualities ) + 10 ) . ' to ' . esc_html( get_num_queries() ) . ' -->';
 }
+?>
+</div><!-- .lwtv-stats-overview -->
+<?php

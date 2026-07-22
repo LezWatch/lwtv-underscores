@@ -1,38 +1,82 @@
 <?php
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
-
 /**
- * The template for displaying the death years statistics - Optimized Version
+ * Death → Years: one bar per year.
  *
  * @package LezWatch.TV
  *
- * @var int $dead_years_average
+ * @var string $dead_years_average
+ * @var array  $dead_years_series
  */
 
-?>
-<h3>Death By Character Year</h3>
-<p>On average, <strong><?php echo esc_html( $dead_years_average ); ?></strong> characters die per year (including years where no queers died).</p>
+// phpcs:ignore PEAR.Files.IncludingFile.UseRequire
+require_once plugin_dir_path( __DIR__ ) . 'partials/phrases.php';
 
-<div class="container chart-container">
-	<p class="d-inline-flex gap-1">
-		<button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#chartCollapse,#listCollapse" aria-expanded="true" aria-controls="chartCollapse">Chart</button>
-		<button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#listCollapse,#chartCollapse" aria-expanded="false" aria-controls="listCollapse">List</button>
-	</p>
+$dy = lwtv_stats_year_series( $dead_years_series );
 
-	<div class="row collapse show" id="chartCollapse">
-		<div class="col-sm-12">
-			<h2><a name="chart">Chart</a></h2>
-			<?php echo lwtv_plugin()->generate_dead_statistics( 'shows', 'years', 'barchart' ); ?>
-		</div>
-	</div>
-	<div class="row collapse" id="listCollapse">
-		<div class="col-sm-12">
-			<h2><a name="list">List</a></h2>
-			<?php echo lwtv_plugin()->generate_dead_statistics( 'shows', 'years', 'percentage' ); ?>
-		</div>
-	</div>
-</div>
-<?php
+// The year-bars card renders its own "Deaths By Year" eyebrow, so no standalone one here.
+$first_year = ! empty( $dy['rows'] ) ? (int) $dy['rows'][0]['year'] : 0;
+$last_year  = ! empty( $dy['rows'] ) ? (int) $dy['rows'][ count( $dy['rows'] ) - 1 ]['year'] : 0;
+
+// Callouts: the deadliest year, and the years nobody died. The current year is
+// still in progress, so exclude it from the zero-death "best years" list.
+$dy_now        = (int) gmdate( 'Y' );
+$dy_zero_years = array();
+foreach ( $dy['rows'] as $dy_row ) {
+	if ( 0 === (int) $dy_row['count'] && (int) $dy_row['year'] !== $dy_now ) {
+		$dy_zero_years[] = (string) (int) $dy_row['year'];
+	}
+}
+
+$dy_callouts = array();
+if ( (int) $dy['peak_count'] > 0 ) {
+	$dy_callouts[] = array(
+		'label' => __( 'Worst Year', 'lwtv' ),
+		'svg'   => 'hand-holding-skull.svg',
+		'icon'  => 'svg-hand-holding-skull',
+		// Raw values — the partial escapes the assembled text with esc_html().
+		'text'  => sprintf(
+			/* translators: 1: year, 2: number of deaths. */
+			_n( 'In %1$s there was %2$s death.', 'In %1$s there were %2$s deaths.', (int) $dy['peak_count'], 'lwtv' ),
+			(string) $dy['peak_year'],
+			number_format_i18n( (int) $dy['peak_count'] )
+		),
+	);
+}
+if ( ! empty( $dy_zero_years ) ) {
+	$dy_callouts[] = array(
+		'label' => __( 'Best Years', 'lwtv' ),
+		'svg'   => 'fireworks.svg',
+		'icon'  => 'svg-fireworks',
+		'text'  => sprintf(
+			/* translators: %s: a list of years, e.g. "2001, 2002, and 2003". */
+			__( 'There were 0 deaths in %s.', 'lwtv' ),
+			wp_sprintf_l( '%l', $dy_zero_years )
+		),
+	);
+}
+
+$yearbars = array(
+	'rows'        => $dy['rows'],
+	'peak_year'   => $dy['peak_year'],
+	'peak_count'  => $dy['peak_count'],
+	'average'     => $dead_years_average,
+	'callouts'    => $dy_callouts,
+	'eyebrow'     => __( 'Deaths By Year', 'lwtv' ),
+	/* translators: 1: first year, 2: last year. */
+	'headline'    => sprintf( __( 'Every year, %1$s–%2$s', 'lwtv' ), (string) $first_year, (string) $last_year ),
+	/* translators: %s: the deadliest year. */
+	'description' => sprintf( __( 'One bar per year. %s towers over the rest.', 'lwtv' ), (string) $dy['peak_year'] ),
+);
+// phpcs:ignore PEAR.Files.IncludingFile.UseRequire
+include plugin_dir_path( __DIR__ ) . 'partials/year-bars.php';
+
+$download_csv = array(
+	'page'  => __( 'year', 'lwtv' ),
+	'title' => __( 'Character deaths, by year', 'lwtv' ),
+	'count' => count( $dy['rows'] ),
+);
+// phpcs:ignore PEAR.Files.IncludingFile.UseRequire
+include plugin_dir_path( __DIR__ ) . 'partials/download-csv.php';
