@@ -82,7 +82,7 @@
 	.list-group-item-primary {
 		background-color: colors.$lwtv-pink;
 		color: colors.$white;
-		border-color: colors.$lwtv-dkpink;
+		border-color: colors.$lwtv-pink-deep;
 
 		a {
 			color: colors.$white;
@@ -99,11 +99,11 @@
 .featured-image-tabs {
 	.nav-tabs .nav-link.active,
 	.nav-tabs .nav-item.show .nav-link {
-		border-color: colors.$lwtv-bordergrey;
+		border-color: colors.$lwtv-grey-border;
 	}
 
 	a.nav-link {
-		color: colors.$medgrey;
+		color: colors.$lwtv-grey-medium;
 	}
 }
 
@@ -174,7 +174,7 @@ input[type="submit"].btn-outline-primary {
 	&:hover {
 		background-color: colors.$lwtv-pink;
 		border-color: colors.$lwtv-pink;
-		box-shadow: 0 0 0 2px rgba(141, 50, 159, 0.5);
+		box-shadow: 0 0 0 2px rgba(colors.$lwtv-purple, 0.5);
 		color: colors.$white;
 	}
 }

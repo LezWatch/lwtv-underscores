@@ -69,7 +69,7 @@ ul.comment-list {
 			margin-bottom: 20px;
 			line-height: 1.42857143;
 			background-color: colors.$white;
-			border: 1px solid colors.$lightgrey;
+			border: 1px solid colors.$lwtv-grey-light;
 
 			@include mixins.border-radius(4px);
 			@include mixins.box-transition(border 0.2s ease-in-out);
@@ -96,7 +96,7 @@ ul.comment-list {
 			margin-bottom: 20px;
 			line-height: 1.42857143;
 			background-color: colors.$white;
-			border: 1px solid colors.$lightgrey;
+			border: 1px solid colors.$lwtv-grey-light;
 
 			@include mixins.border-radius(4px);
 

@@ -1,64 +1,72 @@
 /* =Color Variables for our theme
 ----------------------------------------------- */
 
-/* Base theme colors */
-
+/* Base colors */
 $white: #fff;
 $black: #000;
-$lightgrey: #dedede;
-$medgrey: #999;
-$darkgrey: #222;
-$green: #5cb85c;
-$blue: #06c;
-$red: #c0392b;
 
-/* Theme color palette */
+/* Color palette */
+$lwtv-grey-light: #f3f3f3;
+$lwtv-grey: #dedede;
+$lwtv-grey-alt: #d6d6d6;
+$lwtv-grey-medium: #999;
+$lwtv-grey-deep: #333;
+$lwtv-grey-border: rgba(0, 0, 0, 0.125);
 
-$lwtv-ltgrey: #ebf5fa;
-$lwtv-grey: #f3f3f3;
-$lwtv-grey2: #d6d6d6;
-$lwtv-medgrey: #555;
-$lwtv-dkgrey: #333;
-$lwtv-bordergrey: rgba(0, 0, 0, 0.125);
 $lwtv-pink: #cb3e85;
-$lwtv-ltpink: #eecee3;
-$lwtv-mdpink: #e690ac;
-$lwtv-dkpink: #9e2968;
+$lwtv-pink-light: #eecee3;
+$lwtv-pink-medium: #e690ac;
+$lwtv-pink-deep: #9e2968;
+
 $lwtv-purple: #8d329f;
-$lwtv-ltpurple: #e0d2fe;
-$lwtv-ltblue: #d1ecf1;
-$lwtv-dkblue: #435260;
-$lwtv-salmon: #f55a4e;
-$lwtv-gradient: linear-gradient(60deg, #ab47bc, #8e24aa);
-$lwtv-red: #dc3232;
+$lwtv-purple-light: #e0d2fe;
+$lwtv-purple-deep: #9b4f96;
+
+$lwtv-plum: #673147;
+$lwtv-plum-light: #efd3e3;
+$lwtv-plum-deep: #311721;
+
+$lwtv-blue: #06c;
+$lwtv-blue-light: #d1ecf1;
+$lwtv-blue-deep: #435260;
+
+$lwtv-royal-blue: #0038a8;
+$lwtv-royal-blue-light: #d9e6ff;
+$lwtv-royal-blue-deep: #061c49;
+
+$lwtv-teal: #008080;
+$lwtv-teal-light: #abdbe9;
+$lwtv-teal-deep: #155050;
+
+$lwtv-red: #c0392b;
+$lwtv-red-light: #f8d7da;
+$lwtv-red-deep: #721c24;
+
+$lwtv-crimson: #DC143C;
+$lwtv-crimson-light: #fcd3d5;
+$lwtv-crimson-deep: #be123c;
+
+$lwtv-raspberry: #E30B5C;
+$lwtv-raspberry-light: #f7c3dc;
+$lwtv-raspberry-deep: #9d2a61;
+
 $lwtv-yellow: #f1c40f;
+$lwtv-yellow-light: #fff3cd;
+$lwtv-yellow-deep: #b45309;
+
+$lwtv-orange: #e51e24;
+
+$lwtv-green: #047a49;
+$lwtv-green-light: #d4edda;
+$lwtv-green-deep: #155724;
+
 $lwtv-gold: #ffd700;
 $lwtv-silver: #999;
 $lwtv-bronze: #b87333;
-$lwtv-orange: #e51e24;
-$lwtv-green: #047a49;
 
-$lwtv-stats-progressbar: #17a2b8;
-$lwtv-stats-yellow: #fff3cd;
-$lwtv-stats-yellow-deep: #b45309;
-$lwtv-stats-green: #d4edda;
-$lwtv-stats-green-deep: #155724;
-$lwtv-stats-plum: #efd3e3;
-$lwtv-stats-plum-deep: #7a1f4f;
-$lwtv-stats-blue: #d1ecf1;
-$lwtv-stats-blue-deep: #0c5460;
-$lwtv-stats-red: #f8d7da;
-$lwtv-stats-red-deep: #721c24;
-$lwtv-stats-purple: #f5d4f3;
-$lwtv-stats-purple-deep: #9b4f96;
-$lwtv-stats-royal-blue: #d9e6ff;
-$lwtv-stats-royal-blue-deep: #0038a8;
-$lwtv-stats-crimson: #fcd3d5;
-$lwtv-stats-crimson-deep: #be123c;
-$lwtv-stats-teal: #abdbe9;
-$lwtv-stats-teal-deep: #0e7490;
-$lwtv-stats-raspberry: #f7c3dc;
-$lwtv-stats-raspberry-deep: #9d2a61;
+$lwtv-salmon: #f55a4e;
+$lwtv-gradient: linear-gradient(60deg, #ab47bc, #8e24aa);
+$lwtv-progressbar: #17a2b8;
 
 /* Pride Flags */
 $lwtv-bi-magenta: #d60270;
