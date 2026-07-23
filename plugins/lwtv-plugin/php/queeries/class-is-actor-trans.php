@@ -40,8 +40,8 @@ class Is_Actor_Trans {
 			return (bool) $cached_result;
 		}
 
-		// If the post is private, auto-false
-		if ( 'private' === get_post_status( $the_id ) ) {
+		// Only published actors are evaluated; anything else is auto-false.
+		if ( 'publish' !== get_post_status( $the_id ) ) {
 			lwtv_plugin()->set_transient( $cache_key, false, HOUR_IN_SECONDS );
 			return false;
 		}

@@ -92,6 +92,17 @@ class Author_Box {
 			$author_id = isset( $attributes['users'] ) ? absint( $attributes['users'] ) : 0;
 		}
 
+		// A content author may only render the author box for the post's own
+		// author. Users who can edit others' posts may target any user ID.
+		if ( ! current_user_can( 'edit_others_posts' ) ) {
+			$post_author = (int) get_post_field( 'post_author', get_the_ID() );
+			if ( $post_author ) {
+				$author_id = $post_author;
+			} else {
+				$author_id = 0;
+			}
+		}
+
 		$user = get_userdata( $author_id );
 
 		if ( ! $user ) {
@@ -120,22 +131,22 @@ class Author_Box {
 
 		foreach ( $content['social'] as $social => $url ) {
 			$data           = self::$social_array[ $social ];
-			$social_array[] = '<a href="' . $url . '" target="_blank" rel="nofollow" aria-label="Follow ' . $content['name'] . ' on ' . $data['name'] . '">' . lwtv_plugin()->get_symbolicon( $data['icon'], 'fa-' . $social ) . '</a>';
+			$social_array[] = '<a href="' . esc_url( $url ) . '" target="_blank" rel="nofollow" aria-label="' . esc_attr( 'Follow ' . $content['name'] . ' on ' . $data['name'] ) . '">' . lwtv_plugin()->get_symbolicon( $data['icon'], 'fa-' . $social ) . '</a>';
 		}
 
 		$social_array  = array_filter( $social_array );
-		$view_articles = ( $content['postcount'] > 0 ) ? '<div class="author-archives">' . lwtv_plugin()->get_symbolicon( svg: 'newspaper.svg', icon: 'svg-newspaper-o' ) . '&nbsp;<a href="' . get_author_posts_url( get_the_author_meta( 'ID', $content['id'] ) ) . '">View all articles by ' . $content['name'] . '</a></div>' : '';
-		$author_title  = ( '' !== $content['title'] ) ? ' (' . $content['title'] . ')' : '';
+		$view_articles = ( $content['postcount'] > 0 ) ? '<div class="author-archives">' . lwtv_plugin()->get_symbolicon( svg: 'newspaper.svg', icon: 'svg-newspaper-o' ) . '&nbsp;<a href="' . esc_url( get_author_posts_url( get_the_author_meta( 'ID', $content['id'] ) ) ) . '">' . esc_html( 'View all articles by ' . $content['name'] ) . '</a></div>' : '';
+		$author_title  = ( '' !== $content['title'] ) ? ' (' . esc_html( $content['title'] ) . ')' : '';
 
 		switch ( $format ) {
 			case 'thumbnail':
-				$author_details = '<div>' . $content['avatar'] . '<br>' . $content['name'] . ' ' . $author_title . '</div>';
+				$author_details = '<div>' . $content['avatar'] . '<br>' . esc_html( $content['name'] ) . ' ' . $author_title . '</div>';
 				break;
 			case 'compact':
-				$author_details = '<div class="col-sm-2">' . $content['avatar'] . '</div><div class="col-sm"><span class="author_name author_box_compact"><a href="' . $content['url'] . '">' . $content['name'] . '</a>' . $author_title . ' <span class="author_box_social">' . implode( ' ', $social_array ) . '</span></span><hr><div class="author-details">' . $view_articles . '</div></div>';
+				$author_details = '<div class="col-sm-2">' . $content['avatar'] . '</div><div class="col-sm"><span class="author_name author_box_compact"><a href="' . esc_url( $content['url'] ) . '">' . esc_html( $content['name'] ) . '</a>' . $author_title . ' <span class="author_box_social">' . implode( ' ', $social_array ) . '</span></span><hr><div class="author-details">' . $view_articles . '</div></div>';
 				break;
 			case 'large':
-				$author_details = '<div class="col-sm-2">' . $content['avatar'] . '</div><div class="col-sm"><span class="author_name author_box_large">' . $content['name'] . $author_title . ' <span class="author_box_social">' . implode( ' ', $social_array ) . '</span></span><hr><div class="author-bio">' . nl2br( $content['bio'] ) . '</div><div class="author-details">' . $view_articles . $content['fav_shows'] . '</div>';
+				$author_details = '<div class="col-sm-2">' . $content['avatar'] . '</div><div class="col-sm"><span class="author_name author_box_large">' . esc_html( $content['name'] ) . $author_title . ' <span class="author_box_social">' . implode( ' ', $social_array ) . '</span></span><hr><div class="author-bio">' . nl2br( esc_html( $content['bio'] ) ) . '</div><div class="author-details">' . $view_articles . $content['fav_shows'] . '</div>';
 				break;
 		}
 

@@ -34,6 +34,12 @@ class Actor_Birthday {
 	 * @return void
 	 */
 	public function get( $the_id ) {
+		// Honor the actor's DOB/all privacy request — the birthday banner
+		// reveals birth month/day and exact age.
+		if ( lwtv_plugin()->hide_actor_data( $the_id, 'dob' ) || lwtv_plugin()->hide_actor_data( $the_id, 'all' ) ) {
+			return;
+		}
+
 		if ( $this->make( $the_id ) && ! get_post_meta( $the_id, 'lezactors_death', true ) ) {
 			$old = ' ';
 			$end = array( 'th', 'st', 'nd', 'rd', 'th', 'th', 'th', 'th', 'th', 'th' );

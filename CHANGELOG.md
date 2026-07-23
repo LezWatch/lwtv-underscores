@@ -4,6 +4,22 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [7.1.2] - 2026-07-23
+
+### Security
+
+- Unpublished and privacy-hidden actor, show, and character records no longer leak through the public REST, stats, export, wikidata, or actor birthday endpoints.
+- The public wikidata endpoint is now read-only for anonymous callers; live WikiData refreshes and metadata writes require an editor, closing an unauthenticated write and request-amplification path.
+- A single blank-slug request can no longer trigger a full-table wikidata scan.
+- Untrusted values are escaped across the calendar, author box, author social links, and related-posts archive to prevent stored cross-site scripting.
+- Admin-only profile and ACF fields are enforced when saved, not just hidden in the interface.
+- Outbound TVMaze and TMDB requests use HTTPS and validate response links against the expected host to prevent server-side request forgery, and stored TMDB ids are restricted to digits.
+
+### Changed
+
+- The anonymous wikidata endpoint response is now keyed by actor ID, matching the authenticated response shape.
+- Updated the admin monitoring dashboard link.
+
 ## [7.1.1] - 2026-07-22
 
 ### Added

@@ -120,11 +120,23 @@ class User_Profiles {
 		if ( ! current_user_can( 'edit_user', $user_id ) ) {
 			return false;
 		}
-		// phpcs:disable
-		update_user_meta( $user_id, 'jobrole', sanitize_text_field( $_POST['jobrole'] ) );
-		update_user_meta( $user_id, 'gender', sanitize_text_field( $_POST['gender'] ) );
-		update_user_meta( $user_id, 'sexuality', sanitize_text_field( $_POST['sexuality'] ) );
-		update_user_meta( $user_id, 'pronouns', sanitize_text_field( $_POST['pronouns'] ) );
-		// phpcs:enable
+
+		// jobrole is an admin-only field (see extra_profile_fields) — gate the
+		// write on the same capability, not the generic edit_user.
+		if ( current_user_can( 'update_core' ) && isset( $_POST['jobrole'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
+			update_user_meta( $user_id, 'jobrole', sanitize_text_field( wp_unslash( $_POST['jobrole'] ) ) ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+		}
+
+		// phpcs:disable WordPress.Security.NonceVerification.Missing
+		if ( isset( $_POST['gender'] ) ) {
+			update_user_meta( $user_id, 'gender', sanitize_text_field( wp_unslash( $_POST['gender'] ) ) );
+		}
+		if ( isset( $_POST['sexuality'] ) ) {
+			update_user_meta( $user_id, 'sexuality', sanitize_text_field( wp_unslash( $_POST['sexuality'] ) ) );
+		}
+		if ( isset( $_POST['pronouns'] ) ) {
+			update_user_meta( $user_id, 'pronouns', sanitize_text_field( wp_unslash( $_POST['pronouns'] ) ) );
+		}
+		// phpcs:enable WordPress.Security.NonceVerification.Missing
 	}
 }

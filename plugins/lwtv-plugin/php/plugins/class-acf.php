@@ -107,9 +107,11 @@ class ACF {
 		// Shows: write legacy meta keys on save for backward compat with consuming code.
 		add_action( 'acf/save_post', array( $this, 'save_show_legacy_meta' ), 20 );
 
-		// Restrict specific fields to administrators only.
+		// Restrict specific fields to administrators only — hide in the UI AND
+		// reject writes from non-admins (prepare_field alone does not gate saves).
 		foreach ( self::ADMIN_ONLY_FIELDS as $field_name ) {
 			add_filter( 'acf/prepare_field/name=' . $field_name, array( $this, 'restrict_to_admin' ) );
+			add_filter( 'acf/update_value/name=' . $field_name, array( $this, 'filter_admin_only_value' ), 10, 3 );
 		}
 
 		add_action( 'acf/input/admin_head', array( $this, 'admin_head_styles' ) );
@@ -602,6 +604,29 @@ class ACF {
 			return $field;
 		}
 		return false;
+	}
+
+	/**
+	 * Reject writes to admin-only fields from non-administrators.
+	 *
+	 * acf/prepare_field only hides the control in the form; the value is still
+	 * writable via a crafted submit. This preserves the stored value for anyone
+	 * without manage_options.
+	 *
+	 * @param mixed      $value   The value about to be saved.
+	 * @param int|string $post_id The post ID (ACF may pass a string form).
+	 * @param array      $field   ACF field definition.
+	 * @return mixed
+	 */
+	public function filter_admin_only_value( $value, $post_id, $field ) {
+		if ( current_user_can( 'manage_options' ) ) {
+			return $value;
+		}
+		// Keep whatever is already stored; ignore the submitted value.
+		// Returns the formatted stored value, which is correct for the current
+		// select/true_false ADMIN_ONLY_FIELDS; a future non-select field added
+		// here should use raw get_post_meta() instead.
+		return get_field( $field['name'], $post_id );
 	}
 
 	/**

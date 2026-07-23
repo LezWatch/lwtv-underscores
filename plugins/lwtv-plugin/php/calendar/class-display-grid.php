@@ -119,8 +119,8 @@ class Display_Grid {
 			<div class="' . $head_class . '"><strong>' . $lwtv_date . $native_date . $show['episode_badge'] . '</strong></div>
 			<div class="card-body" style="flex-direction: row;">
 				' . $image . '
-				<p class="card-title">' . $show['show_name'] . '</p>
-				<p class="card-text"><small>' . $show['title'] . '</small></p>
+				<p class="card-title">' . esc_html( $show['show_name'] ) . '</p>
+				<p class="card-text"><small>' . esc_html( $show['title'] ) . '</small></p>
 			</div>
 		</div>';
 		$card .= '</div></div>';
@@ -160,7 +160,7 @@ class Display_Grid {
 			<div class="' . $head_class . '"><strong>' . $lwtv_date . $native_date . '</strong></div>
 			<div class="card-body" style="flex-direction: row;">
 				' . $image . '
-				<p class="card-title">' . $show['show_name'] . '</p>
+				<p class="card-title">' . esc_html( $show['show_name'] ) . '</p>
 				<p class="card-text"><small><ul class="list-unstyled mb-0">' . $episodes_badge . '</ul></small></p>
 			</div>
 		</div>';
