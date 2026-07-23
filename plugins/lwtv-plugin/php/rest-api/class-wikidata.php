@@ -99,15 +99,41 @@ class Wikidata {
 	 * @return array
 	 */
 	private function get_by_post_id( $post_id ): array {
-		if ( get_post_type( $post_id ) !== CPT_Actors::SLUG ) {
+		if ( get_post_type( $post_id ) !== CPT_Actors::SLUG || 'publish' !== get_post_status( $post_id ) ) {
 			return array(
 				'error' => 'Invalid post ID',
 			);
 		}
 
-		$wikidata = ( new Debug_Actors() )->check_actors_wikidata( $post_id );
+		// Respect the actor's own privacy request.
+		if ( lwtv_plugin()->hide_actor_data( $post_id, 'all' ) ) {
+			return array(
+				'error' => 'Invalid post ID',
+			);
+		}
+
+		$wikidata = $this->get_actor_wikidata( $post_id );
 
 		return array( $wikidata );
+	}
+
+	/**
+	 * Get an actor's WikiData comparison for the REST response.
+	 *
+	 * Unauthenticated callers get the stored comparison meta only — no live
+	 * WikiData fetch and no post-meta write. Users who can edit posts (e.g. the
+	 * block editor panel) get a fresh comparison, which also refreshes the meta.
+	 *
+	 * @param int $actor_id Actor post ID.
+	 * @return array
+	 */
+	private function get_actor_wikidata( $actor_id ): array {
+		if ( current_user_can( 'edit_posts' ) ) {
+			return ( new Debug_Actors() )->check_actors_wikidata( $actor_id );
+		}
+
+		$stored = get_post_meta( $actor_id, 'lezactors_saved_wikidata', true );
+		return is_array( $stored ) ? $stored : array();
 	}
 
 	/**
@@ -128,7 +154,10 @@ class Wikidata {
 		// If we have more than one actor with the same IMDB ID, we need to return an array of post IDs.
 		// This should be rare, but it's possible.
 		foreach ( $actor_ids as $actor ) {
-			$actors[] = ( new Debug_Actors() )->check_actors_wikidata( $actor );
+			if ( lwtv_plugin()->hide_actor_data( $actor, 'all' ) ) {
+				continue;
+			}
+			$actors[] = $this->get_actor_wikidata( $actor );
 		}
 
 		return $actors;
@@ -152,7 +181,10 @@ class Wikidata {
 		// If we have more than one actor with the same IMDB ID, we need to return an array of post IDs.
 		// This should be rare, but it's possible.
 		foreach ( $actor_ids as $actor ) {
-			$actors[] = ( new Debug_Actors() )->check_actors_wikidata( $actor );
+			if ( lwtv_plugin()->hide_actor_data( $actor, 'all' ) ) {
+				continue;
+			}
+			$actors[] = $this->get_actor_wikidata( $actor );
 		}
 
 		return $actors;
@@ -169,10 +201,18 @@ class Wikidata {
 
 		$actors = array();
 
+		// Reject empty/blank slugs so the LIKE never degrades to a match-all '%'.
+		$slug = trim( (string) $slug );
+		if ( '' === $slug ) {
+			return array(
+				'error' => 'No such actor found.',
+			);
+		}
+
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
 		$possible_ids = $wpdb->get_col(
 			$wpdb->prepare(
-				"SELECT ID FROM {$wpdb->posts} WHERE post_type = 'post_type_actors' AND post_name LIKE %s",
+				"SELECT ID FROM {$wpdb->posts} WHERE post_type = 'post_type_actors' AND post_status = 'publish' AND post_name LIKE %s LIMIT 50",
 				$wpdb->esc_like( $slug ) . '%'
 			)
 		);
@@ -184,7 +224,10 @@ class Wikidata {
 		}
 
 		foreach ( $possible_ids as $actor ) {
-			$actors[] = ( new Debug_Actors() )->check_actors_wikidata( $actor );
+			if ( lwtv_plugin()->hide_actor_data( $actor, 'all' ) ) {
+				continue;
+			}
+			$actors[] = $this->get_actor_wikidata( $actor );
 		}
 
 		return $actors;

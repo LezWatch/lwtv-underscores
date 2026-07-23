@@ -89,11 +89,11 @@ class Display_List {
 	 * @return string
 	 */
 	private function display_multiple_episodes_list( array $show ): string {
-		$show_content  = '<em>' . $show['show_name'] . $show['episode_badge'] . '</em>';
+		$show_content  = '<em>' . esc_html( $show['show_name'] ) . $show['episode_badge'] . '</em>';
 		$show_content .= '<ul>';
 
 		foreach ( $show['title'] as $one_show ) {
-			$show_content .= '<li>' . $one_show . '</li>';
+			$show_content .= '<li>' . esc_html( $one_show ) . '</li>';
 		}
 		$show_content .= '</ul>';
 
@@ -107,6 +107,6 @@ class Display_List {
 	 * @return string
 	 */
 	private function display_single_episode_list( array $show ): string {
-		return '<em>' . $show['show_name'] . '</em> - ' . $show['title'];
+		return '<em>' . esc_html( $show['show_name'] ) . '</em> - ' . esc_html( $show['title'] );
 	}
 }

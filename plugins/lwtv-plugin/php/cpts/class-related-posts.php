@@ -173,7 +173,7 @@ class Related_Posts {
 		if ( ! empty( $linked_post ) ) {
 			// If we have a linked post, we will trust it.
 			$type    = rtrim( str_replace( 'post_type_', '', get_post_type( $linked_post ) ), 's' );
-			$related = '<p><a href="' . get_permalink( $linked_post ) . '">' . get_the_title( $linked_post ) . '</a></p>';
+			$related = '<p><a href="' . esc_url( get_permalink( $linked_post ) ) . '">' . esc_html( get_the_title( $linked_post ) ) . '</a></p>';
 		} else {
 			// There's no post linked, so we're going to do it the hard way:
 			$maybe         = array(

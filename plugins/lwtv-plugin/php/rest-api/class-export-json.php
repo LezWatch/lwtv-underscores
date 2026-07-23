@@ -470,8 +470,8 @@ class Export_JSON {
 			$page    = get_post( $item_id );
 		}
 
-		// Let's make sure.
-		if ( isset( $page ) && CPT_Shows::SLUG === get_post_type( $page->ID ) ) {
+		// Let's make sure it exists, is a show, and is published.
+		if ( isset( $page ) && CPT_Shows::SLUG === get_post_type( $page->ID ) && 'publish' === get_post_status( $page->ID ) ) {
 
 			// Empty to start
 			$data = array();
@@ -574,8 +574,8 @@ class Export_JSON {
 			$page    = get_post( $item_id );
 		}
 
-		// Let's make sure.
-		if ( isset( $page ) && CPT_Characters::SLUG === get_post_type( $page->ID ) ) {
+		// Let's make sure it exists, is a character, and is published.
+		if ( isset( $page ) && CPT_Characters::SLUG === get_post_type( $page->ID ) && 'publish' === get_post_status( $page->ID ) ) {
 
 			// Basic Data we always need
 			$return = array(

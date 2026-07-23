@@ -110,10 +110,10 @@ class CPTs implements Component, Templater {
 
 			// If we have a TMDB ID, use it.
 			if ( $tmdb_id ) {
-				$response_url .= $post_type . '/' . $tmdb_id . '?api_key=' . TMDB_API;
+				$response_url .= $post_type . '/' . rawurlencode( (string) $tmdb_id ) . '?api_key=' . TMDB_API;
 			} else {
 				// If we have an IMDB ID, use it.
-				$response_url .= 'find/' . $imdb_id . '?api_key=' . TMDB_API . '&external_source=imdb_id';
+				$response_url .= 'find/' . rawurlencode( (string) $imdb_id ) . '?api_key=' . TMDB_API . '&external_source=imdb_id';
 			}
 
 			// Get the response.

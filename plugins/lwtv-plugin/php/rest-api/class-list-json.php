@@ -54,7 +54,7 @@ class List_JSON {
 		$type   = ( isset( $params['type'] ) && '' !== $params['type'] ) ? sanitize_title_for_query( $params['type'] ) : 'none';
 
 		if ( ! in_array( $type, array( 'shows', 'characters', 'actors' ), true ) ) {
-			$return = new \WP_Error( 'invalid', 'An unexpected error has occurred.' );
+			return new \WP_Error( 'invalid', 'An unexpected error has occurred.', array( 'status' => 400 ) );
 		}
 
 		$return = $this->list( $type );

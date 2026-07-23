@@ -235,6 +235,11 @@ class Whats_On_JSON {
 				}
 			}
 
+			// Only published shows are exposed via this endpoint.
+			if ( empty( $show_id ) || 'post_type_shows' !== get_post_type( $show_id ) || 'publish' !== get_post_status( $show_id ) ) {
+				return $return;
+			}
+
 			// Get the on-air status.
 			$on_air = get_post_meta( $show_id, 'lezshows_on_air', true );
 
@@ -291,6 +296,29 @@ class Whats_On_JSON {
 	}
 
 	/**
+	 * Fetch a TVMaze episode link only if it points at the TVMaze API host.
+	 *
+	 * The href comes from a TVMaze API response; validate it before following
+	 * to prevent SSRF via a tampered response.
+	 *
+	 * @param string|false $href The _links href from the show response.
+	 * @return array|false wp_remote_get result, or false.
+	 */
+	private function fetch_tvmaze_link( $href ) {
+		if ( empty( $href ) ) {
+			return false;
+		}
+		$parts = wp_parse_url( $href );
+		if ( ! is_array( $parts ) ) {
+			return false;
+		}
+		if ( empty( $parts['host'] ) || 'https' !== ( $parts['scheme'] ?? '' ) || 'api.tvmaze.com' !== strtolower( $parts['host'] ) ) {
+			return false;
+		}
+		return wp_remote_get( $href );
+	}
+
+	/**
 	 * Make the show array
 	 *
 	 * @param  int    $show_id   The show ID
@@ -314,14 +342,14 @@ class Whats_On_JSON {
 		$episodes_array = array();
 
 		// Get the previous episode, if it exists:
-		$previous_episode = ( isset( $show_array['_links']['previousepisode']['href'] ) ) ? wp_remote_get( $show_array['_links']['previousepisode']['href'] ) : false;
+		$previous_episode = ( isset( $show_array['_links']['previousepisode']['href'] ) ) ? $this->fetch_tvmaze_link( $show_array['_links']['previousepisode']['href'] ) : false;
 
 		if ( ! is_wp_error( $previous_episode ) ) {
 			// If the previous episode URL has data, we use it as an array
 			$episodes_array['previous'] = ( false !== $previous_episode && isset( $previous_episode['body'] ) ) ? json_decode( $previous_episode['body'], true ) : false;
 
 			// Get the next episode if it exists.
-			$next_episode = ( isset( $show_array['_links']['nextepisode']['href'] ) ) ? wp_remote_get( $show_array['_links']['nextepisode']['href'] ) : false;
+			$next_episode = ( isset( $show_array['_links']['nextepisode']['href'] ) ) ? $this->fetch_tvmaze_link( $show_array['_links']['nextepisode']['href'] ) : false;
 
 			// If the next episode URL has data, we use it as an array
 			$episodes_array['next'] = ( ! is_wp_error( $next_episode ) && false !== $next_episode && isset( $next_episode['body'] ) ) ? json_decode( $next_episode['body'], true ) : false;

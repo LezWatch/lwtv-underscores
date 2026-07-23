@@ -79,7 +79,7 @@ class TVMaze {
 
 		if ( $imdb_id && $recheck ) {
 			try {
-				$response = wp_remote_get( 'http://api.tvmaze.com/lookup/shows?imdb=' . $imdb_id );
+				$response = wp_remote_get( 'https://api.tvmaze.com/lookup/shows?imdb=' . rawurlencode( $imdb_id ) );
 
 				// Check the response:
 				if ( is_array( $response ) && ! is_wp_error( $response ) ) {
@@ -87,7 +87,12 @@ class TVMaze {
 
 					// TV Maze returns a null body sometimes.
 					if ( ! is_null( $body ) ) {
-						$scores['url']   = $body['url'];
+						$maybe_url = $body['url'] ?? '';
+						$host      = $maybe_url ? strtolower( (string) wp_parse_url( $maybe_url, PHP_URL_HOST ) ) : '';
+						// Exact host or a real subdomain — NOT "eviltvmaze.com".
+						if ( 'tvmaze.com' === $host || str_ends_with( $host, '.tvmaze.com' ) ) {
+							$scores['url'] = $maybe_url;
+						}
 						$scores['score'] = ( isset( $body['rating']['average'] ) && ! empty( $body['rating']['average'] ) ) ? round( $body['rating']['average'] * 10 ) : 'TBD';
 					}
 				}
