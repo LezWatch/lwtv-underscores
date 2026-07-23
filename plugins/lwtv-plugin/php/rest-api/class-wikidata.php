@@ -78,14 +78,15 @@ class Wikidata {
 			'post-id'    => $this->get_by_post_id( $who_dat ),
 			'wikidata'   => $this->get_by_wikidata( $who_dat ),
 			default      => array(
-				'error' => 'Invalid request',
+				'error' => __( 'Invalid request', 'lwtv' ),
 			),
 		};
 
 		// If we have no data, return an error.
 		if ( empty( $response ) ) {
 			$response = array(
-				'error' => 'No data found for ' . $who_dat,
+				/* translators: %s: the requested actor slug, IMDB ID, WikiData Q-ID, or post ID. */
+				'error' => sprintf( __( 'No data found for %s', 'lwtv' ), $who_dat ),
 			);
 		}
 
@@ -101,14 +102,14 @@ class Wikidata {
 	private function get_by_post_id( $post_id ): array {
 		if ( get_post_type( $post_id ) !== CPT_Actors::SLUG || 'publish' !== get_post_status( $post_id ) ) {
 			return array(
-				'error' => 'Invalid post ID',
+				'error' => __( 'Invalid post ID', 'lwtv' ),
 			);
 		}
 
 		// Respect the actor's own privacy request.
 		if ( lwtv_plugin()->hide_actor_data( $post_id, 'all' ) ) {
 			return array(
-				'error' => 'Invalid post ID',
+				'error' => __( 'Invalid post ID', 'lwtv' ),
 			);
 		}
 
@@ -124,6 +125,10 @@ class Wikidata {
 	 * WikiData fetch and no post-meta write. Users who can edit posts (e.g. the
 	 * block editor panel) get a fresh comparison, which also refreshes the meta.
 	 *
+	 * Both branches return the same shape: an array keyed by actor ID, matching
+	 * what check_actors_wikidata() returns (it stores the inner value under
+	 * lezactors_saved_wikidata, so the stored read is re-wrapped by ID here).
+	 *
 	 * @param int $actor_id Actor post ID.
 	 * @return array
 	 */
@@ -133,7 +138,7 @@ class Wikidata {
 		}
 
 		$stored = get_post_meta( $actor_id, 'lezactors_saved_wikidata', true );
-		return is_array( $stored ) ? $stored : array();
+		return is_array( $stored ) ? array( $actor_id => $stored ) : array();
 	}
 
 	/**
@@ -143,8 +148,9 @@ class Wikidata {
 	 * @return array
 	 */
 	private function get_by_imdb( $imdb ): array {
-		$actors = array();
-		$queery = ( new Queeries_Post_Meta() )->make( CPT_Actors::SLUG, 'lezactors_imdb', $imdb );
+		$actors    = array();
+		$actor_ids = array();
+		$queery    = ( new Queeries_Post_Meta() )->make( CPT_Actors::SLUG, 'lezactors_imdb', $imdb );
 
 		// Add ONLY the IDs to the array.
 		if ( is_object( $queery ) && $queery->have_posts() ) {
@@ -170,8 +176,9 @@ class Wikidata {
 	 * @return array
 	 */
 	private function get_by_wikidata( $wikidata ): array {
-		$actors = array();
-		$queery = ( new Queeries_Post_Meta() )->make( CPT_Actors::SLUG, 'lezactors_wikidata_qid', $wikidata );
+		$actors    = array();
+		$actor_ids = array();
+		$queery    = ( new Queeries_Post_Meta() )->make( CPT_Actors::SLUG, 'lezactors_wikidata_qid', $wikidata );
 
 		// Add ONLY the IDs to the array.
 		if ( is_object( $queery ) && $queery->have_posts() ) {
@@ -205,7 +212,7 @@ class Wikidata {
 		$slug = trim( (string) $slug );
 		if ( '' === $slug ) {
 			return array(
-				'error' => 'No such actor found.',
+				'error' => __( 'No such actor found.', 'lwtv' ),
 			);
 		}
 
@@ -219,7 +226,7 @@ class Wikidata {
 
 		if ( ! $possible_ids ) {
 			return array(
-				'error' => 'No such actor found.',
+				'error' => __( 'No such actor found.', 'lwtv' ),
 			);
 		}
 
