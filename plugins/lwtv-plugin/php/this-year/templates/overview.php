@@ -254,7 +254,7 @@ if ( 0 === $dead ) {
 			/* translators: 1: number of this year's deaths that happened on one show, 2: show name. */
 			__( ', %1$s of them on %2$s.', 'lwtv' ),
 			number_format_i18n( $top_memoriam_show_count ),
-			$top_memoriam_show
+			'"' . $top_memoriam_show . '"'
 		);
 	} else {
 		$highlight_memoriam_desc .= '.';

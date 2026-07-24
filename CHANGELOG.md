@@ -4,6 +4,17 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [7.1.5] - 2026-07-24
+
+### Added
+
+- Improved the death callouts for the list, now including dates.
+
+### Fixed
+
+- Corrected erroneous death count, caused by counting drafts.
+- Made indication of multiple deaths on a date more clear.
+
 ## [7.1.4] - 2026-07-24
 
 ### Added
