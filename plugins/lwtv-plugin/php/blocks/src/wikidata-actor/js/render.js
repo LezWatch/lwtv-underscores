@@ -23,7 +23,6 @@ export default function Render() {
 	const [error, setError] = useState(null);
 	const [refreshCounter, setRefreshCounter] = useState(0);
 	const [showToast, setShowToast] = useState(false);
-	const siteURL = window.location.origin;
 
 	// Handle toast visibility with DOM manipulation
 	useEffect(() => {
@@ -61,17 +60,26 @@ export default function Render() {
 			const fetchData = async () => {
 				setIsLoading(true);
 				try {
-					const response = await fetch(
-						`${siteURL}/wp-json/lwtv/v1/wikidata/${postId}`
-					);
-					if (!response.ok) {
-						throw new Error(
-							`HTTP error! status: ${response.status}`
+					// Use the editor's configured apiFetch so the request carries
+					// the REST nonce. Without it WordPress treats the call as
+					// logged-out, and the panel can neither run a live WikiData
+					// check nor read unpublished actors the editor is editing.
+					const data = await window.wp.apiFetch({
+						path: `/lwtv/v1/wikidata/${postId}`,
+					});
+					if (Array.isArray(data)) {
+						setApiData(data);
+						setError(null);
+					} else {
+						// The endpoint returns an { error } object for actors it
+						// won't disclose; surface it instead of crashing on .map.
+						setApiData(null);
+						setError(
+							data && data.error
+								? data.error
+								: 'No WikiData information is available for this actor.'
 						);
 					}
-					const data = await response.json();
-					setApiData(data);
-					setError(null);
 				} catch (err) {
 					setError(err.message);
 					setApiData(null);
@@ -81,7 +89,7 @@ export default function Render() {
 			};
 			fetchData();
 		}
-	}, [postId, postType, postStatus, siteURL, refreshCounter]);
+	}, [postId, postType, postStatus, refreshCounter]);
 
 	if (postType !== 'post_type_actors') {
 		return null;
@@ -163,8 +171,11 @@ export default function Render() {
 					{!isLoading && !error && apiData && (
 						<>
 							{apiData.map((item) => {
-								const [key, personData] =
-									Object.entries(item)[0];
+								const entries = Object.entries(item);
+								if (entries.length === 0) {
+									return null;
+								}
+								const [key, personData] = entries[0];
 								const filteredData =
 									filteredPersonData(personData);
 
