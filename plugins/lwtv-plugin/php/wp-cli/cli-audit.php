@@ -71,7 +71,7 @@ class WP_CLI_LWTV_Audit {
 	 * : Ignore only. Show post ID the acknowledgement applies to.
 	 *
 	 * [--issue=<type>]
-	 * : Ignore only. Issue type to acknowledge (see Audit::ISSUE_TYPES).
+	 * : Ignore only. Character-level issue type to acknowledge: missing-year, verify-year.
 	 *
 	 * [--remove]
 	 * : Ignore only. Remove a previously acknowledged item instead of adding one.
@@ -94,6 +94,9 @@ class WP_CLI_LWTV_Audit {
 	 *
 	 * [--show-resolved]
 	 * : Also list items resolved since the last run of this scope (catalog/deep only).
+	 *
+	 * [--yes]
+	 * : Answer yes to confirmation prompts (reset, and large deep-audit jobs).
 	 *
 	 * [--format=<format>]
 	 * : Render output in a particular format.
@@ -274,7 +277,8 @@ class WP_CLI_LWTV_Audit {
 			$progress->finish();
 		}
 
-		$scope = $this->catalog_scope( $this->letter_token( $letter_raw ), $roles_flag );
+		$scope_roles = ( 'guests' === $roles_flag ) ? 'guest' : $roles_flag;
+		$scope       = $this->catalog_scope( $this->letter_token( $letter_raw ), $scope_roles );
 		$this->output_results( $scope, $results, $show_resolved );
 	}
 
@@ -560,14 +564,17 @@ class WP_CLI_LWTV_Audit {
 			\WP_CLI::error( 'Please provide --issue=<type>, one of: ' . implode( ', ', $valid ) . '.' );
 		}
 
+		$char_name = html_entity_decode( get_the_title( $char_id ), ENT_QUOTES, 'UTF-8' );
+		$show_name = html_entity_decode( get_the_title( $show_id ), ENT_QUOTES, 'UTF-8' );
+
 		if ( $remove ) {
 			$audit->remove_ignore( $char_id, $show_id, $issue );
-			\WP_CLI::success( sprintf( 'Removed acknowledgement: character %1$d, show %2$d, %3$s.', $char_id, $show_id, $issue ) );
+			\WP_CLI::success( sprintf( 'Removed acknowledgement: %1$s (#%2$d) on %3$s (#%4$d), %5$s.', $char_name, $char_id, $show_name, $show_id, $issue ) );
 			return;
 		}
 
 		$audit->add_ignore( $char_id, $show_id, $issue );
-		\WP_CLI::success( sprintf( 'Acknowledged: character %1$d, show %2$d, %3$s. Hidden from future audits.', $char_id, $show_id, $issue ) );
+		\WP_CLI::success( sprintf( 'Acknowledged: %1$s (#%2$d) on %3$s (#%4$d), %5$s. Hidden from future audits.', $char_name, $char_id, $show_name, $show_id, $issue ) );
 	}
 
 	/**
@@ -979,9 +986,10 @@ class WP_CLI_LWTV_Audit {
 			\WP_CLI\Utils\format_items( $this->format, $rows, $fields );
 		}
 
-		// Summary goes through WP_CLI::success -> STDERR, so it never corrupts
-		// a redirected CSV/JSON stream on STDOUT.
-		\WP_CLI::success( $this->summary_line( $finalized['summary'] ) );
+		// Summary is written directly to STDERR (not via WP_CLI::success, which
+		// writes to STDOUT) so it never corrupts a redirected CSV/JSON stream.
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fwrite -- CLI STDERR write, must bypass STDOUT so redirected CSV/JSON stays clean
+		fwrite( STDERR, $this->summary_line( $finalized['summary'] ) . "\n" );
 	}
 
 	/**

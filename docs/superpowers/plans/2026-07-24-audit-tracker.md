@@ -735,9 +735,10 @@ Replace `output_results()` with a diffed renderer + summary:
 			\WP_CLI\Utils\format_items( $this->format, $rows, $fields );
 		}
 
-		// Summary goes through WP_CLI::success -> STDERR, so it never corrupts
-		// a redirected CSV/JSON stream on STDOUT.
-		\WP_CLI::success( $this->summary_line( $finalized['summary'] ) );
+		// Summary is written directly to STDERR (NOT WP_CLI::success, which
+		// writes to STDOUT), so a redirected CSV/JSON stream on STDOUT stays clean.
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fwrite -- CLI STDERR write, must bypass STDOUT so redirected CSV/JSON stays clean
+		fwrite( STDERR, $this->summary_line( $finalized['summary'] ) . "\n" );
 	}
 
 	/**

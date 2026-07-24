@@ -185,8 +185,11 @@ look `new`.
 - **Resolved rows stay out of the main CSV**, preserving the tool's "everything
   in the file needs action" contract. They surface only with `--show-resolved`
   (status `resolved`), or as a count in the summary.
-- The summary is emitted via `WP_CLI::success`, which writes to **STDERR**, so
-  it never corrupts a `> audit.csv` redirect regardless of `--format`. It reports:
+- The summary is written directly to **STDERR** via `fwrite( STDERR, … )`, so
+  it never corrupts a `> audit.csv` redirect regardless of `--format`.
+  (Note: `WP_CLI::success()` writes to STDOUT, not STDERR — only
+  `WP_CLI::warning()`/`error()` use STDERR — so the summary cannot go through
+  `success()`.) It reports:
   - total needing attention,
   - breakdown by issue type,
   - `X new / Y still open / Z resolved since <last-run date>`,
