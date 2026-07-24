@@ -112,6 +112,7 @@ use LWTV\_Helpers\Utils;
  * @method string get_transient( string $slug )                          \_Components\Transients
  * @method void   set_transient( string $slug, $value, int $expiration ) \_Components\Transients
  * @method void   delete_transient( string $slug )                       \_Components\Transients
+ * @method ?int   get_this_year_generated_time( int $year )              \_Components\Transients
  *
  */
 

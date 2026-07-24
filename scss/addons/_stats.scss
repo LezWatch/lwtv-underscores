@@ -4,9 +4,21 @@
 @use "sass:list";
 
 /* Statistics Pages */
-
 .statistics,
 .thisyear {
+
+	.lwtv-stats-lastcalc {
+		border: 1px solid colors.$lwtv-grey-medium;
+		border-radius: 14px;
+		padding: 20px;
+		background-color: colors.$lwtv-grey-light;
+		margin-top: 20px;
+		font-size: 0.75rem;
+
+		p {
+			margin: 0 !important;
+		}
+	}
 
 	.card-header {
 		color: colors.$lwtv-grey-light;
@@ -952,7 +964,6 @@ canvas {
 .statistics,
 .lwtv-actor-stats-modal,
 .lwtv-actor-articles-modal {
-
 	.lwtv-download-csv-panel {
 		display: flex;
 		align-items: center;

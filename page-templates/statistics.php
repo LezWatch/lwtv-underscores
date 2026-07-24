@@ -78,6 +78,11 @@ get_header(); ?>
 							if ( ! empty( $stats ) ) {
 								// phpcs:ignore WordPress.Security.EscapeOutput
 								echo $stats;
+
+								// Freshness note at the foot of every stats view.
+								$lwtv_lastcalc_variant = 'daily';
+								// phpcs:ignore PEAR.Files.IncludingFile.UseRequire
+								include LWTV_PLUGIN_PATH . '/php/statistics/templates/partials/last-calculated.php';
 							} else {
 								echo '<p>After this maintenance, statistics will be right back!</p>';
 							}

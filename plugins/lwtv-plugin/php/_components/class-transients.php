@@ -14,6 +14,40 @@ class Transients implements Component, Templater {
 	const CACHE_DURATION = HOUR_IN_SECONDS / 2;
 
 	/**
+	 * Option name for the stats-cache index: a map of stats transient key =>
+	 * unix time it was last built. Because a persistent object cache (e.g.
+	 * Redis) stores transients OUTSIDE wp_options, this index is what lets us
+	 * both (a) evict stats transients by pattern through the object-cache-aware
+	 * delete_transient(), and (b) report an honest "last calculated" time on
+	 * the statistics pages.
+	 *
+	 * @var string
+	 */
+	const STATS_INDEX_OPTION = 'lwtv_stats_cache_index';
+
+	/**
+	 * Memoised, flattened list of stats key patterns tracked in the index.
+	 *
+	 * @var array|null
+	 */
+	private static $tracked_patterns_cache = null;
+
+	/**
+	 * In-request buffer of stats keys that were (re)built this request, written
+	 * to the index once on shutdown to avoid an option write per transient.
+	 *
+	 * @var array
+	 */
+	private static $index_buffer = array();
+
+	/**
+	 * Whether the index-flush shutdown hook has been registered.
+	 *
+	 * @var bool
+	 */
+	private static $index_shutdown_registered = false;
+
+	/**
 	 * Queue of cache invalidation requests to process at shutdown.
 	 *
 	 * @var array
@@ -43,12 +77,13 @@ class Transients implements Component, Templater {
 	 */
 	public function get_template_tags(): array {
 		return array(
-			'delete_transient'            => array( $this, 'delete_transient' ),
-			'get_transient'               => array( $this, 'get_transient' ),
-			'set_transient'               => array( $this, 'set_transient' ),
-			'invalidate_statistics_cache' => array( $this, 'invalidate_statistics_cache' ),
-			'get_cache_dependencies'      => array( $this, 'get_cache_dependencies' ),
-			'get_cache_statistics'        => array( $this, 'get_cache_statistics' ),
+			'delete_transient'             => array( $this, 'delete_transient' ),
+			'get_transient'                => array( $this, 'get_transient' ),
+			'set_transient'                => array( $this, 'set_transient' ),
+			'invalidate_statistics_cache'  => array( $this, 'invalidate_statistics_cache' ),
+			'get_cache_dependencies'       => array( $this, 'get_cache_dependencies' ),
+			'get_cache_statistics'         => array( $this, 'get_cache_statistics' ),
+			'get_this_year_generated_time' => array( $this, 'get_this_year_generated_time' ),
 		);
 	}
 
@@ -78,6 +113,12 @@ class Transients implements Component, Templater {
 	 */
 	public static function set_transient( $transient, $value, $expiration = 60 * 60 * 24 ) {
 		set_transient( $transient, $value, $expiration );
+
+		// Record stats transients in the index so we can evict them from a
+		// persistent object cache and report when they were last built.
+		if ( self::is_tracked_stats_key( (string) $transient ) ) {
+			self::record_stats_key( (string) $transient );
+		}
 	}
 
 	/**
@@ -289,7 +330,25 @@ class Transients implements Component, Templater {
 	private function clear_cache_tier( array $patterns ): void {
 		global $wpdb;
 
+		// Object-cache-aware pass. With a persistent object cache (Redis) the
+		// transients live outside wp_options, so the raw SQL below never
+		// reaches them. Walk the index instead and delete each known key via
+		// delete_transient(), which routes to the object cache when one is
+		// active and to the DB otherwise.
+		$index   = self::current_stats_index();
+		$changed = false;
+
 		foreach ( $patterns as $pattern ) {
+			foreach ( array_keys( $index ) as $key ) {
+				if ( self::key_matches_pattern( $key, $pattern ) ) {
+					delete_transient( $key );
+					unset( $index[ $key ], self::$index_buffer[ $key ] );
+					$changed = true;
+				}
+			}
+
+			// Fallback for DB-stored transients (no persistent object cache),
+			// and to sweep any keys that predate the index.
 			$sql_pattern = str_replace( '*', '%', $pattern );
 			$wpdb->query(
 				$wpdb->prepare(
@@ -303,6 +362,10 @@ class Transients implements Component, Templater {
 					'_transient_timeout_' . $sql_pattern
 				)
 			);
+		}
+
+		if ( $changed ) {
+			update_option( self::STATS_INDEX_OPTION, $index, false );
 		}
 	}
 
@@ -380,5 +443,162 @@ class Transients implements Component, Templater {
 		}
 
 		return $stats;
+	}
+
+	/**
+	 * Get the time the /this-year/ caches for a given year were last built.
+	 *
+	 * Reads the stats-cache index for that year's per-year keys
+	 * (lwtv_*_year_*_<year>) and returns the OLDEST build time among them — the
+	 * page is only as fresh as its stalest piece. The index alone is
+	 * authoritative: the /this-year/ page rebuilds all of its data on every
+	 * render, so an indexed key is by definition current when this runs. We
+	 * deliberately do NOT probe get_transient() to confirm the value is live —
+	 * that wrapper is forced to return false in development
+	 * (LWTV_DISABLE_TRANSIENTS), which would suppress the note there for no
+	 * real benefit. Read-only: it never writes the option.
+	 *
+	 * @param  int      $year The calendar year.
+	 * @return int|null       Unix timestamp, or null if nothing is indexed yet.
+	 */
+	public function get_this_year_generated_time( int $year ): ?int {
+		$index  = self::current_stats_index();
+		$suffix = '_' . $year;
+		$oldest = null;
+
+		foreach ( $index as $key => $built ) {
+			if ( ! str_starts_with( (string) $key, 'lwtv_' ) || ! str_ends_with( (string) $key, $suffix ) ) {
+				continue;
+			}
+
+			$oldest = ( null === $oldest ) ? (int) $built : min( $oldest, (int) $built );
+		}
+
+		return $oldest;
+	}
+
+	/**
+	 * Record that a stats transient was just (re)built. Buffered in-request and
+	 * written to the index once on shutdown.
+	 *
+	 * @param  string $key The transient key.
+	 * @return void
+	 */
+	private static function record_stats_key( string $key ): void {
+		self::$index_buffer[ $key ] = time();
+
+		if ( ! self::$index_shutdown_registered ) {
+			add_action( 'shutdown', array( __CLASS__, 'flush_stats_index' ), 5 );
+			self::$index_shutdown_registered = true;
+		}
+	}
+
+	/**
+	 * Flush the in-request index buffer to the stored option (shutdown hook).
+	 *
+	 * @return void
+	 */
+	public static function flush_stats_index(): void {
+		if ( empty( self::$index_buffer ) ) {
+			return;
+		}
+
+		$index = get_option( self::STATS_INDEX_OPTION, array() );
+		$index = is_array( $index ) ? $index : array();
+		$index = array_merge( $index, self::$index_buffer );
+
+		update_option( self::STATS_INDEX_OPTION, $index, false );
+
+		self::$index_buffer = array();
+	}
+
+	/**
+	 * The stored stats-cache index merged with anything buffered this request,
+	 * so reads see keys built earlier in the same request (e.g. a cold render
+	 * that both builds the data and prints the "last calculated" note).
+	 *
+	 * @return array
+	 */
+	private static function current_stats_index(): array {
+		$index = get_option( self::STATS_INDEX_OPTION, array() );
+		$index = is_array( $index ) ? $index : array();
+
+		if ( ! empty( self::$index_buffer ) ) {
+			$index = array_merge( $index, self::$index_buffer );
+		}
+
+		return $index;
+	}
+
+	/**
+	 * Whether a transient key belongs to the statistics system (and so should
+	 * be tracked in the index).
+	 *
+	 * @param  string $key The transient key.
+	 * @return bool
+	 */
+	private static function is_tracked_stats_key( string $key ): bool {
+		foreach ( self::all_tracked_patterns() as $pattern ) {
+			if ( self::key_matches_pattern( $key, $pattern ) ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * All tracked stats key patterns: the tiered dependency patterns plus the
+	 * /this-year/ module's per-year keys (which live outside the tier map).
+	 * Memoised for the request.
+	 *
+	 * @return array
+	 */
+	private static function all_tracked_patterns(): array {
+		if ( null !== self::$tracked_patterns_cache ) {
+			return self::$tracked_patterns_cache;
+		}
+
+		$flat = array();
+		foreach ( ( new self() )->get_cache_dependencies() as $tier ) {
+			foreach ( $tier['patterns'] as $pattern ) {
+				$flat[] = $pattern;
+			}
+		}
+
+		self::$tracked_patterns_cache = array_merge( $flat, self::extra_stats_patterns() );
+
+		return self::$tracked_patterns_cache;
+	}
+
+	/**
+	 * Stats key patterns tracked for freshness/eviction that live outside the
+	 * tiered dependency map — the /this-year/ module's per-year caches.
+	 *
+	 * @return array
+	 */
+	private static function extra_stats_patterns(): array {
+		return array(
+			'lwtv_characters_year_*',
+			'lwtv_characters_shows_year_*',
+			'lwtv_shows_year_*',
+			'lwtv_shows_characters_year_*',
+		);
+	}
+
+	/**
+	 * Match a transient key against a dependency pattern. Patterns use a single
+	 * trailing '*' wildcard (prefix match) or are matched exactly.
+	 *
+	 * @param  string $key     The transient key.
+	 * @param  string $pattern The pattern.
+	 * @return bool
+	 */
+	private static function key_matches_pattern( string $key, string $pattern ): bool {
+		if ( str_ends_with( $pattern, '*' ) ) {
+			return str_starts_with( $key, substr( $pattern, 0, -1 ) );
+		}
+
+		return $key === $pattern;
 	}
 }
