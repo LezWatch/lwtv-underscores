@@ -14,6 +14,11 @@ use LWTV\_Helpers\{ Calendar_Object_Pool, Calendar_Meta_Batcher };
 class TVMaze {
 
 	/**
+	 * TV Maze API URL.
+	 */
+	public const TVMAZE_URL = 'https://api.tvmaze.com';
+
+	/**
 	 * Get the timezone for a show
 	 *
 	 * @param  int $show_id
@@ -95,17 +100,17 @@ class TVMaze {
 
 		if ( $tvmaze_id ) {
 			// Use TV Maze ID if we have it.
-			$show_info = wp_remote_get( 'https://api.tvmaze.com/shows/' . $tvmaze_id );
+			$show_info = wp_remote_get( self::TVMAZE_URL . '/shows/' . $tvmaze_id );
 		} elseif ( $imdb_id ) {
 			// Use IMDB if we can.
-			$show_info = wp_remote_get( 'https://api.tvmaze.com/lookup/shows?imdb=' . $imdb_id );
+			$show_info = wp_remote_get( self::TVMAZE_URL . '/lookup/shows?imdb=' . $imdb_id );
 		} else {
 			// Check the show namer just in case we have odd versions for TV Maze.
 			$names     = Calendar_Object_Pool::get_names();
 			$show_name = $names->make( $show_name, 'lwtv', 'name' );
 
 			// Search TV Maze API for show info:
-			$show_info = wp_remote_get( 'https://api.tvmaze.com/singlesearch/shows?q=' . $show_name );
+			$show_info = wp_remote_get( self::TVMAZE_URL . '/singlesearch/shows?q=' . $show_name );
 		}
 
 		// If we have an error, return false.
