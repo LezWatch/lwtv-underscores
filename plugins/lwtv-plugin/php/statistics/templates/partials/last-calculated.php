@@ -21,7 +21,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 $lwtv_lastcalc_variant = $lwtv_lastcalc_variant ?? 'daily';
 $lwtv_lastcalc_time    = $lwtv_lastcalc_time ?? null;
 ?>
-<p class="lwtv-stats-lastcalc">
+<div class="lwtv-stats-lastcalc d-flex justify-content-center">
+	<p class="justify-content-center">
 	<?php
 	if ( 'volatile' === $lwtv_lastcalc_variant && ! empty( $lwtv_lastcalc_time ) ) {
 		printf(
@@ -33,4 +34,5 @@ $lwtv_lastcalc_time    = $lwtv_lastcalc_time ?? null;
 		esc_html_e( 'Statistics are updated daily.', 'lwtv' );
 	}
 	?>
-</p>
+	</p>
+</div>
