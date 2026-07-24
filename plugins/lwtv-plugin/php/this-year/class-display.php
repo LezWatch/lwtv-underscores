@@ -64,6 +64,16 @@ class Display {
 			include LWTV_PLUGIN_PATH . '/php/statistics/templates/main/tabbar.php';
 			include_once 'templates/navigation-year.php'; // year navigator
 			include_once 'templates/navigation.php';       // sub-nav
+
+			// Only the running year is volatile; settled years need no note.
+			if ( $this_year === $current_year ) {
+				$lwtv_lastcalc_variant = 'volatile';
+				$lwtv_lastcalc_time    = lwtv_plugin()->get_this_year_generated_time( $this_year );
+				if ( ! empty( $lwtv_lastcalc_time ) ) {
+					// phpcs:ignore PEAR.Files.IncludingFile.UseRequire
+					include LWTV_PLUGIN_PATH . '/php/statistics/templates/partials/last-calculated.php';
+				}
+			}
 			?>
 
 			<?php
