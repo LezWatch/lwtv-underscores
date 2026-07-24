@@ -14,6 +14,11 @@ use LWTV\_Components\Grading as Grading_Component;
 class TVMaze {
 
 	/**
+	 * TV Maze API URL.
+	 */
+	public const TVMAZE_URL = 'https://api.tvmaze.com';
+
+	/**
 	 * Get All TVMaze data
 	 *
 	 * @param  int $show_id
@@ -79,7 +84,7 @@ class TVMaze {
 
 		if ( $imdb_id && $recheck ) {
 			try {
-				$response = wp_remote_get( 'https://api.tvmaze.com/lookup/shows?imdb=' . rawurlencode( $imdb_id ) );
+				$response = wp_remote_get( self::TVMAZE_URL . '/lookup/shows?imdb=' . rawurlencode( $imdb_id ) );
 
 				// Check the response:
 				if ( is_array( $response ) && ! is_wp_error( $response ) ) {

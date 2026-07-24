@@ -4,6 +4,24 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [7.1.4] - 2026-07-24
+
+### Added
+
+- Run-to-run tracking for `wp lwtv audit`: each finding is tagged new, open, or resolved against the previous run.
+- Acknowledge findings with `wp lwtv audit ignore` so known-acceptable flags stop recurring, and list them with `wp lwtv audit ignores`.
+- Triage summary at the end of each audit run, broken down by issue type and status.
+- `wp lwtv audit reset` to clear the stored audit baseline.
+
+### Changed
+
+- The audit run summary now prints to STDERR so `--format=csv`/`json` output can be redirected cleanly.
+
+## [7.1.3] - 2026-07-24
+
+- Add "last calculated" stats note with Redis-aware cache eviction
+- New wp lwtv cache check and wp lwtv cache verify commands
+
 ## [7.1.2] - 2026-07-23
 
 ### Security

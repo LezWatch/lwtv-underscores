@@ -17,6 +17,20 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 $lwtv_coa_count = (int) $characters_on_air_count;
 
+// Empty state — guard first, nothing else in this template applies.
+if ( 0 === $lwtv_coa_count ) {
+	?>
+	<div class="lwtv-ty-empty">
+		<div class="lwtv-ty-empty-icon">
+			<?php echo lwtv_plugin()->get_symbolicon( svg: 'construction.svg', icon: 'svg-construction', max_size: '28' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+		</div>
+		<h2><?php esc_html_e( 'No characters have been recorded for this year.', 'lwtv' ); ?></h2>
+		<p><?php esc_html_e( 'Come back soon, our staff is hard at work researching.', 'lwtv' ); ?></p>
+	</div>
+	<?php
+	return;
+}
+
 // Sort By Show cards by cast size, largest first.
 $lwtv_ty_coa_by_show = $characters_on_air_by_show;
 usort(

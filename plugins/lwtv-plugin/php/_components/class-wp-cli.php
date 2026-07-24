@@ -29,6 +29,8 @@ class WP_CLI implements Component {
 
 		// CLI Commands Loader.
 		$cli_loader = array(
+			sprintf( '%s/%s', dirname( __DIR__, 1 ) . '/wp-cli/', 'cli-audit.php' ),     // wp lwtv AUDIT [shows|show <id>]
+			sprintf( '%s/%s', dirname( __DIR__, 1 ) . '/wp-cli/', 'cli-cache.php' ),     // wp lwtv CACHE [check|verify]
 			sprintf( '%s/%s', dirname( __DIR__, 1 ) . '/wp-cli/', 'cli-calc.php' ),      // wp lwtv CALC [ID]
 			sprintf( '%s/%s', dirname( __DIR__, 1 ) . '/wp-cli/', 'cli-check.php' ),     // wp lwtv CHECK [queerchars|wiki] [id]
 			sprintf( '%s/%s', dirname( __DIR__, 1 ) . '/wp-cli/', 'cli-debug.php' ),     // wp lwtv DEBUG
