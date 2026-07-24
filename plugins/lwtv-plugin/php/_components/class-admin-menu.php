@@ -99,7 +99,7 @@ class Admin_Menu implements Component {
 							<td>Our Slack workspace. This is where you can get help from the team and other editors.</td>
 						</tr>
 						<tr>
-							<td><a href="https://uptime.ipstenu.com/status/lwtv-admin" target="_blank">Admin Monitors</a></td>
+							<td><a href="https://status.ipstenu.com/status/lwtv-admin" target="_blank">Admin Monitors</a></td>
 							<td>These are used to check the status of the services outside of the site (TVMaze etc).</td>
 						</tr>
 						<tr>

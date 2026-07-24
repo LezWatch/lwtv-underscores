@@ -78,14 +78,15 @@ class Wikidata {
 			'post-id'    => $this->get_by_post_id( $who_dat ),
 			'wikidata'   => $this->get_by_wikidata( $who_dat ),
 			default      => array(
-				'error' => 'Invalid request',
+				'error' => __( 'Invalid request', 'lwtv' ),
 			),
 		};
 
 		// If we have no data, return an error.
 		if ( empty( $response ) ) {
 			$response = array(
-				'error' => 'No data found for ' . $who_dat,
+				/* translators: %s: the requested actor slug, IMDB ID, WikiData Q-ID, or post ID. */
+				'error' => sprintf( __( 'No data found for %s', 'lwtv' ), $who_dat ),
 			);
 		}
 
@@ -101,13 +102,48 @@ class Wikidata {
 	private function get_by_post_id( $post_id ): array {
 		if ( get_post_type( $post_id ) !== CPT_Actors::SLUG ) {
 			return array(
-				'error' => 'Invalid post ID',
+				'error' => __( 'Invalid post ID', 'lwtv' ),
 			);
 		}
 
-		$wikidata = ( new Debug_Actors() )->check_actors_wikidata( $post_id );
+		// Users who can edit this actor (e.g. the editor's WikiData panel) may
+		// view it regardless of status or privacy. Everyone else only sees a
+		// published actor that has not requested full privacy.
+		if ( ! current_user_can( 'edit_post', $post_id ) ) {
+			if ( 'publish' !== get_post_status( $post_id ) || lwtv_plugin()->hide_actor_data( $post_id, 'all' ) ) {
+				return array(
+					'error' => __( 'Invalid post ID', 'lwtv' ),
+				);
+			}
+		}
+
+		$wikidata = $this->get_actor_wikidata( $post_id );
 
 		return array( $wikidata );
+	}
+
+	/**
+	 * Get an actor's WikiData comparison for the REST response.
+	 *
+	 * Callers who cannot edit the actor get the stored comparison meta only —
+	 * no live WikiData fetch and no post-meta write. Users who can edit the
+	 * actor (e.g. the editor's WikiData panel) get a fresh comparison, which
+	 * also refreshes the meta.
+	 *
+	 * Both branches return the same shape: an array keyed by actor ID, matching
+	 * what check_actors_wikidata() returns (it stores the inner value under
+	 * lezactors_saved_wikidata, so the stored read is re-wrapped by ID here).
+	 *
+	 * @param int $actor_id Actor post ID.
+	 * @return array
+	 */
+	private function get_actor_wikidata( $actor_id ): array {
+		if ( current_user_can( 'edit_post', $actor_id ) ) {
+			return ( new Debug_Actors() )->check_actors_wikidata( $actor_id );
+		}
+
+		$stored = get_post_meta( $actor_id, 'lezactors_saved_wikidata', true );
+		return is_array( $stored ) ? array( $actor_id => $stored ) : array();
 	}
 
 	/**
@@ -117,8 +153,9 @@ class Wikidata {
 	 * @return array
 	 */
 	private function get_by_imdb( $imdb ): array {
-		$actors = array();
-		$queery = ( new Queeries_Post_Meta() )->make( CPT_Actors::SLUG, 'lezactors_imdb', $imdb );
+		$actors    = array();
+		$actor_ids = array();
+		$queery    = ( new Queeries_Post_Meta() )->make( CPT_Actors::SLUG, 'lezactors_imdb', $imdb );
 
 		// Add ONLY the IDs to the array.
 		if ( is_object( $queery ) && $queery->have_posts() ) {
@@ -128,7 +165,10 @@ class Wikidata {
 		// If we have more than one actor with the same IMDB ID, we need to return an array of post IDs.
 		// This should be rare, but it's possible.
 		foreach ( $actor_ids as $actor ) {
-			$actors[] = ( new Debug_Actors() )->check_actors_wikidata( $actor );
+			if ( lwtv_plugin()->hide_actor_data( $actor, 'all' ) ) {
+				continue;
+			}
+			$actors[] = $this->get_actor_wikidata( $actor );
 		}
 
 		return $actors;
@@ -141,8 +181,9 @@ class Wikidata {
 	 * @return array
 	 */
 	private function get_by_wikidata( $wikidata ): array {
-		$actors = array();
-		$queery = ( new Queeries_Post_Meta() )->make( CPT_Actors::SLUG, 'lezactors_wikidata_qid', $wikidata );
+		$actors    = array();
+		$actor_ids = array();
+		$queery    = ( new Queeries_Post_Meta() )->make( CPT_Actors::SLUG, 'lezactors_wikidata_qid', $wikidata );
 
 		// Add ONLY the IDs to the array.
 		if ( is_object( $queery ) && $queery->have_posts() ) {
@@ -152,7 +193,10 @@ class Wikidata {
 		// If we have more than one actor with the same IMDB ID, we need to return an array of post IDs.
 		// This should be rare, but it's possible.
 		foreach ( $actor_ids as $actor ) {
-			$actors[] = ( new Debug_Actors() )->check_actors_wikidata( $actor );
+			if ( lwtv_plugin()->hide_actor_data( $actor, 'all' ) ) {
+				continue;
+			}
+			$actors[] = $this->get_actor_wikidata( $actor );
 		}
 
 		return $actors;
@@ -169,22 +213,33 @@ class Wikidata {
 
 		$actors = array();
 
+		// Reject empty/blank slugs so the LIKE never degrades to a match-all '%'.
+		$slug = trim( (string) $slug );
+		if ( '' === $slug ) {
+			return array(
+				'error' => __( 'No such actor found.', 'lwtv' ),
+			);
+		}
+
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
 		$possible_ids = $wpdb->get_col(
 			$wpdb->prepare(
-				"SELECT ID FROM {$wpdb->posts} WHERE post_type = 'post_type_actors' AND post_name LIKE %s",
+				"SELECT ID FROM {$wpdb->posts} WHERE post_type = 'post_type_actors' AND post_status = 'publish' AND post_name LIKE %s LIMIT 50",
 				$wpdb->esc_like( $slug ) . '%'
 			)
 		);
 
 		if ( ! $possible_ids ) {
 			return array(
-				'error' => 'No such actor found.',
+				'error' => __( 'No such actor found.', 'lwtv' ),
 			);
 		}
 
 		foreach ( $possible_ids as $actor ) {
-			$actors[] = ( new Debug_Actors() )->check_actors_wikidata( $actor );
+			if ( ! current_user_can( 'edit_post', $actor ) && lwtv_plugin()->hide_actor_data( $actor, 'all' ) ) {
+				continue;
+			}
+			$actors[] = $this->get_actor_wikidata( $actor );
 		}
 
 		return $actors;

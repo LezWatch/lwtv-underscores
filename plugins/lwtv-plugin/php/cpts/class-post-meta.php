@@ -50,7 +50,8 @@ class Post_Meta {
 			'post_type' => CPT_Actors::SLUG,
 		),
 		'lezactors_tmdb_id'             => array(
-			'post_type' => CPT_Actors::SLUG,
+			'post_type'         => CPT_Actors::SLUG,
+			'sanitize_callback' => array( self::class, 'sanitize_numeric_id' ),
 		),
 		'lezactors_tumblr'              => array(
 			'post_type' => CPT_Actors::SLUG,
@@ -131,7 +132,8 @@ class Post_Meta {
 			'post_type' => CPT_Shows::SLUG,
 		),
 		'lezshows_tmdb_id'              => array(
-			'post_type' => CPT_Shows::SLUG,
+			'post_type'         => CPT_Shows::SLUG,
+			'sanitize_callback' => array( self::class, 'sanitize_numeric_id' ),
 		),
 		'lezshows_tvmaze_id'            => array(
 			'post_type' => CPT_Shows::SLUG,
@@ -282,8 +284,20 @@ class Post_Meta {
 					$arguments['show_in_rest'] = true;
 				}
 
+				$arguments['sanitize_callback'] = $meta_data['sanitize_callback'] ?? null;
+
 				register_post_meta( $one_post_type, $meta_name, $arguments );
 			}
 		}
+	}
+
+	/**
+	 * Strip a stored ID meta value to digits only (TMDB IDs are numeric).
+	 *
+	 * @param mixed $value Raw meta value.
+	 * @return string
+	 */
+	public static function sanitize_numeric_id( $value ): string {
+		return preg_replace( '/[^0-9]/', '', (string) $value );
 	}
 }

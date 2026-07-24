@@ -51,13 +51,13 @@ class Data_Author {
 		);
 
 		// Get all the stupid social...
-		$bluesky   = ( ! empty( $user_socials['bluesky'] ) ) ? '<a href="' . $user_socials['bluesky'] . '" target="_blank" rel="nofollow">' . lwtv_plugin()->get_symbolicon( svg: 'bluesky.svg', icon: 'svg-bluesky', max_size: '20' ) . '</a>' : false;
-		$instagram = ( ! empty( $user_socials['instagram'] ) ) ? '<a href="https://instagram.com/' . $user_socials['instagram'] . '" target="_blank" rel="nofollow">' . lwtv_plugin()->get_symbolicon( svg: 'instagram.svg', icon: 'svg-instagram', max_size: '20' ) . '</a>' : false;
-		$threads   = ( ! empty( $user_socials['threads'] ) ) ? '<a href="https://threads.net/' . $user_socials['threads'] . '" target="_blank" rel="nofollow">' . lwtv_plugin()->get_symbolicon( svg: 'threads.svg', icon: 'svg-threads', max_size: '20' ) . '</a>' : false;
-		$twitter   = ( ! empty( $user_socials['twitter'] ) ) ? '<a href="https://twitter.com/' . $user_socials['twitter'] . '" target="_blank" rel="nofollow">' . lwtv_plugin()->get_symbolicon( svg: 'x-twitter.svg', icon: 'svg-x-twitter', max_size: '20' ) . '</a>' : false;
-		$tumblr    = ( ! empty( $user_socials['tumblr'] ) ) ? '<a href="' . $user_socials['tumblr'] . '" target="_blank" rel="nofollow">' . lwtv_plugin()->get_symbolicon( svg: 'tumblr.svg', icon: 'svg-tumblr', max_size: '20' ) . '</a>' : false;
-		$website   = ( ! empty( $user_socials['website'] ) ) ? '<a href="' . $user_socials['website'] . '" target="_blank" rel="nofollow">' . lwtv_plugin()->get_symbolicon( svg: 'home.svg', icon: 'svg-home', max_size: '20' ) . '</a>' : false;
-		$mastodon  = ( ! empty( $user_socials['mastodon'] ) ) ? '<a href="' . $user_socials['mastodon'] . '" target="_blank" rel="nofollow">' . lwtv_plugin()->get_symbolicon( svg: 'mastodon.svg', icon: 'svg-mastodon', max_size: '20' ) . '</a>' : false;
+		$bluesky   = ( ! empty( $user_socials['bluesky'] ) ) ? '<a href="' . esc_url( $user_socials['bluesky'] ) . '" target="_blank" rel="nofollow">' . lwtv_plugin()->get_symbolicon( svg: 'bluesky.svg', icon: 'svg-bluesky', max_size: '20' ) . '</a>' : false;
+		$instagram = ( ! empty( $user_socials['instagram'] ) ) ? '<a href="' . esc_url( 'https://instagram.com/' . $user_socials['instagram'] ) . '" target="_blank" rel="nofollow">' . lwtv_plugin()->get_symbolicon( svg: 'instagram.svg', icon: 'svg-instagram', max_size: '20' ) . '</a>' : false;
+		$threads   = ( ! empty( $user_socials['threads'] ) ) ? '<a href="' . esc_url( 'https://threads.net/' . $user_socials['threads'] ) . '" target="_blank" rel="nofollow">' . lwtv_plugin()->get_symbolicon( svg: 'threads.svg', icon: 'svg-threads', max_size: '20' ) . '</a>' : false;
+		$twitter   = ( ! empty( $user_socials['twitter'] ) ) ? '<a href="' . esc_url( 'https://twitter.com/' . $user_socials['twitter'] ) . '" target="_blank" rel="nofollow">' . lwtv_plugin()->get_symbolicon( svg: 'x-twitter.svg', icon: 'svg-x-twitter', max_size: '20' ) . '</a>' : false;
+		$tumblr    = ( ! empty( $user_socials['tumblr'] ) ) ? '<a href="' . esc_url( $user_socials['tumblr'] ) . '" target="_blank" rel="nofollow">' . lwtv_plugin()->get_symbolicon( svg: 'tumblr.svg', icon: 'svg-tumblr', max_size: '20' ) . '</a>' : false;
+		$website   = ( ! empty( $user_socials['website'] ) ) ? '<a href="' . esc_url( $user_socials['website'] ) . '" target="_blank" rel="nofollow">' . lwtv_plugin()->get_symbolicon( svg: 'home.svg', icon: 'svg-home', max_size: '20' ) . '</a>' : false;
+		$mastodon  = ( ! empty( $user_socials['mastodon'] ) ) ? '<a href="' . esc_url( $user_socials['mastodon'] ) . '" target="_blank" rel="nofollow">' . lwtv_plugin()->get_symbolicon( svg: 'mastodon.svg', icon: 'svg-mastodon', max_size: '20' ) . '</a>' : false;
 
 		// Set the array in order and remove any empty ones.
 		$social_array = array( $website, $twitter, $instagram, $threads, $tumblr, $bluesky, $mastodon );

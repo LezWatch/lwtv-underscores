@@ -37,9 +37,11 @@ class Is_Actor_Queer {
 			return false;
 		}
 
-		// If we're private, we aren't queer no matter what to protect identities
-		// We do this first to protect identities.
-		if ( 'private' === get_post_status( $the_id ) ) {
+		// Only compute/store queer status for published actors. Any other
+		// status (private/draft/pending/future/trash) is treated as not-queer
+		// to protect unpublished and privacy-hidden identities, and to avoid
+		// writing post meta for unpublished records.
+		if ( 'publish' !== get_post_status( $the_id ) ) {
 			return false;
 		}
 

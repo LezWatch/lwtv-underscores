@@ -149,7 +149,7 @@ class Display_Calendar {
 		} else {
 			foreach ( $shows as $show ) {
 				// Use pre-processed data from Data Processor
-				$show_name    = $show['show_name'];
+				$show_name    = esc_html( $show['show_name'] );
 				$lwtv_date    = $show['time_data']['formatted_time'];
 				$show_content = ( is_array( $show['title'] ) ) ? $show_name . $show['episode_badge'] : $show_name;
 				$cell        .= '<li class="list-group-item list-group-item-action list-group-item' . $highlight . '"><small>' . $lwtv_date . '</br>' . $show_content . '</small></li>';
