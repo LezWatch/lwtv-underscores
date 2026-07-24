@@ -133,26 +133,10 @@ if ( ! isset( $sb_callouts ) ) {
 		return array( $lwtv_sb_tied[0], $lwtv_sb_max, count( $lwtv_sb_tied ) );
 	};
 
-	list( $lwtv_sb_letter, $lwtv_sb_letter_n, $lwtv_sb_letter_ties )    = $lwtv_sb_top( $sb_by_name, true );
 	list( $lwtv_sb_format, $lwtv_sb_format_n, $lwtv_sb_format_ties )    = $lwtv_sb_top( $sb_by_format );
 	list( $lwtv_sb_country, $lwtv_sb_country_n, $lwtv_sb_country_ties ) = $lwtv_sb_top( $sb_by_country );
 
 	$sb_callouts = array();
-
-	if ( $lwtv_sb_letter ) {
-		if ( 1 === $lwtv_sb_letter_ties ) {
-			/* translators: 1: letter, 2: number of shows whose names begin with it. */
-			$lwtv_sb_letter_text = sprintf( _n( '%2$s show\'s name begins with %1$s.', '%2$s shows\' names begin with %1$s.', $lwtv_sb_letter_n, 'lwtv' ), $lwtv_sb_letter, number_format_i18n( $lwtv_sb_letter_n ) );
-		} else {
-			/* translators: 1: number of tied letters, 2: shows per letter. */
-			$lwtv_sb_letter_text = sprintf( _n( '%1$s letters tie for the most, with %2$s show each.', '%1$s letters tie for the most, with %2$s shows each.', $lwtv_sb_letter_n, 'lwtv' ), number_format_i18n( $lwtv_sb_letter_ties ), number_format_i18n( $lwtv_sb_letter_n ) );
-		}
-		$sb_callouts[] = array(
-			'label' => __( 'Most popular starting letter', 'lwtv' ),
-			'icon'  => 'thumbs-up.svg',
-			'text'  => $lwtv_sb_letter_text,
-		);
-	}
 
 	if ( $lwtv_sb_format ) {
 		if ( 1 === $lwtv_sb_format_ties ) {
