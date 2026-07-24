@@ -77,4 +77,13 @@
 
 	<!-- External Libraries -->
 	<exclude-pattern>*/ICal/*</exclude-pattern>
+
+	<!-- Non Code Folders -->
+	<exclude-pattern>.claude/*</exclude-pattern>
+	<exclude-pattern>.git*/*</exclude-pattern>
+	<exclude-pattern>.superpowers/*</exclude-pattern>
+	<exclude-pattern>.vscode/*</exclude-pattern>
+	<exclude-pattern>CLAUDE*/*</exclude-pattern>
+	<exclude-pattern>docs/*</exclude-pattern>
+
 </ruleset>
