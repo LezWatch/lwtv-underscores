@@ -100,17 +100,21 @@ class Wikidata {
 	 * @return array
 	 */
 	private function get_by_post_id( $post_id ): array {
-		if ( get_post_type( $post_id ) !== CPT_Actors::SLUG || 'publish' !== get_post_status( $post_id ) ) {
+		if ( get_post_type( $post_id ) !== CPT_Actors::SLUG ) {
 			return array(
 				'error' => __( 'Invalid post ID', 'lwtv' ),
 			);
 		}
 
-		// Respect the actor's own privacy request.
-		if ( lwtv_plugin()->hide_actor_data( $post_id, 'all' ) ) {
-			return array(
-				'error' => __( 'Invalid post ID', 'lwtv' ),
-			);
+		// Users who can edit this actor (e.g. the editor's WikiData panel) may
+		// view it regardless of status or privacy. Everyone else only sees a
+		// published actor that has not requested full privacy.
+		if ( ! current_user_can( 'edit_post', $post_id ) ) {
+			if ( 'publish' !== get_post_status( $post_id ) || lwtv_plugin()->hide_actor_data( $post_id, 'all' ) ) {
+				return array(
+					'error' => __( 'Invalid post ID', 'lwtv' ),
+				);
+			}
 		}
 
 		$wikidata = $this->get_actor_wikidata( $post_id );
@@ -121,9 +125,10 @@ class Wikidata {
 	/**
 	 * Get an actor's WikiData comparison for the REST response.
 	 *
-	 * Unauthenticated callers get the stored comparison meta only — no live
-	 * WikiData fetch and no post-meta write. Users who can edit posts (e.g. the
-	 * block editor panel) get a fresh comparison, which also refreshes the meta.
+	 * Callers who cannot edit the actor get the stored comparison meta only —
+	 * no live WikiData fetch and no post-meta write. Users who can edit the
+	 * actor (e.g. the editor's WikiData panel) get a fresh comparison, which
+	 * also refreshes the meta.
 	 *
 	 * Both branches return the same shape: an array keyed by actor ID, matching
 	 * what check_actors_wikidata() returns (it stores the inner value under
@@ -133,7 +138,7 @@ class Wikidata {
 	 * @return array
 	 */
 	private function get_actor_wikidata( $actor_id ): array {
-		if ( current_user_can( 'edit_posts' ) ) {
+		if ( current_user_can( 'edit_post', $actor_id ) ) {
 			return ( new Debug_Actors() )->check_actors_wikidata( $actor_id );
 		}
 
@@ -231,7 +236,7 @@ class Wikidata {
 		}
 
 		foreach ( $possible_ids as $actor ) {
-			if ( lwtv_plugin()->hide_actor_data( $actor, 'all' ) ) {
+			if ( ! current_user_can( 'edit_post', $actor ) && lwtv_plugin()->hide_actor_data( $actor, 'all' ) ) {
 				continue;
 			}
 			$actors[] = $this->get_actor_wikidata( $actor );
