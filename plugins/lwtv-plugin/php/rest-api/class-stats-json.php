@@ -559,13 +559,16 @@ class Stats_JSON {
 		$post_status = get_post_status( $id );
 		$post_type   = get_post_type( $id );
 
-		if ( ! $post_status || 'post_type_' . $cpt . 's' !== $post_type ) {
+		if ( 'publish' !== $post_status || 'post_type_' . $cpt . 's' !== $post_type ) {
 			$stats_array = array( 'Error: Invalid ' . ucfirst( $cpt ) . ' ID provided.' );
 			return $stats_array;
 		}
 
 		switch ( $cpt ) {
 			case 'actor':
+				if ( lwtv_plugin()->hide_actor_data( $id, 'all' ) ) {
+					return array( 'Error: Invalid Actor ID provided.' );
+				}
 				$stats_array = array(
 					'id'         => $id,
 					'name'       => get_the_title( $id ),
