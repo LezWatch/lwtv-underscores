@@ -147,11 +147,18 @@ class Dead {
 		$results       = wp_cache_get( $raw_cache_key );
 
 		if ( false === $results ) {
+			// Join wp_posts and restrict to published characters. ACF copies the
+			// death-date meta onto revision posts (post_type 'revision'), so a bare
+			// postmeta scan double-counts every revised character — inflating the
+			// per-year chart. build_list() already filters this way; match it here.
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
 			$results = $wpdb->get_results(
-				"SELECT post_id, meta_value FROM {$wpdb->postmeta}
-				WHERE meta_key LIKE 'lezchars_death_year_%_date'
-				AND meta_value != ''",
+				"SELECT pm.post_id, pm.meta_value FROM {$wpdb->postmeta} pm
+				INNER JOIN {$wpdb->posts} p ON p.ID = pm.post_id
+				WHERE pm.meta_key LIKE 'lezchars_death_year_%_date'
+				AND pm.meta_value != ''
+				AND p.post_type = 'post_type_characters'
+				AND p.post_status = 'publish'",
 				ARRAY_A
 			);
 
@@ -527,12 +534,24 @@ class Dead {
 			$array = array();
 
 			foreach ( $results as $row ) {
-				$char_id   = (int) $row['ID'];
-				$died_date = $row['died_date'];
+				$char_id  = (int) $row['ID'];
+				$died_raw = $row['died_date'];
 
-				if ( empty( $died_date ) ) {
+				if ( empty( $died_raw ) ) {
 					continue;
 				}
+
+				// Canonicalize to Y-m-d. ACF's date_picker stores raw postmeta as
+				// Ymd (dashless) while legacy rows are Y-m-d. Keying on the raw value
+				// let krsort() — a string sort — interleave the two formats wrong
+				// (a dashless date sorts above a dashed one in the same year), which
+				// both misordered the table and corrupted the pairwise "days since"
+				// gaps. Normalizing first makes the string sort chronological and
+				// merges any day stored under both formats.
+				$digits    = preg_replace( '/\D/', '', $died_raw );
+				$died_date = ( 8 === strlen( $digits ) )
+					? substr( $digits, 0, 4 ) . '-' . substr( $digits, 4, 2 ) . '-' . substr( $digits, 6, 2 )
+					: $died_raw;
 
 				if ( ! isset( $array[ $died_date ] ) ) {
 					$array[ $died_date ] = array(
@@ -546,7 +565,8 @@ class Dead {
 				);
 			}
 
-			// sort by date (newest first)
+			// sort by date (newest first) — keys are now canonical Y-m-d, so a
+			// string reverse-sort is chronological.
 			krsort( $array );
 
 			// Cache the results for 1 day

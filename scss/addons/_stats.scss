@@ -1658,7 +1658,7 @@ canvas {
 
 	.lwtv-stats-subnav {
 		display: flex;
-		flex-wrap: nowrap;
+		flex-wrap: wrap;
 		gap: 20px;
 		margin-bottom: 1.5rem;
 		// Too many views to fit one row on tablets/phones (e.g. Shows has 10).
@@ -2574,6 +2574,14 @@ canvas {
 		margin-top: 12px;
 		font-size: 0.85rem;
 		color: rgba(colors.$white, 0.82);
+	}
+
+	.lwtv-toll-detail {
+		margin-top: 4px;
+		font-size: 0.85rem;
+		font-weight: 600;
+		color: rgba(colors.$white, 0.92);
+		font-variant-numeric: tabular-nums;
 	}
 
 	.lwtv-toll-chip {
