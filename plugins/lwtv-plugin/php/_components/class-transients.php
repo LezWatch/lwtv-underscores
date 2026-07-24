@@ -449,14 +449,17 @@ class Transients implements Component, Templater {
 	 * Get the time the /this-year/ caches for a given year were last built.
 	 *
 	 * Reads the stats-cache index for that year's per-year keys
-	 * (lwtv_*_year_*_<year>) and returns the OLDEST build time among the
-	 * components that are still cached — the page is only as fresh as its
-	 * stalest piece. Read-only: it never writes the option.
+	 * (lwtv_*_year_*_<year>) and returns the OLDEST build time among them — the
+	 * page is only as fresh as its stalest piece. The index alone is
+	 * authoritative: the /this-year/ page rebuilds all of its data on every
+	 * render, so an indexed key is by definition current when this runs. We
+	 * deliberately do NOT probe get_transient() to confirm the value is live —
+	 * that wrapper is forced to return false in development
+	 * (LWTV_DISABLE_TRANSIENTS), which would suppress the note there for no
+	 * real benefit. Read-only: it never writes the option.
 	 *
 	 * @param  int      $year The calendar year.
-	 * @return int|null       Unix timestamp, or null if nothing is cached
-	 *                        (cold cache, or a persistent object cache with no
-	 *                        index yet).
+	 * @return int|null       Unix timestamp, or null if nothing is indexed yet.
 	 */
 	public function get_this_year_generated_time( int $year ): ?int {
 		$index  = self::current_stats_index();
@@ -465,12 +468,6 @@ class Transients implements Component, Templater {
 
 		foreach ( $index as $key => $built ) {
 			if ( ! str_starts_with( (string) $key, 'lwtv_' ) || ! str_ends_with( (string) $key, $suffix ) ) {
-				continue;
-			}
-
-			// Skip entries whose transient has since expired, so we never
-			// report a build time for data that is no longer on the page.
-			if ( false === self::get_transient( $key ) ) {
 				continue;
 			}
 
