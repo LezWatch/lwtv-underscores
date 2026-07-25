@@ -141,7 +141,7 @@ if ( ! isset( $sb_callouts ) ) {
 	if ( $lwtv_sb_format ) {
 		if ( 1 === $lwtv_sb_format_ties ) {
 			/* translators: 1: format name, 2: number of shows. */
-			$lwtv_sb_format_text = sprintf( _n( '%2$s %1$s show, the most common format.', '%2$s %1$s shows, the most common format.', $lwtv_sb_format_n, 'lwtv' ), $lwtv_sb_format, number_format_i18n( $lwtv_sb_format_n ) );
+			$lwtv_sb_format_text = sprintf( _n( '%2$s %1$ss, the most common format.', '%2$s %1$s shows, the most common format.', $lwtv_sb_format_n, 'lwtv' ), $lwtv_sb_format, number_format_i18n( $lwtv_sb_format_n ) );
 		} else {
 			/* translators: 1: number of tied formats, 2: shows per format. */
 			$lwtv_sb_format_text = sprintf( _n( '%1$s formats tie for the most, with %2$s show each.', '%1$s formats tie for the most, with %2$s shows each.', $lwtv_sb_format_n, 'lwtv' ), number_format_i18n( $lwtv_sb_format_ties ), number_format_i18n( $lwtv_sb_format_n ) );
