@@ -1628,14 +1628,17 @@ canvas {
 		background-color: $ramp-5;
 	}
 
-	@media (max-width: 767px) {
+	// Tablet (e.g. iPad portrait, ~810-834px): a 4-across row is too cramped to
+	// read, so drop to 2x2 here rather than waiting for a phone-width breakpoint.
+	// Mirrors the This Year ribbon (.lwtv-ty-ribbon) breakpoints.
+	@media (max-width: 991px) {
 
 		.lwtv-metric-grid {
 			grid-template-columns: repeat(2, 1fr);
 		}
 	}
 
-	@media (max-width: 420px) {
+	@media (max-width: 575px) {
 
 		.lwtv-metric-grid {
 			grid-template-columns: 1fr;
