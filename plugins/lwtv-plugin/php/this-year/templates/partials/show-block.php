@@ -19,6 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @var string $sb_title      Fully assembled heading sentence, count + copy + year.
  * @var string $sb_desc       Subtitle sentence under the header.
  * @var string $sb_foot       Footnote sentence under the group-card grid.
+ * @var string $sb_source     Source (new, canceled, on-air)
  * @var array  $sb_by_name    [ marker => [ showName => {url,name,country,format,airdates} ] ].
  * @var array  $sb_by_format  [ format => [ showName => {url,name,country,format,airdates} ] ].
  * @var array  $sb_by_country [ country => [ showName => {url,name,country,format,airdates} ] ].
@@ -140,11 +141,11 @@ if ( ! isset( $sb_callouts ) ) {
 
 	if ( $lwtv_sb_format ) {
 		if ( 1 === $lwtv_sb_format_ties ) {
-			/* translators: 1: format name, 2: number of shows. */
-			$lwtv_sb_format_text = sprintf( _n( '%2$s %1$ss, the most common format.', '%2$s %1$s shows, the most common format.', $lwtv_sb_format_n, 'lwtv' ), $lwtv_sb_format, number_format_i18n( $lwtv_sb_format_n ) );
+			/* translators: 1: format name, 2: number of shows, 3: type of output (new, canceled, on-air) */
+			$lwtv_sb_format_text = sprintf( _n( '%2$s %3$s %1$s, the most common format.', '%2$s %3$s %1$ss, the most common format.', $lwtv_sb_format_n, 'lwtv' ), $lwtv_sb_format, number_format_i18n( $lwtv_sb_format_n ), $sb_source );
 		} else {
 			/* translators: 1: number of tied formats, 2: shows per format. */
-			$lwtv_sb_format_text = sprintf( _n( '%1$s formats tie for the most, with %2$s show each.', '%1$s formats tie for the most, with %2$s shows each.', $lwtv_sb_format_n, 'lwtv' ), number_format_i18n( $lwtv_sb_format_ties ), number_format_i18n( $lwtv_sb_format_n ) );
+			$lwtv_sb_format_text = sprintf( _n( '%1$s formats tie for the most, with %2$s %3$s show each.', '%1$s formats tie for the most, with %2$s %3$s shows each.', $lwtv_sb_format_n, 'lwtv' ), number_format_i18n( $lwtv_sb_format_ties ), number_format_i18n( $lwtv_sb_format_n ), $sb_source );
 		}
 		$sb_callouts[] = array(
 			'label' => __( 'Most popular format', 'lwtv' ),
@@ -156,10 +157,10 @@ if ( ! isset( $sb_callouts ) ) {
 	if ( $lwtv_sb_country ) {
 		if ( 1 === $lwtv_sb_country_ties ) {
 			/* translators: 1: country name, 2: number of shows. */
-			$lwtv_sb_country_text = sprintf( _n( '%1$s has %2$s show, more than any other country.', '%1$s has %2$s shows, more than any other country.', $lwtv_sb_country_n, 'lwtv' ), $lwtv_sb_country, number_format_i18n( $lwtv_sb_country_n ) );
+			$lwtv_sb_country_text = sprintf( _n( '%1$s has %2$s %3$s show, more than any other country.', '%1$s has %2$s %3$s shows, more than any other country.', $lwtv_sb_country_n, 'lwtv' ), $lwtv_sb_country, number_format_i18n( $lwtv_sb_country_n ), $sb_source );
 		} else {
 			/* translators: 1: number of tied countries, 2: shows per country. */
-			$lwtv_sb_country_text = sprintf( _n( '%1$s countries tie for the most, with %2$s show each.', '%1$s countries tie for the most, with %2$s shows each.', $lwtv_sb_country_n, 'lwtv' ), number_format_i18n( $lwtv_sb_country_ties ), number_format_i18n( $lwtv_sb_country_n ) );
+			$lwtv_sb_country_text = sprintf( _n( '%1$s countries tie for the most, with %2$s %3$s show each.', '%1$s countries tie for the most, with %2$s %3$s shows each.', $lwtv_sb_country_n, 'lwtv' ), number_format_i18n( $lwtv_sb_country_ties ), number_format_i18n( $lwtv_sb_country_n ), $sb_source );
 		}
 		$sb_callouts[] = array(
 			'label' => __( 'Most popular country', 'lwtv' ),

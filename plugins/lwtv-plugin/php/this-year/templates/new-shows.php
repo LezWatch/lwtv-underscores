@@ -37,6 +37,7 @@ if ( 0 === $sb_count ) {
 $sb_title      = sprintf( _n( '%1$s show premiered in %2$s', '%1$s shows premiered in %2$s', $sb_count, 'lwtv' ), number_format_i18n( $sb_count ), (string) $this_year );
 $sb_desc       = __( 'Series and TV movies that started airing this year.', 'lwtv' );
 $sb_foot       = __( 'A show counts as new the year its first episode aired.', 'lwtv' );
+$sb_source     = 'new';
 $sb_by_name    = $new_shows_by_name;
 $sb_by_format  = $new_shows_by_format;
 $sb_by_country = $new_shows_by_country;
