@@ -27,7 +27,8 @@
     "require-dev": {
         "wp-coding-standards/wpcs": "^3.0",
         "phpcompatibility/phpcompatibility-wp": "*",
-        "php-stubs/wp-cli-stubs": "^2.9"
+        "php-stubs/wp-cli-stubs": "^2.9",
+        "phpunit/phpunit": "^11"
     },
     "config": {
         "allow-plugins": {

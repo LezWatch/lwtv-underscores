@@ -302,15 +302,20 @@ class Shows_Builder {
 
 		// ACF repeater fields store sub-fields as separate meta keys (lezchars_show_group_N_show),
 		// not as a single serialized value under lezchars_show_group. Query sub-field keys to find
-		// which characters are linked to our target shows.
+		// which characters are linked to our target shows. Join wp_posts and filter to published
+		// characters — ACF duplicates this meta onto post revisions (post_type=revision), and those
+		// revision IDs would otherwise leak in as phantom, nameless cast members.
 		$placeholders = implode( ',', array_fill( 0, count( $show_ids ), '%d' ) );
 
 		// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 		$query                   = $wpdb->prepare(
-			"SELECT DISTINCT post_id
-			FROM {$wpdb->postmeta}
-			WHERE meta_key REGEXP 'lezchars_show_group_[0-9]+_show'
-			AND meta_value IN ($placeholders)",
+			"SELECT DISTINCT pm.post_id
+			FROM {$wpdb->postmeta} pm
+			INNER JOIN {$wpdb->posts} p ON pm.post_id = p.ID
+			WHERE pm.meta_key REGEXP 'lezchars_show_group_[0-9]+_show'
+			AND pm.meta_value IN ($placeholders)
+			AND p.post_type = 'post_type_characters'
+			AND p.post_status = 'publish'",
 			$show_ids
 		);
 		$candidate_character_ids = $wpdb->get_col( $query );

@@ -454,8 +454,9 @@
 		.lwtv-tail-name,
 		.lwtv-trend-current-sub,
 		.lwtv-trend-desc,
-		.lwtv-ty-highlight-desc,
-		.lwtv-ty-highlight-kicker,
+		.lwtv-ty-standout-desc,
+		.lwtv-ty-standout-kicker,
+		.lwtv-ty-where-eyebrow,
 		.lwtv-ty-lead-narrative,
 		.lwtv-ty-lifebar-legend-count,
 		.lwtv-ty-yearnav-caption,
@@ -577,7 +578,10 @@
 		}
 
 		.lwtv-ty-metric,
-		.lwtv-ty-highlight {
+		.lwtv-ty-standout,
+		.lwtv-ty-deaths,
+		.lwtv-ty-where-card,
+		.lwtv-ty-panel-side {
 			border-color: rgba(colors.$white, 0.12);
 		}
 
@@ -589,29 +593,91 @@
 		.lwtv-ty-metric--pink .lwtv-ty-metric-label { color: colors.$lwtv-pink-light; }
 		.lwtv-ty-metric--amber .lwtv-ty-metric-label { color: $lwtv-yellow-light; }
 
-		.lwtv-ty-highlight-chip--green {
+		.lwtv-ty-standout-chip--green {
 			color: $lwtv-green-light;
-			background-color: rgba(colors.$lwtv-green, 0.16)-light;
+			background-color: rgba(colors.$lwtv-green, 0.2);
 		}
 
-		.lwtv-ty-highlight-chip--red {
+		.lwtv-ty-standout-chip--red {
 			color: $lwtv-red-light;
-			background-color: rgba(colors.$lwtv-red, 0.16)-light;
+			background-color: rgba(colors.$lwtv-red, 0.2);
 		}
 
-		.lwtv-ty-highlight-chip--blue {
+		.lwtv-ty-standout-chip--blue {
 			color: $lwtv-blue-light;
-			background-color: rgba(colors.$lwtv-blue, 0.16)-light;
+			background-color: rgba(colors.$lwtv-blue, 0.2);
 		}
 
-		.lwtv-ty-highlight-chip--pink {
+		.lwtv-ty-standout-chip--pink {
 			color: colors.$lwtv-pink-light;
-			background-color: rgba(colors.$lwtv-pink-light, 0.16);
+			background-color: rgba(colors.$lwtv-pink, 0.2);
 		}
 
-		.lwtv-ty-highlight-chip--amber {
+		.lwtv-ty-standout-chip--amber {
 			color: $lwtv-yellow-light;
-			background-color: rgba(colors.$lwtv-yellow, 0.16)-light;
+			background-color: rgba(colors.$lwtv-yellow, 0.2);
+		}
+
+		// This Year v2 Overview components — lift translucent-black borders/rules,
+		// brighten deep fills/markers, and swap deep text for readable dark tokens.
+		.lwtv-ty-chapter-rule,
+		.lwtv-ty-bar-track,
+		.lwtv-ty-deaths-marker--empty,
+		.lwtv-ty-deaths-strip::before {
+			background-color: rgba(colors.$white, 0.15);
+		}
+
+		.lwtv-ty-panel-death,
+		.lwtv-ty-panel-fact {
+			border-color: rgba(colors.$white, 0.12);
+		}
+
+		.lwtv-ty-chapter-hint,
+		.lwtv-ty-where-sub,
+		.lwtv-ty-where-empty,
+		.lwtv-ty-deaths-sub,
+		.lwtv-ty-deaths-month-initial,
+		.lwtv-ty-panel-death-date {
+			color: colors.$lwtv-grey-light;
+		}
+
+		.lwtv-ty-deaths-title {
+			color: $lwtv-red-light;
+		}
+
+		.lwtv-ty-deaths-marker--count,
+		.lwtv-ty-deaths-marker--single {
+			background-color: colors.$lwtv-red;
+		}
+
+		.lwtv-ty-deaths-today {
+			color: colors.$lwtv-grey-light;
+			border-color: rgba(colors.$white, 0.35);
+		}
+
+		a.lwtv-ty-metric.active {
+			outline-color: colors.$white;
+		}
+
+		// Breakdown bar fills: the light-mode deep tones are muddy on dark.
+		.lwtv-ty-bar-fill--green {
+			background-color: colors.$lwtv-green;
+		}
+
+		.lwtv-ty-bar-fill--red {
+			background-color: colors.$lwtv-red;
+		}
+
+		.lwtv-ty-bar-fill--blue {
+			background-color: colors.$lwtv-blue;
+		}
+
+		.lwtv-ty-bar-fill--pink {
+			background-color: colors.$lwtv-pink;
+		}
+
+		.lwtv-ty-bar-fill--amber {
+			background-color: colors.$lwtv-yellow;
 		}
 
 		// Characters On Air: pill toggle, grid rows, and cast cards need the

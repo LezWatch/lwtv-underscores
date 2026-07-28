@@ -31,12 +31,34 @@ if ( 0 === $lwtv_coa_count ) {
 	return;
 }
 
-// Sort By Show cards by cast size, largest first.
+// Sort By Show cards alphabetically by title, ignoring a leading article
+// ("The", "A", "An") so e.g. "The Simpsons" files under S.
 $lwtv_ty_coa_by_show = $characters_on_air_by_show;
+
+/**
+ * Normalize a show title into a sort key by dropping a single leading English
+ * article so titles alphabetize the way a catalog would ("The Simpsons" → "S").
+ *
+ * Only the three English articles are handled: the vast majority of titles are
+ * English, and non-English titles are impractical to article-strip reliably.
+ * Alternate names are stored in a separate field, so this stays deliberately
+ * simple. strnatcasecmp() (below) compares case-insensitively, so the article
+ * match just needs the /i flag rather than lowercasing the whole title.
+ *
+ * @param string $lwtv_ty_name The show title.
+ * @return string The comparison key.
+ */
+$lwtv_ty_coa_sort_key = static function ( string $lwtv_ty_name ): string {
+	return preg_replace( '/^(?:a|an|the)\s+/i', '', trim( $lwtv_ty_name ) );
+};
+
 usort(
 	$lwtv_ty_coa_by_show,
-	static function ( $lwtv_ty_a, $lwtv_ty_b ) {
-		return count( $lwtv_ty_b['characters'] ) - count( $lwtv_ty_a['characters'] );
+	static function ( $lwtv_ty_a, $lwtv_ty_b ) use ( $lwtv_ty_coa_sort_key ) {
+		return strnatcasecmp(
+			$lwtv_ty_coa_sort_key( (string) $lwtv_ty_a['name'] ),
+			$lwtv_ty_coa_sort_key( (string) $lwtv_ty_b['name'] )
+		);
 	}
 );
 

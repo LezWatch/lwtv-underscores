@@ -118,6 +118,132 @@ class Characters_Builder {
 	}
 
 	/**
+	 * Busiest-actor tally: how many of this year's queer characters each actor
+	 * played. Thin reader over the combined Overview stats pass.
+	 *
+	 * @param int $year The year to tally.
+	 * @return array [ (int) actor_id => (int) character count ].
+	 */
+	public function get_actor_counts_for_year( int $year ): array {
+		return $this->get_overview_character_stats( $year )['actor_counts'];
+	}
+
+	/**
+	 * Characters On Air panel extras (in 2+ shows / debuting / non-binary). Thin
+	 * reader over the combined Overview stats pass.
+	 *
+	 * @param int $year The year to tally.
+	 * @return array { @type int $multi_show, @type int $debuting, @type int $non_binary }
+	 */
+	public function get_character_extras_for_year( int $year ): array {
+		return $this->get_overview_character_stats( $year )['extras'];
+	}
+
+	/**
+	 * Combined Overview stats for the year, computed in a single pass over the
+	 * year's characters and cached together. Walking the character set — and
+	 * reading each one's show group — is the expensive part, so the busiest-actor
+	 * tally and the Characters-panel extras are derived side by side rather than
+	 * in two separate passes.
+	 *
+	 * @param int $year The year to tally.
+	 * @return array {
+	 *     @type array $actor_counts [ (int) actor_id => (int) character count ].
+	 *     @type array $extras       { @type int $multi_show, @type int $debuting, @type int $non_binary }.
+	 * }
+	 */
+	public function get_overview_character_stats( int $year ): array {
+		$empty = array(
+			'actor_counts' => array(),
+			'extras'       => array(
+				'multi_show' => 0,
+				'debuting'   => 0,
+				'non_binary' => 0,
+			),
+		);
+
+		if ( $year < 1900 || $year > gmdate( 'Y' ) + 1 ) {
+			return $empty;
+		}
+
+		$cache_key     = 'lwtv_overview_char_stats_year_' . $year;
+		$cached_result = lwtv_plugin()->get_transient( $cache_key );
+		if ( false !== $cached_result ) {
+			return (array) $cached_result;
+		}
+
+		global $wpdb;
+		$stats = $empty;
+
+		try {
+			// Same character selection as get_characters_for_year(): everyone with
+			// a show relationship; we filter to the year per character below.
+			$query = "SELECT DISTINCT c.ID
+				FROM {$wpdb->posts} c
+				INNER JOIN {$wpdb->postmeta} appears_meta ON c.ID = appears_meta.post_id
+				WHERE c.post_type = 'post_type_characters'
+					AND c.post_status = 'publish'
+					AND appears_meta.meta_key LIKE 'lezchars_show_group_%_appears'
+					AND appears_meta.meta_value IS NOT NULL
+					AND appears_meta.meta_value != ''";
+
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- No user input in query
+			$results = $wpdb->get_results( $query, ARRAY_A );
+
+			foreach ( $results as $row ) {
+				$char_id    = (int) $row['ID'];
+				$show_group = get_field( 'lezchars_show_group', $char_id );
+
+				if ( ! is_array( $show_group ) || ! $this->check_character_appeared_in_year( $show_group, $year ) ) {
+					continue;
+				}
+
+				// Busiest actor: tally every performer of this character.
+				$actor_ids = get_field( 'lezchars_actor', $char_id ) ?: array();
+				if ( ! is_array( $actor_ids ) ) {
+					$actor_ids = array( $actor_ids );
+				}
+				foreach ( $actor_ids as $actor ) {
+					$actor_id = is_object( $actor ) ? (int) $actor->ID : (int) $actor;
+					// Post 14080 is the "Unknown" placeholder actor — a catch-all for
+					// roles with no confirmed performer — so it must never be counted
+					// as a real actor's workload / win "busiest actor".
+					if ( $actor_id <= 0 || 14080 === $actor_id ) {
+						continue;
+					}
+					$stats['actor_counts'][ $actor_id ] = ( $stats['actor_counts'][ $actor_id ] ?? 0 ) + 1;
+				}
+
+				// Panel extras: multi-show / debuting / non-binary.
+				$facts = Character_Facts::for_year( $show_group, $year );
+				if ( $facts['shows_this_year'] >= 2 ) {
+					++$stats['extras']['multi_show'];
+				}
+				if ( $facts['debuted'] ) {
+					++$stats['extras']['debuting'];
+				}
+
+				$genders = get_the_terms( $char_id, 'lez_gender' );
+				if ( is_array( $genders ) ) {
+					foreach ( $genders as $gender ) {
+						if ( 'non-binary' === $gender->slug ) {
+							++$stats['extras']['non_binary'];
+							break;
+						}
+					}
+				}
+			}
+
+			lwtv_plugin()->set_transient( $cache_key, $stats, DAY_IN_SECONDS );
+		} catch ( \Exception $e ) {
+			lwtv_plugin()->debug_log( 'this-year', 'Error in Characters::get_overview_character_stats: ' . $e->getMessage() );
+			return $empty;
+		}
+
+		return $stats;
+	}
+
+	/**
 	 * Check if a character appeared in a specific year based on their show group data
 	 *
 	 * @param array $show_group_data The serialized show group data

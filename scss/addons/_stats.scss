@@ -259,6 +259,14 @@ canvas {
 		}
 	}
 
+	.lwtv-ty-lead-body .btn-group {
+		margin-top: 10px;
+
+		a {
+			font-size: 0.85rem;
+		}
+	}
+
 	.lwtv-ty-lead-media {
 		flex: 0 0 auto;
 		width: 35%;
@@ -384,6 +392,104 @@ canvas {
 		}
 	}
 
+	// Tiles that are switcher tabs: dimmed until selected/hovered, with a ring
+	// and a caret pointing down at the panel when active.
+	a.lwtv-ty-metric {
+		display: block;
+		color: inherit;
+		text-decoration: none;
+		opacity: 0.72;
+		transition: opacity 0.15s ease;
+
+		&:hover,
+		&:focus,
+		&.active {
+			opacity: 1;
+		}
+
+		&.active {
+			position: relative;
+			outline: 2px solid colors.$lwtv-grey-deep;
+			outline-offset: 2px;
+
+			&::after {
+				position: absolute;
+				bottom: -7px;
+				left: 50%;
+				width: 12px;
+				height: 12px;
+				background-color: inherit;
+				border-radius: 2px;
+				transform: translateX(-50%) rotate(45deg);
+				content: "";
+			}
+		}
+	}
+
+	// Chapter 01 drill-in panel: eleven-year chart beside a breakdown list.
+	.lwtv-ty-panels {
+		margin-bottom: 34px;
+	}
+
+	.lwtv-ty-panel-grid {
+		display: grid;
+		grid-template-columns: 1.15fr 1fr;
+		gap: 24px;
+		align-items: stretch;
+
+		@media (max-width: 767px) {
+			grid-template-columns: 1fr;
+		}
+	}
+
+	.lwtv-ty-panel-side {
+		padding: 20px 22px;
+		border: 1px solid colors.$lwtv-grey-border;
+		border-radius: 14px;
+	}
+
+	.lwtv-ty-panel-deaths {
+		margin: 0 0 12px;
+		padding: 0;
+		list-style: none;
+	}
+
+	.lwtv-ty-panel-death {
+		display: flex;
+		gap: 10px;
+		justify-content: space-between;
+		padding: 5px 0;
+		font-size: 0.9rem;
+		border-bottom: 1px solid colors.$lwtv-grey-border;
+	}
+
+	.lwtv-ty-panel-death-date {
+		color: colors.$lwtv-grey-medium;
+		font-variant-numeric: tabular-nums;
+		white-space: nowrap;
+	}
+
+	// Characters panel extra facts (multi-show / debuting / non-binary).
+	.lwtv-ty-panel-facts {
+		margin: 14px 0 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.lwtv-ty-panel-fact {
+		display: flex;
+		gap: 10px;
+		justify-content: space-between;
+		padding: 6px 0;
+		font-size: 0.9rem;
+		border-top: 1px solid colors.$lwtv-grey-border;
+	}
+
+	.lwtv-ty-panel-fact-num {
+		font-weight: 700;
+		font-variant-numeric: tabular-nums;
+	}
+
 	// Overview: shows lifecycle stacked bar (New / Continuing / Canceled).
 	.lwtv-ty-lifebar {
 		margin-bottom: 24px;
@@ -461,83 +567,392 @@ canvas {
 		color: colors.$lwtv-grey-deep;
 	}
 
-	// Overview: highlights of the year.
-	.lwtv-ty-highlights {
+	// Overview: deaths strip — this year's deaths on a twelve-month timeline.
+	.lwtv-ty-deaths {
+		margin-bottom: 34px;
+		padding: 22px 24px 20px;
+		border: 1px solid colors.$lwtv-grey-border;
+		border-radius: 14px;
+	}
+
+	.lwtv-ty-deaths-head {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 10px;
+		align-items: baseline;
+		justify-content: space-between;
+	}
+
+	.lwtv-ty-deaths-title {
+		margin: 0;
+		font-size: 1rem;
+		font-weight: 700;
+		color: colors.$lwtv-red-deep;
+	}
+
+	.lwtv-ty-deaths-link {
+		font-size: 0.8rem;
+		font-weight: 600;
+		color: colors.$lwtv-pink;
+
+		&:hover {
+			color: colors.$lwtv-purple;
+		}
+	}
+
+	.lwtv-ty-deaths-sub {
+		margin: 3px 0 22px;
+		font-size: 0.9rem;
+		color: colors.$lwtv-grey-medium;
+	}
+
+	.lwtv-ty-deaths-strip {
+		position: relative;
+
+		// The timeline rule the markers sit on. Markers are opaque and cover it
+		// where they land, so it reads as a continuous line behind them.
+		&::before {
+			position: absolute;
+			top: 18px;
+			right: 0;
+			left: 0;
+			height: 2px;
+			background-color: colors.$lwtv-grey-border;
+			border-radius: 2px;
+			content: "";
+		}
+	}
+
+	// Shaded band over the part of the year that has already elapsed.
+	.lwtv-ty-deaths-elapsed {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: var(--lwtv-ty-elapsed, 0%);
+		height: 38px;
+		background-color: colors.$lwtv-red-light;
+		border-radius: 6px;
+		opacity: 0.5;
+	}
+
+	// Dashed "today" divider, positioned at the elapsed boundary.
+	.lwtv-ty-deaths-today {
+		position: absolute;
+		top: -2px;
+		left: var(--lwtv-ty-elapsed, 0%);
+		height: 52px;
+		padding-left: 7px;
+		font-size: 0.65rem;
+		font-weight: 600;
+		color: colors.$lwtv-grey-medium;
+		border-left: 1px dashed colors.$lwtv-grey-medium;
+	}
+
+	.lwtv-ty-deaths-months {
+		position: relative;
 		display: grid;
-		grid-template-columns: repeat(3, 1fr);
-		gap: 16px;
+		grid-template-columns: repeat(12, 1fr);
+	}
+
+	.lwtv-ty-deaths-month {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
+
+	// Fixed-height zone so every marker centers on the timeline rule (top:18px),
+	// regardless of the marker's own size.
+	.lwtv-ty-deaths-marker-wrap {
+		display: grid;
+		place-items: center;
+		height: 38px;
+	}
+
+	.lwtv-ty-deaths-marker {
+		display: grid;
+		place-items: center;
+		width: var(--lwtv-ty-marker-size, 5px);
+		height: var(--lwtv-ty-marker-size, 5px);
+		font-size: 0.75rem;
+		font-weight: 700;
+		font-variant-numeric: tabular-nums;
+		line-height: 1;
+		color: colors.$white;
+		border-radius: 50%;
+
+		&--count,
+		&--single {
+			background-color: colors.$lwtv-red-deep;
+		}
+
+		&--empty {
+			background-color: colors.$lwtv-grey-border;
+		}
+	}
+
+	a.lwtv-ty-deaths-marker:hover {
+		background-color: colors.$lwtv-red;
+	}
+
+	.lwtv-ty-deaths-month-initial {
+		margin-top: 9px;
+		font-size: 0.7rem;
+		font-weight: 600;
+		color: colors.$lwtv-grey-medium;
+	}
+
+	// Overview: numbered chapter headings (number, title, rule, optional hint).
+	.lwtv-ty-chapter {
+		display: flex;
+		gap: 12px;
+		align-items: center;
+		margin: 34px 0 18px;
+		// Keep the heading clear of the sticky header when linked to via #id.
+		scroll-margin-top: 50px;
+	}
+
+	.lwtv-ty-chapter-num {
+		flex: 0 0 auto;
+		font-size: 1.1875rem;
+		font-weight: 700;
+		font-variant-numeric: tabular-nums;
+		color: colors.$lwtv-pink;
+	}
+
+	.lwtv-ty-chapter-title {
+		flex: 0 0 auto;
+		margin: 0;
+		font-size: 1.1875rem;
+		font-weight: 700;
+		letter-spacing: -0.015em;
+	}
+
+	.lwtv-ty-chapter-rule {
+		flex: 1 1 auto;
+		height: 1px;
+		background-color: colors.$lwtv-grey-border;
+	}
+
+	.lwtv-ty-chapter-hint {
+		flex: 0 0 auto;
+		font-size: 0.6875rem;
+		color: colors.$lwtv-grey-medium;
+	}
+
+	// Overview: Chapter 02 "Where it came from" — origin / format / role cards.
+	.lwtv-ty-where {
+		display: grid;
+		grid-template-columns: repeat(2, 1fr);
+		gap: 20px;
+		margin-bottom: 10px;
 
 		@media (max-width: 767px) {
 			grid-template-columns: 1fr;
 		}
 	}
 
-	.lwtv-ty-highlight {
-		padding: 20px;
+	.lwtv-ty-where-card {
+		padding: 20px 22px;
 		border: 1px solid colors.$lwtv-grey-border;
 		border-radius: 14px;
 	}
 
-	.lwtv-ty-highlight-chip {
-		display: grid;
-		place-items: center;
-		width: 55px;
-		height: 55px;
-		margin: 0 10px 10px 0;
-		border-radius: 8px;
-		float: left;
-
-		svg {
-			fill: currentColor; // sprite paths have no fill; take the chip's color.
-		}
-	}
-
-	.lwtv-ty-highlight-chip--green {
-		color: colors.$lwtv-green-deep;
-		background-color: colors.$lwtv-green-light;
-	}
-
-	.lwtv-ty-highlight-chip--red {
-		color: colors.$lwtv-red-deep;
-		background-color: colors.$lwtv-red-light;
-	}
-
-	.lwtv-ty-highlight-chip--blue {
-		color: colors.$lwtv-blue-deep;
-		background-color: colors.$lwtv-blue-light;
-	}
-
-	.lwtv-ty-highlight-chip--pink {
-		color: colors.$lwtv-pink-deep;
-		background-color: rgba(colors.$lwtv-pink-deep, 0.12);
-	}
-
-	.lwtv-ty-highlight-chip--amber {
-		color: colors.$lwtv-yellow-deep;
-		background-color: colors.$lwtv-yellow-light;
-	}
-
-	.lwtv-ty-highlight-kicker {
-		margin: 0 0 6px;
-		font-size: 0.85rem;
+	.lwtv-ty-where-title {
+		margin: 0 0 4px;
+		font-size: 1rem;
 		font-weight: 700;
-		letter-spacing: 0.06em;
+	}
+
+	.lwtv-ty-where-sub {
+		margin: 0 0 16px;
+		font-size: 0.9rem;
+		color: colors.$lwtv-grey-medium;
+	}
+
+	.lwtv-ty-where-eyebrow {
+		margin: 18px 0 8px;
+		font-size: 0.7rem;
+		font-weight: 700;
+		letter-spacing: 0.07em;
 		text-transform: uppercase;
 		color: colors.$lwtv-grey-deep;
 	}
 
-	.lwtv-ty-highlight-title {
-		margin: 0 0 6px;
-		font-size: 1.5rem;
+	.lwtv-ty-where-empty {
+		margin: 0;
+		font-size: 0.85rem;
+		color: colors.$lwtv-grey-medium;
+	}
+
+	.lwtv-ty-where-link {
+		display: inline-block;
+		margin-top: 14px;
+		font-size: 0.8rem;
+		font-weight: 600;
+		color: colors.$lwtv-pink;
+
+		&:hover {
+			color: colors.$lwtv-purple;
+		}
+	}
+
+	// Shared horizontal bar list (origin / format / role rows).
+	.lwtv-ty-bars {
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+	}
+
+	.lwtv-ty-bar-row {
+		display: grid;
+		// Fixed count column so every row's track ends at the same x — an auto
+		// column sizes per row, so mixed 1/2/3-digit counts misalign the tracks.
+		grid-template-columns: 6.5rem 1fr 3rem;
+		gap: 10px;
+		align-items: center;
+	}
+
+	.lwtv-ty-bar-label {
+		overflow: hidden;
+		font-size: 0.85rem;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	.lwtv-ty-bar-track {
+		height: 10px;
+		overflow: hidden;
+		background-color: colors.$lwtv-grey-border;
+		border-radius: 5px;
+	}
+
+	.lwtv-ty-bar-fill {
+		display: block;
+		height: 100%;
+		border-radius: 5px;
+
+		&--blue {
+			background-color: colors.$lwtv-blue-deep;
+		}
+
+		&--pink {
+			background-color: colors.$lwtv-pink-deep;
+		}
+
+		&--green {
+			background-color: colors.$lwtv-green-deep;
+		}
+
+		&--red {
+			background-color: colors.$lwtv-red-deep;
+		}
+
+		&--amber {
+			background-color: colors.$lwtv-yellow-deep;
+		}
+	}
+
+	.lwtv-ty-bar-count {
+		font-size: 0.85rem;
+		font-weight: 700;
+		font-variant-numeric: tabular-nums;
+		text-align: right;
+	}
+
+	// Overview: Chapter 03 standouts — bordered callout rows.
+	.lwtv-ty-standouts {
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+		margin-bottom: 10px;
+	}
+
+	.lwtv-ty-standout {
+		display: grid;
+		grid-template-columns: auto 13rem 1fr;
+		gap: 18px;
+		align-items: center;
+		padding: 16px 18px;
+		border: 1px solid colors.$lwtv-grey-border;
+		border-radius: 14px;
+
+		@media (max-width: 767px) {
+			grid-template-columns: auto 1fr;
+			row-gap: 6px;
+		}
+	}
+
+	.lwtv-ty-standout-chip {
+		display: grid;
+		place-items: center;
+		width: 40px;
+		height: 40px;
+		border-radius: 10px;
+
+		svg {
+			fill: currentColor; // sprite paths have no fill; take the chip's color.
+		}
+
+		&--green {
+			color: colors.$lwtv-green-deep;
+			background-color: colors.$lwtv-green-light;
+		}
+
+		&--red {
+			color: colors.$lwtv-red-deep;
+			background-color: colors.$lwtv-red-light;
+		}
+
+		&--blue {
+			color: colors.$lwtv-blue-deep;
+			background-color: colors.$lwtv-blue-light;
+		}
+
+		&--pink {
+			color: colors.$lwtv-pink-deep;
+			background-color: rgba(colors.$lwtv-pink-deep, 0.12);
+		}
+
+		&--amber {
+			color: colors.$lwtv-yellow-deep;
+			background-color: colors.$lwtv-yellow-light;
+		}
+	}
+
+	.lwtv-ty-standout-kicker {
+		margin: 0 0 2px;
+		font-size: 0.7rem;
+		font-weight: 700;
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+		color: colors.$lwtv-grey-medium;
+		text-wrap: balance;
+	}
+
+	.lwtv-ty-standout-title {
+		margin: 0;
+		font-size: 1.05rem;
 		font-weight: 700;
 		line-height: 1.25;
 	}
 
-	.lwtv-ty-highlight-desc {
+	.lwtv-ty-standout-link {
+		color: inherit;
+
+		&:hover {
+			color: colors.$lwtv-pink;
+		}
+	}
+
+	.lwtv-ty-standout-desc {
 		margin: 0;
-		font-size: 0.95rem;
+		font-size: 0.9rem;
 		line-height: 1.5;
 		color: colors.$lwtv-grey-deep;
+
+		@media (max-width: 767px) {
+			grid-column: 2 / -1;
+		}
 	}
 
 	// Shared sub-view header: title + count-up on the left, pill toggle on the right.
@@ -2466,6 +2881,41 @@ canvas {
 	.lwtv-yearbars-axis-peak {
 		color: $death-bar-peak;
 		font-weight: 700;
+	}
+
+	// Metric-family colour ramps for the This Year drill-in charts, which reuse
+	// the year-bars partial (whose default ramp is the crimson death palette).
+	// Each family lightens toward shorter bars; the peak takes the base colour.
+	$lwtv-ty-chart-colors: (
+		"green": colors.$lwtv-green,
+		"red": colors.$lwtv-red,
+		"blue": colors.$lwtv-blue-deep,
+		"pink": colors.$lwtv-pink,
+		"amber": colors.$lwtv-yellow-deep,
+	);
+
+	@each $lwtv-ty-fam, $lwtv-ty-col in $lwtv-ty-chart-colors {
+		.lwtv-yearbars--#{$lwtv-ty-fam} .lwtv-yearbar {
+			background-color: color.adjust($lwtv-ty-col, $lightness: 18%);
+		}
+
+		@for $i from 0 through 5 {
+			.lwtv-yearbars--#{$lwtv-ty-fam} .lwtv-yearbar--r#{$i} {
+				background-color: color.adjust($lwtv-ty-col, $lightness: 15% - $i * 3%);
+			}
+		}
+
+		.lwtv-yearbars--#{$lwtv-ty-fam} .lwtv-yearbar--peak {
+			background-color: $lwtv-ty-col;
+		}
+
+		.lwtv-yearbars--#{$lwtv-ty-fam} .lwtv-yearbar--peak .lwtv-yearbar-val {
+			color: $lwtv-ty-col;
+		}
+
+		.lwtv-yearbars--#{$lwtv-ty-fam} .lwtv-yearbars-axis-peak {
+			color: $lwtv-ty-col;
+		}
 	}
 
 	// Solid tiles (Death Overview + Station "At A Glance") — bespoke fills,
