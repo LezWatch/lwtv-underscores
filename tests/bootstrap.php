@@ -22,3 +22,4 @@ require_once __DIR__ . '/../plugins/lwtv-plugin/php/this-year/build/class-longes
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/this-year/build/class-breakdowns.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/this-year/build/class-standouts.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/this-year/build/class-character-facts.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/this-year/build/class-characters-on-air.php';

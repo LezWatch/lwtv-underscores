@@ -1055,6 +1055,7 @@ canvas {
 		display: grid;
 		grid-template-columns: repeat(2, 1fr);
 		gap: 16px;
+		align-items: start;
 
 		@media (max-width: 767px) {
 			grid-template-columns: 1fr;
@@ -1118,6 +1119,306 @@ canvas {
 		font-size: 0.65rem;
 		font-weight: 400;
 		color: colors.$lwtv-grey-deep;
+	}
+
+	// Characters On Air — A–Z graph
+	.lwtv-ty-coa-graph {
+		border: 1px solid colors.$lwtv-grey-border;
+		border-radius: 14px;
+		padding: 16px 18px 14px;
+		margin-bottom: 14px;
+		scroll-margin-top: 56px;
+	}
+
+	.lwtv-ty-coa-graph-head {
+		display: flex;
+		justify-content: space-between;
+		align-items: baseline;
+		margin-bottom: 12px;
+
+		.lwtv-ty-coa-graph-hint {
+			font-size: 11px;
+			color: colors.$lwtv-grey-medium;
+		}
+	}
+
+	.lwtv-ty-coa-bars {
+		display: grid;
+		grid-template-columns: repeat(27, 1fr);
+		align-items: end;
+		gap: 2px;
+	}
+
+	.lwtv-ty-coa-bar {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: flex-end;
+		min-width: 24px;
+		text-decoration: none;
+		font-variant-numeric: tabular-nums;
+
+		.lwtv-ty-coa-bar-count {
+			font-size: 9px;
+			font-weight: 700;
+			color: colors.$lwtv-grey-medium;
+		}
+
+		.lwtv-ty-coa-bar-fill {
+			width: 100%;
+			background: colors.$lwtv-pink-light;
+			border-radius: 3px 3px 0 0;
+			margin: 2px 0 4px;
+		}
+
+		.lwtv-ty-coa-bar-letter {
+			font-size: 11px;
+			font-weight: 700;
+		}
+
+		&.is-peak .lwtv-ty-coa-bar-fill {
+			background: colors.$lwtv-pink;
+		}
+
+		&.is-empty {
+
+			.lwtv-ty-coa-bar-fill {
+				background: colors.$lwtv-grey-medium;
+			}
+
+			.lwtv-ty-coa-bar-letter {
+				color: colors.$lwtv-grey-medium;
+				text-decoration: line-through;
+			}
+		}
+
+		&:not(.is-empty):hover .lwtv-ty-coa-bar-letter {
+			color: colors.$lwtv-purple;
+		}
+	}
+
+	.lwtv-ty-coa-graph-foot {
+		display: flex;
+		justify-content: space-between;
+		gap: 12px;
+		margin-top: 10px;
+		padding-top: 10px;
+		border-top: 1px solid colors.$lwtv-grey-border;
+		font-size: 0.9rem;
+		color: colors.$lwtv-grey-deep;
+
+		.lwtv-ty-coa-tie,
+		.lwtv-ty-coa-graph-state {
+			white-space: nowrap;
+		}
+	}
+
+	// Characters On Air — directory
+	.lwtv-ty-coa-directory {
+		border: 1px solid colors.$lwtv-grey-border;
+		border-radius: 14px;
+		overflow: hidden;
+	}
+
+	.lwtv-ty-coa-dir-head,
+	.lwtv-ty-coa-dir-row {
+		display: grid;
+		grid-template-columns: 1.1fr 1fr 108px;
+		gap: 14px;
+		align-items: center;
+	}
+
+	.lwtv-ty-coa-dir-head {
+		padding: 9px 18px;
+		background: colors.$lwtv-grey;
+		font-size: 10px;
+		font-weight: 700;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		color: colors.$lwtv-grey-medium;
+	}
+
+	.lwtv-ty-coa-subhead {
+		position: sticky;
+		scroll-margin-top: 56px; /* clear the fixed 50px app nav on letter-jump */
+		z-index: 2;
+		display: flex;
+		gap: 8px;
+		padding: 6px 18px;
+		background: colors.$lwtv-pink-light;
+		color: colors.$lwtv-pink-deep;
+		font-size: 11px;
+		font-weight: 700;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+
+		.lwtv-ty-coa-subhead-letter {
+			color: colors.$lwtv-pink-deep;
+			white-space: nowrap;
+		}
+
+		.lwtv-ty-coa-subhead-count {
+			color: colors.$white;
+			background-color: colors.$lwtv-pink-deep;
+			white-space: nowrap;
+		}
+
+		.lwtv-ty-coa-subhead-top {
+			margin-left: auto;
+			color: colors.$lwtv-pink-deep;
+			text-decoration: none;
+			line-height: 1;
+
+			&:hover {
+				color: colors.$lwtv-purple;
+			}
+		}
+	}
+
+	.lwtv-ty-coa-dir-row {
+		padding: 7px 18px;
+		border-top: 1px solid colors.$lwtv-grey-border;
+
+		.lwtv-ty-coa-dir-char a {
+			font-size: 1rem;
+			font-weight: 600;
+			color: colors.$lwtv-grey-deep;
+		}
+
+		.lwtv-ty-coa-dir-show {
+			font-size: 0.9rem;
+			font-style: italic;
+			color: colors.$lwtv-grey-medium;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+		}
+
+		.lwtv-ty-coa-dir-role {
+			display: flex;
+			align-items: center;
+			gap: 6px;
+			font-size: 11px;
+			font-weight: 600;
+			color: colors.$lwtv-grey-medium;
+		}
+	}
+
+	.lwtv-ty-coa-role-dot {
+		width: 7px;
+		height: 7px;
+		border-radius: 50%;
+		flex-shrink: 0;
+		background: colors.$lwtv-grey-medium;
+
+		&.role-regular { background: colors.$lwtv-green; }
+		&.role-recurring { background: colors.$lwtv-blue; }
+		&.role-guest { background: colors.$lwtv-grey-medium; }
+	}
+
+	.lwtv-ty-coa-dir-foot {
+		padding: 9px 18px;
+		border-top: 1px solid colors.$lwtv-grey-border;
+		font-size: 0.9rem;
+		color: colors.$lwtv-grey-medium;
+	}
+
+	// Characters On Air — By Show sort note + cast rows
+	.lwtv-ty-coa-sortnote {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		margin-bottom: 12px;
+		font-size: 0.9rem;
+		color: colors.$lwtv-grey-medium;
+
+		.lwtv-ty-coa-sortpill {
+			padding: 2px 10px;
+			border-radius: 8px;
+			background: colors.$lwtv-pink-light;
+			color: colors.$lwtv-pink-deep;
+			font-weight: 700;
+		}
+
+		.lwtv-ty-coa-sortnote-text {
+			color: colors.$lwtv-grey-medium;
+		}
+	}
+
+	.lwtv-ty-charshow-cast {
+		display: flex;
+		flex-direction: column;
+	}
+
+	.lwtv-ty-charshow-castrow {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		gap: 10px;
+		padding: 6px 0;
+		border-top: 1px solid colors.$lwtv-grey-border;
+
+		.lwtv-ty-charshow-castname {
+			font-size: 1rem;
+			font-weight: 600;
+			color: colors.$lwtv-grey-deep;
+		}
+
+		.lwtv-ty-charshow-castrole {
+			display: flex;
+			align-items: center;
+			gap: 6px;
+			font-size: 11px;
+			font-weight: 600;
+			color: colors.$lwtv-grey-medium;
+			white-space: nowrap;
+		}
+	}
+
+	// Characters On Air — mobile: the 27-column graph is unreadable, swap bars for letter chips.
+	@media (max-width: 767px) {
+
+		.lwtv-ty-coa-bars {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 6px;
+		}
+
+		.lwtv-ty-coa-bar {
+			flex-direction: row;
+			gap: 4px;
+			height: 28px;
+			padding: 0 10px;
+			border: 1px solid colors.$lwtv-grey-border;
+			border-radius: 8px;
+
+			.lwtv-ty-coa-bar-fill {
+				display: none;
+			}
+
+			&.is-peak {
+				background: colors.$lwtv-pink;
+				border-color: colors.$lwtv-pink;
+
+				.lwtv-ty-coa-bar-letter,
+				.lwtv-ty-coa-bar-count {
+					color: colors.$white;
+				}
+			}
+		}
+
+		.lwtv-ty-coa-dir-head,
+		.lwtv-ty-coa-dir-row {
+			grid-template-columns: 1fr 84px;
+		}
+
+		.lwtv-ty-coa-dir-show {
+			display: none;
+		}
+
+		.lwtv-ty-coa-dir-head-show {
+			display: none;
+		}
 	}
 
 	// Dead Characters — section title in the red family.

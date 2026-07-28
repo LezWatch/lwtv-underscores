@@ -686,7 +686,9 @@
 		.lwtv-ty-charname-shows a,
 		.lwtv-ty-charshow-count,
 		.lwtv-ty-charshow-meta,
-		.lwtv-ty-chip-role {
+		.lwtv-ty-chip-role,
+		.lwtv-ty-coa-dir-row .lwtv-ty-coa-dir-char a,
+		.lwtv-ty-charshow-castrow .lwtv-ty-charshow-castname {
 			color: colors.$white;
 		}
 
