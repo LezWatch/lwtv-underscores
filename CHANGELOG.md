@@ -4,6 +4,27 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [7.1.6] - 2026-07-29
+
+### Added
+
+- This Year Characters On Air view: an interactive A–Z bar graph that jumps to an alphabetized character directory, plus a By Show tab listing each show's cast.
+- This Year Dead Characters (By Date) view: a deaths-by-month graph feeding an ordered death timeline.
+- Single Nation and Station Overview fact-sheets, with a narrative summary, ratio and death-rate facts, a best-year callout, composition bars, and a top-show link.
+- Google Analytics tracking for statistics CSV downloads, including the nation or station slug so single-term exports stay distinct.
+
+### Changed
+
+- Rebuilt the This Year Overview with cached statistics for faster page loads.
+- Reworked the On Air / New / Canceled shows lists into a sticky A–Z jump bar over a two-column list, filing titles under their first significant word.
+- "At a glance" metric rows now collapse to a 2×2 grid on tablet widths and a single column on phones.
+- Font sizes across the statistics pages scale with the reader's root font size, and dark-mode colors were refreshed.
+
+### Fixed
+
+- Non-Latin character names are now counted in the Characters On Air graph instead of being silently dropped.
+- Character listings no longer leak phantom, nameless cast members from draft revisions.
+
 ## [7.1.5] - 2026-07-24
 
 ### Added

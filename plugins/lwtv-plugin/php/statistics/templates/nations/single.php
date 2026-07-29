@@ -14,6 +14,9 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @var string $view    View, '_'-prefixed.
  */
 
+use LWTV\Statistics\Build\Overview_Factsheet;
+use LWTV\Statistics\Build\Taxonomy_Optimized as Build_Taxonomy_Optimized;
+
 $lwtv_slug    = ltrim( $nation, '_' );
 $lwtv_vslug   = ltrim( $view, '_' );
 $lwtv_ndata   = $all_nations_data[ $lwtv_slug ] ?? array(
@@ -96,44 +99,82 @@ $lwtv_build_segments = function ( $items, $topn, $grey_match = '' ) {
 	return array( $segments, $total );
 };
 ?>
-<div class="lwtv-nation-profile lwtv-nation-profile--vibrant">
-	<div class="lwtv-nation-profile-row">
-		<div class="lwtv-nation-profile-lead">
-			<span class="lwtv-nation-profile-chip"><?php echo lwtv_plugin()->get_symbolicon( svg: 'globe.svg', icon: 'svg-globe', max_size: '19' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
-			<div class="lwtv-nation-profile-id">
-				<span class="lwtv-stats-eyebrow sexuality"><?php esc_html_e( 'National Profile', 'lwtv' ); ?></span>
-				<h2 class="lwtv-nation-profile-name"><?php echo esc_html( $lwtv_name ); ?></h2>
-			</div>
-		</div>
-		<div class="lwtv-nation-profile-figs">
-			<span><strong data-count-to="<?php echo (int) $lwtv_shows; ?>"><?php echo esc_html( number_format_i18n( $lwtv_shows ) ); ?></strong><em><?php esc_html_e( 'shows', 'lwtv' ); ?></em></span>
-			<span><strong data-count-to="<?php echo (int) $lwtv_chars; ?>"><?php echo esc_html( number_format_i18n( $lwtv_chars ) ); ?></strong><em><?php esc_html_e( 'characters', 'lwtv' ); ?></em></span>
-			<span class="lwtv-nation-profile-dead"><strong data-count-to="<?php echo (int) $lwtv_dead; ?>"><?php echo esc_html( number_format_i18n( $lwtv_dead ) ); ?></strong><em><?php esc_html_e( 'dead', 'lwtv' ); ?></em></span>
+<?php if ( '_all' !== $view ) : ?>
+<div class="lwtv-fact-masthead">
+	<div class="lwtv-fact-masthead-lead">
+		<span class="lwtv-nation-profile-chip"><?php echo lwtv_plugin()->get_symbolicon( svg: 'globe.svg', icon: 'svg-globe', max_size: '19' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
+		<div>
+			<span class="lwtv-stats-eyebrow"><?php esc_html_e( 'Nation Profile', 'lwtv' ); ?></span>
+			<h2 class="lwtv-fact-masthead-name"><?php echo esc_html( $lwtv_name ); ?></h2>
 		</div>
 	</div>
-	<p class="lwtv-nation-profile-intro">
-		<?php
-		if ( $lwtv_onair > 0 ) {
-			printf(
-				/* translators: 1: on-air count, 2: nation name, 3: total shows. */
-				esc_html( _n( '%1$s of %2$s\'s %3$s shows is currently on air.', '%1$s of %2$s\'s %3$s shows are currently on air.', $lwtv_onair, 'lwtv' ) ),
-				esc_html( number_format_i18n( $lwtv_onair ) ),
-				esc_html( $lwtv_name ),
-				esc_html( number_format_i18n( $lwtv_shows ) )
-			);
-		} else {
-			/* translators: 1: nation name, 2: total shows. */
-			printf( esc_html__( 'None of %1$s\'s %2$s shows are currently on air.', 'lwtv' ), esc_html( $lwtv_name ), esc_html( number_format_i18n( $lwtv_shows ) ) );
-		}
-		echo ' ';
-		esc_html_e( 'Use the tabs to break its catalogue down by sexuality, gender, tropes, formats, and shows on air.', 'lwtv' );
-		?>
-	</p>
+	<div class="lwtv-nation-profile-figs">
+		<span><strong data-count-to="<?php echo (int) $lwtv_shows; ?>"><?php echo esc_html( number_format_i18n( $lwtv_shows ) ); ?></strong><em><?php esc_html_e( 'shows', 'lwtv' ); ?></em></span>
+		<span><strong data-count-to="<?php echo (int) $lwtv_chars; ?>"><?php echo esc_html( number_format_i18n( $lwtv_chars ) ); ?></strong><em><?php esc_html_e( 'characters', 'lwtv' ); ?></em></span>
+		<span class="lwtv-nation-profile-dead"><strong data-count-to="<?php echo (int) $lwtv_dead; ?>"><?php echo esc_html( number_format_i18n( $lwtv_dead ) ); ?></strong><em><?php esc_html_e( 'dead', 'lwtv' ); ?></em></span>
+	</div>
 </div>
+<?php endif; ?>
 
 <?php
 switch ( $view ) {
 	case '_all':
+		// ── Data ────────────────────────────────────────────────────────
+		// Rank: reproduce the leaderboard sort (all.php) and find this nation's place.
+		$lwtv_rank   = null;
+		$lwtv_ranked = array();
+		foreach ( $all_nations_data as $lwtv_rslug => $lwtv_rdata ) {
+			if ( (int) $lwtv_rdata['count'] > 0 ) {
+				$lwtv_ranked[ $lwtv_rslug ] = (int) $lwtv_rdata['count'];
+			}
+		}
+		arsort( $lwtv_ranked );
+		$lwtv_pos = array_search( $lwtv_slug, array_keys( $lwtv_ranked ), true );
+		if ( false !== $lwtv_pos ) {
+			$lwtv_rank = $lwtv_pos + 1;
+		}
+
+		// First tracked year (0 => unknown => null for the transform).
+		$lwtv_fy_map   = ( new Build_Taxonomy_Optimized() )->get_bulk_first_years( 'lez_country', array( $lwtv_slug ) );
+		$lwtv_first_yr = (int) ( $lwtv_fy_map[ $lwtv_slug ] ?? 0 );
+		$lwtv_first_yr = ( $lwtv_first_yr > 0 ) ? $lwtv_first_yr : null;
+
+		// Best-scoring show.
+		$lwtv_top_map  = ( new Build_Taxonomy_Optimized() )->get_bulk_top_shows( 'lez_country', array( $lwtv_slug ) );
+		$lwtv_top_show = $lwtv_top_map[ $lwtv_slug ] ?? null;
+
+		// Global characters-per-show average (site-wide, cached upstream).
+		$lwtv_g_chars   = (int) lwtv_plugin()->generate_total_counts( 'characters' );
+		$lwtv_g_shows   = (int) lwtv_plugin()->generate_total_counts( 'shows' );
+		$lwtv_global_av = Overview_Factsheet::ratio( $lwtv_g_chars, $lwtv_g_shows );
+
+		// Composition inputs (same calls the donut tabs make).
+		$lwtv_sex_raw = lwtv_plugin()->generate_nation_statistics( $nation, 'sexuality', 'array' );
+		$lwtv_gen_raw = lwtv_plugin()->generate_nation_statistics( $nation, 'gender', 'array' );
+		$lwtv_fmt_raw = lwtv_plugin()->generate_nation_statistics( $nation, 'formats', 'array' );
+		$lwtv_sex_raw = is_array( $lwtv_sex_raw ) ? $lwtv_sex_raw : array();
+		$lwtv_gen_raw = is_array( $lwtv_gen_raw ) ? $lwtv_gen_raw : array();
+		$lwtv_fmt_raw = is_array( $lwtv_fmt_raw ) ? $lwtv_fmt_raw : array();
+
+		// Derived facts.
+		$lwtv_narr     = Overview_Factsheet::narrative( $lwtv_rank, $lwtv_first_yr, $lwtv_shows );
+		$lwtv_density  = Overview_Factsheet::ratio( $lwtv_chars, $lwtv_shows );
+		$lwtv_deathpct = Overview_Factsheet::death_rate( $lwtv_dead, $lwtv_chars );
+		$lwtv_alive    = max( 0, $lwtv_chars - $lwtv_dead );
+
+		// Best year (reuse the on-air series the on-air tab loads).
+		$lwtv_oaraw    = lwtv_plugin()->generate_nation_statistics( $nation, 'on-air', 'array' );
+		$lwtv_oaraw    = is_array( $lwtv_oaraw ) ? $lwtv_oaraw : array();
+		$lwtv_oapoints = array();
+		foreach ( $lwtv_oaraw as $lwtv_oa_item ) {
+			$lwtv_oapoints[] = array(
+				'year'  => (int) $lwtv_oa_item['name'],
+				'count' => (int) $lwtv_oa_item['count'],
+			);
+		}
+		$lwtv_best_yr = Overview_Factsheet::best_year( $lwtv_oapoints );
+
+		// Tiles reuse the vibrant palette (unchanged from the old Overview).
 		$lwtv_ov_cards = array(
 			array(
 				'variant' => 'teal',
@@ -165,46 +206,290 @@ switch ( $view ) {
 			),
 		);
 
-		// On-air share drives the score-footer meter fill (0–100).
-		$lwtv_oapct = ( $lwtv_shows > 0 ) ? (int) round( $lwtv_onair / $lwtv_shows * 100 ) : 0;
-		?>
-		<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'At a Glance', 'lwtv' ); ?></p>
-		<div class="lwtv-toll lwtv-toll--4">
-			<?php
-			foreach ( $lwtv_ov_cards as $lwtv_c ) {
-				?>
-				<div class="lwtv-toll-tile lwtv-toll-tile--<?php echo esc_attr( $lwtv_c['variant'] ); ?>">
-					<div class="lwtv-toll-top">
-						<span class="lwtv-toll-eyebrow"><?php echo esc_html( $lwtv_c['label'] ); ?></span>
-						<span class="lwtv-toll-chip"><?php echo lwtv_plugin()->get_symbolicon( svg: $lwtv_c['svg'], icon: $lwtv_c['icon'], max_size: '17' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
-					</div>
-					<span class="lwtv-toll-num" data-count-to="<?php echo (int) $lwtv_c['count']; ?>"><?php echo esc_html( number_format_i18n( $lwtv_c['count'] ) ); ?></span>
-				</div>
-				<?php
-			}
-			?>
-		</div>
+		// Composition bars: [ key, label, mode, segments|text ]. Colour by index.
+		$lwtv_seg_class = array( 'teal', 'amber', 'green', 'rose' );
 
-		<div class="lwtv-metric-card bg-light">
-			<p class="lwtv-stats-eyebrow"><?php esc_html_e( 'Average Show Score', 'lwtv' ); ?></p>
-			<div class="lwtv-station-score">
-				<div class="lwtv-station-scores">
-					<span class="lwtv-station-score-num" data-count-to="<?php echo (int) round( $lwtv_score ); ?>"><?php echo esc_html( number_format_i18n( round( $lwtv_score ) ) ); ?></span>
-					<span class="lwtv-station-score-sub"><?php esc_html_e( '/ 100 all shows', 'lwtv' ); ?></span>
-					<span class="lwtv-station-score-div" aria-hidden="true"></span>
-					<span class="lwtv-station-score-num lwtv-station-score-num--onair" data-count-to="<?php echo (int) round( $lwtv_oascore ); ?>"><?php echo esc_html( number_format_i18n( round( $lwtv_oascore ) ) ); ?></span>
-					<span class="lwtv-station-score-sub"><?php esc_html_e( '/ 100 on air', 'lwtv' ); ?></span>
-				</div>
-				<div class="lwtv-station-meter">
-					<div class="lwtv-station-meter-cap">
-						<span><?php esc_html_e( 'On air', 'lwtv' ); ?></span>
-						<span><?php printf( '%1$s / %2$s', esc_html( number_format_i18n( $lwtv_onair ) ), esc_html( number_format_i18n( $lwtv_shows ) ) ); ?></span>
-					</div>
-					<div class="lwtv-station-meter-track">
-						<div class="lwtv-station-meter-fill" style="width:<?php echo (int) $lwtv_oapct; ?>%"></div>
-					</div>
+		// Bars 1–3 (folded).
+		$lwtv_sex_fold = Overview_Factsheet::fold_top(
+			array_map(
+				fn( $r ) => array(
+					'label' => $r['name'],
+					'count' => (int) $r['count'],
+				),
+				$lwtv_sex_raw
+			),
+			4,
+			true
+		);
+		$lwtv_gen_fold = Overview_Factsheet::fold_top(
+			array_map(
+				fn( $r ) => array(
+					'label' => $r['name'],
+					'count' => (int) $r['count'],
+				),
+				$lwtv_gen_raw
+			),
+			4,
+			false
+		);
+		$lwtv_fmt_fold = Overview_Factsheet::fold_top(
+			array_map(
+				fn( $r ) => array(
+					'label' => $r['name'],
+					'count' => (int) $r['count'],
+				),
+				$lwtv_fmt_raw
+			),
+			4,
+			false
+		);
+		?>
+
+		<!-- 1 — Masthead -->
+		<div class="lwtv-fact-masthead">
+			<div class="lwtv-fact-masthead-lead">
+				<span class="lwtv-nation-profile-chip"><?php echo lwtv_plugin()->get_symbolicon( svg: 'globe.svg', icon: 'svg-globe', max_size: '19' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
+				<div>
+					<span class="lwtv-stats-eyebrow"><?php esc_html_e( 'Nation Profile', 'lwtv' ); ?></span>
+					<h2 class="lwtv-fact-masthead-name"><?php echo esc_html( $lwtv_name ); ?></h2>
 				</div>
 			</div>
+			<p class="lwtv-fact-masthead-narrative">
+				<?php
+				if ( 'ranked' === $lwtv_narr['mode'] ) {
+					printf(
+						/* translators: 1: ordinal rank (e.g. 3rd), 2: first tracked year. */
+						esc_html__( '%1$s busiest nation on the site. Steady output since %2$s.', 'lwtv' ),
+						esc_html( Overview_Factsheet::ordinal( $lwtv_narr['rank'] ) ),
+						esc_html( (string) $lwtv_narr['first_year'] )
+					);
+				} elseif ( 'since' === $lwtv_narr['mode'] ) {
+					printf(
+						/* translators: 1: show count, 2: first tracked year. */
+						esc_html( _n( '%1$s tracked show since %2$s.', '%1$s tracked shows since %2$s.', $lwtv_narr['shows'], 'lwtv' ) ),
+						esc_html( number_format_i18n( $lwtv_narr['shows'] ) ),
+						esc_html( (string) $lwtv_narr['first_year'] )
+					);
+				} else {
+					printf(
+						/* translators: %s: show count. */
+						esc_html( _n( '%s tracked show.', '%s tracked shows.', $lwtv_narr['shows'], 'lwtv' ) ),
+						esc_html( number_format_i18n( $lwtv_narr['shows'] ) )
+					);
+				}
+				?>
+			</p>
+		</div>
+
+		<!-- 2/3 — Tiles + Best Year callout, and Composition -->
+		<div class="lwtv-fact-row">
+			<div class="lwtv-toll lwtv-toll--2x2 lwtv-fact-tiles">
+				<?php foreach ( $lwtv_ov_cards as $lwtv_c ) : ?>
+					<div class="lwtv-toll-tile lwtv-toll-tile--<?php echo esc_attr( $lwtv_c['variant'] ); ?>">
+						<div class="lwtv-toll-top">
+							<span class="lwtv-toll-eyebrow"><?php echo esc_html( $lwtv_c['label'] ); ?></span>
+							<span class="lwtv-toll-chip"><?php echo lwtv_plugin()->get_symbolicon( svg: $lwtv_c['svg'], icon: $lwtv_c['icon'], max_size: '18' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
+						</div>
+						<span class="lwtv-toll-num" data-count-to="<?php echo (int) $lwtv_c['count']; ?>"><?php echo esc_html( number_format_i18n( $lwtv_c['count'] ) ); ?></span>
+					</div>
+				<?php endforeach; ?>
+
+				<?php
+				// Best Year callout — reuses partials/callouts.php (label/text/icon,
+				// where icon is the svg filename). Skip when the peak is 1, or fewer
+				// than 3 shows.
+				if ( null !== $lwtv_best_yr && $lwtv_best_yr['count'] > 1 && ! Overview_Factsheet::collapse_for_shows( $lwtv_shows ) ) {
+					$lwtv_callouts = array(
+						array(
+							'label' => __( 'Best Year', 'lwtv' ),
+							'icon'  => 'fireworks.svg',
+							'text'  => sprintf(
+								/* translators: 1: year, 2: nation name, 3: number of shows on air. */
+								_n( 'In %1$s, %2$s had %3$s show on air.', 'In %1$s, %2$s had %3$s shows on air.', $lwtv_best_yr['count'], 'lwtv' ),
+								(string) $lwtv_best_yr['year'],
+								$lwtv_name,
+								number_format_i18n( $lwtv_best_yr['count'] )
+							),
+						),
+					);
+					// phpcs:ignore PEAR.Files.IncludingFile.UseRequire
+					include plugin_dir_path( __DIR__ ) . 'partials/callouts.php';
+				}
+				?>
+			</div>
+
+			<div class="lwtv-comp">
+				<?php
+				// Bar renderer: shared inline closure so all five bars format identically.
+				// $segments: [ ['label','count','pct','class'], … ]; $summary_html pre-escaped.
+				$lwtv_render_bar = function ( $label, $mode, $segments, $summary_html, $aria ) {
+					?>
+					<div>
+						<div class="lwtv-comp-head">
+							<span class="lwtv-comp-label"><?php echo esc_html( $label ); ?></span>
+							<span class="lwtv-comp-summary"><?php echo wp_kses_post( $summary_html ); ?></span>
+						</div>
+						<?php if ( 'track' === $mode ) : ?>
+							<div class="lwtv-comp-track" role="img" aria-label="<?php echo esc_attr( $aria ); ?>">
+								<?php foreach ( $segments as $seg ) : ?>
+									<span class="lwtv-comp-seg lwtv-comp-seg--<?php echo esc_attr( $seg['class'] ); ?>" style="flex:<?php echo (int) $seg['count']; ?>"></span>
+								<?php endforeach; ?>
+							</div>
+						<?php endif; ?>
+					</div>
+					<?php
+				};
+
+				// Helpers to assemble segments + summary for the folded bars (1–3).
+				$lwtv_fold_segments = function ( $fold ) use ( $lwtv_seg_class ) {
+					$segs = array();
+					foreach ( $fold['segments'] as $i => $s ) {
+						$segs[] = array(
+							'label' => $s['label'],
+							'count' => $s['count'],
+							'pct'   => $s['pct'],
+							'class' => $lwtv_seg_class[ $i ] ?? 'grey',
+						);
+					}
+					if ( null !== $fold['tail'] ) {
+						$segs[] = array(
+							'label' => __( 'Other', 'lwtv' ),
+							'count' => $fold['tail']['count'],
+							'pct'   => $fold['tail']['pct'],
+							'class' => 'grey',
+						);
+					}
+					return $segs;
+				};
+
+				// Summary builders: pct style (top 3) vs count style (top 3).
+				$lwtv_sum_pct = function ( $segs ) {
+					$parts = array();
+					foreach ( array_slice( $segs, 0, 3 ) as $s ) {
+						$parts[] = esc_html( $s['label'] . ' ' . $s['pct'] . '%' );
+					}
+					return implode( ' &middot; ', $parts );
+				};
+				$lwtv_sum_cnt = function ( $segs ) {
+					$parts = array();
+					foreach ( array_slice( $segs, 0, 3 ) as $s ) {
+						$parts[] = esc_html( $s['label'] . ' ' . number_format_i18n( $s['count'] ) );
+					}
+					return implode( ' &middot; ', $parts );
+				};
+				$lwtv_aria    = function ( $segs ) {
+					$parts = array();
+					foreach ( $segs as $s ) {
+						$parts[] = $s['label'] . ' ' . $s['pct'] . '%';
+					}
+					return implode( ', ', $parts );
+				};
+
+				// Bar 1 — Sexuality (pct, has grey tail).
+				$lwtv_sex_segs = $lwtv_fold_segments( $lwtv_sex_fold );
+				$lwtv_sex_mode = Overview_Factsheet::finalize_bar( array_column( $lwtv_sex_segs, 'count' ), Overview_Factsheet::collapse_for_chars( $lwtv_chars ) );
+				$lwtv_render_bar( __( 'Sexuality', 'lwtv' ), $lwtv_sex_mode, $lwtv_sex_segs, $lwtv_sum_pct( $lwtv_sex_segs ), $lwtv_aria( $lwtv_sex_segs ) );
+
+				// Bar 2 — Gender (pct, no tail).
+				$lwtv_gen_segs = $lwtv_fold_segments( $lwtv_gen_fold );
+				$lwtv_gen_mode = Overview_Factsheet::finalize_bar( array_column( $lwtv_gen_segs, 'count' ), Overview_Factsheet::collapse_for_chars( $lwtv_chars ) );
+				$lwtv_render_bar( __( 'Gender', 'lwtv' ), $lwtv_gen_mode, $lwtv_gen_segs, $lwtv_sum_pct( $lwtv_gen_segs ), $lwtv_aria( $lwtv_gen_segs ) );
+
+				// Bar 3 — Format (counts, no tail).
+				$lwtv_fmt_segs = $lwtv_fold_segments( $lwtv_fmt_fold );
+				$lwtv_fmt_mode = Overview_Factsheet::finalize_bar( array_column( $lwtv_fmt_segs, 'count' ), Overview_Factsheet::collapse_for_shows( $lwtv_shows ) );
+				$lwtv_render_bar( __( 'Format', 'lwtv' ), $lwtv_fmt_mode, $lwtv_fmt_segs, $lwtv_sum_cnt( $lwtv_fmt_segs ), $lwtv_aria( $lwtv_fmt_segs ) );
+		?>
+
+				<div class="lwtv-comp-rule" aria-hidden="true"></div>
+
+				<?php
+				// Bar 4 — Shows total vs on air (leads with amber on-air slice, counts).
+				$lwtv_finished = max( 0, $lwtv_shows - $lwtv_onair );
+				$lwtv_b4_segs  = array(
+					array(
+						'label' => __( 'on air', 'lwtv' ),
+						'count' => $lwtv_onair,
+						'pct'   => ( $lwtv_shows > 0 ) ? round( $lwtv_onair / $lwtv_shows * 100, 1 ) : 0,
+						'class' => 'amber',
+					),
+					array(
+						'label' => __( 'finished', 'lwtv' ),
+						'count' => $lwtv_finished,
+						'pct'   => ( $lwtv_shows > 0 ) ? round( $lwtv_finished / $lwtv_shows * 100, 1 ) : 0,
+						'class' => 'teal',
+					),
+				);
+				$lwtv_b4_mode  = Overview_Factsheet::finalize_bar( array( $lwtv_onair, $lwtv_finished ), Overview_Factsheet::collapse_for_shows( $lwtv_shows ) );
+				$lwtv_render_bar( __( 'Shows total vs on air', 'lwtv' ), $lwtv_b4_mode, $lwtv_b4_segs, $lwtv_sum_cnt( $lwtv_b4_segs ), $lwtv_aria( $lwtv_b4_segs ) );
+
+				// Bar 5 — Alive or dead (counts).
+				$lwtv_b5_segs = array(
+					array(
+						'label' => __( 'alive', 'lwtv' ),
+						'count' => $lwtv_alive,
+						'pct'   => ( $lwtv_chars > 0 ) ? round( $lwtv_alive / $lwtv_chars * 100, 1 ) : 0,
+						'class' => 'green',
+					),
+					array(
+						'label' => __( 'dead', 'lwtv' ),
+						'count' => $lwtv_dead,
+						'pct'   => ( $lwtv_chars > 0 ) ? round( $lwtv_dead / $lwtv_chars * 100, 1 ) : 0,
+						'class' => 'rose',
+					),
+				);
+				$lwtv_b5_mode = Overview_Factsheet::finalize_bar( array( $lwtv_alive, $lwtv_dead ), Overview_Factsheet::collapse_for_chars( $lwtv_chars ) );
+				$lwtv_render_bar( __( 'Alive or dead', 'lwtv' ), $lwtv_b5_mode, $lwtv_b5_segs, $lwtv_sum_cnt( $lwtv_b5_segs ), $lwtv_aria( $lwtv_b5_segs ) );
+				?>
+			</div>
+		</div>
+
+		<!-- 4 — Headline facts -->
+		<div class="lwtv-facts">
+			<?php if ( null !== $lwtv_top_show && ! empty( $lwtv_top_show['id'] ) ) : ?>
+				<div class="lwtv-fact">
+					<span class="lwtv-fact-num lwtv-fact-num--teal"><?php echo esc_html( number_format_i18n( round( $lwtv_top_show['score'] ) ) ); ?><span class="lwtv-fact-suffix"><?php esc_html_e( '/ 100', 'lwtv' ); ?></span></span>
+					<div class="lwtv-fact-caption">
+						<?php
+						// Generic phrasing (no entity name) so it reads cleanly for
+						// nations and networks alike — sidesteps "the United States".
+						printf(
+							/* translators: %s: linked show title. */
+							esc_html__( 'Best-scoring show: %s', 'lwtv' ),
+							'<a href="' . esc_url( (string) get_permalink( $lwtv_top_show['id'] ) ) . '">' . esc_html( get_the_title( $lwtv_top_show['id'] ) ) . '</a>'
+						);
+						?>
+					</div>
+				</div>
+			<?php endif; ?>
+
+			<?php if ( null !== $lwtv_density ) : ?>
+				<div class="lwtv-fact">
+					<span class="lwtv-fact-num lwtv-fact-num--green"><?php echo esc_html( number_format_i18n( $lwtv_density, 1 ) ); ?></span>
+					<div class="lwtv-fact-caption">
+						<?php
+						if ( null !== $lwtv_global_av ) {
+							printf(
+								/* translators: %s: global average characters per show. */
+								esc_html__( 'characters per show, against a global average of %s', 'lwtv' ),
+								esc_html( number_format_i18n( $lwtv_global_av, 1 ) )
+							);
+						} else {
+							esc_html_e( 'characters per show', 'lwtv' );
+						}
+						?>
+					</div>
+				</div>
+			<?php endif; ?>
+
+			<?php if ( null !== $lwtv_deathpct ) : ?>
+				<div class="lwtv-fact">
+					<span class="lwtv-fact-num lwtv-fact-num--rose"><?php echo esc_html( number_format_i18n( $lwtv_deathpct, 1 ) ); ?>%</span>
+					<div class="lwtv-fact-caption">
+						<?php esc_html_e( 'Of its queer characters have died on screen', 'lwtv' ); ?>
+					</div>
+				</div>
+			<?php endif; ?>
 		</div>
 		<?php
 		break;
@@ -263,16 +548,25 @@ switch ( $view ) {
 
 		// Add Worst Years
 		if ( ! empty( $no_onair_years ) ) {
-			$lwtv_callouts[] = array(
-				'label' => _n( 'Worst Year', 'Worst Years', count( $no_onair_years ), 'lwtv' ),
-				'svg'   => 'scythe.svg',
-				'icon'  => 'svg-scythe',
-				'text'  => sprintf(
+			if ( 6 > count( $no_onair_years ) ) {
+				$no_onair_years_label = _n( 'Worst Year', 'Worst Years', count( $no_onair_years ), 'lwtv' );
+				$no_onair_years_text  = sprintf(
 					/* translators: 1: nation name, 2: Years with no shows on air. */
 					_n( '%1$s had no shows on air in %2$s.', '%1$s had no shows on air in the following years: %2$s', count( $no_onair_years ), 'lwtv' ),
 					$lwtv_name,
 					implode( ', ', $no_onair_years )
-				),
+				);
+			} else {
+				/* translators: 1: nation name, 2: Number of years with no shows on air. */
+				$no_onair_years_text  = sprintf( __( '%1$s had no shows on air in %2$s years.', 'lwtv' ), $lwtv_name, count( $no_onair_years ) );
+				$no_onair_years_label = __( 'Worst Years', 'lwtv' );
+			}
+
+			$lwtv_callouts[] = array(
+				'label' => $no_onair_years_label,
+				'svg'   => 'scythe.svg',
+				'icon'  => 'svg-scythe',
+				'text'  => $no_onair_years_text,
 			);
 		}
 

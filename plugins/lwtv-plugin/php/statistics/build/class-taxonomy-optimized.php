@@ -400,6 +400,77 @@ class Taxonomy_Optimized {
 	}
 
 	/**
+	 * Highest-scoring published show per taxonomy term.
+	 *
+	 * Returns the winning show's ID and score for each requested term. Unlike
+	 * get_bulk_show_counts() (which averages), this names a single show so the
+	 * fact-sheet Overview can link to it. Reduced in PHP because the Overview
+	 * only ever asks for one term at a time.
+	 *
+	 * @param string $taxonomy Taxonomy slug (e.g. 'lez_country', 'lez_stations').
+	 * @param array  $terms    Term slugs (leading '_' tolerated).
+	 * @return array [ slug => [ 'id'=>int, 'score'=>float ] ].
+	 */
+	public function get_bulk_top_shows( $taxonomy, $terms ) {
+		if ( empty( $terms ) ) {
+			return array();
+		}
+
+		$cache_key   = 'bulk_top_shows_' . $taxonomy . '_' . md5( wp_json_encode( $terms ) );
+		$cached_data = lwtv_plugin()->get_transient( $cache_key );
+		if ( false !== $cached_data ) {
+			return $cached_data;
+		}
+
+		global $wpdb;
+
+		$slugs             = array_map( 'sanitize_text_field', array_map( static fn( $s ) => ltrim( (string) $s, '_' ), $terms ) );
+		$term_placeholders = implode( ',', array_fill( 0, count( $slugs ), '%s' ) );
+		$parameters        = array_merge( array( $taxonomy ), $slugs );
+
+		// phpcs:disable
+		$query = $wpdb->prepare(
+			"SELECT t.slug AS slug, shows.ID AS id, CAST( scores.meta_value AS DECIMAL(6,2) ) AS score
+			FROM {$wpdb->terms} t
+			INNER JOIN {$wpdb->term_taxonomy} tt ON t.term_id = tt.term_id
+			INNER JOIN {$wpdb->term_relationships} tr ON tt.term_taxonomy_id = tr.term_taxonomy_id
+			INNER JOIN {$wpdb->posts} shows ON tr.object_id = shows.ID
+			INNER JOIN {$wpdb->postmeta} scores ON shows.ID = scores.post_id AND scores.meta_key = 'lezshows_the_score'
+			WHERE tt.taxonomy = %s
+			AND shows.post_type = 'post_type_shows'
+			AND shows.post_status = 'publish'
+			AND scores.meta_value != ''
+			AND t.slug IN ($term_placeholders)",
+			$parameters
+		);
+		// phpcs:enable
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- This is a prepared query (see above)
+		$results = $wpdb->get_results( $query, ARRAY_A );
+
+		if ( ! is_array( $results ) ) {
+			lwtv_plugin()->debug_log( 'statistics', 'Bulk top shows query failed: ' . $wpdb->last_error );
+			return array();
+		}
+
+		$top = array();
+		foreach ( $results as $row ) {
+			$slug  = $row['slug'];
+			$score = (float) $row['score'];
+			if ( ! isset( $top[ $slug ] ) || $score > $top[ $slug ]['score'] ) {
+				$top[ $slug ] = array(
+					'id'    => (int) $row['id'],
+					'score' => $score,
+				);
+			}
+		}
+
+		lwtv_plugin()->set_transient( $cache_key, $top, DAY_IN_SECONDS );
+
+		return $top;
+	}
+
+	/**
 	 * Bulk earliest show start-year per term.
 	 *
 	 * Reads the earliest start year from the ACF key (lezshows_airdates_start) and

@@ -302,15 +302,20 @@ class Shows_Builder {
 
 		// ACF repeater fields store sub-fields as separate meta keys (lezchars_show_group_N_show),
 		// not as a single serialized value under lezchars_show_group. Query sub-field keys to find
-		// which characters are linked to our target shows.
+		// which characters are linked to our target shows. Join wp_posts and filter to published
+		// characters — ACF duplicates this meta onto post revisions (post_type=revision), and those
+		// revision IDs would otherwise leak in as phantom, nameless cast members.
 		$placeholders = implode( ',', array_fill( 0, count( $show_ids ), '%d' ) );
 
 		// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 		$query                   = $wpdb->prepare(
-			"SELECT DISTINCT post_id
-			FROM {$wpdb->postmeta}
-			WHERE meta_key REGEXP 'lezchars_show_group_[0-9]+_show'
-			AND meta_value IN ($placeholders)",
+			"SELECT DISTINCT pm.post_id
+			FROM {$wpdb->postmeta} pm
+			INNER JOIN {$wpdb->posts} p ON pm.post_id = p.ID
+			WHERE pm.meta_key REGEXP 'lezchars_show_group_[0-9]+_show'
+			AND pm.meta_value IN ($placeholders)
+			AND p.post_type = 'post_type_characters'
+			AND p.post_status = 'publish'",
 			$show_ids
 		);
 		$candidate_character_ids = $wpdb->get_col( $query );
@@ -560,8 +565,10 @@ class Shows_Builder {
 			$countries = get_the_term_list( $show_id, 'lez_country', '', ', ', '' );
 			$format    = get_the_term_list( $show_id, 'lez_formats' );
 
-			// Build the first character marker
-			$marker = ( new Shared_Builder() )->get_character_marker( $show_name );
+			// Build the first character marker from the article-stripped title so
+			// "The Bear" files under B and "A Good Girl's Guide to Murder" under G.
+			$shared = new Shared_Builder();
+			$marker = $shared->get_character_marker( $shared->sort_name( $show_name ) );
 
 			// Build the array
 			$shows_by_name[ $marker ][ $show_name ] = array(
@@ -573,9 +580,15 @@ class Shows_Builder {
 			);
 		}
 
-		// Sort each group alphabetically by show name
+		// Sort each group alphabetically by show name, ignoring a leading article
+		// and comparing case-insensitively so within-bucket order matches the
+		// article-stripped bucketing above.
+		$shared = new Shared_Builder();
 		foreach ( $shows_by_name as $marker => $shows_group ) {
-			ksort( $shows_group );
+			uksort(
+				$shows_group,
+				static fn( $a, $b ) => strnatcasecmp( $shared->sort_name( (string) $a ), $shared->sort_name( (string) $b ) )
+			);
 			$shows_by_name[ $marker ] = $shows_group;
 		}
 
