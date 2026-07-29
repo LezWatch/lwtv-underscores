@@ -115,10 +115,101 @@
 		} );
 	}
 
+	// CSV download tracking (MonsterInsights / GA4).
+	//
+	// MonsterInsights' automatic download tracking only fires when a link's PATH
+	// ends in a tracked extension (.csv, .pdf, ...). Our download links are
+	// `?download=csv` on a normal page URL — the CSV is streamed server-side via
+	// Content-Disposition — so the client-side tracker never sees an extension
+	// and ignores the click. We fire the standard GA4 `file_download` event
+	// ourselves so these land in the same report as auto-tracked downloads.
+
+	// Send a GA4 file_download event through whichever tracker MonsterInsights
+	// exposed. Fails silently when analytics isn't present (ad-blockers, logged-in
+	// admins with tracking off, etc.) — tracking is never load-bearing for the UI.
+	function sendDownloadEvent( params ) {
+		var tracker = ( 'function' === typeof window.gtag ) ? window.gtag
+			: ( 'function' === typeof window.__gtagTracker ) ? window.__gtagTracker
+			: null;
+		if ( ! tracker ) {
+			return;
+		}
+		tracker( 'event', 'file_download', params );
+	}
+
+	// TODO(you): Build a human-meaningful file name for the GA4 `file_name`
+	// dimension from the download link's href. This is the string you'll scan
+	// for in GA's File Downloads report, so name it the way YOU think about
+	// these exports.
+	//
+	// The href is one of these shapes (query order not guaranteed):
+	//   /statistics/characters/on-air/?download=csv
+	//   /statistics/actors/?download=csv
+	//   /statistics/death/years/?download=csv
+	//   /statistics/nations/on-air/?download=csv&nation=united-kingdom
+	//   /statistics/stations/on-air/?download=csv&station=hbo
+	//
+	// `new URL( href )` is available:
+	//   u.pathname                     -> "/statistics/nations/on-air/"
+	//   u.searchParams.get( 'nation' ) -> "united-kingdom" (or null)
+	//   u.searchParams.get( 'station')-> "hbo" (or null)
+	//
+	// Return e.g. "lwtv-characters-on-air.csv" or
+	// "lwtv-nations-on-air-united-kingdom.csv". Decisions that are yours:
+	//   - how much of the path to keep (drop the leading "statistics"?)
+	//   - whether to append the nation/station slug (recommended — otherwise
+	//     every country's export reports as one identical row)
+	//   - separator + the "lwtv-" prefix, to match your other download names
+	function buildCsvFileName( href ) {
+		var url;
+		try {
+			url = new URL( href, window.location.origin );
+		} catch ( e ) {
+			return 'lwtv-statistics.csv'; // Malformed href — report a stable fallback.
+		}
+
+		// Path segments minus the leading "statistics", e.g.
+		// "/statistics/nations/on-air/" -> [ "nations", "on-air" ].
+		var parts = url.pathname.split( '/' ).filter( function ( seg ) {
+			return seg && 'statistics' !== seg;
+		} );
+
+		// Single-nation/station exports carry their slug in the query string, so
+		// append it — otherwise every country/network reports as one identical row.
+		var slug = url.searchParams.get( 'nation' ) || url.searchParams.get( 'station' );
+		if ( slug ) {
+			parts.push( slug );
+		}
+
+		var name = parts.length ? parts.join( '-' ) : 'statistics';
+		return 'lwtv-' + name + '.csv';
+	}
+
+	function trackCsvDownloads( root ) {
+		root = root || document;
+		Array.prototype.slice.call( root.querySelectorAll( '.lwtv-download-csv-btn' ) ).forEach( function ( link ) {
+			if ( link.hasAttribute( 'data-dl-tracked' ) ) {
+				return; // Already wired (guards against double-binding).
+			}
+			link.setAttribute( 'data-dl-tracked', '1' );
+			link.addEventListener( 'click', function () {
+				sendDownloadEvent( {
+					file_name: buildCsvFileName( link.href ),
+					file_extension: 'csv',
+					link_url: link.href,
+					link_text: ( link.textContent || '' ).trim()
+				} );
+			} );
+		} );
+	}
+
 	function init() {
 		// Static pages (e.g. /statistics/): animate the whole document once.
 		animate( document );
 		wireYearbars( document );
+
+		// Wire CSV download links (present in the DOM even inside hidden tab panes).
+		trackCsvDownloads( document );
 
 		// Keep the sticky-jump-bar scroll offset in sync with the bar's height.
 		setJumpOffsets( document );
