@@ -749,25 +749,46 @@
 		.lwtv-ty-block-title--amber { color: $lwtv-yellow-light; }
 
 		.lwtv-ty-group-grid--blue .lwtv-ty-group-key,
-		.lwtv-ty-group-grid--blue .lwtv-ty-group-item a {
+		.lwtv-ty-group-grid--blue .lwtv-ty-sb-title {
 			color: $lwtv-blue-light;
 		}
 
 		.lwtv-ty-group-grid--pink .lwtv-ty-group-key,
-		.lwtv-ty-group-grid--pink .lwtv-ty-group-item a {
+		.lwtv-ty-group-grid--pink .lwtv-ty-sb-title {
 			color: colors.$lwtv-pink-light;
 		}
 
 		.lwtv-ty-group-grid--amber .lwtv-ty-group-key,
-		.lwtv-ty-group-grid--amber .lwtv-ty-group-item a {
+		.lwtv-ty-group-grid--amber .lwtv-ty-sb-title {
 			color: $lwtv-yellow-light;
 		}
 
-		.lwtv-ty-group-card {
+		// Jump bar fills with the dark #main background so list rows scroll
+		// under it invisibly; chips lift off that fill.
+		.lwtv-ty-sb-jump {
+			background-color: colors.$lwtv-grey-deep;
 			border-color: rgba(colors.$white, 0.12);
 		}
 
-		.lwtv-ty-group-head {
+		.lwtv-ty-sb-chip {
+			background-color: rgba(colors.$white, 0.16);
+		}
+
+		// Struck letters keep the light-mode grey (#999); the dark grey
+		// (#6a5d5d) is too close to the dark bar to read which letters are
+		// empty — the whole job of a struck chip.
+		.lwtv-ty-sb-jump span.lwtv-ty-sb-chip--empty {
+			background-color: transparent;
+			color: colors.$lwtv-grey-medium;
+		}
+
+		// A 6px dot in the deep tones disappears on $lwtv-grey-deep — lift to
+		// the vivid dark locals (purple has only the existing pale global).
+		.lwtv-ty-sb-dot--tv { background-color: $lwtv-blue-light; }
+		.lwtv-ty-sb-dot--mini { background-color: colors.$lwtv-purple-light; }
+		.lwtv-ty-sb-dot--web { background-color: $lwtv-green-light; }
+
+		.lwtv-ty-sb-row {
 			border-bottom-color: rgba(colors.$white, 0.12);
 		}
 

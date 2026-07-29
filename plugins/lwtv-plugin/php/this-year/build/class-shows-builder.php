@@ -565,8 +565,10 @@ class Shows_Builder {
 			$countries = get_the_term_list( $show_id, 'lez_country', '', ', ', '' );
 			$format    = get_the_term_list( $show_id, 'lez_formats' );
 
-			// Build the first character marker
-			$marker = ( new Shared_Builder() )->get_character_marker( $show_name );
+			// Build the first character marker from the article-stripped title so
+			// "The Bear" files under B and "A Good Girl's Guide to Murder" under G.
+			$shared = new Shared_Builder();
+			$marker = $shared->get_character_marker( $shared->sort_name( $show_name ) );
 
 			// Build the array
 			$shows_by_name[ $marker ][ $show_name ] = array(
@@ -578,9 +580,15 @@ class Shows_Builder {
 			);
 		}
 
-		// Sort each group alphabetically by show name
+		// Sort each group alphabetically by show name, ignoring a leading article
+		// and comparing case-insensitively so within-bucket order matches the
+		// article-stripped bucketing above.
+		$shared = new Shared_Builder();
 		foreach ( $shows_by_name as $marker => $shows_group ) {
-			ksort( $shows_group );
+			uksort(
+				$shows_group,
+				static fn( $a, $b ) => strnatcasecmp( $shared->sort_name( (string) $a ), $shared->sort_name( (string) $b ) )
+			);
 			$shows_by_name[ $marker ] = $shows_group;
 		}
 

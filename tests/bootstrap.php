@@ -24,3 +24,5 @@ require_once __DIR__ . '/../plugins/lwtv-plugin/php/this-year/build/class-stando
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/this-year/build/class-character-facts.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/this-year/build/class-characters-on-air.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/this-year/build/class-dead-characters.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/this-year/build/class-shared-builder.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/this-year/build/class-shows-block.php';

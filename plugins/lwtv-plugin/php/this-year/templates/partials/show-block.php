@@ -1,5 +1,7 @@
 <?php
 
+use LWTV\This_Year\Build\Shows_Block;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -49,28 +51,94 @@ if ( false !== $lwtv_sb_num_pos ) {
 }
 
 /**
- * Render one grouped grid of two-column group cards (or an empty-state line).
+ * Render one pane: a sticky jump bar + a hanging-gutter two-column list
+ * (or an empty-state line).
  *
- * @param array  $lwtv_sb_groups    [ groupKey => [ showName => {url,name,country,format} ] ].
- * @param string $lwtv_sb_meta_mode Which non-grouping dimension(s) to show per item: 'name'|'format'|'country'.
+ * @param array  $lwtv_sb_groups      [ groupKey => [ showName => {url,name,country,format} ] ].
+ * @param string $lwtv_sb_meta_mode   Which non-grouping dimension(s) to show per item: 'name'|'format'|'country'.
  * @param string $lwtv_sb_pane_accent Accent slug for the group-key color.
+ * @param string $lwtv_sb_slug        Pane slug ('byname'|'byformat'|'bycountry') — id prefix.
  */
-$lwtv_sb_render_pane = static function ( array $lwtv_sb_groups, string $lwtv_sb_meta_mode, string $lwtv_sb_pane_accent ) {
+$lwtv_sb_render_pane = static function ( array $lwtv_sb_groups, string $lwtv_sb_meta_mode, string $lwtv_sb_pane_accent, string $lwtv_sb_slug ) {
 	if ( empty( $lwtv_sb_groups ) ) {
 		?>
 		<p class="lwtv-ty-group-empty"><?php esc_html_e( 'None this year.', 'lwtv' ); ?></p>
 		<?php
 		return;
 	}
+
+	$lwtv_sb_keys = array_keys( $lwtv_sb_groups );
+
+	// The jump bar and the meta line share the grouping dimension; counts only
+	// matter for the (three-chip) format bar.
+	$lwtv_sb_counts = array();
+	if ( 'format' === $lwtv_sb_meta_mode ) {
+		foreach ( $lwtv_sb_groups as $lwtv_sb_k => $lwtv_sb_v ) {
+			$lwtv_sb_counts[ (string) $lwtv_sb_k ] = count( (array) $lwtv_sb_v );
+		}
+	}
+	$lwtv_sb_bar = Shows_Block::jump_bar( $lwtv_sb_keys, $lwtv_sb_meta_mode, $lwtv_sb_counts );
+
+	switch ( $lwtv_sb_meta_mode ) {
+		case 'format':
+			$lwtv_sb_eyebrow = __( 'Jump to a format', 'lwtv' );
+			break;
+		case 'country':
+			$lwtv_sb_eyebrow = __( 'Jump to a country', 'lwtv' );
+			break;
+		default:
+			$lwtv_sb_eyebrow = __( 'Jump to a letter', 'lwtv' );
+			break;
+	}
+
+	// Format dot class per format name; unknown/empty formats get no dot.
+	$lwtv_sb_dot_class = static function ( string $format ): string {
+		switch ( $format ) {
+			case 'TV Show':
+				return 'lwtv-ty-sb-dot--tv';
+			case 'Mini-Series':
+				return 'lwtv-ty-sb-dot--mini';
+			case 'Web Series':
+				return 'lwtv-ty-sb-dot--web';
+			default:
+				return '';
+		}
+	};
 	?>
+	<nav class="lwtv-ty-sb-jump" id="<?php echo esc_attr( $lwtv_sb_slug ); ?>-jump" aria-label="<?php echo esc_attr( $lwtv_sb_eyebrow ); ?>">
+		<span class="lwtv-stats-eyebrow"><?php echo esc_html( $lwtv_sb_eyebrow ); ?></span>
+		<div class="lwtv-ty-sb-chips">
+			<?php
+			foreach ( $lwtv_sb_bar as $lwtv_sb_chip ) :
+				$lwtv_sb_chip_label = $lwtv_sb_chip['label'];
+				if ( null !== $lwtv_sb_chip['count'] ) {
+					$lwtv_sb_chip_label .= ' ' . number_format_i18n( (int) $lwtv_sb_chip['count'] );
+				}
+				?>
+				<?php if ( $lwtv_sb_chip['struck'] ) : ?>
+					<span class="lwtv-ty-sb-chip lwtv-ty-sb-chip--empty"><?php echo esc_html( $lwtv_sb_chip_label ); ?></span>
+				<?php else : ?>
+					<a class="lwtv-ty-sb-chip" href="#<?php echo esc_attr( $lwtv_sb_slug . '-g' . $lwtv_sb_chip['target'] ); ?>"><?php echo esc_html( $lwtv_sb_chip_label ); ?></a>
+				<?php endif; ?>
+			<?php endforeach; ?>
+		</div>
+	</nav>
+
 	<div class="lwtv-ty-group-grid lwtv-ty-group-grid--<?php echo esc_attr( $lwtv_sb_pane_accent ); ?>">
+		<?php $lwtv_sb_i = 0; ?>
 		<?php foreach ( $lwtv_sb_groups as $lwtv_sb_group_key => $lwtv_sb_shows ) : ?>
-			<div class="lwtv-ty-group-card">
-				<div class="lwtv-ty-group-head">
+			<div class="lwtv-ty-sb-row" id="<?php echo esc_attr( $lwtv_sb_slug . '-g' . $lwtv_sb_i ); ?>">
+				<div class="lwtv-ty-sb-gutter">
 					<span class="lwtv-ty-group-key"><?php echo esc_html( (string) $lwtv_sb_group_key ); ?></span>
-					<span class="badge lwtv-ty-group-count"><?php echo esc_html( number_format_i18n( count( $lwtv_sb_shows ) ) ); ?></span>
+					<span class="lwtv-ty-group-count">
+						<?php
+						/* translators: %s: number of shows in this group. */
+						echo esc_html( sprintf( _n( '%s show', '%s shows', count( $lwtv_sb_shows ), 'lwtv' ), number_format_i18n( count( $lwtv_sb_shows ) ) ) );
+						?>
+					</span>
 				</div>
-				<div class="lwtv-ty-group-list">
+
+				<div class="lwtv-ty-sb-shows">
 					<?php
 					foreach ( $lwtv_sb_shows as $lwtv_sb_show ) :
 						switch ( $lwtv_sb_meta_mode ) {
@@ -94,16 +162,19 @@ $lwtv_sb_render_pane = static function ( array $lwtv_sb_groups, string $lwtv_sb_
 								$lwtv_sb_meta = (string) ( $lwtv_sb_show['format'] ?? '' );
 								break;
 						}
+						$lwtv_sb_dot = $lwtv_sb_dot_class( (string) ( $lwtv_sb_show['format'] ?? '' ) );
 						?>
-						<div class="lwtv-ty-group-item">
-							<a href="<?php echo esc_url( $lwtv_sb_show['url'] ); ?>"><?php echo esc_html( $lwtv_sb_show['name'] ); ?></a>
+						<div class="lwtv-ty-sb-item">
+							<span class="lwtv-ty-sb-dot <?php echo esc_attr( $lwtv_sb_dot ); ?>" aria-hidden="true"></span>
+							<a class="lwtv-ty-sb-title" href="<?php echo esc_url( $lwtv_sb_show['url'] ); ?>"><?php echo esc_html( $lwtv_sb_show['name'] ); ?></a>
 							<?php if ( '' !== $lwtv_sb_meta ) : ?>
-								<span class="lwtv-ty-group-meta">(<?php echo esc_html( $lwtv_sb_meta ); ?>)</span>
+								<span class="lwtv-ty-group-meta"><?php echo esc_html( $lwtv_sb_meta ); ?></span>
 							<?php endif; ?>
 						</div>
 					<?php endforeach; ?>
 				</div>
 			</div>
+			<?php ++$lwtv_sb_i; ?>
 		<?php endforeach; ?>
 	</div>
 	<?php
@@ -214,15 +285,15 @@ if ( ! isset( $sb_callouts ) ) {
 <div class="tab-content" id="lwtv-ty-sb-tabContent">
 
 	<div class="tab-pane fade show active" id="lwtv-ty-sb-byname" role="tabpanel" aria-labelledby="lwtv-ty-sb-byname-tab">
-		<?php $lwtv_sb_render_pane( $sb_by_name, 'name', $lwtv_sb_accent ); ?>
+		<?php $lwtv_sb_render_pane( $sb_by_name, 'name', $lwtv_sb_accent, 'byname' ); ?>
 	</div>
 
 	<div class="tab-pane fade" id="lwtv-ty-sb-byformat" role="tabpanel" aria-labelledby="lwtv-ty-sb-byformat-tab">
-		<?php $lwtv_sb_render_pane( $sb_by_format, 'format', $lwtv_sb_accent ); ?>
+		<?php $lwtv_sb_render_pane( $sb_by_format, 'format', $lwtv_sb_accent, 'byformat' ); ?>
 	</div>
 
 	<div class="tab-pane fade" id="lwtv-ty-sb-bycountry" role="tabpanel" aria-labelledby="lwtv-ty-sb-bycountry-tab">
-		<?php $lwtv_sb_render_pane( $sb_by_country, 'country', $lwtv_sb_accent ); ?>
+		<?php $lwtv_sb_render_pane( $sb_by_country, 'country', $lwtv_sb_accent, 'bycountry' ); ?>
 	</div>
 
 </div>

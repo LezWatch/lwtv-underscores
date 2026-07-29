@@ -97,10 +97,38 @@
 		} );
 	}
 
+	// The By Name / By Country jump bar is sticky, and its height changes with
+	// viewport width (the A–Z chips wrap across 1–3 rows and the eyebrow can take
+	// its own line). Set each pane's --lwtv-sb-offset from the *measured* bar
+	// height so a jump lands the group's key just below the bar at any width; the
+	// rows' scroll-margin-top reads it. A fixed CSS value can't track the wrap.
+	function setJumpOffsets( root ) {
+		root = root || document;
+		Array.prototype.slice.call( root.querySelectorAll( '.lwtv-ty-sb-jump' ) ).forEach( function ( bar ) {
+			if ( ! bar.offsetHeight ) {
+				return; // Bar sits in a hidden tab-pane; measured when its tab is shown.
+			}
+			var top    = parseFloat( window.getComputedStyle( bar ).top ) || 0;
+			var offset = Math.round( top + bar.offsetHeight + 8 );
+			var pane   = bar.closest( '.tab-pane' ) || bar.parentNode;
+			pane.style.setProperty( '--lwtv-sb-offset', offset + 'px' );
+		} );
+	}
+
 	function init() {
 		// Static pages (e.g. /statistics/): animate the whole document once.
 		animate( document );
 		wireYearbars( document );
+
+		// Keep the sticky-jump-bar scroll offset in sync with the bar's height.
+		setJumpOffsets( document );
+		window.addEventListener( 'resize', function () {
+			setJumpOffsets( document );
+		} );
+		// A pane's bar has no height until its tab is shown — remeasure then.
+		document.addEventListener( 'shown.bs.tab', function () {
+			setJumpOffsets( document );
+		} );
 
 		// Bootstrap modals (e.g. actor Character Statistics): replay scoped to
 		// the modal each time it opens.
