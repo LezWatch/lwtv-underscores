@@ -1908,7 +1908,7 @@ canvas {
 		padding: 0 8px;
 		border-radius: 6px;
 		background-color: colors.$lwtv-grey;
-		font-size: 0.812rem;
+		font-size: 0.85rem;
 		font-weight: 700;
 		text-decoration: none;
 		white-space: nowrap;
@@ -2245,24 +2245,6 @@ canvas {
 
 	.lwtv-nation-preamble {
 		font-size: 0.9rem;
-	}
-
-	.lwtv-nation-profile {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		flex-wrap: wrap;
-		gap: 16px;
-		padding: 20px 24px;
-		border: 1px solid colors.$lwtv-grey-border;
-		border-radius: 14px;
-		margin-bottom: 20px;
-	}
-
-	.lwtv-nation-profile-name {
-		margin: 2px 0 0;
-		font-size: 1.375rem;
-		font-weight: 700;
 	}
 
 	.lwtv-nation-profile-figs {
@@ -2746,35 +2728,19 @@ canvas {
 	.lwtv-stats-subnav {
 		display: flex;
 		flex-wrap: wrap;
-		gap: 20px;
+		gap: 0 30px;
 		margin-bottom: 1.5rem;
-		// Too many views to fit one row on tablets/phones (e.g. Shows has 10).
-		// Scroll the tab strip horizontally instead of spilling off the page;
-		// overflow-x is contained here so the page body never scrolls sideways.
-		overflow-x: auto;
-		-webkit-overflow-scrolling: touch;
-		scrollbar-width: thin;
 		border-bottom: 1px solid colors.$lwtv-grey-border;
-
-		&::-webkit-scrollbar {
-			height: 4px;
-		}
-
-		&::-webkit-scrollbar-thumb {
-			background-color: colors.$lwtv-grey-border;
-			border-radius: 2px;
-		}
 	}
 
 	.lwtv-stats-subnav-item {
-		flex: 0 0 auto; // keep each label's full width; scroll rather than squish.
+		flex: 0 0 auto; // keep each label's full width; never squish.
 		padding: 8px 2px;
 		font-size: 0.95rem;
 		white-space: nowrap;
 		color: colors.$lwtv-grey-deep;
 		text-decoration: none;
 		border-bottom: 2px solid transparent;
-		margin-bottom: -1px;
 
 		&:hover {
 			color: colors.$lwtv-purple;
@@ -3611,7 +3577,6 @@ canvas {
 		display: grid;
 		grid-template-columns: repeat(3, 1fr);
 		gap: 16px;
-		margin-bottom: 20px;
 
 		@media (max-width: 767px) {
 			grid-template-columns: 1fr;
@@ -3723,32 +3688,172 @@ canvas {
 		}
 	}
 
-	// ── Station "Vibrant Refresh" (single-station Overview) ──────────────
-	// Profile header restyle: icon chip + descriptive intro line. Scoped to
-	// the --vibrant modifier so Nations (which shares the base classes) is
-	// untouched. Uses the neutral "bg-light" card surface rather than a pink
-	// tint, matching the .lwtv-ty-lead lead card (dark override below).
-	.lwtv-nation-profile--vibrant {
-		flex-direction: column;
-		align-items: stretch;
-		padding: 22px 24px;
-		background-color: colors.$lwtv-grey;
+	// ── Overview fact sheet (single nation / station "_all" view) ───────
+	// 2×2 tile block that sits beside the Composition panel. Stays 2×2 to
+	// 375px — a full-width tile holding one number reads as empty, and the
+	// longest eyebrow (ON AIR NOW) still fits beside the 34px chip at 375px.
+	.lwtv-toll--2x2 {
+		grid-template-columns: repeat(2, 1fr);
+		gap: 14px;
+
+		.lwtv-toll-tile {
+			justify-content: space-between;
+			height: 118px;
+			padding: 15px 16px;
+		}
+
+		.lwtv-toll-chip {
+			width: 34px;
+			height: 34px;
+
+			svg {
+				width: 18px;
+				height: 18px;
+			}
+		}
 	}
 
-	.lwtv-nation-profile-row {
+	.lwtv-fact-masthead {
 		display: flex;
-		align-items: flex-start;
+		align-items: flex-end;
 		justify-content: space-between;
 		flex-wrap: wrap;
-		gap: 16px;
+		gap: 20px;
+		padding-bottom: 16px;
+		margin-bottom: 20px;
+		border-bottom: 3px solid colors.$lwtv-teal-deep;
 	}
 
-	.lwtv-nation-profile-lead {
+	.lwtv-fact-masthead-lead {
 		display: flex;
 		align-items: center;
 		gap: 12px;
 	}
 
+	.lwtv-fact-masthead-name {
+		font-family: fonts.$headingfontfamily;
+		font-size: 2.25rem;
+		font-weight: 700;
+		letter-spacing: -0.02em;
+		line-height: 1;
+	}
+
+	.lwtv-fact-masthead-narrative {
+		max-width: 42ch;
+		margin: 0;
+		font-size: 0.85rem;
+		text-wrap: pretty;
+	}
+
+	.lwtv-fact-row {
+		display: grid;
+		grid-template-columns: 400px 1fr;
+		gap: 20px;
+		margin-bottom: 20px;
+
+		@media (max-width: 991px) {
+			grid-template-columns: 1fr;
+		}
+	}
+
+	.lwtv-fact-tiles {
+		align-content: start;
+
+		// partials/callouts.php wraps the Best Year box in .lwtv-trend-callouts,
+		// so the wrapper is the grid child that must span both tile columns.
+		.lwtv-trend-callouts {
+			grid-column: 1 / -1;
+			margin: 0;
+		}
+	}
+
+	.lwtv-comp {
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+		padding: 18px 20px;
+		border: 1px solid colors.$lwtv-grey-border;
+		border-radius: 14px;
+	}
+
+	.lwtv-comp-head {
+		display: flex;
+		justify-content: space-between;
+		flex-wrap: wrap;
+		gap: 2px 12px;
+		margin-bottom: 5px;
+		font-size: 0.8rem;
+	}
+
+	.lwtv-comp-label {
+		font-weight: 600;
+	}
+
+	.lwtv-comp-summary {
+		font-weight: 400;
+		text-wrap: pretty;
+	}
+
+	.lwtv-comp-track {
+		display: flex;
+		gap: 2px;
+		height: 14px;
+		border-radius: 4px;
+		overflow: hidden;
+	}
+
+	.lwtv-comp-seg {
+		&--teal { background-color: colors.$lwtv-teal-deep; }
+		&--amber { background-color: colors.$lwtv-yellow-deep; }
+		&--green { background-color: colors.$lwtv-gq-green; }
+		&--rose { background-color: colors.$lwtv-crimson-deep; }
+		&--grey { background-color: colors.$lwtv-grey-alt; }
+	}
+
+	.lwtv-comp-rule {
+		height: 1px;
+		background-color: colors.$lwtv-grey-border;
+		margin: 10px 0px;
+	}
+
+	.lwtv-facts {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 20px;
+		padding-top: 18px;
+		border-top: 1px solid colors.$lwtv-grey-border;
+
+		@media (max-width: 767px) {
+			grid-template-columns: 1fr;
+			gap: 16px;
+		}
+	}
+
+	.lwtv-fact-num {
+		font-family: fonts.$headingfontfamily;
+		font-size: 2.25rem;
+		font-weight: 700;
+		line-height: 1;
+		font-variant-numeric: tabular-nums;
+
+		&--teal { color: colors.$lwtv-teal-deep; }
+		&--green { color: colors.$lwtv-gq-green; }
+		&--rose { color: colors.$lwtv-crimson-deep; }
+	}
+
+	.lwtv-fact-suffix {
+		font-size: 1.125rem;
+		font-weight: 500;
+	}
+
+	.lwtv-fact-caption {
+		margin-top: 4px;
+		font-size: 0.85rem;
+		text-wrap: pretty;
+	}
+
+	// Profile chip: icon well shared by the fact-sheet masthead on every
+	// single-nation / single-station view.
 	.lwtv-nation-profile-chip {
 		display: inline-flex;
 		align-items: center;
@@ -3765,20 +3870,6 @@ canvas {
 			height: 19px;
 			fill: currentColor;
 		}
-	}
-
-	.lwtv-nation-profile--vibrant .lwtv-nation-profile-name {
-		font-size: 1.75rem;
-		font-weight: 800;
-		letter-spacing: -0.02em;
-		line-height: 1.05;
-	}
-
-	.lwtv-nation-profile-intro {
-		margin: 14px 0 0;
-		max-width: 560px;
-		font-size: 0.9rem;
-		line-height: 1.5;
 	}
 
 	// Score footer: relabelled averages + on-air progress meter.

@@ -848,13 +848,6 @@
 			border-color: rgba(colors.$white, 0.12);
 		}
 
-		// The --vibrant profile box uses the light "bg-light" surface in light
-		// mode; swap it for the dark neutral so it matches .bg-light / the
-		// lead card here instead of showing a pale panel on the dark page.
-		.lwtv-nation-profile--vibrant {
-			background-color: $lwtv-grey-medium;
-		}
-
 		.lwtv-actor-articles-modal .lwtv-stats-tab:hover,
 		.lwtv-actor-stats-modal .lwtv-stats-tab:hover,
 		.lwtv-stats-tab:hover,
@@ -877,10 +870,6 @@
 		.lwtv-nation-profile-dead strong,
 		.lwtv-nations-lb-dead {
 			color: $lwtv-red-light;
-		}
-
-		.lwtv-nation-profile .lwtv-stats-eyebrow.sexuality {
-			color: $lwtv-blue-light;
 		}
 
 		.lwtv-nation-profile-figs em,
@@ -909,6 +898,30 @@
 
 		.lwtv-ty-dc-pip-death {
 			box-shadow: 0 0 0 3px colors.$lwtv-grey-deep;
+		}
+
+		.lwtv-comp {
+			border-color: rgba(colors.$white, 0.12);
+		}
+
+		.lwtv-comp-rule {
+			background-color: rgba(colors.$white, 0.12);
+		}
+
+		.lwtv-comp-seg--grey {
+			// $lwtv-grey-alt would be the brightest thing in the bar in dark;
+			// match the donut bordergrey neutral instead.
+			background-color: rgba(colors.$white, 0.22);
+		}
+
+		// Accent-text uses of the deep tokens are too dark on the dark surface.
+		// The tile FILLS keep the deep tokens (handled by $vibrant-toll, no change).
+		.lwtv-fact-num--teal { color: $lwtv-blue-light; }
+		.lwtv-fact-num--green { color: $lwtv-green-light; }
+		.lwtv-fact-num--rose { color: $lwtv-red-light; }
+
+		.lwtv-fact-masthead .lwtv-stats-eyebrow {
+			color: $lwtv-blue-light;
 		}
 	}
 
