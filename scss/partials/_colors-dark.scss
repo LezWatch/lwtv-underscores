@@ -454,8 +454,9 @@
 		.lwtv-tail-name,
 		.lwtv-trend-current-sub,
 		.lwtv-trend-desc,
-		.lwtv-ty-highlight-desc,
-		.lwtv-ty-highlight-kicker,
+		.lwtv-ty-standout-desc,
+		.lwtv-ty-standout-kicker,
+		.lwtv-ty-where-eyebrow,
 		.lwtv-ty-lead-narrative,
 		.lwtv-ty-lifebar-legend-count,
 		.lwtv-ty-yearnav-caption,
@@ -577,7 +578,10 @@
 		}
 
 		.lwtv-ty-metric,
-		.lwtv-ty-highlight {
+		.lwtv-ty-standout,
+		.lwtv-ty-deaths,
+		.lwtv-ty-where-card,
+		.lwtv-ty-panel-side {
 			border-color: rgba(colors.$white, 0.12);
 		}
 
@@ -589,29 +593,91 @@
 		.lwtv-ty-metric--pink .lwtv-ty-metric-label { color: colors.$lwtv-pink-light; }
 		.lwtv-ty-metric--amber .lwtv-ty-metric-label { color: $lwtv-yellow-light; }
 
-		.lwtv-ty-highlight-chip--green {
+		.lwtv-ty-standout-chip--green {
 			color: $lwtv-green-light;
-			background-color: rgba(colors.$lwtv-green, 0.16)-light;
+			background-color: rgba(colors.$lwtv-green, 0.2);
 		}
 
-		.lwtv-ty-highlight-chip--red {
+		.lwtv-ty-standout-chip--red {
 			color: $lwtv-red-light;
-			background-color: rgba(colors.$lwtv-red, 0.16)-light;
+			background-color: rgba(colors.$lwtv-red, 0.2);
 		}
 
-		.lwtv-ty-highlight-chip--blue {
+		.lwtv-ty-standout-chip--blue {
 			color: $lwtv-blue-light;
-			background-color: rgba(colors.$lwtv-blue, 0.16)-light;
+			background-color: rgba(colors.$lwtv-blue, 0.2);
 		}
 
-		.lwtv-ty-highlight-chip--pink {
+		.lwtv-ty-standout-chip--pink {
 			color: colors.$lwtv-pink-light;
-			background-color: rgba(colors.$lwtv-pink-light, 0.16);
+			background-color: rgba(colors.$lwtv-pink, 0.2);
 		}
 
-		.lwtv-ty-highlight-chip--amber {
+		.lwtv-ty-standout-chip--amber {
 			color: $lwtv-yellow-light;
-			background-color: rgba(colors.$lwtv-yellow, 0.16)-light;
+			background-color: rgba(colors.$lwtv-yellow, 0.2);
+		}
+
+		// This Year v2 Overview components — lift translucent-black borders/rules,
+		// brighten deep fills/markers, and swap deep text for readable dark tokens.
+		.lwtv-ty-chapter-rule,
+		.lwtv-ty-bar-track,
+		.lwtv-ty-deaths-marker--empty,
+		.lwtv-ty-deaths-strip::before {
+			background-color: rgba(colors.$white, 0.15);
+		}
+
+		.lwtv-ty-panel-death,
+		.lwtv-ty-panel-fact {
+			border-color: rgba(colors.$white, 0.12);
+		}
+
+		.lwtv-ty-chapter-hint,
+		.lwtv-ty-where-sub,
+		.lwtv-ty-where-empty,
+		.lwtv-ty-deaths-sub,
+		.lwtv-ty-deaths-month-initial,
+		.lwtv-ty-panel-death-date {
+			color: colors.$lwtv-grey-light;
+		}
+
+		.lwtv-ty-deaths-title {
+			color: $lwtv-red-light;
+		}
+
+		.lwtv-ty-deaths-marker--count,
+		.lwtv-ty-deaths-marker--single {
+			background-color: colors.$lwtv-red;
+		}
+
+		.lwtv-ty-deaths-today {
+			color: colors.$lwtv-grey-light;
+			border-color: rgba(colors.$white, 0.35);
+		}
+
+		a.lwtv-ty-metric.active {
+			outline-color: colors.$white;
+		}
+
+		// Breakdown bar fills: the light-mode deep tones are muddy on dark.
+		.lwtv-ty-bar-fill--green {
+			background-color: colors.$lwtv-green;
+		}
+
+		.lwtv-ty-bar-fill--red {
+			background-color: colors.$lwtv-red;
+		}
+
+		.lwtv-ty-bar-fill--blue {
+			background-color: colors.$lwtv-blue;
+		}
+
+		.lwtv-ty-bar-fill--pink {
+			background-color: colors.$lwtv-pink;
+		}
+
+		.lwtv-ty-bar-fill--amber {
+			background-color: colors.$lwtv-yellow;
 		}
 
 		// Characters On Air: pill toggle, grid rows, and cast cards need the
@@ -620,7 +686,9 @@
 		.lwtv-ty-charname-shows a,
 		.lwtv-ty-charshow-count,
 		.lwtv-ty-charshow-meta,
-		.lwtv-ty-chip-role {
+		.lwtv-ty-chip-role,
+		.lwtv-ty-coa-dir-row .lwtv-ty-coa-dir-char a,
+		.lwtv-ty-charshow-castrow .lwtv-ty-charshow-castname {
 			color: colors.$white;
 		}
 
@@ -681,25 +749,46 @@
 		.lwtv-ty-block-title--amber { color: $lwtv-yellow-light; }
 
 		.lwtv-ty-group-grid--blue .lwtv-ty-group-key,
-		.lwtv-ty-group-grid--blue .lwtv-ty-group-item a {
+		.lwtv-ty-group-grid--blue .lwtv-ty-sb-title {
 			color: $lwtv-blue-light;
 		}
 
 		.lwtv-ty-group-grid--pink .lwtv-ty-group-key,
-		.lwtv-ty-group-grid--pink .lwtv-ty-group-item a {
+		.lwtv-ty-group-grid--pink .lwtv-ty-sb-title {
 			color: colors.$lwtv-pink-light;
 		}
 
 		.lwtv-ty-group-grid--amber .lwtv-ty-group-key,
-		.lwtv-ty-group-grid--amber .lwtv-ty-group-item a {
+		.lwtv-ty-group-grid--amber .lwtv-ty-sb-title {
 			color: $lwtv-yellow-light;
 		}
 
-		.lwtv-ty-group-card {
+		// Jump bar fills with the dark #main background so list rows scroll
+		// under it invisibly; chips lift off that fill.
+		.lwtv-ty-sb-jump {
+			background-color: colors.$lwtv-grey-deep;
 			border-color: rgba(colors.$white, 0.12);
 		}
 
-		.lwtv-ty-group-head {
+		.lwtv-ty-sb-chip {
+			background-color: rgba(colors.$white, 0.16);
+		}
+
+		// Struck letters keep the light-mode grey (#999); the dark grey
+		// (#6a5d5d) is too close to the dark bar to read which letters are
+		// empty — the whole job of a struck chip.
+		.lwtv-ty-sb-jump span.lwtv-ty-sb-chip--empty {
+			background-color: transparent;
+			color: colors.$lwtv-grey-medium;
+		}
+
+		// A 6px dot in the deep tones disappears on $lwtv-grey-deep — lift to
+		// the vivid dark locals (purple has only the existing pale global).
+		.lwtv-ty-sb-dot--tv { background-color: $lwtv-blue-light; }
+		.lwtv-ty-sb-dot--mini { background-color: colors.$lwtv-purple-light; }
+		.lwtv-ty-sb-dot--web { background-color: $lwtv-green-light; }
+
+		.lwtv-ty-sb-row {
 			border-bottom-color: rgba(colors.$white, 0.12);
 		}
 
@@ -759,13 +848,6 @@
 			border-color: rgba(colors.$white, 0.12);
 		}
 
-		// The --vibrant profile box uses the light "bg-light" surface in light
-		// mode; swap it for the dark neutral so it matches .bg-light / the
-		// lead card here instead of showing a pale panel on the dark page.
-		.lwtv-nation-profile--vibrant {
-			background-color: $lwtv-grey-medium;
-		}
-
 		.lwtv-actor-articles-modal .lwtv-stats-tab:hover,
 		.lwtv-actor-stats-modal .lwtv-stats-tab:hover,
 		.lwtv-stats-tab:hover,
@@ -790,10 +872,6 @@
 			color: $lwtv-red-light;
 		}
 
-		.lwtv-nation-profile .lwtv-stats-eyebrow.sexuality {
-			color: $lwtv-blue-light;
-		}
-
 		.lwtv-nation-profile-figs em,
 		.lwtv-nation-score,
 		.lwtv-nation-sentence,
@@ -812,6 +890,38 @@
 		.lwtv-death-list th,
 		.lwtv-death-list td {
 			border-bottom-color: rgba(colors.$white, 0.12);
+		}
+
+		.lwtv-ty-dc-tl-waypoint .lwtv-ty-dc-tl-gutter {
+			color: colors.$lwtv-pink-medium;
+		}
+
+		.lwtv-ty-dc-pip-death {
+			box-shadow: 0 0 0 3px colors.$lwtv-grey-deep;
+		}
+
+		.lwtv-comp {
+			border-color: rgba(colors.$white, 0.12);
+		}
+
+		.lwtv-comp-rule {
+			background-color: rgba(colors.$white, 0.12);
+		}
+
+		.lwtv-comp-seg--grey {
+			// $lwtv-grey-alt would be the brightest thing in the bar in dark;
+			// match the donut bordergrey neutral instead.
+			background-color: rgba(colors.$white, 0.22);
+		}
+
+		// Accent-text uses of the deep tokens are too dark on the dark surface.
+		// The tile FILLS keep the deep tokens (handled by $vibrant-toll, no change).
+		.lwtv-fact-num--teal { color: $lwtv-blue-light; }
+		.lwtv-fact-num--green { color: $lwtv-green-light; }
+		.lwtv-fact-num--rose { color: $lwtv-red-light; }
+
+		.lwtv-fact-masthead .lwtv-stats-eyebrow {
+			color: $lwtv-blue-light;
 		}
 	}
 

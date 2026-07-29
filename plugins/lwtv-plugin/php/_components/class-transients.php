@@ -583,6 +583,8 @@ class Transients implements Component, Templater {
 			'lwtv_characters_shows_year_*',
 			'lwtv_shows_year_*',
 			'lwtv_shows_characters_year_*',
+			'lwtv_this_year_trends_*',
+			'lwtv_overview_char_stats_year_*',
 		);
 	}
 

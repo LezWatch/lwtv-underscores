@@ -15,11 +15,14 @@ Thumbs.db
 *.swp
 
 /.claude/CLAUDE.local.md
-/node_modules/
+/.phpunit.cache/*
 /.sass-cache/
-/npm-debug.log
+/node_modules/
 /vendor/
+/npm-debug.log
 debug.log
+
+## Local Build
 /inc/dist/
 /_build_scripts/webpackdist/
 /_build_scripts/tmp-icons/

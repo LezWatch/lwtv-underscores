@@ -37,6 +37,7 @@ if ( 0 === $sb_count ) {
 $sb_title      = sprintf( _n( '%1$s show on air in %2$s', '%1$s shows on air in %2$s', $sb_count, 'lwtv' ), number_format_i18n( $sb_count ), (string) $this_year );
 $sb_desc       = __( 'Every tracked series airing at least one episode this year.', 'lwtv' );
 $sb_foot       = __( 'Grouped alphabetically, by format, or by country of origin.', 'lwtv' );
+$sb_source     = 'on-air';
 $sb_by_name    = $shows_by_name;
 $sb_by_format  = $shows_by_format;
 $sb_by_country = $shows_by_country;

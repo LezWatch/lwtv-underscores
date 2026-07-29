@@ -85,5 +85,6 @@
 	<exclude-pattern>.vscode/*</exclude-pattern>
 	<exclude-pattern>CLAUDE*/*</exclude-pattern>
 	<exclude-pattern>docs/*</exclude-pattern>
+	<exclude-pattern>tests/*</exclude-pattern>
 
 </ruleset>

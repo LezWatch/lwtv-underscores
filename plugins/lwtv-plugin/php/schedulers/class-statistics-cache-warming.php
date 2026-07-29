@@ -19,6 +19,8 @@ use LWTV\CPTs\Characters as CPT_Characters;
 
 use LWTV\This_Year\Build\Characters_Builder;
 use LWTV\This_Year\Build\Shows_Builder;
+use LWTV\This_Year\Build\Trends;
+use LWTV\Rest_API\This_Year_JSON;
 use LWTV\_Components\Statistics_Optimized;
 use LWTV\Statistics\Build\Dead as Dead_Stats;
 use LWTV\Statistics\Build\Stations as Stations_Stats;
@@ -78,6 +80,7 @@ class Statistics_Cache_Warming {
 		$this->warm_shows_counts();
 		$this->warm_death_counts();
 		$this->warm_actor_counts();
+		$this->warm_this_year_trends();
 	}
 
 	/**
@@ -114,6 +117,8 @@ class Statistics_Cache_Warming {
 	private function warm_character_counts(): void {
 		$this_year_characters = ( new Characters_Builder() )->get_characters_for_year( gmdate( 'Y' ) );
 		$all_characters       = ( new Statistics_Optimized() )->generate_total_counts( 'characters' );
+		// One combined pass warms both the busiest-actor tally and the panel extras.
+		( new Characters_Builder() )->get_overview_character_stats( (int) gmdate( 'Y' ) );
 
 		lwtv_plugin()->debug_log( 'statistics', 'Warming actor character count caches. This year: ' . count( $this_year_characters ) . ', All: ' . $all_characters );
 	}
@@ -144,12 +149,35 @@ class Statistics_Cache_Warming {
 	}
 
 	/**
+	 * Warm the This Year eleven-year trend count map.
+	 *
+	 * ten_years() is expensive — five builder calls across eleven years — so it
+	 * must never run inline on page load. We compute it here, reduce it to a
+	 * compact [ year => [ metric => count ] ] map, and store that single small
+	 * transient for the Overview to read. The heavy per-year post arrays are
+	 * already cached by the builders (warmed just above for the current year).
+	 *
+	 * @return void
+	 */
+	private function warm_this_year_trends(): void {
+		$year      = (int) gmdate( 'Y' );
+		$ten_years = ( new This_Year_JSON() )->ten_years( $year );
+		$count_map = Trends::to_count_map( $ten_years );
+
+		lwtv_plugin()->set_transient( Trends::cache_key( $year ), $count_map, DAY_IN_SECONDS );
+
+		lwtv_plugin()->debug_log( 'statistics', 'Warming This Year trends count map. Years: ' . count( $count_map ) );
+	}
+
+	/**
 	 * Warm actor count caches
 	 *
 	 * @return void
 	 */
 	private function warm_actor_counts(): void {
 		$all_actors = ( new Statistics_Optimized() )->generate_total_counts( 'actors' );
+		// This year's busiest-actor tally is warmed via the combined Overview pass
+		// in warm_character_counts(), so it isn't re-computed here.
 
 		lwtv_plugin()->debug_log( 'statistics', 'Warming actor count caches. All: ' . $all_actors );
 	}

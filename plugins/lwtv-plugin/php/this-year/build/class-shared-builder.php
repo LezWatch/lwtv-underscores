@@ -36,4 +36,21 @@ class Shared_Builder {
 		// Everything else (accented characters, symbols, etc.) goes in the - group
 		return '-';
 	}
+
+	/**
+	 * Normalize a title into an alphabetization key by dropping a single leading
+	 * English article ("A", "An", "The") so titles file the way a catalog would
+	 * — "The Bear" under B, "A Good Girl's Guide to Murder" under G.
+	 *
+	 * Only the three English articles are handled: the vast majority of titles
+	 * are English, and non-English articles are impractical to strip reliably.
+	 * Feed this into get_character_marker() for the bucket and into a
+	 * case-insensitive comparison for within-bucket order.
+	 *
+	 * @param string $name The title.
+	 * @return string The comparison key (leading article removed).
+	 */
+	public function sort_name( string $name ): string {
+		return preg_replace( '/^(?:a|an|the)\s+/i', '', trim( $name ) );
+	}
 }
