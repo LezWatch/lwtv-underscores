@@ -881,6 +881,14 @@
 		.lwtv-death-list td {
 			border-bottom-color: rgba(colors.$white, 0.12);
 		}
+
+		.lwtv-ty-dc-tl-waypoint .lwtv-ty-dc-tl-gutter {
+			color: colors.$lwtv-pink-medium;
+		}
+
+		.lwtv-ty-dc-pip-death {
+			box-shadow: 0 0 0 3px colors.$lwtv-grey-deep;
+		}
 	}
 
 	.lwtv-donut-track {

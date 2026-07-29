@@ -165,7 +165,7 @@ $endcolor: #7db9e8;
 @mixin form-input {
 	height: 34px;
 	padding: 6px 12px;
-	font-size: 14px;
+	font-size: 0.875rem;
 	line-height: 1.428571429;
 	color: colors.$lwtv-grey-deep;
 	vertical-align: middle;

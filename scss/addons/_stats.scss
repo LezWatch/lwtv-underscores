@@ -1137,7 +1137,7 @@ canvas {
 		margin-bottom: 12px;
 
 		.lwtv-ty-coa-graph-hint {
-			font-size: 11px;
+			font-size: 0.9rem;;
 			color: colors.$lwtv-grey-medium;
 		}
 	}
@@ -1159,7 +1159,7 @@ canvas {
 		font-variant-numeric: tabular-nums;
 
 		.lwtv-ty-coa-bar-count {
-			font-size: 9px;
+			font-size: 0.75rem;
 			font-weight: 700;
 			color: colors.$lwtv-grey-medium;
 		}
@@ -1172,7 +1172,7 @@ canvas {
 		}
 
 		.lwtv-ty-coa-bar-letter {
-			font-size: 11px;
+			font-size: 0.9rem;;
 			font-weight: 700;
 		}
 
@@ -1231,7 +1231,7 @@ canvas {
 	.lwtv-ty-coa-dir-head {
 		padding: 9px 18px;
 		background: colors.$lwtv-grey;
-		font-size: 10px;
+		font-size: 0.8rem;
 		font-weight: 700;
 		letter-spacing: 0.08em;
 		text-transform: uppercase;
@@ -1247,7 +1247,7 @@ canvas {
 		padding: 6px 18px;
 		background: colors.$lwtv-pink-light;
 		color: colors.$lwtv-pink-deep;
-		font-size: 11px;
+		font-size: 0.9rem;;
 		font-weight: 700;
 		letter-spacing: 0.08em;
 		text-transform: uppercase;
@@ -1298,7 +1298,7 @@ canvas {
 			display: flex;
 			align-items: center;
 			gap: 6px;
-			font-size: 11px;
+			font-size: 0.9rem;;
 			font-weight: 600;
 			color: colors.$lwtv-grey-medium;
 		}
@@ -1368,7 +1368,7 @@ canvas {
 			display: flex;
 			align-items: center;
 			gap: 6px;
-			font-size: 11px;
+			font-size: 0.9rem;;
 			font-weight: 600;
 			color: colors.$lwtv-grey-medium;
 			white-space: nowrap;
@@ -1477,6 +1477,268 @@ canvas {
 
 	.lwtv-ty-deathdate-show {
 		color: colors.$lwtv-grey-deep;
+	}
+
+	/* Dead Characters — single-callout row (no stretch card) */
+	.lwtv-trend-callouts--single {
+		grid-template-columns: 1fr;
+	}
+
+	/* Dead Characters — deaths-by-month graph */
+	.lwtv-ty-dc-graph {
+		border: 1px solid colors.$lwtv-grey-border;
+		border-radius: 14px;
+		padding: 16px 18px 14px;
+		margin-bottom: 14px;
+	}
+
+	.lwtv-ty-dc-graph-head {
+		display: flex;
+		justify-content: space-between;
+		align-items: baseline;
+		margin-bottom: 12px;
+
+		.lwtv-ty-dc-graph-hint {
+			font-size: 0.9rem;;
+			color: colors.$lwtv-grey-medium;
+		}
+	}
+
+	.lwtv-ty-dc-bars {
+		display: grid;
+		grid-template-columns: repeat(12, 1fr);
+		align-items: end;
+		gap: 4px;
+	}
+
+	.lwtv-ty-dc-bar {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: flex-end;
+		min-width: 24px;
+		text-decoration: none;
+		font-variant-numeric: tabular-nums;
+
+		.lwtv-ty-dc-bar-count {
+			font-size: 0.8rem;
+			font-weight: 700;
+			color: colors.$lwtv-grey-medium;
+		}
+
+		.lwtv-ty-dc-bar-fill {
+			width: 100%;
+			background: colors.$lwtv-pink-light;
+			border-radius: 3px 3px 0 0;
+			margin: 2px 0 4px;
+		}
+
+		.lwtv-ty-dc-bar-label {
+			font-size: 0.9rem;;
+			font-weight: 700;
+		}
+
+		&.is-peak .lwtv-ty-dc-bar-fill {
+			background: colors.$lwtv-pink;
+		}
+
+		&.is-empty {
+			.lwtv-ty-dc-bar-fill { background: colors.$lwtv-grey-medium; }
+
+			.lwtv-ty-dc-bar-label {
+				color: colors.$lwtv-grey-medium;
+				text-decoration: line-through;
+			}
+		}
+
+		&:not(.is-empty):hover .lwtv-ty-dc-bar-label { color: colors.$lwtv-purple; }
+	}
+
+	.lwtv-ty-dc-graph-foot {
+		display: flex;
+		justify-content: space-between;
+		gap: 12px;
+		margin-top: 10px;
+		padding-top: 10px;
+		border-top: 1px solid colors.$lwtv-grey-border;
+		font-size: 0.9rem;
+		color: colors.$lwtv-grey-medium;
+
+		.lwtv-ty-dc-fact { white-space: nowrap; }
+
+		// Empty-months fact hugs the far right, even when no single deadliest month shows.
+		.lwtv-ty-dc-fact--none {
+			margin-left: auto;
+			text-align: right;
+		}
+	}
+
+	@media (max-width: 479px) {
+		.lwtv-ty-dc-bar .lwtv-ty-dc-bar-count { display: none; }
+	}
+
+	/* Dead Characters — timeline. The rail (2px column) stays unbroken top→tail. */
+	.lwtv-ty-dc-timeline {
+		border: 1px solid colors.$lwtv-grey-border;
+		border-radius: 14px;
+		padding: 6px 20px 18px;
+	}
+
+	.lwtv-ty-dc-tl-waypoint,
+	.lwtv-ty-dc-tl-death,
+	.lwtv-ty-dc-tl-gap,
+	.lwtv-ty-dc-tl-tail {
+		display: grid;
+		grid-template-columns: 78px 20px 1fr;
+		gap: 12px;
+		align-items: start;
+	}
+
+	.lwtv-ty-dc-tl-gutter {
+		text-align: right;
+		font-variant-numeric: tabular-nums;
+	}
+
+	/* The rail cell draws a centred vertical line every row so it reads continuous. */
+	.lwtv-ty-dc-tl-rail {
+		position: relative;
+		align-self: stretch;
+		min-height: 44px;
+
+		&::before {
+			content: "";
+			position: absolute;
+			top: 0;
+			bottom: 0;
+			left: 50%;
+			width: 1px;
+			transform: translateX(-50%);
+			background: colors.$lwtv-grey-border;
+		}
+
+		&.lwtv-ty-dc-tl-rail--dashed::before {
+			background: none;
+			border-left: 1px dashed colors.$lwtv-grey-border;
+			width: 0;
+		}
+	}
+
+	.lwtv-ty-dc-pip-month,
+	.lwtv-ty-dc-pip-death,
+	.lwtv-ty-dc-pip-tail {
+		position: absolute;
+		left: 50%;
+		top: 6px;
+		transform: translateX(-50%);
+	}
+
+	.lwtv-ty-dc-pip-month {
+		width: 7px;
+		height: 7px;
+		border-radius: 2px;
+		background: colors.$lwtv-pink;
+	}
+
+	.lwtv-ty-dc-pip-death {
+		width: 9px;
+		height: 9px;
+		border-radius: 50%;
+		background: colors.$lwtv-pink;
+		box-shadow: 0 0 0 3px colors.$white;
+	}
+
+	.lwtv-ty-dc-pip-tail {
+		width: 7px;
+		height: 7px;
+		border-radius: 50%;
+		background: colors.$lwtv-grey-medium;
+	}
+
+	.lwtv-ty-dc-tl-waypoint {
+		padding: 8px 0 2px;
+
+		.lwtv-ty-dc-tl-gutter {
+			font-size: 0.9rem;;
+			font-weight: 700;
+			letter-spacing: 0.08em;
+			text-transform: uppercase;
+			color: colors.$lwtv-pink-deep;
+		}
+
+		.lwtv-ty-dc-tl-content {
+			font-size: 0.9rem;;
+			color: colors.$lwtv-grey-medium;
+			align-self: center;
+		}
+	}
+
+	.lwtv-ty-dc-tl-death {
+		padding: 6px 0;
+
+		.lwtv-ty-dc-tl-date {
+			font-size: 1rem;
+			font-weight: 600;
+			color: colors.$lwtv-grey-medium;
+			padding-top: 1px;
+		}
+
+		.lwtv-ty-dc-tl-name {
+			font-size: 1rem;
+			font-weight: 600;
+			letter-spacing: -0.01em;
+		}
+
+		.lwtv-ty-dc-tl-meta {
+			display: flex;
+			align-items: center;
+			flex-wrap: wrap;
+			gap: 8px;
+			margin-top: 2px;
+		}
+
+		.lwtv-ty-dc-tl-shows {
+			font-size: 0.9rem;
+			color: colors.$lwtv-grey-medium;
+		}
+	}
+
+	.lwtv-ty-dc-chip {
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		height: 19px;
+		padding: 0 8px;
+		border-radius: 6px;
+		background: colors.$lwtv-grey;
+		font-size: 0.8rem;
+		font-weight: 700;
+		letter-spacing: 0.04em;
+		text-transform: uppercase;
+		color: colors.$lwtv-grey-deep;
+	}
+
+	.lwtv-ty-dc-tl-gap .lwtv-ty-dc-tl-content {
+		font-size: 0.9rem;;
+		font-style: italic;
+		color: colors.$lwtv-grey-medium;
+		align-self: center;
+	}
+
+	.lwtv-ty-dc-tl-tail .lwtv-ty-dc-tl-content {
+		font-size: 1rem;
+		color: colors.$lwtv-grey-medium;
+		align-self: center;
+	}
+
+	@media (max-width: 639px) {
+		.lwtv-ty-dc-tl-waypoint,
+		.lwtv-ty-dc-tl-death,
+		.lwtv-ty-dc-tl-gap,
+		.lwtv-ty-dc-tl-tail {
+			grid-template-columns: 62px 20px 1fr;
+		}
+
+		.lwtv-ty-dc-tl-death .lwtv-ty-dc-tl-name { font-size: 1.15rem; }
 	}
 
 	// Dead Characters — By Show: 2-col grid of cards with a red top rule.
