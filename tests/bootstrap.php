@@ -27,3 +27,6 @@ require_once __DIR__ . '/../plugins/lwtv-plugin/php/this-year/build/class-dead-c
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/this-year/build/class-shared-builder.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/this-year/build/class-shows-block.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/statistics/build/class-overview-factsheet.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/this-year/format/class-new-shows-formatter.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/this-year/format/class-canceled-shows-formatter.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/this-year/format/class-dead-characters-formatter.php';
