@@ -54,8 +54,13 @@ foreach ( $dead_by_show as $lwtv_dc_srow ) {
 }
 $lwtv_dc_show_standout = ( $lwtv_dc_show_top && 1 === $lwtv_dc_show_tiecnt );
 
+// For the year still in progress, cap the graph at the current month so months
+// that haven't happened yet aren't shown (or counted) as empty. Past years show
+// the full calendar. current_time() is the WP glue kept out of the transform.
+$lwtv_dc_through = ( (int) current_time( 'Y' ) === (int) $this_year ) ? (int) current_time( 'n' ) : null;
+
 // Deaths-by-month graph model + the longest-stretch fact (pure transforms).
-$lwtv_dc_months  = Dead_Characters::months( $dead_by_date );
+$lwtv_dc_months  = Dead_Characters::months( $dead_by_date, $lwtv_dc_through );
 $lwtv_dc_stretch = Dead_Characters::longest_stretch( $dead_by_date );
 
 // Localized month helpers (locale is a WP concern — kept out of the transform).
@@ -231,11 +236,20 @@ $lwtv_dc_join_months = static function ( array $lwtv_dc_nums ) use ( $lwtv_dc_mo
 				<?php if ( ! empty( $lwtv_dc_empty_nums ) ) : ?>
 					<span class="lwtv-ty-dc-fact lwtv-ty-dc-fact--none">
 						<?php
-						printf(
-							/* translators: %s: list of month names that recorded no deaths. */
-							esc_html__( '%s recorded none', 'lwtv' ),
-							esc_html( $lwtv_dc_join_months( $lwtv_dc_empty_nums ) )
-						);
+						// Beyond three empty months the name list gets unwieldy — summarize as a count.
+						if ( count( $lwtv_dc_empty_nums ) > 3 ) {
+							printf(
+								/* translators: %s: number of months that recorded no deaths. */
+								esc_html( _n( '%s month had no deaths', '%s months had no deaths', count( $lwtv_dc_empty_nums ), 'lwtv' ) ),
+								esc_html( number_format_i18n( count( $lwtv_dc_empty_nums ) ) )
+							);
+						} else {
+							printf(
+								/* translators: %s: list of month names that recorded no deaths. */
+								esc_html__( '%s recorded none', 'lwtv' ),
+								esc_html( $lwtv_dc_join_months( $lwtv_dc_empty_nums ) )
+							);
+						}
 						?>
 					</span>
 				<?php endif; ?>
@@ -247,7 +261,7 @@ $lwtv_dc_join_months = static function ( array $lwtv_dc_nums ) use ( $lwtv_dc_mo
 			'recurring' => __( 'Recurring', 'lwtv' ),
 			'guest'     => __( 'Guest', 'lwtv' ),
 		);
-		$lwtv_dc_timeline    = Dead_Characters::timeline( $dead_by_date );
+		$lwtv_dc_timeline    = Dead_Characters::timeline( $dead_by_date, $lwtv_dc_through );
 		?>
 		<div class="lwtv-ty-dc-timeline">
 			<?php foreach ( $lwtv_dc_timeline as $lwtv_dc_item ) : ?>
