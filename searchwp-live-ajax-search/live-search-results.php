@@ -84,7 +84,7 @@ if ( ! empty( $live_search_results ) ) :
 						}
 					}
 					// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-					echo lwtv_plugin()->get_symbolicon( svg: $svg, icon: $symbolicon ) . '&nbsp;';
+					echo lwtv_plugin()->get_symbolicon( svg: $svg, icon: $symbolicon, max_size: '30px' ) . '&nbsp;';
 					?>
 					<span class="screen-reader-text"><?php echo esc_html( $screen_reader_text ); ?></span>
 					<a href="<?php echo esc_url( $display_data['permalink'] ); ?>">
