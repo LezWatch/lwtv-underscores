@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [7.1.8] - 2026-07-30
+
+### Changed
+
+- Statistics cache warming now collapses a burst of edits into a single, debounced comprehensive warm that trails the last edit, replacing the previous broken and death-only warming; a daily run keeps stats fresh even with no edits.
+- The cliche leaderboard is now included in cache warming.
+- Statistics and This Year pages load faster thanks to bulk slug resolution and cache priming that eliminate repeated per-row database queries.
+
+### Fixed
+
+- A failed statistics database query now degrades to empty output instead of throwing a fatal error across the nations, stations, on-air, this-year, and shared-format views.
+- Canceled shows, new shows, and dead characters no longer silently drop from the current-year views when a year value's type differs.
+
+### Removed
+
+- Hid the not-yet-ready responsive settings from the UI.
+
 ## [7.1.7] - 2026-07-30
 
 ### Changed
