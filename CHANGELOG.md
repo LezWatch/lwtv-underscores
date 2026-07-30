@@ -4,6 +4,17 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [7.1.7] - 2026-07-30
+
+### Changed
+
+- The Deaths by Month view now summarizes empty months as a count ("X months had no deaths") once more than three months recorded none, instead of listing every month name.
+
+### Fixed
+
+- The Deaths by Month graph and timeline no longer show future months of the current year as having recorded no deaths; past years still show the full calendar.
+- CSS display for Faceted Search and CloudFlare Turnstile no longer overflows.
+
 ## [7.1.6] - 2026-07-29
 
 ### Added

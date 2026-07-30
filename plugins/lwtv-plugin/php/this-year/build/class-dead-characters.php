@@ -37,12 +37,20 @@ class Dead_Characters {
 	}
 
 	/**
-	 * The 12-column deaths-by-month graph model (Jan→Dec).
+	 * The deaths-by-month graph model (Jan→Dec).
 	 *
-	 * @param array $dead_by_date Keyed by death-date string → list of characters.
+	 * For a year still in progress the caller passes the current month as
+	 * $through_month so months that haven't happened yet are omitted entirely
+	 * (rather than shown as empty). Past years pass null for the full calendar.
+	 * Peak/empty flags are computed only over the months actually returned.
+	 *
+	 * @param array    $dead_by_date  Keyed by death-date string → list of characters.
+	 * @param int|null $through_month Last month (1-12) to include; null for all 12.
 	 * @return array Ordered list of { num, count, peak, empty }.
 	 */
-	public static function months( array $dead_by_date ): array {
+	public static function months( array $dead_by_date, ?int $through_month = null ): array {
+		$through = ( null === $through_month ) ? 12 : max( 1, min( 12, $through_month ) );
+
 		$counts = array_fill( 1, 12, 0 );
 		foreach ( $dead_by_date as $date_key => $chars ) {
 			$ts = strtotime( self::normalize_date_key( (string) $date_key ) );
@@ -52,10 +60,13 @@ class Dead_Characters {
 			$counts[ (int) gmdate( 'n', $ts ) ] += count( (array) $chars );
 		}
 
-		$max = max( $counts );
+		$max = 0;
+		for ( $n = 1; $n <= $through; $n++ ) {
+			$max = max( $max, $counts[ $n ] );
+		}
 
 		$months = array();
-		for ( $n = 1; $n <= 12; $n++ ) {
+		for ( $n = 1; $n <= $through; $n++ ) {
 			$months[] = array(
 				'num'   => $n,
 				'count' => $counts[ $n ],
@@ -106,10 +117,15 @@ class Dead_Characters {
 	 * The ordered timeline render sequence: month waypoints, per-death rows,
 	 * dashed gap markers for empty months between deaths, and a tail total.
 	 *
-	 * @param array $dead_by_date Keyed by death-date string → list of characters.
+	 * For a year still in progress the caller passes the current month as
+	 * $through_month so the tail's empty-month tally excludes months that
+	 * haven't happened yet. Past years pass null for the full calendar.
+	 *
+	 * @param array    $dead_by_date  Keyed by death-date string → list of characters.
+	 * @param int|null $through_month Last month (1-12) to count; null for all 12.
 	 * @return array Ordered list of typed items (waypoint|gap|death|tail).
 	 */
-	public static function timeline( array $dead_by_date ): array {
+	public static function timeline( array $dead_by_date, ?int $through_month = null ): array {
 		$rows = array();
 		foreach ( $dead_by_date as $key => $chars ) {
 			$ts = strtotime( self::normalize_date_key( (string) $key ) );
@@ -132,7 +148,8 @@ class Dead_Characters {
 			$month_counts[ $row['month'] ] = ( $month_counts[ $row['month'] ] ?? 0 ) + $count;
 			$total                        += $count;
 		}
-		$empty_month_count = 12 - count( $month_counts );
+		$through           = ( null === $through_month ) ? 12 : max( 1, min( 12, $through_month ) );
+		$empty_month_count = max( 0, $through - count( $month_counts ) );
 
 		$items      = array();
 		$prev_month = null;

@@ -64,6 +64,10 @@
 
 .site-sidebar {
 
+	.facetwp-facet input.facetwp-search {
+		min-width: 100px!important;
+	}
+
 	&.showchars-sidebar {
 
 		.card-filter .card-body {

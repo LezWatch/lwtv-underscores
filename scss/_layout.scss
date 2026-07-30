@@ -2254,6 +2254,14 @@ div.facetwp-facet-shows_scores input.facetwp-number {
 
 	.footer-widgets {
 
+		// footer / narrow-column Turnstile fit
+		.cf-turnstile {
+			transform: scale(0.85);
+			transform-origin: left top;
+			// reserve the scaled height so nothing below jumps
+			height: calc(65px * 0.85);
+		}
+
 		h2.widget-title {
 			border-bottom: dotted 1px colors.$lwtv-grey-alt;
 
