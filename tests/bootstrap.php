@@ -30,3 +30,6 @@ require_once __DIR__ . '/../plugins/lwtv-plugin/php/statistics/build/class-overv
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/this-year/format/class-new-shows-formatter.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/this-year/format/class-canceled-shows-formatter.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/this-year/format/class-dead-characters-formatter.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/_components/interface-component.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/_components/interface-templater.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/_components/class-transients.php';

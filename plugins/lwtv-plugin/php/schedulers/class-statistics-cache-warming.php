@@ -31,6 +31,8 @@ use LWTV\Statistics\Build\Queer_IRL as Queer_IRL_Stats;
 use LWTV\Statistics\Build\Formats as Build_Formats;
 use LWTV\Statistics\Build\We_Love_It as Build_Loved;
 use LWTV\Statistics\Build\Worth_It as Build_Worth_It;
+use LWTV\Statistics\Build\Cliche_Leaders as Build_Cliche_Leaders;
+use LWTV\_Components\Transients;
 
 /**
  * Class Statistics_Cache_Warming
@@ -51,15 +53,18 @@ class Statistics_Cache_Warming {
 	 * @param int    $post_id The post ID that triggered the warming
 	 * @return void
 	 */
-	public function warm_cache_tier( string $tier, int $post_id = 0 ): void {
+	public function warm_cache_tier( string $tier = 'all', int $post_id = 0 ): void {
 		lwtv_plugin()->debug_log( 'statistics', "Starting cache warming for tier: {$tier}, post ID: {$post_id}" );
 
 		switch ( $tier ) {
+			case 'all':
+				$this->warm_all();
+				break;
 			case 'counts':
-				$this->warm_count_caches( $post_id );
+				$this->warm_count_caches();
 				break;
 			case 'derived':
-				$this->warm_derived_caches( $post_id );
+				$this->warm_derived_caches();
 				break;
 			case 'stable':
 				$this->warm_stable_caches();
@@ -67,6 +72,44 @@ class Statistics_Cache_Warming {
 		}
 
 		lwtv_plugin()->debug_log( 'statistics', "Completed cache warming for tier: {$tier}" );
+	}
+
+	/**
+	 * Warm every statistics dataset that backs a visitor-facing view.
+	 *
+	 * Best-effort: each step is isolated so one failing builder cannot abort the
+	 * rest. Clears the debounce window at the end because the burst is now fully
+	 * warmed.
+	 *
+	 * @return void
+	 */
+	public function warm_all(): void {
+		$steps = array(
+			'warm_count_caches',
+			'warm_death_statistics',
+			'warm_taxonomy_statistics',
+			'warm_on_air_statistics',
+			'warm_queer_irl_statistics',
+			'warm_formats_statistics',
+			'warm_loved_statistics',
+			'warm_worth_it_statistics',
+			'warm_nation_statistics',
+			'warm_station_statistics',
+			'warm_cliche_leaders_statistics',
+		);
+
+		foreach ( $steps as $step ) {
+			try {
+				$this->$step();
+			} catch ( \Throwable $e ) {
+				lwtv_plugin()->error_log( 'statistics', "Cache warm step {$step} failed: " . $e->getMessage() );
+			}
+		}
+
+		// The burst is fully warmed — end the debounce window.
+		Transients::clear_stats_warm_deadline();
+
+		lwtv_plugin()->debug_log( 'statistics', 'Completed full statistics cache warm.' );
 	}
 
 	/**
@@ -305,5 +348,17 @@ class Statistics_Cache_Warming {
 		( new Build_Worth_It() )->generate( 'array' );
 
 		lwtv_plugin()->debug_log( 'statistics', 'Warming worth it statistics caches...' );
+	}
+
+	/**
+	 * Warm the "most cliches" leaderboard cache (backs the characters/most-cliches
+	 * view). Previously unwarmed, so it always rebuilt cold after an edit.
+	 *
+	 * @return void
+	 */
+	private function warm_cliche_leaders_statistics(): void {
+		( new Build_Cliche_Leaders() )->generate();
+
+		lwtv_plugin()->debug_log( 'statistics', 'Warming cliche leaders statistics caches...' );
 	}
 }

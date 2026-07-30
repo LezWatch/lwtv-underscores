@@ -11,8 +11,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Transients implements Component, Templater {
 
-	const CACHE_DURATION = HOUR_IN_SECONDS / 2;
-
 	/**
 	 * Option name for the stats-cache index: a map of stats transient key =>
 	 * unix time it was last built. Because a persistent object cache (e.g.
@@ -24,6 +22,30 @@ class Transients implements Component, Templater {
 	 * @var string
 	 */
 	const STATS_INDEX_OPTION = 'lwtv_stats_cache_index';
+
+	/**
+	 * Action Scheduler hook + group for the debounced statistics warm.
+	 */
+	const WARM_HOOK  = 'lwtv_warm_statistics_cache';
+	const WARM_GROUP = 'lwtv';
+
+	/**
+	 * Option holding the hard deadline (unix time) for the in-progress warm
+	 * burst. 0/absent means no burst is currently open.
+	 *
+	 * @var string
+	 */
+	const WARM_DEADLINE_OPTION = 'lwtv_stats_warm_deadline';
+
+	/**
+	 * Trailing debounce: fire the warm this long after the LAST edit in a burst.
+	 */
+	const WARM_DEBOUNCE_DELAY = 2 * MINUTE_IN_SECONDS;
+
+	/**
+	 * Hard cap: never defer the warm more than this past the FIRST edit in a burst.
+	 */
+	const WARM_MAX_DELAY = 10 * MINUTE_IN_SECONDS;
 
 	/**
 	 * Memoised, flattened list of stats key patterns tracked in the index.
@@ -248,53 +270,36 @@ class Transients implements Component, Templater {
 			return;
 		}
 
-		$dependencies = $this->get_cache_dependencies();
-
-		// Collect all unique patterns to clear across all queued requests.
+		$dependencies      = $this->get_cache_dependencies();
 		$patterns_to_clear = array();
-		$warming_requests  = array();
 
 		foreach ( self::$invalidation_queue as $request ) {
-			$tiers_to_invalidate = $this->get_tiers_for_content_type( $request['content_type'] );
-
-			foreach ( $tiers_to_invalidate as $tier ) {
+			foreach ( $this->get_tiers_for_content_type( $request['content_type'] ) as $tier ) {
 				if ( ! isset( $dependencies[ $tier ] ) ) {
 					continue;
 				}
 
 				$tier_config = $dependencies[ $tier ];
 
-				// Skip 'preserve' tier.
+				// 'preserve' tiers are intentionally never cleared on save.
 				if ( 'preserve' === $tier_config['priority'] ) {
 					continue;
 				}
 
-				// Collect patterns to clear (deduplicated).
 				foreach ( $tier_config['patterns'] as $pattern ) {
 					$patterns_to_clear[ $pattern ] = true;
-				}
-
-				// Track warming requests.
-				if ( 'immediate' === $tier_config['priority'] ) {
-					$warming_requests[] = array(
-						'tier'    => $tier,
-						'post_id' => $request['post_id'],
-					);
-				} elseif ( 'background' === $tier_config['priority'] ) {
-					$this->schedule_cache_warming( $tier, $request['post_id'] );
 				}
 			}
 		}
 
-		// Clear all patterns in batch.
+		// Clear all affected patterns in one batch.
 		if ( ! empty( $patterns_to_clear ) ) {
 			$this->clear_cache_tier( array_keys( $patterns_to_clear ) );
 		}
 
-		// Warm immediate caches.
-		foreach ( $warming_requests as $request ) {
-			$this->warm_cache_tier( $request['tier'], $request['post_id'] );
-		}
+		// Schedule ONE debounced, comprehensive warm. A burst of edits reschedules
+		// the same job forward, so the whole burst warms the final state once.
+		$this->schedule_stats_warm();
 
 		$count = count( self::$invalidation_queue );
 		lwtv_plugin()->debug_log( 'caching', "Processed {$count} deferred cache invalidation requests" );
@@ -347,21 +352,26 @@ class Transients implements Component, Templater {
 				}
 			}
 
-			// Fallback for DB-stored transients (no persistent object cache),
-			// and to sweep any keys that predate the index.
-			$sql_pattern = str_replace( '*', '%', $pattern );
-			$wpdb->query(
-				$wpdb->prepare(
-					"DELETE FROM {$wpdb->options} WHERE option_name LIKE %s",
-					'_transient_' . $sql_pattern
-				)
-			);
-			$wpdb->query(
-				$wpdb->prepare(
-					"DELETE FROM {$wpdb->options} WHERE option_name LIKE %s",
-					'_transient_timeout_' . $sql_pattern
-				)
-			);
+			// Fallback for DB-stored transients (no persistent object cache), and
+			// to sweep any keys that predate the index. Under a persistent object
+			// cache (Redis) transients live outside wp_options, so this SQL pass
+			// matches nothing — skip it entirely to avoid a needless DELETE storm
+			// on every content edit.
+			if ( ! wp_using_ext_object_cache() ) {
+				$sql_pattern = str_replace( '*', '%', $pattern );
+				$wpdb->query(
+					$wpdb->prepare(
+						"DELETE FROM {$wpdb->options} WHERE option_name LIKE %s",
+						'_transient_' . $sql_pattern
+					)
+				);
+				$wpdb->query(
+					$wpdb->prepare(
+						"DELETE FROM {$wpdb->options} WHERE option_name LIKE %s",
+						'_transient_timeout_' . $sql_pattern
+					)
+				);
+			}
 		}
 
 		if ( $changed ) {
@@ -370,34 +380,31 @@ class Transients implements Component, Templater {
 	}
 
 	/**
-	 * Warm cache tier immediately
+	 * Schedule (or reschedule) the single debounced statistics warm.
 	 *
-	 * @param string $tier
-	 * @param int    $post_id
+	 * A burst of edits collapses into one job: each call unschedules the pending
+	 * warm and reschedules it to next_stats_warm_time(), which trails the last
+	 * edit by WARM_DEBOUNCE_DELAY but never past first_edit + WARM_MAX_DELAY.
+	 * No-ops when Action Scheduler is unavailable — the daily cron backstop and
+	 * lazy rebuild still keep pages correct.
+	 *
 	 * @return void
 	 */
-	private function warm_cache_tier( string $tier, int $post_id ): void {
-		// For now, just log the warming request
-		// In a full implementation, this would trigger immediate cache regeneration
-		lwtv_plugin()->debug_log( 'caching', "Warming {$tier} cache tier for post ID: {$post_id}" );
-	}
-
-	/**
-	 * Schedule cache warming for background processing
-	 *
-	 * @param string $tier
-	 * @param int    $post_id
-	 * @return void
-	 */
-	private function schedule_cache_warming( string $tier, int $post_id ): void {
-		if ( lwtv_plugin()->is_action_scheduler_available() ) {
-			as_schedule_single_action(
-				time() + self::CACHE_DURATION,
-				'lwtv_warm_statistics_cache',
-				array( $tier, $post_id ),
-				'lwtv'
-			);
+	private function schedule_stats_warm(): void {
+		if ( ! lwtv_plugin()->is_action_scheduler_available() ) {
+			return;
 		}
+
+		$deadline = (int) get_option( self::WARM_DEADLINE_OPTION, 0 );
+		$next     = self::next_stats_warm_time( time(), $deadline, self::WARM_DEBOUNCE_DELAY, self::WARM_MAX_DELAY );
+
+		// Reschedule the single pending warm forward to the new target.
+		as_unschedule_all_actions( self::WARM_HOOK, array(), self::WARM_GROUP );
+		as_schedule_single_action( $next['target'], self::WARM_HOOK, array(), self::WARM_GROUP );
+
+		update_option( self::WARM_DEADLINE_OPTION, $next['deadline'], false );
+
+		lwtv_plugin()->debug_log( 'caching', 'Scheduled debounced statistics warm for ' . $next['target'] );
 	}
 
 	/**
@@ -475,6 +482,43 @@ class Transients implements Component, Templater {
 		}
 
 		return $oldest;
+	}
+
+	/**
+	 * Compute when the debounced statistics warm should next fire.
+	 *
+	 * Pure arithmetic (no WordPress calls) so it is unit-testable. A burst of
+	 * edits keeps pushing the target forward by $delay, but never past a hard
+	 * deadline of first_edit + $max, so a long editing session still warms.
+	 *
+	 * @param int $now      Current unix time.
+	 * @param int $deadline Existing burst deadline (0/absent = no burst open).
+	 * @param int $delay    Trailing debounce delay in seconds.
+	 * @param int $max      Max seconds to defer past the first edit in a burst.
+	 * @return array { 'target' => int, 'deadline' => int }
+	 */
+	public static function next_stats_warm_time( int $now, int $deadline, int $delay, int $max ): array {
+		if ( $deadline <= 0 ) {
+			// No burst in progress: open a new one.
+			$deadline = $now + $max;
+		}
+
+		$target = min( $now + $delay, $deadline );
+
+		return array(
+			'target'   => $target,
+			'deadline' => $deadline,
+		);
+	}
+
+	/**
+	 * End the current warm-burst window. Called once the comprehensive warm has
+	 * actually run (see Statistics_Cache_Warming::warm_all()).
+	 *
+	 * @return void
+	 */
+	public static function clear_stats_warm_deadline(): void {
+		delete_option( self::WARM_DEADLINE_OPTION );
 	}
 
 	/**
