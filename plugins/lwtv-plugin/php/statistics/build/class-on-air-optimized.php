@@ -241,10 +241,13 @@ class On_Air_Optimized {
 			if ( ! empty( $show_ids ) ) {
 				// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- This is a prepared query (see above)
 				$results = $wpdb->get_results( $wpdb->prepare( $queery, ...$show_ids ), ARRAY_A );
+				// get_results() returns null on a DB error; normalise so count()/foreach never hit null.
+				$results = is_array( $results ) ? $results : array();
 				lwtv_plugin()->debug_log( 'statistics', 'Query executed with ' . count( $show_ids ) . ' show IDs, returned ' . count( $results ) . ' results' );
 			} else {
 				// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- There's no need to prepare this query
 				$results = $wpdb->get_results( $queery, ARRAY_A );
+				$results = is_array( $results ) ? $results : array();
 				lwtv_plugin()->debug_log( 'statistics', 'Query executed without filtering, returned ' . count( $results ) . ' results' );
 			}
 

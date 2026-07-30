@@ -67,7 +67,7 @@ class Nations {
 			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- This is a prepared query (see above)
 			$results = $wpdb->get_results( $query, ARRAY_A );
 
-			if ( false === $results ) {
+			if ( ! is_array( $results ) ) {
 				lwtv_plugin()->debug_log( 'statistics', 'Query failed: ' . $wpdb->last_error );
 				return array();
 			}
@@ -343,7 +343,7 @@ class Nations {
 			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- This is a prepared query (see above)
 			$results = $wpdb->get_results( $query, ARRAY_A );
 
-			if ( false === $results ) {
+			if ( ! is_array( $results ) ) {
 				lwtv_plugin()->debug_log( 'statistics', 'Tropes breakdown query failed for nation: ' . $nation_slug );
 				return array();
 			}
@@ -416,7 +416,7 @@ class Nations {
 			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- This is a prepared query (see above)
 			$results = $wpdb->get_results( $query, ARRAY_A );
 
-			if ( false === $results ) {
+			if ( ! is_array( $results ) ) {
 				lwtv_plugin()->debug_log( 'statistics', 'Formats breakdown query failed for nation: ' . $nation_slug );
 				return array();
 			}

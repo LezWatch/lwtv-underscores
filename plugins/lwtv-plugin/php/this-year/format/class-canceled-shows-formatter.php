@@ -21,7 +21,7 @@ class Canceled_Shows_Formatter {
 			foreach ( $shows_by_name as $marker => $shows ) {
 				// each show in the array
 				foreach ( $shows as $show ) {
-					if ( $show['airdates']['finish'] === $this_year ) {
+					if ( (int) $show['airdates']['finish'] === (int) $this_year ) {
 						$canceled_shows_by_name[ $marker ][ $show['name'] ] = $show;
 					}
 				}
@@ -50,7 +50,7 @@ class Canceled_Shows_Formatter {
 			foreach ( $shows_by_format as $marker => $shows ) {
 				// each show in the array
 				foreach ( $shows as $show ) {
-					if ( $show['airdates']['finish'] === $this_year ) {
+					if ( (int) $show['airdates']['finish'] === (int) $this_year ) {
 						$canceled_shows_by_format[ $marker ][ $show['name'] ] = $show;
 					}
 				}
@@ -79,7 +79,7 @@ class Canceled_Shows_Formatter {
 			foreach ( $shows_by_country as $marker => $shows ) {
 				// each show in the array
 				foreach ( $shows as $show ) {
-					if ( $show['airdates']['finish'] === $this_year ) {
+					if ( (int) $show['airdates']['finish'] === (int) $this_year ) {
 						$canceled_shows_by_country[ $marker ][ $show['name'] ] = $show;
 					}
 				}

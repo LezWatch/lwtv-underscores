@@ -35,7 +35,7 @@ class Dead_Characters_Formatter {
 				foreach ( $character['death_years'] as $death_date ) {
 					// Get the year from the death date (it's the first 4 digits).
 					$death_year = substr( $death_date, 0, 4 );
-					if ( $death_year === $this_year ) {
+					if ( (int) $death_year === (int) $this_year ) {
 						// ACF's date_picker stores raw meta as Ymd; a handful of legacy
 						// rows are still Y-m-d. Normalize to Y-m-d so both spellings of
 						// the same day group together instead of fragmenting into two rows.

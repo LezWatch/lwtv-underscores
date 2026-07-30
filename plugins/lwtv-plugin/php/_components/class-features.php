@@ -118,7 +118,7 @@ class Features implements Component {
 			add_action( 'wp_head', array( $this, 'add_meta_tags_for_dev_site' ), 2 );
 		}
 
-		// Post Statues
+		// Post Statuses
 		wp_register_style( 'ui-labs-post-statuses', LWTV_PLUGIN_URL . '/assets/css/post-statuses.css', false, LWTV_PLUGIN_VERSION );
 		wp_enqueue_style( 'ui-labs-post-statuses' );
 
@@ -128,8 +128,22 @@ class Features implements Component {
 		// Block pingbacks.
 		add_filter( 'xmlrpc_methods', array( $this, 'remove_xmlrpc_methods' ) );
 
-		// Fuck off Gutenberg Alerts
+		// Fuck off Gutenberg Alerts.
 		add_action( 'enqueue_block_editor_assets', array( $this, 'disable_gutenberg_things' ) );
+
+		// Stop the broken responsiveEditingEnabled until WP figures this shit out.
+		add_filter( 'block_editor_settings_all', array( $this, 'block_editor_settings_responsive' ) );
+	}
+
+	/**
+	 * Block the responsive settings in the UX because it's not ready.
+	 * https://wordpress.org/support/topic/responsive-styling-7-1-useful-feature-but-a-few-ui-things-confused-me/#new-topic-0
+	 *
+	 * @param array $settings Block Editor Settings
+	 */
+	public function block_editor_settings_responsive( $settings ): array {
+		$settings['responsiveEditingEnabled'] = false;
+		return $settings;
 	}
 
 	/**

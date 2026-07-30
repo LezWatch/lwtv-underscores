@@ -1345,6 +1345,11 @@ class Dead {
 	}
 
 	public function get_data_version_hash() {
+		static $hash = null;
+		if ( null !== $hash ) {
+			return $hash;
+		}
+
 		global $wpdb;
 		$last_modified = $wpdb->get_var(
 			$wpdb->prepare(
@@ -1353,7 +1358,7 @@ class Dead {
 			)
 		);
 
-		$hash = md5( $last_modified );
+		$hash = md5( (string) $last_modified );
 
 		return $hash;
 	}
