@@ -72,6 +72,12 @@ class Characters_Builder {
 			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- No user input in query
 			$results = $wpdb->get_results( $query, ARRAY_A );
 
+			// Prime meta once so the per-character get_field()/get_post_meta() below hit cache.
+			$prime_ids = array_values( array_filter( array_map( static fn( $r ) => (int) $r['ID'], (array) $results ) ) );
+			if ( ! empty( $prime_ids ) ) {
+				update_meta_cache( 'post', $prime_ids );
+			}
+
 			// Process each character's data
 			foreach ( $results as $row ) {
 				$show_group_data = get_field( 'lezchars_show_group', $row['ID'] );
@@ -189,6 +195,16 @@ class Characters_Builder {
 
 			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- No user input in query
 			$results = $wpdb->get_results( $query, ARRAY_A );
+
+			$prime_ids = array_values( array_filter( array_map( static fn( $r ) => (int) $r['ID'], (array) $results ) ) );
+			if ( ! empty( $prime_ids ) ) {
+				// Prime post objects + meta + terms in one pass. The post-object cache
+				// matters: ACF's get_field() resolves each character's WP_Post, so
+				// without it every loop iteration fires get_post() (an N+1 of
+				// "SELECT * FROM wp_posts WHERE ID = N"). meta/terms priming alone
+				// (its own object cache) does not cover that.
+				_prime_post_caches( $prime_ids, true, true );
+			}
 
 			foreach ( $results as $row ) {
 				$char_id    = (int) $row['ID'];
@@ -371,14 +387,11 @@ class Characters_Builder {
 			return array();
 		}
 
-		// Get character IDs for show data lookup
-		$character_ids = array();
-		foreach ( $characters as $character ) {
-			$character_ids[] = $this->get_character_id_by_slug( $character['slug'] );
-		}
+		// Resolve every slug -> id in one query, then hand the map to enhance().
+		$slug_ids = $this->map_slugs_to_ids( wp_list_pluck( $characters, 'slug' ), 'post_type_characters' );
 
 		// Get show data for all characters
-		$characters_with_shows = $this->enhance_characters_with_shows( $characters, $character_ids, $year );
+		$characters_with_shows = $this->enhance_characters_with_shows( $characters, $slug_ids, $year );
 
 		// Cache the enhanced results for 1 day
 		lwtv_plugin()->set_transient( $cache_key, $characters_with_shows, DAY_IN_SECONDS );
@@ -387,28 +400,62 @@ class Characters_Builder {
 	}
 
 	/**
-	 * Get character ID by slug
+	 * Map post slugs to published post IDs in one query (replaces per-row
+	 * get_page_by_path()). Returns [ slug => (int) id ] for slugs that resolve.
 	 *
-	 * @param string $slug The character slug
-	 * @return int|null Character ID or null if not found
+	 * @param array  $slugs     Post slugs.
+	 * @param string $post_type Post type to resolve within.
+	 * @return array
 	 */
-	private function get_character_id_by_slug( string $slug ): ?int {
-		$post = get_page_by_path( $slug, OBJECT, 'post_type_characters' );
-		return $post ? $post->ID : null;
+	private function map_slugs_to_ids( array $slugs, string $post_type ): array {
+		$slugs = array_values( array_unique( array_filter( array_map( 'strval', $slugs ) ) ) );
+		if ( empty( $slugs ) ) {
+			return array();
+		}
+
+		global $wpdb;
+		$placeholders = implode( ',', array_fill( 0, count( $slugs ), '%s' ) );
+
+		// phpcs:disable
+		$query = $wpdb->prepare(
+			"SELECT post_name, ID FROM {$wpdb->posts}
+			WHERE post_name IN ($placeholders)
+			AND post_type = %s
+			AND post_status = 'publish'",
+			array_merge( $slugs, array( $post_type ) )
+		);
+		// phpcs:enable
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- Query is prepared above
+		$rows = $wpdb->get_results( $query, ARRAY_A );
+
+		$map = array();
+		if ( is_array( $rows ) ) {
+			foreach ( $rows as $row ) {
+				$map[ $row['post_name'] ] = (int) $row['ID'];
+			}
+		}
+
+		return $map;
 	}
 
 	/**
 	 * Enhance characters array with show information
 	 *
 	 * @param array $characters Array of character data
-	 * @param array $character_ids Array of character IDs
+	 * @param array $slug_ids Map of character slug => post ID
 	 * @param int   $year The year to filter shows by
 	 * @return array Enhanced character data with shows
 	 */
-	private function enhance_characters_with_shows( array $characters, array $character_ids, int $year ): array {
+	private function enhance_characters_with_shows( array $characters, array $slug_ids, int $year ): array {
 		// Get show group data for each character using ACF API (handles ACF repeater format)
 		$show_ids            = array();
 		$character_show_data = array();
+
+		$character_ids = array_values( array_filter( $slug_ids ) );
+		if ( ! empty( $character_ids ) ) {
+			update_meta_cache( 'post', $character_ids );
+		}
 
 		foreach ( array_filter( $character_ids ) as $character_id ) {
 			$character_id    = (int) $character_id;
@@ -462,7 +509,7 @@ class Characters_Builder {
 		// Enhance characters with show information
 		$enhanced_characters = array();
 		foreach ( $characters as $character ) {
-			$character_id = $this->get_character_id_by_slug( $character['slug'] );
+			$character_id = $slug_ids[ $character['slug'] ] ?? 0;
 			$shows        = array();
 
 			if ( isset( $character_show_data[ $character_id ] ) ) {
@@ -506,6 +553,8 @@ class Characters_Builder {
 		if ( empty( $show_ids ) ) {
 			return array();
 		}
+
+		_prime_post_caches( array_map( 'intval', $show_ids ), false, false );
 
 		global $wpdb;
 		$placeholders = implode( ',', array_fill( 0, count( $show_ids ), '%d' ) );

@@ -214,14 +214,11 @@ class Shows_Builder {
 			return array();
 		}
 
-		// Get show IDs for character lookup
-		$show_ids = array();
-		foreach ( $shows as $show ) {
-			$show_ids[] = $this->get_show_id_by_slug( $show['slug'] );
-		}
+		// Resolve every slug -> id in one query, then hand the map to enhance().
+		$slug_ids = $this->map_slugs_to_ids( wp_list_pluck( $shows, 'slug' ), 'post_type_shows' );
 
 		// Get characters and taxonomy data for these shows
-		$shows_with_characters = $this->enhance_shows_with_characters( $shows, $show_ids, $year );
+		$shows_with_characters = $this->enhance_shows_with_characters( $shows, $slug_ids, $year );
 
 		// Cache the enhanced results for 1 day
 		lwtv_plugin()->set_transient( $cache_key, $shows_with_characters, DAY_IN_SECONDS );
@@ -230,26 +227,57 @@ class Shows_Builder {
 	}
 
 	/**
-	 * Get show ID by slug
+	 * Map post slugs to published post IDs in one query (replaces per-row
+	 * get_page_by_path()). Returns [ slug => (int) id ] for slugs that resolve.
 	 *
-	 * @param string $slug The show slug
-	 * @return int|null Show ID or null if not found
+	 * @param array  $slugs     Post slugs.
+	 * @param string $post_type Post type to resolve within.
+	 * @return array
 	 */
-	private function get_show_id_by_slug( string $slug ): ?int {
-		$post = get_page_by_path( $slug, OBJECT, 'post_type_shows' );
-		return $post ? $post->ID : null;
+	private function map_slugs_to_ids( array $slugs, string $post_type ): array {
+		$slugs = array_values( array_unique( array_filter( array_map( 'strval', $slugs ) ) ) );
+		if ( empty( $slugs ) ) {
+			return array();
+		}
+
+		global $wpdb;
+		$placeholders = implode( ',', array_fill( 0, count( $slugs ), '%s' ) );
+
+		// phpcs:disable
+		$query = $wpdb->prepare(
+			"SELECT post_name, ID FROM {$wpdb->posts}
+			WHERE post_name IN ($placeholders)
+			AND post_type = %s
+			AND post_status = 'publish'",
+			array_merge( $slugs, array( $post_type ) )
+		);
+		// phpcs:enable
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- Query is prepared above
+		$rows = $wpdb->get_results( $query, ARRAY_A );
+
+		$map = array();
+		if ( is_array( $rows ) ) {
+			foreach ( $rows as $row ) {
+				$map[ $row['post_name'] ] = (int) $row['ID'];
+			}
+		}
+
+		return $map;
 	}
 
 	/**
 	 * Enhance shows array with character and taxonomy information
 	 *
 	 * @param array $shows Array of show data
-	 * @param array $show_ids Array of show IDs
+	 * @param array $slug_ids Map of slug => show ID
 	 * @param int   $year The year to filter characters by
 	 * @return array Enhanced show data with characters and taxonomies
 	 */
-	private function enhance_shows_with_characters( array $shows, array $show_ids, int $year ): array {
+	private function enhance_shows_with_characters( array $shows, array $slug_ids, int $year ): array {
 		global $wpdb;
+
+		$show_ids = array_values( array_filter( $slug_ids ) );
 
 		// Get all characters who appeared in these shows during the specified year
 		$characters_data = $this->get_characters_for_shows_in_year( $show_ids, $year );
@@ -260,7 +288,7 @@ class Shows_Builder {
 		// Enhance shows with character and taxonomy information
 		$enhanced_shows = array();
 		foreach ( $shows as $show ) {
-			$show_id    = $this->get_show_id_by_slug( $show['slug'] );
+			$show_id    = $slug_ids[ $show['slug'] ] ?? 0;
 			$characters = isset( $characters_data[ $show_id ] ) ? $characters_data[ $show_id ] : array();
 
 			// Only include shows that have characters for this year
@@ -292,7 +320,7 @@ class Shows_Builder {
 			return array();
 		}
 
-		// Filter out null values that get_show_id_by_slug() may return
+		// Filter out any falsy IDs (unresolved slugs map to 0/false)
 		$show_ids = array_values( array_filter( $show_ids ) );
 		if ( empty( $show_ids ) ) {
 			return array();
@@ -324,6 +352,9 @@ class Shows_Builder {
 		if ( empty( $candidate_character_ids ) ) {
 			return array();
 		}
+
+		$candidate_character_ids = array_map( 'intval', $candidate_character_ids );
+		update_meta_cache( 'post', $candidate_character_ids );
 
 		// Process show group data using ACF API (handles repeater sub-field assembly)
 		$characters_by_show = array();
@@ -383,6 +414,12 @@ class Shows_Builder {
 			}
 		}
 
+		$matched_ids = array_values( array_unique( array_map( 'intval', $character_ids ) ) );
+		if ( ! empty( $matched_ids ) ) {
+			update_meta_cache( 'post', $matched_ids );
+			update_object_term_cache( $matched_ids, 'post_type_characters' );
+		}
+
 		// Get character names and permalinks
 		$character_data = $this->get_character_data_by_ids( array_unique( $character_ids ) );
 
@@ -427,6 +464,8 @@ class Shows_Builder {
 		if ( empty( $character_ids ) ) {
 			return array();
 		}
+
+		_prime_post_caches( array_map( 'intval', $character_ids ), false, false );
 
 		global $wpdb;
 		$placeholders = implode( ',', array_fill( 0, count( $character_ids ), '%d' ) );
@@ -539,10 +578,18 @@ class Shows_Builder {
 			return array();
 		}
 
+		// One slug->id query for the whole set, then prime posts/meta/terms once so
+		// the per-show reads below hit cache instead of firing per-row queries.
+		$slug_ids  = $this->map_slugs_to_ids( wp_list_pluck( $shows, 'slug' ), 'post_type_shows' );
+		$prime_ids = array_values( array_filter( $slug_ids ) );
+		if ( ! empty( $prime_ids ) ) {
+			_prime_post_caches( $prime_ids, true, true );
+		}
+
 		$shows_by_name = array();
 
 		foreach ( $shows as $show ) {
-			$show_id = $this->get_show_id_by_slug( $show['slug'] );
+			$show_id = $slug_ids[ $show['slug'] ] ?? 0;
 
 			if ( ! $show_id ) {
 				continue;
@@ -653,10 +700,18 @@ class Shows_Builder {
 			return array();
 		}
 
+		// One slug->id query for the whole set, then prime posts/meta/terms once so
+		// the per-show reads below hit cache instead of firing per-row queries.
+		$slug_ids  = $this->map_slugs_to_ids( wp_list_pluck( $shows, 'slug' ), 'post_type_shows' );
+		$prime_ids = array_values( array_filter( $slug_ids ) );
+		if ( ! empty( $prime_ids ) ) {
+			_prime_post_caches( $prime_ids, true, true );
+		}
+
 		$shows_by_format = array();
 
 		foreach ( $shows as $show ) {
-			$show_id = $this->get_show_id_by_slug( $show['slug'] );
+			$show_id = $slug_ids[ $show['slug'] ] ?? 0;
 
 			if ( ! $show_id ) {
 				continue;
@@ -747,10 +802,18 @@ class Shows_Builder {
 			return array();
 		}
 
+		// One slug->id query for the whole set, then prime posts/meta/terms once so
+		// the per-show reads below hit cache instead of firing per-row queries.
+		$slug_ids  = $this->map_slugs_to_ids( wp_list_pluck( $shows, 'slug' ), 'post_type_shows' );
+		$prime_ids = array_values( array_filter( $slug_ids ) );
+		if ( ! empty( $prime_ids ) ) {
+			_prime_post_caches( $prime_ids, true, true );
+		}
+
 		$shows_by_nation = array();
 
 		foreach ( $shows as $show ) {
-			$show_id = $this->get_show_id_by_slug( $show['slug'] );
+			$show_id = $slug_ids[ $show['slug'] ] ?? 0;
 
 			if ( ! $show_id ) {
 				continue;

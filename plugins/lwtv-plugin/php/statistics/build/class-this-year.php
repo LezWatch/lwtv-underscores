@@ -162,6 +162,8 @@ class This_Year {
 
 			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- This is a prepared query (see above)
 			$results = $wpdb->get_results( $queery, ARRAY_A );
+			// get_results() returns null on a DB error; normalise so count()/foreach never hit null.
+			$results = is_array( $results ) ? $results : array();
 
 			lwtv_plugin()->debug_log( 'this-year', 'Query returned ' . count( $results ) . ' results for taxonomy: ' . $taxonomy_name );
 

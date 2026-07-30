@@ -67,7 +67,7 @@ class Stations {
 			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- This is a prepared query (see above)
 			$results = $wpdb->get_results( $query, ARRAY_A );
 
-			if ( false === $results ) {
+			if ( ! is_array( $results ) ) {
 				lwtv_plugin()->debug_log( 'statistics', 'Query failed: ' . $wpdb->last_error );
 				return array();
 			}
@@ -345,7 +345,7 @@ class Stations {
 			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- This is a prepared query (see above)
 			$results = $wpdb->get_results( $query, ARRAY_A );
 
-			if ( false === $results ) {
+			if ( ! is_array( $results ) ) {
 				lwtv_plugin()->debug_log( 'statistics', 'Tropes breakdown query failed for station: ' . $station_slug );
 				return array();
 			}
@@ -418,7 +418,7 @@ class Stations {
 			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- This is a prepared query (see above)
 			$results = $wpdb->get_results( $query, ARRAY_A );
 
-			if ( false === $results ) {
+			if ( ! is_array( $results ) ) {
 				lwtv_plugin()->debug_log( 'statistics', 'Formats breakdown query failed for station: ' . $station_slug );
 				return array();
 			}
@@ -503,6 +503,14 @@ class Stations {
 
 			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- This is a prepared query (see above)
 			$results = $wpdb->get_results( $query, ARRAY_A );
+
+			// get_results() returns null on a DB error; array_column( null, … ) is a
+			// TypeError, which the catch ( \Exception ) below does NOT catch. Guard it
+			// (matches the is_array() guard already in Nations::get_nation_shows()).
+			if ( ! is_array( $results ) ) {
+				lwtv_plugin()->error_log( 'statistics', 'Shows query failed for station: ' . $station_slug . ' - Last error: ' . $wpdb->last_error );
+				return array();
+			}
 
 			$clean_results = array_column( $results, 'ID' );
 
