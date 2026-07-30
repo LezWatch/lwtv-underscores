@@ -177,6 +177,7 @@ class Transients implements Component, Templater {
 					'batch_taxonomy_*',
 					'bulk_char_counts_*',
 					'bulk_show_counts_*',
+					'bulk_first_years_*',
 					'actor_chars_*',
 					'stats_meta_*',
 					'total_shows_count',

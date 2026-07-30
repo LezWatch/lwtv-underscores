@@ -496,6 +496,12 @@ class Taxonomy_Optimized {
 			return $first_years;
 		}
 
+		$cache_key   = 'bulk_first_years_' . $taxonomy . '_' . md5( wp_json_encode( $slugs ) );
+		$cached_data = lwtv_plugin()->get_transient( $cache_key );
+		if ( false !== $cached_data ) {
+			return $cached_data;
+		}
+
 		// Fold a candidate year into the running per-term minimum. Zero/unknown
 		// years never win, so they cannot mask a genuine debut year.
 		$fold = static function ( &$years, $slug, $year ) {
@@ -559,6 +565,8 @@ class Taxonomy_Optimized {
 				$fold( $first_years, $row['slug'], $airdates['start'] );
 			}
 		}
+
+		lwtv_plugin()->set_transient( $cache_key, $first_years, DAY_IN_SECONDS );
 
 		return $first_years;
 	}
