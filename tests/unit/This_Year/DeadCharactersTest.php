@@ -67,6 +67,39 @@ class DeadCharactersTest extends TestCase {
 		$this->assertTrue( $result[5]['empty'] );
 	}
 
+	public function test_months_defaults_to_full_year(): void {
+		$result = Dead_Characters::months( $this->deaths( array( '2025-03-10' => 1 ) ) );
+		$this->assertCount( 12, $result );
+		$this->assertSame( 12, $result[11]['num'] );
+	}
+
+	public function test_months_omits_future_months_when_capped(): void {
+		// Year in progress: today is July, so only Jan→Jul should be built.
+		$result = Dead_Characters::months(
+			$this->deaths(
+				array(
+					'2026-03-10' => 1,
+					'2026-06-05' => 2,
+				)
+			),
+			7
+		);
+
+		$this->assertCount( 7, $result );
+		$this->assertSame( 7, $result[ count( $result ) - 1 ]['num'] ); // last shown month is July
+
+		$byNum = array_column( $result, null, 'num' );
+		$this->assertArrayNotHasKey( 8, $byNum );       // August onward omitted
+		$this->assertTrue( $byNum[6]['peak'] );          // June is the peak within range
+		$this->assertTrue( $byNum[7]['empty'] );         // July (current month) has no deaths yet
+		$this->assertSame( 3, array_sum( array_column( $result, 'count' ) ) );
+	}
+
+	public function test_months_cap_clamped_to_valid_range(): void {
+		$this->assertCount( 12, Dead_Characters::months( array(), 99 ) );
+		$this->assertCount( 12, Dead_Characters::months( array(), 12 ) );
+	}
+
 	// ---- longest_stretch(): largest gap between consecutive deaths. ----
 
 	public function test_longest_stretch_picks_largest_gap(): void {
@@ -136,6 +169,20 @@ class DeadCharactersTest extends TestCase {
 		$this->assertSame( 'regular', $items[1]['role'] );    // role from shows[0]
 		$this->assertSame( 4, $items[7]['total'] );
 		$this->assertSame( 10, $items[7]['empty_month_count'] ); // 12 - 2 death-months
+	}
+
+	public function test_timeline_empty_month_count_respects_cap(): void {
+		// Year in progress capped at July: only 7 months count toward "empty".
+		$dead = array(
+			'2026-03-04' => array( $this->char( 'Aa', 'aa', 'regular' ) ),
+			'2026-06-29' => array( $this->char( 'Ab', 'ab', 'guest' ) ),
+		);
+		$items = Dead_Characters::timeline( $dead, 7 );
+		$tail  = $items[ count( $items ) - 1 ];
+
+		$this->assertSame( 'tail', $tail['type'] );
+		// Jan→Jul = 7 months, 2 had deaths (Mar, Jun) → 5 empty (Jan, Feb, Apr, May, Jul).
+		$this->assertSame( 5, $tail['empty_month_count'] );
 	}
 
 	public function test_timeline_same_day_deaths_repeat_the_date(): void {
