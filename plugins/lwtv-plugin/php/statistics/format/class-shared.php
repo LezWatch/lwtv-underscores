@@ -29,7 +29,12 @@ class Shared {
 		// Change all - to _ for clean_view
 		$clean_view = str_replace( '-', '_', $clean_view );
 
-		// Get the data for the clean_view
+		// Get the data for the clean_view. Bail if the requested view key is
+		// missing or not an array, otherwise array_filter()/usort() below run on
+		// null and fatal — this method has no try/catch to absorb it.
+		if ( ! isset( $data[ $clean_view ] ) || ! is_array( $data[ $clean_view ] ) ) {
+			return array();
+		}
 		$data = $data[ $clean_view ];
 
 		// For on_air, we want to sort by the name column so the years go in ascending order (1951 -> 2025)
