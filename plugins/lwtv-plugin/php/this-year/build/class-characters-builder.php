@@ -198,8 +198,12 @@ class Characters_Builder {
 
 			$prime_ids = array_values( array_filter( array_map( static fn( $r ) => (int) $r['ID'], (array) $results ) ) );
 			if ( ! empty( $prime_ids ) ) {
-				update_meta_cache( 'post', $prime_ids );
-				update_object_term_cache( $prime_ids, 'post_type_characters' );
+				// Prime post objects + meta + terms in one pass. The post-object cache
+				// matters: ACF's get_field() resolves each character's WP_Post, so
+				// without it every loop iteration fires get_post() (an N+1 of
+				// "SELECT * FROM wp_posts WHERE ID = N"). meta/terms priming alone
+				// (its own object cache) does not cover that.
+				_prime_post_caches( $prime_ids, true, true );
 			}
 
 			foreach ( $results as $row ) {
