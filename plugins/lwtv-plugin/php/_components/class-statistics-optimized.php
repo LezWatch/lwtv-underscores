@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-use LWTV\Statistics\{ CSV_Download, Gutenberg_SSR, Query_Vars, Stats_Counter, Stats_Handler, Stats_Generator };
+use LWTV\Statistics\{ CSV_Download, Gutenberg_SSR, Query_Vars, Stats_Counter, Stats_Generator };
 use LWTV\Statistics\Stats_Enqueues;
 use LWTV\CPTs\Actors as CPT_Actors;
 
@@ -139,22 +139,6 @@ class Statistics_Optimized implements Component, Templater {
 	}
 
 	/**
-	 * Handle output for different formats
-	 *
-	 * @param array $data Data to format
-	 * @param string $context Context (Station, Nation, etc.)
-	 * @param string $view View type
-	 * @param string $format Output format
-	 * @param string $source_type Source type
-	 * @param array $custom_data Custom data
-	 * @param string $bar_direction Direction of the barchart
-	 * @return mixed Formatted data
-	 */
-	public function handle_output( $data, $context, $view, $format, $source_type, $custom_data = array(), $bar_direction = 'horizontal' ) {
-		return ( new Stats_Handler() )->handle( $data, $context, $view, $format, $source_type, $custom_data, $bar_direction );
-	}
-
-	/**
 	 * Generate station-specific statistics
 	 *
 	 * Direct method for station statistics that bypasses the generic
@@ -163,12 +147,10 @@ class Statistics_Optimized implements Component, Templater {
 	 * @param string $station Station slug (e.g., 'cbs', 'abc') or 'all' for summary
 	 * @param string $view View type ('all', 'gender', 'sexuality', 'tropes', 'on-air')
 	 * @param string $format Output format ('array', 'percentage', 'list', etc.)
-	 * @param array  $custom_data Optional custom data (counts, etc.)
-	 * @param string $bar_direction Direction of the barchart ('vertical', 'horizontal')
 	 * @return mixed Station statistics data
 	 */
-	public function generate_station_statistics( $station, $view = 'all', $format = 'array', $custom_data = array(), $bar_direction = 'vertical' ) {
-		return ( new Stats_Generator() )->generate_stations( $station, $view, $format, $custom_data, $bar_direction );
+	public function generate_station_statistics( $station, $view = 'all', $format = 'array' ) {
+		return ( new Stats_Generator() )->generate_stations( $station, $view, $format );
 	}
 
 	/**
@@ -177,12 +159,10 @@ class Statistics_Optimized implements Component, Templater {
 	 * @param string $nation Nation slug (e.g., 'usa', 'canada')
 	 * @param string $view View type ('all', 'gender', 'sexuality', 'tropes', 'on-air')
 	 * @param string $format Output format ('array', 'percentage', 'list', etc.)
-	 * @param array  $custom_data Optional custom data (counts, etc.)
-	 * @param string $bar_direction Direction of the barchart ('vertical', 'horizontal')
 	 * @return mixed Nation statistics data
 	 */
-	public function generate_nation_statistics( $nation, $view = 'all', $format = 'array', $custom_data = array(), $bar_direction = 'vertical' ) {
-		return ( new Stats_Generator() )->generate_nations( $nation, $view, $format, $custom_data, $bar_direction );
+	public function generate_nation_statistics( $nation, $view = 'all', $format = 'array' ) {
+		return ( new Stats_Generator() )->generate_nations( $nation, $view, $format );
 	}
 
 	/**
