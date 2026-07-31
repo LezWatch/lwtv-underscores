@@ -18,6 +18,7 @@ $lwtv_shows_subnav = array(
 	'genres'            => __( 'Genres', 'lwtv' ),
 	'intersectionality' => __( 'Intersectionality', 'lwtv' ),
 	'stars'             => __( 'Stars', 'lwtv' ),
+	'scores'            => __( 'Scores', 'lwtv' ),
 	'triggers'          => __( 'Triggers', 'lwtv' ),
 	'worth-it'          => __( 'Worth It', 'lwtv' ),
 	'we-love-it'        => __( 'We Love It', 'lwtv' ),

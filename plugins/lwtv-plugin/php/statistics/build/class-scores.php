@@ -156,6 +156,126 @@ class Scores {
 	}
 
 	/**
+	 * Get every published show's score as a flat list.
+	 *
+	 * Feeds Score_Distribution::histogram() / median() / tails(). Shows
+	 * with no score meta are skipped (a stored zero still counts).
+	 *
+	 * @return array Raw score values (numeric strings, unclamped).
+	 */
+	public function get_score_values(): array {
+		global $wpdb;
+
+		try {
+			// Prefixed 'scores_' so the derived-tier invalidation pattern
+			// ('scores_*' in Transients::get_cache_dependencies) clears it.
+			$transient = 'scores_values_shows';
+			$values    = lwtv_plugin()->get_transient( $transient );
+
+			if ( false !== $values ) {
+				return $values;
+			}
+
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- No user input; table names come from $wpdb.
+			$results = $wpdb->get_col(
+				"SELECT pm.meta_value
+				 FROM {$wpdb->posts} p
+				 INNER JOIN {$wpdb->postmeta} pm ON p.ID = pm.post_id AND pm.meta_key = 'lezshows_the_score'
+				 WHERE p.post_type = 'post_type_shows'
+				 AND p.post_status = 'publish'
+				 AND pm.meta_value IS NOT NULL
+				 AND pm.meta_value != ''"
+			);
+
+			$values = is_array( $results ) ? $results : array();
+
+			if ( ! empty( $values ) ) {
+				lwtv_plugin()->set_transient( $transient, $values, DAY_IN_SECONDS );
+			}
+
+			return $values;
+
+		} catch ( \Exception $e ) {
+			lwtv_plugin()->error_log( 'statistics', 'Error getting score values: ' . $e->getMessage() );
+			return array();
+		}
+	}
+
+	/**
+	 * Get show scores grouped by every year each show was on air.
+	 *
+	 * A show contributes its (whole-run) score to each year between its
+	 * airdate start and finish, matching how On_Air_Optimized counts
+	 * shows per year — 'current' finishes run to this year, explicit
+	 * finish years are capped to it. Feeds
+	 * Score_Distribution::yearly_average().
+	 *
+	 * @return array Year => array of raw score values.
+	 */
+	public function get_scores_by_on_air_year(): array {
+		global $wpdb;
+
+		try {
+			$transient = 'scores_by_on_air_year';
+			$array     = lwtv_plugin()->get_transient( $transient );
+
+			if ( false !== $array ) {
+				return $array;
+			}
+
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- No user input; table names come from $wpdb.
+			$results = $wpdb->get_results(
+				"SELECT p.ID, score_meta.meta_value AS score, air_meta.meta_value AS airdates_serialized
+				 FROM {$wpdb->posts} p
+				 INNER JOIN {$wpdb->postmeta} score_meta ON p.ID = score_meta.post_id AND score_meta.meta_key = 'lezshows_the_score'
+				 INNER JOIN {$wpdb->postmeta} air_meta ON p.ID = air_meta.post_id AND air_meta.meta_key = 'lezshows_airdates'
+				 WHERE p.post_type = 'post_type_shows'
+				 AND p.post_status = 'publish'
+				 AND score_meta.meta_value IS NOT NULL
+				 AND score_meta.meta_value != ''
+				 AND air_meta.meta_value IS NOT NULL
+				 AND air_meta.meta_value != ''",
+				ARRAY_A
+			);
+			$results = is_array( $results ) ? $results : array();
+
+			// Same "now" derivation as On_Air_Optimized: the site timezone,
+			// not gmdate()'s UTC year (off-by-one around New Year).
+			$current_year = (int) ( new \DateTime( 'now', new \DateTimeZone( LWTV_TIMEZONE ) ) )->format( 'Y' );
+			$first_year   = (int) LWTV_FIRST_YEAR;
+
+			$array = array();
+
+			foreach ( $results as $row ) {
+				$airdates = maybe_unserialize( $row['airdates_serialized'] );
+
+				if ( ! is_array( $airdates ) || ! isset( $airdates['start'] ) || ! isset( $airdates['finish'] ) ) {
+					continue;
+				}
+
+				$start_year  = (int) $airdates['start'];
+				$finish_year = ( 'current' === $airdates['finish'] ) ? $current_year : min( $current_year, (int) $airdates['finish'] );
+
+				for ( $year = max( $first_year, $start_year ); $year <= $finish_year; $year++ ) {
+					$array[ $year ][] = $row['score'];
+				}
+			}
+
+			ksort( $array );
+
+			if ( ! empty( $array ) ) {
+				lwtv_plugin()->set_transient( $transient, $array, DAY_IN_SECONDS );
+			}
+
+			return $array;
+
+		} catch ( \Exception $e ) {
+			lwtv_plugin()->error_log( 'statistics', 'Error getting scores by on-air year: ' . $e->getMessage() );
+			return array();
+		}
+	}
+
+	/**
 	 * Get total count of posts for the given post type
 	 *
 	 * @param string $post_type Post type to count
