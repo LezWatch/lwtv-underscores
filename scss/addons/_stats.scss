@@ -1376,8 +1376,11 @@ canvas {
 		}
 	}
 
-	// Characters On Air — mobile: the 27-column graph is unreadable, swap bars for letter chips.
-	@media (max-width: 767px) {
+	// Characters On Air — tablet and down: the 27-column graph doesn't have room
+	// for every letter's min-width, so it overlaps instead of shrinking. Swap
+	// bars for wrapping letter chips before that happens (covers iPad widths,
+	// not just phones).
+	@media (max-width: 991px) {
 
 		.lwtv-ty-coa-bars {
 			display: flex;
@@ -1407,6 +1410,10 @@ canvas {
 				}
 			}
 		}
+	}
+
+	// Characters On Air — mobile: the directory table loses its Show column.
+	@media (max-width: 767px) {
 
 		.lwtv-ty-coa-dir-head,
 		.lwtv-ty-coa-dir-row {
@@ -1557,6 +1564,7 @@ canvas {
 
 	.lwtv-ty-dc-graph-foot {
 		display: flex;
+		flex-wrap: wrap;
 		justify-content: space-between;
 		gap: 12px;
 		margin-top: 10px;
@@ -1567,10 +1575,13 @@ canvas {
 
 		.lwtv-ty-dc-fact { white-space: nowrap; }
 
-		// Empty-months fact hugs the far right, even when no single deadliest month shows.
+		// The empty-months list (e.g. every non-deadly month named) has no fixed
+		// length, so it must be able to wrap rather than force the row wider than
+		// its container. Hugs the far right, even when no single deadliest month shows.
 		.lwtv-ty-dc-fact--none {
 			margin-left: auto;
 			text-align: right;
+			white-space: normal;
 		}
 	}
 
