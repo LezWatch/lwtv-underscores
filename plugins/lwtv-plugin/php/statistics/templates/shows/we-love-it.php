@@ -36,7 +36,7 @@ $donut = array(
 	'center_sub'  => __( 'we love', 'lwtv' ),
 	'eyebrow'     => __( 'Shows We Love', 'lwtv' ),
 	'headline'    => __( 'A rare and deliberate honor', 'lwtv' ),
-	'description' => __( '“Shows We Love” is hand-picked, so it stays a small fraction of the whole database.', 'lwtv' ),
+	'description' => __( '“Shows We Love” is hand-picked, so it\'s a fraction of the whole database.', 'lwtv' ),
 );
 
 // phpcs:ignore PEAR.Files.IncludingFile.UseRequire

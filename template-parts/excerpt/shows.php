@@ -59,21 +59,58 @@ $thumb_title       = ( empty( $thumb_attribution ) ) ? get_the_title() : get_the
 							?>
 						</span>
 					</h3>
+
+					<div class="card-info">
+						<ul class="list-group list-group-horizontal">
+							<?php
+							echo get_the_term_list( get_the_ID(), 'lez_formats', '<li class="list-group-item">', ', ', '</li>' );
+
+							$airdates = get_post_meta( get_the_ID(), 'lezshows_airdates', true );
+							if ( $airdates ) {
+								echo '<li class="list-group-item">';
+								$airdate = $airdates['start'] . ' - ' . $airdates['finish'];
+								if ( $airdates['start'] === $airdates['finish'] ) {
+									$airdate = $airdates['finish'];
+								}
+								echo esc_html( $airdate );
+								echo '</li>';
+							}
+
+							$stations = get_the_terms( get_the_ID(), 'lez_stations' );
+							if ( $stations && ! is_wp_error( $stations ) ) {
+								echo get_the_term_list( get_the_ID(), 'lez_stations', '<li class="list-group-item">', ', ', '</li>' );
+							}
+							?>
+						</ul>
+					</div>
+
 					<div class="card-text"><?php the_excerpt(); ?></div>
 
 					<div class="card-meta">
 						<?php
-						$stations = get_the_terms( get_the_ID(), 'lez_stations' );
-						if ( $stations && ! is_wp_error( $stations ) ) {
-							echo get_the_term_list( get_the_ID(), 'lez_stations', '<strong>Network:</strong> ', ', ' ) . '<br />';
+						// Intersectionality: only shown in intersection-focused views, i.e.
+						// on lez_intersections term archives or when the FacetWP
+						// intersectionality facet has a selection. Keeps default browsing clean.
+						$show_intersections = is_tax( 'lez_intersections' );
+						if ( ! $show_intersections && function_exists( 'FWP' ) ) {
+							// AJAX refresh: selections live in the facet object; initial
+							// page load: they come from the URL vars. Check both.
+							$selected_facets    = FWP()->facet->facets['show_intersectionality']['selected_values'] ?? array();
+							$facet_url_vars     = FWP()->request->url_vars['show_intersectionality'] ?? array();
+							$show_intersections = ! empty( $selected_facets ) || ! empty( $facet_url_vars );
 						}
-						$airdates = get_post_meta( get_the_ID(), 'lezshows_airdates', true );
-						if ( $airdates ) {
-							$airdate = $airdates['start'] . ' - ' . $airdates['finish'];
-							if ( $airdates['start'] === $airdates['finish'] ) {
-								$airdate = $airdates['finish'];
+						if ( $show_intersections ) {
+							$intersections = get_the_terms( get_the_ID(), 'lez_intersections' );
+							if ( $intersections && ! is_wp_error( $intersections ) ) {
+								echo '<span class="intersection-icons">';
+								foreach ( $intersections as $intersection ) {
+									$icon = get_term_meta( $intersection->term_id, 'lez_termsmeta_icon', true );
+									$icon = ( ! empty( $icon ) ) ? $icon : 'flag-wave';
+									// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+									echo '<a href="' . esc_url( get_term_link( $intersection, 'lez_intersections' ) ) . '" class="intersection-icon" data-bs-target="tooltip" title="' . esc_attr( $intersection->name ) . '" aria-label="' . esc_attr( $intersection->name ) . '">' . lwtv_plugin()->get_symbolicon( svg: $icon . '.svg', icon: 'svg-lemon', max_size: '20' ) . '</a> ';
+								}
+								echo '</span>';
 							}
-							echo '<strong>Airdates:</strong> ' . esc_html( $airdate ) . '<br />';
 						}
 						?>
 					</div>
