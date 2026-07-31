@@ -21,10 +21,11 @@ if ( (int) $genres_stats['shows'] > 0 ) {
 	$genres_med = (float) $genres_stats['median'];
 
 	$lwtv_callouts[] = array(
-		'label' => __( 'Average per show', 'lwtv' ),
-		'icon'  => 'chart-bar.svg',
+		'label'  => __( 'Average per show', 'lwtv' ),
+		'icon'   => 'chart-bar.svg',
 		/* translators: %s: average number of genres per show (one decimal). */
-		'text'  => sprintf( __( 'The average show spans %s genres.', 'lwtv' ), number_format_i18n( $genres_avg, 1 ) ),
+		'text'   => sprintf( __( 'The average show spans %s genres.', 'lwtv' ), number_format_i18n( $genres_avg, 1 ) ),
+		'family' => 'genres',
 	);
 
 	if ( floor( $genres_med ) === $genres_med ) {
@@ -35,9 +36,10 @@ if ( (int) $genres_stats['shows'] > 0 ) {
 		$genres_med_text = sprintf( __( 'The typical show has %s genres.', 'lwtv' ), number_format_i18n( $genres_med, 1 ) );
 	}
 	$lwtv_callouts[] = array(
-		'label' => __( 'Median per show', 'lwtv' ),
-		'icon'  => 'scales.svg',
-		'text'  => $genres_med_text,
+		'label'  => __( 'Median per show', 'lwtv' ),
+		'icon'   => 'scales.svg',
+		'text'   => $genres_med_text,
+		'family' => 'genres',
 	);
 
 	// phpcs:ignore PEAR.Files.IncludingFile.UseRequire
@@ -47,7 +49,7 @@ if ( (int) $genres_stats['shows'] > 0 ) {
 $ranked = array(
 	'rows'   => $genres_data,
 	'total'  => (int) $shows_count,
-	'family' => 'actors',
+	'family' => 'genres',
 	'svg'    => 'theater_masks.svg',
 	'icon'   => 'svg-theater-masks',
 	'title'  => __( 'Genre Breakdown', 'lwtv' ),

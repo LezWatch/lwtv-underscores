@@ -87,17 +87,19 @@ if ( (int) $inter_stats['shows'] > 0 && (int) $shows_count > 0 ) {
 	$inter_pct  = round( ( $inter_with / (int) $shows_count ) * 100, 1 );
 
 	$lwtv_callouts[] = array(
-		'label' => __( 'Shows with triggers', 'lwtv' ),
-		'icon'  => 'warning.svg',
+		'label'  => __( 'Shows with triggers', 'lwtv' ),
+		'icon'   => 'warning.svg',
 		/* translators: %s: percentage of all shows carrying at least one trigger (one decimal). */
-		'text'  => sprintf( __( '%s%% of all shows have a warning.', 'lwtv' ), number_format_i18n( $inter_pct, 1 ) ),
+		'text'   => sprintf( __( '%s%% of all shows have a warning.', 'lwtv' ), number_format_i18n( $inter_pct, 1 ) ),
+		'family' => 'triggers',
 	);
 
 	$lwtv_callouts[] = array(
-		'label' => __( 'Biggest warnings', 'lwtv' ),
-		'icon'  => 'volcano.svg',
+		'label'  => __( 'Biggest warnings', 'lwtv' ),
+		'icon'   => 'volcano.svg',
 		/* translators: 1: Name of the most common trigger, 2: number of shows with that trigger. */
-		'text'  => sprintf( __( 'The most common warning is "%1$s", seen on %2$s shows.', 'lwtv' ), $trig_top_label, $trig_top_val ),
+		'text'   => sprintf( __( 'The most common warning is "%1$s", seen on %2$s shows.', 'lwtv' ), $trig_top_label, $trig_top_val ),
+		'family' => 'triggers-bad',
 	);
 
 	// phpcs:ignore PEAR.Files.IncludingFile.UseRequire

@@ -232,7 +232,7 @@ class Shows {
 	 */
 	public function check_intersection_problems( int $show_id ): array {
 
-		$intersections = get_post_meta( $show_id, 'lez_intersections', true );
+		$intersections = get_the_terms( $show_id, 'lez_intersections' );
 
 		if ( ! $intersections || is_wp_error( $intersections ) ) {
 			return array();

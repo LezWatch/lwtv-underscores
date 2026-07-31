@@ -48,8 +48,31 @@
 		}
 	}
 
+	.card-meta svg * {
+		fill: colors.$white !important;
+	}
+
+	.card-info {
+		.list-group-item {
+			color: colors.$lwtv-grey-light !important;
+			a {
+				color: colors.$lwtv-grey-light !important;
+			}
+		}
+
+		ul.list-group-horizontal li:not(:last-child):after {
+			color: colors.$lwtv-grey-light !important;
+		}
+	}
+
 	.similar-shows-airdates {
 		color: colors.$white !important;
+	}
+
+	.network-list li.list-group-item {
+		svg * {
+				fill: colors.$white !important;
+			}
 	}
 
 	a.btn-outline-primary,
@@ -173,6 +196,20 @@
 		background-color: $lwtv-grey-medium;
 	}
 
+	form.search-form input[type=text],
+	.searchwp-live-search-results-showing {
+		background-color: $lwtv-grey-medium;
+		color: colors.$lwtv-grey-light;
+
+		svg * {
+			fill: colors.$lwtv-grey-light;
+		}
+	}
+
+	.searchwp-live-search-result .searchwp-live-search-result--title a {
+		color: colors.$lwtv-grey-light;
+	}
+
 	#comments,
 	ul.comment-list li .comment-content,
 	ul.comment-list li .comment-author {
@@ -215,8 +252,9 @@
 		fill: colors.$lwtv-grey-light;
 	}
 
+	#episodes ul li:before,
 	.widget_lwtv_social_menu_widget a::before {
-		filter: invert(50%) sepia(79%) saturate(2476%) hue-rotate(227deg) brightness(118%) contrast(119%);
+		filter: invert(100%) sepia(0%) saturate(0%) hue-rotate(227deg) brightness(180%) contrast(100%);
 	}
 
 	.card-meta-item.actors svg,
@@ -233,9 +271,7 @@
 	}
 
 	.overlay-section {
-
 		.col {
-
 			.card {
 				background-color: $lwtv-grey-medium;
 			}
@@ -314,10 +350,10 @@
 
 		.facetwp-type-fselect .fs-dropdown,
 		.facetwp-type-fselect .fs-wrap,
-		.fs-label-wrap .fs-label
+		.fs-label-wrap .fs-label,
 		.facetwp-type-autocomplete .fs-dropdown,
 		.facetwp-type-autocomplete .fs-wrap {
-			background-color: $lwtv-grey-medium;
+			background-color: $lwtv-grey-medium !important;
 			color: colors.$white;
 			border-color: colors.$lwtv-grey-light;
 		}
@@ -396,6 +432,10 @@
 		.lwtv-bars--actors .progress-bar,
 		.lwtv-bars--shows .progress-bar {
 			background-color: colors.$lwtv-pink-medium !important;
+		}
+
+		.lwtv-stats-lastcalc {
+			background-color: colors.$lwtv-grey-deep;
 		}
 
 		.lwtv-bars--sexuality .progress-bar,
@@ -525,6 +565,12 @@
 		.lwtv-bars--sexuality .lwtv-leader-track,
 		.lwtv-bars--gender .lwtv-leader-track {
 			background-color: colors.$lwtv-grey-light;
+		}
+
+		// Lollipop sticks/dots follow the dark progress-bar pink.
+		.lwtv-lolli-stick,
+		.lwtv-lolli-dot {
+			background-color: colors.$lwtv-pink-medium !important;
 		}
 
 		// Tail separators need a light-on-dark border to stay visible.
