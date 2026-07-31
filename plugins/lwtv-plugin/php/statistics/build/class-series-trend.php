@@ -97,4 +97,35 @@ class Series_Trend {
 			'pct_of_peak'      => ( $peak_count > 0 ) ? (int) round( ( $latest_count / $peak_count ) * 100 ) : 0,
 		);
 	}
+
+	/**
+	 * Drop trailing zero-count years from a per-year series.
+	 *
+	 * When an entity's last show ended years ago, an axis that keeps
+	 * running to the current year implies a history that is not there —
+	 * the chart should stop where the story stops. Interior zero years
+	 * are kept (a gap is part of the story); only the dead tail goes.
+	 * The template pairs the shortened axis with an adaptive "nothing
+	 * on the air since %d" line so the trim explains itself.
+	 *
+	 * @param array $rows [ ['year'=>int,'count'=>int], … ] in any order.
+	 * @return array Rows sorted ascending, tail of zero years removed.
+	 *               Empty array when every year is zero (no anchor year).
+	 */
+	public static function trim_trailing_zeros( array $rows ): array {
+		usort( $rows, static fn( $a, $b ) => (int) ( $a['year'] ?? 0 ) <=> (int) ( $b['year'] ?? 0 ) );
+
+		$last_active = -1;
+		foreach ( $rows as $i => $row ) {
+			if ( (int) ( $row['count'] ?? 0 ) > 0 ) {
+				$last_active = $i;
+			}
+		}
+
+		if ( $last_active < 0 ) {
+			return array();
+		}
+
+		return array_slice( $rows, 0, $last_active + 1 );
+	}
 }

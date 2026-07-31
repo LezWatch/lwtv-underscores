@@ -3565,6 +3565,7 @@ canvas {
 		margin: 4px 0 0;
 		font-size: 0.9rem;
 		color: colors.$lwtv-grey-deep;
+		margin-bottom: 0.4rem;
 	}
 
 	.lwtv-yearbars-avg {
@@ -3657,6 +3658,51 @@ canvas {
 		font-size: 0.6875rem;
 		white-space: nowrap;
 		color: colors.$lwtv-crimson-deep;
+	}
+
+	// Short-history card (thin-data nations/stations): narrative + show rows.
+	.lwtv-shorthist-desc {
+		max-width: 60ch;
+	}
+
+	.lwtv-shorthist-rows {
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
+		margin-top: 16px;
+	}
+
+	.lwtv-shorthist-row {
+		display: flex;
+		align-items: center;
+		gap: 14px;
+		padding: 12px 16px;
+		border: 1px solid colors.$lwtv-grey-border;
+		border-radius: 10px;
+	}
+
+	.lwtv-shorthist-row-body {
+		flex: 1 1 auto;
+		min-width: 0;
+	}
+
+	.lwtv-shorthist-title {
+		font-weight: 600;
+	}
+
+	.lwtv-shorthist-meta {
+		margin: 2px 0 0;
+		font-size: 0.8125rem;
+		color: colors.$lwtv-grey-deep;
+	}
+
+	.lwtv-shorthist-score {
+		flex: 0 0 auto;
+		padding: 4px 10px;
+		font-size: 0.75rem;
+		color: colors.$white;
+		background-color: colors.$lwtv-teal;
+		border-radius: 999px;
 	}
 
 	// Death "Vibrant Refresh" — bespoke crimson→plum data-viz palette. Hardcoded

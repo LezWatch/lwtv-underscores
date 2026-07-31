@@ -156,4 +156,71 @@ class SeriesTrendTest extends TestCase {
 		$this->assertSame( array(), Series_Trend::classify( array(), 2025 ) );
 		$this->assertSame( array(), Series_Trend::classify( $this->rows( array( 2025 => 10 ) ), 2025 ) );
 	}
+
+	/*
+	 * trim_trailing_zeros()
+	 */
+
+	public function test_trim_trailing_zeros_cuts_the_dead_tail(): void {
+		$out = Series_Trend::trim_trailing_zeros(
+			$this->rows(
+				array(
+					2019 => 1,
+					2020 => 0,
+					2021 => 0,
+					2022 => 0,
+				)
+			)
+		);
+
+		$this->assertSame( array( 2019 ), array_column( $out, 'year' ) );
+		$this->assertSame( 1, $out[0]['count'] );
+	}
+
+	public function test_trim_trailing_zeros_keeps_interior_zero_years(): void {
+		$out = Series_Trend::trim_trailing_zeros(
+			$this->rows(
+				array(
+					2018 => 2,
+					2019 => 0,
+					2020 => 3,
+					2021 => 0,
+				)
+			)
+		);
+
+		// The 2019 gap stays (it is part of the story); only the tail goes.
+		$this->assertSame( array( 2018, 2019, 2020 ), array_column( $out, 'year' ) );
+	}
+
+	public function test_trim_trailing_zeros_no_tail_is_untouched(): void {
+		$rows = $this->rows(
+			array(
+				2023 => 4,
+				2024 => 5,
+			)
+		);
+
+		$this->assertSame( $rows, Series_Trend::trim_trailing_zeros( $rows ) );
+	}
+
+	public function test_trim_trailing_zeros_sorts_unordered_input(): void {
+		$out = Series_Trend::trim_trailing_zeros(
+			$this->rows(
+				array(
+					2021 => 0,
+					2019 => 1,
+					2020 => 2,
+				)
+			)
+		);
+
+		$this->assertSame( array( 2019, 2020 ), array_column( $out, 'year' ) );
+	}
+
+	public function test_trim_trailing_zeros_all_zero_or_empty(): void {
+		// All-zero series has no anchor year; hand back nothing rather than guess.
+		$this->assertSame( array(), Series_Trend::trim_trailing_zeros( $this->rows( array( 2020 => 0, 2021 => 0 ) ) ) );
+		$this->assertSame( array(), Series_Trend::trim_trailing_zeros( array() ) );
+	}
 }
