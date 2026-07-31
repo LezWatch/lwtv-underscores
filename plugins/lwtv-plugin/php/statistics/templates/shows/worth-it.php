@@ -52,10 +52,10 @@ $worth_lead = lwtv_stats_fraction_phrase( $worth_yes_percent );
 // "Hard no" clause derives from the real "No" share ("about one in 11"…).
 $worth_no_ratio = lwtv_stats_ratio_phrase( $worth_no_percent );
 if ( '' === $worth_no_ratio ) {
-	$worth_no_clause = __( 'almost none are a hard “no”', 'lwtv' );
+	$worth_no_clause = __( 'Almost none are a hard “no”', 'lwtv' );
 } else {
 	/* translators: %s: a "one in N" ratio phrase, e.g. "one in 11". */
-	$worth_no_clause = sprintf( __( 'about %s is a hard “no”', 'lwtv' ), $worth_no_ratio );
+	$worth_no_clause = sprintf( __( 'About %s is a hard “no”', 'lwtv' ), $worth_no_ratio );
 }
 
 $donut = array(

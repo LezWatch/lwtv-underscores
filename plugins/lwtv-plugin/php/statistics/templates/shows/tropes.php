@@ -21,10 +21,11 @@ if ( (int) $tropes_stats['shows'] > 0 ) {
 	$tropes_med = (float) $tropes_stats['median'];
 
 	$lwtv_callouts[] = array(
-		'label' => __( 'Average per show', 'lwtv' ),
-		'icon'  => 'chart-bar.svg',
+		'label'  => __( 'Average per show', 'lwtv' ),
+		'icon'   => 'chart-bar.svg',
 		/* translators: %s: average number of tropes per show (one decimal). */
-		'text'  => sprintf( __( 'The average show carries %s tropes.', 'lwtv' ), number_format_i18n( $tropes_avg, 1 ) ),
+		'text'   => sprintf( __( 'The average show carries %s tropes.', 'lwtv' ), number_format_i18n( $tropes_avg, 1 ) ),
+		'family' => 'tropes',
 	);
 
 	if ( floor( $tropes_med ) === $tropes_med ) {
@@ -35,9 +36,10 @@ if ( (int) $tropes_stats['shows'] > 0 ) {
 		$tropes_med_text = sprintf( __( 'The typical show has %s tropes.', 'lwtv' ), number_format_i18n( $tropes_med, 1 ) );
 	}
 	$lwtv_callouts[] = array(
-		'label' => __( 'Median per show', 'lwtv' ),
-		'icon'  => 'scales.svg',
-		'text'  => $tropes_med_text,
+		'label'  => __( 'Median per show', 'lwtv' ),
+		'icon'   => 'scales.svg',
+		'text'   => $tropes_med_text,
+		'family' => 'tropes',
 	);
 
 	// phpcs:ignore PEAR.Files.IncludingFile.UseRequire

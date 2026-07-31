@@ -9,10 +9,7 @@
 .thisyear {
 
 	.lwtv-stats-lastcalc {
-		border: 1px solid colors.$lwtv-grey-medium;
-		border-radius: 14px;
 		padding: 20px;
-		background-color: colors.$lwtv-grey-light;
 		margin-top: 20px;
 		font-size: 0.75rem;
 
@@ -2442,24 +2439,30 @@ canvas {
 	}
 
 	.lwtv-panel-icon {
-		color: colors.$lwtv-pink-deep;
+		color: colors.$lwtv-pink;
 
 		svg {
 			fill: currentColor; // sprite paths have no fill; take the icon color.
 		}
 
 		// Family-colored header icons for the shows overview panels.
+		&.tropes,
 		&.characters {
 			color: colors.$lwtv-green-deep;
 		}
 
 		&.gender,
+		&.genres,
 		&.actors {
 			color: colors.$lwtv-yellow-deep;
 		}
 
 		&.sexuality {
 			color: colors.$lwtv-blue-deep;
+		}
+
+		&.intersections {
+			color: colors.$lwtv-royal-blue;
 		}
 	}
 
@@ -2534,11 +2537,13 @@ canvas {
 		}
 	}
 
-	.lwtv-bars--characters .lwtv-leader-track {
+	.lwtv-bars--characters .lwtv-leader-track,
+	.lwtv-bars--tropes .lwtv-leader-track {
 		background-color: colors.$lwtv-green-light;
 	}
 
 	.lwtv-bars--gender .lwtv-leader-track,
+	.lwtv-bars--genres .lwtv-leader-track,
 	.lwtv-bars--actors .lwtv-leader-track {
 		background-color: colors.$lwtv-yellow-light;
 	}
@@ -2568,30 +2573,34 @@ canvas {
 		top: 50%;
 		left: 0;
 		right: 6px;
-		height: 2px;
+		height: 6px;
 		transform: translateY(-50%);
 		border-radius: 999px;
-		background-color: colors.$lwtv-grey-deep;
+		background-color: colors.$lwtv-royal-blue;
 	}
 
 	.lwtv-lolli-dot {
 		position: absolute;
 		top: 50%;
 		right: 0;
-		width: 12px;
-		height: 12px;
+		width: 15px;
+		height: 15px;
 		transform: translate(50%, -50%);
 		border-radius: 50%;
-		background-color: colors.$lwtv-grey-deep;
+		background-color: colors.$lwtv-blue;
 	}
 
 	.lwtv-bars--characters .lwtv-lolli-stick,
-	.lwtv-bars--characters .lwtv-lolli-dot {
-		background-color: colors.$lwtv-green-deep;
+	.lwtv-bars--characters .lwtv-lolli-dot,
+	.lwtv-bars--tropes .lwtv-lolli-stick,
+	.lwtv-bars--tropes .lwtv-lolli-dot {
+		background-color: colors.$lwtv-blue-deep;
 	}
 
 	.lwtv-bars--gender .lwtv-lolli-stick,
 	.lwtv-bars--gender .lwtv-lolli-dot,
+	.lwtv-bars--genres .lwtv-lolli-stick,
+	.lwtv-bars--genres .lwtv-lolli-dot,
 	.lwtv-bars--actors .lwtv-lolli-stick,
 	.lwtv-bars--actors .lwtv-lolli-dot {
 		background-color: colors.$lwtv-yellow-deep;
@@ -2601,7 +2610,7 @@ canvas {
 	.lwtv-bars--sexuality .lwtv-lolli-dot,
 	.lwtv-bars--shows .lwtv-lolli-stick,
 	.lwtv-bars--shows .lwtv-lolli-dot {
-		background-color: colors.$lwtv-blue-deep;
+		background-color: colors.$lwtv-blue;
 	}
 
 	// Overview panel: tail rows (name + count, no bar).
@@ -2650,11 +2659,13 @@ canvas {
 	}
 
 	// Ranked-bar family fills (override the default teal progressbar within a family list).
-	.lwtv-bars--characters .progress-bar {
+	.lwtv-bars--characters .progress-bar,
+	.lwtv-bars--tropes .progress-bar {
 		background-color: colors.$lwtv-green-deep;
 	}
 
 	.lwtv-bars--gender .progress-bar,
+	.lwtv-bars--genres .progress-bar,
 	.lwtv-bars--actors .progress-bar {
 		background-color: colors.$lwtv-yellow-deep;
 	}
@@ -3353,6 +3364,41 @@ canvas {
 			height: 24px;
 			fill: currentColor; // sprite paths have no fill; take the pink.
 		}
+
+		svg {
+			fill: currentColor; // sprite paths have no fill; take the icon color.
+		}
+
+		// Family-colored header icons for the shows overview panels.
+		&.tropes,
+		&.characters {
+			color: colors.$lwtv-green-deep;
+		}
+
+		&.gender,
+		&.genres,
+		&.actors {
+			color: colors.$lwtv-yellow-deep;
+		}
+
+		&.sexuality {
+			color: colors.$lwtv-blue-deep;
+		}
+
+		&.intersections {
+			color: colors.$lwtv-royal-blue;
+		}
+
+		&.triggers,
+		&.stars-good {
+			color: colors.$lwtv-teal;
+		}
+
+		&.triggers-bad,
+		&.stars-bad {
+			color: colors.$lwtv-raspberry-deep;
+		}
+
 	}
 
 	.lwtv-articles-intro {

@@ -23,17 +23,19 @@ if ( (int) $inter_stats['shows'] > 0 && (int) $shows_count > 0 ) {
 	$inter_med  = (float) $inter_stats['median'];
 
 	$lwtv_callouts[] = array(
-		'label' => __( 'Shows with intersections', 'lwtv' ),
-		'icon'  => 'chart-pie.svg',
+		'label'  => __( 'Shows with intersections', 'lwtv' ),
+		'icon'   => 'chart-pie.svg',
 		/* translators: %s: percentage of all shows carrying at least one intersection (one decimal). */
-		'text'  => sprintf( __( '%s%% of all shows carry at least one intersection.', 'lwtv' ), number_format_i18n( $inter_pct, 1 ) ),
+		'text'   => sprintf( __( '%s%% of all shows carry at least one intersection.', 'lwtv' ), number_format_i18n( $inter_pct, 1 ) ),
+		'family' => 'intersections',
 	);
 
 	$lwtv_callouts[] = array(
-		'label' => __( 'Average per show', 'lwtv' ),
-		'icon'  => 'chart-bar.svg',
+		'label'  => __( 'Average per show', 'lwtv' ),
+		'icon'   => 'chart-bar.svg',
 		/* translators: %s: average number of intersections per show that has at least one (one decimal). */
-		'text'  => sprintf( __( 'Shows with intersections span %s of them on average.', 'lwtv' ), number_format_i18n( $inter_avg, 1 ) ),
+		'text'   => sprintf( __( 'Shows with intersections span %s of them on average.', 'lwtv' ), number_format_i18n( $inter_avg, 1 ) ),
+		'family' => 'intersections',
 	);
 
 	if ( floor( $inter_med ) === $inter_med ) {
@@ -44,9 +46,10 @@ if ( (int) $inter_stats['shows'] > 0 && (int) $shows_count > 0 ) {
 		$inter_med_text = sprintf( __( 'The typical such show has %s intersections.', 'lwtv' ), number_format_i18n( $inter_med, 1 ) );
 	}
 	$lwtv_callouts[] = array(
-		'label' => __( 'Median per show', 'lwtv' ),
-		'icon'  => 'scales.svg',
-		'text'  => $inter_med_text,
+		'label'  => __( 'Median per show', 'lwtv' ),
+		'icon'   => 'scales.svg',
+		'text'   => $inter_med_text,
+		'family' => 'intersections',
 	);
 
 	// phpcs:ignore PEAR.Files.IncludingFile.UseRequire
@@ -56,9 +59,9 @@ if ( (int) $inter_stats['shows'] > 0 && (int) $shows_count > 0 ) {
 $ranked = array(
 	'rows'   => $inter_data,
 	'total'  => (int) $shows_count,
-	'family' => 'shows',
-	'svg'    => 'user-heart.svg',
-	'icon'   => 'svg-user',
+	'family' => 'intersections',
+	'svg'    => 'statue-of-liberty.svg',
+	'icon'   => 'svg-statue-of-liberty',
 	'title'  => __( 'Intersectionality Breakdown', 'lwtv' ),
 	/* translators: %s: number of intersections. */
 	'sub'    => sprintf( __( '%s intersections, by number of shows', 'lwtv' ), number_format_i18n( count( $inter_data ) ) ),
@@ -104,9 +107,9 @@ if ( ! empty( $pairs ) ) {
 	$ranked = array(
 		'rows'   => $pair_rows,
 		'total'  => (int) $shows_count,
-		'family' => 'shows',
-		'svg'    => 'hearts.svg',
-		'icon'   => 'svg-heart',
+		'family' => 'intersections',
+		'svg'    => 'vest-patches.svg',
+		'icon'   => 'svg-vest-patches',
 		'title'  => __( 'Common Pairings', 'lwtv' ),
 		'sub'    => __( 'Intersections that appear together on the same show, by number of shows', 'lwtv' ),
 		'base'   => '',

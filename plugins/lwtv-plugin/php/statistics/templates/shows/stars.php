@@ -98,22 +98,25 @@ if ( (int) $inter_stats['shows'] > 0 && (int) $shows_count > 0 ) {
 	$inter_pct  = round( ( $inter_with / (int) $shows_count ) * 100, 1 );
 
 	$lwtv_callouts[] = array(
-		'label' => __( 'Shows with stars', 'lwtv' ),
-		'icon'  => 'fireworks.svg',
+		'label'  => __( 'Shows with stars', 'lwtv' ),
+		'icon'   => 'fireworks.svg',
 		/* translators: %s: percentage of all shows carrying at least one star (one decimal). */
-		'text'  => sprintf( __( '%s%% of all shows have a star.', 'lwtv' ), number_format_i18n( $inter_pct, 1 ) ),
+		'text'   => sprintf( __( '%s%% of all shows have a star.', 'lwtv' ), number_format_i18n( $inter_pct, 1 ) ),
+		'family' => 'stars',
 	);
 
 	$lwtv_callouts[] = array(
-		'label' => __( 'Brightest stars', 'lwtv' ),
-		'icon'  => 'star.svg',
-		'text'  => ucfirst( $stars_common ),
+		'label'  => __( 'Brightest days', 'lwtv' ),
+		'icon'   => 'star.svg',
+		'text'   => ucfirst( $stars_common ),
+		'family' => 'stars-good',
 	);
 
 	$lwtv_callouts[] = array(
-		'label' => __( 'Darkest nights', 'lwtv' ),
-		'icon'  => 'eye-evil.svg',
-		'text'  => ucfirst( $stars_anti_clause ),
+		'label'  => __( 'Darkest nights', 'lwtv' ),
+		'icon'   => 'eye-evil.svg',
+		'text'   => ucfirst( $stars_anti_clause ),
+		'family' => 'stars-bad',
 	);
 
 	// phpcs:ignore PEAR.Files.IncludingFile.UseRequire
