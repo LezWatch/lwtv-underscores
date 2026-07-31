@@ -63,6 +63,55 @@ $ranked = array(
 	/* translators: %s: number of intersections. */
 	'sub'    => sprintf( __( '%s intersections, by number of shows', 'lwtv' ), number_format_i18n( count( $inter_data ) ) ),
 	'base'   => '',
+	'mode'   => 'lollipop',
 );
 // phpcs:ignore PEAR.Files.IncludingFile.UseRequire
 include plugin_dir_path( __DIR__ ) . 'partials/ranked-bars.php';
+
+// Common pairings: which intersections appear together on the same show.
+// Pure counting lives in Build\Intersection_Pairs (unit-tested); the term
+// map and names here are the WP glue.
+$pair_map = ( new \LWTV\Statistics\Build\Taxonomy_Optimized() )->get_object_term_slug_map( 'post_type_shows', 'lez_intersections' );
+$pairs    = \LWTV\Statistics\Build\Intersection_Pairs::top_pairs(
+	\LWTV\Statistics\Build\Intersection_Pairs::count_pairs( $pair_map ),
+	8,
+	2
+);
+
+if ( ! empty( $pairs ) ) {
+	$pair_names = array();
+	$pair_terms = get_terms(
+		array(
+			'taxonomy'   => 'lez_intersections',
+			'hide_empty' => true,
+		)
+	);
+	foreach ( $pair_terms as $pair_term ) {
+		$pair_names[ $pair_term->slug ] = $pair_term->name;
+	}
+
+	$pair_rows = array();
+	foreach ( $pairs as $pair ) {
+		list( $pair_a, $pair_b ) = $pair['slugs'];
+		// Link each pairing to the shows archive with both facet values selected.
+		$pair_rows[ $pair_a . '+' . $pair_b ] = array(
+			'name'  => ( $pair_names[ $pair_a ] ?? $pair_a ) . ' + ' . ( $pair_names[ $pair_b ] ?? $pair_b ),
+			'count' => (int) $pair['count'],
+			'url'   => site_url( '/shows/?fwp_show_intersectionality=' . rawurlencode( $pair_a . ',' . $pair_b ) ),
+		);
+	}
+
+	$ranked = array(
+		'rows'   => $pair_rows,
+		'total'  => (int) $shows_count,
+		'family' => 'shows',
+		'svg'    => 'hearts.svg',
+		'icon'   => 'svg-heart',
+		'title'  => __( 'Common Pairings', 'lwtv' ),
+		'sub'    => __( 'Intersections that appear together on the same show, by number of shows', 'lwtv' ),
+		'base'   => '',
+		'mode'   => 'lollipop',
+	);
+	// phpcs:ignore PEAR.Files.IncludingFile.UseRequire
+	include plugin_dir_path( __DIR__ ) . 'partials/ranked-bars.php';
+}

@@ -2431,6 +2431,7 @@ canvas {
 		padding: 20px;
 		border: 1px solid colors.$lwtv-grey-border;
 		border-radius: 14px;
+		margin-bottom: 0.5rem;
 	}
 
 	.lwtv-panel-head {
@@ -2545,6 +2546,62 @@ canvas {
 	.lwtv-bars--shows .lwtv-leader-track,
 	.lwtv-bars--sexuality .lwtv-leader-track {
 		background-color: colors.$lwtv-blue-light;
+	}
+
+	// Lollipop rows (ranked-bars mode 'lollipop'): a stick with an end dot
+	// instead of a filled track, so nothing reads as a percentage of a whole.
+	.lwtv-lolli-track {
+		position: relative;
+		height: 14px;
+		padding-right: 7px; // room for the dot's outer half at 100%.
+	}
+
+	.lwtv-lolli {
+		position: relative;
+		display: block;
+		height: 100%;
+		min-width: 12px; // tiny counts still show a visible dot.
+	}
+
+	.lwtv-lolli-stick {
+		position: absolute;
+		top: 50%;
+		left: 0;
+		right: 6px;
+		height: 2px;
+		transform: translateY(-50%);
+		border-radius: 999px;
+		background-color: colors.$lwtv-grey-deep;
+	}
+
+	.lwtv-lolli-dot {
+		position: absolute;
+		top: 50%;
+		right: 0;
+		width: 12px;
+		height: 12px;
+		transform: translate(50%, -50%);
+		border-radius: 50%;
+		background-color: colors.$lwtv-grey-deep;
+	}
+
+	.lwtv-bars--characters .lwtv-lolli-stick,
+	.lwtv-bars--characters .lwtv-lolli-dot {
+		background-color: colors.$lwtv-green-deep;
+	}
+
+	.lwtv-bars--gender .lwtv-lolli-stick,
+	.lwtv-bars--gender .lwtv-lolli-dot,
+	.lwtv-bars--actors .lwtv-lolli-stick,
+	.lwtv-bars--actors .lwtv-lolli-dot {
+		background-color: colors.$lwtv-yellow-deep;
+	}
+
+	.lwtv-bars--sexuality .lwtv-lolli-stick,
+	.lwtv-bars--sexuality .lwtv-lolli-dot,
+	.lwtv-bars--shows .lwtv-lolli-stick,
+	.lwtv-bars--shows .lwtv-lolli-dot {
+		background-color: colors.$lwtv-blue-deep;
 	}
 
 	// Overview panel: tail rows (name + count, no bar).
