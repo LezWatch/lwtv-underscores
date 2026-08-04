@@ -30,6 +30,7 @@ if ( ! function_exists( 'lwtv_stats_fraction_phrase' ) ) {
 			array( 90, __( 'Nearly all', 'lwtv' ) ),
 			array( 75, __( 'Over three quarters', 'lwtv' ) ),
 			array( 66, __( 'Over two thirds', 'lwtv' ) ),
+			array( 60, __( 'Nearly two thirds', 'lwtv' ) ),
 			array( 50, __( 'Over half', 'lwtv' ) ),
 			array( 40, __( 'Nearly half', 'lwtv' ) ),
 			array( 33, __( 'Over a third', 'lwtv' ) ),
