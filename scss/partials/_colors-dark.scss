@@ -549,6 +549,42 @@
 			border-color: rgba(colors.$white, 0.12);
 		}
 
+		// Stars podium: plate fills follow the chip pattern (family at ~20%
+		// alpha); silver uses a white alpha because #999 tints vanish on #333.
+		// Rail cards keep their light-mode fills — solid vibrant cards.
+		.lwtv-star-podium {
+			border-color: rgba(colors.$white, 0.12);
+		}
+
+		.lwtv-star-count {
+			color: colors.$white;
+		}
+
+		.lwtv-star-def,
+		.lwtv-star-footnote {
+			color: rgba(colors.$white, 0.75);
+		}
+
+		.lwtv-star-baseline {
+			border-top-color: colors.$white;
+		}
+
+		.lwtv-star-col--gold .lwtv-star-plate {
+			background-color: rgba(colors.$lwtv-yellow, 0.2);
+		}
+
+		.lwtv-star-col--silver .lwtv-star-plate {
+			background-color: rgba(colors.$white, 0.14);
+		}
+
+		.lwtv-star-col--bronze .lwtv-star-plate {
+			background-color: rgba(colors.$lwtv-bronze, 0.24);
+		}
+
+		.lwtv-star-col--anti .lwtv-star-plate {
+			background-color: rgba(colors.$lwtv-raspberry-deep, 0.24);
+		}
+
 		.lwtv-tropegap-desc {
 			color: colors.$lwtv-grey-light;
 		}

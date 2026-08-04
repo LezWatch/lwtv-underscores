@@ -3705,6 +3705,224 @@ canvas {
 		border-radius: 999px;
 	}
 
+	// Stars podium (shows → stars): medal podium + callout rail.
+	.lwtv-star-podium {
+		padding: 20px 24px;
+		border: 1px solid colors.$lwtv-grey-border;
+		border-radius: 14px;
+	}
+
+	.lwtv-star-podium-layout {
+		display: grid;
+		grid-template-columns: 300px 1fr;
+		gap: 32px;
+		align-items: start;
+	}
+
+	@media (max-width: 767px) {
+
+		.lwtv-star-podium-layout {
+			grid-template-columns: 1fr;
+			gap: 24px;
+		}
+	}
+
+	.lwtv-star-rail {
+		display: flex;
+		flex-direction: column;
+		gap: 14px;
+	}
+
+	.lwtv-star-callout {
+		padding: 16px 18px;
+		color: colors.$white;
+		border-radius: 10px;
+	}
+
+	.lwtv-star-callout--pink {
+		background-color: colors.$lwtv-pink;
+	}
+
+	.lwtv-star-callout--teal {
+		background-color: colors.$lwtv-teal;
+	}
+
+	.lwtv-star-callout--raspberry {
+		background-color: colors.$lwtv-raspberry-deep;
+	}
+
+	.lwtv-star-callout-top {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		margin-bottom: 6px;
+	}
+
+	.lwtv-star-callout-eyebrow {
+		font-size: 0.8rem;
+		font-weight: 700;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+	}
+
+	.lwtv-star-callout-chip {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 30px;
+		height: 30px;
+		background-color: rgba(0, 0, 0, 0.25);
+		border-radius: 8px;
+
+		svg {
+			fill: colors.$white;
+		}
+	}
+
+	.lwtv-star-callout-num {
+		display: block;
+		font-family: fonts.$headingfontfamily;
+		font-size: 2.25rem;
+		font-weight: 700;
+		font-variant-numeric: tabular-nums;
+		line-height: 1.1;
+	}
+
+	.lwtv-star-callout-text {
+		margin: 4px 0 0;
+		font-size: 0.875rem;
+	}
+
+	.lwtv-star-figure {
+		margin: 24px 0 0;
+	}
+
+	.lwtv-star-podium-columns {
+		display: grid;
+		gap: 18px;
+		align-items: end;
+	}
+
+	.lwtv-star-col {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: flex-end;
+	}
+
+	.lwtv-star-count {
+		margin-bottom: 29px; // 19px disc overhang + 10px gap.
+		font-family: fonts.$headingfontfamily;
+		font-size: 1.625rem;
+		font-variant-numeric: tabular-nums;
+		color: colors.$lwtv-grey-deep;
+	}
+
+	.lwtv-star-col--gold .lwtv-star-count {
+		margin-bottom: 36px; // 26px disc overhang + 10px gap.
+		font-size: 2.5rem;
+	}
+
+	.lwtv-star-plate {
+		position: relative;
+		display: flex;
+		justify-content: center;
+		width: 100%;
+	}
+
+	.lwtv-star-col--gold .lwtv-star-plate {
+		background-color: color.mix(colors.$lwtv-yellow, colors.$white, 20%);
+		border: 1px solid colors.$lwtv-yellow;
+		border-bottom: 0;
+	}
+
+	.lwtv-star-col--silver .lwtv-star-plate {
+		background-color: color.mix(colors.$lwtv-grey-medium, colors.$white, 18%);
+		border: 1px solid colors.$lwtv-grey-medium;
+		border-bottom: 0;
+	}
+
+	.lwtv-star-col--bronze .lwtv-star-plate {
+		background-color: color.mix(colors.$lwtv-bronze, colors.$white, 16%);
+		border: 1px solid colors.$lwtv-bronze;
+		border-bottom: 0;
+	}
+
+	.lwtv-star-col--anti .lwtv-star-plate {
+		background-color: color.mix(colors.$lwtv-raspberry-deep, colors.$white, 16%);
+		border: 1px solid colors.$lwtv-raspberry-deep;
+		border-bottom: 0;
+	}
+
+	.lwtv-star-medal {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 38px;
+		height: 38px;
+		margin-top: -19px; // half the disc, so it straddles the plate edge.
+		color: colors.$white;
+		border-radius: 50%;
+
+		svg {
+			fill: currentColor;
+		}
+	}
+
+	.lwtv-star-col--gold .lwtv-star-medal {
+		width: 52px;
+		height: 52px;
+		margin-top: -26px;
+		color: colors.$lwtv-yellow-deep;
+		background-color: colors.$lwtv-gold;
+	}
+
+	.lwtv-star-col--silver .lwtv-star-medal {
+		background-color: colors.$lwtv-silver;
+	}
+
+	.lwtv-star-col--bronze .lwtv-star-medal {
+		background-color: colors.$lwtv-bronze;
+	}
+
+	.lwtv-star-col--anti .lwtv-star-medal {
+		background-color: colors.$lwtv-raspberry-deep;
+	}
+
+	.lwtv-star-baseline {
+		height: 0;
+		border-top: 2px solid colors.$lwtv-grey-deep;
+	}
+
+	.lwtv-star-podium-labels {
+		display: grid;
+		gap: 18px;
+		margin-top: 10px;
+		text-align: center;
+	}
+
+	.lwtv-star-tier {
+		display: block;
+		font-family: fonts.$headingfontfamily;
+		font-size: 1.062rem;
+	}
+
+	.lwtv-star-label--gold .lwtv-star-tier {
+		font-size: 1.188rem;
+	}
+
+	.lwtv-star-def {
+		display: block;
+		font-size: 0.825rem;
+		color: colors.$lwtv-grey-deep;
+	}
+
+	.lwtv-star-footnote {
+		margin: 14px 0 0;
+		font-size: 0.825rem;
+		color: colors.$lwtv-grey-deep;
+	}
+
 	// Death "Vibrant Refresh" — bespoke crimson→plum data-viz palette. Hardcoded
 	// hex per the design handoff (a fixed severity ramp meant to read the same in
 	// light and dark), not the theme tokens.
