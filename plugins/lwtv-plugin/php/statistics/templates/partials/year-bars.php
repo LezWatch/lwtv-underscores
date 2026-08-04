@@ -20,11 +20,16 @@ if ( ! defined( 'ABSPATH' ) ) {
  *                              rendered above the chart (reuses trendline callout markup).
  *   @type string $hover_sub   Optional printf format for the corner readout sub-line on
  *                              hover; %s is the year. Defaults to the year alone ('%s').
+ *   @type int    $scale_max   Optional fixed scale ceiling. By default bars scale to the
+ *                              peak count (right for raw counts); for bounded values like
+ *                              the 0–100 show score, pass the bound so bar heights stay
+ *                              honest instead of inflating a small wiggle to full height.
  * }
  */
 
 $yb_rows      = $yearbars['rows'] ?? array();
 $yb_peak      = max( 1, (int) ( $yearbars['peak_count'] ?? 0 ) );
+$yb_scale     = max( $yb_peak, (int) ( $yearbars['scale_max'] ?? 0 ) );
 $yb_pyear     = (int) ( $yearbars['peak_year'] ?? 0 );
 $yb_first     = ! empty( $yb_rows ) ? (int) $yb_rows[0]['year'] : 0;
 $yb_last      = ! empty( $yb_rows ) ? (int) $yb_rows[ count( $yb_rows ) - 1 ]['year'] : 0;
@@ -73,12 +78,12 @@ $yb_hover_sub = $yearbars['hover_sub'] ?? '%s';
 		foreach ( $yb_rows as $yb ) {
 			$yb_year   = (int) $yb['year'];
 			$yb_count  = (int) $yb['count'];
-			$yb_height = round( ( $yb_count / $yb_peak ) * 100, 1 );
+			$yb_height = round( ( $yb_count / $yb_scale ) * 100, 1 );
 			// Peak bar = deepest crimson; others ramp rose->crimson by height (6 buckets).
 			if ( $yb_year === $yb_pyear ) {
 				$yb_class = ' lwtv-yearbar--peak';
 			} else {
-				$yb_bucket = min( 5, (int) floor( ( $yb_count / $yb_peak ) * 6 ) );
+				$yb_bucket = min( 5, (int) floor( ( $yb_count / $yb_scale ) * 6 ) );
 				$yb_class  = ' lwtv-yearbar--r' . $yb_bucket;
 			}
 			// data-year/data-count feed the corner readout on hover (see

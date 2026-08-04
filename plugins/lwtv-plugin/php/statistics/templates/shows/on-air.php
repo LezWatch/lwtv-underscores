@@ -8,6 +8,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @package LezWatch.TV
  */
 
+use LWTV\Statistics\Build\Series_Trend;
+
 $onair_raw  = lwtv_plugin()->generate_shows_statistics( 'array', 'on-air' );
 $onair_data = ( is_array( $onair_raw ) && ! empty( $onair_raw ) ) ? (array) reset( $onair_raw ) : array();
 
@@ -87,8 +89,56 @@ if ( $onair_drop['size'] > 0 ) {
 	);
 }
 
-// translators: %1$d is the year with most shows, %2$d is the number of shows it has.
-$description = sprintf( __( 'The count climbed steadily for two decades and peaked in %1$d (with %2$d); the latest dip reflects the current contraction in scripted TV', 'lwtv' ), $most_year['name'], $most_year['count'] );
+// Adaptive headline + description: classify the series shape (over completed
+// years) so the copy stays true as the data changes, instead of hardcoding
+// "more than ever" or a peak-and-decline narrative.
+$onair_trend = Series_Trend::classify( $onair_points, (int) gmdate( 'Y' ) );
+
+switch ( $onair_trend['state'] ?? '' ) {
+	case 'recovering':
+		$headline    = __( 'Queer shows on air are climbing again', 'lwtv' );
+		$description = sprintf(
+			/* translators: 1: peak year, 2: shows at the peak, 3: latest complete year, 4: shows that year. */
+			__( 'The count peaked in %1$s with %2$s shows on air. After a dip, %3$s reached %4$s — and the trend is pointing back up.', 'lwtv' ),
+			(string) $onair_trend['peak_year'],
+			number_format_i18n( $onair_trend['peak_count'] ),
+			(string) $onair_trend['latest_year'],
+			number_format_i18n( $onair_trend['latest_count'] )
+		);
+		break;
+	case 'receding':
+		$headline    = __( 'Queer shows on air are down from their peak', 'lwtv' );
+		$description = sprintf(
+			/* translators: 1: peak year, 2: shows at the peak, 3: latest complete year, 4: shows that year, 5: percent of the peak. */
+			__( 'The count peaked in %1$s with %2$s shows on air; by %3$s it had slipped to %4$s — about %5$s%% of the peak.', 'lwtv' ),
+			(string) $onair_trend['peak_year'],
+			number_format_i18n( $onair_trend['peak_count'] ),
+			(string) $onair_trend['latest_year'],
+			number_format_i18n( $onair_trend['latest_count'] ),
+			number_format_i18n( $onair_trend['pct_of_peak'] )
+		);
+		break;
+	case 'steady':
+		$headline    = __( 'Queer shows on air are holding steady', 'lwtv' );
+		$description = sprintf(
+			/* translators: 1: peak year, 2: shows at the peak, 3: latest complete year, 4: shows that year. */
+			__( 'The count peaked in %1$s with %2$s shows on air; %3$s held level at %4$s.', 'lwtv' ),
+			(string) $onair_trend['peak_year'],
+			number_format_i18n( $onair_trend['peak_count'] ),
+			(string) $onair_trend['latest_year'],
+			number_format_i18n( $onair_trend['latest_count'] )
+		);
+		break;
+	default: // 'at-peak', or an empty classification.
+		$headline    = __( 'More queer shows are on air than ever', 'lwtv' );
+		$description = sprintf(
+			/* translators: 1: latest complete year, 2: shows on air that year. */
+			__( 'The climb continues: %1$s had %2$s shows on air, the most ever recorded.', 'lwtv' ),
+			(string) ( $onair_trend['latest_year'] ?? $onair_last['year'] ),
+			number_format_i18n( $onair_trend['latest_count'] ?? $onair_last['count'] )
+		);
+		break;
+}
 
 // phpcs:ignore PEAR.Files.IncludingFile.UseRequire
 require_once plugin_dir_path( __DIR__ ) . 'partials/phrases.php';
@@ -102,7 +152,7 @@ $yearbars = array(
 	/* translators: %s: the latest year (4-digit, never thousands-formatted). */
 	'stat_sub'    => sprintf( __( 'on air in %s', 'lwtv' ), (string) $onair_last['year'] ),
 	'eyebrow'     => __( 'Shows On Air per Year', 'lwtv' ),
-	'headline'    => __( 'More queer shows are on air than ever', 'lwtv' ),
+	'headline'    => $headline,
 	'description' => $description,
 	'callouts'    => $lwtv_callouts,
 	/* translators: %s: year. */

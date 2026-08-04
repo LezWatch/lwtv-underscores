@@ -51,7 +51,7 @@ tr.active.age + tr.plugin-age-tr .plugin-age {
 	border-left: 4px solid #00a0d2;
 }
 
-.plugins .active.age th.check-column,
+.plugins .active.age td.check-column,
 .plugins .active.age + .plugin-age-tr .plugin-age {
 	border-left: 4px solid #d54e21;
 }

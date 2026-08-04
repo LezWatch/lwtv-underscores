@@ -230,7 +230,7 @@ class Dead {
 	 *
 	 * @param string $subject Subject type (years/roles/sexuality/gender/stations/nations)
 	 * @param string $view View type (characters/shows)
-	 * @param string $format Format type (array/count/percentage/piechart/barchart/trendline/list)
+	 * @param string $format Format type (array/count/percentage/list)
 	 *
 	 * @return array Dead characters statistics data
 	 */
@@ -238,7 +238,6 @@ class Dead {
 		lwtv_plugin()->debug_log( 'death', 'Generating characters statistics for view: ' . $view );
 		switch ( $view ) {
 			case 'years':
-			case 'trendline':
 				$return = $this->generate_years( $format );
 				break;
 			case 'all':
@@ -261,7 +260,7 @@ class Dead {
 	/**
 	 * Generate all data
 	 *
-	 * @param string $format Format type (array/count/percentage/piechart/barchart/trendline/list)
+	 * @param string $format Format type (array/count/percentage/list)
 	 *
 	 * @return array All data
 	 */
@@ -281,7 +280,7 @@ class Dead {
 	 *
 	 * @param string $subject Subject type (years/roles/sexuality/gender/stations/nations)
 	 * @param string $view View type (characters/shows)
-	 * @param string $format Format type (array/count/percentage/piechart/barchart/trendline/list)
+	 * @param string $format Format type (array/count/percentage/list)
 	 *
 	 * @return array Dead shows statistics data
 	 */
@@ -309,7 +308,7 @@ class Dead {
 	/**
 	 * Generate dead years statistics
 	 *
-	 * @param string $format Format type (array/count/percentage/piechart/barchart/trendline/list)
+	 * @param string $format Format type (array/count/percentage/list)
 	 *
 	 * @return array Dead years statistics data
 	 */
@@ -327,14 +326,6 @@ class Dead {
 			switch ( $format ) {
 				case 'average':
 					$return = number_format( array_sum( array_column( $years, 'death_count' ) ) / count( $total_years ), 2 );
-					break;
-				case 'trendline':
-					$return = array(
-						'years' => $this->format_years_trendline( $years, $total_years ),
-					);
-					break;
-				case 'barchart':
-					$return = $this->format_years_trendline( $years, $total_years );
 					break;
 				case 'percentage':
 					$return = array( 'death' => $this->format_years_percentage( $years, $total_years ) );
@@ -407,42 +398,9 @@ class Dead {
 	}
 
 	/**
-	 * Generate trendline data
-	 *
-	 * We need to make sure we have all years in the trendline, so we need to add 0 for
-	 * years that are not in the years data.
-	 *
-	 * @param array $years Years data
-	 * @param array $total_years Total years data
-	 *
-	 * @return array Trendline data
-	 */
-	public function format_years_trendline( $years, $total_years ) {
-		// Map year => death count for lookup. Keys are cast to string so the
-		// integer years from range() match the string years parsed from meta.
-		$counts_by_year = array();
-		foreach ( $years as $year ) {
-			$counts_by_year[ (string) $year['death_year'] ] = $year['death_count'] ?? 0;
-		}
-
-		// One entry per year across the full range, zero-filled where nobody died.
-		// $total_years is range( LWTV_FIRST_YEAR, current year ), so this yields a
-		// single row per year — no duplicates.
-		$trendline = array();
-		foreach ( $total_years as $year ) {
-			$trendline[] = array(
-				'name'  => $year,
-				'count' => $counts_by_year[ (string) $year ] ?? 0,
-			);
-		}
-
-		return $trendline;
-	}
-
-	/**
 	 * Generate list data
 	 *
-	 * @param string $format Format type (array/count/percentage/piechart/barchart/trendline/list)
+	 * @param string $format Format type (array/count/percentage/list)
 	 *
 	 * @return array List data
 	 */
@@ -669,7 +627,7 @@ class Dead {
 	/**
 	 * Generate stats data
 	 *
-	 * @param string $format Format type (array/count/percentage/piechart/barchart/trendline/list)
+	 * @param string $format Format type (array/count/percentage/list)
 	 *
 	 * @return array Stats data
 	 */
@@ -700,7 +658,7 @@ class Dead {
 	/**
 	 * Generate taxonomy data
 	 *
-	 * @param string $format Format type (array/count/percentage/piechart/barchart/trendline/list)
+	 * @param string $format Format type (array/count/percentage/list)
 	 * @param string $taxonomy Taxonomy to generate data for
 	 *
 	 * @return array Taxonomy data
@@ -797,30 +755,6 @@ class Dead {
 					);
 				}
 				return array( 'death' => $formatted );
-
-			case 'piechart':
-				// Return data formatted for pie charts
-				$formatted = array();
-				foreach ( $results as $result ) {
-					$percentage  = $total_count > 0 ? round( ( $result['count'] / $total_count ) * 100, 2 ) : 0;
-					$formatted[] = array(
-						'name'       => $result['term_name'],
-						'count'      => (int) $result['count'],
-						'percentage' => $percentage,
-					);
-				}
-				return array( 'death' => $formatted );
-
-			case 'barchart':
-				// Return data formatted for bar charts
-				$formatted = array();
-				foreach ( $results as $result ) {
-					$formatted[] = array(
-						'name'  => $result['term_name'],
-						'count' => (int) $result['count'],
-					);
-				}
-				return $formatted;
 
 			case 'list':
 				// Return detailed list format
@@ -945,28 +879,6 @@ class Dead {
 					);
 				}
 				return array( 'death' => $formatted );
-			case 'piechart':
-				// Return data formatted for pie charts
-				$formatted = array();
-				foreach ( $role_counts as $role => $count ) {
-					$percentage  = $total_count > 0 ? round( ( $count / $total_count ) * 100, 2 ) : 0;
-					$formatted[] = array(
-						'name'       => ucfirst( $role ),
-						'count'      => $count,
-						'percentage' => $percentage,
-					);
-				}
-				return array( 'death' => $formatted );
-			case 'barchart':
-				// Return data formatted for bar charts
-				$formatted = array();
-				foreach ( $role_counts as $role => $count ) {
-					$formatted[] = array(
-						'name'  => ucfirst( $role ),
-						'count' => $count,
-					);
-				}
-				return $formatted;
 			case 'list':
 				// Return detailed list format
 				$formatted = array();
@@ -1143,49 +1055,6 @@ class Dead {
 					),
 				);
 
-			case 'piechart':
-				// Return data formatted for pie charts
-				$all_percentage  = $total_shows > 0 ? round( ( $all_dead_count / $total_shows ) * 100, 1 ) : 0;
-				$some_percentage = $total_shows > 0 ? round( ( $some_dead_count / $total_shows ) * 100, 1 ) : 0;
-				$no_percentage   = $total_shows > 0 ? round( ( $no_dead_count / $total_shows ) * 100, 1 ) : 0;
-
-				return array(
-					'death' => array(
-						array(
-							'name'       => 'All characters are dead',
-							'count'      => $all_dead_count,
-							'percentage' => $all_percentage,
-						),
-						array(
-							'name'       => 'Some characters are dead',
-							'count'      => $some_dead_count,
-							'percentage' => $some_percentage,
-						),
-						array(
-							'name'       => 'No characters are dead',
-							'count'      => $no_dead_count,
-							'percentage' => $no_percentage,
-						),
-					),
-				);
-
-			case 'barchart':
-				// Return data formatted for bar charts
-				return array(
-					array(
-						'name'  => 'All characters are dead',
-						'count' => $all_dead_count,
-					),
-					array(
-						'name'  => 'Some characters are dead',
-						'count' => $some_dead_count,
-					),
-					array(
-						'name'  => 'No characters are dead',
-						'count' => $no_dead_count,
-					),
-				);
-
 			case 'list':
 				// Return detailed list format
 				$all_percentage  = $total_shows > 0 ? round( ( $all_dead_count / $total_shows ) * 100, 1 ) : 0;
@@ -1287,7 +1156,7 @@ class Dead {
 			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- This is a prepared query (see above)
 			$results = $wpdb->get_results( $query, ARRAY_A );
 
-			// Format the results for barchart
+			// Format the results for output
 			$formatted_results = $this->format_shows_by_taxonomy_results( $results, $format );
 
 			// Cache the results for 1 day
@@ -1315,14 +1184,6 @@ class Dead {
 		switch ( $format ) {
 			case 'count':
 				$formatted_results = count( $results );
-				break;
-			case 'barchart':
-				foreach ( $results as $result ) {
-					$formatted_results[] = array(
-						'name'  => $result['term_name'],
-						'count' => (int) $result['count'],
-					);
-				}
 				break;
 			case 'percentage':
 				$new_results = array();

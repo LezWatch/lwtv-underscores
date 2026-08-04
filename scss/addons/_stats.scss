@@ -2294,20 +2294,28 @@ canvas {
 		border-radius: 14px;
 	}
 
-	.lwtv-byg-icon {
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		width: 38px;
-		height: 38px;
-		border-radius: 8px;
-		color: inherit; // inherits the card-header type color.
-		background-color: color-mix(in srgb, currentColor 12%, transparent);
+	.lwtv-byg-figure {
 		flex: 0 0 auto;
+		width: 122px;
+	}
 
-		svg {
-			fill: currentColor; // sprite paths have no fill; take the type color.
+	.lwtv-waffle {
+		display: block;
+		width: 100%;
+		height: auto;
+	}
+
+	.lwtv-waffle-dot {
+		fill: currentColor; // faded family color from the parent band.
+		opacity: 0.18;
+
+		&.lwtv-waffle-dot--filled {
+			opacity: 1;
 		}
+	}
+
+	.lwtv-byg .lwtv-waffle-dot--filled {
+		fill: colors.$lwtv-crimson-light;
 	}
 
 	.lwtv-byg-body {
@@ -2317,12 +2325,25 @@ canvas {
 		.lwtv-stats-eyebrow {
 			color: colors.$lwtv-grey-light;
 		}
+
+		.lwtv-stats-eyebrow svg {
+			margin-right: 4px;
+			vertical-align: -2px;
+			fill: currentColor; // sprite paths have no fill; take the type color.
+		}
+	}
+
+	.lwtv-byg-ratio {
+		margin: 0.15rem 0 0;
+		font-size: 2.25rem;
+		font-weight: 700;
+		line-height: 1;
 	}
 
 	.lwtv-byg-line {
 		margin: 0.15rem 0;
-		font-size: 1.125rem;
-		font-weight: 600;
+		font-size: 1rem;
+		font-weight: 400;
 	}
 
 	.lwtv-byg-desc {
@@ -2350,6 +2371,14 @@ canvas {
 		margin-bottom: 1.5rem;
 
 		@media (max-width: 575px) {
+			grid-template-columns: 1fr;
+		}
+	}
+
+	.lwtv-pullstats--three {
+		grid-template-columns: repeat(3, 1fr);
+
+		@media (max-width: 767px) {
 			grid-template-columns: 1fr;
 		}
 	}
@@ -3536,6 +3565,7 @@ canvas {
 		margin: 4px 0 0;
 		font-size: 0.9rem;
 		color: colors.$lwtv-grey-deep;
+		margin-bottom: 0.4rem;
 	}
 
 	.lwtv-yearbars-avg {
@@ -3562,6 +3592,117 @@ canvas {
 		align-items: flex-end;
 		gap: 2px;
 		height: 220px;
+	}
+
+	// Score histogram (shows → scores): ten decile columns + a median marker.
+	.lwtv-histo-figure {
+		position: relative;
+		padding-top: 18px; // headroom for the median label.
+	}
+
+	.lwtv-histo {
+		position: relative;
+		display: flex;
+		align-items: stretch;
+		gap: 6px;
+		height: 240px;
+	}
+
+	.lwtv-histo-col {
+		display: flex;
+		flex: 1 1 0;
+		flex-direction: column;
+		justify-content: flex-end;
+		align-items: center;
+		gap: 4px;
+		min-width: 0;
+	}
+
+	.lwtv-histo-val {
+		font-size: 0.75rem;
+		font-weight: 600;
+		color: colors.$lwtv-grey-deep;
+	}
+
+	.lwtv-histo-bar {
+		width: 100%;
+		border-radius: 4px 4px 0 0;
+		background-color: colors.$lwtv-teal-light;
+	}
+
+	.lwtv-histo-bar--peak {
+		background-color: colors.$lwtv-teal;
+	}
+
+	.lwtv-histo-bar--top {
+		background-color: colors.$lwtv-gold;
+	}
+
+	.lwtv-histo-label {
+		font-size: 0.6875rem;
+		color: colors.$lwtv-grey-deep;
+	}
+
+	.lwtv-histo-median {
+		position: absolute;
+		top: -14px;
+		bottom: 20px; // stop above the bucket labels.
+		border-left: 2px dashed colors.$lwtv-crimson-deep;
+		pointer-events: none;
+	}
+
+	.lwtv-histo-median-label {
+		position: absolute;
+		top: -4px;
+		left: 6px;
+		font-size: 0.6875rem;
+		white-space: nowrap;
+		color: colors.$lwtv-crimson-deep;
+	}
+
+	// Short-history card (thin-data nations/stations): narrative + show rows.
+	.lwtv-shorthist-desc {
+		max-width: 60ch;
+	}
+
+	.lwtv-shorthist-rows {
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
+		margin-top: 16px;
+	}
+
+	.lwtv-shorthist-row {
+		display: flex;
+		align-items: center;
+		gap: 14px;
+		padding: 12px 16px;
+		border: 1px solid colors.$lwtv-grey-border;
+		border-radius: 10px;
+	}
+
+	.lwtv-shorthist-row-body {
+		flex: 1 1 auto;
+		min-width: 0;
+	}
+
+	.lwtv-shorthist-title {
+		font-weight: 600;
+	}
+
+	.lwtv-shorthist-meta {
+		margin: 2px 0 0;
+		font-size: 0.8125rem;
+		color: colors.$lwtv-grey-deep;
+	}
+
+	.lwtv-shorthist-score {
+		flex: 0 0 auto;
+		padding: 4px 10px;
+		font-size: 0.75rem;
+		color: colors.$white;
+		background-color: colors.$lwtv-teal;
+		border-radius: 999px;
 	}
 
 	// Death "Vibrant Refresh" — bespoke crimson→plum data-viz palette. Hardcoded
