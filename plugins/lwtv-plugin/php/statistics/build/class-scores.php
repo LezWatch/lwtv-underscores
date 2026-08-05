@@ -276,6 +276,62 @@ class Scores {
 	}
 
 	/**
+	 * Get show scores grouped by Worth It verdict.
+	 *
+	 * Feeds Worth_It_Grid::averages() for the "average score by verdict"
+	 * bars. Shows missing either meta are skipped; verdict keys arrive
+	 * lowercased (yes/meh/no/tbd) to match the counts data.
+	 *
+	 * @return array Verdict => array of raw score values.
+	 */
+	public function get_scores_by_worthit(): array {
+		global $wpdb;
+
+		try {
+			// Prefixed 'scores_' so the derived-tier invalidation pattern clears it.
+			$transient = 'scores_by_worthit';
+			$array     = lwtv_plugin()->get_transient( $transient );
+
+			if ( false !== $array ) {
+				return $array;
+			}
+
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- No user input; table names come from $wpdb.
+			$results = $wpdb->get_results(
+				"SELECT worth_meta.meta_value AS verdict, score_meta.meta_value AS score
+				 FROM {$wpdb->posts} p
+				 INNER JOIN {$wpdb->postmeta} score_meta ON p.ID = score_meta.post_id AND score_meta.meta_key = 'lezshows_the_score'
+				 INNER JOIN {$wpdb->postmeta} worth_meta ON p.ID = worth_meta.post_id AND worth_meta.meta_key = 'lezshows_worthit_rating'
+				 WHERE p.post_type = 'post_type_shows'
+				 AND p.post_status = 'publish'
+				 AND score_meta.meta_value IS NOT NULL
+				 AND score_meta.meta_value != ''
+				 AND worth_meta.meta_value != ''",
+				ARRAY_A
+			);
+			$results = is_array( $results ) ? $results : array();
+
+			$array = array();
+			foreach ( $results as $row ) {
+				$verdict = strtolower( trim( (string) $row['verdict'] ) );
+				if ( '' !== $verdict ) {
+					$array[ $verdict ][] = $row['score'];
+				}
+			}
+
+			if ( ! empty( $array ) ) {
+				lwtv_plugin()->set_transient( $transient, $array, DAY_IN_SECONDS );
+			}
+
+			return $array;
+
+		} catch ( \Exception $e ) {
+			lwtv_plugin()->error_log( 'statistics', 'Error getting scores by worth-it verdict: ' . $e->getMessage() );
+			return array();
+		}
+	}
+
+	/**
 	 * Get total count of posts for the given post type
 	 *
 	 * @param string $post_type Post type to count
