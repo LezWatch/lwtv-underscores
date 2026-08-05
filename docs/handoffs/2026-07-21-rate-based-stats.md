@@ -1,6 +1,6 @@
 # Handoff: Rate-Based Stats (not just counts)
 
-**Repo:** `LezWatch.TV` (plugin under `plugins/lwtv-plugin/`), theme+plugin on `feat/cliche-stats`.
+**Repo:** `LezWatch.TV` (plugin under `plugins/lwtv-plugin/`), theme+plugin.
 **Scope:** Surface *rates* (per-capita / share) alongside the existing totals, as callouts and CSV columns. No visual framework changes — reuse `partials/callouts.php` and the CSV mechanism.
 
 ## Goal

@@ -1,6 +1,6 @@
 # Handoff: Cross-CPT Depth (actor leaderboards + intersectional slices)
 
-**Repo:** `LezWatch.TV` (plugin under `plugins/lwtv-plugin/`), theme+plugin on `feat/cliche-stats`.
+**Repo:** `LezWatch.TV` (plugin under `plugins/lwtv-plugin/`), theme+plugin.
 **Scope:** Stats currently slice one CPT at a time. The site's actual value is the **shows ↔ characters ↔ actors** web — surface it. Two phases: a cheap actor-leaderboard using existing meta, then heavier intersectional queries.
 
 ## Goal
