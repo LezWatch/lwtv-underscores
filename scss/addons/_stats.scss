@@ -4196,6 +4196,233 @@ canvas {
 		}
 	}
 
+	// Worth It (shows → worth-it): hundred-square grid + score bars.
+	.lwtv-wi {
+		padding: 30px 32px 26px;
+		border: 1px solid colors.$lwtv-grey-border;
+		border-radius: 14px;
+	}
+
+	.lwtv-wi-layout {
+		display: grid;
+		grid-template-columns: 295px 1fr;
+		gap: 44px;
+		align-items: start;
+	}
+
+	// Fixed 22px cells — fluid squares would break one-square-equals-one-percent.
+	.lwtv-wi-grid {
+		display: grid;
+		grid-template-columns: repeat(10, 22px);
+		grid-auto-rows: 22px;
+		gap: 7px;
+	}
+
+	// Full circles, not the reference's 3px squares: straight aligned
+	// gutters between saturated squares trigger the Hermann grid illusion
+	// (ghost dots at the intersections), and even heavy corner rounding
+	// only softened it. Dots remove the straight edges entirely — and
+	// match the Bury Your Gays waffle's visual language.
+	.lwtv-wi-square {
+		border-radius: 50%;
+	}
+
+	.lwtv-wi-square--yes,
+	.lwtv-wi-swatch--yes,
+	.lwtv-wi-score-fill--yes {
+		background-color: colors.$lwtv-green;
+	}
+
+	// Bright yellow, not yellow-deep: the amber reads too close to red at
+	// square size, and no text ever sits on the yellow in this module.
+	.lwtv-wi-square--meh,
+	.lwtv-wi-swatch--meh,
+	.lwtv-wi-score-fill--meh {
+		background-color: colors.$lwtv-yellow;
+	}
+
+	.lwtv-wi-square--no,
+	.lwtv-wi-swatch--no,
+	.lwtv-wi-score-fill--no {
+		background-color: colors.$lwtv-red;
+	}
+
+	.lwtv-wi-square--tbd,
+	.lwtv-wi-swatch--tbd,
+	.lwtv-wi-score-fill--tbd {
+		background-color: colors.$lwtv-grey-medium;
+	}
+
+	.lwtv-wi-caption {
+		margin: 14px 0 0;
+		font-size: 0.75rem;
+		color: colors.$lwtv-grey-deep;
+	}
+
+	.lwtv-wi-deck {
+		margin: 0 0 22px;
+		font-size: 0.875rem;
+		color: colors.$lwtv-grey-deep;
+	}
+
+	.lwtv-wi-row {
+		display: grid;
+		grid-template-columns: 16px 1fr auto auto;
+		gap: 14px;
+		align-items: center;
+		padding: 13px 0;
+		border-top: 1px solid colors.$lwtv-grey-border;
+		border-radius: 0;
+	}
+
+	.lwtv-wi-row--last {
+		border-bottom: 1px solid colors.$lwtv-grey-border;
+	}
+
+	.lwtv-wi-swatch {
+		width: 16px;
+		height: 16px;
+		border-radius: 3px;
+	}
+
+	.lwtv-wi-swatch--sm {
+		width: 12px;
+		height: 12px;
+	}
+
+	.lwtv-wi-verdict {
+		font-family: fonts.$headingfontfamily;
+		font-size: 1.188rem;
+	}
+
+	.lwtv-wi-verdict--sm {
+		font-size: 1.125rem;
+	}
+
+	// Fixed widths keep the digits aligned down the stack.
+	.lwtv-wi-count {
+		width: 62px;
+		font-size: 0.844rem;
+		font-weight: 600;
+		font-variant-numeric: tabular-nums;
+		text-align: right;
+	}
+
+	.lwtv-wi-share {
+		width: 56px;
+		font-size: 0.844rem;
+		font-variant-numeric: tabular-nums;
+		color: colors.$lwtv-grey-deep;
+		text-align: right;
+	}
+
+	.lwtv-wi-note {
+		margin: 18px 0 0;
+		font-size: 0.781rem;
+		color: colors.$lwtv-grey-deep;
+	}
+
+	.lwtv-wi-scores {
+		grid-column: 1 / -1;
+		padding-top: 20px;
+		margin-top: 8px;
+		border-top: 2px solid colors.$lwtv-grey-deep; // section break, not a row rule.
+		border-radius: 0;
+	}
+
+	.lwtv-wi-scores-head {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 24px;
+		margin-bottom: 20px;
+	}
+
+	.lwtv-wi-eyebrow {
+		font-size: 0.688rem;
+		font-weight: 700;
+		letter-spacing: 0.09em;
+		color: colors.$lwtv-grey-deep;
+		text-transform: uppercase;
+	}
+
+	.lwtv-wi-scores-headline {
+		margin: 4px 0 0;
+		font-family: fonts.$headingfontfamily;
+		font-size: 1.25rem;
+	}
+
+	.lwtv-wi-caveat {
+		max-width: 380px;
+		margin: 0;
+		font-size: 0.781rem;
+		color: colors.$lwtv-grey-deep;
+		text-align: right;
+	}
+
+	.lwtv-wi-score-rows {
+		display: flex;
+		flex-direction: column;
+		gap: 14px;
+	}
+
+	.lwtv-wi-score-row,
+	.lwtv-wi-axis {
+		display: grid;
+		grid-template-columns: 74px 1fr 52px;
+		gap: 16px;
+	}
+
+	.lwtv-wi-score-row {
+		align-items: center;
+	}
+
+	.lwtv-wi-score-label {
+		display: flex;
+		align-items: center;
+		gap: 9px;
+	}
+
+	.lwtv-wi-score-track {
+		display: block;
+		height: 22px;
+		overflow: hidden;
+		background-color: colors.$lwtv-grey-light;
+		border-radius: 3px;
+	}
+
+	.lwtv-wi-score-fill {
+		display: block;
+		height: 100%;
+	}
+
+	.lwtv-wi-score-num {
+		font-family: fonts.$headingfontfamily;
+		font-size: 1.375rem;
+		font-variant-numeric: tabular-nums;
+		line-height: 1;
+		text-align: right;
+	}
+
+	.lwtv-wi-axis-ticks {
+		display: flex;
+		justify-content: space-between;
+		padding-top: 5px;
+		font-size: 0.688rem;
+		color: colors.$lwtv-grey-deep;
+		border-top: 1px solid colors.$lwtv-grey-border;
+		border-radius: 0;
+	}
+
+	@media (max-width: 767px) {
+
+		.lwtv-wi-layout {
+			grid-template-columns: 1fr;
+			gap: 24px;
+		}
+	}
+
 	// Death "Vibrant Refresh" — bespoke crimson→plum data-viz palette. Hardcoded
 	// hex per the design handoff (a fixed severity ramp meant to read the same in
 	// light and dark), not the theme tokens.

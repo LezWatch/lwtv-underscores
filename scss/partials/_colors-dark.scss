@@ -637,6 +637,45 @@
 			}
 		}
 
+		// Worth It grid: verdict fills keep base tokens; TBD marks go
+		// white-alpha (#999 on #333 is too faint to read as a data mark).
+		.lwtv-wi {
+			border-color: rgba(colors.$white, 0.12);
+		}
+
+		.lwtv-wi-caption,
+		.lwtv-wi-deck,
+		.lwtv-wi-note,
+		.lwtv-wi-share,
+		.lwtv-wi-caveat,
+		.lwtv-wi-eyebrow {
+			color: rgba(colors.$white, 0.7);
+		}
+
+		.lwtv-wi-row,
+		.lwtv-wi-row--last {
+			border-color: rgba(colors.$white, 0.12);
+		}
+
+		.lwtv-wi-scores {
+			border-top-color: rgba(colors.$white, 0.12);
+		}
+
+		.lwtv-wi-axis-ticks {
+			color: rgba(colors.$white, 0.7);
+			border-top-color: rgba(colors.$white, 0.12);
+		}
+
+		.lwtv-wi-score-track {
+			background-color: rgba(colors.$white, 0.15);
+		}
+
+		.lwtv-wi-square--tbd,
+		.lwtv-wi-swatch--tbd,
+		.lwtv-wi-score-fill--tbd {
+			background-color: rgba(colors.$white, 0.3);
+		}
+
 		.lwtv-tropegap-desc {
 			color: colors.$lwtv-grey-light;
 		}
