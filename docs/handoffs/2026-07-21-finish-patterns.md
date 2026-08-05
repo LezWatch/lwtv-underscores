@@ -1,6 +1,6 @@
 # Handoff: Finish the Patterns (callouts everywhere, CSV everywhere, view-as-table)
 
-**Repo:** `LezWatch.TV` (plugin under `plugins/lwtv-plugin/`), theme+plugin on `feat/cliche-stats`.
+**Repo:** `LezWatch.TV` (plugin under `plugins/lwtv-plugin/`), theme+plugin.
 **Scope:** Roll the three reusable systems from the redesign — the callout kit, the CSV export kit, and (new) an accessibility text-table — across the views that don't yet have them. Almost entirely configuration; near-zero new logic.
 
 ## Goal

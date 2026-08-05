@@ -3923,6 +3923,279 @@ canvas {
 		color: colors.$lwtv-grey-deep;
 	}
 
+	// Trigger warnings (shows → triggers): callout rail + true-scale bars.
+	.lwtv-tw {
+		padding: 30px 32px 26px;
+		border: 1px solid colors.$lwtv-grey-border;
+		border-radius: 14px;
+	}
+
+	.lwtv-tw-layout {
+		display: grid;
+		grid-template-columns: 236px 1fr;
+		gap: 36px;
+		align-items: start;
+	}
+
+	.lwtv-tw-rail {
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+	}
+
+	.lwtv-tw-stat {
+		padding: 15px 16px;
+		color: colors.$white;
+		border-radius: 10px;
+	}
+
+	.lwtv-tw-stat--scarcity {
+		background-color: colors.$lwtv-pink;
+	}
+
+	.lwtv-tw-stat--weight {
+		background-color: colors.$lwtv-red-deep;
+	}
+
+	.lwtv-tw-stat--floor {
+		background-color: colors.$lwtv-red;
+	}
+
+	.lwtv-tw-stat-top {
+		display: flex;
+		align-items: flex-start;
+		justify-content: space-between;
+		gap: 10px;
+	}
+
+	.lwtv-tw-stat-eyebrow {
+		font-size: 0.625rem;
+		font-weight: 700;
+		letter-spacing: 0.09em;
+		text-transform: uppercase;
+	}
+
+	.lwtv-tw-stat-icon {
+		display: grid;
+		flex: none;
+		place-items: center;
+		width: 28px;
+		height: 28px;
+		background-color: rgba(0, 0, 0, 0.25);
+		border-radius: 8px;
+
+		svg {
+			fill: currentColor;
+		}
+	}
+
+	.lwtv-tw-stat-figure {
+		display: block;
+		margin-top: 5px;
+		font-family: fonts.$headingfontfamily;
+		font-size: 2.125rem;
+		font-variant-numeric: tabular-nums;
+		line-height: 1;
+	}
+
+	// 600/0.875rem is required for AA contrast on these fills, not decoration.
+	.lwtv-tw-stat-body {
+		margin: 6px 0 0;
+		font-size: 0.875rem;
+		font-weight: 600;
+		line-height: 1.4;
+	}
+
+	// No #555 token exists; grey-deep + the smaller size carry the hierarchy.
+	.lwtv-tw-footnote {
+		margin: 2px 0 0;
+		font-size: 0.781rem;
+		color: colors.$lwtv-grey-deep;
+	}
+
+	.lwtv-tw-deck {
+		margin: 0 0 22px;
+		font-size: 0.875rem;
+		color: colors.$lwtv-grey-deep;
+	}
+
+	.lwtv-tw-bar {
+		display: flex;
+		height: 40px;
+		overflow: hidden;
+		border-radius: 4px;
+	}
+
+	.lwtv-tw-bar-none {
+		display: flex;
+		align-items: center;
+		padding-left: 14px;
+		background-color: colors.$lwtv-grey;
+	}
+
+	.lwtv-tw-bar-none-label {
+		overflow: hidden;
+		font-size: 0.812rem;
+		font-weight: 600;
+		color: colors.$lwtv-grey-deep;
+		white-space: nowrap;
+	}
+
+	.lwtv-tw-bar-seg--low {
+		background-color: colors.$lwtv-yellow;
+	}
+
+	.lwtv-tw-bar-seg--medium {
+		background-color: colors.$lwtv-yellow-deep;
+	}
+
+	.lwtv-tw-bar-seg--high {
+		background-color: colors.$lwtv-red;
+	}
+
+	.lwtv-tw-bracket {
+		display: flex;
+		height: 20px;
+	}
+
+	.lwtv-tw-bracket-span {
+		position: relative;
+		border: 1px solid colors.$lwtv-grey-deep;
+		border-top: 0;
+		border-radius: 0;
+	}
+
+	.lwtv-tw-bracket-stem {
+		position: absolute;
+		bottom: -14px;
+		left: 50%;
+		width: 1px;
+		height: 14px;
+		background-color: colors.$lwtv-grey-deep;
+	}
+
+	.lwtv-tw-panel {
+		padding: 20px 22px;
+		margin-top: 16px;
+		background-color: colors.$lwtv-grey-light;
+		border-radius: 10px;
+	}
+
+	.lwtv-tw-panel-head {
+		display: flex;
+		align-items: baseline;
+		gap: 8px;
+		margin-bottom: 12px;
+	}
+
+	.lwtv-tw-panel-num {
+		font-family: fonts.$headingfontfamily;
+		font-size: 1.875rem;
+		font-variant-numeric: tabular-nums;
+		line-height: 1;
+	}
+
+	.lwtv-tw-panel-sub {
+		font-size: 0.875rem;
+		font-weight: 600;
+	}
+
+	.lwtv-tw-magbar {
+		display: flex;
+		height: 38px;
+		overflow: hidden;
+		border: 1px solid colors.$lwtv-grey-border;
+		border-radius: 4px;
+	}
+
+	.lwtv-tw-magbar-seg {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.lwtv-tw-magbar-seg--low {
+		background-color: colors.$lwtv-yellow;
+	}
+
+	.lwtv-tw-magbar-seg--medium {
+		background-color: colors.$lwtv-yellow-deep;
+	}
+
+	.lwtv-tw-magbar-seg--high {
+		background-color: colors.$lwtv-red;
+	}
+
+	.lwtv-tw-magbar-label {
+		overflow: hidden;
+		font-size: 0.812rem;
+		font-weight: 700;
+		font-variant-numeric: tabular-nums;
+		color: colors.$white;
+		white-space: nowrap;
+	}
+
+	// White on $lwtv-yellow is unreadable; the low segment goes dark.
+	.lwtv-tw-magbar-seg--low .lwtv-tw-magbar-label {
+		color: colors.$lwtv-grey-deep;
+	}
+
+	.lwtv-tw-legend {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 18px;
+		margin-top: 16px;
+	}
+
+	.lwtv-tw-legend-item {
+		padding-top: 9px;
+		border-top: 3px solid;
+		border-radius: 0;
+	}
+
+	.lwtv-tw-legend-item--low {
+		border-top-color: colors.$lwtv-yellow;
+	}
+
+	.lwtv-tw-legend-item--medium {
+		border-top-color: colors.$lwtv-yellow-deep;
+	}
+
+	.lwtv-tw-legend-item--high {
+		border-top-color: colors.$lwtv-red;
+	}
+
+	.lwtv-tw-legend-name {
+		display: block;
+		font-family: fonts.$headingfontfamily;
+		font-size: 1.062rem;
+	}
+
+	.lwtv-tw-legend-desc {
+		font-size: 0.781rem;
+		color: colors.$lwtv-grey-deep;
+
+		p {
+			margin: 4px 0 0;
+		}
+
+		strong {
+			color: colors.$lwtv-grey-deep;
+		}
+	}
+
+	@media (max-width: 767px) {
+
+		.lwtv-tw-layout {
+			grid-template-columns: 1fr;
+			gap: 24px;
+		}
+
+		.lwtv-tw-legend {
+			grid-template-columns: 1fr;
+		}
+	}
+
 	// Death "Vibrant Refresh" — bespoke crimson→plum data-viz palette. Hardcoded
 	// hex per the design handoff (a fixed severity ramp meant to read the same in
 	// light and dark), not the theme tokens.
