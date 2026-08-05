@@ -585,6 +585,58 @@
 			background-color: rgba(colors.$lwtv-raspberry-deep, 0.24);
 		}
 
+		// Trigger warnings: bar fills keep base tokens (the -deep tones go
+		// muddy on #333); the two red rail cards shift so they stay
+		// distinguishable against the dark surface.
+		.lwtv-tw {
+			border-color: rgba(colors.$white, 0.12);
+		}
+
+		.lwtv-tw-deck,
+		.lwtv-tw-footnote {
+			color: rgba(colors.$white, 0.75);
+		}
+
+		.lwtv-tw-stat--weight {
+			background-color: colors.$lwtv-red;
+		}
+
+		.lwtv-tw-stat--floor {
+			background-color: $lwtv-red-light;
+		}
+
+		.lwtv-tw-bar-none {
+			background-color: rgba(colors.$white, 0.15);
+		}
+
+		.lwtv-tw-bar-none-label {
+			color: colors.$white;
+		}
+
+		.lwtv-tw-bracket-span {
+			border-color: rgba(colors.$white, 0.15);
+		}
+
+		.lwtv-tw-bracket-stem {
+			background-color: rgba(colors.$white, 0.15);
+		}
+
+		.lwtv-tw-panel {
+			background-color: rgba(colors.$white, 0.08);
+		}
+
+		.lwtv-tw-magbar {
+			border-color: rgba(colors.$white, 0.12);
+		}
+
+		.lwtv-tw-legend-desc {
+			color: rgba(colors.$white, 0.75);
+
+			strong {
+				color: colors.$white;
+			}
+		}
+
 		.lwtv-tropegap-desc {
 			color: colors.$lwtv-grey-light;
 		}

@@ -31,6 +31,7 @@ require_once __DIR__ . '/../plugins/lwtv-plugin/php/statistics/build/class-inter
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/statistics/build/class-score-distribution.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/statistics/build/class-series-trend.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/statistics/build/class-star-podium.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/statistics/build/class-trigger-levels.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/this-year/format/class-new-shows-formatter.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/this-year/format/class-canceled-shows-formatter.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/this-year/format/class-dead-characters-formatter.php';
