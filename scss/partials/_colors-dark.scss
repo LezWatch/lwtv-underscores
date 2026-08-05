@@ -676,6 +676,90 @@
 			background-color: rgba(colors.$white, 0.3);
 		}
 
+		// Shows We Love: metric accents swap to the vivid locals (fills,
+		// names, and legend swatches stay in sync); rail fills hold on
+		// base tokens; the grey comparison group goes white-alpha.
+		.lwtv-love,
+		.lwtv-love-roster,
+		.lwtv-love-card {
+			border-color: rgba(colors.$white, 0.12);
+		}
+
+		.lwtv-love-section {
+			border-top-color: rgba(colors.$white, 0.12);
+		}
+
+		.lwtv-love-metric--axisbreak,
+		.lwtv-love-ticks-row,
+		.lwtv-love-card-meta {
+			border-top-color: rgba(colors.$white, 0.12);
+		}
+
+		.lwtv-love-ratio {
+			color: colors.$lwtv-pink-light;
+		}
+
+		.lwtv-love-ratio-meta,
+		.lwtv-love-sliver-caption,
+		.lwtv-love-eyebrow,
+		.lwtv-love-deck,
+		.lwtv-love-legend,
+		.lwtv-love-metric-sub,
+		.lwtv-love-takeaway,
+		.lwtv-love-fig--rest,
+		.lwtv-love-ticks-row,
+		.lwtv-love-roster-note,
+		.lwtv-love-card-years,
+		.lwtv-love-card-meta {
+			color: rgba(colors.$white, 0.75);
+		}
+
+		.lwtv-love-sliver,
+		.lwtv-love-track {
+			background-color: rgba(colors.$white, 0.15);
+		}
+
+		.lwtv-love-fill--rest,
+		.lwtv-love-legend-swatch--rest {
+			background-color: rgba(colors.$white, 0.3);
+		}
+
+		.lwtv-love-fill--chars,
+		.lwtv-love-legend-swatch--chars {
+			background-color: colors.$lwtv-pink-light;
+		}
+
+		.lwtv-love-metric-name--chars {
+			color: colors.$lwtv-pink-light;
+		}
+
+		.lwtv-love-fill--actors,
+		.lwtv-love-legend-swatch--actors {
+			background-color: colors.$lwtv-purple-light;
+		}
+
+		.lwtv-love-metric-name--actors {
+			color: colors.$lwtv-purple-light;
+		}
+
+		.lwtv-love-fill--happy,
+		.lwtv-love-legend-swatch--happy {
+			background-color: $lwtv-green-light;
+		}
+
+		.lwtv-love-metric-name--happy {
+			color: $lwtv-green-light;
+		}
+
+		.lwtv-love-fill--deaths,
+		.lwtv-love-legend-swatch--deaths {
+			background-color: $lwtv-red-light;
+		}
+
+		.lwtv-love-metric-name--deaths {
+			color: $lwtv-red-light;
+		}
+
 		.lwtv-tropegap-desc {
 			color: colors.$lwtv-grey-light;
 		}
