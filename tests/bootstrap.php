@@ -28,6 +28,12 @@ require_once __DIR__ . '/../plugins/lwtv-plugin/php/this-year/build/class-shared
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/this-year/build/class-shows-block.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/statistics/build/class-overview-factsheet.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/statistics/build/class-intersection-pairs.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/statistics/build/class-score-distribution.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/statistics/build/class-series-trend.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/statistics/build/class-star-podium.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/statistics/build/class-trigger-levels.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/statistics/build/class-worth-it-grid.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/statistics/build/class-we-love-compare.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/this-year/format/class-new-shows-formatter.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/this-year/format/class-canceled-shows-formatter.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/this-year/format/class-dead-characters-formatter.php';

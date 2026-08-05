@@ -33,12 +33,10 @@ class Stats_Generator {
 	 *
 	 * @param string $nation Nation slug (e.g., 'usa', 'canada')
 	 * @param string $view View type ('all', 'gender', 'sexuality', 'tropes', 'on-air')
-	 * @param string $format Output format ('array', 'barchart', 'trendline', etc.)
-	 * @param array  $custom_data Optional custom data (counts, etc.)
-	 * @param string $bar_direction Direction of the barchart ('vertical', 'horizontal')
+	 * @param string $format Output format ('array', 'count', etc.)
 	 * @return mixed Nation statistics data
 	 */
-	public function generate_nations( $nation, $view = 'all', $format = 'array', $custom_data = array(), $bar_direction = 'vertical' ) {
+	public function generate_nations( $nation, $view = 'all', $format = 'array' ) {
 		// Handle main stations page (summary view)
 		if ( 'all' === $nation ) {
 			$nations_builder = new Build_Nations();
@@ -55,7 +53,7 @@ class Stats_Generator {
 		$station_data = ( new Build_Nations() )->get_nation_details( $nation, $format, $view );
 		$data         = $station_data['formatted'] ?? $station_data;
 
-		return ( new Stats_Handler() )->handle( $data, $nation, $view, $format, 'nation', $custom_data, $bar_direction );
+		return ( new Stats_Handler() )->handle( $data, $nation, $view, $format, 'nation' );
 	}
 
 	/**
@@ -102,7 +100,7 @@ class Stats_Generator {
 		$data          = array();
 		$data[ $view ] = $all_data;
 
-		return ( new Stats_Handler() )->handle( $data, 'all', $view, $format, 'shows', array(), 'horizontal' );
+		return ( new Stats_Handler() )->handle( $data, 'all', $view, $format, 'shows' );
 	}
 
 	/**
@@ -110,12 +108,10 @@ class Stats_Generator {
 	 *
 	 * @param string $station Station slug (e.g., 'cbs', 'abc')
 	 * @param string $view View type ('all', 'gender', 'sexuality', 'tropes', 'on-air')
-	 * @param string $format Output format ('array', 'barchart', 'trendline', etc.)
-	 * @param array  $custom_data Optional custom data (counts, etc.)
-	 * @param string $bar_direction Direction of the barchart ('vertical', 'horizontal')
+	 * @param string $format Output format ('array', 'count', etc.)
 	 * @return mixed Station statistics data
 	 */
-	public function generate_stations( $station, $view = 'all', $format = 'array', $custom_data = array(), $bar_direction = 'vertical' ) {
+	public function generate_stations( $station, $view = 'all', $format = 'array' ) {
 		// Handle main stations page (summary view)
 		if ( 'all' === $station ) {
 			$stations_builder = new Build_Stations();
@@ -132,7 +128,7 @@ class Stats_Generator {
 		$station_data = ( new Build_Stations() )->get_station_details( $station, $format, $view );
 		$data         = $station_data['formatted'] ?? $station_data;
 
-		return ( new Stats_Handler() )->handle( $data, $station, $view, $format, 'station', $custom_data, $bar_direction );
+		return ( new Stats_Handler() )->handle( $data, $station, $view, $format, 'station' );
 	}
 
 	/**
@@ -177,7 +173,7 @@ class Stats_Generator {
 		$data          = array();
 		$data[ $view ] = $all_data;
 
-		return ( new Stats_Handler() )->handle( $data, 'all', $view, $format, 'characters', array(), 'vertical' );
+		return ( new Stats_Handler() )->handle( $data, 'all', $view, $format, 'characters' );
 	}
 
 	/**
@@ -208,7 +204,7 @@ class Stats_Generator {
 		$data          = array();
 		$data[ $view ] = $all_data;
 
-		return ( new Stats_Handler() )->handle( $data, 'all', $view, $format, 'actors', array(), 'horizontal' );
+		return ( new Stats_Handler() )->handle( $data, 'all', $view, $format, 'actors' );
 	}
 
 	/**
@@ -216,13 +212,12 @@ class Stats_Generator {
 	 *
 	 * @param string $subject Subject type (characters/shows)
 	 * @param string $view View type (years/roles/sexuality/gender/stations/nations)
-	 * @param string $format Format type (array/count/percentage/piechart/barchart/trendline/list)
+	 * @param string $format Format type (array/count/percentage/list)
 	 * @return array Dead statistics data
 	 */
 	public function generate_dead( $subject, $view, $format ) {
-		$all_data      = array();
-		$context       = 'all';
-		$bar_direction = 'vertical';
+		$all_data = array();
+		$context  = 'all';
 
 		if ( 'count' === $format ) {
 			if ( ! in_array( $subject, array( 'characters', 'shows' ), true ) ) {
@@ -236,18 +231,9 @@ class Stats_Generator {
 		switch ( $subject ) {
 			case 'characters':
 				$all_data = ( new Build_Dead() )->generate_characters( $view, $format );
-				if ( in_array( $format, array( 'piechart', 'percentage' ), true ) ) {
-					$context = $view;
-					$view    = 'death';
-				}
 				break;
 			case 'shows':
 				$all_data = ( new Build_Dead() )->generate_shows( $view, $format );
-				if ( in_array( $format, array( 'piechart', 'percentage', 'barchart' ), true ) ) {
-					$context = $view;
-					$view    = 'death';
-				}
-				$bar_direction = 'horizontal';
 				break;
 		}
 
@@ -255,7 +241,7 @@ class Stats_Generator {
 			lwtv_plugin()->debug_log( 'statistics', 'All data for dead is empty' );
 		}
 
-		return ( new Stats_Handler() )->handle( $all_data, $context, $view, $format, 'death', array(), $bar_direction );
+		return ( new Stats_Handler() )->handle( $all_data, $context, $view, $format, 'death' );
 	}
 
 	/**
@@ -283,7 +269,7 @@ class Stats_Generator {
 	 * @param string $type  Roles or Dead
 	 * @return array actors statistics data
 	 */
-	public function generate_individual_actors( $actor_id, $format = 'piechart', $type = 'roles' ) {
+	public function generate_individual_actors( $actor_id, $format = 'array', $type = 'roles' ) {
 		$all_data = array();
 		$view     = 'all';
 
@@ -305,6 +291,6 @@ class Stats_Generator {
 			return array();
 		}
 
-		return ( new Stats_Handler() )->handle( $all_data, $actor_id, $view, $format, 'actors', array(), 'horizontal' );
+		return ( new Stats_Handler() )->handle( $all_data, $actor_id, $view, $format, 'actors' );
 	}
 }

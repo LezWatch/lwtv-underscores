@@ -30,6 +30,7 @@ if ( ! function_exists( 'lwtv_stats_fraction_phrase' ) ) {
 			array( 90, __( 'Nearly all', 'lwtv' ) ),
 			array( 75, __( 'Over three quarters', 'lwtv' ) ),
 			array( 66, __( 'Over two thirds', 'lwtv' ) ),
+			array( 60, __( 'Nearly two thirds', 'lwtv' ) ),
 			array( 50, __( 'Over half', 'lwtv' ) ),
 			array( 40, __( 'Nearly half', 'lwtv' ) ),
 			array( 33, __( 'Over a third', 'lwtv' ) ),
@@ -113,7 +114,7 @@ if ( ! function_exists( 'lwtv_stats_year_series' ) ) {
 	 * @param string $count_key Row key holding the count. Default 'death_count'.
 	 * @return array [ 'rows' => [ ['year'=>int,'count'=>int], … ] dense, 'peak_year'=>int, 'peak_count'=>int ]
 	 */
-	function lwtv_stats_year_series( $sparse, $year_key = 'death_year', $count_key = 'death_count' ) {
+	function lwtv_stats_year_series( $sparse, $year_key = 'death_year', $count_key = 'death_count', $extend_to_now = true ) {
 		$map = array();
 		$min = 0;
 		$max = 0;
@@ -134,8 +135,12 @@ if ( ! function_exists( 'lwtv_stats_year_series' ) ) {
 				'peak_count' => 0,
 			);
 		}
-		$now        = (int) gmdate( 'Y' );
-		$max        = max( $max, $now );
+		// Most charts should run to the present so "no data yet this year" is
+		// visible. Pass false when the series was deliberately trimmed (e.g.
+		// Series_Trend::trim_trailing_zeros) so the axis stops with the story.
+		if ( $extend_to_now ) {
+			$max = max( $max, (int) gmdate( 'Y' ) );
+		}
 		$rows       = array();
 		$peak_year  = $min;
 		$peak_count = 0;

@@ -524,13 +524,240 @@
 			background-color: color-mix(in srgb, currentColor 15%, transparent);
 		}
 
-		.lwtv-byg-icon {
-			background-color: rgba(colors.$white, 0.08); // fallback for no color-mix.
-			background-color: color-mix(in srgb, currentColor 15%, transparent);
-		}
-
 		.lwtv-byg-desc {
 			color: colors.$lwtv-pink-light;
+		}
+
+		.lwtv-histo-val,
+		.lwtv-histo-label {
+			color: colors.$white;
+		}
+
+		.lwtv-histo-median {
+			border-color: colors.$lwtv-crimson-light;
+		}
+
+		.lwtv-histo-median-label {
+			color: colors.$lwtv-crimson-light;
+		}
+
+		.lwtv-shorthist-meta {
+			color: colors.$lwtv-grey-light;
+		}
+
+		.lwtv-shorthist-row {
+			border-color: rgba(colors.$white, 0.12);
+		}
+
+		// Stars podium: plate fills follow the chip pattern (family at ~20%
+		// alpha); silver uses a white alpha because #999 tints vanish on #333.
+		// Rail cards keep their light-mode fills — solid vibrant cards.
+		.lwtv-star-podium {
+			border-color: rgba(colors.$white, 0.12);
+		}
+
+		.lwtv-star-count {
+			color: colors.$white;
+		}
+
+		.lwtv-star-def,
+		.lwtv-star-footnote {
+			color: rgba(colors.$white, 0.75);
+		}
+
+		.lwtv-star-baseline {
+			border-top-color: colors.$white;
+		}
+
+		.lwtv-star-col--gold .lwtv-star-plate {
+			background-color: rgba(colors.$lwtv-yellow, 0.2);
+		}
+
+		.lwtv-star-col--silver .lwtv-star-plate {
+			background-color: rgba(colors.$white, 0.14);
+		}
+
+		.lwtv-star-col--bronze .lwtv-star-plate {
+			background-color: rgba(colors.$lwtv-bronze, 0.24);
+		}
+
+		.lwtv-star-col--anti .lwtv-star-plate {
+			background-color: rgba(colors.$lwtv-raspberry-deep, 0.24);
+		}
+
+		// Trigger warnings: bar fills keep base tokens (the -deep tones go
+		// muddy on #333); the two red rail cards shift so they stay
+		// distinguishable against the dark surface.
+		.lwtv-tw {
+			border-color: rgba(colors.$white, 0.12);
+		}
+
+		.lwtv-tw-deck,
+		.lwtv-tw-footnote {
+			color: rgba(colors.$white, 0.75);
+		}
+
+		.lwtv-tw-stat--weight {
+			background-color: colors.$lwtv-red;
+		}
+
+		.lwtv-tw-stat--floor {
+			background-color: $lwtv-red-light;
+		}
+
+		.lwtv-tw-bar-none {
+			background-color: rgba(colors.$white, 0.15);
+		}
+
+		.lwtv-tw-bar-none-label {
+			color: colors.$white;
+		}
+
+		.lwtv-tw-bracket-span {
+			border-color: rgba(colors.$white, 0.15);
+		}
+
+		.lwtv-tw-bracket-stem {
+			background-color: rgba(colors.$white, 0.15);
+		}
+
+		.lwtv-tw-panel {
+			background-color: rgba(colors.$white, 0.08);
+		}
+
+		.lwtv-tw-magbar {
+			border-color: rgba(colors.$white, 0.12);
+		}
+
+		.lwtv-tw-legend-desc {
+			color: rgba(colors.$white, 0.75);
+
+			strong {
+				color: colors.$white;
+			}
+		}
+
+		// Worth It grid: verdict fills keep base tokens; TBD marks go
+		// white-alpha (#999 on #333 is too faint to read as a data mark).
+		.lwtv-wi {
+			border-color: rgba(colors.$white, 0.12);
+		}
+
+		.lwtv-wi-caption,
+		.lwtv-wi-deck,
+		.lwtv-wi-note,
+		.lwtv-wi-share,
+		.lwtv-wi-caveat,
+		.lwtv-wi-eyebrow {
+			color: rgba(colors.$white, 0.7);
+		}
+
+		.lwtv-wi-row,
+		.lwtv-wi-row--last {
+			border-color: rgba(colors.$white, 0.12);
+		}
+
+		.lwtv-wi-scores {
+			border-top-color: rgba(colors.$white, 0.12);
+		}
+
+		.lwtv-wi-axis-ticks {
+			color: rgba(colors.$white, 0.7);
+			border-top-color: rgba(colors.$white, 0.12);
+		}
+
+		.lwtv-wi-score-track {
+			background-color: rgba(colors.$white, 0.15);
+		}
+
+		.lwtv-wi-square--tbd,
+		.lwtv-wi-swatch--tbd,
+		.lwtv-wi-score-fill--tbd {
+			background-color: rgba(colors.$white, 0.3);
+		}
+
+		// Shows We Love: metric accents swap to the vivid locals (fills,
+		// names, and legend swatches stay in sync); rail fills hold on
+		// base tokens; the grey comparison group goes white-alpha.
+		.lwtv-love,
+		.lwtv-love-roster,
+		.lwtv-love-card {
+			border-color: rgba(colors.$white, 0.12);
+		}
+
+		.lwtv-love-section {
+			border-top-color: rgba(colors.$white, 0.12);
+		}
+
+		.lwtv-love-metric--axisbreak,
+		.lwtv-love-ticks-row,
+		.lwtv-love-card-meta {
+			border-top-color: rgba(colors.$white, 0.12);
+		}
+
+		.lwtv-love-ratio {
+			color: colors.$lwtv-pink-light;
+		}
+
+		.lwtv-love-ratio-meta,
+		.lwtv-love-sliver-caption,
+		.lwtv-love-eyebrow,
+		.lwtv-love-deck,
+		.lwtv-love-legend,
+		.lwtv-love-metric-sub,
+		.lwtv-love-takeaway,
+		.lwtv-love-fig--rest,
+		.lwtv-love-ticks-row,
+		.lwtv-love-roster-note,
+		.lwtv-love-card-years,
+		.lwtv-love-card-meta {
+			color: rgba(colors.$white, 0.75);
+		}
+
+		.lwtv-love-sliver,
+		.lwtv-love-track {
+			background-color: rgba(colors.$white, 0.15);
+		}
+
+		.lwtv-love-fill--rest,
+		.lwtv-love-legend-swatch--rest {
+			background-color: rgba(colors.$white, 0.3);
+		}
+
+		.lwtv-love-fill--chars,
+		.lwtv-love-legend-swatch--chars {
+			background-color: colors.$lwtv-pink-light;
+		}
+
+		.lwtv-love-metric-name--chars {
+			color: colors.$lwtv-pink-light;
+		}
+
+		.lwtv-love-fill--actors,
+		.lwtv-love-legend-swatch--actors {
+			background-color: colors.$lwtv-purple-light;
+		}
+
+		.lwtv-love-metric-name--actors {
+			color: colors.$lwtv-purple-light;
+		}
+
+		.lwtv-love-fill--happy,
+		.lwtv-love-legend-swatch--happy {
+			background-color: $lwtv-green-light;
+		}
+
+		.lwtv-love-metric-name--happy {
+			color: $lwtv-green-light;
+		}
+
+		.lwtv-love-fill--deaths,
+		.lwtv-love-legend-swatch--deaths {
+			background-color: $lwtv-red-light;
+		}
+
+		.lwtv-love-metric-name--deaths {
+			color: $lwtv-red-light;
 		}
 
 		.lwtv-tropegap-desc {

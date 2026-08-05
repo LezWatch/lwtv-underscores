@@ -15,6 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 
 use LWTV\Statistics\Build\Overview_Factsheet;
+use LWTV\Statistics\Build\Series_Trend;
 use LWTV\Statistics\Build\Taxonomy_Optimized as Build_Taxonomy_Optimized;
 
 $lwtv_slug    = ltrim( $nation, '_' );
@@ -495,105 +496,257 @@ switch ( $view ) {
 		break;
 
 	case '_on-air':
-		$lwtv_oaraw     = lwtv_plugin()->generate_nation_statistics( $nation, ltrim( $view, '_' ), 'array' );
-		$lwtv_oaraw     = ( is_array( $lwtv_oaraw ) && ! empty( $lwtv_oaraw ) ) ? $lwtv_oaraw : array();
-		$lwtv_points    = array();
-		$no_onair_years = array();
+		$lwtv_oaraw  = lwtv_plugin()->generate_nation_statistics( $nation, ltrim( $view, '_' ), 'array' );
+		$lwtv_oaraw  = ( is_array( $lwtv_oaraw ) && ! empty( $lwtv_oaraw ) ) ? $lwtv_oaraw : array();
+		$lwtv_points = array();
 
 		foreach ( $lwtv_oaraw as $lwtv_oa_item ) {
 			$lwtv_points[] = array(
 				'year'  => (int) $lwtv_oa_item['name'],
 				'count' => (int) $lwtv_oa_item['count'],
 			);
-
-			if ( 0 === (int) $lwtv_oa_item['count'] ) {
-				$no_onair_years[] = (int) $lwtv_oa_item['name'];
-			}
 		}
 
-		$lwtv_last = ! empty( $lwtv_points ) ? end( $lwtv_points ) : array(
+		// Stop the axis where the story stops: a tail of zero years after the
+		// last show ended would imply a history that is not there. The adaptive
+		// "nothing on the air since" line below explains the shortened axis.
+		$lwtv_points  = Series_Trend::trim_trailing_zeros( $lwtv_points );
+		$lwtv_current = (int) gmdate( 'Y' );
+		$lwtv_last    = ! empty( $lwtv_points ) ? end( $lwtv_points ) : array(
 			'year'  => 0,
 			'count' => 0,
 		);
+		$lwtv_gap_txt = '';
+		if ( (int) $lwtv_last['year'] > 0 && ( $lwtv_current - (int) $lwtv_last['year'] ) >= 2 ) {
+			/* translators: %s: the last year anything was on the air (4-digit year). */
+			$lwtv_gap_txt = sprintf( __( 'Nothing has been on the air since %s.', 'lwtv' ), (string) $lwtv_last['year'] );
+		}
 
-		// Best year = highest on-air count; on a tie, the most recent year (points
-		// are ordered ascending, so >= lets a later equal year win).
-		$lwtv_best_year  = 0;
-		$lwtv_best_count = 0;
-		foreach ( $lwtv_points as $lwtv_pt ) {
-			if ( (int) $lwtv_pt['count'] >= $lwtv_best_count ) {
-				$lwtv_best_count = (int) $lwtv_pt['count'];
-				$lwtv_best_year  = (int) $lwtv_pt['year'];
+		if ( Overview_Factsheet::collapse_for_shows( $lwtv_shows ) ) {
+			// Thin data: with only a show or two, the catalog IS the story —
+			// render the short-history card instead of a one-bar chart.
+			$lwtv_sh_first = 0;
+			foreach ( $lwtv_points as $lwtv_pt ) {
+				if ( (int) $lwtv_pt['count'] > 0 ) {
+					$lwtv_sh_first = (int) $lwtv_pt['year'];
+					break;
+				}
 			}
-		}
+			$lwtv_sh_last = (int) $lwtv_last['year'];
 
-		$lwtv_callouts = array();
-
-		// Add Best Year
-		if ( $lwtv_best_count > 0 ) {
-			$lwtv_callouts[] = array(
-				'label' => __( 'Best Year', 'lwtv' ),
-				'svg'   => 'fireworks.svg',
-				'icon'  => 'svg-fireworks',
-				// Raw values — the callout partial escapes the assembled text with esc_html().
-				'text'  => sprintf(
-					/* translators: 1: year, 2: nation name, 3: number of shows on air. */
-					_n( 'In %1$s, %2$s had %3$s show on air.', 'In %1$s, %2$s had %3$s shows on air.', $lwtv_best_count, 'lwtv' ),
-					(string) $lwtv_best_year,
+			$lwtv_sh_lines = array();
+			if ( $lwtv_sh_first > 0 && $lwtv_sh_first === $lwtv_sh_last ) {
+				$lwtv_sh_lines[] = sprintf(
+					/* translators: 1: nation name, 2: the year on air, 3: number of shows. */
+					_n( '%1$s has %3$s tracked queer show, on the air in %2$s.', '%1$s has %3$s tracked queer shows, all on the air in %2$s.', $lwtv_shows, 'lwtv' ),
 					$lwtv_name,
-					number_format_i18n( $lwtv_best_count )
-				),
-			);
-		}
-
-		// Add Worst Years
-		if ( ! empty( $no_onair_years ) ) {
-			if ( 6 > count( $no_onair_years ) ) {
-				$no_onair_years_label = _n( 'Worst Year', 'Worst Years', count( $no_onair_years ), 'lwtv' );
-				$no_onair_years_text  = sprintf(
-					/* translators: 1: nation name, 2: Years with no shows on air. */
-					_n( '%1$s had no shows on air in %2$s.', '%1$s had no shows on air in the following years: %2$s', count( $no_onair_years ), 'lwtv' ),
+					(string) $lwtv_sh_first,
+					number_format_i18n( $lwtv_shows )
+				);
+			} elseif ( $lwtv_sh_first > 0 ) {
+				$lwtv_sh_lines[] = sprintf(
+					/* translators: 1: nation name, 2: first year on air, 3: last year on air, 4: number of shows. */
+					_n( '%1$s has %4$s tracked queer show, on the air from %2$s to %3$s.', '%1$s has %4$s tracked queer shows on the air between %2$s and %3$s.', $lwtv_shows, 'lwtv' ),
 					$lwtv_name,
-					implode( ', ', $no_onair_years )
+					(string) $lwtv_sh_first,
+					(string) $lwtv_sh_last,
+					number_format_i18n( $lwtv_shows )
 				);
 			} else {
-				/* translators: 1: nation name, 2: Number of years with no shows on air. */
-				$no_onair_years_text  = sprintf( __( '%1$s had no shows on air in %2$s years.', 'lwtv' ), $lwtv_name, count( $no_onair_years ) );
-				$no_onair_years_label = __( 'Worst Years', 'lwtv' );
+				$lwtv_sh_lines[] = sprintf(
+					/* translators: 1: nation name, 2: number of shows. */
+					_n( '%1$s has %2$s tracked queer show.', '%1$s has %2$s tracked queer shows.', $lwtv_shows, 'lwtv' ),
+					$lwtv_name,
+					number_format_i18n( $lwtv_shows )
+				);
 			}
 
-			$lwtv_callouts[] = array(
-				'label' => $no_onair_years_label,
-				'svg'   => 'scythe.svg',
-				'icon'  => 'svg-scythe',
-				'text'  => $no_onair_years_text,
+			if ( $lwtv_onair > 0 ) {
+				$lwtv_sh_lines[] = ( $lwtv_onair === $lwtv_shows )
+					? __( 'Still on the air today.', 'lwtv' )
+					: sprintf(
+						/* translators: %s: number of shows still on the air. */
+						_n( '%s of them is still on the air.', '%s of them are still on the air.', $lwtv_onair, 'lwtv' ),
+						number_format_i18n( $lwtv_onair )
+					);
+			} elseif ( '' !== $lwtv_gap_txt ) {
+				$lwtv_sh_lines[] = $lwtv_gap_txt;
+			}
+			$lwtv_sh_lines[] = __( 'Too little to chart — so here it is in full.', 'lwtv' );
+
+			// The catalog itself. At most two shows here, so per-post meta reads are cheap.
+			$lwtv_sh_posts = get_posts(
+				array(
+					'post_type'      => 'post_type_shows',
+					'post_status'    => 'publish',
+					'posts_per_page' => 10,
+					'orderby'        => 'title',
+					'order'          => 'ASC',
+					// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query -- Thin-data path only (under 3 shows).
+					'tax_query'      => array(
+						array(
+							'taxonomy' => 'lez_country',
+							'field'    => 'slug',
+							'terms'    => $lwtv_slug,
+						),
+					),
+				)
 			);
+
+			$lwtv_sh_rows = array();
+			foreach ( $lwtv_sh_posts as $lwtv_sh_post ) {
+				$lwtv_sh_air   = get_post_meta( $lwtv_sh_post->ID, 'lezshows_airdates', true );
+				$lwtv_sh_start = ( is_array( $lwtv_sh_air ) && ! empty( $lwtv_sh_air['start'] ) ) ? (int) $lwtv_sh_air['start'] : 0;
+				$lwtv_sh_fin   = ( is_array( $lwtv_sh_air ) && isset( $lwtv_sh_air['finish'] ) ) ? $lwtv_sh_air['finish'] : '';
+
+				if ( 'current' === $lwtv_sh_fin ) {
+					/* translators: %s: year the show started airing. */
+					$lwtv_sh_years = sprintf( __( 'On air since %s', 'lwtv' ), (string) $lwtv_sh_start );
+				} elseif ( (int) $lwtv_sh_fin > $lwtv_sh_start ) {
+					/* translators: 1: first year on air, 2: last year on air. */
+					$lwtv_sh_years = sprintf( __( 'On air %1$s–%2$s', 'lwtv' ), (string) $lwtv_sh_start, (string) (int) $lwtv_sh_fin );
+				} else {
+					/* translators: %s: the single year the show was on air. */
+					$lwtv_sh_years = sprintf( __( 'On air %s', 'lwtv' ), (string) $lwtv_sh_start );
+				}
+
+				$lwtv_sh_chars = (int) get_post_meta( $lwtv_sh_post->ID, 'lezshows_char_count', true );
+				$lwtv_sh_dead  = (int) get_post_meta( $lwtv_sh_post->ID, 'lezshows_dead_count', true );
+
+				$lwtv_sh_meta = array( $lwtv_sh_years );
+				if ( $lwtv_sh_chars > 0 ) {
+					$lwtv_sh_meta[] = sprintf(
+						/* translators: %s: number of characters. */
+						_n( '%s character', '%s characters', $lwtv_sh_chars, 'lwtv' ),
+						number_format_i18n( $lwtv_sh_chars )
+					);
+				}
+				$lwtv_sh_meta[] = ( 0 === $lwtv_sh_dead )
+					? __( 'no deaths', 'lwtv' )
+					: sprintf(
+						/* translators: %s: number of dead characters. */
+						_n( '%s death', '%s deaths', $lwtv_sh_dead, 'lwtv' ),
+						number_format_i18n( $lwtv_sh_dead )
+					);
+
+				$lwtv_sh_score = get_post_meta( $lwtv_sh_post->ID, 'lezshows_the_score', true );
+
+				$lwtv_sh_rows[] = array(
+					'start' => $lwtv_sh_start,
+					'title' => get_the_title( $lwtv_sh_post ),
+					'url'   => get_permalink( $lwtv_sh_post ),
+					'meta'  => implode( ' · ', $lwtv_sh_meta ),
+					'score' => ( '' !== (string) $lwtv_sh_score ) ? (int) round( (float) $lwtv_sh_score ) : '',
+				);
+			}
+			usort( $lwtv_sh_rows, static fn( $a, $b ) => $a['start'] <=> $b['start'] );
+
+			$short_history = array(
+				'eyebrow'  => __( 'Shows On Air Per Year', 'lwtv' ),
+				'headline' => __( 'A short history, so far', 'lwtv' ),
+				'lines'    => $lwtv_sh_lines,
+				'rows'     => $lwtv_sh_rows,
+			);
+			// phpcs:ignore PEAR.Files.IncludingFile.UseRequire
+			include plugin_dir_path( __DIR__ ) . 'partials/short-history.php';
+
+			$lwtv_csv_rows = count( $lwtv_oaraw );
+		} else {
+			// Years with nothing on the air, within the trimmed range only —
+			// the trailing tail is covered by the "nothing since" line instead.
+			$no_onair_years = array();
+			foreach ( $lwtv_points as $lwtv_pt ) {
+				if ( 0 === (int) $lwtv_pt['count'] ) {
+					$no_onair_years[] = (int) $lwtv_pt['year'];
+				}
+			}
+
+			// Best year = highest on-air count; on a tie, the most recent year (points
+			// are ordered ascending, so >= lets a later equal year win).
+			$lwtv_best_year  = 0;
+			$lwtv_best_count = 0;
+			foreach ( $lwtv_points as $lwtv_pt ) {
+				if ( (int) $lwtv_pt['count'] >= $lwtv_best_count ) {
+					$lwtv_best_count = (int) $lwtv_pt['count'];
+					$lwtv_best_year  = (int) $lwtv_pt['year'];
+				}
+			}
+
+			$lwtv_callouts = array();
+
+			// Add Best Year
+			if ( $lwtv_best_count > 0 ) {
+				$lwtv_callouts[] = array(
+					'label' => __( 'Best Year', 'lwtv' ),
+					'svg'   => 'fireworks.svg',
+					'icon'  => 'svg-fireworks',
+					// Raw values — the callout partial escapes the assembled text with esc_html().
+					'text'  => sprintf(
+						/* translators: 1: year, 2: nation name, 3: number of shows on air. */
+						_n( 'In %1$s, %2$s had %3$s show on air.', 'In %1$s, %2$s had %3$s shows on air.', $lwtv_best_count, 'lwtv' ),
+						(string) $lwtv_best_year,
+						$lwtv_name,
+						number_format_i18n( $lwtv_best_count )
+					),
+				);
+			}
+
+			// Add Worst Years
+			if ( ! empty( $no_onair_years ) ) {
+				if ( 6 > count( $no_onair_years ) ) {
+					$no_onair_years_label = _n( 'Worst Year', 'Worst Years', count( $no_onair_years ), 'lwtv' );
+					$no_onair_years_text  = sprintf(
+						/* translators: 1: nation name, 2: Years with no shows on air. */
+						_n( '%1$s had no shows on air in %2$s.', '%1$s had no shows on air in the following years: %2$s', count( $no_onair_years ), 'lwtv' ),
+						$lwtv_name,
+						implode( ', ', $no_onair_years )
+					);
+				} else {
+					/* translators: 1: nation name, 2: Number of years with no shows on air. */
+					$no_onair_years_text  = sprintf( __( '%1$s had no shows on air in %2$s years.', 'lwtv' ), $lwtv_name, count( $no_onair_years ) );
+					$no_onair_years_label = __( 'Worst Years', 'lwtv' );
+				}
+
+				$lwtv_callouts[] = array(
+					'label' => $no_onair_years_label,
+					'svg'   => 'scythe.svg',
+					'icon'  => 'svg-scythe',
+					'text'  => $no_onair_years_text,
+				);
+			}
+
+			// phpcs:ignore PEAR.Files.IncludingFile.UseRequire
+			require_once plugin_dir_path( __DIR__ ) . 'partials/phrases.php';
+			$lwtv_oa_series = lwtv_stats_year_series( $lwtv_points, 'year', 'count', false );
+
+			$lwtv_oa_desc = __( 'Shows on air for each year, starting from the first tracked episode.', 'lwtv' );
+			if ( '' !== $lwtv_gap_txt ) {
+				$lwtv_oa_desc .= ' ' . $lwtv_gap_txt;
+			}
+
+			$yearbars = array(
+				'rows'        => $lwtv_oa_series['rows'],
+				'peak_year'   => $lwtv_oa_series['peak_year'],
+				'peak_count'  => $lwtv_oa_series['peak_count'],
+				'stat_num'    => (int) $lwtv_last['count'],
+				/* translators: %s: the latest year (4-digit, never thousands-formatted). */
+				'stat_sub'    => sprintf( __( 'on air in %s', 'lwtv' ), (string) $lwtv_last['year'] ),
+				'eyebrow'     => __( 'Shows On Air Per Year', 'lwtv' ),
+				'headline'    => __( 'On-air over time', 'lwtv' ),
+				'description' => $lwtv_oa_desc,
+				'callouts'    => $lwtv_callouts,
+			);
+			// phpcs:ignore PEAR.Files.IncludingFile.UseRequire
+			include plugin_dir_path( __DIR__ ) . 'partials/year-bars.php';
+
+			$lwtv_csv_rows = count( $lwtv_oa_series['rows'] );
 		}
-
-		// phpcs:ignore PEAR.Files.IncludingFile.UseRequire
-		require_once plugin_dir_path( __DIR__ ) . 'partials/phrases.php';
-		$lwtv_oa_series = lwtv_stats_year_series( $lwtv_points, 'year', 'count' );
-
-		$yearbars = array(
-			'rows'        => $lwtv_oa_series['rows'],
-			'peak_year'   => $lwtv_oa_series['peak_year'],
-			'peak_count'  => $lwtv_oa_series['peak_count'],
-			'stat_num'    => (int) $lwtv_last['count'],
-			/* translators: %s: the latest year (4-digit, never thousands-formatted). */
-			'stat_sub'    => sprintf( __( 'on air in %s', 'lwtv' ), (string) $lwtv_last['year'] ),
-			'eyebrow'     => __( 'Shows On Air Per Year', 'lwtv' ),
-			'headline'    => __( 'On-air over time', 'lwtv' ),
-			'description' => __( 'Shows on air for each year, from the first tracked episode to today.', 'lwtv' ),
-			'callouts'    => $lwtv_callouts,
-		);
-		// phpcs:ignore PEAR.Files.IncludingFile.UseRequire
-		include plugin_dir_path( __DIR__ ) . 'partials/year-bars.php';
 
 		$download_csv = array(
 			'page'  => __( 'year', 'lwtv' ),
 			/* translators: %s: nation name. */
 			'title' => sprintf( __( '%s: shows on air by year', 'lwtv' ), $lwtv_name ),
-			'count' => count( $lwtv_oa_series['rows'] ),
+			'count' => $lwtv_csv_rows,
 		);
 		// phpcs:ignore PEAR.Files.IncludingFile.UseRequire
 		include plugin_dir_path( __DIR__ ) . 'partials/download-csv.php';

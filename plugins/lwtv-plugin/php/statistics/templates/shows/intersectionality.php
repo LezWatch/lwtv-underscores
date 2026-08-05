@@ -89,8 +89,13 @@ if ( ! empty( $pairs ) ) {
 			'hide_empty' => true,
 		)
 	);
-	foreach ( $pair_terms as $pair_term ) {
-		$pair_names[ $pair_term->slug ] = $pair_term->name;
+	// get_terms() can hand back a WP_Error (unregistered taxonomy, DB
+	// hiccup); iterating that would fatal. The row builder below already
+	// falls back to slugs when a name is missing, so an empty map is safe.
+	if ( ! is_wp_error( $pair_terms ) && is_array( $pair_terms ) ) {
+		foreach ( $pair_terms as $pair_term ) {
+			$pair_names[ $pair_term->slug ] = $pair_term->name;
+		}
 	}
 
 	$pair_rows = array();

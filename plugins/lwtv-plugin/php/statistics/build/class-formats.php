@@ -25,8 +25,6 @@ class Formats {
 		switch ( $format ) {
 			case 'count':
 				return count( $all_formats_data );
-			case 'piechart':
-				return $this->format_piechart( $all_formats_data );
 			case 'percentage':
 				return $this->format_percentage( $all_formats_data );
 			default:
@@ -82,23 +80,6 @@ class Formats {
 			lwtv_plugin()->error_log( 'statistics', 'Error generating formats statistics: ' . $e->getMessage() );
 			return array();
 		}
-	}
-
-	/**
-	 * Format piechart
-	 *
-	 * @param array $all_formats_data All formats data
-	 * @return array Piechart data
-	 */
-	public function format_piechart( $all_formats_data ) {
-		$data = array();
-		foreach ( $all_formats_data as $format ) {
-			$data[] = array(
-				'name'  => $format['name'],
-				'count' => $format['count'],
-			);
-		}
-		return $data;
 	}
 
 	/**

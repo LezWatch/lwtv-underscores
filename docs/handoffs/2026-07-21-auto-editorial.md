@@ -1,6 +1,6 @@
 # Handoff: Auto-Generated Editorial (annual post, share cards, notable feed)
 
-**Repo:** `LezWatch.TV` (plugin under `plugins/lwtv-plugin/`), theme+plugin on `feat/cliche-stats`.
+**Repo:** `LezWatch.TV` (plugin under `plugins/lwtv-plugin/`), theme+plugin.
 **Scope:** Turn the stats engine into *content*. Three phases, decreasing certainty. Phase 1 is the high-value, low-risk core; ship it alone if the others stall.
 
 ## Goal

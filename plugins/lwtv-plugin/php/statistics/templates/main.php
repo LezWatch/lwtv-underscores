@@ -45,6 +45,8 @@ $stats_partials = plugin_dir_path( __FILE__ ) . 'main/';
 	include $stats_partials . 'overview.php';
 	// phpcs:ignore PEAR.Files.IncludingFile.UseRequire
 	include $stats_partials . 'bury-your-gays.php';
+	// phpcs:ignore PEAR.Files.IncludingFile.UseRequire
+	include $stats_partials . 'score-trend.php';
 	echo '<div class="lwtv-panels">';
 	// phpcs:ignore PEAR.Files.IncludingFile.UseRequire
 	include $stats_partials . 'where-tv-lives.php';
