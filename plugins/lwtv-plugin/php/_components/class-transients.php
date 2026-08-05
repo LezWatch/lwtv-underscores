@@ -203,7 +203,7 @@ class Transients implements Component, Templater {
 					'queer_irl_characters',
 					'cliche_leaders_characters_*',
 					'worth_it_*',
-					'we_love_it_data',
+					'we_love_*',
 					'shows_we_love_count',
 					'nation_*',
 					'station_*',
