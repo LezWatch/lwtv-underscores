@@ -4,6 +4,26 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [7.1.9] - 2026-08-06
+
+### Added
+
+- Shows statistics gains a Scores tab with a score distribution histogram and median/90+/failing pull-stats, plus a Score Trend band on the main statistics page showing the average score of on-air shows per year.
+- The statistics page gains a "Common Pairings" section showing which intersections most often co-occur on the same show.
+- The Shows We Love It view now compares loved shows against the rest of the archive on average cast size, happy-ending rate, and death rate.
+
+### Changed
+
+- The Shows → Stars view replaces its donut chart with a medal podium and a callout rail of star totals, leading-tier share, and star rate.
+- The Shows → Triggers view replaces its donut chart with a callout rail and true-scale bars showing the flagged-show rate and severity mix.
+- The Shows → Worth It view is rebuilt as a hundred-square grid with score bars.
+- Intersectionality is visible on show pages again: the single-show sidebar card and excerpt intersection icons now render correctly.
+- Nations and stations with only a show or two now show an adaptive narrative and per-show catalog card instead of a near-empty chart.
+
+### Fixed
+
+- A missing or unregistered intersections taxonomy no longer causes a fatal error on the show intersectionality view.
+
 ## [7.1.8] - 2026-07-30
 
 ### Changed
