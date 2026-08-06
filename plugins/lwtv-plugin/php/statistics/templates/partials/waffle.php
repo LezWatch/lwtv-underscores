@@ -17,6 +17,10 @@ if ( ! defined( 'ABSPATH' ) ) {
  *   @type int    $filled  Number of filled cells (clamped to 0…total).
  *   @type int    $total   Total cells. Default 100.
  *   @type int    $columns Grid columns. Default 10.
+ *   @type int    $radius  Dot radius in viewBox units. Default 6. Pitch (the
+ *                          center-to-center spacing) is derived from this, so
+ *                          the gap between dots always scales with the dots
+ *                          themselves — callers only ever set one number.
  *   @type string $label   Accessible description of the figure.
  * }
  */
@@ -27,9 +31,12 @@ $waffle_columns = max( 1, (int) ( $waffle['columns'] ?? 10 ) );
 $waffle_rows    = (int) ceil( $waffle_total / $waffle_columns );
 $waffle_label   = (string) ( $waffle['label'] ?? '' );
 
-// Geometry: dot radius 6 on a 17-unit pitch, 8 units of edge padding.
-$waffle_pitch  = 17;
-$waffle_radius = 6;
+// Geometry: pitch is derived from radius, not a fixed constant, so the gap
+// between dots always scales with dot size instead of getting eaten as
+// radius grows. The 17/6 ratio reproduces the original hand-tuned look
+// (radius 6 → pitch 17, a ~0.42:1 gap-to-diameter ratio) at any size.
+$waffle_radius = max( 1, (int) ( $waffle['radius'] ?? 6 ) );
+$waffle_pitch  = (int) round( $waffle_radius * ( 17 / 6 ) );
 $waffle_edge   = 8;
 $waffle_width  = ( ( $waffle_columns - 1 ) * $waffle_pitch ) + ( 2 * $waffle_edge );
 $waffle_height = ( ( $waffle_rows - 1 ) * $waffle_pitch ) + ( 2 * $waffle_edge );

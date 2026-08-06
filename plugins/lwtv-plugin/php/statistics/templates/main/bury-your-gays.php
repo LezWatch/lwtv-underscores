@@ -57,7 +57,7 @@ $waffle = array(
 			<?php
 			printf(
 				/* translators: 1: number of dead characters (int, for the count-up animation), 2: total characters, 3: formatted number of dead characters. */
-				wp_kses_post( __( 'characters doesn\'t survive their show. <strong data-count-to="%1$d">%3$s</strong> of %2$s characters have been killed off.', 'lwtv' ) ),
+				wp_kses_post( __( '<strong data-count-to="%1$d">%3$s</strong> of %2$s characters have been killed off.', 'lwtv' ) ),
 				(int) $stats_dead,
 				esc_html( number_format_i18n( $stats_characters ) ),
 				esc_html( number_format_i18n( $stats_dead ) )

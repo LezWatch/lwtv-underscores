@@ -721,6 +721,26 @@
 			}
 		}
 
+		// Overview's Trope Gap pair only (--tint modifier, set in
+		// overview.php). Light mode uses a pale tint background; dark mode
+		// swaps to the same neutral panel-grey as the headlines lead
+		// plate, with each family's deep *-light accent token for text.
+		.lwtv-tropegap--tint {
+			&.dead-characters,
+			&.happy-endings {
+				background-color: $lwtv-grey-medium;
+				border-color: rgba(colors.$white, 0.12);
+			}
+
+			&.dead-characters {
+				color: colors.$lwtv-crimson-light;
+			}
+
+			&.happy-endings {
+				color: colors.$lwtv-royal-blue-light;
+			}
+		}
+
 		.lwtv-hl-item {
 			color: colors.$white;
 

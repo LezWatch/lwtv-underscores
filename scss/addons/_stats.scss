@@ -2393,6 +2393,41 @@ canvas {
 		.lwtv-stats-eyebrow {
 			color: inherit; // family accent from .card-header.<type>.
 		}
+
+		// The waffle partial's base rule is width:100% (fine when a caller
+		// wraps it in a fixed-width column, e.g. .lwtv-byg-figure). This
+		// card has no such wrapper, so cap it directly or it fills the
+		// whole card. Paired with 20 columns (5 rows) in the template call,
+		// this reads as a wide horizontal band instead of a tall square,
+		// so it no longer leaves a dead gap above the link. Centered per
+		// request, now that there's slack width to center within.
+		.lwtv-waffle {
+			display: block;
+			max-width: 300px;
+			margin: 0 auto 0.5rem;
+		}
+
+		// Overview's Trope Gap pair only (--tint modifier, set in
+		// overview.php): a lighter tint instead of the vivid family
+		// background. Deliberately NOT scoped to .dead-characters/
+		// .happy-endings alone — those same card-header classes are also
+		// used by Scores' pull-stats (Failing Grades / 90+ Club) and by
+		// canceled-shows/queer-actors elsewhere, none of which should
+		// change. Mirrors the pink-light/pink-deep recipe already used
+		// for .lwtv-hl-lead.
+		&.lwtv-tropegap--tint {
+			&.dead-characters {
+				background-color: colors.$lwtv-crimson-light;
+				border-color: colors.$lwtv-crimson-light;
+				color: colors.$lwtv-crimson-deep;
+			}
+
+			&.happy-endings {
+				background-color: colors.$lwtv-royal-blue-light;
+				border-color: colors.$lwtv-royal-blue-light;
+				color: colors.$lwtv-royal-blue-deep;
+			}
+		}
 	}
 
 	.lwtv-tropegap-top {
