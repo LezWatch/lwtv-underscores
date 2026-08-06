@@ -1,14 +1,16 @@
 # Handoff: Cross-CPT Depth (actor leaderboards + intersectional slices)
 
-**Repo:** `LezWatch.TV` (plugin under `plugins/lwtv-plugin/`), theme+plugin on `feat/cliche-stats`.
+**Repo:** `LezWatch.TV` (plugin under `plugins/lwtv-plugin/`), theme+plugin.
 **Scope:** Stats currently slice one CPT at a time. The site's actual value is the **shows ↔ characters ↔ actors** web — surface it. Two phases: a cheap actor-leaderboard using existing meta, then heavier intersectional queries.
 
 ## Goal
+
 Answer questions that need the relationships, not just one table: "which actors have played the most queer roles?", "how do deaths break down by sexuality?", "do shows that kill also carry certain tropes?"
 
 ---
 
 ## Phase 1 — Actor leaderboards (cheap; uses existing meta)  ⭐ do first
+
 - **Data already exists:** actors carry `lezactors_char_count` (roles played) and `lezactors_dead_count`; taxonomies `lez_actor_gender` / `lez_actor_sexuality`. The redesign's actor CSV roster already reads these.
 - **New view:** add an "Actors by roles" leaderboard to the actors sub-nav, reusing `partials/ranked-bars.php` or `partials/leaderboard.php` (rank actors by `lezactors_char_count`, link to `/actor/{slug}/`).
 - **Callout:** "The most prolific queer performer is X with N roles" via `phrases.php`.
@@ -19,6 +21,7 @@ Answer questions that need the relationships, not just one table: "which actors 
 ---
 
 ## Phase 2 — Intersectional slices (heavier; new queries)
+
 Cross-taxonomy / cross-CPT breakdowns:
 - **Deaths by sexuality / by gender** — group dead characters by their `lez_sexuality` / `lez_gender` terms.
 - **Characters by nation × gender** — two-axis breakdown.
@@ -33,6 +36,7 @@ Cross-taxonomy / cross-CPT breakdowns:
 3. **Term canonicalisation** — sexuality/gender terms may have "unknown"/"none" buckets; decide inclusion/exclusion per axis (mirror the "None!" trope exclusion already done for tropes/cliches).
 
 ## Files (indicative)
+
 - Phase 1: new actors view template + sub-nav entry; reuse ranked-bars/leaderboard; CSV whitelist entry.
 - Phase 2: new builder methods (`Build\Dead`, `Build\Taxonomy_Optimized`); possibly `partials/grouped-bars.php`; new view templates + CSV entries.
 

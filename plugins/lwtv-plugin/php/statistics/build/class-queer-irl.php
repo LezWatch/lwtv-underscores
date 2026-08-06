@@ -24,8 +24,6 @@ class Queer_IRL {
 		switch ( $format ) {
 			case 'count':
 				return count( $all_data );
-			case 'piechart':
-				return $this->format_piechart( $all_data );
 			case 'percentage':
 				return $this->format_percentage( $all_data );
 			default:
@@ -105,21 +103,6 @@ class Queer_IRL {
 			lwtv_plugin()->error_log( 'statistics', 'Error building queer IRL data: ' . $e->getMessage() );
 			return array();
 		}
-	}
-
-	/**
-	 * Format piechart
-	 *
-	 * @param array $all_data All queer IRL data
-	 * @return array Piechart data
-	 */
-	public function format_piechart( $all_data ) {
-		$data = array();
-		foreach ( $all_data as $item ) {
-			$data[ $item['name'] ] = $item['count'];
-		}
-
-		return $data;
 	}
 
 	/**

@@ -16,14 +16,14 @@ if ( ! defined( 'ABSPATH' ) ) {
  *   @type string $svg     Header icon sprite file (optional).
  *   @type string $icon    Header icon FA fallback (optional).
  *   @type string $base    URL base for row links (e.g. '/trope/'); '' to use row 'url'.
- *   @type string $mode    'share' (default) | 'leaderboard'.
+ *   @type string $mode    'share' (default) | 'leaderboard' | 'lollipop'.
  * }
  */
 
 $ranked_rows = $ranked['rows'] ?? array();
 uasort( $ranked_rows, fn( $a, $b ) => (int) $b['count'] <=> (int) $a['count'] );
 $ranked_total = (int) ( $ranked['total'] ?? 0 );
-$ranked_mode  = ( isset( $ranked['mode'] ) && 'leaderboard' === $ranked['mode'] ) ? 'leaderboard' : 'share';
+$ranked_mode  = ( isset( $ranked['mode'] ) && in_array( $ranked['mode'], array( 'leaderboard', 'lollipop' ), true ) ) ? $ranked['mode'] : 'share';
 $ranked_top   = ! empty( $ranked_rows ) ? max( array_map( fn( $r ) => (int) $r['count'], $ranked_rows ) ) : 0;
 $ranked_rank  = 0;
 ?>
@@ -48,8 +48,8 @@ $ranked_rank  = 0;
 				continue;
 			}
 			++$ranked_rank;
-			if ( 'leaderboard' === $ranked_mode ) {
-				// Bar relative to the top count; label is the raw count.
+			if ( 'leaderboard' === $ranked_mode || 'lollipop' === $ranked_mode ) {
+				// Bar/stick relative to the top count; label is the raw count.
 				$ranked_width = ( $ranked_top > 0 ) ? round( ( $ranked_count / $ranked_top ) * 100, 1 ) : 0;
 				$ranked_label = number_format_i18n( $ranked_count );
 			} else {
@@ -71,9 +71,15 @@ $ranked_rank  = 0;
 					<?php endif; ?>
 					<span class="lwtv-leader-value"><?php echo esc_html( $ranked_label ); ?></span>
 				</div>
-				<div class="progress lwtv-leader-track">
-					<div class="progress-bar" role="progressbar" style="width:0" data-grow-to="<?php echo esc_attr( (string) $ranked_width ); ?>" aria-valuenow="<?php echo esc_attr( (string) $ranked_count ); ?>" aria-valuemin="0" aria-valuemax="<?php echo esc_attr( (string) ( 'leaderboard' === $ranked_mode ? $ranked_top : $ranked_total ) ); ?>"></div>
-				</div>
+				<?php if ( 'lollipop' === $ranked_mode ) : ?>
+					<div class="lwtv-lolli-track" aria-hidden="true">
+						<span class="lwtv-lolli" style="width:0" data-grow-to="<?php echo esc_attr( (string) $ranked_width ); ?>"><span class="lwtv-lolli-stick"></span><span class="lwtv-lolli-dot"></span></span>
+					</div>
+				<?php else : ?>
+					<div class="progress lwtv-leader-track">
+						<div class="progress-bar" role="progressbar" style="width:0" data-grow-to="<?php echo esc_attr( (string) $ranked_width ); ?>" aria-valuenow="<?php echo esc_attr( (string) $ranked_count ); ?>" aria-valuemin="0" aria-valuemax="<?php echo esc_attr( (string) ( 'leaderboard' === $ranked_mode ? $ranked_top : $ranked_total ) ); ?>"></div>
+					</div>
+				<?php endif; ?>
 			</div>
 			<?php
 		}

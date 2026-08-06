@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 use LWTV\Statistics\Build\Taxonomy_Optimized as Build_Taxonomy_Optimized;
 
-$valid_views = array( 'formats', 'tropes', 'genres', 'intersectionality', 'stars', 'triggers', 'on-air', 'worth-it', 'we-love-it' );
+$valid_views = array( 'formats', 'tropes', 'genres', 'intersectionality', 'stars', 'scores', 'triggers', 'on-air', 'worth-it', 'we-love-it' );
 $sent_view   = get_query_var( 'view', 'overview' );
 $view        = ( ! in_array( $sent_view, $valid_views, true ) ) ? 'overview' : $sent_view;
 
@@ -100,6 +100,10 @@ switch ( $view ) {
 	case 'stars':
 		// phpcs:ignore PEAR.Files.IncludingFile.UseRequire
 		include plugin_dir_path( __FILE__ ) . 'shows/stars.php';
+		break;
+	case 'scores':
+		// phpcs:ignore PEAR.Files.IncludingFile.UseRequire
+		include plugin_dir_path( __FILE__ ) . 'shows/scores.php';
 		break;
 	case 'on-air':
 		// phpcs:ignore PEAR.Files.IncludingFile.UseRequire

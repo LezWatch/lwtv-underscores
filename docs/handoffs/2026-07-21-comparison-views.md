@@ -1,6 +1,6 @@
 # Handoff: Comparison Views (year vs year, nation vs nation, network vs network)
 
-**Repo:** `LezWatch.TV` (plugin under `plugins/lwtv-plugin/`), theme+plugin on `feat/cliche-stats`.
+**Repo:** `LezWatch.TV` (plugin under `plugins/lwtv-plugin/`), theme+plugin.
 **Scope:** Let a reader put two subjects side by side — two years in *This Year*, or two nations / two networks in `/statistics/`. Layout + one new query var; no new data pipelines.
 
 ## Goal

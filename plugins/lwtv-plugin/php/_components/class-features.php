@@ -133,6 +133,9 @@ class Features implements Component {
 
 		// Stop the broken responsiveEditingEnabled until WP figures this shit out.
 		add_filter( 'block_editor_settings_all', array( $this, 'block_editor_settings_responsive' ) );
+
+		// Disable Infinite Scrolling, which would NOT work on a site with this many images.
+		add_filter( 'media_library_infinite_scrolling', '__return_false' );
 	}
 
 	/**

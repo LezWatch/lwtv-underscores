@@ -145,6 +145,50 @@ class Taxonomy_Optimized {
 	}
 
 	/**
+	 * Map each published object of a post type to its term slugs for one taxonomy.
+	 *
+	 * Feeds pure co-occurrence transforms (e.g. Intersection_Pairs) that need
+	 * to know which terms share an object. One query, transient-cached.
+	 *
+	 * @param string $post_type Post type to map (e.g. 'post_type_shows').
+	 * @param string $taxonomy  Taxonomy whose slugs to collect (e.g. 'lez_intersections').
+	 * @return array [ object_id => [ slug, … ] ] for objects with at least one term.
+	 */
+	public function get_object_term_slug_map( $post_type, $taxonomy ) {
+		$cache_key   = 'object_term_slugs_' . $post_type . '_' . $taxonomy;
+		$cached_data = lwtv_plugin()->get_transient( $cache_key );
+
+		if ( false !== $cached_data ) {
+			return $cached_data;
+		}
+
+		global $wpdb;
+
+		// phpcs:disable
+		$query = $wpdb->prepare(
+			"SELECT tr.object_id, t.slug
+			FROM {$wpdb->term_relationships} tr
+			INNER JOIN {$wpdb->term_taxonomy} tt ON tt.term_taxonomy_id = tr.term_taxonomy_id AND tt.taxonomy = %s
+			INNER JOIN {$wpdb->terms} t ON t.term_id = tt.term_id
+			INNER JOIN {$wpdb->posts} p ON p.ID = tr.object_id AND p.post_type = %s AND p.post_status = 'publish'",
+			array( $taxonomy, $post_type )
+		);
+		// phpcs:enable
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- This is a prepared query (see above)
+		$rows = (array) $wpdb->get_results( $query );
+
+		$map = array();
+		foreach ( $rows as $row ) {
+			$map[ (int) $row->object_id ][] = (string) $row->slug;
+		}
+
+		lwtv_plugin()->set_transient( $cache_key, $map, WEEK_IN_SECONDS );
+
+		return $map;
+	}
+
+	/**
 	 * Average and median number of a taxonomy's terms per object, measured across
 	 * objects that carry at least one (non-excluded) term. Objects whose only
 	 * term is an excluded placeholder (e.g. a "None" term) drop out entirely.
