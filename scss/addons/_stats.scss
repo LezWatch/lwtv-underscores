@@ -2213,7 +2213,7 @@ canvas {
 		height: 38px;
 		border-radius: 8px;
 		color: inherit; // inherits the card-header type color.
-		background-color: rgba(colors.$black, 0.50);
+		background-color: rgba(colors.$white, 0.50);
 
 		svg {
 			fill: currentColor; // sprite paths have no fill; take the type color.
@@ -3007,6 +3007,7 @@ canvas {
 		gap: 28px;
 		align-items: center;
 		padding: 24px;
+		margin-bottom: 1.5rem;
 		border: 1px solid colors.$lwtv-grey-border;
 		border-radius: 14px;
 	}
@@ -3065,6 +3066,18 @@ canvas {
 		color: colors.$lwtv-grey-deep;
 	}
 
+	// Optional waffle echo of the leading segment (Formats only, so far —
+	// see partials/donut.php). Tuned to this ramp's lead color; a caller
+	// with a different segment ramp would need its own override.
+	.lwtv-donut-waffle {
+		margin: 0 0 1rem;
+		color: colors.$lwtv-pink-deep;
+
+		.lwtv-waffle {
+			max-width: 260px;
+		}
+	}
+
 	.lwtv-donut-legend {
 		padding: 0;
 		margin: 0;
@@ -3106,12 +3119,56 @@ canvas {
 
 	.lwtv-donut-center-num--green { color: colors.$lwtv-green-light; }
 	.lwtv-donut-center-num--red { color: colors.$lwtv-red; }
+	.lwtv-donut-center-num--dkpink { color: colors.$lwtv-pink-deep; }
+	.lwtv-donut-center-num--pink { color: colors.$lwtv-pink; }
+	.lwtv-donut-center-num--mid { color: color.mix(colors.$lwtv-pink, colors.$lwtv-pink-light, 55%); }
+	.lwtv-donut-center-num--ltpink { color: colors.$lwtv-pink-light; }
+
+	// Format Mix by Decade: a row of compact donut tiles (see
+	// shows/formats.php), one per Format_Decade_Buckets bucket. The compact
+	// card itself has no fixed width (.lwtv-donut-card--compact above), so
+	// it fills whatever the grid hands it here.
+	.lwtv-decade-row {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 16px;
+		margin-bottom: 1.5rem;
+
+		@media (max-width: 767px) {
+			grid-template-columns: repeat(2, 1fr);
+		}
+
+		@media (max-width: 575px) {
+			grid-template-columns: 1fr;
+		}
+	}
+
+	.lwtv-decade-tile {
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+	}
+
+	.lwtv-decade-count {
+		margin: 0;
+		font-size: 0.8rem;
+		text-align: center;
+		color: colors.$lwtv-grey-deep;
+	}
+
+	// Forces the "s" in "1980s" back to lowercase against the eyebrow's
+	// text-transform: uppercase — see partials/donut.php and formats.php.
+	.lwtv-decade-suffix {
+		text-transform: lowercase;
+	}
 
 	.lwtv-donut-card--compact {
 		flex-direction: column;
 		align-items: stretch;
 		gap: 16px;
 		padding: 20px;
+		margin-bottom: 0; // cancel .lwtv-donut-card's margin — the decade
+		// tile's own caption sits right under this, not a full page section.
 
 		.lwtv-stats-eyebrow {
 			margin: 0;
