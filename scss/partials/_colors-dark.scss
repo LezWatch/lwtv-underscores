@@ -676,6 +676,95 @@
 			background-color: rgba(colors.$white, 0.3);
 		}
 
+		// Shows overview headlines: lead plate goes panel-grey, spines and
+		// figures swap to the vivid *-light members of each family (spine and
+		// figure always share one value — they read as one mark).
+		$lwtv-hl-families-dark: (
+			'formats': $lwtv-blue-light,
+			'tropes': colors.$lwtv-purple-light,
+			'genres': colors.$lwtv-plum-light,
+			'intersectionality': colors.$lwtv-teal-light,
+			'stars': $lwtv-yellow-light,
+			'scores': colors.$lwtv-royal-blue-light,
+			'triggers': $lwtv-red-light,
+			'worth-it': $lwtv-green-light,
+			'we-love-it': colors.$lwtv-pink-light,
+		);
+
+		.lwtv-hl {
+			border-color: rgba(colors.$white, 0.12);
+		}
+
+		.lwtv-hl-lead {
+			color: colors.$white;
+			background-color: $lwtv-grey-medium;
+
+			&:hover,
+			&:focus {
+				color: colors.$white;
+			}
+		}
+
+		.lwtv-hl-lead-label {
+			color: rgba(colors.$white, 0.75);
+		}
+
+		.lwtv-hl-lead-fig {
+			color: colors.$lwtv-pink-light;
+		}
+
+		.lwtv-hl-lead-text {
+			color: colors.$white;
+
+			.lwtv-hl-arrow {
+				color: colors.$lwtv-pink-light;
+			}
+		}
+
+		.lwtv-hl-item {
+			color: colors.$white;
+
+			&:hover,
+			&:focus {
+				color: colors.$white;
+			}
+		}
+
+		.lwtv-hl-label,
+		.lwtv-hl-text {
+			color: colors.$white;
+		}
+
+		.lwtv-hl-item .lwtv-hl-arrow {
+			color: colors.$lwtv-pink-light;
+		}
+
+		@each $lwtv-hl-fam, $lwtv-hl-col in $lwtv-hl-families-dark {
+
+			.lwtv-hl-item--#{$lwtv-hl-fam} {
+
+				.lwtv-hl-spine {
+					background-color: $lwtv-hl-col;
+				}
+
+				.lwtv-hl-fig {
+					color: $lwtv-hl-col;
+				}
+			}
+		}
+
+		.lwtv-lib {
+			border-color: rgba(colors.$white, 0.12);
+		}
+
+		.lwtv-lib-num {
+			color: colors.$lwtv-pink-light;
+		}
+
+		.lwtv-lib-caption {
+			color: rgba(colors.$white, 0.75);
+		}
+
 		// Shows We Love: metric accents swap to the vivid locals (fills,
 		// names, and legend swatches stay in sync); rail fills hold on
 		// base tokens; the grey comparison group goes white-alpha.

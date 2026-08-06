@@ -4423,6 +4423,249 @@ canvas {
 		}
 	}
 
+	// Shows overview: The Headlines — lead plate + colour-spine rail.
+	// One hue per subnav section; the spines double as a family legend.
+	$lwtv-hl-families: (
+		'formats': colors.$lwtv-blue,
+		'tropes': colors.$lwtv-purple,
+		'genres': colors.$lwtv-plum,
+		'intersectionality': colors.$lwtv-teal,
+		'stars': colors.$lwtv-yellow-deep,
+		'scores': colors.$lwtv-royal-blue,
+		'triggers': colors.$lwtv-red,
+		'worth-it': colors.$lwtv-green,
+		'we-love-it': colors.$lwtv-pink,
+	);
+
+	.lwtv-hl {
+		padding: 30px 32px 28px;
+		margin-bottom: 1.5rem;
+		border: 1px solid colors.$lwtv-grey-border;
+		border-radius: 14px;
+	}
+
+	.lwtv-hl-lead {
+		display: grid;
+		grid-template-columns: minmax(0, 420px) 1fr;
+		gap: 48px;
+		align-items: center;
+		padding: 36px 40px;
+		margin-bottom: 26px;
+		color: colors.$lwtv-grey-deep;
+		text-decoration: none;
+		background-color: colors.$lwtv-pink-light;
+		border-radius: 10px;
+
+		&:hover,
+		&:focus {
+			color: colors.$lwtv-grey-deep;
+
+			.lwtv-hl-lead-text {
+				text-decoration: underline;
+			}
+		}
+	}
+
+	.lwtv-hl-lead-label {
+		display: block;
+		margin-bottom: 10px;
+		font-size: 0.688rem;
+		font-weight: 700;
+		letter-spacing: 0.1em;
+		color: colors.$lwtv-pink-deep;
+		text-transform: uppercase;
+	}
+
+	.lwtv-hl-lead-fig {
+		display: block;
+		font-family: fonts.$headingfontfamily;
+		font-size: 4.75rem;
+		font-weight: 500;
+		font-variant-numeric: tabular-nums;
+		line-height: 1;
+		color: colors.$lwtv-plum;
+	}
+
+	.lwtv-hl-lead-text {
+		font-size: 1.25rem;
+		line-height: 1.45;
+		color: colors.$lwtv-grey-deep;
+		text-wrap: pretty;
+
+		.lwtv-hl-arrow {
+			color: colors.$lwtv-pink-deep;
+		}
+	}
+
+	.lwtv-hl-rail {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 20px 24px;
+		padding: 0;
+		margin: 0;
+		list-style: none;
+
+		li {
+			margin: 0;
+			list-style: none;
+		}
+	}
+
+	.lwtv-hl-item {
+		display: grid;
+		grid-template-columns: auto 1fr;
+		gap: 16px;
+		color: colors.$lwtv-grey-deep;
+		text-decoration: none;
+
+		&:hover,
+		&:focus {
+			color: colors.$lwtv-grey-deep;
+
+			.lwtv-hl-spine {
+				width: 5px;
+			}
+
+			.lwtv-hl-fig {
+				text-decoration: underline;
+			}
+		}
+	}
+
+	// Full-height by default grid stretch — no fixed height, so uneven spine
+	// lengths across a row read as typeset, not boxed.
+	.lwtv-hl-spine {
+		width: 3px;
+		border-radius: 2px;
+
+		@media (prefers-reduced-motion: no-preference) {
+			transition: width 150ms ease;
+		}
+	}
+
+	.lwtv-hl-head {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 8px;
+	}
+
+	.lwtv-hl-label {
+		font-size: 0.625rem;
+		font-weight: 700;
+		letter-spacing: 0.1em;
+		color: colors.$lwtv-grey-deep;
+		text-transform: uppercase;
+	}
+
+	.lwtv-hl-item .lwtv-hl-arrow {
+		font-size: 0.812rem;
+		color: colors.$lwtv-pink;
+	}
+
+	.lwtv-hl-fig {
+		display: block;
+		margin: 6px 0 4px;
+		font-family: fonts.$headingfontfamily;
+		font-size: 2rem;
+		font-weight: 500;
+		font-variant-numeric: tabular-nums;
+		line-height: 1.1;
+	}
+
+	.lwtv-hl-text {
+		display: block;
+		font-size: 0.812rem;
+		line-height: 1.5;
+		color: colors.$lwtv-grey-deep;
+		text-wrap: pretty;
+	}
+
+	@each $lwtv-hl-fam, $lwtv-hl-col in $lwtv-hl-families {
+
+		.lwtv-hl-item--#{$lwtv-hl-fam} {
+
+			.lwtv-hl-spine {
+				background-color: $lwtv-hl-col;
+			}
+
+			.lwtv-hl-fig {
+				color: $lwtv-hl-col;
+			}
+		}
+	}
+
+	@media (max-width: 1024px) {
+
+		.lwtv-hl-rail {
+			grid-template-columns: repeat(2, 1fr);
+		}
+	}
+
+	// Shows overview: the library depth band (seasons/episodes totals).
+	.lwtv-lib {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 14px 40px;
+		align-items: center;
+		padding: 24px 32px;
+		margin-bottom: 1.5rem;
+		border: 1px solid colors.$lwtv-grey-border;
+		border-radius: 14px;
+	}
+
+	.lwtv-lib-figures {
+		display: flex;
+		gap: 40px;
+	}
+
+	.lwtv-lib-num {
+		display: block;
+		font-family: fonts.$headingfontfamily;
+		font-size: 2.5rem;
+		font-variant-numeric: tabular-nums;
+		line-height: 1;
+		color: colors.$lwtv-pink-deep;
+	}
+
+	.lwtv-lib-sub {
+		font-size: 0.812rem;
+		font-weight: 600;
+	}
+
+	.lwtv-lib-caption {
+		flex: 1 1 260px;
+		margin: 0;
+		font-size: 0.875rem;
+		color: colors.$lwtv-grey-deep;
+	}
+
+	@media (max-width: 767px) {
+
+		.lwtv-hl {
+			padding: 22px 18px 20px;
+		}
+
+		.lwtv-hl-lead {
+			grid-template-columns: 1fr;
+			gap: 18px;
+			padding: 24px 22px;
+		}
+
+		.lwtv-hl-lead-fig {
+			font-size: 3.5rem;
+		}
+
+		.lwtv-hl-lead-text {
+			font-size: 1.062rem;
+		}
+
+		.lwtv-hl-rail {
+			grid-template-columns: 1fr;
+			gap: 18px;
+		}
+	}
+
 	// Shows We Love (shows → we-love-it): hero, cohort rail, comparisons, roster.
 	.lwtv-love,
 	.lwtv-love-roster {
