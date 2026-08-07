@@ -960,6 +960,108 @@
 			stroke-width: 1px;
 		}
 
+		.lwtv-legend-pct {
+			color: colors.$white;
+		}
+
+		// Genre Stats dark-mode pass. Anything referencing a module-qualified
+		// colors.$lwtv-yellow-* keeps its light-mode value even inside this
+		// mixin (only bare $lwtv-yellow-light above is swapped), so every
+		// amber accent added for Genre Stats needs an explicit override here
+		// rather than getting it for free.
+
+		// Pullstats cards: same lifted-card treatment as .lwtv-ty-lead.
+		.lwtv-statcard {
+			background-color: $lwtv-grey-medium;
+			border-color: rgba(colors.$white, 0.12);
+		}
+
+		.lwtv-statcard-icon {
+			background-color: rgba(colors.$lwtv-yellow, 0.2);
+			color: $lwtv-yellow-light;
+		}
+
+		.lwtv-statcard-number,
+		.lwtv-genreload-poster-eyebrow {
+			color: $lwtv-yellow-light;
+		}
+
+		// Matchup count/plus/footer-number follow whichever .lwtv-bars--<family>
+		// class the panel carries, same split as the light-mode rule in
+		// _stats.scss — Genres stays amber, Tropes matches the green used
+		// everywhere else on that page.
+		.lwtv-bars--genres .lwtv-matchup-count,
+		.lwtv-bars--genres .lwtv-matchup-plus,
+		.lwtv-bars--genres .lwtv-matchup-footer-number {
+			color: $lwtv-yellow-light;
+		}
+
+		.lwtv-bars--tropes .lwtv-matchup-count,
+		.lwtv-bars--tropes .lwtv-matchup-plus,
+		.lwtv-bars--tropes .lwtv-matchup-footer-number {
+			color: $lwtv-green-light;
+		}
+
+		.lwtv-statcard-label,
+		.lwtv-matchup-pair,
+		.lwtv-matchup-footer-title,
+		.lwtv-uncharted-sentence,
+		.lwtv-uncharted-tile,
+		.lwtv-uncharted-tile-name {
+			color: colors.$lwtv-grey-light;
+		}
+
+		.lwtv-uncharted-tile-stat,
+		.lwtv-genreload-poster-cap {
+			color: colors.$lwtv-grey-light;
+			opacity: 0.75;
+		}
+
+		.lwtv-matchup-row,
+		.lwtv-matchup-footer {
+			border-color: rgba(colors.$white, 0.12);
+		}
+
+		// Genre Load's pale grey "0 genres" swatch is bucket 0 (same
+		// visibility fix as Trope Load's palest-green bucket 0 above) — the
+		// grey dot and legend outline both need lifting against the dark
+		// page background, and the SVG dot needs a stroke rather than outline.
+		.lwtv-genreload .lwtv-legend-dot--b0 {
+			outline: 1px solid rgba(colors.$white, 0.15);
+			outline-offset: -1px;
+		}
+
+		.lwtv-genreload .lwtv-waffle-dot--b0 {
+			stroke: rgba(colors.$white, 0.15);
+			stroke-width: 1px;
+		}
+
+		// Uncharted gauge: the light-grey stripe pair reads as a smudge on
+		// a dark card, so swap for a translucent-white stripe pair; the
+		// amber fill and tile border move to the brighter dark-mode yellow
+		// for the same reason .lwtv-statcard-icon does above.
+		.lwtv-uncharted-gauge {
+			background-image: repeating-linear-gradient(
+				45deg,
+				rgba(colors.$white, 0.06),
+				rgba(colors.$white, 0.06) 6px,
+				rgba(colors.$white, 0.12) 6px,
+				rgba(colors.$white, 0.12) 12px
+			);
+		}
+
+		.lwtv-uncharted-gauge-fill {
+			background-color: $lwtv-yellow-light;
+		}
+
+		.lwtv-uncharted-tile {
+			border-color: rgba(colors.$lwtv-yellow, 0.4);
+
+			&:hover {
+				border-color: $lwtv-yellow-light;
+			}
+		}
+
 		.lwtv-stats-subnav-item {
 			color: colors.$lwtv-pink-light;
 

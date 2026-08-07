@@ -2877,20 +2877,20 @@ canvas {
 		background-color: $ramp-5;
 	}
 
-	// Tropes page layout: Trope Load + Common Pairings stack in a side
-	// column, Trope Breakdown (the long ranked list) fills a main column
-	// beside them — two short panels balancing one tall one, instead of
-	// three full-width panels stacked with the last two dwarfed by empty
-	// space at wide viewports. Stacks to one column (side first, so the
-	// shorter panels read before the long list) below 900px.
+	// Tropes page layout: Trope Load + Mixed Alignment stack in the main
+	// (wide) column, Common Pairings sits alone in the side (narrow) column
+	// beside them, and Trope Breakdown (the long ranked list) drops out of
+	// this grid entirely to run full width below — same asymmetric 2:1
+	// ratio and structure as Genres' .lwtv-genres-columns (main leads in
+	// source order on both pages now). Stacks to one column below 900px.
 	.lwtv-tropes-columns {
 		display: grid;
-		grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+		grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
 		gap: 24px;
 		align-items: start;
 	}
 
-	.lwtv-tropes-col--side .lwtv-panel {
+	.lwtv-tropes-col--main .lwtv-panel {
 		margin-bottom: 1rem;
 	}
 
@@ -2900,16 +2900,49 @@ canvas {
 		}
 	}
 
+	// Trope Breakdown: full width now (moved out of .lwtv-tropes-columns
+	// above), so it gets the exact same 2-col newspaper flow and breakpoint
+	// as .lwtv-genres-breakdown-wrap rather than a page-specific one.
+	.lwtv-tropes-breakdown-wrap .lwtv-leaders {
+		column-count: 2;
+		column-gap: 2rem;
+	}
+
+	.lwtv-tropes-breakdown-wrap .lwtv-leader-row {
+		break-inside: avoid;
+	}
+
+	@media (max-width: 900px) {
+		.lwtv-tropes-breakdown-wrap .lwtv-leaders {
+			column-count: 1;
+		}
+	}
+
 	// Mixed Alignment (shows/tropes.php): borrows the compact donut's
 	// figure/legend markup classes directly, skipping donut.php's own
 	// bg-light card wrapper — this already sits inside its own .lwtv-panel,
 	// and nesting two bordered cards would double up the box. That means it
 	// also skips .lwtv-donut-card--compact's centering/sizing for
 	// .lwtv-donut-figure, so it needs its own copy of just that part.
+	// Donut on the left, Pure/Mixed legend on the right, one row — rather
+	// than the stacked donut-above-legend layout donut.php's own compact
+	// mode uses (this section skips that partial and borrows just its
+	// markup classes, so it isn't stuck with that mode's stacking).
+	.lwtv-mixed-alignment-row {
+		display: flex;
+		align-items: center;
+		gap: 20px;
+		flex-wrap: wrap;
+	}
+
 	.lwtv-mixed-alignment .lwtv-donut-figure {
 		width: 150px;
 		height: 150px;
-		margin: 0 auto 1rem;
+		margin: 0;
+	}
+
+	.lwtv-mixed-alignment .lwtv-donut-legend--compact {
+		flex: 1 1 200px;
 	}
 
 	// Trope Load (shows/tropes.php): a 100-dot waffle colored by bucket
@@ -2928,13 +2961,18 @@ canvas {
 		align-items: center;
 	}
 
+	// Widened from 220px, same fix — and same values — as Genre Load's
+	// figure/legend gap. Trope Load now lives in the wide 2fr main column
+	// (see .lwtv-tropes-columns above), the same layout context Genre Load
+	// has, so it gets the same sizing.
 	.lwtv-tropeload-figure {
 		flex: 0 0 auto;
-		width: 220px;
+		width: 320px;
 	}
 
 	.lwtv-tropeload-legend {
 		flex: 1 1 180px;
+		max-width: 280px;
 		margin: 0;
 		min-width: 0;
 	}
@@ -3020,6 +3058,424 @@ canvas {
 
 	.lwtv-tropeload .lwtv-legend-row:nth-child(5) .lwtv-legend-dot {
 		background-color: $tropeload-ramp-5;
+	}
+
+	// Genre Stats: generic stat cards for the 3-up pullstats row (replaces
+	// the old avg/median callout pair). Deliberately plain — white bg, one
+	// amber accent — unlike .lwtv-tropegap's per-family tinted background,
+	// since these three cards are all one family, not four alignment types.
+	.lwtv-statcard {
+		position: relative;
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+		padding: 20px;
+		background-color: colors.$white;
+		border: 1px solid colors.$lwtv-grey-border;
+		border-radius: 14px;
+	}
+
+	// Positioned out of the flex flow so it sits in the card's top-right
+	// corner regardless of source order, while the number/label stack still
+	// starts flush top-left beneath it.
+	.lwtv-statcard-icon {
+		position: absolute;
+		top: 20px;
+		right: 20px;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 36px;
+		height: 36px;
+		border-radius: 9px;
+		background-color: colors.$lwtv-yellow-light;
+		color: colors.$lwtv-yellow-deep;
+
+		svg {
+			fill: currentColor;
+		}
+	}
+
+	.lwtv-statcard-number {
+		font-family: fonts.$headingfontfamily;
+		font-weight: 600;
+		font-size: 2.2rem;
+		line-height: 1;
+		color: colors.$lwtv-yellow-deep;
+		font-variant-numeric: tabular-nums;
+	}
+
+	.lwtv-statcard-label {
+		margin: 0;
+		font-size: 0.85rem;
+		// No #555 token exists; grey-deep + this smaller size carry the
+		// hierarchy, same substitution already used elsewhere in this file.
+		color: colors.$lwtv-grey-deep;
+	}
+
+	// Genre Stats layout: Genre Load (waffle + spotlight) takes the wide
+	// column, Common Pairings' matchup cards sit beside it — asymmetric
+	// 2:1 split, unlike Tropes' even 50/50 .lwtv-tropes-columns. Same
+	// collapse-to-one-column breakpoint as that pattern.
+	.lwtv-genres-columns {
+		display: grid;
+		grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+		gap: 1rem;
+		align-items: start;
+		margin-bottom: 1rem;
+	}
+
+	@media (max-width: 900px) {
+
+		.lwtv-genres-columns {
+			grid-template-columns: 1fr;
+		}
+	}
+
+	// Genre Load: same figure/legend flex layout Trope Load already uses.
+	.lwtv-genreload-row {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 16px;
+		align-items: center;
+	}
+
+	.lwtv-genreload-figure {
+		flex: 0 0 auto;
+		width: 320px;
+	}
+
+	// Capped rather than a plain flex:1 — Genre Load lives in the wide 2fr
+	// column of .lwtv-genres-columns, so uncapped growth stretches the name
+	// column and leaves a wide gap before the percentage on the right.
+	.lwtv-genreload-legend {
+		flex: 1 1 180px;
+		max-width: 280px;
+		margin: 0;
+	}
+
+	.lwtv-genreload .lwtv-waffle {
+		max-width: 100%;
+	}
+
+	.lwtv-genreload-poster {
+		text-align: center;
+		align-items: center;
+		gap: 12px;
+		margin: 1rem 0 0;
+		padding-top: 1rem;
+		border-top: 1px solid colors.$lwtv-grey-border;
+
+		figcaption {
+			padding-top: 0.5rem;
+		}
+	}
+
+	.lwtv-genreload-poster-img {
+		object-fit: cover;
+		border-radius: 8px;
+		flex: 0 0 auto;
+		box-shadow: 0 2px 8px rgba(colors.$black, 0.18);
+	}
+
+	.lwtv-genreload-poster-cap {
+		margin: 0;
+		font-size: 0.8125rem;
+		color: colors.$lwtv-grey-deep;
+	}
+
+	.lwtv-genreload-poster-eyebrow {
+		display: block;
+		margin-bottom: 2px;
+		font-size: 0.68rem;
+		font-weight: 700;
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+		color: colors.$lwtv-yellow-deep;
+	}
+
+	// Genre Load waffle ramp: grey for "0 genres" (absence, outside the
+	// amber ramp), then increasingly saturated amber for 1 through 4+.
+	// Legend dots follow the same bucket order via nth-child, mirroring
+	// .lwtv-tropeload's pattern.
+	.lwtv-genreload .lwtv-waffle-dot--b0 {
+		fill: colors.$lwtv-grey;
+		opacity: 1;
+	}
+
+	.lwtv-genreload .lwtv-waffle-dot--b1 {
+		fill: rgba(colors.$lwtv-yellow-deep, 0.35);
+		opacity: 1;
+	}
+
+	.lwtv-genreload .lwtv-waffle-dot--b2 {
+		fill: rgba(colors.$lwtv-yellow-deep, 0.6);
+		opacity: 1;
+	}
+
+	.lwtv-genreload .lwtv-waffle-dot--b3 {
+		fill: rgba(colors.$lwtv-yellow-deep, 0.8);
+		opacity: 1;
+	}
+
+	.lwtv-genreload .lwtv-waffle-dot--b4 {
+		fill: colors.$lwtv-yellow-deep;
+		opacity: 1;
+	}
+
+	// Keyed to the bucket's own index (--b0…--b4, same classes the waffle
+	// segments use) rather than nth-child position — the "0 genres" row is
+	// omitted entirely when its count is 0 (see genres.php), which would
+	// otherwise shift every remaining row's nth-child position and hand it
+	// the wrong ramp color.
+	.lwtv-genreload .lwtv-legend-dot--b0 {
+		background-color: colors.$lwtv-grey;
+	}
+
+	.lwtv-genreload .lwtv-legend-dot--b1 {
+		background-color: rgba(colors.$lwtv-yellow-deep, 0.35);
+	}
+
+	.lwtv-genreload .lwtv-legend-dot--b2 {
+		background-color: rgba(colors.$lwtv-yellow-deep, 0.6);
+	}
+
+	.lwtv-genreload .lwtv-legend-dot--b3 {
+		background-color: rgba(colors.$lwtv-yellow-deep, 0.8);
+	}
+
+	.lwtv-genreload .lwtv-legend-dot--b4 {
+		background-color: colors.$lwtv-yellow-deep;
+	}
+
+	// Common Genre Pairings: compact "count first" rows (partials/matchup-cards.php)
+	// — leading number reads first, pair name follows on the same line, a thin
+	// divider instead of a bordered box per row. Denser than both the boxed-card
+	// version this replaced and the lollipop-list treatment used on Tropes/
+	// Intersectionality — built for a narrow side column where height matters.
+	// "shows together" moves to a .screen-reader-text label; the number is
+	// self-explanatory next to the pair once it isn't floating alone in a card.
+	.lwtv-matchup-grid {
+		display: flex;
+		flex-direction: column;
+	}
+
+	.lwtv-matchup-row {
+		display: flex;
+		align-items: baseline;
+		gap: 10px;
+		padding: 8px 0;
+		border-bottom: 1px solid colors.$lwtv-grey-border;
+
+		&:last-child {
+			border-bottom: none;
+		}
+	}
+
+	.lwtv-matchup-count {
+		flex: 0 0 auto;
+		min-width: 2.2em;
+		font-family: fonts.$headingfontfamily;
+		font-size: 1.1rem;
+		font-weight: 700;
+		font-variant-numeric: tabular-nums;
+	}
+
+	.lwtv-matchup-pair {
+		font-size: 0.88rem;
+		font-weight: 600;
+		color: colors.$lwtv-grey-deep;
+	}
+
+	.lwtv-matchup-plus {
+		margin: 0 3px;
+		font-weight: 700;
+	}
+
+	// Accent color follows the .lwtv-bars--<family> class matchup-cards.php
+	// puts on .lwtv-matchup-grid — same family-color convention the
+	// lollipop/leaderboard rows above already use, so Genres' pairings stay
+	// amber and Tropes' pairings match the green used everywhere else on
+	// that page (panel icon, progress bars, Trope Load ramp, Mixed Alignment).
+	.lwtv-bars--genres .lwtv-matchup-count,
+	.lwtv-bars--genres .lwtv-matchup-plus {
+		color: colors.$lwtv-yellow-deep;
+	}
+
+	.lwtv-bars--tropes .lwtv-matchup-count,
+	.lwtv-bars--tropes .lwtv-matchup-plus {
+		color: colors.$lwtv-green-deep;
+	}
+
+	// Footer stat appended at the bottom of the same panel (matchup-cards.php's
+	// optional $matchup['footer']) — a double-line rule marks it as an aside,
+	// not another row in the grid above.
+	.lwtv-matchup-footer {
+		margin-top: 14px;
+		padding-top: 14px;
+		border-top: 3px double colors.$lwtv-grey-border;
+		text-align: center;
+	}
+
+	.lwtv-matchup-footer-title {
+		margin: 0 0 4px;
+		font-size: 0.95rem;
+		font-weight: 600;
+		color: colors.$lwtv-grey-deep;
+	}
+
+	.lwtv-matchup-footer-number {
+		font-family: fonts.$headingfontfamily;
+		font-size: 1.6rem;
+		font-weight: 700;
+		font-variant-numeric: tabular-nums;
+	}
+
+	.lwtv-bars--genres .lwtv-matchup-footer-number {
+		color: colors.$lwtv-yellow-deep;
+	}
+
+	.lwtv-bars--tropes .lwtv-matchup-footer-number {
+		color: colors.$lwtv-green-deep;
+	}
+
+	// Genre Breakdown: same ranked-bars.php panel/query, just flowed into two
+	// newspaper-style columns at desktop widths for a denser page. Column
+	// layout (not grid) so rows flow top-to-bottom then wrap, rather than
+	// alternating left/right by row order.
+	.lwtv-genres-breakdown-wrap .lwtv-leaders {
+		column-count: 2;
+		column-gap: 2rem;
+	}
+
+	.lwtv-genres-breakdown-wrap .lwtv-leader-row {
+		break-inside: avoid;
+	}
+
+	@media (max-width: 900px) {
+
+		.lwtv-genres-breakdown-wrap .lwtv-leaders {
+			column-count: 1;
+		}
+	}
+
+	// Still Largely Uncharted: reframed long tail. Striped "unexplored"
+	// track with a solid amber fill sized to the combined share of the
+	// bottom genres — an "explored vs. unexplored" gauge, not a warning.
+	.lwtv-uncharted-gauge {
+		position: relative;
+		height: 14px;
+		margin: 0.5rem 0 1rem;
+		border-radius: 999px;
+		overflow: hidden;
+		background-image: repeating-linear-gradient(
+			45deg,
+			colors.$lwtv-grey-light,
+			colors.$lwtv-grey-light 6px,
+			colors.$lwtv-grey-alt 6px,
+			colors.$lwtv-grey-alt 12px
+		);
+	}
+
+	.lwtv-uncharted-gauge-fill {
+		height: 100%;
+		background-color: colors.$lwtv-yellow-deep;
+		border-radius: 999px;
+	}
+
+	.lwtv-uncharted-sentence {
+		margin: 0 0 1rem;
+		font-size: 0.95rem;
+		color: colors.$lwtv-grey-deep;
+	}
+
+	.lwtv-uncharted-tiles {
+		display: grid;
+		grid-template-columns: repeat(4, 1fr);
+		gap: 10px;
+	}
+
+	@media (max-width: 767px) {
+
+		.lwtv-uncharted-tiles {
+			grid-template-columns: repeat(2, 1fr);
+		}
+	}
+
+	.lwtv-uncharted-tile {
+		display: flex;
+		flex-direction: column;
+		gap: 4px;
+		padding: 12px;
+		border: 1.5px dashed rgba(colors.$lwtv-yellow-deep, 0.4);
+		border-radius: 10px;
+		color: colors.$lwtv-grey-deep;
+		text-decoration: none;
+
+		&:hover {
+			border-color: colors.$lwtv-yellow-deep;
+		}
+	}
+
+	.lwtv-uncharted-tile-name {
+		font-weight: 600;
+		font-size: 0.9rem;
+	}
+
+	.lwtv-uncharted-tile-stat {
+		font-size: 0.8rem;
+		color: colors.$lwtv-grey-medium;
+	}
+
+	// Genre by Decade: placeholder card only — no chart, no data, until the
+	// genre-equivalent of Format_Trend's tally query exists. Deliberately
+	// dark in both light and dark mode (a "coming soon" teaser card, not a
+	// themed content panel), so it needs its own bg/text pair rather than
+	// the usual light-mode-token + dark-mode-override split. Neither hue has
+	// an existing token — flag for promotion to _colors.scss if this card
+	// sticks around past the decade view actually shipping.
+	$genre-decade-bg: #2b1608;
+	$genre-decade-text: #fde68a;
+
+	.lwtv-decade-placeholder {
+		background-color: $genre-decade-bg;
+		border-color: $genre-decade-bg;
+		color: $genre-decade-text;
+		text-align: center;
+	}
+
+	.lwtv-decade-placeholder-icon {
+		display: inline-flex;
+		margin-bottom: 0.5rem;
+		color: $genre-decade-text;
+
+		svg {
+			fill: currentColor;
+		}
+	}
+
+	.lwtv-decade-placeholder-pill {
+		display: block;
+		margin: 0 auto 0.75rem;
+		padding: 3px 10px;
+		width: fit-content;
+		border-radius: 999px;
+		font-size: 0.68rem;
+		font-weight: 700;
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+		color: $genre-decade-bg;
+		background-color: $genre-decade-text;
+	}
+
+	.lwtv-decade-placeholder .lwtv-panel-title {
+		color: $genre-decade-text;
+	}
+
+	.lwtv-decade-placeholder-copy {
+		margin: 0.5rem 0 0;
+		font-size: 0.9rem;
+		color: rgba($genre-decade-text, 0.85);
 	}
 
 	// Tablet (e.g. iPad portrait, ~810-834px): a 4-across row is too cramped to

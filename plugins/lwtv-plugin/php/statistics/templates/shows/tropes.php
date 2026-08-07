@@ -85,9 +85,10 @@ if ( array_sum( $tropes_alignment ) > 0 ) {
 $tropes_distribution = \LWTV\Statistics\Build\Term_Count_Distribution::build( $tropes_slug_map, (int) $shows_count, array( 'none' ) );
 
 // Rendered as a 100-dot waffle colored by bucket rather than another
-// ranked-bar list — the panel right below this one (Trope Breakdown) is
-// already that shape, so Trope Load needs to look like a different kind of
-// fact, not a second copy of the same chart. to_cells() apportions the
+// ranked-bar list — Trope Breakdown (now its own full-width section below
+// this whole layout) is already that shape, so Trope Load needs to look
+// like a different kind of fact, not a second copy of the same chart.
+// to_cells() apportions the
 // 100 dots by largest remainder so they always sum to exactly 100, even
 // though the buckets' raw pcts (each independently rounded to 1 decimal)
 // don't necessarily add up to 100 themselves.
@@ -109,9 +110,9 @@ $waffle = array(
 );
 
 // Spotlight the single most trope-loaded show as a small footer strip on
-// the panel (below the waffle+legend row, not squeezed into it — this panel
-// now lives in a half-width side column, so a third flex item would just
-// force an awkward wrap). Ties are common once counts get this small, so
+// the panel (below the waffle+legend row, not squeezed into it — a third
+// flex item there would just force an awkward wrap). Ties are common once
+// counts get this small, so
 // top_object() reports how many shows shared the top spot and the caption
 // below hedges accordingly rather than implying the pictured show is
 // uniquely the most trope-heavy.
@@ -130,7 +131,7 @@ if ( $tropes_top['id'] > 0 && has_post_thumbnail( $tropes_top['id'] ) ) {
 }
 ?>
 <div class="lwtv-tropes-columns">
-	<div class="lwtv-tropes-col lwtv-tropes-col--side">
+	<div class="lwtv-tropes-col lwtv-tropes-col--main">
 		<section class="lwtv-panel bg-light lwtv-tropeload">
 			<header class="lwtv-panel-head">
 				<span class="lwtv-panel-icon tropes">
@@ -249,34 +250,39 @@ if ( $tropes_top['id'] > 0 && has_post_thumbnail( $tropes_top['id'] ) ) {
 					}
 					?>
 				</p>
-				<div class="lwtv-donut-figure">
-					<svg class="lwtv-donut" viewBox="0 0 120 120" role="img" aria-label="<?php esc_attr_e( 'Pure versus mixed alignment shows', 'lwtv' ); ?>">
-						<g transform="rotate(-90 60 60)">
-							<circle class="lwtv-donut-track" cx="60" cy="60" r="50" fill="none" stroke-width="15" pathLength="100" />
-							<circle class="lwtv-donut-seg lwtv-donut-seg--green" cx="60" cy="60" r="50" fill="none" stroke-width="15" pathLength="100" stroke-dasharray="<?php echo esc_attr( (string) $tropes_align_split['mixed_pct'] ); ?> <?php echo esc_attr( (string) ( 100 - $tropes_align_split['mixed_pct'] ) ); ?>" stroke-dashoffset="0" />
-						</g>
-					</svg>
-					<div class="lwtv-donut-center">
-						<span class="lwtv-donut-center-num" data-count-to="<?php echo (int) round( $tropes_align_split['mixed_pct'] ); ?>" data-count-suffix="%"><?php echo esc_html( number_format_i18n( (int) round( $tropes_align_split['mixed_pct'] ) ) ); ?>%</span>
-						<span class="lwtv-donut-center-sub"><?php esc_html_e( 'mixed', 'lwtv' ); ?></span>
+				<div class="lwtv-mixed-alignment-row">
+					<div class="lwtv-donut-figure">
+						<svg class="lwtv-donut" viewBox="0 0 120 120" role="img" aria-label="<?php esc_attr_e( 'Pure versus mixed alignment shows', 'lwtv' ); ?>">
+							<g transform="rotate(-90 60 60)">
+								<circle class="lwtv-donut-track" cx="60" cy="60" r="50" fill="none" stroke-width="15" pathLength="100" />
+								<circle class="lwtv-donut-seg lwtv-donut-seg--green" cx="60" cy="60" r="50" fill="none" stroke-width="15" pathLength="100" stroke-dasharray="<?php echo esc_attr( (string) $tropes_align_split['mixed_pct'] ); ?> <?php echo esc_attr( (string) ( 100 - $tropes_align_split['mixed_pct'] ) ); ?>" stroke-dashoffset="0" />
+							</g>
+						</svg>
+						<div class="lwtv-donut-center">
+							<span class="lwtv-donut-center-num" data-count-to="<?php echo (int) round( $tropes_align_split['mixed_pct'] ); ?>" data-count-suffix="%"><?php echo esc_html( number_format_i18n( (int) round( $tropes_align_split['mixed_pct'] ) ) ); ?>%</span>
+							<span class="lwtv-donut-center-sub"><?php esc_html_e( 'mixed', 'lwtv' ); ?></span>
+						</div>
 					</div>
+					<ul class="lwtv-donut-legend lwtv-donut-legend--compact">
+						<li class="lwtv-donut-legend-row">
+							<span class="lwtv-donut-dot lwtv-donut-seg--bordergrey"></span>
+							<span class="lwtv-donut-legend-name"><?php esc_html_e( 'Pure (one alignment)', 'lwtv' ); ?></span>
+							<span class="lwtv-donut-legend-val"><?php echo esc_html( number_format_i18n( $tropes_align_split['pure'] ) . ' · ' . number_format_i18n( $tropes_pure_pct, 1 ) . '%' ); ?></span>
+						</li>
+						<li class="lwtv-donut-legend-row">
+							<span class="lwtv-donut-dot lwtv-donut-seg--green"></span>
+							<span class="lwtv-donut-legend-name"><?php esc_html_e( 'Mixed (2+ alignments)', 'lwtv' ); ?></span>
+							<span class="lwtv-donut-legend-val"><?php echo esc_html( number_format_i18n( $tropes_align_split['mixed'] ) . ' · ' . number_format_i18n( $tropes_align_split['mixed_pct'], 1 ) . '%' ); ?></span>
+						</li>
+					</ul>
 				</div>
-				<ul class="lwtv-donut-legend lwtv-donut-legend--compact">
-					<li class="lwtv-donut-legend-row">
-						<span class="lwtv-donut-dot lwtv-donut-seg--bordergrey"></span>
-						<span class="lwtv-donut-legend-name"><?php esc_html_e( 'Pure (one alignment)', 'lwtv' ); ?></span>
-						<span class="lwtv-donut-legend-val"><?php echo esc_html( number_format_i18n( $tropes_align_split['pure'] ) . ' · ' . number_format_i18n( $tropes_pure_pct, 1 ) . '%' ); ?></span>
-					</li>
-					<li class="lwtv-donut-legend-row">
-						<span class="lwtv-donut-dot lwtv-donut-seg--green"></span>
-						<span class="lwtv-donut-legend-name"><?php esc_html_e( 'Mixed (2+ alignments)', 'lwtv' ); ?></span>
-						<span class="lwtv-donut-legend-val"><?php echo esc_html( number_format_i18n( $tropes_align_split['mixed'] ) . ' · ' . number_format_i18n( $tropes_align_split['mixed_pct'], 1 ) . '%' ); ?></span>
-					</li>
-				</ul>
 			</section>
 			<?php
 		}
-
+		?>
+	</div>
+	<div class="lwtv-tropes-col lwtv-tropes-col--side">
+		<?php
 		// Common pairings: which tropes appear together on the same show.
 		// Pure counting lives in Build\Intersection_Pairs (already
 		// unit-tested for the Intersectionality page — the co-occurrence
@@ -285,9 +291,10 @@ if ( $tropes_top['id'] > 0 && has_post_thumbnail( $tropes_top['id'] ) ) {
 		// confirmed for lez_tropes (unlike lez_intersections'
 		// fwp_show_intersectionality), so rows don't link anywhere yet —
 		// same conservative call made for the Trope Alignment cards.
-		// Sits in the same side column as Trope Load, right below it,
-		// since both are shorter than the Trope Breakdown list they're
-		// balancing against.
+		// Now its own column (previously stacked below Trope Load in the
+		// same side column) since Trope Load moved into the main column
+		// alongside Mixed Alignment — see the layout comment on
+		// .lwtv-tropes-columns in _stats.scss for the full "why".
 		$tropes_pairs = \LWTV\Statistics\Build\Intersection_Pairs::top_pairs(
 			\LWTV\Statistics\Build\Intersection_Pairs::count_pairs( $tropes_slug_map ),
 			8,
@@ -312,46 +319,71 @@ if ( $tropes_top['id'] > 0 && has_post_thumbnail( $tropes_top['id'] ) ) {
 				}
 			}
 
-			$tropes_pair_rows = array();
+			// Matchup rows, matching Genres' Common Pairings treatment — a
+			// leading count + "A + B" on one compact line instead of the
+			// lollipop-list bars used elsewhere on this page.
+			$tropes_matchup_items = array();
 			foreach ( $tropes_pairs as $tropes_pair ) {
-				list( $tropes_pair_a, $tropes_pair_b )                     = $tropes_pair['slugs'];
-				$tropes_pair_rows[ $tropes_pair_a . '+' . $tropes_pair_b ] = array(
-					'name'  => ( $tropes_pair_names[ $tropes_pair_a ] ?? $tropes_pair_a ) . ' + ' . ( $tropes_pair_names[ $tropes_pair_b ] ?? $tropes_pair_b ),
+				list( $tropes_pair_a, $tropes_pair_b ) = $tropes_pair['slugs'];
+				$tropes_matchup_items[]                = array(
+					'a'     => $tropes_pair_names[ $tropes_pair_a ] ?? $tropes_pair_a,
+					'b'     => $tropes_pair_names[ $tropes_pair_b ] ?? $tropes_pair_b,
 					'count' => (int) $tropes_pair['count'],
 				);
 			}
 
-			$ranked = array(
-				'rows'   => $tropes_pair_rows,
-				'total'  => (int) $shows_count,
+			// Shows with only one trope never appear in the grid above — a
+			// pairing needs 2+ distinct tropes — so this footnotes the count
+			// that's missing from it. Reuses the "1" bucket from Trope
+			// Load's distribution above; no new query.
+			$tropes_single_count = 0;
+			foreach ( $tropes_distribution as $tropes_dist_bucket ) {
+				if ( '1' === $tropes_dist_bucket['label'] ) {
+					$tropes_single_count = (int) $tropes_dist_bucket['count'];
+					break;
+				}
+			}
+
+			$matchup = array(
+				'items'  => $tropes_matchup_items,
 				'family' => 'tropes',
 				'svg'    => 'vest-patches.svg',
 				'icon'   => 'svg-vest-patches',
 				'title'  => __( 'Common Pairings', 'lwtv' ),
 				'sub'    => __( 'Tropes that appear together on the same show, by number of shows', 'lwtv' ),
-				'base'   => '',
-				'mode'   => 'lollipop',
+				'unit'   => __( 'shows together', 'lwtv' ),
+				'footer' => array(
+					'title'  => __( 'Shows with only one Trope', 'lwtv' ),
+					'number' => number_format_i18n( $tropes_single_count ),
+				),
 			);
 			// phpcs:ignore PEAR.Files.IncludingFile.UseRequire
-			include plugin_dir_path( __DIR__ ) . 'partials/ranked-bars.php';
+			include plugin_dir_path( __DIR__ ) . 'partials/matchup-cards.php';
 		}
 		?>
 	</div>
-	<div class="lwtv-tropes-col lwtv-tropes-col--main">
-		<?php
-		$ranked = array(
-			'rows'   => $tropes_data,
-			'total'  => (int) $shows_count,
-			'family' => 'characters',
-			'svg'    => 'tag.svg',
-			'icon'   => 'svg-tag',
-			'title'  => __( 'Trope Breakdown', 'lwtv' ),
-			/* translators: %s: number of tropes. */
-			'sub'    => sprintf( __( '%s tropes, by number of shows', 'lwtv' ), number_format_i18n( count( $tropes_data ) ) ),
-			'base'   => '/trope/',
-		);
-		// phpcs:ignore PEAR.Files.IncludingFile.UseRequire
-		include plugin_dir_path( __DIR__ ) . 'partials/ranked-bars.php';
-		?>
-	</div>
+</div>
+
+<?php
+// Trope Breakdown: full width now, like Genre Breakdown — it no longer
+// shares the grid with Trope Load/Mixed Alignment/Common Pairings, so it
+// gets the full page to spread its own internal 2 columns across instead
+// of squeezing a 2-col list into one half of a narrower split.
+?>
+<div class="lwtv-tropes-breakdown-wrap">
+	<?php
+	$ranked = array(
+		'rows'   => $tropes_data,
+		'total'  => (int) $shows_count,
+		'family' => 'characters',
+		'svg'    => 'tag.svg',
+		'icon'   => 'svg-tag',
+		'title'  => __( 'Trope Breakdown', 'lwtv' ),
+		/* translators: %s: number of tropes. */
+		'sub'    => sprintf( __( '%s tropes, by number of shows', 'lwtv' ), number_format_i18n( count( $tropes_data ) ) ),
+		'base'   => '/trope/',
+	);
+	// phpcs:ignore PEAR.Files.IncludingFile.UseRequire
+	include plugin_dir_path( __DIR__ ) . 'partials/ranked-bars.php';
+	?>
 </div>
