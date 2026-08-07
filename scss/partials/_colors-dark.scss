@@ -690,6 +690,13 @@
 			'triggers': $lwtv-red-light,
 			'worth-it': $lwtv-green-light,
 			'we-love-it': colors.$lwtv-pink-light,
+			// Characters overview's rail entries — mirrors the light-mode
+			// hues added to $lwtv-hl-families in _stats.scss.
+			'cliches': $lwtv-green-light,
+			'most-cliches': colors.$lwtv-purple-light,
+			'gender': $lwtv-yellow-light,
+			'sexuality': colors.$lwtv-teal-light,
+			'queer-irl': colors.$lwtv-royal-blue-light,
 		);
 
 		.lwtv-hl {
@@ -732,7 +739,10 @@
 			&.good-tropes,
 			&.maybe-tropes,
 			&.bad-tropes,
-			&.ploy-tropes {
+			&.ploy-tropes,
+			&.no-cliche,
+			&.queer-actors,
+			&.straight-cis-actors {
 				background-color: $lwtv-grey-medium;
 				border-color: rgba(colors.$white, 0.12);
 			}
@@ -743,6 +753,21 @@
 
 			&.happy-endings {
 				color: colors.$lwtv-royal-blue-light;
+			}
+
+			// Characters overview's Cliché Gap + Casting Gap pairs — same
+			// neutral panel-grey background as the pairs above, with each
+			// family's *-light accent for text.
+			&.no-cliche {
+				color: colors.$lwtv-purple-light;
+			}
+
+			&.queer-actors {
+				color: colors.$lwtv-royal-blue-light;
+			}
+
+			&.straight-cis-actors {
+				color: colors.$white;
 			}
 
 			// good/maybe reuse the local vivid dark-mode overrides defined
@@ -765,6 +790,24 @@
 			&.ploy-tropes {
 				color: colors.$lwtv-purple-light;
 			}
+		}
+
+		// The Casting Gap's combined waffle (characters/overview.php): base
+		// light-mode pink/aro-grey both fall under 3:1 against this panel's
+		// dark background, so both dot uses (legend swatch + waffle fill)
+		// need brighter stand-ins here — pink-light matches this file's
+		// usual pink swap, translucent white reads as the neutral
+		// "everything else" side without introducing a third hue.
+		.lwtv-donut-seg--pink,
+		.lwtv-castinggap-waffle .lwtv-waffle-dot--queer {
+			fill: colors.$lwtv-pink-light;
+			background-color: colors.$lwtv-pink-light;
+		}
+
+		.lwtv-donut-seg--grey,
+		.lwtv-castinggap-waffle .lwtv-waffle-dot--cis {
+			fill: rgba(colors.$white, 0.55);
+			background-color: rgba(colors.$white, 0.55);
 		}
 
 		.lwtv-hl-item {

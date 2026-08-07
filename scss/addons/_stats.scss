@@ -2467,6 +2467,29 @@ canvas {
 				border-color: colors.$lwtv-purple-light;
 				color: colors.$lwtv-purple-deep;
 			}
+
+			// Characters overview's Cliché Gap + Casting Gap pairs. queer-actors
+			// reuses happy-endings' royal-blue hue (same "the good outcome" side
+			// of a gap pair); no-cliche reuses purple, the Clichés section's
+			// existing family color; straight-cis-actors is a neutral grey for
+			// the "default/expected" side of the Casting Gap.
+			&.no-cliche {
+				background-color: colors.$lwtv-purple-light;
+				border-color: colors.$lwtv-purple-light;
+				color: colors.$lwtv-purple-deep;
+			}
+
+			&.queer-actors {
+				background-color: colors.$lwtv-royal-blue-light;
+				border-color: colors.$lwtv-royal-blue-light;
+				color: colors.$lwtv-royal-blue-deep;
+			}
+
+			&.straight-cis-actors {
+				background-color: colors.$lwtv-grey-light;
+				border-color: colors.$lwtv-grey-light;
+				color: colors.$lwtv-grey-deep;
+			}
 		}
 	}
 
@@ -2943,6 +2966,45 @@ canvas {
 
 	.lwtv-mixed-alignment .lwtv-donut-legend--compact {
 		flex: 1 1 200px;
+	}
+
+	// Characters overview: The Casting Gap. One combined two-color waffle
+	// instead of two near-duplicate cards — same figure-left/legend-right
+	// row idea as Mixed Alignment above (borrows .lwtv-donut-legend's
+	// markup classes directly), just with a waffle standing in for the
+	// donut, since a raw yes/no split reads better as a dot grid than a ring.
+	.lwtv-castinggap-row {
+		display: flex;
+		align-items: center;
+		gap: 24px;
+		flex-wrap: wrap;
+	}
+
+	.lwtv-castinggap-waffle {
+		flex: 0 0 auto;
+
+		.lwtv-waffle {
+			display: block;
+			max-width: 260px;
+		}
+	}
+
+	.lwtv-castinggap-row .lwtv-donut-legend--compact {
+		flex: 1 1 220px;
+	}
+
+	// Pink = played by a queer actor, grey = played by a straight/cis
+	// actor — a deliberate departure from this section's usual royal-blue
+	// family color, so the two segments read as a clear either/or split
+	// rather than "family color vs. everything else."
+	.lwtv-castinggap-waffle .lwtv-waffle-dot--queer {
+		fill: colors.$lwtv-pink;
+		opacity: 1;
+	}
+
+	.lwtv-castinggap-waffle .lwtv-waffle-dot--cis {
+		fill: colors.$lwtv-aro-grey;
+		opacity: 1;
 	}
 
 	// Trope Load (shows/tropes.php): a 100-dot waffle colored by bucket
@@ -5168,6 +5230,16 @@ canvas {
 		'triggers': colors.$lwtv-red,
 		'worth-it': colors.$lwtv-green,
 		'we-love-it': colors.$lwtv-pink,
+		// Characters overview's rail entries (on-air is promoted to the lead
+		// plate, so it never needs a rail color here). 'cliches' reuses the
+		// green already assigned to the Top Clichés panel below (family:
+		// 'characters' there) so the two cliché-related entries in this
+		// rail stay visually distinct from each other.
+		'cliches': colors.$lwtv-green-deep,
+		'most-cliches': colors.$lwtv-purple,
+		'gender': colors.$lwtv-yellow-deep,
+		'sexuality': colors.$lwtv-teal-deep,
+		'queer-irl': colors.$lwtv-royal-blue,
 	);
 
 	.lwtv-hl {
