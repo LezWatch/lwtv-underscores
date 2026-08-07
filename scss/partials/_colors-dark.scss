@@ -728,7 +728,11 @@
 		// plate, with each family's deep *-light accent token for text.
 		.lwtv-tropegap--tint {
 			&.dead-characters,
-			&.happy-endings {
+			&.happy-endings,
+			&.good-tropes,
+			&.maybe-tropes,
+			&.bad-tropes,
+			&.ploy-tropes {
 				background-color: $lwtv-grey-medium;
 				border-color: rgba(colors.$white, 0.12);
 			}
@@ -739,6 +743,27 @@
 
 			&.happy-endings {
 				color: colors.$lwtv-royal-blue-light;
+			}
+
+			// good/maybe reuse the local vivid dark-mode overrides defined
+			// near the top of this file (brighter than the pale light-mode
+			// tokens of the same name); bad/ploy have no such override, so
+			// they fall back to the pale module tokens, same as
+			// dead-characters/happy-endings above.
+			&.good-tropes {
+				color: $lwtv-green-light;
+			}
+
+			&.maybe-tropes {
+				color: $lwtv-yellow-light;
+			}
+
+			&.bad-tropes {
+				color: colors.$lwtv-crimson-light;
+			}
+
+			&.ploy-tropes {
+				color: colors.$lwtv-purple-light;
 			}
 		}
 
@@ -919,6 +944,20 @@
 		.lwtv-share-seg:nth-child(5) {
 			outline: 1px solid rgba(colors.$white, 0.15);
 			outline-offset: -1px;
+		}
+
+		// Trope Load's palest green swatch is bucket 0 (first row/segment,
+		// not last like the raspberry ramp above) — same visibility fix,
+		// same rgba, just aimed at nth-child(1) and the SVG dot needs a
+		// stroke rather than outline.
+		.lwtv-tropeload .lwtv-legend-row:nth-child(1) .lwtv-legend-dot {
+			outline: 1px solid rgba(colors.$white, 0.15);
+			outline-offset: -1px;
+		}
+
+		.lwtv-tropeload .lwtv-waffle-dot--b0 {
+			stroke: rgba(colors.$white, 0.15);
+			stroke-width: 1px;
 		}
 
 		.lwtv-stats-subnav-item {

@@ -2383,6 +2383,18 @@ canvas {
 		}
 	}
 
+	.lwtv-pullstats--four {
+		grid-template-columns: repeat(4, 1fr);
+
+		@media (max-width: 991px) {
+			grid-template-columns: repeat(2, 1fr);
+		}
+
+		@media (max-width: 575px) {
+			grid-template-columns: 1fr;
+		}
+	}
+
 	.lwtv-tropegap {
 		display: flex;
 		flex-direction: column;
@@ -2426,6 +2438,34 @@ canvas {
 				background-color: colors.$lwtv-royal-blue-light;
 				border-color: colors.$lwtv-royal-blue-light;
 				color: colors.$lwtv-royal-blue-deep;
+			}
+
+			// Trope Alignment (shows/tropes.php): good/bad reuse the same
+			// semantic direction as dead-characters/happy-endings above but
+			// with their own hues; maybe/ploy are new tones (amber, purple —
+			// purple already the Tropes section's family color elsewhere).
+			&.good-tropes {
+				background-color: colors.$lwtv-green-light;
+				border-color: colors.$lwtv-green-light;
+				color: colors.$lwtv-green-deep;
+			}
+
+			&.maybe-tropes {
+				background-color: colors.$lwtv-yellow-light;
+				border-color: colors.$lwtv-yellow-light;
+				color: colors.$lwtv-yellow-deep;
+			}
+
+			&.bad-tropes {
+				background-color: colors.$lwtv-crimson-light;
+				border-color: colors.$lwtv-crimson-light;
+				color: colors.$lwtv-crimson-deep;
+			}
+
+			&.ploy-tropes {
+				background-color: colors.$lwtv-purple-light;
+				border-color: colors.$lwtv-purple-light;
+				color: colors.$lwtv-purple-deep;
 			}
 		}
 	}
@@ -2835,6 +2875,151 @@ canvas {
 	.lwtv-share-seg:nth-child(5),
 	.lwtv-legend-row:nth-child(5) .lwtv-legend-dot {
 		background-color: $ramp-5;
+	}
+
+	// Tropes page layout: Trope Load + Common Pairings stack in a side
+	// column, Trope Breakdown (the long ranked list) fills a main column
+	// beside them — two short panels balancing one tall one, instead of
+	// three full-width panels stacked with the last two dwarfed by empty
+	// space at wide viewports. Stacks to one column (side first, so the
+	// shorter panels read before the long list) below 900px.
+	.lwtv-tropes-columns {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+		gap: 24px;
+		align-items: start;
+	}
+
+	.lwtv-tropes-col--side .lwtv-panel {
+		margin-bottom: 1rem;
+	}
+
+	@media (max-width: 900px) {
+		.lwtv-tropes-columns {
+			grid-template-columns: 1fr;
+		}
+	}
+
+	// Mixed Alignment (shows/tropes.php): borrows the compact donut's
+	// figure/legend markup classes directly, skipping donut.php's own
+	// bg-light card wrapper — this already sits inside its own .lwtv-panel,
+	// and nesting two bordered cards would double up the box. That means it
+	// also skips .lwtv-donut-card--compact's centering/sizing for
+	// .lwtv-donut-figure, so it needs its own copy of just that part.
+	.lwtv-mixed-alignment .lwtv-donut-figure {
+		width: 150px;
+		height: 150px;
+		margin: 0 auto 1rem;
+	}
+
+	// Trope Load (shows/tropes.php): a 100-dot waffle colored by bucket
+	// (0/1/2/3/4+ tropes per show) instead of the raspberry share-of-total
+	// ramp above. Reuses .lwtv-legend's row markup — just overrides its
+	// dot colors with a light→dark green ramp in a higher-specificity block,
+	// since bucket order here is fixed (low→high), not ranked by size.
+	// Figure-left, legend-right split, sized for the side column above
+	// rather than the full page width — mirrors .lwtv-donut-card's
+	// figure/body split (same flex-wrap idea), just with a waffle standing
+	// in for the donut.
+	.lwtv-tropeload-row {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 20px;
+		align-items: center;
+	}
+
+	.lwtv-tropeload-figure {
+		flex: 0 0 auto;
+		width: 220px;
+	}
+
+	.lwtv-tropeload-legend {
+		flex: 1 1 180px;
+		margin: 0;
+		min-width: 0;
+	}
+
+	.lwtv-tropeload .lwtv-waffle {
+		max-width: 100%;
+	}
+
+	// Footer strip below the row (not a third flex item in it — a side
+	// column is too narrow for waffle+legend+poster to share one line
+	// without an awkward wrap). Small thumbnail + caption side by side.
+	.lwtv-tropeload-poster {
+		text-align: center;
+		gap: 12px;
+		margin: 1rem 0 0;
+		padding-top: 1rem;
+		border-top: 1px solid colors.$lwtv-grey-border;
+
+		figcaption {
+			padding-top: 0.5rem;
+		}
+	}
+
+	.lwtv-tropeload-poster-img {
+		object-fit: cover;
+		border-radius: 8px;
+		flex: 0 0 auto;
+		box-shadow: 0 2px 8px rgba(colors.$black, 0.18);
+	}
+
+	.lwtv-tropeload-poster-cap {
+		margin: 0;
+		font-size: 0.8125rem;
+		color: colors.$lwtv-grey-deep;
+	}
+
+	$tropeload-ramp-1: colors.$lwtv-green-light;
+	$tropeload-ramp-2: color.mix( colors.$lwtv-green-light, colors.$lwtv-green-deep, 75% );
+	$tropeload-ramp-3: color.mix( colors.$lwtv-green-light, colors.$lwtv-green-deep, 50% );
+	$tropeload-ramp-4: color.mix( colors.$lwtv-green-light, colors.$lwtv-green-deep, 25% );
+	$tropeload-ramp-5: colors.$lwtv-green-deep;
+
+	.lwtv-tropeload .lwtv-waffle-dot--b0 {
+		fill: $tropeload-ramp-1;
+		opacity: 1;
+	}
+
+	.lwtv-tropeload .lwtv-waffle-dot--b1 {
+		fill: $tropeload-ramp-2;
+		opacity: 1;
+	}
+
+	.lwtv-tropeload .lwtv-waffle-dot--b2 {
+		fill: $tropeload-ramp-3;
+		opacity: 1;
+	}
+
+	.lwtv-tropeload .lwtv-waffle-dot--b3 {
+		fill: $tropeload-ramp-4;
+		opacity: 1;
+	}
+
+	.lwtv-tropeload .lwtv-waffle-dot--b4 {
+		fill: $tropeload-ramp-5;
+		opacity: 1;
+	}
+
+	.lwtv-tropeload .lwtv-legend-row:nth-child(1) .lwtv-legend-dot {
+		background-color: $tropeload-ramp-1;
+	}
+
+	.lwtv-tropeload .lwtv-legend-row:nth-child(2) .lwtv-legend-dot {
+		background-color: $tropeload-ramp-2;
+	}
+
+	.lwtv-tropeload .lwtv-legend-row:nth-child(3) .lwtv-legend-dot {
+		background-color: $tropeload-ramp-3;
+	}
+
+	.lwtv-tropeload .lwtv-legend-row:nth-child(4) .lwtv-legend-dot {
+		background-color: $tropeload-ramp-4;
+	}
+
+	.lwtv-tropeload .lwtv-legend-row:nth-child(5) .lwtv-legend-dot {
+		background-color: $tropeload-ramp-5;
 	}
 
 	// Tablet (e.g. iPad portrait, ~810-834px): a 4-across row is too cramped to

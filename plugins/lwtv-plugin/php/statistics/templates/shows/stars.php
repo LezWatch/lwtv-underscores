@@ -45,25 +45,25 @@ $stars_columns = Star_Podium::columns( $stars_counts );
 $stars_tiers = array(
 	'gold'   => array(
 		'label' => __( 'Gold', 'lwtv' ),
-		'def'   => __( 'For us specifically', 'lwtv' ),
+		'def'   => term_description( '4287' ),
 		'svg'   => 'star.svg',
 		'icon'  => 'svg-star',
 	),
 	'silver' => array(
 		'label' => __( 'Silver', 'lwtv' ),
-		'def'   => __( 'For queers broadly', 'lwtv' ),
+		'def'   => term_description( '4288' ),
 		'svg'   => 'star.svg',
 		'icon'  => 'svg-star',
 	),
 	'bronze' => array(
 		'label' => __( 'Bronze', 'lwtv' ),
-		'def'   => __( 'Queer men first', 'lwtv' ),
+		'def'   => term_description( '4286' ),
 		'svg'   => 'star.svg',
 		'icon'  => 'svg-star',
 	),
 	'anti'   => array(
 		'label' => __( 'Anti', 'lwtv' ),
-		'def'   => __( 'For the straights', 'lwtv' ),
+		'def'   => term_description( '4285' ),
 		'svg'   => 'eye-evil.svg',
 		'icon'  => 'svg-eye-evil',
 	),
@@ -72,13 +72,13 @@ $stars_tiers = array(
 // Headline follows the leading tier — "made for us" is only true while gold leads.
 switch ( $stars_facts['leader'] ) {
 	case 'gold':
-		$stars_headline = __( 'Most starred shows were made for us', 'lwtv' );
+		$stars_headline = __( 'Most starred shows were made for queers, starring queer female, trans, and non-binary characters', 'lwtv' );
 		break;
 	case 'silver':
 		$stars_headline = __( 'Most starred shows were made for queers broadly', 'lwtv' );
 		break;
 	case 'bronze':
-		$stars_headline = __( 'Most starred shows put queer men first', 'lwtv' );
+		$stars_headline = __( 'Most starred shows are for the general audience', 'lwtv' );
 		break;
 	default:
 		$stars_headline = __( 'No show has earned a star yet', 'lwtv' );
@@ -200,7 +200,7 @@ if ( $stars_counts['anti'] > 0 ) {
 						<?php foreach ( $stars_columns as $stars_col ) : ?>
 							<div class="lwtv-star-label lwtv-star-label--<?php echo esc_attr( $stars_col['tier'] ); ?>">
 								<span class="lwtv-star-tier"><?php echo esc_html( $stars_tiers[ $stars_col['tier'] ]['label'] ); ?></span>
-								<span class="lwtv-star-def"><?php echo esc_html( $stars_tiers[ $stars_col['tier'] ]['def'] ); ?></span>
+								<span class="lwtv-star-def"><?php echo wp_kses_post( $stars_tiers[ $stars_col['tier'] ]['def'] ); ?></span>
 							</div>
 						<?php endforeach; ?>
 					</div>

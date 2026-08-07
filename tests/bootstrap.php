@@ -29,6 +29,9 @@ require_once __DIR__ . '/../plugins/lwtv-plugin/php/this-year/build/class-shows-
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/statistics/build/class-overview-factsheet.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/statistics/build/class-intersection-pairs.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/statistics/build/class-format-decade-buckets.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/cpts/shows/class-trope-categories.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/statistics/build/class-trope-category-coverage.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/statistics/build/class-term-count-distribution.php'; // to_cells() lives here too.
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/statistics/build/class-score-distribution.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/statistics/build/class-series-trend.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/statistics/build/class-star-podium.php';
