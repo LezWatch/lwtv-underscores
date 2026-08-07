@@ -27,9 +27,19 @@ if ( 'compact' === $donut_layout ) :
 	$donut_family  = $donut['center_family'] ?? '';
 	?>
 	<section class="lwtv-donut-card lwtv-donut-card--compact bg-light">
-		<p class="lwtv-stats-eyebrow"><?php echo esc_html( $donut['eyebrow'] ?? '' ); ?></p>
+		<?php
+		/*
+		 * Eyebrow allows one safe inline tag: a caller like Formats' decade
+		 * tiles needs "1980s" to keep a lowercase "s" against this label's
+		 * uppercase text-transform (CSS can't do that without an element
+		 * boundary — see .lwtv-decade-suffix). Plain-string callers pass
+		 * through wp_kses() unchanged. The SVG's aria-label strips any markup
+		 * back out, since an accessible name should never contain tag syntax.
+		 */
+		?>
+		<p class="lwtv-stats-eyebrow"><?php echo wp_kses( $donut['eyebrow'] ?? '', array( 'span' => array( 'class' => array() ) ) ); ?></p>
 		<div class="lwtv-donut-figure">
-			<svg class="lwtv-donut" viewBox="0 0 120 120" role="img" aria-label="<?php echo esc_attr( $donut['eyebrow'] ?? '' ); ?>">
+			<svg class="lwtv-donut" viewBox="0 0 120 120" role="img" aria-label="<?php echo esc_attr( wp_strip_all_tags( $donut['eyebrow'] ?? '' ) ); ?>">
 				<g transform="rotate(-90 60 60)">
 					<circle class="lwtv-donut-track" cx="60" cy="60" r="50" fill="none" stroke-width="15" pathLength="100" />
 					<?php
@@ -106,6 +116,15 @@ endif;
 		<h2 class="lwtv-donut-headline"><?php echo esc_html( $donut['headline'] ?? '' ); ?></h2>
 		<?php if ( ! empty( $donut['description'] ) ) : ?>
 			<p class="lwtv-donut-desc"><?php echo esc_html( $donut['description'] ); ?></p>
+		<?php endif; ?>
+		<?php if ( ! empty( $donut['waffle'] ) ) : ?>
+			<div class="lwtv-donut-waffle">
+				<?php
+				$waffle = $donut['waffle'];
+				// phpcs:ignore PEAR.Files.IncludingFile.UseRequire
+				include __DIR__ . '/waffle.php';
+				?>
+			</div>
 		<?php endif; ?>
 		<ul class="lwtv-donut-legend">
 			<?php
