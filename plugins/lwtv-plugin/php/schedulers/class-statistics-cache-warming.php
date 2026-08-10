@@ -36,6 +36,7 @@ use LWTV\Statistics\Build\Character_Show_Leaders as Build_Character_Show_Leaders
 use LWTV\Statistics\Build\Character_Actor_Leaders as Build_Character_Actor_Leaders;
 use LWTV\Statistics\Build\Character_Death_Leaders as Build_Character_Death_Leaders;
 use LWTV\Statistics\Build\Character_Longevity_Leaders as Build_Character_Longevity_Leaders;
+use LWTV\Statistics\Build\Character_Identity_Trend as Build_Character_Identity_Trend;
 use LWTV\_Components\Transients;
 
 /**
@@ -295,6 +296,12 @@ class Statistics_Cache_Warming {
 		$character_taxonomies = array( 'lez_gender', 'lez_sexuality' );
 		foreach ( $character_taxonomies as $taxonomy ) {
 			( new Build_Taxonomy_Optimized() )->make_comprehensive( CPT_Characters::SLUG, $taxonomy, true );
+			// Gender/Sexuality Mix by Decade + Firsts (characters/gender.php,
+			// characters/sexuality.php) — generate_decades() and
+			// generate_firsts() both read the same cached row set, so
+			// warming one call per taxonomy here covers both.
+			( new Build_Character_Identity_Trend() )->generate_decades( $taxonomy );
+			( new Build_Character_Identity_Trend() )->generate_firsts( $taxonomy );
 		}
 
 		$show_taxonomies = array( 'lez_tropes', 'lez_genres' );

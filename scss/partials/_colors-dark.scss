@@ -487,6 +487,10 @@
 			}
 		}
 
+		.lwtv-identity-firsts-row {
+			border-color: rgba(colors.$white, 0.12);
+		}
+
 		.lwtv-records-table {
 			border-color: rgba(colors.$white, 0.15);
 		}
@@ -522,6 +526,8 @@
 		.lwtv-leader-name,
 		.lwtv-leader-rank,
 		.lwtv-leader-value,
+		.lwtv-identity-firsts-term,
+		.lwtv-identity-firsts-year,
 		.lwtv-metric-number,
 		.lwtv-panel-sub,
 		.lwtv-records-cell--head,

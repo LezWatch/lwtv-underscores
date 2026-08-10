@@ -4432,7 +4432,15 @@ canvas {
 		white-space: nowrap;
 	}
 
-	.lwtv-donut-center-num--green { color: colors.$lwtv-green-light; }
+	.lwtv-donut-center-num--green { color: colors.$lwtv-green-deep; }
+	// Same dark-for-light-background rule as dkpink/pink/mid above — only
+	// the two darker ramp stops get a center-num rule (medgreen, midgreen);
+	// ltgreen/palegreen are the ramp's palest stops and, like ltpink/mid2,
+	// are left to fall back to .lwtv-donut-center-num's own dark grey
+	// default rather than risk the same low-contrast mistake --green just
+	// had, since a compact tile's lead segment is rarely one of these.
+	.lwtv-donut-center-num--medgreen { color: color.mix(colors.$lwtv-green-light, colors.$lwtv-green-deep, 25%); }
+	.lwtv-donut-center-num--midgreen { color: color.mix(colors.$lwtv-green-light, colors.$lwtv-green-deep, 50%); }
 	.lwtv-donut-center-num--red { color: colors.$lwtv-red; }
 	.lwtv-donut-center-num--dkpink { color: colors.$lwtv-pink-deep; }
 	.lwtv-donut-center-num--pink { color: colors.$lwtv-pink; }
@@ -4469,6 +4477,66 @@ canvas {
 		font-size: 0.8rem;
 		text-align: center;
 		color: colors.$lwtv-grey-deep;
+	}
+
+	// Firsts: the earliest-recorded character per tracked gender/sexuality
+	// identity (characters/gender.php, characters/sexuality.php). A plain
+	// three-part row rather than reusing .lwtv-tail-row, which is a fixed
+	// two-column (name + count) shape.
+	.lwtv-identity-firsts {
+		list-style: none;
+		margin: 0 0 1.5rem;
+		padding: 0;
+		// Two-up, same convention as .lwtv-ty-deathdate/.lwtv-ty-sb-shows —
+		// collapses to one column well before the row itself starts
+		// wrapping (@media max-width: 480px below), so the two breakpoints
+		// never fight each other.
+		columns: 2;
+		column-gap: 24px;
+
+		@media (max-width: 767px) {
+			columns: 1;
+		}
+	}
+
+	.lwtv-identity-firsts-row {
+		display: flex;
+		align-items: baseline;
+		gap: 10px;
+		padding: 9px 0;
+		font-size: 0.9rem;
+		border-bottom: 1px solid colors.$lwtv-grey-border;
+		break-inside: avoid;
+
+		&:last-child {
+			border-bottom: none;
+		}
+	}
+
+	.lwtv-identity-firsts-term {
+		flex: 1 0 100px;
+		font-weight: 700;
+		color: colors.$lwtv-grey-deep;
+	}
+
+	.lwtv-identity-firsts-name {
+		flex: 1 1 auto;
+	}
+
+	.lwtv-identity-firsts-year {
+		flex: 0 0 auto;
+		font-variant-numeric: tabular-nums;
+		color: colors.$lwtv-grey-deep;
+	}
+
+	@media (max-width: 480px) {
+		.lwtv-identity-firsts-row {
+			flex-wrap: wrap;
+		}
+
+		.lwtv-identity-firsts-term {
+			flex: 1 1 100%;
+		}
 	}
 
 	// Forces the "s" in "1980s" back to lowercase against the eyebrow's
@@ -4561,6 +4629,34 @@ canvas {
 		background-color: colors.$lwtv-green-deep;
 	}
 
+	// Green ramp for donuts that need more than the one solid --green shade
+	// above (e.g. characters/gender.php's minority segments) — same
+	// 0/25/50/75/100 mix spacing as the Cliché Load waffle ramp
+	// ($clicheload-ramp-*), just ordered dark-to-light to match dkpink's
+	// own "biggest segment = darkest" convention instead of Cliché Load's
+	// "lowest bucket = lightest" one. --green itself (green-deep, no mix)
+	// already has a dark-mode swap to green-light, so it doubles as this
+	// ramp's darkest stop rather than duplicating that class.
+	.lwtv-donut-seg--medgreen {
+		stroke: color.mix(colors.$lwtv-green-light, colors.$lwtv-green-deep, 25%);
+		background-color: color.mix(colors.$lwtv-green-light, colors.$lwtv-green-deep, 25%);
+	}
+
+	.lwtv-donut-seg--midgreen {
+		stroke: color.mix(colors.$lwtv-green-light, colors.$lwtv-green-deep, 50%);
+		background-color: color.mix(colors.$lwtv-green-light, colors.$lwtv-green-deep, 50%);
+	}
+
+	.lwtv-donut-seg--ltgreen {
+		stroke: color.mix(colors.$lwtv-green-light, colors.$lwtv-green-deep, 75%);
+		background-color: color.mix(colors.$lwtv-green-light, colors.$lwtv-green-deep, 75%);
+	}
+
+	.lwtv-donut-seg--palegreen {
+		stroke: colors.$lwtv-green-light;
+		background-color: colors.$lwtv-green-light;
+	}
+
 	.lwtv-donut-seg--amber {
 		stroke: colors.$lwtv-yellow-deep;
 		background-color: colors.$lwtv-yellow-deep;
@@ -4645,6 +4741,22 @@ canvas {
 
 		&.lwtv-donut-seg--green {
 			background-color: colors.$lwtv-green-deep;
+		}
+
+		&.lwtv-donut-seg--medgreen {
+			background-color: color.mix(colors.$lwtv-green-light, colors.$lwtv-green-deep, 25%) !important;
+		}
+
+		&.lwtv-donut-seg--midgreen {
+			background-color: color.mix(colors.$lwtv-green-light, colors.$lwtv-green-deep, 50%) !important;
+		}
+
+		&.lwtv-donut-seg--ltgreen {
+			background-color: color.mix(colors.$lwtv-green-light, colors.$lwtv-green-deep, 75%);
+		}
+
+		&.lwtv-donut-seg--palegreen {
+			background-color: colors.$lwtv-green-light;
 		}
 
 		&.lwtv-donut-seg--amber {
