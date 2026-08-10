@@ -1003,6 +1003,23 @@
 			stroke-width: 1px;
 		}
 
+		// Cliché Load's ramp is built the same way (palest green swatch is
+		// bucket 0) and, like Trope Load, its legend override now targets
+		// :nth-child(1) rather than the --b0 modifier class (needed to
+		// out-specify the page-wide raspberry ramp default — see the
+		// comment in _stats.scss above .lwtv-clicheload
+		// .lwtv-legend-row:nth-child(1) .lwtv-legend-dot) — same
+		// visibility fix, same rgba, same selector shape as Trope Load's.
+		.lwtv-clicheload .lwtv-legend-row:nth-child(1) .lwtv-legend-dot {
+			outline: 1px solid rgba(colors.$white, 0.15);
+			outline-offset: -1px;
+		}
+
+		.lwtv-clicheload .lwtv-waffle-dot--b0 {
+			stroke: rgba(colors.$white, 0.15);
+			stroke-width: 1px;
+		}
+
 		.lwtv-legend-pct {
 			color: colors.$white;
 		}
@@ -1069,7 +1086,7 @@
 		// visibility fix as Trope Load's palest-green bucket 0 above) — the
 		// grey dot and legend outline both need lifting against the dark
 		// page background, and the SVG dot needs a stroke rather than outline.
-		.lwtv-genreload .lwtv-legend-dot--b0 {
+		.lwtv-genreload .lwtv-legend-row:nth-child(1) .lwtv-legend-dot {
 			outline: 1px solid rgba(colors.$white, 0.15);
 			outline-offset: -1px;
 		}
@@ -1081,7 +1098,7 @@
 
 		// Intersection Load's pale grey "0 intersections" swatch needs the
 		// same visibility fix as Genre/Trope Load's own bucket-0 above.
-		.lwtv-interload .lwtv-legend-dot--b0 {
+		.lwtv-interload .lwtv-legend-row:nth-child(1) .lwtv-legend-dot {
 			outline: 1px solid rgba(colors.$white, 0.15);
 			outline-offset: -1px;
 		}

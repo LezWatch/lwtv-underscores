@@ -3182,6 +3182,21 @@ canvas {
 		color: colors.$lwtv-grey-deep;
 	}
 
+	// .lwtv-statcard-icon/-number default to amber — fine for Genres, the
+	// only page that used pullstats until now, but Clichés' family color
+	// is green everywhere else on its page (Load waffle, matchup accents).
+	// .lwtv-bars--characters already carries that green override elsewhere
+	// on this page, so it doubles as the pullstats variant too rather than
+	// adding a new family-color hook just for this one row.
+	.lwtv-bars--characters .lwtv-statcard-icon {
+		background-color: colors.$lwtv-green-light;
+		color: colors.$lwtv-green-deep;
+	}
+
+	.lwtv-bars--characters .lwtv-statcard-number {
+		color: colors.$lwtv-green-deep;
+	}
+
 	// Genre Stats layout: Genre Load (waffle + spotlight) takes the wide
 	// column, Common Pairings' matchup cards sit beside it — asymmetric
 	// 2:1 split, unlike Tropes' even 50/50 .lwtv-tropes-columns. Same
@@ -3297,23 +3312,33 @@ canvas {
 	// omitted entirely when its count is 0 (see genres.php), which would
 	// otherwise shift every remaining row's nth-child position and hand it
 	// the wrong ramp color.
-	.lwtv-genreload .lwtv-legend-dot--b0 {
+	// Scoped by row position (:nth-child), not the --b0.._b4 modifier
+	// classes those spans also carry — a plain 2-class override like
+	// ".lwtv-genreload .lwtv-legend-dot--b0" loses to the page-wide
+	// "raspberry ramp" default a few hundred lines up
+	// (.lwtv-legend-row:nth-child(N) .lwtv-legend-dot, around line 2886),
+	// which has 3 simple selectors of specificity — this pink ramp was
+	// silently winning regardless of source order. Matching its own
+	// :nth-child shape plus the .lwtv-genreload ancestor pushes this to 4
+	// simple selectors, which reliably wins — same fix applied to Cliché
+	// Load's and Intersection Load's legends.
+	.lwtv-genreload .lwtv-legend-row:nth-child(1) .lwtv-legend-dot {
 		background-color: colors.$lwtv-grey;
 	}
 
-	.lwtv-genreload .lwtv-legend-dot--b1 {
+	.lwtv-genreload .lwtv-legend-row:nth-child(2) .lwtv-legend-dot {
 		background-color: rgba(colors.$lwtv-yellow-deep, 0.35);
 	}
 
-	.lwtv-genreload .lwtv-legend-dot--b2 {
+	.lwtv-genreload .lwtv-legend-row:nth-child(3) .lwtv-legend-dot {
 		background-color: rgba(colors.$lwtv-yellow-deep, 0.6);
 	}
 
-	.lwtv-genreload .lwtv-legend-dot--b3 {
+	.lwtv-genreload .lwtv-legend-row:nth-child(4) .lwtv-legend-dot {
 		background-color: rgba(colors.$lwtv-yellow-deep, 0.8);
 	}
 
-	.lwtv-genreload .lwtv-legend-dot--b4 {
+	.lwtv-genreload .lwtv-legend-row:nth-child(5) .lwtv-legend-dot {
 		background-color: colors.$lwtv-yellow-deep;
 	}
 
@@ -3429,23 +3454,26 @@ canvas {
 		opacity: 1;
 	}
 
-	.lwtv-interload .lwtv-legend-dot--b0 {
+	// Scoped by row position (:nth-child) for the same reason as Genre
+	// Load's legend just above — out-specifies the page-wide pink ramp
+	// default instead of losing to it.
+	.lwtv-interload .lwtv-legend-row:nth-child(1) .lwtv-legend-dot {
 		background-color: colors.$lwtv-grey;
 	}
 
-	.lwtv-interload .lwtv-legend-dot--b1 {
+	.lwtv-interload .lwtv-legend-row:nth-child(2) .lwtv-legend-dot {
 		background-color: rgba(colors.$lwtv-royal-blue, 0.35);
 	}
 
-	.lwtv-interload .lwtv-legend-dot--b2 {
+	.lwtv-interload .lwtv-legend-row:nth-child(3) .lwtv-legend-dot {
 		background-color: rgba(colors.$lwtv-royal-blue, 0.6);
 	}
 
-	.lwtv-interload .lwtv-legend-dot--b3 {
+	.lwtv-interload .lwtv-legend-row:nth-child(4) .lwtv-legend-dot {
 		background-color: rgba(colors.$lwtv-royal-blue, 0.8);
 	}
 
-	.lwtv-interload .lwtv-legend-dot--b4 {
+	.lwtv-interload .lwtv-legend-row:nth-child(5) .lwtv-legend-dot {
 		background-color: colors.$lwtv-royal-blue;
 	}
 
@@ -3622,6 +3650,175 @@ canvas {
 
 	@media (max-width: 900px) {
 		.lwtv-inter-breakdown-wrap .lwtv-leaders {
+			column-count: 1;
+		}
+	}
+
+	// Characters → Clichés layout: Cliché Load (waffle + spotlight) takes
+	// the wide column, Common Pairings' matchup cards sit beside it —
+	// same asymmetric 2:1 split as .lwtv-genres-columns (no alignment-
+	// category split exists for clichés, unlike Tropes, so there's no
+	// second panel to stack in the main column).
+	.lwtv-cliches-columns {
+		display: grid;
+		grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+		gap: 1rem;
+		align-items: start;
+		margin-bottom: 1rem;
+	}
+
+	@media (max-width: 900px) {
+
+		.lwtv-cliches-columns {
+			grid-template-columns: 1fr;
+		}
+	}
+
+	// Cliché Load: same figure/legend flex layout Genre/Trope Load already use.
+	.lwtv-clicheload-row {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 16px;
+		align-items: center;
+	}
+
+	.lwtv-clicheload-figure {
+		flex: 0 0 auto;
+		width: 320px;
+	}
+
+	// Capped rather than a plain flex:1 — Cliché Load lives in the wide 2fr
+	// column of .lwtv-cliches-columns, same reasoning as Genre Load's cap.
+	.lwtv-clicheload-legend {
+		flex: 1 1 180px;
+		max-width: 280px;
+		margin: 0;
+	}
+
+	.lwtv-clicheload .lwtv-waffle {
+		max-width: 100%;
+	}
+
+	.lwtv-clicheload-poster {
+		text-align: center;
+		align-items: center;
+		gap: 12px;
+		margin: 1rem 0 0;
+		padding-top: 1rem;
+		border-top: 1px solid colors.$lwtv-grey-border;
+
+		figcaption {
+			padding-top: 0.5rem;
+		}
+	}
+
+	.lwtv-clicheload-poster-img {
+		object-fit: cover;
+		border-radius: 8px;
+		flex: 0 0 auto;
+		box-shadow: 0 2px 8px rgba(colors.$black, 0.18);
+	}
+
+	.lwtv-clicheload-poster-cap {
+		margin: 0;
+		font-size: 0.8125rem;
+		color: colors.$lwtv-grey-deep;
+	}
+
+	// Cliché Load waffle ramp: a full green gradient, not Genre/Intersection
+	// Load's grey-for-zero treatment — lez_cliches' "none" placeholder is
+	// already excluded before this distribution is built, so the "0" bucket
+	// here means "zero real clichés", a meaningful reading rather than
+	// absence of data. Same ramp shape/reasoning as Trope Load, the other
+	// taxonomy with a real "none" to exclude.
+	$clicheload-ramp-1: colors.$lwtv-green-light;
+	$clicheload-ramp-2: color.mix(colors.$lwtv-green-light, colors.$lwtv-green-deep, 75%);
+	$clicheload-ramp-3: color.mix(colors.$lwtv-green-light, colors.$lwtv-green-deep, 50%);
+	$clicheload-ramp-4: color.mix(colors.$lwtv-green-light, colors.$lwtv-green-deep, 25%);
+	$clicheload-ramp-5: colors.$lwtv-green-deep;
+
+	.lwtv-clicheload .lwtv-waffle-dot--b0 {
+		fill: $clicheload-ramp-1;
+		opacity: 1;
+	}
+
+	.lwtv-clicheload .lwtv-waffle-dot--b1 {
+		fill: $clicheload-ramp-2;
+		opacity: 1;
+	}
+
+	.lwtv-clicheload .lwtv-waffle-dot--b2 {
+		fill: $clicheload-ramp-3;
+		opacity: 1;
+	}
+
+	.lwtv-clicheload .lwtv-waffle-dot--b3 {
+		fill: $clicheload-ramp-4;
+		opacity: 1;
+	}
+
+	.lwtv-clicheload .lwtv-waffle-dot--b4 {
+		fill: $clicheload-ramp-5;
+		opacity: 1;
+	}
+
+	// Scoped by row position (:nth-child), not the --b0.._b4 modifier
+	// classes those spans also carry — the page-wide "raspberry ramp"
+	// default a few hundred lines up (.lwtv-legend-row:nth-child(N)
+	// .lwtv-legend-dot, around line 2886) has 3 simple selectors of
+	// specificity, and a plain 2-class override like ".lwtv-clicheload
+	// .lwtv-legend-dot--b0" (also 3, once you count the ramp's :nth-child
+	// as equal-weight) loses that tie or worse. Matching the ramp's own
+	// :nth-child shape plus the .lwtv-clicheload ancestor pushes this to 4
+	// simple selectors, which reliably wins regardless of source order —
+	// the same fix Trope Load's legend already relies on.
+	.lwtv-clicheload .lwtv-legend-row:nth-child(1) .lwtv-legend-dot {
+		background-color: $clicheload-ramp-1;
+	}
+
+	.lwtv-clicheload .lwtv-legend-row:nth-child(2) .lwtv-legend-dot {
+		background-color: $clicheload-ramp-2;
+	}
+
+	.lwtv-clicheload .lwtv-legend-row:nth-child(3) .lwtv-legend-dot {
+		background-color: $clicheload-ramp-3;
+	}
+
+	.lwtv-clicheload .lwtv-legend-row:nth-child(4) .lwtv-legend-dot {
+		background-color: $clicheload-ramp-4;
+	}
+
+	.lwtv-clicheload .lwtv-legend-row:nth-child(5) .lwtv-legend-dot {
+		background-color: $clicheload-ramp-5;
+	}
+
+	// Common Pairings accent color for Clichés — same green as the rest of
+	// this family (.lwtv-bars--characters already colors the ranked-bars
+	// progress fill/leader-track/lollipop dots this shade).
+	.lwtv-bars--characters .lwtv-matchup-count,
+	.lwtv-bars--characters .lwtv-matchup-plus {
+		color: colors.$lwtv-green-deep;
+	}
+
+	.lwtv-bars--characters .lwtv-matchup-footer-number {
+		color: colors.$lwtv-green-deep;
+	}
+
+	// Cliché Breakdown: full width now (moved out of .lwtv-cliches-columns
+	// above), so it gets the exact same 2-col newspaper flow and breakpoint
+	// as .lwtv-genres-breakdown-wrap / .lwtv-tropes-breakdown-wrap / .lwtv-
+	// inter-breakdown-wrap rather than a page-specific one.
+	.lwtv-cliches-breakdown-wrap .lwtv-leaders {
+		column-count: 2;
+		column-gap: 2rem;
+	}
+
+	.lwtv-cliches-breakdown-wrap .lwtv-leader-row {
+		break-inside: avoid;
+	}
+
+	@media (max-width: 900px) {
+		.lwtv-cliches-breakdown-wrap .lwtv-leaders {
 			column-count: 1;
 		}
 	}
