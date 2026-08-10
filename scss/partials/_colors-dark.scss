@@ -1079,6 +1079,18 @@
 			stroke-width: 1px;
 		}
 
+		// Intersection Load's pale grey "0 intersections" swatch needs the
+		// same visibility fix as Genre/Trope Load's own bucket-0 above.
+		.lwtv-interload .lwtv-legend-dot--b0 {
+			outline: 1px solid rgba(colors.$white, 0.15);
+			outline-offset: -1px;
+		}
+
+		.lwtv-interload .lwtv-waffle-dot--b0 {
+			stroke: rgba(colors.$white, 0.15);
+			stroke-width: 1px;
+		}
+
 		// Uncharted gauge: the light-grey stripe pair reads as a smudge on
 		// a dark card, so swap for a translucent-white stripe pair; the
 		// amber fill and tile border move to the brighter dark-mode yellow

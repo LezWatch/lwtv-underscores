@@ -335,8 +335,8 @@ $genres_decade_buckets = ( new \LWTV\Statistics\Build\Genre_Trend() )->generate(
 if ( ! empty( $genres_decade_buckets ) ) :
 	?>
 	<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'Genre Mix by Decade', 'lwtv' ); ?></p>
-	<p class="lwtv-genre-decade-note"><?php esc_html_e( 'Top 3 genres per decade, each as its own share of shows that premiered in that decade. As shows often carry more than one genre, the three don\'t add up to 100%.', 'lwtv' ); ?></p>
-	<div class="lwtv-genre-decade-grid">
+	<p class="lwtv-decade-tile-note"><?php esc_html_e( 'Top 3 genres per decade, each as its own share of shows that premiered in that decade. As shows often carry more than one genre, the three don\'t add up to 100%.', 'lwtv' ); ?></p>
+	<div class="lwtv-decade-tile-grid">
 		<?php foreach ( $genres_decade_buckets as $genres_decade_bucket ) : ?>
 			<?php
 			// Mirrors Format Mix by Decade's label construction: the
@@ -352,10 +352,10 @@ if ( ! empty( $genres_decade_buckets ) ) :
 				$genres_decade_label = sprintf( __( '%1$d<span class="lwtv-decade-suffix">s</span>', 'lwtv' ), $genres_decade_bucket['from'] );
 			}
 			?>
-			<div class="lwtv-genre-decade-tile">
-				<div class="lwtv-genre-decade-head">
-					<span class="lwtv-genre-decade-label"><?php echo wp_kses( $genres_decade_label, array( 'span' => array( 'class' => array() ) ) ); ?></span>
-					<span class="lwtv-genre-decade-count">
+			<div class="lwtv-decade-tile">
+				<div class="lwtv-decade-tile-head">
+					<span class="lwtv-decade-tile-label"><?php echo wp_kses( $genres_decade_label, array( 'span' => array( 'class' => array() ) ) ); ?></span>
+					<span class="lwtv-decade-tile-count">
 						<?php
 						printf(
 							/* translators: %s: number of shows that premiered in this bucket. */
@@ -366,16 +366,16 @@ if ( ! empty( $genres_decade_buckets ) ) :
 					</span>
 				</div>
 				<?php if ( empty( $genres_decade_bucket['top'] ) ) : ?>
-					<p class="lwtv-genre-decade-empty"><?php esc_html_e( 'No genres tracked yet.', 'lwtv' ); ?></p>
+					<p class="lwtv-decade-tile-empty"><?php esc_html_e( 'No genres tracked yet.', 'lwtv' ); ?></p>
 				<?php else : ?>
-					<div class="lwtv-genre-decade-rows lwtv-bars--genres">
+					<div class="lwtv-decade-tile-rows lwtv-bars--genres">
 						<?php foreach ( $genres_decade_bucket['top'] as $genres_decade_row ) : ?>
-							<div class="lwtv-genre-decade-row">
-								<div class="lwtv-genre-decade-row-head">
-									<a class="lwtv-genre-decade-name" href="<?php echo esc_url( site_url( '/genre/' . $genres_decade_row['slug'] ) ); ?>"><?php echo esc_html( $genres_decade_row['name'] ); ?></a>
-									<span class="lwtv-genre-decade-value"><?php echo esc_html( number_format_i18n( $genres_decade_row['pct'], 1 ) . '%' ); ?></span>
+							<div class="lwtv-decade-tile-row">
+								<div class="lwtv-decade-tile-row-head">
+									<a class="lwtv-decade-tile-name" href="<?php echo esc_url( site_url( '/genre/' . $genres_decade_row['slug'] ) ); ?>"><?php echo esc_html( $genres_decade_row['name'] ); ?></a>
+									<span class="lwtv-decade-tile-value"><?php echo esc_html( number_format_i18n( $genres_decade_row['pct'], 1 ) . '%' ); ?></span>
 								</div>
-								<div class="progress lwtv-genre-decade-track">
+								<div class="progress lwtv-decade-tile-track">
 									<div class="progress-bar" role="progressbar" style="width:0" data-grow-to="<?php echo esc_attr( (string) $genres_decade_row['pct'] ); ?>" aria-valuenow="<?php echo esc_attr( (string) $genres_decade_row['count'] ); ?>" aria-valuemin="0" aria-valuemax="<?php echo esc_attr( (string) $genres_decade_bucket['shows'] ); ?>"></div>
 								</div>
 							</div>

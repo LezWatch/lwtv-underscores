@@ -2802,6 +2802,13 @@ canvas {
 		background-color: colors.$lwtv-blue-deep;
 	}
 
+	// Intersectionality Breakdown/Pairings never had their own fill and were
+	// falling through to the default teal progressbar above — same royal-blue
+	// token .lwtv-panel-icon.intersections already uses elsewhere.
+	.lwtv-bars--intersections .progress-bar {
+		background-color: colors.$lwtv-royal-blue;
+	}
+
 	.lwtv-bar-label {
 		font-size: 0.85rem;
 		color: colors.$lwtv-grey-deep;
@@ -3310,13 +3317,166 @@ canvas {
 		background-color: colors.$lwtv-yellow-deep;
 	}
 
-	// Common Genre Pairings: compact "count first" rows (partials/matchup-cards.php)
+	// Intersectionality page layout: Intersection Load + Single vs Multiple
+	// stack in the main (wide) column, Common Pairings sits alone in the
+	// side (narrow) column beside them, and the Breakdown ranked list drops
+	// out of this grid entirely to run full width below — same asymmetric
+	// 2:1 ratio and structure as Genres' .lwtv-genres-columns and Tropes'
+	// .lwtv-tropes-columns. Stacks to one column below 900px.
+	.lwtv-inter-columns {
+		display: grid;
+		grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+		gap: 24px;
+		align-items: start;
+	}
+
+	.lwtv-inter-col--main .lwtv-panel {
+		margin-bottom: 1rem;
+	}
+
+	@media (max-width: 900px) {
+		.lwtv-inter-columns {
+			grid-template-columns: 1fr;
+		}
+	}
+
+	// Intersection Load: same figure/legend flex layout Genre/Trope Load
+	// already use. No cap needed on the legend column — the main column
+	// here is still wide enough (2fr of .lwtv-inter-columns) that the
+	// legend never gets Genre/Trope Load's overflow problem.
+	.lwtv-interload-row {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 16px;
+		align-items: center;
+	}
+
+	.lwtv-interload-figure {
+		flex: 0 0 auto;
+		width: 320px;
+	}
+
+	.lwtv-interload-legend {
+		flex: 1 1 240px;
+		margin: 0;
+	}
+
+	.lwtv-interload .lwtv-waffle {
+		max-width: 100%;
+	}
+
+	.lwtv-interload-poster {
+		text-align: center;
+		align-items: center;
+		gap: 12px;
+		margin: 1rem 0 0;
+		padding-top: 1rem;
+		border-top: 1px solid colors.$lwtv-grey-border;
+
+		figcaption {
+			padding-top: 0.5rem;
+		}
+	}
+
+	.lwtv-interload-poster-img {
+		object-fit: cover;
+		border-radius: 8px;
+		flex: 0 0 auto;
+		box-shadow: 0 2px 8px rgba(colors.$black, 0.18);
+	}
+
+	.lwtv-interload-poster-cap {
+		margin: 0;
+		font-size: 0.8125rem;
+		color: colors.$lwtv-grey-deep;
+	}
+
+	.lwtv-interload-poster-eyebrow {
+		display: block;
+		margin-bottom: 2px;
+		font-size: 0.68rem;
+		font-weight: 700;
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+		color: colors.$lwtv-royal-blue;
+	}
+
+	// Intersection Load waffle ramp: grey for "0 intersections" (absence,
+	// outside the ramp), then increasingly saturated royal-blue for 1
+	// through 4+ — same ramp shape Genre Load uses with amber.
+	.lwtv-interload .lwtv-waffle-dot--b0 {
+		fill: colors.$lwtv-grey;
+		opacity: 1;
+	}
+
+	.lwtv-interload .lwtv-waffle-dot--b1 {
+		fill: rgba(colors.$lwtv-royal-blue, 0.35);
+		opacity: 1;
+	}
+
+	.lwtv-interload .lwtv-waffle-dot--b2 {
+		fill: rgba(colors.$lwtv-royal-blue, 0.6);
+		opacity: 1;
+	}
+
+	.lwtv-interload .lwtv-waffle-dot--b3 {
+		fill: rgba(colors.$lwtv-royal-blue, 0.8);
+		opacity: 1;
+	}
+
+	.lwtv-interload .lwtv-waffle-dot--b4 {
+		fill: colors.$lwtv-royal-blue;
+		opacity: 1;
+	}
+
+	.lwtv-interload .lwtv-legend-dot--b0 {
+		background-color: colors.$lwtv-grey;
+	}
+
+	.lwtv-interload .lwtv-legend-dot--b1 {
+		background-color: rgba(colors.$lwtv-royal-blue, 0.35);
+	}
+
+	.lwtv-interload .lwtv-legend-dot--b2 {
+		background-color: rgba(colors.$lwtv-royal-blue, 0.6);
+	}
+
+	.lwtv-interload .lwtv-legend-dot--b3 {
+		background-color: rgba(colors.$lwtv-royal-blue, 0.8);
+	}
+
+	.lwtv-interload .lwtv-legend-dot--b4 {
+		background-color: colors.$lwtv-royal-blue;
+	}
+
+	// Single vs Multiple Intersections: borrows the compact donut's
+	// figure/legend markup classes directly, same reasoning as Tropes'
+	// Mixed Alignment (already sits inside its own .lwtv-panel, so
+	// donut.php's own bg-light card wrapper would double up the box).
+	.lwtv-inter-split-row {
+		display: flex;
+		align-items: center;
+		gap: 20px;
+	}
+
+	.lwtv-inter-split .lwtv-donut-figure {
+		width: 150px;
+		height: 150px;
+		margin: 0;
+	}
+
+	.lwtv-inter-split .lwtv-donut-legend--compact {
+		flex: 1 1 200px;
+	}
+
+	// Common Pairings: compact "count first" rows (partials/matchup-cards.php)
 	// — leading number reads first, pair name follows on the same line, a thin
 	// divider instead of a bordered box per row. Denser than both the boxed-card
-	// version this replaced and the lollipop-list treatment used on Tropes/
-	// Intersectionality — built for a narrow side column where height matters.
-	// "shows together" moves to a .screen-reader-text label; the number is
-	// self-explanatory next to the pair once it isn't floating alone in a card.
+	// version this replaced (Genres) and the lollipop-list treatment this
+	// replaced (Tropes, Intersectionality) — built for a narrow side column
+	// where height matters. "shows together" moves to a .screen-reader-text
+	// label; the number is self-explanatory next to the pair once it isn't
+	// floating alone in a card.
 	.lwtv-matchup-grid {
 		display: flex;
 		flex-direction: column;
@@ -3354,6 +3514,23 @@ canvas {
 		font-weight: 700;
 	}
 
+	// Common Pairings rows render as <a> once matchup-cards.php gets a
+	// per-item 'url' (currently just Intersectionality's confirmed
+	// fwp_show_intersectionality FacetWP param) — reset link defaults so a
+	// linked row looks identical to the plain-div rows Genres/Tropes still
+	// use, and only hint at interactivity on hover. Placed after the base
+	// .lwtv-matchup-pair rule above so specificity only increases going
+	// down the file (no-descending-specificity).
+	a.lwtv-matchup-row {
+		color: inherit;
+		text-decoration: none;
+
+		&:hover .lwtv-matchup-pair,
+		&:focus .lwtv-matchup-pair {
+			text-decoration: underline;
+		}
+	}
+
 	// Accent color follows the .lwtv-bars--<family> class matchup-cards.php
 	// puts on .lwtv-matchup-grid — same family-color convention the
 	// lollipop/leaderboard rows above already use, so Genres' pairings stay
@@ -3367,6 +3544,11 @@ canvas {
 	.lwtv-bars--tropes .lwtv-matchup-count,
 	.lwtv-bars--tropes .lwtv-matchup-plus {
 		color: colors.$lwtv-green-deep;
+	}
+
+	.lwtv-bars--intersections .lwtv-matchup-count,
+	.lwtv-bars--intersections .lwtv-matchup-plus {
+		color: colors.$lwtv-royal-blue;
 	}
 
 	// Footer stat appended at the bottom of the same panel (matchup-cards.php's
@@ -3401,6 +3583,10 @@ canvas {
 		color: colors.$lwtv-green-deep;
 	}
 
+	.lwtv-bars--intersections .lwtv-matchup-footer-number {
+		color: colors.$lwtv-royal-blue;
+	}
+
 	// Genre Breakdown: same ranked-bars.php panel/query, just flowed into two
 	// newspaper-style columns at desktop widths for a denser page. Column
 	// layout (not grid) so rows flow top-to-bottom then wrap, rather than
@@ -3417,6 +3603,25 @@ canvas {
 	@media (max-width: 900px) {
 
 		.lwtv-genres-breakdown-wrap .lwtv-leaders {
+			column-count: 1;
+		}
+	}
+
+	// Intersectionality Breakdown: full width now (moved out of
+	// .lwtv-inter-columns above), so it gets the exact same 2-col newspaper
+	// flow and breakpoint as .lwtv-genres-breakdown-wrap / .lwtv-tropes-
+	// breakdown-wrap rather than a page-specific one.
+	.lwtv-inter-breakdown-wrap .lwtv-leaders {
+		column-count: 2;
+		column-gap: 2rem;
+	}
+
+	.lwtv-inter-breakdown-wrap .lwtv-leader-row {
+		break-inside: avoid;
+	}
+
+	@media (max-width: 900px) {
+		.lwtv-inter-breakdown-wrap .lwtv-leaders {
 			column-count: 1;
 		}
 	}
@@ -3489,21 +3694,23 @@ canvas {
 		color: colors.$lwtv-grey-medium;
 	}
 
-	// Genre by Decade: small-multiple tiles, one per decade bucket, each
-	// showing its own top-3 genres as independent "% of shows that decade"
-	// bars (Genre_Trend/Genre_Decade_Buckets) — reuses the same
-	// .progress/.progress-bar/data-grow-to markup as the full-width Genre
-	// Breakdown panel below, just at tile scale, so the two sections read
-	// as the same visual language at two different densities.
-	.lwtv-genre-decade-note {
+	// Decade tile grid: small-multiple tiles, one per decade bucket, each
+	// showing its own top-3 terms as independent "% of shows that decade"
+	// bars — a generic component shared by any multi-value taxonomy fed
+	// through Genre_Decade_Buckets (Genres' "Genre Mix by Decade" today,
+	// Intersectionality's "Intersections by Decade" reuses it as-is).
+	// Reuses the same .progress/.progress-bar/data-grow-to markup as the
+	// full-width ranked-bar panels elsewhere, just at tile scale, so every
+	// bar-based section on the site reads as one visual language.
+	.lwtv-decade-tile-note {
 		margin: -0.25rem 0 1rem;
 		font-size: 0.85rem;
 		color: colors.$lwtv-grey-deep;
 	}
 
-	.lwtv-genre-decade-grid {
+	.lwtv-decade-tile-grid {
 		display: grid;
-		grid-template-columns: repeat(4, 1fr);
+		grid-template-columns: repeat(3, 1fr);
 		gap: 12px;
 		margin-bottom: 1.5rem;
 
@@ -3516,13 +3723,14 @@ canvas {
 		}
 	}
 
-	.lwtv-genre-decade-tile {
+	.lwtv-decade-tile {
 		padding: 16px;
 		border: 1px solid colors.$lwtv-grey-border;
 		border-radius: 14px;
+		background-color: colors.$white;
 	}
 
-	.lwtv-genre-decade-head {
+	.lwtv-decade-tile-head {
 		display: flex;
 		align-items: baseline;
 		justify-content: space-between;
@@ -3530,7 +3738,7 @@ canvas {
 		margin-bottom: 10px;
 	}
 
-	.lwtv-genre-decade-label {
+	.lwtv-decade-tile-label {
 		font-size: 0.95rem;
 		font-weight: 700;
 		text-transform: uppercase;
@@ -3541,13 +3749,13 @@ canvas {
 		text-transform: lowercase;
 	}
 
-	.lwtv-genre-decade-count {
+	.lwtv-decade-tile-count {
 		font-size: 0.75rem;
 		color: colors.$lwtv-grey-deep;
 		white-space: nowrap;
 	}
 
-	.lwtv-genre-decade-row {
+	.lwtv-decade-tile-row {
 		margin-bottom: 0.6rem;
 
 		&:last-child {
@@ -3555,7 +3763,7 @@ canvas {
 		}
 	}
 
-	.lwtv-genre-decade-row-head {
+	.lwtv-decade-tile-row-head {
 		display: flex;
 		align-items: baseline;
 		justify-content: space-between;
@@ -3564,33 +3772,37 @@ canvas {
 		font-size: 0.8rem;
 	}
 
-	a.lwtv-genre-decade-name,
-	a.lwtv-genre-decade-name:visited {
+	a.lwtv-decade-tile-name,
+	a.lwtv-decade-tile-name:visited {
 		color: colors.$lwtv-grey-deep;
 		text-decoration: none;
 		font-weight: 500;
 	}
 
-	.lwtv-genre-decade-value {
+	.lwtv-decade-tile-value {
 		font-variant-numeric: tabular-nums;
 		color: colors.$lwtv-grey-deep;
 	}
 
-	.lwtv-genre-decade-track {
+	.lwtv-decade-tile-track {
 		height: 6px;
 		border-radius: 999px;
 	}
 
-	.lwtv-genre-decade-empty {
+	.lwtv-decade-tile-empty {
 		margin: 0;
 		font-size: 0.8rem;
 		color: colors.$lwtv-grey-deep;
 	}
 
-	// Family color for the mini bars — same amber token the full Genre
-	// Breakdown panel's .lwtv-bars--genres already resolves to.
-	.lwtv-bars--genres .lwtv-genre-decade-track .progress-bar {
+	// Family color for the mini bars — same tokens the full-width Breakdown
+	// panels above already resolve to for each family.
+	.lwtv-bars--genres .lwtv-decade-tile-track .progress-bar {
 		background-color: colors.$lwtv-yellow-deep;
+	}
+
+	.lwtv-bars--intersections .lwtv-decade-tile-track .progress-bar {
+		background-color: colors.$lwtv-royal-blue;
 	}
 
 	// Tablet (e.g. iPad portrait, ~810-834px): a 4-across row is too cramped to
