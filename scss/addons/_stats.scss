@@ -3489,55 +3489,108 @@ canvas {
 		color: colors.$lwtv-grey-medium;
 	}
 
-	// Genre by Decade: placeholder card only — no chart, no data, until the
-	// genre-equivalent of Format_Trend's tally query exists. Deliberately
-	// dark in both light and dark mode (a "coming soon" teaser card, not a
-	// themed content panel), so it needs its own bg/text pair rather than
-	// the usual light-mode-token + dark-mode-override split. Neither hue has
-	// an existing token — flag for promotion to _colors.scss if this card
-	// sticks around past the decade view actually shipping.
-	$genre-decade-bg: #2b1608;
-	$genre-decade-text: #fde68a;
-
-	.lwtv-decade-placeholder {
-		background-color: $genre-decade-bg;
-		border-color: $genre-decade-bg;
-		color: $genre-decade-text;
-		text-align: center;
+	// Genre by Decade: small-multiple tiles, one per decade bucket, each
+	// showing its own top-3 genres as independent "% of shows that decade"
+	// bars (Genre_Trend/Genre_Decade_Buckets) — reuses the same
+	// .progress/.progress-bar/data-grow-to markup as the full-width Genre
+	// Breakdown panel below, just at tile scale, so the two sections read
+	// as the same visual language at two different densities.
+	.lwtv-genre-decade-note {
+		margin: -0.25rem 0 1rem;
+		font-size: 0.85rem;
+		color: colors.$lwtv-grey-deep;
 	}
 
-	.lwtv-decade-placeholder-icon {
-		display: inline-flex;
-		margin-bottom: 0.5rem;
-		color: $genre-decade-text;
+	.lwtv-genre-decade-grid {
+		display: grid;
+		grid-template-columns: repeat(4, 1fr);
+		gap: 12px;
+		margin-bottom: 1.5rem;
 
-		svg {
-			fill: currentColor;
+		@media (max-width: 991px) {
+			grid-template-columns: repeat(2, 1fr);
+		}
+
+		@media (max-width: 575px) {
+			grid-template-columns: 1fr;
 		}
 	}
 
-	.lwtv-decade-placeholder-pill {
-		display: block;
-		margin: 0 auto 0.75rem;
-		padding: 3px 10px;
-		width: fit-content;
-		border-radius: 999px;
-		font-size: 0.68rem;
+	.lwtv-genre-decade-tile {
+		padding: 16px;
+		border: 1px solid colors.$lwtv-grey-border;
+		border-radius: 14px;
+	}
+
+	.lwtv-genre-decade-head {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 8px;
+		margin-bottom: 10px;
+	}
+
+	.lwtv-genre-decade-label {
+		font-size: 0.95rem;
 		font-weight: 700;
-		letter-spacing: 0.06em;
 		text-transform: uppercase;
-		color: $genre-decade-bg;
-		background-color: $genre-decade-text;
+		letter-spacing: 0.02em;
 	}
 
-	.lwtv-decade-placeholder .lwtv-panel-title {
-		color: $genre-decade-text;
+	.lwtv-decade-suffix {
+		text-transform: lowercase;
 	}
 
-	.lwtv-decade-placeholder-copy {
-		margin: 0.5rem 0 0;
-		font-size: 0.9rem;
-		color: rgba($genre-decade-text, 0.85);
+	.lwtv-genre-decade-count {
+		font-size: 0.75rem;
+		color: colors.$lwtv-grey-deep;
+		white-space: nowrap;
+	}
+
+	.lwtv-genre-decade-row {
+		margin-bottom: 0.6rem;
+
+		&:last-child {
+			margin-bottom: 0;
+		}
+	}
+
+	.lwtv-genre-decade-row-head {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 8px;
+		margin-bottom: 4px;
+		font-size: 0.8rem;
+	}
+
+	a.lwtv-genre-decade-name,
+	a.lwtv-genre-decade-name:visited {
+		color: colors.$lwtv-grey-deep;
+		text-decoration: none;
+		font-weight: 500;
+	}
+
+	.lwtv-genre-decade-value {
+		font-variant-numeric: tabular-nums;
+		color: colors.$lwtv-grey-deep;
+	}
+
+	.lwtv-genre-decade-track {
+		height: 6px;
+		border-radius: 999px;
+	}
+
+	.lwtv-genre-decade-empty {
+		margin: 0;
+		font-size: 0.8rem;
+		color: colors.$lwtv-grey-deep;
+	}
+
+	// Family color for the mini bars — same amber token the full Genre
+	// Breakdown panel's .lwtv-bars--genres already resolves to.
+	.lwtv-bars--genres .lwtv-genre-decade-track .progress-bar {
+		background-color: colors.$lwtv-yellow-deep;
 	}
 
 	// Tablet (e.g. iPad portrait, ~810-834px): a 4-across row is too cramped to

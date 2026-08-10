@@ -6,10 +6,12 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Shows → Genres: infographic rework (amber). Shares add up past 100% (multi-value taxonomy).
  *
  * Ports the Tropes rework's Load waffle + Common Pairings pattern onto
- * lez_genres, plus two genre-specific additions: a "matchup card" treatment
- * for pairings (per design handoff) and an "Uncharted Genres" reframe of the
- * long tail. Genre-by-Decade is a placeholder only — it needs a new tally
- * query (a genre-equivalent of Format_Trend) before it can ship.
+ * lez_genres, plus genre-specific additions: a "matchup card" treatment
+ * for pairings (per design handoff), an "Uncharted Genres" reframe of the
+ * long tail, and a Genre by Decade section (Genre_Trend/Genre_Decade_Buckets)
+ * showing each decade's top 3 genres as independent shares of that decade's
+ * shows — not a Format Mix by Decade donut port, since genres are
+ * multi-value and don't partition to 100%.
  *
  * @package LezWatch.TV
  *
@@ -320,21 +322,72 @@ if ( $genres_uncharted_n > 0 && (int) $shows_count > 0 ) {
 ?>
 
 <?php
-// ---- Genre by Decade: placeholder only ----
-// Needs a new tally query (a genre-equivalent of Format_Trend, tallying
-// against lez_genres' multi-value relationships rather than a single term
-// per show) before any chart work starts — decade shares here won't sum to
-// 100% the way Format Mix by Decade's do, so this isn't a straight port.
-// No data, no chart, just the reserved placeholder.
+// ---- Genre by Decade ----
+// lez_genres is multi-value (a show can carry several genres at once), so
+// this can't be Format Mix by Decade's donut — those segments partition
+// 100% of a bucket because format is single-value; genre shares don't and
+// aren't meant to. Genre_Trend/Genre_Decade_Buckets track each bucket's
+// distinct show count separately from its genre tag counts, and this
+// renders the top 3 genres per decade as their own "% of shows that
+// decade" bars — each row true on its own terms, with no implied total.
+$genres_decade_buckets = ( new \LWTV\Statistics\Build\Genre_Trend() )->generate( 20, 3 );
+
+if ( ! empty( $genres_decade_buckets ) ) :
+	?>
+	<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'Genre Mix by Decade', 'lwtv' ); ?></p>
+	<p class="lwtv-genre-decade-note"><?php esc_html_e( 'Top 3 genres per decade, each as its own share of shows that premiered in that decade. As shows often carry more than one genre, the three don\'t add up to 100%.', 'lwtv' ); ?></p>
+	<div class="lwtv-genre-decade-grid">
+		<?php foreach ( $genres_decade_buckets as $genres_decade_bucket ) : ?>
+			<?php
+			// Mirrors Format Mix by Decade's label construction: the
+			// trailing "s" is wrapped so it can be forced lowercase inside
+			// an uppercase-transformed eyebrow.
+			if ( 'before' === $genres_decade_bucket['type'] ) {
+				$genres_decade_label = $genres_decade_bucket['to']
+					/* translators: %d: the decade this bucket ends before, e.g. "Before 1980s". */
+					? sprintf( __( 'Before %1$d<span class="lwtv-decade-suffix">s</span>', 'lwtv' ), $genres_decade_bucket['to'] )
+					: __( 'Earliest years', 'lwtv' );
+			} else {
+				/* translators: %d: a decade, e.g. "1980s". */
+				$genres_decade_label = sprintf( __( '%1$d<span class="lwtv-decade-suffix">s</span>', 'lwtv' ), $genres_decade_bucket['from'] );
+			}
+			?>
+			<div class="lwtv-genre-decade-tile">
+				<div class="lwtv-genre-decade-head">
+					<span class="lwtv-genre-decade-label"><?php echo wp_kses( $genres_decade_label, array( 'span' => array( 'class' => array() ) ) ); ?></span>
+					<span class="lwtv-genre-decade-count">
+						<?php
+						printf(
+							/* translators: %s: number of shows that premiered in this bucket. */
+							esc_html__( '%s shows', 'lwtv' ),
+							esc_html( number_format_i18n( $genres_decade_bucket['shows'] ) )
+						);
+						?>
+					</span>
+				</div>
+				<?php if ( empty( $genres_decade_bucket['top'] ) ) : ?>
+					<p class="lwtv-genre-decade-empty"><?php esc_html_e( 'No genres tracked yet.', 'lwtv' ); ?></p>
+				<?php else : ?>
+					<div class="lwtv-genre-decade-rows lwtv-bars--genres">
+						<?php foreach ( $genres_decade_bucket['top'] as $genres_decade_row ) : ?>
+							<div class="lwtv-genre-decade-row">
+								<div class="lwtv-genre-decade-row-head">
+									<a class="lwtv-genre-decade-name" href="<?php echo esc_url( site_url( '/genre/' . $genres_decade_row['slug'] ) ); ?>"><?php echo esc_html( $genres_decade_row['name'] ); ?></a>
+									<span class="lwtv-genre-decade-value"><?php echo esc_html( number_format_i18n( $genres_decade_row['pct'], 1 ) . '%' ); ?></span>
+								</div>
+								<div class="progress lwtv-genre-decade-track">
+									<div class="progress-bar" role="progressbar" style="width:0" data-grow-to="<?php echo esc_attr( (string) $genres_decade_row['pct'] ); ?>" aria-valuenow="<?php echo esc_attr( (string) $genres_decade_row['count'] ); ?>" aria-valuemin="0" aria-valuemax="<?php echo esc_attr( (string) $genres_decade_bucket['shows'] ); ?>"></div>
+								</div>
+							</div>
+						<?php endforeach; ?>
+					</div>
+				<?php endif; ?>
+			</div>
+		<?php endforeach; ?>
+	</div>
+	<?php
+endif;
 ?>
-<section class="lwtv-panel lwtv-decade-placeholder">
-	<span class="lwtv-decade-placeholder-icon">
-		<?php echo lwtv_plugin()->get_symbolicon( svg: 'hourglass.svg', icon: 'svg-hourglass', max_size: '20' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-	</span>
-	<span class="lwtv-decade-placeholder-pill"><?php esc_html_e( 'Coming soon', 'lwtv' ); ?></span>
-	<h2 class="lwtv-panel-title"><?php esc_html_e( 'Genre by Decade', 'lwtv' ); ?></h2>
-	<p class="lwtv-decade-placeholder-copy"><?php esc_html_e( 'A look at how genres have shifted as a share of queer shows across the decades, coming once the data behind it is ready.', 'lwtv' ); ?></p>
-</section>
 
 <!-- Genre Breakdown: unchanged data/query, just a denser 2-col layout -->
 <div class="lwtv-genres-breakdown-wrap">
