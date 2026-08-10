@@ -4,6 +4,41 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [7.1.10] - 2026-08-11
+
+### Added
+
+- The Shows overview gains a headline index: one figure per statistics subpage, ordered to match the subnav and linking through to the full view, so the page doubles as a visual table of contents.
+- The Shows overview gains a library band showing total seasons and episodes, displayed only when episode coverage is high enough to be meaningful.
+- The Shows → Genres view gains a working Genre by Decade section, with one tile per decade showing that decade's top three genres.
+- The Shows → Genres view gains a Genre Load breakdown of how many genres a show carries, a Common Genre Pairings panel, and a "Still Largely Uncharted" section reframing the long tail as genres queer TV has barely reached.
+- The Shows → Tropes view gains a Trope Alignment row counting shows that carry at least one good, maybe, bad, or ploy trope, a Trope Load breakdown with a spotlight on the most trope-loaded show, a Mixed Alignment donut, and a Common Pairings list.
+- The Shows → Intersectionality view gains an Intersection Load breakdown, a Single vs Multiple donut, and an Intersections by Decade grid.
+- The Shows → Formats view gains a Format Mix by Decade row of compact donut tiles and a long tail callout naming the two smallest formats and their combined share.
+- The Characters → Gender and → Sexuality views each gain a decade-by-decade identity mix and a "Firsts" list naming the earliest recorded character for every tracked identity.
+- The Characters → Clichés view gains a Cliché Load breakdown with a spotlight on the most-clichéd character, and a Common Pairings panel for clichés that appear together on the same character.
+
+### Changed
+
+- The Characters → Most Clichés view becomes "Most" and expands from one leaderboard into five character records: most clichés, most shows, most actors, most resurrected, and longest-running. Each shows its record holder plus a top-five table, and categories with too little data leave ranks blank rather than padding them.
+- The Characters overview is rebuilt with a headline index of its own; "Stories We Keep Telling" is replaced by "The Cliché Gap," which pairs the Dead cliché against characters written with no cliché at all, and "Played by Queer Actors" grows into a Casting Gap section stating how many times more often straight or cisgender actors are cast in queer roles.
+- The Trope Gap cards on the Shows overview now show proportional charts and a computed callout of how much more likely a queer character is to be killed off than given a happy ending.
+- Common Pairings on the Shows → Intersectionality view now link straight to the matching filtered shows archive.
+- The Shows → Stars view now reads its gold, silver, bronze, and anti tier descriptions from the star terms themselves instead of hardcoded copy.
+- Several headline and description sentences across the statistics views were reworded to read as complete sentences on their own.
+
+### Fixed
+
+- The "subtext" trope was counted in two scoring groups at once, where it canceled itself out in the show score while still counting against the total. It now counts only as a maybe trope, which changes the trope score for shows carrying it.
+- Character death and longest-running records no longer double-count characters whose entries have been edited.
+- Genre Load's chart legend rendered pink dots instead of matching its own bucket colors.
+- Decade grouping miscounted which decade some shows and characters belonged to.
+- The donut chart icon and the Trope Gap description text were too low-contrast in dark mode.
+
+### Removed
+
+- The Top Tropes and Top Genres panels and the decorative sparkline are gone from the Shows overview, since the headline index now carries that information.
+
 ## [7.1.9] - 2026-08-06
 
 ### Added
