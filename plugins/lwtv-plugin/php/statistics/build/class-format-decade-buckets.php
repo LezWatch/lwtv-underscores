@@ -67,13 +67,27 @@ class Format_Decade_Buckets {
 		$leading       = array();
 		$leading_total = 0;
 		$leading_done  = false;
+		$first_decade  = array_key_first( $decades );
 
 		foreach ( $decades as $decade => $formats ) {
 			if ( ! $leading_done ) {
+				$current_total = array_sum( $formats );
+
+				// A first decade that already clears the floor on its own
+				// stands alone as a real 'decade' bucket rather than
+				// getting wrapped in a 'before' label it doesn't need —
+				// 'before' only makes sense once at least one earlier,
+				// sparser decade has actually been folded in.
+				if ( $decade === $first_decade && $current_total >= $min_bucket_size ) {
+					$buckets[]    = self::describe( 'decade', $decade, $decade + 10, $formats );
+					$leading_done = true;
+					continue;
+				}
+
 				foreach ( $formats as $format => $count ) {
 					$leading[ $format ] = ( $leading[ $format ] ?? 0 ) + $count;
 				}
-				$leading_total += array_sum( $formats );
+				$leading_total += $current_total;
 
 				if ( $leading_total >= $min_bucket_size ) {
 					$buckets[]    = self::describe( 'before', null, $decade + 10, $leading );
