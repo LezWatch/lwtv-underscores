@@ -32,6 +32,10 @@ use LWTV\Statistics\Build\Formats as Build_Formats;
 use LWTV\Statistics\Build\We_Love_It as Build_Loved;
 use LWTV\Statistics\Build\Worth_It as Build_Worth_It;
 use LWTV\Statistics\Build\Cliche_Leaders as Build_Cliche_Leaders;
+use LWTV\Statistics\Build\Character_Show_Leaders as Build_Character_Show_Leaders;
+use LWTV\Statistics\Build\Character_Actor_Leaders as Build_Character_Actor_Leaders;
+use LWTV\Statistics\Build\Character_Death_Leaders as Build_Character_Death_Leaders;
+use LWTV\Statistics\Build\Character_Longevity_Leaders as Build_Character_Longevity_Leaders;
 use LWTV\_Components\Transients;
 
 /**
@@ -351,14 +355,25 @@ class Statistics_Cache_Warming {
 	}
 
 	/**
-	 * Warm the "most cliches" leaderboard cache (backs the characters/most-cliches
-	 * view). Previously unwarmed, so it always rebuilt cold after an edit.
+	 * Warm the five leaderboard caches backing the characters/most-cliches
+	 * ("Most") view: most clichés, most shows (crossovers), most actors
+	 * (recasts), most resurrected (2+ deaths), longest-running (widest
+	 * on-screen year span). Each is cached under a limit-specific transient
+	 * key (generate()'s $limit is part of the key), so the page's actual
+	 * top-5 request needs its own warm — warming only the 25-row default
+	 * here would leave the top-5 lookup to build cold on first visit.
+	 * Previously only the cliché leaderboard existed and was unwarmed, so
+	 * it always rebuilt cold after an edit.
 	 *
 	 * @return void
 	 */
 	private function warm_cliche_leaders_statistics(): void {
-		( new Build_Cliche_Leaders() )->generate();
+		( new Build_Cliche_Leaders() )->generate( 5 );
+		( new Build_Character_Show_Leaders() )->generate( 5 );
+		( new Build_Character_Actor_Leaders() )->generate( 5 );
+		( new Build_Character_Death_Leaders() )->generate( 5 );
+		( new Build_Character_Longevity_Leaders() )->generate( 5 );
 
-		lwtv_plugin()->debug_log( 'statistics', 'Warming cliche leaders statistics caches...' );
+		lwtv_plugin()->debug_log( 'statistics', 'Warming "most" leaderboard statistics caches...' );
 	}
 }

@@ -3823,6 +3823,156 @@ canvas {
 		}
 	}
 
+	// Characters → Most: three top-5 leaderboard panels (Most Clichés,
+	// Most Shows, Most Actors) side by side. These are full ranked-bars
+	// panels (header + up to 5 rows each), heavier than the pullstats
+	// statcards, so this collapses at the same 900px breakpoint the
+	// asymmetric Load/Pairings grids use rather than pullstats' lighter
+	// 767px.
+	// "The Records" (Characters → Most): a five-column spotlight row (the
+	// #1 character per category, reusing the .lwtv-metric-card shape
+	// characters/overview.php already established) plus a Full Rankings
+	// table below it. Both real design tokens throughout (Oswald headings,
+	// $lwtv-green-deep, $lwtv-grey-light/-border) rather than the design
+	// handoff mockup's literal hex values, which were an approximation of
+	// this exact palette to begin with.
+	.lwtv-metric-grid--5 {
+		grid-template-columns: repeat(5, 1fr);
+	}
+
+	@media (max-width: 900px) {
+		.lwtv-metric-grid--5 {
+			grid-template-columns: repeat(3, 1fr);
+		}
+	}
+
+	@media (max-width: 650px) {
+		.lwtv-metric-grid--5 {
+			grid-template-columns: repeat(2, 1fr);
+		}
+	}
+
+	// A neutral tint rather than the solid family-color fill .card-header +
+	// a family class normally gives .lwtv-metric-card (see characters/
+	// overview.php) — five cards in a row all in that same green fill made
+	// the pink winner-name text hard to read against it. This matches the
+	// design handoff's own light-card + colored-text treatment instead.
+	.lwtv-records-spotlight .lwtv-metric-card {
+		background-color: colors.$lwtv-grey-light;
+		border-color: transparent;
+
+		.lwtv-stats-eyebrow {
+			color: colors.$lwtv-grey-deep;
+		}
+
+		.lwtv-metric-number {
+			color: colors.$lwtv-green-deep;
+		}
+
+		// .lwtv-metric-icon's glyph is fill: currentColor, taking its color
+		// from "color: inherit" on the base rule — on the Characters overview
+		// page that inherits white from the surrounding card-header.characters
+		// fill. This card has no such fill, so the icon needs its own white
+		// set explicitly or the glyph reads dark-on-dark-green.
+		.lwtv-metric-icon {
+			color: colors.$white;
+		}
+	}
+
+	.lwtv-records-winner {
+		display: block;
+		font-family: fonts.$headingfontfamily;
+		font-weight: 600;
+		font-size: 0.92rem;
+		line-height: 1.25;
+	}
+
+	.lwtv-records-number--empty {
+		color: colors.$lwtv-grey-border;
+	}
+
+	.lwtv-records-table-label {
+		margin-top: 1.5rem;
+		font-size: 0.75rem;
+		color: colors.$lwtv-grey-deep;
+	}
+
+	// Same overflow-x precedent as .lwtv-death-list-wrap: six columns (rank +
+	// five categories) get tight on narrow viewports, so the table scrolls
+	// horizontally there rather than cramming every column unreadably thin.
+	.lwtv-records-table-wrap {
+		overflow-x: auto;
+	}
+
+	.lwtv-records-table {
+		min-width: 640px;
+		border: 1px solid colors.$lwtv-grey-border;
+		border-radius: 12px;
+		overflow: hidden;
+	}
+
+	// Each "row" is its own mini grid sharing the same column template,
+	// rather than one grid across the whole table + display:contents —
+	// simpler to reason about and just as reliably column-aligned.
+	.lwtv-records-row {
+		display: grid;
+		grid-template-columns: 36px repeat(5, 1fr);
+
+		&--alt .lwtv-records-cell {
+			background-color: rgba(colors.$black, 0.02);
+		}
+	}
+
+	.lwtv-records-cell {
+		padding: 7px 10px;
+		font-size: 0.78rem;
+		border-left: 1px solid colors.$lwtv-grey-border;
+
+		&--rank {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			padding: 8px 6px;
+			font-family: fonts.$headingfontfamily;
+			font-weight: 700;
+			font-size: 0.85rem;
+			color: colors.$lwtv-grey-deep;
+			border-left: none;
+		}
+
+		&--head {
+			padding: 8px 8px;
+			font-weight: 700;
+			font-size: 0.6rem;
+			letter-spacing: 0.03em;
+			text-transform: uppercase;
+			color: colors.$lwtv-grey-deep;
+			text-align: center;
+		}
+	}
+
+	.lwtv-records-row--head .lwtv-records-cell {
+		background-color: colors.$lwtv-grey-light;
+	}
+
+	.lwtv-records-name {
+		font-weight: 600;
+	}
+
+	.lwtv-records-value {
+		color: colors.$lwtv-grey-deep;
+	}
+
+	.lwtv-records-dash {
+		color: colors.$lwtv-grey-border;
+	}
+
+	.lwtv-records-note {
+		margin: 0.5rem 0 0;
+		font-size: 0.78rem;
+		color: colors.$lwtv-grey-deep;
+	}
+
 	// Still Largely Uncharted: reframed long tail. Striped "unexplored"
 	// track with a solid amber fill sized to the combined share of the
 	// bottom genres — an "explored vs. unexplored" gauge, not a warning.

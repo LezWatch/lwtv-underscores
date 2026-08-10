@@ -475,6 +475,39 @@
 			border-color: colors.$lwtv-grey-border;
 		}
 
+		.lwtv-records-spotlight .lwtv-metric-card {
+			background-color: $lwtv-grey-medium;
+
+			.lwtv-stats-eyebrow {
+				color: colors.$lwtv-grey-light;
+			}
+
+			.lwtv-metric-number {
+				color: $lwtv-green-light;
+			}
+		}
+
+		.lwtv-records-table {
+			border-color: rgba(colors.$white, 0.15);
+		}
+
+		.lwtv-records-cell {
+			border-left-color: rgba(colors.$white, 0.12);
+		}
+
+		.lwtv-records-row--head .lwtv-records-cell {
+			background-color: $lwtv-grey-medium;
+		}
+
+		.lwtv-records-row--alt .lwtv-records-cell {
+			background-color: rgba(colors.$white, 0.04);
+		}
+
+		.lwtv-records-dash,
+		.lwtv-records-number--empty {
+			color: rgba(colors.$white, 0.3);
+		}
+
 		.tablesorter-bootstrap:not(.table-dark) tfoot td, .tablesorter-bootstrap:not(.table-dark) tfoot th, .tablesorter-bootstrap:not(.table-dark) thead:not(.thead-dark) .tablesorter-header {
 			background-color: colors.$lwtv-grey-alt;
 		}
@@ -491,6 +524,11 @@
 		.lwtv-leader-value,
 		.lwtv-metric-number,
 		.lwtv-panel-sub,
+		.lwtv-records-cell--head,
+		.lwtv-records-cell--rank,
+		.lwtv-records-table-label,
+		.lwtv-records-value,
+		.lwtv-records-note,
 		.lwtv-tail-count,
 		.lwtv-tail-name,
 		.lwtv-trend-current-sub,
