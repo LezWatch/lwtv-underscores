@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 $lwtv_char_subnav = array(
 	'overview'     => __( 'Overview', 'lwtv' ),
 	'cliches'      => __( 'Clichés', 'lwtv' ),
-	'most-cliches' => __( 'Most Clichés', 'lwtv' ),
+	'most-cliches' => __( 'Most', 'lwtv' ),
 	'gender'       => __( 'Gender', 'lwtv' ),
 	'sexuality'    => __( 'Sexuality', 'lwtv' ),
 	'queer-irl'    => __( 'Queer IRL', 'lwtv' ),

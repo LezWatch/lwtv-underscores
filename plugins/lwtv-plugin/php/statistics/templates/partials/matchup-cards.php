@@ -7,16 +7,19 @@ if ( ! defined( 'ABSPATH' ) ) {
  * shows-together count.
  *
  * Genre Stats' alternative to the lollipop-list Common Pairings treatment
- * used by Tropes/Intersectionality — same underlying Intersection_Pairs
- * data, a denser card layout instead of a ranked list. Deliberately
- * unlinked by default: pass a 'url' per item only once a FacetWP
- * multi-value param is confirmed for the taxonomy in question.
+ * originally used by Tropes/Intersectionality — same underlying
+ * Intersection_Pairs data, a denser card layout instead of a ranked list.
+ * Unlinked by default: only pass a per-item 'url' once a FacetWP
+ * multi-value param is confirmed for the taxonomy in question (e.g.
+ * Intersectionality's fwp_show_intersectionality). Rows without one render
+ * as plain non-interactive divs, same as always — this never adds a
+ * dead "#" link.
  *
  * @package LezWatch.TV
  *
  * @var array $matchup {
- *   @type array  $items  [ { 'a'=>string, 'b'=>string, 'count'=>int }, … ]. No link support yet —
- *                         add one once a FacetWP multi-value param is confirmed for the taxonomy.
+ *   @type array  $items  [ { 'a'=>string, 'b'=>string, 'count'=>int, 'url'=>string (optional) }, … ].
+ *                         A row with a 'url' renders as a link; without one, a plain div (default).
  *   @type string $family Color family (matches .lwtv-panel-icon.<family> / .lwtv-bars--<family>).
  *   @type string $svg    Header icon sprite file.
  *   @type string $icon   Header icon fallback key.
@@ -50,8 +53,17 @@ if ( empty( $matchup_items ) ) {
 		</div>
 	</header>
 	<div class="lwtv-matchup-grid">
-		<?php foreach ( $matchup_items as $matchup_item ) : ?>
-			<div class="lwtv-matchup-row">
+		<?php
+		foreach ( $matchup_items as $matchup_item ) :
+			$matchup_url = $matchup_item['url'] ?? '';
+			$matchup_tag = ( '' !== $matchup_url ) ? 'a' : 'div';
+			?>
+			<<?php echo esc_attr( $matchup_tag ); ?>
+				class="lwtv-matchup-row"
+				<?php if ( '' !== $matchup_url ) : ?>
+					href="<?php echo esc_url( $matchup_url ); ?>"
+				<?php endif; ?>
+			>
 				<span class="lwtv-matchup-count">
 					<?php echo esc_html( number_format_i18n( (int) ( $matchup_item['count'] ?? 0 ) ) ); ?>
 					<?php if ( ! empty( $matchup['unit'] ) ) : ?>
@@ -63,7 +75,7 @@ if ( empty( $matchup_items ) ) {
 					<span class="lwtv-matchup-plus" aria-hidden="true">+</span>
 					<?php echo esc_html( $matchup_item['b'] ?? '' ); ?>
 				</span>
-			</div>
+			</<?php echo esc_attr( $matchup_tag ); ?>>
 		<?php endforeach; ?>
 	</div>
 	<?php if ( ! empty( $matchup['footer']['number'] ) ) : ?>

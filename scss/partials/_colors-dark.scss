@@ -475,6 +475,43 @@
 			border-color: colors.$lwtv-grey-border;
 		}
 
+		.lwtv-records-spotlight .lwtv-metric-card {
+			background-color: $lwtv-grey-medium;
+
+			.lwtv-stats-eyebrow {
+				color: colors.$lwtv-grey-light;
+			}
+
+			.lwtv-metric-number {
+				color: $lwtv-green-light;
+			}
+		}
+
+		.lwtv-identity-firsts-row {
+			border-color: rgba(colors.$white, 0.12);
+		}
+
+		.lwtv-records-table {
+			border-color: rgba(colors.$white, 0.15);
+		}
+
+		.lwtv-records-cell {
+			border-left-color: rgba(colors.$white, 0.12);
+		}
+
+		.lwtv-records-row--head .lwtv-records-cell {
+			background-color: $lwtv-grey-medium;
+		}
+
+		.lwtv-records-row--alt .lwtv-records-cell {
+			background-color: rgba(colors.$white, 0.04);
+		}
+
+		.lwtv-records-dash,
+		.lwtv-records-number--empty {
+			color: rgba(colors.$white, 0.3);
+		}
+
 		.tablesorter-bootstrap:not(.table-dark) tfoot td, .tablesorter-bootstrap:not(.table-dark) tfoot th, .tablesorter-bootstrap:not(.table-dark) thead:not(.thead-dark) .tablesorter-header {
 			background-color: colors.$lwtv-grey-alt;
 		}
@@ -489,8 +526,15 @@
 		.lwtv-leader-name,
 		.lwtv-leader-rank,
 		.lwtv-leader-value,
+		.lwtv-identity-firsts-term,
+		.lwtv-identity-firsts-year,
 		.lwtv-metric-number,
 		.lwtv-panel-sub,
+		.lwtv-records-cell--head,
+		.lwtv-records-cell--rank,
+		.lwtv-records-table-label,
+		.lwtv-records-value,
+		.lwtv-records-note,
 		.lwtv-tail-count,
 		.lwtv-tail-name,
 		.lwtv-trend-current-sub,
@@ -1003,6 +1047,23 @@
 			stroke-width: 1px;
 		}
 
+		// Cliché Load's ramp is built the same way (palest green swatch is
+		// bucket 0) and, like Trope Load, its legend override now targets
+		// :nth-child(1) rather than the --b0 modifier class (needed to
+		// out-specify the page-wide raspberry ramp default — see the
+		// comment in _stats.scss above .lwtv-clicheload
+		// .lwtv-legend-row:nth-child(1) .lwtv-legend-dot) — same
+		// visibility fix, same rgba, same selector shape as Trope Load's.
+		.lwtv-clicheload .lwtv-legend-row:nth-child(1) .lwtv-legend-dot {
+			outline: 1px solid rgba(colors.$white, 0.15);
+			outline-offset: -1px;
+		}
+
+		.lwtv-clicheload .lwtv-waffle-dot--b0 {
+			stroke: rgba(colors.$white, 0.15);
+			stroke-width: 1px;
+		}
+
 		.lwtv-legend-pct {
 			color: colors.$white;
 		}
@@ -1069,12 +1130,24 @@
 		// visibility fix as Trope Load's palest-green bucket 0 above) — the
 		// grey dot and legend outline both need lifting against the dark
 		// page background, and the SVG dot needs a stroke rather than outline.
-		.lwtv-genreload .lwtv-legend-dot--b0 {
+		.lwtv-genreload .lwtv-legend-row:nth-child(1) .lwtv-legend-dot {
 			outline: 1px solid rgba(colors.$white, 0.15);
 			outline-offset: -1px;
 		}
 
 		.lwtv-genreload .lwtv-waffle-dot--b0 {
+			stroke: rgba(colors.$white, 0.15);
+			stroke-width: 1px;
+		}
+
+		// Intersection Load's pale grey "0 intersections" swatch needs the
+		// same visibility fix as Genre/Trope Load's own bucket-0 above.
+		.lwtv-interload .lwtv-legend-row:nth-child(1) .lwtv-legend-dot {
+			outline: 1px solid rgba(colors.$white, 0.15);
+			outline-offset: -1px;
+		}
+
+		.lwtv-interload .lwtv-waffle-dot--b0 {
 			stroke: rgba(colors.$white, 0.15);
 			stroke-width: 1px;
 		}
