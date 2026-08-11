@@ -25,18 +25,20 @@ class Cliche_Leaders {
 	/**
 	 * Generate the most-clichéd-characters leaderboard.
 	 *
-	 * Returns the top TOP_LIMIT characters by cliché count. Ties on count are
-	 * broken by most-recently-added character first. Keyed by character ID,
-	 * ordered highest count first.
+	 * Returns the top $limit characters by cliché count (defaults to
+	 * TOP_LIMIT). Ties on count are broken by most-recently-added character
+	 * first. Keyed by character ID, ordered highest count first.
 	 *
+	 * @param int $limit How many characters to return.
 	 * @return array [ int $char_id => [ 'name' => string, 'count' => int, 'url' => string ] ]
 	 */
-	public function generate() {
-		$transient = 'cliche_leaders_characters_top' . self::TOP_LIMIT;
+	public function generate( int $limit = self::TOP_LIMIT ) {
+		$limit     = max( 1, $limit );
+		$transient = 'cliche_leaders_characters_top' . $limit;
 		$array     = lwtv_plugin()->get_transient( $transient );
 
 		if ( false === $array ) {
-			$array = $this->build_leaders_data();
+			$array = $this->build_leaders_data( $limit );
 
 			// Cache for 7 days since character data is relatively stable.
 			if ( ! empty( $array ) ) {
@@ -50,15 +52,16 @@ class Cliche_Leaders {
 	/**
 	 * Build the leaderboard by counting lez_cliches terms per character.
 	 *
+	 * @param int $limit How many characters to return.
 	 * @return array Character leaderboard data.
 	 */
-	public function build_leaders_data() {
+	public function build_leaders_data( int $limit = self::TOP_LIMIT ) {
 		global $wpdb;
 
 		// Count how many lez_cliches terms each published character carries, then
-		// take the top TOP_LIMIT. Ties on count are broken by most-recently-added
+		// take the top $limit. Ties on count are broken by most-recently-added
 		// character first (post_date DESC). No user input: taxonomy and post_type
-		// are hardcoded literals and the limit is an integer constant.
+		// are hardcoded literals and the limit is cast to int.
 		// phpcs:disable
 		$query = "SELECT chars.ID as id, chars.post_title as name, COUNT(tr.term_taxonomy_id) as cliche_count
 			FROM {$wpdb->posts} chars
@@ -69,7 +72,7 @@ class Cliche_Leaders {
 			AND tt.taxonomy = 'lez_cliches'
 			GROUP BY chars.ID
 			ORDER BY cliche_count DESC, chars.post_date DESC
-			LIMIT " . (int) self::TOP_LIMIT;
+			LIMIT " . (int) $limit;
 		// phpcs:enable
 
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- No user input; all values are hardcoded literals or an integer constant.

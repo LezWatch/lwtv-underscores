@@ -36,7 +36,7 @@ $score_peak_count = max( 1, max( array_column( $score_histo['buckets'], 'count' 
 			<span class="lwtv-stats-eyebrow"><?php esc_html_e( 'The Typical Show', 'lwtv' ); ?></span>
 		</div>
 		<span class="lwtv-tropegap-number" data-count-to="<?php echo (int) round( $score_median ); ?>"><?php echo esc_html( number_format_i18n( (int) round( $score_median ) ) ); ?></span>
-		<p class="lwtv-tropegap-desc"><?php esc_html_e( 'is the median score, meaning half of all shows grade higher, half lower.', 'lwtv' ); ?></p>
+		<p class="lwtv-tropegap-desc"><?php esc_html_e( 'Half of all shows grade higher, half lower.', 'lwtv' ); ?></p>
 	</div>
 	<div class="lwtv-tropegap card-header happy-endings">
 		<div class="lwtv-tropegap-top">
@@ -47,7 +47,7 @@ $score_peak_count = max( 1, max( array_column( $score_histo['buckets'], 'count' 
 			<?php
 			printf(
 				/* translators: %s: percentage of shows scoring 90 or higher. */
-				esc_html__( 'shows have ever scored 90 or higher, which is about %s%% of everything we track.', 'lwtv' ),
+				esc_html__( '%s%% of all shows have ever scored 90 or higher.', 'lwtv' ),
 				esc_html( (string) round( ( $score_tails['high'] / $score_histo['total'] ) * 100, 1 ) )
 			);
 			?>
@@ -58,7 +58,7 @@ $score_peak_count = max( 1, max( array_column( $score_histo['buckets'], 'count' 
 			<span class="lwtv-stats-eyebrow"><?php esc_html_e( 'Failing Grades', 'lwtv' ); ?></span>
 		</div>
 		<span class="lwtv-tropegap-number" data-count-to="<?php echo (int) $score_tails['low']; ?>"><?php echo esc_html( number_format_i18n( $score_tails['low'] ) ); ?></span>
-		<p class="lwtv-tropegap-desc"><?php esc_html_e( 'shows score under 20, making their representation in name only.', 'lwtv' ); ?></p>
+		<p class="lwtv-tropegap-desc"><?php esc_html_e( 'Shows that score under 20 are representation in name only.', 'lwtv' ); ?></p>
 	</div>
 </div>
 

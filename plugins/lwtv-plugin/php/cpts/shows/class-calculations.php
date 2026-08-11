@@ -361,12 +361,14 @@ class Calculations {
 			$has_dead = false;
 		}
 
-		// Good tropes are always good.
-		// Maybe tropes are only good IF there isn't Queer-for-Ratings
-		$good_tropes  = array( 'happy-ending', 'everyones-queer' );
-		$maybe_tropes = array( 'big-queer-wedding', 'coming-out', 'subtext' );
-		$bad_tropes   = array( 'queerbashing', 'in-prison', 'queerbaiting', 'big-bad-queers' );
-		$ploy_tropes  = array( 'queer-for-ratings', 'queer-laughs', 'happy-then-not', 'erasure', 'subtext', 'queer-of-the-week', 'background-queers' );
+		// Good/maybe/bad/ploy trope-slug groupings now live in
+		// Trope_Categories (shared with the Statistics layer so stats views
+		// can group the same tropes the same way). Same values as before —
+		// this is a data relocation, not a scoring change.
+		$good_tropes  = Trope_Categories::GOOD;
+		$maybe_tropes = Trope_Categories::MAYBE;
+		$bad_tropes   = Trope_Categories::BAD;
+		$ploy_tropes  = Trope_Categories::PLOY;
 
 		// If there a no tropes, we have a default of 80.
 		if ( ( 0 === $count_tropes ) || in_array( 'none', $trope_slugs, true ) ) {

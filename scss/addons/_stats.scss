@@ -2213,7 +2213,7 @@ canvas {
 		height: 38px;
 		border-radius: 8px;
 		color: inherit; // inherits the card-header type color.
-		background-color: rgba(colors.$black, 0.50);
+		background-color: rgba(colors.$white, 0.50);
 
 		svg {
 			fill: currentColor; // sprite paths have no fill; take the type color.
@@ -2383,6 +2383,18 @@ canvas {
 		}
 	}
 
+	.lwtv-pullstats--four {
+		grid-template-columns: repeat(4, 1fr);
+
+		@media (max-width: 991px) {
+			grid-template-columns: repeat(2, 1fr);
+		}
+
+		@media (max-width: 575px) {
+			grid-template-columns: 1fr;
+		}
+	}
+
 	.lwtv-tropegap {
 		display: flex;
 		flex-direction: column;
@@ -2392,6 +2404,92 @@ canvas {
 
 		.lwtv-stats-eyebrow {
 			color: inherit; // family accent from .card-header.<type>.
+		}
+
+		// The waffle partial's base rule is width:100% (fine when a caller
+		// wraps it in a fixed-width column, e.g. .lwtv-byg-figure). This
+		// card has no such wrapper, so cap it directly or it fills the
+		// whole card. Paired with 20 columns (5 rows) in the template call,
+		// this reads as a wide horizontal band instead of a tall square,
+		// so it no longer leaves a dead gap above the link. Centered per
+		// request, now that there's slack width to center within.
+		.lwtv-waffle {
+			display: block;
+			max-width: 300px;
+			margin: 0 auto 0.5rem;
+		}
+
+		// Overview's Trope Gap pair only (--tint modifier, set in
+		// overview.php): a lighter tint instead of the vivid family
+		// background. Deliberately NOT scoped to .dead-characters/
+		// .happy-endings alone — those same card-header classes are also
+		// used by Scores' pull-stats (Failing Grades / 90+ Club) and by
+		// canceled-shows/queer-actors elsewhere, none of which should
+		// change. Mirrors the pink-light/pink-deep recipe already used
+		// for .lwtv-hl-lead.
+		&.lwtv-tropegap--tint {
+			&.dead-characters {
+				background-color: colors.$lwtv-crimson-light;
+				border-color: colors.$lwtv-crimson-light;
+				color: colors.$lwtv-crimson-deep;
+			}
+
+			&.happy-endings {
+				background-color: colors.$lwtv-royal-blue-light;
+				border-color: colors.$lwtv-royal-blue-light;
+				color: colors.$lwtv-royal-blue-deep;
+			}
+
+			// Trope Alignment (shows/tropes.php): good/bad reuse the same
+			// semantic direction as dead-characters/happy-endings above but
+			// with their own hues; maybe/ploy are new tones (amber, purple —
+			// purple already the Tropes section's family color elsewhere).
+			&.good-tropes {
+				background-color: colors.$lwtv-green-light;
+				border-color: colors.$lwtv-green-light;
+				color: colors.$lwtv-green-deep;
+			}
+
+			&.maybe-tropes {
+				background-color: colors.$lwtv-yellow-light;
+				border-color: colors.$lwtv-yellow-light;
+				color: colors.$lwtv-yellow-deep;
+			}
+
+			&.bad-tropes {
+				background-color: colors.$lwtv-crimson-light;
+				border-color: colors.$lwtv-crimson-light;
+				color: colors.$lwtv-crimson-deep;
+			}
+
+			&.ploy-tropes {
+				background-color: colors.$lwtv-purple-light;
+				border-color: colors.$lwtv-purple-light;
+				color: colors.$lwtv-purple-deep;
+			}
+
+			// Characters overview's Cliché Gap + Casting Gap pairs. queer-actors
+			// reuses happy-endings' royal-blue hue (same "the good outcome" side
+			// of a gap pair); no-cliche reuses purple, the Clichés section's
+			// existing family color; straight-cis-actors is a neutral grey for
+			// the "default/expected" side of the Casting Gap.
+			&.no-cliche {
+				background-color: colors.$lwtv-purple-light;
+				border-color: colors.$lwtv-purple-light;
+				color: colors.$lwtv-purple-deep;
+			}
+
+			&.queer-actors {
+				background-color: colors.$lwtv-royal-blue-light;
+				border-color: colors.$lwtv-royal-blue-light;
+				color: colors.$lwtv-royal-blue-deep;
+			}
+
+			&.straight-cis-actors {
+				background-color: colors.$lwtv-grey-light;
+				border-color: colors.$lwtv-grey-light;
+				color: colors.$lwtv-grey-deep;
+			}
 		}
 	}
 
@@ -2704,6 +2802,13 @@ canvas {
 		background-color: colors.$lwtv-blue-deep;
 	}
 
+	// Intersectionality Breakdown/Pairings never had their own fill and were
+	// falling through to the default teal progressbar above — same royal-blue
+	// token .lwtv-panel-icon.intersections already uses elsewhere.
+	.lwtv-bars--intersections .progress-bar {
+		background-color: colors.$lwtv-royal-blue;
+	}
+
 	.lwtv-bar-label {
 		font-size: 0.85rem;
 		color: colors.$lwtv-grey-deep;
@@ -2800,6 +2905,1251 @@ canvas {
 	.lwtv-share-seg:nth-child(5),
 	.lwtv-legend-row:nth-child(5) .lwtv-legend-dot {
 		background-color: $ramp-5;
+	}
+
+	// Tropes page layout: Trope Load + Mixed Alignment stack in the main
+	// (wide) column, Common Pairings sits alone in the side (narrow) column
+	// beside them, and Trope Breakdown (the long ranked list) drops out of
+	// this grid entirely to run full width below — same asymmetric 2:1
+	// ratio and structure as Genres' .lwtv-genres-columns (main leads in
+	// source order on both pages now). Stacks to one column below 900px.
+	.lwtv-tropes-columns {
+		display: grid;
+		grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+		gap: 24px;
+		align-items: start;
+	}
+
+	.lwtv-tropes-col--main .lwtv-panel {
+		margin-bottom: 1rem;
+	}
+
+	@media (max-width: 900px) {
+		.lwtv-tropes-columns {
+			grid-template-columns: 1fr;
+		}
+	}
+
+	// Trope Breakdown: full width now (moved out of .lwtv-tropes-columns
+	// above), so it gets the exact same 2-col newspaper flow and breakpoint
+	// as .lwtv-genres-breakdown-wrap rather than a page-specific one.
+	.lwtv-tropes-breakdown-wrap .lwtv-leaders {
+		column-count: 2;
+		column-gap: 2rem;
+	}
+
+	.lwtv-tropes-breakdown-wrap .lwtv-leader-row {
+		break-inside: avoid;
+	}
+
+	@media (max-width: 900px) {
+		.lwtv-tropes-breakdown-wrap .lwtv-leaders {
+			column-count: 1;
+		}
+	}
+
+	// Mixed Alignment (shows/tropes.php): borrows the compact donut's
+	// figure/legend markup classes directly, skipping donut.php's own
+	// bg-light card wrapper — this already sits inside its own .lwtv-panel,
+	// and nesting two bordered cards would double up the box. That means it
+	// also skips .lwtv-donut-card--compact's centering/sizing for
+	// .lwtv-donut-figure, so it needs its own copy of just that part.
+	// Donut on the left, Pure/Mixed legend on the right, one row — rather
+	// than the stacked donut-above-legend layout donut.php's own compact
+	// mode uses (this section skips that partial and borrows just its
+	// markup classes, so it isn't stuck with that mode's stacking).
+	.lwtv-mixed-alignment-row {
+		display: flex;
+		align-items: center;
+		gap: 20px;
+		flex-wrap: wrap;
+	}
+
+	.lwtv-mixed-alignment .lwtv-donut-figure {
+		width: 150px;
+		height: 150px;
+		margin: 0;
+	}
+
+	.lwtv-mixed-alignment .lwtv-donut-legend--compact {
+		flex: 1 1 200px;
+	}
+
+	// Characters overview: The Casting Gap. One combined two-color waffle
+	// instead of two near-duplicate cards — same figure-left/legend-right
+	// row idea as Mixed Alignment above (borrows .lwtv-donut-legend's
+	// markup classes directly), just with a waffle standing in for the
+	// donut, since a raw yes/no split reads better as a dot grid than a ring.
+	.lwtv-castinggap-row {
+		display: flex;
+		align-items: center;
+		gap: 24px;
+		flex-wrap: wrap;
+	}
+
+	.lwtv-castinggap-waffle {
+		flex: 0 0 auto;
+
+		.lwtv-waffle {
+			display: block;
+			max-width: 260px;
+		}
+	}
+
+	.lwtv-castinggap-row .lwtv-donut-legend--compact {
+		flex: 1 1 220px;
+	}
+
+	// Pink = played by a queer actor, grey = played by a straight/cis
+	// actor — a deliberate departure from this section's usual royal-blue
+	// family color, so the two segments read as a clear either/or split
+	// rather than "family color vs. everything else."
+	.lwtv-castinggap-waffle .lwtv-waffle-dot--queer {
+		fill: colors.$lwtv-pink;
+		opacity: 1;
+	}
+
+	.lwtv-castinggap-waffle .lwtv-waffle-dot--cis {
+		fill: colors.$lwtv-aro-grey;
+		opacity: 1;
+	}
+
+	// Trope Load (shows/tropes.php): a 100-dot waffle colored by bucket
+	// (0/1/2/3/4+ tropes per show) instead of the raspberry share-of-total
+	// ramp above. Reuses .lwtv-legend's row markup — just overrides its
+	// dot colors with a light→dark green ramp in a higher-specificity block,
+	// since bucket order here is fixed (low→high), not ranked by size.
+	// Figure-left, legend-right split, sized for the side column above
+	// rather than the full page width — mirrors .lwtv-donut-card's
+	// figure/body split (same flex-wrap idea), just with a waffle standing
+	// in for the donut.
+	.lwtv-tropeload-row {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 20px;
+		align-items: center;
+	}
+
+	// Widened from 220px, same fix — and same values — as Genre Load's
+	// figure/legend gap. Trope Load now lives in the wide 2fr main column
+	// (see .lwtv-tropes-columns above), the same layout context Genre Load
+	// has, so it gets the same sizing.
+	.lwtv-tropeload-figure {
+		flex: 0 0 auto;
+		width: 320px;
+	}
+
+	.lwtv-tropeload-legend {
+		flex: 1 1 180px;
+		max-width: 280px;
+		margin: 0;
+		min-width: 0;
+	}
+
+	.lwtv-tropeload .lwtv-waffle {
+		max-width: 100%;
+	}
+
+	// Footer strip below the row (not a third flex item in it — a side
+	// column is too narrow for waffle+legend+poster to share one line
+	// without an awkward wrap). Small thumbnail + caption side by side.
+	.lwtv-tropeload-poster {
+		text-align: center;
+		gap: 12px;
+		margin: 1rem 0 0;
+		padding-top: 1rem;
+		border-top: 1px solid colors.$lwtv-grey-border;
+
+		figcaption {
+			padding-top: 0.5rem;
+		}
+	}
+
+	.lwtv-tropeload-poster-img {
+		object-fit: cover;
+		border-radius: 8px;
+		flex: 0 0 auto;
+		box-shadow: 0 2px 8px rgba(colors.$black, 0.18);
+	}
+
+	.lwtv-tropeload-poster-cap {
+		margin: 0;
+		font-size: 0.8125rem;
+		color: colors.$lwtv-grey-deep;
+	}
+
+	$tropeload-ramp-1: colors.$lwtv-green-light;
+	$tropeload-ramp-2: color.mix( colors.$lwtv-green-light, colors.$lwtv-green-deep, 75% );
+	$tropeload-ramp-3: color.mix( colors.$lwtv-green-light, colors.$lwtv-green-deep, 50% );
+	$tropeload-ramp-4: color.mix( colors.$lwtv-green-light, colors.$lwtv-green-deep, 25% );
+	$tropeload-ramp-5: colors.$lwtv-green-deep;
+
+	.lwtv-tropeload .lwtv-waffle-dot--b0 {
+		fill: $tropeload-ramp-1;
+		opacity: 1;
+	}
+
+	.lwtv-tropeload .lwtv-waffle-dot--b1 {
+		fill: $tropeload-ramp-2;
+		opacity: 1;
+	}
+
+	.lwtv-tropeload .lwtv-waffle-dot--b2 {
+		fill: $tropeload-ramp-3;
+		opacity: 1;
+	}
+
+	.lwtv-tropeload .lwtv-waffle-dot--b3 {
+		fill: $tropeload-ramp-4;
+		opacity: 1;
+	}
+
+	.lwtv-tropeload .lwtv-waffle-dot--b4 {
+		fill: $tropeload-ramp-5;
+		opacity: 1;
+	}
+
+	.lwtv-tropeload .lwtv-legend-row:nth-child(1) .lwtv-legend-dot {
+		background-color: $tropeload-ramp-1;
+	}
+
+	.lwtv-tropeload .lwtv-legend-row:nth-child(2) .lwtv-legend-dot {
+		background-color: $tropeload-ramp-2;
+	}
+
+	.lwtv-tropeload .lwtv-legend-row:nth-child(3) .lwtv-legend-dot {
+		background-color: $tropeload-ramp-3;
+	}
+
+	.lwtv-tropeload .lwtv-legend-row:nth-child(4) .lwtv-legend-dot {
+		background-color: $tropeload-ramp-4;
+	}
+
+	.lwtv-tropeload .lwtv-legend-row:nth-child(5) .lwtv-legend-dot {
+		background-color: $tropeload-ramp-5;
+	}
+
+	// Genre Stats: generic stat cards for the 3-up pullstats row (replaces
+	// the old avg/median callout pair). Deliberately plain — white bg, one
+	// amber accent — unlike .lwtv-tropegap's per-family tinted background,
+	// since these three cards are all one family, not four alignment types.
+	.lwtv-statcard {
+		position: relative;
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+		padding: 20px;
+		background-color: colors.$white;
+		border: 1px solid colors.$lwtv-grey-border;
+		border-radius: 14px;
+	}
+
+	// Positioned out of the flex flow so it sits in the card's top-right
+	// corner regardless of source order, while the number/label stack still
+	// starts flush top-left beneath it.
+	.lwtv-statcard-icon {
+		position: absolute;
+		top: 20px;
+		right: 20px;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 36px;
+		height: 36px;
+		border-radius: 9px;
+		background-color: colors.$lwtv-yellow-light;
+		color: colors.$lwtv-yellow-deep;
+
+		svg {
+			fill: currentColor;
+		}
+	}
+
+	.lwtv-statcard-number {
+		font-family: fonts.$headingfontfamily;
+		font-weight: 600;
+		font-size: 2.2rem;
+		line-height: 1;
+		color: colors.$lwtv-yellow-deep;
+		font-variant-numeric: tabular-nums;
+	}
+
+	.lwtv-statcard-label {
+		margin: 0;
+		font-size: 0.85rem;
+		// No #555 token exists; grey-deep + this smaller size carry the
+		// hierarchy, same substitution already used elsewhere in this file.
+		color: colors.$lwtv-grey-deep;
+	}
+
+	// .lwtv-statcard-icon/-number default to amber — fine for Genres, the
+	// only page that used pullstats until now, but Clichés' family color
+	// is green everywhere else on its page (Load waffle, matchup accents).
+	// .lwtv-bars--characters already carries that green override elsewhere
+	// on this page, so it doubles as the pullstats variant too rather than
+	// adding a new family-color hook just for this one row.
+	.lwtv-bars--characters .lwtv-statcard-icon {
+		background-color: colors.$lwtv-green-light;
+		color: colors.$lwtv-green-deep;
+	}
+
+	.lwtv-bars--characters .lwtv-statcard-number {
+		color: colors.$lwtv-green-deep;
+	}
+
+	// Genre Stats layout: Genre Load (waffle + spotlight) takes the wide
+	// column, Common Pairings' matchup cards sit beside it — asymmetric
+	// 2:1 split, unlike Tropes' even 50/50 .lwtv-tropes-columns. Same
+	// collapse-to-one-column breakpoint as that pattern.
+	.lwtv-genres-columns {
+		display: grid;
+		grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+		gap: 1rem;
+		align-items: start;
+		margin-bottom: 1rem;
+	}
+
+	@media (max-width: 900px) {
+
+		.lwtv-genres-columns {
+			grid-template-columns: 1fr;
+		}
+	}
+
+	// Genre Load: same figure/legend flex layout Trope Load already uses.
+	.lwtv-genreload-row {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 16px;
+		align-items: center;
+	}
+
+	.lwtv-genreload-figure {
+		flex: 0 0 auto;
+		width: 320px;
+	}
+
+	// Capped rather than a plain flex:1 — Genre Load lives in the wide 2fr
+	// column of .lwtv-genres-columns, so uncapped growth stretches the name
+	// column and leaves a wide gap before the percentage on the right.
+	.lwtv-genreload-legend {
+		flex: 1 1 180px;
+		max-width: 280px;
+		margin: 0;
+	}
+
+	.lwtv-genreload .lwtv-waffle {
+		max-width: 100%;
+	}
+
+	.lwtv-genreload-poster {
+		text-align: center;
+		align-items: center;
+		gap: 12px;
+		margin: 1rem 0 0;
+		padding-top: 1rem;
+		border-top: 1px solid colors.$lwtv-grey-border;
+
+		figcaption {
+			padding-top: 0.5rem;
+		}
+	}
+
+	.lwtv-genreload-poster-img {
+		object-fit: cover;
+		border-radius: 8px;
+		flex: 0 0 auto;
+		box-shadow: 0 2px 8px rgba(colors.$black, 0.18);
+	}
+
+	.lwtv-genreload-poster-cap {
+		margin: 0;
+		font-size: 0.8125rem;
+		color: colors.$lwtv-grey-deep;
+	}
+
+	.lwtv-genreload-poster-eyebrow {
+		display: block;
+		margin-bottom: 2px;
+		font-size: 0.68rem;
+		font-weight: 700;
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+		color: colors.$lwtv-yellow-deep;
+	}
+
+	// Genre Load waffle ramp: grey for "0 genres" (absence, outside the
+	// amber ramp), then increasingly saturated amber for 1 through 4+.
+	// Legend dots follow the same bucket order via nth-child, mirroring
+	// .lwtv-tropeload's pattern.
+	.lwtv-genreload .lwtv-waffle-dot--b0 {
+		fill: colors.$lwtv-grey;
+		opacity: 1;
+	}
+
+	.lwtv-genreload .lwtv-waffle-dot--b1 {
+		fill: rgba(colors.$lwtv-yellow-deep, 0.35);
+		opacity: 1;
+	}
+
+	.lwtv-genreload .lwtv-waffle-dot--b2 {
+		fill: rgba(colors.$lwtv-yellow-deep, 0.6);
+		opacity: 1;
+	}
+
+	.lwtv-genreload .lwtv-waffle-dot--b3 {
+		fill: rgba(colors.$lwtv-yellow-deep, 0.8);
+		opacity: 1;
+	}
+
+	.lwtv-genreload .lwtv-waffle-dot--b4 {
+		fill: colors.$lwtv-yellow-deep;
+		opacity: 1;
+	}
+
+	// Keyed to the bucket's own index (--b0…--b4, same classes the waffle
+	// segments use) rather than nth-child position — the "0 genres" row is
+	// omitted entirely when its count is 0 (see genres.php), which would
+	// otherwise shift every remaining row's nth-child position and hand it
+	// the wrong ramp color.
+	// Scoped by row position (:nth-child), not the --b0.._b4 modifier
+	// classes those spans also carry — a plain 2-class override like
+	// ".lwtv-genreload .lwtv-legend-dot--b0" loses to the page-wide
+	// "raspberry ramp" default a few hundred lines up
+	// (.lwtv-legend-row:nth-child(N) .lwtv-legend-dot, around line 2886),
+	// which has 3 simple selectors of specificity — this pink ramp was
+	// silently winning regardless of source order. Matching its own
+	// :nth-child shape plus the .lwtv-genreload ancestor pushes this to 4
+	// simple selectors, which reliably wins — same fix applied to Cliché
+	// Load's and Intersection Load's legends.
+	.lwtv-genreload .lwtv-legend-row:nth-child(1) .lwtv-legend-dot {
+		background-color: colors.$lwtv-grey;
+	}
+
+	.lwtv-genreload .lwtv-legend-row:nth-child(2) .lwtv-legend-dot {
+		background-color: rgba(colors.$lwtv-yellow-deep, 0.35);
+	}
+
+	.lwtv-genreload .lwtv-legend-row:nth-child(3) .lwtv-legend-dot {
+		background-color: rgba(colors.$lwtv-yellow-deep, 0.6);
+	}
+
+	.lwtv-genreload .lwtv-legend-row:nth-child(4) .lwtv-legend-dot {
+		background-color: rgba(colors.$lwtv-yellow-deep, 0.8);
+	}
+
+	.lwtv-genreload .lwtv-legend-row:nth-child(5) .lwtv-legend-dot {
+		background-color: colors.$lwtv-yellow-deep;
+	}
+
+	// Intersectionality page layout: Intersection Load + Single vs Multiple
+	// stack in the main (wide) column, Common Pairings sits alone in the
+	// side (narrow) column beside them, and the Breakdown ranked list drops
+	// out of this grid entirely to run full width below — same asymmetric
+	// 2:1 ratio and structure as Genres' .lwtv-genres-columns and Tropes'
+	// .lwtv-tropes-columns. Stacks to one column below 900px.
+	.lwtv-inter-columns {
+		display: grid;
+		grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+		gap: 24px;
+		align-items: start;
+	}
+
+	.lwtv-inter-col--main .lwtv-panel {
+		margin-bottom: 1rem;
+	}
+
+	@media (max-width: 900px) {
+		.lwtv-inter-columns {
+			grid-template-columns: 1fr;
+		}
+	}
+
+	// Intersection Load: same figure/legend flex layout Genre/Trope Load
+	// already use. No cap needed on the legend column — the main column
+	// here is still wide enough (2fr of .lwtv-inter-columns) that the
+	// legend never gets Genre/Trope Load's overflow problem.
+	.lwtv-interload-row {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 16px;
+		align-items: center;
+	}
+
+	.lwtv-interload-figure {
+		flex: 0 0 auto;
+		width: 320px;
+	}
+
+	.lwtv-interload-legend {
+		flex: 1 1 240px;
+		margin: 0;
+	}
+
+	.lwtv-interload .lwtv-waffle {
+		max-width: 100%;
+	}
+
+	.lwtv-interload-poster {
+		text-align: center;
+		align-items: center;
+		gap: 12px;
+		margin: 1rem 0 0;
+		padding-top: 1rem;
+		border-top: 1px solid colors.$lwtv-grey-border;
+
+		figcaption {
+			padding-top: 0.5rem;
+		}
+	}
+
+	.lwtv-interload-poster-img {
+		object-fit: cover;
+		border-radius: 8px;
+		flex: 0 0 auto;
+		box-shadow: 0 2px 8px rgba(colors.$black, 0.18);
+	}
+
+	.lwtv-interload-poster-cap {
+		margin: 0;
+		font-size: 0.8125rem;
+		color: colors.$lwtv-grey-deep;
+	}
+
+	.lwtv-interload-poster-eyebrow {
+		display: block;
+		margin-bottom: 2px;
+		font-size: 0.68rem;
+		font-weight: 700;
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+		color: colors.$lwtv-royal-blue;
+	}
+
+	// Intersection Load waffle ramp: grey for "0 intersections" (absence,
+	// outside the ramp), then increasingly saturated royal-blue for 1
+	// through 4+ — same ramp shape Genre Load uses with amber.
+	.lwtv-interload .lwtv-waffle-dot--b0 {
+		fill: colors.$lwtv-grey;
+		opacity: 1;
+	}
+
+	.lwtv-interload .lwtv-waffle-dot--b1 {
+		fill: rgba(colors.$lwtv-royal-blue, 0.35);
+		opacity: 1;
+	}
+
+	.lwtv-interload .lwtv-waffle-dot--b2 {
+		fill: rgba(colors.$lwtv-royal-blue, 0.6);
+		opacity: 1;
+	}
+
+	.lwtv-interload .lwtv-waffle-dot--b3 {
+		fill: rgba(colors.$lwtv-royal-blue, 0.8);
+		opacity: 1;
+	}
+
+	.lwtv-interload .lwtv-waffle-dot--b4 {
+		fill: colors.$lwtv-royal-blue;
+		opacity: 1;
+	}
+
+	// Scoped by row position (:nth-child) for the same reason as Genre
+	// Load's legend just above — out-specifies the page-wide pink ramp
+	// default instead of losing to it.
+	.lwtv-interload .lwtv-legend-row:nth-child(1) .lwtv-legend-dot {
+		background-color: colors.$lwtv-grey;
+	}
+
+	.lwtv-interload .lwtv-legend-row:nth-child(2) .lwtv-legend-dot {
+		background-color: rgba(colors.$lwtv-royal-blue, 0.35);
+	}
+
+	.lwtv-interload .lwtv-legend-row:nth-child(3) .lwtv-legend-dot {
+		background-color: rgba(colors.$lwtv-royal-blue, 0.6);
+	}
+
+	.lwtv-interload .lwtv-legend-row:nth-child(4) .lwtv-legend-dot {
+		background-color: rgba(colors.$lwtv-royal-blue, 0.8);
+	}
+
+	.lwtv-interload .lwtv-legend-row:nth-child(5) .lwtv-legend-dot {
+		background-color: colors.$lwtv-royal-blue;
+	}
+
+	// Single vs Multiple Intersections: borrows the compact donut's
+	// figure/legend markup classes directly, same reasoning as Tropes'
+	// Mixed Alignment (already sits inside its own .lwtv-panel, so
+	// donut.php's own bg-light card wrapper would double up the box).
+	.lwtv-inter-split-row {
+		display: flex;
+		align-items: center;
+		gap: 20px;
+	}
+
+	.lwtv-inter-split .lwtv-donut-figure {
+		width: 150px;
+		height: 150px;
+		margin: 0;
+	}
+
+	.lwtv-inter-split .lwtv-donut-legend--compact {
+		flex: 1 1 200px;
+	}
+
+	// Common Pairings: compact "count first" rows (partials/matchup-cards.php)
+	// — leading number reads first, pair name follows on the same line, a thin
+	// divider instead of a bordered box per row. Denser than both the boxed-card
+	// version this replaced (Genres) and the lollipop-list treatment this
+	// replaced (Tropes, Intersectionality) — built for a narrow side column
+	// where height matters. "shows together" moves to a .screen-reader-text
+	// label; the number is self-explanatory next to the pair once it isn't
+	// floating alone in a card.
+	.lwtv-matchup-grid {
+		display: flex;
+		flex-direction: column;
+	}
+
+	.lwtv-matchup-row {
+		display: flex;
+		align-items: baseline;
+		gap: 10px;
+		padding: 8px 0;
+		border-bottom: 1px solid colors.$lwtv-grey-border;
+
+		&:last-child {
+			border-bottom: none;
+		}
+	}
+
+	.lwtv-matchup-count {
+		flex: 0 0 auto;
+		min-width: 2.2em;
+		font-family: fonts.$headingfontfamily;
+		font-size: 1.1rem;
+		font-weight: 700;
+		font-variant-numeric: tabular-nums;
+	}
+
+	.lwtv-matchup-pair {
+		font-size: 0.88rem;
+		font-weight: 600;
+		color: colors.$lwtv-grey-deep;
+	}
+
+	.lwtv-matchup-plus {
+		margin: 0 3px;
+		font-weight: 700;
+	}
+
+	// Common Pairings rows render as <a> once matchup-cards.php gets a
+	// per-item 'url' (currently just Intersectionality's confirmed
+	// fwp_show_intersectionality FacetWP param) — reset link defaults so a
+	// linked row looks identical to the plain-div rows Genres/Tropes still
+	// use, and only hint at interactivity on hover. Placed after the base
+	// .lwtv-matchup-pair rule above so specificity only increases going
+	// down the file (no-descending-specificity).
+	a.lwtv-matchup-row {
+		color: inherit;
+		text-decoration: none;
+
+		&:hover .lwtv-matchup-pair,
+		&:focus .lwtv-matchup-pair {
+			text-decoration: underline;
+		}
+	}
+
+	// Accent color follows the .lwtv-bars--<family> class matchup-cards.php
+	// puts on .lwtv-matchup-grid — same family-color convention the
+	// lollipop/leaderboard rows above already use, so Genres' pairings stay
+	// amber and Tropes' pairings match the green used everywhere else on
+	// that page (panel icon, progress bars, Trope Load ramp, Mixed Alignment).
+	.lwtv-bars--genres .lwtv-matchup-count,
+	.lwtv-bars--genres .lwtv-matchup-plus {
+		color: colors.$lwtv-yellow-deep;
+	}
+
+	.lwtv-bars--tropes .lwtv-matchup-count,
+	.lwtv-bars--tropes .lwtv-matchup-plus {
+		color: colors.$lwtv-green-deep;
+	}
+
+	.lwtv-bars--intersections .lwtv-matchup-count,
+	.lwtv-bars--intersections .lwtv-matchup-plus {
+		color: colors.$lwtv-royal-blue;
+	}
+
+	// Footer stat appended at the bottom of the same panel (matchup-cards.php's
+	// optional $matchup['footer']) — a double-line rule marks it as an aside,
+	// not another row in the grid above.
+	.lwtv-matchup-footer {
+		margin-top: 14px;
+		padding-top: 14px;
+		border-top: 3px double colors.$lwtv-grey-border;
+		text-align: center;
+	}
+
+	.lwtv-matchup-footer-title {
+		margin: 0 0 4px;
+		font-size: 0.95rem;
+		font-weight: 600;
+		color: colors.$lwtv-grey-deep;
+	}
+
+	.lwtv-matchup-footer-number {
+		font-family: fonts.$headingfontfamily;
+		font-size: 1.6rem;
+		font-weight: 700;
+		font-variant-numeric: tabular-nums;
+	}
+
+	.lwtv-bars--genres .lwtv-matchup-footer-number {
+		color: colors.$lwtv-yellow-deep;
+	}
+
+	.lwtv-bars--tropes .lwtv-matchup-footer-number {
+		color: colors.$lwtv-green-deep;
+	}
+
+	.lwtv-bars--intersections .lwtv-matchup-footer-number {
+		color: colors.$lwtv-royal-blue;
+	}
+
+	// Genre Breakdown: same ranked-bars.php panel/query, just flowed into two
+	// newspaper-style columns at desktop widths for a denser page. Column
+	// layout (not grid) so rows flow top-to-bottom then wrap, rather than
+	// alternating left/right by row order.
+	.lwtv-genres-breakdown-wrap .lwtv-leaders {
+		column-count: 2;
+		column-gap: 2rem;
+	}
+
+	.lwtv-genres-breakdown-wrap .lwtv-leader-row {
+		break-inside: avoid;
+	}
+
+	@media (max-width: 900px) {
+
+		.lwtv-genres-breakdown-wrap .lwtv-leaders {
+			column-count: 1;
+		}
+	}
+
+	// Intersectionality Breakdown: full width now (moved out of
+	// .lwtv-inter-columns above), so it gets the exact same 2-col newspaper
+	// flow and breakpoint as .lwtv-genres-breakdown-wrap / .lwtv-tropes-
+	// breakdown-wrap rather than a page-specific one.
+	.lwtv-inter-breakdown-wrap .lwtv-leaders {
+		column-count: 2;
+		column-gap: 2rem;
+	}
+
+	.lwtv-inter-breakdown-wrap .lwtv-leader-row {
+		break-inside: avoid;
+	}
+
+	@media (max-width: 900px) {
+		.lwtv-inter-breakdown-wrap .lwtv-leaders {
+			column-count: 1;
+		}
+	}
+
+	// Characters → Clichés layout: Cliché Load (waffle + spotlight) takes
+	// the wide column, Common Pairings' matchup cards sit beside it —
+	// same asymmetric 2:1 split as .lwtv-genres-columns (no alignment-
+	// category split exists for clichés, unlike Tropes, so there's no
+	// second panel to stack in the main column).
+	.lwtv-cliches-columns {
+		display: grid;
+		grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+		gap: 1rem;
+		align-items: start;
+		margin-bottom: 1rem;
+	}
+
+	@media (max-width: 900px) {
+
+		.lwtv-cliches-columns {
+			grid-template-columns: 1fr;
+		}
+	}
+
+	// Cliché Load: same figure/legend flex layout Genre/Trope Load already use.
+	.lwtv-clicheload-row {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 16px;
+		align-items: center;
+	}
+
+	.lwtv-clicheload-figure {
+		flex: 0 0 auto;
+		width: 320px;
+	}
+
+	// Capped rather than a plain flex:1 — Cliché Load lives in the wide 2fr
+	// column of .lwtv-cliches-columns, same reasoning as Genre Load's cap.
+	.lwtv-clicheload-legend {
+		flex: 1 1 180px;
+		max-width: 280px;
+		margin: 0;
+	}
+
+	.lwtv-clicheload .lwtv-waffle {
+		max-width: 100%;
+	}
+
+	.lwtv-clicheload-poster {
+		text-align: center;
+		align-items: center;
+		gap: 12px;
+		margin: 1rem 0 0;
+		padding-top: 1rem;
+		border-top: 1px solid colors.$lwtv-grey-border;
+
+		figcaption {
+			padding-top: 0.5rem;
+		}
+	}
+
+	.lwtv-clicheload-poster-img {
+		object-fit: cover;
+		border-radius: 8px;
+		flex: 0 0 auto;
+		box-shadow: 0 2px 8px rgba(colors.$black, 0.18);
+	}
+
+	.lwtv-clicheload-poster-cap {
+		margin: 0;
+		font-size: 0.8125rem;
+		color: colors.$lwtv-grey-deep;
+	}
+
+	// Cliché Load waffle ramp: a full green gradient, not Genre/Intersection
+	// Load's grey-for-zero treatment — lez_cliches' "none" placeholder is
+	// already excluded before this distribution is built, so the "0" bucket
+	// here means "zero real clichés", a meaningful reading rather than
+	// absence of data. Same ramp shape/reasoning as Trope Load, the other
+	// taxonomy with a real "none" to exclude.
+	$clicheload-ramp-1: colors.$lwtv-green-light;
+	$clicheload-ramp-2: color.mix(colors.$lwtv-green-light, colors.$lwtv-green-deep, 75%);
+	$clicheload-ramp-3: color.mix(colors.$lwtv-green-light, colors.$lwtv-green-deep, 50%);
+	$clicheload-ramp-4: color.mix(colors.$lwtv-green-light, colors.$lwtv-green-deep, 25%);
+	$clicheload-ramp-5: colors.$lwtv-green-deep;
+
+	.lwtv-clicheload .lwtv-waffle-dot--b0 {
+		fill: $clicheload-ramp-1;
+		opacity: 1;
+	}
+
+	.lwtv-clicheload .lwtv-waffle-dot--b1 {
+		fill: $clicheload-ramp-2;
+		opacity: 1;
+	}
+
+	.lwtv-clicheload .lwtv-waffle-dot--b2 {
+		fill: $clicheload-ramp-3;
+		opacity: 1;
+	}
+
+	.lwtv-clicheload .lwtv-waffle-dot--b3 {
+		fill: $clicheload-ramp-4;
+		opacity: 1;
+	}
+
+	.lwtv-clicheload .lwtv-waffle-dot--b4 {
+		fill: $clicheload-ramp-5;
+		opacity: 1;
+	}
+
+	// Scoped by row position (:nth-child), not the --b0.._b4 modifier
+	// classes those spans also carry — the page-wide "raspberry ramp"
+	// default a few hundred lines up (.lwtv-legend-row:nth-child(N)
+	// .lwtv-legend-dot, around line 2886) has 3 simple selectors of
+	// specificity, and a plain 2-class override like ".lwtv-clicheload
+	// .lwtv-legend-dot--b0" (also 3, once you count the ramp's :nth-child
+	// as equal-weight) loses that tie or worse. Matching the ramp's own
+	// :nth-child shape plus the .lwtv-clicheload ancestor pushes this to 4
+	// simple selectors, which reliably wins regardless of source order —
+	// the same fix Trope Load's legend already relies on.
+	.lwtv-clicheload .lwtv-legend-row:nth-child(1) .lwtv-legend-dot {
+		background-color: $clicheload-ramp-1;
+	}
+
+	.lwtv-clicheload .lwtv-legend-row:nth-child(2) .lwtv-legend-dot {
+		background-color: $clicheload-ramp-2;
+	}
+
+	.lwtv-clicheload .lwtv-legend-row:nth-child(3) .lwtv-legend-dot {
+		background-color: $clicheload-ramp-3;
+	}
+
+	.lwtv-clicheload .lwtv-legend-row:nth-child(4) .lwtv-legend-dot {
+		background-color: $clicheload-ramp-4;
+	}
+
+	.lwtv-clicheload .lwtv-legend-row:nth-child(5) .lwtv-legend-dot {
+		background-color: $clicheload-ramp-5;
+	}
+
+	// Common Pairings accent color for Clichés — same green as the rest of
+	// this family (.lwtv-bars--characters already colors the ranked-bars
+	// progress fill/leader-track/lollipop dots this shade).
+	.lwtv-bars--characters .lwtv-matchup-count,
+	.lwtv-bars--characters .lwtv-matchup-plus {
+		color: colors.$lwtv-green-deep;
+	}
+
+	.lwtv-bars--characters .lwtv-matchup-footer-number {
+		color: colors.$lwtv-green-deep;
+	}
+
+	// Cliché Breakdown: full width now (moved out of .lwtv-cliches-columns
+	// above), so it gets the exact same 2-col newspaper flow and breakpoint
+	// as .lwtv-genres-breakdown-wrap / .lwtv-tropes-breakdown-wrap / .lwtv-
+	// inter-breakdown-wrap rather than a page-specific one.
+	.lwtv-cliches-breakdown-wrap .lwtv-leaders {
+		column-count: 2;
+		column-gap: 2rem;
+	}
+
+	.lwtv-cliches-breakdown-wrap .lwtv-leader-row {
+		break-inside: avoid;
+	}
+
+	@media (max-width: 900px) {
+		.lwtv-cliches-breakdown-wrap .lwtv-leaders {
+			column-count: 1;
+		}
+	}
+
+	// Characters → Most: three top-5 leaderboard panels (Most Clichés,
+	// Most Shows, Most Actors) side by side. These are full ranked-bars
+	// panels (header + up to 5 rows each), heavier than the pullstats
+	// statcards, so this collapses at the same 900px breakpoint the
+	// asymmetric Load/Pairings grids use rather than pullstats' lighter
+	// 767px.
+	// "The Records" (Characters → Most): a five-column spotlight row (the
+	// #1 character per category, reusing the .lwtv-metric-card shape
+	// characters/overview.php already established) plus a Full Rankings
+	// table below it. Both real design tokens throughout (Oswald headings,
+	// $lwtv-green-deep, $lwtv-grey-light/-border) rather than the design
+	// handoff mockup's literal hex values, which were an approximation of
+	// this exact palette to begin with.
+	.lwtv-metric-grid--5 {
+		grid-template-columns: repeat(5, 1fr);
+	}
+
+	@media (max-width: 900px) {
+		.lwtv-metric-grid--5 {
+			grid-template-columns: repeat(3, 1fr);
+		}
+	}
+
+	@media (max-width: 650px) {
+		.lwtv-metric-grid--5 {
+			grid-template-columns: repeat(2, 1fr);
+		}
+	}
+
+	// A neutral tint rather than the solid family-color fill .card-header +
+	// a family class normally gives .lwtv-metric-card (see characters/
+	// overview.php) — five cards in a row all in that same green fill made
+	// the pink winner-name text hard to read against it. This matches the
+	// design handoff's own light-card + colored-text treatment instead.
+	.lwtv-records-spotlight .lwtv-metric-card {
+		background-color: colors.$lwtv-grey-light;
+		border-color: transparent;
+
+		.lwtv-stats-eyebrow {
+			color: colors.$lwtv-grey-deep;
+		}
+
+		.lwtv-metric-number {
+			color: colors.$lwtv-green-deep;
+		}
+
+		// .lwtv-metric-icon's glyph is fill: currentColor, taking its color
+		// from "color: inherit" on the base rule — on the Characters overview
+		// page that inherits white from the surrounding card-header.characters
+		// fill. This card has no such fill, so the icon needs its own white
+		// set explicitly or the glyph reads dark-on-dark-green.
+		.lwtv-metric-icon {
+			color: colors.$white;
+		}
+	}
+
+	.lwtv-records-winner {
+		display: block;
+		font-family: fonts.$headingfontfamily;
+		font-weight: 600;
+		font-size: 0.92rem;
+		line-height: 1.25;
+	}
+
+	.lwtv-records-number--empty {
+		color: colors.$lwtv-grey-border;
+	}
+
+	.lwtv-records-table-label {
+		margin-top: 1.5rem;
+		font-size: 0.75rem;
+		color: colors.$lwtv-grey-deep;
+	}
+
+	// Same overflow-x precedent as .lwtv-death-list-wrap: six columns (rank +
+	// five categories) get tight on narrow viewports, so the table scrolls
+	// horizontally there rather than cramming every column unreadably thin.
+	.lwtv-records-table-wrap {
+		overflow-x: auto;
+	}
+
+	.lwtv-records-table {
+		min-width: 640px;
+		border: 1px solid colors.$lwtv-grey-border;
+		border-radius: 12px;
+		overflow: hidden;
+	}
+
+	// Each "row" is its own mini grid sharing the same column template,
+	// rather than one grid across the whole table + display:contents —
+	// simpler to reason about and just as reliably column-aligned.
+	.lwtv-records-row {
+		display: grid;
+		grid-template-columns: 36px repeat(5, 1fr);
+
+		&--alt .lwtv-records-cell {
+			background-color: rgba(colors.$black, 0.02);
+		}
+	}
+
+	.lwtv-records-cell {
+		padding: 7px 10px;
+		font-size: 0.78rem;
+		border-left: 1px solid colors.$lwtv-grey-border;
+
+		&--rank {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			padding: 8px 6px;
+			font-family: fonts.$headingfontfamily;
+			font-weight: 700;
+			font-size: 0.85rem;
+			color: colors.$lwtv-grey-deep;
+			border-left: none;
+		}
+
+		&--head {
+			padding: 8px 8px;
+			font-weight: 700;
+			font-size: 0.6rem;
+			letter-spacing: 0.03em;
+			text-transform: uppercase;
+			color: colors.$lwtv-grey-deep;
+			text-align: center;
+		}
+	}
+
+	.lwtv-records-row--head .lwtv-records-cell {
+		background-color: colors.$lwtv-grey-light;
+	}
+
+	.lwtv-records-name {
+		font-weight: 600;
+	}
+
+	.lwtv-records-value {
+		color: colors.$lwtv-grey-deep;
+	}
+
+	.lwtv-records-dash {
+		color: colors.$lwtv-grey-border;
+	}
+
+	.lwtv-records-note {
+		margin: 0.5rem 0 0;
+		font-size: 0.78rem;
+		color: colors.$lwtv-grey-deep;
+	}
+
+	// Still Largely Uncharted: reframed long tail. Striped "unexplored"
+	// track with a solid amber fill sized to the combined share of the
+	// bottom genres — an "explored vs. unexplored" gauge, not a warning.
+	.lwtv-uncharted-gauge {
+		position: relative;
+		height: 14px;
+		margin: 0.5rem 0 1rem;
+		border-radius: 999px;
+		overflow: hidden;
+		background-image: repeating-linear-gradient(
+			45deg,
+			colors.$lwtv-grey-light,
+			colors.$lwtv-grey-light 6px,
+			colors.$lwtv-grey-alt 6px,
+			colors.$lwtv-grey-alt 12px
+		);
+	}
+
+	.lwtv-uncharted-gauge-fill {
+		height: 100%;
+		background-color: colors.$lwtv-yellow-deep;
+		border-radius: 999px;
+	}
+
+	.lwtv-uncharted-sentence {
+		margin: 0 0 1rem;
+		font-size: 0.95rem;
+		color: colors.$lwtv-grey-deep;
+	}
+
+	.lwtv-uncharted-tiles {
+		display: grid;
+		grid-template-columns: repeat(4, 1fr);
+		gap: 10px;
+	}
+
+	@media (max-width: 767px) {
+
+		.lwtv-uncharted-tiles {
+			grid-template-columns: repeat(2, 1fr);
+		}
+	}
+
+	.lwtv-uncharted-tile {
+		display: flex;
+		flex-direction: column;
+		gap: 4px;
+		padding: 12px;
+		border: 1.5px dashed rgba(colors.$lwtv-yellow-deep, 0.4);
+		border-radius: 10px;
+		color: colors.$lwtv-grey-deep;
+		text-decoration: none;
+
+		&:hover {
+			border-color: colors.$lwtv-yellow-deep;
+		}
+	}
+
+	.lwtv-uncharted-tile-name {
+		font-weight: 600;
+		font-size: 0.9rem;
+	}
+
+	.lwtv-uncharted-tile-stat {
+		font-size: 0.8rem;
+		color: colors.$lwtv-grey-medium;
+	}
+
+	// Decade tile grid: small-multiple tiles, one per decade bucket, each
+	// showing its own top-3 terms as independent "% of shows that decade"
+	// bars — a generic component shared by any multi-value taxonomy fed
+	// through Genre_Decade_Buckets (Genres' "Genre Mix by Decade" today,
+	// Intersectionality's "Intersections by Decade" reuses it as-is).
+	// Reuses the same .progress/.progress-bar/data-grow-to markup as the
+	// full-width ranked-bar panels elsewhere, just at tile scale, so every
+	// bar-based section on the site reads as one visual language.
+	.lwtv-decade-tile-note {
+		margin: -0.25rem 0 1rem;
+		font-size: 0.85rem;
+		color: colors.$lwtv-grey-deep;
+	}
+
+	.lwtv-decade-tile-grid {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 12px;
+		margin-bottom: 1.5rem;
+
+		@media (max-width: 991px) {
+			grid-template-columns: repeat(2, 1fr);
+		}
+
+		@media (max-width: 575px) {
+			grid-template-columns: 1fr;
+		}
+	}
+
+	.lwtv-decade-tile {
+		padding: 16px;
+		border: 1px solid colors.$lwtv-grey-border;
+		border-radius: 14px;
+		background-color: colors.$white;
+	}
+
+	.lwtv-decade-tile-head {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 8px;
+		margin-bottom: 10px;
+	}
+
+	.lwtv-decade-tile-label {
+		font-size: 0.95rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.02em;
+	}
+
+	.lwtv-decade-suffix {
+		text-transform: lowercase;
+	}
+
+	.lwtv-decade-tile-count {
+		font-size: 0.75rem;
+		color: colors.$lwtv-grey-deep;
+		white-space: nowrap;
+	}
+
+	.lwtv-decade-tile-row {
+		margin-bottom: 0.6rem;
+
+		&:last-child {
+			margin-bottom: 0;
+		}
+	}
+
+	.lwtv-decade-tile-row-head {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 8px;
+		margin-bottom: 4px;
+		font-size: 0.8rem;
+	}
+
+	a.lwtv-decade-tile-name,
+	a.lwtv-decade-tile-name:visited {
+		color: colors.$lwtv-grey-deep;
+		text-decoration: none;
+		font-weight: 500;
+	}
+
+	.lwtv-decade-tile-value {
+		font-variant-numeric: tabular-nums;
+		color: colors.$lwtv-grey-deep;
+	}
+
+	.lwtv-decade-tile-track {
+		height: 6px;
+		border-radius: 999px;
+	}
+
+	.lwtv-decade-tile-empty {
+		margin: 0;
+		font-size: 0.8rem;
+		color: colors.$lwtv-grey-deep;
+	}
+
+	// Family color for the mini bars — same tokens the full-width Breakdown
+	// panels above already resolve to for each family.
+	.lwtv-bars--genres .lwtv-decade-tile-track .progress-bar {
+		background-color: colors.$lwtv-yellow-deep;
+	}
+
+	.lwtv-bars--intersections .lwtv-decade-tile-track .progress-bar {
+		background-color: colors.$lwtv-royal-blue;
 	}
 
 	// Tablet (e.g. iPad portrait, ~810-834px): a 4-across row is too cramped to
@@ -2972,6 +4322,7 @@ canvas {
 		gap: 28px;
 		align-items: center;
 		padding: 24px;
+		margin-bottom: 1.5rem;
 		border: 1px solid colors.$lwtv-grey-border;
 		border-radius: 14px;
 	}
@@ -3030,6 +4381,18 @@ canvas {
 		color: colors.$lwtv-grey-deep;
 	}
 
+	// Optional waffle echo of the leading segment (Formats only, so far —
+	// see partials/donut.php). Tuned to this ramp's lead color; a caller
+	// with a different segment ramp would need its own override.
+	.lwtv-donut-waffle {
+		margin: 0 0 1rem;
+		color: colors.$lwtv-pink-deep;
+
+		.lwtv-waffle {
+			max-width: 260px;
+		}
+	}
+
 	.lwtv-donut-legend {
 		padding: 0;
 		margin: 0;
@@ -3069,14 +4432,126 @@ canvas {
 		white-space: nowrap;
 	}
 
-	.lwtv-donut-center-num--green { color: colors.$lwtv-green-light; }
+	.lwtv-donut-center-num--green { color: colors.$lwtv-green-deep; }
+	// Same dark-for-light-background rule as dkpink/pink/mid above — only
+	// the two darker ramp stops get a center-num rule (medgreen, midgreen);
+	// ltgreen/palegreen are the ramp's palest stops and, like ltpink/mid2,
+	// are left to fall back to .lwtv-donut-center-num's own dark grey
+	// default rather than risk the same low-contrast mistake --green just
+	// had, since a compact tile's lead segment is rarely one of these.
+	.lwtv-donut-center-num--medgreen { color: color.mix(colors.$lwtv-green-light, colors.$lwtv-green-deep, 25%); }
+	.lwtv-donut-center-num--midgreen { color: color.mix(colors.$lwtv-green-light, colors.$lwtv-green-deep, 50%); }
 	.lwtv-donut-center-num--red { color: colors.$lwtv-red; }
+	.lwtv-donut-center-num--dkpink { color: colors.$lwtv-pink-deep; }
+	.lwtv-donut-center-num--pink { color: colors.$lwtv-pink; }
+	.lwtv-donut-center-num--mid { color: color.mix(colors.$lwtv-pink, colors.$lwtv-pink-light, 55%); }
+	.lwtv-donut-center-num--ltpink { color: colors.$lwtv-pink-light; }
+
+	// Format Mix by Decade: a row of compact donut tiles (see
+	// shows/formats.php), one per Format_Decade_Buckets bucket. The compact
+	// card itself has no fixed width (.lwtv-donut-card--compact above), so
+	// it fills whatever the grid hands it here.
+	.lwtv-decade-row {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 16px;
+		margin-bottom: 1.5rem;
+
+		@media (max-width: 767px) {
+			grid-template-columns: repeat(2, 1fr);
+		}
+
+		@media (max-width: 575px) {
+			grid-template-columns: 1fr;
+		}
+	}
+
+	.lwtv-decade-tile {
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+	}
+
+	.lwtv-decade-count {
+		margin: 0;
+		font-size: 0.8rem;
+		text-align: center;
+		color: colors.$lwtv-grey-deep;
+	}
+
+	// Firsts: the earliest-recorded character per tracked gender/sexuality
+	// identity (characters/gender.php, characters/sexuality.php). A plain
+	// three-part row rather than reusing .lwtv-tail-row, which is a fixed
+	// two-column (name + count) shape.
+	.lwtv-identity-firsts {
+		list-style: none;
+		margin: 0 0 1.5rem;
+		padding: 0;
+		// Two-up, same convention as .lwtv-ty-deathdate/.lwtv-ty-sb-shows —
+		// collapses to one column well before the row itself starts
+		// wrapping (@media max-width: 480px below), so the two breakpoints
+		// never fight each other.
+		columns: 2;
+		column-gap: 24px;
+
+		@media (max-width: 767px) {
+			columns: 1;
+		}
+	}
+
+	.lwtv-identity-firsts-row {
+		display: flex;
+		align-items: baseline;
+		gap: 10px;
+		padding: 9px 0;
+		font-size: 0.9rem;
+		border-bottom: 1px solid colors.$lwtv-grey-border;
+		break-inside: avoid;
+
+		&:last-child {
+			border-bottom: none;
+		}
+	}
+
+	.lwtv-identity-firsts-term {
+		flex: 1 0 100px;
+		font-weight: 700;
+		color: colors.$lwtv-grey-deep;
+	}
+
+	.lwtv-identity-firsts-name {
+		flex: 1 1 auto;
+	}
+
+	.lwtv-identity-firsts-year {
+		flex: 0 0 auto;
+		font-variant-numeric: tabular-nums;
+		color: colors.$lwtv-grey-deep;
+	}
+
+	@media (max-width: 480px) {
+		.lwtv-identity-firsts-row {
+			flex-wrap: wrap;
+		}
+
+		.lwtv-identity-firsts-term {
+			flex: 1 1 100%;
+		}
+	}
+
+	// Forces the "s" in "1980s" back to lowercase against the eyebrow's
+	// text-transform: uppercase — see partials/donut.php and formats.php.
+	.lwtv-decade-suffix {
+		text-transform: lowercase;
+	}
 
 	.lwtv-donut-card--compact {
 		flex-direction: column;
 		align-items: stretch;
 		gap: 16px;
 		padding: 20px;
+		margin-bottom: 0; // cancel .lwtv-donut-card's margin — the decade
+		// tile's own caption sits right under this, not a full page section.
 
 		.lwtv-stats-eyebrow {
 			margin: 0;
@@ -3152,6 +4627,34 @@ canvas {
 	.lwtv-donut-seg--green {
 		stroke: colors.$lwtv-green-deep;
 		background-color: colors.$lwtv-green-deep;
+	}
+
+	// Green ramp for donuts that need more than the one solid --green shade
+	// above (e.g. characters/gender.php's minority segments) — same
+	// 0/25/50/75/100 mix spacing as the Cliché Load waffle ramp
+	// ($clicheload-ramp-*), just ordered dark-to-light to match dkpink's
+	// own "biggest segment = darkest" convention instead of Cliché Load's
+	// "lowest bucket = lightest" one. --green itself (green-deep, no mix)
+	// already has a dark-mode swap to green-light, so it doubles as this
+	// ramp's darkest stop rather than duplicating that class.
+	.lwtv-donut-seg--medgreen {
+		stroke: color.mix(colors.$lwtv-green-light, colors.$lwtv-green-deep, 25%);
+		background-color: color.mix(colors.$lwtv-green-light, colors.$lwtv-green-deep, 25%);
+	}
+
+	.lwtv-donut-seg--midgreen {
+		stroke: color.mix(colors.$lwtv-green-light, colors.$lwtv-green-deep, 50%);
+		background-color: color.mix(colors.$lwtv-green-light, colors.$lwtv-green-deep, 50%);
+	}
+
+	.lwtv-donut-seg--ltgreen {
+		stroke: color.mix(colors.$lwtv-green-light, colors.$lwtv-green-deep, 75%);
+		background-color: color.mix(colors.$lwtv-green-light, colors.$lwtv-green-deep, 75%);
+	}
+
+	.lwtv-donut-seg--palegreen {
+		stroke: colors.$lwtv-green-light;
+		background-color: colors.$lwtv-green-light;
 	}
 
 	.lwtv-donut-seg--amber {
@@ -3238,6 +4741,22 @@ canvas {
 
 		&.lwtv-donut-seg--green {
 			background-color: colors.$lwtv-green-deep;
+		}
+
+		&.lwtv-donut-seg--medgreen {
+			background-color: color.mix(colors.$lwtv-green-light, colors.$lwtv-green-deep, 25%) !important;
+		}
+
+		&.lwtv-donut-seg--midgreen {
+			background-color: color.mix(colors.$lwtv-green-light, colors.$lwtv-green-deep, 50%) !important;
+		}
+
+		&.lwtv-donut-seg--ltgreen {
+			background-color: color.mix(colors.$lwtv-green-light, colors.$lwtv-green-deep, 75%);
+		}
+
+		&.lwtv-donut-seg--palegreen {
+			background-color: colors.$lwtv-green-light;
 		}
 
 		&.lwtv-donut-seg--amber {
@@ -4420,6 +5939,259 @@ canvas {
 		.lwtv-wi-layout {
 			grid-template-columns: 1fr;
 			gap: 24px;
+		}
+	}
+
+	// Shows overview: The Headlines — lead plate + colour-spine rail.
+	// One hue per subnav section; the spines double as a family legend.
+	$lwtv-hl-families: (
+		'formats': colors.$lwtv-blue,
+		'tropes': colors.$lwtv-purple,
+		'genres': colors.$lwtv-plum,
+		'intersectionality': colors.$lwtv-teal,
+		'stars': colors.$lwtv-yellow-deep,
+		'scores': colors.$lwtv-royal-blue,
+		'triggers': colors.$lwtv-red,
+		'worth-it': colors.$lwtv-green,
+		'we-love-it': colors.$lwtv-pink,
+		// Characters overview's rail entries (on-air is promoted to the lead
+		// plate, so it never needs a rail color here). 'cliches' reuses the
+		// green already assigned to the Top Clichés panel below (family:
+		// 'characters' there) so the two cliché-related entries in this
+		// rail stay visually distinct from each other.
+		'cliches': colors.$lwtv-green-deep,
+		'most-cliches': colors.$lwtv-purple,
+		'gender': colors.$lwtv-yellow-deep,
+		'sexuality': colors.$lwtv-teal-deep,
+		'queer-irl': colors.$lwtv-royal-blue,
+	);
+
+	.lwtv-hl {
+		padding: 30px 32px 28px;
+		margin-bottom: 1.5rem;
+		border: 1px solid colors.$lwtv-grey-border;
+		border-radius: 14px;
+	}
+
+	.lwtv-hl-lead {
+		display: grid;
+		grid-template-columns: minmax(0, 420px) 1fr;
+		gap: 48px;
+		align-items: center;
+		padding: 36px 40px;
+		margin-bottom: 26px;
+		color: colors.$lwtv-grey-deep;
+		text-decoration: none;
+		background-color: colors.$lwtv-pink-light;
+		border-radius: 10px;
+
+		&:hover,
+		&:focus {
+			color: colors.$lwtv-grey-deep;
+
+			.lwtv-hl-lead-text {
+				text-decoration: underline;
+			}
+		}
+	}
+
+	.lwtv-hl-lead-label {
+		display: block;
+		margin-bottom: 10px;
+		font-size: 0.688rem;
+		font-weight: 700;
+		letter-spacing: 0.1em;
+		color: colors.$lwtv-pink-deep;
+		text-transform: uppercase;
+	}
+
+	.lwtv-hl-lead-fig {
+		display: block;
+		font-family: fonts.$headingfontfamily;
+		font-size: 4.75rem;
+		font-weight: 500;
+		font-variant-numeric: tabular-nums;
+		line-height: 1;
+		color: colors.$lwtv-plum;
+	}
+
+	.lwtv-hl-lead-text {
+		font-size: 1.25rem;
+		line-height: 1.45;
+		color: colors.$lwtv-grey-deep;
+		text-wrap: pretty;
+
+		.lwtv-hl-arrow {
+			color: colors.$lwtv-pink-deep;
+		}
+	}
+
+	.lwtv-hl-rail {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 20px 24px;
+		padding: 0;
+		margin: 0;
+		list-style: none;
+
+		li {
+			margin: 0;
+			list-style: none;
+		}
+	}
+
+	.lwtv-hl-item {
+		display: grid;
+		grid-template-columns: auto 1fr;
+		gap: 16px;
+		color: colors.$lwtv-grey-deep;
+		text-decoration: none;
+
+		&:hover,
+		&:focus {
+			color: colors.$lwtv-grey-deep;
+
+			.lwtv-hl-spine {
+				width: 5px;
+			}
+
+			.lwtv-hl-fig {
+				text-decoration: underline;
+			}
+		}
+	}
+
+	// Full-height by default grid stretch — no fixed height, so uneven spine
+	// lengths across a row read as typeset, not boxed.
+	.lwtv-hl-spine {
+		width: 3px;
+		border-radius: 2px;
+
+		@media (prefers-reduced-motion: no-preference) {
+			transition: width 150ms ease;
+		}
+	}
+
+	.lwtv-hl-head {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 8px;
+	}
+
+	.lwtv-hl-label {
+		font-size: 0.625rem;
+		font-weight: 700;
+		letter-spacing: 0.1em;
+		color: colors.$lwtv-grey-deep;
+		text-transform: uppercase;
+	}
+
+	.lwtv-hl-item .lwtv-hl-arrow {
+		font-size: 0.812rem;
+		color: colors.$lwtv-pink;
+	}
+
+	.lwtv-hl-fig {
+		display: block;
+		margin: 6px 0 4px;
+		font-family: fonts.$headingfontfamily;
+		font-size: 2rem;
+		font-weight: 500;
+		font-variant-numeric: tabular-nums;
+		line-height: 1.1;
+	}
+
+	.lwtv-hl-text {
+		display: block;
+		font-size: 0.812rem;
+		line-height: 1.5;
+		color: colors.$lwtv-grey-deep;
+		text-wrap: pretty;
+	}
+
+	@each $lwtv-hl-fam, $lwtv-hl-col in $lwtv-hl-families {
+
+		.lwtv-hl-item--#{$lwtv-hl-fam} {
+
+			.lwtv-hl-spine {
+				background-color: $lwtv-hl-col;
+			}
+
+			.lwtv-hl-fig {
+				color: $lwtv-hl-col;
+			}
+		}
+	}
+
+	@media (max-width: 1024px) {
+
+		.lwtv-hl-rail {
+			grid-template-columns: repeat(2, 1fr);
+		}
+	}
+
+	// Shows overview: the library depth band (seasons/episodes totals).
+	.lwtv-lib {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 14px 40px;
+		align-items: center;
+		padding: 24px 32px;
+		margin-bottom: 1.5rem;
+		border: 1px solid colors.$lwtv-grey-border;
+		border-radius: 14px;
+	}
+
+	.lwtv-lib-figures {
+		display: flex;
+		gap: 40px;
+	}
+
+	.lwtv-lib-num {
+		display: block;
+		font-family: fonts.$headingfontfamily;
+		font-size: 2.5rem;
+		font-variant-numeric: tabular-nums;
+		line-height: 1;
+		color: colors.$lwtv-pink-deep;
+	}
+
+	.lwtv-lib-sub {
+		font-size: 0.812rem;
+		font-weight: 600;
+	}
+
+	.lwtv-lib-caption {
+		flex: 1 1 260px;
+		margin: 0;
+		font-size: 0.875rem;
+		color: colors.$lwtv-grey-deep;
+	}
+
+	@media (max-width: 767px) {
+
+		.lwtv-hl {
+			padding: 22px 18px 20px;
+		}
+
+		.lwtv-hl-lead {
+			grid-template-columns: 1fr;
+			gap: 18px;
+			padding: 24px 22px;
+		}
+
+		.lwtv-hl-lead-fig {
+			font-size: 3.5rem;
+		}
+
+		.lwtv-hl-lead-text {
+			font-size: 1.062rem;
+		}
+
+		.lwtv-hl-rail {
+			grid-template-columns: 1fr;
+			gap: 18px;
 		}
 	}
 

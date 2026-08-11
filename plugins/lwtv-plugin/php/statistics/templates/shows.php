@@ -49,9 +49,6 @@ if ( 'overview' === $view ) {
 	$count_tropes = count( $tropes_data );
 	$count_genres = count( $genres_data );
 
-	// Growth series for the Shows metric-card sparkline (real, cumulative).
-	$shows_growth = lwtv_plugin()->generate_growth_series( 'shows' );
-
 	// Trope Gap pull-stats: counts for the buried vs. happy-ending tropes.
 	$trope_buried = isset( $tropes_data['dead-queers'] ) ? (int) $tropes_data['dead-queers']['count'] : 0;
 	$trope_happy  = isset( $tropes_data['happy-ending'] ) ? (int) $tropes_data['happy-ending']['count'] : 0;
