@@ -2473,13 +2473,22 @@ canvas {
 			// of a gap pair); no-cliche reuses purple, the Clichés section's
 			// existing family color; straight-cis-actors is a neutral grey for
 			// the "default/expected" side of the Casting Gap.
-			&.no-cliche {
+			//
+			// Actors overview's "Who Plays the Roles" pair joins these same two
+			// rules rather than getting its own colors: .openly-queer already
+			// shares .cliches' solid purple in the untinted .card-header rules
+			// above, and .trans-nb-actors already shares .queer-actors'/
+			// .happy-endings' solid royal-blue there too — so their tinted
+			// versions stay consistent with those existing groupings.
+			&.no-cliche,
+			&.openly-queer {
 				background-color: colors.$lwtv-purple-light;
 				border-color: colors.$lwtv-purple-light;
 				color: colors.$lwtv-purple-deep;
 			}
 
-			&.queer-actors {
+			&.queer-actors,
+			&.trans-nb-actors {
 				background-color: colors.$lwtv-royal-blue-light;
 				border-color: colors.$lwtv-royal-blue-light;
 				color: colors.$lwtv-royal-blue-deep;
@@ -4686,6 +4695,19 @@ canvas {
 		background-color: colors.$lwtv-yellow-deep;
 	}
 
+	// Amber ramp for the Roles donut (actors/roles.php): Regular/Recurring/
+	// Guest, three buckets against the "actors" family's one solid --amber
+	// shade above — same 25/75% mix spacing the green ramp uses.
+	.lwtv-donut-seg--medamber {
+		stroke: color.mix(colors.$lwtv-yellow-light, colors.$lwtv-yellow-deep, 25%);
+		background-color: color.mix(colors.$lwtv-yellow-light, colors.$lwtv-yellow-deep, 25%);
+	}
+
+	.lwtv-donut-seg--ltamber {
+		stroke: colors.$lwtv-yellow-light;
+		background-color: colors.$lwtv-yellow-light;
+	}
+
 	.lwtv-donut-seg--red {
 		stroke: colors.$lwtv-red;
 		background-color: colors.$lwtv-red;
@@ -4785,6 +4807,14 @@ canvas {
 
 		&.lwtv-donut-seg--amber {
 			background-color: colors.$lwtv-yellow-deep;
+		}
+
+		&.lwtv-donut-seg--medamber {
+			background-color: color.mix(colors.$lwtv-yellow-light, colors.$lwtv-yellow-deep, 25%) !important;
+		}
+
+		&.lwtv-donut-seg--ltamber {
+			background-color: colors.$lwtv-yellow-light;
 		}
 
 		&.lwtv-donut-seg--red {

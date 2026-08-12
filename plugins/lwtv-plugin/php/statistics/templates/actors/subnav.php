@@ -15,6 +15,7 @@ $lwtv_actor_subnav = array(
 	'overview'  => __( 'Overview', 'lwtv' ),
 	'sexuality' => __( 'Sexuality', 'lwtv' ),
 	'gender'    => __( 'Gender', 'lwtv' ),
+	'roles'     => __( 'Roles', 'lwtv' ),
 );
 ?>
 <nav class="lwtv-stats-subnav" aria-label="<?php esc_attr_e( 'Actors statistics views', 'lwtv' ); ?>">

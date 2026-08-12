@@ -38,6 +38,7 @@ use LWTV\Statistics\Build\Character_Death_Leaders as Build_Character_Death_Leade
 use LWTV\Statistics\Build\Character_Longevity_Leaders as Build_Character_Longevity_Leaders;
 use LWTV\Statistics\Build\Character_Identity_Trend as Build_Character_Identity_Trend;
 use LWTV\Statistics\Build\Character_Queer_Cast_Firsts as Build_Character_Queer_Cast_Firsts;
+use LWTV\Statistics\Build\Actors as Build_Actors;
 use LWTV\_Components\Transients;
 
 /**
@@ -285,6 +286,11 @@ class Statistics_Cache_Warming {
 		( new On_Air_Stats() )->generate( 'shows' );
 		( new On_Air_Stats() )->generate( 'characters' );
 
+		// Actors overview Headlines lead plate: distinct actors with a
+		// character on screen this year. Same daily cadence as the two
+		// calls above, since it's also a "this year" snapshot.
+		( new Build_Actors() )->generate_active_this_year();
+
 		lwtv_plugin()->debug_log( 'statistics', 'Warming on-air statistics caches...' );
 	}
 
@@ -314,6 +320,10 @@ class Statistics_Cache_Warming {
 		foreach ( $actor_taxonomies as $taxonomy ) {
 			( new Build_Taxonomy_Optimized() )->make_comprehensive( CPT_Actors::SLUG, $taxonomy, true );
 		}
+
+		// Actors → Roles (Regular/Recurring/Guest breakdown) + the Actors
+		// overview Headlines band both read this same cached tally.
+		( new Build_Actors() )->generate_roles_totals();
 
 		lwtv_plugin()->debug_log( 'statistics', 'Warming taxonomy statistics caches...' );
 	}

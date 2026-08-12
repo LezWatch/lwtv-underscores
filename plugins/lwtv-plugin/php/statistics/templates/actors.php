@@ -15,7 +15,7 @@ use LWTV\CPTs\Actors as CPT_Actors;
 
 $baseurl = '/statistics/actors/';
 
-$valid_views = array( 'gender', 'sexuality' );
+$valid_views = array( 'gender', 'sexuality', 'roles' );
 $sent_view   = get_query_var( 'view', 'overview' );
 $view        = ( ! in_array( $sent_view, $valid_views, true ) ) ? 'overview' : $sent_view;
 
