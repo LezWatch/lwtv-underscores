@@ -39,6 +39,7 @@ use LWTV\Statistics\Build\Character_Longevity_Leaders as Build_Character_Longevi
 use LWTV\Statistics\Build\Character_Identity_Trend as Build_Character_Identity_Trend;
 use LWTV\Statistics\Build\Character_Queer_Cast_Firsts as Build_Character_Queer_Cast_Firsts;
 use LWTV\Statistics\Build\Actors as Build_Actors;
+use LWTV\Statistics\Build\Unknown_Actor as Build_Unknown_Actor;
 use LWTV\_Components\Transients;
 
 /**
@@ -329,6 +330,13 @@ class Statistics_Cache_Warming {
 		// by-orientation cards.
 		( new Build_Actors() )->generate_straight_queer_gap();
 		( new Build_Actors() )->generate_prolific_by_orientation();
+
+		// Actors → Gender: same two figures, mirrored for gender identity.
+		( new Build_Actors() )->generate_cis_queer_gap();
+		( new Build_Actors() )->generate_prolific_by_gender();
+
+		// Actors → Unknown Actor: the whole spotlight report in one call.
+		( new Build_Unknown_Actor() )->generate_report();
 
 		lwtv_plugin()->debug_log( 'statistics', 'Warming taxonomy statistics caches...' );
 	}

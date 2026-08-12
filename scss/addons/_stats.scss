@@ -3072,6 +3072,45 @@ canvas {
 		color: colors.$lwtv-grey-deep;
 	}
 
+	// Unknown Actor spotlight (actors/unknown.php): same card/row/waffle/body
+	// layout as Queer IRL's card above, just under its own class names since
+	// the dot colors below are specific to this page's "gap vs known" metric
+	// rather than Queer IRL's queer-vs-cis one. Amber matches the "actors"
+	// family color used everywhere else in this section.
+	.lwtv-unknown-card {
+		padding: 32px 36px;
+	}
+
+	.lwtv-unknown-row {
+		display: flex;
+		align-items: center;
+		gap: 44px;
+		flex-wrap: wrap;
+	}
+
+	.lwtv-unknown-waffle {
+		flex: 0 0 auto;
+
+		.lwtv-waffle {
+			display: block;
+			max-width: 230px;
+		}
+	}
+
+	.lwtv-unknown-waffle .lwtv-waffle-dot--gap {
+		fill: colors.$lwtv-yellow-deep;
+		opacity: 1;
+	}
+
+	.lwtv-unknown-waffle .lwtv-waffle-dot--known {
+		fill: colors.$lwtv-aro-grey;
+		opacity: 1;
+	}
+
+	.lwtv-unknown-body {
+		flex: 1 1 260px;
+	}
+
 	// Trope Load (shows/tropes.php): a 100-dot waffle colored by bucket
 	// (0/1/2/3/4+ tropes per show) instead of the raspberry share-of-total
 	// ramp above. Reuses .lwtv-legend's row markup — just overrides its
@@ -4645,6 +4684,39 @@ canvas {
 			align-self: center;
 			width: 150px;
 			height: 150px;
+		}
+	}
+
+	// 'mini' donut layout (partials/donut.php): same figure/eyebrow sizing as
+	// .lwtv-donut-card--compact above, just without its own border/background/
+	// padding — several of these are meant to share one outer .lwtv-panel
+	// card (see actors/unknown.php's "Who Are These Characters?" trio)
+	// instead of each nesting a second bordered box inside the first.
+	.lwtv-donut-mini {
+		display: flex;
+		flex-direction: column;
+		align-items: stretch;
+		gap: 16px;
+
+		.lwtv-stats-eyebrow {
+			margin: 0;
+		}
+
+		.lwtv-donut-figure {
+			align-self: center;
+			width: 150px;
+			height: 150px;
+		}
+	}
+
+	.lwtv-donut-mini-row {
+		display: flex;
+		gap: 32px;
+		flex-wrap: wrap;
+
+		.lwtv-donut-mini {
+			flex: 1 1 220px;
+			min-width: 220px;
 		}
 	}
 

@@ -353,18 +353,71 @@ class Actors {
 	}
 
 	/**
+	 * Actor IDs tagged with any of the given terms in an actor taxonomy, and
+	 * how many of them are still counted as queer overall once
+	 * Is_Actor_Queer's full multi-factor check (gender, pronouns, sexuality,
+	 * romantic orientation, manual override) is run — the shared engine
+	 * behind generate_straight_queer_gap() (Sexuality's "Straight" bucket)
+	 * and generate_cis_queer_gap() (Gender's "Cisgender" bucket, which is
+	 * itself three taxonomy terms: cis-woman, cis-man, cisgender).
+	 *
+	 * Deliberately reuses Is_Actor_Queer::make() rather than re-implementing
+	 * its check here, so this figure can never drift out of sync with
+	 * whatever "is this actor queer" means elsewhere on the site. That means
+	 * one query per tagged actor (Is_Actor_Queer has no internal
+	 * early-return cache check of its own — it only writes one after
+	 * computing) rather than a single batched query; acceptable since the
+	 * whole result is itself cached for a week by the public callers below.
+	 *
+	 * @param string $taxonomy   Actor taxonomy (e.g. 'lez_actor_sexuality').
+	 * @param array  $term_slugs Term slugs that make up the "default" bucket.
+	 * @return array { 'tagged_total' => int, 'queer_anyway' => int }
+	 */
+	private function count_queer_among_terms( string $taxonomy, array $term_slugs ): array {
+		global $wpdb;
+
+		$placeholders = implode( ',', array_fill( 0, count( $term_slugs ), '%s' ) );
+
+		// $placeholders is a fixed-count list of %s tokens (not user input);
+		// every actual value is still passed through prepare() below.
+		// phpcs:disable
+		$actor_ids = $wpdb->get_col(
+			$wpdb->prepare(
+				"SELECT DISTINCT p.ID
+					FROM {$wpdb->posts} p
+					INNER JOIN {$wpdb->term_relationships} tr ON tr.object_id = p.ID
+					INNER JOIN {$wpdb->term_taxonomy} tt ON tr.term_taxonomy_id = tt.term_taxonomy_id AND tt.taxonomy = %s
+					INNER JOIN {$wpdb->terms} t ON tt.term_id = t.term_id AND t.slug IN ($placeholders)
+					WHERE p.post_type = 'post_type_actors'
+					AND p.post_status = 'publish'",
+				array_merge( array( $taxonomy ), $term_slugs )
+			)
+		);
+		// phpcs:enable
+
+		$tagged_total = is_array( $actor_ids ) ? count( $actor_ids ) : 0;
+		$queer_anyway = 0;
+
+		if ( $tagged_total > 0 ) {
+			$is_actor_queer = new Is_Actor_Queer();
+			foreach ( $actor_ids as $actor_id ) {
+				if ( $is_actor_queer->make( (int) $actor_id ) ) {
+					++$queer_anyway;
+				}
+			}
+		}
+
+		return array(
+			'tagged_total' => $tagged_total,
+			'queer_anyway' => $queer_anyway,
+		);
+	}
+
+	/**
 	 * How many actors tagged "Straight" by sexual orientation alone are
 	 * still counted as queer once gender, pronouns, romantic orientation,
 	 * and the manual override are factored in — for the Actors → Sexuality
 	 * "Straight" bucket isn't the whole queerness story.
-	 *
-	 * Deliberately reuses Is_Actor_Queer::make() rather than re-implementing
-	 * its multi-factor check here, so this figure can never drift out of
-	 * sync with whatever "is this actor queer" means elsewhere on the site.
-	 * That means one query per heterosexual-tagged actor (Is_Actor_Queer
-	 * has no internal early-return cache check of its own — it only writes
-	 * one after computing) rather than a single batched query; acceptable
-	 * since the whole result is itself cached for a week.
 	 *
 	 * @return array { 'straight_total' => int, 'queer_anyway' => int }
 	 */
@@ -376,37 +429,11 @@ class Actors {
 			return $cached;
 		}
 
-		global $wpdb;
-
-		$actor_ids = $wpdb->get_col(
-			$wpdb->prepare(
-				"SELECT DISTINCT p.ID
-					FROM {$wpdb->posts} p
-					INNER JOIN {$wpdb->term_relationships} tr ON tr.object_id = p.ID
-					INNER JOIN {$wpdb->term_taxonomy} tt ON tr.term_taxonomy_id = tt.term_taxonomy_id AND tt.taxonomy = %s
-					INNER JOIN {$wpdb->terms} t ON tt.term_id = t.term_id AND t.slug = %s
-					WHERE p.post_type = 'post_type_actors'
-					AND p.post_status = 'publish'",
-				'lez_actor_sexuality',
-				'heterosexual'
-			)
-		);
-
-		$straight_total = is_array( $actor_ids ) ? count( $actor_ids ) : 0;
-		$queer_anyway   = 0;
-
-		if ( $straight_total > 0 ) {
-			$is_actor_queer = new Is_Actor_Queer();
-			foreach ( $actor_ids as $actor_id ) {
-				if ( $is_actor_queer->make( (int) $actor_id ) ) {
-					++$queer_anyway;
-				}
-			}
-		}
+		$counts = $this->count_queer_among_terms( 'lez_actor_sexuality', array( 'heterosexual' ) );
 
 		$gap = array(
-			'straight_total' => $straight_total,
-			'queer_anyway'   => $queer_anyway,
+			'straight_total' => $counts['tagged_total'],
+			'queer_anyway'   => $counts['queer_anyway'],
 		);
 
 		lwtv_plugin()->set_transient( $transient, $gap, WEEK_IN_SECONDS );
@@ -415,26 +442,46 @@ class Actors {
 	}
 
 	/**
-	 * The most-prolific actor for each tracked sexual orientation — the
-	 * actor linked to the most published characters, grouped by their own
-	 * lez_actor_sexuality term.
+	 * How many actors tagged "Cisgender" by gender identity alone (across
+	 * the three cis slugs the Gender donut folds into one "Cisgender"
+	 * segment — cis-woman, cis-man, cisgender) are still counted as queer
+	 * once sexuality, pronouns, romantic orientation, and the manual
+	 * override are factored in — for the Actors → Gender "Cisgender"
+	 * bucket isn't the whole queerness story either.
 	 *
-	 * Counts every actor-character relationship (not just "most recent",
-	 * unlike generate_active_this_year()'s recast handling above) — this is
-	 * about breadth of roles played, not who's active right now, so a past
-	 * recast still counts toward an actor's total.
-	 *
-	 * @return array [ term_slug => { 'actor_id', 'name', 'url', 'count', 'term_name' } ],
-	 *               only for terms with at least one actor with 1+ characters.
+	 * @return array { 'cis_total' => int, 'queer_anyway' => int }
 	 */
-	public function generate_prolific_by_orientation(): array {
-		$transient = 'actor_prolific_by_orientation';
+	public function generate_cis_queer_gap(): array {
+		$transient = 'actor_cis_queer_gap';
 		$cached    = lwtv_plugin()->get_transient( $transient );
 
 		if ( false !== $cached && is_array( $cached ) ) {
 			return $cached;
 		}
 
+		$counts = $this->count_queer_among_terms( 'lez_actor_gender', array( 'cis-woman', 'cis-man', 'cisgender' ) );
+
+		$gap = array(
+			'cis_total'    => $counts['tagged_total'],
+			'queer_anyway' => $counts['queer_anyway'],
+		);
+
+		lwtv_plugin()->set_transient( $transient, $gap, WEEK_IN_SECONDS );
+
+		return $gap;
+	}
+
+	/**
+	 * Character count per actor, counting every actor-character
+	 * relationship (not just "most recent", unlike
+	 * generate_active_this_year()'s recast handling above) — breadth of
+	 * roles played, not who's active right now, so a past recast still
+	 * counts toward an actor's total. Shared engine behind every
+	 * generate_prolific_by_*() method below.
+	 *
+	 * @return array actor_id => character count.
+	 */
+	private function get_actor_character_counts(): array {
 		global $wpdb;
 
 		// Character → actors, same fully-literal query Character_Actor_Leaders
@@ -455,35 +502,62 @@ class Actors {
 				$actors = maybe_unserialize( $row['actors'] );
 				$actors = is_array( $actors ) ? array_values( array_filter( array_map( 'absint', $actors ) ) ) : array();
 				foreach ( $actors as $actor_id ) {
+					// Post 14080 is the "Unknown" placeholder actor — a catch-all
+					// for roles with no confirmed performer — so it must never be
+					// counted toward, or win, any most-prolific-actor leaderboard.
+					// Same guard Characters_Builder uses for "busiest actor".
+					if ( 14080 === $actor_id ) {
+						continue;
+					}
 					$actor_char_counts[ $actor_id ] = ( $actor_char_counts[ $actor_id ] ?? 0 ) + 1;
 				}
 			}
 		}
 
+		return $actor_char_counts;
+	}
+
+	/**
+	 * The most-prolific actor for each term in an actor taxonomy — the
+	 * actor linked to the most published characters, grouped by their own
+	 * term. Shared engine behind generate_prolific_by_orientation()
+	 * (lez_actor_sexuality) and generate_prolific_by_gender()
+	 * (lez_actor_gender).
+	 *
+	 * @param string $taxonomy Actor taxonomy.
+	 * @return array [ term_slug => { 'actor_id', 'name', 'url', 'count', 'term_name' } ],
+	 *               only for terms with at least one actor with 1+ characters.
+	 */
+	private function get_prolific_by_taxonomy( string $taxonomy ): array {
+		$actor_char_counts = $this->get_actor_character_counts();
+
 		if ( empty( $actor_char_counts ) ) {
-			lwtv_plugin()->set_transient( $transient, array(), WEEK_IN_SECONDS );
 			return array();
 		}
 
-		// Actor → sexuality term. Ordered by ID ascending so that, on a tied
+		global $wpdb;
+
+		// Actor → taxonomy term. Ordered by ID ascending so that, on a tied
 		// character count, the earliest-catalogued actor wins — deterministic
 		// rather than depending on incidental row order.
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- No user input; all values are hardcoded literals.
-		$actor_sex_results = $wpdb->get_results(
-			"SELECT p.ID as id, p.post_title as name, t.slug as term_slug, t.name as term_name
-				FROM {$wpdb->posts} p
-				INNER JOIN {$wpdb->term_relationships} tr ON tr.object_id = p.ID
-				INNER JOIN {$wpdb->term_taxonomy} tt ON tr.term_taxonomy_id = tt.term_taxonomy_id AND tt.taxonomy = 'lez_actor_sexuality'
-				INNER JOIN {$wpdb->terms} t ON tt.term_id = t.term_id
-				WHERE p.post_type = 'post_type_actors'
-				AND p.post_status = 'publish'
-				ORDER BY p.ID ASC",
+		$actor_term_results = $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT p.ID as id, p.post_title as name, t.slug as term_slug, t.name as term_name
+					FROM {$wpdb->posts} p
+					INNER JOIN {$wpdb->term_relationships} tr ON tr.object_id = p.ID
+					INNER JOIN {$wpdb->term_taxonomy} tt ON tr.term_taxonomy_id = tt.term_taxonomy_id AND tt.taxonomy = %s
+					INNER JOIN {$wpdb->terms} t ON tt.term_id = t.term_id
+					WHERE p.post_type = 'post_type_actors'
+					AND p.post_status = 'publish'
+					ORDER BY p.ID ASC",
+				$taxonomy
+			),
 			ARRAY_A
 		);
 
 		$leaders = array();
-		if ( is_array( $actor_sex_results ) ) {
-			foreach ( $actor_sex_results as $row ) {
+		if ( is_array( $actor_term_results ) ) {
+			foreach ( $actor_term_results as $row ) {
 				$actor_id = (int) $row['id'];
 				$count    = $actor_char_counts[ $actor_id ] ?? 0;
 
@@ -505,8 +579,54 @@ class Actors {
 			}
 		}
 
+		return $leaders;
+	}
+
+	/**
+	 * The most-prolific actor for each tracked sexual orientation.
+	 *
+	 * @return array [ term_slug => { 'actor_id', 'name', 'url', 'count', 'term_name' } ]
+	 */
+	public function generate_prolific_by_orientation(): array {
+		$transient = 'actor_prolific_by_orientation';
+		$cached    = lwtv_plugin()->get_transient( $transient );
+
+		if ( false !== $cached && is_array( $cached ) ) {
+			return $cached;
+		}
+
+		$leaders = $this->get_prolific_by_taxonomy( 'lez_actor_sexuality' );
+
 		// Character data is relatively stable — same week-long cadence
 		// generate_roles_totals() above uses.
+		lwtv_plugin()->set_transient( $transient, $leaders, WEEK_IN_SECONDS );
+
+		return $leaders;
+	}
+
+	/**
+	 * The most-prolific actor for each tracked gender identity term.
+	 *
+	 * Returned per raw taxonomy term (cis-woman/cis-man/cisgender kept
+	 * separate, not pre-merged) — same shape as
+	 * generate_prolific_by_orientation(). Templates that fold the three cis
+	 * slugs into one "Cisgender" bucket (matching the Gender donut) should
+	 * take the max-count entry across those three slugs themselves; the max
+	 * of a union's subgroup maxes is always the union's max, so that's a
+	 * safe merge to do after the fact rather than re-querying.
+	 *
+	 * @return array [ term_slug => { 'actor_id', 'name', 'url', 'count', 'term_name' } ]
+	 */
+	public function generate_prolific_by_gender(): array {
+		$transient = 'actor_prolific_by_gender';
+		$cached    = lwtv_plugin()->get_transient( $transient );
+
+		if ( false !== $cached && is_array( $cached ) ) {
+			return $cached;
+		}
+
+		$leaders = $this->get_prolific_by_taxonomy( 'lez_actor_gender' );
+
 		lwtv_plugin()->set_transient( $transient, $leaders, WEEK_IN_SECONDS );
 
 		return $leaders;

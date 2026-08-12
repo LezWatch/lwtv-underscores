@@ -159,6 +159,11 @@ class Character_Queer_Cast_Firsts {
 
 		$trans_actor_ids = array_flip( array_map( 'absint', wp_list_pluck( $trans_actor_rows, 'id' ) ) );
 
+		// Post 14080 is the "Unknown" placeholder actor — a catch-all for
+		// roles with no confirmed performer — so it must never win a "first"
+		// callout, same guard Characters_Builder uses for "busiest actor".
+		unset( $trans_actor_ids[14080] );
+
 		// phpcs:disable
 		$query = "SELECT chars.ID as id, chars.post_title as name, appears.meta_value as years, actor_meta.meta_value as actors
 			FROM {$wpdb->posts} chars
