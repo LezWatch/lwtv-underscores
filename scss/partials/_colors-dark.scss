@@ -1110,6 +1110,13 @@
 			color: colors.$lwtv-pink-light;
 		}
 
+		// Actors → Sexuality's pullstats + prolific-by-orientation cards: no
+		// icon/number override needed (amber is already the dark-mode
+		// default above), just the label-link color.
+		.lwtv-bars--actors .lwtv-statcard-label a {
+			color: $lwtv-yellow-light;
+		}
+
 		// Matchup count/plus/footer-number follow whichever .lwtv-bars--<family>
 		// class the panel carries, same split as the light-mode rule in
 		// _stats.scss — Genres stays amber, Tropes matches the green used

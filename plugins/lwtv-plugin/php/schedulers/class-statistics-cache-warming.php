@@ -325,6 +325,11 @@ class Statistics_Cache_Warming {
 		// overview Headlines band both read this same cached tally.
 		( new Build_Actors() )->generate_roles_totals();
 
+		// Actors → Sexuality: "The Overlap" callout and the most-prolific-
+		// by-orientation cards.
+		( new Build_Actors() )->generate_straight_queer_gap();
+		( new Build_Actors() )->generate_prolific_by_orientation();
+
 		lwtv_plugin()->debug_log( 'statistics', 'Warming taxonomy statistics caches...' );
 	}
 

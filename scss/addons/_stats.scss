@@ -3240,6 +3240,43 @@ canvas {
 		color: colors.$lwtv-grey-deep;
 	}
 
+	// Firsts-style cards (a name linked inside the label — Gender/Sexuality/
+	// Queer IRL's Firsts lists, Actors Sexuality's Most Prolific by
+	// Orientation): a smaller single-row layout instead of the plain
+	// pullstat cards' stacked icon-row/number/label. Number stays big, the
+	// name sits right next to it, the icon moves out of the top-right
+	// corner into the row's end. Kept as an additive modifier — .lwtv-
+	// statcard's own default stacked layout still serves the plain
+	// sentence-label pullstat cards, which need the full width a name-row
+	// wouldn't leave them.
+	.lwtv-statcard--firsts {
+		flex-direction: row;
+		align-items: center;
+		gap: 14px;
+		padding: 14px 18px;
+
+		.lwtv-statcard-icon {
+			position: static;
+			flex-shrink: 0;
+			width: 30px;
+			height: 30px;
+			margin-left: auto;
+		}
+
+		.lwtv-statcard-number {
+			flex-shrink: 0;
+			font-size: 1.75rem;
+		}
+
+		.lwtv-statcard-label {
+			flex: 1 1 auto;
+			min-width: 0;
+			margin: 0;
+			font-size: 0.88rem;
+			line-height: 1.3;
+		}
+	}
+
 	// .lwtv-statcard-icon/-number default to amber — fine for Genres, the
 	// only page that used pullstats until now, but Clichés' family color
 	// is green everywhere else on its page (Load waffle, matchup accents).
@@ -3282,6 +3319,20 @@ canvas {
 
 	.lwtv-bars--queer-irl .lwtv-statcard-label a {
 		color: colors.$lwtv-pink-deep;
+		font-weight: 600;
+
+		&:hover,
+		&:focus {
+			text-decoration: underline;
+		}
+	}
+
+	// Actors → Sexuality's pullstats + "Most Prolific by Orientation" cards:
+	// no icon/number override needed (amber is .lwtv-statcard's own default,
+	// same as the original Genre Stats row), just the label-link color that
+	// has no unscoped default.
+	.lwtv-bars--actors .lwtv-statcard-label a {
+		color: colors.$lwtv-yellow-deep;
 		font-weight: 600;
 
 		&:hover,
@@ -4695,12 +4746,25 @@ canvas {
 		background-color: colors.$lwtv-yellow-deep;
 	}
 
-	// Amber ramp for the Roles donut (actors/roles.php): Regular/Recurring/
-	// Guest, three buckets against the "actors" family's one solid --amber
-	// shade above — same 25/75% mix spacing the green ramp uses.
+	// Amber ramp for actors/roles.php's donut (Regular/Recurring/Guest,
+	// three buckets) and actors/sexuality.php's donut (top-4 orientations +
+	// an Other catch-all, five buckets) — same 25/50/75/100% mix spacing
+	// the green ramp uses, against the "actors" family's one solid --amber
+	// shade above. midamber/paleamber (50%/75%) exist only for Sexuality's
+	// extra granularity; Roles only ever uses amber/medamber/ltamber.
 	.lwtv-donut-seg--medamber {
 		stroke: color.mix(colors.$lwtv-yellow-light, colors.$lwtv-yellow-deep, 25%);
 		background-color: color.mix(colors.$lwtv-yellow-light, colors.$lwtv-yellow-deep, 25%);
+	}
+
+	.lwtv-donut-seg--midamber {
+		stroke: color.mix(colors.$lwtv-yellow-light, colors.$lwtv-yellow-deep, 50%);
+		background-color: color.mix(colors.$lwtv-yellow-light, colors.$lwtv-yellow-deep, 50%);
+	}
+
+	.lwtv-donut-seg--paleamber {
+		stroke: color.mix(colors.$lwtv-yellow-light, colors.$lwtv-yellow-deep, 75%);
+		background-color: color.mix(colors.$lwtv-yellow-light, colors.$lwtv-yellow-deep, 75%);
 	}
 
 	.lwtv-donut-seg--ltamber {
@@ -4811,6 +4875,14 @@ canvas {
 
 		&.lwtv-donut-seg--medamber {
 			background-color: color.mix(colors.$lwtv-yellow-light, colors.$lwtv-yellow-deep, 25%) !important;
+		}
+
+		&.lwtv-donut-seg--midamber {
+			background-color: color.mix(colors.$lwtv-yellow-light, colors.$lwtv-yellow-deep, 50%) !important;
+		}
+
+		&.lwtv-donut-seg--paleamber {
+			background-color: color.mix(colors.$lwtv-yellow-light, colors.$lwtv-yellow-deep, 75%);
 		}
 
 		&.lwtv-donut-seg--ltamber {

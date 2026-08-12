@@ -242,7 +242,7 @@ if ( ! empty( $gen_firsts ) ) :
 	<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'Firsts', 'lwtv' ); ?></p>
 	<div class="lwtv-pullstats lwtv-pullstats--three lwtv-statcards lwtv-bars--characters">
 		<?php foreach ( $gen_firsts_sorted as $gen_first ) : ?>
-			<div class="lwtv-statcard">
+			<div class="lwtv-statcard lwtv-statcard--firsts">
 				<span class="lwtv-statcard-icon">
 					<?php echo lwtv_plugin()->get_symbolicon( svg: 'calendar-alt.svg', icon: 'svg-calendar-alt', max_size: '18' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 				</span>
