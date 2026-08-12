@@ -240,13 +240,18 @@ if ( ! empty( $gen_firsts ) ) :
 	uasort( $gen_firsts_sorted, static fn( $a, $b ) => $a['year'] <=> $b['year'] );
 	?>
 	<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'Firsts', 'lwtv' ); ?></p>
-	<ul class="lwtv-identity-firsts">
+	<div class="lwtv-pullstats lwtv-pullstats--three lwtv-statcards lwtv-bars--characters">
 		<?php foreach ( $gen_firsts_sorted as $gen_first ) : ?>
-			<li class="lwtv-identity-firsts-row">
-				<span class="lwtv-identity-firsts-term"><?php echo esc_html( $gen_first['name'] ); ?></span>
-				<a class="lwtv-identity-firsts-name" href="<?php echo esc_url( $gen_first['url'] ); ?>"><?php echo esc_html( $gen_first['char_name'] ); ?></a>
-				<span class="lwtv-identity-firsts-year"><?php echo esc_html( (string) $gen_first['year'] ); ?></span>
-			</li>
+			<div class="lwtv-statcard">
+				<span class="lwtv-statcard-icon">
+					<?php echo lwtv_plugin()->get_symbolicon( svg: 'calendar-alt.svg', icon: 'svg-calendar-alt', max_size: '18' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+				</span>
+				<span class="lwtv-statcard-number"><?php echo esc_html( (string) $gen_first['year'] ); ?></span>
+				<p class="lwtv-statcard-label">
+					<?php echo esc_html( $gen_first['name'] ); ?>:
+					<a href="<?php echo esc_url( $gen_first['url'] ); ?>"><?php echo esc_html( $gen_first['char_name'] ); ?></a>
+				</p>
+			</div>
 		<?php endforeach; ?>
-	</ul>
+	</div>
 <?php endif; ?>

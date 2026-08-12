@@ -3014,6 +3014,55 @@ canvas {
 		opacity: 1;
 	}
 
+	// Queer IRL (characters/queer-irl.php): its own card/row rather than
+	// reusing .lwtv-castinggap-row/-waffle directly — same visual idea
+	// (waffle left, legend right) but this page isn't nested inside
+	// another panel the way Casting Gap is on the Overview page, so it
+	// needs its own top-level card, and the design handoff's spacing
+	// (44px row gap, 230px waffle) differs slightly from Casting Gap's.
+	// Colors are the one thing intentionally NOT page-specific — same
+	// $lwtv-pink/$lwtv-aro-grey Casting Gap already uses for this exact
+	// queer-vs-cis metric, so it reads as the same statistic everywhere.
+	.lwtv-qirl-card {
+		padding: 32px 36px;
+	}
+
+	.lwtv-qirl-row {
+		display: flex;
+		align-items: center;
+		gap: 44px;
+		flex-wrap: wrap;
+	}
+
+	.lwtv-qirl-waffle {
+		flex: 0 0 auto;
+
+		.lwtv-waffle {
+			display: block;
+			max-width: 230px;
+		}
+	}
+
+	.lwtv-qirl-waffle .lwtv-waffle-dot--queer {
+		fill: colors.$lwtv-pink;
+		opacity: 1;
+	}
+
+	.lwtv-qirl-waffle .lwtv-waffle-dot--cis {
+		fill: colors.$lwtv-aro-grey;
+		opacity: 1;
+	}
+
+	.lwtv-qirl-body {
+		flex: 1 1 260px;
+	}
+
+	.lwtv-qirl-footnote {
+		margin: 22px 0 0;
+		font-size: 0.8rem;
+		color: colors.$lwtv-grey-deep;
+	}
+
 	// Trope Load (shows/tropes.php): a 100-dot waffle colored by bucket
 	// (0/1/2/3/4+ tropes per show) instead of the raspberry share-of-total
 	// ramp above. Reuses .lwtv-legend's row markup — just overrides its
@@ -3195,6 +3244,41 @@ canvas {
 
 	.lwtv-bars--characters .lwtv-statcard-number {
 		color: colors.$lwtv-green-deep;
+	}
+
+	// Firsts cards (gender.php/sexuality.php/queer-irl.php) link the
+	// character name inline inside .lwtv-statcard-label — give it a family
+	// color instead of the browser-default link blue.
+	.lwtv-bars--characters .lwtv-statcard-label a {
+		color: colors.$lwtv-green-deep;
+		font-weight: 600;
+
+		&:hover,
+		&:focus {
+			text-decoration: underline;
+		}
+	}
+
+	// Queer IRL Firsts cards only: pink family, kept separate from
+	// .lwtv-bars--characters (green) so Gender/Sexuality's pullstats +
+	// Firsts cards aren't affected.
+	.lwtv-bars--queer-irl .lwtv-statcard-icon {
+		background-color: colors.$lwtv-pink-light;
+		color: colors.$lwtv-pink-deep;
+	}
+
+	.lwtv-bars--queer-irl .lwtv-statcard-number {
+		color: colors.$lwtv-pink-deep;
+	}
+
+	.lwtv-bars--queer-irl .lwtv-statcard-label a {
+		color: colors.$lwtv-pink-deep;
+		font-weight: 600;
+
+		&:hover,
+		&:focus {
+			text-decoration: underline;
+		}
 	}
 
 	// Genre Stats layout: Genre Load (waffle + spotlight) takes the wide
@@ -4477,66 +4561,6 @@ canvas {
 		font-size: 0.8rem;
 		text-align: center;
 		color: colors.$lwtv-grey-deep;
-	}
-
-	// Firsts: the earliest-recorded character per tracked gender/sexuality
-	// identity (characters/gender.php, characters/sexuality.php). A plain
-	// three-part row rather than reusing .lwtv-tail-row, which is a fixed
-	// two-column (name + count) shape.
-	.lwtv-identity-firsts {
-		list-style: none;
-		margin: 0 0 1.5rem;
-		padding: 0;
-		// Two-up, same convention as .lwtv-ty-deathdate/.lwtv-ty-sb-shows —
-		// collapses to one column well before the row itself starts
-		// wrapping (@media max-width: 480px below), so the two breakpoints
-		// never fight each other.
-		columns: 2;
-		column-gap: 24px;
-
-		@media (max-width: 767px) {
-			columns: 1;
-		}
-	}
-
-	.lwtv-identity-firsts-row {
-		display: flex;
-		align-items: baseline;
-		gap: 10px;
-		padding: 9px 0;
-		font-size: 0.9rem;
-		border-bottom: 1px solid colors.$lwtv-grey-border;
-		break-inside: avoid;
-
-		&:last-child {
-			border-bottom: none;
-		}
-	}
-
-	.lwtv-identity-firsts-term {
-		flex: 1 0 100px;
-		font-weight: 700;
-		color: colors.$lwtv-grey-deep;
-	}
-
-	.lwtv-identity-firsts-name {
-		flex: 1 1 auto;
-	}
-
-	.lwtv-identity-firsts-year {
-		flex: 0 0 auto;
-		font-variant-numeric: tabular-nums;
-		color: colors.$lwtv-grey-deep;
-	}
-
-	@media (max-width: 480px) {
-		.lwtv-identity-firsts-row {
-			flex-wrap: wrap;
-		}
-
-		.lwtv-identity-firsts-term {
-			flex: 1 1 100%;
-		}
 	}
 
 	// Forces the "s" in "1980s" back to lowercase against the eyebrow's

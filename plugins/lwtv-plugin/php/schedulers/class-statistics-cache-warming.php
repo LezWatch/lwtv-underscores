@@ -37,6 +37,7 @@ use LWTV\Statistics\Build\Character_Actor_Leaders as Build_Character_Actor_Leade
 use LWTV\Statistics\Build\Character_Death_Leaders as Build_Character_Death_Leaders;
 use LWTV\Statistics\Build\Character_Longevity_Leaders as Build_Character_Longevity_Leaders;
 use LWTV\Statistics\Build\Character_Identity_Trend as Build_Character_Identity_Trend;
+use LWTV\Statistics\Build\Character_Queer_Cast_Firsts as Build_Character_Queer_Cast_Firsts;
 use LWTV\_Components\Transients;
 
 /**
@@ -324,6 +325,11 @@ class Statistics_Cache_Warming {
 	 */
 	private function warm_queer_irl_statistics(): void {
 		( new Queer_IRL_Stats() )->generate_all_data();
+
+		// Queer IRL page Firsts: oldest/newest played by a queer actor,
+		// oldest played by a trans actor.
+		( new Build_Character_Queer_Cast_Firsts() )->generate_queer_actor_firsts();
+		( new Build_Character_Queer_Cast_Firsts() )->generate_trans_actor_oldest();
 
 		lwtv_plugin()->debug_log( 'statistics', 'Warming queer IRL statistics caches...' );
 	}
