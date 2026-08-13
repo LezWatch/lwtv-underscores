@@ -20,6 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 
 use LWTV\Statistics\Build\Role_Podium;
+use LWTV\Statistics\Build\Actors as Build_Actors;
 
 $roles_raw  = lwtv_plugin()->generate_actors_statistics( 'array', 'roles' );
 $roles_data = ( is_array( $roles_raw ) && ! empty( $roles_raw ) ) ? (array) reset( $roles_raw ) : array();
@@ -63,3 +64,81 @@ $donut = array(
 
 // phpcs:ignore PEAR.Files.IncludingFile.UseRequire
 include plugin_dir_path( __DIR__ ) . 'partials/donut.php';
+
+// ---- Pullstats: total tagged appearances, leading type's share, guest share ----
+$roles_pullstats = array();
+
+if ( $roles_facts['sum'] > 0 ) {
+	$roles_pullstats[] = array(
+		'icon'   => 'tag.svg',
+		'number' => number_format_i18n( $roles_facts['sum'] ),
+		'label'  => __( 'Tagged show appearances, across every role type.', 'lwtv' ),
+	);
+}
+
+if ( '' !== $roles_facts['leader'] ) {
+	$roles_pullstats[] = array(
+		'icon'   => 'chart-pie.svg',
+		/* translators: %s: the leading role type's share of all tagged appearances (one decimal). */
+		'number' => sprintf( __( '%s%%', 'lwtv' ), number_format_i18n( $roles_facts['leader_share_pct'], 1 ) ),
+		/* translators: %s: the leading role type's name (e.g. "Regular/Main Character"). */
+		'label'  => sprintf( __( 'Of appearances are %s, the most common type.', 'lwtv' ), lcfirst( $roles_data[ $roles_facts['leader'] ]['name'] ?? '' ) ),
+	);
+}
+
+if ( isset( $roles_facts['levels']['guest'] ) && $roles_facts['sum'] > 0 ) {
+	$roles_pullstats[] = array(
+		'icon'   => 'user.svg',
+		/* translators: %s: percentage of tagged appearances that are one-off Guest roles (one decimal). */
+		'number' => sprintf( __( '%s%%', 'lwtv' ), number_format_i18n( $roles_facts['levels']['guest']['share'], 1 ) ),
+		'label'  => __( 'Are one-off Guest appearances rather than a Regular or Recurring part.', 'lwtv' ),
+	);
+}
+
+if ( ! empty( $roles_pullstats ) ) :
+	?>
+	<div class="lwtv-pullstats lwtv-pullstats--three lwtv-statcards lwtv-bars--actors">
+		<?php foreach ( $roles_pullstats as $roles_pullstat ) : ?>
+			<div class="lwtv-statcard">
+				<span class="lwtv-statcard-icon">
+					<?php echo lwtv_plugin()->get_symbolicon( svg: $roles_pullstat['icon'], icon: 'svg-' . str_replace( '.svg', '', $roles_pullstat['icon'] ), max_size: '18' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+				</span>
+				<span class="lwtv-statcard-number"><?php echo esc_html( $roles_pullstat['number'] ); ?></span>
+				<p class="lwtv-statcard-label"><?php echo esc_html( $roles_pullstat['label'] ); ?></p>
+			</div>
+		<?php endforeach; ?>
+	</div>
+	<?php
+endif;
+
+// ---- Most prolific actor per role type ----
+// "Most recent actor first" approximation — see Build_Actors::
+// get_first_actor_by_character()'s docblock: role type lives on the
+// character's show-group row, not the actor, so a recast character's
+// appearances of every type are credited to whichever actor is listed
+// first today, not necessarily whoever actually played that specific row.
+$roles_prolific = ( new Build_Actors() )->generate_prolific_by_role();
+if ( ! empty( $roles_prolific ) ) :
+	?>
+	<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'Most Prolific by Role Type', 'lwtv' ); ?></p>
+	<div class="lwtv-pullstats lwtv-pullstats--three lwtv-statcards lwtv-bars--actors">
+		<?php
+		foreach ( Role_Podium::ORDER as $roles_prolific_type ) :
+			if ( ! isset( $roles_prolific[ $roles_prolific_type ] ) ) :
+				continue;
+			endif;
+			$roles_prolific_row = $roles_prolific[ $roles_prolific_type ];
+			?>
+			<div class="lwtv-statcard lwtv-statcard--firsts">
+				<span class="lwtv-statcard-icon">
+					<?php echo lwtv_plugin()->get_symbolicon( svg: 'trophy.svg', icon: 'svg-trophy', max_size: '18' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+				</span>
+				<span class="lwtv-statcard-number"><?php echo esc_html( number_format_i18n( $roles_prolific_row['count'] ) ); ?></span>
+				<p class="lwtv-statcard-label">
+					<?php echo esc_html( $roles_data[ $roles_prolific_type ]['name'] ?? $roles_prolific_type ); ?>:
+					<a href="<?php echo esc_url( $roles_prolific_row['url'] ); ?>"><?php echo esc_html( $roles_prolific_row['name'] ); ?></a>
+				</p>
+			</div>
+		<?php endforeach; ?>
+	</div>
+<?php endif; ?>

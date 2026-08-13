@@ -338,6 +338,9 @@ class Statistics_Cache_Warming {
 		// Actors → Unknown Actor: the whole spotlight report in one call.
 		( new Build_Unknown_Actor() )->generate_report();
 
+		// Actors → Roles: the most-prolific-actor-per-role-type cards.
+		( new Build_Actors() )->generate_prolific_by_role();
+
 		lwtv_plugin()->debug_log( 'statistics', 'Warming taxonomy statistics caches...' );
 	}
 

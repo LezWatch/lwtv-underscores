@@ -502,11 +502,12 @@ class Actors {
 				$actors = maybe_unserialize( $row['actors'] );
 				$actors = is_array( $actors ) ? array_values( array_filter( array_map( 'absint', $actors ) ) ) : array();
 				foreach ( $actors as $actor_id ) {
-					// Post 14080 is the "Unknown" placeholder actor — a catch-all
-					// for roles with no confirmed performer — so it must never be
-					// counted toward, or win, any most-prolific-actor leaderboard.
+					// Unknown_Actor::ACTOR_ID (post 14080) is the "Unknown"
+					// placeholder actor — a catch-all for roles with no
+					// confirmed performer — so it must never be counted
+					// toward, or win, any most-prolific-actor leaderboard.
 					// Same guard Characters_Builder uses for "busiest actor".
-					if ( 14080 === $actor_id ) {
+					if ( Unknown_Actor::ACTOR_ID === $actor_id ) {
 						continue;
 					}
 					$actor_char_counts[ $actor_id ] = ( $actor_char_counts[ $actor_id ] ?? 0 ) + 1;
@@ -627,6 +628,151 @@ class Actors {
 
 		$leaders = $this->get_prolific_by_taxonomy( 'lez_actor_gender' );
 
+		lwtv_plugin()->set_transient( $transient, $leaders, WEEK_IN_SECONDS );
+
+		return $leaders;
+	}
+
+	/**
+	 * The first-listed (most recent) actor for every published character —
+	 * the same "most recent actor first" approximation generate_active_this_year()
+	 * uses for recast attribution, reused here because role type (like
+	 * on-air year) lives on the character's show-group row, not the actor,
+	 * and lezchars_actor has no per-row attribution to resolve which actor
+	 * actually played which specific row. A recast character's every
+	 * appearance — regardless of type — ends up credited to whichever actor
+	 * is listed first today.
+	 *
+	 * @return array [ char_id => actor_id ]. Characters with no actor on
+	 *               record, or whose first-listed actor is the "Unknown"
+	 *               placeholder (Unknown_Actor::ACTOR_ID), are omitted entirely.
+	 */
+	private function get_first_actor_by_character(): array {
+		global $wpdb;
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- No user input; all values are hardcoded literals.
+		$results = $wpdb->get_results(
+			"SELECT chars.ID as id, pm.meta_value as actors
+				FROM {$wpdb->posts} chars
+				INNER JOIN {$wpdb->postmeta} pm ON pm.post_id = chars.ID AND pm.meta_key = 'lezchars_actor'
+				WHERE chars.post_type = 'post_type_characters'
+				AND chars.post_status = 'publish'",
+			ARRAY_A
+		);
+
+		$first_actor = array();
+		if ( is_array( $results ) ) {
+			foreach ( $results as $row ) {
+				$actors = maybe_unserialize( $row['actors'] );
+				$actors = is_array( $actors ) ? array_values( array_filter( array_map( 'absint', $actors ) ) ) : array();
+
+				if ( empty( $actors ) ) {
+					continue;
+				}
+
+				// Unknown_Actor::ACTOR_ID (post 14080) is the "Unknown"
+				// placeholder actor — same exclusion
+				// get_actor_character_counts() applies, so it can never be
+				// handed credit for a "most prolific" role type.
+				if ( Unknown_Actor::ACTOR_ID === $actors[0] ) {
+					continue;
+				}
+
+				$first_actor[ (int) $row['id'] ] = $actors[0];
+			}
+		}
+
+		return $first_actor;
+	}
+
+	/**
+	 * The most-prolific actor for each Regular/Recurring/Guest role type —
+	 * the actor credited with the most tagged show-group appearances of
+	 * that type, via the "most recent actor first" approximation above.
+	 *
+	 * @return array [ 'regular'|'recurring'|'guest' => { 'actor_id', 'name', 'url', 'count' } ],
+	 *               only for types with at least one qualifying actor.
+	 */
+	public function generate_prolific_by_role(): array {
+		$transient = 'actor_prolific_by_role';
+		$cached    = lwtv_plugin()->get_transient( $transient );
+
+		if ( false !== $cached && is_array( $cached ) ) {
+			return $cached;
+		}
+
+		$first_actor = $this->get_first_actor_by_character();
+
+		if ( empty( $first_actor ) ) {
+			lwtv_plugin()->set_transient( $transient, array(), WEEK_IN_SECONDS );
+			return array();
+		}
+
+		global $wpdb;
+
+		// Every show-group row's type — same LIKE-through-a-placeholder
+		// pattern generate_roles_totals() uses.
+		$results = $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT chars.ID as id, pm.meta_value as role_type
+					FROM {$wpdb->posts} chars
+					INNER JOIN {$wpdb->postmeta} pm ON pm.post_id = chars.ID
+						AND pm.meta_key LIKE %s
+						AND pm.meta_value != ''
+					WHERE chars.post_type = 'post_type_characters'
+					AND chars.post_status = 'publish'",
+				$wpdb->esc_like( 'lezchars_show_group_' ) . '%' . $wpdb->esc_like( '_type' )
+			),
+			ARRAY_A
+		);
+
+		$tallies = array(
+			'regular'   => array(),
+			'recurring' => array(),
+			'guest'     => array(),
+		);
+
+		if ( is_array( $results ) ) {
+			foreach ( $results as $row ) {
+				$type = $row['role_type'] ?? '';
+				if ( ! isset( $tallies[ $type ] ) ) {
+					continue;
+				}
+				$char_id = (int) $row['id'];
+				if ( ! isset( $first_actor[ $char_id ] ) ) {
+					continue;
+				}
+				$actor_id                      = $first_actor[ $char_id ];
+				$tallies[ $type ][ $actor_id ] = ( $tallies[ $type ][ $actor_id ] ?? 0 ) + 1;
+			}
+		}
+
+		$leaders = array();
+		foreach ( $tallies as $type => $actor_counts ) {
+			if ( empty( $actor_counts ) ) {
+				continue;
+			}
+
+			// Ties broken by lowest actor ID for a deterministic pick.
+			$best_actor_id = null;
+			$best_count    = 0;
+			foreach ( $actor_counts as $actor_id => $count ) {
+				if ( null === $best_actor_id || $count > $best_count || ( $count === $best_count && $actor_id < $best_actor_id ) ) {
+					$best_actor_id = $actor_id;
+					$best_count    = $count;
+				}
+			}
+
+			$leaders[ $type ] = array(
+				'actor_id' => $best_actor_id,
+				'name'     => get_the_title( $best_actor_id ),
+				'url'      => get_permalink( $best_actor_id ),
+				'count'    => $best_count,
+			);
+		}
+
+		// Character data is relatively stable — same week-long cadence
+		// generate_roles_totals() above uses.
 		lwtv_plugin()->set_transient( $transient, $leaders, WEEK_IN_SECONDS );
 
 		return $leaders;
