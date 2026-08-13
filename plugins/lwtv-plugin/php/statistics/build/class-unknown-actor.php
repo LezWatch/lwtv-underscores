@@ -389,30 +389,36 @@ class Unknown_Actor {
 		// phpcs:enable
 
 		$appears = array();
-		foreach ( (array) $appears_results as $row ) {
-			$years = maybe_unserialize( $row['val'] );
-			if ( is_string( $years ) && '' !== $years ) {
-				$years = array( $years );
-			}
-			if ( ! is_array( $years ) ) {
-				continue;
-			}
-			$char_id = (int) $row['id'];
-			foreach ( $years as $year ) {
-				$appears[ $char_id ][] = (int) $year;
+		if ( is_array( $appears_results ) ) {
+			foreach ( $appears_results as $row ) {
+				$years = maybe_unserialize( $row['val'] );
+				if ( is_string( $years ) && '' !== $years ) {
+					$years = array( $years );
+				}
+				if ( ! is_array( $years ) ) {
+					continue;
+				}
+				$char_id = (int) $row['id'];
+				foreach ( $years as $year ) {
+					$appears[ $char_id ][] = (int) $year;
+				}
 			}
 		}
 
 		$shows = array();
-		foreach ( (array) $shows_results as $row ) {
-			$char_id             = (int) $row['id'];
-			$shows[ $char_id ][] = (int) $row['val'];
+		if ( is_array( $shows_results ) ) {
+			foreach ( $shows_results as $row ) {
+				$char_id             = (int) $row['id'];
+				$shows[ $char_id ][] = (int) $row['val'];
+			}
 		}
 
 		$types = array();
-		foreach ( (array) $types_results as $row ) {
-			$char_id             = (int) $row['id'];
-			$types[ $char_id ][] = $row['val'];
+		if ( is_array( $types_results ) ) {
+			foreach ( $types_results as $row ) {
+				$char_id             = (int) $row['id'];
+				$types[ $char_id ][] = $row['val'];
+			}
 		}
 
 		return array(

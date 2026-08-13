@@ -374,6 +374,13 @@ class Actors {
 	 * @return array { 'tagged_total' => int, 'queer_anyway' => int }
 	 */
 	private function count_queer_among_terms( string $taxonomy, array $term_slugs ): array {
+		if ( empty( $term_slugs ) ) {
+			return array(
+				'tagged_total' => 0,
+				'queer_anyway' => 0,
+			);
+		}
+
 		global $wpdb;
 
 		$placeholders = implode( ',', array_fill( 0, count( $term_slugs ), '%s' ) );
