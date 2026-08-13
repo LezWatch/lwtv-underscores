@@ -4,6 +4,30 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [7.1.11] - 2026-08-13
+
+### Added
+
+- The Actors section gains a Roles view, breaking every tagged show appearance down as Regular, Recurring, or Guest, with a most-prolific-actor card for each type.
+- The Actors section gains an Unknown Actor view, which turns characters with no confirmed performer into a tracked figure instead of a silent gap: how many characters and shows are affected, their gender, sexuality, and role mix, the oldest and newest still-uncredited character, the shows carrying the most of them, and a dead-or-alive count.
+- The Actors → Sexuality and → Gender views each gain a pullstats banner, an "Overlap" callout for actors whose orientation or gender tag alone understates their queerness, and a most-prolific-actor card per tracked term.
+- The Actors overview gains a headline index of its own, with the count of actors who have a character on the air this year promoted to the lead spot since it has no page of its own.
+- The Characters → Queer IRL view gains a Firsts row naming the oldest and newest character played by a queer actor and the oldest played by a trans actor.
+
+### Changed
+
+- The Characters → Queer IRL view replaces its donut and two progress bars, which showed the same split three times over, with a single waffle chart and legend.
+- The Firsts lists on the Characters → Gender, → Sexuality, and → Queer IRL views now render as stat cards with the character named inline beside the year, matching the new prolific-actor cards.
+- The "Who Plays the Roles" cards on the Actors overview now show proportional charts of each figure's share of all actors.
+- The Actors → Sexuality and → Gender donuts move from pink to amber so the whole Actors section reads as one color family.
+- The Actors → Gender donut is now a share of every actor rather than only cisgender ones, and shows Unknown as its own slice.
+
+### Fixed
+
+- The longest-running character record counted the calendar span between a character's first and last credited year, so a character written out mid-run was credited for years they were never on screen. It now counts only the years actually credited, which lowers the count for characters with gaps.
+- The placeholder "Unknown" actor could win most-prolific and firsts leaderboards; it is now excluded from all of them.
+- Stat cards in the characters color family fell back to amber in dark mode instead of their own green.
+
 ## [7.1.10] - 2026-08-11
 
 ### Added
