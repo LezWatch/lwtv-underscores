@@ -487,10 +487,6 @@
 			}
 		}
 
-		.lwtv-identity-firsts-row {
-			border-color: rgba(colors.$white, 0.12);
-		}
-
 		.lwtv-records-table {
 			border-color: rgba(colors.$white, 0.15);
 		}
@@ -526,8 +522,6 @@
 		.lwtv-leader-name,
 		.lwtv-leader-rank,
 		.lwtv-leader-value,
-		.lwtv-identity-firsts-term,
-		.lwtv-identity-firsts-year,
 		.lwtv-metric-number,
 		.lwtv-panel-sub,
 		.lwtv-records-cell--head,
@@ -1087,6 +1081,39 @@
 
 		.lwtv-statcard-number,
 		.lwtv-genreload-poster-eyebrow {
+			color: $lwtv-yellow-light;
+		}
+
+		// .lwtv-bars--characters overrides statcard icon/number to green in
+		// light mode (_stats.scss) but had no dark-mode counterpart, so these
+		// cards fell back to the yellow default above — same
+		// family-color-per-.lwtv-bars-- split as the matchup rule below.
+		.lwtv-bars--characters .lwtv-statcard-icon {
+			background-color: rgba(colors.$lwtv-green, 0.2);
+			color: $lwtv-green-light;
+		}
+
+		.lwtv-bars--characters .lwtv-statcard-number,
+		.lwtv-bars--characters .lwtv-statcard-label a {
+			color: $lwtv-green-light;
+		}
+
+		// Queer IRL Firsts cards only: pink family — same rgba(color, 0.2) +
+		// light-token pattern already used for .lwtv-ty-standout-chip--pink.
+		.lwtv-bars--queer-irl .lwtv-statcard-icon {
+			background-color: rgba(colors.$lwtv-pink, 0.2);
+			color: colors.$lwtv-pink-light;
+		}
+
+		.lwtv-bars--queer-irl .lwtv-statcard-number,
+		.lwtv-bars--queer-irl .lwtv-statcard-label a {
+			color: colors.$lwtv-pink-light;
+		}
+
+		// Actors → Sexuality's pullstats + prolific-by-orientation cards: no
+		// icon/number override needed (amber is already the dark-mode
+		// default above), just the label-link color.
+		.lwtv-bars--actors .lwtv-statcard-label a {
 			color: $lwtv-yellow-light;
 		}
 

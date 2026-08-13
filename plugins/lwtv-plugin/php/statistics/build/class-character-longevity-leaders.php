@@ -2,10 +2,18 @@
 /**
  * Longest-Running Characters Query Class
  *
- * Ranks published characters by the span between their earliest and latest
- * on-screen year, using the years recorded in the lezchars_show_group
+ * Ranks published characters by how many distinct years they're actually
+ * credited on screen, using the years recorded in the lezchars_show_group
  * repeater's `appears` sub-field — no join against show airdates needed,
  * the character's own appearance years are already tracked directly.
+ *
+ * This is a count of distinct years, not the calendar span between the
+ * earliest and latest one — a soap character with credited gaps (e.g. an
+ * actor's leave of absence, or years the character was written out and
+ * back in) shouldn't get credit for years they weren't actually on screen
+ * just because they bookend a long run. min/max are still tracked and
+ * returned alongside count, for callers that want to show the actual
+ * first–last year range next to the distinct-year count.
  *
  * @package LezWatch.TV
  */
@@ -28,11 +36,12 @@ class Character_Longevity_Leaders {
 	/**
 	 * Generate the longest-running-characters leaderboard.
 	 *
-	 * Returns the top $limit characters by on-screen year span (defaults to
-	 * TOP_LIMIT) — latest appearance year minus earliest, inclusive. Ties
-	 * on span are broken by the most recent latest-year first (a character
-	 * still active, or active more recently, ranks above one whose run
-	 * ended longer ago). Keyed by character ID, ordered widest span first.
+	 * Returns the top $limit characters by distinct on-screen years
+	 * (defaults to TOP_LIMIT) — count() of the unique years credited, not
+	 * (latest - earliest). Ties on count are broken by the most recent
+	 * latest-year first (a character still active, or active more
+	 * recently, ranks above one whose run ended longer ago). Keyed by
+	 * character ID, ordered most distinct years first.
 	 *
 	 * @param int $limit How many characters to return.
 	 * @return array [ int $char_id => [ 'name' => string, 'count' => int, 'url' => string, 'min' => int, 'max' => int ] ]
@@ -56,17 +65,19 @@ class Character_Longevity_Leaders {
 	}
 
 	/**
-	 * Build the leaderboard by finding each character's earliest/latest
-	 * appearance year.
+	 * Build the leaderboard by finding each character's set of distinct
+	 * on-screen years.
 	 *
 	 * The `appears` sub-field is a multi-value select, one serialized array
 	 * per lezchars_show_group row (unlike that repeater's `show` sub-field,
 	 * which is one scalar ID per row) — there's no per-year meta row to
-	 * COUNT/MIN/MAX in SQL directly. This pulls every (post_id, meta_value)
-	 * row for that sub-field across all published characters in one query,
-	 * then folds each row's unserialized year list into a running min/max
-	 * per character in PHP — one query total, not a get_field() call per
-	 * character, same shape Character_Actor_Leaders uses for lezchars_actor.
+	 * COUNT in SQL directly. This pulls every (post_id, meta_value) row for
+	 * that sub-field across all published characters in one query, then
+	 * folds each row's unserialized year list into a running per-character
+	 * year SET in PHP (deduped across every show-group row a character
+	 * has, so a year credited via two different shows only counts once) —
+	 * one query total, not a get_field() call per character, same shape
+	 * Character_Actor_Leaders uses for lezchars_actor.
 	 *
 	 * @param int $limit How many characters to return.
 	 * @return array Character leaderboard data.
@@ -112,20 +123,22 @@ class Character_Longevity_Leaders {
 				continue;
 			}
 
-			$id      = (int) $row['id'];
-			$row_min = min( $years );
-			$row_max = max( $years );
+			$id = (int) $row['id'];
 
 			if ( ! isset( $spans[ $id ] ) ) {
 				$spans[ $id ] = array(
 					'name'      => $row['name'],
 					'post_date' => $row['post_date'],
-					'min'       => $row_min,
-					'max'       => $row_max,
+					'years'     => array(),
 				);
-			} else {
-				$spans[ $id ]['min'] = min( $spans[ $id ]['min'], $row_min );
-				$spans[ $id ]['max'] = max( $spans[ $id ]['max'], $row_max );
+			}
+
+			// Keyed by year so a character with several show-group rows
+			// (recurring across multiple shows, or multiple stints on the
+			// same one) doesn't get a year counted twice just because two
+			// rows both mention it.
+			foreach ( $years as $year ) {
+				$spans[ $id ]['years'][ $year ] = true;
 			}
 		}
 
@@ -135,17 +148,21 @@ class Character_Longevity_Leaders {
 
 		$counted = array();
 		foreach ( $spans as $id => $span ) {
-			$years_active = ( $span['max'] - $span['min'] ) + 1;
-			if ( $years_active < 1 ) {
-				continue; // Malformed range (max < min) — skip rather than show a negative span.
+			$distinct_years = array_keys( $span['years'] );
+			if ( empty( $distinct_years ) ) {
+				continue;
 			}
 
 			$counted[] = array(
 				'id'        => $id,
 				'name'      => $span['name'],
-				'count'     => $years_active,
-				'min'       => $span['min'],
-				'max'       => $span['max'],
+				// Distinct years actually credited, not (max - min + 1) —
+				// a character with gaps in the middle of a long run
+				// shouldn't get credit for years they weren't on screen
+				// just because they bookend a wide span.
+				'count'     => count( $distinct_years ),
+				'min'       => min( $distinct_years ),
+				'max'       => max( $distinct_years ),
 				'post_date' => $span['post_date'],
 			);
 		}
@@ -154,9 +171,9 @@ class Character_Longevity_Leaders {
 			return array();
 		}
 
-		// Ties on span broken by the more recent latest-year first (active
-		// more recently ranks above a run that ended longer ago), then
-		// most-recently-added character — same final tie-break
+		// Ties on distinct-year count broken by the more recent latest-year
+		// first (active more recently ranks above a run that ended longer
+		// ago), then most-recently-added character — same final tie-break
 		// Cliche_Leaders/Character_Actor_Leaders use.
 		usort(
 			$counted,

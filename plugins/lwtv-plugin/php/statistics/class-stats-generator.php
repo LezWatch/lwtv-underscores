@@ -194,6 +194,9 @@ class Stats_Generator {
 			case 'sexuality':
 				$all_data = ( new Build_Taxonomy_Optimized() )->make_comprehensive( CPT_Actors::SLUG, 'lez_actor_sexuality', true );
 				break;
+			case 'roles':
+				$all_data = ( new Build_Actors() )->generate_roles_totals();
+				break;
 		}
 
 		if ( empty( $all_data ) ) {

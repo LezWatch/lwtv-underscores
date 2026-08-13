@@ -37,6 +37,7 @@ require_once __DIR__ . '/../plugins/lwtv-plugin/php/statistics/build/class-term-
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/statistics/build/class-score-distribution.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/statistics/build/class-series-trend.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/statistics/build/class-star-podium.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/statistics/build/class-role-podium.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/statistics/build/class-trigger-levels.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/statistics/build/class-worth-it-grid.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/statistics/build/class-we-love-compare.php';

@@ -36,10 +36,9 @@ $sex_lesbi     = (int) ( $sex_data['homosexual']['count'] ?? 0 ) + (int) ( $sex_
 $sex_lesbi_pct = ( $sex_total > 0 ) ? round( ( $sex_lesbi / $sex_total ) * 100, 1 ) : 0;
 
 uasort( $sex_data, fn( $a, $b ) => (int) $b['count'] <=> (int) $a['count'] );
-// Green ramp (was a raspberry/pink ramp), matching Gender — same five
-// classes gender.php uses, just all five slotted into the main ramp here
-// since Sexuality has no separate "cisgender"-style baseline segment to
-// carve out first.
+// Green ramp, matching Gender — same five classes gender.php uses, just all
+// five slotted into the main ramp here since Sexuality has no separate
+// "cisgender"-style baseline segment to carve out first.
 $sex_ramp     = array( 'green', 'medgreen', 'midgreen', 'ltgreen', 'palegreen' );
 $sex_segments = array();
 $sex_named    = 0;
@@ -222,13 +221,18 @@ if ( ! empty( $sex_firsts ) ) :
 	uasort( $sex_firsts_sorted, static fn( $a, $b ) => $a['year'] <=> $b['year'] );
 	?>
 	<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'Firsts', 'lwtv' ); ?></p>
-	<ul class="lwtv-identity-firsts">
+	<div class="lwtv-pullstats lwtv-pullstats--three lwtv-statcards lwtv-bars--characters">
 		<?php foreach ( $sex_firsts_sorted as $sex_first ) : ?>
-			<li class="lwtv-identity-firsts-row">
-				<span class="lwtv-identity-firsts-term"><?php echo esc_html( $sex_first['name'] ); ?></span>
-				<a class="lwtv-identity-firsts-name" href="<?php echo esc_url( $sex_first['url'] ); ?>"><?php echo esc_html( $sex_first['char_name'] ); ?></a>
-				<span class="lwtv-identity-firsts-year"><?php echo esc_html( (string) $sex_first['year'] ); ?></span>
-			</li>
+			<div class="lwtv-statcard lwtv-statcard--firsts">
+				<span class="lwtv-statcard-icon">
+					<?php echo lwtv_plugin()->get_symbolicon( svg: 'calendar-alt.svg', icon: 'svg-calendar-alt', max_size: '18' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+				</span>
+				<span class="lwtv-statcard-number"><?php echo esc_html( (string) $sex_first['year'] ); ?></span>
+				<p class="lwtv-statcard-label">
+					<?php echo esc_html( $sex_first['name'] ); ?>:
+					<a href="<?php echo esc_url( $sex_first['url'] ); ?>"><?php echo esc_html( $sex_first['char_name'] ); ?></a>
+				</p>
+			</div>
 		<?php endforeach; ?>
-	</ul>
+	</div>
 <?php endif; ?>

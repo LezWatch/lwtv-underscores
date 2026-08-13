@@ -37,6 +37,9 @@ use LWTV\Statistics\Build\Character_Actor_Leaders as Build_Character_Actor_Leade
 use LWTV\Statistics\Build\Character_Death_Leaders as Build_Character_Death_Leaders;
 use LWTV\Statistics\Build\Character_Longevity_Leaders as Build_Character_Longevity_Leaders;
 use LWTV\Statistics\Build\Character_Identity_Trend as Build_Character_Identity_Trend;
+use LWTV\Statistics\Build\Character_Queer_Cast_Firsts as Build_Character_Queer_Cast_Firsts;
+use LWTV\Statistics\Build\Actors as Build_Actors;
+use LWTV\Statistics\Build\Unknown_Actor as Build_Unknown_Actor;
 use LWTV\_Components\Transients;
 
 /**
@@ -284,6 +287,11 @@ class Statistics_Cache_Warming {
 		( new On_Air_Stats() )->generate( 'shows' );
 		( new On_Air_Stats() )->generate( 'characters' );
 
+		// Actors overview Headlines lead plate: distinct actors with a
+		// character on screen this year. Same daily cadence as the two
+		// calls above, since it's also a "this year" snapshot.
+		( new Build_Actors() )->generate_active_this_year();
+
 		lwtv_plugin()->debug_log( 'statistics', 'Warming on-air statistics caches...' );
 	}
 
@@ -314,6 +322,25 @@ class Statistics_Cache_Warming {
 			( new Build_Taxonomy_Optimized() )->make_comprehensive( CPT_Actors::SLUG, $taxonomy, true );
 		}
 
+		// Actors → Roles (Regular/Recurring/Guest breakdown) + the Actors
+		// overview Headlines band both read this same cached tally.
+		( new Build_Actors() )->generate_roles_totals();
+
+		// Actors → Sexuality: "The Overlap" callout and the most-prolific-
+		// by-orientation cards.
+		( new Build_Actors() )->generate_straight_queer_gap();
+		( new Build_Actors() )->generate_prolific_by_orientation();
+
+		// Actors → Gender: same two figures, mirrored for gender identity.
+		( new Build_Actors() )->generate_cis_queer_gap();
+		( new Build_Actors() )->generate_prolific_by_gender();
+
+		// Actors → Unknown Actor: the whole spotlight report in one call.
+		( new Build_Unknown_Actor() )->generate_report();
+
+		// Actors → Roles: the most-prolific-actor-per-role-type cards.
+		( new Build_Actors() )->generate_prolific_by_role();
+
 		lwtv_plugin()->debug_log( 'statistics', 'Warming taxonomy statistics caches...' );
 	}
 
@@ -324,6 +351,11 @@ class Statistics_Cache_Warming {
 	 */
 	private function warm_queer_irl_statistics(): void {
 		( new Queer_IRL_Stats() )->generate_all_data();
+
+		// Queer IRL page Firsts: oldest/newest played by a queer actor,
+		// oldest played by a trans actor.
+		( new Build_Character_Queer_Cast_Firsts() )->generate_queer_actor_firsts();
+		( new Build_Character_Queer_Cast_Firsts() )->generate_trans_actor_oldest();
 
 		lwtv_plugin()->debug_log( 'statistics', 'Warming queer IRL statistics caches...' );
 	}
