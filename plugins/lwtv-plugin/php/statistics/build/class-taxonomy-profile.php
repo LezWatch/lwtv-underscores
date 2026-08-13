@@ -185,7 +185,12 @@ class Taxonomy_Profile {
 						'show_id'   => (int) $row['id'],
 						'name'      => $row['name'],
 						'url'       => get_permalink( (int) $row['id'] ),
-						'score'     => round( $score, 1 ),
+						// Store the raw score, NOT a rounded one: the next row's raw
+						// score is compared against this value, and rounding first
+						// would let a rounded-up leader beat a genuinely higher
+						// score (8.36 stored as 8.4 wrongly rejects 8.39). The
+						// template does the 1-decimal formatting for display.
+						'score'     => $score,
 						'term_name' => $row['format_name'],
 					);
 				}
