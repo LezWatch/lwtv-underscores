@@ -1123,6 +1123,19 @@
 			color: colors.$lwtv-pink-light;
 		}
 
+		// Death → Characters' highlights row: same pink treatment as Geo
+		// above, kept as its own class since it tracks this page's own
+		// donut ramp, not Nations/Stations'.
+		.lwtv-bars--death .lwtv-statcard-icon {
+			background-color: rgba(colors.$lwtv-pink, 0.2);
+			color: colors.$lwtv-pink-light;
+		}
+
+		.lwtv-bars--death .lwtv-statcard-number,
+		.lwtv-bars--death .lwtv-statcard-label a {
+			color: colors.$lwtv-pink-light;
+		}
+
 		// Actors → Sexuality's pullstats + prolific-by-orientation cards: no
 		// icon/number override needed (amber is already the dark-mode
 		// default above), just the label-link color.

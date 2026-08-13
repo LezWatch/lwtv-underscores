@@ -107,4 +107,46 @@ class Character_Death_Leaders {
 
 		return $leaders;
 	}
+
+	/**
+	 * How many published characters have 2+ recorded deaths.
+	 *
+	 * generate( $limit ) caps its result at $limit, so counting the returned
+	 * array only tells you the true total when the board isn't full — this
+	 * runs the same HAVING-filtered grouping as a bare COUNT, uncapped, for
+	 * a highlight stat like "N characters have cheated death more than once."
+	 *
+	 * @return int
+	 */
+	public function count_resurrected(): int {
+		$transient = 'character_death_leaders_resurrected_count';
+		$count     = lwtv_plugin()->get_transient( $transient );
+
+		if ( false === $count ) {
+			global $wpdb;
+
+			// No user input: post_type/meta_key pattern are hardcoded literals.
+			// phpcs:disable
+			$query = "SELECT COUNT(*) FROM (
+				SELECT chars.ID
+				FROM {$wpdb->posts} chars
+				INNER JOIN {$wpdb->postmeta} deaths ON deaths.post_id = chars.ID
+					AND deaths.meta_key LIKE 'lezchars_death_year_%_date'
+					AND deaths.meta_value != ''
+				WHERE chars.post_type = 'post_type_characters'
+				AND chars.post_status = 'publish'
+				GROUP BY chars.ID
+				HAVING COUNT(*) > 1
+			) resurrected";
+			// phpcs:enable
+
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- No user input; all values are hardcoded literals.
+			$count = (int) $wpdb->get_var( $query );
+
+			// Cache for 7 days, same cadence as generate()'s leaderboard.
+			lwtv_plugin()->set_transient( $transient, $count, WEEK_IN_SECONDS );
+		}
+
+		return (int) $count;
+	}
 }

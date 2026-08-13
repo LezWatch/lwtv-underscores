@@ -3390,6 +3390,28 @@ canvas {
 		}
 	}
 
+	// Death → Characters' highlights row: same pink family as .lwtv-bars--geo,
+	// kept as its own class since it tracks this page's own donut ramp
+	// (dkpink/pink/mid/mid2/ltpink), not Nations/Stations'.
+	.lwtv-bars--death .lwtv-statcard-icon {
+		background-color: colors.$lwtv-pink-light;
+		color: colors.$lwtv-pink-deep;
+	}
+
+	.lwtv-bars--death .lwtv-statcard-number {
+		color: colors.$lwtv-pink-deep;
+	}
+
+	.lwtv-bars--death .lwtv-statcard-label a {
+		color: colors.$lwtv-pink-deep;
+		font-weight: 600;
+
+		&:hover,
+		&:focus {
+			text-decoration: underline;
+		}
+	}
+
 	// Actors → Sexuality's pullstats + "Most Prolific by Orientation" cards:
 	// no icon/number override needed (amber is .lwtv-statcard's own default,
 	// same as the original Genre Stats row), just the label-link color that
@@ -4654,14 +4676,22 @@ canvas {
 	.lwtv-donut-center-num--mid { color: color.mix(colors.$lwtv-pink, colors.$lwtv-pink-light, 55%); }
 	.lwtv-donut-center-num--ltpink { color: colors.$lwtv-pink-light; }
 
-	// Format Mix by Decade: a row of compact donut tiles (see
-	// shows/formats.php), one per Format_Decade_Buckets bucket. The compact
-	// card itself has no fixed width (.lwtv-donut-card--compact above), so
-	// it fills whatever the grid hands it here.
+	// Decade-by-decade rows: a row of compact donut tiles (Sexuality/Gender/
+	// Format Mix by Decade, Deaths by Decade), one per *_Decade_Buckets
+	// bucket. Wrapped in the same bordered-card treatment .lwtv-panel uses
+	// elsewhere — one outer card holding every decade tile, each of which
+	// keeps its own .lwtv-donut-card--compact bg-light tint, same two-level
+	// nesting .lwtv-donut-mini's comment describes for the Unknown Actor
+	// trio. No explicit background-color, same as .lwtv-panel, so it reads
+	// as white in light mode and the page's own dark background in dark
+	// mode without a separate override.
 	.lwtv-decade-row {
 		display: grid;
 		grid-template-columns: repeat(3, 1fr);
 		gap: 16px;
+		padding: 20px;
+		border: 1px solid colors.$lwtv-grey-border;
+		border-radius: 14px;
 		margin-bottom: 1.5rem;
 
 		@media (max-width: 767px) {
@@ -4677,6 +4707,20 @@ canvas {
 		display: flex;
 		flex-direction: column;
 		gap: 8px;
+	}
+
+	// .lwtv-decade-tile's name collides with an unrelated rule above (the
+	// Genre/Intersections "Mix by Decade" ranked-bar tiles use the same
+	// class, giving every tile here a second bordered white box for free).
+	// That extra box duplicated .lwtv-decade-row's own new outer card below
+	// it, so this scoped override cancels it back out — only within a
+	// .lwtv-decade-row, leaving .lwtv-decade-tile-grid's unrelated tiles
+	// untouched.
+	.lwtv-decade-row .lwtv-decade-tile {
+		padding: 0;
+		border: none;
+		border-radius: 0;
+		background-color: transparent;
 	}
 
 	.lwtv-decade-count {
