@@ -4,6 +4,28 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [7.1.12] - 2026-08-13
+
+### Added
+
+- A single nation or station page gains a pullstats banner on its Sexuality, Gender, Formats, and Tropes views, counting the distinct terms tracked and the leading term's share.
+- Those same four views each gain a leaders section suited to what their data supports: the show with the most characters of a given identity, the highest-scored show of each format, and the single most trope-heavy show.
+- The Death → Characters view gains a Standout Numbers row: how many characters have died and come back more than once, which one has done it most often, and the deadliest single day on record.
+- The Death → Characters view gains a Deaths by Decade row anchored to when each death was recorded, so a character who died in more than one decade appears in each of them.
+- The Death → Shows view gains a Standout Numbers row covering the share of shows that have killed at least one queer character, the most lethal show by body count, and the highest death rate among shows with a real cast.
+- The Death → Nations and → Stations views gain a Standout Numbers row with the total deaths on record, the share of countries or networks with any recorded death, and the deadliest of them by rate rather than by raw show count.
+
+### Changed
+
+- The Tropes view on a single nation or station page moves from ranked bars to the same donut its sibling views use, and now states that its shares are of total tags rather than of the shows themselves.
+- Show death highlights read each show's own character and death counts instead of relying on the manually applied "dead queers" tag, so a show with recorded deaths that was never tagged is no longer missed.
+- Death rate figures only count shows, countries, and networks with at least five tracked characters, so a lone small show can no longer read as totally lethal.
+- The decade rows across the statistics section now sit inside a single bordered card rather than a loose grid.
+
+### Fixed
+
+- Tiles on the "by decade" rows drew a second nested box inside their own card.
+
 ## [7.1.11] - 2026-08-13
 
 ### Added
