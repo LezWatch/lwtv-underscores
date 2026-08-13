@@ -15,7 +15,7 @@ use LWTV\CPTs\Actors as CPT_Actors;
 
 $baseurl = '/statistics/actors/';
 
-$valid_views = array( 'gender', 'sexuality' );
+$valid_views = array( 'gender', 'sexuality', 'roles', 'unknown' );
 $sent_view   = get_query_var( 'view', 'overview' );
 $view        = ( ! in_array( $sent_view, $valid_views, true ) ) ? 'overview' : $sent_view;
 
@@ -92,6 +92,10 @@ switch ( $view ) {
 	case 'roles':
 		// phpcs:ignore PEAR.Files.IncludingFile.UseRequire
 		include plugin_dir_path( __FILE__ ) . 'actors/roles.php';
+		break;
+	case 'unknown':
+		// phpcs:ignore PEAR.Files.IncludingFile.UseRequire
+		include plugin_dir_path( __FILE__ ) . 'actors/unknown.php';
 		break;
 }
 

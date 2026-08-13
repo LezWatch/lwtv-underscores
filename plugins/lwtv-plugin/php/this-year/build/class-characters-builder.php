@@ -7,6 +7,8 @@
 
 namespace LWTV\This_Year\Build;
 
+use LWTV\Statistics\Build\Unknown_Actor;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -221,10 +223,11 @@ class Characters_Builder {
 				}
 				foreach ( $actor_ids as $actor ) {
 					$actor_id = is_object( $actor ) ? (int) $actor->ID : (int) $actor;
-					// Post 14080 is the "Unknown" placeholder actor — a catch-all for
-					// roles with no confirmed performer — so it must never be counted
-					// as a real actor's workload / win "busiest actor".
-					if ( $actor_id <= 0 || 14080 === $actor_id ) {
+					// Unknown_Actor::ACTOR_ID (post 14080) is the "Unknown"
+					// placeholder actor — a catch-all for roles with no
+					// confirmed performer — so it must never be counted as a
+					// real actor's workload / win "busiest actor".
+					if ( $actor_id <= 0 || Unknown_Actor::ACTOR_ID === $actor_id ) {
 						continue;
 					}
 					$stats['actor_counts'][ $actor_id ] = ( $stats['actor_counts'][ $actor_id ] ?? 0 ) + 1;
