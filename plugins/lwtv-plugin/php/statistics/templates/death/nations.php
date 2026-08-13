@@ -3,10 +3,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 /**
- * Death → Nations: dead characters by country.
+ * Death → Nations: dead characters by country, plus three standout
+ * highlights (total dead count, share of countries with any death, and the
+ * deadliest-by-rate country) shared with Death → Stations via
+ * partials/death-taxonomy-highlights.php.
  *
  * @package LezWatch.TV
  */
+
+$dtx_taxonomy    = 'lez_country';
+$dtx_url_base    = '/country/';
+$dtx_noun_plural = __( 'countries', 'lwtv' );
+// phpcs:ignore PEAR.Files.IncludingFile.UseRequire
+include plugin_dir_path( __DIR__ ) . 'partials/death-taxonomy-highlights.php';
 
 $dn_raw  = lwtv_plugin()->generate_dead_statistics( 'shows', 'nations', 'array' );
 $dn_raw  = is_array( $dn_raw ) ? $dn_raw : array();
