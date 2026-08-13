@@ -3,10 +3,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 /**
- * Death → Stations: dead characters by network.
+ * Death → Stations: dead characters by network, plus three standout
+ * highlights (total dead count, share of networks with any death, and the
+ * deadliest-by-rate network) shared with Death → Nations via
+ * partials/death-taxonomy-highlights.php.
  *
  * @package LezWatch.TV
  */
+
+$dtx_taxonomy    = 'lez_stations';
+$dtx_url_base    = '/station/';
+$dtx_noun_plural = __( 'networks', 'lwtv' );
+// phpcs:ignore PEAR.Files.IncludingFile.UseRequire
+include plugin_dir_path( __DIR__ ) . 'partials/death-taxonomy-highlights.php';
 
 $dst_raw  = lwtv_plugin()->generate_dead_statistics( 'shows', 'stations', 'array' );
 $dst_raw  = is_array( $dst_raw ) ? $dst_raw : array();
