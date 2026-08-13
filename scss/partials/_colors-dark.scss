@@ -1110,6 +1110,19 @@
 			color: colors.$lwtv-pink-light;
 		}
 
+		// Nations/Stations single-profile pullstats + prolific/top-rated
+		// cards: same pink treatment as Queer IRL above, kept as its own
+		// class since it tracks this page's own donut ramp, not Queer IRL's.
+		.lwtv-bars--geo .lwtv-statcard-icon {
+			background-color: rgba(colors.$lwtv-pink, 0.2);
+			color: colors.$lwtv-pink-light;
+		}
+
+		.lwtv-bars--geo .lwtv-statcard-number,
+		.lwtv-bars--geo .lwtv-statcard-label a {
+			color: colors.$lwtv-pink-light;
+		}
+
 		// Actors → Sexuality's pullstats + prolific-by-orientation cards: no
 		// icon/number override needed (amber is already the dark-mode
 		// default above), just the label-link color.

@@ -32,73 +32,6 @@ $lwtv_oascore = (float) ( $show_counts[ $lwtv_slug ]['onairscore'] ?? 0 );
 $lwtv_chars   = (int) ( $character_counts[ $lwtv_slug ]['total'] ?? 0 );
 $lwtv_dead    = (int) ( $character_counts[ $lwtv_slug ]['dead'] ?? 0 );
 
-/**
- * Build donut segments from a [name,count,...] list: top N ramp + grey remainder.
- *
- * @param array  $items      Items with 'name' + 'count'.
- * @param int    $topn       Number of ramped segments before folding into Other.
- * @param string $grey_match Optional lowercase name to force into the grey slot first (e.g. 'cisgender').
- * @return array [ segments, total ]
- */
-$lwtv_build_segments = function ( $items, $topn, $grey_match = '' ) {
-	$items = is_array( $items ) ? $items : array();
-	$total = 0;
-	foreach ( $items as $it ) {
-		$total += (int) $it['count'];
-	}
-	$ramp     = array( 'dkpink', 'pink', 'mid', 'mid2', 'ltpink' );
-	$segments = array();
-	$grey_val = 0;
-
-	// Pull the grey-matched item (cisgender) out first, if present.
-	if ( '' !== $grey_match ) {
-		foreach ( $items as $k => $it ) {
-			if ( strtolower( $it['name'] ) === $grey_match ) {
-				$grey_val = (int) $it['count'];
-				unset( $items[ $k ] );
-				break;
-			}
-		}
-	}
-
-	uasort( $items, fn( $a, $b ) => (int) $b['count'] <=> (int) $a['count'] );
-
-	if ( '' !== $grey_match ) {
-		$segments[] = array(
-			'label' => ucfirst( $grey_match ),
-			'count' => $grey_val,
-			'pct'   => ( $total > 0 ) ? round( ( $grey_val / $total ) * 100, 1 ) : 0,
-			'class' => 'grey',
-		);
-	}
-
-	$i     = 0;
-	$named = $grey_val;
-	foreach ( $items as $it ) {
-		if ( $i >= $topn || (int) $it['count'] <= 0 ) {
-			break;
-		}
-		$c          = (int) $it['count'];
-		$named     += $c;
-		$segments[] = array(
-			'label' => $it['name'],
-			'count' => $c,
-			'pct'   => ( $total > 0 ) ? round( ( $c / $total ) * 100, 1 ) : 0,
-			'class' => $ramp[ $i ],
-		);
-		++$i;
-	}
-	$other = max( 0, $total - $named );
-	if ( $other > 0 ) {
-		$segments[] = array(
-			'label' => __( 'Other', 'lwtv' ),
-			'count' => $other,
-			'pct'   => ( $total > 0 ) ? round( ( $other / $total ) * 100, 1 ) : 0,
-			'class' => 'grey',
-		);
-	}
-	return array( $segments, $total );
-};
 ?>
 <?php if ( '_all' !== $view ) : ?>
 <div class="lwtv-fact-masthead">
@@ -718,56 +651,16 @@ switch ( $view ) {
 		break;
 
 	case '_tropes':
-		$lwtv_traw  = lwtv_plugin()->generate_station_statistics( $station, ltrim( $view, '_' ), 'array' );
-		$lwtv_trows = ( is_array( $lwtv_traw ) && ! empty( $lwtv_traw ) ) ? $lwtv_traw : array();
-		$ranked     = array(
-			'rows'   => $lwtv_trows,
-			'total'  => $lwtv_shows,
-			'family' => 'characters',
-			'title'  => __( 'Most common tropes', 'lwtv' ),
-			'sub'    => __( 'Shows can carry several, so shares add past 100%.', 'lwtv' ),
-			'svg'    => 'tag.svg',
-			'icon'   => 'svg-tag',
-			'base'   => '',
-			'mode'   => 'share',
-		);
-		// phpcs:ignore PEAR.Files.IncludingFile.UseRequire
-		include plugin_dir_path( __DIR__ ) . 'partials/ranked-bars.php';
-		break;
-
 	case '_sexuality':
 	case '_gender':
 	case '_formats':
-		$lwtv_raw  = lwtv_plugin()->generate_station_statistics( $station, ltrim( $view, '_' ), 'array' );
-		$lwtv_list = ( is_array( $lwtv_raw ) && ! empty( $lwtv_raw ) ) ? $lwtv_raw : array();
-
-		if ( '_gender' === $view ) {
-			list( $lwtv_segs, $lwtv_tot ) = $lwtv_build_segments( $lwtv_list, 4, 'cisgender' );
-			$lwtv_eyebrow                 = __( 'Character Gender', 'lwtv' );
-			$lwtv_headline                = __( 'Gender identities', 'lwtv' );
-			$lwtv_sub                     = __( 'characters', 'lwtv' );
-		} elseif ( '_formats' === $view ) {
-			list( $lwtv_segs, $lwtv_tot ) = $lwtv_build_segments( $lwtv_list, 5 );
-			$lwtv_eyebrow                 = __( 'Show Formats', 'lwtv' );
-			$lwtv_headline                = __( 'How these shows are made', 'lwtv' );
-			$lwtv_sub                     = __( 'shows', 'lwtv' );
-		} else {
-			list( $lwtv_segs, $lwtv_tot ) = $lwtv_build_segments( $lwtv_list, 5 );
-			$lwtv_eyebrow                 = __( 'Character Sexual Orientation ', 'lwtv' );
-			$lwtv_headline                = __( 'Sexual orientations', 'lwtv' );
-			$lwtv_sub                     = __( 'characters', 'lwtv' );
-		}
-
-		$donut = array(
-			'segments'    => $lwtv_segs,
-			'center'      => $lwtv_tot,
-			'center_sub'  => $lwtv_sub,
-			'eyebrow'     => $lwtv_eyebrow,
-			'headline'    => $lwtv_headline,
-			'description' => '',
-		);
+		$facet_view      = ltrim( $view, '_' );
+		$facet_taxonomy  = 'lez_stations';
+		$facet_term_slug = $lwtv_slug;
+		$facet_raw_x     = lwtv_plugin()->generate_station_statistics( $station, $facet_view, 'array' );
+		$facet_raw       = ( is_array( $facet_raw_x ) && ! empty( $facet_raw_x ) ) ? $facet_raw_x : array();
 		// phpcs:ignore PEAR.Files.IncludingFile.UseRequire
-		include plugin_dir_path( __DIR__ ) . 'partials/donut.php';
+		include plugin_dir_path( __DIR__ ) . 'partials/taxonomy-facet.php';
 		break;
 
 	default:

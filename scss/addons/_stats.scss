@@ -3366,6 +3366,30 @@ canvas {
 		}
 	}
 
+	// Nations/Stations single-profile pullstats + "Most Prolific"/"Top-Rated"
+	// cards: same pink family as .lwtv-bars--queer-irl, reused here (not
+	// shared via the same class) because it needs to match this page's own
+	// donut ramp (dkpink/pink/mid/mid2/ltpink — see Donut_Segments::build()),
+	// which is unrelated to Queer IRL's pink.
+	.lwtv-bars--geo .lwtv-statcard-icon {
+		background-color: colors.$lwtv-pink-light;
+		color: colors.$lwtv-pink-deep;
+	}
+
+	.lwtv-bars--geo .lwtv-statcard-number {
+		color: colors.$lwtv-pink-deep;
+	}
+
+	.lwtv-bars--geo .lwtv-statcard-label a {
+		color: colors.$lwtv-pink-deep;
+		font-weight: 600;
+
+		&:hover,
+		&:focus {
+			text-decoration: underline;
+		}
+	}
+
 	// Actors → Sexuality's pullstats + "Most Prolific by Orientation" cards:
 	// no icon/number override needed (amber is .lwtv-statcard's own default,
 	// same as the original Genre Stats row), just the label-link color that
