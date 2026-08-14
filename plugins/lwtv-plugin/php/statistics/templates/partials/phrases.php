@@ -68,6 +68,9 @@ if ( ! function_exists( 'lwtv_stats_shortfall_phrase' ) ) {
 	 * The ladder is ordered low -> high; the first ceiling the percent is under
 	 * wins. Filter `lwtv_stats_shortfall_ladder` to tune or extend it.
 	 *
+	 * WARNING: Ceilings must not exceed the true fraction they name, or the
+	 * phrase can become false.
+	 *
 	 * @param float $pct Percentage, 0-100.
 	 * @return string Translated phrase (no surrounding punctuation).
 	 */
@@ -76,13 +79,16 @@ if ( ! function_exists( 'lwtv_stats_shortfall_phrase' ) ) {
 
 		// Each rung: [ exclusive ceiling percent, phrase ]. Low -> high.
 		$ladder = array(
-			array( 10, __( 'Very few', 'lwtv' ) ),
+			array( 9, __( 'Very few', 'lwtv' ) ),
+			array( 12.5, __( 'Fewer than an eighth', 'lwtv' ) ),
+			array( 20, __( 'Fewer than a fifth', 'lwtv' ) ),
 			array( 25, __( 'Fewer than a quarter', 'lwtv' ) ),
 			array( 33, __( 'Fewer than a third', 'lwtv' ) ),
 			array( 50, __( 'Fewer than half', 'lwtv' ) ),
 			array( 66, __( 'Fewer than two thirds', 'lwtv' ) ),
 			array( 75, __( 'Fewer than three quarters', 'lwtv' ) ),
 			array( 90, __( 'Most', 'lwtv' ) ),
+			array( 99.5, __( 'Nearly all', 'lwtv' ) ),
 		);
 
 		/**
