@@ -313,6 +313,71 @@
 		}
 	}
 
+	// Post meta card. The light-mode surface tokens are near-white, so the
+	// card gets a dark surface and the pink accents step up to the light
+	// tints to hold WCAG AA against it.
+	.entry-meta-card {
+		background-color: colors.$lwtv-grey-deep;
+		border-color: colors.$lwtv-grey-medium;
+
+		// Fill sits on the <svg> rather than `svg *` - see the note in
+		// _layout.scss about <use> shadow trees.
+		.entry-meta-card__row--categories .entry-meta-card__icon svg,
+		.entry-meta-card__row--tags .entry-meta-card__icon svg {
+			fill: colors.$lwtv-grey-light;
+		}
+
+		.entry-meta-card__divider {
+			background-color: colors.$lwtv-grey-medium;
+		}
+
+		a.entry-meta-card__category {
+			color: colors.$lwtv-pink-light;
+
+			&:hover,
+			&:focus {
+				color: colors.$lwtv-purple-light;
+			}
+		}
+
+		a.entry-meta-card__tag {
+			background-color: transparent;
+			border-color: colors.$lwtv-pink-light;
+			color: colors.$lwtv-pink-light;
+
+			&:hover,
+			&:focus {
+				background-color: colors.$lwtv-pink-light;
+				border-color: colors.$lwtv-pink-light;
+				color: colors.$lwtv-grey-deep;
+			}
+		}
+	}
+
+	.entry-meta-permalink {
+
+		.entry-meta-permalink__action {
+			color: colors.$lwtv-grey-light;
+
+			svg {
+				fill: colors.$lwtv-grey-light;
+			}
+
+			&:hover,
+			&:focus {
+				color: colors.$lwtv-pink-light;
+
+				svg {
+					fill: colors.$lwtv-pink-light;
+				}
+			}
+		}
+
+		.entry-meta-permalink__status {
+			color: colors.$lwtv-green-light;
+		}
+	}
+
 	// Nested under #masthead so these out-specify the light-mode
 	// #masthead rules in _layout.scss (the [data-bs-theme=dark] ancestor
 	// alone loses the specificity tie against an id selector).

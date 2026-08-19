@@ -982,19 +982,167 @@ section {
 footer.entry-meta {
 	padding-top: 1em;
 
-	.footer-entry-meta-item {
-		display: block;
-	}
-
 	.fa {
-		margin-left: 1em;
 		width: 16px;
 	}
 
 	svg {
-		width: 15px;
-		height: 15px;
 		vertical-align: middle;
+	}
+}
+
+/* Post meta card - the grouped category / tag block under a single post. */
+
+.entry-meta-card {
+	background-color: colors.$lwtv-surface-subtle;
+	border: 1px solid colors.$lwtv-surface-border;
+	border-radius: 10px;
+	display: flex;
+	flex-direction: column;
+	gap: 0.875rem;
+	padding: 1.25rem 1.375rem;
+
+	.entry-meta-card__row {
+		align-items: flex-start;
+		display: flex;
+		gap: 0.625rem;
+	}
+
+	.entry-meta-card__icon {
+		flex: 0 0 auto;
+		line-height: 1;
+
+		svg {
+			vertical-align: middle;
+		}
+	}
+
+	/* Categories read as bold accent text - no pill, weight and colour carry it. */
+
+	/* The glyphs come from the sprite via <use>, so `fill` has to sit on the
+	   <svg> itself - `svg *` cannot reach into the shadow tree the <use>
+	   clone creates. The sprite paths carry no fill attribute, so the
+	   inherited value wins. */
+
+	.entry-meta-card__row--categories {
+
+		.entry-meta-card__icon svg {
+			fill: colors.$lwtv-grey-deep;
+		}
+
+		.entry-meta-card__terms {
+			font-size: 1rem;
+			line-height: 1.25;
+		}
+	}
+
+	a.entry-meta-card__category {
+		color: colors.$lwtv-pink-deep;
+		font-weight: 800;
+		text-decoration: none;
+
+		&:hover,
+		&:focus {
+			color: colors.$lwtv-purple;
+			text-decoration: underline;
+		}
+	}
+
+	.entry-meta-card__divider {
+		background-color: colors.$lwtv-surface-border;
+		border: 0;
+		height: 1px;
+		margin: 0;
+		opacity: 1;
+	}
+
+	/* Tags read as outline pills - the pill edge replaces the comma. */
+
+	.entry-meta-card__row--tags {
+
+		.entry-meta-card__icon {
+			margin-top: 0.25rem;
+
+			svg {
+				fill: colors.$lwtv-grey-medium;
+			}
+		}
+	}
+
+	ul.entry-meta-card__tags {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+		list-style: none;
+		margin: 0;
+		padding: 0;
+
+		li {
+			margin: 0;
+		}
+	}
+
+	a.entry-meta-card__tag {
+		background-color: colors.$white;
+		border: 1px solid colors.$lwtv-pink;
+		border-radius: 14px;
+		color: colors.$lwtv-pink-deep;
+		display: inline-block;
+		font-size: 0.875rem;
+		font-weight: 600;
+		line-height: 1.4;
+		padding: 0.25rem 0.8125rem;
+		text-decoration: none;
+
+		&:hover,
+		&:focus {
+			background-color: colors.$lwtv-pink-deep;
+			border-color: colors.$lwtv-pink-deep;
+			color: colors.$white;
+		}
+	}
+}
+
+/* The permalink action sits outside the card, demoted by size and weight. */
+
+.entry-meta-permalink {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.375rem;
+	justify-content: flex-end;
+	margin-top: 0.5rem;
+
+	.entry-meta-permalink__action {
+		align-items: center;
+		background: none;
+		border: 0;
+		color: colors.$lwtv-grey-deep;
+		cursor: pointer;
+		display: inline-flex;
+		font-size: 0.8125rem;
+		font-weight: 400;
+		gap: 0.375rem;
+		padding: 0;
+		text-decoration: none;
+
+		svg {
+			fill: colors.$lwtv-grey-medium;
+		}
+
+		&:hover,
+		&:focus {
+			color: colors.$lwtv-pink-deep;
+			text-decoration: underline;
+
+			svg {
+				fill: colors.$lwtv-pink-deep;
+			}
+		}
+	}
+
+	.entry-meta-permalink__status {
+		color: colors.$lwtv-green;
+		font-size: 0.8125rem;
 	}
 }
 

@@ -99,7 +99,8 @@ module.exports = {
 			'./inc/js/skip-link-focus-fix.js',
 			'./inc/js/lwtv-theme-scripts.js',
 			'./inc/js/a11y.js',
-			'./inc/js/searchbox.js'
+			'./inc/js/searchbox.js',
+			'./inc/js/copy-post-link.js'
 		],
 		'js/customizer.min': ['./inc/js/customizer.js'],
 		'js/bootstrap-color-mode.min': ['./inc/js/bootstrap-color-mode.js'],

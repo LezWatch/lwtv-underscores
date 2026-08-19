@@ -372,7 +372,7 @@ function posts_link_attributes() {
 function lwtv_theme_scripts() {
 
 	// combined + minified.
-	// navigation.js, skip-link-focus-fix.js, a11y.js, bootstrap-color-mode etc.
+	// navigation.js, skip-link-focus-fix.js, a11y.js, copy-post-link.js, bootstrap-color-mode etc.
 	wp_enqueue_script( 'yikes-starter-navigation', get_template_directory_uri() . '/inc/js/yikes-theme-scripts.min.js', array(), LWTV_THEME_VERSION['lwtv-underscores'], true );
 	wp_enqueue_script( 'lwtv-dark-mode', get_template_directory_uri() . '/inc/js/bootstrap-color-mode.min.js', array(), LWTV_THEME_VERSION['bootstrap_dark'], false );
 
