@@ -92,13 +92,14 @@ class LWTV_Calendar_Widget extends WP_Widget {
 				$output .= '<div class="collapse" id="collapseCalendar">';
 			}
 
-			// Use pre-processed data from Data Processor
-			$show_name = $show['show_name'];
-			$show_id   = $show['show_id'];
+			// Use pre-processed data from Data Processor. show_link is
+			// pre-escaped markup, and already points at the right permalink -
+			// building a /show/<ID>/ URL here produced a broken link.
+			$show_link = $show['show_link'];
 			$lwtv_date = $show['time_data']['lwtv_date'];
 			$episodes  = $show['episode_badge'];
 
-			$output .= '<li class="list-group-item"><a href="' . home_url( '/show/' . $show_id . '/' ) . '">' . $show_name . '</a> ' . $lwtv_date . $episodes . '</li>';
+			$output .= '<li class="list-group-item">' . $show_link . ' ' . $lwtv_date . $episodes . '</li>';
 
 			++$show_count;
 		}

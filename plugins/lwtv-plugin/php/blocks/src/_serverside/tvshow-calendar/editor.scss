@@ -6,8 +6,10 @@ div.lwtv-calendar-block {
 		vertical-align: baseline;
 	}
 
-	nav.lwtv-pagination,
-	div#calendarTabContent {
+	/* Keep the editor preview compact - the listings themselves are not useful
+	   here, so show the header strip and hide the agenda body. */
+	.ep-agenda-day,
+	.ep-agenda-empty {
 		display: none!important;
 	}
 }

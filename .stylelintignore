@@ -1,0 +1,13 @@
+# Third-party and generated stylesheets. Mirrors the exclusions in
+# phpcs.xml.dist so the CSS and PHP linters agree on what is ours.
+#
+# Without this, the '**/*.scss' glob reaches into vendor/twbs/bootstrap/scss/
+# and the symbolicons build output - which both lint:css and fix:css would
+# then rewrite.
+
+node_modules/
+vendor/
+_build_scripts/
+inc/dist/
+inc/bootstrap/
+plugins/lwtv-plugin/php/blocks/build/
