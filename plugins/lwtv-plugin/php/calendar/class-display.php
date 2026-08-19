@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 use LWTV\_Components\Calendar as Build_Calendar;
-use LWTV\Calendar\Display_List;
+use LWTV\Calendar\Display_Agenda;
 use LWTV\Calendar\Data_Processor;
 
 class Display {
@@ -41,15 +41,16 @@ class Display {
 	 * @return string
 	 */
 	public function make() {
-		// Enqueue the scripts to make the tabs work with links.
-		wp_enqueue_script( 'lwtv-calendar', LWTV_PLUGIN_URL . '/assets/js/calendar-tabs.js', array( 'jquery' ), LWTV_THEME_VERSION['lwtv-underscores'], true );
+		// Enqueue the script that resolves each episode's aired state against
+		// the visitor's clock. The processed calendar is cached for a day, so
+		// this cannot be answered server-side.
+		wp_enqueue_script( 'lwtv-calendar-agenda', LWTV_PLUGIN_URL . '/assets/js/calendar-agenda.js', array(), LWTV_THEME_VERSION['lwtv-underscores'], true );
 
 		$today = $this->today->format( 'Y-m-d' );
 
 		// Query Variables.
 		$get_tvdate = isset( $_GET['tvdate'] ) ? sanitize_text_field( $_GET['tvdate'] ) : 'today'; // phpcs:ignore WordPress.Security.NonceVerification
 		$date_query = ( ( strtotime( $get_tvdate ) !== false ) && ( $get_tvdate !== $today ) ) ? $get_tvdate : 'today';
-		$get_tvview = isset( $_GET['tvview'] ) ? sanitize_text_field( $_GET['tvview'] ) : 'list'; // phpcs:ignore WordPress.Security.NonceVerification
 
 		// Get the dates
 		$start_datetime = self::build_datetime( $date_query, 'start' );
@@ -57,17 +58,13 @@ class Display {
 		$prev_datetime  = self::build_datetime( $date_query, 'previous' );
 
 		/**
-		 * Header
-		 */
-		$return = $this->get_header( $start_datetime );
-
-		/**
 		 * Calendar itself
+		 *
+		 * One week per page - pagination in the footer moves the window. The
+		 * ICS parse is the expensive part of this request, so we only ask for
+		 * the week we are actually going to render.
 		 */
-		$cal_this_week = ( new Build_Calendar() )->generate_tvmaze_calendar( $start_datetime->format( 'Y-m-d' ) );
-		$cal_next_week = ( new Build_Calendar() )->generate_tvmaze_calendar( $end_datetime->format( 'Y-m-d' ) );
-		$cal_last_week = ( new Build_Calendar() )->generate_tvmaze_calendar( $prev_datetime->format( 'Y-m-d' ) );
-		$calendar      = array_merge( $cal_this_week, $cal_next_week, $cal_last_week );
+		$calendar = ( new Build_Calendar() )->generate_tvmaze_calendar( $start_datetime->format( 'Y-m-d' ) );
 
 		// Check if we have valid calendar data
 		if ( empty( $calendar ) ) {
@@ -80,94 +77,50 @@ class Display {
 
 		ksort( $processed_calendar );
 
+		$return  = $this->get_header( $start_datetime );
+		$return .= $this->get_intro();
+
 		// If we have no shows, we need to display a message.
 		if ( isset( $calendar['none'] ) || empty( $calendar ) || ! is_array( $calendar ) ) {
 			$return .= $this->get_empty_calendar( $start_datetime, $end_datetime );
 		} else {
-			$return .= $this->get_tab_navigation( $calendar, $get_tvview, $date_query, $processed_calendar );
+			$return .= ( new Display_Agenda() )->get_shows( $processed_calendar, $this->get_week_of_days( $start_datetime ) );
 		}
 
-		/**
-		 * Footer Section.
-		 */
-		$return .= $this->get_footer( $date_query, $prev_datetime, $end_datetime, $get_tvview );
+		$return .= $this->get_footer( $date_query, $prev_datetime, $end_datetime );
 
 		return '<div class="lwtv-calendar-block">' . $return . '</div>';
 	}
 
 	/**
-	 * Get the header for the calendar
+	 * Get the header for the calendar.
 	 *
-	 * @param  object $start_datetime Start date
+	 * With one week per page the visitor needs to know which week they are
+	 * looking at, since the agenda's own header only names the timezone.
+	 *
+	 * @param  object $start_datetime Sunday of the week being shown.
 	 * @return string                 The header
 	 */
 	private function get_header( $start_datetime ) {
-		// Make sure we always start on Sunday.
-		if ( 'Sun' !== $start_datetime->format( 'D' ) ) {
-			$start_datetime->modify( 'last Sunday' );
-		}
+		$start = clone $start_datetime;
+		$end   = clone $start_datetime;
+		$end->modify( '+6 days' );
 
-		// Build out end date
-		$end_datetime = clone $start_datetime;
-		$end_datetime->modify( '+6 days' );
-
-		return '<h2 class="lwtv-calendar-week">Week of ' . $start_datetime->format( 'F d, Y' ) . ' - ' . $end_datetime->format( 'F d, Y' ) . ' </h2>';
+		return '<h2 class="lwtv-calendar-week">' . sprintf(
+			/* translators: 1: start date of the week, 2: end date of the week */
+			esc_html__( 'Week of %1$s &ndash; %2$s', 'lwtv' ),
+			esc_html( $start->format( 'F j, Y' ) ),
+			esc_html( $end->format( 'F j, Y' ) )
+		) . '</h2>';
 	}
 
 	/**
-	 * Get the tab navigation for the calendar
+	 * Get the introductory copy that sits above the schedule.
 	 *
-	 * @param  array  $calendar The calendar
-	 * @param  string $tv_view  The view
-	 * @return string           The tab navigation
+	 * @return string The intro copy.
 	 */
-	private function get_tab_navigation( $calendar, $tv_view = 'list', $date_query = 'today', $processed_calendar = array() ) {
-		$navigation  = '<p>All times are displayed as US/Eastern, but are reflective of their original air date and time.</p>';
-		$navigation .= '<p>Be advised, airdates and times are subject to change without notice. Always check your local listings.<p>';
-		$navigation .= '<a name="caltop"></a>';
-
-		// Get the show list.
-		$show_tabs = array(
-			'list'     => ( new Display_List() )->get_shows( $processed_calendar, $date_query ),
-			'grid'     => ( new Display_Grid() )->get_shows( $processed_calendar, $date_query ),
-			'calendar' => ( new Display_Calendar() )->get_shows( $processed_calendar, $date_query ),
-		);
-
-		$tab_content = $this->get_tab_content( $show_tabs, $tv_view );
-		$navigation .= '<div class="tab-content" id="calendarTabContent">' . $tab_content . '</div>';
-
-		return $navigation;
-	}
-
-	/**
-	 * Get the tab content for the calendar
-	 *
-	 * @param  array  $show_tabs The tabs
-	 * @param  string $tv_view   The view
-	 * @return string            The tab content
-	 */
-	private function get_tab_content( $show_tabs, $tv_view ) {
-		// Build the tabs
-		$tab_list = '';
-
-		foreach ( $show_tabs as $tab => $content ) {
-			// Active tab
-			$active = ( $tab === $tv_view ) ? ' active' : '';
-
-			$tab_list .= '<li class="nav-item" role="presentation">';
-			$tab_list .= '<a class="nav-link' . $active . '" id="' . $tab . '-tab" data-bs-toggle="tab" data-bs-target="#' . $tab . '-tab-pane" type="button" role="tab" aria-controls="' . $tab . '-tab-pane" aria-selected="' . ( $tv_view === $tab ? 'true' : 'false' ) . '">' . ucfirst( $tab ) . '</a>';
-			$tab_list .= '</li>';
-		}
-
-		// Tab Navigation
-		$tab_content = '<ul class="nav nav-tabs" id="calendarTab" role="tablist">' . $tab_list . '</ul>';
-
-		// Tab Content
-		foreach ( $show_tabs as $tab => $content ) {
-			$tab_content .= '<div class="tab-pane fade' . ( $tv_view === $tab ? ' show active' : '' ) . '" id="' . $tab . '-tab-pane" role="tabpanel" aria-labelledby="' . $tab . '-tab" tabindex="0">' . $content . '</div>';
-		}
-
-		return $tab_content;
+	private function get_intro() {
+		return '<p class="ep-agenda-intro">' . esc_html__( 'Airdates and times are subject to change without notice, and are shown for their original US/Eastern broadcast. Always check your local listings.', 'lwtv' ) . '</p>';
 	}
 
 	/**
@@ -176,18 +129,49 @@ class Display {
 	 * @param  string $date_query    The date we're building nav for
 	 * @param  object $prev_datetime Last week
 	 * @param  object $end_datetime  Next week
-	 * @param  string $get_tvview    The view
 	 *
 	 * @return string                The footer
 	 */
-	private function get_footer( $date_query, $prev_datetime, $end_datetime, $get_tvview ) {
-		// Add Navigation:
-		$footer = $this->get_footer_navigation( $date_query, $prev_datetime->format( 'Y-m-d' ), $end_datetime->format( 'Y-m-d' ), $get_tvview );
-
-		// Powered by:
-		$footer .= '<p><small><a href="https://www.tvmaze.com" target="_new">Powered by TVMaze.</a></small></p>';
+	private function get_footer( $date_query, $prev_datetime, $end_datetime ) {
+		$footer  = $this->get_footer_navigation( $date_query, $prev_datetime->format( 'Y-m-d' ), $end_datetime->format( 'Y-m-d' ) );
+		$footer .= '<p class="ep-agenda-credit"><small><a href="https://www.tvmaze.com" target="_new">' . esc_html__( 'Powered by TVMaze.', 'lwtv' ) . '</a></small></p>';
 
 		return $footer;
+	}
+
+	/**
+	 * Generate week-to-week navigation.
+	 *
+	 * All dates are 'Y-m-d'.
+	 *
+	 * @param  string $date The date we're building nav for
+	 * @param  string $last Last week
+	 * @param  string $next Next week
+	 *
+	 * @return string       HTML output for the navigation
+	 */
+	private function get_footer_navigation( $date, $last, $next ) {
+		$today = $this->today->format( 'Y-m-d' );
+
+		$this_week      = esc_url( get_permalink() );
+		$last_week      = esc_url( add_query_arg( array( 'tvdate' => $last ), get_permalink() ) );
+		$next_week      = esc_url( add_query_arg( array( 'tvdate' => $next ), get_permalink() ) );
+		$last_week_icon = lwtv_plugin()->get_symbolicon( svg: 'caret-left-circle.svg', icon: 'svg-chevron-circle-left', max_size: '14' );
+		$next_week_icon = lwtv_plugin()->get_symbolicon( svg: 'caret-right-circle.svg', icon: 'svg-chevron-circle-right', max_size: '14' );
+
+		$navigation = '<nav aria-label="' . esc_attr__( 'Calendar Navigation', 'lwtv' ) . '" class="lwtv-pagination"><ul class="pagination justify-content-center">';
+
+		$navigation .= '<li class="page-item first me-auto"><a href="' . $last_week . '" class="page-link">' . $last_week_icon . ' ' . esc_html__( 'Last Week', 'lwtv' ) . '</a></li>';
+
+		// We only show 'this week' when it's NOT this week.
+		if ( 'today' !== $date && $today !== $date ) {
+			$navigation .= '<li class="page-item"><a href="' . $this_week . '" class="page-link">' . esc_html__( 'This Week', 'lwtv' ) . '</a></li>';
+		}
+
+		$navigation .= '<li class="page-item last ms-auto"><a href="' . $next_week . '" class="page-link">' . esc_html__( 'Next Week', 'lwtv' ) . ' ' . $next_week_icon . '</a></li>';
+		$navigation .= '</ul></nav>';
+
+		return $navigation;
 	}
 
 	/**
@@ -234,52 +218,6 @@ class Display {
 	}
 
 	/**
-	 * Generate navigation
-	 *
-	 * All dates are 'Y-m-d'
-	 *
-	 * @param  string $date    The date we're building nav for
-	 * @param  string $last    Last week
-	 * @param  string $next    Next week
-	 * @param  string $tv_view The view
-	 *
-	 * @return string       HTML output for the navigation
-	 */
-	private function get_footer_navigation( $date, $last, $next, $tv_view ) {
-		$today = $this->today->format( 'Y-m-d' );
-
-		// Query Args
-		$last_query_args = array(
-			'tvdate' => $last,
-			'tvview' => $tv_view,
-		);
-		$next_query_args = array(
-			'tvdate' => $next,
-			'tvview' => $tv_view,
-		);
-
-		// Build navigation links:
-		$this_week      = esc_url( add_query_arg( array( 'tvview' => $tv_view ), get_permalink() ) );
-		$last_week      = esc_url( add_query_arg( $last_query_args, get_permalink() ) );
-		$last_week_icon = lwtv_plugin()->get_symbolicon( svg: 'caret-left-circle.svg', icon: 'svg-chevron-circle-left', max_size: '14' );
-		$next_week      = esc_url( add_query_arg( $next_query_args, get_permalink() ) );
-		$next_week_icon = lwtv_plugin()->get_symbolicon( svg: 'caret-right-circle.svg', icon: 'svg-chevron-circle-right', max_size: '14' );
-
-		// Last week:
-		$navigation = '<nav aria-label="Calendar Navigation" role="navigation" class="lwtv-pagination"><ul class="pagination justify-content-center"><li class="page-item first me-auto"><a href="' . $last_week . '" class="page-link">' . $last_week_icon . ' Last Week</a></li>';
-
-		// We only show 'this week' when it's NOT this week
-		if ( 'today' !== $date && $today !== $date ) {
-			$navigation .= '<li class="page-item"><a href="' . $this_week . '" class="page-link">This Week</a></li>';
-		}
-
-		// Next week:
-		$navigation .= '<li class="page-item last ms-auto"><a href="' . $next_week . '" class="page-link">Next Week ' . $next_week_icon . ' </a></li></ul></nav>';
-
-		return $navigation;
-	}
-
-	/**
 	 * Get the empty calendar
 	 *
 	 * @param  object $start_datetime Start date
@@ -322,36 +260,6 @@ class Display {
 	}
 
 	/**
-	 * Get the subnav for the calendar
-	 *
-	 * @param  array  $calendar The calendar
-	 */
-	public function get_subnav( $calendar, $prefix = 'list', $date_query = null ) {
-
-		$header = '<div class="ep-calendar-subnav p-3 list-group nav list-group-horizontal justify-content-center">';
-		$today  = $this->today->format( 'Y-m-d' );
-
-		// Loop through the days of the week.
-		$week_of_days = $this->get_week_of_days( $date_query );
-
-		foreach ( $week_of_days as $weekday ) {
-			$weekday_object = new \DateTime( $weekday, $this->timezone );
-			if ( isset( $calendar[ $weekday ] ) ) {
-				$day        = $weekday;
-				$show_day   = new \DateTime( $day, $this->timezone );
-				$link_color = ( $day === $today ) ? 'link-info' : 'link-subnav';
-				$header    .= '<a href="#' . $prefix . '_' . strtolower( $show_day->format( 'l' ) ) . '" class="' . $link_color . ' nav-item list-group-item-light link-offset-2 nav-link">' . $show_day->format( 'l' ) . '</a>';
-			} else {
-				$header .= '<span class="link-secondary nav-item list-group-item-light link-offset-2 nav-link">' . $weekday_object->format( 'l' ) . '</span>';
-			}
-		}
-
-		$header .= '</div>';
-
-		return $header;
-	}
-
-	/**
 	 * Get the days of the week
 	 *
 	 * @param  object $datetime The date
@@ -361,7 +269,11 @@ class Display {
 	public function get_week_of_days( $datetime = null ) {
 
 		// "Today" is the default. If a date is passed, we use that.
-		$today = ( null === $datetime ) ? $this->today : $datetime;
+		//
+		// Clone it: this method walks the object forward a day at a time, and
+		// callers reuse the DateTime they hand us (the list view asks for the
+		// week twice - once for the subnav, once for the table).
+		$today = ( null === $datetime ) ? clone $this->today : clone $datetime;
 
 		// If today is Sunday, we start from there. Otherwise, we find the last Sunday.
 		if ( 'Sun' !== $today->format( 'D' ) ) {

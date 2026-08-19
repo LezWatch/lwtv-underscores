@@ -28,11 +28,37 @@ class Names {
 	 */
 	public function make( $name, $source, $output ) {
 
-		// Set Defaults:
-		$check_name = array(
-			'id'   => 0,
-			'name' => $name,
-		);
+		$check_name = $this->resolve( $name );
+
+		// Output depends on source calling.
+		switch ( $source ) {
+			case 'lwtv':
+				// Return only the name
+				return ( 'name' === $output ) ? $check_name['name'] : $check_name['id'];
+			case 'tvmaze':
+				return ( 'name' === $output ) ? $this->get_link( $check_name['name'], (int) $check_name['id'] ) : $check_name['id'];
+		}
+	}
+
+	/**
+	 * Resolve a TVMaze show name to a local show ID and display name.
+	 *
+	 * Each lookup costs up to two get_page_by_path() calls, so callers that
+	 * need both the ID and the name should call this once and read both keys
+	 * rather than calling make() twice.
+	 *
+	 * Results are memoised per request because the calendar renders three
+	 * weeks at a time and the same show recurs across many days.
+	 *
+	 * @param  string $name Display name of the show, as TVMaze gives it to us.
+	 * @return array        array( 'id' => int, 'name' => string )
+	 */
+	public function resolve( string $name ): array {
+		static $resolved = array();
+
+		if ( isset( $resolved[ $name ] ) ) {
+			return $resolved[ $name ];
+		}
 
 		// Check TV Maze
 		$check_name = $this->tvmaze( $name );
@@ -42,18 +68,29 @@ class Names {
 			$check_name = $this->local( $name );
 		}
 
-		// Output depends on source calling.
-		switch ( $source ) {
-			case 'lwtv':
-				// Return only the name
-				return ( 'name' === $output ) ? $check_name['name'] : $check_name['id'];
-			case 'tvmaze':
-				if ( 0 === $check_name['id'] ) {
-					return ( 'name' === $output ) ? $check_name['name'] : $check_name['id'];
-				} else {
-					return ( 'name' === $output ) ? '<a href="' . get_permalink( $check_name['id'] ) . '">' . $check_name['name'] . '</a>' : $check_name['id'];
-				}
+		$check_name['id']  = (int) $check_name['id'];
+		$resolved[ $name ] = $check_name;
+
+		return $check_name;
+	}
+
+	/**
+	 * Build the display markup for a show name.
+	 *
+	 * Returns a link when we have a local show to point at, and the escaped
+	 * name on its own when we do not. Either way the return value is HTML and
+	 * is already escaped - callers must NOT run it through esc_html().
+	 *
+	 * @param  string $name Display name of the show.
+	 * @param  int    $id   Local show post ID, or 0 if we have no match.
+	 * @return string       Escaped HTML.
+	 */
+	public function get_link( string $name, int $id ): string {
+		if ( 0 === $id ) {
+			return esc_html( $name );
 		}
+
+		return '<a href="' . esc_url( get_permalink( $id ) ) . '">' . esc_html( $name ) . '</a>';
 	}
 
 	/**

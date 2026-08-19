@@ -47,3 +47,4 @@ require_once __DIR__ . '/../plugins/lwtv-plugin/php/this-year/format/class-dead-
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/_components/interface-component.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/_components/interface-templater.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/_components/class-transients.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/calendar/build/class-agenda.php';

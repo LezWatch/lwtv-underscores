@@ -43,6 +43,10 @@
  * 2) WordPress search form customization
  *
  ************************************** */
+
+// Deliberately a second block - this file is organised into the numbered
+// sections above, and merging them would lose that structure.
+// stylelint-disable-next-line no-duplicate-selectors
 .searchwp-modal-form-lwtv {
 
 	.searchwp-modal-form__content .search-form {
@@ -64,7 +68,6 @@
 	.searchwp-modal-form__content .search-form label input {
 		display: block;
 		width: 100%;
-		margin-left: 0.75em;
 
 		/* Some common resets */
 		float: none;
@@ -162,7 +165,7 @@
 
 .lwtv-search-scope__option {
 	display: inline-flex;
-	margin: 0;
+	margin: 0 0 0.25rem 0;
 	cursor: pointer;
 
 	input[type="radio"] {

@@ -361,30 +361,39 @@ canvas {
 
 	.lwtv-ty-metric--green {
 		background-color: colors.$lwtv-green-deep;
+
 		.lwtv-ty-metric-label {
 			color: colors.$lwtv-green-light;
 		}
 	}
+
 	.lwtv-ty-metric--pink {
 		background-color: colors.$lwtv-raspberry-deep;
+
 		.lwtv-ty-metric-label {
 			color: colors.$lwtv-raspberry-light;
 		}
 	}
+
 	.lwtv-ty-metric--blue {
 		background-color: colors.$lwtv-blue-deep;
+
 		.lwtv-ty-metric-label {
 			color: colors.$lwtv-blue-light;
 		}
 	}
+
 	.lwtv-ty-metric--red {
 		background-color: colors.$lwtv-plum;
+
 		.lwtv-ty-metric-label {
 			color: colors.$lwtv-plum-light;
 		}
 	}
+
 	.lwtv-ty-metric--amber {
 		background-color: colors.$lwtv-yellow-deep;
+
 		.lwtv-ty-metric-label {
 			color: colors.$lwtv-yellow-light;
 		}
@@ -888,7 +897,7 @@ canvas {
 		border-radius: 10px;
 
 		svg {
-			fill: currentColor; // sprite paths have no fill; take the chip's color.
+			fill: currentcolor; // sprite paths have no fill; take the chip's color.
 		}
 
 		&--green {
@@ -1310,7 +1319,9 @@ canvas {
 		background: colors.$lwtv-grey-medium;
 
 		&.role-regular { background: colors.$lwtv-green; }
+
 		&.role-recurring { background: colors.$lwtv-blue; }
+
 		&.role-guest { background: colors.$lwtv-grey-medium; }
 	}
 
@@ -1548,6 +1559,7 @@ canvas {
 		}
 
 		&.is-empty {
+
 			.lwtv-ty-dc-bar-fill { background: colors.$lwtv-grey-medium; }
 
 			.lwtv-ty-dc-bar-label {
@@ -1583,6 +1595,7 @@ canvas {
 	}
 
 	@media (max-width: 479px) {
+
 		.lwtv-ty-dc-bar .lwtv-ty-dc-bar-count { display: none; }
 	}
 
@@ -1740,6 +1753,7 @@ canvas {
 	}
 
 	@media (max-width: 639px) {
+
 		.lwtv-ty-dc-tl-waypoint,
 		.lwtv-ty-dc-tl-death,
 		.lwtv-ty-dc-tl-gap,
@@ -1838,7 +1852,7 @@ canvas {
 		place-items: center;
 
 		svg {
-			fill: currentColor; // sprite paths have no fill; take the chip's color.
+			fill: currentcolor; // sprite paths have no fill; take the chip's color.
 		}
 	}
 
@@ -1851,7 +1865,9 @@ canvas {
 	}
 
 	.lwtv-ty-block-title--blue { color: colors.$lwtv-blue-deep; }
+
 	.lwtv-ty-block-title--pink { color: colors.$lwtv-pink-deep; }
+
 	.lwtv-ty-block-title--amber { color: colors.$lwtv-yellow-deep; }
 
 	.lwtv-ty-sb-count {
@@ -2008,7 +2024,9 @@ canvas {
 	}
 
 	.lwtv-ty-sb-dot--tv { background-color: colors.$lwtv-blue-deep; }
+
 	.lwtv-ty-sb-dot--mini { background-color: colors.$lwtv-purple; }
+
 	.lwtv-ty-sb-dot--web { background-color: colors.$lwtv-green; }
 
 	.lwtv-ty-sb-title {
@@ -2056,6 +2074,7 @@ canvas {
 .statistics,
 .lwtv-actor-stats-modal,
 .lwtv-actor-articles-modal {
+
 	.lwtv-download-csv-panel {
 		display: flex;
 		align-items: center;
@@ -2078,7 +2097,7 @@ canvas {
 		background-color: rgba(colors.$lwtv-pink-deep, 0.12);
 
 		svg {
-			fill: currentColor;
+			fill: currentcolor;
 		}
 	}
 
@@ -2216,7 +2235,7 @@ canvas {
 		background-color: rgba(colors.$white, 0.50);
 
 		svg {
-			fill: currentColor; // sprite paths have no fill; take the type color.
+			fill: currentcolor; // sprite paths have no fill; take the type color.
 		}
 	}
 
@@ -2306,7 +2325,7 @@ canvas {
 	}
 
 	.lwtv-waffle-dot {
-		fill: currentColor; // faded family color from the parent band.
+		fill: currentcolor; // faded family color from the parent band.
 		opacity: 0.18;
 
 		&.lwtv-waffle-dot--filled {
@@ -2329,7 +2348,7 @@ canvas {
 		.lwtv-stats-eyebrow svg {
 			margin-right: 4px;
 			vertical-align: -2px;
-			fill: currentColor; // sprite paths have no fill; take the type color.
+			fill: currentcolor; // sprite paths have no fill; take the type color.
 		}
 	}
 
@@ -2428,6 +2447,7 @@ canvas {
 		// change. Mirrors the pink-light/pink-deep recipe already used
 		// for .lwtv-hl-lead.
 		&.lwtv-tropegap--tint {
+
 			&.dead-characters {
 				background-color: colors.$lwtv-crimson-light;
 				border-color: colors.$lwtv-crimson-light;
@@ -2473,7 +2493,7 @@ canvas {
 			// of a gap pair); no-cliche reuses purple, the Clichés section's
 			// existing family color; straight-cis-actors is a neutral grey for
 			// the "default/expected" side of the Casting Gap.
-			//
+
 			// Actors overview's "Who Plays the Roles" pair joins these same two
 			// rules rather than getting its own colors: .openly-queer already
 			// shares .cliches' solid purple in the untinted .card-header rules
@@ -2510,7 +2530,7 @@ canvas {
 	}
 
 	.lwtv-tropegap-icon svg {
-		fill: currentColor; // sprite paths have no fill; take the family color.
+		fill: currentcolor; // sprite paths have no fill; take the family color.
 	}
 
 	.lwtv-tropegap-number {
@@ -2578,7 +2598,7 @@ canvas {
 		color: colors.$lwtv-pink;
 
 		svg {
-			fill: currentColor; // sprite paths have no fill; take the icon color.
+			fill: currentcolor; // sprite paths have no fill; take the icon color.
 		}
 
 		// Family-colored header icons for the shows overview panels.
@@ -2934,6 +2954,7 @@ canvas {
 	}
 
 	@media (max-width: 900px) {
+
 		.lwtv-tropes-columns {
 			grid-template-columns: 1fr;
 		}
@@ -2952,6 +2973,7 @@ canvas {
 	}
 
 	@media (max-width: 900px) {
+
 		.lwtv-tropes-breakdown-wrap .lwtv-leaders {
 			column-count: 1;
 		}
@@ -3258,7 +3280,7 @@ canvas {
 		color: colors.$lwtv-yellow-deep;
 
 		svg {
-			fill: currentColor;
+			fill: currentcolor;
 		}
 	}
 
@@ -3589,6 +3611,7 @@ canvas {
 	}
 
 	@media (max-width: 900px) {
+
 		.lwtv-inter-columns {
 			grid-template-columns: 1fr;
 		}
@@ -3878,6 +3901,7 @@ canvas {
 	}
 
 	@media (max-width: 900px) {
+
 		.lwtv-inter-breakdown-wrap .lwtv-leaders {
 			column-count: 1;
 		}
@@ -4047,6 +4071,7 @@ canvas {
 	}
 
 	@media (max-width: 900px) {
+
 		.lwtv-cliches-breakdown-wrap .lwtv-leaders {
 			column-count: 1;
 		}
@@ -4070,12 +4095,14 @@ canvas {
 	}
 
 	@media (max-width: 900px) {
+
 		.lwtv-metric-grid--5 {
 			grid-template-columns: repeat(3, 1fr);
 		}
 	}
 
 	@media (max-width: 650px) {
+
 		.lwtv-metric-grid--5 {
 			grid-template-columns: repeat(2, 1fr);
 		}
@@ -4536,9 +4563,13 @@ canvas {
 	}
 
 	.lwtv-nations-lb-bar--1 { background-color: $ramp-1; }
+
 	.lwtv-nations-lb-bar--2 { background-color: $ramp-2; }
+
 	.lwtv-nations-lb-bar--3 { background-color: $ramp-3; }
+
 	.lwtv-nations-lb-bar--4 { background-color: $ramp-4; }
+
 	.lwtv-nations-lb-bar--5 { background-color: $ramp-5; }
 
 	.lwtv-nations-lb-dead {
@@ -4669,11 +4700,17 @@ canvas {
 	// default rather than risk the same low-contrast mistake --green just
 	// had, since a compact tile's lead segment is rarely one of these.
 	.lwtv-donut-center-num--medgreen { color: color.mix(colors.$lwtv-green-light, colors.$lwtv-green-deep, 25%); }
+
 	.lwtv-donut-center-num--midgreen { color: color.mix(colors.$lwtv-green-light, colors.$lwtv-green-deep, 50%); }
+
 	.lwtv-donut-center-num--red { color: colors.$lwtv-red; }
+
 	.lwtv-donut-center-num--dkpink { color: colors.$lwtv-pink-deep; }
+
 	.lwtv-donut-center-num--pink { color: colors.$lwtv-pink; }
+
 	.lwtv-donut-center-num--mid { color: color.mix(colors.$lwtv-pink, colors.$lwtv-pink-light, 55%); }
+
 	.lwtv-donut-center-num--ltpink { color: colors.$lwtv-pink-light; }
 
 	// Decade-by-decade rows: a row of compact donut tiles (Sexuality/Gender/
@@ -4703,6 +4740,9 @@ canvas {
 		}
 	}
 
+	// Same class name as the Genre/Intersections "Mix by Decade" tiles earlier
+	// in this file, deliberately - see the note on the scoped override below.
+	// stylelint-disable-next-line no-duplicate-selectors
 	.lwtv-decade-tile {
 		display: flex;
 		flex-direction: column;
@@ -4732,6 +4772,8 @@ canvas {
 
 	// Forces the "s" in "1980s" back to lowercase against the eyebrow's
 	// text-transform: uppercase — see partials/donut.php and formats.php.
+	// Same class name as the earlier decade tiles, deliberately.
+	// stylelint-disable-next-line no-duplicate-selectors
 	.lwtv-decade-suffix {
 		text-transform: lowercase;
 	}
@@ -4965,6 +5007,9 @@ canvas {
 	}
 
 	// Legend mini-bar fill must use the segment color, overriding the base teal.
+	// This intentionally repeats the selector declared earlier in the file -
+	// the override depends on coming later in source order, so do not merge.
+	// stylelint-disable-next-line no-duplicate-selectors
 	.lwtv-donut-legend-track .progress-bar {
 
 		&.lwtv-donut-seg--dkpink {
@@ -5176,11 +5221,7 @@ canvas {
 		svg {
 			width: 24px;
 			height: 24px;
-			fill: currentColor; // sprite paths have no fill; take the pink.
-		}
-
-		svg {
-			fill: currentColor; // sprite paths have no fill; take the icon color.
+			fill: currentcolor; // sprite paths have no fill; take the icon color.
 		}
 
 		// Family-colored header icons for the shows overview panels.
@@ -5281,7 +5322,9 @@ canvas {
 	}
 
 	.lwtv-article-tag--pink { background-color: colors.$lwtv-pink; }
+
 	.lwtv-article-tag--blue { background-color: colors.$lwtv-blue-light; }
+
 	.lwtv-article-tag--dkpink { background-color: colors.$lwtv-pink-deep; }
 
 	.lwtv-article-info {
@@ -5650,7 +5693,7 @@ canvas {
 		border-radius: 50%;
 
 		svg {
-			fill: currentColor;
+			fill: currentcolor;
 		}
 	}
 
@@ -5770,7 +5813,7 @@ canvas {
 		border-radius: 8px;
 
 		svg {
-			fill: currentColor;
+			fill: currentcolor;
 		}
 	}
 
@@ -6609,7 +6652,7 @@ canvas {
 		border-radius: 8px;
 
 		svg {
-			fill: currentColor;
+			fill: currentcolor;
 		}
 	}
 
@@ -6883,7 +6926,7 @@ canvas {
 		color: colors.$lwtv-gold;
 
 		svg {
-			fill: currentColor;
+			fill: currentcolor;
 		}
 	}
 
@@ -7160,7 +7203,7 @@ canvas {
 		svg {
 			width: 19px;
 			height: 19px;
-			fill: currentColor;
+			fill: currentcolor;
 		}
 	}
 
@@ -7279,17 +7322,22 @@ canvas {
 	}
 
 	.lwtv-comp-seg {
+
 		&--teal { background-color: colors.$lwtv-teal-deep; }
+
 		&--amber { background-color: colors.$lwtv-yellow-deep; }
+
 		&--green { background-color: colors.$lwtv-gq-green; }
+
 		&--rose { background-color: colors.$lwtv-crimson-deep; }
+
 		&--grey { background-color: colors.$lwtv-grey-alt; }
 	}
 
 	.lwtv-comp-rule {
 		height: 1px;
 		background-color: colors.$lwtv-grey-border;
-		margin: 10px 0px;
+		margin: 10px 0;
 	}
 
 	.lwtv-facts {
@@ -7313,7 +7361,9 @@ canvas {
 		font-variant-numeric: tabular-nums;
 
 		&--teal { color: colors.$lwtv-teal-deep; }
+
 		&--green { color: colors.$lwtv-gq-green; }
+
 		&--rose { color: colors.$lwtv-crimson-deep; }
 	}
 
@@ -7344,7 +7394,7 @@ canvas {
 		svg {
 			width: 19px;
 			height: 19px;
-			fill: currentColor;
+			fill: currentcolor;
 		}
 	}
 

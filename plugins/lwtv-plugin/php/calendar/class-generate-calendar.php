@@ -55,7 +55,6 @@ class Generate_Calendar {
 							'show_name' => $show_name,
 							'title'     => $episode->description . ' (' . $episode_number . ')',
 							'timestamp' => $showtime->getTimestamp(),
-							'native_tz' => 'timezone',
 						);
 					}
 				} else {
@@ -63,7 +62,6 @@ class Generate_Calendar {
 						'show_name' => $show_name,
 						'title'     => $episode->description . ' (' . $episode_number . ')',
 						'timestamp' => $showtime->getTimestamp(),
-						'native_tz' => 'timezone',
 					);
 				}
 			}

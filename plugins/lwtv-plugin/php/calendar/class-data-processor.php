@@ -15,9 +15,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-use LWTV\_Helpers\{ Calendar_Object_Pool, Calendar_Meta_Batcher };
+use LWTV\_Helpers\Calendar_Object_Pool;
 
 class Data_Processor {
+
+	/**
+	 * Transient prefix for processed calendar data.
+	 *
+	 * Bump the version suffix whenever the shape of the processed array
+	 * changes, so cached payloads from an older shape are ignored rather
+	 * than served to views that no longer understand them.
+	 */
+	const CACHE_PREFIX = 'lwtv_processed_calendar_v4_';
 
 	/**
 	 * Process raw calendar data into a unified structure
@@ -28,20 +37,16 @@ class Data_Processor {
 	 */
 	public function process_calendar_data( array $raw_calendar, string $date_query = 'today' ): array {
 		// Check for cached processed data
-		$cache_key   = 'lwtv_processed_calendar_' . $date_query;
+		$cache_key   = self::CACHE_PREFIX . $date_query;
 		$cached_data = lwtv_plugin()->get_transient( $cache_key );
 
 		if ( false !== $cached_data && is_array( $cached_data ) ) {
 			return $cached_data;
 		}
 
-		// Batch load all meta data for calendar shows
-		Calendar_Meta_Batcher::batch_load_calendar_data( $raw_calendar );
-
 		// Get shared instances from object pool
 		$display = Calendar_Object_Pool::get_display();
 		$names   = Calendar_Object_Pool::get_names();
-		$tvmaze  = Calendar_Object_Pool::get_tvmaze();
 
 		$processed_data = array();
 
@@ -49,7 +54,7 @@ class Data_Processor {
 			$processed_data[ $date ] = array();
 
 			foreach ( $shows as $show ) {
-				$processed_show            = $this->process_show_data( $show, $display, $names, $tvmaze );
+				$processed_show            = $this->process_show_data( $show, $display, $names );
 				$processed_data[ $date ][] = $processed_show;
 			}
 		}
@@ -66,100 +71,49 @@ class Data_Processor {
 	 * @param  array  $show    Raw show data
 	 * @param  Display $display Display instance
 	 * @param  Names   $names   Names instance
-	 * @param  TVMaze  $tvmaze  TVMaze instance
 	 * @return array            Processed show data
 	 */
-	private function process_show_data( array $show, Display $display, Names $names, TVMaze $tvmaze ): array {
-		// Process show names and IDs
+	private function process_show_data( array $show, Display $display, Names $names ): array {
+		// Process show names and IDs.
+		//
+		// `show_name` is plain text and must be escaped at the point of output.
+		// `show_link` is ready-to-print HTML (a link when we have a local show
+		// to point at) and must NOT be escaped again.
+		//
+		// resolve() does the name/ID lookup once - calling make() for each
+		// would repeat up to two get_page_by_path() queries per show.
+		$resolved  = $names->resolve( $show['show_name'] );
+		$show_name = $resolved['name'];
+		$show_id   = $resolved['id'];
+
 		$processed_show = array(
-			'show_name' => $names->make( $show['show_name'], 'tvmaze', 'name' ),
-			'show_id'   => $names->make( $show['show_name'], 'lwtv', 'id' ),
+			'show_name' => $show_name,
+			'show_link' => $names->get_link( $show_name, $show_id ),
+			'show_id'   => $show_id,
 			'title'     => $show['title'],
 			'timestamp' => $show['timestamp'],
-			'native_tz' => $show['native_tz'] ?? '',
 		);
 
-		// Get timezone if not already set
-		if ( empty( $processed_show['native_tz'] ) && ! empty( $processed_show['show_id'] ) ) {
-			$processed_show['native_tz'] = $tvmaze->get_timezone( $processed_show['show_id'] );
-		}
-
-		// Process time data
+		// Process time data.
+		//
+		// `lwtv_date` is the sidebar widget's label. The agenda derives its own
+		// time label and ISO airtime in LWTV\Calendar\Build\Agenda, because the
+		// raw timestamp is offset-shifted and needs unpicking first.
 		$show_time = $display->get_showtime( $show, false );
 		$timezone  = $display->get_tz_abbreviation();
 
 		$processed_show['time_data'] = array(
-			'show_time'      => $show_time,
-			'timezone'       => $timezone,
-			'lwtv_date'      => $show_time->format( '@ g:i A' ) . ' (' . $timezone . ')',
-			'formatted_time' => $display->get_showtime( $show, true ),
-		);
-
-		// Process display-specific data
-		$processed_show['display_data'] = array(
-			'is_today'        => $this->is_today( $show_time, $display->today ),
-			'is_past'         => $this->is_past( $show_time, $display->today ),
-			'dot_class'       => $this->get_dot_class( $show_time, $display->today ),
-			'highlight_class' => $this->get_highlight_class( $show_time, $display->today ),
+			'lwtv_date' => $show_time->format( '@ g:i A' ) . ' (' . $timezone . ')',
 		);
 
 		// Process episode count for multiple episodes
 		if ( is_array( $show['title'] ) ) {
-			$processed_show['episode_count'] = count( $show['title'] );
 			$processed_show['episode_badge'] = ' <span class="badge text-bg-secondary rounded-pill">' . count( $show['title'] ) . '</span>';
 		} else {
-			$processed_show['episode_count'] = 1;
 			$processed_show['episode_badge'] = '';
 		}
 
 		return $processed_show;
-	}
-
-	/**
-	 * Check if show is airing today
-	 *
-	 * @param  \DateTime $show_time Show time
-	 * @param  \DateTime $today     Today's date
-	 * @return bool
-	 */
-	private function is_today( \DateTime $show_time, \DateTime $today ): bool {
-		return $show_time->format( 'Y-m-d' ) === $today->format( 'Y-m-d' );
-	}
-
-	/**
-	 * Check if show is in the past
-	 *
-	 * @param  \DateTime $show_time Show time
-	 * @param  \DateTime $today     Today's date
-	 * @return bool
-	 */
-	private function is_past( \DateTime $show_time, \DateTime $today ): bool {
-		return $show_time <= $today;
-	}
-
-	/**
-	 * Get dot class for show status
-	 *
-	 * @param  \DateTime $show_time Show time
-	 * @param  \DateTime $today     Today's date
-	 * @return string
-	 */
-	private function get_dot_class( \DateTime $show_time, \DateTime $today ): string {
-		return $this->is_past( $show_time, $today ) ? 'ep-calendar-dot ep-calendar-dot-past' : 'ep-calendar-dot';
-	}
-
-	/**
-	 * Get highlight class for show status
-	 *
-	 * @param  \DateTime $show_time Show time
-	 * @param  \DateTime $today     Today's date
-	 * @return string
-	 */
-	private function get_highlight_class( \DateTime $show_time, \DateTime $today ): string {
-		if ( $this->is_today( $show_time, $today ) ) {
-			return 'table-info';
-		}
-		return '';
 	}
 
 	/**
@@ -176,7 +130,7 @@ class Data_Processor {
 			$wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_timeout_lwtv_processed_calendar_%'" );
 		} else {
 			// Clear specific cache
-			$cache_key = 'lwtv_processed_calendar_' . $date_query;
+			$cache_key = self::CACHE_PREFIX . $date_query;
 			lwtv_plugin()->delete_transient( $cache_key );
 		}
 	}

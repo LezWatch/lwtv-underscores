@@ -3,7 +3,6 @@
 
 /* =Styling for Dark Mode
 ----------------------------------------------- */
-/* stylelint-disable no-descending-specificity */
 @include mixins.color-mode(dark) {
 
 	/* Link colors */
@@ -53,14 +52,16 @@
 	}
 
 	.card-info {
+
 		.list-group-item {
 			color: colors.$lwtv-grey-light !important;
+
 			a {
 				color: colors.$lwtv-grey-light !important;
 			}
 		}
 
-		ul.list-group-horizontal li:not(:last-child):after {
+		ul.list-group-horizontal li:not(:last-child)::after {
 			color: colors.$lwtv-grey-light !important;
 		}
 	}
@@ -70,6 +71,7 @@
 	}
 
 	.network-list li.list-group-item {
+
 		svg * {
 				fill: colors.$white !important;
 			}
@@ -196,7 +198,7 @@
 		background-color: $lwtv-grey-medium;
 	}
 
-	form.search-form input[type=text],
+	form.search-form input[type="text"],
 	.searchwp-live-search-results-showing {
 		background-color: $lwtv-grey-medium;
 		color: colors.$lwtv-grey-light;
@@ -252,7 +254,7 @@
 		fill: colors.$lwtv-grey-light;
 	}
 
-	#episodes ul li:before,
+	#episodes ul li::before,
 	.widget_lwtv_social_menu_widget a::before {
 		filter: invert(100%) sepia(0%) saturate(0%) hue-rotate(227deg) brightness(180%) contrast(100%);
 	}
@@ -271,7 +273,9 @@
 	}
 
 	.overlay-section {
+
 		.col {
+
 			.card {
 				background-color: $lwtv-grey-medium;
 			}
@@ -445,15 +449,123 @@
 		}
 	}
 
-	.ep-calendar-title {
+	/* Airdate calendar agenda.
+	   $lwtv-pink is only ~3:1 on these dark surfaces, so accents step up to
+	   $lwtv-pink-medium (6.03:1) and $lwtv-pink-light for text. */
+	.ep-agenda {
+		background-color: $lwtv-grey-deep;
+		border-color: colors.$lwtv-grey-deep;
+	}
 
-		a:visited, a, {
-			color: colors.$lwtv-pink;
+	.ep-agenda-header {
+		background-color: $lwtv-grey-deep;
+		border-bottom-color: colors.$lwtv-grey-deep;
+	}
+
+	.ep-agenda-intro,
+	.ep-agenda-eyebrow,
+	.ep-agenda-time,
+	.ep-agenda-empty,
+	.ep-agenda-credit {
+		color: colors.$lwtv-grey-alt;
+	}
+
+	.ep-agenda-jump {
+		background-color: colors.$lwtv-pink-deep;
+		color: colors.$white;
+
+		&:hover,
+		&:focus,
+		&:active {
+			background-color: colors.$lwtv-pink-medium;
+			color: colors.$lwtv-grey-deep;
 		}
 	}
 
-	h3.ep-calendar-day-heading {
-		background-color: $lwtv-grey-medium;
+	.ep-agenda-week-day {
+
+		a,
+		span {
+			border-color: colors.$lwtv-grey-deep;
+		}
+
+		a {
+			color: colors.$lwtv-grey-light;
+		}
+
+		&.is-past a,
+		&.is-past span,
+		&.is-quiet span {
+			color: colors.$lwtv-grey-alt;
+		}
+
+		&.is-today a,
+		&.is-today span {
+			border-color: colors.$lwtv-pink-medium;
+			background-color: colors.$lwtv-pink-medium;
+			color: colors.$lwtv-grey-deep;
+		}
+	}
+
+	.ep-agenda-day-heading {
+		background-color: colors.$lwtv-grey-deep;
+		border-bottom-color: $lwtv-grey-deep;
+		color: colors.$lwtv-grey-light;
+	}
+
+	.ep-agenda-day.is-past .ep-agenda-day-heading,
+	.ep-agenda-day.is-future .ep-agenda-day-heading {
+		color: colors.$lwtv-grey-light;
+	}
+
+	.ep-agenda-day.is-today .ep-agenda-day-heading {
+		background-color: colors.$lwtv-pink-deep;
+		border-bottom-color: colors.$lwtv-pink-medium;
+		color: colors.$white;
+	}
+
+	.ep-agenda-badge {
+		background-color: colors.$lwtv-pink-medium;
+		color: colors.$lwtv-grey-deep;
+	}
+
+	.ep-agenda-episode {
+		border-bottom-color: colors.$lwtv-grey-deep;
+	}
+
+	.ep-agenda-episode-title,
+	.ep-agenda-multi {
+		color: colors.$lwtv-grey-light;
+	}
+
+	.ep-agenda-show-name a {
+		color: colors.$lwtv-pink-light;
+	}
+
+	.ep-agenda-day.is-past {
+
+		.ep-agenda-show-name a,
+		.ep-agenda-episode-title,
+		.ep-agenda-multi {
+			color: colors.$lwtv-grey-alt;
+		}
+	}
+
+	.ep-agenda-dot {
+		background-color: colors.$lwtv-pink-medium;
+
+		&.is-aired {
+			background-color: colors.$lwtv-grey-medium;
+		}
+
+		&.is-today {
+			background-color: colors.$lwtv-pink-medium;
+		}
+
+		&.is-upcoming {
+			background-color: transparent;
+			border-color: colors.$lwtv-pink-medium;
+		}
 	}
 
 	/** Add future dark mode styles here inside the group */
@@ -527,6 +639,7 @@
 		.lwtv-yearbar-val {
 			color: colors.$lwtv-pink-light!important;
 		}
+
 		.lwtv-stats-tab {
 			color: colors.$lwtv-pink-light;
 
@@ -625,7 +738,7 @@
 
 		.lwtv-metric-icon {
 			background-color: rgba(colors.$white, 0.08); // fallback for no color-mix.
-			background-color: color-mix(in srgb, currentColor 15%, transparent);
+			background-color: color-mix(in srgb, currentcolor 15%, transparent);
 		}
 
 		.lwtv-byg-desc {
@@ -837,6 +950,7 @@
 		// swaps to the same neutral panel-grey as the headlines lead
 		// plate, with each family's deep *-light accent token for text.
 		.lwtv-tropegap--tint {
+
 			&.dead-characters,
 			&.happy-endings,
 			&.good-tropes,
@@ -1346,9 +1460,13 @@
 		// Family label colors: the light-mode deep tokens are too dark to read
 		// against the dark card background, so swap for the vivid dark tokens.
 		.lwtv-ty-metric--green .lwtv-ty-metric-label { color: $lwtv-green-light; }
+
 		.lwtv-ty-metric--red .lwtv-ty-metric-label { color: $lwtv-red-light; }
+
 		.lwtv-ty-metric--blue .lwtv-ty-metric-label { color: $lwtv-blue-light; }
+
 		.lwtv-ty-metric--pink .lwtv-ty-metric-label { color: colors.$lwtv-pink-light; }
+
 		.lwtv-ty-metric--amber .lwtv-ty-metric-label { color: $lwtv-yellow-light; }
 
 		.lwtv-ty-standout-chip--green {
@@ -1503,7 +1621,9 @@
 		// tokens are too dark to read against the dark card background, so
 		// swap for the vivid dark tokens (pink uses the existing ltpink swap).
 		.lwtv-ty-block-title--blue { color: $lwtv-blue-light; }
+
 		.lwtv-ty-block-title--pink { color: colors.$lwtv-pink-light; }
+
 		.lwtv-ty-block-title--amber { color: $lwtv-yellow-light; }
 
 		.lwtv-ty-group-grid--blue .lwtv-ty-group-key,
@@ -1543,7 +1663,9 @@
 		// A 6px dot in the deep tones disappears on $lwtv-grey-deep — lift to
 		// the vivid dark locals (purple has only the existing pale global).
 		.lwtv-ty-sb-dot--tv { background-color: $lwtv-blue-light; }
+
 		.lwtv-ty-sb-dot--mini { background-color: colors.$lwtv-purple-light; }
+
 		.lwtv-ty-sb-dot--web { background-color: $lwtv-green-light; }
 
 		.lwtv-ty-sb-row {
@@ -1675,7 +1797,9 @@
 		// Accent-text uses of the deep tokens are too dark on the dark surface.
 		// The tile FILLS keep the deep tokens (handled by $vibrant-toll, no change).
 		.lwtv-fact-num--teal { color: $lwtv-blue-light; }
+
 		.lwtv-fact-num--green { color: $lwtv-green-light; }
+
 		.lwtv-fact-num--rose { color: $lwtv-red-light; }
 
 		.lwtv-fact-masthead .lwtv-stats-eyebrow {
@@ -1727,6 +1851,7 @@
 	}
 
 	.lwtv-actor-articles-modal {
+
 		.lwtv-article-card {
 			border-color: rgba(colors.$white, 0.12);
 
