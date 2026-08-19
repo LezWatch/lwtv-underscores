@@ -55,7 +55,6 @@ class ICS_Parser {
 	 */
 	public function query_vars( $vars ): array {
 		$vars[] = 'tvdate';
-		$vars[] = 'tvview';
 		return $vars;
 	}
 

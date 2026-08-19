@@ -1,0 +1,18 @@
+{
+	"extends": "@wordpress/stylelint-config/scss",
+	"rules": {
+		"selector-class-pattern": [
+			"^[a-z0-9]+([-_][a-z0-9]+)*(__[a-z0-9]+([-_][a-z0-9]+)*)?(--[a-z0-9]+([-_][a-z0-9]+)*)?$",
+			{
+				"message": "Class selectors should be lowercase, using - or _ between words, with optional __element and --modifier (kebab-case, snake_case and BEM are all allowed)."
+			}
+		],
+		"selector-id-pattern": [
+			"^[a-z0-9]+([-_][a-z0-9]+)*$",
+			{
+				"message": "ID selectors should be lowercase, using - or _ between words."
+			}
+		],
+		"no-descending-specificity": null
+	}
+}

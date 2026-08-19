@@ -10,8 +10,16 @@ $lwtv-grey-light: #f3f3f3;
 $lwtv-grey: #dedede;
 $lwtv-grey-alt: #d6d6d6;
 $lwtv-grey-medium: #999;
+
+/* Muted text that still clears WCAG AA on white (5.74:1) - $lwtv-grey-medium
+   is only 2.85:1 and must not be used for body copy. */
+$lwtv-grey-muted: #666;
 $lwtv-grey-deep: #333;
 $lwtv-grey-border: rgba(0, 0, 0, 0.125);
+
+/* Surfaces - subtle card backgrounds and hairline dividers */
+$lwtv-surface-subtle: #fbfafb;
+$lwtv-surface-border: #ece9eb;
 
 $lwtv-pink: #cb3e85;
 $lwtv-pink-light: #eecee3;

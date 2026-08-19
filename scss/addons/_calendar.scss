@@ -1,93 +1,287 @@
 @use "../partials/colors";
 
-/* Calendar */
+/* =Airdate Calendar - single scrolling agenda
+-----------------------------------------------
 
-table.lwtvc {
+One week of listings per page, paginated week to week. Days with nothing
+airing are omitted; the day-of-week strip in the sticky header is what
+signals a quiet day.
 
-	tbody {
-		border-bottom: 8px solid colors.$white;
-	}
+Accessibility notes, because they constrain the palette here:
+
+- The source design faded past days to 55-70% opacity over a #8a8a8a grey,
+  which lands around 1.8-2.2:1. Past days instead use $lwtv-grey-muted
+  (5.74:1) at full opacity; recency is carried by the grey dot.
+- $lwtv-pink is 4.60:1 on white, so it cannot sit on a tinted background and
+  still pass. Anywhere pink text meets a pink tint we use $lwtv-pink-deep
+  (4.91:1 on $lwtv-pink-light, 7.07:1 on white).
+*/
+
+$agenda-measure: 44rem;
+$agenda-time-width: 4.75rem;
+
+.ep-agenda-intro {
+	color: colors.$lwtv-grey-muted;
+	font-size: 1.0rem;
 }
 
-.ep-calendar-calendar td {
-	padding: 0;
+.ep-agenda {
+	border: 1px solid colors.$lwtv-grey;
+	border-radius: 14px;
+	background-color: colors.$white;
+	overflow: hidden;
 }
 
-.ep-calendar-heading-date {
-	float: left;
+/* --- Sticky header --- */
+
+.ep-agenda-header {
+	position: sticky;
+	top: 0;
+	z-index: 2;
+	padding: 0.875rem 1rem 0.75rem;
+	background-color: colors.$white;
+	border-bottom: 1px solid colors.$lwtv-grey;
 }
 
-.ep-calendar-heading-backtotop,
-.ep-calendar-heading-weekday {
-	float: right;
+.ep-agenda-header-top {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.75rem;
+	margin-bottom: 0.625rem;
 }
 
-.ep-calendar-heading-backtotop {
-
-	a {
-		color: colors.$lwtv-pink-light;
-	}
+.ep-agenda-eyebrow {
+	margin: 0;
+	font-size: 0.725rem;
+	font-weight: 700;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: colors.$lwtv-grey-muted;
 }
 
-.ep-calendar-dot {
-	border-radius: 50%;
-	background: colors.$lwtv-pink;
-	border-color: colors.$lwtv-pink;
-	display: inline-block;
-	width: 10px;
-	height: 10px;
-}
-
-.ep-calendar-dot-past {
-	background: colors.$lwtv-grey-alt;
-	border-color: colors.$lwtv-grey-alt;
-}
-
-.calendar-show-img {
-	width: 30%;
-	max-height: 100px;
-	float: left;
-}
-
-ul#calendarTab a.nav-link {
-	color: colors.$lwtv-pink;
-	border-color: colors.$lwtv-grey-alt;
-	margin-right: 0.5rem;
-
-	&.active {
-		background-color: colors.$lwtv-pink;
-		border-color: colors.$lwtv-pink;
-		color: colors.$white;
-	}
+.ep-agenda-jump {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.375rem;
+	padding: 0.375rem 0.75rem;
+	border-radius: 26px;
+	background-color: colors.$lwtv-pink-light;
+	color: colors.$lwtv-pink-deep;
+	font-size: 0.85rem;
+	font-weight: 600;
+	text-decoration: none;
+	white-space: nowrap;
 
 	&:hover,
 	&:focus,
 	&:active {
-		background-color: colors.$lwtv-grey-alt;
-		color: colors.$lwtv-pink;
+		background-color: colors.$lwtv-pink-deep;
+		color: colors.$white;
+	}
+
+	.symbolicon svg {
+		fill: colors.$lwtv-pink-deep;
 	}
 }
 
-/* On Page ToC */
-h3.ep-calendar-day-heading,
-thead.dayjump {
-	scroll-margin-top: 55px;
-	line-height: 2;
-	margin: 1rem 0;
-	padding: 0.5rem;
-	background-color: colors.$lwtv-grey-alt;
+/* --- Day-of-week strip --- */
+
+.ep-agenda-week {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.375rem;
+	margin: 0;
+	padding: 0;
+	list-style: none;
 }
 
-.ep-calendar-subnav {
+.ep-agenda-week-day {
 
-	.link-primary a {
-		color: colors.$lwtv-pink;
+	a,
+	span {
+		display: block;
+		padding: 0.1875rem 0.5625rem;
+		border: 1px solid colors.$lwtv-grey;
+		border-radius: 26px;
+		font-size: 0.75rem;
+		font-weight: 600;
+		text-decoration: none;
+	}
+
+	a {
+		color: colors.$lwtv-grey-deep;
 
 		&:hover,
 		&:focus,
 		&:active {
-			background-color: colors.$lwtv-grey-alt;
-			color: colors.$lwtv-pink;
+			border-color: colors.$lwtv-pink-deep;
+			color: colors.$lwtv-pink-deep;
 		}
 	}
+
+	&.is-past a,
+	&.is-past span {
+		color: colors.$lwtv-grey-muted;
+	}
+
+	&.is-today a,
+	&.is-today span {
+		border-color: colors.$lwtv-pink-deep;
+		background-color: colors.$lwtv-pink-deep;
+		color: colors.$white;
+		font-weight: 700;
+	}
+
+	&.is-quiet span {
+		color: colors.$lwtv-grey-muted;
+		opacity: 0.85;
+	}
+}
+
+/* --- Day groups --- */
+
+.ep-agenda-day {
+	scroll-margin-top: 3.5rem;
+}
+
+.ep-agenda-day-heading {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	margin: 0;
+	padding: 0.5rem 1rem;
+	background-color: colors.$lwtv-grey-light;
+	border-bottom: 1px solid colors.$lwtv-grey;
+	font-size: 0.85rem;
+	font-weight: 700;
+	scroll-margin-top: 3.5rem;
+}
+
+h3.ep-agenda-day-heading svg * {
+	fill: colors.$lwtv-pink-deep;
+}
+
+.ep-agenda-day.is-past .ep-agenda-day-heading {
+	color: colors.$lwtv-grey-muted;
+}
+
+.ep-agenda-day.is-future .ep-agenda-day-heading {
+	color: colors.$lwtv-grey-deep;
+}
+
+.ep-agenda-day.is-today .ep-agenda-day-heading {
+	background-color: colors.$lwtv-pink-light;
+	border-bottom-color: colors.$lwtv-pink-deep;
+	color: colors.$lwtv-pink-deep;
+}
+
+.ep-agenda-badge {
+	padding: 0.125rem 0.4375rem;
+	border-radius: 26px;
+	background-color: colors.$lwtv-pink-deep;
+	color: colors.$white;
+	font-size: 0.5625rem;
+	font-weight: 700;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+}
+
+/* --- Episode rows --- */
+
+.ep-agenda-episodes {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.ep-agenda-episode {
+	display: flex;
+	align-items: baseline;
+	gap: 0.75rem;
+	padding: 0.5625rem 1rem;
+	border-bottom: 1px solid colors.$lwtv-grey;
+}
+
+.ep-agenda-dot {
+	flex-shrink: 0;
+	width: 7px;
+	height: 7px;
+	border-radius: 50%;
+	background-color: colors.$lwtv-pink;
+
+	/* Nudge the dot onto the text baseline of the row. */
+	transform: translateY(-2px);
+
+	/* Already aired, on any day. */
+	&.is-aired {
+		background-color: colors.$lwtv-grey-muted;
+		border: 0;
+	}
+
+	/* Airing later today. */
+	&.is-today {
+		background-color: colors.$lwtv-pink;
+		border: 0;
+	}
+
+	/* Airing on a later date - hollow ring. */
+	&.is-upcoming {
+		background-color: colors.$white;
+		border: 1.5px solid colors.$lwtv-pink;
+	}
+}
+
+.ep-agenda-time {
+	flex-shrink: 0;
+	width: $agenda-time-width;
+	color: colors.$lwtv-grey-muted;
+	font-size: 0.85rem;
+	font-variant-numeric: tabular-nums;
+}
+
+.ep-agenda-show {
+	font-size: 0.9125rem;
+}
+
+.ep-agenda-show-name {
+	font-style: italic;
+	font-weight: 600;
+}
+
+.ep-agenda-episode-title {
+	color: colors.$lwtv-grey-deep;
+}
+
+.ep-agenda-multi {
+	margin: 0.25rem 0 0;
+	padding-left: 1.25rem;
+	font-size: 0.8125rem;
+	color: colors.$lwtv-grey-deep;
+}
+
+/* Past days: muted, but still legible. No opacity fade. */
+.ep-agenda-day.is-past {
+
+	.ep-agenda-show-name a {
+		color: colors.$lwtv-pink;
+	}
+
+	.ep-agenda-episode-title,
+	.ep-agenda-multi {
+		color: colors.$lwtv-grey-muted;
+	}
+}
+
+.ep-agenda-empty {
+	margin: 0;
+	padding: 1.25rem 1rem;
+	color: colors.$lwtv-grey-muted;
+	font-size: 0.875rem;
+}
+
+.ep-agenda-credit {
+	max-width: $agenda-measure;
+	margin-top: 0.75rem;
+	color: colors.$lwtv-grey-muted;
 }

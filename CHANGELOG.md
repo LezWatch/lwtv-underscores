@@ -4,6 +4,41 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [7.1.13] - 2026-08-19
+
+### Added
+
+- The airdate calendar gains a sticky header carrying the timezone, a jump-to-today control, and a strip of the seven weekdays that links straight to any day with episodes.
+- Each episode's dot now greys out once that episode has actually aired, so an episode earlier in today's schedule reads as past while the rest of the day still reads as upcoming.
+- The post link under a single post can now be copied to the clipboard in place, announcing the result to screen readers, and falls back to an ordinary link when the clipboard is unavailable.
+- Statistics phrasing gains "Fewer than an eighth", "Fewer than a fifth", and "Nearly all" so the shortfall wording tracks the real figure more closely.
+
+### Changed
+
+- The airdate calendar is now one day-grouped agenda instead of three competing views, with the Last and Next Week pagination and the "Week of…" heading retained.
+- Days with no episodes are left out of the calendar rather than listed as empty rows, since the weekday strip already shows which days are quiet.
+- The calendar now loads only the week it displays instead of fetching three weeks and rendering one, which removes two schedule parses from every page load.
+- Categories and tags under a single post now sit together in a bordered card, categories as accent text and tags as outline pills, with the post link demoted below it.
+- Style and script linting now covers every stylesheet and script in the theme and plugin; previously it reached only a handful of files, and the style autofixer could rewrite bundled Bootstrap sources.
+
+### Fixed
+
+- The calendar widget in the sidebar built its show links from an internal ID, which produced links that went nowhere.
+- The current day's row in the calendar never picked up its highlight, so "Today" was badged but never tinted.
+- A day with more than one episode emitted broken table markup, which was the likely source of odd row spacing.
+- Anchor links to individual days used two different naming schemes depending on whether the day had episodes.
+- The "Today" marker was a link nested inside a disabled button, so it could not be focused.
+- The native-timezone display on the calendar had never rendered at all.
+- Menu keyboard navigation leaked two variables into the global scope.
+- The shortfall phrase ladder had rungs whose thresholds overstated the fraction they named, which could make the phrasing false.
+- Several small style bugs surfaced by the wider lint sweep: a cancelled margin in the search form, a redundant duplicate rule in the statistics styles, and inconsistent spacing on the social share and search scope controls.
+
+### Removed
+
+- The calendar's Grid and Calendar views, along with the tab strip and the `tvview` URL parameter that switched between them. Old tab links still land on the agenda.
+- The calendar's tab script, and with it a jQuery dependency on that page.
+- Dead calendar preloading code that had never run, including the thumbnail machinery only the removed Grid view used.
+
 ## [7.1.12] - 2026-08-13
 
 ### Added
