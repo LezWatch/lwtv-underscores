@@ -108,7 +108,7 @@ class Display {
 
 		return '<h2 class="lwtv-calendar-week">' . sprintf(
 			/* translators: 1: start date of the week, 2: end date of the week */
-			esc_html__( 'Week of %1$s &ndash; %2$s', 'lwtv' ),
+			esc_html__( 'Week of %1$s - %2$s', 'lwtv' ),
 			esc_html( $start->format( 'F j, Y' ) ),
 			esc_html( $end->format( 'F j, Y' ) )
 		) . '</h2>';

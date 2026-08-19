@@ -47,7 +47,7 @@
 	function socialMenuAriaLabel() {
 		const socialId = `lwtv_social_menu_widget-2`;
 		const socialMenu = document.getElementById(socialId);
-		if (0 === socialMenu.length) {
+		if (null === socialMenu) {
 			return;
 		}
 

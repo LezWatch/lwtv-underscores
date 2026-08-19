@@ -15,6 +15,13 @@ use LWTV\_Helpers\{ Calendar_Object_Pool, Calendar_Meta_Batcher };
 class Names {
 
 	/**
+	 * Memoised name lookups, keyed by the TVMaze display name.
+	 *
+	 * @var array
+	 */
+	private $resolved = array();
+
+	/**
 	 * Check Show Name
 	 *
 	 * Since TV Maze sometimes uses different names than we do, we have to make
@@ -47,17 +54,17 @@ class Names {
 	 * need both the ID and the name should call this once and read both keys
 	 * rather than calling make() twice.
 	 *
-	 * Results are memoised per request because the calendar renders three
-	 * weeks at a time and the same show recurs across many days.
+	 * Results are memoised on the instance because the calendar renders three
+	 * weeks at a time and the same show recurs across many days. Callers get
+	 * the shared instance from Calendar_Object_Pool, so the cache lasts the
+	 * request and is released by Calendar_Object_Pool::clear().
 	 *
 	 * @param  string $name Display name of the show, as TVMaze gives it to us.
 	 * @return array        array( 'id' => int, 'name' => string )
 	 */
 	public function resolve( string $name ): array {
-		static $resolved = array();
-
-		if ( isset( $resolved[ $name ] ) ) {
-			return $resolved[ $name ];
+		if ( isset( $this->resolved[ $name ] ) ) {
+			return $this->resolved[ $name ];
 		}
 
 		// Check TV Maze
@@ -68,8 +75,9 @@ class Names {
 			$check_name = $this->local( $name );
 		}
 
-		$check_name['id']  = (int) $check_name['id'];
-		$resolved[ $name ] = $check_name;
+		$check_name['id'] = (int) $check_name['id'];
+
+		$this->resolved[ $name ] = $check_name;
 
 		return $check_name;
 	}
