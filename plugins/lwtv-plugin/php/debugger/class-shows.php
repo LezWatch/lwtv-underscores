@@ -18,8 +18,9 @@ class Shows {
 
 	const ITEMS_TO_CHECK = array(
 		'score'      => array(
-			'message' => 'Score is 0 or not set - needs characters and/or ratings.',
-			'meta'    => 'lezshows_the_score',
+			'message'  => 'Score is 0 or not set - needs characters and/or ratings.',
+			'meta'     => 'lezshows_the_score',
+			'empty_ok' => true,
 		),
 		'details'    => array(
 			'message'  => 'No worthit details.',
@@ -141,7 +142,7 @@ class Shows {
 				}
 			}
 
-			// Force set a missing thumb to TBD.
+			// Force set a missing rating (aka Thumb Score) to TBD.
 			if ( empty( $check['thumb'] ) ) {
 				update_post_meta( $show_id, 'lezshows_worthit_rating', 'TBD' );
 			}
@@ -152,7 +153,7 @@ class Shows {
 				wp_set_object_terms( $show_id, $term->ID, 'lez_tropes', true );
 			}
 
-			// Double check there is an END airdate.
+			// Double check there is an END air date.
 			if ( is_array( $check['airdates'] ) ) {
 				$start  = $check['airdates']['start'];
 				$finish = $check['airdates']['finish'];
@@ -165,7 +166,7 @@ class Shows {
 			}
 
 			$duplicates   = self::check_duplicate_shows( $check, $show_id );
-			$intersection = self::check_intersection_problems( $show_id, $check['tropes'] );
+			$intersection = self::check_intersection_problems( $show_id );
 			$problems     = array_merge( $problems, $intersection, $duplicates );
 
 			// If we have problems, list them:
@@ -304,7 +305,7 @@ class Shows {
 			$imdb = get_post_meta( $show_id, 'lezshows_imdb', true );
 
 			if ( empty( $imdb ) ) {
-				// Check for IMDb existing at all, unless it's a webseries
+				// Check for IMDb existing at all, unless it's a web-series.
 				if ( ! has_term( 'web-series', 'lez_formats', $show_id ) ) {
 					$problems[] = 'IMDb ID is not set.';
 				}
