@@ -53,6 +53,14 @@ class Post_Meta {
 			'post_type'         => CPT_Actors::SLUG,
 			'sanitize_callback' => array( self::class, 'sanitize_numeric_id' ),
 		),
+		// Timestamp of the last attempted TMDB lookup. Distinguishes "TMDB has
+		// no match" from "never asked". Written by `wp lwtv tmdb backfill`.
+		'lezactors_tmdb_checked'        => array(
+			'post_type'         => CPT_Actors::SLUG,
+			'type'              => 'integer',
+			'show_in_rest'      => false,
+			'sanitize_callback' => 'absint',
+		),
 		'lezactors_tumblr'              => array(
 			'post_type' => CPT_Actors::SLUG,
 		),
@@ -134,6 +142,14 @@ class Post_Meta {
 		'lezshows_tmdb_id'              => array(
 			'post_type'         => CPT_Shows::SLUG,
 			'sanitize_callback' => array( self::class, 'sanitize_numeric_id' ),
+		),
+		// Timestamp of the last attempted TMDB lookup. Distinguishes "TMDB has
+		// no match" from "never asked". Written by `wp lwtv tmdb backfill`.
+		'lezshows_tmdb_checked'         => array(
+			'post_type'         => CPT_Shows::SLUG,
+			'type'              => 'integer',
+			'show_in_rest'      => false,
+			'sanitize_callback' => 'absint',
 		),
 		'lezshows_tvmaze_id'            => array(
 			'post_type' => CPT_Shows::SLUG,

@@ -424,12 +424,18 @@ class Shows {
 		// reset items since we recheck off $shows.
 		$items = array();
 
+		// Instantiated once, not per show: the constructor registers admin
+		// filters, and doing that a few thousand times is pure waste. (This
+		// migration call doesn't belong in a scanner at all -- see
+		// DEBUGGER-REVIEW.md section 8.4.)
+		$ways_to_watch_migrator = new Ways_To_Watch();
+
 		foreach ( $shows as $show_id ) {
 
 			$problems = array();
 
 			// Check the Ways to Watch - this updates us to the new method.
-			( new Ways_To_Watch() )->migrate_ways_to_watch( $show_id );
+			$ways_to_watch_migrator->migrate_ways_to_watch( $show_id );
 
 			$wtw_rows      = get_field( 'lezshows_waystowatch', $show_id );
 			$ways_to_watch = is_array( $wtw_rows ) ? array_filter( array_column( $wtw_rows, 'url' ) ) : array();

@@ -73,7 +73,7 @@ is the most expensive check on the site (see 1.3). Same for `on_air`.
 Fix: centralise the keys as constants on the scanner classes and reference them from both
 readers. There is no reason for three files to spell the same string independently.
 
-### 1.3 `find_shows_bad_url()` will hang or time out at current scale
+### 1.3 `find_shows_bad_url()` is expensive *and* low-signal — replace, don't optimise
 
 `class-shows.php:386-449` loops every published show and does a synchronous
 `wp_remote_get( $url, array( 'timeout' => 10 ) )` for **every** Ways-to-Watch URL, inline,
@@ -85,17 +85,216 @@ At a few thousand shows with multiple URLs each, worst case is measured in hours
   `false === $items → full scan`), so simply visiting the tab kicks it off;
 - has **no per-URL result cache** — the same Netflix/Hulu URL is fetched once per show;
 - has **no dedupe**, no concurrency, no batching, no `set_time_limit` handling;
-- treats `301`/`308` as a problem, which for streaming services is normal and generates
-  permanent noise.
+- is **not in the cron rotation at all** (`cli-generate.php` covers mon–sun;
+  `find_shows_bad_url` and `find_actors_incomplete` appear nowhere), so it's never warm.
 
-This is also the check that is **not in the cron rotation at all** (`cli-generate.php:227-277`
-covers mon–sun; `find_shows_bad_url` and `find_actors_incomplete` appear nowhere), so it's
-never warm.
+#### Why making it cheaper isn't enough
 
-Fix: move it to the existing scheduler pattern (`php/schedulers/`, alongside
-`class-tmdb-batch-task.php`) as a batched background job, cache per-URL results keyed by
-URL hash for ~30 days, dedupe the URL set across shows before fetching, and drop
-301/308 from the problem list (or demote to "info").
+HTTP is the wrong instrument for this particular question:
+
+- **Streaming services block datacentre IPs.** Netflix, Amazon, and Disney+ routinely 403
+  server-side requests. The code already half-knows this — one branch reads *"We might be
+  blocked from automated testing."* Every one of those is a false positive.
+- **200 does not mean the show is there.** Netflix returns 200 with "this title is no
+  longer available"; Amazon returns 200 with a search page. The signal you most want — *the
+  show left this service* — is invisible to status codes.
+- **Geo-dependence.** The corpus is international. A URL that resolves from a US IP may
+  404 or redirect from an EU one, so the result depends on where the cron box sits.
+- **Redirects are expected.** The legacy meta key was `lezshows_affiliate`; some of these
+  are affiliate links, where a 301 is the entire point. Flagging 301/308 as "update the
+  page so it doesn't have to redirect" is permanent noise.
+
+So even at zero cost the output would be dominated by wrong answers. The fix is not a
+faster link checker.
+
+#### The signal is already computed, and thrown away
+
+`theme/class-ways-to-watch.php::generate_links()` already classifies every one of these
+URLs on each show render:
+
+1. Parse to `scheme://host`.
+2. Look it up in the `lez_watch_urls` provider registry via `get_term_by_url()` (exact
+   match against the `lezwatchurls_all_N_url` term-meta rows).
+3. On a miss, retry the www/non-www variant.
+4. On a second miss → **`$old_style_urls[]`**, which falls through to
+   `generate_links_old()` and *guesses* a provider name by string-munging the hostname
+   against the hardcoded `SUBDOMAINS` / `TLDS` / `URL_OWNER` / `PRETTY_NAME` constants.
+
+**Step 4 is where the signal lives.** Any URL reaching `$old_style_urls` has a host that
+is not registered in the provider taxonomy, so the public site is rendering a guessed label
+for it (and per 1.3a, often a wrong one). Detecting that costs one DB query per distinct
+host and no network, and it's already being computed on every show page — just discarded.
+
+How to *use* that signal needs care, though, because of the ratio below.
+
+#### Measured 2026-08-20 — and it walks back two things I claimed above
+
+Real numbers, from `DEBUGGER-QUERIES.sql`:
+
+| | distinct hosts | show-host pairs |
+|---|---|---|
+| registered | 30 | 409 |
+| **unregistered** | **124** | **932** |
+
+So **154 hosts in use, 124 unregistered** — not "hundreds." And the distribution is
+steeply top-heavy:
+
+| top N unregistered hosts | pairs covered |
+|---|---|
+| 5 | 586 / 932 (63%) |
+| 10 | 678 / 932 (73%) |
+| **12** | **704 / 932 (76%)** |
+| 20 | 761 / 932 (82%) |
+
+Registering roughly a dozen hosts covers three quarters of unregistered usage. This is an
+afternoon, not a backlog. Frequency-ranking (check #1 below) is still the right shape, but
+the threshold conversation is much easier than expected.
+
+**Correction 1 — the guess path is not producing garbage.** The top 12 unregistered hosts
+all render correctly today:
+
+```
+netflix.com → 'Netflix'    cbs.com  → 'CBS'      hbo.com  → 'HBO'
+amazon.com  → 'Amazon'     cwtv.com → 'The CW'   fox.com  → 'FOX'
+hulu.com    → 'Hulu'       abc.com  → 'ABC'      bbc.co.uk → 'BBC'
+crunchyroll.com → 'Crunchyroll'   hbomax.com → 'HBO Max'   nbc.com → 'NBC'
+```
+
+The three-letter-uppercase rule and the `PRETTY_NAME` entries carry the majors. Only **20
+of 932** unregistered pairs get a genuinely ugly label, and they're all long tail:
+`abc.go.com` → "Abc.go", `gem.cbc.ca` → "Gem.cbc", `therokuchannel.roku.com` →
+"Therokuchannel.roku", `iview.abc.net.au` → "Iview.abc.net.au", `rtve.es` → "Rtve.es",
+`animenetwork.net`, `6play.fr`, `alibi.uktv.co.uk`.
+
+**Correction 2 — 1.3a is a 5-pair bug, not a widespread one.** I claimed the `ltrim()`
+defect was mislabelling "a large share" of pages. Measured against the real host list it
+affects **two hosts, 5 show-host pairs**: `watch.amazon.com` → "Mazon" (4) and
+`gshow.globo.com` → "Lobo" (1). The reason is luck: `'www.'` — which prefixes almost every
+host in the data — has character set `{w, .}`, and no host in use starts with `w` or `.`
+after it, so the dominant case survives. Still worth the one-line fix; not the emergency I
+made it out to be.
+
+#### What this means for priority
+
+The taxonomy port is **architectural tidying, not a bug fix**, and it should be sold as
+such. The wins are real but they aren't "the front end is broken":
+
+- **Control.** `hide_display` only works for registered hosts. Unregistered ones always render.
+- **Retiring dead code.** `SUBDOMAINS`, `TLDS`, `URL_OWNER`, `PRETTY_NAME` and
+  `generate_links_old()` all exist to compensate for an unpopulated registry.
+- **Consistency.** "Amazon" vs the existing "Prime Video" term is the same service under
+  two names, decided by which field an editor filled in.
+- **A single source of truth** for provider naming, instead of a constant in a theme class.
+
+Cheapest concrete win in the whole area: the **"Prime Video" term already exists** and just
+doesn't list `amazon.com`. One URL row, 174 shows.
+
+Also worth noting the `PRETTY_NAME` typo `'roosterteeth' => 'Roster Teeth'` — should be
+"Rooster Teeth" (4 shows). And `sky.com` hits the three-letter rule and renders "SKY"
+rather than "Sky".
+
+#### Replacement: three checks, ~zero network
+
+1. **High-traffic unregistered hosts** — hosts appearing on **≥ N shows** (start at 5 and
+   tune) that have no `lez_watch_urls` term. Turns a several-hundred-item backlog into a
+   short, ranked, genuinely actionable list: each entry earns a term, which buys a correct
+   display name and `hide_display` control. The long tail is left alone by design.
+2. **Syntax and internal consistency** — `wp_http_validate_url()`, `http://` that should
+   be `https://`, duplicate URLs on one show, and hosts that contradict the show's
+   `lez_stations` terms. Pure cross-referencing, which is what the rest of the debugger is
+   already good at.
+3. **Registry drift** — `lez_watch_urls` terms whose URLs appear on no show. With only 23
+   terms this is a tiny, cheap check, and a term going to zero uses is a real signal (a
+   provider that's been renamed, or URLs that changed shape).
+
+Sizing queries for all of this are in `DEBUGGER-QUERIES.sql` (read-only).
+
+**Host liveness is now optional and probably not worth it.** The original appeal was that
+the taxonomy bounded the work — but 23 terms means it only ever covered a fraction of the
+hosts in use, so it answers "is Netflix up" and nothing about the long tail. Given nobody
+is acting on the current output (confirmed), the honest recommendation is to skip it and
+revisit only if defunct providers turn out to be a real editorial problem. If it *is* built:
+dedupe, `HEAD` before `GET`, 3–5s timeout, per-host concurrency caps, `Retry-After`
+handling, and a **two-strike rule** (only report after failing on two separate runs), since
+single-run failures are dominated by transient noise.
+
+#### Not TMDB for URLs — but the TMDB numbers are the surprise here
+
+Rejected as a *URL* check: TMDB's `/3/tv/{id}/watch/providers` returns provider *names* per
+region plus one TMDB link, and the docs are explicit it is *"not going to return full deep
+links."* It cannot validate a Ways to Watch URL, and it carries a mandatory JustWatch
+attribution requirement with access revocation attached.
+
+But the coverage query came back very differently from what I predicted:
+
+| | count |
+|---|---|
+| published shows | 2262 |
+| has a non-empty `lezshows_tmdb_id` | **248** (11%) |
+| row exists but empty — *lookup ran, found nothing* | **0** |
+| no row at all — *never attempted* | **2014** (89%) |
+| has a non-empty IMDb ID | **2225** (98%) |
+
+**I was wrong to predict patchy coverage.** There is no evidence TMDB lacks your shows —
+there are zero recorded failed lookups. 89% simply never had a lookup attempted, because
+`lezshows_tmdb_id` is only auto-populated on save and most shows haven't been saved since
+that landed. This is a **backfill** problem, not a coverage problem.
+
+And it's a tractable one: 2225 shows have an IMDb ID, and TMDB supports lookup by external
+ID (`/3/find/{imdb_id}?external_source=imdb_id`). So the 2014 can be filled without human
+effort, bounded by API rate limits.
+
+Two cautions before committing to the full run:
+
+- **The hit rate is still unknown.** Zero failures recorded doesn't mean zero failures
+  exist — it means failures were never *recorded*. Run a sample of ~100 first and measure,
+  then decide. Web series are still the likely soft spot.
+- **Record the misses this time.** Whatever does the backfill should write a sentinel on a
+  failed lookup (or a separate `lezshows_tmdb_checked` timestamp), so "no match" and "never
+  tried" stop being indistinguishable. That ambiguity is the only reason this needed a
+  query to answer.
+
+This is plausibly higher value than anything else in §1.3 — it feeds `grading/class-tmdb.php`
+and the show score, not just Ways to Watch. Tracked separately rather than folded in here.
+
+### 1.3a `clean_subdomain()` uses `ltrim()` as if it stripped a prefix — wrong labels on the front end
+
+`theme/class-ways-to-watch.php:244-254`:
+
+```php
+$hostname = ltrim( $hostname, $remove );   // $remove is e.g. 'gshow.' or 'watch.'
+```
+
+`ltrim()`'s second argument is a **character list**, not a prefix. So after the intended
+prefix is removed it keeps eating any following character that appears anywhere in that
+prefix. The `substr()` guard above it means this only fires on hosts that genuinely start
+with one of `SUBDOMAINS`, but for those it is frequently wrong:
+
+| Host | Renders as | Should be |
+|---|---|---|
+| `gshow.globo.com` | **Lobo** | Globo |
+| `watch.tvnz.co.nz` | **Vnz** | TVNZ |
+| `watch.cbc.ca` | **Bc** | CBC |
+| `watch.aetv.com` | **Etv** | AETV |
+| `www.wwe.com` | **E** | WWE |
+| `play.apple.com` | **E** | Apple |
+| `premium.example.com` | **Xample** | Example |
+
+7 of 10 realistic hosts tested come out wrong. `gshow.globo.com` is clearly a supported
+case — `.globo` is in the `TLDS` list — and it renders a button labelled "Lobo".
+`watch.tvnz.co.nz` is worse than it looks: the mangled slug `vnz` also misses the
+`PRETTY_NAME` lookup (which has `tvnz` => `TVNZ`), so the pretty name is lost too.
+
+Fix: `substr( $hostname, strlen( $remove ) )`, or `str_starts_with()` plus a substring.
+
+**Measured blast radius: 2 hosts, 5 show-host pairs** — `watch.amazon.com` → "Mazon" (4
+shows) and `gshow.globo.com` → "Lobo" (1 show). Everything else survives because `'www.'`
+has character set `{w, .}` and no host in use starts with `w` or `.` after it. The table
+above is what the algorithm *can* do, not what it currently does to your data.
+
+Still worth fixing — it's one line, both labels are live and wrong, and the same
+`clean_subdomain()` call sits inside `check_alt_url()`, so the www/non-www fallback is
+corrupted for those hosts too. But it's a small correctness fix, not a priority.
 
 ### 1.4 The "add NONE term" auto-fixes silently do nothing, and can fatal — in TWO places
 
@@ -523,38 +722,96 @@ directly to the transient and will need updating to the new shape at the same ti
 
 ## Suggested order of work
 
-**Now — correctness, small diffs:**
+**Done — landed in `b6994ef0` plus the notice-scheme cleanup:**
 
-1. Airdates key fix (1.1) — actively producing wrong output.
-2. `$term->ID` fatal + no-op (1.4).
-3. Transient key mismatches (1.2).
-4. `false`-to-array deprecations + `last_run()` guard + `! array()` typo (1.5).
-5. Twitter/Instagram message mixup, `isset( $pos_imdb )` dupe check (§3).
-6. CLI exit code (1.8), `--force` flag (1.9).
-7. "Debuging" typo (§6).
+- Airdates key fix, via a shared `CPTs\Shows\Airdates` helper with unit tests (1.1).
+- `$term->ID` no-op/fatal in both Shows and Characters (1.4).
+- Transient key mismatches, now constants on the scanner classes (1.2).
+- `false`-to-array deprecations, via `Debugger\Status` (1.5). Also caught the same class of
+  bug fataling the dashboard widget on fresh installs.
+- Twitter/Instagram message mixup and the always-true `isset( $pos_imdb )` dupe check (§3),
+  plus the three `Dupes::compare_duplicates()` bugs (1.9b).
+- CLI exit code and `--force`, via a table-driven check registry (1.8, 1.9).
+- "Debuging" typo (§6).
+- `?message=` notice scheme, `Actor_Wiki`, and the dead `admin_post_` hook removed (1.9a).
 
-**Next — stop the bleeding at scale:**
+**Next — informed by the 2026-08-20 measurements:**
 
-8. `fields => 'ids'` at every `Post_Type::make()` debugger call site (2.1).
-9. Move `find_shows_bad_url()` to a batched scheduler task with per-URL caching (1.3);
-   demote 301/308.
-10. Log file rotation + memoised option reads (§6).
+1. **TMDB backfill** — 2014 shows never had a lookup attempted, 2225 have IMDb IDs to
+   backfill from, and it feeds the show score via `grading/class-tmdb.php`. Sample 100
+   first to measure the hit rate; record misses so the ambiguity doesn't recur. Biggest
+   value found in this whole pass, and unrelated to Ways to Watch.
+2. **Port the majors into `lez_watch_urls`** — top 12 unregistered hosts = 76% of
+   unregistered usage. Start with adding `amazon.com` to the existing **Prime Video** term:
+   one URL row, 174 shows. Architectural tidying, not a bug fix (see 1.3).
+3. **`clean_subdomain()` `ltrim()` fix** (1.3a) — one line. Small: 5 show-host pairs
+   ("Mazon", "Lobo"). Do it while you're in the file.
+4. **`fields => 'ids'`** at every `Post_Type::make()` debugger call site (2.1) — stops
+   serialising thousands of `WP_Post` objects into a transient to extract an ID list.
+5. **Log file rotation + memoised option reads** (§6).
 
-**Then — the structural work. Order matters here, because the fix-it decisions depend on it:**
+**Then — replace the URL checker (1.3):**
 
-11. **Issue registry + typed findings** (§5, §8.3). One `issue_type` per finding, one row per
-    issue, `fixable`/`fix_label` from the registry. Includes the transient shape migration
-    (§8.5). Everything below depends on this.
-12. **Route findings through `Audit::finalize()`** (§5) — baselines, new/open/resolved,
-    acknowledgements. Needs `IGNORE_META` generalised per post type first.
-13. **Extract pure rule evaluation into `debugger/build/`** with unit tests (§4). Start with
-    the show rules so 1.1 gets a regression test that would have caught it.
-14. **Move the writes to a repair layer** (§8.2) behind `--fix-it`, plus the per-finding
+6. Build the three network-free checks from 1.3, with #1 **frequency-ranked**. Given the
+   measured distribution, a threshold around 5 shows gives a worklist of roughly 20 hosts.
+7. Delete `find_shows_bad_url()` and link `tab_show_urls` in the nav — the reason it's
+   hidden (1.6) goes away once the full sweep does.
+8. Retire `SUBDOMAINS` / `TLDS` / `URL_OWNER` / `PRETTY_NAME` as hosts get registered. Note
+   `generate_links_old()` has to survive in some form for the permanent long tail — decide
+   what an unregistered host should render as (cleaned host, bare host, or the existing
+   `'Watch Online'` failsafe).
+9. Host liveness: **skip.** 30 registered hosts cover a fraction of usage, and nobody acts
+   on the current output. Revisit only if defunct providers prove to be a real problem.
+
+**Small extra, worth doing whenever:** add a "URLs registered" (and maybe "shows using")
+column to the `lez_watch_urls` admin list. `cpts/shows/class-ways-to-watch.php` already
+filters `manage_edit-lez_watch_urls_columns` to *remove* columns, so adding one is that
+hook plus `manage_lez_watch_urls_custom_column`. Makes the port's progress visible while
+you do it. (Mika's idea.)
+
+**Then — the structural work. Order matters, because the fix-it decisions depend on it:**
+
+10. **Issue registry + typed findings** (§5, §8.3). One `issue_type` per finding, one row per
+   issue, `fixable`/`fix_label` from the registry. Includes the transient shape migration
+   (§8.5). Everything below depends on this.
+11. **Route findings through `Audit::finalize()`** (§5) — baselines, new/open/resolved,
+   acknowledgements. Needs `IGNORE_META` generalised per post type first.
+12. **Extract pure rule evaluation into `debugger/build/`** with unit tests (§4). The
+   airdates helper already works this way and is the template.
+13. **Move the writes to a repair layer** (§8.2) behind `--fix-it`, plus the per-finding
     admin fix links (§8.1). Relocate the four non-fix writes per §8.4.
-15. **Collapse the ten validator files** into a config-driven runner (§7) — much easier
-    once findings are typed and the renderer is uniform.
-16. Add the two missing checks to the cron rotation; decide the fate of
-    `find_actors_incomplete()` (1.7), `tab_show_urls`, and `tab_actor_wiki` (1.6).
+14. **Collapse the ten validator files** into a config-driven runner (§7) — much easier
+    once findings are typed and the renderer is uniform. The CLI registry added in 1.8/1.9
+    is the shape to copy.
+15. Add the missing checks to the cron rotation; decide the fate of
+    `find_actors_incomplete()` (1.7).
 
-Steps 11–14 are one coherent chunk — worth doing together rather than shipping half a
-finding shape. Steps 1–10 are all independent and can land in any order.
+Steps 10–13 are one coherent chunk — worth doing together rather than shipping half a
+finding shape. Everything above them is independent and can land in any order.
+
+---
+
+## Open questions
+
+Answered 2026-08-20 (see `DEBUGGER-QUERIES.sql` for the queries):
+
+- **TMDB coverage** — not a coverage problem. 0 failed lookups, 2014 never attempted, 2225
+  IMDb IDs available to backfill from. Reversed my prediction; see 1.3.
+- **Is anyone acting on Show URLs output?** No. No workflow to preserve.
+- **Ways to Watch hosts** — 154 in use, 124 unregistered, and the top 12 are 76% of
+  unregistered usage. Also walked back my claim that 1.3a was widespread: it's 5 pairs.
+- **Scheme split** — 1292 https vs 50 http. Small but real; those 50 can never match an
+  https-registered term. Normalise scheme in `get_term_by_url()` rather than registering
+  both variants per term.
+- **`PRETTY_NAME` migration hazard** — none. No existing term is *named* like a
+  `PRETTY_NAME` key, so the constant can be retired without renaming terms first.
+
+Still open:
+
+- **What's the TMDB backfill hit rate?** Only a sample run answers this, and it decides
+  whether the full 2014 is worth it.
+- **What should an unregistered host render as** once `generate_links_old()` is simplified?
+  The long tail is permanent, so this needs an answer rather than a deletion.
+- **Is `amazon.com` really Prime Video?** It's 174 shows and the term already exists, but
+  the two were presumably filled in by different people at different times. Worth eyeballing
+  a few before merging them.
