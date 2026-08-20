@@ -21,6 +21,7 @@ use LWTV\Validator\Show_Checker;
 use LWTV\Validator\Show_IMDb;
 use LWTV\Validator\Show_URLs;
 use LWTV\Validator\OnAir_Checker;
+use LWTV\Validator\Watch_Providers;
 
 use LWTV\Debugger\Status;
 
@@ -80,6 +81,13 @@ class Validation {
 			'desc'   => 'Checks that all shows have the correct on-air status.',
 			'option' => 'onair_problems',
 		),
+		'watch_providers'   => array(
+			'name'   => 'Watch Providers',
+			'desc'   => 'Ways to Watch hosts with no provider term, so the front end is guessing their name. Create the term in one click.',
+			// No badge: this isn't a cron scan, and counting it would mean a
+			// query on every view of every tab.
+			'option' => '',
+		),
 	);
 
 	public function __construct() {
@@ -137,25 +145,38 @@ class Validation {
 
 			<h1>Validation Checks</h1>
 
-			<h2 class="nav-tab-wrapper">
-				<a href="?page=lwtv_data_check" class="nav-tab <?php echo ( 'intro' === $active_tab ) ? 'nav-tab-active' : ''; ?>">Introduction</a>
-				<?php
-				foreach ( self::TOOL_TABS as $tab => $value ) {
-					$active = ( 'tab_' . $tab === $active_tab ) ? 'nav-tab-active' : '';
-					?>
-					<a href="?page=lwtv_data_check&tab=tab_<?php echo esc_attr( $tab ); ?>" class="nav-tab <?php echo esc_attr( $active ); ?>">
-						<?php
-						echo esc_html( $value['name'] );
-						$tab_count = isset( $options[ $value['option'] ]['count'] ) ? (int) $options[ $value['option'] ]['count'] : 0;
-						if ( $tab_count > 0 ) {
-							echo ' <span class="validation-errors count-' . esc_attr( (string) $tab_count ) . '"><span class="validation-count">' . esc_html( (string) $tab_count ) . '</span></span>';
-						}
-						?>
-					</a>
+			<form method="get" action="<?php echo esc_url( admin_url( 'admin.php' ) ); ?>" class="lwtv-tools-tabpicker">
+				<input type="hidden" name="page" value="lwtv_data_check" />
+				<label for="lwtv-tools-tab"><strong><?php esc_html_e( 'Check:', 'lwtv' ); ?></strong></label>
+				<select name="tab" id="lwtv-tools-tab">
+					<option value="intro" <?php selected( 'intro', $active_tab ); ?>><?php esc_html_e( 'Introduction', 'lwtv' ); ?></option>
 					<?php
-				}
-				?>
-			</h2>
+					foreach ( self::TOOL_TABS as $tab => $value ) {
+						$count = ( ! empty( $value['option'] ) && isset( $options[ $value['option'] ]['count'] ) )
+							? (int) $options[ $value['option'] ]['count']
+							: 0;
+
+						$label = $count > 0
+							/* translators: 1: check name, 2: number of outstanding items. */
+							? sprintf( '%1$s (%2$d)', $value['name'], $count )
+							: $value['name'];
+						?>
+						<option value="<?php echo esc_attr( 'tab_' . $tab ); ?>" <?php selected( 'tab_' . $tab, $active_tab ); ?>>
+							<?php echo esc_html( $label ); ?>
+						</option>
+						<?php
+					}
+					?>
+				</select>
+				<?php submit_button( __( 'Go', 'lwtv' ), 'secondary', '', false ); ?>
+			</form>
+
+			<script>
+				// Progressive enhancement only -- the Go button works without it.
+				document.getElementById( 'lwtv-tools-tab' ).addEventListener( 'change', function () {
+					this.form.submit();
+				} );
+			</script>
 
 			<div id="dashboard" class="lwtvtab">
 				<?php
@@ -190,6 +211,9 @@ class Validation {
 						break;
 					case 'tab_onair_checker':
 						( new OnAir_Checker() )->make();
+						break;
+					case 'tab_watch_providers':
+						Watch_Providers::make();
 						break;
 					default:
 						self::tab_introduction();

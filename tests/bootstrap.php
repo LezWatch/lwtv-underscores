@@ -33,6 +33,7 @@ require_once __DIR__ . '/../plugins/lwtv-plugin/php/statistics/build/class-genre
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/statistics/build/class-character-identity-decade-buckets.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/cpts/shows/class-trope-categories.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/cpts/shows/class-airdates.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/cpts/shows/class-host-name.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/statistics/build/class-trope-category-coverage.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/statistics/build/class-term-count-distribution.php'; // to_cells() lives here too.
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/statistics/build/class-score-distribution.php';

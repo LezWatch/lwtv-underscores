@@ -18,6 +18,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+use LWTV\CPTs\Shows\Host_Name;
+use LWTV\CPTs\Shows\Watch_Host_Names;
+
 
 class Ways_To_Watch {
 
@@ -25,37 +28,6 @@ class Ways_To_Watch {
 	 * Taxonomy holding the watch providers.
 	 */
 	const TAXONOMY = 'lez_watch_urls';
-
-	/**
-	 * Subdomain prefixes to strip when guessing a name, and when looking for an
-	 * alternate host to match on.
-	 */
-	const SUBDOMAINS = array( 'gshow.', 'play.', 'premium.', 'watch.', 'www.' );
-
-	/**
-	 * Suffixes to strip when guessing a name.
-	 *
-	 * Not all of these are real TLDs -- '.cbc', '.globo' and friends are middle
-	 * segments of hosts like gem.cbc.ca. clean_tlds() strips repeatedly and
-	 * longest-first, so multi-part suffixes resolve without needing every
-	 * combination listed.
-	 */
-	const TLDS = array(
-		'.co.nz',
-		'.co.uk',
-		'.go.com',
-		'.fandom',
-		'.globo',
-		'.com',
-		'.cbc',
-		'.net',
-		'.org',
-		'.ca',
-		'.co',
-		'.es',
-		'.go',
-		'.tv',
-	);
 
 	/**
 	 * Call Custom Links
@@ -128,35 +100,30 @@ class Ways_To_Watch {
 	}
 
 	/**
-	 * Every stored URL form worth trying for one parsed URL.
+	 * Every stored URL form worth trying for one parsed URL, most specific first.
 	 *
 	 * Terms store 'scheme://host'. Editors are inconsistent about www and about
 	 * http vs https, and a term registered as https will never match an http
-	 * show URL on an exact comparison, so both are offered here rather than
-	 * requiring every term to list every variant.
+	 * show URL on an exact comparison, so both are offered rather than requiring
+	 * every term to list every variant.
 	 *
 	 * @param  array $parsed_url Output of wp_parse_url().
 	 * @return array<string>
 	 */
 	private function url_candidates( array $parsed_url ): array {
-		$host = strtolower( $parsed_url['host'] );
-		$bare = $this->clean_subdomain( $host );
+		$hosts = Host_Name::host_candidates( $parsed_url['host'] );
 
-		$hosts = array_unique(
-			array(
-				$host,
-				$bare,
-				'www.' . $bare,
-			)
-		);
+		if ( empty( $hosts ) ) {
+			return array();
+		}
 
-		// Try the URL's own scheme first, then the other one.
+		// The URL's own scheme first, then the other one.
 		$scheme  = ( isset( $parsed_url['scheme'] ) && 'http' === $parsed_url['scheme'] ) ? 'http' : 'https';
 		$schemes = array( $scheme, 'http' === $scheme ? 'https' : 'http' );
 
 		$candidates = array();
-		foreach ( $schemes as $one_scheme ) {
-			foreach ( $hosts as $one_host ) {
+		foreach ( $hosts as $one_host ) {
+			foreach ( $schemes as $one_scheme ) {
 				$candidates[] = $one_scheme . '://' . $one_host;
 			}
 		}
@@ -169,6 +136,9 @@ class Ways_To_Watch {
 	 *
 	 * Searches ACF repeater subfield rows (lezwatchurls_all_N_url) for an exact
 	 * match against any of the supplied URLs, in one query.
+	 *
+	 * When several candidates match, the earliest in $urls wins, so a term
+	 * registered on 'abc.go.com' beats one registered on 'go.com'.
 	 *
 	 * @param  string|array $urls One URL, or candidates in priority order.
 	 * @return array
@@ -185,9 +155,9 @@ class Ways_To_Watch {
 		$placeholders = implode( ', ', array_fill( 0, count( $urls ), '%s' ) );
 
 		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-		$term_ids = $wpdb->get_col(
+		$matches = $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT DISTINCT t.term_id
+				"SELECT tm.meta_value AS matched_url, t.term_id
 				FROM {$wpdb->terms} t
 				INNER JOIN {$wpdb->term_taxonomy} tt ON t.term_id = tt.term_id
 				INNER JOIN {$wpdb->termmeta} tm ON t.term_id = tm.term_id
@@ -199,19 +169,31 @@ class Ways_To_Watch {
 		);
 		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 
-		if ( empty( $term_ids ) ) {
+		if ( empty( $matches ) ) {
 			return array();
 		}
 
-		$terms = get_terms(
-			array(
-				'taxonomy'   => self::TAXONOMY,
-				'hide_empty' => false,
-				'include'    => $term_ids,
-			)
-		);
+		// SQL has no opinion on our candidate order, so resolve it here.
+		$by_url = array();
+		foreach ( $matches as $match ) {
+			$by_url[ $match->matched_url ] = (int) $match->term_id;
+		}
 
-		return ( ! is_wp_error( $terms ) && is_array( $terms ) ) ? $terms : array();
+		$term_id = 0;
+		foreach ( $urls as $candidate ) {
+			if ( isset( $by_url[ $candidate ] ) ) {
+				$term_id = $by_url[ $candidate ];
+				break;
+			}
+		}
+
+		if ( ! $term_id ) {
+			return array();
+		}
+
+		$term = get_term( $term_id, self::TAXONOMY );
+
+		return ( $term instanceof \WP_Term ) ? array( $term ) : array();
 	}
 
 	/**
@@ -223,7 +205,6 @@ class Ways_To_Watch {
 	public function generate_links_old( $watch_urls ) {
 		$links = array();
 
-		// Parse each URL to figure out who it is...
 		foreach ( $watch_urls as $url ) {
 			$parsed_url = wp_parse_url( $url );
 
@@ -231,16 +212,7 @@ class Ways_To_Watch {
 				continue;
 			}
 
-			$hostname = strtolower( $parsed_url['host'] );
-
-			// Clean the subdomain.
-			$hostname = $this->clean_subdomain( $hostname );
-
-			// Remove TLDs from the end:
-			$hostname = $this->clean_tlds( $hostname );
-
-			// Add to the links array.
-			$links[] = $this->build_link( $url, $this->guess_name( $hostname ) );
+			$links[] = $this->build_link( $url, $this->guess_name( $parsed_url['host'] ) );
 		}
 
 		return $links;
@@ -258,91 +230,26 @@ class Ways_To_Watch {
 	}
 
 	/**
-	 * Clean Subdomains
+	 * Best available display name for a host with no term.
 	 *
-	 * @param  string $hostname
+	 * Three tiers, best first:
+	 *   1. A lez_watch_urls term name  -- handled by the caller, wins outright.
+	 *   2. A name the host published about itself, discovered by
+	 *      `wp lwtv waystowatch enrich` and cached. Reads the cache only; never
+	 *      makes a request during a page load.
+	 *   3. Host_Name's guess from the hostname, which is pure and unit-tested
+	 *      but can only ever be best-effort.
+	 *
+	 * @param  string $host Hostname.
 	 * @return string
 	 */
-	public function clean_subdomain( $hostname ): string {
-		foreach ( self::SUBDOMAINS as $remove ) {
-			// substr, not ltrim: ltrim's second argument is a character list, so
-			// ltrim( 'watch.amazon.com', 'watch.' ) also ate the leading 'a' and
-			// produced 'mazon.com'.
-			if ( str_starts_with( $hostname, $remove ) ) {
-				return substr( $hostname, strlen( $remove ) );
-			}
+	private function guess_name( string $host ): string {
+		$discovered = Watch_Host_Names::get( $host );
+
+		if ( null !== $discovered && '' !== $discovered ) {
+			return $discovered;
 		}
 
-		return $hostname;
-	}
-
-	/**
-	 * Clean TLDs off hosts
-	 *
-	 * Strips repeatedly and longest-match-first, so 'abc.go.com' resolves to
-	 * 'abc' rather than stopping at '.com' and leaving 'abc.go'.
-	 *
-	 * @param  string $hostname
-	 * @return string
-	 */
-	public function clean_tlds( $hostname ): string {
-		static $suffixes = null;
-
-		if ( null === $suffixes ) {
-			$suffixes = self::TLDS;
-			// Longest first, so '.go.com' beats '.com' and '.co.uk' beats '.co'.
-			usort(
-				$suffixes,
-				static function ( $a, $b ) {
-					return strlen( $b ) <=> strlen( $a );
-				}
-			);
-		}
-
-		$changed = true;
-		while ( $changed ) {
-			$changed = false;
-
-			foreach ( $suffixes as $remove ) {
-				if ( '' === $remove || ! str_ends_with( $hostname, $remove ) ) {
-					continue;
-				}
-
-				$trimmed = substr( $hostname, 0, -strlen( $remove ) );
-
-				// Never strip down to nothing -- a host that *is* a suffix
-				// (say 'globo') should keep its name.
-				if ( '' === $trimmed ) {
-					break;
-				}
-
-				$hostname = $trimmed;
-				$changed  = true;
-				break;
-			}
-		}
-
-		return $hostname;
-	}
-
-	/**
-	 * Guess a display name from a hostname.
-	 *
-	 * Only used for hosts with no term. Short hostnames are almost always
-	 * acronyms (abc, cbs, hbo, ifc), so those are upper-cased; anything longer
-	 * just gets its first letter capitalised. Give a host a term when the guess
-	 * isn't good enough -- that is what the taxonomy is for.
-	 *
-	 * @param  string $hostname Hostname, already stripped of subdomain and TLD.
-	 * @return string
-	 */
-	private function guess_name( string $hostname ): string {
-		$hostname = trim( $hostname, " \t\n\r\0\x0B." );
-
-		if ( '' === $hostname ) {
-			return 'Watch Online';
-		}
-
-		return ( strlen( $hostname ) <= 3 ) ? strtoupper( $hostname ) : ucfirst( $hostname );
+		return Host_Name::guess( $host );
 	}
 }

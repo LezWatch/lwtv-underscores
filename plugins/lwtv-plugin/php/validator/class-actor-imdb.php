@@ -43,7 +43,7 @@ class Actor_IMDb {
 			<div class="lwtv-tools-container lwtv-tools-container__alert">
 				<h3><span class="dashicons dashicons-yes"></span> Excellent!</h3>
 				<div id="lwtv-tools-alerts">
-					<p>All actors have at an IMDb entry.</p>
+					<p>All actors have an IMDb entry.</p>
 					<?php echo wp_kses_post( $last_run ); ?>
 				</div>
 			</div>
