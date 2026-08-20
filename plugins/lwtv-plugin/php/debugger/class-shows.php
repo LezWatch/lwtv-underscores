@@ -237,7 +237,17 @@ class Shows {
 		if ( ! $intersections || is_wp_error( $intersections ) ) {
 			return array();
 		}
-		$problems[] = ( new Characters_Debugger() )->check_disabled_characters( $show_id );
+
+		// Only shows tagged with the 'disabled' intersection need a disabled character.
+		if ( ! in_array( 'disabled', wp_list_pluck( $intersections, 'slug' ), true ) ) {
+			return array();
+		}
+
+		$problems         = array();
+		$disabled_problem = ( new Characters_Debugger() )->check_disabled_characters( $show_id );
+		if ( ! empty( $disabled_problem ) ) {
+			$problems[] = $disabled_problem;
+		}
 
 		return $problems;
 	}
