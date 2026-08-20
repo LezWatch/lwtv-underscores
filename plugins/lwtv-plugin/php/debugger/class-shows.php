@@ -243,8 +243,13 @@ class Shows {
 			return array();
 		}
 
+		static $characters_debugger = null;
+		if ( null === $characters_debugger ) {
+			$characters_debugger = new Characters_Debugger();
+		}
+
 		$problems         = array();
-		$disabled_problem = ( new Characters_Debugger() )->check_disabled_characters( $show_id );
+		$disabled_problem = $characters_debugger->check_disabled_characters( $show_id );
 		if ( ! empty( $disabled_problem ) ) {
 			$problems[] = $disabled_problem;
 		}
