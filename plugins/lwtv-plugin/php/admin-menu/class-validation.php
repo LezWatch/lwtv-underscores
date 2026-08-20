@@ -13,7 +13,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 use LWTV\Validator\Actor_Checker;
 use LWTV\Validator\Actor_IMDb;
-use LWTV\Validator\Actor_Wiki;
 use LWTV\Validator\BYQ_Checker;
 use LWTV\Validator\Character_Checker;
 use LWTV\Validator\Duplicates;
@@ -28,11 +27,9 @@ use LWTV\Debugger\Status;
 class Validation {
 
 	/**
-	 * Local Variables
+	 * Cached copy of the debugger status option.
 	 */
-	protected $page_id = null;        // page ID
-
-	private static $options = array();      // options
+	private static $options = array();
 
 	/**
 	 * Tool Tabs
@@ -95,19 +92,7 @@ class Validation {
 	 * @return void
 	 */
 	public function init() {
-		add_action( 'admin_menu', array( $this, 'add_admin_notices' ) );
-		add_action( 'admin_post_lwtv_data_check_wikidata_actors', array( $this, 'check_actors_wikidata' ) );
 		add_submenu_page( 'lwtv', 'Data Validation', 'Data Validation', 'upload_files', 'lwtv_data_check', array( $this, 'settings_page' ) );
-	}
-
-	/*
-	 * Settings
-	 *
-	 * Create our settings page
-	 */
-	public function add_admin_notices() {
-		// Admin notices
-		add_action( 'load-$page_id', array( $this, 'admin_notices' ) );
 	}
 
 	/**
@@ -136,40 +121,6 @@ class Validation {
 		$last_run_echo = '<p>The ' . str_replace( '_', ' ', $tool ) . ' was last run on ' . $last_run_time . '</p>';
 
 		return $last_run_echo;
-	}
-
-	/*
-	 * Admin Notices
-	 *
-	 * @return void
-	 */
-	private function admin_notices() {
-		if ( ! isset( $_GET['message'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
-			return;
-		}
-
-		$notice_value = sanitize_text_field( $_GET['message'] ); // phpcs:ignore WordPress.Security.NonceVerification
-
-		switch ( $notice_value ) {
-			case 'success':
-				$content = 'Automatic fix complete.';
-				break;
-			case 'warning':
-				$content = 'Automatic fix was unable to complete properly.';
-				break;
-			case 'error':
-				$content = 'Something has gone gay-ly wrong.';
-				break;
-			case 'rerun':
-				$content      = 'Check has been re-run.';
-				$notice_value = 'success';
-				break;
-		}
-
-		if ( isset( $content ) ) {
-			$message = '<div class="notice notice-' . esc_attr( $notice_value ) . ' is-dissmissable"><p>' . esc_html( $content ) . '</p></div>';
-			add_action( 'admin_notices', $message );
-		}
 	}
 
 	/*
@@ -215,9 +166,6 @@ class Validation {
 						break;
 					case 'tab_actor_imdb':
 						( new Actor_IMDb() )->make();
-						break;
-					case 'tab_actor_wiki':
-						( new Actor_Wiki() )->make();
 						break;
 					case 'tab_byq_checker':
 						( new BYQ_Checker() )->make();

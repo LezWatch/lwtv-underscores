@@ -145,12 +145,21 @@ option is cleared.
 And `Validation::current_status()` has `if ( empty( $options ) || ! array( $options ) )` —
 `array( $options )` is always truthy, so that guard does nothing. It wants `! is_array()`.
 
-### 1.6 Two admin tabs are unreachable
+### 1.6 Two admin tabs were unreachable — one resolved, one deliberate
 
-`Validation::TOOL_TABS` has 9 entries; the `switch` in `settings_page()` handles 11 cases.
-`tab_show_urls` and `tab_actor_wiki` render fine but **have no nav tab** — you can only get
-there by hand-typing the query string. Given 1.3, the Show URLs one being hidden is
-arguably load-bearing right now, but it should be a deliberate decision, not an oversight.
+`Validation::TOOL_TABS` had 9 entries while the `switch` in `settings_page()` handled 11
+cases. Neither extra had a nav tab; you could only reach them by hand-typing the query
+string.
+
+- **`tab_actor_wiki`** — resolved by deletion. It was the superseded pre-Gutenberg WikiData
+  UI, and its replacement already ships as an editor panel. See 1.9a.
+- **`tab_show_urls`** — still unlinked, now **deliberately**. `Show_URLs::make()` works, but
+  per 1.3 reaching it on a cold transient kicks off thousands of 10-second remote requests
+  on a page load. The missing nav link is the only thing preventing that today. Link it
+  once the check is batched, not before.
+
+Post-cleanup the switch has 10 cases against 9 tabs, and that single remaining gap is
+`show_urls` by choice.
 
 ### 1.7 `lwtv_debug_actor_empty` is a dead end
 
@@ -164,18 +173,48 @@ day. It shows up in `current_status()` counts and nowhere else. Either wire it u
 suppresses the exit. Cron (`cron/debug.sh`) can't distinguish a crashed check from a clean
 one. Drop the `false`, or `WP_CLI::halt( 1 )`.
 
-### 1.9a `Validation::admin_notices()` has never worked (found while fixing 1.5)
+### 1.9a The `?message=` notice scheme and the Actor Wiki tab (REMOVED)
 
-Two separate breakages in `admin-menu/class-validation.php`:
+All of this was the **pre-Gutenberg WikiData UI**, superseded and left behind. Four
+fragments of one dead limb in `admin-menu/class-validation.php`:
 
-- `add_action( 'load-$page_id', ... )` — single-quoted, so the hook name is the
-  literal string `load-$page_id`. It matches nothing.
-- `add_action( 'admin_notices', $message )` passes an **HTML string** where a callable
-  is expected. Even if the hook fired, this would be a `TypeError`, not a notice.
+- `add_action( 'load-$page_id', ... )` — single-quoted, so the hook name was the literal
+  string `load-$page_id`. Matched nothing, so `admin_notices()` never fired.
+- `admin_notices()` was `private`, and passed an **HTML string** to `add_action` where a
+  callable belongs. Even if the hook had fired, that's a `TypeError`, not a notice.
+- `add_action( 'admin_post_lwtv_data_check_wikidata_actors', array( $this, 'check_actors_wikidata' ) )`
+  pointed at a method **that does not exist on `Validation`** (it lives on
+  `Debugger\Actors`). A fatal if ever reached.
+- `Validator\Actor_Wiki` — the superseded view, itself broken: it called
+  `check_actors_wikidata()` with no arguments (scanning *every* actor at up to two
+  15-second remote calls each, on page render) and ran `esc_html()` against an array, so
+  the dropdown never rendered. Its header already said
+  `CURRENTLY NOT USED as it's WAAAAY too resource intensive`.
 
-So the `?message=success|warning|error|rerun` notices are dead code. Left alone in this
-pass because fixing it properly means deciding where those notices should come from now —
-it's not a one-line change, and nothing currently depends on it.
+The decisive fact: **nothing anywhere set `?message=`.** No `add_query_arg`, no redirect,
+nothing. So even correctly wired, none of the four notice strings could ever have fired.
+There was no behaviour to preserve.
+
+What replaced it, and is live and current: `blocks/src/wikidata-actor/` registers a
+`PluginDocumentSettingPanel` titled **"WikiData Checker"** on the actor edit screen. It
+fetches `/lwtv/v1/wikidata/{postId}`, hides fields that already match, renders the
+mismatches with click-to-copy, and has a Refresh button. `rest-api/class-wikidata.php`
+backs it with permission checks, `hide_actor_data()` privacy handling, prepared SQL, and a
+documented "editors get a fresh fetch, everyone else gets stored meta" contract.
+
+**Removed:** `add_admin_notices()`, `admin_notices()`, both `add_action` calls in `init()`,
+the vestigial `$page_id` property, the `Actor_Wiki` import and switch case, and
+`validator/class-actor-wiki.php` itself.
+
+**Kept:** `Debugger\Actors::check_actors_wikidata()` — still used by the REST endpoint and
+by `wp-cli/cli-check.php`.
+
+**Follow-up for §8:** per-finding fix links will need admin feedback, but
+redirect-and-read-a-query-arg is the wrong shape for it. Use WP's transient-backed admin
+notices or `add_settings_error()` when that lands.
+
+Note: `_components/class-admin-menu.php:23` carries the same vestigial
+`protected $page_id = null;` from the same copy-paste. Harmless; left alone.
 
 ### 1.9b Duplicate-detection bugs in `Dupes::compare_duplicates()` (fixed)
 
@@ -317,7 +356,7 @@ The classic debugger has none of that. Its findings are `array( url, id, problem
 
 **This is the biggest win available.** Give every finding an `issue_type` from a registry,
 route all scanners through `Audit::finalize()`, and you get baselines, diffing, and
-acknowledgements across all eleven checks for roughly the cost of reshaping the finding
+acknowledgements across all ten checks for roughly the cost of reshaping the finding
 arrays. The tab badges become "3 new / 41 open" instead of a raw count that nobody can act on.
 
 Two things to sort out when generalising `Audit`:
@@ -327,7 +366,7 @@ Two things to sort out when generalising `Audit`:
   cover show- and actor-level findings.
 - Baselines are stored one option per scope (`lwtv_audit_baseline_{scope}`). Full-site
   scopes at current scale will be large options; check the size before scaling this to
-  eleven checks, and consider a custom table or per-post meta if it gets heavy.
+  ten checks, and consider a custom table or per-post meta if it gets heavy.
 
 ---
 
@@ -367,13 +406,13 @@ topic against the constant, or at least log a one-time warning for unknown topic
 - **The "full scan or recheck" preamble** is copy-pasted ~7 times, verbatim, across
   `class-shows.php` (×3), `class-actors.php` (×4). ~20 lines each.
 - **The "save transient + update option + return"** epilogue is copy-pasted ~9 times.
-- **`php/validator/*.php`** is eleven files of 102–107 lines that differ only in the
-  transient key, the nonce name, the tab slug, and three strings. `class-actor-wiki.php`
-  (62 lines) is the odd one out.
+- **`php/validator/*.php`** is ten files of 102–107 lines that differ only in the
+  transient key, the nonce name, the tab slug, and three strings. (An eleventh,
+  `class-actor-wiki.php`, was the odd one out at 62 lines; deleted per 1.9a.)
 
 All three collapse into a config array + one runner + one renderer. The `TOOL_TABS`
 constant in `Validation` is already 80% of the config you'd need — extend it with the
-transient key, the scanner callable, and the empty/error copy, then delete the eleven files.
+transient key, the scanner callable, and the empty/error copy, then delete the ten files.
 That also structurally prevents 1.2 (key mismatches) and 1.6 (orphan tabs) from recurring.
 
 ---
@@ -512,7 +551,7 @@ directly to the transient and will need updating to the new shape at the same ti
     the show rules so 1.1 gets a regression test that would have caught it.
 14. **Move the writes to a repair layer** (§8.2) behind `--fix-it`, plus the per-finding
     admin fix links (§8.1). Relocate the four non-fix writes per §8.4.
-15. **Collapse the eleven validator files** into a config-driven runner (§7) — much easier
+15. **Collapse the ten validator files** into a config-driven runner (§7) — much easier
     once findings are typed and the renderer is uniform.
 16. Add the two missing checks to the cron rotation; decide the fate of
     `find_actors_incomplete()` (1.7), `tab_show_urls`, and `tab_actor_wiki` (1.6).

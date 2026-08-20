@@ -18,11 +18,6 @@ use LWTV\Admin_Menu\Validation;
 class Admin_Menu implements Component {
 
 	/**
-	 * Local Variables
-	 */
-	protected $page_id = null;
-
-	/**
 	 * Auto_Posting instance
 	 *
 	 * @var Auto_Posting
