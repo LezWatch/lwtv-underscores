@@ -21,6 +21,21 @@ use LWTV\Queeries\Post_Type;
 class Actors {
 
 	/**
+	 * Transient holding the results of find_actors_problems().
+	 */
+	const TRANSIENT_PROBLEMS = 'lwtv_debug_actor_problems';
+
+	/**
+	 * Transient holding the results of find_actors_incomplete().
+	 */
+	const TRANSIENT_EMPTY = 'lwtv_debug_actor_empty';
+
+	/**
+	 * Transient holding the results of find_actors_no_imdb().
+	 */
+	const TRANSIENT_IMDB = 'lwtv_debug_actor_imdb';
+
+	/**
 	 * Constructor — wire up action hooks.
 	 */
 	public function __construct() {
@@ -39,7 +54,7 @@ class Actors {
 	 * @return void
 	 */
 	public function flag_shadow_sync_failure( int $actor_id, int $term_id ): void {
-		$items = lwtv_plugin()->get_transient( 'lwtv_debug_actor_problems' );
+		$items = lwtv_plugin()->get_transient( self::TRANSIENT_PROBLEMS );
 		if ( ! is_array( $items ) ) {
 			$items = array();
 		}
@@ -57,16 +72,10 @@ class Actors {
 			'problem' => sprintf( 'Shadow taxonomy sync failed repeatedly (term %d). Run: wp lwtv shadow actors', $term_id ),
 		);
 
-		lwtv_plugin()->set_transient( 'lwtv_debug_actor_problems', $items, WEEK_IN_SECONDS );
+		lwtv_plugin()->set_transient( self::TRANSIENT_PROBLEMS, $items, WEEK_IN_SECONDS );
 
-		$option                   = get_option( 'lwtv_debugger_status' );
-		$option['actor_problems'] = array(
-			'name'  => 'Actors with Issues',
-			'count' => count( $items ),
-			'last'  => time(),
-		);
-		$option['timestamp']      = time();
-		update_option( 'lwtv_debugger_status', $option );
+		// Update Options
+		Status::record( 'actor_problems', 'Actors with Issues', count( $items ) );
 	}
 
 	/**
@@ -150,20 +159,20 @@ class Actors {
 			if ( ! empty( $check['insta'] ) ) {
 				// Limit - 30 symbols. Username must contains only letters, numbers, periods and underscores.
 				if ( ( new Debug_Tool() )->sanitize_social( $check['insta'], 'instagram' ) !== $check['insta'] ) {
-					$problems[] = 'Instagram ID is invalid -- ' . $check['insta'];
+					$problems[] = 'Instagram ID is invalid -- ' . esc_html( $check['insta'] );
 				} elseif ( ( new Debug_Tool() )->validate_imdb( $check['insta'], 'actor' ) ) {
 					// If instagram is IMDb, then it's wrong.
 					delete_post_meta( $actor_id, 'lezactors_instagram' );
-					$problems[] = 'Instagram ID was set as IMDb and has been removed - ' . $check['insta'];
+					$problems[] = 'Instagram ID was set as IMDb and has been removed - ' . esc_html( $check['insta'] );
 				}
 			}
 			if ( ! empty( $check['twits'] ) ) {
 				if ( ( new Debug_Tool() )->sanitize_social( $check['twits'], 'twitter' ) !== $check['twits'] ) {
-					$problems[] = 'Twitter ID is invalid -- ' . $check['insta'];
+					$problems[] = 'Twitter ID is invalid -- ' . esc_html( $check['twits'] );
 				} elseif ( ( new Debug_Tool() )->validate_imdb( $check['twits'], 'actor' ) ) {
 					// If Twitter is IMDb, then it's wrong.
 					delete_post_meta( $actor_id, 'lezactors_twitter' );
-					$problems[] = 'Twitter ID was set as IMDb and has been removed - ' . $check['twits'];
+					$problems[] = 'Twitter ID was set as IMDb and has been removed - ' . esc_html( $check['twits'] );
 				}
 			}
 
@@ -196,17 +205,10 @@ class Actors {
 		}
 
 		// Save Transient
-		lwtv_plugin()->set_transient( 'lwtv_debug_actor_problems', $items, WEEK_IN_SECONDS );
+		lwtv_plugin()->set_transient( self::TRANSIENT_PROBLEMS, $items, WEEK_IN_SECONDS );
 
 		// Update Options
-		$option                   = get_option( 'lwtv_debugger_status' );
-		$option['actor_problems'] = array(
-			'name'  => 'Actors with Issues',
-			'count' => ( ! empty( $items ) ) ? count( $items ) : 0,
-			'last'  => time(),
-		);
-		$option['timestamp']      = time();
-		update_option( 'lwtv_debugger_status', $option );
+		Status::record( 'actor_problems', 'Actors with Issues', count( $items ) );
 
 		return $items;
 	}
@@ -273,17 +275,10 @@ class Actors {
 		}
 
 		// Save Transient
-		lwtv_plugin()->set_transient( 'lwtv_debug_actor_empty', $items, WEEK_IN_SECONDS );
+		lwtv_plugin()->set_transient( self::TRANSIENT_EMPTY, $items, WEEK_IN_SECONDS );
 
 		// Update Options
-		$option                = get_option( 'lwtv_debugger_status' );
-		$option['actor_empty'] = array(
-			'name'  => 'Incomplete Actors',
-			'count' => count( $items ),
-			'last'  => time(),
-		);
-		$option['timestamp']   = time();
-		update_option( 'lwtv_debugger_status', $option );
+		Status::record( 'actor_empty', 'Incomplete Actors', count( $items ) );
 
 		return $items;
 	}
@@ -354,17 +349,10 @@ class Actors {
 		}
 
 		// Save Transient
-		lwtv_plugin()->set_transient( 'lwtv_debug_actor_imdb', $items, WEEK_IN_SECONDS );
+		lwtv_plugin()->set_transient( self::TRANSIENT_IMDB, $items, WEEK_IN_SECONDS );
 
 		// Update Options
-		$option               = get_option( 'lwtv_debugger_status' );
-		$option['actor_imdb'] = array(
-			'name'  => 'Actors without IMDb',
-			'count' => ( ! empty( $items ) ) ? count( $items ) : 0,
-			'last'  => time(),
-		);
-		$option['timestamp']  = time();
-		update_option( 'lwtv_debugger_status', $option );
+		Status::record( 'actor_imdb', 'Actors without IMDb', count( $items ) );
 
 		return $items;
 	}

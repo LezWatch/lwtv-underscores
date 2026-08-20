@@ -16,6 +16,11 @@ use LWTV\CPTs\Characters as CPT_Characters;
 class Queers {
 
 	/**
+	 * Transient holding the results of find_queer_chars().
+	 */
+	const TRANSIENT_QUEERCHECK = 'lwtv_debug_queercheck';
+
+	/**
 	 * Find Queers
 	 *
 	 * Find all characters who are mismatched with their queer settings
@@ -113,17 +118,10 @@ class Queers {
 		}
 
 		// Save Transient
-		lwtv_plugin()->set_transient( 'lwtv_debug_queercheck', $items, WEEK_IN_SECONDS );
+		lwtv_plugin()->set_transient( self::TRANSIENT_QUEERCHECK, $items, WEEK_IN_SECONDS );
 
 		// Update Options
-		$option               = get_option( 'lwtv_debugger_status' );
-		$option['queercheck'] = array(
-			'name'  => 'Queer Checker',
-			'count' => count( $items ),
-			'last'  => time(),
-		);
-		$option['timestamp']  = time();
-		update_option( 'lwtv_debugger_status', $option );
+		Status::record( 'queercheck', 'Queer Checker', count( $items ) );
 
 		return $items;
 	}

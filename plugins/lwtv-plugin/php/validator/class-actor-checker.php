@@ -19,7 +19,7 @@ class Actor_Checker {
 	 */
 	public static function make() {
 
-		$items = lwtv_plugin()->get_transient( 'lwtv_debug_actor_problems' );
+		$items = lwtv_plugin()->get_transient( Actors_Debugger::TRANSIENT_PROBLEMS );
 
 		// If re-run, do a whole full scan!
 		if ( ( isset( $_POST['rerun'] ) && check_admin_referer( 'run_actor_checker_clicked' ) ) || false === $items ) {

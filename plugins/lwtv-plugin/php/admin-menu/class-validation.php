@@ -23,6 +23,8 @@ use LWTV\Validator\Show_IMDb;
 use LWTV\Validator\Show_URLs;
 use LWTV\Validator\OnAir_Checker;
 
+use LWTV\Debugger\Status;
+
 class Validation {
 
 	/**
@@ -84,7 +86,7 @@ class Validation {
 	);
 
 	public function __construct() {
-		self::$options = get_option( 'lwtv_debugger_status' );
+		self::$options = Status::all();
 	}
 
 	/**
@@ -115,14 +117,19 @@ class Validation {
 	 * @return string When was a tool last run.
 	 */
 	public static function last_run( $tool ) {
-		$options = self::$options;
+		$options = is_array( self::$options ) ? self::$options : Status::all();
 
 		// Get the timestamp from the individual last run OR the global.
 		if ( 'intro' !== $tool && isset( $options[ $tool ]['last'] ) ) {
-			$timestamp = $options[ $tool ]['last'];
+			$timestamp = (int) $options[ $tool ]['last'];
 			$tool      = 'checker';
 		} else {
-			$timestamp = $options['timestamp'];
+			$timestamp = (int) ( $options['timestamp'] ?? 0 );
+		}
+
+		// Nothing has ever run (fresh install, or the status option was reset).
+		if ( ! $timestamp ) {
+			return '<p>The ' . str_replace( '_', ' ', $tool ) . ' has not been run yet.</p>';
 		}
 
 		$last_run_time = '<strong>' . get_date_from_gmt( gmdate( 'Y-m-d H:i:s', $timestamp ), 'F j, Y H:i:s' ) . '</strong> (' . human_time_diff( $timestamp ) . ' ago).';
@@ -172,8 +179,8 @@ class Validation {
 	 */
 	public static function settings_page() {
 		// Get the active tab for later
-		$active_tab = isset( $_GET['tab'] ) ? sanitize_text_field( $_GET['tab'] ) : 'intro'; // phpcs:ignore WordPress.Security.NonceVerification
-		$options    = self::$options;
+		$active_tab = isset( $_GET['tab'] ) ? sanitize_text_field( wp_unslash( $_GET['tab'] ) ) : 'intro'; // phpcs:ignore WordPress.Security.NonceVerification
+		$options    = is_array( self::$options ) ? self::$options : Status::all();
 		?>
 		<div class="wrap">
 
@@ -188,8 +195,9 @@ class Validation {
 					<a href="?page=lwtv_data_check&tab=tab_<?php echo esc_attr( $tab ); ?>" class="nav-tab <?php echo esc_attr( $active ); ?>">
 						<?php
 						echo esc_html( $value['name'] );
-						if ( isset( $options[ $value['option'] ] ) && $options[ $value['option'] ]['count'] ) {
-							echo ' <span class="validation-errors count-' . esc_attr( $options[ $value['option'] ]['count'] ) . '"><span class="validation-count">' . esc_attr( $options[ $value['option'] ]['count'] ) . '</span></span>';
+						$tab_count = isset( $options[ $value['option'] ]['count'] ) ? (int) $options[ $value['option'] ]['count'] : 0;
+						if ( $tab_count > 0 ) {
+							echo ' <span class="validation-errors count-' . esc_attr( (string) $tab_count ) . '"><span class="validation-count">' . esc_html( (string) $tab_count ) . '</span></span>';
 						}
 						?>
 					</a>
@@ -206,7 +214,7 @@ class Validation {
 						( new Actor_Checker() )->make();
 						break;
 					case 'tab_actor_imdb':
-						( new Actor_IMDB() )->make();
+						( new Actor_IMDb() )->make();
 						break;
 					case 'tab_actor_wiki':
 						( new Actor_Wiki() )->make();
@@ -316,24 +324,31 @@ class Validation {
 
 	private static function current_status(): void {
 
-		$options = self::$options;
+		$options = is_array( self::$options ) ? self::$options : Status::all();
 
-		if ( empty( $options ) || ! array( $options ) ) {
+		if ( empty( $options ) ) {
 			return;
 		}
 
 		// Build the list.
-		$list = '<ul>';
+		$items = '';
 		foreach ( $options as $an_option ) {
-			$number = ( isset( $an_option['count'] ) ) ? $an_option['count'] : 0;
-			if ( (int) $number > 0 ) {
-				$list .= '<li>&bull; ' . $an_option['name'] . ' - ' . $an_option['count'] . '</li>';
+			// Skip the global 'timestamp' member, which is an int not an array.
+			if ( ! is_array( $an_option ) || empty( $an_option['name'] ) ) {
+				continue;
+			}
+
+			$number = isset( $an_option['count'] ) ? (int) $an_option['count'] : 0;
+			if ( $number > 0 ) {
+				$items .= '<li>&bull; ' . esc_html( $an_option['name'] ) . ' - ' . (int) $number . '</li>';
 			}
 		}
-		$list .= '</ul>';
 
-		if ( ! empty( $list ) ) {
-			echo wp_kses_post( '<p><strong>Current Status</strong></p>' . $list );
+		// Nothing over zero means nothing to report.
+		if ( '' === $items ) {
+			return;
 		}
+
+		echo wp_kses_post( '<p><strong>Current Status</strong></p><ul>' . $items . '</ul>' );
 	}
 }

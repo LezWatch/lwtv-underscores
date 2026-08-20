@@ -20,7 +20,7 @@ class Show_IMDb {
 	 */
 	public static function make() {
 
-		$items = lwtv_plugin()->get_transient( 'lwtv_debug_show_imdb' );
+		$items = lwtv_plugin()->get_transient( Shows_Debugger::TRANSIENT_IMDB );
 
 		// If rerun was clicked, gotta check 'em all.
 		if ( ( isset( $_POST['rerun'] ) && check_admin_referer( 'run_show_imdb_clicked' ) ) || false === $items ) {

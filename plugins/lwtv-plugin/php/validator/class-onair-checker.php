@@ -18,7 +18,7 @@ class OnAir_Checker {
 	 * Output the results of on air checking...
 	 */
 	public static function make() {
-		$items = lwtv_plugin()->get_transient( 'lwtv_debug_on_air_problems' );
+		$items = lwtv_plugin()->get_transient( OnAir_Debugger::TRANSIENT_PROBLEMS );
 
 		// If rerun was clicked, gotta check 'em all.
 		if ( ( isset( $_POST['rerun'] ) && check_admin_referer( 'run_onair_checker_clicked' ) ) || false === $items ) {
