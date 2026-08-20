@@ -237,7 +237,22 @@ class Shows {
 		if ( ! $intersections || is_wp_error( $intersections ) ) {
 			return array();
 		}
-		$problems[] = ( new Characters_Debugger() )->check_disabled_characters( $show_id );
+
+		// Only shows tagged with the 'disabled' intersection need a disabled character.
+		if ( ! in_array( 'disabled', wp_list_pluck( $intersections, 'slug' ), true ) ) {
+			return array();
+		}
+
+		static $characters_debugger = null;
+		if ( null === $characters_debugger ) {
+			$characters_debugger = new Characters_Debugger();
+		}
+
+		$problems         = array();
+		$disabled_problem = $characters_debugger->check_disabled_characters( $show_id );
+		if ( ! empty( $disabled_problem ) ) {
+			$problems[] = $disabled_problem;
+		}
 
 		return $problems;
 	}
