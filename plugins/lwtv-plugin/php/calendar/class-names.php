@@ -116,10 +116,10 @@ class Names {
 		// If there is a TV Maze entry already, we use it.
 		if ( isset( $tvmaze_obj->ID ) && 0 !== $tvmaze_obj->ID && 'publish' === get_post_status( $tvmaze_obj->ID ) ) {
 			$post_id = $tvmaze_obj->ID;
-			$show    = get_post_meta( $post_id, 'leztvmaze_our_show', true );
+			$show    = (int) get_field( 'leztvmaze_our_show', $post_id );
 
-			if ( isset( $show[0] ) && 0 !== $show[0] ) {
-				$show_id   = $show[0];
+			if ( 0 !== $show ) {
+				$show_id   = $show;
 				$show_name = get_the_title( $show_id );
 			}
 		}
