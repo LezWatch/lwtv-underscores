@@ -192,6 +192,42 @@ class Host_Name {
 	}
 
 	/**
+	 * The registrable domain: the shortest form that still identifies an owner.
+	 *
+	 * 'abc.go.com' and 'go.com' are both Disney, so both come back as 'go.com';
+	 * 'gem.cbc.ca' comes back as 'cbc.ca'. That is the right granularity for
+	 * asking "did this URL leave the site it was pointing at", which is what
+	 * Watch_Url_Health uses it for -- a provider moving a reader between its own
+	 * subdomains is not news, a provider bouncing them to a different company is.
+	 *
+	 * Distinct from registrable_label(), which returns just the one label that
+	 * carries the *name* and is therefore lossy ('go' tells you nothing about
+	 * ownership on its own).
+	 *
+	 * @param string $host Hostname.
+	 * @return string Registrable domain, or '' when there's nothing usable.
+	 */
+	public static function registrable_domain( string $host ): string {
+		$host = self::normalise( $host );
+
+		if ( '' === $host ) {
+			return '';
+		}
+
+		$labels = explode( '.', $host );
+		$count  = count( $labels );
+		$floor  = self::registrable_floor( $labels );
+
+		// A bare hostname, or one already at or below the floor, is its own
+		// registrable domain. 'localhost' and 'globo.com' both land here.
+		if ( $count <= $floor ) {
+			return $host;
+		}
+
+		return implode( '.', array_slice( $labels, $count - $floor ) );
+	}
+
+	/**
 	 * How many labels the registrable domain needs.
 	 *
 	 * Three when the suffix is compound ('abc.net.au'), otherwise two

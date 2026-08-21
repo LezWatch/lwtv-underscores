@@ -17,11 +17,17 @@ use LWTV\Debugger\Queers;
 use LWTV\Debugger\Shows;
 use LWTV\Debugger\OnAir;
 use LWTV\Debugger\Status;
+use LWTV\Debugger\Watch_URLs;
 
 /**
  * LezWatch.TV commands to debug and validate content.
  */
 class WP_CLI_LWTV_Debug {
+
+	/**
+	 * Output columns for checks that don't name their own.
+	 */
+	const DEFAULT_COLUMNS = array( 'url', 'id', 'problem' );
 
 	/**
 	 * @var string
@@ -66,6 +72,9 @@ class WP_CLI_LWTV_Debug {
 	 * - status:    key inside the debugger status option, for cache-age reporting.
 	 * - scanner:   array( class, method ) run to produce fresh findings.
 	 * - fixer:     optional array( class, method ) called per item with --fix-it.
+	 * - columns:   optional output columns. Defaults to DEFAULT_COLUMNS, which
+	 *              suits the post-based checks; term-based findings carry
+	 *              different keys and a post permalink they do not have.
 	 *
 	 * @return array<string, array<string, mixed>>
 	 */
@@ -143,14 +152,15 @@ class WP_CLI_LWTV_Debug {
 				'dirty'     => 'show(s) missing IMDb data.',
 				'done'      => 'Show IMDb check complete.',
 			),
-			'show_urls'  => array(
-				'transient' => Shows::TRANSIENT_URL,
-				'status'    => 'show_url',
-				'scanner'   => array( Shows::class, 'find_shows_bad_url' ),
-				'running'   => 'Running show URLs check...',
-				'clean'     => 'Excellent! All show URLs are valid.',
-				'dirty'     => 'show(s) have URL issues.',
-				'done'      => 'Show URLs check complete.',
+			'watchurls'  => array(
+				'transient' => Watch_URLs::TRANSIENT_PROBLEMS,
+				'status'    => Watch_URLs::STATUS_KEY,
+				'scanner'   => array( Watch_URLs::class, 'find_bad_watch_urls' ),
+				'columns'   => array( 'term', 'url', 'status', 'shows', 'problem' ),
+				'running'   => 'Checking every URL on every watch provider term...',
+				'clean'     => 'Excellent! Every watch provider URL answered and still looks like its provider.',
+				'dirty'     => 'provider URL(s) need attention.',
+				'done'      => 'Watch provider URL check complete.',
 				'slow'      => true,
 			),
 			'on_air'     => array(
@@ -181,7 +191,8 @@ class WP_CLI_LWTV_Debug {
 	 *   - shows: Check show data completeness
 	 *   - actor_imdb: Find actors without IMDb data
 	 *   - show_imdb: Find shows without IMDb data
-	 *   - show_urls: Check show URL validity (slow - makes a remote request per URL)
+	 *   - watchurls: Check every URL on every watch provider term still works and
+	 *     still belongs to that provider (slow - one remote request per URL)
 	 *   - on_air: Check on air status of shows
 	 *
 	 * [--fix-it]
@@ -209,6 +220,7 @@ class WP_CLI_LWTV_Debug {
 	 * wp lwtv debug byq --format=json
 	 * wp lwtv debug actors --force
 	 * wp lwtv debug on_air --fix-it
+	 * wp lwtv debug watchurls --force
 	 *
 	 * @param array $args
 	 * @param array $assoc_args
@@ -283,7 +295,7 @@ class WP_CLI_LWTV_Debug {
 		}
 
 		\WP_CLI::log( count( $items ) . ' ' . $check['dirty'] );
-		\WP_CLI\Utils\format_items( $this->format, $items, array( 'url', 'id', 'problem' ) );
+		\WP_CLI\Utils\format_items( $this->format, $items, $check['columns'] ?? self::DEFAULT_COLUMNS );
 		\WP_CLI::success( $check['done'] );
 	}
 

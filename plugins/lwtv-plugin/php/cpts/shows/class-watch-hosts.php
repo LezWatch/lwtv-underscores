@@ -87,6 +87,17 @@ class Watch_Hosts {
 	private static $terms = array();
 
 	/**
+	 * Request-level memo of every term URL.
+	 *
+	 * A three-way join over terms, term_taxonomy and termmeta, and the watch-URL
+	 * scan asks for it twice in one run -- once to find terms with no URLs, once
+	 * to build the probe list.
+	 *
+	 * @var array<int, array{term_id: int, name: string, url: string}>|null
+	 */
+	private static $term_urls = null;
+
+	/**
 	 * Every host referenced by a published show, with a distinct-show count.
 	 *
 	 * Sorted by count descending: the hosts most readers actually reach first.
@@ -170,6 +181,190 @@ class Watch_Hosts {
 		self::$terms[ $host ] = $terms[0] ?? null;
 
 		return self::$terms[ $host ];
+	}
+
+	/**
+	 * Every URL registered against a lez_watch_urls term.
+	 *
+	 * The mirror image of in_use(): that asks what the shows point at, this asks
+	 * what we have claimed to know about. `wp lwtv debug watchurls` walks this
+	 * list, which is a few hundred rows, rather than every Ways to Watch field on
+	 * every show, which is thousands of rows pointing at the same few hundred
+	 * hosts. Same coverage, an order of magnitude fewer requests.
+	 *
+	 * Read from the repeater's subfield rows rather than ACF's row-count
+	 * bookkeeping, so a deleted row can't leave a phantom URL behind.
+	 *
+	 * @return array<int, array{term_id: int, name: string, url: string}> One row per URL.
+	 */
+	public static function term_urls(): array {
+		if ( null !== self::$term_urls ) {
+			return self::$term_urls;
+		}
+
+		global $wpdb;
+
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$rows = $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT t.term_id, t.name, tm.meta_value AS url
+				 FROM {$wpdb->terms} t
+				 INNER JOIN {$wpdb->term_taxonomy} tt ON t.term_id = tt.term_id
+				 INNER JOIN {$wpdb->termmeta} tm ON t.term_id = tm.term_id
+				 WHERE tt.taxonomy = %s
+				   AND tm.meta_key REGEXP '^lezwatchurls_all_[0-9]+_url$'
+				   AND tm.meta_value != ''
+				 ORDER BY t.name ASC, tm.meta_key ASC",
+				Theme_Ways_To_Watch::TAXONOMY
+			)
+		);
+		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+
+		$urls = array();
+		foreach ( (array) $rows as $row ) {
+			$urls[] = array(
+				'term_id' => (int) $row->term_id,
+				'name'    => (string) $row->name,
+				'url'     => (string) $row->url,
+			);
+		}
+
+		self::$term_urls = $urls;
+
+		return self::$term_urls;
+	}
+
+	/**
+	 * How many published shows each provider term actually serves.
+	 *
+	 * Used to sort findings by consequence: a broken URL on the term 500 shows
+	 * point at matters more than one on a term nothing reaches.
+	 *
+	 * Not cheap -- term_for() is a query per host, memoised only per request --
+	 * so this is for CLI and cron, and its results are stored alongside the
+	 * findings rather than recomputed when the admin tab renders.
+	 *
+	 * @return array<int, int> term_id => number of shows
+	 */
+	public static function shows_per_term(): array {
+		$totals = array();
+
+		foreach ( self::in_use() as $host => $count ) {
+			$term = self::term_for( $host );
+
+			if ( ! $term ) {
+				continue;
+			}
+
+			$totals[ $term->term_id ] = ( $totals[ $term->term_id ] ?? 0 ) + $count;
+		}
+
+		return $totals;
+	}
+
+	/**
+	 * Fetch a URL and return the facts needed to judge it.
+	 *
+	 * Deliberately dumb: it gathers, it does not decide. Every judgement lives in
+	 * Watch_Url_Health, which is pure and unit-tested, so the untestable part of
+	 * this feature is only ever "did the request happen".
+	 *
+	 * Redirects are followed rather than reported, because a provider moving its
+	 * own URLs around is normal and only the destination is interesting. Where we
+	 * *landed* is captured so a redirect off the domain entirely can be spotted.
+	 *
+	 * @param string   $url     Full URL to fetch.
+	 * @param int|null $timeout Seconds to wait. Defaults to TIMEOUT; callers in
+	 *                          an admin request should pass UI_TIMEOUT.
+	 * @return array{error: string, code: int, final_url: string, site_name: string, body: string}
+	 */
+	public static function probe( string $url, ?int $timeout = null ): array {
+		$probe = array(
+			'error'     => '',
+			'code'      => 0,
+			'final_url' => '',
+			'site_name' => '',
+			'body'      => '',
+		);
+
+		$response = wp_remote_get(
+			$url,
+			array(
+				'timeout'            => $timeout ?? self::TIMEOUT,
+				'redirection'        => 5,
+				'reject_unsafe_urls' => true,
+				'user-agent'         => 'LezWatch.TV watch-URL check (+https://lezwatchtv.com)',
+				'headers'            => array( 'Accept' => 'text/html' ),
+			)
+		);
+
+		if ( is_wp_error( $response ) ) {
+			$probe['error'] = $response->get_error_message();
+			lwtv_plugin()->debug_log( 'shows', sprintf( 'Watch URL check: %s failed - %s', $url, $probe['error'] ) );
+
+			return $probe;
+		}
+
+		$probe['code']      = (int) wp_remote_retrieve_response_code( $response );
+		$probe['final_url'] = self::final_url( $response );
+		$probe['body']      = substr( (string) wp_remote_retrieve_body( $response ), 0, self::MAX_BYTES );
+		$probe['site_name'] = self::published_name( $probe['body'] );
+
+		return $probe;
+	}
+
+	/**
+	 * Where the request actually ended up after following redirects.
+	 *
+	 * The WP HTTP API exposes no first-class accessor for this, so it comes out
+	 * of the underlying Requests response. Guarded at every step: the transport
+	 * is swappable and a filter can replace the response array wholesale, in
+	 * which case "we don't know" is the correct answer and Watch_Url_Health
+	 * treats an empty value as no evidence of a move.
+	 *
+	 * @param array $response Response array from wp_remote_get().
+	 * @return string Final URL, or '' when the transport didn't say.
+	 */
+	private static function final_url( array $response ): string {
+		$http_response = $response['http_response'] ?? null;
+
+		if ( ! $http_response instanceof \WP_HTTP_Requests_Response ) {
+			return '';
+		}
+
+		$requests_response = $http_response->get_response_object();
+
+		if ( ! is_object( $requests_response ) || empty( $requests_response->url ) ) {
+			return '';
+		}
+
+		return (string) $requests_response->url;
+	}
+
+	/**
+	 * The name a page publishes for itself, raw.
+	 *
+	 * Unlike discover_name(), this does *not* filter on plausibility. That filter
+	 * exists to keep taglines off buttons, but here a long implausible name is
+	 * exactly the signal we want -- "Lucky Star Casino | Best Online Slots" tells
+	 * us quibi.com changed hands, and rejecting it would hide that.
+	 *
+	 * @param string $html Response body.
+	 * @return string Sanitised name, or '' when the page published none.
+	 */
+	private static function published_name( string $html ): string {
+		foreach ( array(
+			Watch_Host_Names::SOURCE_OG_SITE_NAME => 'property',
+			Watch_Host_Names::SOURCE_APP_NAME     => 'name',
+		) as $key => $attribute ) {
+			$value = self::meta_content( $html, $attribute, $key );
+
+			if ( '' !== $value ) {
+				return substr( Watch_Host_Names::sanitize_name( $value ), 0, 200 );
+			}
+		}
+
+		return '';
 	}
 
 	/**

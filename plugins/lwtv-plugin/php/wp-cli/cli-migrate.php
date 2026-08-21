@@ -10,10 +10,20 @@ if ( ! defined( 'ABSPATH' ) && ! defined( 'WP_CLI' ) ) {
 	die();
 }
 
+use LWTV\Debugger\Status;
+
 /**
  * LezWatch.TV commands to migrate content.
  */
 class WP_CLI_LWTV_Migrate {
+
+	/**
+	 * Debugger status keys belonging to checks that no longer exist.
+	 *
+	 * - show_url: `find_shows_bad_url()`, replaced by `wp lwtv debug watchurls`,
+	 *   which checks the provider terms instead of every show.
+	 */
+	const RETIRED_STATUS_KEYS = array( 'show_url' );
 
 	/**
 	 * @var string
@@ -54,7 +64,7 @@ class WP_CLI_LWTV_Migrate {
 	 *
 	 *
 	 * [<subtype>]
-	 * : Optional. Secondary data. ACF uses [airdates|waystowatch|shownames|similarshows|charactor|chardeath|charimages|charimages-to-gallery|charshowgroup|autoposting|watchtermurls|debuglogging].
+	 * : Optional. Secondary data. ACF uses [airdates|waystowatch|shownames|similarshows|charactor|chardeath|charimages|charimages-to-gallery|charshowgroup|autoposting|watchtermurls|debuglogging|debugstatus].
 	 * ---
 	 *
 	 * @param string $migrate_type         The type of migrator to run.
@@ -122,6 +132,9 @@ class WP_CLI_LWTV_Migrate {
 				case 'debuglogging':
 					$this->migrate_debuglogging();
 					break;
+				case 'debugstatus':
+					$this->migrate_debugstatus();
+					break;
 				default:
 					\WP_CLI::error( 'Unknown ACF migration subtype: ' . $subtype . ' does not exist.' );
 			}
@@ -133,58 +146,11 @@ class WP_CLI_LWTV_Migrate {
 	/**
 	 * Migrate Ways to Watch URLs from old flat array to ACF repeater format.
 	 * This is a one-time migration to convert existing data to the new ACF structure.
+	 *
+	 * Complete - 21-08-2026
 	 */
 	public function migrate_waystowatch() {
-		$posts = get_posts(
-			array(
-				'post_type'      => 'post_type_shows',
-				'posts_per_page' => -1,
-				'meta_key'       => 'lezshows_waystowatch',
-				'meta_compare'   => 'EXISTS',
-			)
-		);
-
-		if ( empty( $posts ) ) {
-			\WP_CLI::log( "No posts found with 'lezshows_waystowatch' meta key." );
-			return;
-		}
-
-		$post_count = 0;
-
-		$progress_bar = \WP_CLI\Utils\make_progress_bar( sprintf( 'Starting migration. Found %d shows ...', count( $posts ) ), count( $posts ) );
-
-		foreach ( $posts as $post ) {
-			$value = get_post_meta( $post->ID, 'lezshows_waystowatch', true );
-
-			if ( ! is_array( $value ) ) {
-				continue;
-			}
-
-			$count = 0;
-			foreach ( $value as $url ) {
-				$url = esc_url_raw( trim( $url ) );
-
-				if ( empty( $url ) ) {
-					continue;
-				}
-
-				$key = "lezshows_waystowatch_{$count}_url";
-				update_post_meta( $post->ID, $key, $url );
-				update_post_meta( $post->ID, "_$key", 'field_lwtv_lezshows_waystowatch_url' );
-				++$count;
-			}
-			update_post_meta( $post->ID, 'lezshows_waystowatch', $count );
-			update_post_meta( $post->ID, '_lezshows_waystowatch', 'field_lwtv_lezshows_waystowatch' );
-
-			$progress_bar->tick();
-			++$post_count;
-		}
-
-		if ( 0 === $post_count ) {
-			\WP_CLI::log( "No posts found with 'lezshows_waystowatch' meta key." );
-		} else {
-			\WP_CLI::success( 'Migration completed for ' . $post_count . ' post(s).' );
-		}
+		\WP_CLI::success( 'All posts have had their Ways to Watch migrated to ACF.' );
 	}
 
 	/**
@@ -942,6 +908,31 @@ class WP_CLI_LWTV_Migrate {
 		} else {
 			\WP_CLI::success( "Migration completed. {$migrated} field(s) migrated." );
 		}
+	}
+
+	/**
+	 * Prune retired checks out of the debugger status option.
+	 *
+	 * Status entries outlive the check that wrote them, and
+	 * Admin_Menu\Validation::current_status() prints every entry with a count
+	 * above zero. So a deleted check keeps reporting stale findings on the intro
+	 * tab, with no tab to open and nothing that can recompute it to zero.
+	 *
+	 * Add to RETIRED_STATUS_KEYS whenever a check is removed, and run this once.
+	 */
+	public function migrate_debugstatus() {
+		$removed = Status::forget( self::RETIRED_STATUS_KEYS );
+
+		if ( empty( $removed ) ) {
+			\WP_CLI::log( 'No retired checks left in the debugger status option. Nothing to prune.' );
+			return;
+		}
+
+		foreach ( $removed as $key ) {
+			\WP_CLI::log( 'Pruned: ' . $key );
+		}
+
+		\WP_CLI::success( count( $removed ) . ' retired check(s) pruned.' );
 	}
 }
 

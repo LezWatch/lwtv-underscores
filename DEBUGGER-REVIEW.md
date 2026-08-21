@@ -44,7 +44,6 @@ Shipped across four commits: `b6994ef0`, `de30e6f2`, `b47e982f`, `5b1d348e`, `44
 |---|---|
 | 2.1 | `fields => 'ids'` at the `Post_Type::make()` call sites — still serialising `WP_Post` objects |
 | §6 | Debug log rotation, memoised option reads, log viewer |
-| 1.3 | Delete `find_shows_bad_url()` and link `tab_show_urls` (the replacement now exists — §9) |
 | 1.7 | Decide the fate of `find_actors_incomplete()` |
 | §8 | Typed findings → `Audit::finalize()` → `build/` extraction → repair layer → collapse the validators |
 
@@ -389,10 +388,11 @@ string.
 
 - **`tab_actor_wiki`** — resolved by deletion. It was the superseded pre-Gutenberg WikiData
   UI, and its replacement already ships as an editor panel. See 1.9a.
-- **`tab_show_urls`** — still unlinked, now **deliberately**. `Show_URLs::make()` works, but
-  per 1.3 reaching it on a cold transient kicks off thousands of 10-second remote requests
-  on a page load. The missing nav link is the only thing preventing that today. Link it
-  once the check is batched, not before.
+- **`tab_show_urls`** — **deleted**, along with `Show_URLs::make()` and
+  `find_shows_bad_url()`. The scan-on-cold-transient problem it was hiding from is fixed
+  structurally rather than by omission: `tab_watch_term_check` never scans on render at all.
+  It reads what `wp lwtv debug watchurls` (Sunday cron) left in a transient, and its only
+  live action is a wall-clock-bounded re-probe of the URLs already flagged.
 
 Post-cleanup the switch has 10 cases against 9 tabs, and that single remaining gap is
 `show_urls` by choice.
@@ -905,9 +905,12 @@ Everything in the **Done** table at the top has shipped. What's left, in the ord
    cheapest performance win outstanding.
 5. **Debug log rotation + memoised option reads** (§6). `debug_log()` still reads two ACF
    options per call and the log file still grows without bound.
-6. **Delete `find_shows_bad_url()` and link `tab_show_urls`** (1.3, 1.6). The replacement
-   exists now — the Watch Providers tab *is* the frequency-ranked check — so the old sweep
-   has nothing left to do. Host liveness stays skipped per 1.3.
+6. ~~**Delete `find_shows_bad_url()` and link `tab_show_urls`** (1.3, 1.6).~~ **Done.**
+   `find_shows_bad_url()`, `Shows::TRANSIENT_URL`, `validator/class-show-urls.php` and the
+   unreachable `tab_show_urls` case are gone. Host liveness was *not* skipped after all —
+   it moved to `wp lwtv debug watchurls` / the Watch Term Check tab, which probes the few
+   hundred **term** URLs instead of the thousands of show URLs that resolve to them. Its
+   stale `show_url` status entry is pruned by `wp lwtv migrate acf debugstatus`.
 7. **Decide `find_actors_incomplete()`** (1.7): wire it up or delete it.
 
 **Then the structural chunk (§8), which is unchanged and still worth doing together:**

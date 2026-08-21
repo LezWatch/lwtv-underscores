@@ -12,7 +12,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 use LWTV\_Components\Debugger as Debug_Tool;
 use LWTV\Debugger\Characters as Characters_Debugger;
 use LWTV\CPTs\Shows\Airdates;
-use LWTV\CPTs\Shows\Ways_To_Watch;
 use LWTV\Queeries\Post_Type;
 
 class Shows {
@@ -26,11 +25,6 @@ class Shows {
 	 * Transient holding the results of find_shows_no_imdb().
 	 */
 	const TRANSIENT_IMDB = 'lwtv_debug_show_imdb';
-
-	/**
-	 * Transient holding the results of find_shows_bad_url().
-	 */
-	const TRANSIENT_URL = 'lwtv_debug_show_url';
 
 	const ITEMS_TO_CHECK = array(
 		'score'      => array(
@@ -378,128 +372,6 @@ class Shows {
 
 		// Update Options
 		Status::record( 'show_imdb', 'Shows without IMDb', count( $items ) );
-
-		return $items;
-	}
-
-	/**
-	 * Find all shows with bad URLs for Ways to Watch
-	 *
-	 * @param array $items - array of items to check. Can be empty.
-	 *
-	 * @return array $problems - array of problems. Can be empty.
-	 */
-	public function find_shows_bad_url( $items = array() ) {
-
-		// The array we will be checking.
-		$shows = array();
-
-		// Are we a full scan or a recheck?
-		if ( ! empty( $items ) ) {
-			// Check only the shows from items!
-			foreach ( $items as $show_item ) {
-				if ( get_post_status( $show_item['id'] ) !== 'draft' ) {
-					// If it's NOT a draft, we'll recheck.
-					$shows[] = $show_item['id'];
-				}
-			}
-		} else {
-			// Get all the shows
-			$the_loop = ( new Post_Type() )->make( 'post_type_shows' );
-
-			if ( is_object( $the_loop ) && $the_loop->have_posts() ) {
-				$shows = wp_list_pluck( $the_loop->posts, 'ID' );
-				wp_reset_query();
-			}
-		}
-
-		// If somehow shows is totally empty...
-		if ( empty( $shows ) ) {
-			return false;
-		}
-
-		// Make sure we don't have dupes.
-		$shows = array_unique( $shows );
-
-		// reset items since we recheck off $shows.
-		$items = array();
-
-		// Instantiated once, not per show: the constructor registers admin
-		// filters, and doing that a few thousand times is pure waste. (This
-		// migration call doesn't belong in a scanner at all -- see
-		// DEBUGGER-REVIEW.md section 8.4.)
-		$ways_to_watch_migrator = new Ways_To_Watch();
-
-		foreach ( $shows as $show_id ) {
-
-			$problems = array();
-
-			// Check the Ways to Watch - this updates us to the new method.
-			$ways_to_watch_migrator->migrate_ways_to_watch( $show_id );
-
-			$wtw_rows      = get_field( 'lezshows_waystowatch', $show_id );
-			$ways_to_watch = is_array( $wtw_rows ) ? array_filter( array_column( $wtw_rows, 'url' ) ) : array();
-
-			if ( empty( $ways_to_watch ) ) {
-				continue;
-			}
-
-			// Parse each URL.
-			foreach ( $ways_to_watch as $url ) {
-				$response = wp_remote_get( $url, array( 'timeout' => 10 ) );
-
-				if ( is_array( $response ) && ! is_wp_error( $response ) ) {
-					$http_code = wp_remote_retrieve_response_code( $response );
-
-					if ( '200' === $http_code ) {
-						// If it's a 200, we're good, skip the rest.
-						continue;
-					} elseif ( empty( $http_code ) ) {
-						// If it's empty, we got a bad URL.
-						$problems[] = 'URL does not exist. Remove it from the page. -- ' . $url;
-					} else {
-						// Check the codes.
-						switch ( $http_code ) {
-							case '301':
-							case '308':
-								$problems[] = 'URL has been moved. Update the page so it doesn\'t have to redirect. -- ' . $url;
-								break;
-							case '400':
-							case '403':
-								$problems[] = 'URL cannot be accessed. We might be blocked from automated testing. Check to make sure it exists. -- ' . $url;
-								break;
-							case '404':
-							case '410':
-							case '418':
-								$problems[] = 'URL does not exist. Remove it from the page. -- ' . $url;
-								break;
-							default:
-								$problems[] = 'Something is up with this URL -- ' . $url;
-								break;
-						}
-					}
-				} else {
-					$problems[] = 'URL is un-retrievable. Check if it really exists. -- ' . $url;
-				}
-			}
-
-			// If we have no problems, we're good!
-			if ( empty( $problems ) ) {
-				continue;
-			}
-
-			$items[] = array(
-				'url'     => get_permalink( $show_id ),
-				'id'      => $show_id,
-				'problem' => implode( '</br>', $problems ),
-			);
-		}
-
-		// Save Transient
-		lwtv_plugin()->set_transient( self::TRANSIENT_URL, $items, WEEK_IN_SECONDS );
-
-		// Update Options
-		Status::record( 'show_url', 'Shows with bad Ways to Watch', count( $items ) );
 
 		return $items;
 	}
