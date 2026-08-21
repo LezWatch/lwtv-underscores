@@ -14,9 +14,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 use LWTV\CPTs\Shows as CPT_Shows;
+use LWTV\CPTs\Shows\Airdates;
 use LWTV\Queeries\Post_Type;
 
 class OnAir {
+
+	/**
+	 * Transient holding the results of find_on_air_problems().
+	 */
+	const TRANSIENT_PROBLEMS = 'lwtv_debug_on_air_problems';
 
 	/**
 	 * Find shows that are not on air
@@ -80,17 +86,11 @@ class OnAir {
 		}
 
 		// Save Transient
-		lwtv_plugin()->set_transient( 'lwtv_debug_on_air_problems', $items, WEEK_IN_SECONDS );
+		lwtv_plugin()->set_transient( self::TRANSIENT_PROBLEMS, $items, WEEK_IN_SECONDS );
 
 		// Update Options
-		$option                   = get_option( 'lwtv_debugger_status' );
-		$option['onair_problems'] = array(
-			'name'  => 'On Air Checker',
-			'count' => ( ! empty( $items ) ) ? count( $items ) : 0,
-			'last'  => time(),
-		);
-		$option['timestamp']      = time();
-		update_option( 'lwtv_debugger_status', $option );
+		Status::record( 'onair_problems', 'On Air Checker', count( $items ) );
+
 		return $items;
 	}
 
@@ -98,33 +98,24 @@ class OnAir {
 	 * Check if a show is on air
 	 *
 	 * @param int $show_id The ID of the show to check
-	 * @return bool True if the show is on air, false otherwise
+	 * @return string 'yes' when currently airing, otherwise 'no'.
 	 */
 	public function check_if_on_air( $show_id ) {
-		$year   = gmdate( 'Y' );
-		$start  = get_post_meta( $show_id, 'lezshows_airdates_start', true );
-		$finish = get_post_meta( $show_id, 'lezshows_airdates_finish', true );
-		if ( empty( $start ) || empty( $finish ) ) {
-			$legacy = get_post_meta( $show_id, 'lezshows_airdates', true );
-			if ( is_array( $legacy ) ) {
-				$start  = $start ?: ( $legacy['start'] ?? '' );
-				$finish = $finish ?: ( $legacy['finish'] ?? '' );
-			}
-		}
-		if ( empty( $start ) || empty( $finish ) ) {
+		$year     = (int) gmdate( 'Y' );
+		$airdates = Airdates::get( (int) $show_id );
+		$start    = $airdates['start'];
+		$finish   = $airdates['finish'];
+
+		if ( '' === $start || '' === $finish ) {
 			return 'no';
 		}
 
-		$start = (int) $start;
-
-		// 'current' means the show is still airing — match the logic in fix_on_air_status().
-		if ( 'current' === strtolower( (string) $finish ) ) {
+		// 'current' means the show is still airing, so there's nothing to compare.
+		if ( Airdates::is_still_airing( $finish ) ) {
 			return 'yes';
 		}
 
-		$finish = (int) $finish;
-
-		return ( $start <= $year && $finish >= $year ) ? 'yes' : 'no';
+		return ( (int) $start <= $year && (int) $finish >= $year ) ? 'yes' : 'no';
 	}
 
 	/**
@@ -134,31 +125,15 @@ class OnAir {
 	 * @return bool True if the on air status was fixed, false otherwise
 	 */
 	public function fix_on_air_status( $show_id ): bool {
-		$start  = get_post_meta( $show_id, 'lezshows_airdates_start', true );
-		$finish = get_post_meta( $show_id, 'lezshows_airdates_finish', true );
-		if ( empty( $start ) || empty( $finish ) ) {
-			$legacy = get_post_meta( $show_id, 'lezshows_airdates', true );
-			if ( is_array( $legacy ) ) {
-				$start  = $start ?: ( $legacy['start'] ?? '' );
-				$finish = $finish ?: ( $legacy['finish'] ?? '' );
-			}
-		}
-		if ( empty( $start ) || empty( $finish ) ) {
+		$airdates = Airdates::get( (int) $show_id );
+
+		if ( '' === $airdates['start'] || '' === $airdates['finish'] ) {
 			// No airdates, can't fix, assume not on air.
 			update_post_meta( $show_id, 'lezshows_on_air', 'no' );
 			return false;
 		}
 
-		if ( 'current' === strtolower( (string) $finish ) ) {
-			update_post_meta( $show_id, 'lezshows_on_air', 'yes' );
-			return true;
-		}
-
-		$start  = (int) $start;
-		$finish = (int) $finish;
-		$year   = (int) gmdate( 'Y' );
-
-		update_post_meta( $show_id, 'lezshows_on_air', ( $start <= $year && $finish >= $year ) ? 'yes' : 'no' );
+		update_post_meta( $show_id, 'lezshows_on_air', $this->check_if_on_air( $show_id ) );
 		return true;
 	}
 }

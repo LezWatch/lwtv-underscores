@@ -20,7 +20,7 @@ class Show_IMDb {
 	 */
 	public static function make() {
 
-		$items = lwtv_plugin()->get_transient( 'lwtv_debug_show_imdb' );
+		$items = lwtv_plugin()->get_transient( Shows_Debugger::TRANSIENT_IMDB );
 
 		// If rerun was clicked, gotta check 'em all.
 		if ( ( isset( $_POST['rerun'] ) && check_admin_referer( 'run_show_imdb_clicked' ) ) || false === $items ) {
@@ -44,7 +44,7 @@ class Show_IMDb {
 			<div class="lwtv-tools-container lwtv-tools-container__alert">
 				<h3><span class="dashicons dashicons-yes"></span> Excellent!</h3>
 				<div id="lwtv-tools-alerts">
-					<p>All shows have at an IMDb entry.</p>
+					<p>All shows have an IMDb entry. (Web series are exempt from this check, so some may still have none.)</p>
 					<?php echo wp_kses_post( $last_run ); ?>
 				</div>
 			</div>

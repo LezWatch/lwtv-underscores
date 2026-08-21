@@ -19,7 +19,7 @@ class Show_URLs {
 	 */
 	public static function make() {
 
-		$items = lwtv_plugin()->get_transient( 'lwtv_debug_show_url' );
+		$items = lwtv_plugin()->get_transient( Shows_Debugger::TRANSIENT_URL );
 
 		// If rerun was clicked, gotta check 'em all.
 		if ( ( isset( $_POST['rerun'] ) && check_admin_referer( 'run_show_url_clicked' ) ) || false === $items ) {

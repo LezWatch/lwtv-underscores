@@ -20,6 +20,16 @@ use LWTV\CPTs\Characters as CPT_Characters;
 class Characters {
 
 	/**
+	 * Transient holding the results of find_byq_problems().
+	 */
+	const TRANSIENT_BYQ = 'lwtv_debug_byq_problems';
+
+	/**
+	 * Transient holding the results of find_characters_problems().
+	 */
+	const TRANSIENT_PROBLEMS = 'lwtv_debug_character_problems';
+
+	/**
 	 * Find Characters with Problems regarding BYQ
 	 *
 	 * @param  array $items Array of characters to check (can be empty)
@@ -99,17 +109,10 @@ class Characters {
 		}
 
 		// Save Transient
-		lwtv_plugin()->set_transient( 'lwtv_debug_byq_problems', $items, WEEK_IN_SECONDS );
+		lwtv_plugin()->set_transient( self::TRANSIENT_BYQ, $items, WEEK_IN_SECONDS );
 
 		// Update Options
-		$option                 = get_option( 'lwtv_debugger_status' );
-		$option['byq_problems'] = array(
-			'name'  => 'Bury Your Queers Problems',
-			'count' => ( ! empty( $items ) ) ? count( $items ) : 0,
-			'last'  => time(),
-		);
-		$option['timestamp']    = time();
-		update_option( 'lwtv_debugger_status', $option );
+		Status::record( 'byq_problems', 'Bury Your Queers Problems', count( $items ) );
 
 		return $items;
 	}
@@ -168,7 +171,11 @@ class Characters {
 			// If there's no Cliche, we add 'None'
 			if ( ! $check['cliche'] || is_wp_error( $check['cliche'] ) ) {
 				$term = get_term_by( 'name', 'none', 'lez_cliches' );
-				wp_set_object_terms( $char_id, $term->ID, 'lez_cliches', true );
+				if ( $term instanceof \WP_Term ) {
+					wp_set_object_terms( $char_id, array( $term->term_id ), 'lez_cliches', true );
+				} else {
+					$problems[] = 'No cliché set, and the "none" cliché is missing from lez_cliches so it could not be added.';
+				}
 			}
 
 			if ( has_term( 'dead', 'lez_cliches', $char_id ) && empty( $check['death'] ) ) {
@@ -211,17 +218,10 @@ class Characters {
 		}
 
 		// Save Transient
-		lwtv_plugin()->set_transient( 'lwtv_debug_character_problems', $items, WEEK_IN_SECONDS );
+		lwtv_plugin()->set_transient( self::TRANSIENT_PROBLEMS, $items, WEEK_IN_SECONDS );
 
 		// Update Options
-		$option                       = get_option( 'lwtv_debugger_status' );
-		$option['character_problems'] = array(
-			'name'  => 'Characters with Issues',
-			'count' => ( ! empty( $items ) ) ? count( $items ) : 0,
-			'last'  => time(),
-		);
-		$option['timestamp']          = time();
-		update_option( 'lwtv_debugger_status', $option );
+		Status::record( 'character_problems', 'Characters with Issues', count( $items ) );
 
 		return $items;
 	}

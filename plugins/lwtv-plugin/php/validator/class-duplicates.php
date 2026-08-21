@@ -19,7 +19,7 @@ class Duplicates {
 	 */
 	public static function make() {
 
-		$items = lwtv_plugin()->get_transient( 'lwtv_debug_duplicates' );
+		$items = lwtv_plugin()->get_transient( Dupes_Debugger::TRANSIENT_DUPES );
 
 		// If re-run, do a whole full scan!
 		if ( ( isset( $_POST['rerun'] ) && check_admin_referer( 'run_duplicate_clicked' ) ) || false === $items ) {
