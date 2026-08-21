@@ -102,7 +102,7 @@ class OnAir {
 	 */
 	public function check_if_on_air( $show_id ) {
 		$year     = (int) gmdate( 'Y' );
-		$airdates = ( new Airdates() )->get( (int) $show_id );
+		$airdates = Airdates::get( (int) $show_id );
 		$start    = $airdates['start'];
 		$finish   = $airdates['finish'];
 
@@ -125,7 +125,7 @@ class OnAir {
 	 * @return bool True if the on air status was fixed, false otherwise
 	 */
 	public function fix_on_air_status( $show_id ): bool {
-		$airdates = ( new Airdates() )->get( (int) $show_id );
+		$airdates = Airdates::get( (int) $show_id );
 
 		if ( '' === $airdates['start'] || '' === $airdates['finish'] ) {
 			// No airdates, can't fix, assume not on air.

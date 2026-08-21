@@ -279,21 +279,38 @@ class Watch_Providers {
 			wp_die( esc_html__( 'You do not have permission to do that.', 'lwtv' ), '', array( 'response' => 403 ) );
 		}
 
-		$found  = 0;
-		$asked  = 0;
-		$failed = 0;
+		// Belt: ask for more head-room where the host allows it. Braces: the
+		// budget below, since this can be disabled and does nothing for a
+		// web-server or proxy timeout anyway.
+		if ( function_exists( 'set_time_limit' ) ) {
+			// phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
+			@set_time_limit( Watch_Hosts::UI_TIME_BUDGET * 2 );
+		}
+
+		$started   = microtime( true );
+		$found     = 0;
+		$asked     = 0;
+		$failed    = 0;
+		$remaining = 0;
 
 		foreach ( array_keys( Watch_Hosts::unregistered() ) as $host ) {
-			if ( $asked >= Watch_Hosts::UI_BATCH ) {
-				break;
-			}
-
 			if ( Watch_Host_Names::is_checked( $host ) ) {
 				continue;
 			}
 
+			// Stop before starting a request that could run past the budget,
+			// rather than after one already has. Slow hosts are the actual
+			// failure mode here, not the number of them.
+			$elapsed     = microtime( true ) - $started;
+			$out_of_time = ( $elapsed + Watch_Hosts::UI_TIMEOUT ) > Watch_Hosts::UI_TIME_BUDGET;
+
+			if ( $asked >= Watch_Hosts::UI_BATCH || $out_of_time ) {
+				++$remaining;
+				continue;
+			}
+
 			++$asked;
-			$result = Watch_Hosts::discover_name( $host );
+			$result = Watch_Hosts::discover_name( $host, Watch_Hosts::UI_TIMEOUT );
 
 			if ( 'error' === $result['status'] ) {
 				++$failed;
@@ -316,17 +333,23 @@ class Watch_Providers {
 			self::redirect_back();
 		}
 
-		self::set_notice(
-			$found ? 'success' : 'info',
-			sprintf(
-				/* translators: 1: hosts asked, 2: names found, 3: hosts unreachable. */
-				__( 'Asked %1$d host(s): %2$d published a name, %3$d were unreachable and will be retried.', 'lwtv' ),
-				$asked,
-				$found,
-				$failed
-			)
+		$message = sprintf(
+			/* translators: 1: hosts asked, 2: names found, 3: hosts unreachable. */
+			__( 'Asked %1$d host(s): %2$d published a name, %3$d were unreachable and will be retried.', 'lwtv' ),
+			$asked,
+			$found,
+			$failed
 		);
 
+		if ( $remaining ) {
+			$message .= ' ' . sprintf(
+				/* translators: %d: hosts not yet asked. */
+				__( '%d still to check — press the button again, or run `wp lwtv waystowatch enrich --all` to do the lot.', 'lwtv' ),
+				$remaining
+			);
+		}
+
+		self::set_notice( $found ? 'success' : 'info', $message );
 		self::redirect_back();
 	}
 

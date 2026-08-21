@@ -87,11 +87,14 @@ class Airdates {
 	/**
 	 * Read a show's airdates, handling the legacy fallback.
 	 *
+	 * Static, like everything else here: there is no instance state, and the
+	 * callers are all per-show inside loops.
+	 *
 	 * @param int $show_id Show post ID.
 	 *
 	 * @return array{start: string, finish: string}
 	 */
-	public function get( int $show_id ): array {
+	public static function get( int $show_id ): array {
 		$start  = get_post_meta( $show_id, self::META_START, true );
 		$finish = get_post_meta( $show_id, self::META_FINISH, true );
 		$legacy = null;

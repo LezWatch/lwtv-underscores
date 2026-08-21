@@ -37,11 +37,15 @@ class Watch_Hosts {
 	const META_REPEATER = 'lezwatchurls_all';
 
 	/**
-	 * Request timeout, seconds. Short on purpose: a host that can't answer
-	 * quickly isn't worth waiting on, and this runs in an admin request when
-	 * triggered from the Watch URLs tab.
+	 * Request timeout in seconds for CLI runs, where nothing is waiting on us.
 	 */
 	const TIMEOUT = 6;
+
+	/**
+	 * Request timeout in seconds for admin-request runs. Tighter, because a
+	 * person is watching a spinner.
+	 */
+	const UI_TIMEOUT = 3;
 
 	/**
 	 * Cap on bytes read. Site metadata lives in <head>; no need for the body.
@@ -49,12 +53,24 @@ class Watch_Hosts {
 	const MAX_BYTES = 120000;
 
 	/**
-	 * Most hosts one admin-request lookup will ever fetch.
+	 * Most hosts one admin-request lookup will fetch.
 	 *
-	 * The CLI has no such cap. This one exists so a button press can't sit
-	 * there for minutes -- worst case here is roughly TIMEOUT * this.
+	 * Secondary to UI_TIME_BUDGET. A count on its own bounds nothing useful --
+	 * ten slow hosts is a minute either way -- so the budget is what actually
+	 * protects the request and this just stops it doing needless work when
+	 * every host answers instantly.
 	 */
-	const UI_BATCH = 10;
+	const UI_BATCH = 5;
+
+	/**
+	 * Wall-clock budget in seconds for an admin-request lookup.
+	 *
+	 * Deliberately well under a typical 30s max_execution_time and a 60s
+	 * gateway timeout, with room for the rest of the page load. The loop stops
+	 * before *starting* a request that could exceed this, so overshoot is
+	 * bounded rather than hoped for.
+	 */
+	const UI_TIME_BUDGET = 15;
 
 	/**
 	 * Request-level memo of host => show count.
@@ -150,7 +166,7 @@ class Watch_Hosts {
 			$candidates[] = 'http://' . $one_host;
 		}
 
-		$terms                = ( new Theme_Ways_To_Watch() )->get_term_by_url( $candidates );
+		$terms                = Theme_Ways_To_Watch::get_term_by_url( $candidates );
 		self::$terms[ $host ] = $terms[0] ?? null;
 
 		return self::$terms[ $host ];
@@ -289,14 +305,16 @@ class Watch_Hosts {
 	/**
 	 * Fetch a host and pull a name out of its <head>.
 	 *
-	 * @param string $host Hostname.
+	 * @param string   $host    Hostname.
+	 * @param int|null $timeout Seconds to wait. Defaults to TIMEOUT; callers in
+	 *                          an admin request should pass UI_TIMEOUT.
 	 * @return array{status: string, name: string, source: string}
 	 */
-	public static function discover_name( string $host ): array {
+	public static function discover_name( string $host, ?int $timeout = null ): array {
 		$response = wp_remote_get(
 			'https://' . $host . '/',
 			array(
-				'timeout'            => self::TIMEOUT,
+				'timeout'            => $timeout ?? self::TIMEOUT,
 				'redirection'        => 3,
 				'reject_unsafe_urls' => true,
 				'user-agent'         => 'LezWatch.TV provider-name lookup (+https://lezwatchtv.com)',

@@ -461,7 +461,7 @@ class WP_CLI_LWTV_TMDB {
 			$imdb_id = (string) get_post_meta( $post_id, $type['meta_imdb'], true );
 
 			// Don't spend a request on an IMDb ID that can't be valid.
-			if ( ! ( new Debug_Tool() )->validate_imdb( $imdb_id, $type['imdb_kind'] ) ) {
+			if ( ! Debug_Tool::validate_imdb( $imdb_id, $type['imdb_kind'] ) ) {
 				++$invalid;
 				lwtv_plugin()->debug_log(
 					'tmdb',

@@ -16,9 +16,46 @@ Most of the below is #1, since that's where the bugs and the scale risk are. #2 
 
 ---
 
+## Status — 2026-08-20
+
+Shipped across four commits: `b6994ef0`, `de30e6f2`, `b47e982f`, `5b1d348e`, `44ee0947`.
+`composer lint` clean, `vendor/bin/phpunit` green, `wp lwtv debug actors` verified working.
+
+**Done**
+
+| | |
+|---|---|
+| 1.1 | Airdates legacy key → shared `CPTs\Shows\Airdates`, with 14 unit tests |
+| 1.2 | Transient key mismatches → constants on the scanner classes |
+| 1.3a | `ltrim()` prefix bug → gone, along with the whole suffix-list approach (§9.1) |
+| 1.4 | `$term->ID` no-op/fatal, both sites — plus a third found later in the theme |
+| 1.5 | PHP 8.1 `false`-to-array → `Debugger\Status`; also fixed a dashboard-widget fatal |
+| 1.8 | CLI exit code |
+| 1.9 | `--force`, plus cache-age reporting and `--order` |
+| 1.9a | `?message=` scheme, `Actor_Wiki`, dead `admin_post` hook — all removed |
+| 1.9b | Three `Dupes::compare_duplicates()` bugs, incl. the override that never worked |
+| §3 | Twitter/Instagram message mixup, always-true `isset()` dupe check, escaping |
+| §6 | "Debuging" typo |
+| §7 | CLI collapsed to a table-driven registry (validators not yet) |
+
+**Outstanding, roughly in order**
+
+| | |
+|---|---|
+| 2.1 | `fields => 'ids'` at the `Post_Type::make()` call sites — still serialising `WP_Post` objects |
+| §6 | Debug log rotation, memoised option reads, log viewer |
+| 1.3 | Delete `find_shows_bad_url()` and link `tab_show_urls` (the replacement now exists — §9) |
+| 1.7 | Decide the fate of `find_actors_incomplete()` |
+| §8 | Typed findings → `Audit::finalize()` → `build/` extraction → repair layer → collapse the validators |
+
+**Not verified yet:** the Watch Providers create-term and lookup buttons, and the TMDB
+backfill write path. See Open questions.
+
+---
+
 ## 1. Actual bugs (fix these first)
 
-### 1.1 The Shows airdate check is reading a legacy meta key — false positives everywhere
+### 1.1 The Shows airdate check is reading a legacy meta key (FIXED)
 
 `debugger/class-shows.php` reads `lezshows_airdates` as a single serialized array:
 
@@ -60,7 +97,7 @@ if ( empty( $start ) || empty( $finish ) ) {
 Extract that into a shared `get_show_airdates( int $show_id ): array` helper and have both
 OnAir and Shows call it. This is the single highest-value fix in the file.
 
-### 1.2 Two transient key mismatches — CLI never hits cache, always full-scans
+### 1.2 Two transient key mismatches — CLI never hits cache (FIXED)
 
 | Writer | Admin reader | CLI reader |
 |---|---|---|
@@ -257,7 +294,7 @@ Two cautions before committing to the full run:
 This is plausibly higher value than anything else in §1.3 — it feeds `grading/class-tmdb.php`
 and the show score, not just Ways to Watch. Tracked separately rather than folded in here.
 
-### 1.3a `clean_subdomain()` uses `ltrim()` as if it stripped a prefix — wrong labels on the front end
+### 1.3a `clean_subdomain()` uses `ltrim()` as if it stripped a prefix (FIXED — see §9.1)
 
 `theme/class-ways-to-watch.php:244-254`:
 
@@ -296,7 +333,7 @@ Still worth fixing — it's one line, both labels are live and wrong, and the sa
 `clean_subdomain()` call sits inside `check_alt_url()`, so the www/non-www fallback is
 corrupted for those hosts too. But it's a small correctness fix, not a priority.
 
-### 1.4 The "add NONE term" auto-fixes silently do nothing, and can fatal — in TWO places
+### 1.4 The "add NONE term" auto-fixes silently do nothing, and can fatal (FIXED — three sites, not two)
 
 `class-shows.php:151-154` (tropes):
 
@@ -326,7 +363,7 @@ with no cliché term at all.
 Fix: `if ( $term instanceof \WP_Term ) { wp_set_object_terms( $id, array( $term->term_id ), $tax, true ); }`
 — and per §8 this becomes a repair action, not something a scan does.
 
-### 1.5 `$option['x'] = ...` on a `false` option — deprecated on PHP 8.1+
+### 1.5 `$option['x'] = ...` on a `false` option — deprecated on PHP 8.1+ (FIXED)
 
 Repeated in all six scanners (`class-shows.php:186`, `class-actors.php:62,202,279`,
 `class-characters.php:105,217`, `class-onair.php:86`, `class-queers.php:119`,
@@ -366,7 +403,7 @@ Post-cleanup the switch has 10 cases against 9 tabs, and that single remaining g
 `actor_empty` status entry. Nothing reads either — no validator view, no CLI type, no cron
 day. It shows up in `current_status()` counts and nowhere else. Either wire it up or delete it.
 
-### 1.8 CLI exits 0 on failure
+### 1.8 CLI exits 0 on failure (FIXED)
 
 `cli-debug.php:104`: `\WP_CLI::error( $exception->getMessage(), false )` — the `false`
 suppresses the exit. Cron (`cron/debug.sh`) can't distinguish a crashed check from a clean
@@ -429,7 +466,7 @@ Found while fixing the equivalent false-positive in `Shows`:
 - Two posts both missing an IMDb ID compared equal (`'' === ''`) and were reported as
   likely dupes.
 
-### 1.9 No way to force a fresh CLI run
+### 1.9 No way to force a fresh CLI run (FIXED)
 
 Every `run_*_check()` in `cli-debug.php` reads the transient and only rescans when it's
 `false`. So `wp lwtv debug shows` can happily report week-old data with no indication.
@@ -478,7 +515,7 @@ See §8 — this is now a planned piece of work rather than just an observation.
 
 ---
 
-## 3. Security & correctness hygiene
+## 3. Security & correctness hygiene (mostly FIXED)
 
 - **No capability check inside the validators.** `Show_Checker::make()` etc. rely entirely
   on `add_submenu_page( ..., 'upload_files', ... )`. Add a `current_user_can()` guard in
@@ -720,98 +757,202 @@ directly to the transient and will need updating to the new shape at the same ti
 
 ---
 
+## 9. Built during this pass, beyond the original plan
+
+Things that weren't in the review when it was written, mostly because they came out of
+looking at real data.
+
+### 9.1 Ways to Watch naming, rebuilt (`b47e982f`)
+
+The whole suffix-stripping approach is gone. `CPTs\Shows\Host_Name` is pure, unit-tested
+(23 tests) and answers "which label carries the name" using a short list of compound public
+suffixes rather than a hand-maintained pile of pseudo-TLDs. It also generates the candidate
+host forms used for term matching, by dropping leading labels — so `gshow.globo.com` offers
+`globo.com` without anyone having listed `gshow.` anywhere.
+
+Fixed along the way, all of them live defects:
+
+- **Every unregistered host rendered in ALL CAPS.** `$uc_string || 3 === strlen(...)` —
+  the `||` short-circuited and `generate_links_old()` always passes `true`. `NETFLIX`,
+  `CRUNCHYROLL`, `TELLOFILMS`.
+- **Curated 3-character term names were being overridden.** `ViX` → "VIX", `Max` → "MAX".
+  The registered path now uses `$term->name` verbatim; nothing reformats it.
+- **`hide_display` had never worked.** `$terms[0]->ID` — `WP_Term` has `term_id`. Third
+  instance of the 1.4 bug.
+- **`'es'` in `TLDS` had no leading dot**, so it ate the last two characters of anything
+  ending in "es": `rtve.es` → "Rtve.".
+- **`.go.com` was unreachable**, shadowed by `.com` matching first.
+- `build_link()` now escapes its URL and name.
+- Scheme- and www-insensitive matching in one query, with candidate priority resolved in
+  PHP so a term on `abc.go.com` beats one on `go.com`.
+- Deleted `check_alt_url()`, superseded and uncalled.
+
+**Measured, and it walked back two of my claims.** 154 hosts in use, 124 unregistered —
+not "hundreds". The top 12 are 76% of unregistered usage. And 1.3a turned out to affect
+**5 show-host pairs**, not "a large share": `'www.'` has character set `{w, .}` and nothing
+in the corpus starts with `w` or `.` after it, so the dominant case survived by luck.
+
+### 9.2 Provider name enrichment (`5b1d348e`)
+
+`CPTs\Shows\Watch_Host_Names` caches a name discovered from each host's own
+`og:site_name` / `application-name`, in one non-autoloaded option keyed by normalised host.
+Rendering reads it only — no request ever fetches anything. Populated by
+`wp lwtv waystowatch enrich`, which skips hosts that already have a term, records genuine
+misses so it doesn't re-ask, and deliberately does *not* record errors so an outage can't
+permanently mark a host unnamed.
+
+Display is three tiers: term name → discovered name → `Host_Name::guess()`.
+
+Rationale for building it despite the backlog being small: hosts arrive continuously with
+new shows, so the value is in the flow, not the backlog. My initial analysis was static and
+wrong about this.
+
+### 9.3 Watch Providers admin tab (`5b1d348e`)
+
+New tab listing hosts with no provider term, ranked by show count, with the proposed name
+in an editable field and a one-click **Create term** button that writes the ACF repeater in
+the same shape ACF itself uses. Plus a bounded **Look up names** button.
+
+Two supporting pieces:
+
+- `CPTs\Shows\Watch_Hosts` — shared by the tab and the CLI so they can't disagree about
+  what's registered. `term_for()` delegates to the theme's own matcher.
+- **The tab bar is now a dropdown**, with counts moved into the option labels. Ten checks
+  was already wrapping.
+
+Notice plumbing is new, since 1.9a deleted the `?message=` scheme: a per-user transient,
+read-and-cleared on render, carrying arbitrary text plus an optional link. That is the
+pattern §8's per-finding fix links should reuse.
+
+Note the handlers register in `_Components\Admin_Menu::init()`, **not**
+`Admin_Menu\Validation::init()` — the latter fires on `admin_menu`, which `admin-post.php`
+never triggers. That was the second independent reason the old wikidata `admin_post` hook
+was dead.
+
+### 9.4 TMDB backfill (`5b1d348e`)
+
+`wp lwtv tmdb [status|backfill] [shows|actors|all]`. Needed no new API code —
+`CPTs::get_tmdb_info()` already falls back to `find/{imdb_id}?external_source=imdb_id`.
+
+Coverage on a recent local copy:
+
+| | shows | actors |
+|---|---|---|
+| published | 2255 | 6070 |
+| has a TMDB ID | 242 | 822 |
+| checked, no match | 0 | 0 |
+| no IMDb to look up with | 37 | 153 |
+| **candidates** | **1976** | **5095** |
+
+Every published post lands in exactly one bucket, which is a decent sign the queries are
+right. **Zero recorded failed lookups** — so the earlier prediction of patchy TMDB coverage
+was unfounded; it's a backfill problem, not a coverage problem.
+
+Design points worth keeping:
+
+- `lezshows_tmdb_checked` / `lezactors_tmdb_checked` sentinels, registered in
+  `CPTs\Post_Meta`, written on a hit or a genuine no-match but **never** on an API error.
+  That ambiguity is the only reason this needed a query to diagnose.
+- `--order=oldest|newest|random`, because oldest-first is a biased sampler. The 100% hit
+  rate measured so far was on the oldest 100 shows and should not be extrapolated from.
+- Shows detect a `wrong_kind` outcome: TMDB filing a TV movie under `movie_results`.
+  Reported, not stored — a movie ID would break the later `/tv/{id}` call — and not
+  sentinelled, since TMDB does have data.
+
+### 9.5 `lez_watch_urls` admin column (`b47e982f`)
+
+A **URLs** count column on the taxonomy list. The root cause of the clutter turned out to
+be that `CPTs\Shows\Ways_To_Watch` was **never instantiated**, so its existing filters to
+drop `description`, `count` and `slug` had never run. `count` is permanently 0 there because
+these terms are never *assigned* to shows — the relationship is resolved by URL matching in
+term meta.
+
+### 9.6 Review fixes (`44ee0947`)
+
+Four Gemini findings on the PR, all in code written during this pass:
+
+- `$total` unescaped in a `printf()`.
+- The lookup button bounded by **count** rather than wall clock — 10 hosts × 6s was 60s
+  worst case, on top of a typical 30s `max_execution_time`. Now a 15s budget that stops
+  before *starting* a request that could overrun, a separate `UI_TIMEOUT` of 3s, and
+  `UI_BATCH` demoted to a secondary guard. This was a smaller replay of the exact mistake
+  §1.3 is about.
+- `Airdates::get()` made static, matching `resolve()` and `is_still_airing()`.
+- Stateless classes instantiated per iteration: the four pure `_Components\Debugger`
+  helpers made static (**nine** call sites, worst being four per actor across ~6070), and
+  `Theme\Ways_To_Watch::get_term_by_url()` likewise.
+
+---
+
 ## Suggested order of work
 
-**Done — landed in `b6994ef0` plus the notice-scheme cleanup:**
+Everything in the **Done** table at the top has shipped. What's left, in the order I'd take it:
 
-- Airdates key fix, via a shared `CPTs\Shows\Airdates` helper with unit tests (1.1).
-- `$term->ID` no-op/fatal in both Shows and Characters (1.4).
-- Transient key mismatches, now constants on the scanner classes (1.2).
-- `false`-to-array deprecations, via `Debugger\Status` (1.5). Also caught the same class of
-  bug fataling the dashboard widget on fresh installs.
-- Twitter/Instagram message mixup and the always-true `isset( $pos_imdb )` dupe check (§3),
-  plus the three `Dupes::compare_duplicates()` bugs (1.9b).
-- CLI exit code and `--force`, via a table-driven check registry (1.8, 1.9).
-- "Debuging" typo (§6).
-- `?message=` notice scheme, `Actor_Wiki`, and the dead `admin_post_` hook removed (1.9a).
+**Verify what's built but unexercised** — cheap, and the riskiest unknowns:
 
-**Next — informed by the 2026-08-20 measurements:**
+1. **Create one term from the Watch Providers tab**, then check it renders on a show page
+   *and* opens cleanly on the term edit screen. `Watch_Hosts::create_term()` writes the ACF
+   repeater rows by hand (`lezwatchurls_all_N_url` plus the `_`-prefixed field keys); if
+   that shape is wrong the term will look fine in the list and quietly match nothing.
+2. **`wp lwtv waystowatch hosts`** — no writes, and it cross-checks `Watch_Hosts::in_use()`
+   against the SQL numbers in §9.1. If the host count isn't near 154, normalisation is off.
+3. **`wp lwtv tmdb backfill shows --dry-run --order=random`** — the only hit rate measured
+   so far is from a biased sample. Then a real run of 100 before `--all`.
 
-1. **TMDB backfill** — 2014 shows never had a lookup attempted, 2225 have IMDb IDs to
-   backfill from, and it feeds the show score via `grading/class-tmdb.php`. Sample 100
-   first to measure the hit rate; record misses so the ambiguity doesn't recur. Biggest
-   value found in this whole pass, and unrelated to Ways to Watch.
-2. **Port the majors into `lez_watch_urls`** — top 12 unregistered hosts = 76% of
-   unregistered usage. Start with adding `amazon.com` to the existing **Prime Video** term:
-   one URL row, 174 shows. Architectural tidying, not a bug fix (see 1.3).
-3. **`clean_subdomain()` `ltrim()` fix** (1.3a) — one line. Small: 5 show-host pairs
-   ("Mazon", "Lobo"). Do it while you're in the file.
-4. **`fields => 'ids'`** at every `Post_Type::make()` debugger call site (2.1) — stops
-   serialising thousands of `WP_Post` objects into a transient to extract an ID list.
-5. **Log file rotation + memoised option reads** (§6).
+**Small and independent:**
 
-**Then — replace the URL checker (1.3):**
+4. **`fields => 'ids'`** at every `Post_Type::make()` debugger call site (2.1). Still the
+   cheapest performance win outstanding.
+5. **Debug log rotation + memoised option reads** (§6). `debug_log()` still reads two ACF
+   options per call and the log file still grows without bound.
+6. **Delete `find_shows_bad_url()` and link `tab_show_urls`** (1.3, 1.6). The replacement
+   exists now — the Watch Providers tab *is* the frequency-ranked check — so the old sweep
+   has nothing left to do. Host liveness stays skipped per 1.3.
+7. **Decide `find_actors_incomplete()`** (1.7): wire it up or delete it.
 
-6. Build the three network-free checks from 1.3, with #1 **frequency-ranked**. Given the
-   measured distribution, a threshold around 5 shows gives a worklist of roughly 20 hosts.
-7. Delete `find_shows_bad_url()` and link `tab_show_urls` in the nav — the reason it's
-   hidden (1.6) goes away once the full sweep does.
-8. Retire `SUBDOMAINS` / `TLDS` / `URL_OWNER` / `PRETTY_NAME` as hosts get registered. Note
-   `generate_links_old()` has to survive in some form for the permanent long tail — decide
-   what an unregistered host should render as (cleaned host, bare host, or the existing
-   `'Watch Online'` failsafe).
-9. Host liveness: **skip.** 30 registered hosts cover a fraction of usage, and nobody acts
-   on the current output. Revisit only if defunct providers prove to be a real problem.
+**Then the structural chunk (§8), which is unchanged and still worth doing together:**
 
-**Small extra, worth doing whenever:** add a "URLs registered" (and maybe "shows using")
-column to the `lez_watch_urls` admin list. `cpts/shows/class-ways-to-watch.php` already
-filters `manage_edit-lez_watch_urls_columns` to *remove* columns, so adding one is that
-hook plus `manage_lez_watch_urls_custom_column`. Makes the port's progress visible while
-you do it. (Mika's idea.)
-
-**Then — the structural work. Order matters, because the fix-it decisions depend on it:**
-
-10. **Issue registry + typed findings** (§5, §8.3). One `issue_type` per finding, one row per
-   issue, `fixable`/`fix_label` from the registry. Includes the transient shape migration
-   (§8.5). Everything below depends on this.
-11. **Route findings through `Audit::finalize()`** (§5) — baselines, new/open/resolved,
-   acknowledgements. Needs `IGNORE_META` generalised per post type first.
-12. **Extract pure rule evaluation into `debugger/build/`** with unit tests (§4). The
-   airdates helper already works this way and is the template.
-13. **Move the writes to a repair layer** (§8.2) behind `--fix-it`, plus the per-finding
-    admin fix links (§8.1). Relocate the four non-fix writes per §8.4.
-14. **Collapse the ten validator files** into a config-driven runner (§7) — much easier
-    once findings are typed and the renderer is uniform. The CLI registry added in 1.8/1.9
-    is the shape to copy.
-15. Add the missing checks to the cron rotation; decide the fate of
-    `find_actors_incomplete()` (1.7).
-
-Steps 10–13 are one coherent chunk — worth doing together rather than shipping half a
-finding shape. Everything above them is independent and can land in any order.
+8. **Issue registry + typed findings** (§5, §8.3), including the transient shape migration
+   (§8.5). Everything below depends on it.
+9. **Route findings through `Audit::finalize()`** (§5) — baselines, new/open/resolved,
+   acknowledgements. Needs `IGNORE_META` generalised per post type.
+10. **Extract pure rule evaluation into `debugger/build/`** with tests (§4). `Host_Name` and
+    `Airdates` are both working examples of the shape now — pure, no WP, unit-tested.
+11. **Move the writes to a repair layer** (§8.2) behind `--fix-it`, plus per-finding admin
+    fix links (§8.1). The notice plumbing from §9.3 is the piece that was missing.
+12. **Collapse the ten validator files** (§7). The CLI registry and the `Watch_Hosts`
+    extraction are both precedents to copy.
+13. Add the missing checks to the cron rotation — including `waystowatch enrich`, which is
+    safe to run weekly since it skips anything already asked.
 
 ---
 
 ## Open questions
 
-Answered 2026-08-20 (see `DEBUGGER-QUERIES.sql` for the queries):
+**Answered during this pass:**
 
-- **TMDB coverage** — not a coverage problem. 0 failed lookups, 2014 never attempted, 2225
-  IMDb IDs available to backfill from. Reversed my prediction; see 1.3.
-- **Is anyone acting on Show URLs output?** No. No workflow to preserve.
-- **Ways to Watch hosts** — 154 in use, 124 unregistered, and the top 12 are 76% of
-  unregistered usage. Also walked back my claim that 1.3a was widespread: it's 5 pairs.
-- **Scheme split** — 1292 https vs 50 http. Small but real; those 50 can never match an
-  https-registered term. Normalise scheme in `get_term_by_url()` rather than registering
-  both variants per term.
-- **`PRETTY_NAME` migration hazard** — none. No existing term is *named* like a
-  `PRETTY_NAME` key, so the constant can be retired without renaming terms first.
+- **TMDB coverage** — not a coverage problem. Zero recorded failed lookups; 1976 shows and
+  5095 actors simply never had one attempted, with IMDb IDs available to backfill from.
+- **Is anyone acting on Show URLs output?** No. Nothing to preserve.
+- **Ways to Watch hosts** — 154 in use, 124 unregistered, top 12 = 76% of unregistered
+  usage. Also walked back the claim that 1.3a was widespread; it's 5 pairs.
+- **Scheme split** — 1292 https vs 50 http. Handled in the matcher rather than by
+  registering both variants per term.
+- **`PRETTY_NAME` migration hazard** — none. No term was named like a constant key.
+- **37 shows with no IMDb vs "Excellent!" on the tab** — both correct. The Shows check
+  exempts web series (`has_term( 'web-series', 'lez_formats' )`); the Actors check doesn't,
+  which is why the actor numbers matched exactly at 153. Panel copy now says so.
+- **Where should the provider screen live?** A tenth Validation tab, with the tab bar
+  converted to a dropdown so it can keep growing.
 
-Still open:
+**Still open:**
 
-- **What's the TMDB backfill hit rate?** Only a sample run answers this, and it decides
-  whether the full 2014 is worth it.
-- **What should an unregistered host render as** once `generate_links_old()` is simplified?
-  The long tail is permanent, so this needs an answer rather than a deletion.
-- **Is `amazon.com` really Prime Video?** It's 174 shows and the term already exists, but
-  the two were presumably filled in by different people at different times. Worth eyeballing
-  a few before merging them.
+- **Does the ACF repeater shape written by `create_term()` match what ACF expects?** The
+  one thing in this pass with a plausible silent-failure mode.
+- **What's the real TMDB hit rate?** `--order=random` hasn't been run.
+- **What threshold makes a host "worth registering"?** The tab is unfiltered right now.
+  `--min-shows` exists on the CLI; the distribution suggests somewhere around 3–5.
+- **Should `enrich` go on the weekly cron?** It's designed for it — skips already-asked
+  hosts, so repeat runs are nearly free — but it isn't wired in yet.
+- **Is `amazon.com` really Prime Video?** 174 shows, and the term already exists. Still
+  worth eyeballing a few before merging them.
