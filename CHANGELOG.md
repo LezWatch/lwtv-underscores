@@ -4,13 +4,6 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased
-
-### Fixed
-
-- Fixed dangling ACF issue where the custom TVMaze name wasn't linking up to the show.
-- Fixed esc_html calls that should have been wp_kses_post.
-
 ## [7.1.13] - 2026-08-19
 
 ### Added
@@ -39,6 +32,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Menu keyboard navigation leaked two variables into the global scope.
 - The shortfall phrase ladder had rungs whose thresholds overstated the fraction they named, which could make the phrasing false.
 - Several small style bugs surfaced by the wider lint sweep: a cancelled margin in the search form, a redundant duplicate rule in the statistics styles, and inconsistent spacing on the social share and search scope controls.
+- Fixed dangling ACF issue where the custom TVMaze name wasn't linking up to the show.
+- Fixed esc_html calls that should have been wp_kses_post.
 
 ### Removed
 
