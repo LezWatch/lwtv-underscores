@@ -4,6 +4,34 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [7.1.14] - 2026-08-21
+
+### Added
+
+- Add a "Watch Providers" tool that lists hosts not yet registered in the provider taxonomy, ranked by real show usage, and registers them as terms in one click.
+- Add a `wp lwtv waystowatch enrich` command that discovers a provider's display name directly from the host.
+- Add `wp lwtv tmdb status` and `wp lwtv tmdb backfill` commands to fill in missing TMDB IDs for shows and actors from their existing IMDb IDs.
+
+### Changed
+
+- Ways to Watch link matching now trusts the provider taxonomy as the source of truth for display names, instead of a hardcoded guess table, and matches host/www/scheme variants in priority order so the most specific match always wins.
+- The Watch Providers taxonomy admin screen now shows a per-term URL count.
+- The validator's tab row is now a dropdown instead of a row of links.
+- Shows with a score of 0 now render that score instead of hiding it.
+
+### Fixed
+
+- Fixed provider hostname matching that mangled names like watch.amazon.com into "Mazon".
+- Fixed the show airdate check only reading the legacy meta key, which incorrectly flagged migrated shows as missing airdates.
+- Fixed duplicate-show and duplicate-actor detection treating two entries with no IMDb ID as a match, and a dupe-override comparison that could never be true.
+- Fixed a PHP deprecation warning from the debugger status option on fresh installs.
+- Fixed escaping gaps in debugger and Ways to Watch link output.
+- Fixed grammar in the actor/show IMDb "all clear" messages.
+
+### Removed
+
+- Removed unused actor wiki code and a dead admin hook.
+
 ## [7.1.13] - 2026-08-19
 
 ### Added
