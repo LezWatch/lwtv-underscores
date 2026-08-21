@@ -11,15 +11,32 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 use LWTV\_Components\Debugger as Debug_Tool;
 use LWTV\Debugger\Characters as Characters_Debugger;
+use LWTV\CPTs\Shows\Airdates;
 use LWTV\CPTs\Shows\Ways_To_Watch;
 use LWTV\Queeries\Post_Type;
 
 class Shows {
 
+	/**
+	 * Transient holding the results of find_shows_problems().
+	 */
+	const TRANSIENT_PROBLEMS = 'lwtv_debug_show_problems';
+
+	/**
+	 * Transient holding the results of find_shows_no_imdb().
+	 */
+	const TRANSIENT_IMDB = 'lwtv_debug_show_imdb';
+
+	/**
+	 * Transient holding the results of find_shows_bad_url().
+	 */
+	const TRANSIENT_URL = 'lwtv_debug_show_url';
+
 	const ITEMS_TO_CHECK = array(
 		'score'      => array(
-			'message' => 'Score is 0 or not set - needs characters and/or ratings.',
-			'meta'    => 'lezshows_the_score',
+			'message'  => 'Score is 0 or not set - needs characters and/or ratings.',
+			'meta'     => 'lezshows_the_score',
+			'empty_ok' => true,
 		),
 		'details'    => array(
 			'message'  => 'No worthit details.',
@@ -45,10 +62,6 @@ class Shows {
 			'message'  => 'No screentime rating.',
 			'meta'     => 'lezshows_screentime_rating',
 			'empty_ok' => true,
-		),
-		'airdates'   => array(
-			'message' => 'No airdates.',
-			'meta'    => 'lezshows_airdates',
 		),
 		'imdb'       => array(
 			'message' => 'No IMDb ID.',
@@ -141,7 +154,7 @@ class Shows {
 				}
 			}
 
-			// Force set a missing thumb to TBD.
+			// Force set a missing rating (aka Thumb Score) to TBD.
 			if ( empty( $check['thumb'] ) ) {
 				update_post_meta( $show_id, 'lezshows_worthit_rating', 'TBD' );
 			}
@@ -149,23 +162,17 @@ class Shows {
 			// If there are no tropes, add NONE.
 			if ( ! $check['tropes'] || is_wp_error( $check['tropes'] ) ) {
 				$term = get_term_by( 'name', 'none', 'lez_tropes' );
-				wp_set_object_terms( $show_id, $term->ID, 'lez_tropes', true );
-			}
-
-			// Double check there is an END airdate.
-			if ( is_array( $check['airdates'] ) ) {
-				$start  = $check['airdates']['start'];
-				$finish = $check['airdates']['finish'];
-
-				if ( empty( $finish ) ) {
-					$problems[] = 'No end-date. If the show is on-air, set to CURRENT. TV movies end in the same year.';
-				} elseif ( $start > $finish ) {
-					$problems[] = 'Start date is AFTER end date.';
+				if ( $term instanceof \WP_Term ) {
+					wp_set_object_terms( $show_id, array( $term->term_id ), 'lez_tropes', true );
+				} else {
+					$problems[] = 'No tropes set, and the "none" trope is missing from lez_tropes so it could not be added.';
 				}
 			}
 
+			$problems = array_merge( $problems, $this->check_airdates( $show_id ) );
+
 			$duplicates   = self::check_duplicate_shows( $check, $show_id );
-			$intersection = self::check_intersection_problems( $show_id, $check['tropes'] );
+			$intersection = self::check_intersection_problems( $show_id );
 			$problems     = array_merge( $problems, $intersection, $duplicates );
 
 			// If we have problems, list them:
@@ -179,19 +186,58 @@ class Shows {
 		}
 
 		// Save Transient
-		lwtv_plugin()->set_transient( 'lwtv_debug_show_problems', $items, WEEK_IN_SECONDS );
+		lwtv_plugin()->set_transient( self::TRANSIENT_PROBLEMS, $items, WEEK_IN_SECONDS );
 
 		// Update Options
-		$option                  = get_option( 'lwtv_debugger_status' );
-		$option['show_problems'] = array(
-			'name'  => 'Shows with Issues',
-			'count' => ( ! empty( $items ) ) ? count( $items ) : 0,
-			'last'  => time(),
-		);
-		$option['timestamp']     = time();
-		update_option( 'lwtv_debugger_status', $option );
+		Status::record( 'show_problems', 'Shows with Issues', count( $items ) );
 
 		return $items;
+	}
+
+	/**
+	 * Check a show's airdates for sanity.
+	 *
+	 * Reads through LWTV\CPTs\Shows\Airdates so both the current ACF keys
+	 * (lezshows_airdates_start / _finish) and the legacy serialized
+	 * lezshows_airdates array are handled. Previously this only read the legacy
+	 * key, which meant migrated shows were reported as having no airdates at all
+	 * and the end-date checks below never ran.
+	 *
+	 * @param int $show_id The show ID to check.
+	 *
+	 * @return array $problems - array of problems. Can be empty.
+	 */
+	public function check_airdates( int $show_id ): array {
+		$problems = array();
+		$airdates = ( new Airdates() )->get( $show_id );
+		$start    = $airdates['start'];
+		$finish   = $airdates['finish'];
+
+		if ( '' === $start && '' === $finish ) {
+			$problems[] = 'No airdates.';
+			return $problems;
+		}
+
+		if ( '' === $start ) {
+			$problems[] = 'No start date.';
+		}
+
+		if ( '' === $finish ) {
+			$problems[] = 'No end-date. If the show is on-air, set to CURRENT. TV movies end in the same year.';
+			return $problems;
+		}
+
+		// 'current' means still airing, so there's nothing to compare against.
+		if ( Airdates::is_still_airing( $finish ) ) {
+			return $problems;
+		}
+
+		// Only compare when both sides are actually years.
+		if ( is_numeric( $start ) && is_numeric( $finish ) && (int) $start > (int) $finish ) {
+			$problems[] = 'Start date is AFTER end date.';
+		}
+
+		return $problems;
 	}
 
 	/**
@@ -211,9 +257,12 @@ class Shows {
 			if ( is_object( $possible ) && false !== $possible ) {
 				// The 90210 Loop
 				// Make sure we didn't find ourselves (because some shows are number-named...)
-				if ( $possible->ID !== $show_id ) {
+				if ( (int) $possible->ID !== $show_id ) {
 					$pos_imdb = get_post_meta( $possible->ID, 'lezshows_imdb', true );
-					if ( isset( $pos_imdb ) && $pos_imdb === $check['imdb'] ) {
+					// Both being empty is not a match. The old isset() check was always
+					// true, so every numerically-suffixed show with no IMDb ID matched
+					// any same-named show that also had none.
+					if ( ! empty( $pos_imdb ) && ! empty( $check['imdb'] ) && $pos_imdb === $check['imdb'] ) {
 						$problems[] = 'Likely Dupe - Another Show has this name AND the same IMDb data.';
 					}
 				}
@@ -243,8 +292,13 @@ class Shows {
 			return array();
 		}
 
+		static $characters_debugger = null;
+		if ( null === $characters_debugger ) {
+			$characters_debugger = new Characters_Debugger();
+		}
+
 		$problems         = array();
-		$disabled_problem = ( new Characters_Debugger() )->check_disabled_characters( $show_id );
+		$disabled_problem = $characters_debugger->check_disabled_characters( $show_id );
 		if ( ! empty( $disabled_problem ) ) {
 			$problems[] = $disabled_problem;
 		}
@@ -299,7 +353,7 @@ class Shows {
 			$imdb = get_post_meta( $show_id, 'lezshows_imdb', true );
 
 			if ( empty( $imdb ) ) {
-				// Check for IMDb existing at all, unless it's a webseries
+				// Check for IMDb existing at all, unless it's a web-series.
 				if ( ! has_term( 'web-series', 'lez_formats', $show_id ) ) {
 					$problems[] = 'IMDb ID is not set.';
 				}
@@ -320,17 +374,10 @@ class Shows {
 		}
 
 		// Save Transient
-		lwtv_plugin()->set_transient( 'lwtv_debug_show_imdb', $items, WEEK_IN_SECONDS );
+		lwtv_plugin()->set_transient( self::TRANSIENT_IMDB, $items, WEEK_IN_SECONDS );
 
 		// Update Options
-		$option              = get_option( 'lwtv_debugger_status' );
-		$option['show_imdb'] = array(
-			'name'  => 'Shows without IMDb',
-			'count' => ( ! empty( $items ) ) ? count( $items ) : 0,
-			'last'  => time(),
-		);
-		$option['timestamp'] = time();
-		update_option( 'lwtv_debugger_status', $option );
+		Status::record( 'show_imdb', 'Shows without IMDb', count( $items ) );
 
 		return $items;
 	}
@@ -377,12 +424,18 @@ class Shows {
 		// reset items since we recheck off $shows.
 		$items = array();
 
+		// Instantiated once, not per show: the constructor registers admin
+		// filters, and doing that a few thousand times is pure waste. (This
+		// migration call doesn't belong in a scanner at all -- see
+		// DEBUGGER-REVIEW.md section 8.4.)
+		$ways_to_watch_migrator = new Ways_To_Watch();
+
 		foreach ( $shows as $show_id ) {
 
 			$problems = array();
 
 			// Check the Ways to Watch - this updates us to the new method.
-			( new Ways_To_Watch() )->migrate_ways_to_watch( $show_id );
+			$ways_to_watch_migrator->migrate_ways_to_watch( $show_id );
 
 			$wtw_rows      = get_field( 'lezshows_waystowatch', $show_id );
 			$ways_to_watch = is_array( $wtw_rows ) ? array_filter( array_column( $wtw_rows, 'url' ) ) : array();
@@ -443,17 +496,10 @@ class Shows {
 		}
 
 		// Save Transient
-		lwtv_plugin()->set_transient( 'lwtv_debug_show_url', $items, WEEK_IN_SECONDS );
+		lwtv_plugin()->set_transient( self::TRANSIENT_URL, $items, WEEK_IN_SECONDS );
 
 		// Update Options
-		$option              = get_option( 'lwtv_debugger_status' );
-		$option['show_url']  = array(
-			'name'  => 'Shows with bad Ways to Watch',
-			'count' => ( ! empty( $items ) ) ? count( $items ) : 0,
-			'last'  => time(),
-		);
-		$option['timestamp'] = time();
-		update_option( 'lwtv_debugger_status', $option );
+		Status::record( 'show_url', 'Shows with bad Ways to Watch', count( $items ) );
 
 		return $items;
 	}

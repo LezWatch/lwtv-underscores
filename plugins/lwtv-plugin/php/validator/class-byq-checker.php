@@ -19,7 +19,7 @@ class BYQ_Checker {
 	 */
 	public static function make() {
 
-		$items = lwtv_plugin()->get_transient( 'lwtv_debug_byq_problems' );
+		$items = lwtv_plugin()->get_transient( Character_Debugger::TRANSIENT_BYQ );
 
 		// If rerun was clicked, gotta check 'em all.
 		if ( ( isset( $_POST['rerun'] ) && check_admin_referer( 'run_byq_checker_clicked' ) ) || false === $items ) {

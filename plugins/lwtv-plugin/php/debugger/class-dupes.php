@@ -12,6 +12,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 use LWTV\Queeries\Get_ID_From_Slug;
 
 class Dupes {
+
+	/**
+	 * Transient holding the results of find_duplicates().
+	 */
+	const TRANSIENT_DUPES = 'lwtv_debug_duplicates';
+
 	/**
 	 * Find Duplicates
 	 *
@@ -45,17 +51,10 @@ class Dupes {
 		}
 
 		// Save Transient
-		lwtv_plugin()->set_transient( 'lwtv_debug_duplicates', $duplicates, WEEK_IN_SECONDS );
+		lwtv_plugin()->set_transient( self::TRANSIENT_DUPES, $duplicates, WEEK_IN_SECONDS );
 
 		// Update Options
-		$option               = get_option( 'lwtv_debugger_status' );
-		$option['duplicates'] = array(
-			'name'  => 'Duplicate Actors/Shows',
-			'count' => ( ! empty( $duplicates ) ) ? count( $duplicates ) : 0,
-			'last'  => time(),
-		);
-		$option['timestamp']  = time();
-		update_option( 'lwtv_debugger_status', $option );
+		Status::record( 'duplicates', 'Duplicate Actors/Shows', count( $duplicates ) );
 
 		return $duplicates;
 	}
@@ -88,18 +87,26 @@ class Dupes {
 	 * @return bool|string
 	 */
 	public function compare_duplicates( $post_id ) {
-		$slugs     = array(
+		$slugs = array(
 			'duplicate' => get_post_field( 'post_name', $post_id ),
-			'original'  => substr( get_post_field( 'post_name', $post_id ), 0, -2 ),
+			// Strip any numeric suffix, not just a two-character '-2'. get_dupes()
+			// matches -[0-9]+ so '-10' and up need handling too.
+			'original'  => preg_replace( '/-[0-9]+$/', '', (string) get_post_field( 'post_name', $post_id ) ),
 		);
+
+		// Defaults matter: the switch below only fills these for shows and actors,
+		// so an unexpected post type would otherwise hit undefined keys.
 		$duplicate = array(
 			'id'        => $post_id,
 			'slug'      => $slugs['duplicate'],
 			'post_type' => get_post_type( $post_id ),
+			'imdb'      => '',
+			'override'  => '',
 		);
 		$original  = array(
 			'id'   => ( new Get_ID_From_Slug() )->make( $slugs['original'] ),
 			'slug' => $slugs['original'],
+			'imdb' => '',
 		);
 
 		if ( empty( $original['id'] ) ) {
@@ -119,8 +126,20 @@ class Dupes {
 				break;
 		}
 
-		// If the IMDb IDs are the same, and the override is false, return true.
-		if ( $duplicate['imdb'] === $original['imdb'] && true !== $duplicate['override'] ) {
+		// An override means an editor has confirmed this is not a duplicate. ACF
+		// true_false fields store raw meta as '1'/'0', never a real boolean, so the
+		// old `true !== $override` test could never be false and the override was
+		// silently ignored.
+		if ( ! empty( $duplicate['override'] ) && '0' !== $duplicate['override'] ) {
+			return false;
+		}
+
+		// Two shows both missing an IMDb ID is not evidence of anything.
+		if ( empty( $duplicate['imdb'] ) || empty( $original['imdb'] ) ) {
+			return false;
+		}
+
+		if ( $duplicate['imdb'] === $original['imdb'] ) {
 			$is_dupe = '' . get_the_title( $post_id ) . ' is a duplicate of <a href="' . get_permalink( $original['id'] ) . '">' . get_the_title( $original['id'] ) . '</a>';
 			return $is_dupe;
 		}

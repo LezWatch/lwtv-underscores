@@ -26,7 +26,11 @@ class Display {
 
 		echo '<center>';
 		foreach ( $scores as $score ) {
-			if ( null !== $score['score'] && 0 !== (int) $score['score'] && 'TBD' !== strtoupper( $score['score'] ) ) {
+			if ( 0 === (int) $score['score'] && 'LezWatchTV' !== $score['name'] ) {
+				continue;
+			}
+
+			if ( null !== $score['score'] && 'TBD' !== strtoupper( $score['score'] ) ) {
 				?>
 				<a href="<?php echo esc_url( $score['url'] ); ?>" target="new">
 				<button

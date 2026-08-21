@@ -14,13 +14,9 @@ use LWTV\Admin_Menu\Auto_Posting;
 use LWTV\Admin_Menu\Debugging;
 use LWTV\Admin_Menu\Exclusions;
 use LWTV\Admin_Menu\Validation;
+use LWTV\Validator\Watch_Providers;
 
 class Admin_Menu implements Component {
-
-	/**
-	 * Local Variables
-	 */
-	protected $page_id = null;
 
 	/**
 	 * Auto_Posting instance
@@ -44,6 +40,11 @@ class Admin_Menu implements Component {
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
 		( new Auto_Posting() )->init();
 		( new Debugging() )->init();
+
+		// Registered here, not in Validation::init(), because that runs on
+		// `admin_menu` and admin-post.php never fires it. That is half the
+		// reason the old data-check admin_post hook never worked.
+		( new Watch_Providers() )->init();
 	}
 
 	/*

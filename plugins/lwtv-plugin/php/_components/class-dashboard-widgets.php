@@ -11,6 +11,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+use LWTV\Debugger\Status;
+
 class Dashboard_Widgets implements Component {
 
 	/*
@@ -37,24 +39,31 @@ class Dashboard_Widgets implements Component {
 	 * @return void
 	 */
 	public function check_dashboard_content() {
-		// Get Last Status
-		$options   = get_option( 'lwtv_debugger_status' );
-		$timestamp = $options['timestamp'];
+		// Get Last Status. Status::all() always hands back an array, which matters
+		// on a fresh install -- unsetting an offset on `false` is a fatal on PHP 8.
+		$options   = Status::all();
+		$timestamp = (int) ( $options['timestamp'] ?? 0 );
 		unset( $options['timestamp'] );
 		?>
 		<div class="main">
-			<p>The tools were last run on <strong><?php echo esc_html( get_date_from_gmt( gmdate( 'Y-m-d H:i:s', $timestamp ), 'F j, Y H:i:s' ) ); ?></strong>.</p>
+			<?php if ( $timestamp ) : ?>
+				<p>The tools were last run on <strong><?php echo esc_html( get_date_from_gmt( gmdate( 'Y-m-d H:i:s', $timestamp ), 'F j, Y H:i:s' ) ); ?></strong>.</p>
+			<?php else : ?>
+				<p>The tools have not been run yet.</p>
+			<?php endif; ?>
 
 			<p><strong>Current Status</strong></p>
 
 			<ul>
 				<?php
 				$output = '';
-				if ( is_array( $options ) ) {
-					foreach ( $options as $an_option ) {
-						if ( $an_option['count'] > 0 ) {
-							$output .= '<li>&bull; ' . $an_option['name'] . ' - ' . $an_option['count'] . '</li>';
-						}
+				foreach ( $options as $an_option ) {
+					if ( ! is_array( $an_option ) || empty( $an_option['name'] ) ) {
+						continue;
+					}
+					$count = isset( $an_option['count'] ) ? (int) $an_option['count'] : 0;
+					if ( $count > 0 ) {
+						$output .= '<li>&bull; ' . esc_html( $an_option['name'] ) . ' - ' . (int) $count . '</li>';
 					}
 				}
 

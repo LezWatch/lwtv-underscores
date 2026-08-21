@@ -20,7 +20,7 @@ class Character_Checker {
 	 */
 	public static function make() {
 
-		$items = lwtv_plugin()->get_transient( 'lwtv_debug_character_problems' );
+		$items = lwtv_plugin()->get_transient( Characters_Debugger::TRANSIENT_PROBLEMS );
 
 		// If rerun was clicked, gotta check 'em all.
 		if ( ( isset( $_POST['rerun'] ) && check_admin_referer( 'run_character_checker_clicked' ) ) || false === $items ) {

@@ -19,7 +19,7 @@ class Actor_IMDb {
 	 */
 	public static function make() {
 
-		$items = lwtv_plugin()->get_transient( 'lwtv_debug_actor_imdb' );
+		$items = lwtv_plugin()->get_transient( Actors_Debugger::TRANSIENT_IMDB );
 
 		// If rerun was clicked, gotta check 'em all.
 		if ( ( isset( $_POST['rerun'] ) && check_admin_referer( 'run_actor_imdb_clicked' ) ) || false === $items ) {
@@ -43,7 +43,7 @@ class Actor_IMDb {
 			<div class="lwtv-tools-container lwtv-tools-container__alert">
 				<h3><span class="dashicons dashicons-yes"></span> Excellent!</h3>
 				<div id="lwtv-tools-alerts">
-					<p>All actors have at an IMDb entry.</p>
+					<p>All actors have an IMDb entry.</p>
 					<?php echo wp_kses_post( $last_run ); ?>
 				</div>
 			</div>

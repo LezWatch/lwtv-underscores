@@ -19,7 +19,7 @@ class Queer_Checker {
 	 */
 	public static function make() {
 
-		$items = lwtv_plugin()->get_transient( 'lwtv_debug_queercheck' );
+		$items = lwtv_plugin()->get_transient( Queers_Debugger::TRANSIENT_QUEERCHECK );
 
 		// If rerun was clicked, gotta check 'em all.
 		if ( ( isset( $_POST['rerun'] ) && check_admin_referer( 'run_queer_checker_clicked' ) ) || false === $items ) {

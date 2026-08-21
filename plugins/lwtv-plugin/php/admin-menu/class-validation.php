@@ -13,7 +13,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 use LWTV\Validator\Actor_Checker;
 use LWTV\Validator\Actor_IMDb;
-use LWTV\Validator\Actor_Wiki;
 use LWTV\Validator\BYQ_Checker;
 use LWTV\Validator\Character_Checker;
 use LWTV\Validator\Duplicates;
@@ -22,15 +21,16 @@ use LWTV\Validator\Show_Checker;
 use LWTV\Validator\Show_IMDb;
 use LWTV\Validator\Show_URLs;
 use LWTV\Validator\OnAir_Checker;
+use LWTV\Validator\Watch_Providers;
+
+use LWTV\Debugger\Status;
 
 class Validation {
 
 	/**
-	 * Local Variables
+	 * Cached copy of the debugger status option.
 	 */
-	protected $page_id = null;        // page ID
-
-	private static $options = array();      // options
+	private static $options = array();
 
 	/**
 	 * Tool Tabs
@@ -81,10 +81,17 @@ class Validation {
 			'desc'   => 'Checks that all shows have the correct on-air status.',
 			'option' => 'onair_problems',
 		),
+		'watch_providers'   => array(
+			'name'   => 'Watch Providers',
+			'desc'   => 'Ways to Watch hosts with no provider term, so the front end is guessing their name. Create the term in one click.',
+			// No badge: this isn't a cron scan, and counting it would mean a
+			// query on every view of every tab.
+			'option' => '',
+		),
 	);
 
 	public function __construct() {
-		self::$options = get_option( 'lwtv_debugger_status' );
+		self::$options = Status::all();
 	}
 
 	/**
@@ -93,19 +100,7 @@ class Validation {
 	 * @return void
 	 */
 	public function init() {
-		add_action( 'admin_menu', array( $this, 'add_admin_notices' ) );
-		add_action( 'admin_post_lwtv_data_check_wikidata_actors', array( $this, 'check_actors_wikidata' ) );
 		add_submenu_page( 'lwtv', 'Data Validation', 'Data Validation', 'upload_files', 'lwtv_data_check', array( $this, 'settings_page' ) );
-	}
-
-	/*
-	 * Settings
-	 *
-	 * Create our settings page
-	 */
-	public function add_admin_notices() {
-		// Admin notices
-		add_action( 'load-$page_id', array( $this, 'admin_notices' ) );
 	}
 
 	/**
@@ -115,14 +110,19 @@ class Validation {
 	 * @return string When was a tool last run.
 	 */
 	public static function last_run( $tool ) {
-		$options = self::$options;
+		$options = is_array( self::$options ) ? self::$options : Status::all();
 
 		// Get the timestamp from the individual last run OR the global.
 		if ( 'intro' !== $tool && isset( $options[ $tool ]['last'] ) ) {
-			$timestamp = $options[ $tool ]['last'];
+			$timestamp = (int) $options[ $tool ]['last'];
 			$tool      = 'checker';
 		} else {
-			$timestamp = $options['timestamp'];
+			$timestamp = (int) ( $options['timestamp'] ?? 0 );
+		}
+
+		// Nothing has ever run (fresh install, or the status option was reset).
+		if ( ! $timestamp ) {
+			return '<p>The ' . str_replace( '_', ' ', $tool ) . ' has not been run yet.</p>';
 		}
 
 		$last_run_time = '<strong>' . get_date_from_gmt( gmdate( 'Y-m-d H:i:s', $timestamp ), 'F j, Y H:i:s' ) . '</strong> (' . human_time_diff( $timestamp ) . ' ago).';
@@ -132,71 +132,51 @@ class Validation {
 	}
 
 	/*
-	 * Admin Notices
-	 *
-	 * @return void
-	 */
-	private function admin_notices() {
-		if ( ! isset( $_GET['message'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
-			return;
-		}
-
-		$notice_value = sanitize_text_field( $_GET['message'] ); // phpcs:ignore WordPress.Security.NonceVerification
-
-		switch ( $notice_value ) {
-			case 'success':
-				$content = 'Automatic fix complete.';
-				break;
-			case 'warning':
-				$content = 'Automatic fix was unable to complete properly.';
-				break;
-			case 'error':
-				$content = 'Something has gone gay-ly wrong.';
-				break;
-			case 'rerun':
-				$content      = 'Check has been re-run.';
-				$notice_value = 'success';
-				break;
-		}
-
-		if ( isset( $content ) ) {
-			$message = '<div class="notice notice-' . esc_attr( $notice_value ) . ' is-dissmissable"><p>' . esc_html( $content ) . '</p></div>';
-			add_action( 'admin_notices', $message );
-		}
-	}
-
-	/*
 	 * Settings Page Content
 	 *
 	 * @return void
 	 */
 	public static function settings_page() {
 		// Get the active tab for later
-		$active_tab = isset( $_GET['tab'] ) ? sanitize_text_field( $_GET['tab'] ) : 'intro'; // phpcs:ignore WordPress.Security.NonceVerification
-		$options    = self::$options;
+		$active_tab = isset( $_GET['tab'] ) ? sanitize_text_field( wp_unslash( $_GET['tab'] ) ) : 'intro'; // phpcs:ignore WordPress.Security.NonceVerification
+		$options    = is_array( self::$options ) ? self::$options : Status::all();
 		?>
 		<div class="wrap">
 
 			<h1>Validation Checks</h1>
 
-			<h2 class="nav-tab-wrapper">
-				<a href="?page=lwtv_data_check" class="nav-tab <?php echo ( 'intro' === $active_tab ) ? 'nav-tab-active' : ''; ?>">Introduction</a>
-				<?php
-				foreach ( self::TOOL_TABS as $tab => $value ) {
-					$active = ( 'tab_' . $tab === $active_tab ) ? 'nav-tab-active' : '';
-					?>
-					<a href="?page=lwtv_data_check&tab=tab_<?php echo esc_attr( $tab ); ?>" class="nav-tab <?php echo esc_attr( $active ); ?>">
-						<?php
-						echo esc_html( $value['name'] );
-						if ( isset( $options[ $value['option'] ] ) && $options[ $value['option'] ]['count'] ) {
-							echo ' <span class="validation-errors count-' . esc_attr( $options[ $value['option'] ]['count'] ) . '"><span class="validation-count">' . esc_attr( $options[ $value['option'] ]['count'] ) . '</span></span>';
-						}
-						?>
-					</a>
+			<form method="get" action="<?php echo esc_url( admin_url( 'admin.php' ) ); ?>" class="lwtv-tools-tabpicker">
+				<input type="hidden" name="page" value="lwtv_data_check" />
+				<label for="lwtv-tools-tab"><strong><?php esc_html_e( 'Check:', 'lwtv' ); ?></strong></label>
+				<select name="tab" id="lwtv-tools-tab">
+					<option value="intro" <?php selected( 'intro', $active_tab ); ?>><?php esc_html_e( 'Introduction', 'lwtv' ); ?></option>
 					<?php
-				}
-				?>
-			</h2>
+					foreach ( self::TOOL_TABS as $tab => $value ) {
+						$count = ( ! empty( $value['option'] ) && isset( $options[ $value['option'] ]['count'] ) )
+							? (int) $options[ $value['option'] ]['count']
+							: 0;
+
+						$label = $count > 0
+							/* translators: 1: check name, 2: number of outstanding items. */
+							? sprintf( '%1$s (%2$d)', $value['name'], $count )
+							: $value['name'];
+						?>
+						<option value="<?php echo esc_attr( 'tab_' . $tab ); ?>" <?php selected( 'tab_' . $tab, $active_tab ); ?>>
+							<?php echo esc_html( $label ); ?>
+						</option>
+						<?php
+					}
+					?>
+				</select>
+				<?php submit_button( __( 'Go', 'lwtv' ), 'secondary', '', false ); ?>
+			</form>
+
+			<script>
+				// Progressive enhancement only -- the Go button works without it.
+				document.getElementById( 'lwtv-tools-tab' ).addEventListener( 'change', function () {
+					this.form.submit();
+				} );
+			</script>
 
 			<div id="dashboard" class="lwtvtab">
 				<?php
@@ -206,10 +186,7 @@ class Validation {
 						( new Actor_Checker() )->make();
 						break;
 					case 'tab_actor_imdb':
-						( new Actor_IMDB() )->make();
-						break;
-					case 'tab_actor_wiki':
-						( new Actor_Wiki() )->make();
+						( new Actor_IMDb() )->make();
 						break;
 					case 'tab_byq_checker':
 						( new BYQ_Checker() )->make();
@@ -234,6 +211,9 @@ class Validation {
 						break;
 					case 'tab_onair_checker':
 						( new OnAir_Checker() )->make();
+						break;
+					case 'tab_watch_providers':
+						Watch_Providers::make();
 						break;
 					default:
 						self::tab_introduction();
@@ -316,24 +296,31 @@ class Validation {
 
 	private static function current_status(): void {
 
-		$options = self::$options;
+		$options = is_array( self::$options ) ? self::$options : Status::all();
 
-		if ( empty( $options ) || ! array( $options ) ) {
+		if ( empty( $options ) ) {
 			return;
 		}
 
 		// Build the list.
-		$list = '<ul>';
+		$items = '';
 		foreach ( $options as $an_option ) {
-			$number = ( isset( $an_option['count'] ) ) ? $an_option['count'] : 0;
-			if ( (int) $number > 0 ) {
-				$list .= '<li>&bull; ' . $an_option['name'] . ' - ' . $an_option['count'] . '</li>';
+			// Skip the global 'timestamp' member, which is an int not an array.
+			if ( ! is_array( $an_option ) || empty( $an_option['name'] ) ) {
+				continue;
+			}
+
+			$number = isset( $an_option['count'] ) ? (int) $an_option['count'] : 0;
+			if ( $number > 0 ) {
+				$items .= '<li>&bull; ' . esc_html( $an_option['name'] ) . ' - ' . (int) $number . '</li>';
 			}
 		}
-		$list .= '</ul>';
 
-		if ( ! empty( $list ) ) {
-			echo wp_kses_post( '<p><strong>Current Status</strong></p>' . $list );
+		// Nothing over zero means nothing to report.
+		if ( '' === $items ) {
+			return;
 		}
+
+		echo wp_kses_post( '<p><strong>Current Status</strong></p><ul>' . $items . '</ul>' );
 	}
 }

@@ -3,6 +3,13 @@
  * Name: Ways to Watch
  * Description: Edit 'ways to watch' on the fly, based on networks and links
  *
+ * The lez_watch_urls taxonomy is the source of truth for provider names. A term
+ * holds the URLs that identify it (lezwatchurls_all_N_url) and its *name is the
+ * display name* -- it is used verbatim, never reformatted.
+ *
+ * Hosts with no term fall through to guess_name(), which does its best from the
+ * hostname. That path is permanent: LWTV documents web series, and each one
+ * lives on its own domain, so there will always be a long tail not worth a term.
  */
 
 namespace LWTV\Theme;
@@ -11,40 +18,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+use LWTV\CPTs\Shows\Host_Name;
+use LWTV\CPTs\Shows\Watch_Host_Names;
+
 
 class Ways_To_Watch {
 
-	const SUBDOMAINS = array( 'gshow.', 'play.', 'premium.', 'watch.', 'www.' );
-	const TLDS       = array( '.com', '.co.nz', '.co.uk', '.ca', '.cbc', '.co', '.fandom', '.globo', '.go', '.org', '.tv' );
-
-	// URLs that belong to someone else.
-	const URL_OWNER = array(
-		'paus.tv'         => 'paus',
-		'watch.paus'      => 'paus',
-		'sho'             => 'showtime',
-		'showtimeanytime' => 'showtime',
-	);
-
-	// URL and name params based on host.
-	const PRETTY_NAME = array(
-		'acorn.tv'            => 'Acorn',
-		'adultswim'           => 'Adult Swim',
-		'bet.plus'            => 'BET+',
-		'bifltheseries'       => 'BIFL',
-		'cwtv'                => 'The CW',
-		'dcuniverse'          => 'DC Universe',
-		'hbomax'              => 'HBO Max',
-		'lesflicksvod'        => 'LesFlicks',
-		'paus'                => 'paus',
-		'peepoodo.bobbypills' => 'BobbyPills',
-		'reelwomensnetwork'   => 'Reel Women\'s Network',
-		'roosterteeth'        => 'Roster Teeth',
-		'svtvnetwork'         => 'SVtv',
-		'tellofilms'          => 'Tello Films',
-		'tntdrama'            => 'TNT Drama',
-		'tvnz'                => 'TVNZ',
-		'tv.line.me'          => 'LineTV',
-	);
+	/**
+	 * Taxonomy holding the watch providers.
+	 */
+	const TAXONOMY = 'lez_watch_urls';
 
 	/**
 	 * Call Custom Links
@@ -81,40 +64,30 @@ class Ways_To_Watch {
 		$links          = array();
 
 		foreach ( $watch_urls as $url ) {
-			$uc_string  = false;
 			$parsed_url = wp_parse_url( $url );
-			$clean_url  = $parsed_url['scheme'] . '://' . $parsed_url['host'];
-			$terms      = $this->get_term_by_url( $clean_url );
 
-			// If this is empty, check the alt URL.
-			if ( is_wp_error( $terms ) || empty( $terms ) ) {
-				$alt_host = $this->check_alt_url( $parsed_url );
-				$terms    = $this->get_term_by_url( $alt_host );
-			}
-
-			// If this is STILL empty, we have an old-school URL.
-			if ( is_wp_error( $terms ) || empty( $terms ) ) {
-				$old_style_urls[] = $url;
-				$uc_string        = true;
-			}
-
-			// No terms? Skip.
-			if ( empty( $terms ) ) {
+			// Junk in the field shouldn't warn or crash the whole block.
+			if ( ! is_array( $parsed_url ) || empty( $parsed_url['host'] ) ) {
 				continue;
 			}
+
+			$terms = $this->get_term_by_url( $this->url_candidates( $parsed_url ) );
+
+			// No term for this host: fall back to guessing from the hostname.
+			if ( empty( $terms ) ) {
+				$old_style_urls[] = $url;
+				continue;
+			}
+
+			$term = $terms[0];
 
 			// If Hide Display is flagged, hide the display.
-			if ( '1' === get_term_meta( $terms[0]->ID, 'lezwatchurls_setting_hide_display', true ) ) {
+			if ( '1' === get_term_meta( $term->term_id, 'lezwatchurls_setting_hide_display', true ) ) {
 				continue;
 			}
 
-			$slug = $terms[0]->name;
-
-			// Clean the name
-			$name = $this->clean_name( $slug, $uc_string );
-
-			// Add to the links array.
-			$links[] = $this->build_link( $url, $name );
+			// The term name IS the display name. Do not reformat it.
+			$links[] = $this->build_link( $url, $term->name );
 		}
 
 		// If we have old style URLs, we need to generate those links.
@@ -127,71 +100,104 @@ class Ways_To_Watch {
 	}
 
 	/**
-	 * Check alternate URL
+	 * Every stored URL form worth trying for one parsed URL, most specific first.
 	 *
-	 * We have to check both WWW and non-WWW versions of the URL because
-	 * I don't know what URL people will put in!
+	 * Terms store 'scheme://host'. Editors are inconsistent about www and about
+	 * http vs https, and a term registered as https will never match an http
+	 * show URL on an exact comparison, so both are offered rather than requiring
+	 * every term to list every variant.
 	 *
-	 * @param  string $url
-	 * @return string
+	 * @param  array $parsed_url Output of wp_parse_url().
+	 * @return array<string>
 	 */
-	public function check_alt_url( $parsed_url ) {
-		$clean_host = $this->clean_subdomain( $parsed_url['host'] );
+	private function url_candidates( array $parsed_url ): array {
+		$hosts = Host_Name::host_candidates( $parsed_url['host'] );
 
-		if ( 'www.' === substr( $parsed_url['host'], 0, 4 ) ) {
-			$alt_url = $clean_host;
-		} else {
-			$alt_url = 'www.' . $clean_host;
+		if ( empty( $hosts ) ) {
+			return array();
 		}
 
-		$clean_url = $parsed_url['scheme'] . '://' . $alt_url;
+		// The URL's own scheme first, then the other one.
+		$scheme  = ( isset( $parsed_url['scheme'] ) && 'http' === $parsed_url['scheme'] ) ? 'http' : 'https';
+		$schemes = array( $scheme, 'http' === $scheme ? 'https' : 'http' );
 
-		return $clean_url;
+		$candidates = array();
+		foreach ( $hosts as $one_host ) {
+			foreach ( $schemes as $one_scheme ) {
+				$candidates[] = $one_scheme . '://' . $one_host;
+			}
+		}
+
+		return array_values( array_unique( $candidates ) );
 	}
 
 	/**
 	 * Get Term by URL
 	 *
-	 * Searches ACF repeater subfield rows (lezwatchurls_all_N_url) for an exact URL match.
+	 * Searches ACF repeater subfield rows (lezwatchurls_all_N_url) for an exact
+	 * match against any of the supplied URLs, in one query.
 	 *
-	 * @param  string $url
+	 * When several candidates match, the earliest in $urls wins, so a term
+	 * registered on 'abc.go.com' beats one registered on 'go.com'.
+	 *
+	 * @param  string|array $urls One URL, or candidates in priority order.
 	 * @return array
 	 */
-	public function get_term_by_url( $url ): array {
+	public function get_term_by_url( $urls ): array {
 		global $wpdb;
 
-		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
-		$term_ids = $wpdb->get_col(
-			$wpdb->prepare(
-				"SELECT DISTINCT t.term_id
-				FROM {$wpdb->terms} t
-				INNER JOIN {$wpdb->term_taxonomy} tt ON t.term_id = tt.term_id
-				INNER JOIN {$wpdb->termmeta} tm ON t.term_id = tm.term_id
-				WHERE tt.taxonomy = 'lez_watch_urls'
-				AND tm.meta_key LIKE 'lezwatchurls_all_%_url'
-				AND tm.meta_value = %s",
-				$url
-			)
-		);
-		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
+		$urls = array_values( array_filter( (array) $urls ) );
 
-		if ( empty( $term_ids ) ) {
+		if ( empty( $urls ) ) {
 			return array();
 		}
 
-		$terms = get_terms(
-			array(
-				'taxonomy'   => 'lez_watch_urls',
-				'hide_empty' => false,
-				'include'    => $term_ids,
+		$placeholders = implode( ', ', array_fill( 0, count( $urls ), '%s' ) );
+
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$matches = $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT tm.meta_value AS matched_url, t.term_id
+				FROM {$wpdb->terms} t
+				INNER JOIN {$wpdb->term_taxonomy} tt ON t.term_id = tt.term_id
+				INNER JOIN {$wpdb->termmeta} tm ON t.term_id = tm.term_id
+				WHERE tt.taxonomy = %s
+				AND tm.meta_key REGEXP '^lezwatchurls_all_[0-9]+_url$'
+				AND tm.meta_value IN ( {$placeholders} )",
+				array_merge( array( self::TAXONOMY ), $urls )
 			)
 		);
+		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 
-		return ( ! is_wp_error( $terms ) && is_array( $terms ) ) ? $terms : array();
+		if ( empty( $matches ) ) {
+			return array();
+		}
+
+		// SQL has no opinion on our candidate order, so resolve it here.
+		$by_url = array();
+		foreach ( $matches as $match ) {
+			$by_url[ $match->matched_url ] = (int) $match->term_id;
+		}
+
+		$term_id = 0;
+		foreach ( $urls as $candidate ) {
+			if ( isset( $by_url[ $candidate ] ) ) {
+				$term_id = $by_url[ $candidate ];
+				break;
+			}
+		}
+
+		if ( ! $term_id ) {
+			return array();
+		}
+
+		$term = get_term( $term_id, self::TAXONOMY );
+
+		return ( $term instanceof \WP_Term ) ? array( $term ) : array();
 	}
 
 	/**
-	 * Generate URLs
+	 * Generate links for hosts with no term, guessing the name.
 	 *
 	 * @param  array $watch_urls
 	 * @return array
@@ -199,25 +205,14 @@ class Ways_To_Watch {
 	public function generate_links_old( $watch_urls ) {
 		$links = array();
 
-		// Parse each URL to figure out who it is...
 		foreach ( $watch_urls as $url ) {
 			$parsed_url = wp_parse_url( $url );
-			$hostname   = $parsed_url['host'];
 
-			// Clean the subdomain.
-			$hostname = $this->clean_subdomain( $hostname );
+			if ( ! is_array( $parsed_url ) || empty( $parsed_url['host'] ) ) {
+				continue;
+			}
 
-			// Remove TLDs from the end:
-			$hostname = $this->clean_tlds( $hostname );
-
-			// Get the slug based on the hostname to array translation.
-			$slug = ( array_key_exists( $hostname, self::URL_OWNER ) ) ? self::URL_OWNER[ $hostname ] : $hostname;
-
-			// Clean the name
-			$name = $this->clean_name( $slug, true );
-
-			// Add to the links array.
-			$links[] = $this->build_link( $url, $name );
+			$links[] = $this->build_link( $url, $this->guess_name( $parsed_url['host'] ) );
 		}
 
 		return $links;
@@ -228,68 +223,33 @@ class Ways_To_Watch {
 	 *
 	 * @param  string $url
 	 * @param  string $name
-	 * @param  string $extra
 	 * @return string
 	 */
 	public function build_link( $url, $name ): string {
-		return '<a href="' . $url . '" target="_blank" class="btn btn-primary" rel="nofollow">' . $name . '</a>';
+		return '<a href="' . esc_url( $url ) . '" target="_blank" class="btn btn-primary" rel="nofollow">' . esc_html( $name ) . '</a>';
 	}
 
 	/**
-	 * Clean Subdomains
+	 * Best available display name for a host with no term.
 	 *
-	 * @param  string $hostname
+	 * Three tiers, best first:
+	 *   1. A lez_watch_urls term name  -- handled by the caller, wins outright.
+	 *   2. A name the host published about itself, discovered by
+	 *      `wp lwtv waystowatch enrich` and cached. Reads the cache only; never
+	 *      makes a request during a page load.
+	 *   3. Host_Name's guess from the hostname, which is pure and unit-tested
+	 *      but can only ever be best-effort.
+	 *
+	 * @param  string $host Hostname.
 	 * @return string
 	 */
-	public function clean_subdomain( $hostname ): string {
-		foreach ( self::SUBDOMAINS as $remove ) {
-			$count = strlen( $remove );
-			if ( substr( $hostname, 0, $count ) === $remove ) {
-				$hostname = ltrim( $hostname, $remove );
-				break;
-			}
+	private function guess_name( string $host ): string {
+		$discovered = Watch_Host_Names::get( $host );
+
+		if ( null !== $discovered && '' !== $discovered ) {
+			return $discovered;
 		}
 
-		return $hostname;
-	}
-
-	/**
-	 * Clean TLDs off hosts
-	 *
-	 * @param  string $hostname
-	 * @return string
-	 */
-	public function clean_tlds( $hostname ): string {
-		foreach ( self::TLDS as $remove ) {
-			$count = strlen( $remove );
-			if ( substr( $hostname, -$count ) === $remove ) {
-				$hostname = substr( $hostname, 0, -$count );
-				break;
-			}
-		}
-
-		return $hostname;
-	}
-
-	/**
-	 * Clean the pretty name based on the slug
-	 *
-	 * @param  string $slug
-		* @param  bool   $uc_string
-	 * @return string
-	 */
-	private function clean_name( string $slug, bool $uc_string = false ): string {
-		// Set name based on slug in url_array. If not set, capitalize string.
-		$name = ( isset( self::PRETTY_NAME[ $slug ] ) ) ? self::PRETTY_NAME[ $slug ] : ucfirst( $slug );
-
-		// If it's three letters, it's always capitalized.
-		$name = ( $uc_string && ! isset( self::PRETTY_NAME[ $slug ] ) && 3 === strlen( $name ) ) ? strtoupper( $name ) : $name;
-
-		// Crazy failsafe:
-		if ( empty( $name ) ) {
-			$name = 'Watch Online';
-		}
-
-		return $name;
+		return Host_Name::guess( $host );
 	}
 }
