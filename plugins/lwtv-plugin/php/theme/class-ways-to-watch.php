@@ -71,7 +71,7 @@ class Ways_To_Watch {
 				continue;
 			}
 
-			$terms = $this->get_term_by_url( $this->url_candidates( $parsed_url ) );
+			$terms = self::get_term_by_url( $this->url_candidates( $parsed_url ) );
 
 			// No term for this host: fall back to guessing from the hostname.
 			if ( empty( $terms ) ) {
@@ -140,10 +140,13 @@ class Ways_To_Watch {
 	 * When several candidates match, the earliest in $urls wins, so a term
 	 * registered on 'abc.go.com' beats one registered on 'go.com'.
 	 *
+	 * Static: it keeps no instance state, and Watch_Hosts calls it once per host
+	 * across every host in use.
+	 *
 	 * @param  string|array $urls One URL, or candidates in priority order.
 	 * @return array
 	 */
-	public function get_term_by_url( $urls ): array {
+	public static function get_term_by_url( $urls ): array {
 		global $wpdb;
 
 		$urls = array_values( array_filter( (array) $urls ) );

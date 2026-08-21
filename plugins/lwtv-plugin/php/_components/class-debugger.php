@@ -15,6 +15,11 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Class for debugging. This includes the feature methods:
  * is_dev_site(), is_debug_mode(), and log()
  *
+ * The validators and formatters (validate_imdb, validate_wikidata_id,
+ * sanitize_social, format_wikidate) are static: they hold no state and are
+ * called per-post inside scan loops, where instantiating for each call was
+ * pure waste. The rest stay instance methods because get_template_tags()
+ * binds them with array( $this, ... ).
  */
 class Debugger implements Component, Templater {
 
@@ -47,7 +52,7 @@ class Debugger implements Component, Templater {
 	 * @param  string $social  Social Media Type
 	 * @return string          sanitized username
 	 */
-	public function sanitize_social( $usename, $social ): string {
+	public static function sanitize_social( $usename, $social ): string {
 
 		// Defaults.
 		$trim  = 10;
@@ -82,7 +87,7 @@ class Debugger implements Component, Templater {
 	 * @param  string $date Wiki formatted date: +1968-07-07T00:00:00Z
 	 * @return string      LezWatch formatted date: 1968-07-07
 	 */
-	public function format_wikidate( $date ): string {
+	public static function format_wikidate( $date ): string {
 		$clean = trim( substr( $date, 0, strpos( $date, 'T' ) ), '+' );
 		return $clean;
 	}
@@ -92,7 +97,7 @@ class Debugger implements Component, Templater {
 	 * @param  string  $imdb IMDB ID
 	 * @return boolean         true/false
 	 */
-	public function validate_imdb( $imdb, $type = 'show' ): bool {
+	public static function validate_imdb( $imdb, $type = 'show' ): bool {
 
 		// Defaults
 		$type = ( ! in_array( $type, array( 'show', 'actor' ), true ) ) ? 'show' : $type;
@@ -125,7 +130,7 @@ class Debugger implements Component, Templater {
 	 * @param  string $wiki_id
 	 * @return bool
 	 */
-	public function validate_wikidata_id( $wiki_id ): bool {
+	public static function validate_wikidata_id( $wiki_id ): bool {
 		// If it doesn't start with a Q, fail.
 		if ( ! str_starts_with( $wiki_id, 'Q' ) ) {
 			return false;

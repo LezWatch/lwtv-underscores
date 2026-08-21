@@ -158,18 +158,18 @@ class Actors {
 			//   that's suspicious (props Jamie)
 			if ( ! empty( $check['insta'] ) ) {
 				// Limit - 30 symbols. Username must contains only letters, numbers, periods and underscores.
-				if ( ( new Debug_Tool() )->sanitize_social( $check['insta'], 'instagram' ) !== $check['insta'] ) {
+				if ( Debug_Tool::sanitize_social( $check['insta'], 'instagram' ) !== $check['insta'] ) {
 					$problems[] = 'Instagram ID is invalid -- ' . esc_html( $check['insta'] );
-				} elseif ( ( new Debug_Tool() )->validate_imdb( $check['insta'], 'actor' ) ) {
+				} elseif ( Debug_Tool::validate_imdb( $check['insta'], 'actor' ) ) {
 					// If instagram is IMDb, then it's wrong.
 					delete_post_meta( $actor_id, 'lezactors_instagram' );
 					$problems[] = 'Instagram ID was set as IMDb and has been removed - ' . esc_html( $check['insta'] );
 				}
 			}
 			if ( ! empty( $check['twits'] ) ) {
-				if ( ( new Debug_Tool() )->sanitize_social( $check['twits'], 'twitter' ) !== $check['twits'] ) {
+				if ( Debug_Tool::sanitize_social( $check['twits'], 'twitter' ) !== $check['twits'] ) {
 					$problems[] = 'Twitter ID is invalid -- ' . esc_html( $check['twits'] );
-				} elseif ( ( new Debug_Tool() )->validate_imdb( $check['twits'], 'actor' ) ) {
+				} elseif ( Debug_Tool::validate_imdb( $check['twits'], 'actor' ) ) {
 					// If Twitter is IMDb, then it's wrong.
 					delete_post_meta( $actor_id, 'lezactors_twitter' );
 					$problems[] = 'Twitter ID was set as IMDb and has been removed - ' . esc_html( $check['twits'] );
@@ -332,7 +332,7 @@ class Actors {
 			if ( empty( $imdb ) ) {
 				// Check for IMDb existing at all...
 				$problems[] = 'IMDb ID is not set.';
-			} elseif ( ( new Debug_Tool() )->validate_imdb( $imdb, 'actor' ) === false ) {
+			} elseif ( Debug_Tool::validate_imdb( $imdb, 'actor' ) === false ) {
 				// - IMDb IDs should be valid for the space they're in, e.g. "nm"
 				// and digits for people (props Jamie).
 				$problems[] = 'IMDb ID is invalid (ex: nm12345) -- ' . $imdb;
@@ -597,8 +597,8 @@ class Actors {
 		}
 
 		return array(
-			'birth'     => ( isset( $wiki_claims['P569'] ) ) ? ( new Debug_Tool() )->format_wikidate( $wiki_claims['P569'][0]['mainsnak']['datavalue']['value']['time'] ) : '',
-			'death'     => ( isset( $wiki_claims['P570'] ) ) ? ( new Debug_Tool() )->format_wikidate( $wiki_claims['P570'][0]['mainsnak']['datavalue']['value']['time'] ) : '',
+			'birth'     => ( isset( $wiki_claims['P569'] ) ) ? Debug_Tool::format_wikidate( $wiki_claims['P569'][0]['mainsnak']['datavalue']['value']['time'] ) : '',
+			'death'     => ( isset( $wiki_claims['P570'] ) ) ? Debug_Tool::format_wikidate( $wiki_claims['P570'][0]['mainsnak']['datavalue']['value']['time'] ) : '',
 			'wikipedia' => $wiki_link ?? '',
 			'imdb'      => ( isset( $wiki_claims['P345'] ) ) ? $wiki_claims['P345'][0]['mainsnak']['datavalue']['value'] : '',
 			'instagram' => ( isset( $wiki_claims['P2003'] ) ) ? $wiki_claims['P2003'][0]['mainsnak']['datavalue']['value'] : '',
