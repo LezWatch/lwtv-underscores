@@ -469,7 +469,19 @@ class BYQ {
 		global $wpdb;
 		$date_regex = implode( '|', $date_patterns );
 
-		// phpcs:disable WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery -- meta_key pattern, not a user-supplied value
+		// Bound rather than inlined, for two reasons beyond tidiness.
+		//
+		// The literal it replaced was 'lezchars_death_year_%_date'. Every '_' in
+		// that is a single-character LIKE wildcard, so it also matched keys like
+		// 'lezcharsXdeath_year_1_date'. Harmless with today's data, but not what
+		// it says. esc_like() makes them literal.
+		//
+		// It also put a bare '%' inside a prepare() string, which is what
+		// WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery exists to
+		// catch -- the version this replaced had to phpcs:disable that sniff.
+		// Binding the pattern removes the cause rather than the warning.
+		$meta_key_like = $wpdb->esc_like( 'lezchars_death_year_' ) . '%' . $wpdb->esc_like( '_date' );
+
 		$query = $wpdb->prepare(
 			"SELECT DISTINCT p.ID, p.post_title, p.post_name
 			FROM {$wpdb->posts} p
@@ -479,15 +491,15 @@ class BYQ {
 			INNER JOIN {$wpdb->terms} t ON tt.term_id = t.term_id
 			WHERE p.post_type = %s
 			AND p.post_status = 'publish'
-			AND pm.meta_key LIKE 'lezchars_death_year_%_date'
+			AND pm.meta_key LIKE %s
 			AND pm.meta_value REGEXP %s
 			AND tt.taxonomy = 'lez_cliches'
 			AND t.slug = 'dead'
 			ORDER BY p.post_title",
 			CPT_Characters::SLUG,
+			$meta_key_like,
 			$date_regex
 		);
-		// phpcs:enable WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
 
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- Complex regex pattern for date matching
 		$results = $wpdb->get_results( $query );
@@ -606,20 +618,38 @@ class BYQ {
 
 		$placeholders = implode( ',', array_fill( 0, count( $character_ids ), '%d' ) );
 
+		// Bound, not inlined. Every '_' in these keys is a literal, but an
+		// unescaped one is a single-character LIKE wildcard, and a bare '%'
+		// inside a prepare() string is what LikeWildcardsInQuery flags. Binding
+		// them removes the cause instead of silencing the sniff.
+		$death_date_like = $wpdb->esc_like( 'lezchars_death_year_' ) . '%' . $wpdb->esc_like( '_date' );
+		$show_group_like = $wpdb->esc_like( 'lezchars_show_group_' ) . '%' . $wpdb->esc_like( '_show' );
+
 		// Query ACF repeater subfields — lezchars_death_year and lezchars_show_group now
 		// store a count integer in their parent key; actual values live in indexed subfields.
-		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
+		//
+		// Argument order matters: the IN placeholders come first in the SQL, so
+		// the two LIKE patterns are appended after the character IDs.
+		//
+		// ReplacementsWrongNumber is suppressed for the same reason
+		// UnfinishedPrepare already is: the placeholder count is dynamic
+		// ({$placeholders}), so the sniff compares the 2 literal %s it can see
+		// against the 1 replacement expression it can count and reports a
+		// mismatch that isn't there. Neither the spread form nor a single array
+		// avoids it -- both count as one. Verified by hand instead: IN(...) takes
+		// count($character_ids) %d, then the two %s take the two LIKE patterns.
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber
 		$query = $wpdb->prepare(
 			"SELECT post_id, meta_key, meta_value FROM {$wpdb->postmeta}
 			WHERE post_id IN ({$placeholders})
 			AND (
-				meta_key LIKE 'lezchars_death_year_%_date'
-				OR meta_key LIKE 'lezchars_show_group_%_show'
+				meta_key LIKE %s
+				OR meta_key LIKE %s
 				OR meta_key = 'lezchars_last_death'
 			)",
-			...$character_ids
+			array_merge( $character_ids, array( $death_date_like, $show_group_like ) )
 		);
-		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
+		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber
 
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- query built with prepare() above
 		$results = $wpdb->get_results( $query );

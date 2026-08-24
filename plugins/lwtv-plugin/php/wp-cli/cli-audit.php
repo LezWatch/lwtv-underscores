@@ -722,13 +722,23 @@ class WP_CLI_LWTV_Audit {
 
 		if ( empty( $char_ids ) || ! is_array( $char_ids ) ) {
 			global $wpdb;
+
+			// Both meta_key predicates are intentional. REGEXP is the exact test
+			// but is not sargable, and this query has no other selective filter
+			// to drive off, so without the LIKE it scans wp_postmeta outright.
+			// The LIKE gives the meta_key index a constant prefix. esc_like() is
+			// required: an unescaped '_' is a LIKE wildcard.
+			$like = $wpdb->esc_like( 'lezchars_show_group_' ) . '%' . $wpdb->esc_like( '_show' );
+
 			// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
 			$char_ids = $wpdb->get_col(
 				$wpdb->prepare(
 					"SELECT DISTINCT post_id
 					FROM {$wpdb->postmeta}
-					WHERE meta_key REGEXP 'lezchars_show_group_[0-9]+_show'
+					WHERE meta_key LIKE %s
+					AND meta_key REGEXP 'lezchars_show_group_[0-9]+_show'
 					AND meta_value = %d",
+					$like,
 					$show_id
 				)
 			);

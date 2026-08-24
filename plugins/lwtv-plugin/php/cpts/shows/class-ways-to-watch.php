@@ -149,34 +149,16 @@ class Ways_To_Watch {
 		return $columns;
 	}
 
-	/**
-	 * Check the ways to watch as we moved over.
+	/*
+	 * The `lezshows_affiliate` -> `lezshows_waystowatch` migration used to live
+	 * here as migrate_ways_to_watch(), called once per show from
+	 * Debugger\Shows::find_shows_bad_url(). Both are gone: no post carries
+	 * `lezshows_affiliate` any more (verified 2026-08-21), and running a write
+	 * migration from inside a read-only scanner was the wrong shape regardless
+	 * (DEBUGGER-REVIEW.md 8.4).
 	 *
-	 * @param int $show_id The show ID.
+	 * The remaining legacy path is `wp lwtv migrate acf waystowatch`, which
+	 * converts the flat-array form of `lezshows_waystowatch` into ACF repeater
+	 * rows. That one is idempotent and safe to re-run.
 	 */
-	public function migrate_ways_to_watch( int $show_id ): void {
-		$old_watch_urls = get_post_meta( $show_id, 'lezshows_affiliate', true );
-		$new_watch_urls = get_field( 'lezshows_waystowatch', $show_id );
-
-		if ( empty( $new_watch_urls ) && ! empty( $old_watch_urls ) ) {
-			// Write the ACF repeater's indexed subfield rows directly rather than
-			// dumping the legacy flat value into the repeater's raw count key.
-			$count = 0;
-			foreach ( (array) $old_watch_urls as $url ) {
-				$url = esc_url_raw( trim( $url ) );
-
-				if ( empty( $url ) ) {
-					continue;
-				}
-
-				$key = "lezshows_waystowatch_{$count}_url";
-				update_post_meta( $show_id, $key, $url );
-				update_post_meta( $show_id, "_$key", 'field_lwtv_lezshows_waystowatch_url' );
-				++$count;
-			}
-			update_post_meta( $show_id, 'lezshows_waystowatch', $count );
-			update_post_meta( $show_id, '_lezshows_waystowatch', 'field_lwtv_lezshows_waystowatch' );
-			delete_post_meta( $show_id, 'lezshows_affiliate' );
-		}
-	}
 }

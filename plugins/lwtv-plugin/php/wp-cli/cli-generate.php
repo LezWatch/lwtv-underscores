@@ -13,6 +13,7 @@ use LWTV\Debugger\Shows as Shows_Debugger;
 use LWTV\Debugger\Dupes as Dupes_Debugger;
 use LWTV\Debugger\Queers as Queers_Debugger;
 use LWTV\Debugger\OnAir as OnAir_Debugger;
+use LWTV\Debugger\Watch_URLs as Watch_URLs_Debugger;
 use LWTV\Features\Missed_Schedule;
 use LWTV\Rest_API\BYQ;
 use LWTV\CPTs\Shows as CPT_Shows;
@@ -268,6 +269,14 @@ class WP_CLI_LWTV_Generate {
 				} else {
 					\WP_CLI::warning( 'FacetWP is not active; skipping reindex.' );
 				}
+
+				// Sunday takes the slow one, on the quietest day, and it goes
+				// last: this is one HTTP request per provider URL with a rate
+				// limit between them (Watch_URLs::SLEEP_US), so it is the only
+				// thing here that could plausibly hit a cron wrapper's timeout.
+				// If it does, everything above it has already finished.
+				\WP_CLI::log( 'Debugger: Checking watch provider URLs...' );
+				( new Watch_URLs_Debugger() )->find_bad_watch_urls();
 				break;
 			default:
 				\WP_CLI::warning( 'You must provide a valid day of the week. Use the THREE letter version (Mon, Tue, etc)' );

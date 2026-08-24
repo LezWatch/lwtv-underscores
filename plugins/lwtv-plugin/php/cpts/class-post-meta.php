@@ -118,10 +118,10 @@ class Post_Meta {
 			'post_type'    => CPT_Shows::SLUG,
 			'show_in_rest' => false,
 		),
-		// DEPRECATED! Use 'lezshows_waystowatch' instead.
-		'lezshows_affiliate'            => array(
-			'post_type' => CPT_Shows::SLUG,
-		),
+		// 'lezshows_affiliate' was registered here as deprecated. Removed once no
+		// post carried it (verified 2026-08-21) and the migration that read it
+		// was deleted. It had no 'show_in_rest' key, so it defaulted to true and
+		// was shipping an always-empty field in the shows REST schema.
 		'lezshows_char_count'           => array(
 			'post_type' => CPT_Shows::SLUG,
 		),

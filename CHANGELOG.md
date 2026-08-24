@@ -4,6 +4,22 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [7.1.15] - 2026-08-24
+
+### Added
+
+- Add a term-scoped watch-URL health check that classifies each provider link as ok, broken, blocked, or needing review (parking pages, off-domain redirects, or a mismatched provider name).
+- Add a `wp lwtv debug watchurls` command that runs a full watch-URL health sweep.
+- The Watch Term Check admin tab can now re-check just the flagged URLs instead of re-running a full scan.
+
+### Changed
+
+- Watch-URL health checks now run once per provider instead of once per show, cutting the number of requests needed to validate links.
+
+### Removed
+
+- Removed the old show-by-show URL validator and its unreachable tab.
+
 ## [7.1.14] - 2026-08-21
 
 ### Added

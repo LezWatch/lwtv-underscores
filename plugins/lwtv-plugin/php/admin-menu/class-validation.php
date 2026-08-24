@@ -19,11 +19,12 @@ use LWTV\Validator\Duplicates;
 use LWTV\Validator\Queer_Checker;
 use LWTV\Validator\Show_Checker;
 use LWTV\Validator\Show_IMDb;
-use LWTV\Validator\Show_URLs;
 use LWTV\Validator\OnAir_Checker;
 use LWTV\Validator\Watch_Providers;
+use LWTV\Validator\Watch_Term_Check;
 
 use LWTV\Debugger\Status;
+use LWTV\Debugger\Watch_URLs;
 
 class Validation {
 
@@ -87,6 +88,11 @@ class Validation {
 			// No badge: this isn't a cron scan, and counting it would mean a
 			// query on every view of every tab.
 			'option' => '',
+		),
+		'watch_term_check'  => array(
+			'name'   => 'Watch Term Check',
+			'desc'   => 'The other half of Watch Providers: of the terms we do have, do their URLs still work and still belong to that provider? A shut-down service whose domain was resold still answers HTTP 200.',
+			'option' => Watch_URLs::STATUS_KEY,
 		),
 	);
 
@@ -206,14 +212,14 @@ class Validation {
 					case 'tab_show_imdb':
 						( new Show_IMDb() )->make();
 						break;
-					case 'tab_show_urls':
-						( new Show_URLs() )->make();
-						break;
 					case 'tab_onair_checker':
 						( new OnAir_Checker() )->make();
 						break;
 					case 'tab_watch_providers':
 						Watch_Providers::make();
+						break;
+					case 'tab_watch_term_check':
+						Watch_Term_Check::make();
 						break;
 					default:
 						self::tab_introduction();
