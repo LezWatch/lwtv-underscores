@@ -289,9 +289,17 @@ class Taxonomy_Optimized {
 		$term_slugs        = array_map( 'sanitize_text_field', $terms );
 		$term_placeholders = implode( ',', array_fill( 0, count( $term_slugs ), '%s' ) );
 
+		// Bound, not inlined. Every '_' in the key is a literal, but an unescaped
+		// one is a single-character LIKE wildcard, and a bare '%' inside a
+		// prepare() string is what LikeWildcardsInQuery flags.
+		$show_group_like = $wpdb->esc_like( 'lezchars_show_group_' ) . '%' . $wpdb->esc_like( '_show' );
+
 		// Single query to get both total and dead character counts.
 		// ACF repeater stores show relationships as individual meta keys (lezchars_show_group_N_show),
 		// not as a serialized value under lezchars_show_group. Join on the sub-field key directly.
+		//
+		// Argument order matters: this LIKE sits in a JOIN condition, so it is
+		// the *first* placeholder in the statement, ahead of $post_type.
 		// phpcs:disable
 		$query = $wpdb->prepare(
 			"SELECT
@@ -302,7 +310,7 @@ class Taxonomy_Optimized {
 			INNER JOIN {$wpdb->term_taxonomy} tt ON t.term_id = tt.term_id
 			LEFT JOIN {$wpdb->term_relationships} tr ON tt.term_taxonomy_id = tr.term_taxonomy_id
 			LEFT JOIN {$wpdb->posts} shows ON tr.object_id = shows.ID
-			INNER JOIN {$wpdb->postmeta} char_shows ON char_shows.meta_key LIKE 'lezchars_show_group_%_show'
+			INNER JOIN {$wpdb->postmeta} char_shows ON char_shows.meta_key LIKE %s
 				AND char_shows.meta_value = shows.ID
 			INNER JOIN {$wpdb->posts} chars ON chars.ID = char_shows.post_id AND chars.post_type = %s AND chars.post_status = 'publish'
 			LEFT JOIN {$wpdb->postmeta} chars_death ON chars.ID = chars_death.post_id AND chars_death.meta_key = 'lezchars_last_death'
@@ -311,7 +319,7 @@ class Taxonomy_Optimized {
 			AND shows.post_status = 'publish'
 			AND t.slug IN ($term_placeholders)
 			GROUP BY t.slug",
-			array_merge( array( $post_type, $taxonomy ), $term_slugs )
+			array_merge( array( $show_group_like, $post_type, $taxonomy ), $term_slugs )
 		);
 		// phpcs:enable
 

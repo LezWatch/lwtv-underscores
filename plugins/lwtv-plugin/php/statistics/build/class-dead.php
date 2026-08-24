@@ -806,6 +806,14 @@ class Dead {
 		try {
 			// ACF repeater fields store sub-fields as separate meta keys (lezchars_show_group_N_type),
 			// not as a serialized value under lezchars_show_group. Query sub-field keys directly.
+			//
+			// Do NOT add a sargable `meta_key LIKE 'lezchars\_show\_group\_%\_type'`
+			// alongside the REGEXP here. That trick is worth it on the other
+			// sub-field queries, but EXPLAIN on this one shows MySQL drives off
+			// t.slug = 'dead' and reaches pm_type by the post_id index (type=ref,
+			// ~12 rows per character). The meta_key index is never consulted, so
+			// the LIKE would be pure noise. The selective filter is the taxonomy
+			// join, not the meta key.
 			$query = "SELECT pm_type.meta_value as role_type
 				FROM {$wpdb->postmeta} pm_type
 				INNER JOIN {$wpdb->posts} p ON p.ID = pm_type.post_id

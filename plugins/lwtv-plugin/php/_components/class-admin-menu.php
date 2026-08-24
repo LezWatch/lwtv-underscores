@@ -15,6 +15,7 @@ use LWTV\Admin_Menu\Debugging;
 use LWTV\Admin_Menu\Exclusions;
 use LWTV\Admin_Menu\Validation;
 use LWTV\Validator\Watch_Providers;
+use LWTV\Validator\Watch_Term_Check;
 
 class Admin_Menu implements Component {
 
@@ -45,6 +46,7 @@ class Admin_Menu implements Component {
 		// `admin_menu` and admin-post.php never fires it. That is half the
 		// reason the old data-check admin_post hook never worked.
 		( new Watch_Providers() )->init();
+		( new Watch_Term_Check() )->init();
 	}
 
 	/*

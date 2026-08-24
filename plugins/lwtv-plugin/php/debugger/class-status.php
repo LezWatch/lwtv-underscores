@@ -57,6 +57,40 @@ class Status {
 	}
 
 	/**
+	 * Drop entries for checks that no longer exist.
+	 *
+	 * Retiring a check leaves its last count behind in this option, and
+	 * Admin_Menu\Validation::current_status() prints every entry with a count
+	 * above zero. Without a prune, a deleted check keeps reporting findings on
+	 * the intro tab forever, with no tab to open and nothing that could ever
+	 * recompute it to zero.
+	 *
+	 * @param array<string> $keys Status keys to remove.
+	 *
+	 * @return array<string> The keys that were actually present and removed.
+	 */
+	public static function forget( array $keys ): array {
+		$option  = self::all();
+		$removed = array();
+
+		foreach ( $keys as $key ) {
+			// 'timestamp' is the global last-run marker, not a check.
+			if ( 'timestamp' === $key || ! array_key_exists( $key, $option ) ) {
+				continue;
+			}
+
+			unset( $option[ $key ] );
+			$removed[] = $key;
+		}
+
+		if ( ! empty( $removed ) ) {
+			update_option( self::OPTION, $option );
+		}
+
+		return $removed;
+	}
+
+	/**
 	 * When was a given check last run?
 	 *
 	 * @param string $key Status key for the check.
