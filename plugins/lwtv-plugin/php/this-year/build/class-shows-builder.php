@@ -335,16 +335,25 @@ class Shows_Builder {
 		// revision IDs would otherwise leak in as phantom, nameless cast members.
 		$placeholders = implode( ',', array_fill( 0, count( $show_ids ), '%d' ) );
 
+		// Both meta_key predicates are intentional. REGEXP is the exact test but
+		// is not sargable; the LIKE is redundant for correctness and exists only
+		// so the meta_key index can range-scan a constant prefix instead of
+		// MySQL reaching every candidate row in wp_postmeta. esc_like() is
+		// required because an unescaped '_' is a LIKE wildcard, and these keys
+		// are full of literal ones.
+		$like = $wpdb->esc_like( 'lezchars_show_group_' ) . '%' . $wpdb->esc_like( '_show' );
+
 		// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 		$query                   = $wpdb->prepare(
 			"SELECT DISTINCT pm.post_id
 			FROM {$wpdb->postmeta} pm
 			INNER JOIN {$wpdb->posts} p ON pm.post_id = p.ID
-			WHERE pm.meta_key REGEXP 'lezchars_show_group_[0-9]+_show'
+			WHERE pm.meta_key LIKE %s
+			AND pm.meta_key REGEXP 'lezchars_show_group_[0-9]+_show'
 			AND pm.meta_value IN ($placeholders)
 			AND p.post_type = 'post_type_characters'
 			AND p.post_status = 'publish'",
-			$show_ids
+			array_merge( array( $like ), $show_ids )
 		);
 		$candidate_character_ids = $wpdb->get_col( $query );
 		// phpcs:enable

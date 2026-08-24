@@ -220,7 +220,7 @@ class Watch_Url_Health {
 		}
 
 		foreach ( self::PARKED_MARKERS as $marker ) {
-			if ( str_contains( $body, $marker ) ) {
+			if ( false !== stripos( $body, $marker ) ) {
 				return true;
 			}
 		}

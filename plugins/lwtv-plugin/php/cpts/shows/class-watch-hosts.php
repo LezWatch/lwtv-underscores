@@ -111,6 +111,18 @@ class Watch_Hosts {
 
 		global $wpdb;
 
+		// Two predicates on meta_key, deliberately. REGEXP is the exact test --
+		// anchored, digits only -- but it is not sargable, so alone it makes
+		// MySQL reach every candidate row in wp_postmeta before filtering. The
+		// LIKE is redundant for correctness and exists only to give the
+		// meta_key index a constant prefix to range-scan first.
+		//
+		// esc_like() is not optional: these keys are full of literal
+		// underscores, and an unescaped '_' is a single-character LIKE wildcard
+		// -- it would both loosen the match and truncate the usable index prefix
+		// at the first one.
+		$like = $wpdb->esc_like( 'lezshows_waystowatch_' ) . '%' . $wpdb->esc_like( '_url' );
+
 		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$rows = $wpdb->get_results(
 			$wpdb->prepare(
@@ -119,9 +131,11 @@ class Watch_Hosts {
 				 INNER JOIN {$wpdb->posts} p ON p.ID = pm.post_id
 				 WHERE p.post_type = %s
 				   AND p.post_status = 'publish'
+				   AND pm.meta_key LIKE %s
 				   AND pm.meta_key REGEXP '^lezshows_waystowatch_[0-9]+_url$'
 				   AND pm.meta_value != ''",
-				CPT_Shows::SLUG
+				CPT_Shows::SLUG,
+				$like
 			)
 		);
 		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching

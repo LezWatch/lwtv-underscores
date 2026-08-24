@@ -226,7 +226,7 @@ class Watch_Term_Check {
 			<td>
 				<strong>
 					<?php if ( $edit ) { ?>
-						<a href="<?php echo esc_url( $edit ); ?>" target="_new"><?php echo esc_html( (string) ( $item['term'] ?? '' ) ); ?></a>
+						<a href="<?php echo esc_url( $edit ); ?>" target="_blank" rel="noopener"><?php echo esc_html( (string) ( $item['term'] ?? '' ) ); ?></a>
 					<?php } else { ?>
 						<?php echo esc_html( (string) ( $item['term'] ?? '' ) ); ?>
 					<?php } ?>
@@ -293,9 +293,9 @@ class Watch_Term_Check {
 			wp_die( esc_html__( 'You do not have permission to do that.', 'lwtv' ), '', array( 'response' => 403 ) );
 		}
 
-		$items = lwtv_plugin()->get_transient( Watch_URLs::TRANSIENT_PROBLEMS );
+		$items = (array) lwtv_plugin()->get_transient( Watch_URLs::TRANSIENT_PROBLEMS );
 
-		if ( ! is_array( $items ) || empty( $items ) ) {
+		if ( is_string( $items ) || ! is_array( $items ) || empty( $items ) ) {
 			self::set_notice( 'info', __( 'There is nothing flagged to re-check. Run `wp lwtv debug watchurls --force` for a full sweep.', 'lwtv' ) );
 			self::redirect_back();
 		}
