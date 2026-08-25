@@ -16,6 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 use LWTV\_Components\Debugger as Debug_Tool;
+use LWTV\_Helpers\Imdb_Canonical;
 use LWTV\Queeries\Post_Type;
 
 class Actors {
@@ -336,6 +337,18 @@ class Actors {
 				// - IMDb IDs should be valid for the space they're in, e.g. "nm"
 				// and digits for people (props Jamie).
 				$problems[] = 'IMDb ID is invalid (ex: nm12345) -- ' . $imdb;
+			} else {
+				// Same staleness check as shows, oracled against TMDB rather than
+				// TVMaze because that is the third party whose person IDs we
+				// already store. See Debugger\Shows for why this cannot be a
+				// format check and why an empty canonical stays silent.
+				$canonical = get_post_meta( $actor_id, 'lezactors_imdb_canonical', true );
+
+				if ( Imdb_Canonical::is_stale( $imdb, $canonical ) ) {
+					$problems[] = 'IMDb ID disagrees with TMDB -- ours is ' . $imdb
+						. ', TMDB has ' . $canonical
+						. '. Ours has probably gone stale; check which is right before correcting it.';
+				}
 			}
 
 			// If we added any problems, loop and add.

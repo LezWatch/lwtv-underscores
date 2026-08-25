@@ -55,6 +55,8 @@ require_once __DIR__ . '/../plugins/lwtv-plugin/php/statistics/build/class-genre
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/statistics/build/class-character-identity-decade-buckets.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/cpts/shows/class-trope-categories.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/cpts/shows/class-airdates.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/cpts/shows/class-longevity.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/_helpers/class-imdb-canonical.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/cpts/shows/class-host-name.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/cpts/shows/class-watch-url-health.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/statistics/build/class-trope-category-coverage.php';

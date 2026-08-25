@@ -13,6 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 use LWTV\_Components\Grading;
 use LWTV\Queeries\Is_Actor_Trans;
 use LWTV\CPTs\Shows as CPT_Shows;
+use LWTV\Theme\Show_Characters;
 
 class Calculations {
 
@@ -594,6 +595,13 @@ class Calculations {
 			delete_post_meta( $post_id, 'lezshows_score' );
 			return;
 		}
+
+		// Start this show's calculation from a clean memo. Show_Characters caches
+		// resolved character lists per request, which collapses the three
+		// identical lookups below into one -- but a recalculation must never be
+		// served a list built before whatever prompted it. Flushing per show also
+		// stops the memo growing across a bulk run over every show.
+		Show_Characters::flush_cache( $post_id );
 
 		// Prime post meta and term object caches for all characters before either
 		// loop runs, so show_character_data() and count_queers_all_types() are cache hits.

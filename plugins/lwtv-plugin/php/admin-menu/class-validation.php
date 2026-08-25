@@ -38,42 +38,42 @@ class Validation {
 	 */
 	private const TOOL_TABS = array(
 		'queer_checker'     => array(
-			'name'   => 'Queers',
+			'name'   => 'QIRL Characters have Queer Actors',
 			'desc'   => 'Checks that all characters with queer actors have the queer cliché, and all actors with queer characters are, in fact, queer.',
 			'option' => 'queercheck',
 		),
 		'dupe_checker'      => array(
-			'name'   => 'Dupes',
+			'name'   => 'Duplicate Actors and Show',
 			'desc'   => 'Actors and Shows that are duplicates.',
 			'option' => 'duplicates',
 		),
 		'byq_checker'       => array(
-			'name'   => 'BYQ',
+			'name'   => 'Bury Your Queers',
 			'desc'   => 'Checks all characters with death cliché have proper death year meta data and shows have dead-queers trope. This may be okay, because Sara Lance.',
 			'option' => 'byq_problems',
 		),
 		'actor_checker'     => array(
-			'name'   => 'Actors',
+			'name'   => 'Actors Info',
 			'desc'   => 'Checks that all information for actors appears correct. This includes social media and links.',
 			'option' => 'actor_problems',
 		),
 		'character_checker' => array(
-			'name'   => 'Chars',
+			'name'   => 'Characters Info',
 			'desc'   => 'Checks that all information for characters appears correct, like if they have a show and years-on-air added.',
 			'option' => 'character_problems',
 		),
 		'show_checker'      => array(
-			'name'   => 'Shows',
+			'name'   => 'Shows Info',
 			'desc'   => 'Checks that all information for shows appears correct. Like do they have characters and ratings etc, does intersectionality seem to match.',
 			'option' => 'show_problems',
 		),
 		'actor_imdb'        => array(
-			'name'   => 'Actors w/o IMDb',
+			'name'   => 'Actors missing IMDb',
 			'desc'   => 'Actors who have no IMDb value. This may actually be okay as not all webseries/international shows are listed.',
 			'option' => 'actor_imdb',
 		),
 		'show_imdb'         => array(
-			'name'   => 'Shows w/o IMDb',
+			'name'   => 'Shows missing IMDb',
 			'desc'   => 'Shows that have no IMDb value. This may actually be okay as not all webseries/international shows are listed.',
 			'option' => 'show_imdb',
 		),
@@ -85,8 +85,7 @@ class Validation {
 		'watch_providers'   => array(
 			'name'   => 'Watch Providers',
 			'desc'   => 'Ways to Watch hosts with no provider term, so the front end is guessing their name. Create the term in one click.',
-			// No badge: this isn't a cron scan, and counting it would mean a
-			// query on every view of every tab.
+			// No badge: this isn't a cron scan, and counting it would mean a query on every view of every tab.
 			'option' => '',
 		),
 		'watch_term_check'  => array(

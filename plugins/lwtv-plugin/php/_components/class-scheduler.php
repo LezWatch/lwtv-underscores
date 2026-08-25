@@ -22,6 +22,7 @@ use LWTV\Schedulers\Cache_Batch_Task;
 use LWTV\Schedulers\FixCharShows_Task;
 use LWTV\Schedulers\Statistics_Cache_Warming;
 use LWTV\Schedulers\BYQ_Task;
+use LWTV\Schedulers\Imdb_Verify_Task;
 
 /**
  * Class Scheduler
@@ -59,6 +60,7 @@ class Scheduler implements Component, Templater {
 				new TMDB_Batch_Task();
 				new Cache_Batch_Task();
 				new BYQ_Task();
+				new Imdb_Verify_Task();
 			} else {
 				lwtv_plugin()->debug_log( 'scheduler', 'Action Scheduler not available, skipping AS-dependent task handlers' );
 			}
@@ -84,6 +86,8 @@ class Scheduler implements Component, Templater {
 			'get_tmdb_batch_status'         => array( $this, 'get_tmdb_batch_status' ),
 			'queue_cache_batch'             => array( $this, 'queue_cache_batch' ),
 			'get_cache_batch_status'        => array( $this, 'get_cache_batch_status' ),
+			'queue_imdb_verify'             => array( $this, 'queue_imdb_verify' ),
+			'get_imdb_verify_status'        => array( $this, 'get_imdb_verify_status' ),
 		);
 	}
 
@@ -192,6 +196,30 @@ class Scheduler implements Component, Templater {
 	public function get_tmdb_batch_status(): array {
 		$batch_task = new TMDB_Batch_Task();
 		return $batch_task->get_batch_status();
+	}
+
+	/**
+	 * Queue a post for IMDb staleness verification.
+	 *
+	 * Cheap and synchronous-safe: it reads a couple of meta values and appends to
+	 * a transient. All HTTP happens later, on Action Scheduler.
+	 *
+	 * @param int $post_id The post ID to queue
+	 * @return bool Whether the post was queued successfully
+	 */
+	public function queue_imdb_verify( int $post_id ): bool {
+		$task = new Imdb_Verify_Task();
+		return $task->queue_post( $post_id );
+	}
+
+	/**
+	 * Get IMDb verification queue status
+	 *
+	 * @return array Status information about the IMDb verification queue
+	 */
+	public function get_imdb_verify_status(): array {
+		$task = new Imdb_Verify_Task();
+		return $task->get_status();
 	}
 
 	/**

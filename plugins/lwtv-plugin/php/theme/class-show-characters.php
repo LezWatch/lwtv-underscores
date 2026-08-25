@@ -49,6 +49,29 @@ use LWTV\Queeries\Is_Actor_Trans;
 use LWTV\Queeries\Post_Meta;
 
 class Show_Characters {
+
+	/**
+	 * Per-request memo of resolved character lists, keyed "post_id:format:role".
+	 *
+	 * Static because callers construct a fresh Show_Characters every time
+	 * (see _Components\Theme::get_characters_list()), so instance state would
+	 * never survive to be reused.
+	 *
+	 * @var array<string, mixed>
+	 */
+	private static array $memo = array();
+
+	/**
+	 * Per-request memo of the resolved per-character traversal, keyed by show ID.
+	 *
+	 * Separate from $memo, and keyed by show alone, because the traversal is
+	 * format-agnostic: 'count', 'dead', 'query' and the rest all read different
+	 * fields out of the same array. Keying this by format would defeat the point.
+	 *
+	 * @var array<string, array>
+	 */
+	private static array $resolved = array();
+
 	/**
 	 * Generate character lists
 	 *
@@ -67,6 +90,25 @@ class Show_Characters {
 			return array();
 		}
 
+		// Per-request memo. Shows\Calculations::do_the_math() resolves the same
+		// character list three times for one show -- once in
+		// prime_character_caches(), once in show_character_data(), once via
+		// count_queers_all_types() -- and each pass re-runs the shadow-taxonomy
+		// lookup, a get_field() per character in clean_character_array(), and the
+		// three update_post_meta() calls in build_character_list(). Identical
+		// inputs, identical output, three times over, in exactly the path a bulk
+		// recalculation across every show runs down.
+		//
+		// Keyed on all three arguments because the format and role change what is
+		// returned. Callers that need a guaranteed-fresh read call flush_cache()
+		// first; do_the_math() does that per show, which also keeps this from
+		// growing across a full recalculation.
+		$cache_key = $post_id . ':' . $format . ':' . $role;
+
+		if ( isset( self::$memo[ $cache_key ] ) ) {
+			return self::$memo[ $cache_key ];
+		}
+
 		$get_shadow_tax = \Shadow_Taxonomy\Core\get_the_posts( $post_id, Characters::SHADOW_TAXONOMY, Characters::SLUG );
 
 		if ( $get_shadow_tax && is_array( $get_shadow_tax ) ) {
@@ -78,6 +120,9 @@ class Show_Characters {
 		}
 
 		if ( empty( $characters ) || ! is_array( $characters ) ) {
+			// Not memoised: an empty result is cheap to recompute, and caching it
+			// would make a show look permanently characterless for the rest of the
+			// request if the shadow taxonomy were still being populated.
 			return array();
 		}
 
@@ -89,18 +134,63 @@ class Show_Characters {
 			$build_data = $this->build_character_list( $clean_characters, $post_id, $format );
 		}
 
+		self::$memo[ $cache_key ] = $build_data;
+
 		return $build_data;
 	}
 
 	/**
-	 * Clean character array
+	 * Drop memoised character lists.
 	 *
-	 * @param array $characters
-	 * @param int   $show_id
+	 * @param int|null $post_id Clear just this show, or null for everything.
+	 */
+	public static function flush_cache( $post_id = null ): void {
+		if ( null === $post_id ) {
+			self::$memo     = array();
+			self::$resolved = array();
+			return;
+		}
+
+		unset( self::$resolved[ (string) $post_id ] );
+
+		$prefix = $post_id . ':';
+		foreach ( array_keys( self::$memo ) as $key ) {
+			if ( 0 === strpos( (string) $key, $prefix ) ) {
+				unset( self::$memo[ $key ] );
+			}
+		}
+	}
+
+	/**
+	 * Reconcile the shadow taxonomy between a show and its characters.
 	 *
-	 * @return array
+	 * Despite the name, this does NOT filter the array -- it returns its input
+	 * unchanged, and always did. It previously ended the "character is not on
+	 * this show" branch with `unset( $characters[ $char_id ] )`, using the
+	 * character ID as an array key when every source of this array
+	 * (get_characters_from_shadow_tax, _from_taxonomy, _from_post_meta) returns a
+	 * 0-indexed list of IDs. So it unset an index that did not exist and removed
+	 * nothing. That line is gone rather than fixed: both consumers already
+	 * re-verify show membership themselves -- count_characters() only counts
+	 * inside `$char_show['show'] === $show_id`, and build_character_data()
+	 * `continue`s otherwise -- so filtering here would be redundant even if it
+	 * had worked.
+	 *
+	 * What this is actually for is the side effect: attaching the shadow term for
+	 * characters that list this show, and detaching it for ones that no longer do.
+	 *
+	 * @param array $characters Array of character IDs.
+	 * @param int   $show_id    ID of the show.
+	 *
+	 * @return array The same array, unchanged.
 	 */
 	public function clean_character_array( $characters, $show_id ) {
+		// The show's currently attached shadow terms, read once. The guard below
+		// needs to know what is already there, and asking per character would
+		// just trade a wasted write for a wasted read.
+		$attached = wp_get_object_terms( (int) $show_id, Characters::SHADOW_TAXONOMY, array( 'fields' => 'ids' ) );
+		$attached = is_array( $attached ) ? array_map( 'intval', $attached ) : array();
+
 		foreach ( $characters as $char_id ) {
 			$shows_array = get_field( 'lezchars_show_group', $char_id );
 
@@ -118,14 +208,29 @@ class Show_Characters {
 				$shows_array_simple[] = (int) $char_show['show'];
 			}
 
-			// If the show is not in the simple array for this character, remove the character.
-			$term_id = get_post_meta( $char_id, sanitize_key( 'shadow_' . Characters::SHADOW_TAXONOMY . '_term_id' ), true );
-			if ( ! in_array( (int) $show_id, $shows_array_simple, true ) ) {
-				wp_remove_object_terms( (int) $show_id, (int) $term_id, Characters::SHADOW_TAXONOMY );
-				unset( $characters[ $char_id ] );
-			} else {
-				// Add the tax for the character to the show.
-				wp_add_object_terms( (int) $show_id, (int) $term_id, Characters::SHADOW_TAXONOMY );
+			$term_id = (int) get_post_meta( $char_id, sanitize_key( 'shadow_' . Characters::SHADOW_TAXONOMY . '_term_id' ), true );
+
+			// No shadow term recorded for this character, so there is nothing to
+			// attach or detach. Previously this fell through and called
+			// wp_add_object_terms() with a term ID of 0.
+			if ( $term_id < 1 ) {
+				continue;
+			}
+
+			$listed      = in_array( (int) $show_id, $shows_array_simple, true );
+			$is_attached = in_array( $term_id, $attached, true );
+
+			// Only write when the taxonomy actually disagrees with the
+			// character's own show list. This used to call wp_add_object_terms()
+			// for every character on every invocation, re-adding terms that were
+			// already attached -- on the order of 7500 redundant term writes per
+			// full recalculation, and the same again for pointless removals.
+			if ( $listed && ! $is_attached ) {
+				wp_add_object_terms( (int) $show_id, $term_id, Characters::SHADOW_TAXONOMY );
+				$attached[] = $term_id;
+			} elseif ( ! $listed && $is_attached ) {
+				wp_remove_object_terms( (int) $show_id, $term_id, Characters::SHADOW_TAXONOMY );
+				$attached = array_values( array_diff( $attached, array( $term_id ) ) );
 			}
 		}
 
@@ -228,17 +333,59 @@ class Show_Characters {
 	}
 
 	/**
-	 * Generate list of characters for shows
+	 * Generate list of characters for shows.
+	 *
+	 * Kept as the public entry point it always was; the work now happens in
+	 * resolve_character_counts() (memoised per show) and the requested value is
+	 * picked out by format_character_list().
 	 *
 	 * @param array   $characters  Array of character IDs
 	 * @param string  $show_id     ID of the show
 	 * @param string  $output      Type of Output
 	 *
-	 * @return array  All the characters by ID.
+	 * @return mixed  Depends on $output.
 	 */
 	public function build_character_list( $characters, $show_id, $output ) {
-		$return = array();
+		return $this->format_character_list(
+			$this->resolve_character_counts( $characters, $show_id ),
+			$output
+		);
+	}
 
+	/**
+	 * Count and classify every character on a show, in one pass.
+	 *
+	 * Memoised by show ID, so all seven output formats and any number of callers
+	 * within a request share a single traversal. Writes the three show meta keys
+	 * as it goes, which is why the memo is flushed per show at the top of
+	 * Shows\Calculations::do_the_math().
+	 *
+	 * @param array  $characters Array of character IDs.
+	 * @param string $show_id    ID of the show.
+	 *
+	 * @return array Counts, plus 'characters' and 'dead_list'.
+	 */
+	private function resolve_character_counts( $characters, $show_id ): array {
+		$cache_key = (string) $show_id;
+
+		if ( isset( self::$resolved[ $cache_key ] ) ) {
+			return self::$resolved[ $cache_key ];
+		}
+
+		self::$resolved[ $cache_key ] = $this->count_characters( $characters, $show_id );
+
+		return self::$resolved[ $cache_key ];
+	}
+
+	/**
+	 * The per-character traversal itself.
+	 *
+	 * @param array  $characters Array of character IDs.
+	 * @param string $show_id    ID of the show.
+	 *
+	 * @return array
+	 */
+	private function count_characters( $characters, $show_id ): array {
 		$new_characters  = array();
 		$dead_characters = array();
 		$char_counts     = array(
@@ -320,38 +467,54 @@ class Show_Characters {
 		update_post_meta( $show_id, 'lezshows_char_count', $char_counts['total'] );
 		update_post_meta( $show_id, 'lezshows_char_list', $new_characters );
 
+		$char_counts['characters'] = $new_characters;
+		$char_counts['dead_list']  = $dead_characters;
+
+		return $char_counts;
+	}
+
+	/**
+	 * Pick one value out of resolved character data.
+	 *
+	 * Split out from the resolving loop so every output format shares one pass.
+	 * Before the split, asking for 'count' and then 'dead' on the same show ran
+	 * the whole per-character loop twice -- three has_term() calls, an actor
+	 * get_field(), an Is_Actor_Queer and an Is_Actor_Trans per character, plus
+	 * three update_post_meta() writes -- to return two numbers already sitting in
+	 * the same array. template-parts/embed/content-post_type_shows.php does
+	 * exactly that.
+	 *
+	 * @param array  $resolved From resolve_character_counts().
+	 * @param string $output   Requested format.
+	 *
+	 * @return mixed
+	 */
+	private function format_character_list( array $resolved, $output ) {
 		switch ( $output ) {
 			case 'dead':
 				// Count of dead characters
-				$return = $char_counts['dead'];
-				break;
+				return $resolved['dead'];
 			case 'none':
 				// count of characters with NO clichés
-				$return = $char_counts['none'];
-				break;
+				return $resolved['none'];
 			case 'queer-irl':
 				// count of characters who are queer IRL
-				$return = $char_counts['quirl'];
-				break;
+				return $resolved['quirl'];
 			case 'trans':
 				// Count of trans characters
-				$return = $char_counts['trans'];
-				break;
+				return $resolved['trans'];
 			case 'trans-irl':
 				// count of characters who are trans IRL
-				$return = $char_counts['txirl'];
-				break;
+				return $resolved['txirl'];
 			case 'query':
 				// Array of all characters by ID
-				$return = $new_characters;
-				break;
+				return $resolved['characters'];
 			case 'count':
 				// Count of all characters on the show
-				$return = count( $new_characters );
-				break;
+				return count( $resolved['characters'] );
 		}
 
-		return $return;
+		return null;
 	}
 
 	/**

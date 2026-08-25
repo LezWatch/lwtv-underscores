@@ -12,6 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 use LWTV\_Components\Debugger as Debug_Tool;
 use LWTV\Debugger\Characters as Characters_Debugger;
 use LWTV\CPTs\Shows\Airdates;
+use LWTV\_Helpers\Imdb_Canonical;
 use LWTV\Queeries\Post_Type;
 
 class Shows {
@@ -355,6 +356,30 @@ class Shows {
 				// - IMDb IDs should be valid for the space they're in, e.g. "nm"
 				// and digits for people (props Jamie).
 				$problems[] = 'IMDb ID is invalid (ex: tt12345) -- ' . $imdb;
+			} elseif ( ! get_post_meta( $show_id, 'lezshows_tvmaze_ignore', true ) ) {
+				// IMDb reassigns title IDs and leaves the old one redirecting, so
+				// a stale ID still opens the right page in a browser while
+				// breaking every exact-match API lookup keyed on it. Nothing about
+				// the value looks wrong, which is why format validation above
+				// cannot catch it.
+				//
+				// Compared fresh each run rather than trusting a stored verdict:
+				// lezshows_imdb_canonical holds what TVMaze last told us, and if
+				// an editor has since corrected the ID to match, the problem
+				// clears itself without waiting for a re-check.
+				//
+				// An empty canonical means "no disagreement recorded", which
+				// covers both verified-clean and never-checked. Deliberately
+				// silent either way -- a debugger row implying "verified" for a
+				// show nobody has looked at would be worse than no row at all.
+				$canonical = get_post_meta( $show_id, 'lezshows_imdb_canonical', true );
+
+				if ( Imdb_Canonical::is_stale( $imdb, $canonical ) ) {
+					$problems[] = 'IMDb ID disagrees with TVMaze -- ours is ' . $imdb
+						. ', TVMaze has ' . $canonical
+						. '. Ours has probably gone stale; check which is right, then correct it or '
+						. 'tick "Ignore TVMaze Match" on the show.';
+				}
 			}
 
 			// If we added any problems, loop and add.
