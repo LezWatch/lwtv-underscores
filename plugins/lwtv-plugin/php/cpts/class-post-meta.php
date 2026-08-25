@@ -228,6 +228,13 @@ class Post_Meta {
 		'lezshows_the_score'            => array(
 			'post_type' => CPT_Shows::SLUG,
 		),
+		// The same score before the 0-100 clamp. Kept so shows at the ceiling stay
+		// distinguishable from each other; not for display, which uses the clamped
+		// value above. show_score() alone can reach 115, so this can exceed 100.
+		'lezshows_the_score_uncapped'   => array(
+			'post_type'    => CPT_Shows::SLUG,
+			'show_in_rest' => false,
+		),
 		'lezshows_3rd_scores'           => array(
 			'post_type'    => CPT_Shows::SLUG,
 			'show_in_rest' => false,

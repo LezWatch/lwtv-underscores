@@ -63,39 +63,54 @@ class Longevity {
 	/**
 	 * Shapes the saturating ceiling: raw value equal to this scores 50.
 	 *
-	 * CALIBRATED against all 2255 published shows via `wp lwtv score-preview
-	 * --all`. Chosen as the balance point between two display boundaries that
-	 * pull in opposite directions:
+	 * CALIBRATED against all 2255 published shows. The objective matters more than
+	 * the number, and the obvious objective is the wrong one.
 	 *
-	 *    K   median   vs old   Failing (<20)   90+ Club   deciles moved
-	 *    9    59.87    +5.37       60 -> 47     16 -> 13       55%
-	 *   15    57.42    +2.92       60 -> 50     16 ->  8       37%
-	 *   20    56.26    +1.76       60 -> 52     16 ->  6       28%
-	 *   30    55.09    +0.59       60 -> 55     16 ->  1       20%
+	 * ⚠ DO NOT calibrate by matching the median TOTAL score. Earlier revisions of
+	 * this file and of the preview command both advised exactly that, and it is
+	 * backwards. The character score is one term of a four-way average, and the
+	 * other three have a median of **69.1**. The old character score's median was
+	 * **10.0** -- it sat 59 points below everything it was averaged into, which was
+	 * never an editorial judgment but a scale error from an unbounded sum of small
+	 * role points. Holding the total median fixed requires K≈40, which puts the
+	 * character median at 11.8 and so PRESERVES that error. The total only sat
+	 * where it did because this component was on the floor.
 	 *
-	 * K=30 would hold the median almost exactly, but it nearly empties "The
-	 * 90+ Club" (a named section on the scores stats page) because reaching a
-	 * character score of 90 would need a raw X of 270. K=15 accepts a ~3 point
-	 * median rise to keep the top of the distribution populated.
+	 * So calibrate on the component's own distribution:
 	 *
-	 * The median rise is deliberate, not drift. The old character score sat on
-	 * the floor of its range -- median 10.0, with 52% of shows at or below 10 --
-	 * and went NEGATIVE for 133 shows (worst -19), so it barely participated in
-	 * the four-way average except to subtract. The new median is 37, which is a
-	 * real quarter of the score. Some shrinkage of the 90+ Club is likewise
-	 * correct: it was partly populated by the 38 shows whose character score was
-	 * clamped at 100, each collecting a free 25 points on the total.
+	 *    K    char p50   char p99   total median   Failing (<20)   90+ Club
+	 *    5.4     50.0       86.7        +8.25            -             -
+	 *    8       40.2       81.5        +6.05         60 -> 44     16 -> 14
+	 *   10       35.0       77.8        +4.91         60 -> 47     16 -> 12
+	 *   15       26.4       70.1        +3.01         60 -> 50     16 ->  8
+	 *   40       11.8       46.8        -0.03         60 -> 56     16 ->  1
 	 *
-	 * So this constant does not merely rescale rankings -- it sets how much the
-	 * character component weighs at all. Re-derive it from a fresh --all run if
-	 * any of the value or weight constants change.
+	 * K=10 moves the character median from 10 to 35. That fixes most of the scale
+	 * error while leaving this the HARD component it ought to be -- it measures
+	 * documented queer screen time, which most shows genuinely do little of, so it
+	 * should not sit level with `alive %` at 69. K=5.4 (= median X, so the median
+	 * show scores exactly 50) is the cleanest rule but shifts totals by +8.
+	 *
+	 * The resulting median rise is a correction, not drift, and needs saying out
+	 * loud in the methodology note: most scores go UP because a broken component
+	 * stopped dragging the average down.
+	 *
+	 * Shrinkage of "The 90+ Club" is likewise mostly correct rather than a loss:
+	 * **12 of its 16 members had a character score pinned at exactly 100**, so
+	 * their membership was manufactured by the clamp rather than measured. The
+	 * honest baseline is 4, and K=10 gives 12.
 	 *
 	 * Never calibrate from a single show. An earlier 9.0 came from Transparent
 	 * alone and was off by 6x. Shows whose old character score was clamped are
 	 * unreproducible on principle: Transparent's 93.08 needed a component of
 	 * 100.02, which an asymptotic curve can never reach.
+	 *
+	 * Re-deriving this needs no new `--all` run. The preview's `char_new_raw`
+	 * column IS the X this constant divides, and the three components K does not
+	 * touch are recoverable as `4 * score_new_raw - char_new`, so any existing CSV
+	 * can be swept offline for every candidate K at once.
 	 */
-	const SATURATION_K = 15.0;
+	const SATURATION_K = 10.0;
 
 	/**
 	 * Points per role. Unchanged from the previous scoring model.
@@ -313,6 +328,288 @@ class Longevity {
 	}
 
 	/**
+	 * Calendar years of slack allowed between a show's recorded start and the
+	 * first year TVMaze has dated.
+	 *
+	 * One year absorbs a December premiere recorded as the following year, or an
+	 * airdate that is simply off by one.
+	 */
+	const AIRED_START_SLACK = 1;
+
+	/**
+	 * Seasons of slack allowed between the season count and the aired-year count.
+	 *
+	 * One season covers ordinary Sept-May scheduling, where N seasons occupy N-1
+	 * calendar years. Two seasons inside one calendar year does happen, but
+	 * essentially only in reality TV, which this site does not cover -- so a
+	 * larger gap than this means seasons are missing from the API, not that the
+	 * show aired unusually fast.
+	 */
+	const AIRED_SEASON_SLACK = 1;
+
+	/**
+	 * Minimum share of credited years the aired-years set must account for.
+	 *
+	 * Any credited year the set does not contain is either an `appears` data
+	 * error or a season TVMaze has not dated -- there is no third explanation,
+	 * since a character cannot appear in a year the show was not airing. Volume
+	 * is what tells the two apart, so this is a ratio and not a hard zero.
+	 *
+	 * PROVISIONAL. Calibrate before this ships enabled, the same way SATURATION_K
+	 * was: the shape of the argument is sound but the cut point is not measured.
+	 * `wp lwtv score-preview --all` prints a coverage histogram for every show
+	 * the signal can judge; the threshold belongs in the sparse band between the
+	 * pile at 1.00 and the broken sets. If there is no sparse band, this signal
+	 * is measuring a continuum and needs rethinking rather than retuning.
+	 */
+	const COVERAGE_MIN = 0.75;
+
+	/**
+	 * Distinct credited years required before coverage is allowed to judge.
+	 *
+	 * Sized against COVERAGE_MIN so a single stray `appears` year can never on
+	 * its own reject a set: with five years of evidence one error leaves 0.80,
+	 * still above the threshold. Below this floor the evidence is too thin to
+	 * distinguish a bad set from a bad year, so the signal abstains.
+	 */
+	const COVERAGE_MIN_EVIDENCE = 5;
+
+	/** Verdicts from aired_years_verdict(). */
+	const VERDICT_NONE       = 'none';
+	const VERDICT_OK         = 'ok';
+	const VERDICT_SEASONS    = 'seasons';
+	const VERDICT_LATE_START = 'late-start';
+	const VERDICT_COVERAGE   = 'coverage';
+
+	/**
+	 * What share of the years characters are credited in does the aired-years
+	 * set actually contain?
+	 *
+	 * Compares the UNION of credited years across the show's characters, not a
+	 * per-character or per-row tally, so one long-serving regular cannot swamp
+	 * the measurement and a year credited to six characters counts once.
+	 *
+	 * @param array $aired_years    Years from aired_years_from_seasons().
+	 * @param array $credited_years Every year any character is credited on this
+	 *                              show. Duplicates and zeroes are fine.
+	 *
+	 * @return float 0.0 to 1.0. Returns 1.0 when there is nothing to explain,
+	 *               so no-evidence never reads as bad coverage.
+	 */
+	public static function appearance_coverage( array $aired_years, array $credited_years ): float {
+		$credited = array_unique( array_filter( array_map( 'intval', $credited_years ) ) );
+
+		if ( empty( $credited ) ) {
+			return 1.0;
+		}
+
+		$aired  = array_unique( array_filter( array_map( 'intval', $aired_years ) ) );
+		$inside = array_intersect( $credited, $aired );
+
+		return count( $inside ) / count( $credited );
+	}
+
+	/**
+	 * Where the credited years the aired set cannot explain actually fall.
+	 *
+	 * Diagnostic, not a decision. It was built expecting to BE the decision --
+	 * the theory being that a discarded year outside the set's range is
+	 * unambiguous missing data, while one inside an internal hole is an ambiguous
+	 * hiatus. **Measurement killed that idea.** Both the case it was meant to
+	 * catch and the case it was meant to spare put every discarded year inside a
+	 * hole and none outside the range:
+	 *
+	 *   Gute Zeiten schlechte Zeiten   set 9 yrs, 26 credited   outside 0, hole 26
+	 *   Rick and Morty                 set 11 yrs, 13 credited  outside 0, hole 2
+	 *
+	 * So hole location cannot discriminate. The signal designed to replace it --
+	 * comparing the SIZE of the two records -- did separate those two cases, but
+	 * turned out to be provably redundant against signal 3 and was not built
+	 * either; see the note above run_years().
+	 *
+	 * This function is kept as a diagnostic, because `outside` is worth reporting
+	 * when it is non-zero: a character credited before the set begins or after it
+	 * ends is a harder fact than one credited in a gap, and it is the shape signal
+	 * 2 looks for. It decides nothing.
+	 *
+	 * @param array $aired_years    Years from aired_years_from_seasons().
+	 * @param array $credited_years Every year any character is credited.
+	 *
+	 * @return array{outside:int,hole:int,total:int}
+	 */
+	public static function discarded_years( array $aired_years, array $credited_years ): array {
+		$aired    = array_unique( array_filter( array_map( 'intval', $aired_years ) ) );
+		$credited = array_unique( array_filter( array_map( 'intval', $credited_years ) ) );
+		$missing  = array_diff( $credited, $aired );
+
+		$out = array(
+			'outside' => 0,
+			'hole'    => 0,
+			'total'   => count( $missing ),
+		);
+
+		if ( empty( $aired ) || empty( $missing ) ) {
+			$out['outside'] = count( $missing );
+
+			return $out;
+		}
+
+		$low  = min( $aired );
+		$high = max( $aired );
+
+		foreach ( $missing as $year ) {
+			if ( $year < $low || $year > $high ) {
+				++$out['outside'];
+			} else {
+				++$out['hole'];
+			}
+		}
+
+		return $out;
+	}
+
+	/*
+	 * A signal that was built, measured, and deliberately not shipped.
+	 *
+	 * `record_is_richer()` compared the SIZE of the two records -- reject the set
+	 * when our own `appears` data documents materially more years than TVMaze
+	 * does (ratio > 1.5 with an absolute excess >= 2). It looked like the answer:
+	 * it separated Gute Zeiten schlechte Zeiten (26 credited years against a
+	 * 9-year set) from Rick and Morty (13 against 11) cleanly, and rejected none
+	 * of the 360 shows currently accepted on tier 2.
+	 *
+	 * It is not in the code because it cannot ever fire. Given ratio > 1.5:
+	 *
+	 *     coverage = |C n A| / |C|  <=  |A| / |C|  <  1 / 1.5  =  0.667
+	 *
+	 * -- always below COVERAGE_MIN. So signal 3 rejects every set signal 4 would
+	 * have, and signal 4 could only ever add anything where coverage abstains,
+	 * below its 5-credited-year evidence floor. Measured there: of 304 such shows,
+	 * **zero** qualify, because every one has |C| <= |A| or an excess of 1.
+	 *
+	 * Recorded rather than deleted because "provably redundant" is a much stronger
+	 * reason not to build something than "we tried it and it seemed unnecessary",
+	 * and because an unreachable guard that looks like protection is worse than no
+	 * guard -- see the Tambor Takedown, which sat in dead code for years.
+	 */
+
+	/**
+	 * Vet a TVMaze-derived aired-years set before trusting it.
+	 *
+	 * TVMaze's season coverage is patchy for long-running shows, so one can come
+	 * back with only a handful of its years dated. That is worse than having
+	 * nothing, because the set is used twice and both uses are damaged:
+	 *
+	 *  - as the run_years denominator, where a short set inflates every weight;
+	 *  - and intersected against each character's `appears` in character_years(),
+	 *    where every year TVMaze does not list is silently discarded.
+	 *
+	 * Measured across the live corpus, 13 shows had their denominator shrink while
+	 * mean character weight ALSO fell. A smaller denominator can only raise
+	 * weights, so the intersection was throwing away real screen time -- mostly
+	 * long-running international soaps (Gute Zeiten schlechte Zeiten, Unter Uns,
+	 * Ros na Rún, Salatut elämät).
+	 *
+	 * Three signals, in ascending cost:
+	 *
+	 * 1. The set has fewer years than the show has seasons. Precise, but only 23
+	 *    of 376 tier-2 shows have a season count recorded to compare against.
+	 *    Caught 4 of the 13.
+	 * 2. The set starts materially later than the show's recorded start year.
+	 *    Caught 2 of the 13, and only small-span shows. This was built on the
+	 *    assumption that TVMaze back-fills recent seasons first, so a short set
+	 *    would start late -- MEASUREMENT DISPROVED THAT. Gute Zeiten schlechte
+	 *    Zeiten has 9 dated years across a 35-year span and its set starts at the
+	 *    premiere; the holes are in the middle and the end. Kept because it is
+	 *    free and does catch a real shape, but it is not the workhorse.
+	 * 3. The set cannot account for the years characters are actually credited
+	 *    in. This measures the damage directly instead of predicting it from the
+	 *    set's shape, which is why it separates the two ways a set can be short
+	 *    of the span where 1 and 2 cannot:
+	 *
+	 *      - A genuine revival gap (The X-Files: 1993-2002, then 2016 and 2018)
+	 *        has no appearances inside the hole, because the show was not airing.
+	 *        Coverage is near-total, and the set is real data. Kept.
+	 *      - A data gap has characters credited squarely inside the hole, which
+	 *        is proof the show aired there and the set is incomplete. Rejected.
+	 *
+	 * Two further signals were designed and are deliberately absent, both killed
+	 * by measurement rather than by taste:
+	 *
+	 *  - Separating discarded years OUTSIDE the set's range from those inside an
+	 *    internal hole, on the theory that only the former is unambiguous. Both
+	 *    the case it was meant to catch and the case it was meant to spare put
+	 *    every discarded year inside a hole. See discarded_years().
+	 *  - Comparing the SIZE of the two records. Provably redundant against signal
+	 *    3, and fires on nothing. See the note above run_years().
+	 *
+	 * Signal 3 needs the character data, so it is opt-in via $credited_years: a
+	 * caller that has not gathered characters yet gets signals 1 and 2 only,
+	 * rather than a silently weaker check that looks like the full one.
+	 *
+	 * Takes no current-year argument on purpose: no signal needs one, because
+	 * aired_years_from_seasons() has already clamped the set so it cannot run into
+	 * the future.
+	 *
+	 * @param array  $aired_years    Years from aired_years_from_seasons().
+	 * @param int    $seasons        Stored season count. 0 when unknown.
+	 * @param string $start          Airdate start year.
+	 * @param array  $credited_years Every year any character is credited on this
+	 *                               show. Empty to skip signal 3.
+	 *
+	 * @return string One of the VERDICT_* constants.
+	 */
+	public static function aired_years_verdict( array $aired_years, int $seasons, string $start, array $credited_years = array() ): string {
+		if ( empty( $aired_years ) ) {
+			return self::VERDICT_NONE;
+		}
+
+		// Signal 1: fewer aired years than seasons.
+		if ( $seasons >= 2 && count( $aired_years ) < ( $seasons - self::AIRED_SEASON_SLACK ) ) {
+			return self::VERDICT_SEASONS;
+		}
+
+		// Signal 2: the set begins well after the show did.
+		$start_year = self::year_from_value( $start );
+
+		if ( null !== $start_year && min( $aired_years ) > ( $start_year + self::AIRED_START_SLACK ) ) {
+			return self::VERDICT_LATE_START;
+		}
+
+		// Signal 3: the set cannot explain where the characters were.
+		$credited = array_unique( array_filter( array_map( 'intval', $credited_years ) ) );
+
+		if ( count( $credited ) >= self::COVERAGE_MIN_EVIDENCE
+			&& self::appearance_coverage( $aired_years, $credited ) < self::COVERAGE_MIN ) {
+			return self::VERDICT_COVERAGE;
+		}
+
+		return self::VERDICT_OK;
+	}
+
+	/**
+	 * The vetted aired-years set: unchanged when trustworthy, empty to fall
+	 * through to a later tier.
+	 *
+	 * Thin wrapper over aired_years_verdict() so callers that only need the set
+	 * do not have to know the verdict vocabulary, and so there is exactly one
+	 * implementation of the decision.
+	 *
+	 * @param array  $aired_years    Years from aired_years_from_seasons().
+	 * @param int    $seasons        Stored season count. 0 when unknown.
+	 * @param string $start          Airdate start year.
+	 * @param array  $credited_years Every year any character is credited on this
+	 *                               show. Empty to skip signal 3.
+	 *
+	 * @return array
+	 */
+	public static function usable_aired_years( array $aired_years, int $seasons, string $start, array $credited_years = array() ): array {
+		$verdict = self::aired_years_verdict( $aired_years, $seasons, $start, $credited_years );
+
+		return ( self::VERDICT_OK === $verdict ) ? $aired_years : array();
+	}
+
+	/**
 	 * How many years a show ran, for use as the denominator of share-of-run.
 	 *
 	 * Four tiers, in preference order:
@@ -338,23 +635,94 @@ class Longevity {
 	 * one year, and revival gaps correctly. The ordering is fine, but it is not
 	 * the accuracy ordering -- see the plan doc.
 	 *
-	 * @param array  $aired_years   Years the show aired, from
-	 *                              aired_years_from_seasons(). Empty to fall through.
-	 * @param int    $seasons       Stored season count (lezshows_seasons). 0 to skip.
-	 * @param string $start         Airdate start year.
-	 * @param string $finish        Airdate finish year, or the 'current' sentinel.
-	 * @param int    $current_year  The current year.
-	 * @param array  $hiatus_years  Known off-air years, if any.
+	 * $credited_count is the floor that bounds that cost -- see the detail method.
+	 *
+	 * @param array  $aired_years    Years the show aired, from
+	 *                               aired_years_from_seasons(). Empty to fall through.
+	 * @param int    $seasons        Stored season count (lezshows_seasons). 0 to skip.
+	 * @param string $start          Airdate start year.
+	 * @param string $finish         Airdate finish year, or the 'current' sentinel.
+	 * @param int    $current_year   The current year.
+	 * @param array  $hiatus_years   Known off-air years, if any.
+	 * @param int    $credited_count Distinct years any character is credited. 0 to skip.
 	 *
 	 * @return int Always at least 1 -- this is a denominator.
 	 */
-	public static function run_years( array $aired_years, int $seasons, string $start, string $finish, int $current_year, array $hiatus_years = array() ): int {
+	public static function run_years( array $aired_years, int $seasons, string $start, string $finish, int $current_year, array $hiatus_years = array(), int $credited_count = 0 ): int {
+		return self::run_years_detail( $aired_years, $seasons, $start, $finish, $current_year, $hiatus_years, $credited_count )['years'];
+	}
+
+	/**
+	 * run_years() plus which tier produced it.
+	 *
+	 * Exists because reporting the tier is not optional colour -- it is how a
+	 * reader knows whether a denominator came from curated data, an API, or a
+	 * fallback, and therefore how much to trust the score built on it.
+	 *
+	 * The tier MUST come from the function that made the choice. A caller that
+	 * re-derives it from the same inputs will eventually disagree, and did: the
+	 * preview command tested still-airing with Airdates::is_still_airing() while
+	 * this function tests `$finish_year >= $current_year` inline. Those disagreed
+	 * on 12 shows, all of them currently airing, which the CSV then reported as
+	 * "tier 1 season count" while the denominator had actually come from tier 2.
+	 * The scores were right and the explanation of them was wrong -- the same
+	 * class of bug as the transposed tier labels before it.
+	 *
+	 * ## The credited-years floor
+	 *
+	 * A denominator narrower than the span of its own numerators is internally
+	 * inconsistent: if our records say characters were on screen across five
+	 * calendar years, the show cannot have run for three. So the result is floored
+	 * at the number of distinct years any character is credited in.
+	 *
+	 * The case that forced it, from a live run -- The L Word: Generation Q:
+	 *
+	 *     seasons 3   span 5   credited_years 5   tier 1 -> run_years 3
+	 *
+	 * Three seasons across five calendar years, so tier 1 said 3. Every character
+	 * with three or more years then had `share` capped at 1.0, giving the show the
+	 * largest X in the corpus (116.6) and making it the only show whose uncapped
+	 * total cleared 100. Floored to 5, that inflation disappears.
+	 *
+	 * Two bounds on the floor, both deliberate:
+	 *
+	 *  - **Capped at the span.** A show cannot have aired in more calendar years
+	 *    than lie between its premiere and its finale, so a mistyped `appears`
+	 *    year cannot push the denominator past that. The residual effect of such a
+	 *    typo is to raise the denominator by one, which LOWERS the show's score --
+	 *    the safe direction, since a data error should never flatter a show.
+	 *  - **Never applied to tier 2.** Where we have actual per-season air dates,
+	 *    that set is the authoritative statement of which years the show existed,
+	 *    and character_years() already intersects against it -- so the numerator
+	 *    cannot exceed the denominator and there is nothing to inflate. Raising it
+	 *    above |aired| would mean dividing by years the show demonstrably did not
+	 *    air. The floor exists for denominators derived from something OTHER than
+	 *    air dates, which is exactly where undercounting happens.
+	 *
+	 * @param array  $aired_years    Years the show aired, from
+	 *                               aired_years_from_seasons(). Empty to fall through.
+	 * @param int    $seasons        Stored season count (lezshows_seasons). 0 to skip.
+	 * @param string $start          Airdate start year.
+	 * @param string $finish         Airdate finish year, or the 'current' sentinel.
+	 * @param int    $current_year   The current year.
+	 * @param array  $hiatus_years   Known off-air years, if any.
+	 * @param int    $credited_count Distinct years any character is credited. 0 to skip.
+	 *
+	 * @return array{years:int,tier:int,still_airing:bool,span:int,floored:bool}
+	 */
+	public static function run_years_detail( array $aired_years, int $seasons, string $start, string $finish, int $current_year, array $hiatus_years = array(), int $credited_count = 0 ): array {
 		$start_year = self::year_from_value( $start );
 
 		// Should be unreachable -- every show has a start year -- but this is a
 		// division, so it is guarded rather than trusted.
 		if ( null === $start_year ) {
-			return 1;
+			return array(
+				'years'        => 1,
+				'tier'         => 4,
+				'still_airing' => false,
+				'span'         => 1,
+				'floored'      => false,
+			);
 		}
 
 		// An empty finish, or the 'current' sentinel, means still airing. So
@@ -370,19 +738,39 @@ class Longevity {
 		$finish_year = max( $finish_year, $start_year );
 		$span        = ( $finish_year - $start_year ) + 1;
 
+		$out = array(
+			'years'        => max( 1, $span ),
+			'tier'         => 4,
+			'still_airing' => $still_airing,
+			'span'         => $span,
+			'floored'      => false,
+		);
+
+		// The floor, capped at the span. Applied to every tier except 2, where the
+		// air dates are authoritative -- see the docblock.
+		$floor = min( max( 0, $credited_count ), $span );
+
 		// Tier 1: the curated season count, for finished shows only.
 		//
 		// Capped at the span because years aired can never exceed the years
 		// between premiere and finale, while a season count can -- streaming
 		// shows drop two seasons in one calendar year.
 		if ( ! $still_airing && $seasons >= 1 ) {
-			return max( 1, min( $seasons, $span ) );
+			$years          = max( 1, min( $seasons, $span ) );
+			$out['floored'] = $floor > $years;
+			$out['years']   = max( $years, $floor );
+			$out['tier']    = 1;
+
+			return $out;
 		}
 
 		// Tier 2: the exact set of years the show was on screen.
 		$aired = array_unique( array_filter( array_map( 'intval', $aired_years ) ) );
 		if ( ! empty( $aired ) ) {
-			return count( $aired );
+			$out['years'] = count( $aired );
+			$out['tier']  = 2;
+
+			return $out;
 		}
 
 		// Tier 3: subtract only gap years that actually fall inside the run.
@@ -393,7 +781,12 @@ class Longevity {
 			}
 		}
 
-		return max( 1, $span - $gaps );
+		$years          = max( 1, $span - $gaps );
+		$out['floored'] = $floor > $years;
+		$out['years']   = max( $years, $floor );
+		$out['tier']    = ( $gaps > 0 ) ? 3 : 4;
+
+		return $out;
 	}
 
 	/**

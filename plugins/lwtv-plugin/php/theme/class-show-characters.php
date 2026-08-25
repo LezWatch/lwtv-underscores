@@ -434,7 +434,7 @@ class Show_Characters {
 							if ( has_term( 'none', 'lez_cliches', $char_id ) ) {
 								++$char_counts['none'];
 							}
-							// The Tambour Takedown: Checking Queer IRL
+							// The Tambor Takedown: Checking Queer IRL
 							// We don't award shows that have cast a cis/het actor in a queer
 							// role. To solve this, we grab the actor listed as PRIMARY ACTOR
 							// (i.e. the one listed first). If THEY are QIRL, the show gets points.

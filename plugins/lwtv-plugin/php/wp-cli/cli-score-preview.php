@@ -4,12 +4,21 @@
  *
  * READ ONLY. This command writes no post meta and mutates nothing. It exists so
  * the effect of the longevity model can be inspected against real shows before
- * any of it is wired into Calculations::count_queers_all_types().
+ * it is switched on.
+ *
+ * ⚠ Both models come from LWTV\CPTs\Shows\Character_Score, which is also what
+ * Calculations::count_queers_all_types() calls. That is the point: this command
+ * was used to CALIBRATE the new model, so a private replica of the maths here
+ * could have drifted from what ships and quietly invalidated the calibration it
+ * was used to pick. If you are tempted to compute a score in this file, don't --
+ * add it to Character_Score and read it from there.
  *
  * See docs/plans/show-score-longevity.md. The main job here is calibrating
- * SATURATION_K: pick it from the real distribution so the median show's score is
- * roughly unchanged, making the change a re-ranking rather than a mass deflation
- * that slides every letter grade down at once. Use --k to try values.
+ * SATURATION_K, and NOT by holding the median total steady -- that advice used to
+ * live here and it is backwards, because the old total median only sat where it
+ * did while the character component was stuck on the floor. Calibrate on that
+ * component's own distribution instead. Use --k to try values, though a sweep
+ * needs no re-run: see the note printed after the distribution summary.
  *
  * Registered separately from cli-calc.php because WP_CLI_LWTV_Calculate is
  * declared with an __invoke(), so WP-CLI treats it as a single command and it
@@ -22,11 +31,9 @@ if ( ! defined( 'ABSPATH' ) && ! defined( 'WP_CLI' ) ) {
 }
 
 use LWTV\CPTs\Shows as CPT_Shows;
-use LWTV\CPTs\Shows\Airdates;
 use LWTV\CPTs\Shows\Calculations as Shows_Calculations;
+use LWTV\CPTs\Shows\Character_Score;
 use LWTV\CPTs\Shows\Longevity;
-use LWTV\Queeries\Is_Actor_Queer;
-use LWTV\Queeries\Is_Actor_Trans;
 use LWTV\Statistics\Build\Score_Distribution;
 
 /**
@@ -43,11 +50,6 @@ class WP_CLI_LWTV_Score_Preview {
 	 * Pause between TVMaze requests in --all mode, in milliseconds.
 	 */
 	public const SLEEP_MS = 250;
-
-	/**
-	 * Gender terms that mean "not counted as trans" in the existing model.
-	 */
-	public const NOT_TRANS = array( 'cisgender', 'intersex', 'unknown' );
 
 	/**
 	 * "Failing Grades" threshold: score < this.
@@ -69,12 +71,17 @@ class WP_CLI_LWTV_Score_Preview {
 	public const COLOUR_INFLECTION = 51;
 
 	/**
-	 * Format slug => divisor, exactly as count_queers_all_types() applies them.
+	 * What each aired-years rejection means, appended to the tier-4 explanation.
+	 *
+	 * The verdict slug alone says which check fired but not what it implies about
+	 * the data, and the two rejections need different follow-up: a seasons or
+	 * coverage rejection means TVMaze is missing seasons for that show, while a
+	 * late-start rejection can also mean our own start year is wrong.
 	 */
-	public const FORMAT_DIVISORS = array(
-		'movie'       => 2,
-		'mini-series' => 1.5,
-		'web-series'  => 1.25,
+	public const VERDICT_NOTES = array(
+		Longevity::VERDICT_SEASONS    => ' (fewer dated years than recorded seasons)',
+		Longevity::VERDICT_LATE_START => ' (dated years begin well after the recorded start)',
+		Longevity::VERDICT_COVERAGE   => ' (cannot account for the years characters are credited in)',
 	);
 
 	/**
@@ -186,7 +193,7 @@ class WP_CLI_LWTV_Score_Preview {
 		\WP_CLI\Utils\format_items(
 			$format,
 			$rows,
-			array( 'id', 'show', 'format', 'chars', 'seasons', 'run_years', 'tier', 'chars_no_appears', 'qirl_tagged', 'qirl_no_primary', 'mean_weight', 'char_old_raw', 'char_old', 'char_new_raw', 'char_new', 'score_old', 'score_new', 'score_new_raw', 'delta', 'decile_old', 'decile_new', 'band_old', 'band_new', 'moved' )
+			array( 'id', 'show', 'format', 'chars', 'seasons', 'run_years', 'tier', 'floored', 'aired_rejected', 'aired_verdict', 'coverage', 'credited_years', 'aired_set', 'disc_outside', 'disc_hole', 'chars_no_appears', 'qirl_tagged', 'qirl_no_primary', 'mean_weight', 'char_old_raw', 'char_old', 'char_new_raw', 'char_new', 'score_old', 'score_new', 'score_new_raw', 'delta', 'decile_old', 'decile_new', 'band_old', 'band_new', 'moved' )
 		);
 
 		$this->report_distribution( $rows );
@@ -214,6 +221,27 @@ class WP_CLI_LWTV_Score_Preview {
 		\WP_CLI::log( 'Seasons:     ' . ( $data['seasons'] ?: 'not recorded' ) );
 		\WP_CLI::log( 'Run years:   ' . $data['run_years'] );
 		\WP_CLI::log( 'Source:      ' . $data['run_years_source'] );
+
+		// Coverage is the evidence behind a tier-2 accept or reject, so show it
+		// wherever a TVMaze set existed -- including when it was accepted. A
+		// borderline accept is exactly the case worth eyeballing, and it is
+		// invisible if the number only prints on rejection.
+		if ( Longevity::VERDICT_NONE !== $data['aired_verdict'] ) {
+			$thin = $data['credited_years'] < Longevity::COVERAGE_MIN_EVIDENCE;
+
+			\WP_CLI::log(
+				'Coverage:    ' . number_format( $data['coverage'], 3 )
+				. ' -- ' . $data['credited_years'] . ' credited years vs a ' . $data['aired_set'] . '-year TVMaze set'
+				. ( $thin ? ' (below the evidence floor, so not judged on it)' : '' )
+			);
+
+			if ( $data['disc_outside'] > 0 || $data['disc_hole'] > 0 ) {
+				\WP_CLI::log(
+					'Discarded:   ' . $data['disc_hole'] . ' credited years fall in a gap inside the set, '
+					. $data['disc_outside'] . ' fall outside its range entirely'
+				);
+			}
+		}
 		// Judged-on counts, not tag counts. The two standards are mutually
 		// exclusive now, so "19 queer-irl tagged" would overstate the queer-irl
 		// check when 13 of those characters were actually decided by the
@@ -417,6 +445,27 @@ class WP_CLI_LWTV_Score_Preview {
 			'seasons'          => $data['seasons'],
 			'run_years'        => $data['run_years'],
 			'tier'             => $data['tier'],
+			// The floor turned out to fire on 292 shows, not the one it was built
+			// for, so it needs to be visible in bulk output rather than inferred
+			// from run_years > seasons.
+			'floored'          => $data['run_years_floored'] ? 'yes' : '-',
+			'aired_rejected'   => $data['aired_rejected'] ? 'yes' : '-',
+			'aired_verdict'    => $data['aired_verdict'],
+			// A show with no TVMaze set has nothing to measure coverage against,
+			// and appearance_coverage() reports 0.0 for it. Printing that would
+			// read as catastrophic coverage on 1,855 shows when it means "not
+			// measurable" -- so it is blanked rather than shown as a number.
+			'coverage'         => ( Longevity::VERDICT_NONE === $data['aired_verdict'] )
+				? '-'
+				: number_format( $data['coverage'], 3 ),
+			'credited_years'   => $data['credited_years'],
+			// What a rejection actually rests on. |A| and |C| side by side make
+			// the verdict checkable by hand, and the outside/hole split shows
+			// whether the missing years sit beyond the set's range (a harder
+			// fact) or inside a gap in it.
+			'aired_set'        => $data['aired_set'],
+			'disc_outside'     => $data['disc_outside'],
+			'disc_hole'        => $data['disc_hole'],
 			'chars_no_appears' => $data['no_appears'],
 			'qirl_tagged'      => $data['queer_irl'],
 			'qirl_no_primary'  => $data['qirl_failed_primary'],
@@ -438,311 +487,96 @@ class WP_CLI_LWTV_Score_Preview {
 	}
 
 	/**
-	 * Collect everything both models need for one show.
+	 * Collect one show's data, then add the CLI's own explanation of it.
+	 *
+	 * The gathering itself lives in Character_Score so this command and the live
+	 * calculation cannot disagree -- that shared implementation is the whole point
+	 * of the class. What stays here is the two things only a CLI wants: the
+	 * optional live TVMaze fetch (which must never enter the scoring path) and the
+	 * prose explaining which denominator tier was used and why.
 	 *
 	 * @param int  $show_id Show post ID.
-	 * @param bool $tvmaze  Whether to hit the TVMaze API.
+	 * @param bool $tvmaze  Whether to hit the TVMaze API for missing aired years.
 	 *
 	 * @return array
 	 */
 	private function gather( int $show_id, $tvmaze ): array {
-		$airdates = Airdates::get( $show_id );
-		$now      = (int) gmdate( 'Y' );
+		$aired_override = array();
+		$why            = '--tvmaze not passed';
+		$stored         = get_post_meta( $show_id, 'lezshows_aired_years', true );
+		$has_stored     = is_array( $stored ) && ! empty( $stored );
 
-		$aired_years = array();
-		$why         = '';
-		$seasons     = (int) get_post_meta( $show_id, 'lezshows_seasons', true );
-
-		// Tier 1: exact years, from stored meta if the cron has run, else live.
-		$stored = get_post_meta( $show_id, 'lezshows_aired_years', true );
-		if ( is_array( $stored ) && ! empty( $stored ) ) {
-			$aired_years = array_map( 'intval', $stored );
+		if ( $has_stored ) {
+			$why = '';
 		} elseif ( $tvmaze ) {
-			$aired_years = $this->fetch_aired_years( $show_id, $now, $why );
-		} else {
-			$why = '--tvmaze not passed';
+			$aired_override = $this->fetch_aired_years( $show_id, (int) gmdate( 'Y' ), $why );
 		}
 
-		$run_years = Longevity::run_years( $aired_years, $seasons, $airdates['start'], $airdates['finish'], $now );
+		// Both gates forced on regardless of the live flags. A preview whose
+		// contents depended on whether the feature was already enabled would be
+		// useless for deciding whether to enable it -- and with the flags off,
+		// gather() would return no weights at all and every NEW column would read
+		// zero, which looks like a result rather than a missing input.
+		$data = Character_Score::gather(
+			$show_id,
+			array(
+				'aired_override' => $aired_override,
+				'longevity'      => true,
+				'actor_check'    => true,
+			)
+		);
 
-		// Report which tier actually produced the denominator, and when it fell
-		// through, why. "tier 4" alone hides whether a show has no TVMaze ID or
-		// whether the lookup broke -- those need different fixes.
-		//
-		// Tier order matches Longevity::run_years(): curated season count first,
-		// exact aired years second.
-		$still_airing = '' === trim( $airdates['finish'] ) || Airdates::is_still_airing( $airdates['finish'] );
-		if ( ! $still_airing && $seasons >= 1 ) {
-			$tier   = 1;
-			$source = 'season count (tier 1, curated) = ' . $seasons;
+		$data['has_stored']       = $has_stored;
+		$data['run_years_source'] = $this->explain_tier( $data, $why );
+
+		return $data;
+	}
+
+	/**
+	 * Why this show's denominator came from the tier it did.
+	 *
+	 * "tier 4" alone hides whether a show has no TVMaze ID or whether the lookup
+	 * broke, and those need different fixes -- one is data entry, the other is an
+	 * outage or a bad ID.
+	 *
+	 * @param array  $data Output of Character_Score::gather().
+	 * @param string $why  Why no aired years were available, if they were not.
+	 *
+	 * @return string
+	 */
+	private function explain_tier( array $data, string $why ): string {
+		$airing = $data['still_airing']
+			? ' | still airing, so season count skipped'
+			: ' | no season count';
+
+		$floored = ! empty( $data['run_years_floored'] )
+			? ' | RAISED to ' . $data['run_years'] . ', the number of years characters are credited in'
+			: '';
+
+		if ( 1 === $data['tier'] ) {
+			$source = 'season count (tier 1, curated) = ' . $data['seasons'];
 
 			// Worth surfacing even when tier 1 wins: where the curated count and
 			// the exact year set disagree, one of them is wrong about this show,
 			// and the curated one is the one being used.
-			if ( ! empty( $aired_years ) && count( $aired_years ) !== $run_years ) {
-				$source .= ' | NOTE exact years say ' . count( $aired_years );
+			if ( ! empty( $data['aired_years'] ) && count( $data['aired_years'] ) !== $data['run_years'] ) {
+				$source .= ' | NOTE exact years say ' . count( $data['aired_years'] );
 			}
-		} elseif ( ! empty( $aired_years ) ) {
-			$tier   = 2;
-			$source = ( empty( $stored ) ? 'tvmaze seasons' : 'stored aired years' ) . ' (tier 2, exact)'
-				. ( $still_airing ? ' | still airing, so season count skipped' : ' | no season count' );
-		} else {
-			$tier   = 4;
-			$source = 'airdate span (tier 4) | no exact years: ' . $why
-				. ( $still_airing ? ' | still airing, so season count skipped' : ' | no season count' );
+
+			return $source . $floored;
 		}
 
-		// Format divisor.
-		$format  = '';
-		$divisor = 1;
-		foreach ( self::FORMAT_DIVISORS as $slug => $value ) {
-			if ( has_term( $slug, 'lez_formats', $show_id ) ) {
-				$format  = $slug;
-				$divisor = $value;
-				break;
-			}
+		if ( 2 === $data['tier'] ) {
+			return $data['aired_source'] . ' (tier 2, exact)' . $airing;
 		}
 
-		$characters = lwtv_plugin()->get_characters_list( $show_id, 'query' );
-		$characters = is_array( $characters ) ? $characters : array();
-
-		if ( ! empty( $characters ) ) {
-			update_meta_cache( 'post', $characters );
-			update_object_term_cache( $characters, array( 'lez_cliches', 'lez_gender' ) );
+		if ( $data['aired_rejected'] ) {
+			return 'airdate span (tier ' . $data['tier'] . ') | TVMaze aired years REJECTED as implausible, signal: '
+				. $data['aired_verdict'] . self::VERDICT_NOTES[ $data['aired_verdict'] ];
 		}
 
-		$out = array(
-			'id'                   => $show_id,
-			'format'               => $format,
-			'divisor'              => $divisor,
-			'start'                => $airdates['start'],
-			'finish'               => $airdates['finish'],
-			'aired_years'          => $aired_years,
-			'seasons'              => $seasons,
-			'run_years'            => $run_years,
-			'run_years_source'     => $source,
-			'tier'                 => $tier,
-			'count'                => count( $characters ),
-			'dead'                 => 0,
-			'none'                 => 0,
-			'queer_irl'            => 0,
-			'qirl_failed_primary'  => 0,
-			'trans'                => 0,
-			'trans_irl'            => 0,
-			'trans_new'            => 0,
-			'trans_miscast'        => 0,
-			'miscast_detail'       => array(),
-			'judged_on_trans'      => 0,
-			'judged_on_qirl'       => 0,
-			'actor_gender_unknown' => 0,
-			'unknown_actor_slugs'  => array(),
-			'gender_unclassified'  => 0,
-			'unclassified_slugs'   => array(),
-			'no_appears'           => 0,
-			'characters'           => array(),
-		);
-
-		foreach ( $characters as $char_id ) {
-			$char_id = (int) $char_id;
-
-			$is_dead = has_term( 'dead', 'lez_cliches', $char_id );
-			$is_none = has_term( 'none', 'lez_cliches', $char_id );
-			$is_qirl = has_term( 'queer-irl', 'lez_cliches', $char_id );
-
-			// OLD model's trans test: the exclusion check. Kept only so the OLD
-			// column still replicates the live calculation.
-			$is_trans_old = ! has_term( self::NOT_TRANS, 'lez_gender', $char_id );
-
-			// NEW model: an explicit three-way classification from the actual
-			// gender terms, so an untriaged term is reported rather than
-			// silently counted as cis.
-			$gender_terms = get_the_terms( $char_id, 'lez_gender' );
-			$gender_slugs = ( is_array( $gender_terms ) ) ? wp_list_pluck( $gender_terms, 'slug' ) : array();
-			$gender_class = Longevity::classify_gender( $gender_slugs );
-
-			if ( 'unclassified' === $gender_class ) {
-				++$out['gender_unclassified'];
-				foreach ( $gender_slugs as $slug ) {
-					$out['unclassified_slugs'][ $slug ] = true;
-				}
-			}
-
-			$out['dead']      += $is_dead ? 1 : 0;
-			$out['none']      += $is_none ? 1 : 0;
-			$out['queer_irl'] += $is_qirl ? 1 : 0;
-			$out['trans']     += $is_trans_old ? 1 : 0;
-			if ( 'trans-or-nb' === $gender_class ) {
-				++$out['trans_new'];
-			}
-
-			$actor_ids = get_field( 'lezchars_actor', $char_id ) ?: array();
-			foreach ( $actor_ids as $actor ) {
-				if ( ( new Is_Actor_Trans() )->make( $actor ) ) {
-					++$out['trans_irl'];
-					break;
-				}
-			}
-
-			// The Tambour Takedown, applied to scoring for the first time. The
-			// existing implementation in theme/class-show-characters.php sits in
-			// an unreachable branch, so the live score has been awarding
-			// queer-irl credit without ever checking the actor.
-			//
-			// Both conditions are required, matching that implementation: the
-			// character is tagged queer-irl AND their first-billed actor is
-			// actually queer. Actors are stored in billing order, so the
-			// primary is simply the first.
-			$primary_queer = false;
-			if ( $is_qirl && ! empty( $actor_ids ) ) {
-				$primary_queer = ( new Is_Actor_Queer() )->make( reset( $actor_ids ) );
-			}
-
-			if ( $is_qirl && ! $primary_queer ) {
-				++$out['qirl_failed_primary'];
-			}
-
-			// Trans/NB casting, same shape: the primary actor, not the whole cast.
-			//
-			// Read via Longevity::classify_actor_gender() rather than
-			// Is_Actor_Trans, which decides with strpos( $slug, 'trans' ) and so
-			// cannot see an actor tagged non-binary. Since non-binary CHARACTERS
-			// are now held to this standard, using Is_Actor_Trans here would dock
-			// every show that cast a non-binary actor correctly.
-			$actor_class   = 'unknown';
-			$primary_actor = 0;
-			$primary_slugs = array();
-			if ( ! empty( $actor_ids ) ) {
-				$primary_actor = (int) reset( $actor_ids );
-				$actor_terms   = get_the_terms( $primary_actor, 'lez_actor_gender' );
-				$primary_slugs = ( is_array( $actor_terms ) ) ? wp_list_pluck( $actor_terms, 'slug' ) : array();
-				$actor_class   = Longevity::classify_actor_gender( $primary_slugs );
-			}
-
-			$primary_trans = ( 'trans-or-nb' === $actor_class );
-
-			// One casting decision, one multiplier. Trans/NB roles are judged on
-			// trans/NB casting, everyone else on queer casting -- they no longer
-			// stack.
-			$casting = Longevity::casting_multiplier( $gender_class, $primary_queer, $actor_class );
-
-			// A trans/NB role whose actor's gender we have not recorded scores
-			// neutrally rather than as a miscast. Counted separately so the gap
-			// is visible instead of hiding inside "correctly cast".
-			if ( 'trans-or-nb' === $gender_class && 'unknown' === $actor_class ) {
-				++$out['actor_gender_unknown'];
-				foreach ( $primary_slugs as $slug ) {
-					$out['unknown_actor_slugs'][ $slug ] = true;
-				}
-			}
-
-			if ( $casting < 1.0 ) {
-				++$out['trans_miscast'];
-
-				// A miscast verdict is the only place this model actively DOCKS a
-				// show, so it has to be auditable. There is no unclassified
-				// bucket on the actor side -- an actor whose gender slug is
-				// unrecognised slug now classifies as 'unknown' and scores
-				// neutrally, so only an explicit cis tag reaches here. Recording
-				// the slugs is what lets that be audited rather than trusted.
-				$out['miscast_detail'][] = array(
-					'character'    => $this->display_title( $char_id ),
-					'gender_terms' => implode( ' ', $gender_slugs ),
-					'actor'        => $primary_actor ? $this->display_title( $primary_actor ) : '(no actor listed)',
-					'actor_terms'  => empty( $primary_slugs ) ? '(none)' : implode( ' ', $primary_slugs ),
-				);
-			}
-
-			// Which standard actually decided this character's multiplier. With
-			// one combined signal these are mutually exclusive, so counting
-			// queer-irl tags overstates what that check is doing.
-			if ( 'trans-or-nb' === $gender_class ) {
-				++$out['judged_on_trans'];
-			} elseif ( 'cis' === $gender_class ) {
-				++$out['judged_on_qirl'];
-			}
-
-			// Union the character's years across every show-group row pointing
-			// at this show, and keep their strongest role. A character with two
-			// separate stints is one character, not two -- the existing model
-			// counts their role points once per row, which double-counts them.
-			$years_set = array();
-			$role      = '';
-			$rows      = get_field( 'lezchars_show_group', $char_id );
-
-			if ( is_array( $rows ) ) {
-				foreach ( $rows as $row ) {
-					$row_show = is_array( $row['show'] ?? null ) ? ( $row['show'][0] ?? 0 ) : ( $row['show'] ?? 0 );
-
-					// phpcs:ignore Universal.Operators.StrictComparisons.LooseNotEqual
-					if ( $row_show != $show_id ) {
-						continue;
-					}
-
-					$role = $this->strongest_role( $role, (string) ( $row['type'] ?? '' ) );
-
-					$appears = $row['appears'] ?? null;
-					if ( is_array( $appears ) ) {
-						foreach ( $appears as $year ) {
-							$year = (int) $year;
-							if ( 0 !== $year ) {
-								$years_set[ $year ] = true;
-							}
-						}
-					} elseif ( is_numeric( $appears ) ) {
-						$years_set[ (int) $appears ] = true;
-					}
-				}
-			}
-
-			$years = Longevity::character_years( array_keys( $years_set ), $aired_years );
-
-			if ( 0 === $years ) {
-				++$out['no_appears'];
-				$weight        = Longevity::role_proxy_weight( $role );
-				$weight_source = 'role proxy';
-			} else {
-				$weight        = Longevity::weight( $years, $run_years );
-				$weight_source = 'appears';
-			}
-
-			$value = Longevity::character_value( $role, $casting, $is_none, $is_dead );
-
-			// Flags name which standard was applied, not just what is tagged --
-			// with one combined signal, "judged on trans casting" and "judged on
-			// queer casting" are mutually exclusive and the reader needs to know
-			// which one decided the multiplier.
-			$flags = array();
-			if ( 'trans-or-nb' === $gender_class ) {
-				$flags[] = $primary_trans ? 'trans-cast' : 'trans-MISCAST';
-			} elseif ( 'unclassified' === $gender_class ) {
-				$flags[] = 'gender-UNCLASSIFIED';
-			} elseif ( $primary_queer ) {
-				$flags[] = 'qirl';
-			} elseif ( $is_qirl ) {
-				// Tagged, but the lead role went to a cis/het actor.
-				$flags[] = 'qirl-TAG-ONLY';
-			}
-			if ( $is_none ) {
-				$flags[] = 'no-cliche';
-			}
-			if ( $is_dead ) {
-				$flags[] = 'dead';
-			}
-
-			$out['characters'][] = array(
-				'id'            => $char_id,
-				'name'          => $this->display_title( $char_id ),
-				'role'          => $role ?: '(none)',
-				'years'         => $years,
-				'weight'        => $weight,
-				'weight_source' => $weight_source,
-				'value'         => $value,
-				'contribution'  => $value * $weight,
-				'flags'         => implode( ' ', $flags ),
-			);
-		}
-
-		return $out;
+		return 'airdate span (tier ' . $data['tier'] . ') | no exact years: '
+			. ( $why ?: $data['aired_why'] ) . $airing . $floored;
 	}
 
 	/**
@@ -765,71 +599,35 @@ class WP_CLI_LWTV_Score_Preview {
 			$alive = ( ( $data['count'] - $data['dead'] ) / $data['count'] ) * 100;
 		}
 
-		// The OLD show-level trans aggregate. Retained ONLY for the OLD column,
-		// to keep it a faithful replication of the live calculation.
+		// Both models come from Character_Score, which is also what the live
+		// calculation calls. That is deliberate and it is the point of the
+		// refactor: this command was used to CALIBRATE the new model, so a
+		// separate replica here could have drifted from the shipping maths and
+		// quietly invalidated the calibration it was used to pick.
 		//
-		// The new model has no equivalent: trans casting is now a per-character
-		// multiplier already folded into each contribution, so adding this here
-		// too would double-count it. It also used the exclusion gender test,
-		// where the new path uses an explicit classification.
-		$trans_score = ( $data['trans_irl'] < $data['trans'] )
-			? ( ( $data['trans'] - $data['trans_irl'] ) * -5 )
-			: ( $data['trans'] * 10 );
-
-		// OLD: unbounded sum, format divisor, hard clamp at 100.
-		//
-		// Decomposed rather than summed in one expression, because which term
-		// blew past the cap is the interesting part. On Transparent the
-		// queer-irl bonus alone is 190 against a cap of 100, so roles, deaths
-		// and everything else are noise below the clamp -- the stored character
-		// score carries no information at all.
-		$roles = get_post_meta( (int) $data['id'], 'lezshows_char_roles', true );
-		$roles = is_array( $roles ) ? $roles : array();
-
-		$parts = array(
-			'base (roles)'     => ( ( $roles['regular'] ?? 0 ) * 5 ) + ( ( $roles['recurring'] ?? 0 ) * 2 ) + ( $roles['guest'] ?? 0 ),
-			'queer-irl bonus'  => $data['queer_irl'] * 10,
-			'no-cliches bonus' => $data['none'] * 5,
-			'dead penalty'     => $data['dead'] * -5,
-			'trans adjustment' => $trans_score,
-		);
-
-		$char_old_raw = array_sum( $parts );
-		$char_old     = ( 0 !== $char_old_raw ) ? ( $char_old_raw / $data['divisor'] ) : 0;
-		$char_old     = min( 100, $char_old );
-
-		// NEW: longevity-weighted sum, format divisor, saturating ceiling.
-		//
-		// Every modifier -- role, queer casting, trans casting, clichés, death --
-		// is already inside each character's contribution. Nothing is added at
-		// the show level any more, so the per-character table now accounts for
-		// the whole of X rather than leaving a third of it invisible.
-		$raw = 0.0;
-		foreach ( $data['characters'] as $char ) {
-			$raw += $char['contribution'];
-		}
-
-		$divided  = ( 0.0 !== $raw ) ? ( $raw / $data['divisor'] ) : 0.0;
-		$char_new = Longevity::saturate( (float) $divided, $ceiling );
+		// $legacy['score'] is therefore not "the preview's idea of the old score"
+		// but literally the number count_queers_all_types() returns -- which is
+		// what makes the stored-meta divergence check below meaningful.
+		$legacy = Character_Score::legacy( $data );
+		$new    = Character_Score::longevity( $data, $ceiling );
 
 		// $divided, not $raw, is what saturate() consumed -- so it is the value a
 		// K sweep needs. Reported as its own column because back-deriving it from
 		// a two-decimal char_new is lossy, and doing that by hand is exactly the
 		// gap this column closes.
-
-		$total_old = ( $show_rating + $tropes + $alive + $char_old ) / 4;
-		$total_new = ( $show_rating + $tropes + $alive + $char_new ) / 4;
+		$total_old = ( $show_rating + $tropes + $alive + $legacy['score'] ) / 4;
+		$total_new = ( $show_rating + $tropes + $alive + $new['score'] ) / 4;
 
 		return array(
 			'show_rating'    => $show_rating,
 			'tropes'         => $tropes,
 			'alive'          => $alive,
-			'raw'            => $raw,
-			'raw_divided'    => (float) $divided,
-			'old_parts'      => $parts,
-			'char_old_raw'   => $char_old_raw,
-			'char_old'       => (float) $char_old,
-			'char_new'       => $char_new,
+			'raw'            => $new['raw'],
+			'raw_divided'    => $new['divided'],
+			'old_parts'      => $legacy['parts'],
+			'char_old_raw'   => $legacy['raw'],
+			'char_old'       => $legacy['score'],
+			'char_new'       => $new['score'],
 			// Capped for comparability with the stored meta, which is capped
 			// today. The uncapped values are returned alongside so the display
 			// -only cap question can be answered from real numbers.
@@ -843,16 +641,16 @@ class WP_CLI_LWTV_Score_Preview {
 	/**
 	 * A post title fit for terminal output.
 	 *
-	 * Titles come back HTML-encoded -- Sydney &#8220;Syd&#8221; Feldman, Law
-	 * &#038; Order -- which is right for the web and noise in a CLI table. Same
-	 * decode cli-audit.php uses.
+	 * Delegates so there is one decode, not two. Titles come back HTML-encoded --
+	 * Sydney &#8220;Syd&#8221; Feldman, Law &#038; Order -- which is right for the
+	 * web and noise in a CLI table.
 	 *
 	 * @param int $post_id Post ID.
 	 *
 	 * @return string
 	 */
 	private function display_title( int $post_id ): string {
-		return html_entity_decode( get_the_title( $post_id ), ENT_QUOTES, 'UTF-8' );
+		return Character_Score::display_title( $post_id );
 	}
 
 	/**
@@ -929,28 +727,6 @@ class WP_CLI_LWTV_Score_Preview {
 	}
 
 	/**
-	 * Which of two role slugs represents the larger presence.
-	 *
-	 * @param string $current Role held so far.
-	 * @param string $next    Role from the row being read.
-	 *
-	 * @return string
-	 */
-	private function strongest_role( string $current, string $next ): string {
-		$rank = array(
-			''          => 0,
-			'guest'     => 1,
-			'recurring' => 2,
-			'regular'   => 3,
-		);
-
-		$current_rank = $rank[ $current ] ?? 0;
-		$next_rank    = $rank[ $next ] ?? 0;
-
-		return ( $next_rank > $current_rank ) ? $next : $current;
-	}
-
-	/**
 	 * Fetch a show's aired years from the TVMaze seasons endpoint.
 	 *
 	 * Sets $reason to why it came back empty, so a tier 3 fallback can say
@@ -1023,6 +799,7 @@ class WP_CLI_LWTV_Score_Preview {
 		$tiers    = array(
 			1 => 0,
 			2 => 0,
+			3 => 0,
 			4 => 0,
 		);
 		$over_100 = 0;
@@ -1061,16 +838,107 @@ class WP_CLI_LWTV_Score_Preview {
 		// count is tier 1, exact aired years is tier 2. These were transposed in
 		// an earlier revision, which reported 1813 shows as using "exact years"
 		// when not one of them did.
+		$rejected  = 0;
+		$verdicts  = array();
+		$histogram = array_fill( 0, 11, 0 );
+		$judged    = 0;
+
+		foreach ( $rows as $row ) {
+			if ( 'yes' === ( $row['aired_rejected'] ?? '-' ) ) {
+				++$rejected;
+
+				$verdict              = (string) ( $row['aired_verdict'] ?? '?' );
+				$verdicts[ $verdict ] = ( $verdicts[ $verdict ] ?? 0 ) + 1;
+			}
+
+			// The coverage histogram exists to calibrate COVERAGE_MIN, so it must
+			// only count shows the signal can actually judge: one that had no
+			// TVMaze set at all measures 0.0 for want of anything to compare,
+			// and one below the evidence floor is deliberately not judged.
+			// Including either would invent a cluster at the bottom of the chart.
+			if ( Longevity::VERDICT_NONE === ( $row['aired_verdict'] ?? '' )
+				|| (int) ( $row['credited_years'] ?? 0 ) < Longevity::COVERAGE_MIN_EVIDENCE ) {
+				continue;
+			}
+
+			++$judged;
+			++$histogram[ (int) floor( (float) $row['coverage'] * 10 ) ];
+		}
+
+		$floored = 0;
+		foreach ( $rows as $row ) {
+			if ( 'yes' === ( $row['floored'] ?? '-' ) ) {
+				++$floored;
+			}
+		}
+
 		\WP_CLI::log( 'Denominator tier:' );
 		\WP_CLI::log( '  tier 1 season count:   ' . $tiers[1] . ' (curated)' );
 		\WP_CLI::log( '  tier 2 exact years:    ' . $tiers[2] . ' (TVMaze; needs --tvmaze or stored lezshows_aired_years)' );
+		\WP_CLI::log( '  tier 3 span - hiatus:  ' . $tiers[3] . ' (no hiatus data exists yet, so expect 0)' );
 		\WP_CLI::log( '  tier 4 airdate span:   ' . $tiers[4] . ' (nothing improved for these)' );
+		\WP_CLI::log( '    of which rejected:   ' . $rejected . ' had TVMaze aired years but they looked' );
+		\WP_CLI::log( '                         implausible, so the span was used instead' );
+		\WP_CLI::log( '' );
+		\WP_CLI::log( 'Denominator raised to the credited-years floor: ' . $floored . ' shows' );
+		\WP_CLI::log( '  Each of these had a denominator SMALLER than the number of years its own' );
+		\WP_CLI::log( '  characters are credited in, which cannot be right. Read as a data signal:' );
+		\WP_CLI::log( '  that many shows have a lezshows_seasons value materially below the calendar' );
+		\WP_CLI::log( '  years they actually aired across.' );
+
+		if ( ! empty( $verdicts ) ) {
+			\WP_CLI::log( '' );
+			\WP_CLI::log( 'Which signal rejected them:' );
+			foreach ( $verdicts as $verdict => $total ) {
+				\WP_CLI::log( '  ' . str_pad( $verdict, 22 ) . $total );
+			}
+		}
+
+		// The calibration table. COVERAGE_MIN is currently a provisional guess,
+		// and this is what replaces the guess: if incomplete sets are a distinct
+		// population there will be a sparse band between the pile at 1.0 and the
+		// broken ones, and the threshold belongs in that gap. If instead the
+		// distribution is smooth, there is no natural cut point and the signal
+		// needs rethinking rather than tuning -- so a boring histogram is a real
+		// answer, not a failed measurement.
+		if ( $judged > 0 ) {
+			\WP_CLI::log( '' );
+			\WP_CLI::log( 'Appearance coverage, for the ' . $judged . ' shows the signal can judge:' );
+			\WP_CLI::log( '  (had a TVMaze set, and at least ' . Longevity::COVERAGE_MIN_EVIDENCE . ' credited years to check it against)' );
+
+			$widest = max( $histogram );
+			foreach ( $histogram as $bucket => $total ) {
+				$label = ( 10 === $bucket )
+					? '     1.00 (exact)'
+					: sprintf( '%.2f - %.2f    ', $bucket / 10, ( $bucket + 1 ) / 10 );
+
+				\WP_CLI::log(
+					'  ' . $label . ' ' . str_pad( (string) $total, 6, ' ', STR_PAD_LEFT ) . '  '
+					. str_repeat( '#', (int) round( ( $total / max( 1, $widest ) ) * 40 ) )
+				);
+			}
+
+			\WP_CLI::log( '  current COVERAGE_MIN = ' . Longevity::COVERAGE_MIN . ' (provisional -- set it from the gap above)' );
+		}
+
 		\WP_CLI::log( '' );
 		\WP_CLI::log( 'Uncapped NEW totals above 100: ' . $over_100 . ' shows' . ( $over_100 > 0 ? ', highest ' . number_format( $worst, 2 ) : '' ) );
 		\WP_CLI::log( '  ^ this is what a display-only cap would preserve. Theoretical max is' );
 		\WP_CLI::log( '    103.75, since only show_score() (max 115) is unclamped.' );
 		\WP_CLI::log( '' );
-		\WP_CLI::log( 'Calibration: adjust --k until median NEW is close to median OLD.' );
+		// This used to read "adjust --k until median NEW is close to median OLD",
+		// which is backwards and is corrected here rather than deleted, because
+		// it is the intuitive thing to try and the reason it fails is not obvious.
+		\WP_CLI::log( 'Calibration: do NOT tune --k to match the old median.' );
+		\WP_CLI::log( '  The character score is one term of a four-way average whose other three' );
+		\WP_CLI::log( '  have a median of ~69. The old character median was 10 -- a scale error, not' );
+		\WP_CLI::log( '  a judgment. Matching the old total median needs K=40, which puts the' );
+		\WP_CLI::log( '  character median at 11.8 and keeps the error. Tune on the character' );
+		\WP_CLI::log( '  component\'s own distribution, and expect most totals to rise.' );
+		\WP_CLI::log( '' );
+		\WP_CLI::log( '  No re-run is needed to try other values: char_new_raw IS the X that K' );
+		\WP_CLI::log( '  divides, and the rest of the total is 4 * score_new_raw - char_new, so one' );
+		\WP_CLI::log( '  CSV can be swept offline for every candidate K at once.' );
 	}
 }
 

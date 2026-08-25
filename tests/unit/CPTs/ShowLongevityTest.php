@@ -148,6 +148,490 @@ class ShowLongevityTest extends TestCase {
 	}
 
 	/*
+	 * usable_aired_years() - the plausibility guard on tier 2
+	 *
+	 * TVMaze's season coverage is patchy for long-running shows, so one can come
+	 * back with only a handful of its years dated. That is worse than useless: a
+	 * short aired-years set shrinks the denominator (raising every weight) AND
+	 * gets intersected against each character's `appears`, silently discarding
+	 * real screen time. Measured on the live data, 13 shows had their denominator
+	 * shrink while mean character weight also fell -- only the intersection can
+	 * do that.
+	 *
+	 * Three signals: the season count (signal 1), a late start (signal 2), and
+	 * whether the set can account for the years characters are credited in
+	 * (signal 3). Signals 1 and 2 together caught only 6 of those 13 shows, which
+	 * is why signal 3 exists -- see the discrimination tests below.
+	 */
+
+	public function test_a_complete_aired_set_is_used_as_is(): void {
+		$aired = range( 2014, 2019 );
+
+		$this->assertSame( $aired, Longevity::usable_aired_years( $aired, 6, '2014' ) );
+	}
+
+	public function test_a_revival_gap_is_kept(): void {
+		// The case tier 2 exists for. The X-Files: the set starts at the recorded
+		// start year and the hole is in the middle, which is real.
+		$aired = array_merge( range( 1993, 2002 ), array( 2016, 2018 ) );
+
+		$this->assertSame( $aired, Longevity::usable_aired_years( $aired, 0, '1993' ) );
+	}
+
+	public function test_a_set_that_starts_far_too_late_is_rejected(): void {
+		// A show recorded from 1992 whose only dated years are recent: every
+		// pre-2018 appearance would be thrown away by the intersection.
+		//
+		// This was written expecting it to describe Gute Zeiten, schlechte Zeiten.
+		// It does not -- GZSZ has 9 dated years but they START at the premiere,
+		// with the holes in the middle and end, so signal 2 never fires on it.
+		// The shape is real and worth rejecting, it is just rarer than assumed.
+		// GZSZ is covered by signal 3 instead, below.
+		$aired = range( 2018, 2026 );
+
+		$this->assertSame( array(), Longevity::usable_aired_years( $aired, 0, '1992' ) );
+	}
+
+	public function test_one_year_of_slack_on_the_start_is_allowed(): void {
+		// A December premiere recorded as the following year, or an airdate that
+		// is off by one, must not throw the whole set away.
+		$aired = range( 2015, 2020 );
+
+		$this->assertSame( $aired, Longevity::usable_aired_years( $aired, 0, '2014' ) );
+	}
+
+	public function test_fewer_aired_years_than_seasons_is_rejected(): void {
+		// Fair City: 28 seasons recorded, TVMaze dated 16 years. Two seasons in
+		// one calendar year happens, but essentially only in reality TV, which
+		// this site does not cover -- so at this scale it means missing seasons.
+		$aired = range( 2010, 2025 );
+
+		$this->assertSame( array(), Longevity::usable_aired_years( $aired, 28, '2010' ) );
+	}
+
+	public function test_one_season_straddling_a_year_boundary_is_allowed(): void {
+		// 6 seasons across 5 calendar years is ordinary Sept-May scheduling.
+		$aired = range( 2015, 2019 );
+
+		$this->assertSame( $aired, Longevity::usable_aired_years( $aired, 6, '2015' ) );
+	}
+
+	public function test_an_empty_set_stays_empty(): void {
+		$this->assertSame( array(), Longevity::usable_aired_years( array(), 5, '2014' ) );
+	}
+
+	public function test_an_unparseable_start_skips_the_start_check(): void {
+		// No start year to compare against, so only the seasons signal applies.
+		$aired = range( 2018, 2026 );
+
+		$this->assertSame( $aired, Longevity::usable_aired_years( $aired, 0, '' ) );
+	}
+
+	public function test_the_guard_makes_run_years_fall_through(): void {
+		// The whole point: a rejected set must take the denominator with it, so
+		// the span is used instead of a badly truncated count.
+		$aired = Longevity::usable_aired_years( range( 2018, 2026 ), 0, '1992' );
+
+		$this->assertSame( 35, Longevity::run_years( $aired, 0, '1992', '2026', 2026 ) );
+	}
+
+	public function test_the_guard_also_protects_character_years(): void {
+		// And it must take the intersection with it. A character credited from
+		// 1995 keeps those years rather than having them discarded.
+		$aired = Longevity::usable_aired_years( range( 2018, 2026 ), 0, '1992' );
+
+		$this->assertSame( 3, Longevity::character_years( array( 1995, 1996, 1997 ), $aired ) );
+	}
+
+	/*
+	 * Signal 3 - appearance coverage
+	 *
+	 * The discrimination that signals 1 and 2 cannot make. Both a revival gap and
+	 * a data gap produce a set with holes in it; what separates them is whether
+	 * characters were on screen inside the holes. A revival gap is empty there
+	 * because the show was not airing. A data gap is populated, and that is proof
+	 * the show WAS airing and TVMaze simply has no season dated for it.
+	 */
+
+	public function test_a_revival_gap_survives_the_coverage_check(): void {
+		// The X-Files. The set has an 13-year hole, but no character is credited
+		// inside it, because nothing aired then. The set is right.
+		$aired    = array_merge( range( 1993, 2002 ), array( 2016, 2018 ) );
+		$credited = array_merge( range( 1993, 2002 ), array( 2016, 2018 ) );
+
+		$this->assertSame(
+			$aired,
+			Longevity::usable_aired_years( $aired, 0, '1993', $credited )
+		);
+	}
+
+	public function test_a_middle_gap_with_appearances_in_it_is_rejected(): void {
+		// Gute Zeiten, schlechte Zeiten. Dated years start at the premiere so
+		// signal 2 abstains, and there is no season count so signal 1 abstains --
+		// but characters are credited across the whole 35-year span, most of it in
+		// years the set does not contain. That is the set being wrong, not the
+		// characters.
+		$aired    = array( 1992, 1993, 1994, 2021, 2022, 2023, 2024, 2025, 2026 );
+		$credited = range( 1995, 2020 );
+
+		$this->assertSame(
+			array(),
+			Longevity::usable_aired_years( $aired, 0, '1992', $credited )
+		);
+	}
+
+	public function test_a_single_stray_credited_year_does_not_reject_a_set(): void {
+		// One `appears` typo is a data-entry slip, not evidence the set is short.
+		// 4 of 5 credited years inside = 0.80, above the threshold.
+		$aired    = range( 2015, 2019 );
+		$credited = array( 2015, 2016, 2017, 2018, 1998 );
+
+		$this->assertSame(
+			$aired,
+			Longevity::usable_aired_years( $aired, 0, '2015', $credited )
+		);
+	}
+
+	public function test_coverage_abstains_below_the_evidence_floor(): void {
+		// Two credited years, one outside. That is 0.50 coverage, but on evidence
+		// this thin a bad set and a bad year are indistinguishable, so the signal
+		// must not fire. Small shows are exactly where a false rejection hurts.
+		$aired    = range( 2015, 2019 );
+		$credited = array( 2016, 1998 );
+
+		$this->assertSame(
+			$aired,
+			Longevity::usable_aired_years( $aired, 0, '2015', $credited )
+		);
+	}
+
+	public function test_coverage_is_skipped_when_no_credited_years_are_supplied(): void {
+		// A caller that has not gathered characters gets signals 1 and 2 only.
+		// It must not read as zero coverage.
+		$aired = range( 2015, 2019 );
+
+		$this->assertSame( $aired, Longevity::usable_aired_years( $aired, 0, '2015' ) );
+	}
+
+	public function test_appearance_coverage_measures_the_union_not_the_tally(): void {
+		// A year credited to six characters counts once, so one long-serving
+		// regular cannot swamp the measurement.
+		$aired    = array( 2015, 2016 );
+		$credited = array( 2015, 2015, 2015, 2015, 2016, 2017 );
+
+		$this->assertSame( 2 / 3, Longevity::appearance_coverage( $aired, $credited ) );
+	}
+
+	public function test_appearance_coverage_of_nothing_is_total(): void {
+		// Nothing to explain is not the same as failing to explain something.
+		$this->assertSame( 1.0, Longevity::appearance_coverage( range( 2015, 2019 ), array() ) );
+		$this->assertSame( 1.0, Longevity::appearance_coverage( array(), array( 0, 0 ) ) );
+	}
+
+	public function test_appearance_coverage_of_a_disjoint_set_is_zero(): void {
+		$this->assertSame( 0.0, Longevity::appearance_coverage( range( 2020, 2026 ), range( 1995, 2005 ) ) );
+	}
+
+	public function test_the_coverage_verdict_is_reported_distinctly(): void {
+		// Each signal has to be attributable, or the CLI cannot report which one
+		// fired and the threshold cannot be calibrated against the corpus.
+		$this->assertSame(
+			Longevity::VERDICT_SEASONS,
+			Longevity::aired_years_verdict( range( 2010, 2025 ), 28, '2010' )
+		);
+		$this->assertSame(
+			Longevity::VERDICT_LATE_START,
+			Longevity::aired_years_verdict( range( 2018, 2026 ), 0, '1992' )
+		);
+		$this->assertSame(
+			Longevity::VERDICT_COVERAGE,
+			Longevity::aired_years_verdict( array( 1992, 1993, 1994 ), 0, '1992', range( 1995, 2020 ) )
+		);
+		$this->assertSame(
+			Longevity::VERDICT_OK,
+			Longevity::aired_years_verdict( range( 2015, 2019 ), 0, '2015', range( 2015, 2019 ) )
+		);
+		$this->assertSame(
+			Longevity::VERDICT_NONE,
+			Longevity::aired_years_verdict( array(), 0, '2015' )
+		);
+	}
+
+	public function test_coverage_rejection_recovers_the_character_years(): void {
+		// The end-to-end point of signal 3. Before it, a GZSZ character credited
+		// across 2000-2010 kept none of those years, because the intersection
+		// threw away every year TVMaze had not dated -- so a decade-long regular
+		// scored as though they had never been on screen. Now the set is dropped
+		// and the years survive.
+		$aired    = array( 1992, 1993, 1994, 2021, 2022, 2023, 2024, 2025, 2026 );
+		$credited = range( 1995, 2020 );
+		$vetted   = Longevity::usable_aired_years( $aired, 0, '1992', $credited );
+
+		$this->assertSame( 11, Longevity::character_years( range( 2000, 2010 ), $vetted ) );
+
+		// And the denominator falls back to the span rather than the 9 dated
+		// years, so that regular is measured against the show's real length.
+		$this->assertSame( 35, Longevity::run_years( $vetted, 0, '1992', '2026', 2026 ) );
+	}
+
+	/*
+	 * discarded_years() - a diagnostic, and two signals that did not survive
+	 *
+	 * These tests exist to stop the discarded ideas being rebuilt. Both were
+	 * attempts to sharpen signal 3 by telling a real hiatus (set correct, loose
+	 * `appears`) from a data gap (set incomplete), and both failed on evidence:
+	 *
+	 *  - Hole LOCATION carries no information; the first test below is the
+	 *    measurement that killed it.
+	 *  - Record SIZE is provably redundant. Whenever |C| > 1.5 x |A|, coverage is
+	 *    at most |A|/|C| < 0.667, already under COVERAGE_MIN -- so signal 3 has
+	 *    always rejected the set first. Below coverage's evidence floor, where it
+	 *    could have added something, it qualifies zero of 304 shows.
+	 *
+	 * A COVERAGE_MIN test asserting the second property lives with the constants.
+	 */
+
+	public function test_coverage_min_makes_a_size_comparison_redundant(): void {
+		// The algebra, asserted rather than trusted: a record more than
+		// RATIO times richer than the set cannot have coverage above 1/RATIO,
+		// so any threshold at or above that point rejects it on coverage alone.
+		// This is why there is no size-comparison signal.
+		$ratio = 1.5;
+
+		$this->assertGreaterThan(
+			1 / $ratio,
+			Longevity::COVERAGE_MIN,
+			'A size-comparison signal would be reachable, and should be reconsidered.'
+		);
+
+		// And a worked instance of it.
+		$aired    = range( 2001, 2010 );
+		$credited = range( 2001, 2026 );
+
+		$this->assertGreaterThan( $ratio, count( $credited ) / count( $aired ) );
+		$this->assertLessThan( Longevity::COVERAGE_MIN, Longevity::appearance_coverage( $aired, $credited ) );
+		$this->assertSame(
+			Longevity::VERDICT_COVERAGE,
+			Longevity::aired_years_verdict( $aired, 0, '2001', $credited )
+		);
+	}
+
+	public function test_hole_location_cannot_tell_the_two_cases_apart(): void {
+		// The measurement that killed the internal-hole signal, kept as a test so
+		// nobody rebuilds it. A bad set and a good set, indistinguishable: both
+		// put every discarded year inside a hole and none outside the range.
+		$gzsz = Longevity::discarded_years(
+			array( 1992, 1993, 1994, 2021, 2022, 2023, 2024, 2025, 2026 ),
+			range( 1995, 2020 )
+		);
+		$rick = Longevity::discarded_years(
+			array( 2013, 2014, 2015, 2017, 2019, 2020, 2021, 2022, 2023, 2024, 2025 ),
+			range( 2013, 2025 )
+		);
+
+		$this->assertSame( 0, $gzsz['outside'] );
+		$this->assertSame( 0, $rick['outside'] );
+		$this->assertSame( 26, $gzsz['hole'] );
+		$this->assertSame( 2, $rick['hole'] );
+	}
+
+	public function test_discarded_years_outside_the_range_are_counted_apart(): void {
+		// Still worth reporting where it does happen: credited before the set
+		// begins or after it ends is a harder fact than credited in a gap.
+		$out = Longevity::discarded_years( range( 2010, 2015 ), array( 2008, 2012, 2018 ) );
+
+		$this->assertSame( 2, $out['outside'] );
+		$this->assertSame( 0, $out['hole'] );
+		$this->assertSame( 2, $out['total'] );
+	}
+
+	public function test_discarded_years_with_no_aired_set_are_all_unexplained(): void {
+		$out = Longevity::discarded_years( array(), array( 2008, 2012 ) );
+
+		$this->assertSame( 2, $out['outside'] );
+		$this->assertSame( 2, $out['total'] );
+	}
+
+	public function test_a_fully_explained_record_discards_nothing(): void {
+		$out = Longevity::discarded_years( range( 2010, 2015 ), range( 2011, 2014 ) );
+
+		$this->assertSame( 0, $out['total'] );
+		$this->assertSame( 0, $out['outside'] );
+		$this->assertSame( 0, $out['hole'] );
+	}
+
+	/*
+	 * run_years_detail() - the denominator AND which tier produced it
+	 *
+	 * The tier has to come from the function that made the choice. When the
+	 * preview command re-derived it from the same inputs, the two tests for
+	 * "still airing" drifted apart and 12 currently-airing shows were reported as
+	 * using a curated season count when their denominator had come from TVMaze.
+	 * The scores were right; the explanation of them was wrong.
+	 */
+
+	public function test_a_still_airing_show_with_a_season_count_is_not_tier_1(): void {
+		// The regression. Euphoria: 3 seasons recorded, still airing, and an
+		// aired-years set. Tier 1 excludes still-airing shows, so this MUST
+		// report tier 2 -- and a run of 5 years, not 3.
+		$out = Longevity::run_years_detail( range( 2019, 2023 ), 3, '2019', '', 2026 );
+
+		$this->assertSame( 2, $out['tier'] );
+		$this->assertSame( 5, $out['years'] );
+		$this->assertTrue( $out['still_airing'] );
+	}
+
+	public function test_the_reported_tier_cannot_contradict_the_denominator(): void {
+		// The invariant that caught the bug in the data: with no floor supplied,
+		// tier 1 returns min( seasons, span ), so a tier-1 denominator can never
+		// exceed the season count. 12 rows in the CSV did, which is what exposed
+		// the tier column disagreeing with the tier actually used.
+		//
+		// ⚠ The credited-years floor can legitimately break this, and that is why
+		// every case here passes no floor. `floored` is asserted false so the
+		// invariant is being checked under the conditions it holds in, rather than
+		// passing by accident of the arguments -- if a future default turned the
+		// floor on, this test would fail loudly instead of quietly weakening.
+		$cases = array(
+			array( range( 2019, 2023 ), 3, '2019', '' ),
+			array( range( 2019, 2023 ), 3, '2019', '2023' ),
+			array( array(), 8, '2015', '2020' ),
+			array( range( 2010, 2025 ), 28, '2010', '2025' ),
+			array( array(), 0, '2001', '2001' ),
+		);
+
+		foreach ( $cases as $case ) {
+			$out = Longevity::run_years_detail( $case[0], $case[1], $case[2], $case[3], 2026 );
+
+			$this->assertFalse( $out['floored'] );
+
+			if ( 1 === $out['tier'] ) {
+				$this->assertLessThanOrEqual( $case[1], $out['years'] );
+			}
+
+			$this->assertSame( $out['years'], Longevity::run_years( $case[0], $case[1], $case[2], $case[3], 2026 ) );
+		}
+	}
+
+	public function test_the_floor_is_the_one_thing_allowed_to_break_that_invariant(): void {
+		// Stated explicitly so the exception is documented rather than discovered:
+		// a floored tier-1 denominator CAN exceed the season count, because the
+		// season count was the thing that was wrong.
+		$out = Longevity::run_years_detail( array(), 3, '2019', '2023', 2026, array(), 5 );
+
+		$this->assertSame( 1, $out['tier'] );
+		$this->assertGreaterThan( 3, $out['years'] );
+		$this->assertTrue( $out['floored'] );
+	}
+
+	public function test_a_finished_show_with_a_season_count_is_tier_1(): void {
+		$out = Longevity::run_years_detail( range( 2014, 2020 ), 5, '2014', '2019', 2026 );
+
+		$this->assertSame( 1, $out['tier'] );
+		$this->assertSame( 5, $out['years'] );
+		$this->assertFalse( $out['still_airing'] );
+	}
+
+	public function test_the_bare_span_reports_tier_4_not_tier_3(): void {
+		// Tier 3 is the span LESS hiatus years. With no hiatus data there is
+		// nothing subtracted, so calling it tier 3 would overstate what happened.
+		$this->assertSame( 4, Longevity::run_years_detail( array(), 0, '2015', '2020', 2026 )['tier'] );
+		$this->assertSame( 3, Longevity::run_years_detail( array(), 0, '2015', '2020', 2026, array( 2017 ) )['tier'] );
+	}
+
+	/*
+	 * The credited-years floor
+	 *
+	 * A denominator narrower than the span of its own numerators is internally
+	 * inconsistent. Found in a live run on The L Word: Generation Q -- 3 seasons
+	 * across 5 calendar years, so tier 1 said run_years 3 while its characters
+	 * were credited across 5. Every character with 3+ years then had `share`
+	 * capped at 1.0, giving the show the largest X in the corpus and making it the
+	 * only one whose uncapped total cleared 100.
+	 */
+
+	public function test_the_denominator_is_floored_at_the_credited_years(): void {
+		// The L Word: Generation Q. 3 seasons, aired 2019-2023, characters
+		// credited across all 5 calendar years.
+		$out = Longevity::run_years_detail( array(), 3, '2019', '2023', 2026, array(), 5 );
+
+		$this->assertSame( 1, $out['tier'] );
+		$this->assertSame( 5, $out['years'] );
+		$this->assertTrue( $out['floored'] );
+	}
+
+	public function test_the_floor_never_exceeds_the_span(): void {
+		// A show cannot have aired in more calendar years than lie between its
+		// premiere and its finale, so a mistyped `appears` year cannot run the
+		// denominator past the span.
+		$out = Longevity::run_years_detail( array(), 2, '2019', '2021', 2026, array(), 40 );
+
+		$this->assertSame( 3, $out['years'] );
+		$this->assertSame( 3, $out['span'] );
+	}
+
+	public function test_the_floor_does_nothing_when_the_denominator_is_already_bigger(): void {
+		$out = Longevity::run_years_detail( array(), 6, '2010', '2020', 2026, array(), 2 );
+
+		$this->assertSame( 6, $out['years'] );
+		$this->assertFalse( $out['floored'] );
+	}
+
+	public function test_the_floor_is_not_applied_to_exact_aired_years(): void {
+		// Tier 2 is authoritative about which years the show existed, and
+		// character_years() already intersects against it -- so the numerator
+		// cannot exceed the denominator and there is nothing to inflate. Raising
+		// it would mean dividing by years the show demonstrably did not air.
+		$aired = array( 1993, 1994, 1995, 2016, 2018 );
+		$out   = Longevity::run_years_detail( $aired, 0, '1993', '2018', 2026, array(), 20 );
+
+		$this->assertSame( 2, $out['tier'] );
+		$this->assertSame( 5, $out['years'] );
+		$this->assertFalse( $out['floored'] );
+	}
+
+	public function test_the_floor_also_corrects_a_wrong_hiatus(): void {
+		// Tier 3 subtracts hiatus years. A character credited during a supposed
+		// hiatus is evidence the hiatus data is wrong, so the floor recovers it.
+		$out = Longevity::run_years_detail( array(), 0, '2010', '2019', 2026, array( 2013, 2014, 2015 ), 9 );
+
+		$this->assertSame( 3, $out['tier'] );
+		$this->assertSame( 9, $out['years'] );
+		$this->assertTrue( $out['floored'] );
+	}
+
+	public function test_the_floor_is_off_by_default(): void {
+		// Callers that have not gathered characters must get the unfloored result
+		// rather than a silent zero floor changing their denominator.
+		$this->assertSame( 3, Longevity::run_years_detail( array(), 3, '2019', '2023', 2026 )['years'] );
+		$this->assertSame( 3, Longevity::run_years( array(), 3, '2019', '2023', 2026 ) );
+	}
+
+	public function test_the_floor_removes_the_share_inflation_it_exists_for(): void {
+		// The end-to-end point. A character credited in 5 years on a show whose
+		// denominator said 3 had share capped at 1.0 -- indistinguishable from a
+		// character who was there for every single year. Floored, they differ.
+		$unfloored = Longevity::run_years( array(), 3, '2019', '2023', 2026 );
+		$floored   = Longevity::run_years( array(), 3, '2019', '2023', 2026, array(), 5 );
+
+		$this->assertSame( 3, $unfloored );
+		$this->assertSame( 5, $floored );
+
+		// Three of three reads as total presence; three of five does not.
+		$this->assertGreaterThan(
+			Longevity::weight( 3, $floored ),
+			Longevity::weight( 3, $unfloored )
+		);
+	}
+
+	public function test_an_unparseable_start_reports_a_tier_rather_than_guessing(): void {
+		$out = Longevity::run_years_detail( array(), 5, '', '', 2026 );
+
+		$this->assertSame( 1, $out['years'] );
+		$this->assertSame( 4, $out['tier'] );
+	}
+
+	/*
 	 * run_years() - the tier 1/2/3/4 fallback chain
 	 */
 

@@ -33,6 +33,27 @@ class Shows {
 			'meta'     => 'lezshows_the_score',
 			'empty_ok' => true,
 		),
+		/*
+		 * A show with no characters recorded, flagged deliberately and forever.
+		 *
+		 * These are real: some shows we simply do not have the character data for
+		 * yet, and others only ever had background or unnamed queer characters. It
+		 * is not a bug to be suppressed -- it is a documentation gap we want to
+		 * keep seeing until somebody fills it in, which is precisely what this
+		 * report is for. It also matters more than it used to: with the character
+		 * score now weighted by screen time, a show with no characters has no
+		 * character component at all, so it is scored on three of four parts.
+		 *
+		 * No `empty_ok`, on purpose. lezshows_char_count comes back as the string
+		 * '0' for a genuinely characterless show, and empty( '0' ) is TRUE in PHP,
+		 * so the standard check below flags it. That reads like an accident and
+		 * is not -- it also catches a missing key, which means the show has never
+		 * been calculated, and that is worth surfacing too.
+		 */
+		'characters' => array(
+			'message' => 'No queer characters recorded. Either the data is missing, or the show only had background/unnamed characters - worth confirming which.',
+			'meta'    => 'lezshows_char_count',
+		),
 		'details'    => array(
 			'message'  => 'No worthit details.',
 			'meta'     => 'lezshows_worthit_details',
