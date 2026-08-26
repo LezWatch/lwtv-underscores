@@ -117,6 +117,24 @@ Every question this plan opened is answered. Nothing below is waiting on a decis
 
 ## Phase 0 — Audit before touching the matcher (blocking)
 
+**Status: built, awaiting a run against real data.**
+
+| | |
+|---|---|
+| `cpts/shows/class-watch-term-url-audit.php` | the pure inspector — flags, blocking/cosmetic split, collision detection |
+| `wp-cli/cli-waystowatch.php` | `termurls` action; two queries, everything after is pure |
+| `tests/unit/CPTs/WatchTermUrlAuditTest.php` | 24 cases |
+
+```bash
+vendor/bin/phpunit --filter WatchTermUrlAudit
+wp lwtv waystowatch termurls --all
+wp lwtv waystowatch termurls --blocking --all    # just the rows needing a decision
+```
+
+The normalise/cleanup pass described below is **deliberately not written yet** — what it should
+rewrite depends on what the audit finds.
+
+
 Host matching is looser than exact-URL matching. If any term has deliberately registered a
 *path* (`youtube.com/c/somechannel` is the plausible one — LWTV documents web series, and
 several live on YouTube channels), host matching would make that term swallow every YouTube URL

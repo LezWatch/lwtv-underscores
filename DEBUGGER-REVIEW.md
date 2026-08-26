@@ -570,13 +570,40 @@ The rules layer is the valuable part: `Show_Rules::evaluate()` takes a plain arr
 show's meta/terms and returns findings. That's testable in `tests/unit/` with no WordPress
 bootstrap, which means the airdate bug in 1.1 becomes a two-line regression test.
 
-**Started (2026-08-26).** `debugger/build/` and `debugger/format/` now exist, holding the
-issue vocabulary, the finding builder/grouper, and the row formatter — all pure except the
-formatter's one `get_permalink()`, with tests in `tests/unit/Debugger/`. What is *not* done
-is the `collect/` + rules split: detection still walks posts inline in the scanners, so
-`ITEMS_TO_CHECK` evaluation and the airdate rules remain untested. Those are the next
-extraction, and the typed findings are what make it possible — a rules class can now return
-findings without knowing how they will be rendered or counted.
+**Done for Shows (2026-08-26).** `debugger/build/`, `debugger/collect/` and
+`debugger/format/` all exist now:
+
+- `build/class-show-rules.php` — every rule that decides whether a show has a problem,
+  pure, with `CHECKS` (the old `Shows::ITEMS_TO_CHECK`) declared here since it is rule
+  config rather than WordPress glue. 30 tests in `tests/unit/Debugger/ShowRulesTest.php`,
+  two of which are regressions for bugs that actually shipped: the airdate check reading
+  only the legacy meta key (§1.1) and the duplicate matcher treating two *missing* IMDb IDs
+  as a match.
+- `collect/class-show-collector.php` — everything that touches the database, and nothing
+  that decides anything.
+- `find_shows_problems()` is now ~35 lines of orchestration: pick the IDs, collect, evaluate,
+  diff, render.
+
+Three things worth knowing:
+
+1. **Airdate problems became four issue types** (`show-no-airdates`, `show-no-start-date`,
+   `show-no-end-date`, `show-airdate-inverted`) instead of four different strings under one
+   `show-airdate`. That was the follow-up §8.3 left open. `show-airdate` stays registered as
+   a retired entry so baselines written before the split still resolve to readable copy —
+   but the first scan after deploy will report the old key as resolved and the new ones as
+   new. Run `wp lwtv debug shows --reset-baseline` first if that churn is not wanted.
+2. **The duplicate and intersection copy moved into the registry**, where §8.3 said human
+   copy belongs. They were the last two messages still living in scanner code.
+3. **Collection is batched, and that is a real performance change.** The old scan read five
+   taxonomies per show one show at a time; `wp_get_object_terms()` accepts a list of IDs, so
+   it is now one term query per 200 shows. That is the §2.1 complaint addressed from a
+   different angle than `fields => 'ids'`, and the two are complementary.
+
+`Characters::check_disabled_characters()` became dead when the cross-check moved into the
+collector, and was deleted — same reasoning as the vestigial `debug_check` write in §8.4.
+
+Characters and Actors still detect inline. They should follow this shape; Actors is the
+easy one, since its checks are meta reads plus `Debug_Tool`'s stateless validators.
 
 ---
 
@@ -1126,11 +1153,10 @@ Everything in the **Done** table at the top has shipped. What's left, in the ord
    and new/open/resolved shipped as a pure `Build\Baseline` plus `Baseline_Store`, leaving
    `Audit` alone; see the §5 note for why. **Acknowledgements are still outstanding** and
    still need `IGNORE_META` generalised per post type.
-10. **Extract pure rule evaluation into `debugger/build/`** with tests (§4). Partly done —
-    `build/` and `format/` exist and hold the vocabulary, findings and baseline, all
-    unit-tested. The remaining half is the `collect/` + rules split, so `ITEMS_TO_CHECK`
-    evaluation and the airdate rules stop being untestable inline loops. **This is the next
-    piece I'd take.**
+10. **Extract pure rule evaluation into `debugger/build/`** with tests (§4). **Done for
+    Shows** — `Build\Show_Rules` + `Collect\Show_Collector`, 30 tests, scanner down to
+    orchestration. Characters and Actors still detect inline and should follow the same
+    shape; that is the next piece I'd take.
 11. ~~**Move the writes to a repair layer** (§8.2) behind `--fix-it`, plus per-finding admin
     fix links (§8.1).~~ **Done**, both surfaces, for all three converted checks.
 12. **Collapse the ten validator files** (§7). The CLI registry and the `Watch_Hosts`

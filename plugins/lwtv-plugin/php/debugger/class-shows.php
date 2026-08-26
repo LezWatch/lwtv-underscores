@@ -10,11 +10,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 use LWTV\_Components\Debugger as Debug_Tool;
-use LWTV\Debugger\Build\Findings;
-use LWTV\Debugger\Characters as Characters_Debugger;
+use LWTV\Debugger\Build\Show_Rules;
+use LWTV\Debugger\Collect\Show_Collector;
 use LWTV\Debugger\Format\Rows;
-use LWTV\CPTs\Shows as CPT_Shows;
-use LWTV\CPTs\Shows\Airdates;
 use LWTV\_Helpers\Imdb_Canonical;
 use LWTV\Queeries\Post_Type;
 
@@ -29,97 +27,6 @@ class Shows {
 	 * Transient holding the results of find_shows_no_imdb().
 	 */
 	const TRANSIENT_IMDB = 'lwtv_debug_show_imdb';
-
-	const ITEMS_TO_CHECK = array(
-		'score'      => array(
-			'issue'    => 'show-no-score',
-			'meta'     => 'lezshows_the_score',
-			'empty_ok' => true,
-		),
-		/*
-		 * A show with no characters recorded, flagged deliberately and forever.
-		 *
-		 * These are real: some shows we simply do not have the character data for
-		 * yet, and others only ever had background or unnamed queer characters. It
-		 * is not a bug to be suppressed -- it is a documentation gap we want to
-		 * keep seeing until somebody fills it in, which is precisely what this
-		 * report is for. It also matters more than it used to: with the character
-		 * score now weighted by screen time, a show with no characters has no
-		 * character component at all, so it is scored on three of four parts.
-		 *
-		 * No `empty_ok`, on purpose. lezshows_char_count comes back as the string
-		 * '0' for a genuinely characterless show, and empty( '0' ) is TRUE in PHP,
-		 * so the standard check below flags it. That reads like an accident and
-		 * is not -- it also catches a missing key, which means the show has never
-		 * been calculated, and that is worth surfacing too.
-		 */
-		'characters' => array(
-			'issue' => 'show-no-characters',
-			'meta'  => 'lezshows_char_count',
-		),
-		'details'    => array(
-			'issue'    => 'show-no-worthit-details',
-			'meta'     => 'lezshows_worthit_details',
-			'empty_ok' => true,
-		),
-		/*
-		 * Reported, not silently backfilled. This used to be written to 'TBD'
-		 * mid-scan, which is why it carried `skip` -- the scan repaired it and
-		 * so never had anything to report. The repair now lives in
-		 * set_thumb_tbd() behind --fix-it, so the finding has to be visible or
-		 * there is nothing for the fixer to act on.
-		 *
-		 * Worth knowing before deciding this is cosmetic: class-scores.php and
-		 * class-of-the-day.php INNER JOIN on lezshows_worthit_rating, so a show
-		 * with no row at all drops out of those queries entirely.
-		 */
-		'thumb'      => array(
-			'issue' => 'show-missing-thumb',
-			'meta'  => 'lezshows_worthit_rating',
-		),
-		'realness'   => array(
-			'issue'    => 'show-no-realness',
-			'meta'     => 'lezshows_realness_rating',
-			'empty_ok' => true,
-		),
-		'quality'    => array(
-			'issue'    => 'show-no-quality',
-			'meta'     => 'lezshows_quality_rating',
-			'empty_ok' => true,
-		),
-		'screentime' => array(
-			'issue'    => 'show-no-screentime',
-			'meta'     => 'lezshows_screentime_rating',
-			'empty_ok' => true,
-		),
-		'imdb'       => array(
-			'issue' => 'show-no-imdb',
-			'meta'  => 'lezshows_imdb',
-			'skip'  => true,
-		),
-		'stations'   => array(
-			'issue' => 'show-no-stations',
-			'term'  => 'lez_stations',
-		),
-		'nations'    => array(
-			'issue' => 'show-no-country',
-			'term'  => 'lez_country',
-		),
-		'formats'    => array(
-			'issue' => 'show-no-format',
-			'term'  => 'lez_formats',
-		),
-		'genres'     => array(
-			'issue' => 'show-no-genres',
-			'term'  => 'lez_genres',
-		),
-		// Same story as 'thumb' above: repaired by add_none_trope() under
-		// --fix-it, so the finding is now reported rather than skipped.
-		'tropes'     => array(
-			'issue' => 'show-missing-trope',
-			'term'  => 'lez_tropes',
-		),
-	);
 
 	/**
 	 * Find Shows with Problems
@@ -162,47 +69,19 @@ class Shows {
 		// Make sure we don't have dupes.
 		$shows = array_unique( $shows );
 
-		// Findings are per issue; Rows::from_findings() collapses them back to
-		// one row per show at the end, so $items is rebuilt rather than appended.
-		$findings = array();
+		/*
+		 * Collect, then evaluate. The rules are pure and live in
+		 * Build\Show_Rules; everything that touches the database is in
+		 * Collect\Show_Collector. Batched because the collector fetches terms for
+		 * a whole batch in one query rather than five per show.
+		 */
+		$collector = new Show_Collector();
+		$findings  = array();
 
-		foreach ( $shows as $show_id ) {
-
-			// What we can check for
-			$check = array(
-				'duplicate' => get_post_field( 'post_name', $show_id ),
-			);
-
-			// Build the check array and add findings if needed.
-			foreach ( self::ITEMS_TO_CHECK as $item => $check_array ) {
-				$empty_okay = ( isset( $check_array['empty_ok'] ) ) ? $check_array['empty_ok'] : false;
-				$skip_okay  = ( isset( $check_array['skip'] ) ) ? $check_array['skip'] : false;
-
-				if ( isset( $check_array['meta'] ) ) {
-					$check[ $item ] = get_post_meta( $show_id, $check_array['meta'], true );
-					if ( ! $empty_okay && ! $skip_okay && empty( $check[ $item ] ) ) {
-						$findings[] = Findings::make( $show_id, CPT_Shows::SLUG, $check_array['issue'] );
-					}
-				} elseif ( isset( $check_array['term'] ) ) {
-					$check[ $item ] = get_the_terms( $show_id, $check_array['term'] );
-					if ( ( ! $empty_okay && ! $skip_okay ) && ( ! $check[ $item ] || is_wp_error( $check[ $item ] ) ) ) {
-						$findings[] = Findings::make( $show_id, CPT_Shows::SLUG, $check_array['issue'] );
-					}
-				}
+		foreach ( array_chunk( $shows, Show_Collector::BATCH ) as $batch ) {
+			foreach ( $collector->collect( $batch ) as $show ) {
+				$findings = array_merge( $findings, Show_Rules::evaluate( $show ) );
 			}
-
-			/*
-			 * These three return message strings rather than issue types, so the
-			 * type is supplied here and the message rides along as a per-post
-			 * override. Splitting them into their own types is a follow-up; what
-			 * matters now is that each problem is one addressable finding.
-			 */
-			$findings = array_merge(
-				$findings,
-				Findings::from_messages( $show_id, CPT_Shows::SLUG, 'show-airdate', $this->check_airdates( $show_id ) ),
-				Findings::from_messages( $show_id, CPT_Shows::SLUG, 'show-intersection', self::check_intersection_problems( $show_id ) ),
-				Findings::from_messages( $show_id, CPT_Shows::SLUG, 'show-duplicate', self::check_duplicate_shows( $check, $show_id ) )
-			);
 		}
 
 		// Diff against the last run before rendering, so each row knows whether
@@ -283,118 +162,6 @@ class Shows {
 		}
 
 		return (bool) update_post_meta( $show_id, 'lezshows_worthit_rating', 'TBD' );
-	}
-
-	/**
-	 * Check a show's airdates for sanity.
-	 *
-	 * Reads through LWTV\CPTs\Shows\Airdates so both the current ACF keys
-	 * (lezshows_airdates_start / _finish) and the legacy serialized
-	 * lezshows_airdates array are handled. Previously this only read the legacy
-	 * key, which meant migrated shows were reported as having no airdates at all
-	 * and the end-date checks below never ran.
-	 *
-	 * @param int $show_id The show ID to check.
-	 *
-	 * @return array $problems - array of problems. Can be empty.
-	 */
-	public function check_airdates( int $show_id ): array {
-		$problems = array();
-		$airdates = Airdates::get( $show_id );
-		$start    = $airdates['start'];
-		$finish   = $airdates['finish'];
-
-		if ( '' === $start && '' === $finish ) {
-			$problems[] = 'No airdates.';
-			return $problems;
-		}
-
-		if ( '' === $start ) {
-			$problems[] = 'No start date.';
-		}
-
-		if ( '' === $finish ) {
-			$problems[] = 'No end-date. If the show is on-air, set to CURRENT. TV movies end in the same year.';
-			return $problems;
-		}
-
-		// 'current' means still airing, so there's nothing to compare against.
-		if ( Airdates::is_still_airing( $finish ) ) {
-			return $problems;
-		}
-
-		// Only compare when both sides are actually years.
-		if ( is_numeric( $start ) && is_numeric( $finish ) && (int) $start > (int) $finish ) {
-			$problems[] = 'Start date is AFTER end date.';
-		}
-
-		return $problems;
-	}
-
-	/**
-	 * Check if a show has duplicates.
-	 */
-	public function check_duplicate_shows( array $check, int $show_id ) {
-		$problems = array();
-
-		// - Duplicate Show check - shouldn't end in -[NUMBER].
-		$permalink_array = explode( '-', $check['duplicate'] );
-		$ends_with       = end( $permalink_array );
-
-		// If it ends in a number, we have to check.
-		if ( is_numeric( $ends_with ) ) {
-			// See if an existing page without the -NUMBER exists (someone could rename themselves with numbers...).
-			$possible = get_page_by_path( str_replace( '-' . $ends_with, '', $check['duplicate'] ), OBJECT, 'post_type_shows' );
-			if ( is_object( $possible ) && false !== $possible ) {
-				// The 90210 Loop
-				// Make sure we didn't find ourselves (because some shows are number-named...)
-				if ( (int) $possible->ID !== $show_id ) {
-					$pos_imdb = get_post_meta( $possible->ID, 'lezshows_imdb', true );
-					// Both being empty is not a match. The old isset() check was always
-					// true, so every numerically-suffixed show with no IMDb ID matched
-					// any same-named show that also had none.
-					if ( ! empty( $pos_imdb ) && ! empty( $check['imdb'] ) && $pos_imdb === $check['imdb'] ) {
-						$problems[] = 'Likely Dupe - Another Show has this name AND the same IMDb data.';
-					}
-				}
-			}
-		}
-
-		return $problems;
-	}
-
-	/**
-	 * Check shows with intersectionality
-	 * Ensure they have matching characters.
-	 *
-	 * @param int    $show_id - the show ID to check.
-	 * @return array $problems  - array of problems. Can be empty.
-	 */
-	public function check_intersection_problems( int $show_id ): array {
-
-		$intersections = get_the_terms( $show_id, 'lez_intersections' );
-
-		if ( ! $intersections || is_wp_error( $intersections ) ) {
-			return array();
-		}
-
-		// Only shows tagged with the 'disabled' intersection need a disabled character.
-		if ( ! in_array( 'disabled', wp_list_pluck( $intersections, 'slug' ), true ) ) {
-			return array();
-		}
-
-		static $characters_debugger = null;
-		if ( null === $characters_debugger ) {
-			$characters_debugger = new Characters_Debugger();
-		}
-
-		$problems         = array();
-		$disabled_problem = $characters_debugger->check_disabled_characters( $show_id );
-		if ( ! empty( $disabled_problem ) ) {
-			$problems[] = $disabled_problem;
-		}
-
-		return $problems;
 	}
 
 	/**

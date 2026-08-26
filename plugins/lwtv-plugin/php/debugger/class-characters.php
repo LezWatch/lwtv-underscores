@@ -3,8 +3,6 @@
  * Find all problems with Character pages.
  *
  * find_characters_problems()  - find characters with bad or missing data
- *
- * check_disabled_characters() - check that disabled characters' shows are flagged correctly
  */
 
 namespace LWTV\Debugger;
@@ -267,43 +265,5 @@ class Characters {
 		}
 
 		return ! is_wp_error( wp_set_object_terms( $char_id, array( $term->term_id ), 'lez_cliches', true ) );
-	}
-
-	/**
-	 * Check all characters who are disabled.
-	 *
-	 * Note: There is no 'rechecking' for this, since it's per show.
-	 * The recheck check happens earlier.
-	 *
-	 * @param  int   $show_id post ID of show
-	 * @return array|string What's wrong
-	 */
-	public function check_disabled_characters( $show_id ): array|string {
-
-		// The array we will be checking.
-		$characters = lwtv_plugin()->get_characters_list( $show_id, 'query' );
-
-		// If somehow characters is totally empty...
-		if ( empty( $characters ) ) {
-			return array();
-		}
-
-		// Make sure we don't have dupes.
-		$characters = array_unique( $characters );
-
-		// Default has disabled
-		$has_disabled = false;
-
-		foreach ( $characters as $character ) {
-			// If someone has disabled, we're good.
-			if ( has_term( 'disabled', 'lez_cliches', $character ) ) {
-				$has_disabled = true;
-				break;
-			}
-		}
-
-		$problems = ( ! $has_disabled ) ? 'No character on this show is tagged as disabled. Please review.' : '';
-
-		return $problems;
 	}
 }

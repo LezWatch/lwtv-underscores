@@ -60,6 +60,7 @@ require_once __DIR__ . '/../plugins/lwtv-plugin/php/cpts/shows/class-character-s
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/_helpers/class-imdb-canonical.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/cpts/shows/class-host-name.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/cpts/shows/class-watch-url-health.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/cpts/shows/class-watch-term-url-audit.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/statistics/build/class-trope-category-coverage.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/statistics/build/class-term-count-distribution.php'; // to_cells() lives here too.
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/statistics/build/class-score-distribution.php';
@@ -79,3 +80,4 @@ require_once __DIR__ . '/../plugins/lwtv-plugin/php/calendar/build/class-agenda.
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/debugger/build/class-issue-registry.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/debugger/build/class-findings.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/debugger/build/class-baseline.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/debugger/build/class-show-rules.php';

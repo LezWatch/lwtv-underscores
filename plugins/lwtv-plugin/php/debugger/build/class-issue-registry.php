@@ -115,17 +115,40 @@ class Issue_Registry {
 			'fix'       => array( self::SHOWS, 'add_none_trope' ),
 			'fix_label' => 'adds the "none" trope',
 		),
+		'show-no-airdates'            => array(
+			'level'   => 'show',
+			'message' => 'No airdates.',
+		),
+		'show-no-start-date'          => array(
+			'level'   => 'show',
+			'message' => 'No start date.',
+		),
+		'show-no-end-date'            => array(
+			'level'   => 'show',
+			'message' => 'No end-date. If the show is on-air, set to CURRENT. TV movies end in the same year.',
+		),
+		'show-airdate-inverted'       => array(
+			'level'   => 'show',
+			'message' => 'Start date is AFTER end date.',
+		),
+		/*
+		 * Retired, kept registered on purpose. The four types above replaced this
+		 * one catch-all, and a stored baseline written before that split still
+		 * holds `<id>:show-airdate` keys. Keeping the entry means those resolve to
+		 * readable copy when the next run reports them as resolved, instead of
+		 * falling back to the raw key.
+		 */
 		'show-airdate'                => array(
 			'level'   => 'show',
 			'message' => 'Airdate problem.',
 		),
 		'show-duplicate'              => array(
 			'level'   => 'show',
-			'message' => 'Possible duplicate show.',
+			'message' => 'Likely Dupe - Another Show has this name AND the same IMDb data.',
 		),
 		'show-intersection'           => array(
 			'level'   => 'show',
-			'message' => 'Intersectionality does not match the characters.',
+			'message' => 'No character on this show is tagged as disabled. Please review.',
 		),
 
 		/*
