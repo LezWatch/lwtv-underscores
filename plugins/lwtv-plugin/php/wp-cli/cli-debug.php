@@ -11,6 +11,8 @@ if ( ! defined( 'ABSPATH' ) && ! defined( 'WP_CLI' ) ) {
 }
 
 use LWTV\Debugger\Actors;
+use LWTV\Debugger\Baseline_Store;
+use LWTV\Debugger\Build\Baseline;
 use LWTV\Debugger\Build\Findings;
 use LWTV\Debugger\Build\Issue_Registry;
 use LWTV\Debugger\Characters;
@@ -215,6 +217,12 @@ class WP_CLI_LWTV_Debug {
 	 * : Ignore any cached results and run a fresh scan.
 	 * default: false
 	 *
+	 * [--reset-baseline]
+	 * : Forget what the last run found, so the next run treats everything as
+	 * long-standing rather than new. Use after a deliberate mass change, or if a
+	 * baseline was recorded from a run you don't trust.
+	 * default: false
+	 *
 	 * [--format=<format>]
 	 * : Render output in a particular format.
 	 * ---
@@ -236,6 +244,7 @@ class WP_CLI_LWTV_Debug {
 	 * wp lwtv debug chars --fix-it
 	 * wp lwtv debug actors --fix-it
 	 * wp lwtv debug watchurls --force
+	 * wp lwtv debug shows --reset-baseline
 	 *
 	 * @param array $args
 	 * @param array $assoc_args
@@ -246,6 +255,11 @@ class WP_CLI_LWTV_Debug {
 		$this->fix_it     = (bool) \WP_CLI\Utils\get_flag_value( $assoc_args, 'fix-it', false );
 		$this->force      = (bool) \WP_CLI\Utils\get_flag_value( $assoc_args, 'force', false );
 		$this->debug_type = $args[0] ?? '';
+
+		if ( (bool) \WP_CLI\Utils\get_flag_value( $assoc_args, 'reset-baseline', false ) ) {
+			$this->reset_baseline( $this->debug_type );
+			return;
+		}
 
 		try {
 			$this->run_debug_check( $this->debug_type, $this->fix_it );
@@ -311,6 +325,7 @@ class WP_CLI_LWTV_Debug {
 
 		\WP_CLI::log( count( $items ) . ' ' . $check['dirty'] );
 		\WP_CLI\Utils\format_items( $this->format, $items, $check['columns'] ?? self::DEFAULT_COLUMNS );
+		$this->report_baseline( $check['status'] );
 		\WP_CLI::success( $check['done'] );
 	}
 
@@ -420,6 +435,50 @@ class WP_CLI_LWTV_Debug {
 		}
 
 		return $this->fixers[ $key ];
+	}
+
+	/**
+	 * Forget one check's baseline.
+	 *
+	 * @param  string $debug_type Check to reset.
+	 * @return void
+	 */
+	private function reset_baseline( string $debug_type ): void {
+		$checks = $this->get_checks();
+
+		if ( ! isset( $checks[ $debug_type ] ) ) {
+			\WP_CLI::error( 'Invalid debug type. Available types: ' . implode( ', ', array_keys( $checks ) ) );
+		}
+
+		$scope = $checks[ $debug_type ]['status'];
+
+		if ( ! Baseline_Store::exists( $scope ) ) {
+			\WP_CLI::warning( 'That check has no baseline to reset.' );
+			return;
+		}
+
+		Baseline_Store::reset( $scope );
+
+		\WP_CLI::success( 'Baseline cleared. The next run will report everything as long-standing rather than new.' );
+	}
+
+	/**
+	 * Log the new/open/resolved breakdown, when the check records one.
+	 *
+	 * Only the converted checks do. The rest report a bare count, and saying
+	 * nothing is better than implying a comparison that did not happen.
+	 *
+	 * @param  string $status_key Key inside the debugger status option.
+	 * @return void
+	 */
+	private function report_baseline( string $status_key ): void {
+		$summary = Status::all()[ $status_key ]['summary'] ?? array();
+
+		if ( ! is_array( $summary ) || empty( $summary ) ) {
+			return;
+		}
+
+		\WP_CLI::log( Baseline::describe_summary( $summary ) );
 	}
 
 	/**

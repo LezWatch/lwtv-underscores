@@ -268,6 +268,16 @@ class Repair {
 
 		lwtv_plugin()->set_transient( $config['transient'], $kept, WEEK_IN_SECONDS );
 
+		/*
+		 * Three args on purpose, which clears the stored new/open breakdown: the
+		 * count just changed without a scan, so any surviving "4 new" would be
+		 * arithmetic nobody did. The tab falls back to a plain count until the
+		 * next run.
+		 *
+		 * The baseline itself is deliberately left alone. It records what the
+		 * last *scan* found, so the next scan legitimately reports this finding
+		 * as resolved -- which is exactly what happened.
+		 */
 		Status::record( $config['status'], $config['name'], count( $kept ) );
 	}
 

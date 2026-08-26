@@ -23,6 +23,7 @@ use LWTV\Validator\OnAir_Checker;
 use LWTV\Validator\Watch_Providers;
 use LWTV\Validator\Watch_Term_Check;
 
+use LWTV\Debugger\Build\Baseline;
 use LWTV\Debugger\Repair;
 use LWTV\Debugger\Status;
 use LWTV\Debugger\Watch_URLs;
@@ -162,10 +163,22 @@ class Validation {
 							? (int) $options[ $value['option'] ]['count']
 							: 0;
 
-						$label = $count > 0
+						// Checks that diff against a baseline can say how much of
+						// that count turned up since the last run; a raw number
+						// cannot be acted on, "4 new" can.
+						$new = ( ! empty( $value['option'] ) && isset( $options[ $value['option'] ]['summary']['new'] ) )
+							? (int) $options[ $value['option'] ]['summary']['new']
+							: 0;
+
+						if ( $count > 0 && $new > 0 ) {
+							/* translators: 1: check name, 2: new items, 3: total outstanding. */
+							$label = sprintf( '%1$s (%2$d new / %3$d)', $value['name'], $new, $count );
+						} elseif ( $count > 0 ) {
 							/* translators: 1: check name, 2: number of outstanding items. */
-							? sprintf( '%1$s (%2$d)', $value['name'], $count )
-							: $value['name'];
+							$label = sprintf( '%1$s (%2$d)', $value['name'], $count );
+						} else {
+							$label = $value['name'];
+						}
 						?>
 						<option value="<?php echo esc_attr( 'tab_' . $tab ); ?>" <?php selected( 'tab_' . $tab, $active_tab ); ?>>
 							<?php echo esc_html( $label ); ?>
@@ -293,14 +306,22 @@ class Validation {
 			return wp_kses_post( $item['problem'] ?? '' );
 		}
 
-		$post_id = (int) $item['id'];
-		$lines   = array();
+		$post_id  = (int) $item['id'];
+		$statuses = isset( $item['statuses'] ) && is_array( $item['statuses'] ) ? array_values( $item['statuses'] ) : array();
+		$lines    = array();
 
 		foreach ( $messages as $index => $message ) {
 			$issue_type = (string) ( $issues[ $index ] ?? '' );
 			$button     = Repair::button( $post_id, $issue_type );
 
+			// Flag only what is new. Marking everything else "open" would be
+			// noise on a report where most rows are long-standing by nature.
+			$flag = ( Baseline::NEW_ISSUE === ( $statuses[ $index ] ?? '' ) )
+				? '<span class="lwtv-debug-new" style="font-weight:600;">' . esc_html__( 'New', 'lwtv' ) . '</span> '
+				: '';
+
 			$lines[] = '<div class="lwtv-debug-issue">'
+				. $flag
 				. wp_kses_post( $message )
 				. ( '' !== $button ? ' ' . $button : '' )
 				. '</div>';

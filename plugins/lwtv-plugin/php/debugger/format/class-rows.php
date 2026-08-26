@@ -38,7 +38,7 @@ class Rows {
 		$rows = array();
 
 		foreach ( Findings::group_by_post( $findings ) as $post_id => $row ) {
-			$rows[] = array(
+			$item = array(
 				'url'       => get_permalink( $post_id ),
 				'id'        => $post_id,
 				'problem'   => $row['problem'],
@@ -47,6 +47,14 @@ class Rows {
 				'messages'  => $row['messages'],
 				'fixable'   => $row['fixable'],
 			);
+
+			// Only on a run that was diffed against a baseline.
+			if ( isset( $row['status'] ) ) {
+				$item['status']   = $row['status'];
+				$item['statuses'] = $row['statuses'];
+			}
+
+			$rows[] = $item;
 		}
 
 		return $rows;

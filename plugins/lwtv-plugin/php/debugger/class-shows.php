@@ -129,6 +129,13 @@ class Shows {
 		// The array we will be checking.
 		$shows = array();
 
+		/*
+		 * A recheck only revisits the posts already flagged, so it cannot be
+		 * diffed against the baseline -- everything it did not look at would
+		 * read as resolved. Remembered here because $items is reused below.
+		 */
+		$is_recheck = ! empty( $items );
+
 		// Are we a full scan or a recheck?
 		if ( ! empty( $items ) ) {
 			// Check only the shows from items!
@@ -198,13 +205,19 @@ class Shows {
 			);
 		}
 
-		$items = Rows::from_findings( $findings );
+		// Diff against the last run before rendering, so each row knows whether
+		// its problems are new or long-standing. A recheck is tagged but not
+		// diffed, and must not overwrite the baseline -- see tag_only().
+		$diff  = $is_recheck
+			? Baseline_Store::tag_only( 'show_problems', $findings )
+			: Baseline_Store::apply( 'show_problems', $findings );
+		$items = Rows::from_findings( $diff['findings'] );
 
 		// Save Transient
 		lwtv_plugin()->set_transient( self::TRANSIENT_PROBLEMS, $items, WEEK_IN_SECONDS );
 
 		// Update Options
-		Status::record( 'show_problems', 'Shows with Issues', count( $items ) );
+		Status::record( 'show_problems', 'Shows with Issues', count( $items ), $diff['summary'] );
 
 		return $items;
 	}

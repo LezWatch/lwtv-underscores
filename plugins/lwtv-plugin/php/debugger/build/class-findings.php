@@ -162,8 +162,11 @@ class Findings {
 			return $row;
 		}
 
+		$statuses = array_values( (array) ( $row['statuses'] ?? array() ) );
+
 		$kept_issues   = array();
 		$kept_messages = array();
+		$kept_statuses = array();
 
 		foreach ( $issues as $index => $type ) {
 			if ( $type === $issue_type ) {
@@ -172,6 +175,10 @@ class Findings {
 
 			$kept_issues[]   = $type;
 			$kept_messages[] = $messages[ $index ] ?? Issue_Registry::message( $type );
+
+			if ( isset( $statuses[ $index ] ) ) {
+				$kept_statuses[] = $statuses[ $index ];
+			}
 		}
 
 		if ( empty( $kept_issues ) ) {
@@ -181,6 +188,11 @@ class Findings {
 		$row['issues']   = $kept_issues;
 		$row['messages'] = $kept_messages;
 		$row['problem']  = self::problem_from( $kept_issues, $kept_messages );
+
+		if ( ! empty( $kept_statuses ) ) {
+			$row['statuses'] = $kept_statuses;
+			$row['status']   = Baseline::row_status( $kept_statuses );
+		}
 
 		// Through fixable_issues() so cached junk is filtered the same way here
 		// as it is on read, and a retired repair cannot survive a prune.
@@ -218,6 +230,7 @@ class Findings {
 					'issues'    => array(),
 					'fixable'   => array(),
 					'messages'  => array(),
+					'statuses'  => array(),
 				);
 			}
 
@@ -225,6 +238,10 @@ class Findings {
 
 			$rows[ $post_id ]['issues'][]   = $issue_type;
 			$rows[ $post_id ]['messages'][] = (string) ( $finding['message'] ?? '' );
+
+			// Present only once a run has been diffed against a baseline; an
+			// undiffed finding is neither new nor open, it is just unknown.
+			$rows[ $post_id ]['statuses'][] = (string) ( $finding['status'] ?? '' );
 
 			// A post can carry the same fixable issue only once, and the fixer
 			// is keyed on the type, so duplicates here would fix twice.
@@ -237,6 +254,15 @@ class Findings {
 		// be rebuilt when one issue is repaired.
 		foreach ( $rows as $post_id => $row ) {
 			$rows[ $post_id ]['problem'] = self::problem_from( $row['issues'], $row['messages'] );
+
+			// Row-level status, so a table can flag the row as well as the line.
+			// Dropped entirely on an undiffed run rather than defaulted, so no
+			// surface can mistake "not compared yet" for "nothing is new".
+			$statuses = array_filter( $row['statuses'] );
+
+			if ( ! empty( $statuses ) ) {
+				$rows[ $post_id ]['status'] = Baseline::row_status( $row['statuses'] );
+			}
 		}
 
 		return $rows;

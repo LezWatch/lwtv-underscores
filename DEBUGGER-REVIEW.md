@@ -605,6 +605,59 @@ route all scanners through `Audit::finalize()`, and you get baselines, diffing, 
 acknowledgements across all ten checks for roughly the cost of reshaping the finding
 arrays. The tab badges become "3 new / 41 open" instead of a raw count that nobody can act on.
 
+### Done differently (2026-08-26): the diff was extracted, `Audit` left alone
+
+Baselines and new/open/resolved now exist for the three converted checks, but **not** by
+routing them through `Audit::finalize()`. The recommendation above was not taken, and the
+reasoning is worth recording because it will come up again:
+
+- `Audit::finding_key()` is `show_id:char_id:issue_type:year`. Making it post-type-agnostic
+  changes the string every existing audit baseline was stored under, so every audit scope
+  would report everything as new on the first run after deploy. That is a migration, not a
+  refactor, and it buys nothing for `cli-audit.php` — still the only consumer.
+- `finalize()` bundles ignore-filtering into diffing, and the debugger's ignore story is
+  different (per post type, and not built yet).
+
+So the diff itself was extracted as a pure class instead:
+
+- `debugger/build/class-baseline.php` — `snapshot()`, `tag()`, `diff()`, `row_status()`,
+  `describe_summary()`. Pure, unit-tested in `tests/unit/Debugger/BaselineTest.php`.
+- `debugger/class-baseline-store.php` — one non-autoloaded option per check plus an index,
+  the same storage shape as `Audit` but a separate key namespace.
+
+`Audit` can be pointed at the same pure diff later; that is now a small change rather than
+the risky first move.
+
+Three decisions inside it:
+
+1. **Identity is `post_id:issue_type`, excluding the message.** A show renamed, or a
+   per-post message reworded, must not make a months-old problem look new.
+2. **A first run reports everything as `open`, not `new`.** Calling a decade of accumulated
+   problems "new" on the day this shipped would be false, and would teach everyone to
+   ignore the number permanently. `Baseline_Store::exists()` distinguishes "never run" from
+   "ran and found nothing".
+3. **A recheck is tagged, not diffed.** The admin "Recheck" button re-scans only the posts
+   already flagged. Feeding that to `diff()` would report every finding on every unvisited
+   post as resolved *and* store the subset as the whole truth, so the next full scan would
+   call everything new. `Baseline_Store::tag_only()` stamps statuses, returns no summary,
+   and does not write the baseline. This was the one real bug in wiring it up.
+
+Surfaces: tab badges read "Shows Info (4 new / 41)" when a check has a breakdown and fall
+back to a plain count when it does not; the table flags only the new lines, since marking
+everything else "open" is noise on a report that is long-standing by nature; the CLI prints
+one summary line. `wp lwtv debug <check> --reset-baseline` clears one, for after a
+deliberate mass change.
+
+Anything that changes a count *without* scanning — an admin repair, the shadow-sync hook —
+records the new count with no summary, so the badge drops to a plain number rather than
+showing arithmetic nobody did. Those paths deliberately leave the baseline alone: it records
+what the last scan found, so the next scan correctly reports the fixed finding as resolved.
+
+Still outstanding from this section: acknowledgements. Note for when they land — the
+baseline stores the **raw** finding set for exactly this reason, so ignore must filter
+display only. An ignored finding kept out of the baseline would come back as `new` the
+moment it was un-ignored.
+
 Two things to sort out when generalising `Audit`:
 
 - `IGNORE_META` is hardcoded to `lezchars_audit_ignore` and `is_ignored()` only applies to
@@ -1064,20 +1117,34 @@ Everything in the **Done** table at the top has shipped. What's left, in the ord
    stale `show_url` status entry is pruned by `wp lwtv migrate acf debugstatus`.
 7. **Decide `find_actors_incomplete()`** (1.7): wire it up or delete it.
 
-**Then the structural chunk (§8), which is unchanged and still worth doing together:**
+**The structural chunk (§8) — mostly done as of 2026-08-26:**
 
-8. **Issue registry + typed findings** (§5, §8.3), including the transient shape migration
-   (§8.5). Everything below depends on it.
-9. **Route findings through `Audit::finalize()`** (§5) — baselines, new/open/resolved,
-   acknowledgements. Needs `IGNORE_META` generalised per post type.
-10. **Extract pure rule evaluation into `debugger/build/`** with tests (§4). `Host_Name` and
-    `Airdates` are both working examples of the shape now — pure, no WP, unit-tested.
-11. **Move the writes to a repair layer** (§8.2) behind `--fix-it`, plus per-finding admin
-    fix links (§8.1). The notice plumbing from §9.3 is the piece that was missing.
+8. ~~**Issue registry + typed findings** (§5, §8.3), including the transient shape migration
+   (§8.5).~~ **Done** for Shows, Characters and Actors. No migration was needed; the shape
+   is a superset. See §8.3.
+9. ~~**Route findings through `Audit::finalize()`** (§5)~~ — **done differently.** Baselines
+   and new/open/resolved shipped as a pure `Build\Baseline` plus `Baseline_Store`, leaving
+   `Audit` alone; see the §5 note for why. **Acknowledgements are still outstanding** and
+   still need `IGNORE_META` generalised per post type.
+10. **Extract pure rule evaluation into `debugger/build/`** with tests (§4). Partly done —
+    `build/` and `format/` exist and hold the vocabulary, findings and baseline, all
+    unit-tested. The remaining half is the `collect/` + rules split, so `ITEMS_TO_CHECK`
+    evaluation and the airdate rules stop being untestable inline loops. **This is the next
+    piece I'd take.**
+11. ~~**Move the writes to a repair layer** (§8.2) behind `--fix-it`, plus per-finding admin
+    fix links (§8.1).~~ **Done**, both surfaces, for all three converted checks.
 12. **Collapse the ten validator files** (§7). The CLI registry and the `Watch_Hosts`
-    extraction are both precedents to copy.
+    extraction are both precedents to copy — and `Validation::problem_cell()` is now a third,
+    since the per-issue rendering lives in one place rather than ten.
 13. Add the missing checks to the cron rotation — including `waystowatch enrich`, which is
     safe to run weekly since it skips anything already asked.
+14. **Convert the remaining checks to typed findings**: `byq`, `queers`, `dupes`, `on_air`,
+    both IMDb checks, and `find_actors_incomplete()` if item 7 keeps it. `watchurls` is the
+    awkward one — term-shaped findings need `id` generalised into `object_id` +
+    `object_type`, which is the first change that will actually require §8.5's version
+    marker.
+15. **Give the wikidata cache writes an explicit TTL** (§8.4). Still incidental side effects
+    of a comparison.
 
 ---
 
@@ -1101,6 +1168,11 @@ Everything in the **Done** table at the top has shipped. What's left, in the ord
 
 **Still open:**
 
+- **Does anything want per-issue rows in the admin, rather than per-post rows with per-issue
+  lines?** The current grouping keeps `count()` meaning "posts needing attention", which is
+  what every badge and header string reads. Flattening would give real by-issue filtering
+  and sorting, at the cost of redefining every one of those numbers in one go. Nobody has
+  asked for it yet, and the typed findings mean it stays possible.
 - **Does the ACF repeater shape written by `create_term()` match what ACF expects?** The
   one thing in this pass with a plausible silent-failure mode.
 - **What's the real TMDB hit rate?** `--order=random` hasn't been run.

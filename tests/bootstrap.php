@@ -78,3 +78,4 @@ require_once __DIR__ . '/../plugins/lwtv-plugin/php/_components/class-transients
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/calendar/build/class-agenda.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/debugger/build/class-issue-registry.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/debugger/build/class-findings.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/debugger/build/class-baseline.php';

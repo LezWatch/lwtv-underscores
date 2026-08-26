@@ -90,7 +90,12 @@ class Actors {
 
 		lwtv_plugin()->set_transient( self::TRANSIENT_PROBLEMS, $items, WEEK_IN_SECONDS );
 
-		// Update Options
+		/*
+		 * No summary, which clears any stored new/open breakdown: this row
+		 * arrived from a hook, not a scan, so the previous run's breakdown no
+		 * longer adds up. The baseline is left alone -- the next scan will find
+		 * this legitimately, or not.
+		 */
 		Status::record( 'actor_problems', 'Actors with Issues', count( $items ) );
 	}
 
@@ -103,6 +108,13 @@ class Actors {
 
 		// The array we will be checking.
 		$actors = array();
+
+		/*
+		 * A recheck only revisits the posts already flagged, so it cannot be
+		 * diffed against the baseline -- everything it did not look at would
+		 * read as resolved. Remembered here because $items is reused below.
+		 */
+		$is_recheck = ! empty( $items );
 
 		// Are we a full scan or a recheck?
 		if ( ! empty( $items ) ) {
@@ -216,13 +228,19 @@ class Actors {
 			}
 		}
 
-		$items = Rows::from_findings( $findings );
+		// Diff against the last run before rendering, so each row knows whether
+		// its problems are new or long-standing. A recheck is tagged but not
+		// diffed, and must not overwrite the baseline -- see tag_only().
+		$diff  = $is_recheck
+			? Baseline_Store::tag_only( 'actor_problems', $findings )
+			: Baseline_Store::apply( 'actor_problems', $findings );
+		$items = Rows::from_findings( $diff['findings'] );
 
 		// Save Transient
 		lwtv_plugin()->set_transient( self::TRANSIENT_PROBLEMS, $items, WEEK_IN_SECONDS );
 
 		// Update Options
-		Status::record( 'actor_problems', 'Actors with Issues', count( $items ) );
+		Status::record( 'actor_problems', 'Actors with Issues', count( $items ), $diff['summary'] );
 
 		return $items;
 	}

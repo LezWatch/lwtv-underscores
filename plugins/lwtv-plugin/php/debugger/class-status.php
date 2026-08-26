@@ -37,20 +37,31 @@ class Status {
 	/**
 	 * Record the result of a check run.
 	 *
-	 * @param string $key   Status key for this check (e.g. 'show_problems').
-	 * @param string $name  Human label shown in the admin summary.
-	 * @param int    $count How many findings this run produced.
+	 * @param string $key     Status key for this check (e.g. 'show_problems').
+	 * @param string $name    Human label shown in the admin summary.
+	 * @param int    $count   How many findings this run produced.
+	 * @param array  $summary Optional new/open/resolved breakdown from
+	 *                        Build\Baseline::diff(). Omitting it clears any
+	 *                        stored breakdown, which is what a caller that has
+	 *                        changed the count without re-scanning (a single
+	 *                        admin repair) wants: a stale "3 new" is worse than
+	 *                        no breakdown at all.
 	 *
 	 * @return void
 	 */
-	public static function record( string $key, string $name, int $count ): void {
+	public static function record( string $key, string $name, int $count, array $summary = array() ): void {
 		$option = self::all();
 
-		$option[ $key ]      = array(
+		$option[ $key ] = array(
 			'name'  => $name,
 			'count' => $count,
 			'last'  => time(),
 		);
+
+		if ( ! empty( $summary ) ) {
+			$option[ $key ]['summary'] = $summary;
+		}
+
 		$option['timestamp'] = time();
 
 		update_option( self::OPTION, $option );
