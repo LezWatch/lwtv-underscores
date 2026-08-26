@@ -511,7 +511,8 @@ a single atomic write per check.
 
 ### 2.4 Scans mutate data while claiming to only report
 
-See §8 — this is now a planned piece of work rather than just an observation.
+See §8 — this is now a planned piece of work rather than just an observation. Shows and
+Characters are done; Actors still writes during its scan.
 
 ---
 
@@ -678,10 +679,10 @@ it's one to generalise.
 
 | Location | Current write | Becomes |
 |---|---|---|
-| `class-shows.php:147` | `lezshows_worthit_rating` → `'TBD'` when thumb empty | repair `show-missing-thumb` |
-| `class-shows.php:153` | set `none` trope (broken, 1.4) | repair `show-missing-trope` |
+| ~~`class-shows.php:147`~~ | `lezshows_worthit_rating` → `'TBD'` when thumb empty | **DONE** — `Shows::set_thumb_tbd()` |
+| ~~`class-shows.php:153`~~ | set `none` trope (broken, 1.4) | **DONE** — `Shows::add_none_trope()` |
 | `class-shows.php:391` | `Ways_To_Watch::migrate_ways_to_watch()` | see 8.4 — not a finding |
-| `class-characters.php:171` | set `none` cliché (broken, 1.4) | repair `char-missing-cliche` |
+| ~~`class-characters.php:171`~~ | set `none` cliché (broken, 1.4) | **DONE** — `Characters::add_none_cliche()` |
 | `class-actors.php:156` | delete `lezactors_instagram` when it's an IMDb ID | repair `actor-instagram-is-imdb` |
 | `class-actors.php:165` | delete `lezactors_twitter` when it's an IMDb ID | repair `actor-twitter-is-imdb` |
 | `class-actors.php:176-177` | homepage → wikipedia, clear homepage | repair `actor-homepage-is-wikipedia` |
@@ -694,6 +695,25 @@ it's one to generalise.
 Note that four of these currently fire *unconditionally on every scan* even when nothing
 changed (the `worthit_rating` → TBD write in particular re-writes the same value every
 run), so this also removes a pile of pointless `update_post_meta` calls per scan.
+
+**Shows and Characters are done (2026-08-26).** The three writes above moved into
+`fix_show_data()` / `fix_character_data()` — dispatchers in the `OnAir::fix_on_air_status()`
+mould, registered as the `fixer` for the `shows` and `chars` checks in `cli-debug.php`, so
+`--fix-it` reaches them through the existing `apply_fixes()` path. Both scans are now
+side-effect free. Consequences worth remembering:
+
+- `'thumb'` and `'tropes'` in `ITEMS_TO_CHECK` lost their `'skip' => true`. They only
+  carried it because the scan repaired them before it could report them; with the repair
+  gone the findings have to be visible or `--fix-it` has nothing to iterate.
+- Both scans therefore report more than they used to. Messages advertise the fix inline
+  ("— fixable, adds the "none" trope") since the §8.3 `fix_label` field doesn't exist yet.
+- `fix_show_data()` returns `false` for a show whose only problems have no automated
+  repair, so `apply_fixes()` counts it as "could not be fixed automatically". That's the
+  cost of the flat `problem` blob — the per-issue shape in §8.3 is what makes the count
+  honest. Not misleading, just noisy.
+
+Still outstanding here: the four Actors writes (destructive deletes, own review pass) and
+everything in §8.3–§8.5.
 
 ### 8.3 Finding shape
 

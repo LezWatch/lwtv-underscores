@@ -168,14 +168,9 @@ class Characters {
 				'actors' => get_field( 'lezchars_actor', $char_id ) ?: array(),
 			);
 
-			// If there's no Cliche, we add 'None'
+			// No cliché terms at all. Detect only — add_none_cliche() repairs it.
 			if ( ! $check['cliche'] || is_wp_error( $check['cliche'] ) ) {
-				$term = get_term_by( 'name', 'none', 'lez_cliches' );
-				if ( $term instanceof \WP_Term ) {
-					wp_set_object_terms( $char_id, array( $term->term_id ), 'lez_cliches', true );
-				} else {
-					$problems[] = 'No cliché set, and the "none" cliché is missing from lez_cliches so it could not be added.';
-				}
+				$problems[] = 'No cliché set — fixable, adds the "none" cliché.';
 			}
 
 			if ( has_term( 'dead', 'lez_cliches', $char_id ) && empty( $check['death'] ) ) {
@@ -224,6 +219,46 @@ class Characters {
 		Status::record( 'character_problems', 'Characters with Issues', count( $items ) );
 
 		return $items;
+	}
+
+	/**
+	 * Repair one character's fixable data problems.
+	 *
+	 * Registered as the fixer for the `chars` check, so it runs once per finding
+	 * under `wp lwtv debug chars --fix-it`. Characters flagged for something with
+	 * no automated repair (missing death date, no shows, no actors) return false
+	 * and are reported as unfixed.
+	 *
+	 * @param  int  $char_id Character post ID.
+	 * @return bool True when a repair was applied.
+	 */
+	public function fix_character_data( $char_id ): bool {
+		return $this->add_none_cliche( (int) $char_id );
+	}
+
+	/**
+	 * Add the 'none' cliché to a character carrying no cliché terms.
+	 *
+	 * Looked up by slug on purpose: the term's display name is not 'none', so a
+	 * name lookup silently returns false.
+	 *
+	 * @param  int  $char_id Character post ID.
+	 * @return bool True when the term was added.
+	 */
+	public function add_none_cliche( int $char_id ): bool {
+		$cliches = get_the_terms( $char_id, 'lez_cliches' );
+
+		// Already has clichés — nothing to repair.
+		if ( $cliches && ! is_wp_error( $cliches ) ) {
+			return false;
+		}
+
+		$term = get_term_by( 'slug', 'none', 'lez_cliches' );
+		if ( ! $term instanceof \WP_Term ) {
+			return false;
+		}
+
+		return ! is_wp_error( wp_set_object_terms( $char_id, array( $term->term_id ), 'lez_cliches', true ) );
 	}
 
 	/**

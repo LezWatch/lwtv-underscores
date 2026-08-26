@@ -120,18 +120,20 @@ class WP_CLI_LWTV_Debug {
 				'transient' => Characters::TRANSIENT_PROBLEMS,
 				'status'    => 'character_problems',
 				'scanner'   => array( Characters::class, 'find_characters_problems' ),
+				'fixer'     => array( Characters::class, 'fix_character_data' ),
 				'running'   => 'Running character data completeness check...',
 				'clean'     => 'Excellent! All character data is complete and correct.',
-				'dirty'     => 'character(s) need attention.',
+				'dirty'     => 'character(s) need attention. Use --fix-it to repair the ones marked fixable.',
 				'done'      => 'Character check complete.',
 			),
 			'shows'      => array(
 				'transient' => Shows::TRANSIENT_PROBLEMS,
 				'status'    => 'show_problems',
 				'scanner'   => array( Shows::class, 'find_shows_problems' ),
+				'fixer'     => array( Shows::class, 'fix_show_data' ),
 				'running'   => 'Running show data completeness check...',
 				'clean'     => 'Excellent! All show data is complete and correct.',
-				'dirty'     => 'show(s) need attention.',
+				'dirty'     => 'show(s) need attention. Use --fix-it to repair the ones marked fixable.',
 				'done'      => 'Show check complete.',
 			),
 			'actor_imdb' => array(
@@ -220,6 +222,8 @@ class WP_CLI_LWTV_Debug {
 	 * wp lwtv debug byq --format=json
 	 * wp lwtv debug actors --force
 	 * wp lwtv debug on_air --fix-it
+	 * wp lwtv debug shows --fix-it
+	 * wp lwtv debug chars --fix-it
 	 * wp lwtv debug watchurls --force
 	 *
 	 * @param array $args

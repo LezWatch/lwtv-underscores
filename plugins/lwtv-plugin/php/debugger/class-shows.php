@@ -59,10 +59,20 @@ class Shows {
 			'meta'     => 'lezshows_worthit_details',
 			'empty_ok' => true,
 		),
+		/*
+		 * Reported, not silently backfilled. This used to be written to 'TBD'
+		 * mid-scan, which is why it carried `skip` -- the scan repaired it and
+		 * so never had anything to report. The repair now lives in
+		 * set_thumb_tbd() behind --fix-it, so the finding has to be visible or
+		 * there is nothing for the fixer to act on.
+		 *
+		 * Worth knowing before deciding this is cosmetic: class-scores.php and
+		 * class-of-the-day.php INNER JOIN on lezshows_worthit_rating, so a show
+		 * with no row at all drops out of those queries entirely.
+		 */
 		'thumb'      => array(
-			'message' => 'No Thumb score.',
+			'message' => 'No Thumb score — fixable, sets it to TBD.',
 			'meta'    => 'lezshows_worthit_rating',
-			'skip'    => true,
 		),
 		'realness'   => array(
 			'message'  => 'No realness rating.',
@@ -100,10 +110,11 @@ class Shows {
 			'message' => 'No genres.',
 			'term'    => 'lez_genres',
 		),
+		// Same story as 'thumb' above: repaired by add_none_trope() under
+		// --fix-it, so the finding is now reported rather than skipped.
 		'tropes'     => array(
-			'message' => 'No tropes.',
+			'message' => 'No tropes set — fixable, adds the "none" trope.',
 			'term'    => 'lez_tropes',
-			'skip'    => true,
 		),
 	);
 
@@ -170,21 +181,6 @@ class Shows {
 				}
 			}
 
-			// Force set a missing rating (aka Thumb Score) to TBD.
-			if ( empty( $check['thumb'] ) ) {
-				update_post_meta( $show_id, 'lezshows_worthit_rating', 'TBD' );
-			}
-
-			// If there are no tropes, add NONE.
-			if ( ! $check['tropes'] || is_wp_error( $check['tropes'] ) ) {
-				$term = get_term_by( 'name', 'none', 'lez_tropes' );
-				if ( $term instanceof \WP_Term ) {
-					wp_set_object_terms( $show_id, array( $term->term_id ), 'lez_tropes', true );
-				} else {
-					$problems[] = 'No tropes set, and the "none" trope is missing from lez_tropes so it could not be added.';
-				}
-			}
-
 			$problems = array_merge( $problems, $this->check_airdates( $show_id ) );
 
 			$duplicates   = self::check_duplicate_shows( $check, $show_id );
@@ -208,6 +204,69 @@ class Shows {
 		Status::record( 'show_problems', 'Shows with Issues', count( $items ) );
 
 		return $items;
+	}
+
+	/**
+	 * Repair one show's fixable data problems.
+	 *
+	 * Registered as the fixer for the `shows` check, so it runs once per finding
+	 * under `wp lwtv debug shows --fix-it`. A show flagged only for something
+	 * with no automated repair (no characters, a bad airdate, a duplicate slug)
+	 * returns false and is reported as unfixed.
+	 *
+	 * @param  int  $show_id Show post ID.
+	 * @return bool True when at least one repair was applied.
+	 */
+	public function fix_show_data( $show_id ): bool {
+		$show_id = (int) $show_id;
+
+		// Deliberately not short-circuiting: a show can need both.
+		$trope = $this->add_none_trope( $show_id );
+		$thumb = $this->set_thumb_tbd( $show_id );
+
+		return $trope || $thumb;
+	}
+
+	/**
+	 * Add the 'none' trope to a show carrying no trope terms.
+	 *
+	 * Looked up by slug on purpose: the term's display name is 'None!', so a
+	 * name lookup silently returns false -- which is how this repair spent a
+	 * long time doing nothing while reporting that the term was missing.
+	 *
+	 * @param  int  $show_id Show post ID.
+	 * @return bool True when the term was added.
+	 */
+	public function add_none_trope( int $show_id ): bool {
+		$tropes = get_the_terms( $show_id, 'lez_tropes' );
+
+		// Already has tropes -- nothing to repair.
+		if ( $tropes && ! is_wp_error( $tropes ) ) {
+			return false;
+		}
+
+		$term = get_term_by( 'slug', 'none', 'lez_tropes' );
+		if ( ! $term instanceof \WP_Term ) {
+			return false;
+		}
+
+		return ! is_wp_error( wp_set_object_terms( $show_id, array( $term->term_id ), 'lez_tropes', true ) );
+	}
+
+	/**
+	 * Write 'TBD' for a show with no Thumb (Worth It) rating.
+	 *
+	 * Guarded on empty so this no longer rewrites the same value on every scan.
+	 *
+	 * @param  int  $show_id Show post ID.
+	 * @return bool True when the rating was written.
+	 */
+	public function set_thumb_tbd( int $show_id ): bool {
+		if ( ! empty( get_post_meta( $show_id, 'lezshows_worthit_rating', true ) ) ) {
+			return false;
+		}
+
+		return (bool) update_post_meta( $show_id, 'lezshows_worthit_rating', 'TBD' );
 	}
 
 	/**
