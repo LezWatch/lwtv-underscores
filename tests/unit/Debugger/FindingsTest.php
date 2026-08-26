@@ -44,7 +44,7 @@ class FindingsTest extends TestCase {
 	}
 
 	public function test_make_on_an_unfixable_issue_has_no_fix_label(): void {
-		$finding = Findings::make( 1, 'post_type_shows', 'show-no-characters' );
+		$finding = Findings::make( 1, 'post_type_shows', 'show-no-genres' );
 
 		$this->assertFalse( $finding['fixable'] );
 		$this->assertSame( '', $finding['fix_label'] );
@@ -84,7 +84,7 @@ class FindingsTest extends TestCase {
 			array(
 				Findings::make( 10, 'post_type_shows', 'show-no-genres' ),
 				Findings::make( 10, 'post_type_shows', 'show-missing-trope' ),
-				Findings::make( 11, 'post_type_shows', 'show-no-characters' ),
+				Findings::make( 11, 'post_type_shows', 'show-no-genres' ),
 			)
 		);
 

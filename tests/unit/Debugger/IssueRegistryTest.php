@@ -47,13 +47,15 @@ class IssueRegistryTest extends TestCase {
 	public function test_is_fixable_tracks_the_fix_key(): void {
 		$this->assertTrue( Issue_Registry::is_fixable( 'show-missing-trope' ) );
 		$this->assertTrue( Issue_Registry::is_fixable( 'show-missing-thumb' ) );
-		$this->assertFalse( Issue_Registry::is_fixable( 'show-no-characters' ) );
+		// show-no-characters is fixable-but-manual; that distinction has its own
+		// tests below, so a genuinely unfixable type is used here instead.
+		$this->assertFalse( Issue_Registry::is_fixable( 'show-no-genres' ) );
 		$this->assertFalse( Issue_Registry::is_fixable( 'show-invented-nonsense' ) );
 	}
 
 	public function test_fix_label_is_empty_without_a_repair(): void {
 		$this->assertSame( 'adds the "none" trope', Issue_Registry::fix_label( 'show-missing-trope' ) );
-		$this->assertSame( '', Issue_Registry::fix_label( 'show-no-characters' ) );
+		$this->assertSame( '', Issue_Registry::fix_label( 'show-no-genres' ) );
 	}
 
 	public function test_fix_callable_is_a_class_method_pair(): void {
@@ -61,7 +63,7 @@ class IssueRegistryTest extends TestCase {
 			array( '\LWTV\Debugger\Shows', 'add_none_trope' ),
 			Issue_Registry::fix_callable( 'show-missing-trope' )
 		);
-		$this->assertSame( array(), Issue_Registry::fix_callable( 'show-no-characters' ) );
+		$this->assertSame( array(), Issue_Registry::fix_callable( 'show-no-genres' ) );
 	}
 
 	public function test_every_fixable_issue_declares_a_label_and_callable(): void {
