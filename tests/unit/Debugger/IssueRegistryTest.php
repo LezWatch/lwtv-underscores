@@ -94,6 +94,14 @@ class IssueRegistryTest extends TestCase {
 		);
 	}
 
+	public function test_term_level_issues_have_no_repairs(): void {
+		// Nothing maps 'watch_term' to a repair cache, and none of these can be
+		// fixed without a human deciding what the URL should be.
+		foreach ( Issue_Registry::for_level( 'watch_term' ) as $issue_type ) {
+			$this->assertFalse( Issue_Registry::is_fixable( $issue_type ), $issue_type );
+		}
+	}
+
 	public function test_the_two_on_air_issues_share_one_repair(): void {
 		// Both are "the stored status disagrees with the airdates", and the same
 		// method recalculates it either way.
@@ -141,7 +149,7 @@ class IssueRegistryTest extends TestCase {
 		foreach ( Issue_Registry::ISSUES as $issue_type => $issue ) {
 			$this->assertArrayHasKey( 'level', $issue, $issue_type );
 			$this->assertArrayHasKey( 'message', $issue, $issue_type );
-			$this->assertContains( $issue['level'], array( 'show', 'character', 'actor' ), $issue_type );
+			$this->assertContains( $issue['level'], array( 'show', 'character', 'actor', 'watch_term' ), $issue_type );
 			$this->assertNotSame( '', $issue['message'], $issue_type );
 		}
 	}
@@ -150,10 +158,11 @@ class IssueRegistryTest extends TestCase {
 		$shows  = Issue_Registry::for_level( 'show' );
 		$chars  = Issue_Registry::for_level( 'character' );
 		$actors = Issue_Registry::for_level( 'actor' );
+		$terms  = Issue_Registry::for_level( 'watch_term' );
 
 		$this->assertSame(
 			count( Issue_Registry::ISSUES ),
-			count( $shows ) + count( $chars ) + count( $actors )
+			count( $shows ) + count( $chars ) + count( $actors ) + count( $terms )
 		);
 		$this->assertContains( 'show-no-genres', $shows );
 		$this->assertNotContains( 'show-no-genres', $chars );

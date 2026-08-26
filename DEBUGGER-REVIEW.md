@@ -23,7 +23,7 @@ Most of the below is #1, since that's where the bugs and the scale risk are. #2 
 
 ### What the debugger looks like now
 
-The architecture the plan asked for exists, for ten of the eleven checks:
+The architecture the plan asked for exists, for every check:
 
 ```
 php/debugger/
@@ -61,14 +61,13 @@ buttons, and the copy in both.
 | §4 | `build/` + `collect/` split for Shows, Characters and Actors, 77 tests |
 | §5 | Baselines and new/open/resolved — as a pure `Build\Baseline`, not via `Audit` |
 | §8.1–8.5 | Detect/repair split, typed findings, both repair surfaces, stray writes gone |
-| 14 | All post-based checks converted; ten of eleven report "N new / M open" |
+| 14 | Every check converted — all eleven report "N new / M open" |
 
 **Outstanding, roughly in order**
 
 | | |
 |---|---|
-| 14 | `watchurls` — needs `id` → `object_id` + `object_type`, and the first real transient migration |
-| §4 | `collect/` + rules split for the seven checks converted but not yet extracted |
+| §4 | `collect/` + rules split for the eight checks converted but not yet extracted |
 | §5 | Acknowledgements where no editorial field exists to carry them |
 | §7 | Collapse the twelve validator files |
 | §6 | Debug log rotation, memoised option reads, log viewer |
@@ -787,7 +786,8 @@ the three, because every actor check is a meta read. Four notes:
   `dupes` and never used it; duplicate detection lives in the `dupes` check.
 
 What is left of §4 is the checks that were never in scope here: `byq`, `queers`, `dupes`,
-`on_air`, both IMDb checks, and `watchurls`.
+`on_air`, both IMDb checks, and `watchurls` — every check is converted now, but only
+Shows, Characters and Actors have had their rules extracted into `build/`.
 
 ### Acknowledgement, arrived at from the other end (2026-08-26)
 
@@ -840,14 +840,13 @@ The classic debugger had none of that. Its findings were `array( url, id, proble
 - see when something got fixed
 
 **This was the biggest win available**, and it has largely landed — the first three of those
-four now work for every check except `watchurls`, and the tab badges read "4 new / 41" as
-hoped. But *not* by routing everything through `Audit::finalize()`; see below for why, and
+four now work for every check, and the tab badges read "4 new / 41" as hoped. But *not* by routing everything through `Audit::finalize()`; see below for why, and
 which half is still outstanding.
 
 ### Done differently (2026-08-26): the diff was extracted, `Audit` left alone
 
-Baselines and new/open/resolved now exist for every check except `watchurls`, but **not** by
-routing them through `Audit::finalize()`. The recommendation above was not taken, and the
+Baselines and new/open/resolved now exist for every check, but **not** by routing them
+through `Audit::finalize()`. The recommendation above was not taken, and the
 reasoning is worth recording because it will come up again:
 
 - `Audit::finding_key()` is `show_id:char_id:issue_type:year`. Making it post-type-agnostic
@@ -965,8 +964,8 @@ links**; findings **advertise what a fix would do** before you run it.
 **Status: done.** Detect/repair split (8.1–8.2), typed findings and the issue registry
 (8.3), the stray writes cleaned up (8.4), no transient migration needed (8.5), and both
 repair surfaces wired to the same registry. All ten post-based checks are converted; only
-`watchurls` still emits the old shape. §5's baselines landed too, differently — see the note
-there.
+`watchurls` was the last one and needed the shape to stretch to terms — see item 14. §5's
+baselines landed too, differently: see the note there.
 
 The original reasoning, which held up: per-finding fix links and "fixable" tagging both
 require findings to be individually addressable, which `array( url, id, problem )` could not
@@ -1092,10 +1091,9 @@ pipeline so its hook-appended row carries `issues` too; and the two-argument
 social repair got per-field wrappers (`remove_imdb_from_instagram()` /
 `remove_imdb_from_twitter()`) so every registry fix takes exactly one post ID.
 
-Not converted, still on the legacy shape and reading through the tolerant path:
-`byq`, `queers`, `dupes`, `on_air`, both IMDb checks, `find_actors_incomplete()`,
-and `watchurls` (term-shaped findings — see the `object_id`/`object_type` note
-below).
+*(At the time: the other eight checks were still on the legacy shape, reading through the
+tolerant path. All of them were converted later the same day — see item 14. The tolerant
+reads stay, because week-old cached rows can still predate any of this.)*
 
 The original sketch, for reference:
 
@@ -1378,8 +1376,9 @@ Everything in the **Done** table at the top has shipped. What's left, in the ord
 **The structural chunk (§8) — mostly done as of 2026-08-26:**
 
 8. ~~**Issue registry + typed findings** (§5, §8.3), including the transient shape migration
-   (§8.5).~~ **Done** for every check except `watchurls` (item 14). No migration was
-   needed; the shape is a superset. See §8.3.
+   (§8.5).~~ **Done** for every check. No migration was ever needed: the shape is a
+   superset, and `watchurls` — the one case that did change a key's meaning — bumped its
+   transient key instead, since starting that one over costs nothing. See §8.3.
 9. ~~**Route findings through `Audit::finalize()`** (§5)~~ — **done differently.** Baselines
    and new/open/resolved shipped as a pure `Build\Baseline` plus `Baseline_Store`, leaving
    `Audit` alone; see the §5 note for why. **Acknowledgements are half done**: the mechanism
@@ -1400,13 +1399,9 @@ Everything in the **Done** table at the top has shipped. What's left, in the ord
     since the per-issue rendering lives in one place rather than ten.
 13. Add the missing checks to the cron rotation — including `waystowatch enrich`, which is
     safe to run weekly since it skips anything already asked.
-14. ~~**Convert the remaining checks to typed findings**~~ — **done for all the post-based
-    ones (2026-08-26)**: `byq`, `queers`, `dupes`, `on_air`, both IMDb checks and
-    `actor_empty`. Every check except `watchurls` now emits typed findings and diffs against
-    a baseline, so ten of eleven report "N new / M open". **`watchurls` is still outstanding**
-    and is the awkward one — term-shaped findings need `id` generalised into `object_id` +
-    `object_type`, which is the first change that will actually require §8.5's version
-    marker.
+14. ~~**Convert the remaining checks to typed findings**~~ — **done, all eleven
+    (2026-08-26)**: `byq`, `queers`, `dupes`, `on_air`, both IMDb checks, `actor_empty`, and
+    finally `watchurls`. Every check now emits typed findings and diffs against a baseline.
 
     Worth knowing about that pass:
 
@@ -1424,6 +1419,45 @@ Everything in the **Done** table at the top has shipped. What's left, in the ord
     - **A latent bug in the BYQ reporting gate was found and then fixed** once the intent
       was confirmed — the typed findings are what made it fixable, since the gate can now
       count only the findings it is actually about. See §1.9c.
+
+    And the `watchurls` pass, which needed the shape to stretch:
+
+    - **Findings can now be about a term.** `Findings::make_for_term()` sets
+      `object_kind => 'term'`, and `Findings::is_post()` is the test to run before
+      dereferencing `id`. `Validation::table_content()` and the CLI fixer both call it and
+      skip what is not a post — a term row reaching `get_the_title()` would have rendered a
+      plausible empty row with working links to nothing, which is the worst way to be wrong.
+    - **`id` was *not* renamed to `object_id`.** The plan called for that; it would have
+      meant migrating every stored row and every reader of `id` — `table_content()`, the CLI
+      columns, `apply_fixes()`, `Repair::prune()`, the recheck path in ten scanners — to fix
+      a name that is correct for the ten post-based checks. `object_kind` buys the actual
+      safety property without the churn.
+    - **Baseline keys gained an optional third part.** A provider term can have several
+      broken URLs, and object + issue type is not unique across them; without the URL in the
+      key, fixing one of three would read as resolving all three.
+    - **These rows are one per URL, not grouped per term.** The post checks collapse to one
+      row per post because the post is both what you triage and what you edit. Here the term
+      is what you edit but the URL is what you triage, and the report has a URL column per
+      row — so `Rows::from_term_findings()` does not group.
+    - **`status` became `health`.** The health verdict (broken / needs review / blocked) and
+      the baseline's new/open/resolved both wanted the key. Health moved, since
+      `Watch_Url_Health::STATUS_*` is what it holds and `health` reads better in the
+      renderer.
+    - **No transient migration.** The key is bumped to `lwtv_debug_watch_urls_v2` and old
+      rows are simply never read: the tab says the scan has not run until the next sweep,
+      which is honest, and Sunday's cron refills it. §8.5's version marker is still unused,
+      and now has no pending caller.
+    - **One bug caught in the conversion.** The budget path stashed the previous *row* under
+      `carry` and pushed it back into what is now a *findings* array. `carried()` rebuilds a
+      finding from that row instead, preserving the original issue type and message — so a
+      URL that was broken an hour ago is still reported as broken rather than downgraded to
+      "not checked", which was the point of `carry` in the first place.
+    - **One bug the first live run exposed:** term names arrived entity-encoded, so
+      `U&Alibi` printed as `U&amp;Alibi` in the CLI — and the admin was worse, running
+      `esc_html()` over an already-encoded name. Decoded at the source now, where the name
+      enters the finding, which fixes both surfaces. It also slightly improves
+      `Watch_Url_Health::classify()`, which compares the term name against the name the site
+      gives itself: it was comparing the encoded form.
 15. **Give the wikidata cache writes an explicit TTL** (§8.4). Still incidental side effects
     of a comparison.
 

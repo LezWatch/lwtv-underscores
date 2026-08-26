@@ -51,6 +51,48 @@ class FindingsTest extends TestCase {
 	}
 
 	/*
+	 * make_for_term() / is_post() — the term-shaped findings.
+	 */
+
+	public function test_a_term_finding_says_it_is_about_a_term(): void {
+		$finding = Findings::make_for_term( 55, 'lez_watch_urls', 'watch-url-broken' );
+
+		$this->assertSame( 55, $finding['post_id'] );
+		$this->assertSame( 'lez_watch_urls', $finding['post_type'] );
+		$this->assertSame( 'term', $finding['object_kind'] );
+		$this->assertFalse( Findings::is_post( $finding ) );
+	}
+
+	public function test_a_post_finding_says_it_is_about_a_post(): void {
+		$this->assertTrue( Findings::is_post( Findings::make( 10, 'post_type_shows', 'show-no-genres' ) ) );
+	}
+
+	public function test_an_old_row_with_no_kind_counts_as_a_post(): void {
+		// Rows cached before terms existed in this shape are all post rows, and
+		// treating one as a term is the damaging way to be wrong.
+		$this->assertTrue( Findings::is_post( array( 'id' => 10, 'problem' => 'No genres.' ) ) );
+	}
+
+	public function test_a_term_finding_carries_its_identity(): void {
+		$finding = Findings::make_for_term(
+			55,
+			'lez_watch_urls',
+			'watch-url-broken',
+			'',
+			array( 'url' => 'https://example.com/one' ),
+			'https://example.com/one'
+		);
+
+		$this->assertSame( 'https://example.com/one', $finding['identity'] );
+	}
+
+	public function test_a_term_finding_without_an_identity_has_no_key(): void {
+		$finding = Findings::make_for_term( 55, 'lez_watch_urls', 'watch-term-no-urls' );
+
+		$this->assertArrayNotHasKey( 'identity', $finding );
+	}
+
+	/*
 	 * describe()
 	 */
 

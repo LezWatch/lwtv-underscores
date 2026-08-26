@@ -23,14 +23,23 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 use LWTV\CPTs\Shows\Watch_Hosts;
 use LWTV\CPTs\Shows\Watch_Url_Health;
+use LWTV\Debugger\Build\Findings;
+use LWTV\Debugger\Build\Issue_Registry;
+use LWTV\Debugger\Format\Rows;
 use LWTV\Theme\Ways_To_Watch as Theme_Ways_To_Watch;
 
 class Watch_URLs {
 
 	/**
 	 * Transient holding the results of find_bad_watch_urls().
+	 *
+	 * `_v2` because the row shape changed with typed findings -- `status` became
+	 * `health`, freeing `status` for the baseline's new/open/resolved. Bumping the
+	 * key rather than migrating means old rows are simply never read: the tab says
+	 * the scan has not run until the next sweep, which is honest, and the Sunday
+	 * cron refills it.
 	 */
-	const TRANSIENT_PROBLEMS = 'lwtv_debug_watch_urls';
+	const TRANSIENT_PROBLEMS = 'lwtv_debug_watch_urls_v2';
 
 	/**
 	 * Key inside the debugger status option.
@@ -45,6 +54,21 @@ class Watch_URLs {
 	 * quietly turn this check into a list of false 403s.
 	 */
 	const SLEEP_US = 250000;
+
+	/**
+	 * Issue type per URL health verdict.
+	 *
+	 * The health is what the report's status column shows; the issue type is what
+	 * the finding *is*. They line up one-to-one for probed URLs, but two other
+	 * issue types also carry a health of "needs review" -- a term with no URLs at
+	 * all, and one we ran out of time to re-check -- so the two are not the same
+	 * thing.
+	 */
+	const ISSUE_FOR_HEALTH = array(
+		Watch_Url_Health::STATUS_BROKEN  => 'watch-url-broken',
+		Watch_Url_Health::STATUS_REVIEW  => 'watch-url-suspect',
+		Watch_Url_Health::STATUS_BLOCKED => 'watch-url-blocked',
+	);
 
 	/**
 	 * Severity order for reporting. Worst first.
@@ -86,7 +110,7 @@ class Watch_URLs {
 			// Stop before starting a request that could run past the budget,
 			// rather than after one already has.
 			if ( null !== $budget && ( microtime( true ) - $started ) + (float) ( $timeout ?? Watch_Hosts::TIMEOUT ) > $budget ) {
-				$found[] = $target['carry'] ?? $this->deferred( $target );
+				$found[] = $this->carried( $target );
 				continue;
 			}
 
@@ -103,22 +127,38 @@ class Watch_URLs {
 				continue;
 			}
 
-			$found[] = array(
-				'id'      => $target['term_id'],
-				'url'     => $target['url'],
-				'term'    => $target['term'],
-				'shows'   => $target['shows'],
-				'status'  => $health['status'],
-				'problem' => $health['problem'],
-			);
+			$found[] = $this->finding( $target, $health['status'], $health['problem'] );
 		}
 
-		$found = $this->sort_findings( $found );
+		/*
+		 * Diffed like every other check, but never on a partial run: a budgeted
+		 * re-check visits a subset, and $items being non-empty is what says so.
+		 * Sorting happens after tagging so the status ends up on the right row.
+		 */
+		$diff  = empty( $items )
+			? Baseline_Store::apply( self::STATUS_KEY, $found )
+			: Baseline_Store::tag_only( self::STATUS_KEY, $found );
+		$found = $this->sort_findings( Rows::from_term_findings( $diff['findings'] ) );
 
 		lwtv_plugin()->set_transient( self::TRANSIENT_PROBLEMS, $found, WEEK_IN_SECONDS );
-		Status::record( self::STATUS_KEY, 'Watch provider URLs with problems', count( $found ) );
+		Status::record( self::STATUS_KEY, 'Watch provider URLs with problems', count( $found ), $diff['summary'] );
 
 		return $found;
+	}
+
+	/**
+	 * A term name as text, not as HTML.
+	 *
+	 * WordPress stores term names entity-encoded, so "U&Alibi" comes back as
+	 * "U&amp;Alibi". Findings hold data rather than markup -- each renderer
+	 * escapes -- so leaving it encoded double-encodes it: the admin table runs
+	 * esc_html() over it and prints the entity, and the CLI prints it raw.
+	 *
+	 * @param  string $name Term name as stored.
+	 * @return string
+	 */
+	private function term_name( string $name ): string {
+		return html_entity_decode( $name, ENT_QUOTES | ENT_HTML5, 'UTF-8' );
 	}
 
 	/**
@@ -133,7 +173,7 @@ class Watch_URLs {
 		foreach ( Watch_Hosts::term_urls() as $row ) {
 			$targets[] = array(
 				'term_id' => $row['term_id'],
-				'term'    => $row['name'],
+				'term'    => $this->term_name( (string) $row['name'] ),
 				'url'     => $row['url'],
 				'shows'   => (int) ( $per_term[ $row['term_id'] ] ?? 0 ),
 			);
@@ -174,7 +214,7 @@ class Watch_URLs {
 
 			$targets[] = array(
 				'term_id' => (int) $item['id'],
-				'term'    => $term->name,
+				'term'    => $this->term_name( $term->name ),
 				'url'     => (string) $item['url'],
 				'shows'   => (int) ( $item['shows'] ?? 0 ),
 				'carry'   => $item,
@@ -216,13 +256,17 @@ class Watch_URLs {
 				continue;
 			}
 
-			$found[] = array(
-				'id'      => (int) $term->term_id,
-				'url'     => '',
-				'term'    => $term->name,
-				'shows'   => 0,
-				'status'  => Watch_Url_Health::STATUS_REVIEW,
-				'problem' => __( 'This term has no URLs, so nothing can ever match it. Add a URL or delete the term.', 'lwtv' ),
+			$found[] = Findings::make_for_term(
+				(int) $term->term_id,
+				Theme_Ways_To_Watch::TAXONOMY,
+				'watch-term-no-urls',
+				'',
+				array(
+					'url'    => '',
+					'term'   => $this->term_name( $term->name ),
+					'shows'  => 0,
+					'health' => Watch_Url_Health::STATUS_REVIEW,
+				)
 			);
 		}
 
@@ -236,13 +280,68 @@ class Watch_URLs {
 	 * @return array<string, mixed>
 	 */
 	private function deferred( array $target ): array {
-		return array(
-			'id'      => $target['term_id'],
-			'url'     => $target['url'],
-			'term'    => $target['term'],
-			'shows'   => $target['shows'],
-			'status'  => Watch_Url_Health::STATUS_REVIEW,
-			'problem' => __( 'Not re-checked yet — the page ran out of time. Press the button again.', 'lwtv' ),
+		return $this->finding( $target, Watch_Url_Health::STATUS_REVIEW, '', 'watch-url-deferred' );
+	}
+
+	/**
+	 * The finding for a target we ran out of time to re-probe.
+	 *
+	 * A budget must never silently clear a real finding, so what the previous run
+	 * knew is rebuilt rather than replaced with "not checked": a URL that was
+	 * broken an hour ago is still reported as broken.
+	 *
+	 * Rebuilt rather than carried verbatim, because `carry` holds the previous
+	 * *row* — one row per finding, so its single issue type and message are
+	 * exactly what is needed — and a row pushed into a findings array would have
+	 * no issue type for the baseline to key on.
+	 *
+	 * @param  array $target Probe target, possibly carrying a previous row.
+	 * @return array<string, mixed>
+	 */
+	private function carried( array $target ): array {
+		$row        = (array) ( $target['carry'] ?? array() );
+		$issue_type = (string) ( $row['issues'][0] ?? '' );
+
+		// No previous finding to preserve: this target came from a full sweep.
+		if ( '' === $issue_type || ! Issue_Registry::exists( $issue_type ) ) {
+			return $this->deferred( $target );
+		}
+
+		return $this->finding(
+			$target,
+			(string) ( $row['health'] ?? Watch_Url_Health::STATUS_REVIEW ),
+			(string) ( $row['messages'][0] ?? '' ),
+			$issue_type
+		);
+	}
+
+	/**
+	 * One typed finding about a term URL.
+	 *
+	 * @param  array  $target     Probe target.
+	 * @param  string $health     Watch_Url_Health status.
+	 * @param  string $problem    Message, or '' for the registry default.
+	 * @param  string $issue_type Overrides the health-derived type.
+	 * @return array<string, mixed>
+	 */
+	private function finding( array $target, string $health, string $problem = '', string $issue_type = '' ): array {
+		if ( '' === $issue_type ) {
+			$issue_type = self::ISSUE_FOR_HEALTH[ $health ] ?? 'watch-url-suspect';
+		}
+
+		return Findings::make_for_term(
+			(int) $target['term_id'],
+			Theme_Ways_To_Watch::TAXONOMY,
+			$issue_type,
+			$problem,
+			array(
+				'url'    => $target['url'],
+				'term'   => $target['term'],
+				'shows'  => $target['shows'],
+				'health' => $health,
+			),
+			// A term can have several bad URLs, and each is its own finding.
+			(string) $target['url']
 		);
 	}
 
@@ -253,14 +352,14 @@ class Watch_URLs {
 	 * an editor actually has are "what's definitely broken" and "what does the
 	 * most damage".
 	 *
-	 * @param array $found Findings.
+	 * @param array $found Display rows.
 	 * @return array<int, array<string, mixed>>
 	 */
 	private function sort_findings( array $found ): array {
 		usort(
 			$found,
 			function ( $first, $second ) {
-				$rank = ( self::SEVERITY[ $first['status'] ] ?? 9 ) <=> ( self::SEVERITY[ $second['status'] ] ?? 9 );
+				$rank = ( self::SEVERITY[ $first['health'] ?? '' ] ?? 9 ) <=> ( self::SEVERITY[ $second['health'] ?? '' ] ?? 9 );
 
 				if ( 0 !== $rank ) {
 					return $rank;

@@ -153,7 +153,8 @@ class Watch_Term_Check {
 	 * @return void
 	 */
 	private static function render_findings( array $items, string $last_run ): void {
-		$counts = array_count_values( array_column( $items, 'status' ) );
+		// 'health', not 'status': status is the baseline's new/open/resolved now.
+		$counts = array_count_values( array_column( $items, 'health' ) );
 		$broken = (int) ( $counts[ Watch_Url_Health::STATUS_BROKEN ] ?? 0 );
 		?>
 		<div class="lwtv-tools-container lwtv-tools-container__alert">
@@ -217,9 +218,9 @@ class Watch_Term_Check {
 	private static function render_row( array $item, bool $alt ): void {
 		$term_id = (int) ( $item['id'] ?? 0 );
 		$edit    = $term_id ? get_edit_term_link( $term_id, Theme_Ways_To_Watch::TAXONOMY ) : '';
-		$status  = (string) ( $item['status'] ?? Watch_Url_Health::STATUS_REVIEW );
+		$health  = (string) ( $item['health'] ?? Watch_Url_Health::STATUS_REVIEW );
 		$labels  = self::labels();
-		$label   = $labels[ $status ] ?? $labels[ Watch_Url_Health::STATUS_REVIEW ];
+		$label   = $labels[ $health ] ?? $labels[ Watch_Url_Health::STATUS_REVIEW ];
 		$url     = (string) ( $item['url'] ?? '' );
 		?>
 		<tr class="<?php echo esc_attr( $alt ? 'alternate' : '' ); ?>">

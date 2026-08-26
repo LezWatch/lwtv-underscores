@@ -48,7 +48,17 @@ class Baseline {
 	 * @return string
 	 */
 	public static function key( array $finding ): string {
-		return (int) ( $finding['post_id'] ?? 0 ) . ':' . (string) ( $finding['issue_type'] ?? '' );
+		$key = (int) ( $finding['post_id'] ?? 0 ) . ':' . (string) ( $finding['issue_type'] ?? '' );
+
+		/*
+		 * An optional third part, for the one case where object + type is not
+		 * unique: a watch provider term can have several broken URLs, and each is
+		 * its own problem. Without this they collapse into one, and fixing one of
+		 * three would read as resolving all of them.
+		 */
+		$identity = (string) ( $finding['identity'] ?? '' );
+
+		return ( '' === $identity ) ? $key : $key . ':' . $identity;
 	}
 
 	/**
@@ -71,10 +81,16 @@ class Baseline {
 				continue;
 			}
 
-			$snapshot[ self::key( $finding ) ] = array(
+			$entry = array(
 				'post_id'    => $post_id,
 				'issue_type' => (string) ( $finding['issue_type'] ?? '' ),
 			);
+
+			if ( isset( $finding['identity'] ) ) {
+				$entry['identity'] = (string) $finding['identity'];
+			}
+
+			$snapshot[ self::key( $finding ) ] = $entry;
 		}
 
 		return $snapshot;

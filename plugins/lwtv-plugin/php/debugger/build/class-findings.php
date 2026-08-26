@@ -32,6 +32,16 @@ class Findings {
 	const SEPARATOR = '</br>';
 
 	/**
+	 * A finding about a post.
+	 */
+	const KIND_POST = 'post';
+
+	/**
+	 * A finding about a taxonomy term.
+	 */
+	const KIND_TERM = 'term';
+
+	/**
 	 * Build one finding.
 	 *
 	 * @param  int    $post_id    Post the problem is on.
@@ -45,15 +55,67 @@ class Findings {
 	 */
 	public static function make( int $post_id, string $post_type, string $issue_type, string $message = '', array $context = array() ): array {
 		return array(
-			'post_id'    => $post_id,
-			'post_type'  => $post_type,
-			'issue_type' => $issue_type,
-			'message'    => ( '' !== $message ) ? $message : Issue_Registry::message( $issue_type ),
-			'context'    => $context,
-			'fixable'    => Issue_Registry::is_fixable( $issue_type ),
-			'fix_label'  => Issue_Registry::fix_label( $issue_type ),
-			'manual'     => Issue_Registry::is_manual( $issue_type ),
+			'post_id'     => $post_id,
+			'post_type'   => $post_type,
+			'object_kind' => self::KIND_POST,
+			'issue_type'  => $issue_type,
+			'message'     => ( '' !== $message ) ? $message : Issue_Registry::message( $issue_type ),
+			'context'     => $context,
+			'fixable'     => Issue_Registry::is_fixable( $issue_type ),
+			'fix_label'   => Issue_Registry::fix_label( $issue_type ),
+			'manual'      => Issue_Registry::is_manual( $issue_type ),
 		);
+	}
+
+	/**
+	 * Build one finding about a taxonomy term.
+	 *
+	 * Terms are the awkward case the whole shape had to stretch for: the Watch
+	 * URL check finds problems on `lez_watch_urls` terms, not on posts, and a
+	 * renderer that calls `get_the_title()` on a term ID produces nonsense
+	 * silently. So a finding says what kind of thing it is about, and
+	 * `object_kind` is the key to test before dereferencing `id`.
+	 *
+	 * `post_id` still carries the identity, rather than a parallel `term_id`.
+	 * That is deliberate: renaming it would mean migrating every stored row and
+	 * every reader of `id`, for no gain on the ten post-based checks. The name is
+	 * a little wrong for terms; the alternative was a great deal of churn.
+	 *
+	 * @param  int    $term_id    Term ID.
+	 * @param  string $taxonomy   Taxonomy the term belongs to.
+	 * @param  string $issue_type Key into Issue_Registry.
+	 * @param  string $message    Overrides the registry copy. '' to use the default.
+	 * @param  array  $context    Extra data. See $identity for the URL case.
+	 * @param  string $identity   Distinguishes two findings of the same type on the
+	 *                            same term -- a term can have several bad URLs, and
+	 *                            each is its own problem. Folded into the baseline
+	 *                            key so they do not collapse into one.
+	 * @return array
+	 */
+	public static function make_for_term( int $term_id, string $taxonomy, string $issue_type, string $message = '', array $context = array(), string $identity = '' ): array {
+		$finding = self::make( $term_id, $taxonomy, $issue_type, $message, $context );
+
+		$finding['object_kind'] = self::KIND_TERM;
+
+		if ( '' !== $identity ) {
+			$finding['identity'] = $identity;
+		}
+
+		return $finding;
+	}
+
+	/**
+	 * Is this finding, or row, about a post?
+	 *
+	 * Defaults to true: everything written before terms existed in this shape is
+	 * about a post, and treating an old row as a term would be the damaging way
+	 * to be wrong.
+	 *
+	 * @param  array $finding Finding or row.
+	 * @return bool
+	 */
+	public static function is_post( array $finding ): bool {
+		return self::KIND_TERM !== ( $finding['object_kind'] ?? self::KIND_POST );
 	}
 
 	/**

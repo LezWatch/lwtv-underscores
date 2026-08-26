@@ -179,7 +179,7 @@ class WP_CLI_LWTV_Debug {
 				'transient' => Watch_URLs::TRANSIENT_PROBLEMS,
 				'status'    => Watch_URLs::STATUS_KEY,
 				'scanner'   => array( Watch_URLs::class, 'find_bad_watch_urls' ),
-				'columns'   => array( 'term', 'url', 'status', 'shows', 'problem' ),
+				'columns'   => array( 'term', 'url', 'health', 'shows', 'problem' ),
 				'running'   => 'Checking every URL on every watch provider term...',
 				'clean'     => 'Excellent! Every watch provider URL answered and still looks like its provider.',
 				'dirty'     => 'provider URL(s) need attention.',
@@ -404,6 +404,12 @@ class WP_CLI_LWTV_Debug {
 	 * @return bool  True when at least one repair was applied.
 	 */
 	private function fix_item( array $check, array $item ): bool {
+		// Every registered repair takes a post ID. A term-shaped finding's `id` is
+		// a term ID, and none of those issues has a repair anyway.
+		if ( ! Findings::is_post( $item ) ) {
+			return false;
+		}
+
 		$post_id = (int) $item['id'];
 
 		/*

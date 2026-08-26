@@ -46,6 +46,37 @@ class BaselineTest extends TestCase {
 		$this->assertSame( Baseline::key( $before ), Baseline::key( $after ) );
 	}
 
+	public function test_two_urls_on_one_term_are_two_findings(): void {
+		/*
+		 * The case the third key part exists for. A watch provider term can have
+		 * several broken URLs; without the URL in the key they collapse into one,
+		 * and fixing one of three would read as having resolved all of them.
+		 */
+		$first = Findings::make_for_term( 55, 'lez_watch_urls', 'watch-url-broken', '', array(), 'https://example.com/one' );
+		$other = Findings::make_for_term( 55, 'lez_watch_urls', 'watch-url-broken', '', array(), 'https://example.com/two' );
+
+		$this->assertNotSame( Baseline::key( $first ), Baseline::key( $other ) );
+		$this->assertCount( 2, Baseline::snapshot( array( $first, $other ) ) );
+	}
+
+	public function test_fixing_one_url_resolves_only_that_one(): void {
+		$first = Findings::make_for_term( 55, 'lez_watch_urls', 'watch-url-broken', '', array(), 'https://example.com/one' );
+		$other = Findings::make_for_term( 55, 'lez_watch_urls', 'watch-url-broken', '', array(), 'https://example.com/two' );
+
+		$out = Baseline::diff( array( $other ), Baseline::snapshot( array( $first, $other ) ) );
+
+		$this->assertCount( 1, $out['resolved'] );
+		$this->assertSame( 'https://example.com/one', $out['resolved'][0]['identity'] );
+		$this->assertSame( 1, $out['summary']['open'] );
+	}
+
+	public function test_a_finding_with_no_identity_keys_on_object_and_type(): void {
+		$this->assertSame(
+			'55:watch-term-no-urls',
+			Baseline::key( Findings::make_for_term( 55, 'lez_watch_urls', 'watch-term-no-urls' ) )
+		);
+	}
+
 	public function test_snapshot_stores_identity_only(): void {
 		$snapshot = Baseline::snapshot( $this->findings() );
 

@@ -346,6 +346,41 @@ class Issue_Registry {
 		),
 
 		/*
+		 * Watch provider URLs (the `watchurls` check).
+		 *
+		 * Level 'watch_term' rather than a CPT: these findings are about
+		 * `lez_watch_urls` terms. Nothing maps that level to a repair cache, so
+		 * Repair::is_supported() refuses them and no admin buttons appear --
+		 * which is right, since none of these can be fixed without a human
+		 * deciding what the URL should be.
+		 *
+		 * The health of the URL (broken / needs review / blocked) is a separate
+		 * axis, carried on the row for the report's own column. Two of these
+		 * types share a health of "needs review" while being quite different
+		 * problems, which is why the type is not just the health.
+		 */
+		'watch-url-broken'            => array(
+			'level'   => 'watch_term',
+			'message' => 'The URL does not answer.',
+		),
+		'watch-url-suspect'           => array(
+			'level'   => 'watch_term',
+			'message' => 'The URL answers, but may not be this provider any more.',
+		),
+		'watch-url-blocked'           => array(
+			'level'   => 'watch_term',
+			'message' => 'The host blocked us, so this could not be checked.',
+		),
+		'watch-term-no-urls'          => array(
+			'level'   => 'watch_term',
+			'message' => 'This term has no URLs, so nothing can ever match it. Add a URL or delete the term.',
+		),
+		'watch-url-deferred'          => array(
+			'level'   => 'watch_term',
+			'message' => 'Not re-checked yet — the page ran out of time. Press the button again.',
+		),
+
+		/*
 		 * Incomplete actors (the `actor_empty` check).
 		 */
 		'actor-no-image'              => array(

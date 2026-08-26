@@ -25,6 +25,7 @@ use LWTV\Validator\Watch_Providers;
 use LWTV\Validator\Watch_Term_Check;
 
 use LWTV\Debugger\Build\Baseline;
+use LWTV\Debugger\Build\Findings;
 use LWTV\Debugger\Repair;
 use LWTV\Debugger\Status;
 use LWTV\Debugger\Watch_URLs;
@@ -265,6 +266,19 @@ class Validation {
 	public static function table_content( $items ) {
 		$number = 1;
 		foreach ( $items as $item ) {
+			/*
+			 * This renderer dereferences `id` as a post — get_the_title(),
+			 * get_edit_post_link(), get_permalink(). A term-shaped finding would
+			 * pass all of those silently and render an empty row with working
+			 * links to nothing, which is the worst way to be wrong. Watch URL
+			 * findings have their own renderer for exactly this reason; skipping
+			 * here means a future check that forgets that gets an obviously
+			 * missing row rather than a plausible wrong one.
+			 */
+			if ( ! Findings::is_post( $item ) ) {
+				continue;
+			}
+
 			$class     = ( 0 === $number % 2 ) ? '' : 'alternate';
 			$modified  = get_post_timestamp( (int) $item['id'], 'modified' );
 			$published = get_post_timestamp( (int) $item['id'], 'date' );
