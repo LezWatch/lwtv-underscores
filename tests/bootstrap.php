@@ -81,3 +81,12 @@ require_once __DIR__ . '/../plugins/lwtv-plugin/php/debugger/build/class-issue-r
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/debugger/build/class-findings.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/debugger/build/class-baseline.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/debugger/build/class-show-rules.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/debugger/build/class-character-rules.php';
+/*
+ * Actor_Rules calls two static validators on this class. They are stateless
+ * string work -- the class docblock says so explicitly -- and requiring the file
+ * only declares the class; the instance methods that read options are never
+ * touched from here.
+ */
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/_components/class-debugger.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/debugger/build/class-actor-rules.php';

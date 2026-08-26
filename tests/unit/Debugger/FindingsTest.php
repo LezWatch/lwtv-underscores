@@ -60,6 +60,15 @@ class FindingsTest extends TestCase {
 		$this->assertSame( 'No tropes set. — fixable, adds the "none" trope.', Findings::describe( $finding ) );
 	}
 
+	public function test_describe_says_where_a_manual_repair_lives(): void {
+		// --fix-it will not do this one, so plain "fixable" would be a promise
+		// the CLI does not keep.
+		$finding = Findings::make( 1, 'post_type_shows', 'show-no-characters' );
+
+		$this->assertTrue( $finding['manual'] );
+		$this->assertStringContainsString( 'fixable in wp-admin', Findings::describe( $finding ) );
+	}
+
 	public function test_describe_leaves_unfixable_messages_alone(): void {
 		$finding = Findings::make( 1, 'post_type_shows', 'show-no-genres' );
 

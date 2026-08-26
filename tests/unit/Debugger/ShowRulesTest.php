@@ -137,6 +137,60 @@ class ShowRulesTest extends TestCase {
 		$this->assertNotContains( 'show-no-imdb', $this->types( Show_Rules::missing_fields( $show ) ) );
 	}
 
+	/*
+	 * acknowledged_by — an editor has ruled on it.
+	 */
+
+	public function test_the_no_known_characters_flag_silences_the_finding(): void {
+		$show = $this->show(
+			array(
+				'meta' => array(
+					'lezshows_char_count' => '0',
+					'lezshows_no_chars'   => 1,
+				) + $this->show()['meta'],
+			)
+		);
+
+		$this->assertNotContains( 'show-no-characters', $this->types( Show_Rules::missing_fields( $show ) ) );
+	}
+
+	public function test_without_the_flag_it_is_still_reported(): void {
+		$show = $this->show(
+			array(
+				'meta' => array(
+					'lezshows_char_count' => '0',
+					'lezshows_no_chars'   => 0,
+				) + $this->show()['meta'],
+			)
+		);
+
+		$this->assertContains( 'show-no-characters', $this->types( Show_Rules::missing_fields( $show ) ) );
+	}
+
+	public function test_the_flag_silences_nothing_else(): void {
+		// Acknowledging one problem must not acknowledge the rest of the row.
+		$show = $this->show(
+			array(
+				'meta'  => array(
+					'lezshows_char_count' => '0',
+					'lezshows_no_chars'   => 1,
+				),
+				'terms' => array(),
+			)
+		);
+
+		$types = $this->types( Show_Rules::missing_fields( $show ) );
+
+		$this->assertNotContains( 'show-no-characters', $types );
+		$this->assertContains( 'show-no-genres', $types );
+		$this->assertContains( 'show-missing-thumb', $types );
+	}
+
+	public function test_the_acknowledgement_flag_is_collected(): void {
+		// The rule cannot see the ruling if the collector never fetches it.
+		$this->assertContains( Show_Rules::META_NO_CHARS, Show_Rules::meta_keys() );
+	}
+
 	public function test_a_zero_character_count_is_reported(): void {
 		// lezshows_char_count comes back as the string '0', and empty( '0' ) is
 		// true in PHP. That reads like an accident and is deliberate.

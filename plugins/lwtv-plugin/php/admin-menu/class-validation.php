@@ -273,10 +273,10 @@ class Validation {
 			// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped -- problem_cell() escapes every part it assembles, and the repair buttons are form markup wp_kses_post() would strip.
 			echo '
 			<tr class="' . esc_attr( $class ) . '">
-				<td><strong><a href="' . esc_url( get_edit_post_link( (int) $item['id'] ) ) . '" target="_new">' . wp_kses_post( get_the_title( (int) $item['id'] ) ) . '</a></strong>
+				<td><strong><a href="' . esc_url( get_edit_post_link( (int) $item['id'] ) ) . '" target="_blank" rel="noopener noreferrer">' . wp_kses_post( get_the_title( (int) $item['id'] ) ) . '</a></strong>
 
-				<div class="row-actions"><span class="edit"><a href="' . esc_url( get_edit_post_link( (int) $item['id'] ) ) . '" aria-label="Edit ' . wp_kses_post( get_the_title( (int) $item['id'] ) ) . '">Edit</a>
-				| </span><span class="view"><a href="' . esc_url( get_permalink( (int) $item['id'] ) ) . '" rel="bookmark" aria-label="View ' . wp_kses_post( get_the_title( (int) $item['id'] ) ) . '">View</a></span></div>
+				<div class="row-actions"><span class="edit"><a href="' . esc_url( get_edit_post_link( (int) $item['id'] ) ) . '" target="_blank" rel="noopener noreferrer" aria-label="Edit ' . wp_kses_post( get_the_title( (int) $item['id'] ) ) . ' (opens in a new tab)">Edit</a>
+				| </span><span class="view"><a href="' . esc_url( get_permalink( (int) $item['id'] ) ) . '" target="_blank" rel="bookmark noopener noreferrer" aria-label="View ' . wp_kses_post( get_the_title( (int) $item['id'] ) ) . ' (opens in a new tab)">View</a></span></div>
 				</td>
 				<td>' . $problem . '</td>
 				<td>' . esc_html( $time ) . '<br/>(' . esc_html( $time_diff ) . ' ago)</td>

@@ -291,7 +291,7 @@
             "name": "lezshows_stars",
             "aria-label": "",
             "type": "taxonomy",
-            "instructions": "Gold is by/for queers. No Stars is normal TV.",
+            "instructions": "Gold is by\/for queers. No Stars is normal TV.",
             "required": 0,
             "conditional_logic": 0,
             "wrapper": {
@@ -444,7 +444,7 @@
                         "id": ""
                     },
                     "default_value": "",
-                    "placeholder": "https://...",
+                    "placeholder": "https:\/\/...",
                     "parent_repeater": "field_lwtv_lezshows_waystowatch"
                 }
             ]
@@ -1032,12 +1032,12 @@
             "ui": 1
         },
         {
-            "key": "field_lwtv_lezshows_byq_override",
-            "label": "BYQ Override",
-            "name": "lezshows_byq_override",
+            "key": "field_6a8f5125178e4",
+            "label": "No Known Characters",
+            "name": "lezshows_no_chars",
             "aria-label": "",
             "type": "true_false",
-            "instructions": "Do NOT treat Bury Your Queers as a negative for this show.",
+            "instructions": "If we know the show has no characters, toggle this.",
             "required": 0,
             "conditional_logic": 0,
             "wrapper": {
@@ -1045,11 +1045,11 @@
                 "class": "",
                 "id": ""
             },
-            "message": "Override BYQ",
+            "message": "No known characters for this show",
             "default_value": 0,
             "allow_in_bindings": 1,
-            "ui_on_text": "Yes",
-            "ui_off_text": "No",
+            "ui_on_text": "",
+            "ui_off_text": "",
             "ui": 1
         },
         {
@@ -1079,7 +1079,7 @@
             "name": "lezshows_tvmaze_id_manual",
             "aria-label": "",
             "type": "number",
-            "instructions": "Optional. TVMaze's numeric show ID, from the URL: tvmaze.com\\/shows\\/<strong>48830<\\/strong>\\/only-murders-in-the-building. Set this when you know the right entry but an automatic lookup cannot find it. Authoritative \\u2014 nothing overwrites it. Leave blank to simply acknowledge that no TVMaze entry exists.",
+            "instructions": "Optional. TVMaze's numeric show ID, from the URL: tvmaze.com\/shows\/<strong>48830<\/strong>\/only-murders-in-the-building. Set this when you know the right entry but an automatic lookup cannot find it. Authoritative u2014 nothing overwrites it. Leave blank to simply acknowledge that no TVMaze entry exists.",
             "required": 0,
             "conditional_logic": [
                 [
@@ -1099,10 +1099,31 @@
             "min": 1,
             "max": "",
             "step": 1,
-            "placeholder": "48830",
+            "placeholder": 48830,
             "prepend": "",
             "append": "",
             "allow_in_bindings": 0
+        },
+        {
+            "key": "field_lwtv_lezshows_byq_override",
+            "label": "BYQ Override",
+            "name": "lezshows_byq_override",
+            "aria-label": "",
+            "type": "true_false",
+            "instructions": "Do NOT treat Bury Your Queers as a negative for this show.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "message": "Override BYQ",
+            "default_value": 0,
+            "allow_in_bindings": 1,
+            "ui_on_text": "Yes",
+            "ui_off_text": "No",
+            "ui": 1
         }
     ],
     "location": [
@@ -1126,5 +1147,5 @@
     "display_title": "Basic Details",
     "allow_ai_access": false,
     "ai_description": "",
-    "modified": 1787000000
+    "modified": 1787777462
 }

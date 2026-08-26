@@ -77,6 +77,7 @@ class IssueRegistryTest extends TestCase {
 		// Locks the list: adding a repair should be a deliberate edit here too.
 		$this->assertSame(
 			array(
+				'show-no-characters',
 				'show-missing-thumb',
 				'show-missing-trope',
 				'char-missing-cliche',
@@ -87,6 +88,29 @@ class IssueRegistryTest extends TestCase {
 			),
 			Issue_Registry::fixable_types()
 		);
+	}
+
+	/*
+	 * Manual repairs — fixable, but a judgement call.
+	 */
+
+	public function test_is_manual_only_for_judgement_calls(): void {
+		$this->assertTrue( Issue_Registry::is_manual( 'show-no-characters' ) );
+		$this->assertFalse( Issue_Registry::is_manual( 'show-missing-trope' ) );
+	}
+
+	public function test_an_unfixable_issue_is_not_manual(): void {
+		// Manual means "fixable, by hand" -- not "unfixable".
+		$this->assertFalse( Issue_Registry::is_manual( 'show-no-genres' ) );
+		$this->assertFalse( Issue_Registry::is_manual( 'show-invented-nonsense' ) );
+	}
+
+	public function test_bulk_fixable_excludes_manual_repairs(): void {
+		$bulk = Issue_Registry::bulk_fixable_types();
+
+		$this->assertNotContains( 'show-no-characters', $bulk );
+		$this->assertContains( 'show-missing-trope', $bulk );
+		$this->assertCount( count( Issue_Registry::fixable_types() ) - 1, $bulk );
 	}
 
 	/*

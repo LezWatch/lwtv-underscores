@@ -44,17 +44,27 @@ class Show_Rules {
 	const INTERSECTIONS = 'lez_intersections';
 
 	/**
+	 * Editor flag: we have looked, and there are no findable characters.
+	 */
+	const META_NO_CHARS = 'lezshows_no_chars';
+
+	/**
 	 * The straightforward "is this field filled in" checks.
 	 *
 	 * Read by the rules to evaluate, and by the collector to know what to fetch,
 	 * so the list is declared once.
 	 *
-	 * - issue:    key into Issue_Registry, which owns the human copy.
-	 * - meta:     post meta key to test, or...
-	 * - term:     taxonomy to test.
-	 * - empty_ok: empty is fine, do not report it.
-	 * - skip:     do not report, but still collect the value -- other rules or
-	 *             repairs need it.
+	 * - issue:           key into Issue_Registry, which owns the human copy.
+	 * - meta:            post meta key to test, or...
+	 * - term:            taxonomy to test.
+	 * - empty_ok:        empty is fine, do not report it.
+	 * - skip:            do not report, but still collect the value -- other
+	 *                    rules or repairs need it.
+	 * - acknowledged_by: post meta key that, when truthy, means an editor has
+	 *                    already looked at this and confirmed it is not a fault.
+	 *                    Not the same as `empty_ok`: the field is still empty and
+	 *                    still wrong in the abstract, but somebody has decided
+	 *                    that is the truth about this show.
 	 *
 	 * @var array<string, array<string, mixed>>
 	 */
@@ -80,10 +90,17 @@ class Show_Rules {
 		 * so the standard check below flags it. That reads like an accident and
 		 * is not -- it also catches a missing key, which means the show has never
 		 * been calculated, and that is worth surfacing too.
+		 *
+		 * `acknowledged_by` is how a show leaves this report without the gap being
+		 * filled: an editor toggles "No Known Characters", which is a statement
+		 * that we looked and there is nothing findable. That flag also changes
+		 * what the show page says, so it is real data rather than a way of
+		 * silencing the debugger.
 		 */
 		'characters' => array(
-			'issue' => 'show-no-characters',
-			'meta'  => 'lezshows_char_count',
+			'issue'           => 'show-no-characters',
+			'meta'            => 'lezshows_char_count',
+			'acknowledged_by' => self::META_NO_CHARS,
 		),
 		'details'    => array(
 			'issue'    => 'show-no-worthit-details',
@@ -188,6 +205,11 @@ class Show_Rules {
 
 		foreach ( self::CHECKS as $check ) {
 			if ( ! empty( $check['empty_ok'] ) || ! empty( $check['skip'] ) ) {
+				continue;
+			}
+
+			// Somebody has already looked at this one and said it is correct.
+			if ( isset( $check['acknowledged_by'] ) && ! empty( $meta[ $check['acknowledged_by'] ] ) ) {
 				continue;
 			}
 
@@ -357,9 +379,15 @@ class Show_Rules {
 			if ( isset( $check['meta'] ) ) {
 				$keys[] = $check['meta'];
 			}
+
+			// The acknowledgement flag has to be collected too, or the rule
+			// cannot see that somebody has already ruled on this.
+			if ( isset( $check['acknowledged_by'] ) ) {
+				$keys[] = $check['acknowledged_by'];
+			}
 		}
 
-		return $keys;
+		return array_values( array_unique( $keys ) );
 	}
 
 	/**

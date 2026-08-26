@@ -51,6 +51,8 @@ class Issue_Registry {
 	 *              returning bool. Presence of this key is what makes an issue
 	 *              fixable -- nothing else declares it.
 	 * - fix_label: what the repair will actually do, shown before running it.
+	 * - manual:    the repair is a judgement call. Offered per finding in
+	 *              wp-admin, never applied by a bulk --fix-it run.
 	 *
 	 * @var array<string, array<string, mixed>>
 	 */
@@ -63,9 +65,20 @@ class Issue_Registry {
 			'level'   => 'show',
 			'message' => 'Score is 0 or not set - needs characters and/or ratings.',
 		),
+		/*
+		 * The repair here does not fill the gap -- it records that there is
+		 * nothing to fill it with, by setting the show's "No Known Characters"
+		 * flag. That is a judgement about a particular show, so it is `manual`:
+		 * offered as a button next to the finding, never applied by a bulk
+		 * --fix-it run. Bulk-flagging every characterless show would erase the
+		 * exact distinction this check exists to surface.
+		 */
 		'show-no-characters'          => array(
-			'level'   => 'show',
-			'message' => 'No queer characters recorded. Either the data is missing, or the show only had background/unnamed characters - worth confirming which.',
+			'level'     => 'show',
+			'message'   => 'No queer characters recorded.',
+			'fix'       => array( self::SHOWS, 'flag_no_characters' ),
+			'fix_label' => 'flags it as having no known characters',
+			'manual'    => true,
 		),
 		'show-no-worthit-details'     => array(
 			'level'   => 'show',
@@ -290,6 +303,33 @@ class Issue_Registry {
 	 */
 	public static function is_fixable( string $issue_type ): bool {
 		return ! empty( self::ISSUES[ $issue_type ]['fix'] );
+	}
+
+	/**
+	 * Is the repair a judgement call, for a human to make one at a time?
+	 *
+	 * Fixable, but not in bulk. A `--fix-it` run must skip these: applying them
+	 * across a whole report would be making the judgement on everyone's behalf.
+	 *
+	 * @param  string $issue_type Issue type key.
+	 * @return bool
+	 */
+	public static function is_manual( string $issue_type ): bool {
+		return self::is_fixable( $issue_type ) && ! empty( self::ISSUES[ $issue_type ]['manual'] );
+	}
+
+	/**
+	 * Every issue type a bulk run may repair.
+	 *
+	 * @return array<string>
+	 */
+	public static function bulk_fixable_types(): array {
+		return array_values(
+			array_filter(
+				self::fixable_types(),
+				static fn ( $issue_type ) => ! self::is_manual( $issue_type )
+			)
+		);
 	}
 
 	/**

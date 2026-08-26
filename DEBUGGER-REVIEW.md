@@ -602,8 +602,71 @@ Three things worth knowing:
 `Characters::check_disabled_characters()` became dead when the cross-check moved into the
 collector, and was deleted — same reasoning as the vestigial `debug_check` write in §8.4.
 
-Characters and Actors still detect inline. They should follow this shape; Actors is the
-easy one, since its checks are meta reads plus `Debug_Tool`'s stateless validators.
+**Characters followed (2026-08-26).** `Build\Character_Rules` +
+`Collect\Character_Collector`, 21 tests, and `find_characters_problems()` down to the same
+~35 lines of orchestration. Notes:
+
+- **The dead-without-a-date rule is the one worth having tested.** BYQ and the death
+  statistics both key off the `dead` cliché, so a dead character with no date is counted in
+  one place and missing from another. There is now a test pinning that `dead-queers` — a
+  *show* trope — does not match it, which a substring comparison would have got wrong.
+- **The collector primes the post cache for every show a batch references.** The rules want
+  show titles in their messages, and asking one at a time is a query per show row.
+- **One copy fix:** the old message appended the show title unconditionally, so a show row
+  naming no show produced `No role set for .` It now reads `No role set.` in that case.
+- **`has_years` still only tests "is an array"**, exactly as before. An empty `appears[]`
+  is a different situation from the field never having been filled in, and it was never
+  reported; preserving that was deliberate rather than an oversight.
+
+**Actors followed too (2026-08-26), which completes §4 for all three post-based checks.**
+`Build\Actor_Rules` + `Collect\Actor_Collector`, 26 tests. The collector is the thinnest of
+the three, because every actor check is a meta read. Four notes:
+
+- **Messages now carry raw values.** The rules used to call `esc_html()` and
+  `sanitize_url()` while composing copy, which is both impure and wrong: the admin renders
+  through `wp_kses_post()`, so a pre-escaped string got escaped twice and displayed its
+  entities. Escaping belongs to the renderer, and there is a test pinning it.
+- **`looks_like_actor_imdb()` moved into the rules**, where it belongs, and the repair
+  (`Actors::remove_imdb_from_social()`) now re-checks through it. The 6-digit floor is a
+  named constant (`IMDB_MIN_DIGITS`) with the reasoning attached, and the boundary is
+  tested at 5 and 6 digits.
+- **The `$warnings` array is gone.** It collected "death date set without date of birth"
+  and nothing ever read it. The judgement is still unmade — plenty of people have no
+  recorded DoB — so the *data* is still collected and the open question is recorded on
+  `Actor_Rules::meta_keys()` instead of in a write-only variable.
+- **`get_post_field( 'post_name' )` is no longer collected.** The actor scan gathered it as
+  `dupes` and never used it; duplicate detection lives in the `dupes` check.
+
+What is left of §4 is the checks that were never in scope here: `byq`, `queers`, `dupes`,
+`on_air`, both IMDb checks, and `watchurls`.
+
+### Acknowledgement, arrived at from the other end (2026-08-26)
+
+§5 wanted acknowledgements as debugger-private "ignore" meta. The first one shipped instead
+as **real editorial data**: the `lezshows_no_chars` ACF field ("No Known Characters"). A
+show carrying it drops out of the Shows report *and* renders a different panel on the front
+end, so the acknowledgement is a statement about the show rather than a way of silencing a
+report. Where that option exists, it is the better shape — an ignore flag nobody outside
+the debugger can see is a worse version of a field that says the same thing.
+
+Three mechanisms came out of it, all reusable:
+
+- **`acknowledged_by` in `Show_Rules::CHECKS`** — names a meta key that, when truthy, means
+  an editor has ruled on this check for this post. Distinct from `empty_ok`: the field is
+  still empty, but somebody has decided that is the truth here. The collector picks the key
+  up automatically via `meta_keys()`.
+- **`manual` in `Issue_Registry`** — fixable, but a judgement call. Offered as a per-finding
+  button in wp-admin; `Issue_Registry::bulk_fixable_types()` excludes it and `--fix-it`
+  skips it. Bulk-flagging every characterless show would have erased the exact distinction
+  the check exists to surface. `Findings::describe()` says "fixable in wp-admin" for these,
+  so CLI output does not promise something `--fix-it` will not do.
+- **`Shows::flag_no_characters()`** writes through `update_field()`, not
+  `update_post_meta()`, because ACF true_false fields also carry a `_fieldname` field-key
+  row that the editor UI reads.
+
+When the remaining acknowledgements land (§5), this is the precedent: prefer a real field
+where the distinction is meaningful to readers, and fall back to debugger-private ignore
+meta only where it genuinely is not.
 
 ---
 
@@ -1153,10 +1216,10 @@ Everything in the **Done** table at the top has shipped. What's left, in the ord
    and new/open/resolved shipped as a pure `Build\Baseline` plus `Baseline_Store`, leaving
    `Audit` alone; see the §5 note for why. **Acknowledgements are still outstanding** and
    still need `IGNORE_META` generalised per post type.
-10. **Extract pure rule evaluation into `debugger/build/`** with tests (§4). **Done for
-    Shows** — `Build\Show_Rules` + `Collect\Show_Collector`, 30 tests, scanner down to
-    orchestration. Characters and Actors still detect inline and should follow the same
-    shape; that is the next piece I'd take.
+10. ~~**Extract pure rule evaluation into `debugger/build/`** with tests (§4).~~ **Done for
+    Shows, Characters and Actors** — rules + collector each, 77 tests between them, all
+    three scanners down to ~35 lines of orchestration. The unconverted checks (item 14)
+    still detect inline.
 11. ~~**Move the writes to a repair layer** (§8.2) behind `--fix-it`, plus per-finding admin
     fix links (§8.1).~~ **Done**, both surfaces, for all three converted checks.
 12. **Collapse the ten validator files** (§7). The CLI registry and the `Watch_Hosts`

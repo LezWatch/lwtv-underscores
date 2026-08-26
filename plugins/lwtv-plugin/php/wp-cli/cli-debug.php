@@ -395,7 +395,19 @@ class WP_CLI_LWTV_Debug {
 	 */
 	private function fix_item( array $check, array $item ): bool {
 		$post_id = (int) $item['id'];
-		$issues  = Findings::fixable_issues( $item );
+
+		/*
+		 * Manual repairs are excluded here, not filtered out of the finding.
+		 * They are judgement calls -- "this show really has no characters" --
+		 * and applying one across a whole report would be making that judgement
+		 * on somebody's behalf. They stay available per finding in wp-admin.
+		 */
+		$issues = array_values(
+			array_filter(
+				Findings::fixable_issues( $item ),
+				static fn ( $issue_type ) => ! Issue_Registry::is_manual( $issue_type )
+			)
+		);
 
 		if ( ! empty( $issues ) ) {
 			$repaired = false;

@@ -18,7 +18,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 use LWTV\_Components\Debugger as Debug_Tool;
 use LWTV\_Helpers\Imdb_Canonical;
 use LWTV\CPTs\Actors as CPT_Actors;
+use LWTV\Debugger\Build\Actor_Rules;
 use LWTV\Debugger\Build\Findings;
+use LWTV\Debugger\Collect\Actor_Collector;
 use LWTV\Debugger\Format\Rows;
 use LWTV\Queeries\Post_Type;
 
@@ -143,88 +145,17 @@ class Actors {
 		// Make sure we don't have dupes.
 		$actors = array_unique( $actors );
 
-		// Findings are per issue; Rows::from_findings() collapses them back to one
-		// row per actor at the end, so $items is rebuilt rather than appended.
-		$findings = array();
+		/*
+		 * Collect, then evaluate. The rules are pure and live in
+		 * Build\Actor_Rules; the collector does the meta reads. Batched so the
+		 * meta cache is primed per batch rather than per actor.
+		 */
+		$collector = new Actor_Collector();
+		$findings  = array();
 
-		foreach ( $actors as $actor_id ) {
-			/*
-			 * Collected and never reported -- and that predates the typed
-			 * findings, so the conversion did not drop it. The one warning below
-			 * is a judgement call nobody has made yet (plenty of people have no
-			 * recorded date of birth), so it is neither surfaced nor deleted.
-			 * Give it an issue type when it is decided either way.
-			 */
-			$warnings = array();
-
-			$meta  = get_post_meta( $actor_id );
-			$check = array(
-				'chars' => $meta['lezactors_char_count'][0] ?? '',
-				'birth' => $meta['lezactors_birth'][0] ?? '',
-				'death' => $meta['lezactors_death'][0] ?? '',
-				'wiki'  => $meta['lezactors_wikipedia'][0] ?? '',
-				'imdb'  => $meta['lezactors_imdb'][0] ?? '',
-				'insta' => $meta['lezactors_instagram'][0] ?? '',
-				'twits' => $meta['lezactors_twitter'][0] ?? '',
-				'home'  => $meta['lezactors_homepage'][0] ?? '',
-				'dupes' => get_post_field( 'post_name', $actor_id ),
-			);
-
-			// - Confirm there are characters listed.
-			if ( ! $check['chars'] || empty( $check['chars'] ) ) {
-				$findings[] = Findings::make( $actor_id, CPT_Actors::SLUG, 'actor-no-characters' );
-			}
-
-			// - Warn if there is a death and no birth (nb: this may not be a good idea, some people have no DoB!)
-			if ( ! empty( $check['death'] ) ) {
-				if ( empty( $check['birth'] ) ) {
-					$warnings[] = 'Death date set without date of birth.';
-				}
-			}
-
-			// - Wikipedia links should point to Wikipedia: "https://[language].wikipedia.org/" (props Jamie)
-			if ( ! empty( $check['wiki'] ) && strpos( $check['wiki'], 'wikipedia.org/' ) === false ) {
-				$findings[] = Findings::make( $actor_id, CPT_Actors::SLUG, 'actor-wikipedia-invalid' );
-			}
-
-			// - Instagram and Twitter usernames should follow whatever the
-			//   actual restrictions on those are (props Jamie)
-			// - If Instagram or Twitter usernames are the same format as IMDb IDs,
-			//   that's suspicious (props Jamie)
-			if ( ! empty( $check['insta'] ) ) {
-				// Limit - 30 symbols. Username must contains only letters, numbers, periods and underscores.
-				if ( Debug_Tool::sanitize_social( $check['insta'], 'instagram' ) !== $check['insta'] ) {
-					$findings[] = Findings::make( $actor_id, CPT_Actors::SLUG, 'actor-instagram-invalid', 'Instagram ID is invalid -- ' . esc_html( $check['insta'] ), array( 'value' => $check['insta'] ) );
-				} elseif ( self::looks_like_actor_imdb( $check['insta'] ) ) {
-					$findings[] = Findings::make( $actor_id, CPT_Actors::SLUG, 'actor-instagram-is-imdb', 'Instagram ID is an IMDb ID: ' . esc_html( $check['insta'] ), array( 'value' => $check['insta'] ) );
-				}
-			}
-			if ( ! empty( $check['twits'] ) ) {
-				if ( Debug_Tool::sanitize_social( $check['twits'], 'twitter' ) !== $check['twits'] ) {
-					$findings[] = Findings::make( $actor_id, CPT_Actors::SLUG, 'actor-twitter-invalid', 'Twitter ID is invalid -- ' . esc_html( $check['twits'] ), array( 'value' => $check['twits'] ) );
-				} elseif ( self::looks_like_actor_imdb( $check['twits'] ) ) {
-					$findings[] = Findings::make( $actor_id, CPT_Actors::SLUG, 'actor-twitter-is-imdb', 'Twitter ID is an IMDb ID: ' . esc_html( $check['twits'] ), array( 'value' => $check['twits'] ) );
-				}
-			}
-
-			// - "Website" links should *not* point to Wikipedia, since that
-			// would make them Wikipedia links (props Jamie)
-			//
-			// The first two branches used to be repaired silently, mid-scan, and
-			// recorded no problem at all -- so these two findings are new to the
-			// report even though the situation is not new. fix_actor_data()
-			// performs them under --fix-it.
-			if ( ! empty( $check['home'] ) ) {
-				if ( strpos( $check['home'], 'wikipedia.org/' ) !== false ) {
-					if ( empty( $check['wiki'] ) ) {
-						$findings[] = Findings::make( $actor_id, CPT_Actors::SLUG, 'actor-homepage-is-wikipedia' );
-					} elseif ( $check['wiki'] === $check['home'] ) {
-						$findings[] = Findings::make( $actor_id, CPT_Actors::SLUG, 'actor-homepage-dupe-wiki' );
-					} else {
-						// Two different Wikipedia URLs. Needs a human to pick.
-						$findings[] = Findings::make( $actor_id, CPT_Actors::SLUG, 'actor-homepage-wikipedia', 'Homepage points to Wikipedia - ' . sanitize_url( $check['home'] ), array( 'homepage' => $check['home'] ) );
-					}
-				}
+		foreach ( array_chunk( $actors, Actor_Collector::BATCH ) as $batch ) {
+			foreach ( $collector->collect( $batch ) as $actor ) {
+				$findings = array_merge( $findings, Actor_Rules::evaluate( $actor ) );
 			}
 		}
 
@@ -243,29 +174,6 @@ class Actors {
 		Status::record( 'actor_problems', 'Actors with Issues', count( $items ), $diff['summary'] );
 
 		return $items;
-	}
-
-	/**
-	 * Does a social handle actually look like an actor's IMDb ID?
-	 *
-	 * Debug_Tool::validate_imdb() accepts 'nm' followed by any number of digits,
-	 * which is right for validating the IMDb field itself but too loose here:
-	 * 'nm2020' is a perfectly plausible Instagram handle, and under --fix-it a
-	 * false positive costs someone their social link. Real IMDb person IDs run
-	 * 7-8 digits, so require at least 6 before calling it misfiled.
-	 *
-	 * Kept local on purpose -- tightening the shared helper would change how the
-	 * genuine IMDb fields on actors and shows are validated too.
-	 *
-	 * @param  string $value Social handle as stored.
-	 * @return bool   True when the value is an IMDb ID in the wrong field.
-	 */
-	private static function looks_like_actor_imdb( $value ): bool {
-		if ( ! Debug_Tool::validate_imdb( $value, 'actor' ) ) {
-			return false;
-		}
-
-		return strlen( substr( (string) $value, 2 ) ) >= 6;
 	}
 
 	/**
@@ -346,7 +254,7 @@ class Actors {
 			return false;
 		}
 
-		if ( ! self::looks_like_actor_imdb( $value ) ) {
+		if ( ! Actor_Rules::looks_like_actor_imdb( $value ) ) {
 			return false;
 		}
 

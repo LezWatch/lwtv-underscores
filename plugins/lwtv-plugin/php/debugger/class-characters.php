@@ -11,7 +11,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-use LWTV\Debugger\Build\Findings;
+use LWTV\Debugger\Build\Character_Rules;
+use LWTV\Debugger\Collect\Character_Collector;
 use LWTV\Debugger\Format\Rows;
 use LWTV\Queeries\Post_Type;
 use LWTV\Queeries\Taxonomy_Optimized as Queery_Taxonomy;
@@ -161,52 +162,18 @@ class Characters {
 		// Make sure we don't have dupes.
 		$characters = array_unique( $characters );
 
-		// Findings are per issue; Rows::from_findings() collapses them back to one
-		// row per character at the end, so $items is rebuilt rather than appended.
-		$findings = array();
+		/*
+		 * Collect, then evaluate. The rules are pure and live in
+		 * Build\Character_Rules; everything that reads meta, terms or ACF is in
+		 * Collect\Character_Collector, which batches so a full run is a handful
+		 * of term queries rather than one per character.
+		 */
+		$collector = new Character_Collector();
+		$findings  = array();
 
-		foreach ( $characters as $char_id ) {
-
-			// What we can check for
-			$check = array(
-				'cliche' => get_the_terms( $char_id, 'lez_cliches' ),
-				'death'  => get_post_meta( $char_id, 'lezchars_last_death', true ),
-				'shows'  => get_field( 'lezchars_show_group', $char_id ),
-				'actors' => get_field( 'lezchars_actor', $char_id ) ?: array(),
-			);
-
-			// No cliché terms at all. Detect only — add_none_cliche() repairs it.
-			if ( ! $check['cliche'] || is_wp_error( $check['cliche'] ) ) {
-				$findings[] = Findings::make( $char_id, CPT_Characters::SLUG, 'char-missing-cliche' );
-			}
-
-			if ( has_term( 'dead', 'lez_cliches', $char_id ) && empty( $check['death'] ) ) {
-				$findings[] = Findings::make( $char_id, CPT_Characters::SLUG, 'char-dead-no-date' );
-			}
-
-			if ( ! $check['shows'] || ! is_array( $check['shows'] ) ) {
-				$findings[] = Findings::make( $char_id, CPT_Characters::SLUG, 'char-no-shows' );
-			} else {
-				foreach ( $check['shows'] as $each_show ) {
-					// Remove the Array.
-					if ( is_array( $each_show['show'] ) ) {
-						$each_show['show'] = $each_show['show'][0];
-					}
-					if ( ! isset( $each_show['appears'] ) || ! is_array( $each_show['appears'] ) ) {
-						$findings[] = Findings::make( $char_id, CPT_Characters::SLUG, 'char-no-years', 'No years on air set for ' . get_the_title( $each_show['show'] ) . '.' );
-					}
-					if ( ! isset( $each_show['type'] ) || '' === $each_show['type'] ) {
-						$findings[] = Findings::make( $char_id, CPT_Characters::SLUG, 'char-no-role', 'No role set for ' . get_the_title( $each_show['show'] ) . '.' );
-					}
-					if ( ! isset( $each_show['show'] ) || '' === $each_show['show'] ) {
-						$findings[] = Findings::make( $char_id, CPT_Characters::SLUG, 'char-no-show-name' );
-					}
-				}
-			}
-
-			// Okay fine, now we use the NONE actor.
-			if ( ! $check['actors'] ) {
-				$findings[] = Findings::make( $char_id, CPT_Characters::SLUG, 'char-no-actors' );
+		foreach ( array_chunk( $characters, Character_Collector::BATCH ) as $batch ) {
+			foreach ( $collector->collect( $batch ) as $character ) {
+				$findings = array_merge( $findings, Character_Rules::evaluate( $character ) );
 			}
 		}
 

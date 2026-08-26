@@ -52,6 +52,7 @@ class Findings {
 			'context'    => $context,
 			'fixable'    => Issue_Registry::is_fixable( $issue_type ),
 			'fix_label'  => Issue_Registry::fix_label( $issue_type ),
+			'manual'     => Issue_Registry::is_manual( $issue_type ),
 		);
 	}
 
@@ -107,7 +108,15 @@ class Findings {
 
 		$label = (string) ( $finding['fix_label'] ?? '' );
 
-		return ( '' === $label ) ? $message : $message . ' — fixable, ' . $label . '.';
+		if ( '' === $label ) {
+			return $message;
+		}
+
+		// A manual repair is not something --fix-it will do, so saying plain
+		// "fixable" in CLI output would be a promise the CLI does not keep.
+		$prefix = empty( $finding['manual'] ) ? ' — fixable, ' : ' — fixable in wp-admin, ';
+
+		return $message . $prefix . $label . '.';
 	}
 
 	/**
@@ -134,6 +143,7 @@ class Findings {
 					'message'   => $message,
 					'fixable'   => Issue_Registry::is_fixable( $issue_type ),
 					'fix_label' => Issue_Registry::fix_label( $issue_type ),
+					'manual'    => Issue_Registry::is_manual( $issue_type ),
 				)
 			);
 		}

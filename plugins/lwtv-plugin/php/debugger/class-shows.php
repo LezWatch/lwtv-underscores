@@ -115,7 +115,11 @@ class Shows {
 	public function fix_show_data( $show_id ): bool {
 		$show_id = (int) $show_id;
 
-		// Deliberately not short-circuiting: a show can need both.
+		/*
+		 * Deliberately not short-circuiting: a show can need both. And
+		 * deliberately excluding flag_no_characters(), which is a judgement call
+		 * registered as `manual` -- this dispatcher is the bulk path.
+		 */
 		$trope = $this->add_none_trope( $show_id );
 		$thumb = $this->set_thumb_tbd( $show_id );
 
@@ -146,6 +150,36 @@ class Shows {
 		}
 
 		return ! is_wp_error( wp_set_object_terms( $show_id, array( $term->term_id ), 'lez_tropes', true ) );
+	}
+
+	/**
+	 * Record that a show genuinely has no findable queer characters.
+	 *
+	 * Not a repair in the usual sense: it does not fill the gap, it states that
+	 * there is nothing to fill it with. That is why the issue is registered as
+	 * `manual` -- a bulk run must not decide this for every characterless show.
+	 *
+	 * Written through update_field() rather than update_post_meta() because
+	 * lezshows_no_chars is an ACF true_false field, and ACF also stores the
+	 * companion `_lezshows_no_chars` field-key row that the editor UI reads.
+	 *
+	 * The show page reads the same flag: it swaps the "Under Construction"
+	 * placeholder for a "No Known Characters" panel asking readers who do know
+	 * something to get in touch.
+	 *
+	 * @param  int  $show_id Show post ID.
+	 * @return bool True when the flag was set now.
+	 */
+	public function flag_no_characters( int $show_id ): bool {
+		if ( ! empty( get_post_meta( $show_id, Show_Rules::META_NO_CHARS, true ) ) ) {
+			return false;
+		}
+
+		if ( function_exists( 'update_field' ) ) {
+			return (bool) update_field( Show_Rules::META_NO_CHARS, 1, $show_id );
+		}
+
+		return (bool) update_post_meta( $show_id, Show_Rules::META_NO_CHARS, 1 );
 	}
 
 	/**
