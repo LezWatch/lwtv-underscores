@@ -511,8 +511,9 @@ a single atomic write per check.
 
 ### 2.4 Scans mutate data while claiming to only report
 
-See §8 — this is now a planned piece of work rather than just an observation. Shows and
-Characters are done; Actors still writes during its scan.
+See §8 — done for Shows, Characters and Actors. What remains is the wikidata cache writes
+(§8.4) and `migrate_ways_to_watch()`, which is a migration in the wrong place rather than a
+scan mutating data.
 
 ---
 
@@ -683,11 +684,11 @@ it's one to generalise.
 | ~~`class-shows.php:153`~~ | set `none` trope (broken, 1.4) | **DONE** — `Shows::add_none_trope()` |
 | `class-shows.php:391` | `Ways_To_Watch::migrate_ways_to_watch()` | see 8.4 — not a finding |
 | ~~`class-characters.php:171`~~ | set `none` cliché (broken, 1.4) | **DONE** — `Characters::add_none_cliche()` |
-| `class-actors.php:156` | delete `lezactors_instagram` when it's an IMDb ID | repair `actor-instagram-is-imdb` |
-| `class-actors.php:165` | delete `lezactors_twitter` when it's an IMDb ID | repair `actor-twitter-is-imdb` |
-| `class-actors.php:176-177` | homepage → wikipedia, clear homepage | repair `actor-homepage-is-wikipedia` |
-| `class-actors.php:180` | delete homepage when it equals wikipedia | repair `actor-homepage-dupe-wikipedia` |
-| `class-actors.php:398` | delete `debug_check` meta on drafts | see 8.4 — stray cleanup |
+| ~~`class-actors.php:156`~~ | delete `lezactors_instagram` when it's an IMDb ID | **DONE** — `Actors::remove_imdb_from_social()` |
+| ~~`class-actors.php:165`~~ | delete `lezactors_twitter` when it's an IMDb ID | **DONE** — `Actors::remove_imdb_from_social()` |
+| ~~`class-actors.php:176-177`~~ | homepage → wikipedia, clear homepage | **DONE** — `Actors::fix_homepage_wikipedia()` |
+| ~~`class-actors.php:180`~~ | delete homepage when it equals wikipedia | **DONE** — `Actors::fix_homepage_wikipedia()` |
+| ~~`class-actors.php:398`~~ | delete `debug_check` meta on drafts | **DONE** — deleted, see 8.4 |
 | `class-actors.php:488-491` | write `lezactors_saved_wikidata` | see 8.4 — cache, not a fix |
 | `class-actors.php:578` | write `lezactors_wikidata_qid` | see 8.4 — cache, not a fix |
 | `class-onair.php:148-161` | `lezshows_on_air` | already correct — keep as-is |
@@ -712,8 +713,30 @@ side-effect free. Consequences worth remembering:
   cost of the flat `problem` blob — the per-issue shape in §8.3 is what makes the count
   honest. Not misleading, just noisy.
 
-Still outstanding here: the four Actors writes (destructive deletes, own review pass) and
-everything in §8.3–§8.5.
+**Actors is done too (2026-08-26).** `fix_actor_data()` dispatches to
+`remove_imdb_from_social()` and `fix_homepage_wikipedia()`; the `actors` check has a
+`fixer`. All three scanners are now detect-only, and the vestigial `debug_check` delete
+from §8.4 is gone. Decisions taken while moving these, since they are not obvious from the
+diff:
+
+- **The IMDb-in-social repair still deletes rather than moves.** Recovering the value into
+  `lezactors_imdb` was considered and rejected: it is a guess about intent, and a wrong
+  guess writes a wrong IMDb ID onto an actor, which is worse than a missing one because
+  everything downstream trusts that field. The finding names the value before it goes.
+- **Detection got a local `nm` + 6-or-more-digits guard** (`looks_like_actor_imdb()`).
+  `Debug_Tool::validate_imdb()` accepts `nm` plus *any* digits, so `nm2020` — a plausible
+  Instagram handle — was matching, and a scan was quietly deleting it. Real IMDb person IDs
+  run 7–8 digits. The guard is local on purpose; tightening the shared helper would change
+  validation of the genuine IMDb fields on both actors and shows and wants its own pass.
+- **The repair re-validates before deleting.** A handle that fails `sanitize_social()` is a
+  separate finding with no automated repair, and must not be deleted as collateral when the
+  fixer runs over an actor flagged for something else.
+- **Two new findings appear in the Actors report** — homepage-is-wikipedia and
+  homepage-duplicates-wikipedia. The situation isn't new; those two branches repaired
+  themselves mid-scan and recorded nothing, so nobody ever saw them.
+
+Still outstanding: everything in §8.3–§8.5, and the §8.4 wikidata cache writes (still
+incidental side effects of comparison, still want an explicit TTL).
 
 ### 8.3 Finding shape
 
@@ -763,9 +786,10 @@ would be a mistake:
 - **`lezactors_wikidata_qid`** and **`lezactors_saved_wikidata`** are result caching for an
   expensive remote lookup. Legitimate, but they should be an explicit cache write with a
   TTL, not an incidental side effect of comparison.
-- **`delete_post_meta( ..., 'debug_check' )`** on drafts (`class-actors.php:398`) references
+- ~~**`delete_post_meta( ..., 'debug_check' )`** on drafts (`class-actors.php:398`) references
   a `debug_check` meta key that **nothing else in the codebase reads or writes**. It's
-  vestigial — delete it.
+  vestigial — delete it.~~ **DONE (2026-08-26)** — removed, along with the now-empty `else`
+  branch. Confirmed first that the key appears nowhere else in the repo.
 
 ### 8.5 Transient shape migration
 
