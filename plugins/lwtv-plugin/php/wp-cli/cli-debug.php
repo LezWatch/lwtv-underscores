@@ -111,9 +111,10 @@ class WP_CLI_LWTV_Debug {
 				'transient' => Actors::TRANSIENT_PROBLEMS,
 				'status'    => 'actor_problems',
 				'scanner'   => array( Actors::class, 'find_actors_problems' ),
+				'fixer'     => array( Actors::class, 'fix_actor_data' ),
 				'running'   => 'Running actor data completeness check...',
 				'clean'     => 'Excellent! All actor data is complete and correct.',
-				'dirty'     => 'actor(s) need attention.',
+				'dirty'     => 'actor(s) need attention. Use --fix-it to repair the ones marked fixable.',
 				'done'      => 'Actor check complete.',
 			),
 			'chars'      => array(
@@ -224,6 +225,7 @@ class WP_CLI_LWTV_Debug {
 	 * wp lwtv debug on_air --fix-it
 	 * wp lwtv debug shows --fix-it
 	 * wp lwtv debug chars --fix-it
+	 * wp lwtv debug actors --fix-it
 	 * wp lwtv debug watchurls --force
 	 *
 	 * @param array $args

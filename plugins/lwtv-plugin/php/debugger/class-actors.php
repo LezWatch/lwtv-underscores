@@ -161,35 +161,33 @@ class Actors {
 				// Limit - 30 symbols. Username must contains only letters, numbers, periods and underscores.
 				if ( Debug_Tool::sanitize_social( $check['insta'], 'instagram' ) !== $check['insta'] ) {
 					$problems[] = 'Instagram ID is invalid -- ' . esc_html( $check['insta'] );
-				} elseif ( Debug_Tool::validate_imdb( $check['insta'], 'actor' ) ) {
-					// If instagram is IMDb, then it's wrong.
-					delete_post_meta( $actor_id, 'lezactors_instagram' );
-					$problems[] = 'Instagram ID was set as IMDb and has been removed - ' . esc_html( $check['insta'] );
+				} elseif ( self::looks_like_actor_imdb( $check['insta'] ) ) {
+					$problems[] = 'Instagram ID is an IMDb ID — fixable, removes it: ' . esc_html( $check['insta'] );
 				}
 			}
 			if ( ! empty( $check['twits'] ) ) {
 				if ( Debug_Tool::sanitize_social( $check['twits'], 'twitter' ) !== $check['twits'] ) {
 					$problems[] = 'Twitter ID is invalid -- ' . esc_html( $check['twits'] );
-				} elseif ( Debug_Tool::validate_imdb( $check['twits'], 'actor' ) ) {
-					// If Twitter is IMDb, then it's wrong.
-					delete_post_meta( $actor_id, 'lezactors_twitter' );
-					$problems[] = 'Twitter ID was set as IMDb and has been removed - ' . esc_html( $check['twits'] );
+				} elseif ( self::looks_like_actor_imdb( $check['twits'] ) ) {
+					$problems[] = 'Twitter ID is an IMDb ID — fixable, removes it: ' . esc_html( $check['twits'] );
 				}
 			}
 
 			// - "Website" links should *not* point to Wikipedia, since that
 			// would make them Wikipedia links (props Jamie)
+			//
+			// The first two branches used to be repaired silently, mid-scan, and
+			// recorded no problem at all -- so these two findings are new to the
+			// report even though the situation is not new. fix_actor_data()
+			// performs them under --fix-it.
 			if ( ! empty( $check['home'] ) ) {
 				if ( strpos( $check['home'], 'wikipedia.org/' ) !== false ) {
 					if ( empty( $check['wiki'] ) ) {
-						// If there is no wiki set, move homepage to wiki and clear home page.
-						update_post_meta( $actor_id, 'lezactors_wikipedia', $check['home'] );
-						delete_post_meta( $actor_id, 'lezactors_homepage' );
+						$problems[] = 'Homepage points to Wikipedia and no Wikipedia URL is set — fixable, moves it to the Wikipedia field.';
 					} elseif ( $check['wiki'] === $check['home'] ) {
-						// If wiki === home page, delete home page.
-						delete_post_meta( $actor_id, 'lezactors_homepage' );
+						$problems[] = 'Homepage duplicates the Wikipedia URL — fixable, removes the homepage.';
 					} else {
-						// record problem
+						// Two different Wikipedia URLs. Needs a human to pick.
 						$problems[] = 'Homepage points to Wikipedia - ' . sanitize_url( $check['home'] );
 					}
 				}
@@ -212,6 +210,122 @@ class Actors {
 		Status::record( 'actor_problems', 'Actors with Issues', count( $items ) );
 
 		return $items;
+	}
+
+	/**
+	 * Does a social handle actually look like an actor's IMDb ID?
+	 *
+	 * Debug_Tool::validate_imdb() accepts 'nm' followed by any number of digits,
+	 * which is right for validating the IMDb field itself but too loose here:
+	 * 'nm2020' is a perfectly plausible Instagram handle, and under --fix-it a
+	 * false positive costs someone their social link. Real IMDb person IDs run
+	 * 7-8 digits, so require at least 6 before calling it misfiled.
+	 *
+	 * Kept local on purpose -- tightening the shared helper would change how the
+	 * genuine IMDb fields on actors and shows are validated too.
+	 *
+	 * @param  string $value Social handle as stored.
+	 * @return bool   True when the value is an IMDb ID in the wrong field.
+	 */
+	private static function looks_like_actor_imdb( $value ): bool {
+		if ( ! Debug_Tool::validate_imdb( $value, 'actor' ) ) {
+			return false;
+		}
+
+		return strlen( substr( (string) $value, 2 ) ) >= 6;
+	}
+
+	/**
+	 * Repair one actor's fixable data problems.
+	 *
+	 * Registered as the fixer for the `actors` check, so it runs once per finding
+	 * under `wp lwtv debug actors --fix-it`. An actor flagged only for something
+	 * with no automated repair (no characters, an invalid handle, two competing
+	 * Wikipedia URLs) returns false and is reported as unfixed.
+	 *
+	 * @param  int  $actor_id Actor post ID.
+	 * @return bool True when at least one repair was applied.
+	 */
+	public function fix_actor_data( $actor_id ): bool {
+		$actor_id = (int) $actor_id;
+
+		// Deliberately not short-circuiting: an actor can need all three.
+		$insta = $this->remove_imdb_from_social( $actor_id, 'instagram' );
+		$twits = $this->remove_imdb_from_social( $actor_id, 'twitter' );
+		$home  = $this->fix_homepage_wikipedia( $actor_id );
+
+		return $insta || $twits || $home;
+	}
+
+	/**
+	 * Clear a social field that is holding an IMDb ID.
+	 *
+	 * Destructive by decision: the value is removed rather than moved into
+	 * lezactors_imdb. An IMDb ID recovered from a social field is a guess about
+	 * intent, and a wrong guess writes a wrong ID onto an actor -- worse than a
+	 * missing one, since everything downstream trusts that field. The finding
+	 * names the value before it goes, so it can be re-entered deliberately.
+	 *
+	 * @param  int    $actor_id Actor post ID.
+	 * @param  string $social   'instagram' or 'twitter'.
+	 * @return bool   True when the meta was deleted.
+	 */
+	public function remove_imdb_from_social( int $actor_id, string $social ): bool {
+		if ( ! in_array( $social, array( 'instagram', 'twitter' ), true ) ) {
+			return false;
+		}
+
+		$meta_key = 'lezactors_' . $social;
+		$value    = get_post_meta( $actor_id, $meta_key, true );
+
+		if ( empty( $value ) ) {
+			return false;
+		}
+
+		// Only touch a value that is clean for the platform and IMDb-shaped. A
+		// handle that fails sanitize_social() is a different finding with no
+		// automated repair, and must not be deleted as collateral.
+		if ( Debug_Tool::sanitize_social( $value, $social ) !== $value ) {
+			return false;
+		}
+
+		if ( ! self::looks_like_actor_imdb( $value ) ) {
+			return false;
+		}
+
+		return delete_post_meta( $actor_id, $meta_key );
+	}
+
+	/**
+	 * Sort out a homepage that is really a Wikipedia URL.
+	 *
+	 * Moves it into lezactors_wikipedia when that field is empty, or drops it
+	 * when it merely duplicates what is already there. Two *different* Wikipedia
+	 * URLs are left alone -- picking between them is a human's call.
+	 *
+	 * @param  int  $actor_id Actor post ID.
+	 * @return bool True when the homepage was moved or removed.
+	 */
+	public function fix_homepage_wikipedia( int $actor_id ): bool {
+		$home = get_post_meta( $actor_id, 'lezactors_homepage', true );
+
+		if ( empty( $home ) || strpos( $home, 'wikipedia.org/' ) === false ) {
+			return false;
+		}
+
+		$wiki = get_post_meta( $actor_id, 'lezactors_wikipedia', true );
+
+		if ( empty( $wiki ) ) {
+			update_post_meta( $actor_id, 'lezactors_wikipedia', $home );
+			return delete_post_meta( $actor_id, 'lezactors_homepage' );
+		}
+
+		if ( $wiki === $home ) {
+			return delete_post_meta( $actor_id, 'lezactors_homepage' );
+		}
+
+		// Two competing Wikipedia URLs -- reported, not repaired.
+		return false;
 	}
 
 	/**
@@ -394,9 +508,6 @@ class Actors {
 					if ( get_post_status( $actor_item['id'] ) !== 'draft' ) {
 						// If it's NOT a draft, we'll recheck.
 						$actors[] = $actor_item['id'];
-					} else {
-						// Delete post meta for drafts.
-						delete_post_meta( $actor_item['id'], 'debug_check' );
 					}
 				}
 			} else {
