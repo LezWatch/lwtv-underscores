@@ -11,6 +11,8 @@ if ( ! defined( 'ABSPATH' ) && ! defined( 'WP_CLI' ) ) {
 }
 
 use LWTV\Debugger\Actors;
+use LWTV\Debugger\Build\Findings;
+use LWTV\Debugger\Build\Issue_Registry;
 use LWTV\Debugger\Characters;
 use LWTV\Debugger\Dupes;
 use LWTV\Debugger\Queers;
@@ -48,6 +50,13 @@ class WP_CLI_LWTV_Debug {
 	 * @var bool
 	 */
 	public $force = false;
+
+	/**
+	 * Repair class instances, reused across a run.
+	 *
+	 * @var array<string, object>
+	 */
+	private $fixers = array();
 
 	/**
 	 * Construct to block facet from munging results.
@@ -326,11 +335,8 @@ class WP_CLI_LWTV_Debug {
 	 * @return void
 	 */
 	private function apply_fixes( array $check, array $items ): void {
-		list( $class, $method ) = $check['fixer'];
-
 		\WP_CLI::log( 'Attempting to fix issues for ' . count( $items ) . ' item(s)...' );
 		$progress = \WP_CLI\Utils\make_progress_bar( 'Fixing', count( $items ) );
-		$fixer    = new $class();
 		$fixed    = 0;
 		$failed   = 0;
 
@@ -340,7 +346,8 @@ class WP_CLI_LWTV_Debug {
 				++$failed;
 				continue;
 			}
-			if ( $fixer->$method( (int) $item['id'] ) ) {
+
+			if ( $this->fix_item( $check, $item ) ) {
 				++$fixed;
 			} else {
 				++$failed;
@@ -356,6 +363,63 @@ class WP_CLI_LWTV_Debug {
 			\WP_CLI::warning( $failed . ' item(s) could not be fixed automatically.' );
 		}
 		\WP_CLI::success( $fixed . ' item(s) fixed. Re-run the check to confirm.' );
+	}
+
+	/**
+	 * Repair one finding row.
+	 *
+	 * Prefers the per-issue repairs the row names in `fixable`, which is what
+	 * makes the fix specific: only the issues actually found get repaired, and
+	 * one row can carry several. Rows written before findings were typed -- the
+	 * transients last a week -- have no `fixable` key, so those fall back to the
+	 * check-level fixer. A check with neither is simply not repairable.
+	 *
+	 * @param  array $check Check definition.
+	 * @param  array $item  One finding row.
+	 * @return bool  True when at least one repair was applied.
+	 */
+	private function fix_item( array $check, array $item ): bool {
+		$post_id = (int) $item['id'];
+		$issues  = Findings::fixable_issues( $item );
+
+		if ( ! empty( $issues ) ) {
+			$repaired = false;
+
+			foreach ( $issues as $issue_type ) {
+				list( $class, $method ) = Issue_Registry::fix_callable( $issue_type );
+
+				// Deliberately not short-circuiting: a row can need all of them.
+				if ( $this->fixer( $class )->$method( $post_id ) ) {
+					$repaired = true;
+				}
+			}
+
+			return $repaired;
+		}
+
+		if ( ! isset( $check['fixer'] ) ) {
+			return false;
+		}
+
+		list( $class, $method ) = $check['fixer'];
+
+		return (bool) $this->fixer( $class )->$method( $post_id );
+	}
+
+	/**
+	 * One instance per repair class, reused across a run.
+	 *
+	 * @param  string $class_name Fully qualified class name.
+	 * @return object
+	 */
+	private function fixer( string $class_name ): object {
+		$key = ltrim( $class_name, '\\' );
+
+		if ( ! isset( $this->fixers[ $key ] ) ) {
+			$this->fixers[ $key ] = new $key();
+		}
+
+		return $this->fixers[ $key ];
 	}
 
 	/**

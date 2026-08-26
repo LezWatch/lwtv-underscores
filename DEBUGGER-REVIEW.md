@@ -570,6 +570,14 @@ The rules layer is the valuable part: `Show_Rules::evaluate()` takes a plain arr
 show's meta/terms and returns findings. That's testable in `tests/unit/` with no WordPress
 bootstrap, which means the airdate bug in 1.1 becomes a two-line regression test.
 
+**Started (2026-08-26).** `debugger/build/` and `debugger/format/` now exist, holding the
+issue vocabulary, the finding builder/grouper, and the row formatter — all pure except the
+formatter's one `get_permalink()`, with tests in `tests/unit/Debugger/`. What is *not* done
+is the `collect/` + rules split: detection still walks posts inline in the scanners, so
+`ITEMS_TO_CHECK` evaluation and the airdate rules remain untested. Those are the next
+extraction, and the typed findings are what make it possible — a rules class can now return
+findings without knowing how they will be rendered or counted.
+
 ---
 
 ## 5. Unify with the audit system — the good design is already in the repo
@@ -738,7 +746,56 @@ diff:
 Still outstanding: everything in §8.3–§8.5, and the §8.4 wikidata cache writes (still
 incidental side effects of comparison, still want an explicit TTL).
 
-### 8.3 Finding shape
+### 8.3 Finding shape — DONE for Shows, Characters, Actors (2026-08-26)
+
+Landed as `debugger/build/class-issue-registry.php` (the vocabulary),
+`debugger/build/class-findings.php` (pure build + grouping) and
+`debugger/format/class-rows.php` (the WordPress seam that adds the permalink).
+Both build classes are unit-tested in `tests/unit/Debugger/`.
+
+Four decisions differ from the sketch below, all deliberate:
+
+1. **Rows stay one-per-post; findings are one-per-issue.** `Findings::make()`
+   emits a typed finding per problem and `Rows::from_findings()` collapses them,
+   so `count( $items )` still means "posts needing attention". That matters more
+   than it looks: `Status::record( …, count( $items ) )` feeds the tab badges
+   (`class-validation.php:160-162`), the dashboard widget, and the nine "N shows
+   need your attention" headers. Flattening to one row per issue silently
+   redefines every one of those numbers. The per-issue truth lives on the row as
+   `issues` and `fixable`, which is all the fixer and any future per-finding link
+   need.
+2. **No transient key bump, because the shape is a superset.** `url`, `id` and
+   `problem` are still there, derived; `post_type`, `issues` and `fixable` are
+   added. Nothing was removed, so a week of cached findings stays readable and
+   simply has no `issues` key. `Findings::fixable_issues()` returns an empty list
+   for those and the CLI falls back to the check-level fixer — cheaper and less
+   destructive than discarding every cached scan, which is what §8.5 would have
+   had us do.
+3. **`fixable`/`fix_label` are not stored per row as booleans**; they come from
+   the registry at build time, so retiring a repair cannot leave a row
+   advertising a fix that no longer exists. `fixable_issues()` re-checks the
+   registry on read for the same reason.
+4. **Checks that return prose keep it.** Airdates, duplicate detection and the
+   intersectionality cross-check hand back message strings, so
+   `Findings::from_messages()` wraps each into one addressable finding under a
+   supplied type (`show-airdate`, `show-duplicate`, `show-intersection`). Giving
+   those their own vocabulary entries is a follow-up; being individually
+   addressable was the point.
+
+Also folded in while the files were open: the fixability prose moved out of the
+messages and into `Issue_Registry`, so `Findings::describe()` composes
+"— fixable, adds the "none" trope." from data rather than it being typed into
+each message; `Actors::flag_shadow_sync_failure()` builds through the same
+pipeline so its hook-appended row carries `issues` too; and the two-argument
+social repair got per-field wrappers (`remove_imdb_from_instagram()` /
+`remove_imdb_from_twitter()`) so every registry fix takes exactly one post ID.
+
+Not converted, still on the legacy shape and reading through the tolerant path:
+`byq`, `queers`, `dupes`, `on_air`, both IMDb checks, `find_actors_incomplete()`,
+and `watchurls` (term-shaped findings — see the `object_id`/`object_type` note
+below).
+
+The original sketch, for reference:
 
 One row per issue, not per post, with fixability declared up front:
 
@@ -774,6 +831,18 @@ CLI `--fix-it` iterates findings where `fixable`, calls the registered callable.
 per-finding link is the same callable behind `admin_post_lwtv_debug_fix` with a nonce, the
 `issue_type`, and the `post_id`. One implementation, two surfaces.
 
+**CLI half is done** — `WP_CLI_LWTV_Debug::fix_item()` repairs each issue type the row
+names, so a run now fixes exactly what was found instead of calling one blunt per-post
+dispatcher. The check-level `fixer` entries stay as the fallback for pre-reshape cached
+rows (and for OnAir, which is genuinely check-level). **The admin half is not built**: it
+needs the `admin_post_lwtv_debug_fix` handler plus a link per issue in
+`Validation::table_content()`, which is where the one-row-per-post grouping will have to
+start showing individual issues.
+
+Worth knowing about the fix counts: `apply_fixes()` still reports a row as unfixed when
+none of its issues had a repair, and that is now *accurate* rather than approximate —
+`fix_item()` only claims success when a registered repair actually returned true.
+
 ### 8.4 Writes that are *not* fixes
 
 Four of the writes above shouldn't become `--fix-it` actions at all, and lumping them in
@@ -791,13 +860,24 @@ would be a mistake:
   vestigial — delete it.~~ **DONE (2026-08-26)** — removed, along with the now-empty `else`
   branch. Confirmed first that the key appears nowhere else in the repo.
 
-### 8.5 Transient shape migration
+### 8.5 Transient shape migration — resolved differently (2026-08-26)
 
 Findings live in week-long transients. Changing the shape means new code will read old-shape
 payloads until they expire. Either bump the key names (`lwtv_debug_shows_v2`) or add a
 `'version'` marker and treat a mismatch as a cache miss. Cheap to do, annoying to debug if
 forgotten. `Actors::flag_shadow_sync_failure()` (`class-actors.php:41`) also appends
 directly to the transient and will need updating to the new shape at the same time.
+
+**Neither was needed.** Because the new row is a strict superset of the old one (§8.3), old
+payloads are still valid rows — they just lack `issues`, which readers treat as "no
+per-issue information" rather than as corruption. Bumping the keys would have thrown away
+every cached scan on deploy to gain nothing. `flag_shadow_sync_failure()` was updated as
+predicted.
+
+This only holds while changes stay additive. The first change that *removes* or repurposes
+a key — most likely generalising `id` into `object_id` + `object_type` so `Watch_URLs`
+term-shaped findings become first-class — does need the version marker, because
+`Validation::table_content()` would call `get_the_title()` on a term ID.
 
 ---
 

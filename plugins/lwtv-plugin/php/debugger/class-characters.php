@@ -13,6 +13,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+use LWTV\Debugger\Build\Findings;
+use LWTV\Debugger\Format\Rows;
 use LWTV\Queeries\Post_Type;
 use LWTV\Queeries\Taxonomy_Optimized as Queery_Taxonomy;
 use LWTV\CPTs\Characters as CPT_Characters;
@@ -154,11 +156,11 @@ class Characters {
 		// Make sure we don't have dupes.
 		$characters = array_unique( $characters );
 
-		// reset items since we recheck off $characters.
-		$items = array();
+		// Findings are per issue; Rows::from_findings() collapses them back to one
+		// row per character at the end, so $items is rebuilt rather than appended.
+		$findings = array();
 
 		foreach ( $characters as $char_id ) {
-			$problems = array();
 
 			// What we can check for
 			$check = array(
@@ -170,15 +172,15 @@ class Characters {
 
 			// No cliché terms at all. Detect only — add_none_cliche() repairs it.
 			if ( ! $check['cliche'] || is_wp_error( $check['cliche'] ) ) {
-				$problems[] = 'No cliché set — fixable, adds the "none" cliché.';
+				$findings[] = Findings::make( $char_id, CPT_Characters::SLUG, 'char-missing-cliche' );
 			}
 
 			if ( has_term( 'dead', 'lez_cliches', $char_id ) && empty( $check['death'] ) ) {
-				$problems[] = 'Dead but missing date.';
+				$findings[] = Findings::make( $char_id, CPT_Characters::SLUG, 'char-dead-no-date' );
 			}
 
 			if ( ! $check['shows'] || ! is_array( $check['shows'] ) ) {
-				$problems[] = 'No shows listed.';
+				$findings[] = Findings::make( $char_id, CPT_Characters::SLUG, 'char-no-shows' );
 			} else {
 				foreach ( $check['shows'] as $each_show ) {
 					// Remove the Array.
@@ -186,31 +188,24 @@ class Characters {
 						$each_show['show'] = $each_show['show'][0];
 					}
 					if ( ! isset( $each_show['appears'] ) || ! is_array( $each_show['appears'] ) ) {
-						$problems[] = 'No years on air set for ' . get_the_title( $each_show['show'] ) . '.';
+						$findings[] = Findings::make( $char_id, CPT_Characters::SLUG, 'char-no-years', 'No years on air set for ' . get_the_title( $each_show['show'] ) . '.' );
 					}
 					if ( ! isset( $each_show['type'] ) || '' === $each_show['type'] ) {
-						$problems[] = 'No role set for' . get_the_title( $each_show['show'] ) . '.';
+						$findings[] = Findings::make( $char_id, CPT_Characters::SLUG, 'char-no-role', 'No role set for ' . get_the_title( $each_show['show'] ) . '.' );
 					}
 					if ( ! isset( $each_show['show'] ) || '' === $each_show['show'] ) {
-						$problems[] = 'No show name set.';
+						$findings[] = Findings::make( $char_id, CPT_Characters::SLUG, 'char-no-show-name' );
 					}
 				}
 			}
 
 			// Okay fine, now we use the NONE actor.
 			if ( ! $check['actors'] ) {
-				$problems[] = 'No actors listed.';
-			}
-
-			// If we have problems, list them:
-			if ( ! empty( $problems ) ) {
-				$items[] = array(
-					'url'     => get_permalink( $char_id ),
-					'id'      => $char_id,
-					'problem' => implode( '</br>', $problems ),
-				);
+				$findings[] = Findings::make( $char_id, CPT_Characters::SLUG, 'char-no-actors' );
 			}
 		}
+
+		$items = Rows::from_findings( $findings );
 
 		// Save Transient
 		lwtv_plugin()->set_transient( self::TRANSIENT_PROBLEMS, $items, WEEK_IN_SECONDS );

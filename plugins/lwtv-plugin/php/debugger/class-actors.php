@@ -17,6 +17,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 use LWTV\_Components\Debugger as Debug_Tool;
 use LWTV\_Helpers\Imdb_Canonical;
+use LWTV\CPTs\Actors as CPT_Actors;
+use LWTV\Debugger\Build\Findings;
+use LWTV\Debugger\Format\Rows;
 use LWTV\Queeries\Post_Type;
 
 class Actors {
@@ -67,10 +70,22 @@ class Actors {
 			}
 		}
 
-		$items[] = array(
-			'url'     => get_permalink( $actor_id ),
-			'id'      => $actor_id,
-			'problem' => sprintf( 'Shadow taxonomy sync failed repeatedly (term %d). Run: wp lwtv shadow actors', $term_id ),
+		// Built through the same pipeline as a scan finding so this row carries
+		// `issues` too -- otherwise a hook-appended row would look, to the CLI
+		// fixer, like a stale pre-reshape payload.
+		$items = array_merge(
+			$items,
+			Rows::from_findings(
+				array(
+					Findings::make(
+						$actor_id,
+						CPT_Actors::SLUG,
+						'actor-shadow-sync-failed',
+						sprintf( 'Shadow taxonomy sync failed repeatedly (term %d). Run: wp lwtv shadow actors', $term_id ),
+						array( 'term_id' => $term_id )
+					),
+				)
+			)
 		);
 
 		lwtv_plugin()->set_transient( self::TRANSIENT_PROBLEMS, $items, WEEK_IN_SECONDS );
@@ -116,11 +131,18 @@ class Actors {
 		// Make sure we don't have dupes.
 		$actors = array_unique( $actors );
 
-		// reset items since we recheck off $actors.
-		$items = array();
+		// Findings are per issue; Rows::from_findings() collapses them back to one
+		// row per actor at the end, so $items is rebuilt rather than appended.
+		$findings = array();
 
 		foreach ( $actors as $actor_id ) {
-			$problems = array();
+			/*
+			 * Collected and never reported -- and that predates the typed
+			 * findings, so the conversion did not drop it. The one warning below
+			 * is a judgement call nobody has made yet (plenty of people have no
+			 * recorded date of birth), so it is neither surfaced nor deleted.
+			 * Give it an issue type when it is decided either way.
+			 */
 			$warnings = array();
 
 			$meta  = get_post_meta( $actor_id );
@@ -138,7 +160,7 @@ class Actors {
 
 			// - Confirm there are characters listed.
 			if ( ! $check['chars'] || empty( $check['chars'] ) ) {
-				$problems[] = 'No characters listed.';
+				$findings[] = Findings::make( $actor_id, CPT_Actors::SLUG, 'actor-no-characters' );
 			}
 
 			// - Warn if there is a death and no birth (nb: this may not be a good idea, some people have no DoB!)
@@ -150,7 +172,7 @@ class Actors {
 
 			// - Wikipedia links should point to Wikipedia: "https://[language].wikipedia.org/" (props Jamie)
 			if ( ! empty( $check['wiki'] ) && strpos( $check['wiki'], 'wikipedia.org/' ) === false ) {
-				$problems[] = 'Wikipedia URL does not point to Wikipedia.';
+				$findings[] = Findings::make( $actor_id, CPT_Actors::SLUG, 'actor-wikipedia-invalid' );
 			}
 
 			// - Instagram and Twitter usernames should follow whatever the
@@ -160,16 +182,16 @@ class Actors {
 			if ( ! empty( $check['insta'] ) ) {
 				// Limit - 30 symbols. Username must contains only letters, numbers, periods and underscores.
 				if ( Debug_Tool::sanitize_social( $check['insta'], 'instagram' ) !== $check['insta'] ) {
-					$problems[] = 'Instagram ID is invalid -- ' . esc_html( $check['insta'] );
+					$findings[] = Findings::make( $actor_id, CPT_Actors::SLUG, 'actor-instagram-invalid', 'Instagram ID is invalid -- ' . esc_html( $check['insta'] ), array( 'value' => $check['insta'] ) );
 				} elseif ( self::looks_like_actor_imdb( $check['insta'] ) ) {
-					$problems[] = 'Instagram ID is an IMDb ID — fixable, removes it: ' . esc_html( $check['insta'] );
+					$findings[] = Findings::make( $actor_id, CPT_Actors::SLUG, 'actor-instagram-is-imdb', 'Instagram ID is an IMDb ID: ' . esc_html( $check['insta'] ), array( 'value' => $check['insta'] ) );
 				}
 			}
 			if ( ! empty( $check['twits'] ) ) {
 				if ( Debug_Tool::sanitize_social( $check['twits'], 'twitter' ) !== $check['twits'] ) {
-					$problems[] = 'Twitter ID is invalid -- ' . esc_html( $check['twits'] );
+					$findings[] = Findings::make( $actor_id, CPT_Actors::SLUG, 'actor-twitter-invalid', 'Twitter ID is invalid -- ' . esc_html( $check['twits'] ), array( 'value' => $check['twits'] ) );
 				} elseif ( self::looks_like_actor_imdb( $check['twits'] ) ) {
-					$problems[] = 'Twitter ID is an IMDb ID — fixable, removes it: ' . esc_html( $check['twits'] );
+					$findings[] = Findings::make( $actor_id, CPT_Actors::SLUG, 'actor-twitter-is-imdb', 'Twitter ID is an IMDb ID: ' . esc_html( $check['twits'] ), array( 'value' => $check['twits'] ) );
 				}
 			}
 
@@ -183,25 +205,18 @@ class Actors {
 			if ( ! empty( $check['home'] ) ) {
 				if ( strpos( $check['home'], 'wikipedia.org/' ) !== false ) {
 					if ( empty( $check['wiki'] ) ) {
-						$problems[] = 'Homepage points to Wikipedia and no Wikipedia URL is set — fixable, moves it to the Wikipedia field.';
+						$findings[] = Findings::make( $actor_id, CPT_Actors::SLUG, 'actor-homepage-is-wikipedia' );
 					} elseif ( $check['wiki'] === $check['home'] ) {
-						$problems[] = 'Homepage duplicates the Wikipedia URL — fixable, removes the homepage.';
+						$findings[] = Findings::make( $actor_id, CPT_Actors::SLUG, 'actor-homepage-dupe-wiki' );
 					} else {
 						// Two different Wikipedia URLs. Needs a human to pick.
-						$problems[] = 'Homepage points to Wikipedia - ' . sanitize_url( $check['home'] );
+						$findings[] = Findings::make( $actor_id, CPT_Actors::SLUG, 'actor-homepage-wikipedia', 'Homepage points to Wikipedia - ' . sanitize_url( $check['home'] ), array( 'homepage' => $check['home'] ) );
 					}
 				}
 			}
-
-			// If we added any problems, loop and add.
-			if ( ! empty( $problems ) ) {
-				$items[] = array(
-					'url'     => get_permalink( $actor_id ),
-					'id'      => $actor_id,
-					'problem' => implode( '</br>', $problems ),
-				);
-			}
 		}
+
+		$items = Rows::from_findings( $findings );
 
 		// Save Transient
 		lwtv_plugin()->set_transient( self::TRANSIENT_PROBLEMS, $items, WEEK_IN_SECONDS );
@@ -255,6 +270,30 @@ class Actors {
 		$home  = $this->fix_homepage_wikipedia( $actor_id );
 
 		return $insta || $twits || $home;
+	}
+
+	/**
+	 * Registry entry point for the Instagram case.
+	 *
+	 * Every repair in Issue_Registry takes one post ID, so the two-argument
+	 * worker gets a thin wrapper per field rather than the registry carrying
+	 * bound arguments.
+	 *
+	 * @param  int  $actor_id Actor post ID.
+	 * @return bool True when the meta was deleted.
+	 */
+	public function remove_imdb_from_instagram( int $actor_id ): bool {
+		return $this->remove_imdb_from_social( $actor_id, 'instagram' );
+	}
+
+	/**
+	 * Registry entry point for the Twitter case.
+	 *
+	 * @param  int  $actor_id Actor post ID.
+	 * @return bool True when the meta was deleted.
+	 */
+	public function remove_imdb_from_twitter( int $actor_id ): bool {
+		return $this->remove_imdb_from_social( $actor_id, 'twitter' );
 	}
 
 	/**

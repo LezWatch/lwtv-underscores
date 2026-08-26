@@ -10,7 +10,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 use LWTV\_Components\Debugger as Debug_Tool;
+use LWTV\Debugger\Build\Findings;
 use LWTV\Debugger\Characters as Characters_Debugger;
+use LWTV\Debugger\Format\Rows;
+use LWTV\CPTs\Shows as CPT_Shows;
 use LWTV\CPTs\Shows\Airdates;
 use LWTV\_Helpers\Imdb_Canonical;
 use LWTV\Queeries\Post_Type;
@@ -29,7 +32,7 @@ class Shows {
 
 	const ITEMS_TO_CHECK = array(
 		'score'      => array(
-			'message'  => 'Score is 0 or not set - needs characters and/or ratings.',
+			'issue'    => 'show-no-score',
 			'meta'     => 'lezshows_the_score',
 			'empty_ok' => true,
 		),
@@ -51,11 +54,11 @@ class Shows {
 		 * been calculated, and that is worth surfacing too.
 		 */
 		'characters' => array(
-			'message' => 'No queer characters recorded. Either the data is missing, or the show only had background/unnamed characters - worth confirming which.',
-			'meta'    => 'lezshows_char_count',
+			'issue' => 'show-no-characters',
+			'meta'  => 'lezshows_char_count',
 		),
 		'details'    => array(
-			'message'  => 'No worthit details.',
+			'issue'    => 'show-no-worthit-details',
 			'meta'     => 'lezshows_worthit_details',
 			'empty_ok' => true,
 		),
@@ -71,50 +74,50 @@ class Shows {
 		 * with no row at all drops out of those queries entirely.
 		 */
 		'thumb'      => array(
-			'message' => 'No Thumb score — fixable, sets it to TBD.',
-			'meta'    => 'lezshows_worthit_rating',
+			'issue' => 'show-missing-thumb',
+			'meta'  => 'lezshows_worthit_rating',
 		),
 		'realness'   => array(
-			'message'  => 'No realness rating.',
+			'issue'    => 'show-no-realness',
 			'meta'     => 'lezshows_realness_rating',
 			'empty_ok' => true,
 		),
 		'quality'    => array(
-			'message'  => 'No quality rating.',
+			'issue'    => 'show-no-quality',
 			'meta'     => 'lezshows_quality_rating',
 			'empty_ok' => true,
 		),
 		'screentime' => array(
-			'message'  => 'No screentime rating.',
+			'issue'    => 'show-no-screentime',
 			'meta'     => 'lezshows_screentime_rating',
 			'empty_ok' => true,
 		),
 		'imdb'       => array(
-			'message' => 'No IMDb ID.',
-			'meta'    => 'lezshows_imdb',
-			'skip'    => true,
+			'issue' => 'show-no-imdb',
+			'meta'  => 'lezshows_imdb',
+			'skip'  => true,
 		),
 		'stations'   => array(
-			'message' => 'No stations.',
-			'term'    => 'lez_stations',
+			'issue' => 'show-no-stations',
+			'term'  => 'lez_stations',
 		),
 		'nations'    => array(
-			'message' => 'No country.',
-			'term'    => 'lez_country',
+			'issue' => 'show-no-country',
+			'term'  => 'lez_country',
 		),
 		'formats'    => array(
-			'message' => 'No format.',
-			'term'    => 'lez_formats',
+			'issue' => 'show-no-format',
+			'term'  => 'lez_formats',
 		),
 		'genres'     => array(
-			'message' => 'No genres.',
-			'term'    => 'lez_genres',
+			'issue' => 'show-no-genres',
+			'term'  => 'lez_genres',
 		),
 		// Same story as 'thumb' above: repaired by add_none_trope() under
 		// --fix-it, so the finding is now reported rather than skipped.
 		'tropes'     => array(
-			'message' => 'No tropes set — fixable, adds the "none" trope.',
-			'term'    => 'lez_tropes',
+			'issue' => 'show-missing-trope',
+			'term'  => 'lez_tropes',
 		),
 	);
 
@@ -152,18 +155,18 @@ class Shows {
 		// Make sure we don't have dupes.
 		$shows = array_unique( $shows );
 
-		// reset items since we recheck off $shows.
-		$items = array();
+		// Findings are per issue; Rows::from_findings() collapses them back to
+		// one row per show at the end, so $items is rebuilt rather than appended.
+		$findings = array();
 
 		foreach ( $shows as $show_id ) {
-			$problems = array();
 
 			// What we can check for
 			$check = array(
 				'duplicate' => get_post_field( 'post_name', $show_id ),
 			);
 
-			// Build the check array and add to problems if needed.
+			// Build the check array and add findings if needed.
 			foreach ( self::ITEMS_TO_CHECK as $item => $check_array ) {
 				$empty_okay = ( isset( $check_array['empty_ok'] ) ) ? $check_array['empty_ok'] : false;
 				$skip_okay  = ( isset( $check_array['skip'] ) ) ? $check_array['skip'] : false;
@@ -171,31 +174,31 @@ class Shows {
 				if ( isset( $check_array['meta'] ) ) {
 					$check[ $item ] = get_post_meta( $show_id, $check_array['meta'], true );
 					if ( ! $empty_okay && ! $skip_okay && empty( $check[ $item ] ) ) {
-						$problems[] = $check_array['message'];
+						$findings[] = Findings::make( $show_id, CPT_Shows::SLUG, $check_array['issue'] );
 					}
 				} elseif ( isset( $check_array['term'] ) ) {
 					$check[ $item ] = get_the_terms( $show_id, $check_array['term'] );
 					if ( ( ! $empty_okay && ! $skip_okay ) && ( ! $check[ $item ] || is_wp_error( $check[ $item ] ) ) ) {
-						$problems[] = $check_array['message'];
+						$findings[] = Findings::make( $show_id, CPT_Shows::SLUG, $check_array['issue'] );
 					}
 				}
 			}
 
-			$problems = array_merge( $problems, $this->check_airdates( $show_id ) );
-
-			$duplicates   = self::check_duplicate_shows( $check, $show_id );
-			$intersection = self::check_intersection_problems( $show_id );
-			$problems     = array_merge( $problems, $intersection, $duplicates );
-
-			// If we have problems, list them:
-			if ( ! empty( $problems ) ) {
-				$items[] = array(
-					'url'     => get_permalink( $show_id ),
-					'id'      => $show_id,
-					'problem' => implode( '</br>', $problems ),
-				);
-			}
+			/*
+			 * These three return message strings rather than issue types, so the
+			 * type is supplied here and the message rides along as a per-post
+			 * override. Splitting them into their own types is a follow-up; what
+			 * matters now is that each problem is one addressable finding.
+			 */
+			$findings = array_merge(
+				$findings,
+				Findings::from_messages( $show_id, CPT_Shows::SLUG, 'show-airdate', $this->check_airdates( $show_id ) ),
+				Findings::from_messages( $show_id, CPT_Shows::SLUG, 'show-intersection', self::check_intersection_problems( $show_id ) ),
+				Findings::from_messages( $show_id, CPT_Shows::SLUG, 'show-duplicate', self::check_duplicate_shows( $check, $show_id ) )
+			);
 		}
+
+		$items = Rows::from_findings( $findings );
 
 		// Save Transient
 		lwtv_plugin()->set_transient( self::TRANSIENT_PROBLEMS, $items, WEEK_IN_SECONDS );
