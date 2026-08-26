@@ -9,6 +9,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+use LWTV\CPTs\Actors as CPT_Actors;
+use LWTV\Debugger\Build\Findings;
+use LWTV\Debugger\Format\Rows;
 use LWTV\Queeries\Get_ID_From_Slug;
 
 class Dupes {
@@ -29,6 +32,10 @@ class Dupes {
 		$duplicates     = array();
 		$items_to_check = array();
 
+		// A recheck only revisits the posts already flagged, so it is tagged
+		// against the baseline rather than diffed against it. See tag_only().
+		$is_recheck = ! empty( $items ) && is_array( $items );
+
 		// Are we a full scan or a recheck?
 		if ( ! empty( $items ) && is_array( $items ) ) {
 			foreach ( $items as $item ) {
@@ -38,23 +45,45 @@ class Dupes {
 			$items_to_check = $this->get_dupes();
 		}
 
+		$findings = array();
+
 		foreach ( $items_to_check as $maybe_dupe ) {
 			$check_dupe = $this->compare_duplicates( $maybe_dupe );
-			if ( false !== $check_dupe ) {
-				$duplicates[] = array(
-					'url'     => get_permalink( $maybe_dupe ),
-					'id'      => $maybe_dupe,
-					'name'    => get_the_title( $maybe_dupe ),
-					'problem' => $check_dupe,
-				);
+
+			if ( false === $check_dupe ) {
+				continue;
 			}
+
+			$post_type = (string) get_post_type( $maybe_dupe );
+
+			/*
+			 * Two issue types, one per post type, because a finding's level
+			 * decides which cache an admin repair prunes and which tab it
+			 * returns to -- and this is the only check spanning both.
+			 */
+			$issue_type = ( CPT_Actors::SLUG === $post_type ) ? 'actor-is-duplicate' : 'show-is-duplicate';
+
+			// The message keeps its link to the original, as the admin table has
+			// always rendered it; Findings::plain() strips it for the CLI.
+			$findings[] = Findings::make( (int) $maybe_dupe, $post_type, $issue_type, $check_dupe );
+		}
+
+		$diff       = $is_recheck
+			? Baseline_Store::tag_only( 'duplicates', $findings )
+			: Baseline_Store::apply( 'duplicates', $findings );
+		$duplicates = Rows::from_findings( $diff['findings'] );
+
+		// `name` is not in the standard row shape: cli-dupes.php names it as an
+		// output column, and a post ID alone tells you nothing in that table.
+		foreach ( $duplicates as $index => $duplicate ) {
+			$duplicates[ $index ]['name'] = get_the_title( (int) $duplicate['id'] );
 		}
 
 		// Save Transient
 		lwtv_plugin()->set_transient( self::TRANSIENT_DUPES, $duplicates, WEEK_IN_SECONDS );
 
 		// Update Options
-		Status::record( 'duplicates', 'Duplicate Actors/Shows', count( $duplicates ) );
+		Status::record( 'duplicates', 'Duplicate Actors/Shows', count( $duplicates ), $diff['summary'] );
 
 		return $duplicates;
 	}

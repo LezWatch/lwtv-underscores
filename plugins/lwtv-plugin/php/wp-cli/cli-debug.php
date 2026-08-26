@@ -91,7 +91,7 @@ class WP_CLI_LWTV_Debug {
 	 */
 	private function get_checks(): array {
 		return array(
-			'queers'     => array(
+			'queers'      => array(
 				'transient' => Queers::TRANSIENT_QUEERCHECK,
 				'status'    => 'queercheck',
 				'scanner'   => array( Queers::class, 'find_queer_chars' ),
@@ -100,7 +100,7 @@ class WP_CLI_LWTV_Debug {
 				'dirty'     => 'character(s) need attention for queer consistency.',
 				'done'      => 'Queer consistency check complete.',
 			),
-			'dupes'      => array(
+			'dupes'       => array(
 				'transient' => Dupes::TRANSIENT_DUPES,
 				'status'    => 'duplicates',
 				'scanner'   => array( Dupes::class, 'find_duplicates' ),
@@ -109,7 +109,7 @@ class WP_CLI_LWTV_Debug {
 				'dirty'     => 'duplicate(s) found.',
 				'done'      => 'Duplicate check complete.',
 			),
-			'byq'        => array(
+			'byq'         => array(
 				'transient' => Characters::TRANSIENT_BYQ,
 				'status'    => 'byq_problems',
 				'scanner'   => array( Characters::class, 'find_byq_problems' ),
@@ -118,7 +118,7 @@ class WP_CLI_LWTV_Debug {
 				'dirty'     => 'character(s) have BYQ-related issues.',
 				'done'      => 'BYQ check complete.',
 			),
-			'actors'     => array(
+			'actors'      => array(
 				'transient' => Actors::TRANSIENT_PROBLEMS,
 				'status'    => 'actor_problems',
 				'scanner'   => array( Actors::class, 'find_actors_problems' ),
@@ -128,7 +128,7 @@ class WP_CLI_LWTV_Debug {
 				'dirty'     => 'actor(s) need attention. Use --fix-it to repair the ones marked fixable.',
 				'done'      => 'Actor check complete.',
 			),
-			'chars'      => array(
+			'chars'       => array(
 				'transient' => Characters::TRANSIENT_PROBLEMS,
 				'status'    => 'character_problems',
 				'scanner'   => array( Characters::class, 'find_characters_problems' ),
@@ -138,7 +138,7 @@ class WP_CLI_LWTV_Debug {
 				'dirty'     => 'character(s) need attention. Use --fix-it to repair the ones marked fixable.',
 				'done'      => 'Character check complete.',
 			),
-			'shows'      => array(
+			'shows'       => array(
 				'transient' => Shows::TRANSIENT_PROBLEMS,
 				'status'    => 'show_problems',
 				'scanner'   => array( Shows::class, 'find_shows_problems' ),
@@ -148,7 +148,16 @@ class WP_CLI_LWTV_Debug {
 				'dirty'     => 'show(s) need attention. Use --fix-it to repair the ones marked fixable.',
 				'done'      => 'Show check complete.',
 			),
-			'actor_imdb' => array(
+			'actor_empty' => array(
+				'transient' => Actors::TRANSIENT_EMPTY,
+				'status'    => 'actor_empty',
+				'scanner'   => array( Actors::class, 'find_actors_incomplete' ),
+				'running'   => 'Running actor completeness check...',
+				'clean'     => 'Excellent! Every actor has a photo and a biography.',
+				'dirty'     => 'actor(s) missing a photo or a biography.',
+				'done'      => 'Actor completeness check complete.',
+			),
+			'actor_imdb'  => array(
 				'transient' => Actors::TRANSIENT_IMDB,
 				'status'    => 'actor_imdb',
 				'scanner'   => array( Actors::class, 'find_actors_no_imdb' ),
@@ -157,7 +166,7 @@ class WP_CLI_LWTV_Debug {
 				'dirty'     => 'actor(s) missing IMDb data.',
 				'done'      => 'Actor IMDb check complete.',
 			),
-			'show_imdb'  => array(
+			'show_imdb'   => array(
 				'transient' => Shows::TRANSIENT_IMDB,
 				'status'    => 'show_imdb',
 				'scanner'   => array( Shows::class, 'find_shows_no_imdb' ),
@@ -166,7 +175,7 @@ class WP_CLI_LWTV_Debug {
 				'dirty'     => 'show(s) missing IMDb data.',
 				'done'      => 'Show IMDb check complete.',
 			),
-			'watchurls'  => array(
+			'watchurls'   => array(
 				'transient' => Watch_URLs::TRANSIENT_PROBLEMS,
 				'status'    => Watch_URLs::STATUS_KEY,
 				'scanner'   => array( Watch_URLs::class, 'find_bad_watch_urls' ),
@@ -177,7 +186,7 @@ class WP_CLI_LWTV_Debug {
 				'done'      => 'Watch provider URL check complete.',
 				'slow'      => true,
 			),
-			'on_air'     => array(
+			'on_air'      => array(
 				'transient' => OnAir::TRANSIENT_PROBLEMS,
 				'status'    => 'onair_problems',
 				'scanner'   => array( OnAir::class, 'find_on_air_problems' ),
@@ -203,7 +212,8 @@ class WP_CLI_LWTV_Debug {
 	 *   - actors: Check actor data completeness
 	 *   - chars: Check character data completeness
 	 *   - shows: Check show data completeness
-	 *   - actor_imdb: Find actors without IMDb data
+	 *   - actor_empty: Find actors with no photo or no biography
+ *   - actor_imdb: Find actors without IMDb data
 	 *   - show_imdb: Find shows without IMDb data
 	 *   - watchurls: Check every URL on every watch provider term still works and
 	 *     still belongs to that provider (slow - one remote request per URL)

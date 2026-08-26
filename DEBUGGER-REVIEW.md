@@ -16,39 +16,75 @@ Most of the below is #1, since that's where the bugs and the scale risk are. #2 
 
 ---
 
-## Status — 2026-08-20
+## Status — 2026-08-26
 
-Shipped across four commits: `b6994ef0`, `de30e6f2`, `b47e982f`, `5b1d348e`, `44ee0947`.
-`composer lint` clean, `vendor/bin/phpunit` green, `wp lwtv debug actors` verified working.
+`composer lint` clean, `vendor/bin/phpunit` green. Each converted check verified with a live
+`--force` run.
 
-**Done**
+### What the debugger looks like now
+
+The architecture the plan asked for exists, for ten of the eleven checks:
+
+```
+php/debugger/
+├── build/     PURE. Unit-tested, no WordPress.
+│   ├── class-issue-registry.php   the issue vocabulary: copy, level, repairs
+│   ├── class-findings.php         build, group, describe, render, prune
+│   ├── class-baseline.php         new / open / resolved
+│   ├── class-show-rules.php       every show rule
+│   ├── class-character-rules.php  every character rule
+│   └── class-actor-rules.php      every actor rule
+├── collect/   WordPress glue. Fetches what the rules need, decides nothing.
+│   ├── class-show-collector.php
+│   ├── class-character-collector.php
+│   └── class-actor-collector.php
+├── format/
+│   └── class-rows.php             findings → the rows the surfaces read
+├── class-baseline-store.php       per-check baseline storage
+├── class-repair.php               admin_post per-finding repairs
+└── class-*.php                    the scanners, now orchestration
+```
+
+A finding is typed (`post_id` + `issue_type`), knows whether a repair exists, and is diffed
+against the previous run. One registry drives the CLI's `--fix-it`, the admin's per-finding
+buttons, and the copy in both.
+
+**Done since 2026-08-20**
 
 | | |
 |---|---|
-| 1.1 | Airdates legacy key → shared `CPTs\Shows\Airdates`, with 14 unit tests |
-| 1.2 | Transient key mismatches → constants on the scanner classes |
-| 1.3a | `ltrim()` prefix bug → gone, along with the whole suffix-list approach (§9.1) |
-| 1.4 | `$term->ID` no-op/fatal, both sites — plus a third found later in the theme |
-| 1.5 | PHP 8.1 `false`-to-array → `Debugger\Status`; also fixed a dashboard-widget fatal |
-| 1.8 | CLI exit code |
-| 1.9 | `--force`, plus cache-age reporting and `--order` |
-| 1.9a | `?message=` scheme, `Actor_Wiki`, dead `admin_post` hook — all removed |
-| 1.9b | Three `Dupes::compare_duplicates()` bugs, incl. the override that never worked |
-| §3 | Twitter/Instagram message mixup, always-true `isset()` dupe check, escaping |
-| §6 | "Debuging" typo |
-| §7 | CLI collapsed to a table-driven registry (validators not yet) |
+| 1.4 | The `none` term lookups were by *name*; the term is named `None!`. Fixed by slug |
+| 1.7 | `find_actors_incomplete()` wired up — tab, CLI entry, cron slot |
+| 1.9c | BYQ reporting gate counted show findings and death-year findings together (new) |
+| 2.1 | `Post_Type::get_ids()` — nine debugger sites plus `cli-shadow.php` |
+| 2.4 | Scans no longer mutate data; every write moved behind a repair |
+| §4 | `build/` + `collect/` split for Shows, Characters and Actors, 77 tests |
+| §5 | Baselines and new/open/resolved — as a pure `Build\Baseline`, not via `Audit` |
+| §8.1–8.5 | Detect/repair split, typed findings, both repair surfaces, stray writes gone |
+| 14 | All post-based checks converted; ten of eleven report "N new / M open" |
 
 **Outstanding, roughly in order**
 
 | | |
 |---|---|
-| 2.1 | `fields => 'ids'` at the `Post_Type::make()` call sites — still serialising `WP_Post` objects |
+| 14 | `watchurls` — needs `id` → `object_id` + `object_type`, and the first real transient migration |
+| §4 | `collect/` + rules split for the seven checks converted but not yet extracted |
+| §5 | Acknowledgements where no editorial field exists to carry them |
+| §7 | Collapse the twelve validator files |
 | §6 | Debug log rotation, memoised option reads, log viewer |
-| 1.7 | Decide the fate of `find_actors_incomplete()` |
-| §8 | Typed findings → `Audit::finalize()` → `build/` extraction → repair layer → collapse the validators |
+| §3 | Capability checks inside the validator `make()` methods |
+| §8.4 | The wikidata cache writes still want an explicit TTL |
 
 **Not verified yet:** the Watch Providers create-term and lookup buttons, and the TMDB
 backfill write path. See Open questions.
+
+**Two conventions worth knowing before editing any of this:**
+
+- **Additive row changes only.** Finding rows are a superset of the old
+  `array( url, id, problem )`, which is why no transient migration has been needed. The
+  first change that *removes* or repurposes a key needs the version marker in §8.5.
+- **A repair that is a judgement call is `manual`** — offered per finding in wp-admin, never
+  applied by `--fix-it`. See §8.3 and the acknowledgement note in §5.
 
 ---
 
@@ -397,11 +433,68 @@ string.
 Post-cleanup the switch has 10 cases against 9 tabs, and that single remaining gap is
 `show_urls` by choice.
 
+### 1.9c The BYQ reporting gate counted the wrong things (FIXED — 2026-08-26)
+
+`find_byq_problems()` decides whether to report a character at all with:
+
+```php
+if ( ! empty( $problems ) && ( count( $shows ) - count( $problems ) ) !== 1 ) {
+```
+
+The intent, per the comment, is "report unless the character is marked dead on exactly one
+show". But `$problems` does not only hold show-level findings — the missing-`lezchars_death_year`
+problem goes in the same array, and it is not about a show at all. So a character with one
+show missing the trope *and* no death year has `count( $shows ) - count( $problems ) = 1 - 2
+= -1`, passes the gate, and reports; the same character with a death year has `1 - 1 = 0`,
+also reports; a character on two shows with one bad trope and no death year has `2 - 2 = 0`,
+reports. It is hard to construct the case the comment describes, and the arithmetic mixes
+two different kinds of finding.
+
+**The intent, confirmed:** a character is killed on one show, and may have been on others
+that never killed her. Show A carries the BYQ trope; Show B correctly does not. So a
+per-show "missing trope" finding cannot be judged on its own merits — being on a show with
+no trope is completely normal.
+
+The invariant is therefore on the shows that *do* carry it: **exactly one**. None means
+nobody recorded the death on the show it happened on. More than one means two of her shows
+claim a queer death, which can be legitimate (a show can kill someone else) but is worth an
+eyeball — and reports nothing anyway, since with no trope missing there are no findings to
+show. The gate can only ever suppress, never invent.
+
+**Fixed accordingly:** the gate now counts only `char-show-no-byq-trope` findings, and the
+missing-death-year finding reports on its own terms. Two behaviour changes fall out, both
+surfacing things that were previously hidden:
+
+| shows | missing trope | death year | before | after |
+|---|---|---|---|---|
+| 2 | 0 | absent | silent | reports the death year |
+| 3 | 1 | absent | silent | reports both |
+| 2 | 1 | present | silent | silent (the Show A / Show B case, correct) |
+
+So **expect the BYQ count to go up**, and the increase is real rather than noise: a dead
+character with no death year whose tropes were otherwise fine used to be dropped from this
+report entirely.
+
+One rough edge left, not worth chasing yet: with three shows where two carry the trope, the
+character surfaces via the one show *missing* it, so the message points at the show that is
+arguably fine while the anomaly is the two that claim deaths. It surfaces the right
+character with a slightly confusing reason.
+
 ### 1.7 `lwtv_debug_actor_empty` is a dead end
 
 `find_actors_incomplete()` (`class-actors.php:219`) writes `lwtv_debug_actor_empty` and an
 `actor_empty` status entry. Nothing reads either — no validator view, no CLI type, no cron
 day. It shows up in `current_status()` counts and nowhere else. Either wire it up or delete it.
+
+**WIRED UP (2026-08-26).** Kept rather than deleted, and given all four things it was
+missing: `validator/class-actor-empty.php` and a `TOOL_TABS` entry (as "Incomplete Actors"),
+a `switch` case in `settings_page()`, an `actor_empty` entry in the CLI check registry, and
+a slot on Thursday's cron run alongside the other two actor scans. It emits typed findings
+(`actor-no-image`, `actor-no-bio`) and diffs against a baseline like the rest.
+
+Its panel copy says out loud that this is a completeness report rather than a fault report —
+a brand new actor legitimately has neither a photo nor a bio yet, and a report that reads as
+an accusation is one people learn to ignore.
 
 ### 1.8 CLI exits 0 on failure (FIXED)
 
@@ -552,11 +645,11 @@ running a scan while an admin clicks "Rerun" on a different tab means one of the
 updates is lost. Low severity, easy fix: store per-check status as its own option, or use
 a single atomic write per check.
 
-### 2.4 Scans mutate data while claiming to only report
+### 2.4 Scans mutate data while claiming to only report (FIXED)
 
-See §8 — done for Shows, Characters and Actors. What remains is the wikidata cache writes
-(§8.4) and `migrate_ways_to_watch()`, which is a migration in the wrong place rather than a
-scan mutating data.
+See §8. Every scan is now detect-only. What remains is not a scan mutating data: the
+wikidata cache writes (§8.4), which want an explicit TTL, and
+`migrate_ways_to_watch()`, which is a migration in the wrong place.
 
 ---
 
@@ -565,22 +658,35 @@ scan mutating data.
 - **No capability check inside the validators.** `Show_Checker::make()` etc. rely entirely
   on `add_submenu_page( ..., 'upload_files', ... )`. Add a `current_user_can()` guard in
   each `make()`, since these methods are public statics that trigger expensive writes.
-- **Raw meta interpolated into HTML.** `'IMDb ID is invalid (ex: tt12345) -- ' . $imdb`,
-  `'... -- ' . $url`, `'Instagram ID is invalid -- ' . $check['insta']`. It's laundered
-  through `wp_kses_post()` at render time, but escape at construction instead
-  (`esc_html()` / `esc_url()`) — the strings also go to CLI and JSON output where kses
-  isn't applied.
-- **`</br>`** is not valid HTML. Used as the problem separator in every scanner. Should be
-  `<br />` — or better, keep `problem` as an **array** and let each renderer join it (see §5).
-- **Copy-paste bug**: `class-actors.php:162` reports the *Instagram* value in the Twitter
-  error message — `'Twitter ID is invalid -- ' . $check['insta']`.
-- **`isset()` on an assigned variable**: `class-shows.php:217`
-  `if ( isset( $pos_imdb ) && $pos_imdb === $check['imdb'] )` — always `true`. Also means a
-  show with *no* IMDb ID matches another with no IMDb ID → false "Likely Dupe".
+  **Still outstanding for the validators** — though the repair path added since does check:
+  `Debugger\Repair` requires `edit_post` on the specific post, on the grounds that reading
+  a report and changing a post are not the same right. The validators want the same
+  treatment, and it is one more thing the §7 collapse would fix in one place.
+- **Raw meta interpolated into HTML.** ~~Escape at construction instead.~~ **Resolved the
+  other way, deliberately (2026-08-26).** Escaping at construction was tried and reverted:
+  the admin renders through `wp_kses_post()`, so a pre-escaped string got escaped twice and
+  displayed its entities. Messages now carry raw values and each renderer escapes —
+  `wp_kses_post()` in the admin, `Findings::plain()` for the CLI, which also strips markup
+  and decodes entities. The concern was right; the fix belonged at the other end.
+- **`</br>`** is not valid HTML. Still the separator in the composed `problem` blob, which
+  the admin table has always been fed. But `problem` is now *derived*: rows carry `issues`
+  and raw `messages`, so a renderer can join them however it likes, and the CLI already
+  does. Fixing the blob itself is now a one-line change in `Findings::problem_from()`
+  whenever the admin table is next touched.
+- ~~**Copy-paste bug**: `class-actors.php:162` reports the *Instagram* value in the Twitter
+  error message.~~ **Fixed**, and now structurally prevented: `Actor_Rules::social()` takes
+  the platform as a parameter and derives both the meta key and the label from it, so the
+  two cases cannot drift apart again.
+- ~~**`isset()` on an assigned variable**: `class-shows.php:217` — always `true`, so a show
+  with *no* IMDb ID matched another with no IMDb ID → false "Likely Dupe".~~ **Fixed**, and
+  now covered by a regression test (`ShowRulesTest::test_two_missing_imdb_ids_are_not_a_match`).
 - **i18n**: `_n( 'show needs', 'shows need', $count )` in `class-show-checker.php:70` is
   missing the `'lwtv'` text domain, and the `translators:` comment above it references a
   `%s` that isn't there. CLAUDE.md requires the text domain on all user-facing strings.
-  Most of `debugger/` and `validator/` is un-internationalised.
+  Most of `debugger/` and `validator/` is un-internationalised — and the copy that moved
+  into `Issue_Registry` is not translated either. That is now the right place to fix it
+  once: one file holds every finding message, instead of the strings being scattered across
+  ten scanners.
 - **Alternate syntax**: the validator views use `<?php ... ?>` HTML interleaving with
   `if/else` braces (fine) but `debugger/` uses `if:`/`endif:` in a few spots — per your
   saved preference, new code should use braces.
@@ -724,23 +830,23 @@ meta only where it genuinely is not.
   baseline — the comment on `finalize()` shows someone thought this through
 - a documented "WP-CLI-free so a future wp-admin surface can reuse it" contract
 
-The classic debugger has none of that. Its findings are `array( url, id, problem )` where
-`problem` is an HTML-joined string blob. You cannot:
+The classic debugger had none of that. Its findings were `array( url, id, problem )` where
+`problem` was an HTML-joined string blob, so you could not:
 
-- tell a *new* problem from one that's been sitting there for six months
+- tell a *new* problem from one that had been sitting there for six months
 - acknowledge a known-fine false positive (the intersectionality note in
   `class-show-checker.php:76` is literally a human-readable workaround for this)
 - count or filter by issue type
 - see when something got fixed
 
-**This is the biggest win available.** Give every finding an `issue_type` from a registry,
-route all scanners through `Audit::finalize()`, and you get baselines, diffing, and
-acknowledgements across all ten checks for roughly the cost of reshaping the finding
-arrays. The tab badges become "3 new / 41 open" instead of a raw count that nobody can act on.
+**This was the biggest win available**, and it has largely landed — the first three of those
+four now work for every check except `watchurls`, and the tab badges read "4 new / 41" as
+hoped. But *not* by routing everything through `Audit::finalize()`; see below for why, and
+which half is still outstanding.
 
 ### Done differently (2026-08-26): the diff was extracted, `Audit` left alone
 
-Baselines and new/open/resolved now exist for the three converted checks, but **not** by
+Baselines and new/open/resolved now exist for every check except `watchurls`, but **not** by
 routing them through `Audit::finalize()`. The recommendation above was not taken, and the
 reasoning is worth recording because it will come up again:
 
@@ -838,13 +944,15 @@ topic against the constant, or at least log a one-time warning for unknown topic
 - **The "full scan or recheck" preamble** is copy-pasted ~7 times, verbatim, across
   `class-shows.php` (×3), `class-actors.php` (×4). ~20 lines each.
 - **The "save transient + update option + return"** epilogue is copy-pasted ~9 times.
-- **`php/validator/*.php`** is ten files of 102–107 lines that differ only in the
-  transient key, the nonce name, the tab slug, and three strings. (An eleventh,
-  `class-actor-wiki.php`, was the odd one out at 62 lines; deleted per 1.9a.)
+- **`php/validator/*.php`** is now **twelve** files of 102–107 lines that differ only in
+  the transient key, the nonce name, the tab slug, and three strings. (An earlier one,
+  `class-actor-wiki.php`, was the odd one out at 62 lines; deleted per 1.9a. The count went
+  *up* because 1.7 added `class-actor-empty.php` — written to the same template, which is
+  itself the argument for collapsing them.)
 
 All three collapse into a config array + one runner + one renderer. The `TOOL_TABS`
 constant in `Validation` is already 80% of the config you'd need — extend it with the
-transient key, the scanner callable, and the empty/error copy, then delete the ten files.
+transient key, the scanner callable, and the empty/error copy, then delete the twelve files.
 That also structurally prevents 1.2 (key mismatches) and 1.6 (orphan tabs) from recurring.
 
 ---
@@ -854,27 +962,29 @@ That also structurally prevents 1.2 (key mismatches) and 1.6 (orphan tabs) from 
 **Decisions taken:** repairs move behind `--fix-it`; wp-admin gets **per-finding fix
 links**; findings **advertise what a fix would do** before you run it.
 
-**Status: done for Shows, Characters and Actors** — detect/repair split (8.1–8.2), typed
-findings and the issue registry (8.3), the stray writes cleaned up (8.4), no transient
-migration needed (8.5), and both repair surfaces wired to the same registry. What is left
-is converting the other checks, and §5 (baselines, new/open/resolved, acknowledgements) on
-top of the shape this now provides.
+**Status: done.** Detect/repair split (8.1–8.2), typed findings and the issue registry
+(8.3), the stray writes cleaned up (8.4), no transient migration needed (8.5), and both
+repair surfaces wired to the same registry. All ten post-based checks are converted; only
+`watchurls` still emits the old shape. §5's baselines landed too, differently — see the note
+there.
 
-Per-finding fix links and "fixable" tagging both require findings to be individually
-addressable, which the current `array( url, id, problem )` shape can't do — `problem` is an
-HTML blob of several unrelated issues joined with `</br>`. So the §5 audit reshape is a
-**prerequisite**, not a follow-up. That reorders the plan (see below).
+The original reasoning, which held up: per-finding fix links and "fixable" tagging both
+require findings to be individually addressable, which `array( url, id, problem )` could not
+do — `problem` was an HTML blob of several unrelated issues joined with `</br>`. So the
+reshape was a prerequisite rather than a follow-up, and everything else in this section
+waited on it.
 
 ### 8.1 You already have the target pattern
 
-`class-onair.php` is the model — and it's the only scanner that got this right:
+`class-onair.php` was the model — the only scanner that got this right:
 
 - `find_on_air_problems()` detects and returns findings, touching nothing.
 - `fix_on_air_status( $show_id )` is a separate public method that performs one repair.
-- `cli-debug.php:365-376` already gates it behind `--fix-it` with a progress bar.
+- `cli-debug.php` already gated it behind `--fix-it` with a progress bar.
 
-Every other scanner should end up shaped like OnAir. This isn't a new pattern to invent,
-it's one to generalise.
+**Generalised as of 2026-08-26.** Every scanner is now shaped this way, and OnAir itself was
+converted to typed findings like the rest — its two issue types both point at
+`fix_on_air_status()`, which also gave it per-finding repair buttons in wp-admin.
 
 ### 8.2 Full inventory of writes to relocate
 
@@ -1262,13 +1372,14 @@ Everything in the **Done** table at the top has shipped. What's left, in the ord
    it moved to `wp lwtv debug watchurls` / the Watch Term Check tab, which probes the few
    hundred **term** URLs instead of the thousands of show URLs that resolve to them. Its
    stale `show_url` status entry is pruned by `wp lwtv migrate acf debugstatus`.
-7. **Decide `find_actors_incomplete()`** (1.7): wire it up or delete it.
+7. ~~**Decide `find_actors_incomplete()`** (1.7): wire it up or delete it.~~ **Wired up** —
+   tab, CLI entry, cron slot, typed findings. See §1.7.
 
 **The structural chunk (§8) — mostly done as of 2026-08-26:**
 
 8. ~~**Issue registry + typed findings** (§5, §8.3), including the transient shape migration
-   (§8.5).~~ **Done** for Shows, Characters and Actors. No migration was needed; the shape
-   is a superset. See §8.3.
+   (§8.5).~~ **Done** for every check except `watchurls` (item 14). No migration was
+   needed; the shape is a superset. See §8.3.
 9. ~~**Route findings through `Audit::finalize()`** (§5)~~ — **done differently.** Baselines
    and new/open/resolved shipped as a pure `Build\Baseline` plus `Baseline_Store`, leaving
    `Audit` alone; see the §5 note for why. **Acknowledgements are half done**: the mechanism
@@ -1282,17 +1393,37 @@ Everything in the **Done** table at the top has shipped. What's left, in the ord
     three scanners down to ~35 lines of orchestration. The unconverted checks (item 14)
     still detect inline.
 11. ~~**Move the writes to a repair layer** (§8.2) behind `--fix-it`, plus per-finding admin
-    fix links (§8.1).~~ **Done**, both surfaces, for all three converted checks.
-12. **Collapse the ten validator files** (§7). The CLI registry and the `Watch_Hosts`
+    fix links (§8.1).~~ **Done**, both surfaces. Every write that a scan used to perform is
+    now a registered repair, and `on_air` picked up admin buttons when it was converted.
+12. **Collapse the twelve validator files** (§7). The CLI registry and the `Watch_Hosts`
     extraction are both precedents to copy — and `Validation::problem_cell()` is now a third,
     since the per-issue rendering lives in one place rather than ten.
 13. Add the missing checks to the cron rotation — including `waystowatch enrich`, which is
     safe to run weekly since it skips anything already asked.
-14. **Convert the remaining checks to typed findings**: `byq`, `queers`, `dupes`, `on_air`,
-    both IMDb checks, and `find_actors_incomplete()` if item 7 keeps it. `watchurls` is the
-    awkward one — term-shaped findings need `id` generalised into `object_id` +
+14. ~~**Convert the remaining checks to typed findings**~~ — **done for all the post-based
+    ones (2026-08-26)**: `byq`, `queers`, `dupes`, `on_air`, both IMDb checks and
+    `actor_empty`. Every check except `watchurls` now emits typed findings and diffs against
+    a baseline, so ten of eleven report "N new / M open". **`watchurls` is still outstanding**
+    and is the awkward one — term-shaped findings need `id` generalised into `object_id` +
     `object_type`, which is the first change that will actually require §8.5's version
     marker.
+
+    Worth knowing about that pass:
+
+    - **`on_air` gained admin repair buttons for free.** Its two new issue types both point
+      at `OnAir::fix_on_air_status()`, the same method that has always backed `--fix-it`,
+      so registering them also made it available per finding in wp-admin.
+    - **`dupes` is typed per post type** (`show-is-duplicate` / `actor-is-duplicate`),
+      because it is the only check spanning two, and a finding's level is what decides which
+      cache an admin repair prunes and which tab it returns to. Its `name` key survives —
+      `cli-dupes.php` names it as an output column.
+    - **Two messages still carry markup deliberately.** BYQ embeds an edit link and `dupes`
+      links to the original; both have always rendered in the admin table, and
+      `Findings::plain()` strips them for the CLI. The relevant IDs are in `context` so a
+      renderer can build the links properly later.
+    - **A latent bug in the BYQ reporting gate was found and then fixed** once the intent
+      was confirmed — the typed findings are what made it fixable, since the gate can now
+      count only the findings it is actually about. See §1.9c.
 15. **Give the wikidata cache writes an explicit TTL** (§8.4). Still incidental side effects
     of a comparison.
 

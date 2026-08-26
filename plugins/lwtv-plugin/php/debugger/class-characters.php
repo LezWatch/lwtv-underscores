@@ -12,6 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 use LWTV\Debugger\Build\Character_Rules;
+use LWTV\Debugger\Build\Findings;
 use LWTV\Debugger\Collect\Character_Collector;
 use LWTV\Debugger\Format\Rows;
 use LWTV\Queeries\Post_Type;
@@ -40,6 +41,10 @@ class Characters {
 		// The array we will be checking.
 		$characters = array();
 
+		// A recheck only revisits the posts already flagged, so it is tagged
+		// against the baseline rather than diffed against it. See tag_only().
+		$is_recheck = ! empty( $items );
+
 		// Are we a full scan or a recheck?
 		if ( ! empty( $items ) ) {
 			// Check only the characters from items!
@@ -66,22 +71,27 @@ class Characters {
 		// Make sure we don't have dupes.
 		$characters = array_unique( $characters );
 
-		// reset items since we recheck off $characters.
-		$items = array();
+		$findings = array();
 
 		foreach ( $characters as $char_id ) {
-			$problems = array();
+			$death_findings = array();
+			$trope_findings = array();
 
 			// Check for missing death year meta data
 			$death_rows = get_field( 'lezchars_death_year', $char_id );
 			$death_year = is_array( $death_rows ) ? array_filter( array_column( $death_rows, 'date' ) ) : array();
 			if ( empty( $death_year ) ) {
-				$problems[] = 'Character marked as dead but missing lezchars_death_year meta data.';
+				$death_findings[] = Findings::make( $char_id, CPT_Characters::SLUG, 'char-no-death-year' );
 			}
 
 			$shows = get_field( 'lezchars_show_group', $char_id );
 
-			// If there are no shows, skip.
+			/*
+			 * If there are no shows, skip -- including the death-year finding.
+			 * A dead character on no shows at all is a bigger problem than a
+			 * missing date, and the Characters check reports it as
+			 * `char-no-shows`.
+			 */
 			if ( empty( $shows ) ) {
 				continue;
 			}
@@ -96,25 +106,65 @@ class Characters {
 				$show_id = $each_show['show'];
 
 				if ( ! has_term( 'dead-queers', 'lez_tropes', $show_id ) ) {
-					$problems[] = 'There is no BYQ trope on the show <a href="/wp-admin/post.php?post=' . $each_show['show'] . '&action=edit">' . get_the_title( $each_show['show'] ) . '</a> (edit).';
+					/*
+					 * The edit link stays inside the message. It is markup in
+					 * data, which the typed shape is meant to get away from --
+					 * but the admin table has always rendered it, dropping it
+					 * would lose a click editors use, and the CLI strips it now
+					 * anyway via Findings::plain(). The show ID is in `context`
+					 * so a renderer can build the link properly later.
+					 */
+					$trope_findings[] = Findings::make(
+						$char_id,
+						CPT_Characters::SLUG,
+						'char-show-no-byq-trope',
+						'There is no BYQ trope on the show <a href="/wp-admin/post.php?post=' . $show_id . '&action=edit">' . get_the_title( $show_id ) . '</a> (edit).',
+						array( 'show_id' => (int) $show_id )
+					);
 				}
 			}
 
-			// Check if we have any problems, and the character isn't marked dead on at least ONE show.
-			if ( ! empty( $problems ) && ( count( $shows ) - count( $problems ) ) !== 1 ) {
-				$items[] = array(
-					'url'     => get_permalink( $char_id ),
-					'id'      => $char_id,
-					'problem' => implode( '</br>', $problems ),
-				);
+			/*
+			 * A missing death year is a data gap whatever the tropes look like.
+			 *
+			 * It used to be counted into the gate below, which meant it could
+			 * cancel itself out: a dead character with no death year, whose shows
+			 * were otherwise correctly tropes, was silently dropped from this
+			 * report. See DEBUGGER-REVIEW 1.9c.
+			 */
+			$findings = array_merge( $findings, $death_findings );
+
+			/*
+			 * Exactly one of a dead character's shows should carry the BYQ trope:
+			 * the one she was killed on. Being on other shows that never killed
+			 * her is normal, and those shows legitimately have no trope -- which
+			 * is why a per-show "missing trope" finding cannot be reported on its
+			 * own merits.
+			 *
+			 * So the invariant is on the shows that DO have it. One is right.
+			 * None means nobody recorded the death on the show it happened on.
+			 * More than one means two of her shows claim a queer death, which
+			 * may be legitimate (a show can kill someone else) but is worth an
+			 * eyeball -- and reports nothing anyway, since with nothing missing
+			 * there are no findings to show.
+			 */
+			$shows_with_trope = count( $shows ) - count( $trope_findings );
+
+			if ( 1 !== $shows_with_trope ) {
+				$findings = array_merge( $findings, $trope_findings );
 			}
 		}
+
+		$diff  = $is_recheck
+			? Baseline_Store::tag_only( 'byq_problems', $findings )
+			: Baseline_Store::apply( 'byq_problems', $findings );
+		$items = Rows::from_findings( $diff['findings'] );
 
 		// Save Transient
 		lwtv_plugin()->set_transient( self::TRANSIENT_BYQ, $items, WEEK_IN_SECONDS );
 
 		// Update Options
-		Status::record( 'byq_problems', 'Bury Your Queers Problems', count( $items ) );
+		Status::record( 'byq_problems', 'Bury Your Queers Problems', count( $items ), $diff['summary'] );
 
 		return $items;
 	}

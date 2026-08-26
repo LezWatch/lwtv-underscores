@@ -11,6 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 use LWTV\_Components\Debugger as Debug_Tool;
 use LWTV\CPTs\Shows as CPT_Shows;
+use LWTV\Debugger\Build\Findings;
 use LWTV\Debugger\Build\Show_Rules;
 use LWTV\Debugger\Collect\Show_Collector;
 use LWTV\Debugger\Format\Rows;
@@ -205,6 +206,10 @@ class Shows {
 		// The array we will be checking.
 		$shows = array();
 
+		// A recheck only revisits the posts already flagged, so it is tagged
+		// against the baseline rather than diffed against it. See tag_only().
+		$is_recheck = ! empty( $items );
+
 		// Are we a full scan or a recheck?
 		if ( ! empty( $items ) ) {
 			// Check only the shows from items!
@@ -227,24 +232,21 @@ class Shows {
 		// Make sure we don't have dupes.
 		$shows = array_unique( $shows );
 
-		// reset items since we recheck off $shows.
-		$items = array();
+		$findings = array();
 
 		foreach ( $shows as $show_id ) {
-
-			$problems = array();
 
 			$imdb = get_post_meta( $show_id, 'lezshows_imdb', true );
 
 			if ( empty( $imdb ) ) {
 				// Check for IMDb existing at all, unless it's a web-series.
 				if ( ! has_term( 'web-series', 'lez_formats', $show_id ) ) {
-					$problems[] = 'IMDb ID is not set.';
+					$findings[] = Findings::make( $show_id, CPT_Shows::SLUG, 'show-imdb-not-set' );
 				}
 			} elseif ( Debug_Tool::validate_imdb( $imdb, 'show' ) === false ) {
 				// - IMDb IDs should be valid for the space they're in, e.g. "nm"
 				// and digits for people (props Jamie).
-				$problems[] = 'IMDb ID is invalid (ex: tt12345) -- ' . $imdb;
+				$findings[] = Findings::make( $show_id, CPT_Shows::SLUG, 'show-imdb-invalid', 'IMDb ID is invalid (ex: tt12345) -- ' . $imdb, array( 'imdb' => $imdb ) );
 			} elseif ( ! get_post_meta( $show_id, 'lezshows_tvmaze_ignore', true ) ) {
 				// IMDb reassigns title IDs and leaves the old one redirecting, so
 				// a stale ID still opens the right page in a browser while
@@ -264,28 +266,33 @@ class Shows {
 				$canonical = get_post_meta( $show_id, 'lezshows_imdb_canonical', true );
 
 				if ( Imdb_Canonical::is_stale( $imdb, $canonical ) ) {
-					$problems[] = 'IMDb ID disagrees with TVMaze -- ours is ' . $imdb
-						. ', TVMaze has ' . $canonical
-						. '. Ours has probably gone stale; check which is right, then correct it or '
-						. 'tick "Ignore TVMaze Match" on the show.';
+					$findings[] = Findings::make(
+						$show_id,
+						CPT_Shows::SLUG,
+						'show-imdb-stale',
+						'IMDb ID disagrees with TVMaze -- ours is ' . $imdb
+							. ', TVMaze has ' . $canonical
+							. '. Ours has probably gone stale; check which is right, then correct it or '
+							. 'tick "Ignore TVMaze Match" on the show.',
+						array(
+							'imdb'      => $imdb,
+							'canonical' => $canonical,
+						)
+					);
 				}
 			}
-
-			// If we added any problems, loop and add.
-			if ( ! empty( $problems ) ) {
-				$items[] = array(
-					'url'     => get_permalink( $show_id ),
-					'id'      => $show_id,
-					'problem' => implode( '</br>', $problems ),
-				);
-			}
 		}
+
+		$diff  = $is_recheck
+			? Baseline_Store::tag_only( 'show_imdb', $findings )
+			: Baseline_Store::apply( 'show_imdb', $findings );
+		$items = Rows::from_findings( $diff['findings'] );
 
 		// Save Transient
 		lwtv_plugin()->set_transient( self::TRANSIENT_IMDB, $items, WEEK_IN_SECONDS );
 
 		// Update Options
-		Status::record( 'show_imdb', 'Shows without IMDb', count( $items ) );
+		Status::record( 'show_imdb', 'Shows without IMDb', count( $items ), $diff['summary'] );
 
 		return $items;
 	}

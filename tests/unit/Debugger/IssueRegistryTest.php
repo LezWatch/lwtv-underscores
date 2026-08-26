@@ -87,9 +87,27 @@ class IssueRegistryTest extends TestCase {
 				'actor-twitter-is-imdb',
 				'actor-homepage-is-wikipedia',
 				'actor-homepage-dupe-wiki',
+				'show-onair-no-data',
+				'show-onair-mismatch',
 			),
 			Issue_Registry::fixable_types()
 		);
+	}
+
+	public function test_the_two_on_air_issues_share_one_repair(): void {
+		// Both are "the stored status disagrees with the airdates", and the same
+		// method recalculates it either way.
+		$this->assertSame(
+			Issue_Registry::fix_callable( 'show-onair-no-data' ),
+			Issue_Registry::fix_callable( 'show-onair-mismatch' )
+		);
+	}
+
+	public function test_duplicates_are_typed_per_post_type(): void {
+		// The dupes check spans both, and a finding's level decides which cache
+		// an admin repair prunes and which tab it returns to.
+		$this->assertSame( 'show', Issue_Registry::level( 'show-is-duplicate' ) );
+		$this->assertSame( 'actor', Issue_Registry::level( 'actor-is-duplicate' ) );
 	}
 
 	/*

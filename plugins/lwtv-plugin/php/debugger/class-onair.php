@@ -15,6 +15,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 use LWTV\CPTs\Shows as CPT_Shows;
 use LWTV\CPTs\Shows\Airdates;
+use LWTV\Debugger\Build\Findings;
+use LWTV\Debugger\Format\Rows;
 use LWTV\Queeries\Post_Type;
 
 class OnAir {
@@ -31,6 +33,10 @@ class OnAir {
 	 */
 	public function find_on_air_problems( $items = array() ): array {
 		$shows = array();
+
+		// A recheck only revisits the posts already flagged, so it is tagged
+		// against the baseline rather than diffed against it. See tag_only().
+		$is_recheck = ! empty( $items );
 
 		// Are we a full scan or a recheck?
 		if ( ! empty( $items ) ) {
@@ -53,8 +59,7 @@ class OnAir {
 		// Make sure we don't have dupes.
 		$shows = array_unique( $shows );
 
-		// reset items since we recheck off $characters.
-		$items = array();
+		$findings = array();
 
 		// Loop through the shows and check on-air meta versus the actual airdates
 		foreach ( $shows as $show_id ) {
@@ -62,30 +67,36 @@ class OnAir {
 			$on_air_actual = $this->check_if_on_air( $show_id );
 
 			if ( empty( $on_air_meta ) || empty( $on_air_actual ) ) {
-				$items[] = array(
-					'url'     => get_permalink( $show_id ),
-					'id'      => $show_id,
-					'problem' => 'Show has no on-air meta data and/or airdates.',
-				);
+				$findings[] = Findings::make( $show_id, CPT_Shows::SLUG, 'show-onair-no-data' );
 				continue;
 			}
 
 			// If on-air meta doesn't match the actual on-air status, add to items.
 			// Ignore case for the meta value.
 			if ( strtolower( $on_air_meta ) !== strtolower( $on_air_actual ) ) {
-				$items[] = array(
-					'url'     => get_permalink( $show_id ),
-					'id'      => $show_id,
-					'problem' => 'On-air meta (' . $on_air_meta . ') does not match actual on-air status (' . $on_air_actual . ').',
+				$findings[] = Findings::make(
+					$show_id,
+					CPT_Shows::SLUG,
+					'show-onair-mismatch',
+					'On-air meta (' . $on_air_meta . ') does not match actual on-air status (' . $on_air_actual . ').',
+					array(
+						'meta'   => $on_air_meta,
+						'actual' => $on_air_actual,
+					)
 				);
 			}
 		}
+
+		$diff  = $is_recheck
+			? Baseline_Store::tag_only( 'onair_problems', $findings )
+			: Baseline_Store::apply( 'onair_problems', $findings );
+		$items = Rows::from_findings( $diff['findings'] );
 
 		// Save Transient
 		lwtv_plugin()->set_transient( self::TRANSIENT_PROBLEMS, $items, WEEK_IN_SECONDS );
 
 		// Update Options
-		Status::record( 'onair_problems', 'On Air Checker', count( $items ) );
+		Status::record( 'onair_problems', 'On Air Checker', count( $items ), $diff['summary'] );
 
 		return $items;
 	}

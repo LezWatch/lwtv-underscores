@@ -9,6 +9,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+use LWTV\Debugger\Build\Findings;
+use LWTV\Debugger\Format\Rows;
 use LWTV\Queeries\Is_Actor_Queer;
 use LWTV\Queeries\Post_Type;
 use LWTV\CPTs\Characters as CPT_Characters;
@@ -30,6 +32,10 @@ class Queers {
 
 		// The array we will be checking.
 		$characters = array();
+
+		// A recheck only revisits the posts already flagged, so it is tagged
+		// against the baseline rather than diffed against it. See tag_only().
+		$is_recheck = ! empty( $items );
 
 		// Are we a full scan or a recheck?
 		if ( ! empty( $items ) ) {
@@ -53,8 +59,7 @@ class Queers {
 		// Make sure we don't have dupes.
 		$characters = array_unique( $characters );
 
-		// reset items since we recheck off $characters.
-		$items = array();
+		$findings = array();
 
 		// If this is WP-CLI, setup progress bar.
 		if ( defined( 'WP_CLI' ) && WP_CLI ) {
@@ -67,8 +72,6 @@ class Queers {
 			if ( defined( 'WP_CLI' ) && WP_CLI ) {
 				$progress_bar->tick();
 			}
-
-			$problems = array();
 
 			// Get the actors...
 			$character_actors = get_field( 'lezchars_actor', $character ) ?: array();
@@ -89,22 +92,14 @@ class Queers {
 				}
 
 				if ( $actor_queer && ! $flagged_queer ) {
-					$problems[] = 'Missing Queer IRL tag';
+					$findings[] = Findings::make( $character, CPT_Characters::SLUG, 'char-missing-queer-irl' );
 				}
 
 				if ( ! $actor_queer && $flagged_queer ) {
-					$problems[] = 'No actor is queer';
+					$findings[] = Findings::make( $character, CPT_Characters::SLUG, 'char-no-queer-actor' );
 				}
 			} else {
-				$problems[] = 'No actors listed for this character';
-			}
-
-			if ( ! empty( $problems ) ) {
-				$items[] = array(
-					'url'     => get_permalink( $character ),
-					'id'      => $character,
-					'problem' => implode( '</br>', $problems ),
-				);
+				$findings[] = Findings::make( $character, CPT_Characters::SLUG, 'char-no-actors-listed' );
 			}
 		}
 
@@ -113,11 +108,16 @@ class Queers {
 			$progress_bar->finish();
 		}
 
+		$diff  = $is_recheck
+			? Baseline_Store::tag_only( 'queercheck', $findings )
+			: Baseline_Store::apply( 'queercheck', $findings );
+		$items = Rows::from_findings( $diff['findings'] );
+
 		// Save Transient
 		lwtv_plugin()->set_transient( self::TRANSIENT_QUEERCHECK, $items, WEEK_IN_SECONDS );
 
 		// Update Options
-		Status::record( 'queercheck', 'Queer Checker', count( $items ) );
+		Status::record( 'queercheck', 'Queer Checker', count( $items ), $diff['summary'] );
 
 		return $items;
 	}

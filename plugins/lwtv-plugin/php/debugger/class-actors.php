@@ -298,6 +298,10 @@ class Actors {
 		// The array we will be checking.
 		$actors = array();
 
+		// A recheck only revisits the posts already flagged, so it is tagged
+		// against the baseline rather than diffed against it. See tag_only().
+		$is_recheck = ! empty( $items );
+
 		// Are we a full scan or a recheck?
 		if ( ! empty( $items ) ) {
 			// Check only the actors from items!
@@ -320,35 +324,28 @@ class Actors {
 		// Make sure we don't have dupes.
 		$actors = array_unique( $actors );
 
-		// reset items since we recheck off $actors.
-		$items = array();
+		$findings = array();
 
 		foreach ( $actors as $actor_id ) {
-			$problems = array();
-
 			if ( ! has_post_thumbnail( $actor_id ) ) {
-				$problems[] = 'No image found.';
+				$findings[] = Findings::make( $actor_id, CPT_Actors::SLUG, 'actor-no-image' );
 			}
 
 			if ( empty( get_the_content( '', false, $actor_id ) ) ) {
-				$problems[] = 'No biography found.';
-			}
-
-			// If we added any problems, loop and add.
-			if ( ! empty( $problems ) ) {
-				$items[] = array(
-					'url'     => get_permalink( $actor_id ),
-					'id'      => $actor_id,
-					'problem' => implode( '</br>', $problems ),
-				);
+				$findings[] = Findings::make( $actor_id, CPT_Actors::SLUG, 'actor-no-bio' );
 			}
 		}
+
+		$diff  = $is_recheck
+			? Baseline_Store::tag_only( 'actor_empty', $findings )
+			: Baseline_Store::apply( 'actor_empty', $findings );
+		$items = Rows::from_findings( $diff['findings'] );
 
 		// Save Transient
 		lwtv_plugin()->set_transient( self::TRANSIENT_EMPTY, $items, WEEK_IN_SECONDS );
 
 		// Update Options
-		Status::record( 'actor_empty', 'Incomplete Actors', count( $items ) );
+		Status::record( 'actor_empty', 'Incomplete Actors', count( $items ), $diff['summary'] );
 
 		return $items;
 	}
@@ -363,6 +360,10 @@ class Actors {
 		// The array we will be checking.
 		$actors = array();
 
+		// A recheck only revisits the posts already flagged, so it is tagged
+		// against the baseline rather than diffed against it. See tag_only().
+		$is_recheck = ! empty( $items );
+
 		// Are we a full scan or a recheck?
 		if ( ! empty( $items ) ) {
 			// Check only the actors from items!
@@ -385,22 +386,19 @@ class Actors {
 		// Make sure we don't have dupes.
 		$actors = array_unique( $actors );
 
-		// reset items since we recheck off $actors.
-		$items = array();
+		$findings = array();
 
 		foreach ( $actors as $actor_id ) {
-
-			$problems = array();
 
 			$imdb = get_post_meta( $actor_id, 'lezactors_imdb', true );
 
 			if ( empty( $imdb ) ) {
 				// Check for IMDb existing at all...
-				$problems[] = 'IMDb ID is not set.';
+				$findings[] = Findings::make( $actor_id, CPT_Actors::SLUG, 'actor-imdb-not-set' );
 			} elseif ( Debug_Tool::validate_imdb( $imdb, 'actor' ) === false ) {
 				// - IMDb IDs should be valid for the space they're in, e.g. "nm"
 				// and digits for people (props Jamie).
-				$problems[] = 'IMDb ID is invalid (ex: nm12345) -- ' . $imdb;
+				$findings[] = Findings::make( $actor_id, CPT_Actors::SLUG, 'actor-imdb-invalid', 'IMDb ID is invalid (ex: nm12345) -- ' . $imdb, array( 'imdb' => $imdb ) );
 			} else {
 				// Same staleness check as shows, oracled against TMDB rather than
 				// TVMaze because that is the third party whose person IDs we
@@ -409,27 +407,32 @@ class Actors {
 				$canonical = get_post_meta( $actor_id, 'lezactors_imdb_canonical', true );
 
 				if ( Imdb_Canonical::is_stale( $imdb, $canonical ) ) {
-					$problems[] = 'IMDb ID disagrees with TMDB -- ours is ' . $imdb
-						. ', TMDB has ' . $canonical
-						. '. Ours has probably gone stale; check which is right before correcting it.';
+					$findings[] = Findings::make(
+						$actor_id,
+						CPT_Actors::SLUG,
+						'actor-imdb-stale',
+						'IMDb ID disagrees with TMDB -- ours is ' . $imdb
+							. ', TMDB has ' . $canonical
+							. '. Ours has probably gone stale; check which is right before correcting it.',
+						array(
+							'imdb'      => $imdb,
+							'canonical' => $canonical,
+						)
+					);
 				}
 			}
-
-			// If we added any problems, loop and add.
-			if ( ! empty( $problems ) ) {
-				$items[] = array(
-					'url'     => get_permalink( $actor_id ),
-					'id'      => $actor_id,
-					'problem' => implode( '</br>', $problems ),
-				);
-			}
 		}
+
+		$diff  = $is_recheck
+			? Baseline_Store::tag_only( 'actor_imdb', $findings )
+			: Baseline_Store::apply( 'actor_imdb', $findings );
+		$items = Rows::from_findings( $diff['findings'] );
 
 		// Save Transient
 		lwtv_plugin()->set_transient( self::TRANSIENT_IMDB, $items, WEEK_IN_SECONDS );
 
 		// Update Options
-		Status::record( 'actor_imdb', 'Actors without IMDb', count( $items ) );
+		Status::record( 'actor_imdb', 'Actors without IMDb', count( $items ), $diff['summary'] );
 
 		return $items;
 	}

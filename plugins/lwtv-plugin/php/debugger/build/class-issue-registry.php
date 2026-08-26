@@ -42,6 +42,11 @@ class Issue_Registry {
 	private const ACTORS = '\LWTV\Debugger\Actors';
 
 	/**
+	 * Class holding the on-air repair.
+	 */
+	private const ONAIR = '\LWTV\Debugger\OnAir';
+
+	/**
 	 * Every issue we know how to report.
 	 *
 	 * - level:     'show' | 'character' | 'actor'. Which CPT the finding is about.
@@ -248,6 +253,108 @@ class Issue_Registry {
 		'actor-shadow-sync-failed'    => array(
 			'level'   => 'actor',
 			'message' => 'Shadow taxonomy sync failed repeatedly.',
+		),
+
+		/*
+		 * Bury Your Queers (the `byq` check).
+		 */
+		'char-no-death-year'          => array(
+			'level'   => 'character',
+			'message' => 'Character marked as dead but missing lezchars_death_year meta data.',
+		),
+		'char-show-no-byq-trope'      => array(
+			'level'   => 'character',
+			'message' => 'A show this character is on has no BYQ trope.',
+		),
+
+		/*
+		 * Queer consistency (the `queers` check).
+		 */
+		'char-missing-queer-irl'      => array(
+			'level'   => 'character',
+			'message' => 'Missing Queer IRL tag.',
+		),
+		'char-no-queer-actor'         => array(
+			'level'   => 'character',
+			'message' => 'Tagged Queer IRL, but no actor is queer.',
+		),
+		'char-no-actors-listed'       => array(
+			'level'   => 'character',
+			'message' => 'No actors listed for this character.',
+		),
+
+		/*
+		 * Duplicates (the `dupes` check). Two types rather than one, because a
+		 * finding's level decides which cache an admin repair prunes and which
+		 * tab it returns to -- and this check spans two post types.
+		 *
+		 * `acknowledged_by` is the pre-existing editor override, which predates
+		 * the mechanism: somebody has already confirmed this is not a duplicate.
+		 */
+		'show-is-duplicate'           => array(
+			'level'   => 'show',
+			'message' => 'This show is a duplicate of another.',
+		),
+		'actor-is-duplicate'          => array(
+			'level'   => 'actor',
+			'message' => 'This actor is a duplicate of another.',
+		),
+
+		/*
+		 * On air (the `on_air` check). Both repairable, by the same method that
+		 * has always backed `--fix-it` for this check.
+		 */
+		'show-onair-no-data'          => array(
+			'level'     => 'show',
+			'message'   => 'Show has no on-air meta data and/or airdates.',
+			'fix'       => array( self::ONAIR, 'fix_on_air_status' ),
+			'fix_label' => 'recalculates the on-air status from the airdates',
+		),
+		'show-onair-mismatch'         => array(
+			'level'     => 'show',
+			'message'   => 'On-air meta does not match the actual on-air status.',
+			'fix'       => array( self::ONAIR, 'fix_on_air_status' ),
+			'fix_label' => 'recalculates the on-air status from the airdates',
+		),
+
+		/*
+		 * IMDb (the `show_imdb` and `actor_imdb` checks).
+		 */
+		'show-imdb-not-set'           => array(
+			'level'   => 'show',
+			'message' => 'IMDb ID is not set.',
+		),
+		'show-imdb-invalid'           => array(
+			'level'   => 'show',
+			'message' => 'IMDb ID is invalid (ex: tt12345).',
+		),
+		'show-imdb-stale'             => array(
+			'level'   => 'show',
+			'message' => 'IMDb ID disagrees with TVMaze.',
+		),
+		'actor-imdb-not-set'          => array(
+			'level'   => 'actor',
+			'message' => 'IMDb ID is not set.',
+		),
+		'actor-imdb-invalid'          => array(
+			'level'   => 'actor',
+			'message' => 'IMDb ID is invalid (ex: nm12345).',
+		),
+		'actor-imdb-stale'            => array(
+			'level'   => 'actor',
+			'message' => 'IMDb ID disagrees with TMDB.',
+		),
+
+		/*
+		 * Incomplete actors (the `actor_empty` check).
+		 */
+		'actor-no-image'              => array(
+			'level'   => 'actor',
+			'message' => 'No image found.',
+		),
+		'actor-no-bio'                => array(
+			'level'   => 'actor',
+			'message' => 'No biography found.',
 		),
 	);
 

@@ -250,6 +250,8 @@ class WP_CLI_LWTV_Generate {
 				( new Actors_Debugger() )->find_actors_problems();
 				\WP_CLI::log( 'Debugger: Checking actors for iMDB...' );
 				( new Actors_Debugger() )->find_actors_no_imdb();
+				\WP_CLI::log( 'Debugger: Checking actors for photos and bios...' );
+				( new Actors_Debugger() )->find_actors_incomplete();
 				break;
 			case 'fri':
 				\WP_CLI::log( 'Debugger: Checking all characters...' );

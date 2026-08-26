@@ -12,6 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 use LWTV\Validator\Actor_Checker;
+use LWTV\Validator\Actor_Empty;
 use LWTV\Validator\Actor_IMDb;
 use LWTV\Validator\BYQ_Checker;
 use LWTV\Validator\Character_Checker;
@@ -68,6 +69,11 @@ class Validation {
 			'name'   => 'Shows Info',
 			'desc'   => 'Checks that all information for shows appears correct. Like do they have characters and ratings etc, does intersectionality seem to match.',
 			'option' => 'show_problems',
+		),
+		'actor_empty'       => array(
+			'name'   => 'Incomplete Actors',
+			'desc'   => 'Actors with no photo or no biography. A completeness report rather than a fault report - a brand new actor legitimately has neither yet.',
+			'option' => 'actor_empty',
 		),
 		'actor_imdb'        => array(
 			'name'   => 'Actors missing IMDb',
@@ -205,6 +211,9 @@ class Validation {
 				switch ( $active_tab ) {
 					case 'tab_actor_checker':
 						( new Actor_Checker() )->make();
+						break;
+					case 'tab_actor_empty':
+						Actor_Empty::make();
 						break;
 					case 'tab_actor_imdb':
 						( new Actor_IMDb() )->make();
