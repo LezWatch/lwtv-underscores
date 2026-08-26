@@ -107,6 +107,11 @@ the count now points at an occupied slot. Derive the index from the actual `_N_u
 | Recheck button | Cache the host scan in a transient; tri-state `Run Scan` / `Recheck`, following the Pattern A used by the other nine tabs. |
 | Term dropdown | One `<select>` per row, options cloned from a single shared `<template>` by a small admin JS file. |
 | Table contents | Problems only. A host with a term is not a problem and is not rendered. No "show resolved" view. |
+| Stored scheme | `https://` only, one row per host. The matcher is scheme-blind after Phase 1, so a second row is dead weight. Phase 0 rewrites stored `http://` rows. |
+| URL-less terms | Legitimate (prep for a coming network). `Watch_URLs::terms_without_urls()` gets deleted. |
+| `$min_shows` | Stays at 1. No threshold, no `?min=` arg — a floor would make the problem set silently incomplete. |
+
+Every question this plan opened is answered. Nothing below is waiting on a decision.
 
 ---
 
@@ -391,6 +396,8 @@ than recomputing `unregistered()`.
 - [ ] JS disabled: create-new still works, `<noscript>` notice present.
 - [ ] Keyboard-only pass through one row: select → name field → submit; labels announced.
 - [ ] A user with `upload_files` but not `manage_categories` sees the list and no forms.
+- [ ] `attach_host()` writes exactly one `https://` row per host; no `http://` rows remain after Phase 0's normalise pass.
+- [ ] `terms_without_urls()` gone; `tab_watch_term_check` no longer reports URL-less terms and its badge count reflects that.
 - [ ] `composer lint` and `npm run lint:js` clean.
 
 ## Out of scope
@@ -418,25 +425,33 @@ tab, and this is a decision, not an oversight:**
 Anything added here later needs to survive both of those, so a future "orphan terms" report
 would have to be opt-in and framed as inventory, not as a problem list.
 
-**⚠️ The neighbouring tab already disagrees with the first of these.**
+**Consequence: `terms_without_urls()` comes out.**
 `Debugger\Watch_URLs::terms_without_urls()` (`php/debugger/class-watch-urls.php:196-229`) reports
 every URL-less term as `STATUS_REVIEW` with the text *"This term has no URLs, so nothing can ever
-match it. Add a URL or delete the term."* — so `tab_watch_term_check` is actively telling an
-editor to delete the terms we have just decided are legitimate prep. Pick one:
+match it. Add a URL or delete the term."* — telling an editor to delete terms that are legitimate
+prep. **Delete the method and its call site.** The taxonomy listing's URL-count column already
+shows which terms have none.
 
-- **Reword it** to informational and drop it out of the findings count — cheapest, keeps the
-  visibility, stops the bad advice.
-- **Drop the check** entirely; the taxonomy listing's URL-count column already shows this.
+Watch for: the findings count on `tab_watch_term_check` will drop, and `Debugger\Status::record()`
+writes that count into `lwtv_debugger_status`, so the tab's badge changes. That is correct, not a
+regression. Update the method's doc comment references and the `find_bad_watch_urls()` caller
+rather than leaving a dangling private method. This is a small edit to a file the rest of this
+plan does not touch — call it out explicitly in the PR.
 
-Either way it is a small edit to a file this plan otherwise does not touch, and it should not be
-smuggled in silently — call it out in the PR.
+## Minimum show count — stays at 1
 
-## Open questions
+`Watch_Hosts::unregistered()` takes a `$min_shows` argument (`class-watch-hosts.php:390`) and the
+tab keeps passing the default of `1`. A domain used by exactly one show earns a row.
 
-1. **Minimum show count.** `unregistered()` takes `$min_shows` and the tab always passes the
-   default of 1. Worth exposing as a filter on the tab (`?min=2`) to push the one-off web-series
-   domains out of view, or leave it?
-2. **Should `attach_host()` write `http://` as well as `https://`?** Currently only the https
-   form is stored because the matcher tried both. After Phase 1 the matcher is scheme-blind
-   entirely, so one row per host is right — confirm nothing downstream depends on the stored
-   scheme (`Debugger\Watch_URLs` fetches it, so https-only is also the safer probe).
+**Do not add a threshold, a `?min=` arg, or a default of 2.** The table is the complete problem
+set, and a floor would make it silently incomplete — the same objection that killed the "show
+resolved" view. The rows are already sorted most-used-first (`in_use()` returns them `arsort`ed),
+so the hosts worth a term are at the top without hiding anything below them. The existing framing
+paragraph about web series leaving a permanent long tail (`class-watch-providers.php:103`) is what
+does the work here, and it stays.
+
+`wp lwtv waystowatch hosts --min-shows` remains for CLI triage. The tab does not need it.
+Nothing a reader sees depends on the stored scheme: the front end links the *show's* own URL and
+only borrows the term's name (`theme/class-ways-to-watch.php:90`). The term URL is used for
+matching and for `Debugger\Watch_URLs` probes, so forcing https means an http-only provider gets
+reported as broken — which is the correct outcome, not a false positive.

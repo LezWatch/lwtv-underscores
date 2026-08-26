@@ -44,6 +44,7 @@ class Rows {
 				'problem'   => $row['problem'],
 				'post_type' => $row['post_type'],
 				'issues'    => $row['issues'],
+				'messages'  => $row['messages'],
 				'fixable'   => $row['fixable'],
 			);
 		}

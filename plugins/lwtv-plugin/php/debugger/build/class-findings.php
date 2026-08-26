@@ -90,9 +90,10 @@ class Findings {
 	/**
 	 * One finding's message with its repair advertised inline.
 	 *
-	 * Until findings are individually addressable in the admin, this is how a
-	 * report says a problem can be repaired. It is composed here rather than
-	 * baked into the message so the message itself stays clean data.
+	 * This is how a *text* report says a problem can be repaired -- the CLI, and
+	 * anywhere the `problem` blob is printed. The admin table renders a button
+	 * per issue instead, so it uses the raw message and does not call this. Kept
+	 * out of the message itself either way, so the message stays clean data.
 	 *
 	 * @param  array $finding Finding array.
 	 * @return string
@@ -107,6 +108,85 @@ class Findings {
 		$label = (string) ( $finding['fix_label'] ?? '' );
 
 		return ( '' === $label ) ? $message : $message . ' — fixable, ' . $label . '.';
+	}
+
+	/**
+	 * Compose the `problem` blob from a row's parallel issues/messages lists.
+	 *
+	 * Rows store raw messages, so the fixability prose is composed on the way
+	 * out. That means a row can be rebuilt after one issue is repaired without
+	 * string-surgery on the blob -- which was the thing making per-issue admin
+	 * repairs impossible.
+	 *
+	 * @param  array $issues   Issue types, in order.
+	 * @param  array $messages Raw messages, same order.
+	 * @return string
+	 */
+	public static function problem_from( array $issues, array $messages ): string {
+		$described = array();
+		$types     = array_values( $issues );
+
+		foreach ( array_values( $messages ) as $index => $message ) {
+			$issue_type = (string) ( $types[ $index ] ?? '' );
+
+			$described[] = self::describe(
+				array(
+					'message'   => $message,
+					'fixable'   => Issue_Registry::is_fixable( $issue_type ),
+					'fix_label' => Issue_Registry::fix_label( $issue_type ),
+				)
+			);
+		}
+
+		return implode( self::SEPARATOR, $described );
+	}
+
+	/**
+	 * A row with one issue type repaired and removed.
+	 *
+	 * Lets a single admin repair prune the cached findings instead of dropping
+	 * the whole transient, which would force a full rescan of every post in the
+	 * CPT on the next page view.
+	 *
+	 * @param  array  $row        A row from group_by_post()/Rows::from_findings().
+	 * @param  string $issue_type Issue type that was repaired.
+	 * @return array  The updated row, or empty when nothing is left to report.
+	 */
+	public static function without_issue( array $row, string $issue_type ): array {
+		$issues   = array_values( (array) ( $row['issues'] ?? array() ) );
+		$messages = array_values( (array) ( $row['messages'] ?? array() ) );
+
+		// No per-issue data: a pre-reshape cached row. There is nothing to prune
+		// surgically, and guessing would corrupt the row, so leave it alone.
+		if ( empty( $issues ) ) {
+			return $row;
+		}
+
+		$kept_issues   = array();
+		$kept_messages = array();
+
+		foreach ( $issues as $index => $type ) {
+			if ( $type === $issue_type ) {
+				continue;
+			}
+
+			$kept_issues[]   = $type;
+			$kept_messages[] = $messages[ $index ] ?? Issue_Registry::message( $type );
+		}
+
+		if ( empty( $kept_issues ) ) {
+			return array();
+		}
+
+		$row['issues']   = $kept_issues;
+		$row['messages'] = $kept_messages;
+		$row['problem']  = self::problem_from( $kept_issues, $kept_messages );
+
+		// Through fixable_issues() so cached junk is filtered the same way here
+		// as it is on read, and a retired repair cannot survive a prune.
+		$row['fixable'] = array_values( array_unique( self::fixable_issues( array( 'fixable' => $kept_issues ) ) ) );
+
+		return $row;
 	}
 
 	/**
@@ -144,7 +224,7 @@ class Findings {
 			$issue_type = (string) ( $finding['issue_type'] ?? '' );
 
 			$rows[ $post_id ]['issues'][]   = $issue_type;
-			$rows[ $post_id ]['messages'][] = self::describe( $finding );
+			$rows[ $post_id ]['messages'][] = (string) ( $finding['message'] ?? '' );
 
 			// A post can carry the same fixable issue only once, and the fixer
 			// is keyed on the type, so duplicates here would fix twice.
@@ -153,10 +233,10 @@ class Findings {
 			}
 		}
 
-		// Compose the blob last so the messages array stays the source of truth.
+		// Compose the blob last, and keep the messages: they are what lets a row
+		// be rebuilt when one issue is repaired.
 		foreach ( $rows as $post_id => $row ) {
-			$rows[ $post_id ]['problem'] = implode( self::SEPARATOR, $row['messages'] );
-			unset( $rows[ $post_id ]['messages'] );
+			$rows[ $post_id ]['problem'] = self::problem_from( $row['issues'], $row['messages'] );
 		}
 
 		return $rows;

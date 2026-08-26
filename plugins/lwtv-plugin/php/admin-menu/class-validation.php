@@ -23,6 +23,7 @@ use LWTV\Validator\OnAir_Checker;
 use LWTV\Validator\Watch_Providers;
 use LWTV\Validator\Watch_Term_Check;
 
+use LWTV\Debugger\Repair;
 use LWTV\Debugger\Status;
 use LWTV\Debugger\Watch_URLs;
 
@@ -185,6 +186,8 @@ class Validation {
 
 			<div id="dashboard" class="lwtvtab">
 				<?php
+				// One place, so every tab reports the result of a repair.
+				Repair::show_notice();
 
 				switch ( $active_tab ) {
 					case 'tab_actor_checker':
@@ -252,6 +255,9 @@ class Validation {
 				$time = date_i18n( get_option( 'date_format' ), $published );
 			}
 
+			$problem = self::problem_cell( $item );
+
+			// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped -- problem_cell() escapes every part it assembles, and the repair buttons are form markup wp_kses_post() would strip.
 			echo '
 			<tr class="' . esc_attr( $class ) . '">
 				<td><strong><a href="' . esc_url( get_edit_post_link( (int) $item['id'] ) ) . '" target="_new">' . wp_kses_post( get_the_title( (int) $item['id'] ) ) . '</a></strong>
@@ -259,12 +265,48 @@ class Validation {
 				<div class="row-actions"><span class="edit"><a href="' . esc_url( get_edit_post_link( (int) $item['id'] ) ) . '" aria-label="Edit ' . wp_kses_post( get_the_title( (int) $item['id'] ) ) . '">Edit</a>
 				| </span><span class="view"><a href="' . esc_url( get_permalink( (int) $item['id'] ) ) . '" rel="bookmark" aria-label="View ' . wp_kses_post( get_the_title( (int) $item['id'] ) ) . '">View</a></span></div>
 				</td>
-				<td>' . wp_kses_post( $item['problem'] ) . '</td>
+				<td>' . $problem . '</td>
 				<td>' . esc_html( $time ) . '<br/>(' . esc_html( $time_diff ) . ' ago)</td>
 			</tr>
 			';
+			// phpcs:enable WordPress.Security.EscapeOutput.OutputNotEscaped
 			++$number;
 		}
+	}
+
+	/**
+	 * The Problem cell for one finding row.
+	 *
+	 * Typed rows are rendered one issue per line, each with its own repair
+	 * button where a repair exists. Rows cached before findings were typed have
+	 * no `issues` key, so they fall back to the pre-rendered `problem` blob --
+	 * which is also what checks that have not been converted yet still send.
+	 *
+	 * @param  array  $item One finding row.
+	 * @return string Escaped markup.
+	 */
+	private static function problem_cell( array $item ): string {
+		$issues   = isset( $item['issues'] ) && is_array( $item['issues'] ) ? array_values( $item['issues'] ) : array();
+		$messages = isset( $item['messages'] ) && is_array( $item['messages'] ) ? array_values( $item['messages'] ) : array();
+
+		if ( empty( $issues ) || empty( $messages ) ) {
+			return wp_kses_post( $item['problem'] ?? '' );
+		}
+
+		$post_id = (int) $item['id'];
+		$lines   = array();
+
+		foreach ( $messages as $index => $message ) {
+			$issue_type = (string) ( $issues[ $index ] ?? '' );
+			$button     = Repair::button( $post_id, $issue_type );
+
+			$lines[] = '<div class="lwtv-debug-issue">'
+				. wp_kses_post( $message )
+				. ( '' !== $button ? ' ' . $button : '' )
+				. '</div>';
+		}
+
+		return implode( '', $lines );
 	}
 
 	/**

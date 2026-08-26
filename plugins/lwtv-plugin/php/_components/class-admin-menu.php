@@ -14,6 +14,7 @@ use LWTV\Admin_Menu\Auto_Posting;
 use LWTV\Admin_Menu\Debugging;
 use LWTV\Admin_Menu\Exclusions;
 use LWTV\Admin_Menu\Validation;
+use LWTV\Debugger\Repair;
 use LWTV\Validator\Watch_Providers;
 use LWTV\Validator\Watch_Term_Check;
 
@@ -47,6 +48,7 @@ class Admin_Menu implements Component {
 		// reason the old data-check admin_post hook never worked.
 		( new Watch_Providers() )->init();
 		( new Watch_Term_Check() )->init();
+		( new Repair() )->init();
 	}
 
 	/*

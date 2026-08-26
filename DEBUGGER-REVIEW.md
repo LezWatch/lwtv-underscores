@@ -668,6 +668,12 @@ That also structurally prevents 1.2 (key mismatches) and 1.6 (orphan tabs) from 
 **Decisions taken:** repairs move behind `--fix-it`; wp-admin gets **per-finding fix
 links**; findings **advertise what a fix would do** before you run it.
 
+**Status: done for Shows, Characters and Actors** — detect/repair split (8.1–8.2), typed
+findings and the issue registry (8.3), the stray writes cleaned up (8.4), no transient
+migration needed (8.5), and both repair surfaces wired to the same registry. What is left
+is converting the other checks, and §5 (baselines, new/open/resolved, acknowledgements) on
+top of the shape this now provides.
+
 Per-finding fix links and "fixable" tagging both require findings to be individually
 addressable, which the current `array( url, id, problem )` shape can't do — `problem` is an
 HTML blob of several unrelated issues joined with `</br>`. So the §5 audit reshape is a
@@ -831,13 +837,34 @@ CLI `--fix-it` iterates findings where `fixable`, calls the registered callable.
 per-finding link is the same callable behind `admin_post_lwtv_debug_fix` with a nonce, the
 `issue_type`, and the `post_id`. One implementation, two surfaces.
 
-**CLI half is done** — `WP_CLI_LWTV_Debug::fix_item()` repairs each issue type the row
-names, so a run now fixes exactly what was found instead of calling one blunt per-post
-dispatcher. The check-level `fixer` entries stay as the fallback for pre-reshape cached
-rows (and for OnAir, which is genuinely check-level). **The admin half is not built**: it
-needs the `admin_post_lwtv_debug_fix` handler plus a link per issue in
-`Validation::table_content()`, which is where the one-row-per-post grouping will have to
-start showing individual issues.
+**Both halves are done (2026-08-26).** `WP_CLI_LWTV_Debug::fix_item()` repairs each issue
+type the row names, so a run fixes exactly what was found instead of calling one blunt
+per-post dispatcher. The check-level `fixer` entries stay as the fallback for pre-reshape
+cached rows (and for OnAir, which is genuinely check-level).
+
+The admin half is `debugger/class-repair.php` (`admin_post_lwtv_debug_fix`), rendered by
+`Validation::problem_cell()`: typed rows now print one issue per line with its own repair
+control, and untyped rows fall back to the `problem` blob, which is also what the
+unconverted checks still send. Three decisions in it:
+
+- **It is a form POST, not a link.** "Per-finding fix links" was the plan, but a repair
+  writes to the database and should not sit behind a URL a browser or crawler can prefetch.
+  `Watch_Providers` had already settled this for the same reason.
+- **A repair prunes the cached findings; it does not drop the transient.** Deleting it
+  would send the next viewer of that tab into a full rescan of every post in the CPT to
+  reflect one fixed field. `Findings::without_issue()` rewrites the row without that issue,
+  drops the row when it was the only problem, and the handler re-records the count so the
+  tab badge agrees with the table.
+- **Rows now also store raw `messages`.** This is what made per-issue admin repairs
+  possible at all: with only the joined blob there was no way to rebuild a row minus one
+  issue without string surgery. `problem` is composed from `issues` + `messages` on the way
+  out, so the fixability prose still reaches the CLI while the admin uses the raw message
+  next to a button. Additive again, so cached rows stay readable.
+- **Capability is `edit_post` on the post**, not the page's `upload_files`. Reading the
+  report and changing a post's data are not the same right (§3).
+
+A repair that declines — because the problem was already fixed by hand or by cron — still
+prunes the finding and says so, since the row was stale either way.
 
 Worth knowing about the fix counts: `apply_fixes()` still reports a row as unfixed when
 none of its issues had a repair, and that is now *accurate* rather than approximate —

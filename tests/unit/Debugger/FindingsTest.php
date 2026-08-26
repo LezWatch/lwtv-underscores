@@ -111,7 +111,18 @@ class FindingsTest extends TestCase {
 			'No genres.</br>No tropes set. — fixable, adds the "none" trope.',
 			$rows[10]['problem']
 		);
-		$this->assertArrayNotHasKey( 'messages', $rows[10] );
+	}
+
+	public function test_group_by_post_keeps_raw_messages(): void {
+		// The fixability prose belongs to the blob, not the stored message: the
+		// admin renders a button instead, and a row has to be rebuildable.
+		$rows = Findings::group_by_post(
+			array(
+				Findings::make( 10, 'post_type_shows', 'show-missing-trope' ),
+			)
+		);
+
+		$this->assertSame( array( 'No tropes set.' ), $rows[10]['messages'] );
 	}
 
 	public function test_group_by_post_does_not_repeat_a_fixable_type(): void {
@@ -188,6 +199,100 @@ class FindingsTest extends TestCase {
 		);
 
 		$this->assertSame( array(), Findings::fixable_issues( $old_row ) );
+	}
+
+	/*
+	 * without_issue() — the admin repair pruning one issue off a cached row.
+	 */
+
+	public function test_without_issue_rebuilds_the_row(): void {
+		$rows = Findings::group_by_post(
+			array(
+				Findings::make( 10, 'post_type_shows', 'show-no-genres' ),
+				Findings::make( 10, 'post_type_shows', 'show-missing-trope' ),
+				Findings::make( 10, 'post_type_shows', 'show-missing-thumb' ),
+			)
+		);
+
+		$row = Findings::without_issue( $rows[10], 'show-missing-trope' );
+
+		$this->assertSame( array( 'show-no-genres', 'show-missing-thumb' ), $row['issues'] );
+		$this->assertSame( array( 'No genres.', 'No Thumb score.' ), $row['messages'] );
+		$this->assertSame( array( 'show-missing-thumb' ), $row['fixable'] );
+		$this->assertSame(
+			'No genres.</br>No Thumb score. — fixable, sets it to TBD.',
+			$row['problem']
+		);
+	}
+
+	public function test_without_issue_empties_a_row_with_nothing_left(): void {
+		// An empty return is the signal to drop the row from the report.
+		$rows = Findings::group_by_post(
+			array(
+				Findings::make( 10, 'post_type_shows', 'show-missing-trope' ),
+			)
+		);
+
+		$this->assertSame( array(), Findings::without_issue( $rows[10], 'show-missing-trope' ) );
+	}
+
+	public function test_without_issue_ignores_an_issue_the_row_does_not_have(): void {
+		$rows = Findings::group_by_post(
+			array(
+				Findings::make( 10, 'post_type_shows', 'show-no-genres' ),
+			)
+		);
+
+		$row = Findings::without_issue( $rows[10], 'show-missing-trope' );
+
+		$this->assertSame( array( 'show-no-genres' ), $row['issues'] );
+	}
+
+	public function test_without_issue_leaves_a_pre_reshape_row_untouched(): void {
+		// No per-issue data to prune, and guessing would corrupt the row.
+		$old_row = array(
+			'url'     => 'https://lezwatchtv.com/show/whatever/',
+			'id'      => 10,
+			'problem' => 'No genres.</br>No tropes set.',
+		);
+
+		$this->assertSame( $old_row, Findings::without_issue( $old_row, 'show-missing-trope' ) );
+	}
+
+	public function test_without_issue_drops_every_copy_of_the_type(): void {
+		$row = array(
+			'id'       => 10,
+			'issues'   => array( 'char-no-years', 'char-no-years', 'char-no-actors' ),
+			'messages' => array( 'No years on air set for A.', 'No years on air set for B.', 'No actors listed.' ),
+			'fixable'  => array(),
+		);
+
+		$updated = Findings::without_issue( $row, 'char-no-years' );
+
+		$this->assertSame( array( 'char-no-actors' ), $updated['issues'] );
+		$this->assertSame( array( 'No actors listed.' ), $updated['messages'] );
+	}
+
+	/*
+	 * problem_from()
+	 */
+
+	public function test_problem_from_pairs_issues_with_messages(): void {
+		$this->assertSame(
+			'No genres.</br>No tropes set. — fixable, adds the "none" trope.',
+			Findings::problem_from(
+				array( 'show-no-genres', 'show-missing-trope' ),
+				array( 'No genres.', 'No tropes set.' )
+			)
+		);
+	}
+
+	public function test_problem_from_survives_a_missing_issue_type(): void {
+		// Never expected, but a truncated cached row must not fatal a page.
+		$this->assertSame(
+			'No genres.',
+			Findings::problem_from( array(), array( 'No genres.' ) )
+		);
 	}
 
 	public function test_fixable_issues_drops_types_with_no_registered_repair(): void {
