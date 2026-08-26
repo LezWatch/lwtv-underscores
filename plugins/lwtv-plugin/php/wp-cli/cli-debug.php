@@ -324,7 +324,7 @@ class WP_CLI_LWTV_Debug {
 		}
 
 		\WP_CLI::log( count( $items ) . ' ' . $check['dirty'] );
-		\WP_CLI\Utils\format_items( $this->format, $items, $check['columns'] ?? self::DEFAULT_COLUMNS );
+		\WP_CLI\Utils\format_items( $this->format, $this->for_display( $items ), $check['columns'] ?? self::DEFAULT_COLUMNS );
 		$this->report_baseline( $check['status'] );
 		\WP_CLI::success( $check['done'] );
 	}
@@ -447,6 +447,26 @@ class WP_CLI_LWTV_Debug {
 		}
 
 		return $this->fixers[ $key ];
+	}
+
+	/**
+	 * Rows with their problems flattened to plain text.
+	 *
+	 * A copy: the transient keeps the admin-shaped `problem`, because the admin
+	 * table wants the markup this strips. Applied for every output format, not
+	 * just `table` -- nothing consuming the JSON or CSV wants `</br>` either.
+	 *
+	 * @param  array $items Finding rows.
+	 * @return array
+	 */
+	private function for_display( array $items ): array {
+		foreach ( $items as $index => $item ) {
+			if ( isset( $item['problem'] ) ) {
+				$items[ $index ]['problem'] = Findings::plain( $item );
+			}
+		}
+
+		return $items;
 	}
 
 	/**

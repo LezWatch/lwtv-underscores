@@ -50,10 +50,11 @@ class Characters {
 				}
 			}
 		} else {
-			$the_loop = ( new Queery_Taxonomy() )->get_posts_for_terms( CPT_Characters::SLUG, 'lez_cliches', 'dead' );
+			// 'ids' — this scan only ever plucked the IDs out again.
+			$the_loop = ( new Queery_Taxonomy() )->get_posts_for_terms( CPT_Characters::SLUG, 'lez_cliches', 'dead', 'IN', 'ids' );
 
-			if ( is_object( $the_loop ) && $the_loop->have_posts() ) {
-				$characters = wp_list_pluck( $the_loop->posts, 'ID' );
+			if ( is_object( $the_loop ) && ! empty( $the_loop->posts ) ) {
+				$characters = array_map( 'intval', $the_loop->posts );
 			}
 		}
 
@@ -147,11 +148,7 @@ class Characters {
 			}
 		} else {
 			// Get all the characters
-			$the_loop = ( new Post_Type() )->make( CPT_Characters::SLUG );
-
-			if ( is_object( $the_loop ) && $the_loop->have_posts() ) {
-				$characters = wp_list_pluck( $the_loop->posts, 'ID' );
-			}
+			$characters = ( new Post_Type() )->get_ids( CPT_Characters::SLUG );
 		}
 
 		// If somehow characters is totally empty...

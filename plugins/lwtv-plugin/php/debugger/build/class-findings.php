@@ -120,6 +120,54 @@ class Findings {
 	}
 
 	/**
+	 * A row's problems as plain text, for a terminal.
+	 *
+	 * `problem` is composed for the admin: HTML-ish, joined with `</br>`, and in
+	 * the unconverted checks it can also contain real markup like an edit link.
+	 * Printed in a CLI table that all shows up literally.
+	 *
+	 * A typed row is rebuilt from its raw messages. An untyped one -- the checks
+	 * still on the old shape -- is de-HTML'd instead, which is why this bothers
+	 * with tag stripping at all.
+	 *
+	 * @param  array $row A row from Rows::from_findings(), or an older one.
+	 * @return string
+	 */
+	public static function plain( array $row ): string {
+		$issues   = isset( $row['issues'] ) && is_array( $row['issues'] ) ? array_values( $row['issues'] ) : array();
+		$messages = isset( $row['messages'] ) && is_array( $row['messages'] ) ? array_values( $row['messages'] ) : array();
+
+		if ( ! empty( $issues ) && ! empty( $messages ) ) {
+			return self::flatten( self::problem_from( $issues, $messages ) );
+		}
+
+		return self::flatten( (string) ( $row['problem'] ?? '' ) );
+	}
+
+	/**
+	 * Turn one composed blob into a single readable line.
+	 *
+	 * Semicolons rather than newlines: WP-CLI's table renderer wraps a long cell
+	 * itself, and embedded newlines fight with the box drawing.
+	 *
+	 * @param  string $problem Composed problem text.
+	 * @return string
+	 */
+	private static function flatten( string $problem ): string {
+		// Every break variant the old messages used, plus the real one.
+		$problem = (string) preg_replace( '#<\s*/?\s*br\s*/?\s*>#i', '; ', $problem );
+
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.strip_tags_strip_tags -- wp_strip_all_tags() is unavailable to this class's unit tests, which run with no WordPress bootstrap; this class is documented PURE for exactly that reason.
+		$problem = strip_tags( $problem );
+		$problem = html_entity_decode( $problem, ENT_QUOTES | ENT_HTML5, 'UTF-8' );
+
+		// Collapse the whitespace that stripping tags tends to leave behind.
+		$problem = (string) preg_replace( '/\s+/u', ' ', $problem );
+
+		return trim( $problem, " \t\n\r\0\x0B;" );
+	}
+
+	/**
 	 * Compose the `problem` blob from a row's parallel issues/messages lists.
 	 *
 	 * Rows store raw messages, so the fixability prose is composed on the way

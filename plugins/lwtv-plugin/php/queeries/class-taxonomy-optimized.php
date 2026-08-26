@@ -125,22 +125,34 @@ class Taxonomy_Optimized {
 	/**
 	 * Get posts for multiple terms in a single query
 	 *
+	 * Unlike Post_Type::make(), this does not cache the query object, so a
+	 * caller asking for full posts is paying memory rather than writing a blob
+	 * into the object cache. It is still worth asking for `ids` when that is all
+	 * you want -- the BYQ debugger scan does, while the BYQ REST endpoint
+	 * genuinely reads post_title and post_name off each result.
+	 *
 	 * @param string $post_type Post type to query
 	 * @param string $taxonomy Taxonomy to query
 	 * @param array $terms Array of term slugs
 	 * @param string $operator Query operator (IN, NOT IN, AND)
+	 * @param string $fields Fields to return: 'all' or 'ids'. Default 'all'.
 	 * @return \WP_Query Query object
 	 */
-	public function get_posts_for_terms( $post_type, $taxonomy, $terms, $operator = 'IN' ) {
+	public function get_posts_for_terms( $post_type, $taxonomy, $terms, $operator = 'IN', $fields = 'all' ) {
 		if ( empty( $terms ) ) {
 			return new \WP_Query( array( 'post__in' => array( 0 ) ) ); // Return empty query
 		}
 
-		$count = wp_count_posts( $post_type )->publish;
-
+		/*
+		 * -1 rather than wp_count_posts( $post_type )->publish. That was an
+		 * upper bound derived from every published post of the type, for a query
+		 * that returns a filtered subset of them -- so it did the same job as -1
+		 * while adding a lookup and implying a limit that was never meaningful.
+		 */
 		$query_args = array(
 			'post_type'              => $post_type,
-			'posts_per_page'         => $count,
+			'posts_per_page'         => -1,
+			'fields'                 => $fields,
 			'no_found_rows'          => true,
 			'update_post_meta_cache' => false,
 			'update_post_term_cache' => false,

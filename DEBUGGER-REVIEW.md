@@ -494,6 +494,49 @@ Fix, in order of effort:
 3. `make()` caching a `WP_Query` object at all is questionable — consider caching the ID
    list and rehydrating, or dropping the cache for the `-1` case.
 
+**DONE (2026-08-26), taking option 2.** `Post_Type::get_ids( $post_type )` queries
+`fields => 'ids'` and caches just the integers. All nine debugger call sites use it, plus
+`cli-shadow.php`, which had the identical pattern. Each site collapsed from six lines to
+one, and the `is_object()`/`have_posts()` dance went with them.
+
+Two things fell out of it:
+
+- **A stray `wp_reset_query()`** in `find_shows_no_imdb()` is gone. Constructing a `WP_Query`
+  never touched the globals it resets — only `the_post()` would have, and that scan never
+  called it. It was defending against nothing.
+- **`make()` was left alone.** It still caches whole `WP_Query` objects, which is still
+  questionable (option 3), but its remaining callers — the REST endpoints and
+  `export-json` — genuinely iterate posts. Worth revisiting, not worth bundling.
+
+Still outstanding nearby, both easy and both the same mistake in different clothes:
+
+- **`class-what-happened-json.php:265`** calls `make()` for every show, then loops
+  `the_post()` and uses nothing but `get_the_ID()` and meta. That is a full post-object load
+  on a public REST endpoint for data it does not read.
+- ~~**`Queery_Taxonomy::get_posts_for_terms()`** (used by the BYQ check) has not been looked
+  at and may have the same `fields` default.~~ **Looked at, and it is a different problem.**
+  It does default to `fields => 'all'`, but it **does not cache the query**, so the
+  serialised-blob issue above does not apply — a caller asking for full posts pays memory
+  for one request, not a multi-megabyte cache write. Two smaller things were real and are
+  fixed:
+
+  - `posts_per_page` was `wp_count_posts( $post_type )->publish` — an upper bound derived
+    from every published post of the type, used to page a query that returns a filtered
+    subset. It did the same job as `-1` while adding a lookup and implying a limit that was
+    never meaningful. Now `-1`.
+  - It gained an optional `$fields` argument, and the BYQ **debugger** scan passes `'ids'`,
+    since it only plucked them out again.
+
+  The BYQ **REST** endpoint deliberately still asks for full posts: `class-byq.php` reads
+  `post_title` and `post_name` off each result, not just the ID. Its `generate_death_list_array()`
+  also accepts a caller-supplied query, so it could be handed either shape — worth
+  remembering before "optimising" it later.
+
+  Its `wp_reset_query()` was left alone. Unlike the stray one removed from
+  `find_shows_no_imdb()`, this one restores the global query, which a template-context
+  caller could in principle be relying on, and CLAUDE.md records direct `wp_reset_query()`
+  as intentional in this codebase.
+
 ### 2.2 Scans are all-or-nothing, in-request
 
 Every scanner is "loop every post, then write one transient". There's no batching, no
@@ -1013,6 +1056,19 @@ Worth knowing about the fix counts: `apply_fixes()` still reports a row as unfix
 none of its issues had a repair, and that is now *accurate* rather than approximate —
 `fix_item()` only claims success when a registered repair actually returned true.
 
+**CLI rendering (2026-08-26).** `problem` is composed for the admin, so a CLI table showed
+its `</br>` separators literally, and for the unconverted checks the embedded markup too —
+BYQ prints an edit link, and `get_the_title()` had already entity-encoded the show name, so
+a Thai title arrived as `Girl Rules &#8230;`. `Findings::plain()` now renders a row for a
+terminal: typed rows are rebuilt from their raw messages, untyped ones are de-HTML'd, and
+either way it comes out as one semicolon-joined line (newlines fight WP-CLI's box drawing).
+Applied in `for_display()` to a copy, for every output format — nothing consuming the JSON
+wants `</br>` either — so the transient keeps the markup the admin table needs.
+
+Note this was never a BYQ problem: every check joins with `</br>`, and the converted ones
+only looked clean because those rows happened to carry a single finding each. Fixing it in
+the renderer covers all ten.
+
 ### 8.4 Writes that are *not* fixes
 
 Four of the writes above shouldn't become `--fix-it` actions at all, and lumping them in
@@ -1195,8 +1251,9 @@ Everything in the **Done** table at the top has shipped. What's left, in the ord
 
 **Small and independent:**
 
-4. **`fields => 'ids'`** at every `Post_Type::make()` debugger call site (2.1). Still the
-   cheapest performance win outstanding.
+4. ~~**`fields => 'ids'`** at every `Post_Type::make()` debugger call site (2.1).~~ **Done**
+   as `Post_Type::get_ids()`, across all nine sites plus `cli-shadow.php`. Two adjacent
+   cases remain, listed at the end of §2.1.
 5. **Debug log rotation + memoised option reads** (§6). `debug_log()` still reads two ACF
    options per call and the log file still grows without bound.
 6. ~~**Delete `find_shows_bad_url()` and link `tab_show_urls`** (1.3, 1.6).~~ **Done.**
@@ -1214,8 +1271,12 @@ Everything in the **Done** table at the top has shipped. What's left, in the ord
    is a superset. See §8.3.
 9. ~~**Route findings through `Audit::finalize()`** (§5)~~ — **done differently.** Baselines
    and new/open/resolved shipped as a pure `Build\Baseline` plus `Baseline_Store`, leaving
-   `Audit` alone; see the §5 note for why. **Acknowledgements are still outstanding** and
-   still need `IGNORE_META` generalised per post type.
+   `Audit` alone; see the §5 note for why. **Acknowledgements are half done**: the mechanism
+   exists (`acknowledged_by` on a check, `manual` on a repair) and `show-no-characters` uses
+   it, but backed by a real editorial field rather than debugger-private ignore meta. What
+   is outstanding is the cases with no such field to hang it on — the intersectionality note
+   hardcoded in `class-show-checker.php`'s panel copy being the obvious one. Those are what
+   would need `IGNORE_META` generalised per post type.
 10. ~~**Extract pure rule evaluation into `debugger/build/`** with tests (§4).~~ **Done for
     Shows, Characters and Actors** — rules + collector each, 77 tests between them, all
     three scanners down to ~35 lines of orchestration. The unconverted checks (item 14)

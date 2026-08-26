@@ -42,11 +42,7 @@ class Queers {
 			}
 		} else {
 			// Get all the characters
-			$the_loop = ( new Post_Type() )->make( CPT_Characters::SLUG );
-
-			if ( is_object( $the_loop ) && $the_loop->have_posts() ) {
-				$characters = wp_list_pluck( $the_loop->posts, 'ID' );
-			}
+			$characters = ( new Post_Type() )->get_ids( CPT_Characters::SLUG );
 		}
 
 		// If somehow characters is totally empty...

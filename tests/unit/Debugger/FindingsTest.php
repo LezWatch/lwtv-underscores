@@ -162,6 +162,67 @@ class FindingsTest extends TestCase {
 	}
 
 	/*
+	 * plain() — the CLI rendering of a row.
+	 */
+
+	public function test_plain_rebuilds_a_typed_row_on_one_line(): void {
+		$rows = Findings::group_by_post(
+			array(
+				Findings::make( 10, 'post_type_shows', 'show-no-genres' ),
+				Findings::make( 10, 'post_type_shows', 'show-missing-trope' ),
+			)
+		);
+
+		$this->assertSame(
+			'No genres.; No tropes set. — fixable, adds the "none" trope.',
+			Findings::plain( $rows[10] )
+		);
+	}
+
+	public function test_plain_strips_the_break_separator_from_an_untyped_row(): void {
+		// The checks still on the old shape send a pre-joined blob.
+		$row = array(
+			'id'      => 10,
+			'problem' => 'First problem.</br>Second problem.',
+		);
+
+		$this->assertSame( 'First problem.; Second problem.', Findings::plain( $row ) );
+	}
+
+	public function test_plain_handles_every_break_variant(): void {
+		$row = array(
+			'id'      => 10,
+			'problem' => 'One.<br>Two.<br/>Three.<br />Four.</br>Five.',
+		);
+
+		$this->assertSame( 'One.; Two.; Three.; Four.; Five.', Findings::plain( $row ) );
+	}
+
+	public function test_plain_strips_markup_and_decodes_entities(): void {
+		// Real case: the BYQ check embeds an edit link, and get_the_title() has
+		// already entity-encoded the show name.
+		$row = array(
+			'id'      => 10,
+			'problem' => 'There is no BYQ trope on the show <a href="/wp-admin/post.php?post=98423&action=edit">Girl Rules &#8230;</a> (edit).',
+		);
+
+		$this->assertSame( 'There is no BYQ trope on the show Girl Rules … (edit).', Findings::plain( $row ) );
+	}
+
+	public function test_plain_does_not_leave_a_trailing_separator(): void {
+		$row = array(
+			'id'      => 10,
+			'problem' => 'Only problem.</br>',
+		);
+
+		$this->assertSame( 'Only problem.', Findings::plain( $row ) );
+	}
+
+	public function test_plain_of_an_empty_row(): void {
+		$this->assertSame( '', Findings::plain( array( 'id' => 10 ) ) );
+	}
+
+	/*
 	 * count_by_issue()
 	 */
 

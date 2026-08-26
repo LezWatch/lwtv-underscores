@@ -129,12 +129,7 @@ class Actors {
 			}
 		} else {
 			// Get all the actors
-			$the_loop = ( new Post_Type() )->make( 'post_type_actors' );
-
-			// Add ONLY the IDs to the array.
-			if ( is_object( $the_loop ) && $the_loop->have_posts() ) {
-				$actors = wp_list_pluck( $the_loop->posts, 'ID' );
-			}
+			$actors = ( new Post_Type() )->get_ids( CPT_Actors::SLUG );
 		}
 
 		// If somehow actors is totally empty...
@@ -314,12 +309,7 @@ class Actors {
 			}
 		} else {
 			// Get all the actors
-			$the_loop = ( new Post_Type() )->make( 'post_type_actors' );
-
-			// Add ONLY the IDs to the array.
-			if ( is_object( $the_loop ) && $the_loop->have_posts() ) {
-				$actors = wp_list_pluck( $the_loop->posts, 'ID' );
-			}
+			$actors = ( new Post_Type() )->get_ids( CPT_Actors::SLUG );
 		}
 
 		// If somehow actors is totally empty...
@@ -384,12 +374,7 @@ class Actors {
 			}
 		} else {
 			// Get all the actors
-			$the_loop = ( new Post_Type() )->make( 'post_type_actors' );
-
-			// Add ONLY the IDs to the array.
-			if ( is_object( $the_loop ) && $the_loop->have_posts() ) {
-				$actors = wp_list_pluck( $the_loop->posts, 'ID' );
-			}
+			$actors = ( new Post_Type() )->get_ids( CPT_Actors::SLUG );
 		}
 
 		// If somehow actors is totally empty...
@@ -477,12 +462,7 @@ class Actors {
 				}
 			} else {
 				// Get all the actors
-				$the_loop = ( new Post_Type() )->make( 'post_type_actors' );
-
-				// Add ONLY the IDs to the array.
-				if ( is_object( $the_loop ) && $the_loop->have_posts() ) {
-					$actors = wp_list_pluck( $the_loop->posts, 'ID' );
-				}
+				$actors = ( new Post_Type() )->get_ids( CPT_Actors::SLUG );
 			}
 		}
 

@@ -42,11 +42,7 @@ class OnAir {
 				}
 			}
 		} else {
-			$the_loop = ( new Post_Type() )->make( CPT_Shows::SLUG );
-
-			if ( is_object( $the_loop ) && $the_loop->have_posts() ) {
-				$shows = wp_list_pluck( $the_loop->posts, 'ID' );
-			}
+			$shows = ( new Post_Type() )->get_ids( CPT_Shows::SLUG );
 		}
 
 		// If somehow shows is totally empty...
