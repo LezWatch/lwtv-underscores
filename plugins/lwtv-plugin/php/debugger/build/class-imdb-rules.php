@@ -15,7 +15,8 @@
  *         'imdb'      => string,   // what we hold
  *         'canonical' => string,   // what the oracle last told us
  *         'exempt'    => bool,     // a missing ID is fine for this post
- *         'ignored'   => bool,     // an editor has waived the staleness check
+ *         'ignored'   => bool,     // the oracle has no entry for this post, so
+ *                                  // there is no canonical to compare against
  *     )
  *
  * @package LWTV

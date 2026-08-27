@@ -61,13 +61,13 @@ to `Scan`: get targets, collect, evaluate, finish.
 | §8.1–8.5 | Detect/repair split, typed findings, both repair surfaces, stray writes gone |
 | 14 | Every check converted — all eleven report "N new / M open" |
 | §7 | All three duplications collapsed — validators into `Report`, scanners into `Scan` |
+| §5 | Acknowledgements — **declined**, not enough false positives to earn the machinery |
 | §3 | Capability check now lives once, in `Validator\Report::make()` |
 
 **Outstanding, roughly in order**
 
 | | |
 |---|---|
-| §5 | Acknowledgements where no editorial field exists to carry them |
 | §6 | Debug log rotation, memoised option reads, log viewer |
 | §8.4 | The wikidata cache writes still want an explicit TTL |
 
@@ -877,9 +877,11 @@ Three mechanisms came out of it, all reusable:
   `update_post_meta()`, because ACF true_false fields also carry a `_fieldname` field-key
   row that the editor UI reads.
 
-When the remaining acknowledgements land (§5), this is the precedent: prefer a real field
-where the distinction is meaningful to readers, and fall back to debugger-private ignore
-meta only where it genuinely is not.
+This is also where §5's acknowledgements *stopped*. Having shipped the good shape once, the
+generic fallback turned out not to be needed: see "Acknowledgements: declined on volume" in
+§5. The precedent stands for any future case — prefer a real field where the distinction is
+meaningful to readers, and only reach for debugger-private ignore meta if the reports ever
+accumulate enough false positives to justify it.
 
 ---
 
@@ -955,19 +957,71 @@ records the new count with no summary, so the badge drops to a plain number rath
 showing arithmetic nobody did. Those paths deliberately leave the baseline alone: it records
 what the last scan found, so the next scan correctly reports the fixed finding as resolved.
 
-Still outstanding from this section: acknowledgements. Note for when they land — the
-baseline stores the **raw** finding set for exactly this reason, so ignore must filter
-display only. An ignored finding kept out of the baseline would come back as `new` the
-moment it was un-ignored.
+### Acknowledgements: declined on volume (2026-08-27)
 
-Two things to sort out when generalising `Audit`:
+The last piece of this section was a general acknowledgement mechanism — one way to say
+"reviewed, this is fine" for any issue type. **Not built, deliberately.** The reports do not
+carry enough permanent false positives to earn it. A generic store plus registry flag plus
+both surfaces is roughly 250 lines and a test file, and paying that to hide a handful of
+rows would be the wrong trade.
+
+Two things this pass got wrong, worth correcting since they were the argument *for* building
+it:
+
+- **The intersectionality note is not an ignore workaround.** §5 above claimed it was.
+  `Show_Rules::intersections()` only fires when a show *is* tagged `disabled` and no
+  character carries the flag, so it is a genuine inconsistency, not a permanent row on every
+  show. The note is data-entry advice — the fix may be to remove the show's term rather than
+  tag a character.
+- **The real candidates were elsewhere**, and still too few to matter:
+  `watch-url-blocked` (a host that always 403s our user agent is a false positive by
+  construction, and is term-level rather than post-level) and `actor_empty` (its own tab copy
+  admits it is a completeness report).
+
+So the debugger keeps the narrow mechanism it already has: `acknowledged_by` in
+`Show_Rules::CHECKS`, pointing at a named meta key. One check uses it
+(`show-no-characters` / `lezshows_no_chars`), and that field earns its keep by also driving
+front-end copy. Adding a second is a two-line change to `CHECKS` plus an ACF field.
+
+**If this is ever revisited**, the design was settled even though the code was not:
+
+- **Filter display, never the baseline.** The baseline stores the **raw** finding set for
+  exactly this reason. An ignored finding kept out of the baseline comes back as `new` the
+  moment it is un-ignored. This is the one non-obvious constraint.
+- **Sticky until removed**, not fingerprinted or time-boxed. A stale acknowledgement is a
+  human problem; storing who and when, and showing its age, is enough to surface it.
+  Fingerprinting "what was acknowledged" has nothing meaningful to hash for most types.
+- **Generic per-post meta for the general case, named fields where the flag means something
+  beyond silence.** `lezshows_no_chars` stays a named field because the front end reads it.
+- **Opt-in per issue type**, via a registry flag. `show-no-score` is a bug, not a judgement
+  call, and should not be silenceable.
+
+Two notes on `Audit`'s version, if that is what gets generalised instead:
 
 - `IGNORE_META` is hardcoded to `lezchars_audit_ignore` and `is_ignored()` only applies to
-  findings with a `char_id`. Needs to become per-post-type (`lezshows_`/`lezactor_`) to
-  cover show- and actor-level findings.
+  findings with a `char_id`. It would need to become per-post-type to cover show- and
+  actor-level findings.
 - Baselines are stored one option per scope (`lwtv_audit_baseline_{scope}`). Full-site
   scopes at current scale will be large options; check the size before scaling this to
   ten checks, and consider a custom table or per-post meta if it gets heavy.
+
+**A correction to a "loose end" this pass first claimed (2026-08-27).** I recorded that
+`lezshows_tvmaze_ignore` "silences an IMDb finding" and that its name lies. It does not.
+The flag gates exactly one IMDb issue type — `show-imdb-stale` — and staleness is defined as
+our ID disagreeing with `lezshows_imdb_canonical`, which is *what TVMaze last told us*. With
+no TVMaze entry there is no canonical, so there is nothing to compare and nothing to report.
+All three consumers mean the same thing: the TVMaze oracle has no entry for this show.
+
+- `cli-tvmaze.php` — skips it in the unmatched backlog.
+- `Imdb_Verify_Task` — gates its `oracle_id => lezshows_tvmaze_id` lookup.
+- `Imdb_Rules::stale()` — skips the comparison.
+
+`not_set` and `invalid` never consult it; a legitimately IMDb-less show is handled by
+`exempt_tax`/`web-series` instead. **No rename needed** — the field is correctly named, and
+renaming it would have been a meta migration paid for a misreading. What was actually wrong
+was the comment in `Imdb_Rules`' docblock ("an editor has waived the staleness check", which
+frames an absence of oracle data as an editorial opinion about IMDb) and the terse note in
+`Imdb_Collector::LEVELS`. Both now say what the flag is for.
 
 ---
 
@@ -1508,12 +1562,13 @@ Everything in the **Done** table at the top has shipped. What's left, in the ord
    transient key instead, since starting that one over costs nothing. See §8.3.
 9. ~~**Route findings through `Audit::finalize()`** (§5)~~ — **done differently.** Baselines
    and new/open/resolved shipped as a pure `Build\Baseline` plus `Baseline_Store`, leaving
-   `Audit` alone; see the §5 note for why. **Acknowledgements are half done**: the mechanism
-   exists (`acknowledged_by` on a check, `manual` on a repair) and `show-no-characters` uses
-   it, but backed by a real editorial field rather than debugger-private ignore meta. What
-   is outstanding is the cases with no such field to hang it on — the intersectionality note
-   hardcoded in `class-show-checker.php`'s panel copy being the obvious one. Those are what
-   would need `IGNORE_META` generalised per post type.
+   `Audit` alone; see the §5 note for why. **Acknowledgements went as far as they need to.**
+   The mechanism exists (`acknowledged_by` on a check, `manual` on a repair) and
+   `show-no-characters` uses it, backed by a real editorial field rather than
+   debugger-private ignore meta. Generalising it per post type was **declined on volume**
+   (2026-08-27) — the reports do not carry enough permanent false positives to earn the
+   machinery, and the intersectionality case this list previously cited turned out not to be
+   one. Adding a second `acknowledged_by` is two lines plus an ACF field if that changes.
 10. ~~**Extract pure rule evaluation into `debugger/build/`** with tests (§4).~~ **Done, for
     every check.** Eleven rules classes in `build/`, nine collectors in `collect/`, and every
     scanner reduced to orchestration. `watchurls` needed nothing — its rules were already
