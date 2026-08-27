@@ -29,7 +29,7 @@ class Imdb_Collector {
 	 * `exempt_term` is the one real asymmetry: a web series that was never on
 	 * IMDb is not missing anything, and there is no equivalent for actors.
 	 *
-	 * `ignore_meta` is narrower than it looks. It is the TVMaze "no entry of its
+	 * `no_oracle_meta` is narrower than it looks. It is the TVMaze "no entry of its
 	 * own" flag, and it gates only the *staleness* check -- `lezshows_imdb_canonical`
 	 * is whatever TVMaze last said, so with no TVMaze entry there is nothing to
 	 * compare our ID against. It is not a general "stop reporting this show"
@@ -40,18 +40,18 @@ class Imdb_Collector {
 	 */
 	private const LEVELS = array(
 		Imdb_Rules::SHOW  => array(
-			'imdb'        => 'lezshows_imdb',
-			'canonical'   => 'lezshows_imdb_canonical',
-			'ignore_meta' => 'lezshows_tvmaze_ignore',
-			'exempt_tax'  => 'lez_formats',
-			'exempt_term' => 'web-series',
+			'imdb'           => 'lezshows_imdb',
+			'canonical'      => 'lezshows_imdb_canonical',
+			'no_oracle_meta' => 'lezshows_tvmaze_ignore',
+			'exempt_tax'     => 'lez_formats',
+			'exempt_term'    => 'web-series',
 		),
 		Imdb_Rules::ACTOR => array(
-			'imdb'        => 'lezactors_imdb',
-			'canonical'   => 'lezactors_imdb_canonical',
-			'ignore_meta' => '',
-			'exempt_tax'  => '',
-			'exempt_term' => '',
+			'imdb'           => 'lezactors_imdb',
+			'canonical'      => 'lezactors_imdb_canonical',
+			'no_oracle_meta' => '',
+			'exempt_tax'     => '',
+			'exempt_term'    => '',
 		),
 	);
 
@@ -81,8 +81,8 @@ class Imdb_Collector {
 				'imdb'      => (string) get_post_meta( $post_id, $config['imdb'], true ),
 				'canonical' => (string) get_post_meta( $post_id, $config['canonical'], true ),
 				'exempt'    => $exempt[ $post_id ] ?? false,
-				'ignored'   => '' !== $config['ignore_meta']
-					&& ! empty( get_post_meta( $post_id, $config['ignore_meta'], true ) ),
+				'no_oracle' => '' !== $config['no_oracle_meta']
+					&& ! empty( get_post_meta( $post_id, $config['no_oracle_meta'], true ) ),
 			);
 		}
 

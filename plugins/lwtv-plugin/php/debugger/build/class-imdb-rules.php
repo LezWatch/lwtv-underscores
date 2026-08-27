@@ -15,7 +15,7 @@
  *         'imdb'      => string,   // what we hold
  *         'canonical' => string,   // what the oracle last told us
  *         'exempt'    => bool,     // a missing ID is fine for this post
- *         'ignored'   => bool,     // the oracle has no entry for this post, so
+ *         'no_oracle' => bool,     // the oracle has no entry for this post, so
  *                                  // there is no canonical to compare against
  *     )
  *
@@ -231,7 +231,7 @@ class Imdb_Rules {
 	public static function stale( string $level, array $item, string $imdb ): array {
 		$config = self::LEVELS[ $level ] ?? array();
 
-		if ( empty( $config ) || ! empty( $item['ignored'] ) ) {
+		if ( empty( $config ) || ! empty( $item['no_oracle'] ) ) {
 			return array();
 		}
 

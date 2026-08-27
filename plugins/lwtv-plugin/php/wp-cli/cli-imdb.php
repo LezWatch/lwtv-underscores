@@ -348,7 +348,7 @@ class WP_CLI_LWTV_Imdb {
 	}
 
 	/**
-	 * Posts that can be verified: an IMDb ID, an oracle ID, and not ignored.
+	 * Posts that can be verified: an IMDb ID, an oracle ID, and no "no oracle entry" flag.
 	 *
 	 * @param string $post_type Post type slug.
 	 * @param array  $config    Meta keys for this type.
@@ -362,32 +362,34 @@ class WP_CLI_LWTV_Imdb {
 
 		// All interpolations are internal literals: $order was validated against
 		// ORDER_CLAUSES, the meta keys come from Imdb_Verify_Task::config(), and
-		// $ignore_clause is one of two fixed strings.
-		$order_by      = self::ORDER_CLAUSES[ $order ];
-		$limit_clause  = ( $limit > 0 ) ? 'LIMIT ' . (int) $limit : '';
-		$ignore_clause = '';
+		// $skip_clause is one of two fixed strings.
+		$order_by     = self::ORDER_CLAUSES[ $order ];
+		$limit_clause = ( $limit > 0 ) ? 'LIMIT ' . (int) $limit : '';
+		$skip_clause  = '';
 
-		if ( '' !== $config['ignore'] ) {
-			$ignore_clause = "AND NOT EXISTS ( SELECT 1 FROM {$wpdb->postmeta} ign"
-				. ' WHERE ign.post_id = p.ID AND ign.meta_key = %s'
-				. " AND ign.meta_value != '' AND ign.meta_value != '0' )";
+		// Posts flagged as having no oracle entry are not candidates: there is
+		// nothing to verify our ID against.
+		if ( '' !== $config['no_oracle_meta'] ) {
+			$skip_clause = "AND NOT EXISTS ( SELECT 1 FROM {$wpdb->postmeta} noc"
+				. ' WHERE noc.post_id = p.ID AND noc.meta_key = %s'
+				. " AND noc.meta_value != '' AND noc.meta_value != '0' )";
 		}
 
 		$params = array( $config['imdb'], $config['oracle_id'] );
-		if ( '' !== $ignore_clause ) {
-			$params[] = $config['ignore'];
+		if ( '' !== $skip_clause ) {
+			$params[] = $config['no_oracle_meta'];
 		}
 		$params[] = $post_type;
 
 		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber
-		// Placeholder count is variable ($ignore_clause is conditional), so the sniff's static count of $params can't match; the spread always supplies exactly as many values as %s tokens above.
+		// Placeholder count is variable ($skip_clause is conditional), so the sniff's static count of $params can't match; the spread always supplies exactly as many values as %s tokens above.
 		$ids = $wpdb->get_col(
 			$wpdb->prepare(
 				"SELECT p.ID FROM {$wpdb->posts} p
 				 INNER JOIN {$wpdb->postmeta} im ON im.post_id = p.ID AND im.meta_key = %s AND im.meta_value != ''
 				 INNER JOIN {$wpdb->postmeta} orc ON orc.post_id = p.ID AND orc.meta_key = %s AND orc.meta_value != ''
 				 WHERE 1=1
-				   {$ignore_clause}
+				   {$skip_clause}
 				   AND p.post_type = %s AND p.post_status = 'publish'
 				 ORDER BY {$order_by}
 				 {$limit_clause}",

@@ -27,7 +27,7 @@ class ImdbRulesTest extends TestCase {
 				'imdb'      => 'tt0330251',
 				'canonical' => '',
 				'exempt'    => false,
-				'ignored'   => false,
+				'no_oracle' => false,
 			),
 			$overrides
 		);
@@ -252,7 +252,7 @@ class ImdbRulesTest extends TestCase {
 		$item = $this->item(
 			array(
 				'canonical' => 'tt9999999',
-				'ignored'   => true,
+				'no_oracle' => true,
 			)
 		);
 
@@ -263,8 +263,8 @@ class ImdbRulesTest extends TestCase {
 		// The override waives the oracle comparison, not basic validity.
 		$item = $this->item(
 			array(
-				'imdb'    => 'banana',
-				'ignored' => true,
+				'imdb'      => 'banana',
+				'no_oracle' => true,
 			)
 		);
 

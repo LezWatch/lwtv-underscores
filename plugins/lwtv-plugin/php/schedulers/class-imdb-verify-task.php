@@ -82,16 +82,16 @@ class Imdb_Verify_Task {
 	private function types(): array {
 		return array(
 			'post_type_shows'  => array(
-				'imdb'      => 'lezshows_imdb',
-				'canonical' => 'lezshows_imdb_canonical',
-				'oracle_id' => 'lezshows_tvmaze_id',
-				'ignore'    => 'lezshows_tvmaze_ignore',
+				'imdb'           => 'lezshows_imdb',
+				'canonical'      => 'lezshows_imdb_canonical',
+				'oracle_id'      => 'lezshows_tvmaze_id',
+				'no_oracle_meta' => 'lezshows_tvmaze_ignore',
 			),
 			'post_type_actors' => array(
-				'imdb'      => 'lezactors_imdb',
-				'canonical' => 'lezactors_imdb_canonical',
-				'oracle_id' => 'lezactors_tmdb_id',
-				'ignore'    => '',
+				'imdb'           => 'lezactors_imdb',
+				'canonical'      => 'lezactors_imdb_canonical',
+				'oracle_id'      => 'lezactors_tmdb_id',
+				'no_oracle_meta' => '',
 			),
 		);
 	}
@@ -130,7 +130,7 @@ class Imdb_Verify_Task {
 		}
 
 		// An editor has said not to chase this show's third-party match.
-		if ( '' !== $config['ignore'] && ! empty( get_post_meta( $post_id, $config['ignore'], true ) ) ) {
+		if ( '' !== $config['no_oracle_meta'] && ! empty( get_post_meta( $post_id, $config['no_oracle_meta'], true ) ) ) {
 			return false;
 		}
 
