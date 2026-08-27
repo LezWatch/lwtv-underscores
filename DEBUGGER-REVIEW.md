@@ -68,7 +68,6 @@ buttons, and the copy in both.
 | | |
 |---|---|
 | §5 | Acknowledgements where no editorial field exists to carry them |
-| §7 | Collapse the twelve validator files |
 | §6 | Debug log rotation, memoised option reads, log viewer |
 | §3 | Capability checks inside the validator `make()` methods |
 | §8.4 | The wikidata cache writes still want an explicit TTL |
@@ -1008,16 +1007,41 @@ topic against the constant, or at least log a one-time warning for unknown topic
 - **The "full scan or recheck" preamble** is copy-pasted ~7 times, verbatim, across
   `class-shows.php` (×3), `class-actors.php` (×4). ~20 lines each.
 - **The "save transient + update option + return"** epilogue is copy-pasted ~9 times.
-- **`php/validator/*.php`** is now **twelve** files of 102–107 lines that differ only in
-  the transient key, the nonce name, the tab slug, and three strings. (An earlier one,
-  `class-actor-wiki.php`, was the odd one out at 62 lines; deleted per 1.9a. The count went
-  *up* because 1.7 added `class-actor-empty.php` — written to the same template, which is
-  itself the argument for collapsing them.)
+- ~~**`php/validator/*.php`** is twelve files of 102–107 lines that differ only in the
+  transient key, the nonce name, the tab slug, and three strings.~~ **DONE (2026-08-26).**
 
-All three collapse into a config array + one runner + one renderer. The `TOOL_TABS`
-constant in `Validation` is already 80% of the config you'd need — extend it with the
-transient key, the scanner callable, and the empty/error copy, then delete the twelve files.
-That also structurally prevents 1.2 (key mismatches) and 1.6 (orphan tabs) from recurring.
+The first two are still outstanding. The validator files are collapsed:
+
+### The validator collapse
+
+Ten files, 1,042 lines, replaced by `validator/class-report.php` (202 lines) plus config in
+`TOOL_TABS`. `class-watch-providers.php` and `class-watch-term-check.php` stayed — at 416
+and 384 lines they have their own renderers, their own admin-post handlers, and forms that
+do work rather than re-running a scan.
+
+`TOOL_TABS` now holds everything a report needs: transient, scanner callable, column
+heading, clean copy, singular/plural problem copy, and an optional note. The `switch` in
+`settings_page()` became a lookup, so a tab cannot exist without a scanner (1.6) and the
+transient key is named once (1.2). The two non-report tabs name their own renderer with a
+`render` key.
+
+Five things fixed once instead of ten times:
+
+- **The capability check** §3 asked for. `Report::make()` verifies `upload_files` — the cap
+  the submenu is registered with — because `make()` is a public static and the menu
+  registration guards the route, not the method.
+- **The unreachable branch.** Every template had an `elseif ( false === $items )` "Bogus!"
+  arm after an `empty()` check that had already caught `false`. Ten copies of dead code.
+- **The i18n gap.** `_n()` calls were missing the `'lwtv'` text domain, and their
+  `translators:` comments referenced a `%s` that was not in the string.
+- **Sentences instead of spliced fragments.** The old copy built `'The following ' . _n(
+  'show needs', 'shows need' ) . ' your attention.'` — fine in English, close to
+  untranslatable, and the reason the on-air view read "The following miss-matched on-air
+  checks been found". Config now holds two complete sentences.
+- **Drift the copy-paste had already caused**: the on-air view's table header said
+  "Duplicate" and its translator comment said "number of dupes", both inherited from the
+  duplicates file. The duplicates tab's nonce was `run_duplicate_clicked` while its slug was
+  `dupe_checker`; nonce actions are now derived from the slug, so they cannot disagree.
 
 ---
 
@@ -1459,9 +1483,10 @@ Everything in the **Done** table at the top has shipped. What's left, in the ord
 11. ~~**Move the writes to a repair layer** (§8.2) behind `--fix-it`, plus per-finding admin
     fix links (§8.1).~~ **Done**, both surfaces. Every write that a scan used to perform is
     now a registered repair, and `on_air` picked up admin buttons when it was converted.
-12. **Collapse the twelve validator files** (§7). The CLI registry and the `Watch_Hosts`
-    extraction are both precedents to copy — and `Validation::problem_cell()` is now a third,
-    since the per-issue rendering lives in one place rather than ten.
+12. ~~**Collapse the twelve validator files** (§7).~~ **Done** — ten collapsed into
+    `Validator\Report` plus `TOOL_TABS` config; the two watch tabs kept their own classes.
+    Took §3's capability check with it. The two remaining §7 items are the duplicated
+    scanner preamble and epilogue.
 13. Add the missing checks to the cron rotation — including `waystowatch enrich`, which is
     safe to run weekly since it skips anything already asked.
 14. ~~**Convert the remaining checks to typed findings**~~ — **done, all eleven

@@ -11,22 +11,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-use LWTV\Validator\Actor_Checker;
-use LWTV\Validator\Actor_Empty;
-use LWTV\Validator\Actor_IMDb;
-use LWTV\Validator\BYQ_Checker;
-use LWTV\Validator\Character_Checker;
-use LWTV\Validator\Duplicates;
-use LWTV\Validator\Queer_Checker;
-use LWTV\Validator\Show_Checker;
-use LWTV\Validator\Show_IMDb;
-use LWTV\Validator\OnAir_Checker;
+use LWTV\Validator\Report;
 use LWTV\Validator\Watch_Providers;
 use LWTV\Validator\Watch_Term_Check;
 
+use LWTV\Debugger\Actors;
 use LWTV\Debugger\Build\Baseline;
 use LWTV\Debugger\Build\Findings;
+use LWTV\Debugger\Characters;
+use LWTV\Debugger\Dupes;
+use LWTV\Debugger\OnAir;
+use LWTV\Debugger\Queers;
 use LWTV\Debugger\Repair;
+use LWTV\Debugger\Shows;
 use LWTV\Debugger\Status;
 use LWTV\Debugger\Watch_URLs;
 
@@ -39,68 +36,169 @@ class Validation {
 
 	/**
 	 * Tool Tabs
+	 *
+	 * One entry per tab, and for the report tabs this is the whole definition:
+	 * Validator\Report renders them all from this config, so a check cannot have
+	 * a tab without a scanner or copy. That is what stops 1.2 (transient keys
+	 * drifting) and 1.6 (tabs with nothing behind them) recurring.
+	 *
+	 * - name / desc: shown in the tab picker and the intro.
+	 * - option:      key inside the debugger status option. Drives the badge and
+	 *                the "last run" line.
+	 * - transient:   where the findings live.
+	 * - scanner:     array( class, method ) to produce fresh findings. Takes an
+	 *                optional findings array, for a recheck.
+	 * - column:      heading for the first table column.
+	 * - clean:       what to say when there is nothing to report.
+	 * - dirty:       array( singular sentence, plural sentence ).
+	 * - note:        optional extra paragraph.
+	 * - render:      for the two tabs that are not findings reports.
 	 */
 	private const TOOL_TABS = array(
 		'queer_checker'     => array(
-			'name'   => 'QIRL Characters have Queer Actors',
-			'desc'   => 'Checks that all characters with queer actors have the queer cliché, and all actors with queer characters are, in fact, queer.',
-			'option' => 'queercheck',
+			'name'      => 'QIRL Characters have Queer Actors',
+			'desc'      => 'Checks that all characters with queer actors have the queer cliché, and all actors with queer characters are, in fact, queer.',
+			'option'    => 'queercheck',
+			'transient' => Queers::TRANSIENT_QUEERCHECK,
+			'scanner'   => array( Queers::class, 'find_queer_chars' ),
+			'column'    => 'Character',
+			'clean'     => "Every character's queerness matches their actors.",
+			'dirty'     => array(
+				'The following character needs your attention. Please edit the actor or character queerness as indicated.',
+				'The following characters need your attention. Please edit the actor or character queerness as indicated.',
+			),
 		),
 		'dupe_checker'      => array(
-			'name'   => 'Duplicate Actors and Show',
-			'desc'   => 'Actors and Shows that are duplicates.',
-			'option' => 'duplicates',
+			'name'      => 'Duplicate Actors and Show',
+			'desc'      => 'Actors and Shows that are duplicates.',
+			'option'    => 'duplicates',
+			'transient' => Dupes::TRANSIENT_DUPES,
+			'scanner'   => array( Dupes::class, 'find_duplicates' ),
+			'column'    => 'Duplicate',
+			'clean'     => 'We have no duplicate content!',
+			'dirty'     => array(
+				"The following duplicate has been found. Please review and update as needed. If the flagged show/actor is not a duplicate, edit it and check the 'Not a Duplicate' flag.",
+				"The following duplicates have been found. Please review and update as needed. If a flagged show/actor is not a duplicate, edit it and check the 'Not a Duplicate' flag.",
+			),
 		),
 		'byq_checker'       => array(
-			'name'   => 'Bury Your Queers',
-			'desc'   => 'Checks all characters with death cliché have proper death year meta data and shows have dead-queers trope. This may be okay, because Sara Lance.',
-			'option' => 'byq_problems',
+			'name'      => 'Bury Your Queers',
+			'desc'      => 'Checks all characters with death cliché have proper death year meta data and shows have dead-queers trope. This may be okay, because Sara Lance.',
+			'option'    => 'byq_problems',
+			'transient' => Characters::TRANSIENT_BYQ,
+			'scanner'   => array( Characters::class, 'find_byq_problems' ),
+			'column'    => 'Character',
+			'clean'     => 'All the death data looks good and the data looks sane.',
+			'dirty'     => array(
+				'The following character needs your attention.',
+				'The following characters need your attention.',
+			),
 		),
 		'actor_checker'     => array(
-			'name'   => 'Actors Info',
-			'desc'   => 'Checks that all information for actors appears correct. This includes social media and links.',
-			'option' => 'actor_problems',
+			'name'      => 'Actors Info',
+			'desc'      => 'Checks that all information for actors appears correct. This includes social media and links.',
+			'option'    => 'actor_problems',
+			'transient' => Actors::TRANSIENT_PROBLEMS,
+			'scanner'   => array( Actors::class, 'find_actors_problems' ),
+			'column'    => 'Actor',
+			'clean'     => 'Every actor has at least one character and their data looks sane.',
+			'dirty'     => array(
+				'The following actor needs your attention.',
+				'The following actors need your attention.',
+			),
 		),
 		'character_checker' => array(
-			'name'   => 'Characters Info',
-			'desc'   => 'Checks that all information for characters appears correct, like if they have a show and years-on-air added.',
-			'option' => 'character_problems',
+			'name'      => 'Characters Info',
+			'desc'      => 'Checks that all information for characters appears correct, like if they have a show and years-on-air added.',
+			'option'    => 'character_problems',
+			'transient' => Characters::TRANSIENT_PROBLEMS,
+			'scanner'   => array( Characters::class, 'find_characters_problems' ),
+			'column'    => 'Character',
+			'clean'     => 'All characters look good and their data looks sane. Even Sara Lance.',
+			'dirty'     => array(
+				'The following character needs your attention.',
+				'The following characters need your attention.',
+			),
 		),
 		'show_checker'      => array(
-			'name'   => 'Shows Info',
-			'desc'   => 'Checks that all information for shows appears correct. Like do they have characters and ratings etc, does intersectionality seem to match.',
-			'option' => 'show_problems',
+			'name'      => 'Shows Info',
+			'desc'      => 'Checks that all information for shows appears correct. Like do they have characters and ratings etc, does intersectionality seem to match.',
+			'option'    => 'show_problems',
+			'transient' => Shows::TRANSIENT_PROBLEMS,
+			'scanner'   => array( Shows::class, 'find_shows_problems' ),
+			'column'    => 'Show',
+			'clean'     => 'All shows look good and the data looks sane.',
+			'dirty'     => array(
+				'The following show needs your attention.',
+				'The following shows need your attention.',
+			),
+			'note'      => 'Note: Remember that intersectionality is meant to be a <em>positive</em> representation. If it\'s bad disability rep (like Grey\'s Anatomy with Arizona), do not list them.',
 		),
 		'actor_empty'       => array(
-			'name'   => 'Incomplete Actors',
-			'desc'   => 'Actors with no photo or no biography. A completeness report rather than a fault report - a brand new actor legitimately has neither yet.',
-			'option' => 'actor_empty',
+			'name'      => 'Incomplete Actors',
+			'desc'      => 'Actors with no photo or no biography. A completeness report rather than a fault report - a brand new actor legitimately has neither yet.',
+			'option'    => 'actor_empty',
+			'transient' => Actors::TRANSIENT_EMPTY,
+			'scanner'   => array( Actors::class, 'find_actors_incomplete' ),
+			'column'    => 'Actor',
+			'clean'     => 'Every actor has a photo and a biography.',
+			'dirty'     => array(
+				'The following actor is missing a photo, a biography, or both.',
+				'The following actors are missing a photo, a biography, or both.',
+			),
 		),
 		'actor_imdb'        => array(
-			'name'   => 'Actors missing IMDb',
-			'desc'   => 'Actors who have no IMDb value. This may actually be okay as not all webseries/international shows are listed.',
-			'option' => 'actor_imdb',
+			'name'      => 'Actors missing IMDb',
+			'desc'      => 'Actors who have no IMDb value. This may actually be okay as not all webseries/international shows are listed.',
+			'option'    => 'actor_imdb',
+			'transient' => Actors::TRANSIENT_IMDB,
+			'scanner'   => array( Actors::class, 'find_actors_no_imdb' ),
+			'column'    => 'Actor',
+			'clean'     => 'All actors have an IMDb entry.',
+			'dirty'     => array(
+				"The following actor has invalid IMDb data, or none at all. Not all will be possible to fix, as many webseries and international shows aren't listed on IMDb.",
+				"The following actors have invalid IMDb data, or none at all. Not all will be possible to fix, as many webseries and international shows aren't listed on IMDb.",
+			),
 		),
 		'show_imdb'         => array(
-			'name'   => 'Shows missing IMDb',
-			'desc'   => 'Shows that have no IMDb value. This may actually be okay as not all webseries/international shows are listed.',
-			'option' => 'show_imdb',
+			'name'      => 'Shows missing IMDb',
+			'desc'      => 'Shows that have no IMDb value. This may actually be okay as not all webseries/international shows are listed.',
+			'option'    => 'show_imdb',
+			'transient' => Shows::TRANSIENT_IMDB,
+			'scanner'   => array( Shows::class, 'find_shows_no_imdb' ),
+			'column'    => 'Show',
+			'clean'     => 'All shows have an IMDb entry. (Web series are exempt from this check, so some may still have none.)',
+			'dirty'     => array(
+				"The following show has invalid IMDb data, or none at all. Not all will be possible to fix, as many webseries and international shows aren't listed on IMDb.",
+				"The following shows have invalid IMDb data, or none at all. Not all will be possible to fix, as many webseries and international shows aren't listed on IMDb.",
+			),
 		),
 		'onair_checker'     => array(
-			'name'   => 'On Air',
-			'desc'   => 'Checks that all shows have the correct on-air status.',
-			'option' => 'onair_problems',
+			'name'      => 'On Air',
+			'desc'      => 'Checks that all shows have the correct on-air status.',
+			'option'    => 'onair_problems',
+			'transient' => OnAir::TRANSIENT_PROBLEMS,
+			'scanner'   => array( OnAir::class, 'find_on_air_problems' ),
+			// Was "Duplicate", copy-pasted from the duplicates view.
+			'column'    => 'Show',
+			'clean'     => 'All shows have the correct on-air status.',
+			'dirty'     => array(
+				'The following show has an on-air status that does not match its airdates. Please review and update as needed.',
+				'The following shows have on-air statuses that do not match their airdates. Please review and update as needed.',
+			),
 		),
 		'watch_providers'   => array(
 			'name'   => 'Watch Providers',
 			'desc'   => 'Ways to Watch hosts with no provider term, so the front end is guessing their name. Create the term in one click.',
 			// No badge: this isn't a cron scan, and counting it would mean a query on every view of every tab.
 			'option' => '',
+			'render' => array( Watch_Providers::class, 'make' ),
 		),
 		'watch_term_check'  => array(
 			'name'   => 'Watch Term Check',
 			'desc'   => 'The other half of Watch Providers: of the terms we do have, do their URLs still work and still belong to that provider? A shut-down service whose domain was resold still answers HTTP 200.',
 			'option' => Watch_URLs::STATUS_KEY,
+			'render' => array( Watch_Term_Check::class, 'make' ),
 		),
 	);
 
@@ -209,46 +307,20 @@ class Validation {
 				// One place, so every tab reports the result of a repair.
 				Repair::show_notice();
 
-				switch ( $active_tab ) {
-					case 'tab_actor_checker':
-						( new Actor_Checker() )->make();
-						break;
-					case 'tab_actor_empty':
-						Actor_Empty::make();
-						break;
-					case 'tab_actor_imdb':
-						( new Actor_IMDb() )->make();
-						break;
-					case 'tab_byq_checker':
-						( new BYQ_Checker() )->make();
-						break;
-					case 'tab_dupe_checker':
-						( new Duplicates() )->make();
-						break;
-					case 'tab_character_checker':
-						( new Character_Checker() )->make();
-						break;
-					case 'tab_queer_checker':
-						( new Queer_Checker() )->make();
-						break;
-					case 'tab_show_checker':
-						( new Show_Checker() )->make();
-						break;
-					case 'tab_show_imdb':
-						( new Show_IMDb() )->make();
-						break;
-					case 'tab_onair_checker':
-						( new OnAir_Checker() )->make();
-						break;
-					case 'tab_watch_providers':
-						Watch_Providers::make();
-						break;
-					case 'tab_watch_term_check':
-						Watch_Term_Check::make();
-						break;
-					default:
-						self::tab_introduction();
-						break;
+				/*
+				 * One lookup, not a switch. Every report tab renders from its
+				 * TOOL_TABS entry; the two that are not reports name their own
+				 * renderer with a `render` key.
+				 */
+				$slug   = str_starts_with( $active_tab, 'tab_' ) ? substr( $active_tab, 4 ) : '';
+				$config = self::TOOL_TABS[ $slug ] ?? array();
+
+				if ( empty( $config ) ) {
+					self::tab_introduction();
+				} elseif ( isset( $config['render'] ) ) {
+					call_user_func( $config['render'] );
+				} else {
+					Report::make( $slug, $config );
 				}
 				?>
 			</div>
