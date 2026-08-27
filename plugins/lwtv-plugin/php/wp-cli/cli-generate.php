@@ -244,6 +244,28 @@ class WP_CLI_LWTV_Generate {
 				( new Dupes_Debugger() )->find_duplicates();
 				\WP_CLI::log( 'Debugger: Checking on air status...' );
 				( new OnAir_Debugger() )->find_on_air_problems();
+
+				/*
+				 * Give any newly-seen watch provider host a real display name.
+				 *
+				 * Wednesday because its other two checks are plain SQL, and
+				 * because Sunday's time budget belongs to find_bad_watch_urls().
+				 * Keeping the only two HTTP jobs on separate days means a cron
+				 * timeout still tells you which one caused it.
+				 *
+				 * Safe to repeat weekly: enrich skips hosts that already have a
+				 * term and hosts it has already asked about, so once the backlog
+				 * is named a run does nothing at all. The default --limit of 25
+				 * means the initial backlog is worked through over several weeks
+				 * rather than in one long run. Unreachable hosts are deliberately
+				 * not recorded, so a blip retries next Wednesday instead of
+				 * becoming permanent.
+				 *
+				 * Routed through __invoke() rather than the private run_enrich()
+				 * so cron takes exactly the path a human does.
+				 */
+				\WP_CLI::log( 'Ways to Watch: Naming any new provider hosts...' );
+				( new \WP_CLI_LWTV_WaysToWatch() )->__invoke( array( 'enrich' ), array() );
 				break;
 			case 'thu':
 				\WP_CLI::log( 'Debugger: Checking all actors...' );

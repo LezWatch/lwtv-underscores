@@ -64,6 +64,8 @@ to `Scan`: get targets, collect, evaluate, finish.
 | §5 | Acknowledgements — **declined**, not enough false positives to earn the machinery |
 | §8.4 | Wikidata TTL — **withdrawn**, neither key is a cache and a TTL would break the REST endpoint |
 | §2.1 | `what-happened` counts shows from IDs + batched meta, not hydrated posts |
+| §2.3 | Per-check status options — the shared-array write race is gone |
+| 13 | `waystowatch enrich` on Wednesday's cron slot; all eleven checks were already scheduled |
 | §3 | Capability check now lives once, in `Validator\Report::make()` |
 
 **Outstanding, roughly in order**
@@ -71,7 +73,10 @@ to `Scan`: get targets, collect, evaluate, finish.
 | | |
 |---|---|
 | §6 | Debug log rotation, memoised option reads, log viewer |
+| §2.2 | Scans are all-or-nothing and in-request; no batching or resume |
+| §2.1 | `make()` still caches whole `WP_Query` objects for its REST/export callers |
 | §8.4 | `migrate_ways_to_watch()` is a data migration living inside a URL checker |
+| §2.3 | **After ~1 Sept 2026:** delete the inert `lwtv_debugger_status` option once every check has run post-split |
 
 **Not verified yet:** the Watch Providers create-term and lookup buttons. The TMDB backfill
 write path **has** now been run and works.
@@ -662,12 +667,48 @@ database grows. The codebase already has the right pattern —
 `php/schedulers/class-tmdb-batch-task.php`, `class-cache-batch-task.php`,
 `class-cache-queue.php`. The debuggers should use it.
 
-### 2.3 Read-modify-write race on `lwtv_debugger_status`
+### 2.3 Read-modify-write race on `lwtv_debugger_status` (FIXED — 2026-08-27)
 
-All six scanners do `get_option()` → mutate → `update_option()` with no locking. Cron
+~~All six scanners do `get_option()` → mutate → `update_option()` with no locking. Cron
 running a scan while an admin clicks "Rerun" on a different tab means one of the two count
-updates is lost. Low severity, easy fix: store per-check status as its own option, or use
-a single atomic write per check.
+updates is lost.~~
+
+Centralising the block into `Status::record()` earlier in this pass removed the nine copies
+but not the race — one shared array read-modify-written is still one shared array. **Each
+check now owns its own option** (`lwtv_debugger_status_{scope}`), so a write touches nothing
+but that check.
+
+The whole change fits behind `Status`'s existing four-method API, so **no consumer changed**.
+`all()` reassembles exactly the array the single option used to hold, and the global
+`timestamp` member is now *derived* as the newest `last` rather than stored — which is the
+same number, since both were `time()` in the same `record()` call.
+
+Decisions worth knowing:
+
+- **Nothing is migrated, and nothing disappears.** `all()` unions the per-check options over
+  the old option's leftovers, `+` keeping the left-hand value so a check that has run since
+  the split wins over its own stale entry. A check that has not run yet still shows its old
+  count. Once every check has run once — at most one weekly rotation — the old option is
+  inert and can be deleted.
+- **Not autoloaded.** Only wp-admin and WP-CLI ever read these, so they no longer ride along
+  on every front-end request. The old single option did.
+- **The index is honestly not race-free**, and that is fine. `record()` appends the key to
+  `lwtv_debugger_check_keys` if missing, which is itself a read-modify-write — but it is
+  idempotent and self-healing: a lost append is retried on that check's next run, and the
+  value option holds the truth meanwhile. Worst case is one badge missing for a cycle,
+  against the old worst case of a silently wrong count.
+- **The index option deliberately does not share `PREFIX`.** If it did, a check whose key
+  matched the index's suffix would overwrite the index. Unlikely, and horrible to find.
+
+Verified by mirroring old and new `all()` across the four states the site can be in —
+untouched, mid-rotation, fully migrated, fresh install. Identical on an untouched site, no
+check dropped mid-rotation, and the derived timestamp equal to the newest `last` in every
+case. Not unit-tested: `Status` reads options, so it falls under the "verify against the
+running site" rule rather than the pure-transform suite.
+
+One deliberate behaviour change: `forget()`-ing the most recently recorded check now moves
+`timestamp` back to the next-newest run, where before it kept the retired check's. More
+correct, and nothing reads it for anything but "how long ago".
 
 ### 2.4 Scans mutate data while claiming to only report (FIXED)
 
@@ -1644,8 +1685,15 @@ Everything in the **Done** table at the top has shipped. What's left, in the ord
     preamble and epilogue went into `Debugger\Scan` (2026-08-27), which is now the only
     caller of `Baseline_Store` — so the "a recheck must not be diffed" rule is stated once
     instead of eleven times.
-13. Add the missing checks to the cron rotation — including `waystowatch enrich`, which is
-    safe to run weekly since it skips anything already asked.
+13. ~~Add the missing checks to the cron rotation — including `waystowatch enrich`, which is
+    safe to run weekly since it skips anything already asked.~~ **Done (2026-08-27), and
+    smaller than it read:** all eleven debugger checks were already scheduled, so `enrich`
+    was the only thing missing. It went on **Wednesday**, whose other two checks are plain
+    SQL — Sunday's time budget belongs to `find_bad_watch_urls()`, and keeping the only two
+    HTTP jobs on separate days means a cron timeout still says which one caused it. The
+    default `--limit=25` works the initial backlog down over a few weeks instead of one long
+    run. Routed through `__invoke()` rather than the private `run_enrich()` so cron takes the
+    same path a human does. `check_actors_wikidata()` stays unscheduled on purpose — see §8.4.
 14. ~~**Convert the remaining checks to typed findings**~~ — **done, all eleven
     (2026-08-26)**: `byq`, `queers`, `dupes`, `on_air`, both IMDb checks, `actor_empty`, and
     finally `watchurls`. Every check now emits typed findings and diffs against a baseline.
