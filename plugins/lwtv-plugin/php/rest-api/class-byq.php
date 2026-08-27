@@ -334,8 +334,8 @@ class BYQ {
 			// the death_list cache has stale/wrong data; purge both caches and regenerate.
 			if ( 83580 === (int) $cached_result['id'] ) {
 				lwtv_plugin()->debug_log( 'buryqueers', 'Stale Frankie data detected in last_death cache — purging and regenerating' );
-				delete_transient( $cache_key );
-				delete_transient( 'byq_death_list_' . $this->get_data_version_hash() );
+				lwtv_plugin()->delete_transient( $cache_key );
+				lwtv_plugin()->delete_transient( 'byq_death_list_' . $this->get_data_version_hash() );
 			} else {
 				lwtv_plugin()->debug_log( 'buryqueers', 'Returning cached last death: ' . wp_json_encode( $cached_result ) );
 				return $cached_result;
@@ -909,26 +909,37 @@ class BYQ {
 	 * @return void
 	 */
 	public function invalidate_death_list_cache() {
+		/*
+		 * Deletes go through lwtv_plugin()->delete_transient(), not core's, for
+		 * the same reason the writes do: _Components\Transients is the seam for
+		 * swapping the transient store. Today the wrapper is a passthrough and
+		 * the two are identical -- but every key below is *written* through the
+		 * wrapper, so busting them through core would, after a swap, write to the
+		 * new store and delete from the old. That is cache you cannot clear, on
+		 * the endpoint that feeds Bury Your Queers. Keep both sides on the same
+		 * side of the seam.
+		 */
+
 		// Get the current hash BEFORE we delete it
 		$current_hash = $this->get_data_version_hash();
 
 		// Delete the hash transient first so next request generates fresh hash
-		delete_transient( 'byq_data_version_hash' );
+		lwtv_plugin()->delete_transient( 'byq_data_version_hash' );
 
 		// Delete all related caches using the OLD hash
 		$death_list_key = 'byq_death_list_' . $current_hash;
 		$last_death_key = 'byq_last_death_' . $current_hash;
 
-		delete_transient( $death_list_key );
-		delete_transient( $last_death_key );
+		lwtv_plugin()->delete_transient( $death_list_key );
+		lwtv_plugin()->delete_transient( $last_death_key );
 
 		// Also delete on_this_day caches for today (they share the hash)
 		$today          = gmdate( 'm-d' );
 		$otd_json_key   = 'byq_on_this_day_' . md5( $today . '_json' ) . '_' . $current_hash;
 		$otd_social_key = 'byq_on_this_day_' . md5( $today . '_socialmedia' ) . '_' . $current_hash;
 
-		delete_transient( $otd_json_key );
-		delete_transient( $otd_social_key );
+		lwtv_plugin()->delete_transient( $otd_json_key );
+		lwtv_plugin()->delete_transient( $otd_social_key );
 
 		lwtv_plugin()->debug_log( 'buryqueers', 'Invalidated BYQ caches: ' . $death_list_key . ', ' . $last_death_key . ', byq_data_version_hash, and on_this_day caches' );
 	}

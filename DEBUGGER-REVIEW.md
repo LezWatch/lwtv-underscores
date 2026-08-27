@@ -65,6 +65,7 @@ to `Scan`: get targets, collect, evaluate, finish.
 | §8.4 | Wikidata TTL — **withdrawn**, neither key is a cache and a TTL would break the REST endpoint |
 | §2.1 | `what-happened` counts shows from IDs + batched meta, not hydrated posts |
 | §2.3 | Per-check status options — the shared-array write race is gone |
+| §6 | Logging: rotation, memoised reads, fail-closed topics, `wp lwtv debug-log`, 2 undeclared topics found |
 | 13 | `waystowatch enrich` on Wednesday's cron slot; all eleven checks were already scheduled |
 | §3 | Capability check now lives once, in `Validator\Report::make()` |
 
@@ -72,7 +73,6 @@ to `Scan`: get targets, collect, evaluate, finish.
 
 | | |
 |---|---|
-| §6 | Debug log rotation, memoised option reads, log viewer |
 | §2.2 | Scans are all-or-nothing and in-request; no batching or resume |
 | §2.1 | `make()` still caches whole `WP_Query` objects for its REST/export callers |
 | §8.4 | `migrate_ways_to_watch()` is a data migration living inside a URL checker |
@@ -1094,34 +1094,183 @@ frames an absence of oracle data as an editorial opinion about IMDb) and the ter
 
 ---
 
-## 6. Debug logging stack (`_Components\Debugger` + `Admin_Menu\Debugging`)
+## 6. Debug logging stack — DONE (2026-08-27)
 
-- **Unbounded log file.** `debug_log()` appends to `wp-content/debug-lwtv.log` forever with
-  no rotation or size cap. With 20 topics enabled on a busy site this fills a disk. Add a
-  size check with rotate-on-threshold, or a `wp lwtv debug-log rotate` command.
-- **Two option reads per log call.** `is_debug_mode()` and `is_topic_enabled()` each call
-  `get_field( ..., 'option' )` on *every* `debug_log()` invocation. Memoise both in static
-  properties for the request — this is called in hot paths (`calculations`, `caching`,
-  `statistics` topics).
-- **Fail-open topics.** `is_topic_enabled()` returns `true` when `log_topics` is empty, so
-  deselecting everything logs *everything*. Whether that's intended isn't documented; if it
-  is, say so in the field description.
-- **`WP_DEBUG` forces debug mode on.** `is_debug_mode()` short-circuits to `true` if
-  `WP_DEBUG` is defined — meaning any dev environment writes `debug-lwtv.log` regardless of
-  the plugin toggle. Probably intended, worth a comment.
-- **Typo**: "Debuging Tools" (missing an `g`) appears twice in the menu registration —
-  `admin-menu/class-debugging.php:69-70`. User-facing.
-- **No log viewer.** The options page toggles logging but there's no way to read the log
-  from wp-admin. A tail view (last N lines, filtered by topic) would close the loop, and
-  the topic list is already a typed constant to filter on.
-- **Dead sibling.** `error_log()` in the same class ignores debug mode and topics entirely
-  and writes to PHP's error log. Fine as an escape hatch, but it's exposed as a template
-  tag (`lwtv_plugin()->error_log()`) next to `debug_log()`, which invites misuse.
+Landed as `debugger/build/class-log-rules.php` (pure, 30 tests),
+`debugger/class-log.php` (the file: write, rotate, prune, read), a rewritten
+`_Components\Debugger`, and `wp-cli/cli-debug-log.php`.
 
-Also: `VALID_LOG_TOPICS` is a hardcoded list of 20 strings, and `debug_log( $type, ... )`
-accepts any string with no validation against it. A typo'd topic silently logs (because
-`is_topic_enabled()` fails open) but can never be turned off from the UI. Validate the
-topic against the constant, or at least log a one-time warning for unknown topics.
+### The bug the review only half-saw
+
+§6 said "a typo'd topic silently logs but can never be turned off". That was right about
+the mechanism and wrong about the cause. It is not typos — **two live topics were never
+declared at all**:
+
+| topic | logged from | status before |
+|---|---|---|
+| `show-score` | `cpts/shows/class-calculations.php` | wrote unconditionally, untoggleable |
+| `imdb-verify` | `schedulers/class-imdb-verify-task.php` | wrote unconditionally, untoggleable |
+
+`show-score` is in the show scoring engine, which CLAUDE.md names as the core data product.
+Both are now in `VALID_LOG_TOPICS`, which matters more than it sounds: **flipping the topic
+gate to fail-closed would have silenced both**, invisibly. Worth remembering as the general
+shape — reversing a fail-open default is only safe once you know everything that was relying
+on it.
+
+The census that found them, over 306 call sites:
+
+| topic | sites | | topic | sites |
+|---|---|---|---|---|
+| `statistics` | 104 | | `scheduler` / `death` | 13 each |
+| `buryqueers` | 40 | | `calculations` | 10 |
+| `postiz` | 29 | | `shadow-taxonomy` / `is-queer` / `calendar` | 5 each |
+| `tmdb` | 24 | | `shows` / `missed-schedule` | 4 each |
+| `this-year` | 21 | | `characters` | 1 |
+| `caching` | 20 | | `show-score` / `imdb-verify` | 1 each |
+
+### What was done
+
+- ~~**Unbounded log file.**~~ Two thresholds, one mechanism. `Log::rotate()` runs in the
+  daily cron and rotates only once the file passes `ROTATE_AT` (1MB) — size-based rather
+  than daily, because rotating a 4KB file nightly buries the useful history under
+  near-empty files. `Log::append()` adds a mid-request backstop at `MAX_BYTES` (10MB) for a
+  runaway loop between cron runs. Rotated files are timestamped, so name order is time
+  order and `prunable()` keeps the newest `KEEP` (5) with no renaming.
+- ~~**Two option reads per log call.**~~ Both memoised in statics. The subtlety worth knowing:
+  the memo is only set **once the answer is authoritative**. `debug_log()` is called during
+  bootstrap, before `acf/init`, so caching "off" from an early call would have silenced the
+  rest of the request — a bug the naive memoisation introduces and nothing would have caught.
+- ~~**Fail-open topics.**~~ Flipped: an empty selection now means silence, which is what the
+  UI implies. The *separate* fail-open for "ACF is not loaded yet" is kept deliberately —
+  there, what is ticked is unknowable and losing bootstrap logs is worse than a few extra
+  lines — but it still refuses undeclared topics, so it is not a way around the vocabulary.
+- ~~**No topic validation.**~~ `Log_Rules::topic_enabled()` refuses anything not in
+  `VALID_LOG_TOPICS`, and `debug_log()` reports an undeclared topic once per request to
+  **PHP's** error log — not ours, since a message about a broken topic should not be filed
+  under the broken topic.
+- ~~**No log viewer.**~~ `wp lwtv debug-log [tail|status|topics|rotate|clear]` instead of an
+  admin screen: reading a log is an operator task, and everyone who can enable logging
+  already has shell access. `tail` filters by `--topic`, `--search`, `--lines`, and `--file`
+  for rotated copies; `topics` cross-references declared vs enabled vs actually present,
+  which is the "why am I seeing nothing for X" question in one screen.
+- ~~**Dead sibling `error_log()`.**~~ Kept, with a docblock saying what it is for and to
+  prefer `debug_log()`. It is a legitimate escape hatch, and the unknown-topic report uses it.
+- **Deleted `Debugging::get_enabled_topics()` and `Debugging::is_debug_mode_enabled()`.**
+  Nothing called either. They duplicated `_Components\Debugger`'s live versions with
+  *different* semantics — the dead copy validated against the vocabulary, the live one did
+  not — so the stricter implementation was the one nobody ran. §6 missed these.
+- **Only 2MB of the file is read** for tailing, with a partial first line dropped, so a
+  truncated entry is never shown as whole.
+
+### Stale in the original §6
+
+- **The "Debuging Tools" typo was already fixed.** The menu reads "Debugging Tools" in both
+  places.
+- **`WP_DEBUG` forcing debug mode on** is intended, and now says so in the docblock.
+
+### Left alone deliberately
+
+- **Five declared topics are never logged** — `actors`, `ai-agents`, `taxsync`, `validator`,
+  `wp-cli`. They are a declared vocabulary, and a checkbox for a topic nobody has used yet
+  costs nothing. Removing them would make a future `debug_log( 'actors', ... )` silently
+  fail under the new fail-closed rule, which is strictly worse than an unused checkbox.
+- **`VALID_LOG_TOPICS` stays in `Admin_Menu\Debugging`** even though `_Components\Debugger`
+  and `Plugins\Acf` are now both consumers from other namespaces. It is an editor-facing
+  vocabulary and it already single-sources the ACF choices; moving it to `build/` would be
+  churn for tidiness.
+
+### One self-inflicted fatal, and the lesson
+
+`wp lwtv debug-log topics` fataled on first run: it called
+`lwtv_plugin()->is_topic_enabled()`, and **a public method on a component is not reachable
+through `lwtv_plugin()` unless it is registered in that component's `get_template_tags()`**.
+`Plugin::__call()` throws a `RuntimeException` for anything else, which WordPress surfaces as
+"There has been a critical error on this website" with no clue as to the cause.
+`is_topic_enabled()` is now registered, and annotated in `class-plugin.php`'s `@method` list.
+
+Checking for it repo-wide — every `lwtv_plugin()->x()` call against every registered tag —
+turned up **one pre-existing instance of the same bug**, since fixed:
+`wp-cli/cli-scheduler.php:275` called `lwtv_plugin()->get_transient_cleanup_status()`, which
+no component registered and no class defined, so `wp lwtv scheduler status` fataled outright.
+
+Git told the whole story. `6892468d` (2 Sep 2025, 12:45) added a transient cleanup feature —
+a 368-line `schedulers/class-transient-cleanup-task.php`, a health monitor, docs, the
+Scheduler method, and the CLI display. `c05459e0`, **85 minutes later**, took it all back
+out. The removal was thorough — task class, health monitor, docs and the `@method`
+annotation all went — and missed exactly one thing: the display block in
+`run_overall_status()`, which kept calling the method that no longer existed.
+
+**Deleted rather than rebuilt**, because the feature is redundant *given today's backend*:
+`_Components\Transients` delegates to core, so every LWTV transient is an ordinary WordPress
+transient and core's `delete_expired_transients()` already runs daily via
+`wp_scheduled_delete`. A comment at the site records the two commits so the next person does
+not rebuild it from scratch.
+
+**The wrapper is a seam, not incidental** — it exists so the transient store can be swapped
+later (a separate database was the idea). Core would not sweep a store outside the options
+table, so if that swap happens, expiry becomes the new backend's job and this section becomes
+worth rebuilding. The comment says so, because "core already does it" read as permanent when
+it is a property of the current implementation.
+
+### Seam audit (2026-08-27)
+
+Since the wrapper's whole purpose is to be swappable, it is worth knowing what bypasses it.
+Every direct core transient call outside `class-transients.php`, categorised:
+
+- **Consistent, and fine.** `validator/class-watch-term-check.php`,
+  `validator/class-watch-providers.php` and `debugger/class-repair.php` set, read and delete
+  their one-shot admin-notice key entirely through core, and use the wrapper for a different
+  key. Per-user notices that live for seconds arguably *should not* travel to a swapped
+  store, so this is a reasonable line. `cpts/characters/class-calculations.php` treats its
+  `shadow_tax_failure_` counters the same way.
+- ~~**Inconsistent, and a latent migration bug.** `rest-api/class-byq.php` has **11 wrapper
+  reads/writes, 7 core deletes, and zero wrapper deletes**~~ — **FIXED (2026-08-27).** Line
+  337 deleted `$cache_key`, the same variable it writes with
+  `lwtv_plugin()->set_transient()`. All seven deleted keys were confirmed to be
+  wrapper-written first (`byq_death_list_*`, `byq_last_death_*`, `byq_on_this_day_*`,
+  `byq_data_version_hash`), so all seven now delete through the wrapper too. `class-byq.php`
+  is now 0 bare core transient calls against 18 through the wrapper. A no-op today; after a
+  backend swap it is the difference between working invalidation and cache that cannot be
+  cleared on the endpoint feeding Bury Your Queers. `invalidate_death_list_cache()` carries a
+  comment saying why, since "core's is shorter" is the obvious simplification.
+
+Not a bug, but noted while looking: `character_death_*` (written at line 780) is never
+explicitly deleted. It does not need to be — the key embeds the data version hash, so a data
+change orphans it and its TTL collects it. Worth knowing before someone "fixes" that too.
+
+### `class-plugin.php`'s `@method` block, now trustworthy (2026-08-27)
+
+That docblock is the only map of what `lwtv_plugin()` can do, and it had drifted badly:
+**13 registered tags were undocumented and 30 had wrong parameter lists.** Not just renamed
+parameters — whole arguments missing:
+
+| tag | documented | actually |
+|---|---|---|
+| `get_symbolicon` | `( string $slug )` | `( $svg, $icon, $svg_class, $max_size )` |
+| `get_icon_svg` | `( string $slug )` | `( $base64, $icon_color )` |
+| `schedule_task` | 3 parameters | 6 |
+| `get_last_death` | `( $post_id )` | takes nothing |
+| `display_scores` | `( $show_id )` | `( $scores )` — a different *kind* of value |
+| `get_cpt_related_posts` | `( $show_id )` | `( $slug, $max_posts, $type )` |
+
+`display_scores` was the one worth checking rather than mass-correcting: the doc said
+`$show_id`, and if callers agreed, the *implementation* would have been the bug. Its only
+caller (`template-parts/partials/shows/card-worthit.php`) passes `$scores`, matching the
+code, so the doc was simply wrong. The usage example at the top of the file said `$post_id`
+too, and is fixed.
+
+Every line was regenerated from the real signatures rather than hand-edited, then verified:
+**81 registered tags, 81 annotated, 0 mismatches, 0 annotations pointing at a tag that does
+not exist.** That last check is the one that would have caught `get_transient_cleanup_status`
+years ago, and it is cheap enough to be worth wiring into CI at some point.
+
+### Worth knowing, not fixed
+
+**`wp-content/debug-lwtv.log` may be readable over HTTP**, and rotation multiplies the
+copies. This predates the change — WordPress's own `debug.log` has the same exposure and it
+is a standard finding — but it is worth a deliberate decision rather than an accident. The
+fix is server-side (deny the path, or move the log outside the webroot via a constant), which
+is why it was not done blind here.
 
 ---
 
@@ -1646,8 +1795,10 @@ Everything in the **Done** table at the top has shipped. What's left, in the ord
 4. ~~**`fields => 'ids'`** at every `Post_Type::make()` debugger call site (2.1).~~ **Done**
    as `Post_Type::get_ids()`, across all nine sites plus `cli-shadow.php`. Two adjacent
    cases remain, listed at the end of §2.1.
-5. **Debug log rotation + memoised option reads** (§6). `debug_log()` still reads two ACF
-   options per call and the log file still grows without bound.
+5. ~~**Debug log rotation + memoised option reads** (§6).~~ **Done (2026-08-27)**, along with
+   the rest of §6. The find worth remembering: `show-score` and `imdb-verify` were being
+   logged by live code without being declared, so flipping the topic gate to fail-closed
+   would have silenced both without a word. See §6.
 6. ~~**Delete `find_shows_bad_url()` and link `tab_show_urls`** (1.3, 1.6).~~ **Done.**
    `find_shows_bad_url()`, `Shows::TRANSIENT_URL`, `validator/class-show-urls.php` and the
    unreachable `tab_show_urls` case are gone. Host liveness was *not* skipped after all —

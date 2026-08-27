@@ -14,6 +14,7 @@ use LWTV\Debugger\Dupes as Dupes_Debugger;
 use LWTV\Debugger\Queers as Queers_Debugger;
 use LWTV\Debugger\OnAir as OnAir_Debugger;
 use LWTV\Debugger\Watch_URLs as Watch_URLs_Debugger;
+use LWTV\Debugger\Log;
 use LWTV\Features\Missed_Schedule;
 use LWTV\Rest_API\BYQ;
 use LWTV\CPTs\Shows as CPT_Shows;
@@ -208,6 +209,19 @@ class WP_CLI_LWTV_Generate {
 		// Build tv maze:
 		\WP_CLI::log( 'Downloading the TV Maze ICS.' );
 		$this->run_tvmaze();
+
+		/*
+		 * Rotate the debug log before the day's check adds to it.
+		 *
+		 * Size-based, not daily: a 4KB log rotated every night just buries the
+		 * useful history under a pile of near-empty files. Log::append() has its
+		 * own mid-request backstop at a higher threshold for runaway loops
+		 * between cron runs. See DEBUGGER-REVIEW.md 6.
+		 */
+		$rotated = Log::rotate();
+		if ( '' !== $rotated ) {
+			\WP_CLI::log( sprintf( 'Rotated the debug log to %s.', basename( $rotated ) ) );
+		}
 
 		// Run the debug of the day:
 		$day = gmdate( 'D' );

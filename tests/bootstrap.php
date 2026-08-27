@@ -96,3 +96,4 @@ require_once __DIR__ . '/../plugins/lwtv-plugin/php/debugger/build/class-duplica
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/debugger/build/class-imdb-rules.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/debugger/build/class-queer-rules.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/debugger/build/class-actor-completeness-rules.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/debugger/build/class-log-rules.php';

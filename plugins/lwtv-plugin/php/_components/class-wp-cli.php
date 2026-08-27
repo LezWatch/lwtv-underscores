@@ -34,6 +34,7 @@ class WP_CLI implements Component {
 			sprintf( '%s/%s', dirname( __DIR__, 1 ) . '/wp-cli/', 'cli-calc.php' ),      // wp lwtv CALC [ID]
 			sprintf( '%s/%s', dirname( __DIR__, 1 ) . '/wp-cli/', 'cli-check.php' ),     // wp lwtv CHECK [queerchars|wiki] [id]
 			sprintf( '%s/%s', dirname( __DIR__, 1 ) . '/wp-cli/', 'cli-debug.php' ),     // wp lwtv DEBUG
+			sprintf( '%s/%s', dirname( __DIR__, 1 ) . '/wp-cli/', 'cli-debug-log.php' ), // wp lwtv DEBUG-LOG [tail|status|topics|rotate|clear]
 			sprintf( '%s/%s', dirname( __DIR__, 1 ) . '/wp-cli/', 'cli-dupes.php' ),     // wp lwtv DUPES
 			sprintf( '%s/%s', dirname( __DIR__, 1 ) . '/wp-cli/', 'cli-generate.php' ),  // wp lwtv GENERATE [otd|tvmaze]
 			sprintf( '%s/%s', dirname( __DIR__, 1 ) . '/wp-cli/', 'cli-imdb.php' ),      // wp lwtv IMDB [status|verify|list]
