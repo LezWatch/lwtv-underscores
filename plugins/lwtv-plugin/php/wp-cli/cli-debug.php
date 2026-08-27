@@ -21,6 +21,7 @@ use LWTV\Debugger\Queers;
 use LWTV\Debugger\Shows;
 use LWTV\Debugger\OnAir;
 use LWTV\Debugger\Status;
+use LWTV\Debugger\Watch_Host_Collisions;
 use LWTV\Debugger\Watch_URLs;
 
 /**
@@ -186,6 +187,16 @@ class WP_CLI_LWTV_Debug {
 				'done'      => 'Watch provider URL check complete.',
 				'slow'      => true,
 			),
+			'watchhosts'  => array(
+				'transient' => Watch_Host_Collisions::TRANSIENT_PROBLEMS,
+				'status'    => Watch_Host_Collisions::STATUS_KEY,
+				'scanner'   => array( Watch_Host_Collisions::class, 'find_host_collisions' ),
+				'columns'   => array( 'term', 'url', 'shows', 'problem' ),
+				'running'   => 'Looking for hosts claimed by more than one provider term...',
+				'clean'     => 'Excellent! Every watch host resolves to exactly one provider term.',
+				'dirty'     => 'host(s) claimed by more than one term.',
+				'done'      => 'Watch host collision check complete.',
+			),
 			'on_air'      => array(
 				'transient' => OnAir::TRANSIENT_PROBLEMS,
 				'status'    => 'onair_problems',
@@ -217,6 +228,8 @@ class WP_CLI_LWTV_Debug {
 	 *   - show_imdb: Find shows without IMDb data
 	 *   - watchurls: Check every URL on every watch provider term still works and
 	 *     still belongs to that provider (slow - one remote request per URL)
+	 *   - watchhosts: Find hosts claimed by more than one provider term (two
+	 *     queries, no requests)
 	 *   - on_air: Check on air status of shows
 	 *
 	 * [--fix-it]

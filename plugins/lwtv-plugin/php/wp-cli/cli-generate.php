@@ -12,6 +12,7 @@ use LWTV\Debugger\Characters as Characters_Debugger;
 use LWTV\Debugger\Shows as Shows_Debugger;
 use LWTV\Debugger\Dupes as Dupes_Debugger;
 use LWTV\Debugger\Queers as Queers_Debugger;
+use LWTV\Debugger\Watch_Host_Collisions;
 use LWTV\Debugger\OnAir as OnAir_Debugger;
 use LWTV\Debugger\Watch_URLs as Watch_URLs_Debugger;
 use LWTV\Debugger\Log;
@@ -280,6 +281,16 @@ class WP_CLI_LWTV_Generate {
 				 */
 				\WP_CLI::log( 'Ways to Watch: Naming any new provider hosts...' );
 				( new \WP_CLI_LWTV_WaysToWatch() )->__invoke( array( 'enrich' ), array() );
+
+				/*
+				 * Two queries, no requests, so it rides along with the day's
+				 * other plain-SQL checks. Should find nothing almost always --
+				 * it exists to notice the day someone points a second provider
+				 * term at a host that already has one, which host matching has
+				 * to resolve by name order.
+				 */
+				\WP_CLI::log( 'Debugger: Checking for contested watch hosts...' );
+				( new Watch_Host_Collisions() )->find_host_collisions();
 				break;
 			case 'thu':
 				\WP_CLI::log( 'Debugger: Checking all actors...' );

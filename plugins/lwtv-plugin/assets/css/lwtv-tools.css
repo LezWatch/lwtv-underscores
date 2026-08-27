@@ -65,3 +65,62 @@
 #lwtv-channels-container table tbody tr td {
 	padding-left: 10px;
 }
+
+/* Watch Providers: the assign-or-create control.
+ *
+ * One button per row by default. The select and the rename field are folded
+ * away behind the row's own toggle, or all of them at once from the top of the
+ * table, because accepting the proposed name is the common case and the other
+ * two are not.
+ */
+
+.lwtv-watch-primary {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 8px;
+}
+
+.lwtv-watch-toggle {
+	padding: 0;
+	color: #646970;
+	font-size: 12px;
+	text-decoration: none;
+	white-space: nowrap;
+}
+
+.lwtv-watch-panel {
+	margin-top: 8px;
+	padding-left: 10px;
+	border-left: 2px solid #c3c4c7;
+}
+
+.lwtv-watch-line {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin: 0 0 8px;
+}
+
+.lwtv-watch-line:last-child {
+	margin-bottom: 0;
+}
+
+/* min-width:0 is load-bearing: a flex item's default min-width is auto, and a
+ * select sized by its longest option would otherwise push the cell wider than
+ * the column. That is what made the old layout overflow. */
+.lwtv-watch-term,
+.lwtv-watch-name {
+	flex: 1 1 auto;
+	min-width: 0;
+	max-width: 22em;
+}
+
+.lwtv-watch-provenance {
+	color: #646970;
+	font-size: 12px;
+}
+
+.lwtv-watch-bulk {
+	margin: 20px 0 -10px;
+}

@@ -98,10 +98,7 @@ class Watch_URLs {
 	public function find_bad_watch_urls( array $items = array(), ?int $timeout = null, ?int $budget = null ): array {
 		$targets = empty( $items ) ? $this->all_targets() : $this->targets_from_items( $items );
 
-		// Recomputed on both paths, not carried over. It costs two queries and no
-		// requests, and re-deriving it is what lets a re-check clear a term that
-		// has since been given a URL.
-		$found = $this->terms_without_urls();
+		$found = array();
 
 		$started = microtime( true );
 		$first   = true;
@@ -201,9 +198,9 @@ class Watch_URLs {
 		$targets = array();
 
 		foreach ( $items as $item ) {
-			// A finding with no URL is a term with no URLs, which
-			// terms_without_urls() re-derives from scratch on every run. Probing
-			// '' would be nonsense.
+			// Nothing to probe. Cached rows from before the URL-less-term check
+			// was retired can still carry an empty url, and probing '' would be
+			// nonsense.
 			if ( empty( $item['url'] ) || empty( $item['id'] ) ) {
 				continue;
 			}
@@ -226,55 +223,6 @@ class Watch_URLs {
 		}
 
 		return $targets;
-	}
-
-	/**
-	 * Terms with no URLs at all.
-	 *
-	 * Free to find -- no request needed -- and worth saying, because
-	 * Watch_Hosts::term_for() matches on hosts derived from those URLs, so a term without
-	 * any can never be reached no matter how right its name is.
-	 *
-	 * @return array<int, array<string, mixed>>
-	 */
-	private function terms_without_urls(): array {
-		$terms = get_terms(
-			array(
-				'taxonomy'   => Theme_Ways_To_Watch::TAXONOMY,
-				'hide_empty' => false,
-			)
-		);
-
-		if ( is_wp_error( $terms ) || empty( $terms ) ) {
-			return array();
-		}
-
-		$has_urls = array();
-		foreach ( Watch_Hosts::term_urls() as $row ) {
-			$has_urls[ $row['term_id'] ] = true;
-		}
-
-		$found = array();
-		foreach ( $terms as $term ) {
-			if ( isset( $has_urls[ $term->term_id ] ) ) {
-				continue;
-			}
-
-			$found[] = Findings::make_for_term(
-				(int) $term->term_id,
-				Theme_Ways_To_Watch::TAXONOMY,
-				'watch-term-no-urls',
-				'',
-				array(
-					'url'    => '',
-					'term'   => $this->term_name( $term->name ),
-					'shows'  => 0,
-					'health' => Watch_Url_Health::STATUS_REVIEW,
-				)
-			);
-		}
-
-		return $found;
 	}
 
 	/**

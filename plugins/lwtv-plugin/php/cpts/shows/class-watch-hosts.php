@@ -37,6 +37,14 @@ class Watch_Hosts {
 	const META_REPEATER = 'lezwatchurls_all';
 
 	/**
+	 * Transient holding the Watch Providers tab's worklist.
+	 *
+	 * Written by scan_unregistered(). A week, like the other checks, so a list
+	 * left alone eventually rebuilds itself rather than going stale forever.
+	 */
+	const TRANSIENT_UNREGISTERED = 'lwtv_watch_unregistered';
+
+	/**
 	 * Request timeout in seconds for CLI runs, where nothing is waiting on us.
 	 */
 	const TIMEOUT = 6;
@@ -429,7 +437,113 @@ class Watch_Hosts {
 	}
 
 	/**
+	 * Scan for hosts with no provider term, and cache the result.
+	 *
+	 * Two modes, matching every other validator check:
+	 *
+	 *   - No $items: full scan. Every host in use that has no term.
+	 *   - $items given: re-check only those hosts, so ones that have since been
+	 *     given a term drop off without looking for new problems.
+	 *
+	 * The distinction is about *scope*, not cost -- this is two queries either
+	 * way. A full scan discovers hosts that appeared since last time; a re-check
+	 * deliberately does not, so the list stays a stable worklist while an editor
+	 * works down it. That is the same contract as On Air and the rest, and the
+	 * reason the button says Run Scan or Recheck rather than just Refresh.
+	 *
+	 * Hosts no longer in use are dropped on the re-check path, the same way
+	 * Debugger\Scan::targets() drops drafts: a show whose watch URL changed does
+	 * not still have this problem, and leaving it in would keep it on the list
+	 * forever because nothing can ever fix it.
+	 *
+	 * Show counts are re-derived on both paths rather than carried over, so a row
+	 * never shows a count from a previous week.
+	 *
+	 * @param array<int, array{host: string, shows: int}> $items Rows from a previous run, or empty for a full scan.
+	 * @return array<int, array{host: string, shows: int}> Most-used first.
+	 */
+	public static function scan_unregistered( array $items = array() ): array {
+		$in_use = self::in_use();
+		$map    = self::host_map()['map'];
+
+		if ( empty( $items ) ) {
+			$hosts = array_keys( $in_use );
+		} else {
+			$hosts = array();
+
+			foreach ( $items as $item ) {
+				$host = Host_Name::normalise( (string) ( $item['host'] ?? '' ) );
+
+				// Still a host, and still pointed at by a published show.
+				if ( '' !== $host && isset( $in_use[ $host ] ) ) {
+					$hosts[] = $host;
+				}
+			}
+		}
+
+		$found = array();
+		foreach ( $hosts as $host ) {
+			if ( Watch_Host_Map::resolve( $map, $host ) ) {
+				continue;
+			}
+
+			$found[] = array(
+				'host'  => $host,
+				'shows' => (int) ( $in_use[ $host ] ?? 0 ),
+			);
+		}
+
+		// in_use() is already sorted by count descending, but a re-check walks
+		// the stored order, so sort explicitly rather than relying on the input.
+		usort( $found, static fn ( array $a, array $b ) => $b['shows'] <=> $a['shows'] );
+
+		lwtv_plugin()->set_transient( self::TRANSIENT_UNREGISTERED, $found, WEEK_IN_SECONDS );
+
+		return $found;
+	}
+
+	/**
+	 * Drop one host from the stored worklist.
+	 *
+	 * Called after a term is created or assigned, so the row an editor just dealt
+	 * with disappears instead of sitting there until the next Recheck. Prunes the
+	 * one entry rather than deleting the transient, which would throw away the
+	 * other forty-odd rows and silently turn the next render into a full scan --
+	 * the reasoning Debugger\Repair::prune() documents.
+	 *
+	 * Does nothing when there is no worklist yet. A cold cache has nothing to
+	 * correct, and writing one here would store a list nobody scanned for.
+	 *
+	 * @param string $host Hostname.
+	 * @return void
+	 */
+	public static function forget_unregistered( string $host ): void {
+		$items = lwtv_plugin()->get_transient( self::TRANSIENT_UNREGISTERED );
+
+		if ( ! is_array( $items ) ) {
+			return;
+		}
+
+		$host = Host_Name::normalise( $host );
+		$kept = array();
+
+		foreach ( $items as $item ) {
+			if ( Host_Name::normalise( (string) ( $item['host'] ?? '' ) ) !== $host ) {
+				$kept[] = $item;
+			}
+		}
+
+		if ( count( $kept ) !== count( $items ) ) {
+			lwtv_plugin()->set_transient( self::TRANSIENT_UNREGISTERED, $kept, WEEK_IN_SECONDS );
+		}
+	}
+
+	/**
 	 * Hosts in use with no term, most-used first.
+	 *
+	 * Live, uncached, and used by the CLI and the name-lookup batch. The admin
+	 * tab reads scan_unregistered()'s transient instead, so pressing Recheck
+	 * means something.
 	 *
 	 * @param int $min_shows Ignore hosts used by fewer shows than this.
 	 * @return array<string, int> host => number of shows

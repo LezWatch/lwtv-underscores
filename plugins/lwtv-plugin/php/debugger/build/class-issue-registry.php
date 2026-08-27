@@ -390,13 +390,27 @@ class Issue_Registry {
 			'level'   => 'watch_term',
 			'message' => 'The host blocked us, so this could not be checked.',
 		),
+		/*
+		 * Retired 2026-08-27. A term with no URLs is legitimate -- it is how a
+		 * provider gets prepped before a network launches -- so reporting it and
+		 * advising "add a URL or delete the term" was telling editors to throw
+		 * away deliberate work. The scanner that emitted it is gone.
+		 *
+		 * The type stays declared because findings live in week-long transients:
+		 * a cached row still typed this way must render with a message rather
+		 * than an empty string until the next sweep replaces it.
+		 */
 		'watch-term-no-urls'          => array(
 			'level'   => 'watch_term',
-			'message' => 'This term has no URLs, so nothing can ever match it. Add a URL or delete the term.',
+			'message' => 'This term has no URLs. No longer reported — a term without URLs is a valid placeholder.',
 		),
 		'watch-url-deferred'          => array(
 			'level'   => 'watch_term',
 			'message' => 'Not re-checked yet — the page ran out of time. Press the button again.',
+		),
+		'watch-host-collision'        => array(
+			'level'   => 'watch_term',
+			'message' => 'Another provider term claims this host too.',
 		),
 
 		/*

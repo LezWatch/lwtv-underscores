@@ -12,6 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 use LWTV\Validator\Report;
+use LWTV\Debugger\Watch_Host_Collisions;
 use LWTV\Validator\Watch_Providers;
 use LWTV\Validator\Watch_Term_Check;
 
@@ -189,9 +190,19 @@ class Validation {
 		),
 		'watch_providers'   => array(
 			'name'   => 'Watch Providers',
-			'desc'   => 'Ways to Watch hosts with no provider term, so the front end is guessing their name. Create the term in one click.',
-			// No badge: this isn't a cron scan, and counting it would mean a query on every view of every tab.
-			'option' => '',
+			'desc'   => 'Ways to Watch hosts with no provider term, so the front end is guessing their name. Assign an existing term or create one.',
+			/*
+			 * The badge counts contested hosts, not hosts without a term. The
+			 * second number is ~130 and permanent -- web series each live on
+			 * their own domain -- so badging it would mean a warning that never
+			 * clears and therefore never gets read. A collision is nearly always
+			 * 0 and always worth looking at.
+			 *
+			 * Fed by the `watchhosts` cron check, not by rendering this tab: the
+			 * tab computes its own numbers live and writing an option on read
+			 * would be the wrong shape.
+			 */
+			'option' => Watch_Host_Collisions::STATUS_KEY,
 			'render' => array( Watch_Providers::class, 'make' ),
 		),
 		'watch_term_check'  => array(

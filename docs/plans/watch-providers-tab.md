@@ -105,15 +105,24 @@ the count now points at an occupied slot. Derive the index from the actual `_N_u
 | Question | Decision |
 |---|---|
 | Matching | Normalised **host** matching, front end and admin, **after** a Phase 0 audit of what is actually stored. |
-| Recheck button | Cache the host scan in a transient; tri-state `Run Scan` / `Recheck`. Hand-rolled — `Report::render_form()` is private. Model on `Watch_Term_Check::render_recheck_form()`. |
-| Term dropdown | One `<select>` per row, options cloned from a single shared `<template>` by a small admin JS file. |
+| Recheck button | **Built as Pattern A.** Stored worklist, tri-state Run Scan / Recheck, same nonce and field names as `Report`. Recheck re-tests only the listed hosts. |
+| Term dropdown | One `<select>` per row, options cloned from a single shared `<template>`. Inline script, matching the tab picker on the same screen, rather than a new enqueued asset. |
 | Table contents | Problems only. A host with a term is not a problem and is not rendered. No "show resolved" view. |
-| Scan shape | **Hybrid.** "No term" is a bespoke host snapshot (no object to anchor a finding to). Collisions are real `watch_term` findings through `Scan::finish()`. |
-| Stored scheme | `https://` only, one row per host. The matcher is scheme-blind after Phase 1, so a second row is dead weight. Phase 0 rewrites stored `http://` rows. |
+| Scan shape | **Split.** Hosts needing a term are a stored worklist behind the button. Collisions are live — free from the map the scan already builds. |
+| Stored scheme | `https://` only, one row per host, written by `Watch_Hosts::set_term_urls()`. The matcher is scheme-blind after Phase 1. |
 | URL-less terms | Legitimate (prep for a coming network). `Watch_URLs::terms_without_urls()` gets deleted. |
 | `$min_shows` | Stays at 1. No threshold, no `?min=` arg — a floor would make the problem set silently incomplete. |
 
 Every question this plan opened is answered. Nothing below is waiting on a decision.
+
+**One reversal, and then a reversal of the reversal.** Phase 1 removed the per-host query, so I
+dropped the cache and the button as unjustified. That was wrong, for a reason performance analysis
+could not see: the button's value is a worklist that **holds still** while an editor works down it,
+and consistency with ten other tabs that behave exactly this way. A live list recomputes under you
+and cannot shrink as you fix things. Rebuilt as Pattern A.
+
+The perf argument against caching was correct and irrelevant. Kept here because the cache's
+docblock now has to say *why* it exists, and "it is faster" would be a lie.
 
 ---
 
@@ -360,224 +369,38 @@ term name being used verbatim (line 90), and the guess fallback for hosts with n
 
 ---
 
-## Phase 2 — Cache the scan, tri-state the button
+## Phases 2-4 — built 2026-08-27
 
-The expensive half is now `in_use()`: one big `REGEXP` walk of `wp_postmeta`
-(`class-watch-hosts.php:127`). Cache that; resolve terms live from the Phase 1 map.
+Phase 1 changed what Phase 2 was for. The button is not a performance feature; it is what makes
+the list a worklist.
 
-**This is what delivers ask (4) with no invalidation hooks at all.** The snapshot holds *hosts
-in use*, which only changes when a show is edited. Term resolution is recomputed on every
-render from one cheap query — so a term created in the ACF UI, by CLI, or by another editor is
-reflected on the very next page load, regardless of who did it.
+### What got dropped, and why
 
-- Transient `lwtv_watch_providers`, via `lwtv_plugin()->set_transient()`, `WEEK_IN_SECONDS`,
-  matching `Debugger\Watch_URLs::TRANSIENT_PROBLEMS`.
-- Payload: `array{ generated: int, hosts: array<string,int> }` — every host in use with its
-  distinct-show count, `arsort`ed as `in_use()` already returns it.
-- `Watch_Hosts::scan(): array` builds and stores it. `wp lwtv waystowatch hosts` primes it, so
-  the daily cron already warms the page.
-- Tri-state render, copying `Watch_Term_Check::make()` (`validator/class-watch-term-check.php:88-107`):
-  `false === $snapshot` → never run, button reads **Run Scan**; populated → button reads
-  **Recheck**. Same `rerun` / `recheck` field naming as the other tabs so the page is
-  predictable.
-- Handler: keep this one on `admin-post.php` with the notice plumbing already in this class
-  (`set_notice()` / `redirect_back()`, lines 367-415) rather than the self-POST `Report` uses —
-  the class is already wired into `_Components\Admin_Menu::init()` for exactly this reason
-  (`_components/class-admin-menu.php:49-51`, alongside `Watch_Term_Check` and `Repair`).
-- **No time budget needed.** This is local SQL, unlike the name lookup. Do not merge the two
-  buttons.
-- The tab's count badge is handled by the collision scan in Phase 3, not by this snapshot. This
-  snapshot calls no `Status::record()` and registers no check key — deliberately, since
-  `record()` now auto-registers the scope in `lwtv_debugger_check_keys` and it would sit in
-  `Validation::current_status()` forever.
+| Planned | Outcome |
+|---|---|
+| Transient snapshot of `in_use()` | **Built**, as a worklist of *unresolved hosts* rather than a cache of `in_use()`. Not for speed — host matching made this two queries either way — but so the list holds still while it is worked down. |
+| Tri-state `Run Scan` / `Recheck` button | **Built**, matching `Report` exactly: `run_watch_providers_clicked`, `rerun` / `recheck`, auto-scan on a cold cache. Recheck re-tests only stored hosts and drops any that now have a term, however they got one. |
+| Prune-the-worklist on assign | **Built.** `Watch_Hosts::forget_unregistered()` drops the one row after a create or assign, so the row you just fixed goes away without a Recheck. Prunes one entry rather than dropping the transient, per `Repair::prune()`. |
+| Collisions through `Scan::finish()` *for display* | **Split.** The tab renders them live from `host_collisions()`, a free byproduct of the map it already builds — so contested hosts are current even when the worklist is a week old. The check still exists for cron/CLI/badge, which need a stored number. |
+| `'option' => ''` (no badge) | **Reversed.** The badge now counts *contested hosts*, not the ~130. A badge that is nearly always 0 and spikes on something real is worth reading; one permanently at 130 is not. |
 
-Deliberately **not** hooking `save_post_post_type_shows` to bust the snapshot: a show save
-would make the next admin view do the full scan, and the button plus a week's TTL is enough.
-Render the `generated` timestamp so the age is visible.
+So the tab has two freshness models on purpose: a worklist you refresh deliberately, and a
+collision list that is always right.
 
-### Why the "no term" snapshot bypasses `Debugger\Scan`
+### What shipped
 
-`Debugger\Scan::finish()` (`php/debugger/class-scan.php:100-115`) is the house epilogue for every
-cached scan on this surface — ten call sites — so a future reader will ask why this one skips it.
-The reason is not performance, it is that **a "host with no term" finding has nothing to anchor
-to.**
-
-Every finding's identity is `post_id:issue_type[:identity]` (`Baseline::key()`, line 51), and both
-`Baseline::snapshot()` (line 78) and `Baseline::tag()` (line 117) `continue` on a falsy `post_id`.
-`Watch_URLs` gets away with term-shaped findings because a term *has* an ID. Here the absence of
-the term **is** the finding, so there is no ID — and an ID-less finding is silently dropped, which
-would render the tab empty rather than erroring.
-
-Anchoring it to something else was considered and rejected: to one of the shows using the host
-(arbitrary, and it makes the table show-shaped, thousands of rows, destroying the one-row-per-host
-point of the tab), or to a synthetic ID derived from the host (collides conceptually with post IDs
-for no gain). Relaxing the two guards to accept an identity-only finding is the other real option
-and stays on the table if a second ID-less check ever turns up — one caller is not enough reason to
-change a pure class eleven checks share.
-
-So the snapshot uses `lwtv_plugin()->set_transient()` / `get_transient()` directly:
-`array{ generated: int, hosts: array<string,int> }`, `WEEK_IN_SECONDS`. `Scan::targets()` and
-`Scan::post_ids()` are unusable regardless — both are post-ID oriented and call
-`get_post_status()`.
-
-Nothing is lost that matters. `Scan::finish()` passes only `$diff['findings']` to `$to_rows`;
-resolved findings never reach the transient (they surface once in `summary`). So the drop-out
-behaviour ask (4) wants is what the baseline would have given anyway.
-
----
-
-## Phase 3 — The table
-
-**One row per problem, every problem, nothing else.** A host that resolves to a term is done and
-is not rendered — no resolved section, no toggle, no `?show=` variants.
-
-Header line, for scale rather than as an invitation to see the rest:
-
-> **130** of 154 hosts in use have no provider term. Scanned 2 hours ago.
-
-Columns: `Host` | `Shows` | `Renders as` | `Provider term`.
-
-Two problem classes belong in this table, and only the first exists today:
-
-1. **No term.** The host resolves to nothing; the front end is guessing its name. Row offers the
-   assign-or-create control from Phase 4.
-2. **Host claimed by two terms.** Surfaced for the first time by the Phase 1 map, which has to
-   pick a winner and now knows when it did. The front end renders *something* here, so it is not
-   broken — but which term wins is an accident of alphabetical order, and that is a problem.
-   No one-click fix: resolving it means deciding which term is right and deleting a URL row by
-   hand. Phase 0's audit should mean this class is empty on day one; it exists so a later
-   collision is visible instead of silent.
-
-   **This class goes through the findings machinery**, because unlike class 1 it has real term IDs
-   to anchor to, and a collision appearing is exactly the thing worth knowing about:
-
-   - **One finding per (term, host) pair**, not one per host. Two terms claiming `netflix.com`
-     emits two findings, each anchored on its own `term_id` with `identity` = the host. That
-     sidesteps picking an arbitrary anchor, and it means deleting one term's URL row resolves that
-     finding *and* drops the other (it is no longer a collision) on the next scan.
-   - `Findings::make_for_term( $term_id, 'lez_watch_urls', 'watch-host-collision', $message, $context, $host )`.
-   - New `Issue_Registry` entry `watch-host-collision` at level `watch_term`, beside the five
-     existing watch entries (`debugger/build/class-issue-registry.php:381-400`). Level
-     `watch_term` means `Repair::is_supported()` refuses it and no repair button appears — which
-     is right here, and is exactly why that level exists.
-   - Rows via `Rows::from_term_findings()`, the builder `Watch_URLs` already uses. Context carries
-     `term` and `shows` so the existing column readers work; add the rival term's name and ID.
-   - `Scan::finish( array( 'scope' => 'watch_host_collisions', 'transient' => 'lwtv_debug_watch_host_collisions', 'label' => 'Watch hosts claimed by two terms' ), $found, false )`.
-     Always `false` — the scan is one query over all term URLs, so every run is a full run and the
-     baseline may always be written.
-
-   **This resolves the old badge problem.** `TOOL_TABS['watch_providers']` can now set
-   `'option' => 'watch_host_collisions'`, so the tab badges the *collision* count rather than the
-   permanent ~130 long tail. A badge that reads 0 almost always and spikes when something real
-   breaks is worth having; a badge permanently reading 130 is not. Replace the "No badge" comment
-   at `class-validation.php:193` accordingly.
-
-Keep the existing "from the site itself" / "guessed from the hostname" provenance line under
-`Renders as` (`class-watch-providers.php:160-164`) — it tells an editor whether the prefilled
-name is worth trusting.
-
-Keep the framing paragraph about web series always leaving a long tail (line 103). It is true
-and it stops this list reading as a failure.
-
----
-
-## Phase 4 — Assign-or-create
-
-### 4a. Model
-
-```php
-// class-watch-hosts.php — new, public
-public static function attach_host( int $term_id, string $host )   // int|WP_Error
-```
-
-- Normalise the host; reject empty.
-- Verify `$term_id` is a real term **in `lez_watch_urls`** — `get_term( $id, TAXONOMY )`,
-  `instanceof WP_Term`. Never trust a POSTed term ID.
-- If the host already resolves *to this same term*, succeed idempotently.
-- If it resolves to a **different** term, return `WP_Error` naming that term — that is a
-  collision an editor needs to see, not something to paper over.
-- Otherwise `add_url_to_term( $term_id, 'https://' . $host )` and `unset( self::$terms[ $host ] )`.
-
-Make `add_url_to_term()` derive its index from the real subfield rows (see Latent bug above):
-scan `lezwatchurls_all_N_url` upward until a gap, write there, then set the count meta to the
-true row count. Existing duplicate-URL guard stays.
-
-`create_term()` keeps its `lwtv_host_registered` guard — with the assign path existing, that
-error is now correct advice rather than a dead end. Reword the message to point at the
-dropdown.
-
-### 4b. UI
-
-One form per row, one new admin-post action `lwtv_watch_assign_term`, per-host nonce and
-`CAP_MANAGE` exactly as `handle_create()` does (`class-watch-providers.php:236-243`):
-
-```html
-<select name="term_id">
-  <option value="0">— Create a new term —</option>
-  <!-- cloned from #lwtv-watch-term-options -->
-</select>
-<input type="text" name="provider_name" value="{proposed}">   <!-- shown only when term_id = 0 -->
-<button type="submit">Assign</button>
-```
-
-Terms fetched **once** per render:
-`get_terms( array( 'taxonomy' => 'lez_watch_urls', 'hide_empty' => false, 'fields' => 'id=>name', 'orderby' => 'name' ) )`.
-Rendered once into a `<template id="lwtv-watch-term-options">`.
-
-The plugin has no enqueued admin JS today, but this very screen already ships inline
-progressive-enhancement script — the tab-picker auto-submit at `class-validation.php:298-303`,
-commented *“Progressive enhancement only -- the Go button works without it.”* **Match that: inline
-the script in `Watch_Providers::make()`** rather than adding `assets/js/lwtv-watch-providers.js`
-plus an enqueue gate and a version constant. It is a dozen lines and it keeps the screen's one
-existing convention:
-
-1. On `DOMContentLoaded`, clone the template's options into every `select.lwtv-watch-term`.
-2. On `change`, show/hide the row's `provider_name` field and flip the button label between
-   *Create term* and *Assign*.
-
-If it outgrows inline, the enqueue hook is `_Components\Admin_Menu::admin_enqueue_scripts()`
-(`_components/class-admin-menu.php:136-141`, CSS version `'1.2.0'` on line 140), gated on both
-`lezwatch-tv_page_lwtv_data_check` **and** `'tab_watch_providers' === ( $_GET['tab'] ?? '' )`.
-
-**Degradation:** with JS off, the select holds only "Create a new term" and the name field is
-visible, so today's behaviour survives exactly. A `<noscript>` line says assignment needs JS and
-links to the `lez_watch_urls` taxonomy screen. Accepted tradeoff of the shared-template choice.
-
-**Accessibility:** the select needs its own `screen-reader-text` label per row (the existing
-name input already has one, line 172), and the button label change must not be the only signal —
-keep the field's visible label accurate too.
-
-### 4c. Handler
-
-`handle_assign()`: nonce → cap → `term_id > 0` ? `attach_host()` : `create_term()`. Both
-outcomes reuse the existing `set_notice()` / `redirect_back()` plumbing and the "Edit the term"
-link. On the not-yours-collision error, name both terms in the notice.
-
-**Prune the snapshot, do not delete it.** On a successful assign or create, remove that one host
-from the cached `hosts` array and write the transient back. Deleting it would force a full
-`wp_postmeta` REGEXP walk on the very next render, which is the cost Phase 2 exists to avoid.
-`Debugger\Repair::prune()` (`php/debugger/class-repair.php:241-282`) is the precedent.
-
-**Do not route this through `Debugger\Repair`.** It looks like the same shape and is not:
-`Repair::LEVELS` (`class-repair.php:53-72`) maps only `show`, `character` and `actor`, and
-`Issue_Registry` puts watch findings at level `watch_term` specifically so `Repair::is_supported()`
-refuses them (`debugger/build/class-issue-registry.php:370-374`) — *"none of these can be fixed
-without a human deciding what the URL should be."* `Repair::handle()` also hardcodes post
-semantics throughout (`absint( $_POST['post_id'] )`, `current_user_can( 'edit_post', … )`,
-`get_the_title()`).
-
-**Do copy its shape**, because it is now the house pattern and it converged on the same
-conclusions this plan reached independently:
-
-- form POST to `admin-post.php`, never a link;
-- nonce action scoped to the identity being changed — `ACTION . '_' . $host`, as `handle_create()`
-  already does at line 239;
-- a `button()`-style method returning escaped markup and returning `''` when the user lacks the
-  cap, so the table renders nothing rather than a dead control;
-- memoise the capability check once per request (`Repair::can_edit()`, lines 109-117) — a
-  130-row table asking per row is 130 redundant checks.
-
----
+| | |
+|---|---|
+| `debugger/class-watch-host-collisions.php` | the `watchhosts` check. One finding per (term, host) pair, `identity` = host, always a full scan. |
+| `Issue_Registry['watch-host-collision']` | level `watch_term`, so `Repair` refuses it — correct, nothing can auto-fix a collision. |
+| `Issue_Registry['watch-term-no-urls']` | retired with a note; kept declared so week-old cached rows still render a message. |
+| `Watch_URLs::terms_without_urls()` | **deleted**, with its call site. It advised deleting legitimate placeholder terms. |
+| `cli-debug.php` / `cli-generate.php` | `wp lwtv debug watchhosts`, and Wednesday's cron slot beside the other plain-SQL checks. |
+| `Watch_Providers::render_summary()` | accounts for every host in use, so the table can be problems-only. |
+| `Watch_Providers::render_collisions()` | live, marks which term wins, links both edit screens, offers no fix. |
+| `Watch_Providers::render_term_options()` | one `<template>` of ~80 options cloned into every select; inline script, `<noscript>` fallback. |
+| `ACTION_ASSIGN` + `handle_assign()` | `term_id` 0 means create. Shares `create_and_notify()` with the old handler. |
+| `handle_create()` | kept registered — a page loaded before this shipped still posts the old form. |
 
 ## Phase 5 — Name lookup, unchanged
 
