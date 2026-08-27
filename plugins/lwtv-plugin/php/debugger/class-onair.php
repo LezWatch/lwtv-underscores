@@ -17,8 +17,6 @@ use LWTV\CPTs\Shows as CPT_Shows;
 use LWTV\CPTs\Shows\Airdates;
 use LWTV\Debugger\Build\On_Air_Rules;
 use LWTV\Debugger\Collect\On_Air_Collector;
-use LWTV\Debugger\Format\Rows;
-use LWTV\Queeries\Post_Type;
 
 class OnAir {
 
@@ -33,32 +31,15 @@ class OnAir {
 	 * @return array $items - array of show IDs that are not on air
 	 */
 	public function find_on_air_problems( $items = array() ): array {
-		$shows = array();
-
-		// A recheck only revisits the posts already flagged, so it is tagged
-		// against the baseline rather than diffed against it. See tag_only().
+		// A recheck only revisits what was already flagged, so it may be tagged
+		// against the baseline but never diffed into it. See Scan::finish().
 		$is_recheck = ! empty( $items );
 
-		// Are we a full scan or a recheck?
-		if ( ! empty( $items ) ) {
-			// Check only the shows from items!
-			foreach ( $items as $show_item ) {
-				if ( get_post_status( $show_item['id'] ) !== 'draft' ) {
-					// If it's NOT a draft, we'll recheck.
-					$shows[] = $show_item['id'];
-				}
-			}
-		} else {
-			$shows = ( new Post_Type() )->get_ids( CPT_Shows::SLUG );
-		}
+		$shows = Scan::post_ids( $items, CPT_Shows::SLUG );
 
-		// If somehow shows is totally empty...
 		if ( empty( $shows ) ) {
 			return array();
 		}
-
-		// Make sure we don't have dupes.
-		$shows = array_unique( $shows );
 
 		/*
 		 * Collect, then evaluate. Build\On_Air_Rules holds the comparison and is
@@ -74,18 +55,15 @@ class OnAir {
 			}
 		}
 
-		$diff  = $is_recheck
-			? Baseline_Store::tag_only( 'onair_problems', $findings )
-			: Baseline_Store::apply( 'onair_problems', $findings );
-		$items = Rows::from_findings( $diff['findings'] );
-
-		// Save Transient
-		lwtv_plugin()->set_transient( self::TRANSIENT_PROBLEMS, $items, WEEK_IN_SECONDS );
-
-		// Update Options
-		Status::record( 'onair_problems', 'On Air Checker', count( $items ), $diff['summary'] );
-
-		return $items;
+		return Scan::finish(
+			array(
+				'scope'     => 'onair_problems',
+				'transient' => self::TRANSIENT_PROBLEMS,
+				'label'     => 'On Air Checker',
+			),
+			$findings,
+			$is_recheck
+		);
 	}
 
 	/**

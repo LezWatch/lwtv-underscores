@@ -16,7 +16,7 @@ Most of the below is #1, since that's where the bugs and the scale risk are. #2 
 
 ---
 
-## Status — 2026-08-26
+## Status — 2026-08-27
 
 `composer lint` clean, `vendor/bin/phpunit` green. Each converted check verified with a live
 `--force` run.
@@ -31,15 +31,12 @@ php/debugger/
 │   ├── class-issue-registry.php   the issue vocabulary: copy, level, repairs
 │   ├── class-findings.php         build, group, describe, render, prune
 │   ├── class-baseline.php         new / open / resolved
-│   ├── class-show-rules.php       every show rule
-│   ├── class-character-rules.php  every character rule
-│   └── class-actor-rules.php      every actor rule
+│   └── class-*-rules.php          the rules, one class per subject (11)
 ├── collect/   WordPress glue. Fetches what the rules need, decides nothing.
-│   ├── class-show-collector.php
-│   ├── class-character-collector.php
-│   └── class-actor-collector.php
+│   └── class-*-collector.php      one per rules class that needs reads (9)
 ├── format/
 │   └── class-rows.php             findings → the rows the surfaces read
+├── class-scan.php                 the shared scan halves: targets in, rows out
 ├── class-baseline-store.php       per-check baseline storage
 ├── class-repair.php               admin_post per-finding repairs
 └── class-*.php                    the scanners, now orchestration
@@ -47,7 +44,8 @@ php/debugger/
 
 A finding is typed (`post_id` + `issue_type`), knows whether a repair exists, and is diffed
 against the previous run. One registry drives the CLI's `--fix-it`, the admin's per-finding
-buttons, and the copy in both.
+buttons, and the copy in both. Every scanner is now the same three steps between two calls
+to `Scan`: get targets, collect, evaluate, finish.
 
 **Done since 2026-08-20**
 
@@ -62,6 +60,8 @@ buttons, and the copy in both.
 | §5 | Baselines and new/open/resolved — as a pure `Build\Baseline`, not via `Audit` |
 | §8.1–8.5 | Detect/repair split, typed findings, both repair surfaces, stray writes gone |
 | 14 | Every check converted — all eleven report "N new / M open" |
+| §7 | All three duplications collapsed — validators into `Report`, scanners into `Scan` |
+| §3 | Capability check now lives once, in `Validator\Report::make()` |
 
 **Outstanding, roughly in order**
 
@@ -69,7 +69,6 @@ buttons, and the copy in both.
 |---|---|
 | §5 | Acknowledgements where no editorial field exists to carry them |
 | §6 | Debug log rotation, memoised option reads, log viewer |
-| §3 | Capability checks inside the validator `make()` methods |
 | §8.4 | The wikidata cache writes still want an explicit TTL |
 
 **Not verified yet:** the Watch Providers create-term and lookup buttons. The TMDB backfill
@@ -652,13 +651,14 @@ wikidata cache writes (§8.4), which want an explicit TTL, and
 
 ## 3. Security & correctness hygiene (mostly FIXED)
 
-- **No capability check inside the validators.** `Show_Checker::make()` etc. rely entirely
+- ~~**No capability check inside the validators.** `Show_Checker::make()` etc. rely entirely
   on `add_submenu_page( ..., 'upload_files', ... )`. Add a `current_user_can()` guard in
-  each `make()`, since these methods are public statics that trigger expensive writes.
-  **Still outstanding for the validators** — though the repair path added since does check:
-  `Debugger\Repair` requires `edit_post` on the specific post, on the grounds that reading
-  a report and changing a post are not the same right. The validators want the same
-  treatment, and it is one more thing the §7 collapse would fix in one place.
+  each `make()`, since these methods are public statics that trigger expensive writes.~~
+  **FIXED (2026-08-26)** — by the §7 collapse, in one place instead of ten:
+  `Validator\Report::make()` verifies `upload_files`, the cap the submenu is registered
+  with. The repair path guards separately and more tightly: `Debugger\Repair` requires
+  `edit_post` on the specific post, on the grounds that reading a report and changing a post
+  are not the same right.
 - **Raw meta interpolated into HTML.** ~~Escape at construction instead.~~ **Resolved the
   other way, deliberately (2026-08-26).** Escaping at construction was tried and reverted:
   the admin renders through `wp_kses_post()`, so a pre-escaped string got escaped twice and
@@ -1004,13 +1004,51 @@ topic against the constant, or at least log a one-time warning for unknown topic
 
 ## 7. Duplication worth collapsing
 
-- **The "full scan or recheck" preamble** is copy-pasted ~7 times, verbatim, across
-  `class-shows.php` (×3), `class-actors.php` (×4). ~20 lines each.
-- **The "save transient + update option + return"** epilogue is copy-pasted ~9 times.
+- ~~**The "full scan or recheck" preamble** is copy-pasted ~7 times, verbatim, across
+  `class-shows.php` (×3), `class-actors.php` (×4). ~20 lines each.~~ **DONE (2026-08-27).**
+- ~~**The "save transient + update option + return"** epilogue is copy-pasted ~9 times.~~
+  **DONE (2026-08-27).**
 - ~~**`php/validator/*.php`** is twelve files of 102–107 lines that differ only in the
   transient key, the nonce name, the tab slug, and three strings.~~ **DONE (2026-08-26).**
 
-The first two are still outstanding. The validator files are collapsed:
+All three are collapsed. The scanner halves went into `debugger/class-scan.php`:
+
+### The scanner collapse
+
+`Scan` is three static methods, and it is the only place left that touches
+`Baseline_Store` outside the store itself:
+
+- **`Scan::post_ids( $items, $post_type )`** — the preamble, for the eight call sites that
+  want "the IDs I was handed, or every published post of one type". `Scan::targets( $items,
+  $callable )` is the same thing where the full-scan source is not a post-type query: BYQ
+  passes a closure around its `lez_cliches`/`dead` taxonomy query.
+- **`Scan::finish( $check, $findings, $is_recheck, $to_rows = null )`** — the epilogue.
+  `$check` is `array( 'scope', 'transient', 'label' )`, and `scope` keys *both* the baseline
+  and the status entry, so the two can no longer drift apart the way §1.2's transient keys
+  did.
+
+The `$is_recheck` argument is the reason this was worth centralising rather than tidying.
+A recheck visits only what was already flagged, so diffing it against the baseline reports
+every post it did not look at as resolved **and** stores the subset as the whole truth,
+making the next full scan call everything new. That decision was previously made
+independently at eleven call sites, and `class-watch-urls.php` had written its ternary the
+other way round (`empty( $items )` rather than `$is_recheck`) — correct, but only by
+accident of which branch it put first.
+
+Two checks pass a `$to_rows` callable rather than taking the default `Rows::from_findings()`,
+which is why the seam exists at all:
+
+- `class-dupes.php` adds a `name` key per row, because `cli-dupes.php` names it as an output
+  column and a post ID alone tells you nothing in that table.
+- `class-watch-urls.php` uses `Rows::from_term_findings()` (one row per URL, not grouped per
+  post) and then sorts by severity — after tagging, so each row keeps the status it was
+  given.
+
+Eleven epilogues and ten preambles became two lines each. `Post_Type` and `Rows` are no
+longer imported by five of the scanners, which is the honest signal that the querying and
+the rendering really did leave them.
+
+The validator files were collapsed the day before:
 
 ### The validator collapse
 
@@ -1483,10 +1521,12 @@ Everything in the **Done** table at the top has shipped. What's left, in the ord
 11. ~~**Move the writes to a repair layer** (§8.2) behind `--fix-it`, plus per-finding admin
     fix links (§8.1).~~ **Done**, both surfaces. Every write that a scan used to perform is
     now a registered repair, and `on_air` picked up admin buttons when it was converted.
-12. ~~**Collapse the twelve validator files** (§7).~~ **Done** — ten collapsed into
-    `Validator\Report` plus `TOOL_TABS` config; the two watch tabs kept their own classes.
-    Took §3's capability check with it. The two remaining §7 items are the duplicated
-    scanner preamble and epilogue.
+12. ~~**Collapse the duplication** (§7).~~ **Done, all three items.** Ten validator files
+    collapsed into `Validator\Report` plus `TOOL_TABS` config (2026-08-26); the two watch
+    tabs kept their own classes. Took §3's capability check with it. Then the scanner
+    preamble and epilogue went into `Debugger\Scan` (2026-08-27), which is now the only
+    caller of `Baseline_Store` — so the "a recheck must not be diffed" rule is stated once
+    instead of eleven times.
 13. Add the missing checks to the cron rotation — including `waystowatch enrich`, which is
     safe to run weekly since it skips anything already asked.
 14. ~~**Convert the remaining checks to typed findings**~~ — **done, all eleven

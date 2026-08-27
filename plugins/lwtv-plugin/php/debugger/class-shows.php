@@ -14,8 +14,6 @@ use LWTV\Debugger\Build\Imdb_Rules;
 use LWTV\Debugger\Build\Show_Rules;
 use LWTV\Debugger\Collect\Imdb_Collector;
 use LWTV\Debugger\Collect\Show_Collector;
-use LWTV\Debugger\Format\Rows;
-use LWTV\Queeries\Post_Type;
 
 class Shows {
 
@@ -34,37 +32,15 @@ class Shows {
 	 */
 	public function find_shows_problems( $items = array() ) {
 
-		// The array we will be checking.
-		$shows = array();
-
-		/*
-		 * A recheck only revisits the posts already flagged, so it cannot be
-		 * diffed against the baseline -- everything it did not look at would
-		 * read as resolved. Remembered here because $items is reused below.
-		 */
+		// A recheck only revisits what was already flagged, so it may be tagged
+		// against the baseline but never diffed into it. See Scan::finish().
 		$is_recheck = ! empty( $items );
 
-		// Are we a full scan or a recheck?
-		if ( ! empty( $items ) ) {
-			// Check only the shows from items!
-			foreach ( $items as $show_item ) {
-				if ( get_post_status( $show_item['id'] ) !== 'draft' ) {
-					// If it's NOT a draft, we'll recheck.
-					$shows[] = $show_item['id'];
-				}
-			}
-		} else {
-			// Get all the shows
-			$shows = ( new Post_Type() )->get_ids( CPT_Shows::SLUG );
-		}
+		$shows = Scan::post_ids( $items, CPT_Shows::SLUG );
 
-		// If somehow shows is totally empty...
 		if ( empty( $shows ) ) {
-			return false;
+			return array();
 		}
-
-		// Make sure we don't have dupes.
-		$shows = array_unique( $shows );
 
 		/*
 		 * Collect, then evaluate. The rules are pure and live in
@@ -81,21 +57,15 @@ class Shows {
 			}
 		}
 
-		// Diff against the last run before rendering, so each row knows whether
-		// its problems are new or long-standing. A recheck is tagged but not
-		// diffed, and must not overwrite the baseline -- see tag_only().
-		$diff  = $is_recheck
-			? Baseline_Store::tag_only( 'show_problems', $findings )
-			: Baseline_Store::apply( 'show_problems', $findings );
-		$items = Rows::from_findings( $diff['findings'] );
-
-		// Save Transient
-		lwtv_plugin()->set_transient( self::TRANSIENT_PROBLEMS, $items, WEEK_IN_SECONDS );
-
-		// Update Options
-		Status::record( 'show_problems', 'Shows with Issues', count( $items ), $diff['summary'] );
-
-		return $items;
+		return Scan::finish(
+			array(
+				'scope'     => 'show_problems',
+				'transient' => self::TRANSIENT_PROBLEMS,
+				'label'     => 'Shows with Issues',
+			),
+			$findings,
+			$is_recheck
+		);
 	}
 
 	/**
@@ -224,34 +194,15 @@ class Shows {
 	 */
 	public function find_shows_no_imdb( $items = array() ) {
 
-		// The array we will be checking.
-		$shows = array();
-
-		// A recheck only revisits the posts already flagged, so it is tagged
-		// against the baseline rather than diffed against it. See tag_only().
+		// A recheck only revisits what was already flagged, so it may be tagged
+		// against the baseline but never diffed into it. See Scan::finish().
 		$is_recheck = ! empty( $items );
 
-		// Are we a full scan or a recheck?
-		if ( ! empty( $items ) ) {
-			// Check only the shows from items!
-			foreach ( $items as $show_item ) {
-				if ( get_post_status( $show_item['id'] ) !== 'draft' ) {
-					// If it's NOT a draft, we'll recheck.
-					$shows[] = $show_item['id'];
-				}
-			}
-		} else {
-			// Get all the shows
-			$shows = ( new Post_Type() )->get_ids( CPT_Shows::SLUG );
-		}
+		$shows = Scan::post_ids( $items, CPT_Shows::SLUG );
 
-		// If somehow shows is totally empty...
 		if ( empty( $shows ) ) {
-			return false;
+			return array();
 		}
-
-		// Make sure we don't have dupes.
-		$shows = array_unique( $shows );
 
 		/*
 		 * Collect, then evaluate. Build\Imdb_Rules serves both this check and the
@@ -267,17 +218,14 @@ class Shows {
 			}
 		}
 
-		$diff  = $is_recheck
-			? Baseline_Store::tag_only( 'show_imdb', $findings )
-			: Baseline_Store::apply( 'show_imdb', $findings );
-		$items = Rows::from_findings( $diff['findings'] );
-
-		// Save Transient
-		lwtv_plugin()->set_transient( self::TRANSIENT_IMDB, $items, WEEK_IN_SECONDS );
-
-		// Update Options
-		Status::record( 'show_imdb', 'Shows without IMDb', count( $items ), $diff['summary'] );
-
-		return $items;
+		return Scan::finish(
+			array(
+				'scope'     => 'show_imdb',
+				'transient' => self::TRANSIENT_IMDB,
+				'label'     => 'Shows without IMDb',
+			),
+			$findings,
+			$is_recheck
+		);
 	}
 }

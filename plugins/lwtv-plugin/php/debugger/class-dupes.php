@@ -52,24 +52,26 @@ class Dupes {
 			$findings = array_merge( $findings, Duplicate_Rules::evaluate( $candidate ) );
 		}
 
-		$diff       = $is_recheck
-			? Baseline_Store::tag_only( 'duplicates', $findings )
-			: Baseline_Store::apply( 'duplicates', $findings );
-		$duplicates = Rows::from_findings( $diff['findings'] );
+		return Scan::finish(
+			array(
+				'scope'     => 'duplicates',
+				'transient' => self::TRANSIENT_DUPES,
+				'label'     => 'Duplicate Actors/Shows',
+			),
+			$findings,
+			$is_recheck,
+			// `name` is not in the standard row shape: cli-dupes.php names it as
+			// an output column, and a post ID alone tells you nothing there.
+			static function ( array $tagged ) {
+				$rows = Rows::from_findings( $tagged );
 
-		// `name` is not in the standard row shape: cli-dupes.php names it as an
-		// output column, and a post ID alone tells you nothing in that table.
-		foreach ( $duplicates as $index => $duplicate ) {
-			$duplicates[ $index ]['name'] = get_the_title( (int) $duplicate['id'] );
-		}
+				foreach ( $rows as $index => $row ) {
+					$rows[ $index ]['name'] = get_the_title( (int) $row['id'] );
+				}
 
-		// Save Transient
-		lwtv_plugin()->set_transient( self::TRANSIENT_DUPES, $duplicates, WEEK_IN_SECONDS );
-
-		// Update Options
-		Status::record( 'duplicates', 'Duplicate Actors/Shows', count( $duplicates ), $diff['summary'] );
-
-		return $duplicates;
+				return $rows;
+			}
+		);
 	}
 
 	/**

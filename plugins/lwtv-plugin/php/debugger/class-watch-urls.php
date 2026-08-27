@@ -133,17 +133,21 @@ class Watch_URLs {
 		/*
 		 * Diffed like every other check, but never on a partial run: a budgeted
 		 * re-check visits a subset, and $items being non-empty is what says so.
-		 * Sorting happens after tagging so the status ends up on the right row.
 		 */
-		$diff  = empty( $items )
-			? Baseline_Store::apply( self::STATUS_KEY, $found )
-			: Baseline_Store::tag_only( self::STATUS_KEY, $found );
-		$found = $this->sort_findings( Rows::from_term_findings( $diff['findings'] ) );
-
-		lwtv_plugin()->set_transient( self::TRANSIENT_PROBLEMS, $found, WEEK_IN_SECONDS );
-		Status::record( self::STATUS_KEY, 'Watch provider URLs with problems', count( $found ), $diff['summary'] );
-
-		return $found;
+		return Scan::finish(
+			array(
+				'scope'     => self::STATUS_KEY,
+				'transient' => self::TRANSIENT_PROBLEMS,
+				'label'     => 'Watch provider URLs with problems',
+			),
+			$found,
+			! empty( $items ),
+			/*
+			 * Term-shaped rows, one per URL rather than grouped per term, and
+			 * sorted after tagging so each row keeps the status it was given.
+			 */
+			fn ( array $tagged ) => $this->sort_findings( Rows::from_term_findings( $tagged ) )
+		);
 	}
 
 	/**

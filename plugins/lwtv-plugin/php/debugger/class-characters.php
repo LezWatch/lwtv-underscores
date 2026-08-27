@@ -15,8 +15,6 @@ use LWTV\Debugger\Build\Byq_Rules;
 use LWTV\Debugger\Build\Character_Rules;
 use LWTV\Debugger\Collect\Byq_Collector;
 use LWTV\Debugger\Collect\Character_Collector;
-use LWTV\Debugger\Format\Rows;
-use LWTV\Queeries\Post_Type;
 use LWTV\Queeries\Taxonomy_Optimized as Queery_Taxonomy;
 use LWTV\CPTs\Characters as CPT_Characters;
 
@@ -39,38 +37,26 @@ class Characters {
 	 * @return array Characters with issues
 	 */
 	public function find_byq_problems( $items = array() ): array {
-		// The array we will be checking.
-		$characters = array();
-
-		// A recheck only revisits the posts already flagged, so it is tagged
-		// against the baseline rather than diffed against it. See tag_only().
+		// A recheck only revisits what was already flagged, so it may be tagged
+		// against the baseline but never diffed into it. See Scan::finish().
 		$is_recheck = ! empty( $items );
 
-		// Are we a full scan or a recheck?
-		if ( ! empty( $items ) ) {
-			// Check only the characters from items!
-			foreach ( $items as $character_item ) {
-				if ( get_post_status( $character_item['id'] ) !== 'draft' ) {
-					// If it's NOT a draft, we'll recheck.
-					$characters[] = $character_item['id'];
-				}
-			}
-		} else {
-			// 'ids' — this scan only ever plucked the IDs out again.
-			$the_loop = ( new Queery_Taxonomy() )->get_posts_for_terms( CPT_Characters::SLUG, 'lez_cliches', 'dead', 'IN', 'ids' );
+		/*
+		 * Only dead characters, so the full-scan source is a taxonomy query
+		 * rather than a whole post type. 'ids' because this only ever wanted them.
+		 */
+		$characters = Scan::targets(
+			$items,
+			static function () {
+				$loop = ( new Queery_Taxonomy() )->get_posts_for_terms( CPT_Characters::SLUG, 'lez_cliches', 'dead', 'IN', 'ids' );
 
-			if ( is_object( $the_loop ) && ! empty( $the_loop->posts ) ) {
-				$characters = array_map( 'intval', $the_loop->posts );
+				return ( is_object( $loop ) && ! empty( $loop->posts ) ) ? $loop->posts : array();
 			}
-		}
+		);
 
-		// If somehow characters is totally empty...
 		if ( empty( $characters ) ) {
 			return array();
 		}
-
-		// Make sure we don't have dupes.
-		$characters = array_unique( $characters );
 
 		/*
 		 * Collect, then evaluate. Build\Byq_Rules holds the two rules and the gate
@@ -87,18 +73,15 @@ class Characters {
 			}
 		}
 
-		$diff  = $is_recheck
-			? Baseline_Store::tag_only( 'byq_problems', $findings )
-			: Baseline_Store::apply( 'byq_problems', $findings );
-		$items = Rows::from_findings( $diff['findings'] );
-
-		// Save Transient
-		lwtv_plugin()->set_transient( self::TRANSIENT_BYQ, $items, WEEK_IN_SECONDS );
-
-		// Update Options
-		Status::record( 'byq_problems', 'Bury Your Queers Problems', count( $items ), $diff['summary'] );
-
-		return $items;
+		return Scan::finish(
+			array(
+				'scope'     => 'byq_problems',
+				'transient' => self::TRANSIENT_BYQ,
+				'label'     => 'Bury Your Queers Problems',
+			),
+			$findings,
+			$is_recheck
+		);
 	}
 
 	/**
@@ -109,37 +92,15 @@ class Characters {
 	 */
 	public function find_characters_problems( $items = array() ): array {
 
-		// The array we will be checking.
-		$characters = array();
-
-		/*
-		 * A recheck only revisits the posts already flagged, so it cannot be
-		 * diffed against the baseline -- everything it did not look at would
-		 * read as resolved. Remembered here because $items is reused below.
-		 */
+		// A recheck only revisits what was already flagged, so it may be tagged
+		// against the baseline but never diffed into it. See Scan::finish().
 		$is_recheck = ! empty( $items );
 
-		// Are we a full scan or a recheck?
-		if ( ! empty( $items ) ) {
-			// Check only the characters from items!
-			foreach ( $items as $character_item ) {
-				if ( get_post_status( $character_item['id'] ) !== 'draft' ) {
-					// If it's NOT a draft, we'll recheck.
-					$characters[] = $character_item['id'];
-				}
-			}
-		} else {
-			// Get all the characters
-			$characters = ( new Post_Type() )->get_ids( CPT_Characters::SLUG );
-		}
+		$characters = Scan::post_ids( $items, CPT_Characters::SLUG );
 
-		// If somehow characters is totally empty...
 		if ( empty( $characters ) ) {
 			return array();
 		}
-
-		// Make sure we don't have dupes.
-		$characters = array_unique( $characters );
 
 		/*
 		 * Collect, then evaluate. The rules are pure and live in
@@ -156,21 +117,15 @@ class Characters {
 			}
 		}
 
-		// Diff against the last run before rendering, so each row knows whether
-		// its problems are new or long-standing. A recheck is tagged but not
-		// diffed, and must not overwrite the baseline -- see tag_only().
-		$diff  = $is_recheck
-			? Baseline_Store::tag_only( 'character_problems', $findings )
-			: Baseline_Store::apply( 'character_problems', $findings );
-		$items = Rows::from_findings( $diff['findings'] );
-
-		// Save Transient
-		lwtv_plugin()->set_transient( self::TRANSIENT_PROBLEMS, $items, WEEK_IN_SECONDS );
-
-		// Update Options
-		Status::record( 'character_problems', 'Characters with Issues', count( $items ), $diff['summary'] );
-
-		return $items;
+		return Scan::finish(
+			array(
+				'scope'     => 'character_problems',
+				'transient' => self::TRANSIENT_PROBLEMS,
+				'label'     => 'Characters with Issues',
+			),
+			$findings,
+			$is_recheck
+		);
 	}
 
 	/**

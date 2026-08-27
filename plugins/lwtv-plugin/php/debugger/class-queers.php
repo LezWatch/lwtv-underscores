@@ -11,8 +11,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 use LWTV\Debugger\Build\Queer_Rules;
 use LWTV\Debugger\Collect\Queer_Collector;
-use LWTV\Debugger\Format\Rows;
-use LWTV\Queeries\Post_Type;
 use LWTV\CPTs\Characters as CPT_Characters;
 
 class Queers {
@@ -30,34 +28,15 @@ class Queers {
 	 */
 	public function find_queer_chars( $items = array() ) {
 
-		// The array we will be checking.
-		$characters = array();
-
-		// A recheck only revisits the posts already flagged, so it is tagged
-		// against the baseline rather than diffed against it. See tag_only().
+		// A recheck only revisits what was already flagged, so it may be tagged
+		// against the baseline but never diffed into it. See Scan::finish().
 		$is_recheck = ! empty( $items );
 
-		// Are we a full scan or a recheck?
-		if ( ! empty( $items ) ) {
-			// Check only the characters from items!
-			foreach ( $items as $character_item ) {
-				if ( get_post_status( $character_item['id'] ) !== 'draft' ) {
-					// If it's NOT a draft, we'll recheck.
-					$characters[] = $character_item['id'];
-				}
-			}
-		} else {
-			// Get all the characters
-			$characters = ( new Post_Type() )->get_ids( CPT_Characters::SLUG );
-		}
+		$characters = Scan::post_ids( $items, CPT_Characters::SLUG );
 
-		// If somehow characters is totally empty...
 		if ( empty( $characters ) ) {
-			return false;
+			return array();
 		}
-
-		// Make sure we don't have dupes.
-		$characters = array_unique( $characters );
 
 		/*
 		 * Collect, then evaluate. Build\Queer_Rules holds the comparison; the
@@ -88,17 +67,14 @@ class Queers {
 			$progress_bar->finish();
 		}
 
-		$diff  = $is_recheck
-			? Baseline_Store::tag_only( 'queercheck', $findings )
-			: Baseline_Store::apply( 'queercheck', $findings );
-		$items = Rows::from_findings( $diff['findings'] );
-
-		// Save Transient
-		lwtv_plugin()->set_transient( self::TRANSIENT_QUEERCHECK, $items, WEEK_IN_SECONDS );
-
-		// Update Options
-		Status::record( 'queercheck', 'Queer Checker', count( $items ), $diff['summary'] );
-
-		return $items;
+		return Scan::finish(
+			array(
+				'scope'     => 'queercheck',
+				'transient' => self::TRANSIENT_QUEERCHECK,
+				'label'     => 'Queer Checker',
+			),
+			$findings,
+			$is_recheck
+		);
 	}
 }

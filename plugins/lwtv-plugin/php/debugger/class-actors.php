@@ -25,7 +25,6 @@ use LWTV\Debugger\Collect\Actor_Collector;
 use LWTV\Debugger\Collect\Actor_Completeness_Collector;
 use LWTV\Debugger\Collect\Imdb_Collector;
 use LWTV\Debugger\Format\Rows;
-use LWTV\Queeries\Post_Type;
 
 class Actors {
 
@@ -111,37 +110,15 @@ class Actors {
 	 */
 	public function find_actors_problems( $items = array() ): array {
 
-		// The array we will be checking.
-		$actors = array();
-
-		/*
-		 * A recheck only revisits the posts already flagged, so it cannot be
-		 * diffed against the baseline -- everything it did not look at would
-		 * read as resolved. Remembered here because $items is reused below.
-		 */
+		// A recheck only revisits what was already flagged, so it may be tagged
+		// against the baseline but never diffed into it. See Scan::finish().
 		$is_recheck = ! empty( $items );
 
-		// Are we a full scan or a recheck?
-		if ( ! empty( $items ) ) {
-			// Check only the actors from items!
-			foreach ( $items as $actor_item ) {
-				if ( get_post_status( $actor_item['id'] ) !== 'draft' ) {
-					// If it's NOT a draft, we'll recheck.
-					$actors[] = $actor_item['id'];
-				}
-			}
-		} else {
-			// Get all the actors
-			$actors = ( new Post_Type() )->get_ids( CPT_Actors::SLUG );
-		}
+		$actors = Scan::post_ids( $items, CPT_Actors::SLUG );
 
-		// If somehow actors is totally empty...
 		if ( empty( $actors ) ) {
 			return array();
 		}
-
-		// Make sure we don't have dupes.
-		$actors = array_unique( $actors );
 
 		/*
 		 * Collect, then evaluate. The rules are pure and live in
@@ -157,21 +134,15 @@ class Actors {
 			}
 		}
 
-		// Diff against the last run before rendering, so each row knows whether
-		// its problems are new or long-standing. A recheck is tagged but not
-		// diffed, and must not overwrite the baseline -- see tag_only().
-		$diff  = $is_recheck
-			? Baseline_Store::tag_only( 'actor_problems', $findings )
-			: Baseline_Store::apply( 'actor_problems', $findings );
-		$items = Rows::from_findings( $diff['findings'] );
-
-		// Save Transient
-		lwtv_plugin()->set_transient( self::TRANSIENT_PROBLEMS, $items, WEEK_IN_SECONDS );
-
-		// Update Options
-		Status::record( 'actor_problems', 'Actors with Issues', count( $items ), $diff['summary'] );
-
-		return $items;
+		return Scan::finish(
+			array(
+				'scope'     => 'actor_problems',
+				'transient' => self::TRANSIENT_PROBLEMS,
+				'label'     => 'Actors with Issues',
+			),
+			$findings,
+			$is_recheck
+		);
 	}
 
 	/**
@@ -320,34 +291,15 @@ class Actors {
 	 */
 	public function find_actors_incomplete( $items = array() ): array {
 
-		// The array we will be checking.
-		$actors = array();
-
-		// A recheck only revisits the posts already flagged, so it is tagged
-		// against the baseline rather than diffed against it. See tag_only().
+		// A recheck only revisits what was already flagged, so it may be tagged
+		// against the baseline but never diffed into it. See Scan::finish().
 		$is_recheck = ! empty( $items );
 
-		// Are we a full scan or a recheck?
-		if ( ! empty( $items ) ) {
-			// Check only the actors from items!
-			foreach ( $items as $actor_item ) {
-				if ( get_post_status( $actor_item['id'] ) !== 'draft' ) {
-					// If it's NOT a draft, we'll recheck.
-					$actors[] = $actor_item['id'];
-				}
-			}
-		} else {
-			// Get all the actors
-			$actors = ( new Post_Type() )->get_ids( CPT_Actors::SLUG );
-		}
+		$actors = Scan::post_ids( $items, CPT_Actors::SLUG );
 
-		// If somehow actors is totally empty...
 		if ( empty( $actors ) ) {
 			return array();
 		}
-
-		// Make sure we don't have dupes.
-		$actors = array_unique( $actors );
 
 		$collector = new Actor_Completeness_Collector();
 		$findings  = array();
@@ -358,18 +310,15 @@ class Actors {
 			}
 		}
 
-		$diff  = $is_recheck
-			? Baseline_Store::tag_only( 'actor_empty', $findings )
-			: Baseline_Store::apply( 'actor_empty', $findings );
-		$items = Rows::from_findings( $diff['findings'] );
-
-		// Save Transient
-		lwtv_plugin()->set_transient( self::TRANSIENT_EMPTY, $items, WEEK_IN_SECONDS );
-
-		// Update Options
-		Status::record( 'actor_empty', 'Incomplete Actors', count( $items ), $diff['summary'] );
-
-		return $items;
+		return Scan::finish(
+			array(
+				'scope'     => 'actor_empty',
+				'transient' => self::TRANSIENT_EMPTY,
+				'label'     => 'Incomplete Actors',
+			),
+			$findings,
+			$is_recheck
+		);
 	}
 
 	/**
@@ -379,34 +328,15 @@ class Actors {
 	 */
 	public function find_actors_no_imdb( $items = array() ): array {
 
-		// The array we will be checking.
-		$actors = array();
-
-		// A recheck only revisits the posts already flagged, so it is tagged
-		// against the baseline rather than diffed against it. See tag_only().
+		// A recheck only revisits what was already flagged, so it may be tagged
+		// against the baseline but never diffed into it. See Scan::finish().
 		$is_recheck = ! empty( $items );
 
-		// Are we a full scan or a recheck?
-		if ( ! empty( $items ) ) {
-			// Check only the actors from items!
-			foreach ( $items as $actor_item ) {
-				if ( get_post_status( $actor_item['id'] ) !== 'draft' ) {
-					// If it's NOT a draft, we'll recheck.
-					$actors[] = $actor_item['id'];
-				}
-			}
-		} else {
-			// Get all the actors
-			$actors = ( new Post_Type() )->get_ids( CPT_Actors::SLUG );
-		}
+		$actors = Scan::post_ids( $items, CPT_Actors::SLUG );
 
-		// If somehow actors is totally empty...
 		if ( empty( $actors ) ) {
 			return array();
 		}
-
-		// Make sure we don't have dupes.
-		$actors = array_unique( $actors );
 
 		/*
 		 * Collect, then evaluate. Build\Imdb_Rules serves both this check and the
@@ -422,18 +352,15 @@ class Actors {
 			}
 		}
 
-		$diff  = $is_recheck
-			? Baseline_Store::tag_only( 'actor_imdb', $findings )
-			: Baseline_Store::apply( 'actor_imdb', $findings );
-		$items = Rows::from_findings( $diff['findings'] );
-
-		// Save Transient
-		lwtv_plugin()->set_transient( self::TRANSIENT_IMDB, $items, WEEK_IN_SECONDS );
-
-		// Update Options
-		Status::record( 'actor_imdb', 'Actors without IMDb', count( $items ), $diff['summary'] );
-
-		return $items;
+		return Scan::finish(
+			array(
+				'scope'     => 'actor_imdb',
+				'transient' => self::TRANSIENT_IMDB,
+				'label'     => 'Actors without IMDb',
+			),
+			$findings,
+			$is_recheck
+		);
 	}
 
 	/**
@@ -450,31 +377,12 @@ class Actors {
 		if ( is_numeric( $actors ) && 0 !== $actors && ! is_array( $actors ) ) {
 			$actors = array( $actors );
 		} else {
-			// The array we will be checking.
-			$actors = array();
-
-			// Are we a full scan or a recheck?
-			if ( ! empty( $items ) ) {
-				// Check only the actors from items!
-				foreach ( $items as $actor_item ) {
-					if ( get_post_status( $actor_item['id'] ) !== 'draft' ) {
-						// If it's NOT a draft, we'll recheck.
-						$actors[] = $actor_item['id'];
-					}
-				}
-			} else {
-				// Get all the actors
-				$actors = ( new Post_Type() )->get_ids( CPT_Actors::SLUG );
-			}
+			$actors = Scan::post_ids( $items, CPT_Actors::SLUG );
 		}
 
-		// If somehow actors is totally empty...
 		if ( empty( $actors ) ) {
 			return array();
 		}
-
-		// Make sure we don't have dupes.
-		$actors = array_unique( $actors );
 
 		// reset items since we recheck off $actors.
 		$items = array();
