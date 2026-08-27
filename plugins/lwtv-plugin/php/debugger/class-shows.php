@@ -9,13 +9,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-use LWTV\_Components\Debugger as Debug_Tool;
 use LWTV\CPTs\Shows as CPT_Shows;
-use LWTV\Debugger\Build\Findings;
+use LWTV\Debugger\Build\Imdb_Rules;
 use LWTV\Debugger\Build\Show_Rules;
+use LWTV\Debugger\Collect\Imdb_Collector;
 use LWTV\Debugger\Collect\Show_Collector;
 use LWTV\Debugger\Format\Rows;
-use LWTV\_Helpers\Imdb_Canonical;
 use LWTV\Queeries\Post_Type;
 
 class Shows {
@@ -197,6 +196,28 @@ class Shows {
 	}
 
 	/**
+	 * Replace a pasted IMDb URL with the ID inside it.
+	 *
+	 * Re-extracted here rather than trusting the finding's `context`: a repair
+	 * runs some time after the scan that produced it, and the field may have been
+	 * edited since. If the value is no longer an extractable URL this does
+	 * nothing and reports as unfixed, which is correct.
+	 *
+	 * @param  int  $show_id Show post ID.
+	 * @return bool True when the ID was written.
+	 */
+	public function extract_imdb_from_url( int $show_id ): bool {
+		$current   = (string) get_post_meta( $show_id, 'lezshows_imdb', true );
+		$extracted = Imdb_Rules::id_from_url( $current, Imdb_Rules::SHOW );
+
+		if ( '' === $extracted ) {
+			return false;
+		}
+
+		return (bool) update_post_meta( $show_id, 'lezshows_imdb', $extracted );
+	}
+
+	/**
 	 * Find all shows without IMDb Settings.
 	 *
 	 * @return array $problems - array of problems. Can be empty.
@@ -232,54 +253,17 @@ class Shows {
 		// Make sure we don't have dupes.
 		$shows = array_unique( $shows );
 
-		$findings = array();
+		/*
+		 * Collect, then evaluate. Build\Imdb_Rules serves both this check and the
+		 * actor one -- same three rules, different oracle and prefix -- so the two
+		 * cannot drift apart the way they had before.
+		 */
+		$collector = new Imdb_Collector();
+		$findings  = array();
 
-		foreach ( $shows as $show_id ) {
-
-			$imdb = get_post_meta( $show_id, 'lezshows_imdb', true );
-
-			if ( empty( $imdb ) ) {
-				// Check for IMDb existing at all, unless it's a web-series.
-				if ( ! has_term( 'web-series', 'lez_formats', $show_id ) ) {
-					$findings[] = Findings::make( $show_id, CPT_Shows::SLUG, 'show-imdb-not-set' );
-				}
-			} elseif ( Debug_Tool::validate_imdb( $imdb, 'show' ) === false ) {
-				// - IMDb IDs should be valid for the space they're in, e.g. "nm"
-				// and digits for people (props Jamie).
-				$findings[] = Findings::make( $show_id, CPT_Shows::SLUG, 'show-imdb-invalid', 'IMDb ID is invalid (ex: tt12345) -- ' . $imdb, array( 'imdb' => $imdb ) );
-			} elseif ( ! get_post_meta( $show_id, 'lezshows_tvmaze_ignore', true ) ) {
-				// IMDb reassigns title IDs and leaves the old one redirecting, so
-				// a stale ID still opens the right page in a browser while
-				// breaking every exact-match API lookup keyed on it. Nothing about
-				// the value looks wrong, which is why format validation above
-				// cannot catch it.
-				//
-				// Compared fresh each run rather than trusting a stored verdict:
-				// lezshows_imdb_canonical holds what TVMaze last told us, and if
-				// an editor has since corrected the ID to match, the problem
-				// clears itself without waiting for a re-check.
-				//
-				// An empty canonical means "no disagreement recorded", which
-				// covers both verified-clean and never-checked. Deliberately
-				// silent either way -- a debugger row implying "verified" for a
-				// show nobody has looked at would be worse than no row at all.
-				$canonical = get_post_meta( $show_id, 'lezshows_imdb_canonical', true );
-
-				if ( Imdb_Canonical::is_stale( $imdb, $canonical ) ) {
-					$findings[] = Findings::make(
-						$show_id,
-						CPT_Shows::SLUG,
-						'show-imdb-stale',
-						'IMDb ID disagrees with TVMaze -- ours is ' . $imdb
-							. ', TVMaze has ' . $canonical
-							. '. Ours has probably gone stale; check which is right, then correct it or '
-							. 'tick "Ignore TVMaze Match" on the show.',
-						array(
-							'imdb'      => $imdb,
-							'canonical' => $canonical,
-						)
-					);
-				}
+		foreach ( array_chunk( $shows, Imdb_Collector::BATCH ) as $batch ) {
+			foreach ( $collector->collect( Imdb_Rules::SHOW, $batch ) as $show ) {
+				$findings = array_merge( $findings, Imdb_Rules::evaluate( Imdb_Rules::SHOW, $show ) );
 			}
 		}
 

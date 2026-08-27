@@ -226,7 +226,7 @@ class BaselineTest extends TestCase {
 	public function test_describe_summary_reads_as_a_sentence(): void {
 		$out = Baseline::diff( $this->findings(), Baseline::snapshot( array( Findings::make( 10, 'post_type_shows', 'show-no-genres' ) ) ) );
 
-		$this->assertSame( '1 new, 1 open.', Baseline::describe_summary( $out['summary'] ) );
+		$this->assertSame( 'Problems: 1 new, 1 open.', Baseline::describe_summary( $out['summary'] ) );
 	}
 
 	public function test_describe_summary_mentions_resolved_only_when_there_are_some(): void {
@@ -240,13 +240,25 @@ class BaselineTest extends TestCase {
 			)
 		);
 
-		$this->assertSame( '0 new, 1 open, 1 resolved since the last run.', Baseline::describe_summary( $out['summary'] ) );
+		$this->assertSame( 'Problems: 0 new, 1 open, 1 resolved since the last run.', Baseline::describe_summary( $out['summary'] ) );
 	}
 
 	public function test_describe_summary_flags_a_first_run(): void {
 		$out = Baseline::diff( $this->findings(), array(), true );
 
 		$this->assertStringContainsString( 'first run', Baseline::describe_summary( $out['summary'] ) );
+		$this->assertStringContainsString( '2 problems', Baseline::describe_summary( $out['summary'] ) );
+	}
+
+	public function test_describe_summary_says_problems_not_posts(): void {
+		/*
+		 * The CLI line above this counts rows and these numbers count findings, so
+		 * one character with two problems reads as "1 character(s)" then "2". The
+		 * noun is what stops that looking like a contradiction.
+		 */
+		$out = Baseline::diff( array( Findings::make( 10, 'post_type_shows', 'show-no-genres' ) ), array(), true );
+
+		$this->assertStringContainsString( '1 problem outstanding', Baseline::describe_summary( $out['summary'] ) );
 	}
 
 	public function test_describe_summary_of_nothing(): void {

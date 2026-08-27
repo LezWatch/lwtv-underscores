@@ -9,9 +9,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-use LWTV\Debugger\Build\Findings;
+use LWTV\Debugger\Build\Queer_Rules;
+use LWTV\Debugger\Collect\Queer_Collector;
 use LWTV\Debugger\Format\Rows;
-use LWTV\Queeries\Is_Actor_Queer;
 use LWTV\Queeries\Post_Type;
 use LWTV\CPTs\Characters as CPT_Characters;
 
@@ -59,47 +59,27 @@ class Queers {
 		// Make sure we don't have dupes.
 		$characters = array_unique( $characters );
 
-		$findings = array();
+		/*
+		 * Collect, then evaluate. Build\Queer_Rules holds the comparison; the
+		 * collector resolves each actor's is-queer verdict once per batch, since
+		 * the same actors recur across characters.
+		 */
+		$collector = new Queer_Collector();
+		$findings  = array();
 
 		// If this is WP-CLI, setup progress bar.
 		if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			$progress_bar = \WP_CLI\Utils\make_progress_bar( sprintf( 'Starting queer checker. Found %d characters...', count( $characters ) ), count( $characters ) );
 		}
 
-		foreach ( $characters as $character ) {
-
-			// If this is WP-CLI, tick progress bar.
-			if ( defined( 'WP_CLI' ) && WP_CLI ) {
-				$progress_bar->tick();
-			}
-
-			// Get the actors...
-			$character_actors = get_field( 'lezchars_actor', $character ) ?: array();
-
-			if ( ! empty( $character_actors ) && is_array( $character_actors ) ) {
-				// Get the defaults
-				$flagged_queer = ( has_term( 'queer-irl', 'lez_cliches', $character ) ) ? true : false;
-				$actor_queer   = false;
-
-				// If ANY actor is flagged as queer, we're queer.
-				foreach ( $character_actors as $actor ) {
-					$actor_queer = ( new Is_Actor_Queer() )->make( $actor );
-
-					// If queer, we're done!
-					if ( $actor_queer ) {
-						break;
-					}
+		foreach ( array_chunk( $characters, Queer_Collector::BATCH ) as $batch ) {
+			foreach ( $collector->collect( $batch ) as $character ) {
+				// If this is WP-CLI, tick progress bar.
+				if ( defined( 'WP_CLI' ) && WP_CLI ) {
+					$progress_bar->tick();
 				}
 
-				if ( $actor_queer && ! $flagged_queer ) {
-					$findings[] = Findings::make( $character, CPT_Characters::SLUG, 'char-missing-queer-irl' );
-				}
-
-				if ( ! $actor_queer && $flagged_queer ) {
-					$findings[] = Findings::make( $character, CPT_Characters::SLUG, 'char-no-queer-actor' );
-				}
-			} else {
-				$findings[] = Findings::make( $character, CPT_Characters::SLUG, 'char-no-actors-listed' );
+				$findings = array_merge( $findings, Queer_Rules::evaluate( $character ) );
 			}
 		}
 

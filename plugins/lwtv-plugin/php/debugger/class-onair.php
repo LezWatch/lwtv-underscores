@@ -15,7 +15,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 use LWTV\CPTs\Shows as CPT_Shows;
 use LWTV\CPTs\Shows\Airdates;
-use LWTV\Debugger\Build\Findings;
+use LWTV\Debugger\Build\On_Air_Rules;
+use LWTV\Debugger\Collect\On_Air_Collector;
 use LWTV\Debugger\Format\Rows;
 use LWTV\Queeries\Post_Type;
 
@@ -59,31 +60,17 @@ class OnAir {
 		// Make sure we don't have dupes.
 		$shows = array_unique( $shows );
 
-		$findings = array();
+		/*
+		 * Collect, then evaluate. Build\On_Air_Rules holds the comparison and is
+		 * pure -- it is handed the year rather than asking the clock, which is why
+		 * it can be tested.
+		 */
+		$collector = new On_Air_Collector();
+		$findings  = array();
 
-		// Loop through the shows and check on-air meta versus the actual airdates
-		foreach ( $shows as $show_id ) {
-			$on_air_meta   = get_post_meta( $show_id, 'lezshows_on_air', true );
-			$on_air_actual = $this->check_if_on_air( $show_id );
-
-			if ( empty( $on_air_meta ) || empty( $on_air_actual ) ) {
-				$findings[] = Findings::make( $show_id, CPT_Shows::SLUG, 'show-onair-no-data' );
-				continue;
-			}
-
-			// If on-air meta doesn't match the actual on-air status, add to items.
-			// Ignore case for the meta value.
-			if ( strtolower( $on_air_meta ) !== strtolower( $on_air_actual ) ) {
-				$findings[] = Findings::make(
-					$show_id,
-					CPT_Shows::SLUG,
-					'show-onair-mismatch',
-					'On-air meta (' . $on_air_meta . ') does not match actual on-air status (' . $on_air_actual . ').',
-					array(
-						'meta'   => $on_air_meta,
-						'actual' => $on_air_actual,
-					)
-				);
+		foreach ( array_chunk( $shows, On_Air_Collector::BATCH ) as $batch ) {
+			foreach ( $collector->collect( $batch ) as $show ) {
+				$findings = array_merge( $findings, On_Air_Rules::evaluate( $show ) );
 			}
 		}
 
@@ -108,21 +95,9 @@ class OnAir {
 	 * @return string 'yes' when currently airing, otherwise 'no'.
 	 */
 	public function check_if_on_air( $show_id ) {
-		$year     = (int) gmdate( 'Y' );
-		$airdates = Airdates::get( (int) $show_id );
-		$start    = $airdates['start'];
-		$finish   = $airdates['finish'];
-
-		if ( '' === $start || '' === $finish ) {
-			return 'no';
-		}
-
-		// 'current' means the show is still airing, so there's nothing to compare.
-		if ( Airdates::is_still_airing( $finish ) ) {
-			return 'yes';
-		}
-
-		return ( (int) $start <= $year && (int) $finish >= $year ) ? 'yes' : 'no';
+		// The reading is here; the deciding is in Build\On_Air_Rules, so the repair
+		// below and the scan above cannot drift apart on what "on air" means.
+		return On_Air_Rules::should_be_on_air( Airdates::get( (int) $show_id ), (int) gmdate( 'Y' ) );
 	}
 
 	/**

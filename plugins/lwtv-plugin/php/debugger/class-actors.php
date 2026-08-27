@@ -16,11 +16,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 use LWTV\_Components\Debugger as Debug_Tool;
-use LWTV\_Helpers\Imdb_Canonical;
 use LWTV\CPTs\Actors as CPT_Actors;
+use LWTV\Debugger\Build\Actor_Completeness_Rules;
 use LWTV\Debugger\Build\Actor_Rules;
 use LWTV\Debugger\Build\Findings;
+use LWTV\Debugger\Build\Imdb_Rules;
 use LWTV\Debugger\Collect\Actor_Collector;
+use LWTV\Debugger\Collect\Actor_Completeness_Collector;
+use LWTV\Debugger\Collect\Imdb_Collector;
 use LWTV\Debugger\Format\Rows;
 use LWTV\Queeries\Post_Type;
 
@@ -194,6 +197,28 @@ class Actors {
 	}
 
 	/**
+	 * Replace a pasted IMDb URL with the ID inside it.
+	 *
+	 * Re-extracted here rather than trusting the finding's `context`: a repair
+	 * runs some time after the scan that produced it, and the field may have been
+	 * edited since. If the value is no longer an extractable URL this does
+	 * nothing and reports as unfixed, which is correct.
+	 *
+	 * @param  int  $actor_id Actor post ID.
+	 * @return bool True when the ID was written.
+	 */
+	public function extract_imdb_from_url( int $actor_id ): bool {
+		$current   = (string) get_post_meta( $actor_id, Actor_Rules::META_IMDB, true );
+		$extracted = Imdb_Rules::id_from_url( $current, Imdb_Rules::ACTOR );
+
+		if ( '' === $extracted ) {
+			return false;
+		}
+
+		return (bool) update_post_meta( $actor_id, Actor_Rules::META_IMDB, $extracted );
+	}
+
+	/**
 	 * Registry entry point for the Instagram case.
 	 *
 	 * Every repair in Issue_Registry takes one post ID, so the two-argument
@@ -324,15 +349,12 @@ class Actors {
 		// Make sure we don't have dupes.
 		$actors = array_unique( $actors );
 
-		$findings = array();
+		$collector = new Actor_Completeness_Collector();
+		$findings  = array();
 
-		foreach ( $actors as $actor_id ) {
-			if ( ! has_post_thumbnail( $actor_id ) ) {
-				$findings[] = Findings::make( $actor_id, CPT_Actors::SLUG, 'actor-no-image' );
-			}
-
-			if ( empty( get_the_content( '', false, $actor_id ) ) ) {
-				$findings[] = Findings::make( $actor_id, CPT_Actors::SLUG, 'actor-no-bio' );
+		foreach ( array_chunk( $actors, Actor_Completeness_Collector::BATCH ) as $batch ) {
+			foreach ( $collector->collect( $batch ) as $actor ) {
+				$findings = array_merge( $findings, Actor_Completeness_Rules::evaluate( $actor ) );
 			}
 		}
 
@@ -386,40 +408,17 @@ class Actors {
 		// Make sure we don't have dupes.
 		$actors = array_unique( $actors );
 
-		$findings = array();
+		/*
+		 * Collect, then evaluate. Build\Imdb_Rules serves both this check and the
+		 * show one; the oracle here is TMDB rather than TVMaze, which is the only
+		 * interesting difference.
+		 */
+		$collector = new Imdb_Collector();
+		$findings  = array();
 
-		foreach ( $actors as $actor_id ) {
-
-			$imdb = get_post_meta( $actor_id, 'lezactors_imdb', true );
-
-			if ( empty( $imdb ) ) {
-				// Check for IMDb existing at all...
-				$findings[] = Findings::make( $actor_id, CPT_Actors::SLUG, 'actor-imdb-not-set' );
-			} elseif ( Debug_Tool::validate_imdb( $imdb, 'actor' ) === false ) {
-				// - IMDb IDs should be valid for the space they're in, e.g. "nm"
-				// and digits for people (props Jamie).
-				$findings[] = Findings::make( $actor_id, CPT_Actors::SLUG, 'actor-imdb-invalid', 'IMDb ID is invalid (ex: nm12345) -- ' . $imdb, array( 'imdb' => $imdb ) );
-			} else {
-				// Same staleness check as shows, oracled against TMDB rather than
-				// TVMaze because that is the third party whose person IDs we
-				// already store. See Debugger\Shows for why this cannot be a
-				// format check and why an empty canonical stays silent.
-				$canonical = get_post_meta( $actor_id, 'lezactors_imdb_canonical', true );
-
-				if ( Imdb_Canonical::is_stale( $imdb, $canonical ) ) {
-					$findings[] = Findings::make(
-						$actor_id,
-						CPT_Actors::SLUG,
-						'actor-imdb-stale',
-						'IMDb ID disagrees with TMDB -- ours is ' . $imdb
-							. ', TMDB has ' . $canonical
-							. '. Ours has probably gone stale; check which is right before correcting it.',
-						array(
-							'imdb'      => $imdb,
-							'canonical' => $canonical,
-						)
-					);
-				}
+		foreach ( array_chunk( $actors, Imdb_Collector::BATCH ) as $batch ) {
+			foreach ( $collector->collect( Imdb_Rules::ACTOR, $batch ) as $actor ) {
+				$findings = array_merge( $findings, Imdb_Rules::evaluate( Imdb_Rules::ACTOR, $actor ) );
 			}
 		}
 

@@ -73,6 +73,12 @@ class Actor_Rules {
 	const META_TWITTER = 'lezactors_twitter';
 
 	/**
+	 * IMDb ID. Not judged by these rules -- the `actor_imdb` check owns that --
+	 * but collected here, and named so the repairs have one place to read it from.
+	 */
+	const META_IMDB = 'lezactors_imdb';
+
+	/**
 	 * Fragment every Wikipedia URL contains, whatever the language subdomain.
 	 */
 	const WIKIPEDIA = 'wikipedia.org/';
@@ -278,7 +284,7 @@ class Actor_Rules {
 			self::META_HOME,
 			self::META_INSTAGRAM,
 			self::META_TWITTER,
-			'lezactors_imdb',
+			self::META_IMDB,
 		);
 	}
 }

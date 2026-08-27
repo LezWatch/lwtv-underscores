@@ -307,10 +307,6 @@ class WP_CLI_LWTV_Debug {
 	private function run_check( array $check, bool $fix_it ): void {
 		\WP_CLI::log( $check['running'] );
 
-		if ( $fix_it && ! isset( $check['fixer'] ) ) {
-			\WP_CLI::warning( '--fix-it is not available for this check; reporting only.' );
-		}
-
 		$items      = $this->force ? false : lwtv_plugin()->get_transient( $check['transient'] );
 		$from_cache = false !== $items;
 
@@ -328,9 +324,20 @@ class WP_CLI_LWTV_Debug {
 			return;
 		}
 
-		if ( $fix_it && isset( $check['fixer'] ) ) {
-			$this->apply_fixes( $check, $items );
-			return;
+		if ( $fix_it ) {
+			/*
+			 * Asked after the findings are in hand, not before. A check with no
+			 * check-level `fixer` can still be repairable through the registry --
+			 * `actor_imdb` has no dispatcher but its pasted-URL findings each have
+			 * a repair -- and whether *these* findings have one is a question
+			 * about the findings, not about the check definition.
+			 */
+			if ( $this->has_repairs( $check, $items ) ) {
+				$this->apply_fixes( $check, $items );
+				return;
+			}
+
+			\WP_CLI::warning( 'Nothing here can be repaired automatically; reporting only.' );
 		}
 
 		\WP_CLI::log( count( $items ) . ' ' . $check['dirty'] );
@@ -391,6 +398,55 @@ class WP_CLI_LWTV_Debug {
 	}
 
 	/**
+	 * Is there anything in these findings that `--fix-it` can act on?
+	 *
+	 * Two ways to qualify: the check declares a fixer of its own, or at least one
+	 * finding names an issue type the registry has a bulk-safe repair for. The
+	 * second is what lets a check with no dispatcher still be repairable.
+	 *
+	 * @param  array $check Check definition.
+	 * @param  array $items Findings.
+	 * @return bool
+	 */
+	private function has_repairs( array $check, array $items ): bool {
+		if ( isset( $check['fixer'] ) ) {
+			return true;
+		}
+
+		foreach ( $items as $item ) {
+			if ( ! empty( $this->bulk_fixable( $item ) ) ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * The issue types on one row that a bulk run may repair.
+	 *
+	 * Manual repairs are excluded: they are judgement calls -- "this show really
+	 * has no characters" -- and applying one across a whole report would be making
+	 * that judgement on somebody's behalf. They stay available per finding in
+	 * wp-admin.
+	 *
+	 * @param  array $item One finding row.
+	 * @return array<string>
+	 */
+	private function bulk_fixable( array $item ): array {
+		if ( ! Findings::is_post( $item ) ) {
+			return array();
+		}
+
+		return array_values(
+			array_filter(
+				Findings::fixable_issues( $item ),
+				static fn ( $issue_type ) => ! Issue_Registry::is_manual( $issue_type )
+			)
+		);
+	}
+
+	/**
 	 * Repair one finding row.
 	 *
 	 * Prefers the per-issue repairs the row names in `fixable`, which is what
@@ -411,19 +467,7 @@ class WP_CLI_LWTV_Debug {
 		}
 
 		$post_id = (int) $item['id'];
-
-		/*
-		 * Manual repairs are excluded here, not filtered out of the finding.
-		 * They are judgement calls -- "this show really has no characters" --
-		 * and applying one across a whole report would be making that judgement
-		 * on somebody's behalf. They stay available per finding in wp-admin.
-		 */
-		$issues = array_values(
-			array_filter(
-				Findings::fixable_issues( $item ),
-				static fn ( $issue_type ) => ! Issue_Registry::is_manual( $issue_type )
-			)
-		);
+		$issues  = $this->bulk_fixable( $item );
 
 		if ( ! empty( $issues ) ) {
 			$repaired = false;

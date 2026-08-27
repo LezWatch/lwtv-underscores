@@ -89,6 +89,8 @@ class IssueRegistryTest extends TestCase {
 				'actor-homepage-dupe-wiki',
 				'show-onair-no-data',
 				'show-onair-mismatch',
+				'show-imdb-url-pasted',
+				'actor-imdb-url-pasted',
 			),
 			Issue_Registry::fixable_types()
 		);
@@ -109,6 +111,14 @@ class IssueRegistryTest extends TestCase {
 			Issue_Registry::fix_callable( 'show-onair-no-data' ),
 			Issue_Registry::fix_callable( 'show-onair-mismatch' )
 		);
+	}
+
+	public function test_a_pasted_url_is_repairable_but_plain_invalid_is_not(): void {
+		// The correct value is inside the wrong one, which is what makes the
+		// repair safe in bulk. Junk stays a human's problem.
+		$this->assertTrue( Issue_Registry::is_fixable( 'actor-imdb-url-pasted' ) );
+		$this->assertFalse( Issue_Registry::is_manual( 'actor-imdb-url-pasted' ) );
+		$this->assertFalse( Issue_Registry::is_fixable( 'actor-imdb-invalid' ) );
 	}
 
 	public function test_duplicates_are_typed_per_post_type(): void {

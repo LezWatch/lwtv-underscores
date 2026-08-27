@@ -328,6 +328,19 @@ class Issue_Registry {
 			'level'   => 'show',
 			'message' => 'IMDb ID is invalid (ex: tt12345).',
 		),
+		/*
+		 * Repairable, and safe in bulk, because the correct value is inside the
+		 * wrong one: someone pasted the IMDb page URL instead of the ID, and the
+		 * ID is in a known position in it. Contrast the IMDb-in-a-social-field
+		 * repair, which deletes rather than moves, because there the intent is a
+		 * guess. Here it is not.
+		 */
+		'show-imdb-url-pasted'        => array(
+			'level'     => 'show',
+			'message'   => 'The IMDb field holds a URL, not an ID.',
+			'fix'       => array( self::SHOWS, 'extract_imdb_from_url' ),
+			'fix_label' => 'replaces it with the ID from the URL',
+		),
 		'show-imdb-stale'             => array(
 			'level'   => 'show',
 			'message' => 'IMDb ID disagrees with TVMaze.',
@@ -339,6 +352,12 @@ class Issue_Registry {
 		'actor-imdb-invalid'          => array(
 			'level'   => 'actor',
 			'message' => 'IMDb ID is invalid (ex: nm12345).',
+		),
+		'actor-imdb-url-pasted'       => array(
+			'level'     => 'actor',
+			'message'   => 'The IMDb field holds a URL, not an ID.',
+			'fix'       => array( self::ACTORS, 'extract_imdb_from_url' ),
+			'fix_label' => 'replaces it with the ID from the URL',
 		),
 		'actor-imdb-stale'            => array(
 			'level'   => 'actor',

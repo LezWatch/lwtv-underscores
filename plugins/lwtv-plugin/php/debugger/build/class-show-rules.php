@@ -280,6 +280,12 @@ class Show_Rules {
 	 * number-named (90210), which is why finding a suffix only starts the check
 	 * rather than finishing it.
 	 *
+	 * Looser than Duplicate_Rules::base_slug(), which requires the hyphen: this
+	 * splits on '-' and takes the last part, so a bare `90210` counts as
+	 * suffixed. That is why the duplicate rule below needs its self-finding
+	 * guard — stripping a "suffix" that is the whole slug leaves the slug alone,
+	 * and the lookup finds the show you started from.
+	 *
 	 * Public because the collector uses it to decide whether a lookup is even
 	 * worth doing -- most slugs have no suffix and cost nothing.
 	 *

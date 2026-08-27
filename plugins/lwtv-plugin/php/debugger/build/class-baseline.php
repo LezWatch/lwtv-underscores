@@ -208,10 +208,19 @@ class Baseline {
 			return 'Nothing outstanding.';
 		}
 
+		/*
+		 * "Problems", explicitly. The line above this in CLI output counts rows —
+		 * posts needing attention — and these numbers count findings, so one
+		 * character with two problems reads as "1 character(s)" then "2". Both are
+		 * right; without the noun they look like a contradiction.
+		 */
+		$noun = ( 1 === $total ) ? 'problem' : 'problems';
+
 		if ( ! empty( $summary['first_run'] ) ) {
 			return sprintf(
-				'%d outstanding (first run — everything counts as open until there is something to compare against).',
-				$total
+				'%d %s outstanding (first run — everything counts as open until there is something to compare against).',
+				$total,
+				$noun
 			);
 		}
 
@@ -224,6 +233,6 @@ class Baseline {
 			$parts[] = sprintf( '%d resolved since the last run', (int) $summary['resolved'] );
 		}
 
-		return implode( ', ', $parts ) . '.';
+		return 'Problems: ' . implode( ', ', $parts ) . '.';
 	}
 }

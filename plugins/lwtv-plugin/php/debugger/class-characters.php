@@ -11,8 +11,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+use LWTV\Debugger\Build\Byq_Rules;
 use LWTV\Debugger\Build\Character_Rules;
-use LWTV\Debugger\Build\Findings;
+use LWTV\Debugger\Collect\Byq_Collector;
 use LWTV\Debugger\Collect\Character_Collector;
 use LWTV\Debugger\Format\Rows;
 use LWTV\Queeries\Post_Type;
@@ -71,87 +72,18 @@ class Characters {
 		// Make sure we don't have dupes.
 		$characters = array_unique( $characters );
 
-		$findings = array();
+		/*
+		 * Collect, then evaluate. Build\Byq_Rules holds the two rules and the gate
+		 * that decides when a missing trope is worth reporting -- pure, and tested,
+		 * which it needed to be: that gate had a bug in it (1.9c) for as long as it
+		 * was interleaved with the ACF reads.
+		 */
+		$collector = new Byq_Collector();
+		$findings  = array();
 
-		foreach ( $characters as $char_id ) {
-			$death_findings = array();
-			$trope_findings = array();
-
-			// Check for missing death year meta data
-			$death_rows = get_field( 'lezchars_death_year', $char_id );
-			$death_year = is_array( $death_rows ) ? array_filter( array_column( $death_rows, 'date' ) ) : array();
-			if ( empty( $death_year ) ) {
-				$death_findings[] = Findings::make( $char_id, CPT_Characters::SLUG, 'char-no-death-year' );
-			}
-
-			$shows = get_field( 'lezchars_show_group', $char_id );
-
-			/*
-			 * If there are no shows, skip -- including the death-year finding.
-			 * A dead character on no shows at all is a bigger problem than a
-			 * missing date, and the Characters check reports it as
-			 * `char-no-shows`.
-			 */
-			if ( empty( $shows ) ) {
-				continue;
-			}
-
-			// Get all the shows the character is on. If ANY of them are missing the dead-queers trope we have a problem
-			foreach ( $shows as $each_show ) {
-				// Remove the Array.
-				if ( is_array( $each_show['show'] ) ) {
-					$each_show['show'] = $each_show['show'][0];
-				}
-
-				$show_id = $each_show['show'];
-
-				if ( ! has_term( 'dead-queers', 'lez_tropes', $show_id ) ) {
-					/*
-					 * The edit link stays inside the message. It is markup in
-					 * data, which the typed shape is meant to get away from --
-					 * but the admin table has always rendered it, dropping it
-					 * would lose a click editors use, and the CLI strips it now
-					 * anyway via Findings::plain(). The show ID is in `context`
-					 * so a renderer can build the link properly later.
-					 */
-					$trope_findings[] = Findings::make(
-						$char_id,
-						CPT_Characters::SLUG,
-						'char-show-no-byq-trope',
-						'There is no BYQ trope on the show <a href="/wp-admin/post.php?post=' . $show_id . '&action=edit">' . get_the_title( $show_id ) . '</a> (edit).',
-						array( 'show_id' => (int) $show_id )
-					);
-				}
-			}
-
-			/*
-			 * A missing death year is a data gap whatever the tropes look like.
-			 *
-			 * It used to be counted into the gate below, which meant it could
-			 * cancel itself out: a dead character with no death year, whose shows
-			 * were otherwise correctly tropes, was silently dropped from this
-			 * report. See DEBUGGER-REVIEW 1.9c.
-			 */
-			$findings = array_merge( $findings, $death_findings );
-
-			/*
-			 * Exactly one of a dead character's shows should carry the BYQ trope:
-			 * the one she was killed on. Being on other shows that never killed
-			 * her is normal, and those shows legitimately have no trope -- which
-			 * is why a per-show "missing trope" finding cannot be reported on its
-			 * own merits.
-			 *
-			 * So the invariant is on the shows that DO have it. One is right.
-			 * None means nobody recorded the death on the show it happened on.
-			 * More than one means two of her shows claim a queer death, which
-			 * may be legitimate (a show can kill someone else) but is worth an
-			 * eyeball -- and reports nothing anyway, since with nothing missing
-			 * there are no findings to show.
-			 */
-			$shows_with_trope = count( $shows ) - count( $trope_findings );
-
-			if ( 1 !== $shows_with_trope ) {
-				$findings = array_merge( $findings, $trope_findings );
+		foreach ( array_chunk( $characters, Byq_Collector::BATCH ) as $batch ) {
+			foreach ( $collector->collect( $batch ) as $character ) {
+				$findings = array_merge( $findings, Byq_Rules::evaluate( $character ) );
 			}
 		}
 

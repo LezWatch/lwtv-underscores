@@ -58,7 +58,7 @@ buttons, and the copy in both.
 | 1.9c | BYQ reporting gate counted show findings and death-year findings together (new) |
 | 2.1 | `Post_Type::get_ids()` — nine debugger sites plus `cli-shadow.php` |
 | 2.4 | Scans no longer mutate data; every write moved behind a repair |
-| §4 | `build/` + `collect/` split for Shows, Characters and Actors, 77 tests |
+| §4 | `build/` + `collect/` split — **every check**. 11 rules classes, 9 collectors, ~200 tests |
 | §5 | Baselines and new/open/resolved — as a pure `Build\Baseline`, not via `Audit` |
 | §8.1–8.5 | Detect/repair split, typed findings, both repair surfaces, stray writes gone |
 | 14 | Every check converted — all eleven report "N new / M open" |
@@ -67,15 +67,14 @@ buttons, and the copy in both.
 
 | | |
 |---|---|
-| §4 | `collect/` + rules split for the eight checks converted but not yet extracted |
 | §5 | Acknowledgements where no editorial field exists to carry them |
 | §7 | Collapse the twelve validator files |
 | §6 | Debug log rotation, memoised option reads, log viewer |
 | §3 | Capability checks inside the validator `make()` methods |
 | §8.4 | The wikidata cache writes still want an explicit TTL |
 
-**Not verified yet:** the Watch Providers create-term and lookup buttons, and the TMDB
-backfill write path. See Open questions.
+**Not verified yet:** the Watch Providers create-term and lookup buttons. The TMDB backfill
+write path **has** now been run and works.
 
 **Two conventions worth knowing before editing any of this:**
 
@@ -785,9 +784,75 @@ the three, because every actor check is a meta read. Four notes:
 - **`get_post_field( 'post_name' )` is no longer collected.** The actor scan gathered it as
   `dupes` and never used it; duplicate detection lives in the `dupes` check.
 
-What is left of §4 is the checks that were never in scope here: `byq`, `queers`, `dupes`,
-`on_air`, both IMDb checks, and `watchurls` — every check is converted now, but only
-Shows, Characters and Actors have had their rules extracted into `build/`.
+**Three more followed (2026-08-26): on-air, BYQ and duplicates** — chosen because each had
+real logic and a history of bugs, rather than for tidiness:
+
+- **`Build\On_Air_Rules`** takes the year as a parameter instead of reading the clock, which
+  is the whole reason it can be tested: "is this show on air" is a question about a date, and
+  a rule that asks the system what day it is can only be tested on days the answer suits.
+  `OnAir::check_if_on_air()` now delegates to it, so the scan and the repair cannot drift
+  apart on what "on air" means. It also documented a dead clause: the original tested the
+  *computed* verdict for emptiness, and that is always 'yes' or 'no'.
+- **`Build\Byq_Rules`** holds the reporting gate from §1.9c. That gate was wrong for as long
+  as it was interleaved with the ACF reads, and the fix is only checkable because the rules
+  are now separable — `ByqRulesTest` encodes the whole invariant, including that the gate can
+  only ever suppress findings and never invent them.
+- **`Build\Duplicate_Rules`** holds all three §1.9b bugs' worth of comparisons, each with a
+  test: the ACF override that could never be true, two missing IMDb IDs counting as a match,
+  and the two-character suffix assumption that mangled `-10` and up. `Dupes` is down to 38
+  lines; `compare_duplicates()` and `get_dupes()` stay as thin pass-throughs for callers
+  outside the class.
+
+**`watchurls` needs nothing here** — its rules were already extracted into
+`CPTs\Shows\Watch_Url_Health::classify()`, which is pure and has its own test file. Worth
+knowing before someone goes looking for work that is already done.
+
+**And the last four (2026-08-26), which completes §4.** They were left for last because
+their logic is one or two comparisons over already-pure helpers, and that is how they turned
+out — with one thing worth doing properly:
+
+- **`Build\Imdb_Rules` serves both IMDb checks**, rather than one class each. They are the
+  same three rules — not set, malformed, disagrees with the oracle — differing only in the
+  ID prefix, the oracle's name, and (shows only) an exemption for web series and an override
+  to waive the comparison. All of that is a config map. Keeping them together is the point:
+  these two had already drifted apart once, which is how the actor check ended up reporting
+  the Instagram value in a Twitter message (§3). Most of `ImdbRulesTest` asserts on both
+  levels in the same test.
+- **`Build\Queer_Rules`** is the two-way comparison: a queer actor with no tag is a gap in
+  our data, a tag with no queer actor is a claim we cannot support, and they are separate
+  issue types.
+- **`Build\Actor_Completeness_Rules`** is barely a rule — two booleans in, up to two
+  findings out. It exists so `actor_empty` has the same shape as everything else, and so the
+  next completeness rule has an obvious home.
+
+Two collectors earned their keep beyond consistency: `Queer_Collector` resolves each actor's
+is-queer verdict once per batch rather than once per character-actor pair, and
+`Imdb_Collector` resolves the web-series exemption with one term query per batch instead of a
+`has_term()` each.
+
+**A new repair came out of the first live run:** an actor whose IMDb field held
+`https://www.imdb.com/fr/name/nm10688602/` — the page URL pasted instead of the ID. That is
+its own diagnosis rather than a flavour of "invalid", so it got its own issue types
+(`show-imdb-url-pasted` / `actor-imdb-url-pasted`) and a repair that writes the ID from
+inside the URL.
+
+Unlike the IMDb-in-a-social-field repair, this one is **not** `manual` and is safe in bulk,
+and the difference is worth stating: there, the intent was a guess, so the repair deletes
+rather than moves. Here the correct value is literally inside the wrong one, in a known
+position. `Imdb_Rules::id_from_url()` is strict about both halves of that claim — it must be
+an imdb.com URL, and the ID's prefix must match the level, because a title URL in an actor's
+field is probably the wrong record entirely and turning it into a valid-looking wrong answer
+would be worse than leaving it visible. Values that are merely junk keep reporting as
+`*-imdb-invalid` with no repair offered.
+
+**And a bug that repair exposed:** `run_check()` gated the whole `--fix-it` path on the check
+declaring a `fixer` of its own, warning "not available for this check" and reporting only.
+That was correct when repairs were check-level, and quietly wrong once they became per-issue
+— `actor_imdb` has no dispatcher, but its pasted-URL findings each have a repair, so
+`--fix-it` refused a check it could have fixed. It now asks `has_repairs()` *after* the
+findings are in hand, because whether these findings are repairable is a question about the
+findings, not about the check definition. Second time that key has been the wrong
+abstraction; it is no longer load-bearing for anything except the fallback path.
 
 ### Acknowledgement, arrived at from the other end (2026-08-26)
 
@@ -1387,10 +1452,10 @@ Everything in the **Done** table at the top has shipped. What's left, in the ord
    is outstanding is the cases with no such field to hang it on — the intersectionality note
    hardcoded in `class-show-checker.php`'s panel copy being the obvious one. Those are what
    would need `IGNORE_META` generalised per post type.
-10. ~~**Extract pure rule evaluation into `debugger/build/`** with tests (§4).~~ **Done for
-    Shows, Characters and Actors** — rules + collector each, 77 tests between them, all
-    three scanners down to ~35 lines of orchestration. The unconverted checks (item 14)
-    still detect inline.
+10. ~~**Extract pure rule evaluation into `debugger/build/`** with tests (§4).~~ **Done, for
+    every check.** Eleven rules classes in `build/`, nine collectors in `collect/`, and every
+    scanner reduced to orchestration. `watchurls` needed nothing — its rules were already
+    pure in `Watch_Url_Health::classify()`.
 11. ~~**Move the writes to a repair layer** (§8.2) behind `--fix-it`, plus per-finding admin
     fix links (§8.1).~~ **Done**, both surfaces. Every write that a scan used to perform is
     now a registered repair, and `on_air` picked up admin buttons when it was converted.
@@ -1490,7 +1555,8 @@ Everything in the **Done** table at the top has shipped. What's left, in the ord
   asked for it yet, and the typed findings mean it stays possible.
 - **Does the ACF repeater shape written by `create_term()` match what ACF expects?** The
   one thing in this pass with a plausible silent-failure mode.
-- **What's the real TMDB hit rate?** `--order=random` hasn't been run.
+- ~~**What's the real TMDB hit rate?** `--order=random` hasn't been run.~~ The backfill has
+  been run and works. The measured hit rate is still worth recording here if you have it.
 - **What threshold makes a host "worth registering"?** The tab is unfiltered right now.
   `--min-shows` exists on the CLI; the distribution suggests somewhere around 3–5.
 - **Should `enrich` go on the weekly cron?** It's designed for it — skips already-asked
