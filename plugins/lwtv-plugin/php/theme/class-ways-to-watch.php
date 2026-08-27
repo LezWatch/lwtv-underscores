@@ -7,6 +7,11 @@
  * holds the URLs that identify it (lezwatchurls_all_N_url) and its *name is the
  * display name* -- it is used verbatim, never reformatted.
  *
+ * Matching is by normalised *host*, via Watch_Hosts::term_for(). It used to be an
+ * exact comparison against the stored URL string, which meant a term URL saved
+ * with a trailing slash or a `www.` matched nothing and the provider silently
+ * fell through to the guess below. See CPTs\Shows\Watch_Host_Map.
+ *
  * Hosts with no term fall through to guess_name(), which does its best from the
  * hostname. That path is permanent: LWTV documents web series, and each one
  * lives on its own domain, so there will always be a long tail not worth a term.
@@ -20,6 +25,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 use LWTV\CPTs\Shows\Host_Name;
 use LWTV\CPTs\Shows\Watch_Host_Names;
+use LWTV\CPTs\Shows\Watch_Hosts;
 
 
 class Ways_To_Watch {
@@ -71,23 +77,22 @@ class Ways_To_Watch {
 				continue;
 			}
 
-			$terms = self::get_term_by_url( $this->url_candidates( $parsed_url ) );
+			$term = Watch_Hosts::term_for( $parsed_url['host'] );
 
 			// No term for this host: fall back to guessing from the hostname.
-			if ( empty( $terms ) ) {
+			if ( ! $term ) {
 				$old_style_urls[] = $url;
 				continue;
 			}
-
-			$term = $terms[0];
 
 			// If Hide Display is flagged, hide the display.
 			if ( '1' === get_term_meta( $term->term_id, 'lezwatchurls_setting_hide_display', true ) ) {
 				continue;
 			}
 
-			// The term name IS the display name. Do not reformat it.
-			$links[] = $this->build_link( $url, $term->name );
+			// The term name IS the display name. Do not reformat it -- decoding
+			// is not reformatting, see term_name().
+			$links[] = $this->build_link( $url, $this->term_name( $term->name ) );
 		}
 
 		// If we have old style URLs, we need to generate those links.
@@ -97,106 +102,6 @@ class Ways_To_Watch {
 		}
 
 		return $links;
-	}
-
-	/**
-	 * Every stored URL form worth trying for one parsed URL, most specific first.
-	 *
-	 * Terms store 'scheme://host'. Editors are inconsistent about www and about
-	 * http vs https, and a term registered as https will never match an http
-	 * show URL on an exact comparison, so both are offered rather than requiring
-	 * every term to list every variant.
-	 *
-	 * @param  array $parsed_url Output of wp_parse_url().
-	 * @return array<string>
-	 */
-	private function url_candidates( array $parsed_url ): array {
-		$hosts = Host_Name::host_candidates( $parsed_url['host'] );
-
-		if ( empty( $hosts ) ) {
-			return array();
-		}
-
-		// The URL's own scheme first, then the other one.
-		$scheme  = ( isset( $parsed_url['scheme'] ) && 'http' === $parsed_url['scheme'] ) ? 'http' : 'https';
-		$schemes = array( $scheme, 'http' === $scheme ? 'https' : 'http' );
-
-		$candidates = array();
-		foreach ( $hosts as $one_host ) {
-			foreach ( $schemes as $one_scheme ) {
-				$candidates[] = $one_scheme . '://' . $one_host;
-			}
-		}
-
-		return array_values( array_unique( $candidates ) );
-	}
-
-	/**
-	 * Get Term by URL
-	 *
-	 * Searches ACF repeater subfield rows (lezwatchurls_all_N_url) for an exact
-	 * match against any of the supplied URLs, in one query.
-	 *
-	 * When several candidates match, the earliest in $urls wins, so a term
-	 * registered on 'abc.go.com' beats one registered on 'go.com'.
-	 *
-	 * Static: it keeps no instance state, and Watch_Hosts calls it once per host
-	 * across every host in use.
-	 *
-	 * @param  string|array $urls One URL, or candidates in priority order.
-	 * @return array
-	 */
-	public static function get_term_by_url( $urls ): array {
-		global $wpdb;
-
-		$urls = array_values( array_filter( (array) $urls ) );
-
-		if ( empty( $urls ) ) {
-			return array();
-		}
-
-		$placeholders = implode( ', ', array_fill( 0, count( $urls ), '%s' ) );
-
-		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-		$matches = $wpdb->get_results(
-			$wpdb->prepare(
-				"SELECT tm.meta_value AS matched_url, t.term_id
-				FROM {$wpdb->terms} t
-				INNER JOIN {$wpdb->term_taxonomy} tt ON t.term_id = tt.term_id
-				INNER JOIN {$wpdb->termmeta} tm ON t.term_id = tm.term_id
-				WHERE tt.taxonomy = %s
-				AND tm.meta_key REGEXP '^lezwatchurls_all_[0-9]+_url$'
-				AND tm.meta_value IN ( {$placeholders} )",
-				array_merge( array( self::TAXONOMY ), $urls )
-			)
-		);
-		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-
-		if ( empty( $matches ) ) {
-			return array();
-		}
-
-		// SQL has no opinion on our candidate order, so resolve it here.
-		$by_url = array();
-		foreach ( $matches as $match ) {
-			$by_url[ $match->matched_url ] = (int) $match->term_id;
-		}
-
-		$term_id = 0;
-		foreach ( $urls as $candidate ) {
-			if ( isset( $by_url[ $candidate ] ) ) {
-				$term_id = $by_url[ $candidate ];
-				break;
-			}
-		}
-
-		if ( ! $term_id ) {
-			return array();
-		}
-
-		$term = get_term( $term_id, self::TAXONOMY );
-
-		return ( $term instanceof \WP_Term ) ? array( $term ) : array();
 	}
 
 	/**
@@ -219,6 +124,29 @@ class Ways_To_Watch {
 		}
 
 		return $links;
+	}
+
+	/**
+	 * A term name as text, not as HTML.
+	 *
+	 * WordPress stores term names entity-encoded, so "U&Alibi" comes back as
+	 * "U&amp;Alibi" and "Seed&Spark" as "Seed&amp;Spark". build_link() escapes
+	 * with esc_html(), which encodes the ampersand a second time, and the reader
+	 * gets a literal "U&amp;Alibi" on the button.
+	 *
+	 * Decode on the way out rather than fixing the stored value: WordPress
+	 * re-encodes on every term save, so a corrected name would not stay
+	 * corrected.
+	 *
+	 * Twin of Debugger\Watch_URLs::term_name(), which solved this for the
+	 * debugger's findings and documents the same reasoning. Two copies of a
+	 * one-liner is not yet a pattern; a third means extracting it.
+	 *
+	 * @param  string $name Term name as stored.
+	 * @return string
+	 */
+	private function term_name( string $name ): string {
+		return html_entity_decode( $name, ENT_QUOTES | ENT_HTML5, 'UTF-8' );
 	}
 
 	/**

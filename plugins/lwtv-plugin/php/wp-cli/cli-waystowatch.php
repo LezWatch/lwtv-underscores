@@ -2,14 +2,25 @@
 /*
  * WP CLI Commands for Ways to Watch hosts.
  *
- * Three jobs:
+ * Reporting:
  *   hosts    - which hosts are in use, how many shows use them, do they have a
  *              lez_watch_urls term, and what name do we currently render.
- *   enrich   - ask hosts with no term what they call themselves, and cache it,
- *              so the long tail stops rendering as 'Tubitv' and 'Onemorelesbian'.
  *   termurls - read-only audit of what is actually stored in the term URL rows,
  *              and whether matching terms on host rather than on an exact URL
  *              string would change any meanings.
+ *
+ * Writing:
+ *   enrich   - ask hosts with no term what they call themselves, and cache it,
+ *              so the long tail stops rendering as 'Tubitv' and 'Onemorelesbian'.
+ *   merge    - fold one provider term into another and delete it, for genuine
+ *              duplicates ('Lesflicks' and 'LezFlicks' are one service).
+ *   seturls  - rewrite one term's URL rows, for repairing a typo'd or dead host
+ *              without hand-editing ACF repeater meta and mis-numbering it.
+ *
+ * `merge` and `seturls` both go through Watch_Hosts::set_term_urls(), which
+ * rewrites the repeater contiguously rather than appending at whatever ACF's
+ * row-count meta claims. Editing those rows by hand is what this exists to
+ * avoid.
  *
  * New shows arrive with new hosts continuously, so `enrich` is worth running on
  * a schedule rather than once. It only ever touches hosts it has not already
@@ -25,6 +36,7 @@ use LWTV\CPTs\Shows\Host_Name;
 use LWTV\CPTs\Shows\Watch_Host_Names;
 use LWTV\CPTs\Shows\Watch_Hosts;
 use LWTV\CPTs\Shows\Watch_Term_Url_Audit;
+use LWTV\Theme\Ways_To_Watch as Theme_Ways_To_Watch;
 
 /**
  * LezWatch.TV commands for Ways to Watch hosts.
@@ -53,6 +65,14 @@ class WP_CLI_LWTV_WaysToWatch {
 	 *   - enrich: fetch og:site_name for hosts with no term, and cache it.
 	 *   - forget: clear the enrichment cache.
 	 *   - termurls: audit what is stored in the lez_watch_urls term URL rows. Read-only.
+	 *   - merge: fold one provider term into another and delete it.
+	 *   - seturls: rewrite one term's URL rows to exactly the given list.
+	 *
+	 * [<term_id>]
+	 * : For `merge`, the term to keep. For `seturls`, the term to rewrite.
+	 *
+	 * [<drop_id>]
+	 * : For `merge` only, the term to fold in and delete.
 	 *
 	 * [--limit=<number>]
 	 * : For `enrich`, how many hosts to process. For `hosts` and `termurls`, how
@@ -73,6 +93,9 @@ class WP_CLI_LWTV_WaysToWatch {
 	 *
 	 * [--unregistered]
 	 * : For `hosts`, show only hosts with no lez_watch_urls term.
+	 *
+	 * [--urls=<urls>]
+	 * : For `seturls`, a comma-separated list of URLs to store.
 	 *
 	 * [--flagged]
 	 * : For `termurls`, show only rows with something wrong with them.
@@ -130,6 +153,12 @@ class WP_CLI_LWTV_WaysToWatch {
 	 *     # Everything untidy, as a spreadsheet.
 	 *     $ wp lwtv waystowatch termurls --flagged --all --format=csv
 	 *
+	 *     # Fold a duplicate provider term into the one to keep.
+	 *     $ wp lwtv waystowatch merge 28134 28671 --dry-run
+	 *
+	 *     # Repair a term's URL rows.
+	 *     $ wp lwtv waystowatch seturls 28663 --urls=https://paus.tv,https://watch.paus.tv --dry-run
+	 *
 	 * @param array $args       Positional args.
 	 * @param array $assoc_args Flags.
 	 */
@@ -144,13 +173,141 @@ class WP_CLI_LWTV_WaysToWatch {
 			case 'termurls':
 				$this->run_termurls( $assoc_args );
 				break;
+			case 'merge':
+				$this->run_merge( $args, $assoc_args );
+				break;
+			case 'seturls':
+				$this->run_seturls( $args, $assoc_args );
+				break;
 			case 'forget':
 				Watch_Host_Names::forget();
 				\WP_CLI::success( 'Enrichment cache cleared.' );
 				break;
 			default:
-				\WP_CLI::error( 'Invalid action. Use: hosts, enrich, termurls, forget' );
+				\WP_CLI::error( 'Invalid action. Use: hosts, enrich, termurls, merge, seturls, forget' );
 		}
+	}
+
+	/**
+	 * Fold one provider term into another and delete it.
+	 *
+	 * For genuine duplicates only -- two terms describing one service. Safe
+	 * because these terms are never assigned to shows, so deleting one orphans
+	 * nothing; the show-to-provider link is resolved by matching term-meta URLs.
+	 *
+	 *     wp lwtv waystowatch merge <keep_id> <drop_id> [--dry-run]
+	 *
+	 * @param array $args       Positional args: action, keep_id, drop_id.
+	 * @param array $assoc_args Flags.
+	 * @return void
+	 */
+	private function run_merge( array $args, array $assoc_args ): void {
+		$keep_id = (int) ( $args[1] ?? 0 );
+		$drop_id = (int) ( $args[2] ?? 0 );
+		$dry_run = (bool) \WP_CLI\Utils\get_flag_value( $assoc_args, 'dry-run', false );
+
+		if ( ! $keep_id || ! $drop_id ) {
+			\WP_CLI::error( 'Usage: wp lwtv waystowatch merge <keep_id> <drop_id> [--dry-run]' );
+		}
+
+		$keep = get_term( $keep_id, Theme_Ways_To_Watch::TAXONOMY );
+		$drop = get_term( $drop_id, Theme_Ways_To_Watch::TAXONOMY );
+
+		if ( ! $keep instanceof \WP_Term || ! $drop instanceof \WP_Term ) {
+			\WP_CLI::error( 'One of those term IDs is not a lez_watch_urls term.' );
+		}
+
+		$before = array_merge(
+			array_values( Watch_Hosts::term_url_rows( $keep_id ) ),
+			array_values( Watch_Hosts::term_url_rows( $drop_id ) )
+		);
+		$after  = Watch_Term_Url_Audit::canonical_urls( $before );
+
+		\WP_CLI::log( sprintf( 'Keep:  #%d %s', $keep_id, $keep->name ) );
+		\WP_CLI::log( sprintf( 'Drop:  #%d %s  (will be deleted)', $drop_id, $drop->name ) );
+		\WP_CLI::log( '' );
+		\WP_CLI::log( sprintf( '%d row(s) in, %d canonical row(s) out:', count( $before ), count( $after ) ) );
+
+		foreach ( $after as $url ) {
+			\WP_CLI::log( '  ' . $url );
+		}
+
+		$lost = count( $before ) - count( $after );
+		if ( $lost > 0 ) {
+			\WP_CLI::log( sprintf( '  (%d duplicate or unusable row(s) dropped)', $lost ) );
+		}
+
+		if ( $dry_run ) {
+			\WP_CLI::success( 'Dry run. Nothing written.' );
+			return;
+		}
+
+		\WP_CLI::log( '' );
+		\WP_CLI::confirm( sprintf( 'Delete “%s” and fold its URLs into “%s”?', $drop->name, $keep->name ) );
+
+		$result = Watch_Hosts::merge_terms( $keep_id, $drop_id );
+
+		if ( is_wp_error( $result ) ) {
+			\WP_CLI::error( $result->get_error_message() );
+		}
+
+		\WP_CLI::success(
+			sprintf(
+				'Merged “%s” into “%s”; %d URL row(s) remain.',
+				$result['dropped'],
+				$result['kept'],
+				count( $result['urls'] )
+			)
+		);
+	}
+
+	/**
+	 * Rewrite one term's URL rows to exactly this list.
+	 *
+	 * For repairing a bad row -- a typo'd host, a dead domain -- without hand
+	 * editing ACF repeater meta and getting the index bookkeeping wrong. Values
+	 * are canonicalised to one bare `https://host` per distinct host.
+	 *
+	 *     wp lwtv waystowatch seturls <term_id> --urls=<url,url> [--dry-run]
+	 *
+	 * @param array $args       Positional args: action, term_id.
+	 * @param array $assoc_args Flags.
+	 * @return void
+	 */
+	private function run_seturls( array $args, array $assoc_args ): void {
+		$term_id = (int) ( $args[1] ?? 0 );
+		$raw     = (string) \WP_CLI\Utils\get_flag_value( $assoc_args, 'urls', '' );
+		$dry_run = (bool) \WP_CLI\Utils\get_flag_value( $assoc_args, 'dry-run', false );
+
+		if ( ! $term_id || '' === $raw ) {
+			\WP_CLI::error( 'Usage: wp lwtv waystowatch seturls <term_id> --urls=https://a.com,https://b.com [--dry-run]' );
+		}
+
+		$term = get_term( $term_id, Theme_Ways_To_Watch::TAXONOMY );
+
+		if ( ! $term instanceof \WP_Term ) {
+			\WP_CLI::error( 'That term ID is not a lez_watch_urls term.' );
+		}
+
+		$before = array_values( Watch_Hosts::term_url_rows( $term_id ) );
+		$after  = Watch_Term_Url_Audit::canonical_urls( array_map( 'trim', explode( ',', $raw ) ) );
+
+		if ( empty( $after ) ) {
+			\WP_CLI::error( 'None of those values parsed to a usable host. Nothing written.' );
+		}
+
+		\WP_CLI::log( sprintf( 'Term:  #%d %s', $term_id, $term->name ) );
+		\WP_CLI::log( 'Was:   ' . ( empty( $before ) ? '(no rows)' : implode( ', ', $before ) ) );
+		\WP_CLI::log( 'Now:   ' . implode( ', ', $after ) );
+
+		if ( $dry_run ) {
+			\WP_CLI::success( 'Dry run. Nothing written.' );
+			return;
+		}
+
+		$count = Watch_Hosts::set_term_urls( $term_id, $after );
+
+		\WP_CLI::success( sprintf( '%d URL row(s) written.', $count ) );
 	}
 
 	/**

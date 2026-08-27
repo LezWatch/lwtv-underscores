@@ -293,4 +293,57 @@ class WatchTermUrlAuditTest extends TestCase {
 	public function test_is_blocking_on_an_empty_flag_list(): void {
 		$this->assertFalse( Audit::is_blocking( array() ) );
 	}
+
+	/*
+	 * canonical_urls() -- what set_term_urls() writes back.
+	 */
+
+	public function test_canonical_urls_strips_www_slash_and_scheme_variance(): void {
+		$this->assertSame(
+			array( 'https://vix.com' ),
+			Audit::canonical_urls(
+				array(
+					'https://vix.com/',
+					'https://www.vix.com/',
+					'http://VIX.com',
+				)
+			)
+		);
+	}
+
+	public function test_canonical_urls_keeps_distinct_hosts_in_order(): void {
+		$this->assertSame(
+			array( 'https://lesflicksvod.vhx.tv', 'https://lesflicks.com', 'https://lesflicksvod.com' ),
+			Audit::canonical_urls(
+				array(
+					'https://lesflicksvod.vhx.tv',
+					'https://www.lesflicks.com/',
+					'https://lesflicksvod.com',
+					'https://lesflicks.com',
+				)
+			)
+		);
+	}
+
+	public function test_canonical_urls_keeps_meaningful_subdomains_apart(): void {
+		$this->assertSame(
+			array( 'https://abc.go.com', 'https://go.com' ),
+			Audit::canonical_urls( array( 'https://abc.go.com', 'https://go.com' ) )
+		);
+	}
+
+	public function test_canonical_urls_drops_unusable_values(): void {
+		$this->assertSame(
+			array( 'https://paus.tv' ),
+			Audit::canonical_urls( array( '', 'https://', 'https://paus.tv', '   ' ) )
+		);
+	}
+
+	public function test_canonical_urls_on_empty_input(): void {
+		$this->assertSame( array(), Audit::canonical_urls( array() ) );
+	}
+
+	public function test_canonical_urls_accepts_a_bare_host(): void {
+		$this->assertSame( array( 'https://hulu.com' ), Audit::canonical_urls( array( 'hulu.com' ) ) );
+	}
 }

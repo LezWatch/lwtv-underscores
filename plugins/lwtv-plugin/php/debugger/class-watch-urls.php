@@ -232,7 +232,7 @@ class Watch_URLs {
 	 * Terms with no URLs at all.
 	 *
 	 * Free to find -- no request needed -- and worth saying, because
-	 * Theme\Ways_To_Watch::get_term_by_url() matches on URLs, so a term without
+	 * Watch_Hosts::term_for() matches on hosts derived from those URLs, so a term without
 	 * any can never be reached no matter how right its name is.
 	 *
 	 * @return array<int, array<string, mixed>>

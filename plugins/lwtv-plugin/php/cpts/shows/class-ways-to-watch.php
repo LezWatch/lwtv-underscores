@@ -63,7 +63,7 @@ class Ways_To_Watch {
 
 		if ( 0 === $count ) {
 			// A provider with no URLs can never be matched by
-			// Theme\Ways_To_Watch::get_term_by_url(), so it's dead weight.
+			// Watch_Hosts::term_for(), so it's dead weight.
 			return '<span aria-label="' . esc_attr__( 'No URLs, so this provider can never be matched', 'lwtv' ) . '">0</span>';
 		}
 
@@ -122,7 +122,7 @@ class Ways_To_Watch {
 	 * `count` is dropped because it counts term *assignments*, and these terms
 	 * are never assigned to shows — the show-to-provider relationship is
 	 * resolved by matching URLs in term meta (see
-	 * Theme\Ways_To_Watch::get_term_by_url()), so it is permanently 0. The URLs
+	 * Watch_Hosts::term_for()), so it is permanently 0. The URLs
 	 * count is the number that actually says whether a term is doing anything.
 	 */
 	public function hide_on_edit_page( $columns ) {

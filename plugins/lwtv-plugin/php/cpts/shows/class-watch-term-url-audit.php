@@ -83,6 +83,41 @@ class Watch_Term_Url_Audit {
 	}
 
 	/**
+	 * Reduce a list of stored URLs to the canonical rows a term should hold.
+	 *
+	 * One bare `https://host` per distinct host, first occurrence winning, order
+	 * otherwise preserved. This is the shape Phase 1's matcher wants and the
+	 * shape `Watch_Hosts::set_term_urls()` writes: after host matching, a term
+	 * carrying both `https://www.vix.com/` and `https://vix.com/` is holding the
+	 * same fact twice, and the `www`/trailing-slash variants only ever existed to
+	 * satisfy exact-string comparison.
+	 *
+	 * Unparseable values are dropped rather than passed through — writing a value
+	 * back that can never match anything would be worse than losing it, and the
+	 * caller is expected to have run inspect() first.
+	 *
+	 * @param array<string> $urls Stored URLs, any shape.
+	 * @return array<string> Canonical `https://host` URLs, deduplicated.
+	 */
+	public static function canonical_urls( array $urls ): array {
+		$out  = array();
+		$seen = array();
+
+		foreach ( $urls as $url ) {
+			$host = self::parse( trim( (string) $url ) )['host'];
+
+			if ( '' === $host || isset( $seen[ $host ] ) ) {
+				continue;
+			}
+
+			$seen[ $host ] = true;
+			$out[]         = 'https://' . $host;
+		}
+
+		return $out;
+	}
+
+	/**
 	 * Inspect every stored term URL.
 	 *
 	 * @param array<int, array{term_id: int, name: string, url: string}> $term_urls    Rows as Watch_Hosts::term_urls() returns them.
