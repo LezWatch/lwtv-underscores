@@ -62,6 +62,8 @@ to `Scan`: get targets, collect, evaluate, finish.
 | 14 | Every check converted — all eleven report "N new / M open" |
 | §7 | All three duplications collapsed — validators into `Report`, scanners into `Scan` |
 | §5 | Acknowledgements — **declined**, not enough false positives to earn the machinery |
+| §8.4 | Wikidata TTL — **withdrawn**, neither key is a cache and a TTL would break the REST endpoint |
+| §2.1 | `what-happened` counts shows from IDs + batched meta, not hydrated posts |
 | §3 | Capability check now lives once, in `Validator\Report::make()` |
 
 **Outstanding, roughly in order**
@@ -69,7 +71,7 @@ to `Scan`: get targets, collect, evaluate, finish.
 | | |
 |---|---|
 | §6 | Debug log rotation, memoised option reads, log viewer |
-| §8.4 | The wikidata cache writes still want an explicit TTL |
+| §8.4 | `migrate_ways_to_watch()` is a data migration living inside a URL checker |
 
 **Not verified yet:** the Watch Providers create-term and lookup buttons. The TMDB backfill
 write path **has** now been run and works.
@@ -599,9 +601,35 @@ Two things fell out of it:
 
 Still outstanding nearby, both easy and both the same mistake in different clothes:
 
-- **`class-what-happened-json.php:265`** calls `make()` for every show, then loops
+- ~~**`class-what-happened-json.php:265`** calls `make()` for every show, then loops
   `the_post()` and uses nothing but `get_the_ID()` and meta. That is a full post-object load
-  on a public REST endpoint for data it does not read.
+  on a public REST endpoint for data it does not read.~~ **FIXED (2026-08-27.)**
+  `count_shows()` now takes `get_ids()` and primes meta in batches of 200. Three things came
+  out of it:
+
+  - **The hydration was the smaller half.** Both `make()` and `get_ids()` set
+    `update_post_meta_cache => false`, so the old loop's two-to-three `get_post_meta()` calls
+    per show each went to the database — thousands of queries on an anonymous endpoint.
+    `update_postmeta_cache( $batch )` makes them cache hits.
+  - **The loop never called `wp_reset_postdata()`.** `the_post()` left the global `$post`
+    pointing at the last show for the rest of the request. Reading IDs removes the global
+    mutation entirely rather than papering over it.
+  - **It carried a third copy of the airdate legacy fallback.** `Airdates::resolve()` is the
+    canonical version and `Airdates::get()` the reader; this method had its own inline
+    variant. Now it calls the shared one.
+
+  Parity was checked by mirroring both versions of the counting arithmetic over synthetic
+  airdate rows across six query years — identical in every case except one deliberate
+  widening: the sentinel test moved from `'current' === $finish` to
+  `Airdates::is_still_airing()`, which trims and lowercases, so a stray `Current` now counts
+  where it previously did not. That matches `On_Air_Rules` and every other consumer.
+
+  Left exactly as found, and worth knowing before touching it: `$ad_finish >= $thisyear` is
+  a **string** comparison, and PHP compares `'current'` to a year bytewise, so `'c' > '2'` is
+  true. A still-airing show therefore satisfies the second branch for every year from its
+  start onwards, which makes the first branch's `$thisyear === now` guard largely redundant.
+  The result is defensible — the show *was* airing in those years — so this is redundancy,
+  not a bug, and changing it would move published counts.
 - ~~**`Queery_Taxonomy::get_posts_for_terms()`** (used by the BYQ check) has not been looked
   at and may have the same `fields` default.~~ **Looked at, and it is a different problem.**
   It does default to `fields => 'all'`, but it **does not cache the query**, so the
@@ -644,7 +672,7 @@ a single atomic write per check.
 ### 2.4 Scans mutate data while claiming to only report (FIXED)
 
 See §8. Every scan is now detect-only. What remains is not a scan mutating data: the
-wikidata cache writes (§8.4), which want an explicit TTL, and
+wikidata writes (§8.4), which turned out to want nothing, and
 `migrate_ways_to_watch()`, which is a migration in the wrong place.
 
 ---
@@ -1179,8 +1207,8 @@ converted to typed findings like the rest — its two issue types both point at
 | ~~`class-actors.php:176-177`~~ | homepage → wikipedia, clear homepage | **DONE** — `Actors::fix_homepage_wikipedia()` |
 | ~~`class-actors.php:180`~~ | delete homepage when it equals wikipedia | **DONE** — `Actors::fix_homepage_wikipedia()` |
 | ~~`class-actors.php:398`~~ | delete `debug_check` meta on drafts | **DONE** — deleted, see 8.4 |
-| `class-actors.php:488-491` | write `lezactors_saved_wikidata` | see 8.4 — cache, not a fix |
-| `class-actors.php:578` | write `lezactors_wikidata_qid` | see 8.4 — cache, not a fix |
+| `class-actors.php:488-491` | write `lezactors_saved_wikidata` | see 8.4 — a public endpoint's snapshot, not a fix and not a cache |
+| `class-actors.php:578` | write `lezactors_wikidata_qid` | see 8.4 — a resolved identifier, not a fix and not a cache |
 | `class-onair.php:148-161` | `lezshows_on_air` | already correct — keep as-is |
 
 Note that four of these currently fire *unconditionally on every scan* even when nothing
@@ -1225,8 +1253,9 @@ diff:
   homepage-duplicates-wikipedia. The situation isn't new; those two branches repaired
   themselves mid-scan and recorded nothing, so nobody ever saw them.
 
-Still outstanding: everything in §8.3–§8.5, and the §8.4 wikidata cache writes (still
-incidental side effects of comparison, still want an explicit TTL).
+All of §8.3–§8.5 has since landed, and §8.4's wikidata recommendation was **withdrawn** on
+inspection — neither key is a cache. The one write still in the wrong place is
+`migrate_ways_to_watch()`, a data migration living inside a URL checker.
 
 ### 8.3 Finding shape — DONE for Shows, Characters, Actors (2026-08-26)
 
@@ -1367,9 +1396,42 @@ would be a mistake:
   live inside a URL checker. It belongs in a one-shot `wp lwtv migrate` command, not in a
   scan. Right now it only runs against shows whose URL check happens to execute — which,
   given 1.3 and 1.6, is close to never.
-- **`lezactors_wikidata_qid`** and **`lezactors_saved_wikidata`** are result caching for an
+- ~~**`lezactors_wikidata_qid`** and **`lezactors_saved_wikidata`** are result caching for an
   expensive remote lookup. Legitimate, but they should be an explicit cache write with a
-  TTL, not an incidental side effect of comparison.
+  TTL, not an incidental side effect of comparison.~~ **Withdrawn (2026-08-27) — neither is
+  a cache, and a TTL on either would be a regression.** See below.
+
+#### Why the wikidata TTL was the wrong ask
+
+Investigated properly before implementing, and the premise did not survive:
+
+- **`lezactors_saved_wikidata` is a snapshot serving a public endpoint, not a cache.**
+  `Rest_API\Wikidata::get_actor_wikidata()` forks on `edit_post`: an editor gets a live
+  fetch, and **everyone else gets this meta and nothing else**. Expiring it makes
+  `/lwtv/v1/wikidata/{id}` return an empty array for anonymous readers.
+- **Nothing refreshes it in the background.** It is not in `cli-generate.php`, not in
+  `cron/`, not in `schedulers/`. The only writers are `wp lwtv check wikidata <id>` run by
+  hand and the REST endpoint itself when an editor views an actor. A TTL would therefore not
+  cause a refresh — it would empty the store permanently, one actor at a time, until someone
+  re-ran each by hand.
+- **`lezactors_wikidata_qid` is a resolved identifier.** Expiring it forces
+  `get_actors_wikidata_by_search()` — the fuzzy `wbsearchentities` call that takes the
+  *first* result — in place of the exact `get_actors_wikidata_by_id()` fetch. That is worse
+  correctness for more requests. A Q-ID does not go stale.
+
+What the two keys *do* lack is a **`checked` timestamp**: the stored comparison carries no
+date, so neither a consumer nor we can tell whether it was computed last week or years ago.
+That is the real complaint buried in the original note.
+
+**Decided (2026-08-27): leave it alone.** The endpoint's honest contract is "the last time a
+human looked at this actor", and it has been serving that correctly. Adding maintenance —
+a cron slot or an Action Scheduler queue modelled on `Imdb_Verify_Task` — is a feature with
+rate-limit and volume decisions attached, not a cleanup, and nothing is currently asking for
+it. If that changes, the timestamp is the prerequisite and comes first.
+
+**Rejected outright:** making wikidata staleness a debugger finding. It would fire for every
+actor never checked — likely most of them — producing a several-thousand-row report on day
+one. That is precisely the noise §5 declined to build acknowledgements for.
 - ~~**`delete_post_meta( ..., 'debug_check' )`** on drafts (`class-actors.php:398`) references
   a `debug_check` meta key that **nothing else in the codebase reads or writes**. It's
   vestigial — delete it.~~ **DONE (2026-08-26)** — removed, along with the now-empty `else`
@@ -1643,8 +1705,11 @@ Everything in the **Done** table at the top has shipped. What's left, in the ord
       enters the finding, which fixes both surfaces. It also slightly improves
       `Watch_Url_Health::classify()`, which compares the term name against the name the site
       gives itself: it was comparing the encoded form.
-15. **Give the wikidata cache writes an explicit TTL** (§8.4). Still incidental side effects
-    of a comparison.
+15. ~~**Give the wikidata cache writes an explicit TTL** (§8.4).~~ **Withdrawn
+    (2026-08-27.)** Neither `lezactors_saved_wikidata` nor `lezactors_wikidata_qid` is a
+    cache: the first is the sole data source for anonymous readers of `/lwtv/v1/wikidata/`,
+    the second is a resolved Q-ID. A TTL on either is a regression, and nothing refreshes
+    them in the background for a TTL to hand off to. See §8.4.
 
 ---
 
