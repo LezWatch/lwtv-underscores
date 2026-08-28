@@ -29,11 +29,30 @@ class Watch_Host_Names {
 	const OPTION = 'lwtv_watch_host_names';
 
 	/**
-	 * Where a name came from. Anything other than 'none' is usable.
+	 * Where a name came from. Anything other than 'none' or 'error' is usable.
 	 */
 	const SOURCE_OG_SITE_NAME = 'og:site_name';
 	const SOURCE_APP_NAME     = 'application-name';
 	const SOURCE_NONE         = 'none';
+	const SOURCE_ERROR        = 'error';
+
+	/**
+	 * How many times to try a host that will not answer before giving up on it.
+	 *
+	 * Failures used to go unrecorded entirely, so a blip could retry -- which was
+	 * right, and had the consequence that a *permanently* dead host stayed on the
+	 * "still to check" list forever. Two of them sat there being re-fetched by
+	 * every cron run and every button press, and the page kept promising that one
+	 * more attempt would clear the list.
+	 *
+	 * Three keeps the blip-retry (a host down for one run comes back on the next)
+	 * and stops the nagging. The enrich rotation is weekly, so three attempts is
+	 * about three weeks of genuine unavailability before we stop asking.
+	 *
+	 * `wp lwtv waystowatch enrich --recheck` ignores this and asks everything
+	 * again; `forget` clears it. So a host that comes back is one command away.
+	 */
+	const MAX_ATTEMPTS = 3;
 
 	/**
 	 * Longest name we'll accept. Anything past this is a tagline, not a name.
@@ -96,6 +115,76 @@ class Watch_Host_Names {
 	}
 
 	/**
+	 * Is it still worth asking this host what it calls itself?
+	 *
+	 * The question every caller actually has, and not the same as is_checked():
+	 * a host that failed once has been *looked at* but is still worth another go.
+	 *
+	 * False when we already have a name, when the host answered and published
+	 * nothing usable, or when it has refused to answer MAX_ATTEMPTS times. True
+	 * otherwise, including for a host that has failed once or twice.
+	 *
+	 * @param string $host Hostname.
+	 * @return bool
+	 */
+	public static function should_ask( string $host ): bool {
+		$record = self::all()[ Host_Name::normalise( $host ) ] ?? null;
+
+		// Never looked at.
+		if ( ! is_array( $record ) ) {
+			return true;
+		}
+
+		// Asked and answered, one way or the other.
+		if ( self::SOURCE_ERROR !== ( $record['source'] ?? '' ) ) {
+			return false;
+		}
+
+		return (int) ( $record['attempts'] ?? 0 ) < self::MAX_ATTEMPTS;
+	}
+
+	/**
+	 * How many times a host has failed to answer.
+	 *
+	 * @param string $host Hostname.
+	 * @return int
+	 */
+	public static function attempts( string $host ): int {
+		$record = self::all()[ Host_Name::normalise( $host ) ] ?? null;
+
+		return is_array( $record ) ? (int) ( $record['attempts'] ?? 0 ) : 0;
+	}
+
+	/**
+	 * Record that a host would not answer.
+	 *
+	 * Counts up rather than writing a flag, so the difference between "down when
+	 * we happened to look" and "gone" is a number instead of a guess.
+	 *
+	 * @param string $host Hostname.
+	 * @return void
+	 */
+	public static function fail( string $host ): void {
+		$host = Host_Name::normalise( $host );
+
+		if ( '' === $host ) {
+			return;
+		}
+
+		$map          = self::all();
+		$attempts     = (int) ( $map[ $host ]['attempts'] ?? 0 );
+		$map[ $host ] = array(
+			'name'     => '',
+			'source'   => self::SOURCE_ERROR,
+			'attempts' => $attempts + 1,
+			'checked'  => time(),
+		);
+
+		self::$cache = $map;
+		update_option( self::OPTION, $map, false );
+	}
+
+	/**
 	 * Record the outcome of a lookup.
 	 *
 	 * @param string $host   Hostname.
@@ -110,7 +199,11 @@ class Watch_Host_Names {
 			return;
 		}
 
-		$map          = self::all();
+		$map = self::all();
+
+		// No `attempts`: a host that answers has stopped failing, and leaving a
+		// count behind would make a future failure look like the third strike
+		// rather than the first.
 		$map[ $host ] = array(
 			'name'    => self::sanitize_name( $name ),
 			'source'  => $source,

@@ -14,6 +14,7 @@ use LWTV\Admin_Menu\Auto_Posting;
 use LWTV\Admin_Menu\Debugging;
 use LWTV\Admin_Menu\Exclusions;
 use LWTV\Admin_Menu\Validation;
+use LWTV\Debugger\Repair;
 use LWTV\Validator\Watch_Providers;
 use LWTV\Validator\Watch_Term_Check;
 
@@ -47,6 +48,7 @@ class Admin_Menu implements Component {
 		// reason the old data-check admin_post hook never worked.
 		( new Watch_Providers() )->init();
 		( new Watch_Term_Check() )->init();
+		( new Repair() )->init();
 	}
 
 	/*
@@ -135,7 +137,7 @@ class Admin_Menu implements Component {
 		// Load only on /admin.php?page=lwtv_data_check
 		$my_hooks = array( 'toplevel_page_lwtv', 'lezwatch-tv_page_lwtv-auto-posting', 'lezwatch-tv_page_lwtv_data_check', 'lezwatch-tv_page_lwtv_monitor_check', 'lezwatch-tv_page_lwtv_exclusion_check' );
 		if ( in_array( $hook, $my_hooks, true ) ) {
-				wp_enqueue_style( 'lwtv_data_check_admin', LWTV_PLUGIN_URL . '/assets/css/lwtv-tools.css', array(), '1.2.0' );
+				wp_enqueue_style( 'lwtv_data_check_admin', LWTV_PLUGIN_URL . '/assets/css/lwtv-tools.css', array(), '1.6.0' );
 		}
 	}
 }

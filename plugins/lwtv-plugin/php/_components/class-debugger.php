@@ -11,6 +11,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+use LWTV\Admin_Menu\Debugging;
+use LWTV\Debugger\Build\Log_Rules;
+use LWTV\Debugger\Log;
+
 /**
  * Class for debugging. This includes the feature methods:
  * is_dev_site(), is_debug_mode(), and log()
@@ -22,6 +26,32 @@ if ( ! defined( 'ABSPATH' ) ) {
  * binds them with array( $this, ... ).
  */
 class Debugger implements Component, Templater {
+
+	/**
+	 * Memoised debug-mode answer for this request, or null before it is known.
+	 *
+	 * debug_log() is called from 306 sites -- `statistics` alone from 104, many
+	 * inside cache-warming loops -- and each call used to run get_field() twice.
+	 *
+	 * Only ever set once the answer is *authoritative*. See is_debug_mode().
+	 *
+	 * @var bool|null
+	 */
+	private static ?bool $debug_mode = null;
+
+	/**
+	 * Memoised list of enabled topics, or null before it is known.
+	 *
+	 * @var array<string>|null
+	 */
+	private static ?array $enabled_topics = null;
+
+	/**
+	 * Unknown topics already reported this request, as a set.
+	 *
+	 * @var array<string, bool>
+	 */
+	private static array $reported = array();
 
 	/**
 	 * Init the component. Hooks go in here.
@@ -39,10 +69,11 @@ class Debugger implements Component, Templater {
 	 */
 	public function get_template_tags(): array {
 		return array(
-			'is_dev_site'   => array( $this, 'is_dev_site' ),
-			'is_debug_mode' => array( $this, 'is_debug_mode' ),
-			'debug_log'     => array( $this, 'debug_log' ),
-			'error_log'     => array( $this, 'error_log' ),
+			'is_dev_site'      => array( $this, 'is_dev_site' ),
+			'is_debug_mode'    => array( $this, 'is_debug_mode' ),
+			'is_topic_enabled' => array( $this, 'is_topic_enabled' ),
+			'debug_log'        => array( $this, 'debug_log' ),
+			'error_log'        => array( $this, 'error_log' ),
 		);
 	}
 
@@ -162,18 +193,33 @@ class Debugger implements Component, Templater {
 	 *
 	 * Checks both WP_DEBUG constant and custom LWTV debug mode option.
 	 *
+	 * WP_DEBUG forcing this on is deliberate: a development environment should
+	 * not also need the option ticked.
+	 *
 	 * @return bool
 	 */
 	public function is_debug_mode(): bool {
-		// Check WP_DEBUG first
+		if ( null !== self::$debug_mode ) {
+			return self::$debug_mode;
+		}
+
 		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+			self::$debug_mode = true;
 			return true;
 		}
 
+		/*
+		 * Deliberately NOT memoised while ACF is unavailable. debug_log() is
+		 * called during bootstrap, before acf/init, so caching "off" from an
+		 * early call would silence the rest of the request.
+		 */
 		if ( ! function_exists( 'get_field' ) ) {
 			return false;
 		}
-		return (bool) get_field( 'debug_mode', 'option' );
+
+		self::$debug_mode = (bool) get_field( 'debug_mode', 'option' );
+
+		return self::$debug_mode;
 	}
 
 	/**
@@ -184,23 +230,52 @@ class Debugger implements Component, Templater {
 	 * @return bool
 	 */
 	public function is_topic_enabled( string $topic ): bool {
+		/*
+		 * ACF is not loaded yet, so what is ticked cannot be known. Fail open
+		 * here -- losing bootstrap-time logs is worse than a few extra lines --
+		 * but only for topics in the vocabulary, so this is not a way around it.
+		 *
+		 * This is a separate case from an empty selection, which now means
+		 * silence. See Log_Rules::topic_enabled().
+		 */
 		if ( ! function_exists( 'get_field' ) ) {
-			return true;
-		}
-		$enabled_topics = get_field( 'log_topics', 'option' );
-		$enabled_topics = is_array( $enabled_topics ) ? $enabled_topics : array();
-
-		if ( empty( $enabled_topics ) ) {
-			return true;
+			return Log_Rules::is_known_topic( $topic, Debugging::VALID_LOG_TOPICS );
 		}
 
-		return in_array( $topic, $enabled_topics, true );
+		return Log_Rules::topic_enabled( $topic, $this->enabled_topics(), Debugging::VALID_LOG_TOPICS );
+	}
+
+	/**
+	 * Topics the editor has ticked, memoised for the request.
+	 *
+	 * @return array<string>
+	 */
+	private function enabled_topics(): array {
+		if ( null !== self::$enabled_topics ) {
+			return self::$enabled_topics;
+		}
+
+		if ( ! function_exists( 'get_field' ) ) {
+			return array();
+		}
+
+		$topics = get_field( 'log_topics', 'option' );
+
+		self::$enabled_topics = is_array( $topics )
+			? array_values( array_filter( array_map( 'strval', $topics ) ) )
+			: array();
+
+		return self::$enabled_topics;
 	}
 
 	/**
 	 * Log a debug message to debug-lwtv.log.
 	 *
-	 * Only logs if debug mode is enabled AND the topic is enabled.
+	 * Only logs if debug mode is enabled AND the topic is both known and
+	 * enabled. An unknown topic is refused rather than written, and reported
+	 * once per request to PHP's error log so the mistake is discoverable --
+	 * silence is a better failure than an unstoppable one, but it is still a
+	 * failure, and this is how you find out.
 	 *
 	 * @param string $type    The type/topic of log message.
 	 * @param string $message The message to log.
@@ -208,25 +283,56 @@ class Debugger implements Component, Templater {
 	 * @return void
 	 */
 	public function debug_log( $type = 'debug', $message = '' ): void {
-		// Bail if debug mode is off or message is empty
 		if ( ! $this->is_debug_mode() || empty( $message ) ) {
 			return;
 		}
 
-		// Bail if topic is not enabled
-		if ( ! $this->is_topic_enabled( $type ) ) {
+		$topic = strtolower( trim( (string) $type ) );
+
+		if ( ! Log_Rules::is_known_topic( $topic, Debugging::VALID_LOG_TOPICS ) ) {
+			$this->report_unknown_topic( $topic );
 			return;
 		}
 
-		$log_file    = WP_CONTENT_DIR . '/debug-lwtv.log';
-		$log_message = '[' . gmdate( 'Y-m-d H:i:s' ) . '] [' . ucwords( $type ) . '] ' . $message . "\n";
+		if ( ! $this->is_topic_enabled( $topic ) ) {
+			return;
+		}
 
-		// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
-		error_log( $log_message, 3, $log_file );
+		Log::append( Log_Rules::line( $topic, (string) $message, gmdate( 'Y-m-d H:i:s' ) ) );
 	}
 
 	/**
-	 * Log a message.
+	 * Complain about an undeclared topic, once per topic per request.
+	 *
+	 * Goes to PHP's error log rather than ours: the point is that this topic
+	 * cannot be written to ours, and a message about a broken topic should not
+	 * be filed under the broken topic.
+	 *
+	 * @param  string $topic The topic that is not in the vocabulary.
+	 * @return void
+	 */
+	private function report_unknown_topic( string $topic ): void {
+		if ( '' === $topic || isset( self::$reported[ $topic ] ) ) {
+			return;
+		}
+
+		self::$reported[ $topic ] = true;
+
+		$this->error_log(
+			'lwtv',
+			sprintf(
+				'debug_log() was called with the undeclared topic "%s", so nothing was written. Add it to Admin_Menu\Debugging::VALID_LOG_TOPICS.',
+				$topic
+			)
+		);
+	}
+
+	/**
+	 * Log a message straight to PHP's error log.
+	 *
+	 * Ignores debug mode and topics entirely, which is the point: it is the
+	 * escape hatch for "this needs saying regardless". Prefer debug_log() for
+	 * anything that belongs to a topic.
 	 *
 	 * @param string $type    The type of log message.
 	 * @param string $message The message to log.

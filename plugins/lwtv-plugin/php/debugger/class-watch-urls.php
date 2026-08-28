@@ -23,14 +23,23 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 use LWTV\CPTs\Shows\Watch_Hosts;
 use LWTV\CPTs\Shows\Watch_Url_Health;
+use LWTV\Debugger\Build\Findings;
+use LWTV\Debugger\Build\Issue_Registry;
+use LWTV\Debugger\Format\Rows;
 use LWTV\Theme\Ways_To_Watch as Theme_Ways_To_Watch;
 
 class Watch_URLs {
 
 	/**
 	 * Transient holding the results of find_bad_watch_urls().
+	 *
+	 * `_v2` because the row shape changed with typed findings -- `status` became
+	 * `health`, freeing `status` for the baseline's new/open/resolved. Bumping the
+	 * key rather than migrating means old rows are simply never read: the tab says
+	 * the scan has not run until the next sweep, which is honest, and the Sunday
+	 * cron refills it.
 	 */
-	const TRANSIENT_PROBLEMS = 'lwtv_debug_watch_urls';
+	const TRANSIENT_PROBLEMS = 'lwtv_debug_watch_urls_v2';
 
 	/**
 	 * Key inside the debugger status option.
@@ -45,6 +54,21 @@ class Watch_URLs {
 	 * quietly turn this check into a list of false 403s.
 	 */
 	const SLEEP_US = 250000;
+
+	/**
+	 * Issue type per URL health verdict.
+	 *
+	 * The health is what the report's status column shows; the issue type is what
+	 * the finding *is*. They line up one-to-one for probed URLs, but two other
+	 * issue types also carry a health of "needs review" -- a term with no URLs at
+	 * all, and one we ran out of time to re-check -- so the two are not the same
+	 * thing.
+	 */
+	const ISSUE_FOR_HEALTH = array(
+		Watch_Url_Health::STATUS_BROKEN  => 'watch-url-broken',
+		Watch_Url_Health::STATUS_REVIEW  => 'watch-url-suspect',
+		Watch_Url_Health::STATUS_BLOCKED => 'watch-url-blocked',
+	);
 
 	/**
 	 * Severity order for reporting. Worst first.
@@ -74,10 +98,7 @@ class Watch_URLs {
 	public function find_bad_watch_urls( array $items = array(), ?int $timeout = null, ?int $budget = null ): array {
 		$targets = empty( $items ) ? $this->all_targets() : $this->targets_from_items( $items );
 
-		// Recomputed on both paths, not carried over. It costs two queries and no
-		// requests, and re-deriving it is what lets a re-check clear a term that
-		// has since been given a URL.
-		$found = $this->terms_without_urls();
+		$found = array();
 
 		$started = microtime( true );
 		$first   = true;
@@ -86,7 +107,7 @@ class Watch_URLs {
 			// Stop before starting a request that could run past the budget,
 			// rather than after one already has.
 			if ( null !== $budget && ( microtime( true ) - $started ) + (float) ( $timeout ?? Watch_Hosts::TIMEOUT ) > $budget ) {
-				$found[] = $target['carry'] ?? $this->deferred( $target );
+				$found[] = $this->carried( $target );
 				continue;
 			}
 
@@ -103,22 +124,27 @@ class Watch_URLs {
 				continue;
 			}
 
-			$found[] = array(
-				'id'      => $target['term_id'],
-				'url'     => $target['url'],
-				'term'    => $target['term'],
-				'shows'   => $target['shows'],
-				'status'  => $health['status'],
-				'problem' => $health['problem'],
-			);
+			$found[] = $this->finding( $target, $health['status'], $health['problem'] );
 		}
 
-		$found = $this->sort_findings( $found );
-
-		lwtv_plugin()->set_transient( self::TRANSIENT_PROBLEMS, $found, WEEK_IN_SECONDS );
-		Status::record( self::STATUS_KEY, 'Watch provider URLs with problems', count( $found ) );
-
-		return $found;
+		/*
+		 * Diffed like every other check, but never on a partial run: a budgeted
+		 * re-check visits a subset, and $items being non-empty is what says so.
+		 */
+		return Scan::finish(
+			array(
+				'scope'     => self::STATUS_KEY,
+				'transient' => self::TRANSIENT_PROBLEMS,
+				'label'     => 'Watch provider URLs with problems',
+			),
+			$found,
+			! empty( $items ),
+			/*
+			 * Term-shaped rows, one per URL rather than grouped per term, and
+			 * sorted after tagging so each row keeps the status it was given.
+			 */
+			fn ( array $tagged ) => $this->sort_findings( Rows::from_term_findings( $tagged ) )
+		);
 	}
 
 	/**
@@ -133,7 +159,7 @@ class Watch_URLs {
 		foreach ( Watch_Hosts::term_urls() as $row ) {
 			$targets[] = array(
 				'term_id' => $row['term_id'],
-				'term'    => $row['name'],
+				'term'    => Theme_Ways_To_Watch::term_name( (string) $row['name'] ),
 				'url'     => $row['url'],
 				'shows'   => (int) ( $per_term[ $row['term_id'] ] ?? 0 ),
 			);
@@ -157,9 +183,9 @@ class Watch_URLs {
 		$targets = array();
 
 		foreach ( $items as $item ) {
-			// A finding with no URL is a term with no URLs, which
-			// terms_without_urls() re-derives from scratch on every run. Probing
-			// '' would be nonsense.
+			// Nothing to probe. Cached rows from before the URL-less-term check
+			// was retired can still carry an empty url, and probing '' would be
+			// nonsense.
 			if ( empty( $item['url'] ) || empty( $item['id'] ) ) {
 				continue;
 			}
@@ -174,7 +200,7 @@ class Watch_URLs {
 
 			$targets[] = array(
 				'term_id' => (int) $item['id'],
-				'term'    => $term->name,
+				'term'    => Theme_Ways_To_Watch::term_name( $term->name ),
 				'url'     => (string) $item['url'],
 				'shows'   => (int) ( $item['shows'] ?? 0 ),
 				'carry'   => $item,
@@ -185,64 +211,74 @@ class Watch_URLs {
 	}
 
 	/**
-	 * Terms with no URLs at all.
-	 *
-	 * Free to find -- no request needed -- and worth saying, because
-	 * Theme\Ways_To_Watch::get_term_by_url() matches on URLs, so a term without
-	 * any can never be reached no matter how right its name is.
-	 *
-	 * @return array<int, array<string, mixed>>
-	 */
-	private function terms_without_urls(): array {
-		$terms = get_terms(
-			array(
-				'taxonomy'   => Theme_Ways_To_Watch::TAXONOMY,
-				'hide_empty' => false,
-			)
-		);
-
-		if ( is_wp_error( $terms ) || empty( $terms ) ) {
-			return array();
-		}
-
-		$has_urls = array();
-		foreach ( Watch_Hosts::term_urls() as $row ) {
-			$has_urls[ $row['term_id'] ] = true;
-		}
-
-		$found = array();
-		foreach ( $terms as $term ) {
-			if ( isset( $has_urls[ $term->term_id ] ) ) {
-				continue;
-			}
-
-			$found[] = array(
-				'id'      => (int) $term->term_id,
-				'url'     => '',
-				'term'    => $term->name,
-				'shows'   => 0,
-				'status'  => Watch_Url_Health::STATUS_REVIEW,
-				'problem' => __( 'This term has no URLs, so nothing can ever match it. Add a URL or delete the term.', 'lwtv' ),
-			);
-		}
-
-		return $found;
-	}
-
-	/**
 	 * A finding for a URL we ran out of time to re-check.
 	 *
 	 * @param array $target Probe target.
 	 * @return array<string, mixed>
 	 */
 	private function deferred( array $target ): array {
-		return array(
-			'id'      => $target['term_id'],
-			'url'     => $target['url'],
-			'term'    => $target['term'],
-			'shows'   => $target['shows'],
-			'status'  => Watch_Url_Health::STATUS_REVIEW,
-			'problem' => __( 'Not re-checked yet — the page ran out of time. Press the button again.', 'lwtv' ),
+		return $this->finding( $target, Watch_Url_Health::STATUS_REVIEW, '', 'watch-url-deferred' );
+	}
+
+	/**
+	 * The finding for a target we ran out of time to re-probe.
+	 *
+	 * A budget must never silently clear a real finding, so what the previous run
+	 * knew is rebuilt rather than replaced with "not checked": a URL that was
+	 * broken an hour ago is still reported as broken.
+	 *
+	 * Rebuilt rather than carried verbatim, because `carry` holds the previous
+	 * *row* — one row per finding, so its single issue type and message are
+	 * exactly what is needed — and a row pushed into a findings array would have
+	 * no issue type for the baseline to key on.
+	 *
+	 * @param  array $target Probe target, possibly carrying a previous row.
+	 * @return array<string, mixed>
+	 */
+	private function carried( array $target ): array {
+		$row        = (array) ( $target['carry'] ?? array() );
+		$issue_type = (string) ( $row['issues'][0] ?? '' );
+
+		// No previous finding to preserve: this target came from a full sweep.
+		if ( '' === $issue_type || ! Issue_Registry::exists( $issue_type ) ) {
+			return $this->deferred( $target );
+		}
+
+		return $this->finding(
+			$target,
+			(string) ( $row['health'] ?? Watch_Url_Health::STATUS_REVIEW ),
+			(string) ( $row['messages'][0] ?? '' ),
+			$issue_type
+		);
+	}
+
+	/**
+	 * One typed finding about a term URL.
+	 *
+	 * @param  array  $target     Probe target.
+	 * @param  string $health     Watch_Url_Health status.
+	 * @param  string $problem    Message, or '' for the registry default.
+	 * @param  string $issue_type Overrides the health-derived type.
+	 * @return array<string, mixed>
+	 */
+	private function finding( array $target, string $health, string $problem = '', string $issue_type = '' ): array {
+		if ( '' === $issue_type ) {
+			$issue_type = self::ISSUE_FOR_HEALTH[ $health ] ?? 'watch-url-suspect';
+		}
+
+		return Findings::make_for_term(
+			(int) $target['term_id'],
+			Theme_Ways_To_Watch::TAXONOMY,
+			$issue_type,
+			$problem,
+			array(
+				'url'    => $target['url'],
+				'term'   => $target['term'],
+				'shows'  => $target['shows'],
+				'health' => $health,
+			),
+			// A term can have several bad URLs, and each is its own finding.
+			(string) $target['url']
 		);
 	}
 
@@ -253,14 +289,14 @@ class Watch_URLs {
 	 * an editor actually has are "what's definitely broken" and "what does the
 	 * most damage".
 	 *
-	 * @param array $found Findings.
+	 * @param array $found Display rows.
 	 * @return array<int, array<string, mixed>>
 	 */
 	private function sort_findings( array $found ): array {
 		usort(
 			$found,
 			function ( $first, $second ) {
-				$rank = ( self::SEVERITY[ $first['status'] ] ?? 9 ) <=> ( self::SEVERITY[ $second['status'] ] ?? 9 );
+				$rank = ( self::SEVERITY[ $first['health'] ?? '' ] ?? 9 ) <=> ( self::SEVERITY[ $second['health'] ?? '' ] ?? 9 );
 
 				if ( 0 !== $rank ) {
 					return $rank;

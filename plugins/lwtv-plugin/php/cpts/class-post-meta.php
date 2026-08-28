@@ -61,6 +61,14 @@ class Post_Meta {
 			'show_in_rest'      => false,
 			'sanitize_callback' => 'absint',
 		),
+		// The IMDb ID TMDB holds for this actor, stored ONLY when it disagrees
+		// with ours. Absent means no disagreement recorded -- which covers both
+		// verified-clean and never-checked, deliberately indistinguishable so
+		// nothing reads absence as a clean bill of health.
+		'lezactors_imdb_canonical'      => array(
+			'post_type'    => CPT_Actors::SLUG,
+			'show_in_rest' => false,
+		),
 		'lezactors_tumblr'              => array(
 			'post_type' => CPT_Actors::SLUG,
 		),
@@ -154,6 +162,33 @@ class Post_Meta {
 		'lezshows_tvmaze_id'            => array(
 			'post_type' => CPT_Shows::SLUG,
 		),
+		'lezshows_tvmaze_checked'       => array(
+			'post_type'         => CPT_Shows::SLUG,
+			'type'              => 'integer',
+			'show_in_rest'      => false,
+			'sanitize_callback' => 'absint',
+		),
+		'lezshows_tvmaze_ignore'        => array(
+			'post_type'    => CPT_Shows::SLUG,
+			'show_in_rest' => false,
+		),
+		'lezshows_tvmaze_id_manual'     => array(
+			'post_type'         => CPT_Shows::SLUG,
+			'type'              => 'integer',
+			'show_in_rest'      => false,
+			'sanitize_callback' => 'absint',
+		),
+		// The IMDb ID TVMaze holds for this show, stored ONLY when it disagrees
+		// with ours. See lezactors_imdb_canonical for why absence is deliberately
+		// ambiguous.
+		'lezshows_imdb_canonical'       => array(
+			'post_type'    => CPT_Shows::SLUG,
+			'show_in_rest' => false,
+		),
+		'lezshows_aired_years'          => array(
+			'post_type'    => CPT_Shows::SLUG,
+			'show_in_rest' => false,
+		),
 		'lezshows_episodes'             => array(
 			'post_type' => CPT_Shows::SLUG,
 		),
@@ -192,6 +227,13 @@ class Post_Meta {
 		),
 		'lezshows_the_score'            => array(
 			'post_type' => CPT_Shows::SLUG,
+		),
+		// The same score before the 0-100 clamp. Kept so shows at the ceiling stay
+		// distinguishable from each other; not for display, which uses the clamped
+		// value above. show_score() alone can reach 115, so this can exceed 100.
+		'lezshows_the_score_uncapped'   => array(
+			'post_type'    => CPT_Shows::SLUG,
+			'show_in_rest' => false,
 		),
 		'lezshows_3rd_scores'           => array(
 			'post_type'    => CPT_Shows::SLUG,

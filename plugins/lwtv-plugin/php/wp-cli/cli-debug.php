@@ -11,12 +11,17 @@ if ( ! defined( 'ABSPATH' ) && ! defined( 'WP_CLI' ) ) {
 }
 
 use LWTV\Debugger\Actors;
+use LWTV\Debugger\Baseline_Store;
+use LWTV\Debugger\Build\Baseline;
+use LWTV\Debugger\Build\Findings;
+use LWTV\Debugger\Build\Issue_Registry;
 use LWTV\Debugger\Characters;
 use LWTV\Debugger\Dupes;
 use LWTV\Debugger\Queers;
 use LWTV\Debugger\Shows;
 use LWTV\Debugger\OnAir;
 use LWTV\Debugger\Status;
+use LWTV\Debugger\Watch_Host_Collisions;
 use LWTV\Debugger\Watch_URLs;
 
 /**
@@ -50,6 +55,13 @@ class WP_CLI_LWTV_Debug {
 	public $force = false;
 
 	/**
+	 * Repair class instances, reused across a run.
+	 *
+	 * @var array<string, object>
+	 */
+	private $fixers = array();
+
+	/**
 	 * Construct to block facet from munging results.
 	 */
 	public function __construct() {
@@ -80,7 +92,7 @@ class WP_CLI_LWTV_Debug {
 	 */
 	private function get_checks(): array {
 		return array(
-			'queers'     => array(
+			'queers'      => array(
 				'transient' => Queers::TRANSIENT_QUEERCHECK,
 				'status'    => 'queercheck',
 				'scanner'   => array( Queers::class, 'find_queer_chars' ),
@@ -89,7 +101,7 @@ class WP_CLI_LWTV_Debug {
 				'dirty'     => 'character(s) need attention for queer consistency.',
 				'done'      => 'Queer consistency check complete.',
 			),
-			'dupes'      => array(
+			'dupes'       => array(
 				'transient' => Dupes::TRANSIENT_DUPES,
 				'status'    => 'duplicates',
 				'scanner'   => array( Dupes::class, 'find_duplicates' ),
@@ -98,7 +110,7 @@ class WP_CLI_LWTV_Debug {
 				'dirty'     => 'duplicate(s) found.',
 				'done'      => 'Duplicate check complete.',
 			),
-			'byq'        => array(
+			'byq'         => array(
 				'transient' => Characters::TRANSIENT_BYQ,
 				'status'    => 'byq_problems',
 				'scanner'   => array( Characters::class, 'find_byq_problems' ),
@@ -107,34 +119,46 @@ class WP_CLI_LWTV_Debug {
 				'dirty'     => 'character(s) have BYQ-related issues.',
 				'done'      => 'BYQ check complete.',
 			),
-			'actors'     => array(
+			'actors'      => array(
 				'transient' => Actors::TRANSIENT_PROBLEMS,
 				'status'    => 'actor_problems',
 				'scanner'   => array( Actors::class, 'find_actors_problems' ),
+				'fixer'     => array( Actors::class, 'fix_actor_data' ),
 				'running'   => 'Running actor data completeness check...',
 				'clean'     => 'Excellent! All actor data is complete and correct.',
-				'dirty'     => 'actor(s) need attention.',
+				'dirty'     => 'actor(s) need attention. Use --fix-it to repair the ones marked fixable.',
 				'done'      => 'Actor check complete.',
 			),
-			'chars'      => array(
+			'chars'       => array(
 				'transient' => Characters::TRANSIENT_PROBLEMS,
 				'status'    => 'character_problems',
 				'scanner'   => array( Characters::class, 'find_characters_problems' ),
+				'fixer'     => array( Characters::class, 'fix_character_data' ),
 				'running'   => 'Running character data completeness check...',
 				'clean'     => 'Excellent! All character data is complete and correct.',
-				'dirty'     => 'character(s) need attention.',
+				'dirty'     => 'character(s) need attention. Use --fix-it to repair the ones marked fixable.',
 				'done'      => 'Character check complete.',
 			),
-			'shows'      => array(
+			'shows'       => array(
 				'transient' => Shows::TRANSIENT_PROBLEMS,
 				'status'    => 'show_problems',
 				'scanner'   => array( Shows::class, 'find_shows_problems' ),
+				'fixer'     => array( Shows::class, 'fix_show_data' ),
 				'running'   => 'Running show data completeness check...',
 				'clean'     => 'Excellent! All show data is complete and correct.',
-				'dirty'     => 'show(s) need attention.',
+				'dirty'     => 'show(s) need attention. Use --fix-it to repair the ones marked fixable.',
 				'done'      => 'Show check complete.',
 			),
-			'actor_imdb' => array(
+			'actor_empty' => array(
+				'transient' => Actors::TRANSIENT_EMPTY,
+				'status'    => 'actor_empty',
+				'scanner'   => array( Actors::class, 'find_actors_incomplete' ),
+				'running'   => 'Running actor completeness check...',
+				'clean'     => 'Excellent! Every actor has a photo and a biography.',
+				'dirty'     => 'actor(s) missing a photo or a biography.',
+				'done'      => 'Actor completeness check complete.',
+			),
+			'actor_imdb'  => array(
 				'transient' => Actors::TRANSIENT_IMDB,
 				'status'    => 'actor_imdb',
 				'scanner'   => array( Actors::class, 'find_actors_no_imdb' ),
@@ -143,7 +167,7 @@ class WP_CLI_LWTV_Debug {
 				'dirty'     => 'actor(s) missing IMDb data.',
 				'done'      => 'Actor IMDb check complete.',
 			),
-			'show_imdb'  => array(
+			'show_imdb'   => array(
 				'transient' => Shows::TRANSIENT_IMDB,
 				'status'    => 'show_imdb',
 				'scanner'   => array( Shows::class, 'find_shows_no_imdb' ),
@@ -152,18 +176,28 @@ class WP_CLI_LWTV_Debug {
 				'dirty'     => 'show(s) missing IMDb data.',
 				'done'      => 'Show IMDb check complete.',
 			),
-			'watchurls'  => array(
+			'watchurls'   => array(
 				'transient' => Watch_URLs::TRANSIENT_PROBLEMS,
 				'status'    => Watch_URLs::STATUS_KEY,
 				'scanner'   => array( Watch_URLs::class, 'find_bad_watch_urls' ),
-				'columns'   => array( 'term', 'url', 'status', 'shows', 'problem' ),
+				'columns'   => array( 'term', 'url', 'health', 'shows', 'problem' ),
 				'running'   => 'Checking every URL on every watch provider term...',
 				'clean'     => 'Excellent! Every watch provider URL answered and still looks like its provider.',
 				'dirty'     => 'provider URL(s) need attention.',
 				'done'      => 'Watch provider URL check complete.',
 				'slow'      => true,
 			),
-			'on_air'     => array(
+			'watchhosts'  => array(
+				'transient' => Watch_Host_Collisions::TRANSIENT_PROBLEMS,
+				'status'    => Watch_Host_Collisions::STATUS_KEY,
+				'scanner'   => array( Watch_Host_Collisions::class, 'find_host_collisions' ),
+				'columns'   => array( 'term', 'url', 'shows', 'problem' ),
+				'running'   => 'Looking for hosts claimed by more than one provider term...',
+				'clean'     => 'Excellent! Every watch host resolves to exactly one provider term.',
+				'dirty'     => 'host(s) claimed by more than one term.',
+				'done'      => 'Watch host collision check complete.',
+			),
+			'on_air'      => array(
 				'transient' => OnAir::TRANSIENT_PROBLEMS,
 				'status'    => 'onair_problems',
 				'scanner'   => array( OnAir::class, 'find_on_air_problems' ),
@@ -189,10 +223,13 @@ class WP_CLI_LWTV_Debug {
 	 *   - actors: Check actor data completeness
 	 *   - chars: Check character data completeness
 	 *   - shows: Check show data completeness
-	 *   - actor_imdb: Find actors without IMDb data
+	 *   - actor_empty: Find actors with no photo or no biography
+ *   - actor_imdb: Find actors without IMDb data
 	 *   - show_imdb: Find shows without IMDb data
 	 *   - watchurls: Check every URL on every watch provider term still works and
 	 *     still belongs to that provider (slow - one remote request per URL)
+	 *   - watchhosts: Find hosts claimed by more than one provider term (two
+	 *     queries, no requests)
 	 *   - on_air: Check on air status of shows
 	 *
 	 * [--fix-it]
@@ -201,6 +238,12 @@ class WP_CLI_LWTV_Debug {
 	 *
 	 * [--force]
 	 * : Ignore any cached results and run a fresh scan.
+	 * default: false
+	 *
+	 * [--reset-baseline]
+	 * : Forget what the last run found, so the next run treats everything as
+	 * long-standing rather than new. Use after a deliberate mass change, or if a
+	 * baseline was recorded from a run you don't trust.
 	 * default: false
 	 *
 	 * [--format=<format>]
@@ -220,7 +263,11 @@ class WP_CLI_LWTV_Debug {
 	 * wp lwtv debug byq --format=json
 	 * wp lwtv debug actors --force
 	 * wp lwtv debug on_air --fix-it
+	 * wp lwtv debug shows --fix-it
+	 * wp lwtv debug chars --fix-it
+	 * wp lwtv debug actors --fix-it
 	 * wp lwtv debug watchurls --force
+	 * wp lwtv debug shows --reset-baseline
 	 *
 	 * @param array $args
 	 * @param array $assoc_args
@@ -231,6 +278,11 @@ class WP_CLI_LWTV_Debug {
 		$this->fix_it     = (bool) \WP_CLI\Utils\get_flag_value( $assoc_args, 'fix-it', false );
 		$this->force      = (bool) \WP_CLI\Utils\get_flag_value( $assoc_args, 'force', false );
 		$this->debug_type = $args[0] ?? '';
+
+		if ( (bool) \WP_CLI\Utils\get_flag_value( $assoc_args, 'reset-baseline', false ) ) {
+			$this->reset_baseline( $this->debug_type );
+			return;
+		}
 
 		try {
 			$this->run_debug_check( $this->debug_type, $this->fix_it );
@@ -268,11 +320,7 @@ class WP_CLI_LWTV_Debug {
 	private function run_check( array $check, bool $fix_it ): void {
 		\WP_CLI::log( $check['running'] );
 
-		if ( $fix_it && ! isset( $check['fixer'] ) ) {
-			\WP_CLI::warning( '--fix-it is not available for this check; reporting only.' );
-		}
-
-		$items      = $this->force ? false : lwtv_plugin()->get_transient( $check['transient'] );
+		$items      = $this->force ? false : lwtv_plugin()->get_stored( $check['transient'] );
 		$from_cache = false !== $items;
 
 		if ( $from_cache ) {
@@ -289,13 +337,25 @@ class WP_CLI_LWTV_Debug {
 			return;
 		}
 
-		if ( $fix_it && isset( $check['fixer'] ) ) {
-			$this->apply_fixes( $check, $items );
-			return;
+		if ( $fix_it ) {
+			/*
+			 * Asked after the findings are in hand, not before. A check with no
+			 * check-level `fixer` can still be repairable through the registry --
+			 * `actor_imdb` has no dispatcher but its pasted-URL findings each have
+			 * a repair -- and whether *these* findings have one is a question
+			 * about the findings, not about the check definition.
+			 */
+			if ( $this->has_repairs( $check, $items ) ) {
+				$this->apply_fixes( $check, $items );
+				return;
+			}
+
+			\WP_CLI::warning( 'Nothing here can be repaired automatically; reporting only.' );
 		}
 
 		\WP_CLI::log( count( $items ) . ' ' . $check['dirty'] );
-		\WP_CLI\Utils\format_items( $this->format, $items, $check['columns'] ?? self::DEFAULT_COLUMNS );
+		\WP_CLI\Utils\format_items( $this->format, $this->for_display( $items ), $check['columns'] ?? self::DEFAULT_COLUMNS );
+		$this->report_baseline( $check['status'] );
 		\WP_CLI::success( $check['done'] );
 	}
 
@@ -320,11 +380,8 @@ class WP_CLI_LWTV_Debug {
 	 * @return void
 	 */
 	private function apply_fixes( array $check, array $items ): void {
-		list( $class, $method ) = $check['fixer'];
-
 		\WP_CLI::log( 'Attempting to fix issues for ' . count( $items ) . ' item(s)...' );
 		$progress = \WP_CLI\Utils\make_progress_bar( 'Fixing', count( $items ) );
-		$fixer    = new $class();
 		$fixed    = 0;
 		$failed   = 0;
 
@@ -334,7 +391,8 @@ class WP_CLI_LWTV_Debug {
 				++$failed;
 				continue;
 			}
-			if ( $fixer->$method( (int) $item['id'] ) ) {
+
+			if ( $this->fix_item( $check, $item ) ) {
 				++$fixed;
 			} else {
 				++$failed;
@@ -350,6 +408,182 @@ class WP_CLI_LWTV_Debug {
 			\WP_CLI::warning( $failed . ' item(s) could not be fixed automatically.' );
 		}
 		\WP_CLI::success( $fixed . ' item(s) fixed. Re-run the check to confirm.' );
+	}
+
+	/**
+	 * Is there anything in these findings that `--fix-it` can act on?
+	 *
+	 * Two ways to qualify: the check declares a fixer of its own, or at least one
+	 * finding names an issue type the registry has a bulk-safe repair for. The
+	 * second is what lets a check with no dispatcher still be repairable.
+	 *
+	 * @param  array $check Check definition.
+	 * @param  array $items Findings.
+	 * @return bool
+	 */
+	private function has_repairs( array $check, array $items ): bool {
+		if ( isset( $check['fixer'] ) ) {
+			return true;
+		}
+
+		foreach ( $items as $item ) {
+			if ( ! empty( $this->bulk_fixable( $item ) ) ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * The issue types on one row that a bulk run may repair.
+	 *
+	 * Manual repairs are excluded: they are judgement calls -- "this show really
+	 * has no characters" -- and applying one across a whole report would be making
+	 * that judgement on somebody's behalf. They stay available per finding in
+	 * wp-admin.
+	 *
+	 * @param  array $item One finding row.
+	 * @return array<string>
+	 */
+	private function bulk_fixable( array $item ): array {
+		if ( ! Findings::is_post( $item ) ) {
+			return array();
+		}
+
+		return array_values(
+			array_filter(
+				Findings::fixable_issues( $item ),
+				static fn ( $issue_type ) => ! Issue_Registry::is_manual( $issue_type )
+			)
+		);
+	}
+
+	/**
+	 * Repair one finding row.
+	 *
+	 * Prefers the per-issue repairs the row names in `fixable`, which is what
+	 * makes the fix specific: only the issues actually found get repaired, and
+	 * one row can carry several. Rows written before findings were typed -- the
+	 * transients last a week -- have no `fixable` key, so those fall back to the
+	 * check-level fixer. A check with neither is simply not repairable.
+	 *
+	 * @param  array $check Check definition.
+	 * @param  array $item  One finding row.
+	 * @return bool  True when at least one repair was applied.
+	 */
+	private function fix_item( array $check, array $item ): bool {
+		// Every registered repair takes a post ID. A term-shaped finding's `id` is
+		// a term ID, and none of those issues has a repair anyway.
+		if ( ! Findings::is_post( $item ) ) {
+			return false;
+		}
+
+		$post_id = (int) $item['id'];
+		$issues  = $this->bulk_fixable( $item );
+
+		if ( ! empty( $issues ) ) {
+			$repaired = false;
+
+			foreach ( $issues as $issue_type ) {
+				list( $class, $method ) = Issue_Registry::fix_callable( $issue_type );
+
+				// Deliberately not short-circuiting: a row can need all of them.
+				if ( $this->fixer( $class )->$method( $post_id ) ) {
+					$repaired = true;
+				}
+			}
+
+			return $repaired;
+		}
+
+		if ( ! isset( $check['fixer'] ) ) {
+			return false;
+		}
+
+		list( $class, $method ) = $check['fixer'];
+
+		return (bool) $this->fixer( $class )->$method( $post_id );
+	}
+
+	/**
+	 * One instance per repair class, reused across a run.
+	 *
+	 * @param  string $class_name Fully qualified class name.
+	 * @return object
+	 */
+	private function fixer( string $class_name ): object {
+		$key = ltrim( $class_name, '\\' );
+
+		if ( ! isset( $this->fixers[ $key ] ) ) {
+			$this->fixers[ $key ] = new $key();
+		}
+
+		return $this->fixers[ $key ];
+	}
+
+	/**
+	 * Rows with their problems flattened to plain text.
+	 *
+	 * A copy: the transient keeps the admin-shaped `problem`, because the admin
+	 * table wants the markup this strips. Applied for every output format, not
+	 * just `table` -- nothing consuming the JSON or CSV wants `</br>` either.
+	 *
+	 * @param  array $items Finding rows.
+	 * @return array
+	 */
+	private function for_display( array $items ): array {
+		foreach ( $items as $index => $item ) {
+			if ( isset( $item['problem'] ) ) {
+				$items[ $index ]['problem'] = Findings::plain( $item );
+			}
+		}
+
+		return $items;
+	}
+
+	/**
+	 * Forget one check's baseline.
+	 *
+	 * @param  string $debug_type Check to reset.
+	 * @return void
+	 */
+	private function reset_baseline( string $debug_type ): void {
+		$checks = $this->get_checks();
+
+		if ( ! isset( $checks[ $debug_type ] ) ) {
+			\WP_CLI::error( 'Invalid debug type. Available types: ' . implode( ', ', array_keys( $checks ) ) );
+		}
+
+		$scope = $checks[ $debug_type ]['status'];
+
+		if ( ! Baseline_Store::exists( $scope ) ) {
+			\WP_CLI::warning( 'That check has no baseline to reset.' );
+			return;
+		}
+
+		Baseline_Store::reset( $scope );
+
+		\WP_CLI::success( 'Baseline cleared. The next run will report everything as long-standing rather than new.' );
+	}
+
+	/**
+	 * Log the new/open/resolved breakdown, when the check records one.
+	 *
+	 * Only the converted checks do. The rest report a bare count, and saying
+	 * nothing is better than implying a comparison that did not happen.
+	 *
+	 * @param  string $status_key Key inside the debugger status option.
+	 * @return void
+	 */
+	private function report_baseline( string $status_key ): void {
+		$summary = Status::all()[ $status_key ]['summary'] ?? array();
+
+		if ( ! is_array( $summary ) || empty( $summary ) ) {
+			return;
+		}
+
+		\WP_CLI::log( Baseline::describe_summary( $summary ) );
 	}
 
 	/**

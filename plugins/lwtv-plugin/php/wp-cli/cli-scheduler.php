@@ -272,7 +272,6 @@ class WP_CLI_LWTV_Scheduler {
 		$missed_status    = $missed_schedule->get_scheduler_status();
 		$tmdb_status      = lwtv_plugin()->get_tmdb_batch_status();
 		$cache_status     = lwtv_plugin()->get_cache_batch_status();
-		$transient_status = lwtv_plugin()->get_transient_cleanup_status();
 
 		\WP_CLI::log( 'LezWatch.TV Scheduler Status:' );
 		\WP_CLI::log( '' );
@@ -313,22 +312,27 @@ class WP_CLI_LWTV_Scheduler {
 			\WP_CLI::log( '  Last Processed: ' . gmdate( 'Y-m-d H:i:s', $cache_status['last_processed'] ) );
 			\WP_CLI::log( '  URLs Cleared: ' . $cache_status['urls_cleared'] );
 		}
-		\WP_CLI::log( '' );
-
-		\WP_CLI::log( 'Transient Cleanup:' );
-		\WP_CLI::log( '  Status: ' . $transient_status['status'] );
-		if ( $transient_status['next_scheduled'] ) {
-			\WP_CLI::log( '  Next Cleanup: ' . gmdate( 'Y-m-d H:i:s', $transient_status['next_scheduled'] ) );
-		} else {
-			\WP_CLI::log( '  Next Cleanup: Not scheduled' );
-		}
-		if ( $transient_status['daily_scheduled'] ) {
-			\WP_CLI::log( '  Daily Schedule: ' . gmdate( 'Y-m-d H:i:s', $transient_status['daily_scheduled'] ) );
-		}
-		if ( $transient_status['completed_at'] ) {
-			\WP_CLI::log( '  Last Completed: ' . gmdate( 'Y-m-d H:i:s', $transient_status['completed_at'] ) );
-			\WP_CLI::log( '  Total Cleaned: ' . $transient_status['cleaned_count'] );
-		}
+		/*
+		 * There is deliberately no "Transient Cleanup" section here.
+		 *
+		 * One was added in 6892468d and removed 85 minutes later in c05459e0
+		 * along with schedulers/class-transient-cleanup-task.php. The removal
+		 * missed this block, which went on calling the deleted
+		 * get_transient_cleanup_status() and fataled the whole command. Cleaned
+		 * up 2026-08-27.
+		 *
+		 * Why nothing replaced it: _Components\Transients currently delegates to
+		 * core, so every LWTV transient is an ordinary WordPress transient and
+		 * core's delete_expired_transients() (daily, via wp_scheduled_delete)
+		 * already expires them.
+		 *
+		 * That is a fact about today's backend, not a permanent one. The
+		 * Transients wrapper exists as a seam for swapping the store -- a
+		 * separate database, say -- and a store that is not the options table
+		 * would not be swept by core. If that happens, expiry becomes the new
+		 * backend's job, and this section is worth rebuilding rather than
+		 * reinventing: see the two commits above.
+		 */
 
 		\WP_CLI::success( 'Scheduler status retrieved.' );
 	}

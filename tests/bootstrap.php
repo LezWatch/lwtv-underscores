@@ -55,8 +55,14 @@ require_once __DIR__ . '/../plugins/lwtv-plugin/php/statistics/build/class-genre
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/statistics/build/class-character-identity-decade-buckets.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/cpts/shows/class-trope-categories.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/cpts/shows/class-airdates.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/cpts/shows/class-longevity.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/cpts/shows/class-character-score.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/_helpers/class-imdb-canonical.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/cpts/shows/class-host-name.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/cpts/shows/class-watch-url-health.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/cpts/shows/class-watch-term-url-audit.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/cpts/shows/class-watch-host-map.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/cpts/shows/class-watch-term-match.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/statistics/build/class-trope-category-coverage.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/statistics/build/class-term-count-distribution.php'; // to_cells() lives here too.
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/statistics/build/class-score-distribution.php';
@@ -73,3 +79,23 @@ require_once __DIR__ . '/../plugins/lwtv-plugin/php/_components/interface-compon
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/_components/interface-templater.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/_components/class-transients.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/calendar/build/class-agenda.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/debugger/build/class-issue-registry.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/debugger/build/class-findings.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/debugger/build/class-baseline.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/debugger/build/class-show-rules.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/debugger/build/class-character-rules.php';
+/*
+ * Actor_Rules calls two static validators on this class. They are stateless
+ * string work -- the class docblock says so explicitly -- and requiring the file
+ * only declares the class; the instance methods that read options are never
+ * touched from here.
+ */
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/_components/class-debugger.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/debugger/build/class-actor-rules.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/debugger/build/class-on-air-rules.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/debugger/build/class-byq-rules.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/debugger/build/class-duplicate-rules.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/debugger/build/class-imdb-rules.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/debugger/build/class-queer-rules.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/debugger/build/class-actor-completeness-rules.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/debugger/build/class-log-rules.php';

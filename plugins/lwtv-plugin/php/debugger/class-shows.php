@@ -9,10 +9,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-use LWTV\_Components\Debugger as Debug_Tool;
-use LWTV\Debugger\Characters as Characters_Debugger;
-use LWTV\CPTs\Shows\Airdates;
-use LWTV\Queeries\Post_Type;
+use LWTV\CPTs\Shows as CPT_Shows;
+use LWTV\Debugger\Build\Imdb_Rules;
+use LWTV\Debugger\Build\Show_Rules;
+use LWTV\Debugger\Collect\Imdb_Collector;
+use LWTV\Debugger\Collect\Show_Collector;
 
 class Shows {
 
@@ -26,278 +27,164 @@ class Shows {
 	 */
 	const TRANSIENT_IMDB = 'lwtv_debug_show_imdb';
 
-	const ITEMS_TO_CHECK = array(
-		'score'      => array(
-			'message'  => 'Score is 0 or not set - needs characters and/or ratings.',
-			'meta'     => 'lezshows_the_score',
-			'empty_ok' => true,
-		),
-		'details'    => array(
-			'message'  => 'No worthit details.',
-			'meta'     => 'lezshows_worthit_details',
-			'empty_ok' => true,
-		),
-		'thumb'      => array(
-			'message' => 'No Thumb score.',
-			'meta'    => 'lezshows_worthit_rating',
-			'skip'    => true,
-		),
-		'realness'   => array(
-			'message'  => 'No realness rating.',
-			'meta'     => 'lezshows_realness_rating',
-			'empty_ok' => true,
-		),
-		'quality'    => array(
-			'message'  => 'No quality rating.',
-			'meta'     => 'lezshows_quality_rating',
-			'empty_ok' => true,
-		),
-		'screentime' => array(
-			'message'  => 'No screentime rating.',
-			'meta'     => 'lezshows_screentime_rating',
-			'empty_ok' => true,
-		),
-		'imdb'       => array(
-			'message' => 'No IMDb ID.',
-			'meta'    => 'lezshows_imdb',
-			'skip'    => true,
-		),
-		'stations'   => array(
-			'message' => 'No stations.',
-			'term'    => 'lez_stations',
-		),
-		'nations'    => array(
-			'message' => 'No country.',
-			'term'    => 'lez_country',
-		),
-		'formats'    => array(
-			'message' => 'No format.',
-			'term'    => 'lez_formats',
-		),
-		'genres'     => array(
-			'message' => 'No genres.',
-			'term'    => 'lez_genres',
-		),
-		'tropes'     => array(
-			'message' => 'No tropes.',
-			'term'    => 'lez_tropes',
-			'skip'    => true,
-		),
-	);
-
 	/**
 	 * Find Shows with Problems
 	 */
 	public function find_shows_problems( $items = array() ) {
 
-		// The array we will be checking.
-		$shows = array();
+		// A recheck only revisits what was already flagged, so it may be tagged
+		// against the baseline but never diffed into it. See Scan::finish().
+		$is_recheck = ! empty( $items );
 
-		// Are we a full scan or a recheck?
-		if ( ! empty( $items ) ) {
-			// Check only the shows from items!
-			foreach ( $items as $show_item ) {
-				if ( get_post_status( $show_item['id'] ) !== 'draft' ) {
-					// If it's NOT a draft, we'll recheck.
-					$shows[] = $show_item['id'];
-				}
-			}
-		} else {
-			// Get all the shows
-			$the_loop = ( new Post_Type() )->make( 'post_type_shows' );
+		$shows = Scan::post_ids( $items, CPT_Shows::SLUG );
 
-			if ( is_object( $the_loop ) && $the_loop->have_posts() ) {
-				$shows = wp_list_pluck( $the_loop->posts, 'ID' );
+		if ( empty( $shows ) ) {
+			return array();
+		}
+
+		/*
+		 * Collect, then evaluate. The rules are pure and live in
+		 * Build\Show_Rules; everything that touches the database is in
+		 * Collect\Show_Collector. Batched because the collector fetches terms for
+		 * a whole batch in one query rather than five per show.
+		 */
+		$collector = new Show_Collector();
+		$findings  = array();
+
+		foreach ( array_chunk( $shows, Show_Collector::BATCH ) as $batch ) {
+			foreach ( $collector->collect( $batch ) as $show ) {
+				$findings = array_merge( $findings, Show_Rules::evaluate( $show ) );
 			}
 		}
 
-		// If somehow shows is totally empty...
-		if ( empty( $shows ) ) {
+		return Scan::finish(
+			array(
+				'scope'     => 'show_problems',
+				'transient' => self::TRANSIENT_PROBLEMS,
+				'label'     => 'Shows with Issues',
+			),
+			$findings,
+			$is_recheck
+		);
+	}
+
+	/**
+	 * Repair one show's fixable data problems.
+	 *
+	 * Registered as the fixer for the `shows` check, so it runs once per finding
+	 * under `wp lwtv debug shows --fix-it`. A show flagged only for something
+	 * with no automated repair (no characters, a bad airdate, a duplicate slug)
+	 * returns false and is reported as unfixed.
+	 *
+	 * @param  int  $show_id Show post ID.
+	 * @return bool True when at least one repair was applied.
+	 */
+	public function fix_show_data( $show_id ): bool {
+		$show_id = (int) $show_id;
+
+		/*
+		 * Deliberately not short-circuiting: a show can need both. And
+		 * deliberately excluding flag_no_characters(), which is a judgement call
+		 * registered as `manual` -- this dispatcher is the bulk path.
+		 */
+		$trope = $this->add_none_trope( $show_id );
+		$thumb = $this->set_thumb_tbd( $show_id );
+
+		return $trope || $thumb;
+	}
+
+	/**
+	 * Add the 'none' trope to a show carrying no trope terms.
+	 *
+	 * Looked up by slug on purpose: the term's display name is 'None!', so a
+	 * name lookup silently returns false -- which is how this repair spent a
+	 * long time doing nothing while reporting that the term was missing.
+	 *
+	 * @param  int  $show_id Show post ID.
+	 * @return bool True when the term was added.
+	 */
+	public function add_none_trope( int $show_id ): bool {
+		$tropes = get_the_terms( $show_id, 'lez_tropes' );
+
+		// Already has tropes -- nothing to repair.
+		if ( $tropes && ! is_wp_error( $tropes ) ) {
 			return false;
 		}
 
-		// Make sure we don't have dupes.
-		$shows = array_unique( $shows );
-
-		// reset items since we recheck off $shows.
-		$items = array();
-
-		foreach ( $shows as $show_id ) {
-			$problems = array();
-
-			// What we can check for
-			$check = array(
-				'duplicate' => get_post_field( 'post_name', $show_id ),
-			);
-
-			// Build the check array and add to problems if needed.
-			foreach ( self::ITEMS_TO_CHECK as $item => $check_array ) {
-				$empty_okay = ( isset( $check_array['empty_ok'] ) ) ? $check_array['empty_ok'] : false;
-				$skip_okay  = ( isset( $check_array['skip'] ) ) ? $check_array['skip'] : false;
-
-				if ( isset( $check_array['meta'] ) ) {
-					$check[ $item ] = get_post_meta( $show_id, $check_array['meta'], true );
-					if ( ! $empty_okay && ! $skip_okay && empty( $check[ $item ] ) ) {
-						$problems[] = $check_array['message'];
-					}
-				} elseif ( isset( $check_array['term'] ) ) {
-					$check[ $item ] = get_the_terms( $show_id, $check_array['term'] );
-					if ( ( ! $empty_okay && ! $skip_okay ) && ( ! $check[ $item ] || is_wp_error( $check[ $item ] ) ) ) {
-						$problems[] = $check_array['message'];
-					}
-				}
-			}
-
-			// Force set a missing rating (aka Thumb Score) to TBD.
-			if ( empty( $check['thumb'] ) ) {
-				update_post_meta( $show_id, 'lezshows_worthit_rating', 'TBD' );
-			}
-
-			// If there are no tropes, add NONE.
-			if ( ! $check['tropes'] || is_wp_error( $check['tropes'] ) ) {
-				$term = get_term_by( 'name', 'none', 'lez_tropes' );
-				if ( $term instanceof \WP_Term ) {
-					wp_set_object_terms( $show_id, array( $term->term_id ), 'lez_tropes', true );
-				} else {
-					$problems[] = 'No tropes set, and the "none" trope is missing from lez_tropes so it could not be added.';
-				}
-			}
-
-			$problems = array_merge( $problems, $this->check_airdates( $show_id ) );
-
-			$duplicates   = self::check_duplicate_shows( $check, $show_id );
-			$intersection = self::check_intersection_problems( $show_id );
-			$problems     = array_merge( $problems, $intersection, $duplicates );
-
-			// If we have problems, list them:
-			if ( ! empty( $problems ) ) {
-				$items[] = array(
-					'url'     => get_permalink( $show_id ),
-					'id'      => $show_id,
-					'problem' => implode( '</br>', $problems ),
-				);
-			}
+		$term = get_term_by( 'slug', 'none', 'lez_tropes' );
+		if ( ! $term instanceof \WP_Term ) {
+			return false;
 		}
 
-		// Save Transient
-		lwtv_plugin()->set_transient( self::TRANSIENT_PROBLEMS, $items, WEEK_IN_SECONDS );
-
-		// Update Options
-		Status::record( 'show_problems', 'Shows with Issues', count( $items ) );
-
-		return $items;
+		return ! is_wp_error( wp_set_object_terms( $show_id, array( $term->term_id ), 'lez_tropes', true ) );
 	}
 
 	/**
-	 * Check a show's airdates for sanity.
+	 * Record that a show genuinely has no findable queer characters.
 	 *
-	 * Reads through LWTV\CPTs\Shows\Airdates so both the current ACF keys
-	 * (lezshows_airdates_start / _finish) and the legacy serialized
-	 * lezshows_airdates array are handled. Previously this only read the legacy
-	 * key, which meant migrated shows were reported as having no airdates at all
-	 * and the end-date checks below never ran.
+	 * Not a repair in the usual sense: it does not fill the gap, it states that
+	 * there is nothing to fill it with. That is why the issue is registered as
+	 * `manual` -- a bulk run must not decide this for every characterless show.
 	 *
-	 * @param int $show_id The show ID to check.
+	 * Written through update_field() rather than update_post_meta() because
+	 * lezshows_no_chars is an ACF true_false field, and ACF also stores the
+	 * companion `_lezshows_no_chars` field-key row that the editor UI reads.
 	 *
-	 * @return array $problems - array of problems. Can be empty.
+	 * The show page reads the same flag: it swaps the "Under Construction"
+	 * placeholder for a "No Known Characters" panel asking readers who do know
+	 * something to get in touch.
+	 *
+	 * @param  int  $show_id Show post ID.
+	 * @return bool True when the flag was set now.
 	 */
-	public function check_airdates( int $show_id ): array {
-		$problems = array();
-		$airdates = Airdates::get( $show_id );
-		$start    = $airdates['start'];
-		$finish   = $airdates['finish'];
-
-		if ( '' === $start && '' === $finish ) {
-			$problems[] = 'No airdates.';
-			return $problems;
+	public function flag_no_characters( int $show_id ): bool {
+		if ( ! empty( get_post_meta( $show_id, Show_Rules::META_NO_CHARS, true ) ) ) {
+			return false;
 		}
 
-		if ( '' === $start ) {
-			$problems[] = 'No start date.';
+		if ( function_exists( 'update_field' ) ) {
+			return (bool) update_field( Show_Rules::META_NO_CHARS, 1, $show_id );
 		}
 
-		if ( '' === $finish ) {
-			$problems[] = 'No end-date. If the show is on-air, set to CURRENT. TV movies end in the same year.';
-			return $problems;
-		}
-
-		// 'current' means still airing, so there's nothing to compare against.
-		if ( Airdates::is_still_airing( $finish ) ) {
-			return $problems;
-		}
-
-		// Only compare when both sides are actually years.
-		if ( is_numeric( $start ) && is_numeric( $finish ) && (int) $start > (int) $finish ) {
-			$problems[] = 'Start date is AFTER end date.';
-		}
-
-		return $problems;
+		return (bool) update_post_meta( $show_id, Show_Rules::META_NO_CHARS, 1 );
 	}
 
 	/**
-	 * Check if a show has duplicates.
+	 * Write 'TBD' for a show with no Thumb (Worth It) rating.
+	 *
+	 * Guarded on empty so this no longer rewrites the same value on every scan.
+	 *
+	 * @param  int  $show_id Show post ID.
+	 * @return bool True when the rating was written.
 	 */
-	public function check_duplicate_shows( array $check, int $show_id ) {
-		$problems = array();
-
-		// - Duplicate Show check - shouldn't end in -[NUMBER].
-		$permalink_array = explode( '-', $check['duplicate'] );
-		$ends_with       = end( $permalink_array );
-
-		// If it ends in a number, we have to check.
-		if ( is_numeric( $ends_with ) ) {
-			// See if an existing page without the -NUMBER exists (someone could rename themselves with numbers...).
-			$possible = get_page_by_path( str_replace( '-' . $ends_with, '', $check['duplicate'] ), OBJECT, 'post_type_shows' );
-			if ( is_object( $possible ) && false !== $possible ) {
-				// The 90210 Loop
-				// Make sure we didn't find ourselves (because some shows are number-named...)
-				if ( (int) $possible->ID !== $show_id ) {
-					$pos_imdb = get_post_meta( $possible->ID, 'lezshows_imdb', true );
-					// Both being empty is not a match. The old isset() check was always
-					// true, so every numerically-suffixed show with no IMDb ID matched
-					// any same-named show that also had none.
-					if ( ! empty( $pos_imdb ) && ! empty( $check['imdb'] ) && $pos_imdb === $check['imdb'] ) {
-						$problems[] = 'Likely Dupe - Another Show has this name AND the same IMDb data.';
-					}
-				}
-			}
+	public function set_thumb_tbd( int $show_id ): bool {
+		if ( ! empty( get_post_meta( $show_id, 'lezshows_worthit_rating', true ) ) ) {
+			return false;
 		}
 
-		return $problems;
+		return (bool) update_post_meta( $show_id, 'lezshows_worthit_rating', 'TBD' );
 	}
 
 	/**
-	 * Check shows with intersectionality
-	 * Ensure they have matching characters.
+	 * Replace a pasted IMDb URL with the ID inside it.
 	 *
-	 * @param int    $show_id - the show ID to check.
-	 * @return array $problems  - array of problems. Can be empty.
+	 * Re-extracted here rather than trusting the finding's `context`: a repair
+	 * runs some time after the scan that produced it, and the field may have been
+	 * edited since. If the value is no longer an extractable URL this does
+	 * nothing and reports as unfixed, which is correct.
+	 *
+	 * @param  int  $show_id Show post ID.
+	 * @return bool True when the ID was written.
 	 */
-	public function check_intersection_problems( int $show_id ): array {
+	public function extract_imdb_from_url( int $show_id ): bool {
+		$current   = (string) get_post_meta( $show_id, 'lezshows_imdb', true );
+		$extracted = Imdb_Rules::id_from_url( $current, Imdb_Rules::SHOW );
 
-		$intersections = get_the_terms( $show_id, 'lez_intersections' );
-
-		if ( ! $intersections || is_wp_error( $intersections ) ) {
-			return array();
+		if ( '' === $extracted ) {
+			return false;
 		}
 
-		// Only shows tagged with the 'disabled' intersection need a disabled character.
-		if ( ! in_array( 'disabled', wp_list_pluck( $intersections, 'slug' ), true ) ) {
-			return array();
-		}
-
-		static $characters_debugger = null;
-		if ( null === $characters_debugger ) {
-			$characters_debugger = new Characters_Debugger();
-		}
-
-		$problems         = array();
-		$disabled_problem = $characters_debugger->check_disabled_characters( $show_id );
-		if ( ! empty( $disabled_problem ) ) {
-			$problems[] = $disabled_problem;
-		}
-
-		return $problems;
+		return (bool) update_post_meta( $show_id, 'lezshows_imdb', $extracted );
 	}
 
 	/**
@@ -307,72 +194,38 @@ class Shows {
 	 */
 	public function find_shows_no_imdb( $items = array() ) {
 
-		// The array we will be checking.
-		$shows = array();
+		// A recheck only revisits what was already flagged, so it may be tagged
+		// against the baseline but never diffed into it. See Scan::finish().
+		$is_recheck = ! empty( $items );
 
-		// Are we a full scan or a recheck?
-		if ( ! empty( $items ) ) {
-			// Check only the shows from items!
-			foreach ( $items as $show_item ) {
-				if ( get_post_status( $show_item['id'] ) !== 'draft' ) {
-					// If it's NOT a draft, we'll recheck.
-					$shows[] = $show_item['id'];
-				}
-			}
-		} else {
-			// Get all the shows
-			$the_loop = ( new Post_Type() )->make( 'post_type_shows' );
+		$shows = Scan::post_ids( $items, CPT_Shows::SLUG );
 
-			if ( is_object( $the_loop ) && $the_loop->have_posts() ) {
-				$shows = wp_list_pluck( $the_loop->posts, 'ID' );
-				wp_reset_query();
-			}
-		}
-
-		// If somehow shows is totally empty...
 		if ( empty( $shows ) ) {
-			return false;
+			return array();
 		}
 
-		// Make sure we don't have dupes.
-		$shows = array_unique( $shows );
+		/*
+		 * Collect, then evaluate. Build\Imdb_Rules serves both this check and the
+		 * actor one -- same three rules, different oracle and prefix -- so the two
+		 * cannot drift apart the way they had before.
+		 */
+		$collector = new Imdb_Collector();
+		$findings  = array();
 
-		// reset items since we recheck off $shows.
-		$items = array();
-
-		foreach ( $shows as $show_id ) {
-
-			$problems = array();
-
-			$imdb = get_post_meta( $show_id, 'lezshows_imdb', true );
-
-			if ( empty( $imdb ) ) {
-				// Check for IMDb existing at all, unless it's a web-series.
-				if ( ! has_term( 'web-series', 'lez_formats', $show_id ) ) {
-					$problems[] = 'IMDb ID is not set.';
-				}
-			} elseif ( Debug_Tool::validate_imdb( $imdb, 'show' ) === false ) {
-				// - IMDb IDs should be valid for the space they're in, e.g. "nm"
-				// and digits for people (props Jamie).
-				$problems[] = 'IMDb ID is invalid (ex: tt12345) -- ' . $imdb;
-			}
-
-			// If we added any problems, loop and add.
-			if ( ! empty( $problems ) ) {
-				$items[] = array(
-					'url'     => get_permalink( $show_id ),
-					'id'      => $show_id,
-					'problem' => implode( '</br>', $problems ),
-				);
+		foreach ( array_chunk( $shows, Imdb_Collector::BATCH ) as $batch ) {
+			foreach ( $collector->collect( Imdb_Rules::SHOW, $batch ) as $show ) {
+				$findings = array_merge( $findings, Imdb_Rules::evaluate( Imdb_Rules::SHOW, $show ) );
 			}
 		}
 
-		// Save Transient
-		lwtv_plugin()->set_transient( self::TRANSIENT_IMDB, $items, WEEK_IN_SECONDS );
-
-		// Update Options
-		Status::record( 'show_imdb', 'Shows without IMDb', count( $items ) );
-
-		return $items;
+		return Scan::finish(
+			array(
+				'scope'     => 'show_imdb',
+				'transient' => self::TRANSIENT_IMDB,
+				'label'     => 'Shows without IMDb',
+			),
+			$findings,
+			$is_recheck
+		);
 	}
 }

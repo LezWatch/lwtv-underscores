@@ -4,6 +4,28 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [7.2.0] - 2026-08-28
+
+### Added
+
+- Add IMDb staleness detection that flags stored IMDb IDs disagreeing with TVMaze/TMDB, with a new `wp lwtv imdb` command for review.
+- Add an opt-in longevity-weighted character scoring preview, not yet applied to live scores.
+- Add per-finding repair buttons and a `--fix-it` CLI flag so debugger findings can be fixed directly instead of just reported.
+- Add new/open/resolved tracking and debug log rotation with a CLI viewer to the debugger.
+- Add a background "Run Scan" option for the Watch Term Check URL sweep, so it no longer requires the command line.
+- Add existing-term suggestions to the Watch Providers tab before offering to create a duplicate term.
+
+### Changed
+
+- Watch-provider terms are now matched by normalized host instead of exact URL, and host collisions between terms are now detected.
+- Hosts that repeatedly fail to answer are now retried a limited number of times instead of being checked forever.
+- Consolidated character scoring into a single implementation shared by the live calculator and the CLI preview tool.
+
+### Fixed
+
+- Fixed trigger warnings adding to a show's score instead of subtracting from it.
+- Fixed several long-standing copy-paste bugs in the admin validator tabs, including stale labels, missing translations, and mismatched security tokens.
+
 ## [7.1.15] - 2026-08-24
 
 ### Added

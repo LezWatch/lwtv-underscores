@@ -11,8 +11,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 use LWTV\_Components\Grading;
-use LWTV\Queeries\Is_Actor_Trans;
 use LWTV\CPTs\Shows as CPT_Shows;
+use LWTV\Theme\Show_Characters;
 
 class Calculations {
 
@@ -73,13 +73,23 @@ class Calculations {
 		$score     += ( key_exists( $stars, $star_score ) ) ? $star_score[ $stars ] : 0;
 
 		// Trigger Warning: -5, -10, -15
+		//
+		// These were POSITIVE, which meant a high trigger warning earned a show
+		// +15 -- the site's own scoring documentation has always said -15, and
+		// stated the intent outright: "If a show is actively detrimental to some
+		// viewers, with abuse, or excessive violence, its score is downgraded."
+		// Nothing negated it downstream, so shows were being rewarded for carrying
+		// the warning. Corrected here.
+		//
+		// 'on' and 'medium' are legacy aliases for 'high' and 'med'; both spellings
+		// exist in the data, so both are kept.
 		$trigger       = $taxonomy_terms['lez_triggers'] ?? $meta_fields['lezshows_triggerwarning'];
 		$trigger_score = array(
-			'on'     => 15,
-			'high'   => 15,
-			'med'    => 10,
-			'medium' => 10,
-			'low'    => 5,
+			'on'     => -15,
+			'high'   => -15,
+			'med'    => -10,
+			'medium' => -10,
+			'low'    => -5,
 		);
 		$score        += ( key_exists( $trigger, $trigger_score ) ) ? $trigger_score[ $trigger ] : 0;
 
@@ -170,7 +180,16 @@ class Calculations {
 	 * @return array Array of counts for all types
 	 */
 	private function count_queers_all_types( $post_id ) {
-		// Initialize counts
+		$post_id = (int) $post_id;
+
+		// Memoised because this is called twice per do_the_math() -- once via
+		// count_queers() and once from show_character_score() -- and each call
+		// used to redo the full character traversal, the batched term queries and
+		// every get_field( 'lezchars_actor' ).
+		if ( isset( self::$counts_memo[ $post_id ] ) ) {
+			return self::$counts_memo[ $post_id ];
+		}
+
 		$counts = array(
 			'count'     => 0,
 			'dead'      => 0,
@@ -181,127 +200,67 @@ class Calculations {
 			'score'     => 0,
 		);
 
-		// Get character list once
-		$characters = lwtv_plugin()->get_characters_list( $post_id, 'query' );
-		if ( empty( $characters ) || ! is_array( $characters ) ) {
+		// Gather exactly what the ACTIVE models need and nothing more. With both
+		// flags off this is the same set of queries count_queers_all_types() ran
+		// before Character_Score existed -- turning a model off has to actually
+		// stop paying for it, or a disabled feature still costs ~30,000 reads per
+		// recalculation.
+		$data = Character_Score::gather( $post_id, Character_Score::options_from_flags() );
+
+		if ( 0 === $data['count'] ) {
+			self::$counts_memo[ $post_id ] = $counts;
+
 			return $counts;
 		}
 
-		$counts['count'] = count( $characters );
+		// Key names are the historical ones and are deliberately unchanged: they
+		// are the public shape of count_queers(), which is called from outside
+		// this class.
+		$counts['count'] = $data['count'];
+		$counts['dead']  = $data['dead'];
+		$counts['none']  = $data['none'];
+		$counts['trans'] = $data['trans'];
 
-		// Get character roles for score calculation
-		$char_roles      = get_post_meta( $post_id, 'lezshows_char_roles', true );
-		$chars_regular   = $char_roles['regular'] ?? 0;
-		$chars_recurring = $char_roles['recurring'] ?? 0;
-		$chars_guest     = $char_roles['guest'] ?? 0;
+		// This becomes lezshows_queer_irl_count, whose only reader is the "actors"
+		// column of the Shows We Love comparison. With the actor check on it is the
+		// count of characters whose first-billed actor is actually queer, which is
+		// what that column has always claimed to show and has never contained.
+		$counts['queer-irl'] = $data['queer_irl_scored'];
+		$counts['trans-irl'] = $data['trans_irl'];
 
-		// Points: Regular = 5; Recurring = 2; Guests = 1
-		$base_score = ( $chars_regular * 5 ) + ( $chars_recurring * 2 ) + $chars_guest;
+		$counts['score'] = Character_Score::longevity_enabled()
+			? Character_Score::longevity( $data )['score']
+			: Character_Score::legacy( $data )['score'];
 
-		// Batch get all taxonomy terms for all characters at once
-		$all_terms = $this->get_batch_character_terms( $characters );
-
-		// Prime the post meta cache for all characters in one query so ACF's
-		// get_field( 'lezchars_actor' ) calls below are cache hits.
-		update_meta_cache( 'post', $characters );
-
-		// Process each character once
-		foreach ( $characters as $char_id ) {
-			$char_terms = $all_terms[ $char_id ] ?? array();
-
-			// Count different character types
-			if ( isset( $char_terms['dead'] ) ) {
-				++$counts['dead'];
-			}
-			if ( isset( $char_terms['none'] ) ) {
-				++$counts['none'];
-			}
-			if ( isset( $char_terms['queer-irl'] ) ) {
-				++$counts['queer-irl'];
-			}
-			if ( ! isset( $char_terms['cisgender'] ) && ! isset( $char_terms['intersex'] ) && ! isset( $char_terms['unknown'] ) ) {
-				++$counts['trans'];
-			}
-
-			// Check for trans actors (trans-irl)
-			$actors_ids = get_field( 'lezchars_actor', $char_id ) ?: array();
-			foreach ( $actors_ids as $actor ) {
-				if ( ( new Is_Actor_Trans() )->make( $actor ) ) {
-					++$counts['trans-irl'];
-					break; // Only count once per character
-				}
-			}
-		}
-
-		// Calculate score components
-		$queer_irl_score  = $counts['queer-irl'] * 10;
-		$no_cliches_score = $counts['none'] * 5;
-		$the_dead_score   = $counts['dead'] * -5;
-		$trans_score      = 0;
-
-		if ( $counts['trans-irl'] < $counts['trans'] ) {
-			$trans_score = ( ( $counts['trans'] - $counts['trans-irl'] ) * -5 );
-		} else {
-			$trans_score = $counts['trans'] * 10;
-		}
-
-		// Add it all together
-		$counts['score'] = $base_score + $queer_irl_score + $no_cliches_score + $the_dead_score + $trans_score;
-
-		// Adjust scores based on type of series
-		if ( 0 !== $counts['score'] ) {
-			if ( has_term( 'movie', 'lez_formats', $post_id ) ) {
-				// Movies have a low bar, since they have low stakes
-				$counts['score'] = ( $counts['score'] / 2 );
-			} elseif ( has_term( 'mini-series', 'lez_formats', $post_id ) ) {
-				// Mini-Series similarly have a small run
-				$counts['score'] = ( $counts['score'] / 1.5 );
-			} elseif ( has_term( 'web-series', 'lez_formats', $post_id ) ) {
-				// WebSeries tend to be more daring, but again, low stakes.
-				$counts['score'] = ( $counts['score'] / 1.25 );
-			}
-		}
-
-		// Finally make sure we're between 0 and 100
-		$counts['score'] = ( $counts['score'] > 100 ) ? 100 : $counts['score'];
+		self::$counts_memo[ $post_id ] = $counts;
 
 		return $counts;
 	}
 
 	/**
-	 * Get taxonomy terms for multiple characters in batch queries
+	 * Per-show memo for count_queers_all_types().
 	 *
-	 * @param array $characters Array of character IDs
-	 * @return array Array of character terms organized by character ID
+	 * Static, and cleared by do_the_math() at the top of a recalculation, mirroring
+	 * how Show_Characters::flush_cache() is handled -- a long-running WP-CLI
+	 * process must not serve a stale score after the data underneath it changed.
+	 *
+	 * @var array<int, array>
 	 */
-	private function get_batch_character_terms( $characters ) {
-		$all_terms = array();
+	private static array $counts_memo = array();
 
-		// Initialize array for each character
-		foreach ( $characters as $char_id ) {
-			$all_terms[ $char_id ] = array();
+	/**
+	 * Drop the memoised counts for one show, or all of them.
+	 *
+	 * @param int|null $post_id Show to forget, or null for everything.
+	 */
+	public static function flush_counts( $post_id = null ): void {
+		if ( null === $post_id ) {
+			self::$counts_memo = array();
+
+			return;
 		}
 
-		// Get all terms for all characters in fewer queries
-		$taxonomies = array( 'lez_cliches', 'lez_gender' );
-
-		foreach ( $taxonomies as $taxonomy ) {
-			$terms = wp_get_object_terms(
-				$characters,
-				$taxonomy,
-				array(
-					'fields' => 'all_with_object_id',
-				)
-			);
-
-			if ( ! is_wp_error( $terms ) && ! empty( $terms ) ) {
-				foreach ( $terms as $term ) {
-					$all_terms[ $term->object_id ][ $term->slug ] = true;
-				}
-			}
-		}
-
-		return $all_terms;
+		unset( self::$counts_memo[ (int) $post_id ] );
 	}
 
 	/**
@@ -327,8 +286,8 @@ class Calculations {
 
 		// One query per taxonomy (batched across all character IDs) primes the term
 		// object cache used by get_the_terms() and wp_get_object_terms().
-		// Covers all taxonomies consumed by show_character_data() and
-		// count_queers_all_types() / get_batch_character_terms().
+		// Covers all taxonomies consumed by show_character_data() and by
+		// Character_Score::batch_terms().
 		update_object_term_cache(
 			$characters,
 			array( 'lez_cliches', 'lez_gender', 'lez_sexuality', 'lez_romantic' )
@@ -589,11 +548,20 @@ class Calculations {
 			delete_post_meta( $post_id, 'lezshows_char_count' );
 			delete_post_meta( $post_id, 'lezshows_dead_count' );
 			delete_post_meta( $post_id, 'lezshows_the_score' );
+			delete_post_meta( $post_id, 'lezshows_the_score_uncapped' );
 			delete_post_meta( $post_id, 'lezshows_on_air' );
 			delete_post_meta( $post_id, 'lezshows_on_air_score' );
 			delete_post_meta( $post_id, 'lezshows_score' );
 			return;
 		}
+
+		// Start this show's calculation from a clean memo. Show_Characters caches
+		// resolved character lists per request, which collapses the three
+		// identical lookups below into one -- but a recalculation must never be
+		// served a list built before whatever prompted it. Flushing per show also
+		// stops the memo growing across a bulk run over every show.
+		Show_Characters::flush_cache( $post_id );
+		self::flush_counts( $post_id );
 
 		// Prime post meta and term object caches for all characters before either
 		// loop runs, so show_character_data() and count_queers_all_types() are cache hits.
@@ -601,6 +569,13 @@ class Calculations {
 
 		// Generate character data
 		self::show_character_data( $post_id );
+
+		// show_character_data() has just rewritten lezshows_char_roles, which is an
+		// INPUT to the legacy character score. count_queers() is public and can be
+		// called from anywhere, so a memo taken before this write would pin a score
+		// built on the previous run's role counts. Flushing here rather than
+		// reordering keeps the dependency visible instead of implicit.
+		self::flush_counts( $post_id );
 
 		// Get the ratings
 		$score_show_rating_raw = self::show_score( $post_id );
@@ -631,6 +606,20 @@ class Calculations {
 		// Calculate the full score
 		$calculate = ( $score_show_rating + $score_show_tropes + $score_chars_alive + $score_chars_score ) / 4;
 
+		// Keep the true value before clamping.
+		//
+		// The clamp used to be the only thing stored, which threw away the one
+		// piece of information that distinguishes shows at the ceiling from each
+		// other -- the same mistake, one level up, as the old character score
+		// pinning 38 shows at exactly 100 with no way to rank them. Today only one
+		// show clears 100, so this buys little; the point is that it cannot start
+		// creating ties again as the data improves.
+		//
+		// lezshows_the_score stays clamped, deliberately. Everything reads it --
+		// display, the stats SQL, Grading, of-the-day, the taxonomy queries -- and
+		// none of that should have to learn about a 0-115 range.
+		update_post_meta( $post_id, 'lezshows_the_score_uncapped', $calculate );
+
 		// Keep it between 0 and 100
 		$calculate = ( $calculate > 100 ) ? 100 : $calculate;
 		$calculate = ( $calculate < 0 ) ? 0 : $calculate;
@@ -638,8 +627,25 @@ class Calculations {
 		// Update the score meta. The rest are done.
 		update_post_meta( $post_id, 'lezshows_the_score', $calculate );
 
-		// Update 3rd party scores
-		( new Grading() )->update_scores( $post_id );
+		/**
+		 * Whether to refresh this show's third-party (TMDB / TVMaze) scores.
+		 *
+		 * Filterable because Grading\TVMaze::update_scores() makes a live
+		 * wp_remote_get() on a transient miss, so a bulk recalculation over the
+		 * whole corpus would fire thousands of unthrottled requests -- well past
+		 * TVMaze's documented 20-calls-per-10-seconds, and the resulting 429s get
+		 * written into lezshows_3rd_scores as if they were data.
+		 *
+		 * A recalculation triggered by a change to OUR scoring has no reason to
+		 * refetch somebody else's, so `wp lwtv calc --all` turns this off and lets
+		 * the on-save path and the daily cron refresh them at their own pace.
+		 *
+		 * @param bool $refresh Whether to update third-party scores.
+		 * @param int  $post_id Show post ID.
+		 */
+		if ( apply_filters( 'lwtv_recalculate_third_party_scores', true, $post_id ) ) {
+			( new Grading() )->update_scores( $post_id );
+		}
 
 		// Invalidate score-related caches
 		lwtv_plugin()->invalidate_statistics_cache( 'score', $post_id );
