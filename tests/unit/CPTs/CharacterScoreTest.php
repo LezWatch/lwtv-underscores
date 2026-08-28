@@ -12,8 +12,8 @@
 
 namespace LWTV\Tests\CPTs;
 
-use LWTV\CPTs\Shows\Character_Score;
-use LWTV\CPTs\Shows\Longevity;
+use LWTV\CPTs\Shows\Scoring\Character_Score;
+use LWTV\CPTs\Shows\Scoring\Longevity;
 use PHPUnit\Framework\TestCase;
 
 final class CharacterScoreTest extends TestCase {

@@ -29,7 +29,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-use LWTV\CPTs\Shows\Airdates;
+use LWTV\CPTs\Shows\Scoring\Airdates;
 
 class Show_Rules {
 

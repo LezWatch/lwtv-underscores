@@ -26,7 +26,7 @@
  * @package LWTV
  */
 
-namespace LWTV\CPTs\Shows;
+namespace LWTV\CPTs\Shows\Scoring;
 
 use LWTV\Queeries\Is_Actor_Queer;
 use LWTV\Queeries\Is_Actor_Trans;

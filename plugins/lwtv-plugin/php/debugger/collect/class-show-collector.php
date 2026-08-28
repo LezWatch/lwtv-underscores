@@ -22,7 +22,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 use LWTV\Debugger\Build\Show_Rules;
-use LWTV\CPTs\Shows\Airdates;
+use LWTV\CPTs\Shows\Scoring\Airdates;
 
 class Show_Collector {
 

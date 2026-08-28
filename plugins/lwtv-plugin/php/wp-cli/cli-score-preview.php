@@ -6,7 +6,7 @@
  * the effect of the longevity model can be inspected against real shows before
  * it is switched on.
  *
- * ⚠ The score comes from LWTV\CPTs\Shows\Character_Score::longevity(), which is
+ * ⚠ The score comes from LWTV\CPTs\Shows\Scoring\Character_Score::longevity(), which is
  * also what Calculations::count_queers_all_types() calls -- now the only model,
  * after this command's old-vs-new comparison did its job calibrating
  * SATURATION_K and Character_Score::legacy() was retired. A private replica of
@@ -33,8 +33,8 @@ if ( ! defined( 'ABSPATH' ) && ! defined( 'WP_CLI' ) ) {
 
 use LWTV\CPTs\Shows as CPT_Shows;
 use LWTV\CPTs\Shows\Calculations as Shows_Calculations;
-use LWTV\CPTs\Shows\Character_Score;
-use LWTV\CPTs\Shows\Longevity;
+use LWTV\CPTs\Shows\Scoring\Character_Score;
+use LWTV\CPTs\Shows\Scoring\Longevity;
 use LWTV\Statistics\Build\Score_Distribution;
 
 /**

@@ -12,6 +12,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 use LWTV\_Components\Grading;
 use LWTV\CPTs\Shows as CPT_Shows;
+use LWTV\CPTs\Shows\Scoring\Character_Score;
+use LWTV\CPTs\Shows\Scoring\Show_Rating;
+use LWTV\CPTs\Shows\Scoring\Show_Tropes;
 use LWTV\Theme\Show_Characters;
 
 class Calculations {

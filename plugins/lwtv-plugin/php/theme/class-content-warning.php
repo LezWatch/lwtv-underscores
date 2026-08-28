@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-use LWTV\CPTs\Shows\Trigger_Warning;
+use LWTV\CPTs\Shows\Scoring\Trigger_Warning;
 
 class Content_Warning {
 

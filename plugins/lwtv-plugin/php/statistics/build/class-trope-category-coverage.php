@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-use LWTV\CPTs\Shows\Trope_Categories;
+use LWTV\CPTs\Shows\Scoring\Trope_Categories;
 
 class Trope_Category_Coverage {
 

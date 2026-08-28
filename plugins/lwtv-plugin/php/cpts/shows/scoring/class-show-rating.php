@@ -5,15 +5,10 @@
  * quality, screentime, worth-it verdict, star rating, trigger warning, and
  * the Shows We Love bonus.
  *
- * Extracted verbatim from Calculations::show_score(), which reads meta and
- * taxonomy terms directly and so cannot be unit-tested itself. This class
- * takes the already-resolved values and does only arithmetic, following the
- * same precedent as Longevity -- no WordPress calls, no globals.
- *
  * @package LWTV
  */
 
-namespace LWTV\CPTs\Shows;
+namespace LWTV\CPTs\Shows\Scoring;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;

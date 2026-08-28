@@ -7,7 +7,7 @@
 
 namespace LWTV\Tests\CPTs;
 
-use LWTV\CPTs\Shows\Show_Rating;
+use LWTV\CPTs\Shows\Scoring\Show_Rating;
 use PHPUnit\Framework\TestCase;
 
 final class ShowRatingTest extends TestCase {

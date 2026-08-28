@@ -18,7 +18,7 @@ use LWTV\Rest_API\BYQ;
 use LWTV\CPTs\Actors as CPT_Actors;
 use LWTV\CPTs\Characters as CPT_Characters;
 use LWTV\CPTs\Shows as CPT_Shows;
-use LWTV\CPTs\Shows\Airdates;
+use LWTV\CPTs\Shows\Scoring\Airdates;
 use LWTV\Statistics\Build\Dead;
 
 class What_Happened_JSON {
