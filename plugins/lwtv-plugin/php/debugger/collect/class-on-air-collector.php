@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-use LWTV\CPTs\Shows\Scoring\Airdates;
+use LWTV\CPTs\Shows\Airdates;
 use LWTV\Debugger\Build\On_Air_Rules;
 
 class On_Air_Collector {

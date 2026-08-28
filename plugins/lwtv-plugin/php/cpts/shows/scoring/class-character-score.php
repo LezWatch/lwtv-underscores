@@ -28,6 +28,7 @@
 
 namespace LWTV\CPTs\Shows\Scoring;
 
+use LWTV\CPTs\Shows\Airdates;
 use LWTV\Queeries\Is_Actor_Queer;
 use LWTV\Queeries\Is_Actor_Trans;
 

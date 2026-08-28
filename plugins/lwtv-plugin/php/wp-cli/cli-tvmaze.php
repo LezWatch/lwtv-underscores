@@ -56,7 +56,7 @@ if ( ! defined( 'ABSPATH' ) && ! defined( 'WP_CLI' ) ) {
 }
 
 use LWTV\CPTs\Shows as CPT_Shows;
-use LWTV\CPTs\Shows\Scoring\Airdates;
+use LWTV\CPTs\Shows\Airdates;
 use LWTV\CPTs\Shows\Scoring\Longevity;
 
 /**

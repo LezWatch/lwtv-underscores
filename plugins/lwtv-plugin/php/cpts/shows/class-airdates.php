@@ -12,7 +12,7 @@
  * @package LWTV
  */
 
-namespace LWTV\CPTs\Shows\Scoring;
+namespace LWTV\CPTs\Shows;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;

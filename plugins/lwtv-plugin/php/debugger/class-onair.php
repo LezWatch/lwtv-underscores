@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 use LWTV\CPTs\Shows as CPT_Shows;
-use LWTV\CPTs\Shows\Scoring\Airdates;
+use LWTV\CPTs\Shows\Airdates;
 use LWTV\Debugger\Build\On_Air_Rules;
 use LWTV\Debugger\Collect\On_Air_Collector;
 

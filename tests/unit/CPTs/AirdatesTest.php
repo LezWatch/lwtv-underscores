@@ -14,7 +14,7 @@
 namespace LWTV\Tests\CPTs;
 
 use PHPUnit\Framework\TestCase;
-use LWTV\CPTs\Shows\Scoring\Airdates;
+use LWTV\CPTs\Shows\Airdates;
 
 class AirdatesTest extends TestCase {
 
