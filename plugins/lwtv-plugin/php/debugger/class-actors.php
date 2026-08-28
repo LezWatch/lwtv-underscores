@@ -16,7 +16,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 use LWTV\_Components\Debugger as Debug_Tool;
-use LWTV\Queeries\Post_Type;
+use LWTV\CPTs\Actors as CPT_Actors;
+use LWTV\Debugger\Build\Actor_Completeness_Rules;
+use LWTV\Debugger\Build\Actor_Rules;
+use LWTV\Debugger\Build\Findings;
+use LWTV\Debugger\Build\Imdb_Rules;
+use LWTV\Debugger\Collect\Actor_Collector;
+use LWTV\Debugger\Collect\Actor_Completeness_Collector;
+use LWTV\Debugger\Collect\Imdb_Collector;
+use LWTV\Debugger\Format\Rows;
 
 class Actors {
 
@@ -54,7 +62,13 @@ class Actors {
 	 * @return void
 	 */
 	public function flag_shadow_sync_failure( int $actor_id, int $term_id ): void {
-		$items = lwtv_plugin()->get_transient( self::TRANSIENT_PROBLEMS );
+		/*
+		 * get_stored(), not get_transient(): this is a read-modify-write, and
+		 * get_transient() returns false when LWTV_DISABLE_TRANSIENTS is set. That
+		 * would land here as "no findings yet", and the append below would replace
+		 * the whole list with this one row rather than adding to it.
+		 */
+		$items = lwtv_plugin()->get_stored( self::TRANSIENT_PROBLEMS );
 		if ( ! is_array( $items ) ) {
 			$items = array();
 		}
@@ -66,15 +80,32 @@ class Actors {
 			}
 		}
 
-		$items[] = array(
-			'url'     => get_permalink( $actor_id ),
-			'id'      => $actor_id,
-			'problem' => sprintf( 'Shadow taxonomy sync failed repeatedly (term %d). Run: wp lwtv shadow actors', $term_id ),
+		// Built through the same pipeline as a scan finding so this row carries
+		// `issues` too -- otherwise a hook-appended row would look, to the CLI
+		// fixer, like a stale pre-reshape payload.
+		$items = array_merge(
+			$items,
+			Rows::from_findings(
+				array(
+					Findings::make(
+						$actor_id,
+						CPT_Actors::SLUG,
+						'actor-shadow-sync-failed',
+						sprintf( 'Shadow taxonomy sync failed repeatedly (term %d). Run: wp lwtv shadow actors', $term_id ),
+						array( 'term_id' => $term_id )
+					),
+				)
+			)
 		);
 
-		lwtv_plugin()->set_transient( self::TRANSIENT_PROBLEMS, $items, WEEK_IN_SECONDS );
+		Scan::store( self::TRANSIENT_PROBLEMS, $items );
 
-		// Update Options
+		/*
+		 * No summary, which clears any stored new/open breakdown: this row
+		 * arrived from a hook, not a scan, so the previous run's breakdown no
+		 * longer adds up. The baseline is left alone -- the next scan will find
+		 * this legitimately, or not.
+		 */
 		Status::record( 'actor_problems', 'Actors with Issues', count( $items ) );
 	}
 
@@ -85,132 +116,178 @@ class Actors {
 	 */
 	public function find_actors_problems( $items = array() ): array {
 
-		// The array we will be checking.
-		$actors = array();
+		// A recheck only revisits what was already flagged, so it may be tagged
+		// against the baseline but never diffed into it. See Scan::finish().
+		$is_recheck = ! empty( $items );
 
-		// Are we a full scan or a recheck?
-		if ( ! empty( $items ) ) {
-			// Check only the actors from items!
-			foreach ( $items as $actor_item ) {
-				if ( get_post_status( $actor_item['id'] ) !== 'draft' ) {
-					// If it's NOT a draft, we'll recheck.
-					$actors[] = $actor_item['id'];
-				}
-			}
-		} else {
-			// Get all the actors
-			$the_loop = ( new Post_Type() )->make( 'post_type_actors' );
+		$actors = Scan::post_ids( $items, CPT_Actors::SLUG );
 
-			// Add ONLY the IDs to the array.
-			if ( is_object( $the_loop ) && $the_loop->have_posts() ) {
-				$actors = wp_list_pluck( $the_loop->posts, 'ID' );
-			}
-		}
-
-		// If somehow actors is totally empty...
 		if ( empty( $actors ) ) {
 			return array();
 		}
 
-		// Make sure we don't have dupes.
-		$actors = array_unique( $actors );
+		/*
+		 * Collect, then evaluate. The rules are pure and live in
+		 * Build\Actor_Rules; the collector does the meta reads. Batched so the
+		 * meta cache is primed per batch rather than per actor.
+		 */
+		$collector = new Actor_Collector();
+		$findings  = array();
 
-		// reset items since we recheck off $actors.
-		$items = array();
-
-		foreach ( $actors as $actor_id ) {
-			$problems = array();
-			$warnings = array();
-
-			$meta  = get_post_meta( $actor_id );
-			$check = array(
-				'chars' => $meta['lezactors_char_count'][0] ?? '',
-				'birth' => $meta['lezactors_birth'][0] ?? '',
-				'death' => $meta['lezactors_death'][0] ?? '',
-				'wiki'  => $meta['lezactors_wikipedia'][0] ?? '',
-				'imdb'  => $meta['lezactors_imdb'][0] ?? '',
-				'insta' => $meta['lezactors_instagram'][0] ?? '',
-				'twits' => $meta['lezactors_twitter'][0] ?? '',
-				'home'  => $meta['lezactors_homepage'][0] ?? '',
-				'dupes' => get_post_field( 'post_name', $actor_id ),
-			);
-
-			// - Confirm there are characters listed.
-			if ( ! $check['chars'] || empty( $check['chars'] ) ) {
-				$problems[] = 'No characters listed.';
-			}
-
-			// - Warn if there is a death and no birth (nb: this may not be a good idea, some people have no DoB!)
-			if ( ! empty( $check['death'] ) ) {
-				if ( empty( $check['birth'] ) ) {
-					$warnings[] = 'Death date set without date of birth.';
-				}
-			}
-
-			// - Wikipedia links should point to Wikipedia: "https://[language].wikipedia.org/" (props Jamie)
-			if ( ! empty( $check['wiki'] ) && strpos( $check['wiki'], 'wikipedia.org/' ) === false ) {
-				$problems[] = 'Wikipedia URL does not point to Wikipedia.';
-			}
-
-			// - Instagram and Twitter usernames should follow whatever the
-			//   actual restrictions on those are (props Jamie)
-			// - If Instagram or Twitter usernames are the same format as IMDb IDs,
-			//   that's suspicious (props Jamie)
-			if ( ! empty( $check['insta'] ) ) {
-				// Limit - 30 symbols. Username must contains only letters, numbers, periods and underscores.
-				if ( Debug_Tool::sanitize_social( $check['insta'], 'instagram' ) !== $check['insta'] ) {
-					$problems[] = 'Instagram ID is invalid -- ' . esc_html( $check['insta'] );
-				} elseif ( Debug_Tool::validate_imdb( $check['insta'], 'actor' ) ) {
-					// If instagram is IMDb, then it's wrong.
-					delete_post_meta( $actor_id, 'lezactors_instagram' );
-					$problems[] = 'Instagram ID was set as IMDb and has been removed - ' . esc_html( $check['insta'] );
-				}
-			}
-			if ( ! empty( $check['twits'] ) ) {
-				if ( Debug_Tool::sanitize_social( $check['twits'], 'twitter' ) !== $check['twits'] ) {
-					$problems[] = 'Twitter ID is invalid -- ' . esc_html( $check['twits'] );
-				} elseif ( Debug_Tool::validate_imdb( $check['twits'], 'actor' ) ) {
-					// If Twitter is IMDb, then it's wrong.
-					delete_post_meta( $actor_id, 'lezactors_twitter' );
-					$problems[] = 'Twitter ID was set as IMDb and has been removed - ' . esc_html( $check['twits'] );
-				}
-			}
-
-			// - "Website" links should *not* point to Wikipedia, since that
-			// would make them Wikipedia links (props Jamie)
-			if ( ! empty( $check['home'] ) ) {
-				if ( strpos( $check['home'], 'wikipedia.org/' ) !== false ) {
-					if ( empty( $check['wiki'] ) ) {
-						// If there is no wiki set, move homepage to wiki and clear home page.
-						update_post_meta( $actor_id, 'lezactors_wikipedia', $check['home'] );
-						delete_post_meta( $actor_id, 'lezactors_homepage' );
-					} elseif ( $check['wiki'] === $check['home'] ) {
-						// If wiki === home page, delete home page.
-						delete_post_meta( $actor_id, 'lezactors_homepage' );
-					} else {
-						// record problem
-						$problems[] = 'Homepage points to Wikipedia - ' . sanitize_url( $check['home'] );
-					}
-				}
-			}
-
-			// If we added any problems, loop and add.
-			if ( ! empty( $problems ) ) {
-				$items[] = array(
-					'url'     => get_permalink( $actor_id ),
-					'id'      => $actor_id,
-					'problem' => implode( '</br>', $problems ),
-				);
+		foreach ( array_chunk( $actors, Actor_Collector::BATCH ) as $batch ) {
+			foreach ( $collector->collect( $batch ) as $actor ) {
+				$findings = array_merge( $findings, Actor_Rules::evaluate( $actor ) );
 			}
 		}
 
-		// Save Transient
-		lwtv_plugin()->set_transient( self::TRANSIENT_PROBLEMS, $items, WEEK_IN_SECONDS );
+		return Scan::finish(
+			array(
+				'scope'     => 'actor_problems',
+				'transient' => self::TRANSIENT_PROBLEMS,
+				'label'     => 'Actors with Issues',
+			),
+			$findings,
+			$is_recheck
+		);
+	}
 
-		// Update Options
-		Status::record( 'actor_problems', 'Actors with Issues', count( $items ) );
+	/**
+	 * Repair one actor's fixable data problems.
+	 *
+	 * Registered as the fixer for the `actors` check, so it runs once per finding
+	 * under `wp lwtv debug actors --fix-it`. An actor flagged only for something
+	 * with no automated repair (no characters, an invalid handle, two competing
+	 * Wikipedia URLs) returns false and is reported as unfixed.
+	 *
+	 * @param  int  $actor_id Actor post ID.
+	 * @return bool True when at least one repair was applied.
+	 */
+	public function fix_actor_data( $actor_id ): bool {
+		$actor_id = (int) $actor_id;
 
-		return $items;
+		// Deliberately not short-circuiting: an actor can need all three.
+		$insta = $this->remove_imdb_from_social( $actor_id, 'instagram' );
+		$twits = $this->remove_imdb_from_social( $actor_id, 'twitter' );
+		$home  = $this->fix_homepage_wikipedia( $actor_id );
+
+		return $insta || $twits || $home;
+	}
+
+	/**
+	 * Replace a pasted IMDb URL with the ID inside it.
+	 *
+	 * Re-extracted here rather than trusting the finding's `context`: a repair
+	 * runs some time after the scan that produced it, and the field may have been
+	 * edited since. If the value is no longer an extractable URL this does
+	 * nothing and reports as unfixed, which is correct.
+	 *
+	 * @param  int  $actor_id Actor post ID.
+	 * @return bool True when the ID was written.
+	 */
+	public function extract_imdb_from_url( int $actor_id ): bool {
+		$current   = (string) get_post_meta( $actor_id, Actor_Rules::META_IMDB, true );
+		$extracted = Imdb_Rules::id_from_url( $current, Imdb_Rules::ACTOR );
+
+		if ( '' === $extracted ) {
+			return false;
+		}
+
+		return (bool) update_post_meta( $actor_id, Actor_Rules::META_IMDB, $extracted );
+	}
+
+	/**
+	 * Registry entry point for the Instagram case.
+	 *
+	 * Every repair in Issue_Registry takes one post ID, so the two-argument
+	 * worker gets a thin wrapper per field rather than the registry carrying
+	 * bound arguments.
+	 *
+	 * @param  int  $actor_id Actor post ID.
+	 * @return bool True when the meta was deleted.
+	 */
+	public function remove_imdb_from_instagram( int $actor_id ): bool {
+		return $this->remove_imdb_from_social( $actor_id, 'instagram' );
+	}
+
+	/**
+	 * Registry entry point for the Twitter case.
+	 *
+	 * @param  int  $actor_id Actor post ID.
+	 * @return bool True when the meta was deleted.
+	 */
+	public function remove_imdb_from_twitter( int $actor_id ): bool {
+		return $this->remove_imdb_from_social( $actor_id, 'twitter' );
+	}
+
+	/**
+	 * Clear a social field that is holding an IMDb ID.
+	 *
+	 * Destructive by decision: the value is removed rather than moved into
+	 * lezactors_imdb. An IMDb ID recovered from a social field is a guess about
+	 * intent, and a wrong guess writes a wrong ID onto an actor -- worse than a
+	 * missing one, since everything downstream trusts that field. The finding
+	 * names the value before it goes, so it can be re-entered deliberately.
+	 *
+	 * @param  int    $actor_id Actor post ID.
+	 * @param  string $social   'instagram' or 'twitter'.
+	 * @return bool   True when the meta was deleted.
+	 */
+	public function remove_imdb_from_social( int $actor_id, string $social ): bool {
+		if ( ! in_array( $social, array( 'instagram', 'twitter' ), true ) ) {
+			return false;
+		}
+
+		$meta_key = 'lezactors_' . $social;
+		$value    = get_post_meta( $actor_id, $meta_key, true );
+
+		if ( empty( $value ) ) {
+			return false;
+		}
+
+		// Only touch a value that is clean for the platform and IMDb-shaped. A
+		// handle that fails sanitize_social() is a different finding with no
+		// automated repair, and must not be deleted as collateral.
+		if ( Debug_Tool::sanitize_social( $value, $social ) !== $value ) {
+			return false;
+		}
+
+		if ( ! Actor_Rules::looks_like_actor_imdb( $value ) ) {
+			return false;
+		}
+
+		return delete_post_meta( $actor_id, $meta_key );
+	}
+
+	/**
+	 * Sort out a homepage that is really a Wikipedia URL.
+	 *
+	 * Moves it into lezactors_wikipedia when that field is empty, or drops it
+	 * when it merely duplicates what is already there. Two *different* Wikipedia
+	 * URLs are left alone -- picking between them is a human's call.
+	 *
+	 * @param  int  $actor_id Actor post ID.
+	 * @return bool True when the homepage was moved or removed.
+	 */
+	public function fix_homepage_wikipedia( int $actor_id ): bool {
+		$home = get_post_meta( $actor_id, 'lezactors_homepage', true );
+
+		if ( empty( $home ) || strpos( $home, 'wikipedia.org/' ) === false ) {
+			return false;
+		}
+
+		$wiki = get_post_meta( $actor_id, 'lezactors_wikipedia', true );
+
+		if ( empty( $wiki ) ) {
+			update_post_meta( $actor_id, 'lezactors_wikipedia', $home );
+			return delete_post_meta( $actor_id, 'lezactors_homepage' );
+		}
+
+		if ( $wiki === $home ) {
+			return delete_post_meta( $actor_id, 'lezactors_homepage' );
+		}
+
+		// Two competing Wikipedia URLs -- reported, not repaired.
+		return false;
 	}
 
 	/**
@@ -220,67 +297,34 @@ class Actors {
 	 */
 	public function find_actors_incomplete( $items = array() ): array {
 
-		// The array we will be checking.
-		$actors = array();
+		// A recheck only revisits what was already flagged, so it may be tagged
+		// against the baseline but never diffed into it. See Scan::finish().
+		$is_recheck = ! empty( $items );
 
-		// Are we a full scan or a recheck?
-		if ( ! empty( $items ) ) {
-			// Check only the actors from items!
-			foreach ( $items as $actor_item ) {
-				if ( get_post_status( $actor_item['id'] ) !== 'draft' ) {
-					// If it's NOT a draft, we'll recheck.
-					$actors[] = $actor_item['id'];
-				}
-			}
-		} else {
-			// Get all the actors
-			$the_loop = ( new Post_Type() )->make( 'post_type_actors' );
+		$actors = Scan::post_ids( $items, CPT_Actors::SLUG );
 
-			// Add ONLY the IDs to the array.
-			if ( is_object( $the_loop ) && $the_loop->have_posts() ) {
-				$actors = wp_list_pluck( $the_loop->posts, 'ID' );
-			}
-		}
-
-		// If somehow actors is totally empty...
 		if ( empty( $actors ) ) {
 			return array();
 		}
 
-		// Make sure we don't have dupes.
-		$actors = array_unique( $actors );
+		$collector = new Actor_Completeness_Collector();
+		$findings  = array();
 
-		// reset items since we recheck off $actors.
-		$items = array();
-
-		foreach ( $actors as $actor_id ) {
-			$problems = array();
-
-			if ( ! has_post_thumbnail( $actor_id ) ) {
-				$problems[] = 'No image found.';
-			}
-
-			if ( empty( get_the_content( '', false, $actor_id ) ) ) {
-				$problems[] = 'No biography found.';
-			}
-
-			// If we added any problems, loop and add.
-			if ( ! empty( $problems ) ) {
-				$items[] = array(
-					'url'     => get_permalink( $actor_id ),
-					'id'      => $actor_id,
-					'problem' => implode( '</br>', $problems ),
-				);
+		foreach ( array_chunk( $actors, Actor_Completeness_Collector::BATCH ) as $batch ) {
+			foreach ( $collector->collect( $batch ) as $actor ) {
+				$findings = array_merge( $findings, Actor_Completeness_Rules::evaluate( $actor ) );
 			}
 		}
 
-		// Save Transient
-		lwtv_plugin()->set_transient( self::TRANSIENT_EMPTY, $items, WEEK_IN_SECONDS );
-
-		// Update Options
-		Status::record( 'actor_empty', 'Incomplete Actors', count( $items ) );
-
-		return $items;
+		return Scan::finish(
+			array(
+				'scope'     => 'actor_empty',
+				'transient' => self::TRANSIENT_EMPTY,
+				'label'     => 'Incomplete Actors',
+			),
+			$findings,
+			$is_recheck
+		);
 	}
 
 	/**
@@ -290,71 +334,39 @@ class Actors {
 	 */
 	public function find_actors_no_imdb( $items = array() ): array {
 
-		// The array we will be checking.
-		$actors = array();
+		// A recheck only revisits what was already flagged, so it may be tagged
+		// against the baseline but never diffed into it. See Scan::finish().
+		$is_recheck = ! empty( $items );
 
-		// Are we a full scan or a recheck?
-		if ( ! empty( $items ) ) {
-			// Check only the actors from items!
-			foreach ( $items as $actor_item ) {
-				if ( get_post_status( $actor_item['id'] ) !== 'draft' ) {
-					// If it's NOT a draft, we'll recheck.
-					$actors[] = $actor_item['id'];
-				}
-			}
-		} else {
-			// Get all the actors
-			$the_loop = ( new Post_Type() )->make( 'post_type_actors' );
+		$actors = Scan::post_ids( $items, CPT_Actors::SLUG );
 
-			// Add ONLY the IDs to the array.
-			if ( is_object( $the_loop ) && $the_loop->have_posts() ) {
-				$actors = wp_list_pluck( $the_loop->posts, 'ID' );
-			}
-		}
-
-		// If somehow actors is totally empty...
 		if ( empty( $actors ) ) {
 			return array();
 		}
 
-		// Make sure we don't have dupes.
-		$actors = array_unique( $actors );
+		/*
+		 * Collect, then evaluate. Build\Imdb_Rules serves both this check and the
+		 * show one; the oracle here is TMDB rather than TVMaze, which is the only
+		 * interesting difference.
+		 */
+		$collector = new Imdb_Collector();
+		$findings  = array();
 
-		// reset items since we recheck off $actors.
-		$items = array();
-
-		foreach ( $actors as $actor_id ) {
-
-			$problems = array();
-
-			$imdb = get_post_meta( $actor_id, 'lezactors_imdb', true );
-
-			if ( empty( $imdb ) ) {
-				// Check for IMDb existing at all...
-				$problems[] = 'IMDb ID is not set.';
-			} elseif ( Debug_Tool::validate_imdb( $imdb, 'actor' ) === false ) {
-				// - IMDb IDs should be valid for the space they're in, e.g. "nm"
-				// and digits for people (props Jamie).
-				$problems[] = 'IMDb ID is invalid (ex: nm12345) -- ' . $imdb;
-			}
-
-			// If we added any problems, loop and add.
-			if ( ! empty( $problems ) ) {
-				$items[] = array(
-					'url'     => get_permalink( $actor_id ),
-					'id'      => $actor_id,
-					'problem' => implode( '</br>', $problems ),
-				);
+		foreach ( array_chunk( $actors, Imdb_Collector::BATCH ) as $batch ) {
+			foreach ( $collector->collect( Imdb_Rules::ACTOR, $batch ) as $actor ) {
+				$findings = array_merge( $findings, Imdb_Rules::evaluate( Imdb_Rules::ACTOR, $actor ) );
 			}
 		}
 
-		// Save Transient
-		lwtv_plugin()->set_transient( self::TRANSIENT_IMDB, $items, WEEK_IN_SECONDS );
-
-		// Update Options
-		Status::record( 'actor_imdb', 'Actors without IMDb', count( $items ) );
-
-		return $items;
+		return Scan::finish(
+			array(
+				'scope'     => 'actor_imdb',
+				'transient' => self::TRANSIENT_IMDB,
+				'label'     => 'Actors without IMDb',
+			),
+			$findings,
+			$is_recheck
+		);
 	}
 
 	/**
@@ -371,39 +383,12 @@ class Actors {
 		if ( is_numeric( $actors ) && 0 !== $actors && ! is_array( $actors ) ) {
 			$actors = array( $actors );
 		} else {
-			// The array we will be checking.
-			$actors = array();
-
-			// Are we a full scan or a recheck?
-			if ( ! empty( $items ) ) {
-				// Check only the actors from items!
-				foreach ( $items as $actor_item ) {
-					if ( get_post_status( $actor_item['id'] ) !== 'draft' ) {
-						// If it's NOT a draft, we'll recheck.
-						$actors[] = $actor_item['id'];
-					} else {
-						// Delete post meta for drafts.
-						delete_post_meta( $actor_item['id'], 'debug_check' );
-					}
-				}
-			} else {
-				// Get all the actors
-				$the_loop = ( new Post_Type() )->make( 'post_type_actors' );
-
-				// Add ONLY the IDs to the array.
-				if ( is_object( $the_loop ) && $the_loop->have_posts() ) {
-					$actors = wp_list_pluck( $the_loop->posts, 'ID' );
-				}
-			}
+			$actors = Scan::post_ids( $items, CPT_Actors::SLUG );
 		}
 
-		// If somehow actors is totally empty...
 		if ( empty( $actors ) ) {
 			return array();
 		}
-
-		// Make sure we don't have dupes.
-		$actors = array_unique( $actors );
 
 		// reset items since we recheck off $actors.
 		$items = array();

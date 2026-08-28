@@ -15,7 +15,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 use LWTV\CPTs\Shows as CPT_Shows;
 use LWTV\CPTs\Shows\Airdates;
-use LWTV\Queeries\Post_Type;
+use LWTV\Debugger\Build\On_Air_Rules;
+use LWTV\Debugger\Collect\On_Air_Collector;
 
 class OnAir {
 
@@ -30,68 +31,39 @@ class OnAir {
 	 * @return array $items - array of show IDs that are not on air
 	 */
 	public function find_on_air_problems( $items = array() ): array {
-		$shows = array();
+		// A recheck only revisits what was already flagged, so it may be tagged
+		// against the baseline but never diffed into it. See Scan::finish().
+		$is_recheck = ! empty( $items );
 
-		// Are we a full scan or a recheck?
-		if ( ! empty( $items ) ) {
-			// Check only the shows from items!
-			foreach ( $items as $show_item ) {
-				if ( get_post_status( $show_item['id'] ) !== 'draft' ) {
-					// If it's NOT a draft, we'll recheck.
-					$shows[] = $show_item['id'];
-				}
-			}
-		} else {
-			$the_loop = ( new Post_Type() )->make( CPT_Shows::SLUG );
+		$shows = Scan::post_ids( $items, CPT_Shows::SLUG );
 
-			if ( is_object( $the_loop ) && $the_loop->have_posts() ) {
-				$shows = wp_list_pluck( $the_loop->posts, 'ID' );
-			}
-		}
-
-		// If somehow shows is totally empty...
 		if ( empty( $shows ) ) {
 			return array();
 		}
 
-		// Make sure we don't have dupes.
-		$shows = array_unique( $shows );
+		/*
+		 * Collect, then evaluate. Build\On_Air_Rules holds the comparison and is
+		 * pure -- it is handed the year rather than asking the clock, which is why
+		 * it can be tested.
+		 */
+		$collector = new On_Air_Collector();
+		$findings  = array();
 
-		// reset items since we recheck off $characters.
-		$items = array();
-
-		// Loop through the shows and check on-air meta versus the actual airdates
-		foreach ( $shows as $show_id ) {
-			$on_air_meta   = get_post_meta( $show_id, 'lezshows_on_air', true );
-			$on_air_actual = $this->check_if_on_air( $show_id );
-
-			if ( empty( $on_air_meta ) || empty( $on_air_actual ) ) {
-				$items[] = array(
-					'url'     => get_permalink( $show_id ),
-					'id'      => $show_id,
-					'problem' => 'Show has no on-air meta data and/or airdates.',
-				);
-				continue;
-			}
-
-			// If on-air meta doesn't match the actual on-air status, add to items.
-			// Ignore case for the meta value.
-			if ( strtolower( $on_air_meta ) !== strtolower( $on_air_actual ) ) {
-				$items[] = array(
-					'url'     => get_permalink( $show_id ),
-					'id'      => $show_id,
-					'problem' => 'On-air meta (' . $on_air_meta . ') does not match actual on-air status (' . $on_air_actual . ').',
-				);
+		foreach ( array_chunk( $shows, On_Air_Collector::BATCH ) as $batch ) {
+			foreach ( $collector->collect( $batch ) as $show ) {
+				$findings = array_merge( $findings, On_Air_Rules::evaluate( $show ) );
 			}
 		}
 
-		// Save Transient
-		lwtv_plugin()->set_transient( self::TRANSIENT_PROBLEMS, $items, WEEK_IN_SECONDS );
-
-		// Update Options
-		Status::record( 'onair_problems', 'On Air Checker', count( $items ) );
-
-		return $items;
+		return Scan::finish(
+			array(
+				'scope'     => 'onair_problems',
+				'transient' => self::TRANSIENT_PROBLEMS,
+				'label'     => 'On Air Checker',
+			),
+			$findings,
+			$is_recheck
+		);
 	}
 
 	/**
@@ -101,21 +73,9 @@ class OnAir {
 	 * @return string 'yes' when currently airing, otherwise 'no'.
 	 */
 	public function check_if_on_air( $show_id ) {
-		$year     = (int) gmdate( 'Y' );
-		$airdates = Airdates::get( (int) $show_id );
-		$start    = $airdates['start'];
-		$finish   = $airdates['finish'];
-
-		if ( '' === $start || '' === $finish ) {
-			return 'no';
-		}
-
-		// 'current' means the show is still airing, so there's nothing to compare.
-		if ( Airdates::is_still_airing( $finish ) ) {
-			return 'yes';
-		}
-
-		return ( (int) $start <= $year && (int) $finish >= $year ) ? 'yes' : 'no';
+		// The reading is here; the deciding is in Build\On_Air_Rules, so the repair
+		// below and the scan above cannot drift apart on what "on air" means.
+		return On_Air_Rules::should_be_on_air( Airdates::get( (int) $show_id ), (int) gmdate( 'Y' ) );
 	}
 
 	/**

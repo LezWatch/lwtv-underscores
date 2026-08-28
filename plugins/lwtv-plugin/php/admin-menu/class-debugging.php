@@ -17,6 +17,16 @@ class Debugging {
 
 	/**
 	 * Valid log topics that can be enabled/disabled.
+	 *
+	 * This is the vocabulary, and it is load-bearing in two directions:
+	 * Plugins\Acf populates the `log_topics` checkbox from it, and
+	 * Build\Log_Rules refuses to write a topic that is not in it. A topic
+	 * missing from this list therefore cannot be logged at all -- which is why
+	 * `imdb-verify` and `show-score` were added on 2026-08-27. Both were already
+	 * being logged by live code and neither was declared, so under the old
+	 * fail-open rule they wrote unconditionally and could never be switched off.
+	 *
+	 * Add the topic here first, then log it.
 	 */
 	public const VALID_LOG_TOPICS = array(
 		'actors',
@@ -27,11 +37,13 @@ class Debugging {
 		'calculations',
 		'calendar',
 		'death',
+		'imdb-verify',
 		'is-queer',
 		'missed-schedule',
 		'postiz',
 		'scheduler',
 		'shadow-taxonomy',
+		'show-score',
 		'shows',
 		'statistics',
 		'taxsync',
@@ -76,39 +88,5 @@ class Debugging {
 				'post_id'     => 'option',
 			)
 		);
-	}
-
-	/**
-	 * Check if debug mode is enabled.
-	 *
-	 * @return bool
-	 */
-	public function is_debug_mode_enabled(): bool {
-		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-			return true;
-		}
-		if ( ! function_exists( 'get_field' ) ) {
-			return false;
-		}
-		return (bool) get_field( 'debug_mode', 'option' );
-	}
-
-	/**
-	 * Get the enabled log topics.
-	 *
-	 * @return array
-	 */
-	public function get_enabled_topics(): array {
-		if ( ! function_exists( 'get_field' ) ) {
-			return self::VALID_LOG_TOPICS;
-		}
-		$topics = get_field( 'log_topics', 'option' );
-		$topics = is_array( $topics ) ? $topics : array();
-
-		if ( empty( $topics ) ) {
-			return self::VALID_LOG_TOPICS;
-		}
-
-		return array_intersect( $topics, self::VALID_LOG_TOPICS );
 	}
 }

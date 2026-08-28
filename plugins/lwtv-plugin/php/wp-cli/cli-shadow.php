@@ -112,13 +112,7 @@ class WP_CLI_LWTV_Shadow {
 		if ( $post_id ) {
 			$posts_array = array( $post_id );
 		} else {
-			$posts_queery = ( new Post_Type() )->make( 'post_type_characters' );
-
-			if ( ! is_object( $posts_queery ) || ! $posts_queery->have_posts() ) {
-				\WP_CLI::error( 'There are no posts in that post type.' );
-			} else {
-				$posts_array = wp_list_pluck( $posts_queery->posts, 'ID' );
-			}
+			$posts_array = ( new Post_Type() )->get_ids( 'post_type_characters' );
 		}
 
 		if ( ! is_array( $posts_array ) || empty( $posts_array ) ) {

@@ -18,9 +18,19 @@ use LWTV\Rest_API\BYQ;
 use LWTV\CPTs\Actors as CPT_Actors;
 use LWTV\CPTs\Characters as CPT_Characters;
 use LWTV\CPTs\Shows as CPT_Shows;
+use LWTV\CPTs\Shows\Airdates;
 use LWTV\Statistics\Build\Dead;
 
 class What_Happened_JSON {
+
+	/**
+	 * How many shows to prime the meta cache for at a time.
+	 *
+	 * Matches the debugger collectors. Large enough that the per-batch query
+	 * count is negligible, small enough that the primed cache does not hold
+	 * every show's meta at once.
+	 */
+	const META_BATCH = 200;
 
 	/**
 	 * Constructor
@@ -248,11 +258,11 @@ class What_Happened_JSON {
 	}
 
 	/**
-	 * count_shows function.
+	 * Count shows airing, starting, and ending in a given year.
 	 *
-	 * @access public
-	 * @static
-	 * @return void
+	 * @param string|false $thisyear Four-digit year, or false for the current one.
+	 *
+	 * @return array{current: int, ended: int, started: int}
 	 */
 	public function count_shows( $thisyear = false ) {
 
@@ -262,33 +272,46 @@ class What_Happened_JSON {
 		$dt->setTimestamp( $timestamp ); //adjust the object to correct timestamp
 
 		$thisyear        = ( ! $thisyear ) ? $dt->format( 'Y' ) : $thisyear;
-		$shows_queery    = ( new Post_Type() )->make( CPT_Shows::SLUG );
 		$shows_this_year = array(
 			'current' => 0,
 			'ended'   => 0,
 			'started' => 0,
 		);
 
-		if ( ! is_object( $shows_queery ) || ! $shows_queery->have_posts() ) {
+		/*
+		 * IDs, not post objects. This loop reads nothing off the post -- only
+		 * airdate meta -- so hydrating every published show, and serialising the
+		 * whole WP_Query into a transient, paid for data it never touched.
+		 * See DEBUGGER-REVIEW.md 2.1.
+		 */
+		$show_ids = ( new Post_Type() )->get_ids( CPT_Shows::SLUG );
+
+		if ( empty( $show_ids ) ) {
 			return $shows_this_year;
 		}
 
-		while ( $shows_queery->have_posts() ) {
-			$shows_queery->the_post();
+		foreach ( array_chunk( $show_ids, self::META_BATCH ) as $batch ) {
+			/*
+			 * One meta query per batch rather than two or three per show. Both
+			 * get_ids() and make() set update_post_meta_cache => false, so the
+			 * old loop's get_post_meta() calls each went to the database.
+			 */
+			update_postmeta_cache( $batch );
 
-			$show_id = get_the_ID();
+			foreach ( $batch as $show_id ) {
+				// Airdates::get() is the canonical reader, legacy fallback and all.
+				// This method used to carry its own third copy of that logic.
+				$airdates  = Airdates::get( (int) $show_id );
+				$ad_start  = $airdates['start'];
+				$ad_finish = $airdates['finish'];
 
-			// Shows Currently Airing
-			$ad_start  = get_post_meta( $show_id, 'lezshows_airdates_start', true );
-			$ad_finish = get_post_meta( $show_id, 'lezshows_airdates_finish', true );
-			if ( empty( $ad_start ) || empty( $ad_finish ) ) {
-				$legacy    = get_post_meta( $show_id, 'lezshows_airdates', true );
-				$ad_start  = $ad_start ?: ( is_array( $legacy ) ? ( $legacy['start'] ?? '' ) : '' );
-				$ad_finish = $ad_finish ?: ( is_array( $legacy ) ? ( $legacy['finish'] ?? '' ) : '' );
-			}
-			if ( ! empty( $ad_start ) && ! empty( $ad_finish ) ) {
+				if ( '' === $ad_start || '' === $ad_finish ) {
+					continue;
+				}
+
+				// Shows Currently Airing
 				if (
-					( 'current' === $ad_finish && $thisyear === $dt->format( 'Y' ) )
+					( Airdates::is_still_airing( $ad_finish ) && $thisyear === $dt->format( 'Y' ) )
 					|| ( $ad_finish >= $thisyear && $ad_start <= $thisyear ) // Airdates between
 				) {
 					// Currently Airing Shows shows for the current year only

@@ -1032,6 +1032,79 @@
             "ui": 1
         },
         {
+            "key": "field_6a8f5125178e4",
+            "label": "No Known Characters",
+            "name": "lezshows_no_chars",
+            "aria-label": "",
+            "type": "true_false",
+            "instructions": "If we know the show has no characters, toggle this.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "message": "No known characters for this show",
+            "default_value": 0,
+            "allow_in_bindings": 1,
+            "ui_on_text": "",
+            "ui_off_text": "",
+            "ui": 1
+        },
+        {
+            "key": "field_lwtv_lezshows_tvmaze_ignore",
+            "label": "Ignore TVMaze Match",
+            "name": "lezshows_tvmaze_ignore",
+            "aria-label": "",
+            "type": "true_false",
+            "instructions": "Turn this on when this show legitimately has no TVMaze entry of its own, or when the automatic match is wrong. It stops the show being reported as an unmatched problem. Example: Criminal Minds: Evolution lives on TVMaze's parent Criminal Minds entry, so it will never match on its own IMDb ID.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "message": "Ignore TVMaze match",
+            "default_value": 0,
+            "allow_in_bindings": 1,
+            "ui_on_text": "Yes",
+            "ui_off_text": "No",
+            "ui": 1
+        },
+        {
+            "key": "field_lwtv_lezshows_tvmaze_id_manual",
+            "label": "TVMaze ID (manual)",
+            "name": "lezshows_tvmaze_id_manual",
+            "aria-label": "",
+            "type": "number",
+            "instructions": "Optional. TVMaze's numeric show ID, from the URL: tvmaze.com\/shows\/<strong>48830<\/strong>\/only-murders-in-the-building. Set this when you know the right entry but an automatic lookup cannot find it. Authoritative \u2014 nothing overwrites it. Leave blank to simply acknowledge that no TVMaze entry exists.",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_lwtv_lezshows_tvmaze_ignore",
+                        "operator": "==",
+                        "value": "1"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "min": 1,
+            "max": "",
+            "step": 1,
+            "placeholder": 48830,
+            "prepend": "",
+            "append": "",
+            "allow_in_bindings": 0
+        },
+        {
             "key": "field_lwtv_lezshows_byq_override",
             "label": "BYQ Override",
             "name": "lezshows_byq_override",
@@ -1074,5 +1147,5 @@
     "display_title": "Basic Details",
     "allow_ai_access": false,
     "ai_description": "",
-    "modified": 1781807618
+    "modified": 1787777462
 }

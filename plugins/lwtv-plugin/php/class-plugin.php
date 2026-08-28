@@ -18,25 +18,28 @@ use LWTV\_Helpers\Utils;
  * Class Plugin
  *
  * All methods listed below may be called via lwtv_plugin()->METHOD()
- * i.e. lwtv_plugin()->display_scores( $post_id );
+ * i.e. lwtv_plugin()->display_scores( $scores );
  *
  * CPTs
- * @method array  get_cpt_related_posts( $show_id )                     \_Components\CPTs
- * @method string get_related_archive_header( $tag_id )                 \_Components\CPTs
- * @method array  get_shows_like_this_show( $show_id )                  \_Components\CPTs
- * @method bool   has_cpt_related_posts( $show_id )                     \_Components\CPTs
- * @method void   hide_actor_data( $post_id )                           \_Components\CPTs
- * @method string the_actor_privacy_warning( $post_id )                 \_Components\CPTs
+ * @method array  get_cpt_related_posts( $slug, $max_posts = 3, $type = '' ) \_Components\CPTs
+ * @method string get_related_archive_header( $tag_id )                      \_Components\CPTs
+ * @method array  get_shows_like_this_show( $post_id )                       \_Components\CPTs
+ * @method bool   has_cpt_related_posts( $slug )                             \_Components\CPTs
+ * @method void   hide_actor_data( $post_id, $type )                         \_Components\CPTs
+ * @method bool   maybe_has_new_characters( $post_id )                       \_Components\CPTs
+ * @method void   maybe_show_actor_note( $post_id, $return_echo = true )     \_Components\CPTs
+ * @method string the_actor_privacy_warning( $post_id, $return_echo = true ) \_Components\CPTs
  *
  * DEBUGGER
- * @method bool   is_dev_site()                \_Components\Debugger
- * @method bool   is_debug_mode()              \_Components\Debugger
- * @method void   error_log( $type, $message ) \_Components\Debugger
- * @method void   debug_log( $type, $message ) \_Components\Debugger
+ * @method bool   is_dev_site()                               \_Components\Debugger
+ * @method bool   is_debug_mode()                             \_Components\Debugger
+ * @method bool   is_topic_enabled( string $topic )           \_Components\Debugger
+ * @method void   error_log( $type = 'debug', $message = '' ) \_Components\Debugger
+ * @method void   debug_log( $type = 'debug', $message = '' ) \_Components\Debugger
  *
  * GRADING
- * @method string display_scores( $show_id )        \_Components\Grading
- * @method array  get_all_scores( $show_id )        \_Components\Grading
+ * @method string display_scores( $scores )  \_Components\Grading
+ * @method array  get_all_scores( $show_id ) \_Components\Grading
  *
  * OTD
  * @method string get_wp_version()         \_Components\Of_The_Day
@@ -44,40 +47,48 @@ use LWTV\_Helpers\Utils;
  * @method string get_rss_otd_feed()       \_Components\Of_The_Day
  *
  * PLUGINS
- * @method array  post_meta_sharing()                 \_Components\Plugins
+ * @method array  post_meta_sharing( $post_id = 0 ) \_Components\Plugins
  *
  * QUEERY / LOOPS
- * @method bool   is_actor_queer( $the_id )           \_Components\Queeries
+ * @method bool   is_actor_queer( $the_id ) \_Components\Queeries
  *
  * REST API
- * @method array  get_whats_on_show( $show )                        \_Components\Rest_API
+ * @method array  get_whats_on_show( $show ) \_Components\Rest_API
  *
  * SCHEDULER
- * @method bool   schedule_task( string $task_type, int $post_id, int $delay = 30 ) \_Components\Scheduler
- * @method void   cache_queue( int $post_id )                                       \_Components\Scheduler
- * @method bool   queue_cache_batch( int $post_id )                                 \_Components\Scheduler
- * @method array  get_cache_batch_status()                                          \_Components\Scheduler
- * @method bool   is_action_scheduler_available()                                   \_Components\Scheduler
- * @method array  get_scheduler_status()                                            \_Components\Scheduler
+ * @method bool   schedule_task( string $task_type, int $post_id, int $priority = 0, int $delay = 30, string $group = 'lwtv', bool $unique = true ) \_Components\Scheduler
+ * @method void   cache_queue( int $post_id )       \_Components\Scheduler
+ * @method bool   queue_cache_batch( int $post_id ) \_Components\Scheduler
+ * @method array  get_cache_batch_status()          \_Components\Scheduler
+ * @method bool   is_action_scheduler_available()   \_Components\Scheduler
+ * @method array  get_scheduler_status()            \_Components\Scheduler
+ * @method array  get_tmdb_batch_status()           \_Components\Scheduler
+ * @method bool   queue_tmdb_batch( int $post_id )  \_Components\Scheduler
+ * @method array  get_imdb_verify_status()          \_Components\Scheduler
+ * @method bool   queue_imdb_verify( int $post_id ) \_Components\Scheduler
  *
  * STATISTICS OPTIMIZED
- * @method array  generate_shows_count( $type, $tax, $term )                                              \_Components\Statistics
- * @method string generate_stats_block( $attributes )                                                     \_Components\Statistics
- * @method mixed  generate_nation_statistics( $nation, $view, $format )     \_Components\Statistics
- * @method mixed  generate_station_statistics( $station, $view, $format )   \_Components\Statistics
- * @method mixed  generate_statistics( $subject, $data, $format, $post_id, $custom_array )                \_Components\Statistics
- * @method mixed  generate_total_counts( [shows|characters|actors] )                                      \_Components\Statistics
- * @method mixed  generate_total_dead( [characters] )                                                     \_Components\Statistics
- * @method mixed  generate_dead_statistics( $subject, $view, $format )                                    \_Components\Statistics
- * @method array  generate_growth_series( $subject )                                                      \_Components\Statistics
+ * @method array  generate_shows_count( $type, $tax, $term )                                \_Components\Statistics
+ * @method string generate_stats_block( $attributes )                                       \_Components\Statistics
+ * @method mixed  generate_nation_statistics( $nation, $view = 'all', $format = 'array' )   \_Components\Statistics
+ * @method mixed  generate_station_statistics( $station, $view = 'all', $format = 'array' ) \_Components\Statistics
+ * @method mixed  generate_statistics( $subject, $data, $format, $post_id, $custom_array )  \_Components\Statistics
+ * @method mixed  generate_total_counts( $subject, $death = false )                         \_Components\Statistics
+ * @method mixed  generate_total_dead( $subject )                                           \_Components\Statistics
+ * @method mixed  generate_dead_statistics( $subject, $view, $format )                      \_Components\Statistics
+ * @method array  generate_growth_series( $subject )                                        \_Components\Statistics
+ * @method mixed  generate_shows_statistics( $format = 'list', $type = 'formats' )          \_Components\Statistics
+ * @method mixed  generate_characters_statistics( $format = 'list', $type = 'gender' )      \_Components\Statistics
+ * @method mixed  generate_actors_statistics( $format = 'list', $type = 'gender' )          \_Components\Statistics
+ * @method mixed  generate_individual_actors( $actor_id, $format = 'array', $type = 'roles' ) \_Components\Statistics
  *
  * SYMBOLICONS
- * @method string get_icon_svg( string $slug )   \_Components\Symbolicons
- * @method string get_symbolicon( string $slug ) \_Components\Symbolicons
+ * @method string get_icon_svg( $base64 = true, $icon_color = false ) \_Components\Symbolicons
+ * @method string get_symbolicon( $svg = 'square.svg', $icon = 'svg-square', $svg_class = 'symbolicon', $max_size = '32' ) \_Components\Symbolicons
  *
  * THEME
  * @method string get_actor_age( $actor_id )                                \_Components\Theme
- * @method string get_actor_birthday( $actor_id )                           \_Components\Theme
+ * @method string get_actor_birthday( $the_id )                             \_Components\Theme
  * @method mixed  get_actor_characters( $actor_id )                         \_Components\Theme
  * @method array  get_actor_data( $actor_id, $data )                        \_Components\Theme
  * @method string get_actor_dead( $actor_id )                               \_Components\Theme
@@ -85,33 +96,36 @@ use LWTV\_Helpers\Utils;
  * @method string get_actor_pronouns( $actor_id )                           \_Components\Theme
  * @method string get_actor_sexuality( $actor_id )                          \_Components\Theme
  * @method void   get_admin_tools( $post_id )                               \_Components\Theme
- * @method string get_author_social( $author_id )                           \_Components\Theme
- * @method string get_author_favorite_shows( $author_id )                   \_Components\Theme
- * @method array  get_character_data( $character_id, $data )                \_Components\Theme
+ * @method string get_author_social( $author )                              \_Components\Theme
+ * @method string get_author_favorite_shows( $author )                      \_Components\Theme
+ * @method array  get_character_data( $character_id, $format )              \_Components\Theme
  * @method mixed  get_characters_list( $post_id, $format )                  \_Components\Theme
- * @method string get_chars_for_show( $show_id )                            \_Components\Theme
- * @method string get_chars_relationships( $post_id, $format )              \_Components\Theme
+ * @method string get_chars_for_show( $show_id, $role )                     \_Components\Theme
+ * @method string get_chars_relationships( $char_id )                       \_Components\Theme
  * @method string get_last_updated( $post_id )                              \_Components\Theme
- * @method string get_last_death( $post_id )                                \_Components\Theme
+ * @method string get_last_death()                                          \_Components\Theme
  * @method string get_show_content_warning( $show_id )                      \_Components\Theme
  * @method string get_microformats_fix( $post_id )                          \_Components\Theme
  * @method string get_post_types_by_taxonomy( $tax )                        \_Components\Theme
- * @method string get_show_stars( $show_id )                                \_Components\Theme
+ * @method string get_show_stars( $show_id, $size = 50 )                    \_Components\Theme
  * @method string get_stats_symbolicon( $stat_type )                        \_Components\Theme
  * @method array  get_tax_archive_title( $location, $post_type, $taxonomy ) \_Components\Theme
  * @method string get_tvmaze_episodes( $show_id )                           \_Components\Theme
  * @method string get_ways_to_watch( $show_id )                             \_Components\Theme
- * @method bool   is_actor_birthday( $actor_id )                            \_Components\Theme
+ * @method bool   is_actor_birthday( $the_id )                              \_Components\Theme
  * @method array  get_random_loved_shows_ids( $count )                      \_Components\Theme
  *
  * THIS YEAR
  * @method string get_this_year_display( $year ) \_Components\This_Year
  *
  * TRANSIENTS
- * @method string get_transient( string $slug )                          \_Components\Transients
- * @method void   set_transient( string $slug, $value, int $expiration ) \_Components\Transients
- * @method void   delete_transient( string $slug )                       \_Components\Transients
- * @method ?int   get_this_year_generated_time( int $year )              \_Components\Transients
+ * @method string get_transient( string $slug )                                         \_Components\Transients
+ * @method void   set_transient( string $slug, $value, int $expiration )                \_Components\Transients
+ * @method void   delete_transient( string $slug )                                      \_Components\Transients
+ * @method ?int   get_this_year_generated_time( int $year )                             \_Components\Transients
+ * @method void   invalidate_statistics_cache( string $content_type, int $post_id = 0 ) \_Components\Transients
+ * @method array  get_cache_dependencies()                                              \_Components\Transients
+ * @method array  get_cache_statistics()                                                \_Components\Transients
  *
  */
 

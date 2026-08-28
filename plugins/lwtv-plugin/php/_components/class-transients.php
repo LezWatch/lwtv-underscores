@@ -101,6 +101,7 @@ class Transients implements Component, Templater {
 		return array(
 			'delete_transient'             => array( $this, 'delete_transient' ),
 			'get_transient'                => array( $this, 'get_transient' ),
+			'get_stored'                   => array( $this, 'get_stored' ),
 			'set_transient'                => array( $this, 'set_transient' ),
 			'invalidate_statistics_cache'  => array( $this, 'invalidate_statistics_cache' ),
 			'get_cache_dependencies'       => array( $this, 'get_cache_dependencies' ),
@@ -114,6 +115,13 @@ class Transients implements Component, Templater {
 	 *
 	 * A wrapper to default to false if you're developing.
 	 *
+	 * Use this for a **cache**: something derived, that can always be recomputed,
+	 * where a stale copy getting in the way during development is the problem the
+	 * flag exists to solve. Statistics are the case it was written for.
+	 *
+	 * Do not use it for a **store** -- data with no cheaper source to fall back
+	 * to. See get_stored().
+	 *
 	 * @param  string      $transient The Transient name
 	 * @return string|bool            Transient value (or false)
 	 */
@@ -126,9 +134,39 @@ class Transients implements Component, Templater {
 	}
 
 	/**
+	 * Get a transient that is a store rather than a cache.
+	 *
+	 * Reads regardless of LWTV_DISABLE_TRANSIENTS, because for some payloads the
+	 * transient is the only copy and "pretend it isn't there" is not a safe
+	 * default.
+	 *
+	 * The debugger's findings are the case. A check's results are not derived from
+	 * anything cheaper -- `Watch_URLs` costs a hundred-odd HTTP requests -- so a
+	 * read that always fails does not mean "recompute", it means the report is
+	 * permanently empty and the tab picker is permanently unbadged. That is what
+	 * a development environment looked like: every check reported as never run
+	 * while the site knew exactly what each had last found.
+	 *
+	 * The distinction is deliberately in the method name rather than in a flag on
+	 * get_transient(), so a caller has to decide which of the two it is holding.
+	 *
+	 * @param  string $transient The transient name.
+	 * @return mixed             Stored value, or false when genuinely absent.
+	 */
+	public static function get_stored( $transient ) {
+		return get_transient( $transient );
+	}
+
+	/**
 	 * Set Transient
 	 *
-	 * A wrapper to default to false if you're developing.
+	 * Writes even when LWTV_DISABLE_TRANSIENTS is set, and that asymmetry with
+	 * get_transient() is deliberate rather than an oversight.
+	 *
+	 * Two reasons to keep writing. A development database stays production-shaped,
+	 * so `wp transient get` shows what the site would be serving; and turning the
+	 * flag off gives a warm cache rather than a cold one. The flag means "do not
+	 * let a cached value hide fresh data from me", not "do not keep records".
 	 *
 	 * @param  string      $transient The Transient name
 	 * @return void

@@ -244,6 +244,10 @@ class Actors {
 		// Queue TMDB ID generation for batch processing
 		lwtv_plugin()->queue_tmdb_batch( $post_id );
 
+		// Queue an IMDb staleness check. No HTTP here -- this only marks the post
+		// as needing verification; Action Scheduler does the asking.
+		lwtv_plugin()->queue_imdb_verify( $post_id );
+
 		// Schedule calculations for later processing
 		lwtv_plugin()->schedule_task( 'calculation', $post_id );
 

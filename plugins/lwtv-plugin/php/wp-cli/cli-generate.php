@@ -12,8 +12,10 @@ use LWTV\Debugger\Characters as Characters_Debugger;
 use LWTV\Debugger\Shows as Shows_Debugger;
 use LWTV\Debugger\Dupes as Dupes_Debugger;
 use LWTV\Debugger\Queers as Queers_Debugger;
+use LWTV\Debugger\Watch_Host_Collisions;
 use LWTV\Debugger\OnAir as OnAir_Debugger;
 use LWTV\Debugger\Watch_URLs as Watch_URLs_Debugger;
+use LWTV\Debugger\Log;
 use LWTV\Features\Missed_Schedule;
 use LWTV\Rest_API\BYQ;
 use LWTV\CPTs\Shows as CPT_Shows;
@@ -209,6 +211,19 @@ class WP_CLI_LWTV_Generate {
 		\WP_CLI::log( 'Downloading the TV Maze ICS.' );
 		$this->run_tvmaze();
 
+		/*
+		 * Rotate the debug log before the day's check adds to it.
+		 *
+		 * Size-based, not daily: a 4KB log rotated every night just buries the
+		 * useful history under a pile of near-empty files. Log::append() has its
+		 * own mid-request backstop at a higher threshold for runaway loops
+		 * between cron runs. See DEBUGGER-REVIEW.md 6.
+		 */
+		$rotated = Log::rotate();
+		if ( '' !== $rotated ) {
+			\WP_CLI::log( sprintf( 'Rotated the debug log to %s.', basename( $rotated ) ) );
+		}
+
 		// Run the debug of the day:
 		$day = gmdate( 'D' );
 		\WP_CLI::log( sprintf( 'Running the debug checker. Day: %s ...', $day ) );
@@ -244,12 +259,46 @@ class WP_CLI_LWTV_Generate {
 				( new Dupes_Debugger() )->find_duplicates();
 				\WP_CLI::log( 'Debugger: Checking on air status...' );
 				( new OnAir_Debugger() )->find_on_air_problems();
+
+				/*
+				 * Give any newly-seen watch provider host a real display name.
+				 *
+				 * Wednesday because its other two checks are plain SQL, and
+				 * because Sunday's time budget belongs to find_bad_watch_urls().
+				 * Keeping the only two HTTP jobs on separate days means a cron
+				 * timeout still tells you which one caused it.
+				 *
+				 * Safe to repeat weekly: enrich skips hosts that already have a
+				 * term and hosts it has already asked about, so once the backlog
+				 * is named a run does nothing at all. The default --limit of 25
+				 * means the initial backlog is worked through over several weeks
+				 * rather than in one long run. Unreachable hosts are deliberately
+				 * not recorded, so a blip retries next Wednesday instead of
+				 * becoming permanent.
+				 *
+				 * Routed through __invoke() rather than the private run_enrich()
+				 * so cron takes exactly the path a human does.
+				 */
+				\WP_CLI::log( 'Ways to Watch: Naming any new provider hosts...' );
+				( new \WP_CLI_LWTV_WaysToWatch() )->__invoke( array( 'enrich' ), array() );
+
+				/*
+				 * Two queries, no requests, so it rides along with the day's
+				 * other plain-SQL checks. Should find nothing almost always --
+				 * it exists to notice the day someone points a second provider
+				 * term at a host that already has one, which host matching has
+				 * to resolve by name order.
+				 */
+				\WP_CLI::log( 'Debugger: Checking for contested watch hosts...' );
+				( new Watch_Host_Collisions() )->find_host_collisions();
 				break;
 			case 'thu':
 				\WP_CLI::log( 'Debugger: Checking all actors...' );
 				( new Actors_Debugger() )->find_actors_problems();
 				\WP_CLI::log( 'Debugger: Checking actors for iMDB...' );
 				( new Actors_Debugger() )->find_actors_no_imdb();
+				\WP_CLI::log( 'Debugger: Checking actors for photos and bios...' );
+				( new Actors_Debugger() )->find_actors_incomplete();
 				break;
 			case 'fri':
 				\WP_CLI::log( 'Debugger: Checking all characters...' );

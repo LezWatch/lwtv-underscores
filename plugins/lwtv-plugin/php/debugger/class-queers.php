@@ -9,8 +9,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-use LWTV\Queeries\Is_Actor_Queer;
-use LWTV\Queeries\Post_Type;
+use LWTV\Debugger\Build\Queer_Rules;
+use LWTV\Debugger\Collect\Queer_Collector;
 use LWTV\CPTs\Characters as CPT_Characters;
 
 class Queers {
@@ -28,87 +28,37 @@ class Queers {
 	 */
 	public function find_queer_chars( $items = array() ) {
 
-		// The array we will be checking.
-		$characters = array();
+		// A recheck only revisits what was already flagged, so it may be tagged
+		// against the baseline but never diffed into it. See Scan::finish().
+		$is_recheck = ! empty( $items );
 
-		// Are we a full scan or a recheck?
-		if ( ! empty( $items ) ) {
-			// Check only the characters from items!
-			foreach ( $items as $character_item ) {
-				if ( get_post_status( $character_item['id'] ) !== 'draft' ) {
-					// If it's NOT a draft, we'll recheck.
-					$characters[] = $character_item['id'];
-				}
-			}
-		} else {
-			// Get all the characters
-			$the_loop = ( new Post_Type() )->make( CPT_Characters::SLUG );
+		$characters = Scan::post_ids( $items, CPT_Characters::SLUG );
 
-			if ( is_object( $the_loop ) && $the_loop->have_posts() ) {
-				$characters = wp_list_pluck( $the_loop->posts, 'ID' );
-			}
-		}
-
-		// If somehow characters is totally empty...
 		if ( empty( $characters ) ) {
-			return false;
+			return array();
 		}
 
-		// Make sure we don't have dupes.
-		$characters = array_unique( $characters );
-
-		// reset items since we recheck off $characters.
-		$items = array();
+		/*
+		 * Collect, then evaluate. Build\Queer_Rules holds the comparison; the
+		 * collector resolves each actor's is-queer verdict once per batch, since
+		 * the same actors recur across characters.
+		 */
+		$collector = new Queer_Collector();
+		$findings  = array();
 
 		// If this is WP-CLI, setup progress bar.
 		if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			$progress_bar = \WP_CLI\Utils\make_progress_bar( sprintf( 'Starting queer checker. Found %d characters...', count( $characters ) ), count( $characters ) );
 		}
 
-		foreach ( $characters as $character ) {
-
-			// If this is WP-CLI, tick progress bar.
-			if ( defined( 'WP_CLI' ) && WP_CLI ) {
-				$progress_bar->tick();
-			}
-
-			$problems = array();
-
-			// Get the actors...
-			$character_actors = get_field( 'lezchars_actor', $character ) ?: array();
-
-			if ( ! empty( $character_actors ) && is_array( $character_actors ) ) {
-				// Get the defaults
-				$flagged_queer = ( has_term( 'queer-irl', 'lez_cliches', $character ) ) ? true : false;
-				$actor_queer   = false;
-
-				// If ANY actor is flagged as queer, we're queer.
-				foreach ( $character_actors as $actor ) {
-					$actor_queer = ( new Is_Actor_Queer() )->make( $actor );
-
-					// If queer, we're done!
-					if ( $actor_queer ) {
-						break;
-					}
+		foreach ( array_chunk( $characters, Queer_Collector::BATCH ) as $batch ) {
+			foreach ( $collector->collect( $batch ) as $character ) {
+				// If this is WP-CLI, tick progress bar.
+				if ( defined( 'WP_CLI' ) && WP_CLI ) {
+					$progress_bar->tick();
 				}
 
-				if ( $actor_queer && ! $flagged_queer ) {
-					$problems[] = 'Missing Queer IRL tag';
-				}
-
-				if ( ! $actor_queer && $flagged_queer ) {
-					$problems[] = 'No actor is queer';
-				}
-			} else {
-				$problems[] = 'No actors listed for this character';
-			}
-
-			if ( ! empty( $problems ) ) {
-				$items[] = array(
-					'url'     => get_permalink( $character ),
-					'id'      => $character,
-					'problem' => implode( '</br>', $problems ),
-				);
+				$findings = array_merge( $findings, Queer_Rules::evaluate( $character ) );
 			}
 		}
 
@@ -117,12 +67,14 @@ class Queers {
 			$progress_bar->finish();
 		}
 
-		// Save Transient
-		lwtv_plugin()->set_transient( self::TRANSIENT_QUEERCHECK, $items, WEEK_IN_SECONDS );
-
-		// Update Options
-		Status::record( 'queercheck', 'Queer Checker', count( $items ) );
-
-		return $items;
+		return Scan::finish(
+			array(
+				'scope'     => 'queercheck',
+				'transient' => self::TRANSIENT_QUEERCHECK,
+				'label'     => 'Queer Checker',
+			),
+			$findings,
+			$is_recheck
+		);
 	}
 }
