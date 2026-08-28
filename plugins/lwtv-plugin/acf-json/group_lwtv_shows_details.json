@@ -1079,7 +1079,7 @@
             "name": "lezshows_tvmaze_id_manual",
             "aria-label": "",
             "type": "number",
-            "instructions": "Optional. TVMaze's numeric show ID, from the URL: tvmaze.com\/shows\/<strong>48830<\/strong>\/only-murders-in-the-building. Set this when you know the right entry but an automatic lookup cannot find it. Authoritative u2014 nothing overwrites it. Leave blank to simply acknowledge that no TVMaze entry exists.",
+            "instructions": "Optional. TVMaze's numeric show ID, from the URL: tvmaze.com\/shows\/<strong>48830<\/strong>\/only-murders-in-the-building. Set this when you know the right entry but an automatic lookup cannot find it. Authoritative \u2014 nothing overwrites it. Leave blank to simply acknowledge that no TVMaze entry exists.",
             "required": 0,
             "conditional_logic": [
                 [
