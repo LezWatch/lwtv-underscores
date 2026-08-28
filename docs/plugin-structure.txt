@@ -87,6 +87,7 @@ This document describes the structure and contents of the custom LezWatch.TV Plu
 │   │   ├── class-calendar-database-optimizer.php - Database query optimization for calendar
 │   │   ├── class-calendar-meta-batcher.php - Batch processing for calendar meta data
 │   │   ├── class-calendar-object-pool.php - Object pooling for calendar performance
+│   │   ├── class-imdb-canonical.php - Pure comparison of a stored IMDb ID against a third-party oracle's canonical value
 │   │   └── class-utils.php - Common utility functions
 │   ├── admin-color-schemes/ - Additional color schemes for the backend (Each folder contains a colors.css and colors-rtl.css)
 │   │   ├── editor.css - Manages color display along with sub folders.
@@ -144,17 +145,62 @@ This document describes the structure and contents of the custom LezWatch.TV Plu
 │   │   │   ├── class-calculations.php - Does the math for various data points used to generate show scores
 │   │   │   └── class-custom-columns.php - Define columns for post listing
 │   │   └── shows/
+│   │       ├── class-airdates.php - Single source of truth for reading a show's start/finish airdates (mixed Ymd/Y-m-d meta formats)
 │   │       ├── class-calculations.php - Show score math with intelligent cache invalidation
+│   │       ├── class-character-score.php - The character component of a show's score: one data gather shared by the live calculator and the CLI preview, exposing both the legacy model and an opt-in longevity-weighted model
 │   │       ├── class-custom-columns.php - Define columns for post listing
+│   │       ├── class-host-name.php - Pure: derive a display name/registrable label/domain from a hostname
+│   │       ├── class-longevity.php - Pure maths for longevity-weighted character scoring (TVMaze aired-years vetting, saturation constant)
 │   │       ├── class-shows-like-this.php - Calculations for 'shows like this' (uses Related Posts by Taxonomy)
+│   │       ├── class-trope-categories.php - Canonical good/maybe/bad/ploy trope-slug groupings, shared by the show score and Statistics
+│   │       ├── class-watch-host-map.php - Pure: reduces a term's stored URLs to a host => term_id map, and reports host collisions
+│   │       ├── class-watch-host-names.php - Cache of provider names discovered from a host's own metadata, with a bounded retry count for hosts that won't answer
+│   │       ├── class-watch-hosts.php - Which hosts the Ways to Watch fields actually point at; shared by `wp lwtv waystowatch` and the Watch URLs validation tab
+│   │       ├── class-watch-term-match.php - Pure: does an existing provider term already look like this host, so the tab can suggest instead of creating a duplicate
+│   │       ├── class-watch-term-url-audit.php - Pure, read-only audit of what is actually stored in the lez_watch_urls term URL rows
+│   │       ├── class-watch-url-health.php - Pure: decide whether a probed provider URL is still a working provider (ok/broken/blocked/needs-review)
 │   │       └── class-ways-to-watch.php - Taxonomy to allow editors to customize the 'ways to watch' on the fly, based on networks and links
-│   ├── debugger/ - Debugging tools
-│   │   ├── class-actors.php - Find all problems with Actor pages.
-│   │   ├── class-characters.php - Find all problems with Character pages.
-│   │   ├── class-dupes.php - Find all duplicate content based on names, IMDB, etc.
-│   │   ├── class-onair.php - Makes sure that on-air data is correct.
-│   │   ├── class-queers.php - Find all problems with Queer data (i.e. are actors queer, are characters played by queer actors)
-│   │   └── class-shows.php - Find all problems with Show pages.
+│   ├── debugger/ - Debugging tools (`wp lwtv debug`, the admin validator tabs). Every check follows a collect/ + build/ split: collectors do the WordPress reads, rules are pure and unit-tested, format/ turns findings into rows.
+│   │   ├── class-actors.php - Orchestration: find all problems with Actor pages (via Collect\Actor_Collector + Build\Actor_Rules)
+│   │   ├── class-audit.php - Baselines, diffing, and acknowledgements for `wp lwtv audit` (WP-CLI-free so wp-admin can reuse it)
+│   │   ├── class-baseline-store.php - Where a check's previous run is kept, so this run can be diffed against it (storage only; the diff is Build\Baseline)
+│   │   ├── class-characters.php - Orchestration: find all problems with Character pages
+│   │   ├── class-dupes.php - Orchestration: find all duplicate content based on names, IMDb, etc. (rules live in Build\Duplicate_Rules)
+│   │   ├── class-log.php - The debug log file itself: write, rotate, prune, read
+│   │   ├── class-onair.php - Orchestration: makes sure a show's on-air flag agrees with its airdates
+│   │   ├── class-queers.php - Orchestration: find all problems with Queer data (i.e. are actors queer, are characters played by queer actors)
+│   │   ├── class-repair.php - Repair one finding from wp-admin; same issue registry `--fix-it` uses, one issue on one post at a time
+│   │   ├── class-scan.php - Shared scan preamble/epilogue (which posts to look at, findings storage/TTL) so scanners are orchestration only
+│   │   ├── class-shows.php - Orchestration: find all problems with Show pages
+│   │   ├── class-status.php - Debugger run status: per-check counts and last-run timestamps, one write path instead of one per scanner
+│   │   ├── class-watch-host-collisions.php - Find hosts claimed by more than one watch provider term
+│   │   ├── class-watch-urls.php - Check that the URLs on every watch provider term still work (the Watch Term Check tab's data source)
+│   │   ├── build/ - Pure, unit-tested rule classes. Array/scalar in, findings out; no WordPress calls.
+│   │   │   ├── class-actor-completeness-rules.php - Does an actor have a photo and a biography?
+│   │   │   ├── class-actor-rules.php - Every rule that decides whether an actor has a problem
+│   │   │   ├── class-baseline.php - Diffs this run's findings against the last, so a new problem reads differently from a stale one
+│   │   │   ├── class-byq-rules.php - Bury Your Queers: does a dead character's paperwork line up
+│   │   │   ├── class-character-rules.php - Every rule that decides whether a character has a problem
+│   │   │   ├── class-duplicate-rules.php - Is a numerically-suffixed post actually a duplicate of the one without it?
+│   │   │   ├── class-findings.php - Builds and groups typed debugger findings; everything downstream (counts, repairs, tables) derives from these
+│   │   │   ├── class-imdb-rules.php - Is a post's IMDb ID missing, malformed, or out of date? (shared by both show and actor IMDb checks)
+│   │   │   ├── class-issue-registry.php - The debugger's issue vocabulary: one entry per kind of problem, and which are auto- vs. manual-repairable
+│   │   │   ├── class-log-rules.php - Pure decisions for the LWTV debug log (which topics, rotation thresholds)
+│   │   │   ├── class-on-air-rules.php - Whether a show's stored on-air flag agrees with its airdates (year passed in, not read from the clock)
+│   │   │   ├── class-queer-rules.php - Does a character's Queer IRL cliché agree with who plays them?
+│   │   │   └── class-show-rules.php - Every rule that decides whether a show has a problem
+│   │   ├── collect/ - The WordPress half of each check: queries and meta reads, no decisions.
+│   │   │   ├── class-actor-collector.php - Fetches what the actor rules need
+│   │   │   ├── class-actor-completeness-collector.php - Fetches what the actor completeness rules need
+│   │   │   ├── class-byq-collector.php - Fetches what the BYQ rules need
+│   │   │   ├── class-character-collector.php - Fetches what the character rules need
+│   │   │   ├── class-duplicate-collector.php - Fetches what the duplicate rules need
+│   │   │   ├── class-imdb-collector.php - Fetches what the IMDb rules need, for either shows or actors
+│   │   │   ├── class-on-air-collector.php - Fetches what the on-air rules need
+│   │   │   ├── class-queer-collector.php - Fetches what the queer-consistency rules need
+│   │   │   └── class-show-collector.php - Fetches what the show rules need, in as few queries as it can manage
+│   │   └── format/
+│   │       └── class-rows.php - Turns typed findings into the rows the admin tables and CLI already read
 │   ├── features/ - Miscellaneous features
 │   │   ├── class-author-box.php - Custom author boxes
 │   │   ├── class-blockagents.php - Block use of AI agents (prevents hallucinations about show/character data)
@@ -226,10 +272,12 @@ This document describes the structure and contents of the custom LezWatch.TV Plu
 │   │   ├── class-cache-task.php - Handles scheduled cache invalidation tasks
 │   │   ├── class-calculation-task.php - Handles deferred math operations for all CPT types
 │   │   ├── class-fixcharshows-task.php - Fixes character-show relationship data
+│   │   ├── class-imdb-verify-task.php - Detects stale IMDb IDs by cross-checking against TVMaze (shows) / TMDB (actors); queued on save
 │   │   ├── class-statistics-cache-warming.php - Background cache warming for statistics after content changes
 │   │   ├── class-taxsync-task.php - Handles deferred taxonomy synchronization
 │   │   ├── class-tmdb-batch-task.php - Action Scheduler-based TMDB batch processing
-│   │   └── class-tmdb-task.php - Handles deferred TMDB API calls (legacy)
+│   │   ├── class-tmdb-task.php - Handles deferred TMDB API calls (legacy)
+│   │   └── class-watch-urls-task.php - Runs the watch-provider URL health sweep in the background, queued from the admin "Run Scan" button
 │   ├── queeries/ - Custom queries and arrays
 │   │   ├── class-get-id-from-slug.php - Get post ID from slug/URL
 │   │   ├── class-is-actor-queer.php - Determine if actor is queer (yes/no)
@@ -333,25 +381,25 @@ This document describes the structure and contents of the custom LezWatch.TV Plu
 │   │       ├── shows-on-air.php - Shows on air template
 │   │       └── partials/ - Shared partials
 │   │           └── show-block.php - Shared Shows/New/Canceled block (two-column group cards)
-│   ├── validator/ - Data validation
-│   │   ├── class-actor-checker.php - Check actors for valid data
-│   │   ├── class-actor-imdb.php - List actors missing IMDb
-│   │   ├── class-actor-wiki.php - Check actors wiki data (NOT CURRENTLY USED)
-│   │   ├── class-byq-checker.php - Checks for BYQ (at least one person has to be dead!)
-│   │   ├── class-character-checker.php - Check characters for valid data
-│   │   ├── class-duplicates.php - Look for duplicate shows/actors/characters
-│   │   ├── class-queer-checker.php - Check that all characters for queer actors are marked properly
-│   │   ├── class-onair-checker.php - Check on-air status of shows
-│   │   ├── class-show-checker.php - Check shows for valid data
-│   │   ├── class-show-imdb.php - List shows missing IMDb
-│   │   └── class-show-urls.php - Check Ways-To-Watch URLs
+│   ├── validator/ - Data Validation admin tabs (renders `Debugger` findings)
+│   │   ├── class-report.php - One renderer for every findings-report tab, driven by the `TOOL_TABS` config in Admin_Menu\Validation; replaced ten near-identical checker classes (queer/BYQ/actor/character/show/actor-empty/actor-imdb/show-imdb/dupes/on-air)
+│   │   ├── class-watch-providers.php - Unregistered-host tab: create or assign a provider term, with existing-term suggestions and host collision notices
+│   │   └── class-watch-term-check.php - Shows what the watch-URL health sweep last found, re-checks flagged URLs, and can queue a full background sweep
 │   └── wp-cli/ - WP-CLI commands
+│       ├── cli-audit.php - Compare on-air shows and their characters against TVMaze - wp lwtv audit
+│       ├── cli-cache.php - Diagnostics for the statistics cache (persistent-object-cache eviction, last-built times)
 │       ├── cli-calc.php - Calculations on content (scores, character count, etc) - wp lwtv CALC [ID]
 │       ├── cli-check.php - Data validation checkers - wp lwtv CHECK [queerchars|wiki] [id]
-│       ├── cli-debug.php - Debug utilities - wp lwtv DEBUG [command]
+│       ├── cli-debug-log.php - Read and maintain the LWTV debug log - wp lwtv debug-log [tail|clear]
+│       ├── cli-debug.php - Debug utilities (runs the Debugger checks, `--fix-it` to repair) - wp lwtv DEBUG [command]
 │       ├── cli-dupes.php - List all duplicate content - wp lwtv dupes
 │       ├── cli-generate.php - Generate custom content - wp lwtv GENERATE [otd|tvmaze]
+│       ├── cli-imdb.php - Verify IMDb IDs against TVMaze/TMDB and surface stale ones - wp lwtv imdb
 │       ├── cli-migrate.php - Migrate data between formats - wp lwtv MIGRATE [action]
 │       ├── cli-scheduler.php - Action Scheduler management - wp lwtv SCHEDULER [missed|tmdb|cache|status] [action]
+│       ├── cli-score-preview.php - Read-only preview of the longevity-weighted character score against real shows - wp lwtv score-preview
 │       ├── cli-shadow.php - Build out shadow taxonomy connections - wp lwtv shadow [shows|actors] [ID (optional)]
-│       └── cli-sweep.php - BYQ sweep commands - wp lwtv sweep
+│       ├── cli-sweep.php - BYQ sweep commands - wp lwtv sweep
+│       ├── cli-tmdb.php - Backfill TMDB IDs for shows/actors that never had a lookup attempted - wp lwtv tmdb [status|backfill]
+│       ├── cli-tvmaze.php - Backfill TVMaze IDs and derive aired-year data for shows - wp lwtv tvmaze [status|backfill]
+│       └── cli-waystowatch.php - Ways to Watch host reporting, name discovery, and enrichment - wp lwtv waystowatch [hosts|termurls|enrich]

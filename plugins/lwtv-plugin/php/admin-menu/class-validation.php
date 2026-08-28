@@ -81,7 +81,7 @@ class Validation {
 			),
 		),
 		'dupe_checker'      => array(
-			'name'      => 'Duplicate Actors and Show',
+			'name'      => 'Duplicate Actors and Shows',
 			'desc'      => 'Actors and Shows that are duplicates.',
 			'option'    => 'duplicates',
 			'transient' => Dupes::TRANSIENT_DUPES,
