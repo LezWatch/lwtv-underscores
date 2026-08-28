@@ -228,9 +228,7 @@ class Calculations {
 		$counts['queer-irl'] = $data['queer_irl_scored'];
 		$counts['trans-irl'] = $data['trans_irl'];
 
-		$counts['score'] = Character_Score::longevity_enabled()
-			? Character_Score::longevity( $data )['score']
-			: Character_Score::legacy( $data )['score'];
+		$counts['score'] = Character_Score::longevity( $data )['score'];
 
 		self::$counts_memo[ $post_id ] = $counts;
 

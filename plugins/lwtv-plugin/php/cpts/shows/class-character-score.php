@@ -59,43 +59,6 @@ class Character_Score {
 	);
 
 	/**
-	 * Is the longevity-weighted model live?
-	 *
-	 * Filters rather than options, deliberately: this is consulted once per show
-	 * inside a loop that runs over every published show, and a filter costs
-	 * nothing where an option read costs a query or a cache lookup. It also keeps
-	 * "which model produced this score" answerable from the code alone rather
-	 * than from database state.
-	 *
-	 *     add_filter( 'lwtv_score_longevity_enabled', '__return_true' );
-	 *
-	 * @return bool
-	 */
-	public static function longevity_enabled(): bool {
-		return (bool) apply_filters( 'lwtv_score_longevity_enabled', false );
-	}
-
-	/**
-	 * Is queer-irl credit conditional on the first-billed actor being queer?
-	 *
-	 * The Tambor Takedown. Its own flag, because it is a LARGER change to show
-	 * scores than longevity weighting -- on Transparent the queer-irl term was 90%
-	 * of the old character score, and it has never once been actor-checked. Two
-	 * flags keep the two effects attributable when a score is questioned.
-	 *
-	 * ⚠ Turning this on also changes `lezshows_queer_irl_count`, and therefore the
-	 * "actors" column of the Shows We Love comparison -- its only reader. That is
-	 * intended: the column is LABELLED actors and has always been populated with a
-	 * count of tagged characters, which is a different thing. This makes the label
-	 * true for the first time, and the numbers there will drop.
-	 *
-	 * @return bool
-	 */
-	public static function actor_check_enabled(): bool {
-		return (bool) apply_filters( 'lwtv_score_actor_check_enabled', false );
-	}
-
-	/**
 	 * The gather options implied by the current flags.
 	 *
 	 * One place, so a caller cannot gather less than the active model needs (a
@@ -105,8 +68,8 @@ class Character_Score {
 	 */
 	public static function options_from_flags(): array {
 		return array(
-			'longevity'   => self::longevity_enabled(),
-			'actor_check' => self::actor_check_enabled(),
+			'longevity'   => true,
+			'actor_check' => true,
 		);
 	}
 
@@ -478,67 +441,9 @@ class Character_Score {
 			);
 		}
 
-		// Which queer-irl count the legacy model should score on, resolved HERE
-		// rather than in legacy() on purpose. legacy() cannot tell whether the
-		// actor data was gathered, so a caller who passed actor_check = false and
-		// then asked for an actor-checked score would get zero queer-irl credit for
-		// every character -- a silently catastrophic score rather than an error.
-		// gather() knows what it collected, so gather() decides.
-		$out['actor_check_applied'] = $with_actor && self::actor_check_enabled();
-		$out['queer_irl_scored']    = $out['actor_check_applied'] ? $out['queer_irl_cast'] : $out['queer_irl'];
+		$out['queer_irl_scored'] = $out['queer_irl_cast'];
 
 		return $out;
-	}
-
-	/**
-	 * The LEGACY character score: unbounded sum, format divisor, clamp at 100.
-	 *
-	 * Decomposed rather than summed in one expression, because which term blew
-	 * past the cap is the interesting part. On Transparent the queer-irl bonus
-	 * alone is 190 against a cap of 100, so roles, deaths and everything else are
-	 * noise below the clamp -- the stored character score carries no information.
-	 *
-	 * Pure -- every input arrives in $data, nothing is read from the database
-	 * here. That is what makes "this refactor changed no scores" a claim the test
-	 * suite can check rather than one I can only assert.
-	 *
-	 * @param array $data Output of gather().
-	 *
-	 * @return array{parts:array,raw:float,score:float}
-	 */
-	public static function legacy( array $data ): array {
-		// The legacy model uses aggregate role counts from meta rather than
-		// per-character roles, so a character with two show-group rows on one show
-		// has their role points counted twice. Faithfully reproduced, not fixed:
-		// fixing it here would change live scores in a step whose whole purpose is
-		// changing none. Filed in the plan doc instead.
-		$roles = is_array( $data['char_roles'] ?? null ) ? $data['char_roles'] : array();
-
-		$trans_score = ( $data['trans_irl'] < $data['trans'] )
-			? ( ( $data['trans'] - $data['trans_irl'] ) * -5 )
-			: ( $data['trans'] * 10 );
-
-		// queer_irl_scored is the tagged count with the actor check off and the
-		// actor-verified count with it on -- gather() resolves which, since only it
-		// knows whether the actor data was collected.
-		$queer_irl = $data['queer_irl_scored'] ?? $data['queer_irl'];
-
-		$parts = array(
-			'base (roles)'     => ( ( $roles['regular'] ?? 0 ) * 5 ) + ( ( $roles['recurring'] ?? 0 ) * 2 ) + ( $roles['guest'] ?? 0 ),
-			'queer-irl bonus'  => $queer_irl * 10,
-			'no-cliches bonus' => $data['none'] * 5,
-			'dead penalty'     => $data['dead'] * -5,
-			'trans adjustment' => $trans_score,
-		);
-
-		$raw   = array_sum( $parts );
-		$score = ( 0 !== $raw ) ? ( $raw / $data['divisor'] ) : 0;
-
-		return array(
-			'parts' => $parts,
-			'raw'   => (float) $raw,
-			'score' => (float) min( 100, $score ),
-		);
 	}
 
 	/**
