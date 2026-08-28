@@ -4,12 +4,6 @@
  * Description: The single canonical mapping from a lez_triggers slug (or its
  * legacy alias) to a normalized level.
  *
- * Extracted because this alias table used to have two independent copies:
- * one inline in Calculations::show_score() and one inline in
- * Content_Warning::make(). Two copies of one decision is the exact failure
- * mode Character_Score's own docblock documents causing three real bugs in
- * this project already. There is now exactly one.
- *
  * @package LWTV
  */
 

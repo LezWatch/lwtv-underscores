@@ -441,7 +441,7 @@ class Character_Score {
 			);
 		}
 
-		$out['queer_irl_scored'] = $out['queer_irl_cast'];
+		$out['queer_irl_scored'] = $with_actor ? $out['queer_irl_cast'] : $out['queer_irl'];
 
 		return $out;
 	}
