@@ -24,7 +24,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-use LWTV\CPTs\Shows\Watch_Hosts;
+use LWTV\CPTs\Shows\Watching\Watch_Hosts;
 use LWTV\Debugger\Watch_URLs;
 
 /**

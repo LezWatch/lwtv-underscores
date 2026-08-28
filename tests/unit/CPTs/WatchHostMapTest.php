@@ -14,7 +14,7 @@
 namespace LWTV\Tests\CPTs;
 
 use PHPUnit\Framework\TestCase;
-use LWTV\CPTs\Shows\Watch_Host_Map as Map;
+use LWTV\CPTs\Shows\Watching\Watch_Host_Map as Map;
 
 class WatchHostMapTest extends TestCase {
 

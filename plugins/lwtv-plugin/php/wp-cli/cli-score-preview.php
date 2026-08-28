@@ -6,12 +6,13 @@
  * the effect of the longevity model can be inspected against real shows before
  * it is switched on.
  *
- * ⚠ Both models come from LWTV\CPTs\Shows\Character_Score, which is also what
- * Calculations::count_queers_all_types() calls. That is the point: this command
- * was used to CALIBRATE the new model, so a private replica of the maths here
- * could have drifted from what ships and quietly invalidated the calibration it
- * was used to pick. If you are tempted to compute a score in this file, don't --
- * add it to Character_Score and read it from there.
+ * ⚠ The score comes from LWTV\CPTs\Shows\Scoring\Character_Score::longevity(), which is
+ * also what Calculations::count_queers_all_types() calls -- now the only model,
+ * after this command's old-vs-new comparison did its job calibrating
+ * SATURATION_K and Character_Score::legacy() was retired. A private replica of
+ * the maths here could still drift from what ships. If you are tempted to
+ * compute a score in this file, don't -- add it to Character_Score and read it
+ * from there.
  *
  * See docs/plans/show-score-longevity.md. The main job here is calibrating
  * SATURATION_K, and NOT by holding the median total steady -- that advice used to
@@ -32,8 +33,8 @@ if ( ! defined( 'ABSPATH' ) && ! defined( 'WP_CLI' ) ) {
 
 use LWTV\CPTs\Shows as CPT_Shows;
 use LWTV\CPTs\Shows\Calculations as Shows_Calculations;
-use LWTV\CPTs\Shows\Character_Score;
-use LWTV\CPTs\Shows\Longevity;
+use LWTV\CPTs\Shows\Scoring\Character_Score;
+use LWTV\CPTs\Shows\Scoring\Longevity;
 use LWTV\Statistics\Build\Score_Distribution;
 
 /**
@@ -66,11 +67,6 @@ class WP_CLI_LWTV_Score_Preview {
 	public const BAND_TOP = 90;
 
 	/**
-	 * Score at which class-grading.php's colour ramp flips red to green.
-	 */
-	public const COLOUR_INFLECTION = 51;
-
-	/**
 	 * What each aired-years rejection means, appended to the tier-4 explanation.
 	 *
 	 * The verdict slug alone says which check fired but not what it implies about
@@ -90,7 +86,7 @@ class WP_CLI_LWTV_Score_Preview {
 	 * ## OPTIONS
 	 *
 	 * [<post_id>]
-	 * : Show ID to preview. Omit and pass --all for the full comparison.
+	 * : Show ID to preview. Omit and pass --all to preview every show.
 	 *
 	 * [--all]
 	 * : Every published show. Pair with --format=csv.
@@ -111,7 +107,7 @@ class WP_CLI_LWTV_Score_Preview {
 	 * ## EXAMPLES
 	 *
 	 *     wp lwtv score-preview 655 --verbose
-	 *     wp lwtv score-preview --all --format=csv > movers.csv
+	 *     wp lwtv score-preview --all --format=csv > scores.csv
 	 *     wp lwtv score-preview --all --k=60
 	 *
 	 * @param array $args       Positional arguments.
@@ -182,18 +178,10 @@ class WP_CLI_LWTV_Score_Preview {
 
 		$progress->finish();
 
-		// Biggest movers first: that is what needs an editorial eye.
-		usort(
-			$rows,
-			static function ( $a, $b ) {
-				return abs( $b['delta'] ) <=> abs( $a['delta'] );
-			}
-		);
-
 		\WP_CLI\Utils\format_items(
 			$format,
 			$rows,
-			array( 'id', 'show', 'format', 'chars', 'seasons', 'run_years', 'tier', 'floored', 'aired_rejected', 'aired_verdict', 'coverage', 'credited_years', 'aired_set', 'disc_outside', 'disc_hole', 'chars_no_appears', 'qirl_tagged', 'qirl_no_primary', 'mean_weight', 'char_old_raw', 'char_old', 'char_new_raw', 'char_new', 'score_old', 'score_new', 'score_new_raw', 'delta', 'decile_old', 'decile_new', 'band_old', 'band_new', 'moved' )
+			array( 'id', 'show', 'format', 'chars', 'seasons', 'run_years', 'tier', 'floored', 'aired_rejected', 'aired_verdict', 'coverage', 'credited_years', 'aired_set', 'disc_outside', 'disc_hole', 'chars_no_appears', 'qirl_tagged', 'qirl_no_primary', 'mean_weight', 'char_new_raw', 'char_new', 'score_new', 'score_new_raw', 'decile_new', 'band_new' )
 		);
 
 		$this->report_distribution( $rows );
@@ -345,79 +333,45 @@ class WP_CLI_LWTV_Score_Preview {
 
 		$scores = $this->score( $data, $ceiling );
 
-		// Where the old character score came from. Printed before the
-		// comparison because when a show is clamped, this table is the finding:
-		// it shows which single term overran the cap and rendered the rest of
-		// the component inert.
-		if ( $verbose ) {
-			$decomposed = array();
-			foreach ( $scores['old_parts'] as $label => $value ) {
-				$decomposed[] = array(
-					'old score term' => $label,
-					'points'         => sprintf( '%+d', $value ),
-					'share of raw'   => ( 0 === $scores['char_old_raw'] )
-						? '-'
-						: number_format( ( abs( $value ) / max( 1, abs( $scores['char_old_raw'] ) ) ) * 100, 1 ) . '%',
-				);
-			}
-			$decomposed[] = array(
-				'old score term' => 'UNCAPPED TOTAL',
-				'points'         => (string) $scores['char_old_raw'],
-				'share of raw'   => $scores['char_old_raw'] > 100
-					? sprintf( '%.1fx over the cap', $scores['char_old_raw'] / 100 )
-					: 'under the cap',
-			);
-
-			\WP_CLI\Utils\format_items( $format, $decomposed, array( 'old score term', 'points', 'share of raw' ) );
-			\WP_CLI::log( '' );
-		}
-
 		$comparison = array(
 			array(
 				'component' => 'Show rating',
-				'old'       => number_format( $scores['show_rating'], 2 ),
-				'new'       => number_format( $scores['show_rating'], 2 ),
-				'note'      => 'unchanged',
+				'score'     => number_format( $scores['show_rating'], 2 ),
+				'note'      => '',
 			),
 			array(
 				'component' => 'Tropes',
-				'old'       => number_format( $scores['tropes'], 2 ),
-				'new'       => number_format( $scores['tropes'], 2 ),
-				'note'      => 'unchanged',
+				'score'     => number_format( $scores['tropes'], 2 ),
+				'note'      => '',
 			),
 			array(
 				'component' => 'Alive ratio',
-				'old'       => number_format( $scores['alive'], 2 ),
-				'new'       => number_format( $scores['alive'], 2 ),
+				'score'     => number_format( $scores['alive'], 2 ),
 				'note'      => $data['dead'] . ' dead of ' . $data['count'],
 			),
 			array(
 				'component' => 'Character score',
-				'old'       => number_format( $scores['char_old'], 2 ),
-				'new'       => number_format( $scores['char_new'], 2 ),
-				'note'      => 'raw X = ' . number_format( $scores['raw'], 2 )
-					. ( $scores['char_old'] >= 100 ? ' | OLD WAS CLAMPED AT 100' : '' ),
+				'score'     => number_format( $scores['char_new'], 2 ),
+				'note'      => 'raw X = ' . number_format( $scores['raw'], 2 ),
 			),
 			array(
 				'component' => 'TOTAL',
-				'old'       => number_format( $scores['total_old'], 2 ),
-				'new'       => number_format( $scores['total_new'], 2 ),
-				'note'      => sprintf( '%+.2f', $scores['total_new'] - $scores['total_old'] ),
+				'score'     => number_format( $scores['total_new'], 2 ),
+				'note'      => '',
 			),
 		);
 
-		\WP_CLI\Utils\format_items( $format, $comparison, array( 'component', 'old', 'new', 'note' ) );
+		\WP_CLI\Utils\format_items( $format, $comparison, array( 'component', 'score', 'note' ) );
 
 		$stored = get_post_meta( $show_id, 'lezshows_the_score', true );
 		if ( '' !== $stored ) {
 			\WP_CLI::log( '' );
 			\WP_CLI::log( 'Stored lezshows_the_score: ' . $stored );
 
-			// If the recomputed "old" total drifts from the stored value, this
-			// preview is not replicating the live model and its "new" number
-			// cannot be trusted either.
-			if ( abs( (float) $stored - $scores['total_old'] ) > 0.01 ) {
-				\WP_CLI::warning( 'Recomputed OLD total does not match stored meta. This preview is not faithfully replicating the live calculation -- investigate before trusting the NEW column.' );
+			// If the recomputed total drifts from the stored value, this preview
+			// is not faithfully replicating the live calculation.
+			if ( abs( (float) $stored - $scores['total_new'] ) > 0.01 ) {
+				\WP_CLI::warning( 'Recomputed total does not match stored meta. This preview is not faithfully replicating the live calculation -- investigate.' );
 			}
 		}
 	}
@@ -470,19 +424,12 @@ class WP_CLI_LWTV_Score_Preview {
 			'qirl_tagged'      => $data['queer_irl'],
 			'qirl_no_primary'  => $data['qirl_failed_primary'],
 			'mean_weight'      => empty( $weights ) ? '0.000' : number_format( array_sum( $weights ) / count( $weights ), 3 ),
-			'char_old_raw'     => $scores['char_old_raw'],
-			'char_old'         => number_format( $scores['char_old'], 2 ),
 			'char_new_raw'     => number_format( $scores['raw_divided'], 3 ),
 			'char_new'         => number_format( $scores['char_new'], 2 ),
-			'score_old'        => number_format( $scores['total_old'], 2 ),
 			'score_new'        => number_format( $scores['total_new'], 2 ),
 			'score_new_raw'    => number_format( $scores['total_new_true'], 2 ),
-			'delta'            => round( $scores['total_new'] - $scores['total_old'], 2 ),
-			'decile_old'       => $this->decile_label( $scores['total_old'] ),
 			'decile_new'       => $this->decile_label( $scores['total_new'] ),
-			'band_old'         => $this->band_label( $scores['total_old'] ),
 			'band_new'         => $this->band_label( $scores['total_new'] ),
-			'moved'            => $this->movement_flags( $scores['total_old'], $scores['total_new'] ),
 		);
 	}
 
@@ -512,18 +459,9 @@ class WP_CLI_LWTV_Score_Preview {
 			$aired_override = $this->fetch_aired_years( $show_id, (int) gmdate( 'Y' ), $why );
 		}
 
-		// Both gates forced on regardless of the live flags. A preview whose
-		// contents depended on whether the feature was already enabled would be
-		// useless for deciding whether to enable it -- and with the flags off,
-		// gather() would return no weights at all and every NEW column would read
-		// zero, which looks like a result rather than a missing input.
 		$data = Character_Score::gather(
 			$show_id,
-			array(
-				'aired_override' => $aired_override,
-				'longevity'      => true,
-				'actor_check'    => true,
-			)
+			array( 'aired_override' => $aired_override )
 		);
 
 		$data['has_stored']       = $has_stored;
@@ -580,7 +518,7 @@ class WP_CLI_LWTV_Score_Preview {
 	}
 
 	/**
-	 * Score a gathered show under both models.
+	 * Score a gathered show.
 	 *
 	 * @param array      $data    Output of gather().
 	 * @param float|null $ceiling SATURATION_K override.
@@ -590,7 +528,7 @@ class WP_CLI_LWTV_Score_Preview {
 	private function score( array $data, $ceiling ): array {
 		$calc = new Shows_Calculations();
 
-		// Unchanged components, read from the live calculation.
+		// Read from the live calculation.
 		$show_rating = (float) ( $calc->show_score( (int) $data['id'] ) ?? 0 );
 		$tropes      = (float) ( $calc->show_tropes_score( (int) $data['id'] ) ?? 0 );
 
@@ -599,23 +537,17 @@ class WP_CLI_LWTV_Score_Preview {
 			$alive = ( ( $data['count'] - $data['dead'] ) / $data['count'] ) * 100;
 		}
 
-		// Both models come from Character_Score, which is also what the live
-		// calculation calls. That is deliberate and it is the point of the
-		// refactor: this command was used to CALIBRATE the new model, so a
-		// separate replica here could have drifted from the shipping maths and
-		// quietly invalidated the calibration it was used to pick.
-		//
-		// $legacy['score'] is therefore not "the preview's idea of the old score"
-		// but literally the number count_queers_all_types() returns -- which is
-		// what makes the stored-meta divergence check below meaningful.
-		$legacy = Character_Score::legacy( $data );
-		$new    = Character_Score::longevity( $data, $ceiling );
+		// The score comes from Character_Score, which is also what the live
+		// calculation calls -- deliberately, so this preview cannot drift from
+		// what ships. $new['score'] is therefore not "the preview's idea of the
+		// score" but literally what count_queers_all_types() returns, which is
+		// what makes the stored-meta check in preview_one() meaningful.
+		$new = Character_Score::longevity( $data, $ceiling );
 
 		// $divided, not $raw, is what saturate() consumed -- so it is the value a
 		// K sweep needs. Reported as its own column because back-deriving it from
 		// a two-decimal char_new is lossy, and doing that by hand is exactly the
 		// gap this column closes.
-		$total_old = ( $show_rating + $tropes + $alive + $legacy['score'] ) / 4;
 		$total_new = ( $show_rating + $tropes + $alive + $new['score'] ) / 4;
 
 		return array(
@@ -624,16 +556,11 @@ class WP_CLI_LWTV_Score_Preview {
 			'alive'          => $alive,
 			'raw'            => $new['raw'],
 			'raw_divided'    => $new['divided'],
-			'old_parts'      => $legacy['parts'],
-			'char_old_raw'   => $legacy['raw'],
-			'char_old'       => $legacy['score'],
 			'char_new'       => $new['score'],
 			// Capped for comparability with the stored meta, which is capped
-			// today. The uncapped values are returned alongside so the display
+			// today. The uncapped value is returned alongside so the display
 			// -only cap question can be answered from real numbers.
-			'total_old'      => max( 0, min( 100, $total_old ) ),
 			'total_new'      => max( 0, min( 100, $total_new ) ),
-			'total_old_true' => $total_old,
 			'total_new_true' => $total_new,
 		);
 	}
@@ -697,36 +624,6 @@ class WP_CLI_LWTV_Score_Preview {
 	}
 
 	/**
-	 * Which display boundaries a show crosses, as a sortable flag string.
-	 *
-	 * The point of the column: these are the only score changes a reader can
-	 * actually see. A show shifting 57 to 59 is invisible; one crossing 20, 90 or
-	 * the colour inflection is not.
-	 *
-	 * @param float $before Total under the current model.
-	 * @param float $after  Total under the new model.
-	 *
-	 * @return string Space-separated flags, or '-'.
-	 */
-	private function movement_flags( float $before, float $after ): string {
-		$flags = array();
-
-		if ( $this->decile_label( $before ) !== $this->decile_label( $after ) ) {
-			$flags[] = 'decile';
-		}
-
-		if ( $this->band_label( $before ) !== $this->band_label( $after ) ) {
-			$flags[] = 'band';
-		}
-
-		if ( ( $before < self::COLOUR_INFLECTION ) !== ( $after < self::COLOUR_INFLECTION ) ) {
-			$flags[] = 'colour';
-		}
-
-		return empty( $flags ) ? '-' : implode( ' ', $flags );
-	}
-
-	/**
 	 * Fetch a show's aired years from the TVMaze seasons endpoint.
 	 *
 	 * Sets $reason to why it came back empty, so a tier 3 fallback can say
@@ -780,10 +677,8 @@ class WP_CLI_LWTV_Score_Preview {
 	 * @param array $rows Comparison rows.
 	 */
 	private function report_distribution( array $rows ): void {
-		$old = array_map( static fn( $r ) => (float) $r['score_old'], $rows );
 		$new = array_map( static fn( $r ) => (float) $r['score_new'], $rows );
 
-		sort( $old );
 		sort( $new );
 
 		$median = static function ( array $set ) {
@@ -795,7 +690,6 @@ class WP_CLI_LWTV_Score_Preview {
 			return ( 0 === $count % 2 ) ? ( ( $set[ $middle ] + $set[ $middle + 1 ] ) / 2 ) : $set[ $middle ];
 		};
 
-		$clamped  = 0;
 		$tiers    = array(
 			1 => 0,
 			2 => 0,
@@ -806,16 +700,12 @@ class WP_CLI_LWTV_Score_Preview {
 		$worst    = 0.0;
 
 		foreach ( $rows as $row ) {
-			if ( (float) $row['char_old'] >= 100 ) {
-				++$clamped;
-			}
-
 			$tier = (int) $row['tier'];
 			if ( isset( $tiers[ $tier ] ) ) {
 				++$tiers[ $tier ];
 			}
 
-			// How much a display-only cap would actually preserve. The new
+			// How much a display-only cap would actually preserve. The
 			// character score is asymptotic below 100 and tropes and alive are
 			// both capped, so only show_score() (max 115, unclamped) can push a
 			// total past 100 -- a ceiling of 103.75 in the best case.
@@ -828,11 +718,8 @@ class WP_CLI_LWTV_Score_Preview {
 		\WP_CLI::log( '' );
 		\WP_CLI::log( '--- distribution ---' );
 		\WP_CLI::log( 'Shows:                   ' . count( $rows ) );
-		\WP_CLI::log( 'Median score OLD:        ' . number_format( $median( $old ), 2 ) );
 		\WP_CLI::log( 'Median score NEW:        ' . number_format( $median( $new ), 2 ) );
-		\WP_CLI::log( 'Mean score OLD:          ' . number_format( array_sum( $old ) / max( 1, count( $old ) ), 2 ) );
 		\WP_CLI::log( 'Mean score NEW:          ' . number_format( array_sum( $new ) / max( 1, count( $new ) ), 2 ) );
-		\WP_CLI::log( 'Char score clamped OLD:  ' . $clamped . ' shows pinned at exactly 100 (no ranking info)' );
 		\WP_CLI::log( '' );
 		// Labels must match the order in Longevity::run_years(): curated season
 		// count is tier 1, exact aired years is tier 2. These were transposed in
@@ -926,18 +813,9 @@ class WP_CLI_LWTV_Score_Preview {
 		\WP_CLI::log( '  ^ this is what a display-only cap would preserve. Theoretical max is' );
 		\WP_CLI::log( '    103.75, since only show_score() (max 115) is unclamped.' );
 		\WP_CLI::log( '' );
-		// This used to read "adjust --k until median NEW is close to median OLD",
-		// which is backwards and is corrected here rather than deleted, because
-		// it is the intuitive thing to try and the reason it fails is not obvious.
-		\WP_CLI::log( 'Calibration: do NOT tune --k to match the old median.' );
-		\WP_CLI::log( '  The character score is one term of a four-way average whose other three' );
-		\WP_CLI::log( '  have a median of ~69. The old character median was 10 -- a scale error, not' );
-		\WP_CLI::log( '  a judgment. Matching the old total median needs K=40, which puts the' );
-		\WP_CLI::log( '  character median at 11.8 and keeps the error. Tune on the character' );
-		\WP_CLI::log( '  component\'s own distribution, and expect most totals to rise.' );
-		\WP_CLI::log( '' );
-		\WP_CLI::log( '  No re-run is needed to try other values: char_new_raw IS the X that K' );
-		\WP_CLI::log( '  divides, and the rest of the total is 4 * score_new_raw - char_new, so one' );
+		\WP_CLI::log( 'Calibration:' );
+		\WP_CLI::log( '  No re-run is needed to try other values of --k: char_new_raw IS the X that' );
+		\WP_CLI::log( '  K divides, and the rest of the total is 4 * score_new_raw - char_new, so one' );
 		\WP_CLI::log( '  CSV can be swept offline for every candidate K at once.' );
 	}
 }

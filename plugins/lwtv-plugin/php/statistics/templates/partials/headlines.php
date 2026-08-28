@@ -6,12 +6,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Reusable "Headlines" section: one promoted lead plate + a color-spine rail
  * of linked mini-stats, one per subpage.
  *
- * Extracted from shows/overview.php's original inline "The Headlines" block
- * (the pattern that page introduced first) once Characters needed the exact
- * same shape — every figure here should already come from the same cached
- * transform its own subpage runs, so this stays in lockstep with them
- * rather than computing anything new.
- *
  * @package LezWatch.TV
  *
  * @var array $headlines {

@@ -16,7 +16,7 @@ use LWTV\CPTs\Characters as CPT_Characters;
 use LWTV\CPTs\Characters\Calculations as Characters_Calculations;
 use LWTV\CPTs\Shows as CPT_Shows;
 use LWTV\CPTs\Shows\Calculations as Shows_Calculations;
-use LWTV\CPTs\Shows\Character_Score;
+use LWTV\CPTs\Shows\Scoring\Character_Score;
 use LWTV\Theme\Show_Characters;
 
 /**
@@ -166,23 +166,6 @@ class WP_CLI_LWTV_Calculate {
 		if ( in_array( '', $types, true ) ) {
 			\WP_CLI::error( 'Invalid --post-type. Use: shows, characters, actors, all' );
 		}
-
-		// Report the flag state before anything else. The whole reason to run this
-		// is usually to apply a scoring change, and running it with the flags off
-		// would rewrite 2,000+ rows of meta with the OLD numbers -- succeeding
-		// loudly while achieving the opposite of what was intended.
-		$longevity   = Character_Score::longevity_enabled();
-		$actor_check = Character_Score::actor_check_enabled();
-
-		\WP_CLI::log( 'Scoring flags for this run:' );
-		\WP_CLI::log( '  lwtv_score_longevity_enabled    ' . ( $longevity ? 'ON' : 'off' ) );
-		\WP_CLI::log( '  lwtv_score_actor_check_enabled  ' . ( $actor_check ? 'ON' : 'off' ) );
-
-		if ( ! $longevity && ! $actor_check ) {
-			\WP_CLI::warning( 'Both scoring flags are off, so this will rewrite every score with the CURRENT model. That is correct if you are seeding after a data fix, and wrong if you meant to apply the new scoring.' );
-		}
-
-		\WP_CLI::log( '' );
 
 		$queued = array();
 		foreach ( $types as $label => $slug ) {

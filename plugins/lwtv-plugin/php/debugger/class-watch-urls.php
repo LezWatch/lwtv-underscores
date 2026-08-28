@@ -21,8 +21,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-use LWTV\CPTs\Shows\Watch_Hosts;
-use LWTV\CPTs\Shows\Watch_Url_Health;
+use LWTV\CPTs\Shows\Watching\Watch_Hosts;
+use LWTV\CPTs\Shows\Watching\Watch_Url_Health;
 use LWTV\Debugger\Build\Findings;
 use LWTV\Debugger\Build\Issue_Registry;
 use LWTV\Debugger\Format\Rows;

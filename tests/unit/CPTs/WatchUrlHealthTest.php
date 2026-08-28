@@ -12,7 +12,7 @@
 namespace LWTV\Tests\CPTs;
 
 use PHPUnit\Framework\TestCase;
-use LWTV\CPTs\Shows\Watch_Url_Health;
+use LWTV\CPTs\Shows\Watching\Watch_Url_Health;
 
 class WatchUrlHealthTest extends TestCase {
 

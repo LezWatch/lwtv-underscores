@@ -26,8 +26,9 @@
  * @package LWTV
  */
 
-namespace LWTV\CPTs\Shows;
+namespace LWTV\CPTs\Shows\Scoring;
 
+use LWTV\CPTs\Shows\Airdates;
 use LWTV\Queeries\Is_Actor_Queer;
 use LWTV\Queeries\Is_Actor_Trans;
 
@@ -59,88 +60,18 @@ class Character_Score {
 	);
 
 	/**
-	 * Is the longevity-weighted model live?
-	 *
-	 * Filters rather than options, deliberately: this is consulted once per show
-	 * inside a loop that runs over every published show, and a filter costs
-	 * nothing where an option read costs a query or a cache lookup. It also keeps
-	 * "which model produced this score" answerable from the code alone rather
-	 * than from database state.
-	 *
-	 *     add_filter( 'lwtv_score_longevity_enabled', '__return_true' );
-	 *
-	 * @return bool
-	 */
-	public static function longevity_enabled(): bool {
-		return (bool) apply_filters( 'lwtv_score_longevity_enabled', false );
-	}
-
-	/**
-	 * Is queer-irl credit conditional on the first-billed actor being queer?
-	 *
-	 * The Tambor Takedown. Its own flag, because it is a LARGER change to show
-	 * scores than longevity weighting -- on Transparent the queer-irl term was 90%
-	 * of the old character score, and it has never once been actor-checked. Two
-	 * flags keep the two effects attributable when a score is questioned.
-	 *
-	 * ⚠ Turning this on also changes `lezshows_queer_irl_count`, and therefore the
-	 * "actors" column of the Shows We Love comparison -- its only reader. That is
-	 * intended: the column is LABELLED actors and has always been populated with a
-	 * count of tagged characters, which is a different thing. This makes the label
-	 * true for the first time, and the numbers there will drop.
-	 *
-	 * @return bool
-	 */
-	public static function actor_check_enabled(): bool {
-		return (bool) apply_filters( 'lwtv_score_actor_check_enabled', false );
-	}
-
-	/**
-	 * The gather options implied by the current flags.
-	 *
-	 * One place, so a caller cannot gather less than the active model needs (a
-	 * silently wrong score) or more than it needs (a silent slowdown).
-	 *
-	 * @return array
-	 */
-	public static function options_from_flags(): array {
-		return array(
-			'longevity'   => self::longevity_enabled(),
-			'actor_check' => self::actor_check_enabled(),
-		);
-	}
-
-	/**
 	 * Collect everything either model needs for one show.
 	 *
-	 * Ordering here is load-bearing and not obvious: the characters must be read
+	 * Ordering here is critical and not obvious: the characters must be read
 	 * and reduced to their credited years BEFORE the aired-years set is vetted,
 	 * because the vet's strongest signal is whether the set can account for those
 	 * years. The vet's verdict then decides the denominator every weight is
 	 * measured against. So it is characters, then vet, then denominator -- not the
 	 * other way round.
 	 *
-	 * The two gathering gates are PERFORMANCE gates, not feature flags, and they
-	 * exist because each unlocks work the other models never read. Across ~2,300
-	 * shows and ~30,000 characters that difference is thousands of queries:
-	 *
-	 * | gate          | unlocks                                                   |
-	 * |---------------|-----------------------------------------------------------|
-	 * | `longevity`   | `lezchars_show_group` per character (credited years), the  |
-	 * |               | airdates, the season count, the aired-years vetting, and   |
-	 * |               | the primary actor's gender terms                          |
-	 * | `actor_check` | Is_Actor_Queer on the primary actor of each character      |
-	 * |               | TAGGED queer-irl -- far cheaper, since most are not        |
-	 *
-	 * With both false, gather() does exactly the work count_queers_all_types() did
-	 * before this class existed. Callers pass what their flags actually turned on
-	 * rather than taking the defaults, so a disabled model costs nothing.
-	 *
 	 * @param int   $show_id Show post ID.
 	 * @param array $options aired_override (array) TVMaze years from a caller that
-	 *                       fetched them live, empty for stored meta only;
-	 *                       longevity (bool) gather longevity inputs;
-	 *                       actor_check (bool) gather primary-actor queerness.
+	 *                       fetched them live, empty for stored meta only.
 	 *
 	 * @return array
 	 */
@@ -148,28 +79,15 @@ class Character_Score {
 		$aired_override = isset( $options['aired_override'] ) && is_array( $options['aired_override'] )
 			? $options['aired_override']
 			: array();
-		$with_longevity = (bool) ( $options['longevity'] ?? true );
-		$with_actor     = (bool) ( $options['actor_check'] ?? true );
 
-		// The longevity model folds queer casting into casting_multiplier(), so it
-		// cannot score without the actor check regardless of that flag.
-		$with_actor = $with_actor || $with_longevity;
-
-		$airdates = $with_longevity
-			? Airdates::get( $show_id )
-			: array(
-				'start'  => '',
-				'finish' => '',
-			);
+		$airdates = Airdates::get( $show_id );
 		$now      = (int) gmdate( 'Y' );
-		$seasons  = $with_longevity ? (int) get_post_meta( $show_id, 'lezshows_seasons', true ) : 0;
+		$seasons  = (int) get_post_meta( $show_id, 'lezshows_seasons', true );
 
 		$aired_years = array();
 		$why         = '';
 
-		if ( ! $with_longevity ) {
-			$why = 'longevity data not gathered';
-		} elseif ( ! empty( $aired_override ) ) {
+		if ( ! empty( $aired_override ) ) {
 			$aired_years = array_map( 'intval', $aired_override );
 		} else {
 			$stored = get_post_meta( $show_id, 'lezshows_aired_years', true );
@@ -216,7 +134,7 @@ class Character_Score {
 			$char_id   = (int) $char_id;
 			$years_set = array();
 			$role      = '';
-			$rows      = $with_longevity ? get_field( 'lezchars_show_group', $char_id ) : null;
+			$rows      = get_field( 'lezchars_show_group', $char_id );
 
 			if ( is_array( $rows ) ) {
 				foreach ( $rows as $row ) {
@@ -378,7 +296,7 @@ class Character_Score {
 			// first-billed actor is actually queer. Actors are stored in billing
 			// order, so the primary is simply the first.
 			$primary_queer = false;
-			if ( $with_actor && $is_qirl && ! empty( $actor_ids ) ) {
+			if ( $is_qirl && ! empty( $actor_ids ) ) {
 				$primary_queer = ( new Is_Actor_Queer() )->make( reset( $actor_ids ) );
 			}
 
@@ -395,7 +313,7 @@ class Character_Score {
 			$actor_class   = 'unknown';
 			$primary_actor = 0;
 			$primary_slugs = array();
-			if ( $with_longevity && ! empty( $actor_ids ) ) {
+			if ( ! empty( $actor_ids ) ) {
 				$primary_actor = (int) reset( $actor_ids );
 				$actor_terms   = get_the_terms( $primary_actor, 'lez_actor_gender' );
 				$primary_slugs = ( is_array( $actor_terms ) ) ? wp_list_pluck( $actor_terms, 'slug' ) : array();
@@ -478,67 +396,9 @@ class Character_Score {
 			);
 		}
 
-		// Which queer-irl count the legacy model should score on, resolved HERE
-		// rather than in legacy() on purpose. legacy() cannot tell whether the
-		// actor data was gathered, so a caller who passed actor_check = false and
-		// then asked for an actor-checked score would get zero queer-irl credit for
-		// every character -- a silently catastrophic score rather than an error.
-		// gather() knows what it collected, so gather() decides.
-		$out['actor_check_applied'] = $with_actor && self::actor_check_enabled();
-		$out['queer_irl_scored']    = $out['actor_check_applied'] ? $out['queer_irl_cast'] : $out['queer_irl'];
+		$out['queer_irl_scored'] = $out['queer_irl_cast'];
 
 		return $out;
-	}
-
-	/**
-	 * The LEGACY character score: unbounded sum, format divisor, clamp at 100.
-	 *
-	 * Decomposed rather than summed in one expression, because which term blew
-	 * past the cap is the interesting part. On Transparent the queer-irl bonus
-	 * alone is 190 against a cap of 100, so roles, deaths and everything else are
-	 * noise below the clamp -- the stored character score carries no information.
-	 *
-	 * Pure -- every input arrives in $data, nothing is read from the database
-	 * here. That is what makes "this refactor changed no scores" a claim the test
-	 * suite can check rather than one I can only assert.
-	 *
-	 * @param array $data Output of gather().
-	 *
-	 * @return array{parts:array,raw:float,score:float}
-	 */
-	public static function legacy( array $data ): array {
-		// The legacy model uses aggregate role counts from meta rather than
-		// per-character roles, so a character with two show-group rows on one show
-		// has their role points counted twice. Faithfully reproduced, not fixed:
-		// fixing it here would change live scores in a step whose whole purpose is
-		// changing none. Filed in the plan doc instead.
-		$roles = is_array( $data['char_roles'] ?? null ) ? $data['char_roles'] : array();
-
-		$trans_score = ( $data['trans_irl'] < $data['trans'] )
-			? ( ( $data['trans'] - $data['trans_irl'] ) * -5 )
-			: ( $data['trans'] * 10 );
-
-		// queer_irl_scored is the tagged count with the actor check off and the
-		// actor-verified count with it on -- gather() resolves which, since only it
-		// knows whether the actor data was collected.
-		$queer_irl = $data['queer_irl_scored'] ?? $data['queer_irl'];
-
-		$parts = array(
-			'base (roles)'     => ( ( $roles['regular'] ?? 0 ) * 5 ) + ( ( $roles['recurring'] ?? 0 ) * 2 ) + ( $roles['guest'] ?? 0 ),
-			'queer-irl bonus'  => $queer_irl * 10,
-			'no-cliches bonus' => $data['none'] * 5,
-			'dead penalty'     => $data['dead'] * -5,
-			'trans adjustment' => $trans_score,
-		);
-
-		$raw   = array_sum( $parts );
-		$score = ( 0 !== $raw ) ? ( $raw / $data['divisor'] ) : 0;
-
-		return array(
-			'parts' => $parts,
-			'raw'   => (float) $raw,
-			'score' => (float) min( 100, $score ),
-		);
 	}
 
 	/**

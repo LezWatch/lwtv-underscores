@@ -148,17 +148,4 @@ class Ways_To_Watch {
 		unset( $columns['taxonomy-lez_watch_urls'] );
 		return $columns;
 	}
-
-	/*
-	 * The `lezshows_affiliate` -> `lezshows_waystowatch` migration used to live
-	 * here as migrate_ways_to_watch(), called once per show from
-	 * Debugger\Shows::find_shows_bad_url(). Both are gone: no post carries
-	 * `lezshows_affiliate` any more (verified 2026-08-21), and running a write
-	 * migration from inside a read-only scanner was the wrong shape regardless
-	 * (DEBUGGER-REVIEW.md 8.4).
-	 *
-	 * The remaining legacy path is `wp lwtv migrate acf waystowatch`, which
-	 * converts the flat-array form of `lezshows_waystowatch` into ACF repeater
-	 * rows. That one is idempotent and safe to re-run.
-	 */
 }

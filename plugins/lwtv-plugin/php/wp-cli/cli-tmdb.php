@@ -451,8 +451,8 @@ class WP_CLI_LWTV_TMDB {
 		foreach ( $post_ids as $index => $post_id ) {
 			$progress->tick();
 
-			// Belt and braces. get_candidates() already excludes these, but a
-			// long --all run can overlap an editor saving a post mid-flight.
+			// get_candidates() already excludes these, but a long --all
+			// run can overlap an editor saving a post mid-flight.
 			if ( ! empty( get_post_meta( $post_id, $type['meta_tmdb'], true ) ) ) {
 				++$skipped;
 				continue;

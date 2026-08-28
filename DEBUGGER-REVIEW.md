@@ -872,7 +872,7 @@ real logic and a history of bugs, rather than for tidiness:
   outside the class.
 
 **`watchurls` needs nothing here** — its rules were already extracted into
-`CPTs\Shows\Watch_Url_Health::classify()`, which is pure and has its own test file. Worth
+`CPTs\Shows\Watching\Watch_Url_Health::classify()`, which is pure and has its own test file. Worth
 knowing before someone goes looking for work that is already done.
 
 **And the last four (2026-08-26), which completes §4.** They were left for last because
@@ -1685,7 +1685,7 @@ in the corpus starts with `w` or `.` after it, so the dominant case survived by 
 
 ### 9.2 Provider name enrichment (`5b1d348e`)
 
-`CPTs\Shows\Watch_Host_Names` caches a name discovered from each host's own
+`CPTs\Shows\Watching\Watch_Host_Names` caches a name discovered from each host's own
 `og:site_name` / `application-name`, in one non-autoloaded option keyed by normalised host.
 Rendering reads it only — no request ever fetches anything. Populated by
 `wp lwtv waystowatch enrich`, which skips hosts that already have a term, records genuine
@@ -1706,7 +1706,7 @@ the same shape ACF itself uses. Plus a bounded **Look up names** button.
 
 Two supporting pieces:
 
-- `CPTs\Shows\Watch_Hosts` — shared by the tab and the CLI so they can't disagree about
+- `CPTs\Shows\Watching\Watch_Hosts` — shared by the tab and the CLI so they can't disagree about
   what's registered. `term_for()` delegates to the theme's own matcher.
 - **The tab bar is now a dropdown**, with counts moved into the option labels. Ten checks
   was already wrapping.
