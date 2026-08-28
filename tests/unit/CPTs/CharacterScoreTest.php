@@ -1,17 +1,11 @@
 <?php
 /**
- * Tests for Character_Score's two scoring models.
+ * Tests for Character_Score's longevity model and its role-strength helper.
  *
- * This class exists to hold ONE copy of maths that used to exist in two places:
- * the live calculation and the preview command that was used to calibrate it. The
- * extraction was made with an explicit promise -- that it changed no scores -- and
- * these tests are what turns that promise into something checkable.
- *
- * Only legacy() and longevity() are covered here, because only they are pure.
- * gather() reads meta, taxonomy and ACF, and is verified against the running site
- * via `wp lwtv score-preview`, whose stored-meta divergence warning is the real
- * regression test for the extraction: if the shared legacy() stops reproducing
- * what the site stored, every row prints a warning.
+ * Only longevity() is covered here, because it is the only pure model this
+ * class exposes -- legacy() has been retired now that longevity() is the live
+ * model. gather() reads meta, taxonomy and ACF, and is verified against the
+ * running site via `wp lwtv score-preview` instead.
  *
  * @package lwtv-underscores
  */
@@ -62,138 +56,7 @@ final class CharacterScoreTest extends TestCase {
 	}
 
 	/*
-	 * legacy() - the model the site stores today
-	 */
-
-	public function test_the_legacy_decomposition_matches_the_recorded_one(): void {
-		$out = Character_Score::legacy( $this->transparent() );
-
-		$this->assertSame( 41, $out['parts']['base (roles)'] );
-		$this->assertSame( 190, $out['parts']['queer-irl bonus'] );
-		$this->assertSame( 0, $out['parts']['no-cliches bonus'] );
-		$this->assertSame( -10, $out['parts']['dead penalty'] );
-		$this->assertSame( -10, $out['parts']['trans adjustment'] );
-		$this->assertSame( 211.0, $out['raw'] );
-	}
-
-	public function test_the_queer_irl_bonus_alone_overruns_the_cap(): void {
-		// The finding that reshaped the whole model: one term is 1.9x the entire
-		// ceiling, so roles, deaths and longevity were all inert noise beneath it.
-		$out = Character_Score::legacy( $this->transparent() );
-
-		$this->assertGreaterThan( 100, $out['parts']['queer-irl bonus'] );
-		$this->assertSame( 100.0, $out['score'] );
-	}
-
-	public function test_the_format_divisor_applies_before_the_clamp(): void {
-		// 211 / 2 = 105.5, still over the cap; 211 / 1.5 = 140.67, likewise. The
-		// ordering only becomes visible below the cap, so test it there too.
-		$this->assertSame( 100.0, Character_Score::legacy( $this->transparent( array( 'divisor' => 2 ) ) )['score'] );
-
-		$small = $this->transparent(
-			array(
-				'queer_irl' => 4,
-				'divisor'   => 2,
-			)
-		);
-
-		// 41 + 40 + 0 - 10 - 10 = 61, halved = 30.5.
-		$out = Character_Score::legacy( $small );
-		$this->assertSame( 61.0, $out['raw'] );
-		$this->assertSame( 30.5, $out['score'] );
-	}
-
-	public function test_the_trans_term_rewards_when_casting_keeps_up(): void {
-		// trans_irl >= trans flips the sign of the whole term, from a per-character
-		// penalty to a per-character bonus. Faithfully preserved.
-		$out = Character_Score::legacy( $this->transparent( array( 'trans_irl' => 3 ) ) );
-
-		$this->assertSame( 30, $out['parts']['trans adjustment'] );
-	}
-
-	public function test_the_legacy_model_still_has_no_lower_bound(): void {
-		// `min( 100, ... )` caps the top and leaves the bottom open, so a show can
-		// score below zero -- Killing Eve stored -6. This is a real bug and it is
-		// asserted here ON PURPOSE: the extraction promised to change no scores, so
-		// the bug must survive it. The new model is what fixes it.
-		$out = Character_Score::legacy(
-			$this->transparent(
-				array(
-					'char_roles' => array(),
-					'queer_irl'  => 0,
-					'dead'       => 4,
-					'trans'      => 2,
-					'trans_irl'  => 0,
-				)
-			)
-		);
-
-		$this->assertSame( -30.0, $out['raw'] );
-		$this->assertSame( -30.0, $out['score'] );
-	}
-
-	public function test_a_zero_raw_score_skips_the_divisor(): void {
-		// `0 !== $raw` guards the division. It cannot matter arithmetically -- 0
-		// over anything is 0 -- but it is in the original and removing it would be
-		// an undocumented change to a function that promised none.
-		$out = Character_Score::legacy(
-			$this->transparent(
-				array(
-					'char_roles' => array(),
-					'queer_irl'  => 0,
-					'dead'       => 0,
-					'trans'      => 0,
-					'trans_irl'  => 0,
-					'divisor'    => 2,
-				)
-			)
-		);
-
-		$this->assertSame( 0.0, $out['raw'] );
-		$this->assertSame( 0.0, $out['score'] );
-	}
-
-	public function test_missing_role_meta_is_not_fatal(): void {
-		// lezshows_char_roles is written by show_character_data(); a show that has
-		// never been calculated has no such meta, and get_post_meta returns ''.
-		$out = Character_Score::legacy( $this->transparent( array( 'char_roles' => '' ) ) );
-
-		$this->assertSame( 0, $out['parts']['base (roles)'] );
-	}
-
-	public function test_the_actor_check_reduces_the_queer_irl_bonus(): void {
-		// The Tambor Takedown reaching the score for the first time. 19 tagged
-		// characters, 6 whose first-billed actor is actually queer: +190 becomes
-		// +60, which on Transparent is the difference between 2.1x over the cap and
-		// under it. legacy() reads queer_irl_scored, which gather() resolves from
-		// the flag -- so this asserts the wiring, not the flag.
-		$out = Character_Score::legacy(
-			$this->transparent(
-				array(
-					'queer_irl'        => 19,
-					'queer_irl_scored' => 6,
-				)
-			)
-		);
-
-		$this->assertSame( 60, $out['parts']['queer-irl bonus'] );
-		$this->assertSame( 81.0, $out['raw'] );
-		$this->assertSame( 81.0, $out['score'] );
-	}
-
-	public function test_the_tagged_count_is_used_when_nothing_was_resolved(): void {
-		// A caller that gathered without the actor check has no queer_irl_scored
-		// key. Falling back to the tagged count keeps the legacy score correct; the
-		// alternative -- treating a missing key as zero -- would award no queer-irl
-		// credit at all and look like a scoring collapse.
-		$data = $this->transparent();
-		unset( $data['queer_irl_scored'] );
-
-		$this->assertSame( 190, Character_Score::legacy( $data )['parts']['queer-irl bonus'] );
-	}
-
-	/*
-	 * longevity() - the model behind the flag
+	 * longevity() - the live model
 	 */
 
 	public function test_longevity_sums_contributions_and_saturates(): void {
