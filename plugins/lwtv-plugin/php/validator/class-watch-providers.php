@@ -45,9 +45,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-use LWTV\CPTs\Shows\Watch_Host_Names;
-use LWTV\CPTs\Shows\Watch_Hosts;
-use LWTV\CPTs\Shows\Watch_Term_Match;
+use LWTV\CPTs\Shows\Watching\Watch_Host_Names;
+use LWTV\CPTs\Shows\Watching\Watch_Hosts;
+use LWTV\CPTs\Shows\Watching\Watch_Term_Match;
 use LWTV\Theme\Ways_To_Watch as Theme_Ways_To_Watch;
 
 class Watch_Providers {
@@ -569,7 +569,7 @@ class Watch_Providers {
 			var options = document.getElementById( 'lwtv-watch-term-options' );
 			var forms   = document.querySelectorAll( '.lwtv-watch-assign' );
 			var bulk    = document.getElementById( 'lwtv-watch-showall' );
-			var labels  = 
+			var labels  =
 			<?php
 				echo wp_json_encode(
 					array(

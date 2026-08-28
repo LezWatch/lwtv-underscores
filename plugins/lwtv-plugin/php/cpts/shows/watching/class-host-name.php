@@ -30,7 +30,7 @@
  * @package LWTV
  */
 
-namespace LWTV\CPTs\Shows;
+namespace LWTV\CPTs\Shows\Watching;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;

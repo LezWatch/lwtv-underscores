@@ -10,7 +10,7 @@
  * Matching is by normalised *host*, via Watch_Hosts::term_for(). It used to be an
  * exact comparison against the stored URL string, which meant a term URL saved
  * with a trailing slash or a `www.` matched nothing and the provider silently
- * fell through to the guess below. See CPTs\Shows\Watch_Host_Map.
+ * fell through to the guess below. See CPTs\Shows\Watching\Watch_Host_Map.
  *
  * Hosts with no term fall through to guess_name(), which does its best from the
  * hostname. That path is permanent: LWTV documents web series, and each one
@@ -23,9 +23,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-use LWTV\CPTs\Shows\Host_Name;
-use LWTV\CPTs\Shows\Watch_Host_Names;
-use LWTV\CPTs\Shows\Watch_Hosts;
+use LWTV\CPTs\Shows\Watching\Host_Name;
+use LWTV\CPTs\Shows\Watching\Watch_Host_Names;
+use LWTV\CPTs\Shows\Watching\Watch_Hosts;
 
 
 class Ways_To_Watch {

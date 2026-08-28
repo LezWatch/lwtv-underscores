@@ -23,8 +23,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 use LWTV\Admin_Menu\Validation;
-use LWTV\CPTs\Shows\Watch_Hosts;
-use LWTV\CPTs\Shows\Watch_Url_Health;
+use LWTV\CPTs\Shows\Watching\Watch_Hosts;
+use LWTV\CPTs\Shows\Watching\Watch_Url_Health;
 use LWTV\Debugger\Watch_URLs;
 use LWTV\Schedulers\Watch_URLs_Task;
 use LWTV\Theme\Ways_To_Watch as Theme_Ways_To_Watch;

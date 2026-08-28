@@ -14,7 +14,7 @@
 namespace LWTV\Tests\CPTs;
 
 use PHPUnit\Framework\TestCase;
-use LWTV\CPTs\Shows\Watch_Term_Url_Audit as Audit;
+use LWTV\CPTs\Shows\Watching\Watch_Term_Url_Audit as Audit;
 
 class WatchTermUrlAuditTest extends TestCase {
 

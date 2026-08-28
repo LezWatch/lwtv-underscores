@@ -26,7 +26,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-use LWTV\CPTs\Shows\Watch_Hosts;
+use LWTV\CPTs\Shows\Watching\Watch_Hosts;
 use LWTV\Debugger\Build\Findings;
 use LWTV\Debugger\Format\Rows;
 use LWTV\Theme\Ways_To_Watch as Theme_Ways_To_Watch;

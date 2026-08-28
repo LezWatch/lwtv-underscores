@@ -33,10 +33,10 @@ if ( ! defined( 'ABSPATH' ) && ! defined( 'WP_CLI' ) ) {
 	die();
 }
 
-use LWTV\CPTs\Shows\Host_Name;
-use LWTV\CPTs\Shows\Watch_Host_Names;
-use LWTV\CPTs\Shows\Watch_Hosts;
-use LWTV\CPTs\Shows\Watch_Term_Url_Audit;
+use LWTV\CPTs\Shows\Watching\Host_Name;
+use LWTV\CPTs\Shows\Watching\Watch_Host_Names;
+use LWTV\CPTs\Shows\Watching\Watch_Hosts;
+use LWTV\CPTs\Shows\Watching\Watch_Term_Url_Audit;
 use LWTV\Theme\Ways_To_Watch as Theme_Ways_To_Watch;
 
 /**
