@@ -61,11 +61,11 @@ require_once __DIR__ . '/../plugins/lwtv-plugin/php/cpts/shows/class-airdates.ph
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/cpts/shows/scoring/class-longevity.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/cpts/shows/scoring/class-character-score.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/_helpers/class-imdb-canonical.php';
-require_once __DIR__ . '/../plugins/lwtv-plugin/php/cpts/shows/class-host-name.php';
-require_once __DIR__ . '/../plugins/lwtv-plugin/php/cpts/shows/class-watch-url-health.php';
-require_once __DIR__ . '/../plugins/lwtv-plugin/php/cpts/shows/class-watch-term-url-audit.php';
-require_once __DIR__ . '/../plugins/lwtv-plugin/php/cpts/shows/class-watch-host-map.php';
-require_once __DIR__ . '/../plugins/lwtv-plugin/php/cpts/shows/class-watch-term-match.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/cpts/shows/watching/class-host-name.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/cpts/shows/watching/class-watch-url-health.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/cpts/shows/watching/class-watch-term-url-audit.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/cpts/shows/watching/class-watch-host-map.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/cpts/shows/watching/class-watch-term-match.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/statistics/build/class-trope-category-coverage.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/statistics/build/class-term-count-distribution.php'; // to_cells() lives here too.
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/statistics/build/class-score-distribution.php';

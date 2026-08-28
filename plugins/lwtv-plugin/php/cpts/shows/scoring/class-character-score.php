@@ -60,51 +60,18 @@ class Character_Score {
 	);
 
 	/**
-	 * The gather options implied by the current flags.
-	 *
-	 * One place, so a caller cannot gather less than the active model needs (a
-	 * silently wrong score) or more than it needs (a silent slowdown).
-	 *
-	 * @return array
-	 */
-	public static function options_from_flags(): array {
-		return array(
-			'longevity'   => true,
-			'actor_check' => true,
-		);
-	}
-
-	/**
 	 * Collect everything either model needs for one show.
 	 *
-	 * Ordering here is load-bearing and not obvious: the characters must be read
+	 * Ordering here is critical and not obvious: the characters must be read
 	 * and reduced to their credited years BEFORE the aired-years set is vetted,
 	 * because the vet's strongest signal is whether the set can account for those
 	 * years. The vet's verdict then decides the denominator every weight is
 	 * measured against. So it is characters, then vet, then denominator -- not the
 	 * other way round.
 	 *
-	 * The two gathering gates are PERFORMANCE gates, not feature flags, and they
-	 * exist because each unlocks work the other models never read. Across ~2,300
-	 * shows and ~30,000 characters that difference is thousands of queries:
-	 *
-	 * | gate          | unlocks                                                   |
-	 * |---------------|-----------------------------------------------------------|
-	 * | `longevity`   | `lezchars_show_group` per character (credited years), the  |
-	 * |               | airdates, the season count, the aired-years vetting, and   |
-	 * |               | the primary actor's gender terms                          |
-	 * | `actor_check` | Is_Actor_Queer on the primary actor of each character      |
-	 * |               | TAGGED queer-irl -- far cheaper, since most are not        |
-	 *
-	 * With both false, gather() does exactly the work count_queers_all_types() did
-	 * before this class existed. Callers pass what their flags actually turned on
-	 * rather than taking the defaults, so a disabled model costs nothing.
-	 *
 	 * @param int   $show_id Show post ID.
 	 * @param array $options aired_override (array) TVMaze years from a caller that
-	 *                       fetched them live, empty for stored meta only;
-	 *                       longevity (bool) gather longevity inputs;
-	 *                       actor_check (bool) gather primary-actor queerness.
+	 *                       fetched them live, empty for stored meta only.
 	 *
 	 * @return array
 	 */
@@ -112,28 +79,15 @@ class Character_Score {
 		$aired_override = isset( $options['aired_override'] ) && is_array( $options['aired_override'] )
 			? $options['aired_override']
 			: array();
-		$with_longevity = (bool) ( $options['longevity'] ?? true );
-		$with_actor     = (bool) ( $options['actor_check'] ?? true );
 
-		// The longevity model folds queer casting into casting_multiplier(), so it
-		// cannot score without the actor check regardless of that flag.
-		$with_actor = $with_actor || $with_longevity;
-
-		$airdates = $with_longevity
-			? Airdates::get( $show_id )
-			: array(
-				'start'  => '',
-				'finish' => '',
-			);
+		$airdates = Airdates::get( $show_id );
 		$now      = (int) gmdate( 'Y' );
-		$seasons  = $with_longevity ? (int) get_post_meta( $show_id, 'lezshows_seasons', true ) : 0;
+		$seasons  = (int) get_post_meta( $show_id, 'lezshows_seasons', true );
 
 		$aired_years = array();
 		$why         = '';
 
-		if ( ! $with_longevity ) {
-			$why = 'longevity data not gathered';
-		} elseif ( ! empty( $aired_override ) ) {
+		if ( ! empty( $aired_override ) ) {
 			$aired_years = array_map( 'intval', $aired_override );
 		} else {
 			$stored = get_post_meta( $show_id, 'lezshows_aired_years', true );
@@ -180,7 +134,7 @@ class Character_Score {
 			$char_id   = (int) $char_id;
 			$years_set = array();
 			$role      = '';
-			$rows      = $with_longevity ? get_field( 'lezchars_show_group', $char_id ) : null;
+			$rows      = get_field( 'lezchars_show_group', $char_id );
 
 			if ( is_array( $rows ) ) {
 				foreach ( $rows as $row ) {
@@ -342,7 +296,7 @@ class Character_Score {
 			// first-billed actor is actually queer. Actors are stored in billing
 			// order, so the primary is simply the first.
 			$primary_queer = false;
-			if ( $with_actor && $is_qirl && ! empty( $actor_ids ) ) {
+			if ( $is_qirl && ! empty( $actor_ids ) ) {
 				$primary_queer = ( new Is_Actor_Queer() )->make( reset( $actor_ids ) );
 			}
 
@@ -359,7 +313,7 @@ class Character_Score {
 			$actor_class   = 'unknown';
 			$primary_actor = 0;
 			$primary_slugs = array();
-			if ( $with_longevity && ! empty( $actor_ids ) ) {
+			if ( ! empty( $actor_ids ) ) {
 				$primary_actor = (int) reset( $actor_ids );
 				$actor_terms   = get_the_terms( $primary_actor, 'lez_actor_gender' );
 				$primary_slugs = ( is_array( $actor_terms ) ) ? wp_list_pluck( $actor_terms, 'slug' ) : array();
@@ -442,7 +396,7 @@ class Character_Score {
 			);
 		}
 
-		$out['queer_irl_scored'] = $with_actor ? $out['queer_irl_cast'] : $out['queer_irl'];
+		$out['queer_irl_scored'] = $out['queer_irl_cast'];
 
 		return $out;
 	}

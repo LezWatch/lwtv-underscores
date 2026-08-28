@@ -459,18 +459,9 @@ class WP_CLI_LWTV_Score_Preview {
 			$aired_override = $this->fetch_aired_years( $show_id, (int) gmdate( 'Y' ), $why );
 		}
 
-		// Both gates forced on regardless of the live flags. A preview whose
-		// contents depended on whether the feature was already enabled would be
-		// useless for deciding whether to enable it -- and with the flags off,
-		// gather() would return no weights at all and every NEW column would read
-		// zero, which looks like a result rather than a missing input.
 		$data = Character_Score::gather(
 			$show_id,
-			array(
-				'aired_override' => $aired_override,
-				'longevity'      => true,
-				'actor_check'    => true,
-			)
+			array( 'aired_override' => $aired_override )
 		);
 
 		$data['has_stored']       = $has_stored;

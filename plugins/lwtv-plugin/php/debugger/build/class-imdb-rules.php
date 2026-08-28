@@ -199,8 +199,8 @@ class Imdb_Rules {
 
 		$id = $matches[1];
 
-		// Belt and braces: run the extracted value through the same validator the
-		// finding used, so a repair can never write something the check would
+		// Run the extracted value through the same validator the finding
+		// used, so a repair can never write something the check would
 		// immediately flag again.
 		return ( false === Debug_Tool::validate_imdb( $id, $config['validate'] ) ) ? '' : $id;
 	}
