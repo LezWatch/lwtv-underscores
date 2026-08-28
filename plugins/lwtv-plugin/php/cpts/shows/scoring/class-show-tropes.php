@@ -4,6 +4,10 @@
  * Description: Pure maths for a show's trope score -- the good/maybe/bad/ploy
  * trope tally, the intersectionality bonus, and the death deductions.
  *
+ * Extracted verbatim from Calculations::show_tropes_score(), which reads
+ * taxonomy terms and meta directly and so cannot be unit-tested itself. This
+ * class takes the already-resolved values and does only arithmetic.
+ *
  * @package LWTV
  */
 

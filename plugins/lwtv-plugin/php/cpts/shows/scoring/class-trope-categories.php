@@ -26,14 +26,8 @@ class Trope_Categories {
 	 */
 	const MAYBE = array( 'big-queer-wedding', 'coming-out', 'subtext' );
 
-	/**
-	 * BAD tropes are always good.
-	 */
 	const BAD = array( 'queerbashing', 'in-prison', 'queerbaiting', 'big-bad-queers' );
 
-	/**
-	 * PLOY tropes are sketchy.
-	 */
 	const PLOY = array( 'queer-for-ratings', 'queer-laughs', 'happy-then-not', 'erasure', 'queer-of-the-week', 'background-queers' );
 
 	/**
