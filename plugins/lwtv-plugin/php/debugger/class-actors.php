@@ -62,7 +62,13 @@ class Actors {
 	 * @return void
 	 */
 	public function flag_shadow_sync_failure( int $actor_id, int $term_id ): void {
-		$items = lwtv_plugin()->get_transient( self::TRANSIENT_PROBLEMS );
+		/*
+		 * get_stored(), not get_transient(): this is a read-modify-write, and
+		 * get_transient() returns false when LWTV_DISABLE_TRANSIENTS is set. That
+		 * would land here as "no findings yet", and the append below would replace
+		 * the whole list with this one row rather than adding to it.
+		 */
+		$items = lwtv_plugin()->get_stored( self::TRANSIENT_PROBLEMS );
 		if ( ! is_array( $items ) ) {
 			$items = array();
 		}
@@ -92,7 +98,7 @@ class Actors {
 			)
 		);
 
-		lwtv_plugin()->set_transient( self::TRANSIENT_PROBLEMS, $items, WEEK_IN_SECONDS );
+		Scan::store( self::TRANSIENT_PROBLEMS, $items );
 
 		/*
 		 * No summary, which clears any stored new/open breakdown: this row

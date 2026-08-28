@@ -47,6 +47,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 use LWTV\CPTs\Shows\Watch_Host_Names;
 use LWTV\CPTs\Shows\Watch_Hosts;
+use LWTV\CPTs\Shows\Watch_Term_Match;
 use LWTV\Theme\Ways_To_Watch as Theme_Ways_To_Watch;
 
 class Watch_Providers {
@@ -103,7 +104,7 @@ class Watch_Providers {
 	public static function make(): void {
 		self::show_notice();
 
-		$items = lwtv_plugin()->get_transient( Watch_Hosts::TRANSIENT_UNREGISTERED );
+		$items = lwtv_plugin()->get_stored( Watch_Hosts::TRANSIENT_UNREGISTERED );
 
 		/*
 		 * Same shape as Validator\Report, deliberately: same nonce naming, same
@@ -188,7 +189,7 @@ class Watch_Providers {
 						$number = 0;
 						foreach ( $unregistered as $host => $count ) {
 							++$number;
-							self::render_row( $host, $count, $can_manage, 0 === $number % 2 );
+							self::render_row( $host, $count, $can_manage, 0 === $number % 2, $terms );
 						}
 						?>
 					</tbody>
@@ -348,7 +349,7 @@ class Watch_Providers {
 
 								foreach ( $terms as $term_id => $term_name ) {
 									$edit  = get_edit_term_link( (int) $term_id, Theme_Ways_To_Watch::TAXONOMY );
-									$label = html_entity_decode( $term_name, ENT_QUOTES | ENT_HTML5, 'UTF-8' );
+									$label = Theme_Ways_To_Watch::term_name( $term_name );
 
 									if ( $term_id === $winning ) {
 										/* translators: %s: provider term name. */
@@ -382,13 +383,22 @@ class Watch_Providers {
 	 * @param bool   $alt        Zebra striping.
 	 * @return void
 	 */
-	private static function render_row( string $host, int $count, bool $can_manage, bool $alt ): void {
+	private static function render_row( string $host, int $count, bool $can_manage, bool $alt, array $terms = array() ): void {
 		$proposed   = Watch_Hosts::proposed_name( $host );
 		$discovered = Watch_Host_Names::get( $host );
 		$slug       = md5( $host );
 		$field_id   = 'lwtv-watch-name-' . $slug;
 		$select_id  = 'lwtv-watch-term-' . $slug;
 		$panel_id   = 'lwtv-watch-panel-' . $slug;
+
+		/*
+		 * Does a term already exist under a slightly different spelling? This is
+		 * how the data grew "Lesflicks" beside "LezFlicks", so the tab looks
+		 * before it offers to create. Exact-after-canonicalisation only -- see
+		 * Watch_Term_Match on why this is not fuzzy.
+		 */
+		$suggested_id   = Watch_Term_Match::suggest( $host, $proposed, $terms );
+		$suggested_name = $suggested_id ? Theme_Ways_To_Watch::term_name( (string) ( $terms[ $suggested_id ] ?? '' ) ) : '';
 		?>
 		<tr class="<?php echo esc_attr( $alt ? 'alternate' : '' ); ?>">
 			<td>
@@ -400,13 +410,33 @@ class Watch_Providers {
 				<span class="lwtv-watch-provenance">
 					<?php
 					echo ' &middot; ';
+
+					/*
+					 * Three provenances, not two. "Guessed" alone does not say
+					 * whether asking the site would help -- and for a host that has
+					 * stopped answering, it never will. Worth saying so on the row
+					 * rather than leaving it to be rediscovered.
+					 */
 					if ( null !== $discovered && '' !== $discovered ) {
 						esc_html_e( 'from the site', 'lwtv' );
+					} elseif ( ! Watch_Host_Names::should_ask( $host ) && Watch_Host_Names::attempts( $host ) ) {
+						esc_html_e( 'guessed — host does not answer', 'lwtv' );
 					} else {
 						esc_html_e( 'guessed', 'lwtv' );
 					}
 					?>
 				</span>
+				<?php if ( $suggested_id ) : ?>
+					<span class="lwtv-watch-suggestion">
+						<?php
+						printf(
+							/* translators: %s: existing provider term name. */
+							esc_html__( 'Looks like the existing term “%s”.', 'lwtv' ),
+							esc_html( $suggested_name )
+						);
+						?>
+					</span>
+				<?php endif; ?>
 			</td>
 			<td>
 				<?php if ( ! $can_manage ) : ?>
@@ -420,21 +450,39 @@ class Watch_Providers {
 						<div class="lwtv-watch-primary">
 							<?php
 							/*
-							 * Two submits, told apart by `do` rather than by which
-							 * fields happen to be filled in. A select left on a
-							 * real term while the editor meant to create cannot
-							 * then quietly assign instead.
+							 * Submits are told apart by `do`, never by which fields
+							 * happen to be filled in. A select left on a real term
+							 * while the editor meant to create cannot then quietly
+							 * assign instead.
+							 *
+							 * `suggest` carries its term in a server-rendered hidden
+							 * field rather than reading the select, so the one-click
+							 * path works with no JavaScript -- the select is empty
+							 * until the script fills it.
 							 */
-							?>
-							<button type="submit" name="do" value="create" class="button button-secondary lwtv-watch-create">
-								<?php
-								printf(
-									/* translators: %s: proposed provider name. */
-									esc_html__( 'Create “%s”', 'lwtv' ),
-									esc_html( $proposed )
-								);
+							if ( $suggested_id ) :
 								?>
-							</button>
+								<input type="hidden" name="suggested_term_id" value="<?php echo esc_attr( (string) $suggested_id ); ?>" />
+								<button type="submit" name="do" value="suggest" class="button button-primary">
+									<?php
+									printf(
+										/* translators: %s: existing provider term name. */
+										esc_html__( 'Assign to “%s”', 'lwtv' ),
+										esc_html( $suggested_name )
+									);
+									?>
+								</button>
+							<?php else : ?>
+								<button type="submit" name="do" value="create" class="button button-secondary lwtv-watch-create">
+									<?php
+									printf(
+										/* translators: %s: proposed provider name. */
+										esc_html__( 'Create “%s”', 'lwtv' ),
+										esc_html( $proposed )
+									);
+									?>
+								</button>
+							<?php endif; ?>
 							<button type="button" class="button-link lwtv-watch-toggle" aria-expanded="false" aria-controls="<?php echo esc_attr( $panel_id ); ?>" hidden>
 								<?php esc_html_e( 'more', 'lwtv' ); ?>
 							</button>
@@ -467,6 +515,16 @@ class Watch_Providers {
 									?>
 								</label>
 								<input type="text" id="<?php echo esc_attr( $field_id ); ?>" name="provider_name" value="<?php echo esc_attr( $proposed ); ?>" class="lwtv-watch-name" />
+								<?php
+								/*
+								 * Always present, even when the primary button is
+								 * also Create: a suggested row's primary is Assign,
+								 * so this is the only way to say "no, make a new
+								 * one" -- and refusing the suggestion has to stay
+								 * one click away.
+								 */
+								?>
+								<button type="submit" name="do" value="create" class="button"><?php esc_html_e( 'Create', 'lwtv' ); ?></button>
 							</p>
 						</div>
 					</form>
@@ -498,7 +556,7 @@ class Watch_Providers {
 		?>
 		<template id="lwtv-watch-term-options">
 			<?php foreach ( $terms as $term_id => $term_name ) : ?>
-				<option value="<?php echo esc_attr( (string) $term_id ); ?>"><?php echo esc_html( html_entity_decode( $term_name, ENT_QUOTES | ENT_HTML5, 'UTF-8' ) ); ?></option>
+				<option value="<?php echo esc_attr( (string) $term_id ); ?>"><?php echo esc_html( Theme_Ways_To_Watch::term_name( $term_name ) ); ?></option>
 			<?php endforeach; ?>
 		</template>
 		<noscript>
@@ -548,6 +606,16 @@ class Watch_Providers {
 				// thousands of nodes for no gain.
 				if ( options && select ) {
 					select.appendChild( options.content.cloneNode( true ) );
+
+					// A suggested row already names its term on the primary
+					// button; pre-selecting it here means opening the panel shows
+					// the same answer rather than an empty control that looks like
+					// the suggestion was lost.
+					var suggested = form.querySelector( 'input[name="suggested_term_id"]' );
+
+					if ( suggested ) {
+						select.value = suggested.value;
+					}
 				}
 
 				// Only offered now we know the panel can be reached again.
@@ -627,7 +695,7 @@ class Watch_Providers {
 	private static function render_lookup_form( array $unregistered ): void {
 		$pending = 0;
 		foreach ( array_keys( $unregistered ) as $host ) {
-			if ( ! Watch_Host_Names::is_checked( $host ) ) {
+			if ( Watch_Host_Names::should_ask( $host ) ) {
 				++$pending;
 			}
 		}
@@ -652,10 +720,18 @@ class Watch_Providers {
 			</button>
 			<span class="description">
 				<?php
+				/*
+				 * "Still to check" is not "will clear if you press again". A host
+				 * that fails to answer is deliberately not recorded, so a blip can
+				 * retry -- which means a host that is permanently unreachable stays
+				 * on this list for good, and `enrich --all` will not shift it
+				 * either. Say so, rather than implying one more press finishes it.
+				 */
 				printf(
-					/* translators: %d: number of hosts still to check. */
-					esc_html__( 'Asks each site what it calls itself. %d still to check — this page does a few at a time; `wp lwtv waystowatch enrich --all` does the lot.', 'lwtv' ),
-					(int) $pending
+					/* translators: 1: number of hosts still to check, 2: WP-CLI command, already wrapped in a code element. */
+					wp_kses_post( __( 'Asks each site what it calls itself, a few at a time. %1$d still to check; %2$s does the rest. Hosts that never answer are not recorded, so they stay on this list and are retried each run.', 'lwtv' ) ),
+					(int) $pending,
+					'<code>wp lwtv waystowatch enrich --all</code>'
 				);
 				?>
 			</span>
@@ -745,10 +821,22 @@ class Watch_Providers {
 		 * inferring intent from a non-zero term_id could assign a host the editor
 		 * meant to create a fresh term for.
 		 */
-		$assigning = isset( $_POST['do'] ) && 'assign' === sanitize_key( wp_unslash( $_POST['do'] ) );
-		$term_id   = isset( $_POST['term_id'] ) ? absint( $_POST['term_id'] ) : 0;
+		$action = isset( $_POST['do'] ) ? sanitize_key( wp_unslash( $_POST['do'] ) ) : '';
 
-		if ( ! $assigning ) {
+		/*
+		 * Three intents, one form.
+		 *
+		 * `suggest` takes its term from a hidden field the server rendered, so the
+		 * one-click path works without JavaScript -- the select is empty until the
+		 * script fills it. `assign` takes the select. Both are still checked
+		 * against the taxonomy by attach_host(), because a POSTed ID is a POSTed
+		 * ID however it arrived.
+		 */
+		if ( 'suggest' === $action ) {
+			$term_id = isset( $_POST['suggested_term_id'] ) ? absint( $_POST['suggested_term_id'] ) : 0;
+		} elseif ( 'assign' === $action ) {
+			$term_id = isset( $_POST['term_id'] ) ? absint( $_POST['term_id'] ) : 0;
+		} else {
 			$this->create_and_notify( $host );
 			return;
 		}
@@ -766,7 +854,7 @@ class Watch_Providers {
 		}
 
 		$term = get_term( (int) $result, Theme_Ways_To_Watch::TAXONOMY );
-		$name = ( $term instanceof \WP_Term ) ? html_entity_decode( $term->name, ENT_QUOTES | ENT_HTML5, 'UTF-8' ) : '';
+		$name = ( $term instanceof \WP_Term ) ? Theme_Ways_To_Watch::term_name( $term->name ) : '';
 
 		Watch_Hosts::forget_unregistered( $host );
 
@@ -811,7 +899,7 @@ class Watch_Providers {
 		$remaining = 0;
 
 		foreach ( array_keys( Watch_Hosts::unregistered() ) as $host ) {
-			if ( Watch_Host_Names::is_checked( $host ) ) {
+			if ( ! Watch_Host_Names::should_ask( $host ) ) {
 				continue;
 			}
 
@@ -831,6 +919,11 @@ class Watch_Providers {
 
 			if ( 'error' === $result['status'] ) {
 				++$failed;
+
+				// Recorded now, where it used to be dropped. Counting the failure
+				// is what lets a host that is genuinely gone stop appearing on the
+				// "still to check" list after MAX_ATTEMPTS.
+				Watch_Host_Names::fail( $host );
 				continue;
 			}
 
@@ -860,9 +953,10 @@ class Watch_Providers {
 
 		if ( $remaining ) {
 			$message .= ' ' . sprintf(
-				/* translators: %d: hosts not yet asked. */
-				__( '%d still to check — press the button again, or run `wp lwtv waystowatch enrich --all` to do the lot.', 'lwtv' ),
-				$remaining
+				/* translators: 1: hosts not yet asked, 2: WP-CLI command in a code element. */
+				__( '%1$d still to check — press the button again, or run %2$s for the rest.', 'lwtv' ),
+				$remaining,
+				'<code>wp lwtv waystowatch enrich --all</code>'
 			);
 		}
 
@@ -912,7 +1006,12 @@ class Watch_Providers {
 		?>
 		<div class="notice <?php echo esc_attr( $class ); ?> is-dismissible">
 			<p>
-				<?php echo esc_html( $notice['message'] ); ?>
+				<?php
+				// wp_kses_post, not esc_html: these messages are ours and some
+				// carry a <code> element naming a WP-CLI command. Nothing here is
+				// user input.
+				echo wp_kses_post( $notice['message'] );
+				?>
 				<?php if ( ! empty( $notice['link'] ) ) : ?>
 					<a href="<?php echo esc_url( $notice['link'] ); ?>"><?php esc_html_e( 'Edit the term', 'lwtv' ); ?></a>
 				<?php endif; ?>

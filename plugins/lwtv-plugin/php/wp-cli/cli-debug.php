@@ -320,7 +320,7 @@ class WP_CLI_LWTV_Debug {
 	private function run_check( array $check, bool $fix_it ): void {
 		\WP_CLI::log( $check['running'] );
 
-		$items      = $this->force ? false : lwtv_plugin()->get_transient( $check['transient'] );
+		$items      = $this->force ? false : lwtv_plugin()->get_stored( $check['transient'] );
 		$from_cache = false !== $items;
 
 		if ( $from_cache ) {

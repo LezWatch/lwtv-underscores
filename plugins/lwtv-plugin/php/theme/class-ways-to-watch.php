@@ -92,7 +92,7 @@ class Ways_To_Watch {
 
 			// The term name IS the display name. Do not reformat it -- decoding
 			// is not reformatting, see term_name().
-			$links[] = $this->build_link( $url, $this->term_name( $term->name ) );
+			$links[] = $this->build_link( $url, self::term_name( $term->name ) );
 		}
 
 		// If we have old style URLs, we need to generate those links.
@@ -127,25 +127,26 @@ class Ways_To_Watch {
 	}
 
 	/**
-	 * A term name as text, not as HTML.
+	 * A provider term's name as text, not as HTML.
 	 *
 	 * WordPress stores term names entity-encoded, so "U&Alibi" comes back as
-	 * "U&amp;Alibi" and "Seed&Spark" as "Seed&amp;Spark". build_link() escapes
-	 * with esc_html(), which encodes the ampersand a second time, and the reader
-	 * gets a literal "U&amp;Alibi" on the button.
+	 * "U&amp;Alibi" and "Seed&Spark" as "Seed&amp;Spark". Every surface that
+	 * renders one has to decode before escaping, or `esc_html()` encodes the
+	 * ampersand a second time and the reader gets a literal "U&amp;Alibi".
 	 *
-	 * Decode on the way out rather than fixing the stored value: WordPress
-	 * re-encodes on every term save, so a corrected name would not stay
-	 * corrected.
+	 * Decode on the way out rather than correcting the stored value: WordPress
+	 * re-encodes on every term save, so a fixed name would not stay fixed.
 	 *
-	 * Twin of Debugger\Watch_URLs::term_name(), which solved this for the
-	 * debugger's findings and documents the same reasoning. Two copies of a
-	 * one-liner is not yet a pattern; a third means extracting it.
+	 * **Public and static because seven places need it** — this class, the two
+	 * debugger checks that report on `lez_watch_urls` terms, and four spots in the
+	 * Watch Providers tab. Each one that forgot shipped the double-encoding bug,
+	 * which is a poor thing to leave to memory. It lives here because this class
+	 * owns `TAXONOMY`, so every caller already imports it.
 	 *
 	 * @param  string $name Term name as stored.
 	 * @return string
 	 */
-	private function term_name( string $name ): string {
+	public static function term_name( string $name ): string {
 		return html_entity_decode( $name, ENT_QUOTES | ENT_HTML5, 'UTF-8' );
 	}
 

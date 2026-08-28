@@ -23,6 +23,7 @@ use LWTV\Schedulers\FixCharShows_Task;
 use LWTV\Schedulers\Statistics_Cache_Warming;
 use LWTV\Schedulers\BYQ_Task;
 use LWTV\Schedulers\Imdb_Verify_Task;
+use LWTV\Schedulers\Watch_URLs_Task;
 
 /**
  * Class Scheduler
@@ -61,6 +62,7 @@ class Scheduler implements Component, Templater {
 				new Cache_Batch_Task();
 				new BYQ_Task();
 				new Imdb_Verify_Task();
+				new Watch_URLs_Task();
 			} else {
 				lwtv_plugin()->debug_log( 'scheduler', 'Action Scheduler not available, skipping AS-dependent task handlers' );
 			}

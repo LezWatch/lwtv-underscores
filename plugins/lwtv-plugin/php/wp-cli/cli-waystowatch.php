@@ -23,8 +23,9 @@
  * avoid.
  *
  * New shows arrive with new hosts continuously, so `enrich` is worth running on
- * a schedule rather than once. It only ever touches hosts it has not already
- * asked about, so repeat runs are cheap.
+ * a schedule rather than once. It only ever touches hosts still worth asking --
+ * never named, never answered, and not yet out of retries -- so repeat runs are
+ * cheap and a dead host stops being re-fetched forever.
  */
 
 // Bail if directly accessed
@@ -528,7 +529,7 @@ class WP_CLI_LWTV_WaysToWatch {
 				continue;
 			}
 
-			if ( ! $recheck && Watch_Host_Names::is_checked( $host ) ) {
+			if ( ! $recheck && ! Watch_Host_Names::should_ask( $host ) ) {
 				continue;
 			}
 
@@ -536,7 +537,12 @@ class WP_CLI_LWTV_WaysToWatch {
 		}
 
 		if ( empty( $targets ) ) {
-			\WP_CLI::success( 'Nothing to enrich. Every host in use either has a term or has already been asked.' );
+			\WP_CLI::success(
+				sprintf(
+					'Nothing to enrich. Every host in use has a term, has been asked, or has failed to answer %d times. --recheck asks anyway.',
+					Watch_Host_Names::MAX_ATTEMPTS
+				)
+			);
 			return;
 		}
 
@@ -564,6 +570,13 @@ class WP_CLI_LWTV_WaysToWatch {
 
 			if ( 'error' === $result['status'] ) {
 				++$failed;
+
+				// Recorded, where it used to be dropped. Counting the failure is
+				// what lets a host that is genuinely gone stop appearing on the
+				// "still to check" list after MAX_ATTEMPTS.
+				if ( ! $dry_run ) {
+					Watch_Host_Names::fail( $host );
+				}
 			} elseif ( '' !== $result['name'] ) {
 				++$found;
 				$rows[] = array(
@@ -598,12 +611,21 @@ class WP_CLI_LWTV_WaysToWatch {
 
 		\WP_CLI::log(
 			sprintf(
-				'%d named, %d published nothing usable, %d unreachable (will retry next run).',
+				'%d named, %d published nothing usable, %d unreachable.',
 				$found,
 				$none,
 				$failed
 			)
 		);
+
+		if ( $failed ) {
+			\WP_CLI::log(
+				sprintf(
+					'An unreachable host is retried up to %d times, then left alone. --recheck asks everything again.',
+					Watch_Host_Names::MAX_ATTEMPTS
+				)
+			);
+		}
 
 		if ( $dry_run ) {
 			\WP_CLI::success( 'Dry run complete. Nothing cached.' );

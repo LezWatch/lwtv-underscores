@@ -121,6 +121,114 @@
 	font-size: 12px;
 }
 
+/* "Looks like the existing term X" -- the reason the primary button says Assign
+ * rather than Create. Coloured, because it is the one line on the row that
+ * changes what the button will do. */
+.lwtv-watch-suggestion {
+	display: block;
+	margin-top: 4px;
+	color: #135e96;
+	font-size: 12px;
+}
+
 .lwtv-watch-bulk {
 	margin: 20px 0 -10px;
+}
+
+/* The Data Health Checkers overview.
+ *
+ * Replaces a bulleted list of links plus a separate status list that named the
+ * same checks differently. Colours are WordPress admin's own, so this reads as
+ * native wp-admin rather than a skin.
+ */
+
+.lwtv-tools-intro {
+	max-width: 820px;
+}
+
+.lwtv-tools-callout {
+	max-width: 820px;
+	margin: 0 0 20px;
+	padding: 10px 12px;
+	border-left: 4px solid #72aee6;
+	background: #fff;
+	box-shadow: 0 1px 1px rgba(0, 0, 0, .04);
+}
+
+.lwtv-tools-callout p {
+	margin: 0;
+}
+
+.lwtv-tools-subhead {
+	margin: 0 0 8px;
+	font-size: 14px;
+	font-weight: 600;
+}
+
+.lwtv-tools-checkers {
+	max-width: 1280px;
+}
+
+.lwtv-tools-checkers tbody tr:hover {
+	background: #f0f6fc;
+}
+
+.lwtv-tools-checkers td,
+.lwtv-tools-checkers th {
+	vertical-align: top;
+}
+
+.lwtv-tools-checkers__name {
+	display: block;
+	margin-bottom: 2px;
+	font-weight: 600;
+	text-decoration: none;
+}
+
+.lwtv-tools-checkers__desc {
+	display: block;
+	color: #646970;
+	font-size: 12px;
+}
+
+.lwtv-tools-checkers__count {
+	width: 130px;
+	text-align: center;
+}
+
+.lwtv-tools-checkers__action {
+	width: 130px;
+	text-align: right;
+}
+
+.lwtv-tools-checkers__none {
+	color: #646970;
+}
+
+.lwtv-tools-checkers__asof {
+	display: block;
+	margin-top: 3px;
+	color: #646970;
+	font-size: 11px;
+}
+
+/* A count from the status option rather than from live findings: outlined
+ * instead of filled, so it reads as a record rather than a current alarm. */
+.lwtv-tools-pill--stale {
+	border: 1px solid #d63638;
+	background: transparent;
+	color: #d63638;
+}
+
+/* #d63638 is WordPress's own "needs attention" red, the same one the update
+ * bubbles use. */
+.lwtv-tools-pill {
+	display: inline-block;
+	padding: 3px 8px;
+	border-radius: 9px;
+	background: #d63638;
+	color: #fff;
+	font-size: 11px;
+	font-weight: 600;
+	line-height: 1;
 }

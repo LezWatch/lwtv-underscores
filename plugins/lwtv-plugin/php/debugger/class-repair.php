@@ -245,7 +245,7 @@ class Repair {
 			return;
 		}
 
-		$items = lwtv_plugin()->get_transient( $config['transient'] );
+		$items = lwtv_plugin()->get_stored( $config['transient'] );
 
 		if ( ! is_array( $items ) ) {
 			return;
@@ -266,7 +266,7 @@ class Repair {
 			}
 		}
 
-		lwtv_plugin()->set_transient( $config['transient'], $kept, WEEK_IN_SECONDS );
+		Scan::store( $config['transient'], $kept );
 
 		/*
 		 * Three args on purpose, which clears the stored new/open breakdown: the

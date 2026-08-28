@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 use LWTV\Validator\Report;
-use LWTV\Debugger\Watch_Host_Collisions;
+use LWTV\CPTs\Shows\Watch_Hosts as CPT_Watch_Hosts;
 use LWTV\Validator\Watch_Providers;
 use LWTV\Validator\Watch_Term_Check;
 
@@ -26,6 +26,7 @@ use LWTV\Debugger\Queers;
 use LWTV\Debugger\Repair;
 use LWTV\Debugger\Shows;
 use LWTV\Debugger\Status;
+use LWTV\Debugger\Watch_Host_Collisions;
 use LWTV\Debugger\Watch_URLs;
 
 class Validation {
@@ -34,6 +35,16 @@ class Validation {
 	 * Cached copy of the debugger status option.
 	 */
 	private static $options = array();
+
+	/**
+	 * Request-level memo of tab_counts().
+	 *
+	 * The tab picker and the intro's Current Status table both want it, and it
+	 * reads one transient per check.
+	 *
+	 * @var array<string, array{count: int, new: int, cached: bool, stored: int, last: int}>|null
+	 */
+	private static $counts = null;
 
 	/**
 	 * Tool Tabs
@@ -189,27 +200,47 @@ class Validation {
 			),
 		),
 		'watch_providers'   => array(
-			'name'   => 'Watch Providers',
-			'desc'   => 'Ways to Watch hosts with no provider term, so the front end is guessing their name. Assign an existing term or create one.',
+			'name'      => 'Watch Providers',
+			'desc'      => 'Ways to Watch hosts with no provider term, so the front end is guessing their name. Assign an existing term or create one.',
 			/*
-			 * The badge counts contested hosts, not hosts without a term. The
-			 * second number is ~130 and permanent -- web series each live on
-			 * their own domain -- so badging it would mean a warning that never
-			 * clears and therefore never gets read. A collision is nearly always
-			 * 0 and always worth looking at.
+			 * Counts hosts with no term, written by Watch_Hosts::scan_unregistered().
 			 *
-			 * Fed by the `watchhosts` cron check, not by rendering this tab: the
-			 * tab computes its own numbers live and writing an option on read
-			 * would be the wrong shape.
+			 * An earlier version badged *contested* hosts instead, on the grounds
+			 * that a number which never reaches zero stops being read. Host
+			 * matching took that number from ~130 to 35 and it now falls as the
+			 * list is worked, so it is worth seeing. Contested hosts keep their own
+			 * status entry from the `watchhosts` check and their own section at
+			 * the top of the tab, which is louder than a badge anyway.
 			 */
-			'option' => Watch_Host_Collisions::STATUS_KEY,
-			'render' => array( Watch_Providers::class, 'make' ),
+			'option'    => CPT_Watch_Hosts::STATUS_KEY,
+			'transient' => CPT_Watch_Hosts::TRANSIENT_UNREGISTERED,
+			'render'    => array( Watch_Providers::class, 'make' ),
+		),
+		'watch_hosts'       => array(
+			/*
+			 * A real check with a real count -- weekly cron, `wp lwtv debug
+			 * watchhosts` -- whose findings are rendered inside the Watch
+			 * Providers tab rather than on a page of their own, because a
+			 * contested host and a host with no term are the same editor's
+			 * problem in the same sitting.
+			 *
+			 * `show_tab => false` keeps it out of the picker, since a dropdown
+			 * option leading nowhere would be worse than no option. `tab` says
+			 * where its row links instead.
+			 */
+			'name'      => 'Contested Watch Hosts',
+			'desc'      => 'Hosts claimed by more than one provider term. The front end has to pick one, and it picks whichever sorts first by name — stable, but arbitrary. Reported on the Watch Providers tab.',
+			'option'    => Watch_Host_Collisions::STATUS_KEY,
+			'transient' => Watch_Host_Collisions::TRANSIENT_PROBLEMS,
+			'show_tab'  => false,
+			'tab'       => 'watch_providers',
 		),
 		'watch_term_check'  => array(
-			'name'   => 'Watch Term Check',
-			'desc'   => 'The other half of Watch Providers: of the terms we do have, do their URLs still work and still belong to that provider? A shut-down service whose domain was resold still answers HTTP 200.',
-			'option' => Watch_URLs::STATUS_KEY,
-			'render' => array( Watch_Term_Check::class, 'make' ),
+			'name'      => 'Watch Term Check',
+			'desc'      => 'The other half of Watch Providers: of the terms we do have, do their URLs still work and still belong to that provider? A shut-down service whose domain was resold still answers HTTP 200.',
+			'option'    => Watch_URLs::STATUS_KEY,
+			'transient' => Watch_URLs::TRANSIENT_PROBLEMS,
+			'render'    => array( Watch_Term_Check::class, 'make' ),
 		),
 	);
 
@@ -254,6 +285,86 @@ class Validation {
 		return $last_run_echo;
 	}
 
+	/**
+	 * Outstanding count per tab, taken from the findings each tab renders.
+	 *
+	 * The badge in the picker, the Current Status table on the intro, and the tab
+	 * body itself all read this, so none of them can contradict another.
+	 *
+	 * **Counted from the findings transient, not from the status option.** The
+	 * status option never expires and the findings do, so a count read from the
+	 * option could advertise a check whose detail had gone -- which is exactly
+	 * what "Watch Term Check (47)" over an empty report was. Nine tabs hid it by
+	 * silently re-scanning on a cold cache; the one check too slow to do that
+	 * showed it plainly.
+	 *
+	 * No more expensive than the option it replaced: Status::all() already reads
+	 * one non-autoloaded option per check, and a transient is an option. Memoised
+	 * anyway, because the picker and the intro table both want it.
+	 *
+	 * `cached` is the third state the count alone cannot express: an empty array
+	 * means the check ran and found nothing, `false` means there is nothing to
+	 * read. "Clean" and "never run" deserve different words.
+	 *
+	 * Read through `get_stored()`, not `get_transient()`: findings are a store, not
+	 * a cache, and `get_transient()` returns false whenever
+	 * `LWTV_DISABLE_TRANSIENTS` is set -- which a development environment sets on
+	 * purpose. See _Components\Transients::get_stored().
+	 *
+	 * `stored` and `last` come from the status option and remain the fallback for
+	 * when the findings really are gone: a fresh database copy brings options
+	 * across but not transients, and the transient expires while the option does
+	 * not. The tab picker still badges only `count`, so it never advertises a
+	 * number whose detail has gone; the overview shows `stored` and says when it is
+	 * from.
+	 *
+	 * @return array<string, array{count: int, new: int, cached: bool, stored: int, last: int}> Keyed by tab slug.
+	 */
+	private static function tab_counts(): array {
+		if ( null !== self::$counts ) {
+			return self::$counts;
+		}
+
+		$counts  = array();
+		$options = is_array( self::$options ) && ! empty( self::$options ) ? self::$options : Status::all();
+
+		foreach ( self::TOOL_TABS as $tab => $value ) {
+			$items = ( ! empty( $value['transient'] ) )
+				? lwtv_plugin()->get_stored( $value['transient'] )
+				: false;
+
+			$rows = is_array( $items ) ? $items : array();
+			$new  = 0;
+
+			// Rows carry their own new/open stamp from the baseline diff, so the
+			// "N new" half of a badge comes from the same rows as the total. The
+			// status summary counts findings where this counts rows; mixing the
+			// two is what made "4 new / 41" incomparable.
+			foreach ( $rows as $row ) {
+				if ( is_array( $row ) && Baseline::NEW_ISSUE === ( $row['status'] ?? '' ) ) {
+					++$new;
+				}
+			}
+
+			$option = (string) ( $value['option'] ?? '' );
+			$status = ( '' !== $option && isset( $options[ $option ] ) && is_array( $options[ $option ] ) )
+				? $options[ $option ]
+				: array();
+
+			$counts[ $tab ] = array(
+				'count'  => count( $rows ),
+				'new'    => $new,
+				'cached' => is_array( $items ),
+				'stored' => (int) ( $status['count'] ?? 0 ),
+				'last'   => (int) ( $status['last'] ?? 0 ),
+			);
+		}
+
+		self::$counts = $counts;
+
+		return self::$counts;
+	}
+
 	/*
 	 * Settings Page Content
 	 *
@@ -274,17 +385,16 @@ class Validation {
 				<select name="tab" id="lwtv-tools-tab">
 					<option value="intro" <?php selected( 'intro', $active_tab ); ?>><?php esc_html_e( 'Introduction', 'lwtv' ); ?></option>
 					<?php
-					foreach ( self::TOOL_TABS as $tab => $value ) {
-						$count = ( ! empty( $value['option'] ) && isset( $options[ $value['option'] ]['count'] ) )
-							? (int) $options[ $value['option'] ]['count']
-							: 0;
+					$counts = self::tab_counts();
 
-						// Checks that diff against a baseline can say how much of
-						// that count turned up since the last run; a raw number
-						// cannot be acted on, "4 new" can.
-						$new = ( ! empty( $value['option'] ) && isset( $options[ $value['option'] ]['summary']['new'] ) )
-							? (int) $options[ $value['option'] ]['summary']['new']
-							: 0;
+					foreach ( self::TOOL_TABS as $tab => $value ) {
+						// Reports into another tab; it has no page to pick.
+						if ( isset( $value['show_tab'] ) && false === $value['show_tab'] ) {
+							continue;
+						}
+
+						$count = $counts[ $tab ]['count'];
+						$new   = $counts[ $tab ]['new'];
 
 						if ( $count > 0 && $new > 0 ) {
 							/* translators: 1: check name, 2: new items, 3: total outstanding. */
@@ -325,6 +435,17 @@ class Validation {
 				 */
 				$slug   = str_starts_with( $active_tab, 'tab_' ) ? substr( $active_tab, 4 ) : '';
 				$config = self::TOOL_TABS[ $slug ] ?? array();
+
+				/*
+				 * An entry that reports into another tab has no page of its own,
+				 * so a hand-typed or bookmarked URL for it gets sent where its
+				 * findings actually render. Without this it would fall through to
+				 * Report::make() with no scanner and no copy.
+				 */
+				if ( ! empty( $config['tab'] ) && $config['tab'] !== $slug ) {
+					$slug   = $config['tab'];
+					$config = self::TOOL_TABS[ $slug ] ?? array();
+				}
 
 				if ( empty( $config ) ) {
 					self::tab_introduction();
@@ -437,64 +558,141 @@ class Validation {
 	}
 
 	/**
-	 * Static Introduction to what the hell is going on...
+	 * The overview: every check, what it looks for, and what it last found.
+	 *
+	 * Replaced a bulleted list of links plus a separate "Current Status" list that
+	 * repeated some of the same checks under different names, so you had to match
+	 * them up by eye. One row per check, with its count in it, removes that
+	 * translation step.
+	 *
+	 * Counts come from tab_counts(), the same place the tab picker's badges do, so
+	 * this table cannot disagree with the badge or with the report it links to.
+	 *
+	 * @return void
 	 */
 	public static function tab_introduction() {
+		$counts = self::tab_counts();
 		?>
+		<div class="tab-block">
+			<p class="lwtv-tools-intro">
+				<?php esc_html_e( 'If data gets out of sync or we update things incorrectly, these checkers can help identify those errors before people notice. They run on an automated cycle, each check once a week, to try and catch things early.', 'lwtv' ); ?>
+			</p>
 
-		<div class="tab-block"><div class="lwtv-tools-container">
-			<h3>LezWatch.TV Data Validation Checks</h3>
-			<p>If data gets out of sync or we update things incorrectly, these checkers can help identify those errors before people notice. They run on an automated cycle, each check once a week, to try and catch things early.</p>
+			<div class="lwtv-tools-callout">
+				<p><?php esc_html_e( 'When visiting the individual checker, it will show you the status of the last run. To re-run the tool, press the \'Run Scan\' button at the bottom of the page.', 'lwtv' ); ?></p>
+			</div>
 
-			<p>When visiting the individual checker, it will show you the status of the last run. To re-run the tool, press the 'Run Scan' button at the bottom of the page.</p>
+			<h2 class="lwtv-tools-subhead"><?php esc_html_e( 'Current Status', 'lwtv' ); ?></h2>
+
+			<table class="widefat striped lwtv-tools-checkers">
+				<thead>
+					<tr>
+						<th scope="col"><?php esc_html_e( 'Checker', 'lwtv' ); ?></th>
+						<th scope="col" class="lwtv-tools-checkers__count"><?php esc_html_e( 'Issues Found', 'lwtv' ); ?></th>
+						<th scope="col" class="lwtv-tools-checkers__action">
+							<span class="screen-reader-text"><?php esc_html_e( 'Actions', 'lwtv' ); ?></span>
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+					<?php
+					foreach ( self::TOOL_TABS as $tab => $value ) {
+						$url    = add_query_arg(
+							array(
+								'page' => 'lwtv_data_check',
+								'tab'  => 'tab_' . ( $value['tab'] ?? $tab ),
+							),
+							admin_url( 'admin.php' )
+						);
+						$count  = $counts[ $tab ]['count'];
+						$cached = $counts[ $tab ]['cached'];
+						$stored = $counts[ $tab ]['stored'];
+						$last   = $counts[ $tab ]['last'];
+						?>
+						<tr>
+							<td>
+								<a href="<?php echo esc_url( $url ); ?>" class="lwtv-tools-checkers__name"><?php echo esc_html( $value['name'] ); ?></a>
+								<span class="lwtv-tools-checkers__desc"><?php echo esc_html( $value['desc'] ); ?></span>
+							</td>
+							<td class="lwtv-tools-checkers__count">
+								<?php
+								/*
+								 * Four states. A count of zero with cached findings
+								 * means the check ran and found nothing, which is
+								 * good news and reads as an em-dash. No cached
+								 * findings is an absence, not good news -- and
+								 * collapsing the two would let a check quietly stop
+								 * running while looking clean.
+								 *
+								 * The third state matters because the findings can
+								 * genuinely be gone while the status option remains:
+								 * a fresh database copy brings options across but
+								 * not transients, and the transient expires while
+								 * the option does not. Reporting a dozen checks as
+								 * never run while the site knows what they last
+								 * found would be worse than saying so and dating it.
+								 */
+								if ( $count > 0 ) {
+									?>
+									<span class="lwtv-tools-pill"><?php echo esc_html( (string) $count ); ?></span>
+									<?php
+								} elseif ( $cached ) {
+									?>
+									<span class="lwtv-tools-checkers__none" aria-label="<?php esc_attr_e( 'No issues', 'lwtv' ); ?>">&mdash;</span>
+									<?php
+								} elseif ( $last ) {
+									/*
+									 * `last` is the "has it run" signal, not
+									 * `stored`. A check that ran and found nothing
+									 * records a count of zero against a real
+									 * timestamp -- testing the count instead
+									 * reported a clean check as never run, which is
+									 * both wrong and alarming in the wrong
+									 * direction.
+									 */
+									if ( $stored > 0 ) {
+										?>
+										<span class="lwtv-tools-pill lwtv-tools-pill--stale"><?php echo esc_html( (string) $stored ); ?></span>
+										<?php
+									} else {
+										?>
+										<span class="lwtv-tools-checkers__none">&mdash;</span>
+										<?php
+									}
+									?>
+									<span class="lwtv-tools-checkers__asof">
+										<?php
+										printf(
+											/* translators: %s: human-readable time difference, e.g. "3 days". */
+											esc_html__( 'as of %s ago', 'lwtv' ),
+											esc_html( human_time_diff( $last ) )
+										);
+										?>
+									</span>
+									<?php
+								} else {
+									?>
+									<span class="lwtv-tools-checkers__none"><?php esc_html_e( 'Not run', 'lwtv' ); ?></span>
+									<?php
+								}
+								?>
+							</td>
+							<td class="lwtv-tools-checkers__action">
+								<a href="<?php echo esc_url( $url ); ?>" class="button button-small"><?php esc_html_e( 'View report', 'lwtv' ); ?></a>
+							</td>
+						</tr>
+						<?php
+					}
+					?>
+				</tbody>
+			</table>
 
 			<?php
-				self::last_run( 'intro' );
-				self::current_status();
+			// Echoed, not just called: last_run() returns its markup, and the old
+			// intro invoked it bare and printed nothing at all.
+			echo wp_kses_post( self::last_run( 'intro' ) );
 			?>
-
-			<hr>
-
-			<ul>
-				<?php
-				foreach ( self::TOOL_TABS as $tab => $value ) {
-					echo '<li>&bull; <a href="?page=lwtv_data_check&tab=tab_' . esc_attr( $tab ) . '">' . esc_html( $value['name'] ) . '</a> - ' . esc_html( $value['desc'] ) . '</li>';
-				}
-				?>
-			</ul>
-
-		</div></div>
-
+		</div>
 		<?php
-	}
-
-	private static function current_status(): void {
-
-		$options = is_array( self::$options ) ? self::$options : Status::all();
-
-		if ( empty( $options ) ) {
-			return;
-		}
-
-		// Build the list.
-		$items = '';
-		foreach ( $options as $an_option ) {
-			// Skip the global 'timestamp' member, which is an int not an array.
-			if ( ! is_array( $an_option ) || empty( $an_option['name'] ) ) {
-				continue;
-			}
-
-			$number = isset( $an_option['count'] ) ? (int) $an_option['count'] : 0;
-			if ( $number > 0 ) {
-				$items .= '<li>&bull; ' . esc_html( $an_option['name'] ) . ' - ' . (int) $number . '</li>';
-			}
-		}
-
-		// Nothing over zero means nothing to report.
-		if ( '' === $items ) {
-			return;
-		}
-
-		echo wp_kses_post( '<p><strong>Current Status</strong></p><ul>' . $items . '</ul>' );
 	}
 }

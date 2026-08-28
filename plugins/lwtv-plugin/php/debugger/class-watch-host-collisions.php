@@ -78,7 +78,7 @@ class Watch_Host_Collisions {
 
 				foreach ( $terms as $other_id => $other_name ) {
 					if ( $other_id !== $term_id ) {
-						$rivals[] = sprintf( '%s (#%d)', $this->term_name( $other_name ), $other_id );
+						$rivals[] = sprintf( '%s (#%d)', Theme_Ways_To_Watch::term_name( $other_name ), $other_id );
 					}
 				}
 
@@ -94,7 +94,7 @@ class Watch_Host_Collisions {
 					),
 					array(
 						'url'   => 'https://' . $host,
-						'term'  => $this->term_name( $term_name ),
+						'term'  => Theme_Ways_To_Watch::term_name( $term_name ),
 						'shows' => (int) ( $in_use[ $host ] ?? 0 ),
 					),
 					$host
@@ -112,23 +112,5 @@ class Watch_Host_Collisions {
 			false,
 			fn ( array $tagged ) => Rows::from_term_findings( $tagged )
 		);
-	}
-
-	/**
-	 * A term name as text, not as HTML.
-	 *
-	 * Twin of Watch_URLs::term_name() and Theme\Ways_To_Watch::term_name(), for
-	 * the same reason: WordPress stores term names entity-encoded, findings hold
-	 * data rather than markup, and leaving it encoded double-encodes it.
-	 *
-	 * Third copy of this one-liner, which is the point at which it should be
-	 * extracted. Left alone here only because the extraction touches three
-	 * classes in two layers and belongs in its own change.
-	 *
-	 * @param  string $name Term name as stored.
-	 * @return string
-	 */
-	private function term_name( string $name ): string {
-		return html_entity_decode( $name, ENT_QUOTES | ENT_HTML5, 'UTF-8' );
 	}
 }

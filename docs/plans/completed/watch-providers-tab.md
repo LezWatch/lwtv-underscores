@@ -402,7 +402,116 @@ collision list that is always right.
 | `ACTION_ASSIGN` + `handle_assign()` | `term_id` 0 means create. Shares `create_and_notify()` with the old handler. |
 | `handle_create()` | kept registered — a page loaded before this shipped still posts the old form. |
 
-## Phase 5 — Name lookup, unchanged
+## Suggesting an existing term (added 2026-08-27)
+
+The tab offered "create a term" for every unregistered host, and the easy mistake was creating one
+that already existed under a slightly different spelling. That is not hypothetical — it is how the
+live data grew **"Lesflicks" beside "LezFlicks"** and **"FX" beside "FX Networks"**, both of which
+this work had to clean up by hand.
+
+So the row now looks before it offers to create.
+
+| | |
+|---|---|
+| `cpts/shows/class-watch-term-match.php` | pure; `canonical()`, `candidates()`, `suggest()` |
+| `tests/unit/CPTs/WatchTermMatchTest.php` | 21 cases, half of them things that must *not* match |
+| `Watch_Providers::render_row()` | primary button becomes **Assign to “X”** when a term matches |
+| handler | third intent, `do=suggest` |
+
+### The matching rule
+
+Exact equality after canonicalisation — lowercase, `+`→`plus`, `&`→`and`, then strip everything
+non-alphanumeric. Three candidates per host, best evidence first:
+
+1. the proposed name (often the site's own `og:site_name`),
+2. the registrable label — `hbomax.com` → `hbomax`, and it survives generic subdomains so
+   `watch.revry.tv` → `revry`,
+3. the registrable domain with dots removed — `acorn.tv` → `acorntv`, which the label alone
+   (`acorn`) would miss.
+
+**The `+` rule is the one that earns its keep.** Seven providers in the data spell themselves with a
+trailing plus — Paramount+, Disney+, BET+, MGM+, Apple TV+, M6+, SVTV+ — and every one owns a domain
+that writes it out. Without that substitution the most valuable match never fires.
+
+**Deliberately not fuzzy.** No edit distance, no prefix matching, no similarity threshold. A wrong
+suggestion pre-selects a dropdown and points a host at the wrong provider, so a false positive costs
+more than a miss. `tubitv.com` therefore does *not* suggest the existing "Tubi", and
+`fxnetwork.com` does not suggest "FX Networks" — both are probably right, and neither is provable by
+a rule you can hold in your head. Tests assert both non-matches so nobody "improves" this into a
+guess later.
+
+### The interaction
+
+- Matched row: primary button reads **Assign to “HBO Max”**, and the Renders-as cell says *Looks
+  like the existing term “HBO Max”.* One click does the right thing.
+- The term arrives in a **server-rendered hidden field**, not from the select, so the one-click path
+  works with no JavaScript — the select is empty until the script fills it.
+- Refusing the suggestion stays one click away: the folded panel always carries its own **Create**
+  button beside the rename field, because on a suggested row the primary is no longer Create.
+- `attach_host()` still validates the ID against the taxonomy. A POSTed term ID is a POSTed term ID
+  however it arrived.
+
+## Extracting `term_name()` (2026-08-27)
+
+WordPress stores term names entity-encoded, so `U&Alibi` comes back as `U&amp;Alibi`. Every surface
+that renders one has to decode before escaping, or `esc_html()` encodes the ampersand a second time
+and the reader sees the entity. That was a live front-end bug earlier in this work.
+
+By the end there were **seven places** doing it: three private `term_name()` twins (theme,
+`Watch_URLs`, `Watch_Host_Collisions`) and four inline `html_entity_decode()` calls in
+`Watch_Providers`. Each surface that forgot shipped the bug, which is a poor thing to leave to
+memory.
+
+Now one: **`Theme\Ways_To_Watch::term_name()`**, public and static. It lives there because that
+class owns `const TAXONOMY`, so all six other call sites already imported it — the extraction added
+no imports and no files.
+
+`Watch_Term_Match::canonical()` still calls `html_entity_decode()` itself, and that is deliberate:
+it is a step inside a *comparison*, not a rendering decision, and the class is pure — it runs in the
+unit suite with no WordPress bootstrap, so it cannot reach into a theme class. There is a comment
+saying so, because it otherwise looks like the one that got missed.
+
+## Phase 5 — Name lookup: unreachable hosts stop nagging
+
+Reported from use: after `wp lwtv waystowatch enrich --all`, the tab still said *"2 still to
+check"* — and it said so forever.
+
+```
+Asking 2 host(s)...
+0 named, 0 published nothing usable, 2 unreachable (will retry next run).
+```
+
+**Failures were deliberately not recorded**, so a blip could retry. That was the right instinct with
+a consequence nobody had followed through: a host that is *permanently* gone fails every run,
+never gets recorded, and therefore stays on the "still to check" list for good — re-fetched by every
+cron run and every button press, while the copy promised one more attempt would clear it.
+
+The fix keeps the blip-retry and ends the nagging by counting instead of flagging:
+
+| | |
+|---|---|
+| `Watch_Host_Names::MAX_ATTEMPTS` | 3. Weekly rotation, so ~3 weeks of genuine unavailability before we stop asking. |
+| `Watch_Host_Names::fail()` | records `source: error` and increments `attempts`. |
+| `Watch_Host_Names::should_ask()` | the question callers actually have. False once we have a name, once the host answered with nothing usable, or after MAX_ATTEMPTS failures. |
+| `set()` | writes no `attempts`, so a host that comes back does not carry old strikes into its next failure. |
+
+`should_ask()` replaced `is_checked()` at all three call sites — the admin batch, its pending count,
+and the CLI. `is_checked()` remains as a distinct question ("has this ever been looked at") with no
+callers, which is fine; it is the honest name for what it does.
+
+Escape hatches already existed and are now the documented way back:
+`wp lwtv waystowatch enrich --recheck` ignores the cap, `forget` clears it.
+
+Two smaller things fixed alongside:
+
+- **Provenance has three states, not two.** "Guessed" alone does not say whether asking the site
+  would help. A host that has stopped answering now reads *guessed — host does not answer*.
+- **Backticks in admin copy became `<code>`.** Four strings across two classes, with the command
+  passed as a `%s` argument so the translatable string stays free of markup. Both notice renderers
+  moved from `esc_html()` to `wp_kses_post()`, which is safe because the messages are ours — no user
+  input reaches them.
+
+## Phase 5 (original) — Name lookup, unchanged
 
 `render_lookup_form()` / `handle_lookup()` stay as they are: bounded HTTP, `UI_BATCH` +
 `UI_TIME_BUDGET`, separate button. Only change: read the pending count from the snapshot rather

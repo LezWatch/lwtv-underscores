@@ -28,6 +28,48 @@ use LWTV\Queeries\Post_Type;
 class Scan {
 
 	/**
+	 * How long a check's findings stay readable.
+	 *
+	 * Ten days, not seven, and the difference is the whole point: the debug
+	 * rotation runs each check once a week, so a seven-day life expires the cache
+	 * exactly as the next run comes due. One missed run -- a deploy, a failed
+	 * cron, a slow night -- and the report is empty until the following week for
+	 * no reason at all.
+	 *
+	 * Not longer, either. The expiry is what makes a check nobody has looked at
+	 * rebuild itself rather than showing figures from spring. Ten days survives
+	 * one missed weekly run and not much more, which is exactly the slack wanted.
+	 */
+	private const FINDINGS_TTL = 10 * DAY_IN_SECONDS;
+
+	/**
+	 * Write a check's findings. The only place that does.
+	 *
+	 * A transient's expiry is a property of each *write*, not of the key --
+	 * `set_transient()` on an existing key replaces whatever time was left rather
+	 * than preserving it. So the lifetime of a report belongs to whichever code
+	 * path happened to touch it last, and four paths do: a scan, a per-finding
+	 * repair, a hook-appended finding, and the Watch Providers worklist.
+	 *
+	 * When those disagreed, repairing a finding silently changed when the report
+	 * would disappear -- earlier if you fixed something soon after a scan, later
+	 * if you fixed it a week on. Nobody would find that by reading one file.
+	 *
+	 * Hence one door. FINDINGS_TTL is private: the expiry is not a number callers
+	 * pass, it is a fact about findings, and the only way to write findings is to
+	 * come through here.
+	 *
+	 * @param  string $transient Transient key.
+	 * @param  array  $items     Rows to store.
+	 * @return array             The rows, so callers can `return Scan::store( … )`.
+	 */
+	public static function store( string $transient, array $items ): array {
+		lwtv_plugin()->set_transient( $transient, $items, self::FINDINGS_TTL );
+
+		return $items;
+	}
+
+	/**
 	 * Which posts this run should look at.
 	 *
 	 * Two modes, and the distinction matters beyond performance: a recheck only
@@ -107,7 +149,7 @@ class Scan {
 		$to_rows = $to_rows ?? static fn ( array $tagged ) => Rows::from_findings( $tagged );
 		$items   = (array) $to_rows( $diff['findings'] );
 
-		lwtv_plugin()->set_transient( $check['transient'], $items, WEEK_IN_SECONDS );
+		self::store( $check['transient'], $items );
 
 		Status::record( $scope, $check['label'], count( $items ), $diff['summary'] );
 

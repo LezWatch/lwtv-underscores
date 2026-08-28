@@ -19,6 +19,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 // `Shows` here would resolve to LWTV\CPTs\Shows\Shows and fatal. Aliased,
 // matching what class-calculations.php does in this same namespace.
 use LWTV\CPTs\Shows as CPT_Shows;
+use LWTV\Debugger\Scan;
+use LWTV\Debugger\Status;
 use LWTV\Theme\Ways_To_Watch as Theme_Ways_To_Watch;
 
 class Watch_Hosts {
@@ -37,10 +39,16 @@ class Watch_Hosts {
 	const META_REPEATER = 'lezwatchurls_all';
 
 	/**
+	 * Key inside the debugger status options, for the tab's count badge.
+	 */
+	const STATUS_KEY = 'watch_providers';
+
+	/**
 	 * Transient holding the Watch Providers tab's worklist.
 	 *
-	 * Written by scan_unregistered(). A week, like the other checks, so a list
-	 * left alone eventually rebuilds itself rather than going stale forever.
+	 * Written through Debugger\Scan::store(), the one door for a findings write, so
+	 * this list has exactly the same life as every other check's findings and a
+	 * list left alone eventually rebuilds itself rather than going stale forever.
 	 */
 	const TRANSIENT_UNREGISTERED = 'lwtv_watch_unregistered';
 
@@ -497,7 +505,18 @@ class Watch_Hosts {
 		// the stored order, so sort explicitly rather than relying on the input.
 		usort( $found, static fn ( array $a, array $b ) => $b['shows'] <=> $a['shows'] );
 
-		lwtv_plugin()->set_transient( self::TRANSIENT_UNREGISTERED, $found, WEEK_IN_SECONDS );
+		Scan::store( self::TRANSIENT_UNREGISTERED, $found );
+
+		/*
+		 * So the tab picker can say "Watch Providers (35)". Recorded here rather
+		 * than when the tab renders, because this is the only place the number is
+		 * authoritative -- and it is the same place Debugger\Scan::finish() does
+		 * it for every other check.
+		 *
+		 * No summary, so no "N new": that needs a baseline, and these findings
+		 * have no object ID to key one on. See the Watch Providers plan.
+		 */
+		Status::record( self::STATUS_KEY, 'Ways to Watch hosts with no provider term', count( $found ) );
 
 		return $found;
 	}
@@ -534,7 +553,12 @@ class Watch_Hosts {
 		}
 
 		if ( count( $kept ) !== count( $items ) ) {
-			lwtv_plugin()->set_transient( self::TRANSIENT_UNREGISTERED, $kept, WEEK_IN_SECONDS );
+			Scan::store( self::TRANSIENT_UNREGISTERED, $kept );
+
+			// The badge is read from the status option, not the transient, so a
+			// pruned row has to be counted off both or the tab picker keeps
+			// advertising work that is done.
+			Status::record( self::STATUS_KEY, 'Ways to Watch hosts with no provider term', count( $kept ) );
 		}
 	}
 

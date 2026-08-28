@@ -148,21 +148,6 @@ class Watch_URLs {
 	}
 
 	/**
-	 * A term name as text, not as HTML.
-	 *
-	 * WordPress stores term names entity-encoded, so "U&Alibi" comes back as
-	 * "U&amp;Alibi". Findings hold data rather than markup -- each renderer
-	 * escapes -- so leaving it encoded double-encodes it: the admin table runs
-	 * esc_html() over it and prints the entity, and the CLI prints it raw.
-	 *
-	 * @param  string $name Term name as stored.
-	 * @return string
-	 */
-	private function term_name( string $name ): string {
-		return html_entity_decode( $name, ENT_QUOTES | ENT_HTML5, 'UTF-8' );
-	}
-
-	/**
 	 * Every term URL on the site, with the show count that gives it weight.
 	 *
 	 * @return array<int, array<string, mixed>>
@@ -174,7 +159,7 @@ class Watch_URLs {
 		foreach ( Watch_Hosts::term_urls() as $row ) {
 			$targets[] = array(
 				'term_id' => $row['term_id'],
-				'term'    => $this->term_name( (string) $row['name'] ),
+				'term'    => Theme_Ways_To_Watch::term_name( (string) $row['name'] ),
 				'url'     => $row['url'],
 				'shows'   => (int) ( $per_term[ $row['term_id'] ] ?? 0 ),
 			);
@@ -215,7 +200,7 @@ class Watch_URLs {
 
 			$targets[] = array(
 				'term_id' => (int) $item['id'],
-				'term'    => $this->term_name( $term->name ),
+				'term'    => Theme_Ways_To_Watch::term_name( $term->name ),
 				'url'     => (string) $item['url'],
 				'shows'   => (int) ( $item['shows'] ?? 0 ),
 				'carry'   => $item,

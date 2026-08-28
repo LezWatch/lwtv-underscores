@@ -26,6 +26,7 @@ use LWTV\Admin_Menu\Validation;
 use LWTV\CPTs\Shows\Watch_Hosts;
 use LWTV\CPTs\Shows\Watch_Url_Health;
 use LWTV\Debugger\Watch_URLs;
+use LWTV\Schedulers\Watch_URLs_Task;
 use LWTV\Theme\Ways_To_Watch as Theme_Ways_To_Watch;
 
 class Watch_Term_Check {
@@ -34,6 +35,15 @@ class Watch_Term_Check {
 	 * admin-post action for the bounded re-check.
 	 */
 	const ACTION_RECHECK = 'lwtv_watch_recheck_urls';
+
+	/**
+	 * admin-post action for queueing a full sweep.
+	 *
+	 * Separate from ACTION_RECHECK because they are different shapes: a re-check
+	 * probes a bounded subset inside this request, a scan queues the lot to run
+	 * elsewhere.
+	 */
+	const ACTION_SCAN = 'lwtv_watch_scan_urls';
 
 	/**
 	 * Transient prefix for one-shot admin notices, per user.
@@ -75,6 +85,7 @@ class Watch_Term_Check {
 	 */
 	public function init(): void {
 		add_action( 'admin_post_' . self::ACTION_RECHECK, array( $this, 'handle_recheck' ) );
+		add_action( 'admin_post_' . self::ACTION_SCAN, array( $this, 'handle_scan' ) );
 	}
 
 	/**
@@ -85,7 +96,7 @@ class Watch_Term_Check {
 	public static function make(): void {
 		self::show_notice();
 
-		$items = lwtv_plugin()->get_transient( Watch_URLs::TRANSIENT_PROBLEMS );
+		$items = lwtv_plugin()->get_stored( Watch_URLs::TRANSIENT_PROBLEMS );
 
 		// Instantiated, not called statically: Validation::last_run() reads a
 		// static cache of the status option that only the constructor fills.
@@ -113,18 +124,100 @@ class Watch_Term_Check {
 	 * @return void
 	 */
 	private static function render_never_run(): void {
+		$queued = Watch_URLs_Task::is_queued();
 		?>
 		<div class="lwtv-tools-container lwtv-tools-container__alert">
-			<h3><span class="dashicons dashicons-info"></span> <?php esc_html_e( 'No results yet', 'lwtv' ); ?></h3>
+			<h3>
+				<span class="dashicons dashicons-info"></span>
+				<?php
+				if ( $queued ) {
+					esc_html_e( 'Scan running', 'lwtv' );
+				} else {
+					esc_html_e( 'No results yet', 'lwtv' );
+				}
+				?>
+			</h3>
 			<div id="lwtv-tools-alerts">
-				<p><?php esc_html_e( 'This check has not run, or its results have expired.', 'lwtv' ); ?></p>
-				<p>
-					<?php esc_html_e( 'It makes one request per provider URL, which is too slow for a page load, so the sweep runs on cron. To run it now:', 'lwtv' ); ?>
-					<code>wp lwtv debug watchurls --force</code>
-				</p>
+				<?php if ( $queued ) : ?>
+					<p><?php esc_html_e( 'A sweep is queued and will run in the background. Reload this page in a few minutes — the results appear here when it finishes.', 'lwtv' ); ?></p>
+				<?php else : ?>
+					<p><?php esc_html_e( 'This check has not run, or its results have expired.', 'lwtv' ); ?></p>
+					<p>
+						<?php esc_html_e( 'It makes one request per provider URL, which is too slow for a page load, so pressing Run Scan queues it to run in the background rather than making you wait. On the command line:', 'lwtv' ); ?>
+						<code>wp lwtv debug watchurls --force</code>
+					</p>
+				<?php endif; ?>
 			</div>
 		</div>
+
 		<?php
+		if ( ! $queued ) {
+			self::render_scan_form();
+		}
+	}
+
+	/**
+	 * Run Scan, for when there is nothing cached.
+	 *
+	 * Queues the sweep instead of running it, which is the only honest way to
+	 * offer this button: a hundred-odd HTTP requests will not fit in a page
+	 * request, and the other validator tabs get away with scanning on render only
+	 * because their scans are SQL.
+	 *
+	 * Absent entirely when Action Scheduler is not available, rather than
+	 * offering a button that would queue into nothing.
+	 *
+	 * @return void
+	 */
+	private static function render_scan_form(): void {
+		if ( ! current_user_can( self::CAP_MANAGE ) || ! Watch_URLs_Task::available() ) {
+			return;
+		}
+		?>
+		<form action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" method="post">
+			<input type="hidden" name="action" value="<?php echo esc_attr( self::ACTION_SCAN ); ?>" />
+			<?php wp_nonce_field( self::ACTION_SCAN ); ?>
+			<p class="submit">
+				<?php submit_button( __( 'Run Scan', 'lwtv' ), 'primary', '', false ); ?>
+			</p>
+			<p class="description">
+				<?php esc_html_e( 'Checks every URL on every provider term. Runs in the background; come back in a few minutes.', 'lwtv' ); ?>
+			</p>
+		</form>
+		<?php
+	}
+
+	/**
+	 * Queue a full sweep.
+	 *
+	 * @return void
+	 */
+	public function handle_scan(): void {
+		check_admin_referer( self::ACTION_SCAN );
+
+		if ( ! current_user_can( self::CAP_MANAGE ) ) {
+			wp_die( esc_html__( 'You do not have permission to do that.', 'lwtv' ), '', array( 'response' => 403 ) );
+		}
+
+		if ( ! Watch_URLs_Task::available() ) {
+			self::set_notice(
+				'error',
+				sprintf(
+					/* translators: %s: WP-CLI command in a code element. */
+					__( 'Action Scheduler is not available, so the sweep cannot be queued. Run %s instead.', 'lwtv' ),
+					'<code>wp lwtv debug watchurls --force</code>'
+				)
+			);
+			self::redirect_back();
+		}
+
+		if ( Watch_URLs_Task::queue() ) {
+			self::set_notice( 'success', __( 'Sweep queued. It runs in the background — reload in a few minutes.', 'lwtv' ) );
+		} else {
+			self::set_notice( 'info', __( 'A sweep is already queued.', 'lwtv' ) );
+		}
+
+		self::redirect_back();
 	}
 
 	/**
@@ -272,9 +365,10 @@ class Watch_Term_Check {
 				<?php
 				printf(
 					/* translators: 1: number of flagged URLs, 2: seconds of budget. */
-					esc_html__( 'Re-probes the %1$d flagged URLs only, and drops any that now pass. Stops after about %2$d seconds; anything it did not reach is kept, not cleared. A full sweep of every term is `wp lwtv debug watchurls --force`.', 'lwtv' ),
+					wp_kses_post( __( 'Re-probes the %1$d flagged URLs only, and drops any that now pass. Stops after about %2$d seconds; anything it did not reach is kept, not cleared. A full sweep of every term is %3$s.', 'lwtv' ) ),
 					absint( $count ),
-					absint( Watch_Hosts::UI_TIME_BUDGET )
+					absint( Watch_Hosts::UI_TIME_BUDGET ),
+					'<code>wp lwtv debug watchurls --force</code>'
 				);
 				?>
 			</span>
@@ -294,10 +388,17 @@ class Watch_Term_Check {
 			wp_die( esc_html__( 'You do not have permission to do that.', 'lwtv' ), '', array( 'response' => 403 ) );
 		}
 
-		$items = (array) lwtv_plugin()->get_transient( Watch_URLs::TRANSIENT_PROBLEMS );
+		$items = (array) lwtv_plugin()->get_stored( Watch_URLs::TRANSIENT_PROBLEMS );
 
 		if ( is_string( $items ) || ! is_array( $items ) || empty( $items ) ) {
-			self::set_notice( 'info', __( 'There is nothing flagged to re-check. Run `wp lwtv debug watchurls --force` for a full sweep.', 'lwtv' ) );
+			self::set_notice(
+				'info',
+				sprintf(
+					/* translators: %s: WP-CLI command in a code element. */
+					__( 'There is nothing flagged to re-check. Run %s for a full sweep.', 'lwtv' ),
+					'<code>wp lwtv debug watchurls --force</code>'
+				)
+			);
 			self::redirect_back();
 		}
 
@@ -367,7 +468,11 @@ class Watch_Term_Check {
 		$class = 'error' === $notice['type'] ? 'notice-error' : ( 'info' === $notice['type'] ? 'notice-info' : 'notice-success' );
 		?>
 		<div class="notice <?php echo esc_attr( $class ); ?> is-dismissible">
-			<p><?php echo esc_html( $notice['message'] ); ?></p>
+			<?php
+			// wp_kses_post, not esc_html: these messages are ours and some carry a
+			// <code> element naming a WP-CLI command. Nothing here is user input.
+			?>
+			<p><?php echo wp_kses_post( $notice['message'] ); ?></p>
 		</div>
 		<?php
 	}

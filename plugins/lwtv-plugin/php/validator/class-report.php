@@ -80,7 +80,7 @@ class Report {
 	 * @return array
 	 */
 	private static function items( array $config, string $nonce ): array {
-		$items   = lwtv_plugin()->get_transient( $config['transient'] );
+		$items   = lwtv_plugin()->get_stored( $config['transient'] );
 		$scanner = $config['scanner'];
 
 		// Rerun: check everything. Also the path when there is no cache at all.
