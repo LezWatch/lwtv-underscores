@@ -106,7 +106,7 @@
 	margin-bottom: 0;
 }
 
-/* min-width:0 is load-bearing: a flex item's default min-width is auto, and a
+/* min-width:0 is critical: a flex item's default min-width is auto, and a
  * select sized by its longest option would otherwise push the cell wider than
  * the column. That is what made the old layout overflow. */
 .lwtv-watch-term,

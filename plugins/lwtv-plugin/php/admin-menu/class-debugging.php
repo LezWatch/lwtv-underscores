@@ -18,7 +18,7 @@ class Debugging {
 	/**
 	 * Valid log topics that can be enabled/disabled.
 	 *
-	 * This is the vocabulary, and it is load-bearing in two directions:
+	 * This is the vocabulary, and it is used in two directions:
 	 * Plugins\Acf populates the `log_topics` checkbox from it, and
 	 * Build\Log_Rules refuses to write a topic that is not in it. A topic
 	 * missing from this list therefore cannot be logged at all -- which is why

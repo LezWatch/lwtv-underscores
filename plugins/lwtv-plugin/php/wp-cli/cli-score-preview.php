@@ -6,7 +6,7 @@
  * the effect of the longevity model can be inspected against real shows before
  * it is switched on.
  *
- * ⚠ The score comes from LWTV\CPTs\Shows\Character_Score::longevity(), which is
+ * ⚠ The score comes from LWTV\CPTs\Shows\Scoring\Character_Score::longevity(), which is
  * also what Calculations::count_queers_all_types() calls -- now the only model,
  * after this command's old-vs-new comparison did its job calibrating
  * SATURATION_K and Character_Score::legacy() was retired. A private replica of
@@ -33,8 +33,8 @@ if ( ! defined( 'ABSPATH' ) && ! defined( 'WP_CLI' ) ) {
 
 use LWTV\CPTs\Shows as CPT_Shows;
 use LWTV\CPTs\Shows\Calculations as Shows_Calculations;
-use LWTV\CPTs\Shows\Character_Score;
-use LWTV\CPTs\Shows\Longevity;
+use LWTV\CPTs\Shows\Scoring\Character_Score;
+use LWTV\CPTs\Shows\Scoring\Longevity;
 use LWTV\Statistics\Build\Score_Distribution;
 
 /**
@@ -459,18 +459,9 @@ class WP_CLI_LWTV_Score_Preview {
 			$aired_override = $this->fetch_aired_years( $show_id, (int) gmdate( 'Y' ), $why );
 		}
 
-		// Both gates forced on regardless of the live flags. A preview whose
-		// contents depended on whether the feature was already enabled would be
-		// useless for deciding whether to enable it -- and with the flags off,
-		// gather() would return no weights at all and every NEW column would read
-		// zero, which looks like a result rather than a missing input.
 		$data = Character_Score::gather(
 			$show_id,
-			array(
-				'aired_override' => $aired_override,
-				'longevity'      => true,
-				'actor_check'    => true,
-			)
+			array( 'aired_override' => $aired_override )
 		);
 
 		$data['has_stored']       = $has_stored;

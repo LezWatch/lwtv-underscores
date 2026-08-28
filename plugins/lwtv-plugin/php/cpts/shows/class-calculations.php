@@ -12,6 +12,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 use LWTV\_Components\Grading;
 use LWTV\CPTs\Shows as CPT_Shows;
+use LWTV\CPTs\Shows\Scoring\Character_Score;
+use LWTV\CPTs\Shows\Scoring\Show_Rating;
+use LWTV\CPTs\Shows\Scoring\Show_Tropes;
 use LWTV\Theme\Show_Characters;
 
 class Calculations {
@@ -153,12 +156,7 @@ class Calculations {
 			'score'     => 0,
 		);
 
-		// Gather exactly what the ACTIVE models need and nothing more. With both
-		// flags off this is the same set of queries count_queers_all_types() ran
-		// before Character_Score existed -- turning a model off has to actually
-		// stop paying for it, or a disabled feature still costs ~30,000 reads per
-		// recalculation.
-		$data = Character_Score::gather( $post_id, Character_Score::options_from_flags() );
+		$data = Character_Score::gather( $post_id );
 
 		if ( 0 === $data['count'] ) {
 			self::$counts_memo[ $post_id ] = $counts;

@@ -7,7 +7,7 @@
 
 namespace LWTV\Tests\CPTs;
 
-use LWTV\CPTs\Shows\Show_Tropes;
+use LWTV\CPTs\Shows\Scoring\Show_Tropes;
 use PHPUnit\Framework\TestCase;
 
 final class ShowTropesTest extends TestCase {

@@ -154,7 +154,7 @@
 
 	// Send a GA4 file_download event through whichever tracker MonsterInsights
 	// exposed. Fails silently when analytics isn't present (ad-blockers, logged-in
-	// admins with tracking off, etc.) — tracking is never load-bearing for the UI.
+	// admins with tracking off, etc.) — tracking is never required for the UI.
 	function sendDownloadEvent(params) {
 		let tracker = null;
 		if ('function' === typeof window.gtag) {

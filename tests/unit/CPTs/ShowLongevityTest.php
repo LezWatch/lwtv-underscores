@@ -17,7 +17,7 @@
 namespace LWTV\Tests\CPTs;
 
 use PHPUnit\Framework\TestCase;
-use LWTV\CPTs\Shows\Longevity;
+use LWTV\CPTs\Shows\Scoring\Longevity;
 
 class ShowLongevityTest extends TestCase {
 

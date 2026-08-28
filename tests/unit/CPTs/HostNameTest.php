@@ -12,7 +12,7 @@
 namespace LWTV\Tests\CPTs;
 
 use PHPUnit\Framework\TestCase;
-use LWTV\CPTs\Shows\Host_Name;
+use LWTV\CPTs\Shows\Watching\Host_Name;
 
 class HostNameTest extends TestCase {
 

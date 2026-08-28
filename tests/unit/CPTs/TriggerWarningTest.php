@@ -7,7 +7,7 @@
 
 namespace LWTV\Tests\CPTs;
 
-use LWTV\CPTs\Shows\Trigger_Warning;
+use LWTV\CPTs\Shows\Scoring\Trigger_Warning;
 use PHPUnit\Framework\TestCase;
 
 final class TriggerWarningTest extends TestCase {

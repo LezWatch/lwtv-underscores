@@ -16,7 +16,7 @@ use LWTV\CPTs\Characters as CPT_Characters;
 use LWTV\CPTs\Characters\Calculations as Characters_Calculations;
 use LWTV\CPTs\Shows as CPT_Shows;
 use LWTV\CPTs\Shows\Calculations as Shows_Calculations;
-use LWTV\CPTs\Shows\Character_Score;
+use LWTV\CPTs\Shows\Scoring\Character_Score;
 use LWTV\Theme\Show_Characters;
 
 /**

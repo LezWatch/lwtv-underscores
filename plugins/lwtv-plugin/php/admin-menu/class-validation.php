@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 use LWTV\Validator\Report;
-use LWTV\CPTs\Shows\Watch_Hosts as CPT_Watch_Hosts;
+use LWTV\CPTs\Shows\Watching\Watch_Hosts as CPT_Watch_Hosts;
 use LWTV\Validator\Watch_Providers;
 use LWTV\Validator\Watch_Term_Check;
 

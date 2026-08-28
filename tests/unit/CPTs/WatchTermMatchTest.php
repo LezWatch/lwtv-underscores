@@ -16,7 +16,7 @@
 namespace LWTV\Tests\CPTs;
 
 use PHPUnit\Framework\TestCase;
-use LWTV\CPTs\Shows\Watch_Term_Match as Match_Term;
+use LWTV\CPTs\Shows\Watching\Watch_Term_Match as Match_Term;
 
 class WatchTermMatchTest extends TestCase {
 
