@@ -43,62 +43,15 @@ class Calculations {
 		// Get all taxonomy terms at once to reduce database queries
 		$taxonomy_terms = $this->get_show_taxonomy_terms( $post_id );
 
-		// Set initial score:
-		$score = 0;
-
-		// Base Ratings: Multiply by 3 for a max of 30
-		$realness   = min( (int) $meta_fields['lezshows_realness_rating'], 5 );
-		$quality    = min( (int) $meta_fields['lezshows_quality_rating'], 5 );
-		$screentime = min( (int) $meta_fields['lezshows_screentime_rating'], 5 );
-		$score     += ( $realness + $quality + $screentime ) * 3;
-
-		// Thumb Score Rating: 10, 5, 0, -10
-		$worth_it    = $meta_fields['lezshows_worthit_rating'];
-		$worth_score = array(
-			'Yes' => 10,
-			'Meh' => 5,
-			'No'  => -10,
-			'TBD' => 0,
+		return Show_Rating::score(
+			(int) $meta_fields['lezshows_realness_rating'],
+			(int) $meta_fields['lezshows_quality_rating'],
+			(int) $meta_fields['lezshows_screentime_rating'],
+			(string) $meta_fields['lezshows_worthit_rating'],
+			(string) ( $taxonomy_terms['lez_stars'] ?? $meta_fields['lez_stars'] ),
+			(string) ( $taxonomy_terms['lez_triggers'] ?? $meta_fields['lezshows_triggerwarning'] ),
+			'on' === $meta_fields['lezshows_worthit_show_we_love']
 		);
-		$score      += ( key_exists( $worth_it, $worth_score ) ) ? $worth_score[ $worth_it ] : 0;
-
-		// Star Rating: 20, 10, 5, -15
-		$stars      = $taxonomy_terms['lez_stars'] ?? $meta_fields['lez_stars'];
-		$star_score = array(
-			'gold'   => 20,
-			'silver' => 10,
-			'bronze' => 5,
-			'anti'   => -15,
-		);
-		$score     += ( key_exists( $stars, $star_score ) ) ? $star_score[ $stars ] : 0;
-
-		// Trigger Warning: -5, -10, -15
-		//
-		// These were POSITIVE, which meant a high trigger warning earned a show
-		// +15 -- the site's own scoring documentation has always said -15, and
-		// stated the intent outright: "If a show is actively detrimental to some
-		// viewers, with abuse, or excessive violence, its score is downgraded."
-		// Nothing negated it downstream, so shows were being rewarded for carrying
-		// the warning. Corrected here.
-		//
-		// 'on' and 'medium' are legacy aliases for 'high' and 'med'; both spellings
-		// exist in the data, so both are kept.
-		$trigger       = $taxonomy_terms['lez_triggers'] ?? $meta_fields['lezshows_triggerwarning'];
-		$trigger_score = array(
-			'on'     => -15,
-			'high'   => -15,
-			'med'    => -10,
-			'medium' => -10,
-			'low'    => -5,
-		);
-		$score        += ( key_exists( $trigger, $trigger_score ) ) ? $trigger_score[ $trigger ] : 0;
-
-		// Shows We Love: 40 points
-		if ( 'on' === $meta_fields['lezshows_worthit_show_we_love'] ) {
-			$score += 40;
-		}
-
-		return $score;
 	}
 
 	/**
@@ -228,9 +181,7 @@ class Calculations {
 		$counts['queer-irl'] = $data['queer_irl_scored'];
 		$counts['trans-irl'] = $data['trans_irl'];
 
-		$counts['score'] = Character_Score::longevity_enabled()
-			? Character_Score::longevity( $data )['score']
-			: Character_Score::legacy( $data )['score'];
+		$counts['score'] = Character_Score::longevity( $data )['score'];
 
 		self::$counts_memo[ $post_id ] = $counts;
 
@@ -303,90 +254,17 @@ class Calculations {
 			return;
 		}
 
-		$score        = 0;
-		$tropes       = wp_get_post_terms( $post_id, 'lez_tropes' );
-		$count_tropes = ( $tropes ) ? count( $tropes ) : 0;
-
-		// Get all trope slugs for efficient processing
+		$tropes      = wp_get_post_terms( $post_id, 'lez_tropes' );
 		$trope_slugs = wp_list_pluck( $tropes, 'slug' );
-
-		// Check specific tropes efficiently using array operations
-		$has_dead     = in_array( 'dead-queers', $trope_slugs, true );
-		$is_happy_end = in_array( 'happy-ending', $trope_slugs, true );
 
 		// Death Override Checker.
 		$override = get_post_meta( $post_id, 'lezshows_byq_override', true );
-		if ( ! empty( $override ) ) {
-			$has_dead = false;
-		}
-
-		// Good/maybe/bad/ploy trope-slug groupings now live in
-		// Trope_Categories (shared with the Statistics layer so stats views
-		// can group the same tropes the same way). Same values as before —
-		// this is a data relocation, not a scoring change.
-		$good_tropes  = Trope_Categories::GOOD;
-		$maybe_tropes = Trope_Categories::MAYBE;
-		$bad_tropes   = Trope_Categories::BAD;
-		$ploy_tropes  = Trope_Categories::PLOY;
-
-		// If there a no tropes, we have a default of 80.
-		if ( ( 0 === $count_tropes ) || in_array( 'none', $trope_slugs, true ) ) {
-			// No tropes: 80
-			$score = 80;
-		} else {
-			// Calculate all trope counts efficiently using array operations
-			$has_tropes = array(
-				'good'  => count( array_intersect( $trope_slugs, $good_tropes ) ),
-				'maybe' => count( array_intersect( $trope_slugs, $maybe_tropes ) ),
-				'bad'   => count( array_intersect( $trope_slugs, $bad_tropes ) ),
-				'ploy'  => count( array_intersect( $trope_slugs, $ploy_tropes ) ),
-			);
-
-			// Calculate total tropes counted
-			$has_tropes['any'] = $has_tropes['good'] + $has_tropes['maybe'] + $has_tropes['bad'] + $has_tropes['ploy'];
-
-			// Pause for C Shows
-			if ( 0 === $has_tropes['any'] ) {
-				// If a show has NO good/maybe/bad/ploy tropes, it gets a C
-				$score = 70;
-			} else {
-				// Most shows need math!
-				$base_score     = ( $has_tropes['good'] + $has_tropes['maybe'] - $has_tropes['ploy'] - $has_tropes['bad'] );
-				$counted_tropes = $has_tropes['any'];
-
-				if ( $base_score > 0 ) {
-					$score = ( ( $base_score / $counted_tropes ) * 100 );
-				} else {
-					$score = 0;
-				}
-			}
-		}
 
 		// Add Intersectionality Bonus
-		// If you do good with intersectionality you can have more points up to 15
-		$count_inters = 0;
-		$intersection = get_the_terms( $post_id, 'lez_intersections' );
-		if ( is_array( $intersection ) ) {
-			$count_inters = count( $intersection );
-			$score       += min( ( $count_inters * 3 ), 15 );
-		}
+		$intersection       = get_the_terms( $post_id, 'lez_intersections' );
+		$intersection_count = is_array( $intersection ) ? count( $intersection ) : 0;
 
-		// Sanity Check: Below 0?
-		$score = ( $score < 0 ) ? 0 : $score;
-
-		// Death Deductions
-		if ( 0 !== $score && $has_dead && ! $is_happy_end ) {
-			// If there are dead WITHOUT happy-ending, drop by a third.
-			$score = ( $score * .66 );
-		} elseif ( 0 !== $score && $has_dead && $is_happy_end ) {
-			// If there are dead WITH happy-ending, drop by a quarter
-			$score = ( $score * .75 );
-		}
-
-		// Sanity Check: Still above 100?
-		$score = ( $score > 100 ) ? 100 : $score;
-
-		return $score;
+		return Show_Tropes::score( $trope_slugs, ! empty( $override ), $intersection_count );
 	}
 
 	/**

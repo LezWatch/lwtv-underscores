@@ -54,6 +54,9 @@ require_once __DIR__ . '/../plugins/lwtv-plugin/php/statistics/build/class-forma
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/statistics/build/class-genre-decade-buckets.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/statistics/build/class-character-identity-decade-buckets.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/cpts/shows/class-trope-categories.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/cpts/shows/class-trigger-warning.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/cpts/shows/class-show-rating.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/cpts/shows/class-show-tropes.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/cpts/shows/class-airdates.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/cpts/shows/class-longevity.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/cpts/shows/class-character-score.php';
