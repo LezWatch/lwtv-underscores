@@ -1001,6 +1001,8 @@ class Of_The_Day implements Component, Templater {
 		$table_data = $wpdb->get_results( "SELECT * FROM {$table} order by id desc limit 10" );
 
 		foreach ( $table_data as $use_data ) {
+			// Escape the CDATA terminator so title/show text can't break out of the CDATA section.
+			$cdata_content = str_replace( ']]>', ']]]]><![CDATA[>', $use_data->content );
 			?>
 			<item>
 				<title><?php echo esc_html( ucfirst( $use_data->posts_type ) ); ?> of the Day: <?php echo esc_html( get_the_title( $use_data->posts_id ) ); ?></title>
@@ -1008,8 +1010,8 @@ class Of_The_Day implements Component, Templater {
 				<pubDate><?php echo esc_html( mysql2date( 'D, d M Y H:i:s +0000', $use_data->post_datetime ) ); ?></pubDate>
 				<dc:creator>LezWatch.TV</dc:creator>
 				<guid isPermaLink="false"><?php the_guid( $use_data->posts_id ); ?></guid>
-				<description><![CDATA[<?php echo wp_kses_post( $use_data->content ); ?>]]></description>
-				<content:encoded><![CDATA[<?php echo wp_kses_post( $use_data->content ); ?>]]></content:encoded>
+				<description><![CDATA[<?php echo wp_kses_post( $cdata_content ); ?>]]></description>
+				<content:encoded><![CDATA[<?php echo wp_kses_post( $cdata_content ); ?>]]></content:encoded>
 				<?php
 				if ( has_post_thumbnail( $use_data->posts_id ) ) {
 					$thumbnail_id = get_post_thumbnail_id( $use_data->posts_id );
