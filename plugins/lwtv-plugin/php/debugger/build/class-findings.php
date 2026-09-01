@@ -265,7 +265,7 @@ class Findings {
 	 * A row with one issue type repaired and removed.
 	 *
 	 * Lets a single admin repair prune the cached findings instead of dropping
-	 * the whole transient, which would force a full rescan of every post in the
+	 * the whole findings set, which would force a full rescan of every post in the
 	 * CPT on the next page view.
 	 *
 	 * @param  array  $row        A row from group_by_post()/Rows::from_findings().
@@ -418,7 +418,7 @@ class Findings {
 	/**
 	 * The fixable issue types on one row, tolerating the pre-reshape shape.
 	 *
-	 * Findings live in week-long transients, so a cached payload written before
+	 * Findings are stored for ten days, so a payload written before
 	 * this existed has no `fixable` key. Returning an empty list for those is
 	 * correct: they fall back to the check-level fixer.
 	 *
@@ -433,7 +433,7 @@ class Findings {
 		$fixable = array();
 
 		foreach ( $row['fixable'] as $issue_type ) {
-			// Cached transient data, so do not trust it to be strings, and drop
+			// Stored data, so do not trust it to be strings, and drop
 			// any type whose repair has since been retired from the registry.
 			if ( ! is_string( $issue_type ) || ! Issue_Registry::is_fixable( $issue_type ) ) {
 				continue;

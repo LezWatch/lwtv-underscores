@@ -232,3 +232,28 @@
 	font-weight: 600;
 	line-height: 1;
 }
+
+/* The expandable list of shows behind a "N shows" count.
+ *
+ * No colours: the whole Shows cell inherits from whichever wp-admin colour
+ * scheme the editor is using, and hardcoding one here would fight it.
+ *
+ * The scroll cap earns its place on Netflix, which 247 shows point at -- an
+ * un-capped list pushes the rest of the table off the screen. Titles wrap on
+ * words because `widefat fixed` means an over-long one would otherwise draw
+ * across the next column rather than widening its own.
+ */
+.lwtv-affected-shows summary {
+	cursor: pointer;
+}
+
+.lwtv-affected-shows ul {
+	max-height: 18em;
+	margin: 4px 0 0;
+	overflow-y: auto;
+}
+
+.lwtv-affected-shows li {
+	margin: 0 0 2px;
+	overflow-wrap: break-word;
+}

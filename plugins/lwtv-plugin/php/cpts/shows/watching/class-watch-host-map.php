@@ -118,6 +118,37 @@ class Watch_Host_Map {
 	}
 
 	/**
+	 * Which shows reach each provider term, by way of the hosts they link to.
+	 *
+	 * Deduped per term, not summed. One show can list two of a provider's hosts
+	 * -- hbomax.com and play.max.com are the same provider -- and summing the
+	 * per-host counts double-counts it, which is what the counts on the Watch
+	 * URLs report used to do. Here the count is always the length of the list an
+	 * editor is shown, so the two cannot disagree.
+	 *
+	 * @param array<string, array<int|string>> $ids_by_host host => post IDs, as Watch_Hosts::show_ids_by_host() returns it.
+	 * @param array<string, int>               $map         Map from build().
+	 * @return array<int, array<int, int>> term_id => post IDs, first-seen order.
+	 */
+	public static function ids_per_term( array $ids_by_host, array $map ): array {
+		$seen = array();
+
+		foreach ( $ids_by_host as $host => $post_ids ) {
+			$term_id = self::resolve( $map, (string) $host );
+
+			if ( ! $term_id ) {
+				continue;
+			}
+
+			foreach ( (array) $post_ids as $post_id ) {
+				$seen[ $term_id ][ (int) $post_id ] = true;
+			}
+		}
+
+		return array_map( 'array_keys', $seen );
+	}
+
+	/**
 	 * The normalised host a stored URL points at.
 	 *
 	 * Tolerates the shapes the live data actually holds -- trailing slashes,

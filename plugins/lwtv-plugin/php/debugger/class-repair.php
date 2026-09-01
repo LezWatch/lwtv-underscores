@@ -14,7 +14,7 @@
  *    something a browser or crawler can prefetch. Watch_Providers already
  *    settled this pattern for the same reason.
  * 2. A successful repair *prunes* the cached findings rather than deleting the
- *    transient. Dropping it would send the next viewer of that tab into a full
+ *    findings. Dropping them would send the next viewer of that tab into a full
  *    rescan of every show, character or actor -- thousands of posts -- to
  *    reflect one fixed field.
  *
@@ -52,22 +52,22 @@ class Repair {
 	 */
 	private const LEVELS = array(
 		'show'      => array(
-			'transient' => Shows::TRANSIENT_PROBLEMS,
-			'status'    => 'show_problems',
-			'name'      => 'Shows with Issues',
-			'tab'       => 'tab_show_checker',
+			'findings' => Shows::FINDINGS_PROBLEMS,
+			'status'   => 'show_problems',
+			'name'     => 'Shows with Issues',
+			'tab'      => 'tab_show_checker',
 		),
 		'character' => array(
-			'transient' => Characters::TRANSIENT_PROBLEMS,
-			'status'    => 'character_problems',
-			'name'      => 'Characters with Issues',
-			'tab'       => 'tab_character_checker',
+			'findings' => Characters::FINDINGS_PROBLEMS,
+			'status'   => 'character_problems',
+			'name'     => 'Characters with Issues',
+			'tab'      => 'tab_character_checker',
 		),
 		'actor'     => array(
-			'transient' => Actors::TRANSIENT_PROBLEMS,
-			'status'    => 'actor_problems',
-			'name'      => 'Actors with Issues',
-			'tab'       => 'tab_actor_checker',
+			'findings' => Actors::FINDINGS_PROBLEMS,
+			'status'   => 'actor_problems',
+			'name'     => 'Actors with Issues',
+			'tab'      => 'tab_actor_checker',
 		),
 	);
 
@@ -245,7 +245,7 @@ class Repair {
 			return;
 		}
 
-		$items = lwtv_plugin()->get_stored( $config['transient'] );
+		$items = Findings_Store::load( $config['findings'] );
 
 		if ( ! is_array( $items ) ) {
 			return;
@@ -266,7 +266,7 @@ class Repair {
 			}
 		}
 
-		Scan::store( $config['transient'], $kept );
+		Scan::store( $config['findings'], $kept );
 
 		/*
 		 * Three args on purpose, which clears the stored new/open breakdown: the

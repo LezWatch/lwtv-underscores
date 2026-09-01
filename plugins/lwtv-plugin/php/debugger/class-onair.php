@@ -21,9 +21,9 @@ use LWTV\Debugger\Collect\On_Air_Collector;
 class OnAir {
 
 	/**
-	 * Transient holding the results of find_on_air_problems().
+	 * Findings from find_on_air_problems().
 	 */
-	const TRANSIENT_PROBLEMS = 'lwtv_debug_on_air_problems';
+	const FINDINGS_PROBLEMS = 'lwtv_debug_on_air_problems';
 
 	/**
 	 * Find shows that are not on air
@@ -57,9 +57,9 @@ class OnAir {
 
 		return Scan::finish(
 			array(
-				'scope'     => 'onair_problems',
-				'transient' => self::TRANSIENT_PROBLEMS,
-				'label'     => 'On Air Checker',
+				'scope'    => 'onair_problems',
+				'findings' => self::FINDINGS_PROBLEMS,
+				'label'    => 'On Air Checker',
 			),
 			$findings,
 			$is_recheck

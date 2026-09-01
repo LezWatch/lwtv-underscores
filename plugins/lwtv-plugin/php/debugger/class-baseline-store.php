@@ -12,7 +12,7 @@
  * audit scope on deploy -- or two incompatible key formats in one option space.
  *
  * The payload is identity only (see Baseline::snapshot()), so this is smaller
- * than the findings transient each check already stores for a week.
+ * than the findings each check already stores for ten days.
  *
  * @package LWTV
  */

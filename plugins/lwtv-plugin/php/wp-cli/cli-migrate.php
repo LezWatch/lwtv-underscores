@@ -10,7 +10,17 @@ if ( ! defined( 'ABSPATH' ) && ! defined( 'WP_CLI' ) ) {
 	die();
 }
 
+use LWTV\CPTs\Shows\Watching\Watch_Hosts as CPT_Watch_Hosts;
+use LWTV\Debugger\Actors as Debug_Actors;
+use LWTV\Debugger\Characters as Debug_Characters;
+use LWTV\Debugger\Dupes as Debug_Dupes;
+use LWTV\Debugger\Findings_Store;
+use LWTV\Debugger\OnAir as Debug_OnAir;
+use LWTV\Debugger\Queers as Debug_Queers;
+use LWTV\Debugger\Shows as Debug_Shows;
 use LWTV\Debugger\Status;
+use LWTV\Debugger\Watch_Host_Collisions as Debug_Watch_Host_Collisions;
+use LWTV\Debugger\Watch_URLs as Debug_Watch_URLs;
 
 /**
  * LezWatch.TV commands to migrate content.
@@ -64,7 +74,7 @@ class WP_CLI_LWTV_Migrate {
 	 *
 	 *
 	 * [<subtype>]
-	 * : Optional. Secondary data. ACF uses [airdates|waystowatch|shownames|similarshows|charactor|chardeath|charimages|charimages-to-gallery|charshowgroup|autoposting|watchtermurls|debuglogging|debugstatus].
+	 * : Optional. Secondary data. ACF uses [airdates|waystowatch|shownames|similarshows|charactor|chardeath|charimages|charimages-to-gallery|charshowgroup|autoposting|watchtermurls|debuglogging|debugstatus|debugfindings].
 	 * ---
 	 *
 	 * @param string $migrate_type         The type of migrator to run.
@@ -134,6 +144,9 @@ class WP_CLI_LWTV_Migrate {
 					break;
 				case 'debugstatus':
 					$this->migrate_debugstatus();
+					break;
+				case 'debugfindings':
+					$this->migrate_debugfindings();
 					break;
 				default:
 					\WP_CLI::error( 'Unknown ACF migration subtype: ' . $subtype . ' does not exist.' );
@@ -933,6 +946,125 @@ class WP_CLI_LWTV_Migrate {
 		}
 
 		\WP_CLI::success( count( $removed ) . ' retired check(s) pruned.' );
+	}
+
+	/**
+	 * Move debugger findings out of transients and into the findings option store.
+	 *
+	 * Run once, from WP-CLI, after deploying Debugger\Findings_Store.
+	 *
+	 * Without this every check reads as "never run" until its next scan, which for
+	 * `watchurls` means a few hundred HTTP requests to rebuild a report that is
+	 * already sitting in the database.
+	 *
+	 * Reads the underlying `_transient_*` option rows directly rather than calling
+	 * get_transient(), and that is the whole point rather than a shortcut. This
+	 * migration exists because the two do not agree: on production WP-CLI does not
+	 * load the object-cache drop-in that web requests use, so get_transient() asks
+	 * whichever tier the current process happens to have. The DB rows are what we
+	 * are actually migrating, and get_option() sees them from either side.
+	 *
+	 * Expired rows are dropped rather than carried, and a live row keeps its
+	 * remaining lifetime rather than getting a fresh ten days -- moving storage
+	 * should not quietly re-date a stale report as current.
+	 */
+	public function migrate_debugfindings() {
+		$migrated = 0;
+		$expired  = 0;
+		$now      = time();
+
+		foreach ( self::findings_keys() as $key ) {
+			$raw = get_option( '_transient_' . $key );
+
+			// Nothing in the DB tier for this check. Either it never ran, or it
+			// already migrated, or its findings only ever existed in an object
+			// cache we cannot reach from here. All three are "nothing to do".
+			if ( ! is_array( $raw ) ) {
+				continue;
+			}
+
+			$timeout = (int) get_option( '_transient_timeout_' . $key );
+
+			if ( Findings_Store::expired( $timeout, $now ) ) {
+				self::drop_findings_transient( $key );
+				++$expired;
+				\WP_CLI::log( 'Expired, dropped: ' . $key );
+				continue;
+			}
+
+			/*
+			 * A missing timeout row would mean "never expires", which would leave
+			 * this check unable to age out and re-scan. Give it a fresh TTL instead
+			 * -- nothing writes findings without an expiry, so this is a corrupted
+			 * row rather than a deliberate one.
+			 */
+			Findings_Store::save( $key, $raw, $timeout > 0 ? $timeout : null );
+			self::drop_findings_transient( $key );
+
+			++$migrated;
+			\WP_CLI::log(
+				sprintf(
+					'Migrated: %1$s (%2$d row(s), %3$s left)',
+					$key,
+					count( $raw ),
+					human_time_diff( $now, $now + Findings_Store::remaining( $timeout, $now ) )
+				)
+			);
+		}
+
+		if ( 0 === $migrated && 0 === $expired ) {
+			\WP_CLI::log( 'No findings transients found. Nothing to migrate.' );
+			return;
+		}
+
+		\WP_CLI::success(
+			sprintf( '%1$d check(s) migrated, %2$d expired and dropped.', $migrated, $expired )
+		);
+	}
+
+	/**
+	 * Remove a migrated findings transient from both tiers.
+	 *
+	 * delete_transient() alone is not enough to make this migration idempotent.
+	 * Where a persistent object cache is active it deletes the cached copy and
+	 * leaves the `_transient_*` option rows -- the very rows this migration reads
+	 * -- so a second run would find them again and overwrite the migrated findings
+	 * with the old snapshot. Deleting the options explicitly means running twice
+	 * is a no-op no matter which tier the process has.
+	 *
+	 * @param  string $key Findings key.
+	 * @return void
+	 */
+	private static function drop_findings_transient( string $key ): void {
+		delete_transient( $key );
+		delete_option( '_transient_' . $key );
+		delete_option( '_transient_timeout_' . $key );
+	}
+
+	/**
+	 * Every findings key, read off the classes that own them.
+	 *
+	 * Listed by constant rather than by literal so a renamed key cannot leave this
+	 * migration quietly pointing at a string nothing writes any more.
+	 *
+	 * @return array<int, string>
+	 */
+	private static function findings_keys(): array {
+		return array(
+			Debug_Queers::FINDINGS_QUEERCHECK,
+			Debug_Dupes::FINDINGS_DUPES,
+			Debug_Characters::FINDINGS_BYQ,
+			Debug_Characters::FINDINGS_PROBLEMS,
+			Debug_Actors::FINDINGS_PROBLEMS,
+			Debug_Actors::FINDINGS_EMPTY,
+			Debug_Actors::FINDINGS_IMDB,
+			Debug_Shows::FINDINGS_PROBLEMS,
+			Debug_Shows::FINDINGS_IMDB,
+			Debug_OnAir::FINDINGS_PROBLEMS,
+			Debug_Watch_URLs::FINDINGS_PROBLEMS,
+			Debug_Watch_Host_Collisions::FINDINGS_PROBLEMS,
+			CPT_Watch_Hosts::FINDINGS_UNREGISTERED,
+		);
 	}
 }
 

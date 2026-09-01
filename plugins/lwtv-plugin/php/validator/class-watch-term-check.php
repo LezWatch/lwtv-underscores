@@ -25,6 +25,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 use LWTV\Admin_Menu\Validation;
 use LWTV\CPTs\Shows\Watching\Watch_Hosts;
 use LWTV\CPTs\Shows\Watching\Watch_Url_Health;
+use LWTV\Debugger\Findings_Store;
 use LWTV\Debugger\Watch_URLs;
 use LWTV\Schedulers\Watch_URLs_Task;
 use LWTV\Theme\Ways_To_Watch as Theme_Ways_To_Watch;
@@ -44,6 +45,26 @@ class Watch_Term_Check {
 	 * elsewhere.
 	 */
 	const ACTION_SCAN = 'lwtv_watch_scan_urls';
+
+	/**
+	 * admin-post action for re-checking a single flagged URL.
+	 *
+	 * Separate from ACTION_RECHECK: that one is a budgeted sweep over every
+	 * flagged row, this is one request against one row, for when a term was
+	 * just fixed -- or deleted -- and there is no reason to wait on the rest
+	 * of the list to find out.
+	 */
+	const ACTION_RECHECK_ONE = 'lwtv_watch_recheck_one_url';
+
+	/**
+	 * admin-post action for confirming a term's provider despite a
+	 * published-name mismatch.
+	 *
+	 * Term-wide, not per-URL: the override lives on the term (see
+	 * Watch_Hosts::META_CONFIRMED_NAME), so confirming from any one flagged
+	 * row clears the name-mismatch review on every URL that term has.
+	 */
+	const ACTION_CONFIRM_PROVIDER = 'lwtv_watch_confirm_provider';
 
 	/**
 	 * Transient prefix for one-shot admin notices, per user.
@@ -86,6 +107,8 @@ class Watch_Term_Check {
 	public function init(): void {
 		add_action( 'admin_post_' . self::ACTION_RECHECK, array( $this, 'handle_recheck' ) );
 		add_action( 'admin_post_' . self::ACTION_SCAN, array( $this, 'handle_scan' ) );
+		add_action( 'admin_post_' . self::ACTION_RECHECK_ONE, array( $this, 'handle_recheck_one' ) );
+		add_action( 'admin_post_' . self::ACTION_CONFIRM_PROVIDER, array( $this, 'handle_confirm_provider' ) );
 	}
 
 	/**
@@ -96,15 +119,15 @@ class Watch_Term_Check {
 	public static function make(): void {
 		self::show_notice();
 
-		$items = lwtv_plugin()->get_stored( Watch_URLs::TRANSIENT_PROBLEMS );
+		$items = Findings_Store::load( Watch_URLs::FINDINGS_PROBLEMS );
 
 		// Instantiated, not called statically: Validation::last_run() reads a
 		// static cache of the status option that only the constructor fills.
 		$last_run = ( new Validation() )->last_run( Watch_URLs::STATUS_KEY );
 
-		// No transient at all means the scan has never run, or has expired.
+		// No findings at all means the scan has never run, or has expired.
 		// That is a different thing from "ran and found nothing", and saying
-		// "Excellent!" to an empty cache would be a lie.
+		// "Excellent!" to an empty store would be a lie.
 		if ( false === $items ) {
 			self::render_never_run();
 			return;
@@ -249,6 +272,8 @@ class Watch_Term_Check {
 		// 'health', not 'status': status is the baseline's new/open/resolved now.
 		$counts = array_count_values( array_column( $items, 'health' ) );
 		$broken = (int) ( $counts[ Watch_Url_Health::STATUS_BROKEN ] ?? 0 );
+
+		Affected_Shows::prime( $items );
 		?>
 		<div class="lwtv-tools-container lwtv-tools-container__alert">
 			<h3>
@@ -315,6 +340,41 @@ class Watch_Term_Check {
 		$labels  = self::labels();
 		$label   = $labels[ $health ] ?? $labels[ Watch_Url_Health::STATUS_REVIEW ];
 		$url     = (string) ( $item['url'] ?? '' );
+
+		// Nothing to key a single-row recheck on without both, and the button
+		// fires a live request -- gated behind the same capability as the bulk
+		// form rather than just being read-only-page-visible.
+		$recheck_link = ( $term_id && '' !== $url && current_user_can( self::CAP_MANAGE ) )
+			? wp_nonce_url(
+				add_query_arg(
+					array(
+						'action' => self::ACTION_RECHECK_ONE,
+						'term'   => $term_id,
+						'url'    => rawurlencode( $url ),
+					),
+					admin_url( 'admin-post.php' )
+				),
+				self::ACTION_RECHECK_ONE
+			)
+			: '';
+
+		// Only offered for the one cause confirming the provider actually
+		// clears: a published-name mismatch. A broken link or an off-site
+		// redirect still needs a real fix, and this button would not touch
+		// them -- Watch_URLs::drop_reason() only drops REASON_NAME_MISMATCH
+		// rows.
+		$confirm_link = ( $term_id && Watch_Url_Health::REASON_NAME_MISMATCH === (string) ( $item['reason'] ?? '' ) && current_user_can( self::CAP_MANAGE ) )
+			? wp_nonce_url(
+				add_query_arg(
+					array(
+						'action' => self::ACTION_CONFIRM_PROVIDER,
+						'term'   => $term_id,
+					),
+					admin_url( 'admin-post.php' )
+				),
+				self::ACTION_CONFIRM_PROVIDER
+			)
+			: '';
 		?>
 		<tr class="<?php echo esc_attr( $alt ? 'alternate' : '' ); ?>">
 			<td>
@@ -329,11 +389,17 @@ class Watch_Term_Check {
 					<div class="row-actions">
 						<span class="view">
 							<a href="<?php echo esc_url( $url ); ?>" target="_blank" rel="noopener noreferrer nofollow"><?php echo esc_html( $url ); ?></a>
+							<?php if ( '' !== $recheck_link ) : ?>
+								| <a href="<?php echo esc_url( $recheck_link ); ?>"><?php esc_html_e( 'Re-check this URL', 'lwtv' ); ?></a>
+							<?php endif; ?>
+							<?php if ( '' !== $confirm_link ) : ?>
+								| <a href="<?php echo esc_url( $confirm_link ); ?>"><?php esc_html_e( 'Confirm provider', 'lwtv' ); ?></a>
+							<?php endif; ?>
 						</span>
 					</div>
 				<?php } ?>
 			</td>
-			<td><?php echo esc_html( (string) ( (int) ( $item['shows'] ?? 0 ) ) ); ?></td>
+			<td><?php Affected_Shows::cell( (array) ( $item['show_ids'] ?? array() ), (int) ( $item['shows'] ?? 0 ) ); ?></td>
 			<td>
 				<span class="dashicons <?php echo esc_attr( $label[0] ); ?>"></span>
 				<?php echo esc_html( $label[1] ); ?>
@@ -388,9 +454,11 @@ class Watch_Term_Check {
 			wp_die( esc_html__( 'You do not have permission to do that.', 'lwtv' ), '', array( 'response' => 403 ) );
 		}
 
-		$items = (array) lwtv_plugin()->get_stored( Watch_URLs::TRANSIENT_PROBLEMS );
+		// Cast, so a `false` read (never run, or expired) becomes the empty array
+		// the guard below is looking for.
+		$items = (array) Findings_Store::load( Watch_URLs::FINDINGS_PROBLEMS );
 
-		if ( is_string( $items ) || ! is_array( $items ) || empty( $items ) ) {
+		if ( empty( $items ) ) {
 			self::set_notice(
 				'info',
 				sprintf(
@@ -427,6 +495,98 @@ class Watch_Term_Check {
 				$fixed,
 				count( $after )
 			)
+		);
+
+		self::redirect_back();
+	}
+
+	/**
+	 * Re-check one flagged URL, and only that one.
+	 *
+	 * @return void
+	 */
+	public function handle_recheck_one(): void {
+		check_admin_referer( self::ACTION_RECHECK_ONE );
+
+		if ( ! current_user_can( self::CAP_MANAGE ) ) {
+			wp_die( esc_html__( 'You do not have permission to do that.', 'lwtv' ), '', array( 'response' => 403 ) );
+		}
+
+		$term_id = isset( $_GET['term'] ) ? absint( $_GET['term'] ) : 0;
+		$url     = isset( $_GET['url'] ) ? esc_url_raw( rawurldecode( wp_unslash( $_GET['url'] ) ) ) : '';
+
+		$items  = (array) Findings_Store::load( Watch_URLs::FINDINGS_PROBLEMS );
+		$target = null;
+
+		foreach ( $items as $item ) {
+			if ( (int) ( $item['id'] ?? 0 ) === $term_id && (string) ( $item['url'] ?? '' ) === $url ) {
+				$target = $item;
+				break;
+			}
+		}
+
+		if ( null === $target ) {
+			self::set_notice( 'info', __( 'That URL is no longer flagged — nothing to re-check.', 'lwtv' ) );
+			self::redirect_back();
+		}
+
+		$result = ( new Watch_URLs() )->recheck_one( $items, $target, Watch_Hosts::UI_TIMEOUT );
+
+		if ( $result['resolved'] ) {
+			self::set_notice( 'success', __( 'That URL now passes and has been removed from the report.', 'lwtv' ) );
+			self::redirect_back();
+		}
+
+		$problem = wp_strip_all_tags( (string) ( $result['row']['problem'] ?? '' ) );
+
+		self::set_notice(
+			'info',
+			'' !== $problem
+				? sprintf(
+					/* translators: %s: the problem now reported for this URL. */
+					__( 'Still flagged: %s', 'lwtv' ),
+					$problem
+				)
+				: __( 'Still flagged. See the updated row below.', 'lwtv' )
+		);
+
+		self::redirect_back();
+	}
+
+	/**
+	 * Confirm a term's provider despite a published-name mismatch.
+	 *
+	 * Term-wide: sets the ACF override on the term (the source of truth --
+	 * an editor can also set or clear it from the term edit screen), then
+	 * drops every currently-flagged name-mismatch row for that term so the
+	 * report reflects it immediately rather than waiting for the next scan.
+	 *
+	 * @return void
+	 */
+	public function handle_confirm_provider(): void {
+		check_admin_referer( self::ACTION_CONFIRM_PROVIDER );
+
+		if ( ! current_user_can( self::CAP_MANAGE ) ) {
+			wp_die( esc_html__( 'You do not have permission to do that.', 'lwtv' ), '', array( 'response' => 403 ) );
+		}
+
+		$term_id = isset( $_GET['term'] ) ? absint( $_GET['term'] ) : 0;
+
+		if ( ! $term_id || ! get_term( $term_id, Theme_Ways_To_Watch::TAXONOMY ) ) {
+			self::set_notice( 'error', __( 'That provider term no longer exists.', 'lwtv' ) );
+			self::redirect_back();
+		}
+
+		update_term_meta( $term_id, Watch_Hosts::META_CONFIRMED_NAME, '1' );
+
+		$items   = (array) Findings_Store::load( Watch_URLs::FINDINGS_PROBLEMS );
+		$dropped = ( new Watch_URLs() )->drop_reason( $items, $term_id, Watch_Url_Health::REASON_NAME_MISMATCH );
+
+		self::set_notice(
+			'success',
+			$dropped
+				? __( 'Provider confirmed. Name-mismatch reviews for this term will no longer be flagged.', 'lwtv' )
+				: __( 'Provider confirmed for future scans. Nothing currently flagged needed clearing.', 'lwtv' )
 		);
 
 		self::redirect_back();

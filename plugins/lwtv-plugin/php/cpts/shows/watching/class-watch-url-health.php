@@ -50,6 +50,16 @@ class Watch_Url_Health {
 	const STATUS_OK      = 'ok';
 
 	/**
+	 * Machine-readable reason, for the one case a caller needs to act on
+	 * specifically: a term whose published name is a known, confirmed drift
+	 * (a provider now hosted on a platform that publishes its own name, for
+	 * instance) rather than evidence of losing the provider. Everything else
+	 * that can produce a REVIEW or worse has no reason to single out yet, so
+	 * it is left '' rather than invented ahead of a caller that needs it.
+	 */
+	const REASON_NAME_MISMATCH = 'name_mismatch';
+
+	/**
 	 * Shortest normalised name we'll compare on.
 	 *
 	 * Two-character names ('GO', for go.com) collide with far too much ordinary
@@ -91,13 +101,21 @@ class Watch_Url_Health {
 	/**
 	 * Classify one probed URL.
 	 *
-	 * @param array  $probe     Output of Watch_Hosts::probe(): keys 'error',
-	 *                          'code', 'final_url', 'site_name', 'body'.
-	 * @param string $term_name The provider term's display name.
-	 * @param string $url       The URL that was probed.
-	 * @return array{status: string, problem: string}
+	 * @param array  $probe          Output of Watch_Hosts::probe(): keys 'error',
+	 *                                'code', 'final_url', 'site_name', 'body'.
+	 * @param string $term_name      The provider term's display name.
+	 * @param string $url            The URL that was probed.
+	 * @param bool   $name_confirmed The term has been confirmed to still be the
+	 *                                right provider despite a published name that
+	 *                                does not resemble it -- a platform-hosted
+	 *                                site that publishes its own name, say. Only
+	 *                                changes the one outcome that check produces;
+	 *                                a broken link, a parked domain, or an
+	 *                                off-site redirect are still reported even
+	 *                                when this is true.
+	 * @return array{status: string, problem: string, reason: string}
 	 */
-	public static function classify( array $probe, string $term_name, string $url ): array {
+	public static function classify( array $probe, string $term_name, string $url, bool $name_confirmed = false ): array {
 		$error     = (string) ( $probe['error'] ?? '' );
 		$code      = (int) ( $probe['code'] ?? 0 );
 		$final_url = (string) ( $probe['final_url'] ?? '' );
@@ -142,7 +160,7 @@ class Watch_Url_Health {
 			);
 		}
 
-		if ( ! self::name_matches( $term_name, $site_name, self::host_of( $url ) ) ) {
+		if ( ! self::name_matches( $term_name, $site_name, self::host_of( $url ) ) && ! $name_confirmed ) {
 			return self::result(
 				self::STATUS_REVIEW,
 				sprintf(
@@ -150,7 +168,8 @@ class Watch_Url_Health {
 					__( 'The site now calls itself “%1$s”, which does not resemble “%2$s”. Confirm it is still the same provider.', 'lwtv' ),
 					$site_name,
 					$term_name
-				)
+				),
+				self::REASON_NAME_MISMATCH
 			);
 		}
 
@@ -337,12 +356,14 @@ class Watch_Url_Health {
 	 *
 	 * @param string $status  One of the STATUS_* constants.
 	 * @param string $problem Human-readable explanation, '' when healthy.
-	 * @return array{status: string, problem: string}
+	 * @param string $reason  One of the REASON_* constants, '' when not applicable.
+	 * @return array{status: string, problem: string, reason: string}
 	 */
-	private static function result( string $status, string $problem ): array {
+	private static function result( string $status, string $problem, string $reason = '' ): array {
 		return array(
 			'status'  => $status,
 			'problem' => $problem,
+			'reason'  => $reason,
 		);
 	}
 }

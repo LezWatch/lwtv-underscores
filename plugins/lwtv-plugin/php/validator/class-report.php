@@ -3,7 +3,7 @@
  * One renderer for every findings report on the Data Validation screen.
  *
  * This replaced ten near-identical classes of ~105 lines each, which differed
- * only in a transient key, a scanner method, a nonce name and three strings.
+ * only in a findings key, a scanner method, a nonce name and three strings.
  * They had already drifted: the on-air view's table header said "Duplicate", its
  * translator comment said "number of dupes", and its sentence read "The
  * following miss-matched on-air checks been found". Copy-paste is how that
@@ -25,6 +25,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 use LWTV\Admin_Menu\Validation;
+use LWTV\Debugger\Findings_Store;
 
 class Report {
 
@@ -54,7 +55,7 @@ class Report {
 		$items = self::items( $config, $nonce );
 
 		/*
-		 * `false` means the transient was missing and the scan has just run, so
+		 * `false` means the findings were missing and the scan has just run, so
 		 * by this point $items is always an array. The old templates each carried
 		 * an `elseif ( false === $items )` "Bogus!" branch after an `empty()`
 		 * check that had already caught false -- ten copies of unreachable code.
@@ -80,7 +81,7 @@ class Report {
 	 * @return array
 	 */
 	private static function items( array $config, string $nonce ): array {
-		$items   = lwtv_plugin()->get_stored( $config['transient'] );
+		$items   = Findings_Store::load( $config['findings'] );
 		$scanner = $config['scanner'];
 
 		// Rerun: check everything. Also the path when there is no cache at all.
