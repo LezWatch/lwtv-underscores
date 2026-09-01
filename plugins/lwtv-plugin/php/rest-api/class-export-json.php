@@ -691,7 +691,7 @@ class Export_JSON {
 		}
 
 		// Let's make sure.
-		if ( isset( $page ) && CPT_Actors::SLUG === get_post_type( $page->ID ) && 'publish' === get_post_status( $page->ID ) ) {
+		if ( $page instanceof \WP_Post && CPT_Actors::SLUG === get_post_type( $page ) && 'publish' === get_post_status( $page ) ) {
 
 			// If the actor has asked to be private, we respect that.
 			if ( lwtv_plugin()->hide_actor_data( $page->ID, 'all' ) ) {

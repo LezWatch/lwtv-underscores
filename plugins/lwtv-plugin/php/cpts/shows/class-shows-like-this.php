@@ -82,7 +82,7 @@ class Shows_Like_This {
 			$exclude    = '';
 			$include    = '';
 			$tags_array = array();
-			if ( ! empty( $tagged ) ) {
+			if ( ! empty( $tagged ) && ! is_wp_error( $tagged ) ) {
 				foreach ( $tagged as $tag ) {
 					$tags_array[] = $tag->term_id;
 				}

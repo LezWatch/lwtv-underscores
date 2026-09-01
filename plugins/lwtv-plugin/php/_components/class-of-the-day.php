@@ -1002,6 +1002,7 @@ class Of_The_Day implements Component, Templater {
 
 		foreach ( $table_data as $use_data ) {
 			// Escape the CDATA terminator so title/show text can't break out of the CDATA section.
+			$cdata_content = wp_kses_post( $use_data->content );
 			$cdata_content = str_replace( ']]>', ']]]]><![CDATA[>', $use_data->content );
 			?>
 			<item>
@@ -1010,8 +1011,8 @@ class Of_The_Day implements Component, Templater {
 				<pubDate><?php echo esc_html( mysql2date( 'D, d M Y H:i:s +0000', $use_data->post_datetime ) ); ?></pubDate>
 				<dc:creator>LezWatch.TV</dc:creator>
 				<guid isPermaLink="false"><?php the_guid( $use_data->posts_id ); ?></guid>
-				<description><![CDATA[<?php echo wp_kses_post( $cdata_content ); ?>]]></description>
-				<content:encoded><![CDATA[<?php echo wp_kses_post( $cdata_content ); ?>]]></content:encoded>
+				<description><![CDATA[<?php echo $cdata_content; //phpcs:ignore ?>]]></description>
+				<content:encoded><![CDATA[<?php echo $cdata_content; //phpcs:ignore ?>]]></content:encoded>
 				<?php
 				if ( has_post_thumbnail( $use_data->posts_id ) ) {
 					$thumbnail_id = get_post_thumbnail_id( $use_data->posts_id );
