@@ -29,19 +29,19 @@ use LWTV\Debugger\Format\Rows;
 class Actors {
 
 	/**
-	 * Transient holding the results of find_actors_problems().
+	 * Findings from find_actors_problems().
 	 */
-	const TRANSIENT_PROBLEMS = 'lwtv_debug_actor_problems';
+	const FINDINGS_PROBLEMS = 'lwtv_debug_actor_problems';
 
 	/**
-	 * Transient holding the results of find_actors_incomplete().
+	 * Findings from find_actors_incomplete().
 	 */
-	const TRANSIENT_EMPTY = 'lwtv_debug_actor_empty';
+	const FINDINGS_EMPTY = 'lwtv_debug_actor_empty';
 
 	/**
-	 * Transient holding the results of find_actors_no_imdb().
+	 * Findings from find_actors_no_imdb().
 	 */
-	const TRANSIENT_IMDB = 'lwtv_debug_actor_imdb';
+	const FINDINGS_IMDB = 'lwtv_debug_actor_imdb';
 
 	/**
 	 * Constructor — wire up action hooks.
@@ -54,7 +54,7 @@ class Actors {
 	 * Add a shadow taxonomy sync failure to the actor problems list.
 	 *
 	 * Called when sync_actors() has retried 3+ times without success.
-	 * Appends the actor to the lwtv_debug_actor_problems transient so it
+	 * Appends the actor to the lwtv_debug_actor_problems findings so it
 	 * surfaces in `wp lwtv debug actors` and the admin debugger view.
 	 *
 	 * @param int $actor_id  Post ID of the actor.
@@ -63,12 +63,13 @@ class Actors {
 	 */
 	public function flag_shadow_sync_failure( int $actor_id, int $term_id ): void {
 		/*
-		 * get_stored(), not get_transient(): this is a read-modify-write, and
-		 * get_transient() returns false when LWTV_DISABLE_TRANSIENTS is set. That
-		 * would land here as "no findings yet", and the append below would replace
-		 * the whole list with this one row rather than adding to it.
+		 * This is a read-modify-write, so a read that fails for reasons unrelated
+		 * to the data is destructive: it would land here as "no findings yet" and
+		 * the append below would replace the whole list with this one row. Reading
+		 * findings from an option rather than a transient is what rules that out --
+		 * see Findings_Store.
 		 */
-		$items = lwtv_plugin()->get_stored( self::TRANSIENT_PROBLEMS );
+		$items = Findings_Store::load( self::FINDINGS_PROBLEMS );
 		if ( ! is_array( $items ) ) {
 			$items = array();
 		}
@@ -98,7 +99,7 @@ class Actors {
 			)
 		);
 
-		Scan::store( self::TRANSIENT_PROBLEMS, $items );
+		Scan::store( self::FINDINGS_PROBLEMS, $items );
 
 		/*
 		 * No summary, which clears any stored new/open breakdown: this row
@@ -142,9 +143,9 @@ class Actors {
 
 		return Scan::finish(
 			array(
-				'scope'     => 'actor_problems',
-				'transient' => self::TRANSIENT_PROBLEMS,
-				'label'     => 'Actors with Issues',
+				'scope'    => 'actor_problems',
+				'findings' => self::FINDINGS_PROBLEMS,
+				'label'    => 'Actors with Issues',
 			),
 			$findings,
 			$is_recheck
@@ -318,9 +319,9 @@ class Actors {
 
 		return Scan::finish(
 			array(
-				'scope'     => 'actor_empty',
-				'transient' => self::TRANSIENT_EMPTY,
-				'label'     => 'Incomplete Actors',
+				'scope'    => 'actor_empty',
+				'findings' => self::FINDINGS_EMPTY,
+				'label'    => 'Incomplete Actors',
 			),
 			$findings,
 			$is_recheck
@@ -360,9 +361,9 @@ class Actors {
 
 		return Scan::finish(
 			array(
-				'scope'     => 'actor_imdb',
-				'transient' => self::TRANSIENT_IMDB,
-				'label'     => 'Actors without IMDb',
+				'scope'    => 'actor_imdb',
+				'findings' => self::FINDINGS_IMDB,
+				'label'    => 'Actors without IMDb',
 			),
 			$findings,
 			$is_recheck

@@ -254,6 +254,51 @@ class WatchUrlHealthTest extends TestCase {
 		$this->assertSame( Watch_Url_Health::STATUS_REVIEW, $result['status'] );
 		$this->assertStringContainsString( 'Lucky Star Casino', $result['problem'] );
 		$this->assertStringContainsString( 'Quibi', $result['problem'] );
+		$this->assertSame( Watch_Url_Health::REASON_NAME_MISMATCH, $result['reason'] );
+	}
+
+	public function test_confirmed_provider_overrides_a_name_mismatch(): void {
+		// Secret Message Productions, hosted on Tumblr: the term name and the
+		// published name are both correct, so a confirmed term must pass.
+		$result = Watch_Url_Health::classify(
+			$this->probe( array( 'site_name' => 'Tumblr' ) ),
+			'Secret Message Productions',
+			'https://secretmessageproductions.com',
+			true
+		);
+
+		$this->assertSame( Watch_Url_Health::STATUS_OK, $result['status'] );
+	}
+
+	public function test_confirmed_provider_does_not_override_a_broken_link(): void {
+		// The override is for the name check specifically -- a dead link on a
+		// confirmed term is still a dead link.
+		$result = Watch_Url_Health::classify(
+			$this->probe( array( 'code' => 404 ) ),
+			'Secret Message Productions',
+			'https://secretmessageproductions.com',
+			true
+		);
+
+		$this->assertSame( Watch_Url_Health::STATUS_BROKEN, $result['status'] );
+	}
+
+	public function test_confirmed_provider_does_not_override_an_offsite_redirect(): void {
+		$result = Watch_Url_Health::classify(
+			$this->probe( array( 'final_url' => 'https://luckystarcasino.com/' ) ),
+			'Quibi',
+			'https://quibi.com',
+			true
+		);
+
+		$this->assertSame( Watch_Url_Health::STATUS_REVIEW, $result['status'] );
+		$this->assertSame( '', $result['reason'] );
+	}
+
+	public function test_matching_name_has_no_reason(): void {
+		$result = Watch_Url_Health::classify( $this->probe(), 'Netflix', 'https://netflix.com' );
+
+		$this->assertSame( '', $result['reason'] );
 	}
 
 	public function test_acronym_terms_are_judged(): void {

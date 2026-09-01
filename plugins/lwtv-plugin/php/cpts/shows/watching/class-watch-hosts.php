@@ -19,6 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 // `Shows` here would resolve to LWTV\CPTs\Shows\Shows and fatal. Aliased,
 // matching what class-calculations.php does in this same namespace.
 use LWTV\CPTs\Shows as CPT_Shows;
+use LWTV\Debugger\Findings_Store;
 use LWTV\Debugger\Scan;
 use LWTV\Debugger\Status;
 use LWTV\Theme\Ways_To_Watch as Theme_Ways_To_Watch;
@@ -39,18 +40,26 @@ class Watch_Hosts {
 	const META_REPEATER = 'lezwatchurls_all';
 
 	/**
+	 * ACF true_false field: this term's published-name mismatch is confirmed
+	 * fine, not evidence the provider changed. Term-wide, alongside the
+	 * repeater's own "Hide Display" setting -- see
+	 * acf-json/group_lwtv_term_watch_urls.json.
+	 */
+	const META_CONFIRMED_NAME = 'lezwatchurls_setting_confirmed_name';
+
+	/**
 	 * Key inside the debugger status options, for the tab's count badge.
 	 */
 	const STATUS_KEY = 'watch_providers';
 
 	/**
-	 * Transient holding the Watch Providers tab's worklist.
+	 * Findings backing the Watch Providers tab's worklist.
 	 *
 	 * Written through Debugger\Scan::store(), the one door for a findings write, so
 	 * this list has exactly the same life as every other check's findings and a
 	 * list left alone eventually rebuilds itself rather than going stale forever.
 	 */
-	const TRANSIENT_UNREGISTERED = 'lwtv_watch_unregistered';
+	const FINDINGS_UNREGISTERED = 'lwtv_watch_unregistered';
 
 	/**
 	 * Request timeout in seconds for CLI runs, where nothing is waiting on us.
@@ -94,6 +103,17 @@ class Watch_Hosts {
 	 * @var array<string, int>|null
 	 */
 	private static $in_use = null;
+
+	/**
+	 * Request-level memo of host => the post IDs behind its count.
+	 *
+	 * Filled by in_use(), which builds this set anyway to count distinct shows.
+	 * Kept rather than discarded so the admin tabs can name the shows a broken
+	 * URL affects instead of only counting them.
+	 *
+	 * @var array<string, array<int, int>>|null
+	 */
+	private static $show_ids = null;
 
 	/**
 	 * Request-level memo of host => WP_Term|null.
@@ -187,9 +207,21 @@ class Watch_Hosts {
 		}
 
 		arsort( $hosts );
-		self::$in_use = $hosts;
+		self::$in_use   = $hosts;
+		self::$show_ids = array_map( 'array_keys', $seen );
 
 		return self::$in_use;
+	}
+
+	/**
+	 * The published shows behind each host's count.
+	 *
+	 * @return array<string, array<int, int>> host => post IDs.
+	 */
+	public static function show_ids_by_host(): array {
+		self::in_use();
+
+		return self::$show_ids ?? array();
 	}
 
 	/**
@@ -312,31 +344,28 @@ class Watch_Hosts {
 	}
 
 	/**
+	 * Which published shows each provider term actually serves.
+	 *
+	 * Used to weigh findings by consequence, and to name the shows behind one: a
+	 * broken URL on the term 500 shows point at matters more than one on a term
+	 * nothing reaches, and an editor fixing it wants the list.
+	 *
+	 * @return array<int, array<int, int>> term_id => post IDs.
+	 */
+	public static function show_ids_per_term(): array {
+		return Watch_Host_Map::ids_per_term( self::show_ids_by_host(), self::host_map()['map'] );
+	}
+
+	/**
 	 * How many published shows each provider term actually serves.
 	 *
-	 * Used to sort findings by consequence: a broken URL on the term 500 shows
-	 * point at matters more than one on a term nothing reaches.
-	 *
-	 * Not cheap -- term_for() is a query per host, memoised only per request --
-	 * so this is for CLI and cron, and its results are stored alongside the
-	 * findings rather than recomputed when the admin tab renders.
+	 * The length of show_ids_per_term()'s lists, deliberately, so the count on a
+	 * finding can never disagree with the list of shows rendered beside it.
 	 *
 	 * @return array<int, int> term_id => number of shows
 	 */
 	public static function shows_per_term(): array {
-		$totals = array();
-
-		foreach ( self::in_use() as $host => $count ) {
-			$term = self::term_for( $host );
-
-			if ( ! $term ) {
-				continue;
-			}
-
-			$totals[ $term->term_id ] = ( $totals[ $term->term_id ] ?? 0 ) + $count;
-		}
-
-		return $totals;
+		return array_map( 'count', self::show_ids_per_term() );
 	}
 
 	/**
@@ -464,15 +493,16 @@ class Watch_Hosts {
 	 * not still have this problem, and leaving it in would keep it on the list
 	 * forever because nothing can ever fix it.
 	 *
-	 * Show counts are re-derived on both paths rather than carried over, so a row
-	 * never shows a count from a previous week.
+	 * Show counts and the show IDs behind them are re-derived on both paths rather
+	 * than carried over, so a row never shows a count from a previous week.
 	 *
-	 * @param array<int, array{host: string, shows: int}> $items Rows from a previous run, or empty for a full scan.
-	 * @return array<int, array{host: string, shows: int}> Most-used first.
+	 * @param array<int, array{host: string, shows: int, show_ids: array<int, int>}> $items Rows from a previous run, or empty for a full scan.
+	 * @return array<int, array{host: string, shows: int, show_ids: array<int, int>}> Most-used first.
 	 */
 	public static function scan_unregistered( array $items = array() ): array {
-		$in_use = self::in_use();
-		$map    = self::host_map()['map'];
+		$in_use      = self::in_use();
+		$ids_by_host = self::show_ids_by_host();
+		$map         = self::host_map()['map'];
 
 		if ( empty( $items ) ) {
 			$hosts = array_keys( $in_use );
@@ -496,8 +526,9 @@ class Watch_Hosts {
 			}
 
 			$found[] = array(
-				'host'  => $host,
-				'shows' => (int) ( $in_use[ $host ] ?? 0 ),
+				'host'     => $host,
+				'shows'    => (int) ( $in_use[ $host ] ?? 0 ),
+				'show_ids' => array_values( (array) ( $ids_by_host[ $host ] ?? array() ) ),
 			);
 		}
 
@@ -505,7 +536,7 @@ class Watch_Hosts {
 		// the stored order, so sort explicitly rather than relying on the input.
 		usort( $found, static fn ( array $a, array $b ) => $b['shows'] <=> $a['shows'] );
 
-		Scan::store( self::TRANSIENT_UNREGISTERED, $found );
+		Scan::store( self::FINDINGS_UNREGISTERED, $found );
 
 		/*
 		 * So the tab picker can say "Watch Providers (35)". Recorded here rather
@@ -526,7 +557,7 @@ class Watch_Hosts {
 	 *
 	 * Called after a term is created or assigned, so the row an editor just dealt
 	 * with disappears instead of sitting there until the next Recheck. Prunes the
-	 * one entry rather than deleting the transient, which would throw away the
+	 * one entry rather than deleting the findings, which would throw away the
 	 * other forty-odd rows and silently turn the next render into a full scan --
 	 * the reasoning Debugger\Repair::prune() documents.
 	 *
@@ -537,7 +568,13 @@ class Watch_Hosts {
 	 * @return void
 	 */
 	public static function forget_unregistered( string $host ): void {
-		$items = lwtv_plugin()->get_transient( self::TRANSIENT_UNREGISTERED );
+		/*
+		 * Findings_Store, not the transient cache wrapper this used to call. That
+		 * wrapper returns false whenever LWTV_DISABLE_TRANSIENTS is set, so in
+		 * development assigning a term silently failed to prune its row -- and this
+		 * was the one findings read in the codebase not going through the store.
+		 */
+		$items = Findings_Store::load( self::FINDINGS_UNREGISTERED );
 
 		if ( ! is_array( $items ) ) {
 			return;
@@ -553,9 +590,9 @@ class Watch_Hosts {
 		}
 
 		if ( count( $kept ) !== count( $items ) ) {
-			Scan::store( self::TRANSIENT_UNREGISTERED, $kept );
+			Scan::store( self::FINDINGS_UNREGISTERED, $kept );
 
-			// The badge is read from the status option, not the transient, so a
+			// The badge is read from the status option, not the findings, so a
 			// pruned row has to be counted off both or the tab picker keeps
 			// advertising work that is done.
 			Status::record( self::STATUS_KEY, 'Ways to Watch hosts with no provider term', count( $kept ) );
@@ -566,7 +603,7 @@ class Watch_Hosts {
 	 * Hosts in use with no term, most-used first.
 	 *
 	 * Live, uncached, and used by the CLI and the name-lookup batch. The admin
-	 * tab reads scan_unregistered()'s transient instead, so pressing Recheck
+	 * tab reads scan_unregistered()'s stored findings instead, so pressing Recheck
 	 * means something.
 	 *
 	 * @param int $min_shows Ignore hosts used by fewer shows than this.
@@ -702,6 +739,18 @@ class Watch_Hosts {
 		}
 
 		return $rows;
+	}
+
+	/**
+	 * Has an editor confirmed this term's published-name mismatch is fine?
+	 *
+	 * ACF true_false raw postmeta is `'1'`/`'0'`, never a real bool.
+	 *
+	 * @param int $term_id Term ID.
+	 * @return bool
+	 */
+	public static function name_confirmed( int $term_id ): bool {
+		return '1' === (string) get_term_meta( $term_id, self::META_CONFIRMED_NAME, true );
 	}
 
 	/**

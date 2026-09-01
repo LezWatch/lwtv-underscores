@@ -14,7 +14,7 @@
  * it, which is correct for exactly that reason.
  *
  * Costs two queries and no requests. The Watch Providers tab does not read this
- * check's transient -- it renders collisions live from the same host map it
+ * check's findings -- it renders collisions live from the same host map it
  * already builds for its own list, so it can never show a stale one. This check
  * exists for the weekly cron, `wp lwtv debug watchhosts`, and the tab's count
  * badge, all of which need a stored number.
@@ -34,9 +34,9 @@ use LWTV\Theme\Ways_To_Watch as Theme_Ways_To_Watch;
 class Watch_Host_Collisions {
 
 	/**
-	 * Transient holding the results of find_host_collisions().
+	 * Findings from find_host_collisions().
 	 */
-	const TRANSIENT_PROBLEMS = 'lwtv_debug_watch_host_collisions';
+	const FINDINGS_PROBLEMS = 'lwtv_debug_watch_host_collisions';
 
 	/**
 	 * Key inside the debugger status options.
@@ -104,9 +104,9 @@ class Watch_Host_Collisions {
 
 		return Scan::finish(
 			array(
-				'scope'     => self::STATUS_KEY,
-				'transient' => self::TRANSIENT_PROBLEMS,
-				'label'     => 'Watch hosts claimed by more than one term',
+				'scope'    => self::STATUS_KEY,
+				'findings' => self::FINDINGS_PROBLEMS,
+				'label'    => 'Watch hosts claimed by more than one term',
 			),
 			$found,
 			false,

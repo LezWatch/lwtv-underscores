@@ -21,9 +21,9 @@ use LWTV\Debugger\Format\Rows;
 class Dupes {
 
 	/**
-	 * Transient holding the results of find_duplicates().
+	 * Findings from find_duplicates().
 	 */
-	const TRANSIENT_DUPES = 'lwtv_debug_duplicates';
+	const FINDINGS_DUPES = 'lwtv_debug_duplicates';
 
 	/**
 	 * Find Duplicates
@@ -54,9 +54,9 @@ class Dupes {
 
 		return Scan::finish(
 			array(
-				'scope'     => 'duplicates',
-				'transient' => self::TRANSIENT_DUPES,
-				'label'     => 'Duplicate Actors/Shows',
+				'scope'    => 'duplicates',
+				'findings' => self::FINDINGS_DUPES,
+				'label'    => 'Duplicate Actors/Shows',
 			),
 			$findings,
 			$is_recheck,

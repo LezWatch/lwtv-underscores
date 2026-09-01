@@ -21,14 +21,14 @@ use LWTV\CPTs\Characters as CPT_Characters;
 class Characters {
 
 	/**
-	 * Transient holding the results of find_byq_problems().
+	 * Findings from find_byq_problems().
 	 */
-	const TRANSIENT_BYQ = 'lwtv_debug_byq_problems';
+	const FINDINGS_BYQ = 'lwtv_debug_byq_problems';
 
 	/**
-	 * Transient holding the results of find_characters_problems().
+	 * Findings from find_characters_problems().
 	 */
-	const TRANSIENT_PROBLEMS = 'lwtv_debug_character_problems';
+	const FINDINGS_PROBLEMS = 'lwtv_debug_character_problems';
 
 	/**
 	 * Find Characters with Problems regarding BYQ
@@ -75,9 +75,9 @@ class Characters {
 
 		return Scan::finish(
 			array(
-				'scope'     => 'byq_problems',
-				'transient' => self::TRANSIENT_BYQ,
-				'label'     => 'Bury Your Queers Problems',
+				'scope'    => 'byq_problems',
+				'findings' => self::FINDINGS_BYQ,
+				'label'    => 'Bury Your Queers Problems',
 			),
 			$findings,
 			$is_recheck
@@ -119,9 +119,9 @@ class Characters {
 
 		return Scan::finish(
 			array(
-				'scope'     => 'character_problems',
-				'transient' => self::TRANSIENT_PROBLEMS,
-				'label'     => 'Characters with Issues',
+				'scope'    => 'character_problems',
+				'findings' => self::FINDINGS_PROBLEMS,
+				'label'    => 'Characters with Issues',
 			),
 			$findings,
 			$is_recheck
