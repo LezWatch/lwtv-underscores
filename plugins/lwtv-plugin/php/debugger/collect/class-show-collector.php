@@ -2,16 +2,6 @@
 /**
  * Fetches what the show rules need, in as few queries as it can manage.
  *
- * The WordPress half of the split: everything here touches meta, terms or
- * queries, and nothing here decides whether anything is wrong. Build\Show_Rules
- * does that, from the plain arrays this returns.
- *
- * Collecting in batches is not incidental. The old scan read five taxonomies
- * per show one show at a time, so a full run was thousands of term queries;
- * `wp_get_object_terms()` takes a list of IDs, so one query per batch covers
- * every taxonomy for every show in it. Batching also bounds the memory that
- * primed meta and term caches hold.
- *
  * @package LWTV
  */
 
@@ -28,9 +18,6 @@ class Show_Collector {
 
 	/**
 	 * How many shows to gather per pass.
-	 *
-	 * Small enough that the primed caches stay modest, large enough that the
-	 * per-batch queries are worth their round trip.
 	 */
 	const BATCH = 200;
 
@@ -47,7 +34,6 @@ class Show_Collector {
 			return array();
 		}
 
-		// One query each, rather than one per show per lookup.
 		update_postmeta_cache( $show_ids );
 		$terms = $this->terms_for( $show_ids );
 

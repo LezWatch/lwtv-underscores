@@ -2,19 +2,6 @@
 /**
  * Turns typed findings into the rows the admin tables and CLI already read.
  *
- * This is the seam between the pure layer and WordPress: grouping and copy
- * happen in Debugger\Build\Findings, and the only thing added here is the
- * permalink, which needs a live site.
- *
- * The row is an additive superset of the old `array( url, id, problem )` shape,
- * so every existing consumer keeps working untouched -- Admin_Menu\Validation
- * reads `id` and `problem`, the CLI names its columns, and `count()` still
- * counts posts. `issues` and `fixable` are the new structured truth alongside
- * them. Because nothing was removed, findings cached before this change stay
- * readable and simply have no `issues` key; callers treat that as "no per-issue
- * information" rather than an error, which avoids throwing away a week of
- * scans for a findings key bump.
- *
  * @package LWTV
  */
 
@@ -62,15 +49,6 @@ class Rows {
 
 	/**
 	 * Build display rows from term findings, one row per finding.
-	 *
-	 * Deliberately not grouped. The post checks collapse to one row per post
-	 * because the post is both what you triage and what you edit. A watch
-	 * provider term is what you edit, but a *URL* is what you triage, and the
-	 * report has a URL column per row — grouping a term's three broken URLs into
-	 * one row would cost information the report currently gives.
-	 *
-	 * Context is lifted to the top level because that is where the renderer and
-	 * the CLI columns look for it.
 	 *
 	 * @param  array $findings List of findings from Findings::make_for_term().
 	 * @return array<int, array<string, mixed>>
