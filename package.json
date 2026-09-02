@@ -18,6 +18,8 @@
     "build:workspace": "npm run build:workspace --workspaces",
     "build:mover": "node ./_build_scripts/postbuild.js",
     "buildquick": "npm run build:assets && npm run build:mover",
+    "docs:structure": "node _build_scripts/structure-docs.js",
+    "docs:structure:check": "node _build_scripts/structure-docs.js --check",
     "symbolicons:prod": "LWTV_BRANCH=production node ./_build_scripts/symbolicons.js",
     "symbolicons:dev": "LWTV_BRANCH=development node ./_build_scripts/symbolicons.js",
     "create:local": "SVG_SPRITE_ENV=local npm run build",

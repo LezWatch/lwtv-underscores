@@ -8,8 +8,8 @@ This document describes the structure and contents of the custom LezWatch.TV Plu
 ├── composer.json
 ├── composer.lock
 ├── package.json
-├── readme.md
 ├── vendor/ - Composer dependencies (not stored in GitHub)
+├── node_modules/ - npm dependencies (not stored in GitHub)
 ├── acf-json/ - ACF field group definitions (JSON sync files)
 │   ├── group_lwtv_actors_details.json
 │   ├── group_lwtv_auto_posting.json
@@ -41,365 +41,432 @@ This document describes the structure and contents of the custom LezWatch.TV Plu
 │   │   ├── unicorn.png - Unicorn (used if a toaster cannot be loaded)
 │   │   ├── unicorn.svg - Unicorn (used if a toaster cannot be loaded)
 │   │   └── scores/
-│   │   │   ├── circle.svg
-│   │   │   ├── imdb.png
-│   │   │   ├── lwtv.png
-│   │   │   ├── tmdb.png
-│   │   │   ├── tmdb.svg
-│   │   │   └── tvmaze.png
+│   │       ├── circle.svg
+│   │       ├── imdb.png
+│   │       ├── lwtv.png
+│   │       ├── tmdb.png
+│   │       ├── tmdb.svg
+│   │       └── tvmaze.png
 │   └── js/
-│       ├── calendar-tabs.js - Tab switching logic for calendar views
+│       ├── calendar-agenda.js - Agenda-view interactions for the airdate calendar
 │       ├── facetwp-pagination.js - FacetWP pagination customizations
 │       ├── gutenberg.js - Gutenberg editor customizations
 │       ├── jquery.tablesorter.js - Tablesorter jQuery plugin
 │       ├── jquery.tablesorter.min.js - Tablesorter jQuery plugin (minified)
-├── php/
-│   ├── class-plugin.php - Main plugin file. All new components will be added there
-│   ├── readme.md
-│   ├── _components/ - Top-level components
-│   │   ├── class-admin-color-schemes.php - Admin color schemes (forked from plugin)
-│   │   ├── class-admin-menu.php - LWTV custom admin menu
-│   │   ├── class-block-types-allowed.php - Filter to remove/hide certain blocks
-│   │   ├── class-blocks.php - Gutenberg Blocks
-│   │   ├── class-calendar.php - Calendar
-│   │   ├── class-cpts.php - Custom Post Types
-│   │   ├── class-dashboard-widgets.php - Dashboard Widgets
-│   │   ├── class-debugger.php - Debugger
-│   │   ├── class-features.php - General features
-│   │   ├── class-grading.php - Show Scores / Grading
-│   │   ├── class-of-the-day.php - Of The Day RSS
-│   │   ├── class-plugins.php - Plugin filters and actions
-│   │   ├── class-postiz.php - Postiz social media integration component
-│   │   ├── class-queeries.php - Customized loops
-│   │   ├── class-rest-api.php - Rest API code
-│   │   ├── class-scheduler.php - Deferred task scheduler for performance optimization with Action Scheduler integration
-│   │   ├── class-statistics-optimized.php - Statistics with optimized performance and caching
-│   │   ├── class-symbolicons.php - Symbolicons
-│   │   ├── class-theme.php - Theme code
-│   │   ├── class-this-year.php - This Year features
-│   │   ├── class-transients.php - Transients with intelligent cache invalidation and tiered caching system
-│   │   ├── class-wp-cli.php - WP CLI code
-│   │   ├── interface-component.php - Interface for classes that act as plugin components.
-│   │   ├── interface-conditional.php - Interface for classes that are conditional.
-│   │   └── interface-templater.php - Interface for classes that return template functions.
-│   ├── _helpers/ - Helper files
-│   │   ├── class-autoload.php - Autoloader
-│   │   ├── class-calendar-database-optimizer.php - Database query optimization for calendar
-│   │   ├── class-calendar-meta-batcher.php - Batch processing for calendar meta data
-│   │   ├── class-calendar-object-pool.php - Object pooling for calendar performance
-│   │   ├── class-imdb-canonical.php - Pure comparison of a stored IMDb ID against a third-party oracle's canonical value
-│   │   └── class-utils.php - Common utility functions
-│   ├── admin-color-schemes/ - Additional color schemes for the backend (Each folder contains a colors.css and colors-rtl.css)
-│   │   ├── editor.css - Manages color display along with sub folders.
-│   │   ├── 80s-kid/
-│   │   ├── adderley/
-│   │   ├── aubergine/
-│   │   ├── contrast-blue/
-│   │   ├── cruise/
-│   │   ├── flat/
-│   │   ├── kirk/
-│   │   ├── lawn/
-│   │   ├── modern-evergreen/
-│   │   ├── primary/
-│   │   ├── seashore/
-│   │   └── vineyard/
-│   ├── admin-menu/ - Admin menu items and validation
-│   │   ├── class-auto-posting.php - Auto-posting configuration for social media
-│   │   ├── class-debugging.php - Debug logging settings and display
-│   │   ├── class-exclusions.php - Lists any exclusions or overrides applied by admins (i.e. forcing someone to show as queer)
-│   │   └── class-validation.php - Data consistency checks (each one runs weekly)
-│   ├── blocks/ - Gutenberg blocks
-│   │   ├── class-serverside.php - Server-side Renders: Run PHP code in JS blocks
-│   │   └── src/ - Block source code (one directory per block)
-│   │       ├── _common/ - Shared block utilities (block.js, block.json, style.scss, SVG icons)
-│   │       ├── _serverside/ - Server-side rendered blocks (author-box, glossary, private-note, tvshow-calendar)
-│   │       ├── featured-image/ - Featured image block
-│   │       ├── grade/ - Show grade display block
-│   │       ├── pre-publish/ - Pre-publish checklist block
-│   │       ├── screener/ - Screener info block (queer/star/trigger/worth components)
-│   │       ├── spoiler/ - Spoiler block
-│   │       └── wikidata-actor/ - WikiData actor lookup block
-│   ├── calendar/ - Calendar display and data
-│   │   ├── ICal/ - ICal Parser Library
-│   │   ├── class-data-processor.php - Processes and transforms calendar data
-│   │   ├── class-display-calendar.php - Builds the traditional calendar display
-│   │   ├── class-display-grid.php - Builds the grid display
-│   │   ├── class-display-list.php - Builds the list display (aka the original view)
-│   │   ├── class-display.php - Code to display the calendar
-│   │   ├── class-generate-calendar.php - Code to generate the calendar data
-│   │   ├── class-ics-parser.php - Connection to the ICS Parser for calendar data.
-│   │   ├── class-names.php - Process TV Maze names.
-│   │   └── class-tvmaze.php - Master control over getting TVMaze data
-│   ├── cpts/ - Custom Post Types
-│   │   ├── class-actors.php - Actor CPT code with smart cache invalidation
-│   │   ├── class-characters.php - Character CPT code with smart cache invalidation
-│   │   ├── class-post-meta.php - Registers post-meta so it can be properly used and hidden from Gutenberg
-│   │   ├── class-related-posts.php - Displays related shows and posts (based on tags)
-│   │   ├── class-shows.php - Show CPT code with smart cache invalidation
-│   │   ├── class-tvmaze.php - TVMaze CPT which helps link our show names to the ones used by TVMaze
-│   │   ├── actors/
-│   │   │   ├── class-calculations.php - Does the math for various data points used to generate show scores, stores count of number of characters for faster retrieval later
-│   │   │   ├── class-custom-columns.php - Define columns for post listing
-│   │   │   └── class-privacy.php - Code to allow sections of an actor page to be hidden from output
-│   │   ├── characters/
-│   │   │   ├── class-calculations.php - Does the math for various data points used to generate show scores
-│   │   │   └── class-custom-columns.php - Define columns for post listing
-│   │   └── shows/
-│   │       ├── class-airdates.php - Single source of truth for reading a show's start/finish airdates (mixed Ymd/Y-m-d meta formats)
-│   │       ├── class-calculations.php - Show score math with intelligent cache invalidation
-│   │       ├── class-character-score.php - The character component of a show's score: one data gather shared by the live calculator and the CLI preview, exposing both the legacy model and an opt-in longevity-weighted model
-│   │       ├── class-custom-columns.php - Define columns for post listing
-│   │       ├── class-host-name.php - Pure: derive a display name/registrable label/domain from a hostname
-│   │       ├── class-longevity.php - Pure maths for longevity-weighted character scoring (TVMaze aired-years vetting, saturation constant)
-│   │       ├── class-shows-like-this.php - Calculations for 'shows like this' (uses Related Posts by Taxonomy)
-│   │       ├── class-trope-categories.php - Canonical good/maybe/bad/ploy trope-slug groupings, shared by the show score and Statistics
-│   │       ├── class-watch-host-map.php - Pure: reduces a term's stored URLs to a host => term_id map, and reports host collisions
-│   │       ├── class-watch-host-names.php - Cache of provider names discovered from a host's own metadata, with a bounded retry count for hosts that won't answer
-│   │       ├── class-watch-hosts.php - Which hosts the Ways to Watch fields actually point at; shared by `wp lwtv waystowatch` and the Watch URLs validation tab
-│   │       ├── class-watch-term-match.php - Pure: does an existing provider term already look like this host, so the tab can suggest instead of creating a duplicate
-│   │       ├── class-watch-term-url-audit.php - Pure, read-only audit of what is actually stored in the lez_watch_urls term URL rows
-│   │       ├── class-watch-url-health.php - Pure: decide whether a probed provider URL is still a working provider (ok/broken/blocked/needs-review)
-│   │       └── class-ways-to-watch.php - Taxonomy to allow editors to customize the 'ways to watch' on the fly, based on networks and links
-│   ├── debugger/ - Debugging tools (`wp lwtv debug`, the admin validator tabs). Every check follows a collect/ + build/ split: collectors do the WordPress reads, rules are pure and unit-tested, format/ turns findings into rows.
-│   │   ├── class-actors.php - Orchestration: find all problems with Actor pages (via Collect\Actor_Collector + Build\Actor_Rules)
-│   │   ├── class-audit.php - Baselines, diffing, and acknowledgements for `wp lwtv audit` (WP-CLI-free so wp-admin can reuse it)
-│   │   ├── class-baseline-store.php - Where a check's previous run is kept, so this run can be diffed against it (storage only; the diff is Build\Baseline)
-│   │   ├── class-characters.php - Orchestration: find all problems with Character pages
-│   │   ├── class-dupes.php - Orchestration: find all duplicate content based on names, IMDb, etc. (rules live in Build\Duplicate_Rules)
-│   │   ├── class-log.php - The debug log file itself: write, rotate, prune, read
-│   │   ├── class-onair.php - Orchestration: makes sure a show's on-air flag agrees with its airdates
-│   │   ├── class-queers.php - Orchestration: find all problems with Queer data (i.e. are actors queer, are characters played by queer actors)
-│   │   ├── class-repair.php - Repair one finding from wp-admin; same issue registry `--fix-it` uses, one issue on one post at a time
-│   │   ├── class-scan.php - Shared scan preamble/epilogue (which posts to look at, findings storage/TTL) so scanners are orchestration only
-│   │   ├── class-shows.php - Orchestration: find all problems with Show pages
-│   │   ├── class-status.php - Debugger run status: per-check counts and last-run timestamps, one write path instead of one per scanner
-│   │   ├── class-watch-host-collisions.php - Find hosts claimed by more than one watch provider term
-│   │   ├── class-watch-urls.php - Check that the URLs on every watch provider term still work (the Watch Term Check tab's data source)
-│   │   ├── build/ - Pure, unit-tested rule classes. Array/scalar in, findings out; no WordPress calls.
-│   │   │   ├── class-actor-completeness-rules.php - Does an actor have a photo and a biography?
-│   │   │   ├── class-actor-rules.php - Every rule that decides whether an actor has a problem
-│   │   │   ├── class-baseline.php - Diffs this run's findings against the last, so a new problem reads differently from a stale one
-│   │   │   ├── class-byq-rules.php - Bury Your Queers: does a dead character's paperwork line up
-│   │   │   ├── class-character-rules.php - Every rule that decides whether a character has a problem
-│   │   │   ├── class-duplicate-rules.php - Is a numerically-suffixed post actually a duplicate of the one without it?
-│   │   │   ├── class-findings.php - Builds and groups typed debugger findings; everything downstream (counts, repairs, tables) derives from these
-│   │   │   ├── class-imdb-rules.php - Is a post's IMDb ID missing, malformed, or out of date? (shared by both show and actor IMDb checks)
-│   │   │   ├── class-issue-registry.php - The debugger's issue vocabulary: one entry per kind of problem, and which are auto- vs. manual-repairable
-│   │   │   ├── class-log-rules.php - Pure decisions for the LWTV debug log (which topics, rotation thresholds)
-│   │   │   ├── class-on-air-rules.php - Whether a show's stored on-air flag agrees with its airdates (year passed in, not read from the clock)
-│   │   │   ├── class-queer-rules.php - Does a character's Queer IRL cliché agree with who plays them?
-│   │   │   └── class-show-rules.php - Every rule that decides whether a show has a problem
-│   │   ├── collect/ - The WordPress half of each check: queries and meta reads, no decisions.
-│   │   │   ├── class-actor-collector.php - Fetches what the actor rules need
-│   │   │   ├── class-actor-completeness-collector.php - Fetches what the actor completeness rules need
-│   │   │   ├── class-byq-collector.php - Fetches what the BYQ rules need
-│   │   │   ├── class-character-collector.php - Fetches what the character rules need
-│   │   │   ├── class-duplicate-collector.php - Fetches what the duplicate rules need
-│   │   │   ├── class-imdb-collector.php - Fetches what the IMDb rules need, for either shows or actors
-│   │   │   ├── class-on-air-collector.php - Fetches what the on-air rules need
-│   │   │   ├── class-queer-collector.php - Fetches what the queer-consistency rules need
-│   │   │   └── class-show-collector.php - Fetches what the show rules need, in as few queries as it can manage
-│   │   └── format/
-│   │       └── class-rows.php - Turns typed findings into the rows the admin tables and CLI already read
-│   ├── features/ - Miscellaneous features
-│   │   ├── class-author-box.php - Custom author boxes
-│   │   ├── class-blockagents.php - Block use of AI agents (prevents hallucinations about show/character data)
-│   │   ├── class-blocktracking.php - Block WP.com and WP.org from tracking everything.
-│   │   ├── class-dashboard-posts-in-progress.php - Forked version of a plugin to show in progress posts
-│   │   ├── class-dashboard.php - Custom column for featured images in posts lists and removal of self pings
-│   │   ├── class-embeds.php - Embeds DisneyABCPress videos, Gleam, GoFundMe, IndieGoGo
-│   │   ├── class-environment.php - Display notices and settings for servers
-│   │   ├── class-languages.php - Support for multiple languages in a dropdown (used by Shows for alt show names)
-│   │   ├── class-missed-schedule.php - Code to ensure posts don't miss scheduling (Action Scheduler enhanced)
-│   │   ├── class-plugin-age.php - Display plugin age/last updated on plugin listing
-│   │   ├── class-post-editor.php - Gutenberg customizations (In progress)
-│   │   ├── class-private-posts.php - Shows alert that a page is hidden if the post is set private.
-│   │   ├── class-roles.php - Custom roles created for curation of content
-│   │   ├── class-shortcodes.php - Various shortcodes (see below)
-│   │   │   - Badges: [badge url=LINK class="class class" role="role"]TEXT[/badge]
-│   │   │   - Copyright Year: [copyright year=(start year) text=(copyright text)]
-│   │   │   - Number of Posts: [numposts data="posts" posttype="post type" term="term slug" taxonomy="taxonomy slug"]
-│   │   │   - Display The first year we had queers: [firstyear]
-│   │   │   - Display This Month recap: [thismonth] or [thismonth date="2017-01"]
-│   │   │   - Deprecated Shortcodes (remaining for backcompat):
-│   │   │       * Display screener information: [screener ...] (now a block)
-│   │   │       * Author Box:  [author-box users=username]
-│   │   │       * Embed Gleam: [gleam url="..."]...[/gleam]
-│   │   │       * Embed IndieGoGo: [indiegogo url=URL]
-│   │   │       * Glossary: [glossary taxonomy=TAXONOMY]
-│   │   │       * Spoilers: [spoilers] or [spoilers warning="..."]
-│   │   ├── class-spammers.php - Prevent Spammers from annoying us.
-│   │   ├── class-upgrades.php - Handle upgrades of WP and everything included.
-│   │   └── class-user-profiles.php - Custom profile code
-│   ├── grading/ - Show grades/scores
-│   │   ├── class-display.php - display grades
-│   │   ├── class-lwtv.php - Generate LWTV score
-│   │   ├── class-tmdb.php - Generate TMDB score
-│   │   └── class-tvmaze.php - Generate TVMaze score
-│   ├── of-the-day/ - Character and show of the day
-│   │   └── template.php - Backup of theme template.
-│   ├── plugins/ - Addons for other plugins
-│   │   ├── class-acf.php - ACF Pro integration
-│   │   ├── acf/
-│   │   │   ├── class-number-slider.php - ACF number slider field type (jQuery Simple Slider, forked from Q Studio)
-│   │   │   ├── css/
-│   │   │   │   └── simple-slider.css - Simple slider styles
-│   │   │   └── js/
-│   │   │       └── input.js - Simple slider input logic
-│   │   ├── class-actionscheduler.php - Action Scheduler integration and configuration
-│   │   ├── class-cache.php - Custom Cache specific to DreamPress hosting (generates data used by Proxy Cache Purge to know what to flush)
-│   │   ├── class-comment-probation.php - Fork of abandoned plugin
-│   │   ├── class-facetwp.php - Facet WP (calls other files, Reset Shortcode)
-│   │   ├── facetwp/
-│   │   │   ├── class-indexing.php - filter Data before it's saved to rename values (capitalization), split actors and shows into separate entries, and add additional orderby params
-│   │   │   ├── class-labels.php - Custom labels when changing display options
-│   │   │   └── class-pagination.php - Only show pagination if there's more than one page
-│   │   ├── class-gravity-forms.php - Gravity Forms Integration
-│   │   ├── gravity-forms/
-│   │   │   ├── class-gf-approvals.php - Approval Code (forked from another plugin)
-│   │   │   └── class-stop-spammers.php - Block Spammers
-│   │   ├── class-monsterinsights.php - Custom code for Monster Insights
-│   │   ├── class-related-posts-by-taxonomy.php - Filters to allow a custom layout for "Shows Like This"
-│   │   └── class-searchwp.php - Custom integration with SearchWP
-│   ├── postiz/ - Postiz social media API integration
-│   │   ├── class-new-post.php - Handles posting new blog posts and shows to social media
-│   │   ├── class-of-the-day.php - Handles posting "Of The Day" content to social media
-│   │   └── class-postiz.php - Main Postiz integration class with API communication
-│   ├── schedulers/ - Deferred task processing for performance optimization
-│   │   ├── class-byq-task.php - Action Scheduler-based BYQ cache regeneration
-│   │   ├── class-cache-batch-task.php - Action Scheduler-based cache batch processing
-│   │   ├── class-cache-queue.php - Manages immediate cache invalidation on shutdown (legacy)
-│   │   ├── class-cache-task.php - Handles scheduled cache invalidation tasks
-│   │   ├── class-calculation-task.php - Handles deferred math operations for all CPT types
-│   │   ├── class-fixcharshows-task.php - Fixes character-show relationship data
-│   │   ├── class-imdb-verify-task.php - Detects stale IMDb IDs by cross-checking against TVMaze (shows) / TMDB (actors); queued on save
-│   │   ├── class-statistics-cache-warming.php - Background cache warming for statistics after content changes
-│   │   ├── class-taxsync-task.php - Handles deferred taxonomy synchronization
-│   │   ├── class-tmdb-batch-task.php - Action Scheduler-based TMDB batch processing
-│   │   ├── class-tmdb-task.php - Handles deferred TMDB API calls (legacy)
-│   │   └── class-watch-urls-task.php - Runs the watch-provider URL health sweep in the background, queued from the admin "Run Scan" button
-│   ├── queeries/ - Custom queries and arrays
-│   │   ├── class-get-id-from-slug.php - Get post ID from slug/URL
-│   │   ├── class-is-actor-queer.php - Determine if actor is queer (yes/no)
-│   │   ├── class-is-actor-trans.php - Determine if an actor is trans (yes/no)
-│   │   ├── class-post-meta-and-tax.php - Generate an array of posts that have a specific post meta AND a specific taxonomy value.
-│   │   ├── class-post-meta.php - Post Meta Array returns the whole post data. Can handle compares and likes
-│   │   ├── class-post-type.php - Generate an object of all posts in a specific post type.
-│   │   ├── class-related-posts-by-tag.php - Related Posts by Tags.
-│   │   ├── class-shadow-taxonomy.php - Shadow taxonomy query utilities
-│   │   └── class-taxonomy-optimized.php - Optimized taxonomy queries with caching
-│   ├── rest-api/ - REST API output
-│   │   ├── class-byq.php - LezWatch.TV Plugin (formerly Bury Your Queers) (Last Death, On This Day, When Died)
-│   │   ├── class-export-json.php - Export content in JSON format. Mostly used for WikiData and Universities.
-│   │   ├── class-imdb-json.php - API to communicate with IMDb and generate information
-│   │   ├── class-list-json.php - Generates lists
-│   │   ├── class-otd-json.php - X Of The Day API service. Every 24 hours, a new character and show of the day are spawned
-│   │   ├── class-stats-json.php - JSON API version of the stats (mostly)
-│   │   ├── class-this-year-json.php - Outputs simplified lists of what happened in a given year.
-│   │   ├── class-what-happened-json.php - Outputs data based on what happened in a given year, year-month, or specific day.
-│   │   ├── class-whats-on-json.php - What's on TV tonight (or tomorrow).
-│   │   ├── class-wikidata.php - Get the status of our data compared with WikiData (used by Gutenberg)
-│   │   └── templates/
-│   │       └── export-json.php - uses var query data to determine what to show.
-│   ├── statistics/ - Statistics and graphs (optimized architecture)
-│   │   ├── class-gutenberg-ssr.php - Gutenberg Server side rendering to show stats
-│   │   ├── class-query-vars.php - Query Variables customization (to make virtual pages) and Yoast meta
-│   │   ├── class-stats-counter.php - Centralized counting logic for statistics
-│   │   ├── class-stats-enqueues.php - Asset enqueueing for statistics pages
-│   │   ├── class-stats-generator.php - Main statistics generation orchestrator
-│   │   ├── class-stats-handler.php - Request handling and routing for statistics
-│   │   ├── build/ - Data builders for specific stat types
-│   │   │   ├── class-actors.php - Actor statistics builder
-│   │   │   ├── class-cliche-leaders - Cliche leaders builder
-│   │   │   ├── class-dead.php - Death statistics builder
-│   │   │   ├── class-formats.php - Format statistics builder
-│   │   │   ├── class-nations.php - Nation statistics builder
-│   │   │   ├── class-on-air-optimized.php - On-air statistics with optimization
-│   │   │   ├── class-queer-irl.php - Queer IRL statistics builder
-│   │   │   ├── class-scores.php - Score statistics builder
-│   │   │   ├── class-stations.php - Station statistics builder
-│   │   │   ├── class-taxonomy-optimized.php - Optimized taxonomy statistics
-│   │   │   ├── class-this-year.php - This year statistics builder
-│   │   │   ├── class-we-love-it.php - "Shows We Love" statistics builder
-│   │   │   └── class-worth-it.php - "Worth It" score statistics builder
-│   │   ├── format/ - Output formatters (all server-rendered; Chart.js removed)
-│   │   │   ├── class-lists-optimized.php - Optimized list formatting
-│   │   │   ├── class-percentage-optimized.php - Optimized percentage display
-│   │   │   └── class-shared.php - Shared formatting utilities
-│   │   └── templates/ - Template files organized by section
-│   │       ├── actors.php - Actor stats entry point
-│   │       ├── actors/ - Actor stat templates (gender, navbar, overview, sexuality)
-│   │       ├── characters.php - Character stats entry point
-│   │       ├── characters/ - Character stat templates (cliches, most-cliches, gender, navbar, on-air, overview, queer-irl, sexuality)
-│   │       ├── death.php - Death stats entry point
-│   │       ├── death/ - Death stat templates (characters, list, nations, navbar, overview, shows, stations, years)
-│   │       ├── main.php - Main stats page entry point
-│   │       ├── main/ - Main page templates (overview, top-nations, top-stations)
-│   │       ├── nations.php - Nation stats entry point
-│   │       ├── nations/ - Nation stat templates (all, single)
-│   │       ├── shows.php - Show stats entry point
-│   │       ├── shows/ - Show stat templates (formats, genres, intersectionality, navbar, on-air, overview, stars, triggers, tropes, we-love-it, worth-it)
-│   │       ├── stations.php - Station stats entry point
-│   │       └── stations/ - Station stat templates (all, single)
-│   ├── theme/ - Theme-related code
-│   │   ├── class-actor-age.php - Returns actor age.
-│   │   ├── class-actor-birthday.php - Boolean return if an actor is having a birthday.
-│   │   ├── class-actor-characters.php - List all characters for an actor.
-│   │   ├── class-actor-pronouns.php - Sort actor pronouns.
-│   │   ├── class-actor-terms.php - List simple terms for actors (i.e. gender, sexuality)
-│   │   ├── class-character-relationships.php - IDs of all characters a specific character (i.e. Sara Lance) has had a relationship with.
-│   │   ├── class-content-warning.php - If a show has a content warning, we display it.
-│   │   ├── class-data-author.php - Generate and return data for Authors (Mika, Tracy, Etc.) (social(), favorite_shows())
-│   │   ├── class-data-character.php - Generate character Data (actors(), cliches(), dead(), oneactor(), oneshow(), shows(), terms())
-│   │   ├── class-do-math.php - Generates the 'recalculate data' button for editors on the front end, to refresh interrelated content
-│   │   ├── class-get-loved.php - Retrieves "Shows We Love" data
-│   │   ├── class-show-characters.php - Generate and return list of Characters from a show
-│   │   ├── class-show-stars.php - Make show stars
-│   │   ├── class-stats-symbolicon.php - Makes the icon/title for symbolicons
-│   │   ├── class-taxonomy-archive-title.php - Customize title of archives with pretty icons
-│   │   ├── class-theme-config.php - All theme configuration code
-│   │   ├── class-tvmaze.php - Calls to TVMaze (uses episodes() instead of make())
-│   │   └── class-ways-to-watch.php - Outputs Ways to Watch
-│   ├── this-year/ - Year-specific data (restructured architecture)
-│   │   ├── class-display.php - Controls individual pages (navigation())
-│   │   ├── build/ - Data builders
-│   │   │   ├── class-characters-builder.php - Builds character data for the year
-│   │   │   ├── class-shared-builder.php - Shared builder utilities
-│   │   │   └── class-shows-builder.php - Builds show data for the year
-│   │   ├── format/ - Output formatters
-│   │   │   ├── class-canceled-shows-formatter.php - Formats canceled shows display
-│   │   │   ├── class-dead-characters-formatter.php - Formats dead characters display
-│   │   │   └── class-new-shows-formatter.php - Formats new shows display
-│   │   └── templates/ - Template files
-│   │       ├── canceled-shows.php - Canceled shows template
-│   │       ├── characters-on-air.php - Characters on air template
-│   │       ├── dead-characters.php - Dead characters template
-│   │       ├── navigation.php - Section sub-nav (Overview / Characters / Dead / Shows / New / Canceled)
-│   │       ├── navigation-year.php - Year navigator (prev/next arrows + year dropdown + live chip)
-│   │       ├── new-shows.php - New shows template
-│   │       ├── overview.php - Overview template (lead statement, metric ribbon, highlights)
-│   │       ├── shows-on-air.php - Shows on air template
-│   │       └── partials/ - Shared partials
-│   │           └── show-block.php - Shared Shows/New/Canceled block (two-column group cards)
-│   ├── validator/ - Data Validation admin tabs (renders `Debugger` findings)
-│   │   ├── class-report.php - One renderer for every findings-report tab, driven by the `TOOL_TABS` config in Admin_Menu\Validation; replaced ten near-identical checker classes (queer/BYQ/actor/character/show/actor-empty/actor-imdb/show-imdb/dupes/on-air)
-│   │   ├── class-watch-providers.php - Unregistered-host tab: create or assign a provider term, with existing-term suggestions and host collision notices
-│   │   └── class-watch-term-check.php - Shows what the watch-URL health sweep last found, re-checks flagged URLs, and can queue a full background sweep
-│   └── wp-cli/ - WP-CLI commands
-│       ├── cli-audit.php - Compare on-air shows and their characters against TVMaze - wp lwtv audit
-│       ├── cli-cache.php - Diagnostics for the statistics cache (persistent-object-cache eviction, last-built times)
-│       ├── cli-calc.php - Calculations on content (scores, character count, etc) - wp lwtv CALC [ID]
-│       ├── cli-check.php - Data validation checkers - wp lwtv CHECK [queerchars|wiki] [id]
-│       ├── cli-debug-log.php - Read and maintain the LWTV debug log - wp lwtv debug-log [tail|clear]
-│       ├── cli-debug.php - Debug utilities (runs the Debugger checks, `--fix-it` to repair) - wp lwtv DEBUG [command]
-│       ├── cli-dupes.php - List all duplicate content - wp lwtv dupes
-│       ├── cli-generate.php - Generate custom content - wp lwtv GENERATE [otd|tvmaze]
-│       ├── cli-imdb.php - Verify IMDb IDs against TVMaze/TMDB and surface stale ones - wp lwtv imdb
-│       ├── cli-migrate.php - Migrate data between formats - wp lwtv MIGRATE [action]
-│       ├── cli-scheduler.php - Action Scheduler management - wp lwtv SCHEDULER [missed|tmdb|cache|status] [action]
-│       ├── cli-score-preview.php - Read-only preview of the longevity-weighted character score against real shows - wp lwtv score-preview
-│       ├── cli-shadow.php - Build out shadow taxonomy connections - wp lwtv shadow [shows|actors] [ID (optional)]
-│       ├── cli-sweep.php - BYQ sweep commands - wp lwtv sweep
-│       ├── cli-tmdb.php - Backfill TMDB IDs for shows/actors that never had a lookup attempted - wp lwtv tmdb [status|backfill]
-│       ├── cli-tvmaze.php - Backfill TVMaze IDs and derive aired-year data for shows - wp lwtv tvmaze [status|backfill]
-│       └── cli-waystowatch.php - Ways to Watch host reporting, name discovery, and enrichment - wp lwtv waystowatch [hosts|termurls|enrich]
+│       └── statistics-overview.js - Count-up figures and chart interactions on statistics views
+└── php/
+    ├── class-plugin.php - Main plugin file. All new components will be added there
+    ├── readme.md - How components, interfaces, and template tags work
+    ├── _components/ - Top-level components
+    │   ├── class-admin-color-schemes.php - Admin color schemes (forked from plugin)
+    │   ├── class-admin-menu.php - LWTV custom admin menu
+    │   ├── class-block-types-allowed.php - Filter to remove/hide certain blocks
+    │   ├── class-blocks.php - Gutenberg Blocks
+    │   ├── class-calendar.php - Calendar
+    │   ├── class-cpts.php - Custom Post Types
+    │   ├── class-dashboard-widgets.php - Dashboard Widgets
+    │   ├── class-debugger.php - Debugger
+    │   ├── class-features.php - General features
+    │   ├── class-grading.php - Show Scores / Grading
+    │   ├── class-of-the-day.php - Of The Day RSS
+    │   ├── class-plugins.php - Plugin filters and actions
+    │   ├── class-postiz.php - Postiz social media integration component
+    │   ├── class-queeries.php - Customized loops
+    │   ├── class-rest-api.php - Rest API code
+    │   ├── class-scheduler.php - Deferred task scheduler for performance optimization with Action Scheduler integration
+    │   ├── class-statistics-optimized.php - Statistics with optimized performance and caching
+    │   ├── class-symbolicons.php - Symbolicons
+    │   ├── class-theme.php - Theme code
+    │   ├── class-this-year.php - This Year features
+    │   ├── class-transients.php - Transients with intelligent cache invalidation and tiered caching system
+    │   ├── class-wp-cli.php - WP CLI code
+    │   ├── interface-component.php - Interface for classes that act as plugin components.
+    │   ├── interface-conditional.php - Interface for classes that are conditional.
+    │   └── interface-templater.php - Interface for classes that return template functions.
+    ├── _helpers/ - Helper files
+    │   ├── class-autoload.php - Autoloader
+    │   ├── class-calendar-database-optimizer.php - Database query optimization for calendar
+    │   ├── class-calendar-meta-batcher.php - Batch processing for calendar meta data
+    │   ├── class-calendar-object-pool.php - Object pooling for calendar performance
+    │   ├── class-imdb-canonical.php - Pure comparison of a stored IMDb ID against a third-party oracle's canonical value
+    │   └── class-utils.php - Common utility functions
+    ├── admin-color-schemes/ - Additional color schemes for the backend (Each folder contains a colors.css and colors-rtl.css)
+    │   ├── editor.css - Manages color display along with sub folders.
+    │   ├── 80s-kid/
+    │   ├── adderley/
+    │   ├── aubergine/
+    │   ├── contrast-blue/
+    │   ├── cruise/
+    │   ├── flat/
+    │   ├── kirk/
+    │   ├── lawn/
+    │   ├── modern-evergreen/
+    │   ├── primary/
+    │   ├── seashore/
+    │   └── vineyard/
+    ├── admin-menu/ - Admin menu items and validation
+    │   ├── class-auto-posting.php - Auto-posting configuration for social media
+    │   ├── class-debugging.php - Debug logging settings and display
+    │   ├── class-exclusions.php - Lists any exclusions or overrides applied by admins (i.e. forcing someone to show as queer)
+    │   └── class-validation.php - Data consistency checks (each one runs weekly)
+    ├── blocks/ - Gutenberg blocks
+    │   ├── class-serverside.php - Server-side Renders: Run PHP code in JS blocks
+    │   ├── package.json - npm workspace for the block build
+    │   ├── readme.md
+    │   ├── build/ - Built block output (generated by @wordpress/scripts - never edit)
+    │   ├── node_modules/ - npm dependencies (not stored in GitHub)
+    │   └── src/ - Block source code (one directory per block)
+    │       ├── _common/ - Non-inserter block (`lwtv/common-gutenberg`) holding shared editor styles and the reusable SVG icon components
+    │       ├── _serverside/ - Wrapper entry (`lwtv/serverside`) importing the server-rendered/editor-only blocks: `lwtv/author-box` (Team Member), `lez-library/glossary`, `lwtv/tvshow-calendar`, `lez-library/private-note`
+    │       ├── featured-image/ - `lez-library/featured-image`: surfaces the post's featured image in the editor content area
+    │       ├── grade/ - `lwtv/grade`: show/review score display in stars or letters
+    │       ├── pre-publish/ - `lwtv/pre-publish-checks`: editor plugin adding a pre-publish checklist panel (not an inserted block)
+    │       ├── screener/ - `lwtv/screener`: Screener Reviews block (queer/star/trigger/worth components)
+    │       ├── spoiler/ - `lez-library/spoilers`: wraps content in a spoiler warning
+    │       └── wikidata-actor/ - `lwtv/wikidata-actor`: document settings panel that fetches an actor's WikiData with copy-to-clipboard
+    ├── calendar/ - Calendar display and data
+    │   ├── ICal/ - ICal Parser Library
+    │   ├── class-data-processor.php - Pre-processes raw TVMaze data into one unified, transient-cached array so every calendar view computes show values once
+    │   ├── class-display-agenda.php - Renders the calendar as a scrolling agenda (sticky header, week strip, per-day groups); markup only
+    │   ├── class-display.php - Top-level controller: resolves the `tvdate` query var into start/prev/next dates, enqueues the agenda JS, assembles the page
+    │   ├── class-generate-calendar.php - Code to generate the calendar data
+    │   ├── class-ics-parser.php - Connection to the ICS Parser for calendar data.
+    │   ├── class-names.php - Process TV Maze names.
+    │   ├── class-tvmaze.php - Master control over getting TVMaze data
+    │   └── build/ - Pure transforms
+    │       └── class-agenda.php - Turns the processed calendar plus a reference date into ordered day-groups and the week strip (rebuilds true UTC airtimes from TVMaze's Eastern-offset timestamps)
+    ├── cpts/ - Custom Post Types
+    │   ├── class-actors.php - Actor CPT code with smart cache invalidation
+    │   ├── class-characters.php - Character CPT code with smart cache invalidation
+    │   ├── class-post-meta.php - Registers post-meta so it can be properly used and hidden from Gutenberg
+    │   ├── class-related-posts.php - Displays related shows and posts (based on tags)
+    │   ├── class-shows.php - Show CPT code with smart cache invalidation
+    │   ├── class-tvmaze.php - TVMaze CPT which helps link our show names to the ones used by TVMaze
+    │   ├── actors/
+    │   │   ├── class-calculations.php - Does the math for various data points used to generate show scores, stores count of number of characters for faster retrieval later
+    │   │   ├── class-custom-columns.php - Define columns for post listing
+    │   │   └── class-privacy.php - Code to allow sections of an actor page to be hidden from output
+    │   ├── characters/
+    │   │   ├── class-calculations.php - Does the math for various data points used to generate show scores
+    │   │   └── class-custom-columns.php - Define columns for post listing
+    │   └── shows/
+    │       ├── class-airdates.php - Single source of truth for reading a show's start/finish airdates (mixed Ymd/Y-m-d meta formats)
+    │       ├── class-calculations.php - Show score math with intelligent cache invalidation
+    │       ├── class-custom-columns.php - Define columns for post listing
+    │       ├── class-shows-like-this.php - Calculations for 'shows like this' (uses Related Posts by Taxonomy)
+    │       ├── class-ways-to-watch.php - Taxonomy to allow editors to customize the 'ways to watch' on the fly, based on networks and links
+    │       ├── scoring/ - Pure maths behind the show score
+    │       │   ├── class-character-score.php - The character component of a show's score: one data gather shared by the live calculator and the CLI preview, exposing both the legacy model and an opt-in longevity-weighted model
+    │       │   ├── class-longevity.php - Pure maths for longevity-weighted character scoring (TVMaze aired-years vetting, saturation constant)
+    │       │   ├── class-show-rating.php - Pure point tables for the base rating: realness/quality/screentime caps and multiplier, worth-it verdict, star rating, trigger penalties, Shows We Love bonus
+    │       │   ├── class-show-tropes.php - Pure maths for the trope score: good/maybe/bad/ploy tally, capped intersectionality bonus, dead-queer death multipliers
+    │       │   ├── class-trigger-warning.php - Canonical `lez_triggers` slug normalizer, mapping legacy aliases (`on`, `medium`) to high/med/low/none
+    │       │   └── class-trope-categories.php - Canonical good/maybe/bad/ploy trope-slug groupings, shared by the show score and Statistics
+    │       └── watching/ - Ways to Watch host and provider-term logic
+    │           ├── class-host-name.php - Pure: derive a display name/registrable label/domain from a hostname
+    │           ├── class-watch-host-map.php - Pure: reduces a term's stored URLs to a host => term_id map, and reports host collisions
+    │           ├── class-watch-host-names.php - Cache of provider names discovered from a host's own metadata, with a bounded retry count for hosts that won't answer
+    │           ├── class-watch-hosts.php - Which hosts the Ways to Watch fields actually point at; shared by `wp lwtv waystowatch` and the Watch URLs validation tab
+    │           ├── class-watch-term-match.php - Pure: does an existing provider term already look like this host, so the tab can suggest instead of creating a duplicate
+    │           ├── class-watch-term-url-audit.php - Pure, read-only audit of what is actually stored in the lez_watch_urls term URL rows
+    │           └── class-watch-url-health.php - Pure: decide whether a probed provider URL is still a working provider (ok/broken/blocked/needs-review)
+    ├── debugger/ - Debugging tools (`wp lwtv debug`, the admin validator tabs). Every check follows a collect/ + build/ split: collectors do the WordPress reads, rules are pure and unit-tested, format/ turns findings into rows.
+    │   ├── class-actors.php - Orchestration: find all problems with Actor pages (via Collect\Actor_Collector + Build\Actor_Rules)
+    │   ├── class-audit.php - Baselines, diffing, and acknowledgements for `wp lwtv audit` (WP-CLI-free so wp-admin can reuse it)
+    │   ├── class-baseline-store.php - Where a check's previous run is kept, so this run can be diffed against it (storage only; the diff is Build\Baseline)
+    │   ├── class-characters.php - Orchestration: find all problems with Character pages
+    │   ├── class-dupes.php - Orchestration: find all duplicate content based on names, IMDb, etc. (rules live in Build\Duplicate_Rules)
+    │   ├── class-findings-store.php - Persistence for check findings: each check's results in a non-autoloaded option plus an index (not transients), with an explicit ten-day expiry
+    │   ├── class-log.php - The debug log file itself: write, rotate, prune, read
+    │   ├── class-onair.php - Orchestration: makes sure a show's on-air flag agrees with its airdates
+    │   ├── class-queers.php - Orchestration: find all problems with Queer data (i.e. are actors queer, are characters played by queer actors)
+    │   ├── class-repair.php - Repair one finding from wp-admin; same issue registry `--fix-it` uses, one issue on one post at a time
+    │   ├── class-scan.php - Shared scan preamble/epilogue (which posts to look at, findings storage/TTL) so scanners are orchestration only
+    │   ├── class-shows.php - Orchestration: find all problems with Show pages
+    │   ├── class-status.php - Debugger run status: per-check counts and last-run timestamps, one write path instead of one per scanner
+    │   ├── class-watch-host-collisions.php - Find hosts claimed by more than one watch provider term
+    │   ├── class-watch-urls.php - Check that the URLs on every watch provider term still work (the Watch Term Check tab's data source)
+    │   ├── build/ - Pure, unit-tested rule classes. Array/scalar in, findings out; no WordPress calls.
+    │   │   ├── class-actor-completeness-rules.php - Does an actor have a photo and a biography?
+    │   │   ├── class-actor-rules.php - Every rule that decides whether an actor has a problem
+    │   │   ├── class-baseline.php - Diffs this run's findings against the last, so a new problem reads differently from a stale one
+    │   │   ├── class-byq-rules.php - Bury Your Queers: does a dead character's paperwork line up
+    │   │   ├── class-character-rules.php - Every rule that decides whether a character has a problem
+    │   │   ├── class-duplicate-rules.php - Is a numerically-suffixed post actually a duplicate of the one without it?
+    │   │   ├── class-findings.php - Builds and groups typed debugger findings; everything downstream (counts, repairs, tables) derives from these
+    │   │   ├── class-imdb-rules.php - Is a post's IMDb ID missing, malformed, or out of date? (shared by both show and actor IMDb checks)
+    │   │   ├── class-issue-registry.php - The debugger's issue vocabulary: one entry per kind of problem, and which are auto- vs. manual-repairable
+    │   │   ├── class-log-rules.php - Pure decisions for the LWTV debug log (which topics, rotation thresholds)
+    │   │   ├── class-on-air-rules.php - Whether a show's stored on-air flag agrees with its airdates (year passed in, not read from the clock)
+    │   │   ├── class-queer-rules.php - Does a character's Queer IRL cliché agree with who plays them?
+    │   │   └── class-show-rules.php - Every rule that decides whether a show has a problem
+    │   ├── collect/ - The WordPress half of each check: queries and meta reads, no decisions.
+    │   │   ├── class-actor-collector.php - Fetches what the actor rules need
+    │   │   ├── class-actor-completeness-collector.php - Fetches what the actor completeness rules need
+    │   │   ├── class-byq-collector.php - Fetches what the BYQ rules need
+    │   │   ├── class-character-collector.php - Fetches what the character rules need
+    │   │   ├── class-duplicate-collector.php - Fetches what the duplicate rules need
+    │   │   ├── class-imdb-collector.php - Fetches what the IMDb rules need, for either shows or actors
+    │   │   ├── class-on-air-collector.php - Fetches what the on-air rules need
+    │   │   ├── class-queer-collector.php - Fetches what the queer-consistency rules need
+    │   │   └── class-show-collector.php - Fetches what the show rules need, in as few queries as it can manage
+    │   └── format/
+    │       └── class-rows.php - Turns typed findings into the rows the admin tables and CLI already read
+    ├── features/ - Miscellaneous features
+    │   ├── class-author-box.php - Custom author boxes
+    │   ├── class-blockagents.php - Block use of AI agents (prevents hallucinations about show/character data)
+    │   ├── class-blocktracking.php - Block WP.com and WP.org from tracking everything.
+    │   ├── class-dashboard-posts-in-progress.php - Forked version of a plugin to show in progress posts
+    │   ├── class-dashboard.php - Custom column for featured images in posts lists and removal of self pings
+    │   ├── class-embeds.php - Embeds DisneyABCPress videos, Gleam, GoFundMe, IndieGoGo
+    │   ├── class-environment.php - Display notices and settings for servers
+    │   ├── class-languages.php - Support for multiple languages in a dropdown (used by Shows for alt show names)
+    │   ├── class-missed-schedule.php - Code to ensure posts don't miss scheduling (Action Scheduler enhanced)
+    │   ├── class-plugin-age.php - Display plugin age/last updated on plugin listing
+    │   ├── class-post-editor.php - Gutenberg customizations (In progress)
+    │   ├── class-private-posts.php - Shows alert that a page is hidden if the post is set private.
+    │   ├── class-roles.php - Custom roles created for curation of content
+    │   ├── class-shortcodes.php - Various shortcodes (see below)
+    │   │   - Badges: [badge url=LINK class="class class" role="role"]TEXT[/badge]
+    │   │   - Copyright Year: [copyright year=(start year) text=(copyright text)]
+    │   │   - Number of Posts: [numposts data="posts" posttype="post type" term="term slug" taxonomy="taxonomy slug"]
+    │   │   - Display The first year we had queers: [firstyear]
+    │   │   - Display This Month recap: [thismonth] or [thismonth date="2017-01"]
+    │   │   - Deprecated Shortcodes (remaining for backcompat):
+    │   │       * Display screener information: [screener ...] (now a block)
+    │   │       * Author Box:  [author-box users=username]
+    │   │       * Embed Gleam: [gleam url="..."]...[/gleam]
+    │   │       * Embed IndieGoGo: [indiegogo url=URL]
+    │   │       * Glossary: [glossary taxonomy=TAXONOMY]
+    │   │       * Spoilers: [spoilers] or [spoilers warning="..."]
+    │   ├── class-spammers.php - Prevent Spammers from annoying us.
+    │   ├── class-upgrades.php - Handle upgrades of WP and everything included.
+    │   └── class-user-profiles.php - Custom profile code
+    ├── grading/ - Show grades/scores
+    │   ├── class-display.php - display grades
+    │   ├── class-lwtv.php - Generate LWTV score
+    │   ├── class-tmdb.php - Generate TMDB score
+    │   └── class-tvmaze.php - Generate TVMaze score
+    ├── of-the-day/ - Character and show of the day
+    │   └── template.php - RSS 2.0 feed template for `/feeds/otd/` (items come from `lwtv_plugin()->get_rss_otd_feed()`)
+    ├── plugins/ - Addons for other plugins
+    │   ├── class-acf.php - ACF Pro integration
+    │   ├── acf/
+    │   │   ├── class-number-slider.php - ACF number slider field type (jQuery Simple Slider, forked from Q Studio)
+    │   │   ├── css/
+    │   │   │   └── simple-slider.css - Simple slider styles
+    │   │   └── js/
+    │   │       └── input.js - Simple slider input logic
+    │   ├── class-actionscheduler.php - Action Scheduler integration and configuration
+    │   ├── class-aioseo.php - AIOSEO integration: filters `wp_unique_post_slug` so new shows/characters/actors never take a slug an active AIOSEO redirect still points away from
+    │   ├── class-cache.php - Custom Cache specific to DreamPress hosting (generates data used by Proxy Cache Purge to know what to flush)
+    │   ├── class-comment-probation.php - Fork of abandoned plugin
+    │   ├── class-facetwp.php - Facet WP (calls other files, Reset Shortcode)
+    │   ├── facetwp/
+    │   │   ├── class-indexing.php - filter Data before it's saved to rename values (capitalization), split actors and shows into separate entries, and add additional orderby params
+    │   │   ├── class-labels.php - Custom labels when changing display options
+    │   │   └── class-pagination.php - Only show pagination if there's more than one page
+    │   ├── class-gravity-forms.php - Gravity Forms Integration
+    │   ├── gravity-forms/
+    │   │   ├── class-gf-approvals.php - Approval Code (forked from another plugin)
+    │   │   └── class-stop-spammers.php - Block Spammers
+    │   ├── class-monsterinsights.php - Custom code for Monster Insights
+    │   ├── class-related-posts-by-taxonomy.php - Filters to allow a custom layout for "Shows Like This"
+    │   └── class-searchwp.php - Custom integration with SearchWP
+    ├── postiz/ - Postiz social media API integration
+    │   ├── class-new-post.php - Handles posting new blog posts and shows to social media
+    │   ├── class-of-the-day.php - Handles posting "Of The Day" content to social media
+    │   └── class-postiz.php - Main Postiz integration class with API communication
+    ├── schedulers/ - Deferred task processing for performance optimization
+    │   ├── class-byq-task.php - Action Scheduler-based BYQ cache regeneration
+    │   ├── class-cache-batch-task.php - Action Scheduler-based cache batch processing
+    │   ├── class-cache-queue.php - Manages immediate cache invalidation on shutdown (legacy)
+    │   ├── class-cache-task.php - Handles scheduled cache invalidation tasks
+    │   ├── class-calculation-task.php - Handles deferred math operations for all CPT types
+    │   ├── class-fixcharshows-task.php - Fixes character-show relationship data
+    │   ├── class-imdb-verify-task.php - Detects stale IMDb IDs by cross-checking against TVMaze (shows) / TMDB (actors); queued on save
+    │   ├── class-statistics-cache-warming.php - Background cache warming for statistics after content changes
+    │   ├── class-tmdb-batch-task.php - Action Scheduler-based TMDB batch processing
+    │   ├── class-tmdb-task.php - Handles deferred TMDB API calls (legacy)
+    │   └── class-watch-urls-task.php - Runs the watch-provider URL health sweep in the background, queued from the admin "Run Scan" button
+    ├── queeries/ - Custom queries and arrays
+    │   ├── class-get-id-from-slug.php - Get post ID from slug/URL
+    │   ├── class-is-actor-queer.php - Determine if actor is queer (yes/no)
+    │   ├── class-is-actor-trans.php - Determine if an actor is trans (yes/no)
+    │   ├── class-post-meta-and-tax.php - Generate an array of posts that have a specific post meta AND a specific taxonomy value.
+    │   ├── class-post-meta.php - Post Meta Array returns the whole post data. Can handle compares and likes
+    │   ├── class-post-type.php - Generate an object of all posts in a specific post type.
+    │   ├── class-related-posts-by-tag.php - Related Posts by Tags.
+    │   ├── class-shadow-taxonomy.php - Shadow taxonomy query utilities
+    │   └── class-taxonomy-optimized.php - Optimized taxonomy queries with caching
+    ├── rest-api/ - REST API output
+    │   ├── class-byq.php - LezWatch.TV Plugin (formerly Bury Your Queers) (Last Death, On This Day, When Died)
+    │   ├── class-export-json.php - Export content in JSON format. Mostly used for WikiData and Universities.
+    │   ├── class-imdb-json.php - API to communicate with IMDb and generate information
+    │   ├── class-list-json.php - Generates lists
+    │   ├── class-otd-json.php - X Of The Day API service. Every 24 hours, a new character and show of the day are spawned
+    │   ├── class-stats-json.php - JSON API version of the stats (mostly)
+    │   ├── class-this-year-json.php - Outputs simplified lists of what happened in a given year.
+    │   ├── class-what-happened-json.php - Outputs data based on what happened in a given year, year-month, or specific day.
+    │   ├── class-whats-on-json.php - What's on TV tonight (or tomorrow).
+    │   ├── class-wikidata.php - Get the status of our data compared with WikiData (used by Gutenberg)
+    │   └── templates/
+    │       └── export-json.php - uses var query data to determine what to show.
+    ├── statistics/ - Statistics and graphs (build → format → templates)
+    │   ├── class-csv-download.php - Intercepts `?download=csv` on template_redirect and streams a whitelisted view's chart data as CSV, reading only through the cached builders
+    │   ├── class-gutenberg-ssr.php - Server-side renderer for the `[statistics page=…]` shortcode/block
+    │   ├── class-query-vars.php - Registers the `statistics`/`view` query vars and rewrites, assigns the statistics page template, and shows a permalinks admin notice
+    │   ├── class-stats-counter.php - Site-wide count builder: show and total counts plus the cumulative growth series used by sparklines
+    │   ├── class-stats-enqueues.php - Enqueues statistics scripts and styles conditionally, based on the `statistics` and `view` query vars
+    │   ├── class-stats-generator.php - Cron/regeneration entry points that rebuild and store the cached statistics (shows, characters, actors, single actors, nations, stations, deaths)
+    │   ├── class-stats-handler.php - Thin dispatcher routing a statistics request to the right template
+    │   ├── build/ - Data builders. "Pure" classes take arrays/scalars and return arrays (no WP calls, unit-tested); "WP glue" classes do the queries and hand off to the pure ones.
+    │   │   ├── class-actors.php - Actor stats: role-type totals per actor, most-prolific-actor leaderboards by gender/sexuality/role, and the cis-vs-queer / straight-vs-queer representation gaps
+    │   │   ├── class-catalog-depth.php - Direct-SQL archive-wide season/episode totals plus the coverage figure templates use to decide whether the totals are complete enough to publish
+    │   │   ├── class-character-actor-leaders.php - Top 25 most-recast characters, by number of actors who played them
+    │   │   ├── class-character-death-leaders.php - Top 25 most-resurrected characters, by count of dated `lezchars_death_year` rows (2+ deaths only)
+    │   │   ├── class-character-identity-decade-buckets.php - Pure: groups a per-year gender/sexuality term tally into decade buckets, folding sparse early decades into one leading bucket
+    │   │   ├── class-character-identity-trend.php - WP glue: each character's earliest on-screen year plus its lez_gender/lez_sexuality term, serving decade-bucketed identity mix and earliest-per-term firsts from one cached row set
+    │   │   ├── class-character-longevity-leaders.php - Longest-running characters by distinct credited years (from the show-group `appears` sub-field), with first–last year range
+    │   │   ├── class-character-queer-cast-firsts.php - Three firsts callouts: oldest and newest character played by a queer-IRL actor, and oldest played by a trans actor
+    │   │   ├── class-character-show-leaders.php - Top 25 most-crossover characters, by distinct show count
+    │   │   ├── class-cliche-leaders.php - Top 25 most-clichéd characters, by number of lez_cliches terms carried
+    │   │   ├── class-dead.php - Dead-character stats: totals, per-year counts and percentages, breakdowns by role/taxonomy/show, dead-show counts, and the full death list
+    │   │   ├── class-death-trend.php - WP glue: buckets each dated death by decade paired with the dying character's gender/sexuality term
+    │   │   ├── class-donut-segments.php - Pure: ranks a flat name/count list into top-N donut segments with a color ramp, an "Other" remainder, and an optional forced-grey pulled-out item
+    │   │   ├── class-format-decade-buckets.php - Pure: decade buckets for a per-year lez_formats tally, with sparse-early-decade folding
+    │   │   ├── class-format-trend.php - WP glue: pairs each show's premiere year with its format term and feeds Format_Decade_Buckets
+    │   │   ├── class-formats.php - Per-format show counts, as array, count, or percentage
+    │   │   ├── class-genre-decade-buckets.php - Pure: decade buckets for the multi-value lez_genres taxonomy, tracking distinct-show counts separately from genre-tag counts
+    │   │   ├── class-genre-trend.php - WP glue: pairs each show's premiere year with every lez_genres term for Genre_Decade_Buckets
+    │   │   ├── class-intersection-pairs.php - Pure: counts co-occurring term-slug pairs across objects (canonically ordered, deduped) and returns the top pairings
+    │   │   ├── class-intersection-trend.php - WP glue: pairs each show's premiere year with every lez_intersections term
+    │   │   ├── class-nations.php - Per-country summaries (show/character counts) plus single-nation details with show lists and sexuality/gender/format/on-air/trope breakdowns
+    │   │   ├── class-on-air-optimized.php - Currently-airing show and character data per post type, with timestamped cached output
+    │   │   ├── class-overview-factsheet.php - Pure: shapes the single-nation/station fact sheet — top-N folded bar segments, death rate, best year, ratios, ordinals, adaptive narrative lines
+    │   │   ├── class-queer-irl.php - Counts of characters played by queer actors (the `queer-irl` cliché term), as array, count, or percentage
+    │   │   ├── class-role-podium.php - Pure: Regular/Recurring/Guest split for Actors → Roles, with the leading role type and its share of all tagged appearances
+    │   │   ├── class-score-distribution.php - Pure: show-score decile histogram, median, high/low tail counts, and per-year average score with thin-year trimming
+    │   │   ├── class-scores.php - Chunked/lazy score collection, raw score values, and scores grouped by on-air year and by worth-it verdict
+    │   │   ├── class-series-trend.php - Pure: classifies the shape of a per-year count series (rising, past peak, etc.), excluding the partial current year, so templates can pick adaptive wording
+    │   │   ├── class-show-death-leaders.php - Ranks shows by dead/char count meta for most-deaths and highest-death-rate highlights (with a minimum-cast threshold)
+    │   │   ├── class-star-podium.php - Pure: medal-podium column order, scaled plate heights, leader facts, and the silver/bronze relationship for the Stars view
+    │   │   ├── class-stations.php - Per-network summaries plus single-station details with show lists and sexuality/gender/format/on-air/trope breakdowns
+    │   │   ├── class-taxonomy-death-leaders.php - Sums show character/death meta per lez_country or lez_stations term, to rank by death rate rather than raw show count
+    │   │   ├── class-taxonomy-optimized.php - Batch taxonomy stats: bulk show/character counts, first years, top shows, per-object term-slug maps, and terms-per-object stats via batched queries instead of per-term WP_Query
+    │   │   ├── class-taxonomy-profile.php - Single nation/station: most-prolific show per sexuality/gender term, most trope-heavy show, and top-rated show per format
+    │   │   ├── class-term-count-distribution.php - Pure: buckets objects by how many distinct terms of a taxonomy they carry (0,1,2,…,N+), with waffle-ready cell counts and the top object
+    │   │   ├── class-this-year.php - Batch-queried counts for the in-progress year (legacy version)
+    │   │   ├── class-trigger-levels.php - Pure: trigger-warning flagged-vs-none split, per-level shares of both denominators, rail figures, and the low/high balance the footnote copy adapts to
+    │   │   ├── class-trope-category-coverage.php - Pure: distinct shows carrying at least one trope from each good/maybe/bad/ploy category, plus the alignment split
+    │   │   ├── class-unknown-actor.php - The "Unknown" placeholder actor: affected character count, the character list, dead/alive split, term breakdowns, and shows with the most of them
+    │   │   ├── class-we-love-compare.php - Pure: We Love It cohort facts, loved-side totals, loved-vs-rest comparison multiples, and the gating checks behind each adaptive takeaway
+    │   │   ├── class-we-love-it.php - Loved-show count against total shows, as array, count, or percentage
+    │   │   ├── class-we-love.php - Data acquisition for the We Love It view: the loved-show roster (newest premiere first) and archive-wide aggregate totals
+    │   │   ├── class-worth-it-grid.php - Pure: hundred-square grid allocation with sum-to-100 guard, per-verdict average scores, and the "verdict tracks the score" check
+    │   │   └── class-worth-it.php - Per-rating ("worth it" verdict) show counts, as array, count, or percentage
+    │   ├── format/ - Output formatters (all server-rendered; Chart.js removed)
+    │   │   └── class-csv.php - Builds a UTF-8 CSV string (with BOM) from headers plus rows, hardening every cell against CSV/formula injection
+    │   └── templates/ - Template files organized by section
+    │       ├── actors.php - Actor stats entry point
+    │       ├── actors/ - gender, overview, roles, sexuality, subnav, unknown
+    │       ├── characters.php - Character stats entry point
+    │       ├── characters/ - cliches, gender, most-cliches, on-air, overview, queer-irl, sexuality, subnav
+    │       ├── death.php - Death stats entry point
+    │       ├── death/ - characters, list, nations, overview, shows, stations, years
+    │       ├── main.php - Main stats page entry point
+    │       ├── main/ - around-the-world, bury-your-gays, overview, score-trend, tabbar, where-tv-lives
+    │       ├── nations.php - Nation stats entry point
+    │       ├── nations/ - all, single
+    │       ├── shows.php - Show stats entry point
+    │       ├── shows/ - formats, genres, intersectionality, on-air, overview, scores, stars, subnav, triggers, tropes, we-love-it, worth-it
+    │       ├── stations.php - Station stats entry point
+    │       ├── stations/ - all, single
+    │       └── partials/ - Shared render helpers used across every section
+    │           ├── callouts.php - A row of generic callout boxes (eyebrow label, pre-translated text, optional symbolicon) from a `$lwtv_callouts` array
+    │           ├── death-taxonomy-highlights.php - Shared Death → Nations/Stations highlights: total deaths, share of tracked terms with any death, deadliest-by-rate term; parameterized by taxonomy
+    │           ├── donut.php - Reusable donut chart: SVG ring at pathLength=100 plus a legend with mini-bars, in full/compact/mini layouts, counting-up center figure
+    │           ├── download-csv.php - The CSV download card (icon chip, title, row-count meta, download button)
+    │           ├── headlines.php - "The Headlines" section: one promoted lead plate plus a color-spine rail of linked mini-stats; skipped below four stats
+    │           ├── last-calculated.php - Data-freshness note, in two variants: absolute "last recalculated" timestamp for the volatile current year, or a daily-cache note
+    │           ├── leaderboard.php - Ranked nations/stations leaderboard: rank, linked name, share bar, shows with percent, character count, dead count (top 10)
+    │           ├── matchup-cards.php - Grid of matchup cards pairing two terms with their shows-together count, with an optional footnote for excluded items
+    │           ├── phrases.php - Filterable helpers turning percentages into natural-language phrasing ("Over half", "about one in 11") for headlines and descriptions
+    │           ├── ranked-bars.php - Full-width ranked horizontal-bar list, sorted by count, in share, leaderboard, or lollipop mode
+    │           ├── short-history.php - Thin-data short-history card: adaptive narrative lines plus one row per show, for nations/stations with only a show or two
+    │           ├── sparkline.php - Converts a cumulative count series into SVG polyline coordinates scaled to a viewBox
+    │           ├── taxonomy-facet.php - Shared single-nation/station facet block for Sexuality/Gender/Formats/Tropes: donut, pullstats banner, and a Taxonomy_Profile "Most Prolific" section
+    │           ├── waffle.php - Waffle/pictogram SVG dot grid, in binary "1 in N" mode or segmented mode where each dot's class encodes its bucket
+    │           └── year-bars.php - Vertical bar-per-year chart with the peak bar highlighted, optional callouts, custom tooltips, and an optional scale_max
+    ├── theme/ - Theme-related code
+    │   ├── class-actor-age.php - Returns actor age.
+    │   ├── class-actor-birthday.php - Boolean return if an actor is having a birthday.
+    │   ├── class-actor-characters.php - List all characters for an actor.
+    │   ├── class-actor-pronouns.php - Sort actor pronouns.
+    │   ├── class-actor-terms.php - List simple terms for actors (i.e. gender, sexuality)
+    │   ├── class-character-relationships.php - IDs of all characters a specific character (i.e. Sara Lance) has had a relationship with.
+    │   ├── class-content-warning.php - If a show has a content warning, we display it.
+    │   ├── class-data-author.php - Generate and return data for Authors (Mika, Tracy, Etc.) (social(), favorite_shows())
+    │   ├── class-data-character.php - Generate character Data (actors(), cliches(), dead(), oneactor(), oneshow(), shows(), terms())
+    │   ├── class-do-math.php - Generates the 'recalculate data' button for editors on the front end, to refresh interrelated content
+    │   ├── class-get-loved.php - Retrieves "Shows We Love" data
+    │   ├── class-show-characters.php - Generate and return list of Characters from a show
+    │   ├── class-show-stars.php - Make show stars
+    │   ├── class-stats-symbolicon.php - Makes the icon/title for symbolicons
+    │   ├── class-taxonomy-archive-title.php - Customize title of archives with pretty icons
+    │   ├── class-theme-config.php - All theme configuration code
+    │   ├── class-tvmaze.php - Calls to TVMaze (uses episodes() instead of make())
+    │   └── class-ways-to-watch.php - Outputs Ways to Watch
+    ├── this-year/ - Year-specific data (build → format → templates)
+    │   ├── class-display.php - Controls individual pages (navigation())
+    │   ├── build/ - Data builders (pure transforms; unit-tested)
+    │   │   ├── class-breakdowns.php - Overview "where it came from" cards: top-N country origin with Other, format split, and regular/recurring/guest role split
+    │   │   ├── class-character-facts.php - Per-character derivations from `lezchars_show_group`: distinct shows a character appeared in during a year, and whether that year was their debut
+    │   │   ├── class-characters-builder.php - Builds character data for the year
+    │   │   ├── class-characters-on-air.php - Shapes the flat character list and by-show cast for Characters On Air, including role precedence (regular > recurring > guest)
+    │   │   ├── class-dead-characters.php - Dead Characters By Date: date-key normalization, the deaths-by-month graph model, longest-stretch fact, and ordered timeline sequence
+    │   │   ├── class-deaths-strip.php - Buckets a year's deaths into a twelve-month strip with per-month marker metadata and in-progress-year elapsed percentages
+    │   │   ├── class-longest-running.php - Selects the longest-tenured character lost this year, measuring tenure as distinct years on air (union of `appears`), not debut-to-death span
+    │   │   ├── class-shared-builder.php - Shared builder utilities
+    │   │   ├── class-shows-block.php - Alphabet/country/format jump-bar model (index-based anchors, chip labels, counts) for the Shows On Air / New / Canceled panes
+    │   │   ├── class-shows-builder.php - Builds show data for the year
+    │   │   ├── class-standouts.php - Overview standout rows: biggest ensemble, busiest actor, and earliest-starting (longest running) show
+    │   │   └── class-trends.php - Reduces `This_Year_JSON::ten_years()` output into the compact eleven-year per-year count map, plus transient key helpers
+    │   ├── format/ - Output formatters
+    │   │   ├── class-canceled-shows-formatter.php - Formats canceled shows display
+    │   │   ├── class-dead-characters-formatter.php - Formats dead characters display
+    │   │   └── class-new-shows-formatter.php - Formats new shows display
+    │   └── templates/ - Template files
+    │       ├── canceled-shows.php - Canceled shows template
+    │       ├── characters-on-air.php - Characters on air template
+    │       ├── dead-characters.php - Dead characters template
+    │       ├── navigation.php - Section sub-nav (Overview / Characters / Dead / Shows / New / Canceled)
+    │       ├── navigation-year.php - Year navigator (prev/next arrows + year dropdown + live chip)
+    │       ├── new-shows.php - New shows template
+    │       ├── overview.php - Overview template (lead statement, metric ribbon, highlights)
+    │       ├── shows-on-air.php - Shows on air template
+    │       └── partials/ - Shared partials
+    │           └── show-block.php - Shared Shows/New/Canceled block (two-column group cards)
+    ├── validator/ - Data Validation admin tabs (renders `Debugger` findings)
+    │   ├── class-affected-shows.php - Renders the "N shows" cell on watch-URL findings as an expandable `<details>` list, priming post caches for the whole page first
+    │   ├── class-report.php - One renderer for every findings-report tab, driven by the `TOOL_TABS` config in Admin_Menu\Validation; replaced ten near-identical checker classes (queer/BYQ/actor/character/show/actor-empty/actor-imdb/show-imdb/dupes/on-air)
+    │   ├── class-watch-providers.php - Unregistered-host tab: create or assign a provider term, with existing-term suggestions and host collision notices
+    │   └── class-watch-term-check.php - Shows what the watch-URL health sweep last found, re-checks flagged URLs, and can queue a full background sweep
+    └── wp-cli/ - WP-CLI commands
+        ├── cli-audit.php - Compare on-air shows and their characters against TVMaze - wp lwtv audit
+        ├── cli-cache.php - Diagnostics for the statistics cache (persistent-object-cache eviction, last-built times)
+        ├── cli-calc.php - Calculations on content (scores, character count, etc) - wp lwtv CALC [ID]
+        ├── cli-check.php - Data validation checkers - wp lwtv CHECK [queerchars|wiki] [id]
+        ├── cli-debug-log.php - Read and maintain the LWTV debug log - wp lwtv debug-log [tail|clear]
+        ├── cli-debug.php - Debug utilities (runs the Debugger checks, `--fix-it` to repair) - wp lwtv DEBUG [command]
+        ├── cli-dupes.php - List all duplicate content - wp lwtv dupes
+        ├── cli-generate.php - Generate custom content - wp lwtv GENERATE [otd|tvmaze]
+        ├── cli-imdb.php - Verify IMDb IDs against TVMaze/TMDB and surface stale ones - wp lwtv imdb
+        ├── cli-migrate.php - Migrate data between formats - wp lwtv MIGRATE [action]
+        ├── cli-scheduler.php - Action Scheduler management - wp lwtv SCHEDULER [missed|tmdb|cache|status] [action]
+        ├── cli-score-preview.php - Read-only preview of the longevity-weighted character score against real shows - wp lwtv score-preview
+        ├── cli-shadow.php - Build out shadow taxonomy connections - wp lwtv shadow [shows|actors] [ID (optional)]
+        ├── cli-sweep.php - BYQ sweep commands - wp lwtv sweep
+        ├── cli-tmdb.php - Backfill TMDB IDs for shows/actors that never had a lookup attempted - wp lwtv tmdb [status|backfill]
+        ├── cli-tvmaze.php - Backfill TVMaze IDs and derive aired-year data for shows - wp lwtv tvmaze [status|backfill]
+        └── cli-waystowatch.php - Ways to Watch host reporting, name discovery, and enrichment - wp lwtv waystowatch [hosts|termurls|enrich]
