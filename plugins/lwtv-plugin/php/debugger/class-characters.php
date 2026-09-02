@@ -37,8 +37,6 @@ class Characters {
 	 * @return array Characters with issues
 	 */
 	public function find_byq_problems( $items = array() ): array {
-		// A recheck only revisits what was already flagged, so it may be tagged
-		// against the baseline but never diffed into it. See Scan::finish().
 		$is_recheck = ! empty( $items );
 
 		/*
@@ -91,9 +89,6 @@ class Characters {
 	 * @return array Characters with issues
 	 */
 	public function find_characters_problems( $items = array() ): array {
-
-		// A recheck only revisits what was already flagged, so it may be tagged
-		// against the baseline but never diffed into it. See Scan::finish().
 		$is_recheck = ! empty( $items );
 
 		$characters = Scan::post_ids( $items, CPT_Characters::SLUG );
@@ -102,12 +97,6 @@ class Characters {
 			return array();
 		}
 
-		/*
-		 * Collect, then evaluate. The rules are pure and live in
-		 * Build\Character_Rules; everything that reads meta, terms or ACF is in
-		 * Collect\Character_Collector, which batches so a full run is a handful
-		 * of term queries rather than one per character.
-		 */
 		$collector = new Character_Collector();
 		$findings  = array();
 

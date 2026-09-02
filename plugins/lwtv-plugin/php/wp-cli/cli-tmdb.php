@@ -4,10 +4,6 @@
  *
  * Backfills TMDB IDs for shows and actors that never had a lookup attempted.
  *
- * Context: TMDB IDs are normally populated on save, which means posts predating
- * that behaviour never got one. As of 2026-08-20 that was 2014 of 2262
- * published shows, with 2225 holding an IMDb ID to look up from and zero
- * recorded failed lookups. See DEBUGGER-REVIEW.md section 1.3.
  */
 
 // Bail if directly accessed

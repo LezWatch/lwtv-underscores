@@ -5,14 +5,6 @@
  * The Watch Providers tab answers "which hosts have no term". This answers the
  * other half: of the terms we do have, are they still pointing anywhere useful.
  *
- * Scoped to term URLs rather than to every Ways to Watch field on every show.
- * Thousands of show URLs resolve to a few hundred distinct provider URLs, so
- * checking the terms is the same coverage for an order of magnitude fewer
- * requests -- and it puts the finding on the record you'd actually edit to fix
- * it, instead of on each of the 400 shows that inherited the problem.
- *
- * This replaces the old `show_urls` check, which walked every show. See
- * DEBUGGER-REVIEW.md item 6.
  */
 
 namespace LWTV\Debugger;
@@ -32,12 +24,6 @@ class Watch_URLs {
 
 	/**
 	 * Findings from find_bad_watch_urls().
-	 *
-	 * `_v2` because the row shape changed with typed findings -- `status` became
-	 * `health`, freeing `status` for the baseline's new/open/resolved. Bumping the
-	 * key rather than migrating means old rows are simply never read: the tab says
-	 * the scan has not run until the next sweep, which is honest, and the Sunday
-	 * cron refills it.
 	 */
 	const FINDINGS_PROBLEMS = 'lwtv_debug_watch_urls_v2';
 
@@ -48,21 +34,11 @@ class Watch_URLs {
 
 	/**
 	 * Pause between requests, in microseconds.
-	 *
-	 * A few hundred requests in a tight loop is rude to the smaller hosts and a
-	 * good way to get our user agent blocked by the larger ones, which would
-	 * quietly turn this check into a list of false 403s.
 	 */
 	const SLEEP_US = 250000;
 
 	/**
 	 * Issue type per URL health verdict.
-	 *
-	 * The health is what the report's status column shows; the issue type is what
-	 * the finding *is*. They line up one-to-one for probed URLs, but two other
-	 * issue types also carry a health of "needs review" -- a term with no URLs at
-	 * all, and one we ran out of time to re-check -- so the two are not the same
-	 * thing.
 	 */
 	const ISSUE_FOR_HEALTH = array(
 		Watch_Url_Health::STATUS_BROKEN  => 'watch-url-broken',
@@ -124,10 +100,6 @@ class Watch_URLs {
 			}
 		}
 
-		/*
-		 * Diffed like every other check, but never on a partial run: a budgeted
-		 * re-check visits a subset, and $items being non-empty is what says so.
-		 */
 		return Scan::finish(
 			array(
 				'scope'    => self::STATUS_KEY,
@@ -136,23 +108,12 @@ class Watch_URLs {
 			),
 			$found,
 			! empty( $items ),
-			/*
-			 * Term-shaped rows, one per URL rather than grouped per term, and
-			 * sorted after tagging so each row keeps the status it was given.
-			 */
 			fn ( array $tagged ) => $this->sort_findings( Rows::from_term_findings( $tagged ) )
 		);
 	}
 
 	/**
 	 * Re-check exactly one flagged URL, leaving every other row untouched.
-	 *
-	 * find_bad_watch_urls() always writes its result back as the *whole*
-	 * findings option -- correct for a full sweep or the bulk recheck, where
-	 * the input already was the whole list, but wrong here: reprobing one row
-	 * and storing only that row would erase the other forty-odd. So this
-	 * merges the reprobed row into the full stored list itself and stores that,
-	 * rather than going through Scan::finish().
 	 *
 	 * @param  array    $all_items Every row currently in the findings store.
 	 * @param  array    $target    The one row to re-check, from $all_items.
@@ -200,8 +161,7 @@ class Watch_URLs {
 	/**
 	 * Probe one target and classify what came back.
 	 *
-	 * Null means the URL passed -- nothing to report. Shared by the full/bulk
-	 * loop above and the single-row recheck, so both classify the same way.
+	 * Null means the URL passed.
 	 *
 	 * @param  array    $target  Probe target.
 	 * @param  int|null $timeout Per-request timeout in seconds.
@@ -219,7 +179,7 @@ class Watch_URLs {
 	}
 
 	/**
-	 * Same term, same URL -- the identity a term-URL row is keyed on.
+	 * Same term, same URL; the identity a term-URL row is keyed on.
 	 *
 	 * A term can have several bad URLs, so the term ID alone is not enough to
 	 * pick out the one row a single-row recheck should replace.
@@ -262,12 +222,7 @@ class Watch_URLs {
 	 * Turn an existing findings list back into things to probe.
 	 *
 	 * The show count and the IDs behind it are carried across rather than
-	 * recomputed: working them out costs the full postmeta sweep and neither has
-	 * changed in the seconds since the tab rendered. Carrying them is not
-	 * optional -- a re-check rewrites the findings, so anything not carried here
-	 * is gone the first time someone presses the button. The whole original
-	 * finding is carried too, so an item skipped for budget reasons comes back out
-	 * exactly as it went in.
+	 * recomputed.
 	 *
 	 * @param array $items Findings from a previous run.
 	 * @return array<int, array<string, mixed>>
@@ -276,17 +231,12 @@ class Watch_URLs {
 		$targets = array();
 
 		foreach ( $items as $item ) {
-			// Nothing to probe. Cached rows from before the URL-less-term check
-			// was retired can still carry an empty url, and probing '' would be
-			// nonsense.
 			if ( empty( $item['url'] ) || empty( $item['id'] ) ) {
 				continue;
 			}
 
 			$term = get_term( (int) $item['id'], Theme_Ways_To_Watch::TAXONOMY );
 
-			// The term was deleted since the last scan, which resolves the
-			// finding by definition.
 			if ( ! $term instanceof \WP_Term ) {
 				continue;
 			}
@@ -317,15 +267,6 @@ class Watch_URLs {
 
 	/**
 	 * The finding for a target we ran out of time to re-probe.
-	 *
-	 * A budget must never silently clear a real finding, so what the previous run
-	 * knew is rebuilt rather than replaced with "not checked": a URL that was
-	 * broken an hour ago is still reported as broken.
-	 *
-	 * Rebuilt rather than carried verbatim, because `carry` holds the previous
-	 * *row* — one row per finding, so its single issue type and message are
-	 * exactly what is needed — and a row pushed into a findings array would have
-	 * no issue type for the baseline to key on.
 	 *
 	 * @param  array $target Probe target, possibly carrying a previous row.
 	 * @return array<string, mixed>
@@ -385,11 +326,6 @@ class Watch_URLs {
 	 * Drop every stored row for one term that was flagged for a specific
 	 * reason -- for when a term-wide override (an editor confirming the
 	 * provider despite a published-name mismatch) makes that reason moot.
-	 *
-	 * Merges and stores directly, the same way recheck_one() does, rather
-	 * than through Scan::finish(): the caller has already loaded the full
-	 * findings list, and writing back anything less than the full list would
-	 * erase every other row.
 	 *
 	 * @param  array  $all_items Every row currently in the findings store.
 	 * @param  int    $term_id   Term whose rows to filter.

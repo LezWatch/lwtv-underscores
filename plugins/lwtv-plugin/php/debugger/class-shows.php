@@ -31,9 +31,6 @@ class Shows {
 	 * Find Shows with Problems
 	 */
 	public function find_shows_problems( $items = array() ) {
-
-		// A recheck only revisits what was already flagged, so it may be tagged
-		// against the baseline but never diffed into it. See Scan::finish().
 		$is_recheck = ! empty( $items );
 
 		$shows = Scan::post_ids( $items, CPT_Shows::SLUG );
@@ -42,12 +39,6 @@ class Shows {
 			return array();
 		}
 
-		/*
-		 * Collect, then evaluate. The rules are pure and live in
-		 * Build\Show_Rules; everything that touches the database is in
-		 * Collect\Show_Collector. Batched because the collector fetches terms for
-		 * a whole batch in one query rather than five per show.
-		 */
 		$collector = new Show_Collector();
 		$findings  = array();
 
@@ -71,24 +62,13 @@ class Shows {
 	/**
 	 * Repair one show's fixable data problems.
 	 *
-	 * Registered as the fixer for the `shows` check, so it runs once per finding
-	 * under `wp lwtv debug shows --fix-it`. A show flagged only for something
-	 * with no automated repair (no characters, a bad airdate, a duplicate slug)
-	 * returns false and is reported as unfixed.
-	 *
 	 * @param  int  $show_id Show post ID.
 	 * @return bool True when at least one repair was applied.
 	 */
 	public function fix_show_data( $show_id ): bool {
 		$show_id = (int) $show_id;
-
-		/*
-		 * Deliberately not short-circuiting: a show can need both. And
-		 * deliberately excluding flag_no_characters(), which is a judgement call
-		 * registered as `manual` -- this dispatcher is the bulk path.
-		 */
-		$trope = $this->add_none_trope( $show_id );
-		$thumb = $this->set_thumb_tbd( $show_id );
+		$trope   = $this->add_none_trope( $show_id );
+		$thumb   = $this->set_thumb_tbd( $show_id );
 
 		return $trope || $thumb;
 	}
@@ -97,8 +77,7 @@ class Shows {
 	 * Add the 'none' trope to a show carrying no trope terms.
 	 *
 	 * Looked up by slug on purpose: the term's display name is 'None!', so a
-	 * name lookup silently returns false -- which is how this repair spent a
-	 * long time doing nothing while reporting that the term was missing.
+	 * name lookup silently returns false.
 	 *
 	 * @param  int  $show_id Show post ID.
 	 * @return bool True when the term was added.
@@ -122,13 +101,8 @@ class Shows {
 	/**
 	 * Record that a show genuinely has no findable queer characters.
 	 *
-	 * Not a repair in the usual sense: it does not fill the gap, it states that
-	 * there is nothing to fill it with. That is why the issue is registered as
-	 * `manual` -- a bulk run must not decide this for every characterless show.
-	 *
-	 * Written through update_field() rather than update_post_meta() because
-	 * lezshows_no_chars is an ACF true_false field, and ACF also stores the
-	 * companion `_lezshows_no_chars` field-key row that the editor UI reads.
+	 * This exists to handle shows we know have queers, but they're only background,
+	 * OR we just can't get the info because the show is lost to time.
 	 *
 	 * The show page reads the same flag: it swaps the "Under Construction"
 	 * placeholder for a "No Known Characters" panel asking readers who do know
@@ -168,11 +142,6 @@ class Shows {
 	/**
 	 * Replace a pasted IMDb URL with the ID inside it.
 	 *
-	 * Re-extracted here rather than trusting the finding's `context`: a repair
-	 * runs some time after the scan that produced it, and the field may have been
-	 * edited since. If the value is no longer an extractable URL this does
-	 * nothing and reports as unfixed, which is correct.
-	 *
 	 * @param  int  $show_id Show post ID.
 	 * @return bool True when the ID was written.
 	 */
@@ -193,9 +162,6 @@ class Shows {
 	 * @return array $problems - array of problems. Can be empty.
 	 */
 	public function find_shows_no_imdb( $items = array() ) {
-
-		// A recheck only revisits what was already flagged, so it may be tagged
-		// against the baseline but never diffed into it. See Scan::finish().
 		$is_recheck = ! empty( $items );
 
 		$shows = Scan::post_ids( $items, CPT_Shows::SLUG );
@@ -204,11 +170,6 @@ class Shows {
 			return array();
 		}
 
-		/*
-		 * Collect, then evaluate. Build\Imdb_Rules serves both this check and the
-		 * actor one -- same three rules, different oracle and prefix -- so the two
-		 * cannot drift apart the way they had before.
-		 */
 		$collector = new Imdb_Collector();
 		$findings  = array();
 

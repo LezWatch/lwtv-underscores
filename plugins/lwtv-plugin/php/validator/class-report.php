@@ -1,17 +1,9 @@
 <?php
 /*
- * One renderer for every findings report on the Data Validation screen.
- *
- * This replaced ten near-identical classes of ~105 lines each, which differed
- * only in a findings key, a scanner method, a nonce name and three strings.
- * They had already drifted: the on-air view's table header said "Duplicate", its
- * translator comment said "number of dupes", and its sentence read "The
- * following miss-matched on-air checks been found". Copy-paste is how that
- * happens, and a config array is how it stops.
+ * Report renderer for findings on the Data Validation screen.
  *
  * Everything a report needs now lives in Admin_Menu\Validation::TOOL_TABS, which
- * means a check cannot have a tab without a scanner, or a scanner without copy —
- * the two failure modes recorded as 1.2 and 1.6.
+ * means a check cannot have a tab without a scanner, or a scanner without copy.
  *
  * Watch Providers and Watch Term Check are deliberately not here: they render
  * term-shaped findings and run real work behind admin-post handlers, so they
@@ -136,15 +128,7 @@ class Report {
 	 * @return void
 	 */
 	private static function render_problems( array $config, array $items ): void {
-		$count = count( $items );
-
-		/*
-		 * Complete sentences per plural form rather than a fragment spliced into
-		 * a shared tail. The old version built "The following " . _n( 'show
-		 * needs', 'shows need' ) . " your attention.", which reads fine in
-		 * English and is close to untranslatable -- and is how the on-air view
-		 * ended up ungrammatical.
-		 */
+		$count    = count( $items );
 		$sentence = _n( $config['dirty'][0], $config['dirty'][1], $count, 'lwtv' );
 		?>
 		<div class="lwtv-tools-container lwtv-tools-container__alert">

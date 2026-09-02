@@ -5,49 +5,6 @@
  * Backfills lezshows_tvmaze_id for shows that never had a lookup attempted, and
  * optionally derives lezshows_aired_years from each show's season dates.
  *
- * Context: the score-preview run across all 2255 published shows put 1813 on the
- * curated season count and 442 on the raw airdate span. Not one reached the
- * TVMaze tier, because no show has lezshows_aired_years stored. Those 442 are
- * the shows where the denominator is currently least accurate -- still airing,
- * or no season count recorded -- so they are exactly the ones exact aired years
- * would help. See docs/plans/show-score-longevity.md.
- *
- * Deliberately a separate command rather than a lookup inside do_the_math().
- * Per-show HTTP during a bulk recalculation means rate limits, timeouts and
- * partial failures, which would leave some shows scored on one denominator tier
- * and others on another depending on when the API blinked. Scoring reads meta;
- * this command fills the meta.
- *
- * Mirrors the structure of cli-tmdb.php, including its timestamp rule: the
- * checked marker is written on a hit and on a genuine no-match, but never on an
- * API error, so an outage cannot permanently mark shows as unmatched.
- *
- * Two ways in, both exact. First the "Ignore TVMaze Match" toggle on the show,
- * which reveals a manual TVMaze ID field -- a human said "this show is that
- * entry", so it wins outright and needs no API call. Otherwise an IMDb lookup.
- *
- * That toggle with no ID means something different and equally useful: "I looked,
- * there is nothing to match." Criminal Minds: Evolution is the canonical case --
- * TVMaze keeps it on the parent Criminal Minds entry per its continuations
- * policy, so it will never match on its own IMDb ID. Ticking the toggle drops it
- * out of the candidate queries and out of `missing`, so the backlog reflects work
- * still to do rather than decisions already made.
- *
- * What we do NOT do is search by name. /search/shows is fuzzy and
- * /singlesearch/shows is explicitly undefined about which show it returns when
- * titles collide, and a wrong TVMaze ID would feed wrong aired years straight
- * into the show score. An exact match or nothing. The `reconcile` action uses
- * name search purely to propose corrections for human review, never to write.
- *
- * Note this is NOT because TVMaze requires an IMDb entry to be listed. Its
- * inclusion policy (https://www.tvmaze.com/faq/13/shows, checked 2026-08) makes
- * no mention of IMDb; the bar for shows on non-curated web channels is credited
- * cast/crew, sequential numbering, a fixed schedule, and one of notable
- * credits / a $25k verified budget / a later broadcast re-run. So a show without
- * an IMDb ID may well be on TVMaze -- we simply won't guess at which entry it is.
- *
- * Those shows are reported by `status` and left alone. Adding either an IMDb ID
- * or a manual TVMaze ID brings one into scope automatically.
  */
 
 // Bail if directly accessed

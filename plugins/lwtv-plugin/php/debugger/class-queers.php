@@ -27,9 +27,6 @@ class Queers {
 	 * and the actor who plays them
 	 */
 	public function find_queer_chars( $items = array() ) {
-
-		// A recheck only revisits what was already flagged, so it may be tagged
-		// against the baseline but never diffed into it. See Scan::finish().
 		$is_recheck = ! empty( $items );
 
 		$characters = Scan::post_ids( $items, CPT_Characters::SLUG );
@@ -38,13 +35,9 @@ class Queers {
 			return array();
 		}
 
-		/*
-		 * Collect, then evaluate. Build\Queer_Rules holds the comparison; the
-		 * collector resolves each actor's is-queer verdict once per batch, since
-		 * the same actors recur across characters.
-		 */
-		$collector = new Queer_Collector();
-		$findings  = array();
+		$collector    = new Queer_Collector();
+		$findings     = array();
+		$progress_bar = array();
 
 		// If this is WP-CLI, setup progress bar.
 		if ( defined( 'WP_CLI' ) && WP_CLI ) {

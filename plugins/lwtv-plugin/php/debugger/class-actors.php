@@ -62,13 +62,6 @@ class Actors {
 	 * @return void
 	 */
 	public function flag_shadow_sync_failure( int $actor_id, int $term_id ): void {
-		/*
-		 * This is a read-modify-write, so a read that fails for reasons unrelated
-		 * to the data is destructive: it would land here as "no findings yet" and
-		 * the append below would replace the whole list with this one row. Reading
-		 * findings from an option rather than a transient is what rules that out --
-		 * see Findings_Store.
-		 */
 		$items = Findings_Store::load( self::FINDINGS_PROBLEMS );
 		if ( ! is_array( $items ) ) {
 			$items = array();
@@ -81,9 +74,6 @@ class Actors {
 			}
 		}
 
-		// Built through the same pipeline as a scan finding so this row carries
-		// `issues` too -- otherwise a hook-appended row would look, to the CLI
-		// fixer, like a stale pre-reshape payload.
 		$items = array_merge(
 			$items,
 			Rows::from_findings(
@@ -101,12 +91,6 @@ class Actors {
 
 		Scan::store( self::FINDINGS_PROBLEMS, $items );
 
-		/*
-		 * No summary, which clears any stored new/open breakdown: this row
-		 * arrived from a hook, not a scan, so the previous run's breakdown no
-		 * longer adds up. The baseline is left alone -- the next scan will find
-		 * this legitimately, or not.
-		 */
 		Status::record( 'actor_problems', 'Actors with Issues', count( $items ) );
 	}
 
@@ -127,11 +111,6 @@ class Actors {
 			return array();
 		}
 
-		/*
-		 * Collect, then evaluate. The rules are pure and live in
-		 * Build\Actor_Rules; the collector does the meta reads. Batched so the
-		 * meta cache is primed per batch rather than per actor.
-		 */
 		$collector = new Actor_Collector();
 		$findings  = array();
 
@@ -177,11 +156,6 @@ class Actors {
 	/**
 	 * Replace a pasted IMDb URL with the ID inside it.
 	 *
-	 * Re-extracted here rather than trusting the finding's `context`: a repair
-	 * runs some time after the scan that produced it, and the field may have been
-	 * edited since. If the value is no longer an extractable URL this does
-	 * nothing and reports as unfixed, which is correct.
-	 *
 	 * @param  int  $actor_id Actor post ID.
 	 * @return bool True when the ID was written.
 	 */
@@ -223,12 +197,6 @@ class Actors {
 	/**
 	 * Clear a social field that is holding an IMDb ID.
 	 *
-	 * Destructive by decision: the value is removed rather than moved into
-	 * lezactors_imdb. An IMDb ID recovered from a social field is a guess about
-	 * intent, and a wrong guess writes a wrong ID onto an actor -- worse than a
-	 * missing one, since everything downstream trusts that field. The finding
-	 * names the value before it goes, so it can be re-entered deliberately.
-	 *
 	 * @param  int    $actor_id Actor post ID.
 	 * @param  string $social   'instagram' or 'twitter'.
 	 * @return bool   True when the meta was deleted.
@@ -245,9 +213,6 @@ class Actors {
 			return false;
 		}
 
-		// Only touch a value that is clean for the platform and IMDb-shaped. A
-		// handle that fails sanitize_social() is a different finding with no
-		// automated repair, and must not be deleted as collateral.
 		if ( Debug_Tool::sanitize_social( $value, $social ) !== $value ) {
 			return false;
 		}
@@ -263,8 +228,7 @@ class Actors {
 	 * Sort out a homepage that is really a Wikipedia URL.
 	 *
 	 * Moves it into lezactors_wikipedia when that field is empty, or drops it
-	 * when it merely duplicates what is already there. Two *different* Wikipedia
-	 * URLs are left alone -- picking between them is a human's call.
+	 * when it merely duplicates what is already there.
 	 *
 	 * @param  int  $actor_id Actor post ID.
 	 * @return bool True when the homepage was moved or removed.
@@ -297,9 +261,6 @@ class Actors {
 	 * @return array $problems - array of problems. Can be empty.
 	 */
 	public function find_actors_incomplete( $items = array() ): array {
-
-		// A recheck only revisits what was already flagged, so it may be tagged
-		// against the baseline but never diffed into it. See Scan::finish().
 		$is_recheck = ! empty( $items );
 
 		$actors = Scan::post_ids( $items, CPT_Actors::SLUG );
@@ -334,9 +295,6 @@ class Actors {
 	 * @return array $problems - array of problems. Can be empty.
 	 */
 	public function find_actors_no_imdb( $items = array() ): array {
-
-		// A recheck only revisits what was already flagged, so it may be tagged
-		// against the baseline but never diffed into it. See Scan::finish().
 		$is_recheck = ! empty( $items );
 
 		$actors = Scan::post_ids( $items, CPT_Actors::SLUG );
@@ -345,11 +303,6 @@ class Actors {
 			return array();
 		}
 
-		/*
-		 * Collect, then evaluate. Build\Imdb_Rules serves both this check and the
-		 * show one; the oracle here is TMDB rather than TVMaze, which is the only
-		 * interesting difference.
-		 */
 		$collector = new Imdb_Collector();
 		$findings  = array();
 

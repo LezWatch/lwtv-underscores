@@ -5,13 +5,6 @@
  * Shows what `wp lwtv debug watchurls` last found: provider terms whose URLs no
  * longer work, or no longer point at the provider we think they do.
  *
- * This tab does not run a full scan. Checking every term URL means a few hundred
- * HTTP requests, which is a cron job, not a page load -- so the sweep lives in
- * `wp lwtv debug watchurls` and this reads the findings it leaves behind. The
- * one thing it will do live is re-check the URLs already flagged, which is a
- * short list and is exactly what you want after fixing one. That is bounded by
- * wall clock, not by count, because slow hosts are the failure mode here.
- *
  * Findings are keyed to terms, not posts, so Validation::table_content() (which
  * assumes post IDs and calls get_the_title()) can't render them.
  */

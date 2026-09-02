@@ -2,12 +2,6 @@
 /*
  * Find hosts claimed by more than one watch provider term.
  *
- * Host-based matching has to pick a winner when two terms list the same host,
- * and it picks the first by term name. That is deterministic and stable, and
- * still arbitrary -- "Lesflicks" beat "LezFlicks" on the live data because `s`
- * sorts before `z`, which happened to be correct and could just as easily not
- * have been. So the tie is reported rather than tolerated.
- *
  * Nothing here is fixable automatically. Resolving a collision means deciding
  * which term is right and removing a URL row from the other, or merging them
  * with `wp lwtv waystowatch merge`. Level 'watch_term' keeps Repair away from
@@ -50,17 +44,6 @@ class Watch_Host_Collisions {
 
 	/**
 	 * Find every contested host.
-	 *
-	 * One finding per (term, host) pair rather than one per host. Two terms
-	 * claiming `lesflicks.com` is two findings, each anchored on its own term ID
-	 * with the host as its identity.
-	 *
-	 * That shape is deliberate. Anchoring one finding per host would mean picking
-	 * an arbitrary term to hang it on, and the baseline key is
-	 * `post_id:issue_type:identity` -- so the finding would move when the winner
-	 * changed and read as new. Per-pair also means removing one term's URL row
-	 * resolves that finding *and* drops the other on the next run, because the
-	 * host is no longer contested.
 	 *
 	 * @param array $items Ignored. Every run is a full scan: the whole thing is
 	 *                     two queries, so there is no subset worth revisiting and

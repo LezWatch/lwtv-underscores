@@ -6,24 +6,6 @@
  * the effect of the longevity model can be inspected against real shows before
  * it is switched on.
  *
- * ⚠ The score comes from LWTV\CPTs\Shows\Scoring\Character_Score::longevity(), which is
- * also what Calculations::count_queers_all_types() calls -- now the only model,
- * after this command's old-vs-new comparison did its job calibrating
- * SATURATION_K and Character_Score::legacy() was retired. A private replica of
- * the maths here could still drift from what ships. If you are tempted to
- * compute a score in this file, don't -- add it to Character_Score and read it
- * from there.
- *
- * See docs/plans/show-score-longevity.md. The main job here is calibrating
- * SATURATION_K, and NOT by holding the median total steady -- that advice used to
- * live here and it is backwards, because the old total median only sat where it
- * did while the character component was stuck on the floor. Calibrate on that
- * component's own distribution instead. Use --k to try values, though a sweep
- * needs no re-run: see the note printed after the distribution summary.
- *
- * Registered separately from cli-calc.php because WP_CLI_LWTV_Calculate is
- * declared with an __invoke(), so WP-CLI treats it as a single command and it
- * cannot host subcommands.
  */
 
 // Bail if directly accessed
