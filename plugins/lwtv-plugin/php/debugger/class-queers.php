@@ -16,9 +16,9 @@ use LWTV\CPTs\Characters as CPT_Characters;
 class Queers {
 
 	/**
-	 * Transient holding the results of find_queer_chars().
+	 * Findings from find_queer_chars().
 	 */
-	const TRANSIENT_QUEERCHECK = 'lwtv_debug_queercheck';
+	const FINDINGS_QUEERCHECK = 'lwtv_debug_queercheck';
 
 	/**
 	 * Find Queers
@@ -69,9 +69,9 @@ class Queers {
 
 		return Scan::finish(
 			array(
-				'scope'     => 'queercheck',
-				'transient' => self::TRANSIENT_QUEERCHECK,
-				'label'     => 'Queer Checker',
+				'scope'    => 'queercheck',
+				'findings' => self::FINDINGS_QUEERCHECK,
+				'label'    => 'Queer Checker',
 			),
 			$findings,
 			$is_recheck

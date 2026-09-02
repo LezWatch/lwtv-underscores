@@ -396,7 +396,7 @@ class Issue_Registry {
 		 * advising "add a URL or delete the term" was telling editors to throw
 		 * away deliberate work. The scanner that emitted it is gone.
 		 *
-		 * The type stays declared because findings live in week-long transients:
+		 * The type stays declared because findings are stored for ten days:
 		 * a cached row still typed this way must render with a message rather
 		 * than an empty string until the next sweep replaces it.
 		 */

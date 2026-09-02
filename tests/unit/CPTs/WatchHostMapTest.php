@@ -238,4 +238,89 @@ class WatchHostMapTest extends TestCase {
 
 		$this->assertSame( 1, $this->resolve( $rows, 'youtube.com' ) );
 	}
+
+	/*
+	 * ids_per_term(): which shows reach each provider term.
+	 */
+
+	public function test_ids_per_term_collects_the_shows_behind_one_host(): void {
+		$map = Map::build( array( $this->row( 1, 'Hulu', 'https://hulu.com' ) ) )['map'];
+
+		$this->assertSame(
+			array( 1 => array( 10, 20 ) ),
+			Map::ids_per_term( array( 'hulu.com' => array( 10, 20 ) ), $map )
+		);
+	}
+
+	public function test_ids_per_term_dedupes_a_show_reaching_one_term_through_two_hosts(): void {
+		// The double-count this replaces: HBO Max owns both hosts, and show 10
+		// lists a link on each, so it must be counted once.
+		$map = Map::build(
+			array(
+				$this->row( 28664, 'HBO Max', 'https://hbomax.com' ),
+				$this->row( 28664, 'HBO Max', 'https://play.max.com' ),
+			)
+		)['map'];
+
+		$ids = Map::ids_per_term(
+			array(
+				'hbomax.com'   => array( 10, 20 ),
+				'play.max.com' => array( 10, 30 ),
+			),
+			$map
+		);
+
+		$this->assertSame( array( 28664 => array( 10, 20, 30 ) ), $ids );
+	}
+
+	public function test_ids_per_term_skips_hosts_no_term_owns(): void {
+		$map = Map::build( array( $this->row( 1, 'Hulu', 'https://hulu.com' ) ) )['map'];
+
+		$ids = Map::ids_per_term(
+			array(
+				'hulu.com'    => array( 10 ),
+				'netflix.com' => array( 20, 30 ),
+			),
+			$map
+		);
+
+		$this->assertSame( array( 1 => array( 10 ) ), $ids );
+	}
+
+	public function test_ids_per_term_follows_the_same_precedence_as_resolve(): void {
+		$map = Map::build(
+			array(
+				$this->row( 28684, 'ABC/Disney', 'https://abc.go.com' ),
+				$this->row( 99, 'Disney', 'https://go.com' ),
+			)
+		)['map'];
+
+		$ids = Map::ids_per_term(
+			array(
+				'abc.go.com'   => array( 10 ),
+				'other.go.com' => array( 20 ),
+			),
+			$map
+		);
+
+		$this->assertSame(
+			array(
+				28684 => array( 10 ),
+				99    => array( 20 ),
+			),
+			$ids
+		);
+	}
+
+	public function test_ids_per_term_tolerates_junk(): void {
+		$map = Map::build( array( $this->row( 1, 'Hulu', 'https://hulu.com' ) ) )['map'];
+
+		$this->assertSame( array(), Map::ids_per_term( array(), $map ) );
+		$this->assertSame( array(), Map::ids_per_term( array( 'hulu.com' => array( 10 ) ), array() ) );
+		$this->assertSame( array(), Map::ids_per_term( array( '' => array( 10 ) ), $map ) );
+		$this->assertSame( array(), Map::ids_per_term( array( 'hulu.com' => array() ), $map ) );
+
+		// Post IDs arrive from a $wpdb row, so a numeric string must land as an int.
+		$this->assertSame( array( 1 => array( 10 ) ), Map::ids_per_term( array( 'hulu.com' => array( '10' ) ), $map ) );
+	}
 }

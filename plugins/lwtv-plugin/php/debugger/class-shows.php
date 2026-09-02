@@ -18,14 +18,14 @@ use LWTV\Debugger\Collect\Show_Collector;
 class Shows {
 
 	/**
-	 * Transient holding the results of find_shows_problems().
+	 * Findings from find_shows_problems().
 	 */
-	const TRANSIENT_PROBLEMS = 'lwtv_debug_show_problems';
+	const FINDINGS_PROBLEMS = 'lwtv_debug_show_problems';
 
 	/**
-	 * Transient holding the results of find_shows_no_imdb().
+	 * Findings from find_shows_no_imdb().
 	 */
-	const TRANSIENT_IMDB = 'lwtv_debug_show_imdb';
+	const FINDINGS_IMDB = 'lwtv_debug_show_imdb';
 
 	/**
 	 * Find Shows with Problems
@@ -59,9 +59,9 @@ class Shows {
 
 		return Scan::finish(
 			array(
-				'scope'     => 'show_problems',
-				'transient' => self::TRANSIENT_PROBLEMS,
-				'label'     => 'Shows with Issues',
+				'scope'    => 'show_problems',
+				'findings' => self::FINDINGS_PROBLEMS,
+				'label'    => 'Shows with Issues',
 			),
 			$findings,
 			$is_recheck
@@ -220,9 +220,9 @@ class Shows {
 
 		return Scan::finish(
 			array(
-				'scope'     => 'show_imdb',
-				'transient' => self::TRANSIENT_IMDB,
-				'label'     => 'Shows without IMDb',
+				'scope'    => 'show_imdb',
+				'findings' => self::FINDINGS_IMDB,
+				'label'    => 'Shows without IMDb',
 			),
 			$findings,
 			$is_recheck

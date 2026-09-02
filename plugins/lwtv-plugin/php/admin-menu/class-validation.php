@@ -21,6 +21,7 @@ use LWTV\Debugger\Build\Baseline;
 use LWTV\Debugger\Build\Findings;
 use LWTV\Debugger\Characters;
 use LWTV\Debugger\Dupes;
+use LWTV\Debugger\Findings_Store;
 use LWTV\Debugger\OnAir;
 use LWTV\Debugger\Queers;
 use LWTV\Debugger\Repair;
@@ -40,7 +41,7 @@ class Validation {
 	 * Request-level memo of tab_counts().
 	 *
 	 * The tab picker and the intro's Current Status table both want it, and it
-	 * reads one transient per check.
+	 * reads one option per check.
 	 *
 	 * @var array<string, array{count: int, new: int, cached: bool, stored: int, last: int}>|null
 	 */
@@ -51,13 +52,13 @@ class Validation {
 	 *
 	 * One entry per tab, and for the report tabs this is the whole definition:
 	 * Validator\Report renders them all from this config, so a check cannot have
-	 * a tab without a scanner or copy. That is what stops 1.2 (transient keys
+	 * a tab without a scanner or copy. That is what stops 1.2 (findings keys
 	 * drifting) and 1.6 (tabs with nothing behind them) recurring.
 	 *
 	 * - name / desc: shown in the tab picker and the intro.
 	 * - option:      key inside the debugger status option. Drives the badge and
 	 *                the "last run" line.
-	 * - transient:   where the findings live.
+	 * - findings:    where the findings live.
 	 * - scanner:     array( class, method ) to produce fresh findings. Takes an
 	 *                optional findings array, for a recheck.
 	 * - column:      heading for the first table column.
@@ -68,140 +69,140 @@ class Validation {
 	 */
 	private const TOOL_TABS = array(
 		'queer_checker'     => array(
-			'name'      => 'QIRL Characters have Queer Actors',
-			'desc'      => 'Checks that all characters with queer actors have the queer cliché, and all actors with queer characters are, in fact, queer.',
-			'option'    => 'queercheck',
-			'transient' => Queers::TRANSIENT_QUEERCHECK,
-			'scanner'   => array( Queers::class, 'find_queer_chars' ),
-			'column'    => 'Character',
-			'clean'     => "Every character's queerness matches their actors.",
-			'dirty'     => array(
+			'name'     => 'QIRL Characters have Queer Actors',
+			'desc'     => 'Checks that all characters with queer actors have the queer cliché, and all actors with queer characters are, in fact, queer.',
+			'option'   => 'queercheck',
+			'findings' => Queers::FINDINGS_QUEERCHECK,
+			'scanner'  => array( Queers::class, 'find_queer_chars' ),
+			'column'   => 'Character',
+			'clean'    => "Every character's queerness matches their actors.",
+			'dirty'    => array(
 				'The following character needs your attention. Please edit the actor or character queerness as indicated.',
 				'The following characters need your attention. Please edit the actor or character queerness as indicated.',
 			),
 		),
 		'dupe_checker'      => array(
-			'name'      => 'Duplicate Actors and Shows',
-			'desc'      => 'Actors and Shows that are duplicates.',
-			'option'    => 'duplicates',
-			'transient' => Dupes::TRANSIENT_DUPES,
-			'scanner'   => array( Dupes::class, 'find_duplicates' ),
-			'column'    => 'Duplicate',
-			'clean'     => 'We have no duplicate content!',
-			'dirty'     => array(
+			'name'     => 'Duplicate Actors and Shows',
+			'desc'     => 'Actors and Shows that are duplicates.',
+			'option'   => 'duplicates',
+			'findings' => Dupes::FINDINGS_DUPES,
+			'scanner'  => array( Dupes::class, 'find_duplicates' ),
+			'column'   => 'Duplicate',
+			'clean'    => 'We have no duplicate content!',
+			'dirty'    => array(
 				"The following duplicate has been found. Please review and update as needed. If the flagged show/actor is not a duplicate, edit it and check the 'Not a Duplicate' flag.",
 				"The following duplicates have been found. Please review and update as needed. If a flagged show/actor is not a duplicate, edit it and check the 'Not a Duplicate' flag.",
 			),
 		),
 		'byq_checker'       => array(
-			'name'      => 'Bury Your Queers',
-			'desc'      => 'Checks all characters with death cliché have proper death year meta data and shows have dead-queers trope. This may be okay, because Sara Lance.',
-			'option'    => 'byq_problems',
-			'transient' => Characters::TRANSIENT_BYQ,
-			'scanner'   => array( Characters::class, 'find_byq_problems' ),
-			'column'    => 'Character',
-			'clean'     => 'All the death data looks good and the data looks sane.',
-			'dirty'     => array(
+			'name'     => 'Bury Your Queers',
+			'desc'     => 'Checks all characters with death cliché have proper death year meta data and shows have dead-queers trope. This may be okay, because Sara Lance.',
+			'option'   => 'byq_problems',
+			'findings' => Characters::FINDINGS_BYQ,
+			'scanner'  => array( Characters::class, 'find_byq_problems' ),
+			'column'   => 'Character',
+			'clean'    => 'All the death data looks good and the data looks sane.',
+			'dirty'    => array(
 				'The following character needs your attention.',
 				'The following characters need your attention.',
 			),
 		),
 		'actor_checker'     => array(
-			'name'      => 'Actors Info',
-			'desc'      => 'Checks that all information for actors appears correct. This includes social media and links.',
-			'option'    => 'actor_problems',
-			'transient' => Actors::TRANSIENT_PROBLEMS,
-			'scanner'   => array( Actors::class, 'find_actors_problems' ),
-			'column'    => 'Actor',
-			'clean'     => 'Every actor has at least one character and their data looks sane.',
-			'dirty'     => array(
+			'name'     => 'Actors Info',
+			'desc'     => 'Checks that all information for actors appears correct. This includes social media and links.',
+			'option'   => 'actor_problems',
+			'findings' => Actors::FINDINGS_PROBLEMS,
+			'scanner'  => array( Actors::class, 'find_actors_problems' ),
+			'column'   => 'Actor',
+			'clean'    => 'Every actor has at least one character and their data looks sane.',
+			'dirty'    => array(
 				'The following actor needs your attention.',
 				'The following actors need your attention.',
 			),
 		),
 		'character_checker' => array(
-			'name'      => 'Characters Info',
-			'desc'      => 'Checks that all information for characters appears correct, like if they have a show and years-on-air added.',
-			'option'    => 'character_problems',
-			'transient' => Characters::TRANSIENT_PROBLEMS,
-			'scanner'   => array( Characters::class, 'find_characters_problems' ),
-			'column'    => 'Character',
-			'clean'     => 'All characters look good and their data looks sane. Even Sara Lance.',
-			'dirty'     => array(
+			'name'     => 'Characters Info',
+			'desc'     => 'Checks that all information for characters appears correct, like if they have a show and years-on-air added.',
+			'option'   => 'character_problems',
+			'findings' => Characters::FINDINGS_PROBLEMS,
+			'scanner'  => array( Characters::class, 'find_characters_problems' ),
+			'column'   => 'Character',
+			'clean'    => 'All characters look good and their data looks sane. Even Sara Lance.',
+			'dirty'    => array(
 				'The following character needs your attention.',
 				'The following characters need your attention.',
 			),
 		),
 		'show_checker'      => array(
-			'name'      => 'Shows Info',
-			'desc'      => 'Checks that all information for shows appears correct. Like do they have characters and ratings etc, does intersectionality seem to match.',
-			'option'    => 'show_problems',
-			'transient' => Shows::TRANSIENT_PROBLEMS,
-			'scanner'   => array( Shows::class, 'find_shows_problems' ),
-			'column'    => 'Show',
-			'clean'     => 'All shows look good and the data looks sane.',
-			'dirty'     => array(
+			'name'     => 'Shows Info',
+			'desc'     => 'Checks that all information for shows appears correct. Like do they have characters and ratings etc, does intersectionality seem to match.',
+			'option'   => 'show_problems',
+			'findings' => Shows::FINDINGS_PROBLEMS,
+			'scanner'  => array( Shows::class, 'find_shows_problems' ),
+			'column'   => 'Show',
+			'clean'    => 'All shows look good and the data looks sane.',
+			'dirty'    => array(
 				'The following show needs your attention.',
 				'The following shows need your attention.',
 			),
-			'note'      => 'Note: Remember that intersectionality is meant to be a <em>positive</em> representation. If it\'s bad disability rep (like Grey\'s Anatomy with Arizona), do not list them.',
+			'note'     => 'Note: Remember that intersectionality is meant to be a <em>positive</em> representation. If it\'s bad disability rep (like Grey\'s Anatomy with Arizona), do not list them.',
 		),
 		'actor_empty'       => array(
-			'name'      => 'Incomplete Actors',
-			'desc'      => 'Actors with no photo or no biography. A completeness report rather than a fault report - a brand new actor legitimately has neither yet.',
-			'option'    => 'actor_empty',
-			'transient' => Actors::TRANSIENT_EMPTY,
-			'scanner'   => array( Actors::class, 'find_actors_incomplete' ),
-			'column'    => 'Actor',
-			'clean'     => 'Every actor has a photo and a biography.',
-			'dirty'     => array(
+			'name'     => 'Incomplete Actors',
+			'desc'     => 'Actors with no photo or no biography. A completeness report rather than a fault report - a brand new actor legitimately has neither yet.',
+			'option'   => 'actor_empty',
+			'findings' => Actors::FINDINGS_EMPTY,
+			'scanner'  => array( Actors::class, 'find_actors_incomplete' ),
+			'column'   => 'Actor',
+			'clean'    => 'Every actor has a photo and a biography.',
+			'dirty'    => array(
 				'The following actor is missing a photo, a biography, or both.',
 				'The following actors are missing a photo, a biography, or both.',
 			),
 		),
 		'actor_imdb'        => array(
-			'name'      => 'Actors missing IMDb',
-			'desc'      => 'Actors who have no IMDb value. This may actually be okay as not all webseries/international shows are listed.',
-			'option'    => 'actor_imdb',
-			'transient' => Actors::TRANSIENT_IMDB,
-			'scanner'   => array( Actors::class, 'find_actors_no_imdb' ),
-			'column'    => 'Actor',
-			'clean'     => 'All actors have an IMDb entry.',
-			'dirty'     => array(
+			'name'     => 'Actors missing IMDb',
+			'desc'     => 'Actors who have no IMDb value. This may actually be okay as not all webseries/international shows are listed.',
+			'option'   => 'actor_imdb',
+			'findings' => Actors::FINDINGS_IMDB,
+			'scanner'  => array( Actors::class, 'find_actors_no_imdb' ),
+			'column'   => 'Actor',
+			'clean'    => 'All actors have an IMDb entry.',
+			'dirty'    => array(
 				"The following actor has invalid IMDb data, or none at all. Not all will be possible to fix, as many webseries and international shows aren't listed on IMDb.",
 				"The following actors have invalid IMDb data, or none at all. Not all will be possible to fix, as many webseries and international shows aren't listed on IMDb.",
 			),
 		),
 		'show_imdb'         => array(
-			'name'      => 'Shows missing IMDb',
-			'desc'      => 'Shows that have no IMDb value. This may actually be okay as not all webseries/international shows are listed.',
-			'option'    => 'show_imdb',
-			'transient' => Shows::TRANSIENT_IMDB,
-			'scanner'   => array( Shows::class, 'find_shows_no_imdb' ),
-			'column'    => 'Show',
-			'clean'     => 'All shows have an IMDb entry. (Web series are exempt from this check, so some may still have none.)',
-			'dirty'     => array(
+			'name'     => 'Shows missing IMDb',
+			'desc'     => 'Shows that have no IMDb value. This may actually be okay as not all webseries/international shows are listed.',
+			'option'   => 'show_imdb',
+			'findings' => Shows::FINDINGS_IMDB,
+			'scanner'  => array( Shows::class, 'find_shows_no_imdb' ),
+			'column'   => 'Show',
+			'clean'    => 'All shows have an IMDb entry. (Web series are exempt from this check, so some may still have none.)',
+			'dirty'    => array(
 				"The following show has invalid IMDb data, or none at all. Not all will be possible to fix, as many webseries and international shows aren't listed on IMDb.",
 				"The following shows have invalid IMDb data, or none at all. Not all will be possible to fix, as many webseries and international shows aren't listed on IMDb.",
 			),
 		),
 		'onair_checker'     => array(
-			'name'      => 'On Air',
-			'desc'      => 'Checks that all shows have the correct on-air status.',
-			'option'    => 'onair_problems',
-			'transient' => OnAir::TRANSIENT_PROBLEMS,
-			'scanner'   => array( OnAir::class, 'find_on_air_problems' ),
+			'name'     => 'On Air',
+			'desc'     => 'Checks that all shows have the correct on-air status.',
+			'option'   => 'onair_problems',
+			'findings' => OnAir::FINDINGS_PROBLEMS,
+			'scanner'  => array( OnAir::class, 'find_on_air_problems' ),
 			// Was "Duplicate", copy-pasted from the duplicates view.
-			'column'    => 'Show',
-			'clean'     => 'All shows have the correct on-air status.',
-			'dirty'     => array(
+			'column'   => 'Show',
+			'clean'    => 'All shows have the correct on-air status.',
+			'dirty'    => array(
 				'The following show has an on-air status that does not match its airdates. Please review and update as needed.',
 				'The following shows have on-air statuses that do not match their airdates. Please review and update as needed.',
 			),
 		),
 		'watch_providers'   => array(
-			'name'      => 'Watch Providers',
-			'desc'      => 'Ways to Watch hosts with no provider term, so the front end is guessing their name. Assign an existing term or create one.',
+			'name'     => 'Watch Providers',
+			'desc'     => 'Ways to Watch hosts with no provider term, so the front end is guessing their name. Assign an existing term or create one.',
 			/*
 			 * Counts hosts with no term, written by Watch_Hosts::scan_unregistered().
 			 *
@@ -212,9 +213,9 @@ class Validation {
 			 * status entry from the `watchhosts` check and their own section at
 			 * the top of the tab, which is louder than a badge anyway.
 			 */
-			'option'    => CPT_Watch_Hosts::STATUS_KEY,
-			'transient' => CPT_Watch_Hosts::TRANSIENT_UNREGISTERED,
-			'render'    => array( Watch_Providers::class, 'make' ),
+			'option'   => CPT_Watch_Hosts::STATUS_KEY,
+			'findings' => CPT_Watch_Hosts::FINDINGS_UNREGISTERED,
+			'render'   => array( Watch_Providers::class, 'make' ),
 		),
 		'watch_hosts'       => array(
 			/*
@@ -228,19 +229,19 @@ class Validation {
 			 * option leading nowhere would be worse than no option. `tab` says
 			 * where its row links instead.
 			 */
-			'name'      => 'Contested Watch Hosts',
-			'desc'      => 'Hosts claimed by more than one provider term. The front end has to pick one, and it picks whichever sorts first by name — stable, but arbitrary. Reported on the Watch Providers tab.',
-			'option'    => Watch_Host_Collisions::STATUS_KEY,
-			'transient' => Watch_Host_Collisions::TRANSIENT_PROBLEMS,
-			'show_tab'  => false,
-			'tab'       => 'watch_providers',
+			'name'     => 'Contested Watch Hosts',
+			'desc'     => 'Hosts claimed by more than one provider term. The front end has to pick one, and it picks whichever sorts first by name — stable, but arbitrary. Reported on the Watch Providers tab.',
+			'option'   => Watch_Host_Collisions::STATUS_KEY,
+			'findings' => Watch_Host_Collisions::FINDINGS_PROBLEMS,
+			'show_tab' => false,
+			'tab'      => 'watch_providers',
 		),
 		'watch_term_check'  => array(
-			'name'      => 'Watch Term Check',
-			'desc'      => 'The other half of Watch Providers: of the terms we do have, do their URLs still work and still belong to that provider? A shut-down service whose domain was resold still answers HTTP 200.',
-			'option'    => Watch_URLs::STATUS_KEY,
-			'transient' => Watch_URLs::TRANSIENT_PROBLEMS,
-			'render'    => array( Watch_Term_Check::class, 'make' ),
+			'name'     => 'Watch Term Check',
+			'desc'     => 'The other half of Watch Providers: of the terms we do have, do their URLs still work and still belong to that provider? A shut-down service whose domain was resold still answers HTTP 200.',
+			'option'   => Watch_URLs::STATUS_KEY,
+			'findings' => Watch_URLs::FINDINGS_PROBLEMS,
+			'render'   => array( Watch_Term_Check::class, 'make' ),
 		),
 	);
 
@@ -291,32 +292,36 @@ class Validation {
 	 * The badge in the picker, the Current Status table on the intro, and the tab
 	 * body itself all read this, so none of them can contradict another.
 	 *
-	 * **Counted from the findings transient, not from the status option.** The
+	 * **Counted from the findings themselves, not from the status option.** The
 	 * status option never expires and the findings do, so a count read from the
 	 * option could advertise a check whose detail had gone -- which is exactly
 	 * what "Watch Term Check (47)" over an empty report was. Nine tabs hid it by
-	 * silently re-scanning on a cold cache; the one check too slow to do that
-	 * showed it plainly.
+	 * silently re-scanning when the findings were missing; the one check too slow
+	 * to do that showed it plainly.
 	 *
-	 * No more expensive than the option it replaced: Status::all() already reads
-	 * one non-autoloaded option per check, and a transient is an option. Memoised
-	 * anyway, because the picker and the intro table both want it.
+	 * No more expensive than the status option it replaced: both are one
+	 * non-autoloaded option per check. Memoised anyway, because the picker and the
+	 * intro table both want it.
 	 *
 	 * `cached` is the third state the count alone cannot express: an empty array
 	 * means the check ran and found nothing, `false` means there is nothing to
 	 * read. "Clean" and "never run" deserve different words.
 	 *
-	 * Read through `get_stored()`, not `get_transient()`: findings are a store, not
-	 * a cache, and `get_transient()` returns false whenever
-	 * `LWTV_DISABLE_TRANSIENTS` is set -- which a development environment sets on
-	 * purpose. See _Components\Transients::get_stored().
+	 * Read through `Findings_Store`, which is an option rather than a transient
+	 * precisely so this read cannot come back empty for reasons that have nothing
+	 * to do with the data: a development environment setting
+	 * `LWTV_DISABLE_TRANSIENTS`, or -- the production bug -- WP-CLI and web
+	 * requests not sharing an object cache tier. See Debugger\Findings_Store.
 	 *
 	 * `stored` and `last` come from the status option and remain the fallback for
-	 * when the findings really are gone: a fresh database copy brings options
-	 * across but not transients, and the transient expires while the option does
-	 * not. The tab picker still badges only `count`, so it never advertises a
-	 * number whose detail has gone; the overview shows `stored` and says when it is
-	 * from.
+	 * when the findings really are gone. One reason for that, not two, now that
+	 * both are options: the findings expire and the status entry does not, so a
+	 * check nobody has looked at in ten days has a count on record and no detail
+	 * behind it. (The other reason used to be that a fresh database copy brought
+	 * options across but not transients. It no longer applies -- a copy now brings
+	 * the findings too.) The tab picker still badges only `count`, so it never
+	 * advertises a number whose detail has gone; the overview shows `stored` and
+	 * says when it is from.
 	 *
 	 * @return array<string, array{count: int, new: int, cached: bool, stored: int, last: int}> Keyed by tab slug.
 	 */
@@ -329,8 +334,8 @@ class Validation {
 		$options = is_array( self::$options ) && ! empty( self::$options ) ? self::$options : Status::all();
 
 		foreach ( self::TOOL_TABS as $tab => $value ) {
-			$items = ( ! empty( $value['transient'] ) )
-				? lwtv_plugin()->get_stored( $value['transient'] )
+			$items = ( ! empty( $value['findings'] ) )
+				? Findings_Store::load( $value['findings'] )
 				: false;
 
 			$rows = is_array( $items ) ? $items : array();
@@ -626,9 +631,8 @@ class Validation {
 								 *
 								 * The third state matters because the findings can
 								 * genuinely be gone while the status option remains:
-								 * a fresh database copy brings options across but
-								 * not transients, and the transient expires while
-								 * the option does not. Reporting a dozen checks as
+								 * findings expire after ten days and the status
+								 * entry never does. Reporting a dozen checks as
 								 * never run while the site knows what they last
 								 * found would be worse than saying so and dating it.
 								 */

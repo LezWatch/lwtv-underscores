@@ -24,6 +24,27 @@
             "allow_in_bindings": 0
         },
         {
+            "key": "field_lwtv_lezwatchurls_setting_confirmed_name",
+            "label": "Confirmed Provider",
+            "name": "lezwatchurls_setting_confirmed_name",
+            "aria-label": "",
+            "type": "true_false",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "message": "The site behind this provider's URL(s) publishes a different name than this term, and that has been confirmed as fine (a platform-hosted page, for instance) rather than a sign the provider changed. Stops the Watch Term Check from flagging a name mismatch on this term.",
+            "default_value": 0,
+            "ui": 1,
+            "ui_on_text": "",
+            "ui_off_text": "",
+            "allow_in_bindings": 0
+        },
+        {
             "key": "field_lwtv_lezwatchurls_all",
             "label": "URLs",
             "name": "lezwatchurls_all",
@@ -87,5 +108,5 @@
     "display_title": "Watch URL Settings",
     "allow_ai_access": false,
     "ai_description": "",
-    "modified": 1781717460
+    "modified": 1788295167
 }

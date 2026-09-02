@@ -17,6 +17,7 @@ use LWTV\Debugger\Build\Findings;
 use LWTV\Debugger\Build\Issue_Registry;
 use LWTV\Debugger\Characters;
 use LWTV\Debugger\Dupes;
+use LWTV\Debugger\Findings_Store;
 use LWTV\Debugger\Queers;
 use LWTV\Debugger\Shows;
 use LWTV\Debugger\OnAir;
@@ -76,136 +77,136 @@ class WP_CLI_LWTV_Debug {
 	/**
 	 * The check registry.
 	 *
-	 * One entry per debug type. Keeps the transient key, the scanner callable,
+	 * One entry per debug type. Keeps the findings key, the scanner callable,
 	 * and the display copy in a single place so the admin views, the cron
 	 * rotation, and this command can never drift apart on key names again.
 	 *
-	 * - transient: the transient constant on the scanner class.
-	 * - status:    key inside the debugger status option, for cache-age reporting.
-	 * - scanner:   array( class, method ) run to produce fresh findings.
-	 * - fixer:     optional array( class, method ) called per item with --fix-it.
-	 * - columns:   optional output columns. Defaults to DEFAULT_COLUMNS, which
-	 *              suits the post-based checks; term-based findings carry
-	 *              different keys and a post permalink they do not have.
+	 * - findings: the findings-key constant on the scanner class.
+	 * - status:   key inside the debugger status option, for cache-age reporting.
+	 * - scanner:  array( class, method ) run to produce fresh findings.
+	 * - fixer:    optional array( class, method ) called per item with --fix-it.
+	 * - columns:  optional output columns. Defaults to DEFAULT_COLUMNS, which
+	 *             suits the post-based checks; term-based findings carry
+	 *             different keys and a post permalink they do not have.
 	 *
 	 * @return array<string, array<string, mixed>>
 	 */
 	private function get_checks(): array {
 		return array(
 			'queers'      => array(
-				'transient' => Queers::TRANSIENT_QUEERCHECK,
-				'status'    => 'queercheck',
-				'scanner'   => array( Queers::class, 'find_queer_chars' ),
-				'running'   => 'Running queer consistency check...',
-				'clean'     => 'Excellent! All queer character/actor relationships are consistent.',
-				'dirty'     => 'character(s) need attention for queer consistency.',
-				'done'      => 'Queer consistency check complete.',
+				'findings' => Queers::FINDINGS_QUEERCHECK,
+				'status'   => 'queercheck',
+				'scanner'  => array( Queers::class, 'find_queer_chars' ),
+				'running'  => 'Running queer consistency check...',
+				'clean'    => 'Excellent! All queer character/actor relationships are consistent.',
+				'dirty'    => 'character(s) need attention for queer consistency.',
+				'done'     => 'Queer consistency check complete.',
 			),
 			'dupes'       => array(
-				'transient' => Dupes::TRANSIENT_DUPES,
-				'status'    => 'duplicates',
-				'scanner'   => array( Dupes::class, 'find_duplicates' ),
-				'running'   => 'Running duplicate check...',
-				'clean'     => 'Excellent! No duplicate actors or shows found.',
-				'dirty'     => 'duplicate(s) found.',
-				'done'      => 'Duplicate check complete.',
+				'findings' => Dupes::FINDINGS_DUPES,
+				'status'   => 'duplicates',
+				'scanner'  => array( Dupes::class, 'find_duplicates' ),
+				'running'  => 'Running duplicate check...',
+				'clean'    => 'Excellent! No duplicate actors or shows found.',
+				'dirty'    => 'duplicate(s) found.',
+				'done'     => 'Duplicate check complete.',
 			),
 			'byq'         => array(
-				'transient' => Characters::TRANSIENT_BYQ,
-				'status'    => 'byq_problems',
-				'scanner'   => array( Characters::class, 'find_byq_problems' ),
-				'running'   => 'Running BYQ (Bury Your Queers) check...',
-				'clean'     => 'Excellent! All death data looks good and consistent.',
-				'dirty'     => 'character(s) have BYQ-related issues.',
-				'done'      => 'BYQ check complete.',
+				'findings' => Characters::FINDINGS_BYQ,
+				'status'   => 'byq_problems',
+				'scanner'  => array( Characters::class, 'find_byq_problems' ),
+				'running'  => 'Running BYQ (Bury Your Queers) check...',
+				'clean'    => 'Excellent! All death data looks good and consistent.',
+				'dirty'    => 'character(s) have BYQ-related issues.',
+				'done'     => 'BYQ check complete.',
 			),
 			'actors'      => array(
-				'transient' => Actors::TRANSIENT_PROBLEMS,
-				'status'    => 'actor_problems',
-				'scanner'   => array( Actors::class, 'find_actors_problems' ),
-				'fixer'     => array( Actors::class, 'fix_actor_data' ),
-				'running'   => 'Running actor data completeness check...',
-				'clean'     => 'Excellent! All actor data is complete and correct.',
-				'dirty'     => 'actor(s) need attention. Use --fix-it to repair the ones marked fixable.',
-				'done'      => 'Actor check complete.',
+				'findings' => Actors::FINDINGS_PROBLEMS,
+				'status'   => 'actor_problems',
+				'scanner'  => array( Actors::class, 'find_actors_problems' ),
+				'fixer'    => array( Actors::class, 'fix_actor_data' ),
+				'running'  => 'Running actor data completeness check...',
+				'clean'    => 'Excellent! All actor data is complete and correct.',
+				'dirty'    => 'actor(s) need attention. Use --fix-it to repair the ones marked fixable.',
+				'done'     => 'Actor check complete.',
 			),
 			'chars'       => array(
-				'transient' => Characters::TRANSIENT_PROBLEMS,
-				'status'    => 'character_problems',
-				'scanner'   => array( Characters::class, 'find_characters_problems' ),
-				'fixer'     => array( Characters::class, 'fix_character_data' ),
-				'running'   => 'Running character data completeness check...',
-				'clean'     => 'Excellent! All character data is complete and correct.',
-				'dirty'     => 'character(s) need attention. Use --fix-it to repair the ones marked fixable.',
-				'done'      => 'Character check complete.',
+				'findings' => Characters::FINDINGS_PROBLEMS,
+				'status'   => 'character_problems',
+				'scanner'  => array( Characters::class, 'find_characters_problems' ),
+				'fixer'    => array( Characters::class, 'fix_character_data' ),
+				'running'  => 'Running character data completeness check...',
+				'clean'    => 'Excellent! All character data is complete and correct.',
+				'dirty'    => 'character(s) need attention. Use --fix-it to repair the ones marked fixable.',
+				'done'     => 'Character check complete.',
 			),
 			'shows'       => array(
-				'transient' => Shows::TRANSIENT_PROBLEMS,
-				'status'    => 'show_problems',
-				'scanner'   => array( Shows::class, 'find_shows_problems' ),
-				'fixer'     => array( Shows::class, 'fix_show_data' ),
-				'running'   => 'Running show data completeness check...',
-				'clean'     => 'Excellent! All show data is complete and correct.',
-				'dirty'     => 'show(s) need attention. Use --fix-it to repair the ones marked fixable.',
-				'done'      => 'Show check complete.',
+				'findings' => Shows::FINDINGS_PROBLEMS,
+				'status'   => 'show_problems',
+				'scanner'  => array( Shows::class, 'find_shows_problems' ),
+				'fixer'    => array( Shows::class, 'fix_show_data' ),
+				'running'  => 'Running show data completeness check...',
+				'clean'    => 'Excellent! All show data is complete and correct.',
+				'dirty'    => 'show(s) need attention. Use --fix-it to repair the ones marked fixable.',
+				'done'     => 'Show check complete.',
 			),
 			'actor_empty' => array(
-				'transient' => Actors::TRANSIENT_EMPTY,
-				'status'    => 'actor_empty',
-				'scanner'   => array( Actors::class, 'find_actors_incomplete' ),
-				'running'   => 'Running actor completeness check...',
-				'clean'     => 'Excellent! Every actor has a photo and a biography.',
-				'dirty'     => 'actor(s) missing a photo or a biography.',
-				'done'      => 'Actor completeness check complete.',
+				'findings' => Actors::FINDINGS_EMPTY,
+				'status'   => 'actor_empty',
+				'scanner'  => array( Actors::class, 'find_actors_incomplete' ),
+				'running'  => 'Running actor completeness check...',
+				'clean'    => 'Excellent! Every actor has a photo and a biography.',
+				'dirty'    => 'actor(s) missing a photo or a biography.',
+				'done'     => 'Actor completeness check complete.',
 			),
 			'actor_imdb'  => array(
-				'transient' => Actors::TRANSIENT_IMDB,
-				'status'    => 'actor_imdb',
-				'scanner'   => array( Actors::class, 'find_actors_no_imdb' ),
-				'running'   => 'Running actor IMDb check...',
-				'clean'     => 'Excellent! All actors have IMDb data.',
-				'dirty'     => 'actor(s) missing IMDb data.',
-				'done'      => 'Actor IMDb check complete.',
+				'findings' => Actors::FINDINGS_IMDB,
+				'status'   => 'actor_imdb',
+				'scanner'  => array( Actors::class, 'find_actors_no_imdb' ),
+				'running'  => 'Running actor IMDb check...',
+				'clean'    => 'Excellent! All actors have IMDb data.',
+				'dirty'    => 'actor(s) missing IMDb data.',
+				'done'     => 'Actor IMDb check complete.',
 			),
 			'show_imdb'   => array(
-				'transient' => Shows::TRANSIENT_IMDB,
-				'status'    => 'show_imdb',
-				'scanner'   => array( Shows::class, 'find_shows_no_imdb' ),
-				'running'   => 'Running show IMDb check...',
-				'clean'     => 'Excellent! All shows have IMDb data.',
-				'dirty'     => 'show(s) missing IMDb data.',
-				'done'      => 'Show IMDb check complete.',
+				'findings' => Shows::FINDINGS_IMDB,
+				'status'   => 'show_imdb',
+				'scanner'  => array( Shows::class, 'find_shows_no_imdb' ),
+				'running'  => 'Running show IMDb check...',
+				'clean'    => 'Excellent! All shows have IMDb data.',
+				'dirty'    => 'show(s) missing IMDb data.',
+				'done'     => 'Show IMDb check complete.',
 			),
 			'watchurls'   => array(
-				'transient' => Watch_URLs::TRANSIENT_PROBLEMS,
-				'status'    => Watch_URLs::STATUS_KEY,
-				'scanner'   => array( Watch_URLs::class, 'find_bad_watch_urls' ),
-				'columns'   => array( 'term', 'url', 'health', 'shows', 'problem' ),
-				'running'   => 'Checking every URL on every watch provider term...',
-				'clean'     => 'Excellent! Every watch provider URL answered and still looks like its provider.',
-				'dirty'     => 'provider URL(s) need attention.',
-				'done'      => 'Watch provider URL check complete.',
-				'slow'      => true,
+				'findings' => Watch_URLs::FINDINGS_PROBLEMS,
+				'status'   => Watch_URLs::STATUS_KEY,
+				'scanner'  => array( Watch_URLs::class, 'find_bad_watch_urls' ),
+				'columns'  => array( 'term', 'url', 'health', 'shows', 'problem' ),
+				'running'  => 'Checking every URL on every watch provider term...',
+				'clean'    => 'Excellent! Every watch provider URL answered and still looks like its provider.',
+				'dirty'    => 'provider URL(s) need attention.',
+				'done'     => 'Watch provider URL check complete.',
+				'slow'     => true,
 			),
 			'watchhosts'  => array(
-				'transient' => Watch_Host_Collisions::TRANSIENT_PROBLEMS,
-				'status'    => Watch_Host_Collisions::STATUS_KEY,
-				'scanner'   => array( Watch_Host_Collisions::class, 'find_host_collisions' ),
-				'columns'   => array( 'term', 'url', 'shows', 'problem' ),
-				'running'   => 'Looking for hosts claimed by more than one provider term...',
-				'clean'     => 'Excellent! Every watch host resolves to exactly one provider term.',
-				'dirty'     => 'host(s) claimed by more than one term.',
-				'done'      => 'Watch host collision check complete.',
+				'findings' => Watch_Host_Collisions::FINDINGS_PROBLEMS,
+				'status'   => Watch_Host_Collisions::STATUS_KEY,
+				'scanner'  => array( Watch_Host_Collisions::class, 'find_host_collisions' ),
+				'columns'  => array( 'term', 'url', 'shows', 'problem' ),
+				'running'  => 'Looking for hosts claimed by more than one provider term...',
+				'clean'    => 'Excellent! Every watch host resolves to exactly one provider term.',
+				'dirty'    => 'host(s) claimed by more than one term.',
+				'done'     => 'Watch host collision check complete.',
 			),
 			'on_air'      => array(
-				'transient' => OnAir::TRANSIENT_PROBLEMS,
-				'status'    => 'onair_problems',
-				'scanner'   => array( OnAir::class, 'find_on_air_problems' ),
-				'fixer'     => array( OnAir::class, 'fix_on_air_status' ),
-				'running'   => 'Running on air check...',
-				'clean'     => 'All shows have the correct on air status.',
-				'dirty'     => 'show(s) have incorrect on-air status. Use --fix-it to attempt to fix these issues.',
-				'done'      => 'On air check complete.',
+				'findings' => OnAir::FINDINGS_PROBLEMS,
+				'status'   => 'onair_problems',
+				'scanner'  => array( OnAir::class, 'find_on_air_problems' ),
+				'fixer'    => array( OnAir::class, 'fix_on_air_status' ),
+				'running'  => 'Running on air check...',
+				'clean'    => 'All shows have the correct on air status.',
+				'dirty'    => 'show(s) have incorrect on-air status. Use --fix-it to attempt to fix these issues.',
+				'done'     => 'On air check complete.',
 			),
 		);
 	}
@@ -320,7 +321,7 @@ class WP_CLI_LWTV_Debug {
 	private function run_check( array $check, bool $fix_it ): void {
 		\WP_CLI::log( $check['running'] );
 
-		$items      = $this->force ? false : lwtv_plugin()->get_stored( $check['transient'] );
+		$items      = $this->force ? false : Findings_Store::load( $check['findings'] );
 		$from_cache = false !== $items;
 
 		if ( $from_cache ) {
@@ -402,7 +403,7 @@ class WP_CLI_LWTV_Debug {
 		$progress->finish();
 
 		// The findings we just repaired are now stale.
-		lwtv_plugin()->delete_transient( $check['transient'] );
+		Findings_Store::forget( $check['findings'] );
 
 		if ( $failed ) {
 			\WP_CLI::warning( $failed . ' item(s) could not be fixed automatically.' );
@@ -465,7 +466,7 @@ class WP_CLI_LWTV_Debug {
 	 * Prefers the per-issue repairs the row names in `fixable`, which is what
 	 * makes the fix specific: only the issues actually found get repaired, and
 	 * one row can carry several. Rows written before findings were typed -- the
-	 * transients last a week -- have no `fixable` key, so those fall back to the
+	 * findings last ten days -- have no `fixable` key, so those fall back to the
 	 * check-level fixer. A check with neither is simply not repairable.
 	 *
 	 * @param  array $check Check definition.
@@ -525,7 +526,7 @@ class WP_CLI_LWTV_Debug {
 	/**
 	 * Rows with their problems flattened to plain text.
 	 *
-	 * A copy: the transient keeps the admin-shaped `problem`, because the admin
+	 * A copy: the stored findings keep the admin-shaped `problem`, because the admin
 	 * table wants the markup this strips. Applied for every output format, not
 	 * just `table` -- nothing consuming the JSON or CSV wants `</br>` either.
 	 *

@@ -14,6 +14,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 	define( 'ABSPATH', __DIR__ . '/' );
 }
 
+/*
+ * WordPress's time constants. Plain deterministic integers, not a bootstrap:
+ * class constants like Findings_Store::TTL are defined in terms of them, and a
+ * test that reads one would otherwise fatal on an undefined constant.
+ */
+if ( ! defined( 'DAY_IN_SECONDS' ) ) {
+	define( 'DAY_IN_SECONDS', 24 * 60 * 60 );
+}
+
 require_once __DIR__ . '/../vendor/autoload.php';
 
 /*
@@ -85,6 +94,17 @@ require_once __DIR__ . '/../plugins/lwtv-plugin/php/calendar/build/class-agenda.
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/debugger/build/class-issue-registry.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/debugger/build/class-findings.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/debugger/build/class-baseline.php';
+/*
+ * from_findings() needs get_permalink(); from_term_findings(), the half that is
+ * tested, is pure and calls nothing.
+ */
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/debugger/format/class-rows.php';
+/*
+ * Requiring this only declares the class. Its option reads and writes are never
+ * touched from here -- the tests cover expired(), remaining() and option_name(),
+ * which are pure arithmetic and string work.
+ */
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/debugger/class-findings-store.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/debugger/build/class-show-rules.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/debugger/build/class-character-rules.php';
 /*

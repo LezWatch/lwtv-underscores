@@ -691,7 +691,7 @@ class Export_JSON {
 		}
 
 		// Let's make sure.
-		if ( isset( $page ) && CPT_Actors::SLUG === get_post_type( $page->ID ) ) {
+		if ( $page instanceof \WP_Post && CPT_Actors::SLUG === get_post_type( $page ) && 'publish' === get_post_status( $page ) ) {
 
 			// If the actor has asked to be private, we respect that.
 			if ( lwtv_plugin()->hide_actor_data( $page->ID, 'all' ) ) {
@@ -932,10 +932,10 @@ class Export_JSON {
 				FROM {$wpdb->term_relationships} tr
 				INNER JOIN {$wpdb->term_taxonomy} tt ON tr.term_taxonomy_id = tt.term_taxonomy_id
 				INNER JOIN {$wpdb->terms} t ON tt.term_id = t.term_id
-				WHERE tr.object_id IN ($ids_string) AND tt.taxonomy IN ($tax_placeholders)";
+				WHERE tr.object_id IN ($id_placeholders) AND tt.taxonomy IN ($tax_placeholders)";
 
 			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- IDs are sanitized; taxonomies are internal constants
-			$tax_results = $wpdb->get_results( $wpdb->prepare( $tax_query, ...$taxonomies ) );
+			$tax_results = $wpdb->get_results( $wpdb->prepare( $tax_query, ...array_merge( $post_ids, $taxonomies ) ) );
 
 			foreach ( $tax_results as $row ) {
 				$bulk_data[ $row->object_id ]['taxonomies'][ $row->taxonomy ][] = array(

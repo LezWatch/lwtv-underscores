@@ -13,7 +13,7 @@
  * The two classes are cached differently, on purpose.
  *
  * Hosts needing a term are a **stored worklist** (Watch_Hosts::scan_unregistered,
- * TRANSIENT_UNREGISTERED) behind the same Run Scan / Recheck button every other
+ * FINDINGS_UNREGISTERED) behind the same Run Scan / Recheck button every other
  * validator tab has, with the same nonce and field names. Recheck re-tests only
  * the listed hosts and drops the ones that now have a term; it does not look for
  * hosts that have appeared since. That is what makes it a worklist rather than a
@@ -29,7 +29,7 @@
  *
  * The `watchhosts` debugger check (Debugger\Watch_Host_Collisions) covers the
  * same collisions for cron, the CLI and this tab's count badge, which need a
- * stored number. This tab does not read its transient.
+ * stored number. This tab does not read its findings.
  *
  * Three actions, and they are not the same shape:
  *
@@ -48,6 +48,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 use LWTV\CPTs\Shows\Watching\Watch_Host_Names;
 use LWTV\CPTs\Shows\Watching\Watch_Hosts;
 use LWTV\CPTs\Shows\Watching\Watch_Term_Match;
+use LWTV\Debugger\Findings_Store;
 use LWTV\Theme\Ways_To_Watch as Theme_Ways_To_Watch;
 
 class Watch_Providers {
@@ -104,7 +105,7 @@ class Watch_Providers {
 	public static function make(): void {
 		self::show_notice();
 
-		$items = lwtv_plugin()->get_stored( Watch_Hosts::TRANSIENT_UNREGISTERED );
+		$items = Findings_Store::load( Watch_Hosts::FINDINGS_UNREGISTERED );
 
 		/*
 		 * Same shape as Validator\Report, deliberately: same nonce naming, same
@@ -123,13 +124,17 @@ class Watch_Providers {
 		$items        = is_array( $items ) ? $items : array();
 		$unregistered = array();
 
+		// Keyed by host, but the whole row is kept: the Shows cell needs the post
+		// IDs alongside the count, and flattening to a count threw those away.
 		foreach ( $items as $item ) {
 			$host = (string) ( $item['host'] ?? '' );
 
 			if ( '' !== $host ) {
-				$unregistered[ $host ] = (int) ( $item['shows'] ?? 0 );
+				$unregistered[ $host ] = $item;
 			}
 		}
+
+		Affected_Shows::prime( $unregistered );
 
 		// Collisions stay live. They are a byproduct of the host map the scan
 		// already built, so caching them would add staleness to something free,
@@ -173,10 +178,10 @@ class Watch_Providers {
 					 */
 					?>
 					<colgroup>
-						<col style="width:26%" />
-						<col style="width:8%" />
-						<col style="width:22%" />
-						<col style="width:44%" />
+						<col style="width:24%" />
+						<col style="width:14%" />
+						<col style="width:20%" />
+						<col style="width:42%" />
 					</colgroup>
 					<thead><tr>
 						<th class="manage-column column-title column-primary" scope="col"><?php esc_html_e( 'Host', 'lwtv' ); ?></th>
@@ -187,9 +192,9 @@ class Watch_Providers {
 					<tbody>
 						<?php
 						$number = 0;
-						foreach ( $unregistered as $host => $count ) {
+						foreach ( $unregistered as $host => $row ) {
 							++$number;
-							self::render_row( $host, $count, $can_manage, 0 === $number % 2, $terms );
+							self::render_row( (string) $host, (array) $row, $can_manage, 0 === $number % 2, $terms );
 						}
 						?>
 					</tbody>
@@ -312,7 +317,7 @@ class Watch_Providers {
 	 * Hosts claimed by more than one provider term.
 	 *
 	 * Read live from the same host map the list above uses, not from the
-	 * `watchhosts` check's transient — so this can never disagree with what the
+	 * `watchhosts` check's findings — so this can never disagree with what the
 	 * front end is actually resolving. That check exists to put a number in the
 	 * status option for cron, the CLI and this tab's badge.
 	 *
@@ -378,12 +383,13 @@ class Watch_Providers {
 	 * One table row.
 	 *
 	 * @param string $host       Hostname.
-	 * @param int    $count      Shows using it.
+	 * @param array  $row        Worklist row: the show count and the IDs behind it.
 	 * @param bool   $can_manage Whether the user may create terms.
 	 * @param bool   $alt        Zebra striping.
+	 * @param array  $terms      term_id => name, for the suggestion match.
 	 * @return void
 	 */
-	private static function render_row( string $host, int $count, bool $can_manage, bool $alt, array $terms = array() ): void {
+	private static function render_row( string $host, array $row, bool $can_manage, bool $alt, array $terms = array() ): void {
 		$proposed   = Watch_Hosts::proposed_name( $host );
 		$discovered = Watch_Host_Names::get( $host );
 		$slug       = md5( $host );
@@ -404,7 +410,7 @@ class Watch_Providers {
 			<td>
 				<strong><a href="<?php echo esc_url( 'https://' . $host ); ?>" target="_blank" rel="noopener noreferrer"><?php echo esc_html( $host ); ?></a></strong>
 			</td>
-			<td><?php echo esc_html( (string) $count ); ?></td>
+			<td><?php Affected_Shows::cell( (array) ( $row['show_ids'] ?? array() ), (int) ( $row['shows'] ?? 0 ) ); ?></td>
 			<td>
 				<?php echo esc_html( $proposed ); ?>
 				<span class="lwtv-watch-provenance">
@@ -689,7 +695,7 @@ class Watch_Providers {
 	/**
 	 * The bounded "go and ask the hosts" form.
 	 *
-	 * @param array $unregistered host => count.
+	 * @param array $unregistered host => worklist row.
 	 * @return void
 	 */
 	private static function render_lookup_form( array $unregistered ): void {

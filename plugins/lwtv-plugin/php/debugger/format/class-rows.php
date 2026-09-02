@@ -13,7 +13,7 @@
  * them. Because nothing was removed, findings cached before this change stay
  * readable and simply have no `issues` key; callers treat that as "no per-issue
  * information" rather than an error, which avoids throwing away a week of
- * scans for a transient key bump.
+ * scans for a findings key bump.
  *
  * @package LWTV
  */
@@ -93,7 +93,7 @@ class Rows {
 			);
 
 			// The keys this check's own renderer and CLI columns read.
-			foreach ( array( 'url', 'term', 'shows', 'health' ) as $key ) {
+			foreach ( array( 'url', 'term', 'shows', 'health', 'show_ids', 'reason' ) as $key ) {
 				if ( isset( $context[ $key ] ) ) {
 					$row[ $key ] = $context[ $key ];
 				}
