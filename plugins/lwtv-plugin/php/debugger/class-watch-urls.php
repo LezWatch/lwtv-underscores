@@ -333,11 +333,49 @@ class Watch_URLs {
 	 * @return int Number of rows dropped.
 	 */
 	public function drop_reason( array $all_items, int $term_id, string $reason ): int {
+		return $this->drop_where(
+			$all_items,
+			static fn ( array $item ): bool => (int) ( $item['id'] ?? 0 ) === $term_id
+				&& (string) ( $item['reason'] ?? '' ) === $reason
+		);
+	}
+
+	/**
+	 * Drop every stored row for one term, whatever it was flagged for. Used
+	 * when the term itself is gone.
+	 *
+	 * A term can hold several URLs and each is its own finding, so retiring one
+	 * term can clear more than one row. Nothing here deletes the term; the caller
+	 * has already done that and is bringing the report into line with it.
+	 *
+	 * @param  array $all_items Every row currently in the findings store.
+	 * @param  int   $term_id   Term whose rows to drop.
+	 * @return int Number of rows dropped.
+	 */
+	public function drop_term( array $all_items, int $term_id ): int {
+		return $this->drop_where(
+			$all_items,
+			static fn ( array $item ): bool => (int) ( $item['id'] ?? 0 ) === $term_id
+		);
+	}
+
+	/**
+	 * Drop the stored rows a predicate matches, and re-record the count.
+	 *
+	 * The store and the status option are written together or not at all: a
+	 * status entry that disagrees with the findings behind it is how a tab ends
+	 * up badged with a number its own table cannot account for.
+	 *
+	 * @param  array    $all_items Every row currently in the findings store.
+	 * @param  callable $matches   fn( array $item ): bool -- true to drop.
+	 * @return int Number of rows dropped.
+	 */
+	private function drop_where( array $all_items, callable $matches ): int {
 		$merged  = array();
 		$dropped = 0;
 
 		foreach ( $all_items as $item ) {
-			if ( (int) ( $item['id'] ?? 0 ) === $term_id && (string) ( $item['reason'] ?? '' ) === $reason ) {
+			if ( $matches( (array) $item ) ) {
 				++$dropped;
 				continue;
 			}

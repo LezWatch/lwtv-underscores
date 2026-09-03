@@ -257,3 +257,44 @@
 	margin: 0 0 2px;
 	overflow-wrap: break-word;
 }
+
+/* Watch Term Check's second section: flagged URLs on provider terms no
+ * published show reaches.
+ *
+ * Shut by default and visually quieter than the worklist above it, because that
+ * is the whole point of the split -- these rows are worth keeping and are not
+ * worth scrolling past. The summary gets a real hit area and a pointer so it
+ * does not read as a heading someone forgot to link.
+ *
+ * No colours beyond the rule and the muted summary: the tables inside inherit
+ * from whichever wp-admin colour scheme the editor is using.
+ */
+.lwtv-watch-unused {
+	margin: 24px 0 0;
+	border-top: 1px solid #dcdcde;
+	padding-top: 12px;
+}
+
+.lwtv-watch-unused > summary {
+	cursor: pointer;
+	padding: 4px 0;
+	color: #646970;
+	font-size: 14px;
+	font-weight: 600;
+}
+
+.lwtv-watch-unused > .description {
+	max-width: 820px;
+}
+
+/* Deletes a term, so it should not look like the neutral row actions beside
+ * it. wp-admin's own destructive red, matching the Delete link on a term list
+ * table. */
+.lwtv-watch-retire {
+	color: #b32d2e;
+}
+
+.lwtv-watch-retire:hover,
+.lwtv-watch-retire:focus {
+	color: #8a2424;
+}

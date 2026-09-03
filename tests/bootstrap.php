@@ -99,6 +99,8 @@ require_once __DIR__ . '/../plugins/lwtv-plugin/php/debugger/build/class-baselin
  * tested, is pure and calls nothing.
  */
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/debugger/format/class-rows.php';
+// Pure: partitions rows on a count already in the row, calls nothing.
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/debugger/format/class-triage.php';
 /*
  * Requiring this only declares the class. Its option reads and writes are never
  * touched from here -- the tests cover expired(), remaining() and option_name(),

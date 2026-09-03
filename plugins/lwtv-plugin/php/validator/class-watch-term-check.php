@@ -19,6 +19,7 @@ use LWTV\Admin_Menu\Validation;
 use LWTV\CPTs\Shows\Watching\Watch_Hosts;
 use LWTV\CPTs\Shows\Watching\Watch_Url_Health;
 use LWTV\Debugger\Findings_Store;
+use LWTV\Debugger\Format\Triage;
 use LWTV\Debugger\Watch_URLs;
 use LWTV\Schedulers\Watch_URLs_Task;
 use LWTV\Theme\Ways_To_Watch as Theme_Ways_To_Watch;
@@ -58,6 +59,19 @@ class Watch_Term_Check {
 	 * row clears the name-mismatch review on every URL that term has.
 	 */
 	const ACTION_CONFIRM_PROVIDER = 'lwtv_watch_confirm_provider';
+
+	/**
+	 * admin-post action for retiring a provider term nothing reaches.
+	 *
+	 * Offered only on rows Triage put in the unused pile, because it is the only
+	 * action that can clear one. Re-checking a URL on a term no show reaches
+	 * cannot help: whether it answers or not, nothing is pointing at it.
+	 *
+	 * Deletes the term, which is why the handler re-derives the show count live
+	 * rather than trusting the stored row, and refuses outright if the term
+	 * still holds object relationships.
+	 */
+	const ACTION_RETIRE = 'lwtv_watch_retire_term';
 
 	/**
 	 * Transient prefix for one-shot admin notices, per user.
@@ -102,6 +116,7 @@ class Watch_Term_Check {
 		add_action( 'admin_post_' . self::ACTION_SCAN, array( $this, 'handle_scan' ) );
 		add_action( 'admin_post_' . self::ACTION_RECHECK_ONE, array( $this, 'handle_recheck_one' ) );
 		add_action( 'admin_post_' . self::ACTION_CONFIRM_PROVIDER, array( $this, 'handle_confirm_provider' ) );
+		add_action( 'admin_post_' . self::ACTION_RETIRE, array( $this, 'handle_retire' ) );
 	}
 
 	/**
@@ -257,44 +272,119 @@ class Watch_Term_Check {
 	/**
 	 * Ran, found problems.
 	 *
+	 * Split, not filtered. A broken URL on a term no published show reaches is a
+	 * real finding, but it is a different finding with a different fix, and
+	 * leaving it interleaved by severity is what made this report hard to work:
+	 * the rows an editor can act on sank under rows where every button on offer
+	 * was the wrong one. See Debugger\Format\Triage.
+	 *
 	 * @param array  $items    Findings.
 	 * @param string $last_run Rendered last-run paragraph.
 	 * @return void
 	 */
 	private static function render_findings( array $items, string $last_run ): void {
-		// 'health', not 'status': status is the baseline's new/open/resolved now.
-		$counts = array_count_values( array_column( $items, 'health' ) );
-		$broken = (int) ( $counts[ Watch_Url_Health::STATUS_BROKEN ] ?? 0 );
+		$split     = Triage::by_impact( $items );
+		$affecting = $split['affecting'];
+		$unused    = $split['unused'];
 
+		// Primed over everything: both tables render a Shows cell.
 		Affected_Shows::prime( $items );
+
+		self::render_summary( $affecting, $unused, $last_run );
+
+		if ( ! empty( $affecting ) ) {
+			self::render_table( $affecting );
+		}
+
+		self::render_recheck_form( count( $items ), count( $unused ) );
+
+		if ( ! empty( $unused ) ) {
+			self::render_unused( $unused );
+		}
+	}
+
+	/**
+	 * The count block above the tables.
+	 *
+	 * Every number here is counted off the rows being rendered rather than
+	 * asserted, so the copy cannot outlive the data it describes -- including the
+	 * case where everything flagged turns out to be on an unused term and there
+	 * is no worklist at all.
+	 *
+	 * @param array  $affecting Rows on terms at least one published show reaches.
+	 * @param array  $unused    Rows on terms nothing reaches.
+	 * @param string $last_run  Rendered last-run paragraph.
+	 * @return void
+	 */
+	private static function render_summary( array $affecting, array $unused, string $last_run ): void {
+		// 'health', not 'status': status is the baseline's new/open/resolved now.
+		$counts  = array_count_values( array_column( $affecting, 'health' ) );
+		$broken  = (int) ( $counts[ Watch_Url_Health::STATUS_BROKEN ] ?? 0 );
+		$live    = count( $affecting );
+		$dormant = count( $unused );
 		?>
 		<div class="lwtv-tools-container lwtv-tools-container__alert">
 			<h3>
-				<span class="dashicons dashicons-warning"></span>
+				<span class="dashicons <?php echo esc_attr( $live ? 'dashicons-warning' : 'dashicons-yes' ); ?>"></span>
 				<?php
-				printf(
-					/* translators: %d: number of URLs with problems. */
-					esc_html( _n( '%d provider URL needs attention', '%d provider URLs need attention', count( $items ), 'lwtv' ) ),
-					count( $items )
-				);
+				if ( $live ) {
+					printf(
+						/* translators: %d: number of URLs with problems that at least one show reaches. */
+						esc_html( _n( '%d provider URL needs attention', '%d provider URLs need attention', $live, 'lwtv' ) ),
+						absint( $live )
+					);
+				} else {
+					esc_html_e( 'Nothing a reader can reach is broken', 'lwtv' );
+				}
 				?>
 			</h3>
 			<div id="lwtv-tools-alerts">
-				<p>
-					<?php
-					printf(
-						/* translators: 1: definitely broken, 2: total findings. */
-						esc_html__( '%1$d of %2$d are definitely broken. The rest answered, but something suggests they may not be the provider any more — a domain that changed hands still returns a healthy 200.', 'lwtv' ),
-						absint( $broken ),
-						count( $items )
-					);
-					?>
-				</p>
-				<p><?php esc_html_e( 'Worst first, then by how many shows point at the term. Fixing a term fixes every show that reaches it.', 'lwtv' ); ?></p>
+				<?php if ( $live ) { ?>
+					<p>
+						<?php
+						printf(
+							/* translators: 1: definitely broken, 2: findings on terms a show reaches. */
+							esc_html__( '%1$d of %2$d are definitely broken. The rest answered, but something suggests they may not be the provider any more — a domain that changed hands still returns a healthy 200.', 'lwtv' ),
+							absint( $broken ),
+							absint( $live )
+						);
+						?>
+					</p>
+					<p><?php esc_html_e( 'Worst first, then by how many shows point at the term. Fixing a term fixes every show that reaches it.', 'lwtv' ); ?></p>
+				<?php } else { ?>
+					<p><?php esc_html_e( 'Everything flagged is on a provider term no published show reaches, so nothing on the front end is pointing at a dead link.', 'lwtv' ); ?></p>
+				<?php } ?>
+				<?php if ( $dormant ) { ?>
+					<p>
+						<?php
+						printf(
+							/* translators: %d: number of flagged URLs on terms no published show reaches. */
+							esc_html( _n( '%d flagged URL is on a term no published show reaches. It is listed separately below, because re-checking it cannot clear it.', '%d flagged URLs are on terms no published show reaches. Those are listed separately below, because re-checking them cannot clear them.', $dormant, 'lwtv' ) ),
+							absint( $dormant )
+						);
+						?>
+					</p>
+				<?php } ?>
 				<?php echo wp_kses_post( $last_run ); ?>
 			</div>
 		</div>
+		<?php
+	}
 
+	/**
+	 * One findings table.
+	 *
+	 * Both sections share it, and share all four columns -- including Shows,
+	 * which is a constant zero in the unused table. Printing the zero is the
+	 * point: it is the reason those rows are down there.
+	 *
+	 * @param array $rows   Display rows, already sorted.
+	 * @param bool  $unused Whether these are rows nothing reaches, which decides
+	 *                      whether the retire action is offered.
+	 * @return void
+	 */
+	private static function render_table( array $rows, bool $unused = false ): void {
+		?>
 		<div class="lwtv-tools-table">
 			<table class="widefat fixed" cellspacing="0">
 				<thead><tr>
@@ -306,27 +396,62 @@ class Watch_Term_Check {
 				<tbody>
 					<?php
 					$number = 0;
-					foreach ( $items as $item ) {
+					foreach ( $rows as $row ) {
 						++$number;
-						self::render_row( $item, 0 === $number % 2 );
+						self::render_row( (array) $row, 0 === $number % 2, $unused );
 					}
 					?>
 				</tbody>
 			</table>
 		</div>
-
 		<?php
-		self::render_recheck_form( count( $items ) );
+	}
+
+	/**
+	 * The rows nothing reaches, and what to do about them.
+	 *
+	 * In a <details>, shut by default. These are findings worth keeping -- "this
+	 * service is gone" is real information -- but they are not a worklist, and
+	 * anything permanently expanded above the fold becomes the thing you scroll
+	 * past to reach the work. Native element, no JavaScript, degrades to an open
+	 * list, matching the no-JS stance the Watch Providers tab already takes.
+	 *
+	 * @param array $unused Rows on terms nothing reaches.
+	 * @return void
+	 */
+	private static function render_unused( array $unused ): void {
+		$terms = count( array_unique( array_column( $unused, 'id' ) ) );
+		?>
+		<details class="lwtv-watch-unused">
+			<summary>
+				<?php
+				printf(
+					/* translators: %d: number of provider terms no published show reaches. */
+					esc_html( _n( '%d unused provider term', '%d unused provider terms', $terms, 'lwtv' ) ),
+					absint( $terms )
+				);
+				?>
+			</summary>
+			<p class="description">
+				<?php esc_html_e( 'No published show reaches these terms, so a dead URL here is not reaching a reader, and re-checking it cannot clear the row. The decision these need is whether the term should exist at all: a service that has shut down can be retired, which deletes the term and takes its rows off this report for good.', 'lwtv' ); ?>
+			</p>
+			<p class="description">
+				<?php esc_html_e( 'Two different things read as zero here. A term that genuinely serves nothing, and a term that has lost its host — the losing side of a contested host counts zero, and so does a term whose stored URL cannot be parsed, because neither one ever enters the host map shows are matched through. Check the Watch Providers tab before retiring anything you expected to be in use.', 'lwtv' ); ?>
+			</p>
+			<?php self::render_table( $unused, true ); ?>
+		</details>
+		<?php
 	}
 
 	/**
 	 * One table row.
 	 *
-	 * @param array $item One finding.
-	 * @param bool  $alt  Zebra striping.
+	 * @param array $item   One finding.
+	 * @param bool  $alt    Zebra striping.
+	 * @param bool  $unused Whether this row is on a term nothing reaches.
 	 * @return void
 	 */
-	private static function render_row( array $item, bool $alt ): void {
+	private static function render_row( array $item, bool $alt, bool $unused = false ): void {
 		$term_id = (int) ( $item['id'] ?? 0 );
 		$edit    = $term_id ? get_edit_term_link( $term_id, Theme_Ways_To_Watch::TAXONOMY ) : '';
 		$health  = (string) ( $item['health'] ?? Watch_Url_Health::STATUS_REVIEW );
@@ -368,6 +493,23 @@ class Watch_Term_Check {
 				self::ACTION_CONFIRM_PROVIDER
 			)
 			: '';
+
+		// The only action that can clear an unused row, and never offered on a
+		// row that does affect shows -- there, deleting the term would take a
+		// working provider name off the front end. Nonce is per-term rather than
+		// per-action: this one deletes something.
+		$retire_link = ( $term_id && $unused && current_user_can( self::CAP_MANAGE ) )
+			? wp_nonce_url(
+				add_query_arg(
+					array(
+						'action' => self::ACTION_RETIRE,
+						'term'   => $term_id,
+					),
+					admin_url( 'admin-post.php' )
+				),
+				self::ACTION_RETIRE . '_' . $term_id
+			)
+			: '';
 		?>
 		<tr class="<?php echo esc_attr( $alt ? 'alternate' : '' ); ?>">
 			<td>
@@ -382,12 +524,15 @@ class Watch_Term_Check {
 					<div class="row-actions">
 						<span class="view">
 							<a href="<?php echo esc_url( $url ); ?>" target="_blank" rel="noopener noreferrer nofollow"><?php echo esc_html( $url ); ?></a>
-							<?php if ( '' !== $recheck_link ) : ?>
+							<?php if ( '' !== $retire_link ) { ?>
+								| <a href="<?php echo esc_url( $retire_link ); ?>" class="lwtv-watch-retire"><?php esc_html_e( 'Retire term', 'lwtv' ); ?></a>
+							<?php } ?>
+							<?php if ( '' !== $recheck_link ) { ?>
 								| <a href="<?php echo esc_url( $recheck_link ); ?>"><?php esc_html_e( 'Re-check this URL', 'lwtv' ); ?></a>
-							<?php endif; ?>
-							<?php if ( '' !== $confirm_link ) : ?>
+							<?php } ?>
+							<?php if ( '' !== $confirm_link ) { ?>
 								| <a href="<?php echo esc_url( $confirm_link ); ?>"><?php esc_html_e( 'Confirm provider', 'lwtv' ); ?></a>
-							<?php endif; ?>
+							<?php } ?>
 						</span>
 					</div>
 				<?php } ?>
@@ -405,10 +550,16 @@ class Watch_Term_Check {
 	/**
 	 * The bounded "check these again" form.
 	 *
-	 * @param int $count How many findings there are.
+	 * The count is every flagged URL, not just the worklist above: the re-check
+	 * probes the whole findings store, unused terms included. Said out loud when
+	 * there are any, so the number under the button cannot look like it disagrees
+	 * with the table it sits beneath.
+	 *
+	 * @param int $count  How many findings there are in total.
+	 * @param int $unused How many of those are on terms nothing reaches.
 	 * @return void
 	 */
-	private static function render_recheck_form( int $count ): void {
+	private static function render_recheck_form( int $count, int $unused = 0 ): void {
 		if ( ! current_user_can( self::CAP_MANAGE ) ) {
 			?>
 			<p><em><?php esc_html_e( 'You need permission to manage categories to re-check these URLs.', 'lwtv' ); ?></em></p>
@@ -423,12 +574,21 @@ class Watch_Term_Check {
 			<span class="description">
 				<?php
 				printf(
-					/* translators: 1: number of flagged URLs, 2: seconds of budget. */
+					/* translators: 1: number of flagged URLs, 2: seconds of budget, 3: WP-CLI command in a code element. */
 					wp_kses_post( __( 'Re-probes the %1$d flagged URLs only, and drops any that now pass. Stops after about %2$d seconds; anything it did not reach is kept, not cleared. A full sweep of every term is %3$s.', 'lwtv' ) ),
 					absint( $count ),
 					absint( Watch_Hosts::UI_TIME_BUDGET ),
 					'<code>wp lwtv debug watchurls --force</code>'
 				);
+
+				if ( $unused ) {
+					echo ' ';
+					printf(
+						/* translators: %d: number of flagged URLs on terms no published show reaches. */
+						esc_html( _n( 'That count includes the %d URL on an unused term, which a re-check will only clear if the URL has come back.', 'That count includes the %d URLs on unused terms, which a re-check will only clear if those URLs have come back.', $unused, 'lwtv' ) ),
+						absint( $unused )
+					);
+				}
 				?>
 			</span>
 		</form>
@@ -580,6 +740,126 @@ class Watch_Term_Check {
 			$dropped
 				? __( 'Provider confirmed. Name-mismatch reviews for this term will no longer be flagged.', 'lwtv' )
 				: __( 'Provider confirmed for future scans. Nothing currently flagged needed clearing.', 'lwtv' )
+		);
+
+		self::redirect_back();
+	}
+
+	/**
+	 * Retire a provider term nothing reaches.
+	 *
+	 * Deletes the term, so the guards matter more than the action does:
+	 *
+	 *   - The show count is re-derived live, never read off the row. Findings are
+	 *     as of the last sweep, and a term that has gained shows since must not be
+	 *     deleted on the strength of a stale zero.
+	 *   - A term still holding object relationships is refused. `lez_watch_urls`
+	 *     is registered against shows (see CPTs\Shows::ALL_TAXONOMIES) even though
+	 *     the front end resolves providers by host, so a term *can* be assigned to
+	 *     posts -- and deleting it would drop those relationships silently, which
+	 *     is not something a triage link gets to do.
+	 *
+	 * Both refusals say what they found rather than failing quietly, because the
+	 * disagreement between the report and the live count is the interesting part.
+	 *
+	 * @return void
+	 */
+	public function handle_retire(): void {
+		$term_id = isset( $_GET['term'] ) ? absint( $_GET['term'] ) : 0;
+
+		check_admin_referer( self::ACTION_RETIRE . '_' . $term_id );
+
+		if ( ! current_user_can( self::CAP_MANAGE ) ) {
+			wp_die( esc_html__( 'You do not have permission to do that.', 'lwtv' ), '', array( 'response' => 403 ) );
+		}
+
+		$term = $term_id ? get_term( $term_id, Theme_Ways_To_Watch::TAXONOMY ) : null;
+
+		if ( ! $term instanceof \WP_Term ) {
+			self::set_notice( 'info', __( 'That provider term no longer exists — nothing to retire.', 'lwtv' ) );
+			self::redirect_back();
+		}
+
+		$name = Theme_Ways_To_Watch::term_name( $term->name );
+		$live = (int) ( Watch_Hosts::shows_per_term()[ $term_id ] ?? 0 );
+
+		/*
+		 * Not $term->count. That is maintained by _update_post_term_count(),
+		 * which counts published posts only -- so a term assigned to a draft or
+		 * pending show reports zero, and $live (host matching, also published
+		 * only) reports zero too. Both guards would wave through a delete that
+		 * silently drops a real relationship, which is the one thing this must
+		 * not do. get_objects_in_term() counts the relationship rows themselves,
+		 * whatever status the post is in.
+		 */
+		$objects  = get_objects_in_term( $term_id, Theme_Ways_To_Watch::TAXONOMY );
+		$assigned = is_wp_error( $objects ) ? 0 : count( $objects );
+
+		if ( is_wp_error( $objects ) ) {
+			self::set_notice(
+				'error',
+				sprintf(
+					/* translators: %s: provider name. */
+					__( 'Could not check what “%s” is still assigned to, so it was not retired.', 'lwtv' ),
+					$name
+				)
+			);
+			self::redirect_back();
+		}
+
+		if ( $live > 0 ) {
+			self::set_notice(
+				'error',
+				sprintf(
+					/* translators: 1: provider name, 2: number of published shows. */
+					_n( '“%1$s” now serves %2$d published show, so it was not retired. Re-check its URL instead.', '“%1$s” now serves %2$d published shows, so it was not retired. Re-check its URL instead.', $live, 'lwtv' ),
+					$name,
+					$live
+				)
+			);
+			self::redirect_back();
+		}
+
+		if ( $assigned > 0 ) {
+			self::set_notice(
+				'error',
+				sprintf(
+					/* translators: 1: provider name, 2: number of posts the term is assigned to. */
+					_n( '“%1$s” is still assigned to %2$d post, so it was not retired. Nothing reaches it by URL, but deleting it would drop that assignment — including on a draft or pending show. Unassign it first.', '“%1$s” is still assigned to %2$d posts, so it was not retired. Nothing reaches them by URL, but deleting it would drop those assignments — including on draft or pending shows. Unassign it first.', $assigned, 'lwtv' ),
+					$name,
+					$assigned
+				)
+			);
+			self::redirect_back();
+		}
+
+		$deleted = wp_delete_term( $term_id, Theme_Ways_To_Watch::TAXONOMY );
+
+		if ( is_wp_error( $deleted ) || true !== $deleted ) {
+			self::set_notice(
+				'error',
+				sprintf(
+					/* translators: %s: provider name. */
+					__( '“%s” could not be retired.', 'lwtv' ),
+					$name
+				)
+			);
+			self::redirect_back();
+		}
+
+		// A term can hold several URLs, and every one of them was a separate
+		// finding. All of them go with the term.
+		$items   = (array) Findings_Store::load( Watch_URLs::FINDINGS_PROBLEMS );
+		$dropped = ( new Watch_URLs() )->drop_term( $items, $term_id );
+
+		self::set_notice(
+			'success',
+			sprintf(
+				/* translators: 1: provider name, 2: number of rows removed from the report. */
+				_n( 'Retired “%1$s” and removed %2$d row from the report.', 'Retired “%1$s” and removed %2$d rows from the report.', $dropped, 'lwtv' ),
+				$name,
+				$dropped
+			)
 		);
 
 		self::redirect_back();
