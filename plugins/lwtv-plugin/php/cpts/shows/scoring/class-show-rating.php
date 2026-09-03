@@ -41,11 +41,7 @@ class Show_Rating {
 	/**
 	 * Points for the show's normalized trigger-warning level.
 	 *
-	 * Deliberately negative: a high trigger warning is a downgrade, per the
-	 * site's own scoring documentation -- "If a show is actively detrimental
-	 * to some viewers, with abuse, or excessive violence, its score is
-	 * downgraded." Alias handling ('on', 'medium') lives in Trigger_Warning,
-	 * not here -- see class-trigger-warning.php.
+	 * Deliberately negative.
 	 */
 	const TRIGGER_SCORES = array(
 		'high' => -15,

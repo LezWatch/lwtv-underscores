@@ -3,13 +3,7 @@
  * Name: Show Longevity
  * Description: Pure maths for longevity-weighted character scoring.
  *
- * Headcount used to drive a show's character score: the old aggregate was an
- * unbounded sum clamped to 100, so any show with enough characters saturated
- * the ceiling regardless of how briefly those characters were on screen. A
- * 50-year soap that cycled 200 one-episode characters through outranked a
- * tightly-written five-season drama.
- *
- * This class holds the replacement maths, in two parts:
+ * Headcount used to drive a show's character score, in two parts:
  *
  *  1. A per-character weight in (0, 1] blending share-of-run with a curved
  *     absolute-year term, so a character who was actually around counts for
@@ -21,11 +15,6 @@
  *     Penalising thorough documentation would be the wrong incentive for this
  *     site, so short-tenured characters contribute a small positive amount and
  *     the curve flattens instead.
- *
- * Everything here is static and pure -- no WordPress calls, no globals, no
- * meta reads -- following the same precedent as Airdates::resolve(), so it is
- * unit-testable without a WordPress runtime. See tests/unit/CPTs/ShowLongevityTest.php.
- * WordPress glue (meta reads, term lookups) stays with the caller.
  *
  * @package LWTV
  */
@@ -66,17 +55,8 @@ class Longevity {
 	 * CALIBRATED against all 2255 published shows. The objective matters more than
 	 * the number, and the obvious objective is the wrong one.
 	 *
-	 * ⚠ DO NOT calibrate by matching the median TOTAL score. Earlier revisions of
-	 * this file and of the preview command both advised exactly that, and it is
-	 * backwards. The character score is one term of a four-way average, and the
-	 * other three have a median of **69.1**. The old character score's median was
-	 * **10.0** -- it sat 59 points below everything it was averaged into, which was
-	 * never an editorial judgment but a scale error from an unbounded sum of small
-	 * role points. Holding the total median fixed requires K≈40, which puts the
-	 * character median at 11.8 and so PRESERVES that error. The total only sat
-	 * where it did because this component was on the floor.
-	 *
-	 * So calibrate on the component's own distribution:
+	 * ⚠ DO NOT calibrate by matching the median TOTAL score but the
+	 * component's own distribution:
 	 *
 	 *    K    char p50   char p99   total median   Failing (<20)   90+ Club
 	 *    5.4     50.0       86.7        +8.25            -             -
@@ -86,7 +66,7 @@ class Longevity {
 	 *   40       11.8       46.8        -0.03         60 -> 56     16 ->  1
 	 *
 	 * K=10 moves the character median from 10 to 35. That fixes most of the scale
-	 * error while leaving this the HARD component it ought to be -- it measures
+	 * error while leaving this the HARD component it ought to be, measuring
 	 * documented queer screen time, which most shows genuinely do little of, so it
 	 * should not sit level with `alive %` at 69. K=5.4 (= median X, so the median
 	 * show scores exactly 50) is the cleanest rule but shifts totals by +8.
@@ -123,10 +103,6 @@ class Longevity {
 
 	/**
 	 * Weight to assume when a character has no `appears` years recorded.
-	 *
-	 * A missing year list is a documentation gap, not evidence the character
-	 * was barely present, so it must never resolve to zero -- that would turn
-	 * incomplete data into a score penalty.
 	 */
 	const ROLE_PROXY = array(
 		'regular'   => 0.7,
@@ -145,12 +121,6 @@ class Longevity {
 	 * 1.0 means doubling, and the plain-language test for this number is:
 	 * "casting a queer actor is worth as much as doubling this character's
 	 * screen time." Raise it if queer casting should outweigh prominence.
-	 *
-	 * This replaced a flat +10, which was double the maximum role points and so
-	 * made casting outrank prominence 2:1 for every character: on Transparent a
-	 * one-scene guest played by a queer actor (4.73) outscored a five-season
-	 * co-lead (4.69). Multiplying instead of adding ties the reward to how much
-	 * of the show the character actually was.
 	 */
 	const QIRL_BOOST = 1.0;
 
@@ -165,13 +135,6 @@ class Longevity {
 	 * Multiplier applied when a character is dead.
 	 *
 	 * 0.5 means "killing a character halves everything they contributed."
-	 *
-	 * This replaced a flat -5, which made a dead guest a net NEGATIVE (1 - 5 =
-	 * -4), so documenting a dead one-scene queer character lowered the show's
-	 * score. Scaling instead of subtracting keeps every documented character
-	 * worth a non-negative amount, and makes killing a lead cost more in
-	 * absolute terms (2.50) than killing a guest (0.50) -- which is the actual
-	 * Bury Your Gays concern.
 	 */
 	const DEAD_FACTOR = 0.5;
 
@@ -185,12 +148,6 @@ class Longevity {
 	 *
 	 * Below 1.0 on purpose: casting a cis actor in a trans role is treated as
 	 * actively costing a show, not merely failing to earn a bonus.
-	 *
-	 * This replaced a show-level aggregate, (trans - trans_irl) * -5, which was
-	 * flat, unweighted and invisible per character -- on Transparent it removed
-	 * 32% of the show's character value while treating a one-scene guest and a
-	 * five-season lead identically. Per character and longevity-weighted, so
-	 * miscasting a lead now costs more than miscasting a walk-on.
 	 */
 	const TRANS_MISCAST_FACTOR = 0.5;
 
@@ -205,17 +162,6 @@ class Longevity {
 	 * Non-binary and genderqueer are included deliberately: a non-binary role
 	 * should go to a trans or non-binary actor, and the site treats non-binary
 	 * characters as a core constituency rather than an edge case.
-	 *
-	 * ⚠ Verified only against the slugs seen on Transparent (which surfaced
-	 * `non-binary` and `genderqueer` via the unclassified warning). Reconcile
-	 * with `wp term list lez_gender --fields=slug,count` before enabling.
-	 *
-	 * This is a deliberate departure from the convention in
-	 * Statistics\Build\Character_Queer_Cast_Firsts, which avoids "hardcoding an
-	 * exhaustive list" precisely so new gender terms keep working without code
-	 * changes. An allowlist trades that for precision, and the cost is that
-	 * adding a gender term becomes a code change. The unclassified bucket exists
-	 * so that cost is paid loudly instead of by silent under-counting.
 	 */
 	const GENDER_TRANS_OR_NB = array(
 		'trans-woman',
@@ -230,8 +176,7 @@ class Longevity {
 	 * lez_actor_gender slugs meaning the actor is explicitly cis.
 	 *
 	 * Only an explicit cis tag justifies a miscast penalty. Anything unrecognised
-	 * falls through to 'unknown' and scores neutrally -- see
-	 * classify_actor_gender().
+	 * falls through to 'unknown' and scores neutrally.
 	 */
 	const ACTOR_CIS = array(
 		'cisgender',
@@ -244,14 +189,11 @@ class Longevity {
 	 * lez_actor_gender slugs for gender-diverse identities that neither the
 	 * 'trans' nor the 'non-binary' substring rule catches.
 	 *
-	 * Reconciled against the live taxonomy (6070 actors). The substring rules
-	 * already cover 271 of them, and ACTOR_CIS covers 5596.
-	 *
 	 * Four slugs are deliberately NOT listed, by editorial decision rather than
 	 * oversight — whether they are held to the trans/NB casting standard is an
 	 * identity question, not a technical one:
 	 *
-	 *   demigender (3), androgynous (2), no-label (2), two-spirit (1)
+	 *   demigender, androgynous, no-label, two-spirit
 	 *
 	 * androgynous often describes presentation rather than identity, and no-label
 	 * is a deliberate refusal to categorise — which an allowlist should not
@@ -296,10 +238,7 @@ class Longevity {
 
 			$start = self::year_from_date( $season['premiereDate'] ?? null );
 
-			// With no premiere date the season cannot be placed on a timeline
-			// at all, so it contributes nothing rather than being guessed at.
-			// A premiere in the future means the season has not aired yet and
-			// must not inflate the denominator.
+			// Every show should have a premier date.
 			if ( null === $start || $start > $current_year ) {
 				continue;
 			}
@@ -340,8 +279,7 @@ class Longevity {
 	 * Seasons of slack allowed between the season count and the aired-year count.
 	 *
 	 * One season covers ordinary Sept-May scheduling, where N seasons occupy N-1
-	 * calendar years. Two seasons inside one calendar year does happen, but
-	 * essentially only in reality TV, which this site does not cover -- so a
+	 * calendar years. Two seasons inside one calendar year does happen, so a
 	 * larger gap than this means seasons are missing from the API, not that the
 	 * show aired unusually fast.
 	 */
@@ -354,13 +292,6 @@ class Longevity {
 	 * error or a season TVMaze has not dated -- there is no third explanation,
 	 * since a character cannot appear in a year the show was not airing. Volume
 	 * is what tells the two apart, so this is a ratio and not a hard zero.
-	 *
-	 * PROVISIONAL. Calibrate before this ships enabled, the same way SATURATION_K
-	 * was: the shape of the argument is sound but the cut point is not measured.
-	 * `wp lwtv score-preview --all` prints a coverage histogram for every show
-	 * the signal can judge; the threshold belongs in the sparse band between the
-	 * pile at 1.00 and the broken sets. If there is no sparse band, this signal
-	 * is measuring a continuum and needs rethinking rather than retuning.
 	 */
 	const COVERAGE_MIN = 0.75;
 
@@ -412,26 +343,6 @@ class Longevity {
 	/**
 	 * Where the credited years the aired set cannot explain actually fall.
 	 *
-	 * Diagnostic, not a decision. It was built expecting to BE the decision --
-	 * the theory being that a discarded year outside the set's range is
-	 * unambiguous missing data, while one inside an internal hole is an ambiguous
-	 * hiatus. **Measurement killed that idea.** Both the case it was meant to
-	 * catch and the case it was meant to spare put every discarded year inside a
-	 * hole and none outside the range:
-	 *
-	 *   Gute Zeiten schlechte Zeiten   set 9 yrs, 26 credited   outside 0, hole 26
-	 *   Rick and Morty                 set 11 yrs, 13 credited  outside 0, hole 2
-	 *
-	 * So hole location cannot discriminate. The signal designed to replace it --
-	 * comparing the SIZE of the two records -- did separate those two cases, but
-	 * turned out to be provably redundant against signal 3 and was not built
-	 * either; see the note above run_years().
-	 *
-	 * This function is kept as a diagnostic, because `outside` is worth reporting
-	 * when it is non-zero: a character credited before the set begins or after it
-	 * ends is a harder fact than one credited in a gap, and it is the shape signal
-	 * 2 looks for. It decides nothing.
-	 *
 	 * @param array $aired_years    Years from aired_years_from_seasons().
 	 * @param array $credited_years Every year any character is credited.
 	 *
@@ -467,31 +378,6 @@ class Longevity {
 
 		return $out;
 	}
-
-	/*
-	 * A signal that was built, measured, and deliberately not shipped.
-	 *
-	 * `record_is_richer()` compared the SIZE of the two records -- reject the set
-	 * when our own `appears` data documents materially more years than TVMaze
-	 * does (ratio > 1.5 with an absolute excess >= 2). It looked like the answer:
-	 * it separated Gute Zeiten schlechte Zeiten (26 credited years against a
-	 * 9-year set) from Rick and Morty (13 against 11) cleanly, and rejected none
-	 * of the 360 shows currently accepted on tier 2.
-	 *
-	 * It is not in the code because it cannot ever fire. Given ratio > 1.5:
-	 *
-	 *     coverage = |C n A| / |C|  <=  |A| / |C|  <  1 / 1.5  =  0.667
-	 *
-	 * -- always below COVERAGE_MIN. So signal 3 rejects every set signal 4 would
-	 * have, and signal 4 could only ever add anything where coverage abstains,
-	 * below its 5-credited-year evidence floor. Measured there: of 304 such shows,
-	 * **zero** qualify, because every one has |C| <= |A| or an excess of 1.
-	 *
-	 * Recorded rather than deleted because "provably redundant" is a much stronger
-	 * reason not to build something than "we tried it and it seemed unnecessary",
-	 * and because an unreachable guard that looks like protection is worse than no
-	 * guard -- see the Tambor Takedown, which sat in dead code for years.
-	 */
 
 	/**
 	 * Vet a TVMaze-derived aired-years set before trusting it.
@@ -591,10 +477,6 @@ class Longevity {
 	 * The vetted aired-years set: unchanged when trustworthy, empty to fall
 	 * through to a later tier.
 	 *
-	 * Thin wrapper over aired_years_verdict() so callers that only need the set
-	 * do not have to know the verdict vocabulary, and so there is exactly one
-	 * implementation of the decision.
-	 *
 	 * @param array  $aired_years    Years from aired_years_from_seasons().
 	 * @param int    $seasons        Stored season count. 0 when unknown.
 	 * @param string $start          Airdate start year.
@@ -635,7 +517,7 @@ class Longevity {
 	 * one year, and revival gaps correctly. The ordering is fine, but it is not
 	 * the accuracy ordering -- see the plan doc.
 	 *
-	 * $credited_count is the floor that bounds that cost -- see the detail method.
+	 * $credited_count is the floor that bounds that cost.
 	 *
 	 * @param array  $aired_years    Years the show aired, from
 	 *                               aired_years_from_seasons(). Empty to fall through.
@@ -655,18 +537,7 @@ class Longevity {
 	/**
 	 * run_years() plus which tier produced it.
 	 *
-	 * Exists because reporting the tier is not optional colour -- it is how a
-	 * reader knows whether a denominator came from curated data, an API, or a
-	 * fallback, and therefore how much to trust the score built on it.
-	 *
-	 * The tier MUST come from the function that made the choice. A caller that
-	 * re-derives it from the same inputs will eventually disagree, and did: the
-	 * preview command tested still-airing with Airdates::is_still_airing() while
-	 * this function tests `$finish_year >= $current_year` inline. Those disagreed
-	 * on 12 shows, all of them currently airing, which the CSV then reported as
-	 * "tier 1 season count" while the denominator had actually come from tier 2.
-	 * The scores were right and the explanation of them was wrong -- the same
-	 * class of bug as the transposed tier labels before it.
+	 * Exists because reporting the tier is not optional.
 	 *
 	 * ## The credited-years floor
 	 *
@@ -871,8 +742,8 @@ class Longevity {
 	/**
 	 * The unweighted value of a single character.
 	 *
-	 * Role points are the base -- they stand for how present the character is
-	 * within a given year -- and the three qualities scale that base rather
+	 * Role points are the base and stand for how present the character is
+	 * within a given year. The three qualities scale that base rather
 	 * than adding to it. Multiplying is what keeps prominence meaningful: a
 	 * queer actor cast in a lead is worth more than one cast in a single scene,
 	 * and killing a lead costs more than killing a walk-on.
@@ -919,7 +790,7 @@ class Longevity {
 	 * Returns one of three states rather than a boolean, and the third state is
 	 * the point. An allowlist that answers only yes/no would treat any gender
 	 * term it has never heard of as cis, so adding a term to the taxonomy would
-	 * silently stop those characters being assessed -- a show could quietly
+	 * silently stop those characters being assessed. For example, a show could quietly
 	 * cease being checked and nobody would see it happen. 'unclassified' makes
 	 * that a reportable condition instead.
 	 *
@@ -949,19 +820,6 @@ class Longevity {
 
 	/**
 	 * Classify an actor's gender terms for the casting check.
-	 *
-	 * Three states, and the third one matters: 'unknown' covers both actors
-	 * explicitly tagged `undefined`/`unknown` (37 in the live taxonomy) and any
-	 * slug added in future that nobody has triaged. Those must score neutrally.
-	 * Treating "we do not know this actor's gender" as "this actor is cis" would
-	 * dock a show for OUR missing data -- the same failure the character side
-	 * already guards against.
-	 *
-	 * Pure counterpart to Queeries\Is_Actor_Trans, which is deliberately left
-	 * unmodified (it feeds count_queers_all_types() and class-show-characters.php,
-	 * and widening it would move existing counts). This keeps that class's
-	 * substring rule so future `trans*` slugs match without a code change, and
-	 * adds the same treatment for `non-binary*`.
 	 *
 	 * @param array $slugs The actor's lez_actor_gender term slugs.
 	 *
@@ -1004,8 +862,8 @@ class Longevity {
 	 *
 	 * One casting decision produces one multiplier. Queer-irl and trans casting
 	 * used to be separate multipliers that compounded, which meant Maura
-	 * Pfefferman was reduced twice over -- once for losing the queer-irl boost,
-	 * once for the trans miscast -- for the single fact that a cis, non-queer
+	 * Pfefferman was reduced twice over (once for losing the queer-irl boost,
+	 * once for the trans miscast) for the single fact that a cis, non-queer
 	 * actor was cast as a trans woman. Stacking also let two x2 boosts reach x4
 	 * and overtake the entire role hierarchy, so a recurring character outranked
 	 * a series lead.
@@ -1014,7 +872,7 @@ class Longevity {
 	 * character is judged on trans/NB casting, everyone else on queer casting.
 	 *
 	 * Unclassified characters get a neutral 1.0. A gender term nobody has
-	 * triaged yet must not move a score in either direction -- it belongs in the
+	 * triaged yet must not move a score in either direction and it belongs in the
 	 * unclassified report, not in the maths.
 	 *
 	 * @param string $gender_class        Character's class, from classify_gender().
