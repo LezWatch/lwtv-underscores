@@ -2,19 +2,6 @@
 /**
  * Tells a new problem from one that has been sitting there for months.
  *
- * A raw count cannot be acted on: "41 shows need attention" is the same number
- * whether nothing changed or eleven things broke last night. Diffing this run
- * against the last one turns that into "3 new, 38 open, 5 resolved", which can.
- *
- * PURE. Array in, array out. Storage lives in Debugger\Baseline_Store, and the
- * separation is the point: the diff is the part worth testing, and it is
- * testable with no WordPress and no options table.
- *
- * Identity is `post_id:issue_type` and deliberately excludes the message. A
- * show renamed, or a per-post message reworded, must not make an old problem
- * look new -- the problem is "this post has this kind of problem", and that is
- * what gets tracked.
- *
  * @package LWTV
  */
 
@@ -48,14 +35,7 @@ class Baseline {
 	 * @return string
 	 */
 	public static function key( array $finding ): string {
-		$key = (int) ( $finding['post_id'] ?? 0 ) . ':' . (string) ( $finding['issue_type'] ?? '' );
-
-		/*
-		 * An optional third part, for the one case where object + type is not
-		 * unique: a watch provider term can have several broken URLs, and each is
-		 * its own problem. Without this they collapse into one, and fixing one of
-		 * three would read as resolving all of them.
-		 */
+		$key      = (int) ( $finding['post_id'] ?? 0 ) . ':' . (string) ( $finding['issue_type'] ?? '' );
 		$identity = (string) ( $finding['identity'] ?? '' );
 
 		return ( '' === $identity ) ? $key : $key . ':' . $identity;
@@ -63,10 +43,6 @@ class Baseline {
 
 	/**
 	 * Reduce a run's findings to the set worth storing as a baseline.
-	 *
-	 * Only identity is kept. Messages, context and fixability all change for
-	 * reasons that have nothing to do with whether a problem is still there, and
-	 * storing them would bloat the option for no gain.
 	 *
 	 * @param  array $findings List of findings.
 	 * @return array<string, array<string, mixed>> Keyed by finding key.
@@ -99,12 +75,6 @@ class Baseline {
 	/**
 	 * Stamp each finding new or open against a baseline.
 	 *
-	 * Separate from diff() because a *partial* run -- the admin "Recheck"
-	 * button, which only re-scans the posts already flagged -- can honestly say
-	 * whether each finding it looked at is new, but cannot say anything about
-	 * what it did not look at. Calling diff() there would report every finding
-	 * on every unvisited post as resolved.
-	 *
 	 * @param  array $findings  List of findings.
 	 * @param  array $baseline  Stored snapshot.
 	 * @param  bool  $first_run True when no baseline has ever been stored.
@@ -130,11 +100,6 @@ class Baseline {
 
 	/**
 	 * Diff this run against a stored baseline.
-	 *
-	 * A first run -- no baseline at all -- reports everything as `open` rather
-	 * than `new`. Calling a decade of accumulated problems "new" on the day the
-	 * feature ships would be false, and would train everyone to ignore the
-	 * number permanently.
 	 *
 	 * @param  array $findings List of findings from this run.
 	 * @param  array $baseline Stored snapshot from the previous run.
@@ -185,9 +150,6 @@ class Baseline {
 	/**
 	 * The worst status on a row, for a per-post badge.
 	 *
-	 * `new` wins: a row with one new problem and four old ones is a row
-	 * something just happened to.
-	 *
 	 * @param  array $statuses Statuses of the issues on one row.
 	 * @return string
 	 */
@@ -208,12 +170,6 @@ class Baseline {
 			return 'Nothing outstanding.';
 		}
 
-		/*
-		 * "Problems", explicitly. The line above this in CLI output counts rows —
-		 * posts needing attention — and these numbers count findings, so one
-		 * character with two problems reads as "1 character(s)" then "2". Both are
-		 * right; without the noun they look like a contradiction.
-		 */
 		$noun = ( 1 === $total ) ? 'problem' : 'problems';
 
 		if ( ! empty( $summary['first_run'] ) ) {

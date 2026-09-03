@@ -6,11 +6,6 @@
  * downstream -- counts, repairs, admin tables, CLI columns -- is derived from
  * them rather than from a pre-rendered string.
  *
- * PURE. Array in, array out, no WordPress calls. The one WordPress-flavoured
- * concession is that the grouped `problem` string joins with `</br>`, which is
- * what the admin renderer has always emitted; the joining is still string work,
- * so it stays testable here.
- *
  * @package LWTV
  */
 
@@ -24,10 +19,6 @@ class Findings {
 
 	/**
 	 * Separator between problems on one post.
-	 *
-	 * Invalid HTML, and deliberately unchanged: Admin_Menu\Validation renders
-	 * `problem` through wp_kses_post() and has always been fed this. Fixing it
-	 * is a rendering change, not part of the finding shape.
 	 */
 	const SEPARATOR = '</br>';
 
@@ -107,10 +98,6 @@ class Findings {
 	/**
 	 * Is this finding, or row, about a post?
 	 *
-	 * Defaults to true: everything written before terms existed in this shape is
-	 * about a post, and treating an old row as a term would be the damaging way
-	 * to be wrong.
-	 *
 	 * @param  array $finding Finding or row.
 	 * @return bool
 	 */
@@ -120,11 +107,6 @@ class Findings {
 
 	/**
 	 * Build findings from a list of ready-made message strings.
-	 *
-	 * Several checks predate the registry and return prose rather than issue
-	 * types -- airdate problems, duplicate detection, the intersectionality
-	 * cross-check. Those keep their per-post wording while still becoming one
-	 * addressable finding each, under a type supplied by the caller.
 	 *
 	 * @param  int             $post_id    Post the problems are on.
 	 * @param  string          $post_type  Post type slug.
@@ -153,11 +135,6 @@ class Findings {
 	/**
 	 * One finding's message with its repair advertised inline.
 	 *
-	 * This is how a *text* report says a problem can be repaired -- the CLI, and
-	 * anywhere the `problem` blob is printed. The admin table renders a button
-	 * per issue instead, so it uses the raw message and does not call this. Kept
-	 * out of the message itself either way, so the message stays clean data.
-	 *
 	 * @param  array $finding Finding array.
 	 * @return string
 	 */
@@ -183,14 +160,6 @@ class Findings {
 
 	/**
 	 * A row's problems as plain text, for a terminal.
-	 *
-	 * `problem` is composed for the admin: HTML-ish, joined with `</br>`, and in
-	 * the unconverted checks it can also contain real markup like an edit link.
-	 * Printed in a CLI table that all shows up literally.
-	 *
-	 * A typed row is rebuilt from its raw messages. An untyped one -- the checks
-	 * still on the old shape -- is de-HTML'd instead, which is why this bothers
-	 * with tag stripping at all.
 	 *
 	 * @param  array $row A row from Rows::from_findings(), or an older one.
 	 * @return string
@@ -231,11 +200,6 @@ class Findings {
 
 	/**
 	 * Compose the `problem` blob from a row's parallel issues/messages lists.
-	 *
-	 * Rows store raw messages, so the fixability prose is composed on the way
-	 * out. That means a row can be rebuilt after one issue is repaired without
-	 * string-surgery on the blob -- which was the thing making per-issue admin
-	 * repairs impossible.
 	 *
 	 * @param  array $issues   Issue types, in order.
 	 * @param  array $messages Raw messages, same order.
@@ -324,12 +288,6 @@ class Findings {
 	/**
 	 * Collapse per-issue findings into one row per post.
 	 *
-	 * Rows keep first-seen order, and each carries both the derived `problem`
-	 * blob the old consumers read and the structured issue lists the new ones
-	 * need. Counting rows therefore still counts posts, not problems -- the
-	 * report says "10 shows need attention" as it always has, while `issues`
-	 * makes the individual problems addressable.
-	 *
 	 * @param  array $findings List of findings from make().
 	 * @return array<int, array<string, mixed>> Keyed by post ID.
 	 */
@@ -358,13 +316,8 @@ class Findings {
 
 			$rows[ $post_id ]['issues'][]   = $issue_type;
 			$rows[ $post_id ]['messages'][] = (string) ( $finding['message'] ?? '' );
-
-			// Present only once a run has been diffed against a baseline; an
-			// undiffed finding is neither new nor open, it is just unknown.
 			$rows[ $post_id ]['statuses'][] = (string) ( $finding['status'] ?? '' );
 
-			// A post can carry the same fixable issue only once, and the fixer
-			// is keyed on the type, so duplicates here would fix twice.
 			if ( ! empty( $finding['fixable'] ) && ! in_array( $issue_type, $rows[ $post_id ]['fixable'], true ) ) {
 				$rows[ $post_id ]['fixable'][] = $issue_type;
 			}
@@ -375,9 +328,6 @@ class Findings {
 		foreach ( $rows as $post_id => $row ) {
 			$rows[ $post_id ]['problem'] = self::problem_from( $row['issues'], $row['messages'] );
 
-			// Row-level status, so a table can flag the row as well as the line.
-			// Dropped entirely on an undiffed run rather than defaulted, so no
-			// surface can mistake "not compared yet" for "nothing is new".
 			$statuses = array_filter( $row['statuses'] );
 
 			if ( ! empty( $statuses ) ) {
@@ -433,8 +383,6 @@ class Findings {
 		$fixable = array();
 
 		foreach ( $row['fixable'] as $issue_type ) {
-			// Stored data, so do not trust it to be strings, and drop
-			// any type whose repair has since been retired from the registry.
 			if ( ! is_string( $issue_type ) || ! Issue_Registry::is_fixable( $issue_type ) ) {
 				continue;
 			}

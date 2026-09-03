@@ -2,11 +2,6 @@
 /**
  * Whether a show's stored on-air flag agrees with its airdates.
  *
- * PURE. The current year is passed in rather than read from the clock, which is
- * the whole reason this is testable: "is this show on air" is a question about a
- * date, and a rule that asks the system what day it is can only be tested on the
- * days the answer happens to suit.
- *
  * The data contract, as produced by Collect\On_Air_Collector:
  *
  *     array(
@@ -84,14 +79,7 @@ class On_Air_Rules {
 		$stored = (string) ( $show['on_air'] ?? '' );
 		$actual = self::should_be_on_air( (array) ( $show['airdates'] ?? array() ), (int) ( $show['year'] ?? 0 ) );
 
-		/*
-		 * Nothing stored at all. The original also tested the computed value for
-		 * emptiness -- "no on-air meta data and/or airdates" -- but
-		 * should_be_on_air() returns 'yes' or 'no' and never '', so that half was
-		 * unreachable. Harmless: a show with no airdates computes to 'no', and if
-		 * the stored flag agrees there is nothing to report here, while the Shows
-		 * check reports the missing airdates on their own terms.
-		 */
+		// All shows should have an airdate.
 		if ( '' === $stored ) {
 			return array( Findings::make( $post_id, self::POST_TYPE, 'show-onair-no-data' ) );
 		}

@@ -2,12 +2,6 @@
 /**
  * Does a character's Queer IRL cliché agree with who plays them?
  *
- * PURE. "Queer IRL" says the actor is queer in real life, so it is a claim about
- * the actor, checked against the actors actually linked to the character. Either
- * direction of disagreement is worth reporting, and they are different problems:
- * a missing tag is a gap in our data, while a tag with no queer actor behind it
- * is a claim we cannot support.
- *
  * The data contract, as produced by Collect\Queer_Collector:
  *
  *     array(
@@ -52,10 +46,10 @@ class Queer_Rules {
 		}
 
 		/*
-		 * No actors at all, so there is nothing to compare the cliché against.
-		 * Reported instead of skipped, because a character nobody plays is itself
-		 * a gap -- and the alternative would be silently passing every untagged
-		 * character with no actors.
+		 * No actors at all, reported.
+		 *
+		 * There's only been one case where a character had no actor and she eventually got one
+		 * in the Dragon Prince.
 		 */
 		if ( empty( $character['has_actors'] ) ) {
 			return array( Findings::make( $post_id, self::POST_TYPE, 'char-no-actors-listed' ) );

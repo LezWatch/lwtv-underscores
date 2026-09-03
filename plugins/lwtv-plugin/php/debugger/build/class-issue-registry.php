@@ -2,18 +2,6 @@
 /**
  * The debugger's issue vocabulary: one entry per kind of problem we can find.
  *
- * Findings used to be an HTML string blob -- several unrelated problems joined
- * with `</br>` into one `problem` key -- which meant a finding could not be
- * addressed, counted, or repaired individually. This constant is the single
- * source of truth that replaces that: the human copy, and whether a repair
- * exists, both live here rather than being duplicated across scanners, CLI
- * output and admin views.
- *
- * PURE. No WordPress calls, no state. Fix callables are stored as
- * array( 'Fully\\Qualified\\Class', 'method' ) *strings* on purpose: the
- * registry must stay loadable (and unit-testable) without pulling a scanner --
- * and therefore WordPress -- in behind it. The caller resolves them.
- *
  * @package LWTV
  */
 
@@ -70,14 +58,6 @@ class Issue_Registry {
 			'level'   => 'show',
 			'message' => 'Score is 0 or not set - needs characters and/or ratings.',
 		),
-		/*
-		 * The repair here does not fill the gap -- it records that there is
-		 * nothing to fill it with, by setting the show's "No Known Characters"
-		 * flag. That is a judgement about a particular show, so it is `manual`:
-		 * offered as a button next to the finding, never applied by a bulk
-		 * --fix-it run. Bulk-flagging every characterless show would erase the
-		 * exact distinction this check exists to surface.
-		 */
 		'show-no-characters'          => array(
 			'level'     => 'show',
 			'message'   => 'No queer characters recorded.',
@@ -149,13 +129,6 @@ class Issue_Registry {
 			'level'   => 'show',
 			'message' => 'Start date is AFTER end date.',
 		),
-		/*
-		 * Retired, kept registered on purpose. The four types above replaced this
-		 * one catch-all, and a stored baseline written before that split still
-		 * holds `<id>:show-airdate` keys. Keeping the entry means those resolve to
-		 * readable copy when the next run reports them as resolved, instead of
-		 * falling back to the raw key.
-		 */
 		'show-airdate'                => array(
 			'level'   => 'show',
 			'message' => 'Airdate problem.',
@@ -328,13 +301,6 @@ class Issue_Registry {
 			'level'   => 'show',
 			'message' => 'IMDb ID is invalid (ex: tt12345).',
 		),
-		/*
-		 * Repairable, and safe in bulk, because the correct value is inside the
-		 * wrong one: someone pasted the IMDb page URL instead of the ID, and the
-		 * ID is in a known position in it. Contrast the IMDb-in-a-social-field
-		 * repair, which deletes rather than moves, because there the intent is a
-		 * guess. Here it is not.
-		 */
 		'show-imdb-url-pasted'        => array(
 			'level'     => 'show',
 			'message'   => 'The IMDb field holds a URL, not an ID.',
@@ -366,17 +332,6 @@ class Issue_Registry {
 
 		/*
 		 * Watch provider URLs (the `watchurls` check).
-		 *
-		 * Level 'watch_term' rather than a CPT: these findings are about
-		 * `lez_watch_urls` terms. Nothing maps that level to a repair cache, so
-		 * Repair::is_supported() refuses them and no admin buttons appear --
-		 * which is right, since none of these can be fixed without a human
-		 * deciding what the URL should be.
-		 *
-		 * The health of the URL (broken / needs review / blocked) is a separate
-		 * axis, carried on the row for the report's own column. Two of these
-		 * types share a health of "needs review" while being quite different
-		 * problems, which is why the type is not just the health.
 		 */
 		'watch-url-broken'            => array(
 			'level'   => 'watch_term',
@@ -390,16 +345,6 @@ class Issue_Registry {
 			'level'   => 'watch_term',
 			'message' => 'The host blocked us, so this could not be checked.',
 		),
-		/*
-		 * Retired 2026-08-27. A term with no URLs is legitimate -- it is how a
-		 * provider gets prepped before a network launches -- so reporting it and
-		 * advising "add a URL or delete the term" was telling editors to throw
-		 * away deliberate work. The scanner that emitted it is gone.
-		 *
-		 * The type stays declared because findings are stored for ten days:
-		 * a cached row still typed this way must render with a message rather
-		 * than an empty string until the next sweep replaces it.
-		 */
 		'watch-term-no-urls'          => array(
 			'level'   => 'watch_term',
 			'message' => 'This term has no URLs. No longer reported — a term without URLs is a valid placeholder.',

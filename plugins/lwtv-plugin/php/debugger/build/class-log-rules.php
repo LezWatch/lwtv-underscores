@@ -2,14 +2,6 @@
 /**
  * Pure decisions for the LWTV debug log.
  *
- * No WordPress, no filesystem: every method here takes values and returns
- * values, so the parts that are easy to get subtly wrong -- which topics are
- * enabled, when to rotate, how many files to keep, how a line parses back into
- * a topic -- are unit-testable. The file handling itself lives in
- * Debugger\Log, and the option reads in _Components\Debugger.
- *
- * See DEBUGGER-REVIEW.md 6.
- *
  * @package LWTV
  */
 
@@ -23,17 +15,11 @@ class Log_Rules {
 
 	/**
 	 * Rotate during cron once the log passes this size.
-	 *
-	 * Size-based rather than daily: rotating a 4KB file every night just buries
-	 * the useful history in a pile of near-empty files.
 	 */
 	const ROTATE_AT = 1048576;
 
 	/**
 	 * Hard cap enforced mid-request, between cron runs.
-	 *
-	 * `statistics` alone has 104 call sites, many inside cache-warming loops, so
-	 * a single bad afternoon can outrun a daily rotation. This is the backstop.
 	 */
 	const MAX_BYTES = 10485760;
 
@@ -44,11 +30,6 @@ class Log_Rules {
 
 	/**
 	 * Format one log line.
-	 *
-	 * The format is deliberately unchanged -- `ucwords()` and all -- because
-	 * existing log files have to keep parsing. Note that `ucwords()` splits on
-	 * spaces, not hyphens, so `shadow-taxonomy` becomes `Shadow-taxonomy`;
-	 * topic_from_line() lowercases to compensate rather than "fixing" it here.
 	 *
 	 * @param  string $topic     Log topic.
 	 * @param  string $message   The message.
@@ -87,15 +68,6 @@ class Log_Rules {
 	/**
 	 * Should this topic be written?
 	 *
-	 * Fail *closed*, which is a deliberate reversal: an empty selection used to
-	 * mean "log everything", so unticking every box in a UI that plainly implies
-	 * silence produced the loudest possible setting. Empty now means silence.
-	 *
-	 * An unknown topic is also refused. That makes a typo'd topic silent rather
-	 * than unstoppable, which is the better failure of the two but still a
-	 * failure -- Log::write() reports unknown topics to PHP's error log so the
-	 * typo is discoverable.
-	 *
 	 * @param  string        $topic   Topic being logged.
 	 * @param  array<string> $enabled Topics the editor has ticked.
 	 * @param  array<string> $valid   The declared vocabulary.
@@ -127,9 +99,6 @@ class Log_Rules {
 	/**
 	 * Name for a rotated copy.
 	 *
-	 * Timestamped rather than numbered: numbering means renaming every kept file
-	 * on every rotation, and a timestamp sorts into the right order for free.
-	 *
 	 * @param  string $basename Log file name, e.g. 'debug-lwtv.log'.
 	 * @param  string $stamp    Pre-formatted stamp, e.g. '20260827-141500'.
 	 * @return string
@@ -146,9 +115,6 @@ class Log_Rules {
 
 	/**
 	 * Which rotated files are surplus to requirements?
-	 *
-	 * Sorted by name, which is chronological given rotated_name(). Newest KEEP
-	 * survive; everything older is returned for deletion.
 	 *
 	 * @param  array<string> $files Rotated file names or paths.
 	 * @param  int           $keep  How many to keep.
