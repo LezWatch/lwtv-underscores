@@ -15,9 +15,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-// The Shows CPT class lives in LWTV\CPTs, not LWTV\CPTs\Shows, so a bare
-// `Shows` here would resolve to LWTV\CPTs\Shows\Shows and fatal. Aliased,
-// matching what class-calculations.php does in this same namespace.
 use LWTV\CPTs\Shows as CPT_Shows;
 use LWTV\Debugger\Findings_Store;
 use LWTV\Debugger\Scan;
@@ -54,10 +51,6 @@ class Watch_Hosts {
 
 	/**
 	 * Findings backing the Watch Providers tab's worklist.
-	 *
-	 * Written through Debugger\Scan::store(), the one door for a findings write, so
-	 * this list has exactly the same life as every other check's findings and a
-	 * list left alone eventually rebuilds itself rather than going stale forever.
 	 */
 	const FINDINGS_UNREGISTERED = 'lwtv_watch_unregistered';
 
@@ -67,8 +60,7 @@ class Watch_Hosts {
 	const TIMEOUT = 6;
 
 	/**
-	 * Request timeout in seconds for admin-request runs. Tighter, because a
-	 * person is watching a spinner.
+	 * Request timeout in seconds for admin-request runs.
 	 */
 	const UI_TIMEOUT = 3;
 
@@ -79,11 +71,6 @@ class Watch_Hosts {
 
 	/**
 	 * Most hosts one admin-request lookup will fetch.
-	 *
-	 * Secondary to UI_TIME_BUDGET. A count on its own bounds nothing useful --
-	 * ten slow hosts is a minute either way -- so the budget is what actually
-	 * protects the request and this just stops it doing needless work when
-	 * every host answers instantly.
 	 */
 	const UI_BATCH = 5;
 
@@ -154,16 +141,6 @@ class Watch_Hosts {
 
 		global $wpdb;
 
-		// Two predicates on meta_key, deliberately. REGEXP is the exact test --
-		// anchored, digits only -- but it is not sargable, so alone it makes
-		// MySQL reach every candidate row in wp_postmeta before filtering. The
-		// LIKE is redundant for correctness and exists only to give the
-		// meta_key index a constant prefix to range-scan first.
-		//
-		// esc_like() is not optional: these keys are full of literal
-		// underscores, and an unescaped '_' is a single-character LIKE wildcard
-		// -- it would both loosen the match and truncate the usable index prefix
-		// at the first one.
 		$like = $wpdb->esc_like( 'lezshows_waystowatch_' ) . '%' . $wpdb->esc_like( '_url' );
 
 		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
@@ -227,10 +204,6 @@ class Watch_Hosts {
 	/**
 	 * host => term_id, plus any contested hosts.
 	 *
-	 * One query for every term URL, then arithmetic. Replaced a query per host,
-	 * which the validation tab paid ~154 times per render and every show page
-	 * paid once per watch link.
-	 *
 	 * @return array{map: array<string, int>, collisions: array<string, array<int, string>>}
 	 */
 	public static function host_map(): array {
@@ -258,10 +231,6 @@ class Watch_Hosts {
 	/**
 	 * Hosts claimed by more than one provider term.
 	 *
-	 * Reported rather than resolved: which term wins is an accident of name
-	 * order, and picking correctly needs a human. The Watch Providers tab renders
-	 * these as findings.
-	 *
 	 * @return array<string, array<int, string>> host => term_id => term name
 	 */
 	public static function host_collisions(): array {
@@ -270,9 +239,6 @@ class Watch_Hosts {
 
 	/**
 	 * The lez_watch_urls term matching a host, if any.
-	 *
-	 * Resolves from the host map, so it reports exactly what the front end
-	 * renders -- the front end calls this same method.
 	 *
 	 * @param string $host Hostname.
 	 * @return \WP_Term|null
@@ -294,15 +260,6 @@ class Watch_Hosts {
 
 	/**
 	 * Every URL registered against a lez_watch_urls term.
-	 *
-	 * The mirror image of in_use(): that asks what the shows point at, this asks
-	 * what we have claimed to know about. `wp lwtv debug watchurls` walks this
-	 * list, which is a few hundred rows, rather than every Ways to Watch field on
-	 * every show, which is thousands of rows pointing at the same few hundred
-	 * hosts. Same coverage, an order of magnitude fewer requests.
-	 *
-	 * Read from the repeater's subfield rows rather than ACF's row-count
-	 * bookkeeping, so a deleted row can't leave a phantom URL behind.
 	 *
 	 * @return array<int, array{term_id: int, name: string, url: string}> One row per URL.
 	 */
@@ -346,10 +303,6 @@ class Watch_Hosts {
 	/**
 	 * Which published shows each provider term actually serves.
 	 *
-	 * Used to weigh findings by consequence, and to name the shows behind one: a
-	 * broken URL on the term 500 shows point at matters more than one on a term
-	 * nothing reaches, and an editor fixing it wants the list.
-	 *
 	 * @return array<int, array<int, int>> term_id => post IDs.
 	 */
 	public static function show_ids_per_term(): array {
@@ -359,9 +312,6 @@ class Watch_Hosts {
 	/**
 	 * How many published shows each provider term actually serves.
 	 *
-	 * The length of show_ids_per_term()'s lists, deliberately, so the count on a
-	 * finding can never disagree with the list of shows rendered beside it.
-	 *
 	 * @return array<int, int> term_id => number of shows
 	 */
 	public static function shows_per_term(): array {
@@ -370,14 +320,6 @@ class Watch_Hosts {
 
 	/**
 	 * Fetch a URL and return the facts needed to judge it.
-	 *
-	 * Deliberately dumb: it gathers, it does not decide. Every judgement lives in
-	 * Watch_Url_Health, which is pure and unit-tested, so the untestable part of
-	 * this feature is only ever "did the request happen".
-	 *
-	 * Redirects are followed rather than reported, because a provider moving its
-	 * own URLs around is normal and only the destination is interesting. Where we
-	 * *landed* is captured so a redirect off the domain entirely can be spotted.
 	 *
 	 * @param string   $url     Full URL to fetch.
 	 * @param int|null $timeout Seconds to wait. Defaults to TIMEOUT; callers in
@@ -422,12 +364,6 @@ class Watch_Hosts {
 	/**
 	 * Where the request actually ended up after following redirects.
 	 *
-	 * The WP HTTP API exposes no first-class accessor for this, so it comes out
-	 * of the underlying Requests response. Guarded at every step: the transport
-	 * is swappable and a filter can replace the response array wholesale, in
-	 * which case "we don't know" is the correct answer and Watch_Url_Health
-	 * treats an empty value as no evidence of a move.
-	 *
 	 * @param array $response Response array from wp_remote_get().
 	 * @return string Final URL, or '' when the transport didn't say.
 	 */
@@ -450,11 +386,6 @@ class Watch_Hosts {
 	/**
 	 * The name a page publishes for itself, raw.
 	 *
-	 * Unlike discover_name(), this does *not* filter on plausibility. That filter
-	 * exists to keep taglines off buttons, but here a long implausible name is
-	 * exactly the signal we want -- "Lucky Star Casino | Best Online Slots" tells
-	 * us quibi.com changed hands, and rejecting it would hide that.
-	 *
 	 * @param string $html Response body.
 	 * @return string Sanitised name, or '' when the page published none.
 	 */
@@ -475,26 +406,6 @@ class Watch_Hosts {
 
 	/**
 	 * Scan for hosts with no provider term, and cache the result.
-	 *
-	 * Two modes, matching every other validator check:
-	 *
-	 *   - No $items: full scan. Every host in use that has no term.
-	 *   - $items given: re-check only those hosts, so ones that have since been
-	 *     given a term drop off without looking for new problems.
-	 *
-	 * The distinction is about *scope*, not cost -- this is two queries either
-	 * way. A full scan discovers hosts that appeared since last time; a re-check
-	 * deliberately does not, so the list stays a stable worklist while an editor
-	 * works down it. That is the same contract as On Air and the rest, and the
-	 * reason the button says Run Scan or Recheck rather than just Refresh.
-	 *
-	 * Hosts no longer in use are dropped on the re-check path, the same way
-	 * Debugger\Scan::targets() drops drafts: a show whose watch URL changed does
-	 * not still have this problem, and leaving it in would keep it on the list
-	 * forever because nothing can ever fix it.
-	 *
-	 * Show counts and the show IDs behind them are re-derived on both paths rather
-	 * than carried over, so a row never shows a count from a previous week.
 	 *
 	 * @param array<int, array{host: string, shows: int, show_ids: array<int, int>}> $items Rows from a previous run, or empty for a full scan.
 	 * @return array<int, array{host: string, shows: int, show_ids: array<int, int>}> Most-used first.
@@ -532,21 +443,10 @@ class Watch_Hosts {
 			);
 		}
 
-		// in_use() is already sorted by count descending, but a re-check walks
-		// the stored order, so sort explicitly rather than relying on the input.
 		usort( $found, static fn ( array $a, array $b ) => $b['shows'] <=> $a['shows'] );
 
 		Scan::store( self::FINDINGS_UNREGISTERED, $found );
 
-		/*
-		 * So the tab picker can say "Watch Providers (35)". Recorded here rather
-		 * than when the tab renders, because this is the only place the number is
-		 * authoritative -- and it is the same place Debugger\Scan::finish() does
-		 * it for every other check.
-		 *
-		 * No summary, so no "N new": that needs a baseline, and these findings
-		 * have no object ID to key one on. See the Watch Providers plan.
-		 */
 		Status::record( self::STATUS_KEY, 'Ways to Watch hosts with no provider term', count( $found ) );
 
 		return $found;
@@ -555,25 +455,10 @@ class Watch_Hosts {
 	/**
 	 * Drop one host from the stored worklist.
 	 *
-	 * Called after a term is created or assigned, so the row an editor just dealt
-	 * with disappears instead of sitting there until the next Recheck. Prunes the
-	 * one entry rather than deleting the findings, which would throw away the
-	 * other forty-odd rows and silently turn the next render into a full scan --
-	 * the reasoning Debugger\Repair::prune() documents.
-	 *
-	 * Does nothing when there is no worklist yet. A cold cache has nothing to
-	 * correct, and writing one here would store a list nobody scanned for.
-	 *
 	 * @param string $host Hostname.
 	 * @return void
 	 */
 	public static function forget_unregistered( string $host ): void {
-		/*
-		 * Findings_Store, not the transient cache wrapper this used to call. That
-		 * wrapper returns false whenever LWTV_DISABLE_TRANSIENTS is set, so in
-		 * development assigning a term silently failed to prune its row -- and this
-		 * was the one findings read in the codebase not going through the store.
-		 */
 		$items = Findings_Store::load( self::FINDINGS_UNREGISTERED );
 
 		if ( ! is_array( $items ) ) {
@@ -592,19 +477,12 @@ class Watch_Hosts {
 		if ( count( $kept ) !== count( $items ) ) {
 			Scan::store( self::FINDINGS_UNREGISTERED, $kept );
 
-			// The badge is read from the status option, not the findings, so a
-			// pruned row has to be counted off both or the tab picker keeps
-			// advertising work that is done.
 			Status::record( self::STATUS_KEY, 'Ways to Watch hosts with no provider term', count( $kept ) );
 		}
 	}
 
 	/**
 	 * Hosts in use with no term, most-used first.
-	 *
-	 * Live, uncached, and used by the CLI and the name-lookup batch. The admin
-	 * tab reads scan_unregistered()'s stored findings instead, so pressing Recheck
-	 * means something.
 	 *
 	 * @param int $min_shows Ignore hosts used by fewer shows than this.
 	 * @return array<string, int> host => number of shows
@@ -629,8 +507,6 @@ class Watch_Hosts {
 
 	/**
 	 * The name we would render for a host right now.
-	 *
-	 * Mirrors the theme's three tiers: term, then discovered name, then guess.
 	 *
 	 * @param string $host Hostname.
 	 * @return string
@@ -658,10 +534,6 @@ class Watch_Hosts {
 	/**
 	 * Create a lez_watch_urls term for a host.
 	 *
-	 * Writes the URL into the ACF repeater in the same shape ACF itself uses,
-	 * so the term is editable in wp-admin afterwards. Only the https form is
-	 * stored -- the matcher already tries http and www variants.
-	 *
 	 * @param string $host Hostname.
 	 * @param string $name Display name for the term.
 	 * @return int|\WP_Error Term ID on success.
@@ -688,8 +560,6 @@ class Watch_Hosts {
 
 		$created = wp_insert_term( $name, Theme_Ways_To_Watch::TAXONOMY );
 
-		// An existing term of the same name is fine -- attach the host to it
-		// rather than refusing. Two hosts, one provider, is normal.
 		if ( is_wp_error( $created ) ) {
 			$existing = $created->get_error_data( 'term_exists' );
 
@@ -710,23 +580,11 @@ class Watch_Hosts {
 	/**
 	 * The URL rows one term actually holds, in index order.
 	 *
-	 * Reads the `_N_url` subfield rows rather than ACF's row-count bookkeeping,
-	 * for the same reason term_urls() does: a row deleted in the ACF UI leaves
-	 * the count saying one thing and the rows saying another, and the rows are
-	 * the truth.
-	 *
-	 * Walks past gaps rather than stopping at the first one -- ACF renumbering
-	 * can leave rows 0 and 2 with nothing at 1, and stopping there would silently
-	 * lose the tail.
-	 *
 	 * @param int $term_id Term ID.
 	 * @return array<int, string> index => URL, gaps omitted.
 	 */
 	public static function term_url_rows( int $term_id ): array {
 		$claimed = (int) get_term_meta( $term_id, self::META_REPEATER, true );
-
-		// Look a little past what the count claims, so a count that undershoots
-		// the real rows cannot hide them.
 		$ceiling = max( $claimed, 0 ) + 5;
 		$rows    = array();
 
@@ -756,15 +614,6 @@ class Watch_Hosts {
 	/**
 	 * Rewrite a term's URL repeater to exactly this set, contiguously.
 	 *
-	 * Replaces the old append-at-the-count approach, which derived its next index
-	 * from ACF's row-count meta while every reader used the subfield rows. Once
-	 * those two disagreed -- which a row deleted in the ACF UI is enough to do --
-	 * the next append could land on an occupied slot and overwrite a live URL.
-	 *
-	 * Writes both the value rows and ACF's `_`-prefixed field-key rows, so the
-	 * term stays editable in wp-admin, and clears any trailing rows the new set
-	 * does not fill.
-	 *
 	 * @param int           $term_id Term ID.
 	 * @param array<string> $urls    URLs in any shape; canonicalised to one bare
 	 *                               `https://host` per distinct host.
@@ -779,8 +628,6 @@ class Watch_Hosts {
 			update_term_meta( $term_id, '_' . self::META_REPEATER . "_{$index}_url", self::FIELD_URL );
 		}
 
-		// Anything the new set does not cover has to go, or a shrinking rewrite
-		// leaves orphan rows that term_urls() would keep reporting.
 		$indexes = array_keys( $existing );
 		$highest = empty( $indexes ) ? -1 : max( $indexes );
 
@@ -792,7 +639,6 @@ class Watch_Hosts {
 		update_term_meta( $term_id, self::META_REPEATER, count( $canonical ) );
 		update_term_meta( $term_id, '_' . self::META_REPEATER, self::FIELD_REPEATER );
 
-		// Every memo that answered from term meta is now stale.
 		self::$term_urls = null;
 		self::$terms     = array();
 		self::$host_map  = null;
@@ -802,11 +648,6 @@ class Watch_Hosts {
 
 	/**
 	 * Point an existing term at another host.
-	 *
-	 * The gap the Watch Providers tab could not fill: create_term() refuses a
-	 * host that already resolves, and there was no other way in, so joining a
-	 * second host to a provider meant retyping that provider's name exactly and
-	 * hoping wp_insert_term()'s term_exists path caught it.
 	 *
 	 * @param int    $term_id Term to attach to.
 	 * @param string $host    Hostname.
@@ -828,7 +669,6 @@ class Watch_Hosts {
 		$current = self::term_for( $host );
 
 		if ( $current && $current->term_id === $term->term_id ) {
-			// Already true. Say so rather than writing again.
 			return $term->term_id;
 		}
 
@@ -851,12 +691,6 @@ class Watch_Hosts {
 
 	/**
 	 * Fold one provider term into another and delete it.
-	 *
-	 * For genuine duplicates -- "Lesflicks" and "LezFlicks", "FX" and "FX
-	 * Networks" -- where two terms describe one service. Safe because these terms
-	 * are never assigned to shows: the show-to-provider relationship is resolved
-	 * by matching URLs in term meta, so the term's `count` is permanently 0 and
-	 * deleting it orphans nothing. See CPTs\Shows\Ways_To_Watch::hide_on_edit_page().
 	 *
 	 * @param int $keep_id Term to keep.
 	 * @param int $drop_id Term to fold in and delete.
@@ -881,7 +715,6 @@ class Watch_Hosts {
 			array_values( self::term_url_rows( $drop_id ) )
 		);
 
-		// Canonicalise before deleting, so a failure here leaves both terms intact.
 		$urls = Watch_Term_Url_Audit::canonical_urls( $merged );
 
 		self::set_term_urls( $keep_id, $urls );
@@ -902,6 +735,7 @@ class Watch_Hosts {
 			'dropped' => $drop->name,
 		);
 	}
+
 	/**
 	 * Fetch a host and pull a name out of its <head>.
 	 *

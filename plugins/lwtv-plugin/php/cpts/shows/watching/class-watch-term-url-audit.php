@@ -3,13 +3,6 @@
  * Name: Watch Term URL Audit
  * Description: What is actually stored in the lez_watch_urls term URL rows.
  *
- * Read-only, and pure: it takes the rows Watch_Hosts::term_urls() returns and
- * says what shape each one is in. Nothing here writes, fetches, or decides
- * policy -- it exists so the decision to match terms on *host* rather than on
- * an exact URL string can be made against the data instead of against a hunch.
- *
- * The distinction that matters is blocking vs cosmetic:
- *
  *   - Cosmetic (trailing slash, case, http, www, port): exact-URL matching
  *     fails on these today. Host matching fixes them. They are why hosts that
  *     genuinely have a term still show up as problems.
@@ -20,7 +13,7 @@
  *     web series' term swallow every other YouTube URL on the site. A human has
  *     to look at these before the matcher changes.
  *
- * Collisions -- two different terms whose URLs reduce to the same host -- are
+ * Collisions (two different terms whose URLs reduce to the same host) are
  * blocking for the same reason, from the other direction: host matching has to
  * pick a winner, and there is no correct way to pick one automatically.
  *
@@ -219,10 +212,6 @@ class Watch_Term_Url_Audit {
 	/**
 	 * Pull one stored URL apart and say what is wrong with it.
 	 *
-	 * A URL with no scheme is retried with 'https://' bolted on, because
-	 * parse_url() reads a bare 'hulu.com' as a path and reports no host at all.
-	 * That is a real stored shape, and it is untidy rather than ambiguous.
-	 *
 	 * @param string $url Stored value.
 	 * @return array{host: string, flags: array<string>}
 	 */
@@ -239,10 +228,9 @@ class Watch_Term_Url_Audit {
 		$parsed = wp_parse_url( $url );
 
 		if ( ! is_array( $parsed ) || empty( $parsed['host'] ) ) {
-			// Retry only when the value never claimed to have a scheme. A value
-			// that *does* contain '://' and still yields no host is broken, and
-			// bolting another scheme on the front would parse the old scheme as
-			// the hostname -- 'https://' would come back as the host 'https'.
+			// Retry only when the value never claimed to have a scheme.
+			// This addresses an issue in wp_parse_url() where a URL without
+			// schema can be misinterpreted as a path.
 			$retry = str_contains( $url, '://' )
 				? false
 				: wp_parse_url( 'https://' . ltrim( $url, '/' ) );
@@ -257,15 +245,11 @@ class Watch_Term_Url_Audit {
 			$parsed  = $retry;
 			$flags[] = self::FLAG_NO_SCHEME;
 		} else {
-			// A protocol-relative '//hulu.com' parses a host but no scheme.
 			$scheme = strtolower( (string) ( $parsed['scheme'] ?? '' ) );
 
 			if ( '' === $scheme ) {
 				$flags[] = self::FLAG_NO_SCHEME;
 			} elseif ( 'https' !== $scheme ) {
-				// Anything that is not https gets flagged. http is the common
-				// case and the one the normalise pass rewrites; anything else
-				// (ftp, a typo'd scheme) is odd enough to want the same look.
 				$flags[] = self::FLAG_HTTP_SCHEME;
 			}
 		}
