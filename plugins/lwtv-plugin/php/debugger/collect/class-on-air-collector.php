@@ -2,13 +2,6 @@
 /**
  * Fetches what the on-air rules need.
  *
- * Two meta reads per show, but across every published show, so the batch's meta
- * cache is primed first -- Airdates::get() then answers from memory, including
- * its legacy-key fallback.
- *
- * The year is stamped here rather than read inside the rules, so the rules stay
- * testable on any day of any year.
- *
  * @package LWTV
  */
 

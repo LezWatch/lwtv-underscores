@@ -3,13 +3,7 @@
  * Name: Watch URL Health
  * Description: Decide whether a probed provider URL is still a working provider.
  *
- * Pure: no network, no state, no globals, no queries. It touches WordPress only
- * for `wp_parse_url()` and the translation functions, both of which the test
- * bootstrap shims, so it is unit-testable without a WP runtime (see
- * tests/unit/CPTs/WatchUrlHealthTest). The HTTP request that feeds it lives in
- * Watch_Hosts::probe().
- *
- * A dead Ways to Watch link is the easy case -- a 404 says so. The expensive
+ * A dead Ways to Watch link is the easy case: a 404 says so. The expensive
  * case is the one that still returns HTTP 200: Quibi shut down and quibi.com is
  * now an online casino, so every reader who clicked that button got sent
  * somewhere we did not intend. Status codes cannot see that, which is why this
@@ -107,12 +101,7 @@ class Watch_Url_Health {
 	 * @param string $url            The URL that was probed.
 	 * @param bool   $name_confirmed The term has been confirmed to still be the
 	 *                                right provider despite a published name that
-	 *                                does not resemble it -- a platform-hosted
-	 *                                site that publishes its own name, say. Only
-	 *                                changes the one outcome that check produces;
-	 *                                a broken link, a parked domain, or an
-	 *                                off-site redirect are still reported even
-	 *                                when this is true.
+	 *                                does not resemble it.
 	 * @return array{status: string, problem: string, reason: string}
 	 */
 	public static function classify( array $probe, string $term_name, string $url, bool $name_confirmed = false ): array {
@@ -276,16 +265,6 @@ class Watch_Url_Health {
 
 	/**
 	 * Does the name a site publishes for itself still match what we call it?
-	 *
-	 * Deliberately generous. A mismatch is only reported when there is something
-	 * solid to compare, because the cost of a false positive is an editor
-	 * checking a link that was fine, every week, until they stop reading the
-	 * report.
-	 *
-	 * Both our term name and the hostname's own label count as "known": a term
-	 * named "Hulu" on hulu.com is confirmed either way, and a term named
-	 * "BBC iPlayer" on bbc.co.uk is confirmed by the host even if the site says
-	 * only "BBC".
 	 *
 	 * @param string $term_name Our provider term name.
 	 * @param string $site_name What the site published, or '' when it published nothing.

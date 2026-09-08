@@ -377,6 +377,11 @@ class Features implements Component {
 	/**
 	 * Modify the response HTTP headers for front-end requests
 	 *
+	 * Only request-dependent headers belong here. Static policy headers
+	 * (HSTS, Permissions-Policy, Referrer-Policy) are set in nginx so they
+	 * also cover WP Rocket static cache hits, which never reach PHP.
+	 * See docs/nginx-security-headers.conf
+	 *
 	 * @param array $headers
 	 * @param WP    $wp
 	 *
@@ -386,7 +391,19 @@ class Features implements Component {
 		// The oEmbed endpoints should remain embed-able.
 		if ( ! isset( $wp->query_vars['embed'] ) || ! $wp->query_vars['embed'] ) {
 			$headers['X-Frame-Options'] = 'SAMEORIGIN';
+
+			/*
+			 * frame-ancestors is the modern replacement for X-Frame-Options.
+			 */
+			$headers['Content-Security-Policy'] = "frame-ancestors 'self'";
 		}
+
+		/*
+		 * X-XSS-Protection is dead: no current browser implements it, and the
+		 * filter it used to enable was itself an XSS vector. Send an empty value
+		 * so anything upstream that set it is overridden rather than merged.
+		 */
+		$headers['X-XSS-Protection'] = '0';
 
 		return $headers;
 	}

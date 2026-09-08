@@ -2,13 +2,6 @@
 /**
  * Does an actor have a photo and a biography?
  *
- * PURE, and barely a rule — two booleans in, up to two findings out. It exists
- * anyway so the `actor_empty` check has the same shape as every other one, and
- * so the next person adding a completeness rule has somewhere obvious to put it.
- *
- * This is a completeness report rather than a fault report: a brand new actor
- * legitimately has neither yet.
- *
  * The data contract, as produced by Collect\Actor_Completeness_Collector:
  *
  *     array(

@@ -2,22 +2,6 @@
 /**
  * Debugger run status: per-check counts and last-run timestamps.
  *
- * Every scanner used to inline this block, which meant ten copies of
- * `get_option()` → mutate → `update_option()`. That pattern also assigned into
- * the option's array offset without checking it was an array, which raises
- * "Automatic conversion of false to array is deprecated" on PHP 8.1+ whenever
- * the option is missing (fresh install, or after a reset).
- *
- * Centralising it removed the nine copies but not the race underneath: a
- * read-modify-write of one shared array means cron finishing a scan while an
- * admin clicks "Rerun" on a different tab loses one of the two counts, and the
- * losing check then reports a stale number until its next run. See
- * DEBUGGER-REVIEW.md 2.3.
- *
- * So each check now owns its own option, and a write touches nothing but that
- * check. `all()` reassembles the same array the shared option used to hold —
- * including the global `timestamp` member — so every consumer is unchanged.
- *
  * @package LWTV
  */
 
@@ -31,12 +15,6 @@ class Status {
 
 	/**
 	 * The former single option holding every check's status.
-	 *
-	 * Read by `all()` and `last_run()`, and pruned by `forget()`, but never
-	 * written any more. Entries here fill in for checks that have not run since
-	 * the split, so nothing vanishes from the admin while the weekly rotation
-	 * catches up. Once every check has run once, this option is inert and can be
-	 * deleted.
 	 */
 	const OPTION = 'lwtv_debugger_status';
 
@@ -47,10 +25,6 @@ class Status {
 
 	/**
 	 * Option listing the check keys that have their own option.
-	 *
-	 * Deliberately does NOT start with PREFIX. Sharing the prefix would mean a
-	 * check whose key happened to be the index's suffix wrote over the index
-	 * itself, which is an unlikely bug and a horrible one to find.
 	 */
 	const INDEX = 'lwtv_debugger_check_keys';
 
@@ -72,11 +46,6 @@ class Status {
 	/**
 	 * Read every check's status, always as an array.
 	 *
-	 * Returns the same shape the single option used to hold: check keys mapping
-	 * to `array( name, count, last[, summary] )`, plus a `timestamp` member
-	 * holding the most recent run. `timestamp` is derived rather than stored,
-	 * because "when did anything last run" is exactly the newest `last`.
-	 *
 	 * @return array
 	 */
 	public static function all(): array {
@@ -90,8 +59,6 @@ class Status {
 			}
 		}
 
-		// Union, not merge: `+` keeps the left-hand value, so a check that has
-		// its own option always wins over its pre-split leftover.
 		$status = $status + self::legacy();
 
 		$times = array();
@@ -135,13 +102,6 @@ class Status {
 			$entry['summary'] = $summary;
 		}
 
-		/*
-		 * The whole point: one option per check, so two checks finishing in the
-		 * same moment cannot overwrite each other's counts.
-		 *
-		 * Not autoloaded. Only wp-admin and WP-CLI ever read these, so there is
-		 * no reason to carry them on every front-end request.
-		 */
 		update_option( self::PREFIX . $key, $entry, false );
 
 		$keys = self::keys();
@@ -154,12 +114,6 @@ class Status {
 
 	/**
 	 * Drop entries for checks that no longer exist.
-	 *
-	 * Retiring a check leaves its last count behind, and
-	 * Admin_Menu\Validation::current_status() prints every entry with a count
-	 * above zero. Without a prune, a deleted check keeps reporting findings on
-	 * the intro tab forever, with no tab to open and nothing that could ever
-	 * recompute it to zero.
 	 *
 	 * @param array<string> $keys Status keys to remove.
 	 *

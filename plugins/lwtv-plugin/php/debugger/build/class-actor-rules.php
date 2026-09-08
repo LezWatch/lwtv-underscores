@@ -2,16 +2,6 @@
 /**
  * Every rule that decides whether an actor has a problem.
  *
- * PURE. Takes the plain array Collect\Actor_Collector assembles and returns
- * findings. This was the closest of the three to pure already -- the checks are
- * meta reads plus `Debug_Tool`'s stateless validators -- which is why the
- * collector here is thin.
- *
- * Messages carry raw values, not escaped ones. Escaping is the renderer's job
- * (`Validation::problem_cell()` runs `wp_kses_post()`, the CLI writes to a
- * terminal), and pre-escaping meant the admin escaped an already-escaped string
- * and showed the entities.
- *
  * The data contract, as produced by the collector:
  *
  *     array(
@@ -73,8 +63,7 @@ class Actor_Rules {
 	const META_TWITTER = 'lezactors_twitter';
 
 	/**
-	 * IMDb ID. Not judged by these rules -- the `actor_imdb` check owns that --
-	 * but collected here, and named so the repairs have one place to read it from.
+	 * IMDb ID.
 	 */
 	const META_IMDB = 'lezactors_imdb';
 
@@ -85,12 +74,6 @@ class Actor_Rules {
 
 	/**
 	 * Shortest numeric part we will accept as an IMDb person ID.
-	 *
-	 * Real IMDb person IDs run 7-8 digits. `Debug_Tool::validate_imdb()` accepts
-	 * `nm` plus *any* digits, which is right for validating the IMDb field but
-	 * too loose for deciding a social handle is misfiled: 'nm2020' is a
-	 * plausible Instagram handle, and the repair for this finding deletes the
-	 * value.
 	 */
 	const IMDB_MIN_DIGITS = 6;
 
@@ -147,11 +130,6 @@ class Actor_Rules {
 	/**
 	 * A social handle that is malformed, or is an IMDb ID in the wrong box.
 	 *
-	 * The two are mutually exclusive on purpose: a handle that fails
-	 * sanitisation is reported as invalid and nothing else, because the repair
-	 * for the IMDb case deletes the value and must not be offered for a handle
-	 * we merely failed to parse.
-	 *
 	 * @param  array  $actor  Collected actor data.
 	 * @param  string $social 'instagram' or 'twitter'.
 	 * @return array
@@ -197,10 +175,6 @@ class Actor_Rules {
 	/**
 	 * A homepage that is really a Wikipedia URL.
 	 *
-	 * Three outcomes, two of them repairable: move it when the Wikipedia field
-	 * is empty, drop it when it duplicates what is there, and report it when the
-	 * two are different Wikipedia pages, which needs a human to pick.
-	 *
 	 * @param  array $actor Collected actor data.
 	 * @return array
 	 */
@@ -235,10 +209,6 @@ class Actor_Rules {
 
 	/**
 	 * Does a social handle actually look like an actor's IMDb ID?
-	 *
-	 * Public because Debugger\Actors::remove_imdb_from_social() re-checks it
-	 * before deleting anything -- the repair must not trust that the finding it
-	 * was called for is still true.
 	 *
 	 * @param  string $value Social handle as stored.
 	 * @return bool

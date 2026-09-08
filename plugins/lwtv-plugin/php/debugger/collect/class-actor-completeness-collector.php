@@ -3,7 +3,7 @@
  * Fetches what the actor completeness rules need.
  *
  * Two questions per actor, but across every published actor, so the batch's meta
- * cache is primed first -- the featured image is a meta lookup.
+ * cache is primed first (the featured image is a meta lookup).
  *
  * @package LWTV
  */

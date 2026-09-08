@@ -7,17 +7,6 @@
  * breaking every exact-match API lookup keyed on it. Well-formed, right prefix,
  * works when clicked -- and wrong. Debug_Tool::validate_imdb() cannot see it.
  *
- * Deliberately its own command rather than a `tvmaze` action: the subject is our
- * IMDb data, and it uses two different oracles depending on post type. Shows are
- * checked against TVMaze, actors against TMDB, because those are the third
- * parties that store a canonical IMDb ID and whose IDs we already hold. IMDb
- * itself is never contacted -- it blocks automated requests, and a check that
- * silently reports "fine" for everything is worse than no check.
- *
- * Schedulers\Imdb_Verify_Task does the actual comparison, so a CLI sweep and the
- * background queue cannot drift. This command exists mainly to seed the first
- * pass: the queue only fills on save, so without a sweep nothing gets checked
- * until someone edits it.
  */
 
 // Bail if directly accessed

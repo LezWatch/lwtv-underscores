@@ -2,10 +2,6 @@
 /**
  * Fetches what the actor rules need.
  *
- * The thinnest of the three collectors, because every actor check is a meta
- * read: one `get_post_meta( $id )` per actor returns the lot, and priming the
- * cache for the batch first means that call is served from memory.
- *
  * @package LWTV
  */
 

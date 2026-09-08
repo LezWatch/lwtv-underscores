@@ -3,16 +3,6 @@
  * Name: Host Name
  * Description: Derive a display name from a hostname.
  *
- * Pure: no WordPress, no network, no state. Everything here is deterministic so
- * it can be unit-tested without a WP runtime (see tests/unit/CPTs/HostNameTest).
- *
- * This replaces an ad-hoc list of suffixes to strip. The question that list was
- * really asking is "which label carries the name", which is what the Public
- * Suffix List exists to answer. The full PSL is ~10k entries and needs periodic
- * updating; the part that actually matters here is knowing when the last *two*
- * labels form a suffix (co.uk, net.au, com.br) rather than one, and that is a
- * short list that changes rarely.
- *
  * Be aware of the ceiling. This gets you from wrong to recognisable, not to
  * right. Which label carries the brand is a semantic question:
  *
@@ -40,10 +30,6 @@ class Host_Name {
 
 	/**
 	 * Subdomain prefixes that never carry the brand, so they're safe to drop.
-	 *
-	 * Deliberately conservative. 'abc.go.com' is NOT in here, because 'abc' is
-	 * exactly the brand — dropping unknown subdomains would lose more than it
-	 * gains.
 	 */
 	const GENERIC_SUBDOMAINS = array(
 		'www.',
@@ -59,9 +45,6 @@ class Host_Name {
 	/**
 	 * Two-label public suffixes. When a host ends in one of these, the name is
 	 * the third label from the right, not the second.
-	 *
-	 * Scoped to the regions this corpus actually covers rather than mirroring
-	 * the whole PSL.
 	 */
 	const COMPOUND_SUFFIXES = array(
 		// UK
@@ -193,16 +176,6 @@ class Host_Name {
 
 	/**
 	 * The registrable domain: the shortest form that still identifies an owner.
-	 *
-	 * 'abc.go.com' and 'go.com' are both Disney, so both come back as 'go.com';
-	 * 'gem.cbc.ca' comes back as 'cbc.ca'. That is the right granularity for
-	 * asking "did this URL leave the site it was pointing at", which is what
-	 * Watch_Url_Health uses it for -- a provider moving a reader between its own
-	 * subdomains is not news, a provider bouncing them to a different company is.
-	 *
-	 * Distinct from registrable_label(), which returns just the one label that
-	 * carries the *name* and is therefore lossy ('go' tells you nothing about
-	 * ownership on its own).
 	 *
 	 * @param string $host Hostname.
 	 * @return string Registrable domain, or '' when there's nothing usable.

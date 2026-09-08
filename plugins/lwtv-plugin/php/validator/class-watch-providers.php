@@ -168,15 +168,6 @@ class Watch_Providers {
 			?>
 			<div class="lwtv-tools-table">
 				<table class="widefat fixed" cellspacing="0">
-					<?php
-					/*
-					 * Explicit widths because the provider-term cell holds a
-					 * select and a text field. Four equal columns leave it too
-					 * narrow, and `fixed` means the contents overflow the cell
-					 * rather than widening it -- which is exactly what the first
-					 * version of this column did.
-					 */
-					?>
 					<colgroup>
 						<col style="width:24%" />
 						<col style="width:14%" />
@@ -282,10 +273,6 @@ class Watch_Providers {
 	 * Self-POSTs back to the tab rather than through admin-post.php, matching
 	 * Validator\Report. The two write actions on this tab do go through
 	 * admin-post.php, because they redirect with a notice; a scan just re-renders.
-	 *
-	 * Rendered below the table, also matching Report. The table is what an editor
-	 * came for; the button is what they reach for once they have worked through
-	 * it, so it belongs at the end of the list rather than above it.
 	 *
 	 * @param bool $has_items Whether the worklist currently holds anything.
 	 * @return void
@@ -397,12 +384,7 @@ class Watch_Providers {
 		$select_id  = 'lwtv-watch-term-' . $slug;
 		$panel_id   = 'lwtv-watch-panel-' . $slug;
 
-		/*
-		 * Does a term already exist under a slightly different spelling? This is
-		 * how the data grew "Lesflicks" beside "LezFlicks", so the tab looks
-		 * before it offers to create. Exact-after-canonicalisation only -- see
-		 * Watch_Term_Match on why this is not fuzzy.
-		 */
+		// Does a term already exist under a slightly different spelling?
 		$suggested_id   = Watch_Term_Match::suggest( $host, $proposed, $terms );
 		$suggested_name = $suggested_id ? Theme_Ways_To_Watch::term_name( (string) ( $terms[ $suggested_id ] ?? '' ) ) : '';
 		?>
@@ -521,15 +503,6 @@ class Watch_Providers {
 									?>
 								</label>
 								<input type="text" id="<?php echo esc_attr( $field_id ); ?>" name="provider_name" value="<?php echo esc_attr( $proposed ); ?>" class="lwtv-watch-name" />
-								<?php
-								/*
-								 * Always present, even when the primary button is
-								 * also Create: a suggested row's primary is Assign,
-								 * so this is the only way to say "no, make a new
-								 * one" -- and refusing the suggestion has to stay
-								 * one click away.
-								 */
-								?>
 								<button type="submit" name="do" value="create" class="button"><?php esc_html_e( 'Create', 'lwtv' ); ?></button>
 							</p>
 						</div>
@@ -726,13 +699,6 @@ class Watch_Providers {
 			</button>
 			<span class="description">
 				<?php
-				/*
-				 * "Still to check" is not "will clear if you press again". A host
-				 * that fails to answer is deliberately not recorded, so a blip can
-				 * retry -- which means a host that is permanently unreachable stays
-				 * on this list for good, and `enrich --all` will not shift it
-				 * either. Say so, rather than implying one more press finishes it.
-				 */
 				printf(
 					/* translators: 1: number of hosts still to check, 2: WP-CLI command, already wrapped in a code element. */
 					wp_kses_post( __( 'Asks each site what it calls itself, a few at a time. %1$d still to check; %2$s does the rest. Hosts that never answer are not recorded, so they stay on this list and are retried each run.', 'lwtv' ) ),
@@ -821,23 +787,8 @@ class Watch_Providers {
 			wp_die( esc_html__( 'You do not have permission to assign provider terms.', 'lwtv' ), '', array( 'response' => 403 ) );
 		}
 
-		/*
-		 * Which button was pressed decides, not which fields are filled in. The
-		 * select keeps its value when a row is collapsed and reopened, so
-		 * inferring intent from a non-zero term_id could assign a host the editor
-		 * meant to create a fresh term for.
-		 */
 		$action = isset( $_POST['do'] ) ? sanitize_key( wp_unslash( $_POST['do'] ) ) : '';
 
-		/*
-		 * Three intents, one form.
-		 *
-		 * `suggest` takes its term from a hidden field the server rendered, so the
-		 * one-click path works without JavaScript -- the select is empty until the
-		 * script fills it. `assign` takes the select. Both are still checked
-		 * against the taxonomy by attach_host(), because a POSTed ID is a POSTed
-		 * ID however it arrived.
-		 */
 		if ( 'suggest' === $action ) {
 			$term_id = isset( $_POST['suggested_term_id'] ) ? absint( $_POST['suggested_term_id'] ) : 0;
 		} elseif ( 'assign' === $action ) {
@@ -890,9 +841,6 @@ class Watch_Providers {
 			wp_die( esc_html__( 'You do not have permission to do that.', 'lwtv' ), '', array( 'response' => 403 ) );
 		}
 
-		// Belt: ask for more head-room where the host allows it. Braces: the
-		// budget below, since this can be disabled and does nothing for a
-		// web-server or proxy timeout anyway.
 		if ( function_exists( 'set_time_limit' ) ) {
 			// phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
 			@set_time_limit( Watch_Hosts::UI_TIME_BUDGET * 2 );
@@ -909,9 +857,7 @@ class Watch_Providers {
 				continue;
 			}
 
-			// Stop before starting a request that could run past the budget,
-			// rather than after one already has. Slow hosts are the actual
-			// failure mode here, not the number of them.
+			// Stop before starting a request that could run past the budget.
 			$elapsed     = microtime( true ) - $started;
 			$out_of_time = ( $elapsed + Watch_Hosts::UI_TIMEOUT ) > Watch_Hosts::UI_TIME_BUDGET;
 
@@ -925,10 +871,6 @@ class Watch_Providers {
 
 			if ( 'error' === $result['status'] ) {
 				++$failed;
-
-				// Recorded now, where it used to be dropped. Counting the failure
-				// is what lets a host that is genuinely gone stop appearing on the
-				// "still to check" list after MAX_ATTEMPTS.
 				Watch_Host_Names::fail( $host );
 				continue;
 			}

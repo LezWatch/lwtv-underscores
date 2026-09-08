@@ -31,8 +31,6 @@ class OnAir {
 	 * @return array $items - array of show IDs that are not on air
 	 */
 	public function find_on_air_problems( $items = array() ): array {
-		// A recheck only revisits what was already flagged, so it may be tagged
-		// against the baseline but never diffed into it. See Scan::finish().
 		$is_recheck = ! empty( $items );
 
 		$shows = Scan::post_ids( $items, CPT_Shows::SLUG );
@@ -41,11 +39,6 @@ class OnAir {
 			return array();
 		}
 
-		/*
-		 * Collect, then evaluate. Build\On_Air_Rules holds the comparison and is
-		 * pure -- it is handed the year rather than asking the clock, which is why
-		 * it can be tested.
-		 */
 		$collector = new On_Air_Collector();
 		$findings  = array();
 
@@ -73,8 +66,6 @@ class OnAir {
 	 * @return string 'yes' when currently airing, otherwise 'no'.
 	 */
 	public function check_if_on_air( $show_id ) {
-		// The reading is here; the deciding is in Build\On_Air_Rules, so the repair
-		// below and the scan above cannot drift apart on what "on air" means.
 		return On_Air_Rules::should_be_on_air( Airdates::get( (int) $show_id ), (int) gmdate( 'Y' ) );
 	}
 

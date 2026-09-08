@@ -2,27 +2,6 @@
 /**
  * The character component of a show's score: one gather, two models.
  *
- * This class exists to hold exactly ONE copy of a decision that was previously
- * made twice. `Calculations::count_queers_all_types()` computed the live score
- * while `cli-score-preview.php` computed its own replica so it could run before
- * anything was wired in. That was the right call for a preview and it became a
- * divergence risk the moment the preview was used to CALIBRATE the live model:
- * the number in the CSV and the number the site would store could drift apart
- * silently, quietly invalidating the calibration the CSV was used to pick.
- *
- * Two copies of one decision has now caused three bugs in this project -- the
- * transposed denominator-tier labels, the tier column that disagreed with the
- * tier actually used, and this. Hence the shape here: the data is gathered once,
- * each model is a pure function of that data, and the CLI's only remaining job
- * is presentation.
- *
- * ⚠ NO HTTP, EVER. gather() reads meta and taxonomy only. The TVMaze aired-years
- * set arrives as $aired_override, supplied by a CLI that fetched it, or from the
- * `lezshows_aired_years` meta the backfill cron writes. Per-show HTTP inside a
- * recalculation would mean rate limits, timeouts and partial failures leaving
- * some shows on one denominator tier and others on another depending on when the
- * API blinked.
- *
  * @package LWTV
  */
 
@@ -41,12 +20,6 @@ class Character_Score {
 
 	/**
 	 * Gender slugs the LEGACY model treats as not-trans.
-	 *
-	 * Preserved exactly as `count_queers_all_types()` had it, because the legacy
-	 * path must stay a faithful replica while it is still the live one. It is an
-	 * exclusion test -- anything not on this list counts as trans -- which is why
-	 * a character with no gender term at all counted as trans. The new model uses
-	 * Longevity::classify_gender() instead, an explicit three-way classification.
 	 */
 	public const NOT_TRANS = array( 'cisgender', 'intersex', 'unknown' );
 
@@ -61,13 +34,6 @@ class Character_Score {
 
 	/**
 	 * Collect everything either model needs for one show.
-	 *
-	 * Ordering here is critical and not obvious: the characters must be read
-	 * and reduced to their credited years BEFORE the aired-years set is vetted,
-	 * because the vet's strongest signal is whether the set can account for those
-	 * years. The vet's verdict then decides the denominator every weight is
-	 * measured against. So it is characters, then vet, then denominator -- not the
-	 * other way round.
 	 *
 	 * @param int   $show_id Show post ID.
 	 * @param array $options aired_override (array) TVMaze years from a caller that
@@ -113,20 +79,12 @@ class Character_Score {
 
 		$characters = lwtv_plugin()->get_characters_list( $show_id, 'query' );
 		$characters = is_array( $characters ) ? $characters : array();
-
-		// Batched, not per-character. The live path used one wp_get_object_terms()
-		// across every character while the preview used has_term() per character
-		// with primed caches; sharing the slower of the two would have made a full
-		// recalculation worse, which is the one thing this project must not do.
-		$all_terms = self::batch_terms( $characters );
+		$all_terms  = self::batch_terms( $characters );
 
 		if ( ! empty( $characters ) ) {
 			update_meta_cache( 'post', $characters );
 		}
 
-		// Pre-pass: reduce each character's show-group rows to the union of years
-		// they are credited on THIS show, plus their strongest role. Read once;
-		// the scoring pass below consumes this rather than re-reading ACF.
 		$appears  = array();
 		$credited = array();
 
@@ -169,13 +127,7 @@ class Character_Score {
 			$credited += $years_set;
 		}
 
-		$credited = array_keys( $credited );
-
-		// Vet the aired-years set before it is used for anything. It feeds both
-		// the denominator and the appears-year intersection, so a set missing
-		// seasons has to be dropped for BOTH or the guard achieves nothing --
-		// rejecting it from run_years while still intersecting against it would
-		// keep the exact damage the guard exists to prevent.
+		$credited       = array_keys( $credited );
 		$coverage       = Longevity::appearance_coverage( $aired_years, $credited );
 		$discarded      = Longevity::discarded_years( $aired_years, $credited );
 		$aired_set      = count( array_unique( array_filter( array_map( 'intval', $aired_years ) ) ) );
@@ -219,8 +171,6 @@ class Character_Score {
 			'still_airing'         => $denominator['still_airing'],
 			'span'                 => $denominator['span'],
 			'count'                => count( $characters ),
-			// Read here rather than inside legacy() so that model stays pure and
-			// therefore unit-testable.
 			'char_roles'           => get_post_meta( $show_id, 'lezshows_char_roles', true ),
 			'dead'                 => 0,
 			'none'                 => 0,
@@ -250,8 +200,7 @@ class Character_Score {
 			$is_none = isset( $char_terms['none'] );
 			$is_qirl = isset( $char_terms['queer-irl'] );
 
-			// LEGACY trans test: the exclusion check. Kept so the legacy model
-			// stays a faithful replica of what the site stores today.
+			// Legacy check.
 			$is_trans_old = true;
 			foreach ( self::NOT_TRANS as $slug ) {
 				if ( isset( $char_terms[ $slug ] ) ) {
@@ -260,9 +209,7 @@ class Character_Score {
 				}
 			}
 
-			// NEW model: an explicit three-way classification from the actual
-			// gender terms, so an untriaged term is reported rather than silently
-			// counted as cis.
+			// New check.
 			$gender_slugs = $all_terms[ $char_id ]['lez_gender'] ?? array();
 			$gender_class = Longevity::classify_gender( $gender_slugs );
 
@@ -307,9 +254,6 @@ class Character_Score {
 			}
 
 			// Trans/NB casting, same shape: the primary actor, not the whole cast.
-			// Read via Longevity::classify_actor_gender() rather than
-			// Is_Actor_Trans, which decides with strpos( $slug, 'trans' ) and so
-			// cannot see an actor tagged non-binary.
 			$actor_class   = 'unknown';
 			$primary_actor = 0;
 			$primary_slugs = array();
@@ -404,11 +348,6 @@ class Character_Score {
 	/**
 	 * The LONGEVITY character score: weighted sum, format divisor, saturating.
 	 *
-	 * Every modifier -- role, queer casting, trans casting, clichés, death -- is
-	 * already inside each character's contribution. Nothing is added at the show
-	 * level, so there is no equivalent of the legacy trans aggregate; adding one
-	 * would double-count what casting_multiplier() already applied.
-	 *
 	 * @param array      $data    Output of gather().
 	 * @param float|null $ceiling SATURATION_K override, for calibration sweeps.
 	 *
@@ -432,17 +371,10 @@ class Character_Score {
 	/**
 	 * Taxonomy terms for many characters in two queries rather than 2N.
 	 *
-	 * Keeps the terms BOTH flattened and split by taxonomy, because the two
-	 * models want different things from them and neither should pay for a re-read:
-	 *
 	 *  - `flat` is a slug => true map across both taxonomies, which is all the
 	 *    legacy counting needs (`isset( $terms['dead'] )`).
 	 *  - the per-taxonomy lists preserve which taxonomy a slug came from, which
 	 *    classify_gender() needs and a flattened map cannot answer.
-	 *
-	 * An earlier revision flattened only, then called get_the_terms() per
-	 * character to recover the gender slugs -- correct, cache-warm, and still one
-	 * function call per character for data already in hand.
 	 *
 	 * @param array $characters Character post IDs.
 	 *
@@ -482,8 +414,8 @@ class Character_Score {
 	/**
 	 * The stronger of two role slugs.
 	 *
-	 * A character with two show-group rows on one show -- a guest stint and a
-	 * later regular run -- is one character in one role, the better of the two.
+	 * Arguably we don't add in actors to a show more than once, but IF we did
+	 * then this would come into play.
 	 *
 	 * Ranked by the POINTS each role is worth rather than by their position in
 	 * ROLE_POINTS, so reordering that array cannot silently invert the hierarchy.
@@ -505,8 +437,8 @@ class Character_Score {
 	/**
 	 * A post title fit for terminal output and for comparison.
 	 *
-	 * Titles come back HTML-encoded -- Sydney &#8220;Syd&#8221; Feldman, Law
-	 * &#038; Order -- which is right for the web and noise everywhere else.
+	 * Titles come back HTML-encoded (i.e. Sydney &#8220;Syd&#8221; Feldman, Law
+	 * &#038; Order) which is right for the web and noise everywhere else.
 	 *
 	 * @param int $post_id Post ID.
 	 *

@@ -4,8 +4,7 @@
  * Description: The canonical good/maybe/bad/ploy trope-slug groupings used
  * by the show score (Calculations::show_tropes_score()) and now shared with
  * the Statistics layer so stats views can group the same tropes the same
- * way. Pure data — no logic — so this file is safe to read from either
- * domain without pulling in scoring behavior.
+ * way.
  */
 
 namespace LWTV\CPTs\Shows\Scoring;

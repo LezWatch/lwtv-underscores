@@ -2,12 +2,6 @@
 /**
  * Every rule that decides whether a character has a problem.
  *
- * PURE. Takes the plain array Collect\Character_Collector assembles and returns
- * findings. Same split as Build\Show_Rules, and the same reason: these rules
- * cross-reference clichés against death dates and show rows against roles, and
- * none of that could be tested while it sat inside a loop of `get_field()` and
- * `has_term()` calls.
- *
  * The data contract, as produced by the collector:
  *
  *     array(
@@ -74,10 +68,7 @@ class Character_Rules {
 	}
 
 	/**
-	 * A character carrying no cliché terms at all.
-	 *
-	 * Detect only -- Debugger\Characters::add_none_cliche() repairs it under
-	 * --fix-it or from the admin.
+	 * A character carrying no cliché terms at all. (Detect only)
 	 *
 	 * @param  array $character Collected character data.
 	 * @return array
@@ -169,10 +160,6 @@ class Character_Rules {
 
 	/**
 	 * "<problem> for <show>." -- or just "<problem>." when the row names no show.
-	 *
-	 * The old copy appended the title unconditionally, so a show row with no
-	 * show produced "No role set for ." Naming nothing reads better than naming
-	 * an empty string.
 	 *
 	 * @param  string $problem Problem phrase, no trailing punctuation.
 	 * @param  string $title   Show title, possibly empty.
