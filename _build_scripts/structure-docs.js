@@ -328,7 +328,7 @@ let drifted = false;
 
 for ( const docConfig of CONFIG.docs ) {
 	const docPath = path.join( ROOT, docConfig.file );
-	const original = fs.readFileSync( docPath, 'utf8' );
+	const original = fs.readFileSync( docPath, 'utf8' ).replace( /\r\n/g, '\n' );
 	const chunks = parseDoc( original );
 	const used = new Set();
 
