@@ -4,10 +4,7 @@
  * Description: Cache of provider names discovered from a host's own metadata.
  *
  * A lez_watch_urls term always wins. This is for the hosts that don't have one
- * and probably never will -- the long tail of web series on their own domains.
- * Host_Name can only ever guess from the hostname ("Tubitv", "Onemorelesbian");
- * asking the site what it calls itself does better, and it only has to be asked
- * once per host.
+ * and probably never will.
  *
  * Populated by `wp lwtv waystowatch enrich`. Never fetches anything on a page
  * request -- rendering only ever reads this option.
@@ -38,19 +35,6 @@ class Watch_Host_Names {
 
 	/**
 	 * How many times to try a host that will not answer before giving up on it.
-	 *
-	 * Failures used to go unrecorded entirely, so a blip could retry -- which was
-	 * right, and had the consequence that a *permanently* dead host stayed on the
-	 * "still to check" list forever. Two of them sat there being re-fetched by
-	 * every cron run and every button press, and the page kept promising that one
-	 * more attempt would clear the list.
-	 *
-	 * Three keeps the blip-retry (a host down for one run comes back on the next)
-	 * and stops the nagging. The enrich rotation is weekly, so three attempts is
-	 * about three weeks of genuine unavailability before we stop asking.
-	 *
-	 * `wp lwtv waystowatch enrich --recheck` ignores this and asks everything
-	 * again; `forget` clears it. So a host that comes back is one command away.
 	 */
 	const MAX_ATTEMPTS = 3;
 
@@ -103,10 +87,6 @@ class Watch_Host_Names {
 	/**
 	 * Has this host been looked at, regardless of outcome?
 	 *
-	 * Lets the enrich command skip hosts it has already asked about, while
-	 * keeping "asked, found nothing" distinct from "never asked" -- the same
-	 * distinction the TMDB backfill needs, for the same reason.
-	 *
 	 * @param string $host Hostname.
 	 * @return bool
 	 */
@@ -116,13 +96,6 @@ class Watch_Host_Names {
 
 	/**
 	 * Is it still worth asking this host what it calls itself?
-	 *
-	 * The question every caller actually has, and not the same as is_checked():
-	 * a host that failed once has been *looked at* but is still worth another go.
-	 *
-	 * False when we already have a name, when the host answered and published
-	 * nothing usable, or when it has refused to answer MAX_ATTEMPTS times. True
-	 * otherwise, including for a host that has failed once or twice.
 	 *
 	 * @param string $host Hostname.
 	 * @return bool
@@ -157,9 +130,6 @@ class Watch_Host_Names {
 
 	/**
 	 * Record that a host would not answer.
-	 *
-	 * Counts up rather than writing a flag, so the difference between "down when
-	 * we happened to look" and "gone" is a number instead of a guess.
 	 *
 	 * @param string $host Hostname.
 	 * @return void
@@ -237,9 +207,7 @@ class Watch_Host_Names {
 	/**
 	 * Is this string plausibly a site name?
 	 *
-	 * og:site_name is usually clean, but not always -- sites put taglines,
-	 * full sentences and even URLs in it. Reject the obvious rubbish rather
-	 * than putting it on a button.
+	 * og:site_name is usually clean, but not always.
 	 *
 	 * @param string $name Candidate.
 	 * @return bool

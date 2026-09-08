@@ -2,10 +2,6 @@
 /*
  * Find all Duplicates.
  *
- * Orchestration only. The rules are pure and live in Build\Duplicate_Rules --
- * which is where they belong, since every duplicate-detection bug this check has
- * had was a comparison rather than a query (see DEBUGGER-REVIEW.md 1.9b). The
- * database reads are in Collect\Duplicate_Collector.
  */
 
 namespace LWTV\Debugger;
@@ -60,8 +56,6 @@ class Dupes {
 			),
 			$findings,
 			$is_recheck,
-			// `name` is not in the standard row shape: cli-dupes.php names it as
-			// an output column, and a post ID alone tells you nothing there.
 			static function ( array $tagged ) {
 				$rows = Rows::from_findings( $tagged );
 

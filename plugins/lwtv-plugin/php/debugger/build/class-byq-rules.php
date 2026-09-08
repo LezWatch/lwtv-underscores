@@ -2,16 +2,13 @@
 /**
  * Bury Your Queers: does a dead character's paperwork line up.
  *
- * PURE. Two questions, and the second one is the reason this class exists:
- *
  * 1. Does a character marked dead have a death year recorded?
  * 2. Is the death recorded on the right show?
  *
  * The second cannot be judged one show at a time. A character is killed on one
  * show and may have been on others that never killed her; those shows correctly
  * carry no BYQ trope. So the invariant is on the count of shows that *do* carry
- * it — exactly one — and that gate had a bug in it for as long as it was tangled
- * up with the WordPress reads. See DEBUGGER-REVIEW.md 1.9c.
+ * it.
  *
  * The data contract, as produced by Collect\Byq_Collector:
  *
@@ -66,12 +63,7 @@ class Byq_Rules {
 			return array();
 		}
 
-		/*
-		 * No shows at all is a bigger problem than any of this, and the Characters
-		 * check reports it as `char-no-shows`. Reporting a missing death year for a
-		 * character who is not recorded as being in anything would be noise on top
-		 * of a more basic gap.
-		 */
+		// If a character has no shows, there's a bigger issue at hand.
 		if ( empty( $shows ) ) {
 			return array();
 		}
@@ -84,10 +76,6 @@ class Byq_Rules {
 
 	/**
 	 * Dead, with no death year recorded.
-	 *
-	 * Reported on its own terms. It used to be counted into the trope gate below,
-	 * where it could cancel itself out: a dead character with no death year whose
-	 * shows were otherwise correct was dropped from this report entirely.
 	 *
 	 * @param  array $character Collected character data.
 	 * @return array
@@ -103,16 +91,14 @@ class Byq_Rules {
 	/**
 	 * Shows whose BYQ trope does not add up.
 	 *
-	 * Exactly one of a dead character's shows should carry the trope: the one she
-	 * was killed on.
+	 * Exactly one of a dead character's shows should carry the trope: the one they
+	 * were killed on.
 	 *
 	 * - One: correct, report nothing.
 	 * - None: nobody recorded the death on the show it happened on, so every show
 	 *   missing the trope is reported and one of them is the right one to fix.
-	 * - More than one: two of her shows claim a queer death. That can be
-	 *   legitimate — a show can kill someone else — but it is worth an eyeball.
-	 *   It also reports nothing when no show is missing the trope, so this gate
-	 *   can only ever suppress findings, never invent them.
+	 * - More than one: two shows claim a queer death. This is usually a Sara Lance
+	 *   Paradigm, but needs eyes to verify.
 	 *
 	 * @param  int   $post_id Character post ID.
 	 * @param  array $shows   Collected show rows.
@@ -129,13 +115,6 @@ class Byq_Rules {
 			$show_id = (int) ( $show['show_id'] ?? 0 );
 			$title   = (string) ( $show['title'] ?? '' );
 
-			/*
-			 * The edit link lives inside the message. That is markup in data,
-			 * which the typed shape is otherwise trying to get away from — but the
-			 * admin table has always rendered it, dropping it would cost editors a
-			 * click, and Findings::plain() strips it for the CLI. The show ID is in
-			 * context so a renderer can build the link properly later.
-			 */
 			$missing[] = Findings::make(
 				$post_id,
 				self::POST_TYPE,

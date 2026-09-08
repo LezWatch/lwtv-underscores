@@ -2,15 +2,6 @@
 /**
  * The debug log file itself: write, rotate, prune, read.
  *
- * Everything here touches the filesystem, which is why it is separate from
- * Build\Log_Rules -- that holds the decisions and is unit-tested; this holds the
- * side effects and is verified against a running site.
- *
- * The option reads that decide *whether* to log stay in _Components\Debugger,
- * which owns the template tags. This class is told what to write, not whether.
- *
- * See DEBUGGER-REVIEW.md 6.
- *
  * @package LWTV
  */
 
@@ -26,25 +17,16 @@ class Log {
 
 	/**
 	 * The log file's name, inside WP_CONTENT_DIR.
-	 *
-	 * Unchanged from the original inline path so existing logs and any server
-	 * housekeeping keep working.
 	 */
 	const FILENAME = 'debug-lwtv.log';
 
 	/**
 	 * How much of the file the reader will pull into memory, in bytes.
-	 *
-	 * Tailing does not need the whole file, and the hard cap allows 10MB.
 	 */
 	const READ_BYTES = 2097152;
 
 	/**
 	 * Size seen by this request's cap check, or null before it has run.
-	 *
-	 * One filesize() per request rather than one per debug_log() call. With 306
-	 * call sites and `statistics` alone accounting for 104, per-call would be
-	 * the expensive kind of safety.
 	 *
 	 * @var int|null
 	 */
@@ -88,20 +70,12 @@ class Log {
 
 		self::guard();
 
-		// error_log()'s message_type 3 is an append-and-close, which is what the
-		// original implementation used. Keeping it avoids holding a handle open
-		// across a request that may write hundreds of lines.
 		// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
 		return error_log( $line, 3, self::path() );
 	}
 
 	/**
 	 * Rotate mid-request if the log has run away between cron runs.
-	 *
-	 * Checked once per request, not once per line. A single request could in
-	 * principle write a long way past the cap after the check passes, but a
-	 * request writes kilobytes and cron rotates daily; this exists to stop a
-	 * runaway loop filling a disk, not to enforce the cap to the byte.
 	 *
 	 * @return void
 	 */
@@ -133,9 +107,6 @@ class Log {
 
 		$target = WP_CONTENT_DIR . '/' . Log_Rules::rotated_name( self::FILENAME, gmdate( 'Ymd-His' ) );
 
-		// Two processes rotating at once means one of them renames a file that is
-		// already gone. Nothing is lost either way, so a failed rename is not an
-		// error worth reporting.
 		// phpcs:ignore WordPress.WP.AlternativeFunctions.rename_rename, WordPress.PHP.NoSilencedErrors.Discouraged
 		if ( ! @rename( $path, $target ) ) {
 			return '';

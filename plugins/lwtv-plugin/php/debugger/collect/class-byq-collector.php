@@ -3,8 +3,8 @@
  * Fetches what the BYQ rules need.
  *
  * Two ACF reads per character plus a trope check per show they appear on. The
- * trope checks are the expensive part — the same handful of shows come up over
- * and over across a batch of dead characters — so they are resolved once per
+ * trope checks are the expensive part (the same handful of shows come up over
+ * and over across a batch of dead characters) so they are resolved once per
  * batch rather than once per character-show pair.
  *
  * @package LWTV

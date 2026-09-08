@@ -2,12 +2,6 @@
 /**
  * Is a post's IMDb ID missing, malformed, or out of date?
  *
- * PURE. One class for both the show and actor checks, because they are the same
- * three rules with different nouns: a different ID prefix, a different oracle to
- * disagree with, and — for shows only — an exemption and an override. Keeping
- * them together is the point; they drifted apart before, which is how the actor
- * check ended up reporting the *Instagram* value in a Twitter message (§3).
- *
  * The data contract, as produced by Collect\Imdb_Collector:
  *
  *     array(
@@ -88,10 +82,6 @@ class Imdb_Rules {
 	/**
 	 * Every finding for one post.
 	 *
-	 * The three cases are mutually exclusive, in this order: an ID that is not
-	 * there cannot be malformed, and one that is malformed cannot usefully be
-	 * compared with an oracle.
-	 *
 	 * @param  string $level self::SHOW or self::ACTOR.
 	 * @param  array  $item  Collected post data.
 	 * @return array<int, array<string, mixed>>
@@ -107,8 +97,7 @@ class Imdb_Rules {
 		$imdb = trim( (string) ( $item['imdb'] ?? '' ) );
 
 		if ( '' === $imdb ) {
-			// Exempt means a missing ID is expected here -- a web series that was
-			// never on IMDb in the first place.
+			// Some shows do not have IMDb records (web series)
 			if ( ! empty( $item['exempt'] ) ) {
 				return array();
 			}
@@ -117,13 +106,7 @@ class Imdb_Rules {
 		}
 
 		if ( false === Debug_Tool::validate_imdb( $imdb, $config['validate'] ) ) {
-			/*
-			 * A pasted IMDb URL is its own diagnosis, not just "invalid": the
-			 * right answer is inside the wrong value, so this one is repairable
-			 * and the general case is not. Separating them also makes the counts
-			 * mean something — paste errors are a fixable batch, everything else
-			 * needs somebody to go and look.
-			 */
+			// Check if someone put in IMDb as a URL and not the key.
 			$extracted = self::id_from_url( $imdb, $level );
 
 			if ( '' !== $extracted ) {
@@ -211,17 +194,6 @@ class Imdb_Rules {
 	 * IMDb reassigns title IDs and leaves the old one redirecting, so a stale ID
 	 * still opens the right page in a browser while breaking every exact-match
 	 * API lookup keyed on it. Nothing about the value looks wrong, which is why
-	 * format validation cannot catch it.
-	 *
-	 * Compared fresh each run rather than trusting a stored verdict: the canonical
-	 * value holds what the oracle last told us, and if an editor has since
-	 * corrected the ID to match, the problem clears itself without waiting for a
-	 * re-check.
-	 *
-	 * An empty canonical means "no disagreement recorded", which covers both
-	 * verified-clean and never-checked. Deliberately silent either way — a
-	 * debugger row implying "verified" for a post nobody has looked at would be
-	 * worse than no row at all.
 	 *
 	 * @param  string $level self::SHOW or self::ACTOR.
 	 * @param  array  $item  Collected post data.

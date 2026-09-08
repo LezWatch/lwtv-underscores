@@ -15,8 +15,7 @@
  *    settled this pattern for the same reason.
  * 2. A successful repair *prunes* the cached findings rather than deleting the
  *    findings. Dropping them would send the next viewer of that tab into a full
- *    rescan of every show, character or actor -- thousands of posts -- to
- *    reflect one fixed field.
+ *    rescan of every show, character or actor to reflect one fixed field.
  *
  * @package LWTV
  */
@@ -44,9 +43,6 @@ class Repair {
 
 	/**
 	 * Where a repaired finding lives, per issue level.
-	 *
-	 * Ties an issue's level to the cache that has to be pruned, the status key
-	 * whose count has to be re-recorded, and the tab to go back to.
 	 *
 	 * @var array<string, array<string, string>>
 	 */
@@ -178,8 +174,6 @@ class Repair {
 			wp_die( esc_html__( 'That is not a repairable issue.', 'lwtv' ), '', array( 'response' => 400 ) );
 		}
 
-		// The page cap (upload_files) gates *reading* the report. Changing a
-		// post's data should need rights over that post.
 		if ( ! $post_id || ! current_user_can( 'edit_post', $post_id ) ) {
 			wp_die( esc_html__( 'You do not have permission to repair this.', 'lwtv' ), '', array( 'response' => 403 ) );
 		}
@@ -192,11 +186,6 @@ class Repair {
 		$repaired = (bool) ( new $class() )->$method( $post_id );
 
 		if ( ! $repaired ) {
-			/*
-			 * The repair declined. Usually that means the problem is already
-			 * gone -- someone edited the post, or the same fix ran on cron --
-			 * so the finding is stale and pruning it is right either way.
-			 */
 			self::prune( $level, $post_id, $issue_type );
 			self::set_notice(
 				'info',
@@ -268,16 +257,6 @@ class Repair {
 
 		Scan::store( $config['findings'], $kept );
 
-		/*
-		 * Three args on purpose, which clears the stored new/open breakdown: the
-		 * count just changed without a scan, so any surviving "4 new" would be
-		 * arithmetic nobody did. The tab falls back to a plain count until the
-		 * next run.
-		 *
-		 * The baseline itself is deliberately left alone. It records what the
-		 * last *scan* found, so the next scan legitimately reports this finding
-		 * as resolved -- which is exactly what happened.
-		 */
 		Status::record( $config['status'], $config['name'], count( $kept ) );
 	}
 

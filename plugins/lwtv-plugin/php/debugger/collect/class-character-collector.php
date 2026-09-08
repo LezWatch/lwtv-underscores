@@ -2,14 +2,6 @@
 /**
  * Fetches what the character rules need.
  *
- * The WordPress half: clichés, the death date, the ACF show group and the actor
- * list. Nothing here decides whether anything is wrong.
- *
- * Batched for the same reason as the show collector -- one term query per batch
- * instead of one per character -- and it primes the post cache for every show a
- * batch references, because the rules want show titles and asking for them one
- * at a time is a query per row.
- *
  * @package LWTV
  */
 

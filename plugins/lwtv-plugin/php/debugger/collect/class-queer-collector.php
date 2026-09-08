@@ -2,10 +2,6 @@
 /**
  * Fetches what the queer-consistency rules need.
  *
- * The expensive part is asking whether an actor is queer, which is its own query
- * per actor -- and the same actors recur across a batch of characters, so the
- * verdicts are resolved once per batch and reused.
- *
  * @package LWTV
  */
 
