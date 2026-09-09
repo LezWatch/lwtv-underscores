@@ -9,8 +9,20 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+use LWTV\CPTs\Actors as CPT_Actors;
+use LWTV\CPTs\Shows as CPT_Shows;
 
 class Indexing {
+
+	/**
+	 * Post types whose title is stored as a display value on character rows.
+	 *
+	 * @var string[]
+	 */
+	private const TITLE_SOURCES = array(
+		CPT_Actors::SLUG,
+		CPT_Shows::SLUG,
+	);
 
 	/**
 	 * Constructor
@@ -18,6 +30,9 @@ class Indexing {
 	public function __construct() {
 		// Filter data before saving it
 		add_filter( 'facetwp_index_row', array( $this, 'facetwp_index_row' ), 10, 2 );
+
+		// Renaming an actor or show invalidates the character rows that quote its title
+		add_action( 'post_updated', array( $this, 'reindex_characters_on_rename' ), 10, 3 );
 
 		// Filter Facet output
 		add_filter( 'facetwp_facet_html', array( $this, 'facetwp_facet_html' ), 10, 2 );
@@ -54,6 +69,41 @@ class Indexing {
 		}
 
 		return $params;
+	}
+
+	/**
+	 * Re-index a renamed post's characters
+	 *
+	 * The character facets store another post's title as their display value
+	 * (see facetwp_index_row_characters_actors() and _shows() below), resolved
+	 * when the character is indexed. Renaming an actor or a show leaves every
+	 * character that references it pointing at the old name, which is invisible
+	 * until someone searches the facet for the new one.
+	 *
+	 * Deferred to a scheduled task: one rename can touch every character on a
+	 * long-running show, and none of it needs to happen before the redirect.
+	 *
+	 * @param int      $post_id     The post ID being updated.
+	 * @param \WP_Post $post_after  The post after the update.
+	 * @param \WP_Post $post_before The post before the update.
+	 *
+	 * @return void
+	 */
+	public function reindex_characters_on_rename( $post_id, $post_after, $post_before ) {
+		if ( ! in_array( $post_after->post_type, self::TITLE_SOURCES, true ) ) {
+			return;
+		}
+
+		if ( $post_after->post_title === $post_before->post_title ) {
+			return;
+		}
+
+		// A rename to nothing is a save in progress, not a new name to index.
+		if ( '' === trim( (string) $post_after->post_title ) ) {
+			return;
+		}
+
+		lwtv_plugin()->schedule_task( 'facet_reindex', (int) $post_id );
 	}
 
 	/**
