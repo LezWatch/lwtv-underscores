@@ -20,6 +20,7 @@ use LWTV\Schedulers\Cache_Queue;
 use LWTV\Schedulers\Calculation_Task;
 use LWTV\Schedulers\Cache_Batch_Task;
 use LWTV\Schedulers\FixCharShows_Task;
+use LWTV\Schedulers\Facet_Reindex_Task;
 use LWTV\Schedulers\Statistics_Cache_Warming;
 use LWTV\Schedulers\BYQ_Task;
 use LWTV\Schedulers\Imdb_Verify_Task;
@@ -54,6 +55,7 @@ class Scheduler implements Component, Templater {
 			new Cache_Queue();
 			new Calculation_Task();
 			new FixCharShows_Task();
+			new Facet_Reindex_Task();
 			new Statistics_Cache_Warming();
 
 			// Only initialize Action Scheduler-dependent tasks if AS is available

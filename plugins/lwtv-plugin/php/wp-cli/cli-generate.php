@@ -313,7 +313,7 @@ class WP_CLI_LWTV_Generate {
 			case 'sun':
 				\WP_CLI::log( 'Debugger: Force re-indexing FacetWP...' );
 				if ( function_exists( 'FWP' ) ) {
-					FWP()->indexer->index( true );
+					FWP()->indexer->index();
 					\WP_CLI::log( 'FacetWP re-index complete.' );
 				} else {
 					\WP_CLI::warning( 'FacetWP is not active; skipping reindex.' );
