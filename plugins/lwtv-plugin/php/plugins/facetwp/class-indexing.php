@@ -28,19 +28,19 @@ class Indexing {
 	 * Constructor
 	 */
 	public function __construct() {
-		// Filter data before saving it
+		// Filter data before saving it.
 		add_filter( 'facetwp_index_row', array( $this, 'facetwp_index_row' ), 10, 2 );
 
-		// Renaming an actor or show invalidates the character rows that quote its title
+		// Renaming an actor or show invalidates the character rows that quote its title.
 		add_action( 'post_updated', array( $this, 'reindex_characters_on_rename' ), 10, 3 );
 
 		// Filter Facet output
 		add_filter( 'facetwp_facet_html', array( $this, 'facetwp_facet_html' ), 10, 2 );
 
-		// Adding a weird filter...
+		// Adding a sources filter.
 		add_filter( 'facetwp_facet_sources', array( $this, 'facetwp_facet_sources' ), 10, 2 );
 
-		// Force Facet to show sometimes
+		// Force Facet to show.
 		add_filter( 'facetwp_is_main_query', array( $this, 'facetwp_is_main_query' ), 10, 2 );
 	}
 
@@ -90,6 +90,10 @@ class Indexing {
 	 * @return void
 	 */
 	public function reindex_characters_on_rename( $post_id, $post_after, $post_before ) {
+		if ( 'auto-draft' === $post_before->post_status ) {
+			return;
+		}
+
 		if ( ! in_array( $post_after->post_type, self::TITLE_SOURCES, true ) ) {
 			return;
 		}
