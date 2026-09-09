@@ -2,14 +2,23 @@
 /**
  * Hard dependency checks.
  *
- * The site cannot render without ACF Pro (all CPT meta) or Action Scheduler
- * (every background task). Rather than let templates fatal on missing
- * `get_field()` / `as_schedule_single_action()` calls, we stop the front end
- * cold and serve a static maintenance page with a 503.
+ * The site cannot render without ACF Pro: every CPT's meta comes from it, and
+ * templates call `get_field()` unguarded throughout. Rather than let them fatal
+ * one by one, we stop the front end cold and serve a static maintenance page
+ * with a 503.
  *
  * This file is loaded from the very top of functions.php, BEFORE
  * plugins/index.php pulls in the LWTV plugin, so a missing dependency never
  * reaches CPT registration or the show score calculations.
+ *
+ * Deliberately NOT gated here:
+ * - Action Scheduler. `_Components\Scheduler` degrades to WP-Cron by design
+ *   (`is_action_scheduler_available()`, `schedule_task()`, `cache_queue()`), so
+ *   the site survives without it. Do not add it back without also removing
+ *   that fallback.
+ * - FacetWP, SearchWP (+ Modal Form / Live Ajax), AIOSEO, Gravity Forms,
+ *   MonsterInsights, Related Posts By Taxonomy, Jetpack sharing. All call sites
+ *   are guarded; these degrade rather than fatal.
  *
  * Escape hatch: define( 'LWTV_SKIP_REQUIREMENTS_CHECK', true ) in wp-config.php
  * to bypass the gate entirely.
@@ -20,11 +29,8 @@
 /**
  * Dependencies the site cannot run without.
  *
- * Each entry maps a human-readable label to a callable check. The checks match
- * the ones already used elsewhere in the codebase:
- * - `class_exists( 'ACF' )` mirrors plugins/lwtv-plugin/php/plugins/class-acf.php
- * - `function_exists( 'as_schedule_single_action' )` mirrors
- *   plugins/lwtv-plugin/php/_components/class-scheduler.php
+ * Each entry maps a human-readable label to the symbol that was looked for. The
+ * ACF check mirrors the one in plugins/lwtv-plugin/php/plugins/class-acf.php.
  *
  * @return array<string, string> Array of plugin name => missing reason.
  */
@@ -39,10 +45,6 @@ function lwtv_theme_missing_requirements() {
 
 	if ( ! class_exists( 'ACF' ) ) {
 		$missing['Advanced Custom Fields Pro'] = 'class ACF';
-	}
-
-	if ( ! function_exists( 'as_schedule_single_action' ) ) {
-		$missing['Action Scheduler'] = 'function as_schedule_single_action()';
 	}
 
 	return $missing;

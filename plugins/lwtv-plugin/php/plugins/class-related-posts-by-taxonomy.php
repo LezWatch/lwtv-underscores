@@ -57,11 +57,11 @@ class Related_Posts_By_Taxonomy {
 	 * @return string
 	 */
 	public function lwtv_cards_format() {
-		if ( class_exists( 'Related_Posts_By_Taxonomy_Defaults\\get_instance' ) ) {
+		if ( method_exists( 'Related_Posts_By_Taxonomy_Defaults', 'get_instance' ) ) {
 			$defaults = \Related_Posts_By_Taxonomy_Defaults::get_instance();
 
 			// Add the new format .
-			$defaults->formats['lwtv_cards'] = __( 'LWTV Customized Display' );
+			$defaults->formats['lwtv_cards'] = __( 'LWTV Customized Display', 'lwtv' );
 		}
 	}
 
