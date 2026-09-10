@@ -118,12 +118,20 @@ class Watch_URLs {
 	 * @param  array    $all_items Every row currently in the findings store.
 	 * @param  array    $target    The one row to re-check, from $all_items.
 	 * @param  int|null $timeout   Per-request timeout in seconds.
-	 * @return array{resolved: bool, row: array|null} `row` is the new display
-	 *                             row when still flagged, null when resolved.
+	 * @return array{resolved: bool, stale: bool, row: array|null} `row` is the
+	 *                             new display row when still flagged, null when
+	 *                             resolved. `stale` distinguishes the two ways a
+	 *                             row resolves: the URL came back, or it is no
+	 *                             longer stored on the term at all. Worth telling
+	 *                             apart, because "it passes now" about a URL an
+	 *                             editor just deleted would be a lie.
 	 */
 	public function recheck_one( array $all_items, array $target, ?int $timeout = null ): array {
+		// Empty means targets_from_items() rejected it: the term is gone, or the
+		// URL is no longer on it. Either way there is nothing left to probe.
 		$targets = $this->targets_from_items( array( $target ) );
-		$finding = empty( $targets ) ? null : $this->probe_and_classify( $targets[0], $timeout );
+		$stale   = empty( $targets );
+		$finding = $stale ? null : $this->probe_and_classify( $targets[0], $timeout );
 
 		$row = null;
 
@@ -154,6 +162,7 @@ class Watch_URLs {
 
 		return array(
 			'resolved' => null === $row,
+			'stale'    => $stale,
 			'row'      => $row,
 		);
 	}
@@ -224,6 +233,15 @@ class Watch_URLs {
 	 * The show count and the IDs behind it are carried across rather than
 	 * recomputed.
 	 *
+	 * A stored row is a memory of the last sweep, and the term has been editable
+	 * ever since -- so before re-probing anything, check the URL is still on the
+	 * term. It very often is not: the row is what told the editor to go and
+	 * remove it. Re-probing a URL nobody stores any more would fail forever (the
+	 * host is dead, which is why it was flagged), so the row could never be
+	 * cleared from the UI at all; only a full sweep, which rebuilds targets from
+	 * `term_urls()`, would drop it. Skipping the target is what clears it: no
+	 * target, no finding, and Scan::finish() stores what came back.
+	 *
 	 * @param array $items Findings from a previous run.
 	 * @return array<int, array<string, mixed>>
 	 */
@@ -238,6 +256,18 @@ class Watch_URLs {
 			$term = get_term( (int) $item['id'], Theme_Ways_To_Watch::TAXONOMY );
 
 			if ( ! $term instanceof \WP_Term ) {
+				continue;
+			}
+
+			// Exact match, not host match. The finding is keyed on the stored
+			// string (see finding()), and an edited URL is a different fact
+			// about the term: the old row goes, and the new value is picked up
+			// by the next full sweep rather than probed behind the editor's
+			// back. Trimmed on both sides because term_url_rows() hands back
+			// whatever ACF wrote.
+			$stored = array_map( 'trim', array_values( Watch_Hosts::term_url_rows( (int) $item['id'] ) ) );
+
+			if ( ! in_array( trim( (string) $item['url'] ), $stored, true ) ) {
 				continue;
 			}
 

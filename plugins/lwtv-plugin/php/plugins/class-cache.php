@@ -244,12 +244,40 @@ class Cache {
 	 * @return void
 	 */
 	private function clear_nginx_helper( $clear_urls ) {
-		if ( is_plugin_active( 'nginx-helper/nginx-helper.php' ) ) {
-			foreach ( $clear_urls as $url ) {
-				// add /purge/ to the URL
-				$url = str_replace( home_url(), home_url() . '/purge/', $url );
-				wp_remote_get( $url );
-			}
+		if ( ! $this->is_nginx_helper_active() ) {
+			return;
 		}
+
+		foreach ( $clear_urls as $url ) {
+			// add /purge/ to the URL
+			$url = str_replace( home_url(), home_url() . '/purge/', $url );
+			wp_remote_get( $url );
+		}
+	}
+
+	/**
+	 * Whether Nginx Helper is active.
+	 *
+	 * Deliberately does NOT use is_plugin_active(): that lives in
+	 * wp-admin/includes/plugin.php, which is not loaded on front-end, REST, or
+	 * wp-cron.php requests. Cache clears reach here from the `shutdown` hook
+	 * (Schedulers\Cache_Queue) and from cron/Action Scheduler tasks, so calling
+	 * it would be a fatal on exactly those paths.
+	 *
+	 * @return bool
+	 */
+	private function is_nginx_helper_active(): bool {
+		$plugin = 'nginx-helper/nginx-helper.php';
+
+		if ( in_array( $plugin, (array) get_option( 'active_plugins', array() ), true ) ) {
+			return true;
+		}
+
+		if ( is_multisite() ) {
+			$network_plugins = (array) get_site_option( 'active_sitewide_plugins', array() );
+			return isset( $network_plugins[ $plugin ] );
+		}
+
+		return false;
 	}
 }

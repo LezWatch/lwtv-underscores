@@ -10,7 +10,7 @@ if ( ! defined( 'LWTV_THEME_VERSION' ) ) {
 	$versions = array();
 
 	// Automatically updated by the build script. Update ./package.json to change this.
-	$versions['lwtv-underscores'] = '7.2.2';
+	$versions['lwtv-underscores'] = '7.2.3';
 
 	// Automatically updated by the build script.
 	$versions['bootstrap'] = '5.3.8';
@@ -43,6 +43,18 @@ if ( ! defined( 'LWTV_THEME_PATH' ) ) {
 if ( ! defined( 'LWTV_THEME_URL' ) ) {
 	define( 'LWTV_THEME_URL', trailingslashit( get_stylesheet_directory_uri() ) );
 }
+
+/**
+ * Check for requirements.
+ *
+ * ACF Pro is a hard dependency. Without it, front-end requests get a static
+ * 503 maintenance page and wp-admin gets a notice. This runs before the LWTV
+ * plugin loads (see the bottom of this file) so a missing dependency never
+ * reaches CPT registration. See inc/requirements.php for what is deliberately
+ * not gated, and why.
+ */
+require_once LWTV_THEME_PATH . '/inc/requirements.php';
+lwtv_theme_check_requirements();
 
 /**
  * Get the title of the Posts page.

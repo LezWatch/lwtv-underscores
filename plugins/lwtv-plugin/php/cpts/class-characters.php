@@ -488,6 +488,14 @@ class Characters {
 
 		// If character is not in cached list or death date changed, invalidate cache
 		if ( ! $is_in_list ) {
+			// This runs on save_post, so it must not assume Action Scheduler is
+			// loaded -- BYQ_Task is only instantiated when AS is available (see
+			// _Components\Scheduler::initialize_task_handlers).
+			if ( ! lwtv_plugin()->is_action_scheduler_available() ) {
+				lwtv_plugin()->debug_log( 'buryqueers', "Skipping BYQ cache invalidation for character {$post_id} - Action Scheduler unavailable" );
+				return;
+			}
+
 			// Schedule cache invalidation for 10 minutes in the future
 			as_schedule_single_action( time() + ( 10 * MINUTE_IN_SECONDS ), \LWTV\Schedulers\BYQ_Task::AS_INVALIDATE_HOOK, array(), \LWTV\Schedulers\BYQ_Task::AS_GROUP );
 			lwtv_plugin()->debug_log( 'buryqueers', "Scheduled BYQ cache invalidation for character {$post_id} - character not in cached list or death date changed" );

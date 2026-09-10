@@ -575,7 +575,7 @@ class Watch_Term_Check {
 				<?php
 				printf(
 					/* translators: 1: number of flagged URLs, 2: seconds of budget, 3: WP-CLI command in a code element. */
-					wp_kses_post( __( 'Re-probes the %1$d flagged URLs only, and drops any that now pass. Stops after about %2$d seconds; anything it did not reach is kept, not cleared. A full sweep of every term is %3$s.', 'lwtv' ) ),
+					wp_kses_post( __( 'Re-probes the %1$d flagged URLs only. Drops any that now pass, and any you have since removed from their term. Stops after about %2$d seconds; anything it did not reach is kept, not cleared. A full sweep of every term is %3$s.', 'lwtv' ) ),
 					absint( $count ),
 					absint( Watch_Hosts::UI_TIME_BUDGET ),
 					'<code>wp lwtv debug watchurls --force</code>'
@@ -636,15 +636,17 @@ class Watch_Term_Check {
 		$fixed  = max( 0, $before - count( $after ) );
 
 		if ( empty( $after ) ) {
-			self::set_notice( 'success', __( 'Every flagged URL now passes. Nothing left to look at.', 'lwtv' ) );
+			self::set_notice( 'success', __( 'Nothing is flagged any more. Every URL either passes or is no longer stored on a term.', 'lwtv' ) );
 			self::redirect_back();
 		}
 
 		self::set_notice(
 			$fixed ? 'success' : 'info',
 			sprintf(
-				/* translators: 1: URLs that now pass, 2: URLs still flagged. */
-				__( '%1$d URL(s) now pass; %2$d still flagged.', 'lwtv' ),
+				// "Cleared", not "now pass": a row also goes when the URL has
+				// been removed from the term, which is the usual reason.
+				/* translators: 1: URLs cleared, 2: URLs still flagged. */
+				__( '%1$d URL(s) cleared; %2$d still flagged.', 'lwtv' ),
 				$fixed,
 				count( $after )
 			)
@@ -686,7 +688,12 @@ class Watch_Term_Check {
 		$result = ( new Watch_URLs() )->recheck_one( $items, $target, Watch_Hosts::UI_TIMEOUT );
 
 		if ( $result['resolved'] ) {
-			self::set_notice( 'success', __( 'That URL now passes and has been removed from the report.', 'lwtv' ) );
+			self::set_notice(
+				'success',
+				! empty( $result['stale'] )
+					? __( 'That URL is no longer stored on the term, so its row has been removed from the report.', 'lwtv' )
+					: __( 'That URL now passes and has been removed from the report.', 'lwtv' )
+			);
 			self::redirect_back();
 		}
 
