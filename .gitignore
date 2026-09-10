@@ -15,6 +15,7 @@ Thumbs.db
 *.swp
 
 /.claude/CLAUDE.local.md
+/.claude/settings.local.json
 /.phpunit.cache/*
 /.sass-cache/
 /node_modules/

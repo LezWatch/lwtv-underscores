@@ -25,6 +25,9 @@ class SearchWP {
 			add_filter( 'searchwp\indexer\alternate', '__return_true' );
 		}
 
+		// No more logging
+		add_filter( 'searchwp\statistics\log', '__return_false', 20 );
+
 		// We know Cron works.
 		add_filter( 'searchwp\utils\cron_operational', '__return_true' );
 

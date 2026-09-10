@@ -45,6 +45,18 @@ if ( ! defined( 'LWTV_THEME_URL' ) ) {
 }
 
 /**
+ * Check for requirements.
+ *
+ * ACF Pro is a hard dependency. Without it, front-end requests get a static
+ * 503 maintenance page and wp-admin gets a notice. This runs before the LWTV
+ * plugin loads (see the bottom of this file) so a missing dependency never
+ * reaches CPT registration. See inc/requirements.php for what is deliberately
+ * not gated, and why.
+ */
+require_once LWTV_THEME_PATH . '/inc/requirements.php';
+lwtv_theme_check_requirements();
+
+/**
  * Get the title of the Posts page.
  */
 function lwtv_theme_blog_page_title() {

@@ -1,0 +1,41 @@
+# Gemini Code Assist configuration for lezwatch/lwtv-underscores
+#
+# Schema: https://docs.cloud.google.com/gemini/docs/code-review/customize-repo-review
+# Review conventions live alongside this file in styleguide.md.
+
+have_fun: false
+
+code_review:
+  disable: false
+
+  # MEDIUM is the default and includes minor refactor suggestions. Raise to
+  # HIGH if reviews stay noisy after styleguide.md settles in.
+  comment_severity_threshold: MEDIUM
+
+  max_review_comments: -1
+
+  pull_request_opened:
+    help: false
+    summary: true
+    code_review: true
+    include_drafts: true
+
+# Generated, vendored, and compiled files. These mirror the exclusions in
+# phpcs.xml.dist and .eslintignore -- reviewing them is pure noise.
+ignore_patterns:
+  - '**/vendor/**'
+  - '**/node_modules/**'
+  - '**/blocks/build/**'
+  - 'inc/dist/**'
+  - 'plugins/shadow-taxonomy/**'
+  - '**/ICal/**'
+  - 'symbolicons/**'
+  - 'languages/**'
+  - '*.min.css'
+  - '*.min.js'
+  - '*.css.map'
+  - 'style.css'
+  - 'style-editor.css'
+  - 'composer.lock'
+  - 'package-lock.json'
+  - 'plugins/lwtv-plugin/acf-json/**'

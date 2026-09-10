@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [7.2.3] - 2026-09-10
+
+### Added
+
+- Add a maintenance page that takes the front end offline with a 503 response when Advanced Custom Fields Pro is missing or deactivated, instead of showing broken pages.
+
+### Changed
+
+- Reduce log noise by turning off SearchWP's own statistics logging.
+
+### Fixed
+
+- Fix character saving so it skips cache invalidation instead of erroring when Action Scheduler is unavailable.
+- Fix cache clearing to correctly detect whether Nginx Helper is active on front-end, REST, and cron requests.
+- Fix a stale compatibility check that prevented the custom card display format from registering with Related Posts by Taxonomy.
+- Fix the Watch URLs report so it stops re-checking, and correctly clears, URLs that have already been removed from their term.
+
 ## [7.2.2] - 2026-09-09
 
 ### Fixed
