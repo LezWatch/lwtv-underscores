@@ -91,9 +91,14 @@ function lwtv_theme_requirements_request_is_exempt() {
 	}
 
 	// REST API. Sniffed from the URI; see note above.
+	//
+	// Match against the PATH only. Matching the whole REQUEST_URI would let
+	// anyone skip the gate with a query string -- `/?bypass=/wp-json/` is not a
+	// REST request, but it contains the prefix.
 	if ( isset( $_SERVER['REQUEST_URI'] ) ) {
-		$request_uri = sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) );
-		if ( str_contains( $request_uri, '/' . rest_get_url_prefix() . '/' ) ) {
+		$request_uri  = sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) );
+		$request_path = wp_parse_url( $request_uri, PHP_URL_PATH );
+		if ( is_string( $request_path ) && str_contains( $request_path, '/' . rest_get_url_prefix() . '/' ) ) {
 			return true;
 		}
 	}
