@@ -736,8 +736,10 @@ class WP_CLI_LWTV_Audit {
 	 */
 	private function unconfirmed_action( string $verdict, int $year ): string {
 		return ( self::APPEARED_UNKNOWN_MAIN_CAST === $verdict )
-			? 'Confirm ' . $year . ' -- TVMaze lists main cast without years'
-			: 'Confirm ' . $year . ' -- no TVMaze episode data checked';
+			// translators: %1 - Year
+			? sprintf( __( 'Confirm %1$d -- TVMaze lists main cast without years', 'lwtv' ), $year )
+			// translators: %1 - Year
+			: sprintf( __( 'Confirm %1$d -- no TVMaze episode data checked', 'lwtv' ), $year );
 	}
 
 	/**
@@ -780,6 +782,11 @@ class WP_CLI_LWTV_Audit {
 
 		// No end year, or still flagged as airing: this is the close-out case.
 		if ( '' === $finish || Airdates::is_still_airing( $finish ) ) {
+			$action = $ended_year
+				// translators: %s - Year
+				? sprintf( __( 'Set end year (TVMaze: ended %s)', 'lwtv' ), $ended_year )
+				: __( 'Set end year (TVMaze: ended date unknown)', 'lwtv' );
+
 			return $this->build_row(
 				$show_id,
 				$status,
@@ -787,7 +794,7 @@ class WP_CLI_LWTV_Audit {
 				'',
 				'',
 				'',
-				'Set end year (TVMaze: ended ' . ( $ended_year ?: 'date unknown' ) . ')',
+				$action,
 				'ended'
 			);
 		}
@@ -805,7 +812,8 @@ class WP_CLI_LWTV_Audit {
 				'',
 				'',
 				'',
-				'End year mismatch (site: ' . $finish . ', TVMaze: ' . $ended_year . ')',
+				// translators: %1 - LWTV end Year ; %2 TVMaze End Year
+				sprintf( __( 'End year mismatch (site: %1$s, TVMaze: %2$s)', 'lwtv' ), $finish, $ended_year ),
 				'end-year-mismatch'
 			);
 		}
@@ -834,6 +842,7 @@ class WP_CLI_LWTV_Audit {
 				return array();
 			default:
 				\WP_CLI::error( 'Invalid --roles option. Allowed values: all, regular, recurring, guests, none.' );
+				return array();
 		}
 	}
 
@@ -1031,6 +1040,7 @@ class WP_CLI_LWTV_Audit {
 		}
 
 		\WP_CLI::error( 'Invalid --letter. Use a-z, num (#), or intl (-).' );
+		return '';
 	}
 
 	/**
