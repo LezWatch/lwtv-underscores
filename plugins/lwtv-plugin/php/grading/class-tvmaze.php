@@ -65,8 +65,9 @@ class TVMaze {
 	 * @return array
 	 */
 	public function update_scores( int $show_id ): array {
-		$imdb_id = get_post_meta( $show_id, 'lezshows_imdb', true );
-		$recheck = false;
+		$imdb_id   = get_post_meta( $show_id, 'lezshows_imdb', true );
+		$tvmaze_id = get_post_meta( $show_id, 'lezshows_tvmaze_id', true );
+		$recheck   = false;
 
 		$scores = array(
 			'score' => 'TBD',
@@ -82,31 +83,42 @@ class TVMaze {
 			$recheck         = ( 'TBD' === $scores['score'] ) ? true : false;
 		}
 
-		if ( $imdb_id && $recheck ) {
-			try {
-				$response = wp_remote_get( self::TVMAZE_URL . '/lookup/shows?imdb=' . rawurlencode( $imdb_id ) );
+		// If Recheck remains false, return early.
+		if ( ! $recheck ) {
+			return $scores;
+		}
 
-				// Check the response:
-				if ( is_array( $response ) && ! is_wp_error( $response ) ) {
-					$body = json_decode( $response['body'], true ); // use the content
+		// Build the URL based on the TVMaze or IMDB URL
+		if ( $tvmaze_id ) {
+			$response_url = self::TVMAZE_URL . '/shows/' . rawurlencode( $tvmaze_id );
+		} elseif ( $imdb_id ) {
+			$response_url = self::TVMAZE_URL . '/lookup/shows?imdb=' . rawurlencode( $imdb_id );
+		} else {
+			return $scores;
+		}
 
-					// TV Maze returns a null body sometimes.
-					if ( ! is_null( $body ) ) {
-						$maybe_url = $body['url'] ?? '';
-						$host      = $maybe_url ? strtolower( (string) wp_parse_url( $maybe_url, PHP_URL_HOST ) ) : '';
-						// Exact host or a real subdomain — NOT "eviltvmaze.com".
-						if ( 'tvmaze.com' === $host || str_ends_with( $host, '.tvmaze.com' ) ) {
-							$scores['url'] = $maybe_url;
-						}
-						$scores['score'] = ( isset( $body['rating']['average'] ) && ! empty( $body['rating']['average'] ) ) ? round( $body['rating']['average'] * 10 ) : 'TBD';
+		try {
+			$response = wp_remote_get( $response_url );
+			// Check the response:
+			if ( is_array( $response ) && ! is_wp_error( $response ) ) {
+				$body = json_decode( $response['body'], true ); // use the content
+
+				// TV Maze returns a null body sometimes.
+				if ( ! is_null( $body ) ) {
+					$maybe_url = $body['url'] ?? '';
+					$host      = $maybe_url ? strtolower( (string) wp_parse_url( $maybe_url, PHP_URL_HOST ) ) : '';
+					// Exact host or a real subdomain — NOT "eviltvmaze.com".
+					if ( 'tvmaze.com' === $host || str_ends_with( $host, '.tvmaze.com' ) ) {
+						$scores['url'] = $maybe_url;
 					}
+					$scores['score'] = ( isset( $body['rating']['average'] ) && ! empty( $body['rating']['average'] ) ) ? round( $body['rating']['average'] * 10 ) : 'TBD';
 				}
-
-				// Set transient and don't re-check until tomorrow.
-				lwtv_plugin()->set_transient( 'lwtv_3rd_scores_tvmaze_' . $show_id, $scores['score'], 24 * HOUR_IN_SECONDS );
-			} catch ( \Exception $e ) {
-				lwtv_plugin()->error_log( 'tvmaze', 'Error getting TV Maze data: ' . $e->getMessage() );
 			}
+
+			// Set transient and don't re-check until tomorrow.
+			lwtv_plugin()->set_transient( 'lwtv_3rd_scores_tvmaze_' . $show_id, $scores['score'], 24 * HOUR_IN_SECONDS );
+		} catch ( \Exception $e ) {
+			lwtv_plugin()->error_log( 'tvmaze', 'Error getting TV Maze data: ' . $e->getMessage() );
 		}
 
 		return $scores;
