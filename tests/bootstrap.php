@@ -70,6 +70,7 @@ require_once __DIR__ . '/../plugins/lwtv-plugin/php/cpts/shows/class-airdates.ph
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/cpts/shows/scoring/class-longevity.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/cpts/shows/scoring/class-character-score.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/_helpers/class-imdb-canonical.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/_helpers/class-tmdb-response.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/cpts/shows/watching/class-host-name.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/cpts/shows/watching/class-watch-url-health.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/cpts/shows/watching/class-watch-term-url-audit.php';

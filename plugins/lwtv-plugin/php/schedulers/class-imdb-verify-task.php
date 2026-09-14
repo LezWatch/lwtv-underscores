@@ -38,6 +38,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 use LWTV\_Components\CPTs;
 use LWTV\_Helpers\Imdb_Canonical;
+use LWTV\_Helpers\Tmdb_Response;
 
 /**
  * Class Imdb_Verify_Task
@@ -287,20 +288,30 @@ class Imdb_Verify_Task {
 	 * The IMDb ID TMDB holds for an actor.
 	 *
 	 * Reuses _Components\CPTs::get_tmdb_info(), which already handles the API key
-	 * check, the /person/{id} shape and TMDB's status_message errors.
+	 * check and TMDB's status_message errors -- but not its choice of endpoint.
+	 * That method returns a /person/{id} detail object only while the post has a
+	 * TMDB ID; without one it falls back to /find/{imdb_id}, whose results carry
+	 * no imdb_id field at all. Asking there wastes a request on a response that
+	 * cannot answer, so bail before spending it.
+	 *
+	 * The check is here rather than only in queue_post() because verify() is
+	 * public: the CLI and the debugger both call it directly, bypassing the
+	 * queue's gate.
 	 *
 	 * @param int $post_id Actor post ID.
 	 *
-	 * @return string|null Null on failure, '' when TMDB has no link.
+	 * @return string|null Null when TMDB could not be asked, '' when it has the
+	 *                     person and no IMDb link.
 	 */
 	private function tmdb_imdb( int $post_id ): ?string {
-		$info = ( new CPTs() )->get_tmdb_info( $post_id );
-
-		if ( ! is_array( $info ) ) {
+		if ( empty( get_post_meta( $post_id, 'lezactors_tmdb_id', true ) ) ) {
 			return null;
 		}
 
-		return (string) ( $info['imdb_id'] ?? '' );
+		// Tmdb_Response tells a missing imdb_id key (wrong shape, no answer) apart
+		// from a present-but-null one (TMDB has no link). Collapsing the two would
+		// let an unanswerable response clear a real stale flag.
+		return Tmdb_Response::imdb_id( ( new CPTs() )->get_tmdb_info( $post_id ) );
 	}
 
 	/**

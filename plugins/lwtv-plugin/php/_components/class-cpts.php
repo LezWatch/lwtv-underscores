@@ -24,6 +24,11 @@ class CPTs implements Component, Templater {
 	const POST_TYPES = array( 'post_type_actors', 'post_type_characters', 'post_type_shows' );
 
 	/**
+	 * TMDB API URL
+	 */
+	const TMDB_API_URL = 'https://api.themoviedb.org/3/';
+
+	/**
 	 * Constructor
 	 */
 	public function init() {
@@ -106,7 +111,7 @@ class CPTs implements Component, Templater {
 
 		try {
 			// Get the response URL.
-			$response_url = 'https://api.themoviedb.org/3/';
+			$response_url = self::TMDB_API_URL;
 
 			// If we have a TMDB ID, use it.
 			if ( $tmdb_id ) {

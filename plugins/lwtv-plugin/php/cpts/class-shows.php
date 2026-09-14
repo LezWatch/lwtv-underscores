@@ -11,7 +11,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-use LWTV\_Components\CPTs;
 use LWTV\CPTs\Shows\{ Custom_Columns, Shows_Like_This, Ways_To_Watch };
 
 /**
@@ -323,38 +322,5 @@ class Shows {
 			$input = 'Add show';
 		}
 		return $input;
-	}
-
-	/**
-	 * Generate the TMDB ID for a TV show and save it.
-	 *
-	 * @param int $post_id
-	 *
-	 * @return void
-	 */
-	public function generate_tmdb_id( $post_id ): void {
-		$tmdb_id   = get_post_meta( $post_id, 'lezshows_tmdb_id', true );
-		$tmdb_data = false;
-
-		// If the TMDB ID is already set, move on.
-		if ( ( isset( $tmdb_id ) && ! empty( $tmdb_id ) ) ) {
-			return;
-		}
-
-		// Get the TMDB ID from the data.
-		$tmdb_data = ( new CPTs() )->get_tmdb_info( $post_id );
-
-		if ( isset( $tmdb_data['id'] ) ) {
-			$tmdb_id = $tmdb_data['id'];
-		} elseif ( isset( $tmdb_data['tv_results'][0]['id'] ) ) {
-			$tmdb_id = $tmdb_data['tv_results'][0]['id'];
-		} else {
-			$tmdb_id = false;
-		}
-
-		// If we have a TMDB ID, save it.
-		if ( false !== $tmdb_id ) {
-			update_post_meta( $post_id, 'lezshows_tmdb_id', $tmdb_id );
-		}
 	}
 }
