@@ -7,6 +7,9 @@
  * find_actors_no_imdb()    - find actors without IMDb / bad IMDb data
  *
  * check_actors_wikidata()  - Validate our data vs WikiData.
+ * check_actor_death()      - Has an actor died without us noticing?
+ *
+ * resolve_actor_qid()      - Actor -> WikiData Q-ID, shared by both checks.
  */
 
 namespace LWTV\Debugger;
@@ -18,6 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 use LWTV\_Components\Debugger as Debug_Tool;
 use LWTV\CPTs\Actors as CPT_Actors;
 use LWTV\Debugger\Build\Actor_Completeness_Rules;
+use LWTV\Debugger\Build\Actor_Death_Rules;
 use LWTV\Debugger\Build\Actor_Rules;
 use LWTV\Debugger\Build\Findings;
 use LWTV\Debugger\Build\Imdb_Rules;
@@ -356,9 +360,10 @@ class Actors {
 
 			$check_ours = $this->get_actors_wikidata_ours( $actor_id );
 
-			// Search for the actor, using the Q-ID if it's set.
-			$wikidata_id = get_post_meta( $actor_id, 'lezactors_wikidata_qid', true );
-			$wiki_claims = ( ! empty( $wikidata_id ) ) ? $this->get_actors_wikidata_by_id( $wikidata_id ) : $this->get_actors_wikidata_by_search( $actor_id );
+			// Stored Q-ID, then the IMDb ID, then the name. See resolve_actor_qid()
+			// for why that order and not any other.
+			$identity    = $this->resolve_actor_qid( (int) $actor_id );
+			$wiki_claims = ( '' !== $identity['qid'] ) ? $this->get_actors_wikidata_by_id( $identity['qid'] ) : array();
 
 			// If we have no WikiData, we can't check anything.
 			if ( empty( $wiki_claims['wikidata'] ) ) {
@@ -366,7 +371,7 @@ class Actors {
 				continue;
 			}
 
-			$items[ $actor_id ]['wikidata'] = ( ! empty( $wikidata_id ) ) ? $wikidata_id : $wiki_claims['wikidata'];
+			$items[ $actor_id ]['wikidata'] = $identity['qid'];
 			unset( $wiki_claims['wikidata'] );
 
 			$check_wiki = $this->process_actor_wikidata( $actor_id, $wiki_claims );
@@ -476,6 +481,31 @@ class Actors {
 	 * Use WikiData Search to find the actor.
 	 */
 	public function get_actors_wikidata_by_search( $actor_id ) {
+		$wikidata_id = $this->wikidata_qid_from_name( $actor_id );
+		$claims      = ( '' !== $wikidata_id ) ? $this->get_actors_wikidata_by_id( $wikidata_id ) : array();
+
+		$claims['wikidata'] = $wikidata_id;
+
+		// Save the Q-ID if we found one.
+		if ( '' !== $wikidata_id ) {
+			update_post_meta( $actor_id, 'lezactors_wikidata_qid', $wikidata_id );
+		}
+
+		return $claims;
+	}
+
+	/**
+	 * The first Q-ID WikiData returns for the actor's name.
+	 *
+	 * The weakest of the three lookups by a wide margin: wbsearchentities scores
+	 * text, so the first hit for a common name is a coin toss between our actor,
+	 * a politician, and a 19th century botanist. Fine for putting a diff in front
+	 * of a human who will notice; not fine for drawing a conclusion from.
+	 *
+	 * @param int $actor_id The ID of the actor.
+	 * @return string The Q-ID, or '' when nothing came back.
+	 */
+	public function wikidata_qid_from_name( $actor_id ): string {
 		$language    = 'en';
 		$search_name = str_replace( ' ', '%20', get_the_title( $actor_id ) );
 		$wikipedia   = get_post_meta( $actor_id, 'lezactors_wikipedia', true );
@@ -491,21 +521,284 @@ class Actors {
 		$search_data   = wp_remote_get( $search_queery, array( 'timeout' => 15 ) );
 
 		// Check for errors.
-		if ( ! is_wp_error( $search_data ) ) {
-			$search_body = json_decode( $search_data['body'], true );
+		if ( is_wp_error( $search_data ) ) {
+			return '';
 		}
 
-		$wikidata_id = ( is_array( $search_body ) && ! empty( $search_body['search'] ) ) ? $search_body['search'][0]['id'] : '';
-		$claims      = ( ! empty( $wikidata_id ) ) ? $this->get_actors_wikidata_by_id( $wikidata_id ) : array();
+		$search_body = json_decode( wp_remote_retrieve_body( $search_data ), true );
 
-		$claims['wikidata'] = $wikidata_id;
+		return ( is_array( $search_body ) && ! empty( $search_body['search'][0]['id'] ) )
+			? (string) $search_body['search'][0]['id']
+			: '';
+	}
 
-		// Save the Q-ID if we found one.
-		if ( ! empty( $wikidata_id ) ) {
-			update_post_meta( $actor_id, 'lezactors_wikidata_qid', $wikidata_id );
+	/**
+	 * Resolve an actor to a WikiData Q-ID.
+	 *
+	 * Three strategies, most trustworthy first:
+	 *
+	 * 1. The Q-ID we already hold. A human put it there.
+	 * 2. An exact statement match on the IMDb ID (P345). One ID means one
+	 *    person, so a single hit is as good as a stored Q-ID -- and unlike a
+	 *    name, an IMDb ID cannot be shared by two people who happen to be
+	 *    called the same thing.
+	 * 3. A name search, taking the first hit.
+	 *
+	 * Only the first two are safe to act on unattended, which is what $allow_name
+	 * is for: check_actors_wikidata() wants coverage because a human reads every
+	 * row it produces, while the death audit wants certainty because nobody is
+	 * checking its reasoning before it says someone has died.
+	 *
+	 * A Q-ID found by IMDb is written back to postmeta, the same way the name
+	 * search already does -- it makes the next run a request lighter, and it puts
+	 * the match somewhere a human can see and correct it.
+	 *
+	 * @param int  $actor_id   The ID of the actor.
+	 * @param bool $allow_name Whether to fall back to a name search.
+	 * @return array{qid: string, source: string} Source is meta|imdb|name, or
+	 *               'imdb-ambiguous' when the IMDb ID matched several entities,
+	 *               or '' when nothing resolved.
+	 */
+	public function resolve_actor_qid( int $actor_id, bool $allow_name = true ): array {
+		$stored = trim( (string) get_post_meta( $actor_id, 'lezactors_wikidata_qid', true ) );
+
+		if ( '' !== $stored ) {
+			return array(
+				'qid'    => $stored,
+				'source' => 'meta',
+			);
 		}
 
-		return $claims;
+		$imdb_id = $this->actor_imdb_id( $actor_id );
+
+		if ( '' !== $imdb_id ) {
+			$by_imdb = $this->wikidata_qid_from_imdb( $imdb_id );
+
+			if ( '' !== $by_imdb['qid'] ) {
+				update_post_meta( $actor_id, 'lezactors_wikidata_qid', $by_imdb['qid'] );
+
+				return array(
+					'qid'    => $by_imdb['qid'],
+					'source' => 'imdb',
+				);
+			}
+
+			// Several items carry this IMDb ID. Report it rather than picking
+			// one, and do not quietly fall through to the weaker lookup: an
+			// ambiguous exact match is a data problem worth naming.
+			if ( $by_imdb['ambiguous'] ) {
+				return array(
+					'qid'    => '',
+					'source' => 'imdb-ambiguous',
+				);
+			}
+		}
+
+		if ( ! $allow_name ) {
+			return array(
+				'qid'    => '',
+				'source' => '',
+			);
+		}
+
+		$by_name = $this->wikidata_qid_from_name( $actor_id );
+
+		if ( '' !== $by_name ) {
+			update_post_meta( $actor_id, 'lezactors_wikidata_qid', $by_name );
+		}
+
+		return array(
+			'qid'    => $by_name,
+			'source' => ( '' === $by_name ) ? '' : 'name',
+		);
+	}
+
+	/**
+	 * The actor's IMDb person ID, in a form WikiData can be queried with.
+	 *
+	 * Tolerates the two ways this field goes wrong without being useless: a
+	 * pasted IMDb URL, where the ID is sitting right there in a known position,
+	 * and a stale ID, where TMDB's canonical value is the better bet. Both are
+	 * common enough that giving up on them would cost real coverage.
+	 *
+	 * @param int $actor_id The ID of the actor.
+	 * @return string A validated nm-prefixed ID, or '' when there isn't one.
+	 */
+	public function actor_imdb_id( int $actor_id ): string {
+		$candidates = array(
+			(string) get_post_meta( $actor_id, 'lezactors_imdb', true ),
+			(string) get_post_meta( $actor_id, 'lezactors_imdb_canonical', true ),
+		);
+
+		foreach ( $candidates as $candidate ) {
+			$candidate = trim( $candidate );
+
+			if ( '' === $candidate ) {
+				continue;
+			}
+
+			if ( Debug_Tool::validate_imdb( $candidate, 'actor' ) ) {
+				return $candidate;
+			}
+
+			$extracted = Imdb_Rules::id_from_url( $candidate, Imdb_Rules::ACTOR );
+
+			if ( '' !== $extracted ) {
+				return $extracted;
+			}
+		}
+
+		return '';
+	}
+
+	/**
+	 * The WikiData item whose IMDb ID (P345) is exactly this one.
+	 *
+	 * Uses CirrusSearch's haswbstatement, which matches a statement value rather
+	 * than scoring text, so this is a lookup and not a search -- same host and
+	 * same API as everything else here, no SPARQL endpoint needed.
+	 *
+	 * Two or more hits means WikiData holds duplicate or disputed items for the
+	 * ID. We ask for two purely to detect that, and report it instead of taking
+	 * the first, because "one of these two people died" is not an answer.
+	 *
+	 * @param string $imdb_id A validated nm-prefixed IMDb ID.
+	 * @return array{qid: string, ambiguous: bool}
+	 */
+	public function wikidata_qid_from_imdb( string $imdb_id ): array {
+		$none = array(
+			'qid'       => '',
+			'ambiguous' => false,
+		);
+
+		if ( ! Debug_Tool::validate_imdb( $imdb_id, 'actor' ) ) {
+			return $none;
+		}
+
+		$queery = add_query_arg(
+			array(
+				'action'   => 'query',
+				'list'     => 'search',
+				'srsearch' => 'haswbstatement:P345=' . $imdb_id,
+				'srlimit'  => 2,
+				'format'   => 'json',
+			),
+			'https://www.wikidata.org/w/api.php'
+		);
+
+		$response = wp_remote_get( $queery, array( 'timeout' => 15 ) );
+
+		if ( is_wp_error( $response ) || 200 !== (int) wp_remote_retrieve_response_code( $response ) ) {
+			return $none;
+		}
+
+		$body    = json_decode( wp_remote_retrieve_body( $response ), true );
+		$results = $body['query']['search'] ?? array();
+
+		if ( ! is_array( $results ) || empty( $results ) ) {
+			return $none;
+		}
+
+		if ( count( $results ) > 1 ) {
+			return array(
+				'qid'       => '',
+				'ambiguous' => true,
+			);
+		}
+
+		$qid = (string) ( $results[0]['title'] ?? '' );
+
+		return array(
+			'qid'       => preg_match( '/^Q[0-9]+$/', $qid ) ? $qid : '',
+			'ambiguous' => false,
+		);
+	}
+
+	/**
+	 * Has this actor died without us noticing?
+	 *
+	 * Collects the facts and hands the decision to Actor_Death_Rules, which is
+	 * where the reasoning lives and where it is tested. This method's only job is
+	 * the part that cannot be pure: reading meta and talking to WikiData.
+	 *
+	 * Reports; never writes a death date. A death is a fact about a real person
+	 * that a stranger's database happened to record before we did, and it goes in
+	 * after a human has looked -- not because a lookup came back clean.
+	 *
+	 * @param int $actor_id The ID of the actor.
+	 * @return array{verdict: string, action: string, qid: string, source: string, death: string, our_birth: string, wiki_birth: string}
+	 */
+	public function check_actor_death( int $actor_id ): array {
+		$item = array(
+			'our_death'  => (string) get_post_meta( $actor_id, 'lezactors_death', true ),
+			'our_birth'  => (string) get_post_meta( $actor_id, 'lezactors_birth', true ),
+			'qid'        => '',
+			'source'     => '',
+			'fetched'    => false,
+			'wiki_death' => '',
+			'wiki_birth' => '',
+		);
+
+		// Rule 1 of the audit: if we already have a date, we are done. Bail
+		// before spending a request, so a full run costs nothing for the
+		// thousands of actors whose data is already settled.
+		if ( '' !== trim( $item['our_death'] ) ) {
+			return $this->death_result( $item, Actor_Death_Rules::evaluate( $item ) );
+		}
+
+		// No name fallback: see resolve_actor_qid().
+		$identity       = $this->resolve_actor_qid( $actor_id, false );
+		$item['qid']    = $identity['qid'];
+		$item['source'] = $identity['source'];
+
+		if ( '' !== $item['qid'] ) {
+			$claims = $this->get_actors_wikidata_by_id( $item['qid'] );
+
+			if ( ! empty( $claims ) ) {
+				// Read the two claims directly rather than going through
+				// process_actor_wikidata(). That method also reconstructs a
+				// Wikipedia link from the actor's stored URL, which is work we
+				// don't need and a code path we'd be running across every actor
+				// on the site instead of the one an editor asked about.
+				$item['fetched']    = true;
+				$item['wiki_death'] = $this->wikidata_date_claim( $claims, 'P570' );
+				$item['wiki_birth'] = $this->wikidata_date_claim( $claims, 'P569' );
+			}
+		}
+
+		return $this->death_result( $item, Actor_Death_Rules::evaluate( $item ) );
+	}
+
+	/**
+	 * One date claim out of a WikiData entity.
+	 *
+	 * @param array  $claims   Claims from get_actors_wikidata_by_id().
+	 * @param string $property Property ID -- P569 (birth) or P570 (death).
+	 * @return string The date, or '' when the property is absent or malformed.
+	 */
+	public function wikidata_date_claim( array $claims, string $property ): string {
+		$time = $claims[ $property ][0]['mainsnak']['datavalue']['value']['time'] ?? '';
+
+		return ( '' === $time ) ? '' : Debug_Tool::format_wikidate( $time );
+	}
+
+	/**
+	 * Flatten a collected item and its verdict into one return shape.
+	 *
+	 * @param array $item    Collected actor data.
+	 * @param array $verdict Result from Actor_Death_Rules::evaluate().
+	 * @return array
+	 */
+	private function death_result( array $item, array $verdict ): array {
+		return array(
+			'verdict'    => $verdict['verdict'],
+			'action'     => $verdict['action'],
+			'death'      => $verdict['death'],
+			'qid'        => $item['qid'],
+			'source'     => $item['source'],
+			'our_birth'  => $this->format_our_date( $item['our_birth'] ),
+			'wiki_birth' => $item['wiki_birth'],
+		);
 	}
 
 	/**
