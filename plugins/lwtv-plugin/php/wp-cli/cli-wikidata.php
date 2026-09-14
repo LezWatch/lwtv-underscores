@@ -552,6 +552,14 @@ class WP_CLI_LWTV_WikiData {
 
 		$counts = array();
 
+		// On the interpolated {$clause}: every string in $groups is composed a
+		// few lines up from class constants (Identity::META_*,
+		// Qid_Trust::TRUSTED, CPT_Actors::SLUG) and literal SQL. No request
+		// data, CLI argument or meta value reaches it, and $groups is a closed
+		// map iterated by key, so there is no path for a caller to add one. The
+		// three values that *are* dynamic are %s placeholders below. Composing
+		// these as placeholders is not possible -- prepare() escapes values, not
+		// SQL fragments, and would quote each clause into a string literal.
 		foreach ( $groups as $key => $clause ) {
 			// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 			$counts[ $key ] = (int) $wpdb->get_var(

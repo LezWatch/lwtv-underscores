@@ -54,9 +54,30 @@ class Wikidata_Qid_Task {
 	const QUEUE = 'lwtv_wikidata_qid_queue';
 
 	/**
+	 * Transient holding the per-post error count, keyed by post ID.
+	 *
+	 * Separate from the queue so a post ID re-queued by a later save starts over
+	 * with a clean slate only when we say so, not as a side effect of the queue
+	 * being rewritten on every run.
+	 */
+	const ATTEMPTS = 'lwtv_wikidata_qid_attempts';
+
+	/**
 	 * How many actors to resolve per run.
 	 */
 	const BATCH_SIZE = 25;
+
+	/**
+	 * How many consecutive transport failures before a post is dropped.
+	 *
+	 * The queue reschedules itself every 60 seconds and set_queue() writes a
+	 * fresh TTL each time, so the transient's own expiry never fires while the
+	 * queue is non-empty. Without a ceiling here, one post WikiData will never
+	 * answer for keeps the whole queue alive and re-requests it ~1,400 times a
+	 * day. Three strikes is enough to ride out a brief outage or a 429 without
+	 * turning a permanent fault into a permanent load.
+	 */
+	const MAX_ATTEMPTS = 3;
 
 	/**
 	 * Constructor.
@@ -120,11 +141,14 @@ class Wikidata_Qid_Task {
 		$identity  = new Identity();
 		$batch     = array_slice( $queue, 0, self::BATCH_SIZE );
 		$remaining = array_slice( $queue, self::BATCH_SIZE );
+		$attempts  = $this->get_attempts();
 		$resolved  = 0;
 		$retry     = array();
+		$abandoned = array();
 
 		foreach ( $batch as $post_id ) {
-			$result = $identity->resolve_and_record( (int) $post_id );
+			$post_id = (int) $post_id;
+			$result  = $identity->resolve_and_record( $post_id );
 
 			if ( in_array( $result['status'], array( 'found', 'confirmed', 'conflict' ), true ) ) {
 				++$resolved;
@@ -134,8 +158,30 @@ class Wikidata_Qid_Task {
 			// the CLI there is no human here to re-run it. Put it back so the
 			// next batch tries again; resolve_and_record() wrote no
 			// checked-marker, so nothing has been recorded as a no-match.
+			//
+			// Only genuine faults land here. An ambiguous IMDb ID is an answer
+			// and carries its own checked-marker, so it leaves by the front door.
 			if ( 'error' === $result['status'] ) {
-				$retry[] = (int) $post_id;
+				$count = ( $attempts[ $post_id ] ?? 0 ) + 1;
+
+				if ( $count >= self::MAX_ATTEMPTS ) {
+					// Give up, loudly. No checked-marker is written, so the next
+					// save or a `wp lwtv wikidata backfill` still picks this up --
+					// we are abandoning the 60-second retry, not the actor.
+					$abandoned[] = $post_id;
+					unset( $attempts[ $post_id ] );
+
+					lwtv_plugin()->debug_log(
+						'wikidata-qid',
+						'Gave up on actor ' . $post_id . ' after ' . $count . ' failed lookups: ' . $result['reason']
+					);
+				} else {
+					$attempts[ $post_id ] = $count;
+					$retry[]              = $post_id;
+				}
+			} elseif ( isset( $attempts[ $post_id ] ) ) {
+				// It answered. Forget the earlier stumbles.
+				unset( $attempts[ $post_id ] );
 			}
 
 			$identity->throttle();
@@ -144,10 +190,11 @@ class Wikidata_Qid_Task {
 		$remaining = array_merge( $remaining, $retry );
 
 		$this->set_queue( $remaining );
+		$this->set_attempts( $attempts, $remaining );
 
 		lwtv_plugin()->debug_log(
 			'wikidata-qid',
-			'Resolved ' . $resolved . ' of ' . count( $batch ) . ' actor(s), ' . count( $retry ) . ' to retry, ' . count( $remaining ) . ' still queued'
+			'Resolved ' . $resolved . ' of ' . count( $batch ) . ' actor(s), ' . count( $retry ) . ' to retry, ' . count( $abandoned ) . ' abandoned, ' . count( $remaining ) . ' still queued'
 		);
 
 		if ( ! empty( $remaining ) ) {
@@ -177,13 +224,60 @@ class Wikidata_Qid_Task {
 	}
 
 	/**
+	 * Read the per-post error counts.
+	 *
+	 * @return array<int, int> Post ID => consecutive failures.
+	 */
+	private function get_attempts(): array {
+		$attempts = lwtv_plugin()->get_transient( self::ATTEMPTS );
+
+		if ( ! is_array( $attempts ) ) {
+			return array();
+		}
+
+		$clean = array();
+		foreach ( $attempts as $post_id => $count ) {
+			$clean[ (int) $post_id ] = (int) $count;
+		}
+
+		return $clean;
+	}
+
+	/**
+	 * Write the per-post error counts, keeping only what is still queued.
+	 *
+	 * Pruning against the queue is what stops this growing without bound. A post
+	 * that has left the queue -- resolved, abandoned, or dropped by hand -- has no
+	 * use for its old failure count, and if it is queued again later it deserves a
+	 * fresh three attempts rather than inheriting a tally from last week.
+	 *
+	 * @param  array $attempts  Post ID => count.
+	 * @param  array $remaining The queue as just written.
+	 * @return void
+	 */
+	private function set_attempts( array $attempts, array $remaining ): void {
+		$attempts = array_intersect_key( $attempts, array_flip( array_map( 'intval', $remaining ) ) );
+
+		if ( empty( $attempts ) ) {
+			lwtv_plugin()->delete_transient( self::ATTEMPTS );
+			return;
+		}
+
+		lwtv_plugin()->set_transient( self::ATTEMPTS, $attempts, DAY_IN_SECONDS );
+	}
+
+	/**
 	 * Queue status, for the scheduler admin screen and CLI.
 	 *
 	 * @return array<string, mixed>
 	 */
 	public function get_status(): array {
+		$attempts = $this->get_attempts();
+
 		return array(
 			'queued'         => count( $this->get_queue() ),
+			'retrying'       => count( $attempts ),
+			'worst_attempts' => empty( $attempts ) ? 0 : max( $attempts ),
 			'next_scheduled' => as_next_scheduled_action( self::AS_HOOK ),
 		);
 	}

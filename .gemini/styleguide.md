@@ -49,6 +49,8 @@ these links.
    are explicitly allowed in `phpcs.xml.dist`.
 6. **Missing text domain.** All user-facing strings must be translatable:
    `'lwtv'` inside `plugins/lwtv-plugin/`, `'lwtv-underscores'` in theme files.
+   "User-facing" means a site visitor or a wp-admin screen. It does **not**
+   include WP-CLI console output — see "WP-CLI files" below.
 7. **Unescaped output** — except for the self-escaping helpers listed below.
 8. **New display logic put in the wrong layer.** See "build → format →
    templates" below.
@@ -112,6 +114,22 @@ Everything under `plugins/lwtv-plugin/php/wp-cli/` is loaded only from inside a
 files therefore do not need their own `WP_CLI` guards, and classes extending
 `\WP_CLI_Command` there are safe. The `if ( ! defined( 'ABSPATH' ) && ! defined( 'WP_CLI' ) )`
 header in those files is a direct-access check, not a CLI gate.
+
+**`WP_CLI::log()`, `::line()`, `::success()`, `::warning()` and `::error()`
+strings are not translated, by convention and consistently.** Across the ~420
+such calls in that directory, none are wrapped in `__()`, matching WP core and
+WP-CLI itself: this is operator console output read by the person who typed the
+command, not user-facing copy. Do not flag it under rule 6. Where a *summary*
+line is already translated (e.g. `summary_line()` in `cli-wikidata.php`), that
+is a deliberate exception for prose with plurals, not the standard to hold the
+rest of the file to.
+
+Status vocabularies returned by CLI-facing resolvers are deliberate and
+load-bearing. In `Wikidata\Identity::resolve_and_record()`, `'none'` and
+`'ambiguous'` are *answers* from WikiData and write a checked-marker, while
+`'error'` is the *absence* of an answer and deliberately writes nothing so an
+outage cannot mark actors permanently unresolvable. Do not suggest collapsing
+them.
 
 ### ACF date storage
 

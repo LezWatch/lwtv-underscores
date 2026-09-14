@@ -255,8 +255,12 @@ class Scheduler implements Component, Templater {
 	 */
 	public function get_wikidata_qid_status(): array {
 		if ( ! $this->is_action_scheduler_available() ) {
+			// Same keys as Wikidata_Qid_Task::get_status(), so a caller reading
+			// 'retrying' does not have to know whether Action Scheduler is up.
 			return array(
 				'queued'         => 0,
+				'retrying'       => 0,
+				'worst_attempts' => 0,
 				'next_scheduled' => false,
 			);
 		}

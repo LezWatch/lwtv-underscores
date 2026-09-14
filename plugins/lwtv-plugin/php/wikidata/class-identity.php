@@ -255,15 +255,26 @@ class Identity {
 	 * Look one actor up and record the outcome.
 	 *
 	 * The unit the backfill and the scheduler both run. Returns a verdict rather
-	 * than a boolean because the four outcomes need different handling: only
-	 * 'none' earns a checked-marker, and 'error' deliberately earns nothing at
-	 * all so a WikiData outage cannot mark thousands of actors permanently
-	 * unresolvable.
+	 * than a boolean because the outcomes need different handling, and the split
+	 * that matters most is whether WikiData answered us:
+	 *
+	 *   - 'none' and 'ambiguous' are answers. Both earn a checked-marker, which
+	 *     takes the actor out of routine runs until --retry-missed asks again.
+	 *   - 'error' is the absence of an answer, and deliberately earns nothing at
+	 *     all, so a WikiData outage cannot mark thousands of actors permanently
+	 *     unresolvable.
+	 *
+	 * 'ambiguous' is emphatically not an error, however much it looks like one:
+	 * two WikiData items carrying the same IMDb ID is a stable fact about their
+	 * data, and re-asking gets the same answer forever. Conflating the two is how
+	 * the scheduler's retry queue ends up looping on it. A human sees it via the
+	 * death audit's AMBIGUOUS verdict, which reads resolve()'s 'imdb-ambiguous'
+	 * source rather than anything this method writes.
 	 *
 	 * @param  int  $actor_id The ID of the actor.
 	 * @param  bool $dry_run  Compute the verdict without writing meta.
 	 * @return array{status: string, qid: string, was: string, reason: string}
-	 *               Status is found|confirmed|conflict|none|error|skipped.
+	 *               Status is found|confirmed|conflict|none|ambiguous|error|skipped.
 	 */
 	public function resolve_and_record( int $actor_id, bool $dry_run = false ): array {
 		$collected = $this->collect( $actor_id );
@@ -280,8 +291,14 @@ class Identity {
 			return $this->outcome( 'error', '', $collected['qid'], $lookup['reason'] );
 		}
 
+		// An answer, just not a usable one. Marked checked so it stops being
+		// re-asked: nothing about the next request would come back different.
 		if ( $lookup['ambiguous'] ) {
-			return $this->outcome( 'error', '', $collected['qid'], 'IMDb ID matches several WikiData items' );
+			if ( ! $dry_run ) {
+				update_post_meta( $actor_id, self::META_CHECKED, time() );
+			}
+
+			return $this->outcome( 'ambiguous', '', $collected['qid'], 'IMDb ID matches several WikiData items' );
 		}
 
 		if ( '' === $lookup['qid'] ) {
@@ -369,6 +386,12 @@ class Identity {
 	 * a politician, and a 19th century botanist. Fine for putting a diff in front
 	 * of a human who will notice; never a basis for a conclusion.
 	 *
+	 * Searches on the raw post_title, not get_the_title(). The `the_title` filter
+	 * runs wptexturize, which turns the apostrophe in "O'Brien" into a curly
+	 * U+2019 and the hyphen in a double-barrelled name into an en dash -- none of
+	 * which WikiData is indexing. html_entity_decode() on top of that covers the
+	 * separate case of an entity an editor typed into the title itself.
+	 *
 	 * @param  int $actor_id The ID of the actor.
 	 * @return string The Q-ID, or '' when nothing came back.
 	 */
@@ -390,7 +413,7 @@ class Identity {
 			add_query_arg(
 				array(
 					'action'   => 'wbsearchentities',
-					'search'   => get_the_title( $actor_id ),
+					'search'   => $this->search_title( $actor_id ),
 					'language' => $language,
 					'format'   => 'json',
 				),
@@ -403,6 +426,18 @@ class Identity {
 		}
 
 		return (string) ( $response['body']['search'][0]['id'] ?? '' );
+	}
+
+	/**
+	 * An actor's name in a form worth sending to a search API.
+	 *
+	 * @param  int $actor_id The ID of the actor.
+	 * @return string
+	 */
+	private function search_title( int $actor_id ): string {
+		$title = (string) get_post_field( 'post_title', $actor_id, 'raw' );
+
+		return trim( html_entity_decode( $title, ENT_QUOTES, 'UTF-8' ) );
 	}
 
 	/**
