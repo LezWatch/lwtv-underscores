@@ -29,6 +29,7 @@ class ActorDeathRulesTest extends TestCase {
 			array(
 				'our_death'  => '',
 				'our_birth'  => '19760525',
+				'ignored'    => false,
 				'qid'        => 'Q12345',
 				'source'     => 'meta',
 				'fetched'    => true,
@@ -77,6 +78,38 @@ class ActorDeathRulesTest extends TestCase {
 		);
 	}
 
+	public function test_an_ignored_actor_is_settled_not_reported(): void {
+		// The toggle's whole job is to stop an actor recurring as a problem. If
+		// it only silenced some verdicts it would be worse than not existing.
+		$this->assertSame(
+			Actor_Death_Rules::IGNORED,
+			$this->verdict(
+				$this->actor(
+					array(
+						'ignored' => true,
+						'qid'     => '',
+						'source'  => '',
+					)
+				)
+			)
+		);
+		$this->assertFalse( Actor_Death_Rules::is_reportable( Actor_Death_Rules::IGNORED ) );
+	}
+
+	public function test_a_death_date_we_already_hold_outranks_the_ignore_toggle(): void {
+		$this->assertSame(
+			Actor_Death_Rules::HAS_DATE,
+			$this->verdict(
+				$this->actor(
+					array(
+						'our_death' => '20240101',
+						'ignored'   => true,
+					)
+				)
+			)
+		);
+	}
+
 	public function test_a_whitespace_only_death_date_does_not_count_as_having_one(): void {
 		$this->assertSame(
 			Actor_Death_Rules::FOUND,
@@ -114,6 +147,46 @@ class ActorDeathRulesTest extends TestCase {
 					)
 				)
 			)
+		);
+	}
+
+	public function test_a_qid_we_cannot_vouch_for_is_unverified_not_missing(): void {
+		// trusted_qid() hands back an empty qid with the real source when the
+		// stored Q-ID is untrusted. "Verify this" and "there is nothing to
+		// verify" send an editor to different places.
+		$this->assertSame(
+			Actor_Death_Rules::UNVERIFIED,
+			$this->verdict(
+				$this->actor(
+					array(
+						'qid'    => '',
+						'source' => 'legacy',
+					)
+				)
+			)
+		);
+	}
+
+	public function test_a_name_sourced_qid_does_not_confer_identity(): void {
+		$result = Actor_Death_Rules::evaluate(
+			$this->actor(
+				array(
+					'qid'        => '',
+					'source'     => 'name',
+					'wiki_death' => '2024-03-11',
+				)
+			)
+		);
+
+		// The whole point: a name match must never reach a death claim.
+		$this->assertSame( Actor_Death_Rules::UNVERIFIED, $result['verdict'] );
+		$this->assertSame( '', $result['death'] );
+	}
+
+	public function test_unverified_advice_names_the_command_that_fixes_it(): void {
+		$this->assertStringContainsString(
+			'--reverify',
+			Actor_Death_Rules::REPORTABLE[ Actor_Death_Rules::UNVERIFIED ]
 		);
 	}
 
@@ -167,7 +240,7 @@ class ActorDeathRulesTest extends TestCase {
 	}
 
 	public function test_every_problem_verdict_is_reportable_with_an_action(): void {
-		foreach ( array( Actor_Death_Rules::FOUND, Actor_Death_Rules::SUSPECT, Actor_Death_Rules::AMBIGUOUS, Actor_Death_Rules::NO_IDENTITY, Actor_Death_Rules::NO_DATA ) as $verdict ) {
+		foreach ( array( Actor_Death_Rules::FOUND, Actor_Death_Rules::SUSPECT, Actor_Death_Rules::UNVERIFIED, Actor_Death_Rules::AMBIGUOUS, Actor_Death_Rules::NO_IDENTITY, Actor_Death_Rules::NO_DATA ) as $verdict ) {
 			$this->assertTrue( Actor_Death_Rules::is_reportable( $verdict ), $verdict . ' should be reportable' );
 			$this->assertNotSame( '', Actor_Death_Rules::REPORTABLE[ $verdict ], $verdict . ' should have an action' );
 		}
@@ -175,6 +248,7 @@ class ActorDeathRulesTest extends TestCase {
 
 	public function test_only_metadata_gaps_count_as_unresolved(): void {
 		$this->assertTrue( Actor_Death_Rules::is_unresolved( Actor_Death_Rules::NO_IDENTITY ) );
+		$this->assertTrue( Actor_Death_Rules::is_unresolved( Actor_Death_Rules::UNVERIFIED ) );
 		$this->assertTrue( Actor_Death_Rules::is_unresolved( Actor_Death_Rules::AMBIGUOUS ) );
 		$this->assertTrue( Actor_Death_Rules::is_unresolved( Actor_Death_Rules::NO_DATA ) );
 

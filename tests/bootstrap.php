@@ -124,4 +124,5 @@ require_once __DIR__ . '/../plugins/lwtv-plugin/php/debugger/build/class-imdb-ru
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/debugger/build/class-queer-rules.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/debugger/build/class-actor-completeness-rules.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/debugger/build/class-actor-death-rules.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/wikidata/build/class-qid-trust.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/debugger/build/class-log-rules.php';

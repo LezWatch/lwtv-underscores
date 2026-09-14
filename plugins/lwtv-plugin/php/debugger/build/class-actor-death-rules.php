@@ -7,8 +7,12 @@
  *     array(
  *         'our_death'  => string,  // lezactors_death, raw
  *         'our_birth'  => string,  // lezactors_birth, raw
- *         'qid'        => string,  // resolved WikiData Q-ID, '' when unresolved
- *         'source'     => string,  // how the Q-ID was resolved -- see Actors::resolve_actor_qid()
+ *         'ignored'    => bool,    // lezactors_wikidata_ignore
+ *         'qid'        => string,  // a TRUSTED WikiData Q-ID, '' when we have none
+ *         'source'     => string,  // Wikidata\Build\Qid_Trust::SOURCE_*, or '' when
+ *                                  // we hold no Q-ID at all. A non-empty source
+ *                                  // alongside an empty qid means we hold one we
+ *                                  // cannot vouch for -- see UNVERIFIED below.
  *         'fetched'    => bool,    // the entity fetch returned claims
  *         'wiki_death' => string,  // P570, formatted
  *         'wiki_birth' => string,  // P569, formatted
@@ -41,14 +45,33 @@ class Actor_Death_Rules {
 	const HAS_DATE = 'has-date';
 
 	/**
+	 * An editor has ticked "Ignore WikiData Match" -- they have looked, and
+	 * there is nothing to find. Not reportable, because a toggle that silences
+	 * nothing is a toggle nobody will trust twice.
+	 */
+	const IGNORED = 'ignored';
+
+	/**
 	 * No Q-ID and no IMDb ID to find one with, so there is nothing to check
 	 * against. Not evidence the actor is alive.
 	 */
 	const NO_IDENTITY = 'no-identity';
 
 	/**
+	 * We hold a Q-ID for this actor, but not one we can vouch for -- it came
+	 * from a name search, or predates source tracking. Reported separately from
+	 * NO_IDENTITY because the fix is different: there is nothing to add, only
+	 * something to verify.
+	 */
+	const UNVERIFIED = 'unverified-identity';
+
+	/**
 	 * The IMDb ID matched more than one WikiData entity. Picking one would be a
 	 * guess, so we name the problem instead.
+	 *
+	 * The death audit reads stored state and never resolves, so it does not
+	 * produce this itself -- `wp lwtv wikidata` does. The branch stays for any
+	 * caller that resolves before asking.
 	 */
 	const AMBIGUOUS = 'ambiguous-identity';
 
@@ -78,14 +101,16 @@ class Actor_Death_Rules {
 	/**
 	 * Verdicts worth a human's time, and what that human should do.
 	 *
-	 * HAS_DATE and ALIVE are absent deliberately: both mean our data is already
-	 * right, and a report that lists every correct row is a report nobody reads.
+	 * HAS_DATE, ALIVE and IGNORED are absent deliberately: each means there is
+	 * nothing to do, and a report that lists every settled row is a report
+	 * nobody reads.
 	 *
 	 * @var array<string, string>
 	 */
 	const REPORTABLE = array(
 		self::FOUND       => 'Verify, then add the death date',
 		self::SUSPECT     => 'Birth dates disagree -- wrong person? Check the Q-ID',
+		self::UNVERIFIED  => 'Q-ID held but unverified -- run: wp lwtv wikidata backfill --reverify',
 		self::AMBIGUOUS   => 'IMDb ID matches several WikiData items -- set the Q-ID by hand',
 		self::NO_IDENTITY => 'No Q-ID and no usable IMDb ID -- add one to make this checkable',
 		self::NO_DATA     => 'WikiData had nothing to read -- retry, or check the Q-ID',
@@ -99,7 +124,7 @@ class Actor_Death_Rules {
 	 *
 	 * @var array<string>
 	 */
-	const UNRESOLVED = array( self::NO_IDENTITY, self::AMBIGUOUS, self::NO_DATA );
+	const UNRESOLVED = array( self::NO_IDENTITY, self::UNVERIFIED, self::AMBIGUOUS, self::NO_DATA );
 
 	/**
 	 * The verdict for one actor.
@@ -153,10 +178,24 @@ class Actor_Death_Rules {
 			return self::HAS_DATE;
 		}
 
+		// An editor has already looked and told us there is nothing to find.
+		// Checked before the identity rules so it silences the unidentifiable
+		// verdicts too -- which is the entire reason the toggle exists.
+		if ( ! empty( $item['ignored'] ) ) {
+			return self::IGNORED;
+		}
+
 		if ( '' === trim( (string) ( $item['qid'] ?? '' ) ) ) {
-			return ( 'imdb-ambiguous' === ( $item['source'] ?? '' ) )
-				? self::AMBIGUOUS
-				: self::NO_IDENTITY;
+			$source = trim( (string) ( $item['source'] ?? '' ) );
+
+			if ( 'imdb-ambiguous' === $source ) {
+				return self::AMBIGUOUS;
+			}
+
+			// A source with no trusted Q-ID beside it means we do hold one, we
+			// just cannot say whose it is. Worth distinguishing: "verify this"
+			// and "there is nothing here to verify" are different jobs.
+			return ( '' === $source ) ? self::NO_IDENTITY : self::UNVERIFIED;
 		}
 
 		if ( empty( $item['fetched'] ) ) {

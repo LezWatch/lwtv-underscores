@@ -78,6 +78,34 @@ class Post_Meta {
 		'lezactors_wikidata_qid'        => array(
 			'post_type' => CPT_Actors::SLUG,
 		),
+		// How lezactors_wikidata_qid was resolved: 'manual', 'imdb', 'name', or
+		// 'legacy'. A Q-ID is not self-describing -- a fuzzy name match and a
+		// hand-checked ID look identical once stored -- and only 'manual' and
+		// 'imdb' are trusted enough for an unattended process to act on. Absent
+		// reads as 'legacy', which is untrusted on purpose. See Wikidata\Build\Qid_Trust.
+		'lezactors_wikidata_qid_source' => array(
+			'post_type'    => CPT_Actors::SLUG,
+			'show_in_rest' => false,
+		),
+		// Timestamp of the last *attempted* Q-ID lookup. Distinguishes "WikiData
+		// has no item for this person" from "never asked". Written by
+		// `wp lwtv wikidata backfill` and the Q-ID scheduler task.
+		'lezactors_wikidata_checked'    => array(
+			'post_type'         => CPT_Actors::SLUG,
+			'type'              => 'integer',
+			'show_in_rest'      => false,
+			'sanitize_callback' => 'absint',
+		),
+		// Editorial toggle: this actor has no WikiData item, or the automatic
+		// match is wrong. An explicit "stop asking".
+		'lezactors_wikidata_ignore'     => array(
+			'post_type' => CPT_Actors::SLUG,
+		),
+		// Editorial Q-ID, revealed by the toggle. Authoritative and never
+		// machine-written.
+		'lezactors_wikidata_qid_manual' => array(
+			'post_type' => CPT_Actors::SLUG,
+		),
 		'lezactors_wikipedia'           => array(
 			'post_type' => CPT_Actors::SLUG,
 		),

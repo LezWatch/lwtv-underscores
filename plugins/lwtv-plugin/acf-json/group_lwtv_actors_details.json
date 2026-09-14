@@ -257,7 +257,7 @@
             "name": "lezactors_wikidata_qid",
             "aria-label": "",
             "type": "text",
-            "instructions": "Enter a WikiData QID for this actor to override the automated check.",
+            "instructions": "Resolved automatically from the IMDb ID where possible. To override a wrong or missing match, use Ignore WikiData Match and the manual field below rather than editing this - a backfill run can overwrite this value.",
             "required": 0,
             "conditional_logic": 0,
             "wrapper": {
@@ -271,6 +271,56 @@
             "placeholder": "Ex: Q2933359",
             "prepend": "",
             "append": ""
+        },
+        {
+            "key": "field_lwtv_lezactors_wikidata_ignore",
+            "label": "Ignore WikiData Match",
+            "name": "lezactors_wikidata_ignore",
+            "aria-label": "",
+            "type": "true_false",
+            "instructions": "Turn this on when this actor legitimately has no WikiData item, or when the automatic match is wrong. It stops them being reported as unidentifiable by the death audit and the Q-ID backfill.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "message": "Ignore WikiData match",
+            "default_value": 0,
+            "allow_in_bindings": 1,
+            "ui_on_text": "Yes",
+            "ui_off_text": "No",
+            "ui": 1
+        },
+        {
+            "key": "field_lwtv_lezactors_wikidata_qid_manual",
+            "label": "WikiData ID (manual)",
+            "name": "lezactors_wikidata_qid_manual",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "Optional. The Q-ID from the WikiData URL: wikidata.org\/wiki\/<strong>Q42<\/strong>. Set this when you know the right item but an automatic lookup cannot find it, or found the wrong person. Authoritative - nothing overwrites it, and the death audit trusts it. Leave blank to simply acknowledge that no WikiData item exists.",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_lwtv_lezactors_wikidata_ignore",
+                        "operator": "==",
+                        "value": "1"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "placeholder": "Q42",
+            "prepend": "",
+            "append": "",
+            "allow_in_bindings": 0
         },
         {
             "key": "field_lwtv_lezactors_wikipedia",
@@ -654,5 +704,5 @@
     "display_title": "",
     "allow_ai_access": false,
     "ai_description": "",
-    "modified": 1781733811
+    "modified": 1789305600
 }

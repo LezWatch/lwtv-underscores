@@ -1101,10 +1101,11 @@ class WP_CLI_LWTV_Audit {
 
 			$tally[ $verdict ] = ( $tally[ $verdict ] ?? 0 ) + 1;
 
-			// An actor we already have a date for cost us no request, so don't
-			// pay the throttle for them either -- that is what keeps a full run
+			// An actor we already have a date for -- or one an editor has told us
+			// to stop asking about -- cost us no request, so don't pay the
+			// throttle for them either. That is what keeps a full run
 			// proportional to the work actually left to do.
-			if ( Actor_Death_Rules::HAS_DATE === $verdict ) {
+			if ( in_array( $verdict, array( Actor_Death_Rules::HAS_DATE, Actor_Death_Rules::IGNORED ), true ) ) {
 				continue;
 			}
 
@@ -1113,7 +1114,14 @@ class WP_CLI_LWTV_Audit {
 				$rows[] = $this->build_actor_row( (int) $actor_id, $result );
 			}
 
-			usleep( self::WAIT_TIME );
+			// Throttle only when we actually asked WikiData something. Identity
+			// resolution is the backfill's job now, so this audit fetches an
+			// entity only for actors it can already identify -- and pausing half
+			// a second for each of the thousands it cannot would make a full run
+			// cost hours of doing nothing.
+			if ( '' !== $result['qid'] ) {
+				usleep( self::WAIT_TIME );
+			}
 		}
 
 		if ( $progress ) {
@@ -1209,11 +1217,13 @@ class WP_CLI_LWTV_Audit {
 	private function actor_summary_line( array $tally, int $shown, bool $do_unresolved ): string {
 		$parts = array();
 
+		$settled = ( $tally[ Actor_Death_Rules::HAS_DATE ] ?? 0 ) + ( $tally[ Actor_Death_Rules::IGNORED ] ?? 0 );
+
 		$parts[] = sprintf(
-			/* translators: 1: actors with a death date already, 2: actors checked against WikiData. */
-			__( '%1$d already had a date, %2$d checked', 'lwtv' ),
-			$tally[ Actor_Death_Rules::HAS_DATE ] ?? 0,
-			array_sum( $tally ) - ( $tally[ Actor_Death_Rules::HAS_DATE ] ?? 0 )
+			/* translators: 1: actors already settled (date on file, or ignored), 2: actors checked against WikiData. */
+			__( '%1$d already settled, %2$d checked', 'lwtv' ),
+			$settled,
+			array_sum( $tally ) - $settled
 		);
 
 		$found   = $tally[ Actor_Death_Rules::FOUND ] ?? 0;
@@ -1233,9 +1243,27 @@ class WP_CLI_LWTV_Audit {
 			);
 		}
 
+		$unverified = $tally[ Actor_Death_Rules::UNVERIFIED ] ?? 0;
+
 		$unresolved = ( $tally[ Actor_Death_Rules::NO_IDENTITY ] ?? 0 )
+			+ $unverified
 			+ ( $tally[ Actor_Death_Rules::AMBIGUOUS ] ?? 0 )
 			+ ( $tally[ Actor_Death_Rules::NO_DATA ] ?? 0 );
+
+		// Worth calling out separately: these actors are not missing data, they
+		// are waiting on a verification pass, and there is one command for it.
+		if ( $unverified ) {
+			$parts[] = sprintf(
+				/* translators: %d: number of actors holding an unverified Q-ID. */
+				_n(
+					'%d holds an unverified Q-ID -- run: wp lwtv wikidata backfill --reverify',
+					'%d hold unverified Q-IDs -- run: wp lwtv wikidata backfill --reverify',
+					$unverified,
+					'lwtv'
+				),
+				$unverified
+			);
+		}
 
 		if ( $unresolved ) {
 			$parts[] = $do_unresolved
