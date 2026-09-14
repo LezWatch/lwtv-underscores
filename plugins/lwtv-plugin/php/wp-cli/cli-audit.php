@@ -12,6 +12,7 @@ if ( ! defined( 'ABSPATH' ) && ! defined( 'WP_CLI' ) ) {
 
 use LWTV\Calendar\TVMaze;
 use LWTV\CPTs\Shows as CPT_Shows;
+use LWTV\CPTs\Shows\Airdates;
 use LWTV\CPTs\Characters as CPT_Characters;
 use LWTV\Debugger\Audit;
 use LWTV\This_Year\Build\Shared_Builder;
@@ -36,6 +37,18 @@ class WP_CLI_LWTV_Audit {
 	 * Voice actors play multiple characters; mapping is manual.
 	 */
 	public const SKIP_GENRES = array( 'animation', 'anime' );
+
+	/**
+	 * Verdicts from character_appeared_in_year().
+	 *
+	 * The two UNKNOWN values are the important ones: TVMaze often cannot answer
+	 * the question at all, and treating that silence as "did not appear" is how
+	 * you end up telling an editor to add a year the character was never in.
+	 */
+	public const APPEARED_YES               = 'yes';
+	public const APPEARED_NO                = 'no';
+	public const APPEARED_UNKNOWN_MAIN_CAST = 'unknown-main-cast';
+	public const APPEARED_UNKNOWN_NO_DATA   = 'unknown-no-data';
 
 	/**
 	 * Construct to block facet from munging results.
@@ -71,7 +84,7 @@ class WP_CLI_LWTV_Audit {
 	 * : Ignore only. Show post ID the acknowledgement applies to.
 	 *
 	 * [--issue=<type>]
-	 * : Ignore only. Character-level issue type to acknowledge: missing-year, verify-year.
+	 * : Ignore only. Character-level issue type to acknowledge: missing-year, verify-year, unconfirmed-year.
 	 *
 	 * [--remove]
 	 * : Ignore only. Remove a previously acknowledged item instead of adding one.
@@ -242,9 +255,19 @@ class WP_CLI_LWTV_Audit {
 			$ended_year = ! empty( $ended_raw ) ? substr( $ended_raw, 0, 4 ) : '';
 
 			if ( 'Ended' === $status ) {
-				$results[] = $this->build_row( $show_id, $status, $ended_year, '', '', '', 'Set end year (TVMaze: ended ' . ( $ended_year ?: 'date unknown' ) . ')', 'ended' );
-				usleep( 500000 );
-				continue; // No point auditing characters on a show we're about to close out.
+				$ended_row = $this->evaluate_ended_show( $show_id, $status, $ended_year );
+
+				// Only bail early when the show still needs closing out; if our end
+				// year is already right the final season's characters still need
+				// their Years Appears audited.
+				if ( null !== $ended_row ) {
+					$results[] = $ended_row;
+
+					if ( 'ended' === $ended_row['issue_type'] ) {
+						usleep( 500000 );
+						continue;
+					}
+				}
 			}
 
 			if ( 'To Be Determined' === $status ) {
@@ -285,6 +308,11 @@ class WP_CLI_LWTV_Audit {
 	/**
 	 * Audit living characters on one show for the current year based on specified roles.
 	 *
+	 * The catalog pass deliberately fetches no per-episode cast -- that is the
+	 * deep audit's job, and doing it for every on-air show would run to thousands
+	 * of API calls. So every finding here is a gap in *our* data awaiting human
+	 * confirmation, never a claim that TVMaze confirms the appearance.
+	 *
 	 * @param int    $show_id        Show post ID.
 	 * @param string $status         TVMaze status (for the row).
 	 * @param int    $current_year   Current year.
@@ -308,20 +336,24 @@ class WP_CLI_LWTV_Audit {
 
 				$appears = $this->clean_appears( $row );
 
-				if ( ! in_array( $current_year, $appears, true ) ) {
-					$rows[] = $this->build_row(
-						$show_id,
-						$status,
-						'',
-						get_the_title( $char_id ),
-						$this->get_actor_name( $char_id ),
-						$type,
-						'Add ' . $current_year . ' to Years Appears',
-						'missing-year',
-						$char_id,
-						$current_year
-					);
+				if ( in_array( $current_year, $appears, true ) ) {
+					continue; // Already recorded; nothing to ask about.
 				}
+
+				$verdict = $this->character_appeared_in_year( $this->character_names( $char_id ), array() );
+
+				$rows[] = $this->build_row(
+					$show_id,
+					$status,
+					'',
+					get_the_title( $char_id ),
+					$this->get_actor_name( $char_id ),
+					$type,
+					$this->unconfirmed_action( $verdict, $current_year ),
+					'unconfirmed-year',
+					$char_id,
+					$current_year
+				);
 			}
 		}
 
@@ -374,7 +406,10 @@ class WP_CLI_LWTV_Audit {
 		if ( empty( $roles_to_audit ) ) {
 			$results = array();
 			if ( 'Ended' === $status ) {
-				$results[] = $this->build_row( $show_id, $status, $ended_year, '', '', '', 'Set end year (TVMaze: ended ' . ( $ended_year ?: 'date unknown' ) . ')', 'ended' );
+				$ended_row = $this->evaluate_ended_show( $show_id, $status, $ended_year );
+				if ( null !== $ended_row ) {
+					$results[] = $ended_row;
+				}
 			} elseif ( 'To Be Determined' === $status ) {
 				$results[] = $this->build_row( $show_id, $status, '', '', '', '', 'Review: show in limbo on TVMaze', 'tbd' );
 			}
@@ -443,12 +478,7 @@ class WP_CLI_LWTV_Audit {
 				continue;
 			}
 
-			$char_names = array( $this->normalize_name( get_the_title( $char_id ) ) );
-			$actors     = get_field( 'lezchars_actor', $char_id ) ?: array();
-			foreach ( $actors as $actor_id ) {
-				$char_names[] = $this->normalize_name( get_the_title( (int) $actor_id ) );
-			}
-			$char_names = array_filter( array_unique( $char_names ) );
+			$char_names = $this->character_names( $char_id );
 
 			foreach ( $this->get_show_rows_for_character( $char_id, $show_id ) as $row ) {
 				$type = $row['type'] ?? '';
@@ -463,13 +493,22 @@ class WP_CLI_LWTV_Audit {
 						continue;
 					}
 
-					$found = $this->name_found( $char_names, array_merge( $cast_names, $names_by_year[ $year ] ) );
-					$has   = in_array( $year, $appears, true );
+					$verdict = $this->character_appeared_in_year(
+						$char_names,
+						array(
+							'main_cast'      => $cast_names,
+							'year_names'     => $names_by_year[ $year ],
+							'has_year_names' => true,
+						)
+					);
+					$has     = in_array( $year, $appears, true );
 
-					if ( $found && ! $has ) {
+					if ( self::APPEARED_YES === $verdict && ! $has ) {
 						$results[] = $this->build_row( $show_id, $status, '', get_the_title( $char_id ), $this->get_actor_name( $char_id ), $type, 'TVMaze shows ' . $year . ' -- add?', 'missing-year', $char_id, $year );
-					} elseif ( ! $found && $has ) {
+					} elseif ( self::APPEARED_NO === $verdict && $has ) {
 						$results[] = $this->build_row( $show_id, $status, '', get_the_title( $char_id ), $this->get_actor_name( $char_id ), $type, 'Verify ' . $year . ' -- no TVMaze appearance found', 'verify-year', $char_id, $year );
+					} elseif ( $this->is_unknown_appearance( $verdict ) && ! $has ) {
+						$results[] = $this->build_row( $show_id, $status, '', get_the_title( $char_id ), $this->get_actor_name( $char_id ), $type, $this->unconfirmed_action( $verdict, $year ), 'unconfirmed-year', $char_id, $year );
 					}
 				}
 			}
@@ -633,6 +672,156 @@ class WP_CLI_LWTV_Audit {
 	 * ---------------------------------------------------------------- */
 
 	/**
+	 * Can TVMaze confirm this character appeared in this year?
+	 *
+	 * The single place that answers this question, so the data source can change
+	 * without touching either audit path. Today the public API cannot answer it
+	 * for main cast: /shows/:id/cast lists them once for the whole show with no
+	 * years attached, and /episodes/:id/guestcast contains *only* guest cast, so
+	 * a regular never shows up in any year's episode data no matter how many
+	 * episodes they are in. That is why absence returns UNKNOWN, not NO.
+	 *
+	 * When TVMaze exposes per-character appearances (requested upstream), answer
+	 * from that first and leave everything below as the fallback for characters
+	 * it cannot resolve.
+	 *
+	 * @param array $char_names Normalized character + actor names.
+	 * @param array $evidence   array{
+	 *     main_cast: array,      Normalized all-time main cast names.
+	 *     year_names: array,     Normalized names seen in that year's episodes.
+	 *     has_year_names: bool,  Whether year_names was actually fetched.
+	 * }
+	 * @return string One of the self::APPEARED_* verdicts.
+	 */
+	private function character_appeared_in_year( array $char_names, array $evidence ): string {
+		$main_cast      = (array) ( $evidence['main_cast'] ?? array() );
+		$year_names     = (array) ( $evidence['year_names'] ?? array() );
+		$has_year_names = (bool) ( $evidence['has_year_names'] ?? false );
+
+		// Positive evidence: named in that year's episode cast.
+		if ( $this->name_found( $char_names, $year_names ) ) {
+			return self::APPEARED_YES;
+		}
+
+		// Main cast: TVMaze carries no per-year data for them, so their absence
+		// from the year's guest cast is not evidence of anything.
+		if ( $this->name_found( $char_names, $main_cast ) ) {
+			return self::APPEARED_UNKNOWN_MAIN_CAST;
+		}
+
+		// Nobody fetched the year's episode cast, so there is nothing to judge.
+		if ( ! $has_year_names ) {
+			return self::APPEARED_UNKNOWN_NO_DATA;
+		}
+
+		return self::APPEARED_NO;
+	}
+
+	/**
+	 * Is this verdict a "TVMaze cannot tell us" rather than a yes or a no?
+	 *
+	 * @param string $verdict A self::APPEARED_* verdict.
+	 * @return bool
+	 */
+	private function is_unknown_appearance( string $verdict ): bool {
+		return in_array( $verdict, array( self::APPEARED_UNKNOWN_MAIN_CAST, self::APPEARED_UNKNOWN_NO_DATA ), true );
+	}
+
+	/**
+	 * Action text for an unconfirmed year, naming why it is unconfirmed.
+	 *
+	 * @param string $verdict A self::APPEARED_* unknown verdict.
+	 * @param int    $year    Year concerned.
+	 * @return string
+	 */
+	private function unconfirmed_action( string $verdict, int $year ): string {
+		return ( self::APPEARED_UNKNOWN_MAIN_CAST === $verdict )
+			// translators: %1 - Year
+			? sprintf( __( 'Confirm %1$d -- TVMaze lists main cast without years', 'lwtv' ), $year )
+			// translators: %1 - Year
+			: sprintf( __( 'Confirm %1$d -- no TVMaze episode data checked', 'lwtv' ), $year );
+	}
+
+	/**
+	 * Normalized names a character might be credited under: their own, plus
+	 * every actor who plays them.
+	 *
+	 * @param int $char_id Character post ID.
+	 * @return array Normalized, unique, non-empty names.
+	 */
+	private function character_names( int $char_id ): array {
+		$names  = array( $this->normalize_name( get_the_title( $char_id ) ) );
+		$actors = get_field( 'lezchars_actor', $char_id ) ?: array();
+
+		foreach ( $actors as $actor_id ) {
+			$names[] = $this->normalize_name( get_the_title( (int) $actor_id ) );
+		}
+
+		return array_values( array_filter( array_unique( $names ) ) );
+	}
+
+	/**
+	 * Judge a TVMaze 'Ended' status against the end year we already store.
+	 *
+	 * TVMaze saying a show has ended is not on its own a finding: the usual case
+	 * is that we already closed the show out and there is nothing to do. So this
+	 * compares TVMaze's ended year against lezshows_airdates_finish and returns
+	 * a row only when our data actually needs a human.
+	 *
+	 * A show finishing in the current year legitimately keeps lezshows_on_air at
+	 * 'yes' until the year turns over, which is why these shows keep appearing in
+	 * the catalog audit's queue.
+	 *
+	 * @param int    $show_id    Show post ID.
+	 * @param string $status     TVMaze status (for the row).
+	 * @param string $ended_year TVMaze ended year, '' when TVMaze has no date.
+	 * @return array|null Finding row, or null when our end year is already right.
+	 */
+	private function evaluate_ended_show( int $show_id, string $status, string $ended_year ): ?array {
+		$finish = Airdates::get( $show_id )['finish'];
+
+		// No end year, or still flagged as airing: this is the close-out case.
+		if ( '' === $finish || Airdates::is_still_airing( $finish ) ) {
+			$action = $ended_year
+				// translators: %s - Year
+				? sprintf( __( 'Set end year (TVMaze: ended %s)', 'lwtv' ), $ended_year )
+				: __( 'Set end year (TVMaze: ended date unknown)', 'lwtv' );
+
+			return $this->build_row(
+				$show_id,
+				$status,
+				$ended_year,
+				'',
+				'',
+				'',
+				$action,
+				'ended'
+			);
+		}
+
+		// We have a year and TVMaze does not, so there is nothing to compare.
+		if ( '' === $ended_year ) {
+			return null;
+		}
+
+		if ( (int) $finish !== (int) $ended_year ) {
+			return $this->build_row(
+				$show_id,
+				$status,
+				$ended_year,
+				'',
+				'',
+				'',
+				// translators: %1 - LWTV end Year ; %2 TVMaze End Year
+				sprintf( __( 'End year mismatch (site: %1$s, TVMaze: %2$s)', 'lwtv' ), $finish, $ended_year ),
+				'end-year-mismatch'
+			);
+		}
+
+		return null;
+	}
+
+	/**
 	 * Parse --roles flag into an array of allowed character types.
 	 *
 	 * @param string $roles_flag Flag string.
@@ -653,6 +842,7 @@ class WP_CLI_LWTV_Audit {
 				return array();
 			default:
 				\WP_CLI::error( 'Invalid --roles option. Allowed values: all, regular, recurring, guests, none.' );
+				return array();
 		}
 	}
 
@@ -850,6 +1040,7 @@ class WP_CLI_LWTV_Audit {
 		}
 
 		\WP_CLI::error( 'Invalid --letter. Use a-z, num (#), or intl (-).' );
+		return '';
 	}
 
 	/**
