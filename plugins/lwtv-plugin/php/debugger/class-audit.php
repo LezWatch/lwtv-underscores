@@ -41,23 +41,31 @@ class Audit {
 	 * @var array<string, array{level:string, label:string}>
 	 */
 	const ISSUE_TYPES = array(
-		'no-match'     => array(
+		'no-match'          => array(
 			'level' => 'show',
 			'label' => 'No TVMaze match',
 		),
-		'ended'        => array(
+		'ended'             => array(
 			'level' => 'show',
 			'label' => 'Show ended',
 		),
-		'tbd'          => array(
+		'end-year-mismatch' => array(
+			'level' => 'show',
+			'label' => 'End year mismatch',
+		),
+		'tbd'               => array(
 			'level' => 'show',
 			'label' => 'Status in limbo',
 		),
-		'missing-year' => array(
+		'missing-year'      => array(
 			'level' => 'character',
 			'label' => 'Missing year',
 		),
-		'verify-year'  => array(
+		'unconfirmed-year'  => array(
+			'level' => 'character',
+			'label' => 'Unconfirmed year',
+		),
+		'verify-year'       => array(
 			'level' => 'character',
 			'label' => 'Verify year',
 		),
