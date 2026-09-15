@@ -11,9 +11,8 @@ on:
     branches: [ "production" ]
 
 permissions:
-  # Require writing security events to upload SARIF file to security tab
+  actions: read
   security-events: write
-  # Read commit contents
   contents: read
 
 jobs:
@@ -21,7 +20,6 @@ jobs:
     if: ${{ github.event_name == 'push' || github.event_name == 'schedule' }}
     uses: "google/osv-scanner-action/.github/workflows/osv-scanner-reusable.yml@v2.6.0"
     with:
-      # Example of specifying custom arguments
       scan-args: |-
         -r
         --skip-git
