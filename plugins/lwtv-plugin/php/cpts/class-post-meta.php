@@ -118,14 +118,15 @@ class Post_Meta {
 			'show_in_rest'      => false,
 			'sanitize_callback' => 'absint',
 		),
-		// Editorial toggle: this actor has no WikiData item, or the automatic
-		// match is wrong. An explicit "stop asking".
+		// Write-lock on lezactors_wikidata_qid. Set it and Identity::store_qid()
+		// refuses, so the field is editable by hand only and no backfill can
+		// overwrite what an editor put there.
+		//
+		// 'lezactors_wikidata_qid_manual' was registered here as a second,
+		// editor-only Q-ID field. Removed: two Q-IDs meant two things to keep in
+		// step, and the distinction it carried -- who set this value -- is what
+		// lezactors_wikidata_qid_source records. Never deployed, so no rows exist.
 		'lezactors_wikidata_ignore'     => array(
-			'post_type' => CPT_Actors::SLUG,
-		),
-		// Editorial Q-ID, revealed by the toggle. Authoritative and never
-		// machine-written.
-		'lezactors_wikidata_qid_manual' => array(
 			'post_type' => CPT_Actors::SLUG,
 		),
 		'lezactors_wikipedia'           => array(

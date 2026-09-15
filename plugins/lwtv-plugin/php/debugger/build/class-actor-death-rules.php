@@ -127,28 +127,34 @@ class Actor_Death_Rules {
 	const UNRESOLVED = array( self::NO_IDENTITY, self::UNVERIFIED, self::AMBIGUOUS, self::NO_DATA );
 
 	/**
-	 * Does "Ignore WikiData Match" mean stop checking this actor?
+	 * Does the write-lock mean stop checking this actor?
 	 *
-	 * The toggle carries two editorial meanings and only one of them is "stop":
+	 * lezactors_wikidata_ignore is a write-lock on the Q-ID field: set it and no
+	 * machine write lands, so the field is editable by hand only. That is all it
+	 * means everywhere except here.
 	 *
-	 *   - Ticked, manual Q-ID blank: "this actor has no WikiData item." Settled.
-	 *     Nothing to check, so the audit skips them -- IGNORED.
-	 *   - Ticked, manual Q-ID filled in: "the automatic match was wrong, use this
-	 *     one." That is a request to keep checking on better evidence, not to
-	 *     stop, so the audit proceeds with the editor's Q-ID.
+	 * For the audit, the lock plus an EMPTY Q-ID is the only way an editor can
+	 * say "this person has no WikiData item":
 	 *
-	 * This lives here, in the layer that gets tested, because the collector had
-	 * been answering it with a bare is_ignored() call -- and since the manual
-	 * field is only revealed *by* the toggle, every hand-corrected Q-ID therefore
-	 * had the toggle on and was skipped before anything read it. The whole point
-	 * of typing one in was lost, silently, to the thing meant to enable it.
+	 *   - Locked, Q-ID empty: settled. There is nothing to look up and nothing
+	 *     will ever arrive, because the lock stops the backfill filling it in.
+	 *     Reporting it would be reporting a gap the editor has already closed,
+	 *     so the verdict is IGNORED and it is not reportable.
+	 *   - Locked, Q-ID present: audit normally, on that Q-ID. The editor pinned
+	 *     an identity; using it is the entire point of pinning it.
+	 *   - Unlocked: audit normally.
 	 *
-	 * @param  bool   $ignored    The lezactors_wikidata_ignore toggle.
-	 * @param  string $manual_qid A validated bare Q-ID, or '' when unset.
+	 * Without the first branch, NO_IDENTITY would fire instead, and that verdict
+	 * *is* reportable -- so an actor an editor had explicitly marked as having no
+	 * WikiData item would keep coming back on the report forever. A toggle that
+	 * silences nothing is a toggle nobody will trust twice.
+	 *
+	 * @param  bool   $ignored The lezactors_wikidata_ignore write-lock.
+	 * @param  string $qid     The stored Q-ID, or '' when the field is empty.
 	 * @return bool   True when the audit should treat the actor as settled.
 	 */
-	public static function editor_says_stop( bool $ignored, string $manual_qid ): bool {
-		return $ignored && '' === trim( $manual_qid );
+	public static function editor_says_stop( bool $ignored, string $qid ): bool {
+		return $ignored && '' === trim( $qid );
 	}
 
 	/**

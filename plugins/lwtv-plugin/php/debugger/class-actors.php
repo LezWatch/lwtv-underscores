@@ -513,14 +513,20 @@ class Actors {
 	public function check_actor_death( int $actor_id ): array {
 		$identity = new Identity();
 
-		// Whether the ignore toggle means "stop" is a rule, not a meta read, so
-		// it lives in Actor_Death_Rules where it is tested. See editor_says_stop().
+		// Whether the write-lock means "stop" is a rule, not a meta read, so it
+		// lives in Actor_Death_Rules where it is tested. See editor_says_stop().
+		//
+		// The raw stored Q-ID, not trusted_qid(): the question is whether the
+		// editor left the field empty, not whether we vouch for what is in it. A
+		// locked Q-ID we cannot vouch for should read as UNVERIFIED and be
+		// reported, because the lock means the backfill can no longer resolve it
+		// and only a human can.
 		$item = array(
 			'our_death'  => (string) get_post_meta( $actor_id, 'lezactors_death', true ),
 			'our_birth'  => (string) get_post_meta( $actor_id, 'lezactors_birth', true ),
 			'ignored'    => Actor_Death_Rules::editor_says_stop(
 				$identity->is_ignored( $actor_id ),
-				$identity->manual_qid( $actor_id )
+				(string) get_post_meta( $actor_id, Identity::META_QID, true )
 			),
 			'qid'        => '',
 			'source'     => '',

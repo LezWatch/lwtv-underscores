@@ -78,16 +78,18 @@ class ExclusionRegistryTest extends TestCase {
 	 * describe() -- the Setting column
 	 */
 
-	public function test_the_wikidata_toggle_distinguishes_its_two_meanings(): void {
-		// The entire reason this column exists. Same toggle, same "1", two
-		// completely different editorial statements.
+	public function test_the_wikidata_lock_distinguishes_its_two_meanings(): void {
+		// The entire reason this column exists. Same lock, same "1", two
+		// completely different editorial statements, and the only thing that
+		// tells them apart is whether the Q-ID field holds anything.
 		$this->assertSame(
-			'Using Q42',
+			'Locked to Q42 (manual)',
 			Exclusion_Registry::describe(
 				'wikidata_ignore',
 				array(
 					'value'      => '1',
-					'manual_qid' => 'Q42',
+					'stored_qid' => 'Q42',
+					'qid_source' => 'manual',
 				)
 			)
 		);
@@ -98,7 +100,21 @@ class ExclusionRegistryTest extends TestCase {
 				'wikidata_ignore',
 				array(
 					'value'      => '1',
-					'manual_qid' => '',
+					'stored_qid' => '',
+				)
+			)
+		);
+	}
+
+	public function test_a_locked_qid_with_no_recorded_source_still_names_itself(): void {
+		$this->assertSame(
+			'Locked to Q42',
+			Exclusion_Registry::describe(
+				'wikidata_ignore',
+				array(
+					'value'      => '1',
+					'stored_qid' => 'Q42',
+					'qid_source' => '',
 				)
 			)
 		);
@@ -145,31 +161,55 @@ class ExclusionRegistryTest extends TestCase {
 		$this->assertSame( '', Exclusion_Registry::staleness( 'no_known_chars', array() ) );
 	}
 
-	public function test_an_ignored_actor_still_holding_a_qid_is_flagged(): void {
+	public function test_a_locked_qid_from_an_untrusted_source_is_flagged(): void {
+		// The one combination nothing can resolve on its own: the lock stops the
+		// backfill re-checking it, so only a human retyping it -- which records
+		// 'manual' -- can clear the audit's UNVERIFIED verdict.
+		$note = Exclusion_Registry::staleness(
+			'wikidata_ignore',
+			array(
+				'stored_qid' => 'Q999',
+				'qid_source' => 'name',
+			)
+		);
+
+		$this->assertStringContainsString( 'unverified', $note );
+		$this->assertStringContainsString( 'name', $note );
+	}
+
+	public function test_a_locked_qid_with_no_source_reads_as_legacy_and_is_flagged(): void {
+		// An absent source is deliberately untrusted, so it must be flagged too.
 		$this->assertStringContainsString(
-			'Q999',
+			'legacy',
 			Exclusion_Registry::staleness(
 				'wikidata_ignore',
-				array(
-					'manual_qid' => '',
-					'stored_qid' => 'Q999',
-				)
+				array( 'stored_qid' => 'Q999' )
 			)
 		);
 	}
 
-	public function test_a_corrected_actor_is_not_flagged_as_stale(): void {
-		// Manual Q-ID set: the stored value being different is the point, not a
-		// problem, so this must stay quiet.
+	public function test_a_locked_qid_from_a_trusted_source_is_quiet(): void {
+		foreach ( array( 'manual', 'imdb' ) as $source ) {
+			$this->assertSame(
+				'',
+				Exclusion_Registry::staleness(
+					'wikidata_ignore',
+					array(
+						'stored_qid' => 'Q42',
+						'qid_source' => $source,
+					)
+				),
+				$source . ' is trusted and should not be flagged'
+			);
+		}
+	}
+
+	public function test_a_lock_with_no_qid_is_quiet(): void {
+		// "This actor has no WikiData item" is a complete, settled statement --
+		// there is nothing stale about it.
 		$this->assertSame(
 			'',
-			Exclusion_Registry::staleness(
-				'wikidata_ignore',
-				array(
-					'manual_qid' => 'Q42',
-					'stored_qid' => 'Q999',
-				)
-			)
+			Exclusion_Registry::staleness( 'wikidata_ignore', array( 'stored_qid' => '' ) )
 		);
 	}
 

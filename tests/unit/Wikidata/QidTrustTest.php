@@ -30,7 +30,6 @@ class QidTrustTest extends TestCase {
 			array(
 				'qid'          => '',
 				'source'       => '',
-				'manual_qid'   => '',
 				'ignored'      => false,
 				'checked'      => 0,
 				'imdb'         => 'nm0000123',
@@ -169,15 +168,36 @@ class QidTrustTest extends TestCase {
 	}
 
 	public function test_a_hand_set_qid_is_never_overwritten(): void {
+		// There is one Q-ID field, so a hand-set value is not a separate key --
+		// it is this key with source 'manual'. Being trusted is what protects it,
+		// and --reverify only targets what we cannot vouch for, so even that
+		// leaves it alone.
 		$item = $this->actor(
 			array(
-				'manual_qid' => 'Q999',
-				'reverify'   => true,
+				'qid'      => 'Q999',
+				'source'   => Qid_Trust::SOURCE_MANUAL,
+				'reverify' => true,
 			)
 		);
 
 		$this->assertFalse( $this->check( $item ) );
-		$this->assertSame( 'set by hand', $this->reason( $item ) );
+		$this->assertSame( 'already resolved (manual)', $this->reason( $item ) );
+	}
+
+	public function test_a_write_locked_actor_is_never_asked_about(): void {
+		// store_qid() would refuse the answer, so spending a request on it is
+		// pure waste -- and --reverify must not override an editor's lock.
+		$item = $this->actor(
+			array(
+				'qid'      => 'Q999',
+				'source'   => Qid_Trust::SOURCE_LEGACY,
+				'ignored'  => true,
+				'reverify' => true,
+			)
+		);
+
+		$this->assertFalse( $this->check( $item ) );
+		$this->assertSame( 'write-locked by an editor', $this->reason( $item ) );
 	}
 
 	public function test_an_already_trusted_qid_is_not_re_asked(): void {
@@ -251,7 +271,12 @@ class QidTrustTest extends TestCase {
 	public function test_every_refusal_explains_itself(): void {
 		$refusals = array(
 			$this->actor( array( 'ignored' => true ) ),
-			$this->actor( array( 'manual_qid' => 'Q999' ) ),
+			$this->actor(
+				array(
+					'qid'    => 'Q999',
+					'source' => Qid_Trust::SOURCE_MANUAL,
+				)
+			),
 			$this->actor(
 				array(
 					'qid'    => 'Q1',

@@ -240,7 +240,7 @@
             "required": 0,
             "conditional_logic": 0,
             "wrapper": {
-                "width": "50",
+                "width": "",
                 "class": "",
                 "id": ""
             },
@@ -250,77 +250,6 @@
             "placeholder": "Ex: nm6087250",
             "prepend": "",
             "append": ""
-        },
-        {
-            "key": "field_lwtv_lezactors_wikidata_qid",
-            "label": "WikiData ID",
-            "name": "lezactors_wikidata_qid",
-            "aria-label": "",
-            "type": "text",
-            "instructions": "Resolved automatically from the IMDb ID where possible. To override a wrong or missing match, use Ignore WikiData Match and the manual field below rather than editing this - a backfill run can overwrite this value.",
-            "required": 0,
-            "conditional_logic": 0,
-            "wrapper": {
-                "width": "50",
-                "class": "",
-                "id": ""
-            },
-            "default_value": "",
-            "maxlength": "",
-            "allow_in_bindings": 1,
-            "placeholder": "Ex: Q2933359",
-            "prepend": "",
-            "append": ""
-        },
-        {
-            "key": "field_lwtv_lezactors_wikidata_ignore",
-            "label": "Ignore WikiData Match",
-            "name": "lezactors_wikidata_ignore",
-            "aria-label": "",
-            "type": "true_false",
-            "instructions": "Turn this on when the automatic match is wrong, or when this actor legitimately has no WikiData item. What happens next depends on the manual field it reveals: leave that blank and the death audit stops checking this actor altogether, or fill it in and the audit carries on using your Q-ID instead of the automatic one. Either way the Q-ID backfill stops guessing.",
-            "required": 0,
-            "conditional_logic": 0,
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "message": "Ignore WikiData match",
-            "default_value": 0,
-            "allow_in_bindings": 1,
-            "ui_on_text": "Yes",
-            "ui_off_text": "No",
-            "ui": 1
-        },
-        {
-            "key": "field_lwtv_lezactors_wikidata_qid_manual",
-            "label": "WikiData ID (manual)",
-            "name": "lezactors_wikidata_qid_manual",
-            "aria-label": "",
-            "type": "text",
-            "instructions": "Optional. The Q-ID from the WikiData URL: wikidata.org\/wiki\/<strong>Q42<\/strong>. Set this when you know the right item but an automatic lookup cannot find it, or found the wrong person. Authoritative - nothing overwrites it, and the death audit trusts it. Leave blank to simply acknowledge that no WikiData item exists.",
-            "required": 0,
-            "conditional_logic": [
-                [
-                    {
-                        "field": "field_lwtv_lezactors_wikidata_ignore",
-                        "operator": "==",
-                        "value": "1"
-                    }
-                ]
-            ],
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "default_value": "",
-            "maxlength": "",
-            "placeholder": "Q42",
-            "prepend": "",
-            "append": "",
-            "allow_in_bindings": 0
         },
         {
             "key": "field_lwtv_lezactors_wikipedia",
@@ -357,6 +286,48 @@
             "default_value": "",
             "allow_in_bindings": 1,
             "placeholder": "https:\/\/actorname.com"
+        },
+        {
+            "key": "field_lwtv_lezactors_wikidata_ignore",
+            "label": "Lock WikiData QID",
+            "name": "lezactors_wikidata_ignore",
+            "aria-label": "",
+            "type": "true_false",
+            "instructions": "If the generated QID is wrong, flip this to YES.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "message": "Lock the QID against automated changes",
+            "default_value": 0,
+            "allow_in_bindings": 1,
+            "ui_on_text": "Yes",
+            "ui_off_text": "No",
+            "ui": 1
+        },
+        {
+            "key": "field_lwtv_lezactors_wikidata_qid",
+            "label": "WikiData ID",
+            "name": "lezactors_wikidata_qid",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "Sometimes the QID is wrong (multiple people, same name, no QID, etc). When it needs to be overwritten, flip the toggle to YES and you can manually edit here.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "allow_in_bindings": 1,
+            "placeholder": "Ex: Q2933359",
+            "prepend": "",
+            "append": ""
         },
         {
             "key": "field_6a330bf0ad7ba",
@@ -704,5 +675,5 @@
     "display_title": "",
     "allow_ai_access": false,
     "ai_description": "",
-    "modified": 1789491344
+    "modified": 1789512346
 }

@@ -37,6 +37,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+use LWTV\Wikidata\Build\Qid_Trust;
+
 class Exclusion_Registry {
 
 	/**
@@ -107,16 +109,16 @@ class Exclusion_Registry {
 			'context' => array(),
 		),
 		'wikidata_ignore' => array(
-			'name'    => 'WikiData Ignored',
-			'desc'    => 'Actors whose WikiData match an editor has overridden or ruled out.',
+			'name'    => 'WikiData Locked',
+			'desc'    => 'Actors whose WikiData Q-ID is write-locked against the backfill.',
 			'cpt'     => self::CPT_ACTORS,
 			'meta'    => 'lezactors_wikidata_ignore',
 			'match'   => '1',
 			'column'  => 'Actor',
-			'empty'   => 'No actors have their WikiData match overridden at this time.',
+			'empty'   => 'No actors have their WikiData Q-ID write-locked at this time.',
 			'context' => array(
-				'manual_qid' => 'lezactors_wikidata_qid_manual',
 				'stored_qid' => 'lezactors_wikidata_qid',
+				'qid_source' => 'lezactors_wikidata_qid_source',
 			),
 		),
 		'tvmaze_ignore'   => array(
@@ -225,11 +227,19 @@ class Exclusion_Registry {
 				return self::queer_label( $value );
 
 			case 'wikidata_ignore':
-				$manual = trim( (string) ( $context['manual_qid'] ?? '' ) );
+				// The two things a lock can mean, and the only way to tell them
+				// apart is whether the field holds anything: a pinned identity,
+				// or "this person has no WikiData item".
+				$stored = trim( (string) ( $context['stored_qid'] ?? '' ) );
+				$source = trim( (string) ( $context['qid_source'] ?? '' ) );
 
-				return ( '' !== $manual )
-					? 'Using ' . $manual
-					: 'No WikiData item';
+				if ( '' === $stored ) {
+					return 'No WikiData item';
+				}
+
+				return ( '' !== $source )
+					? 'Locked to ' . $stored . ' (' . $source . ')'
+					: 'Locked to ' . $stored;
 
 			case 'tvmaze_ignore':
 				$manual = trim( (string) ( $context['manual_id'] ?? '' ) );
@@ -294,13 +304,18 @@ class Exclusion_Registry {
 				return '';
 
 			case 'wikidata_ignore':
-				$manual = trim( (string) ( $context['manual_qid'] ?? '' ) );
 				$stored = trim( (string) ( $context['stored_qid'] ?? '' ) );
+				$source = trim( (string) ( $context['qid_source'] ?? '' ) );
 
-				// Ignored, nothing put in its place, but a machine-resolved Q-ID
-				// is still sitting in the field.
-				if ( '' === $manual && '' !== $stored ) {
-					return 'Still holds ' . $stored . ', which is now unused.';
+				// A locked Q-ID no trusted source backs is the one combination
+				// nothing can resolve on its own: the lock stops the backfill
+				// re-checking it, so the death audit will report it as unverified
+				// until a human retypes it, which is what records 'manual'.
+				//
+				// Asks Qid_Trust rather than keeping its own list of trusted
+				// sources, so this page cannot drift from what the audit believes.
+				if ( '' !== $stored && ! Qid_Trust::is_trusted( $source ) ) {
+					return 'Locked to an unverified Q-ID (' . Qid_Trust::normalise_source( $source ) . ') -- retype it to confirm.';
 				}
 
 				return '';

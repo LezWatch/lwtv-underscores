@@ -502,10 +502,6 @@ class WP_CLI_LWTV_WikiData {
 			. " WHERE ign.post_id = p.ID AND ign.meta_key = '" . Identity::META_IGNORE . "'"
 			. " AND ign.meta_value != '' AND ign.meta_value != '0' )";
 
-		$no_manual = "NOT EXISTS ( SELECT 1 FROM {$wpdb->postmeta} man"
-			. " WHERE man.post_id = p.ID AND man.meta_key = '" . Identity::META_QID_MANUAL . "'"
-			. " AND man.meta_value != '' )";
-
 		$trusted_sources = "'" . implode( "', '", Qid_Trust::TRUSTED ) . "'";
 
 		// A previous no-match only silences an actor who still has no Q-ID. One
@@ -523,7 +519,6 @@ class WP_CLI_LWTV_WikiData {
 				 WHERE p.post_type = %s AND p.post_status = 'publish'
 				   AND {$has_imdb}
 				   AND {$not_ignored}
-				   AND {$no_manual}
 				   AND ( q.post_id IS NULL OR COALESCE( s.meta_value, '' ) NOT IN ( {$trusted_sources} ) )
 				   {$checked_clause}
 				 ORDER BY p.post_title ASC",
@@ -552,37 +547,43 @@ class WP_CLI_LWTV_WikiData {
 			. " WHERE im.post_id = p.ID AND im.meta_key IN ( '" . Identity::META_IMDB . "', '" . Identity::META_IMDB_CANONICAL . "' )"
 			. " AND im.meta_value != '' )";
 
-		$manual_set = "EXISTS ( SELECT 1 FROM {$wpdb->postmeta} man"
-			. " WHERE man.post_id = p.ID AND man.meta_key = '" . Identity::META_QID_MANUAL . "'"
-			. " AND man.meta_value != '' )";
-
 		$ignored = "EXISTS ( SELECT 1 FROM {$wpdb->postmeta} ign"
 			. " WHERE ign.post_id = p.ID AND ign.meta_key = '" . Identity::META_IGNORE . "'"
 			. " AND ign.meta_value != '' AND ign.meta_value != '0' )";
 
 		// The five groups are mutually exclusive and sum to the published total,
 		// which is the only reason the breakdown table can be read as a whole.
-		// Two rules keep them that way:
 		//
-		// 1. A manual Q-ID is only reachable through the ignore toggle, so every
-		//    manual actor is also an ignored one. They belong in 'trusted' -- the
-		//    editor told us who this is -- so 'ignored' has to exclude them or
-		//    they are counted twice and the rows sum past the total.
-		// 2. Ignoring an actor who still holds a machine Q-ID settles them; it
-		//    does not leave them awaiting verification. trusted_qid() returns
-		//    nothing for them, so 'unverified' must exclude them too, or the
-		//    number the --reverify advice below is based on is overstated.
+		// The pivot is that trust comes from the SOURCE, not from the write-lock.
+		// A locked Q-ID from a trusted source is still usable -- that is the
+		// normal state of a hand-corrected actor, since editing the field records
+		// source 'manual' -- so 'trusted' must not exclude locked actors. The
+		// lock only matters where it stops work being possible: an actor whose
+		// Q-ID we cannot vouch for, or who has none, can no longer be resolved by
+		// any backfill, so those belong in 'ignored' rather than being counted as
+		// work outstanding.
+		//
+		// Written out as a partition on four facts -- has a Q-ID, source is
+		// trusted, is locked, has an IMDb ID:
+		//
+		//   qid + trusted                 -> trusted   (locked or not)
+		//   qid + untrusted + unlocked    -> unverified
+		//   no qid + imdb + unlocked      -> candidates
+		//   no qid + no imdb + unlocked   -> unreachable
+		//   anything else locked          -> ignored
 		$groups = array(
-			// Trusted: a hand-set Q-ID, or one we resolved from an IMDb ID.
-			'trusted'     => "( {$manual_set} OR ( NOT {$ignored} AND q.post_id IS NOT NULL AND COALESCE( s.meta_value, '' ) IN ( {$trusted_sources} ) ) )",
-			// A Q-ID we hold but cannot vouch for, and nobody has settled.
-			'unverified'  => "( NOT {$manual_set} AND NOT {$ignored} AND q.post_id IS NOT NULL AND COALESCE( s.meta_value, '' ) NOT IN ( {$trusted_sources} ) )",
+			// A Q-ID we can act on: hand-set, or resolved from an IMDb ID.
+			'trusted'     => "( q.post_id IS NOT NULL AND COALESCE( s.meta_value, '' ) IN ( {$trusted_sources} ) )",
+			// A Q-ID we hold but cannot vouch for, and a backfill could still fix.
+			'unverified'  => "( NOT {$ignored} AND q.post_id IS NOT NULL AND COALESCE( s.meta_value, '' ) NOT IN ( {$trusted_sources} ) )",
 			// No Q-ID, but an IMDb ID to find one with.
-			'candidates'  => "( NOT {$manual_set} AND q.post_id IS NULL AND {$has_imdb} AND NOT {$ignored} )",
+			'candidates'  => "( NOT {$ignored} AND q.post_id IS NULL AND {$has_imdb} )",
 			// No Q-ID and nothing to look one up with.
-			'unreachable' => "( NOT {$manual_set} AND q.post_id IS NULL AND NOT {$has_imdb} AND NOT {$ignored} )",
-			// An editor has said stop asking, and offered nothing in its place.
-			'ignored'     => "( {$ignored} AND NOT {$manual_set} )",
+			'unreachable' => "( NOT {$ignored} AND q.post_id IS NULL AND NOT {$has_imdb} )",
+			// Write-locked with nothing usable in the field, so nothing automatic
+			// can help: either the editor has said there is no WikiData item, or
+			// they have locked a Q-ID we cannot vouch for and only they can fix.
+			'ignored'     => "( {$ignored} AND ( q.post_id IS NULL OR COALESCE( s.meta_value, '' ) NOT IN ( {$trusted_sources} ) ) )",
 		);
 
 		$counts = array();
@@ -619,7 +620,7 @@ class WP_CLI_LWTV_WikiData {
 			'Q-ID held but unverified'         => $counts['unverified'],
 			'no Q-ID, IMDb ID available'       => $counts['candidates'],
 			'no Q-ID and no IMDb ID'           => $counts['unreachable'],
-			'ignored by an editor'             => $counts['ignored'],
+			'write-locked, nothing usable'     => $counts['ignored'],
 		);
 
 		return $counts;

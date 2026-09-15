@@ -26,8 +26,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Qid_Trust {
 
 	/**
-	 * An editor typed this Q-ID into the manual field. Authoritative; nothing
-	 * overwrites it.
+	 * An editor typed or pasted this Q-ID into the field. Authoritative, and
+	 * left alone: should_check() skips any trusted source, so a correction is
+	 * safe from a backfill without needing the write-lock toggled as well.
 	 */
 	const SOURCE_MANUAL = 'manual';
 
@@ -99,8 +100,7 @@ class Qid_Trust {
 	 *     array(
 	 *         'qid'          => string,  // lezactors_wikidata_qid
 	 *         'source'       => string,  // lezactors_wikidata_qid_source
-	 *         'manual_qid'   => string,  // lezactors_wikidata_qid_manual
-	 *         'ignored'      => bool,    // lezactors_wikidata_ignore
+	 *         'ignored'      => bool,    // lezactors_wikidata_ignore (write-lock)
 	 *         'checked'      => int,     // lezactors_wikidata_checked, 0 = never
 	 *         'imdb'         => string,  // a validated nm-prefixed ID, or ''
 	 *         'retry_missed' => bool,    // --retry-missed
@@ -111,25 +111,20 @@ class Qid_Trust {
 	 * @return array{check: bool, reason: string}
 	 */
 	public static function should_check( array $item ): array {
-		$qid        = trim( (string) ( $item['qid'] ?? '' ) );
-		$manual     = trim( (string) ( $item['manual_qid'] ?? '' ) );
-		$source     = self::normalise_source( (string) ( $item['source'] ?? '' ) );
-		$imdb       = trim( (string) ( $item['imdb'] ?? '' ) );
-		$checked    = (int) ( $item['checked'] ?? 0 );
-		$has_manual = ( '' !== $manual );
+		$qid     = trim( (string) ( $item['qid'] ?? '' ) );
+		$source  = self::normalise_source( (string) ( $item['source'] ?? '' ) );
+		$imdb    = trim( (string) ( $item['imdb'] ?? '' ) );
+		$checked = (int) ( $item['checked'] ?? 0 );
 
-		// An editor has said stop asking. Checked before everything else,
-		// because it is the one signal that means "I have already looked".
+		// Write-locked. Checked before everything else: there is no point
+		// spending a request on an answer store_qid() would refuse to write.
 		if ( ! empty( $item['ignored'] ) ) {
-			return self::no( $has_manual ? 'set by hand' : 'ignored by an editor' );
+			return self::no( 'write-locked by an editor' );
 		}
 
-		// A manual Q-ID outside the ignore toggle still wins: there is nothing
-		// to resolve when someone has already told us the answer.
-		if ( $has_manual ) {
-			return self::no( 'set by hand' );
-		}
-
+		// A hand-typed Q-ID needs no special case here. Editing the field sets
+		// the source to 'manual', which is trusted, so the next branch already
+		// leaves it alone.
 		if ( '' !== $qid && self::is_trusted( $source ) ) {
 			return self::no( 'already resolved (' . $source . ')' );
 		}
