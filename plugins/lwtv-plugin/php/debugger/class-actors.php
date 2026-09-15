@@ -12,7 +12,7 @@
  * Both ask LWTV\Wikidata\Identity who an actor is, but they ask different
  * questions of it: the diff above wants coverage and can live with a fuzzy name
  * match, because a human reads every row. The death check wants certainty and
- * takes only a trusted Q-ID, because nothing reads its reasoning before it says
+ * takes only a trusted QID, because nothing reads its reasoning before it says
  * a person has died.
  */
 
@@ -365,7 +365,7 @@ class Actors {
 
 			$check_ours = $this->get_actors_wikidata_ours( $actor_id );
 
-			// Manual Q-ID, then the IMDb ID, then the name. Name matches are
+			// Manual QID, then the IMDb ID, then the name. Name matches are
 			// allowed here -- a human reads every row this produces -- and
 			// Identity records which tier answered, so nothing downstream
 			// mistakes a guess for a verified match.
@@ -460,7 +460,7 @@ class Actors {
 	/**
 	 * Use WikiData ID to search.
 	 *
-	 * @param string $wikidata_id - The Q-ID to search for.
+	 * @param string $wikidata_id - The QID to search for.
 	 *
 	 * @return array $items - The results of the search.
 	 */
@@ -477,7 +477,7 @@ class Actors {
 	 *
 	 * @param int $actor_id - The ID of the actor.
 	 *
-	 * @return array The claims, with a 'wikidata' key holding the Q-ID.
+	 * @return array The claims, with a 'wikidata' key holding the QID.
 	 */
 	public function get_actors_wikidata_by_search( $actor_id ) {
 		$identity = new Identity();
@@ -497,7 +497,7 @@ class Actors {
 	 * the part that cannot be pure: reading meta and talking to WikiData.
 	 *
 	 * Identity comes from trusted_qid(), not resolve(). That is the whole
-	 * safeguard: a Q-ID that came from a name search -- or one stored before we
+	 * safeguard: a QID that came from a name search -- or one stored before we
 	 * tracked sources, which may well have -- is not an identity this check may
 	 * act on, because nobody is reading its reasoning before it says a person
 	 * has died. Such an actor is reported as unidentifiable, and
@@ -516,9 +516,9 @@ class Actors {
 		// Whether the write-lock means "stop" is a rule, not a meta read, so it
 		// lives in Actor_Death_Rules where it is tested. See editor_says_stop().
 		//
-		// The raw stored Q-ID, not trusted_qid(): the question is whether the
+		// The raw stored QID, not trusted_qid(): the question is whether the
 		// editor left the field empty, not whether we vouch for what is in it. A
-		// locked Q-ID we cannot vouch for should read as UNVERIFIED and be
+		// locked QID we cannot vouch for should read as UNVERIFIED and be
 		// reported, because the lock means the backfill can no longer resolve it
 		// and only a human can.
 		$item = array(

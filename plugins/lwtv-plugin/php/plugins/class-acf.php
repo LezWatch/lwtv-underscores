@@ -91,10 +91,10 @@ class ACF {
 		add_filter( 'acf/load_value/name=lezactors_gender', array( $this, 'load_actor_gender_default' ), 10, 3 );
 		add_filter( 'acf/load_value/name=lezactors_sexuality', array( $this, 'load_actor_sexuality_default' ), 10, 3 );
 
-		// Actors: a hand-edited WikiData Q-ID records itself as 'manual'.
+		// Actors: a hand-edited WikiData QID records itself as 'manual'.
 		add_filter( 'acf/update_value/name=lezactors_wikidata_qid', array( $this, 'record_manual_wikidata_qid' ), 10, 3 );
 
-		// Actors: the Q-ID field is read-only until its write-lock is on.
+		// Actors: the QID field is read-only until its write-lock is on.
 		add_filter( 'acf/prepare_field/name=lezactors_wikidata_qid', array( $this, 'lock_wikidata_qid_field' ) );
 
 		// Characters: improve search for the Show post_object field.
@@ -638,7 +638,7 @@ class ACF {
 	}
 
 	/**
-	 * Make the WikiData Q-ID read-only until an editor takes the lock.
+	 * Make the WikiData QID read-only until an editor takes the lock.
 	 *
 	 * Unlocked, the field belongs to the automated check: a value typed here
 	 * would sit there looking accepted until the next backfill quietly replaced
@@ -716,9 +716,9 @@ class ACF {
 	}
 
 	/**
-	 * Record a hand-edited WikiData Q-ID as coming from a human.
+	 * Record a hand-edited WikiData QID as coming from a human.
 	 *
-	 * There is one Q-ID field and the machine may overwrite it, so what separates
+	 * There is one QID field and the machine may overwrite it, so what separates
 	 * "an editor checked this" from "a name search guessed it" is the source meta
 	 * beside it. Machine writes go through Identity::store_qid(), which uses
 	 * update_post_meta() and therefore never fires this filter -- so reaching
@@ -730,7 +730,7 @@ class ACF {
 	 * time anyone opened an actor and hit Update -- laundering a guess into an
 	 * identity, which is the one failure Qid_Trust exists to prevent.
 	 *
-	 * Also normalises a pasted wikidata.org URL down to the bare Q-ID.
+	 * Also normalises a pasted wikidata.org URL down to the bare QID.
 	 *
 	 * @param  mixed $value   The value being saved.
 	 * @param  mixed $post_id ACF post ID (int for posts, string for options).

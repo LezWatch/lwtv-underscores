@@ -8,9 +8,9 @@
  *         'our_death'  => string,  // lezactors_death, raw
  *         'our_birth'  => string,  // lezactors_birth, raw
  *         'ignored'    => bool,    // lezactors_wikidata_ignore
- *         'qid'        => string,  // a TRUSTED WikiData Q-ID, '' when we have none
+ *         'qid'        => string,  // a TRUSTED WikiData QID, '' when we have none
  *         'source'     => string,  // Wikidata\Build\Qid_Trust::SOURCE_*, or '' when
- *                                  // we hold no Q-ID at all. A non-empty source
+ *                                  // we hold no QID at all. A non-empty source
  *                                  // alongside an empty qid means we hold one we
  *                                  // cannot vouch for -- see UNVERIFIED below.
  *         'fetched'    => bool,    // the entity fetch returned claims
@@ -25,7 +25,7 @@
  * about a real person, and the cost of the two errors is wildly asymmetric:
  * missing one is a stale page, while asserting one that is wrong is telling our
  * readers an actor is dead. So an unresolved identity, a failed fetch, and a
- * Q-ID whose birth date contradicts ours all produce their own verdict instead
+ * QID whose birth date contradicts ours all produce their own verdict instead
  * of collapsing into "no death found" or, worse, into a death claim.
  *
  * @package LWTV
@@ -52,13 +52,13 @@ class Actor_Death_Rules {
 	const IGNORED = 'ignored';
 
 	/**
-	 * No Q-ID and no IMDb ID to find one with, so there is nothing to check
+	 * No QID and no IMDb ID to find one with, so there is nothing to check
 	 * against. Not evidence the actor is alive.
 	 */
 	const NO_IDENTITY = 'no-identity';
 
 	/**
-	 * We hold a Q-ID for this actor, but not one we can vouch for -- it came
+	 * We hold a QID for this actor, but not one we can vouch for -- it came
 	 * from a name search, or predates source tracking. Reported separately from
 	 * NO_IDENTITY because the fix is different: there is nothing to add, only
 	 * something to verify.
@@ -105,16 +105,30 @@ class Actor_Death_Rules {
 	 * nothing to do, and a report that lists every settled row is a report
 	 * nobody reads.
 	 *
-	 * @var array<string, string>
+	 * A method rather than a const so the advice can go through __(). These lines
+	 * are printed to editors on the Data Validation screen, and a const cannot
+	 * call a function -- while `__( $variable )` after the fact is worse than
+	 * either, because gettext cannot see the strings to extract them.
+	 *
+	 * The WP-CLI command in the UNVERIFIED line is held outside the placeholder:
+	 * it is a literal someone has to type, so translating it would break it.
+	 *
+	 * @return array<string, string>
 	 */
-	const REPORTABLE = array(
-		self::FOUND       => 'Verify, then add the death date',
-		self::SUSPECT     => 'Birth dates disagree -- wrong person? Check the Q-ID',
-		self::UNVERIFIED  => 'Q-ID held but unverified -- run: wp lwtv wikidata backfill --reverify',
-		self::AMBIGUOUS   => 'IMDb ID matches several WikiData items -- set the Q-ID by hand',
-		self::NO_IDENTITY => 'No Q-ID and no usable IMDb ID -- add one to make this checkable',
-		self::NO_DATA     => 'WikiData had nothing to read -- retry, or check the Q-ID',
-	);
+	public static function reportable(): array {
+		return array(
+			self::FOUND       => __( 'Verify, then add the death date', 'lwtv' ),
+			self::SUSPECT     => __( 'Birth dates disagree -- wrong person? Check the QID', 'lwtv' ),
+			self::UNVERIFIED  => sprintf(
+				/* translators: %s: a WP-CLI command to run, not translatable. */
+				__( 'QID held but unverified -- run: %s', 'lwtv' ),
+				'wp lwtv wikidata backfill --reverify'
+			),
+			self::AMBIGUOUS   => __( 'IMDb ID matches several WikiData items -- set the QID by hand', 'lwtv' ),
+			self::NO_IDENTITY => __( 'No QID and no usable IMDb ID -- add one to make this checkable', 'lwtv' ),
+			self::NO_DATA     => __( 'WikiData had nothing to read -- retry, or check the QID', 'lwtv' ),
+		);
+	}
 
 	/**
 	 * Verdicts that are about our own missing metadata rather than about a
@@ -129,18 +143,18 @@ class Actor_Death_Rules {
 	/**
 	 * Does the write-lock mean stop checking this actor?
 	 *
-	 * lezactors_wikidata_ignore is a write-lock on the Q-ID field: set it and no
+	 * lezactors_wikidata_ignore is a write-lock on the QID field: set it and no
 	 * machine write lands, so the field is editable by hand only. That is all it
 	 * means everywhere except here.
 	 *
-	 * For the audit, the lock plus an EMPTY Q-ID is the only way an editor can
+	 * For the audit, the lock plus an EMPTY QID is the only way an editor can
 	 * say "this person has no WikiData item":
 	 *
-	 *   - Locked, Q-ID empty: settled. There is nothing to look up and nothing
+	 *   - Locked, QID empty: settled. There is nothing to look up and nothing
 	 *     will ever arrive, because the lock stops the backfill filling it in.
 	 *     Reporting it would be reporting a gap the editor has already closed,
 	 *     so the verdict is IGNORED and it is not reportable.
-	 *   - Locked, Q-ID present: audit normally, on that Q-ID. The editor pinned
+	 *   - Locked, QID present: audit normally, on that QID. The editor pinned
 	 *     an identity; using it is the entire point of pinning it.
 	 *   - Unlocked: audit normally.
 	 *
@@ -150,7 +164,7 @@ class Actor_Death_Rules {
 	 * silences nothing is a toggle nobody will trust twice.
 	 *
 	 * @param  bool   $ignored The lezactors_wikidata_ignore write-lock.
-	 * @param  string $qid     The stored Q-ID, or '' when the field is empty.
+	 * @param  string $qid     The stored QID, or '' when the field is empty.
 	 * @return bool   True when the audit should treat the actor as settled.
 	 */
 	public static function editor_says_stop( bool $ignored, string $qid ): bool {
@@ -168,7 +182,7 @@ class Actor_Death_Rules {
 
 		return array(
 			'verdict' => $verdict,
-			'action'  => self::REPORTABLE[ $verdict ] ?? '',
+			'action'  => self::reportable()[ $verdict ] ?? '',
 			'death'   => ( self::FOUND === $verdict || self::SUSPECT === $verdict )
 				? (string) ( $item['wiki_death'] ?? '' )
 				: '',
@@ -182,7 +196,7 @@ class Actor_Death_Rules {
 	 * @return bool
 	 */
 	public static function is_reportable( string $verdict ): bool {
-		return isset( self::REPORTABLE[ $verdict ] );
+		return isset( self::reportable()[ $verdict ] );
 	}
 
 	/**
@@ -223,7 +237,7 @@ class Actor_Death_Rules {
 				return self::AMBIGUOUS;
 			}
 
-			// A source with no trusted Q-ID beside it means we do hold one, we
+			// A source with no trusted QID beside it means we do hold one, we
 			// just cannot say whose it is. Worth distinguishing: "verify this"
 			// and "there is nothing here to verify" are different jobs.
 			return ( '' === $source ) ? self::NO_IDENTITY : self::UNVERIFIED;
@@ -247,7 +261,7 @@ class Actor_Death_Rules {
 	/**
 	 * Do two birth dates describe different people?
 	 *
-	 * This is the guard on the whole command. A stored Q-ID can be wrong, and an
+	 * This is the guard on the whole command. A stored QID can be wrong, and an
 	 * IMDb ID can have been reassigned, and in both cases what we get back is a
 	 * confident death date for a stranger. Birth date is the cheapest way to
 	 * notice, since we already hold one for most actors.

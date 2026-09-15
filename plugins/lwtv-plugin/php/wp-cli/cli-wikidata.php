@@ -1,6 +1,6 @@
 <?php
 /*
- * WP CLI Commands for WikiData Q-IDs.
+ * WP CLI Commands for WikiData QIDs.
  *
  * Backfills lezactors_wikidata_qid from each actor's IMDb ID, recording how the
  * match was made so an unattended process can tell a verified identity from a
@@ -58,7 +58,7 @@ class WP_CLI_LWTV_WikiData {
 	}
 
 	/**
-	 * Resolve actors to WikiData Q-IDs.
+	 * Resolve actors to WikiData QIDs.
 	 *
 	 * ## OPTIONS
 	 *
@@ -66,7 +66,7 @@ class WP_CLI_LWTV_WikiData {
 	 * : What to do.
 	 * options:
 	 * - status   (how many actors are identified, unverified, or unreachable)
-	 * - backfill (resolve Q-IDs from IMDb IDs)
+	 * - backfill (resolve QIDs from IMDb IDs)
 	 * - actor    (look one actor up and explain the outcome)
 	 * ---
 	 *
@@ -92,9 +92,9 @@ class WP_CLI_LWTV_WikiData {
 	 * : Backfill only. Include actors already checked without a match.
 	 *
 	 * [--reverify]
-	 * : Backfill only. Re-check Q-IDs we cannot vouch for -- those from a name
+	 * : Backfill only. Re-check QIDs we cannot vouch for -- those from a name
 	 * search, and those stored before we recorded sources -- against the IMDb
-	 * match. This is what turns an inherited Q-ID into one the death audit will
+	 * match. This is what turns an inherited QID into one the death audit will
 	 * act on.
 	 *
 	 * [--letter=<letter>]
@@ -121,7 +121,7 @@ class WP_CLI_LWTV_WikiData {
 	 *     # Fill in the blanks, a letter at a time
 	 *     wp lwtv wikidata backfill --letter=a --limit=0
 	 *
-	 *     # Verify the Q-IDs we inherited, so the death audit can use them
+	 *     # Verify the QIDs we inherited, so the death audit can use them
 	 *     wp lwtv wikidata backfill --reverify --limit=0
 	 *
 	 *     # Explain one actor
@@ -163,7 +163,7 @@ class WP_CLI_LWTV_WikiData {
 	 * How identifiable is the actor catalogue?
 	 *
 	 * The split that matters is trusted versus unverified. A large unverified
-	 * count is not a broken database -- those Q-IDs may well be right -- it is
+	 * count is not a broken database -- those QIDs may well be right -- it is
 	 * the number of actors the death audit has to refuse to answer about until
 	 * --reverify has checked them.
 	 */
@@ -182,14 +182,14 @@ class WP_CLI_LWTV_WikiData {
 
 		\WP_CLI::log( '' );
 		\WP_CLI::log( sprintf( '%d published actors.', $counts['total'] ) );
-		\WP_CLI::log( sprintf( '%d can be identified for unattended checks (trusted Q-ID).', $counts['trusted'] ) );
+		\WP_CLI::log( sprintf( '%d can be identified for unattended checks (trusted QID).', $counts['trusted'] ) );
 
 		if ( $counts['unverified'] > 0 ) {
-			\WP_CLI::log( sprintf( '%d hold a Q-ID we cannot vouch for -- try: wp lwtv wikidata backfill --reverify --limit=0', $counts['unverified'] ) );
+			\WP_CLI::log( sprintf( '%d hold a QID we cannot vouch for -- try: wp lwtv wikidata backfill --reverify --limit=0', $counts['unverified'] ) );
 		}
 
 		if ( $counts['candidates'] > 0 ) {
-			\WP_CLI::log( sprintf( '%d have an IMDb ID and no Q-ID -- try: wp lwtv wikidata backfill --limit=0', $counts['candidates'] ) );
+			\WP_CLI::log( sprintf( '%d have an IMDb ID and no QID -- try: wp lwtv wikidata backfill --limit=0', $counts['candidates'] ) );
 		}
 
 		if ( $counts['unreachable'] > 0 ) {
@@ -217,7 +217,7 @@ class WP_CLI_LWTV_WikiData {
 	 * ---------------------------------------------------------------- */
 
 	/**
-	 * Resolve Q-IDs for as many actors as the flags allow.
+	 * Resolve QIDs for as many actors as the flags allow.
 	 *
 	 * @param array $assoc_args Associative args.
 	 */
@@ -327,7 +327,7 @@ class WP_CLI_LWTV_WikiData {
 			// Three genuinely different outcomes, and this line used to report the
 			// first one for all of them: trusted_qid() did not read the ignore
 			// toggle, so an actor an editor had ignored still had their stale
-			// Q-ID announced as the one the audit would use.
+			// QID announced as the one the audit would use.
 			if ( '' !== $trusted['qid'] ) {
 				\WP_CLI::log( 'The death audit will use ' . $trusted['qid'] . ' (' . $trusted['source'] . ').' );
 			} elseif ( $identity->is_ignored( $actor_id ) ) {
@@ -483,9 +483,9 @@ class WP_CLI_LWTV_WikiData {
 	 *
 	 * A superset, not the decision: Qid_Trust::should_check() makes the actual
 	 * call per actor. What this excludes is only what SQL can rule out for
-	 * certain -- an editor's "stop asking", a hand-set Q-ID, a Q-ID we already
+	 * certain -- an editor's "stop asking", a hand-set QID, a QID we already
 	 * trust, no IMDb meta of any kind to ask with, and (unless --retry-missed)
-	 * an actor with no Q-ID we have already asked about without success.
+	 * an actor with no QID we have already asked about without success.
 	 *
 	 * @param bool $retry_missed Include actors already checked without a match.
 	 * @return array<int, int>
@@ -504,7 +504,7 @@ class WP_CLI_LWTV_WikiData {
 
 		$trusted_sources = "'" . implode( "', '", Qid_Trust::TRUSTED ) . "'";
 
-		// A previous no-match only silences an actor who still has no Q-ID. One
+		// A previous no-match only silences an actor who still has no QID. One
 		// that does needs re-checking on its own terms, which is --reverify's
 		// business rather than this marker's.
 		$checked_clause = $retry_missed ? '' : 'AND ( q.post_id IS NOT NULL OR chk.post_id IS NULL )';
@@ -555,15 +555,15 @@ class WP_CLI_LWTV_WikiData {
 		// which is the only reason the breakdown table can be read as a whole.
 		//
 		// The pivot is that trust comes from the SOURCE, not from the write-lock.
-		// A locked Q-ID from a trusted source is still usable -- that is the
+		// A locked QID from a trusted source is still usable -- that is the
 		// normal state of a hand-corrected actor, since editing the field records
 		// source 'manual' -- so 'trusted' must not exclude locked actors. The
 		// lock only matters where it stops work being possible: an actor whose
-		// Q-ID we cannot vouch for, or who has none, can no longer be resolved by
+		// QID we cannot vouch for, or who has none, can no longer be resolved by
 		// any backfill, so those belong in 'ignored' rather than being counted as
 		// work outstanding.
 		//
-		// Written out as a partition on four facts -- has a Q-ID, source is
+		// Written out as a partition on four facts -- has a QID, source is
 		// trusted, is locked, has an IMDb ID:
 		//
 		//   qid + trusted                 -> trusted   (locked or not)
@@ -572,17 +572,17 @@ class WP_CLI_LWTV_WikiData {
 		//   no qid + no imdb + unlocked   -> unreachable
 		//   anything else locked          -> ignored
 		$groups = array(
-			// A Q-ID we can act on: hand-set, or resolved from an IMDb ID.
+			// A QID we can act on: hand-set, or resolved from an IMDb ID.
 			'trusted'     => "( q.post_id IS NOT NULL AND COALESCE( s.meta_value, '' ) IN ( {$trusted_sources} ) )",
-			// A Q-ID we hold but cannot vouch for, and a backfill could still fix.
+			// A QID we hold but cannot vouch for, and a backfill could still fix.
 			'unverified'  => "( NOT {$ignored} AND q.post_id IS NOT NULL AND COALESCE( s.meta_value, '' ) NOT IN ( {$trusted_sources} ) )",
-			// No Q-ID, but an IMDb ID to find one with.
+			// No QID, but an IMDb ID to find one with.
 			'candidates'  => "( NOT {$ignored} AND q.post_id IS NULL AND {$has_imdb} )",
-			// No Q-ID and nothing to look one up with.
+			// No QID and nothing to look one up with.
 			'unreachable' => "( NOT {$ignored} AND q.post_id IS NULL AND NOT {$has_imdb} )",
 			// Write-locked with nothing usable in the field, so nothing automatic
 			// can help: either the editor has said there is no WikiData item, or
-			// they have locked a Q-ID we cannot vouch for and only they can fix.
+			// they have locked a QID we cannot vouch for and only they can fix.
 			'ignored'     => "( {$ignored} AND ( q.post_id IS NULL OR COALESCE( s.meta_value, '' ) NOT IN ( {$trusted_sources} ) ) )",
 		);
 
@@ -616,11 +616,11 @@ class WP_CLI_LWTV_WikiData {
 		$counts['total'] = (int) ( wp_count_posts( CPT_Actors::SLUG )->publish ?? 0 );
 
 		$counts['breakdown'] = array(
-			'trusted Q-ID (usable unattended)' => $counts['trusted'],
-			'Q-ID held but unverified'         => $counts['unverified'],
-			'no Q-ID, IMDb ID available'       => $counts['candidates'],
-			'no Q-ID and no IMDb ID'           => $counts['unreachable'],
-			'write-locked, nothing usable'     => $counts['ignored'],
+			'trusted QID (usable unattended)' => $counts['trusted'],
+			'QID held but unverified'         => $counts['unverified'],
+			'no QID, IMDb ID available'       => $counts['candidates'],
+			'no QID and no IMDb ID'           => $counts['unreachable'],
+			'write-locked, nothing usable'    => $counts['ignored'],
 		);
 
 		return $counts;

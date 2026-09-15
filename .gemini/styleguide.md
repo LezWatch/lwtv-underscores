@@ -50,7 +50,12 @@ these links.
 6. **Missing text domain.** All user-facing strings must be translatable:
    `'lwtv'` inside `plugins/lwtv-plugin/`, `'lwtv-underscores'` in theme files.
    "User-facing" means a site visitor or a wp-admin screen. It does **not**
-   include WP-CLI console output — see "WP-CLI files" below.
+   include WP-CLI console output, nor `status`/`reason`/verdict values, which
+   are identifiers rather than copy — both are covered under "WP-CLI files"
+   below, and both have been flagged here in error before.
+   A `const` array cannot call `__()`, so the fix for one holding translatable
+   prose is to make it a static method returning the array — not `__( $var )`
+   after the fact, which gettext cannot extract.
 7. **Unescaped output** — except for the self-escaping helpers listed below.
 8. **New display logic put in the wrong layer.** See "build → format →
    templates" below.
@@ -130,6 +135,25 @@ load-bearing. In `Wikidata\Identity::resolve_and_record()`, `'none'` and
 `'error'` is the *absence* of an answer and deliberately writes nothing so an
 outage cannot mark actors permanently unresolvable. Do not suggest collapsing
 them.
+
+**`status` and `reason` strings are identifiers, not copy. Never suggest
+wrapping them in `__()`.** They are grouped, compared and used as array keys,
+so translating them makes the behaviour locale-dependent. The clearest case is
+`Wikidata\Build\Qid_Trust::should_check()`, whose `reason` becomes an array key
+in `cli-wikidata.php`:
+
+```php
+$skipped[ $decision['reason'] ] = ( $skipped[ $decision['reason'] ] ?? 0 ) + 1;
+```
+
+Translate that and the skip tally buckets differently per language, and any two
+reasons a translation renders identically silently merge into one count. The
+same applies to `Debugger\Build\Actor_Death_Rules` verdicts and to the
+`$health['status']` / `$health['reason']` values in the watch-URL checks.
+
+If a reason ever does need showing to a site visitor, the fix is a stable slug
+at the source plus a translated label where it is printed — never `__()` on the
+value that does the grouping.
 
 ### ACF date storage
 

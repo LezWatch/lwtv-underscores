@@ -3,10 +3,10 @@
  * Who is this actor on WikiData?
  *
  * One place that owns the question, because three things now need the answer --
- * the wikidata diff view, the actor death audit, and the Q-ID backfill -- and
+ * the wikidata diff view, the actor death audit, and the QID backfill -- and
  * they need it to mean the same thing each time.
  *
- * There is ONE Q-ID field, lezactors_wikidata_qid, and it is the source of
+ * There is ONE QID field, lezactors_wikidata_qid, and it is the source of
  * truth. What varies is how the value got there, recorded alongside it in
  * lezactors_wikidata_qid_source:
  *
@@ -16,7 +16,7 @@
  *   3. 'name'    -- a name search, taking the first hit. A guess.
  *   4. 'legacy'  -- predates source tracking, so unknowable. Untrusted.
  *
- * Only the first two produce a Q-ID an unattended process may act on. That
+ * Only the first two produce a QID an unattended process may act on. That
  * distinction living in the source, not in a second field, is the whole design:
  * a fuzzy name match is otherwise indistinguishable from a verified one the
  * moment it is stored, and the next process to read it treats a guess about a
@@ -28,7 +28,7 @@
  * Set it and store_qid() refuses, so the field becomes editable only by hand and
  * no backfill can overwrite what an editor put there. It says nothing about
  * whether the value is right; that is still the source's job. The one place it
- * carries a second meaning is the death audit, where ignore with an EMPTY Q-ID
+ * carries a second meaning is the death audit, where ignore with an EMPTY QID
  * is how an editor says "this person has no WikiData item" -- see
  * Debugger\Build\Actor_Death_Rules::editor_says_stop().
  *
@@ -55,7 +55,7 @@ use LWTV\Wikidata\Build\Qid_Trust;
 class Identity {
 
 	/**
-	 * The resolved Q-ID. Machine-written.
+	 * The resolved QID. Machine-written.
 	 */
 	const META_QID = 'lezactors_wikidata_qid';
 
@@ -117,14 +117,14 @@ class Identity {
 	const P_IMDB = 'P345';
 
 	/**
-	 * A Q-ID safe to draw conclusions from, or nothing.
+	 * A QID safe to draw conclusions from, or nothing.
 	 *
 	 * This is what an unattended process asks for. It performs no lookup and
-	 * writes nothing: either we already hold a Q-ID we can vouch for, or the
+	 * writes nothing: either we already hold a QID we can vouch for, or the
 	 * caller is told we cannot identify this person and must say so rather than
 	 * guess.
 	 *
-	 * One rule, and deliberately only one: a Q-ID plus a source we trust. There
+	 * One rule, and deliberately only one: a QID plus a source we trust. There
 	 * is no special case for a hand-typed value because there does not need to
 	 * be -- an editor typing in the field sets the source to 'manual', which is
 	 * already in Qid_Trust::TRUSTED.
@@ -132,7 +132,7 @@ class Identity {
 	 * The ignore toggle is NOT read here. It is a write-lock, not a statement
 	 * about identity: it stops the machine overwriting the field, and says
 	 * nothing about whether the value in it is right. An ignored actor holding a
-	 * Q-ID from a trusted source is still identifiable, and refusing to hand it
+	 * QID from a trusted source is still identifiable, and refusing to hand it
 	 * back would mean the death audit skipped exactly the actors an editor had
 	 * taken the trouble to pin down. What ignore does mean for the audit lives in
 	 * Debugger\Build\Actor_Death_Rules::editor_says_stop().
@@ -151,7 +151,7 @@ class Identity {
 			);
 		}
 
-		// We may well hold a Q-ID here. We just cannot say whose it is.
+		// We may well hold a QID here. We just cannot say whose it is.
 		return array(
 			'qid'    => '',
 			'source' => '' === $qid ? '' : $source,
@@ -159,7 +159,7 @@ class Identity {
 	}
 
 	/**
-	 * Resolve an actor to a Q-ID, looking it up if we have to.
+	 * Resolve an actor to a QID, looking it up if we have to.
 	 *
 	 * Writes back what it finds, along with the source, so the next caller is a
 	 * request lighter and a human can see and correct the match.
@@ -203,7 +203,7 @@ class Identity {
 			);
 		}
 
-		// An untrusted Q-ID we could not verify. Hand it back as-is with its
+		// An untrusted QID we could not verify. Hand it back as-is with its
 		// real source, so a caller that only needs *something* to diff against
 		// still has it, and one that needs certainty can see it lacks it.
 		if ( '' !== $stored ) {
@@ -309,13 +309,13 @@ class Identity {
 			return $this->outcome( 'none', '', $collected['qid'], 'no WikiData item holds this IMDb ID' );
 		}
 
-		// An untrusted Q-ID we can now vouch for, or correct.
+		// An untrusted QID we can now vouch for, or correct.
 		if ( '' !== $collected['qid'] && $collected['qid'] !== $lookup['qid'] ) {
 			if ( ! $dry_run ) {
 				$this->store_qid( $actor_id, $lookup['qid'], Qid_Trust::SOURCE_IMDB );
 			}
 
-			return $this->outcome( 'conflict', $lookup['qid'], $collected['qid'], 'stored Q-ID disagreed with the IMDb match' );
+			return $this->outcome( 'conflict', $lookup['qid'], $collected['qid'], 'stored QID disagreed with the IMDb match' );
 		}
 
 		$status = ( '' !== $collected['qid'] ) ? 'confirmed' : 'found';
@@ -379,7 +379,7 @@ class Identity {
 	}
 
 	/**
-	 * The first Q-ID WikiData returns for the actor's name.
+	 * The first QID WikiData returns for the actor's name.
 	 *
 	 * The weakest of the three lookups by a wide margin: wbsearchentities scores
 	 * text, so the first hit for a common name is a coin toss between our actor,
@@ -393,7 +393,7 @@ class Identity {
 	 * separate case of an entity an editor typed into the title itself.
 	 *
 	 * @param  int $actor_id The ID of the actor.
-	 * @return string The Q-ID, or '' when nothing came back.
+	 * @return string The QID, or '' when nothing came back.
 	 */
 	public function qid_from_name( int $actor_id ): string {
 		$language  = 'en';
@@ -443,7 +443,7 @@ class Identity {
 	/**
 	 * A WikiData entity's claims, keyed by property.
 	 *
-	 * @param  string $qid A Q-ID.
+	 * @param  string $qid A QID.
 	 * @return array Empty when the entity could not be read or holds no claims.
 	 */
 	public function entity( string $qid ): array {
@@ -516,19 +516,19 @@ class Identity {
 	}
 
 	/**
-	 * A typed or pasted value, as a bare Q-ID.
+	 * A typed or pasted value, as a bare QID.
 	 *
-	 * Accepts a pasted WikiData URL as well as a bare Q-ID. Someone copying
+	 * Accepts a pasted WikiData URL as well as a bare QID. Someone copying
 	 * wikidata.org/wiki/Q42 out of the address bar is the obvious way to fill the
 	 * field in, and silently discarding it would be the worst outcome: the editor
 	 * believes they have corrected a bad match while the audit keeps reporting it.
 	 *
 	 * Lives on the write path now. This used to read a separate
-	 * lezactors_wikidata_qid_manual field; there is one Q-ID field, so the
+	 * lezactors_wikidata_qid_manual field; there is one QID field, so the
 	 * normalising happens once as an editor saves rather than on every read.
 	 *
 	 * @param  string $value Raw field value.
-	 * @return string A bare Q-ID, or '' when the value holds nothing usable.
+	 * @return string A bare QID, or '' when the value holds nothing usable.
 	 */
 	public static function normalise_qid( string $value ): string {
 		$value = trim( $value );
@@ -547,7 +547,7 @@ class Identity {
 	}
 
 	/**
-	 * Has an editor write-locked this actor's Q-ID?
+	 * Has an editor write-locked this actor's QID?
 	 *
 	 * @param  int $actor_id The ID of the actor.
 	 * @return bool
@@ -571,20 +571,20 @@ class Identity {
 	}
 
 	/**
-	 * Store a Q-ID and how we got it.
+	 * Store a QID and how we got it.
 	 *
-	 * The source is written in the same breath as the Q-ID, never separately --
-	 * a Q-ID with no recorded source reads as legacy, which is untrusted, so
+	 * The source is written in the same breath as the QID, never separately --
+	 * a QID with no recorded source reads as legacy, which is untrusted, so
 	 * letting the two drift apart would silently downgrade a good match.
 	 *
 	 * Refuses outright when the ignore toggle is set. That is what makes ignore a
 	 * write-lock rather than a convention: this is the only door every machine
 	 * write goes through -- resolve(), resolve_and_record() and the scheduler all
 	 * arrive here -- so enforcing it once means no future caller can forget, and
-	 * an editor's Q-ID cannot be overwritten by a backfill they did not run.
+	 * an editor's QID cannot be overwritten by a backfill they did not run.
 	 *
 	 * @param  int    $actor_id The ID of the actor.
-	 * @param  string $qid      The Q-ID.
+	 * @param  string $qid      The QID.
 	 * @param  string $source   A Qid_Trust::SOURCE_* value.
 	 * @return void
 	 */
@@ -596,7 +596,7 @@ class Identity {
 		if ( $this->is_ignored( $actor_id ) ) {
 			lwtv_plugin()->debug_log(
 				'wikidata',
-				'Refused to write ' . $qid . ' (' . $source . ') to actor ' . $actor_id . ': the Q-ID is write-locked.'
+				'Refused to write ' . $qid . ' (' . $source . ') to actor ' . $actor_id . ': the QID is write-locked.'
 			);
 
 			return;
@@ -682,7 +682,7 @@ class Identity {
 	/**
 	 * Shape a qid_from_imdb() return.
 	 *
-	 * @param  string $qid       The Q-ID, or ''.
+	 * @param  string $qid       The QID, or ''.
 	 * @param  bool   $ambiguous Whether several items matched.
 	 * @param  string $status    ok|none|error.
 	 * @param  string $reason    Why, when it went wrong.
@@ -701,7 +701,7 @@ class Identity {
 	 * Shape a resolve_and_record() return.
 	 *
 	 * @param  string $status One of found|confirmed|conflict|none|error|skipped.
-	 * @param  string $qid    The Q-ID now stored, or ''.
+	 * @param  string $qid    The QID now stored, or ''.
 	 * @param  string $was    What was stored before, or ''.
 	 * @param  string $reason Explanation, when there is one.
 	 * @return array

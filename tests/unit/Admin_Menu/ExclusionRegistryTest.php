@@ -81,7 +81,7 @@ class ExclusionRegistryTest extends TestCase {
 	public function test_the_wikidata_lock_distinguishes_its_two_meanings(): void {
 		// The entire reason this column exists. Same lock, same "1", two
 		// completely different editorial statements, and the only thing that
-		// tells them apart is whether the Q-ID field holds anything.
+		// tells them apart is whether the QID field holds anything.
 		$this->assertSame(
 			'Locked to Q42 (manual)',
 			Exclusion_Registry::describe(

@@ -47,6 +47,18 @@ if ( ! function_exists( '__' ) ) {
 	}
 }
 
+if ( ! function_exists( '_n' ) ) {
+	function _n( $single, $plural, $number, $domain = 'default' ) { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
+		return ( 1 === (int) $number ) ? $single : $plural;
+	}
+}
+
+if ( ! function_exists( 'number_format_i18n' ) ) {
+	function number_format_i18n( $number, $decimals = 0 ) { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
+		return number_format( (float) $number, (int) $decimals );
+	}
+}
+
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/this-year/build/class-trends.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/this-year/build/class-deaths-strip.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/this-year/build/class-longest-running.php';

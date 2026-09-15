@@ -1,8 +1,8 @@
 <?php
 /**
- * How much do we trust a stored WikiData Q-ID, and is it worth asking again?
+ * How much do we trust a stored WikiData QID, and is it worth asking again?
  *
- * A Q-ID in postmeta is not self-describing. It might have been typed by an
+ * A QID in postmeta is not self-describing. It might have been typed by an
  * editor who checked, derived from an exact IMDb statement match, or picked by a
  * fuzzy name search that returned a politician with the same name as an actress.
  * All three look identical once written, and that is the whole problem this file
@@ -26,7 +26,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Qid_Trust {
 
 	/**
-	 * An editor typed or pasted this Q-ID into the field. Authoritative, and
+	 * An editor typed or pasted this QID into the field. Authoritative, and
 	 * left alone: should_check() skips any trusted source, so a correction is
 	 * safe from a backfill without needing the write-lock toggled as well.
 	 */
@@ -44,7 +44,7 @@ class Qid_Trust {
 	const SOURCE_NAME = 'name';
 
 	/**
-	 * A Q-ID that predates source tracking.
+	 * A QID that predates source tracking.
 	 *
 	 * Deliberately NOT trusted. The existing column is a mix of hand-entered
 	 * IDs and old `wbsearchentities` first-hits with no way to tell them apart,
@@ -64,9 +64,9 @@ class Qid_Trust {
 	const TRUSTED = array( self::SOURCE_MANUAL, self::SOURCE_IMDB );
 
 	/**
-	 * Is a Q-ID from this source safe to draw conclusions from?
+	 * Is a QID from this source safe to draw conclusions from?
 	 *
-	 * @param  string $source A SOURCE_* value, or '' for an untracked Q-ID.
+	 * @param  string $source A SOURCE_* value, or '' for an untracked QID.
 	 * @return bool
 	 */
 	public static function is_trusted( string $source ): bool {
@@ -76,7 +76,7 @@ class Qid_Trust {
 	/**
 	 * A stored source value, with anything unrecognised read as legacy.
 	 *
-	 * An empty string means the Q-ID was written before we tracked sources. An
+	 * An empty string means the QID was written before we tracked sources. An
 	 * unrecognised string means something wrote a value we do not know about,
 	 * which gets the same cautious treatment rather than the benefit of the
 	 * doubt.
@@ -104,7 +104,7 @@ class Qid_Trust {
 	 *         'checked'      => int,     // lezactors_wikidata_checked, 0 = never
 	 *         'imdb'         => string,  // a validated nm-prefixed ID, or ''
 	 *         'retry_missed' => bool,    // --retry-missed
-	 *         'reverify'     => bool,    // --reverify: re-check untrusted Q-IDs
+	 *         'reverify'     => bool,    // --reverify: re-check untrusted QIDs
 	 *     )
 	 *
 	 * @param  array $item Per the contract above.
@@ -122,7 +122,7 @@ class Qid_Trust {
 			return self::no( 'write-locked by an editor' );
 		}
 
-		// A hand-typed Q-ID needs no special case here. Editing the field sets
+		// A hand-typed QID needs no special case here. Editing the field sets
 		// the source to 'manual', which is trusted, so the next branch already
 		// leaves it alone.
 		if ( '' !== $qid && self::is_trusted( $source ) ) {
@@ -130,18 +130,18 @@ class Qid_Trust {
 		}
 
 		// Everything past here needs an IMDb ID, because the exact statement
-		// match is the only lookup allowed to write a trusted Q-ID.
+		// match is the only lookup allowed to write a trusted QID.
 		if ( '' === $imdb ) {
 			return self::no( '' === $qid ? 'no IMDb ID to ask with' : 'unverified, and no IMDb ID to verify it with' );
 		}
 
-		// A Q-ID we hold but cannot vouch for. Worth re-resolving, but only when
+		// A QID we hold but cannot vouch for. Worth re-resolving, but only when
 		// asked -- on a routine run these are not gaps, and re-checking every one
 		// of them would make a backfill of the actual blanks impossible to size.
 		if ( '' !== $qid ) {
 			return empty( $item['reverify'] )
 				? self::no( 'unverified (' . $source . ') -- --reverify to check' )
-				: self::yes( 'verify stored Q-ID against IMDb' );
+				: self::yes( 'verify stored QID against IMDb' );
 		}
 
 		// We asked before and WikiData had nothing. Not a fault, and not worth
@@ -150,7 +150,7 @@ class Qid_Trust {
 			return self::no( 'checked before, no match' );
 		}
 
-		return self::yes( 'no Q-ID, IMDb ID available' );
+		return self::yes( 'no QID, IMDb ID available' );
 	}
 
 	/**

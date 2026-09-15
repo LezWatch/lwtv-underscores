@@ -85,7 +85,7 @@ class Wikidata {
 		// If we have no data, return an error.
 		if ( empty( $response ) ) {
 			$response = array(
-				/* translators: %s: the requested actor slug, IMDB ID, WikiData Q-ID, or post ID. */
+				/* translators: %s: the requested actor slug, IMDB ID, WikiData QID, or post ID. */
 				'error' => sprintf( __( 'No data found for %s', 'lwtv' ), $who_dat ),
 			);
 		}

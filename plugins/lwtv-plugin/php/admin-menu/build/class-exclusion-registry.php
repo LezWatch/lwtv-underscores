@@ -79,74 +79,81 @@ class Exclusion_Registry {
 	 * those keys and hands back an array keyed by alias, so meta key names stay
 	 * declared in exactly one place while the reading stays out of this class.
 	 *
-	 * @var array<string, array<string, mixed>>
+	 * A method rather than a const, only so the labels an editor reads -- 'name',
+	 * 'desc', 'column', 'empty' -- can go through __(). A const cannot call a
+	 * function, and these are tab names and headings on a wp-admin screen, so
+	 * they are as user-facing as anything describe() returns.
+	 *
+	 * @return array<string, array<string, mixed>>
 	 */
-	private const CHECKS = array(
-		'queer_checker'   => array(
-			'name'    => 'Queer Checker',
-			'desc'    => 'Actors whose queerness has been set by hand.',
-			'cpt'     => self::CPT_ACTORS,
-			'meta'    => 'lezactors_queer_override',
-			'match'   => self::MATCH_ANY,
-			'column'  => 'Actor',
-			'empty'   => 'No actors have their queerness overridden at this time.',
-			'context' => array(
-				// The stored flag the admin column, the ACF relationship labels,
-				// both REST endpoints and the statistics all read. It is written
-				// on save, so it lags an override until the actor is recalculated.
-				'stored_queer' => 'lezactors_queer',
+	private static function checks(): array {
+		return array(
+			'queer_checker'   => array(
+				'name'    => __( 'Queer Checker', 'lwtv' ),
+				'desc'    => __( 'Actors whose queerness has been set by hand.', 'lwtv' ),
+				'cpt'     => self::CPT_ACTORS,
+				'meta'    => 'lezactors_queer_override',
+				'match'   => self::MATCH_ANY,
+				'column'  => __( 'Actor', 'lwtv' ),
+				'empty'   => __( 'No actors have their queerness overridden at this time.', 'lwtv' ),
+				'context' => array(
+					// The stored flag the admin column, the ACF relationship labels,
+					// both REST endpoints and the statistics all read. It is written
+					// on save, so it lags an override until the actor is recalculated.
+					'stored_queer' => 'lezactors_queer',
+				),
 			),
-		),
-		'dead_checker'    => array(
-			'name'    => 'Dead Checker',
-			'desc'    => 'Shows with the death-score deduction overridden.',
-			'cpt'     => self::CPT_SHOWS,
-			'meta'    => 'lezshows_byq_override',
-			// 'on', not '1'. See the note in the class docblock.
-			'match'   => 'on',
-			'column'  => 'Show',
-			'empty'   => 'No shows have their scores for death overridden at this time.',
-			'context' => array(),
-		),
-		'wikidata_ignore' => array(
-			'name'    => 'WikiData Locked',
-			'desc'    => 'Actors whose WikiData Q-ID is write-locked against the backfill.',
-			'cpt'     => self::CPT_ACTORS,
-			'meta'    => 'lezactors_wikidata_ignore',
-			'match'   => '1',
-			'column'  => 'Actor',
-			'empty'   => 'No actors have their WikiData Q-ID write-locked at this time.',
-			'context' => array(
-				'stored_qid' => 'lezactors_wikidata_qid',
-				'qid_source' => 'lezactors_wikidata_qid_source',
+			'dead_checker'    => array(
+				'name'    => __( 'Dead Checker', 'lwtv' ),
+				'desc'    => __( 'Shows with the death-score deduction overridden.', 'lwtv' ),
+				'cpt'     => self::CPT_SHOWS,
+				'meta'    => 'lezshows_byq_override',
+				// 'on', not '1'. See the note in the class docblock.
+				'match'   => 'on',
+				'column'  => __( 'Show', 'lwtv' ),
+				'empty'   => __( 'No shows have their scores for death overridden at this time.', 'lwtv' ),
+				'context' => array(),
 			),
-		),
-		'tvmaze_ignore'   => array(
-			'name'    => 'TVMaze Ignored',
-			'desc'    => 'Shows whose TVMaze match an editor has overridden or ruled out.',
-			'cpt'     => self::CPT_SHOWS,
-			'meta'    => 'lezshows_tvmaze_ignore',
-			'match'   => '1',
-			'column'  => 'Show',
-			'empty'   => 'No shows have their TVMaze match overridden at this time.',
-			'context' => array(
-				'manual_id' => 'lezshows_tvmaze_id_manual',
-				'stored_id' => 'lezshows_tvmaze_id',
+			'wikidata_ignore' => array(
+				'name'    => __( 'WikiData Locked', 'lwtv' ),
+				'desc'    => __( 'Actors whose WikiData QID is write-locked against the backfill.', 'lwtv' ),
+				'cpt'     => self::CPT_ACTORS,
+				'meta'    => 'lezactors_wikidata_ignore',
+				'match'   => '1',
+				'column'  => __( 'Actor', 'lwtv' ),
+				'empty'   => __( 'No actors have their WikiData QID write-locked at this time.', 'lwtv' ),
+				'context' => array(
+					'stored_qid' => 'lezactors_wikidata_qid',
+					'qid_source' => 'lezactors_wikidata_qid_source',
+				),
 			),
-		),
-		'no_known_chars'  => array(
-			'name'    => 'No Known Characters',
-			'desc'    => 'Shows an editor has flagged as having no characters to list.',
-			'cpt'     => self::CPT_SHOWS,
-			'meta'    => 'lezshows_no_chars',
-			'match'   => '1',
-			'column'  => 'Show',
-			'empty'   => 'No shows are flagged as having no known characters at this time.',
-			'context' => array(
-				'char_count' => 'lezshows_char_count',
+			'tvmaze_ignore'   => array(
+				'name'    => __( 'TVMaze Ignored', 'lwtv' ),
+				'desc'    => __( 'Shows whose TVMaze match an editor has overridden or ruled out.', 'lwtv' ),
+				'cpt'     => self::CPT_SHOWS,
+				'meta'    => 'lezshows_tvmaze_ignore',
+				'match'   => '1',
+				'column'  => __( 'Show', 'lwtv' ),
+				'empty'   => __( 'No shows have their TVMaze match overridden at this time.', 'lwtv' ),
+				'context' => array(
+					'manual_id' => 'lezshows_tvmaze_id_manual',
+					'stored_id' => 'lezshows_tvmaze_id',
+				),
 			),
-		),
-	);
+			'no_known_chars'  => array(
+				'name'    => __( 'No Known Characters', 'lwtv' ),
+				'desc'    => __( 'Shows an editor has flagged as having no characters to list.', 'lwtv' ),
+				'cpt'     => self::CPT_SHOWS,
+				'meta'    => 'lezshows_no_chars',
+				'match'   => '1',
+				'column'  => __( 'Show', 'lwtv' ),
+				'empty'   => __( 'No shows are flagged as having no known characters at this time.', 'lwtv' ),
+				'context' => array(
+					'char_count' => 'lezshows_char_count',
+				),
+			),
+		);
+	}
 
 	/**
 	 * Every check, keyed by its tab slug.
@@ -154,7 +161,7 @@ class Exclusion_Registry {
 	 * @return array<string, array<string, mixed>>
 	 */
 	public static function all(): array {
-		return self::CHECKS;
+		return self::checks();
 	}
 
 	/**
@@ -163,7 +170,7 @@ class Exclusion_Registry {
 	 * @return array<int, string>
 	 */
 	public static function keys(): array {
-		return array_keys( self::CHECKS );
+		return array_keys( self::checks() );
 	}
 
 	/**
@@ -173,7 +180,7 @@ class Exclusion_Registry {
 	 * @return bool
 	 */
 	public static function exists( string $key ): bool {
-		return isset( self::CHECKS[ $key ] );
+		return isset( self::checks()[ $key ] );
 	}
 
 	/**
@@ -183,7 +190,7 @@ class Exclusion_Registry {
 	 * @return array<string, mixed> Empty when the key is unknown.
 	 */
 	public static function get( string $key ): array {
-		return self::CHECKS[ $key ] ?? array();
+		return self::checks()[ $key ] ?? array();
 	}
 
 	/**
@@ -234,26 +241,33 @@ class Exclusion_Registry {
 				$source = trim( (string) ( $context['qid_source'] ?? '' ) );
 
 				if ( '' === $stored ) {
-					return 'No WikiData item';
+					return __( 'No WikiData item', 'lwtv' );
 				}
 
-				return ( '' !== $source )
-					? 'Locked to ' . $stored . ' (' . $source . ')'
-					: 'Locked to ' . $stored;
+				if ( '' !== $source ) {
+					/* translators: 1: a WikiData QID, 2: how it was resolved (manual, imdb, name, legacy). */
+					return sprintf( __( 'Locked to %1$s (%2$s)', 'lwtv' ), $stored, $source );
+				}
+
+				/* translators: %s: a WikiData QID. */
+				return sprintf( __( 'Locked to %s', 'lwtv' ), $stored );
 
 			case 'tvmaze_ignore':
 				$manual = trim( (string) ( $context['manual_id'] ?? '' ) );
 
-				return ( '' !== $manual )
-					? 'Using ' . $manual
-					: 'No TVMaze match';
+				if ( '' !== $manual ) {
+					/* translators: %s: a TVMaze show ID. */
+					return sprintf( __( 'Using %s', 'lwtv' ), $manual );
+				}
+
+				return __( 'No TVMaze match', 'lwtv' );
 
 			case 'no_known_chars':
 			case 'dead_checker':
-				return 'Yes';
+				return __( 'Yes', 'lwtv' );
 		}
 
-		return ( '' === $value ) ? 'Yes' : ucfirst( $value );
+		return ( '' === $value ) ? __( 'Yes', 'lwtv' ) : ucfirst( $value );
 	}
 
 	/**
@@ -272,11 +286,7 @@ class Exclusion_Registry {
 		switch ( $key ) {
 			case 'queer_checker':
 				// The override is read live by is_actor_queer(); the stored flag is
-				// only rewritten when the actor is saved. So between setting an
-				// override and the next recalculation, the actor page says one
-				// thing while the admin column, the ACF labels and the REST
-				// endpoints say the other. That window is invisible everywhere
-				// else, which is exactly why it belongs on this page.
+				// only rewritten when the actor is saved.
 				$override = trim( (string) ( $context['value'] ?? '' ) );
 				$stored   = trim( (string) ( $context['stored_queer'] ?? '' ) );
 
@@ -284,12 +294,16 @@ class Exclusion_Registry {
 				// tests it.
 				$stored_says_queer = ! in_array( $stored, array( '', '0' ), true );
 
+				// The WP-CLI command is not translated -- it is a literal someone
+				// has to type -- so it sits outside the placeholder.
 				if ( 'is_queer' === $override && ! $stored_says_queer ) {
-					return 'Stored as not queer -- run: wp lwtv calc actors';
+					/* translators: %s: a WP-CLI command to run, not translatable. */
+					return sprintf( __( 'Stored as not queer -- run: %s', 'lwtv' ), 'wp lwtv calc actors' );
 				}
 
 				if ( 'not_queer' === $override && $stored_says_queer ) {
-					return 'Stored as queer -- run: wp lwtv calc actors';
+					/* translators: %s: a WP-CLI command to run, not translatable. */
+					return sprintf( __( 'Stored as queer -- run: %s', 'lwtv' ), 'wp lwtv calc actors' );
 				}
 
 				return '';
@@ -298,7 +312,16 @@ class Exclusion_Registry {
 				$count = (int) ( $context['char_count'] ?? 0 );
 
 				if ( $count > 0 ) {
-					return $count . ' character(s) are now listed -- untick this?';
+					return sprintf(
+						/* translators: %s: number of characters now listed on the show. */
+						_n(
+							'%s character is now listed -- untick this?',
+							'%s characters are now listed -- untick this?',
+							$count,
+							'lwtv'
+						),
+						number_format_i18n( $count )
+					);
 				}
 
 				return '';
@@ -307,15 +330,9 @@ class Exclusion_Registry {
 				$stored = trim( (string) ( $context['stored_qid'] ?? '' ) );
 				$source = trim( (string) ( $context['qid_source'] ?? '' ) );
 
-				// A locked Q-ID no trusted source backs is the one combination
-				// nothing can resolve on its own: the lock stops the backfill
-				// re-checking it, so the death audit will report it as unverified
-				// until a human retypes it, which is what records 'manual'.
-				//
-				// Asks Qid_Trust rather than keeping its own list of trusted
-				// sources, so this page cannot drift from what the audit believes.
 				if ( '' !== $stored && ! Qid_Trust::is_trusted( $source ) ) {
-					return 'Locked to an unverified Q-ID (' . Qid_Trust::normalise_source( $source ) . ') -- retype it to confirm.';
+					/* translators: %s: how the QID was resolved (name, legacy). */
+					return sprintf( __( 'Locked to an unverified QID (%s) -- retype it to confirm.', 'lwtv' ), Qid_Trust::normalise_source( $source ) );
 				}
 
 				return '';
@@ -325,7 +342,8 @@ class Exclusion_Registry {
 				$stored = trim( (string) ( $context['stored_id'] ?? '' ) );
 
 				if ( '' === $manual && '' !== $stored ) {
-					return 'Still holds ' . $stored . ', which is now unused.';
+					/* translators: %s: a TVMaze show ID. */
+					return sprintf( __( 'Still holds %s, which is now unused.', 'lwtv' ), $stored );
 				}
 
 				return '';
@@ -346,11 +364,13 @@ class Exclusion_Registry {
 	private static function queer_label( string $value ): string {
 		switch ( $value ) {
 			case 'is_queer':
-				return 'Is Queer';
+				return __( 'Is Queer', 'lwtv' );
 			case 'not_queer':
-				return 'Is NOT Queer';
+				return __( 'Is NOT Queer', 'lwtv' );
 		}
 
+		// An unrecognised value is echoed back rather than translated: it is a raw
+		// stored slug, so there is no string to have translated in the first place.
 		return ( '' === $value ) ? '' : ucfirst( str_replace( '_', ' ', $value ) );
 	}
 }

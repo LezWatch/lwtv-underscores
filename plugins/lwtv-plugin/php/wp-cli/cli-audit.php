@@ -108,7 +108,7 @@ class WP_CLI_LWTV_Audit {
 	 * : Catalog and actors only. Restrict to one alphabet bucket: a-z, 'num' (#), or 'intl' (-).
 	 *
 	 * [--unresolved]
-	 * : Actors only. Also list actors we cannot check at all (no Q-ID, no usable
+	 * : Actors only. Also list actors we cannot check at all (no QID, no usable
 	 * IMDb ID, or WikiData unreadable) rather than only possible deaths.
 	 *
 	 * [--roles=<roles>]
@@ -1254,10 +1254,10 @@ class WP_CLI_LWTV_Audit {
 		// are waiting on a verification pass, and there is one command for it.
 		if ( $unverified ) {
 			$parts[] = sprintf(
-				/* translators: %d: number of actors holding an unverified Q-ID. */
+				/* translators: %d: number of actors holding an unverified QID. */
 				_n(
-					'%d holds an unverified Q-ID -- run: wp lwtv wikidata backfill --reverify',
-					'%d hold unverified Q-IDs -- run: wp lwtv wikidata backfill --reverify',
+					'%d holds an unverified QID -- run: wp lwtv wikidata backfill --reverify',
+					'%d hold unverified QIDs -- run: wp lwtv wikidata backfill --reverify',
 					$unverified,
 					'lwtv'
 				),

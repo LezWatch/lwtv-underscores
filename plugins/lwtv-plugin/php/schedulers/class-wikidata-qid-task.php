@@ -1,8 +1,8 @@
 <?php
 /**
- * WikiData Q-ID Resolution Task
+ * WikiData QID Resolution Task
  *
- * Resolves an actor's WikiData Q-ID from their IMDb ID shortly after they are
+ * Resolves an actor's WikiData QID from their IMDb ID shortly after they are
  * saved, so a newly added actor is identifiable to the death audit without
  * anyone remembering to run a backfill.
  *
@@ -87,7 +87,7 @@ class Wikidata_Qid_Task {
 	}
 
 	/**
-	 * Queue an actor for Q-ID resolution.
+	 * Queue an actor for QID resolution.
 	 *
 	 * Called from save_post. Does no HTTP: it reads a handful of meta values,
 	 * asks Qid_Trust whether a lookup is even worthwhile, and appends to a
@@ -104,9 +104,9 @@ class Wikidata_Qid_Task {
 		$identity = new Identity();
 
 		// The same decision the CLI backfill makes, from the same rules: an
-		// ignored actor, a hand-set Q-ID, one we already trust, or no IMDb ID to
+		// ignored actor, a hand-set QID, one we already trust, or no IMDb ID to
 		// ask with all mean there is nothing here worth a request. Without
-		// 'reverify' this also leaves inherited Q-IDs alone -- upgrading those
+		// 'reverify' this also leaves inherited QIDs alone -- upgrading those
 		// is a deliberate bulk pass, not something a save should trigger.
 		if ( ! Qid_Trust::should_check( $identity->collect( $post_id ) )['check'] ) {
 			return false;

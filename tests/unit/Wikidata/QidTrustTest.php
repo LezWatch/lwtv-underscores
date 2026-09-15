@@ -1,6 +1,6 @@
 <?php
 /**
- * Unit tests for Q-ID trust and candidate selection.
+ * Unit tests for QID trust and candidate selection.
  *
  * The trust half matters more than it looks. is_trusted() is the single gate
  * between a fuzzy name match and the death audit acting on it, so the cases that
@@ -19,7 +19,7 @@ use LWTV\Wikidata\Build\Qid_Trust;
 class QidTrustTest extends TestCase {
 
 	/**
-	 * An actor with no Q-ID and an IMDb ID to find one with -- the plain
+	 * An actor with no QID and an IMDb ID to find one with -- the plain
 	 * backfill candidate.
 	 *
 	 * @param  array $item Values to replace.
@@ -153,7 +153,7 @@ class QidTrustTest extends TestCase {
 	}
 
 	public function test_ignore_wins_over_every_other_signal(): void {
-		// Reverify, retry-missed, an IMDb ID and no Q-ID would all say yes.
+		// Reverify, retry-missed, an IMDb ID and no QID would all say yes.
 		$this->assertFalse(
 			$this->check(
 				$this->actor(
@@ -168,7 +168,7 @@ class QidTrustTest extends TestCase {
 	}
 
 	public function test_a_hand_set_qid_is_never_overwritten(): void {
-		// There is one Q-ID field, so a hand-set value is not a separate key --
+		// There is one QID field, so a hand-set value is not a separate key --
 		// it is this key with source 'manual'. Being trusted is what protects it,
 		// and --reverify only targets what we cannot vouch for, so even that
 		// leaves it alone.

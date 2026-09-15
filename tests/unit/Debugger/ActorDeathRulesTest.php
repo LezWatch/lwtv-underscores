@@ -4,7 +4,7 @@
  *
  * The birth-date conflict cases carry the weight here. Every other verdict is a
  * bookkeeping distinction, but that one is the only thing standing between a
- * wrong Q-ID and the site telling readers a living actor has died -- so the
+ * wrong QID and the site telling readers a living actor has died -- so the
  * tests below pin both directions of it: a real contradiction must be caught,
  * and a coarse WikiData date must NOT be mistaken for one.
  *
@@ -19,7 +19,7 @@ use LWTV\Debugger\Build\Actor_Death_Rules;
 class ActorDeathRulesTest extends TestCase {
 
 	/**
-	 * A living actor we hold complete data for, resolved by stored Q-ID.
+	 * A living actor we hold complete data for, resolved by stored QID.
 	 *
 	 * @param  array $item Values to replace.
 	 * @return array
@@ -122,12 +122,12 @@ class ActorDeathRulesTest extends TestCase {
 
 	public function test_a_whitespace_only_qid_counts_as_empty(): void {
 		// "Stop" is the safe reading: the alternative is auditing against an
-		// empty Q-ID, which can only produce a wrong answer.
+		// empty QID, which can only produce a wrong answer.
 		$this->assertTrue( Actor_Death_Rules::editor_says_stop( true, '   ' ) );
 	}
 
 	public function test_a_locked_qid_reaches_a_verdict_instead_of_being_skipped(): void {
-		// The end-to-end shape at this layer: an actor whose Q-ID an editor has
+		// The end-to-end shape at this layer: an actor whose QID an editor has
 		// pinned is evaluated on it, not skipped.
 		$item = $this->actor(
 			array(
@@ -197,7 +197,7 @@ class ActorDeathRulesTest extends TestCase {
 
 	public function test_a_qid_we_cannot_vouch_for_is_unverified_not_missing(): void {
 		// trusted_qid() hands back an empty qid with the real source when the
-		// stored Q-ID is untrusted. "Verify this" and "there is nothing to
+		// stored QID is untrusted. "Verify this" and "there is nothing to
 		// verify" send an editor to different places.
 		$this->assertSame(
 			Actor_Death_Rules::UNVERIFIED,
@@ -231,7 +231,7 @@ class ActorDeathRulesTest extends TestCase {
 	public function test_unverified_advice_names_the_command_that_fixes_it(): void {
 		$this->assertStringContainsString(
 			'--reverify',
-			Actor_Death_Rules::REPORTABLE[ Actor_Death_Rules::UNVERIFIED ]
+			Actor_Death_Rules::reportable()[ Actor_Death_Rules::UNVERIFIED ]
 		);
 	}
 
@@ -287,7 +287,7 @@ class ActorDeathRulesTest extends TestCase {
 	public function test_every_problem_verdict_is_reportable_with_an_action(): void {
 		foreach ( array( Actor_Death_Rules::FOUND, Actor_Death_Rules::SUSPECT, Actor_Death_Rules::UNVERIFIED, Actor_Death_Rules::AMBIGUOUS, Actor_Death_Rules::NO_IDENTITY, Actor_Death_Rules::NO_DATA ) as $verdict ) {
 			$this->assertTrue( Actor_Death_Rules::is_reportable( $verdict ), $verdict . ' should be reportable' );
-			$this->assertNotSame( '', Actor_Death_Rules::REPORTABLE[ $verdict ], $verdict . ' should have an action' );
+			$this->assertNotSame( '', Actor_Death_Rules::reportable()[ $verdict ], $verdict . ' should have an action' );
 		}
 	}
 

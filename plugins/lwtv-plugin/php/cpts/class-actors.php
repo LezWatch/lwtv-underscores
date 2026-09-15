@@ -247,7 +247,7 @@ class Actors {
 		// as needing verification; Action Scheduler does the asking.
 		lwtv_plugin()->queue_imdb_verify( $post_id );
 
-		// Queue WikiData Q-ID resolution, so a new actor becomes identifiable to
+		// Queue WikiData QID resolution, so a new actor becomes identifiable to
 		// the death audit without waiting on someone to run a backfill. Also no
 		// HTTP here; it only appends to a queue when a lookup is worthwhile.
 		lwtv_plugin()->queue_wikidata_qid( $post_id );

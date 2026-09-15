@@ -231,7 +231,7 @@ class Scheduler implements Component, Templater {
 	}
 
 	/**
-	 * Queue an actor for WikiData Q-ID resolution.
+	 * Queue an actor for WikiData QID resolution.
 	 *
 	 * Cheap and synchronous-safe: it reads a few meta values and appends to a
 	 * transient. All HTTP happens later, on Action Scheduler.
@@ -249,9 +249,9 @@ class Scheduler implements Component, Templater {
 	}
 
 	/**
-	 * Get WikiData Q-ID queue status
+	 * Get WikiData QID queue status
 	 *
-	 * @return array Status information about the Q-ID resolution queue
+	 * @return array Status information about the QID resolution queue
 	 */
 	public function get_wikidata_qid_status(): array {
 		if ( ! $this->is_action_scheduler_available() ) {
