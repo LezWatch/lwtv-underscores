@@ -172,7 +172,7 @@ class Wikidata_Qid_Task {
 					unset( $attempts[ $post_id ] );
 
 					lwtv_plugin()->debug_log(
-						'wikidata-qid',
+						'wikidata',
 						'Gave up on actor ' . $post_id . ' after ' . $count . ' failed lookups: ' . $result['reason']
 					);
 				} else {
@@ -193,7 +193,7 @@ class Wikidata_Qid_Task {
 		$this->set_attempts( $attempts, $remaining );
 
 		lwtv_plugin()->debug_log(
-			'wikidata-qid',
+			'wikidata',
 			'Resolved ' . $resolved . ' of ' . count( $batch ) . ' actor(s), ' . count( $retry ) . ' to retry, ' . count( $abandoned ) . ' abandoned, ' . count( $remaining ) . ' still queued'
 		);
 
