@@ -15,6 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+use LWTV\_Helpers\Admin_Notice;
 use LWTV\Admin_Menu\Validation;
 use LWTV\CPTs\Shows\Watching\Watch_Hosts;
 use LWTV\CPTs\Shows\Watching\Watch_Url_Health;
@@ -880,41 +881,21 @@ class Watch_Term_Check {
 	 * @return void
 	 */
 	private static function set_notice( string $type, string $message ): void {
-		set_transient(
-			self::NOTICE_PREFIX . get_current_user_id(),
-			array(
-				'type'    => $type,
-				'message' => $message,
-			),
-			MINUTE_IN_SECONDS * 5
-		);
+		// No link argument: nothing on this screen has a single obvious thing to
+		// send an editor to edit, so the notice never carries one.
+		Admin_Notice::set( self::NOTICE_PREFIX, $type, $message );
 	}
 
 	/**
 	 * Print and clear any pending notice.
 	 *
+	 * Markup allowed: these messages are ours and some carry a <code> element
+	 * naming a WP-CLI command. Nothing here is user input.
+	 *
 	 * @return void
 	 */
 	private static function show_notice(): void {
-		$key    = self::NOTICE_PREFIX . get_current_user_id();
-		$notice = get_transient( $key );
-
-		if ( ! is_array( $notice ) || empty( $notice['message'] ) ) {
-			return;
-		}
-
-		delete_transient( $key );
-
-		$class = 'error' === $notice['type'] ? 'notice-error' : ( 'info' === $notice['type'] ? 'notice-info' : 'notice-success' );
-		?>
-		<div class="notice <?php echo esc_attr( $class ); ?> is-dismissible">
-			<?php
-			// wp_kses_post, not esc_html: these messages are ours and some carry a
-			// <code> element naming a WP-CLI command. Nothing here is user input.
-			?>
-			<p><?php echo wp_kses_post( $notice['message'] ); ?></p>
-		</div>
-		<?php
+		Admin_Notice::show( self::NOTICE_PREFIX, '', true );
 	}
 
 	/**

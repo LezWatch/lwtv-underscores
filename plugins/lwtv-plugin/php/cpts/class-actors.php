@@ -13,7 +13,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-use LWTV\_Components\CPTs;
 use LWTV\CPTs\Actors\{ Custom_Columns, Privacy };
 
 /**
@@ -248,6 +247,11 @@ class Actors {
 		// as needing verification; Action Scheduler does the asking.
 		lwtv_plugin()->queue_imdb_verify( $post_id );
 
+		// Queue WikiData QID resolution, so a new actor becomes identifiable to
+		// the death audit without waiting on someone to run a backfill. Also no
+		// HTTP here; it only appends to a queue when a lookup is worthwhile.
+		lwtv_plugin()->queue_wikidata_qid( $post_id );
+
 		// Schedule calculations for later processing
 		lwtv_plugin()->schedule_task( 'calculation', $post_id );
 
@@ -319,38 +323,5 @@ class Actors {
 	 */
 	public function privacy_warning( $post_id, $return_echo = true ) {
 		return ( new Privacy() )->get_warning( $post_id, $return_echo );
-	}
-
-	/**
-	 * Generate the TMDB ID for an actor and save it.
-	 *
-	 * @param int $post_id
-	 *
-	 * @return void
-	 */
-	public function generate_tmdb_id( $post_id ): void {
-		$tmdb_id   = get_post_meta( $post_id, 'lezactors_tmdb_id', true );
-		$tmdb_data = false;
-
-		// If the TMDB ID is already set, move on.
-		if ( isset( $tmdb_id ) && ! empty( $tmdb_id ) ) {
-			return;
-		}
-
-		// Get the TMDB ID from the data.
-		$tmdb_data = ( new CPTs() )->get_tmdb_info( $post_id );
-
-		if ( isset( $tmdb_data['id'] ) ) {
-			$tmdb_id = $tmdb_data['id'];
-		} elseif ( isset( $tmdb_data['person_results'][0]['id'] ) ) {
-			$tmdb_id = $tmdb_data['person_results'][0]['id'];
-		} else {
-			$tmdb_id = false;
-		}
-
-		// If we have a TMDB ID, save it.
-		if ( false !== $tmdb_id ) {
-			update_post_meta( $post_id, 'lezactors_tmdb_id', $tmdb_id );
-		}
 	}
 }

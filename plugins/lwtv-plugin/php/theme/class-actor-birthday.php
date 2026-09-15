@@ -9,7 +9,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Actor_Birthday {
 	/**
-	 * Is today a birthday?
+	 * Is today a birthday we may celebrate?
+	 *
+	 * The privacy check lives here, in the predicate, rather than at each call
+	 * site. Every consumer uses this to decide whether to show a birthday
+	 * flourish -- the banner below, the cake icon and "Happy Birthday" tooltip
+	 * in the actor header -- and each of those discloses the birth month and
+	 * day. So an actor who opted out of publishing their date of birth simply
+	 * reads as "not today", and a new caller inherits that without knowing to
+	 * ask.
 	 *
 	 * @access public
 	 *
@@ -17,6 +25,10 @@ class Actor_Birthday {
 	 * @return bool
 	 */
 	public function make( $the_id ) {
+		if ( lwtv_plugin()->hide_actor_data( $the_id, 'dob' ) || lwtv_plugin()->hide_actor_data( $the_id, 'all' ) ) {
+			return false;
+		}
+
 		$today_is  = gmdate( 'm-d' );
 		$birth_raw = get_post_meta( $the_id, 'lezactors_birth', true );
 		$birthday  = $birth_raw ? gmdate( 'm-d', strtotime( $birth_raw ) ) : '';
@@ -35,7 +47,9 @@ class Actor_Birthday {
 	 */
 	public function get( $the_id ) {
 		// Honor the actor's DOB/all privacy request — the birthday banner
-		// reveals birth month/day and exact age.
+		// reveals birth month/day and exact age. make() checks this too; the
+		// duplicate is deliberate, so neither the predicate nor the output can
+		// be the single point of failure.
 		if ( lwtv_plugin()->hide_actor_data( $the_id, 'dob' ) || lwtv_plugin()->hide_actor_data( $the_id, 'all' ) ) {
 			return;
 		}

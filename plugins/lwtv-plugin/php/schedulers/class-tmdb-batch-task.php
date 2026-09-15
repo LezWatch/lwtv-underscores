@@ -15,6 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 use LWTV\_Components\CPTs;
+use LWTV\_Helpers\Tmdb_Response;
 
 /**
  * Class TMDB_Batch_Task
@@ -199,10 +200,11 @@ class TMDB_Batch_Task {
 				return false;
 			}
 
-			// Extract and save TMDB ID
-			$tmdb_id = $this->extract_tmdb_id( $tmdb_data, $post_type );
+			// Extract and save TMDB ID. get_tmdb_info() returns a detail object or
+			// a find envelope depending on our own meta; Tmdb_Response knows both.
+			$tmdb_id = Tmdb_Response::id( $tmdb_data, $post_type );
 
-			if ( $tmdb_id ) {
+			if ( '' !== $tmdb_id ) {
 				$this->save_tmdb_id( $post_id, $post_type, $tmdb_id );
 				lwtv_plugin()->debug_log( 'tmdb', "Successfully saved TMDB ID {$tmdb_id} for post {$post_id}" );
 				return true;
@@ -282,57 +284,6 @@ class TMDB_Batch_Task {
 
 		$tmdb_id = get_post_meta( $post_id, $meta_key, true );
 		return ! empty( $tmdb_id );
-	}
-
-	/**
-	 * Extract TMDB ID from API response
-	 *
-	 * @param array  $tmdb_data The TMDB API response
-	 * @param string $post_type The post type
-	 * @return string|false The TMDB ID or false
-	 */
-	private function extract_tmdb_id( array $tmdb_data, string $post_type ) {
-		return match ( $post_type ) {
-			'post_type_actors' => $this->extract_actor_tmdb_id( $tmdb_data ),
-			'post_type_shows'  => $this->extract_show_tmdb_id( $tmdb_data ),
-			default            => false,
-		};
-	}
-
-	/**
-	 * Extract TMDB ID for actors
-	 *
-	 * @param array $tmdb_data The TMDB API response
-	 * @return string|false The TMDB ID or false
-	 */
-	private function extract_actor_tmdb_id( array $tmdb_data ) {
-		if ( isset( $tmdb_data['id'] ) ) {
-			return $tmdb_data['id'];
-		}
-
-		if ( isset( $tmdb_data['person_results'][0]['id'] ) ) {
-			return $tmdb_data['person_results'][0]['id'];
-		}
-
-		return false;
-	}
-
-	/**
-	 * Extract TMDB ID for shows
-	 *
-	 * @param array $tmdb_data The TMDB API response
-	 * @return string|false The TMDB ID or false
-	 */
-	private function extract_show_tmdb_id( array $tmdb_data ) {
-		if ( isset( $tmdb_data['id'] ) ) {
-			return $tmdb_data['id'];
-		}
-
-		if ( isset( $tmdb_data['tv_results'][0]['id'] ) ) {
-			return $tmdb_data['tv_results'][0]['id'];
-		}
-
-		return false;
 	}
 
 	/**

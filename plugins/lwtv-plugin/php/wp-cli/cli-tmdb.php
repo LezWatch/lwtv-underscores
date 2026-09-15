@@ -13,6 +13,7 @@ if ( ! defined( 'ABSPATH' ) && ! defined( 'WP_CLI' ) ) {
 
 use LWTV\_Components\CPTs;
 use LWTV\_Components\Debugger as Debug_Tool;
+use LWTV\_Helpers\Tmdb_Response;
 use LWTV\CPTs\Actors as CPT_Actors;
 use LWTV\CPTs\Shows as CPT_Shows;
 use LWTV\Schedulers\TMDB_Batch_Task;
@@ -64,7 +65,9 @@ class WP_CLI_LWTV_TMDB {
 	 *   asked" stop being indistinguishable. Deliberately NOT written when the
 	 *   API errors, so an outage can't permanently mark posts as unmatched.
 	 * - imdb_kind: which prefix validate_imdb() should expect ('tt' vs 'nm').
-	 * - result_key: where TMDB's find endpoint puts matches for this type.
+	 * - other_key: the find-endpoint bucket a match of the WRONG kind lands in.
+	 *   The right-kind bucket is not here -- Tmdb_Response::RESULT_KEYS owns it,
+	 *   because every other caller needs it too.
 	 *
 	 * @return array<string, array<string, string>>
 	 */
@@ -79,7 +82,6 @@ class WP_CLI_LWTV_TMDB {
 				'meta_checked' => 'lezshows_tmdb_checked',
 				'imdb_kind'    => 'show',
 				'imdb_example' => 'tt12345',
-				'result_key'   => 'tv_results',
 				// TV movies exist in the corpus, and TMDB files those under
 				// movie_results. Detected but not stored -- see look_up().
 				'other_key'    => 'movie_results',
@@ -94,7 +96,6 @@ class WP_CLI_LWTV_TMDB {
 				'meta_checked' => 'lezactors_tmdb_checked',
 				'imdb_kind'    => 'actor',
 				'imdb_example' => 'nm12345',
-				'result_key'   => 'person_results',
 				'other_key'    => '',
 				'debug_cmd'    => 'wp lwtv debug actor_imdb',
 			),
@@ -539,16 +540,18 @@ class WP_CLI_LWTV_TMDB {
 			);
 		}
 
-		$tmdb_id = $data[ $type['result_key'] ][0]['id'] ?? ( $data['id'] ?? '' );
+		$tmdb_id = Tmdb_Response::id( $data, $type['post_type'] );
 
-		if ( ! empty( $tmdb_id ) ) {
+		if ( '' !== $tmdb_id ) {
 			return array(
 				'status'  => 'hit',
-				'tmdb_id' => (string) $tmdb_id,
+				'tmdb_id' => $tmdb_id,
 			);
 		}
 
-		// Nothing in the expected bucket. Did it land in another one?
+		// Nothing in the expected bucket. Did it land in another one? Only the find
+		// envelope can answer that, which is why other_key stays local config
+		// rather than moving into Tmdb_Response alongside result_key.
 		if ( ! empty( $type['other_key'] ) && ! empty( $data[ $type['other_key'] ][0]['id'] ) ) {
 			return array(
 				'status'  => 'wrong_kind',
