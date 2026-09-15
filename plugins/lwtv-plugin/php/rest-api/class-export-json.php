@@ -748,7 +748,10 @@ class Export_JSON {
 
 			switch ( $format ) {
 				case 'wiki':
-					// Collect oddities
+					// Collect oddities. 'born' needs a default: it is omitted for
+					// anyone who hid their date of birth, and the description
+					// below concatenates it unconditionally.
+					$data['born'] = '';
 					if ( ! lwtv_plugin()->hide_actor_data( $page->ID, 'dob' ) ) {
 						$data['born'] = ( isset( $get_birth ) ) ? ' b. ' . date_format( $get_birth, 'F d, Y' ) : '';
 					}

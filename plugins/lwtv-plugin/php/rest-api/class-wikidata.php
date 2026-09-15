@@ -142,8 +142,55 @@ class Wikidata {
 			return ( new Debug_Actors() )->check_actors_wikidata( $actor_id );
 		}
 
+		// Belt and braces: every caller below already skips actors who asked us
+		// to hide everything, but this is the one chokepoint all of them share,
+		// so a future route cannot leak by forgetting the check.
+		if ( lwtv_plugin()->hide_actor_data( $actor_id, 'all' ) ) {
+			return array();
+		}
+
 		$stored = get_post_meta( $actor_id, 'lezactors_saved_wikidata', true );
-		return is_array( $stored ) ? array( $actor_id => $stored ) : array();
+
+		if ( ! is_array( $stored ) ) {
+			return array();
+		}
+
+		return array( $actor_id => $this->respect_actor_privacy( $actor_id, $stored ) );
+	}
+
+	/**
+	 * Strip the fields an actor has asked us to hide from a stored comparison.
+	 *
+	 * The snapshot mirrors post meta, so it carries the same values an actor can
+	 * opt out of publishing. A comparison result discloses the value even when
+	 * it is not spelled out: a mismatch stores both sides verbatim, and 'match'
+	 * confirms ours equals WikiData's public one. So the key is removed outright
+	 * rather than blanked.
+	 *
+	 * 'death' and the professional links (imdb, wikipedia, website) are not part
+	 * of the opt-out -- see template-parts/partials/actors/links.php, which
+	 * marks those 'hide' => false -- so they stay.
+	 *
+	 * @param  int   $actor_id Actor post ID.
+	 * @param  array $stored   Stored comparison snapshot.
+	 * @return array
+	 */
+	private function respect_actor_privacy( $actor_id, $stored ): array {
+		$hidden = array();
+
+		if ( lwtv_plugin()->hide_actor_data( $actor_id, 'dob' ) ) {
+			$hidden[] = 'birth';
+		}
+
+		if ( lwtv_plugin()->hide_actor_data( $actor_id, 'socials' ) ) {
+			$hidden = array_merge( $hidden, array( 'instagram', 'twitter', 'facebook' ) );
+		}
+
+		foreach ( $hidden as $key ) {
+			unset( $stored[ $key ] );
+		}
+
+		return $stored;
 	}
 
 	/**
