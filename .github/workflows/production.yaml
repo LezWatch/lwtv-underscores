@@ -76,7 +76,7 @@ jobs:
           ls -lah cron/
 
       - name: Deploy to LezWatch.TV Production Server
-        uses: easingthemes/ssh-deploy@main
+        uses: easingthemes/ssh-deploy@5d8aeab1a56041e269567e67a08ce00df324a617 # v6.0.1
         env:
           SSH_PRIVATE_KEY: ${{ secrets.LWTV_SSH_KEY }}
           ARGS: "-rlgoDzvc --delete -i"
@@ -86,7 +86,7 @@ jobs:
           EXCLUDE: " /_build_scripts/, /.cursor/, /.git/, /.github/, /.githooks/, /.sass-cache/, /.vscode/, /cron/, /docs/, /node_modules/, /scss/, /tests/, /vendor/, webpack.config.js, .browserslistrc, .gitignore, .npmrc, .nvmrc, .ruby-version, composer.json, composer.lock, package-lock.json, package.json, phpcs.xml.dist, /plugins/lwtv-plugin/node_modules/, /plugins/lwtv-plugin/vendor/, /plugins/lwtv-plugin/.gitignore, /plugins/lwtv-plugin/composer.json, /plugins/lwtv-plugin/composer.lock, /plugins/lwtv-plugin/package-lock.json, /plugins/lwtv-plugin/package.json, /plugins/lwtv-plugin/php/blocks/node_modules/, /plugins/lwtv-plugin/php/blocks/.gitignore, /plugins/lwtv-plugin/php/blocks/package-lock.json, /plugins/lwtv-plugin/php/blocks/package.json, /plugins/lwtv-plugin/php/blocks/.eslint, /plugins/lwtv-plugin/php/src/"
 
       - name: Deploy Cron to Production Server
-        uses: easingthemes/ssh-deploy@main
+        uses: easingthemes/ssh-deploy@5d8aeab1a56041e269567e67a08ce00df324a617 # v6.0.1
         env:
           SSH_PRIVATE_KEY: ${{ secrets.LWTV_SSH_KEY }}
           ARGS: "-rlgoDzvc -i"
@@ -103,7 +103,7 @@ jobs:
     needs: deploy # This ensures the 'deploy' job finishes first
     steps:
       - name: Run Post-Deploy Commands on Remote Server
-        uses: appleboy/ssh-action@master
+        uses: appleboy/ssh-action@0ff4204d59e8e51228ff73bce53f80d53301dee2 # v1.2.5
         with:
           host: ${{ secrets.LWTV_HOST }}
           username: ${{ secrets.LWTV_USER }}
