@@ -195,6 +195,21 @@ class WP_CLI_LWTV_WikiData {
 		if ( $counts['unreachable'] > 0 ) {
 			\WP_CLI::log( sprintf( '%d have neither, so nothing can be looked up for them.', $counts['unreachable'] ) );
 		}
+
+		// The five groups are built to partition the catalogue. Say so out loud
+		// when they stop doing that, rather than letting a silently overlapping
+		// or under-matching clause make every number above look plausible.
+		$grouped = array_sum( array_values( $counts['breakdown'] ) );
+
+		if ( $grouped !== $counts['total'] ) {
+			\WP_CLI::warning(
+				sprintf(
+					'Breakdown sums to %1$d but there are %2$d published actors. The groups in status_counts() are no longer mutually exclusive.',
+					$grouped,
+					$counts['total']
+				)
+			);
+		}
 	}
 
 	/* ------------------------------------------------------------------
@@ -308,11 +323,19 @@ class WP_CLI_LWTV_WikiData {
 			$trusted = $identity->trusted_qid( $actor_id );
 
 			\WP_CLI::log( $name . ': not looked up -- ' . $decision['reason'] . '.' );
-			\WP_CLI::log(
-				'' !== $trusted['qid']
-					? 'The death audit will use ' . $trusted['qid'] . ' (' . $trusted['source'] . ').'
-					: 'The death audit cannot identify this actor.'
-			);
+
+			// Three genuinely different outcomes, and this line used to report the
+			// first one for all of them: trusted_qid() did not read the ignore
+			// toggle, so an actor an editor had ignored still had their stale
+			// Q-ID announced as the one the audit would use.
+			if ( '' !== $trusted['qid'] ) {
+				\WP_CLI::log( 'The death audit will use ' . $trusted['qid'] . ' (' . $trusted['source'] . ').' );
+			} elseif ( $identity->is_ignored( $actor_id ) ) {
+				\WP_CLI::log( 'The death audit will skip this actor: an editor has ignored it.' );
+			} else {
+				\WP_CLI::log( 'The death audit cannot identify this actor.' );
+			}
+
 			return;
 		}
 
@@ -537,17 +560,29 @@ class WP_CLI_LWTV_WikiData {
 			. " WHERE ign.post_id = p.ID AND ign.meta_key = '" . Identity::META_IGNORE . "'"
 			. " AND ign.meta_value != '' AND ign.meta_value != '0' )";
 
+		// The five groups are mutually exclusive and sum to the published total,
+		// which is the only reason the breakdown table can be read as a whole.
+		// Two rules keep them that way:
+		//
+		// 1. A manual Q-ID is only reachable through the ignore toggle, so every
+		//    manual actor is also an ignored one. They belong in 'trusted' -- the
+		//    editor told us who this is -- so 'ignored' has to exclude them or
+		//    they are counted twice and the rows sum past the total.
+		// 2. Ignoring an actor who still holds a machine Q-ID settles them; it
+		//    does not leave them awaiting verification. trusted_qid() returns
+		//    nothing for them, so 'unverified' must exclude them too, or the
+		//    number the --reverify advice below is based on is overstated.
 		$groups = array(
 			// Trusted: a hand-set Q-ID, or one we resolved from an IMDb ID.
-			'trusted'     => "( {$manual_set} OR ( q.post_id IS NOT NULL AND COALESCE( s.meta_value, '' ) IN ( {$trusted_sources} ) ) )",
-			// A Q-ID we hold but cannot vouch for.
-			'unverified'  => "( NOT {$manual_set} AND q.post_id IS NOT NULL AND COALESCE( s.meta_value, '' ) NOT IN ( {$trusted_sources} ) )",
+			'trusted'     => "( {$manual_set} OR ( NOT {$ignored} AND q.post_id IS NOT NULL AND COALESCE( s.meta_value, '' ) IN ( {$trusted_sources} ) ) )",
+			// A Q-ID we hold but cannot vouch for, and nobody has settled.
+			'unverified'  => "( NOT {$manual_set} AND NOT {$ignored} AND q.post_id IS NOT NULL AND COALESCE( s.meta_value, '' ) NOT IN ( {$trusted_sources} ) )",
 			// No Q-ID, but an IMDb ID to find one with.
 			'candidates'  => "( NOT {$manual_set} AND q.post_id IS NULL AND {$has_imdb} AND NOT {$ignored} )",
 			// No Q-ID and nothing to look one up with.
 			'unreachable' => "( NOT {$manual_set} AND q.post_id IS NULL AND NOT {$has_imdb} AND NOT {$ignored} )",
-			// An editor has said stop asking.
-			'ignored'     => $ignored,
+			// An editor has said stop asking, and offered nothing in its place.
+			'ignored'     => "( {$ignored} AND NOT {$manual_set} )",
 		);
 
 		$counts = array();

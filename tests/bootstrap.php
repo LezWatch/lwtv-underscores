@@ -127,3 +127,10 @@ require_once __DIR__ . '/../plugins/lwtv-plugin/php/debugger/build/class-actor-c
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/debugger/build/class-actor-death-rules.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/wikidata/build/class-qid-trust.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/debugger/build/class-log-rules.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/admin-menu/build/class-exclusion-registry.php';
+/*
+ * Only css_class() is exercised here. set()/show() touch transients and echo,
+ * and are verified on the running site; requiring the file only declares the
+ * class, whose constants are plain integers for exactly this reason.
+ */
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/_helpers/class-admin-notice.php';

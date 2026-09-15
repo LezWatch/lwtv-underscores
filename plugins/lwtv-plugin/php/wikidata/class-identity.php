@@ -118,6 +118,17 @@ class Identity {
 	 * caller is told we cannot identify this person and must say so rather than
 	 * guess.
 	 *
+	 * The ignore toggle is read here, not just by should_check(). An editor ticks
+	 * it to say one of two things -- "this actor has no WikiData item" or "the
+	 * automatic match is wrong" -- and in the second case the stored Q-ID is
+	 * precisely the value we must not hand back. Without this, ticking the toggle
+	 * silenced the backfill while still serving the bad Q-ID to anyone who asked
+	 * for a trustworthy one.
+	 *
+	 * A manual Q-ID outranks the toggle, because setting one is how an editor
+	 * says "the right item is this". Since the manual field is only revealed
+	 * *by* the toggle, that combination is the normal way to correct a match.
+	 *
 	 * @param  int $actor_id The ID of the actor.
 	 * @return array{qid: string, source: string}
 	 */
@@ -128,6 +139,15 @@ class Identity {
 			return array(
 				'qid'    => $manual,
 				'source' => Qid_Trust::SOURCE_MANUAL,
+			);
+		}
+
+		// Ticked, with nothing put in its place: an explicit "we cannot identify
+		// this person", which is a different thing from "we never managed to".
+		if ( $this->is_ignored( $actor_id ) ) {
+			return array(
+				'qid'    => '',
+				'source' => '',
 			);
 		}
 

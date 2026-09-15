@@ -513,10 +513,15 @@ class Actors {
 	public function check_actor_death( int $actor_id ): array {
 		$identity = new Identity();
 
+		// Whether the ignore toggle means "stop" is a rule, not a meta read, so
+		// it lives in Actor_Death_Rules where it is tested. See editor_says_stop().
 		$item = array(
 			'our_death'  => (string) get_post_meta( $actor_id, 'lezactors_death', true ),
 			'our_birth'  => (string) get_post_meta( $actor_id, 'lezactors_birth', true ),
-			'ignored'    => $identity->is_ignored( $actor_id ),
+			'ignored'    => Actor_Death_Rules::editor_says_stop(
+				$identity->is_ignored( $actor_id ),
+				$identity->manual_qid( $actor_id )
+			),
 			'qid'        => '',
 			'source'     => '',
 			'fetched'    => false,

@@ -96,6 +96,50 @@ class ActorDeathRulesTest extends TestCase {
 		$this->assertFalse( Actor_Death_Rules::is_reportable( Actor_Death_Rules::IGNORED ) );
 	}
 
+	/*
+	 * editor_says_stop() -- the two meanings of the ignore toggle
+	 */
+
+	public function test_the_toggle_alone_means_stop_checking(): void {
+		// "This actor has no WikiData item." Nothing to check.
+		$this->assertTrue( Actor_Death_Rules::editor_says_stop( true, '' ) );
+	}
+
+	public function test_the_toggle_with_a_manual_qid_means_check_with_that_qid(): void {
+		// "The automatic match was wrong, use this one." A request to keep
+		// checking, not to stop -- and the case that was silently lost, because
+		// the manual field is only revealed BY the toggle, so every manual Q-ID
+		// arrives with $ignored already true.
+		$this->assertFalse( Actor_Death_Rules::editor_says_stop( true, 'Q42' ) );
+	}
+
+	public function test_an_untoggled_actor_is_never_stopped(): void {
+		$this->assertFalse( Actor_Death_Rules::editor_says_stop( false, '' ) );
+		$this->assertFalse( Actor_Death_Rules::editor_says_stop( false, 'Q42' ) );
+	}
+
+	public function test_a_blank_manual_qid_does_not_count_as_one(): void {
+		// manual_qid() validates before returning, so whitespace should not reach
+		// here -- but "stop" is the safe reading if it ever does, because the
+		// alternative is auditing against an empty Q-ID.
+		$this->assertTrue( Actor_Death_Rules::editor_says_stop( true, '   ' ) );
+	}
+
+	public function test_a_manual_qid_reaches_a_verdict_instead_of_being_ignored(): void {
+		// The end-to-end shape of the fix at this layer: an actor the editor has
+		// corrected is evaluated on their Q-ID, not skipped.
+		$item = $this->actor(
+			array(
+				'ignored'    => Actor_Death_Rules::editor_says_stop( true, 'Q42' ),
+				'qid'        => 'Q42',
+				'source'     => 'manual',
+				'wiki_death' => '2024-01-01',
+			)
+		);
+
+		$this->assertSame( Actor_Death_Rules::FOUND, $this->verdict( $item ) );
+	}
+
 	public function test_a_death_date_we_already_hold_outranks_the_ignore_toggle(): void {
 		$this->assertSame(
 			Actor_Death_Rules::HAS_DATE,

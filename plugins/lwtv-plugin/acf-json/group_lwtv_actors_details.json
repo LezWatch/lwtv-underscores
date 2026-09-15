@@ -278,7 +278,7 @@
             "name": "lezactors_wikidata_ignore",
             "aria-label": "",
             "type": "true_false",
-            "instructions": "Turn this on when this actor legitimately has no WikiData item, or when the automatic match is wrong. It stops them being reported as unidentifiable by the death audit and the Q-ID backfill.",
+            "instructions": "Turn this on when the automatic match is wrong, or when this actor legitimately has no WikiData item. What happens next depends on the manual field it reveals: leave that blank and the death audit stops checking this actor altogether, or fill it in and the audit carries on using your Q-ID instead of the automatic one. Either way the Q-ID backfill stops guessing.",
             "required": 0,
             "conditional_logic": 0,
             "wrapper": {
@@ -704,5 +704,5 @@
     "display_title": "",
     "allow_ai_access": false,
     "ai_description": "",
-    "modified": 1789489836
+    "modified": 1789491344
 }

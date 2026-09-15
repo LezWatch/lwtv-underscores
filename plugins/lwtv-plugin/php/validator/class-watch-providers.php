@@ -45,6 +45,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+use LWTV\_Helpers\Admin_Notice;
 use LWTV\CPTs\Shows\Watching\Watch_Host_Names;
 use LWTV\CPTs\Shows\Watching\Watch_Hosts;
 use LWTV\CPTs\Shows\Watching\Watch_Term_Match;
@@ -924,48 +925,21 @@ class Watch_Providers {
 	 * @return void
 	 */
 	private static function set_notice( string $type, string $message, string $link = '' ): void {
-		set_transient(
-			self::NOTICE_PREFIX . get_current_user_id(),
-			array(
-				'type'    => $type,
-				'message' => $message,
-				'link'    => $link,
-			),
-			MINUTE_IN_SECONDS * 5
-		);
+		Admin_Notice::set( self::NOTICE_PREFIX, $type, $message, $link );
 	}
 
 	/**
 	 * Print and clear any pending notice.
 	 *
+	 * Markup allowed: these messages are ours and some carry a <code> element
+	 * naming a WP-CLI command. One exception worth knowing about is the
+	 * get_error_message() passed in above -- still ours or WP core's, and
+	 * wp_kses_post would strip anything executable regardless.
+	 *
 	 * @return void
 	 */
 	private static function show_notice(): void {
-		$key    = self::NOTICE_PREFIX . get_current_user_id();
-		$notice = get_transient( $key );
-
-		if ( ! is_array( $notice ) || empty( $notice['message'] ) ) {
-			return;
-		}
-
-		delete_transient( $key );
-
-		$class = 'error' === $notice['type'] ? 'notice-error' : ( 'info' === $notice['type'] ? 'notice-info' : 'notice-success' );
-		?>
-		<div class="notice <?php echo esc_attr( $class ); ?> is-dismissible">
-			<p>
-				<?php
-				// wp_kses_post, not esc_html: these messages are ours and some
-				// carry a <code> element naming a WP-CLI command. Nothing here is
-				// user input.
-				echo wp_kses_post( $notice['message'] );
-				?>
-				<?php if ( ! empty( $notice['link'] ) ) : ?>
-					<a href="<?php echo esc_url( $notice['link'] ); ?>"><?php esc_html_e( 'Edit the term', 'lwtv' ); ?></a>
-				<?php endif; ?>
-			</p>
-		</div>
-		<?php
+		Admin_Notice::show( self::NOTICE_PREFIX, __( 'Edit the term', 'lwtv' ), true );
 	}
 
 	/**

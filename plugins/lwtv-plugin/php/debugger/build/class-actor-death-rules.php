@@ -127,6 +127,31 @@ class Actor_Death_Rules {
 	const UNRESOLVED = array( self::NO_IDENTITY, self::UNVERIFIED, self::AMBIGUOUS, self::NO_DATA );
 
 	/**
+	 * Does "Ignore WikiData Match" mean stop checking this actor?
+	 *
+	 * The toggle carries two editorial meanings and only one of them is "stop":
+	 *
+	 *   - Ticked, manual Q-ID blank: "this actor has no WikiData item." Settled.
+	 *     Nothing to check, so the audit skips them -- IGNORED.
+	 *   - Ticked, manual Q-ID filled in: "the automatic match was wrong, use this
+	 *     one." That is a request to keep checking on better evidence, not to
+	 *     stop, so the audit proceeds with the editor's Q-ID.
+	 *
+	 * This lives here, in the layer that gets tested, because the collector had
+	 * been answering it with a bare is_ignored() call -- and since the manual
+	 * field is only revealed *by* the toggle, every hand-corrected Q-ID therefore
+	 * had the toggle on and was skipped before anything read it. The whole point
+	 * of typing one in was lost, silently, to the thing meant to enable it.
+	 *
+	 * @param  bool   $ignored    The lezactors_wikidata_ignore toggle.
+	 * @param  string $manual_qid A validated bare Q-ID, or '' when unset.
+	 * @return bool   True when the audit should treat the actor as settled.
+	 */
+	public static function editor_says_stop( bool $ignored, string $manual_qid ): bool {
+		return $ignored && '' === trim( $manual_qid );
+	}
+
+	/**
 	 * The verdict for one actor.
 	 *
 	 * @param  array $item Collected actor data, per the contract above.
