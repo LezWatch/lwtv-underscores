@@ -1879,7 +1879,7 @@ h3 svg * {
 	&.shows-we-love-loop,
 	&.related-post-loop {
 		grid-template-columns: repeat(3, 1fr);
-		grid-gap: 1.6rem;
+		gap: 1.6rem;
 
 		&.four-across-loop {
 			grid-template-columns: repeat(4, 1fr);
@@ -1888,12 +1888,12 @@ h3 svg * {
 
 	&.related-posts-by-taxonomy-loop {
 		grid-template-columns: repeat(2, 1fr);
-		grid-gap: 1.6rem;
+		gap: 1.6rem;
 	}
 
 	&.character-show-loop,
 	&.related-post-loop {
-		grid-gap: 1rem;
+		gap: 1rem;
 	}
 
 	&.shows-we-love-loop .card:nth-child(4) {
