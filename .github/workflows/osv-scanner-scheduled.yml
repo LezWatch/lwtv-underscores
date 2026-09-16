@@ -22,5 +22,4 @@ jobs:
     with:
       scan-args: |-
         -r
-        --skip-git
         ./
