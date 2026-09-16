@@ -1,6 +1,6 @@
 {
   "name": "lwtv-underscores",
-  "version": "7.2.5",
+  "version": "7.2.6",
   "description": "LezWatch.TV Custom Theme.",
   "main": "index.js",
   "workspaces": [
@@ -39,13 +39,12 @@
     "fix:js:theme": "wp-scripts lint-js 'inc/js/**/*.js' --fix",
     "fix:js:plugin": "wp-scripts lint-js 'plugins/lwtv-plugin/assets/js/**/*.js' --fix",
     "start": "npm-run-all start:*",
-    "start:blocks": "npm run start",
+    "start:blocks": "npm run start --workspace=@lwtv/blocks",
     "test": "./vendor/bin/phpunit",
     "preinstall": "composer install",
-    "postinstall": "npm-run-all postinstall:*",
-    "postinstall:blocks": "cd ./plugins/lwtv-plugin/php/blocks && npm install --ignore-scripts",
-    "postinstall:plugin": "cd ./plugins/lwtv-plugin && npm install --ignore-scripts",
-    "updater": "composer update && npm update && wp-scripts packages-update && npm run updater:workspace --workspaces",
+    "updater": "composer update && npm update && wp-scripts packages-update && npm run updater:workspace --workspaces --if-present && npm run updater:relock",
+    "updater:relock": "rm -f package-lock.json && npm install",
+    "updater:majors": "npx -y npm-check-updates -u --workspaces && npm run updater:relock",
     "clean": "npm-run-all clean:*",
     "clean:node": "rm -rf node_modules",
     "clean:vendor": "rm -rf vendor",
@@ -77,6 +76,7 @@
   },
   "overrides": {
     "serialize-javascript": "^7.0.4",
+    "markdownlint-cli": "^0.49.1",
     "sockjs": {
       "uuid": ">=11.1.1"
     }

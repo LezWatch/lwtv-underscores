@@ -1,17 +1,29 @@
 version: 2
 
 updates:
+  # npm: the root lockfile governs both workspaces, but list the workspace
+  # manifests explicitly so a pinned devDependency there cannot silently drift
+  # behind the root (how blocks got stuck on @wordpress/scripts 33 vs root 35).
   - package-ecosystem: "npm"
-    directory: "/"
+    directories:
+      - "/"
+      - "/plugins/lwtv-plugin"
+      - "/plugins/lwtv-plugin/php/blocks"
     schedule:
       interval: "weekly"
     target-branch: "development"
+    groups:
+      wordpress-scripts:
+        patterns:
+          - "@wordpress/scripts"
     ignore:
        - dependency-name: "@types/node"
          update-types: ["version-update:semver-major"]
 
   - package-ecosystem: "composer"
-    directory: "/"
+    directories:
+      - "/"
+      - "/plugins/lwtv-plugin"
     schedule:
       interval: "weekly"
     target-branch: "development"

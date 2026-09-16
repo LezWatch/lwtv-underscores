@@ -8,7 +8,6 @@
   "repository": "https://github.com/lezwatch/lwtv-plugin/",
   "scripts": {
     "build:workspace": "",
-    "start": "npm run start",
     "preinstall": "composer install",
     "updater:workspace": "composer update",
     "clean:workspace": "rm -rf node_modules"

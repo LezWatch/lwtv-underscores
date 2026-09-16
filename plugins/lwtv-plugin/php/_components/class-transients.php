@@ -183,6 +183,20 @@ class Transients implements Component, Templater {
 		// NOTE: Patterns use a single '*' as the wildcard. clear_cache_tier() and
 		// get_cache_statistics() translate '*' -> SQL LIKE '%'; any other regex-style
 		// metacharacter (e.g. '.') is treated literally by LIKE and will match nothing.
+		//
+		// The '*' must be TRAILING. key_matches_pattern() only does a
+		// str_starts_with() on a pattern ending in '*' and an exact comparison
+		// otherwise, so 'a_*_b' matches nothing there -- while the SQL pass would
+		// happily match it via LIKE. The two passes would then disagree, and under
+		// a persistent object cache the SQL pass is skipped entirely, so the index
+		// walk is the only one that runs. A mid-string wildcard is therefore a
+		// silent no-op in production. Use exact keys instead.
+		//
+		// Also: a pattern makes every key it matches TRACKED, because
+		// is_tracked_stats_key() is built from this map and set_transient() then
+		// records each one in a single option. That is fine for a handful of
+		// aggregate keys and wrong for a high-cardinality keyspace -- see the
+		// deliberate omission of 'post_meta_*' below.
 		return array(
 			// Tier 1: Critical Counts (1 hour cache)
 			'counts'  => array(
@@ -218,6 +232,8 @@ class Transients implements Component, Templater {
 					'actor_char_*',
 					'complex_taxonomy_*',
 					'queer_irl_characters',
+					'actor_straight_queer_gap',
+					'actor_cis_queer_gap',
 					'cliche_leaders_characters_*',
 					'worth_it_*',
 					'we_love_*',
@@ -230,6 +246,28 @@ class Transients implements Component, Templater {
 				'priority' => 'background',
 				'duration' => DAY_IN_SECONDS,
 			),
+
+			// DELIBERATELY ABSENT: 'post_meta_*', the keyspace Queeries\Post_Meta
+			// caches its WP_Query results under. Those transients are never
+			// invalidated, which looks like the same omission the two queer-gap
+			// keys above were -- but adding the pattern would be worse than
+			// leaving it.
+			//
+			// The keyspace is high-cardinality: the key is an md5 of the call
+			// arguments, so there is one per show (lezchars_show_group), one per
+			// actor (lezchars_actor), one per date (lezactors_birth) and one per
+			// IMDb ID and Q-ID (the two REST endpoints). A pattern here would make
+			// every one of them tracked, so lwtv_stats_cache_index -- a single
+			// option -- would grow with the catalogue, and clear_cache_tier()
+			// walks that whole index against every pattern on every save. The save
+			// path would get slower the more content there is.
+			//
+			// The real fix is upstream, in Post_Meta::make(): it serialises an
+			// entire WP_Query into a transient, and caching IDs under a
+			// low-cardinality key per call site would make both this and the blob
+			// size a non-problem. Until then these expire on their own 30-minute
+			// TTL, and the one screen that could not tolerate that -- the
+			// Exclusion Checker -- queries directly instead.
 
 			// Tier 3: Stable Data (7 day cache)
 			// Reserved for caches that should survive content edits. The 'preserve'

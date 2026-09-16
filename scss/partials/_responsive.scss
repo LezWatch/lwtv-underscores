@@ -251,7 +251,7 @@
 	.site-loop.character-show-loop,
 	.site-loop.main-posts-loop {
 		grid-template-columns: repeat(2, 1fr) !important;
-		grid-gap: 1.2rem;
+		gap: 1.2rem;
 		padding: 0 0 0 1rem;
 	}
 
@@ -270,7 +270,7 @@
 
 	.site-loop.related-posts-by-taxonomy-loop {
 		grid-template-columns: repeat(2, 1fr);
-		grid-gap: 1rem;
+		gap: 1rem;
 
 		.mb-3 {
 			width: 100% !important;
@@ -332,7 +332,7 @@
 
 		.related-gallery {
 			grid-template-columns: 1fr;
-			grid-gap: 1rem;
+			gap: 1rem;
 		}
 	}
 
@@ -439,7 +439,7 @@
 	.site-loop.home-featured-secondary-loop,
 	.site-loop.show-archive-loop {
 		grid-template-columns: 1fr;
-		grid-gap: 1rem;
+		gap: 1rem;
 		padding: 0 1rem;
 	}
 
