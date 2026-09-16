@@ -25,6 +25,7 @@ use LWTV\Schedulers\Statistics_Cache_Warming;
 use LWTV\Schedulers\BYQ_Task;
 use LWTV\Schedulers\Imdb_Verify_Task;
 use LWTV\Schedulers\Watch_URLs_Task;
+use LWTV\Schedulers\Wikidata_Qid_Task;
 
 /**
  * Class Scheduler
@@ -65,6 +66,7 @@ class Scheduler implements Component, Templater {
 				new BYQ_Task();
 				new Imdb_Verify_Task();
 				new Watch_URLs_Task();
+				new Wikidata_Qid_Task();
 			} else {
 				lwtv_plugin()->debug_log( 'scheduler', 'Action Scheduler not available, skipping AS-dependent task handlers' );
 			}
@@ -92,6 +94,8 @@ class Scheduler implements Component, Templater {
 			'get_cache_batch_status'        => array( $this, 'get_cache_batch_status' ),
 			'queue_imdb_verify'             => array( $this, 'queue_imdb_verify' ),
 			'get_imdb_verify_status'        => array( $this, 'get_imdb_verify_status' ),
+			'queue_wikidata_qid'            => array( $this, 'queue_wikidata_qid' ),
+			'get_wikidata_qid_status'       => array( $this, 'get_wikidata_qid_status' ),
 		);
 	}
 
@@ -223,6 +227,45 @@ class Scheduler implements Component, Templater {
 	 */
 	public function get_imdb_verify_status(): array {
 		$task = new Imdb_Verify_Task();
+		return $task->get_status();
+	}
+
+	/**
+	 * Queue an actor for WikiData QID resolution.
+	 *
+	 * Cheap and synchronous-safe: it reads a few meta values and appends to a
+	 * transient. All HTTP happens later, on Action Scheduler.
+	 *
+	 * @param int $post_id The post ID to queue
+	 * @return bool Whether the post was queued successfully
+	 */
+	public function queue_wikidata_qid( int $post_id ): bool {
+		if ( ! $this->is_action_scheduler_available() ) {
+			return false;
+		}
+
+		$task = new Wikidata_Qid_Task();
+		return $task->queue_post( $post_id );
+	}
+
+	/**
+	 * Get WikiData QID queue status
+	 *
+	 * @return array Status information about the QID resolution queue
+	 */
+	public function get_wikidata_qid_status(): array {
+		if ( ! $this->is_action_scheduler_available() ) {
+			// Same keys as Wikidata_Qid_Task::get_status(), so a caller reading
+			// 'retrying' does not have to know whether Action Scheduler is up.
+			return array(
+				'queued'         => 0,
+				'retrying'       => 0,
+				'worst_attempts' => 0,
+				'next_scheduled' => false,
+			);
+		}
+
+		$task = new Wikidata_Qid_Task();
 		return $task->get_status();
 	}
 

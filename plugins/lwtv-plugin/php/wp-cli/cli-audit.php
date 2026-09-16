@@ -11,10 +11,13 @@ if ( ! defined( 'ABSPATH' ) && ! defined( 'WP_CLI' ) ) {
 }
 
 use LWTV\Calendar\TVMaze;
+use LWTV\CPTs\Actors as CPT_Actors;
 use LWTV\CPTs\Shows as CPT_Shows;
 use LWTV\CPTs\Shows\Airdates;
 use LWTV\CPTs\Characters as CPT_Characters;
+use LWTV\Debugger\Actors as Actors_Debugger;
 use LWTV\Debugger\Audit;
+use LWTV\Debugger\Build\Actor_Death_Rules;
 use LWTV\This_Year\Build\Shared_Builder;
 
 /**
@@ -37,6 +40,16 @@ class WP_CLI_LWTV_Audit {
 	 * Voice actors play multiple characters; mapping is manual.
 	 */
 	public const SKIP_GENRES = array( 'animation', 'anime' );
+
+	/**
+	 * Wait time.
+	 */
+	public const WAIT_TIME = 500000;
+
+	/**
+	 * Columns for an actor death audit row.
+	 */
+	public const ACTOR_FIELDS = array( 'actor_id', 'actor', 'issue', 'wikidata', 'birth', 'death', 'action' );
 
 	/**
 	 * Verdicts from character_appeared_in_year().
@@ -72,13 +85,15 @@ class WP_CLI_LWTV_Audit {
 	 * options:
 	 * - shows (catalog: all on-air shows, status + character roles)
 	 * - show  (deep: one show, per-episode guest cast)
+	 * - actors (all actors with no death date, against WikiData)
+	 * - actor  (one actor, against WikiData)
 	 * - ignore  (acknowledge one character+show+issue so it stops recurring)
 	 * - ignores (list a character's acknowledged items)
 	 * - reset   (clear a scope's baseline, or all baselines)
 	 * ---
 	 *
 	 * [<id>]
-	 * : Show post ID (required for 'show').
+	 * : Post ID (required for 'show' and 'actor').
 	 *
 	 * [--show=<id>]
 	 * : Ignore only. Show post ID the acknowledgement applies to.
@@ -90,7 +105,11 @@ class WP_CLI_LWTV_Audit {
 	 * : Ignore only. Remove a previously acknowledged item instead of adding one.
 	 *
 	 * [--letter=<letter>]
-	 * : Catalog only. Restrict to one alphabet bucket: a-z, 'num' (#), or 'intl' (-).
+	 * : Catalog and actors only. Restrict to one alphabet bucket: a-z, 'num' (#), or 'intl' (-).
+	 *
+	 * [--unresolved]
+	 * : Actors only. Also list actors we cannot check at all (no QID, no usable
+	 * IMDb ID, or WikiData unreadable) rather than only possible deaths.
 	 *
 	 * [--roles=<roles>]
 	 * : Which character roles to audit.
@@ -132,6 +151,15 @@ class WP_CLI_LWTV_Audit {
 	 *     # Deep historical audit of all character roles on a single show
 	 *     wp lwtv audit show 12345 --roles=all --all
 	 *
+	 *     # Which actors does WikiData think have died since we last looked?
+	 *     wp lwtv audit actors --letter=a
+	 *
+	 *     # Same, plus the actors we have no way to check
+	 *     wp lwtv audit actors --letter=a --unresolved
+	 *
+	 *     # Check one actor
+	 *     wp lwtv audit actor 6789
+	 *
 	 *     # Acknowledge a missing-year flag so it stops recurring
 	 *     wp lwtv audit ignore 456 --show=123 --issue=missing-year
 	 *
@@ -156,6 +184,12 @@ class WP_CLI_LWTV_Audit {
 				case 'show':
 					$this->audit_single( (int) ( $args[1] ?? 0 ), $assoc_args );
 					break;
+				case 'actors':
+					$this->audit_actor_deaths( $assoc_args );
+					break;
+				case 'actor':
+					$this->audit_actor_death_single( (int) ( $args[1] ?? 0 ) );
+					break;
 				case 'ignore':
 					$this->cmd_ignore( (int) ( $args[1] ?? 0 ), $assoc_args );
 					break;
@@ -166,7 +200,7 @@ class WP_CLI_LWTV_Audit {
 					$this->cmd_reset( (string) ( $args[1] ?? '' ), $assoc_args );
 					break;
 				default:
-					\WP_CLI::error( 'Invalid audit type. Use: shows, show <id>, ignore, ignores, reset.' );
+					\WP_CLI::error( 'Invalid audit type. Use: shows, show <id>, actors, actor <id>, ignore, ignores, reset.' );
 			}
 		} catch ( Exception $exception ) {
 			\WP_CLI::error( $exception->getMessage() );
@@ -245,8 +279,8 @@ class WP_CLI_LWTV_Audit {
 			$show_info  = $this->resolve_show( $tvmaze, $show_id, $show_title );
 
 			if ( false === $show_info ) {
-				$results[] = $this->build_row( $show_id, 'No Match', '', '', '', '', 'Add IMDb/TVMaze ID or audit manually', 'no-match' );
-				usleep( 500000 );
+				$results[] = $this->build_row( $show_id, 'No Match', '', '', '', 'Add IMDb/TVMaze ID or audit manually', 'no-match' );
+				usleep( self::WAIT_TIME );
 				continue;
 			}
 
@@ -264,25 +298,25 @@ class WP_CLI_LWTV_Audit {
 					$results[] = $ended_row;
 
 					if ( 'ended' === $ended_row['issue_type'] ) {
-						usleep( 500000 );
+						usleep( self::WAIT_TIME );
 						continue;
 					}
 				}
 			}
 
 			if ( 'To Be Determined' === $status ) {
-				$results[] = $this->build_row( $show_id, $status, '', '', '', '', 'Review: show in limbo on TVMaze', 'tbd' );
+				$results[] = $this->build_row( $show_id, $status, '', '', '', 'Review: show in limbo on TVMaze', 'tbd' );
 			}
 
 			// If roles is set to 'none', skip character auditing entirely.
 			if ( empty( $roles_to_audit ) ) {
-				usleep( 500000 );
+				usleep( self::WAIT_TIME );
 				continue;
 			}
 
 			// Animated? Character data can't be audited via TVMaze
 			if ( has_term( self::SKIP_GENRES, 'lez_genres', $show_id ) ) {
-				usleep( 500000 );
+				usleep( self::WAIT_TIME );
 				continue;
 			}
 
@@ -293,7 +327,7 @@ class WP_CLI_LWTV_Audit {
 				$results = array_merge( $results, $this->audit_characters( $show_id, $status, $current_year, $roles_to_audit ) );
 			}
 
-			usleep( 500000 );
+			usleep( self::WAIT_TIME );
 		}
 
 		if ( $progress ) {
@@ -347,7 +381,6 @@ class WP_CLI_LWTV_Audit {
 					$status,
 					'',
 					get_the_title( $char_id ),
-					$this->get_actor_name( $char_id ),
 					$type,
 					$this->unconfirmed_action( $verdict, $current_year ),
 					'unconfirmed-year',
@@ -411,7 +444,7 @@ class WP_CLI_LWTV_Audit {
 					$results[] = $ended_row;
 				}
 			} elseif ( 'To Be Determined' === $status ) {
-				$results[] = $this->build_row( $show_id, $status, '', '', '', '', 'Review: show in limbo on TVMaze', 'tbd' );
+				$results[] = $this->build_row( $show_id, $status, '', '', '', 'Review: show in limbo on TVMaze', 'tbd' );
 			}
 			$this->output_results( $scope, $results, $show_resolved );
 			return;
@@ -504,11 +537,11 @@ class WP_CLI_LWTV_Audit {
 					$has     = in_array( $year, $appears, true );
 
 					if ( self::APPEARED_YES === $verdict && ! $has ) {
-						$results[] = $this->build_row( $show_id, $status, '', get_the_title( $char_id ), $this->get_actor_name( $char_id ), $type, 'TVMaze shows ' . $year . ' -- add?', 'missing-year', $char_id, $year );
+						$results[] = $this->build_row( $show_id, $status, '', get_the_title( $char_id ), $type, 'TVMaze shows ' . $year . ' -- add?', 'missing-year', $char_id, $year );
 					} elseif ( self::APPEARED_NO === $verdict && $has ) {
-						$results[] = $this->build_row( $show_id, $status, '', get_the_title( $char_id ), $this->get_actor_name( $char_id ), $type, 'Verify ' . $year . ' -- no TVMaze appearance found', 'verify-year', $char_id, $year );
+						$results[] = $this->build_row( $show_id, $status, '', get_the_title( $char_id ), $type, 'Verify ' . $year . ' -- no TVMaze appearance found', 'verify-year', $char_id, $year );
 					} elseif ( $this->is_unknown_appearance( $verdict ) && ! $has ) {
-						$results[] = $this->build_row( $show_id, $status, '', get_the_title( $char_id ), $this->get_actor_name( $char_id ), $type, $this->unconfirmed_action( $verdict, $year ), 'unconfirmed-year', $char_id, $year );
+						$results[] = $this->build_row( $show_id, $status, '', get_the_title( $char_id ), $type, $this->unconfirmed_action( $verdict, $year ), 'unconfirmed-year', $char_id, $year );
 					}
 				}
 			}
@@ -559,7 +592,7 @@ class WP_CLI_LWTV_Audit {
 				$had_error = true;
 			}
 
-			usleep( 500000 );
+			usleep( self::WAIT_TIME );
 		}
 
 		if ( $progress ) {
@@ -793,7 +826,6 @@ class WP_CLI_LWTV_Audit {
 				$ended_year,
 				'',
 				'',
-				'',
 				$action,
 				'ended'
 			);
@@ -809,7 +841,6 @@ class WP_CLI_LWTV_Audit {
 				$show_id,
 				$status,
 				$ended_year,
-				'',
 				'',
 				'',
 				// translators: %1 - LWTV end Year ; %2 TVMaze End Year
@@ -978,17 +1009,6 @@ class WP_CLI_LWTV_Audit {
 	}
 
 	/**
-	 * First actor's name for a character.
-	 *
-	 * @param int $char_id Character post ID.
-	 * @return string
-	 */
-	private function get_actor_name( int $char_id ): string {
-		$actors = get_field( 'lezchars_actor', $char_id ) ?: array();
-		return ! empty( $actors ) ? get_the_title( (int) reset( $actors ) ) : '';
-	}
-
-	/**
 	 * Normalize a name for fuzzy matching: strip accents, strip
 	 * disambiguation parentheticals, lowercase.
 	 *
@@ -1015,6 +1035,255 @@ class WP_CLI_LWTV_Audit {
 			}
 		}
 		return false;
+	}
+
+	/* ------------------------------------------------------------------
+	 * ACTOR DEATH AUDIT
+	 * ---------------------------------------------------------------- */
+
+	/**
+	 * Which of our actors does WikiData think have died?
+	 *
+	 * Deliberately not wired into the Audit baseline tracker. The shows audit
+	 * needs new/open/resolved because its findings are judgement calls that
+	 * recur for months; a death finding is acted on once and then never appears
+	 * again, because the moment the date goes in the actor is skipped on rule 1.
+	 * A baseline would be bookkeeping for a list that empties itself.
+	 *
+	 * @param array $assoc_args Associative args.
+	 */
+	private function audit_actor_deaths( array $assoc_args ): void {
+		$letter        = $this->parse_letter( (string) \WP_CLI\Utils\get_flag_value( $assoc_args, 'letter', '' ) );
+		$do_unresolved = (bool) \WP_CLI\Utils\get_flag_value( $assoc_args, 'unresolved', false );
+		$is_table      = ( 'table' === $this->format );
+
+		$actor_ids = get_posts(
+			array(
+				'post_type'      => CPT_Actors::SLUG,
+				'post_status'    => 'publish',
+				'posts_per_page' => -1,
+				'fields'         => 'ids',
+				'no_found_rows'  => true,
+			)
+		);
+
+		if ( '' !== $letter ) {
+			$builder = new Shared_Builder();
+			$marker  = ( 1 === strlen( $letter ) && ctype_alpha( $letter ) ) ? strtoupper( $letter ) : $letter;
+
+			$actor_ids = array_values(
+				array_filter(
+					$actor_ids,
+					fn( $id ) => $builder->get_character_marker( get_the_title( $id ) ) === $marker
+				)
+			);
+		}
+
+		if ( empty( $actor_ids ) ) {
+			\WP_CLI::error( 'No actors found to audit' . ( $letter ? ' in that letter bucket' : '' ) . '.' );
+		}
+
+		$progress = $is_table
+			? \WP_CLI\Utils\make_progress_bar( sprintf( 'Checking %d actors', count( $actor_ids ) ), count( $actor_ids ) )
+			: null;
+
+		$debugger = new Actors_Debugger();
+		$rows     = array();
+		$tally    = array();
+
+		foreach ( $actor_ids as $actor_id ) {
+			if ( $progress ) {
+				$progress->tick();
+			}
+
+			$result  = $debugger->check_actor_death( (int) $actor_id );
+			$verdict = $result['verdict'];
+
+			$tally[ $verdict ] = ( $tally[ $verdict ] ?? 0 ) + 1;
+
+			// An actor we already have a date for -- or one an editor has told us
+			// to stop asking about -- cost us no request, so don't pay the
+			// throttle for them either. That is what keeps a full run
+			// proportional to the work actually left to do.
+			if ( in_array( $verdict, array( Actor_Death_Rules::HAS_DATE, Actor_Death_Rules::IGNORED ), true ) ) {
+				continue;
+			}
+
+			if ( Actor_Death_Rules::is_reportable( $verdict )
+				&& ( $do_unresolved || ! Actor_Death_Rules::is_unresolved( $verdict ) ) ) {
+				$rows[] = $this->build_actor_row( (int) $actor_id, $result );
+			}
+
+			// Throttle only when we actually asked WikiData something. Identity
+			// resolution is the backfill's job now, so this audit fetches an
+			// entity only for actors it can already identify -- and pausing half
+			// a second for each of the thousands it cannot would make a full run
+			// cost hours of doing nothing.
+			if ( '' !== $result['qid'] ) {
+				usleep( self::WAIT_TIME );
+			}
+		}
+
+		if ( $progress ) {
+			$progress->finish();
+		}
+
+		if ( ! empty( $rows ) ) {
+			\WP_CLI\Utils\format_items( $this->format, $rows, self::ACTOR_FIELDS );
+		}
+
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fwrite -- CLI STDERR write, must bypass STDOUT so redirected CSV/JSON stays clean
+		fwrite( STDERR, $this->actor_summary_line( $tally, count( $rows ), $do_unresolved ) . "\n" );
+	}
+
+	/**
+	 * Check one actor, and say so even when there is nothing to report.
+	 *
+	 * @param int $actor_id Actor post ID.
+	 */
+	private function audit_actor_death_single( int $actor_id ): void {
+		if ( ! $actor_id || CPT_Actors::SLUG !== get_post_type( $actor_id ) ) {
+			\WP_CLI::error( 'Pass the post ID of an actor: wp lwtv audit actor <id>' );
+		}
+
+		$result = ( new Actors_Debugger() )->check_actor_death( $actor_id );
+		$name   = html_entity_decode( get_the_title( $actor_id ), ENT_QUOTES, 'UTF-8' );
+
+		if ( Actor_Death_Rules::HAS_DATE === $result['verdict'] ) {
+			\WP_CLI::success( $name . ' already has a death date. Nothing to check.' );
+			return;
+		}
+
+		if ( Actor_Death_Rules::ALIVE === $result['verdict'] ) {
+			\WP_CLI::success( $name . ' has no death date on WikiData either (' . $result['qid'] . ').' );
+			return;
+		}
+
+		\WP_CLI\Utils\format_items(
+			$this->format,
+			array( $this->build_actor_row( $actor_id, $result ) ),
+			self::ACTOR_FIELDS
+		);
+	}
+
+	/**
+	 * One actor finding row.
+	 *
+	 * Both birth dates travel in the 'birth' column, ours first, because on a
+	 * suspect-match row the disagreement between them IS the finding -- and on a
+	 * genuine one, seeing them agree is what lets an editor trust the row
+	 * without opening WikiData.
+	 *
+	 * @param int   $actor_id Actor post ID.
+	 * @param array $result   Result from Actors::check_actor_death().
+	 * @return array
+	 */
+	private function build_actor_row( int $actor_id, array $result ): array {
+		$ours   = $result['our_birth'];
+		$theirs = $result['wiki_birth'];
+
+		if ( '' === $ours && '' === $theirs ) {
+			$birth = '';
+		} elseif ( $ours === $theirs || '' === $theirs ) {
+			$birth = $ours;
+		} else {
+			$birth = ( '' === $ours ? '?' : $ours ) . ' vs ' . $theirs;
+		}
+
+		return array(
+			'actor_id' => $actor_id,
+			'actor'    => html_entity_decode( get_the_title( $actor_id ), ENT_QUOTES, 'UTF-8' ),
+			'issue'    => $result['verdict'],
+			'wikidata' => $result['qid'],
+			'birth'    => $birth,
+			'death'    => $result['death'],
+			'action'   => $result['action'],
+		);
+	}
+
+	/**
+	 * One-line summary of an actor death audit run.
+	 *
+	 * Reports the checked/skipped split as well as the findings, because the
+	 * interesting failure of this command is silence: "0 items need attention"
+	 * reads like good news whether we checked four thousand actors or couldn't
+	 * identify any of them.
+	 *
+	 * @param array $tally         Verdict => count.
+	 * @param int   $shown         Rows actually printed.
+	 * @param bool  $do_unresolved Whether unresolved rows were listed.
+	 * @return string
+	 */
+	private function actor_summary_line( array $tally, int $shown, bool $do_unresolved ): string {
+		$parts = array();
+
+		$settled = ( $tally[ Actor_Death_Rules::HAS_DATE ] ?? 0 ) + ( $tally[ Actor_Death_Rules::IGNORED ] ?? 0 );
+
+		$parts[] = sprintf(
+			/* translators: 1: actors already settled (date on file, or ignored), 2: actors checked against WikiData. */
+			__( '%1$d already settled, %2$d checked', 'lwtv' ),
+			$settled,
+			array_sum( $tally ) - $settled
+		);
+
+		$found   = $tally[ Actor_Death_Rules::FOUND ] ?? 0;
+		$suspect = $tally[ Actor_Death_Rules::SUSPECT ] ?? 0;
+
+		$parts[] = sprintf(
+			/* translators: %d: number of possible deaths found. */
+			_n( '%d possible death to verify', '%d possible deaths to verify', $found, 'lwtv' ),
+			$found
+		);
+
+		if ( $suspect ) {
+			$parts[] = sprintf(
+				/* translators: %d: number of rows whose WikiData match looks wrong. */
+				_n( '%d death claim withheld (match looks wrong)', '%d death claims withheld (match looks wrong)', $suspect, 'lwtv' ),
+				$suspect
+			);
+		}
+
+		$unverified = $tally[ Actor_Death_Rules::UNVERIFIED ] ?? 0;
+
+		$unresolved = ( $tally[ Actor_Death_Rules::NO_IDENTITY ] ?? 0 )
+			+ $unverified
+			+ ( $tally[ Actor_Death_Rules::AMBIGUOUS ] ?? 0 )
+			+ ( $tally[ Actor_Death_Rules::NO_DATA ] ?? 0 );
+
+		// Worth calling out separately: these actors are not missing data, they
+		// are waiting on a verification pass, and there is one command for it.
+		if ( $unverified ) {
+			$parts[] = sprintf(
+				/* translators: %d: number of actors holding an unverified QID. */
+				_n(
+					'%d holds an unverified QID -- run: wp lwtv wikidata backfill --reverify',
+					'%d hold unverified QIDs -- run: wp lwtv wikidata backfill --reverify',
+					$unverified,
+					'lwtv'
+				),
+				$unverified
+			);
+		}
+
+		if ( $unresolved ) {
+			$parts[] = $do_unresolved
+				? sprintf(
+					/* translators: %d: number of actors that could not be checked. */
+					_n( '%d not checkable (listed)', '%d not checkable (listed)', $unresolved, 'lwtv' ),
+					$unresolved
+				)
+				: sprintf(
+					/* translators: %d: number of actors that could not be checked. */
+					_n( '%d not checkable (--unresolved to list)', '%d not checkable (--unresolved to list)', $unresolved, 'lwtv' ),
+					$unresolved
+				);
+		}
+
+		if ( 0 === $shown ) {
+			$parts[] = __( 'nothing to act on', 'lwtv' );
+		}
+
+		return __( 'Actor death audit complete.', 'lwtv' ) . ' ' . implode( '. ', $parts ) . '.';
 	}
 
 	/**
@@ -1139,7 +1408,6 @@ class WP_CLI_LWTV_Audit {
 	 * @param string $status     TVMaze status.
 	 * @param string $ended      TVMaze ended date or year.
 	 * @param string $character  Character name (empty for show-level rows).
-	 * @param string $actor      Actor name.
 	 * @param string $role       Character role type.
 	 * @param string $action     Action needed.
 	 * @param string $issue_type Issue type (see Audit::ISSUE_TYPES).
@@ -1147,8 +1415,8 @@ class WP_CLI_LWTV_Audit {
 	 * @param int    $year       Year the finding concerns (0 for show-level).
 	 * @return array
 	 */
-	private function build_row( int $show_id, string $status, string $ended, string $character, string $actor, string $role, string $action, string $issue_type, int $char_id = 0, int $year = 0 ): array {
-		$ended_year = ! empty( $ended ) ? substr( $ended, 0, 4 ) : '';
+	private function build_row( int $show_id, string $status, string $ended, string $character, string $role, string $action, string $issue_type, int $char_id = 0, int $year = 0 ): array {
+		$ended_year = ! empty( $ended ) ? ' (' . substr( $ended, 0, 4 ) . ')' : '';
 
 		return array(
 			'scope'         => '',
@@ -1157,10 +1425,8 @@ class WP_CLI_LWTV_Audit {
 			'issue_type'    => $issue_type,
 			'year'          => $year,
 			'show'          => html_entity_decode( get_the_title( $show_id ), ENT_QUOTES, 'UTF-8' ),
-			'tvmaze_status' => $status,
-			'tvmaze_ended'  => $ended_year,
+			'tvmaze_status' => $status . $ended_year,
 			'character'     => html_entity_decode( $character, ENT_QUOTES, 'UTF-8' ),
-			'actor'         => html_entity_decode( $actor, ENT_QUOTES, 'UTF-8' ),
 			'role'          => $role,
 			'action'        => $action,
 		);
@@ -1183,12 +1449,12 @@ class WP_CLI_LWTV_Audit {
 		}
 
 		if ( ! empty( $rows ) ) {
-			$fields = array( 'status', 'show', 'tvmaze_status', 'tvmaze_ended', 'character', 'actor', 'role', 'action' );
+			// show_id is here so a flagged row can be fed straight back in as
+			// `wp lwtv audit show <show_id>` for the deep per-episode audit.
+			$fields = array( 'status', 'show_id', 'show', 'tvmaze_status', 'character', 'role', 'action' );
 			\WP_CLI\Utils\format_items( $this->format, $rows, $fields );
 		}
 
-		// Summary is written directly to STDERR (not via WP_CLI::success, which
-		// writes to STDOUT) so it never corrupts a redirected CSV/JSON stream.
 		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fwrite -- CLI STDERR write, must bypass STDOUT so redirected CSV/JSON stays clean
 		fwrite( STDERR, $this->summary_line( $finalized['summary'] ) . "\n" );
 	}

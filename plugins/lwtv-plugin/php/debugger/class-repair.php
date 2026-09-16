@@ -26,6 +26,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+use LWTV\_Helpers\Admin_Notice;
 use LWTV\Debugger\Build\Findings;
 use LWTV\Debugger\Build\Issue_Registry;
 
@@ -269,49 +270,20 @@ class Repair {
 	 * @return void
 	 */
 	private static function set_notice( string $type, string $message, string $link = '' ): void {
-		set_transient(
-			self::NOTICE_PREFIX . get_current_user_id(),
-			array(
-				'type'    => $type,
-				'message' => $message,
-				'link'    => $link,
-			),
-			MINUTE_IN_SECONDS * 5
-		);
+		Admin_Notice::set( self::NOTICE_PREFIX, $type, $message, $link );
 	}
 
 	/**
 	 * Print and clear any pending notice.
 	 *
+	 * Escaped, not wp_kses_post: the messages above are built around
+	 * get_the_title(), which is editor-authored. The Validator screens pass true
+	 * here because they author their own prose; this one must not.
+	 *
 	 * @return void
 	 */
 	public static function show_notice(): void {
-		$key    = self::NOTICE_PREFIX . get_current_user_id();
-		$notice = get_transient( $key );
-
-		if ( ! is_array( $notice ) || empty( $notice['message'] ) ) {
-			return;
-		}
-
-		delete_transient( $key );
-
-		$class = 'notice-success';
-		if ( 'error' === $notice['type'] ) {
-			$class = 'notice-error';
-		} elseif ( 'info' === $notice['type'] ) {
-			$class = 'notice-info';
-		}
-
-		?>
-		<div class="notice <?php echo esc_attr( $class ); ?> is-dismissible">
-			<p>
-				<?php echo esc_html( $notice['message'] ); ?>
-				<?php if ( ! empty( $notice['link'] ) ) : ?>
-					<a href="<?php echo esc_url( $notice['link'] ); ?>"><?php esc_html_e( 'Edit the post', 'lwtv' ); ?></a>
-				<?php endif; ?>
-			</p>
-		</div>
-		<?php
+		Admin_Notice::show( self::NOTICE_PREFIX, __( 'Edit the post', 'lwtv' ), false );
 	}
 
 	/**

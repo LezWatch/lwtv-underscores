@@ -240,7 +240,7 @@
             "required": 0,
             "conditional_logic": 0,
             "wrapper": {
-                "width": "50",
+                "width": "",
                 "class": "",
                 "id": ""
             },
@@ -248,27 +248,6 @@
             "maxlength": "",
             "allow_in_bindings": 1,
             "placeholder": "Ex: nm6087250",
-            "prepend": "",
-            "append": ""
-        },
-        {
-            "key": "field_lwtv_lezactors_wikidata_qid",
-            "label": "WikiData ID",
-            "name": "lezactors_wikidata_qid",
-            "aria-label": "",
-            "type": "text",
-            "instructions": "Enter a WikiData QID for this actor to override the automated check.",
-            "required": 0,
-            "conditional_logic": 0,
-            "wrapper": {
-                "width": "50",
-                "class": "",
-                "id": ""
-            },
-            "default_value": "",
-            "maxlength": "",
-            "allow_in_bindings": 1,
-            "placeholder": "Ex: Q2933359",
             "prepend": "",
             "append": ""
         },
@@ -307,6 +286,48 @@
             "default_value": "",
             "allow_in_bindings": 1,
             "placeholder": "https:\/\/actorname.com"
+        },
+        {
+            "key": "field_lwtv_lezactors_wikidata_ignore",
+            "label": "Lock WikiData QID",
+            "name": "lezactors_wikidata_ignore",
+            "aria-label": "",
+            "type": "true_false",
+            "instructions": "If the generated QID is wrong, flip this to YES.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "message": "Lock the QID against automated changes",
+            "default_value": 0,
+            "allow_in_bindings": 1,
+            "ui_on_text": "Yes",
+            "ui_off_text": "No",
+            "ui": 1
+        },
+        {
+            "key": "field_lwtv_lezactors_wikidata_qid",
+            "label": "WikiData ID",
+            "name": "lezactors_wikidata_qid",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "Sometimes the QID is wrong (multiple people, same name, no QID, etc). When it needs to be overwritten, flip the toggle to YES and you can manually edit here.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "allow_in_bindings": 1,
+            "placeholder": "Ex: Q2933359",
+            "prepend": "",
+            "append": ""
         },
         {
             "key": "field_6a330bf0ad7ba",
@@ -650,9 +671,9 @@
     ],
     "active": true,
     "description": "All information about Actors",
-    "show_in_rest": 1,
+    "show_in_rest": 0,
     "display_title": "",
     "allow_ai_access": false,
     "ai_description": "",
-    "modified": 1781733811
+    "modified": 1789512346
 }

@@ -20,7 +20,12 @@ class Is_Actor_Queer {
 	 * There are multiple ways someone can be queer:
 	 * sexuality, gender, pronouns, romantic orientation
 	 *
-	 * There's also an override.
+	 * There's also an override, and it wins either way round -- 'is_queer' for
+	 * someone the taxonomies miss, 'not_queer' for someone they wrongly catch.
+	 *
+	 * Callers read this live rather than from stored meta. Statistics\Build\Actors
+	 * calls it per actor, and two templates call it per page, so it is the single
+	 * answer to "is this person queer" across the site.
 	 *
 	 * @access public
 	 * @param  mixed $the_id
@@ -45,22 +50,33 @@ class Is_Actor_Queer {
 			return false;
 		}
 
-		// Check the override first
+		// The override comes first, and it is authoritative in BOTH directions.
+		// An editor has looked at this person and decided; that outranks whatever
+		// the taxonomies imply about them.
+		//
+		// 'not_queer' returning early is the whole point of the value, not a
+		// shortcut: it exists for someone who *does* meet the automated criteria
+		// below but should not be counted. Falling through to check_queerness()
+		// would return true for exactly the actors the override was set on, which
+		// is what it did until now -- the field offered "Is NOT Queer" and nothing
+		// anywhere acted on it.
+		//
+		// Anything else ('undefined', the ACF default, or an empty value) means no
+		// decision has been made, so the taxonomies answer.
 		$override = get_post_meta( $the_id, 'lezactors_queer_override', true );
-		if ( 'is_queer' === $override ) {
-			return true;
+
+		switch ( $override ) {
+			case 'is_queer':
+				return true;
+			case 'not_queer':
+				return false;
 		}
 
 		// Get all actor taxonomies in a single query
 		$taxonomies = $this->get_actor_taxonomies( $the_id );
 
-		// Check if ANY category indicates queerness
-		$is_queer = $this->check_queerness( $taxonomies );
-
-		// Update the post meta with the result
-		update_post_meta( $the_id, 'lezactors_queer_status', (bool) $is_queer );
-
-		return $is_queer;
+		// Check if ANY category indicates queerness.
+		return $this->check_queerness( $taxonomies );
 	}
 
 	/**

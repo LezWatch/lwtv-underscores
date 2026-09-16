@@ -23,6 +23,16 @@ class OTD_JSON {
 	const OTD_CACHE_DURATION = HOUR_IN_SECONDS;
 
 	/**
+	 * Cache schema version.
+	 *
+	 * Bump this whenever the shape or the filtering of an OTD payload changes,
+	 * so already-cached responses are abandoned instead of being served for up
+	 * to another OTD_CACHE_DURATION. Bumped to 2 when birthday() began honoring
+	 * the actors' date-of-birth privacy setting.
+	 */
+	const OTD_CACHE_VERSION = '2';
+
+	/**
 	 * Constructor
 	 */
 	public function __construct() {
@@ -80,7 +90,7 @@ class OTD_JSON {
 		}
 
 		// Generate cache key
-		$cache_key = 'lwtv_otd_' . $type . '_' . $format . '_' . $this->get_data_version_hash();
+		$cache_key = 'lwtv_otd_v' . self::OTD_CACHE_VERSION . '_' . $type . '_' . $format . '_' . $this->get_data_version_hash();
 
 		// Try to get from cache first
 		$cached_result = lwtv_plugin()->get_transient( $cache_key );
