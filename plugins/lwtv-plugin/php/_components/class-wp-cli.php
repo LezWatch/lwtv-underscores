@@ -29,7 +29,7 @@ class WP_CLI implements Component {
 
 		// CLI Commands Loader.
 		$cli_loader = array(
-			sprintf( '%s/%s', dirname( __DIR__, 1 ) . '/wp-cli/', 'cli-audit.php' ),     // wp lwtv AUDIT [shows|show <id>]
+			sprintf( '%s/%s', dirname( __DIR__, 1 ) . '/wp-cli/', 'cli-audit.php' ),     // wp lwtv AUDIT [shows|show <id>|actors|actor <id>]
 			sprintf( '%s/%s', dirname( __DIR__, 1 ) . '/wp-cli/', 'cli-cache.php' ),     // wp lwtv CACHE [check|verify]
 			sprintf( '%s/%s', dirname( __DIR__, 1 ) . '/wp-cli/', 'cli-calc.php' ),      // wp lwtv CALC [ID]
 			sprintf( '%s/%s', dirname( __DIR__, 1 ) . '/wp-cli/', 'cli-check.php' ),     // wp lwtv CHECK [queerchars|wiki] [id]
@@ -46,6 +46,7 @@ class WP_CLI implements Component {
 			sprintf( '%s/%s', dirname( __DIR__, 1 ) . '/wp-cli/', 'cli-tmdb.php' ),      // wp lwtv TMDB [status|backfill]
 			sprintf( '%s/%s', dirname( __DIR__, 1 ) . '/wp-cli/', 'cli-tvmaze.php' ),    // wp lwtv TVMAZE [status|backfill]
 			sprintf( '%s/%s', dirname( __DIR__, 1 ) . '/wp-cli/', 'cli-waystowatch.php' ), // wp lwtv WAYSTOWATCH [hosts|enrich|forget]
+			sprintf( '%s/%s', dirname( __DIR__, 1 ) . '/wp-cli/', 'cli-wikidata.php' ),  // wp lwtv WIKIDATA [status|backfill|actor <id>]
 		);
 
 		foreach ( $cli_loader as $path_to_command ) {

@@ -869,26 +869,44 @@ class Of_The_Day implements Component, Templater {
 		// Get all our birthdays
 		$actor_loop = ( new Post_Meta() )->make( CPT_Actors::SLUG, 'lezactors_birth', $date, 'LIKE' );
 
+		$twitter_array   = array();
+		$wordpress_array = array();
+
 		if ( is_object( $actor_loop ) && $actor_loop->have_posts() ) {
 			foreach ( $actor_loop->posts as $actor ) {
+
+				/*
+				 * Honor the actor's privacy request.
+				 *
+				 * Appearing in a birthday round-up discloses the birth month and
+				 * day (and the exact age), so anyone who has asked us to hide
+				 * their date of birth -- or all of their data -- is omitted
+				 * entirely. This matches LWTV\Theme\Actor_Birthday::get().
+				 */
+				if ( lwtv_plugin()->hide_actor_data( $actor->ID, 'dob' ) || lwtv_plugin()->hide_actor_data( $actor->ID, 'all' ) ) {
+					continue;
+				}
 
 				// Get the post slug
 				$post_slug = get_post_field( 'post_name', get_post( $actor ) );
 
 				// Calculate Age
-				$age_end = new \DateTime();
+				$age_end   = new \DateTime();
+				$age_start = false;
 				if ( get_post_meta( $actor->ID, 'lezactors_death', true ) ) {
 					$age_end = new \DateTime( get_post_meta( $actor->ID, 'lezactors_death', true ) );
 				}
 				if ( get_post_meta( $actor->ID, 'lezactors_birth', true ) ) {
 					$age_start = new \DateTime( get_post_meta( $actor->ID, 'lezactors_birth', true ) );
 				}
-				if ( isset( $age_start ) ) {
-					$alive = $age_start->diff( $age_end );
+
+				// Without a birth date there is no birthday to celebrate.
+				if ( ! $age_start ) {
+					continue;
 				}
 
 				// Their age is ...
-				$age = $alive->format( '%Y' );
+				$age = $age_start->diff( $age_end )->format( '%Y' );
 
 				// Setup the WordPress name (used by LWTV News)
 				$wordpress_name = '<a href="' . get_permalink( $actor ) . '">' . get_the_title( $actor ) . ' (' . $age . ')</a>';
@@ -901,7 +919,9 @@ class Of_The_Day implements Component, Templater {
 				$wordpress_array[ $post_slug ] = $wordpress_name;
 
 			}
+		}
 
+		if ( ! empty( $wordpress_array ) ) {
 			switch ( $format ) {
 				case 'socialmedia':
 					$birthdays = implode( ', ', $twitter_array );
@@ -1003,7 +1023,7 @@ class Of_The_Day implements Component, Templater {
 		foreach ( $table_data as $use_data ) {
 			// Escape the CDATA terminator so title/show text can't break out of the CDATA section.
 			$cdata_content = wp_kses_post( $use_data->content );
-			$cdata_content = str_replace( ']]>', ']]]]><![CDATA[>', $use_data->content );
+			$cdata_content = str_replace( ']]>', ']]]]><![CDATA[>', $cdata_content );
 			?>
 			<item>
 				<title><?php echo esc_html( ucfirst( $use_data->posts_type ) ); ?> of the Day: <?php echo esc_html( get_the_title( $use_data->posts_id ) ); ?></title>

@@ -12,6 +12,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 use LWTV\Features\Languages;
+use LWTV\Wikidata\Build\Qid_Trust;
+use LWTV\Wikidata\Identity;
 
 class ACF {
 
@@ -88,6 +90,12 @@ class ACF {
 		// Actors: default Gender to cisgender and Sexuality to unknown on new posts.
 		add_filter( 'acf/load_value/name=lezactors_gender', array( $this, 'load_actor_gender_default' ), 10, 3 );
 		add_filter( 'acf/load_value/name=lezactors_sexuality', array( $this, 'load_actor_sexuality_default' ), 10, 3 );
+
+		// Actors: a hand-edited WikiData QID records itself as 'manual'.
+		add_filter( 'acf/update_value/name=lezactors_wikidata_qid', array( $this, 'record_manual_wikidata_qid' ), 10, 3 );
+
+		// Actors: the QID field is read-only until its write-lock is on.
+		add_filter( 'acf/prepare_field/name=lezactors_wikidata_qid', array( $this, 'lock_wikidata_qid_field' ) );
 
 		// Characters: improve search for the Show post_object field.
 		add_filter( 'acf/fields/post_object/query/key=field_lwtv_lezchars_show_group_show', array( $this, 'show_post_object_query' ) );
@@ -627,6 +635,136 @@ class ACF {
 		// select/true_false ADMIN_ONLY_FIELDS; a future non-select field added
 		// here should use raw get_post_meta() instead.
 		return get_field( $field['name'], $post_id );
+	}
+
+	/**
+	 * Make the WikiData QID read-only until an editor takes the lock.
+	 *
+	 * Unlocked, the field belongs to the automated check: a value typed here
+	 * would sit there looking accepted until the next backfill quietly replaced
+	 * it. Showing it as read-only says so before anyone spends the effort.
+	 *
+	 * Only sets readonly -- it deliberately does not touch the instructions. The
+	 * field's own copy already tells an editor to flip the toggle, and appending
+	 * a second sentence saying the same thing just made the hint stutter.
+	 *
+	 * acf/prepare_field, not acf/load_field: load_field runs once per field
+	 * definition with no post in sight, which is why the usual recipe for this
+	 * reaches for $_GET['post'] -- absent on Gutenberg's metabox request and on
+	 * post-new.php. prepare_field runs per render, inside the metabox, where WP
+	 * has already set up the post.
+	 *
+	 * Read-only is an affordance, not a control: the browser still submits the
+	 * value and the attribute can be removed. What actually protects the data is
+	 * Identity::store_qid() refusing to write when locked, and the source meta
+	 * deciding what the death audit will trust.
+	 *
+	 * @param  array $field ACF field definition, as prepared for this render.
+	 * @return array
+	 */
+	public function lock_wikidata_qid_field( $field ) {
+		$post_id = $this->current_admin_post_id();
+
+		// No post yet (post-new.php): nothing has been resolved and there is no
+		// lock to read, so leave the field alone rather than shipping a new actor
+		// screen with an un-editable field and no way to unlock it.
+		if ( ! $post_id ) {
+			return $field;
+		}
+
+		$locked = get_post_meta( $post_id, Identity::META_IGNORE, true );
+
+		// ACF true_false stores "1"/"0" as strings, so "0" must not read as set.
+		if ( ! in_array( (string) $locked, array( '', '0' ), true ) ) {
+			return $field;
+		}
+
+		$field['readonly'] = 1;
+
+		return $field;
+	}
+
+	/**
+	 * The post being edited, for filters that run without one passed in.
+	 *
+	 * get_the_ID() covers the metabox render on both the classic screen and
+	 * Gutenberg's meta-box request, since WP sets up the post in both. The
+	 * superglobals are the fallback for filters that fire before that.
+	 *
+	 * @return int Post ID, or 0 when there is no post in context.
+	 */
+	private function current_admin_post_id(): int {
+		$post_id = get_the_ID();
+
+		if ( $post_id ) {
+			return (int) $post_id;
+		}
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- reading which post is on screen, not acting on input.
+		if ( isset( $_GET['post'] ) && is_numeric( $_GET['post'] ) ) {
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			return (int) $_GET['post'];
+		}
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- as above; the save itself is nonce-checked by core.
+		if ( isset( $_POST['post_ID'] ) && is_numeric( $_POST['post_ID'] ) ) {
+			// phpcs:ignore WordPress.Security.NonceVerification.Missing
+			return (int) $_POST['post_ID'];
+		}
+
+		return 0;
+	}
+
+	/**
+	 * Record a hand-edited WikiData QID as coming from a human.
+	 *
+	 * There is one QID field and the machine may overwrite it, so what separates
+	 * "an editor checked this" from "a name search guessed it" is the source meta
+	 * beside it. Machine writes go through Identity::store_qid(), which uses
+	 * update_post_meta() and therefore never fires this filter -- so reaching
+	 * here means a person saved the field.
+	 *
+	 * Only stamps 'manual' when the value actually CHANGED. ACF re-saves every
+	 * field on every post save, including untouched ones, so stamping
+	 * unconditionally would relabel a fuzzy 'name' match as trusted the first
+	 * time anyone opened an actor and hit Update -- laundering a guess into an
+	 * identity, which is the one failure Qid_Trust exists to prevent.
+	 *
+	 * Also normalises a pasted wikidata.org URL down to the bare QID.
+	 *
+	 * @param  mixed $value   The value being saved.
+	 * @param  mixed $post_id ACF post ID (int for posts, string for options).
+	 * @param  array $field   Field definition.
+	 * @return mixed
+	 */
+	public function record_manual_wikidata_qid( $value, $post_id, $field ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
+		if ( ! is_numeric( $post_id ) ) {
+			return $value;
+		}
+
+		$post_id = (int) $post_id;
+		$value   = Identity::normalise_qid( (string) $value );
+		$stored  = trim( (string) get_post_meta( $post_id, Identity::META_QID, true ) );
+
+		if ( $value === $stored ) {
+			return $value;
+		}
+
+		if ( '' === $value ) {
+			// Cleared by hand: we no longer hold an identity, so drop the source
+			// rather than leave one describing a value that is gone. The checked
+			// marker goes too, so the backfill treats this as never asked instead
+			// of "asked, no match" and will look again.
+			delete_post_meta( $post_id, Identity::META_SOURCE );
+			delete_post_meta( $post_id, Identity::META_CHECKED );
+
+			return $value;
+		}
+
+		update_post_meta( $post_id, Identity::META_SOURCE, Qid_Trust::SOURCE_MANUAL );
+		update_post_meta( $post_id, Identity::META_CHECKED, time() );
+
+		return $value;
 	}
 
 	/**

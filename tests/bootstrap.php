@@ -47,6 +47,18 @@ if ( ! function_exists( '__' ) ) {
 	}
 }
 
+if ( ! function_exists( '_n' ) ) {
+	function _n( $single, $plural, $number, $domain = 'default' ) { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
+		return ( 1 === (int) $number ) ? $single : $plural;
+	}
+}
+
+if ( ! function_exists( 'number_format_i18n' ) ) {
+	function number_format_i18n( $number, $decimals = 0 ) { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
+		return number_format( (float) $number, (int) $decimals );
+	}
+}
+
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/this-year/build/class-trends.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/this-year/build/class-deaths-strip.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/this-year/build/class-longest-running.php';
@@ -70,6 +82,7 @@ require_once __DIR__ . '/../plugins/lwtv-plugin/php/cpts/shows/class-airdates.ph
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/cpts/shows/scoring/class-longevity.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/cpts/shows/scoring/class-character-score.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/_helpers/class-imdb-canonical.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/_helpers/class-tmdb-response.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/cpts/shows/watching/class-host-name.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/cpts/shows/watching/class-watch-url-health.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/cpts/shows/watching/class-watch-term-url-audit.php';
@@ -123,4 +136,13 @@ require_once __DIR__ . '/../plugins/lwtv-plugin/php/debugger/build/class-duplica
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/debugger/build/class-imdb-rules.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/debugger/build/class-queer-rules.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/debugger/build/class-actor-completeness-rules.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/debugger/build/class-actor-death-rules.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/wikidata/build/class-qid-trust.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/debugger/build/class-log-rules.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/admin-menu/build/class-exclusion-registry.php';
+/*
+ * Only css_class() is exercised here. set()/show() touch transients and echo,
+ * and are verified on the running site; requiring the file only declares the
+ * class, whose constants are plain integers for exactly this reason.
+ */
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/_helpers/class-admin-notice.php';

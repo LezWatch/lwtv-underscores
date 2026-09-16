@@ -25,8 +25,24 @@ class Post_Meta {
 	const ALL_POST_META = array(
 		// Meta Name                    => Post Type
 		// Actors
+		//
+		// NOTE ON ACTOR PRIVACY: the fields an actor can opt out of via
+		// 'lezactors_make_option_private' (hide_dob, hide_socials) are all
+		// registered with 'show_in_rest' => false. The core wp/v2 meta endpoint
+		// has no per-post read gate -- registered meta is readable by anyone who
+		// can read the post, and the actor CPT is public -- so a public field
+		// there bypasses the opt-out entirely. Anything needing this data
+		// publicly goes through Rest_API\Export_JSON, which honors the privacy
+		// settings. Do not make these public without replacing that gate.
+		//
+		// This is NOT the only REST surface for these values. An ACF field
+		// group with 'show_in_rest' enabled publishes its fields under the
+		// response's 'acf' key on its own, ignoring what is set here -- so
+		// acf-json/group_lwtv_actors_details.json has to stay at 0 for the
+		// above to mean anything. Check both when adding an actor field.
 		'lezactors_birth'               => array(
-			'post_type' => CPT_Actors::SLUG,
+			'post_type'    => CPT_Actors::SLUG,
+			'show_in_rest' => false,
 		),
 		'lezactors_death'               => array(
 			'post_type' => CPT_Actors::SLUG,
@@ -35,19 +51,23 @@ class Post_Meta {
 			'post_type' => CPT_Actors::SLUG,
 		),
 		'lezactors_facebook'            => array(
-			'post_type' => CPT_Actors::SLUG,
+			'post_type'    => CPT_Actors::SLUG,
+			'show_in_rest' => false,
 		),
 		'lezactors_imdb'                => array(
 			'post_type' => CPT_Actors::SLUG,
 		),
 		'lezactors_instagram'           => array(
-			'post_type' => CPT_Actors::SLUG,
+			'post_type'    => CPT_Actors::SLUG,
+			'show_in_rest' => false,
 		),
 		'lezactors_mastodon'            => array(
-			'post_type' => CPT_Actors::SLUG,
+			'post_type'    => CPT_Actors::SLUG,
+			'show_in_rest' => false,
 		),
 		'lezactors_tiktok'              => array(
-			'post_type' => CPT_Actors::SLUG,
+			'post_type'    => CPT_Actors::SLUG,
+			'show_in_rest' => false,
 		),
 		'lezactors_tmdb_id'             => array(
 			'post_type'         => CPT_Actors::SLUG,
@@ -70,12 +90,43 @@ class Post_Meta {
 			'show_in_rest' => false,
 		),
 		'lezactors_tumblr'              => array(
-			'post_type' => CPT_Actors::SLUG,
+			'post_type'    => CPT_Actors::SLUG,
+			'show_in_rest' => false,
 		),
 		'lezactors_twitter'             => array(
-			'post_type' => CPT_Actors::SLUG,
+			'post_type'    => CPT_Actors::SLUG,
+			'show_in_rest' => false,
 		),
 		'lezactors_wikidata_qid'        => array(
+			'post_type' => CPT_Actors::SLUG,
+		),
+		// How lezactors_wikidata_qid was resolved: 'manual', 'imdb', 'name', or
+		// 'legacy'. A QID is not self-describing -- a fuzzy name match and a
+		// hand-checked ID look identical once stored -- and only 'manual' and
+		// 'imdb' are trusted enough for an unattended process to act on. Absent
+		// reads as 'legacy', which is untrusted on purpose. See Wikidata\Build\Qid_Trust.
+		'lezactors_wikidata_qid_source' => array(
+			'post_type'    => CPT_Actors::SLUG,
+			'show_in_rest' => false,
+		),
+		// Timestamp of the last *attempted* QID lookup. Distinguishes "WikiData
+		// has no item for this person" from "never asked". Written by
+		// `wp lwtv wikidata backfill` and the QID scheduler task.
+		'lezactors_wikidata_checked'    => array(
+			'post_type'         => CPT_Actors::SLUG,
+			'type'              => 'integer',
+			'show_in_rest'      => false,
+			'sanitize_callback' => 'absint',
+		),
+		// Write-lock on lezactors_wikidata_qid. Set it and Identity::store_qid()
+		// refuses, so the field is editable by hand only and no backfill can
+		// overwrite what an editor put there.
+		//
+		// 'lezactors_wikidata_qid_manual' was registered here as a second,
+		// editor-only QID field. Removed: two QIDs meant two things to keep in
+		// step, and the distinction it carried -- who set this value -- is what
+		// lezactors_wikidata_qid_source records. Never deployed, so no rows exist.
+		'lezactors_wikidata_ignore'     => array(
 			'post_type' => CPT_Actors::SLUG,
 		),
 		'lezactors_wikipedia'           => array(

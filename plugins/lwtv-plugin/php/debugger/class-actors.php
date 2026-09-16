@@ -7,6 +7,13 @@
  * find_actors_no_imdb()    - find actors without IMDb / bad IMDb data
  *
  * check_actors_wikidata()  - Validate our data vs WikiData.
+ * check_actor_death()      - Has an actor died without us noticing?
+ *
+ * Both ask LWTV\Wikidata\Identity who an actor is, but they ask different
+ * questions of it: the diff above wants coverage and can live with a fuzzy name
+ * match, because a human reads every row. The death check wants certainty and
+ * takes only a trusted QID, because nothing reads its reasoning before it says
+ * a person has died.
  */
 
 namespace LWTV\Debugger;
@@ -18,6 +25,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 use LWTV\_Components\Debugger as Debug_Tool;
 use LWTV\CPTs\Actors as CPT_Actors;
 use LWTV\Debugger\Build\Actor_Completeness_Rules;
+use LWTV\Debugger\Build\Actor_Death_Rules;
 use LWTV\Debugger\Build\Actor_Rules;
 use LWTV\Debugger\Build\Findings;
 use LWTV\Debugger\Build\Imdb_Rules;
@@ -25,6 +33,7 @@ use LWTV\Debugger\Collect\Actor_Collector;
 use LWTV\Debugger\Collect\Actor_Completeness_Collector;
 use LWTV\Debugger\Collect\Imdb_Collector;
 use LWTV\Debugger\Format\Rows;
+use LWTV\Wikidata\Identity;
 
 class Actors {
 
@@ -356,9 +365,13 @@ class Actors {
 
 			$check_ours = $this->get_actors_wikidata_ours( $actor_id );
 
-			// Search for the actor, using the Q-ID if it's set.
-			$wikidata_id = get_post_meta( $actor_id, 'lezactors_wikidata_qid', true );
-			$wiki_claims = ( ! empty( $wikidata_id ) ) ? $this->get_actors_wikidata_by_id( $wikidata_id ) : $this->get_actors_wikidata_by_search( $actor_id );
+			// Manual QID, then the IMDb ID, then the name. Name matches are
+			// allowed here -- a human reads every row this produces -- and
+			// Identity records which tier answered, so nothing downstream
+			// mistakes a guess for a verified match.
+			$wikidata    = new Identity();
+			$identity    = $wikidata->resolve( (int) $actor_id );
+			$wiki_claims = ( '' !== $identity['qid'] ) ? $wikidata->entity( $identity['qid'] ) : array();
 
 			// If we have no WikiData, we can't check anything.
 			if ( empty( $wiki_claims['wikidata'] ) ) {
@@ -366,7 +379,7 @@ class Actors {
 				continue;
 			}
 
-			$items[ $actor_id ]['wikidata'] = ( ! empty( $wikidata_id ) ) ? $wikidata_id : $wiki_claims['wikidata'];
+			$items[ $actor_id ]['wikidata'] = $identity['qid'];
 			unset( $wiki_claims['wikidata'] );
 
 			$check_wiki = $this->process_actor_wikidata( $actor_id, $wiki_claims );
@@ -447,65 +460,128 @@ class Actors {
 	/**
 	 * Use WikiData ID to search.
 	 *
-	 * @param string $wikidata_id - The Q-ID to search for.
+	 * @param string $wikidata_id - The QID to search for.
 	 *
 	 * @return array $items - The results of the search.
 	 */
 	public function get_actors_wikidata_by_id( $wikidata_id ) {
-		$search_data = wp_remote_get( 'https://www.wikidata.org/entity/' . $wikidata_id, array( 'timeout' => 15 ) );
+		return ( new Identity() )->entity( (string) $wikidata_id );
+	}
 
-		// Check for errors.
-		if ( is_wp_error( $search_data ) ) {
-			return array();
-		}
+	/**
+	 * Use WikiData Search to find the actor.
+	 *
+	 * Kept as the shape its callers expect -- claims plus a 'wikidata' key --
+	 * but the resolution behind it is now Identity::resolve(), so this and the
+	 * death audit agree about who an actor is.
+	 *
+	 * @param int $actor_id - The ID of the actor.
+	 *
+	 * @return array The claims, with a 'wikidata' key holding the QID.
+	 */
+	public function get_actors_wikidata_by_search( $actor_id ) {
+		$identity = new Identity();
+		$resolved = $identity->resolve( (int) $actor_id );
+		$claims   = ( '' !== $resolved['qid'] ) ? $identity->entity( $resolved['qid'] ) : array();
 
-		$search_body = json_decode( $search_data['body'], true );
-
-		if ( empty( $search_body['entities'][ $wikidata_id ]['claims'] ) ) {
-			return array();
-		}
-
-		$claims              = $search_body['entities'][ $wikidata_id ]['claims'];
-		$claims['sitelinks'] = $search_body['entities'][ $wikidata_id ]['sitelinks'] ?? array();
-		$claims['wikidata']  = $wikidata_id;
+		$claims['wikidata'] = $resolved['qid'];
 
 		return $claims;
 	}
 
 	/**
-	 * Use WikiData Search to find the actor.
+	 * Has this actor died without us noticing?
+	 *
+	 * Collects the facts and hands the decision to Actor_Death_Rules, which is
+	 * where the reasoning lives and where it is tested. This method's only job is
+	 * the part that cannot be pure: reading meta and talking to WikiData.
+	 *
+	 * Identity comes from trusted_qid(), not resolve(). That is the whole
+	 * safeguard: a QID that came from a name search -- or one stored before we
+	 * tracked sources, which may well have -- is not an identity this check may
+	 * act on, because nobody is reading its reasoning before it says a person
+	 * has died. Such an actor is reported as unidentifiable, and
+	 * `wp lwtv wikidata backfill --reverify` is what turns them into something
+	 * checkable, on real evidence rather than on a guess being old enough to
+	 * look settled.
+	 *
+	 * Reports; never writes a death date.
+	 *
+	 * @param int $actor_id The ID of the actor.
+	 * @return array{verdict: string, action: string, qid: string, source: string, death: string, our_birth: string, wiki_birth: string}
 	 */
-	public function get_actors_wikidata_by_search( $actor_id ) {
-		$language    = 'en';
-		$search_name = str_replace( ' ', '%20', get_the_title( $actor_id ) );
-		$wikipedia   = get_post_meta( $actor_id, 'lezactors_wikipedia', true );
+	public function check_actor_death( int $actor_id ): array {
+		$identity = new Identity();
 
-		// Pick language based on existing WikiPedia link.
-		if ( ! empty( $wikipedia ) ) {
-			$wikiurl  = wp_parse_url( $wikipedia );
-			$wikihost = explode( '.', $wikiurl['host'] );
-			$language = $wikihost[0];
+		// Whether the write-lock means "stop" is a rule, not a meta read, so it
+		// lives in Actor_Death_Rules where it is tested. See editor_says_stop().
+		//
+		// The raw stored QID, not trusted_qid(): the question is whether the
+		// editor left the field empty, not whether we vouch for what is in it. A
+		// locked QID we cannot vouch for should read as UNVERIFIED and be
+		// reported, because the lock means the backfill can no longer resolve it
+		// and only a human can.
+		$item = array(
+			'our_death'  => (string) get_post_meta( $actor_id, 'lezactors_death', true ),
+			'our_birth'  => (string) get_post_meta( $actor_id, 'lezactors_birth', true ),
+			'ignored'    => Actor_Death_Rules::editor_says_stop(
+				$identity->is_ignored( $actor_id ),
+				(string) get_post_meta( $actor_id, Identity::META_QID, true )
+			),
+			'qid'        => '',
+			'source'     => '',
+			'fetched'    => false,
+			'wiki_death' => '',
+			'wiki_birth' => '',
+		);
+
+		// Rule 1 of the audit: if we already have a date, we are done. Bail
+		// before spending a request, so a full run costs nothing for the
+		// thousands of actors whose data is already settled. Same for an actor
+		// an editor has told us to stop asking about.
+		if ( '' !== trim( $item['our_death'] ) || $item['ignored'] ) {
+			return $this->death_result( $item, Actor_Death_Rules::evaluate( $item ) );
 		}
 
-		$search_queery = 'https://www.wikidata.org/w/api.php?action=wbsearchentities&search=' . $search_name . '&language=' . $language . '&format=json';
-		$search_data   = wp_remote_get( $search_queery, array( 'timeout' => 15 ) );
+		$trusted        = $identity->trusted_qid( $actor_id );
+		$item['qid']    = $trusted['qid'];
+		$item['source'] = $trusted['source'];
 
-		// Check for errors.
-		if ( ! is_wp_error( $search_data ) ) {
-			$search_body = json_decode( $search_data['body'], true );
+		if ( '' !== $item['qid'] ) {
+			$claims = $identity->entity( $item['qid'] );
+
+			if ( ! empty( $claims ) ) {
+				// Read the two claims directly rather than going through
+				// process_actor_wikidata(). That method also reconstructs a
+				// Wikipedia link from the actor's stored URL, which is work we
+				// don't need and a code path we'd be running across every actor
+				// on the site instead of the one an editor asked about.
+				$item['fetched']    = true;
+				$item['wiki_death'] = $identity->date_claim( $claims, Identity::P_DEATH );
+				$item['wiki_birth'] = $identity->date_claim( $claims, Identity::P_BIRTH );
+			}
 		}
 
-		$wikidata_id = ( is_array( $search_body ) && ! empty( $search_body['search'] ) ) ? $search_body['search'][0]['id'] : '';
-		$claims      = ( ! empty( $wikidata_id ) ) ? $this->get_actors_wikidata_by_id( $wikidata_id ) : array();
+		return $this->death_result( $item, Actor_Death_Rules::evaluate( $item ) );
+	}
 
-		$claims['wikidata'] = $wikidata_id;
-
-		// Save the Q-ID if we found one.
-		if ( ! empty( $wikidata_id ) ) {
-			update_post_meta( $actor_id, 'lezactors_wikidata_qid', $wikidata_id );
-		}
-
-		return $claims;
+	/**
+	 * Flatten a collected item and its verdict into one return shape.
+	 *
+	 * @param array $item    Collected actor data.
+	 * @param array $verdict Result from Actor_Death_Rules::evaluate().
+	 * @return array
+	 */
+	private function death_result( array $item, array $verdict ): array {
+		return array(
+			'verdict'    => $verdict['verdict'],
+			'action'     => $verdict['action'],
+			'death'      => $verdict['death'],
+			'qid'        => $item['qid'],
+			'source'     => $item['source'],
+			'our_birth'  => $this->format_our_date( $item['our_birth'] ),
+			'wiki_birth' => $item['wiki_birth'],
+		);
 	}
 
 	/**

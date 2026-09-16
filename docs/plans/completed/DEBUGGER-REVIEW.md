@@ -1607,7 +1607,7 @@ Investigated properly before implementing, and the premise did not survive:
 - **`lezactors_wikidata_qid` is a resolved identifier.** Expiring it forces
   `get_actors_wikidata_by_search()` — the fuzzy `wbsearchentities` call that takes the
   *first* result — in place of the exact `get_actors_wikidata_by_id()` fetch. That is worse
-  correctness for more requests. A Q-ID does not go stale.
+  correctness for more requests. A QID does not go stale.
 
 What the two keys *do* lack is a **`checked` timestamp**: the stored comparison carries no
 date, so neither a consumer nor we can tell whether it was computed last week or years ago.
@@ -1907,7 +1907,7 @@ Everything in the **Done** table at the top has shipped. What's left, in the ord
 15. ~~**Give the wikidata cache writes an explicit TTL** (§8.4).~~ **Withdrawn
     (2026-08-27.)** Neither `lezactors_saved_wikidata` nor `lezactors_wikidata_qid` is a
     cache: the first is the sole data source for anonymous readers of `/lwtv/v1/wikidata/`,
-    the second is a resolved Q-ID. A TTL on either is a regression, and nothing refreshes
+    the second is a resolved QID. A TTL on either is a regression, and nothing refreshes
     them in the background for a TTL to hand off to. See §8.4.
 
 ---

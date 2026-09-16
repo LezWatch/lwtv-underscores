@@ -37,6 +37,7 @@ class Debugging {
 		'calculations',
 		'calendar',
 		'death',
+		'facetwp',
 		'imdb-verify',
 		'is-queer',
 		'missed-schedule',
@@ -50,6 +51,7 @@ class Debugging {
 		'this-year',
 		'tmdb',
 		'validator',
+		'wikidata',
 		'wp-cli',
 	);
 

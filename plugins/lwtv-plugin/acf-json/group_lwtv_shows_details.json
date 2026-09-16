@@ -788,7 +788,7 @@
             "name": "lezshows_quality_rating",
             "aria-label": "",
             "type": "number_slider",
-            "instructions": "How good is the show for queers? (1 = low, 5 = The L Word)",
+            "instructions": "How good is the show for queers? (1 = bad, 5 = amazing)",
             "required": 1,
             "conditional_logic": 0,
             "wrapper": {
@@ -831,7 +831,7 @@
             "name": "lezshows_realness_rating",
             "aria-label": "",
             "type": "number_slider",
-            "instructions": "How realistic are the queers? (1 = low, 5 = The L Word)",
+            "instructions": "How realistic are the queers? (1 = not at all, 5 = are those my neighbors?)",
             "required": 1,
             "conditional_logic": 0,
             "wrapper": {
@@ -874,7 +874,7 @@
             "name": "lezshows_screentime_rating",
             "aria-label": "",
             "type": "number_slider",
-            "instructions": "How much air-time do the queers get? (1 = low, 5 = The L Word)",
+            "instructions": "How much air-time do the queers get? (1 = barely any, 5 = The L Word)",
             "required": 1,
             "conditional_logic": 0,
             "wrapper": {
@@ -1147,5 +1147,5 @@
     "display_title": "Basic Details",
     "allow_ai_access": false,
     "ai_description": "",
-    "modified": 1787777462
+    "modified": 1789392268
 }

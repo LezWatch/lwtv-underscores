@@ -21,7 +21,7 @@ $born = get_post_meta( $actor, 'lezactors_birth', true );
 $died = get_post_meta( $actor, 'lezactors_death', true );
 
 // If they have a birthday, let's parse it.
-if ( ! empty( $born ) && ! lwtv_plugin()->hide_actor_data( $actor, 'dob' ) ) {
+if ( ! empty( $born ) && ! lwtv_plugin()->hide_actor_data( $actor, 'dob' ) && ! lwtv_plugin()->hide_actor_data( $actor, 'all' ) ) {
 	try {
 		$get_birth = new DateTime( $born );
 

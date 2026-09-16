@@ -7,8 +7,6 @@
 
 namespace LWTV\Statistics\Build;
 
-use LWTV\Queeries\Is_Actor_Queer;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -361,23 +359,37 @@ class Actors {
 	 * and generate_cis_queer_gap() (Gender's "Cisgender" bucket, which is
 	 * itself three taxonomy terms: cis-woman, cis-man, cisgender).
 	 *
-	 * Deliberately reuses Is_Actor_Queer::make() rather than re-implementing
-	 * its check here, so this figure can never drift out of sync with
-	 * whatever "is this actor queer" means elsewhere on the site. That means
-	 * one query per tagged actor (Is_Actor_Queer has no internal
-	 * early-return cache check of its own — it only writes one after
-	 * computing) rather than a single batched query; acceptable since the
-	 * whole result is itself cached for a week by the public callers below.
+	 * Reads the stored lezactors_queer flag rather than calling
+	 * Is_Actor_Queer::make() once per tagged actor, which is what this did
+	 * before. The old note here argued the loop kept this figure from drifting
+	 * out of sync — but it was consistent with only one of the two answers the
+	 * site holds. Actors\Calculations::do_the_math() calls make() on save and
+	 * stores the result in lezactors_queer, and that stored value is what the
+	 * actors admin column, the ACF relationship labels and both REST endpoints
+	 * display. Recomputing live here meant statistics could disagree with every
+	 * other surface a reader sees. Now they all read one row.
+	 *
+	 * The cost of that choice is staleness: an actor is only as current as their
+	 * last save or `wp lwtv calc actors`. The cost of the old choice was one
+	 * query per tagged actor, each running a three-table join, which is why the
+	 * public callers below cache for a week.
+	 *
+	 * A missing row counts as not queer, matching how every PHP consumer tests
+	 * it — `! empty()` and truthiness, which is why the SQL excludes '' and '0'
+	 * rather than matching '1'. 'uncalculated' reports how many tagged actors
+	 * have no row at all: non-zero means a recalculation is overdue and this
+	 * figure is understated, which is the one way this can quietly mislead.
 	 *
 	 * @param string $taxonomy   Actor taxonomy (e.g. 'lez_actor_sexuality').
 	 * @param array  $term_slugs Term slugs that make up the "default" bucket.
-	 * @return array { 'tagged_total' => int, 'queer_anyway' => int }
+	 * @return array { 'tagged_total' => int, 'queer_anyway' => int, 'uncalculated' => int }
 	 */
 	private function count_queer_among_terms( string $taxonomy, array $term_slugs ): array {
 		if ( empty( $term_slugs ) ) {
 			return array(
 				'tagged_total' => 0,
 				'queer_anyway' => 0,
+				'uncalculated' => 0,
 			);
 		}
 
@@ -387,36 +399,52 @@ class Actors {
 
 		// $placeholders is a fixed-count list of %s tokens (not user input);
 		// every actual value is still passed through prepare() below.
+		//
+		// COUNT( DISTINCT CASE ... ) rather than three queries: an actor tagged
+		// with two of the bucket's terms joins twice, so every count here has to
+		// be DISTINCT on p.ID or a cis-woman who is also tagged cisgender would
+		// be counted as two people.
 		// phpcs:disable
-		$actor_ids = $wpdb->get_col(
+		$counts = $wpdb->get_row(
 			$wpdb->prepare(
-				"SELECT DISTINCT p.ID
+				"SELECT
+						COUNT( DISTINCT p.ID ) AS tagged_total,
+						COUNT( DISTINCT CASE WHEN q.meta_value IS NOT NULL AND q.meta_value NOT IN ( '', '0' ) THEN p.ID END ) AS queer_anyway,
+						COUNT( DISTINCT CASE WHEN q.post_id IS NULL THEN p.ID END ) AS uncalculated
 					FROM {$wpdb->posts} p
 					INNER JOIN {$wpdb->term_relationships} tr ON tr.object_id = p.ID
 					INNER JOIN {$wpdb->term_taxonomy} tt ON tr.term_taxonomy_id = tt.term_taxonomy_id AND tt.taxonomy = %s
 					INNER JOIN {$wpdb->terms} t ON tt.term_id = t.term_id AND t.slug IN ($placeholders)
+					LEFT JOIN {$wpdb->postmeta} q ON q.post_id = p.ID AND q.meta_key = 'lezactors_queer'
 					WHERE p.post_type = 'post_type_actors'
 					AND p.post_status = 'publish'",
 				array_merge( array( $taxonomy ), $term_slugs )
-			)
+			),
+			ARRAY_A
 		);
 		// phpcs:enable
 
-		$tagged_total = is_array( $actor_ids ) ? count( $actor_ids ) : 0;
-		$queer_anyway = 0;
+		if ( ! is_array( $counts ) ) {
+			return array(
+				'tagged_total' => 0,
+				'queer_anyway' => 0,
+				'uncalculated' => 0,
+			);
+		}
 
-		if ( $tagged_total > 0 ) {
-			$is_actor_queer = new Is_Actor_Queer();
-			foreach ( $actor_ids as $actor_id ) {
-				if ( $is_actor_queer->make( (int) $actor_id ) ) {
-					++$queer_anyway;
-				}
-			}
+		$uncalculated = (int) $counts['uncalculated'];
+
+		if ( $uncalculated > 0 ) {
+			lwtv_plugin()->debug_log(
+				'statistics',
+				'count_queer_among_terms(' . $taxonomy . '): ' . $uncalculated . ' tagged actor(s) have no lezactors_queer row, so queer_anyway is understated. Run: wp lwtv calc actors'
+			);
 		}
 
 		return array(
-			'tagged_total' => $tagged_total,
-			'queer_anyway' => $queer_anyway,
+			'tagged_total' => (int) $counts['tagged_total'],
+			'queer_anyway' => (int) $counts['queer_anyway'],
+			'uncalculated' => $uncalculated,
 		);
 	}
 
