@@ -84,7 +84,9 @@
   "lint-staged": {
     "*.php": "composer lint",
     "plugins/lwtv-plugin/php/blocks/src/**/*.js": "wp-scripts lint-js",
-    "style.scss": "wp-scripts lint-style"
+    "inc/js/**/*.js": "wp-scripts lint-js",
+    "plugins/lwtv-plugin/assets/js/**/*.js": "wp-scripts lint-js",
+    "**/*.scss": "wp-scripts lint-style"
   },
   "browserslist": [
     "last 2 versions",
