@@ -8,6 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+use LWTV\Rest_API\Actor_Name_Check;
 use LWTV\Rest_API\BYQ;
 use LWTV\Rest_API\Export_JSON;
 use LWTV\Rest_API\IMDb_JSON;
@@ -25,6 +26,7 @@ class Rest_API implements Component, Templater {
 	 * Init
 	 */
 	public function init(): void {
+		new Actor_Name_Check();
 		new BYQ();
 		new Export_JSON();
 		new IMDb_JSON();

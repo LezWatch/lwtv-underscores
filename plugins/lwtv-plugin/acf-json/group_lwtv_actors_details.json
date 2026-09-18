@@ -644,6 +644,38 @@
             "rows": 6,
             "placeholder": "",
             "new_lines": ""
+        },
+        {
+            "key": "field_lwtv_lezactors_dupe_override",
+            "label": "Not a duplicate of",
+            "name": "lezactors_dupe_override",
+            "aria-label": "",
+            "type": "relationship",
+            "instructions": "Actors who share this person's name but are NOT this person. Listing one here stops the duplicate check asking about that pair again, in both directions. Leave this empty unless you have actually checked -- it is how we tell two Sarah Joneses apart from one Sarah Jones entered twice.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "post_type": [
+                "post_type_actors"
+            ],
+            "post_status": "",
+            "taxonomy": "",
+            "filters": [
+                "search"
+            ],
+            "return_format": "id",
+            "min": "",
+            "max": "",
+            "allow_in_bindings": 0,
+            "elements": "",
+            "bidirectional": 1,
+            "bidirectional_target": [
+                "field_lwtv_lezactors_dupe_override"
+            ]
         }
     ],
     "location": [
@@ -675,5 +707,5 @@
     "display_title": "",
     "allow_ai_access": false,
     "ai_description": "",
-    "modified": 1789512346
+    "modified": 1789667400
 }

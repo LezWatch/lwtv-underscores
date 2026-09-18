@@ -110,6 +110,94 @@ class DuplicateRulesTest extends TestCase {
 	}
 
 	/*
+	 * is_acknowledged() — the pair-scoped array form.
+	 *
+	 * Actors moved to a list of "not a duplicate of" IDs because names collide
+	 * far more often than slugs do. A blanket flag on a common name would hide
+	 * every future duplicate of it, which is the opposite of what an editor
+	 * means when they confirm that two particular people are different.
+	 */
+
+	public function test_an_id_list_acknowledges_only_the_pair_it_names(): void {
+		$this->assertTrue( Duplicate_Rules::is_acknowledged( array( 10, 42 ), 10 ) );
+		$this->assertFalse( Duplicate_Rules::is_acknowledged( array( 10, 42 ), 77 ) );
+	}
+
+	public function test_an_id_list_stored_as_strings_still_matches(): void {
+		// ACF relationship fields hand back strings more often than not.
+		$this->assertTrue( Duplicate_Rules::is_acknowledged( array( '10' ), 10 ) );
+	}
+
+	public function test_an_empty_id_list_acknowledges_nothing(): void {
+		$this->assertFalse( Duplicate_Rules::is_acknowledged( array(), 10 ) );
+		$this->assertFalse( Duplicate_Rules::is_acknowledged( array(), 0 ) );
+	}
+
+	public function test_an_id_list_without_a_pair_to_check_acknowledges_nothing(): void {
+		// Zero is not a post, so it must never match a stored ID.
+		$this->assertFalse( Duplicate_Rules::is_acknowledged( array( 10 ), 0 ) );
+	}
+
+	public function test_the_scalar_flag_still_acknowledges_everything(): void {
+		// Shows never moved off the flag, and must keep working untouched.
+		$this->assertTrue( Duplicate_Rules::is_acknowledged( '1', 999 ) );
+	}
+
+	public function test_evaluate_honours_an_id_list_naming_the_original(): void {
+		$candidate = $this->candidate(
+			array(
+				'post_type' => 'post_type_actors',
+				'override'  => array( 10 ),
+			)
+		);
+
+		$this->assertSame( array(), Duplicate_Rules::evaluate( $candidate ) );
+	}
+
+	public function test_evaluate_still_reports_a_pair_the_id_list_does_not_name(): void {
+		// Acknowledging one same-named actor must not silence a different one.
+		$candidate = $this->candidate(
+			array(
+				'post_type' => 'post_type_actors',
+				'override'  => array( 4821 ),
+			)
+		);
+
+		$this->assertSame( array( 'actor-is-duplicate' ), $this->types( Duplicate_Rules::evaluate( $candidate ) ) );
+	}
+
+	/*
+	 * The name-key path. evaluate() never read the slug, so a pair that no suffix
+	 * scan could have found is judged on exactly the same evidence.
+	 */
+
+	public function test_a_pair_with_no_slug_suffix_is_still_judged(): void {
+		// The Cynthia Hicks shape: two unsuffixed slugs, one IMDb ID.
+		$candidate = $this->candidate(
+			array(
+				'post_id'   => 86754,
+				'post_type' => 'post_type_actors',
+				'slug'      => 'cynthia-jimenez-hicks',
+				'title'     => 'Cynthia Jimenez-Hicks',
+				'imdb'      => 'nm8826582',
+			)
+		);
+
+		$candidate['original'] = array(
+			'id'    => 14186,
+			'slug'  => 'cynthia-hicks',
+			'imdb'  => 'nm8826582',
+			'title' => 'Cynthia Hicks',
+			'url'   => 'https://lezwatchtv.com/actor/cynthia-hicks/',
+		);
+
+		$findings = Duplicate_Rules::evaluate( $candidate );
+
+		$this->assertSame( array( 'actor-is-duplicate' ), $this->types( $findings ) );
+		$this->assertSame( array( 'original_id' => 14186 ), $findings[0]['context'] );
+	}
+
+	/*
 	 * evaluate()
 	 */
 
