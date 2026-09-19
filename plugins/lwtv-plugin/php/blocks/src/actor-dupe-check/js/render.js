@@ -1,4 +1,5 @@
 // Plugin Specific Imports
+import { __ } from '@wordpress/i18n';
 import { PluginPrePublishPanel } from '@wordpress/editor';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useState, useEffect, useMemo, useRef } from '@wordpress/element';
