@@ -2,6 +2,8 @@
 /**
  * Is a numerically-suffixed post actually a duplicate of the one without it?
  *
+ * In addition, is an actor a duplicate of another based on name parts.
+ *
  * The data contract, as produced by Collect\Duplicate_Collector:
  *
  *     array(
@@ -9,7 +11,7 @@
  *         'post_type' => string,
  *         'slug'      => string,
  *         'imdb'      => string,
- *         'override'  => string,   // raw meta: '1', '0', or ''
+ *         'override'  => string|array,  // see is_acknowledged()
  *         'original'  => array{}|array{id: int, slug: string, imdb: string},
  *     )
  *
@@ -55,10 +57,29 @@ class Duplicate_Rules {
 	/**
 	 * Has an editor confirmed this is not a duplicate?
 	 *
-	 * @param  string $override Raw meta value.
+	 * Two shapes, because the two post types store this differently.
+	 *
+	 * An array is the pair-scoped form that lezactors_dupe_override now holds: a
+	 * list of actor IDs an editor has confirmed are different people. It has to
+	 * be per pair -- saying this Sarah Jones is not that Sarah Jones must not
+	 * also silence a third Sarah Jones added next year, which a single flag
+	 * would. Names collide far more often than slugs do, so a blanket exemption
+	 * on a common name would hide real duplicates indefinitely.
+	 *
+	 * A scalar is the original flag, still what lezshows_dupe_override holds,
+	 * and still means "not a duplicate of anything".
+	 *
+	 * @param  mixed $override Raw meta value: an array of IDs, or a flag.
+	 * @param  int   $against  The post this candidate is being compared to.
 	 * @return bool
 	 */
-	public static function is_acknowledged( string $override ): bool {
+	public static function is_acknowledged( $override, int $against = 0 ): bool {
+		if ( is_array( $override ) ) {
+			return in_array( $against, array_map( 'intval', $override ), true );
+		}
+
+		$override = (string) $override;
+
 		return '' !== $override && '0' !== $override;
 	}
 
@@ -76,13 +97,17 @@ class Duplicate_Rules {
 			return array();
 		}
 
-		if ( self::is_acknowledged( (string) ( $candidate['override'] ?? '' ) ) ) {
-			return array();
-		}
+		$original_id = (int) ( $original['id'] ?? 0 );
 
 		// A post cannot duplicate itself. Some titles really are numbers — 90210 —
 		// and stripping the "suffix" from those finds the post you started with.
-		if ( (int) ( $original['id'] ?? 0 ) === $post_id ) {
+		if ( $original_id === $post_id ) {
+			return array();
+		}
+
+		// Checked after the pairing is known, because an acknowledgement is now
+		// about a specific pair rather than the post as a whole.
+		if ( self::is_acknowledged( $candidate['override'] ?? '', $original_id ) ) {
 			return array();
 		}
 
@@ -109,7 +134,7 @@ class Duplicate_Rules {
 				$post_type,
 				$issue_type,
 				self::message( $candidate, $original ),
-				array( 'original_id' => (int) $original['id'] )
+				array( 'original_id' => $original_id )
 			),
 		);
 	}

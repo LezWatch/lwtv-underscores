@@ -24,8 +24,12 @@ class Dupes {
 	/**
 	 * Find Duplicates
 	 *
-	 * Find all posts whose slug ends in a number, and work out which of them are
-	 * really duplicates of the post without it.
+	 * Two candidate sources, because a duplicate only inherits a `-2` slug when
+	 * its title was typed identically the second time. Posts whose slug ends in a
+	 * number are paired with the post without it; actors are additionally paired
+	 * on a matching name key, which is what finds the same person entered under
+	 * two different spellings. Either way a pair is only called a duplicate when
+	 * both posts carry the same IMDb ID.
 	 *
 	 * @param array $items - array of Posts
 	 */
@@ -36,15 +40,46 @@ class Dupes {
 		// against the baseline rather than diffed against it. See tag_only().
 		$is_recheck = ! empty( $items ) && is_array( $items );
 
+		$slug_ids = $collector->candidate_ids();
+		$pairs    = $collector->name_key_pairs();
+
 		if ( $is_recheck ) {
-			$items_to_check = wp_list_pluck( $items, 'id' );
-		} else {
-			$items_to_check = $collector->candidate_ids();
+			$wanted = array_map( 'intval', wp_list_pluck( $items, 'id' ) );
+
+			// Narrow both sources rather than only the slug one. A finding that
+			// came from a name-key pair has no suffix to rediscover, so collecting
+			// it by ID alone would find no original and clear it as fixed.
+			$slug_ids = $wanted;
+			$pairs    = array_values(
+				array_filter(
+					$pairs,
+					static function ( array $pair ) use ( $wanted ): bool {
+						return in_array( (int) $pair['post_id'], $wanted, true );
+					}
+				)
+			);
 		}
 
-		$findings = array();
+		$candidates = array_merge(
+			$collector->collect( $slug_ids ),
+			$collector->collect_pairs( $pairs )
+		);
 
-		foreach ( $collector->collect( $items_to_check ) as $candidate ) {
+		$findings = array();
+		$seen     = array();
+
+		foreach ( $candidates as $candidate ) {
+			// One pair can arrive from both sources -- a suffixed slug whose names
+			// also key alike, which is what the Desirée Rodriguez pair looks like --
+			// and evaluating it twice would put the same row in the report twice.
+			$pair_key = (int) ( $candidate['post_id'] ?? 0 ) . ':' . (int) ( $candidate['original']['id'] ?? 0 );
+
+			if ( isset( $seen[ $pair_key ] ) ) {
+				continue;
+			}
+
+			$seen[ $pair_key ] = true;
+
 			$findings = array_merge( $findings, Duplicate_Rules::evaluate( $candidate ) );
 		}
 
@@ -91,8 +126,27 @@ class Dupes {
 	 * @return bool|string
 	 */
 	public function compare_duplicates( $post_id ) {
-		$candidate = ( new Duplicate_Collector() )->collect_one( (int) $post_id );
-		$findings  = Duplicate_Rules::evaluate( $candidate );
+		$post_id   = (int) $post_id;
+		$collector = new Duplicate_Collector();
+		$findings  = Duplicate_Rules::evaluate( $collector->collect_one( $post_id ) );
+
+		// Nothing from the slug. Try the name-key pairing, so this answers the
+		// same question find_duplicates() does rather than a narrower one.
+		if ( empty( $findings ) ) {
+			foreach ( $collector->name_key_pairs() as $pair ) {
+				if ( (int) $pair['post_id'] !== $post_id ) {
+					continue;
+				}
+
+				$findings = Duplicate_Rules::evaluate(
+					$collector->collect_one( $post_id, (int) $pair['original_id'] )
+				);
+
+				if ( ! empty( $findings ) ) {
+					break;
+				}
+			}
+		}
 
 		if ( empty( $findings ) ) {
 			return false;

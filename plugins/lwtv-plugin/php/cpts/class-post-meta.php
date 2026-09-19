@@ -22,24 +22,29 @@ use LWTV\CPTs\TVMaze as CPT_TV_Maze;
 
 class Post_Meta {
 
+	/**
+	 * NOTE ON ACTOR PRIVACY: the fields an actor can opt out of via
+	 * 'lezactors_make_option_private' (hide_dob, hide_socials) are all
+	 * registered with 'show_in_rest' => false. The core wp/v2 meta endpoint
+	 * has no per-post read gate -- registered meta is readable by anyone who
+	 * can read the post, and the actor CPT is public -- so a public field
+	 * there bypasses the opt-out entirely. Anything needing this data
+	 * publicly goes through Rest_API\Export_JSON, which honors the privacy
+	 * settings. Do not make these public without replacing that gate.
+	 *
+	 * This is NOT the only REST surface for these values. An ACF field
+	 * group with 'show_in_rest' enabled publishes its fields under the
+	 * response's 'acf' key on its own, ignoring what is set here -- so
+	 * acf-json/group_lwtv_actors_details.json has to stay at 0 for the
+	 * above to mean anything. Check both when adding an actor field.
+	 */
 	const ALL_POST_META = array(
 		// Meta Name                    => Post Type
-		// Actors
-		//
-		// NOTE ON ACTOR PRIVACY: the fields an actor can opt out of via
-		// 'lezactors_make_option_private' (hide_dob, hide_socials) are all
-		// registered with 'show_in_rest' => false. The core wp/v2 meta endpoint
-		// has no per-post read gate -- registered meta is readable by anyone who
-		// can read the post, and the actor CPT is public -- so a public field
-		// there bypasses the opt-out entirely. Anything needing this data
-		// publicly goes through Rest_API\Export_JSON, which honors the privacy
-		// settings. Do not make these public without replacing that gate.
-		//
-		// This is NOT the only REST surface for these values. An ACF field
-		// group with 'show_in_rest' enabled publishes its fields under the
-		// response's 'acf' key on its own, ignoring what is set here -- so
-		// acf-json/group_lwtv_actors_details.json has to stay at 0 for the
-		// above to mean anything. Check both when adding an actor field.
+		// Actors - Gender/Sexuality
+		'lezactors_queer_override'      => array(
+			'post_type' => CPT_Actors::SLUG,
+		),
+		// Actors - Life Details
 		'lezactors_birth'               => array(
 			'post_type'    => CPT_Actors::SLUG,
 			'show_in_rest' => false,
@@ -47,16 +52,49 @@ class Post_Meta {
 		'lezactors_death'               => array(
 			'post_type' => CPT_Actors::SLUG,
 		),
-		'lezactors_homepage'            => array(
-			'post_type' => CPT_Actors::SLUG,
-		),
-		'lezactors_facebook'            => array(
-			'post_type'    => CPT_Actors::SLUG,
-			'show_in_rest' => false,
-		),
+		// Actors - Verified Sources
 		'lezactors_imdb'                => array(
 			'post_type' => CPT_Actors::SLUG,
 		),
+		'lezactors_wikipedia'           => array(
+			'post_type' => CPT_Actors::SLUG,
+		),
+		'lezactors_homepage'            => array(
+			'post_type' => CPT_Actors::SLUG,
+		),
+		'lezactors_wikidata_ignore'     => array(
+			'post_type' => CPT_Actors::SLUG,
+		),
+		'lezactors_wikidata_qid'        => array(
+			'post_type' => CPT_Actors::SLUG,
+		),
+		'lezactors_saved_wikidata'      => array(
+			'post_type'    => CPT_Actors::SLUG,
+			'type'         => 'object',
+			'items_type'   => 'string',
+			'show_in_rest' => false,
+		),
+		'lezactors_wikidata_qid_source' => array(
+			'post_type'    => CPT_Actors::SLUG,
+			'show_in_rest' => false,
+		),
+		'lezactors_wikidata_checked'    => array(
+			'post_type'         => CPT_Actors::SLUG,
+			'type'              => 'integer',
+			'show_in_rest'      => false,
+			'sanitize_callback' => 'absint',
+		),
+		'lezactors_tmdb_id'             => array(
+			'post_type'         => CPT_Actors::SLUG,
+			'sanitize_callback' => array( self::class, 'sanitize_numeric_id' ),
+		),
+		'lezactors_tmdb_checked'        => array(
+			'post_type'         => CPT_Actors::SLUG,
+			'type'              => 'integer',
+			'show_in_rest'      => false,
+			'sanitize_callback' => 'absint',
+		),
+		// Actors - Social
 		'lezactors_instagram'           => array(
 			'post_type'    => CPT_Actors::SLUG,
 			'show_in_rest' => false,
@@ -69,22 +107,6 @@ class Post_Meta {
 			'post_type'    => CPT_Actors::SLUG,
 			'show_in_rest' => false,
 		),
-		'lezactors_tmdb_id'             => array(
-			'post_type'         => CPT_Actors::SLUG,
-			'sanitize_callback' => array( self::class, 'sanitize_numeric_id' ),
-		),
-		// Timestamp of the last attempted TMDB lookup. Distinguishes "TMDB has
-		// no match" from "never asked". Written by `wp lwtv tmdb backfill`.
-		'lezactors_tmdb_checked'        => array(
-			'post_type'         => CPT_Actors::SLUG,
-			'type'              => 'integer',
-			'show_in_rest'      => false,
-			'sanitize_callback' => 'absint',
-		),
-		// The IMDb ID TMDB holds for this actor, stored ONLY when it disagrees
-		// with ours. Absent means no disagreement recorded -- which covers both
-		// verified-clean and never-checked, deliberately indistinguishable so
-		// nothing reads absence as a clean bill of health.
 		'lezactors_imdb_canonical'      => array(
 			'post_type'    => CPT_Actors::SLUG,
 			'show_in_rest' => false,
@@ -97,41 +119,7 @@ class Post_Meta {
 			'post_type'    => CPT_Actors::SLUG,
 			'show_in_rest' => false,
 		),
-		'lezactors_wikidata_qid'        => array(
-			'post_type' => CPT_Actors::SLUG,
-		),
-		// How lezactors_wikidata_qid was resolved: 'manual', 'imdb', 'name', or
-		// 'legacy'. A QID is not self-describing -- a fuzzy name match and a
-		// hand-checked ID look identical once stored -- and only 'manual' and
-		// 'imdb' are trusted enough for an unattended process to act on. Absent
-		// reads as 'legacy', which is untrusted on purpose. See Wikidata\Build\Qid_Trust.
-		'lezactors_wikidata_qid_source' => array(
-			'post_type'    => CPT_Actors::SLUG,
-			'show_in_rest' => false,
-		),
-		// Timestamp of the last *attempted* QID lookup. Distinguishes "WikiData
-		// has no item for this person" from "never asked". Written by
-		// `wp lwtv wikidata backfill` and the QID scheduler task.
-		'lezactors_wikidata_checked'    => array(
-			'post_type'         => CPT_Actors::SLUG,
-			'type'              => 'integer',
-			'show_in_rest'      => false,
-			'sanitize_callback' => 'absint',
-		),
-		// Write-lock on lezactors_wikidata_qid. Set it and Identity::store_qid()
-		// refuses, so the field is editable by hand only and no backfill can
-		// overwrite what an editor put there.
-		//
-		// 'lezactors_wikidata_qid_manual' was registered here as a second,
-		// editor-only QID field. Removed: two QIDs meant two things to keep in
-		// step, and the distinction it carried -- who set this value -- is what
-		// lezactors_wikidata_qid_source records. Never deployed, so no rows exist.
-		'lezactors_wikidata_ignore'     => array(
-			'post_type' => CPT_Actors::SLUG,
-		),
-		'lezactors_wikipedia'           => array(
-			'post_type' => CPT_Actors::SLUG,
-		),
+		// Actors - Automated
 		'lezactors_char_count'          => array(
 			'post_type' => CPT_Actors::SLUG,
 		),
@@ -146,14 +134,18 @@ class Post_Meta {
 			'post_type'    => CPT_Actors::SLUG,
 			'show_in_rest' => false,
 		),
-		'lezactors_saved_wikidata'      => array(
+		'lezactors_name_key'            => array(
 			'post_type'    => CPT_Actors::SLUG,
-			'type'         => 'object',
-			'items_type'   => 'string',
+			'show_in_rest' => false,
+			'single'       => false,
+		),
+		'lezactors_name_key_ends'       => array(
+			'post_type'    => CPT_Actors::SLUG,
 			'show_in_rest' => false,
 		),
-		'lezactors_queer_override'      => array(
-			'post_type' => CPT_Actors::SLUG,
+		'lezactors_dupe_override'       => array(
+			'post_type'    => CPT_Actors::SLUG,
+			'show_in_rest' => false,
 		),
 		// Characters
 		'lezchars_death_year'           => array(
@@ -177,10 +169,6 @@ class Post_Meta {
 			'post_type'    => CPT_Shows::SLUG,
 			'show_in_rest' => false,
 		),
-		// 'lezshows_affiliate' was registered here as deprecated. Removed once no
-		// post carried it (verified 2026-08-21) and the migration that read it
-		// was deleted. It had no 'show_in_rest' key, so it defaulted to true and
-		// was shipping an always-empty field in the shows REST schema.
 		'lezshows_char_count'           => array(
 			'post_type' => CPT_Shows::SLUG,
 		),
@@ -202,8 +190,6 @@ class Post_Meta {
 			'post_type'         => CPT_Shows::SLUG,
 			'sanitize_callback' => array( self::class, 'sanitize_numeric_id' ),
 		),
-		// Timestamp of the last attempted TMDB lookup. Distinguishes "TMDB has
-		// no match" from "never asked". Written by `wp lwtv tmdb backfill`.
 		'lezshows_tmdb_checked'         => array(
 			'post_type'         => CPT_Shows::SLUG,
 			'type'              => 'integer',
@@ -229,9 +215,6 @@ class Post_Meta {
 			'show_in_rest'      => false,
 			'sanitize_callback' => 'absint',
 		),
-		// The IMDb ID TVMaze holds for this show, stored ONLY when it disagrees
-		// with ours. See lezactors_imdb_canonical for why absence is deliberately
-		// ambiguous.
 		'lezshows_imdb_canonical'       => array(
 			'post_type'    => CPT_Shows::SLUG,
 			'show_in_rest' => false,
@@ -279,9 +262,6 @@ class Post_Meta {
 		'lezshows_the_score'            => array(
 			'post_type' => CPT_Shows::SLUG,
 		),
-		// The same score before the 0-100 clamp. Kept so shows at the ceiling stay
-		// distinguishable from each other; not for display, which uses the clamped
-		// value above. show_score() alone can reach 115, so this can exceed 100.
 		'lezshows_the_score_uncapped'   => array(
 			'post_type'    => CPT_Shows::SLUG,
 			'show_in_rest' => false,
@@ -394,6 +374,10 @@ class Post_Meta {
 				}
 
 				$arguments['sanitize_callback'] = $meta_data['sanitize_callback'] ?? null;
+
+				// register_post_meta() already defaults this to false, so passing
+				// it through changes nothing for the keys that do not set it.
+				$arguments['single'] = $meta_data['single'] ?? false;
 
 				register_post_meta( $one_post_type, $meta_name, $arguments );
 			}

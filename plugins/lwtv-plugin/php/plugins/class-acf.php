@@ -11,11 +11,29 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+use LWTV\CPTs\Actors;
+use LWTV\CPTs\Shows;
 use LWTV\Features\Languages;
+use LWTV\Queeries\Get_Post_By_Imdb;
+use LWTV\_Helpers\Imdb_Canonical;
 use LWTV\Wikidata\Build\Qid_Trust;
 use LWTV\Wikidata\Identity;
 
 class ACF {
+
+	/**
+	 * IMDb ID fields that must be unique, and what they belong to.
+	 *
+	 * An IMDb ID is an identity claim, not a resemblance: two actors holding one
+	 * nm ID are one person. Unlike the name check -- which warns, because people
+	 * genuinely share names -- a collision here is refused outright.
+	 *
+	 * @var array<string, string>
+	 */
+	const UNIQUE_IMDB_FIELDS = array(
+		'lezactors_imdb' => Actors::SLUG,
+		'lezshows_imdb'  => Shows::SLUG,
+	);
 
 	/**
 	 * Fields visible to administrators only.
@@ -69,6 +87,11 @@ class ACF {
 		add_filter( 'acf/load_field/name=lezshows_airdates_start', array( $this, 'load_airdates_start_choices' ) );
 		add_filter( 'acf/load_field/name=lezshows_airdates_finish', array( $this, 'load_airdates_finish_choices' ) );
 		add_filter( 'acf/validate_value/name=lezshows_airdates_finish', array( $this, 'validate_airdate_finish' ), 10, 4 );
+
+		// Refuse to store an IMDb ID another post of the same type already holds.
+		foreach ( array_keys( self::UNIQUE_IMDB_FIELDS ) as $imdb_field ) {
+			add_filter( 'acf/validate_value/name=' . $imdb_field, array( $this, 'validate_unique_imdb' ), 10, 4 );
+		}
 
 		// Shows: populate Primary Genre choices from the show's assigned genres.
 		add_filter( 'acf/load_field/name=lezshows_tvgenre_primary', array( $this, 'load_genre_primary_choices' ) );
@@ -300,6 +323,73 @@ class ACF {
 		}
 
 		return $valid;
+	}
+
+	/**
+	 * Refuse an IMDb ID that another post of the same type already holds.
+	 *
+	 * This is the one hard stop in the duplicate-detection work. The name check
+	 * warns and can be waved past, because two people really do share a name and
+	 * a token-sorted key cannot tell them apart. An IMDb ID is different: it is
+	 * an identity claim, so a collision is not a resemblance to judge but a
+	 * contradiction to fix.
+	 *
+	 * An unchanged value is always allowed through, whatever it collides with.
+	 * The job here is to stop a new collision being created, not to make an
+	 * existing duplicate pair unsavable -- an editor opening one of those to fix
+	 * it must be able to save their work. `wp lwtv dupes` is what reports the
+	 * ones already in there.
+	 *
+	 * @param bool|string $valid      True if valid, or an error message string.
+	 * @param mixed       $value      The IMDb value being saved.
+	 * @param array       $field      ACF field definition.
+	 * @param string      $input_name HTML input name.
+	 * @return bool|string
+	 */
+	public function validate_unique_imdb( $valid, $value, array $field, string $input_name ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
+		if ( ! $valid || empty( $value ) ) {
+			return $valid;
+		}
+
+		$field_name = (string) ( $field['name'] ?? '' );
+		$post_type  = self::UNIQUE_IMDB_FIELDS[ $field_name ] ?? '';
+
+		if ( '' === $post_type ) {
+			return $valid;
+		}
+
+		$wanted = Imdb_Canonical::normalise( $value );
+
+		// Nothing usable to compare. Malformed IDs are the IMDb debugger check's
+		// business, and reporting them here too would put two errors on one fault.
+		if ( '' === $wanted ) {
+			return $valid;
+		}
+
+		$post_id = (int) acf_get_form_data( 'post_id' );
+
+		if ( ! $post_id ) {
+			$post_id = (int) get_the_ID();
+		}
+
+		// Unchanged from what is already stored: let it through.
+		if ( $post_id && Imdb_Canonical::normalise( get_post_meta( $post_id, $field_name, true ) ) === $wanted ) {
+			return $valid;
+		}
+
+		$owner_id = ( new Get_Post_By_Imdb() )->make( $wanted, $post_type, $field_name, $post_id );
+
+		if ( ! $owner_id ) {
+			return $valid;
+		}
+
+		return sprintf(
+			/* translators: 1: IMDb ID, 2: title of the post already using it, 3: that post's ID. */
+			__( 'IMDb ID %1$s is already used by "%2$s" (post %3$d). If this is a different person or show, check the ID; if it is the same one, edit that post instead of making a second.', 'lwtv' ),
+			$wanted,
+			get_the_title( $owner_id ),
+			$owner_id
+		);
 	}
 
 	/**

@@ -82,9 +82,11 @@
     }
   },
   "lint-staged": {
-    "*.php": "npm run lint:php",
-    "plugins/lwtv-plugin/php/blocks/src/**/*.js": "npm run lint:js",
-    "style.scss": "npm run lint:css"
+    "*.php": "composer lint",
+    "plugins/lwtv-plugin/php/blocks/src/**/*.js": "wp-scripts lint-js",
+    "inc/js/**/*.js": "wp-scripts lint-js",
+    "plugins/lwtv-plugin/assets/js/**/*.js": "wp-scripts lint-js",
+    "**/*.scss": "wp-scripts lint-style"
   },
   "browserslist": [
     "last 2 versions",

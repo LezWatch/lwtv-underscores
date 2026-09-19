@@ -14,6 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 use LWTV\CPTs\Actors\{ Custom_Columns, Privacy };
+use LWTV\_Helpers\Name_Key;
 
 /**
  * class LWTV_CPT_Actors
@@ -47,6 +48,20 @@ class Actors {
 	 * Taxonomies that use Select2
 	 */
 	const SELECT2_TAXONOMIES = array();
+
+	/**
+	 * Comparable name keys, one row per reading of the name.
+	 *
+	 * @var string
+	 */
+	const NAME_KEY_META = 'lezactors_name_key';
+
+	/**
+	 * The looser first-and-last-part name key. Single row.
+	 *
+	 * @var string
+	 */
+	const NAME_ENDS_META = 'lezactors_name_key_ends';
 
 	/**
 	 * Constructor
@@ -261,8 +276,57 @@ class Actors {
 		// Smart statistics cache invalidation
 		lwtv_plugin()->invalidate_statistics_cache( 'post_type_actors', $post_id );
 
+		// Keep the comparable name keys in step with the title. Done inline rather
+		// than queued: it is string work and at most three meta writes, and the
+		// duplicate warning on the next Add Actor screen reads these directly, so
+		// an actor added a minute ago has to already be findable.
+		$this->save_name_keys( $post_id );
+
 		// re-hook this function
 		add_action( 'save_post_post_type_actors', array( $this, 'save_post_meta' ) );
+	}
+
+	/**
+	 * Store the comparable forms of this actor's name.
+	 *
+	 * Reads the raw title, not get_the_title(): wptexturize would hand back curly
+	 * apostrophes and en dashes that are not what the editor typed, and the stored
+	 * key has to match what Name_Key makes of that same text when someone types it
+	 * again later. Wikidata\Identity::search_title() avoids the same trap.
+	 *
+	 * Writes nothing when the keys have not moved, so saving an actor whose name
+	 * did not change touches no rows.
+	 *
+	 * @param  int $post_id Actor post ID.
+	 * @return void
+	 */
+	public function save_name_keys( $post_id ): void {
+		$title = (string) get_post_field( 'post_title', $post_id, 'raw' );
+
+		$variants = Name_Key::variants( $title );
+		$ends     = Name_Key::ends( $title );
+
+		// $single false on purpose: this key holds a row per reading of the name.
+		if ( get_post_meta( $post_id, self::NAME_KEY_META, false ) !== $variants ) {
+			delete_post_meta( $post_id, self::NAME_KEY_META );
+
+			foreach ( $variants as $variant ) {
+				add_post_meta( $post_id, self::NAME_KEY_META, $variant );
+			}
+		}
+
+		$ends_key = $ends[0] ?? '';
+
+		if ( (string) get_post_meta( $post_id, self::NAME_ENDS_META, true ) === $ends_key ) {
+			return;
+		}
+
+		if ( '' === $ends_key ) {
+			delete_post_meta( $post_id, self::NAME_ENDS_META );
+			return;
+		}
+
+		update_post_meta( $post_id, self::NAME_ENDS_META, $ends_key );
 	}
 
 	/*
