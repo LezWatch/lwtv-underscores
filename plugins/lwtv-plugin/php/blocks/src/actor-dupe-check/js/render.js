@@ -17,11 +17,11 @@ const MIN_LENGTH = 3;
  * @param {Array} matches Candidates from the REST route.
  * @return {string} Signature.
  */
-const signatureOf = (matches) =>
+const signatureOf = ( matches ) =>
 	matches
-		.map((match) => `${match.id}:${match.tier}`)
+		.map( ( match ) => `${ match.id }:${ match.tier }` )
 		.sort()
-		.join('|');
+		.join( '|' );
 
 /**
  * Wording for one candidate.
@@ -35,42 +35,43 @@ const signatureOf = (matches) =>
  * @param {Object} candidate One candidate.
  * @return {string} Label.
  */
-const describe = (candidate) => {
+const describe = ( candidate ) => {
 	const status =
-		candidate.status === 'publish' ? '' : ` (${candidate.status})`;
+		candidate.status === 'publish' ? '' : ` (${ candidate.status })`;
 
 	return candidate.tier === 'full'
-		? `${candidate.title}${status}`
-		: `${candidate.title}${status} — similar name`;
+		? `${ candidate.title }${ status }`
+		: `${ candidate.title }${ status } — similar name`;
 };
 
 export default function Render() {
-	const postType = useSelect((select) =>
-		select('core/editor').getCurrentPostType()
+	const postType = useSelect( ( select ) =>
+		select( 'core/editor' ).getCurrentPostType()
 	);
 
-	const postId = useSelect((select) =>
-		select('core/editor').getCurrentPostId()
+	const postId = useSelect( ( select ) =>
+		select( 'core/editor' ).getCurrentPostId()
 	);
 
 	const editedTitle = useSelect(
-		(select) => select('core/editor').getEditedPostAttribute('title') || ''
+		( select ) =>
+			select( 'core/editor' ).getEditedPostAttribute( 'title' ) || ''
 	);
 
 	const savedTitle = useSelect(
-		(select) => select('core/editor').getCurrentPost().title || ''
+		( select ) => select( 'core/editor' ).getCurrentPost().title || ''
 	);
 
-	const { createWarningNotice, removeNotice } = useDispatch('core/notices');
-	const { lockPostSaving, unlockPostSaving } = useDispatch('core/editor');
+	const { createWarningNotice, removeNotice } = useDispatch( 'core/notices' );
+	const { lockPostSaving, unlockPostSaving } = useDispatch( 'core/editor' );
 
 	// Matches are kept with the name they belong to, so a result never applies
 	// to a name the editor has since typed past.
-	const [result, setResult] = useState({ name: '', matches: [] });
-	const [isChecking, setIsChecking] = useState(false);
-	const [acknowledged, setAcknowledged] = useState(false);
+	const [ result, setResult ] = useState( { name: '', matches: [] } );
+	const [ isChecking, setIsChecking ] = useState( false );
+	const [ acknowledged, setAcknowledged ] = useState( false );
 
-	const announced = useRef('');
+	const announced = useRef( '' );
 
 	const isActor = postType === 'post_type_actors';
 	const name = editedTitle.trim();
@@ -89,15 +90,15 @@ export default function Render() {
 	// Memoised so the notice effect below depends on an array that only changes
 	// when the matches themselves do, rather than on a fresh one every render.
 	const matches = useMemo(
-		() => (isCurrent ? result.matches : []),
-		[isCurrent, result.matches]
+		() => ( isCurrent ? result.matches : [] ),
+		[ isCurrent, result.matches ]
 	);
 
-	const strict = matches.filter((candidate) => candidate.tier === 'full');
+	const strict = matches.filter( ( candidate ) => candidate.tier === 'full' );
 
 	// Computed once so the effects below can depend on a plain string rather
 	// than on an array rebuilt on every render.
-	const signature = signatureOf(matches);
+	const signature = signatureOf( matches );
 
 	/*
 	 * A strict match is the only thing here worth stopping a publish over. The
@@ -105,78 +106,78 @@ export default function Render() {
 	 * against four at the loose tier of which three were different people --
 	 * so loose warns and strict blocks, and never the other way round.
 	 */
-	const shouldLock = strict.length > 0 && !acknowledged;
+	const shouldLock = strict.length > 0 && ! acknowledged;
 
 	// Fetch.
-	useEffect(() => {
-		if (!shouldCheck) {
+	useEffect( () => {
+		if ( ! shouldCheck ) {
 			return undefined;
 		}
 
 		const controller = new AbortController();
 
-		const timer = setTimeout(() => {
-			setIsChecking(true);
+		const timer = setTimeout( () => {
+			setIsChecking( true );
 
 			const path =
-				`/lwtv/v1/actors/name-check?name=${encodeURIComponent(name)}` +
-				`&exclude=${postId ? postId : 0}`;
+				`/lwtv/v1/actors/name-check?name=${ encodeURIComponent( name ) }` +
+				`&exclude=${ postId ? postId : 0 }`;
 
 			// The editor's own apiFetch, so the request carries the REST nonce.
 			// This route is gated on the actors capability and will 401 without
 			// it -- see Rest_API\Actor_Name_Check on why it is not public.
 			window.wp
-				.apiFetch({ path, signal: controller.signal })
-				.then((data) => {
-					setResult({
+				.apiFetch( { path, signal: controller.signal } )
+				.then( ( data ) => {
+					setResult( {
 						name,
 						matches:
-							data && Array.isArray(data.matches)
+							data && Array.isArray( data.matches )
 								? data.matches
 								: [],
-					});
-					setIsChecking(false);
-				})
-				.catch((error) => {
+					} );
+					setIsChecking( false );
+				} )
+				.catch( ( error ) => {
 					// An aborted request is the expected outcome of typing
 					// another character, not a failure worth reporting.
-					if (error && error.name === 'AbortError') {
+					if ( error && error.name === 'AbortError' ) {
 						return;
 					}
 
 					// Fail open. A check we could not run must never be the
 					// reason somebody cannot publish.
-					setResult({ name, matches: [] });
-					setIsChecking(false);
-				});
-		}, DEBOUNCE_MS);
+					setResult( { name, matches: [] } );
+					setIsChecking( false );
+				} );
+		}, DEBOUNCE_MS );
 
 		return () => {
-			clearTimeout(timer);
+			clearTimeout( timer );
 			controller.abort();
 		};
-	}, [shouldCheck, name, postId]);
+	}, [ shouldCheck, name, postId ] );
 
 	// A different set of matches is a new question, so it has to be asked again.
-	useEffect(() => {
-		setAcknowledged(false);
-	}, [signature]);
+	useEffect( () => {
+		setAcknowledged( false );
+	}, [ signature ] );
 
 	/*
 	 * The lock. Keyed by name so it never fights another plugin's lock, and
 	 * released in cleanup so no code path can leave the Publish button dead.
 	 */
-	useEffect(() => {
-		if (shouldLock) {
-			lockPostSaving(LOCK_KEY);
+	useEffect( () => {
+		if ( shouldLock ) {
+			lockPostSaving( LOCK_KEY );
 		} else {
-			unlockPostSaving(LOCK_KEY);
+			unlockPostSaving( LOCK_KEY );
 		}
 
 		return () => {
-			unlockPostSaving(LOCK_KEY);
+			unlockPostSaving( LOCK_KEY );
 		};
-	}, [shouldLock, lockPostSaving, unlockPostSaving]);
+	}, [ shouldLock, lockPostSaving, unlockPostSaving ] );
 
 	/*
 	 * The notice, which is also where the unlock lives.
@@ -186,48 +187,48 @@ export default function Render() {
 	 * on, and a locked Publish button with no visible way to clear it would be
 	 * indistinguishable from a broken editor.
 	 */
-	useEffect(() => {
-		const announcement = `${signature}|${acknowledged}`;
+	useEffect( () => {
+		const announcement = `${ signature }|${ acknowledged }`;
 
-		if (announcement === announced.current) {
+		if ( announcement === announced.current ) {
 			return undefined;
 		}
 
 		announced.current = announcement;
-		removeNotice(NOTICE_ID);
+		removeNotice( NOTICE_ID );
 
-		if (!matches.length) {
+		if ( ! matches.length ) {
 			return undefined;
 		}
 
 		let message = 'An actor with a similar name already exists.';
 
-		if (strict.length && !acknowledged) {
+		if ( strict.length && ! acknowledged ) {
 			message =
 				'This actor may already be in the database. Publishing is paused until you confirm.';
-		} else if (strict.length) {
+		} else if ( strict.length ) {
 			message = 'This actor may already be in the database.';
 		}
 
 		const actions = matches
-			.filter((candidate) => candidate.edit_url)
-			.map((candidate) => ({
-				label: describe(candidate),
+			.filter( ( candidate ) => candidate.edit_url )
+			.map( ( candidate ) => ( {
+				label: describe( candidate ),
 				url: candidate.edit_url,
-			}));
+			} ) );
 
-		if (strict.length && !acknowledged) {
-			actions.unshift({
+		if ( strict.length && ! acknowledged ) {
+			actions.unshift( {
 				label: 'These are different people',
-				onClick: () => setAcknowledged(true),
-			});
+				onClick: () => setAcknowledged( true ),
+			} );
 		}
 
-		createWarningNotice(message, {
+		createWarningNotice( message, {
 			id: NOTICE_ID,
 			isDismissible: true,
 			actions,
-		});
+		} );
 
 		return undefined;
 	}, [
@@ -237,72 +238,72 @@ export default function Render() {
 		acknowledged,
 		createWarningNotice,
 		removeNotice,
-	]);
+	] );
 
 	// Clear up after ourselves when the editor moves on.
-	useEffect(() => {
+	useEffect( () => {
 		return () => {
-			removeNotice(NOTICE_ID);
+			removeNotice( NOTICE_ID );
 		};
-	}, [removeNotice]);
+	}, [ removeNotice ] );
 
-	if (!isActor) {
+	if ( ! isActor ) {
 		return null;
 	}
 
 	// Nothing checked yet means an untouched name, and nothing to report.
-	if (!isCurrent && !isChecking) {
+	if ( ! isCurrent && ! isChecking ) {
 		return null;
 	}
 
 	return (
 		<PluginPrePublishPanel
-			title={'Duplicate Check'}
+			title={ 'Duplicate Check' }
 			className={
 				matches.length ? 'lwtv-dupe-check-warn' : 'lwtv-dupe-check-ok'
 			}
-			initialOpen={matches.length > 0}
-			icon={'info-outline'}
+			initialOpen={ matches.length > 0 }
+			icon={ 'info-outline' }
 		>
-			{isChecking && <Spinner />}
+			{ isChecking && <Spinner /> }
 
-			{!isChecking && !matches.length && (
-				<p>{__('No existing actor matches this name.', 'lwtv')}</p>
-			)}
+			{ ! isChecking && ! matches.length && (
+				<p>{ __( 'No existing actor matches this name.', 'lwtv' ) }</p>
+			) }
 
-			{!isChecking && matches.length > 0 && (
+			{ ! isChecking && matches.length > 0 && (
 				<>
 					<p>
-						{strict.length && !acknowledged
+						{ strict.length && ! acknowledged
 							? 'These may be the same person. Confirm they are not to continue.'
-							: 'These actors may be the same person.'}
+							: 'These actors may be the same person.' }
 					</p>
 					<ul className="lwtv-dupe-check-list">
-						{matches.map((candidate) => (
-							<li key={candidate.id}>
-								{candidate.edit_url ? (
+						{ matches.map( ( candidate ) => (
+							<li key={ candidate.id }>
+								{ candidate.edit_url ? (
 									<a
-										href={candidate.edit_url}
+										href={ candidate.edit_url }
 										target="_blank"
 										rel="noreferrer"
 									>
-										{describe(candidate)}
+										{ describe( candidate ) }
 									</a>
 								) : (
-									describe(candidate)
-								)}
+									describe( candidate )
+								) }
 							</li>
-						))}
+						) ) }
 					</ul>
 
-					{strict.length > 0 && !acknowledged && (
+					{ strict.length > 0 && ! acknowledged && (
 						<Button
 							variant="secondary"
-							onClick={() => setAcknowledged(true)}
+							onClick={ () => setAcknowledged( true ) }
 						>
-							{'These are different people'}
+							{ 'These are different people' }
 						</Button>
-					)}
+					) }
 
 					<p className="lwtv-dupe-check-hint">
 						{
@@ -310,7 +311,7 @@ export default function Render() {
 						}
 					</p>
 				</>
-			)}
+			) }
 		</PluginPrePublishPanel>
 	);
 }

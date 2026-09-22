@@ -19,6 +19,6 @@ import { registerPlugin } from '@wordpress/plugins';
 import Render from './js/render';
 import './css/editor.scss';
 
-registerPlugin(metadata.textdomain, {
+registerPlugin( metadata.textdomain, {
 	render: Render,
-});
+} );

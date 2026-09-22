@@ -13,7 +13,7 @@ import { registerBlockType } from '@wordpress/blocks';
 import { Fragment } from '@wordpress/element';
 import { InnerBlocks } from '@wordpress/block-editor';
 
-registerBlockType('lez-library/private-note', {
+registerBlockType( 'lez-library/private-note', {
 	apiVersion: 3,
 	title: 'Private Note',
 	icon: Icon,
@@ -21,13 +21,13 @@ registerBlockType('lez-library/private-note', {
 	description:
 		'Private notes, only seen by logged in users. It will be stripped from all published pages.',
 
-	edit: (props) => {
+	edit: ( props ) => {
 		const { className } = props;
 		return (
 			<Fragment>
-				<div className={`${className} alert alert-warning`}>
+				<div className={ `${ className } alert alert-warning` }>
 					<InnerBlocks
-						template={[
+						template={ [
 							[
 								'core/paragraph',
 								{
@@ -35,22 +35,22 @@ registerBlockType('lez-library/private-note', {
 										'All content in this block will be invisible to non-logged-in visitors (delete this and replace it).',
 								},
 							],
-						]}
-						templateLock={false}
+						] }
+						templateLock={ false }
 					/>
 				</div>
 			</Fragment>
 		);
 	},
 
-	save: (props) => {
+	save: ( props ) => {
 		const {
 			attributes: { className },
 		} = props;
 		return (
-			<div className={`${className} alert alert-warning`}>
+			<div className={ `${ className } alert alert-warning` }>
 				<InnerBlocks.Content />
 			</div>
 		);
 	},
-});
+} );

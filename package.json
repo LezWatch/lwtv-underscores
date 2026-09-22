@@ -8,7 +8,7 @@
     "./plugins/lwtv-plugin/php/blocks"
   ],
   "engines": {
-    "node": ">=24.0.0",
+    "node": ">=24.15.0",
     "npm": ">=11.0.0"
   },
   "scripts": {
@@ -62,7 +62,7 @@
   },
   "devDependencies": {
     "@parcel/watcher": "^2",
-    "@types/node": "^22",
+    "@types/node": "^24",
     "@wordpress/scripts": "^35.0.0",
     "autoprefixer": "^10.6",
     "css-minimizer-webpack-plugin": "^8.0",
@@ -70,6 +70,7 @@
     "lint-staged": "^17",
     "npm-run-all2": "^9",
     "postcss": "^8",
+    "prettier": "npm:wp-prettier@3.9.6",
     "terser": "^5",
     "terser-webpack-plugin": "^5",
     "webpack": "^5"
@@ -77,6 +78,7 @@
   "overrides": {
     "serialize-javascript": "^7.0.4",
     "markdownlint-cli": "^0.49.1",
+    "prettier": "npm:wp-prettier@3.9.6",
     "sockjs": {
       "uuid": ">=11.1.1"
     }

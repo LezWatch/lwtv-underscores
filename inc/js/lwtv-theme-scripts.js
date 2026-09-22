@@ -1,18 +1,18 @@
 // Smooths scrolling for TOC
-jQuery(document).ready(function ($) {
-	$('a.smoothscroll.breadcrumb-item[href*="#"]:not([href="#"])').click(
+jQuery( document ).ready( function ( $ ) {
+	$( 'a.smoothscroll.breadcrumb-item[href*="#"]:not([href="#"])' ).click(
 		function () {
 			if (
-				location.pathname.replace(/^\//, '') ===
-					this.pathname.replace(/^\//, '') &&
+				location.pathname.replace( /^\//, '' ) ===
+					this.pathname.replace( /^\//, '' ) &&
 				location.hostname === this.hostname
 			) {
-				let target = $(this.hash);
+				let target = $( this.hash );
 				target = target.length
 					? target
-					: $('[name=' + this.hash.slice(1) + ']');
-				if (target.length) {
-					$('html, body').animate(
+					: $( '[name=' + this.hash.slice( 1 ) + ']' );
+				if ( target.length ) {
+					$( 'html, body' ).animate(
 						{
 							scrollTop: target.offset().top - 55,
 						},
@@ -23,11 +23,11 @@ jQuery(document).ready(function ($) {
 			}
 		}
 	);
-});
+} );
 
 // Tooltips
-jQuery(document).ready(function ($) {
-	$(function () {
-		$('[data-bs-target="tooltip"]').tooltip();
-	});
-});
+jQuery( document ).ready( function ( $ ) {
+	$( function () {
+		$( '[data-bs-target="tooltip"]' ).tooltip();
+	} );
+} );
