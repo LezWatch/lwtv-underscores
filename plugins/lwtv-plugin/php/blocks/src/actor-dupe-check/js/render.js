@@ -267,7 +267,7 @@ export default function Render() {
 			{isChecking && <Spinner />}
 
 			{!isChecking && !matches.length && (
-				<p>{__( 'No existing actor matches this name.', 'lwtv' )}</p>
+				<p>{__('No existing actor matches this name.', 'lwtv')}</p>
 			)}
 
 			{!isChecking && matches.length > 0 && (

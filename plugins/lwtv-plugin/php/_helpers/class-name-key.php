@@ -84,8 +84,14 @@ class Name_Key {
 
 		$keys = array();
 
+		$readings     = array( $base );
+		$dehyphenated = self::dehyphenate( $base );
+		if ( $dehyphenated !== $base ) {
+			$readings[] = $dehyphenated;
+		}
+
 		// Joined first, then split. See the class docblock on hyphens.
-		foreach ( array( self::dehyphenate( $base ), $base ) as $reading ) {
+		foreach ( $readings as $reading ) {
 			$tokens = self::tokens( $reading );
 
 			if ( empty( $tokens ) ) {

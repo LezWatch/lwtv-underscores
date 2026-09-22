@@ -21,6 +21,14 @@ use LWTV\_Helpers\Name_Key;
 class WP_CLI_LWTV_Name_Keys {
 
 	/**
+	 * How many actors to prime and process per pass.
+	 *
+	 * Small enough that the primed meta cache never holds every actor's meta at
+	 * once, large enough that the query count stays in the dozens.
+	 */
+	public const BATCH = 200;
+
+	/**
 	 * Write the comparable name keys for every actor.
 	 *
 	 * Safe to re-run: an actor whose keys already match is left alone, so a
@@ -53,12 +61,20 @@ class WP_CLI_LWTV_Name_Keys {
 
 		$dry_run = (bool) \WP_CLI\Utils\get_flag_value( $assoc_args, 'dry-run', false );
 
-		// Every status that is really an actor. Private matters: Actors\Privacy
-		// flips a post private on request, and a duplicate of a deliberately
-		// hidden actor is the worst kind to create by accident.
-		$post_ids = $wpdb->get_col(
+		/*
+		 * Every status that is really an actor. Private matters: Actors\Privacy
+		 * flips a post private on request, and a duplicate of a deliberately
+		 * hidden actor is the worst kind to create by accident.
+		 *
+		 * The title rides along with the ID on purpose. post_title as stored is
+		 * exactly what get_post_field( ..., 'raw' ) hands back -- Name_Key has to
+		 * see what the editor typed, not what wptexturize makes of it -- and
+		 * taking it here spares the loop a get_post() query per actor, which is
+		 * the larger half of this command's query count.
+		 */
+		$actors = $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT ID FROM {$wpdb->posts}
+				"SELECT ID, post_title FROM {$wpdb->posts}
 				WHERE post_type = %s
 				AND post_status NOT IN ( 'trash', 'auto-draft', 'inherit' )
 				ORDER BY ID ASC",
@@ -66,65 +82,79 @@ class WP_CLI_LWTV_Name_Keys {
 			)
 		);
 
-		$post_ids = array_map( 'intval', (array) $post_ids );
-
-		if ( empty( $post_ids ) ) {
+		if ( empty( $actors ) ) {
 			\WP_CLI::warning( 'No actors found.' );
 			return;
 		}
 
-		$progress  = \WP_CLI\Utils\make_progress_bar( 'Keying actors', count( $post_ids ) );
+		$total     = count( $actors );
+		$progress  = \WP_CLI\Utils\make_progress_bar( 'Keying actors', $total );
 		$written   = 0;
 		$unchanged = 0;
 		$unkeyable = 0;
 
-		foreach ( $post_ids as $post_id ) {
-			$progress->tick();
+		foreach ( array_chunk( $actors, self::BATCH ) as $batch ) {
+			/*
+			 * One meta query per batch rather than one per actor. Nothing has
+			 * primed these posts -- there is no WP_Query in front of this -- so
+			 * each get_post_meta() below would otherwise go to the database on
+			 * its own. Primed per batch, not all at once: the whole table's meta
+			 * in one array is how a backfill runs out of memory as the site
+			 * grows, and this command is meant to stay re-runnable.
+			 */
+			update_postmeta_cache( array_map( 'intval', wp_list_pluck( $batch, 'ID' ) ) );
 
-			$title = (string) get_post_field( 'post_title', $post_id, 'raw' );
+			foreach ( $batch as $actor ) {
+				$progress->tick();
 
-			$variants = Name_Key::variants( $title );
-			$ends     = Name_Key::ends( $title );
+				$post_id = (int) $actor->ID;
+				$title   = (string) $actor->post_title;
 
-			if ( empty( $variants ) ) {
-				++$unkeyable;
-				\WP_CLI::debug( sprintf( 'Actor %d has no keyable name: "%s"', $post_id, $title ), 'lwtv' );
-				continue;
+				$variants = Name_Key::variants( $title );
+				$ends     = Name_Key::ends( $title );
+
+				if ( empty( $variants ) ) {
+					++$unkeyable;
+					\WP_CLI::debug( sprintf( 'Actor %d has no keyable name: "%s"', $post_id, $title ), 'lwtv' );
+					continue;
+				}
+
+				// $single false on purpose: one row per reading of the name.
+				$stored_variants = get_post_meta( $post_id, Actors::NAME_KEY_META, false );
+				$stored_ends     = (string) get_post_meta( $post_id, Actors::NAME_ENDS_META, true );
+				$wanted_ends     = $ends[0] ?? '';
+
+				if ( $stored_variants === $variants && $stored_ends === $wanted_ends ) {
+					++$unchanged;
+					continue;
+				}
+
+				++$written;
+
+				if ( $dry_run ) {
+					continue;
+				}
+
+				delete_post_meta( $post_id, Actors::NAME_KEY_META );
+
+				foreach ( $variants as $variant ) {
+					add_post_meta( $post_id, Actors::NAME_KEY_META, $variant );
+				}
+
+				if ( '' === $wanted_ends ) {
+					delete_post_meta( $post_id, Actors::NAME_ENDS_META );
+				} else {
+					update_post_meta( $post_id, Actors::NAME_ENDS_META, $wanted_ends );
+				}
 			}
 
-			// $single false on purpose: one row per reading of the name.
-			$stored_variants = get_post_meta( $post_id, Actors::NAME_KEY_META, false );
-			$stored_ends     = (string) get_post_meta( $post_id, Actors::NAME_ENDS_META, true );
-			$wanted_ends     = $ends[0] ?? '';
-
-			if ( $stored_variants === $variants && $stored_ends === $wanted_ends ) {
-				++$unchanged;
-				continue;
-			}
-
-			++$written;
-
-			if ( $dry_run ) {
-				continue;
-			}
-
-			delete_post_meta( $post_id, Actors::NAME_KEY_META );
-
-			foreach ( $variants as $variant ) {
-				add_post_meta( $post_id, Actors::NAME_KEY_META, $variant );
-			}
-
-			if ( '' === $wanted_ends ) {
-				delete_post_meta( $post_id, Actors::NAME_ENDS_META );
-			} else {
-				update_post_meta( $post_id, Actors::NAME_ENDS_META, $wanted_ends );
-			}
+			$this->free_memory();
 		}
 
 		$progress->finish();
 
 		\WP_CLI::log( '' );
-		\WP_CLI::log( 'Actors seen:  ' . count( $post_ids ) );
+		\WP_CLI::log( 'Actors seen:  ' . $total );
 		\WP_CLI::log( ( $dry_run ? 'Would write:  ' : 'Written:      ' ) . $written );
 		\WP_CLI::log( 'Unchanged:    ' . $unchanged );
 		\WP_CLI::log( 'Unkeyable:    ' . $unkeyable );
@@ -136,6 +166,40 @@ class WP_CLI_LWTV_Name_Keys {
 		}
 
 		\WP_CLI::success( 'Name keys are up to date.' );
+	}
+
+	/**
+	 * Drop the in-process caches that grow across a long backfill.
+	 *
+	 * Deliberately NOT wp_cache_flush(): with a persistent object cache that
+	 * would empty the whole site's cache, taking the front end down with it for
+	 * the sake of a maintenance script. This clears only this process's local
+	 * copy, so a persistent backend is untouched and simply gets re-read. Same
+	 * reasoning as cli-calc.php, which does this between batches for the same
+	 * reason.
+	 */
+	private function free_memory(): void {
+		global $wpdb, $wp_object_cache;
+
+		// Only populated when SAVEQUERIES is on, but it grows without bound when
+		// it is, and a debug-enabled backfill is exactly when memory runs out.
+		$wpdb->queries = array();
+
+		if ( ! is_object( $wp_object_cache ) ) {
+			return;
+		}
+
+		foreach ( array( 'group_ops', 'stats', 'memcache_debug', 'cache' ) as $property ) {
+			if ( property_exists( $wp_object_cache, $property ) ) {
+				$wp_object_cache->$property = array();
+			}
+		}
+
+		// Redis/Memcached drop-ins expose this to re-establish their connection
+		// after the local cache is dropped.
+		if ( method_exists( $wp_object_cache, '__remoteset' ) ) {
+			$wp_object_cache->__remoteset();
+		}
 	}
 }
 
