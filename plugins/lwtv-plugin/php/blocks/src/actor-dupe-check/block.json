@@ -1,0 +1,15 @@
+{
+	"$schema": "https://json.schemastore.org/block.json",
+	"apiVersion": 3,
+	"name": "lwtv/actor-dupe-check",
+	"textdomain": "lwtv-actor-dupe-check",
+	"version": "1.0.0",
+	"title": "Duplicate Actor Check",
+	"category": "lezwatch",
+	"icon": "info-outline",
+	"description": "Warns when the actor being added may already exist.",
+	"supports": {
+		"html": false
+	},
+	"editorScript": "file:./block.js"
+}

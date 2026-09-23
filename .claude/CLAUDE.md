@@ -101,6 +101,8 @@ Do not assume every view emits a chart.
 
 Always run `nvm use` first so you're on the version pinned in `.nvmrc` (**Node 24**; `engines` requires Node ≥24 and npm ≥11).
 
+Prettier is the WordPress fork, pinned exactly as prettier: `npm:wp-prettier@3.9.6` in both `devDependencies` and `overrides`. It puts spaces inside parens, template interpolations and JSX expression containers `(__( 'x', 'lwtv' ), ${ value }, { children })` — matching the PHP style, unlike stock Prettier. Without the `overrides` pin, npm's peer resolution reinstalls stock Prettier on the next relock and silently reformats every JS file. A caret range doesn't hold either, because a stock `prettier` already in the tree satisfies it on version alone. Run `npm run fix:js` rather than hand-matching the style.
+
 - **Lint JS:** `npm run lint:js`
 - **Lint CSS:** `npm run lint:css`
 - **Autofix CSS/JS:** `npm run fix`

@@ -83,6 +83,12 @@ require_once __DIR__ . '/../plugins/lwtv-plugin/php/cpts/shows/scoring/class-lon
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/cpts/shows/scoring/class-character-score.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/_helpers/class-imdb-canonical.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/_helpers/class-tmdb-response.php';
+/*
+ * Pure string work. Accent folding is injectable rather than shimmed here,
+ * because WordPress's remove_accents() branches on get_locale() and so fails
+ * the bar set above; the tests pass their own deterministic fold.
+ */
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/_helpers/class-name-key.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/cpts/shows/watching/class-host-name.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/cpts/shows/watching/class-watch-url-health.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/cpts/shows/watching/class-watch-term-url-audit.php';

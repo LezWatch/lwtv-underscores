@@ -4,6 +4,26 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [7.2.7] - 2026-09-23
+
+### Added
+
+- Duplicate actor warning on the Add/Edit Actor screen, matching names regardless of word order, accents, punctuation, or hyphenation.
+- Publishing is blocked on a strong name match until the editor confirms the actors are different people; looser matches only warn.
+- "Not a duplicate of" field on actors to permanently mark specific same-name pairs as different people.
+- `wp lwtv namekeys backfill` command to prepare existing actors for duplicate matching.
+
+### Changed
+
+- Actor and show IMDb IDs must now be unique; saving an ID another post already uses is refused.
+- Duplicate debugger now finds actors entered under different spellings of the same name, not just identical titles.
+- Switched JavaScript formatting to the WordPress fork of Prettier.
+- Updated Node requirement to 24.15+.
+
+### Removed
+
+- Unused pre-publish checklist block, which was never loaded.
+
 ## [7.2.6] - 2026-09-17
 
 ### Added
@@ -27,10 +47,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 - Improved show-audit tools.
 - Turned actor wikidata ignore toggle into a qid write-lock.
+- Improved 'is the actor queer' checker to be more accurate and performant.
 
 ### Fixed
 
-- TMDB scores now work properly.
+- TMDB scores now work properly when using TMDB ID and not search.
 - Actor DoB no longer leaks when set private.
 
 ## [7.2.4] - 2026-09-14

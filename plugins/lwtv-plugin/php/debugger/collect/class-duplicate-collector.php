@@ -5,6 +5,18 @@
  * The IMDb meta key differs per post type, which is the only reason this needs a
  * map rather than one read.
  *
+ * Candidates come from two places. The original source is a slug scan: a post
+ * whose slug ends in a number, paired with the post whose slug it is a
+ * suffixed copy of. That only ever finds a duplicate whose title was typed
+ * identically the second time, because only an identical title collides in
+ * wp_unique_post_slug() and earns the `-2`.
+ *
+ * So actors also come from name_key_pairs(), which pairs them on the comparable
+ * name keys instead. "Cynthia Hicks" and "Cynthia Jimenez-Hicks" were one
+ * person under two slugs, neither suffixed, sharing an IMDb ID -- the evidence
+ * the rules need was already stored and the slug scan simply never handed over
+ * the pair.
+ *
  * @package LWTV
  */
 
@@ -14,6 +26,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+use LWTV\CPTs\Actors;
 use LWTV\Debugger\Build\Duplicate_Rules;
 use LWTV\Queeries\Get_ID_From_Slug;
 
@@ -61,10 +74,14 @@ class Duplicate_Collector {
 	/**
 	 * Collect one candidate.
 	 *
-	 * @param  int $post_id Candidate post ID.
+	 * @param  int $post_id     Candidate post ID.
+	 * @param  int $original_id The post it is paired against. Zero resolves the
+	 *                          pairing from the slug, which is the original
+	 *                          behaviour; a name-key pair passes it in already
+	 *                          known, because there is no slug to derive it from.
 	 * @return array<string, mixed>
 	 */
-	public function collect_one( int $post_id ): array {
+	public function collect_one( int $post_id, int $original_id = 0 ): array {
 		$post_type = (string) get_post_type( $post_id );
 		$slug      = (string) get_post_field( 'post_name', $post_id );
 		$meta      = self::META[ $post_type ] ?? array();
@@ -79,15 +96,30 @@ class Duplicate_Collector {
 			'original'  => array(),
 		);
 
-		if ( empty( $meta ) || ! Duplicate_Rules::has_suffix( $slug ) ) {
+		if ( empty( $meta ) ) {
 			return $candidate;
 		}
 
-		$candidate['imdb']     = (string) get_post_meta( $post_id, $meta['imdb'], true );
-		$candidate['override'] = (string) get_post_meta( $post_id, $meta['override'], true );
+		// Only the slug path needs a suffix to work from.
+		if ( 0 === $original_id && ! Duplicate_Rules::has_suffix( $slug ) ) {
+			return $candidate;
+		}
 
-		$base        = Duplicate_Rules::base_slug( $slug );
-		$original_id = (int) ( new Get_ID_From_Slug() )->make( $base );
+		$candidate['imdb'] = (string) get_post_meta( $post_id, $meta['imdb'], true );
+
+		// Deliberately not cast: lezactors_dupe_override holds an array of post
+		// IDs, and casting one to string would both warn and flatten the pair
+		// information Duplicate_Rules::is_acknowledged() needs.
+		$candidate['override'] = get_post_meta( $post_id, $meta['override'], true );
+
+		$original_slug = '';
+
+		if ( 0 === $original_id ) {
+			$original_slug = Duplicate_Rules::base_slug( $slug );
+			$original_id   = (int) ( new Get_ID_From_Slug() )->make( $original_slug );
+		} else {
+			$original_slug = (string) get_post_field( 'post_name', $original_id );
+		}
 
 		if ( ! $original_id ) {
 			return $candidate;
@@ -95,13 +127,209 @@ class Duplicate_Collector {
 
 		$candidate['original'] = array(
 			'id'    => $original_id,
-			'slug'  => $base,
+			'slug'  => $original_slug,
 			'imdb'  => (string) get_post_meta( $original_id, $meta['imdb'], true ),
 			'title' => (string) get_the_title( $original_id ),
 			'url'   => (string) get_permalink( $original_id ),
 		);
 
 		return $candidate;
+	}
+
+	/**
+	 * Actors paired by a shared name key.
+	 *
+	 * Grouped in PHP rather than joined in SQL: postmeta has no index on
+	 * meta_value, so a self-join on it across every actor is a table scan
+	 * against itself, while pulling the rows the meta_key index already narrows
+	 * and grouping them is linear.
+	 *
+	 * Both key families count. The loose first-and-last-part key is the one that
+	 * catches a dropped or added middle name, which is exactly the shape the
+	 * Cynthia Hicks duplicate had. Noise is not a concern here the way it is on
+	 * the edit screen, because Duplicate_Rules still requires a matching IMDb ID
+	 * before it will call anything a duplicate.
+	 *
+	 * The lower post ID is treated as the original, so a pair is reported once
+	 * and the newer post is the one flagged -- the same convention the slug scan
+	 * arrives at, where the `-2` copy came second.
+	 *
+	 * @return array<int, array{post_id: int, original_id: int}>
+	 */
+	public function name_key_pairs(): array {
+		global $wpdb;
+
+		$query = $wpdb->prepare(
+			"SELECT pm.post_id, pm.meta_key, pm.meta_value
+			FROM {$wpdb->postmeta} pm
+			INNER JOIN {$wpdb->posts} p ON p.ID = pm.post_id
+			WHERE pm.meta_key IN ( %s, %s )
+			AND p.post_type = %s
+			AND p.post_status NOT IN ( 'trash', 'auto-draft', 'inherit' )",
+			Actors::NAME_KEY_META,
+			Actors::NAME_ENDS_META,
+			Actors::SLUG
+		);
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$rows = $wpdb->get_results( $query );
+
+		$groups = array();
+
+		foreach ( (array) $rows as $row ) {
+			// Keyed by meta_key as well as value, so a strict key never groups
+			// with a loose one that happens to read the same.
+			$groups[ $row->meta_key . '|' . $row->meta_value ][] = (int) $row->post_id;
+		}
+
+		$pairs = array();
+
+		foreach ( $groups as $ids ) {
+			$ids = array_values( array_unique( $ids ) );
+
+			if ( count( $ids ) < 2 ) {
+				continue;
+			}
+
+			sort( $ids );
+			$original_id = (int) array_shift( $ids );
+
+			foreach ( $ids as $post_id ) {
+				// Keyed so the same pair found on two keys is only collected once.
+				$pairs[ $post_id . ':' . $original_id ] = array(
+					'post_id'     => (int) $post_id,
+					'original_id' => $original_id,
+				);
+			}
+		}
+
+		return array_values( $pairs );
+	}
+
+	/**
+	 * The name-key pairs that concern one actor.
+	 *
+	 * Same answer as filtering name_key_pairs() down to this post, without
+	 * reading every actor's keys to get there: one query for the post's own keys,
+	 * one for everybody who shares them.
+	 *
+	 * The grouping rule has to be the group's lowest ID, not the lower of each
+	 * pair. For a key shared by 5, 9 and 12, name_key_pairs() yields 9 => 5 and
+	 * 12 => 5, so checking 12 must produce 12 => 5 and never 12 => 9 -- a pair
+	 * the full scan does not make, which would let this method call something a
+	 * duplicate that the report does not. Hence min() over the whole group.
+	 *
+	 * Returns nothing when this post is a group's original, matching the scan:
+	 * the newer post is the one flagged, so the older one has no pair of its own.
+	 *
+	 * @param  int $post_id Actor post ID.
+	 * @return array<int, array{post_id: int, original_id: int}>
+	 */
+	public function name_key_pairs_for( int $post_id ): array {
+		global $wpdb;
+
+		if ( ! $post_id ) {
+			return array();
+		}
+
+		// $single false: the strict key holds a row per reading of the name.
+		$variants = get_post_meta( $post_id, Actors::NAME_KEY_META, false );
+		$ends     = (string) get_post_meta( $post_id, Actors::NAME_ENDS_META, true );
+
+		$clauses = array();
+		$params  = array();
+
+		if ( ! empty( $variants ) ) {
+			$placeholders = implode( ', ', array_fill( 0, count( $variants ), '%s' ) );
+			$clauses[]    = "( pm.meta_key = %s AND pm.meta_value IN ( {$placeholders} ) )";
+			$params[]     = Actors::NAME_KEY_META;
+			$params       = array_merge( $params, array_map( 'strval', $variants ) );
+		}
+
+		if ( '' !== $ends ) {
+			$clauses[] = '( pm.meta_key = %s AND pm.meta_value = %s )';
+			$params[]  = Actors::NAME_ENDS_META;
+			$params[]  = $ends;
+		}
+
+		if ( empty( $clauses ) ) {
+			return array();
+		}
+
+		// Same post_type and status filters as name_key_pairs(). Name keys
+		// survive trashing, so without them a trashed actor pairs again.
+		$conditions = implode( ' OR ', $clauses );
+		$params[]   = Actors::SLUG;
+
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$query = $wpdb->prepare(
+			"SELECT pm.post_id, pm.meta_key, pm.meta_value
+			FROM {$wpdb->postmeta} pm
+			INNER JOIN {$wpdb->posts} p ON p.ID = pm.post_id
+			WHERE ( {$conditions} )
+			AND p.post_type = %s
+			AND p.post_status NOT IN ( 'trash', 'auto-draft', 'inherit' )",
+			$params
+		);
+		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$rows = $wpdb->get_results( $query );
+
+		$groups = array();
+
+		foreach ( (array) $rows as $row ) {
+			// Keyed by meta_key as well as value, as in name_key_pairs().
+			$groups[ $row->meta_key . '|' . $row->meta_value ][] = (int) $row->post_id;
+		}
+
+		$pairs = array();
+
+		foreach ( $groups as $ids ) {
+			$ids = array_values( array_unique( $ids ) );
+
+			if ( count( $ids ) < 2 ) {
+				continue;
+			}
+
+			$original_id = (int) min( $ids );
+
+			// This post is the group's original; the scan pairs the newer posts
+			// against it, not it against them.
+			if ( $original_id === $post_id ) {
+				continue;
+			}
+
+			$pairs[ $post_id . ':' . $original_id ] = array(
+				'post_id'     => $post_id,
+				'original_id' => $original_id,
+			);
+		}
+
+		return array_values( $pairs );
+	}
+
+	/**
+	 * Collect a list of already-paired candidates.
+	 *
+	 * @param  array<int, array{post_id: int, original_id: int}> $pairs Pairs.
+	 * @return array<int, array<string, mixed>>
+	 */
+	public function collect_pairs( array $pairs ): array {
+		$collected = array();
+
+		foreach ( $pairs as $pair ) {
+			$post_id     = (int) ( $pair['post_id'] ?? 0 );
+			$original_id = (int) ( $pair['original_id'] ?? 0 );
+
+			if ( ! $post_id || ! $original_id ) {
+				continue;
+			}
+
+			$collected[] = $this->collect_one( $post_id, $original_id );
+		}
+
+		return $collected;
 	}
 
 	/**

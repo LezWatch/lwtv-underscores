@@ -1,0 +1,26 @@
+/**
+ * Duplicate Actor Check — pre-publish panel.
+ *
+ * Colour comes from currentColor and the editor's own variables rather than
+ * fixed hex values, so the panel follows the admin colour scheme and stays
+ * legible in the dark editor without a second palette to maintain.
+ */
+
+.lwtv-dupe-check-list {
+	margin: 0.5rem 0;
+	padding-left: 1.2rem;
+	list-style: disc;
+
+	li {
+		margin-bottom: 0.25rem;
+	}
+}
+
+.lwtv-dupe-check-hint {
+	font-size: 0.75rem;
+	opacity: 0.8;
+}
+
+.lwtv-dupe-check-warn .components-panel__body-title {
+	border-left: 4px solid #cb3e85;
+}

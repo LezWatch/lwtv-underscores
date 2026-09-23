@@ -1,4 +1,5 @@
 // Plugin Specific Imports
+import apiFetch from '@wordpress/api-fetch';
 import { PluginDocumentSettingPanel } from '@wordpress/editor';
 import { useSelect } from '@wordpress/data';
 import { useState, useEffect } from '@wordpress/element';
@@ -6,140 +7,142 @@ import { Button, PanelRow, Spinner } from '@wordpress/components';
 import CopyIcon from '../../_common/svg/copy';
 
 export default function Render() {
-	const postType = useSelect((select) =>
-		select('core/editor').getCurrentPostType()
+	const postType = useSelect( ( select ) =>
+		select( 'core/editor' ).getCurrentPostType()
 	);
 
-	const postId = useSelect((select) =>
-		select('core/editor').getCurrentPostId()
+	const postId = useSelect( ( select ) =>
+		select( 'core/editor' ).getCurrentPostId()
 	);
 
 	const postStatus = useSelect(
-		(select) => select('core/editor').getCurrentPost().status
+		( select ) => select( 'core/editor' ).getCurrentPost().status
 	);
 
-	const [apiData, setApiData] = useState(null);
-	const [isLoading, setIsLoading] = useState(true);
-	const [error, setError] = useState(null);
-	const [refreshCounter, setRefreshCounter] = useState(0);
-	const [showToast, setShowToast] = useState(false);
+	const [ apiData, setApiData ] = useState( null );
+	const [ isLoading, setIsLoading ] = useState( true );
+	const [ error, setError ] = useState( null );
+	const [ refreshCounter, setRefreshCounter ] = useState( 0 );
+	const [ showToast, setShowToast ] = useState( false );
 
 	// Handle toast visibility with DOM manipulation
-	useEffect(() => {
-		if (showToast) {
-			const toast = document.createElement('div');
+	useEffect( () => {
+		if ( showToast ) {
+			const toast = document.createElement( 'div' );
 			toast.id = 'lwtv-copy-toast';
 			toast.textContent = 'Copied!';
 			toast.style.cssText =
 				'position: fixed; top: 50px; right: 50px; background-color: #cb3e85; color: #fff; padding: 12px 16px; border-radius: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.3); z-index: 999999; font-size: 13px; font-weight: 500; pointer-events: none;';
 
-			document.body.appendChild(toast);
+			document.body.appendChild( toast );
 
-			const timer = setTimeout(() => {
-				if (document.body.contains(toast)) {
-					document.body.removeChild(toast);
+			const timer = setTimeout( () => {
+				if ( document.body.contains( toast ) ) {
+					document.body.removeChild( toast );
 				}
-				setShowToast(false);
-			}, 2500);
+				setShowToast( false );
+			}, 2500 );
 
 			return () => {
-				clearTimeout(timer);
-				if (document.body.contains(toast)) {
-					document.body.removeChild(toast);
+				clearTimeout( timer );
+				if ( document.body.contains( toast ) ) {
+					document.body.removeChild( toast );
 				}
 			};
 		}
-	}, [showToast]);
+	}, [ showToast ] );
 
-	useEffect(() => {
+	useEffect( () => {
 		if (
 			postId &&
 			postType === 'post_type_actors' &&
 			postStatus !== 'auto-draft'
 		) {
 			const fetchData = async () => {
-				setIsLoading(true);
+				setIsLoading( true );
 				try {
-					// Use the editor's configured apiFetch so the request carries
-					// the REST nonce. Without it WordPress treats the call as
-					// logged-out, and the panel can neither run a live WikiData
-					// check nor read unpublished actors the editor is editing.
-					const data = await window.wp.apiFetch({
-						path: `/lwtv/v1/wikidata/${postId}`,
-					});
-					if (Array.isArray(data)) {
-						setApiData(data);
-						setError(null);
+					// The build externalises this import to wp.apiFetch, so it
+					// is the editor's configured instance and the request
+					// carries the REST nonce. Without it WordPress treats the
+					// call as logged-out, and the panel can neither run a live
+					// WikiData check nor read unpublished actors the editor is
+					// editing.
+					const data = await apiFetch( {
+						path: `/lwtv/v1/wikidata/${ postId }`,
+					} );
+					if ( Array.isArray( data ) ) {
+						setApiData( data );
+						setError( null );
 					} else {
 						// The endpoint returns an { error } object for actors it
 						// won't disclose; surface it instead of crashing on .map.
-						setApiData(null);
+						setApiData( null );
 						setError(
 							data && data.error
 								? data.error
 								: 'No WikiData information is available for this actor.'
 						);
 					}
-				} catch (err) {
-					setError(err.message);
-					setApiData(null);
+				} catch ( err ) {
+					setError( err.message );
+					setApiData( null );
 				} finally {
-					setIsLoading(false);
+					setIsLoading( false );
 				}
 			};
 			fetchData();
 		}
-	}, [postId, postType, postStatus, refreshCounter]);
+	}, [ postId, postType, postStatus, refreshCounter ] );
 
-	if (postType !== 'post_type_actors') {
+	if ( postType !== 'post_type_actors' ) {
 		return null;
 	}
 
 	const handleRefresh = () => {
-		setRefreshCounter((prevCounter) => prevCounter + 1);
+		setRefreshCounter( ( prevCounter ) => prevCounter + 1 );
 	};
 
-	const handleCopy = async (textToCopy) => {
+	const handleCopy = async ( textToCopy ) => {
 		try {
 			if (
 				typeof navigator !== 'undefined' &&
 				navigator.clipboard &&
 				navigator.clipboard.writeText
 			) {
-				await navigator.clipboard.writeText(textToCopy);
+				await navigator.clipboard.writeText( textToCopy );
 			} else {
 				// eslint-disable-next-line no-alert
 				window.alert(
 					'Copy to clipboard is not supported in your browser. Please copy manually.'
 				);
 			}
-			setShowToast(true);
-			setTimeout(() => {
-				setShowToast(false);
-			}, 2500);
-		} catch (err) {
+			setShowToast( true );
+			setTimeout( () => {
+				setShowToast( false );
+			}, 2500 );
+		} catch ( err ) {
 			// Display error to user
 			// eslint-disable-next-line no-alert
-			window.alert('Error: ' + err.message || 'Unknown error');
-			setShowToast(true);
-			setTimeout(() => {
-				setShowToast(false);
-			}, 2500);
+			window.alert( 'Error: ' + err.message || 'Unknown error' );
+			setShowToast( true );
+			setTimeout( () => {
+				setShowToast( false );
+			}, 2500 );
 		}
 	};
 
-	const filteredPersonData = (personData) => {
-		const filteredEntries = Object.entries(personData).filter(
-			([key, value]) => {
-				const lowerCaseValue = String(value).toLowerCase();
+	const filteredPersonData = ( personData ) => {
+		const filteredEntries = Object.entries( personData ).filter(
+			( [ key, value ] ) => {
+				const lowerCaseValue = String( value ).toLowerCase();
 				return (
 					lowerCaseValue !== 'match' &&
 					lowerCaseValue !== 'n/a' &&
-					!['wikidata', 'id', 'name'].includes(key.toLowerCase())
+					! [ 'wikidata', 'id', 'name' ].includes( key.toLowerCase() )
 				);
 			}
 		);
-		return Object.fromEntries(filteredEntries);
+		return Object.fromEntries( filteredEntries );
 	};
 
 	const MetadataPanelAutoSave = () => (
@@ -166,23 +169,23 @@ export default function Render() {
 		>
 			<PanelRow>
 				<div>
-					{isLoading && <Spinner />}
-					{error && <p>Error: {error}</p>}
-					{!isLoading && !error && apiData && (
+					{ isLoading && <Spinner /> }
+					{ error && <p>Error: { error }</p> }
+					{ ! isLoading && ! error && apiData && (
 						<>
-							{apiData.map((item) => {
-								const entries = Object.entries(item);
-								if (entries.length === 0) {
+							{ apiData.map( ( item ) => {
+								const entries = Object.entries( item );
+								if ( entries.length === 0 ) {
 									return null;
 								}
-								const [key, personData] = entries[0];
+								const [ key, personData ] = entries[ 0 ];
 								const filteredData =
-									filteredPersonData(personData);
+									filteredPersonData( personData );
 
-								if ('error' === personData.wikidata) {
+								if ( 'error' === personData.wikidata ) {
 									return (
-										<div key={key}>
-											<h3>{personData.name}</h3>
+										<div key={ key }>
+											<h3>{ personData.name }</h3>
 											<p>
 												There is no information on
 												WikiData for this actor.
@@ -192,161 +195,165 @@ export default function Render() {
 								}
 
 								return (
-									<div key={key}>
+									<div key={ key }>
 										<h3>
 											<a
-												href={`https://www.wikidata.org/wiki/${personData.wikidata}`}
+												href={ `https://www.wikidata.org/wiki/${ personData.wikidata }` }
 												target="_blank"
 												rel="noopener noreferrer"
 											>
-												{personData.name}
+												{ personData.name }
 											</a>
 										</h3>
-										{Object.keys(filteredData).length ===
+										{ Object.keys( filteredData ).length ===
 										0 ? (
 											<p>
 												Congratulations! All WikiData
-												matches for {personData.name}.
+												matches for { personData.name }.
 											</p>
 										) : (
 											<div>
-												{Object.entries(
+												{ Object.entries(
 													filteredData
-												).map(([subKey, value]) => (
-													<div key={subKey}>
-														<h4>
-															{subKey.toUpperCase()}
-														</h4>
-														{value && (
-															<ul>
-																{Object.entries(
-																	value
-																).map(
-																	([
-																		innerKey,
-																		innerValue,
-																	]) => (
-																		<li
-																			key={
-																				innerKey
-																			}
-																		>
-																			<strong>
-																				{innerKey
-																					.charAt(
-																						0
-																					)
-																					.toUpperCase() +
-																					innerKey.slice(
-																						1
-																					)}
-																			</strong>
-																			:{' '}
-																			<span
-																				style={{
-																					display:
-																						'inline-flex',
-																					alignItems:
-																						'center',
-																					gap: '4px',
-																				}}
+												).map(
+													( [ subKey, value ] ) => (
+														<div key={ subKey }>
+															<h4>
+																{ subKey.toUpperCase() }
+															</h4>
+															{ value && (
+																<ul>
+																	{ Object.entries(
+																		value
+																	).map(
+																		( [
+																			innerKey,
+																			innerValue,
+																		] ) => (
+																			<li
+																				key={
+																					innerKey
+																				}
 																			>
-																				{innerValue ? (
-																					<span
-																						className="wrapping-code"
-																						role="button"
-																						tabIndex={
+																				<strong>
+																					{ innerKey
+																						.charAt(
 																							0
-																						}
-																						onClick={() =>
-																							handleCopy(
-																								innerValue
-																							)
-																						}
-																						onKeyDown={(
-																							e
-																						) => {
-																							if (
-																								e.key ===
-																									'Enter' ||
-																								e.key ===
-																									' '
-																							) {
-																								e.preventDefault();
+																						)
+																						.toUpperCase() +
+																						innerKey.slice(
+																							1
+																						) }
+																				</strong>
+
+																				:{ ' ' }
+																				<span
+																					style={ {
+																						display:
+																							'inline-flex',
+																						alignItems:
+																							'center',
+																						gap: '4px',
+																					} }
+																				>
+																					{ innerValue ? (
+																						<span
+																							className="wrapping-code"
+																							role="button"
+																							tabIndex={
+																								0
+																							}
+																							onClick={ () =>
 																								handleCopy(
 																									innerValue
-																								);
+																								)
 																							}
-																						}}
-																						style={{
-																							cursor: 'pointer',
-																						}}
-																						title="Click to copy"
-																					>
-																						{
-																							innerValue
-																						}
-																					</span>
-																				) : (
-																					<code className="wrapping-code">
-																						empty
-																					</code>
-																				)}
-																				{innerValue && (
-																					<Button
-																						size="small"
-																						variant="tertiary"
-																						onClick={() =>
-																							handleCopy(
+																							onKeyDown={ (
+																								e
+																							) => {
+																								if (
+																									e.key ===
+																										'Enter' ||
+																									e.key ===
+																										' '
+																								) {
+																									e.preventDefault();
+																									handleCopy(
+																										innerValue
+																									);
+																								}
+																							} }
+																							style={ {
+																								cursor: 'pointer',
+																							} }
+																							title="Click to copy"
+																						>
+																							{
 																								innerValue
-																							)
-																						}
-																						title="Copy to clipboard"
-																						style={{
-																							minWidth:
-																								'auto',
-																							padding:
-																								'2px 4px',
-																							height: 'auto',
-																						}}
-																					>
-																						<CopyIcon />
-																					</Button>
-																				)}
-																			</span>
-																		</li>
-																	)
-																)}
-															</ul>
-														)}
-														{!value && 'empty'}
-													</div>
-												))}
+																							}
+																						</span>
+																					) : (
+																						<code className="wrapping-code">
+																							empty
+																						</code>
+																					) }
+																					{ innerValue && (
+																						<Button
+																							size="small"
+																							variant="tertiary"
+																							onClick={ () =>
+																								handleCopy(
+																									innerValue
+																								)
+																							}
+																							title="Copy to clipboard"
+																							style={ {
+																								minWidth:
+																									'auto',
+																								padding:
+																									'2px 4px',
+																								height: 'auto',
+																							} }
+																						>
+																							<CopyIcon />
+																						</Button>
+																					) }
+																				</span>
+																			</li>
+																		)
+																	) }
+																</ul>
+															) }
+															{ ! value &&
+																'empty' }
+														</div>
+													)
+												) }
 											</div>
-										)}
+										) }
 									</div>
 								);
-							})}
+							} ) }
 						</>
-					)}
+					) }
 
-					{!isLoading && !error && !apiData && (
+					{ ! isLoading && ! error && ! apiData && (
 						<p>No data found for this post.</p>
-					)}
+					) }
 
 					<Button
 						variant="secondary"
-						onClick={handleRefresh}
-						isBusy={isLoading}
+						onClick={ handleRefresh }
+						isBusy={ isLoading }
 					>
-						{isLoading ? 'Refreshing...' : 'Refresh'}
+						{ isLoading ? 'Refreshing...' : 'Refresh' }
 					</Button>
 				</div>
 			</PanelRow>
 		</PluginDocumentSettingPanel>
 	);
 
-	if (postStatus === 'auto-draft') {
+	if ( postStatus === 'auto-draft' ) {
 		return <MetadataPanelAutoSave />;
 	}
 	return <MetadataPanel />;

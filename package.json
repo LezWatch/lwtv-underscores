@@ -1,6 +1,6 @@
 {
   "name": "lwtv-underscores",
-  "version": "7.2.6",
+  "version": "7.2.7",
   "description": "LezWatch.TV Custom Theme.",
   "main": "index.js",
   "workspaces": [
@@ -8,7 +8,7 @@
     "./plugins/lwtv-plugin/php/blocks"
   ],
   "engines": {
-    "node": ">=24.0.0",
+    "node": ">=24.15.0",
     "npm": ">=11.0.0"
   },
   "scripts": {
@@ -62,14 +62,15 @@
   },
   "devDependencies": {
     "@parcel/watcher": "^2",
-    "@types/node": "^22",
-    "@wordpress/scripts": "^35.0.0",
+    "@types/node": "^24",
+    "@wordpress/scripts": "^36.0.0",
     "autoprefixer": "^10.6",
     "css-minimizer-webpack-plugin": "^8.0",
     "eslint-plugin-prettier": "^5.5",
     "lint-staged": "^17",
     "npm-run-all2": "^9",
     "postcss": "^8",
+    "prettier": "npm:wp-prettier@3.9.6",
     "terser": "^5",
     "terser-webpack-plugin": "^5",
     "webpack": "^5"
@@ -77,14 +78,17 @@
   "overrides": {
     "serialize-javascript": "^7.0.4",
     "markdownlint-cli": "^0.49.1",
+    "prettier": "npm:wp-prettier@3.9.6",
     "sockjs": {
       "uuid": ">=11.1.1"
     }
   },
   "lint-staged": {
-    "*.php": "npm run lint:php",
-    "plugins/lwtv-plugin/php/blocks/src/**/*.js": "npm run lint:js",
-    "style.scss": "npm run lint:css"
+    "*.php": "composer lint",
+    "plugins/lwtv-plugin/php/blocks/src/**/*.js": "wp-scripts lint-js",
+    "inc/js/**/*.js": "wp-scripts lint-js",
+    "plugins/lwtv-plugin/assets/js/**/*.js": "wp-scripts lint-js",
+    "**/*.scss": "wp-scripts lint-style"
   },
   "browserslist": [
     "last 2 versions",

@@ -9,48 +9,48 @@
  * control that copies rather than navigates should not announce as a link.
  */
 
-(function () {
+( function () {
 	const SUCCESS_TIMEOUT = 2500;
 
-	function announce(statusEl, message) {
-		if (!statusEl) {
+	function announce( statusEl, message ) {
+		if ( ! statusEl ) {
 			return;
 		}
 		statusEl.textContent = message;
-		window.setTimeout(function () {
-			if (statusEl.textContent === message) {
+		window.setTimeout( function () {
+			if ( statusEl.textContent === message ) {
 				statusEl.textContent = '';
 			}
-		}, SUCCESS_TIMEOUT);
+		}, SUCCESS_TIMEOUT );
 	}
 
-	function enhance(anchor) {
-		const url = anchor.getAttribute('href');
-		if (!url) {
+	function enhance( anchor ) {
+		const url = anchor.getAttribute( 'href' );
+		if ( ! url ) {
 			return;
 		}
 
 		const wrapper = anchor.parentNode;
 		const statusEl = wrapper
-			? wrapper.querySelector('.entry-meta-permalink__status')
+			? wrapper.querySelector( '.entry-meta-permalink__status' )
 			: null;
 
-		const button = document.createElement('button');
+		const button = document.createElement( 'button' );
 		button.type = 'button';
 		button.className = anchor.className;
 		button.innerHTML = anchor.innerHTML;
 
-		const label = button.querySelector('.entry-meta-permalink__label');
-		if (label && label.dataset.copyLabel) {
+		const label = button.querySelector( '.entry-meta-permalink__label' );
+		if ( label && label.dataset.copyLabel ) {
 			label.textContent = label.dataset.copyLabel;
 		}
 
-		if (anchor.hasAttribute('title')) {
-			button.setAttribute('title', anchor.getAttribute('title'));
+		if ( anchor.hasAttribute( 'title' ) ) {
+			button.setAttribute( 'title', anchor.getAttribute( 'title' ) );
 		}
 
-		button.addEventListener('click', function () {
-			navigator.clipboard.writeText(url).then(
+		button.addEventListener( 'click', function () {
+			navigator.clipboard.writeText( url ).then(
 				function () {
 					announce(
 						statusEl,
@@ -68,23 +68,23 @@
 					);
 				}
 			);
-		});
+		} );
 
-		anchor.replaceWith(button);
+		anchor.replaceWith( button );
 	}
 
 	function init() {
-		if (!navigator.clipboard || !navigator.clipboard.writeText) {
+		if ( ! navigator.clipboard || ! navigator.clipboard.writeText ) {
 			return;
 		}
 
-		const anchors = document.querySelectorAll('a[data-lwtv-copy-link]');
-		Array.prototype.forEach.call(anchors, enhance);
+		const anchors = document.querySelectorAll( 'a[data-lwtv-copy-link]' );
+		Array.prototype.forEach.call( anchors, enhance );
 	}
 
-	if ('loading' === document.readyState) {
-		document.addEventListener('DOMContentLoaded', init);
+	if ( 'loading' === document.readyState ) {
+		document.addEventListener( 'DOMContentLoaded', init );
 	} else {
 		init();
 	}
-})();
+} )();
