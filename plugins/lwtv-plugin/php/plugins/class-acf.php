@@ -334,11 +334,25 @@ class ACF {
 	 * an identity claim, so a collision is not a resemblance to judge but a
 	 * contradiction to fix.
 	 *
-	 * An unchanged value is always allowed through, whatever it collides with.
-	 * The job here is to stop a new collision being created, not to make an
+	 * An unchanged value is allowed through only for the older of the colliding
+	 * posts. The job here is to stop a new collision being created, not to make an
 	 * existing duplicate pair unsavable -- an editor opening one of those to fix
 	 * it must be able to save their work. `wp lwtv dupes` is what reports the
 	 * ones already in there.
+	 *
+	 * "Unchanged" cannot mean "already in the database", which is what it used to.
+	 * Publishing in the block editor writes ACF meta before ACF validation runs,
+	 * so a brand-new post's colliding ID was already stored by the time this saw
+	 * it, read as unchanged, and waved through -- permanently, on that post and
+	 * every save after. The one case this exists to refuse was the one case it
+	 * structurally could not see.
+	 *
+	 * So the collision check runs first, and an unchanged value only survives it
+	 * when this post is the lower ID of the two. That is the same
+	 * lowest-ID-is-the-original convention Debugger\Collect\Duplicate_Collector
+	 * pairs on, and it leaves the original of a legacy pair editable while asking
+	 * the newer post to fix or clear its ID -- which is the resolution anyway. An
+	 * emptied field returns above, so there is always a way out.
 	 *
 	 * @param bool|string $valid      True if valid, or an error message string.
 	 * @param mixed       $value      The IMDb value being saved.
@@ -366,20 +380,39 @@ class ACF {
 			return $valid;
 		}
 
-		$post_id = (int) acf_get_form_data( 'post_id' );
+		/*
+		 * Zero means none of the sources knew, which is not the same as "new
+		 * post". The check still runs: a new actor pasting an ID that a published
+		 * actor already holds is the exact thing this exists to refuse, and
+		 * skipping it there would let duplicates in silently. An unresolved ID on
+		 * an *existing* post can still produce a false collision against itself,
+		 * which is the lesser of the two and is what the sources below are for.
+		 */
+		$post_id = self::editing_post_id();
 
-		if ( ! $post_id ) {
-			$post_id = (int) get_the_ID();
-		}
+		// The lowest-numbered other post holding this ID, if any. Asked before the
+		// unchanged-value question, because the answer to that one depends on it.
+		$owner_id = ( new Get_Post_By_Imdb() )->make( $wanted, $post_type, $field_name, $post_id );
 
-		// Unchanged from what is already stored: let it through.
-		if ( $post_id && Imdb_Canonical::normalise( get_post_meta( $post_id, $field_name, true ) ) === $wanted ) {
+		// Nothing else holds it, or the only holder is this post. The second case
+		// is unreachable when the ID resolved, since the query excluded it, and is
+		// the backstop for when it did not -- the alternative being to tell
+		// someone their post duplicates itself.
+		if ( ! $owner_id || $owner_id === $post_id ) {
 			return $valid;
 		}
 
-		$owner_id = ( new Get_Post_By_Imdb() )->make( $wanted, $post_type, $field_name, $post_id );
+		/*
+		 * Another post holds it, and this one is the older claimant with the value
+		 * already stored: a legacy pair being edited from the original's side.
+		 * Allowed, so that work on the post that was there first can still be
+		 * saved. get_post_meta() on an unresolved zero returns nothing, so an
+		 * unidentifiable post never reaches this.
+		 */
+		$is_older  = $post_id > 0 && $post_id < $owner_id;
+		$unchanged = Imdb_Canonical::normalise( get_post_meta( $post_id, $field_name, true ) ) === $wanted;
 
-		if ( ! $owner_id ) {
+		if ( $is_older && $unchanged ) {
 			return $valid;
 		}
 
@@ -390,6 +423,56 @@ class ACF {
 			get_the_title( $owner_id ),
 			$owner_id
 		);
+	}
+
+	/**
+	 * The post being edited, as seen from inside an ACF validation filter.
+	 *
+	 * acf/validate_value does not always run with a global post. In the block
+	 * editor the validation happens in ACF's own AJAX request, where get_the_ID()
+	 * has nothing to return and the ID arrives only in the payload -- which is
+	 * how the unique-IMDb check came to compare a post against itself and report
+	 * post 33236 as already holding post 33236's ID.
+	 *
+	 * Each source is tried in turn rather than trusting one, because which of
+	 * them is populated depends on the editor and on ACF's own version.
+	 *
+	 * @return int Post ID, or 0 when none of the sources knows.
+	 */
+	private static function editing_post_id(): int {
+		$sources = array( acf_get_form_data( 'post_id' ) );
+
+		// ACF has verified its own nonce before any validate_value filter runs;
+		// this only reads an ID it already acted on. _acf_post_id is the hidden
+		// field ACF's own form data is built from, so it survives contexts where
+		// the parsed copy is empty.
+		// phpcs:disable WordPress.Security.NonceVerification.Missing
+		foreach ( array( '_acf_post_id', 'post_id', 'post_ID' ) as $key ) {
+			if ( isset( $_POST[ $key ] ) ) {
+				$sources[] = sanitize_text_field( wp_unslash( $_POST[ $key ] ) );
+			}
+		}
+		// phpcs:enable WordPress.Security.NonceVerification.Missing
+
+		$sources[] = get_the_ID();
+
+		foreach ( $sources as $source ) {
+			// acf_get_form_data() also answers with things like 'options' or
+			// 'term_12', which are not posts and must not become post 0.
+			if ( ! is_numeric( $source ) || (int) $source < 1 ) {
+				continue;
+			}
+
+			$post_id = (int) $source;
+
+			// An autosave or revision stands in for the post it belongs to; its
+			// own meta is empty, which would defeat the unchanged-value check.
+			$parent_id = (int) wp_is_post_revision( $post_id );
+
+			return $parent_id ? $parent_id : $post_id;
+		}
+
+		return 0;
 	}
 
 	/**
