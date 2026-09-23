@@ -94,6 +94,13 @@ class Get_Actors_By_Name {
 		 * of %s placeholders and fixed meta_key comparisons; $limit is an integer
 		 * cast of a class constant. Every actual value -- the post type, the meta
 		 * keys and every name key -- is bound through $params.
+		 *
+		 * $limit stays interpolated rather than bound as %d on purpose.
+		 * PreparedSQLPlaceholders counts the arguments after the query, not the
+		 * elements of an array, so a second placeholder against a single $params
+		 * warns as a mismatch -- and suppressing that sniff in a file of
+		 * hand-built SQL costs more than binding a class constant gains. A
+		 * spread does not help; it is still one argument.
 		 */
 		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		$query = $wpdb->prepare(

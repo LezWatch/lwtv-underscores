@@ -1,5 +1,6 @@
 // Plugin Specific Imports
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
+import apiFetch from '@wordpress/api-fetch';
 import { PluginPrePublishPanel } from '@wordpress/editor';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useState, useEffect, useMemo, useRef } from '@wordpress/element';
@@ -32,16 +33,32 @@ const signatureOf = ( matches ) =>
  * and last part, which is what catches a dropped middle name -- and also pairs
  * people who are genuinely different.
  *
+ * The status stays as WordPress's own slug rather than a translated label.
+ * Mapping it would mean shipping a second set of status names that drifts from
+ * core's, and this line is a pointer for an editor deciding where to click, not
+ * prose.
+ *
  * @param {Object} candidate One candidate.
  * @return {string} Label.
  */
 const describe = ( candidate ) => {
-	const status =
-		candidate.status === 'publish' ? '' : ` (${ candidate.status })`;
+	const label =
+		candidate.status === 'publish'
+			? candidate.title
+			: sprintf(
+					/* translators: 1: Actor name. 2: Post status slug, such as draft or pending. */
+					__( '%1$s (%2$s)', 'lwtv' ),
+					candidate.title,
+					candidate.status
+				);
 
 	return candidate.tier === 'full'
-		? `${ candidate.title }${ status }`
-		: `${ candidate.title }${ status } — similar name`;
+		? label
+		: sprintf(
+				/* translators: %s: Actor name, optionally followed by a post status. */
+				__( '%s — similar name', 'lwtv' ),
+				label
+			);
 };
 
 export default function Render() {
@@ -123,11 +140,16 @@ export default function Render() {
 				`/lwtv/v1/actors/name-check?name=${ encodeURIComponent( name ) }` +
 				`&exclude=${ postId ? postId : 0 }`;
 
-			// The editor's own apiFetch, so the request carries the REST nonce.
-			// This route is gated on the actors capability and will 401 without
-			// it -- see Rest_API\Actor_Name_Check on why it is not public.
-			window.wp
-				.apiFetch( { path, signal: controller.signal } )
+			/*
+			 * The build externalises this import to wp.apiFetch, so it is the
+			 * editor's own configured instance and the request carries the REST
+			 * nonce -- importing it rather than reaching for window.wp also puts
+			 * wp-api-fetch in the generated asset file instead of assuming some
+			 * other script pulled it in. This route is gated on the actors
+			 * capability and 401s without the nonce; see
+			 * Rest_API\Actor_Name_Check on why it is not public.
+			 */
+			apiFetch( { path, signal: controller.signal } )
 				.then( ( data ) => {
 					setResult( {
 						name,
@@ -201,13 +223,21 @@ export default function Render() {
 			return undefined;
 		}
 
-		let message = 'An actor with a similar name already exists.';
+		let message = __(
+			'An actor with a similar name already exists.',
+			'lwtv'
+		);
 
 		if ( strict.length && ! acknowledged ) {
-			message =
-				'This actor may already be in the database. Publishing is paused until you confirm.';
+			message = __(
+				'This actor may already be in the database. Publishing is paused until you confirm.',
+				'lwtv'
+			);
 		} else if ( strict.length ) {
-			message = 'This actor may already be in the database.';
+			message = __(
+				'This actor may already be in the database.',
+				'lwtv'
+			);
 		}
 
 		const actions = matches
@@ -219,7 +249,7 @@ export default function Render() {
 
 		if ( strict.length && ! acknowledged ) {
 			actions.unshift( {
-				label: 'These are different people',
+				label: __( 'These are different people', 'lwtv' ),
 				onClick: () => setAcknowledged( true ),
 			} );
 		}
@@ -258,7 +288,7 @@ export default function Render() {
 
 	return (
 		<PluginPrePublishPanel
-			title={ 'Duplicate Check' }
+			title={ __( 'Duplicate Check', 'lwtv' ) }
 			className={
 				matches.length ? 'lwtv-dupe-check-warn' : 'lwtv-dupe-check-ok'
 			}
@@ -275,8 +305,14 @@ export default function Render() {
 				<>
 					<p>
 						{ strict.length && ! acknowledged
-							? 'These may be the same person. Confirm they are not to continue.'
-							: 'These actors may be the same person.' }
+							? __(
+									'These may be the same person. Confirm they are not to continue.',
+									'lwtv'
+								)
+							: __(
+									'These actors may be the same person.',
+									'lwtv'
+								) }
 					</p>
 					<ul className="lwtv-dupe-check-list">
 						{ matches.map( ( candidate ) => (
@@ -301,13 +337,17 @@ export default function Render() {
 							variant="secondary"
 							onClick={ () => setAcknowledged( true ) }
 						>
-							{ 'These are different people' }
+							{ __( 'These are different people', 'lwtv' ) }
 						</Button>
 					) }
 
 					<p className="lwtv-dupe-check-hint">
 						{
-							'To stop this asking again, list them in "Not a duplicate of" under Administrative.'
+							/* translators: "Not a duplicate of" and "Administrative" name an ACF field and the tab it sits under. Keep them matching whatever those read as on screen. */
+							__(
+								'To stop this asking again, list them in "Not a duplicate of" under Administrative.',
+								'lwtv'
+							)
 						}
 					</p>
 				</>

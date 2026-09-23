@@ -207,6 +207,109 @@ class Duplicate_Collector {
 	}
 
 	/**
+	 * The name-key pairs that concern one actor.
+	 *
+	 * Same answer as filtering name_key_pairs() down to this post, without
+	 * reading every actor's keys to get there: one query for the post's own keys,
+	 * one for everybody who shares them.
+	 *
+	 * The grouping rule has to be the group's lowest ID, not the lower of each
+	 * pair. For a key shared by 5, 9 and 12, name_key_pairs() yields 9 => 5 and
+	 * 12 => 5, so checking 12 must produce 12 => 5 and never 12 => 9 -- a pair
+	 * the full scan does not make, which would let this method call something a
+	 * duplicate that the report does not. Hence min() over the whole group.
+	 *
+	 * Returns nothing when this post is a group's original, matching the scan:
+	 * the newer post is the one flagged, so the older one has no pair of its own.
+	 *
+	 * @param  int $post_id Actor post ID.
+	 * @return array<int, array{post_id: int, original_id: int}>
+	 */
+	public function name_key_pairs_for( int $post_id ): array {
+		global $wpdb;
+
+		if ( ! $post_id ) {
+			return array();
+		}
+
+		// $single false: the strict key holds a row per reading of the name.
+		$variants = get_post_meta( $post_id, Actors::NAME_KEY_META, false );
+		$ends     = (string) get_post_meta( $post_id, Actors::NAME_ENDS_META, true );
+
+		$clauses = array();
+		$params  = array();
+
+		if ( ! empty( $variants ) ) {
+			$placeholders = implode( ', ', array_fill( 0, count( $variants ), '%s' ) );
+			$clauses[]    = "( pm.meta_key = %s AND pm.meta_value IN ( {$placeholders} ) )";
+			$params[]     = Actors::NAME_KEY_META;
+			$params       = array_merge( $params, array_map( 'strval', $variants ) );
+		}
+
+		if ( '' !== $ends ) {
+			$clauses[] = '( pm.meta_key = %s AND pm.meta_value = %s )';
+			$params[]  = Actors::NAME_ENDS_META;
+			$params[]  = $ends;
+		}
+
+		if ( empty( $clauses ) ) {
+			return array();
+		}
+
+		// Same post_type and status filters as name_key_pairs(). Name keys
+		// survive trashing, so without them a trashed actor pairs again.
+		$conditions = implode( ' OR ', $clauses );
+		$params[]   = Actors::SLUG;
+
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$query = $wpdb->prepare(
+			"SELECT pm.post_id, pm.meta_key, pm.meta_value
+			FROM {$wpdb->postmeta} pm
+			INNER JOIN {$wpdb->posts} p ON p.ID = pm.post_id
+			WHERE ( {$conditions} )
+			AND p.post_type = %s
+			AND p.post_status NOT IN ( 'trash', 'auto-draft', 'inherit' )",
+			$params
+		);
+		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$rows = $wpdb->get_results( $query );
+
+		$groups = array();
+
+		foreach ( (array) $rows as $row ) {
+			// Keyed by meta_key as well as value, as in name_key_pairs().
+			$groups[ $row->meta_key . '|' . $row->meta_value ][] = (int) $row->post_id;
+		}
+
+		$pairs = array();
+
+		foreach ( $groups as $ids ) {
+			$ids = array_values( array_unique( $ids ) );
+
+			if ( count( $ids ) < 2 ) {
+				continue;
+			}
+
+			$original_id = (int) min( $ids );
+
+			// This post is the group's original; the scan pairs the newer posts
+			// against it, not it against them.
+			if ( $original_id === $post_id ) {
+				continue;
+			}
+
+			$pairs[ $post_id . ':' . $original_id ] = array(
+				'post_id'     => $post_id,
+				'original_id' => $original_id,
+			);
+		}
+
+		return array_values( $pairs );
+	}
+
+	/**
 	 * Collect a list of already-paired candidates.
 	 *
 	 * @param  array<int, array{post_id: int, original_id: int}> $pairs Pairs.

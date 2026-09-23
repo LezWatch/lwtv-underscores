@@ -132,12 +132,10 @@ class Dupes {
 
 		// Nothing from the slug. Try the name-key pairing, so this answers the
 		// same question find_duplicates() does rather than a narrower one.
+		// name_key_pairs_for() returns the same pairs the full scan would hand
+		// back for this post, without reading every actor's keys to find them.
 		if ( empty( $findings ) ) {
-			foreach ( $collector->name_key_pairs() as $pair ) {
-				if ( (int) $pair['post_id'] !== $post_id ) {
-					continue;
-				}
-
+			foreach ( $collector->name_key_pairs_for( $post_id ) as $pair ) {
 				$findings = Duplicate_Rules::evaluate(
 					$collector->collect_one( $post_id, (int) $pair['original_id'] )
 				);

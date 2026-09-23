@@ -1,4 +1,5 @@
 // Plugin Specific Imports
+import apiFetch from '@wordpress/api-fetch';
 import { PluginDocumentSettingPanel } from '@wordpress/editor';
 import { useSelect } from '@wordpress/data';
 import { useState, useEffect } from '@wordpress/element';
@@ -60,11 +61,13 @@ export default function Render() {
 			const fetchData = async () => {
 				setIsLoading( true );
 				try {
-					// Use the editor's configured apiFetch so the request carries
-					// the REST nonce. Without it WordPress treats the call as
-					// logged-out, and the panel can neither run a live WikiData
-					// check nor read unpublished actors the editor is editing.
-					const data = await window.wp.apiFetch( {
+					// The build externalises this import to wp.apiFetch, so it
+					// is the editor's configured instance and the request
+					// carries the REST nonce. Without it WordPress treats the
+					// call as logged-out, and the panel can neither run a live
+					// WikiData check nor read unpublished actors the editor is
+					// editing.
+					const data = await apiFetch( {
 						path: `/lwtv/v1/wikidata/${ postId }`,
 					} );
 					if ( Array.isArray( data ) ) {
