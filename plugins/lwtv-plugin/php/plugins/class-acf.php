@@ -409,10 +409,9 @@ class ACF {
 		 * saved. get_post_meta() on an unresolved zero returns nothing, so an
 		 * unidentifiable post never reaches this.
 		 */
-		$is_older  = $post_id > 0 && $post_id < $owner_id;
-		$unchanged = Imdb_Canonical::normalise( get_post_meta( $post_id, $field_name, true ) ) === $wanted;
+		$is_older = $post_id > 0 && $post_id < $owner_id;
 
-		if ( $is_older && $unchanged ) {
+		if ( $is_older && Imdb_Canonical::normalise( get_post_meta( $post_id, $field_name, true ) ) === $wanted ) {
 			return $valid;
 		}
 
@@ -448,7 +447,7 @@ class ACF {
 		// the parsed copy is empty.
 		// phpcs:disable WordPress.Security.NonceVerification.Missing
 		foreach ( array( '_acf_post_id', 'post_id', 'post_ID' ) as $key ) {
-			if ( isset( $_POST[ $key ] ) ) {
+			if ( isset( $_POST[ $key ] ) && is_scalar( $_POST[ $key ] ) ) {
 				$sources[] = sanitize_text_field( wp_unslash( $_POST[ $key ] ) );
 			}
 		}
