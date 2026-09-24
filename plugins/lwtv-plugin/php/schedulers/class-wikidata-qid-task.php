@@ -160,7 +160,7 @@ class Wikidata_Qid_Task {
 			// checked-marker, so nothing has been recorded as a no-match.
 			//
 			// Only genuine faults land here. An ambiguous IMDb ID is an answer
-			// and carries its own checked-marker, so it leaves by the front door.
+			// and carries its own checked-marker, so it is not retried.
 			if ( 'error' === $result['status'] ) {
 				$count = ( $attempts[ $post_id ] ?? 0 ) + 1;
 

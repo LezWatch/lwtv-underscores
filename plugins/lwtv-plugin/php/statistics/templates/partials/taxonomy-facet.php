@@ -8,9 +8,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  * facet-specific "Most Prolific"-style section (see Taxonomy_Profile's
  * class docblock for why each facet's version means something different).
  *
- * Replaces four near-identical ~35-line blocks that used to be duplicated
- * across nations/single.php and stations/single.php — one include per
- * facet, parameterized by taxonomy instead of copy-pasted per page.
+ * Shared by nations/single.php and stations/single.php — one include per
+ * facet, parameterized by taxonomy.
  *
  * @package LezWatch.TV
  *
@@ -157,7 +156,7 @@ if ( ! empty( $facet_pullstats ) ) :
 endif;
 
 // ---- Most Prolific — a different shape per facet; see Taxonomy_Profile's docblock ----
-// Tropes has no branch here — it was folded into the pullstats row above.
+// Tropes has no branch here — the pullstats row above covers it.
 if ( 'formats' === $facet_view ) {
 	$facet_prolific = $facet_profile->generate_top_rated_by_format();
 	if ( ! empty( $facet_prolific ) ) {

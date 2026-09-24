@@ -126,7 +126,7 @@ class Shows {
 	/**
 	 * Write 'TBD' for a show with no Thumb (Worth It) rating.
 	 *
-	 * Guarded on empty so this no longer rewrites the same value on every scan.
+	 * Guarded on empty so a scan does not rewrite the same value every time.
 	 *
 	 * @param  int  $show_id Show post ID.
 	 * @return bool True when the rating was written.

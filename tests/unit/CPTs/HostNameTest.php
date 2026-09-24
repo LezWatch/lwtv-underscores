@@ -3,8 +3,8 @@
  * Unit tests for deriving a provider display name from a hostname, and for the
  * candidate host list used to match lez_watch_urls terms.
  *
- * Cases are drawn from real Ways to Watch hosts on the site, including the ones
- * the previous suffix-stripping approach got wrong.
+ * Cases are drawn from real Ways to Watch hosts on the site, including ones a
+ * naive suffix-stripping approach gets wrong.
  *
  * @package lwtv-underscores
  */
@@ -57,8 +57,8 @@ class HostNameTest extends TestCase {
 	/*
 	 * registrable_label() - compound public suffixes
 	 *
-	 * These are the cases the old '.co.uk before .co' ordering kept getting
-	 * wrong, or missing entirely.
+	 * These are the cases a '.co.uk before .co' ordering gets wrong, or misses
+	 * entirely.
 	 */
 
 	public function test_registrable_label_handles_compound_suffixes(): void {
@@ -110,18 +110,18 @@ class HostNameTest extends TestCase {
 	}
 
 	public function test_guess_regression_cases_from_the_old_ltrim_bug(): void {
-		// ltrim( 'watch.amazon.com', 'watch.' ) used to yield 'mazon.com'.
+		// ltrim( 'watch.amazon.com', 'watch.' ) yields 'mazon.com'; this must not.
 		$this->assertSame( 'Amazon', Host_Name::guess( 'watch.amazon.com' ) );
-		// ltrim( 'gshow.globo.com', 'gshow.' ) used to yield 'lobo.com'.
+		// ltrim( 'gshow.globo.com', 'gshow.' ) yields 'lobo.com'; this must not.
 		$this->assertSame( 'Globo', Host_Name::guess( 'gshow.globo.com' ) );
 	}
 
 	public function test_guess_regression_cases_from_the_suffix_list(): void {
-		// Previously 'Rtve.' with a trailing dot, because 'es' had no leading dot.
+		// Not 'Rtve.' with a trailing dot, which an 'es' entry with no leading dot gives.
 		$this->assertSame( 'Rtve', Host_Name::guess( 'www.rtve.es' ) );
-		// Previously 'Therokuchannel.roku'.
+		// Not 'Therokuchannel.roku'.
 		$this->assertSame( 'Roku', Host_Name::guess( 'therokuchannel.roku.com' ) );
-		// Previously 'Iview.abc.net.au' untouched.
+		// Not 'Iview.abc.net.au' untouched.
 		$this->assertSame( 'ABC', Host_Name::guess( 'iview.abc.net.au' ) );
 	}
 

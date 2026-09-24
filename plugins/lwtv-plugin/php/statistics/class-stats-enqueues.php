@@ -35,10 +35,8 @@ class Stats_Enqueues {
 			);
 		}
 
-		// The stats redesign replaced every sortable data table with server-rendered
-		// charts, donuts and leaderboards. The one tablesorter table left is the death
-		// record list, so load tablesorter (and its single init) only on that view and
-		// nowhere else — every other page skips the ~150KB library + theme CSS.
+		// Only the death record list uses tablesorter, so load it (and its single
+		// init) on that view alone — every other page skips the library + theme CSS.
 		if ( 'death' === $statistics && 'list' === $stat_view ) {
 			wp_enqueue_script( 'tablesorter', LWTV_PLUGIN_URL . '/assets/js/jquery.tablesorter.min.js', array( 'jquery' ), $versioning['tablesorter'], false );
 			wp_enqueue_style( 'tablesorter', LWTV_PLUGIN_URL . '/assets/css/theme.bootstrap.min.css', array(), $versioning['tablesorter'], false );

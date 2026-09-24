@@ -47,9 +47,8 @@ class Watch_Url_Health {
 	 * Machine-readable reason, for the one case a caller needs to act on
 	 * specifically: a term whose published name is a known, confirmed drift
 	 * (a provider now hosted on a platform that publishes its own name, for
-	 * instance) rather than evidence of losing the provider. Everything else
-	 * that can produce a REVIEW or worse has no reason to single out yet, so
-	 * it is left '' rather than invented ahead of a caller that needs it.
+	 * instance) rather than evidence of losing the provider. Every other
+	 * outcome leaves the reason ''.
 	 */
 	const REASON_NAME_MISMATCH = 'name_mismatch';
 

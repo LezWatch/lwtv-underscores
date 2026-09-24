@@ -57,9 +57,7 @@ class Is_Actor_Queer {
 		// 'not_queer' returning early is the whole point of the value, not a
 		// shortcut: it exists for someone who *does* meet the automated criteria
 		// below but should not be counted. Falling through to check_queerness()
-		// would return true for exactly the actors the override was set on, which
-		// is what it did until now -- the field offered "Is NOT Queer" and nothing
-		// anywhere acted on it.
+		// would return true for exactly the actors the override was set on.
 		//
 		// Anything else ('undefined', the ACF default, or an empty value) means no
 		// decision has been made, so the taxonomies answer.

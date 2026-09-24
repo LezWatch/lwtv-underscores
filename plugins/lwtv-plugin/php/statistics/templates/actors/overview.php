@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * top panels.
  *
  * The Headlines band mirrors Characters'/Shows' section-index pattern, but
- * inlines its own markup (Shows' original approach) rather than including
+ * inlines its own markup rather than including
  * the shared partials/headlines.php, which hard-gates below 4 total items —
  * a threshold Actors will never realistically clear with only three
  * subpages to draw from. See the render-gate below for the lower bar used

@@ -237,11 +237,9 @@ class Character_Score {
 				}
 			}
 
-			// The Tambor Takedown. Both conditions are required, matching the
-			// implementation in theme/class-show-characters.php that nothing has
-			// ever reached: the character is tagged queer-irl AND their
-			// first-billed actor is actually queer. Actors are stored in billing
-			// order, so the primary is simply the first.
+			// The Tambor Takedown. Both conditions are required: the character
+			// is tagged queer-irl AND their first-billed actor is actually queer.
+			// Actors are stored in billing order, so the primary is simply the first.
 			$primary_queer = false;
 			if ( $is_qirl && ! empty( $actor_ids ) ) {
 				$primary_queer = ( new Is_Actor_Queer() )->make( reset( $actor_ids ) );
@@ -419,8 +417,7 @@ class Character_Score {
 	 *
 	 * Ranked by the POINTS each role is worth rather than by their position in
 	 * ROLE_POINTS, so reordering that array cannot silently invert the hierarchy.
-	 * An unrecognised slug scores 0 and therefore never wins, matching the
-	 * behaviour this replaced.
+	 * An unrecognised slug scores 0 and therefore never wins.
 	 *
 	 * @param string $current Role held so far.
 	 * @param string $found   Role from this row.

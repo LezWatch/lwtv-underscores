@@ -34,7 +34,7 @@ class Worth_It_Grid {
 	/**
 	 * Allocate 100 grid squares by verdict share.
 	 *
-	 * Guards, per the handoff: a verdict with a non-zero count always
+	 * Guards: a verdict with a non-zero count always
 	 * renders at least one square (TBD must never round to nothing),
 	 * and rounding drift is absorbed by the largest verdict so the
 	 * grid always fills exactly 100.

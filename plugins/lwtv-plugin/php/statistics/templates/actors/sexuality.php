@@ -31,9 +31,8 @@ unset( $sex_data['heterosexual'], $sex_data['unknown'] );
 
 // Remaining = queer orientations; rank and ramp the top 4, fold the rest into "Other".
 // Amber, not pink — matches the "actors" family color used by the
-// pullstats/callout/prolific cards added below, so the whole page reads as
-// one color family instead of the donut being a leftover from before those
-// existed.
+// pullstats/callout/prolific cards below, so the whole page reads as one
+// color family.
 uasort( $sex_data, fn( $a, $b ) => (int) $b['count'] <=> (int) $a['count'] );
 $sex_ramp     = array( 'amber', 'medamber', 'midamber', 'paleamber' );
 $sex_segments = array(

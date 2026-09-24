@@ -6,9 +6,8 @@
  * field the only place a duplicate can be caught before a second post exists.
  *
  * Registered through block.json's editorScript rather than its own enqueue, the
- * same way wikidata-actor is. Note that editorScript is load-bearing: the old
- * pre-publish entry omitted it, so its JavaScript was never built or enqueued
- * and the panel it describes never once ran.
+ * same way wikidata-actor is. Note that editorScript is load-bearing: without
+ * it the JavaScript is never built or enqueued, and the panel never runs.
  */
 
 // Import defaults

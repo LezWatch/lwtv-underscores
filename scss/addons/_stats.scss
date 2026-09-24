@@ -2430,8 +2430,7 @@ canvas {
 		// card has no such wrapper, so cap it directly or it fills the
 		// whole card. Paired with 20 columns (5 rows) in the template call,
 		// this reads as a wide horizontal band instead of a tall square,
-		// so it no longer leaves a dead gap above the link. Centered per
-		// request, now that there's slack width to center within.
+		// centered in the card's spare width.
 		.lwtv-waffle {
 			display: block;
 			max-width: 300px;
@@ -2831,9 +2830,9 @@ canvas {
 		background-color: colors.$lwtv-blue-deep;
 	}
 
-	// Intersectionality Breakdown/Pairings never had their own fill and were
-	// falling through to the default teal progressbar above — same royal-blue
-	// token .lwtv-panel-icon.intersections already uses elsewhere.
+	// Intersectionality Breakdown/Pairings get their own fill instead of the
+	// default teal progressbar above — same royal-blue token
+	// .lwtv-panel-icon.intersections already uses elsewhere.
 	.lwtv-bars--intersections .progress-bar {
 		background-color: colors.$lwtv-royal-blue;
 	}
@@ -2941,7 +2940,7 @@ canvas {
 	// beside them, and Trope Breakdown (the long ranked list) drops out of
 	// this grid entirely to run full width below — same asymmetric 2:1
 	// ratio and structure as Genres' .lwtv-genres-columns (main leads in
-	// source order on both pages now). Stacks to one column below 900px.
+	// source order on both pages). Stacks to one column below 900px.
 	.lwtv-tropes-columns {
 		display: grid;
 		grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
@@ -2960,8 +2959,8 @@ canvas {
 		}
 	}
 
-	// Trope Breakdown: full width now (moved out of .lwtv-tropes-columns
-	// above), so it gets the exact same 2-col newspaper flow and breakpoint
+	// Trope Breakdown: full width (outside .lwtv-tropes-columns above),
+	// so it gets the exact same 2-col newspaper flow and breakpoint
 	// as .lwtv-genres-breakdown-wrap rather than a page-specific one.
 	.lwtv-tropes-breakdown-wrap .lwtv-leaders {
 		column-count: 2;
@@ -3049,8 +3048,8 @@ canvas {
 	// reusing .lwtv-castinggap-row/-waffle directly — same visual idea
 	// (waffle left, legend right) but this page isn't nested inside
 	// another panel the way Casting Gap is on the Overview page, so it
-	// needs its own top-level card, and the design handoff's spacing
-	// (44px row gap, 230px waffle) differs slightly from Casting Gap's.
+	// needs its own top-level card, and its spacing (44px row gap,
+	// 230px waffle) differs slightly from Casting Gap's.
 	// Colors are the one thing intentionally NOT page-specific — same
 	// $lwtv-pink/$lwtv-aro-grey Casting Gap already uses for this exact
 	// queer-vs-cis metric, so it reads as the same statistic everywhere.
@@ -3134,14 +3133,7 @@ canvas {
 	}
 
 	// Trope Load (shows/tropes.php): a 100-dot waffle colored by bucket
-	// (0/1/2/3/4+ tropes per show) instead of the raspberry share-of-total
-	// ramp above. Reuses .lwtv-legend's row markup — just overrides its
-	// dot colors with a light→dark green ramp in a higher-specificity block,
-	// since bucket order here is fixed (low→high), not ranked by size.
-	// Figure-left, legend-right split, sized for the side column above
-	// rather than the full page width — mirrors .lwtv-donut-card's
-	// figure/body split (same flex-wrap idea), just with a waffle standing
-	// in for the donut.
+	// (0/1/2/3/4+ tropes per show).
 	.lwtv-tropeload-row {
 		display: flex;
 		flex-wrap: wrap;
@@ -3149,10 +3141,9 @@ canvas {
 		align-items: center;
 	}
 
-	// Widened from 220px, same fix — and same values — as Genre Load's
-	// figure/legend gap. Trope Load now lives in the wide 2fr main column
-	// (see .lwtv-tropes-columns above), the same layout context Genre Load
-	// has, so it gets the same sizing.
+	// Same values as Genre Load's figure/legend gap. Trope Load sits in the
+	// wide 2fr main column (see .lwtv-tropes-columns above), the same layout
+	// context Genre Load has, so it gets the same sizing.
 	.lwtv-tropeload-figure {
 		flex: 0 0 auto;
 		width: 320px;
@@ -3248,8 +3239,8 @@ canvas {
 		background-color: $tropeload-ramp-5;
 	}
 
-	// Genre Stats: generic stat cards for the 3-up pullstats row (replaces
-	// the old avg/median callout pair). Deliberately plain — white bg, one
+	// Genre Stats: generic stat cards for the 3-up pullstats row.
+	// Deliberately plain — white bg, one
 	// amber accent — unlike .lwtv-tropegap's per-family tinted background,
 	// since these three cards are all one family, not four alignment types.
 	.lwtv-statcard {
@@ -3338,8 +3329,8 @@ canvas {
 		}
 	}
 
-	// .lwtv-statcard-icon/-number default to amber — fine for Genres, the
-	// only page that used pullstats until now, but Clichés' family color
+	// .lwtv-statcard-icon/-number default to amber — fine for Genres,
+	// but Clichés' family color
 	// is green everywhere else on its page (Load waffle, matchup accents).
 	// .lwtv-bars--characters already carries that green override elsewhere
 	// on this page, so it doubles as the pullstats variant too rather than
@@ -3738,10 +3729,8 @@ canvas {
 
 	// Common Pairings: compact "count first" rows (partials/matchup-cards.php)
 	// — leading number reads first, pair name follows on the same line, a thin
-	// divider instead of a bordered box per row. Denser than both the boxed-card
-	// version this replaced (Genres) and the lollipop-list treatment this
-	// replaced (Tropes, Intersectionality) — built for a narrow side column
-	// where height matters. "shows together" moves to a .screen-reader-text
+	// divider instead of a bordered box per row. Kept dense because it is
+	// built for a narrow side column where height matters. "shows together" moves to a .screen-reader-text
 	// label; the number is self-explanatory next to the pair once it isn't
 	// floating alone in a card.
 	.lwtv-matchup-grid {
@@ -3784,7 +3773,7 @@ canvas {
 	// Common Pairings rows render as <a> once matchup-cards.php gets a
 	// per-item 'url' (currently just Intersectionality's confirmed
 	// fwp_show_intersectionality FacetWP param) — reset link defaults so a
-	// linked row looks identical to the plain-div rows Genres/Tropes still
+	// linked row looks identical to the plain-div rows Genres/Tropes
 	// use, and only hint at interactivity on hover. Placed after the base
 	// .lwtv-matchup-pair rule above so specificity only increases going
 	// down the file (no-descending-specificity).
@@ -3874,7 +3863,7 @@ canvas {
 		}
 	}
 
-	// Intersectionality Breakdown: full width now (moved out of
+	// Intersectionality Breakdown: full width (outside
 	// .lwtv-inter-columns above), so it gets the exact same 2-col newspaper
 	// flow and breakpoint as .lwtv-genres-breakdown-wrap / .lwtv-tropes-
 	// breakdown-wrap rather than a page-specific one.
@@ -4035,7 +4024,7 @@ canvas {
 		color: colors.$lwtv-green-deep;
 	}
 
-	// Cliché Breakdown: full width now (moved out of .lwtv-cliches-columns
+	// Cliché Breakdown: full width (outside .lwtv-cliches-columns
 	// above), so it gets the exact same 2-col newspaper flow and breakpoint
 	// as .lwtv-genres-breakdown-wrap / .lwtv-tropes-breakdown-wrap / .lwtv-
 	// inter-breakdown-wrap rather than a page-specific one.
@@ -4064,10 +4053,8 @@ canvas {
 	// "The Records" (Characters → Most): a five-column spotlight row (the
 	// #1 character per category, reusing the .lwtv-metric-card shape
 	// characters/overview.php already established) plus a Full Rankings
-	// table below it. Both real design tokens throughout (Oswald headings,
-	// $lwtv-green-deep, $lwtv-grey-light/-border) rather than the design
-	// handoff mockup's literal hex values, which were an approximation of
-	// this exact palette to begin with.
+	// table below it. Both use design tokens throughout (Oswald headings,
+	// $lwtv-green-deep, $lwtv-grey-light/-border).
 	.lwtv-metric-grid--5 {
 		grid-template-columns: repeat(5, 1fr);
 	}
@@ -4089,8 +4076,8 @@ canvas {
 	// A neutral tint rather than the solid family-color fill .card-header +
 	// a family class normally gives .lwtv-metric-card (see characters/
 	// overview.php) — five cards in a row all in that same green fill made
-	// the pink winner-name text hard to read against it. This matches the
-	// design handoff's own light-card + colored-text treatment instead.
+	// the pink winner-name text hard to read against it, so these use a
+	// light card with colored text instead.
 	.lwtv-records-spotlight .lwtv-metric-card {
 		background-color: colors.$lwtv-grey-light;
 		border-color: transparent;
@@ -4675,8 +4662,8 @@ canvas {
 	// the two darker ramp stops get a center-num rule (medgreen, midgreen);
 	// ltgreen/palegreen are the ramp's palest stops and, like ltpink/mid2,
 	// are left to fall back to .lwtv-donut-center-num's own dark grey
-	// default rather than risk the same low-contrast mistake --green just
-	// had, since a compact tile's lead segment is rarely one of these.
+	// default rather than risk low contrast, since a compact tile's lead
+	// segment is rarely one of these.
 	.lwtv-donut-center-num--medgreen { color: color.mix(colors.$lwtv-green-light, colors.$lwtv-green-deep, 25%); }
 
 	.lwtv-donut-center-num--midgreen { color: color.mix(colors.$lwtv-green-light, colors.$lwtv-green-deep, 50%); }
@@ -4730,7 +4717,7 @@ canvas {
 	// .lwtv-decade-tile's name collides with an unrelated rule above (the
 	// Genre/Intersections "Mix by Decade" ranked-bar tiles use the same
 	// class, giving every tile here a second bordered white box for free).
-	// That extra box duplicated .lwtv-decade-row's own new outer card below
+	// That extra box duplicated .lwtv-decade-row's own outer card below
 	// it, so this scoped override cancels it back out — only within a
 	// .lwtv-decade-row, leaving .lwtv-decade-tile-grid's unrelated tiles
 	// untouched.
@@ -6947,8 +6934,8 @@ canvas {
 	}
 
 	// Death "Vibrant Refresh" — bespoke crimson→plum data-viz palette. Hardcoded
-	// hex per the design handoff (a fixed severity ramp meant to read the same in
-	// light and dark), not the theme tokens.
+	// hex (a fixed severity ramp meant to read the same in light and dark), not
+	// the theme tokens.
 	$death-bar-ramp: #edaac1, #e690ac, #e068a0, #d84f92, #c93a80, #c02e70;
 	$death-bar-peak: #a5124a;
 
@@ -6959,7 +6946,7 @@ canvas {
 		background-color: list.nth($death-bar-ramp, 1);
 		border-radius: 3px 3px 0 0;
 
-		// Only the peak bar carries an on-bar label now; every other year's value
+		// Only the peak bar carries an on-bar label; every other year's value
 		// is shown in the corner readout on hover (see statistics-overview.js).
 		.lwtv-yearbar-val {
 			position: absolute;

@@ -3,7 +3,7 @@
  * Unit tests for the longevity weighting maths: turning a show's TVMaze season
  * dates into the set of years it actually aired, turning a character's
  * `appears` years into a 0-1 weight against that run, and the saturating curve
- * that replaces the old hard clamp at 100.
+ * that gives the score a smooth ceiling at 100.
  *
  * The point of the model is that headcount stops driving a show's character
  * score. A 50-year soap that cycled through 200 one-episode characters should
@@ -181,12 +181,6 @@ class ShowLongevityTest extends TestCase {
 	public function test_a_set_that_starts_far_too_late_is_rejected(): void {
 		// A show recorded from 1992 whose only dated years are recent: every
 		// pre-2018 appearance would be thrown away by the intersection.
-		//
-		// This was written expecting it to describe Gute Zeiten, schlechte Zeiten.
-		// It does not -- GZSZ has 9 dated years but they START at the premiere,
-		// with the holes in the middle and end, so signal 2 never fires on it.
-		// The shape is real and worth rejecting, it is just rarer than assumed.
-		// GZSZ is covered by signal 3 instead, below.
 		$aired = range( 2018, 2026 );
 
 		$this->assertSame( array(), Longevity::usable_aired_years( $aired, 0, '1992' ) );
@@ -358,11 +352,11 @@ class ShowLongevityTest extends TestCase {
 	}
 
 	public function test_coverage_rejection_recovers_the_character_years(): void {
-		// The end-to-end point of signal 3. Before it, a GZSZ character credited
-		// across 2000-2010 kept none of those years, because the intersection
-		// threw away every year TVMaze had not dated -- so a decade-long regular
-		// scored as though they had never been on screen. Now the set is dropped
-		// and the years survive.
+		// The end-to-end point of signal 3. Without it, a GZSZ character credited
+		// across 2000-2010 would keep none of those years, because the
+		// intersection throws away every year TVMaze has not dated -- so a
+		// decade-long regular would score as though they had never been on
+		// screen. With it, the set is dropped and the years survive.
 		$aired    = array( 1992, 1993, 1994, 2021, 2022, 2023, 2024, 2025, 2026 );
 		$credited = range( 1995, 2020 );
 		$vetted   = Longevity::usable_aired_years( $aired, 0, '1992', $credited );
@@ -463,15 +457,14 @@ class ShowLongevityTest extends TestCase {
 	/*
 	 * run_years_detail() - the denominator AND which tier produced it
 	 *
-	 * The tier has to come from the function that made the choice. When the
-	 * preview command re-derived it from the same inputs, the two tests for
-	 * "still airing" drifted apart and 12 currently-airing shows were reported as
-	 * using a curated season count when their denominator had come from TVMaze.
-	 * The scores were right; the explanation of them was wrong.
+	 * The tier has to come from the function that made the choice. Re-deriving
+	 * it from the same inputs lets the two tests for "still airing" drift
+	 * apart, so a currently-airing show can be reported as using a curated
+	 * season count when its denominator came from TVMaze.
 	 */
 
 	public function test_a_still_airing_show_with_a_season_count_is_not_tier_1(): void {
-		// The regression. Euphoria: 3 seasons recorded, still airing, and an
+		// Euphoria: 3 seasons recorded, still airing, and an
 		// aired-years set. Tier 1 excludes still-airing shows, so this MUST
 		// report tier 2 -- and a run of 5 years, not 3.
 		$out = Longevity::run_years_detail( range( 2019, 2023 ), 3, '2019', '', 2026 );
@@ -482,10 +475,9 @@ class ShowLongevityTest extends TestCase {
 	}
 
 	public function test_the_reported_tier_cannot_contradict_the_denominator(): void {
-		// The invariant that caught the bug in the data: with no floor supplied,
-		// tier 1 returns min( seasons, span ), so a tier-1 denominator can never
-		// exceed the season count. 12 rows in the CSV did, which is what exposed
-		// the tier column disagreeing with the tier actually used.
+		// The invariant: with no floor supplied, tier 1 returns
+		// min( seasons, span ), so a tier-1 denominator can never exceed the
+		// season count.
 		//
 		// ⚠ The credited-years floor can legitimately break this, and that is why
 		// every case here passes no floor. `floored` is asserted false so the
@@ -844,8 +836,8 @@ class ShowLongevityTest extends TestCase {
 	}
 
 	public function test_character_value_is_never_negative(): void {
-		// Was 1 - 5 = -4 under the additive model, which meant documenting a
-		// dead one-scene queer character LOWERED a show's score.
+		// Documenting a dead one-scene queer character must never LOWER a
+		// show's score.
 		$this->assertEqualsWithDelta( 0.5, Longevity::character_value( 'guest', 1.0, false, true ), 0.000001 );
 		$this->assertGreaterThanOrEqual( 0.0, Longevity::character_value( 'guest', 1.0, false, true ) );
 	}
@@ -946,9 +938,9 @@ class ShowLongevityTest extends TestCase {
 	}
 
 	public function test_actor_check_sees_compound_non_binary_slugs(): void {
-		// Regression: an exact-match list caught `non-binary` but silently missed
-		// every compound form, so 11 unambiguously non-binary actors read as cis
-		// and produced false miscast penalties.
+		// An exact-match list catches `non-binary` but silently misses every
+		// compound form, so non-binary actors would read as cis and produce
+		// false miscast penalties.
 		$this->assertSame( 'trans-or-nb', Longevity::classify_actor_gender( array( 'non-binary' ) ) );
 		$this->assertSame( 'trans-or-nb', Longevity::classify_actor_gender( array( 'non-binary-woman' ) ) );
 		$this->assertSame( 'trans-or-nb', Longevity::classify_actor_gender( array( 'non-binary-intersex' ) ) );
@@ -1012,11 +1004,9 @@ class ShowLongevityTest extends TestCase {
 	/**
 	 * Every actor classification classify_actor_gender() can return.
 	 *
-	 * Exists so these tests iterate the real states. An earlier revision passed
-	 * booleans here after the parameter became a string; PHP coerced true to "1"
-	 * and false to "", which matched no branch, so every trans case silently
-	 * returned the neutral 1.0. Four tests failed loudly — and four more passed
-	 * while asserting nothing at all.
+	 * Exists so these tests iterate the real states rather than booleans: PHP
+	 * coerces true to "1" and false to "", which match no branch, so every
+	 * trans case would silently return the neutral 1.0.
 	 *
 	 * @return array<int, string>
 	 */
@@ -1042,7 +1032,7 @@ class ShowLongevityTest extends TestCase {
 	}
 
 	public function test_a_trans_role_is_judged_only_on_trans_casting(): void {
-		// The signals no longer stack. A trans character played by a cis QUEER
+		// The signals do not stack. A trans character played by a cis QUEER
 		// actor is still a miscast trans role: the queer-irl boost must not
 		// offset it, and must not compound with it either.
 		$this->assertEqualsWithDelta( 0.5, Longevity::casting_multiplier( 'trans-or-nb', true, 'cis' ), 0.000001 );
@@ -1074,14 +1064,12 @@ class ShowLongevityTest extends TestCase {
 	}
 
 	public function test_the_casting_multiplier_never_compounds_past_its_bounds(): void {
-		// Guards the regression this replaced: two stacking x2 multipliers
-		// reached x4 and overtook the role hierarchy entirely, so a recurring
-		// character outranked a series lead.
+		// Two stacking x2 multipliers would reach x4 and overtake the role
+		// hierarchy entirely, so a recurring character would outrank a series
+		// lead.
 		//
-		// This is also the test that was silently vacuous while the third
-		// argument was a coerced boolean -- every trans case returned 1.0, well
-		// inside the bounds, so it asserted nothing. Iterating the real
-		// classifications is what gives it teeth.
+		// Iterating the real classifications, rather than a coerced boolean
+		// that always lands on 1.0, is what gives this test teeth.
 		$seen = array();
 
 		foreach ( array( 'trans-or-nb', 'cis', 'unclassified' ) as $class ) {
@@ -1104,8 +1092,8 @@ class ShowLongevityTest extends TestCase {
 	}
 
 	public function test_miscasting_a_lead_costs_more_than_miscasting_a_guest(): void {
-		// The reason this moved off the old show-level aggregate, which applied
-		// a flat -5 per character regardless of who they were.
+		// Miscasting is weighed per character, so it costs more the bigger the
+		// role, not a flat amount regardless of who they were.
 		$miscast = Longevity::casting_multiplier( 'trans-or-nb', false, 'cis' );
 
 		$lead_loss  = Longevity::character_value( 'regular', 1.0 ) - Longevity::character_value( 'regular', $miscast );
@@ -1150,15 +1138,15 @@ class ShowLongevityTest extends TestCase {
 		$maura   = Longevity::character_value( 'regular', $miscast, false, true ) * Longevity::weight( 4, 5 );
 		$adriana = Longevity::character_value( 'guest', 2.0 ) * Longevity::weight( 1, 5 );
 
-		// Pin the miscast value too. This assertion passed while the argument was
-		// a coerced boolean and $miscast was silently 1.0 instead of 0.5 -- Maura
-		// still cleared Adriana, so the comparison hid the wrong input.
+		// Pin the miscast value too. If $miscast were silently 1.0 instead of
+		// 0.5, Maura would still clear Adriana, so the comparison alone would
+		// hide the wrong input.
 		$this->assertEqualsWithDelta( 0.5, $miscast, 0.000001 );
 		$this->assertGreaterThan( $adriana, $maura );
 	}
 
 	/*
-	 * saturate() - the smooth ceiling replacing the hard clamp at 100
+	 * saturate() - the smooth ceiling at 100
 	 */
 
 	public function test_saturate_is_zero_at_or_below_zero(): void {

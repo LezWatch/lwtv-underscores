@@ -77,10 +77,8 @@ class Post_Type {
 	 * Every published post ID in a post type.
 	 *
 	 * `make()` defaults to `fields => 'all'` and caches the whole WP_Query, so a
-	 * caller that only wanted IDs was writing a multi-megabyte blob of full post
-	 * objects -- post_content and all -- into the object cache to extract an
-	 * array of integers. Every debugger scan did exactly that, then immediately
-	 * called `wp_list_pluck( $query->posts, 'ID' )`.
+	 * caller that only wants IDs would write a multi-megabyte blob of full post
+	 * objects into the object cache to extract an array of integers.
 	 *
 	 * This queries `fields => 'ids'` and caches only the ID list.
 	 *

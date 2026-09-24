@@ -3,7 +3,7 @@
  * Name: Show Longevity
  * Description: Pure maths for longevity-weighted character scoring.
  *
- * Headcount used to drive a show's character score, in two parts:
+ * Longevity-weighted headcount for a show's character score, in two parts:
  *
  *  1. A per-character weight in (0, 1] blending share-of-run with a curved
  *     absolute-year term, so a character who was actually around counts for
@@ -93,7 +93,7 @@ class Longevity {
 	const SATURATION_K = 10.0;
 
 	/**
-	 * Points per role. Unchanged from the previous scoring model.
+	 * Points per role.
 	 */
 	const ROLE_POINTS = array(
 		'regular'   => 5,
@@ -502,7 +502,7 @@ class Longevity {
 	 *     season landed in 2018.
 	 *  2. The TVMaze-derived set of years actually aired. Exact.
 	 *  3. The airdate span less known off-air years, if hiatus data exists.
-	 *  4. The raw airdate span. Today's behaviour -- wrong for revival shows,
+	 *  4. The raw airdate span. Wrong for revival shows,
 	 *     but never missing, since airdate coverage is complete.
 	 *
 	 * Tier 1 deliberately excludes still-airing shows: a season currently on air
@@ -515,7 +515,7 @@ class Longevity {
 	 * 5 where tier 2 says 7. Undercounting the denominator inflates every
 	 * character's `share`. Tier 2 handles straddling seasons, multiple drops in
 	 * one year, and revival gaps correctly. The ordering is fine, but it is not
-	 * the accuracy ordering -- see the plan doc.
+	 * the accuracy ordering.
 	 *
 	 * $credited_count is the floor that bounds that cost.
 	 *
@@ -759,8 +759,7 @@ class Longevity {
 	 *                                   queer-irl and trans flags is deliberate:
 	 *                                   it makes "one casting decision, one
 	 *                                   multiplier" structural, so the two
-	 *                                   signals cannot silently start
-	 *                                   compounding again.
+	 *                                   signals cannot silently compound.
 	 * @param bool   $no_cliches         Whether the character carries no clichés.
 	 * @param bool   $dead               Whether the character is dead.
 	 *
@@ -838,7 +837,7 @@ class Longevity {
 			// Substring, not exact match, for both families. This taxonomy is
 			// full of compound slugs -- non-binary-woman, non-binary-intersex,
 			// non-binary-gender-fluid, two-spirit-trans-man -- and an exact-match
-			// list silently missed every one of them.
+			// list would miss every one of them.
 			if ( false !== strpos( $slug, 'trans' ) || false !== strpos( $slug, 'non-binary' ) ) {
 				return 'trans-or-nb';
 			}
@@ -909,8 +908,8 @@ class Longevity {
 	/**
 	 * Map a raw weighted total onto 0-100 along a saturating curve.
 	 *
-	 * Replaces the old hard clamp at 100, which stacked shows at exactly 100
-	 * and made the top of the ranking carry no information. The asymptote means
+	 * A curve rather than a hard clamp at 100, so shows do not stack at exactly
+	 * 100 and the top of the ranking still carries information. The asymptote means
 	 * no amount of headcount buys a perfect score, while each additional
 	 * character still contributes something positive.
 	 *

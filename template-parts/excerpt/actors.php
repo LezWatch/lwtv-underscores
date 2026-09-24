@@ -2,10 +2,6 @@
 /*
  * This content is called by all archival displays of actors
  *
- * Used by the following files
- *      - archive-post_type_actors.php
- *      - taxonomy.php
- *
  * @package LezWatch.TV
  */
 

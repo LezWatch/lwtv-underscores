@@ -429,9 +429,9 @@ class ACF {
 	 *
 	 * acf/validate_value does not always run with a global post. In the block
 	 * editor the validation happens in ACF's own AJAX request, where get_the_ID()
-	 * has nothing to return and the ID arrives only in the payload -- which is
-	 * how the unique-IMDb check came to compare a post against itself and report
-	 * post 33236 as already holding post 33236's ID.
+	 * has nothing to return and the ID arrives only in the payload. Missing it
+	 * would let the unique-IMDb check compare a post against itself and report
+	 * the post as already holding its own ID.
 	 *
 	 * Each source is tried in turn rather than trusting one, because which of
 	 * them is populated depends on the editor and on ACF's own version.
@@ -553,9 +553,6 @@ class ACF {
 
 	/**
 	 * Populate the Primary Genre select choices from the show's assigned genres.
-	 *
-	 * CMB2 used options_cb to build a dynamic list of term IDs from lez_genres.
-	 * This replicates that behaviour for ACF.
 	 *
 	 * @param array $field ACF field definition.
 	 * @return array
@@ -684,7 +681,7 @@ class ACF {
 	 *
 	 * 1. lezshows_airdates — 10+ files read get_post_meta( $id, 'lezshows_airdates', true )
 	 *    expecting array( 'start' => year, 'finish' => year|'current' ).
-	 *    ACF now stores the values in separate keys; this hook keeps the legacy key in sync.
+	 *    ACF stores the values in separate keys; this hook keeps the legacy key in sync.
 	 *
 	 * 2. lezshows_worthit_show_we_love / lezshows_byq_override — SQL in
 	 *    class-we-love-it.php and class-get-loved.php hardcode pm.meta_value = 'on'.
@@ -817,8 +814,8 @@ class ACF {
 	 * it. Showing it as read-only says so before anyone spends the effort.
 	 *
 	 * Only sets readonly -- it deliberately does not touch the instructions. The
-	 * field's own copy already tells an editor to flip the toggle, and appending
-	 * a second sentence saying the same thing just made the hint stutter.
+	 * field's own copy already tells an editor to flip the toggle, so appending
+	 * a sentence would only say the same thing twice.
 	 *
 	 * acf/prepare_field, not acf/load_field: load_field runs once per field
 	 * definition with no post in sight, which is why the usual recipe for this
@@ -1057,7 +1054,6 @@ class ACF {
 	 * Register the number_slider ACF field type.
 	 *
 	 * Uses acf/init + acf_register_field_type() (ACF 5.8.9+/6.x).
-	 * The legacy acf/include_field_types hook was dropped in ACF 6.x.
 	 */
 	public function register_number_slider(): void {
 		if ( ! function_exists( 'acf_register_field_type' ) ) {

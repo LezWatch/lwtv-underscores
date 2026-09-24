@@ -86,8 +86,8 @@ class Genre_Decade_Buckets {
 		// show count, until it clears $min_bucket_size, then emit every
 		// decade after that on its own. A first decade that already clears
 		// the floor by itself stands alone as a real 'decade' bucket rather
-		// than getting wrapped in a 'before' label it doesn't need (same fix
-		// as Format_Decade_Buckets).
+		// than getting wrapped in a 'before' label it doesn't need (same as
+		// Format_Decade_Buckets).
 		$buckets       = array();
 		$leading_shows = 0;
 		$leading       = array();

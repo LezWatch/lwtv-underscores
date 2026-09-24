@@ -43,11 +43,10 @@ $cliches_slug_map = ( new \LWTV\Statistics\Build\Taxonomy_Optimized() )->get_obj
 
 // Cliché Load: how many (real) clichés a character carries, 0 to 4+.
 // "none" is excluded — it marks the absence of a cliché, not one of its
-// own. Confirmed against live data (audit script, 2026-08-10): every
-// published character carries at least one lez_cliches row, so the "0"
-// bucket below is exactly the "None"-tagged set, not a mix of that and
-// untagged characters — worth labeling as such rather than a bare "0
-// clichés", so the legend doesn't read like a data gap.
+// own. Every published character carries at least one lez_cliches row,
+// so the "0" bucket below is exactly the "None"-tagged set, not a mix of
+// that and untagged characters — worth labeling as such rather than a bare
+// "0 clichés", so the legend doesn't read like a data gap.
 $cliches_distribution = \LWTV\Statistics\Build\Term_Count_Distribution::build( $cliches_slug_map, (int) $character_count, array( 'none' ) );
 $cliches_cells        = \LWTV\Statistics\Build\Term_Count_Distribution::to_cells( $cliches_distribution, (int) $character_count, 100 );
 
@@ -104,11 +103,10 @@ if ( ! is_wp_error( $cliches_pair_terms ) && is_array( $cliches_pair_terms ) ) {
 }
 
 // ---- Pullstats row: average clichés/character, share carrying 3+, top pairing ----
-// Replaces the old average/median callout pair — three punchier numbers,
-// same treatment as the Genres/Tropes pullstats row. The average is
+// Same treatment as the Genres/Tropes pullstats row. The average is
 // measured across characters that carry at least one real cliché (Taxonomy_
-// Optimized excludes "None"-only characters from that denominator entirely,
-// same scope the old callout used) — a different, narrower denominator than
+// Optimized excludes "None"-only characters from that denominator entirely)
+// — a different, narrower denominator than
 // the 3+ share below, which is a % of every published character.
 $cliches_stats     = ( new \LWTV\Statistics\Build\Taxonomy_Optimized() )->get_terms_per_object_stats( 'post_type_characters', 'lez_cliches', array( 'none' ) );
 $cliches_pullstats = array();
@@ -172,7 +170,7 @@ endif;
 // Spotlight the single most-clichéd character as a small footer strip on
 // the panel — same treatment Genre/Trope Load use for their own "most
 // loaded" entity. This overlaps the #1 slot of the separate "Most Clichés"
-// leaderboard subpage by design (per direction): that page is the full
+// leaderboard subpage by design: that page is the full
 // top-25 list, this is just the headline fact for this panel.
 $cliches_top       = \LWTV\Statistics\Build\Term_Count_Distribution::top_object( $cliches_slug_map, array( 'none' ) );
 $cliches_top_media = '';
@@ -215,11 +213,6 @@ if ( $cliches_top['id'] > 0 && has_post_thumbnail( $cliches_top['id'] ) ) {
 						<span class="lwtv-legend-name">
 							<?php
 							if ( '0' === $cliches_dist_bucket['label'] ) {
-								// The "0" bucket is exactly the "None"-tagged characters
-								// (confirmed against live data, see the comment above
-								// $cliches_distribution) — label it as that cliché by
-								// name instead of a bare "0 clichés", which reads like
-								// a data gap rather than a deliberate tag.
 								echo esc_html( $cliches_none_name );
 							} else {
 								echo esc_html(
@@ -269,13 +262,6 @@ if ( $cliches_top['id'] > 0 && has_post_thumbnail( $cliches_top['id'] ) ) {
 	</div>
 	<div class="lwtv-cliches-col lwtv-cliches-col--side">
 		<?php
-		// Common pairings: which clichés appear together on the same
-		// character. $cliches_pairs/$cliches_pair_names were already
-		// computed above (reused for the pullstat headline), so this just
-		// builds the matchup rows — no re-query. No FacetWP multi-value
-		// param is confirmed for lez_cliches (same conservative call
-		// already made for lez_genres/lez_tropes), so rows don't link
-		// anywhere yet.
 		if ( ! empty( $cliches_pairs ) ) {
 			$cliches_matchup_items = array();
 			foreach ( $cliches_pairs as $cliches_pair ) {

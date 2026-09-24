@@ -76,21 +76,20 @@ if ( array_sum( $tropes_alignment ) > 0 ) {
 	<?php
 }
 
-// Trope Load: what share of shows carry 0, 1, 2, 3, or 4+ tropes. Replaces a
-// plain average/median pair — those collapse to the same "2" when the data
-// clusters tightly around the middle, which tells a reader nothing about
-// the spread. Reuses the same slug map as Trope Alignment above; $shows_count
+// Trope Load: what share of shows carry 0, 1, 2, 3, or 4+ tropes. Shown as
+// a distribution, not an average/median pair — those collapse to the same
+// "2" when the data clusters tightly around the middle, which tells a
+// reader nothing about the spread. Reuses the same slug map as Trope Alignment above; $shows_count
 // is the true denominator since the map only lists shows with >=1 trope
 // relationship row, so shows with none never appear in it at all.
 $tropes_distribution = \LWTV\Statistics\Build\Term_Count_Distribution::build( $tropes_slug_map, (int) $shows_count, array( 'none' ) );
 
 // Rendered as a 100-dot waffle colored by bucket rather than another
-// ranked-bar list — Trope Breakdown (now its own full-width section below
-// this whole layout) is already that shape, so Trope Load needs to look
-// like a different kind of fact, not a second copy of the same chart.
-// to_cells() apportions the
-// 100 dots by largest remainder so they always sum to exactly 100, even
-// though the buckets' raw pcts (each independently rounded to 1 decimal)
+// ranked-bar list — Trope Breakdown (the full-width section below this
+// layout) is already that shape, so Trope Load needs to look like a
+// different kind of fact, not a second copy of the same chart.
+// to_cells() apportions the 100 dots by largest remainder so they always
+// sum to exactly 100, even though the buckets' raw pcts (each independently rounded to 1 decimal)
 // don't necessarily add up to 100 themselves.
 $tropes_cells           = \LWTV\Statistics\Build\Term_Count_Distribution::to_cells( $tropes_distribution, (int) $shows_count, 100 );
 $tropes_waffle_segments = array();
@@ -291,10 +290,8 @@ if ( $tropes_top['id'] > 0 && has_post_thumbnail( $tropes_top['id'] ) ) {
 		// confirmed for lez_tropes (unlike lez_intersections'
 		// fwp_show_intersectionality), so rows don't link anywhere yet —
 		// same conservative call made for the Trope Alignment cards.
-		// Now its own column (previously stacked below Trope Load in the
-		// same side column) since Trope Load moved into the main column
-		// alongside Mixed Alignment — see the layout comment on
-		// .lwtv-tropes-columns in _stats.scss for the full "why".
+		// See the layout comment on .lwtv-tropes-columns in _stats.scss for
+		// why this sits in its own column.
 		$tropes_pairs = \LWTV\Statistics\Build\Intersection_Pairs::top_pairs(
 			\LWTV\Statistics\Build\Intersection_Pairs::count_pairs( $tropes_slug_map ),
 			8,
@@ -365,10 +362,10 @@ if ( $tropes_top['id'] > 0 && has_post_thumbnail( $tropes_top['id'] ) ) {
 </div>
 
 <?php
-// Trope Breakdown: full width now, like Genre Breakdown — it no longer
-// shares the grid with Trope Load/Mixed Alignment/Common Pairings, so it
-// gets the full page to spread its own internal 2 columns across instead
-// of squeezing a 2-col list into one half of a narrower split.
+// Trope Breakdown: full width, like Genre Breakdown — outside the grid
+// with Trope Load/Mixed Alignment/Common Pairings, so it gets the full page
+// to spread its own internal 2 columns across instead of squeezing a 2-col
+// list into one half of a narrower split.
 ?>
 <div class="lwtv-tropes-breakdown-wrap">
 	<?php

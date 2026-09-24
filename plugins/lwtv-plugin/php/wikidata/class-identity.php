@@ -523,9 +523,8 @@ class Identity {
 	 * field in, and silently discarding it would be the worst outcome: the editor
 	 * believes they have corrected a bad match while the audit keeps reporting it.
 	 *
-	 * Lives on the write path now. This used to read a separate
-	 * lezactors_wikidata_qid_manual field; there is one QID field, so the
-	 * normalising happens once as an editor saves rather than on every read.
+	 * Lives on the write path: there is one QID field, so the normalising
+	 * happens once as an editor saves rather than on every read.
 	 *
 	 * @param  string $value Raw field value.
 	 * @return string A bare QID, or '' when the value holds nothing usable.

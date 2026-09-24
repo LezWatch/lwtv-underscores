@@ -2,14 +2,13 @@
 /*
  * Validation: the shows behind a watch-URL finding.
  *
- * Both watch tabs used to print a bare "N shows" next to a broken provider URL,
- * which told an editor how much damage there was but not where. Finding out meant
- * querying wp_postmeta for the URL by hand. The scans already know the post IDs
+ * Both watch tabs list the shows behind a broken provider URL, so an editor sees
+ * where the damage is and not just how much. The scans already know the post IDs
  * -- Watch_Hosts::in_use() builds them to count distinct shows -- so this turns
  * that count into the list.
  *
  * The list is as of the last scan. A show whose watch URL changed since then is
- * still in it, the same staleness the count has always had; deleted and
+ * still in it, the same staleness the count has; deleted and
  * unpublished posts are dropped, because those we can see.
  *
  * No JavaScript. <details> is native and degrades to an open list, which matches

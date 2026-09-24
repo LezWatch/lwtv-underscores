@@ -44,14 +44,12 @@ class TMDB_Task {
 
 		lwtv_plugin()->debug_log( 'tmdb', "Processing TMDB task for {$post_type} ID: {$post_id}" );
 
-		// Check if TMDB ID is already set
 		$tmdb_id = $this->get_existing_tmdb_id( $post_id, $post_type );
 		if ( $tmdb_id ) {
 			lwtv_plugin()->debug_log( 'tmdb', "TMDB ID already exists for {$post_type} ID: {$post_id}" );
 			return;
 		}
 
-		// Get TMDB data
 		$tmdb_data = ( new CPTs() )->get_tmdb_info( $post_id );
 
 		if ( ! $tmdb_data ) {
@@ -63,7 +61,6 @@ class TMDB_Task {
 		// our own meta; Tmdb_Response knows both.
 		$tmdb_id = Tmdb_Response::id( $tmdb_data, $post_type );
 
-		// Save TMDB ID if found
 		if ( '' !== $tmdb_id ) {
 			$this->save_tmdb_id( $post_id, $post_type, $tmdb_id );
 			lwtv_plugin()->debug_log( 'tmdb', "Successfully saved TMDB ID: {$tmdb_id} for {$post_type} ID: {$post_id}" );

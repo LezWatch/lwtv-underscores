@@ -44,7 +44,6 @@
 	const links = menu.getElementsByTagName( 'a' );
 
 	// Each time a menu link is focused or blurred, toggle focus.
-	// `i` and `len` were previously undeclared, leaking onto window.
 	for ( let i = 0, len = links.length; i < len; i++ ) {
 		links[ i ].addEventListener( 'focus', toggleFocus, true );
 		links[ i ].addEventListener( 'blur', toggleFocus, true );

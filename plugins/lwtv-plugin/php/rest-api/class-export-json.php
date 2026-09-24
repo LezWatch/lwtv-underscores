@@ -757,7 +757,6 @@ class Export_JSON {
 					}
 					$data['died'] = ( isset( $get_dead ) ) ? ' and died ' . date_format( $get_dead, 'F d, Y' ) : '';
 
-					// Now Build
 					$return['description'] = $data['sexuality'] . ' ' . $data['gender'] . ' actor' . $data['born'] . $data['died'] . '. ' . $data['wikipedia'];
 					break;
 				case 'raw':

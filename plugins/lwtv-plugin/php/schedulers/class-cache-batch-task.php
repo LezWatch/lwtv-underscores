@@ -81,7 +81,6 @@ class Cache_Batch_Task {
 			return;
 		}
 
-		// Register Action Scheduler hook
 		add_action( self::AS_HOOK, array( $this, 'process_cache_batch' ) );
 	}
 
@@ -92,10 +91,8 @@ class Cache_Batch_Task {
 	 * @return bool True if successfully queued, false otherwise
 	 */
 	public function queue_post( int $post_id ): bool {
-		// Get existing queue
 		$queue = $this->get_queue();
 
-		// Add post to queue with priority if not already present
 		if ( ! $this->is_post_in_queue( $post_id, $queue ) ) {
 			$priority   = $this->get_post_priority( $post_id );
 			$queue_item = array(
@@ -110,7 +107,6 @@ class Cache_Batch_Task {
 			lwtv_plugin()->debug_log( 'caching', "Queued cache invalidation for post ID: {$post_id} with priority: {$priority}" );
 		}
 
-		// Schedule processing if not already scheduled
 		if ( ! $this->is_processing_scheduled() ) {
 			as_schedule_single_action( time(), self::AS_HOOK, array(), self::AS_GROUP );
 
@@ -168,11 +164,9 @@ class Cache_Batch_Task {
 			$processed_posts[] = $post_id;
 		}
 
-		// Remove duplicates
 		$unique_urls = array_unique( $all_urls );
 
 		if ( ! empty( $unique_urls ) ) {
-			// Process URLs in batches
 			$url_batches = array_chunk( $unique_urls, self::BATCH_SIZE );
 
 			foreach ( $url_batches as $batch_index => $url_batch ) {
@@ -187,7 +181,6 @@ class Cache_Batch_Task {
 			}
 		}
 
-		// Clear processed posts from queue
 		$remaining_queue = array_filter(
 			$queue,
 			function ( $item ) use ( $processed_posts ) {
@@ -196,7 +189,6 @@ class Cache_Batch_Task {
 		);
 		$this->set_queue( $remaining_queue );
 
-		// Update status
 		$this->update_status(
 			array(
 				'last_processed'  => time(),
@@ -206,7 +198,6 @@ class Cache_Batch_Task {
 			)
 		);
 
-		// Schedule next processing if queue is not empty
 		if ( ! empty( $remaining_queue ) ) {
 			as_schedule_single_action( time() + 30, self::AS_HOOK, array(), self::AS_GROUP ); // 30 second delay
 			$this->update_status(
@@ -400,7 +391,6 @@ class Cache_Batch_Task {
 		$this->set_queue( array() );
 		$this->clear_status();
 
-		// Cancel any scheduled actions
 		if ( lwtv_plugin()->is_action_scheduler_available() ) {
 			as_unschedule_all_actions( self::AS_HOOK );
 		}
@@ -424,7 +414,6 @@ class Cache_Batch_Task {
 			return false;
 		}
 
-		// Schedule immediate processing
 		as_schedule_single_action( time(), self::AS_HOOK, array(), self::AS_GROUP );
 
 		$this->update_status(

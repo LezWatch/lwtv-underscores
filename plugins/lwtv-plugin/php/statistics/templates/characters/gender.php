@@ -13,9 +13,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  * repeater's `appears` sub-field) since characters have no premiere-year
  * field of their own.
  *
- * Pullstats render before the donut (moved up per request) — the two are
- * otherwise independent, so the swap is just render order.
- *
  * @package LezWatch.TV
  *
  * @var int $character_count
@@ -116,7 +113,7 @@ $gen_segments = array(
 );
 
 uasort( $gen_data, fn( $a, $b ) => (int) $b['count'] <=> (int) $a['count'] );
-// Green ramp (was a raspberry/pink ramp) — --green reuses the existing solid
+// Green ramp — --green reuses the existing solid
 // dark-green segment class rather than duplicating its value under a new
 // name, so it keeps that class's dark-mode swap to green-light for free.
 $gen_ramp  = array( 'green', 'medgreen', 'midgreen', 'ltgreen' );

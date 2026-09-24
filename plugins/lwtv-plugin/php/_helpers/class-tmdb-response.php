@@ -12,11 +12,9 @@
  *                                    with `tv_results` / `person_results` arrays
  *
  * Nothing in the returned array says which one arrived, and a post silently
- * changes shape the moment a backfill writes its TMDB ID. That is what broke the
- * TMDB show score: it read `tv_results[0].vote_average`, which stops existing on
- * the day the show gets an ID. Six other call sites had each grown their own copy
- * of the detail-then-envelope dance, so one shape change meant auditing seven
- * files. This class is the single copy.
+ * changes shape the moment a backfill writes its TMDB ID -- `tv_results` stops
+ * existing on the day the show gets an ID. This class is the single copy of the
+ * detail-then-envelope handling, so callers never read one shape directly.
  *
  * Pure: takes decoded arrays, returns scalars, touches no WordPress. The HTTP and
  * the endpoint choice stay in _Components\CPTs.
@@ -91,9 +89,7 @@ class Tmdb_Response {
 	 *
 	 * Returned unscaled, in TMDB's own units, so that the ×10 conversion to the
 	 * 0-100 scale lezshows_3rd_scores holds lives in exactly one place --
-	 * Grading\TMDB::update_scores() -- rather than once per branch. It was a
-	 * per-branch copy of that multiplier that went missing last time this reader
-	 * was patched by hand.
+	 * Grading\TMDB::update_scores() -- rather than once per branch.
 	 *
 	 * @param mixed  $data      A decoded TMDB response, or anything else.
 	 * @param string $post_type The post type the request was made for.

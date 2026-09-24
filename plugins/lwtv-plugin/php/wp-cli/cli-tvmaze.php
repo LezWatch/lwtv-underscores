@@ -70,9 +70,8 @@ class WP_CLI_LWTV_TVMaze {
 	 * Default pause between requests, in milliseconds.
 	 *
 	 * TVMaze documents its rate limit as "at least 20 calls every 10 seconds"
-	 * per IP -- i.e. 2/sec. 500ms sits on that budget. An earlier revision
-	 * copied 250ms from cli-tmdb.php, which is 4/sec and twice the documented
-	 * allowance; TMDB's limits are simply more generous than TVMaze's.
+	 * per IP -- i.e. 2/sec. 500ms sits on that budget. Don't copy cli-tmdb.php's
+	 * 250ms: TMDB's limits are more generous than TVMaze's.
 	 *
 	 * Note --with-seasons makes two calls per show, so the effective rate is
 	 * halved again. That is intentional headroom rather than waste.
@@ -340,11 +339,8 @@ class WP_CLI_LWTV_TVMaze {
 		$wanted = $do_all ? 0 : max( 1, $limit );
 
 		// --scoring-only filters in PHP rather than SQL so it can call the same
-		// tier test Longevity::run_years() uses. Expressing "finished, and has a
-		// season count" in SQL would mean reimplementing the airdate resolution
-		// (including the legacy serialized fallback and the 'current' sentinel),
-		// and a filter that drifts from the scoring logic is worse than no filter.
-		// So fetch unlimited, filter, then slice.
+		// tier test Longevity::run_years() uses; an SQL copy would drift from the
+		// scoring logic. So fetch unlimited, filter, then slice.
 		if ( $scoring_only ) {
 			$all_ids  = $this->get_candidates( $order, $retry_missed, 0 );
 			$show_ids = array();
@@ -480,7 +476,7 @@ class WP_CLI_LWTV_TVMaze {
 	 *
 	 * Separate from `backfill` because that action's candidates are shows MISSING
 	 * an ID, so its --with-seasons flag can only ever reach shows it just matched.
-	 * It cannot touch the ~499 shows that already had an ID and no aired years,
+	 * It cannot touch shows that already had an ID and no aired years,
 	 * nor anything after a completed backfill has emptied the candidate list.
 	 *
 	 * @param array $assoc_args Flags.
@@ -631,17 +627,12 @@ class WP_CLI_LWTV_TVMaze {
 	 * Resolve one show's TVMaze ID.
 	 *
 	 * Read-only on purpose. Calendar\TVMaze::get_tvmaze_info_show() performs the
-	 * same lookup chain, but writes the ID as a side effect of fetching info,
-	 * which --dry-run cannot use. Sharing that method would mean dry-run and the
-	 * real run taking different code paths -- exactly the divergence that makes a
-	 * dry run untrustworthy.
+	 * same lookup chain but writes the ID as a side effect, so sharing it would
+	 * give --dry-run a different code path from the real run.
 	 *
-	 * IMDb lookups only. TVMaze can also be searched by name, but a name match is
-	 * a guess -- /search/shows is fuzzy and /singlesearch/shows is explicitly
-	 * undefined about which show it returns when titles collide -- and a wrong
-	 * TVMaze ID feeds wrong aired years straight into the show score. Shows with
-	 * no IMDb ID are skipped rather than guessed at. That is our choice, not a
-	 * TVMaze listing requirement.
+	 * IMDb lookups only. A TVMaze name match is a guess, and a wrong TVMaze ID
+	 * feeds wrong aired years straight into the show score, so shows with no
+	 * IMDb ID are skipped rather than guessed at.
 	 *
 	 * @param int $show_id Show post ID.
 	 *
@@ -706,11 +697,9 @@ class WP_CLI_LWTV_TVMaze {
 	 *
 	 * Comes from the "Ignore TVMaze Match" toggle on the show itself, which
 	 * reveals a manual ID field. Deliberately NOT lezshows_tvmaze_id: that one is
-	 * machine-written, and Calendar\TVMaze::get_tvmaze_info_show() updates it from
-	 * whatever the API returns -- including from its /singlesearch/shows name-search
-	 * fallback. So a fuzzy match on a show with no IMDb ID can overwrite it with
-	 * the wrong ID, and the `if ( $tvmaze_id )` branch then trusts that forever.
-	 * A manual value is never overwritten.
+	 * machine-written by Calendar\TVMaze::get_tvmaze_info_show(), including from
+	 * its fuzzy name-search fallback, so it can hold a wrong ID. A manual value is
+	 * never overwritten.
 	 *
 	 * @param int $show_id Show post ID.
 	 *
@@ -876,24 +865,14 @@ class WP_CLI_LWTV_TVMaze {
 	/**
 	 * Fit a title into a fixed-width column: truncate, then pad.
 	 *
-	 * Both halves have to be character-aware, and the padding half is the one
-	 * that is easy to miss.
-	 *
-	 * Truncation uses mb_substr rather than substr because these titles contain
-	 * multibyte characters (Päivä, Lindenstraße, Shoujo☆Kageki) and a byte-wise
-	 * cut lands mid-character and prints mojibake.
-	 *
-	 * Padding is done here rather than with sprintf's '%-42s', because that pads
-	 * to a byte count too: "Gideon’s Crossing" is 17 characters but 19 bytes, so
-	 * sprintf emitted two spaces too few and shunted the next column left.
-	 * Decoding HTML entities is what exposed this -- '&#8217;' is seven ASCII
-	 * bytes, and the ' it decodes to is three bytes but one visible character.
+	 * Both halves are character-aware: mb_substr so a multibyte title is not cut
+	 * mid-character, and manual padding because sprintf's '%-42s' pads to a byte
+	 * count.
 	 *
 	 * mb_strlen, not mb_strwidth: WordPress polyfills mb_substr and mb_strlen in
 	 * wp-includes/compat.php but not mb_strwidth, so using the latter would fatal
-	 * where mbstring is missing. The cost is that full-width CJK still counts as
-	 * one column when it occupies two -- acceptable for a CLI table, and no worse
-	 * than before.
+	 * where mbstring is missing. Full-width CJK therefore counts as one column
+	 * when it occupies two -- acceptable for a CLI table.
 	 *
 	 * @param string $title Decoded title.
 	 * @param int    $width Column width in characters.

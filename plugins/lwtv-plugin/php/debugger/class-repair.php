@@ -9,9 +9,8 @@
  *
  * Two deliberate choices:
  *
- * 1. It is a form POST, not a link. The plan called these "per-finding fix
- *    links", but a repair writes to the database, so it should not sit behind
- *    something a browser or crawler can prefetch. Watch_Providers already
+ * 1. It is a form POST, not a link. A repair writes to the database, so it
+ *    should not sit behind something a browser or crawler can prefetch. Watch_Providers already
  *    settled this pattern for the same reason.
  * 2. A successful repair *prunes* the cached findings rather than deleting the
  *    findings. Dropping them would send the next viewer of that tab into a full

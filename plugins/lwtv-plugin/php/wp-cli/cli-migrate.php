@@ -587,7 +587,7 @@ class WP_CLI_LWTV_Migrate {
 	 * New format: ACF repeater rows with show (post ID int), type (string), appears (array) sub-fields.
 	 *
 	 * NOTE: After running this, LIKE meta queries against lezchars_show_group will stop
-	 * working. Run Phase 4 consuming-code updates before or immediately after.
+	 * working.
 	 */
 	public function migrate_charshowgroup() {
 		$posts = get_posts(

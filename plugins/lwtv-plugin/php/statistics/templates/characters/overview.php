@@ -255,7 +255,7 @@ include plugin_dir_path( __DIR__ ) . 'partials/headlines.php';
 <?php
 // ---- The Cliché Gap: Bury Your Gays vs. No Cliché ----
 // Same Trope Gap treatment Shows uses (waffle-per-card + a computed ratio
-// callout) — replaces the old flat "Stories We Keep Telling" pull-stats.
+// callout).
 // "No Cliché" pairs against Dead rather than reusing "Played by Queer
 // Actors" (which The Casting Gap below already covers) so the two gap
 // sections don't repeat each other's story.

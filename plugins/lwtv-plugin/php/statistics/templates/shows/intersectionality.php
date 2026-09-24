@@ -190,12 +190,10 @@ $waffle = array(
 		<?php
 		// Common pairings: which intersections appear together on the same show.
 		// Pure counting lives in Build\Intersection_Pairs (unit-tested); reuses the
-		// same $inter_slug_map fetched at the top of this file. Rendered as
-		// matchup-cards.php rows (not the ranked-bars lollipop list Genres/Tropes
-		// use for this) because lez_intersections has a confirmed FacetWP
-		// multi-value param — matchup-cards.php's optional per-item 'url' turns
-		// each row into a link to that filtered shows archive, same destination
-		// this section always linked to.
+		// same $inter_slug_map fetched at the top of this file. lez_intersections
+		// has a confirmed FacetWP multi-value param, so matchup-cards.php's
+		// optional per-item 'url' turns each row into a link to that filtered
+		// shows archive.
 		$pairs = \LWTV\Statistics\Build\Intersection_Pairs::top_pairs(
 			\LWTV\Statistics\Build\Intersection_Pairs::count_pairs( $inter_slug_map ),
 			8,

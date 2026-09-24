@@ -70,7 +70,7 @@ class Star_Podium {
 	 * The rail-card numbers: star total, the leading merit tier and its
 	 * share of all stars, the star rate, and the unstarred remainder.
 	 *
-	 * Percent precision follows the handoff: whole numbers on the share
+	 * Percent precision: whole numbers on the share
 	 * (rail cards round), one decimal on rate and none-share.
 	 *
 	 * @param array $counts       Tier => count.

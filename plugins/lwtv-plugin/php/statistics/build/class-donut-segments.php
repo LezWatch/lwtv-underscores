@@ -17,10 +17,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  * out into its own forced-grey slot first (e.g. "cisgender" on Gender
  * views).
  *
- * Lifted verbatim from the identical closure that used to be duplicated at
- * the top of both nations/single.php and stations/single.php — same ramp,
- * same grey-match-first behavior, same shape — so both pages (and any
- * future taxonomy-profile caller) share one implementation instead of two
+ * Shared by nations/single.php and stations/single.php (and any future
+ * taxonomy-profile caller) so they use one implementation instead of
  * copies that could silently drift apart.
  */
 class Donut_Segments {

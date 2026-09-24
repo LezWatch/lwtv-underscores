@@ -2,7 +2,7 @@
 /**
  * Name: Trope Categories
  * Description: The canonical good/maybe/bad/ploy trope-slug groupings used
- * by the show score (Calculations::show_tropes_score()) and now shared with
+ * by the show score (Calculations::show_tropes_score()) and by
  * the Statistics layer so stats views can group the same tropes the same
  * way.
  */

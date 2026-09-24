@@ -27,8 +27,7 @@ class OTD_JSON {
 	 *
 	 * Bump this whenever the shape or the filtering of an OTD payload changes,
 	 * so already-cached responses are abandoned instead of being served for up
-	 * to another OTD_CACHE_DURATION. Bumped to 2 when birthday() began honoring
-	 * the actors' date-of-birth privacy setting.
+	 * to another OTD_CACHE_DURATION.
 	 */
 	const OTD_CACHE_VERSION = '2';
 

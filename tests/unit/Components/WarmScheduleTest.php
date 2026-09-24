@@ -1,8 +1,7 @@
 <?php
 /**
  * Unit tests for the pure debounce-timing helper behind the statistics
- * cache-warming schedule. See
- * docs/superpowers/specs/2026-07-30-stats-cache-warming-design.md.
+ * cache-warming schedule.
  *
  * @package lwtv-underscores
  */

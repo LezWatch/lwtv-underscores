@@ -3,11 +3,8 @@
  * Unit tests for the shared admin notice helper.
  *
  * Only css_class() is testable here -- set() and show() write transients and
- * echo markup. It is also the part that had actually drifted: the three copies
- * this helper replaced expressed the same mapping three ways (if/elseif in
- * Debugger\Repair, nested ternaries in the two Validator screens), which is how
- * a fourth type added to one of them would have silently rendered as a success
- * in the other two.
+ * echo markup. It is also the part most likely to drift: any type the mapping
+ * does not name falls through to a success notice.
  *
  * @package lwtv-underscores
  */

@@ -32,10 +32,9 @@ class Trigger_Warning {
 	/**
 	 * Normalize a trigger-warning slug to a canonical level.
 	 *
-	 * Matching is deliberately exact-case (no strtolower/trim) because the
-	 * show_score() code this replaced did an exact-case key_exists() lookup
-	 * against a lowercase-only table; case-folding here would change stored
-	 * scores for any show with legacy mixed-case trigger meta.
+	 * Matching is deliberately exact-case (no strtolower/trim): case-folding
+	 * here would change stored scores for any show with legacy mixed-case
+	 * trigger meta.
 	 *
 	 * @param string $slug Raw slug or meta value, e.g. 'on', 'medium', 'low'.
 	 * @return string One of 'high', 'med', 'low', or 'none'.

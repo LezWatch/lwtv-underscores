@@ -75,7 +75,7 @@ class LogRulesTest extends TestCase {
 
 	public function test_an_unknown_topic_is_refused_even_when_ticked(): void {
 		// A typo cannot be ticked in the UI, so it could never be turned on --
-		// and under the old fail-open rule it could never be turned off either.
+		// and if unknown topics failed open it could never be turned off either.
 		$this->assertFalse( Log_Rules::topic_enabled( 'statitsics', array( 'statitsics' ), self::VALID ) );
 	}
 

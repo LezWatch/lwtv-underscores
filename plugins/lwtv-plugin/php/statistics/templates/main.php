@@ -3,7 +3,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 /**
- * The main statistics overview page — redesigned.
+ * The main statistics overview page.
  *
  * Computes all server-side data, then includes focused partials.
  *

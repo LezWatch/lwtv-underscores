@@ -1258,8 +1258,8 @@
 		}
 
 		// .lwtv-bars--characters overrides statcard icon/number to green in
-		// light mode (_stats.scss) but had no dark-mode counterpart, so these
-		// cards fell back to the yellow default above — same
+		// light mode (_stats.scss); this is the dark-mode counterpart, so these
+		// cards don't fall back to the yellow default above — same
 		// family-color-per-.lwtv-bars-- split as the matchup rule below.
 		.lwtv-bars--characters .lwtv-statcard-icon {
 			background-color: rgba(colors.$lwtv-green, 0.2);

@@ -318,7 +318,7 @@ class Watch_Term_Check {
 	 * @return void
 	 */
 	private static function render_summary( array $affecting, array $unused, string $last_run ): void {
-		// 'health', not 'status': status is the baseline's new/open/resolved now.
+		// 'health', not 'status': status holds the baseline's new/open/resolved.
 		$counts  = array_count_values( array_column( $affecting, 'health' ) );
 		$broken  = (int) ( $counts[ Watch_Url_Health::STATUS_BROKEN ] ?? 0 );
 		$live    = count( $affecting );
@@ -855,7 +855,7 @@ class Watch_Term_Check {
 			self::redirect_back();
 		}
 
-		// A term can hold several URLs, and every one of them was a separate
+		// A term can hold several URLs, and every one of them is a separate
 		// finding. All of them go with the term.
 		$items   = (array) Findings_Store::load( Watch_URLs::FINDINGS_PROBLEMS );
 		$dropped = ( new Watch_URLs() )->drop_term( $items, $term_id );

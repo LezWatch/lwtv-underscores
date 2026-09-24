@@ -7,10 +7,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  * queer deaths, the share of tracked networks/countries with any recorded
  * death, and the single deadliest-by-rate network/country (linked).
  *
- * Replaces two near-identical highlight blocks that would otherwise be
- * copy-pasted across death/nations.php and death/stations.php — one
- * include, parameterized by taxonomy, matching the earlier
- * taxonomy-facet.php precedent for the same two pages.
+ * One include shared by death/nations.php and death/stations.php,
+ * parameterized by taxonomy (same approach as taxonomy-facet.php).
  *
  * @package LezWatch.TV
  *

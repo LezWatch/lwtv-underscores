@@ -354,7 +354,7 @@ class On_Air_Optimized {
 	 * Note: This is being phased out.
 	 *
 	 * Trying to do math of who's on what year.
-	 * Now optimized with single query instead of N+1 pattern.
+	 * Uses a single query instead of an N+1 pattern.
 	 *
 	 * @param string $post_type  Post Type of data (show or character)
 	 * @param array  $data       Array of data to loop at.

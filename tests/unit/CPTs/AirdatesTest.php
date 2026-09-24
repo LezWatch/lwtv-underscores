@@ -4,9 +4,9 @@
  * serialized fallback, part-migrated shows that only have one of the two, and
  * the "current" still-airing sentinel.
  *
- * Regression cover for the Shows debugger reading only the legacy
- * lezshows_airdates key, which made every migrated show report "No airdates."
- * while silently skipping the end-date checks entirely.
+ * Regression cover: reading only the legacy lezshows_airdates key makes every
+ * migrated show report "No airdates." while silently skipping the end-date
+ * checks entirely.
  *
  * @package lwtv-underscores
  */

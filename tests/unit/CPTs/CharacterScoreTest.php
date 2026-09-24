@@ -3,9 +3,8 @@
  * Tests for Character_Score's longevity model and its role-strength helper.
  *
  * Only longevity() is covered here, because it is the only pure model this
- * class exposes -- legacy() has been retired now that longevity() is the live
- * model. gather() reads meta, taxonomy and ACF, and is verified against the
- * running site via `wp lwtv score-preview` instead.
+ * class exposes. gather() reads meta, taxonomy and ACF, and is verified against
+ * the running site via `wp lwtv score-preview` instead.
  *
  * @package lwtv-underscores
  */
@@ -19,8 +18,7 @@ use PHPUnit\Framework\TestCase;
 final class CharacterScoreTest extends TestCase {
 
 	/**
-	 * Transparent (#655) as the reference fixture, matching the decomposition
-	 * recorded in docs/plans/maybe-later/show-score-longevity.md:
+	 * Transparent (#655) as the reference fixture, with this decomposition:
 	 *
 	 *   base (roles)      +41
 	 *   queer-irl bonus  +190   <- 19 characters x 10
@@ -61,8 +59,8 @@ final class CharacterScoreTest extends TestCase {
 
 	public function test_longevity_sums_contributions_and_saturates(): void {
 		// The ceiling is passed explicitly throughout this section. SATURATION_K is
-		// a tuning constant that has already been recalibrated twice (9 -> 15 -> 10);
-		// a unit test that fails when it moves is testing the tuning, not the maths.
+		// a tuning constant; a test that fails when it moves is testing the tuning,
+		// not the maths.
 		$data = $this->transparent(
 			array(
 				'characters' => array(
