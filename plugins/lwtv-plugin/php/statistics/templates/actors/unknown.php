@@ -3,12 +3,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 /**
- * Actors → Unknown Actor: a spotlight on the "Unknown" placeholder actor
- * (post 14080) — every other actor-facing stat on the site deliberately
- * excludes this post (see Build_Actors::get_actor_character_counts() and
- * Character_Queer_Cast_Firsts::build_trans_actor_oldest()); this page is the
- * one place that queries for it on purpose, turning "we don't know who
- * played this" into its own tracked figure instead of a silent gap.
+ * Actors → Unknown Actor: a spotlight on the "Unknown" placeholder actor,
+ * which every other actor stat excludes.
+ * See docs/statistics/data-model.md#the-unknown-actor.
  *
  * @package LezWatch.TV
  *

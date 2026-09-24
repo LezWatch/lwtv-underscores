@@ -247,11 +247,9 @@ class WP_CLI_LWTV_Score_Preview {
 			);
 		}
 
-		// Actor slugs that fell through to 'unknown'. Includes the five pending
-		// an editorial call (gender-non-conforming, demigender, androgynous,
-		// no-label, two-spirit) and anything added to the taxonomy since. These
-		// score neutrally, so nothing is docked -- but a trans/NB role whose
-		// casting cannot be assessed is a gap worth closing.
+		// Actor slugs that fell through to 'unknown': the deliberately omitted ones
+		// and anything added since. Neutral, but an unassessed trans/NB role is a
+		// gap. See docs/scoring/character-score.md#deliberately-omitted-actor-gender-slugs.
 		if ( ! empty( $data['unknown_actor_slugs'] ) ) {
 			\WP_CLI::warning(
 				'Primary actors on trans/NB roles with an unclassified gender slug: '
@@ -533,9 +531,8 @@ class WP_CLI_LWTV_Score_Preview {
 			'raw'            => $new['raw'],
 			'raw_divided'    => $new['divided'],
 			'char_new'       => $new['score'],
-			// Capped for comparability with the stored meta, which is capped
-			// today. The uncapped value is returned alongside so the display
-			// -only cap question can be answered from real numbers.
+			// Capped for comparability with lezshows_the_score; the uncapped
+			// value is returned alongside.
 			'total_new'      => max( 0, min( 100, $total_new ) ),
 			'total_new_true' => $total_new,
 		);
@@ -681,10 +678,8 @@ class WP_CLI_LWTV_Score_Preview {
 				++$tiers[ $tier ];
 			}
 
-			// How much a display-only cap would actually preserve. The
-			// character score is asymptotic below 100 and tropes and alive are
-			// both capped, so only show_score() (max 115, unclamped) can push a
-			// total past 100 -- a ceiling of 103.75 in the best case.
+			// Only show_score() (max 115) is unclamped, so the uncapped total
+			// tops out at 103.75. See docs/scoring/calibration.md#uncapped-totals.
 			if ( (float) $row['score_new_raw'] > 100 ) {
 				++$over_100;
 				$worst = max( $worst, (float) $row['score_new_raw'] );
@@ -755,13 +750,8 @@ class WP_CLI_LWTV_Score_Preview {
 			}
 		}
 
-		// The calibration table. COVERAGE_MIN is currently a provisional guess,
-		// and this is what replaces the guess: if incomplete sets are a distinct
-		// population there will be a sparse band between the pile at 1.0 and the
-		// broken ones, and the threshold belongs in that gap. If instead the
-		// distribution is smooth, there is no natural cut point and the signal
-		// needs rethinking rather than tuning -- so a boring histogram is a real
-		// answer, not a failed measurement.
+		// The COVERAGE_MIN calibration histogram: look for a sparse band between
+		// the pile at 1.0 and the broken sets. See docs/scoring/calibration.md#coverage-min.
 		if ( $judged > 0 ) {
 			\WP_CLI::log( '' );
 			\WP_CLI::log( 'Appearance coverage, for the ' . $judged . ' shows the signal can judge:' );

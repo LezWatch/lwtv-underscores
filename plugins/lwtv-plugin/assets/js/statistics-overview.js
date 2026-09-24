@@ -125,11 +125,8 @@
 		} );
 	}
 
-	// The By Name / By Country jump bar is sticky, and its height changes with
-	// viewport width (the A–Z chips wrap across 1–3 rows and the eyebrow can take
-	// its own line). Set each pane's --lwtv-sb-offset from the *measured* bar
-	// height so a jump lands the group's key just below the bar at any width; the
-	// rows' scroll-margin-top reads it. A fixed CSS value can't track the wrap.
+	// Set each pane's --lwtv-sb-offset from the measured sticky jump bar, for the
+	// rows' scroll-margin-top. See docs/design/stats-css.md#jump-bar-offset.
 	function setJumpOffsets( root ) {
 		root = root || document;
 		Array.prototype.slice
@@ -146,14 +143,9 @@
 			} );
 	}
 
-	// CSV download tracking (MonsterInsights / GA4).
-	//
-	// MonsterInsights' automatic download tracking only fires when a link's PATH
-	// ends in a tracked extension (.csv, .pdf, ...). Our download links are
-	// `?download=csv` on a normal page URL — the CSV is streamed server-side via
-	// Content-Disposition — so the client-side tracker never sees an extension
-	// and ignores the click. We fire the standard GA4 `file_download` event
-	// ourselves so these land in the same report as auto-tracked downloads.
+	// CSV download tracking (MonsterInsights / GA4). `?download=csv` links have no
+	// file extension in the path, so auto-tracking misses them; fire GA4's
+	// `file_download` event ourselves.
 
 	// Send a GA4 file_download event through whichever tracker MonsterInsights
 	// exposed. Fails silently when analytics isn't present (ad-blockers, logged-in

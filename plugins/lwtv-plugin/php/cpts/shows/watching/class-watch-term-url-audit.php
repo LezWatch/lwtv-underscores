@@ -3,18 +3,8 @@
  * Name: Watch Term URL Audit
  * Description: What is actually stored in the lez_watch_urls term URL rows.
  *
- *   - Cosmetic (trailing slash, case, http, www, port): host matching absorbs
- *     these, so they are safe to normalise.
- *
- *   - Blocking (path, query, fragment, credentials, unparseable): a term that
- *     has registered 'youtube.com/c/something' means something narrower than
- *     'youtube.com'. Host matching widens it to the whole host and lets one
- *     web series' term swallow every other YouTube URL on the site. A human has
- *     to look at these.
- *
- * Collisions (two different terms whose URLs reduce to the same host) are
- * blocking for the same reason, from the other direction: host matching has to
- * pick a winner, and there is no correct way to pick one automatically.
+ * Flags are cosmetic (host matching absorbs them) or blocking (a human must
+ * decide). See docs/architecture/watch-providers.md#term-url-audit.
  *
  * @package LWTV
  */

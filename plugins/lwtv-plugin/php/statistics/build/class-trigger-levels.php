@@ -2,13 +2,9 @@
 /**
  * Trigger-levels transforms.
  *
- * Pure array-in/array-out math for the Triggers view's callout rail and
- * true-scale/magnified bars: flagged vs none splits, per-level shares
- * of both denominators, the derived rail figures, and the low/high
- * balance data the footnote copy adapts to ("nearly 2 to 1" only while
- * that is true). No WordPress calls — unit-testable without a WP
- * runtime (see tests/unit/Statistics/TriggerLevelsTest.php). All i18n
- * stays in the template.
+ * Triggers view math: flagged vs none, per-level shares of both
+ * denominators, rail figures, and the low/high balance for adaptive copy.
+ * Pure transform. See docs/statistics/presentation-rules.md.
  *
  * @package LezWatch.TV
  */

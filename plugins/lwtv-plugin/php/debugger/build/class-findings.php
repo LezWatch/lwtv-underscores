@@ -61,16 +61,8 @@ class Findings {
 	/**
 	 * Build one finding about a taxonomy term.
 	 *
-	 * Terms are the awkward case the whole shape had to stretch for: the Watch
-	 * URL check finds problems on `lez_watch_urls` terms, not on posts, and a
-	 * renderer that calls `get_the_title()` on a term ID produces nonsense
-	 * silently. So a finding says what kind of thing it is about, and
-	 * `object_kind` is the key to test before dereferencing `id`.
-	 *
-	 * `post_id` still carries the identity, rather than a parallel `term_id`.
-	 * That is deliberate: renaming it would mean migrating every stored row and
-	 * every reader of `id`, for no gain on the ten post-based checks. The name is
-	 * a little wrong for terms; the alternative was a great deal of churn.
+	 * Test `object_kind` before dereferencing `id`. The term ID is carried in
+	 * `post_id` on purpose. See docs/architecture/validation-screen.md#term-shaped-findings.
 	 *
 	 * @param  int    $term_id    Term ID.
 	 * @param  string $taxonomy   Taxonomy the term belongs to.

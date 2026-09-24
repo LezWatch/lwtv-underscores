@@ -88,14 +88,8 @@ class TMDB {
 				$tmdb_data = ( new CPTs() )->get_tmdb_info( $show_id );
 				$vote      = Tmdb_Response::vote_average( $tmdb_data, CPT_Shows::SLUG );
 
-				// get_tmdb_info() hands back a /tv/{id} detail object once the show
-				// has a TMDB ID and a /find/ envelope before that. Tmdb_Response
-				// knows both shapes.
-				//
-				// TMDB votes are 0.5-10; lezshows_3rd_scores holds 0-100. A null
-				// covers both "no average in this response" and TMDB's unrated
-				// sentinel of 0, and leaves the score at 'TBD' so the recheck above
-				// asks again tomorrow rather than caching a hard zero for a day.
+				// TMDB votes are 0.5-10; lezshows_3rd_scores holds 0-100. Null
+				// (no rating) leaves 'TBD' so tomorrow's recheck asks again.
 				if ( null !== $vote ) {
 					$scores['score'] = round( $vote * 10 );
 				}

@@ -1,5 +1,7 @@
 # Plan: Longevity-Weighted Character Scoring
 
+> **Historical.** This model has shipped: `Calculations` calls `Character_Score::longevity()` directly, and the enable filters described below no longer exist. For how it works now, see [docs/scoring/](../../scoring/show-score.md). This plan is kept as background only.
+
 **Goal:** stop headcount driving a show's character score, so a 50-year soap that cycled
 through 200 one-episode characters no longer outranks a tightly-written five-season drama.
 What replaced it turned out to be larger than longevity weighting alone — see Diagnosis.

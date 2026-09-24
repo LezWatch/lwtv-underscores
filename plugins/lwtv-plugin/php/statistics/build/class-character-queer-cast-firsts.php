@@ -2,26 +2,10 @@
 /**
  * Queer/Trans Cast Firsts Query Class
  *
- * Three callouts for the Characters → Queer IRL page: the oldest and newest
- * character played by a queer-IRL actor, and the oldest character played by
- * a transgender actor. "Oldest"/"newest" means earliest/latest first-on-
- * screen year — the same per-character minimum drawn from the
- * lezchars_show_group repeater's `appears` sub-field that
- * Character_Longevity_Leaders and Character_Identity_Trend already use,
- * since characters have no premiere-year field of their own.
- *
- * "Played by a queer-IRL actor" is a flag on the CHARACTER (the lez_cliches
- * term `queer-irl` — see Queer_IRL::build_queer_irl_data()), so that half is
- * a direct character-level join. "Played by a trans actor" has no such
- * character-level flag — it lives on the ACTOR's own lez_actor_gender
- * taxonomy, reached through the lezchars_actor relationship field, which
- * (like lezchars_show_group's `appears`) is stored as one serialized array
- * per character rather than a per-row meta key, so it can't be joined
- * per-actor in SQL either — same two-step "pull the array, unserialize in
- * PHP" shape Character_Actor_Leaders already uses. A term slug counts as
- * "trans" the same way Queeries\Is_Actor_Trans decides it for a single
- * actor: it contains the substring "trans" (matches trans-woman, trans-man,
- * and non-binary-transgender without hardcoding an exhaustive list).
+ * Queer IRL callouts: oldest and newest character played by a queer-IRL
+ * actor (the character's `queer-irl` cliché term), and oldest played by a
+ * trans actor (a lez_actor_gender slug containing "trans", read through
+ * lezchars_actor). See docs/statistics/pages.md#queer-irl.
  *
  * @package LezWatch.TV
  */
@@ -159,10 +143,8 @@ class Character_Queer_Cast_Firsts {
 
 		$trans_actor_ids = array_flip( array_map( 'absint', wp_list_pluck( $trans_actor_rows, 'id' ) ) );
 
-		// Unknown_Actor::ACTOR_ID (post 14080) is the "Unknown" placeholder
-		// actor — a catch-all for roles with no confirmed performer — so it
-		// must never win a "first" callout, same guard Characters_Builder
-		// uses for "busiest actor".
+		// The Unknown placeholder actor never wins a callout.
+		// See docs/statistics/data-model.md#the-unknown-actor.
 		unset( $trans_actor_ids[ Unknown_Actor::ACTOR_ID ] );
 
 		// phpcs:disable
@@ -184,13 +166,8 @@ class Character_Queer_Cast_Firsts {
 			return array();
 		}
 
-		// Fold per character: earliest year (same normalization
-		// Character_Longevity_Leaders uses for `appears`) and the set of
-		// actor IDs (same normalization Character_Actor_Leaders uses for
-		// lezchars_actor) — a character can appear in several rows here
-		// since it's joined against every one of its own appears-rows, but
-		// its actor list is identical on every row, so re-setting it each
-		// time is harmless.
+		// Fold per character: earliest year and actor IDs. A character gets
+		// one row per appears-row, with the same actor list on each.
 		$folded = array();
 		foreach ( $results as $row ) {
 			$years = maybe_unserialize( $row['years'] );

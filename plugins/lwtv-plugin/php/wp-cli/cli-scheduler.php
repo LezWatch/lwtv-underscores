@@ -312,20 +312,8 @@ class WP_CLI_LWTV_Scheduler {
 			\WP_CLI::log( '  Last Processed: ' . gmdate( 'Y-m-d H:i:s', $cache_status['last_processed'] ) );
 			\WP_CLI::log( '  URLs Cleared: ' . $cache_status['urls_cleared'] );
 		}
-		/*
-		 * There is deliberately no "Transient Cleanup" section here.
-		 *
-		 * _Components\Transients currently delegates to
-		 * core, so every LWTV transient is an ordinary WordPress transient and
-		 * core's delete_expired_transients() (daily, via wp_scheduled_delete)
-		 * already expires them.
-		 *
-		 * That is a fact about today's backend, not a permanent one. The
-		 * Transients wrapper exists as a seam for swapping the store -- a
-		 * separate database, say -- and a store that is not the options table
-		 * would not be swept by core. If that happens, expiry becomes the new
-		 * backend's job, and this section is worth rebuilding.
-		 */
+		// No "Transient Cleanup" section: core expires LWTV transients while the
+		// wrapper delegates to core. See docs/architecture/caching.md#transients-wrapper.
 
 		\WP_CLI::success( 'Scheduler status retrieved.' );
 	}

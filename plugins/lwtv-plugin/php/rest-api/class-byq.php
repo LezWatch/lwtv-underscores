@@ -469,15 +469,8 @@ class BYQ {
 		global $wpdb;
 		$date_regex = implode( '|', $date_patterns );
 
-		// Bound rather than inlined, for two reasons beyond tidiness.
-		//
-		// Inlined as 'lezchars_death_year_%_date', every '_' would be a
-		// single-character LIKE wildcard, also matching keys like
-		// 'lezcharsXdeath_year_1_date'. esc_like() makes them literal.
-		//
-		// A bare '%' inside a prepare() string is also what
-		// WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery exists to
-		// catch. Binding the pattern removes the cause rather than the warning.
+		// Bound, not inlined: esc_like() makes each '_' literal instead of a
+		// LIKE wildcard, and binding avoids LikeWildcardsInQuery at the cause.
 		$meta_key_like = $wpdb->esc_like( 'lezchars_death_year_' ) . '%' . $wpdb->esc_like( '_date' );
 
 		$query = $wpdb->prepare(
@@ -907,16 +900,8 @@ class BYQ {
 	 * @return void
 	 */
 	public function invalidate_death_list_cache() {
-		/*
-		 * Deletes go through lwtv_plugin()->delete_transient(), not core's, for
-		 * the same reason the writes do: _Components\Transients is the seam for
-		 * swapping the transient store. Today the wrapper is a passthrough and
-		 * the two are identical -- but every key below is *written* through the
-		 * wrapper, so busting them through core would, after a swap, write to the
-		 * new store and delete from the old. That is cache you cannot clear, on
-		 * the endpoint that feeds Bury Your Queers. Keep both sides on the same
-		 * side of the seam.
-		 */
+		// Delete through the wrapper, like the writes, never core's
+		// delete_transient(). See docs/architecture/caching.md#transients-wrapper.
 
 		// Get the current hash BEFORE we delete it
 		$current_hash = $this->get_data_version_hash();

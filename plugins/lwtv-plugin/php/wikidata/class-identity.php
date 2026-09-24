@@ -2,41 +2,9 @@
 /**
  * Who is this actor on WikiData?
  *
- * One place that owns the question, because three things now need the answer --
- * the wikidata diff view, the actor death audit, and the QID backfill -- and
- * they need it to mean the same thing each time.
- *
- * There is ONE QID field, lezactors_wikidata_qid, and it is the source of
- * truth. What varies is how the value got there, recorded alongside it in
- * lezactors_wikidata_qid_source:
- *
- *   1. 'manual'  -- an editor typed or pasted it. Authoritative.
- *   2. 'imdb'    -- an exact statement match on the IMDb ID (P345). One IMDb ID
- *                   means one person, so this is as good as a human checking.
- *   3. 'name'    -- a name search, taking the first hit. A guess.
- *   4. 'legacy'  -- predates source tracking, so unknowable. Untrusted.
- *
- * Only the first two produce a QID an unattended process may act on. That
- * distinction living in the source, not in a second field, is the whole design:
- * a fuzzy name match is otherwise indistinguishable from a verified one the
- * moment it is stored, and the next process to read it treats a guess about a
- * stranger as an identity -- which for the death audit means telling readers a
- * living actor has died. Hence $allow_name, hence trusted_qid(), hence
- * Build\Qid_Trust.
- *
- * lezactors_wikidata_ignore is a WRITE-LOCK on that one field, nothing more.
- * Set it and store_qid() refuses, so the field becomes editable only by hand and
- * no backfill can overwrite what an editor put there. It says nothing about
- * whether the value is right; that is still the source's job. The one place it
- * carries a second meaning is the death audit, where ignore with an EMPTY QID
- * is how an editor says "this person has no WikiData item" -- see
- * Debugger\Build\Actor_Death_Rules::editor_says_stop().
- *
- * The show-side equivalent is a cautionary tale rather than a model: the
- * calendar's get_tvmaze_info_show() writes a fuzzy /singlesearch hit straight
- * into lezshows_tvmaze_id and then trusts it forever, which cli-tvmaze.php
- * documents as a known hazard. This class follows cli-tvmaze.php's guarded
- * backfill instead.
+ * The single owner of actor-to-QID resolution. One QID field, with its source
+ * recorded beside it; only 'manual' and 'imdb' sources may drive unattended
+ * decisions. See docs/architecture/actor-identity.md.
  *
  * @package LWTV
  */
@@ -119,23 +87,9 @@ class Identity {
 	/**
 	 * A QID safe to draw conclusions from, or nothing.
 	 *
-	 * This is what an unattended process asks for. It performs no lookup and
-	 * writes nothing: either we already hold a QID we can vouch for, or the
-	 * caller is told we cannot identify this person and must say so rather than
-	 * guess.
-	 *
-	 * One rule, and deliberately only one: a QID plus a source we trust. There
-	 * is no special case for a hand-typed value because there does not need to
-	 * be -- an editor typing in the field sets the source to 'manual', which is
-	 * already in Qid_Trust::TRUSTED.
-	 *
-	 * The ignore toggle is NOT read here. It is a write-lock, not a statement
-	 * about identity: it stops the machine overwriting the field, and says
-	 * nothing about whether the value in it is right. An ignored actor holding a
-	 * QID from a trusted source is still identifiable, and refusing to hand it
-	 * back would mean the death audit skipped exactly the actors an editor had
-	 * taken the trouble to pin down. What ignore does mean for the audit lives in
-	 * Debugger\Build\Actor_Death_Rules::editor_says_stop().
+	 * What an unattended process asks for. No lookup, no writes: a QID with a
+	 * trusted source, or nothing. The write-lock is deliberately not read here.
+	 * See docs/architecture/actor-identity.md#the-write-lock.
 	 *
 	 * @param  int $actor_id The ID of the actor.
 	 * @return array{qid: string, source: string}
@@ -166,7 +120,8 @@ class Identity {
 	 *
 	 * @param  int  $actor_id   The ID of the actor.
 	 * @param  bool $allow_name Whether to fall back to a name search. False for
-	 *                          anything unattended -- see the class docblock.
+	 *                          anything unattended -- see
+	 *                          docs/architecture/actor-identity.md.
 	 * @return array{qid: string, source: string} Source is a SOURCE_* value, or
 	 *               'imdb-ambiguous' when the IMDb ID matched several items, or
 	 *               '' when nothing resolved.
@@ -254,22 +209,9 @@ class Identity {
 	/**
 	 * Look one actor up and record the outcome.
 	 *
-	 * The unit the backfill and the scheduler both run. Returns a verdict rather
-	 * than a boolean because the outcomes need different handling, and the split
-	 * that matters most is whether WikiData answered us:
-	 *
-	 *   - 'none' and 'ambiguous' are answers. Both earn a checked-marker, which
-	 *     takes the actor out of routine runs until --retry-missed asks again.
-	 *   - 'error' is the absence of an answer, and deliberately earns nothing at
-	 *     all, so a WikiData outage cannot mark thousands of actors permanently
-	 *     unresolvable.
-	 *
-	 * 'ambiguous' is emphatically not an error, however much it looks like one:
-	 * two WikiData items carrying the same IMDb ID is a stable fact about their
-	 * data, and re-asking gets the same answer forever. Conflating the two is how
-	 * the scheduler's retry queue ends up looping on it. A human sees it via the
-	 * death audit's AMBIGUOUS verdict, which reads resolve()'s 'imdb-ambiguous'
-	 * source rather than anything this method writes.
+	 * The unit the backfill and the scheduler both run. 'none' and 'ambiguous'
+	 * are answers and earn a checked-marker; 'error' is not and earns nothing.
+	 * See docs/architecture/actor-identity.md#lookup-outcomes-and-the-checked-marker.
 	 *
 	 * @param  int  $actor_id The ID of the actor.
 	 * @param  bool $dry_run  Compute the verdict without writing meta.
@@ -330,13 +272,9 @@ class Identity {
 	/**
 	 * The WikiData item whose IMDb ID (P345) is exactly this one.
 	 *
-	 * Uses CirrusSearch's haswbstatement, which matches a statement value rather
-	 * than scoring text, so this is a lookup and not a search -- same host and
-	 * same API as everything else here, no SPARQL endpoint needed.
-	 *
-	 * Asks for two results purely to detect ambiguity. Two or more means
-	 * WikiData holds duplicate or disputed items for the ID, and "one of these
-	 * two people died" is not an answer worth writing down.
+	 * A haswbstatement lookup, not a text search. Asks for two results only to
+	 * detect ambiguity, which is reported rather than resolved. See
+	 * docs/architecture/actor-identity.md#why-only-p345-matches-may-write.
 	 *
 	 * @param  string $imdb_id A validated nm-prefixed IMDb ID.
 	 * @return array{qid: string, ambiguous: bool, status: string, reason: string}
@@ -386,11 +324,8 @@ class Identity {
 	 * a politician, and a 19th century botanist. Fine for putting a diff in front
 	 * of a human who will notice; never a basis for a conclusion.
 	 *
-	 * Searches on the raw post_title, not get_the_title(). The `the_title` filter
-	 * runs wptexturize, which turns the apostrophe in "O'Brien" into a curly
-	 * U+2019 and the hyphen in a double-barrelled name into an en dash -- none of
-	 * which WikiData is indexing. html_entity_decode() on top of that covers the
-	 * separate case of an entity an editor typed into the title itself.
+	 * Searches the raw post_title, because wptexturize output is not what
+	 * WikiData indexes.
 	 *
 	 * @param  int $actor_id The ID of the actor.
 	 * @return string The QID, or '' when nothing came back.
@@ -518,13 +453,8 @@ class Identity {
 	/**
 	 * A typed or pasted value, as a bare QID.
 	 *
-	 * Accepts a pasted WikiData URL as well as a bare QID. Someone copying
-	 * wikidata.org/wiki/Q42 out of the address bar is the obvious way to fill the
-	 * field in, and silently discarding it would be the worst outcome: the editor
-	 * believes they have corrected a bad match while the audit keeps reporting it.
-	 *
-	 * Lives on the write path: there is one QID field, so the normalising
-	 * happens once as an editor saves rather than on every read.
+	 * Accepts a pasted wikidata.org URL as well as a bare QID, so a pasted
+	 * correction is never silently discarded. Runs on the write path, once.
 	 *
 	 * @param  string $value Raw field value.
 	 * @return string A bare QID, or '' when the value holds nothing usable.
@@ -572,15 +502,9 @@ class Identity {
 	/**
 	 * Store a QID and how we got it.
 	 *
-	 * The source is written in the same breath as the QID, never separately --
-	 * a QID with no recorded source reads as legacy, which is untrusted, so
-	 * letting the two drift apart would silently downgrade a good match.
-	 *
-	 * Refuses outright when the ignore toggle is set. That is what makes ignore a
-	 * write-lock rather than a convention: this is the only door every machine
-	 * write goes through -- resolve(), resolve_and_record() and the scheduler all
-	 * arrive here -- so enforcing it once means no future caller can forget, and
-	 * an editor's QID cannot be overwritten by a backfill they did not run.
+	 * The only path for machine writes. Writes QID, source and checked-marker
+	 * together, and refuses when the write-lock is set. See
+	 * docs/architecture/actor-identity.md#store_qid-the-only-machine-write-path.
 	 *
 	 * @param  int    $actor_id The ID of the actor.
 	 * @param  string $qid      The QID.

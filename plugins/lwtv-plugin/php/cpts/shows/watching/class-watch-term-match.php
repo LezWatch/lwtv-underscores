@@ -17,14 +17,10 @@ class Watch_Term_Match {
 	/**
 	 * Reduce a provider name to the form worth comparing.
 	 *
-	 * The substitutions are not cosmetic. Seven providers in the live data spell
-	 * themselves with a trailing `+` (Paramount+, Disney+, BET+, MGM+, Apple
-	 * TV+, M6+, SVTV+) and every one of them owns a domain that writes it out
-	 * as "plus". Without that rule the single most useful match never fires.
-	 *
-	 * `&` becomes `and` for the same reason ("Seed&Spark" against
-	 * `seedandspark.com`), and entities are decoded first because WordPress
-	 * stores term names encoded, so the raw name is "Seed&amp;Spark".
+	 * The substitutions are not cosmetic: "+" providers (Paramount+, Disney+)
+	 * spell it "plus" in their domains, and "&" becomes "and" (Seed&Spark,
+	 * seedandspark.com). Entities are decoded first because term names are
+	 * stored encoded. See docs/architecture/watch-providers.md#actions.
 	 *
 	 * @param string $name A term name, a discovered site name, or a host label.
 	 * @return string Lowercase alphanumerics only, or '' when nothing survives.

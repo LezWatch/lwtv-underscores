@@ -2,9 +2,8 @@
 /**
  * Most-Resurrected Characters Query Class
  *
- * Ranks published characters by how many recorded deaths they have — the
- * lezchars_death_year repeater tracks soap-opera-style fake-deaths, so a
- * character can carry more than one dated death row.
+ * Ranks published characters by recorded deaths (2 or more).
+ * See docs/statistics/data-model.md#death-rows.
  *
  * @package LezWatch.TV
  */
@@ -57,13 +56,9 @@ class Character_Death_Leaders {
 	/**
 	 * Build the leaderboard by counting death-date rows per character.
 	 *
-	 * lezchars_death_year is an ACF repeater; each row's `date` sub-field is
-	 * stored as its own postmeta row (lezchars_death_year_{n}_date) — the
-	 * same key pattern Dead::get_death_date_rows() already scans. That
-	 * class's own comment is the reason this joins wp_posts and restricts
-	 * post_type/post_status there rather than scanning wp_postmeta bare:
-	 * ACF copies death-date meta onto revision posts too, so an unrestricted
-	 * scan would double- (or triple-, or...) count every revised character.
+	 * Counts lezchars_death_year_{n}_date rows, joined to published
+	 * characters so revision copies aren't counted.
+	 * See docs/statistics/data-model.md#published-only-scoping.
 	 *
 	 * @param int $limit How many characters to return.
 	 * @return array Character leaderboard data.

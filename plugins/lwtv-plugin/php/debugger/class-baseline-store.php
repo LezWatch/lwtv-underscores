@@ -4,15 +4,8 @@
  *
  * Storage only. The diff itself is pure and lives in Debugger\Build\Baseline.
  *
- * One non-autoloaded option per check, plus a small index of which checks have
- * a baseline and when they last ran. That mirrors Audit's storage shape without
- * sharing its keys: Audit's identity string is `show_id:char_id:issue_type:year`
- * and its baselines are already populated under it, so reusing that namespace
- * would have meant either rewriting its identity function -- resetting every
- * audit scope on deploy -- or two incompatible key formats in one option space.
- *
- * The payload is identity only (see Baseline::snapshot()), so this is smaller
- * than the findings each check already stores for ten days.
+ * One non-autoloaded option per check plus an index; separate from Audit's
+ * baselines. See docs/architecture/validation-screen.md#baselines.
  *
  * @package LWTV
  */

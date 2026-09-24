@@ -295,8 +295,8 @@ class Taxonomy_Optimized {
 		$show_group_like = $wpdb->esc_like( 'lezchars_show_group_' ) . '%' . $wpdb->esc_like( '_show' );
 
 		// Single query to get both total and dead character counts.
-		// ACF repeater stores show relationships as individual meta keys (lezchars_show_group_N_show),
-		// not as a serialized value under lezchars_show_group. Join on the sub-field key directly.
+		// Joins the lezchars_show_group_{n}_show sub-field key directly.
+		// See docs/statistics/data-model.md#repeaters.
 		//
 		// Argument order matters: this LIKE sits in a JOIN condition, so it is
 		// the *first* placeholder in the statement, ahead of $post_type.

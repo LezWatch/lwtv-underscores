@@ -2,7 +2,8 @@
 /**
  * Statistics Cache Warming Handler
  *
- * Handles background cache warming for statistics after content changes
+ * Handles background cache warming for statistics after content changes.
+ * Which view each step feeds: docs/architecture/caching.md#warm-call-to-stats-view.
  *
  * @package lwtv-plugin
  */
@@ -202,11 +203,8 @@ class Statistics_Cache_Warming {
 	/**
 	 * Warm the This Year eleven-year trend count map.
 	 *
-	 * ten_years() is expensive — five builder calls across eleven years — so it
-	 * must never run inline on page load. We compute it here, reduce it to a
-	 * compact [ year => [ metric => count ] ] map, and store that single small
-	 * transient for the Overview to read. The heavy per-year post arrays are
-	 * already cached by the builders (warmed just above for the current year).
+	 * ten_years() is too expensive to run on page load, so it is reduced here to
+	 * a small [ year => [ metric => count ] ] transient for the Overview to read.
 	 *
 	 * @return void
 	 */
@@ -286,9 +284,7 @@ class Statistics_Cache_Warming {
 		( new On_Air_Stats() )->generate( 'shows' );
 		( new On_Air_Stats() )->generate( 'characters' );
 
-		// Actors overview Headlines lead plate: distinct actors with a
-		// character on screen this year. Same daily cadence as the two
-		// calls above, since it's also a "this year" snapshot.
+		// Distinct actors on screen this year (actors overview and sexuality).
 		( new Build_Actors() )->generate_active_this_year();
 
 		lwtv_plugin()->debug_log( 'statistics', 'Warming on-air statistics caches...' );
@@ -303,10 +299,7 @@ class Statistics_Cache_Warming {
 		$character_taxonomies = array( 'lez_gender', 'lez_sexuality' );
 		foreach ( $character_taxonomies as $taxonomy ) {
 			( new Build_Taxonomy_Optimized() )->make_comprehensive( CPT_Characters::SLUG, $taxonomy, true );
-			// Gender/Sexuality Mix by Decade + Firsts (characters/gender.php,
-			// characters/sexuality.php) — generate_decades() and
-			// generate_firsts() both read the same cached row set, so
-			// warming one call per taxonomy here covers both.
+			// Mix by Decade + Firsts on characters/gender.php and sexuality.php.
 			( new Build_Character_Identity_Trend() )->generate_decades( $taxonomy );
 			( new Build_Character_Identity_Trend() )->generate_firsts( $taxonomy );
 		}
@@ -393,13 +386,9 @@ class Statistics_Cache_Warming {
 	}
 
 	/**
-	 * Warm the five leaderboard caches backing the characters/most-cliches
-	 * ("Most") view: most clichés, most shows (crossovers), most actors
-	 * (recasts), most resurrected (2+ deaths), longest-running (widest
-	 * on-screen year span). Each is cached under a limit-specific transient
-	 * key (generate()'s $limit is part of the key), so the page's actual
-	 * top-5 request needs its own warm — warming only the 25-row default
-	 * here would leave the top-5 lookup to build cold on first visit.
+	 * Warm the five leaderboards behind characters/most-cliches. The limit is
+	 * part of each cache key, so this warms the page's top-5 request, not the
+	 * default. See docs/architecture/caching.md#warm-call-to-stats-view.
 	 *
 	 * @return void
 	 */

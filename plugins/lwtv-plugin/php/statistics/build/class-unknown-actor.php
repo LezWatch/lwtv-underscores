@@ -2,14 +2,9 @@
 /**
  * Unknown Actor Spotlight Query Class
  *
- * Post ID 14080 is the "Unknown" placeholder actor — assigned to characters
- * with no confirmed real-world performer on record. Every other actor-facing
- * stat on the site deliberately excludes it (see Build_Actors::
- * get_actor_character_counts() and Character_Queer_Cast_Firsts::
- * build_trans_actor_oldest()); this class is the one place that queries *for*
- * it on purpose, turning a data gap into its own spotlight page: how many
- * characters are affected, who they are, and which shows carry the most of
- * them.
+ * The one class that queries for the Unknown placeholder actor on
+ * purpose, for the Actors → Unknown Actor spotlight.
+ * See docs/statistics/data-model.md#the-unknown-actor.
  *
  * @package LezWatch.TV
  */

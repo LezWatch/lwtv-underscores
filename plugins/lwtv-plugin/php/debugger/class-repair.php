@@ -2,19 +2,9 @@
 /**
  * Repair one finding from wp-admin.
  *
- * The other half of `wp lwtv debug <check> --fix-it`: same registry, same repair
- * methods, one issue on one post at a time. Nothing about a repair is defined
- * here -- this is the request handler, the permission check, and the cache
- * bookkeeping around a call the registry already describes.
- *
- * Two deliberate choices:
- *
- * 1. It is a form POST, not a link. A repair writes to the database, so it
- *    should not sit behind something a browser or crawler can prefetch. Watch_Providers already
- *    settled this pattern for the same reason.
- * 2. A successful repair *prunes* the cached findings rather than deleting the
- *    findings. Dropping them would send the next viewer of that tab into a full
- *    rescan of every show, character or actor to reflect one fixed field.
+ * The admin half of `wp lwtv debug <check> --fix-it`: one registry repair on
+ * one post. A form POST, not a link, and it prunes the findings rather than
+ * deleting them. See docs/architecture/validation-screen.md#repairs.
  *
  * @package LWTV
  */

@@ -1,21 +1,9 @@
 <?php
 /**
- * Death trend WP glue: buckets recorded death dates by the decade the
- * death itself happened in (not a character's earliest on-screen year),
- * paired with whichever term the dying character carries on a given
- * single-value taxonomy (lez_sexuality / lez_gender). A character can
- * contribute more than one row here — the lezchars_death_year repeater
- * tracks soap-opera-style resurrections, and each dated death is its own
- * event in time, so a character who died in the 1990s and again in the
- * 2000s counts once in each decade's tally. That's the opposite of
- * Character_Identity_Trend, which deliberately folds every row down to
- * one per character; here the repetition is the point — it's what makes
- * "is it getting better or worse per decade" a meaningful question.
- *
- * Reuses Character_Identity_Decade_Buckets::build() as-is rather than
- * writing a second bucketer — that class only needs a
- * [ year => [ term_name => count ] ] tally, and doesn't care whether the
- * year came from a premiere date or a death date.
+ * Death trend WP glue: each dated death, bucketed by the decade it
+ * happened in and the character's term (lez_sexuality / lez_gender), via
+ * Character_Identity_Decade_Buckets. Repeat deaths count once per decade.
+ * See docs/statistics/data-model.md#death-rows.
  *
  * @package LezWatch.TV
  */

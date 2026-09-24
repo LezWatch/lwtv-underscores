@@ -53,14 +53,9 @@ class Character_Show_Leaders {
 	/**
 	 * Build the leaderboard by counting distinct shows per character.
 	 *
-	 * lezchars_show_group is an ACF repeater; each row's `show` sub-field is
-	 * stored as its own postmeta row (lezchars_show_group_{n}_show), not a
-	 * single serialized value under lezchars_show_group — the same
-	 * sub-field-key join Taxonomy_Optimized::get_bulk_character_counts()
-	 * already relies on. A character can carry two rows pointing at the
-	 * same show (e.g. guest-then-regular across separate stints), so this
-	 * counts DISTINCT show IDs, not raw rows — "how many different shows",
-	 * not "how many appearance stints".
+	 * Joins the lezchars_show_group_{n}_show sub-field keys and counts
+	 * DISTINCT show IDs, since one show can appear in two rows.
+	 * See docs/statistics/data-model.md#repeaters.
 	 *
 	 * @param int $limit How many characters to return.
 	 * @return array Character leaderboard data.

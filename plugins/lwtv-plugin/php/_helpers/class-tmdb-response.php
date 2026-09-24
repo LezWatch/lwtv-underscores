@@ -2,22 +2,9 @@
 /**
  * TMDB response shapes.
  *
- * _Components\CPTs::get_tmdb_info() returns one of two incompatible shapes, and
- * which one you get depends on our own post meta rather than on anything the
- * caller asked for:
- *
- *   lez{shows,actors}_tmdb_id set -> /3/{tv,person}/{id} -> a detail object,
- *                                    with `id` at the top level
- *   only lez{shows,actors}_imdb   -> /3/find/{imdb_id}   -> a find envelope,
- *                                    with `tv_results` / `person_results` arrays
- *
- * Nothing in the returned array says which one arrived, and a post silently
- * changes shape the moment a backfill writes its TMDB ID -- `tv_results` stops
- * existing on the day the show gets an ID. This class is the single copy of the
- * detail-then-envelope handling, so callers never read one shape directly.
- *
- * Pure: takes decoded arrays, returns scalars, touches no WordPress. The HTTP and
- * the endpoint choice stay in _Components\CPTs.
+ * The single reader for both shapes _Components\CPTs::get_tmdb_info() can return
+ * (detail object or /find/ envelope). Pure. See
+ * docs/integrations/imdb.md#tmdb-response-shapes.
  *
  * @package lwtv-plugin
  */
@@ -33,9 +20,8 @@ class Tmdb_Response {
 	/**
 	 * The find-envelope bucket each of our post types lands in.
 	 *
-	 * TMDB files TV movies under `movie_results` rather than `tv_results`, which
-	 * is a real case in this corpus but a different question -- see
-	 * CLI\TMDB::look_up(), which reports it as `wrong_kind` instead of storing it.
+	 * TV movies land in `movie_results` instead; WP_CLI_LWTV_TMDB::look_up()
+	 * reports those as `wrong_kind`.
 	 */
 	const RESULT_KEYS = array(
 		'post_type_shows'  => 'tv_results',
@@ -87,9 +73,7 @@ class Tmdb_Response {
 	/**
 	 * TMDB's own 0.5-10 vote average, out of either shape.
 	 *
-	 * Returned unscaled, in TMDB's own units, so that the ×10 conversion to the
-	 * 0-100 scale lezshows_3rd_scores holds lives in exactly one place --
-	 * Grading\TMDB::update_scores() -- rather than once per branch.
+	 * Unscaled; the ×10 conversion lives only in Grading\TMDB::update_scores().
 	 *
 	 * @param mixed  $data      A decoded TMDB response, or anything else.
 	 * @param string $post_type The post type the request was made for.
@@ -118,12 +102,8 @@ class Tmdb_Response {
 	/**
 	 * One rated entity's average, or null if nobody has rated it.
 	 *
-	 * TMDB's user scale runs 0.5 to 10, so it has no way to express "rated zero"
-	 * and sends a bare 0 for anything unrated instead. The payload says so
-	 * plainly: an unaired episode arrives as vote_average 0.0 alongside
-	 * vote_count 0. Passing that through as a score would put a hard 0 on the
-	 * show -- indistinguishable from a real drubbing, and cached for a day --
-	 * where 'TBD' lets the daily recheck pick the rating up once votes exist.
+	 * TMDB sends 0 for "unrated" (its scale starts at 0.5), so 0 and a zero
+	 * vote_count both mean null, leaving the score at 'TBD'.
 	 *
 	 * @param array $source A detail object or one find result.
 	 *
@@ -148,13 +128,9 @@ class Tmdb_Response {
 	/**
 	 * The IMDb ID TMDB holds, distinguishing "no link" from "not in this shape".
 	 *
-	 * The distinction is the whole point, because the two mean opposite things to
-	 * Imdb_Canonical::verdict(): '' is a real answer that clears a stale flag,
-	 * while null must leave our stored value untouched. Only /person/{id} carries
-	 * `imdb_id` at the top level. /tv/{id} does not carry one at all -- it needs
-	 * `append_to_response=external_ids` -- and the find envelope's results carry
-	 * none either. Reading a missing key as '' would turn both of those into
-	 * "TMDB has no IMDb link", which invents a verdict out of the wrong shape.
+	 * '' clears a stale flag; null must leave it alone. Only /person/{id} (or
+	 * external_ids) carries the key. See
+	 * docs/integrations/imdb.md#tmdb-response-shapes.
 	 *
 	 * @param mixed $data A decoded TMDB response, or anything else.
 	 *

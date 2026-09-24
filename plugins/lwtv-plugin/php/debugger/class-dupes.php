@@ -24,12 +24,9 @@ class Dupes {
 	/**
 	 * Find Duplicates
 	 *
-	 * Two candidate sources, because a duplicate only inherits a `-2` slug when
-	 * its title was typed identically the second time. Posts whose slug ends in a
-	 * number are paired with the post without it; actors are additionally paired
-	 * on a matching name key, which is what finds the same person entered under
-	 * two different spellings. Either way a pair is only called a duplicate when
-	 * both posts carry the same IMDb ID.
+	 * Slug-suffix pairs plus, for actors, name-key pairs; a pair is a duplicate
+	 * only when both carry the same IMDb ID. See
+	 * docs/architecture/duplicate-detection.md#duplicate-scan.
 	 *
 	 * @param array $items - array of Posts
 	 */
@@ -69,9 +66,7 @@ class Dupes {
 		$seen     = array();
 
 		foreach ( $candidates as $candidate ) {
-			// One pair can arrive from both sources -- a suffixed slug whose names
-			// also key alike, which is what the Desirée Rodriguez pair looks like --
-			// and evaluating it twice would put the same row in the report twice.
+			// One pair can arrive from both sources; evaluate it once.
 			$pair_key = (int) ( $candidate['post_id'] ?? 0 ) . ':' . (int) ( $candidate['original']['id'] ?? 0 );
 
 			if ( isset( $seen[ $pair_key ] ) ) {

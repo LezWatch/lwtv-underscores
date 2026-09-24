@@ -149,20 +149,9 @@ class Actors {
 	 * Sitewide Regular/Recurring/Guest breakdown for the Actors → Roles
 	 * view.
 	 *
-	 * "Role type" is stored on the character's show-group repeater (one
-	 * `type` sub-field per show a character appears in — regular/recurring/
-	 * guest), not on the actor directly. generate_roles() above tallies
-	 * this per-actor from that actor's own cached character list; this
-	 * tallies the same field across every published character's every
-	 * tagged show appearance, sitewide — the "what kind of roles do
-	 * queer characters (and by extension, the actors playing them) tend to
-	 * get" figure the Roles page and the Actors overview headline need.
-	 *
-	 * Same LIKE-through-a-placeholder pattern Character_Identity_Trend
-	 * uses for `_appears`, just matching the `_type` sub-field instead.
-	 * Revision-safe: ACF copies repeater postmeta onto revisions, so this
-	 * is scoped to published characters only, same guard Dead::
-	 * get_death_date_rows() and Character_Identity_Trend both use.
+	 * Tallies every published character's lezchars_show_group_{n}_type
+	 * sitewide (generate_roles() does the same per actor).
+	 * See docs/statistics/data-model.md#role-type.
 	 *
 	 * @return array [ 'regular' => ['name','count'], 'recurring' => [...], 'guest' => [...] ]
 	 *               — shaped like Taxonomy_Optimized's term rows so templates
@@ -234,22 +223,8 @@ class Actors {
 	 * Count of distinct actors with a character on screen this year, for
 	 * the Actors overview Headlines lead plate.
 	 *
-	 * Two facts already tracked elsewhere, joined for a new purpose:
-	 * which characters are on screen this year (the same `appears`
-	 * sub-field On_Air_Optimized::build_characters() reads for the
-	 * Characters/Shows "on air" trend), and which actors have ever played
-	 * each character (`lezchars_actor`, the same relationship
-	 * Character_Actor_Leaders reads).
-	 *
-	 * Recast wrinkle: lezchars_actor is a flat list — "select all actors
-	 * who have played this character, most recent actor first" — with no
-	 * year boundary per actor. There's no data path to know which actor
-	 * specifically was on screen in a given year for a recast character.
-	 * Per an explicit product decision, this takes only the first-listed
-	 * (most recent) actor as the one active this year, rather than
-	 * crediting every actor who's ever played an on-air character —
-	 * accurate as long as that "most recent first" ordering is kept up to
-	 * date whenever a character is recast.
+	 * Characters with this year in `appears`, credited to their first-listed
+	 * (most recent) actor only. See docs/statistics/data-model.md#recasts.
 	 *
 	 * @return int Distinct actor count.
 	 */
@@ -334,7 +309,7 @@ class Actors {
 					continue;
 				}
 
-				// "Most recent actor first" — see docblock above.
+				// First-listed actor only; see docs/statistics/data-model.md#recasts.
 				$active_actor_ids[ $actors[0] ] = true;
 			}
 		}
@@ -359,26 +334,10 @@ class Actors {
 	 * and generate_cis_queer_gap() (Gender's "Cisgender" bucket, which is
 	 * itself three taxonomy terms: cis-woman, cis-man, cisgender).
 	 *
-	 * Reads the stored lezactors_queer flag rather than calling
-	 * Is_Actor_Queer::make() once per tagged actor, which is what this did
-	 * before. The old note here argued the loop kept this figure from drifting
-	 * out of sync — but it was consistent with only one of the two answers the
-	 * site holds. Actors\Calculations::do_the_math() calls make() on save and
-	 * stores the result in lezactors_queer, and that stored value is what the
-	 * actors admin column, the ACF relationship labels and both REST endpoints
-	 * display. Recomputing live here meant statistics could disagree with every
-	 * other surface a reader sees. Now they all read one row.
-	 *
-	 * The cost of that choice is staleness: an actor is only as current as their
-	 * last save or `wp lwtv calc actors`. The cost of the old choice was one
-	 * query per tagged actor, each running a three-table join, which is why the
-	 * public callers below cache for a week.
-	 *
-	 * A missing row counts as not queer, matching how every PHP consumer tests
-	 * it — `! empty()` and truthiness, which is why the SQL excludes '' and '0'
-	 * rather than matching '1'. 'uncalculated' reports how many tagged actors
-	 * have no row at all: non-zero means a recalculation is overdue and this
-	 * figure is understated, which is the one way this can quietly mislead.
+	 * Reads the stored lezactors_queer flag (not a live Is_Actor_Queer::make()
+	 * per actor) so stats agree with every other surface; a missing row is
+	 * not queer, and 'uncalculated' flags a stale recalc.
+	 * See docs/statistics/data-model.md#stored-queer-flag.
 	 *
 	 * @param string $taxonomy   Actor taxonomy (e.g. 'lez_actor_sexuality').
 	 * @param array  $term_slugs Term slugs that make up the "default" bucket.
@@ -537,11 +496,8 @@ class Actors {
 				$actors = maybe_unserialize( $row['actors'] );
 				$actors = is_array( $actors ) ? array_values( array_filter( array_map( 'absint', $actors ) ) ) : array();
 				foreach ( $actors as $actor_id ) {
-					// Unknown_Actor::ACTOR_ID (post 14080) is the "Unknown"
-					// placeholder actor — a catch-all for roles with no
-					// confirmed performer — so it must never be counted
-					// toward, or win, any most-prolific-actor leaderboard.
-					// Same guard Characters_Builder uses for "busiest actor".
+					// Skip the Unknown placeholder actor.
+					// See docs/statistics/data-model.md#the-unknown-actor.
 					if ( Unknown_Actor::ACTOR_ID === $actor_id ) {
 						continue;
 					}
@@ -669,14 +625,9 @@ class Actors {
 	}
 
 	/**
-	 * The first-listed (most recent) actor for every published character —
-	 * the same "most recent actor first" approximation generate_active_this_year()
-	 * uses for recast attribution, reused here because role type (like
-	 * on-air year) lives on the character's show-group row, not the actor,
-	 * and lezchars_actor has no per-row attribution to resolve which actor
-	 * actually played which specific row. A recast character's every
-	 * appearance — regardless of type — ends up credited to whichever actor
-	 * is listed first today.
+	 * The first-listed (most recent) actor for every published character, who
+	 * is credited with all of that character's show-group rows.
+	 * See docs/statistics/data-model.md#recasts.
 	 *
 	 * @return array [ char_id => actor_id ]. Characters with no actor on
 	 *               record, or whose first-listed actor is the "Unknown"
@@ -705,10 +656,8 @@ class Actors {
 					continue;
 				}
 
-				// Unknown_Actor::ACTOR_ID (post 14080) is the "Unknown"
-				// placeholder actor — same exclusion
-				// get_actor_character_counts() applies, so it can never be
-				// handed credit for a "most prolific" role type.
+				// Skip the Unknown placeholder actor.
+				// See docs/statistics/data-model.md#the-unknown-actor.
 				if ( Unknown_Actor::ACTOR_ID === $actors[0] ) {
 					continue;
 				}

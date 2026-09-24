@@ -3,15 +3,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 /**
- * Characters → Gender: a pullstats banner, donut (grey cisgender + green-ramp
- * minorities), a decade-by-decade trend (small donut tiles, mirroring Format
- * Mix by Decade), and a Firsts list — the earliest-recorded character for
- * each tracked identity. lez_gender is a single-value taxonomy on Characters
- * (an ACF "select" field wraps it, so a character carries exactly one term)
- * — the trend/firsts data comes from Character_Identity_Trend, which anchors
- * each character to their own earliest on-screen year (from the show-group
- * repeater's `appears` sub-field) since characters have no premiere-year
- * field of their own.
+ * Characters → Gender: pullstats, donut (grey cisgender + green ramp),
+ * Gender Mix by Decade and Firsts. See docs/statistics/pages.md#character-identity-pages.
  *
  * @package LezWatch.TV
  *
@@ -157,13 +150,7 @@ $donut = array(
 include plugin_dir_path( __DIR__ ) . 'partials/donut.php';
 
 // ---- Gender Mix by Decade: small compact donuts, oldest to newest ----
-// Mirrors Format Mix by Decade (shows/formats.php) exactly, just anchored to
-// each character's own earliest on-screen year instead of a show's premiere
-// year — see Character_Identity_Trend's docblock for why. Colors are
-// rank-based per bucket (same convention Format's tiles use) rather than
-// keeping cisgender specially grey in every tile; with cisgender the
-// majority in nearly every decade, rank-based green already lands on it
-// almost everywhere anyway.
+// Tile colours are by rank (cisgender isn't forced grey here).
 $gen_decade_buckets = $gen_identity_trend->generate_decades( 'lez_gender', 20 );
 
 if ( ! empty( $gen_decade_buckets ) ) :

@@ -2,12 +2,9 @@
 /**
  * Star podium transforms.
  *
- * Pure array-in/array-out math for the Stars view's medal podium and
- * callout rail: column ordering, scaled plate heights, leader facts,
- * and the silver/bronze relationship the footnote copy adapts to.
- * No WordPress calls — unit-testable without a WP runtime (see
- * tests/unit/Statistics/StarPodiumTest.php). All i18n stays in the
- * template; this class only reports shape and numbers.
+ * Stars view math: podium column order and plate heights, leader facts,
+ * and the silver/bronze relationship for adaptive copy. Pure transform.
+ * See docs/statistics/presentation-rules.md.
  *
  * @package LezWatch.TV
  */

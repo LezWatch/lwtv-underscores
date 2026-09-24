@@ -1,17 +1,8 @@
 <?php
 /*
- * Find hosts claimed by more than one watch provider term.
- *
- * Nothing here is fixable automatically. Resolving a collision means deciding
- * which term is right and removing a URL row from the other, or merging them
- * with `wp lwtv waystowatch merge`. Level 'watch_term' keeps Repair away from
- * it, which is correct for exactly that reason.
- *
- * Costs two queries and no requests. The Watch Providers tab does not read this
- * check's findings -- it renders collisions live from the same host map it
- * already builds for its own list, so it can never show a stale one. This check
- * exists for the weekly cron, `wp lwtv debug watchhosts`, and the tab's count
- * badge, all of which need a stored number.
+ * Find hosts claimed by more than one watch provider term. Report only; stored
+ * for cron, the CLI and the tab badge (the tab itself reads collisions live).
+ * See docs/architecture/watch-providers.md#contested-hosts.
  */
 
 namespace LWTV\Debugger;

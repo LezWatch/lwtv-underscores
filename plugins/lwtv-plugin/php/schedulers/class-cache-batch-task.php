@@ -2,8 +2,8 @@
 /**
  * Cache Batch Task
  *
- * Batches cache invalidation through Action Scheduler. Runs alongside
- * Cache_Queue, which still clears on shutdown.
+ * Batches page-cache purges through Action Scheduler. Cache_Queue is the
+ * shutdown fallback when this is unavailable. See docs/architecture/caching.md#page-cache.
  *
  * @package lwtv-plugin
  */

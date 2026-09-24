@@ -2,14 +2,9 @@
 /*
  * WP CLI Commands for WikiData QIDs.
  *
- * Backfills lezactors_wikidata_qid from each actor's IMDb ID, recording how the
- * match was made so an unattended process can tell a verified identity from a
- * guess.
- *
- * Only the exact IMDb statement match (P345) is allowed to write here. The name
- * search that Debugger\Actors uses for its diff view is deliberately absent: a
- * first-hit name match is a coin toss for a common name, and this command's
- * output is what the death audit later treats as an identity.
+ * Backfills lezactors_wikidata_qid from each actor's IMDb ID. Only the exact
+ * P345 match may write here; no name search. See
+ * docs/architecture/actor-identity.md#backfill-wp-lwtv-wikidata.
  */
 
 // Bail if directly accessed
@@ -549,20 +544,12 @@ class WP_CLI_LWTV_WikiData {
 			. " WHERE ign.post_id = p.ID AND ign.meta_key = '" . Identity::META_IGNORE . "'"
 			. " AND ign.meta_value != '' AND ign.meta_value != '0' )";
 
-		// The five groups are mutually exclusive and sum to the published total,
-		// which is the only reason the breakdown table can be read as a whole.
+		// The five groups are mutually exclusive and sum to the published total.
+		// Trust comes from the source, not the lock, so 'trusted' includes locked
+		// actors. See docs/architecture/actor-identity.md#backfill-wp-lwtv-wikidata.
 		//
-		// The pivot is that trust comes from the SOURCE, not from the write-lock.
-		// A locked QID from a trusted source is still usable -- that is the
-		// normal state of a hand-corrected actor, since editing the field records
-		// source 'manual' -- so 'trusted' must not exclude locked actors. The
-		// lock only matters where it stops work being possible: an actor whose
-		// QID we cannot vouch for, or who has none, can no longer be resolved by
-		// any backfill, so those belong in 'ignored' rather than being counted as
-		// work outstanding.
-		//
-		// Written out as a partition on four facts -- has a QID, source is
-		// trusted, is locked, has an IMDb ID:
+		// The partition, on four facts -- has a QID, source is trusted, is
+		// locked, has an IMDb ID:
 		//
 		//   qid + trusted                 -> trusted   (locked or not)
 		//   qid + untrusted + unlocked    -> unverified

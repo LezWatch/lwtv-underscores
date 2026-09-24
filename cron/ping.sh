@@ -3,7 +3,6 @@
 UUID=$1
 SUCCEEDED=$2
 
-# Check if all arguments are provided
 if [ -z "$UUID" ] || [ -z "$SUCCEEDED" ]; then
 	echo "Usage: $0 <uuid> <succeeded: boolean>"
 	exit 1

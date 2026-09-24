@@ -2,12 +2,9 @@
 /**
  * Watch URL Scan Task
  *
- * Runs the watch-provider URL sweep in the background, so the admin can start it
- * without holding a page request open.
- *
- * The check makes one HTTP request per provider URL, too many to run during a
- * page load, so the Run Scan button queues the work here. Action Scheduler
- * rather than WP-Cron, matching the other batch tasks.
+ * Runs the watch-provider URL sweep on Action Scheduler, in time-budgeted passes,
+ * so the admin can start it without holding a page request open.
+ * See docs/architecture/scheduling.md#watch-url-sweep.
  *
  * @package lwtv-plugin
  */
@@ -37,12 +34,8 @@ class Watch_URLs_Task {
 	const AS_GROUP = 'lwtv';
 
 	/**
-	 * Wall-clock budget for one pass, in seconds.
-	 *
-	 * Bounded because `find_bad_watch_urls()` only writes its findings at the
-	 * end, so a pass killed by a time limit stores nothing. Stopping ourselves
-	 * first means every pass banks its work, with whatever it did not reach
-	 * recorded as deferred and re-queued.
+	 * Wall-clock budget for one pass, in seconds. Findings are only stored at the
+	 * end of a pass, so stopping ourselves first means every pass banks its work.
 	 */
 	const BUDGET = 240;
 

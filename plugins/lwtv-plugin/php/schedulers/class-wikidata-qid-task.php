@@ -2,23 +2,10 @@
 /**
  * WikiData QID Resolution Task
  *
- * Resolves an actor's WikiData QID from their IMDb ID shortly after they are
- * saved, so a newly added actor is identifiable to the death audit without
- * anyone remembering to run a backfill.
- *
- * Runs on Action Scheduler and never during save_post. An HTTP call in a save
- * hook blocks the editor, and save_post fires on autosaves, revisions, bulk
- * edits, REST writes and the cron-driven recalculations -- far more often than
- * "a human edited an actor".
- *
- * Only the exact IMDb statement match (P345) can write here, because nothing
- * reads this task's reasoning before the death audit treats its output as an
- * identity. The name search stays where a human will see its results.
- *
- * The queue is deliberately the same shape as Imdb_Verify_Task's: a transient
- * list of post IDs, drained in batches by a single scheduled action. Two small
- * queues that behave identically are easier to reason about during an incident
- * than one clever shared one.
+ * Resolves a saved actor's WikiData QID from their IMDb ID (exact P345 match
+ * only) on Action Scheduler, never in save_post. Same queue shape as
+ * Imdb_Verify_Task. See docs/architecture/actor-identity.md#scheduler-wikidata_qid_task
+ * and docs/architecture/scheduling.md#no-http-in-save_post.
  *
  * @package lwtv-plugin
  */
@@ -70,12 +57,9 @@ class Wikidata_Qid_Task {
 	/**
 	 * How many consecutive transport failures before a post is dropped.
 	 *
-	 * The queue reschedules itself every 60 seconds and set_queue() writes a
-	 * fresh TTL each time, so the transient's own expiry never fires while the
-	 * queue is non-empty. Without a ceiling here, one post WikiData will never
-	 * answer for keeps the whole queue alive and re-requests it ~1,400 times a
-	 * day. Three strikes is enough to ride out a brief outage or a 429 without
-	 * turning a permanent fault into a permanent load.
+	 * The queue's TTL is rewritten every run, so it never expires on its own;
+	 * without this ceiling one unanswerable post would keep it alive forever.
+	 * See docs/architecture/scheduling.md#retry-ceilings.
 	 */
 	const MAX_ATTEMPTS = 3;
 
@@ -103,11 +87,8 @@ class Wikidata_Qid_Task {
 
 		$identity = new Identity();
 
-		// The same decision the CLI backfill makes, from the same rules: an
-		// ignored actor, a hand-set QID, one we already trust, or no IMDb ID to
-		// ask with all mean there is nothing here worth a request. Without
-		// 'reverify' this also leaves inherited QIDs alone -- upgrading those
-		// is a deliberate bulk pass, not something a save should trigger.
+		// The same decision the CLI backfill makes. Without 'reverify', inherited
+		// QIDs are left for a deliberate bulk pass.
 		if ( ! Qid_Trust::should_check( $identity->collect( $post_id ) )['check'] ) {
 			return false;
 		}
@@ -154,13 +135,8 @@ class Wikidata_Qid_Task {
 				++$resolved;
 			}
 
-			// A transport failure or a rate limit is not an answer, and unlike
-			// the CLI there is no human here to re-run it. Put it back so the
-			// next batch tries again; resolve_and_record() wrote no
-			// checked-marker, so nothing has been recorded as a no-match.
-			//
-			// Only genuine faults land here. An ambiguous IMDb ID is an answer
-			// and carries its own checked-marker, so it is not retried.
+			// Only genuine faults land here (no checked-marker was written), so
+			// re-queue them. An ambiguous IMDb ID is an answer and is not retried.
 			if ( 'error' === $result['status'] ) {
 				$count = ( $attempts[ $post_id ] ?? 0 ) + 1;
 
@@ -246,10 +222,7 @@ class Wikidata_Qid_Task {
 	/**
 	 * Write the per-post error counts, keeping only what is still queued.
 	 *
-	 * Pruning against the queue is what stops this growing without bound. A post
-	 * that has left the queue -- resolved, abandoned, or dropped by hand -- has no
-	 * use for its old failure count, and if it is queued again later it deserves a
-	 * fresh three attempts rather than inheriting a tally from last week.
+	 * Pruning keeps this bounded, and gives a re-queued post fresh attempts.
 	 *
 	 * @param  array $attempts  Post ID => count.
 	 * @param  array $remaining The queue as just written.

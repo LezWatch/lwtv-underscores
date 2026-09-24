@@ -3,10 +3,8 @@
  * Trope category coverage: how many distinct shows carry at least one
  * trope from each of Trope_Categories' good/maybe/bad/ploy buckets.
  *
- * Pure array-in/array-out — no WordPress calls. Takes the same object →
- * slugs shape Taxonomy_Optimized::get_object_term_slug_map() and
- * Intersection_Pairs already use, so the WP glue in tropes.php only needs
- * to fetch that map once and can feed it to both.
+ * Takes the same object → slugs map as Intersection_Pairs, so tropes.php
+ * fetches it once. Pure transform. See docs/statistics/pages.md#build-layer.
  *
  * @package LezWatch.TV
  */

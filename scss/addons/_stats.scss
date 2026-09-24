@@ -1946,12 +1946,8 @@ canvas {
 		text-decoration: line-through;
 	}
 
-	// scroll-margin-top clears the fixed site header + the sticky jump bar + 8px
-	// of air, so a jump lands the group key below the bar, never behind it. The
-	// bar's height changes with viewport width (the A–Z chips wrap 1–3 rows, the
-	// eyebrow can take its own line), which a fixed value can't track — so
-	// statistics-overview.js measures the bar and sets --lwtv-sb-offset per pane.
-	// The static fallback errs large for the no-JS case.
+	// scroll-margin-top reads --lwtv-sb-offset, measured by statistics-overview.js;
+	// the fallback errs large for no-JS. See docs/design/stats-css.md#jump-bar-offset.
 	.lwtv-ty-sb-row {
 		display: grid;
 		grid-template-columns: 150px 1fr;
@@ -2437,14 +2433,9 @@ canvas {
 			margin: 0 auto 0.5rem;
 		}
 
-		// Overview's Trope Gap pair only (--tint modifier, set in
-		// overview.php): a lighter tint instead of the vivid family
-		// background. Deliberately NOT scoped to .dead-characters/
-		// .happy-endings alone — those same card-header classes are also
-		// used by Scores' pull-stats (Failing Grades / 90+ Club) and by
-		// canceled-shows/queer-actors elsewhere, none of which should
-		// change. Mirrors the pink-light/pink-deep recipe already used
-		// for .lwtv-hl-lead.
+		// Gap pairs only (--tint modifier): light tint, deep text. Scoped to the
+		// modifier because the family classes are reused elsewhere.
+		// See docs/design/colors.md#tinted-pairs.
 		&.lwtv-tropegap--tint {
 
 			&.dead-characters {
@@ -2487,18 +2478,8 @@ canvas {
 				color: colors.$lwtv-purple-deep;
 			}
 
-			// Characters overview's Cliché Gap + Casting Gap pairs. queer-actors
-			// reuses happy-endings' royal-blue hue (same "the good outcome" side
-			// of a gap pair); no-cliche reuses purple, the Clichés section's
-			// existing family color; straight-cis-actors is a neutral grey for
-			// the "default/expected" side of the Casting Gap.
-
-			// Actors overview's "Who Plays the Roles" pair joins these same two
-			// rules rather than getting its own colors: .openly-queer already
-			// shares .cliches' solid purple in the untinted .card-header rules
-			// above, and .trans-nb-actors already shares .queer-actors'/
-			// .happy-endings' solid royal-blue there too — so their tinted
-			// versions stay consistent with those existing groupings.
+			// Cliché Gap, Casting Gap and "Who Plays the Roles" pairs reuse the
+			// tints of their solid families. See docs/design/colors.md#tinted-pairs.
 			&.no-cliche,
 			&.openly-queer {
 				background-color: colors.$lwtv-purple-light;
@@ -2935,12 +2916,8 @@ canvas {
 		background-color: $ramp-5;
 	}
 
-	// Tropes page layout: Trope Load + Mixed Alignment stack in the main
-	// (wide) column, Common Pairings sits alone in the side (narrow) column
-	// beside them, and Trope Breakdown (the long ranked list) drops out of
-	// this grid entirely to run full width below — same asymmetric 2:1
-	// ratio and structure as Genres' .lwtv-genres-columns (main leads in
-	// source order on both pages). Stacks to one column below 900px.
+	// Tropes page grid: 2:1 main/side, one column at 900px or narrower.
+	// See docs/design/stats-css.md#page-grids.
 	.lwtv-tropes-columns {
 		display: grid;
 		grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
@@ -2959,9 +2936,7 @@ canvas {
 		}
 	}
 
-	// Trope Breakdown: full width (outside .lwtv-tropes-columns above),
-	// so it gets the exact same 2-col newspaper flow and breakpoint
-	// as .lwtv-genres-breakdown-wrap rather than a page-specific one.
+	// Trope Breakdown: full width, 2-col newspaper flow.
 	.lwtv-tropes-breakdown-wrap .lwtv-leaders {
 		column-count: 2;
 		column-gap: 2rem;
@@ -2978,16 +2953,9 @@ canvas {
 		}
 	}
 
-	// Mixed Alignment (shows/tropes.php): borrows the compact donut's
-	// figure/legend markup classes directly, skipping donut.php's own
-	// bg-light card wrapper — this already sits inside its own .lwtv-panel,
-	// and nesting two bordered cards would double up the box. That means it
-	// also skips .lwtv-donut-card--compact's centering/sizing for
-	// .lwtv-donut-figure, so it needs its own copy of just that part.
-	// Donut on the left, Pure/Mixed legend on the right, one row — rather
-	// than the stacked donut-above-legend layout donut.php's own compact
-	// mode uses (this section skips that partial and borrows just its
-	// markup classes, so it isn't stuck with that mode's stacking).
+	// Mixed Alignment: donut left, legend right. Borrows donut.php's markup
+	// classes without its card, so it needs its own figure sizing.
+	// See docs/design/stats-css.md#card-nesting.
 	.lwtv-mixed-alignment-row {
 		display: flex;
 		align-items: center;
@@ -3005,11 +2973,8 @@ canvas {
 		flex: 1 1 200px;
 	}
 
-	// Characters overview: The Casting Gap. One combined two-color waffle
-	// instead of two near-duplicate cards — same figure-left/legend-right
-	// row idea as Mixed Alignment above (borrows .lwtv-donut-legend's
-	// markup classes directly), just with a waffle standing in for the
-	// donut, since a raw yes/no split reads better as a dot grid than a ring.
+	// Characters overview: The Casting Gap. One two-colour waffle left, legend
+	// right, like Mixed Alignment.
 	.lwtv-castinggap-row {
 		display: flex;
 		align-items: center;
@@ -3044,15 +3009,8 @@ canvas {
 		opacity: 1;
 	}
 
-	// Queer IRL (characters/queer-irl.php): its own card/row rather than
-	// reusing .lwtv-castinggap-row/-waffle directly — same visual idea
-	// (waffle left, legend right) but this page isn't nested inside
-	// another panel the way Casting Gap is on the Overview page, so it
-	// needs its own top-level card, and its spacing (44px row gap,
-	// 230px waffle) differs slightly from Casting Gap's.
-	// Colors are the one thing intentionally NOT page-specific — same
-	// $lwtv-pink/$lwtv-aro-grey Casting Gap already uses for this exact
-	// queer-vs-cis metric, so it reads as the same statistic everywhere.
+	// Queer IRL: a top-level card of its own (not nested in a panel), with
+	// the Casting Gap's colours. See docs/design/colors.md#same-statistic-same-colours.
 	.lwtv-qirl-card {
 		padding: 32px 36px;
 	}
@@ -3093,11 +3051,8 @@ canvas {
 		color: colors.$lwtv-grey-deep;
 	}
 
-	// Unknown Actor spotlight (actors/unknown.php): same card/row/waffle/body
-	// layout as Queer IRL's card above, just under its own class names since
-	// the dot colors below are specific to this page's "gap vs known" metric
-	// rather than Queer IRL's queer-vs-cis one. Amber matches the "actors"
-	// family color used everywhere else in this section.
+	// Unknown Actor spotlight: Queer IRL's card layout under its own classes,
+	// in the actors family amber.
 	.lwtv-unknown-card {
 		padding: 32px 36px;
 	}
@@ -3141,9 +3096,8 @@ canvas {
 		align-items: center;
 	}
 
-	// Same values as Genre Load's figure/legend gap. Trope Load sits in the
-	// wide 2fr main column (see .lwtv-tropes-columns above), the same layout
-	// context Genre Load has, so it gets the same sizing.
+	// Trope Load sits in the wide 2fr main column, so it gets Genre Load's
+	// sizing. See docs/design/stats-css.md#page-grids.
 	.lwtv-tropeload-figure {
 		flex: 0 0 auto;
 		width: 320px;
@@ -3160,9 +3114,8 @@ canvas {
 		max-width: 100%;
 	}
 
-	// Footer strip below the row (not a third flex item in it — a side
-	// column is too narrow for waffle+legend+poster to share one line
-	// without an awkward wrap). Small thumbnail + caption side by side.
+	// Footer strip below the row, not a third flex item: waffle, legend and
+	// poster don't fit on one line. Small thumbnail + caption side by side.
 	.lwtv-tropeload-poster {
 		text-align: center;
 		gap: 12px;
@@ -3292,15 +3245,8 @@ canvas {
 		color: colors.$lwtv-grey-deep;
 	}
 
-	// Firsts-style cards (a name linked inside the label — Gender/Sexuality/
-	// Queer IRL's Firsts lists, Actors Sexuality's Most Prolific by
-	// Orientation): a smaller single-row layout instead of the plain
-	// pullstat cards' stacked icon-row/number/label. Number stays big, the
-	// name sits right next to it, the icon moves out of the top-right
-	// corner into the row's end. Kept as an additive modifier — .lwtv-
-	// statcard's own default stacked layout still serves the plain
-	// sentence-label pullstat cards, which need the full width a name-row
-	// wouldn't leave them.
+	// Firsts-style cards (a linked name in the label): one row of number, name,
+	// icon. An additive modifier; plain pullstat cards keep the stacked layout.
 	.lwtv-statcard--firsts {
 		flex-direction: row;
 		align-items: center;
@@ -3329,12 +3275,8 @@ canvas {
 		}
 	}
 
-	// .lwtv-statcard-icon/-number default to amber — fine for Genres,
-	// but Clichés' family color
-	// is green everywhere else on its page (Load waffle, matchup accents).
-	// .lwtv-bars--characters already carries that green override elsewhere
-	// on this page, so it doubles as the pullstats variant too rather than
-	// adding a new family-color hook just for this one row.
+	// Stat cards default to amber; .lwtv-bars--characters is the green variant
+	// (Clichés). See docs/design/colors.md#card-header-families.
 	.lwtv-bars--characters .lwtv-statcard-icon {
 		background-color: colors.$lwtv-green-light;
 		color: colors.$lwtv-green-deep;
@@ -3379,11 +3321,8 @@ canvas {
 		}
 	}
 
-	// Nations/Stations single-profile pullstats + "Most Prolific"/"Top-Rated"
-	// cards: same pink family as .lwtv-bars--queer-irl, reused here (not
-	// shared via the same class) because it needs to match this page's own
-	// donut ramp (dkpink/pink/mid/mid2/ltpink — see Donut_Segments::build()),
-	// which is unrelated to Queer IRL's pink.
+	// Nations/Stations single-profile cards: pink, to match that page's donut
+	// ramp (a separate class from .lwtv-bars--queer-irl on purpose).
 	.lwtv-bars--geo .lwtv-statcard-icon {
 		background-color: colors.$lwtv-pink-light;
 		color: colors.$lwtv-pink-deep;
@@ -3439,10 +3378,8 @@ canvas {
 		}
 	}
 
-	// Genre Stats layout: Genre Load (waffle + spotlight) takes the wide
-	// column, Common Pairings' matchup cards sit beside it — asymmetric
-	// 2:1 split, unlike Tropes' even 50/50 .lwtv-tropes-columns. Same
-	// collapse-to-one-column breakpoint as that pattern.
+	// Genres page grid: 2:1 main/side, one column at 900px or narrower.
+	// See docs/design/stats-css.md#page-grids.
 	.lwtv-genres-columns {
 		display: grid;
 		grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
@@ -3573,12 +3510,8 @@ canvas {
 		background-color: colors.$lwtv-yellow-deep;
 	}
 
-	// Intersectionality page layout: Intersection Load + Single vs Multiple
-	// stack in the main (wide) column, Common Pairings sits alone in the
-	// side (narrow) column beside them, and the Breakdown ranked list drops
-	// out of this grid entirely to run full width below — same asymmetric
-	// 2:1 ratio and structure as Genres' .lwtv-genres-columns and Tropes'
-	// .lwtv-tropes-columns. Stacks to one column below 900px.
+	// Intersectionality page grid: 2:1 main/side, one column at 900px or
+	// narrower. See docs/design/stats-css.md#page-grids.
 	.lwtv-inter-columns {
 		display: grid;
 		grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
@@ -3597,10 +3530,8 @@ canvas {
 		}
 	}
 
-	// Intersection Load: same figure/legend flex layout Genre/Trope Load
-	// already use. No cap needed on the legend column — the main column
-	// here is still wide enough (2fr of .lwtv-inter-columns) that the
-	// legend never gets Genre/Trope Load's overflow problem.
+	// Intersection Load: same figure/legend row as Genre/Trope Load, with no
+	// legend cap.
 	.lwtv-interload-row {
 		display: flex;
 		flex-wrap: wrap;
@@ -3727,12 +3658,8 @@ canvas {
 		flex: 1 1 200px;
 	}
 
-	// Common Pairings: compact "count first" rows (partials/matchup-cards.php)
-	// — leading number reads first, pair name follows on the same line, a thin
-	// divider instead of a bordered box per row. Kept dense because it is
-	// built for a narrow side column where height matters. "shows together" moves to a .screen-reader-text
-	// label; the number is self-explanatory next to the pair once it isn't
-	// floating alone in a card.
+	// Common Pairings: dense "count first" rows for the narrow side column; the
+	// unit label is .screen-reader-text.
 	.lwtv-matchup-grid {
 		display: flex;
 		flex-direction: column;
@@ -3770,13 +3697,8 @@ canvas {
 		font-weight: 700;
 	}
 
-	// Common Pairings rows render as <a> once matchup-cards.php gets a
-	// per-item 'url' (currently just Intersectionality's confirmed
-	// fwp_show_intersectionality FacetWP param) — reset link defaults so a
-	// linked row looks identical to the plain-div rows Genres/Tropes
-	// use, and only hint at interactivity on hover. Placed after the base
-	// .lwtv-matchup-pair rule above so specificity only increases going
-	// down the file (no-descending-specificity).
+	// Linked rows (docs/statistics/pages.md#facetwp-links) look like plain rows
+	// until hover. Kept after .lwtv-matchup-pair for no-descending-specificity.
 	a.lwtv-matchup-row {
 		color: inherit;
 		text-decoration: none;
@@ -3787,11 +3709,7 @@ canvas {
 		}
 	}
 
-	// Accent color follows the .lwtv-bars--<family> class matchup-cards.php
-	// puts on .lwtv-matchup-grid — same family-color convention the
-	// lollipop/leaderboard rows above already use, so Genres' pairings stay
-	// amber and Tropes' pairings match the green used everywhere else on
-	// that page (panel icon, progress bars, Trope Load ramp, Mixed Alignment).
+	// Accent colour follows the .lwtv-bars--<family> class on the grid.
 	.lwtv-bars--genres .lwtv-matchup-count,
 	.lwtv-bars--genres .lwtv-matchup-plus {
 		color: colors.$lwtv-yellow-deep;
@@ -3863,10 +3781,7 @@ canvas {
 		}
 	}
 
-	// Intersectionality Breakdown: full width (outside
-	// .lwtv-inter-columns above), so it gets the exact same 2-col newspaper
-	// flow and breakpoint as .lwtv-genres-breakdown-wrap / .lwtv-tropes-
-	// breakdown-wrap rather than a page-specific one.
+	// Intersectionality Breakdown: full width, 2-col newspaper flow.
 	.lwtv-inter-breakdown-wrap .lwtv-leaders {
 		column-count: 2;
 		column-gap: 2rem;
@@ -3883,11 +3798,8 @@ canvas {
 		}
 	}
 
-	// Characters → Clichés layout: Cliché Load (waffle + spotlight) takes
-	// the wide column, Common Pairings' matchup cards sit beside it —
-	// same asymmetric 2:1 split as .lwtv-genres-columns (no alignment-
-	// category split exists for clichés, unlike Tropes, so there's no
-	// second panel to stack in the main column).
+	// Clichés page grid: 2:1 main/side, one column at 900px or narrower.
+	// See docs/design/stats-css.md#page-grids.
 	.lwtv-cliches-columns {
 		display: grid;
 		grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
@@ -3954,12 +3866,8 @@ canvas {
 		color: colors.$lwtv-grey-deep;
 	}
 
-	// Cliché Load waffle ramp: a full green gradient, not Genre/Intersection
-	// Load's grey-for-zero treatment — lez_cliches' "none" placeholder is
-	// already excluded before this distribution is built, so the "0" bucket
-	// here means "zero real clichés", a meaningful reading rather than
-	// absence of data. Same ramp shape/reasoning as Trope Load, the other
-	// taxonomy with a real "none" to exclude.
+	// Cliché Load ramp: full green gradient (bucket 0 is a real reading, as on
+	// Trope Load). See docs/design/colors.md#load-waffle-ramps.
 	$clicheload-ramp-1: colors.$lwtv-green-light;
 	$clicheload-ramp-2: color.mix(colors.$lwtv-green-light, colors.$lwtv-green-deep, 75%);
 	$clicheload-ramp-3: color.mix(colors.$lwtv-green-light, colors.$lwtv-green-deep, 50%);
@@ -4044,17 +3952,8 @@ canvas {
 		}
 	}
 
-	// Characters → Most: three top-5 leaderboard panels (Most Clichés,
-	// Most Shows, Most Actors) side by side. These are full ranked-bars
-	// panels (header + up to 5 rows each), heavier than the pullstats
-	// statcards, so this collapses at the same 900px breakpoint the
-	// asymmetric Load/Pairings grids use rather than pullstats' lighter
-	// 767px.
-	// "The Records" (Characters → Most): a five-column spotlight row (the
-	// #1 character per category, reusing the .lwtv-metric-card shape
-	// characters/overview.php already established) plus a Full Rankings
-	// table below it. Both use design tokens throughout (Oswald headings,
-	// $lwtv-green-deep, $lwtv-grey-light/-border).
+	// "The Records" (Characters → Most): five-card spotlight (.lwtv-metric-card)
+	// plus a Full Rankings table. Collapses at 900px, like the Load grids.
 	.lwtv-metric-grid--5 {
 		grid-template-columns: repeat(5, 1fr);
 	}
@@ -4262,14 +4161,9 @@ canvas {
 		color: colors.$lwtv-grey-medium;
 	}
 
-	// Decade tile grid: small-multiple tiles, one per decade bucket, each
-	// showing its own top-3 terms as independent "% of shows that decade"
-	// bars — a generic component shared by any multi-value taxonomy fed
-	// through Genre_Decade_Buckets (Genres' "Genre Mix by Decade" today,
-	// Intersectionality's "Intersections by Decade" reuses it as-is).
-	// Reuses the same .progress/.progress-bar/data-grow-to markup as the
-	// full-width ranked-bar panels elsewhere, just at tile scale, so every
-	// bar-based section on the site reads as one visual language.
+	// Decade tile grid: one tile per Genre_Decade_Buckets bucket, top-3 terms
+	// as independent bars (Genres, Intersectionality), using the standard
+	// .progress markup at tile scale.
 	.lwtv-decade-tile-note {
 		margin: -0.25rem 0 1rem;
 		font-size: 0.85rem;
@@ -4658,12 +4552,8 @@ canvas {
 	}
 
 	.lwtv-donut-center-num--green { color: colors.$lwtv-green-deep; }
-	// Same dark-for-light-background rule as dkpink/pink/mid above — only
-	// the two darker ramp stops get a center-num rule (medgreen, midgreen);
-	// ltgreen/palegreen are the ramp's palest stops and, like ltpink/mid2,
-	// are left to fall back to .lwtv-donut-center-num's own dark grey
-	// default rather than risk low contrast, since a compact tile's lead
-	// segment is rarely one of these.
+	// Only the darker stops get a centre-number colour; the palest fall back to
+	// the default grey. See docs/design/colors.md#ramps.
 	.lwtv-donut-center-num--medgreen { color: color.mix(colors.$lwtv-green-light, colors.$lwtv-green-deep, 25%); }
 
 	.lwtv-donut-center-num--midgreen { color: color.mix(colors.$lwtv-green-light, colors.$lwtv-green-deep, 50%); }
@@ -4678,15 +4568,8 @@ canvas {
 
 	.lwtv-donut-center-num--ltpink { color: colors.$lwtv-pink-light; }
 
-	// Decade-by-decade rows: a row of compact donut tiles (Sexuality/Gender/
-	// Format Mix by Decade, Deaths by Decade), one per *_Decade_Buckets
-	// bucket. Wrapped in the same bordered-card treatment .lwtv-panel uses
-	// elsewhere — one outer card holding every decade tile, each of which
-	// keeps its own .lwtv-donut-card--compact bg-light tint, same two-level
-	// nesting .lwtv-donut-mini's comment describes for the Unknown Actor
-	// trio. No explicit background-color, same as .lwtv-panel, so it reads
-	// as white in light mode and the page's own dark background in dark
-	// mode without a separate override.
+	// Decade-by-decade donut rows: one outer card around every compact tile.
+	// See docs/design/stats-css.md#card-nesting.
 	.lwtv-decade-row {
 		display: grid;
 		grid-template-columns: repeat(3, 1fr);
@@ -4714,13 +4597,8 @@ canvas {
 		gap: 8px;
 	}
 
-	// .lwtv-decade-tile's name collides with an unrelated rule above (the
-	// Genre/Intersections "Mix by Decade" ranked-bar tiles use the same
-	// class, giving every tile here a second bordered white box for free).
-	// That extra box duplicated .lwtv-decade-row's own outer card below
-	// it, so this scoped override cancels it back out — only within a
-	// .lwtv-decade-row, leaving .lwtv-decade-tile-grid's unrelated tiles
-	// untouched.
+	// Cancels the colliding .lwtv-decade-tile box inside .lwtv-decade-row only.
+	// See docs/design/stats-css.md#class-name-collisions.
 	.lwtv-decade-row .lwtv-decade-tile {
 		padding: 0;
 		border: none;
@@ -4762,11 +4640,8 @@ canvas {
 		}
 	}
 
-	// 'mini' donut layout (partials/donut.php): same figure/eyebrow sizing as
-	// .lwtv-donut-card--compact above, just without its own border/background/
-	// padding — several of these are meant to share one outer .lwtv-panel
-	// card (see actors/unknown.php's "Who Are These Characters?" trio)
-	// instead of each nesting a second bordered box inside the first.
+	// 'mini' donut: compact sizing with no card of its own, so several share one
+	// .lwtv-panel. See docs/design/stats-css.md#card-nesting.
 	.lwtv-donut-mini {
 		display: flex;
 		flex-direction: column;
@@ -4860,14 +4735,8 @@ canvas {
 		background-color: colors.$lwtv-green-deep;
 	}
 
-	// Green ramp for donuts that need more than the one solid --green shade
-	// above (e.g. characters/gender.php's minority segments) — same
-	// 0/25/50/75/100 mix spacing as the Cliché Load waffle ramp
-	// ($clicheload-ramp-*), just ordered dark-to-light to match dkpink's
-	// own "biggest segment = darkest" convention instead of Cliché Load's
-	// "lowest bucket = lightest" one. --green itself (green-deep, no mix)
-	// already has a dark-mode swap to green-light, so it doubles as this
-	// ramp's darkest stop rather than duplicating that class.
+	// Green donut ramp, dark to light; --green is its darkest stop.
+	// See docs/design/colors.md#ramps.
 	.lwtv-donut-seg--medgreen {
 		stroke: color.mix(colors.$lwtv-green-light, colors.$lwtv-green-deep, 25%);
 		background-color: color.mix(colors.$lwtv-green-light, colors.$lwtv-green-deep, 25%);
@@ -4893,12 +4762,8 @@ canvas {
 		background-color: colors.$lwtv-yellow-deep;
 	}
 
-	// Amber ramp for actors/roles.php's donut (Regular/Recurring/Guest,
-	// three buckets) and actors/sexuality.php's donut (top-4 orientations +
-	// an Other catch-all, five buckets) — same 25/50/75/100% mix spacing
-	// the green ramp uses, against the "actors" family's one solid --amber
-	// shade above. midamber/paleamber (50%/75%) exist only for Sexuality's
-	// extra granularity; Roles only ever uses amber/medamber/ltamber.
+	// Amber donut ramp for the Actors pages; Roles uses only amber, medamber
+	// and ltamber. See docs/design/colors.md#ramps.
 	.lwtv-donut-seg--medamber {
 		stroke: color.mix(colors.$lwtv-yellow-light, colors.$lwtv-yellow-deep, 25%);
 		background-color: color.mix(colors.$lwtv-yellow-light, colors.$lwtv-yellow-deep, 25%);
@@ -6011,11 +5876,8 @@ canvas {
 		gap: 7px;
 	}
 
-	// Full circles, not the reference's 3px squares: straight aligned
-	// gutters between saturated squares trigger the Hermann grid illusion
-	// (ghost dots at the intersections), and even heavy corner rounding
-	// only softened it. Dots remove the straight edges entirely — and
-	// match the Bury Your Gays waffle's visual language.
+	// Full circles, to avoid the Hermann grid illusion.
+	// See docs/design/colors.md#worth-it-grid.
 	.lwtv-wi-square {
 		border-radius: 50%;
 	}
@@ -6228,11 +6090,8 @@ canvas {
 		'triggers': colors.$lwtv-red,
 		'worth-it': colors.$lwtv-green,
 		'we-love-it': colors.$lwtv-pink,
-		// Characters overview's rail entries (on-air is promoted to the lead
-		// plate, so it never needs a rail color here). 'cliches' reuses the
-		// green already assigned to the Top Clichés panel below (family:
-		// 'characters' there) so the two cliché-related entries in this
-		// rail stay visually distinct from each other.
+		// Characters overview's rail (on-air is the lead plate, so has no entry).
+		// 'cliches' and 'most-cliches' get distinct hues.
 		'cliches': colors.$lwtv-green-deep,
 		'most-cliches': colors.$lwtv-purple,
 		'gender': colors.$lwtv-yellow-deep,

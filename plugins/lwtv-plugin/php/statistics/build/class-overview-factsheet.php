@@ -3,8 +3,7 @@
  * Overview fact-sheet view transforms for the single-nation and
  * single-station statistics pages.
  *
- * Pure array-in / array-out helpers. No WordPress runtime dependency — every
- * query, meta read, permalink, and i18n string stays in the template.
+ * Pure transform. See docs/statistics/pages.md#build-layer.
  *
  * @package LezWatch.TV
  */

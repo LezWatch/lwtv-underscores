@@ -76,21 +76,13 @@ if ( array_sum( $tropes_alignment ) > 0 ) {
 	<?php
 }
 
-// Trope Load: what share of shows carry 0, 1, 2, 3, or 4+ tropes. Shown as
-// a distribution, not an average/median pair — those collapse to the same
-// "2" when the data clusters tightly around the middle, which tells a
-// reader nothing about the spread. Reuses the same slug map as Trope Alignment above; $shows_count
-// is the true denominator since the map only lists shows with >=1 trope
-// relationship row, so shows with none never appear in it at all.
+// Trope Load: share of shows carrying 0, 1, 2, 3 or 4+ tropes. $shows_count is
+// the denominator (the slug map omits shows with no trope rows).
+// See docs/statistics/pages.md#load-and-pairings-pages.
 $tropes_distribution = \LWTV\Statistics\Build\Term_Count_Distribution::build( $tropes_slug_map, (int) $shows_count, array( 'none' ) );
 
-// Rendered as a 100-dot waffle colored by bucket rather than another
-// ranked-bar list — Trope Breakdown (the full-width section below this
-// layout) is already that shape, so Trope Load needs to look like a
-// different kind of fact, not a second copy of the same chart.
-// to_cells() apportions the 100 dots by largest remainder so they always
-// sum to exactly 100, even though the buckets' raw pcts (each independently rounded to 1 decimal)
-// don't necessarily add up to 100 themselves.
+// 100-dot waffle; to_cells() uses largest remainder so it always totals 100.
+// See docs/statistics/presentation-rules.md#sum-to-100-allocation.
 $tropes_cells           = \LWTV\Statistics\Build\Term_Count_Distribution::to_cells( $tropes_distribution, (int) $shows_count, 100 );
 $tropes_waffle_segments = array();
 foreach ( $tropes_distribution as $tropes_dist_i => $tropes_dist_bucket ) {
@@ -108,13 +100,8 @@ $waffle = array(
 	'label'    => __( 'Shows grouped by how many tropes each carries, from none to four or more.', 'lwtv' ),
 );
 
-// Spotlight the single most trope-loaded show as a small footer strip on
-// the panel (below the waffle+legend row, not squeezed into it — a third
-// flex item there would just force an awkward wrap). Ties are common once
-// counts get this small, so
-// top_object() reports how many shows shared the top spot and the caption
-// below hedges accordingly rather than implying the pictured show is
-// uniquely the most trope-heavy.
+// Spotlight the most trope-loaded show as a footer strip; the caption hedges
+// when top_object() reports a tie. See docs/statistics/presentation-rules.md#ties.
 $tropes_top       = \LWTV\Statistics\Build\Term_Count_Distribution::top_object( $tropes_slug_map, array( 'none' ) );
 $tropes_top_media = '';
 if ( $tropes_top['id'] > 0 && has_post_thumbnail( $tropes_top['id'] ) ) {
@@ -195,15 +182,9 @@ if ( $tropes_top['id'] > 0 && has_post_thumbnail( $tropes_top['id'] ) ) {
 			<?php endif; ?>
 		</section>
 		<?php
-		// Mixed Alignment: shows that carry tropes from more than one
-		// alignment category at once (e.g. both a "good" and a "bad" trope
-		// on the same show) versus shows that stay in exactly one bucket.
-		// category_sets() keeps each show's categories together (unlike
-		// Trope_Category_Coverage::count() above, which tallies them
-		// independently), and its output is the same [ id => [ slug, … ] ]
-		// shape Intersection_Pairs already knows how to pair up — just with
-		// category names standing in for trope slugs, so the "most common
-		// pairing" sentence below is free, not a new algorithm.
+		// Mixed Alignment: shows with tropes in more than one alignment
+		// category vs exactly one. category_sets() keeps each show's categories
+		// together, in the shape Intersection_Pairs pairs up.
 		$tropes_category_sets = \LWTV\Statistics\Build\Trope_Category_Coverage::category_sets( $tropes_slug_map );
 		$tropes_align_split   = \LWTV\Statistics\Build\Trope_Category_Coverage::alignment_split( $tropes_category_sets );
 
@@ -282,16 +263,8 @@ if ( $tropes_top['id'] > 0 && has_post_thumbnail( $tropes_top['id'] ) ) {
 	</div>
 	<div class="lwtv-tropes-col lwtv-tropes-col--side">
 		<?php
-		// Common pairings: which tropes appear together on the same show.
-		// Pure counting lives in Build\Intersection_Pairs (already
-		// unit-tested for the Intersectionality page — the co-occurrence
-		// math doesn't care which taxonomy it's counting); the term names
-		// and links here are the WP glue. No FacetWP multi-value param is
-		// confirmed for lez_tropes (unlike lez_intersections'
-		// fwp_show_intersectionality), so rows don't link anywhere yet —
-		// same conservative call made for the Trope Alignment cards.
-		// See the layout comment on .lwtv-tropes-columns in _stats.scss for
-		// why this sits in its own column.
+		// Common pairings (Build\Intersection_Pairs). Unlinked: see
+		// docs/statistics/pages.md#facetwp-links.
 		$tropes_pairs = \LWTV\Statistics\Build\Intersection_Pairs::top_pairs(
 			\LWTV\Statistics\Build\Intersection_Pairs::count_pairs( $tropes_slug_map ),
 			8,
@@ -362,10 +335,7 @@ if ( $tropes_top['id'] > 0 && has_post_thumbnail( $tropes_top['id'] ) ) {
 </div>
 
 <?php
-// Trope Breakdown: full width, like Genre Breakdown — outside the grid
-// with Trope Load/Mixed Alignment/Common Pairings, so it gets the full page
-// to spread its own internal 2 columns across instead of squeezing a 2-col
-// list into one half of a narrower split.
+// Trope Breakdown: full width, outside the grid, in two columns.
 ?>
 <div class="lwtv-tropes-breakdown-wrap">
 	<?php

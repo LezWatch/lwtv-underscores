@@ -1,31 +1,7 @@
 <?php
 /*
- * WP CLI Commands for Ways to Watch hosts.
- *
- * Reporting:
- *   hosts    - which hosts are in use, how many shows use them, do they have a
- *              lez_watch_urls term, and what name do we currently render.
- *   termurls - read-only audit of what is actually stored in the term URL rows,
- *              and whether matching terms on host rather than on an exact URL
- *              string would change any meanings.
- *
- * Writing:
- *   enrich   - ask hosts with no term what they call themselves, and cache it,
- *              so the long tail stops rendering as 'Tubitv' and 'Onemorelesbian'.
- *   merge    - fold one provider term into another and delete it, for genuine
- *              duplicates ('Lesflicks' and 'LezFlicks' are one service).
- *   seturls  - rewrite one term's URL rows, for repairing a typo'd or dead host
- *              without hand-editing ACF repeater meta and mis-numbering it.
- *
- * `merge` and `seturls` both go through Watch_Hosts::set_term_urls(), which
- * rewrites the repeater contiguously rather than appending at whatever ACF's
- * row-count meta claims. Editing those rows by hand is what this exists to
- * avoid.
- *
- * New shows arrive with new hosts continuously, so `enrich` is worth running on
- * a schedule rather than once. It only ever touches hosts still worth asking --
- * never named, never answered, and not yet out of retries -- so repeat runs are
- * cheap and a dead host stops being re-fetched forever.
+ * WP CLI Commands for Ways to Watch hosts. Usage: `wp help lwtv waystowatch`.
+ * See docs/architecture/watch-providers.md#wp-cli-wp-lwtv-waystowatch.
  */
 
 // Bail if directly accessed
@@ -192,9 +168,9 @@ class WP_CLI_LWTV_WaysToWatch {
 	/**
 	 * Fold one provider term into another and delete it.
 	 *
-	 * For genuine duplicates only -- two terms describing one service. Safe
-	 * because these terms are never assigned to shows, so deleting one orphans
-	 * nothing; the show-to-provider link is resolved by matching term-meta URLs.
+	 * For genuine duplicates only -- two terms describing one service. Shows
+	 * reach providers by host, but unlike Retire this does not check for term
+	 * relationships. See docs/architecture/watch-providers.md#term-retirement-guards.
 	 *
 	 *     wp lwtv waystowatch merge <keep_id> <drop_id> [--dry-run]
 	 *
@@ -314,8 +290,8 @@ class WP_CLI_LWTV_WaysToWatch {
 	/**
 	 * Audit the stored term URLs.
 	 *
-	 * Answers one question: would switching term matching from an exact URL
-	 * string to a normalised host change what any existing term means?
+	 * Answers one question: does matching terms on normalised host rather than
+	 * exact URL string change what any stored term URL means?
 	 *
 	 * Writes nothing, fetches nothing. Two queries -- the term URLs and the
 	 * hosts in use -- and everything after that is pure.
@@ -590,8 +566,8 @@ class WP_CLI_LWTV_WaysToWatch {
 				}
 			} else {
 				++$none;
-				// Record the miss so we don't ask again every run. Errors are
-				// deliberately NOT recorded, so a blip doesn't become permanent.
+				// Record the miss so we don't ask again every run. Errors go
+				// through fail() instead, so a blip is retried up to MAX_ATTEMPTS.
 				if ( ! $dry_run ) {
 					Watch_Host_Names::set( $host, '', Watch_Host_Names::SOURCE_NONE );
 				}

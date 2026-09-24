@@ -50,22 +50,8 @@ class Validation {
 	/**
 	 * Tool Tabs
 	 *
-	 * One entry per tab, and for the report tabs this is the whole definition:
-	 * Validator\Report renders them all from this config, so a check cannot have
-	 * a tab without a scanner or copy. That keeps findings keys from drifting and
-	 * stops a tab existing with nothing behind it.
-	 *
-	 * - name / desc: shown in the tab picker and the intro.
-	 * - option:      key inside the debugger status option. Drives the badge and
-	 *                the "last run" line.
-	 * - findings:    where the findings live.
-	 * - scanner:     array( class, method ) to produce fresh findings. Takes an
-	 *                optional findings array, for a recheck.
-	 * - column:      heading for the first table column.
-	 * - clean:       what to say when there is nothing to report.
-	 * - dirty:       array( singular sentence, plural sentence ).
-	 * - note:        optional extra paragraph.
-	 * - render:      for the two tabs that are not findings reports.
+	 * One entry per tab; report tabs are rendered entirely from their entry by
+	 * Validator\Report. Keys: docs/architecture/validation-screen.md#the-tab-registry.
 	 */
 	private const TOOL_TABS = array(
 		'queer_checker'     => array(
@@ -192,7 +178,6 @@ class Validation {
 			'option'   => 'onair_problems',
 			'findings' => OnAir::FINDINGS_PROBLEMS,
 			'scanner'  => array( OnAir::class, 'find_on_air_problems' ),
-			// Was "Duplicate", copy-pasted from the duplicates view.
 			'column'   => 'Show',
 			'clean'    => 'All shows have the correct on-air status.',
 			'dirty'    => array(
@@ -203,30 +188,14 @@ class Validation {
 		'watch_providers'   => array(
 			'name'     => 'Watch Providers',
 			'desc'     => 'Ways to Watch hosts with no provider term, so the front end is guessing their name. Assign an existing term or create one.',
-			/*
-			 * Counts hosts with no term, written by Watch_Hosts::scan_unregistered().
-			 *
-			 * The number falls as the list is worked, so it is worth seeing.
-			 * Contested hosts keep their own status entry from the `watchhosts`
-			 * check and their own section at the top of the tab, which is louder
-			 * than a badge anyway.
-			 */
+			// Counts hosts with no term; contested hosts have their own entry below.
 			'option'   => CPT_Watch_Hosts::STATUS_KEY,
 			'findings' => CPT_Watch_Hosts::FINDINGS_UNREGISTERED,
 			'render'   => array( Watch_Providers::class, 'make' ),
 		),
 		'watch_hosts'       => array(
-			/*
-			 * A real check with a real count -- weekly cron, `wp lwtv debug
-			 * watchhosts` -- whose findings are rendered inside the Watch
-			 * Providers tab rather than on a page of their own, because a
-			 * contested host and a host with no term are the same editor's
-			 * problem in the same sitting.
-			 *
-			 * `show_tab => false` keeps it out of the picker, since a dropdown
-			 * option leading nowhere would be worse than no option. `tab` says
-			 * where its row links instead.
-			 */
+			// Reported inside the Watch Providers tab: no picker entry, and its
+			// row links to `tab`. See docs/architecture/watch-providers.md#contested-hosts.
 			'name'     => 'Contested Watch Hosts',
 			'desc'     => 'Hosts claimed by more than one provider term. The front end has to pick one, and it picks whichever sorts first by name — stable, but arbitrary. Reported on the Watch Providers tab.',
 			'option'   => Watch_Host_Collisions::STATUS_KEY,
@@ -287,39 +256,9 @@ class Validation {
 	/**
 	 * Outstanding count per tab, taken from the findings each tab renders.
 	 *
-	 * The badge in the picker, the Current Status table on the intro, and the tab
-	 * body itself all read this, so none of them can contradict another.
-	 *
-	 * **Counted from the findings themselves, not from the status option.** The
-	 * status option never expires and the findings do, so a count read from the
-	 * option could advertise a check whose detail had gone -- which is exactly
-	 * what "Watch Term Check (47)" over an empty report was. Nine tabs hid it by
-	 * silently re-scanning when the findings were missing; the one check too slow
-	 * to do that showed it plainly.
-	 *
-	 * No more expensive than the status option it replaced: both are one
-	 * non-autoloaded option per check. Memoised anyway, because the picker and the
-	 * intro table both want it.
-	 *
-	 * `cached` is the third state the count alone cannot express: an empty array
-	 * means the check ran and found nothing, `false` means there is nothing to
-	 * read. "Clean" and "never run" deserve different words.
-	 *
-	 * Read through `Findings_Store`, which is an option rather than a transient
-	 * precisely so this read cannot come back empty for reasons that have nothing
-	 * to do with the data: a development environment setting
-	 * `LWTV_DISABLE_TRANSIENTS`, or -- the production bug -- WP-CLI and web
-	 * requests not sharing an object cache tier. See Debugger\Findings_Store.
-	 *
-	 * `stored` and `last` come from the status option and remain the fallback for
-	 * when the findings really are gone. One reason for that, not two, now that
-	 * both are options: the findings expire and the status entry does not, so a
-	 * check nobody has looked at in ten days has a count on record and no detail
-	 * behind it. (The other reason used to be that a fresh database copy brought
-	 * options across but not transients. It no longer applies -- a copy now brings
-	 * the findings too.) The tab picker still badges only `count`, so it never
-	 * advertises a number whose detail has gone; the overview shows `stored` and
-	 * says when it is from.
+	 * The picker badge, the intro table and the tab body all read this. Counted
+	 * from the findings, not the status option, which never expires; `stored` and
+	 * `last` are the dated fallback. See docs/architecture/validation-screen.md#per-tab-counts.
 	 *
 	 * @return array<string, array{count: int, new: int, cached: bool, stored: int, last: int}> Keyed by tab slug.
 	 */
@@ -339,10 +278,8 @@ class Validation {
 			$rows = is_array( $items ) ? $items : array();
 			$new  = 0;
 
-			// Rows carry their own new/open stamp from the baseline diff, so the
-			// "N new" half of a badge comes from the same rows as the total. The
-			// status summary counts findings where this counts rows; mixing the
-			// two is what made "4 new / 41" incomparable.
+			// Count "new" from the same rows as the total (not the status
+			// summary, which counts findings), so the badge compares like with like.
 			foreach ( $rows as $row ) {
 				if ( is_array( $row ) && Baseline::NEW_ISSUE === ( $row['status'] ?? '' ) ) {
 					++$new;
@@ -473,15 +410,8 @@ class Validation {
 	public static function table_content( $items ) {
 		$number = 1;
 		foreach ( $items as $item ) {
-			/*
-			 * This renderer dereferences `id` as a post — get_the_title(),
-			 * get_edit_post_link(), get_permalink(). A term-shaped finding would
-			 * pass all of those silently and render an empty row with working
-			 * links to nothing, which is the worst way to be wrong. Watch URL
-			 * findings have their own renderer for exactly this reason; skipping
-			 * here means a future check that forgets that gets an obviously
-			 * missing row rather than a plausible wrong one.
-			 */
+			// Post-shaped rows only: a term row would render a plausible wrong row.
+			// See docs/architecture/validation-screen.md#term-shaped-findings.
 			if ( ! Findings::is_post( $item ) ) {
 				continue;
 			}
@@ -617,21 +547,8 @@ class Validation {
 							</td>
 							<td class="lwtv-tools-checkers__count">
 								<?php
-								/*
-								 * Four states. A count of zero with cached findings
-								 * means the check ran and found nothing, which is
-								 * good news and reads as an em-dash. No cached
-								 * findings is an absence, not good news -- and
-								 * collapsing the two would let a check quietly stop
-								 * running while looking clean.
-								 *
-								 * The third state matters because the findings can
-								 * genuinely be gone while the status option remains:
-								 * findings expire after ten days and the status
-								 * entry never does. Reporting a dozen checks as
-								 * never run while the site knows what they last
-								 * found would be worse than saying so and dating it.
-								 */
+								// Four states: outstanding, clean, stale (dated), never run.
+								// See docs/architecture/validation-screen.md#count-states.
 								if ( $count > 0 ) {
 									?>
 									<span class="lwtv-tools-pill"><?php echo esc_html( (string) $count ); ?></span>
@@ -641,15 +558,8 @@ class Validation {
 									<span class="lwtv-tools-checkers__none" aria-label="<?php esc_attr_e( 'No issues', 'lwtv' ); ?>">&mdash;</span>
 									<?php
 								} elseif ( $last ) {
-									/*
-									 * `last` is the "has it run" signal, not
-									 * `stored`. A check that ran and found nothing
-									 * records a count of zero against a real
-									 * timestamp -- testing the count instead
-									 * would report a clean check as never run, which is
-									 * both wrong and alarming in the wrong
-									 * direction.
-									 */
+									// `last`, not `stored`, says it has run: a clean
+									// run records zero against a real timestamp.
 									if ( $stored > 0 ) {
 										?>
 										<span class="lwtv-tools-pill lwtv-tools-pill--stale"><?php echo esc_html( (string) $stored ); ?></span>
@@ -688,8 +598,7 @@ class Validation {
 			</table>
 
 			<?php
-			// Echoed, not just called: last_run() returns its markup, and the old
-			// intro invoked it bare and printed nothing at all.
+			// Echoed: last_run() returns its markup rather than printing it.
 			echo wp_kses_post( self::last_run( 'intro' ) );
 			?>
 		</div>

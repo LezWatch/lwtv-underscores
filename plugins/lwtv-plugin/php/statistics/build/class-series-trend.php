@@ -2,12 +2,9 @@
 /**
  * Series trend classifier.
  *
- * Pure array-in/array-out shape detection for a per-year count series,
- * so templates can pick adaptive verbiage ("more than ever" vs. "down
- * from the peak") instead of hardcoding claims the data can outgrow.
- * No WordPress calls — unit-testable without a WP runtime (see
- * tests/unit/Statistics/SeriesTrendTest.php). All i18n strings stay in
- * the templates; this class only reports the shape.
+ * Shape detection for a per-year count series, so templates pick wording
+ * the data supports. Pure transform. See docs/statistics/pages.md#build-layer
+ * and docs/statistics/presentation-rules.md#adaptive-copy-gates.
  *
  * @package LezWatch.TV
  */

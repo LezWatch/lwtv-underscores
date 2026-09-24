@@ -3,17 +3,9 @@
  * Name: Ways to Watch
  * Description: Edit 'ways to watch' on the fly, based on networks and links
  *
- * The lez_watch_urls taxonomy is the source of truth for provider names. A term
- * holds the URLs that identify it (lezwatchurls_all_N_url) and its *name is the
- * display name* -- it is used verbatim, never reformatted.
- *
- * Matching is by normalised *host*, via Watch_Hosts::term_for(), so a term URL
- * saved with a trailing slash or a `www.` still matches. See
- * CPTs\Shows\Watching\Watch_Host_Map.
- *
- * Hosts with no term fall through to guess_name(), which does its best from the
- * hostname. That path is permanent: LWTV documents web series, and each one
- * lives on its own domain, so there will always be a long tail not worth a term.
+ * A lez_watch_urls term, matched by host, supplies the display name verbatim;
+ * hosts with no term fall through to guess_name().
+ * See docs/architecture/watch-providers.md#display-names.
  */
 
 namespace LWTV\Theme;
@@ -128,19 +120,9 @@ class Ways_To_Watch {
 	/**
 	 * A provider term's name as text, not as HTML.
 	 *
-	 * WordPress stores term names entity-encoded, so "U&Alibi" comes back as
-	 * "U&amp;Alibi" and "Seed&Spark" as "Seed&amp;Spark". Every surface that
-	 * renders one has to decode before escaping, or `esc_html()` encodes the
-	 * ampersand a second time and the reader gets a literal "U&amp;Alibi".
-	 *
-	 * Decode on the way out rather than correcting the stored value: WordPress
-	 * re-encodes on every term save, so a fixed name would not stay fixed.
-	 *
-	 * **Public and static because seven places need it** — this class, the two
-	 * debugger checks that report on `lez_watch_urls` terms, and four spots in the
-	 * Watch Providers tab. Any caller that skips it double-encodes the name. It
-	 * lives here because this class
-	 * owns `TAXONOMY`, so every caller already imports it.
+	 * Term names are stored entity-encoded; every surface that renders one must
+	 * decode before escaping, or the name double-encodes.
+	 * See docs/architecture/watch-providers.md#name-decoding.
 	 *
 	 * @param  string $name Term name as stored.
 	 * @return string
@@ -161,15 +143,8 @@ class Ways_To_Watch {
 	}
 
 	/**
-	 * Best available display name for a host with no term.
-	 *
-	 * Three tiers, best first:
-	 *   1. A lez_watch_urls term name  -- handled by the caller, wins outright.
-	 *   2. A name the host published about itself, discovered by
-	 *      `wp lwtv waystowatch enrich` and cached. Reads the cache only; never
-	 *      makes a request during a page load.
-	 *   3. Host_Name's guess from the hostname, which is pure and unit-tested
-	 *      but can only ever be best-effort.
+	 * Best available display name for a host with no term: the cached
+	 * self-published name, else Host_Name::guess(). Never makes a request.
 	 *
 	 * @param  string $host Hostname.
 	 * @return string

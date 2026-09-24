@@ -254,11 +254,7 @@ include plugin_dir_path( __DIR__ ) . 'partials/headlines.php';
 
 <?php
 // ---- The Cliché Gap: Bury Your Gays vs. No Cliché ----
-// Same Trope Gap treatment Shows uses (waffle-per-card + a computed ratio
-// callout).
-// "No Cliché" pairs against Dead rather than reusing "Played by Queer
-// Actors" (which The Casting Gap below already covers) so the two gap
-// sections don't repeat each other's story.
+// Waffle-per-card plus a ratio callout. See docs/statistics/pages.md#characters-overview-gaps.
 $char_none = isset( $character_cliches_data['none'] ) ? (int) $character_cliches_data['none']['count'] : 0;
 
 $clichegap_dead_pct = ( (int) $character_count > 0 ) ? (int) round( ( $char_dead / (int) $character_count ) * 100 ) : 0;
@@ -346,14 +342,8 @@ $clichegap_ratio    = ( $char_none > 0 ) ? round( $char_dead / $char_none, 1 ) :
 
 <?php
 // ---- The Casting Gap: Played by Queer Actors vs. Straight/Cis Actors ----
-// One combined two-color waffle rather than two near-duplicate cards (the
-// "24%/76% of everything we track" framing repeated itself with almost no
-// new information). Mirrors Tropes' Mixed Alignment figure-left/legend-right
-// row (partials/donut.php's markup classes, reused directly rather than
-// through that partial — same reasoning as Mixed Alignment: this already
-// sits inside its own .lwtv-panel, so wrapping it again would double the
-// box). cis_pct is derived as the complement of queer_pct, not rounded
-// independently, so the two waffle segments always sum to exactly 100 dots.
+// One two-colour waffle. cis_pct = 100 − queer_pct so the waffle totals 100.
+// See docs/statistics/presentation-rules.md#sum-to-100-allocation.
 $castinggap_total     = $char_queer_yes + $char_queer_no;
 $castinggap_queer_pct = ( $castinggap_total > 0 ) ? (int) round( ( $char_queer_yes / $castinggap_total ) * 100 ) : 0;
 $castinggap_cis_pct   = ( $castinggap_total > 0 ) ? 100 - $castinggap_queer_pct : 0;

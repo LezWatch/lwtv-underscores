@@ -26,17 +26,10 @@ class Imdb_Collector {
 	/**
 	 * Where each check's values live.
 	 *
-	 * `exempt_term` is the one real asymmetry: a web series that was never on
-	 * IMDb is not missing anything, but there is no equivalent for actors.
+	 * `exempt_term`: a web series never on IMDb is not missing an ID.
 	 *
-	 * `no_oracle_meta` is narrower than it looks. It is the TVMaze "no entry of its
-	 * own" flag, and it gates only the *staleness* check:
-	 * `lezshows_imdb_canonical` is whatever TVMaze last said, so with no TVMaze
-	 * entry there is nothing to compare our ID against. It is not a general "stop
-	 * reporting this show" switch: `not_set` and `invalid` ignore it, and use
-	 * `exempt_term` instead.
-	 *
-	 * Actors have no equivalent because TMDB is their oracle and carries everyone.
+	 * `no_oracle_meta` (shows only) gates only the staleness check; the not-set
+	 * and invalid checks ignore it. See docs/integrations/tvmaze.md#editorial-overrides.
 	 *
 	 * @var array<string, array<string, string>>
 	 */

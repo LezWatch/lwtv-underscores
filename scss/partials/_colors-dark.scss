@@ -987,11 +987,8 @@
 				color: colors.$white;
 			}
 
-			// good/maybe reuse the local vivid dark-mode overrides defined
-			// near the top of this file (brighter than the pale light-mode
-			// tokens of the same name); bad/ploy have no such override, so
-			// they fall back to the pale module tokens, same as
-			// dead-characters/happy-endings above.
+			// good/maybe use the bright local overrides; bad/ploy keep the module
+			// tokens. See docs/design/dark-mode.md#dark-stand-ins.
 			&.good-tropes {
 				color: $lwtv-green-light;
 			}
@@ -1009,12 +1006,8 @@
 			}
 		}
 
-		// The Casting Gap's combined waffle (characters/overview.php): base
-		// light-mode pink/aro-grey both fall under 3:1 against this panel's
-		// dark background, so both dot uses (legend swatch + waffle fill)
-		// need brighter stand-ins here — pink-light matches this file's
-		// usual pink swap, translucent white reads as the neutral
-		// "everything else" side without introducing a third hue.
+		// Casting Gap waffle: pink/aro-grey fall under 3:1 here, so use brighter
+		// stand-ins. See docs/design/dark-mode.md#dark-stand-ins.
 		.lwtv-donut-seg--pink,
 		.lwtv-castinggap-waffle .lwtv-waffle-dot--queer {
 			fill: colors.$lwtv-pink-light;
@@ -1235,11 +1228,9 @@
 			color: colors.$white;
 		}
 
-		// Genre Stats dark-mode pass. Anything referencing a module-qualified
-		// colors.$lwtv-yellow-* keeps its light-mode value even inside this
-		// mixin (only bare $lwtv-yellow-light above is swapped), so every
-		// amber accent added for Genre Stats needs an explicit override here
-		// rather than getting it for free.
+		// colors.$lwtv-* keeps its light value inside this mixin (only bare locals
+		// are swapped), so each stats accent needs an explicit override here.
+		// See docs/design/dark-mode.md#module-qualified-variables-are-not-swapped.
 
 		// Pullstats cards: same lifted-card treatment as .lwtv-ty-lead.
 		.lwtv-statcard {

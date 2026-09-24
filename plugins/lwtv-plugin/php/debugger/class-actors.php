@@ -9,11 +9,8 @@
  * check_actors_wikidata()  - Validate our data vs WikiData.
  * check_actor_death()      - Has an actor died without us noticing?
  *
- * Both ask LWTV\Wikidata\Identity who an actor is, but they ask different
- * questions of it: the diff above wants coverage and can live with a fuzzy name
- * match, because a human reads every row. The death check wants certainty and
- * takes only a trusted QID, because nothing reads its reasoning before it says
- * a person has died.
+ * The diff may use a name match (a human reads every row); the death check
+ * takes only a trusted QID. See docs/architecture/actor-identity.md.
  */
 
 namespace LWTV\Debugger;
@@ -365,10 +362,7 @@ class Actors {
 
 			$check_ours = $this->get_actors_wikidata_ours( $actor_id );
 
-			// Manual QID, then the IMDb ID, then the name. Name matches are
-			// allowed here -- a human reads every row this produces -- and
-			// Identity records which tier answered, so nothing downstream
-			// mistakes a guess for a verified match.
+			// Name matches are allowed here, and stored with source 'name'.
 			$wikidata    = new Identity();
 			$identity    = $wikidata->resolve( (int) $actor_id );
 			$wiki_claims = ( '' !== $identity['qid'] ) ? $wikidata->entity( $identity['qid'] ) : array();
@@ -496,16 +490,9 @@ class Actors {
 	 * where the reasoning lives and where it is tested. This method's only job is
 	 * the part that cannot be pure: reading meta and talking to WikiData.
 	 *
-	 * Identity comes from trusted_qid(), not resolve(). That is the whole
-	 * safeguard: a QID that came from a name search -- or one stored before we
-	 * tracked sources, which may well have -- is not an identity this check may
-	 * act on, because nobody is reading its reasoning before it says a person
-	 * has died. Such an actor is reported as unidentifiable, and
-	 * `wp lwtv wikidata backfill --reverify` is what turns them into something
-	 * checkable, on real evidence rather than on a guess being old enough to
-	 * look settled.
-	 *
-	 * Reports; never writes a death date.
+	 * Identity comes from trusted_qid(), not resolve(): a name or legacy QID is
+	 * reported as unverified, never acted on. Reports; never writes a death date.
+	 * See docs/architecture/actor-identity.md#death-audit.
 	 *
 	 * @param int $actor_id The ID of the actor.
 	 * @return array{verdict: string, action: string, qid: string, source: string, death: string, our_birth: string, wiki_birth: string}
@@ -513,14 +500,8 @@ class Actors {
 	public function check_actor_death( int $actor_id ): array {
 		$identity = new Identity();
 
-		// Whether the write-lock means "stop" is a rule, not a meta read, so it
-		// lives in Actor_Death_Rules where it is tested. See editor_says_stop().
-		//
-		// The raw stored QID, not trusted_qid(): the question is whether the
-		// editor left the field empty, not whether we vouch for what is in it. A
-		// locked QID we cannot vouch for should read as UNVERIFIED and be
-		// reported, because the lock means the backfill can no longer resolve it
-		// and only a human can.
+		// The raw stored QID, not trusted_qid(): editor_says_stop() asks whether
+		// the field is empty, not whether we vouch for it.
 		$item = array(
 			'our_death'  => (string) get_post_meta( $actor_id, 'lezactors_death', true ),
 			'our_birth'  => (string) get_post_meta( $actor_id, 'lezactors_birth', true ),
@@ -535,10 +516,7 @@ class Actors {
 			'wiki_birth' => '',
 		);
 
-		// Rule 1 of the audit: if we already have a date, we are done. Bail
-		// before spending a request, so a full run costs nothing for the
-		// thousands of actors whose data is already settled. Same for an actor
-		// an editor has told us to stop asking about.
+		// Settled already (a date, or an editor's stop): bail before any request.
 		if ( '' !== trim( $item['our_death'] ) || $item['ignored'] ) {
 			return $this->death_result( $item, Actor_Death_Rules::evaluate( $item ) );
 		}

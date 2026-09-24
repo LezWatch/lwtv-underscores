@@ -62,15 +62,8 @@ class Watch_Term_Check {
 	const ACTION_CONFIRM_PROVIDER = 'lwtv_watch_confirm_provider';
 
 	/**
-	 * admin-post action for retiring a provider term nothing reaches.
-	 *
-	 * Offered only on rows Triage put in the unused pile, because it is the only
-	 * action that can clear one. Re-checking a URL on a term no show reaches
-	 * cannot help: whether it answers or not, nothing is pointing at it.
-	 *
-	 * Deletes the term, which is why the handler re-derives the show count live
-	 * rather than trusting the stored row, and refuses outright if the term
-	 * still holds object relationships.
+	 * admin-post action for retiring (deleting) a provider term nothing reaches.
+	 * Offered only on Triage's unused rows; guarded in handle_retire().
 	 */
 	const ACTION_RETIRE = 'lwtv_watch_retire_term';
 
@@ -191,13 +184,8 @@ class Watch_Term_Check {
 	/**
 	 * Run Scan, for when there is nothing cached.
 	 *
-	 * Queues the sweep instead of running it, which is the only honest way to
-	 * offer this button: a hundred-odd HTTP requests will not fit in a page
-	 * request, and the other validator tabs get away with scanning on render only
-	 * because their scans are SQL.
-	 *
-	 * Absent entirely when Action Scheduler is not available, rather than
-	 * offering a button that would queue into nothing.
+	 * Queues the sweep instead of running it: the HTTP requests will not fit in a
+	 * page request. Absent when Action Scheduler is not available.
 	 *
 	 * @return void
 	 */
@@ -273,11 +261,8 @@ class Watch_Term_Check {
 	/**
 	 * Ran, found problems.
 	 *
-	 * Split, not filtered. A broken URL on a term no published show reaches is a
-	 * real finding, but it is a different finding with a different fix, and
-	 * leaving it interleaved by severity is what made this report hard to work:
-	 * the rows an editor can act on sank under rows where every button on offer
-	 * was the wrong one. See Debugger\Format\Triage.
+	 * Split, not filtered, into rows a published show reaches and rows it does
+	 * not. See docs/architecture/watch-providers.md#watch-term-check-tab.
 	 *
 	 * @param array  $items    Findings.
 	 * @param string $last_run Rendered last-run paragraph.
@@ -411,11 +396,8 @@ class Watch_Term_Check {
 	/**
 	 * The rows nothing reaches, and what to do about them.
 	 *
-	 * In a <details>, shut by default. These are findings worth keeping -- "this
-	 * service is gone" is real information -- but they are not a worklist, and
-	 * anything permanently expanded above the fold becomes the thing you scroll
-	 * past to reach the work. Native element, no JavaScript, degrades to an open
-	 * list, matching the no-JS stance the Watch Providers tab already takes.
+	 * In a <details>, shut by default: worth keeping, but not a worklist. Native
+	 * element, no JavaScript.
 	 *
 	 * @param array $unused Rows on terms nothing reaches.
 	 * @return void
@@ -756,19 +738,9 @@ class Watch_Term_Check {
 	/**
 	 * Retire a provider term nothing reaches.
 	 *
-	 * Deletes the term, so the guards matter more than the action does:
-	 *
-	 *   - The show count is re-derived live, never read off the row. Findings are
-	 *     as of the last sweep, and a term that has gained shows since must not be
-	 *     deleted on the strength of a stale zero.
-	 *   - A term still holding object relationships is refused. `lez_watch_urls`
-	 *     is registered against shows (see CPTs\Shows::ALL_TAXONOMIES) even though
-	 *     the front end resolves providers by host, so a term *can* be assigned to
-	 *     posts -- and deleting it would drop those relationships silently, which
-	 *     is not something a triage link gets to do.
-	 *
-	 * Both refusals say what they found rather than failing quietly, because the
-	 * disagreement between the report and the live count is the interesting part.
+	 * Deletes the term, so it refuses when the live show count is non-zero or the
+	 * term still has object relationships, and says what it found.
+	 * See docs/architecture/watch-providers.md#term-retirement-guards.
 	 *
 	 * @return void
 	 */
@@ -791,15 +763,8 @@ class Watch_Term_Check {
 		$name = Theme_Ways_To_Watch::term_name( $term->name );
 		$live = (int) ( Watch_Hosts::shows_per_term()[ $term_id ] ?? 0 );
 
-		/*
-		 * Not $term->count. That is maintained by _update_post_term_count(),
-		 * which counts published posts only -- so a term assigned to a draft or
-		 * pending show reports zero, and $live (host matching, also published
-		 * only) reports zero too. Both guards would wave through a delete that
-		 * silently drops a real relationship, which is the one thing this must
-		 * not do. get_objects_in_term() counts the relationship rows themselves,
-		 * whatever status the post is in.
-		 */
+		// Not $term->count, which counts published posts only; this counts
+		// relationship rows whatever the post status.
 		$objects  = get_objects_in_term( $term_id, Theme_Ways_To_Watch::TAXONOMY );
 		$assigned = is_wp_error( $objects ) ? 0 : count( $objects );
 

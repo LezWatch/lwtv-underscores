@@ -2,17 +2,9 @@
 /**
  * Facet Re-index Task Handler
  *
- * Re-indexes the characters attached to an actor or a show.
- *
- * The FacetWP index stores a display value per row, and for the character
- * facets that value is another post's title, resolved at the moment the
- * *character* is indexed (see Plugins\FacetWP\Indexing). Renaming an actor or
- * a show therefore leaves every character that references it holding the old
- * name, and nothing in the normal save path re-indexes those characters --
- * Calculation_Task only re-indexes the post it just calculated.
- *
- * A rename fans out to every character on that actor or show, so this runs
- * deferred rather than inline on save.
+ * Re-indexes the characters attached to an actor or show when it is renamed,
+ * so their facet rows stop quoting the old title.
+ * See docs/architecture/facetwp-indexing.md.
  *
  * @package lwtv-plugin
  */

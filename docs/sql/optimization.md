@@ -190,6 +190,23 @@ Before and after any Phase 3 rollout:
 
 ---
 
+## Repeater sub-field key matching
+
+ACF stores each repeater row's sub-fields as their own postmeta rows (`lezchars_show_group_{n}_show`, `…_type`, `…_appears`). See [`docs/statistics/data-model.md`](../statistics/data-model.md#repeaters). Queries find them by pattern on `meta_key`, and the two predicates behave differently:
+
+| Predicate | Correct? | Uses the `meta_key` index? |
+|---|---|---|
+| `meta_key REGEXP 'lezchars_show_group_[0-9]+_show'` | Exact | No (not sargable) |
+| `meta_key LIKE 'lezchars\_show\_group\_%\_show'` | Close enough (the `%` also matches non-numeric middles) | Yes, range scan on the constant prefix `lezchars_show_group_` |
+
+**Default:** when the meta-key filter is what narrows the query, send both. The `LIKE` lets MySQL range-scan the index and the `REGEXP` keeps the match exact. Build the `LIKE` with `$wpdb->esc_like( 'lezchars_show_group_' ) . '%' . $wpdb->esc_like( '_show' )` and pass it as a `prepare()` placeholder. An unescaped `_` is a single-character wildcard, and a bare `%` in a `prepare()` string trips phpcs's `LikeWildcardsInQuery`. Example: `This_Year\Build\Shows_Builder` (characters linked to a set of shows).
+
+**Exception:** don't add the `LIKE` when another join is the selective filter. `Statistics\Build\Dead::generate_characters_by_roles()` matches `…_type` by `REGEXP` only. `EXPLAIN` shows MySQL driving off `t.slug = 'dead'` (the `lez_cliches` join) and reaching postmeta through the `post_id` index (`type=ref`, about a dozen rows per character). The `meta_key` index is never consulted, so a `LIKE` there would add nothing. Run `EXPLAIN` before adding either predicate to a new query.
+
+> Note: `Taxonomy_Optimized::get_bulk_character_counts()` now joins on the `lezchars_show_group_%_show` sub-field key with `char_shows.meta_value = shows.ID`, rather than the serialized-blob `LIKE` described under *Background* above.
+
+---
+
 ## Related code
 
 - Bulk character counts: `LWTV\Statistics\Build\Taxonomy_Optimized::get_bulk_character_counts()`

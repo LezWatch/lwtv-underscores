@@ -3,16 +3,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 /**
- * Actors → Roles: the Regular/Recurring/Guest breakdown across every
- * character a queer-role actor has played (amber ramp, matching the
- * "actors" family color used for this stat elsewhere on the site).
- *
- * Role type lives on the character's show-group repeater (one per show a
- * character appears in), not on the actor directly — see
- * Build_Actors::generate_roles_totals()'s docblock for why this is still
- * framed as an Actors-facing stat: it's "what kind of parts do the actors
- * behind queer characters tend to get," even though the underlying tally
- * runs across characters' show appearances, not actor postmeta.
+ * Actors → Roles (amber): the Regular/Recurring/Guest breakdown of the
+ * parts queer characters get, tallied from characters' show-group rows.
+ * See docs/statistics/data-model.md#role-type.
  *
  * @package LezWatch.TV
  *
@@ -112,11 +105,8 @@ if ( ! empty( $roles_pullstats ) ) :
 endif;
 
 // ---- Most prolific actor per role type ----
-// "Most recent actor first" approximation — see Build_Actors::
-// get_first_actor_by_character()'s docblock: role type lives on the
-// character's show-group row, not the actor, so a recast character's
-// appearances of every type are credited to whichever actor is listed
-// first today, not necessarily whoever actually played that specific row.
+// Credited to each character's first-listed actor.
+// See docs/statistics/data-model.md#recasts.
 $roles_prolific = ( new Build_Actors() )->generate_prolific_by_role();
 if ( ! empty( $roles_prolific ) ) :
 	?>

@@ -59,15 +59,9 @@ class Duplicate_Rules {
 	 *
 	 * Two shapes, because the two post types store this differently.
 	 *
-	 * An array is the pair-scoped form that lezactors_dupe_override holds: a
-	 * list of actor IDs an editor has confirmed are different people. It has to
-	 * be per pair -- saying this Sarah Jones is not that Sarah Jones must not
-	 * also silence a third Sarah Jones added next year, which a single flag
-	 * would. Names collide far more often than slugs do, so a blanket exemption
-	 * on a common name would hide real duplicates indefinitely.
-	 *
-	 * A scalar is the post-wide flag lezshows_dupe_override holds, and means
-	 * "not a duplicate of anything".
+	 * An array is the pair-scoped lezactors_dupe_override (actor IDs confirmed
+	 * as different people); a scalar is the post-wide lezshows_dupe_override.
+	 * See docs/architecture/duplicate-detection.md#acknowledging-a-pair.
 	 *
 	 * @param  mixed $override Raw meta value: an array of IDs, or a flag.
 	 * @param  int   $against  The post this candidate is being compared to.

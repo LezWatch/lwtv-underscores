@@ -3,24 +3,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 /**
- * Shows → Intersectionality: ranked bars (royal-blue), plus the same
- * infographic pattern already shipped for Genres/Tropes — an Intersection
- * Load waffle with a Most Intersectional Show spotlight, a Single vs
- * Multiple donut (mirrors Mixed Alignment), the existing Breakdown/Common
- * Pairings lists, and an Intersections by Decade tile grid. lez_intersections
- * is multi-value, so the decade section reuses Genre_Decade_Buckets'
- * top-3-per-decade shape (via Intersection_Trend) rather than a Format Mix
- * by Decade donut port — see genres.php's docblock for why.
- *
- * Layout mirrors Tropes: Intersection Load + Single vs Multiple stack in
- * the main (wide) column, Common Pairings sits alone in the side (narrow)
- * column beside them (as matchup-cards.php rows — lez_intersections is the
- * one taxonomy here with a confirmed FacetWP multi-value param,
- * fwp_show_intersectionality, so unlike Genres'/Tropes' matchup cards these
- * rows link out), and the Breakdown ranked list drops out of that grid to
- * run full width below in a 2-column card, same as
- * .lwtv-genres-breakdown-wrap / .lwtv-tropes-breakdown-wrap. Intersections
- * by Decade stays full width at the very end, unchanged.
+ * Shows → Intersectionality (royal blue): Intersection Load, Single vs
+ * Multiple, linked Common Pairings, the ranked Breakdown and Intersections
+ * by Decade. See docs/statistics/pages.md#load-and-pairings-pages.
  *
  * @package LezWatch.TV
  *
@@ -188,12 +173,8 @@ $waffle = array(
 	</div>
 	<div class="lwtv-inter-col lwtv-inter-col--side">
 		<?php
-		// Common pairings: which intersections appear together on the same show.
-		// Pure counting lives in Build\Intersection_Pairs (unit-tested); reuses the
-		// same $inter_slug_map fetched at the top of this file. lez_intersections
-		// has a confirmed FacetWP multi-value param, so matchup-cards.php's
-		// optional per-item 'url' turns each row into a link to that filtered
-		// shows archive.
+		// Common pairings, linked to the filtered shows archive.
+		// See docs/statistics/pages.md#facetwp-links.
 		$pairs = \LWTV\Statistics\Build\Intersection_Pairs::top_pairs(
 			\LWTV\Statistics\Build\Intersection_Pairs::count_pairs( $inter_slug_map ),
 			8,
@@ -249,10 +230,7 @@ $waffle = array(
 	<div class="lwtv-inter-col lwtv-inter-col--main">
 		<?php
 		// ---- Intersections by Decade ----
-		// Same reasoning as Genres' decade section: lez_intersections is
-		// multi-value, so this reuses Genre_Decade_Buckets' top-3-per-decade tile
-		// grid as-is (via Intersection_Trend, the taxonomy-specific WP glue) rather
-		// than a Format Mix by Decade donut port.
+		// Top-3-per-decade tiles, not a donut: lez_intersections is multi-value.
 		$inter_decade_buckets = ( new \LWTV\Statistics\Build\Intersection_Trend() )->generate( 20, 3 );
 
 		if ( ! empty( $inter_decade_buckets ) ) :

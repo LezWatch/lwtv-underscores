@@ -499,13 +499,8 @@ class Dead {
 					continue;
 				}
 
-				// Canonicalize to Y-m-d. ACF's date_picker stores raw postmeta as
-				// Ymd (dashless) while legacy rows are Y-m-d. Keyed on the raw value,
-				// krsort() — a string sort — would interleave the two formats wrong
-				// (a dashless date sorts above a dashed one in the same year),
-				// misordering the table and corrupting the pairwise "days since"
-				// gaps. Normalizing first makes the string sort chronological and
-				// merges any day stored under both formats.
+				// Canonicalize Ymd / legacy Y-m-d to Y-m-d so krsort() below is
+				// chronological. See docs/statistics/data-model.md#death-rows.
 				$digits    = preg_replace( '/\D/', '', $died_raw );
 				$died_date = ( 8 === strlen( $digits ) )
 					? substr( $digits, 0, 4 ) . '-' . substr( $digits, 4, 2 ) . '-' . substr( $digits, 6, 2 )
@@ -804,16 +799,8 @@ class Dead {
 		}
 
 		try {
-			// ACF repeater fields store sub-fields as separate meta keys (lezchars_show_group_N_type),
-			// not as a serialized value under lezchars_show_group. Query sub-field keys directly.
-			//
-			// Do NOT add a sargable `meta_key LIKE 'lezchars\_show\_group\_%\_type'`
-			// alongside the REGEXP here. That trick is worth it on the other
-			// sub-field queries, but EXPLAIN on this one shows MySQL drives off
-			// t.slug = 'dead' and reaches pm_type by the post_id index (type=ref,
-			// ~12 rows per character). The meta_key index is never consulted, so
-			// the LIKE would be pure noise. The selective filter is the taxonomy
-			// join, not the meta key.
+			// REGEXP only, deliberately no sargable LIKE: the 'dead' term join is the
+			// selective filter. See docs/sql/optimization.md#repeater-sub-field-key-matching.
 			$query = "SELECT pm_type.meta_value as role_type
 				FROM {$wpdb->postmeta} pm_type
 				INNER JOIN {$wpdb->posts} p ON p.ID = pm_type.post_id

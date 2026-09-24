@@ -3,16 +3,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 /**
- * Actors overview: metric cards + a Headlines band (Roles promoted to the
- * lead plate, Gender/Sexuality in the rail) + representation callouts +
- * top panels.
- *
- * The Headlines band mirrors Characters'/Shows' section-index pattern, but
- * inlines its own markup rather than including
- * the shared partials/headlines.php, which hard-gates below 4 total items —
- * a threshold Actors will never realistically clear with only three
- * subpages to draw from. See the render-gate below for the lower bar used
- * here instead.
+ * Actors overview: metric cards + a Headlines band (On Air as the lead
+ * plate; Roles, Gender and Sexuality in the rail) + representation
+ * callouts + top panels. The band is inlined with a lower render gate than
+ * partials/headlines.php. See docs/statistics/pages.md#actors-overview.
  *
  * @package LezWatch.TV
  *
@@ -222,16 +216,8 @@ $idx_total = count( $idx_cards ) + ( empty( $idx_lead ) ? 0 : 1 );
 
 <?php
 // ---- Who Plays the Roles: Openly LGBTQ+ and Trans & Non-binary ----
-// Same waffle-per-card treatment as Characters' Cliché Gap (--tint cards,
-// a waffle showing each figure's share of all actors). Unlike Cliché Gap's
-// Dead/No-Cliché pair (mutually exclusive) or the Casting Gap's queer/
-// straight-cis split (complementary, sums to 100%), these two aren't
-// opposite ends of anything — trans and non-binary actors are already part
-// of the LGBTQ+ umbrella, not a separate category to ratio against it. So
-// there's no "gap" callout here, just the two independent figures. See
-// _stats.scss's .lwtv-tropegap--tint block for why .openly-queer/
-// .trans-nb-actors reuse the existing .no-cliche/.queer-actors tint colors
-// rather than getting their own.
+// Two independent waffle cards, no gap ratio: trans and non-binary actors
+// are inside the LGBTQ+ figure. See docs/statistics/pages.md#actors-overview.
 $actor_lgbtq_ratio = ( $actor_lgbtq > 0 ) ? (int) round( (int) $actor_count / $actor_lgbtq ) : 0;
 $actor_trans_ratio = ( $actor_transnb > 0 ) ? (int) round( (int) $actor_count / $actor_transnb ) : 0;
 $actor_lgbtq_pct   = ( (int) $actor_count > 0 ) ? (int) round( ( $actor_lgbtq / (int) $actor_count ) * 100 ) : 0;

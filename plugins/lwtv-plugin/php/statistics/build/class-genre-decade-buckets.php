@@ -2,21 +2,11 @@
 /**
  * Genre-by-decade bucketer.
  *
- * Pure array-in/array-out grouping of a per-year genre tally into decades,
- * folding the earliest sparse decades into a single leading bucket so a
- * handful of shows from the medium's early years don't render as an
- * overconfident breakdown. Mirrors Format_Decade_Buckets' fold logic, but
- * lez_genres is a multi-value taxonomy (a show can carry several genres at
- * once), so this class tracks each bucket's distinct show count separately
- * from its genre tag counts — the two numbers diverge on purpose, and the
- * resulting top-N percentages are each "% of shows in this bucket carrying
- * that genre," not a partition, so they are not expected to sum to 100.
- * Genres are keyed by slug (not name) throughout, with the display name
- * carried alongside each count, so templates can link to the real term
- * archive instead of guessing a slug from the name. No WordPress calls —
- * unit-testable without a WP runtime (see
- * tests/unit/Statistics/GenreDecadeBucketsTest.php). All labels/i18n stay in
- * the templates; this class only reports the shape.
+ * Groups a per-year tally for a multi-value taxonomy (any, despite the
+ * name) into decades: distinct shows per bucket plus top-N term shares,
+ * keyed by slug. Shares don't sum to 100. Pure transform.
+ * See docs/statistics/data-model.md#taxonomy-cardinality and
+ * docs/statistics/pages.md#build-layer.
  *
  * @package LezWatch.TV
  */

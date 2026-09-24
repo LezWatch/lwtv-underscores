@@ -6,10 +6,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Characters → Queer IRL: a single waffle chart (dot grid + headline +
  * compact legend) of the queer-vs-not split.
  *
- * Colors reuse Casting Gap's exact choice for this identical metric
- * (characters/overview.php's "Who Plays Queer Characters" section) —
- * $lwtv-pink / $lwtv-aro-grey, so the same statistic reads as the same
- * colors wherever it appears on the site.
+ * Same $lwtv-pink / $lwtv-aro-grey as the Casting Gap, since it's the same
+ * statistic. See docs/design/colors.md#same-statistic-same-colours.
  *
  * @package LezWatch.TV
  *

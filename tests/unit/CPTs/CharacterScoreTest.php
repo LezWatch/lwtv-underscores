@@ -18,15 +18,8 @@ use PHPUnit\Framework\TestCase;
 final class CharacterScoreTest extends TestCase {
 
 	/**
-	 * Transparent (#655) as the reference fixture, with this decomposition:
-	 *
-	 *   base (roles)      +41
-	 *   queer-irl bonus  +190   <- 19 characters x 10
-	 *   no-cliches          0
-	 *   dead penalty      -10   <- 2 dead x -5
-	 *   trans adjustment  -10
-	 *   ------------------------
-	 *   uncapped total    211    2.1x over the cap
+	 * Shaped like gather() output for Transparent (#655). longevity() reads only
+	 * `divisor` and `characters`; the other keys are legacy counts.
 	 *
 	 * @param array $overrides Keys to replace.
 	 *
