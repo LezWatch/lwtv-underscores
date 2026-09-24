@@ -17,6 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 use LWTV\CPTs\Actors as CPT_Actors;
+use LWTV\_Helpers\Queue_Store;
 use LWTV\Wikidata\Build\Qid_Trust;
 use LWTV\Wikidata\Identity;
 
@@ -36,12 +37,12 @@ class Wikidata_Qid_Task {
 	const AS_GROUP = 'lwtv';
 
 	/**
-	 * Transient holding the queue.
+	 * Option holding the queue (see Queue_Store).
 	 */
 	const QUEUE = 'lwtv_wikidata_qid_queue';
 
 	/**
-	 * Transient holding the per-post error count, keyed by post ID.
+	 * Option holding the per-post error count, keyed by post ID.
 	 *
 	 * Separate from the queue so a post ID re-queued by a later save starts over
 	 * with a clean slate only when we say so, not as a side effect of the queue
@@ -184,9 +185,7 @@ class Wikidata_Qid_Task {
 	 * @return array<int, int>
 	 */
 	private function get_queue(): array {
-		$queue = lwtv_plugin()->get_transient( self::QUEUE );
-
-		return is_array( $queue ) ? array_map( 'intval', $queue ) : array();
+		return array_map( 'intval', Queue_Store::get( self::QUEUE ) );
 	}
 
 	/**
@@ -196,7 +195,7 @@ class Wikidata_Qid_Task {
 	 * @return void
 	 */
 	private function set_queue( array $queue ): void {
-		lwtv_plugin()->set_transient( self::QUEUE, array_values( array_unique( $queue ) ), DAY_IN_SECONDS );
+		Queue_Store::set( self::QUEUE, array_values( array_unique( $queue ) ) );
 	}
 
 	/**
@@ -205,13 +204,8 @@ class Wikidata_Qid_Task {
 	 * @return array<int, int> Post ID => consecutive failures.
 	 */
 	private function get_attempts(): array {
-		$attempts = lwtv_plugin()->get_transient( self::ATTEMPTS );
-
-		if ( ! is_array( $attempts ) ) {
-			return array();
-		}
-
-		$clean = array();
+		$attempts = Queue_Store::get( self::ATTEMPTS );
+		$clean    = array();
 		foreach ( $attempts as $post_id => $count ) {
 			$clean[ (int) $post_id ] = (int) $count;
 		}
@@ -231,12 +225,7 @@ class Wikidata_Qid_Task {
 	private function set_attempts( array $attempts, array $remaining ): void {
 		$attempts = array_intersect_key( $attempts, array_flip( array_map( 'intval', $remaining ) ) );
 
-		if ( empty( $attempts ) ) {
-			lwtv_plugin()->delete_transient( self::ATTEMPTS );
-			return;
-		}
-
-		lwtv_plugin()->set_transient( self::ATTEMPTS, $attempts, DAY_IN_SECONDS );
+		Queue_Store::set( self::ATTEMPTS, $attempts );
 	}
 
 	/**

@@ -168,7 +168,7 @@ The Retire action (`ACTION_RETIRE`) is offered only on unused rows and **deletes
 
 Both refusals say what they found, because a disagreement between the report and the live count is the interesting part.
 
-`wp lwtv waystowatch merge` (`Watch_Hosts::merge_terms()`) also deletes a term but does not run the relationship check. Use it only for genuine duplicates.
+`wp lwtv waystowatch merge` (`Watch_Hosts::merge_terms()`) also deletes a term, but it moves the dropped term's relationships to the kept term first (`get_objects_in_term()` then `wp_set_object_terms( …, true )`), so no post loses its provider. It reads the relationships before writing anything and stops before the delete if any reassignment fails. `--dry-run` reports how many posts would move. Use it only for genuine duplicates.
 
 ## WP-CLI: wp lwtv waystowatch
 
@@ -180,7 +180,7 @@ Options and examples are in `wp help lwtv waystowatch`. The actions:
 | `termurls` | no | The [term URL audit](#term-url-audit); ends with a verdict on whether host matching changes any meaning |
 | `enrich` | option | [Host name enrichment](#host-name-enrichment); run weekly by cron |
 | `forget` | option | Clear the enrichment cache |
-| `merge` | terms | Fold one provider term into another and delete it, for genuine duplicates ("Lesflicks" and "LezFlicks") |
+| `merge` | terms | Fold one provider term (URLs and assigned posts) into another and delete it, for genuine duplicates ("Lesflicks" and "LezFlicks") |
 | `seturls` | terms | Rewrite one term's URL rows, to repair a typo'd or dead host |
 
 ## Decisions

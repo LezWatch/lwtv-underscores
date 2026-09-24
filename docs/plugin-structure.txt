@@ -92,7 +92,8 @@ This document describes the structure and contents of the custom LezWatch.TV Plu
     │   ├── class-utils.php - Common utility functions
     │   ├── class-admin-notice.php - One-shot per-user admin notices that survive the redirect after an admin_post_* handler
     │   ├── class-name-key.php - Pure comparable name keys for actors (strict variants() and loose ends() tiers) used by duplicate detection
-    │   └── class-tmdb-response.php - Pure reader for both TMDB response shapes (detail object or /find/ envelope)
+    │   ├── class-tmdb-response.php - Pure reader for both TMDB response shapes (detail object or /find/ envelope)
+    │   └── class-queue-store.php - Background work queues in non-autoloaded options, with a one-time carry-over from the old transients
     ├── admin-color-schemes/ - Additional color schemes for the backend (Each folder contains a colors.css and colors-rtl.css)
     │   ├── editor.css - Manages color display along with sub folders.
     │   ├── 80s-kid/
@@ -288,7 +289,6 @@ This document describes the structure and contents of the custom LezWatch.TV Plu
     │   ├── class-byq-task.php - Action Scheduler-based BYQ cache regeneration
     │   ├── class-cache-batch-task.php - Action Scheduler-based cache batch processing
     │   ├── class-cache-queue.php - Manages immediate cache invalidation on shutdown (legacy)
-    │   ├── class-cache-task.php - Handles scheduled cache invalidation tasks
     │   ├── class-calculation-task.php - Handles deferred math operations for all CPT types
     │   ├── class-fixcharshows-task.php - Fixes character-show relationship data
     │   ├── class-imdb-verify-task.php - Detects stale IMDb IDs by cross-checking against TVMaze (shows) / TMDB (actors); queued on save

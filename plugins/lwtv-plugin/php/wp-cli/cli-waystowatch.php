@@ -168,9 +168,9 @@ class WP_CLI_LWTV_WaysToWatch {
 	/**
 	 * Fold one provider term into another and delete it.
 	 *
-	 * For genuine duplicates only -- two terms describing one service. Shows
-	 * reach providers by host, but unlike Retire this does not check for term
-	 * relationships. See docs/architecture/watch-providers.md#term-retirement-guards.
+	 * For genuine duplicates only -- two terms describing one service. Any posts
+	 * assigned to the dropped term are moved to the kept term before it is
+	 * deleted. See docs/architecture/watch-providers.md#term-retirement-guards.
 	 *
 	 *     wp lwtv waystowatch merge <keep_id> <drop_id> [--dry-run]
 	 *
@@ -214,13 +214,21 @@ class WP_CLI_LWTV_WaysToWatch {
 			\WP_CLI::log( sprintf( '  (%d duplicate or unusable row(s) dropped)', $lost ) );
 		}
 
+		$objects = get_objects_in_term( $drop_id, Theme_Ways_To_Watch::TAXONOMY );
+		if ( is_wp_error( $objects ) ) {
+			\WP_CLI::error( 'Could not read what the dropped term is assigned to: ' . $objects->get_error_message() );
+		}
+
+		\WP_CLI::log( '' );
+		\WP_CLI::log( sprintf( '%d post(s) assigned to “%s” will move to “%s”.', count( $objects ), $drop->name, $keep->name ) );
+
 		if ( $dry_run ) {
 			\WP_CLI::success( 'Dry run. Nothing written.' );
 			return;
 		}
 
 		\WP_CLI::log( '' );
-		\WP_CLI::confirm( sprintf( 'Delete “%s” and fold its URLs into “%s”?', $drop->name, $keep->name ) );
+		\WP_CLI::confirm( sprintf( 'Delete “%s”, moving its URLs and posts to “%s”?', $drop->name, $keep->name ) );
 
 		$result = Watch_Hosts::merge_terms( $keep_id, $drop_id );
 
@@ -230,10 +238,11 @@ class WP_CLI_LWTV_WaysToWatch {
 
 		\WP_CLI::success(
 			sprintf(
-				'Merged “%s” into “%s”; %d URL row(s) remain.',
+				'Merged “%s” into “%s”; %d URL row(s) remain, %d post(s) reassigned.',
 				$result['dropped'],
 				$result['kept'],
-				count( $result['urls'] )
+				count( $result['urls'] ),
+				$result['reassigned']
 			)
 		);
 	}

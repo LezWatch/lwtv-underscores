@@ -37,4 +37,4 @@ The Sunday debug cron runs `FWP()->indexer->index()` for the whole site (see [cr
 
 ## CLI output
 
-The WP-CLI command classes add a `facetwp_is_main_query` filter returning `false` in their constructors (`cli-scheduler.php` and `cli-sweep.php` hook `fwp_is_main_query` instead, which is not a FacetWP filter name), so FacetWP does not inject `<!--fwp-loop-->` into command output.
+The WP-CLI command classes add a `facetwp_is_main_query` filter returning `false` in their constructors, so FacetWP does not inject `<!--fwp-loop-->` into command output.

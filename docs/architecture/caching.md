@@ -27,7 +27,7 @@ The flag means "do not let a cached value hide fresh data from me", not "do not 
 
 `Debugger\Findings_Store` is the reference implementation: one option per check, a small index (`lwtv_debug_findings_keys`), and an explicit expiry (`Findings_Store::TTL`, ten days) stored alongside the data so `load()` can still return `false` for "absent or expired". `Watch_Host_Names` (`lwtv_watch_host_names`) and `Debugger\Baseline_Store` follow the same shape.
 
-**Known exceptions.** Some background queues still live in transients: `Schedulers\Cache_Batch_Task` (`lwtv_cache_batch_queue`, `lwtv_cache_batch_status`), `Imdb_Verify_Task` and `Wikidata_Qid_Task`. They are read through the wrapper, so with `LWTV_DISABLE_TRANSIENTS` on, each `queue_post()` starts from an empty queue. They are also subject to the tier split described next.
+The background work queues follow the same rule through `_Helpers\Queue_Store`: `lwtv_cache_batch_queue`, `lwtv_tmdb_batch_queue`, `lwtv_imdb_verify_queue`, `lwtv_wikidata_qid_queue` and `lwtv_wikidata_qid_attempts` are non-autoloaded options. The option names match the transients they replaced. The first read of each adopts any leftover transient once and deletes it. Short-lived counters stay in transients because losing them costs nothing: `lwtv_cache_batch_status` and the TMDB rate-limit window keys.
 
 ## CLI and web cache tiers
 
@@ -126,7 +126,7 @@ What each step in `Schedulers\Statistics_Cache_Warming` ([class-statistics-cache
 
 **Leaderboard keys include the limit.** Each leaderboard caches under `<name>_top<limit>`, so the page's top-5 request needs its own warm. Warming only the default (`TOP_LIMIT`, 25) would leave the top-5 lookup to build cold. The reverse is also true: `characters/overview.php` calls `Cliche_Leaders::generate()` with the default limit, and that key is not warmed.
 
-Only `cliche_leaders_characters_*` is in a tier. The `character_*_leaders_top*` keys are untracked, so saves never invalidate them and they refresh on their one-week TTL.
+All five leaderboards are in the `derived` tier (`cliche_leaders_characters_*`, `character_show_leaders_*`, `character_actor_leaders_*`, `character_death_leaders_*`, `character_longevity_leaders_*`), so a show, character or actor save clears them.
 
 `warm_cache_tier()` also accepts `counts`, `derived` and `stable`, which run subsets of the steps above. The scheduled warm passes no arguments, so it always runs `all`.
 

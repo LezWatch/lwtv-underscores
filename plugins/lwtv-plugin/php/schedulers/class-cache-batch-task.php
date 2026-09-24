@@ -15,6 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 use LWTV\Plugins\Cache;
+use LWTV\_Helpers\Queue_Store;
 
 /**
  * Class Cache_Batch_Task
@@ -42,7 +43,7 @@ class Cache_Batch_Task {
 	const DELAY_BETWEEN_BATCHES = 2;
 
 	/**
-	 * Transient key for cache queue
+	 * Option holding the cache queue (see Queue_Store)
 	 */
 	const QUEUE_TRANSIENT = 'lwtv_cache_batch_queue';
 
@@ -235,8 +236,7 @@ class Cache_Batch_Task {
 	 * @return array Array of post IDs
 	 */
 	private function get_queue(): array {
-		$queue = lwtv_plugin()->get_transient( self::QUEUE_TRANSIENT );
-		return is_array( $queue ) ? $queue : array();
+		return Queue_Store::get( self::QUEUE_TRANSIENT );
 	}
 
 	/**
@@ -246,7 +246,7 @@ class Cache_Batch_Task {
 	 * @return void
 	 */
 	private function set_queue( array $queue ): void {
-		lwtv_plugin()->set_transient( self::QUEUE_TRANSIENT, $queue, HOUR_IN_SECONDS );
+		Queue_Store::set( self::QUEUE_TRANSIENT, array_values( $queue ) );
 	}
 
 	/**
@@ -327,7 +327,7 @@ class Cache_Batch_Task {
 	public function get_batch_status(): array {
 		$queue          = $this->get_queue();
 		$status         = lwtv_plugin()->get_transient( self::STATUS_TRANSIENT );
-		$next_scheduled = as_next_scheduled_action( self::AS_HOOK );
+		$next_scheduled = function_exists( 'as_next_scheduled_action' ) ? as_next_scheduled_action( self::AS_HOOK ) : false;
 
 		// Extract post IDs from queue items for backward compatibility
 		$queued_post_ids = array_map(

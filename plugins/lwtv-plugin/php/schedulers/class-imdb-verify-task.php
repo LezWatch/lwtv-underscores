@@ -18,6 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 use LWTV\_Components\CPTs;
 use LWTV\_Helpers\Imdb_Canonical;
+use LWTV\_Helpers\Queue_Store;
 use LWTV\_Helpers\Tmdb_Response;
 
 /**
@@ -288,9 +289,7 @@ class Imdb_Verify_Task {
 	 * @return array<int, int>
 	 */
 	private function get_queue(): array {
-		$queue = lwtv_plugin()->get_transient( 'lwtv_imdb_verify_queue' );
-
-		return is_array( $queue ) ? array_map( 'intval', $queue ) : array();
+		return array_map( 'intval', Queue_Store::get( 'lwtv_imdb_verify_queue' ) );
 	}
 
 	/**
@@ -299,7 +298,7 @@ class Imdb_Verify_Task {
 	 * @param array $queue Post IDs.
 	 */
 	private function set_queue( array $queue ): void {
-		lwtv_plugin()->set_transient( 'lwtv_imdb_verify_queue', array_values( array_unique( $queue ) ), DAY_IN_SECONDS );
+		Queue_Store::set( 'lwtv_imdb_verify_queue', array_values( array_unique( $queue ) ) );
 	}
 
 	/**
@@ -310,7 +309,7 @@ class Imdb_Verify_Task {
 	public function get_status(): array {
 		return array(
 			'queued'         => count( $this->get_queue() ),
-			'next_scheduled' => as_next_scheduled_action( self::AS_HOOK ),
+			'next_scheduled' => function_exists( 'as_next_scheduled_action' ) ? as_next_scheduled_action( self::AS_HOOK ) : false,
 		);
 	}
 }
