@@ -3,19 +3,8 @@
  * Name: Watch Term URL Audit
  * Description: What is actually stored in the lez_watch_urls term URL rows.
  *
- *   - Cosmetic (trailing slash, case, http, www, port): exact-URL matching
- *     fails on these today. Host matching fixes them. They are why hosts that
- *     genuinely have a term still show up as problems.
- *
- *   - Blocking (path, query, fragment, credentials, unparseable): a term that
- *     has registered 'youtube.com/c/something' means something narrower than
- *     'youtube.com'. Host matching would widen it to the whole host and let one
- *     web series' term swallow every other YouTube URL on the site. A human has
- *     to look at these before the matcher changes.
- *
- * Collisions (two different terms whose URLs reduce to the same host) are
- * blocking for the same reason, from the other direction: host matching has to
- * pick a winner, and there is no correct way to pick one automatically.
+ * Flags are cosmetic (host matching absorbs them) or blocking (a human must
+ * decide). See docs/architecture/watch-providers.md#term-url-audit.
  *
  * @package LWTV
  */
@@ -41,8 +30,8 @@ class Watch_Term_Url_Audit {
 	const FLAG_DUPLICATE      = 'duplicate';
 
 	/**
-	 * Blocking flags. Each one needs a human decision before the matcher
-	 * changes, because host matching would alter what the row means.
+	 * Blocking flags. Each one needs a human decision, because host matching
+	 * would alter what the row means.
 	 */
 	const FLAG_PATH        = 'path';
 	const FLAG_QUERY       = 'query';
@@ -51,7 +40,7 @@ class Watch_Term_Url_Audit {
 	const FLAG_UNPARSEABLE = 'unparseable';
 
 	/**
-	 * The flags that stop Phase 1 shipping.
+	 * The flags that need a human before a row can be normalised.
 	 *
 	 * @return array<string>
 	 */
@@ -66,7 +55,7 @@ class Watch_Term_Url_Audit {
 	}
 
 	/**
-	 * Does this row need a human before host matching goes in?
+	 * Does this row need a human?
 	 *
 	 * @param array<string> $flags Flags from one inspected row.
 	 * @return bool
@@ -79,8 +68,8 @@ class Watch_Term_Url_Audit {
 	 * Reduce a list of stored URLs to the canonical rows a term should hold.
 	 *
 	 * One bare `https://host` per distinct host, first occurrence winning, order
-	 * otherwise preserved. This is the shape Phase 1's matcher wants and the
-	 * shape `Watch_Hosts::set_term_urls()` writes: after host matching, a term
+	 * otherwise preserved. This is the shape the host matcher wants and
+	 * `Watch_Hosts::set_term_urls()` writes: under host matching, a term
 	 * carrying both `https://www.vix.com/` and `https://vix.com/` is holding the
 	 * same fact twice, and the `www`/trailing-slash variants only ever existed to
 	 * satisfy exact-string comparison.

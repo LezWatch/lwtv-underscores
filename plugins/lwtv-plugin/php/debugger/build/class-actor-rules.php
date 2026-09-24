@@ -237,11 +237,10 @@ class Actor_Rules {
 	/**
 	 * Meta keys the rules need.
 	 *
-	 * META_BIRTH and META_DEATH are collected but not yet judged: a death date
-	 * with no date of birth was flagged into a `$warnings` array that nothing
-	 * ever read, because plenty of people have no recorded DoB and nobody has
-	 * decided whether that is worth reporting. Give it an issue type when it is
-	 * decided either way; the data is already here.
+	 * META_BIRTH and META_DEATH are collected but not yet judged: plenty of
+	 * people have no recorded DoB, and nobody has decided whether a death date
+	 * without one is worth reporting. Give it an issue type when it is decided
+	 * either way; the data is already here.
 	 *
 	 * @return array<string>
 	 */

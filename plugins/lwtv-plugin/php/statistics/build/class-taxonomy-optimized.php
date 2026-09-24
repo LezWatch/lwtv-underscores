@@ -295,8 +295,8 @@ class Taxonomy_Optimized {
 		$show_group_like = $wpdb->esc_like( 'lezchars_show_group_' ) . '%' . $wpdb->esc_like( '_show' );
 
 		// Single query to get both total and dead character counts.
-		// ACF repeater stores show relationships as individual meta keys (lezchars_show_group_N_show),
-		// not as a serialized value under lezchars_show_group. Join on the sub-field key directly.
+		// Joins the lezchars_show_group_{n}_show sub-field key directly.
+		// See docs/statistics/data-model.md#repeaters.
 		//
 		// Argument order matters: this LIKE sits in a JOIN condition, so it is
 		// the *first* placeholder in the statement, ahead of $post_type.
@@ -351,7 +351,7 @@ class Taxonomy_Optimized {
 			}
 		}
 
-		// Cache for 24 hours; query is cheaper after join fix, and counts change infrequently.
+		// Cache for 24 hours; counts change infrequently.
 		lwtv_plugin()->set_transient( $cache_key, $formatted, DAY_IN_SECONDS );
 
 		return $formatted;
@@ -528,10 +528,9 @@ class Taxonomy_Optimized {
 	 * Reads the earliest start year from the ACF key (lezshows_airdates_start) and
 	 * folds in the legacy serialized lezshows_airdates['start'] value for any show
 	 * that has not been migrated to the new key yet. Without the legacy fallback a
-	 * pre-migration (or rolled-back) database returns 0 for every term, which is how
-	 * the "New Since 2020" counters silently zeroed out. Every other reader of the
-	 * air-date meta already falls back to the legacy array, so this brings the bulk
-	 * query in line with them.
+	 * pre-migration (or rolled-back) database returns 0 for every term, zeroing the
+	 * "New Since 2020" counters. Every other reader of the air-date meta falls back
+	 * to the legacy array too.
 	 *
 	 * @param string $taxonomy Taxonomy slug (e.g. 'lez_country').
 	 * @param array  $slugs    Term slugs to include.

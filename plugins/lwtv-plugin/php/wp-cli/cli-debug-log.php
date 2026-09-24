@@ -179,8 +179,7 @@ class WP_CLI_LWTV_Debug_Log {
 	/**
 	 * Cross-reference the declared, enabled, and present topics.
 	 *
-	 * Answers "why am I not seeing anything for X" in one screen, which is the
-	 * question this whole section of the review started from.
+	 * Answers "why am I not seeing anything for X" in one screen.
 	 *
 	 * @return void
 	 */

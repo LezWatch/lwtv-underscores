@@ -1,6 +1,7 @@
 <?php
 /**
- * The character component of a show's score: one gather, two models.
+ * The character component of a show's score: gather() reads the data,
+ * longevity() scores it. See docs/scoring/character-score.md.
  *
  * @package LWTV
  */
@@ -19,12 +20,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Character_Score {
 
 	/**
-	 * Gender slugs the LEGACY model treats as not-trans.
+	 * Gender slugs the legacy `trans` count treats as not-trans. Not used in scoring.
 	 */
 	public const NOT_TRANS = array( 'cisgender', 'intersex', 'unknown' );
 
 	/**
-	 * Format slug => divisor. Applies to both models identically.
+	 * Format slug => divisor, applied to X before saturation.
 	 */
 	public const FORMAT_DIVISORS = array(
 		'movie'       => 2,
@@ -33,7 +34,7 @@ class Character_Score {
 	);
 
 	/**
-	 * Collect everything either model needs for one show.
+	 * Collect everything the character score and its diagnostics need for one show.
 	 *
 	 * @param int   $show_id Show post ID.
 	 * @param array $options aired_override (array) TVMaze years from a caller that
@@ -237,11 +238,8 @@ class Character_Score {
 				}
 			}
 
-			// The Tambor Takedown. Both conditions are required, matching the
-			// implementation in theme/class-show-characters.php that nothing has
-			// ever reached: the character is tagged queer-irl AND their
-			// first-billed actor is actually queer. Actors are stored in billing
-			// order, so the primary is simply the first.
+			// The Tambor Takedown: tagged queer-irl AND first-billed (first stored)
+			// actor actually queer. See docs/scoring/character-score.md#casting-multiplier.
 			$primary_queer = false;
 			if ( $is_qirl && ! empty( $actor_ids ) ) {
 				$primary_queer = ( new Is_Actor_Queer() )->make( reset( $actor_ids ) );
@@ -419,8 +417,7 @@ class Character_Score {
 	 *
 	 * Ranked by the POINTS each role is worth rather than by their position in
 	 * ROLE_POINTS, so reordering that array cannot silently invert the hierarchy.
-	 * An unrecognised slug scores 0 and therefore never wins, matching the
-	 * behaviour this replaced.
+	 * An unrecognised slug scores 0 and therefore never wins.
 	 *
 	 * @param string $current Role held so far.
 	 * @param string $found   Role from this row.

@@ -125,11 +125,8 @@
 		} );
 	}
 
-	// The By Name / By Country jump bar is sticky, and its height changes with
-	// viewport width (the A–Z chips wrap across 1–3 rows and the eyebrow can take
-	// its own line). Set each pane's --lwtv-sb-offset from the *measured* bar
-	// height so a jump lands the group's key just below the bar at any width; the
-	// rows' scroll-margin-top reads it. A fixed CSS value can't track the wrap.
+	// Set each pane's --lwtv-sb-offset from the measured sticky jump bar, for the
+	// rows' scroll-margin-top. See docs/design/stats-css.md#jump-bar-offset.
 	function setJumpOffsets( root ) {
 		root = root || document;
 		Array.prototype.slice
@@ -146,14 +143,9 @@
 			} );
 	}
 
-	// CSV download tracking (MonsterInsights / GA4).
-	//
-	// MonsterInsights' automatic download tracking only fires when a link's PATH
-	// ends in a tracked extension (.csv, .pdf, ...). Our download links are
-	// `?download=csv` on a normal page URL — the CSV is streamed server-side via
-	// Content-Disposition — so the client-side tracker never sees an extension
-	// and ignores the click. We fire the standard GA4 `file_download` event
-	// ourselves so these land in the same report as auto-tracked downloads.
+	// CSV download tracking (MonsterInsights / GA4). `?download=csv` links have no
+	// file extension in the path, so auto-tracking misses them; fire GA4's
+	// `file_download` event ourselves.
 
 	// Send a GA4 file_download event through whichever tracker MonsterInsights
 	// exposed. Fails silently when analytics isn't present (ad-blockers, logged-in
@@ -172,29 +164,7 @@
 		tracker( 'event', 'file_download', params );
 	}
 
-	// TODO(you): Build a human-meaningful file name for the GA4 `file_name`
-	// dimension from the download link's href. This is the string you'll scan
-	// for in GA's File Downloads report, so name it the way YOU think about
-	// these exports.
-	//
-	// The href is one of these shapes (query order not guaranteed):
-	//   /statistics/characters/on-air/?download=csv
-	//   /statistics/actors/?download=csv
-	//   /statistics/death/years/?download=csv
-	//   /statistics/nations/on-air/?download=csv&nation=united-kingdom
-	//   /statistics/stations/on-air/?download=csv&station=hbo
-	//
-	// `new URL( href )` is available:
-	//   u.pathname                     -> "/statistics/nations/on-air/"
-	//   u.searchParams.get( 'nation' ) -> "united-kingdom" (or null)
-	//   u.searchParams.get( 'station')-> "hbo" (or null)
-	//
-	// Return e.g. "lwtv-characters-on-air.csv" or
-	// "lwtv-nations-on-air-united-kingdom.csv". Decisions that are yours:
-	//   - how much of the path to keep (drop the leading "statistics"?)
-	//   - whether to append the nation/station slug (recommended — otherwise
-	//     every country's export reports as one identical row)
-	//   - separator + the "lwtv-" prefix, to match your other download names
+	// GA4 `file_name` for a CSV link, e.g. "lwtv-nations-on-air-united-kingdom.csv".
 	function buildCsvFileName( href ) {
 		let url;
 		try {

@@ -3,12 +3,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 /**
- * Actors → Unknown Actor: a spotlight on the "Unknown" placeholder actor
- * (post 14080) — every other actor-facing stat on the site deliberately
- * excludes this post (see Build_Actors::get_actor_character_counts() and
- * Character_Queer_Cast_Firsts::build_trans_actor_oldest()); this page is the
- * one place that queries for it on purpose, turning "we don't know who
- * played this" into its own tracked figure instead of a silent gap.
+ * Actors → Unknown Actor: a spotlight on the "Unknown" placeholder actor,
+ * which every other actor stat excludes.
+ * See docs/statistics/data-model.md#the-unknown-actor.
  *
  * @package LezWatch.TV
  *
@@ -299,14 +296,6 @@ if ( ! empty( $unk_report['top_shows'] ) ) :
 <?php endif; ?>
 
 <?php
-// Role Breakdown used to have its own pullstat-card section here, but it's
-// now folded into the "By Role" mini donut in the "Who Are These
-// Characters?" card above — showing the same three counts twice added
-// nothing. Recast Overlap (Unknown-only vs. Unknown-plus-a-named-actor) was
-// removed outright: checked against real data, every character carrying the
-// Unknown actor has Unknown as its *only* listed actor, so the split never
-// had a second side to show.
-
 // ---- Dead or Alive ----
 $unk_dead_total = $unk_report['dead']['alive'] + $unk_report['dead']['dead'];
 if ( $unk_dead_total > 0 ) :

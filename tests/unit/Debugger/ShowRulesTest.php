@@ -1,10 +1,10 @@
 <?php
 /**
  * Unit tests for the show rules — the layer that decides whether a show has a
- * problem. These were untestable until the WordPress reads moved into
- * Collect\Show_Collector, and two of the cases below are regressions for bugs
- * that shipped: the airdate check that only read a legacy meta key, and the
- * duplicate matcher that treated two missing IMDb IDs as a match.
+ * problem. The WordPress reads live in Collect\Show_Collector, so these run
+ * without WordPress. Two of the cases below guard against bugs that shipped:
+ * an airdate check that only read a legacy meta key, and a duplicate matcher
+ * that treated two missing IMDb IDs as a match.
  *
  * @package lwtv-underscores
  */
@@ -285,11 +285,11 @@ class ShowRulesTest extends TestCase {
 
 	public function test_migrated_airdates_are_read(): void {
 		/*
-		 * The 1.1 regression. The check used to read only the legacy serialised
-		 * key, so a show migrated to lezshows_airdates_start/_finish reported
-		 * "No airdates." and the end-date rules never ran. Reading is the
-		 * collector's job now; what this pins is that the rules judge whatever
-		 * the collector hands over, with no key knowledge of their own.
+		 * A show migrated to lezshows_airdates_start/_finish must not report
+		 * "No airdates." just because the legacy serialised key is empty.
+		 * Reading is the collector's job; what this pins is that the rules
+		 * judge whatever the collector hands over, with no key knowledge of
+		 * their own.
 		 */
 		$show = $this->show(
 			array(
@@ -346,9 +346,9 @@ class ShowRulesTest extends TestCase {
 
 	public function test_two_missing_imdb_ids_are_not_a_match(): void {
 		/*
-		 * The 1.9b-era bug: the old test was isset() on a value that was always
-		 * set, so every numerically-suffixed show with no IMDb ID matched any
-		 * same-named show that also had none.
+		 * An isset() test on a value that is always set would match every
+		 * numerically-suffixed show with no IMDb ID to any same-named show that
+		 * also has none.
 		 */
 		$show = $this->show(
 			array(

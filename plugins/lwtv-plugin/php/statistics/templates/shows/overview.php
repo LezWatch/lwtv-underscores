@@ -5,9 +5,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Shows overview: metric cards, the section index (one hero number per
  * subpage, all from already-cached transforms, each linking through),
- * trope-gap pull-stats, and the library depth band. The old top
- * tropes/genres panels are gone — their headline names live in the
- * index now, and the full ranked lists are one click away.
+ * trope-gap pull-stats, and the library depth band. Top trope/genre
+ * names live in the index; the full ranked lists are one click away.
  *
  * @package LezWatch.TV
  *
@@ -32,9 +31,9 @@ use LWTV\Statistics\Build\Worth_It_Grid;
 // phpcs:ignore PEAR.Files.IncludingFile.UseRequire
 require_once plugin_dir_path( __DIR__ ) . 'partials/phrases.php';
 
-// No sparklines on these cards: the term-count cards never had a real
-// time series (the old ones were decorative fakes), and the Shows card
-// drops its real one so the row reads as a matched set.
+// No sparklines on these cards: the term-count cards have no real time
+// series, and the Shows card skips its real one so the row reads as a
+// matched set.
 $shows_cards = array(
 	array(
 		'type'    => 'shows',
@@ -325,7 +324,7 @@ $idx_depth_ok = ( ! empty( $idx_depth['n'] ) && $idx_depth['with_episodes'] >= 0
 
 <?php
 // Fewer than four stats with data would render a lead plus a stub — skip
-// the whole module instead (per the handoff's edge-case rule).
+// the whole module instead.
 $idx_total = count( $idx_cards ) + ( empty( $idx_lead ) ? 0 : 1 );
 ?>
 <?php if ( $idx_total >= 4 ) : ?>
@@ -363,11 +362,11 @@ $idx_total = count( $idx_cards ) + ( empty( $idx_lead ) ? 0 : 1 );
 <?php endif; ?>
 
 <?php
-// Trope Gap add-ons (7.1.9 infographic pass): a proportional waffle per
+// Trope Gap add-ons: a proportional waffle per
 // card (reuses partials/waffle.php, colored via currentColor from the
 // card-header family — no new CSS) plus a computed ratio callout below
 // the pair (reuses partials/callouts.php, same pattern as Tropes/Genres/
-// Scores). Guard every divisor per the redesign spec's safety rule.
+// Scores). Every divisor is guarded.
 $tropegap_buried_pct = ( (int) $shows_count > 0 ) ? (int) round( ( (int) $trope_buried / (int) $shows_count ) * 100 ) : 0;
 $tropegap_happy_pct  = ( (int) $shows_count > 0 ) ? (int) round( ( (int) $trope_happy / (int) $shows_count ) * 100 ) : 0;
 $tropegap_ratio      = ( (int) $trope_happy > 0 ) ? round( (int) $trope_buried / (int) $trope_happy, 1 ) : 0;

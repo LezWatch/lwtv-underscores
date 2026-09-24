@@ -195,7 +195,7 @@ class Status {
 			return array();
 		}
 
-		// The old global marker was stored; the new one is derived in all().
+		// A stored global marker is ignored; all() derives it instead.
 		unset( $legacy['timestamp'] );
 
 		return $legacy;

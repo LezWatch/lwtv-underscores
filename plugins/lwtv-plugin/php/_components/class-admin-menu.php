@@ -44,8 +44,7 @@ class Admin_Menu implements Component {
 		( new Debugging() )->init();
 
 		// Registered here, not in Validation::init(), because that runs on
-		// `admin_menu` and admin-post.php never fires it. That is half the
-		// reason the old data-check admin_post hook never worked.
+		// `admin_menu` and admin-post.php never fires it.
 		( new Watch_Providers() )->init();
 		( new Watch_Term_Check() )->init();
 		( new Repair() )->init();

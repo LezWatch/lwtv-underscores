@@ -192,8 +192,8 @@ class CharacterRulesTest extends TestCase {
 	}
 
 	public function test_a_row_naming_no_show_is_reported_and_not_named(): void {
-		// The old copy appended the title unconditionally, so this read
-		// "No role set for ." Naming nothing is better than naming nothing badly.
+		// Appending the title unconditionally would read "No role set for ."
+		// Naming nothing is better than naming nothing badly.
 		$character = $this->character(
 			array(
 				'shows' => array(

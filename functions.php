@@ -47,11 +47,8 @@ if ( ! defined( 'LWTV_THEME_URL' ) ) {
 /**
  * Check for requirements.
  *
- * ACF Pro is a hard dependency. Without it, front-end requests get a static
- * 503 maintenance page and wp-admin gets a notice. This runs before the LWTV
- * plugin loads (see the bottom of this file) so a missing dependency never
- * reaches CPT registration. See inc/requirements.php for what is deliberately
- * not gated, and why.
+ * Hard-dependency gate (ACF Pro); runs before the LWTV plugin loads.
+ * See inc/requirements.php and docs/dependencies.md.
  */
 require_once LWTV_THEME_PATH . '/inc/requirements.php';
 lwtv_theme_check_requirements();
@@ -342,14 +339,7 @@ function register_navwalker() {
 }
 add_action( 'after_setup_theme', 'register_navwalker' );
 
-/*
- * Pagination
- *  @usage
- *    1) setup WP_Query with a $paged variable
- *      (https://codex.wordpress.org/Pagination#Adding_the_.22paged.22_parameter_to_a_query)
- *    2) Wherever you'd like the pagination to appear, add <?php echo page_navi( $query ); ?>
- *       where $query is the entire $query setup in the previous step
-*/
+// Bootstrap pagination: wp_bootstrap_pagination().
 require_once 'inc/wp_bootstrap_pagination.php';
 
 // Add classes to “next_post_link” and “previous_post_link”.

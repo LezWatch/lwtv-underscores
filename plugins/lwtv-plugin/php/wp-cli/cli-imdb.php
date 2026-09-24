@@ -1,12 +1,7 @@
 <?php
 /*
- * WP CLI Commands for IMDb ID verification.
- *
- * IMDb reassigns title and name IDs and leaves the previous one working as a
- * redirect, so a stale ID still opens the right page in a browser while silently
- * breaking every exact-match API lookup keyed on it. Well-formed, right prefix,
- * works when clicked -- and wrong. Debug_Tool::validate_imdb() cannot see it.
- *
+ * WP CLI Commands for IMDb ID verification (stale, still-redirecting IDs).
+ * See docs/integrations/imdb.md.
  */
 
 // Bail if directly accessed
@@ -32,9 +27,7 @@ class WP_CLI_LWTV_Imdb {
 	/**
 	 * Pause between requests, in milliseconds.
 	 *
-	 * Matches Imdb_Verify_Task: sized for TVMaze's documented 20-calls-per-10-
-	 * seconds rather than TMDB's more generous allowance, since a shows sweep is
-	 * entirely TVMaze.
+	 * Matches Imdb_Verify_Task. See docs/integrations/tvmaze.md#rate-limits.
 	 */
 	public const DEFAULT_SLEEP_MS = 500;
 

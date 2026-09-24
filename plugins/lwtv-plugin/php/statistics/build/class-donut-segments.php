@@ -15,13 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Pure transform: ranks a flat [{'name','count'}] list, ramps the top N,
  * folds the remainder into "Other", and optionally pulls one matching item
  * out into its own forced-grey slot first (e.g. "cisgender" on Gender
- * views).
- *
- * Lifted verbatim from the identical closure that used to be duplicated at
- * the top of both nations/single.php and stations/single.php — same ramp,
- * same grey-match-first behavior, same shape — so both pages (and any
- * future taxonomy-profile caller) share one implementation instead of two
- * copies that could silently drift apart.
+ * views). Used by partials/taxonomy-facet.php.
  */
 class Donut_Segments {
 

@@ -2,20 +2,8 @@
 /**
  * IMDb Canonical ID comparison.
  *
- * IMDb reassigns title and name IDs, leaving the previous one working as a
- * redirect. That makes a stale ID invisible to a human -- the link still opens
- * the right page -- while silently breaking every exact-match API lookup keyed
- * on it. TVMaze's /lookup/shows?imdb= is one of those: it matches against the
- * single canonical ID TVMaze stores, so a stale alias returns 404.
- *
- * Worked example: Only Murders in the Building. TVMaze holds tt11691774, we
- * held tt12851524, and both resolve to the same show on imdb.com. Nothing about
- * our value looks wrong -- it is well-formed and it works in a browser.
- *
- * Detection therefore cannot come from IMDb. It comes from the third parties
- * that already store a canonical IMDb ID and whose IDs we already hold: TVMaze
- * for shows, TMDB for actors. This class is the pure comparison; the HTTP lives
- * in Schedulers\Imdb_Verify_Task.
+ * Pure comparison of our IMDb ID against an oracle's canonical one; the HTTP
+ * lives in Schedulers\Imdb_Verify_Task. See docs/integrations/imdb.md.
  *
  * @package lwtv-plugin
  */

@@ -2,12 +2,9 @@
 /**
  * Format-by-decade bucketer.
  *
- * Pure array-in/array-out grouping of a per-year format tally into decades,
- * folding the earliest sparse decades into a single leading bucket so a
- * handful of shows from the medium's early years don't render as an
- * overconfident 100% pie. No WordPress calls — unit-testable without a WP
- * runtime (see tests/unit/Statistics/FormatDecadeBucketsTest.php). All
- * labels/i18n stay in the templates; this class only reports the shape.
+ * Groups a per-year lez_formats tally into decades, folding sparse early
+ * decades. Pure transform. See docs/statistics/pages.md#build-layer and
+ * docs/statistics/presentation-rules.md#sparse-early-decades.
  *
  * @package LezWatch.TV
  */

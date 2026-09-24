@@ -26,14 +26,9 @@ if ( ! defined( 'DAY_IN_SECONDS' ) ) {
 require_once __DIR__ . '/../vendor/autoload.php';
 
 /*
- * Minimal shims for the handful of WordPress functions that are themselves pure.
- *
- * These are not a WordPress bootstrap and must not become one. The bar for
- * adding to this list is that the function is deterministic, has no side
- * effects, and touches no globals, options, or database -- in other words, that
- * shimming it does not let untestable code pretend to be testable. Anything that
- * reads state belongs behind a seam and gets verified against the running site
- * instead.
+ * Shims for WordPress functions that are themselves pure. Not a WordPress
+ * bootstrap: only deterministic, side-effect-free, state-free functions
+ * qualify. See docs/testing.md#shim-policy.
  */
 if ( ! function_exists( 'wp_parse_url' ) ) {
 	function wp_parse_url( $url, $component = -1 ) {

@@ -328,19 +328,12 @@ class Shows_Builder {
 
 		global $wpdb;
 
-		// ACF repeater fields store sub-fields as separate meta keys (lezchars_show_group_N_show),
-		// not as a single serialized value under lezchars_show_group. Query sub-field keys to find
-		// which characters are linked to our target shows. Join wp_posts and filter to published
-		// characters — ACF duplicates this meta onto post revisions (post_type=revision), and those
-		// revision IDs would otherwise leak in as phantom, nameless cast members.
+		// Match lezchars_show_group_{n}_show keys, published characters only (ACF copies
+		// this meta onto revisions). See docs/statistics/data-model.md#repeaters.
 		$placeholders = implode( ',', array_fill( 0, count( $show_ids ), '%d' ) );
 
-		// Both meta_key predicates are intentional. REGEXP is the exact test but
-		// is not sargable; the LIKE is redundant for correctness and exists only
-		// so the meta_key index can range-scan a constant prefix instead of
-		// MySQL reaching every candidate row in wp_postmeta. esc_like() is
-		// required because an unescaped '_' is a LIKE wildcard, and these keys
-		// are full of literal ones.
+		// Both meta_key predicates are intentional: LIKE for the index, REGEXP for
+		// exactness. See docs/sql/optimization.md#repeater-sub-field-key-matching.
 		$like = $wpdb->esc_like( 'lezchars_show_group_' ) . '%' . $wpdb->esc_like( '_show' );
 
 		// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare

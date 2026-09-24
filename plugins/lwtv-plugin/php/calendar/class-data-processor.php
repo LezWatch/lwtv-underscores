@@ -20,11 +20,9 @@ use LWTV\_Helpers\Calendar_Object_Pool;
 class Data_Processor {
 
 	/**
-	 * Transient prefix for processed calendar data.
-	 *
-	 * Bump the version suffix whenever the shape of the processed array
-	 * changes, so cached payloads from an older shape are ignored rather
-	 * than served to views that no longer understand them.
+	 * Transient prefix for processed calendar data. Bump the version suffix
+	 * whenever the processed array's shape changes.
+	 * See docs/architecture/calendar.md#cache-versioning.
 	 */
 	const CACHE_PREFIX = 'lwtv_processed_calendar_v4_';
 

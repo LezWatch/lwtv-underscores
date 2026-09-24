@@ -2,17 +2,8 @@
 /**
  * How much do we trust a stored WikiData QID, and is it worth asking again?
  *
- * A QID in postmeta is not self-describing. It might have been typed by an
- * editor who checked, derived from an exact IMDb statement match, or picked by a
- * fuzzy name search that returned a politician with the same name as an actress.
- * All three look identical once written, and that is the whole problem this file
- * exists to solve: `lezactors_wikidata_qid_source` records which, and nothing
- * unattended is allowed to act on the fuzzy kind.
- *
- * Pure. Both decisions here -- "can this be trusted" and "is this worth an API
- * call" -- are made from an array and nothing else, so the CLI backfill, the
- * scheduler task and the death audit all reach the same answer and the answer is
- * testable without a WordPress runtime.
+ * Pure, so the CLI backfill, the scheduler and the death audit reach the same
+ * answer. See docs/architecture/actor-identity.md#sources-and-trust.
  *
  * @package LWTV
  */
@@ -26,9 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Qid_Trust {
 
 	/**
-	 * An editor typed or pasted this QID into the field. Authoritative, and
-	 * left alone: should_check() skips any trusted source, so a correction is
-	 * safe from a backfill without needing the write-lock toggled as well.
+	 * An editor typed or pasted this QID into the field. Authoritative.
 	 */
 	const SOURCE_MANUAL = 'manual';
 
@@ -44,15 +33,8 @@ class Qid_Trust {
 	const SOURCE_NAME = 'name';
 
 	/**
-	 * A QID that predates source tracking.
-	 *
-	 * Deliberately NOT trusted. The existing column is a mix of hand-entered
-	 * IDs and old `wbsearchentities` first-hits with no way to tell them apart,
-	 * and guessing generously here is exactly the mistake that would put a
-	 * fuzzy match behind a death claim. The backfill's verify pass upgrades
-	 * these to SOURCE_IMDB when an IMDb lookup agrees with the stored value,
-	 * so the untrusted set shrinks as real evidence arrives rather than by
-	 * assumption.
+	 * A QID that predates source tracking. Deliberately NOT trusted; --reverify
+	 * upgrades it to SOURCE_IMDB when the IMDb lookup agrees.
 	 */
 	const SOURCE_LEGACY = 'legacy';
 

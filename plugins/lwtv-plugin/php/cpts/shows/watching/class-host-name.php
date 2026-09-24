@@ -3,19 +3,8 @@
  * Name: Host Name
  * Description: Derive a display name from a hostname.
  *
- * Be aware of the ceiling. This gets you from wrong to recognisable, not to
- * right. Which label carries the brand is a semantic question:
- *
- *   netflix.com        -> the registrable label IS the brand.      "Netflix"
- *   abc.go.com         -> the brand is the SUBDOMAIN; go.com is
- *                         Disney's registrable domain.             "GO"
- *   gem.cbc.ca         -> both matter; the product is "CBC Gem".   "CBC"
- *   onemorelesbian.com -> unsplittable without a dictionary.       "Onemorelesbian"
- *
- * Which is fine, because a lez_watch_urls term overrides all of this, and
- * host_candidates() orders matches so a term on 'abc.go.com' beats one on
- * 'go.com'. Give a host a term when the guess isn't good enough; that is what
- * the taxonomy is for, and no parser will resolve these.
+ * Best-effort only; a lez_watch_urls term overrides it.
+ * See docs/architecture/watch-providers.md#limits-of-host_name.
  *
  * @package LWTV
  */

@@ -50,10 +50,8 @@ class Cache_Queue {
 	 * @return void
 	 */
 	public static function queue( int $post_id ): void {
-		// Add to post IDs to process
 		self::$post_ids_to_process[] = $post_id;
 
-		// Collect URLs for this post
 		$urls = ( new Cache() )->collect_cache_urls_for_actors_or_shows( $post_id );
 
 		if ( ! empty( $urls ) ) {
@@ -78,16 +76,13 @@ class Cache_Queue {
 
 		lwtv_plugin()->debug_log( 'caching', 'Processing cache queue on shutdown - ' . count( self::$post_ids_to_process ) . ' posts, ' . count( self::$urls_to_clear ) . ' URLs' );
 
-		// Remove duplicates
 		$unique_urls = array_unique( self::$urls_to_clear );
 
-		// Process cache invalidation
 		if ( ! empty( $unique_urls ) ) {
 			( new Cache() )->clean_any_urls( $unique_urls );
 			lwtv_plugin()->debug_log( 'caching', 'Successfully cleared cache for ' . count( $unique_urls ) . ' URLs' );
 		}
 
-		// Clear the queues
 		self::$urls_to_clear       = array();
 		self::$post_ids_to_process = array();
 	}

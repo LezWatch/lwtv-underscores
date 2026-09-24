@@ -222,7 +222,7 @@ class FindingsTest extends TestCase {
 	}
 
 	public function test_plain_strips_the_break_separator_from_an_untyped_row(): void {
-		// The checks still on the old shape send a pre-joined blob.
+		// Checks that send untyped rows send a pre-joined blob.
 		$row = array(
 			'id'      => 10,
 			'problem' => 'First problem.</br>Second problem.',

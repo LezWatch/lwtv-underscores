@@ -108,7 +108,7 @@ switch ( $view ) {
 		}
 		$lwtv_best_yr = Overview_Factsheet::best_year( $lwtv_oapoints );
 
-		// Tiles reuse the vibrant palette (unchanged from the old Overview).
+		// Tiles reuse the vibrant palette.
 		$lwtv_ov_cards = array(
 			array(
 				'variant' => 'teal',

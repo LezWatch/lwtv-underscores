@@ -211,14 +211,8 @@ class WP_CLI_LWTV_Generate {
 		\WP_CLI::log( 'Downloading the TV Maze ICS.' );
 		$this->run_tvmaze();
 
-		/*
-		 * Rotate the debug log before the day's check adds to it.
-		 *
-		 * Size-based, not daily: a 4KB log rotated every night just buries the
-		 * useful history under a pile of near-empty files. Log::append() has its
-		 * own mid-request backstop at a higher threshold for runaway loops
-		 * between cron runs. See DEBUGGER-REVIEW.md 6.
-		 */
+		// Size-based rotation, before the day's check adds to the log;
+		// Log::append() has its own backstop. See docs/operations/cron-schedule.md#log-rotation.
 		$rotated = Log::rotate();
 		if ( '' !== $rotated ) {
 			\WP_CLI::log( sprintf( 'Rotated the debug log to %s.', basename( $rotated ) ) );
@@ -260,35 +254,13 @@ class WP_CLI_LWTV_Generate {
 				\WP_CLI::log( 'Debugger: Checking on air status...' );
 				( new OnAir_Debugger() )->find_on_air_problems();
 
-				/*
-				 * Give any newly-seen watch provider host a real display name.
-				 *
-				 * Wednesday because its other two checks are plain SQL, and
-				 * because Sunday's time budget belongs to find_bad_watch_urls().
-				 * Keeping the only two HTTP jobs on separate days means a cron
-				 * timeout still tells you which one caused it.
-				 *
-				 * Safe to repeat weekly: enrich skips hosts that already have a
-				 * term and hosts it has already asked about, so once the backlog
-				 * is named a run does nothing at all. The default --limit of 25
-				 * means the initial backlog is worked through over several weeks
-				 * rather than in one long run. Unreachable hosts are deliberately
-				 * not recorded, so a blip retries next Wednesday instead of
-				 * becoming permanent.
-				 *
-				 * Routed through __invoke() rather than the private run_enrich()
-				 * so cron takes exactly the path a human does.
-				 */
+				// Name new provider hosts. One of only two HTTP jobs, kept off
+				// Sunday; via __invoke() so cron takes the human path.
+				// See docs/operations/cron-schedule.md#why-the-http-jobs-are-spread-out.
 				\WP_CLI::log( 'Ways to Watch: Naming any new provider hosts...' );
 				( new \WP_CLI_LWTV_WaysToWatch() )->__invoke( array( 'enrich' ), array() );
 
-				/*
-				 * Two queries, no requests, so it rides along with the day's
-				 * other plain-SQL checks. Should find nothing almost always --
-				 * it exists to notice the day someone points a second provider
-				 * term at a host that already has one, which host matching has
-				 * to resolve by name order.
-				 */
+				// Two queries, no requests. Catches a second provider term on a host.
 				\WP_CLI::log( 'Debugger: Checking for contested watch hosts...' );
 				( new Watch_Host_Collisions() )->find_host_collisions();
 				break;
@@ -319,11 +291,8 @@ class WP_CLI_LWTV_Generate {
 					\WP_CLI::warning( 'FacetWP is not active; skipping reindex.' );
 				}
 
-				// Sunday takes the slow one, on the quietest day, and it goes
-				// last: this is one HTTP request per provider URL with a rate
-				// limit between them (Watch_URLs::SLEEP_US), so it is the only
-				// thing here that could plausibly hit a cron wrapper's timeout.
-				// If it does, everything above it has already finished.
+				// Slowest job (one request per provider URL), so it runs last:
+				// a timeout here leaves everything above finished.
 				\WP_CLI::log( 'Debugger: Checking watch provider URLs...' );
 				( new Watch_URLs_Debugger() )->find_bad_watch_urls();
 				break;

@@ -79,7 +79,7 @@ class WP_CLI_LWTV_Debug {
 	 *
 	 * One entry per debug type. Keeps the findings key, the scanner callable,
 	 * and the display copy in a single place so the admin views, the cron
-	 * rotation, and this command can never drift apart on key names again.
+	 * rotation, and this command can never drift apart on key names.
 	 *
 	 * - findings: the findings-key constant on the scanner class.
 	 * - status:   key inside the debugger status option, for cache-age reporting.
@@ -465,8 +465,7 @@ class WP_CLI_LWTV_Debug {
 	 *
 	 * Prefers the per-issue repairs the row names in `fixable`, which is what
 	 * makes the fix specific: only the issues actually found get repaired, and
-	 * one row can carry several. Rows written before findings were typed -- the
-	 * findings last ten days -- have no `fixable` key, so those fall back to the
+	 * one row can carry several. Rows with no `fixable` key fall back to the
 	 * check-level fixer. A check with neither is simply not repairable.
 	 *
 	 * @param  array $check Check definition.

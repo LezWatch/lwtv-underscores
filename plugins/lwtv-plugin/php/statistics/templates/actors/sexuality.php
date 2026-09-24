@@ -3,16 +3,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 /**
- * Actors → Sexuality: donut (grey straight + queer ramp + unknown), a
- * pullstats banner, "The Overlap" callout (actors marked Straight who are
- * still queer once gender/pronouns/romantic orientation are counted), and
- * a most-prolific-actor-per-orientation statcard grid.
- *
- * No decade trend or Firsts list here, unlike Characters' Gender/Sexuality
- * pages — there's no data path from an actor to which specific years they
- * were active (that lives on the character's show-group repeater, and a
- * recast actor has no per-year attribution — see Build_Actors::
- * generate_active_this_year()'s docblock for the same wrinkle).
+ * Actors → Sexuality: donut (grey straight + amber ramp + unknown),
+ * pullstats, "The Overlap" callout and most-prolific per orientation.
+ * No decade trend: see docs/statistics/pages.md#actors-identity-pages.
  *
  * @package LezWatch.TV
  *
@@ -30,10 +23,7 @@ $sex_unknown  = isset( $sex_data['unknown'] ) ? (int) $sex_data['unknown']['coun
 unset( $sex_data['heterosexual'], $sex_data['unknown'] );
 
 // Remaining = queer orientations; rank and ramp the top 4, fold the rest into "Other".
-// Amber, not pink — matches the "actors" family color used by the
-// pullstats/callout/prolific cards added below, so the whole page reads as
-// one color family instead of the donut being a leftover from before those
-// existed.
+// Amber: the actors family colour (docs/design/colors.md#card-header-families).
 uasort( $sex_data, fn( $a, $b ) => (int) $b['count'] <=> (int) $a['count'] );
 $sex_ramp     = array( 'amber', 'medamber', 'midamber', 'paleamber' );
 $sex_segments = array(

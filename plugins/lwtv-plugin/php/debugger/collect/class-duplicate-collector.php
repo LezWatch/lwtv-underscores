@@ -2,20 +2,8 @@
 /**
  * Fetches what the duplicate rules need.
  *
- * The IMDb meta key differs per post type, which is the only reason this needs a
- * map rather than one read.
- *
- * Candidates come from two places. The original source is a slug scan: a post
- * whose slug ends in a number, paired with the post whose slug it is a
- * suffixed copy of. That only ever finds a duplicate whose title was typed
- * identically the second time, because only an identical title collides in
- * wp_unique_post_slug() and earns the `-2`.
- *
- * So actors also come from name_key_pairs(), which pairs them on the comparable
- * name keys instead. "Cynthia Hicks" and "Cynthia Jimenez-Hicks" were one
- * person under two slugs, neither suffixed, sharing an IMDb ID -- the evidence
- * the rules need was already stored and the slug scan simply never handed over
- * the pair.
+ * Candidates come from a slug scan (`-2` suffixes) and, for actors, from
+ * name-key pairing. See docs/architecture/duplicate-detection.md#duplicate-scan.
  *
  * @package LWTV
  */
@@ -139,20 +127,9 @@ class Duplicate_Collector {
 	/**
 	 * Actors paired by a shared name key.
 	 *
-	 * Grouped in PHP rather than joined in SQL: postmeta has no index on
-	 * meta_value, so a self-join on it across every actor is a table scan
-	 * against itself, while pulling the rows the meta_key index already narrows
-	 * and grouping them is linear.
-	 *
-	 * Both key families count. The loose first-and-last-part key is the one that
-	 * catches a dropped or added middle name, which is exactly the shape the
-	 * Cynthia Hicks duplicate had. Noise is not a concern here the way it is on
-	 * the edit screen, because Duplicate_Rules still requires a matching IMDb ID
-	 * before it will call anything a duplicate.
-	 *
-	 * The lower post ID is treated as the original, so a pair is reported once
-	 * and the newer post is the one flagged -- the same convention the slug scan
-	 * arrives at, where the `-2` copy came second.
+	 * Grouped in PHP, not an SQL self-join (meta_value is unindexed). Both key
+	 * families count; the lowest post ID is the original. See
+	 * docs/architecture/duplicate-detection.md#name-key-pairing-actors.
 	 *
 	 * @return array<int, array{post_id: int, original_id: int}>
 	 */
@@ -213,14 +190,9 @@ class Duplicate_Collector {
 	 * reading every actor's keys to get there: one query for the post's own keys,
 	 * one for everybody who shares them.
 	 *
-	 * The grouping rule has to be the group's lowest ID, not the lower of each
-	 * pair. For a key shared by 5, 9 and 12, name_key_pairs() yields 9 => 5 and
-	 * 12 => 5, so checking 12 must produce 12 => 5 and never 12 => 9 -- a pair
-	 * the full scan does not make, which would let this method call something a
-	 * duplicate that the report does not. Hence min() over the whole group.
-	 *
-	 * Returns nothing when this post is a group's original, matching the scan:
-	 * the newer post is the one flagged, so the older one has no pair of its own.
+	 * Pairs against the group's lowest ID (min() over the group, not the lower
+	 * of each pair), and returns nothing for the original, matching the scan.
+	 * See docs/architecture/duplicate-detection.md#lowest-id-is-the-original.
 	 *
 	 * @param  int $post_id Actor post ID.
 	 * @return array<int, array{post_id: int, original_id: int}>

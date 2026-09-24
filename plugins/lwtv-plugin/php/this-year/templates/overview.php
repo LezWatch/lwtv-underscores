@@ -237,9 +237,8 @@ if ( $leading_nation ) {
 
 // 3. Longest-running character we lost: of this year's deaths, the one with the
 // most years actually on air (distinct appearance years across all their shows,
-// NOT the debut-to-death span — that overstates gappy mini-series careers). This
-// replaces the old "most recent death" card, which elevated one person for no
-// stated reason. When no tenure resolves, the row is dropped rather than faked.
+// NOT the debut-to-death span — that overstates gappy mini-series careers).
+// When no tenure resolves, the row is dropped rather than faked.
 $lwtv_ty_lost_winner = null;
 if ( $dead > 0 && ! empty( $dead_by_date_ov ) ) {
 	$lwtv_ty_lost_candidates = array();
@@ -349,7 +348,7 @@ if ( 0 === $dead ) {
 	);
 }
 // Otherwise: deaths occurred but no first-appearance data resolved — the row is
-// intentionally dropped rather than reinstating an unexplained pick.
+// intentionally dropped rather than showing an unexplained pick.
 
 // Flatten shows-by-name once: a name→url map (for the ensemble link) and the
 // start/finish rows the "longest run ended" selector needs.

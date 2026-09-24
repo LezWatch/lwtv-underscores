@@ -1,46 +1,10 @@
 <?php
 /**
- * Comparable keys for a person's name.
+ * Comparable keys for a person's name. Pure: a name in, keys out.
  *
- * Editors add actors by typing a name, and the same person arrives spelled more
- * than one way: "Bae Doona" and "Doona Bae", "Moennig, Katherine", "Zoë" and
- * "Zoe", "Doo-na" and "Doona". A duplicate check keyed on the title as written
- * catches none of those, which is how one actor ends up in the database twice
- * under two slugs.
- *
- * This is the pure half of that check -- a name in, comparable keys out. It runs
- * no queries and reads no meta; see Queeries\Get_Actors_By_Name for the lookup
- * and Debugger\Build\Duplicate_Rules for the after-the-fact audit.
- *
- * Two families of key, because they answer different questions:
- *
- *   variants()  Every token, sorted. "Bae Doona" and "Doona Bae" both key to
- *               "bae doona", so surname-first entry stops mattering. Strict:
- *               every token must be present on both sides.
- *
- *   ends()      First and last token only, sorted, generational suffixes
- *               dropped. Catches the dropped middle name -- "Sarah Michelle
- *               Gellar" against "Sarah Gellar" -- which variants() cannot.
- *               Much looser, so a match here is a weaker signal and belongs in
- *               a lower confidence tier, never in a hard block.
- *
- * Hyphens are why variants() returns a list rather than one string. The
- * convention is genuinely ambiguous: a Korean given name joins ("Doo-na" is
- * "Doona") while a Western double barrel splits ("Mary-Louise" is "Mary
- * Louise"). Guessing one way misses real duplicates the other way, so both
- * readings are emitted and the caller matches on any of them.
- *
- * Accent folding is injectable for one reason: WordPress's remove_accents()
- * branches on get_locale() for German and Danish, which puts it outside what
- * tests/bootstrap.php is willing to shim. Callers inside WordPress get it by
- * default; the unit tests pass their own deterministic fold.
- *
- * Known limits, all deliberate. Romanization systems are not reconciled
- * ("Zhang Ziyi" will not meet "Chang Tzu-i"), native script does not meet its
- * romanization, and a changed name is a different name. Two different people
- * genuinely do share a name, and a token-sorted key cannot tell them apart from
- * a duplicate. Nothing here returns a verdict; it produces candidates for a
- * human to look at.
+ * variants() is the strict tier (every token, sorted); ends() is the loose tier
+ * (first and last token). Candidates for a human, never a verdict. See
+ * docs/architecture/duplicate-detection.md#name-keys.
  *
  * @package lwtv-plugin
  */
@@ -56,11 +20,7 @@ class Name_Key {
 	/**
 	 * Generational suffixes, dropped by ends() only.
 	 *
-	 * variants() keeps them, so "Robert Downey Jr" and "Robert Downey Sr" stay
-	 * distinct at the strict tier. ends() drops them so a genuinely dropped
-	 * suffix still surfaces, at the cost of pairing a father and child who are
-	 * both actors -- exactly the sort of known pair the dupe override exists to
-	 * silence once.
+	 * variants() keeps them, so Sr and Jr stay distinct at the strict tier.
 	 *
 	 * @var array<int, string>
 	 */
@@ -90,7 +50,8 @@ class Name_Key {
 			$readings[] = $dehyphenated;
 		}
 
-		// Joined first, then split. See the class docblock on hyphens.
+		// Joined first, then split. See
+		// docs/architecture/duplicate-detection.md#hyphens.
 		foreach ( $readings as $reading ) {
 			$tokens = self::tokens( $reading );
 

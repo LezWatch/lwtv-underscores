@@ -18,15 +18,10 @@
  *         'wiki_birth' => string,  // P569, formatted
  *     )
  *
- * Pure: every decision is made from that array and nothing else, which is what
- * makes the reasoning below testable rather than only observable in production.
+ * Pure: every decision is made from that array and nothing else.
  *
- * The important thing this file does is refuse to answer. A death date is a fact
- * about a real person, and the cost of the two errors is wildly asymmetric:
- * missing one is a stale page, while asserting one that is wrong is telling our
- * readers an actor is dead. So an unresolved identity, a failed fetch, and a
- * QID whose birth date contradicts ours all produce their own verdict instead
- * of collapsing into "no death found" or, worse, into a death claim.
+ * Refuses rather than guesses: anything uncertain gets its own verdict, never a
+ * death claim. See docs/architecture/actor-identity.md#death-audit.
  *
  * @package LWTV
  */
@@ -45,9 +40,8 @@ class Actor_Death_Rules {
 	const HAS_DATE = 'has-date';
 
 	/**
-	 * An editor has ticked "Ignore WikiData Match" -- they have looked, and
-	 * there is nothing to find. Not reportable, because a toggle that silences
-	 * nothing is a toggle nobody will trust twice.
+	 * Locked with an empty QID: an editor has said there is no WikiData item.
+	 * Not reportable. See editor_says_stop().
 	 */
 	const IGNORED = 'ignored';
 
@@ -69,9 +63,8 @@ class Actor_Death_Rules {
 	 * The IMDb ID matched more than one WikiData entity. Picking one would be a
 	 * guess, so we name the problem instead.
 	 *
-	 * The death audit reads stored state and never resolves, so it does not
-	 * produce this itself -- `wp lwtv wikidata` does. The branch stays for any
-	 * caller that resolves before asking.
+	 * The death audit never resolves, so it does not produce this itself; the
+	 * branch stays for any caller that resolves before asking.
 	 */
 	const AMBIGUOUS = 'ambiguous-identity';
 
@@ -101,17 +94,10 @@ class Actor_Death_Rules {
 	/**
 	 * Verdicts worth a human's time, and what that human should do.
 	 *
-	 * HAS_DATE, ALIVE and IGNORED are absent deliberately: each means there is
-	 * nothing to do, and a report that lists every settled row is a report
-	 * nobody reads.
+	 * HAS_DATE, ALIVE and IGNORED are absent deliberately: nothing to do.
 	 *
-	 * A method rather than a const so the advice can go through __(). These lines
-	 * are printed to editors on the Data Validation screen, and a const cannot
-	 * call a function -- while `__( $variable )` after the fact is worse than
-	 * either, because gettext cannot see the strings to extract them.
-	 *
-	 * The WP-CLI command in the UNVERIFIED line is held outside the placeholder:
-	 * it is a literal someone has to type, so translating it would break it.
+	 * A method rather than a const so the advice can go through __(). The WP-CLI
+	 * command in the UNVERIFIED line stays outside the translatable string.
 	 *
 	 * @return array<string, string>
 	 */
@@ -143,25 +129,9 @@ class Actor_Death_Rules {
 	/**
 	 * Does the write-lock mean stop checking this actor?
 	 *
-	 * lezactors_wikidata_ignore is a write-lock on the QID field: set it and no
-	 * machine write lands, so the field is editable by hand only. That is all it
-	 * means everywhere except here.
-	 *
-	 * For the audit, the lock plus an EMPTY QID is the only way an editor can
-	 * say "this person has no WikiData item":
-	 *
-	 *   - Locked, QID empty: settled. There is nothing to look up and nothing
-	 *     will ever arrive, because the lock stops the backfill filling it in.
-	 *     Reporting it would be reporting a gap the editor has already closed,
-	 *     so the verdict is IGNORED and it is not reportable.
-	 *   - Locked, QID present: audit normally, on that QID. The editor pinned
-	 *     an identity; using it is the entire point of pinning it.
-	 *   - Unlocked: audit normally.
-	 *
-	 * Without the first branch, NO_IDENTITY would fire instead, and that verdict
-	 * *is* reportable -- so an actor an editor had explicitly marked as having no
-	 * WikiData item would keep coming back on the report forever. A toggle that
-	 * silences nothing is a toggle nobody will trust twice.
+	 * Only when the QID is empty: that is how an editor says "no WikiData item".
+	 * Locked with a QID audits normally on it. See
+	 * docs/architecture/actor-identity.md#editor_says_stop.
 	 *
 	 * @param  bool   $ignored The lezactors_wikidata_ignore write-lock.
 	 * @param  string $qid     The stored QID, or '' when the field is empty.
@@ -261,15 +231,9 @@ class Actor_Death_Rules {
 	/**
 	 * Do two birth dates describe different people?
 	 *
-	 * This is the guard on the whole command. A stored QID can be wrong, and an
-	 * IMDb ID can have been reassigned, and in both cases what we get back is a
-	 * confident death date for a stranger. Birth date is the cheapest way to
-	 * notice, since we already hold one for most actors.
-	 *
-	 * Unknowns are never a conflict. WikiData records plenty of birth dates to
-	 * the year or the month only, and treating "1976" against "1976-05-25" as a
-	 * contradiction would suppress exactly the correct matches we are looking
-	 * for. Only two *known* parts that differ count.
+	 * The guard against a wrong QID. Only two *known* parts that differ count;
+	 * a year-only or month-only date is never a conflict. See
+	 * docs/architecture/actor-identity.md#birth-date-guard.
 	 *
 	 * @param  string $ours   Our birth date, any of the formats we store.
 	 * @param  string $theirs WikiData's birth date.
@@ -299,16 +263,9 @@ class Actor_Death_Rules {
 	/**
 	 * Split a date into year / month / day, whatever shape it arrived in.
 	 *
-	 * Three formats are in play at once and all of them are real:
-	 *
-	 * - `Ymd` -- what the ACF date_picker actually writes to postmeta, despite
-	 *   its return_format saying Y-m-d.
-	 * - `Y-m-d` -- what WikiData returns, and what format_our_date() produces.
-	 * - `m/d/Y` -- rows the ACF migration did not convert.
-	 *
-	 * A `00` month or day comes back empty rather than as "00", because that is
-	 * WikiData saying it does not know, and an unknown must not read as a
-	 * mismatch downstream.
+	 * Reads `Ymd` (ACF postmeta), `Y-m-d` (WikiData) and `m/d/Y` (unmigrated
+	 * rows). A `00` month or day is unknown and comes back empty. See
+	 * docs/architecture/actor-identity.md#birth-date-guard.
 	 *
 	 * @param  string $date A date in one of the formats above.
 	 * @return array{year: string, month: string, day: string} Empty strings when unparseable.

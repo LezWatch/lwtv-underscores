@@ -2,20 +2,10 @@
 /**
  * Taxonomy Death Leaders Query Class
  *
- * Sums each published show's canonical lezshows_char_count /
- * lezshows_dead_count postmeta — the same two fields Show_Death_Leaders
- * already reads for the Deaths → Shows highlights — per term on a given
- * taxonomy (lez_country / lez_stations), to answer "which network/nation is
- * disproportionately deadly" rather than "which one just has the most
- * shows." Death → Nations and Death → Stations already rank networks/
- * countries by a raw show-count ("shows tagged dead-queers"), and that
- * page's own copy already admits the honest problem: more shows on a
- * network just means more deaths. This is the rate-based fix for that.
- *
- * A show tagged with more than one term on the taxonomy (e.g. a
- * co-production airing on two networks) contributes its full character/
- * death counts to each term it carries — the same multi-term attribution
- * Dead::generate_shows_by_taxonomy() already uses for the existing raw list.
+ * Sums lezshows_char_count / lezshows_dead_count per lez_country or
+ * lez_stations term, for a death rate rather than a raw tagged-show count.
+ * Multi-term shows count toward each term.
+ * See docs/statistics/data-model.md#counts-vs-curator-tags.
  *
  * @package LezWatch.TV
  */

@@ -1,11 +1,8 @@
 <?php
 /**
- * Genre trend WP glue: pulls each show's premiere year (from
- * lezshows_airdates.start, the same field Format_Trend and On_Air_Optimized
- * use) paired with every lez_genres term it carries, tallies both a
- * distinct-show count and a genre-tag count (keyed by slug, so templates can
- * link to the real term archive) per year, and hands the result to the pure
- * Genre_Decade_Buckets transform.
+ * Genre trend WP glue: premiere year plus every lez_genres term per show,
+ * tallied by year (distinct shows and tags, keyed by slug) and handed to
+ * Genre_Decade_Buckets.
  *
  * @package LezWatch.TV
  */

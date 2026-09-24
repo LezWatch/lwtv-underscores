@@ -2,30 +2,10 @@
 /**
  * IMDb Verification Task
  *
- * Detects IMDb IDs that have gone stale.
- *
- * IMDb reassigns title and name IDs and leaves the previous one working as a
- * redirect, so a stale ID still opens the right page in a browser while silently
- * breaking every exact-match API lookup keyed on it. Nothing about the value
- * looks wrong, which is why Debug_Tool::validate_imdb() cannot catch it: it is
- * well-formed, it is the right prefix, and it works when clicked.
- *
- * Detection therefore cannot come from IMDb -- automated requests there get
- * blocked, and a check that silently reports "fine" for everything is worse than
- * no check. It comes instead from third parties that store a canonical IMDb ID
- * and whose IDs we already hold:
- *
- *   shows  -> TVMaze /shows/{id}, externals.imdb
- *   actors -> TMDB /person/{id}, imdb_id  (via _Components\CPTs::get_tmdb_info)
- *
- * TVMaze is a particularly good oracle for shows here: it carries television
- * only, exactly like this site, so when it disagrees with us its ID is the one
- * guaranteed to point at a TV entity rather than a film.
- *
- * Runs on Action Scheduler and never during save_post. An HTTP call in a save
- * hook blocks the editor, and save_post fires on autosaves, revisions, bulk
- * edits, REST writes and the cron-driven recalculations -- far more often than
- * "a human edited a show".
+ * Detects stale (still-redirecting) IMDb IDs by asking TVMaze (shows) and TMDB
+ * (actors), on Action Scheduler, never in save_post. See
+ * docs/integrations/imdb.md#imdb_verify_task and
+ * docs/architecture/scheduling.md#no-http-in-save_post.
  *
  * @package lwtv-plugin
  */
@@ -68,10 +48,8 @@ class Imdb_Verify_Task {
 	/**
 	 * Pause between requests, in microseconds.
 	 *
-	 * 500ms, sized for TVMaze's documented "at least 20 calls every 10 seconds"
-	 * rather than TMDB's more generous allowance, because a mixed queue could be
-	 * all shows. A single conservative delay beats two rate-limit budgets for a
-	 * background job nobody is waiting on.
+	 * 500ms, sized for TVMaze rather than TMDB. See
+	 * docs/integrations/tvmaze.md#rate-limits.
 	 */
 	const DELAY_US = 500000;
 
@@ -287,16 +265,8 @@ class Imdb_Verify_Task {
 	/**
 	 * The IMDb ID TMDB holds for an actor.
 	 *
-	 * Reuses _Components\CPTs::get_tmdb_info(), which already handles the API key
-	 * check and TMDB's status_message errors -- but not its choice of endpoint.
-	 * That method returns a /person/{id} detail object only while the post has a
-	 * TMDB ID; without one it falls back to /find/{imdb_id}, whose results carry
-	 * no imdb_id field at all. Asking there wastes a request on a response that
-	 * cannot answer, so bail before spending it.
-	 *
-	 * The check is here rather than only in queue_post() because verify() is
-	 * public: the CLI and the debugger both call it directly, bypassing the
-	 * queue's gate.
+	 * Bails without a TMDB ID: the /find/ fallback carries no imdb_id. Checked
+	 * here too because the CLI and debugger call verify() directly.
 	 *
 	 * @param int $post_id Actor post ID.
 	 *
@@ -308,9 +278,7 @@ class Imdb_Verify_Task {
 			return null;
 		}
 
-		// Tmdb_Response tells a missing imdb_id key (wrong shape, no answer) apart
-		// from a present-but-null one (TMDB has no link). Collapsing the two would
-		// let an unanswerable response clear a real stale flag.
+		// Null (shape cannot answer) must stay distinct from '' (no link).
 		return Tmdb_Response::imdb_id( ( new CPTs() )->get_tmdb_info( $post_id ) );
 	}
 

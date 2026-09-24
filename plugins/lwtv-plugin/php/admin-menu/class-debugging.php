@@ -21,10 +21,7 @@ class Debugging {
 	 * This is the vocabulary, and it is used in two directions:
 	 * Plugins\Acf populates the `log_topics` checkbox from it, and
 	 * Build\Log_Rules refuses to write a topic that is not in it. A topic
-	 * missing from this list therefore cannot be logged at all -- which is why
-	 * `imdb-verify` and `show-score` were added on 2026-08-27. Both were already
-	 * being logged by live code and neither was declared, so under the old
-	 * fail-open rule they wrote unconditionally and could never be switched off.
+	 * missing from this list therefore cannot be logged at all.
 	 *
 	 * Add the topic here first, then log it.
 	 */

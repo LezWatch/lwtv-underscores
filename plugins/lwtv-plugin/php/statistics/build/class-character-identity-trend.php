@@ -1,18 +1,9 @@
 <?php
 /**
- * Character identity trend WP glue: pulls each published character's
- * earliest on-screen year (from the lezchars_show_group repeater's own
- * `appears` sub-field — the same source Character_Longevity_Leaders uses,
- * since characters have no premiere-year field of their own) paired with
- * whichever term it carries on a given taxonomy. lez_gender and
- * lez_sexuality are both ACF "select" fields wrapping a taxonomy, so each
- * character contributes to exactly one term — the same single-value shape
- * Format_Trend already relies on for lez_formats on Shows.
- *
- * One query, two pure consumers: generate_decades() feeds
- * Character_Identity_Decade_Buckets for a trend chart, and generate_firsts()
- * finds the earliest-recorded character per term. Both read the same
- * cached row set rather than querying twice.
+ * Character identity trend WP glue: each published character's earliest
+ * `appears` year paired with their single term on a taxonomy. One cached
+ * query feeds both generate_decades() and generate_firsts().
+ * See docs/statistics/data-model.md#anchoring-characters-to-a-year.
  *
  * @package LezWatch.TV
  */

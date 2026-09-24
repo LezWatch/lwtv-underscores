@@ -2,16 +2,10 @@
 /**
  * Role podium transforms.
  *
- * Pure array-in/array-out math for the Actors → Roles view: the
- * Regular/Recurring/Guest breakdown, the leading role type, and its share
- * of every tagged appearance. No WordPress calls — unit-testable without a
- * WP runtime (see tests/unit/Statistics/RolePodiumTest.php). All i18n
- * stays in the template; this class only reports shape and numbers.
- *
- * Unlike Star_Podium/Trigger_Levels, there is no separate "total shows/
- * characters" denominator here: every tagged show-group row carries
- * exactly one role type, so the sum of the three buckets is the total by
- * definition.
+ * Actors → Roles math: the Regular/Recurring/Guest breakdown, leading role
+ * type and its share. The three buckets are the total (one type per row).
+ * Pure transform. See docs/statistics/pages.md#build-layer and
+ * docs/statistics/data-model.md#role-type.
  *
  * @package LezWatch.TV
  */

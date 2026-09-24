@@ -3,7 +3,7 @@ version: 2
 updates:
   # npm: the root lockfile governs both workspaces, but list the workspace
   # manifests explicitly so a pinned devDependency there cannot silently drift
-  # behind the root (how blocks got stuck on @wordpress/scripts 33 vs root 35).
+  # behind the root.
   - package-ecosystem: "npm"
     directories:
       - "/"

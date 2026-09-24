@@ -1,9 +1,8 @@
 <?php
 /**
  * Unit tests for the Bury Your Queers rules, and in particular the gate that
- * decides when a missing trope is worth reporting. That gate was wrong for as
- * long as it was tangled up with the ACF reads (DEBUGGER-REVIEW.md 1.9c), and
- * the table at the bottom of this file is what it should do.
+ * decides when a missing trope is worth reporting. The table at the bottom of
+ * this file is what it should do.
  *
  * @package lwtv-underscores
  */
@@ -138,14 +137,13 @@ class ByqRulesTest extends TestCase {
 	}
 
 	/*
-	 * evaluate() — the two rules together, and the 1.9c behaviour table.
+	 * evaluate() — the two rules together, and the behaviour table.
 	 */
 
 	public function test_a_death_year_reports_even_when_the_tropes_are_fine(): void {
 		/*
-		 * The 1.9c regression. The missing death year used to be counted into the
-		 * trope gate, where it cancelled itself out: this character was dropped
-		 * from the report entirely.
+		 * A missing death year must not be counted into the trope gate, where it
+		 * cancels itself out and drops this character from the report entirely.
 		 */
 		$character = $this->character(
 			array(

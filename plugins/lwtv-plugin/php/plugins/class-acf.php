@@ -24,9 +24,8 @@ class ACF {
 	/**
 	 * IMDb ID fields that must be unique, and what they belong to.
 	 *
-	 * An IMDb ID is an identity claim, not a resemblance: two actors holding one
-	 * nm ID are one person. Unlike the name check -- which warns, because people
-	 * genuinely share names -- a collision here is refused outright.
+	 * An IMDb ID is an identity claim, so a collision is refused outright. See
+	 * docs/architecture/duplicate-detection.md#unique-imdb-ids.
 	 *
 	 * @var array<string, string>
 	 */
@@ -328,17 +327,10 @@ class ACF {
 	/**
 	 * Refuse an IMDb ID that another post of the same type already holds.
 	 *
-	 * This is the one hard stop in the duplicate-detection work. The name check
-	 * warns and can be waved past, because two people really do share a name and
-	 * a token-sorted key cannot tell them apart. An IMDb ID is different: it is
-	 * an identity claim, so a collision is not a resemblance to judge but a
-	 * contradiction to fix.
-	 *
-	 * An unchanged value is always allowed through, whatever it collides with.
-	 * The job here is to stop a new collision being created, not to make an
-	 * existing duplicate pair unsavable -- an editor opening one of those to fix
-	 * it must be able to save their work. `wp lwtv dupes` is what reports the
-	 * ones already in there.
+	 * The one hard stop in duplicate detection. The collision check runs first
+	 * (block-editor meta is stored before validation), and an unchanged value
+	 * survives only on the lower post ID of the pair. See
+	 * docs/architecture/duplicate-detection.md#unique-imdb-ids.
 	 *
 	 * @param bool|string $valid      True if valid, or an error message string.
 	 * @param mixed       $value      The IMDb value being saved.
@@ -366,20 +358,23 @@ class ACF {
 			return $valid;
 		}
 
-		$post_id = (int) acf_get_form_data( 'post_id' );
+		// Zero means no source knew the post, not "new post"; the check still runs.
+		$post_id = self::editing_post_id();
 
-		if ( ! $post_id ) {
-			$post_id = (int) get_the_ID();
-		}
+		// The lowest-numbered other post holding this ID, if any. Asked before the
+		// unchanged-value question, because the answer to that one depends on it.
+		$owner_id = ( new Get_Post_By_Imdb() )->make( $wanted, $post_type, $field_name, $post_id );
 
-		// Unchanged from what is already stored: let it through.
-		if ( $post_id && Imdb_Canonical::normalise( get_post_meta( $post_id, $field_name, true ) ) === $wanted ) {
+		// Nothing else holds it, or the only holder is this post (a backstop for
+		// when the post ID did not resolve).
+		if ( ! $owner_id || $owner_id === $post_id ) {
 			return $valid;
 		}
 
-		$owner_id = ( new Get_Post_By_Imdb() )->make( $wanted, $post_type, $field_name, $post_id );
+		// The older claimant of a legacy pair, value already stored: allowed.
+		$is_older = $post_id > 0 && $post_id < $owner_id;
 
-		if ( ! $owner_id ) {
+		if ( $is_older && Imdb_Canonical::normalise( get_post_meta( $post_id, $field_name, true ) ) === $wanted ) {
 			return $valid;
 		}
 
@@ -390,6 +385,51 @@ class ACF {
 			get_the_title( $owner_id ),
 			$owner_id
 		);
+	}
+
+	/**
+	 * The post being edited, as seen from inside an ACF validation filter.
+	 *
+	 * In the block editor, validation runs in ACF's AJAX request with no global
+	 * post, so each source is tried in turn. See
+	 * docs/architecture/duplicate-detection.md#block-editor-ordering.
+	 *
+	 * @return int Post ID, or 0 when none of the sources knows.
+	 */
+	private static function editing_post_id(): int {
+		$sources = array( acf_get_form_data( 'post_id' ) );
+
+		// ACF has verified its own nonce before any validate_value filter runs;
+		// this only reads an ID it already acted on. _acf_post_id is the hidden
+		// field ACF's own form data is built from, so it survives contexts where
+		// the parsed copy is empty.
+		// phpcs:disable WordPress.Security.NonceVerification.Missing
+		foreach ( array( '_acf_post_id', 'post_id', 'post_ID' ) as $key ) {
+			if ( isset( $_POST[ $key ] ) && is_scalar( $_POST[ $key ] ) ) {
+				$sources[] = sanitize_text_field( wp_unslash( $_POST[ $key ] ) );
+			}
+		}
+		// phpcs:enable WordPress.Security.NonceVerification.Missing
+
+		$sources[] = get_the_ID();
+
+		foreach ( $sources as $source ) {
+			// acf_get_form_data() also answers with things like 'options' or
+			// 'term_12', which are not posts and must not become post 0.
+			if ( ! is_numeric( $source ) || (int) $source < 1 ) {
+				continue;
+			}
+
+			$post_id = (int) $source;
+
+			// An autosave or revision stands in for the post it belongs to; its
+			// own meta is empty, which would defeat the unchanged-value check.
+			$parent_id = (int) wp_is_post_revision( $post_id );
+
+			return $parent_id ? $parent_id : $post_id;
+		}
+
+		return 0;
 	}
 
 	/**
@@ -471,9 +511,6 @@ class ACF {
 
 	/**
 	 * Populate the Primary Genre select choices from the show's assigned genres.
-	 *
-	 * CMB2 used options_cb to build a dynamic list of term IDs from lez_genres.
-	 * This replicates that behaviour for ACF.
 	 *
 	 * @param array $field ACF field definition.
 	 * @return array
@@ -602,7 +639,7 @@ class ACF {
 	 *
 	 * 1. lezshows_airdates — 10+ files read get_post_meta( $id, 'lezshows_airdates', true )
 	 *    expecting array( 'start' => year, 'finish' => year|'current' ).
-	 *    ACF now stores the values in separate keys; this hook keeps the legacy key in sync.
+	 *    ACF stores the values in separate keys; this hook keeps the legacy key in sync.
 	 *
 	 * 2. lezshows_worthit_show_we_love / lezshows_byq_override — SQL in
 	 *    class-we-love-it.php and class-get-loved.php hardcode pm.meta_value = 'on'.
@@ -730,24 +767,10 @@ class ACF {
 	/**
 	 * Make the WikiData QID read-only until an editor takes the lock.
 	 *
-	 * Unlocked, the field belongs to the automated check: a value typed here
-	 * would sit there looking accepted until the next backfill quietly replaced
-	 * it. Showing it as read-only says so before anyone spends the effort.
-	 *
-	 * Only sets readonly -- it deliberately does not touch the instructions. The
-	 * field's own copy already tells an editor to flip the toggle, and appending
-	 * a second sentence saying the same thing just made the hint stutter.
-	 *
-	 * acf/prepare_field, not acf/load_field: load_field runs once per field
-	 * definition with no post in sight, which is why the usual recipe for this
-	 * reaches for $_GET['post'] -- absent on Gutenberg's metabox request and on
-	 * post-new.php. prepare_field runs per render, inside the metabox, where WP
-	 * has already set up the post.
-	 *
-	 * Read-only is an affordance, not a control: the browser still submits the
-	 * value and the attribute can be removed. What actually protects the data is
-	 * Identity::store_qid() refusing to write when locked, and the source meta
-	 * deciding what the death audit will trust.
+	 * Only sets readonly; the field's instructions already explain the toggle.
+	 * Uses acf/prepare_field because load_field has no post in context.
+	 * Read-only is an affordance only; store_qid() is the real protection. See
+	 * docs/architecture/actor-identity.md#the-editor-field.
 	 *
 	 * @param  array $field ACF field definition, as prepared for this render.
 	 * @return array
@@ -808,19 +831,10 @@ class ACF {
 	/**
 	 * Record a hand-edited WikiData QID as coming from a human.
 	 *
-	 * There is one QID field and the machine may overwrite it, so what separates
-	 * "an editor checked this" from "a name search guessed it" is the source meta
-	 * beside it. Machine writes go through Identity::store_qid(), which uses
-	 * update_post_meta() and therefore never fires this filter -- so reaching
-	 * here means a person saved the field.
-	 *
-	 * Only stamps 'manual' when the value actually CHANGED. ACF re-saves every
-	 * field on every post save, including untouched ones, so stamping
-	 * unconditionally would relabel a fuzzy 'name' match as trusted the first
-	 * time anyone opened an actor and hit Update -- laundering a guess into an
-	 * identity, which is the one failure Qid_Trust exists to prevent.
-	 *
-	 * Also normalises a pasted wikidata.org URL down to the bare QID.
+	 * Machine writes never fire this filter, so reaching it means a person saved
+	 * the field. Stamps 'manual' only when the value CHANGED (ACF re-saves every
+	 * field), and normalises a pasted wikidata.org URL. See
+	 * docs/architecture/actor-identity.md#the-editor-field.
 	 *
 	 * @param  mixed $value   The value being saved.
 	 * @param  mixed $post_id ACF post ID (int for posts, string for options).
@@ -841,10 +855,8 @@ class ACF {
 		}
 
 		if ( '' === $value ) {
-			// Cleared by hand: we no longer hold an identity, so drop the source
-			// rather than leave one describing a value that is gone. The checked
-			// marker goes too, so the backfill treats this as never asked instead
-			// of "asked, no match" and will look again.
+			// Cleared by hand: drop the source and the checked-marker, so the
+			// backfill treats this actor as never asked.
 			delete_post_meta( $post_id, Identity::META_SOURCE );
 			delete_post_meta( $post_id, Identity::META_CHECKED );
 
@@ -975,7 +987,6 @@ class ACF {
 	 * Register the number_slider ACF field type.
 	 *
 	 * Uses acf/init + acf_register_field_type() (ACF 5.8.9+/6.x).
-	 * The legacy acf/include_field_types hook was dropped in ACF 6.x.
 	 */
 	public function register_number_slider(): void {
 		if ( ! function_exists( 'acf_register_field_type' ) ) {

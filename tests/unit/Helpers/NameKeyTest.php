@@ -2,23 +2,8 @@
 /**
  * Unit tests for the comparable name key.
  *
- * The problem being solved: an editor adds an actor by typing a name, and the
- * same person arrives spelled more than one way. "Bae Doona" and "Doona Bae"
- * are the same actor with the surname on either end -- a habit for Korean,
- * Chinese and Japanese names, and easy to forget in either direction. A
- * duplicate check keyed on the title as written sees two different people, and
- * the database quietly gains a second Bae Doona under a -2 slug.
- *
- * Two tiers on purpose. variants() is strict -- every token present on both
- * sides, order irrelevant -- and is what should drive a warning an editor
- * trusts. ends() is deliberately loose, catching the dropped middle name that
- * variants() cannot, and is expected to produce some false pairs; a match there
- * is a prompt to look, never a verdict.
- *
- * Accent folding is injected throughout rather than shimmed, because WordPress's
- * remove_accents() branches on get_locale() and so fails the bar set in
- * tests/bootstrap.php. The fold below is a fixed two-character map: enough for
- * these cases, and deterministic.
+ * Accent folding is injected rather than shimmed; the fold below is a small
+ * fixed map. See docs/architecture/duplicate-detection.md#name-keys.
  *
  * @package lwtv-underscores
  */

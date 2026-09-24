@@ -2,7 +2,7 @@
 /*
  * Report renderer for findings on the Data Validation screen.
  *
- * Everything a report needs now lives in Admin_Menu\Validation::TOOL_TABS, which
+ * Everything a report needs lives in Admin_Menu\Validation::TOOL_TABS, which
  * means a check cannot have a tab without a scanner, or a scanner without copy.
  *
  * Watch Providers and Watch Term Check are deliberately not here: they render
@@ -48,9 +48,7 @@ class Report {
 
 		/*
 		 * `false` means the findings were missing and the scan has just run, so
-		 * by this point $items is always an array. The old templates each carried
-		 * an `elseif ( false === $items )` "Bogus!" branch after an `empty()`
-		 * check that had already caught false -- ten copies of unreachable code.
+		 * by this point $items is always an array.
 		 */
 		if ( empty( $items ) ) {
 			self::render_clean( $config );

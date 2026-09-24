@@ -1,12 +1,8 @@
 <?php
 /**
  * Term count distribution: how many objects carry 0, 1, 2, 3, …, N+ terms of
- * a taxonomy. Pure array-in / array-out — no WordPress runtime dependency.
- *
- * Feeds "how loaded is a typical show" views (e.g. Tropes' distribution
- * panel) where a flat average/median hides the real spread — two shows can
- * both average out to "2 tropes" while one carries exactly 2 every time and
- * the other swings between 0 and 4.
+ * a taxonomy, for the Load waffles. Pure transform.
+ * See docs/statistics/pages.md#load-and-pairings-pages.
  *
  * @package LezWatch.TV
  */

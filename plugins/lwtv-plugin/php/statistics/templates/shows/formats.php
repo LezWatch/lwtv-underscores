@@ -103,14 +103,8 @@ $donut = array(
 // phpcs:ignore PEAR.Files.IncludingFile.UseRequire
 include plugin_dir_path( __DIR__ ) . 'partials/donut.php';
 
-// Format mix by decade: small compact donuts, oldest to newest. The pure
-// bucketing (decade rollup + folding sparse early decades into one leading
-// bucket) lives in Format_Decade_Buckets — see that class for why 1950s,
-// 1960s, and 1970s combine into one "Before 1980s" tile today. Each tile
-// reuses the same segment/ramp shape as the main donut above, rank-based
-// (the biggest slice in THIS bucket gets dkpink), so a color can mean a
-// different format from one tile to the next — same convention the main
-// donut already uses, just applied per-bucket instead of catalogue-wide.
+// Format mix by decade: compact donuts, oldest to newest, coloured by rank
+// within each tile. See docs/statistics/pages.md#formats.
 $decade_buckets = ( new \LWTV\Statistics\Build\Format_Trend() )->generate( 20 );
 
 if ( ! empty( $decade_buckets ) ) :

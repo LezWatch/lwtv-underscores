@@ -3,29 +3,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 /**
- * Characters → Most: "The Records" — a five-column spotlight row (the #1
- * character in each category) followed by a Full Rankings table (ranks 1-5
- * across all five categories). Replaces the earlier five-stacked-panels
- * layout with the two-part design from the "Characters Most - Records"
- * handoff: same five data sources, same top-5 depth, laid out as spotlight +
- * table instead of five separate ranked-bars panels.
- *
- * Categories: most clichés (existing, trimmed from a top-25 list), most
- * shows (crossover/recurring-guest characters, distinct show count via the
- * lezchars_show_group repeater), most actors (recast characters, via the
- * lezchars_actor relationship field), most resurrected (2+ recorded deaths
- * via the lezchars_death_year repeater — can render fewer than 5 rows, or
- * none, if the data doesn't have that many repeat-deaths on record), and
- * longest-running (widest earliest-to-latest on-screen year span, via the
- * show-group repeater's own `appears` years).
- *
- * Every category can legitimately come back with fewer than 5 rows (Most
- * Resurrected and Longest-Running especially) — missing ranks render as an
- * em dash rather than fabricated data, both in the spotlight (falls back to
- * "No record yet") and the table.
- *
- * URL/view slug stays "most-cliches" (unchanged, avoids breaking existing
- * links); the on-page title and subnav label are "Most".
+ * Characters → Most ("The Records"): the #1 per category plus ranks 1–5.
+ * Short categories render em dashes, never filler. The view slug stays
+ * "most-cliches" so links keep working. See docs/statistics/pages.md#most-the-records.
  *
  * @package LezWatch.TV
  *

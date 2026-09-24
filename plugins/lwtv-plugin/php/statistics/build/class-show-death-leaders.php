@@ -2,14 +2,9 @@
 /**
  * Show Death Leaders Query Class
  *
- * Ranks published shows by their canonical lezshows_char_count /
- * lezshows_dead_count postmeta — the same two fields
- * Dead::generate_shows_by_characters() already reads for the Deaths → Shows
- * donut, just queried across every show rather than only the ones tagged
- * with the 'dead-queers' trope. That trope is a curator's manual tag, not a
- * live count, so a show can have recorded deaths without ever being tagged
- * with it — reading the raw meta directly here means a highlight like "Most
- * Lethal Show" can't be silently wrong just because a tag was missed.
+ * Ranks every published show by lezshows_char_count / lezshows_dead_count
+ * meta, not the manual 'dead-queers' tag.
+ * See docs/statistics/data-model.md#counts-vs-curator-tags.
  *
  * @package LezWatch.TV
  */

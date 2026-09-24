@@ -233,14 +233,8 @@ class Watch_URLs {
 	 * The show count and the IDs behind it are carried across rather than
 	 * recomputed.
 	 *
-	 * A stored row is a memory of the last sweep, and the term has been editable
-	 * ever since -- so before re-probing anything, check the URL is still on the
-	 * term. It very often is not: the row is what told the editor to go and
-	 * remove it. Re-probing a URL nobody stores any more would fail forever (the
-	 * host is dead, which is why it was flagged), so the row could never be
-	 * cleared from the UI at all; only a full sweep, which rebuilds targets from
-	 * `term_urls()`, would drop it. Skipping the target is what clears it: no
-	 * target, no finding, and Scan::finish() stores what came back.
+	 * Rows whose URL is no longer on the term are skipped, which is what clears
+	 * them. See docs/architecture/watch-providers.md#url-health.
 	 *
 	 * @param array $items Findings from a previous run.
 	 * @return array<int, array<string, mixed>>
@@ -259,12 +253,8 @@ class Watch_URLs {
 				continue;
 			}
 
-			// Exact match, not host match. The finding is keyed on the stored
-			// string (see finding()), and an edited URL is a different fact
-			// about the term: the old row goes, and the new value is picked up
-			// by the next full sweep rather than probed behind the editor's
-			// back. Trimmed on both sides because term_url_rows() hands back
-			// whatever ACF wrote.
+			// Exact (trimmed) match, not host match: an edited URL is a new
+			// fact, left for the next full sweep.
 			$stored = array_map( 'trim', array_values( Watch_Hosts::term_url_rows( (int) $item['id'] ) ) );
 
 			if ( ! in_array( trim( (string) $item['url'] ), $stored, true ) ) {
