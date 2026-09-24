@@ -40,8 +40,8 @@ class Watch_Term_Url_Audit {
 	const FLAG_DUPLICATE      = 'duplicate';
 
 	/**
-	 * Blocking flags. Each one needs a human decision before the matcher
-	 * changes, because host matching would alter what the row means.
+	 * Blocking flags. Each one needs a human decision, because host matching
+	 * would alter what the row means.
 	 */
 	const FLAG_PATH        = 'path';
 	const FLAG_QUERY       = 'query';

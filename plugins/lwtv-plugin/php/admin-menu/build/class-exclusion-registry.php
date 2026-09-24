@@ -207,7 +207,7 @@ class Exclusion_Registry {
 			return $meta_value === $match_value;
 		}
 
-		// Still worth checking in PHP even though the caller now filters these in
+		// Still worth checking in PHP even though the caller also filters these in
 		// SQL: trim() above means a value of '   ' fails here but would pass a
 		// SQL NOT IN, so the two are complementary rather than redundant.
 		return ! in_array( $meta_value, self::UNSET_VALUES, true );
@@ -356,7 +356,7 @@ class Exclusion_Registry {
 	 * The Queer Override select's value, as an editor chose it.
 	 *
 	 * Mirrors the choices in group_lwtv_actors_details.json. The raw values are
-	 * snake_case keys and were being printed as-is.
+	 * snake_case keys, not labels.
 	 *
 	 * @param  string $value Stored value.
 	 * @return string

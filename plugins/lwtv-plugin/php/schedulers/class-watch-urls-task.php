@@ -5,15 +5,9 @@
  * Runs the watch-provider URL sweep in the background, so the admin can start it
  * without holding a page request open.
  *
- * Why this exists: the check makes one HTTP request per provider URL, a hundred
- * and more of them. Every other validator tab re-scans on a cold cache during the
- * page load, and this one cannot -- that is the whole reason it has a "no results
- * yet" state at all. So the Run Scan button queues the work here instead of doing
- * it inline.
- *
- * Action Scheduler rather than WP-Cron, matching the other batch tasks: it has its
- * own request loop, its own retry behaviour, and it does not depend on someone
- * visiting the site at the right moment.
+ * The check makes one HTTP request per provider URL, too many to run during a
+ * page load, so the Run Scan button queues the work here. Action Scheduler
+ * rather than WP-Cron, matching the other batch tasks.
  *
  * @package lwtv-plugin
  */
@@ -45,14 +39,10 @@ class Watch_URLs_Task {
 	/**
 	 * Wall-clock budget for one pass, in seconds.
 	 *
-	 * Generous, because nothing is waiting on it -- but still bounded, and that
-	 * matters more than the number. `find_bad_watch_urls()` only writes its
-	 * findings at the very end, so a pass killed by a time limit stores nothing
-	 * and the whole run is wasted. Stopping ourselves first means every pass
-	 * banks its work, with whatever it did not reach recorded as deferred.
-	 *
-	 * At four minutes a typical sweep finishes in one pass; a slow night takes
-	 * two, and re-queues itself.
+	 * Bounded because `find_bad_watch_urls()` only writes its findings at the
+	 * end, so a pass killed by a time limit stores nothing. Stopping ourselves
+	 * first means every pass banks its work, with whatever it did not reach
+	 * recorded as deferred and re-queued.
 	 */
 	const BUDGET = 240;
 

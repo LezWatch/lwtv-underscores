@@ -7,10 +7,9 @@
  * holds the URLs that identify it (lezwatchurls_all_N_url) and its *name is the
  * display name* -- it is used verbatim, never reformatted.
  *
- * Matching is by normalised *host*, via Watch_Hosts::term_for(). It used to be an
- * exact comparison against the stored URL string, which meant a term URL saved
- * with a trailing slash or a `www.` matched nothing and the provider silently
- * fell through to the guess below. See CPTs\Shows\Watching\Watch_Host_Map.
+ * Matching is by normalised *host*, via Watch_Hosts::term_for(), so a term URL
+ * saved with a trailing slash or a `www.` still matches. See
+ * CPTs\Shows\Watching\Watch_Host_Map.
  *
  * Hosts with no term fall through to guess_name(), which does its best from the
  * hostname. That path is permanent: LWTV documents web series, and each one
@@ -139,8 +138,8 @@ class Ways_To_Watch {
 	 *
 	 * **Public and static because seven places need it** — this class, the two
 	 * debugger checks that report on `lez_watch_urls` terms, and four spots in the
-	 * Watch Providers tab. Each one that forgot shipped the double-encoding bug,
-	 * which is a poor thing to leave to memory. It lives here because this class
+	 * Watch Providers tab. Any caller that skips it double-encodes the name. It
+	 * lives here because this class
 	 * owns `TAXONOMY`, so every caller already imports it.
 	 *
 	 * @param  string $name Term name as stored.

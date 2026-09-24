@@ -212,9 +212,9 @@ class WP_CLI_LWTV_Score_Preview {
 			}
 		}
 		// Judged-on counts, not tag counts. The two standards are mutually
-		// exclusive now, so "19 queer-irl tagged" would overstate the queer-irl
-		// check when 13 of those characters were actually decided by the
-		// trans/NB standard instead.
+		// exclusive, so the queer-irl tag count would overstate the queer-irl
+		// check when some of those characters were decided by the trans/NB
+		// standard instead.
 		\WP_CLI::log(
 			'Judged on:   ' . $data['judged_on_trans'] . ' trans/NB casting, '
 			. $data['judged_on_qirl'] . ' queer casting, '
@@ -295,7 +295,7 @@ class WP_CLI_LWTV_Score_Preview {
 			// Every place this model docks a show, with the evidence. Check the
 			// actor_terms column before believing a miscast: an actor whose
 			// gender slug classifies as 'cis' produces a real miscast, but a slug
-			// that is simply unrecognised now falls to 'unknown' and scores
+			// that is simply unrecognised falls to 'unknown' and scores
 			// neutrally -- so anything reaching this table is an explicit cis tag.
 			if ( ! empty( $data['miscast_detail'] ) ) {
 				\WP_CLI::log( \WP_CLI::colorize( '%3Miscast verdicts -- verify actor_terms before trusting these%n' ) );
@@ -380,16 +380,15 @@ class WP_CLI_LWTV_Score_Preview {
 			'seasons'          => $data['seasons'],
 			'run_years'        => $data['run_years'],
 			'tier'             => $data['tier'],
-			// The floor turned out to fire on 292 shows, not the one it was built
-			// for, so it needs to be visible in bulk output rather than inferred
-			// from run_years > seasons.
+			// Shown explicitly in bulk output rather than inferred from
+			// run_years > seasons.
 			'floored'          => $data['run_years_floored'] ? 'yes' : '-',
 			'aired_rejected'   => $data['aired_rejected'] ? 'yes' : '-',
 			'aired_verdict'    => $data['aired_verdict'],
 			// A show with no TVMaze set has nothing to measure coverage against,
 			// and appearance_coverage() reports 0.0 for it. Printing that would
-			// read as catastrophic coverage on 1,855 shows when it means "not
-			// measurable" -- so it is blanked rather than shown as a number.
+			// read as catastrophic coverage when it means "not measurable" --
+			// so it is blanked rather than shown as a number.
 			'coverage'         => ( Longevity::VERDICT_NONE === $data['aired_verdict'] )
 				? '-'
 				: number_format( $data['coverage'], 3 ),
@@ -417,11 +416,10 @@ class WP_CLI_LWTV_Score_Preview {
 	/**
 	 * Collect one show's data, then add the CLI's own explanation of it.
 	 *
-	 * The gathering itself lives in Character_Score so this command and the live
-	 * calculation cannot disagree -- that shared implementation is the whole point
-	 * of the class. What stays here is the two things only a CLI wants: the
-	 * optional live TVMaze fetch (which must never enter the scoring path) and the
-	 * prose explaining which denominator tier was used and why.
+	 * The gathering lives in Character_Score so this command and the live
+	 * calculation cannot disagree. This adds only the optional live TVMaze fetch
+	 * (which must never enter the scoring path) and the prose explaining which
+	 * denominator tier was used and why.
 	 *
 	 * @param int  $show_id Show post ID.
 	 * @param bool $tvmaze  Whether to hit the TVMaze API for missing aired years.
@@ -518,17 +516,14 @@ class WP_CLI_LWTV_Score_Preview {
 			$alive = ( ( $data['count'] - $data['dead'] ) / $data['count'] ) * 100;
 		}
 
-		// The score comes from Character_Score, which is also what the live
-		// calculation calls -- deliberately, so this preview cannot drift from
-		// what ships. $new['score'] is therefore not "the preview's idea of the
-		// score" but literally what count_queers_all_types() returns, which is
-		// what makes the stored-meta check in preview_one() meaningful.
+		// Character_Score is also what the live calculation calls, so this
+		// preview cannot drift from what ships and the stored-meta check in
+		// preview_one() is meaningful.
 		$new = Character_Score::longevity( $data, $ceiling );
 
 		// $divided, not $raw, is what saturate() consumed -- so it is the value a
 		// K sweep needs. Reported as its own column because back-deriving it from
-		// a two-decimal char_new is lossy, and doing that by hand is exactly the
-		// gap this column closes.
+		// a two-decimal char_new is lossy.
 		$total_new = ( $show_rating + $tropes + $alive + $new['score'] ) / 4;
 
 		return array(
@@ -703,9 +698,7 @@ class WP_CLI_LWTV_Score_Preview {
 		\WP_CLI::log( 'Mean score NEW:          ' . number_format( array_sum( $new ) / max( 1, count( $new ) ), 2 ) );
 		\WP_CLI::log( '' );
 		// Labels must match the order in Longevity::run_years(): curated season
-		// count is tier 1, exact aired years is tier 2. These were transposed in
-		// an earlier revision, which reported 1813 shows as using "exact years"
-		// when not one of them did.
+		// count is tier 1, exact aired years is tier 2.
 		$rejected  = 0;
 		$verdicts  = array();
 		$histogram = array_fill( 0, 11, 0 );

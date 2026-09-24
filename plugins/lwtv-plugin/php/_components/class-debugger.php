@@ -21,8 +21,8 @@ use LWTV\Debugger\Log;
  *
  * The validators and formatters (validate_imdb, validate_wikidata_id,
  * sanitize_social, format_wikidate) are static: they hold no state and are
- * called per-post inside scan loops, where instantiating for each call was
- * pure waste. The rest stay instance methods because get_template_tags()
+ * called per-post inside scan loops, where instantiating for each call would
+ * be pure waste. The rest stay instance methods because get_template_tags()
  * binds them with array( $this, ... ).
  */
 class Debugger implements Component, Templater {
@@ -30,8 +30,8 @@ class Debugger implements Component, Templater {
 	/**
 	 * Memoised debug-mode answer for this request, or null before it is known.
 	 *
-	 * debug_log() is called from 306 sites -- `statistics` alone from 104, many
-	 * inside cache-warming loops -- and each call used to run get_field() twice.
+	 * Memoised because debug_log() is hot -- many calls sit inside
+	 * cache-warming loops -- and each check would otherwise run get_field().
 	 *
 	 * Only ever set once the answer is *authoritative*. See is_debug_mode().
 	 *
@@ -235,7 +235,7 @@ class Debugger implements Component, Templater {
 		 * here -- losing bootstrap-time logs is worse than a few extra lines --
 		 * but only for topics in the vocabulary, so this is not a way around it.
 		 *
-		 * This is a separate case from an empty selection, which now means
+		 * This is a separate case from an empty selection, which means
 		 * silence. See Log_Rules::topic_enabled().
 		 */
 		if ( ! function_exists( 'get_field' ) ) {

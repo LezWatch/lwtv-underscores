@@ -106,8 +106,8 @@ class Dupes {
 	/**
 	 * Get Duplicates
 	 *
-	 * Kept as a thin pass-through: `wp lwtv dupes` and anything else outside this
-	 * class calls it, and the query itself now lives with the other reads.
+	 * A thin pass-through: `wp lwtv dupes` and anything else outside this class
+	 * calls it, and the query itself lives with the other reads.
 	 *
 	 * @return array<int>
 	 */
@@ -119,8 +119,8 @@ class Dupes {
 	 * Compare Duplicates
 	 *
 	 * Kept for callers outside this class. The verdict is the rules' to make; all
-	 * this does is collect one candidate and translate a finding back into the
-	 * string-or-false this used to return.
+	 * this does is collect one candidate and translate a finding into the
+	 * string-or-false those callers expect.
 	 *
 	 * @param  int $post_id - Post ID to check
 	 * @return bool|string

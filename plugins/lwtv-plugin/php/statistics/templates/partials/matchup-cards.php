@@ -6,14 +6,12 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Reusable "matchup card" grid: stacked cards pairing two terms with a
  * shows-together count.
  *
- * Genre Stats' alternative to the lollipop-list Common Pairings treatment
- * originally used by Tropes/Intersectionality — same underlying
- * Intersection_Pairs data, a denser card layout instead of a ranked list.
+ * A denser card-layout alternative to a lollipop-list Common Pairings
+ * treatment — same underlying Intersection_Pairs data.
  * Unlinked by default: only pass a per-item 'url' once a FacetWP
  * multi-value param is confirmed for the taxonomy in question (e.g.
  * Intersectionality's fwp_show_intersectionality). Rows without one render
- * as plain non-interactive divs, same as always — this never adds a
- * dead "#" link.
+ * as plain non-interactive divs — this never adds a dead "#" link.
  *
  * @package LezWatch.TV
  *

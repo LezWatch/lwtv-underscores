@@ -526,8 +526,8 @@ class Watch_Providers {
 	 * need a hook gate and a version constant to say the same thing.
 	 *
 	 * Degrades honestly. With no JavaScript every select holds only "create a
-	 * new term" and the name field stays visible, which is exactly the behaviour
-	 * this tab had before assignment existed.
+	 * new term" and the name field stays visible, so creating a term still
+	 * works.
 	 *
 	 * @param array<int, string> $terms term_id => name.
 	 * @return void
@@ -715,9 +715,9 @@ class Watch_Providers {
 	/**
 	 * Create a term for one host.
 	 *
-	 * Kept registered although the tab no longer posts here: a page loaded before
-	 * the assign control shipped still has the old form in it, and dropping the
-	 * action would give that editor a blank screen instead of a created term.
+	 * Kept registered although the tab does not post here: a stale page can still
+	 * hold a form that does, and dropping the action would give that editor a
+	 * blank screen instead of a created term.
 	 *
 	 * @return void
 	 */
@@ -915,9 +915,6 @@ class Watch_Providers {
 
 	/**
 	 * Stash a one-shot notice for the current user.
-	 *
-	 * Replaces the old ?message= scheme, which never worked and could only
-	 * express four hardcoded strings. See DEBUGGER-REVIEW.md section 1.9a.
 	 *
 	 * @param string $type    'success', 'error' or 'info'.
 	 * @param string $message Text.

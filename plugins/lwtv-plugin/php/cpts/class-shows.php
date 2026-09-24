@@ -64,8 +64,7 @@ class Shows {
 	public function __construct() {
 		new Custom_Columns();
 		new Shows_Like_This();
-		// Owns the lez_watch_urls admin screen. Previously never instantiated,
-		// so none of its column filters ran.
+		// Owns the lez_watch_urls admin screen.
 		new Ways_To_Watch();
 
 		add_action( 'admin_init', array( $this, 'admin_init' ) );

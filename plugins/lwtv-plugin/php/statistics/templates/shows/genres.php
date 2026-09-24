@@ -3,11 +3,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 /**
- * Shows → Genres: infographic rework (amber). Shares add up past 100% (multi-value taxonomy).
+ * Shows → Genres (amber). Shares add up past 100% (multi-value taxonomy).
  *
- * Ports the Tropes rework's Load waffle + Common Pairings pattern onto
+ * Uses the Tropes page's Load waffle + Common Pairings pattern on
  * lez_genres, plus genre-specific additions: a "matchup card" treatment
- * for pairings (per design handoff), an "Uncharted Genres" reframe of the
+ * for pairings, an "Uncharted Genres" reframe of the
  * long tail, and a Genre by Decade section (Genre_Trend/Genre_Decade_Buckets)
  * showing each decade's top 3 genres as independent shares of that decade's
  * shows — not a Format Mix by Decade donut port, since genres are
@@ -66,8 +66,6 @@ if ( ! is_wp_error( $genres_pair_terms ) && is_array( $genres_pair_terms ) ) {
 }
 
 // ---- Pullstats row: average genres/show, share carrying 3+, top pairing ----
-// Replaces the old avg/median callout pair — three punchier numbers instead
-// of two sentences, per the design handoff.
 $genres_stats     = ( new \LWTV\Statistics\Build\Taxonomy_Optimized() )->get_terms_per_object_stats( 'post_type_shows', 'lez_genres' );
 $genres_pullstats = array();
 

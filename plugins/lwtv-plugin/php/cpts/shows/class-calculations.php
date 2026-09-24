@@ -140,8 +140,8 @@ class Calculations {
 
 		// Memoised because this is called twice per do_the_math() -- once via
 		// count_queers() and once from show_character_score() -- and each call
-		// used to redo the full character traversal, the batched term queries and
-		// every get_field( 'lezchars_actor' ).
+		// does the full character traversal, batched term queries and every
+		// get_field( 'lezchars_actor' ).
 		if ( isset( self::$counts_memo[ $post_id ] ) ) {
 			return self::$counts_memo[ $post_id ];
 		}
@@ -164,9 +164,8 @@ class Calculations {
 			return $counts;
 		}
 
-		// Key names are the historical ones and are deliberately unchanged: they
-		// are the public shape of count_queers(), which is called from outside
-		// this class.
+		// Key names are the public shape of count_queers(), which is called from
+		// outside this class; do not rename them.
 		$counts['count'] = $data['count'];
 		$counts['dead']  = $data['dead'];
 		$counts['none']  = $data['none'];
@@ -175,7 +174,7 @@ class Calculations {
 		// This becomes lezshows_queer_irl_count, whose only reader is the "actors"
 		// column of the Shows We Love comparison. With the actor check on it is the
 		// count of characters whose first-billed actor is actually queer, which is
-		// what that column has always claimed to show and has never contained.
+		// what that column claims to show.
 		$counts['queer-irl'] = $data['queer_irl_scored'];
 		$counts['trans-irl'] = $data['trans_irl'];
 
@@ -270,8 +269,6 @@ class Calculations {
 	 *
 	 * NO MATTER WHAT YOU THINK the post counts HAVE to be two separate meta fields.
 	 * Otherwise you get weird issues with FacetWP.
-	 *
-	 * Attempts: 4
 	 */
 	public function show_character_score( $post_id ) {
 
@@ -482,14 +479,8 @@ class Calculations {
 		// Calculate the full score
 		$calculate = ( $score_show_rating + $score_show_tropes + $score_chars_alive + $score_chars_score ) / 4;
 
-		// Keep the true value before clamping.
-		//
-		// The clamp used to be the only thing stored, which threw away the one
-		// piece of information that distinguishes shows at the ceiling from each
-		// other -- the same mistake, one level up, as the old character score
-		// pinning 38 shows at exactly 100 with no way to rank them. Today only one
-		// show clears 100, so this buys little; the point is that it cannot start
-		// creating ties again as the data improves.
+		// Keep the true value before clamping, so shows at the ceiling can still
+		// be ranked against each other.
 		//
 		// lezshows_the_score stays clamped, deliberately. Everything reads it --
 		// display, the stats SQL, Grading, of-the-day, the taxonomy queries -- and

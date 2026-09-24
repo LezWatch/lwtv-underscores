@@ -44,7 +44,6 @@ class BYQ_Task {
 			return;
 		}
 
-		// Register Action Scheduler hook
 		add_action( self::AS_HOOK, array( $this, 'process_cache_check' ), 10, 1 );
 		add_action( self::AS_INVALIDATE_HOOK, array( $this, 'process_invalidate_cache' ), 10, 0 );
 	}
@@ -76,7 +75,6 @@ class BYQ_Task {
 	public function process_cache_check( string $cache_key ): void {
 		lwtv_plugin()->debug_log( 'scheduler', 'Processing BYQ cache check for key: ' . $cache_key );
 
-		// Check if cache exists
 		$cached_list = lwtv_plugin()->get_transient( $cache_key );
 
 		if ( false === $cached_list ) {

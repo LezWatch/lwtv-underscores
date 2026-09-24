@@ -35,9 +35,8 @@ unset( $gen_data['unknown'] );
 
 // Remaining = trans / non-binary / other tracked identities; rank and ramp
 // the top 4, fold the rest into "Other". Amber, not pink — matches the
-// "actors" family color used by the pullstats/callout/prolific cards added
-// below, so the whole page reads as one color family, same fix already
-// applied to the Sexuality donut.
+// "actors" family color used by the pullstats/callout/prolific cards below
+// and the Sexuality donut, so the whole page reads as one color family.
 uasort( $gen_data, fn( $a, $b ) => (int) $b['count'] <=> (int) $a['count'] );
 $gen_ramp     = array( 'amber', 'medamber', 'midamber', 'paleamber' );
 $gen_segments = array(

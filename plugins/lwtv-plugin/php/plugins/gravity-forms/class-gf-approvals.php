@@ -193,29 +193,7 @@ class GF_Approvals extends \GFFeedAddOn {
 	}
 
 	/**
-	 * Entry meta data is custom data that's stored and retrieved along with the entry object.
-	 * For example, entry meta data may contain the results of a calculation made at the time of the entry submission.
-	 *
-	 * To add entry meta override the get_entry_meta() function and return an associative array with the following keys:
-	 *
-	 * label
-	 * - (string) The label for the entry meta
-	 *
-	 * is_numeric
-	 * - (boolean) Used for sorting
-	 *
-	 * is_default_column
-	 * - (boolean) Default columns appear in the entry list by default. Otherwise the user has to edit the
-	 *             columns and select the entry meta from the list.
-	 *
-	 * update_entry_meta_callback
-	 * - (string | array) The function that should be called when updating this entry meta value
-	 *
-	 * filter
-	 * - (array) An array containing the configuration for the filter used on the results pages,
-	 *           the entry list search and export entries page.
-	 *           The array should contain one element: operators. e.g. 'operators' => array('is', 'isnot', '>', '<')
-	 *
+	 * Registers approval-status entry meta.
 	 *
 	 * @param array $entry_meta An array of entry meta already registered with the gform_entry_meta filter.
 	 * @param int   $form_id    The Form ID

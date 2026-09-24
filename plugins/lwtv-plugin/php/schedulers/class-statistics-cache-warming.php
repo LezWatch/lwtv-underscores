@@ -250,7 +250,6 @@ class Statistics_Cache_Warming {
 			( new Dead_Stats() )->generate_characters_taxonomy( 'array', $taxonomy );
 		}
 
-		// This would trigger regeneration of death-related statistics
 		lwtv_plugin()->debug_log( 'statistics', 'Warming death statistics caches...' );
 	}
 
@@ -401,8 +400,6 @@ class Statistics_Cache_Warming {
 	 * key (generate()'s $limit is part of the key), so the page's actual
 	 * top-5 request needs its own warm — warming only the 25-row default
 	 * here would leave the top-5 lookup to build cold on first visit.
-	 * Previously only the cliché leaderboard existed and was unwarmed, so
-	 * it always rebuilt cold after an edit.
 	 *
 	 * @return void
 	 */

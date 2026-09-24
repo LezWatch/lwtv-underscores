@@ -4,17 +4,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 /**
  * Characters → Queer IRL: a single waffle chart (dot grid + headline +
- * compact legend), replacing the earlier donut-plus-two-progress-bars card
- * that showed the same 24%/76% split three times over. Per the design
- * handoff: no new data — same queer-vs-not counts the donut card already
- * read, just one visualization instead of three.
+ * compact legend) of the queer-vs-not split.
  *
  * Colors reuse Casting Gap's exact choice for this identical metric
- * (characters/overview.php's "Who Plays Queer Characters" section) rather
- * than the handoff mockup's own literal hex values — $lwtv-pink /
- * $lwtv-aro-grey, so the same statistic reads as the same colors wherever
- * it appears on the site, and per CLAUDE.md's real-token-over-hardcoded-hex
- * rule.
+ * (characters/overview.php's "Who Plays Queer Characters" section) —
+ * $lwtv-pink / $lwtv-aro-grey, so the same statistic reads as the same
+ * colors wherever it appears on the site.
  *
  * @package LezWatch.TV
  *
@@ -35,7 +30,7 @@ $qirl_tot = $qirl_yes + $qirl_no;
 $qirl_pct = ( $qirl_tot > 0 ) ? round( ( $qirl_yes / $qirl_tot ) * 100, 1 ) : 0.0;
 
 // 50 dots, each worth 2% — the closest whole-dot match to the real
-// percentage, same rounding the design handoff calls out (24.2% → 12 dots).
+// percentage (e.g. 24.2% → 12 dots).
 $qirl_dots_yes = ( $qirl_tot > 0 ) ? (int) round( ( $qirl_yes / $qirl_tot ) * 50 ) : 0;
 $qirl_dots_yes = max( 0, min( 50, $qirl_dots_yes ) );
 $qirl_dots_no  = 50 - $qirl_dots_yes;

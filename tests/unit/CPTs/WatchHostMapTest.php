@@ -2,11 +2,10 @@
 /**
  * Unit tests for host-based lez_watch_urls term resolution.
  *
- * The cases that matter are the ones exact-URL matching got wrong on the live
- * data — trailing slashes, `www.`, mixed case, a bare host — plus the two things
- * the old matcher got *right* and must keep getting right: subdomain precedence
- * (a term on 'abc.go.com' beats one on 'go.com') and never degrading to a public
- * suffix.
+ * The cases that matter are the ones exact-URL matching gets wrong on the live
+ * data — trailing slashes, `www.`, mixed case, a bare host — plus two things
+ * that must hold: subdomain precedence (a term on 'abc.go.com' beats one on
+ * 'go.com') and never degrading to a public suffix.
  *
  * @package lwtv-underscores
  */
@@ -46,8 +45,8 @@ class WatchHostMapTest extends TestCase {
 	}
 
 	/*
-	 * The shapes exact-URL matching failed on. Each of these is a real row from
-	 * the 2026-08-27 audit.
+	 * The shapes exact-URL matching fails on. Each of these is a real row from
+	 * the live data.
 	 */
 
 	public function test_trailing_slash_now_resolves(): void {
@@ -99,7 +98,7 @@ class WatchHostMapTest extends TestCase {
 	}
 
 	/*
-	 * Precedence the old matcher had, which must survive.
+	 * Subdomain precedence, which must hold.
 	 */
 
 	public function test_more_specific_subdomain_wins(): void {
@@ -253,7 +252,7 @@ class WatchHostMapTest extends TestCase {
 	}
 
 	public function test_ids_per_term_dedupes_a_show_reaching_one_term_through_two_hosts(): void {
-		// The double-count this replaces: HBO Max owns both hosts, and show 10
+		// The double-count to avoid: HBO Max owns both hosts, and show 10
 		// lists a link on each, so it must be counted once.
 		$map = Map::build(
 			array(

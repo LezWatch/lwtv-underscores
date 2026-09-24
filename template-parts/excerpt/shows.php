@@ -2,10 +2,6 @@
 /**
  * This content is called by all archival displays of shows
  *
- * It's used by the following files
- *      - archive-post_type_shows.php
- *      - taxonomy.php
- *
  * @package LezWatch.TV
  */
 

@@ -471,9 +471,9 @@ class Actors {
 	/**
 	 * Use WikiData Search to find the actor.
 	 *
-	 * Kept as the shape its callers expect -- claims plus a 'wikidata' key --
-	 * but the resolution behind it is now Identity::resolve(), so this and the
-	 * death audit agree about who an actor is.
+	 * Returns the shape its callers expect -- claims plus a 'wikidata' key --
+	 * with the resolution done by Identity::resolve(), so this and the death
+	 * audit agree about who an actor is.
 	 *
 	 * @param int $actor_id - The ID of the actor.
 	 *

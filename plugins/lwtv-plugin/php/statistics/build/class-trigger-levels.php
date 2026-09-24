@@ -29,7 +29,7 @@ class Trigger_Levels {
 	/**
 	 * The rail and bar numbers.
 	 *
-	 * Percent precision follows the handoff: one decimal everywhere,
+	 * Percent precision: one decimal everywhere,
 	 * whole numbers on the "1 in N" ratios.
 	 *
 	 * @param array $counts Level => count (low/medium/high; missing = 0).

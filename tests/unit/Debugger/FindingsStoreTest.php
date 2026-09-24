@@ -29,8 +29,7 @@ class FindingsStoreTest extends TestCase {
 
 	/**
 	 * Matches get_transient(): a row whose expiry is this exact second is gone,
-	 * not live for one more. The nine call sites were written against that
-	 * behaviour, so the replacement has to keep it.
+	 * not live for one more. Callers rely on that behaviour.
 	 */
 	public function test_expiry_on_the_exact_second_is_expired(): void {
 		$this->assertTrue( Findings_Store::expired( 1000, 1000 ) );

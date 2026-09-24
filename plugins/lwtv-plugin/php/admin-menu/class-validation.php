@@ -52,8 +52,8 @@ class Validation {
 	 *
 	 * One entry per tab, and for the report tabs this is the whole definition:
 	 * Validator\Report renders them all from this config, so a check cannot have
-	 * a tab without a scanner or copy. That is what stops 1.2 (findings keys
-	 * drifting) and 1.6 (tabs with nothing behind them) recurring.
+	 * a tab without a scanner or copy. That keeps findings keys from drifting and
+	 * stops a tab existing with nothing behind it.
 	 *
 	 * - name / desc: shown in the tab picker and the intro.
 	 * - option:      key inside the debugger status option. Drives the badge and
@@ -206,12 +206,10 @@ class Validation {
 			/*
 			 * Counts hosts with no term, written by Watch_Hosts::scan_unregistered().
 			 *
-			 * An earlier version badged *contested* hosts instead, on the grounds
-			 * that a number which never reaches zero stops being read. Host
-			 * matching took that number from ~130 to 35 and it now falls as the
-			 * list is worked, so it is worth seeing. Contested hosts keep their own
-			 * status entry from the `watchhosts` check and their own section at
-			 * the top of the tab, which is louder than a badge anyway.
+			 * The number falls as the list is worked, so it is worth seeing.
+			 * Contested hosts keep their own status entry from the `watchhosts`
+			 * check and their own section at the top of the tab, which is louder
+			 * than a badge anyway.
 			 */
 			'option'   => CPT_Watch_Hosts::STATUS_KEY,
 			'findings' => CPT_Watch_Hosts::FINDINGS_UNREGISTERED,
@@ -565,10 +563,8 @@ class Validation {
 	/**
 	 * The overview: every check, what it looks for, and what it last found.
 	 *
-	 * Replaced a bulleted list of links plus a separate "Current Status" list that
-	 * repeated some of the same checks under different names, so you had to match
-	 * them up by eye. One row per check, with its count in it, removes that
-	 * translation step.
+	 * One row per check, with its count in it, so nothing has to be matched up
+	 * by eye across separate lists.
 	 *
 	 * Counts come from tab_counts(), the same place the tab picker's badges do, so
 	 * this table cannot disagree with the badge or with the report it links to.
@@ -650,7 +646,7 @@ class Validation {
 									 * `stored`. A check that ran and found nothing
 									 * records a count of zero against a real
 									 * timestamp -- testing the count instead
-									 * reported a clean check as never run, which is
+									 * would report a clean check as never run, which is
 									 * both wrong and alarming in the wrong
 									 * direction.
 									 */

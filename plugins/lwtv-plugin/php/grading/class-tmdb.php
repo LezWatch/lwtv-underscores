@@ -89,8 +89,7 @@ class TMDB {
 				$vote      = Tmdb_Response::vote_average( $tmdb_data, CPT_Shows::SLUG );
 
 				// get_tmdb_info() hands back a /tv/{id} detail object once the show
-				// has a TMDB ID and a /find/ envelope before that, and reading only
-				// one of the two is what made this score go quiet. Tmdb_Response
+				// has a TMDB ID and a /find/ envelope before that. Tmdb_Response
 				// knows both shapes.
 				//
 				// TMDB votes are 0.5-10; lezshows_3rd_scores holds 0-100. A null

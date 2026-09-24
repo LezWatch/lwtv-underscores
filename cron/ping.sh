@@ -1,6 +1,5 @@
 #!/bin/bash
 
-# Assign command-line arguments to variables
 UUID=$1
 SUCCEEDED=$2
 
@@ -17,5 +16,4 @@ if [ "$SUCCEEDED" != "true" ]; then
 	STATUS="/fail"
 fi
 
-# Execute the curl command to send the ping
 /usr/bin/curl -X POST -m 10 --retry 5 -o /dev/null "$BASEURL/$UUID$STATUS"

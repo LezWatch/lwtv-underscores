@@ -185,7 +185,7 @@ class Findings {
 	 * @return string
 	 */
 	private static function flatten( string $problem ): string {
-		// Every break variant the old messages used, plus the real one.
+		// Every spelling of a <br> tag a message might carry.
 		$problem = (string) preg_replace( '#<\s*/?\s*br\s*/?\s*>#i', '; ', $problem );
 
 		// phpcs:ignore WordPress.WP.AlternativeFunctions.strip_tags_strip_tags -- wp_strip_all_tags() is unavailable to this class's unit tests, which run with no WordPress bootstrap; this class is documented PURE for exactly that reason.

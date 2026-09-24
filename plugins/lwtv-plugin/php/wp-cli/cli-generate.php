@@ -217,7 +217,7 @@ class WP_CLI_LWTV_Generate {
 		 * Size-based, not daily: a 4KB log rotated every night just buries the
 		 * useful history under a pile of near-empty files. Log::append() has its
 		 * own mid-request backstop at a higher threshold for runaway loops
-		 * between cron runs. See DEBUGGER-REVIEW.md 6.
+		 * between cron runs.
 		 */
 		$rotated = Log::rotate();
 		if ( '' !== $rotated ) {

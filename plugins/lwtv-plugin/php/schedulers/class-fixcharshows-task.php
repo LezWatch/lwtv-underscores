@@ -7,10 +7,6 @@
  * field to scalar values. This helps maintain data consistency for character
  * show group associations.
  *
- * Usage:
- *   - The task is triggered via the 'lwtv_fixcharshows_task' action hook.
- *   - Intended for use in scheduled or batch operations to clean up post meta.
- *
  * @package LWTV\Schedulers
  */
 

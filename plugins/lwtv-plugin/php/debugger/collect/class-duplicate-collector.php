@@ -12,10 +12,9 @@
  * wp_unique_post_slug() and earns the `-2`.
  *
  * So actors also come from name_key_pairs(), which pairs them on the comparable
- * name keys instead. "Cynthia Hicks" and "Cynthia Jimenez-Hicks" were one
- * person under two slugs, neither suffixed, sharing an IMDb ID -- the evidence
- * the rules need was already stored and the slug scan simply never handed over
- * the pair.
+ * name keys instead. That catches one person entered under two different names
+ * (and so two unsuffixed slugs) sharing an IMDb ID, a pair the slug scan never
+ * hands over.
  *
  * @package LWTV
  */
@@ -145,10 +144,9 @@ class Duplicate_Collector {
 	 * and grouping them is linear.
 	 *
 	 * Both key families count. The loose first-and-last-part key is the one that
-	 * catches a dropped or added middle name, which is exactly the shape the
-	 * Cynthia Hicks duplicate had. Noise is not a concern here the way it is on
-	 * the edit screen, because Duplicate_Rules still requires a matching IMDb ID
-	 * before it will call anything a duplicate.
+	 * catches a dropped or added middle name. Noise is not a concern here the way
+	 * it is on the edit screen, because Duplicate_Rules still requires a matching
+	 * IMDb ID before it will call anything a duplicate.
 	 *
 	 * The lower post ID is treated as the original, so a pair is reported once
 	 * and the newer post is the one flagged -- the same convention the slug scan

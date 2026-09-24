@@ -571,9 +571,8 @@ class WP_CLI_LWTV_WaysToWatch {
 			if ( 'error' === $result['status'] ) {
 				++$failed;
 
-				// Recorded, where it used to be dropped. Counting the failure is
-				// what lets a host that is genuinely gone stop appearing on the
-				// "still to check" list after MAX_ATTEMPTS.
+				// Counting the failure is what lets a host that is genuinely gone
+				// stop appearing on the "still to check" list after MAX_ATTEMPTS.
 				if ( ! $dry_run ) {
 					Watch_Host_Names::fail( $host );
 				}

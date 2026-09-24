@@ -48,7 +48,6 @@ class TMDB_Batch_Task {
 	 * Constructor
 	 */
 	public function __construct() {
-		// Register Action Scheduler hook
 		add_action( self::AS_HOOK, array( $this, 'process_tmdb_batch' ) );
 	}
 
@@ -66,13 +65,11 @@ class TMDB_Batch_Task {
 			return false;
 		}
 
-		// Check if already has TMDB ID
 		if ( $this->has_tmdb_id( $post_id, $post_type ) ) {
 			lwtv_plugin()->debug_log( 'tmdb', "Post {$post_id} already has TMDB ID" );
 			return false;
 		}
 
-		// Add to queue
 		$queued_posts   = $this->get_queued_posts();
 		$queued_posts[] = array(
 			'post_id'   => $post_id,
@@ -82,7 +79,6 @@ class TMDB_Batch_Task {
 
 		$this->set_queued_posts( $queued_posts );
 
-		// Schedule batch processing if not already scheduled
 		if ( ! as_next_scheduled_action( self::AS_HOOK ) ) {
 			as_schedule_single_action( time() + 30, self::AS_HOOK, array(), self::AS_GROUP );
 			lwtv_plugin()->debug_log( 'tmdb', 'Scheduled TMDB batch processing' );
@@ -107,7 +103,6 @@ class TMDB_Batch_Task {
 
 		lwtv_plugin()->debug_log( 'tmdb', 'Processing ' . count( $queued_posts ) . ' posts for TMDB data' );
 
-		// Process in batches
 		$batches         = array_chunk( $queued_posts, self::BATCH_SIZE );
 		$processed_count = 0;
 		$success_count   = 0;
@@ -125,7 +120,6 @@ class TMDB_Batch_Task {
 			}
 		}
 
-		// Clear the queue
 		$this->set_queued_posts( array() );
 
 		lwtv_plugin()->debug_log( 'tmdb', "Completed TMDB batch processing: {$success_count}/{$processed_count} successful" );
@@ -192,7 +186,6 @@ class TMDB_Batch_Task {
 		$post_type = $post_data['post_type'];
 
 		try {
-			// Get TMDB data
 			$tmdb_data = ( new CPTs() )->get_tmdb_info( $post_id );
 
 			if ( ! $tmdb_data ) {
@@ -239,7 +232,6 @@ class TMDB_Batch_Task {
 			return true;
 		}
 
-		// Increment request counter
 		$this->increment_request_count();
 		return false;
 	}

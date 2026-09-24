@@ -5,10 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Characters → Most: "The Records" — a five-column spotlight row (the #1
  * character in each category) followed by a Full Rankings table (ranks 1-5
- * across all five categories). Replaces the earlier five-stacked-panels
- * layout with the two-part design from the "Characters Most - Records"
- * handoff: same five data sources, same top-5 depth, laid out as spotlight +
- * table instead of five separate ranked-bars panels.
+ * across all five categories).
  *
  * Categories: most clichés (existing, trimmed from a top-25 list), most
  * shows (crossover/recurring-guest characters, distinct show count via the

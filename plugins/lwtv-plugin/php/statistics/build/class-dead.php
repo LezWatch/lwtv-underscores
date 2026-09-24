@@ -103,7 +103,7 @@ class Dead {
 
 			// Build the set of character IDs that died in $year from a single
 			// postmeta scan (shared request cache) rather than a get_field() call
-			// per character, which was an N+1 over every dead character.
+			// per character, which would be an N+1 over every dead character.
 			$died_this_year = array();
 			foreach ( $this->get_death_date_rows() as $row ) {
 				// ACF date_picker raw postmeta is Ymd; legacy rows may still be Y-m-d.
@@ -500,10 +500,10 @@ class Dead {
 				}
 
 				// Canonicalize to Y-m-d. ACF's date_picker stores raw postmeta as
-				// Ymd (dashless) while legacy rows are Y-m-d. Keying on the raw value
-				// let krsort() — a string sort — interleave the two formats wrong
-				// (a dashless date sorts above a dashed one in the same year), which
-				// both misordered the table and corrupted the pairwise "days since"
+				// Ymd (dashless) while legacy rows are Y-m-d. Keyed on the raw value,
+				// krsort() — a string sort — would interleave the two formats wrong
+				// (a dashless date sorts above a dashed one in the same year),
+				// misordering the table and corrupting the pairwise "days since"
 				// gaps. Normalizing first makes the string sort chronological and
 				// merges any day stored under both formats.
 				$digits    = preg_replace( '/\D/', '', $died_raw );
@@ -523,7 +523,7 @@ class Dead {
 				);
 			}
 
-			// sort by date (newest first) — keys are now canonical Y-m-d, so a
+			// sort by date (newest first) — keys are canonical Y-m-d, so a
 			// string reverse-sort is chronological.
 			krsort( $array );
 

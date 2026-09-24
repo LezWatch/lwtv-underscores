@@ -43,7 +43,6 @@ class Cache_Task {
 
 		lwtv_plugin()->debug_log( 'caching', "Processing cache task for {$post_type} ID: {$post_id}" );
 
-		// Get a list of URLs to flush
 		$clear_urls = ( new Cache() )->collect_cache_urls_for_actors_or_shows( $post_id );
 
 		// If we've got a list of URLs, then flush.

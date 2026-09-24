@@ -1115,10 +1115,9 @@ class WP_CLI_LWTV_Audit {
 			}
 
 			// Throttle only when we actually asked WikiData something. Identity
-			// resolution is the backfill's job now, so this audit fetches an
-			// entity only for actors it can already identify -- and pausing half
-			// a second for each of the thousands it cannot would make a full run
-			// cost hours of doing nothing.
+			// resolution is the backfill's job, so this audit fetches an entity
+			// only for actors it can already identify; pausing for the rest
+			// would add hours to a full run.
 			if ( '' !== $result['qid'] ) {
 				usleep( self::WAIT_TIME );
 			}

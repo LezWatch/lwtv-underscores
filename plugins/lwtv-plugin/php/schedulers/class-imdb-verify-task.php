@@ -287,16 +287,12 @@ class Imdb_Verify_Task {
 	/**
 	 * The IMDb ID TMDB holds for an actor.
 	 *
-	 * Reuses _Components\CPTs::get_tmdb_info(), which already handles the API key
-	 * check and TMDB's status_message errors -- but not its choice of endpoint.
-	 * That method returns a /person/{id} detail object only while the post has a
-	 * TMDB ID; without one it falls back to /find/{imdb_id}, whose results carry
-	 * no imdb_id field at all. Asking there wastes a request on a response that
-	 * cannot answer, so bail before spending it.
+	 * Reuses _Components\CPTs::get_tmdb_info(). Without a TMDB ID that method
+	 * falls back to /find/{imdb_id}, whose results carry no imdb_id field, so
+	 * bail before spending the request.
 	 *
-	 * The check is here rather than only in queue_post() because verify() is
-	 * public: the CLI and the debugger both call it directly, bypassing the
-	 * queue's gate.
+	 * The check is here rather than only in queue_post() because the CLI and the
+	 * debugger call verify() directly, bypassing the queue's gate.
 	 *
 	 * @param int $post_id Actor post ID.
 	 *

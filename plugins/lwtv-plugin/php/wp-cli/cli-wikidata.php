@@ -324,10 +324,8 @@ class WP_CLI_LWTV_WikiData {
 
 			\WP_CLI::log( $name . ': not looked up -- ' . $decision['reason'] . '.' );
 
-			// Three genuinely different outcomes, and this line used to report the
-			// first one for all of them: trusted_qid() did not read the ignore
-			// toggle, so an actor an editor had ignored still had their stale
-			// QID announced as the one the audit would use.
+			// Three genuinely different outcomes: a trusted QID, ignored by an
+			// editor, or nothing to use.
 			if ( '' !== $trusted['qid'] ) {
 				\WP_CLI::log( 'The death audit will use ' . $trusted['qid'] . ' (' . $trusted['source'] . ').' );
 			} elseif ( $identity->is_ignored( $actor_id ) ) {
@@ -588,14 +586,8 @@ class WP_CLI_LWTV_WikiData {
 
 		$counts = array();
 
-		// On the interpolated {$clause}: every string in $groups is composed a
-		// few lines up from class constants (Identity::META_*,
-		// Qid_Trust::TRUSTED, CPT_Actors::SLUG) and literal SQL. No request
-		// data, CLI argument or meta value reaches it, and $groups is a closed
-		// map iterated by key, so there is no path for a caller to add one. The
-		// three values that *are* dynamic are %s placeholders below. Composing
-		// these as placeholders is not possible -- prepare() escapes values, not
-		// SQL fragments, and would quote each clause into a string literal.
+		// {$clause} is built only from class constants and literal SQL; the
+		// dynamic values are %s placeholders below.
 		foreach ( $groups as $key => $clause ) {
 			// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 			$counts[ $key ] = (int) $wpdb->get_var(

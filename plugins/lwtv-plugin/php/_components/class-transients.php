@@ -119,11 +119,9 @@ class Transients implements Component, Templater {
 	 * flag exists to solve. Statistics are the case it was written for.
 	 *
 	 * Do not use a transient at all for a **store** -- data with no cheaper source
-	 * to fall back to. There used to be a get_stored() here that read transients
-	 * while promising store semantics, and it could not keep that promise: on
-	 * production WP-CLI and web requests do not share an object cache tier, so
-	 * findings written by cron were invisible to wp-admin. Stores are options now.
-	 * See Debugger\Findings_Store.
+	 * to fall back to. On production WP-CLI and web requests do not share an
+	 * object cache tier, so a transient written by cron can be invisible to
+	 * wp-admin. Stores go in options; see Debugger\Findings_Store.
 	 *
 	 * @param  string      $transient The Transient name
 	 * @return string|bool            Transient value (or false)

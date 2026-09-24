@@ -171,12 +171,7 @@ class WP_CLI_LWTV_Name_Keys {
 	/**
 	 * Drop the in-process caches that grow across a long backfill.
 	 *
-	 * Deliberately NOT wp_cache_flush(): with a persistent object cache that
-	 * would empty the whole site's cache, taking the front end down with it for
-	 * the sake of a maintenance script. This clears only this process's local
-	 * copy, so a persistent backend is untouched and simply gets re-read. Same
-	 * reasoning as cli-calc.php, which does this between batches for the same
-	 * reason.
+	 * Deliberately NOT wp_cache_flush(). See free_memory() in cli-calc.php.
 	 */
 	private function free_memory(): void {
 		global $wpdb, $wp_object_cache;

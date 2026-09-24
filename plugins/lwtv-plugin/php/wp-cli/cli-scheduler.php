@@ -315,13 +315,7 @@ class WP_CLI_LWTV_Scheduler {
 		/*
 		 * There is deliberately no "Transient Cleanup" section here.
 		 *
-		 * One was added in 6892468d and removed 85 minutes later in c05459e0
-		 * along with schedulers/class-transient-cleanup-task.php. The removal
-		 * missed this block, which went on calling the deleted
-		 * get_transient_cleanup_status() and fataled the whole command. Cleaned
-		 * up 2026-08-27.
-		 *
-		 * Why nothing replaced it: _Components\Transients currently delegates to
+		 * _Components\Transients currently delegates to
 		 * core, so every LWTV transient is an ordinary WordPress transient and
 		 * core's delete_expired_transients() (daily, via wp_scheduled_delete)
 		 * already expires them.
@@ -330,8 +324,7 @@ class WP_CLI_LWTV_Scheduler {
 		 * Transients wrapper exists as a seam for swapping the store -- a
 		 * separate database, say -- and a store that is not the options table
 		 * would not be swept by core. If that happens, expiry becomes the new
-		 * backend's job, and this section is worth rebuilding rather than
-		 * reinventing: see the two commits above.
+		 * backend's job, and this section is worth rebuilding.
 		 */
 
 		\WP_CLI::success( 'Scheduler status retrieved.' );
