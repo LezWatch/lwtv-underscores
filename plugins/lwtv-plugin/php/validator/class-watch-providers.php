@@ -31,7 +31,7 @@
  * same collisions for cron, the CLI and this tab's count badge, which need a
  * stored number. This tab does not read its findings.
  *
- * Three actions, and they are not the same shape:
+ * Two kinds of action, and they are not the same shape:
  *
  *   - Assigning or creating a term is a local write. Instant, safe in a request.
  *   - Looking up names fetches third-party hosts over HTTP. That is capped hard

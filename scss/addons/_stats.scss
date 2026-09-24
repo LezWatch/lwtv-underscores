@@ -7072,9 +7072,8 @@ canvas {
 		}
 	}
 
-	// Solid tiles (Death Overview + Station "At A Glance") — bespoke fills,
-	// hardcoded per the handoffs (same in light + dark, white text carries
-	// contrast). Each entry: (solid fill, inset-chip surface).
+	// Solid tiles (Death Overview + Station "At A Glance"). Same in light and
+	// dark; white text carries contrast. Each entry: (solid fill, inset-chip surface).
 	$death-toll: (
 		"crimson": (colors.$lwtv-crimson-deep, colors.$lwtv-crimson-light),
 		"raspberry": (colors.$lwtv-raspberry-deep, colors.$lwtv-raspberry-light),

@@ -2,9 +2,8 @@
 /*
  * WP CLI Commands for previewing longevity-weighted show scores.
  *
- * READ ONLY. This command writes no post meta and mutates nothing. It exists so
- * the effect of the longevity model can be inspected against real shows before
- * it is switched on.
+ * READ ONLY. This command writes no post meta and mutates nothing. It shows how
+ * the live longevity model scores real shows.
  *
  */
 

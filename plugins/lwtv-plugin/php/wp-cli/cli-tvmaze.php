@@ -639,9 +639,9 @@ class WP_CLI_LWTV_TVMaze {
 	 * IMDb lookups only. TVMaze can also be searched by name, but a name match is
 	 * a guess -- /search/shows is fuzzy and /singlesearch/shows is explicitly
 	 * undefined about which show it returns when titles collide -- and a wrong
-	 * TVMaze ID feeds wrong aired years straight into the show score. The 37
-	 * shows with no IMDb ID are skipped rather than guessed at. See the file
-	 * header: that is our choice, not a TVMaze listing requirement.
+	 * TVMaze ID feeds wrong aired years straight into the show score. Shows with
+	 * no IMDb ID are skipped rather than guessed at. That is our choice, not a
+	 * TVMaze listing requirement.
 	 *
 	 * @param int $show_id Show post ID.
 	 *

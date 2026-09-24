@@ -2,8 +2,8 @@
 /**
  * Cache Batch Task
  *
- * Handles batch processing of cache invalidation operations using Action Scheduler
- * Replaces the shutdown-based cache queue with reliable background processing
+ * Batches cache invalidation through Action Scheduler. Runs alongside
+ * Cache_Queue, which still clears on shutdown.
  *
  * @package lwtv-plugin
  */

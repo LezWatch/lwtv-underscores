@@ -30,8 +30,7 @@ class Imdb_Collector {
 	 * IMDb is not missing anything, but there is no equivalent for actors.
 	 *
 	 * `no_oracle_meta` is narrower than it looks. It is the TVMaze "no entry of its
-	 * own" flag, and it gates only the *staleness* check
-	 *
+	 * own" flag, and it gates only the *staleness* check:
 	 * `lezshows_imdb_canonical` is whatever TVMaze last said, so with no TVMaze
 	 * entry there is nothing to compare our ID against. It is not a general "stop
 	 * reporting this show" switch: `not_set` and `invalid` ignore it, and use

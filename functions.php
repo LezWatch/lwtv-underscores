@@ -342,14 +342,7 @@ function register_navwalker() {
 }
 add_action( 'after_setup_theme', 'register_navwalker' );
 
-/*
- * Pagination
- *  @usage
- *    1) setup WP_Query with a $paged variable
- *      (https://codex.wordpress.org/Pagination#Adding_the_.22paged.22_parameter_to_a_query)
- *    2) Wherever you'd like the pagination to appear, add <?php echo page_navi( $query ); ?>
- *       where $query is the entire $query setup in the previous step
-*/
+// Bootstrap pagination: wp_bootstrap_pagination().
 require_once 'inc/wp_bootstrap_pagination.php';
 
 // Add classes to “next_post_link” and “previous_post_link”.

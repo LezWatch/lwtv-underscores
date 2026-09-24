@@ -20,7 +20,7 @@ final class CharacterScoreTest extends TestCase {
 
 	/**
 	 * Transparent (#655) as the reference fixture, matching the decomposition
-	 * recorded in docs/plans/show-score-longevity.md:
+	 * recorded in docs/plans/maybe-later/show-score-longevity.md:
 	 *
 	 *   base (roles)      +41
 	 *   queer-irl bonus  +190   <- 19 characters x 10

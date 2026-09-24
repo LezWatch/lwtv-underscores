@@ -7,11 +7,6 @@
  * causing server overload. This code shows the individuals as
  * headshots with alt-text as their character post content.
  *
- * It's used by the following files
- *      - archive-post_type_characters.php
- *      - content-post_type_shows.php
- *      - taxonomy.php
- *
  * @package LezWatch.TV
  */
 
