@@ -301,12 +301,13 @@ heartbeat UUID on success or failure.
 
 ├── README.md
 ├── ping.sh - Shared helper that POSTs a success/`/fail` ping for a given UUID
-├── debug.sh - `wp lwtv generate debug` (site debugger scan) → UUID `run-debug-checks`
+├── debug.sh - `wp lwtv generate debug` (site debugger scan) → UUID `run-debug-checks`. Manual only; daily.sh runs this step
 ├── hourly.sh - `wp lwtv generate cron hourly` → UUID `due-now-hourly`
-├── lists.sh - `wp lwtv generate lists` (rebuild generated list pages) → UUID `generate-lists`
+├── lists.sh - `wp lwtv generate lists` (rebuild generated list pages) → UUID `generate-lists`. Manual only; daily.sh runs this step
 ├── ontheten.sh - `wp cron event run --due-now` every ten minutes; the real WP-Cron driver → UUID `due-now-10-min`
-├── otd.sh - Flushes the object cache, then `wp lwtv generate otd` → UUID `set-char-and-show-otd`
-└── tvmaze.sh - `wp lwtv generate tvmaze` (refresh show data from TVmaze) → UUID `update-tvmaze`
+├── otd.sh - `wp lwtv generate otd` → UUID `set-char-and-show-otd`
+├── tvmaze.sh - `wp lwtv generate tvmaze` (refresh show data from TVmaze) → UUID `update-tvmaze`. Manual only; daily.sh runs this step
+└── daily.sh - `wp lwtv generate cron daily` (lists, BYQ refresh, TVMaze, log rotation, debug check, stats warm) → UUID `run-daily`
 
 ## Docs - `/docs/`
 

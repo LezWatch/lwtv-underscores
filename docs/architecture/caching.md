@@ -31,7 +31,7 @@ The background work queues follow the same rule through `_Helpers\Queue_Store`: 
 
 ## CLI and web cache tiers
 
-On production, WP-CLI does not load the object-cache drop-in that web requests use. `get_transient()` therefore asks whichever tier the current process has: web requests see the persistent object cache (Redis), CLI sees the `_transient_*` rows in `wp_options`. A transient written by a cron job can be invisible to wp-admin, and the reverse.
+On production, WP-CLI does not load the object-cache drop-in that web requests use (`wp cache type` reports `Default`). So `wp cache flush` from CLI clears nothing that web requests can see. `get_transient()` therefore asks whichever tier the current process has: web requests see the persistent object cache (Redis), CLI sees the `_transient_*` rows in `wp_options`. A transient written by a cron job can be invisible to wp-admin, and the reverse.
 
 This is the main reason stores go in options: `get_option()` sees the same row from either side. It is also why the one-shot findings migration (`wp lwtv migrate acf debugfindings`, see [cmb2-to-acf.md](../operations/migrations/cmb2-to-acf.md#debugger-findings-to-options)) reads the option rows directly instead of calling `get_transient()`.
 
@@ -124,7 +124,7 @@ What each step in `Schedulers\Statistics_Cache_Warming` ([class-statistics-cache
 | `warm_nation_statistics`, `warm_station_statistics` | `get_nation_summaries()` / `get_station_summaries()` and `get_top_nations( 10 )` / `get_top_stations( 10 )` | nation and station views (via `Stats_Generator`), top-10 lists in `main.php` |
 | `warm_cliche_leaders_statistics` | `generate( 5 )` on `Cliche_Leaders`, `Character_Show_Leaders`, `Character_Actor_Leaders`, `Character_Death_Leaders`, `Character_Longevity_Leaders` | `characters/most-cliches.php` (`$lwtv_most_limit = 5`) |
 
-**Leaderboard keys include the limit.** Each leaderboard caches under `<name>_top<limit>`, so the page's top-5 request needs its own warm. Warming only the default (`TOP_LIMIT`, 25) would leave the top-5 lookup to build cold. The reverse is also true: `characters/overview.php` calls `Cliche_Leaders::generate()` with the default limit, and that key is not warmed.
+**Leaderboard keys include the limit.** Each leaderboard caches under `<name>_top<limit>`, so the page's top-5 request needs its own warm. Warming only the default (`TOP_LIMIT`, 25) would leave the top-5 lookup to build cold. `characters/overview.php` needs only the top clichéd character, so it reads the warmed top-5 key rather than the default (unwarmed) 25.
 
 All five leaderboards are in the `derived` tier (`cliche_leaders_characters_*`, `character_show_leaders_*`, `character_actor_leaders_*`, `character_death_leaders_*`, `character_longevity_leaders_*`), so a show, character or actor save clears them.
 

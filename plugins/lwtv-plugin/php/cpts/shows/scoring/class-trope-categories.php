@@ -26,7 +26,7 @@ class Trope_Categories {
 	const MAYBE = array( 'big-queer-wedding', 'coming-out', 'subtext' );
 
 	/**
-	 * BAD tropes are always good.
+	 * BAD tropes are always bad.
 	 */
 	const BAD = array( 'queerbashing', 'in-prison', 'queerbaiting', 'big-bad-queers' );
 

@@ -351,7 +351,7 @@ class On_Air_Optimized {
 	/**
 	 * Statistics On Air - Optimized with single query
 	 *
-	 * Note: This is being phased out.
+	 * Used for the per-nation and per-station on-air counts.
 	 *
 	 * Trying to do math of who's on what year.
 	 * Uses a single query instead of an N+1 pattern.

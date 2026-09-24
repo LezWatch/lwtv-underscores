@@ -183,7 +183,9 @@ if ( ! empty( $idx_top_cliche['name'] ) && (int) $character_count > 0 ) {
 }
 
 // Most Clichés → the single most-clichéd character.
-$idx_cliche_leaders = ( new Build_Cliche_Leaders() )->generate();
+// Only #1 is used. Top 5 is the key the cache warm builds (for Most Clichés),
+// and ORDER BY count, post_date makes its #1 the same as the full list's.
+$idx_cliche_leaders = ( new Build_Cliche_Leaders() )->generate( 5 );
 $idx_top_cliched    = ! empty( $idx_cliche_leaders ) ? reset( $idx_cliche_leaders ) : false;
 if ( ! empty( $idx_top_cliched['name'] ) ) {
 	$idx_cards['most-cliches'] = array(

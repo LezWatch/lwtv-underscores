@@ -15,6 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+use LWTV\_Components\Calendar;
 use LWTV\_Helpers\Calendar_Object_Pool;
 
 class Data_Processor {
@@ -34,8 +35,9 @@ class Data_Processor {
 	 * @return array                Processed calendar data
 	 */
 	public function process_calendar_data( array $raw_calendar, string $date_query = 'today' ): array {
-		// Check for cached processed data
-		$cache_key   = self::CACHE_PREFIX . $date_query;
+		// Keyed on the ICS file's mtime as well, so the nightly download is
+		// picked up at once in every cache tier. See docs/architecture/calendar.md#cache-versioning.
+		$cache_key   = self::CACHE_PREFIX . $date_query . '_' . self::source_version();
 		$cached_data = lwtv_plugin()->get_transient( $cache_key );
 
 		if ( false !== $cached_data && is_array( $cached_data ) ) {
@@ -115,48 +117,19 @@ class Data_Processor {
 	}
 
 	/**
-	 * Clear processed calendar cache
+	 * Version of the source data: the TVMaze ICS file's modification time.
 	 *
-	 * @param  string $date_query Date query to clear (optional)
-	 * @return void
+	 * @return string Unix mtime, or '0' when the file is missing.
 	 */
-	public function clear_cache( string $date_query = '' ): void {
-		if ( empty( $date_query ) ) {
-			// Clear all processed calendar caches
-			global $wpdb;
-			$wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_lwtv_processed_calendar_%'" );
-			$wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_timeout_lwtv_processed_calendar_%'" );
-		} else {
-			// Clear specific cache
-			$cache_key = self::CACHE_PREFIX . $date_query;
-			lwtv_plugin()->delete_transient( $cache_key );
-		}
-	}
+	private static function source_version(): string {
+		$ics = ( new Calendar() )->get_tvmaze_ics();
 
-	/**
-	 * Get cache statistics
-	 *
-	 * @return array
-	 */
-	public function get_cache_stats(): array {
-		global $wpdb;
-
-		$cache_keys = $wpdb->get_results(
-			"SELECT option_name, option_value FROM {$wpdb->options}
-			WHERE option_name LIKE '_transient_lwtv_processed_calendar_%'
-			AND option_name NOT LIKE '%_timeout_%'"
-		);
-
-		$stats = array(
-			'cache_count' => count( $cache_keys ),
-			'cache_keys'  => array(),
-		);
-
-		foreach ( $cache_keys as $cache ) {
-			$key                   = str_replace( '_transient_', '', $cache->option_name );
-			$stats['cache_keys'][] = $key;
+		if ( false === $ics ) {
+			return '0';
 		}
 
-		return $stats;
+		$mtime = filemtime( $ics );
+
+		return false === $mtime ? '0' : (string) $mtime;
 	}
 }

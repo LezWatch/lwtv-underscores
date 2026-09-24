@@ -46,8 +46,11 @@ In the processed show array, `show_name` is plain text and must be escaped at ou
 
 ## Cache versioning
 
-Processed calendar data is cached under `Data_Processor::CACHE_PREFIX` plus the date query, for `DAY_IN_SECONDS`. The prefix carries a version suffix (currently `lwtv_processed_calendar_v4_`).
+Processed calendar data is cached for `DAY_IN_SECONDS` under `Data_Processor::CACHE_PREFIX`, the date query, and the modification time of `uploads/tvmaze.ics` (`lwtv_processed_calendar_v4_<date>_<mtime>`).
 
-**Bump the version whenever the shape of the processed array changes.** Cached payloads in the old shape are then ignored instead of being served to views that no longer understand them. `Data_Processor::clear_cache()` with no argument deletes every `lwtv_processed_calendar_*` transient row, but only from `wp_options`: it will not reach a persistent object cache (see [caching.md](caching.md#cli-and-web-cache-tiers)). A version bump works under either.
+- **The mtime** means the nightly `wp lwtv generate tvmaze` download is picked up on the next page load. The cron runs in CLI and can't delete a web-side cache entry (see [caching.md](caching.md#cli-and-web-cache-tiers)), so the key changes instead. Old keys expire on their TTL. `download_tvmaze()` also purges the `/calendar/` page cache, so the rebuilt page uses the new key.
+- **The version suffix** (`v4`): bump it whenever the shape of the processed array changes, so payloads in the old shape are ignored rather than served to views that no longer understand them.
+
+There is no bulk "clear calendar cache" call. Changing either part of the key is how the cache is invalidated.
 
 `Names::resolve()` results are memoised on the shared `Names` instance from `Calendar_Object_Pool` for the request, because the same show recurs across the three weeks the calendar renders. `Calendar_Object_Pool::clear()` releases them.

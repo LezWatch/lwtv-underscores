@@ -8,16 +8,16 @@ Background mechanics (Action Scheduler, queues, time budgets) are in [scheduling
 
 The server crontab runs the shell wrappers in [`cron/`](../../cron/). The copies in the repo are a backup and are not deployed. The API paths they reference are locked by IP.
 
-| Script | Runs | Healthcheck ID |
-|---|---|---|
-| `hourly.sh` | `wp lwtv generate cron hourly` | `due-now-hourly` |
-| `ontheten.sh` | `wp cron event run --due-now` | `due-now-10-min` |
-| `debug.sh` | `wp lwtv generate debug` (today's check) | `run-debug-checks` |
-| `lists.sh` | `wp lwtv generate lists` | `generate-lists` |
-| `otd.sh` | `wp cache flush`, then `wp lwtv generate otd` | `set-char-and-show-otd` |
-| `tvmaze.sh` | `wp lwtv generate tvmaze` | `update-tvmaze` |
+| Script | Runs | Schedule | Healthcheck ID |
+|---|---|---|---|
+| `ontheten.sh` | `wp cron event run --due-now` | every 10 minutes | `due-now-10-min` |
+| `hourly.sh` | `wp lwtv generate cron hourly` | hourly | `due-now-hourly` |
+| `otd.sh` | `wp lwtv generate otd` | 09:00 | `set-char-and-show-otd` |
+| `daily.sh` | `wp lwtv generate cron daily` (see [Daily run](#daily-run)) | `@daily` (midnight, server time) | `run-daily` |
 
-The times each script runs are set in the server crontab, which is not in the repo. The repo also has no wrapper for `wp lwtv generate cron daily` (described below), although `CLAUDE.md` names it as the daily entry point. Check the server crontab to see which of the two drives the daily debug check, so that it does not run twice.
+The crontab lives in the DreamHost panel (inside its managed block, so edit it there, not by hand). Each entry is wrapped in `setlock -n`, so a run that is still going when the next one is due is skipped rather than doubled. DreamHost runs each script as `sh -c <path>`, so the script on the server must be executable (`chmod +x`); the repo copies are stored as 644.
+
+`tvmaze.sh`, `debug.sh` and `lists.sh` each run one step of the daily run on its own. They are kept for running a step by hand and are not scheduled: scheduling them alongside `daily.sh` would run those steps twice.
 
 Every wrapper follows the same pattern:
 
