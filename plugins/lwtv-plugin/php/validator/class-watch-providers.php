@@ -634,10 +634,11 @@ class Watch_Providers {
 			<span class="description">
 				<?php
 				printf(
-					/* translators: 1: number of hosts still to check, 2: WP-CLI command, already wrapped in a code element. */
-					wp_kses_post( __( 'Asks each site what it calls itself, a few at a time. %1$d still to check; %2$s does the rest. Hosts that never answer are not recorded, so they stay on this list and are retried each run.', 'lwtv' ) ),
+					/* translators: 1: number of hosts still to check, 2: WP-CLI command, already wrapped in a code element, 3: maximum attempts per host. */
+					wp_kses_post( __( 'Asks each site what it calls itself, a few at a time. %1$d still to check; %2$s does the rest. A host that does not answer is asked again on later runs, up to %3$d times, then left for you to name by hand.', 'lwtv' ) ),
 					(int) $pending,
-					'<code>wp lwtv waystowatch enrich --all</code>'
+					'<code>wp lwtv waystowatch enrich --all</code>',
+					(int) Watch_Host_Names::MAX_ATTEMPTS
 				);
 				?>
 			</span>
@@ -826,11 +827,12 @@ class Watch_Providers {
 		}
 
 		$message = sprintf(
-			/* translators: 1: hosts asked, 2: names found, 3: hosts unreachable. */
-			__( 'Asked %1$d host(s): %2$d published a name, %3$d were unreachable and will be retried.', 'lwtv' ),
+			/* translators: 1: hosts asked, 2: names found, 3: hosts unreachable, 4: maximum attempts per host. */
+			__( 'Asked %1$d host(s): %2$d published a name, %3$d were unreachable. Unreachable hosts are retried, up to %4$d attempts each.', 'lwtv' ),
 			$asked,
 			$found,
-			$failed
+			$failed,
+			(int) Watch_Host_Names::MAX_ATTEMPTS
 		);
 
 		if ( $remaining ) {

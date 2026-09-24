@@ -769,7 +769,7 @@ class WP_CLI_LWTV_Score_Preview {
 				);
 			}
 
-			\WP_CLI::log( '  current COVERAGE_MIN = ' . Longevity::COVERAGE_MIN . ' (provisional -- set it from the gap above)' );
+			\WP_CLI::log( '  current COVERAGE_MIN = ' . Longevity::COVERAGE_MIN . ' (compare against the gaps above; see docs/scoring/calibration.md#coverage-min)' );
 		}
 
 		\WP_CLI::log( '' );

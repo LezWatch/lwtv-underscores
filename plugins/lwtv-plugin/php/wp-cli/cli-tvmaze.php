@@ -170,9 +170,9 @@ class WP_CLI_LWTV_TVMaze {
 	 * [--scoring-only]
 	 * : Restrict to shows where aired years could actually change the score.
 	 * Because the curated season count (tier 1) is preferred over exact aired
-	 * years (tier 2), a finished show with a season count will never consult
-	 * aired years at all -- roughly 1813 of 2255 shows. This narrows the run to
-	 * the rest: still-airing shows, and shows with no season count recorded.
+	 * years (tier 2), a finished show with a season count never consults aired
+	 * years at all, and that is most of the corpus. This narrows the run to the
+	 * rest: still-airing shows, and shows with no season count recorded.
 	 * Meaningful with --with-seasons or the `seasons` action; on `backfill` alone
 	 * it just skips useful ID lookups.
 	 *

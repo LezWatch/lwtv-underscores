@@ -100,9 +100,9 @@ class WP_CLI_LWTV_Generate {
 	 *     $ wp lwtv generate cron daily
 	 *     Success: Cron jobs triggered successfully.
 	 *
-	 *     # Check missed schedule status
-	 *     $ wp lwtv generate missed-schedule status
-	 *     Success: Missed schedule status retrieved.
+	 *     # Generate cron hourly (includes the missed-schedule check)
+	 *     $ wp lwtv generate cron hourly
+	 *     Success: Cron jobs triggered successfully.
 	 *
 	 * @param array $args
 	 * @param array $assoc_args

@@ -155,15 +155,17 @@ Template tags, walkers, widgets, and theme-side JS/CSS.
 │   ├── searchbox.js - Opens/closes the header search overlay (`#search`, Esc to close) and focuses the input when the collapse expands
 │   ├── skip-link-focus-fix.js - `_s` fix making skip-link targets focusable on hashchange
 │   └── yikes-theme-scripts.min.js - BUILD OUTPUT bundling navigation + skip-link-focus-fix + lwtv-theme-scripts + a11y + searchbox + copy-post-link
-└── widgets/
-    ├── calendar-widget.php - `LWTV_Calendar_Widget` ("LWTV Calendar"): today's air-date calendar card via the plugin's Calendar component
-    ├── character-widget.php - `LWTV_Character_Widget` ("LWTV Recent Character"): most recently added character
-    ├── filter-bottom-widget.php - `LWTV_Filter_Bottom_Widget`: emits only the closing `.card-body`/`.card` markup wrapping the filter widgets
-    ├── filter-top-widget.php - `LWTV_Filter_Top_Widget`: opens the filter `.card` with a title and optional symbolicon
-    ├── my-widget.php - `My_Widget`: boilerplate two-textarea example widget, kept as a template
-    ├── otd-widget.php - `LWTV_Today_Widget` ("LWTV Today"): character/show/death of the day from the `lwtv/v1` REST API, type selectable
-    ├── show-widget.php - `LWTV_Show_Widget` ("LWTV Recent Show"): most recently added show
-    └── social-nav-widget.php - `LWTV_Social_Menu_Widget`: renders the `social_menu` location, horizontal or vertical
+├── widgets/
+│   ├── calendar-widget.php - `LWTV_Calendar_Widget` ("LWTV Calendar"): today's air-date calendar card via the plugin's Calendar component
+│   ├── character-widget.php - `LWTV_Character_Widget` ("LWTV Recent Character"): most recently added character
+│   ├── filter-bottom-widget.php - `LWTV_Filter_Bottom_Widget`: emits only the closing `.card-body`/`.card` markup wrapping the filter widgets
+│   ├── filter-top-widget.php - `LWTV_Filter_Top_Widget`: opens the filter `.card` with a title and optional symbolicon
+│   ├── my-widget.php - `My_Widget`: boilerplate two-textarea example widget, kept as a template
+│   ├── otd-widget.php - `LWTV_Today_Widget` ("LWTV Today"): character/show/death of the day from the `lwtv/v1` REST API, type selectable
+│   ├── show-widget.php - `LWTV_Show_Widget` ("LWTV Recent Show"): most recently added show
+│   └── social-nav-widget.php - `LWTV_Social_Menu_Widget`: renders the `social_menu` location, horizontal or vertical
+├── maintenance.php - Self-contained static 503 page served when a hard dependency is missing
+└── requirements.php - Hard dependency gate (ACF Pro); loaded first from functions.php
 
 ## Plugin Specific files
 
@@ -281,9 +283,11 @@ classes under test directly. Run with `vendor/bin/phpunit`.
     ├── Calendar/ - The calendar Agenda builder
     ├── Components/ - The transient warm-schedule component
     ├── Debugger/ - Issue registry, findings, findings-store TTL, baseline, row formatting, and the show/character/actor/actor-completeness/on-air/BYQ/duplicate/IMDb/queer/log rule sets
-    ├── Helpers/ - IMDb URL/ID canonicalisation
+    ├── Helpers/ - Admin notices, IMDb URL/ID canonicalisation, name keys, TMDB response shapes
     ├── Statistics/ - Overview factsheet, intersection pairs, decade buckets (format/genre/character identity), score and term-count distributions, series trend, star and role podiums, trigger levels, trope category coverage, we-love compare, worth-it grid
-    └── This_Year/ - Trends, breakdowns, standouts, shows block, shared builder, character facts, characters on air, dead characters, deaths strip, longest running, formatter year matching
+    ├── This_Year/ - Trends, breakdowns, standouts, shows block, shared builder, character facts, characters on air, dead characters, deaths strip, longest running, formatter year matching
+    ├── Admin_Menu/ - The Exclusion Checker's override registry
+    └── Wikidata/ - WikiData QID trust rules
 
 Only pure logic is covered here. Anything that reads WP globals, post meta, or runs
 queries is verified against the running site instead — templates, widgets, and JS
@@ -313,4 +317,14 @@ heartbeat UUID on success or failure.
 ├── plans/ - Active feature plans, plus `completed/` and `maybe-later/` subfolders
 ├── posts/ - Drafted site content
 ├── sql/ - Database notes (optimization.md)
-└── superpowers/ - Agent plans and specs
+├── superpowers/ - Agent plans and specs
+├── architecture/ - How subsystems work: actor identity, duplicate detection, caching, scheduling, watch providers, validation screen, meta quirks, calendar, FacetWP
+├── dependencies.md - Required plugins, the boot gate, and what is deliberately not gated
+├── design/ - Statistics CSS layout, colour families and ramps, dark mode, colour accessibility
+├── integrations/ - Third-party APIs: TVMaze, IMDb (and TMDB response shapes)
+├── nginx-security-headers.conf - nginx security response headers for cached pages served straight from disk
+├── operations/ - Cron schedule and one-shot migrations (CMB2 to ACF)
+├── README.md - Index of the reference docs
+├── scoring/ - Show score, character score, and score calibration
+├── statistics/ - Statistics data model, page build/layout, and presentation rules
+└── testing.md - PHPUnit setup, what belongs in it, and the bootstrap shim policy

@@ -260,7 +260,7 @@ class WP_CLI_LWTV_Calculate {
 		\WP_CLI::success( sprintf( '%d recalculated, %d failed.', $done - count( $failed ), count( $failed ) ) );
 
 		if ( ! $third_party ) {
-			\WP_CLI::log( 'Third-party scores were left alone. The daily cron and the on-save hooks will refresh them.' );
+			\WP_CLI::log( 'Third-party scores were left alone. They refresh when a show is saved, or rerun with --with-third-party.' );
 		}
 	}
 
