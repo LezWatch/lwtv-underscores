@@ -43,6 +43,10 @@ class OTD_JSON {
 	 *
 	 * Creates callbacks
 	 *   - /lwtv/v1/of-the-day/
+	 *
+	 * Unused today. Character/show requests can pick a new item from a stale
+	 * cached option; fix before relying on it.
+	 * See docs/architecture/caching.md#of-the-day-and-the-rest-endpoint.
 	 */
 	public function rest_api_init() {
 

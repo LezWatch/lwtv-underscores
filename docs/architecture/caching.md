@@ -40,6 +40,15 @@ Options have the same problem one level down. Web requests cache non-autoloaded 
 
 Every store uses it: `Queue_Store`, `Debugger\Findings_Store`, `Debugger\Status`, `Debugger\Baseline_Store`, the audit baselines in `Debugger\Audit`, and `Watch_Host_Names`. `delete_option()` needs nothing extra, because it reads the row from the database itself and every read now does too. It is also why the one-shot findings migration (`wp lwtv migrate acf debugfindings`, see [cmb2-to-acf.md](../operations/migrations/cmb2-to-acf.md#debugger-findings-to-options)) reads the option rows directly instead of calling `get_transient()`.
 
+### Of the Day and the REST endpoint
+
+`lwtv_otd` (the current character and show of the day, with an expiry time) is an **autoloaded** option, so web requests read it from the Redis `alloptions` cache. `Uncached_Option` does not cover autoloaded options.
+
+- **RSS and Postiz are safe.** The 09:00 CLI job (`wp lwtv generate otd`) reads the option from the database, writes today's row to the `lwtv_otd` table, and fires `lwtv_otd_added` for Postiz. The RSS feed reads that table.
+- **`/wp-json/lwtv/v1/of-the-day/` (character and show) is not.** It calls `Of_The_Day::of_the_day()` → `character_show()` on the web side. With a stale cached copy whose expiry has passed, it picks and saves a **new** item, which then disagrees with RSS and Postiz and marks an extra post as used (`lwtv_of_the_day`, +4 months).
+
+Nothing calls the endpoint today. Before anything does (an Alexa skill, say), make its character and show path return today's table row, the same as RSS, and never pick. Then only the cron job chooses.
+
 ### delete_transient() and option rows
 
 With a persistent object cache active, `delete_transient()` deletes the cached copy and leaves any `_transient_*` / `_transient_timeout_*` option rows in place. Code that must be sure a transient is gone from both tiers deletes the option rows explicitly as well. `WP_CLI_LWTV_Migrate::drop_findings_transient()` does this so that running the migration twice is a no-op.
