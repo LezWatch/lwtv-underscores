@@ -2,7 +2,8 @@
 /**
  * The Template for inserting header images as LCP HIGH.
  *
- * TODO: Preload the symbolicons sprite SVG. Right now it's not supported by Chrome so it's not worth it.
+ * The symbolicons sprite is not preloaded: browsers can't reuse a preloaded SVG
+ * for <use href> references (https://github.com/whatwg/html/issues/8870).
  *
  * @package LezWatch.TV
  */

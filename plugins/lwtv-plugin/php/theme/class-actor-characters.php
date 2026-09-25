@@ -186,8 +186,6 @@ class Actor_Characters {
 	 * @return array
 	 */
 	public function build_character_info( array $character_array, int $actor_id ) {
-		// @TODO: There needs to be a way to invalidate this and re-run without a re-save.
-
 		$characters = array();
 		$dead       = array();
 		// Rebuild the character array in format:

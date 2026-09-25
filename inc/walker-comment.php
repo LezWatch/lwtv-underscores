@@ -35,7 +35,6 @@ class LWTV_Walker_Comment extends Walker {
 	 * @var array
 	 *
 	 * @see Walker::$db_fields
-	 * @todo Decouple this
 	 */
 	public $db_fields = array(
 		'parent' => 'comment_parent',
