@@ -29,7 +29,7 @@ use LWTV\_Helpers\Tmdb_Response;
 class TmdbResponseTest extends TestCase {
 
 	/**
-	 * Trimmed /3/tv/126167 -- the shape Vigil returns now.
+	 * Trimmed /3/tv/126167 -- the shape Vigil returns.
 	 *
 	 * @return array
 	 */
@@ -49,8 +49,8 @@ class TmdbResponseTest extends TestCase {
 	}
 
 	/**
-	 * Trimmed /3/find/tt11846996?external_source=imdb_id -- the shape it used to
-	 * return, and still does for any show we have no TMDB ID for.
+	 * Trimmed /3/find/tt11846996?external_source=imdb_id -- the shape it returns
+	 * for any show we have no TMDB ID for.
 	 *
 	 * @return array
 	 */

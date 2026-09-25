@@ -2,12 +2,9 @@
 /**
  * Star podium transforms.
  *
- * Pure array-in/array-out math for the Stars view's medal podium and
- * callout rail: column ordering, scaled plate heights, leader facts,
- * and the silver/bronze relationship the footnote copy adapts to.
- * No WordPress calls — unit-testable without a WP runtime (see
- * tests/unit/Statistics/StarPodiumTest.php). All i18n stays in the
- * template; this class only reports shape and numbers.
+ * Stars view math: podium column order and plate heights, leader facts,
+ * and the silver/bronze relationship for adaptive copy. Pure transform.
+ * See docs/statistics/presentation-rules.md.
  *
  * @package LezWatch.TV
  */
@@ -70,7 +67,7 @@ class Star_Podium {
 	 * The rail-card numbers: star total, the leading merit tier and its
 	 * share of all stars, the star rate, and the unstarred remainder.
 	 *
-	 * Percent precision follows the handoff: whole numbers on the share
+	 * Percent precision: whole numbers on the share
 	 * (rail cards round), one decimal on rate and none-share.
 	 *
 	 * @param array $counts       Tier => count.

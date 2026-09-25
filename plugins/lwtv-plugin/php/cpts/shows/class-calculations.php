@@ -138,10 +138,8 @@ class Calculations {
 	private function count_queers_all_types( $post_id ) {
 		$post_id = (int) $post_id;
 
-		// Memoised because this is called twice per do_the_math() -- once via
-		// count_queers() and once from show_character_score() -- and each call
-		// used to redo the full character traversal, the batched term queries and
-		// every get_field( 'lezchars_actor' ).
+		// Memoised: do_the_math() reaches this twice (via count_queers() and
+		// show_character_score()), and each call walks every character.
 		if ( isset( self::$counts_memo[ $post_id ] ) ) {
 			return self::$counts_memo[ $post_id ];
 		}
@@ -164,18 +162,15 @@ class Calculations {
 			return $counts;
 		}
 
-		// Key names are the historical ones and are deliberately unchanged: they
-		// are the public shape of count_queers(), which is called from outside
-		// this class.
+		// Key names are the public shape of count_queers(), which is called from
+		// outside this class; do not rename them.
 		$counts['count'] = $data['count'];
 		$counts['dead']  = $data['dead'];
 		$counts['none']  = $data['none'];
 		$counts['trans'] = $data['trans'];
 
-		// This becomes lezshows_queer_irl_count, whose only reader is the "actors"
-		// column of the Shows We Love comparison. With the actor check on it is the
-		// count of characters whose first-billed actor is actually queer, which is
-		// what that column has always claimed to show and has never contained.
+		// Becomes lezshows_queer_irl_count: characters whose first-billed actor is
+		// actually queer. See docs/scoring/show-score.md#other-meta-written.
 		$counts['queer-irl'] = $data['queer_irl_scored'];
 		$counts['trans-irl'] = $data['trans_irl'];
 
@@ -270,8 +265,6 @@ class Calculations {
 	 *
 	 * NO MATTER WHAT YOU THINK the post counts HAVE to be two separate meta fields.
 	 * Otherwise you get weird issues with FacetWP.
-	 *
-	 * Attempts: 4
 	 */
 	public function show_character_score( $post_id ) {
 
@@ -446,11 +439,9 @@ class Calculations {
 		// Generate character data
 		self::show_character_data( $post_id );
 
-		// show_character_data() has just rewritten lezshows_char_roles, which is an
-		// INPUT to the legacy character score. count_queers() is public and can be
-		// called from anywhere, so a memo taken before this write would pin a score
-		// built on the previous run's role counts. Flushing here rather than
-		// reordering keeps the dependency visible instead of implicit.
+		// show_character_data() has just rewritten lezshows_char_roles, which
+		// Character_Score::gather() reads, so drop any memo built before the write.
+		// Flushing here rather than reordering keeps the dependency visible.
 		self::flush_counts( $post_id );
 
 		// Get the ratings
@@ -482,18 +473,9 @@ class Calculations {
 		// Calculate the full score
 		$calculate = ( $score_show_rating + $score_show_tropes + $score_chars_alive + $score_chars_score ) / 4;
 
-		// Keep the true value before clamping.
-		//
-		// The clamp used to be the only thing stored, which threw away the one
-		// piece of information that distinguishes shows at the ceiling from each
-		// other -- the same mistake, one level up, as the old character score
-		// pinning 38 shows at exactly 100 with no way to rank them. Today only one
-		// show clears 100, so this buys little; the point is that it cannot start
-		// creating ties again as the data improves.
-		//
-		// lezshows_the_score stays clamped, deliberately. Everything reads it --
-		// display, the stats SQL, Grading, of-the-day, the taxonomy queries -- and
-		// none of that should have to learn about a 0-115 range.
+		// Store the true value before clamping; lezshows_the_score stays 0-100
+		// because every consumer reads it.
+		// See docs/scoring/show-score.md#clamped-and-uncapped-meta.
 		update_post_meta( $post_id, 'lezshows_the_score_uncapped', $calculate );
 
 		// Keep it between 0 and 100
@@ -506,15 +488,9 @@ class Calculations {
 		/**
 		 * Whether to refresh this show's third-party (TMDB / TVMaze) scores.
 		 *
-		 * Filterable because Grading\TVMaze::update_scores() makes a live
-		 * wp_remote_get() on a transient miss, so a bulk recalculation over the
-		 * whole corpus would fire thousands of unthrottled requests -- well past
-		 * TVMaze's documented 20-calls-per-10-seconds, and the resulting 429s get
-		 * written into lezshows_3rd_scores as if they were data.
-		 *
-		 * A recalculation triggered by a change to OUR scoring has no reason to
-		 * refetch somebody else's, so `wp lwtv calc --all` turns this off and lets
-		 * the on-save path and the daily cron refresh them at their own pace.
+		 * `wp lwtv calc --all` turns this off: each refresh can be a live API call,
+		 * and a corpus sweep would blow through TVMaze's rate limit.
+		 * See docs/scoring/show-score.md#third-party-scores.
 		 *
 		 * @param bool $refresh Whether to update third-party scores.
 		 * @param int  $post_id Show post ID.

@@ -3,7 +3,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 /**
- * Overview metric cards — redesigned.
+ * Overview metric cards.
  *
  * @package LezWatch.TV
  *

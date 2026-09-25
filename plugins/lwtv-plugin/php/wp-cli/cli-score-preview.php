@@ -2,9 +2,8 @@
 /*
  * WP CLI Commands for previewing longevity-weighted show scores.
  *
- * READ ONLY. This command writes no post meta and mutates nothing. It exists so
- * the effect of the longevity model can be inspected against real shows before
- * it is switched on.
+ * READ ONLY. This command writes no post meta and mutates nothing. It shows how
+ * the live longevity model scores real shows.
  *
  */
 
@@ -213,9 +212,9 @@ class WP_CLI_LWTV_Score_Preview {
 			}
 		}
 		// Judged-on counts, not tag counts. The two standards are mutually
-		// exclusive now, so "19 queer-irl tagged" would overstate the queer-irl
-		// check when 13 of those characters were actually decided by the
-		// trans/NB standard instead.
+		// exclusive, so the queer-irl tag count would overstate the queer-irl
+		// check when some of those characters were decided by the trans/NB
+		// standard instead.
 		\WP_CLI::log(
 			'Judged on:   ' . $data['judged_on_trans'] . ' trans/NB casting, '
 			. $data['judged_on_qirl'] . ' queer casting, '
@@ -248,11 +247,9 @@ class WP_CLI_LWTV_Score_Preview {
 			);
 		}
 
-		// Actor slugs that fell through to 'unknown'. Includes the five pending
-		// an editorial call (gender-non-conforming, demigender, androgynous,
-		// no-label, two-spirit) and anything added to the taxonomy since. These
-		// score neutrally, so nothing is docked -- but a trans/NB role whose
-		// casting cannot be assessed is a gap worth closing.
+		// Actor slugs that fell through to 'unknown': the deliberately omitted ones
+		// and anything added since. Neutral, but an unassessed trans/NB role is a
+		// gap. See docs/scoring/character-score.md#deliberately-omitted-actor-gender-slugs.
 		if ( ! empty( $data['unknown_actor_slugs'] ) ) {
 			\WP_CLI::warning(
 				'Primary actors on trans/NB roles with an unclassified gender slug: '
@@ -296,7 +293,7 @@ class WP_CLI_LWTV_Score_Preview {
 			// Every place this model docks a show, with the evidence. Check the
 			// actor_terms column before believing a miscast: an actor whose
 			// gender slug classifies as 'cis' produces a real miscast, but a slug
-			// that is simply unrecognised now falls to 'unknown' and scores
+			// that is simply unrecognised falls to 'unknown' and scores
 			// neutrally -- so anything reaching this table is an explicit cis tag.
 			if ( ! empty( $data['miscast_detail'] ) ) {
 				\WP_CLI::log( \WP_CLI::colorize( '%3Miscast verdicts -- verify actor_terms before trusting these%n' ) );
@@ -381,16 +378,15 @@ class WP_CLI_LWTV_Score_Preview {
 			'seasons'          => $data['seasons'],
 			'run_years'        => $data['run_years'],
 			'tier'             => $data['tier'],
-			// The floor turned out to fire on 292 shows, not the one it was built
-			// for, so it needs to be visible in bulk output rather than inferred
-			// from run_years > seasons.
+			// Shown explicitly in bulk output rather than inferred from
+			// run_years > seasons.
 			'floored'          => $data['run_years_floored'] ? 'yes' : '-',
 			'aired_rejected'   => $data['aired_rejected'] ? 'yes' : '-',
 			'aired_verdict'    => $data['aired_verdict'],
 			// A show with no TVMaze set has nothing to measure coverage against,
 			// and appearance_coverage() reports 0.0 for it. Printing that would
-			// read as catastrophic coverage on 1,855 shows when it means "not
-			// measurable" -- so it is blanked rather than shown as a number.
+			// read as catastrophic coverage when it means "not measurable" --
+			// so it is blanked rather than shown as a number.
 			'coverage'         => ( Longevity::VERDICT_NONE === $data['aired_verdict'] )
 				? '-'
 				: number_format( $data['coverage'], 3 ),
@@ -418,11 +414,10 @@ class WP_CLI_LWTV_Score_Preview {
 	/**
 	 * Collect one show's data, then add the CLI's own explanation of it.
 	 *
-	 * The gathering itself lives in Character_Score so this command and the live
-	 * calculation cannot disagree -- that shared implementation is the whole point
-	 * of the class. What stays here is the two things only a CLI wants: the
-	 * optional live TVMaze fetch (which must never enter the scoring path) and the
-	 * prose explaining which denominator tier was used and why.
+	 * The gathering lives in Character_Score so this command and the live
+	 * calculation cannot disagree. This adds only the optional live TVMaze fetch
+	 * (which must never enter the scoring path) and the prose explaining which
+	 * denominator tier was used and why.
 	 *
 	 * @param int  $show_id Show post ID.
 	 * @param bool $tvmaze  Whether to hit the TVMaze API for missing aired years.
@@ -519,17 +514,14 @@ class WP_CLI_LWTV_Score_Preview {
 			$alive = ( ( $data['count'] - $data['dead'] ) / $data['count'] ) * 100;
 		}
 
-		// The score comes from Character_Score, which is also what the live
-		// calculation calls -- deliberately, so this preview cannot drift from
-		// what ships. $new['score'] is therefore not "the preview's idea of the
-		// score" but literally what count_queers_all_types() returns, which is
-		// what makes the stored-meta check in preview_one() meaningful.
+		// Character_Score is also what the live calculation calls, so this
+		// preview cannot drift from what ships and the stored-meta check in
+		// preview_one() is meaningful.
 		$new = Character_Score::longevity( $data, $ceiling );
 
 		// $divided, not $raw, is what saturate() consumed -- so it is the value a
 		// K sweep needs. Reported as its own column because back-deriving it from
-		// a two-decimal char_new is lossy, and doing that by hand is exactly the
-		// gap this column closes.
+		// a two-decimal char_new is lossy.
 		$total_new = ( $show_rating + $tropes + $alive + $new['score'] ) / 4;
 
 		return array(
@@ -539,9 +531,8 @@ class WP_CLI_LWTV_Score_Preview {
 			'raw'            => $new['raw'],
 			'raw_divided'    => $new['divided'],
 			'char_new'       => $new['score'],
-			// Capped for comparability with the stored meta, which is capped
-			// today. The uncapped value is returned alongside so the display
-			// -only cap question can be answered from real numbers.
+			// Capped for comparability with lezshows_the_score; the uncapped
+			// value is returned alongside.
 			'total_new'      => max( 0, min( 100, $total_new ) ),
 			'total_new_true' => $total_new,
 		);
@@ -687,10 +678,8 @@ class WP_CLI_LWTV_Score_Preview {
 				++$tiers[ $tier ];
 			}
 
-			// How much a display-only cap would actually preserve. The
-			// character score is asymptotic below 100 and tropes and alive are
-			// both capped, so only show_score() (max 115, unclamped) can push a
-			// total past 100 -- a ceiling of 103.75 in the best case.
+			// Only show_score() (max 115) is unclamped, so the uncapped total
+			// tops out at 103.75. See docs/scoring/calibration.md#uncapped-totals.
 			if ( (float) $row['score_new_raw'] > 100 ) {
 				++$over_100;
 				$worst = max( $worst, (float) $row['score_new_raw'] );
@@ -704,9 +693,7 @@ class WP_CLI_LWTV_Score_Preview {
 		\WP_CLI::log( 'Mean score NEW:          ' . number_format( array_sum( $new ) / max( 1, count( $new ) ), 2 ) );
 		\WP_CLI::log( '' );
 		// Labels must match the order in Longevity::run_years(): curated season
-		// count is tier 1, exact aired years is tier 2. These were transposed in
-		// an earlier revision, which reported 1813 shows as using "exact years"
-		// when not one of them did.
+		// count is tier 1, exact aired years is tier 2.
 		$rejected  = 0;
 		$verdicts  = array();
 		$histogram = array_fill( 0, 11, 0 );
@@ -763,13 +750,8 @@ class WP_CLI_LWTV_Score_Preview {
 			}
 		}
 
-		// The calibration table. COVERAGE_MIN is currently a provisional guess,
-		// and this is what replaces the guess: if incomplete sets are a distinct
-		// population there will be a sparse band between the pile at 1.0 and the
-		// broken ones, and the threshold belongs in that gap. If instead the
-		// distribution is smooth, there is no natural cut point and the signal
-		// needs rethinking rather than tuning -- so a boring histogram is a real
-		// answer, not a failed measurement.
+		// The COVERAGE_MIN calibration histogram: look for a sparse band between
+		// the pile at 1.0 and the broken sets. See docs/scoring/calibration.md#coverage-min.
 		if ( $judged > 0 ) {
 			\WP_CLI::log( '' );
 			\WP_CLI::log( 'Appearance coverage, for the ' . $judged . ' shows the signal can judge:' );
@@ -787,7 +769,7 @@ class WP_CLI_LWTV_Score_Preview {
 				);
 			}
 
-			\WP_CLI::log( '  current COVERAGE_MIN = ' . Longevity::COVERAGE_MIN . ' (provisional -- set it from the gap above)' );
+			\WP_CLI::log( '  current COVERAGE_MIN = ' . Longevity::COVERAGE_MIN . ' (compare against the gaps above; see docs/scoring/calibration.md#coverage-min)' );
 		}
 
 		\WP_CLI::log( '' );

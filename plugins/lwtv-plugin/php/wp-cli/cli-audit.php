@@ -54,9 +54,8 @@ class WP_CLI_LWTV_Audit {
 	/**
 	 * Verdicts from character_appeared_in_year().
 	 *
-	 * The two UNKNOWN values are the important ones: TVMaze often cannot answer
-	 * the question at all, and treating that silence as "did not appear" is how
-	 * you end up telling an editor to add a year the character was never in.
+	 * The two UNKNOWN values matter most: TVMaze silence is not "did not appear".
+	 * See docs/integrations/tvmaze.md#cast-data-limits.
 	 */
 	public const APPEARED_YES               = 'yes';
 	public const APPEARED_NO                = 'no';
@@ -707,16 +706,9 @@ class WP_CLI_LWTV_Audit {
 	/**
 	 * Can TVMaze confirm this character appeared in this year?
 	 *
-	 * The single place that answers this question, so the data source can change
-	 * without touching either audit path. Today the public API cannot answer it
-	 * for main cast: /shows/:id/cast lists them once for the whole show with no
-	 * years attached, and /episodes/:id/guestcast contains *only* guest cast, so
-	 * a regular never shows up in any year's episode data no matter how many
-	 * episodes they are in. That is why absence returns UNKNOWN, not NO.
-	 *
-	 * When TVMaze exposes per-character appearances (requested upstream), answer
-	 * from that first and leave everything below as the fallback for characters
-	 * it cannot resolve.
+	 * The single place that answers this. TVMaze has no per-year data for main
+	 * cast, so absence is UNKNOWN, not NO. See
+	 * docs/integrations/tvmaze.md#cast-data-limits.
 	 *
 	 * @param array $char_names Normalized character + actor names.
 	 * @param array $evidence   array{
@@ -1044,11 +1036,8 @@ class WP_CLI_LWTV_Audit {
 	/**
 	 * Which of our actors does WikiData think have died?
 	 *
-	 * Deliberately not wired into the Audit baseline tracker. The shows audit
-	 * needs new/open/resolved because its findings are judgement calls that
-	 * recur for months; a death finding is acted on once and then never appears
-	 * again, because the moment the date goes in the actor is skipped on rule 1.
-	 * A baseline would be bookkeeping for a list that empties itself.
+	 * Deliberately not wired into the Audit baseline tracker: the list empties
+	 * itself. See docs/architecture/actor-identity.md#death-audit.
 	 *
 	 * @param array $assoc_args Associative args.
 	 */
@@ -1101,10 +1090,7 @@ class WP_CLI_LWTV_Audit {
 
 			$tally[ $verdict ] = ( $tally[ $verdict ] ?? 0 ) + 1;
 
-			// An actor we already have a date for -- or one an editor has told us
-			// to stop asking about -- cost us no request, so don't pay the
-			// throttle for them either. That is what keeps a full run
-			// proportional to the work actually left to do.
+			// Settled actors cost no request, so skip the throttle too.
 			if ( in_array( $verdict, array( Actor_Death_Rules::HAS_DATE, Actor_Death_Rules::IGNORED ), true ) ) {
 				continue;
 			}
@@ -1114,11 +1100,7 @@ class WP_CLI_LWTV_Audit {
 				$rows[] = $this->build_actor_row( (int) $actor_id, $result );
 			}
 
-			// Throttle only when we actually asked WikiData something. Identity
-			// resolution is the backfill's job now, so this audit fetches an
-			// entity only for actors it can already identify -- and pausing half
-			// a second for each of the thousands it cannot would make a full run
-			// cost hours of doing nothing.
+			// Throttle only when an entity was actually fetched.
 			if ( '' !== $result['qid'] ) {
 				usleep( self::WAIT_TIME );
 			}

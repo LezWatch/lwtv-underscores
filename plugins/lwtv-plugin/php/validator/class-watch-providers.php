@@ -2,41 +2,9 @@
 /*
  * Validation: Watch Providers For LezWatch.TV
  *
- * The problems with host-to-provider resolution, and the controls to fix them.
- * Two problem classes:
- *
- *   - A host in use with no term, so the front end guesses its name. Fixable
- *     here: assign an existing term, or create one.
- *   - A host claimed by two terms. Reported only -- deciding which term is right
- *     needs a human, so there is no button.
- *
- * The two classes are cached differently, on purpose.
- *
- * Hosts needing a term are a **stored worklist** (Watch_Hosts::scan_unregistered,
- * FINDINGS_UNREGISTERED) behind the same Run Scan / Recheck button every other
- * validator tab has, with the same nonce and field names. Recheck re-tests only
- * the listed hosts and drops the ones that now have a term; it does not look for
- * hosts that have appeared since. That is what makes it a worklist rather than a
- * readout -- it shrinks as you work down it and does not grow under you.
- *
- * The saving is not the point and would not justify a cache: host matching made
- * this two queries either way. Consistency with the other ten tabs is the point,
- * and so is a list that holds still.
- *
- * Contested hosts are read **live** from Watch_Hosts::host_collisions(), a free
- * byproduct of the map the scan already builds. Caching a free thing would only
- * add staleness, and a collision is urgent in a way a missing term is not.
- *
- * The `watchhosts` debugger check (Debugger\Watch_Host_Collisions) covers the
- * same collisions for cron, the CLI and this tab's count badge, which need a
- * stored number. This tab does not read its findings.
- *
- * Three actions, and they are not the same shape:
- *
- *   - Assigning or creating a term is a local write. Instant, safe in a request.
- *   - Looking up names fetches third-party hosts over HTTP. That is capped hard
- *     (Watch_Hosts::UI_BATCH) so a button press can't sit for minutes; the
- *     unbounded version lives in `wp lwtv waystowatch enrich` and on cron.
+ * Hosts with no provider term (a stored worklist, fixable here) and hosts
+ * claimed by two terms (read live, report only).
+ * See docs/architecture/watch-providers.md#watch-providers-tab.
  */
 
 namespace LWTV\Validator;
@@ -108,12 +76,7 @@ class Watch_Providers {
 
 		$items = Findings_Store::load( Watch_Hosts::FINDINGS_UNREGISTERED );
 
-		/*
-		 * Same shape as Validator\Report, deliberately: same nonce naming, same
-		 * `rerun` / `recheck` field names, same auto-scan on a cold cache. Ten
-		 * tabs behaving one way and this one behaving another would be a worse
-		 * problem than anything it could buy.
-		 */
+		// Same nonce, field names and cold-cache auto-scan as Validator\Report.
 		if ( ( isset( $_POST['rerun'] ) && check_admin_referer( self::NONCE ) ) || false === $items ) {
 			$items = Watch_Hosts::scan_unregistered();
 		}
@@ -137,9 +100,7 @@ class Watch_Providers {
 
 		Affected_Shows::prime( $unregistered );
 
-		// Collisions stay live. They are a byproduct of the host map the scan
-		// already built, so caching them would add staleness to something free,
-		// and a contested host is urgent in a way a missing term is not.
+		// Collisions stay live: free from the host map, and urgent.
 		$collisions = Watch_Hosts::host_collisions();
 		$total      = count( Watch_Hosts::in_use() );
 		$can_manage = current_user_can( self::CAP_MANAGE );
@@ -304,13 +265,8 @@ class Watch_Providers {
 	/**
 	 * Hosts claimed by more than one provider term.
 	 *
-	 * Read live from the same host map the list above uses, not from the
-	 * `watchhosts` check's findings — so this can never disagree with what the
-	 * front end is actually resolving. That check exists to put a number in the
-	 * status option for cron, the CLI and this tab's badge.
-	 *
-	 * No fix button on purpose. Resolving a collision means deciding which term
-	 * is right, and nothing here can decide that.
+	 * Read live, never from the `watchhosts` findings. No fix button: only a
+	 * human can pick the right term. See docs/architecture/watch-providers.md#contested-hosts.
 	 *
 	 * @param array<string, array<int, string>> $collisions host => term_id => name.
 	 * @return void
@@ -439,15 +395,9 @@ class Watch_Providers {
 						<div class="lwtv-watch-primary">
 							<?php
 							/*
-							 * Submits are told apart by `do`, never by which fields
-							 * happen to be filled in. A select left on a real term
-							 * while the editor meant to create cannot then quietly
-							 * assign instead.
-							 *
-							 * `suggest` carries its term in a server-rendered hidden
-							 * field rather than reading the select, so the one-click
-							 * path works with no JavaScript -- the select is empty
-							 * until the script fills it.
+							 * Submits are told apart by `do`, never by which fields are
+							 * filled in. `suggest` carries its term in a hidden field so
+							 * it works without JavaScript (the select starts empty).
 							 */
 							if ( $suggested_id ) :
 								?>
@@ -517,17 +467,9 @@ class Watch_Providers {
 	/**
 	 * The one copy of the provider-term options, plus the script that clones it.
 	 *
-	 * Rendered once and cloned into every row's select, rather than echoed ~130
-	 * times. With 80-odd terms the difference is ten thousand DOM nodes.
-	 *
-	 * Inline rather than an enqueued asset, matching the tab picker's script on
-	 * this same screen (Admin_Menu\Validation) and its reasoning: it is
-	 * progressive enhancement, it is a dozen lines, and an enqueued file would
-	 * need a hook gate and a version constant to say the same thing.
-	 *
-	 * Degrades honestly. With no JavaScript every select holds only "create a
-	 * new term" and the name field stays visible, which is exactly the behaviour
-	 * this tab had before assignment existed.
+	 * Rendered once and cloned into every row's select instead of repeated per
+	 * row. Inline, like the tab picker script: small progressive enhancement.
+	 * Without JavaScript, Create still works with the proposed name.
 	 *
 	 * @param array<int, string> $terms term_id => name.
 	 * @return void
@@ -582,8 +524,6 @@ class Watch_Providers {
 				}
 
 				// The options exist once in the document and are cloned per row.
-				// Echoing eighty of them into each of forty-five selects is
-				// thousands of nodes for no gain.
 				if ( options && select ) {
 					select.appendChild( options.content.cloneNode( true ) );
 
@@ -644,15 +584,8 @@ class Watch_Providers {
 	}
 
 	/**
-	 * Open every row's options at once.
-	 *
-	 * The per-row toggle is right for working down the list one host at a time,
-	 * which is the normal way this page gets used. It is wrong for a session
-	 * spent assigning a batch of hosts to terms that already exist, where it
-	 * means the same click forty times.
-	 *
-	 * Hidden until the script unhides it: with no JavaScript there is nothing to
-	 * expand, so offering the control would be a dead button.
+	 * Open every row's options at once, for assigning a batch of hosts in one
+	 * sitting. Hidden until the script unhides it, so it is never a dead button.
 	 *
 	 * @return void
 	 */
@@ -701,10 +634,11 @@ class Watch_Providers {
 			<span class="description">
 				<?php
 				printf(
-					/* translators: 1: number of hosts still to check, 2: WP-CLI command, already wrapped in a code element. */
-					wp_kses_post( __( 'Asks each site what it calls itself, a few at a time. %1$d still to check; %2$s does the rest. Hosts that never answer are not recorded, so they stay on this list and are retried each run.', 'lwtv' ) ),
+					/* translators: 1: number of hosts still to check, 2: WP-CLI command, already wrapped in a code element, 3: maximum attempts per host. */
+					wp_kses_post( __( 'Asks each site what it calls itself, a few at a time. %1$d still to check; %2$s does the rest. A host that does not answer is asked again on later runs, up to %3$d times, then left for you to name by hand.', 'lwtv' ) ),
 					(int) $pending,
-					'<code>wp lwtv waystowatch enrich --all</code>'
+					'<code>wp lwtv waystowatch enrich --all</code>',
+					(int) Watch_Host_Names::MAX_ATTEMPTS
 				);
 				?>
 			</span>
@@ -715,9 +649,9 @@ class Watch_Providers {
 	/**
 	 * Create a term for one host.
 	 *
-	 * Kept registered although the tab no longer posts here: a page loaded before
-	 * the assign control shipped still has the old form in it, and dropping the
-	 * action would give that editor a blank screen instead of a created term.
+	 * Kept registered although the tab does not post here: a stale page can still
+	 * hold a form that does, and dropping the action would give that editor a
+	 * blank screen instead of a created term.
 	 *
 	 * @return void
 	 */
@@ -883,7 +817,7 @@ class Watch_Providers {
 			}
 
 			// Asked, published nothing usable. Recorded so we don't re-ask;
-			// errors are deliberately not recorded, so a blip can retry.
+			// errors go through fail() above, so a blip can retry.
 			Watch_Host_Names::set( $host, '', Watch_Host_Names::SOURCE_NONE );
 		}
 
@@ -893,11 +827,12 @@ class Watch_Providers {
 		}
 
 		$message = sprintf(
-			/* translators: 1: hosts asked, 2: names found, 3: hosts unreachable. */
-			__( 'Asked %1$d host(s): %2$d published a name, %3$d were unreachable and will be retried.', 'lwtv' ),
+			/* translators: 1: hosts asked, 2: names found, 3: hosts unreachable, 4: maximum attempts per host. */
+			__( 'Asked %1$d host(s): %2$d published a name, %3$d were unreachable. Unreachable hosts are retried, up to %4$d attempts each.', 'lwtv' ),
 			$asked,
 			$found,
-			$failed
+			$failed,
+			(int) Watch_Host_Names::MAX_ATTEMPTS
 		);
 
 		if ( $remaining ) {
@@ -915,9 +850,6 @@ class Watch_Providers {
 
 	/**
 	 * Stash a one-shot notice for the current user.
-	 *
-	 * Replaces the old ?message= scheme, which never worked and could only
-	 * express four hardcoded strings. See DEBUGGER-REVIEW.md section 1.9a.
 	 *
 	 * @param string $type    'success', 'error' or 'info'.
 	 * @param string $message Text.

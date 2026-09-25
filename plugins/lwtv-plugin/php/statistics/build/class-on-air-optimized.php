@@ -351,10 +351,10 @@ class On_Air_Optimized {
 	/**
 	 * Statistics On Air - Optimized with single query
 	 *
-	 * Note: This is being phased out.
+	 * Used for the per-nation and per-station on-air counts.
 	 *
 	 * Trying to do math of who's on what year.
-	 * Now optimized with single query instead of N+1 pattern.
+	 * Uses a single query instead of an N+1 pattern.
 	 *
 	 * @param string $post_type  Post Type of data (show or character)
 	 * @param array  $data       Array of data to loop at.

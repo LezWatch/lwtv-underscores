@@ -35,7 +35,6 @@ class LWTV_Walker_Comment extends Walker {
 	 * @var array
 	 *
 	 * @see Walker::$db_fields
-	 * @todo Decouple this
 	 */
 	public $db_fields = array(
 		'parent' => 'comment_parent',
@@ -297,7 +296,6 @@ class LWTV_Walker_Comment extends Walker {
 
 			<div class="comment-meta-author">
 				<?php
-					/* translators: %s: comment author link */
 					$comment_author_link = sprintf(
 						// translators: %s: comment author link
 						__( '<cite class="author">%s</cite> <span class="says">says:</span>' ),
@@ -368,7 +366,6 @@ class LWTV_Walker_Comment extends Walker {
 								<a href="<?php echo esc_url( get_comment_link( $comment, $args ) ); ?>">
 									<time datetime="<?php comment_time( 'c' ); ?>">
 										<?php
-											/* translators: 1: comment date, 2: comment time */
 											$comment_date = sprintf(
 												// translators: 1: comment date, 2: comment time
 												__( '%1$s at %2$s' ),
@@ -382,7 +379,6 @@ class LWTV_Walker_Comment extends Walker {
 
 								<div class="comment-meta-author">
 									<?php
-										/* translators: %s: comment author link */
 										$comment_name = sprintf(
 											// translators: %s: comment author link
 											__( '<strong class="fn">%s</strong> <span class="says">says:</span>' ),

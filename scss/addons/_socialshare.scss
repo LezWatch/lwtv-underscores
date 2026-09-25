@@ -82,8 +82,7 @@ body.highlander-dark h3.lwtv-share-title::before {
 .lwtv-share-content ul li.advanced a.share-more,
 .lwtv-social-icon-text .lwtv-share-content ul li a.lwtv-share-button,
 .lwtv-social-official .lwtv-share-content > ul > li > a.lwtv-share-button,
-#sharing_email .sharing_send,
-.lwtv-social-official .lwtv-share-content > ul > li .digg_button > a {
+#sharing_email .sharing_send {
 	text-decoration: none !important;
 	display: inline-block;
 	font-size: 0.8125rem;
@@ -119,8 +118,7 @@ body.highlander-dark h3.lwtv-share-title::before {
 .lwtv-share-content ul li.preview-item div.option.option-smart-off a span,
 .lwtv-share-content ul li.advanced a.share-more span,
 .lwtv-social-icon-text .lwtv-share-content ul li a.lwtv-share-button > span,
-.lwtv-social-official .lwtv-share-content > ul > li > a.lwtv-share-button span,
-.lwtv-social-official .lwtv-share-content > ul > li .digg_button > a span {		/* official Digg button no longer works, needs cleaning */
+.lwtv-social-official .lwtv-share-content > ul > li > a.lwtv-share-button span {
 	line-height: 23px;
 	margin-left: 6px;
 }
@@ -143,9 +141,7 @@ body.highlander-dark h3.lwtv-share-title::before {
 
 
 .lwtv-social-official .lwtv-share-content > ul > li > a.lwtv-share-button::before,
-.lwtv-social-official .lwtv-share-content > ul > li .digg_button > a::before,
-.lwtv-social-official .lwtv-share-content .sharing-hidden .inner > ul > li > a.lwtv-share-button::before,
-.lwtv-social-official .lwtv-share-content .sharing-hidden .inner > ul > li .digg_button > a::before {
+.lwtv-social-official .lwtv-share-content .sharing-hidden .inner > ul > li > a.lwtv-share-button::before {
 	margin-bottom: -1px;
 }
 
@@ -156,17 +152,14 @@ body.highlander-dark h3.lwtv-share-title::before {
 .lwtv-social-icon-text .lwtv-share-content ul li a.lwtv-share-button:hover,
 .lwtv-social-icon-text .lwtv-share-content ul li a.lwtv-share-button:active,
 .lwtv-social-official .lwtv-share-content > ul > li > a.lwtv-share-button:hover,
-.lwtv-social-official .lwtv-share-content > ul > li > a.lwtv-share-button:active,
-.lwtv-social-official .lwtv-share-content > ul > li .digg_button > a:hover,
-.lwtv-social-official .lwtv-share-content > ul > li .digg_button > a:active {
+.lwtv-social-official .lwtv-share-content > ul > li > a.lwtv-share-button:active {
 	box-shadow: 0 1px 2px rgba(colors.$black, 0.22), 0 0 0 1px rgba(colors.$black, 0.22);
 }
 
 .lwtv-social-icon .lwtv-share-content ul li a.lwtv-share-button:active,
 .lwtv-social-text .lwtv-share-content ul li a.lwtv-share-button:active,
 .lwtv-social-icon-text .lwtv-share-content ul li a.lwtv-share-button:active,
-.lwtv-social-official .lwtv-share-content > ul > li > a.lwtv-share-button:active,
-.lwtv-social-official .lwtv-share-content > ul > li .digg_button > a:active {
+.lwtv-social-official .lwtv-share-content > ul > li > a.lwtv-share-button:active {
 	box-shadow: inset 0 1px 0 rgba(colors.$black, 0.16);
 }
 
@@ -378,7 +371,6 @@ body .lwtv-social-official li.share-print,
 body .lwtv-social-official li.share-email a,
 body .lwtv-social-official li.share-custom a,
 body .lwtv-social-official li a.share-more,
-body .lwtv-social-official li.share-digg a,
 body .lwtv-social-official li.share-press-this a {
 	position: relative;
 	top: 0;
@@ -573,15 +565,6 @@ body .lwtv-social-icon .lwtv-share-content li.share-custom a span {
 .lwtv-social-icon .lwtv-share-content ul li[class*="share-"].share-pinterest a.lwtv-share-button {
 	background: #ca1f27;
 	color: colors.$white !important;
-
-	svg {
-		width: 18px;
-		fill: colors.$white;
-	}
-}
-
-.lwtv-social-icon .lwtv-share-content ul li[class*="share-"].share-digg a.lwtv-share-button {
-	color: colors.$lwtv-grey-medium !important;
 
 	svg {
 		width: 18px;

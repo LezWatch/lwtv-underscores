@@ -3,13 +3,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 /**
- * Actors → Gender: donut (grey cisgender + trans/non-binary amber ramp), a
- * pullstats banner, "The Overlap" callout (actors marked Cisgender who are
- * still queer once sexuality/pronouns/romantic orientation are counted), and
- * a most-prolific-actor-per-gender-identity statcard grid — mirrors the
- * Actors → Sexuality page (see that template's docblock for why there's no
- * decade trend or Firsts list here: no data path from an actor to which
- * specific years they were active).
+ * Actors → Gender: donut (grey cisgender + amber ramp), pullstats, "The
+ * Overlap" callout and most-prolific per gender identity.
+ * See docs/statistics/pages.md#actors-identity-pages.
  *
  * @package LezWatch.TV
  *
@@ -34,10 +30,7 @@ $gen_unknown = isset( $gen_data['unknown'] ) ? (int) $gen_data['unknown']['count
 unset( $gen_data['unknown'] );
 
 // Remaining = trans / non-binary / other tracked identities; rank and ramp
-// the top 4, fold the rest into "Other". Amber, not pink — matches the
-// "actors" family color used by the pullstats/callout/prolific cards added
-// below, so the whole page reads as one color family, same fix already
-// applied to the Sexuality donut.
+// the top 4, fold the rest into "Other". Amber: the actors family colour.
 uasort( $gen_data, fn( $a, $b ) => (int) $b['count'] <=> (int) $a['count'] );
 $gen_ramp     = array( 'amber', 'medamber', 'midamber', 'paleamber' );
 $gen_segments = array(
@@ -171,12 +164,8 @@ if ( ! empty( $gen_gap['cis_total'] ) && $gen_gap['queer_anyway'] > 0 ) :
 endif;
 
 // ---- Most prolific actor per gender identity ----
-// generate_prolific_by_gender() returns one entry per raw taxonomy term
-// (cis-woman/cis-man/cisgender kept separate); merge those three into a
-// single "Cisgender" card here, matching the donut's own merged bucket. The
-// max of a union's subgroup maxes is always the union's max, so picking
-// whichever of the three per-slug leaders has the highest count is a safe,
-// correct merge without re-querying.
+// Merge the three cis slugs into one Cisgender card by taking the highest
+// per-slug leader (the max of the maxes is the union's max).
 $gen_prolific_raw = ( new Build_Actors() )->generate_prolific_by_gender();
 $gen_prolific     = array();
 $gen_cis_leader   = null;

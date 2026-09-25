@@ -200,8 +200,7 @@ class WeLoveCompareTest extends TestCase {
 		$this->assertTrue( $out['leads_all'] );
 
 		// With these figures actors (3.0×) outranks happy endings (2.4×), so
-		// the "clearest gap on the page" clause must NOT attach to happy —
-		// exactly the ranking check the handoff asks for.
+		// the "clearest gap on the page" clause must NOT attach to happy.
 		$this->assertSame( 'actors', $out['largest_gap'] );
 	}
 

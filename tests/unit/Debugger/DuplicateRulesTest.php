@@ -1,8 +1,7 @@
 <?php
 /**
  * Unit tests for duplicate detection. Every bug this check has shipped was a
- * comparison rather than a query — see DEBUGGER-REVIEW.md 1.9b — so each of the
- * three has a test here.
+ * comparison rather than a query, so each of the three has a test here.
  *
  * @package lwtv-underscores
  */
@@ -51,11 +50,11 @@ class DuplicateRulesTest extends TestCase {
 	}
 
 	/*
-	 * base_slug() / has_suffix() — the 1.9b suffix bug.
+	 * base_slug() / has_suffix() — multi-digit suffixes.
 	 */
 
 	public function test_a_two_digit_suffix_is_stripped(): void {
-		// The original assumed a two-character '-2', so '-10' and up were mangled.
+		// Not just a two-character '-2': '-10' and up must strip cleanly too.
 		$this->assertSame( 'the-l-word', Duplicate_Rules::base_slug( 'the-l-word-10' ) );
 		$this->assertSame( 'the-l-word', Duplicate_Rules::base_slug( 'the-l-word-217' ) );
 	}
@@ -91,12 +90,12 @@ class DuplicateRulesTest extends TestCase {
 	}
 
 	/*
-	 * is_acknowledged() — the 1.9b override bug.
+	 * is_acknowledged() — the ACF true/false override.
 	 */
 
 	public function test_an_acf_true_false_override_is_honoured(): void {
-		// ACF stores '1', never a real boolean, so the old `true !== $override`
-		// test could never be false and the override was silently ignored.
+		// ACF stores '1', never a real boolean, so a strict `true !== $override`
+		// test would never be false and the override would be silently ignored.
 		$this->assertTrue( Duplicate_Rules::is_acknowledged( '1' ) );
 	}
 
@@ -211,8 +210,8 @@ class DuplicateRulesTest extends TestCase {
 	}
 
 	public function test_two_missing_imdb_ids_are_not_a_match(): void {
-		// The third 1.9b bug: an isset() test that was always true, so every
-		// suffixed post with no IMDb ID matched a same-named post with none.
+		// Guards against an isset() test that is always true, which would match
+		// every suffixed post with no IMDb ID to a same-named post with none.
 		$candidate             = $this->candidate( array( 'imdb' => '' ) );
 		$candidate['original'] = array( 'id' => 10, 'imdb' => '' ) + $candidate['original'];
 

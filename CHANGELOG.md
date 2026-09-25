@@ -4,6 +4,32 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [7.2.8] - 2026-09-25
+
+### Added
+
+- New Shows auto-posting: a show is announced through Postiz once it is published and has at least one character, within 30 days of first publish. Off unless "New Shows" is ticked in the Auto Posting settings.
+- `cron/daily.sh`, running `wp lwtv generate cron daily`, so the daily BYQ cache refresh, debug-log rotation and full statistics warm actually run.
+- Reference documentation under `docs/` (scoring, statistics, architecture, integrations, operations, design, testing), indexed in `docs/README.md`.
+
+### Changed
+
+- `wp lwtv waystowatch merge` moves the dropped term's posts to the kept term before deleting it, and reports how many moved.
+- Background work queues (TMDB, IMDb verification, WikiData QIDs, page-cache purges) are stored in options instead of transients, so they survive with transients disabled.
+- Debugger findings, status, baselines, the work queues and host names always read from the database, so values written by cron are visible in wp-admin straight away.
+- Long explanatory code comments moved into `docs/`; stale TODOs and change-history comments removed.
+
+### Fixed
+
+- Editing a published blog post no longer sends it to Postiz again.
+- With the default setting on, background tasks for many posts at once (for example the recalculation for each actor after a character save) are no longer dropped after the first on older versions of Action Scheduler.
+- The WP-Cron fallback now runs scheduled tasks; saving a show or actor without Action Scheduler no longer errors.
+- The calendar shows new TVMaze listings as soon as the nightly download lands, instead of up to a day later.
+- Genre Load, Intersection Load and Cliché Load legend colours match their waffle when a bucket is empty.
+- The Most Clichés leaderboards clear when shows, characters or actors are saved.
+- FacetWP markup no longer leaks into `wp lwtv scheduler` and `wp lwtv sweep` output.
+- Removed dead Digg share styles.
+
 ## [7.2.7] - 2026-09-23
 
 ### Added

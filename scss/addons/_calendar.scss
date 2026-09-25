@@ -7,14 +7,8 @@ One week of listings per page, paginated week to week. Days with nothing
 airing are omitted; the day-of-week strip in the sticky header is what
 signals a quiet day.
 
-Accessibility notes, because they constrain the palette here:
-
-- The source design faded past days to 55-70% opacity over a #8a8a8a grey,
-  which lands around 1.8-2.2:1. Past days instead use $lwtv-grey-muted
-  (5.74:1) at full opacity; recency is carried by the grey dot.
-- $lwtv-pink is 4.60:1 on white, so it cannot sit on a tinted background and
-  still pass. Anywhere pink text meets a pink tint we use $lwtv-pink-deep
-  (4.91:1 on $lwtv-pink-light, 7.07:1 on white).
+Past days use $lwtv-grey-muted at full opacity (no fading), and pink text on
+a pink tint uses $lwtv-pink-deep. See docs/design/accessibility.md.
 */
 
 $agenda-measure: 44rem;

@@ -26,7 +26,7 @@ class WP_CLI_LWTV_Sweep extends \WP_CLI_Command {
 	public function __construct() {
 		// phpcs:disable
 		// Remove <!--fwp-loop--> from output
-		add_filter( 'fwp_is_main_query', function( $is_main_query, $query ) {
+		add_filter( 'facetwp_is_main_query', function( $is_main_query, $query ) {
 			return false;
 		}, 10, 2 );
 		// phpcs:enable

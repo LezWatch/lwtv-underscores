@@ -3,22 +3,12 @@
  * Description: REST-API: Actor name check
  *
  * Answers one question for the block editor: is there already an actor who might
- * be the person whose name someone is typing?
+ * be the person whose name someone is typing? Candidates and a tier, never a
+ * verdict.
  *
- * Editors add actors from a blank Add Actor screen -- the workflow is show, then
- * actors, then characters -- so the title field is the only place a duplicate can
- * be caught before a second post exists. Matching is on the comparable name keys
- * (see _Helpers\Name_Key), so "Doona Bae" finds the existing "Bae Doona" and an
- * accent, a comma or a hyphen stops mattering.
- *
- * UNLIKE every other route in this directory, this one is not public. The others
- * serve data the site already publishes; this one returns draft and private actor
- * names, and Actors\Privacy makes a post private precisely because the person
- * asked not to be listed. An open callback here would hand those names to anyone
- * who guessed at them.
- *
- * Nothing here is a verdict. Two people really do share a name, so the response
- * is candidates and a confidence tier, and a human decides.
+ * UNLIKE every other route in this directory, this one is not public: it returns
+ * draft and private actor names. See
+ * docs/architecture/duplicate-detection.md#editor-warning.
  */
 
 namespace LWTV\Rest_API;
@@ -72,10 +62,8 @@ class Actor_Name_Check {
 	/**
 	 * Can this user edit actors?
 	 *
-	 * Read off the post type object rather than hardcoded. The actors CPT
-	 * registers capability_type => array( 'actor', 'actors' ) with map_meta_cap,
-	 * so the capability is 'edit_actors' and not 'edit_posts' -- and asking the
-	 * post type stays correct if that registration ever changes.
+	 * Read off the post type object (it is 'edit_actors', not 'edit_posts'), so
+	 * it stays correct if the registration changes.
 	 *
 	 * @return bool
 	 */

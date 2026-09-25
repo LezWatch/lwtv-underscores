@@ -69,21 +69,15 @@ class WP_CLI_LWTV_TVMaze {
 	/**
 	 * Default pause between requests, in milliseconds.
 	 *
-	 * TVMaze documents its rate limit as "at least 20 calls every 10 seconds"
-	 * per IP -- i.e. 2/sec. 500ms sits on that budget. An earlier revision
-	 * copied 250ms from cli-tmdb.php, which is 4/sec and twice the documented
-	 * allowance; TMDB's limits are simply more generous than TVMaze's.
-	 *
-	 * Note --with-seasons makes two calls per show, so the effective rate is
-	 * halved again. That is intentional headroom rather than waste.
+	 * Sits on TVMaze's documented 2/sec budget; don't copy cli-tmdb.php's 250ms.
+	 * See docs/integrations/tvmaze.md#rate-limits.
 	 */
 	public const DEFAULT_SLEEP_MS = 500;
 
 	/**
 	 * Extra pause after an HTTP 429, in milliseconds.
 	 *
-	 * TVMaze asks clients to "back off for a few seconds" and retry rather than
-	 * treat a 429 as a permanent failure.
+	 * A 429 is retried later, never recorded as a no-match.
 	 */
 	public const BACKOFF_MS = 5000;
 
@@ -96,10 +90,8 @@ class WP_CLI_LWTV_TVMaze {
 	/**
 	 * Allowed --order values mapped to SQL. Fixed strings, never user input.
 	 *
-	 * 'oldest' is the default because it makes repeated --limit runs advance
-	 * through the backlog. It is a poor sampler though: the oldest posts are the
-	 * long-established, mainstream shows, so a hit rate measured that way runs
-	 * optimistic. Use 'random' when the number needs to mean something.
+	 * 'oldest' advances through the backlog but samples optimistically; use
+	 * 'random' to measure. See docs/integrations/tvmaze.md#sampling-order.
 	 */
 	public const ORDER_CLAUSES = array(
 		'oldest' => 'p.ID ASC',
@@ -178,9 +170,9 @@ class WP_CLI_LWTV_TVMaze {
 	 * [--scoring-only]
 	 * : Restrict to shows where aired years could actually change the score.
 	 * Because the curated season count (tier 1) is preferred over exact aired
-	 * years (tier 2), a finished show with a season count will never consult
-	 * aired years at all -- roughly 1813 of 2255 shows. This narrows the run to
-	 * the rest: still-airing shows, and shows with no season count recorded.
+	 * years (tier 2), a finished show with a season count never consults aired
+	 * years at all, and that is most of the corpus. This narrows the run to the
+	 * rest: still-airing shows, and shows with no season count recorded.
 	 * Meaningful with --with-seasons or the `seasons` action; on `backfill` alone
 	 * it just skips useful ID lookups.
 	 *
@@ -274,13 +266,9 @@ class WP_CLI_LWTV_TVMaze {
 
 		\WP_CLI\Utils\format_items( $format, $rows, array( 'metric', 'shows' ) );
 
-		// Break the no-match group down by format. A bare count of 430 cannot
-		// distinguish "TVMaze policy excludes these" from "our IMDb IDs are
-		// wrong", and those need completely different responses. TVMaze's bar for
-		// non-curated web channels is high -- credited cast and crew, sequential
-		// numbering, a fixed schedule, plus notable credits or a verified budget
-		// or a broadcast re-run -- so a no-match group dominated by web series is
-		// expected and fine. One dominated by ordinary series is a data problem.
+		// Break the no-match group down by format: web series are expected
+		// (TVMaze policy), ordinary series suggest stale IMDb IDs. See
+		// docs/integrations/tvmaze.md#inclusion-policy-and-continuations.
 		$breakdown = $this->get_no_match_breakdown();
 
 		if ( ! empty( $breakdown ) ) {
@@ -340,11 +328,8 @@ class WP_CLI_LWTV_TVMaze {
 		$wanted = $do_all ? 0 : max( 1, $limit );
 
 		// --scoring-only filters in PHP rather than SQL so it can call the same
-		// tier test Longevity::run_years() uses. Expressing "finished, and has a
-		// season count" in SQL would mean reimplementing the airdate resolution
-		// (including the legacy serialized fallback and the 'current' sentinel),
-		// and a filter that drifts from the scoring logic is worse than no filter.
-		// So fetch unlimited, filter, then slice.
+		// tier test Longevity::run_years() uses; an SQL copy would drift from the
+		// scoring logic. So fetch unlimited, filter, then slice.
 		if ( $scoring_only ) {
 			$all_ids  = $this->get_candidates( $order, $retry_missed, 0 );
 			$show_ids = array();
@@ -480,7 +465,7 @@ class WP_CLI_LWTV_TVMaze {
 	 *
 	 * Separate from `backfill` because that action's candidates are shows MISSING
 	 * an ID, so its --with-seasons flag can only ever reach shows it just matched.
-	 * It cannot touch the ~499 shows that already had an ID and no aired years,
+	 * It cannot touch shows that already had an ID and no aired years,
 	 * nor anything after a completed backfill has emptied the candidate list.
 	 *
 	 * @param array $assoc_args Flags.
@@ -630,18 +615,9 @@ class WP_CLI_LWTV_TVMaze {
 	/**
 	 * Resolve one show's TVMaze ID.
 	 *
-	 * Read-only on purpose. Calendar\TVMaze::get_tvmaze_info_show() performs the
-	 * same lookup chain, but writes the ID as a side effect of fetching info,
-	 * which --dry-run cannot use. Sharing that method would mean dry-run and the
-	 * real run taking different code paths -- exactly the divergence that makes a
-	 * dry run untrustworthy.
-	 *
-	 * IMDb lookups only. TVMaze can also be searched by name, but a name match is
-	 * a guess -- /search/shows is fuzzy and /singlesearch/shows is explicitly
-	 * undefined about which show it returns when titles collide -- and a wrong
-	 * TVMaze ID feeds wrong aired years straight into the show score. The 37
-	 * shows with no IMDb ID are skipped rather than guessed at. See the file
-	 * header: that is our choice, not a TVMaze listing requirement.
+	 * Read-only on purpose, and IMDb lookups only (no name matching): a wrong
+	 * TVMaze ID feeds wrong aired years into the show score. See
+	 * docs/integrations/tvmaze.md#lookup-chain.
 	 *
 	 * @param int $show_id Show post ID.
 	 *
@@ -655,9 +631,7 @@ class WP_CLI_LWTV_TVMaze {
 			'reason' => '',
 		);
 
-		// An editorially-set ID wins outright: a human looked at both records and
-		// said "this show is that TVMaze entry". No API call, no guessing, and it
-		// works for shows whose titles do not match TVMaze's at all.
+		// An editorially-set ID wins outright, with no API call.
 		$manual = $this->manual_tvmaze_id( $show_id );
 
 		if ( $manual > 0 ) {
@@ -704,13 +678,8 @@ class WP_CLI_LWTV_TVMaze {
 	/**
 	 * The editorially-set TVMaze ID for this show, if any.
 	 *
-	 * Comes from the "Ignore TVMaze Match" toggle on the show itself, which
-	 * reveals a manual ID field. Deliberately NOT lezshows_tvmaze_id: that one is
-	 * machine-written, and Calendar\TVMaze::get_tvmaze_info_show() updates it from
-	 * whatever the API returns -- including from its /singlesearch/shows name-search
-	 * fallback. So a fuzzy match on a show with no IMDb ID can overwrite it with
-	 * the wrong ID, and the `if ( $tvmaze_id )` branch then trusts that forever.
-	 * A manual value is never overwritten.
+	 * lezshows_tvmaze_id_manual, never machine-written -- unlike
+	 * lezshows_tvmaze_id. See docs/integrations/tvmaze.md#editorial-overrides.
 	 *
 	 * @param int $show_id Show post ID.
 	 *
@@ -723,10 +692,8 @@ class WP_CLI_LWTV_TVMaze {
 	/**
 	 * Has an editor acknowledged that this show has no TVMaze entry of its own?
 	 *
-	 * The toggle without an ID means "I looked, there is nothing to match".
-	 * Criminal Minds: Evolution is the canonical case -- TVMaze keeps it on the
-	 * parent Criminal Minds entry per its continuations policy, so it will never
-	 * match on its own IMDb ID and reporting it forever is noise.
+	 * The toggle without an ID means "I looked, there is nothing to match"
+	 * (e.g. a continuation TVMaze folds into its parent entry).
 	 *
 	 * @param int $show_id Show post ID.
 	 *
@@ -739,10 +706,7 @@ class WP_CLI_LWTV_TVMaze {
 	/**
 	 * Both editorial overrides, read once per request.
 	 *
-	 * One query for the whole set rather than two meta reads per show. These are
-	 * expected to be rare -- an escape hatch for stubborn cases, not a backlog --
-	 * so scanning a couple of thousand candidates against an in-memory map beats
-	 * a query each.
+	 * One query for the whole (rare) set, rather than two meta reads per show.
 	 *
 	 * @return array{ids: array<int, int>, ignored: array<int, bool>}
 	 */
@@ -876,24 +840,8 @@ class WP_CLI_LWTV_TVMaze {
 	/**
 	 * Fit a title into a fixed-width column: truncate, then pad.
 	 *
-	 * Both halves have to be character-aware, and the padding half is the one
-	 * that is easy to miss.
-	 *
-	 * Truncation uses mb_substr rather than substr because these titles contain
-	 * multibyte characters (Päivä, Lindenstraße, Shoujo☆Kageki) and a byte-wise
-	 * cut lands mid-character and prints mojibake.
-	 *
-	 * Padding is done here rather than with sprintf's '%-42s', because that pads
-	 * to a byte count too: "Gideon’s Crossing" is 17 characters but 19 bytes, so
-	 * sprintf emitted two spaces too few and shunted the next column left.
-	 * Decoding HTML entities is what exposed this -- '&#8217;' is seven ASCII
-	 * bytes, and the ' it decodes to is three bytes but one visible character.
-	 *
-	 * mb_strlen, not mb_strwidth: WordPress polyfills mb_substr and mb_strlen in
-	 * wp-includes/compat.php but not mb_strwidth, so using the latter would fatal
-	 * where mbstring is missing. The cost is that full-width CJK still counts as
-	 * one column when it occupies two -- acceptable for a CLI table, and no worse
-	 * than before.
+	 * Character-aware, since sprintf pads to bytes; mb_strlen, not the
+	 * unpolyfilled mb_strwidth. See docs/integrations/tvmaze.md#terminal-output.
 	 *
 	 * @param string $title Decoded title.
 	 * @param int    $width Column width in characters.
@@ -1000,20 +948,9 @@ class WP_CLI_LWTV_TVMaze {
 	/**
 	 * Find no-match shows whose IMDb ID has probably gone stale.
 	 *
-	 * IMDb reassigns title IDs, leaving the old one working as a redirect. TVMaze
-	 * stores one canonical IMDb ID per show and /lookup/shows?imdb= is an exact
-	 * match against it, so a stale-but-redirecting alias 404s even though the ID
-	 * still resolves perfectly well for a human clicking it. Only Murders in the
-	 * Building is the worked example: TVMaze holds tt11691774, we held tt12851524,
-	 * and both point at the same show on IMDb itself.
-	 *
-	 * This searches TVMaze by NAME instead, and reports where the IMDb ID it holds
-	 * differs from ours. Name search is exactly the fuzzy guess this command
-	 * refuses to trust for writes -- so it is used only to surface candidates for
-	 * review. Nothing is written, ever.
-	 *
-	 * Worth fixing beyond TVMaze: cli-tmdb.php resolves TMDB IDs from the same
-	 * lezshows_imdb value, so a stale ID fails there too.
+	 * Searches TVMaze by NAME and reports where its IMDb ID differs from ours.
+	 * Read-only: name search only surfaces candidates for review. See
+	 * docs/integrations/imdb.md#stale-ids-that-still-work.
 	 *
 	 * @param array $assoc_args Flags.
 	 */
@@ -1395,11 +1332,8 @@ class WP_CLI_LWTV_TVMaze {
 	/**
 	 * Count backfill candidates without materialising the ID list.
 	 *
-	 * Requires an IMDb ID. Not because TVMaze demands one to list a show -- its
-	 * inclusion policy says nothing about IMDb -- but because an exact ID lookup
-	 * is the only match we trust enough to write into a scoring input. Shows
-	 * without one are reported separately by status() and never counted as
-	 * candidates.
+	 * Requires an IMDb ID (or a manual TVMaze ID): the only match we trust to
+	 * write. See docs/integrations/tvmaze.md#lookup-chain.
 	 *
 	 * @param bool $retry_missed Include shows already checked without a match.
 	 *

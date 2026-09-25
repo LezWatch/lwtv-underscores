@@ -4,15 +4,8 @@
  *
  * Storage only. The diff itself is pure and lives in Debugger\Build\Baseline.
  *
- * One non-autoloaded option per check, plus a small index of which checks have
- * a baseline and when they last ran. That mirrors Audit's storage shape without
- * sharing its keys: Audit's identity string is `show_id:char_id:issue_type:year`
- * and its baselines are already populated under it, so reusing that namespace
- * would have meant either rewriting its identity function -- resetting every
- * audit scope on deploy -- or two incompatible key formats in one option space.
- *
- * The payload is identity only (see Baseline::snapshot()), so this is smaller
- * than the findings each check already stores for ten days.
+ * One non-autoloaded option per check plus an index; separate from Audit's
+ * baselines. See docs/architecture/validation-screen.md#baselines.
  *
  * @package LWTV
  */
@@ -23,6 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+use LWTV\_Helpers\Uncached_Option;
 use LWTV\Debugger\Build\Baseline;
 
 class Baseline_Store {
@@ -44,7 +38,7 @@ class Baseline_Store {
 	 * @return array
 	 */
 	public static function load( string $scope ): array {
-		$baseline = get_option( self::PREFIX . $scope );
+		$baseline = Uncached_Option::get( self::PREFIX . $scope );
 
 		return is_array( $baseline ) ? $baseline : array();
 	}
@@ -78,7 +72,7 @@ class Baseline_Store {
 	public static function save( string $scope, array $findings ): void {
 		$snapshot = Baseline::snapshot( $findings );
 
-		update_option( self::PREFIX . $scope, $snapshot, false );
+		Uncached_Option::set( self::PREFIX . $scope, $snapshot );
 
 		$index           = self::index();
 		$index[ $scope ] = array(
@@ -86,7 +80,7 @@ class Baseline_Store {
 			'count'    => count( $snapshot ),
 		);
 
-		update_option( self::INDEX, $index, false );
+		Uncached_Option::set( self::INDEX, $index );
 	}
 
 	/**
@@ -144,7 +138,7 @@ class Baseline_Store {
 	 * @return array<string, array<string, int>>
 	 */
 	public static function index(): array {
-		$index = get_option( self::INDEX );
+		$index = Uncached_Option::get( self::INDEX );
 
 		return is_array( $index ) ? $index : array();
 	}
@@ -173,6 +167,6 @@ class Baseline_Store {
 		delete_option( self::PREFIX . $scope );
 		unset( $index[ $scope ] );
 
-		update_option( self::INDEX, $index, false );
+		Uncached_Option::set( self::INDEX, $index );
 	}
 }

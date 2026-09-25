@@ -281,8 +281,7 @@ class What_Happened_JSON {
 		/*
 		 * IDs, not post objects. This loop reads nothing off the post -- only
 		 * airdate meta -- so hydrating every published show, and serialising the
-		 * whole WP_Query into a transient, paid for data it never touched.
-		 * See DEBUGGER-REVIEW.md 2.1.
+		 * whole WP_Query into a transient, would pay for data it never touches.
 		 */
 		$show_ids = ( new Post_Type() )->get_ids( CPT_Shows::SLUG );
 
@@ -293,14 +292,13 @@ class What_Happened_JSON {
 		foreach ( array_chunk( $show_ids, self::META_BATCH ) as $batch ) {
 			/*
 			 * One meta query per batch rather than two or three per show. Both
-			 * get_ids() and make() set update_post_meta_cache => false, so the
-			 * old loop's get_post_meta() calls each went to the database.
+			 * get_ids() and make() set update_post_meta_cache => false, so
+			 * without this each get_post_meta() call would go to the database.
 			 */
 			update_postmeta_cache( $batch );
 
 			foreach ( $batch as $show_id ) {
 				// Airdates::get() is the canonical reader, legacy fallback and all.
-				// This method used to carry its own third copy of that logic.
 				$airdates  = Airdates::get( (int) $show_id );
 				$ad_start  = $airdates['start'];
 				$ad_finish = $airdates['finish'];

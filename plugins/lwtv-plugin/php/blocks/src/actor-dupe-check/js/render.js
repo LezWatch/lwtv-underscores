@@ -117,12 +117,7 @@ export default function Render() {
 	// than on an array rebuilt on every render.
 	const signature = signatureOf( matches );
 
-	/*
-	 * A strict match is the only thing here worth stopping a publish over. The
-	 * audit that sized this found one strict collision across 6,132 actors,
-	 * against four at the loose tier of which three were different people --
-	 * so loose warns and strict blocks, and never the other way round.
-	 */
+	// Strict blocks, loose only warns -- never the other way round.
 	const shouldLock = strict.length > 0 && ! acknowledged;
 
 	// Fetch.
@@ -140,15 +135,8 @@ export default function Render() {
 				`/lwtv/v1/actors/name-check?name=${ encodeURIComponent( name ) }` +
 				`&exclude=${ postId ? postId : 0 }`;
 
-			/*
-			 * The build externalises this import to wp.apiFetch, so it is the
-			 * editor's own configured instance and the request carries the REST
-			 * nonce -- importing it rather than reaching for window.wp also puts
-			 * wp-api-fetch in the generated asset file instead of assuming some
-			 * other script pulled it in. This route is gated on the actors
-			 * capability and 401s without the nonce; see
-			 * Rest_API\Actor_Name_Check on why it is not public.
-			 */
+			// Imported apiFetch carries the REST nonce; this route 401s without
+			// it. See docs/architecture/duplicate-detection.md#apifetch-and-the-rest-nonce.
 			apiFetch( { path, signal: controller.signal } )
 				.then( ( data ) => {
 					setResult( {

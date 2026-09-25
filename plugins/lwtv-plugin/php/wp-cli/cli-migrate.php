@@ -487,15 +487,7 @@ class WP_CLI_LWTV_Migrate {
 
 	/**
 	 * Migrate lezchars_character_image_group from ACF repeater format to ACF Gallery field.
-	 *
-	 * Old format: ACF repeater rows; lezchars_character_image_group = integer count,
-	 *             sub-fields lezchars_character_image_group_{N}_alt_image_file (attach ID)
-	 *             and lezchars_character_image_group_{N}_alt_image_text (label string).
-	 * New format: ACF Gallery field; lezchars_character_image_group = serialized array of attach IDs.
-	 *
-	 * Also copies alt_image_text to the attachment title when the attachment title
-	 * looks like a raw filename (no spaces), preserving the "Crossover"/"Flashback" labels
-	 * for the front-end tab UI.
+	 * Run after charimages. See docs/operations/migrations/cmb2-to-acf.md#post-meta-mappings.
 	 */
 	public function migrate_charimages_to_gallery() {
 		$posts = get_posts(
@@ -587,7 +579,7 @@ class WP_CLI_LWTV_Migrate {
 	 * New format: ACF repeater rows with show (post ID int), type (string), appears (array) sub-fields.
 	 *
 	 * NOTE: After running this, LIKE meta queries against lezchars_show_group will stop
-	 * working. Run Phase 4 consuming-code updates before or immediately after.
+	 * working.
 	 */
 	public function migrate_charshowgroup() {
 		$posts = get_posts(
@@ -664,11 +656,8 @@ class WP_CLI_LWTV_Migrate {
 
 	/**
 	 * Migrate Auto-Posting (Postiz) settings from CMB2 options page to ACF options page.
-	 *
-	 * CMB2 stores all settings under a single serialized option key.
-	 * ACF options pages store each field as its own wp_options row.
-	 *
 	 * Run AFTER syncing group_lwtv_auto_posting.json in ACF → Sync.
+	 * See docs/operations/migrations/cmb2-to-acf.md#term-and-option-mappings.
 	 */
 	public function migrate_autoposting() {
 		$old_options = get_option( 'lwtv_auto_posting_options', array() );
@@ -730,12 +719,8 @@ class WP_CLI_LWTV_Migrate {
 
 	/**
 	 * Migrate lez_watch_urls term meta from CMB2 format to ACF repeater format.
-	 *
-	 * CMB2 repeatable text_url stores lezwatchurls_all as a serialized PHP array.
-	 * ACF repeater stores individual rows: lezwatchurls_all_N_url.
-	 * CMB2 checkbox stores lezwatchurls_setting_hide_display as 'on'; ACF true_false uses '1'.
-	 *
 	 * Run AFTER syncing group_lwtv_term_watch_urls.json in ACF → Sync.
+	 * See docs/operations/migrations/cmb2-to-acf.md#term-and-option-mappings.
 	 */
 	public function migrate_watchtermurls() {
 		$terms = get_terms(
@@ -799,15 +784,9 @@ class WP_CLI_LWTV_Migrate {
 	}
 
 	/**
-	 * Migrate lezshows_airdates start/finish to separate ACF meta keys.
-	 *
-	 * CMB2 stored both dates as one serialized array: lezshows_airdates['start'] / ['finish'].
-	 * ACF uses separate keys: lezshows_airdates_start and lezshows_airdates_finish.
-	 * The load_value filters bridge the gap at display time, but the separate keys must
-	 * exist in the DB for direct get_post_meta() reads (on-air checker, calculations) to
-	 * work correctly without relying on the legacy fallback.
-	 *
-	 * Skips shows where the separate key already has a non-empty value.
+	 * Migrate lezshows_airdates start/finish to separate ACF meta keys, so direct
+	 * get_post_meta() reads work. Skips keys that already have a value.
+	 * See docs/architecture/meta-storage-quirks.md#show-airdates.
 	 */
 	public function migrate_airdates() {
 		$posts = get_posts(
@@ -883,11 +862,8 @@ class WP_CLI_LWTV_Migrate {
 
 	/**
 	 * Migrate Debug Logging settings from CMB2 options page to ACF options page.
-	 *
-	 * CMB2 stores all settings under lwtv_debug_logging_options as a serialized array.
-	 * ACF options pages store each field as its own wp_options row.
-	 *
-	 * Run AFTER syncing group_lwtv_debug_logging.json in ACF → Sync.
+	 * Run AFTER syncing group_lwtv_debugging.json in ACF → Sync.
+	 * See docs/operations/migrations/cmb2-to-acf.md#term-and-option-mappings.
 	 */
 	public function migrate_debuglogging() {
 		$old_options = get_option( 'lwtv_debug_logging_options', array() );
@@ -924,14 +900,9 @@ class WP_CLI_LWTV_Migrate {
 	}
 
 	/**
-	 * Prune retired checks out of the debugger status option.
-	 *
-	 * Status entries outlive the check that wrote them, and
-	 * Admin_Menu\Validation::current_status() prints every entry with a count
-	 * above zero. So a deleted check keeps reporting stale findings on the intro
-	 * tab, with no tab to open and nothing that can recompute it to zero.
-	 *
-	 * Add to RETIRED_STATUS_KEYS whenever a check is removed, and run this once.
+	 * Prune retired checks out of the debugger status option. Add to
+	 * RETIRED_STATUS_KEYS whenever a check is removed, and run this once.
+	 * See docs/architecture/validation-screen.md#retired-checks.
 	 */
 	public function migrate_debugstatus() {
 		$removed = Status::forget( self::RETIRED_STATUS_KEYS );
@@ -951,22 +922,9 @@ class WP_CLI_LWTV_Migrate {
 	/**
 	 * Move debugger findings out of transients and into the findings option store.
 	 *
-	 * Run once, from WP-CLI, after deploying Debugger\Findings_Store.
-	 *
-	 * Without this every check reads as "never run" until its next scan, which for
-	 * `watchurls` means a few hundred HTTP requests to rebuild a report that is
-	 * already sitting in the database.
-	 *
-	 * Reads the underlying `_transient_*` option rows directly rather than calling
-	 * get_transient(), and that is the whole point rather than a shortcut. This
-	 * migration exists because the two do not agree: on production WP-CLI does not
-	 * load the object-cache drop-in that web requests use, so get_transient() asks
-	 * whichever tier the current process happens to have. The DB rows are what we
-	 * are actually migrating, and get_option() sees them from either side.
-	 *
-	 * Expired rows are dropped rather than carried, and a live row keeps its
-	 * remaining lifetime rather than getting a fresh ten days -- moving storage
-	 * should not quietly re-date a stale report as current.
+	 * Run once, from WP-CLI, after deploying Debugger\Findings_Store. Reads the
+	 * `_transient_*` option rows directly (never get_transient()) and keeps each
+	 * row's remaining lifetime. See docs/operations/migrations/cmb2-to-acf.md#debugger-findings-to-options.
 	 */
 	public function migrate_debugfindings() {
 		$migrated = 0;
@@ -1023,14 +981,9 @@ class WP_CLI_LWTV_Migrate {
 	}
 
 	/**
-	 * Remove a migrated findings transient from both tiers.
-	 *
-	 * delete_transient() alone is not enough to make this migration idempotent.
-	 * Where a persistent object cache is active it deletes the cached copy and
-	 * leaves the `_transient_*` option rows -- the very rows this migration reads
-	 * -- so a second run would find them again and overwrite the migrated findings
-	 * with the old snapshot. Deleting the options explicitly means running twice
-	 * is a no-op no matter which tier the process has.
+	 * Remove a migrated findings transient from both tiers. delete_transient()
+	 * alone can leave the option rows behind, which would break idempotency.
+	 * See docs/architecture/caching.md#delete_transient-and-option-rows.
 	 *
 	 * @param  string $key Findings key.
 	 * @return void

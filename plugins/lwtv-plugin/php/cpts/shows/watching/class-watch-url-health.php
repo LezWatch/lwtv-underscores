@@ -3,19 +3,9 @@
  * Name: Watch URL Health
  * Description: Decide whether a probed provider URL is still a working provider.
  *
- * A dead Ways to Watch link is the easy case: a 404 says so. The expensive
- * case is the one that still returns HTTP 200: Quibi shut down and quibi.com is
- * now an online casino, so every reader who clicked that button got sent
- * somewhere we did not intend. Status codes cannot see that, which is why this
- * also looks at three cheap signals:
- *
- *   - the domain now serves a parking / for-sale page
- *   - the request ends up on a different registrable domain than it started on
- *   - the site no longer calls itself anything resembling our provider name
- *
- * None of these are proof, so they report as 'review' rather than 'broken'. The
- * job here is to put a human in front of the twenty URLs worth looking at, not
- * to decide anything on its own.
+ * Checks the status code, then parked pages, off-site redirects and published
+ * name drift, because a lost domain can still answer 200.
+ * See docs/architecture/watch-providers.md#url-health.
  *
  * @package LWTV
  */
@@ -47,9 +37,8 @@ class Watch_Url_Health {
 	 * Machine-readable reason, for the one case a caller needs to act on
 	 * specifically: a term whose published name is a known, confirmed drift
 	 * (a provider now hosted on a platform that publishes its own name, for
-	 * instance) rather than evidence of losing the provider. Everything else
-	 * that can produce a REVIEW or worse has no reason to single out yet, so
-	 * it is left '' rather than invented ahead of a caller that needs it.
+	 * instance) rather than evidence of losing the provider. Every other
+	 * outcome leaves the reason ''.
 	 */
 	const REASON_NAME_MISMATCH = 'name_mismatch';
 

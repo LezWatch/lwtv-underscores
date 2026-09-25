@@ -74,14 +74,9 @@ class Indexing {
 	/**
 	 * Re-index a renamed post's characters
 	 *
-	 * The character facets store another post's title as their display value
-	 * (see facetwp_index_row_characters_actors() and _shows() below), resolved
-	 * when the character is indexed. Renaming an actor or a show leaves every
-	 * character that references it pointing at the old name, which is invisible
-	 * until someone searches the facet for the new one.
-	 *
-	 * Deferred to a scheduled task: one rename can touch every character on a
-	 * long-running show, and none of it needs to happen before the redirect.
+	 * Character rows store linked actor/show titles as display values, so a
+	 * rename queues a deferred re-index of those characters.
+	 * See docs/architecture/facetwp-indexing.md#rename-fan-out.
 	 *
 	 * @param int      $post_id     The post ID being updated.
 	 * @param \WP_Post $post_after  The post after the update.

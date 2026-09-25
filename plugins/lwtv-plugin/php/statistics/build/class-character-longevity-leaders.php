@@ -2,18 +2,9 @@
 /**
  * Longest-Running Characters Query Class
  *
- * Ranks published characters by how many distinct years they're actually
- * credited on screen, using the years recorded in the lezchars_show_group
- * repeater's `appears` sub-field — no join against show airdates needed,
- * the character's own appearance years are already tracked directly.
- *
- * This is a count of distinct years, not the calendar span between the
- * earliest and latest one — a soap character with credited gaps (e.g. an
- * actor's leave of absence, or years the character was written out and
- * back in) shouldn't get credit for years they weren't actually on screen
- * just because they bookend a long run. min/max are still tracked and
- * returned alongside count, for callers that want to show the actual
- * first–last year range next to the distinct-year count.
+ * Ranks published characters by distinct credited `appears` years (not the
+ * first-to-last span); min/max are returned for display.
+ * See docs/statistics/data-model.md#anchoring-characters-to-a-year.
  *
  * @package LezWatch.TV
  */
@@ -68,16 +59,9 @@ class Character_Longevity_Leaders {
 	 * Build the leaderboard by finding each character's set of distinct
 	 * on-screen years.
 	 *
-	 * The `appears` sub-field is a multi-value select, one serialized array
-	 * per lezchars_show_group row (unlike that repeater's `show` sub-field,
-	 * which is one scalar ID per row) — there's no per-year meta row to
-	 * COUNT in SQL directly. This pulls every (post_id, meta_value) row for
-	 * that sub-field across all published characters in one query, then
-	 * folds each row's unserialized year list into a running per-character
-	 * year SET in PHP (deduped across every show-group row a character
-	 * has, so a year credited via two different shows only counts once) —
-	 * one query total, not a get_field() call per character, same shape
-	 * Character_Actor_Leaders uses for lezchars_actor.
+	 * One query for every `appears` row, then a per-character year set in
+	 * PHP (a year credited via two shows counts once).
+	 * See docs/statistics/data-model.md#repeaters.
 	 *
 	 * @param int $limit How many characters to return.
 	 * @return array Character leaderboard data.

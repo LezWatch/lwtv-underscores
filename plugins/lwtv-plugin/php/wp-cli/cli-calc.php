@@ -222,9 +222,8 @@ class WP_CLI_LWTV_Calculate {
 				try {
 					$this->calculate_quietly( (int) $post_id, $label );
 				} catch ( \Throwable $error ) {
-					// One bad post must not end a two-thousand-post migration.
-					// Collected and reported at the end so the failures are
-					// visible rather than scrolling past inside a progress bar.
+					// One bad post must not end the sweep. Failures are reported
+					// at the end rather than scrolling past inside a progress bar.
 					$failed[ (int) $post_id ] = $error->getMessage();
 				}
 
@@ -261,7 +260,7 @@ class WP_CLI_LWTV_Calculate {
 		\WP_CLI::success( sprintf( '%d recalculated, %d failed.', $done - count( $failed ), count( $failed ) ) );
 
 		if ( ! $third_party ) {
-			\WP_CLI::log( 'Third-party scores were left alone. The daily cron and the on-save hooks will refresh them.' );
+			\WP_CLI::log( 'Third-party scores were left alone. They refresh when a show is saved, or rerun with --with-third-party.' );
 		}
 	}
 
@@ -269,7 +268,7 @@ class WP_CLI_LWTV_Calculate {
 	 * Run one post's calculation without the per-post success line.
 	 *
 	 * run_calculations() prints a summary per post, which is right for a single
-	 * post and unreadable 2,000 times underneath a progress bar.
+	 * post and unreadable underneath a progress bar.
 	 *
 	 * @param int    $post_id Post ID.
 	 * @param string $label   shows, characters or actors.

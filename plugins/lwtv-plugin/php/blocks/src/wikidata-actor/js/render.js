@@ -61,12 +61,9 @@ export default function Render() {
 			const fetchData = async () => {
 				setIsLoading( true );
 				try {
-					// The build externalises this import to wp.apiFetch, so it
-					// is the editor's configured instance and the request
-					// carries the REST nonce. Without it WordPress treats the
-					// call as logged-out, and the panel can neither run a live
-					// WikiData check nor read unpublished actors the editor is
-					// editing.
+					// Imported apiFetch carries the REST nonce, without which
+					// the call is treated as logged-out. See
+					// docs/architecture/duplicate-detection.md#apifetch-and-the-rest-nonce.
 					const data = await apiFetch( {
 						path: `/lwtv/v1/wikidata/${ postId }`,
 					} );

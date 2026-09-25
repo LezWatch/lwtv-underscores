@@ -3,28 +3,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 /**
- * Characters → Clichés: infographic rework (green, shared with Tropes' family
- * class), porting the Load waffle + Common Pairings pattern already shipped
- * for shows-side taxonomies onto lez_cliches. lez_cliches carries a real
- * "None" placeholder term (characters written with no cliché at all), so
- * Cliché Load/Pairings exclude it exactly the way Trope Load/Pairings
- * exclude lez_tropes' own "none" term — Cliché Load's "0" bucket is
- * therefore a real, meaningful bucket (characters with zero tracked
- * clichés), not absence-of-data, which is why its waffle ramp is a full
- * green gradient rather than Genre/Intersection Load's grey-for-zero
- * treatment.
- *
- * Layout mirrors Genres (no alignment-category split exists for clichés,
- * unlike Tropes' good/maybe/bad/ploy, so there's no second main-column
- * panel to stack): Cliché Load alone in the main (wide) column, Common
- * Pairings alone in the side (narrow) column, and the existing "All
- * Clichés, Ranked" list drops out of that grid to run full width below in
- * a 2-column card, same as .lwtv-genres-breakdown-wrap / .lwtv-tropes-
- * breakdown-wrap / .lwtv-inter-breakdown-wrap.
- *
- * The old average/median callout pair is gone entirely, replaced by a
- * 3-up pullstats banner (average, share with 3+, top pairing) — the same
- * treatment Genres uses in place of its own old callouts.
+ * Characters → Clichés (green): pullstats, Cliché Load waffle, Common
+ * Pairings and the full ranked list, excluding the "none" term.
+ * See docs/statistics/pages.md#load-and-pairings-pages.
  *
  * @package LezWatch.TV
  *
@@ -34,20 +15,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 $cliches_raw  = lwtv_plugin()->generate_characters_statistics( 'array', 'cliches' );
 $cliches_data = ( is_array( $cliches_raw ) && ! empty( $cliches_raw ) ) ? (array) reset( $cliches_raw ) : array();
 
-// Shared WP glue: every published character's cliché slugs, one query,
-// transient-cached. Feeds the pullstats row below, Cliché Load, the
-// most-clichéd-character spotlight, and Common Pairings — same map shape
-// Genre Load / Trope Load already use for their own taxonomies, just
-// scoped to characters instead of shows.
+// Every published character's cliché slugs, one cached query, shared by
+// the pullstats, Cliché Load, the spotlight and Common Pairings.
 $cliches_slug_map = ( new \LWTV\Statistics\Build\Taxonomy_Optimized() )->get_object_term_slug_map( 'post_type_characters', 'lez_cliches' );
 
-// Cliché Load: how many (real) clichés a character carries, 0 to 4+.
-// "none" is excluded — it marks the absence of a cliché, not one of its
-// own. Confirmed against live data (audit script, 2026-08-10): every
-// published character carries at least one lez_cliches row, so the "0"
-// bucket below is exactly the "None"-tagged set, not a mix of that and
-// untagged characters — worth labeling as such rather than a bare "0
-// clichés", so the legend doesn't read like a data gap.
+// Cliché Load: real clichés per character, 0 to 4+, with "none" excluded,
+// so bucket 0 is the None-tagged set. See docs/statistics/data-model.md#none-terms.
 $cliches_distribution = \LWTV\Statistics\Build\Term_Count_Distribution::build( $cliches_slug_map, (int) $character_count, array( 'none' ) );
 $cliches_cells        = \LWTV\Statistics\Build\Term_Count_Distribution::to_cells( $cliches_distribution, (int) $character_count, 100 );
 
@@ -59,9 +32,7 @@ foreach ( $cliches_distribution as $cliches_dist_i => $cliches_dist_bucket ) {
 	);
 }
 
-// Real term name rather than a hardcoded "None" — picks up a rename for
-// free and falls back to the slug on the same DB hiccup / WP_Error the
-// pair-name lookups below already guard against.
+// Real term name for bucket 0 (picks up a rename), falling back to the slug.
 $cliches_none_term = get_term_by( 'slug', 'none', 'lez_cliches' );
 $cliches_none_name = ( $cliches_none_term instanceof \WP_Term ) ? $cliches_none_term->name : 'none';
 
@@ -74,16 +45,8 @@ $waffle = array(
 	'label'    => sprintf( __( 'Characters grouped by how many clichés each carries, from "%s" to four or more.', 'lwtv' ), $cliches_none_name ),
 );
 
-// Common Cliché Pairings: which two clichés most often appear on the same
-// character. Counted once here and reused both for the pullstat headline
-// (top 1) below and the full matchup panel (top 8) further down — same
-// pure counting Genres/Tropes/Intersectionality already use, just aimed
-// at lez_cliches. Deliberately unlinked: no FacetWP multi-value param is
-// confirmed for lez_cliches (same conservative call already made for
-// lez_genres/lez_tropes). Passed the raw slug map with no "none"
-// pre-filter, same as Trope Pairings — "none" is designed to be exclusive
-// of real clichés on the same character, so it never actually surfaces as
-// a pairing partner in practice.
+// Common Cliché Pairings, counted once for the pullstat (top 1) and the
+// panel (top 8). Unlinked: see docs/statistics/pages.md#facetwp-links.
 $cliches_pairs_counted = \LWTV\Statistics\Build\Intersection_Pairs::count_pairs( $cliches_slug_map );
 $cliches_pairs         = \LWTV\Statistics\Build\Intersection_Pairs::top_pairs( $cliches_pairs_counted, 8, 2 );
 
@@ -104,12 +67,7 @@ if ( ! is_wp_error( $cliches_pair_terms ) && is_array( $cliches_pair_terms ) ) {
 }
 
 // ---- Pullstats row: average clichés/character, share carrying 3+, top pairing ----
-// Replaces the old average/median callout pair — three punchier numbers,
-// same treatment as the Genres/Tropes pullstats row. The average is
-// measured across characters that carry at least one real cliché (Taxonomy_
-// Optimized excludes "None"-only characters from that denominator entirely,
-// same scope the old callout used) — a different, narrower denominator than
-// the 3+ share below, which is a % of every published character.
+// The average excludes None-only characters; the 3+ share is of every character.
 $cliches_stats     = ( new \LWTV\Statistics\Build\Taxonomy_Optimized() )->get_terms_per_object_stats( 'post_type_characters', 'lez_cliches', array( 'none' ) );
 $cliches_pullstats = array();
 
@@ -169,11 +127,8 @@ if ( ! empty( $cliches_pullstats ) ) :
 	<?php
 endif;
 
-// Spotlight the single most-clichéd character as a small footer strip on
-// the panel — same treatment Genre/Trope Load use for their own "most
-// loaded" entity. This overlaps the #1 slot of the separate "Most Clichés"
-// leaderboard subpage by design (per direction): that page is the full
-// top-25 list, this is just the headline fact for this panel.
+// Spotlight the most-clichéd character as a footer strip (it deliberately
+// repeats the #1 of Characters → Most).
 $cliches_top       = \LWTV\Statistics\Build\Term_Count_Distribution::top_object( $cliches_slug_map, array( 'none' ) );
 $cliches_top_media = '';
 if ( $cliches_top['id'] > 0 && has_post_thumbnail( $cliches_top['id'] ) ) {
@@ -215,11 +170,6 @@ if ( $cliches_top['id'] > 0 && has_post_thumbnail( $cliches_top['id'] ) ) {
 						<span class="lwtv-legend-name">
 							<?php
 							if ( '0' === $cliches_dist_bucket['label'] ) {
-								// The "0" bucket is exactly the "None"-tagged characters
-								// (confirmed against live data, see the comment above
-								// $cliches_distribution) — label it as that cliché by
-								// name instead of a bare "0 clichés", which reads like
-								// a data gap rather than a deliberate tag.
 								echo esc_html( $cliches_none_name );
 							} else {
 								echo esc_html(
@@ -269,13 +219,6 @@ if ( $cliches_top['id'] > 0 && has_post_thumbnail( $cliches_top['id'] ) ) {
 	</div>
 	<div class="lwtv-cliches-col lwtv-cliches-col--side">
 		<?php
-		// Common pairings: which clichés appear together on the same
-		// character. $cliches_pairs/$cliches_pair_names were already
-		// computed above (reused for the pullstat headline), so this just
-		// builds the matchup rows — no re-query. No FacetWP multi-value
-		// param is confirmed for lez_cliches (same conservative call
-		// already made for lez_genres/lez_tropes), so rows don't link
-		// anywhere yet.
 		if ( ! empty( $cliches_pairs ) ) {
 			$cliches_matchup_items = array();
 			foreach ( $cliches_pairs as $cliches_pair ) {
@@ -287,11 +230,8 @@ if ( $cliches_top['id'] > 0 && has_post_thumbnail( $cliches_top['id'] ) ) {
 				);
 			}
 
-			// Characters with only one cliché never appear in the grid
-			// above — a pairing needs 2+ distinct clichés — so this
-			// footnotes the count that's missing from it. Reuses the "1"
-			// bucket from Cliché Load's distribution above, same footer
-			// Trope Pairings adds for the same reason; no new query.
+			// Footnote the one-cliché characters a pairing can't include,
+			// from Cliché Load's "1" bucket.
 			$cliches_single_count = 0;
 			foreach ( $cliches_distribution as $cliches_dist_bucket ) {
 				if ( '1' === $cliches_dist_bucket['label'] ) {
@@ -320,7 +260,7 @@ if ( $cliches_top['id'] > 0 && has_post_thumbnail( $cliches_top['id'] ) ) {
 	</div>
 </div>
 
-<!-- Cliché Breakdown: unchanged data/query, just a denser 2-col layout -->
+<!-- Cliché Breakdown: full width, 2-col layout -->
 <div class="lwtv-cliches-breakdown-wrap">
 	<?php
 	$ranked = array(

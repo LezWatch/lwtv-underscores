@@ -4,13 +4,11 @@
  *
  * The New / Canceled / Dead-by-date formatters filter rows by comparing a show's
  * start/finish year (or a character's death year) against the requested year.
- * That comparison used a strict `===`, so it silently produced EMPTY output
- * whenever the two sides were different types — e.g. a caller passing the year
- * as the int 2024 against a `'2024'` string pulled from meta. Every caller
- * happened to stringify the year, so the bug was latent, but it contradicted the
- * `@param int` signatures. The comparison now casts both sides to int; these
- * tests lock that in by asserting an int year and a string year yield identical,
- * non-empty results.
+ * A strict `===` silently produces EMPTY output whenever the two sides are
+ * different types — e.g. a caller passing the year as the int 2024 against a
+ * `'2024'` string pulled from meta — which contradicts the `@param int`
+ * signatures. The comparison casts both sides to int; these tests lock that in
+ * by asserting an int year and a string year yield identical, non-empty results.
  *
  * @package lwtv-underscores
  */
@@ -60,7 +58,7 @@ class FormatterYearMatchingTest extends TestCase {
 
 		// Both spellings of the year must agree...
 		$this->assertSame( $from_string, $from_int );
-		// ...and actually match the 2024 debut (the bug made this empty).
+		// ...and actually match the 2024 debut (a strict comparison makes this empty).
 		$this->assertArrayHasKey( 'Alpha', $from_int['A'] );
 		$this->assertArrayNotHasKey( 'Beta', $from_int['A'] );
 	}

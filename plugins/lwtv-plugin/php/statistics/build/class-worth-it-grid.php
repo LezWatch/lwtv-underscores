@@ -2,13 +2,9 @@
 /**
  * Worth It grid transforms.
  *
- * Pure array-in/array-out math for the Worth It view's hundred-square
- * grid and average-score bars: square allocation with the sum-to-100
- * guard, per-verdict score means, and the check behind the "verdict
- * tracks the score" heading — a claim about the data that must only be
- * made while the data supports it. No WordPress calls — unit-testable
- * without a WP runtime (see tests/unit/Statistics/WorthItGridTest.php).
- * All i18n stays in the template.
+ * Worth It view math: hundred-square allocation, per-verdict score means,
+ * and the "verdict tracks the score" gate. Pure transform.
+ * See docs/statistics/presentation-rules.md.
  *
  * @package LezWatch.TV
  */
@@ -34,7 +30,7 @@ class Worth_It_Grid {
 	/**
 	 * Allocate 100 grid squares by verdict share.
 	 *
-	 * Guards, per the handoff: a verdict with a non-zero count always
+	 * Guards: a verdict with a non-zero count always
 	 * renders at least one square (TBD must never round to nothing),
 	 * and rounding drift is absorbed by the largest verdict so the
 	 * grid always fills exactly 100.

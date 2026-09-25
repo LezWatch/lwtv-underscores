@@ -53,13 +53,9 @@ class Character_Actor_Leaders {
 	/**
 	 * Build the leaderboard by counting actors per character.
 	 *
-	 * lezchars_actor is an ACF relationship field stored as one serialized
-	 * array per character — unlike lezchars_show_group's per-row sub-field
-	 * keys, there's no per-actor meta row to COUNT(DISTINCT ...) against in
-	 * SQL. This pulls one (post_id, meta_value) row per published character
-	 * and counts each unserialized array in PHP — one query total, not a
-	 * get_field() call per character — then sorts/slices to $limit here
-	 * since the count isn't available to ORDER BY in the query itself.
+	 * One query for every character's serialized lezchars_actor array, then
+	 * count, sort and slice in PHP.
+	 * See docs/statistics/data-model.md#relationship-fields.
 	 *
 	 * @param int $limit How many characters to return.
 	 * @return array Character leaderboard data.

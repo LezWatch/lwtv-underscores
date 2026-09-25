@@ -14,6 +14,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+use LWTV\_Helpers\Uncached_Option;
+
 /**
  * Class Audit.
  */
@@ -202,7 +204,7 @@ class Audit {
 	 * @return array
 	 */
 	public function load_baseline( string $scope ): array {
-		$baseline = get_option( self::BASELINE_PREFIX . $scope );
+		$baseline = Uncached_Option::get( self::BASELINE_PREFIX . $scope );
 		return is_array( $baseline ) ? $baseline : array();
 	}
 
@@ -218,14 +220,14 @@ class Audit {
 		foreach ( $findings as $finding ) {
 			$stored[ $this->finding_key( $finding ) ] = $finding;
 		}
-		update_option( self::BASELINE_PREFIX . $scope, $stored, false );
+		Uncached_Option::set( self::BASELINE_PREFIX . $scope, $stored );
 
 		$index           = $this->list_scopes();
 		$index[ $scope ] = array(
 			'last_run' => time(),
 			'count'    => count( $stored ),
 		);
-		update_option( self::BASELINE_INDEX, $index, false );
+		Uncached_Option::set( self::BASELINE_INDEX, $index );
 	}
 
 	/**
@@ -234,7 +236,7 @@ class Audit {
 	 * @return array
 	 */
 	public function list_scopes(): array {
-		$index = get_option( self::BASELINE_INDEX );
+		$index = Uncached_Option::get( self::BASELINE_INDEX );
 		return is_array( $index ) ? $index : array();
 	}
 
@@ -257,7 +259,7 @@ class Audit {
 
 		delete_option( self::BASELINE_PREFIX . $scope );
 		unset( $index[ $scope ] );
-		update_option( self::BASELINE_INDEX, $index, false );
+		Uncached_Option::set( self::BASELINE_INDEX, $index );
 	}
 
 	/**

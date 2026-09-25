@@ -3,8 +3,7 @@
  * Intersection pair (co-occurrence) transform for the shows
  * intersectionality statistics page.
  *
- * Pure array-in / array-out helpers. No WordPress runtime dependency — every
- * query, term lookup, permalink, and i18n string stays in the template.
+ * Pure transform. See docs/statistics/pages.md#build-layer.
  *
  * @package LezWatch.TV
  */

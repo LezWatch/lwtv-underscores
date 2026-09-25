@@ -1,14 +1,8 @@
 <?php
 /**
- * Intersection trend WP glue: pulls each show's premiere year (from
- * lezshows_airdates.start, the same field Format_Trend/Genre_Trend and
- * On_Air_Optimized use) paired with every lez_intersections term it
- * carries, tallies both a distinct-show count and an intersection-tag
- * count (keyed by slug, so templates can link to the real term archive)
- * per year, and hands the result to the pure Genre_Decade_Buckets
- * transform — that class is taxonomy-agnostic despite the name (it only
- * ever sees "shows" and "genres" as generic labels), so lez_intersections
- * reuses it as-is rather than needing its own bucketer.
+ * Intersection trend WP glue: premiere year plus every lez_intersections
+ * term per show, tallied by year and handed to Genre_Decade_Buckets.
+ * See docs/statistics/data-model.md#taxonomy-cardinality.
  *
  * @package LezWatch.TV
  */

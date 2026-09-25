@@ -23,8 +23,8 @@ class Labels {
 	 *
 	 * FWP.facets.sortby_XXX
 	 *
-	 * Since Facet is so fast, the old PHP way of calculating sorted and titles
-	 * doesn't work anymore. Welcome to Javascript Hell.
+	 * FacetWP refreshes results without a page load, so sorted labels and titles
+	 * can't be calculated in PHP. Welcome to Javascript Hell.
 	 */
 	public function facetwp_add_labels() {
 

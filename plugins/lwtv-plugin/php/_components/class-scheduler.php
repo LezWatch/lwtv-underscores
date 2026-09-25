@@ -15,7 +15,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 use LWTV\Schedulers\TMDB_Task;
 use LWTV\Schedulers\TMDB_Batch_Task;
-use LWTV\Schedulers\Cache_Task;
 use LWTV\Schedulers\Cache_Queue;
 use LWTV\Schedulers\Calculation_Task;
 use LWTV\Schedulers\Cache_Batch_Task;
@@ -50,9 +49,9 @@ class Scheduler implements Component, Templater {
 	 */
 	private function initialize_task_handlers(): void {
 		try {
-			// Always initialize these (they have fallbacks)
+			// Always initialize these. TMDB_Task and Cache_Queue are the
+			// no-Action-Scheduler fallbacks for the TMDB and cache batches.
 			new TMDB_Task();
-			new Cache_Task();
 			new Cache_Queue();
 			new Calculation_Task();
 			new FixCharShows_Task();
@@ -107,20 +106,29 @@ class Scheduler implements Component, Templater {
 	 * @param int    $priority The priority of the task (default: 0)
 	 * @param int    $delay    Delay in seconds (default: 30)
 	 * @param string $group    The group to schedule the task in (default: 'lwtv')
-	 * @param bool   $unique   Whether the task should be unique (default: true)
-	 * @return bool  Whether the task was scheduled successfully
+	 * @param bool   $unique   Skip if this task is already pending for this post (default: true)
+	 * @return bool  Whether the task is scheduled (including already pending)
 	 */
 	public function schedule_task( string $task_type, int $post_id, int $priority = 0, int $delay = 30, string $group = 'lwtv', bool $unique = true ): bool {
 		$task_name = 'lwtv_' . $task_type . '_task';
-		$hook_name = $task_name . '_' . $post_id;
+		$args      = array( $post_id );
 
-		// If Action Scheduler is active, use it with generic hook name
+		// Both paths use the same hook the task class listens on, with the post
+		// ID in the args.
 		if ( $this->is_action_scheduler_available() ) {
-			$scheduled = as_schedule_single_action( time() + $delay, $task_name, array( $post_id ), $group, $unique, $priority );
+			// Uniqueness is checked here, per post. Action Scheduler's own $unique
+			// ignores args before 4.0.0, so one pending task would silently drop
+			// every other post's. See docs/architecture/scheduling.md#schedule_task.
+			if ( $unique && function_exists( 'as_has_scheduled_action' ) && as_has_scheduled_action( $task_name, $args, $group ) ) {
+				lwtv_plugin()->debug_log( 'scheduler', "{$task_type} task already pending for post ID: {$post_id}" );
+				return true;
+			}
+
+			$scheduled = (bool) as_schedule_single_action( time() + $delay, $task_name, $args, $group, false, $priority );
 			lwtv_plugin()->debug_log( 'scheduler', "Scheduled {$task_type} task via Action Scheduler for post ID: {$post_id} with {$delay}s delay" );
 		} else {
-			// Fallback to WordPress cron with unique hook name
-			$scheduled = wp_schedule_single_event( time() + $delay, $hook_name, array( $post_id ) );
+			// WordPress itself refuses a duplicate hook + args within ten minutes.
+			$scheduled = (bool) wp_schedule_single_event( time() + $delay, $task_name, $args );
 			lwtv_plugin()->debug_log( 'scheduler', "Scheduled {$task_type} task via WordPress cron for post ID: {$post_id} with {$delay}s delay" );
 		}
 
@@ -188,10 +196,16 @@ class Scheduler implements Component, Templater {
 	/**
 	 * Queue a post for TMDB batch processing
 	 *
+	 * Without Action Scheduler, falls back to a per-post TMDB_Task on WP-Cron.
+	 *
 	 * @param int $post_id The post ID to queue
 	 * @return bool Whether the post was queued successfully
 	 */
 	public function queue_tmdb_batch( int $post_id ): bool {
+		if ( ! $this->is_action_scheduler_available() ) {
+			return $this->schedule_task( 'tmdb', $post_id );
+		}
+
 		$batch_task = new TMDB_Batch_Task();
 		return $batch_task->queue_post( $post_id );
 	}
@@ -210,12 +224,17 @@ class Scheduler implements Component, Templater {
 	 * Queue a post for IMDb staleness verification.
 	 *
 	 * Cheap and synchronous-safe: it reads a couple of meta values and appends to
-	 * a transient. All HTTP happens later, on Action Scheduler.
+	 * the queue. All HTTP happens later, on Action Scheduler; without it, nothing
+	 * is queued.
 	 *
 	 * @param int $post_id The post ID to queue
 	 * @return bool Whether the post was queued successfully
 	 */
 	public function queue_imdb_verify( int $post_id ): bool {
+		if ( ! $this->is_action_scheduler_available() ) {
+			return false;
+		}
+
 		$task = new Imdb_Verify_Task();
 		return $task->queue_post( $post_id );
 	}
@@ -233,8 +252,8 @@ class Scheduler implements Component, Templater {
 	/**
 	 * Queue an actor for WikiData QID resolution.
 	 *
-	 * Cheap and synchronous-safe: it reads a few meta values and appends to a
-	 * transient. All HTTP happens later, on Action Scheduler.
+	 * Cheap and synchronous-safe: it reads a few meta values and appends to the
+	 * queue. All HTTP happens later, on Action Scheduler.
 	 *
 	 * @param int $post_id The post ID to queue
 	 * @return bool Whether the post was queued successfully
@@ -273,9 +292,14 @@ class Scheduler implements Component, Templater {
 	 * Queue a post for cache batch processing
 	 *
 	 * @param int $post_id The post ID to queue
-	 * @return bool True if successfully queued, false otherwise
+	 * @return bool True if successfully queued, false otherwise (including when
+	 *              Action Scheduler is unavailable; cache_queue() then falls back)
 	 */
 	public function queue_cache_batch( int $post_id ): bool {
+		if ( ! $this->is_action_scheduler_available() ) {
+			return false;
+		}
+
 		$cache_batch_task = new Cache_Batch_Task();
 		return $cache_batch_task->queue_post( $post_id );
 	}

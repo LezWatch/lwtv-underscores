@@ -61,17 +61,9 @@ class WP_CLI_LWTV_Name_Keys {
 
 		$dry_run = (bool) \WP_CLI\Utils\get_flag_value( $assoc_args, 'dry-run', false );
 
-		/*
-		 * Every status that is really an actor. Private matters: Actors\Privacy
-		 * flips a post private on request, and a duplicate of a deliberately
-		 * hidden actor is the worst kind to create by accident.
-		 *
-		 * The title rides along with the ID on purpose. post_title as stored is
-		 * exactly what get_post_field( ..., 'raw' ) hands back -- Name_Key has to
-		 * see what the editor typed, not what wptexturize makes of it -- and
-		 * taking it here spares the loop a get_post() query per actor, which is
-		 * the larger half of this command's query count.
-		 */
+		// Every status that is really an actor, private included. The raw title
+		// rides along so Name_Key sees what was typed, with no get_post() per actor.
+		// See docs/architecture/duplicate-detection.md#storage.
 		$actors = $wpdb->get_results(
 			$wpdb->prepare(
 				"SELECT ID, post_title FROM {$wpdb->posts}
@@ -94,14 +86,7 @@ class WP_CLI_LWTV_Name_Keys {
 		$unkeyable = 0;
 
 		foreach ( array_chunk( $actors, self::BATCH ) as $batch ) {
-			/*
-			 * One meta query per batch rather than one per actor. Nothing has
-			 * primed these posts -- there is no WP_Query in front of this -- so
-			 * each get_post_meta() below would otherwise go to the database on
-			 * its own. Primed per batch, not all at once: the whole table's meta
-			 * in one array is how a backfill runs out of memory as the site
-			 * grows, and this command is meant to stay re-runnable.
-			 */
+			// Prime meta per batch (not all at once, to bound memory).
 			update_postmeta_cache( array_map( 'intval', wp_list_pluck( $batch, 'ID' ) ) );
 
 			foreach ( $batch as $actor ) {
@@ -171,12 +156,7 @@ class WP_CLI_LWTV_Name_Keys {
 	/**
 	 * Drop the in-process caches that grow across a long backfill.
 	 *
-	 * Deliberately NOT wp_cache_flush(): with a persistent object cache that
-	 * would empty the whole site's cache, taking the front end down with it for
-	 * the sake of a maintenance script. This clears only this process's local
-	 * copy, so a persistent backend is untouched and simply gets re-read. Same
-	 * reasoning as cli-calc.php, which does this between batches for the same
-	 * reason.
+	 * Deliberately NOT wp_cache_flush(). See free_memory() in cli-calc.php.
 	 */
 	private function free_memory(): void {
 		global $wpdb, $wp_object_cache;

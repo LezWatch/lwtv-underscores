@@ -2,18 +2,10 @@
 /**
  * Character-identity-by-decade bucketer.
  *
- * Pure array-in/array-out grouping of a per-year term tally into decades,
- * folding the earliest sparse decades into a single leading bucket so a
- * handful of characters from the medium's early years don't render as an
- * overconfident 100% pie. Mirrors Format_Decade_Buckets exactly — lez_gender
- * and lez_sexuality are both single-value taxonomies on Characters (an ACF
- * "select" field wraps each, so a character carries exactly one term), the
- * same shape Format_Decade_Buckets already assumes for lez_formats on Shows.
- * A dedicated class rather than reusing Format_Decade_Buckets directly, to
- * keep its own name/docblock/tests honest about which data it describes —
- * same reasoning Genre_Decade_Buckets already exists alongside Format's.
- *
- * No WordPress calls — unit-testable without a WP runtime.
+ * Groups a per-year tally for a single-value character taxonomy
+ * (lez_gender, lez_sexuality) into decades, folding sparse early decades.
+ * Pure transform. See docs/statistics/pages.md#build-layer and
+ * docs/statistics/presentation-rules.md#sparse-early-decades.
  *
  * @package LezWatch.TV
  */

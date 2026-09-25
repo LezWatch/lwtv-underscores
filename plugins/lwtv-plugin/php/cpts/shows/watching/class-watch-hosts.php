@@ -692,9 +692,13 @@ class Watch_Hosts {
 	/**
 	 * Fold one provider term into another and delete it.
 	 *
+	 * Posts assigned to the dropped term are moved to the kept term first, so a
+	 * merge never leaves a post without its provider. Relationships are read
+	 * before anything is written; if they can't be read, nothing changes.
+	 *
 	 * @param int $keep_id Term to keep.
 	 * @param int $drop_id Term to fold in and delete.
-	 * @return array{urls: array<string>, kept: string, dropped: string}|\WP_Error
+	 * @return array{urls: array<string>, kept: string, dropped: string, reassigned: int}|\WP_Error
 	 */
 	public static function merge_terms( int $keep_id, int $drop_id ) {
 		if ( $keep_id === $drop_id ) {
@@ -710,6 +714,13 @@ class Watch_Hosts {
 			}
 		}
 
+		// Every post status, not just published: $term->count would miss drafts.
+		$objects = get_objects_in_term( $drop_id, Theme_Ways_To_Watch::TAXONOMY );
+
+		if ( is_wp_error( $objects ) ) {
+			return $objects;
+		}
+
 		$merged = array_merge(
 			array_values( self::term_url_rows( $keep_id ) ),
 			array_values( self::term_url_rows( $drop_id ) )
@@ -718,6 +729,15 @@ class Watch_Hosts {
 		$urls = Watch_Term_Url_Audit::canonical_urls( $merged );
 
 		self::set_term_urls( $keep_id, $urls );
+
+		foreach ( array_map( 'intval', (array) $objects ) as $object_id ) {
+			$assigned = wp_set_object_terms( $object_id, $keep_id, Theme_Ways_To_Watch::TAXONOMY, true );
+
+			if ( is_wp_error( $assigned ) ) {
+				// Stop before the delete: the dropped term still holds this post.
+				return $assigned;
+			}
+		}
 
 		$deleted = wp_delete_term( $drop_id, Theme_Ways_To_Watch::TAXONOMY );
 
@@ -730,9 +750,10 @@ class Watch_Hosts {
 		self::$host_map  = null;
 
 		return array(
-			'urls'    => $urls,
-			'kept'    => $keep->name,
-			'dropped' => $drop->name,
+			'urls'       => $urls,
+			'kept'       => $keep->name,
+			'dropped'    => $drop->name,
+			'reassigned' => count( (array) $objects ),
 		);
 	}
 

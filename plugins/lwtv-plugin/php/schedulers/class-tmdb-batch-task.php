@@ -15,6 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 use LWTV\_Components\CPTs;
+use LWTV\_Helpers\Queue_Store;
 use LWTV\_Helpers\Tmdb_Response;
 
 /**
@@ -48,7 +49,6 @@ class TMDB_Batch_Task {
 	 * Constructor
 	 */
 	public function __construct() {
-		// Register Action Scheduler hook
 		add_action( self::AS_HOOK, array( $this, 'process_tmdb_batch' ) );
 	}
 
@@ -66,13 +66,11 @@ class TMDB_Batch_Task {
 			return false;
 		}
 
-		// Check if already has TMDB ID
 		if ( $this->has_tmdb_id( $post_id, $post_type ) ) {
 			lwtv_plugin()->debug_log( 'tmdb', "Post {$post_id} already has TMDB ID" );
 			return false;
 		}
 
-		// Add to queue
 		$queued_posts   = $this->get_queued_posts();
 		$queued_posts[] = array(
 			'post_id'   => $post_id,
@@ -82,7 +80,6 @@ class TMDB_Batch_Task {
 
 		$this->set_queued_posts( $queued_posts );
 
-		// Schedule batch processing if not already scheduled
 		if ( ! as_next_scheduled_action( self::AS_HOOK ) ) {
 			as_schedule_single_action( time() + 30, self::AS_HOOK, array(), self::AS_GROUP );
 			lwtv_plugin()->debug_log( 'tmdb', 'Scheduled TMDB batch processing' );
@@ -107,7 +104,6 @@ class TMDB_Batch_Task {
 
 		lwtv_plugin()->debug_log( 'tmdb', 'Processing ' . count( $queued_posts ) . ' posts for TMDB data' );
 
-		// Process in batches
 		$batches         = array_chunk( $queued_posts, self::BATCH_SIZE );
 		$processed_count = 0;
 		$success_count   = 0;
@@ -125,7 +121,6 @@ class TMDB_Batch_Task {
 			}
 		}
 
-		// Clear the queue
 		$this->set_queued_posts( array() );
 
 		lwtv_plugin()->debug_log( 'tmdb', "Completed TMDB batch processing: {$success_count}/{$processed_count} successful" );
@@ -192,7 +187,6 @@ class TMDB_Batch_Task {
 		$post_type = $post_data['post_type'];
 
 		try {
-			// Get TMDB data
 			$tmdb_data = ( new CPTs() )->get_tmdb_info( $post_id );
 
 			if ( ! $tmdb_data ) {
@@ -239,29 +233,27 @@ class TMDB_Batch_Task {
 			return true;
 		}
 
-		// Increment request counter
 		$this->increment_request_count();
 		return false;
 	}
 
 	/**
-	 * Get queued posts from transient
+	 * Get queued posts
 	 *
 	 * @return array
 	 */
 	private function get_queued_posts(): array {
-		$queued = lwtv_plugin()->get_transient( 'lwtv_tmdb_batch_queue' );
-		return is_array( $queued ) ? $queued : array();
+		return Queue_Store::get( 'lwtv_tmdb_batch_queue' );
 	}
 
 	/**
-	 * Set queued posts in transient
+	 * Set queued posts
 	 *
 	 * @param array $posts
 	 * @return void
 	 */
 	private function set_queued_posts( array $posts ): void {
-		lwtv_plugin()->set_transient( 'lwtv_tmdb_batch_queue', $posts, HOUR_IN_SECONDS );
+		Queue_Store::set( 'lwtv_tmdb_batch_queue', $posts );
 	}
 
 	/**
@@ -370,7 +362,7 @@ class TMDB_Batch_Task {
 	 */
 	public function get_batch_status(): array {
 		$queued_posts   = $this->get_queued_posts();
-		$next_scheduled = as_next_scheduled_action( self::AS_HOOK );
+		$next_scheduled = function_exists( 'as_next_scheduled_action' ) ? as_next_scheduled_action( self::AS_HOOK ) : false;
 
 		return array(
 			'queued_posts_count'      => count( $queued_posts ),

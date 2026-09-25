@@ -2,14 +2,9 @@
 /**
  * Shows We Love transforms.
  *
- * Pure array-in/array-out math for the We Love It view: cohort facts
- * from the roster rows, loved-side totals, and the loved-vs-rest
- * comparison data behind every adaptive takeaway — computed multiples,
- * the deaths direction, the leads-all heading gate, and the ranking
- * check for "the clearest gap on the page". No WordPress calls —
- * unit-testable without a WP runtime (see
- * tests/unit/Statistics/WeLoveCompareTest.php). All i18n stays in the
- * template; data acquisition stays in Build\We_Love.
+ * We Love It view math: cohort facts, loved-side totals and the
+ * loved-vs-rest comparisons behind every adaptive takeaway. Data comes from
+ * Build\We_Love. Pure transform. See docs/statistics/presentation-rules.md.
  *
  * @package LezWatch.TV
  */

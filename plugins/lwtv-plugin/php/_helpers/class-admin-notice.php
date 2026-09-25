@@ -8,8 +8,7 @@
  * request can find it. That is what this does.
  *
  * Callers keep their own thin set_notice()/show_notice() pair. This holds the
- * mechanics they were each copying; they hold the three things that genuinely
- * differ.
+ * shared mechanics; they hold the three things that genuinely differ.
  *
  * @package LWTV
  */

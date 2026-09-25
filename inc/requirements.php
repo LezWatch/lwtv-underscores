@@ -2,26 +2,11 @@
 /**
  * Hard dependency checks.
  *
- * The site cannot render without ACF Pro: every CPT's meta comes from it, and
- * templates call `get_field()` unguarded throughout. Rather than let them fatal
- * one by one, we stop the front end cold and serve a static maintenance page
- * with a 503.
- *
- * This file is loaded from the very top of functions.php, BEFORE
- * plugins/index.php pulls in the LWTV plugin, so a missing dependency never
- * reaches CPT registration or the show score calculations.
- *
- * Deliberately NOT gated here:
- * - Action Scheduler. `_Components\Scheduler` degrades to WP-Cron by design
- *   (`is_action_scheduler_available()`, `schedule_task()`, `cache_queue()`), so
- *   the site survives without it. Do not add it back without also removing
- *   that fallback.
- * - FacetWP, SearchWP (+ Modal Form / Live Ajax), AIOSEO, Gravity Forms,
- *   MonsterInsights, Related Posts By Taxonomy, Jetpack sharing. All call sites
- *   are guarded; these degrade rather than fatal.
- *
- * Escape hatch: define( 'LWTV_SKIP_REQUIREMENTS_CHECK', true ) in wp-config.php
- * to bypass the gate entirely.
+ * ACF Pro is the only hard dependency: without it the front end serves a
+ * static 503 maintenance page. Loaded from the top of functions.php, before
+ * the LWTV plugin. Action Scheduler and the other plugins are deliberately
+ * not gated; LWTV_SKIP_REQUIREMENTS_CHECK bypasses the gate.
+ * See docs/dependencies.md.
  *
  * @package LWTV Underscores
  */

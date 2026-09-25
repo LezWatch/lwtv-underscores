@@ -6,14 +6,8 @@
  * and a reference date, and returns an ordered list of day-groups ready to
  * render. No WordPress globals, no queries, no output.
  *
- * The one subtlety here is the airtime. `Generate_Calendar` stores a timestamp
- * that is NOT the real instant the episode airs: it takes the UTC time from
- * TVMaze and adds the US/Eastern offset, so that formatting the value as UTC
- * yields the Eastern wall-clock time. That is fine for display, but it means
- * the raw timestamp is several hours off the true moment. Anything that
- * compares an airtime against "now" - notably the client-side aired-state dot
- * logic - has to rebuild the real instant first. `airtime()` does that, and
- * derives the UTC offset from the date so it stays correct across DST.
+ * Stored timestamps are Eastern-shifted, not real instants; use airtime() before
+ * comparing against "now". See docs/architecture/calendar.md#shifted-timestamps.
  *
  * @package lwtv-plugin
  */
@@ -109,10 +103,8 @@ class Agenda {
 	/**
 	 * Rebuild the true airtime for an episode.
 	 *
-	 * See the class docblock: the stored timestamp is the real instant shifted
-	 * by the Eastern offset, so reading it back as UTC gives us the wall-clock
-	 * time. We then reinterpret that wall clock in the real timezone, which
-	 * produces the correct instant and the correct offset for that date.
+	 * Reads the shifted timestamp back as a UTC wall clock, then reinterprets it
+	 * in the real timezone, giving the true instant and that date's offset.
 	 *
 	 * @param  int $timestamp Stored (offset-shifted) timestamp.
 	 * @return \DateTimeImmutable

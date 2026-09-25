@@ -3,15 +3,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 /**
- * Shows → Genres: infographic rework (amber). Shares add up past 100% (multi-value taxonomy).
- *
- * Ports the Tropes rework's Load waffle + Common Pairings pattern onto
- * lez_genres, plus genre-specific additions: a "matchup card" treatment
- * for pairings (per design handoff), an "Uncharted Genres" reframe of the
- * long tail, and a Genre by Decade section (Genre_Trend/Genre_Decade_Buckets)
- * showing each decade's top 3 genres as independent shares of that decade's
- * shows — not a Format Mix by Decade donut port, since genres are
- * multi-value and don't partition to 100%.
+ * Shows → Genres (amber). Shares add up past 100% (multi-value taxonomy).
+ * Genre Load, Common Pairings, "Uncharted Genres" and Genre Mix by Decade.
+ * See docs/statistics/pages.md#load-and-pairings-pages.
  *
  * @package LezWatch.TV
  *
@@ -66,8 +60,6 @@ if ( ! is_wp_error( $genres_pair_terms ) && is_array( $genres_pair_terms ) ) {
 }
 
 // ---- Pullstats row: average genres/show, share carrying 3+, top pairing ----
-// Replaces the old avg/median callout pair — three punchier numbers instead
-// of two sentences, per the design handoff.
 $genres_stats     = ( new \LWTV\Statistics\Build\Taxonomy_Optimized() )->get_terms_per_object_stats( 'post_type_shows', 'lez_genres' );
 $genres_pullstats = array();
 
@@ -323,13 +315,8 @@ if ( $genres_uncharted_n > 0 && (int) $shows_count > 0 ) {
 
 <?php
 // ---- Genre by Decade ----
-// lez_genres is multi-value (a show can carry several genres at once), so
-// this can't be Format Mix by Decade's donut — those segments partition
-// 100% of a bucket because format is single-value; genre shares don't and
-// aren't meant to. Genre_Trend/Genre_Decade_Buckets track each bucket's
-// distinct show count separately from its genre tag counts, and this
-// renders the top 3 genres per decade as their own "% of shows that
-// decade" bars — each row true on its own terms, with no implied total.
+// Top 3 genres per decade as independent "% of shows" bars, not a donut.
+// See docs/statistics/data-model.md#taxonomy-cardinality.
 $genres_decade_buckets = ( new \LWTV\Statistics\Build\Genre_Trend() )->generate( 20, 3 );
 
 if ( ! empty( $genres_decade_buckets ) ) :

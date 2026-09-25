@@ -987,11 +987,8 @@
 				color: colors.$white;
 			}
 
-			// good/maybe reuse the local vivid dark-mode overrides defined
-			// near the top of this file (brighter than the pale light-mode
-			// tokens of the same name); bad/ploy have no such override, so
-			// they fall back to the pale module tokens, same as
-			// dead-characters/happy-endings above.
+			// good/maybe use the bright local overrides; bad/ploy keep the module
+			// tokens. See docs/design/dark-mode.md#dark-stand-ins.
 			&.good-tropes {
 				color: $lwtv-green-light;
 			}
@@ -1009,12 +1006,8 @@
 			}
 		}
 
-		// The Casting Gap's combined waffle (characters/overview.php): base
-		// light-mode pink/aro-grey both fall under 3:1 against this panel's
-		// dark background, so both dot uses (legend swatch + waffle fill)
-		// need brighter stand-ins here — pink-light matches this file's
-		// usual pink swap, translucent white reads as the neutral
-		// "everything else" side without introducing a third hue.
+		// Casting Gap waffle: pink/aro-grey fall under 3:1 here, so use brighter
+		// stand-ins. See docs/design/dark-mode.md#dark-stand-ins.
 		.lwtv-donut-seg--pink,
 		.lwtv-castinggap-waffle .lwtv-waffle-dot--queer {
 			fill: colors.$lwtv-pink-light;
@@ -1220,14 +1213,8 @@
 			stroke-width: 1px;
 		}
 
-		// Cliché Load's ramp is built the same way (palest green swatch is
-		// bucket 0) and, like Trope Load, its legend override now targets
-		// :nth-child(1) rather than the --b0 modifier class (needed to
-		// out-specify the page-wide raspberry ramp default — see the
-		// comment in _stats.scss above .lwtv-clicheload
-		// .lwtv-legend-row:nth-child(1) .lwtv-legend-dot) — same
-		// visibility fix, same rgba, same selector shape as Trope Load's.
-		.lwtv-clicheload .lwtv-legend-row:nth-child(1) .lwtv-legend-dot {
+		// Cliché Load's palest green swatch is also bucket 0; same fix.
+		.lwtv-clicheload .lwtv-legend-row .lwtv-legend-dot.lwtv-legend-dot--b0 {
 			outline: 1px solid rgba(colors.$white, 0.15);
 			outline-offset: -1px;
 		}
@@ -1241,11 +1228,9 @@
 			color: colors.$white;
 		}
 
-		// Genre Stats dark-mode pass. Anything referencing a module-qualified
-		// colors.$lwtv-yellow-* keeps its light-mode value even inside this
-		// mixin (only bare $lwtv-yellow-light above is swapped), so every
-		// amber accent added for Genre Stats needs an explicit override here
-		// rather than getting it for free.
+		// colors.$lwtv-* keeps its light value inside this mixin (only bare locals
+		// are swapped), so each stats accent needs an explicit override here.
+		// See docs/design/dark-mode.md#module-qualified-variables-are-not-swapped.
 
 		// Pullstats cards: same lifted-card treatment as .lwtv-ty-lead.
 		.lwtv-statcard {
@@ -1264,8 +1249,8 @@
 		}
 
 		// .lwtv-bars--characters overrides statcard icon/number to green in
-		// light mode (_stats.scss) but had no dark-mode counterpart, so these
-		// cards fell back to the yellow default above — same
+		// light mode (_stats.scss); this is the dark-mode counterpart, so these
+		// cards don't fall back to the yellow default above — same
 		// family-color-per-.lwtv-bars-- split as the matchup rule below.
 		.lwtv-bars--characters .lwtv-statcard-icon {
 			background-color: rgba(colors.$lwtv-green, 0.2);
@@ -1362,7 +1347,7 @@
 		// visibility fix as Trope Load's palest-green bucket 0 above) — the
 		// grey dot and legend outline both need lifting against the dark
 		// page background, and the SVG dot needs a stroke rather than outline.
-		.lwtv-genreload .lwtv-legend-row:nth-child(1) .lwtv-legend-dot {
+		.lwtv-genreload .lwtv-legend-row .lwtv-legend-dot.lwtv-legend-dot--b0 {
 			outline: 1px solid rgba(colors.$white, 0.15);
 			outline-offset: -1px;
 		}
@@ -1374,7 +1359,7 @@
 
 		// Intersection Load's pale grey "0 intersections" swatch needs the
 		// same visibility fix as Genre/Trope Load's own bucket-0 above.
-		.lwtv-interload .lwtv-legend-row:nth-child(1) .lwtv-legend-dot {
+		.lwtv-interload .lwtv-legend-row .lwtv-legend-dot.lwtv-legend-dot--b0 {
 			outline: 1px solid rgba(colors.$white, 0.15);
 			outline-offset: -1px;
 		}

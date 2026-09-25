@@ -11,22 +11,8 @@
  * live admin screen. Admin_Menu\Exclusions keeps the WordPress half: the menu,
  * one query per check, the meta reads, and the markup.
  *
- * The thing worth knowing before adding a check: our booleans are not stored
- * the same way.
- *
- *   - Plain ACF true_false writes "1" when ticked and *keeps a "0" row* when
- *     not. A query for EXISTS on one of those matches every post that has ever
- *     been saved, so these must match on the value '1'.
- *   - lezshows_byq_override and lezshows_worthit_show_we_love are special:
- *     ACF::SHOW_LEGACY_ON_FIELDS makes save_show_legacy_meta() rewrite them to
- *     'on' when ticked and *delete* the row when not, because SQL elsewhere
- *     hardcodes = 'on'. Those match on 'on'.
- *   - lezactors_queer_override is a select whose default is the literal string
- *     'undefined', so for that one any *other* defined value is the signal.
- *
- * Getting this wrong does not error. It quietly counts the whole catalogue as
- * overridden, which is why `match` is a required part of every definition
- * rather than something a caller may leave off.
+ * Before adding a check: booleans are not all stored the same way, so `match`
+ * is required on every definition. See docs/architecture/meta-storage-quirks.md#booleans.
  *
  * @package LWTV
  */
@@ -61,12 +47,8 @@ class Exclusion_Registry {
 	 * Stored values that mean "nobody overrode anything".
 	 *
 	 * A select's "no selection" default, an empty string, and an unticked ACF
-	 * boolean. Public because the caller builds its SQL from this too: a
-	 * MATCH_ANY check must be queried as NOT IN these values, not as EXISTS.
-	 * EXISTS matches every post that has ever been saved -- ACF writes the
-	 * 'undefined' default for all of them -- so the database would hand back the
-	 * whole catalogue for qualifies() to throw away in PHP, one WP_Post and its
-	 * meta at a time.
+	 * boolean. Public because the caller's SQL uses it: query MATCH_ANY checks
+	 * as NOT IN these values, never EXISTS (which matches every saved post).
 	 *
 	 * @var array<string>
 	 */
@@ -79,10 +61,7 @@ class Exclusion_Registry {
 	 * those keys and hands back an array keyed by alias, so meta key names stay
 	 * declared in exactly one place while the reading stays out of this class.
 	 *
-	 * A method rather than a const, only so the labels an editor reads -- 'name',
-	 * 'desc', 'column', 'empty' -- can go through __(). A const cannot call a
-	 * function, and these are tab names and headings on a wp-admin screen, so
-	 * they are as user-facing as anything describe() returns.
+	 * A method rather than a const so the labels can go through __().
 	 *
 	 * @return array<string, array<string, mixed>>
 	 */
@@ -207,7 +186,7 @@ class Exclusion_Registry {
 			return $meta_value === $match_value;
 		}
 
-		// Still worth checking in PHP even though the caller now filters these in
+		// Still worth checking in PHP even though the caller also filters these in
 		// SQL: trim() above means a value of '   ' fails here but would pass a
 		// SQL NOT IN, so the two are complementary rather than redundant.
 		return ! in_array( $meta_value, self::UNSET_VALUES, true );
@@ -356,7 +335,7 @@ class Exclusion_Registry {
 	 * The Queer Override select's value, as an editor chose it.
 	 *
 	 * Mirrors the choices in group_lwtv_actors_details.json. The raw values are
-	 * snake_case keys and were being printed as-is.
+	 * snake_case keys, not labels.
 	 *
 	 * @param  string $value Stored value.
 	 * @return string

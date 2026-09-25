@@ -53,16 +53,21 @@ When adding a feature to these modules: put the logic in `build/`, write a test 
 
 ### Show Score (`class-calculations.php`)
 
-The scoring system in `plugins/lwtv-plugin/php/cpts/shows/class-calculations.php` is the core data product. It weighs:
+The show score is the core data product. `Calculations::do_the_math()` in `plugins/lwtv-plugin/php/cpts/shows/class-calculations.php` averages four equally weighted components. The point tables and models live in `cpts/shows/scoring/`:
 
-- Realness + Quality + Screentime ratings (×3 multiplier, max 30)
-- Worth It rating (Yes=10, Meh=5, No=−10)
-- Star rating (gold=20, silver=10, bronze=5, anti=−15)
-- Trigger warning level (high=15, med=10, low=5)
-- Shows We Love bonus (+40)
-- Character counts, diversity, dead/alive ratios, and more
+- **Show rating** (`Show_Rating`), not clamped, −40 to 115:
+  - Realness + Quality + Screentime, each capped at 5, summed, ×3 (max 45)
+  - Worth It (Yes=+10, Meh=+5, No=−10)
+  - Star (gold=+20, silver=+10, bronze=+5, anti=−15)
+  - Trigger warning (high=−15, med=−10, low=−5; these **subtract**)
+  - Shows We Love (+40)
+- **Tropes** (`Show_Tropes`), 0–100
+- **Alive ratio**, 0–100
+- **Character score** (`Character_Score::longevity()`, a longevity-weighted, saturating model), 0 to under 100
 
-**Do not alter scoring weights without understanding the downstream effects on all existing show scores.** The score is stored in post meta and regenerated via cron/WP-CLI.
+The average is stored twice: clamped to 0–100 in `lezshows_the_score`, which everything reads, and raw in `lezshows_the_score_uncapped`, which is used for tie-breaking at the top. Full details: `docs/scoring/show-score.md`.
+
+**Do not alter scoring weights without understanding the downstream effects on all existing show scores.** Scores are recalculated on save (via the Action Scheduler calculation task) and by `wp lwtv calc`. The daily cron does **not** recalculate them. After changing a scoring constant, run `wp lwtv score-preview` (read-only) and then `wp lwtv calc --all`.
 
 ### Statistics & Charts
 
@@ -151,7 +156,7 @@ npm run symbolicons:prod  # production branch
 
 ## Testing
 
-A PHPUnit 11 harness covers the **pure-transform** logic under `build/` (currently `this-year/`).
+A PHPUnit harness (version pinned in `composer.json`) covers **pure-transform** logic: the `build/` classes, the scoring models, and other WordPress-free helpers (see `tests/unit/`). More detail in `docs/testing.md`.
 
 ```bash
 vendor/bin/phpunit                 # run the unit suite
@@ -170,6 +175,7 @@ vendor/bin/phpunit --filter Trends # run a single test class
 - Server crontab drives `wp lwtv generate cron daily`, which rotates debuggers, refreshes FacetWP cache, and runs other maintenance.
 - Shell scripts live in `cron/`.
 - The plugin registers scheduled actions that map to WP-CLI commands.
+- Details: `docs/operations/cron-schedule.md` and `docs/architecture/scheduling.md`. The full docs index is `docs/README.md`.
 
 ---
 

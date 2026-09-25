@@ -17,7 +17,6 @@ TMPFILE=$(mktemp)
 {
     echo "--- Start: $(date) ---"
     echo "User: $(whoami)"
-    /usr/bin/wp cache flush --path=/home/wp_bg3hrq/lezwatchtv.com/
     /usr/bin/wp lwtv generate otd --path=/home/wp_bg3hrq/lezwatchtv.com/
 } > "$TMPFILE" 2>&1
 EXIT_CODE=$?

@@ -24,6 +24,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+use LWTV\_Helpers\Uncached_Option;
+
 class Findings_Store {
 
 	/**
@@ -81,7 +83,7 @@ class Findings_Store {
 	 * @return array|false Findings, or false when there are none to read.
 	 */
 	public static function load( string $key ) {
-		$stored = get_option( self::option_name( $key ) );
+		$stored = Uncached_Option::get( self::option_name( $key ) );
 
 		// Not ours, or never written. An envelope always has `items`.
 		if ( ! is_array( $stored ) || ! array_key_exists( 'items', $stored ) ) {
@@ -113,13 +115,13 @@ class Findings_Store {
 			'saved'   => time(),
 		);
 
-		update_option( self::option_name( $key ), $envelope, false );
+		Uncached_Option::set( self::option_name( $key ), $envelope );
 
 		$keys = self::keys();
 
 		if ( ! in_array( $key, $keys, true ) ) {
 			$keys[] = $key;
-			update_option( self::INDEX, $keys, false );
+			Uncached_Option::set( self::INDEX, $keys );
 		}
 
 		return $items;
@@ -143,7 +145,7 @@ class Findings_Store {
 		// Only write when something actually changed; forget() is called on every
 		// expired read.
 		if ( count( $kept ) !== count( $keys ) ) {
-			update_option( self::INDEX, $kept, false );
+			Uncached_Option::set( self::INDEX, $kept );
 		}
 	}
 
@@ -153,7 +155,7 @@ class Findings_Store {
 	 * @return array<int, string>
 	 */
 	public static function keys(): array {
-		$keys = get_option( self::INDEX );
+		$keys = Uncached_Option::get( self::INDEX );
 
 		if ( ! is_array( $keys ) ) {
 			return array();
@@ -169,7 +171,7 @@ class Findings_Store {
 	 * @return int         Unix timestamp, or 0.
 	 */
 	public static function saved_at( string $key ): int {
-		$stored = get_option( self::option_name( $key ) );
+		$stored = Uncached_Option::get( self::option_name( $key ) );
 
 		return is_array( $stored ) ? (int) ( $stored['saved'] ?? 0 ) : 0;
 	}

@@ -2,13 +2,9 @@
 /**
  * Score distribution transforms.
  *
- * Pure array-in/array-out math for the show score (0–100) infographics:
- * the decile histogram, median, tail counts, and the average score of
- * the shows on air in each year. No WordPress calls — unit-testable
- * without a WP runtime (see tests/unit/Statistics/ScoreDistributionTest.php).
- *
- * Data acquisition (meta reads, queries) stays in Build\Scores and the
- * on-air builders; this class only crunches what they hand it.
+ * Show score (0–100) math: decile histogram, median, tail counts and
+ * average score of shows on air per year. Data comes from Build\Scores.
+ * Pure transform. See docs/statistics/pages.md#build-layer.
  *
  * @package LezWatch.TV
  */

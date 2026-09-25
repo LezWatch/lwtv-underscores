@@ -144,10 +144,10 @@ class Taxonomy_Optimized {
 		}
 
 		/*
-		 * -1 rather than wp_count_posts( $post_type )->publish. That was an
-		 * upper bound derived from every published post of the type, for a query
-		 * that returns a filtered subset of them -- so it did the same job as -1
-		 * while adding a lookup and implying a limit that was never meaningful.
+		 * -1 rather than wp_count_posts( $post_type )->publish: that count is an
+		 * upper bound over every published post of the type, for a query that
+		 * returns a filtered subset, so it would do the same job as -1 while
+		 * adding a lookup.
 		 */
 		$query_args = array(
 			'post_type'              => $post_type,

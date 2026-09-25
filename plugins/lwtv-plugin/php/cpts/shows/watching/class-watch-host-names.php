@@ -18,6 +18,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+use LWTV\_Helpers\Uncached_Option;
+
 class Watch_Host_Names {
 
 	/**
@@ -62,7 +64,7 @@ class Watch_Host_Names {
 			return self::$cache;
 		}
 
-		$stored      = get_option( self::OPTION );
+		$stored      = Uncached_Option::get( self::OPTION );
 		self::$cache = is_array( $stored ) ? $stored : array();
 
 		return self::$cache;
@@ -151,7 +153,7 @@ class Watch_Host_Names {
 		);
 
 		self::$cache = $map;
-		update_option( self::OPTION, $map, false );
+		Uncached_Option::set( self::OPTION, $map );
 	}
 
 	/**
@@ -181,7 +183,7 @@ class Watch_Host_Names {
 		);
 
 		self::$cache = $map;
-		update_option( self::OPTION, $map, false );
+		Uncached_Option::set( self::OPTION, $map );
 	}
 
 	/**
@@ -201,7 +203,7 @@ class Watch_Host_Names {
 		unset( $map[ Host_Name::normalise( $host ) ] );
 
 		self::$cache = $map;
-		update_option( self::OPTION, $map, false );
+		Uncached_Option::set( self::OPTION, $map );
 	}
 
 	/**

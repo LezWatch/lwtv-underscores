@@ -2,19 +2,9 @@
 /**
  * Publish Missed Schedule
  *
- * This class handles the publication of posts that have missed their scheduled time.
- *
- * MIGRATION TO ACTION SCHEDULER:
- * - When Action Scheduler is available, uses recurring actions every hour
- * - Maintains backward compatibility with transient-based approach
- * - Integrates with health checks system for monitoring
- * - Provides WP-CLI commands for status and manual triggering
- *
- * USAGE:
- * - Automatic: Action Scheduler runs every hour when available
- * - Manual: wp lwtv generate missed-schedule [status|trigger]
- * - Legacy: wp lwtv generate cron hourly (still works)
- *
+ * Publishes posts that have missed their scheduled time: hourly on Action
+ * Scheduler, with a transient-guarded fallback without it.
+ * See docs/operations/cron-schedule.md#missed-schedule.
  */
 
 namespace LWTV\Features;

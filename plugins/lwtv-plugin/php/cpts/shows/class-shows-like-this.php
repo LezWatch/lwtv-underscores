@@ -134,8 +134,6 @@ class Shows_Like_This {
 	/**
 	 * Custom Meta Query for related posts
 	 *
-	 * @TODO: Move this to a QUEERY looper.
-	 *
 	 * @param  array  $meta_query
 	 * @param  int    $post_id
 	 * @param  array  $taxonomies

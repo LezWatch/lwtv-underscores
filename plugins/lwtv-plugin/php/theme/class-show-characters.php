@@ -93,11 +93,8 @@ class Show_Characters {
 		// Per-request memo. Shows\Calculations::do_the_math() resolves the same
 		// character list three times for one show -- once in
 		// prime_character_caches(), once in show_character_data(), once via
-		// count_queers_all_types() -- and each pass re-runs the shadow-taxonomy
-		// lookup, a get_field() per character in clean_character_array(), and the
-		// three update_post_meta() calls in build_character_list(). Identical
-		// inputs, identical output, three times over, in exactly the path a bulk
-		// recalculation across every show runs down.
+		// count_queers_all_types() -- and each pass would otherwise re-run the
+		// shadow-taxonomy lookup and a get_field() per character.
 		//
 		// Keyed on all three arguments because the format and role change what is
 		// returned. Callers that need a guaranteed-fresh read call flush_cache()
@@ -165,16 +162,10 @@ class Show_Characters {
 	 * Reconcile the shadow taxonomy between a show and its characters.
 	 *
 	 * Despite the name, this does NOT filter the array -- it returns its input
-	 * unchanged, and always did. It previously ended the "character is not on
-	 * this show" branch with `unset( $characters[ $char_id ] )`, using the
-	 * character ID as an array key when every source of this array
-	 * (get_characters_from_shadow_tax, _from_taxonomy, _from_post_meta) returns a
-	 * 0-indexed list of IDs. So it unset an index that did not exist and removed
-	 * nothing. That line is gone rather than fixed: both consumers already
-	 * re-verify show membership themselves -- count_characters() only counts
-	 * inside `$char_show['show'] === $show_id`, and build_character_data()
-	 * `continue`s otherwise -- so filtering here would be redundant even if it
-	 * had worked.
+	 * unchanged. Both consumers re-verify show membership themselves --
+	 * count_characters() only counts inside `$char_show['show'] === $show_id`,
+	 * and build_character_data() `continue`s otherwise -- so filtering here
+	 * would be redundant.
 	 *
 	 * What this is actually for is the side effect: attaching the shadow term for
 	 * characters that list this show, and detaching it for ones that no longer do.
@@ -211,8 +202,7 @@ class Show_Characters {
 			$term_id = (int) get_post_meta( $char_id, sanitize_key( 'shadow_' . Characters::SHADOW_TAXONOMY . '_term_id' ), true );
 
 			// No shadow term recorded for this character, so there is nothing to
-			// attach or detach. Previously this fell through and called
-			// wp_add_object_terms() with a term ID of 0.
+			// attach or detach.
 			if ( $term_id < 1 ) {
 				continue;
 			}
@@ -221,10 +211,7 @@ class Show_Characters {
 			$is_attached = in_array( $term_id, $attached, true );
 
 			// Only write when the taxonomy actually disagrees with the
-			// character's own show list. This used to call wp_add_object_terms()
-			// for every character on every invocation, re-adding terms that were
-			// already attached -- on the order of 7500 redundant term writes per
-			// full recalculation, and the same again for pointless removals.
+			// character's own show list.
 			if ( $listed && ! $is_attached ) {
 				wp_add_object_terms( (int) $show_id, $term_id, Characters::SHADOW_TAXONOMY );
 				$attached[] = $term_id;
@@ -335,9 +322,9 @@ class Show_Characters {
 	/**
 	 * Generate list of characters for shows.
 	 *
-	 * Kept as the public entry point it always was; the work now happens in
-	 * resolve_character_counts() (memoised per show) and the requested value is
-	 * picked out by format_character_list().
+	 * Public entry point; the work happens in resolve_character_counts()
+	 * (memoised per show) and the requested value is picked out by
+	 * format_character_list().
 	 *
 	 * @param array   $characters  Array of character IDs
 	 * @param string  $show_id     ID of the show
@@ -408,7 +395,7 @@ class Show_Characters {
 				// to determine what to display.
 				if ( ! empty( $shows_array ) && is_array( $shows_array ) && 'publish' === get_post_status( $char_id ) ) {
 					foreach ( $shows_array as $char_show ) {
-						// De-array the show (there was an old issue with this, but it's fixed now).
+						// De-array the show (pre-migration CMB2 data).
 						if ( is_array( $char_show['show'] ) ) {
 							$char_show['show'] = $char_show['show'][0];
 						}
@@ -476,13 +463,9 @@ class Show_Characters {
 	/**
 	 * Pick one value out of resolved character data.
 	 *
-	 * Split out from the resolving loop so every output format shares one pass.
-	 * Before the split, asking for 'count' and then 'dead' on the same show ran
-	 * the whole per-character loop twice -- three has_term() calls, an actor
-	 * get_field(), an Is_Actor_Queer and an Is_Actor_Trans per character, plus
-	 * three update_post_meta() writes -- to return two numbers already sitting in
-	 * the same array. template-parts/embed/content-post_type_shows.php does
-	 * exactly that.
+	 * Split out from the resolving loop so every output format shares one pass:
+	 * asking for 'count' and then 'dead' on the same show reads the same
+	 * resolved array rather than re-running the per-character loop.
 	 *
 	 * @param array  $resolved From resolve_character_counts().
 	 * @param string $output   Requested format.

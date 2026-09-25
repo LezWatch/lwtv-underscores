@@ -12,12 +12,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Transients implements Component, Templater {
 
 	/**
-	 * Option name for the stats-cache index: a map of stats transient key =>
-	 * unix time it was last built. Because a persistent object cache (e.g.
-	 * Redis) stores transients OUTSIDE wp_options, this index is what lets us
-	 * both (a) evict stats transients by pattern through the object-cache-aware
-	 * delete_transient(), and (b) report an honest "last calculated" time on
-	 * the statistics pages.
+	 * Option name for the stats-cache index: stats transient key => unix time
+	 * last built. Used for pattern eviction and "last calculated" notes.
+	 * See docs/architecture/caching.md#the-stats-index.
 	 *
 	 * @var string
 	 */
@@ -112,18 +109,8 @@ class Transients implements Component, Templater {
 	/**
 	 * Get Transient
 	 *
-	 * A wrapper to default to false if you're developing.
-	 *
-	 * Use this for a **cache**: something derived, that can always be recomputed,
-	 * where a stale copy getting in the way during development is the problem the
-	 * flag exists to solve. Statistics are the case it was written for.
-	 *
-	 * Do not use a transient at all for a **store** -- data with no cheaper source
-	 * to fall back to. There used to be a get_stored() here that read transients
-	 * while promising store semantics, and it could not keep that promise: on
-	 * production WP-CLI and web requests do not share an object cache tier, so
-	 * findings written by cron were invisible to wp-admin. Stores are options now.
-	 * See Debugger\Findings_Store.
+	 * A wrapper to default to false if you're developing. Caches only; stores go
+	 * in options. See docs/architecture/caching.md#cache-vs-store.
 	 *
 	 * @param  string      $transient The Transient name
 	 * @return string|bool            Transient value (or false)
@@ -139,13 +126,8 @@ class Transients implements Component, Templater {
 	/**
 	 * Set Transient
 	 *
-	 * Writes even when LWTV_DISABLE_TRANSIENTS is set, and that asymmetry with
-	 * get_transient() is deliberate rather than an oversight.
-	 *
-	 * Two reasons to keep writing. A development database stays production-shaped,
-	 * so `wp transient get` shows what the site would be serving; and turning the
-	 * flag off gives a warm cache rather than a cold one. The flag means "do not
-	 * let a cached value hide fresh data from me", not "do not keep records".
+	 * Writes even when LWTV_DISABLE_TRANSIENTS is set; the asymmetry with
+	 * get_transient() is deliberate. See docs/architecture/caching.md#lwtv_disable_transients.
 	 *
 	 * @param  string      $transient The Transient name
 	 * @return void
@@ -180,23 +162,8 @@ class Transients implements Component, Templater {
 	 * @return array
 	 */
 	public function get_cache_dependencies(): array {
-		// NOTE: Patterns use a single '*' as the wildcard. clear_cache_tier() and
-		// get_cache_statistics() translate '*' -> SQL LIKE '%'; any other regex-style
-		// metacharacter (e.g. '.') is treated literally by LIKE and will match nothing.
-		//
-		// The '*' must be TRAILING. key_matches_pattern() only does a
-		// str_starts_with() on a pattern ending in '*' and an exact comparison
-		// otherwise, so 'a_*_b' matches nothing there -- while the SQL pass would
-		// happily match it via LIKE. The two passes would then disagree, and under
-		// a persistent object cache the SQL pass is skipped entirely, so the index
-		// walk is the only one that runs. A mid-string wildcard is therefore a
-		// silent no-op in production. Use exact keys instead.
-		//
-		// Also: a pattern makes every key it matches TRACKED, because
-		// is_tracked_stats_key() is built from this map and set_transient() then
-		// records each one in a single option. That is fine for a handful of
-		// aggregate keys and wrong for a high-cardinality keyspace -- see the
-		// deliberate omission of 'post_meta_*' below.
+		// Patterns take one TRAILING '*' only, and every matching key becomes
+		// tracked in the index. See docs/architecture/caching.md#wildcard-patterns.
 		return array(
 			// Tier 1: Critical Counts (1 hour cache)
 			'counts'  => array(
@@ -235,6 +202,10 @@ class Transients implements Component, Templater {
 					'actor_straight_queer_gap',
 					'actor_cis_queer_gap',
 					'cliche_leaders_characters_*',
+					'character_show_leaders_*',
+					'character_actor_leaders_*',
+					'character_death_leaders_*',
+					'character_longevity_leaders_*',
 					'worth_it_*',
 					'we_love_*',
 					'shows_we_love_count',
@@ -247,27 +218,9 @@ class Transients implements Component, Templater {
 				'duration' => DAY_IN_SECONDS,
 			),
 
-			// DELIBERATELY ABSENT: 'post_meta_*', the keyspace Queeries\Post_Meta
-			// caches its WP_Query results under. Those transients are never
-			// invalidated, which looks like the same omission the two queer-gap
-			// keys above were -- but adding the pattern would be worse than
-			// leaving it.
-			//
-			// The keyspace is high-cardinality: the key is an md5 of the call
-			// arguments, so there is one per show (lezchars_show_group), one per
-			// actor (lezchars_actor), one per date (lezactors_birth) and one per
-			// IMDb ID and Q-ID (the two REST endpoints). A pattern here would make
-			// every one of them tracked, so lwtv_stats_cache_index -- a single
-			// option -- would grow with the catalogue, and clear_cache_tier()
-			// walks that whole index against every pattern on every save. The save
-			// path would get slower the more content there is.
-			//
-			// The real fix is upstream, in Post_Meta::make(): it serialises an
-			// entire WP_Query into a transient, and caching IDs under a
-			// low-cardinality key per call site would make both this and the blob
-			// size a non-problem. Until then these expire on their own 30-minute
-			// TTL, and the one screen that could not tolerate that -- the
-			// Exclusion Checker -- queries directly instead.
+			// DELIBERATELY ABSENT: 'post_meta_*' (Queeries\Post_Meta). Too many
+			// keys to track; they expire on their own TTL instead.
+			// See docs/architecture/caching.md#why-post_meta_-is-not-tracked.
 
 			// Tier 3: Stable Data (7 day cache)
 			// Reserved for caches that should survive content edits. The 'preserve'
@@ -511,15 +464,10 @@ class Transients implements Component, Templater {
 	/**
 	 * Get the time the /this-year/ caches for a given year were last built.
 	 *
-	 * Reads the stats-cache index for that year's per-year keys
-	 * (lwtv_*_year_*_<year>) and returns the OLDEST build time among them — the
-	 * page is only as fresh as its stalest piece. The index alone is
-	 * authoritative: the /this-year/ page rebuilds all of its data on every
-	 * render, so an indexed key is by definition current when this runs. We
-	 * deliberately do NOT probe get_transient() to confirm the value is live —
-	 * that wrapper is forced to return false in development
-	 * (LWTV_DISABLE_TRANSIENTS), which would suppress the note there for no
-	 * real benefit. Read-only: it never writes the option.
+	 * Returns the OLDEST build time among that year's indexed keys: the page is
+	 * only as fresh as its stalest piece. Reads the index only (never
+	 * get_transient(), which is always false under LWTV_DISABLE_TRANSIENTS) and
+	 * never writes it. See docs/architecture/caching.md#the-stats-index.
 	 *
 	 * @param  int      $year The calendar year.
 	 * @return int|null       Unix timestamp, or null if nothing is indexed yet.

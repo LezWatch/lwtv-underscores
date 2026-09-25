@@ -59,8 +59,8 @@ class Characters {
 		/*
 		 * Collect, then evaluate. Build\Byq_Rules holds the two rules and the gate
 		 * that decides when a missing trope is worth reporting -- pure, and tested,
-		 * which it needed to be: that gate had a bug in it (1.9c) for as long as it
-		 * was interleaved with the ACF reads.
+		 * because that gate is easy to get wrong when interleaved with the ACF
+		 * reads.
 		 */
 		$collector = new Byq_Collector();
 		$findings  = array();

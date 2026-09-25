@@ -4,10 +4,7 @@
  * Description: The card style and text for a show's content warning.
  *
  * Alias handling ('on', 'medium') is delegated to Trigger_Warning::normalize()
- * rather than duplicated here. This file used to carry its own copy of that
- * table, independently of Calculations::show_score() -- two copies of one
- * decision, the exact pattern Character_Score's docblock documents causing
- * three real bugs in this project already.
+ * so the card and the score can't disagree.
  *
  * @package LWTV
  */
