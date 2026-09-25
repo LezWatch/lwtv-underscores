@@ -48,11 +48,9 @@ class Display {
 
 		$today = $this->today->format( 'Y-m-d' );
 
-		// Query Variables.
 		$get_tvdate = isset( $_GET['tvdate'] ) ? sanitize_text_field( $_GET['tvdate'] ) : 'today'; // phpcs:ignore WordPress.Security.NonceVerification
 		$date_query = ( ( strtotime( $get_tvdate ) !== false ) && ( $get_tvdate !== $today ) ) ? $get_tvdate : 'today';
 
-		// Get the dates
 		$start_datetime = self::build_datetime( $date_query, 'start' );
 		$end_datetime   = self::build_datetime( $date_query, 'next' );
 		$prev_datetime  = self::build_datetime( $date_query, 'previous' );
@@ -66,12 +64,10 @@ class Display {
 		 */
 		$calendar = ( new Build_Calendar() )->generate_tvmaze_calendar( $start_datetime->format( 'Y-m-d' ) );
 
-		// Check if we have valid calendar data
 		if ( empty( $calendar ) ) {
 			return $this->get_tvmaze_error_message();
 		}
 
-		// Process calendar data using Data Processor
 		$data_processor     = new Data_Processor();
 		$processed_calendar = $data_processor->process_calendar_data( $calendar, $date_query );
 
@@ -80,7 +76,6 @@ class Display {
 		$return  = $this->get_header( $start_datetime );
 		$return .= $this->get_intro();
 
-		// If we have no shows, we need to display a message.
 		if ( isset( $calendar['none'] ) || empty( $calendar ) || ! is_array( $calendar ) ) {
 			$return .= $this->get_empty_calendar( $start_datetime, $end_datetime );
 		} else {

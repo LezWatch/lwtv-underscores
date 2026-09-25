@@ -134,7 +134,6 @@ class Postiz {
 	 * @return array|WP_Error Response array or WP_Error on failure
 	 */
 	public function create_post( $content, $options = array() ) {
-		// Check if enabled
 		if ( ! $this->is_enabled() ) {
 			return new \WP_Error(
 				'postiz_not_configured',
@@ -143,7 +142,6 @@ class Postiz {
 			);
 		}
 
-		// Default options
 		$post_type = get_field( 'lwtv_postiz_post_type', 'option' );
 		$defaults  = array(
 			'type'      => $post_type ? $post_type : 'draft',
@@ -157,15 +155,12 @@ class Postiz {
 
 		$options = wp_parse_args( $options, $defaults );
 
-		// Build posts array - one for each channel
 		$posts = $this->build_posts( $content, $options );
 
-		// Check for errors from build_posts
 		if ( is_wp_error( $posts ) ) {
 			return $posts;
 		}
 
-		// Build the payload
 		$payload = array(
 			'type'      => $options['type'],
 			'date'      => $options['date'],
@@ -174,7 +169,6 @@ class Postiz {
 			'posts'     => $posts,
 		);
 
-		// Make the API request
 		$response = $this->make_api_request( '/posts', $payload );
 
 		return $response;
@@ -212,13 +206,10 @@ class Postiz {
 			$args['body'] = wp_json_encode( $data );
 		}
 
-		// Make the request
 		$response = wp_remote_request( $url, $args );
 
-		// Log the response
 		lwtv_plugin()->debug_log( 'postiz', 'API Response: ' . wp_json_encode( $response ) );
 
-		// Check for errors
 		if ( is_wp_error( $response ) ) {
 			return $response;
 		}
@@ -227,9 +218,7 @@ class Postiz {
 		$response_body = wp_remote_retrieve_body( $response );
 		$decoded_body  = json_decode( $response_body, true );
 
-		// Check for HTTP errors
 		if ( $response_code < 200 || $response_code >= 300 ) {
-			// Extract structured error messages from the response
 			$error_messages = $this->extract_error_messages( $decoded_body );
 
 			// Format error message (use extracted messages or fall back to raw body)
@@ -432,7 +421,6 @@ class Postiz {
 	 * @return bool True if the OTD exists, false otherwise
 	 */
 	public function post_exists( $content, $post_id ) {
-		// Get the last OTD date for the post
 		$last_otd_date   = get_post_meta( $post_id, 'lwtv_was_last_otd', true );
 		$lwtv_of_the_day = get_post_meta( $post_id, 'lwtv_of_the_day', true );
 		if ( empty( $last_otd_date ) || empty( $lwtv_of_the_day ) ) {
@@ -446,7 +434,6 @@ class Postiz {
 			return true;
 		}
 
-		// Get the last Postiz post date for the post
 		$last_postiz_post_date = get_post_meta( $post_id, 'lwtv_last_postiz_post', true );
 		if ( empty( $last_postiz_post_date ) ) {
 			lwtv_plugin()->debug_log( 'postiz', 'No last Postiz post date found for post: ' . $post_id );
@@ -459,7 +446,6 @@ class Postiz {
 			return true;
 		}
 
-		// Get all posts made for the last 24 hours
 		$start_date = rawurlencode( gmdate( 'Y-m-d\TH:i:s\Z', strtotime( '-48 hours' ) ) );
 		$end_date   = rawurlencode( gmdate( 'Y-m-d\TH:i:s\Z' ) );
 
@@ -477,17 +463,14 @@ class Postiz {
 				continue;
 			}
 
-			// Check if the posts are empty
 			if ( is_null( $response['data']['posts'] ) || empty( $response['data']['posts'] ) ) {
 				lwtv_plugin()->debug_log( 'postiz', 'No posts found in response: ' . wp_json_encode( $response ) );
 				continue;
 			}
 
-			// Add to the posts array
 			$posts = array_merge( $posts, $response['data']['posts'] );
 		}
 
-		// Loop through the posts and check if the content matches
 		foreach ( $posts as $post ) {
 			lwtv_plugin()->debug_log( 'postiz', 'Checking if OTD already exists in Postiz: ' . wp_json_encode( $post ) );
 
@@ -498,7 +481,6 @@ class Postiz {
 				continue;
 			}
 
-			// Check if the content matches the content
 			if ( $post['content'] === $content ) {
 				lwtv_plugin()->debug_log( 'postiz', 'OTD already exists in Postiz: ' . wp_json_encode( $post ) );
 				return true;

@@ -38,7 +38,6 @@ class Names {
 		// Output depends on source calling.
 		switch ( $source ) {
 			case 'lwtv':
-				// Return only the name
 				return ( 'name' === $output ) ? $check_name['name'] : $check_name['id'];
 			case 'tvmaze':
 				return ( 'name' === $output ) ? $this->get_link( $check_name['name'], (int) $check_name['id'] ) : $check_name['id'];
@@ -65,7 +64,6 @@ class Names {
 			return $this->resolved[ $name ];
 		}
 
-		// Check TV Maze
 		$check_name = $this->tvmaze( $name );
 
 		// If the ID is 0, try looking for a local show that matches.
@@ -106,7 +104,6 @@ class Names {
 	 * @return array
 	 */
 	private function tvmaze( string $name ): array {
-		// Set base name and ID.
 		$show_name = $name;
 		$show_id   = 0;
 

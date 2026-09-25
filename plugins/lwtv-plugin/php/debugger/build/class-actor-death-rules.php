@@ -7,7 +7,7 @@
  *     array(
  *         'our_death'  => string,  // lezactors_death, raw
  *         'our_birth'  => string,  // lezactors_birth, raw
- *         'ignored'    => bool,    // lezactors_wikidata_ignore
+ *         'ignored'    => bool,    // editor_says_stop(): locked AND no QID
  *         'qid'        => string,  // a TRUSTED WikiData QID, '' when we have none
  *         'source'     => string,  // Wikidata\Build\Qid_Trust::SOURCE_*, or '' when
  *                                  // we hold no QID at all. A non-empty source

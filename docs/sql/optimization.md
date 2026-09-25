@@ -1,6 +1,8 @@
 # SQL optimization: taxonomy character counts
 
-This document describes the **Phase 3** options for further improving performance of bulk character counts by taxonomy term (`lez_stations`, `lez_country`, etc.). Phases 1–2 are implemented in code (see [`plugins/lwtv-plugin/php/statistics/build/class-taxonomy-optimized.php`](../../plugins/lwtv-plugin/php/statistics/build/class-taxonomy-optimized.php)).
+How `Taxonomy_Optimized::get_bulk_character_counts()` counts characters per taxonomy term (`lez_stations`, `lez_country`, etc.), and the heavier options kept in reserve if it ever gets slow again. Code: [`plugins/lwtv-plugin/php/statistics/build/class-taxonomy-optimized.php`](../../plugins/lwtv-plugin/php/statistics/build/class-taxonomy-optimized.php).
+
+**Status:** the problem the Phase 3 options below were written for, a leading-wildcard `LIKE` on a serialized blob, no longer exists. The query now joins ACF's per-row sub-field meta with an equality match (see [Current query](#current-query)), which is essentially [Option B](#option-b--one-postmeta-row-per-charactershow-pair) with ACF maintaining the rows. The options are kept for reference only.
 
 ---
 
@@ -13,27 +15,16 @@ For each term slug, the site needs:
 - **`total`**: `COUNT(DISTINCT character_id)` for published characters who appear on at least one **published show** tagged with that term.
 - **`dead`**: Same set, restricted to characters with a non-empty `lezchars_last_death` meta.
 
-The canonical source of truth for “which shows a character appears on” is **`lezchars_show_group`** post meta on the character: a **PHP-serialized** structure stored in `wp_postmeta.meta_value`. The statistics query matches a show ID embedded in that blob using a `LIKE` pattern derived from `shows.ID` (serialized string length + quoted ID).
-
 You **cannot** replace this with a simple `SUM(lezshows_char_count)` across shows in a term: one character on two shows under the same network would be **double-counted** if you summed per-show cached counts.
 
-### What Phase 1 fixed
+### Current query
 
-The original query accidentally **cross-joined** all published characters with all term–show rows before applying the `LIKE`, producing tens of millions of examined rows. Phase 1 reordered joins so `wp_postmeta` rows are found **per show** first, then joined to the character post—eliminating the Cartesian product.
+"Which shows a character appears on" comes from the character's `lezchars_show_group` ACF repeater. ACF stores each row's show as its own postmeta row, `lezchars_show_group_{n}_show`, holding the show ID (see [data-model.md](../statistics/data-model.md#repeaters)). The query joins that row with `char_shows.meta_value = shows.ID` and finds the key with an escaped `LIKE 'lezchars\_show\_group\_%\_show'`, which range-scans the `meta_key` index on its constant prefix (see [Repeater sub-field key matching](#repeater-sub-field-key-matching)). It returns `total` and `dead` for every requested slug in one statement, cached as `bulk_char_counts_<taxonomy>_<md5>`.
 
-### What still costs CPU after Phase 1
+### History
 
-Even with correct joins, each candidate row still evaluates:
-
-```sql
-meta_value LIKE CONCAT('%s:', LENGTH(CAST(shows.ID AS CHAR)), ':"', CAST(shows.ID AS CHAR), '";%')
-```
-
-That pattern has a **leading wildcard** (`%` before the serialized segment). Standard B-tree indexes on `meta_value` cannot narrow the scan in the general case; the engine may still scan many `meta_key = 'lezchars_show_group'` rows or rely on filtering after index prefix lookups, depending on version, optimizer, and data distribution.
-
-**Phase 3** is about making the relationship **queryable with equality or narrow range predicates** so MySQL can use indexes and/or tiny precomputed aggregates.
-
----
+- **Phase 1** fixed a join order that cross-joined every published character with every term–show row before filtering.
+- The serialized-blob match (`meta_value LIKE '%s:<len>:"<id>";%'`), whose leading wildcard defeated any index, was replaced by the sub-field join above.
 
 ## When to consider Phase 3
 
@@ -41,11 +32,11 @@ Treat Phase 3 as justified if **production evidence** shows one or more of:
 
 | Signal | Rough interpretation |
 |--------|----------------------|
-| Slow query log still lists `get_bulk_character_counts` SQL with **high `Rows_examined`** or **multi-second** runtime after Phase 1 deploy | Join fix was necessary but not sufficient |
+| Slow query log lists `get_bulk_character_counts` SQL with **high `Rows_examined`** or **multi-second** runtime | The sub-field join is not enough |
 | **High concurrent cold-cache** traffic on statistics URLs (many PHP workers blocked on the same query) | Need stronger caching or precomputation |
-| Plans to add **more taxonomies** or **heavier dashboards** using the same serialized match | Cost scales with use of `LIKE` on `postmeta` |
+| Plans to add **more taxonomies** or **heavier dashboards** on the same join | Cost scales with postmeta joins |
 
-If Phase 1 reduced runtime enough and transients absorb traffic, Phase 3 can remain deferred.
+While the current query is fast enough and transients absorb traffic, Phase 3 stays deferred.
 
 ---
 
@@ -185,7 +176,7 @@ Often used **together with** Option A: the link table makes recomputation querie
 Before and after any Phase 3 rollout:
 
 - Capture **`EXPLAIN ANALYZE`** (or at least `EXPLAIN`) for the new query.
-- Compare **per-slug** `total` / `dead` against Phase 1 query output on a **copy** of production data.
+- Compare **per-slug** `total` / `dead` against the current query output on a **copy** of production data.
 - Monitor **slow query log** and **PHP max execution time** on statistics routes.
 
 ---
@@ -203,8 +194,6 @@ ACF stores each repeater row's sub-fields as their own postmeta rows (`lezchars_
 
 **Exception:** don't add the `LIKE` when another join is the selective filter. `Statistics\Build\Dead::generate_characters_by_roles()` matches `…_type` by `REGEXP` only. `EXPLAIN` shows MySQL driving off `t.slug = 'dead'` (the `lez_cliches` join) and reaching postmeta through the `post_id` index (`type=ref`, about a dozen rows per character). The `meta_key` index is never consulted, so a `LIKE` there would add nothing. Run `EXPLAIN` before adding either predicate to a new query.
 
-> Note: `Taxonomy_Optimized::get_bulk_character_counts()` now joins on the `lezchars_show_group_%_show` sub-field key with `char_shows.meta_value = shows.ID`, rather than the serialized-blob `LIKE` described under *Background* above.
-
 ---
 
 ## Related code
@@ -218,3 +207,4 @@ ACF stores each repeater row's sub-fields as their own postmeta rows (`lezchars_
 ## Document history
 
 - **Phase 3** detailed options added for long-term SQL strategy if Phase 1 join fix and caching are insufficient.
+- Background rewritten for the ACF sub-field join; Phase 3 options marked reference-only.

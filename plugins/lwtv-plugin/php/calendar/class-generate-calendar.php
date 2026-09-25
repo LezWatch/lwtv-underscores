@@ -85,7 +85,6 @@ class Generate_Calendar {
 			$first = $show_title_array;
 			$newer = $description . ' (' . $number . ')';
 
-			// Now Make it.
 			$show_title_array = array( $first, $newer );
 		}
 

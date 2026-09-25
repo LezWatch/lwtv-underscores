@@ -44,7 +44,6 @@ class Data_Processor {
 			return $cached_data;
 		}
 
-		// Get shared instances from object pool
 		$display = Calendar_Object_Pool::get_display();
 		$names   = Calendar_Object_Pool::get_names();
 
@@ -59,7 +58,6 @@ class Data_Processor {
 			}
 		}
 
-		// Cache the processed data for 1 day
 		lwtv_plugin()->set_transient( $cache_key, $processed_data, DAY_IN_SECONDS );
 
 		return $processed_data;
@@ -106,7 +104,6 @@ class Data_Processor {
 			'lwtv_date' => $show_time->format( '@ g:i A' ) . ' (' . $timezone . ')',
 		);
 
-		// Process episode count for multiple episodes
 		if ( is_array( $show['title'] ) ) {
 			$processed_show['episode_badge'] = ' <span class="badge text-bg-secondary rounded-pill">' . count( $show['title'] ) . '</span>';
 		} else {

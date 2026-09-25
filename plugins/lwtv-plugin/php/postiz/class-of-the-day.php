@@ -43,7 +43,6 @@ class Of_The_Day extends Postiz {
 		if ( $this->is_enabled() && $this->is_type_triggered_enabled( 'of_the_day' ) ) {
 			add_action( 'lwtv_otd_added', array( $this, 'handle_otd_added' ), 10, 4 );
 
-			// Register Action Scheduler hook if available
 			if ( lwtv_plugin()->is_action_scheduler_available() ) {
 				add_action( self::AS_HOOK, array( $this, 'process_scheduled_otd' ), 10, 4 );
 			}
@@ -97,7 +96,6 @@ class Of_The_Day extends Postiz {
 	public function process_scheduled_otd( $type, $content, $post_id, $data ) {
 		lwtv_plugin()->debug_log( 'postiz', 'Processing scheduled OTD post: ' . wp_json_encode( $data ) );
 
-		// Check if the OTD already exists in Postiz
 		$exists = parent::post_exists( $content, $post_id );
 		if ( $exists ) {
 			parent::log_otd_message( 'OTD already exists in Postiz in at least one channel. Skipping', $type, $content, $post_id, $data );
@@ -109,7 +107,6 @@ class Of_The_Day extends Postiz {
 			$result = $this->post_of_the_day( $type, $content, $post_id );
 			lwtv_plugin()->debug_log( 'postiz', 'Result of posting OTD to Postiz: ' . wp_json_encode( $result ) );
 
-			// Log errors if any
 			if ( is_wp_error( $result ) ) {
 				lwtv_plugin()->debug_log(
 					'postiz',
@@ -121,7 +118,6 @@ class Of_The_Day extends Postiz {
 				return;
 			}
 
-			// Update the last Postiz post date for the post
 			update_post_meta( $post_id, 'lwtv_last_postiz_post', time() );
 		} catch ( \Throwable $th ) {
 			lwtv_plugin()->error_log( 'postiz', 'Error posting OTD to Postiz: ' . $th->getMessage() );
@@ -140,11 +136,9 @@ class Of_The_Day extends Postiz {
 	 */
 	public function post_of_the_day( $type, $content, $post_id ) {
 
-		// Get Images and Tags
 		$images = parent::get_images( $post_id );
 		$tags   = parent::get_tags( 'otd', $post_id, $type );
 
-		// Options for the post
 		$options = array(
 			'group'     => 'otd_' . $type . '_' . gmdate( 'Y-m-d' ),
 			'image'     => $images,
@@ -152,7 +146,6 @@ class Of_The_Day extends Postiz {
 			'shortLink' => false,
 		);
 
-		// Create the post
 		return parent::create_post( $content, $options );
 	}
 

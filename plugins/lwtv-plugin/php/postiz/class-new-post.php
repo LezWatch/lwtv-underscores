@@ -40,15 +40,12 @@ class New_Post extends Postiz {
 			return;
 		}
 
-		// Get the content and post it
 		$content = $this->get_post_content( $post_id );
 		$result  = $this->post_new_post( $content, $post_id );
 
-		// Log errors if any
 		if ( is_wp_error( $result ) ) {
 			parent::log_new_post_message( 'Failed to post new post to Postiz: ' . $result->get_error_message(), $post_id );
 		} else {
-			// Log success
 			parent::log_new_post_message( 'New post posted to Postiz', $post_id );
 		}
 
@@ -62,7 +59,6 @@ class New_Post extends Postiz {
 	 * @return string The content
 	 */
 	private function get_post_content( $post_id ) {
-		// Get the extracted content
 		$content = get_the_excerpt( $post_id );
 
 		if ( empty( $content ) ) {
@@ -121,7 +117,6 @@ class New_Post extends Postiz {
 	public function post_new_post( $content, $post_id ) {
 		$post_type = get_post_type( $post_id );
 
-		// Options for the post
 		$options = array(
 			'group'     => $post_type . '_' . $post_id,
 			'image'     => parent::get_images( $post_id ),
@@ -129,7 +124,6 @@ class New_Post extends Postiz {
 			'shortLink' => false,
 		);
 
-		// Create the post
 		return parent::create_post( $content, $options );
 	}
 }

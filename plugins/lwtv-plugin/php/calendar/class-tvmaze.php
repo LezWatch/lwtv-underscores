@@ -25,12 +25,10 @@ class TVMaze {
 	 * @return string $timezone
 	 */
 	public function get_timezone( $show_id ) {
-		// If TV Maze is disabled, bail early
 		if ( ! defined( 'TV_MAZE' ) || ! TV_MAZE ) {
 			return '';
 		}
 
-		// If there's no show ID, bail early
 		$show_id = intval( $show_id );
 		if ( ! $show_id || 0 === $show_id ) {
 			return '';
@@ -42,7 +40,7 @@ class TVMaze {
 			return $timezone;
 		}
 
-		// Check if there's a transient for the timezone.
+		// 'missing' is a negative cache: TVMaze had no timezone, so don't ask again yet.
 		$network_transient = lwtv_plugin()->get_transient( 'lezshows_tvmaze_timezone_' . $show_id );
 
 		if ( 'missing' === $network_transient ) {
@@ -87,7 +85,6 @@ class TVMaze {
 	 * @return mixed $show_info_decoded - the response body decoded or false
 	 */
 	public function get_tvmaze_info_show( $show_id, $maybe_show_name = '' ): mixed {
-		// If it's not a show, bail early.
 		if ( 'post_type_shows' !== get_post_type( $show_id ) ) {
 			return false;
 		}
@@ -113,12 +110,10 @@ class TVMaze {
 			$show_info = wp_remote_get( self::TVMAZE_URL . '/singlesearch/shows?q=' . $show_name );
 		}
 
-		// If we have an error, return false.
 		if ( ! isset( $show_info ) || is_wp_error( $show_info ) ) {
 			return false;
 		}
 
-		// Set the TV Maze ID
 		$show_info_decoded = json_decode( $show_info['body'], true );
 
 		// If we have a TV Maze ID, save it to the post. This is in case they change the records.

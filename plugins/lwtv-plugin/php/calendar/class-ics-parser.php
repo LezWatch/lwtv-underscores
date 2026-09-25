@@ -13,7 +13,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-// Include iCal parser
 require_once 'ICal/ICal.php';
 require_once 'ICal/Event.php';
 
@@ -70,10 +69,8 @@ class ICS_Parser {
 		$ical = new ICal();
 		$ical->initUrl( $url );
 
-		// Timezone
 		$tz = new \DateTimeZone( LWTV_TIMEZONE );
 
-		// Default is today:
 		$start_datetime = new \DateTime( 'today', $tz );
 
 		switch ( $when ) {
