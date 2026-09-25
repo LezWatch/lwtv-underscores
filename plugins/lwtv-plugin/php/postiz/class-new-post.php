@@ -15,6 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 use LWTV\CPTs\Shows\Airdates;
+use LWTV\Postiz\Build\Post_Announcement;
 use LWTV\Postiz\Build\Show_Announcement;
 
 class New_Post extends Postiz {
@@ -212,24 +213,17 @@ class New_Post extends Postiz {
 	}
 
 	/**
-	 * Get the content for the new post
+	 * The announcement text for a blog post. See Post_Announcement::content().
 	 *
 	 * @param int $post_id The post ID
 	 * @return string The content
 	 */
-	private function get_post_content( $post_id ) {
-		$content = get_the_excerpt( $post_id );
-
-		if ( empty( $content ) ) {
-			$content = get_the_title( $post_id );
-		}
-
-		// Bluesky posts have a 300-character limit
-		if ( strlen( $content ) > 300 ) {
-			$content = substr( $content, 0, 296 ) . ' ...';
-		}
-
-		return $content;
+	private function get_post_content( $post_id ): string {
+		return Post_Announcement::content(
+			get_the_title( $post_id ),
+			(string) get_the_excerpt( $post_id ),
+			(string) get_permalink( $post_id )
+		);
 	}
 
 	/**
