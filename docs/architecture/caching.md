@@ -27,13 +27,18 @@ The flag means "do not let a cached value hide fresh data from me", not "do not 
 
 `Debugger\Findings_Store` is the reference implementation: one option per check, a small index (`lwtv_debug_findings_keys`), and an explicit expiry (`Findings_Store::TTL`, ten days) stored alongside the data so `load()` can still return `false` for "absent or expired". `Watch_Host_Names` (`lwtv_watch_host_names`) and `Debugger\Baseline_Store` follow the same shape.
 
-The background work queues follow the same rule through `_Helpers\Queue_Store`: `lwtv_cache_batch_queue`, `lwtv_tmdb_batch_queue`, `lwtv_imdb_verify_queue`, `lwtv_wikidata_qid_queue` and `lwtv_wikidata_qid_attempts` are non-autoloaded options. The option names match the transients they replaced. The first read of each adopts any leftover transient once and deletes it. Short-lived counters stay in transients because losing them costs nothing: `lwtv_cache_batch_status` and the TMDB rate-limit window keys.
+The background work queues follow the same rule through `_Helpers\Queue_Store`: `lwtv_cache_batch_queue`, `lwtv_tmdb_batch_queue`, `lwtv_imdb_verify_queue`, `lwtv_wikidata_qid_queue` and `lwtv_wikidata_qid_attempts` are non-autoloaded options. The option names match the transients they replaced. The first read of each adopts any leftover transient once and deletes it. Reads and writes go through `Uncached_Option` (see [CLI and web cache tiers](#cli-and-web-cache-tiers)). Short-lived counters stay in transients because losing them costs nothing: `lwtv_cache_batch_status` and the TMDB rate-limit window keys.
 
 ## CLI and web cache tiers
 
 On production, WP-CLI does not load the object-cache drop-in that web requests use (`wp cache type` reports `Default`). So `wp cache flush` from CLI clears nothing that web requests can see. `get_transient()` therefore asks whichever tier the current process has: web requests see the persistent object cache (Redis), CLI sees the `_transient_*` rows in `wp_options`. A transient written by a cron job can be invisible to wp-admin, and the reverse.
 
-This is the main reason stores go in options: `get_option()` sees the same row from either side. It is also why the one-shot findings migration (`wp lwtv migrate acf debugfindings`, see [cmb2-to-acf.md](../operations/migrations/cmb2-to-acf.md#debugger-findings-to-options)) reads the option rows directly instead of calling `get_transient()`.
+Options have the same problem one level down. Web requests cache non-autoloaded options in Redis too, so a CLI write reaches the database but not the copy web requests read. That covers cron, and Action Scheduler jobs run through `wp cron event run` in `ontheten.sh`. Stores that CLI and web both write therefore go through `_Helpers\Uncached_Option`, which drops the cached copy (and any `notoptions` record) before every read and write:
+
+- `get()` always reads the database row.
+- `set()` clears the cache first, because `update_option()` skips the write when the new value matches the cached one, and a stale copy can match.
+
+Every store uses it: `Queue_Store`, `Debugger\Findings_Store`, `Debugger\Status`, `Debugger\Baseline_Store`, the audit baselines in `Debugger\Audit`, and `Watch_Host_Names`. `delete_option()` needs nothing extra, because it reads the row from the database itself and every read now does too. It is also why the one-shot findings migration (`wp lwtv migrate acf debugfindings`, see [cmb2-to-acf.md](../operations/migrations/cmb2-to-acf.md#debugger-findings-to-options)) reads the option rows directly instead of calling `get_transient()`.
 
 ### delete_transient() and option rows
 

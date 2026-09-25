@@ -139,6 +139,7 @@ require_once __DIR__ . '/../plugins/lwtv-plugin/php/debugger/build/class-queer-r
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/debugger/build/class-actor-completeness-rules.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/debugger/build/class-actor-death-rules.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/wikidata/build/class-qid-trust.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/postiz/build/class-show-announcement.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/debugger/build/class-log-rules.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/admin-menu/build/class-exclusion-registry.php';
 /*

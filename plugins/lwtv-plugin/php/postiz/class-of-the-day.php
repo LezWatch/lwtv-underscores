@@ -148,27 +148,4 @@ class Of_The_Day extends Postiz {
 
 		return parent::create_post( $content, $options );
 	}
-
-	/**
-	 * Create a tag for the OTD
-	 *
-	 * @param string $type The type of OTD (character, show)
-	 * @return array The tag array with 'value' and 'label' keys
-	 */
-	public function create_tag( $type ) {
-		switch ( $type ) {
-			case 'character':
-				return array(
-					'value' => '#LWTVcotd',
-					'label' => '#LWTVcotd',
-				);
-			case 'show':
-				return array(
-					'value' => '#LWTVsotd',
-					'label' => '#LWTVsotd',
-				);
-			default:
-				return array();
-		}
-	}
 }

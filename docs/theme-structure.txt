@@ -287,7 +287,8 @@ classes under test directly. Run with `vendor/bin/phpunit`.
     ├── Statistics/ - Overview factsheet, intersection pairs, decade buckets (format/genre/character identity), score and term-count distributions, series trend, star and role podiums, trigger levels, trope category coverage, we-love compare, worth-it grid
     ├── This_Year/ - Trends, breakdowns, standouts, shows block, shared builder, character facts, characters on air, dead characters, deaths strip, longest running, formatter year matching
     ├── Admin_Menu/ - The Exclusion Checker's override registry
-    └── Wikidata/ - WikiData QID trust rules
+    ├── Wikidata/ - WikiData QID trust rules
+    └── Postiz/ - New Shows announcement rules
 
 Only pure logic is covered here. Anything that reads WP globals, post meta, or runs
 queries is verified against the running site instead — templates, widgets, and JS

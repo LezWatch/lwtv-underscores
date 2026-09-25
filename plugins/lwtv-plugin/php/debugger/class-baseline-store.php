@@ -16,6 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+use LWTV\_Helpers\Uncached_Option;
 use LWTV\Debugger\Build\Baseline;
 
 class Baseline_Store {
@@ -37,7 +38,7 @@ class Baseline_Store {
 	 * @return array
 	 */
 	public static function load( string $scope ): array {
-		$baseline = get_option( self::PREFIX . $scope );
+		$baseline = Uncached_Option::get( self::PREFIX . $scope );
 
 		return is_array( $baseline ) ? $baseline : array();
 	}
@@ -71,7 +72,7 @@ class Baseline_Store {
 	public static function save( string $scope, array $findings ): void {
 		$snapshot = Baseline::snapshot( $findings );
 
-		update_option( self::PREFIX . $scope, $snapshot, false );
+		Uncached_Option::set( self::PREFIX . $scope, $snapshot );
 
 		$index           = self::index();
 		$index[ $scope ] = array(
@@ -79,7 +80,7 @@ class Baseline_Store {
 			'count'    => count( $snapshot ),
 		);
 
-		update_option( self::INDEX, $index, false );
+		Uncached_Option::set( self::INDEX, $index );
 	}
 
 	/**
@@ -137,7 +138,7 @@ class Baseline_Store {
 	 * @return array<string, array<string, int>>
 	 */
 	public static function index(): array {
-		$index = get_option( self::INDEX );
+		$index = Uncached_Option::get( self::INDEX );
 
 		return is_array( $index ) ? $index : array();
 	}
@@ -166,6 +167,6 @@ class Baseline_Store {
 		delete_option( self::PREFIX . $scope );
 		unset( $index[ $scope ] );
 
-		update_option( self::INDEX, $index, false );
+		Uncached_Option::set( self::INDEX, $index );
 	}
 }

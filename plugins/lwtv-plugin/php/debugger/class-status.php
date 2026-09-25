@@ -11,6 +11,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+use LWTV\_Helpers\Uncached_Option;
+
 class Status {
 
 	/**
@@ -34,7 +36,7 @@ class Status {
 	 * @return array<string>
 	 */
 	public static function keys(): array {
-		$keys = get_option( self::INDEX );
+		$keys = Uncached_Option::get( self::INDEX );
 
 		if ( ! is_array( $keys ) ) {
 			return array();
@@ -52,7 +54,7 @@ class Status {
 		$status = array();
 
 		foreach ( self::keys() as $key ) {
-			$entry = get_option( self::PREFIX . $key );
+			$entry = Uncached_Option::get( self::PREFIX . $key );
 
 			if ( is_array( $entry ) ) {
 				$status[ $key ] = $entry;
@@ -102,13 +104,13 @@ class Status {
 			$entry['summary'] = $summary;
 		}
 
-		update_option( self::PREFIX . $key, $entry, false );
+		Uncached_Option::set( self::PREFIX . $key, $entry );
 
 		$keys = self::keys();
 
 		if ( ! in_array( $key, $keys, true ) ) {
 			$keys[] = $key;
-			update_option( self::INDEX, $keys, false );
+			Uncached_Option::set( self::INDEX, $keys );
 		}
 	}
 
@@ -154,11 +156,11 @@ class Status {
 		}
 
 		if ( $known_change ) {
-			update_option( self::INDEX, $known, false );
+			Uncached_Option::set( self::INDEX, $known );
 		}
 
 		if ( $legacy_change ) {
-			update_option( self::OPTION, $legacy, false );
+			Uncached_Option::set( self::OPTION, $legacy );
 		}
 
 		return $removed;
@@ -172,7 +174,7 @@ class Status {
 	 * @return int Unix timestamp, or 0 when unknown.
 	 */
 	public static function last_run( string $key ): int {
-		$entry = get_option( self::PREFIX . $key );
+		$entry = Uncached_Option::get( self::PREFIX . $key );
 
 		if ( is_array( $entry ) && isset( $entry['last'] ) ) {
 			return (int) $entry['last'];
@@ -189,7 +191,7 @@ class Status {
 	 * @return array
 	 */
 	private static function legacy(): array {
-		$legacy = get_option( self::OPTION );
+		$legacy = Uncached_Option::get( self::OPTION );
 
 		if ( ! is_array( $legacy ) ) {
 			return array();

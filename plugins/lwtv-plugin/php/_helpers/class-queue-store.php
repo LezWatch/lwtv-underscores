@@ -6,6 +6,9 @@
  * A queue is a store, not a cache: nothing can rebuild it, so it must not live
  * in a transient. See docs/architecture/caching.md#cache-vs-store.
  *
+ * Reads and writes bypass the object cache (Uncached_Option), because CLI and
+ * web both write these queues.
+ *
  * Keys keep the names the queues had as transients. The first read of a key
  * with no option yet adopts any leftover transient of the same name, once, then
  * deletes it.
@@ -28,7 +31,7 @@ class Queue_Store {
 	 * @return array The stored array, or an empty one.
 	 */
 	public static function get( string $key ): array {
-		$stored = get_option( $key, null );
+		$stored = Uncached_Option::get( $key, null );
 
 		if ( null === $stored ) {
 			$stored = self::adopt_legacy_transient( $key );
@@ -46,7 +49,7 @@ class Queue_Store {
 	 * @return void
 	 */
 	public static function set( string $key, array $value ): void {
-		update_option( $key, $value, false );
+		Uncached_Option::set( $key, $value );
 	}
 
 	/**
@@ -59,7 +62,7 @@ class Queue_Store {
 		$legacy = lwtv_plugin()->get_transient( $key );
 		$value  = is_array( $legacy ) ? $legacy : array();
 
-		update_option( $key, $value, false );
+		Uncached_Option::set( $key, $value );
 		lwtv_plugin()->delete_transient( $key );
 
 		return $value;
