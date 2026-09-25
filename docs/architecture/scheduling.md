@@ -28,7 +28,7 @@ The `get_*_status()` methods return their usual shape with `next_scheduled` set 
 
 `lwtv_plugin()->schedule_task( $type, $post_id, $priority, $delay = 30 )`:
 
-- **Action Scheduler:** one generic hook, `lwtv_<type>_task`, with the post ID as the argument, `unique` by default.
+- **Action Scheduler:** one generic hook, `lwtv_<type>_task`, with the post ID as the argument. With `$unique` (the default), `schedule_task()` first asks `as_has_scheduled_action( $hook, array( $post_id ), $group )` and skips only when that post's task is already pending. It then schedules with Action Scheduler's own `unique` off. Before Action Scheduler 4.0.0 that flag ignored args, so one pending `calculation` task would silently drop every other post's (a character save schedules one per actor).
 - **Fallback:** `wp_schedule_single_event()` on the same `lwtv_<type>_task` hook, with the post ID as the argument. WordPress refuses a duplicate hook-and-args event within ten minutes, which gives the same one-per-post behaviour.
 
 Callers today: `calculation` (shows, characters, actors, and actors touched by a character's calculation), `fixcharshows` (characters), `facet_reindex` (renames, see [facetwp-indexing.md](facetwp-indexing.md)) and `tmdb` (the no-Action-Scheduler path of `queue_tmdb_batch()`).

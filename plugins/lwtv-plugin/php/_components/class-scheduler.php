@@ -106,19 +106,29 @@ class Scheduler implements Component, Templater {
 	 * @param int    $priority The priority of the task (default: 0)
 	 * @param int    $delay    Delay in seconds (default: 30)
 	 * @param string $group    The group to schedule the task in (default: 'lwtv')
-	 * @param bool   $unique   Whether the task should be unique (default: true)
-	 * @return bool  Whether the task was scheduled successfully
+	 * @param bool   $unique   Skip if this task is already pending for this post (default: true)
+	 * @return bool  Whether the task is scheduled (including already pending)
 	 */
 	public function schedule_task( string $task_type, int $post_id, int $priority = 0, int $delay = 30, string $group = 'lwtv', bool $unique = true ): bool {
 		$task_name = 'lwtv_' . $task_type . '_task';
+		$args      = array( $post_id );
 
-		// Both paths use the same hook the task class listens on; the post ID
-		// rides in the args, which also makes each event unique per post.
+		// Both paths use the same hook the task class listens on, with the post
+		// ID in the args.
 		if ( $this->is_action_scheduler_available() ) {
-			$scheduled = as_schedule_single_action( time() + $delay, $task_name, array( $post_id ), $group, $unique, $priority );
+			// Uniqueness is checked here, per post. Action Scheduler's own $unique
+			// ignores args before 4.0.0, so one pending task would silently drop
+			// every other post's. See docs/architecture/scheduling.md#schedule_task.
+			if ( $unique && function_exists( 'as_has_scheduled_action' ) && as_has_scheduled_action( $task_name, $args, $group ) ) {
+				lwtv_plugin()->debug_log( 'scheduler', "{$task_type} task already pending for post ID: {$post_id}" );
+				return true;
+			}
+
+			$scheduled = (bool) as_schedule_single_action( time() + $delay, $task_name, $args, $group, false, $priority );
 			lwtv_plugin()->debug_log( 'scheduler', "Scheduled {$task_type} task via Action Scheduler for post ID: {$post_id} with {$delay}s delay" );
 		} else {
-			$scheduled = wp_schedule_single_event( time() + $delay, $task_name, array( $post_id ) );
+			// WordPress itself refuses a duplicate hook + args within ten minutes.
+			$scheduled = (bool) wp_schedule_single_event( time() + $delay, $task_name, $args );
 			lwtv_plugin()->debug_log( 'scheduler', "Scheduled {$task_type} task via WordPress cron for post ID: {$post_id} with {$delay}s delay" );
 		}
 
