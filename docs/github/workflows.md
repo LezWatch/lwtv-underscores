@@ -76,18 +76,18 @@ Also add **Restrict deletions** to the rulesets for `development` and `productio
 
 This scans dependencies on PRs to `production` and weekly. It reports to the Security tab and isn't a required check.
 
-## Deploys
+## Deploys (`development.yaml`, `production.yaml`)
 
-Two workflows automate pushing code to staging (aka development) and production.
+Deploys don't install, lint, test or build anything. They ship what CI already built and tested:
 
-Each flow is very similar and contains the following steps:
+1. A push to `development` or `production` runs CI (`ci.yml`). It lints, runs PHPStan and PHPUnit, and builds the theme. `development` builds use the staging sprite URL; everything else uses production. It then uploads two artifacts: `theme-files` and `cron-files`.
+2. When that CI run finishes, the matching deploy workflow starts, and it only continues if **every** CI job passed. A red push never reaches staging or production.
+3. It checks that the commit is still the tip of the branch. If a newer push has landed since, it skips, and the newer CI run deploys instead.
+4. It downloads the artifacts from that CI run and rsyncs them to the server. The EXCLUDE list decides what's deployed.
+5. It copies the Symbolicons into place and runs `wp acf json sync`. Production also sets the cron script permissions and cleans up login files.
 
-1. Checkout the code
-2. Confirm the workspace
-3. Setup node
-4. Setup composer and PHP
-5. Install dependencies
-6. Run lint
-7. Build the code - this will regenerate CSS and update versions if needed
-8. Rsync the code to the server
-9. Call the symbolicons repository to push the new images
+Deploys use GitHub's `workflow_run` trigger. Those workflows always run **the copy on the default branch (`production`)**, so an edit to either deploy file takes effect only after it's merged to `production`, and that includes the staging deploy.
+
+A deploy only accepts a CI run from a push to its own branch in this repo, never from a PR or a fork, because it holds the SSH key.
+
+To redeploy without a code change, open the latest successful CI run for the branch and click **Re-run all jobs**.

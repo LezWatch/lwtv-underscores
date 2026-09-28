@@ -68,8 +68,13 @@ jobs:
 
       # `npm run build` minus build:composer, which runs `composer update` and would
       # resolve new versions instead of testing the ones in the lockfile.
+      # The SVG sprite URL is baked into the CSS per environment, so development builds
+      # for staging and everything else for production.
       - name: Build
+        env:
+          SVG_SPRITE_ENV: ${{ (github.base_ref || github.ref_name) == 'development' && 'staging' || 'production' }}
         run: |
+          echo "Building for $SVG_SPRITE_ENV"
           npm run build:assets
           npm run build:workspace
           npm run build:mover
@@ -80,6 +85,34 @@ jobs:
       # PR code running first could rewrite it.
       - name: Gate script tests
         run: python3 -m unittest discover -s .github/scripts -p 'test_*.py' -v
+
+      # Pushes only (never PRs): this is what development.yaml / production.yaml
+      # ship, once the whole CI run passes. The deploy rsync's EXCLUDE list decides what
+      # reaches the server; dropping dependency and cache folders here just keeps the
+      # artifact small. Hidden files are left out, as they always were.
+      - name: Upload theme artifact
+        if: github.event_name == 'push'
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: theme-files
+          retention-days: 7
+          if-no-files-found: error
+          path: |
+            .
+            !**/node_modules/
+            !vendor/
+            !plugins/*/vendor/
+            !_build_scripts/webpackdist/
+            !_build_scripts/tmp-icons/
+
+      - name: Upload cron artifact
+        if: github.event_name == 'push'
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: cron-files
+          retention-days: 7
+          if-no-files-found: error
+          path: cron/
 
   # Runs no PR code: only the scanners, over the PR's files as data.
   security:
