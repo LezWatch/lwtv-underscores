@@ -259,6 +259,19 @@ class TestManifestIsVersionBump(unittest.TestCase):
                 self.assertFalse(rt.manifest_is_version_bump(base, head))
         self.assertFalse(rt.manifest_is_version_bump("", base), "new manifest")
 
+    def test_source_to_version_is_not_a_bump(self):
+        # Swapping a git source or inline definition for a registry version changes
+        # where the code comes from, even though the new value looks like a version.
+        head = _pkg({"a": "^1.0.0"})
+        for label, old in {
+            "from git": _pkg({"a": "github:someone/a"}),
+            "from tarball": _pkg({"a": "https://example.com/a.tgz"}),
+            "from alias": _pkg({"a": "npm:b@^1"}),
+            "from inline object": _pkg({"a": {"version": "1.0.0", "source": "x"}}),
+        }.items():
+            with self.subTest(label):
+                self.assertFalse(rt.manifest_is_version_bump(old, head))
+
     def test_composer_repositories_change_is_not_a_bump(self):
         base = json.dumps({"require": {"a/a": "^1"}})
         head = json.dumps({"require": {"a/a": "^1"}, "repositories": [{"type": "vcs", "url": "x"}]})

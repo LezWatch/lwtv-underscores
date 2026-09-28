@@ -132,9 +132,14 @@ DEP_SECTIONS = (
     "require", "require-dev",
 )
 # A version constraint never needs these; a git URL, tarball, `file:`/`link:` path,
-# `npm:` alias or `user/repo` shorthand does. Changing a value to one of those swaps the
-# code source, not the version, so it isn't a bump.
+# `npm:` alias or `user/repo` shorthand does. Changing a value to or from one of those
+# swaps the code source, not the version, so it isn't a bump.
 _NON_VERSION_CHARS = (":", "/")
+
+
+def _is_plain_version(value):
+    """A string version constraint that names no source (no URL, path, alias, repo)."""
+    return isinstance(value, str) and not any(c in value for c in _NON_VERSION_CHARS)
 
 
 def changed_manifests(files):
@@ -170,7 +175,9 @@ def manifest_is_version_bump(base_text, head_text):
         for name, value in new.items():
             if value == old[name]:
                 continue
-            if not isinstance(value, str) or any(c in value for c in _NON_VERSION_CHARS):
+            # Both sides: moving FROM a git source or inline definition to a registry
+            # version changes where the code comes from just as much as the reverse.
+            if not _is_plain_version(old[name]) or not _is_plain_version(value):
                 return False
     return True
 
