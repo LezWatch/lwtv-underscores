@@ -1,0 +1,82 @@
+# High-risk paths. A PR touching any of these needs Mika's `human-reviewed` label.
+#
+# Read by .github/scripts/risk_tier.py at the PR's BASE commit, so a PR can't loosen
+# the list it is judged by. Patterns use fnmatch: `*` also crosses `/`, and matching is
+# case-sensitive, hence the [Cc] classes on agent-instruction files.
+#
+# A file on this list is high even if it also matches .github/low-risk.txt.
+# A file on neither list is high too. See low-risk.txt.
+
+# --- CI, deploy, build, and this gate --------------------------------------------------
+# Deploy workflows hold LWTV_SSH_KEY; build scripts run in them.
+.github/*
+.githooks/*
+_build_scripts/*
+
+# --- Runs on the server -----------------------------------------------------------------
+# production.yaml chmods these +x and the system cron runs them.
+cron/*
+*.sh
+# Every deploy runs `wp acf json sync`, which rewrites live field groups.
+plugins/lwtv-plugin/acf-json/*
+
+# --- Dependency manifests and toolchain -------------------------------------------------
+# composer.json/package.json and the lockfiles are NOT here: they're on the allowlist,
+# and risk_tier.py itself flags anything beyond a version bump or any new package.
+.npmrc
+*/.npmrc
+.nvmrc
+
+# --- Bootstrap and entry points ---------------------------------------------------------
+functions.php
+plugins/lwtv-plugin/functions.php
+plugins/lwtv-plugin/php/class-plugin.php
+plugins/shadow-taxonomy/index.php
+plugins/shadow-taxonomy/includes/*
+
+# --- Public endpoints, CLI, scheduled jobs, admin/capabilities ---------------------------
+plugins/lwtv-plugin/php/rest-api/*
+plugins/lwtv-plugin/php/wp-cli/*
+plugins/lwtv-plugin/php/schedulers/*
+plugins/lwtv-plugin/php/admin-menu/*
+plugins/lwtv-plugin/php/postiz/*
+
+# --- Lint and test configuration --------------------------------------------------------
+# Loosening a rule shouldn't pass quietly.
+phpcs.xml*
+phpunit.xml*
+phpstan.neon*
+phpstan-baseline.neon
+eslint.config.*
+.eslintrc*
+*/.eslintrc*
+.stylelintrc*
+.stylelintignore
+tests/bootstrap.php
+
+# --- Agent instructions -----------------------------------------------------------------
+# An agent PR that edits its own rules is exactly what this gate is for.
+.claude/*
+*/.claude/*
+.gemini/*
+*/.gemini/*
+.superpowers/*
+*[Cc][Ll][Aa][Uu][Dd][Ee]*.[Mm][Dd]
+*[Aa][Gg][Ee][Nn][Tt][Ss].[Mm][Dd]
+*[Gg][Ee][Mm][Ii][Nn][Ii].[Mm][Dd]
+
+# --- Secrets and server config ----------------------------------------------------------
+.env*
+*/.env*
+*wp-config*
+*.htaccess
+.gitignore
+*/.gitignore
+.gitattributes
+*/.gitattributes
+.gitmodules
+.gitleaks.toml
+.gitleaksignore
+
+# --- SVG can carry script and is served from the theme directory ------------------------
+*.svg

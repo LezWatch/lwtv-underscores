@@ -201,7 +201,7 @@ class Data_Character {
 	 * @return string Term information
 	 */
 	public function terms( $character_id, $format ) {
-		$terms = get_the_terms( $character_id, 'lez_' . $format, true );
+		$terms = get_the_terms( $character_id, 'lez_' . $format );
 		if ( $terms && ! is_wp_error( $terms ) ) {
 			$output = '';
 			foreach ( $terms as $term ) {

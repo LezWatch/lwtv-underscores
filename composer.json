@@ -22,17 +22,24 @@
             "sh _build_scripts/copy-composer-assets.sh"
         ],
         "lint": "phpcs",
-        "lint-fix": "phpcbf"
+        "lint-fix": "phpcbf",
+        "analyse": "phpstan analyse --memory-limit=2G",
+        "analyse:baseline": "phpstan analyse --memory-limit=2G --generate-baseline"
     },
     "require-dev": {
         "wp-coding-standards/wpcs": "^3.0",
         "phpcompatibility/phpcompatibility-wp": "*",
         "php-stubs/wp-cli-stubs": "^2.9",
-        "phpunit/phpunit": "^13"
+        "phpunit/phpunit": "^13",
+        "phpstan/phpstan": "^2.2",
+        "phpstan/extension-installer": "^1.4",
+        "szepeviktor/phpstan-wordpress": "^2.0",
+        "php-stubs/acf-pro-stubs": "^6.8"
     },
     "config": {
         "allow-plugins": {
-            "dealerdirect/phpcodesniffer-composer-installer": true
+            "dealerdirect/phpcodesniffer-composer-installer": true,
+            "phpstan/extension-installer": true
         },
         "platform": {
             "php": "8.5"
