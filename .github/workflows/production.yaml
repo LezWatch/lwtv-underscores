@@ -12,18 +12,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Do a git checkout including submodules
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           submodules: true
 
       - name: Setup Node
-        uses: actions/setup-node@v7
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version-file: '.nvmrc'
           cache: 'npm'
 
       - name: Setup PHP and Composer
-        uses: shivammathur/setup-php@v2
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # 2.37.2
         with:
           php-version: '8.5'
           tools: composer:v2
@@ -41,13 +41,13 @@ jobs:
         run: npm run build
 
       - name: Upload theme artifact
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: theme-files-prod
           path: . # Uploads the entire workspace
 
       - name: Upload cron artifact
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: cron-files-prod
           path: cron/
@@ -60,12 +60,12 @@ jobs:
     needs: build # This ensures the 'build' job finishes first
     steps:
       - name: Download theme artifact
-        uses: actions/download-artifact@v8
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: theme-files-prod
 
       - name: Download cron artifact
-        uses: actions/download-artifact@v8
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: cron-files-prod
           path: cron/ # Specify path to restore directory structure
@@ -83,7 +83,7 @@ jobs:
           REMOTE_HOST: ${{ secrets.LWTV_HOST }}
           REMOTE_USER: ${{ secrets.LWTV_USER }}
           TARGET: /home/${{ secrets.LWTV_USER }}/${{ secrets.LWTV_DOMAIN }}/wp-content/themes/lwtv-underscores
-          EXCLUDE: " /_build_scripts/, /.cursor/, /.git/, /.github/, /.githooks/, /.sass-cache/, /.vscode/, /cron/, /docs/, /node_modules/, /scss/, /tests/, /vendor/, webpack.config.js, .browserslistrc, .gitignore, .npmrc, .nvmrc, .ruby-version, composer.json, composer.lock, package-lock.json, package.json, phpcs.xml.dist, /plugins/lwtv-plugin/node_modules/, /plugins/lwtv-plugin/vendor/, /plugins/lwtv-plugin/.gitignore, /plugins/lwtv-plugin/composer.json, /plugins/lwtv-plugin/composer.lock, /plugins/lwtv-plugin/package-lock.json, /plugins/lwtv-plugin/package.json, /plugins/lwtv-plugin/php/blocks/node_modules/, /plugins/lwtv-plugin/php/blocks/.gitignore, /plugins/lwtv-plugin/php/blocks/package-lock.json, /plugins/lwtv-plugin/php/blocks/package.json, /plugins/lwtv-plugin/php/blocks/.eslint, /plugins/lwtv-plugin/php/src/"
+          EXCLUDE: " /_build_scripts/, /.claude/, /.gemini/, /.git/, /.github/, /.githooks/, /.phpunit.cache/, /.sass-cache/, /.superpowers/, /.vscode/, /cron/, /docs/, /node_modules/, /scss/, /tests/, /vendor/, webpack.config.js, .browserslistrc, .gitignore, .gitleaks.toml, .npmrc, .nvmrc, .ruby-version, .stylelintignore, .stylelintrc.json, composer.json, composer.lock, package-lock.json, eslint.config.js, package.json, phpcs.xml.dist, phpstan-baseline.neon, phpstan.neon.dist, phpunit.xml.dist, /plugins/lwtv-plugin/node_modules/, /plugins/lwtv-plugin/vendor/, /plugins/lwtv-plugin/.gitignore, /plugins/lwtv-plugin/composer.json, /plugins/lwtv-plugin/composer.lock, /plugins/lwtv-plugin/package-lock.json, /plugins/lwtv-plugin/package.json, /plugins/lwtv-plugin/php/blocks/node_modules/, /plugins/lwtv-plugin/php/blocks/.gitignore, /plugins/lwtv-plugin/php/blocks/package-lock.json, /plugins/lwtv-plugin/php/blocks/package.json, /plugins/lwtv-plugin/php/blocks/.eslint, /plugins/lwtv-plugin/php/src/"
 
       - name: Deploy Cron to Production Server
         uses: easingthemes/ssh-deploy@2cc5b27bf3029d0455dd5e09fe02633904031447 # v6.0.3

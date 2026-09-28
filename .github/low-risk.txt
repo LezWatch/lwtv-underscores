@@ -1,0 +1,87 @@
+# Low-risk allowlist. A PR is low risk only when EVERY changed file matches a pattern
+# here and none matches .github/risk-tiers.txt (which always wins).
+#
+# Anything on neither list is high risk. That's deliberate: a new folder, a new cron
+# script, or a new plugin module nobody thought to list gets reviewed instead of slipping
+# through. Add to this list on purpose, in its own PR, which will itself be high risk.
+#
+# Read at the PR's BASE commit. fnmatch patterns: `*` also crosses `/`.
+
+# --- Docs -------------------------------------------------------------------------------
+docs/*
+*.md
+LICENSE
+
+# --- Styles and static assets -----------------------------------------------------------
+scss/*
+style.scss
+style-editor.scss
+style.css
+style.css.map
+style.min.css
+style-editor.css
+style-editor.css.map
+style-editor.min.css
+custom-editor-style.css
+inc/css/*
+plugins/lwtv-plugin/assets/css/*
+images/*.png
+images/*.jpg
+images/*.gif
+plugins/lwtv-plugin/assets/images/*.png
+plugins/lwtv-plugin/assets/images/*.jpg
+plugins/lwtv-plugin/assets/images/*.gif
+screenshot.png
+languages/*
+
+# --- Theme templates --------------------------------------------------------------------
+# Listed by name, not *.php: `*` crosses `/`, so *.php would allow every PHP file.
+404.php
+archive.php
+archive-post_type_actors.php
+archive-post_type_characters.php
+archive-post_type_shows.php
+attachment.php
+comments.php
+content.php
+embed.php
+footer.php
+header.php
+index.php
+page.php
+page-fullwidth.php
+page-home.php
+rss-otd.php
+search.php
+searchform.php
+sidebar.php
+single.php
+single-post_type_actors.php
+single-post_type_characters.php
+single-post_type_shows.php
+taxonomy.php
+template-parts/*
+page-templates/*
+searchwp-live-ajax-search/*
+searchwp-modal-form/*
+
+# --- Front-end JS -----------------------------------------------------------------------
+inc/js/*
+plugins/lwtv-plugin/assets/js/*
+plugins/lwtv-plugin/php/blocks/src/*
+
+# --- Tests ------------------------------------------------------------------------------
+# tests/bootstrap.php is on the high-risk list: it decides what the tests even load.
+tests/*
+
+# --- Dependencies -----------------------------------------------------------------------
+# Version bumps are low. risk_tier.py separately flags any NEW package in a lockfile and
+# any manifest change beyond version numbers (scripts, overrides, new deps, git sources).
+composer.json
+package.json
+plugins/lwtv-plugin/composer.json
+plugins/lwtv-plugin/package.json
+plugins/lwtv-plugin/php/blocks/package.json
+composer.lock
+package-lock.json
+plugins/lwtv-plugin/composer.lock

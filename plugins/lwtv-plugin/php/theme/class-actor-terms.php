@@ -27,7 +27,7 @@ class Actor_Terms {
 
 		$output    = '';
 		$term_name = 'lez_actor_' . $format;
-		$the_terms = get_the_terms( $actor_id, $term_name, true );
+		$the_terms = get_the_terms( $actor_id, $term_name );
 		if ( $the_terms && ! is_wp_error( $the_terms ) ) {
 			foreach ( $the_terms as $a_term ) {
 				$output .= '<a href="' . get_term_link( $a_term->slug, $term_name ) . '" rel="tag" title="' . $a_term->name . '">' . $a_term->name . '</a> ';

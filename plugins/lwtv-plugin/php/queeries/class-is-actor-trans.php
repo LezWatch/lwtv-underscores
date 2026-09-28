@@ -47,7 +47,7 @@ class Is_Actor_Trans {
 		}
 
 		// The gender terms this actor uses:
-		$gender_terms = get_the_terms( $the_id, 'lez_actor_gender', true );
+		$gender_terms = get_the_terms( $the_id, 'lez_actor_gender' );
 
 		// If there are terms, check for trans terms directly
 		if ( ! empty( $gender_terms ) && ! is_wp_error( $gender_terms ) ) {
