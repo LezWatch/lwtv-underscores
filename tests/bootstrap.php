@@ -149,3 +149,4 @@ require_once __DIR__ . '/../plugins/lwtv-plugin/php/admin-menu/build/class-exclu
  * class, whose constants are plain integers for exactly this reason.
  */
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/_helpers/class-admin-notice.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/plugins/searchwp/build/class-alt-names.php';

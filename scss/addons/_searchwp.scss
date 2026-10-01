@@ -228,6 +228,13 @@
 		flex: 1;
 	}
 
+	.searchwp-live-search-result--aka {
+		margin: 0 0 0.25rem;
+		font-size: 0.875rem;
+		font-style: italic;
+		color: colors.$lwtv-grey-muted;
+	}
+
 	.searchwp-live-search-view-all-button {
 		display: block;
 		margin: 1rem;

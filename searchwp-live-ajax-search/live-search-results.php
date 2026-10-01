@@ -14,6 +14,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 global $post;
 
 $settings = searchwp_live_search()->get( 'Settings_Api' )->get();
+
+/*
+ * Search term, for the "also known as" line on shows. Live search sends it as
+ * swpquery; fall back to that if the main query hasn't set `s`.
+ */
+$lwtv_search_term = get_search_query( false );
+if ( '' === $lwtv_search_term ) {
+	$lwtv_search_term = sanitize_text_field( wp_unslash( $_REQUEST['swpquery'] ?? '' ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+}
+$lwtv_languages = null; // Loaded on first show result only.
 ?>
 
 <?php
@@ -92,6 +102,37 @@ if ( ! empty( $live_search_results ) ) :
 					</a>
 				</h4>
 				<div class="searchwp-live-search-result--info">
+					<?php
+					// Explain matches that came from an alternate (e.g. English) show name.
+					if ( 'post_type_shows' === ( $display_data['type'] ?? '' ) && '' !== $lwtv_search_term && function_exists( 'get_field' ) ) {
+						$lwtv_alt_rows = get_field( 'lezshows_show_names', $display_data['id'] );
+						if ( ! empty( $lwtv_alt_rows ) ) {
+							if ( null === $lwtv_languages ) {
+								$lwtv_languages = ( new \LWTV\Features\Languages() )->all_languages();
+							}
+
+							$lwtv_aka = \LWTV\Plugins\SearchWP\Build\Alt_Names::matching( $lwtv_alt_rows, $lwtv_search_term, $lwtv_languages, 'remove_accents' );
+
+							if ( ! empty( $lwtv_aka ) ) {
+								$lwtv_aka_names = array();
+								foreach ( $lwtv_aka as $lwtv_aka_item ) {
+									$lwtv_aka_names[] = ( '' === $lwtv_aka_item['language'] )
+										? $lwtv_aka_item['name']
+										/* translators: 1: alternate show name, 2: language, e.g. "Cable Girls (English)". */
+										: sprintf( __( '%1$s (%2$s)', 'lwtv' ), $lwtv_aka_item['name'], $lwtv_aka_item['language'] );
+								}
+								?>
+								<p class="searchwp-live-search-result--aka">
+									<?php
+									/* translators: %s: comma-separated list of alternate show names. */
+									echo esc_html( sprintf( __( 'Also known as: %s', 'lwtv' ), implode( ', ', $lwtv_aka_names ) ) );
+									?>
+								</p>
+								<?php
+							}
+						}
+					}
+					?>
 					<p class="searchwp-live-search-result--desc">
 						<?php echo wp_kses_post( get_the_excerpt( $display_data['id'] ) ); ?>
 					</p>
