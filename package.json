@@ -57,7 +57,7 @@
   "repository": "https://github.com/lezwatch/lwtv-underscores/",
   "dependencies": {
     "@popperjs/core": "^2.11.8",
-    "simple-git": "^3",
+    "simple-git": "^4",
     "tablesorter": "^2"
   },
   "devDependencies": {
