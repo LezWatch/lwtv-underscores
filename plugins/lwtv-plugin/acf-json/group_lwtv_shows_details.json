@@ -450,6 +450,27 @@
             ]
         },
         {
+            "key": "field_lwtv_lezshows_waystowatch_curated",
+            "label": "Always Use These Links",
+            "name": "lezshows_waystowatch_curated",
+            "aria-label": "",
+            "type": "true_false",
+            "instructions": "Show the links above instead of the JustWatch widget. Turn this on when JustWatch doesn't list this show, lists it with no offers, or matches the wrong show.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "message": "Use these links instead of JustWatch",
+            "default_value": 0,
+            "allow_in_bindings": 1,
+            "ui_on_text": "Yes",
+            "ui_off_text": "No",
+            "ui": 1
+        },
+        {
             "key": "field_lwtv_lezshows_show_names",
             "label": "Alternative Show Names",
             "name": "lezshows_show_names",
@@ -1147,5 +1168,5 @@
     "display_title": "Basic Details",
     "allow_ai_access": false,
     "ai_description": "",
-    "modified": 1789392268
+    "modified": 1790812800
 }

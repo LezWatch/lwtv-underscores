@@ -219,6 +219,10 @@ class Post_Meta {
 			'post_type'    => CPT_Shows::SLUG,
 			'show_in_rest' => false,
 		),
+		'lezshows_waystowatch_curated'  => array(
+			'post_type'    => CPT_Shows::SLUG,
+			'show_in_rest' => false,
+		),
 		'lezshows_aired_years'          => array(
 			'post_type'    => CPT_Shows::SLUG,
 			'show_in_rest' => false,

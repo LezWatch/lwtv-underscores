@@ -1548,6 +1548,16 @@ section#characters {
 	.btn {
 		margin: 0 0.4rem;
 	}
+
+	/* JustWatch widget, replaces the buttons when it renders. */
+	.justwatch {
+		margin: 0.5rem 0.4rem 0;
+	}
+
+	.justwatch-attribution {
+		font-size: 0.875rem;
+		margin: 0.5rem 0.4rem 0;
+	}
 }
 
 /* Notable Queer-Centric Episodes */
