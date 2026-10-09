@@ -14,9 +14,9 @@ if ( ! defined( 'ABSPATH' ) ) {
  * }
  */
 
-$dl_title = (string) ( $download_csv['title'] ?? __( 'Download the data', 'lwtv' ) );
+$dl_title = (string) ( $download_csv['title'] ?? __( 'Download the data', 'lwtv-underscores' ) );
 $dl_count = (int) ( $download_csv['count'] ?? 0 );
-$dl_page  = (string) ( $download_csv['page'] ?? __( 'row', 'lwtv' ) );
+$dl_page  = (string) ( $download_csv['page'] ?? __( 'row', 'lwtv-underscores' ) );
 ?>
 <div class="lwtv-download-csv-panel bg-light">
 	<span class="lwtv-download-csv-icon"><?php echo lwtv_plugin()->get_symbolicon( svg: 'magic-wand.svg', icon: 'svg-magic-wand', max_size: '24' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
@@ -26,12 +26,12 @@ $dl_page  = (string) ( $download_csv['page'] ?? __( 'row', 'lwtv' ) );
 			<?php
 			printf(
 				/* translators: 1: number of rows, 2: singular unit (year, actor, station, nation). */
-				esc_html( _n( '%1$s row · CSV · one row per %2$s', '%1$s rows · CSV · one row per %2$s', $dl_count, 'lwtv' ) ),
+				esc_html( _n( '%1$s row · CSV · one row per %2$s', '%1$s rows · CSV · one row per %2$s', $dl_count, 'lwtv-underscores' ) ),
 				esc_html( number_format_i18n( $dl_count ) ),
 				esc_html( $dl_page )
 			);
 			?>
 		</small>
 	</span>
-	<a class="lwtv-download-csv-btn" href="<?php echo esc_url( add_query_arg( 'download', 'csv' ) ); ?>"><?php esc_html_e( 'Download CSV', 'lwtv' ); ?></a>
+	<a class="lwtv-download-csv-btn" href="<?php echo esc_url( add_query_arg( 'download', 'csv' ) ); ?>"><?php esc_html_e( 'Download CSV', 'lwtv-underscores' ); ?></a>
 </div>

@@ -1,0 +1,50 @@
+# PHPStan for the LWTV theme and plugins.
+#
+# Extensions (szepeviktor/phpstan-wordpress) load through phpstan/extension-installer.
+# Existing errors live in phpstan-baseline.neon; CI fails only on new ones. Shrink the
+# baseline over time rather than growing it: regenerate with `composer analyse:baseline`
+# only after fixing errors, never to hide new ones.
+includes:
+	- phpstan-baseline.neon
+
+parameters:
+	level: 5
+	phpVersion: 80500
+	paths:
+		- .
+	# Wildcard entries are fnmatch patterns against the full file path, so they need a
+	# trailing `*`; a plain directory (`vendor/`) matches without one.
+	excludePaths:
+		# Local stubs: read for symbols, never reported on.
+		analyse:
+			- .github/
+		analyseAndScan:
+			- vendor/
+			- node_modules/
+			- tests/
+			- _build_scripts/
+			- plugins/*/vendor/*
+			- plugins/*/node_modules/*
+			- plugins/lwtv-plugin/php/blocks/node_modules/*
+			- plugins/lwtv-plugin/php/blocks/build/*
+			# Vendored copy of johngrogg/ics-parser (see the plugin's composer.json).
+			- plugins/lwtv-plugin/php/calendar/ICal/
+			# Bundled third-party plugin, also excluded from PHPCS.
+			- plugins/shadow-taxonomy/
+	bootstrapFiles:
+		- vendor/php-stubs/wp-cli-stubs/wp-cli-stubs.php
+	# Stubs PHPStan only reads, never executes. The commands stubs extend Composer
+	# classes that aren't installed here, so loading them as bootstrap files fatals.
+	scanFiles:
+		- vendor/php-stubs/wp-cli-stubs/wp-cli-commands-stubs.php
+		- vendor/php-stubs/wp-cli-stubs/wp-cli-tools-stubs.php
+		- vendor/php-stubs/acf-pro-stubs/acf-pro-stubs.php
+		- .github/phpstan/gravity-forms-stubs.php
+	# WordPress docblocks are often looser than the code; don't let them prove
+	# conditions "always true" and hide real checks.
+	treatPhpDocTypesAsCertain: false
+	ignoreErrors:
+		# Core uses these as docblock-only pseudo-types; no real class exists.
+		-
+			identifier: class.notFound
+			message: '#\bWP_Nav_Menu_(Args|Item)\b#'

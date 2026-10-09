@@ -44,18 +44,18 @@ if ( (int) $inter_stats['shows'] > 0 && (int) $shows_count > 0 ) {
 	$inter_all_avg = ( (int) $shows_count > 0 ) ? ( (int) $inter_stats['total'] / (int) $shows_count ) : 0.0;
 
 	$lwtv_callouts[] = array(
-		'label'  => __( 'Shows with intersections', 'lwtv' ),
+		'label'  => __( 'Shows with intersections', 'lwtv-underscores' ),
 		'icon'   => 'chart-pie.svg',
 		/* translators: %s: percentage of all shows carrying at least one intersection (one decimal). */
-		'text'   => sprintf( __( '%s%% of all shows carry at least one intersection.', 'lwtv' ), number_format_i18n( $inter_pct, 1 ) ),
+		'text'   => sprintf( __( '%s%% of all shows carry at least one intersection.', 'lwtv-underscores' ), number_format_i18n( $inter_pct, 1 ) ),
 		'family' => 'intersections',
 	);
 
 	$lwtv_callouts[] = array(
-		'label'  => __( 'Average per show', 'lwtv' ),
+		'label'  => __( 'Average per show', 'lwtv-underscores' ),
 		'icon'   => 'chart-bar.svg',
 		/* translators: %s: average number of intersections per show that has at least one (one decimal). */
-		'text'   => sprintf( __( 'Shows with intersections span %s of them on average.', 'lwtv' ), number_format_i18n( $inter_avg, 1 ) ),
+		'text'   => sprintf( __( 'Shows with intersections span %s of them on average.', 'lwtv-underscores' ), number_format_i18n( $inter_avg, 1 ) ),
 		'family' => 'intersections',
 	);
 
@@ -64,10 +64,10 @@ if ( (int) $inter_stats['shows'] > 0 && (int) $shows_count > 0 ) {
 	// so this one measures density across the whole catalogue rather than
 	// just the subset that already carries at least one.
 	$lwtv_callouts[] = array(
-		'label'  => __( 'Average across all shows', 'lwtv' ),
+		'label'  => __( 'Average across all shows', 'lwtv-underscores' ),
 		'icon'   => 'scales.svg',
 		/* translators: %s: average number of intersections per show, counting every show including those with none (two decimals). */
-		'text'   => sprintf( __( 'Counting every show we track, that average drops to %s.', 'lwtv' ), number_format_i18n( $inter_all_avg, 2 ) ),
+		'text'   => sprintf( __( 'Counting every show we track, that average drops to %s.', 'lwtv-underscores' ), number_format_i18n( $inter_all_avg, 2 ) ),
 		'family' => 'intersections',
 	);
 
@@ -98,7 +98,7 @@ $waffle = array(
 	'total'    => 100,
 	'columns'  => 20,
 	'radius'   => 6,
-	'label'    => __( 'Shows grouped by how many intersections each carries, from none to four or more.', 'lwtv' ),
+	'label'    => __( 'Shows grouped by how many intersections each carries, from none to four or more.', 'lwtv-underscores' ),
 );
 ?>
 <div class="lwtv-inter-columns">
@@ -109,8 +109,8 @@ $waffle = array(
 					<?php echo lwtv_plugin()->get_symbolicon( svg: 'escalator.svg', icon: 'svg-escalator', max_size: '20' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 				</span>
 				<div>
-					<h2 class="lwtv-panel-title"><?php esc_html_e( 'Intersection Load', 'lwtv' ); ?></h2>
-					<p class="lwtv-panel-sub"><?php esc_html_e( 'How many intersections a show carries, by share of all shows', 'lwtv' ); ?></p>
+					<h2 class="lwtv-panel-title"><?php esc_html_e( 'Intersection Load', 'lwtv-underscores' ); ?></h2>
+					<p class="lwtv-panel-sub"><?php esc_html_e( 'How many intersections a show carries, by share of all shows', 'lwtv-underscores' ); ?></p>
 				</div>
 			</header>
 			<div class="lwtv-interload-row">
@@ -130,7 +130,7 @@ $waffle = array(
 								echo esc_html(
 									sprintf(
 										/* translators: %s: number of intersections (or "4+"). */
-										_n( '%s intersection', '%s intersections', ( '1' === $inter_dist_bucket['label'] ) ? 1 : 2, 'lwtv' ),
+										_n( '%s intersection', '%s intersections', ( '1' === $inter_dist_bucket['label'] ) ? 1 : 2, 'lwtv-underscores' ),
 										$inter_dist_bucket['label']
 									)
 								);
@@ -147,12 +147,12 @@ $waffle = array(
 						<?php echo $inter_top_media; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- get_the_post_thumbnail() returns safe markup. ?>
 					</a>
 					<figcaption class="lwtv-interload-poster-cap">
-						<span class="lwtv-interload-poster-eyebrow"><?php esc_html_e( 'Most intersectional show', 'lwtv' ); ?></span>
+						<span class="lwtv-interload-poster-eyebrow"><?php esc_html_e( 'Most intersectional show', 'lwtv-underscores' ); ?></span>
 						<?php
 						if ( $inter_top['tied'] > 1 ) {
 							printf(
 								/* translators: 1: show name, 2: number of intersections, 3: number of shows tied for the most. */
-								esc_html__( '%1$s spans %2$s intersections, tied with %3$s other shows for the most.', 'lwtv' ),
+								esc_html__( '%1$s spans %2$s intersections, tied with %3$s other shows for the most.', 'lwtv-underscores' ),
 								esc_html( get_the_title( $inter_top['id'] ) ),
 								esc_html( number_format_i18n( $inter_top['count'] ) ),
 								esc_html( number_format_i18n( $inter_top['tied'] - 1 ) )
@@ -160,7 +160,7 @@ $waffle = array(
 						} else {
 							printf(
 								/* translators: 1: show name, 2: number of intersections. */
-								esc_html__( '%1$s spans %2$s intersections, the most of any show.', 'lwtv' ),
+								esc_html__( '%1$s spans %2$s intersections, the most of any show.', 'lwtv-underscores' ),
 								esc_html( get_the_title( $inter_top['id'] ) ),
 								esc_html( number_format_i18n( $inter_top['count'] ) )
 							);
@@ -215,9 +215,9 @@ $waffle = array(
 				'family' => 'intersections',
 				'svg'    => 'vest-patches.svg',
 				'icon'   => 'svg-vest-patches',
-				'title'  => __( 'Common Pairings', 'lwtv' ),
-				'sub'    => __( 'Intersections that appear together on the same show, by number of shows', 'lwtv' ),
-				'unit'   => __( 'shows together', 'lwtv' ),
+				'title'  => __( 'Common Pairings', 'lwtv-underscores' ),
+				'sub'    => __( 'Intersections that appear together on the same show, by number of shows', 'lwtv-underscores' ),
+				'unit'   => __( 'shows together', 'lwtv-underscores' ),
 			);
 			// phpcs:ignore PEAR.Files.IncludingFile.UseRequire
 			include plugin_dir_path( __DIR__ ) . 'partials/matchup-cards.php';
@@ -241,8 +241,8 @@ $waffle = array(
 						<?php echo lwtv_plugin()->get_symbolicon( svg: 'calendar-15.svg', icon: 'svg-calendar-15', max_size: '20' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 					</span>
 					<div>
-						<h2 class="lwtv-panel-title"><?php esc_html_e( 'Intersection by Decade', 'lwtv' ); ?></h2>
-						<p class="lwtv-panel-sub"><?php esc_html_e( 'Top 3 intersections per decade, each as its own share of shows that premiered in that decade. As shows often carry more than one intersection, the three don\'t add up to 100%.', 'lwtv' ); ?></p>
+						<h2 class="lwtv-panel-title"><?php esc_html_e( 'Intersection by Decade', 'lwtv-underscores' ); ?></h2>
+						<p class="lwtv-panel-sub"><?php esc_html_e( 'Top 3 intersections per decade, each as its own share of shows that premiered in that decade. As shows often carry more than one intersection, the three don\'t add up to 100%.', 'lwtv-underscores' ); ?></p>
 					</div>
 				</header>
 				<div class="lwtv-decade-tile-grid">
@@ -254,11 +254,11 @@ $waffle = array(
 						if ( 'before' === $inter_decade_bucket['type'] ) {
 							$inter_decade_label = $inter_decade_bucket['to']
 								/* translators: %d: the decade this bucket ends before, e.g. "Before 1980s". */
-								? sprintf( __( 'Before %1$d<span class="lwtv-decade-suffix">s</span>', 'lwtv' ), $inter_decade_bucket['to'] )
-								: __( 'Earliest years', 'lwtv' );
+								? sprintf( __( 'Before %1$d<span class="lwtv-decade-suffix">s</span>', 'lwtv-underscores' ), $inter_decade_bucket['to'] )
+								: __( 'Earliest years', 'lwtv-underscores' );
 						} else {
 							/* translators: %d: a decade, e.g. "1980s". */
-							$inter_decade_label = sprintf( __( '%1$d<span class="lwtv-decade-suffix">s</span>', 'lwtv' ), $inter_decade_bucket['from'] );
+							$inter_decade_label = sprintf( __( '%1$d<span class="lwtv-decade-suffix">s</span>', 'lwtv-underscores' ), $inter_decade_bucket['from'] );
 						}
 						?>
 						<div class="lwtv-decade-tile">
@@ -268,14 +268,14 @@ $waffle = array(
 									<?php
 									printf(
 										/* translators: %s: number of shows that premiered in this bucket. */
-										esc_html__( '%s shows', 'lwtv' ),
+										esc_html__( '%s shows', 'lwtv-underscores' ),
 										esc_html( number_format_i18n( $inter_decade_bucket['shows'] ) )
 									);
 									?>
 								</span>
 							</div>
 							<?php if ( empty( $inter_decade_bucket['top'] ) ) : ?>
-								<p class="lwtv-decade-tile-empty"><?php esc_html_e( 'No intersections tracked yet.', 'lwtv' ); ?></p>
+								<p class="lwtv-decade-tile-empty"><?php esc_html_e( 'No intersections tracked yet.', 'lwtv-underscores' ); ?></p>
 							<?php else : ?>
 								<div class="lwtv-decade-tile-rows lwtv-bars--intersections">
 									<?php foreach ( $inter_decade_bucket['top'] as $inter_decade_row ) : ?>
@@ -326,12 +326,12 @@ $waffle = array(
 						<?php echo lwtv_plugin()->get_symbolicon( svg: 'scales.svg', icon: 'svg-scales', max_size: '20' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 					</span>
 					<div>
-						<h2 class="lwtv-panel-title"><?php esc_html_e( 'Single vs Multiple Intersections', 'lwtv' ); ?></h2>
+						<h2 class="lwtv-panel-title"><?php esc_html_e( 'Single vs Multiple Intersections', 'lwtv-underscores' ); ?></h2>
 						<p class="lwtv-panel-sub">
 							<?php
 							printf(
 								/* translators: %s: percentage of shows with at least one intersection that carry two or more at once (one decimal). */
-								esc_html__( '%s%% of shows with an intersection carry more than one at once.', 'lwtv' ),
+								esc_html__( '%s%% of shows with an intersection carry more than one at once.', 'lwtv-underscores' ),
 								esc_html( number_format_i18n( $inter_multi_pct, 1 ) )
 							);
 							?>
@@ -340,7 +340,7 @@ $waffle = array(
 				</header>
 				<div class="lwtv-inter-split-row">
 					<div class="lwtv-donut-figure">
-						<svg class="lwtv-donut" viewBox="0 0 120 120" role="img" aria-label="<?php esc_attr_e( 'Single versus multiple intersections', 'lwtv' ); ?>">
+						<svg class="lwtv-donut" viewBox="0 0 120 120" role="img" aria-label="<?php esc_attr_e( 'Single versus multiple intersections', 'lwtv-underscores' ); ?>">
 							<g transform="rotate(-90 60 60)">
 								<circle class="lwtv-donut-track" cx="60" cy="60" r="50" fill="none" stroke-width="15" pathLength="100" />
 								<circle class="lwtv-donut-seg lwtv-donut-seg--royal-blue" cx="60" cy="60" r="50" fill="none" stroke-width="15" pathLength="100" stroke-dasharray="<?php echo esc_attr( (string) $inter_multi_pct ); ?> <?php echo esc_attr( (string) ( 100 - $inter_multi_pct ) ); ?>" stroke-dashoffset="0" />
@@ -348,18 +348,18 @@ $waffle = array(
 						</svg>
 						<div class="lwtv-donut-center">
 							<span class="lwtv-donut-center-num" data-count-to="<?php echo (int) round( $inter_multi_pct ); ?>" data-count-suffix="%"><?php echo esc_html( number_format_i18n( (int) round( $inter_multi_pct ) ) ); ?>%</span>
-							<span class="lwtv-donut-center-sub"><?php esc_html_e( 'multiple', 'lwtv' ); ?></span>
+							<span class="lwtv-donut-center-sub"><?php esc_html_e( 'multiple', 'lwtv-underscores' ); ?></span>
 						</div>
 					</div>
 					<ul class="lwtv-donut-legend lwtv-donut-legend--compact">
 						<li class="lwtv-donut-legend-row">
 							<span class="lwtv-donut-dot lwtv-donut-seg--bordergrey"></span>
-							<span class="lwtv-donut-legend-name"><?php esc_html_e( '1 intersection', 'lwtv' ); ?></span>
+							<span class="lwtv-donut-legend-name"><?php esc_html_e( '1 intersection', 'lwtv-underscores' ); ?></span>
 							<br /><span class="lwtv-donut-legend-val"><?php echo esc_html( number_format_i18n( $inter_single_count ) . ' · ' . number_format_i18n( $inter_single_pct, 1 ) . '%' ); ?></span>
 						</li>
 						<li class="lwtv-donut-legend-row">
 							<span class="lwtv-donut-dot lwtv-donut-seg--royal-blue"></span>
-							<span class="lwtv-donut-legend-name"><?php esc_html_e( '2+ intersections', 'lwtv' ); ?></span>
+							<span class="lwtv-donut-legend-name"><?php esc_html_e( '2+ intersections', 'lwtv-underscores' ); ?></span>
 							<br /><span class="lwtv-donut-legend-val"><?php echo esc_html( number_format_i18n( $inter_multi_count ) . ' · ' . number_format_i18n( $inter_multi_pct, 1 ) . '%' ); ?></span>
 						</li>
 					</ul>
@@ -377,9 +377,9 @@ $ranked = array(
 	'family' => 'intersections',
 	'svg'    => 'statue-of-liberty.svg',
 	'icon'   => 'svg-statue-of-liberty',
-	'title'  => __( 'Intersectionality Breakdown', 'lwtv' ),
+	'title'  => __( 'Intersectionality Breakdown', 'lwtv-underscores' ),
 	/* translators: %s: number of intersections. */
-	'sub'    => sprintf( __( '%s intersections, by number of shows', 'lwtv' ), number_format_i18n( count( $inter_data ) ) ),
+	'sub'    => sprintf( __( '%s intersections, by number of shows', 'lwtv-underscores' ), number_format_i18n( count( $inter_data ) ) ),
 	'base'   => '',
 	'mode'   => 'lollipop',
 );

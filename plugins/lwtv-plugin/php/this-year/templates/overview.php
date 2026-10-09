@@ -48,14 +48,14 @@ $canceled = (int) $canceled_shows_count;
 if ( 0 === $dead ) {
 	$lead_stat = sprintf(
 		/* translators: 1: characters on air count, 2: new shows count. */
-		__( '%1$s characters on air, %2$s new shows, and not a single death ... so far.', 'lwtv' ),
+		__( '%1$s characters on air, %2$s new shows, and not a single death ... so far.', 'lwtv-underscores' ),
 		number_format_i18n( $coa ),
 		number_format_i18n( $new )
 	);
 } else {
 	$lead_stat = sprintf(
 		/* translators: 1: characters on air count, 2: premieres count, 3: deaths count. */
-		__( '%1$s queer characters on air, %2$s premieres, and %3$s we lost.', 'lwtv' ),
+		__( '%1$s queer characters on air, %2$s premieres, and %3$s we lost.', 'lwtv-underscores' ),
 		number_format_i18n( $coa ),
 		number_format_i18n( $new ),
 		number_format_i18n( $dead )
@@ -63,32 +63,32 @@ if ( 0 === $dead ) {
 }
 
 if ( ! $has_prev ) {
-	$trend_word = __( 'the first year we tracked', 'lwtv' );
+	$trend_word = __( 'the first year we tracked', 'lwtv-underscores' );
 } else {
 	$coa_delta = $coa - (int) $prev_counts['coa'];
 	if ( $coa_delta > 0 ) {
 		/* translators: 1: increase in characters on air since last year, 2: prior year. */
-		$trend_word = sprintf( __( 'up %1$s from %2$s', 'lwtv' ), number_format_i18n( $coa_delta ), (string) $prev_year );
+		$trend_word = sprintf( __( 'up %1$s from %2$s', 'lwtv-underscores' ), number_format_i18n( $coa_delta ), (string) $prev_year );
 	} elseif ( $coa_delta < 0 ) {
 		/* translators: 1: decrease in characters on air since last year, 2: prior year. */
-		$trend_word = sprintf( __( 'down %1$s from %2$s', 'lwtv' ), number_format_i18n( abs( $coa_delta ) ), (string) $prev_year );
+		$trend_word = sprintf( __( 'down %1$s from %2$s', 'lwtv-underscores' ), number_format_i18n( abs( $coa_delta ) ), (string) $prev_year );
 	} else {
 		/* translators: %s: prior year. */
-		$trend_word = sprintf( __( 'flat against %s', 'lwtv' ), (string) $prev_year );
+		$trend_word = sprintf( __( 'flat against %s', 'lwtv-underscores' ), (string) $prev_year );
 	}
 }
 
 $deaths_clause = ( 0 === $dead )
-	? __( 'and remarkably, no one has died.', 'lwtv' )
+	? __( 'and remarkably, no one has died.', 'lwtv-underscores' )
 	: sprintf(
 		/* translators: %s: number of characters who died this year. */
-		__( 'while we lost %s.', 'lwtv' ),
+		__( 'while we lost %s.', 'lwtv-underscores' ),
 		number_format_i18n( $dead )
 	);
 
 $narrative = sprintf(
 	/* translators: 1: year, 2: characters on air count, 3: shows on air count, 4: trend phrase (already translated), 5: new shows count, 6: canceled shows count, 7: deaths clause (already translated). */
-	__( '%1$s has %2$s queer characters on air across %3$s shows, %4$s. %5$s series premiered and %6$s wrapped, %7$s', 'lwtv' ),
+	__( '%1$s has %2$s queer characters on air across %3$s shows, %4$s. %5$s series premiered and %6$s wrapped, %7$s', 'lwtv-underscores' ),
 	(string) $this_year,
 	number_format_i18n( $coa ),
 	number_format_i18n( $soa ),
@@ -101,7 +101,7 @@ $narrative = sprintf(
 // ---- 5-metric ribbon: count + live delta vs. the prior year. ----
 $ty_metrics = array(
 	array(
-		'label'  => __( 'Characters On Air', 'lwtv' ),
+		'label'  => __( 'Characters On Air', 'lwtv-underscores' ),
 		'family' => 'green',
 		'count'  => $coa,
 		'prev'   => $prev_counts['coa'],
@@ -109,7 +109,7 @@ $ty_metrics = array(
 		'trend'  => 'characters',
 	),
 	array(
-		'label'  => __( 'Dead Characters', 'lwtv' ),
+		'label'  => __( 'Dead Characters', 'lwtv-underscores' ),
 		'family' => 'red',
 		'count'  => $dead,
 		'prev'   => $prev_counts['dead'],
@@ -117,7 +117,7 @@ $ty_metrics = array(
 		'trend'  => 'dead',
 	),
 	array(
-		'label'  => __( 'Shows On Air', 'lwtv' ),
+		'label'  => __( 'Shows On Air', 'lwtv-underscores' ),
 		'family' => 'blue',
 		'count'  => $soa,
 		'prev'   => $prev_counts['soa'],
@@ -125,7 +125,7 @@ $ty_metrics = array(
 		'trend'  => 'shows',
 	),
 	array(
-		'label'  => __( 'New Shows', 'lwtv' ),
+		'label'  => __( 'New Shows', 'lwtv-underscores' ),
 		'family' => 'pink',
 		'count'  => $new,
 		'prev'   => $prev_counts['new'],
@@ -133,7 +133,7 @@ $ty_metrics = array(
 		'trend'  => 'started',
 	),
 	array(
-		'label'  => __( 'Canceled Shows', 'lwtv' ),
+		'label'  => __( 'Canceled Shows', 'lwtv-underscores' ),
 		'family' => 'amber',
 		'count'  => $canceled,
 		'prev'   => $prev_counts['canceled'],
@@ -152,14 +152,14 @@ $ty_metrics = array(
  */
 $ty_delta_text = function ( $now, $prev ) use ( $prev_year ) {
 	if ( null === $prev ) {
-		return __( 'first tracked', 'lwtv' );
+		return __( 'first tracked', 'lwtv-underscores' );
 	}
 
 	$delta = (int) $now - (int) $prev;
 	$arrow = ( $delta > 0 ) ? '↑' : ( ( $delta < 0 ) ? '↓' : '–' );
 
 	/* translators: 1: arrow glyph (up/down/flat), 2: absolute change, 3: prior year. */
-	return sprintf( __( '%1$s %2$s vs %3$s', 'lwtv' ), $arrow, number_format_i18n( abs( $delta ) ), (string) $prev_year );
+	return sprintf( __( '%1$s %2$s vs %3$s', 'lwtv-underscores' ), $arrow, number_format_i18n( abs( $delta ) ), (string) $prev_year );
 };
 
 // ---- Highlights of the year (all derived; every fallback guarded). ----
@@ -186,14 +186,14 @@ if ( $biggest_premiere ) {
 	$highlight_premiere_title = $biggest_premiere['name'];
 	$highlight_premiere_desc  = sprintf(
 		/* translators: 1: show format, 2: show country, 3: character count. */
-		__( 'A %1$s from %2$s with %3$s queer characters, the most of any new show this year.', 'lwtv' ),
+		__( 'A %1$s from %2$s with %3$s queer characters, the most of any new show this year.', 'lwtv-underscores' ),
 		$biggest_premiere['format'],
 		$biggest_premiere['country'],
 		number_format_i18n( $biggest_premiere_chars )
 	);
 } else {
-	$highlight_premiere_title = __( 'No new shows yet', 'lwtv' );
-	$highlight_premiere_desc  = __( 'Nothing has premiered yet this year.', 'lwtv' );
+	$highlight_premiere_title = __( 'No new shows yet', 'lwtv-underscores' );
+	$highlight_premiere_desc  = __( 'Nothing has premiered yet this year.', 'lwtv-underscores' );
 }
 
 // Resolve the biggest-premiere show's post ID from its permalink so the lead
@@ -226,13 +226,13 @@ if ( $leading_nation ) {
 	$highlight_nation_title = $leading_nation;
 	$highlight_nation_desc  = sprintf(
 		/* translators: 1: number of new shows, 2: country name. */
-		__( '%1$s of this year\'s new shows come from %2$s, more than any other country.', 'lwtv' ),
+		__( '%1$s of this year\'s new shows come from %2$s, more than any other country.', 'lwtv-underscores' ),
 		number_format_i18n( $leading_nation_count ),
 		$leading_nation
 	);
 } else {
-	$highlight_nation_title = __( '—', 'lwtv' );
-	$highlight_nation_desc  = __( 'No new shows to rank by country yet this year.', 'lwtv' );
+	$highlight_nation_title = __( '—', 'lwtv-underscores' );
+	$highlight_nation_desc  = __( 'No new shows to rank by country yet this year.', 'lwtv-underscores' );
 }
 
 // 3. Longest-running character we lost: of this year's deaths, the one with the
@@ -284,7 +284,7 @@ $ty_standouts = array(
 	array(
 		'family' => 'pink',
 		'icon'   => 'star.svg',
-		'kicker' => __( 'Biggest premiere', 'lwtv' ),
+		'kicker' => __( 'Biggest premiere', 'lwtv-underscores' ),
 		'title'  => $highlight_premiere_title,
 		'desc'   => $highlight_premiere_desc,
 		'url'    => $biggest_premiere ? $biggest_premiere['url'] : '',
@@ -292,7 +292,7 @@ $ty_standouts = array(
 	array(
 		'family' => 'blue',
 		'icon'   => 'globe.svg',
-		'kicker' => __( 'Leading nation', 'lwtv' ),
+		'kicker' => __( 'Leading nation', 'lwtv-underscores' ),
 		'title'  => $highlight_nation_title,
 		'desc'   => $highlight_nation_desc,
 		'url'    => $leading_nation ? $lwtv_ty_nation_url : '',
@@ -303,9 +303,9 @@ if ( 0 === $dead ) {
 	$ty_standouts[] = array(
 		'family' => 'green',
 		'icon'   => 'heart.svg',
-		'kicker' => __( 'The good news', 'lwtv' ),
-		'title'  => __( 'Nobody died ... yet', 'lwtv' ),
-		'desc'   => __( 'No queer character deaths recorded so far this year. Long may it last.', 'lwtv' ),
+		'kicker' => __( 'The good news', 'lwtv-underscores' ),
+		'title'  => __( 'Nobody died ... yet', 'lwtv-underscores' ),
+		'desc'   => __( 'No queer character deaths recorded so far this year. Long may it last.', 'lwtv-underscores' ),
 	);
 } elseif ( $lwtv_ty_lost_winner ) {
 	$lwtv_ty_lost_show   = ( $lwtv_ty_lost_winner['show_id'] ) ? get_the_title( (int) $lwtv_ty_lost_winner['show_id'] ) : '';
@@ -341,7 +341,7 @@ if ( 0 === $dead ) {
 	$ty_standouts[] = array(
 		'family' => 'red',
 		'icon'   => 'heart.svg',
-		'kicker' => __( 'Longest-running character we lost', 'lwtv' ),
+		'kicker' => __( 'Longest-running character we lost', 'lwtv-underscores' ),
 		'title'  => $lwtv_ty_lost_winner['name'],
 		'desc'   => $lwtv_ty_lost_desc,
 		'url'    => $lwtv_ty_lost_winner['url'] ?? '',
@@ -373,7 +373,7 @@ if ( $lwtv_ty_ensemble ) {
 		'family'  => 'green',
 		'icon'    => 'group.svg',
 		'icon_id' => 'svg-users',
-		'kicker'  => __( 'Biggest ensemble', 'lwtv' ),
+		'kicker'  => __( 'Biggest ensemble', 'lwtv-underscores' ),
 		'title'   => $lwtv_ty_ensemble['key'],
 		'url'     => $lwtv_ty_show_url_by_name[ $lwtv_ty_ensemble['key'] ] ?? '',
 		'desc'    => sprintf(
@@ -397,7 +397,7 @@ if ( $lwtv_ty_ended ) {
 	$ty_standouts[] = array(
 		'family' => 'amber',
 		'icon'   => 'calendar-alt.svg',
-		'kicker' => __( 'Ended this year', 'lwtv' ),
+		'kicker' => __( 'Ended this year', 'lwtv-underscores' ),
 		'title'  => $lwtv_ty_ended['name'],
 		'url'    => $lwtv_ty_ended['url'] ?? '',
 		'desc'   => sprintf(
@@ -424,7 +424,7 @@ if ( $lwtv_ty_busiest && $lwtv_ty_busiest['count'] >= 2 ) {
 		$ty_standouts[] = array(
 			'family' => 'pink',
 			'icon'   => 'user.svg',
-			'kicker' => __( 'Busiest actor', 'lwtv' ),
+			'kicker' => __( 'Busiest actor', 'lwtv-underscores' ),
 			'title'  => $lwtv_ty_actor_name,
 			'url'    => (string) get_permalink( (int) $lwtv_ty_busiest['key'] ),
 			'desc'   => sprintf(
@@ -448,23 +448,23 @@ $lwtv_ty_show_denom    = max( 1, $soa );
 $lwtv_ty_show_segments = array(
 	array(
 		'key'   => 'new',
-		'label' => __( 'New', 'lwtv' ),
+		'label' => __( 'New', 'lwtv-underscores' ),
 		'count' => $new,
 	),
 	array(
 		'key'   => 'steady',
-		'label' => __( 'Continuing', 'lwtv' ),
+		'label' => __( 'Continuing', 'lwtv-underscores' ),
 		'count' => $lwtv_ty_show_steady,
 	),
 	array(
 		'key'   => 'canceled',
-		'label' => __( 'Canceled', 'lwtv' ),
+		'label' => __( 'Canceled', 'lwtv-underscores' ),
 		'count' => $canceled,
 	),
 );
 $lwtv_ty_lifebar_aria  = sprintf(
 	/* translators: 1: new shows, 2: continuing shows, 3: canceled shows, 4: total shows. */
-	__( 'Of %4$s shows this year: %1$s new, %2$s continuing, %3$s canceled.', 'lwtv' ),
+	__( 'Of %4$s shows this year: %1$s new, %2$s continuing, %3$s canceled.', 'lwtv-underscores' ),
 	number_format_i18n( $new ),
 	number_format_i18n( $lwtv_ty_show_steady ),
 	number_format_i18n( $canceled ),
@@ -508,9 +508,9 @@ $lwtv_ty_formats = Breakdowns::formats( $shows_by_format );
 $lwtv_ty_roles   = Breakdowns::roles( $characters_on_air );
 
 $lwtv_ty_role_labels = array(
-	'regular'   => __( 'Regular', 'lwtv' ),
-	'recurring' => __( 'Recurring', 'lwtv' ),
-	'guest'     => __( 'Guest', 'lwtv' ),
+	'regular'   => __( 'Regular', 'lwtv-underscores' ),
+	'recurring' => __( 'Recurring', 'lwtv-underscores' ),
+	'guest'     => __( 'Guest', 'lwtv-underscores' ),
 );
 
 /**
@@ -549,7 +549,7 @@ $lwtv_ty_bars = function ( array $rows, $family = 'blue' ) {
 $lwtv_ty_origin_rows = $lwtv_ty_origin['top'];
 if ( $lwtv_ty_origin['other'] > 0 ) {
 	$lwtv_ty_origin_rows[] = array(
-		'name'  => __( 'Other', 'lwtv' ),
+		'name'  => __( 'Other', 'lwtv-underscores' ),
 		'count' => $lwtv_ty_origin['other'],
 	);
 }
@@ -582,15 +582,15 @@ foreach ( array_slice( Standouts::runs_ended( $lwtv_ty_show_rows, (int) $this_ye
 $lwtv_ty_char_extras    = ( new Characters_Builder() )->get_character_extras_for_year( (int) $this_year );
 $lwtv_ty_char_fact_rows = array(
 	array(
-		'label' => __( 'In two or more shows', 'lwtv' ),
+		'label' => __( 'In two or more shows', 'lwtv-underscores' ),
 		'count' => $lwtv_ty_char_extras['multi_show'],
 	),
 	array(
-		'label' => __( 'Debuting this year', 'lwtv' ),
+		'label' => __( 'Debuting this year', 'lwtv-underscores' ),
 		'count' => $lwtv_ty_char_extras['debuting'],
 	),
 	array(
-		'label' => __( 'Non-binary characters', 'lwtv' ),
+		'label' => __( 'Non-binary characters', 'lwtv-underscores' ),
 		'count' => $lwtv_ty_char_extras['non_binary'],
 	),
 );
@@ -646,7 +646,7 @@ $lwtv_ty_yearbars = function ( $trend_key, $family, $headline ) use ( $lwtv_ty_t
 		'headline'   => $headline,
 		'stat_num'   => $now_count,
 		/* translators: %s: the year being reviewed. */
-		'stat_sub'   => sprintf( __( 'in %s', 'lwtv' ), (string) $this_year ),
+		'stat_sub'   => sprintf( __( 'in %s', 'lwtv-underscores' ), (string) $this_year ),
 	);
 
 	echo '<div class="lwtv-yearbars--' . esc_attr( $family ) . '">';
@@ -657,7 +657,7 @@ $lwtv_ty_yearbars = function ( $trend_key, $family, $headline ) use ( $lwtv_ty_t
 
 <div class="lwtv-ty-lead<?php echo ( '' !== $lead_media ) ? ' lwtv-ty-lead--media' : ''; ?>">
 	<div class="lwtv-ty-lead-body">
-		<p class="lwtv-stats-eyebrow"><?php /* translators: %s: the year being reviewed. */ printf( esc_html__( '%s in review', 'lwtv' ), esc_html( (string) $this_year ) ); ?></p>
+		<p class="lwtv-stats-eyebrow"><?php /* translators: %s: the year being reviewed. */ printf( esc_html__( '%s in review', 'lwtv-underscores' ), esc_html( (string) $this_year ) ); ?></p>
 		<p class="lwtv-ty-lead-stat"><?php echo esc_html( $lead_stat ); ?></p>
 		<p class="lwtv-ty-lead-narrative"><?php echo esc_html( $narrative ); ?></p>
 
@@ -686,7 +686,7 @@ $lwtv_ty_yearbars = function ( $trend_key, $family, $headline ) use ( $lwtv_ty_t
 $ty_panel_keys   = array( 'coa', 'dead', 'soa', 'new', 'canceled' );
 $ty_has_panels   = ! empty( array_intersect( $ty_panel_keys, array_column( $ty_metrics, 'key' ) ) );
 $ty_active_shown = false;
-$lwtv_ty_chapter( '01', __( 'The shape of the year', 'lwtv' ), $ty_has_panels ? __( 'Click a metric to explore it', 'lwtv' ) : '', 'shape-of-the-year' );
+$lwtv_ty_chapter( '01', __( 'The shape of the year', 'lwtv-underscores' ), $ty_has_panels ? __( 'Click a metric to explore it', 'lwtv-underscores' ) : '', 'shape-of-the-year' );
 ?>
 
 <div class="lwtv-ty-ribbon"<?php echo $ty_has_panels ? ' role="tablist"' : ''; ?>>
@@ -721,7 +721,7 @@ $lwtv_ty_chapter( '01', __( 'The shape of the year', 'lwtv' ), $ty_has_panels ? 
 	<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section">
 		<?php
 		/* translators: %s: total number of shows on air this year. */
-		printf( esc_html( _n( '%s show this year', '%s shows this year', $soa, 'lwtv' ) ), esc_html( number_format_i18n( $soa ) ) );
+		printf( esc_html( _n( '%s show this year', '%s shows this year', $soa, 'lwtv-underscores' ) ), esc_html( number_format_i18n( $soa ) ) );
 		?>
 	</p>
 	<div class="lwtv-ty-lifebar-track" role="img" aria-label="<?php echo esc_attr( $lwtv_ty_lifebar_aria ); ?>">
@@ -757,10 +757,10 @@ $lwtv_ty_chapter( '01', __( 'The shape of the year', 'lwtv' ), $ty_has_panels ? 
 	<div class="tab-pane fade show active lwtv-ty-panel" id="ty-panel-coa" role="tabpanel" aria-labelledby="ty-tab-coa" tabindex="0">
 		<div class="lwtv-ty-panel-grid">
 			<div class="lwtv-ty-panel-chart">
-				<?php $lwtv_ty_yearbars( 'characters', 'green', __( 'Characters on air', 'lwtv' ) ); ?>
+				<?php $lwtv_ty_yearbars( 'characters', 'green', __( 'Characters on air', 'lwtv-underscores' ) ); ?>
 			</div>
 			<div class="lwtv-ty-panel-side">
-				<p class="lwtv-ty-where-eyebrow"><?php esc_html_e( 'By role type', 'lwtv' ); ?></p>
+				<p class="lwtv-ty-where-eyebrow"><?php esc_html_e( 'By role type', 'lwtv-underscores' ); ?></p>
 				<?php $lwtv_ty_bars( $lwtv_ty_role_rows, 'green' ); ?>
 				<ul class="lwtv-ty-panel-facts">
 					<?php foreach ( $lwtv_ty_char_fact_rows as $lwtv_ty_fact ) : ?>
@@ -770,7 +770,7 @@ $lwtv_ty_chapter( '01', __( 'The shape of the year', 'lwtv' ), $ty_has_panels ? 
 						</li>
 					<?php endforeach; ?>
 				</ul>
-				<a class="lwtv-ty-where-link" href="<?php echo esc_url( home_url( $ty_baseurl . 'characters-on-air/' ) ); ?>"><?php esc_html_e( 'All characters on air', 'lwtv' ); ?> &rarr;</a>
+				<a class="lwtv-ty-where-link" href="<?php echo esc_url( home_url( $ty_baseurl . 'characters-on-air/' ) ); ?>"><?php esc_html_e( 'All characters on air', 'lwtv-underscores' ); ?> &rarr;</a>
 			</div>
 		</div>
 	</div>
@@ -779,10 +779,10 @@ $lwtv_ty_chapter( '01', __( 'The shape of the year', 'lwtv' ), $ty_has_panels ? 
 	<div class="tab-pane fade lwtv-ty-panel" id="ty-panel-dead" role="tabpanel" aria-labelledby="ty-tab-dead" tabindex="0">
 		<div class="lwtv-ty-panel-grid">
 			<div class="lwtv-ty-panel-chart">
-				<?php $lwtv_ty_yearbars( 'dead', 'red', __( 'Characters we lost', 'lwtv' ) ); ?>
+				<?php $lwtv_ty_yearbars( 'dead', 'red', __( 'Characters we lost', 'lwtv-underscores' ) ); ?>
 			</div>
 			<div class="lwtv-ty-panel-side">
-				<p class="lwtv-ty-where-eyebrow"><?php esc_html_e( 'Who we lost', 'lwtv' ); ?></p>
+				<p class="lwtv-ty-where-eyebrow"><?php esc_html_e( 'Who we lost', 'lwtv-underscores' ); ?></p>
 				<?php if ( ! empty( $dead_by_date_ov ) ) : ?>
 					<ul class="lwtv-ty-panel-deaths">
 						<?php
@@ -809,9 +809,9 @@ $lwtv_ty_chapter( '01', __( 'The shape of the year', 'lwtv' ), $ty_has_panels ? 
 						<?php endforeach; ?>
 					</ul>
 				<?php else : ?>
-					<p class="lwtv-ty-where-empty"><?php esc_html_e( 'No deaths recorded this year.', 'lwtv' ); ?></p>
+					<p class="lwtv-ty-where-empty"><?php esc_html_e( 'No deaths recorded this year.', 'lwtv-underscores' ); ?></p>
 				<?php endif; ?>
-				<a class="lwtv-ty-where-link" href="<?php echo esc_url( $lwtv_ty_deaths_url ); ?>"><?php esc_html_e( 'All the characters we lost', 'lwtv' ); ?> &rarr;</a>
+				<a class="lwtv-ty-where-link" href="<?php echo esc_url( $lwtv_ty_deaths_url ); ?>"><?php esc_html_e( 'All the characters we lost', 'lwtv-underscores' ); ?> &rarr;</a>
 			</div>
 		</div>
 	</div>
@@ -820,16 +820,16 @@ $lwtv_ty_chapter( '01', __( 'The shape of the year', 'lwtv' ), $ty_has_panels ? 
 	<div class="tab-pane fade lwtv-ty-panel" id="ty-panel-soa" role="tabpanel" aria-labelledby="ty-tab-soa" tabindex="0">
 		<div class="lwtv-ty-panel-grid">
 			<div class="lwtv-ty-panel-chart">
-				<?php $lwtv_ty_yearbars( 'shows', 'blue', __( 'Shows on air', 'lwtv' ) ); ?>
+				<?php $lwtv_ty_yearbars( 'shows', 'blue', __( 'Shows on air', 'lwtv-underscores' ) ); ?>
 			</div>
 			<div class="lwtv-ty-panel-side">
-				<p class="lwtv-ty-where-eyebrow"><?php esc_html_e( 'By country of origin', 'lwtv' ); ?></p>
+				<p class="lwtv-ty-where-eyebrow"><?php esc_html_e( 'By country of origin', 'lwtv-underscores' ); ?></p>
 				<?php if ( ! empty( $lwtv_ty_origin_rows ) ) : ?>
 					<?php $lwtv_ty_bars( $lwtv_ty_origin_rows, 'blue' ); ?>
 				<?php else : ?>
-					<p class="lwtv-ty-where-empty"><?php esc_html_e( 'No shows to rank by country yet this year.', 'lwtv' ); ?></p>
+					<p class="lwtv-ty-where-empty"><?php esc_html_e( 'No shows to rank by country yet this year.', 'lwtv-underscores' ); ?></p>
 				<?php endif; ?>
-				<a class="lwtv-ty-where-link" href="<?php echo esc_url( home_url( $ty_baseurl . 'shows-on-air/' ) ); ?>"><?php esc_html_e( 'All shows on air', 'lwtv' ); ?> &rarr;</a>
+				<a class="lwtv-ty-where-link" href="<?php echo esc_url( home_url( $ty_baseurl . 'shows-on-air/' ) ); ?>"><?php esc_html_e( 'All shows on air', 'lwtv-underscores' ); ?> &rarr;</a>
 			</div>
 		</div>
 	</div>
@@ -838,16 +838,16 @@ $lwtv_ty_chapter( '01', __( 'The shape of the year', 'lwtv' ), $ty_has_panels ? 
 	<div class="tab-pane fade lwtv-ty-panel" id="ty-panel-new" role="tabpanel" aria-labelledby="ty-tab-new" tabindex="0">
 		<div class="lwtv-ty-panel-grid">
 			<div class="lwtv-ty-panel-chart">
-				<?php $lwtv_ty_yearbars( 'started', 'pink', __( 'New shows', 'lwtv' ) ); ?>
+				<?php $lwtv_ty_yearbars( 'started', 'pink', __( 'New shows', 'lwtv-underscores' ) ); ?>
 			</div>
 			<div class="lwtv-ty-panel-side">
-				<p class="lwtv-ty-where-eyebrow"><?php esc_html_e( 'By format', 'lwtv' ); ?></p>
+				<p class="lwtv-ty-where-eyebrow"><?php esc_html_e( 'By format', 'lwtv-underscores' ); ?></p>
 				<?php if ( ! empty( $lwtv_ty_new_format_rows ) ) : ?>
 					<?php $lwtv_ty_bars( $lwtv_ty_new_format_rows, 'pink' ); ?>
 				<?php else : ?>
-					<p class="lwtv-ty-where-empty"><?php esc_html_e( 'No new shows to break down by format yet this year.', 'lwtv' ); ?></p>
+					<p class="lwtv-ty-where-empty"><?php esc_html_e( 'No new shows to break down by format yet this year.', 'lwtv-underscores' ); ?></p>
 				<?php endif; ?>
-				<a class="lwtv-ty-where-link" href="<?php echo esc_url( home_url( $ty_baseurl . 'new-shows/' ) ); ?>"><?php esc_html_e( 'All new shows', 'lwtv' ); ?> &rarr;</a>
+				<a class="lwtv-ty-where-link" href="<?php echo esc_url( home_url( $ty_baseurl . 'new-shows/' ) ); ?>"><?php esc_html_e( 'All new shows', 'lwtv-underscores' ); ?> &rarr;</a>
 			</div>
 		</div>
 	</div>
@@ -856,16 +856,16 @@ $lwtv_ty_chapter( '01', __( 'The shape of the year', 'lwtv' ), $ty_has_panels ? 
 	<div class="tab-pane fade lwtv-ty-panel" id="ty-panel-canceled" role="tabpanel" aria-labelledby="ty-tab-canceled" tabindex="0">
 		<div class="lwtv-ty-panel-grid">
 			<div class="lwtv-ty-panel-chart">
-				<?php $lwtv_ty_yearbars( 'canceled', 'amber', __( 'Shows that ended', 'lwtv' ) ); ?>
+				<?php $lwtv_ty_yearbars( 'canceled', 'amber', __( 'Shows that ended', 'lwtv-underscores' ) ); ?>
 			</div>
 			<div class="lwtv-ty-panel-side">
-				<p class="lwtv-ty-where-eyebrow"><?php esc_html_e( 'Longest runs that ended', 'lwtv' ); ?></p>
+				<p class="lwtv-ty-where-eyebrow"><?php esc_html_e( 'Longest runs that ended', 'lwtv-underscores' ); ?></p>
 				<?php if ( ! empty( $lwtv_ty_canceled_rows ) ) : ?>
 					<?php $lwtv_ty_bars( $lwtv_ty_canceled_rows, 'amber' ); ?>
 				<?php else : ?>
-					<p class="lwtv-ty-where-empty"><?php esc_html_e( 'No shows have ended yet this year.', 'lwtv' ); ?></p>
+					<p class="lwtv-ty-where-empty"><?php esc_html_e( 'No shows have ended yet this year.', 'lwtv-underscores' ); ?></p>
 				<?php endif; ?>
-				<a class="lwtv-ty-where-link" href="<?php echo esc_url( home_url( $ty_baseurl . 'canceled-shows/' ) ); ?>"><?php esc_html_e( 'All canceled shows', 'lwtv' ); ?> &rarr;</a>
+				<a class="lwtv-ty-where-link" href="<?php echo esc_url( home_url( $ty_baseurl . 'canceled-shows/' ) ); ?>"><?php esc_html_e( 'All canceled shows', 'lwtv-underscores' ); ?> &rarr;</a>
 			</div>
 		</div>
 	</div>
@@ -879,18 +879,18 @@ $lwtv_ty_chapter( '01', __( 'The shape of the year', 'lwtv' ), $ty_has_panels ? 
 			<?php
 			printf(
 				/* translators: %s: number of characters lost this year. */
-				esc_html( _n( 'The %s we lost', 'The %s we lost', (int) $lwtv_ty_deaths_strip['total'], 'lwtv' ) ),
+				esc_html( _n( 'The %s we lost', 'The %s we lost', (int) $lwtv_ty_deaths_strip['total'], 'lwtv-underscores' ) ),
 				esc_html( number_format_i18n( (int) $lwtv_ty_deaths_strip['total'] ) )
 			);
 			?>
 		</p>
-		<a class="lwtv-ty-deaths-link" href="<?php echo esc_url( home_url( '/statistics/death/' ) ); ?>"><?php esc_html_e( 'Full death statistics', 'lwtv' ); ?> &rarr;</a>
+		<a class="lwtv-ty-deaths-link" href="<?php echo esc_url( home_url( '/statistics/death/' ) ); ?>"><?php esc_html_e( 'Full death statistics', 'lwtv-underscores' ); ?> &rarr;</a>
 	</div>
-	<p class="lwtv-ty-deaths-sub"><?php esc_html_e( 'Placed on the calendar year, grouped by month.', 'lwtv' ); ?></p>
+	<p class="lwtv-ty-deaths-sub"><?php esc_html_e( 'Placed on the calendar year, grouped by month.', 'lwtv-underscores' ); ?></p>
 	<div class="lwtv-ty-deaths-strip<?php echo $lwtv_ty_deaths_strip['is_current_year'] ? ' is-current' : ''; ?>"<?php echo $lwtv_ty_deaths_strip['is_current_year'] ? ' style="--lwtv-ty-elapsed:' . esc_attr( $lwtv_ty_deaths_strip['elapsed_pct'] ) . '%"' : ''; ?>>
 		<?php if ( $lwtv_ty_deaths_strip['is_current_year'] ) : ?>
 			<span class="lwtv-ty-deaths-elapsed" aria-hidden="true"></span>
-			<span class="lwtv-ty-deaths-today" aria-hidden="true"><?php esc_html_e( 'today', 'lwtv' ); ?></span>
+			<span class="lwtv-ty-deaths-today" aria-hidden="true"><?php esc_html_e( 'today', 'lwtv-underscores' ); ?></span>
 		<?php endif; ?>
 		<div class="lwtv-ty-deaths-months">
 			<?php foreach ( $lwtv_ty_deaths_strip['months'] as $lwtv_ty_dm ) : ?>
@@ -899,10 +899,10 @@ $lwtv_ty_chapter( '01', __( 'The shape of the year', 'lwtv' ), $ty_has_panels ? 
 				$lwtv_ty_dm_month = date_i18n( 'F', $lwtv_ty_dm_ts );
 				$lwtv_ty_dm_label = ( 0 === $lwtv_ty_dm['count'] )
 					/* translators: %s: month name. */
-					? sprintf( __( 'No deaths in %s', 'lwtv' ), $lwtv_ty_dm_month )
+					? sprintf( __( 'No deaths in %s', 'lwtv-underscores' ), $lwtv_ty_dm_month )
 					: sprintf(
 						/* translators: 1: number of deaths, 2: month name. */
-						_n( '%1$s death in %2$s', '%1$s deaths in %2$s', (int) $lwtv_ty_dm['count'], 'lwtv' ),
+						_n( '%1$s death in %2$s', '%1$s deaths in %2$s', (int) $lwtv_ty_dm['count'], 'lwtv-underscores' ),
 						number_format_i18n( (int) $lwtv_ty_dm['count'] ),
 						$lwtv_ty_dm_month
 					);
@@ -924,44 +924,44 @@ $lwtv_ty_chapter( '01', __( 'The shape of the year', 'lwtv' ), $ty_has_panels ? 
 </div>
 <?php endif; ?>
 
-<?php $lwtv_ty_chapter( '02', __( 'Where it came from', 'lwtv' ), '', 'where-it-came-from' ); ?>
+<?php $lwtv_ty_chapter( '02', __( 'Where it came from', 'lwtv-underscores' ), '', 'where-it-came-from' ); ?>
 <div class="lwtv-ty-where">
 	<div class="lwtv-ty-where-card">
-		<p class="lwtv-ty-where-title"><?php esc_html_e( 'Where the shows come from', 'lwtv' ); ?></p>
+		<p class="lwtv-ty-where-title"><?php esc_html_e( 'Where the shows come from', 'lwtv-underscores' ); ?></p>
 		<p class="lwtv-ty-where-sub">
 			<?php
 			printf(
 				/* translators: %s: total number of shows on air this year. */
-				esc_html( _n( 'All %s show on air, by country of origin.', 'All %s shows on air, by country of origin.', $soa, 'lwtv' ) ),
+				esc_html( _n( 'All %s show on air, by country of origin.', 'All %s shows on air, by country of origin.', $soa, 'lwtv-underscores' ) ),
 				esc_html( number_format_i18n( $soa ) )
 			);
 			?>
 		</p>
 		<?php if ( ! empty( $lwtv_ty_origin_rows ) ) : ?>
 			<?php $lwtv_ty_bars( $lwtv_ty_origin_rows, 'blue' ); ?>
-			<a class="lwtv-ty-where-link" href="<?php echo esc_url( home_url( '/statistics/nations/' ) ); ?>"><?php esc_html_e( 'All countries', 'lwtv' ); ?> &rarr;</a>
+			<a class="lwtv-ty-where-link" href="<?php echo esc_url( home_url( '/statistics/nations/' ) ); ?>"><?php esc_html_e( 'All countries', 'lwtv-underscores' ); ?> &rarr;</a>
 		<?php else : ?>
-			<p class="lwtv-ty-where-empty"><?php esc_html_e( 'No shows to rank by country yet this year.', 'lwtv' ); ?></p>
+			<p class="lwtv-ty-where-empty"><?php esc_html_e( 'No shows to rank by country yet this year.', 'lwtv-underscores' ); ?></p>
 		<?php endif; ?>
 	</div>
 
 	<div class="lwtv-ty-where-card">
-		<p class="lwtv-ty-where-title"><?php esc_html_e( 'Formats and roles', 'lwtv' ); ?></p>
-		<p class="lwtv-ty-where-sub"><?php esc_html_e( 'What kind of shows, and how central the characters are in them.', 'lwtv' ); ?></p>
+		<p class="lwtv-ty-where-title"><?php esc_html_e( 'Formats and roles', 'lwtv-underscores' ); ?></p>
+		<p class="lwtv-ty-where-sub"><?php esc_html_e( 'What kind of shows, and how central the characters are in them.', 'lwtv-underscores' ); ?></p>
 
-		<p class="lwtv-ty-where-eyebrow"><?php esc_html_e( 'Formats', 'lwtv' ); ?></p>
+		<p class="lwtv-ty-where-eyebrow"><?php esc_html_e( 'Formats', 'lwtv-underscores' ); ?></p>
 		<?php if ( ! empty( $lwtv_ty_formats ) ) : ?>
 			<?php $lwtv_ty_bars( $lwtv_ty_formats, 'blue' ); ?>
 		<?php else : ?>
-			<p class="lwtv-ty-where-empty"><?php esc_html_e( 'No formats to show yet.', 'lwtv' ); ?></p>
+			<p class="lwtv-ty-where-empty"><?php esc_html_e( 'No formats to show yet.', 'lwtv-underscores' ); ?></p>
 		<?php endif; ?>
 
-		<p class="lwtv-ty-where-eyebrow"><?php esc_html_e( 'Roles', 'lwtv' ); ?></p>
+		<p class="lwtv-ty-where-eyebrow"><?php esc_html_e( 'Roles', 'lwtv-underscores' ); ?></p>
 		<?php $lwtv_ty_bars( $lwtv_ty_role_rows, 'pink' ); ?>
 	</div>
 </div>
 
-<?php $lwtv_ty_chapter( '03', __( 'Standouts', 'lwtv' ), '', 'standouts' ); ?>
+<?php $lwtv_ty_chapter( '03', __( 'Standouts', 'lwtv-underscores' ), '', 'standouts' ); ?>
 <div class="lwtv-ty-standouts">
 	<?php foreach ( $ty_standouts as $ty_standout ) : ?>
 		<?php $lwtv_ty_icon_id = $ty_standout['icon_id'] ?? ( 'svg-' . str_replace( '.svg', '', $ty_standout['icon'] ) ); ?>

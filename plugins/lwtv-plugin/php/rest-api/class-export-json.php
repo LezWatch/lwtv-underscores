@@ -373,7 +373,7 @@ class Export_JSON {
 		foreach ( $characters_list as $character ) {
 			// Gender -- array of all applicable
 			$gender       = array();
-			$gender_terms = get_the_terms( $character, 'lez_gender', true );
+			$gender_terms = get_the_terms( $character, 'lez_gender' );
 			if ( $gender_terms && ! is_wp_error( $gender_terms ) ) {
 				foreach ( $gender_terms as $gender_term ) {
 					$gender[] = $gender_term->name;
@@ -382,7 +382,7 @@ class Export_JSON {
 
 			// Sexuality -- array of all applicable
 			$sexuality       = array();
-			$sexuality_terms = get_the_terms( $character, 'lez_sexuality', true );
+			$sexuality_terms = get_the_terms( $character, 'lez_sexuality' );
 			if ( $sexuality_terms && ! is_wp_error( $sexuality_terms ) ) {
 				foreach ( $sexuality_terms as $sexuality_term ) {
 					$sexuality[] = $sexuality_term->name;
@@ -484,12 +484,12 @@ class Export_JSON {
 			);
 
 			// Show Formats
-			$format_terms    = get_the_terms( $page->ID, 'lez_formats', true );
+			$format_terms    = get_the_terms( $page->ID, 'lez_formats' );
 			$data['formats'] = ( $format_terms && ! is_wp_error( $format_terms ) ) ? join( ', ', wp_list_pluck( $format_terms, 'name' ) ) : '';
 
 			// Nations
 			$data['nations'] = '';
-			$nation_terms    = get_the_terms( $page->ID, 'lez_country', true );
+			$nation_terms    = get_the_terms( $page->ID, 'lez_country' );
 			$nation_array    = ( $nation_terms && ! is_wp_error( $nation_terms ) ) ? wp_list_pluck( $nation_terms, 'name' ) : '';
 			if ( is_array( $nation_array ) ) {
 				if ( count( $nation_array ) > 1 && 'wiki' === $format ) {
@@ -500,7 +500,7 @@ class Export_JSON {
 			}
 
 			// Stations
-			$station_terms    = get_the_terms( $page->ID, 'lez_stations', true );
+			$station_terms    = get_the_terms( $page->ID, 'lez_stations' );
 			$data['stations'] = ( $station_terms && ! is_wp_error( $station_terms ) ) ? join( ', ', wp_list_pluck( $station_terms, 'name' ) ) : '';
 
 			// Airdates
@@ -587,11 +587,11 @@ class Export_JSON {
 			$data = array();
 
 			// Sexuality
-			$sexuality_terms   = get_the_terms( $page->ID, 'lez_sexuality', true );
+			$sexuality_terms   = get_the_terms( $page->ID, 'lez_sexuality' );
 			$data['sexuality'] = ( $sexuality_terms && ! is_wp_error( $sexuality_terms ) ) ? join( ', ', wp_list_pluck( $sexuality_terms, 'name' ) ) : '';
 
 			// Gender
-			$gender_terms = get_the_terms( $page->ID, 'lez_gender', true );
+			$gender_terms = get_the_terms( $page->ID, 'lez_gender' );
 			if ( $gender_terms && ! is_wp_error( $gender_terms ) ) {
 				$gender_string = implode( ', ', wp_list_pluck( $gender_terms, 'name' ) );
 				$gender_string = ( 'Cisgender' === $gender_string ) ? 'Cisgender Female' : $gender_string;
@@ -702,11 +702,11 @@ class Export_JSON {
 			$data = array();
 
 			// Sexuality
-			$sexuality_terms   = get_the_terms( $page->ID, 'lez_actor_sexuality', true );
+			$sexuality_terms   = get_the_terms( $page->ID, 'lez_actor_sexuality' );
 			$data['sexuality'] = ( $sexuality_terms && ! is_wp_error( $sexuality_terms ) ) ? join( ', ', wp_list_pluck( $sexuality_terms, 'name' ) ) : '';
 
 			// Gender
-			$gender_terms   = get_the_terms( $page->ID, 'lez_actor_gender', true );
+			$gender_terms   = get_the_terms( $page->ID, 'lez_actor_gender' );
 			$data['gender'] = ( $gender_terms && ! is_wp_error( $gender_terms ) ) ? join( ', ', wp_list_pluck( $gender_terms, 'name' ) ) : '';
 
 			// If the actor has asked to keep their DoB private, we honor it.

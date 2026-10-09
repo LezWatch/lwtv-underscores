@@ -1,0 +1,3583 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Function wp_enqueue_script invoked with 6 parameters, 1\-5 required\.$#'
+			identifier: arguments.count
+			count: 1
+			path: functions.php
+
+		-
+			message: '#^Function wp_enqueue_style invoked with 6 parameters, 1\-5 required\.$#'
+			identifier: arguments.count
+			count: 1
+			path: functions.php
+
+		-
+			message: '#^Parameter \#5 \$args of function wp_enqueue_script expects array\{strategy\?\: string, in_footer\?\: bool, fetchpriority\?\: string\}\|bool, ''all'' given\.$#'
+			identifier: argument.type
+			count: 1
+			path: functions.php
+
+		-
+			message: '#^Parameter \#5 \$media of function wp_enqueue_style expects string, false given\.$#'
+			identifier: argument.type
+			count: 3
+			path: functions.php
+
+		-
+			message: '#^Parameter \#5 \$media of function wp_enqueue_style expects string, true given\.$#'
+			identifier: argument.type
+			count: 1
+			path: functions.php
+
+		-
+			message: '#^Parameter \#1 \$author_id of function get_author_posts_url expects int, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: inc/author-box.php
+
+		-
+			message: '#^Parameter \#3 \$number of function _n expects int, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: inc/author-box.php
+
+		-
+			message: '#^@param stdClass \$args does not accept actual type of parameter\: WP_Nav_Menu_Args\|null\.$#'
+			identifier: parameter.phpDocType
+			count: 1
+			path: inc/class-wp-bootstrap-4-navwalker.php
+
+		-
+			message: '#^@param stdClass \$args does not accept actual type of parameter\: WP_Nav_Menu_Args\|null\.$#'
+			identifier: parameter.phpDocType
+			count: 1
+			path: inc/class-wp-bootstrap-5-navwalker.php
+
+		-
+			message: '#^PHPDoc tag @param references unknown parameter\: \$array$#'
+			identifier: parameter.notFound
+			count: 1
+			path: inc/class-wp-bootstrap-5-navwalker.php
+
+		-
+			message: '#^Found usage of constant DOING_AJAX\. Use wp_doing_ajax\(\) instead\.$#'
+			identifier: phpstanWP.wpConstant.fetch
+			count: 1
+			path: inc/requirements.php
+
+		-
+			message: '#^Found usage of constant DOING_CRON\. Use wp_doing_cron\(\) instead\.$#'
+			identifier: phpstanWP.wpConstant.fetch
+			count: 1
+			path: inc/requirements.php
+
+		-
+			message: '#^Call to sprintf contains 2 placeholders, 4 values given\.$#'
+			identifier: argument.sprintf
+			count: 1
+			path: inc/template-tags.php
+
+		-
+			message: '#^Method LWTV\\Plugin\:\:set_transient\(\) invoked with 2 parameters, 3 required\.$#'
+			identifier: arguments.count
+			count: 1
+			path: inc/template-tags.php
+
+		-
+			message: '#^Parameter \#1 \$author_id of function get_author_posts_url expects int, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: inc/template-tags.php
+
+		-
+			message: '#^Parameter \#1 \$text of function esc_attr expects string, \(float\|int\) given\.$#'
+			identifier: argument.type
+			count: 2
+			path: inc/template-tags.php
+
+		-
+			message: '#^Function wp_kses_post invoked with 3 parameters, 1 required\.$#'
+			identifier: arguments.count
+			count: 1
+			path: inc/walker-comment.php
+
+		-
+			message: '#^PHPDoc type array of property LWTV_Walker_Comment\:\:\$db_fields is not covariant with PHPDoc type array\<string\> of overridden property Walker\:\:\$db_fields\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: inc/walker-comment.php
+
+		-
+			message: '#^Parameter \#1 \(array\) of echo cannot be converted to string\.$#'
+			identifier: echo.nonString
+			count: 2
+			path: inc/widgets/character-widget.php
+
+		-
+			message: '#^Binary operation "\." between array and array results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 1
+			path: inc/widgets/otd-widget.php
+
+		-
+			message: '#^Variable \$content might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: inc/widgets/otd-widget.php
+
+		-
+			message: '#^Variable \$icon might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: inc/widgets/otd-widget.php
+
+		-
+			message: '#^Variable \$text might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: inc/widgets/otd-widget.php
+
+		-
+			message: '#^Variable \$thumb might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: inc/widgets/otd-widget.php
+
+		-
+			message: '#^Parameter \#1 \$string of function str_pad expects string, int\<min, \-1\>\|int\<1, max\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: inc/wp_bootstrap_pagination.php
+
+		-
+			message: '#^Variable \$echo in isset\(\) always exists and is not nullable\.$#'
+			identifier: isset.variable
+			count: 1
+			path: inc/wp_bootstrap_pagination.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between 1 and 1 will always evaluate to true\.$#'
+			identifier: identical.alwaysTrue
+			count: 1
+			path: page-home.php
+
+		-
+			message: '#^Offset ''image'' does not exist on string\.$#'
+			identifier: offsetAccess.notFound
+			count: 1
+			path: page-templates/statistics.php
+
+		-
+			message: '#^Offset ''intro'' does not exist on string\.$#'
+			identifier: offsetAccess.notFound
+			count: 1
+			path: page-templates/statistics.php
+
+		-
+			message: '#^Parameter \#2 \$status of function wp_safe_redirect expects int, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: page-templates/statistics.php
+
+		-
+			message: '#^Parameter \#2 \$status of function wp_safe_redirect expects int, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: page-templates/thisyear.php
+
+		-
+			message: '#^Variable \$iconpath in isset\(\) always exists and is not nullable\.$#'
+			identifier: isset.variable
+			count: 1
+			path: page-templates/thisyear.php
+
+		-
+			message: '#^Action callback returns string but should not return anything\.$#'
+			identifier: return.void
+			count: 1
+			path: plugins/lwtv-plugin/php/_components/class-admin-color-schemes.php
+
+		-
+			message: '#^Constant LWTV_THEME_VERSION not found\.$#'
+			identifier: constant.notFound
+			count: 2
+			path: plugins/lwtv-plugin/php/_components/class-admin-color-schemes.php
+
+		-
+			message: '#^One or more @param tags has an invalid name or invalid syntax\.$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: plugins/lwtv-plugin/php/_components/class-block-types-allowed.php
+
+		-
+			message: '#^PHPDoc tag @param has invalid value \(array\<string\> self\:\:DISALLOWED_CORE_BLOCK_TYPES List of NOT allowed core block types\.\)\: Unexpected token "self", expected variable at offset 112 on line 4$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: plugins/lwtv-plugin/php/_components/class-block-types-allowed.php
+
+		-
+			message: '#^Call to function is_wp_error\(\) with array\<mixed, mixed\> will always evaluate to false\.$#'
+			identifier: function.impossibleType
+			count: 1
+			path: plugins/lwtv-plugin/php/_components/class-calendar.php
+
+		-
+			message: '#^Constant TV_MAZE not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/_components/class-calendar.php
+
+		-
+			message: '#^Call to function is_wp_error\(\) with array\<mixed, mixed\> will always evaluate to false\.$#'
+			identifier: function.impossibleType
+			count: 1
+			path: plugins/lwtv-plugin/php/_components/class-cpts.php
+
+		-
+			message: '#^Match arm comparison between ''post_type_shows'' and ''post_type_shows'' is always true\.$#'
+			identifier: match.alwaysTrue
+			count: 1
+			path: plugins/lwtv-plugin/php/_components/class-cpts.php
+
+		-
+			message: '#^Method LWTV\\_Components\\CPTs\:\:get_shows_like_this_show\(\) with return type void returns mixed but should not return anything\.$#'
+			identifier: return.void
+			count: 1
+			path: plugins/lwtv-plugin/php/_components/class-cpts.php
+
+		-
+			message: '#^Access to property \$query_vars on an unknown class LWTV\\_Components\\WP\.$#'
+			identifier: class.notFound
+			count: 2
+			path: plugins/lwtv-plugin/php/_components/class-features.php
+
+		-
+			message: '#^Constant LWTV_THEME_PATH not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/_components/class-features.php
+
+		-
+			message: '#^Default value of the parameter \#2 \$icon_color \(false\) of method LWTV\\_Components\\Features\:\:get_icon_svg\(\) is incompatible with type string\.$#'
+			identifier: parameter.defaultValue
+			count: 1
+			path: plugins/lwtv-plugin/php/_components/class-features.php
+
+		-
+			message: '#^Filter callback return statement is missing\.$#'
+			identifier: return.missing
+			count: 1
+			path: plugins/lwtv-plugin/php/_components/class-features.php
+
+		-
+			message: '#^Method LWTV\\_Components\\Features\:\:extend_login_session\(\) should return string but returns int\.$#'
+			identifier: return.type
+			count: 1
+			path: plugins/lwtv-plugin/php/_components/class-features.php
+
+		-
+			message: '#^Method LWTV\\_Components\\Features\:\:extend_login_session\(\) should return string but returns int\<min, \-1\>\|int\<1, max\>\.$#'
+			identifier: return.type
+			count: 1
+			path: plugins/lwtv-plugin/php/_components/class-features.php
+
+		-
+			message: '#^Method LWTV\\_Components\\Features\:\:validate_date\(\) should return string but returns bool\.$#'
+			identifier: return.type
+			count: 1
+			path: plugins/lwtv-plugin/php/_components/class-features.php
+
+		-
+			message: '#^PHPDoc tag @return with type int is incompatible with native type string\.$#'
+			identifier: return.phpDocType
+			count: 1
+			path: plugins/lwtv-plugin/php/_components/class-features.php
+
+		-
+			message: '#^Parameter \#3 \$deps of function wp_register_style expects array\<string\>, false given\.$#'
+			identifier: argument.type
+			count: 1
+			path: plugins/lwtv-plugin/php/_components/class-features.php
+
+		-
+			message: '#^Parameter \$wp of method LWTV\\_Components\\Features\:\:modify_front_end_http_headers\(\) has invalid type LWTV\\_Components\\WP\.$#'
+			identifier: class.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/_components/class-features.php
+
+		-
+			message: '#^Method LWTV\\_Components\\Grading\:\:display\(\) with return type void returns null but should not return anything\.$#'
+			identifier: return.void
+			count: 1
+			path: plugins/lwtv-plugin/php/_components/class-grading.php
+
+		-
+			message: '#^PHPDoc tag @return has invalid value \(n/a   Saves to DB\.\)\: Unexpected token "/a", expected TOKEN_HORIZONTAL_WS at offset 105 on line 5$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: plugins/lwtv-plugin/php/_components/class-grading.php
+
+		-
+			message: '#^Parameter \#1 \$string of function strtoupper expects string, int given\.$#'
+			identifier: argument.type
+			count: 1
+			path: plugins/lwtv-plugin/php/_components/class-grading.php
+
+		-
+			message: '#^Result of method LWTV\\Grading\\Display\:\:make\(\) \(void\) is used\.$#'
+			identifier: method.void
+			count: 1
+			path: plugins/lwtv-plugin/php/_components/class-grading.php
+
+		-
+			message: '#^Access to property \$posts on an unknown class LWTV\\Queeries\\WP_Query\.$#'
+			identifier: class.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/_components/class-of-the-day.php
+
+		-
+			message: '#^Call to method have_posts\(\) on an unknown class LWTV\\Queeries\\WP_Query\.$#'
+			identifier: class.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/_components/class-of-the-day.php
+
+		-
+			message: '#^PHPDoc tag @return has invalid value \(\[type\]         \[description\]\)\: Unexpected token "\[", expected type at offset 134 on line 6$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: plugins/lwtv-plugin/php/_components/class-of-the-day.php
+
+		-
+			message: '#^PHPDoc tag @return has invalid value \(array\(\)\)\: Unexpected token "\(", expected TOKEN_HORIZONTAL_WS at offset 159 on line 7$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: plugins/lwtv-plugin/php/_components/class-of-the-day.php
+
+		-
+			message: '#^Parameter \#1 \$text of function esc_html expects string, int\<0, max\>\|false given\.$#'
+			identifier: argument.type
+			count: 2
+			path: plugins/lwtv-plugin/php/_components/class-of-the-day.php
+
+		-
+			message: '#^Result of method LWTV\\Plugin\:\:hide_actor_data\(\) \(void\) is used\.$#'
+			identifier: method.void
+			count: 2
+			path: plugins/lwtv-plugin/php/_components/class-of-the-day.php
+
+		-
+			message: '#^Variable \$hashtag in isset\(\) always exists and is not nullable\.$#'
+			identifier: isset.variable
+			count: 1
+			path: plugins/lwtv-plugin/php/_components/class-of-the-day.php
+
+		-
+			message: '#^Variable \$num_shows in isset\(\) always exists and is not nullable\.$#'
+			identifier: isset.variable
+			count: 1
+			path: plugins/lwtv-plugin/php/_components/class-of-the-day.php
+
+		-
+			message: '#^Variable \$show_name in isset\(\) always exists and is not nullable\.$#'
+			identifier: isset.variable
+			count: 1
+			path: plugins/lwtv-plugin/php/_components/class-of-the-day.php
+
+		-
+			message: '#^Constant LWTV_THEME_PATH not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/_components/class-plugins.php
+
+		-
+			message: '#^Parameter \#1 \$text of function esc_attr expects string, int\<min, \-1\>\|int\<1, max\> given\.$#'
+			identifier: argument.type
+			count: 7
+			path: plugins/lwtv-plugin/php/_components/class-plugins.php
+
+		-
+			message: '#^Parameter \#1 \$text of function esc_attr expects string, null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: plugins/lwtv-plugin/php/_components/class-plugins.php
+
+		-
+			message: '#^Result of function the_title \(void\) is used\.$#'
+			identifier: function.void
+			count: 1
+			path: plugins/lwtv-plugin/php/_components/class-plugins.php
+
+		-
+			message: '#^PHPDoc tag @param references unknown parameter\: \$date$#'
+			identifier: parameter.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/_components/class-rest-api.php
+
+		-
+			message: '#^Function as_schedule_single_action not found\.$#'
+			identifier: function.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/_components/class-scheduler.php
+
+		-
+			message: '#^Default value of the parameter \#2 \$icon_color \(false\) of method LWTV\\_Components\\Symbolicons\:\:get_icon_svg\(\) is incompatible with type string\.$#'
+			identifier: parameter.defaultValue
+			count: 1
+			path: plugins/lwtv-plugin/php/_components/class-symbolicons.php
+
+		-
+			message: '#^Method LWTV\\_Components\\Symbolicons\:\:get_symbolicon\(\) has invalid return type LWTV\\_Components\\icon\.$#'
+			identifier: class.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/_components/class-symbolicons.php
+
+		-
+			message: '#^Method LWTV\\_Components\\Symbolicons\:\:get_symbolicon\(\) should return LWTV\\_Components\\icon but returns string\.$#'
+			identifier: return.type
+			count: 3
+			path: plugins/lwtv-plugin/php/_components/class-symbolicons.php
+
+		-
+			message: '#^Parameter \$max_size of method LWTV\\_Components\\Symbolicons\:\:get_symbolicon\(\) expects string, int given\.$#'
+			identifier: argument.type
+			count: 1
+			path: plugins/lwtv-plugin/php/_components/class-symbolicons.php
+
+		-
+			message: '#^Method LWTV\\_Components\\Theme\:\:get_actor_birthday\(\) should return bool but returns null\.$#'
+			identifier: return.type
+			count: 1
+			path: plugins/lwtv-plugin/php/_components/class-theme.php
+
+		-
+			message: '#^Method LWTV\\_Components\\Theme\:\:get_last_updated\(\) should return string but return statement is missing\.$#'
+			identifier: return.missing
+			count: 1
+			path: plugins/lwtv-plugin/php/_components/class-theme.php
+
+		-
+			message: '#^Method LWTV\\_Components\\Theme\:\:get_show_content_warning\(\) should return string but returns array\<string, string\>\.$#'
+			identifier: return.type
+			count: 1
+			path: plugins/lwtv-plugin/php/_components/class-theme.php
+
+		-
+			message: '#^Method LWTV\\_Components\\Theme\:\:get_stats_symbolicon\(\) should return string but returns array\.$#'
+			identifier: return.type
+			count: 1
+			path: plugins/lwtv-plugin/php/_components/class-theme.php
+
+		-
+			message: '#^Method LWTV\\_Components\\Theme\:\:get_tvmaze_episodes\(\) should return string but returns null\.$#'
+			identifier: return.type
+			count: 1
+			path: plugins/lwtv-plugin/php/_components/class-theme.php
+
+		-
+			message: '#^PHPDoc tag @param references unknown parameter\: \$post_id$#'
+			identifier: parameter.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/_components/class-theme.php
+
+		-
+			message: '#^Parameter \#1 \$actor_id of method LWTV\\Theme\\Actor_Characters\:\:make\(\) expects string, int given\.$#'
+			identifier: argument.type
+			count: 2
+			path: plugins/lwtv-plugin/php/_components/class-theme.php
+
+		-
+			message: '#^Parameter \#1 \$actor_id of method LWTV\\Theme\\Actor_Terms\:\:make\(\) expects string, int given\.$#'
+			identifier: argument.type
+			count: 2
+			path: plugins/lwtv-plugin/php/_components/class-theme.php
+
+		-
+			message: '#^Parameter \#1 \$char_id of method LWTV\\Theme\\Character_Relationships\:\:make\(\) expects string, int given\.$#'
+			identifier: argument.type
+			count: 1
+			path: plugins/lwtv-plugin/php/_components/class-theme.php
+
+		-
+			message: '#^Parameter \#1 \$character_id of method LWTV\\Theme\\Data_Character\:\:make\(\) expects string, int given\.$#'
+			identifier: argument.type
+			count: 1
+			path: plugins/lwtv-plugin/php/_components/class-theme.php
+
+		-
+			message: '#^Parameter \#1 \$post_id of method LWTV\\Theme\\Do_Math\:\:make\(\) expects string, int given\.$#'
+			identifier: argument.type
+			count: 1
+			path: plugins/lwtv-plugin/php/_components/class-theme.php
+
+		-
+			message: '#^Parameter \#1 \$show_id of method LWTV\\Theme\\Show_Stars\:\:make\(\) expects string, int given\.$#'
+			identifier: argument.type
+			count: 1
+			path: plugins/lwtv-plugin/php/_components/class-theme.php
+
+		-
+			message: '#^Parameter \#1 \$the_id of method LWTV\\Theme\\Actor_Birthday\:\:make\(\) expects string, int given\.$#'
+			identifier: argument.type
+			count: 1
+			path: plugins/lwtv-plugin/php/_components/class-theme.php
+
+		-
+			message: '#^Result of method LWTV\\Theme\\Actor_Birthday\:\:get\(\) \(void\) is used\.$#'
+			identifier: method.void
+			count: 1
+			path: plugins/lwtv-plugin/php/_components/class-theme.php
+
+		-
+			message: '#^Result of method LWTV\\Theme\\TVMaze\:\:episodes\(\) \(void\) is used\.$#'
+			identifier: method.void
+			count: 1
+			path: plugins/lwtv-plugin/php/_components/class-theme.php
+
+		-
+			message: '#^PHPDoc tag @return has invalid value \(\$templates\)\: Unexpected token "\$templates", expected type at offset 67 on line 4$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: plugins/lwtv-plugin/php/_components/class-this-year.php
+
+		-
+			message: '#^PHPDoc tag @return has invalid value \(\$vars\)\: Unexpected token "\$vars", expected type at offset 79 on line 4$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: plugins/lwtv-plugin/php/_components/class-this-year.php
+
+		-
+			message: '#^Parameter \#1 \$this_year of method LWTV\\This_Year\\Display\:\:make\(\) expects int, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: plugins/lwtv-plugin/php/_components/class-this-year.php
+
+		-
+			message: '#^Result of && is always false\.$#'
+			identifier: booleanAnd.alwaysFalse
+			count: 1
+			path: plugins/lwtv-plugin/php/_components/class-this-year.php
+
+		-
+			message: '#^Variable \$wp_query in isset\(\) is never defined\.$#'
+			identifier: isset.variable
+			count: 2
+			path: plugins/lwtv-plugin/php/_components/class-this-year.php
+
+		-
+			message: '#^Function as_schedule_single_action not found\.$#'
+			identifier: function.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/_components/class-transients.php
+
+		-
+			message: '#^Function as_unschedule_all_actions not found\.$#'
+			identifier: function.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/_components/class-transients.php
+
+		-
+			message: '#^Action callback returns array but should not return anything\.$#'
+			identifier: return.void
+			count: 2
+			path: plugins/lwtv-plugin/php/_helpers/class-calendar-database-optimizer.php
+
+		-
+			message: '#^Constant DB_NAME not found\.$#'
+			identifier: constant.notFound
+			count: 2
+			path: plugins/lwtv-plugin/php/_helpers/class-calendar-database-optimizer.php
+
+		-
+			message: '#^Method LWTV\\Admin_Menu\\Validation\:\:table_content\(\) should return string but return statement is missing\.$#'
+			identifier: return.missing
+			count: 1
+			path: plugins/lwtv-plugin/php/admin-menu/class-validation.php
+
+		-
+			message: '#^Offset ''findings'' on array\{name\: ''Actors Info'', desc\: ''Checks that all…'', option\: ''actor_problems'', findings\: ''lwtv_debug_actor…'', scanner\: array\{''LWTV\\\\Debugger\\\\Actors'', ''find_actors_problems''\}, column\: ''Actor'', clean\: ''Every actor has at…'', dirty\: array\{''The following actor…'', ''The following…''\}\}\|array\{name\: ''Actors missing IMDb'', desc\: ''Actors who have no…'', option\: ''actor_imdb'', findings\: ''lwtv_debug_actor…'', scanner\: array\{''LWTV\\\\Debugger\\\\Actors'', ''find_actors_no_imdb''\}, column\: ''Actor'', clean\: ''All actors have an…'', dirty\: array\{''The following actor…'', ''The following…''\}\}\|array\{name\: ''Bury Your Queers'', desc\: ''Checks all…'', option\: ''byq_problems'', findings\: ''lwtv_debug_byq…'', scanner\: array\{''LWTV\\\\Debugger\\\\Characters'', ''find_byq_problems''\}, column\: ''Character'', clean\: ''All the death data…'', dirty\: array\{''The following…'', ''The following…''\}\}\|array\{name\: ''Characters Info'', desc\: ''Checks that all…'', option\: ''character_problems'', findings\: ''lwtv_debug…'', scanner\: array\{''LWTV\\\\Debugger\\\\Characters'', ''find_characters…''\}, column\: ''Character'', clean\: ''All characters look…'', dirty\: array\{''The following…'', ''The following…''\}\}\|array\{name\: ''Contested Watch…'', desc\: ''Hosts claimed by…'', option\: ''watch_host…'', findings\: ''lwtv_debug_watch…'', show_tab\: false, tab\: ''watch_providers''\}\|array\{name\: ''Duplicate Actors…'', desc\: ''Actors and Shows…'', option\: ''duplicates'', findings\: ''lwtv_debug…'', scanner\: array\{''LWTV\\\\Debugger\\\\Dupes'', ''find_duplicates''\}, column\: ''Duplicate'', clean\: ''We have no…'', dirty\: array\{''The following…'', ''The following…''\}\}\|array\{name\: ''Incomplete Actors'', desc\: ''Actors with no…'', option\: ''actor_empty'', findings\: ''lwtv_debug_actor…'', scanner\: array\{''LWTV\\\\Debugger\\\\Actors'', ''find_actors…''\}, column\: ''Actor'', clean\: ''Every actor has a…'', dirty\: array\{''The following actor…'', ''The following…''\}\}\|array\{name\: ''On Air'', desc\: ''Checks that all…'', option\: ''onair_problems'', findings\: ''lwtv_debug_on_air…'', scanner\: array\{''LWTV\\\\Debugger\\\\OnAir'', ''find_on_air_problems''\}, column\: ''Show'', clean\: ''All shows have the…'', dirty\: array\{''The following show…'', ''The following shows…''\}\}\|array\{name\: ''QIRL Characters…'', desc\: ''Checks that all…'', option\: ''queercheck'', findings\: ''lwtv_debug…'', scanner\: array\{''LWTV\\\\Debugger\\\\Queers'', ''find_queer_chars''\}, column\: ''Character'', clean\: ''Every character\\''s…'', dirty\: array\{''The following…'', ''The following…''\}\}\|array\{name\: ''Shows Info'', desc\: ''Checks that all…'', option\: ''show_problems'', findings\: ''lwtv_debug_show…'', scanner\: array\{''LWTV\\\\Debugger\\\\Shows'', ''find_shows_problems''\}, column\: ''Show'', clean\: ''All shows look good…'', dirty\: array\{''The following show…'', ''The following shows…''\}, \.\.\.\}\|array\{name\: ''Shows missing IMDb'', desc\: ''Shows that have no…'', option\: ''show_imdb'', findings\: ''lwtv_debug_show_imdb'', scanner\: array\{''LWTV\\\\Debugger\\\\Shows'', ''find_shows_no_imdb''\}, column\: ''Show'', clean\: ''All shows have an…'', dirty\: array\{''The following show…'', ''The following shows…''\}\}\|array\{name\: ''Watch Providers'', desc\: ''Ways to Watch hosts…'', option\: ''watch_providers'', findings\: ''lwtv_watch…'', render\: array\{''LWTV\\\\Validator\\\\Watch_Providers'', ''make''\}\}\|array\{name\: ''Watch Term Check'', desc\: ''The other half of…'', option\: ''watch_urls'', findings\: ''lwtv_debug_watch…'', render\: array\{''LWTV\\\\Validator\\\\Watch_Term_Check'', ''make''\}\} in empty\(\) always exists and is not falsy\.$#'
+			identifier: empty.offset
+			count: 1
+			path: plugins/lwtv-plugin/php/admin-menu/class-validation.php
+
+		-
+			message: '#^Offset ''option'' on array\{name\: ''Actors Info'', desc\: ''Checks that all…'', option\: ''actor_problems'', findings\: ''lwtv_debug_actor…'', scanner\: array\{''LWTV\\\\Debugger\\\\Actors'', ''find_actors_problems''\}, column\: ''Actor'', clean\: ''Every actor has at…'', dirty\: array\{''The following actor…'', ''The following…''\}\}\|array\{name\: ''Actors missing IMDb'', desc\: ''Actors who have no…'', option\: ''actor_imdb'', findings\: ''lwtv_debug_actor…'', scanner\: array\{''LWTV\\\\Debugger\\\\Actors'', ''find_actors_no_imdb''\}, column\: ''Actor'', clean\: ''All actors have an…'', dirty\: array\{''The following actor…'', ''The following…''\}\}\|array\{name\: ''Bury Your Queers'', desc\: ''Checks all…'', option\: ''byq_problems'', findings\: ''lwtv_debug_byq…'', scanner\: array\{''LWTV\\\\Debugger\\\\Characters'', ''find_byq_problems''\}, column\: ''Character'', clean\: ''All the death data…'', dirty\: array\{''The following…'', ''The following…''\}\}\|array\{name\: ''Characters Info'', desc\: ''Checks that all…'', option\: ''character_problems'', findings\: ''lwtv_debug…'', scanner\: array\{''LWTV\\\\Debugger\\\\Characters'', ''find_characters…''\}, column\: ''Character'', clean\: ''All characters look…'', dirty\: array\{''The following…'', ''The following…''\}\}\|array\{name\: ''Contested Watch…'', desc\: ''Hosts claimed by…'', option\: ''watch_host…'', findings\: ''lwtv_debug_watch…'', show_tab\: false, tab\: ''watch_providers''\}\|array\{name\: ''Duplicate Actors…'', desc\: ''Actors and Shows…'', option\: ''duplicates'', findings\: ''lwtv_debug…'', scanner\: array\{''LWTV\\\\Debugger\\\\Dupes'', ''find_duplicates''\}, column\: ''Duplicate'', clean\: ''We have no…'', dirty\: array\{''The following…'', ''The following…''\}\}\|array\{name\: ''Incomplete Actors'', desc\: ''Actors with no…'', option\: ''actor_empty'', findings\: ''lwtv_debug_actor…'', scanner\: array\{''LWTV\\\\Debugger\\\\Actors'', ''find_actors…''\}, column\: ''Actor'', clean\: ''Every actor has a…'', dirty\: array\{''The following actor…'', ''The following…''\}\}\|array\{name\: ''On Air'', desc\: ''Checks that all…'', option\: ''onair_problems'', findings\: ''lwtv_debug_on_air…'', scanner\: array\{''LWTV\\\\Debugger\\\\OnAir'', ''find_on_air_problems''\}, column\: ''Show'', clean\: ''All shows have the…'', dirty\: array\{''The following show…'', ''The following shows…''\}\}\|array\{name\: ''QIRL Characters…'', desc\: ''Checks that all…'', option\: ''queercheck'', findings\: ''lwtv_debug…'', scanner\: array\{''LWTV\\\\Debugger\\\\Queers'', ''find_queer_chars''\}, column\: ''Character'', clean\: ''Every character\\''s…'', dirty\: array\{''The following…'', ''The following…''\}\}\|array\{name\: ''Shows Info'', desc\: ''Checks that all…'', option\: ''show_problems'', findings\: ''lwtv_debug_show…'', scanner\: array\{''LWTV\\\\Debugger\\\\Shows'', ''find_shows_problems''\}, column\: ''Show'', clean\: ''All shows look good…'', dirty\: array\{''The following show…'', ''The following shows…''\}, \.\.\.\}\|array\{name\: ''Shows missing IMDb'', desc\: ''Shows that have no…'', option\: ''show_imdb'', findings\: ''lwtv_debug_show_imdb'', scanner\: array\{''LWTV\\\\Debugger\\\\Shows'', ''find_shows_no_imdb''\}, column\: ''Show'', clean\: ''All shows have an…'', dirty\: array\{''The following show…'', ''The following shows…''\}\}\|array\{name\: ''Watch Providers'', desc\: ''Ways to Watch hosts…'', option\: ''watch_providers'', findings\: ''lwtv_watch…'', render\: array\{''LWTV\\\\Validator\\\\Watch_Providers'', ''make''\}\}\|array\{name\: ''Watch Term Check'', desc\: ''The other half of…'', option\: ''watch_urls'', findings\: ''lwtv_debug_watch…'', render\: array\{''LWTV\\\\Validator\\\\Watch_Term_Check'', ''make''\}\} on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.offset
+			count: 1
+			path: plugins/lwtv-plugin/php/admin-menu/class-validation.php
+
+		-
+			message: '#^Offset ''watch_providers'' on array\{queer_checker\: array\{name\: ''QIRL Characters…'', desc\: ''Checks that all…'', option\: ''queercheck'', findings\: ''lwtv_debug…'', scanner\: array\{''LWTV\\\\Debugger\\\\Queers'', ''find_queer_chars''\}, column\: ''Character'', clean\: ''Every character\\''s…'', dirty\: array\{''The following…'', ''The following…''\}\}, dupe_checker\: array\{name\: ''Duplicate Actors…'', desc\: ''Actors and Shows…'', option\: ''duplicates'', findings\: ''lwtv_debug…'', scanner\: array\{''LWTV\\\\Debugger\\\\Dupes'', ''find_duplicates''\}, column\: ''Duplicate'', clean\: ''We have no…'', dirty\: array\{''The following…'', ''The following…''\}\}, byq_checker\: array\{name\: ''Bury Your Queers'', desc\: ''Checks all…'', option\: ''byq_problems'', findings\: ''lwtv_debug_byq…'', scanner\: array\{''LWTV\\\\Debugger\\\\Characters'', ''find_byq_problems''\}, column\: ''Character'', clean\: ''All the death data…'', dirty\: array\{''The following…'', ''The following…''\}\}, actor_checker\: array\{name\: ''Actors Info'', desc\: ''Checks that all…'', option\: ''actor_problems'', findings\: ''lwtv_debug_actor…'', scanner\: array\{''LWTV\\\\Debugger\\\\Actors'', ''find_actors_problems''\}, column\: ''Actor'', clean\: ''Every actor has at…'', dirty\: array\{''The following actor…'', ''The following…''\}\}, character_checker\: array\{name\: ''Characters Info'', desc\: ''Checks that all…'', option\: ''character_problems'', findings\: ''lwtv_debug…'', scanner\: array\{''LWTV\\\\Debugger\\\\Characters'', ''find_characters…''\}, column\: ''Character'', clean\: ''All characters look…'', dirty\: array\{''The following…'', ''The following…''\}\}, show_checker\: array\{name\: ''Shows Info'', desc\: ''Checks that all…'', option\: ''show_problems'', findings\: ''lwtv_debug_show…'', scanner\: array\{''LWTV\\\\Debugger\\\\Shows'', ''find_shows_problems''\}, column\: ''Show'', clean\: ''All shows look good…'', dirty\: array\{''The following show…'', ''The following shows…''\}, \.\.\.\}, actor_empty\: array\{name\: ''Incomplete Actors'', desc\: ''Actors with no…'', option\: ''actor_empty'', findings\: ''lwtv_debug_actor…'', scanner\: array\{''LWTV\\\\Debugger\\\\Actors'', ''find_actors…''\}, column\: ''Actor'', clean\: ''Every actor has a…'', dirty\: array\{''The following actor…'', ''The following…''\}\}, actor_imdb\: array\{name\: ''Actors missing IMDb'', desc\: ''Actors who have no…'', option\: ''actor_imdb'', findings\: ''lwtv_debug_actor…'', scanner\: array\{''LWTV\\\\Debugger\\\\Actors'', ''find_actors_no_imdb''\}, column\: ''Actor'', clean\: ''All actors have an…'', dirty\: array\{''The following actor…'', ''The following…''\}\}, \.\.\.\} on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.offset
+			count: 1
+			path: plugins/lwtv-plugin/php/admin-menu/class-validation.php
+
+		-
+			message: '#^Parameter \#2 \$to of function human_time_diff expects int, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: plugins/lwtv-plugin/php/admin-menu/class-validation.php
+
+		-
+			message: '#^Strict comparison using \!\=\= between '''' and ''actor_empty''\|''actor_imdb''\|''actor_problems''\|''byq_problems''\|''character_problems''\|''duplicates''\|''onair_problems''\|''queercheck''\|''show_imdb''\|''show_problems''\|''watch_host…''\|''watch_providers''\|''watch_urls'' will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 1
+			path: plugins/lwtv-plugin/php/admin-menu/class-validation.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between false and false will always evaluate to true\.$#'
+			identifier: identical.alwaysTrue
+			count: 1
+			path: plugins/lwtv-plugin/php/admin-menu/class-validation.php
+
+		-
+			message: '#^Parameter \#2 \$args of function register_block_type expects array\{api_version\?\: string, title\?\: string, category\?\: string\|null, parent\?\: array\<string\>\|null, ancestor\?\: array\<string\>\|null, allowed_blocks\?\: array\<string\>\|null, icon\?\: string\|null, description\?\: string, \.\.\.\}, array\{api_version\: 3, attributes\: array\{taxonomy\: array\{type\: ''string''\}\}, render_callback\: array\{\$this\(LWTV\\Blocks\\Serverside\), ''render_glossary''\}\} given\.$#'
+			identifier: argument.type
+			count: 1
+			path: plugins/lwtv-plugin/php/blocks/class-serverside.php
+
+		-
+			message: '#^Parameter \#2 \$args of function register_block_type expects array\{api_version\?\: string, title\?\: string, category\?\: string\|null, parent\?\: array\<string\>\|null, ancestor\?\: array\<string\>\|null, allowed_blocks\?\: array\<string\>\|null, icon\?\: string\|null, description\?\: string, \.\.\.\}, array\{api_version\: 3, attributes\: array\{users\: array\{type\: ''string''\}, format\: array\{type\: ''string''\}\}, render_callback\: array\{\$this\(LWTV\\Blocks\\Serverside\), ''render_author_box''\}\} given\.$#'
+			identifier: argument.type
+			count: 1
+			path: plugins/lwtv-plugin/php/blocks/class-serverside.php
+
+		-
+			message: '#^Parameter \#2 \$args of function register_block_type expects array\{api_version\?\: string, title\?\: string, category\?\: string\|null, parent\?\: array\<string\>\|null, ancestor\?\: array\<string\>\|null, allowed_blocks\?\: array\<string\>\|null, icon\?\: string\|null, description\?\: string, \.\.\.\}, array\{api_version\: 3, render_callback\: array\{\$this\(LWTV\\Blocks\\Serverside\), ''render_private…''\}\} given\.$#'
+			identifier: argument.type
+			count: 1
+			path: plugins/lwtv-plugin/php/blocks/class-serverside.php
+
+		-
+			message: '#^Parameter \#2 \$args of function register_block_type expects array\{api_version\?\: string, title\?\: string, category\?\: string\|null, parent\?\: array\<string\>\|null, ancestor\?\: array\<string\>\|null, allowed_blocks\?\: array\<string\>\|null, icon\?\: string\|null, description\?\: string, \.\.\.\}, array\{api_version\: 3, render_callback\: array\{\$this\(LWTV\\Blocks\\Serverside\), ''render_tvshow…''\}\} given\.$#'
+			identifier: argument.type
+			count: 1
+			path: plugins/lwtv-plugin/php/blocks/class-serverside.php
+
+		-
+			message: '#^Cannot call method format\(\) on object\|string\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: plugins/lwtv-plugin/php/calendar/class-data-processor.php
+
+		-
+			message: '#^Call to function is_array\(\) with non\-empty\-array will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: plugins/lwtv-plugin/php/calendar/class-display.php
+
+		-
+			message: '#^Constant LWTV_THEME_VERSION not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/calendar/class-display.php
+
+		-
+			message: '#^Variable \$calendar in empty\(\) always exists and is not falsy\.$#'
+			identifier: empty.variable
+			count: 1
+			path: plugins/lwtv-plugin/php/calendar/class-display.php
+
+		-
+			message: '#^Default value of the parameter \#3 \$date \(false\) of method LWTV\\Calendar\\Generate_Calendar\:\:make\(\) is incompatible with type string\.$#'
+			identifier: parameter.defaultValue
+			count: 1
+			path: plugins/lwtv-plugin/php/calendar/class-generate-calendar.php
+
+		-
+			message: '#^Call to method eventsFromRange\(\) on an unknown class ICal\\ICal\.$#'
+			identifier: class.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/calendar/class-ics-parser.php
+
+		-
+			message: '#^Call to method initUrl\(\) on an unknown class ICal\\ICal\.$#'
+			identifier: class.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/calendar/class-ics-parser.php
+
+		-
+			message: '#^Default value of the parameter \#3 \$date \(false\) of method LWTV\\Calendar\\ICS_Parser\:\:generate_by_date\(\) is incompatible with type string\.$#'
+			identifier: parameter.defaultValue
+			count: 1
+			path: plugins/lwtv-plugin/php/calendar/class-ics-parser.php
+
+		-
+			message: '#^Instantiated class ICal\\ICal not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/calendar/class-ics-parser.php
+
+		-
+			message: '#^PHPDoc tag @return has invalid value \(\$vars\)\: Unexpected token "\$vars", expected type at offset 132 on line 5$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: plugins/lwtv-plugin/php/calendar/class-ics-parser.php
+
+		-
+			message: '#^Variable \$end_datetime might not be defined\.$#'
+			identifier: variable.undefined
+			count: 2
+			path: plugins/lwtv-plugin/php/calendar/class-ics-parser.php
+
+		-
+			message: '#^Method LWTV\\Calendar\\Names\:\:make\(\) should return string but return statement is missing\.$#'
+			identifier: return.missing
+			count: 1
+			path: plugins/lwtv-plugin/php/calendar/class-names.php
+
+		-
+			message: '#^PHPDoc tag @param references unknown parameter\: \$showname$#'
+			identifier: parameter.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/calendar/class-names.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between 0 and int\<min, \-1\>\|int\<1, max\> will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 1
+			path: plugins/lwtv-plugin/php/calendar/class-tvmaze.php
+
+		-
+			message: '#^Access to an undefined property WP_Term\:\:\$object_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/cpts/actors/class-calculations.php
+
+		-
+			message: '#^Result of && is always false\.$#'
+			identifier: booleanAnd.alwaysFalse
+			count: 2
+			path: plugins/lwtv-plugin/php/cpts/actors/class-custom-columns.php
+
+		-
+			message: '#^Undefined variable\: \$orderby$#'
+			identifier: variable.undefined
+			count: 1
+			path: plugins/lwtv-plugin/php/cpts/actors/class-custom-columns.php
+
+		-
+			message: '#^Variable \$orderby in isset\(\) is never defined\.$#'
+			identifier: isset.variable
+			count: 1
+			path: plugins/lwtv-plugin/php/cpts/actors/class-custom-columns.php
+
+		-
+			message: '#^Function Shadow_Taxonomy\\Core\\get_associated_term not found\.$#'
+			identifier: function.notFound
+			count: 2
+			path: plugins/lwtv-plugin/php/cpts/characters/class-calculations.php
+
+		-
+			message: '#^PHPDoc tag @return has invalid value \(N/A   No return, just update\)\: Unexpected token "/A", expected TOKEN_HORIZONTAL_WS at offset 127 on line 6$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: plugins/lwtv-plugin/php/cpts/characters/class-calculations.php
+
+		-
+			message: '#^Call to an undefined method LWTV\\Plugin\:\:queue_wikidata_qid\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/cpts/class-actors.php
+
+		-
+			message: '#^Callback expects 1 parameter, \$accepted_args is set to 3\.$#'
+			identifier: arguments.count
+			count: 1
+			path: plugins/lwtv-plugin/php/cpts/class-actors.php
+
+		-
+			message: '#^Offset ''hide'' on array\{name\: ''gender''\}\|array\{name\: ''pronoun''\}\|array\{name\: ''romantic orientation''\}\|array\{name\: ''sexuality'', plural\: ''sexualities''\} in isset\(\) does not exist\.$#'
+			identifier: isset.offset
+			count: 1
+			path: plugins/lwtv-plugin/php/cpts/class-actors.php
+
+		-
+			message: '#^PHPDoc tag @param references unknown parameter\: \$echo$#'
+			identifier: parameter.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/cpts/class-actors.php
+
+		-
+			message: '#^Result of \|\| is always true\.$#'
+			identifier: booleanOr.alwaysTrue
+			count: 1
+			path: plugins/lwtv-plugin/php/cpts/class-actors.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between ''post_type_actors'' and ''post_type_actors'' will always evaluate to true\.$#'
+			identifier: identical.alwaysTrue
+			count: 1
+			path: plugins/lwtv-plugin/php/cpts/class-actors.php
+
+		-
+			message: '#^Access to property \$ID on an unknown class LWTV\\CPTs\\WP_Post\.$#'
+			identifier: class.notFound
+			count: 2
+			path: plugins/lwtv-plugin/php/cpts/class-characters.php
+
+		-
+			message: '#^Callback expects 1 parameter, \$accepted_args is set to 3\.$#'
+			identifier: arguments.count
+			count: 1
+			path: plugins/lwtv-plugin/php/cpts/class-characters.php
+
+		-
+			message: '#^Function Shadow_Taxonomy\\Core\\create_relationship not found\.$#'
+			identifier: function.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/cpts/class-characters.php
+
+		-
+			message: '#^Function as_next_scheduled_action not found\.$#'
+			identifier: function.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/cpts/class-characters.php
+
+		-
+			message: '#^Function as_schedule_recurring_action not found\.$#'
+			identifier: function.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/cpts/class-characters.php
+
+		-
+			message: '#^Function as_schedule_single_action not found\.$#'
+			identifier: function.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/cpts/class-characters.php
+
+		-
+			message: '#^Offset ''hide'' on ''lez_cliches''\|''lez_gender''\|''lez_romantic''\|''lez_sexuality'' in isset\(\) does not exist\.$#'
+			identifier: isset.offset
+			count: 1
+			path: plugins/lwtv-plugin/php/cpts/class-characters.php
+
+		-
+			message: '#^Offset ''plural'' on array\{name\: ''cliché''\}\|array\{name\: ''gender''\}\|array\{name\: ''romantic orientation''\}\|array\{name\: ''sexual orientation''\} in isset\(\) does not exist\.$#'
+			identifier: isset.offset
+			count: 1
+			path: plugins/lwtv-plugin/php/cpts/class-characters.php
+
+		-
+			message: '#^Parameter \#1 \$args of function wp_count_terms expects array\{taxonomy\?\: array\<string\>\|string, object_ids\?\: array\<int\>\|int, orderby\?\: string, order\?\: string, hide_empty\?\: bool\|int, include\?\: array\<int\>\|string, exclude\?\: array\<int\>\|string, exclude_tree\?\: array\<int\>\|string, \.\.\.\}, ''shadow_tax…'' given\.$#'
+			identifier: argument.type
+			count: 2
+			path: plugins/lwtv-plugin/php/cpts/class-characters.php
+
+		-
+			message: '#^Parameter \#1 \$post of function get_post_type expects int\|WP_Post\|null, LWTV\\CPTs\\WP_Post given\.$#'
+			identifier: argument.type
+			count: 1
+			path: plugins/lwtv-plugin/php/cpts/class-characters.php
+
+		-
+			message: '#^Parameter \#3 \$args of function register_taxonomy expects array\{labels\?\: array\<string\>, description\?\: string, public\?\: bool, publicly_queryable\?\: bool, hierarchical\?\: bool, show_ui\?\: bool, show_in_menu\?\: bool, show_in_nav_menus\?\: bool, \.\.\.\}, array\{hierarchical\: false, labels\: array\{name\: ''Clichés''\|''Genders''\|''Romantic…''\|''Sexual Orientations'', singular_name\: ''Cliché''\|''Gender''\|''Romantic Orientation''\|''Sexual Orientation'', search_items\: ''Search Clichés''\|''Search Genders''\|''Search Romantic…''\|''Search Sexual…'', popular_items\: ''Popular Clichés''\|''Popular Genders''\|''Popular Romantic…''\|''Popular Sexual…'', all_items\: ''AllClichés''\|''AllGenders''\|''AllRomantic…''\|''AllSexual…'', parent_item\: null, parent_item_colon\: null, edit_item\: ''Edit Cliché''\|''Edit Gender''\|''Edit Romantic…''\|''Edit Sexual…'', \.\.\.\}, public\: true, show_ui\: true, show_in_rest\: true, show_admin_column\: true, update_count_callback\: ''_update_post_term…'', query_var\: true, \.\.\.\} given\.$#'
+			identifier: argument.type
+			count: 1
+			path: plugins/lwtv-plugin/php/cpts/class-characters.php
+
+		-
+			message: '#^Parameter \$post of method LWTV\\CPTs\\Characters\:\:maybe_update_new_character_flags\(\) has invalid type LWTV\\CPTs\\WP_Post\.$#'
+			identifier: class.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/cpts/class-characters.php
+
+		-
+			message: '#^Result of \|\| is always true\.$#'
+			identifier: booleanOr.alwaysTrue
+			count: 1
+			path: plugins/lwtv-plugin/php/cpts/class-characters.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between ''post_type_characters'' and ''post_type_characters'' will always evaluate to true\.$#'
+			identifier: identical.alwaysTrue
+			count: 1
+			path: plugins/lwtv-plugin/php/cpts/class-characters.php
+
+		-
+			message: '#^Offset ''properties'' on array\{post_type\: ''post_type_actors'', type\: ''object'', items_type\: ''string'', show_in_rest\: false\} in isset\(\) does not exist\.$#'
+			identifier: isset.offset
+			count: 1
+			path: plugins/lwtv-plugin/php/cpts/class-post-meta.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between false and false will always evaluate to true\.$#'
+			identifier: identical.alwaysTrue
+			count: 1
+			path: plugins/lwtv-plugin/php/cpts/class-post-meta.php
+
+		-
+			message: '#^Access to property \$posts on an unknown class LWTV\\Queeries\\WP_Query\.$#'
+			identifier: class.notFound
+			count: 2
+			path: plugins/lwtv-plugin/php/cpts/class-related-posts.php
+
+		-
+			message: '#^Call to function is_array\(\) with array will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: plugins/lwtv-plugin/php/cpts/class-related-posts.php
+
+		-
+			message: '#^Call to method have_posts\(\) on an unknown class LWTV\\Queeries\\WP_Query\.$#'
+			identifier: class.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/cpts/class-related-posts.php
+
+		-
+			message: '#^Comparison operation "\>\=" between array\{term_id\: string, term_taxonomy_id\: string\} and 1 results in an error\.$#'
+			identifier: greaterOrEqual.invalid
+			count: 1
+			path: plugins/lwtv-plugin/php/cpts/class-related-posts.php
+
+		-
+			message: '#^Method LWTV\\CPTs\\Related_Posts\:\:related_posts\(\) should return string but returns null\.$#'
+			identifier: return.type
+			count: 1
+			path: plugins/lwtv-plugin/php/cpts/class-related-posts.php
+
+		-
+			message: '#^Parameter \#1 \$tag of function get_tag_link expects int\|object, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: plugins/lwtv-plugin/php/cpts/class-related-posts.php
+
+		-
+			message: '#^Callback expects 3 parameters, \$accepted_args is set to 1\.$#'
+			identifier: arguments.count
+			count: 1
+			path: plugins/lwtv-plugin/php/cpts/class-shows.php
+
+		-
+			message: '#^Filter callback return statement is missing\.$#'
+			identifier: return.missing
+			count: 1
+			path: plugins/lwtv-plugin/php/cpts/class-shows.php
+
+		-
+			message: '#^Method LWTV\\CPTs\\Shows\:\:hide_tags_from_quick_edit\(\) with return type void returns false but should not return anything\.$#'
+			identifier: return.void
+			count: 1
+			path: plugins/lwtv-plugin/php/cpts/class-shows.php
+
+		-
+			message: '#^Method LWTV\\CPTs\\Shows\:\:hide_tags_from_quick_edit\(\) with return type void returns mixed but should not return anything\.$#'
+			identifier: return.void
+			count: 1
+			path: plugins/lwtv-plugin/php/cpts/class-shows.php
+
+		-
+			message: '#^Parameter \#3 \$args of function register_taxonomy expects array\{labels\?\: array\<string\>, description\?\: string, public\?\: bool, publicly_queryable\?\: bool, hierarchical\?\: bool, show_ui\?\: bool, show_in_menu\?\: bool, show_in_nav_menus\?\: bool, \.\.\.\}, array\{hierarchical\: false, labels\: array\{name\: ''Formats''\|''Genres''\|''Intersections''\|''Nations''\|''Stars''\|''Tagged''\|''Triggers''\|''Tropes''\|''TV Stations''\|''Watch URLs'', singular_name\: ''Format''\|''Genre''\|''Intersection''\|''Nation''\|''Star''\|''Tagged''\|''Trigger''\|''Trope''\|''TV Station''\|''Watch URL'', search_items\: ''Search Formats''\|''Search Genres''\|''Search Intersections''\|''Search Nations''\|''Search Stars''\|''Search Tagged''\|''Search Triggers''\|''Search Tropes''\|''Search TV Stations''\|''Search Watch URLs'', popular_items\: ''Popular Formats''\|''Popular Genres''\|''Popular…''\|''Popular Nations''\|''Popular Stars''\|''Popular Tagged''\|''Popular Triggers''\|''Popular Tropes''\|''Popular TV Stations''\|''Popular Watch URLs'', all_items\: ''AllFormats''\|''AllGenres''\|''AllIntersections''\|''AllNations''\|''AllStars''\|''AllTagged''\|''AllTriggers''\|''AllTropes''\|''AllTV Stations''\|''AllWatch URLs'', parent_item\: null, parent_item_colon\: null, edit_item\: ''Edit Format''\|''Edit Genre''\|''Edit Intersection''\|''Edit Nation''\|''Edit Star''\|''Edit Tagged''\|''Edit Trigger''\|''Edit Trope''\|''Edit TV Station''\|''Edit Watch URL'', \.\.\.\}, show_ui\: true, show_in_rest\: true, show_admin_column\: true, update_count_callback\: ''_update_post_term…'', query_var\: true, show_in_nav_menus\: true, \.\.\.\} given\.$#'
+			identifier: argument.type
+			count: 1
+			path: plugins/lwtv-plugin/php/cpts/class-shows.php
+
+		-
+			message: '#^Strict comparison using \!\=\= between false and false will always evaluate to false\.$#'
+			identifier: notIdentical.alwaysFalse
+			count: 1
+			path: plugins/lwtv-plugin/php/cpts/class-shows.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between ''post_type_shows'' and ''post_type_shows'' will always evaluate to true\.$#'
+			identifier: identical.alwaysTrue
+			count: 1
+			path: plugins/lwtv-plugin/php/cpts/class-shows.php
+
+		-
+			message: '#^Method LWTV\\CPTs\\Shows\\Calculations\:\:show_score\(\) should return int but empty return statement found\.$#'
+			identifier: return.empty
+			count: 1
+			path: plugins/lwtv-plugin/php/cpts/shows/class-calculations.php
+
+		-
+			message: '#^Parameter \#1 \$args of function get_terms expects array\{taxonomy\?\: array\<string\>\|string, object_ids\?\: array\<int\>\|int, orderby\?\: string, order\?\: string, hide_empty\?\: bool\|int, include\?\: array\<int\>\|string, exclude\?\: array\<int\>\|string, exclude_tree\?\: array\<int\>\|string, \.\.\.\}, ''lez_gender''\|''lez_romantic''\|''lez_sexuality'' given\.$#'
+			identifier: argument.type
+			count: 1
+			path: plugins/lwtv-plugin/php/cpts/shows/class-calculations.php
+
+		-
+			message: '#^Result of && is always false\.$#'
+			identifier: booleanAnd.alwaysFalse
+			count: 2
+			path: plugins/lwtv-plugin/php/cpts/shows/class-custom-columns.php
+
+		-
+			message: '#^Undefined variable\: \$orderby$#'
+			identifier: variable.undefined
+			count: 1
+			path: plugins/lwtv-plugin/php/cpts/shows/class-custom-columns.php
+
+		-
+			message: '#^Variable \$orderby in isset\(\) is never defined\.$#'
+			identifier: isset.variable
+			count: 1
+			path: plugins/lwtv-plugin/php/cpts/shows/class-custom-columns.php
+
+		-
+			message: '#^Method LWTV\\CPTs\\Shows\\Shows_Like_This\:\:reciprocity\(\) should return array but empty return statement found\.$#'
+			identifier: return.empty
+			count: 1
+			path: plugins/lwtv-plugin/php/cpts/shows/class-shows-like-this.php
+
+		-
+			message: '#^Variable \$terms_array might not be defined\.$#'
+			identifier: variable.undefined
+			count: 3
+			path: plugins/lwtv-plugin/php/cpts/shows/class-shows-like-this.php
+
+		-
+			message: '#^Access to an undefined property WP_Term\:\:\$object_id\.$#'
+			identifier: property.notFound
+			count: 2
+			path: plugins/lwtv-plugin/php/cpts/shows/scoring/class-character-score.php
+
+		-
+			message: '#^Method LWTV\\CPTs\\Shows\\Watching\\Watch_Url_Health\:\:classify\(\) should return array\{status\: string, problem\: string, reason\: string\} but returns array\{status\: string, problem\: string\}\.$#'
+			identifier: return.type
+			count: 1
+			path: plugins/lwtv-plugin/php/cpts/shows/watching/class-watch-url-health.php
+
+		-
+			message: '#^Offset ''level'' on array\{level\: ''actor'', message\: ''Homepage duplicates…'', fix\: array\{''\\\\LWTV\\\\Debugger…'', ''fix_homepage…''\}, fix_label\: ''removes the homepage''\}\|array\{level\: ''actor'', message\: ''Homepage points to…'', fix\: array\{''\\\\LWTV\\\\Debugger…'', ''fix_homepage…''\}, fix_label\: ''moves it to the…''\}\|array\{level\: ''actor'', message\: ''Instagram ID is an…'', fix\: array\{''\\\\LWTV\\\\Debugger…'', ''remove_imdb_from…''\}, fix_label\: ''removes it''\}\|array\{level\: ''actor'', message\: ''The IMDb field…'', fix\: array\{''\\\\LWTV\\\\Debugger…'', ''extract_imdb_from…''\}, fix_label\: ''replaces it with…''\}\|array\{level\: ''actor'', message\: ''Twitter ID is an…'', fix\: array\{''\\\\LWTV\\\\Debugger…'', ''remove_imdb_from…''\}, fix_label\: ''removes it''\}\|array\{level\: ''actor''\|''show'', message\: ''Airdate problem\.''\|''Homepage points to…''\|''IMDb ID disagrees…''\|''IMDb ID is invalid …''\|''IMDb ID is not set\.''\|''Instagram ID is…''\|''Likely Dupe \-…''\|''No airdates\.''\|''No biography found\.''\|''No character on…''\|''No characters…''\|''No country\.''\|''No end\-date\. If the…''\|''No format\.''\|''No genres\.''\|''No image found\.''\|''No IMDb ID\.''\|''No quality rating\.''\|''No realness rating\.''\|''No screentime…''\|''No start date\.''\|''No stations\.''\|''No worthit details\.''\|''Score is 0 or not…''\|''Shadow taxonomy…''\|''Start date is AFTER…''\|''This actor is a…''\|''This show is a…''\|''Twitter ID is…''\|''Wikipedia URL does…''\}\|array\{level\: ''character'', message\: ''A show this…''\|''Character marked as…''\|''Dead but missing…''\|''Missing Queer IRL…''\|''No actors listed…''\|''No actors listed\.''\|''No role set\.''\|''No show name set\.''\|''No shows listed\.''\|''No years on air set\.''\|''Tagged Queer IRL,…''\}\|array\{level\: ''character'', message\: ''No cliché set\.'', fix\: array\{''\\\\LWTV\\\\Debugger…'', ''add_none_cliche''\}, fix_label\: ''adds the "none"…''\}\|array\{level\: ''show'', message\: ''No queer characters…'', fix\: array\{''\\\\LWTV\\\\Debugger\\\\Shows'', ''flag_no_characters''\}, fix_label\: ''flags it as having…'', manual\: true\}\|array\{level\: ''show'', message\: ''No Thumb score\.'', fix\: array\{''\\\\LWTV\\\\Debugger\\\\Shows'', ''set_thumb_tbd''\}, fix_label\: ''sets it to TBD''\}\|array\{level\: ''show'', message\: ''No tropes set\.'', fix\: array\{''\\\\LWTV\\\\Debugger\\\\Shows'', ''add_none_trope''\}, fix_label\: ''adds the "none"…''\}\|array\{level\: ''show'', message\: ''On\-air meta does…''\|''Show has no on\-air…'', fix\: array\{''\\\\LWTV\\\\Debugger\\\\OnAir'', ''fix_on_air_status''\}, fix_label\: ''recalculates the on…''\}\|array\{level\: ''show'', message\: ''The IMDb field…'', fix\: array\{''\\\\LWTV\\\\Debugger\\\\Shows'', ''extract_imdb_from…''\}, fix_label\: ''replaces it with…''\}\|array\{level\: ''watch_term'', message\: ''Another provider…''\|''Not re\-checked yet…''\|''The host blocked us…''\|''The URL answers,…''\|''The URL does not…''\|''This term has no…''\} on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.offset
+			count: 1
+			path: plugins/lwtv-plugin/php/debugger/build/class-issue-registry.php
+
+		-
+			message: '#^Offset ''term'' on array\{issue\: ''show\-missing\-trope'', term\: ''lez_tropes''\}\|array\{issue\: ''show\-no\-country'', term\: ''lez_country''\}\|array\{issue\: ''show\-no\-format'', term\: ''lez_formats''\}\|array\{issue\: ''show\-no\-genres'', term\: ''lez_genres''\}\|array\{issue\: ''show\-no\-stations'', term\: ''lez_stations''\} in isset\(\) always exists and is not nullable\.$#'
+			identifier: isset.offset
+			count: 1
+			path: plugins/lwtv-plugin/php/debugger/build/class-show-rules.php
+
+		-
+			message: '#^Call to function is_array\(\) with float\|int\<min, \-1\>\|int\<1, max\>\|numeric\-string will always evaluate to false\.$#'
+			identifier: function.impossibleType
+			count: 1
+			path: plugins/lwtv-plugin/php/debugger/class-actors.php
+
+		-
+			message: '#^Call to function is_array\(\) with non\-empty\-array\<non\-empty\-array\> will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: plugins/lwtv-plugin/php/debugger/class-actors.php
+
+		-
+			message: '#^Parameter \#3 \$terms of method LWTV\\Queeries\\Taxonomy_Optimized\:\:get_posts_for_terms\(\) expects array, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: plugins/lwtv-plugin/php/debugger/class-characters.php
+
+		-
+			message: '#^Access to an undefined property WP_Term\:\:\$object_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/debugger/collect/class-byq-collector.php
+
+		-
+			message: '#^Access to an undefined property WP_Term\:\:\$object_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/debugger/collect/class-character-collector.php
+
+		-
+			message: '#^Access to an undefined property WP_Term\:\:\$object_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/debugger/collect/class-imdb-collector.php
+
+		-
+			message: '#^Access to an undefined property WP_Term\:\:\$object_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/debugger/collect/class-queer-collector.php
+
+		-
+			message: '#^Access to an undefined property WP_Term\:\:\$object_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/debugger/collect/class-show-collector.php
+
+		-
+			message: '#^Parameter \#1 \$array \(list\<non\-falsy\-string\>\) to function array_filter does not contain falsy values, the array will always stay the same\.$#'
+			identifier: arrayFilter.same
+			count: 1
+			path: plugins/lwtv-plugin/php/features/class-author-box.php
+
+		-
+			message: '#^Parameter \#1 \$author_id of function get_author_posts_url expects int, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: plugins/lwtv-plugin/php/features/class-author-box.php
+
+		-
+			message: '#^Parameter \#1 \$post of function get_permalink expects int\|WP_Post, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: plugins/lwtv-plugin/php/features/class-author-box.php
+
+		-
+			message: '#^Parameter \#1 \$post of function get_post_status expects int\|WP_Post\|null, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: plugins/lwtv-plugin/php/features/class-author-box.php
+
+		-
+			message: '#^Parameter \#1 \$post of function get_the_title expects int\|WP_Post, string given\.$#'
+			identifier: argument.type
+			count: 2
+			path: plugins/lwtv-plugin/php/features/class-author-box.php
+
+		-
+			message: '#^Strict comparison using \!\=\= between '''' and array will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 1
+			path: plugins/lwtv-plugin/php/features/class-author-box.php
+
+		-
+			message: '#^Variable \$favourites in isset\(\) always exists and is not nullable\.$#'
+			identifier: isset.variable
+			count: 1
+			path: plugins/lwtv-plugin/php/features/class-author-box.php
+
+		-
+			message: '#^Variable \$show_title in empty\(\) always exists and is not falsy\.$#'
+			identifier: empty.variable
+			count: 1
+			path: plugins/lwtv-plugin/php/features/class-author-box.php
+
+		-
+			message: '#^Method LWTV\\Features\\BlockTracking\:\:block_happyness\(\) should return array but returns WP_Error\.$#'
+			identifier: return.type
+			count: 1
+			path: plugins/lwtv-plugin/php/features/class-blocktracking.php
+
+		-
+			message: '#^Method LWTV\\Features\\BlockTracking\:\:remove_url_from_user_agent\(\) should return string but return statement is missing\.$#'
+			identifier: return.missing
+			count: 1
+			path: plugins/lwtv-plugin/php/features/class-blocktracking.php
+
+		-
+			message: '#^PHPDoc tag @return has invalid value \(n/a\)\: Unexpected token "/a", expected TOKEN_HORIZONTAL_WS at offset 47 on line 4$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: plugins/lwtv-plugin/php/features/class-dashboard-posts-in-progress.php
+
+		-
+			message: '#^Parameter \#1 \$array \(non\-empty\-list\<non\-falsy\-string\>\) to function array_filter does not contain falsy values, the array will always stay the same\.$#'
+			identifier: arrayFilter.same
+			count: 1
+			path: plugins/lwtv-plugin/php/features/class-dashboard-posts-in-progress.php
+
+		-
+			message: '#^Parameter \#2 \$user_id of function get_the_author_meta expects int\|false, string given\.$#'
+			identifier: argument.type
+			count: 2
+			path: plugins/lwtv-plugin/php/features/class-dashboard-posts-in-progress.php
+
+		-
+			message: '#^Parameter \#3 \$deps of function wp_register_style expects array\<string\>, false given\.$#'
+			identifier: argument.type
+			count: 1
+			path: plugins/lwtv-plugin/php/features/class-environment.php
+
+		-
+			message: '#^Function as_next_scheduled_action not found\.$#'
+			identifier: function.notFound
+			count: 2
+			path: plugins/lwtv-plugin/php/features/class-missed-schedule.php
+
+		-
+			message: '#^Function as_schedule_recurring_action not found\.$#'
+			identifier: function.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/features/class-missed-schedule.php
+
+		-
+			message: '#^Function as_schedule_single_action not found\.$#'
+			identifier: function.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/features/class-missed-schedule.php
+
+		-
+			message: '#^Parameter \#2 \$gmt of function current_time expects bool, int given\.$#'
+			identifier: argument.type
+			count: 1
+			path: plugins/lwtv-plugin/php/features/class-missed-schedule.php
+
+		-
+			message: '#^Result of function wp_publish_post \(void\) is used\.$#'
+			identifier: function.void
+			count: 1
+			path: plugins/lwtv-plugin/php/features/class-missed-schedule.php
+
+		-
+			message: '#^Action callback returns void\|false but should not return anything\.$#'
+			identifier: return.void
+			count: 1
+			path: plugins/lwtv-plugin/php/features/class-plugin-age.php
+
+		-
+			message: '#^Parameter \#1 \$text of function esc_attr expects string, int given\.$#'
+			identifier: argument.type
+			count: 1
+			path: plugins/lwtv-plugin/php/features/class-plugin-age.php
+
+		-
+			message: '#^Parameter \#3 \$deps of function wp_register_style expects array\<string\>, false given\.$#'
+			identifier: argument.type
+			count: 1
+			path: plugins/lwtv-plugin/php/features/class-plugin-age.php
+
+		-
+			message: '#^Method LWTV\\Features\\Shortcodes\:\:screener\(\) with return type void returns string but should not return anything\.$#'
+			identifier: return.void
+			count: 1
+			path: plugins/lwtv-plugin/php/features/class-shortcodes.php
+
+		-
+			message: '#^Parameter \#1 \$args of function get_terms expects array\{taxonomy\?\: array\<string\>\|string, object_ids\?\: array\<int\>\|int, orderby\?\: string, order\?\: string, hide_empty\?\: bool\|int, include\?\: array\<int\>\|string, exclude\?\: array\<int\>\|string, exclude_tree\?\: array\<int\>\|string, \.\.\.\}, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: plugins/lwtv-plugin/php/features/class-shortcodes.php
+
+		-
+			message: '#^Parameter \#2 \$callback of function add_shortcode expects callable\(array\<string\>, string\|null, string\)\: string, array\{\$this\(LWTV\\Features\\Shortcodes\), ''screener''\} given\.$#'
+			identifier: argument.type
+			count: 1
+			path: plugins/lwtv-plugin/php/features/class-shortcodes.php
+
+		-
+			message: '#^PHPDoc tag @param references unknown parameter\: \$email_address$#'
+			identifier: parameter.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/features/class-spammers.php
+
+		-
+			message: '#^PHPDoc tag @param references unknown parameter\: \$plugin$#'
+			identifier: parameter.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/features/class-spammers.php
+
+		-
+			message: '#^Callback expects 0 parameters, \$accepted_args is set to 2\.$#'
+			identifier: arguments.count
+			count: 1
+			path: plugins/lwtv-plugin/php/features/class-user-profiles.php
+
+		-
+			message: '#^Call to function is_numeric\(\) with int will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: plugins/lwtv-plugin/php/grading/class-lwtv.php
+
+		-
+			message: '#^Parameter \#1 \$score of method LWTV\\_Components\\Grading\:\:color\(\) expects int, float given\.$#'
+			identifier: argument.type
+			count: 1
+			path: plugins/lwtv-plugin/php/grading/class-lwtv.php
+
+		-
+			message: '#^Parameter \#1 \$score of method LWTV\\_Components\\Grading\:\:color\(\) expects int, float given\.$#'
+			identifier: argument.type
+			count: 1
+			path: plugins/lwtv-plugin/php/grading/class-tmdb.php
+
+		-
+			message: '#^Call to function is_wp_error\(\) with array\<mixed, mixed\> will always evaluate to false\.$#'
+			identifier: function.impossibleType
+			count: 1
+			path: plugins/lwtv-plugin/php/grading/class-tvmaze.php
+
+		-
+			message: '#^Parameter \#1 \$score of method LWTV\\_Components\\Grading\:\:color\(\) expects int, float given\.$#'
+			identifier: argument.type
+			count: 1
+			path: plugins/lwtv-plugin/php/grading/class-tvmaze.php
+
+		-
+			message: '#^Parameter \#1 \$text of function esc_attr expects string, int given\.$#'
+			identifier: argument.type
+			count: 4
+			path: plugins/lwtv-plugin/php/plugins/acf/class-number-slider.php
+
+		-
+			message: '#^Parameter \#1 \$text of function esc_html expects string, int given\.$#'
+			identifier: argument.type
+			count: 1
+			path: plugins/lwtv-plugin/php/plugins/acf/class-number-slider.php
+
+		-
+			message: '#^Variable \$excerpt on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.variable
+			count: 1
+			path: plugins/lwtv-plugin/php/plugins/class-acf.php
+
+		-
+			message: '#^Call to static method instance\(\) on an unknown class ActionScheduler_Logger\.$#'
+			identifier: class.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/plugins/class-actionscheduler.php
+
+		-
+			message: '#^Function remove_action invoked with 4 parameters, 2\-3 required\.$#'
+			identifier: arguments.count
+			count: 1
+			path: plugins/lwtv-plugin/php/plugins/class-actionscheduler.php
+
+		-
+			message: '#^Function Shadow_Taxonomy\\Core\\get_the_posts not found\.$#'
+			identifier: function.notFound
+			count: 2
+			path: plugins/lwtv-plugin/php/plugins/class-cache.php
+
+		-
+			message: '#^Variable \$clean_urls in empty\(\) always exists and is not falsy\.$#'
+			identifier: empty.variable
+			count: 2
+			path: plugins/lwtv-plugin/php/plugins/class-cache.php
+
+		-
+			message: '#^Call to new LWTV\\Plugins\\Gravity_Forms\\GF_Approvals\(\) on a separate line has no effect\.$#'
+			identifier: new.resultUnused
+			count: 1
+			path: plugins/lwtv-plugin/php/plugins/class-gravity-forms.php
+
+		-
+			message: '#^Access to property \$post_author on an unknown class LWTV\\Plugins\\WP_Post\.$#'
+			identifier: class.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/plugins/class-monsterinsights.php
+
+		-
+			message: '#^Access to property \$post_date on an unknown class LWTV\\Plugins\\WP_Post\.$#'
+			identifier: class.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/plugins/class-monsterinsights.php
+
+		-
+			message: '#^Access to property \$post_title on an unknown class LWTV\\Plugins\\WP_Post\.$#'
+			identifier: class.notFound
+			count: 4
+			path: plugins/lwtv-plugin/php/plugins/class-monsterinsights.php
+
+		-
+			message: '#^Access to property \$post_type on an unknown class LWTV\\Plugins\\WP_Post\.$#'
+			identifier: class.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/plugins/class-monsterinsights.php
+
+		-
+			message: '#^Function monsterinsights_add_site_note not found\.$#'
+			identifier: function.notFound
+			count: 2
+			path: plugins/lwtv-plugin/php/plugins/class-monsterinsights.php
+
+		-
+			message: '#^Parameter \$post of method LWTV\\Plugins\\MonsterInsights\:\:create_site_note_on_post_publish\(\) has invalid type LWTV\\Plugins\\WP_Post\.$#'
+			identifier: class.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/plugins/class-monsterinsights.php
+
+		-
+			message: '#^Action callback returns string but should not return anything\.$#'
+			identifier: return.void
+			count: 1
+			path: plugins/lwtv-plugin/php/plugins/class-related-posts-by-taxonomy.php
+
+		-
+			message: '#^Call to function method_exists\(\) with ''Related_Posts_By…'' and ''get_instance'' will always evaluate to false\.$#'
+			identifier: function.impossibleType
+			count: 1
+			path: plugins/lwtv-plugin/php/plugins/class-related-posts-by-taxonomy.php
+
+		-
+			message: '#^Call to static method get_instance\(\) on an unknown class Related_Posts_By_Taxonomy_Defaults\.$#'
+			identifier: class.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/plugins/class-related-posts-by-taxonomy.php
+
+		-
+			message: '#^Method LWTV\\Plugins\\Related_Posts_By_Taxonomy\:\:lwtv_cards_format\(\) should return string but return statement is missing\.$#'
+			identifier: return.missing
+			count: 2
+			path: plugins/lwtv-plugin/php/plugins/class-related-posts-by-taxonomy.php
+
+		-
+			message: '#^PHPDoc tag @param references unknown parameter\: \$directory$#'
+			identifier: parameter.notFound
+			count: 4
+			path: plugins/lwtv-plugin/php/plugins/class-related-posts-by-taxonomy.php
+
+		-
+			message: '#^PHPDoc tag @param references unknown parameter\: \$query$#'
+			identifier: parameter.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/plugins/class-searchwp.php
+
+		-
+			message: '#^Access to property \$query_vars on an unknown class LWTV\\Plugins\\FacetWP\\WP_Query\.$#'
+			identifier: class.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/plugins/facetwp/class-indexing.php
+
+		-
+			message: '#^Callback expects 1 parameter, \$accepted_args is set to 2\.$#'
+			identifier: arguments.count
+			count: 1
+			path: plugins/lwtv-plugin/php/plugins/facetwp/class-indexing.php
+
+		-
+			message: '#^PHPDoc tag @param references unknown parameter\: \$params$#'
+			identifier: parameter.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/plugins/facetwp/class-indexing.php
+
+		-
+			message: '#^Parameter \$query of method LWTV\\Plugins\\FacetWP\\Indexing\:\:facetwp_is_main_query\(\) has invalid type LWTV\\Plugins\\FacetWP\\WP_Query\.$#'
+			identifier: class.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/plugins/facetwp/class-indexing.php
+
+		-
+			message: '#^Call to an undefined method LWTV\\Plugins\\Gravity_Forms\\GF_Approvals\:\:get_feeds\(\)\.$#'
+			identifier: method.notFound
+			count: 4
+			path: plugins/lwtv-plugin/php/plugins/gravity-forms/class-gf-approvals.php
+
+		-
+			message: '#^Call to an undefined method LWTV\\Plugins\\Gravity_Forms\\GF_Approvals\:\:is_feed_condition_met\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: plugins/lwtv-plugin/php/plugins/gravity-forms/class-gf-approvals.php
+
+		-
+			message: '#^Call to an undefined static method GFAPI\:\:current_user_can_any\(\)\.$#'
+			identifier: staticMethod.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/plugins/gravity-forms/class-gf-approvals.php
+
+		-
+			message: '#^Call to an undefined static method GFAPI\:\:get_entries\(\)\.$#'
+			identifier: staticMethod.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/plugins/gravity-forms/class-gf-approvals.php
+
+		-
+			message: '#^Call to an undefined static method GFAPI\:\:get_form\(\)\.$#'
+			identifier: staticMethod.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/plugins/gravity-forms/class-gf-approvals.php
+
+		-
+			message: '#^Call to an undefined static method GFAddOn\:\:register\(\)\.$#'
+			identifier: staticMethod.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/plugins/gravity-forms/class-gf-approvals.php
+
+		-
+			message: '#^Call to an undefined static method GFCommon\:\:get_notifications_to_send\(\)\.$#'
+			identifier: staticMethod.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/plugins/gravity-forms/class-gf-approvals.php
+
+		-
+			message: '#^Call to an undefined static method GFCommon\:\:send_notification\(\)\.$#'
+			identifier: staticMethod.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/plugins/gravity-forms/class-gf-approvals.php
+
+		-
+			message: '#^Call to an undefined static method GFFeedAddOn\:\:init_admin\(\)\.$#'
+			identifier: staticMethod.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/plugins/gravity-forms/class-gf-approvals.php
+
+		-
+			message: '#^Call to an undefined static method GFFeedAddOn\:\:init_frontend\(\)\.$#'
+			identifier: staticMethod.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/plugins/gravity-forms/class-gf-approvals.php
+
+		-
+			message: '#^Call to an undefined static method GFForms\:\:include_feed_addon_framework\(\)\.$#'
+			identifier: staticMethod.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/plugins/gravity-forms/class-gf-approvals.php
+
+		-
+			message: '#^Elseif condition is always false\.$#'
+			identifier: elseif.alwaysFalse
+			count: 1
+			path: plugins/lwtv-plugin/php/plugins/gravity-forms/class-gf-approvals.php
+
+		-
+			message: '#^If condition is always false\.$#'
+			identifier: if.alwaysFalse
+			count: 1
+			path: plugins/lwtv-plugin/php/plugins/gravity-forms/class-gf-approvals.php
+
+		-
+			message: '#^Left side of && is always true\.$#'
+			identifier: booleanAnd.leftAlwaysTrue
+			count: 1
+			path: plugins/lwtv-plugin/php/plugins/gravity-forms/class-gf-approvals.php
+
+		-
+			message: '#^Strict comparison using \!\=\= between ''approved'' and mixed~\(0\|0\.0\|''''\|''0''\|''approved''\|array\{\}\|false\|null\) will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 1
+			path: plugins/lwtv-plugin/php/plugins/gravity-forms/class-gf-approvals.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between false and mixed will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 1
+			path: plugins/lwtv-plugin/php/plugins/gravity-forms/class-gf-approvals.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between true and false will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 2
+			path: plugins/lwtv-plugin/php/plugins/gravity-forms/class-gf-approvals.php
+
+		-
+			message: '#^Action callback returns bool but should not return anything\.$#'
+			identifier: return.void
+			count: 1
+			path: plugins/lwtv-plugin/php/plugins/gravity-forms/class-stop-spammers.php
+
+		-
+			message: '#^Call to an undefined static method GFAPI\:\:add_note\(\)\.$#'
+			identifier: staticMethod.notFound
+			count: 2
+			path: plugins/lwtv-plugin/php/plugins/gravity-forms/class-stop-spammers.php
+
+		-
+			message: '#^Parameter \#2 \$callback of function array_filter expects \(callable\(string\)\: bool\)\|null, ''strlen'' given\.$#'
+			identifier: argument.type
+			count: 2
+			path: plugins/lwtv-plugin/php/postiz/build/class-show-announcement.php
+
+		-
+			message: '#^Call to method get_error_message\(\) on an unknown class LWTV\\Postiz\\WP_Error\.$#'
+			identifier: class.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/postiz/class-of-the-day.php
+
+		-
+			message: '#^Dead catch \- Exception is already caught above\.$#'
+			identifier: catch.alreadyCaught
+			count: 1
+			path: plugins/lwtv-plugin/php/postiz/class-of-the-day.php
+
+		-
+			message: '#^Function as_has_scheduled_action not found\.$#'
+			identifier: function.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/postiz/class-of-the-day.php
+
+		-
+			message: '#^Function as_schedule_single_action not found\.$#'
+			identifier: function.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/postiz/class-of-the-day.php
+
+		-
+			message: '#^Method LWTV\\Postiz\\Of_The_Day\:\:post_of_the_day\(\) has invalid return type LWTV\\Postiz\\WP_Error\.$#'
+			identifier: class.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/postiz/class-of-the-day.php
+
+		-
+			message: '#^Call to function is_array\(\) with array\<mixed\> will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: plugins/lwtv-plugin/php/postiz/class-postiz.php
+
+		-
+			message: '#^Call to method get_error_message\(\) on an unknown class LWTV\\Postiz\\WP_Error\.$#'
+			identifier: class.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/postiz/class-postiz.php
+
+		-
+			message: '#^Method LWTV\\Postiz\\Postiz\:\:build_posts\(\) should return array but returns WP_Error\.$#'
+			identifier: return.type
+			count: 3
+			path: plugins/lwtv-plugin/php/postiz/class-postiz.php
+
+		-
+			message: '#^Method LWTV\\Postiz\\Postiz\:\:create_post\(\) has invalid return type LWTV\\Postiz\\WP_Error\.$#'
+			identifier: class.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/postiz/class-postiz.php
+
+		-
+			message: '#^Method LWTV\\Postiz\\Postiz\:\:create_post\(\) should return array\|LWTV\\Postiz\\WP_Error but returns WP_Error\.$#'
+			identifier: return.type
+			count: 1
+			path: plugins/lwtv-plugin/php/postiz/class-postiz.php
+
+		-
+			message: '#^Method LWTV\\Postiz\\Postiz\:\:make_api_request\(\) has invalid return type LWTV\\Postiz\\WP_Error\.$#'
+			identifier: class.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/postiz/class-postiz.php
+
+		-
+			message: '#^Method LWTV\\Postiz\\Postiz\:\:make_api_request\(\) should return array\|LWTV\\Postiz\\WP_Error but returns WP_Error\.$#'
+			identifier: return.type
+			count: 2
+			path: plugins/lwtv-plugin/php/postiz/class-postiz.php
+
+		-
+			message: '#^PHPDoc tag @param references unknown parameter\: \$type$#'
+			identifier: parameter.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/postiz/class-postiz.php
+
+		-
+			message: '#^Access to property \$found_posts on an unknown class LWTV\\Queeries\\WP_Query\.$#'
+			identifier: class.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/queeries/class-post-meta-and-tax.php
+
+		-
+			message: '#^Method LWTV\\Queeries\\Post_Meta_And_Tax\:\:make\(\) has invalid return type LWTV\\Queeries\\WP_Query\.$#'
+			identifier: class.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/queeries/class-post-meta-and-tax.php
+
+		-
+			message: '#^Method LWTV\\Queeries\\Post_Meta_And_Tax\:\:make\(\) should return LWTV\\Queeries\\WP_Query but returns WP_Query\.$#'
+			identifier: return.type
+			count: 2
+			path: plugins/lwtv-plugin/php/queeries/class-post-meta-and-tax.php
+
+		-
+			message: '#^Method LWTV\\Queeries\\Post_Meta_And_Tax\:\:make\(\) should return LWTV\\Queeries\\WP_Query but returns string\.$#'
+			identifier: return.type
+			count: 1
+			path: plugins/lwtv-plugin/php/queeries/class-post-meta-and-tax.php
+
+		-
+			message: '#^Access to property \$found_posts on an unknown class LWTV\\Queeries\\WP_Query\.$#'
+			identifier: class.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/queeries/class-post-meta.php
+
+		-
+			message: '#^Method LWTV\\Queeries\\Post_Meta\:\:make\(\) has invalid return type LWTV\\Queeries\\WP_Query\.$#'
+			identifier: class.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/queeries/class-post-meta.php
+
+		-
+			message: '#^Method LWTV\\Queeries\\Post_Meta\:\:make\(\) should return LWTV\\Queeries\\WP_Query but returns WP_Query\.$#'
+			identifier: return.type
+			count: 2
+			path: plugins/lwtv-plugin/php/queeries/class-post-meta.php
+
+		-
+			message: '#^Method LWTV\\Queeries\\Post_Meta\:\:make\(\) should return LWTV\\Queeries\\WP_Query but returns string\.$#'
+			identifier: return.type
+			count: 1
+			path: plugins/lwtv-plugin/php/queeries/class-post-meta.php
+
+		-
+			message: '#^Access to property \$found_posts on an unknown class LWTV\\Queeries\\WP_Query\.$#'
+			identifier: class.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/queeries/class-post-type.php
+
+		-
+			message: '#^Method LWTV\\Queeries\\Post_Type\:\:make\(\) has invalid return type LWTV\\Queeries\\WP_Query\.$#'
+			identifier: class.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/queeries/class-post-type.php
+
+		-
+			message: '#^Method LWTV\\Queeries\\Post_Type\:\:make\(\) should return LWTV\\Queeries\\WP_Query but returns WP_Query\.$#'
+			identifier: return.type
+			count: 2
+			path: plugins/lwtv-plugin/php/queeries/class-post-type.php
+
+		-
+			message: '#^Method LWTV\\Queeries\\Post_Type\:\:make\(\) should return LWTV\\Queeries\\WP_Query but returns string\.$#'
+			identifier: return.type
+			count: 1
+			path: plugins/lwtv-plugin/php/queeries/class-post-type.php
+
+		-
+			message: '#^Method LWTV\\Queeries\\Post_Type\:\:make_legacy\(\) has invalid return type LWTV\\Queeries\\WP_Query\.$#'
+			identifier: class.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/queeries/class-post-type.php
+
+		-
+			message: '#^Access to property \$found_posts on an unknown class LWTV\\Queeries\\WP_Query\.$#'
+			identifier: class.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/queeries/class-related-posts-by-tag.php
+
+		-
+			message: '#^Method LWTV\\Queeries\\Related_Posts_By_Tag\:\:make\(\) has invalid return type LWTV\\Queeries\\WP_Query\.$#'
+			identifier: class.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/queeries/class-related-posts-by-tag.php
+
+		-
+			message: '#^Method LWTV\\Queeries\\Related_Posts_By_Tag\:\:make\(\) should return LWTV\\Queeries\\WP_Query but returns WP_Query\.$#'
+			identifier: return.type
+			count: 3
+			path: plugins/lwtv-plugin/php/queeries/class-related-posts-by-tag.php
+
+		-
+			message: '#^Method LWTV\\Queeries\\Related_Posts_By_Tag\:\:make\(\) should return LWTV\\Queeries\\WP_Query but returns string\.$#'
+			identifier: return.type
+			count: 1
+			path: plugins/lwtv-plugin/php/queeries/class-related-posts-by-tag.php
+
+		-
+			message: '#^Method LWTV\\Queeries\\Shadow_Taxonomy\:\:get_actor_ids_for_character\(\) should return array but returns string\.$#'
+			identifier: return.type
+			count: 1
+			path: plugins/lwtv-plugin/php/queeries/class-shadow-taxonomy.php
+
+		-
+			message: '#^Method LWTV\\Queeries\\Shadow_Taxonomy\:\:get_actors_for_character_cached\(\) should return array but returns string\.$#'
+			identifier: return.type
+			count: 1
+			path: plugins/lwtv-plugin/php/queeries/class-shadow-taxonomy.php
+
+		-
+			message: '#^Method LWTV\\Queeries\\Shadow_Taxonomy\:\:get_actors_for_characters_batch\(\) should return array but returns string\.$#'
+			identifier: return.type
+			count: 1
+			path: plugins/lwtv-plugin/php/queeries/class-shadow-taxonomy.php
+
+		-
+			message: '#^Method LWTV\\Queeries\\Shadow_Taxonomy\:\:get_show_ids_for_character\(\) should return array but returns string\.$#'
+			identifier: return.type
+			count: 1
+			path: plugins/lwtv-plugin/php/queeries/class-shadow-taxonomy.php
+
+		-
+			message: '#^Method LWTV\\Queeries\\Shadow_Taxonomy\:\:get_shows_for_character_cached\(\) should return array but returns string\.$#'
+			identifier: return.type
+			count: 1
+			path: plugins/lwtv-plugin/php/queeries/class-shadow-taxonomy.php
+
+		-
+			message: '#^Method LWTV\\Queeries\\Shadow_Taxonomy\:\:get_shows_for_characters_batch\(\) should return array but returns string\.$#'
+			identifier: return.type
+			count: 1
+			path: plugins/lwtv-plugin/php/queeries/class-shadow-taxonomy.php
+
+		-
+			message: '#^Method LWTV\\Rest_API\\BYQ\:\:last_death\(\) should return array but returns string\.$#'
+			identifier: return.type
+			count: 1
+			path: plugins/lwtv-plugin/php/rest-api/class-byq.php
+
+		-
+			message: '#^Method LWTV\\Rest_API\\BYQ\:\:on_this_day\(\) should return array but returns string\.$#'
+			identifier: return.type
+			count: 1
+			path: plugins/lwtv-plugin/php/rest-api/class-byq.php
+
+		-
+			message: '#^Method LWTV\\Rest_API\\BYQ\:\:when_died\(\) should return array but returns string\.$#'
+			identifier: return.type
+			count: 1
+			path: plugins/lwtv-plugin/php/rest-api/class-byq.php
+
+		-
+			message: '#^Offset ''id'' does not exist on string\.$#'
+			identifier: offsetAccess.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/rest-api/class-byq.php
+
+		-
+			message: '#^Parameter \#3 \$terms of method LWTV\\Queeries\\Taxonomy_Optimized\:\:get_posts_for_terms\(\) expects array, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: plugins/lwtv-plugin/php/rest-api/class-byq.php
+
+		-
+			message: '#^Call to an undefined method LWTV\\Queeries\\Taxonomy_Optimized\:\:make\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/rest-api/class-export-json.php
+
+		-
+			message: '#^Call to method have_posts\(\) on an unknown class LWTV\\Queeries\\WP_Query\.$#'
+			identifier: class.notFound
+			count: 2
+			path: plugins/lwtv-plugin/php/rest-api/class-export-json.php
+
+		-
+			message: '#^Call to method the_post\(\) on an unknown class LWTV\\Queeries\\WP_Query\.$#'
+			identifier: class.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/rest-api/class-export-json.php
+
+		-
+			message: '#^Method LWTV\\Rest_API\\Export_JSON\:\:export_full\(\) should return array but returns WP_Error\.$#'
+			identifier: return.type
+			count: 2
+			path: plugins/lwtv-plugin/php/rest-api/class-export-json.php
+
+		-
+			message: '#^Method LWTV\\Rest_API\\Export_JSON\:\:export_list\(\) should return array but returns string\.$#'
+			identifier: return.type
+			count: 1
+			path: plugins/lwtv-plugin/php/rest-api/class-export-json.php
+
+		-
+			message: '#^Method LWTV\\Rest_API\\Export_JSON\:\:get_full_list\(\) should return array but returns WP_Error\.$#'
+			identifier: return.type
+			count: 1
+			path: plugins/lwtv-plugin/php/rest-api/class-export-json.php
+
+		-
+			message: '#^Method LWTV\\Rest_API\\Export_JSON\:\:get_full_list_characters\(\) should return array but returns WP_Error\.$#'
+			identifier: return.type
+			count: 2
+			path: plugins/lwtv-plugin/php/rest-api/class-export-json.php
+
+		-
+			message: '#^PHPDoc tag @return has invalid value \(\$templates\)\: Unexpected token "\$templates", expected type at offset 67 on line 4$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: plugins/lwtv-plugin/php/rest-api/class-export-json.php
+
+		-
+			message: '#^PHPDoc tag @return has invalid value \(\$vars\)\: Unexpected token "\$vars", expected type at offset 79 on line 4$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: plugins/lwtv-plugin/php/rest-api/class-export-json.php
+
+		-
+			message: '#^Parameter \#1 \$post of function get_post expects int\|WP_Post\|null, string given\.$#'
+			identifier: argument.type
+			count: 3
+			path: plugins/lwtv-plugin/php/rest-api/class-export-json.php
+
+		-
+			message: '#^Result of method LWTV\\Plugin\:\:hide_actor_data\(\) \(void\) is used\.$#'
+			identifier: method.void
+			count: 10
+			path: plugins/lwtv-plugin/php/rest-api/class-export-json.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between null and mixed will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 2
+			path: plugins/lwtv-plugin/php/rest-api/class-export-json.php
+
+		-
+			message: '#^Variable \$characters in isset\(\) always exists and is not nullable\.$#'
+			identifier: isset.variable
+			count: 1
+			path: plugins/lwtv-plugin/php/rest-api/class-export-json.php
+
+		-
+			message: '#^Variable \$meta_key might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: plugins/lwtv-plugin/php/rest-api/class-imdb-json.php
+
+		-
+			message: '#^Variable \$post_type might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: plugins/lwtv-plugin/php/rest-api/class-imdb-json.php
+
+		-
+			message: '#^Access to property \$posts on an unknown class LWTV\\Queeries\\WP_Query\.$#'
+			identifier: class.notFound
+			count: 3
+			path: plugins/lwtv-plugin/php/rest-api/class-stats-json.php
+
+		-
+			message: '#^Call to method have_posts\(\) on an unknown class LWTV\\Queeries\\WP_Query\.$#'
+			identifier: class.notFound
+			count: 3
+			path: plugins/lwtv-plugin/php/rest-api/class-stats-json.php
+
+		-
+			message: '#^Method LWTV\\Rest_API\\Stats_JSON\:\:format_slug\(\) should return array but returns false\.$#'
+			identifier: return.type
+			count: 1
+			path: plugins/lwtv-plugin/php/rest-api/class-stats-json.php
+
+		-
+			message: '#^Method LWTV\\Rest_API\\Stats_JSON\:\:get_actors\(\) should return array but returns WP_Error\.$#'
+			identifier: return.type
+			count: 1
+			path: plugins/lwtv-plugin/php/rest-api/class-stats-json.php
+
+		-
+			message: '#^Method LWTV\\Rest_API\\Stats_JSON\:\:get_characters\(\) should return array but returns WP_Error\.$#'
+			identifier: return.type
+			count: 1
+			path: plugins/lwtv-plugin/php/rest-api/class-stats-json.php
+
+		-
+			message: '#^Method LWTV\\Rest_API\\Stats_JSON\:\:get_death\(\) with return type void returns array but should not return anything\.$#'
+			identifier: return.void
+			count: 1
+			path: plugins/lwtv-plugin/php/rest-api/class-stats-json.php
+
+		-
+			message: '#^Method LWTV\\Rest_API\\Stats_JSON\:\:get_show_taxonomy\(\) should return array but returns WP_Error\.$#'
+			identifier: return.type
+			count: 1
+			path: plugins/lwtv-plugin/php/rest-api/class-stats-json.php
+
+		-
+			message: '#^Method LWTV\\Rest_API\\Stats_JSON\:\:get_shows\(\) should return array but returns WP_Error\.$#'
+			identifier: return.type
+			count: 1
+			path: plugins/lwtv-plugin/php/rest-api/class-stats-json.php
+
+		-
+			message: '#^Method LWTV\\Rest_API\\Stats_JSON\:\:statistics\(\) should return array but returns WP_Error\.$#'
+			identifier: return.type
+			count: 1
+			path: plugins/lwtv-plugin/php/rest-api/class-stats-json.php
+
+		-
+			message: '#^Method LWTV\\Rest_API\\Stats_JSON\:\:stats_rest_api_callback\(\) should return array but returns WP_Error\.$#'
+			identifier: return.type
+			count: 1
+			path: plugins/lwtv-plugin/php/rest-api/class-stats-json.php
+
+		-
+			message: '#^Parameter \#1 \$args of function wp_count_terms expects array\{taxonomy\?\: array\<string\>\|string, object_ids\?\: array\<int\>\|int, orderby\?\: string, order\?\: string, hide_empty\?\: bool\|int, include\?\: array\<int\>\|string, exclude\?\: array\<int\>\|string, exclude_tree\?\: array\<int\>\|string, \.\.\.\}, ''lez_actor_gender'' given\.$#'
+			identifier: argument.type
+			count: 1
+			path: plugins/lwtv-plugin/php/rest-api/class-stats-json.php
+
+		-
+			message: '#^Parameter \#1 \$args of function wp_count_terms expects array\{taxonomy\?\: array\<string\>\|string, object_ids\?\: array\<int\>\|int, orderby\?\: string, order\?\: string, hide_empty\?\: bool\|int, include\?\: array\<int\>\|string, exclude\?\: array\<int\>\|string, exclude_tree\?\: array\<int\>\|string, \.\.\.\}, ''lez_actor_sexuality'' given\.$#'
+			identifier: argument.type
+			count: 1
+			path: plugins/lwtv-plugin/php/rest-api/class-stats-json.php
+
+		-
+			message: '#^Parameter \#1 \$args of function wp_count_terms expects array\{taxonomy\?\: array\<string\>\|string, object_ids\?\: array\<int\>\|int, orderby\?\: string, order\?\: string, hide_empty\?\: bool\|int, include\?\: array\<int\>\|string, exclude\?\: array\<int\>\|string, exclude_tree\?\: array\<int\>\|string, \.\.\.\}, ''lez_cliches'' given\.$#'
+			identifier: argument.type
+			count: 1
+			path: plugins/lwtv-plugin/php/rest-api/class-stats-json.php
+
+		-
+			message: '#^Parameter \#1 \$args of function wp_count_terms expects array\{taxonomy\?\: array\<string\>\|string, object_ids\?\: array\<int\>\|int, orderby\?\: string, order\?\: string, hide_empty\?\: bool\|int, include\?\: array\<int\>\|string, exclude\?\: array\<int\>\|string, exclude_tree\?\: array\<int\>\|string, \.\.\.\}, ''lez_country'' given\.$#'
+			identifier: argument.type
+			count: 1
+			path: plugins/lwtv-plugin/php/rest-api/class-stats-json.php
+
+		-
+			message: '#^Parameter \#1 \$args of function wp_count_terms expects array\{taxonomy\?\: array\<string\>\|string, object_ids\?\: array\<int\>\|int, orderby\?\: string, order\?\: string, hide_empty\?\: bool\|int, include\?\: array\<int\>\|string, exclude\?\: array\<int\>\|string, exclude_tree\?\: array\<int\>\|string, \.\.\.\}, ''lez_formats'' given\.$#'
+			identifier: argument.type
+			count: 1
+			path: plugins/lwtv-plugin/php/rest-api/class-stats-json.php
+
+		-
+			message: '#^Parameter \#1 \$args of function wp_count_terms expects array\{taxonomy\?\: array\<string\>\|string, object_ids\?\: array\<int\>\|int, orderby\?\: string, order\?\: string, hide_empty\?\: bool\|int, include\?\: array\<int\>\|string, exclude\?\: array\<int\>\|string, exclude_tree\?\: array\<int\>\|string, \.\.\.\}, ''lez_gender'' given\.$#'
+			identifier: argument.type
+			count: 1
+			path: plugins/lwtv-plugin/php/rest-api/class-stats-json.php
+
+		-
+			message: '#^Parameter \#1 \$args of function wp_count_terms expects array\{taxonomy\?\: array\<string\>\|string, object_ids\?\: array\<int\>\|int, orderby\?\: string, order\?\: string, hide_empty\?\: bool\|int, include\?\: array\<int\>\|string, exclude\?\: array\<int\>\|string, exclude_tree\?\: array\<int\>\|string, \.\.\.\}, ''lez_genres'' given\.$#'
+			identifier: argument.type
+			count: 1
+			path: plugins/lwtv-plugin/php/rest-api/class-stats-json.php
+
+		-
+			message: '#^Parameter \#1 \$args of function wp_count_terms expects array\{taxonomy\?\: array\<string\>\|string, object_ids\?\: array\<int\>\|int, orderby\?\: string, order\?\: string, hide_empty\?\: bool\|int, include\?\: array\<int\>\|string, exclude\?\: array\<int\>\|string, exclude_tree\?\: array\<int\>\|string, \.\.\.\}, ''lez_romantic'' given\.$#'
+			identifier: argument.type
+			count: 1
+			path: plugins/lwtv-plugin/php/rest-api/class-stats-json.php
+
+		-
+			message: '#^Parameter \#1 \$args of function wp_count_terms expects array\{taxonomy\?\: array\<string\>\|string, object_ids\?\: array\<int\>\|int, orderby\?\: string, order\?\: string, hide_empty\?\: bool\|int, include\?\: array\<int\>\|string, exclude\?\: array\<int\>\|string, exclude_tree\?\: array\<int\>\|string, \.\.\.\}, ''lez_sexuality'' given\.$#'
+			identifier: argument.type
+			count: 1
+			path: plugins/lwtv-plugin/php/rest-api/class-stats-json.php
+
+		-
+			message: '#^Parameter \#1 \$args of function wp_count_terms expects array\{taxonomy\?\: array\<string\>\|string, object_ids\?\: array\<int\>\|int, orderby\?\: string, order\?\: string, hide_empty\?\: bool\|int, include\?\: array\<int\>\|string, exclude\?\: array\<int\>\|string, exclude_tree\?\: array\<int\>\|string, \.\.\.\}, ''lez_stations'' given\.$#'
+			identifier: argument.type
+			count: 1
+			path: plugins/lwtv-plugin/php/rest-api/class-stats-json.php
+
+		-
+			message: '#^Result of method LWTV\\Plugin\:\:hide_actor_data\(\) \(void\) is used\.$#'
+			identifier: method.void
+			count: 1
+			path: plugins/lwtv-plugin/php/rest-api/class-stats-json.php
+
+		-
+			message: '#^Result of method LWTV\\Rest_API\\Stats_JSON\:\:get_death\(\) \(void\) is used\.$#'
+			identifier: staticMethod.void
+			count: 1
+			path: plugins/lwtv-plugin/php/rest-api/class-stats-json.php
+
+		-
+			message: '#^Variable \$stats_array might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: plugins/lwtv-plugin/php/rest-api/class-stats-json.php
+
+		-
+			message: '#^Method LWTV\\Rest_API\\This_Year_JSON\:\:rest_api_callback\(\) should return array but returns WP_Error\.$#'
+			identifier: return.type
+			count: 1
+			path: plugins/lwtv-plugin/php/rest-api/class-this-year-json.php
+
+		-
+			message: '#^Parameter \#1 \$year of method LWTV\\This_Year\\Build\\Characters_Builder\:\:get_characters_for_year\(\) expects int, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: plugins/lwtv-plugin/php/rest-api/class-this-year-json.php
+
+		-
+			message: '#^Parameter \#1 \$year of method LWTV\\This_Year\\Build\\Characters_Builder\:\:get_dead_characters_for_year\(\) expects int, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: plugins/lwtv-plugin/php/rest-api/class-this-year-json.php
+
+		-
+			message: '#^Parameter \#1 \$year of method LWTV\\This_Year\\Build\\Shows_Builder\:\:get_ended_shows_for_year\(\) expects int, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: plugins/lwtv-plugin/php/rest-api/class-this-year-json.php
+
+		-
+			message: '#^Parameter \#1 \$year of method LWTV\\This_Year\\Build\\Shows_Builder\:\:get_new_shows_for_year\(\) expects int, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: plugins/lwtv-plugin/php/rest-api/class-this-year-json.php
+
+		-
+			message: '#^Parameter \#1 \$year of method LWTV\\This_Year\\Build\\Shows_Builder\:\:get_shows_for_year\(\) expects int, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: plugins/lwtv-plugin/php/rest-api/class-this-year-json.php
+
+		-
+			message: '#^Parameter \#1 \$year of method LWTV\\Statistics\\Build\\Dead\:\:get_dead_characters_for_year\(\) expects int, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: plugins/lwtv-plugin/php/rest-api/class-what-happened-json.php
+
+		-
+			message: '#^Call to function is_array\(\) with non\-falsy\-string will always evaluate to false\.$#'
+			identifier: function.impossibleType
+			count: 1
+			path: plugins/lwtv-plugin/php/rest-api/class-whats-on-json.php
+
+		-
+			message: '#^PHPDoc tag @param has invalid value \(\[type\] \$date \[description\]\)\: Unexpected token "\[", expected type at offset 59 on line 3$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: plugins/lwtv-plugin/php/rest-api/class-whats-on-json.php
+
+		-
+			message: '#^PHPDoc tag @return has invalid value \(\[type\]       \[description\]\)\: Unexpected token "\[", expected type at offset 98 on line 4$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: plugins/lwtv-plugin/php/rest-api/class-whats-on-json.php
+
+		-
+			message: '#^Parameter \#3 \$date of method LWTV\\Calendar\\ICS_Parser\:\:generate_by_date\(\) expects string, false given\.$#'
+			identifier: argument.type
+			count: 1
+			path: plugins/lwtv-plugin/php/rest-api/class-whats-on-json.php
+
+		-
+			message: '#^Access to property \$posts on an unknown class LWTV\\Queeries\\WP_Query\.$#'
+			identifier: class.notFound
+			count: 2
+			path: plugins/lwtv-plugin/php/rest-api/class-wikidata.php
+
+		-
+			message: '#^Call to method have_posts\(\) on an unknown class LWTV\\Queeries\\WP_Query\.$#'
+			identifier: class.notFound
+			count: 2
+			path: plugins/lwtv-plugin/php/rest-api/class-wikidata.php
+
+		-
+			message: '#^Match arm comparison between ''wikidata'' and ''wikidata'' is always true\.$#'
+			identifier: match.alwaysTrue
+			count: 1
+			path: plugins/lwtv-plugin/php/rest-api/class-wikidata.php
+
+		-
+			message: '#^Parameter \#1 \$post_id of method LWTV\\Rest_API\\Wikidata\:\:get_by_post_id\(\) expects int, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: plugins/lwtv-plugin/php/rest-api/class-wikidata.php
+
+		-
+			message: '#^Result of method LWTV\\Plugin\:\:hide_actor_data\(\) \(void\) is used\.$#'
+			identifier: method.void
+			count: 7
+			path: plugins/lwtv-plugin/php/rest-api/class-wikidata.php
+
+		-
+			message: '#^Variable \$wp_query might not be defined\.$#'
+			identifier: variable.undefined
+			count: 2
+			path: plugins/lwtv-plugin/php/rest-api/templates/export-json.php
+
+		-
+			message: '#^Function as_schedule_single_action not found\.$#'
+			identifier: function.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/schedulers/class-byq-task.php
+
+		-
+			message: '#^Function as_next_scheduled_action not found\.$#'
+			identifier: function.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/schedulers/class-cache-batch-task.php
+
+		-
+			message: '#^Function as_schedule_single_action not found\.$#'
+			identifier: function.notFound
+			count: 3
+			path: plugins/lwtv-plugin/php/schedulers/class-cache-batch-task.php
+
+		-
+			message: '#^Function as_unschedule_all_actions not found\.$#'
+			identifier: function.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/schedulers/class-cache-batch-task.php
+
+		-
+			message: '#^Function Shadow_Taxonomy\\Core\\get_associated_post_id not found\.$#'
+			identifier: function.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/schedulers/class-facet-reindex-task.php
+
+		-
+			message: '#^Function as_next_scheduled_action not found\.$#'
+			identifier: function.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/schedulers/class-imdb-verify-task.php
+
+		-
+			message: '#^Function as_schedule_single_action not found\.$#'
+			identifier: function.notFound
+			count: 2
+			path: plugins/lwtv-plugin/php/schedulers/class-imdb-verify-task.php
+
+		-
+			message: '#^Binary operation "\." between non\-falsy\-string and array results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 1
+			path: plugins/lwtv-plugin/php/schedulers/class-statistics-cache-warming.php
+
+		-
+			message: '#^PHPDoc tag @param references unknown parameter\: \$post_id$#'
+			identifier: parameter.notFound
+			count: 2
+			path: plugins/lwtv-plugin/php/schedulers/class-statistics-cache-warming.php
+
+		-
+			message: '#^Parameter \#1 \$year of method LWTV\\This_Year\\Build\\Characters_Builder\:\:get_characters_for_year\(\) expects int, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: plugins/lwtv-plugin/php/schedulers/class-statistics-cache-warming.php
+
+		-
+			message: '#^Parameter \#1 \$year of method LWTV\\This_Year\\Build\\Characters_Builder\:\:get_dead_characters_for_year\(\) expects int, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: plugins/lwtv-plugin/php/schedulers/class-statistics-cache-warming.php
+
+		-
+			message: '#^Parameter \#1 \$year of method LWTV\\This_Year\\Build\\Shows_Builder\:\:get_shows_for_year\(\) expects int, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: plugins/lwtv-plugin/php/schedulers/class-statistics-cache-warming.php
+
+		-
+			message: '#^Function as_next_scheduled_action not found\.$#'
+			identifier: function.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/schedulers/class-tmdb-batch-task.php
+
+		-
+			message: '#^Function as_schedule_single_action not found\.$#'
+			identifier: function.notFound
+			count: 3
+			path: plugins/lwtv-plugin/php/schedulers/class-tmdb-batch-task.php
+
+		-
+			message: '#^Function as_next_scheduled_action not found\.$#'
+			identifier: function.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/schedulers/class-watch-urls-task.php
+
+		-
+			message: '#^Function as_schedule_single_action not found\.$#'
+			identifier: function.notFound
+			count: 2
+			path: plugins/lwtv-plugin/php/schedulers/class-watch-urls-task.php
+
+		-
+			message: '#^Function as_next_scheduled_action not found\.$#'
+			identifier: function.notFound
+			count: 2
+			path: plugins/lwtv-plugin/php/schedulers/class-wikidata-qid-task.php
+
+		-
+			message: '#^Function as_schedule_single_action not found\.$#'
+			identifier: function.notFound
+			count: 2
+			path: plugins/lwtv-plugin/php/schedulers/class-wikidata-qid-task.php
+
+		-
+			message: '#^Method LWTV\\Statistics\\Build\\Catalog_Depth\:\:get_totals\(\) should return array but returns string\.$#'
+			identifier: return.type
+			count: 1
+			path: plugins/lwtv-plugin/php/statistics/build/class-catalog-depth.php
+
+		-
+			message: '#^Method LWTV\\Statistics\\Build\\Dead\:\:generate_characters_by_roles\(\) should return array but returns string\.$#'
+			identifier: return.type
+			count: 1
+			path: plugins/lwtv-plugin/php/statistics/build/class-dead.php
+
+		-
+			message: '#^Method LWTV\\Statistics\\Build\\Dead\:\:generate_characters_taxonomy\(\) should return array but returns string\.$#'
+			identifier: return.type
+			count: 1
+			path: plugins/lwtv-plugin/php/statistics/build/class-dead.php
+
+		-
+			message: '#^Method LWTV\\Statistics\\Build\\Dead\:\:generate_shows_by_characters\(\) should return array but returns string\.$#'
+			identifier: return.type
+			count: 1
+			path: plugins/lwtv-plugin/php/statistics/build/class-dead.php
+
+		-
+			message: '#^Method LWTV\\Statistics\\Build\\Dead\:\:generate_shows_by_taxonomy\(\) should return array but returns string\.$#'
+			identifier: return.type
+			count: 1
+			path: plugins/lwtv-plugin/php/statistics/build/class-dead.php
+
+		-
+			message: '#^Method LWTV\\Statistics\\Build\\Dead\:\:generate_years_data\(\) should return array but returns string\.$#'
+			identifier: return.type
+			count: 1
+			path: plugins/lwtv-plugin/php/statistics/build/class-dead.php
+
+		-
+			message: '#^Method LWTV\\Statistics\\Build\\Dead\:\:get_dead_characters_data\(\) should return array but returns string\.$#'
+			identifier: return.type
+			count: 1
+			path: plugins/lwtv-plugin/php/statistics/build/class-dead.php
+
+		-
+			message: '#^Method LWTV\\Statistics\\Build\\Dead\:\:get_dead_characters_for_year\(\) should return array but returns string\.$#'
+			identifier: return.type
+			count: 1
+			path: plugins/lwtv-plugin/php/statistics/build/class-dead.php
+
+		-
+			message: '#^Method LWTV\\Statistics\\Build\\Dead\:\:total_dead_shows\(\) should return array but returns int\.$#'
+			identifier: return.type
+			count: 2
+			path: plugins/lwtv-plugin/php/statistics/build/class-dead.php
+
+		-
+			message: '#^Method LWTV\\Statistics\\Build\\Dead\:\:total_dead_shows\(\) should return array but returns int\<0, max\>\.$#'
+			identifier: return.type
+			count: 1
+			path: plugins/lwtv-plugin/php/statistics/build/class-dead.php
+
+		-
+			message: '#^PHPDoc tag @param references unknown parameter\: \$subject$#'
+			identifier: parameter.notFound
+			count: 2
+			path: plugins/lwtv-plugin/php/statistics/build/class-dead.php
+
+		-
+			message: '#^Parameter \#1 \$output_array of method LWTV\\Statistics\\Build\\Dead\:\:output_list\(\) expects array, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: plugins/lwtv-plugin/php/statistics/build/class-dead.php
+
+		-
+			message: '#^Method LWTV\\Statistics\\Build\\Format_Trend\:\:get_year_format_tally\(\) should return array but returns string\.$#'
+			identifier: return.type
+			count: 1
+			path: plugins/lwtv-plugin/php/statistics/build/class-format-trend.php
+
+		-
+			message: '#^Method LWTV\\Statistics\\Build\\Formats\:\:generate\(\) should return array but returns int\<0, max\>\.$#'
+			identifier: return.type
+			count: 1
+			path: plugins/lwtv-plugin/php/statistics/build/class-formats.php
+
+		-
+			message: '#^Method LWTV\\Statistics\\Build\\Formats\:\:generate_all_formats\(\) should return array but returns string\.$#'
+			identifier: return.type
+			count: 1
+			path: plugins/lwtv-plugin/php/statistics/build/class-formats.php
+
+		-
+			message: '#^Method LWTV\\Statistics\\Build\\Intersection_Trend\:\:get_year_intersection_tally\(\) should return array but returns string\.$#'
+			identifier: return.type
+			count: 1
+			path: plugins/lwtv-plugin/php/statistics/build/class-intersection-trend.php
+
+		-
+			message: '#^Method LWTV\\Statistics\\Build\\Nations\:\:get_formats_breakdown\(\) should return array but returns string\.$#'
+			identifier: return.type
+			count: 1
+			path: plugins/lwtv-plugin/php/statistics/build/class-nations.php
+
+		-
+			message: '#^Method LWTV\\Statistics\\Build\\Nations\:\:get_nation_basic_data\(\) should return array but returns string\.$#'
+			identifier: return.type
+			count: 1
+			path: plugins/lwtv-plugin/php/statistics/build/class-nations.php
+
+		-
+			message: '#^Method LWTV\\Statistics\\Build\\Nations\:\:get_nation_shows\(\) should return array but returns string\.$#'
+			identifier: return.type
+			count: 1
+			path: plugins/lwtv-plugin/php/statistics/build/class-nations.php
+
+		-
+			message: '#^Method LWTV\\Statistics\\Build\\Nations\:\:get_nation_summaries\(\) should return array but returns string\.$#'
+			identifier: return.type
+			count: 1
+			path: plugins/lwtv-plugin/php/statistics/build/class-nations.php
+
+		-
+			message: '#^Method LWTV\\Statistics\\Build\\Nations\:\:get_tropes_breakdown\(\) should return array but returns string\.$#'
+			identifier: return.type
+			count: 1
+			path: plugins/lwtv-plugin/php/statistics/build/class-nations.php
+
+		-
+			message: '#^Method LWTV\\Statistics\\Build\\Nations\:\:parse_meta_breakdown\(\) should return array but returns string\.$#'
+			identifier: return.type
+			count: 1
+			path: plugins/lwtv-plugin/php/statistics/build/class-nations.php
+
+		-
+			message: '#^Parameter \#1 \$detailed_data of method LWTV\\Statistics\\Build\\Nations\:\:prepare_nation_data\(\) expects array, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: plugins/lwtv-plugin/php/statistics/build/class-nations.php
+
+		-
+			message: '#^Cannot assign offset numeric\-string to string\.$#'
+			identifier: offsetAssign.dimType
+			count: 1
+			path: plugins/lwtv-plugin/php/statistics/build/class-on-air-optimized.php
+
+		-
+			message: '#^Default value of the parameter \#2 \$data \(false\) of method LWTV\\Statistics\\Build\\On_Air_Optimized\:\:make\(\) is incompatible with type array\.$#'
+			identifier: parameter.defaultValue
+			count: 1
+			path: plugins/lwtv-plugin/php/statistics/build/class-on-air-optimized.php
+
+		-
+			message: '#^Default value of the parameter \#2 \$filtered_data \(false\) of method LWTV\\Statistics\\Build\\On_Air_Optimized\:\:build_characters\(\) is incompatible with type array\.$#'
+			identifier: parameter.defaultValue
+			count: 1
+			path: plugins/lwtv-plugin/php/statistics/build/class-on-air-optimized.php
+
+		-
+			message: '#^Default value of the parameter \#2 \$filtered_data \(false\) of method LWTV\\Statistics\\Build\\On_Air_Optimized\:\:build_shows\(\) is incompatible with type array\.$#'
+			identifier: parameter.defaultValue
+			count: 1
+			path: plugins/lwtv-plugin/php/statistics/build/class-on-air-optimized.php
+
+		-
+			message: '#^Default value of the parameter \#3 \$minor \(false\) of method LWTV\\Statistics\\Build\\On_Air_Optimized\:\:make\(\) is incompatible with type string\.$#'
+			identifier: parameter.defaultValue
+			count: 1
+			path: plugins/lwtv-plugin/php/statistics/build/class-on-air-optimized.php
+
+		-
+			message: '#^Method LWTV\\Statistics\\Build\\On_Air_Optimized\:\:build_characters\(\) should return array but returns string\.$#'
+			identifier: return.type
+			count: 1
+			path: plugins/lwtv-plugin/php/statistics/build/class-on-air-optimized.php
+
+		-
+			message: '#^Method LWTV\\Statistics\\Build\\On_Air_Optimized\:\:build_shows\(\) should return array but returns string\.$#'
+			identifier: return.type
+			count: 1
+			path: plugins/lwtv-plugin/php/statistics/build/class-on-air-optimized.php
+
+		-
+			message: '#^Strict comparison using \!\=\= between false and mixed will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 2
+			path: plugins/lwtv-plugin/php/statistics/build/class-on-air-optimized.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between false and mixed will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 1
+			path: plugins/lwtv-plugin/php/statistics/build/class-on-air-optimized.php
+
+		-
+			message: '#^Unreachable statement \- code above always terminates\.$#'
+			identifier: deadCode.unreachable
+			count: 2
+			path: plugins/lwtv-plugin/php/statistics/build/class-on-air-optimized.php
+
+		-
+			message: '#^Method LWTV\\Statistics\\Build\\Queer_IRL\:\:generate\(\) should return array but returns int\<0, max\>\.$#'
+			identifier: return.type
+			count: 1
+			path: plugins/lwtv-plugin/php/statistics/build/class-queer-irl.php
+
+		-
+			message: '#^Method LWTV\\Statistics\\Build\\Scores\:\:get_score_values\(\) should return array but returns string\.$#'
+			identifier: return.type
+			count: 1
+			path: plugins/lwtv-plugin/php/statistics/build/class-scores.php
+
+		-
+			message: '#^Method LWTV\\Statistics\\Build\\Scores\:\:get_scores_by_on_air_year\(\) should return array but returns string\.$#'
+			identifier: return.type
+			count: 1
+			path: plugins/lwtv-plugin/php/statistics/build/class-scores.php
+
+		-
+			message: '#^Method LWTV\\Statistics\\Build\\Scores\:\:get_scores_by_worthit\(\) should return array but returns string\.$#'
+			identifier: return.type
+			count: 1
+			path: plugins/lwtv-plugin/php/statistics/build/class-scores.php
+
+		-
+			message: '#^Method LWTV\\Statistics\\Build\\Stations\:\:get_formats_breakdown\(\) should return array but returns string\.$#'
+			identifier: return.type
+			count: 1
+			path: plugins/lwtv-plugin/php/statistics/build/class-stations.php
+
+		-
+			message: '#^Method LWTV\\Statistics\\Build\\Stations\:\:get_station_basic_data\(\) should return array but returns string\.$#'
+			identifier: return.type
+			count: 1
+			path: plugins/lwtv-plugin/php/statistics/build/class-stations.php
+
+		-
+			message: '#^Method LWTV\\Statistics\\Build\\Stations\:\:get_station_shows\(\) should return array but returns string\.$#'
+			identifier: return.type
+			count: 1
+			path: plugins/lwtv-plugin/php/statistics/build/class-stations.php
+
+		-
+			message: '#^Method LWTV\\Statistics\\Build\\Stations\:\:get_station_summaries\(\) should return array but returns string\.$#'
+			identifier: return.type
+			count: 1
+			path: plugins/lwtv-plugin/php/statistics/build/class-stations.php
+
+		-
+			message: '#^Method LWTV\\Statistics\\Build\\Stations\:\:get_tropes_breakdown\(\) should return array but returns string\.$#'
+			identifier: return.type
+			count: 1
+			path: plugins/lwtv-plugin/php/statistics/build/class-stations.php
+
+		-
+			message: '#^Method LWTV\\Statistics\\Build\\Stations\:\:parse_meta_breakdown\(\) should return array but returns string\.$#'
+			identifier: return.type
+			count: 1
+			path: plugins/lwtv-plugin/php/statistics/build/class-stations.php
+
+		-
+			message: '#^Parameter \#1 \$detailed_data of method LWTV\\Statistics\\Build\\Stations\:\:prepare_station_data\(\) expects array, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: plugins/lwtv-plugin/php/statistics/build/class-stations.php
+
+		-
+			message: '#^Call to function is_null\(\) with mixed will always evaluate to false\.$#'
+			identifier: function.impossibleType
+			count: 1
+			path: plugins/lwtv-plugin/php/statistics/build/class-taxonomy-optimized.php
+
+		-
+			message: '#^Method LWTV\\Statistics\\Build\\Taxonomy_Optimized\:\:get_bulk_character_counts\(\) should return array but returns string\.$#'
+			identifier: return.type
+			count: 1
+			path: plugins/lwtv-plugin/php/statistics/build/class-taxonomy-optimized.php
+
+		-
+			message: '#^Method LWTV\\Statistics\\Build\\Taxonomy_Optimized\:\:get_bulk_first_years\(\) should return array but returns string\.$#'
+			identifier: return.type
+			count: 1
+			path: plugins/lwtv-plugin/php/statistics/build/class-taxonomy-optimized.php
+
+		-
+			message: '#^Method LWTV\\Statistics\\Build\\Taxonomy_Optimized\:\:get_bulk_show_counts\(\) should return array but returns string\.$#'
+			identifier: return.type
+			count: 1
+			path: plugins/lwtv-plugin/php/statistics/build/class-taxonomy-optimized.php
+
+		-
+			message: '#^Method LWTV\\Statistics\\Build\\Taxonomy_Optimized\:\:get_bulk_top_shows\(\) should return array but returns string\.$#'
+			identifier: return.type
+			count: 1
+			path: plugins/lwtv-plugin/php/statistics/build/class-taxonomy-optimized.php
+
+		-
+			message: '#^Method LWTV\\Statistics\\Build\\Taxonomy_Optimized\:\:get_object_term_slug_map\(\) should return array but returns string\.$#'
+			identifier: return.type
+			count: 1
+			path: plugins/lwtv-plugin/php/statistics/build/class-taxonomy-optimized.php
+
+		-
+			message: '#^Method LWTV\\Statistics\\Build\\Taxonomy_Optimized\:\:get_terms_per_object_stats\(\) should return array but returns string\.$#'
+			identifier: return.type
+			count: 1
+			path: plugins/lwtv-plugin/php/statistics/build/class-taxonomy-optimized.php
+
+		-
+			message: '#^Method LWTV\\Statistics\\Build\\We_Love_It\:\:generate\(\) should return array but returns int\<0, max\>\.$#'
+			identifier: return.type
+			count: 1
+			path: plugins/lwtv-plugin/php/statistics/build/class-we-love-it.php
+
+		-
+			message: '#^Method LWTV\\Statistics\\Build\\We_Love_It\:\:generate_all_data\(\) should return array but returns string\.$#'
+			identifier: return.type
+			count: 1
+			path: plugins/lwtv-plugin/php/statistics/build/class-we-love-it.php
+
+		-
+			message: '#^Method LWTV\\Statistics\\Build\\We_Love_It\:\:get_shows_we_love_count\(\) should return int but returns string\.$#'
+			identifier: return.type
+			count: 1
+			path: plugins/lwtv-plugin/php/statistics/build/class-we-love-it.php
+
+		-
+			message: '#^Method LWTV\\Statistics\\Build\\We_Love_It\:\:get_total_shows_count\(\) should return int but returns string\.$#'
+			identifier: return.type
+			count: 1
+			path: plugins/lwtv-plugin/php/statistics/build/class-we-love-it.php
+
+		-
+			message: '#^Call to function is_wp_error\(\) with array\<mixed, mixed\> will always evaluate to false\.$#'
+			identifier: function.impossibleType
+			count: 1
+			path: plugins/lwtv-plugin/php/statistics/build/class-we-love.php
+
+		-
+			message: '#^Method LWTV\\Statistics\\Build\\We_Love\:\:get_archive_totals\(\) should return array but returns string\.$#'
+			identifier: return.type
+			count: 1
+			path: plugins/lwtv-plugin/php/statistics/build/class-we-love.php
+
+		-
+			message: '#^Method LWTV\\Statistics\\Build\\We_Love\:\:get_roster\(\) should return array but returns string\.$#'
+			identifier: return.type
+			count: 1
+			path: plugins/lwtv-plugin/php/statistics/build/class-we-love.php
+
+		-
+			message: '#^Method LWTV\\Statistics\\Build\\Worth_It\:\:generate\(\) should return array but returns int\<0, max\>\.$#'
+			identifier: return.type
+			count: 1
+			path: plugins/lwtv-plugin/php/statistics/build/class-worth-it.php
+
+		-
+			message: '#^Method LWTV\\Statistics\\Build\\Worth_It\:\:generate_all_data\(\) should return array but returns string\.$#'
+			identifier: return.type
+			count: 1
+			path: plugins/lwtv-plugin/php/statistics/build/class-worth-it.php
+
+		-
+			message: '#^Method LWTV\\Statistics\\Build\\Worth_It\:\:get_rating_count\(\) should return int but returns string\.$#'
+			identifier: return.type
+			count: 1
+			path: plugins/lwtv-plugin/php/statistics/build/class-worth-it.php
+
+		-
+			message: '#^Method LWTV\\Statistics\\CSV_Download\:\:actor_roster_rows\(\) should return array but returns string\.$#'
+			identifier: return.type
+			count: 1
+			path: plugins/lwtv-plugin/php/statistics/class-csv-download.php
+
+		-
+			message: '#^PHPDoc tag @return has invalid value \(\$templates\)\: Unexpected token "\$templates", expected type at offset 67 on line 4$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: plugins/lwtv-plugin/php/statistics/class-query-vars.php
+
+		-
+			message: '#^PHPDoc tag @return has invalid value \(\$vars\)\: Unexpected token "\$vars", expected type at offset 79 on line 4$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: plugins/lwtv-plugin/php/statistics/class-query-vars.php
+
+		-
+			message: '#^Variable \$wp_query in isset\(\) is never defined\.$#'
+			identifier: isset.variable
+			count: 1
+			path: plugins/lwtv-plugin/php/statistics/class-query-vars.php
+
+		-
+			message: '#^Call to an undefined method LWTV\\Queeries\\Taxonomy_Optimized\:\:make\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/statistics/class-stats-counter.php
+
+		-
+			message: '#^Method LWTV\\Statistics\\Build\\Dead\:\:total_dead_characters\(\) invoked with 1 parameter, 0 required\.$#'
+			identifier: arguments.count
+			count: 1
+			path: plugins/lwtv-plugin/php/statistics/class-stats-counter.php
+
+		-
+			message: '#^Method LWTV\\Statistics\\Stats_Counter\:\:count_shows\(\) should return array but returns int\.$#'
+			identifier: return.type
+			count: 1
+			path: plugins/lwtv-plugin/php/statistics/class-stats-counter.php
+
+		-
+			message: '#^Method LWTV\\Statistics\\Stats_Counter\:\:get_growth_series\(\) should return array\<int, array\{year\: int, count\: int\}\> but returns array\{string\}\.$#'
+			identifier: return.type
+			count: 1
+			path: plugins/lwtv-plugin/php/statistics/class-stats-counter.php
+
+		-
+			message: '#^Parameter \#5 \$media of function wp_enqueue_style expects string, false given\.$#'
+			identifier: argument.type
+			count: 1
+			path: plugins/lwtv-plugin/php/statistics/class-stats-enqueues.php
+
+		-
+			message: '#^Method LWTV\\Statistics\\Build\\Dead\:\:total_dead_characters\(\) invoked with 1 parameter, 0 required\.$#'
+			identifier: arguments.count
+			count: 1
+			path: plugins/lwtv-plugin/php/statistics/class-stats-generator.php
+
+		-
+			message: '#^Method LWTV\\Statistics\\Stats_Generator\:\:generate_dead\(\) should return array but returns int\.$#'
+			identifier: return.type
+			count: 2
+			path: plugins/lwtv-plugin/php/statistics/class-stats-generator.php
+
+		-
+			message: '#^Method LWTV\\Statistics\\Stats_Generator\:\:generate_total_dead\(\) should return int but returns array\.$#'
+			identifier: return.type
+			count: 1
+			path: plugins/lwtv-plugin/php/statistics/class-stats-generator.php
+
+		-
+			message: '#^Parameter \#1 \$actor_id of method LWTV\\Statistics\\Build\\Actors\:\:generate_dead\(\) expects int, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: plugins/lwtv-plugin/php/statistics/class-stats-generator.php
+
+		-
+			message: '#^Parameter \#1 \$actor_id of method LWTV\\Statistics\\Build\\Actors\:\:generate_roles\(\) expects int, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: plugins/lwtv-plugin/php/statistics/class-stats-generator.php
+
+		-
+			message: '#^Parameter \#1 \$text of function esc_html expects string, int given\.$#'
+			identifier: argument.type
+			count: 1
+			path: plugins/lwtv-plugin/php/statistics/templates/actors.php
+
+		-
+			message: '#^Offset 0 on non\-empty\-list\<array\{label\: mixed, count\: mixed, pct\: 0\|float, class\: literal\-string&non\-falsy\-string\}\> on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.offset
+			count: 1
+			path: plugins/lwtv-plugin/php/statistics/templates/actors/gender.php
+
+		-
+			message: '#^Call to function is_array\(\) with array\<mixed, mixed\> will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: plugins/lwtv-plugin/php/statistics/templates/actors/overview.php
+
+		-
+			message: '#^Offset 0 on non\-empty\-list\<array\{label\: mixed, count\: mixed, pct\: 0\|float, class\: literal\-string&non\-falsy\-string\}\> on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.offset
+			count: 1
+			path: plugins/lwtv-plugin/php/statistics/templates/actors/sexuality.php
+
+		-
+			message: '#^Parameter \#1 \$text of function esc_html expects string, int given\.$#'
+			identifier: argument.type
+			count: 1
+			path: plugins/lwtv-plugin/php/statistics/templates/characters.php
+
+		-
+			message: '#^Comparison operation "\>" between int\<1, max\> and 0 is always true\.$#'
+			identifier: greater.alwaysTrue
+			count: 1
+			path: plugins/lwtv-plugin/php/statistics/templates/characters/gender.php
+
+		-
+			message: '#^Variable \$gen_pullstats in empty\(\) always exists and is not falsy\.$#'
+			identifier: empty.variable
+			count: 1
+			path: plugins/lwtv-plugin/php/statistics/templates/characters/gender.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between ''dead\-characters'' and ''characters''\|''cliches''\|''gender''\|''sexuality'' will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 1
+			path: plugins/lwtv-plugin/php/statistics/templates/characters/overview.php
+
+		-
+			message: '#^Parameter \#1 \$text of function esc_attr expects string, float\|int given\.$#'
+			identifier: argument.type
+			count: 1
+			path: plugins/lwtv-plugin/php/statistics/templates/main/around-the-world.php
+
+		-
+			message: '#^Parameter \#1 \$text of function esc_html expects string, float\|int given\.$#'
+			identifier: argument.type
+			count: 1
+			path: plugins/lwtv-plugin/php/statistics/templates/main/around-the-world.php
+
+		-
+			message: '#^Variable \$statstype might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: plugins/lwtv-plugin/php/statistics/templates/main/tabbar.php
+
+		-
+			message: '#^Parameter \#1 \$text of function esc_attr expects string, float\|int given\.$#'
+			identifier: argument.type
+			count: 1
+			path: plugins/lwtv-plugin/php/statistics/templates/main/where-tv-lives.php
+
+		-
+			message: '#^Parameter \#1 \$text of function esc_html expects string, float\|int given\.$#'
+			identifier: argument.type
+			count: 1
+			path: plugins/lwtv-plugin/php/statistics/templates/main/where-tv-lives.php
+
+		-
+			message: '#^Parameter \#1 \$text of function esc_attr expects string, int given\.$#'
+			identifier: argument.type
+			count: 1
+			path: plugins/lwtv-plugin/php/statistics/templates/partials/donut.php
+
+		-
+			message: '#^Parameter \#1 \$text of function esc_html expects string, int given\.$#'
+			identifier: argument.type
+			count: 1
+			path: plugins/lwtv-plugin/php/statistics/templates/shows.php
+
+		-
+			message: '#^Comparison operation "\>" between int\<1, max\> and 0 is always true\.$#'
+			identifier: greater.alwaysTrue
+			count: 1
+			path: plugins/lwtv-plugin/php/statistics/templates/shows/genres.php
+
+		-
+			message: '#^Comparison operation "\>" between int\<1, max\> and 0 is always true\.$#'
+			identifier: greater.alwaysTrue
+			count: 1
+			path: plugins/lwtv-plugin/php/statistics/templates/shows/intersectionality.php
+
+		-
+			message: '#^Variable \$baseurl might not be defined\.$#'
+			identifier: variable.undefined
+			count: 10
+			path: plugins/lwtv-plugin/php/statistics/templates/shows/overview.php
+
+		-
+			message: '#^Parameter \#1 \$term of function term_description expects int, string given\.$#'
+			identifier: argument.type
+			count: 4
+			path: plugins/lwtv-plugin/php/statistics/templates/shows/stars.php
+
+		-
+			message: '#^Parameter \#1 \$term of function term_description expects int, WP_Term given\.$#'
+			identifier: argument.type
+			count: 1
+			path: plugins/lwtv-plugin/php/statistics/templates/shows/triggers.php
+
+		-
+			message: '#^Comparison operation "\>" between int\<1, max\> and 0 is always true\.$#'
+			identifier: greater.alwaysTrue
+			count: 1
+			path: plugins/lwtv-plugin/php/statistics/templates/shows/we-love-it.php
+
+		-
+			message: '#^PHPDoc tag @param references unknown parameter\: \$actor$#'
+			identifier: parameter.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/theme/class-actor-age.php
+
+		-
+			message: '#^Result of method LWTV\\Plugin\:\:hide_actor_data\(\) \(void\) is used\.$#'
+			identifier: method.void
+			count: 2
+			path: plugins/lwtv-plugin/php/theme/class-actor-age.php
+
+		-
+			message: '#^Comparison operation "\<\=" between \*NEVER\* and 13 results in an error\.$#'
+			identifier: smallerOrEqual.invalid
+			count: 1
+			path: plugins/lwtv-plugin/php/theme/class-actor-birthday.php
+
+		-
+			message: '#^Comparison operation "\>\=" between \*NEVER\* and 11 results in an error\.$#'
+			identifier: greaterOrEqual.invalid
+			count: 1
+			path: plugins/lwtv-plugin/php/theme/class-actor-birthday.php
+
+		-
+			message: '#^PHPDoc tag @param has invalid value \(\[type\] \$the_id\)\: Unexpected token "\[", expected type at offset 40 on line 4$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: plugins/lwtv-plugin/php/theme/class-actor-birthday.php
+
+		-
+			message: '#^Parameter \#1 \$post_id of function get_post_meta expects int, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: plugins/lwtv-plugin/php/theme/class-actor-birthday.php
+
+		-
+			message: '#^Result of method LWTV\\Plugin\:\:hide_actor_data\(\) \(void\) is used\.$#'
+			identifier: method.void
+			count: 4
+			path: plugins/lwtv-plugin/php/theme/class-actor-birthday.php
+
+		-
+			message: '#^Access to property \$posts on an unknown class LWTV\\Queeries\\WP_Query\.$#'
+			identifier: class.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/theme/class-actor-characters.php
+
+		-
+			message: '#^Call to method have_posts\(\) on an unknown class LWTV\\Queeries\\WP_Query\.$#'
+			identifier: class.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/theme/class-actor-characters.php
+
+		-
+			message: '#^Function Shadow_Taxonomy\\Core\\get_the_posts not found\.$#'
+			identifier: function.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/theme/class-actor-characters.php
+
+		-
+			message: '#^Method LWTV\\Theme\\Actor_Characters\:\:count\(\) should return array but returns int\.$#'
+			identifier: return.type
+			count: 1
+			path: plugins/lwtv-plugin/php/theme/class-actor-characters.php
+
+		-
+			message: '#^Method LWTV\\Theme\\Actor_Characters\:\:count\(\) should return array but returns int\<0, max\>\.$#'
+			identifier: return.type
+			count: 1
+			path: plugins/lwtv-plugin/php/theme/class-actor-characters.php
+
+		-
+			message: '#^Method LWTV\\Theme\\Actor_Characters\:\:get_characters_from_post_meta\(\) should return array but empty return statement found\.$#'
+			identifier: return.empty
+			count: 1
+			path: plugins/lwtv-plugin/php/theme/class-actor-characters.php
+
+		-
+			message: '#^PHPDoc tag @param references unknown parameter\: \$actor$#'
+			identifier: parameter.notFound
+			count: 4
+			path: plugins/lwtv-plugin/php/theme/class-actor-characters.php
+
+		-
+			message: '#^PHPDoc tag @param references unknown parameter\: \$format$#'
+			identifier: parameter.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/theme/class-actor-characters.php
+
+		-
+			message: '#^Parameter \#3 \$value of method LWTV\\Queeries\\Post_Meta\:\:make\(\) expects string, int given\.$#'
+			identifier: argument.type
+			count: 1
+			path: plugins/lwtv-plugin/php/theme/class-actor-characters.php
+
+		-
+			message: '#^Variable \$actors_array in isset\(\) always exists and is not nullable\.$#'
+			identifier: isset.variable
+			count: 1
+			path: plugins/lwtv-plugin/php/theme/class-actor-characters.php
+
+		-
+			message: '#^PHPDoc tag @param references unknown parameter\: \$the_id$#'
+			identifier: parameter.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/theme/class-actor-pronouns.php
+
+		-
+			message: '#^Parameter \#1 \$post of function get_the_terms expects int\|WP_Post, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: plugins/lwtv-plugin/php/theme/class-actor-terms.php
+
+		-
+			message: '#^Call to an undefined method LWTV\\Queeries\\Taxonomy_Optimized\:\:make\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/theme/class-character-relationships.php
+
+		-
+			message: '#^Parameter \#1 \$post_id of function get_post_meta expects int, string given\.$#'
+			identifier: argument.type
+			count: 2
+			path: plugins/lwtv-plugin/php/theme/class-character-relationships.php
+
+		-
+			message: '#^Method LWTV\\Theme\\Data_Author\:\:make\(\) should return array but empty return statement found\.$#'
+			identifier: return.empty
+			count: 1
+			path: plugins/lwtv-plugin/php/theme/class-data-author.php
+
+		-
+			message: '#^Method LWTV\\Theme\\Data_Author\:\:make\(\) should return array but returns string\.$#'
+			identifier: return.type
+			count: 1
+			path: plugins/lwtv-plugin/php/theme/class-data-author.php
+
+		-
+			message: '#^PHPDoc tag @param for parameter \$author with type string is incompatible with native type float\.$#'
+			identifier: parameter.phpDocType
+			count: 1
+			path: plugins/lwtv-plugin/php/theme/class-data-author.php
+
+		-
+			message: '#^Parameter \#1 \$author of method LWTV\\Theme\\Data_Author\:\:favorite_shows\(\) expects string, float given\.$#'
+			identifier: argument.type
+			count: 1
+			path: plugins/lwtv-plugin/php/theme/class-data-author.php
+
+		-
+			message: '#^Parameter \#1 \$author of method LWTV\\Theme\\Data_Author\:\:social\(\) expects string, float given\.$#'
+			identifier: argument.type
+			count: 1
+			path: plugins/lwtv-plugin/php/theme/class-data-author.php
+
+		-
+			message: '#^Parameter \#2 \$user_id of function get_the_author_meta expects int\|false, string given\.$#'
+			identifier: argument.type
+			count: 8
+			path: plugins/lwtv-plugin/php/theme/class-data-author.php
+
+		-
+			message: '#^Variable \$fav_title might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: plugins/lwtv-plugin/php/theme/class-data-author.php
+
+		-
+			message: '#^Method LWTV\\Theme\\Data_Character\:\:cliches\(\) should return string but return statement is missing\.$#'
+			identifier: return.missing
+			count: 1
+			path: plugins/lwtv-plugin/php/theme/class-data-character.php
+
+		-
+			message: '#^Method LWTV\\Theme\\Data_Character\:\:dead\(\) should return string but empty return statement found\.$#'
+			identifier: return.empty
+			count: 1
+			path: plugins/lwtv-plugin/php/theme/class-data-character.php
+
+		-
+			message: '#^Method LWTV\\Theme\\Data_Character\:\:dead\(\) should return string but return statement is missing\.$#'
+			identifier: return.missing
+			count: 1
+			path: plugins/lwtv-plugin/php/theme/class-data-character.php
+
+		-
+			message: '#^Method LWTV\\Theme\\Data_Character\:\:oneactor\(\) should return string but return statement is missing\.$#'
+			identifier: return.missing
+			count: 1
+			path: plugins/lwtv-plugin/php/theme/class-data-character.php
+
+		-
+			message: '#^Method LWTV\\Theme\\Data_Character\:\:oneshow\(\) should return string but return statement is missing\.$#'
+			identifier: return.missing
+			count: 1
+			path: plugins/lwtv-plugin/php/theme/class-data-character.php
+
+		-
+			message: '#^Method LWTV\\Theme\\Data_Character\:\:terms\(\) should return string but return statement is missing\.$#'
+			identifier: return.missing
+			count: 1
+			path: plugins/lwtv-plugin/php/theme/class-data-character.php
+
+		-
+			message: '#^Parameter \#1 \$post of function get_the_terms expects int\|WP_Post, string given\.$#'
+			identifier: argument.type
+			count: 2
+			path: plugins/lwtv-plugin/php/theme/class-data-character.php
+
+		-
+			message: '#^Parameter \#3 \$post of function has_term expects int\|WP_Post\|null, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: plugins/lwtv-plugin/php/theme/class-data-character.php
+
+		-
+			message: '#^Parameter \#1 \$character_id of method LWTV\\CPTs\\Characters\\Calculations\:\:do_the_math\(\) expects int, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: plugins/lwtv-plugin/php/theme/class-do-math.php
+
+		-
+			message: '#^Parameter \#1 \$post of function get_post_type expects int\|WP_Post\|null, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: plugins/lwtv-plugin/php/theme/class-do-math.php
+
+		-
+			message: '#^Parameter \#1 \$post_id of method LWTV\\CPTs\\Actors\\Calculations\:\:do_the_math\(\) expects int, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: plugins/lwtv-plugin/php/theme/class-do-math.php
+
+		-
+			message: '#^Parameter \#1 \$post_id of method LWTV\\CPTs\\Shows\\Calculations\:\:do_the_math\(\) expects int, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: plugins/lwtv-plugin/php/theme/class-do-math.php
+
+		-
+			message: '#^Access to property \$posts on an unknown class LWTV\\Queeries\\WP_Query\.$#'
+			identifier: class.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/theme/class-show-characters.php
+
+		-
+			message: '#^Call to method have_posts\(\) on an unknown class LWTV\\Queeries\\WP_Query\.$#'
+			identifier: class.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/theme/class-show-characters.php
+
+		-
+			message: '#^Cannot unset offset decimal\-int\-string on array\<string, array\>\.$#'
+			identifier: unset.offset
+			count: 1
+			path: plugins/lwtv-plugin/php/theme/class-show-characters.php
+
+		-
+			message: '#^Function Shadow_Taxonomy\\Core\\get_the_posts not found\.$#'
+			identifier: function.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/theme/class-show-characters.php
+
+		-
+			message: '#^Method LWTV\\Theme\\Show_Characters\:\:get_characters_from_shadow_tax\(\) invoked with 2 parameters, 1 required\.$#'
+			identifier: arguments.count
+			count: 1
+			path: plugins/lwtv-plugin/php/theme/class-show-characters.php
+
+		-
+			message: '#^PHPDoc tag @param references unknown parameter\: \$show_id$#'
+			identifier: parameter.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/theme/class-show-characters.php
+
+		-
+			message: '#^Parameter \#1 \$post_id of function update_post_meta expects int, string given\.$#'
+			identifier: argument.type
+			count: 3
+			path: plugins/lwtv-plugin/php/theme/class-show-characters.php
+
+		-
+			message: '#^Parameter \#3 \$value of method LWTV\\Queeries\\Post_Meta\:\:make\(\) expects string, int given\.$#'
+			identifier: argument.type
+			count: 1
+			path: plugins/lwtv-plugin/php/theme/class-show-characters.php
+
+		-
+			message: '#^Parameter \#1 \$post of function get_the_terms expects int\|WP_Post, string given\.$#'
+			identifier: argument.type
+			count: 2
+			path: plugins/lwtv-plugin/php/theme/class-show-stars.php
+
+		-
+			message: '#^Parameter \#1 \$post_id of function get_post_meta expects int, string given\.$#'
+			identifier: argument.type
+			count: 2
+			path: plugins/lwtv-plugin/php/theme/class-show-stars.php
+
+		-
+			message: '#^Method LWTV\\Theme\\Taxonomy_Archive_Title\:\:make\(\) should return string but empty return statement found\.$#'
+			identifier: return.empty
+			count: 1
+			path: plugins/lwtv-plugin/php/theme/class-taxonomy-archive-title.php
+
+		-
+			message: '#^Variable \$return might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: plugins/lwtv-plugin/php/theme/class-taxonomy-archive-title.php
+
+		-
+			message: '#^Binary operation "\+" between string and 1 results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 3
+			path: plugins/lwtv-plugin/php/this-year/build/class-characters-builder.php
+
+		-
+			message: '#^Parameter \#1 \$array \(list\<\(int\|string\)\>\) of array_values is already a list, call has no effect\.$#'
+			identifier: arrayValues.list
+			count: 1
+			path: plugins/lwtv-plugin/php/this-year/build/class-characters-on-air.php
+
+		-
+			message: '#^Binary operation "\+" between string and 1 results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 5
+			path: plugins/lwtv-plugin/php/this-year/build/class-shows-builder.php
+
+		-
+			message: '#^Strict comparison using \!\=\= between ''\-'' and ''\#'' will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 2
+			path: plugins/lwtv-plugin/php/this-year/build/class-shows-builder.php
+
+		-
+			message: '#^PHPDoc tag @return has invalid value \(n/a    outputs everything\)\: Unexpected token "/a", expected TOKEN_HORIZONTAL_WS at offset 99 on line 6$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: plugins/lwtv-plugin/php/this-year/class-display.php
+
+		-
+			message: '#^Parameter \#1 \$this_year of method LWTV\\This_Year\\Format\\Canceled_Shows_Formatter\:\:format_by_country_for_year\(\) expects int, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: plugins/lwtv-plugin/php/this-year/class-display.php
+
+		-
+			message: '#^Parameter \#1 \$this_year of method LWTV\\This_Year\\Format\\Canceled_Shows_Formatter\:\:format_by_format_for_year\(\) expects int, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: plugins/lwtv-plugin/php/this-year/class-display.php
+
+		-
+			message: '#^Parameter \#1 \$this_year of method LWTV\\This_Year\\Format\\Dead_Characters_Formatter\:\:format_by_date_for_year\(\) expects int, string given\.$#'
+			identifier: argument.type
+			count: 2
+			path: plugins/lwtv-plugin/php/this-year/class-display.php
+
+		-
+			message: '#^Parameter \#1 \$this_year of method LWTV\\This_Year\\Format\\Dead_Characters_Formatter\:\:format_by_show_for_year\(\) expects int, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: plugins/lwtv-plugin/php/this-year/class-display.php
+
+		-
+			message: '#^Parameter \#1 \$this_year of method LWTV\\This_Year\\Format\\New_Shows_Formatter\:\:format_by_country_for_year\(\) expects int, string given\.$#'
+			identifier: argument.type
+			count: 2
+			path: plugins/lwtv-plugin/php/this-year/class-display.php
+
+		-
+			message: '#^Parameter \#1 \$this_year of method LWTV\\This_Year\\Format\\New_Shows_Formatter\:\:format_by_format_for_year\(\) expects int, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: plugins/lwtv-plugin/php/this-year/class-display.php
+
+		-
+			message: '#^PHPDoc tag @param references unknown parameter\: \$characters_on_air$#'
+			identifier: parameter.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/this-year/format/class-dead-characters-formatter.php
+
+		-
+			message: '#^Call to function in_array\(\) with arguments ''canceled''\|''coa''\|''dead''\|''new''\|''soa'', array\{''coa'', ''dead'', ''soa'', ''new'', ''canceled''\} and true will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: plugins/lwtv-plugin/php/this-year/templates/overview.php
+
+		-
+			message: '#^Parameter \#1 \$text of function esc_attr expects string, float given\.$#'
+			identifier: argument.type
+			count: 2
+			path: plugins/lwtv-plugin/php/this-year/templates/overview.php
+
+		-
+			message: '#^Parameter \#1 \$this_year of method LWTV\\This_Year\\Format\\New_Shows_Formatter\:\:format_by_format_for_year\(\) expects int, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: plugins/lwtv-plugin/php/this-year/templates/overview.php
+
+		-
+			message: '#^Variable \$shows_by_name might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: plugins/lwtv-plugin/php/this-year/templates/overview.php
+
+		-
+			message: '#^Parameter \#1 \$post of function get_post_type expects int\|WP_Post\|null, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: plugins/lwtv-plugin/php/wp-cli/cli-check.php
+
+		-
+			message: '#^Parameter \#1 \$post of function get_the_title expects int\|WP_Post, string given\.$#'
+			identifier: argument.type
+			count: 2
+			path: plugins/lwtv-plugin/php/wp-cli/cli-check.php
+
+		-
+			message: '#^Call to function is_null\(\) with mixed will always evaluate to false\.$#'
+			identifier: function.impossibleType
+			count: 1
+			path: plugins/lwtv-plugin/php/wp-cli/cli-generate.php
+
+		-
+			message: '#^Parameter \#1 \$day of method WP_CLI_LWTV_Generate\:\:run_debug_checker\(\) expects array\|null, string given\.$#'
+			identifier: argument.type
+			count: 2
+			path: plugins/lwtv-plugin/php/wp-cli/cli-generate.php
+
+		-
+			message: '#^Parameter \#1 \$otd of method WP_CLI_LWTV_Generate\:\:run_otd\(\) expects array\|null, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: plugins/lwtv-plugin/php/wp-cli/cli-generate.php
+
+		-
+			message: '#^PHPDoc tag @param references unknown parameter\: \$migrate_subtype$#'
+			identifier: parameter.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/wp-cli/cli-migrate.php
+
+		-
+			message: '#^PHPDoc tag @param references unknown parameter\: \$migrate_type$#'
+			identifier: parameter.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/wp-cli/cli-migrate.php
+
+		-
+			message: '#^Function as_schedule_single_action not found\.$#'
+			identifier: function.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/wp-cli/cli-scheduler.php
+
+		-
+			message: '#^Call to function is_array\(\) with array will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: plugins/lwtv-plugin/php/wp-cli/cli-shadow.php
+
+		-
+			message: '#^Function Shadow_Taxonomy\\Core\\get_associated_term not found\.$#'
+			identifier: function.notFound
+			count: 2
+			path: plugins/lwtv-plugin/php/wp-cli/cli-shadow.php
+
+		-
+			message: '#^PHPDoc tag @param has invalid value \(int    post_id Post ID to sync \(optional\)\)\: Unexpected token "post_id", expected variable at offset 126 on line 5$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: plugins/lwtv-plugin/php/wp-cli/cli-shadow.php
+
+		-
+			message: '#^PHPDoc tag @param has invalid value \(string tax what we''re syncing TO\)\: Unexpected token "tax", expected variable at offset 82 on line 4$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: plugins/lwtv-plugin/php/wp-cli/cli-shadow.php
+
+		-
+			message: '#^Access to an undefined property WP_Term\:\:\$object_id\.$#'
+			identifier: property.notFound
+			count: 2
+			path: plugins/lwtv-plugin/php/wp-cli/cli-tvmaze.php
+
+		-
+			message: '#^Strict comparison using \!\=\= between ''0'' and mixed~\(0\|0\.0\|''''\|''0''\|array\{\}\|false\|null\) will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 1
+			path: plugins/lwtv-plugin/php/wp-cli/cli-tvmaze.php
+
+		-
+			message: '#^Call to static method get_engine_settings\(\) on an unknown class SearchWP\\Settings\.$#'
+			identifier: class.notFound
+			count: 1
+			path: searchform.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between ''default'' and ''actors''\|''characters''\|''shows'' will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 1
+			path: searchform.php
+
+		-
+			message: '#^Call to static method get_display_data\(\) on an unknown class SearchWP_Live_Search_Template\.$#'
+			identifier: class.notFound
+			count: 1
+			path: searchwp-live-ajax-search/live-search-results.php
+
+		-
+			message: '#^Call to static method render_no_results_message\(\) on an unknown class SearchWP_Live_Search_Template\.$#'
+			identifier: class.notFound
+			count: 1
+			path: searchwp-live-ajax-search/live-search-results.php
+
+		-
+			message: '#^Function searchwp_live_search not found\.$#'
+			identifier: function.notFound
+			count: 1
+			path: searchwp-live-ajax-search/live-search-results.php
+
+		-
+			message: '#^Call to static method get_engine_settings\(\) on an unknown class SearchWP\\Settings\.$#'
+			identifier: class.notFound
+			count: 1
+			path: searchwp-modal-form/lwtv.php
+
+		-
+			message: '#^Variable \$post might not be defined\.$#'
+			identifier: variable.undefined
+			count: 6
+			path: single-post_type_actors.php
+
+		-
+			message: '#^Binary operation "\." between ''\<h1 class\="facetwp…'' and array results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 1
+			path: taxonomy.php
+
+		-
+			message: '#^Binary operation "\." between array and '' \('' results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 1
+			path: taxonomy.php
+
+		-
+			message: '#^Binary operation "\." between non\-falsy\-string and array results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 1
+			path: taxonomy.php
+
+		-
+			message: '#^Variable \$args might not be defined\.$#'
+			identifier: variable.undefined
+			count: 2
+			path: template-parts/content/front-page-posts.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between 0 and int\<1, max\> will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 1
+			path: template-parts/content/post_type_actors.php
+
+		-
+			message: '#^Variable \$post might not be defined\.$#'
+			identifier: variable.undefined
+			count: 2
+			path: template-parts/content/post_type_characters.php
+
+		-
+			message: '#^Variable \$rip_dates might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: template-parts/content/post_type_characters.php
+
+		-
+			message: '#^Variable \$post might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: template-parts/content/post_type_shows.php
+
+		-
+			message: '#^Parameter \#1 \$args of function the_title_attribute expects array\{before\?\: string, after\?\: string, echo\?\: bool, post\?\: WP_Post\}, ''echo\=0'' given\.$#'
+			identifier: argument.type
+			count: 1
+			path: template-parts/content/single.php
+
+		-
+			message: '#^Offset ''card'' does not exist on string\.$#'
+			identifier: offsetAccess.notFound
+			count: 1
+			path: template-parts/embed/content-post_type_shows.php
+
+		-
+			message: '#^Variable \$station_list might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: template-parts/embed/content-post_type_shows.php
+
+		-
+			message: '#^Parameter \#1 \(array\) of echo cannot be converted to string\.$#'
+			identifier: echo.nonString
+			count: 3
+			path: template-parts/excerpt/characters.php
+
+		-
+			message: '#^Offset ''card'' does not exist on string\.$#'
+			identifier: offsetAccess.notFound
+			count: 1
+			path: template-parts/excerpt/shows.php
+
+		-
+			message: '#^Parameter \#1 \$args of function wp_nav_menu expects array\{menu\?\: int\|string\|WP_Term, menu_class\?\: string, menu_id\?\: string, container\?\: string, container_class\?\: string, container_id\?\: string, container_aria_label\?\: string, fallback_cb\?\: \(callable\(\)\: mixed\)\|false, \.\.\.\}, array\{menu\: ''primary'', theme_location\: ''primary'', depth\: 3, container\: false, menu_class\: ''navbar\-nav justify…'', fallback_cb\: ''wp_page_menu'', walker\: WP_Bootstrap_Navwalker, items_wrap\: ''\<ul id\="%%1\$s" class…''\} given\.$#'
+			identifier: argument.type
+			count: 1
+			path: template-parts/header/navbar.php
+
+		-
+			message: '#^Call to static method get_engine_settings\(\) on an unknown class SearchWP\\Settings\.$#'
+			identifier: class.notFound
+			count: 1
+			path: template-parts/header/searchbox-searchwp.php
+
+		-
+			message: '#^Function searchwp_modal_form_get_template_from_label not found\.$#'
+			identifier: function.notFound
+			count: 1
+			path: template-parts/header/searchbox-searchwp.php
+
+		-
+			message: '#^Function searchwp_modal_form_get_template_hash not found\.$#'
+			identifier: function.notFound
+			count: 1
+			path: template-parts/header/searchbox-searchwp.php
+
+		-
+			message: '#^Parameter \#1 \$tag of function get_tag_link expects int\|object, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: template-parts/overlays/related-articles.php
+
+		-
+			message: '#^Variable \$related in isset\(\) always exists and is not nullable\.$#'
+			identifier: isset.variable
+			count: 1
+			path: template-parts/partials/actors/additional.php
+
+		-
+			message: '#^Parameter \#1 \$array \(array\{gender\: array\{data\: mixed, label\: ''Gender Orientation''\}, sexuality\: array\{data\: mixed, label\: ''Sexual Orientation''\}\}\) to function array_filter does not contain falsy values, the array will always stay the same\.$#'
+			identifier: arrayFilter.same
+			count: 1
+			path: template-parts/partials/actors/gender-sexuality.php
+
+		-
+			message: '#^Offset ''born'' on array\{born\: string, died\?\: string\} in isset\(\) always exists and is not nullable\.$#'
+			identifier: isset.offset
+			count: 1
+			path: template-parts/partials/actors/life.php
+
+		-
+			message: '#^Result of method LWTV\\Plugin\:\:hide_actor_data\(\) \(void\) is used\.$#'
+			identifier: method.void
+			count: 2
+			path: template-parts/partials/actors/life.php
+
+		-
+			message: '#^Result of method LWTV\\Plugin\:\:hide_actor_data\(\) \(void\) is used\.$#'
+			identifier: method.void
+			count: 1
+			path: template-parts/partials/actors/links.php
+
+		-
+			message: '#^Right side of && is always false\.$#'
+			identifier: booleanAnd.rightAlwaysFalse
+			count: 1
+			path: template-parts/partials/actors/links.php
+
+		-
+			message: '#^Ternary operator condition is always true\.$#'
+			identifier: ternary.alwaysTrue
+			count: 1
+			path: template-parts/partials/actors/links.php
+
+		-
+			message: '#^Result of method LWTV\\Plugin\:\:hide_actor_data\(\) \(void\) is used\.$#'
+			identifier: method.void
+			count: 1
+			path: template-parts/partials/actors/social.php
+
+		-
+			message: '#^Right side of && is always true\.$#'
+			identifier: booleanAnd.rightAlwaysTrue
+			count: 1
+			path: template-parts/partials/actors/social.php
+
+		-
+			message: '#^Parameter \#1 \$text of function esc_html expects string, int\<2, max\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: template-parts/partials/characters/actors.php
+
+		-
+			message: '#^Parameter \#1 \(array\) of echo cannot be converted to string\.$#'
+			identifier: echo.nonString
+			count: 1
+			path: template-parts/partials/characters/actors.php
+
+		-
+			message: '#^Negated boolean expression is always false\.$#'
+			identifier: booleanNot.alwaysFalse
+			count: 1
+			path: template-parts/partials/characters/gender-sexuality.php
+
+		-
+			message: '#^Parameter \#2 \$array of function implode expects array\<string\>, list\<int, array\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: template-parts/partials/characters/gender-sexuality.php
+
+		-
+			message: '#^Parameter \#1 \$text of function esc_html expects string, int\<2, max\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: template-parts/partials/characters/shows.php
+
+		-
+			message: '#^Parameter \#1 \(array\) of echo cannot be converted to string\.$#'
+			identifier: echo.nonString
+			count: 1
+			path: template-parts/partials/related-articles.php
+
+		-
+			message: '#^Call to function is_numeric\(\) with int will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 3
+			path: template-parts/partials/shows/card-ratings.php
+
+		-
+			message: '#^Variable \$thumb_icon might not be defined\.$#'
+			identifier: variable.undefined
+			count: 2
+			path: template-parts/partials/shows/card-worthit.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between ''0'' and mixed~\(0\|0\.0\|''''\|''0''\|array\{\}\|false\|null\) will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 1
+			path: template-parts/partials/shows/characters.php
+
+		-
+			message: '#^Variable \$args might not be defined\.$#'
+			identifier: variable.undefined
+			count: 2
+			path: template-parts/partials/shows/characters.php
+
+		-
+			message: '#^Function km_rpbt_no_posts_found_notice not found\.$#'
+			identifier: function.notFound
+			count: 1
+			path: template-parts/related-posts/lwtv-cards.php

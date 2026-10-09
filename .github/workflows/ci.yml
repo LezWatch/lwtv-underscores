@@ -1,0 +1,165 @@
+name: CI
+
+on:
+  push:
+    branches: [development, production]
+  pull_request:
+    branches: [development, production]
+    # `edited` covers a changed base branch: the gitleaks range depends on the base, so a
+    # retargeted PR must be re-scanned. It also fires on title/body edits; those re-run in
+    # full on purpose, because a skipped job reports "skipped", which branch protection
+    # counts as passing and would paper over a red check on the same commit.
+    types: [opened, synchronize, reopened, edited]
+
+# Build scripts and tests run PR code, so the token they could reach stays read-only.
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  # Until all pinned actions ship Node 24 runtimes, force JS actions onto Node 24.
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  lint-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Setup Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+
+      - name: Setup PHP and Composer
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # 2.37.2
+        with:
+          php-version: '8.5'
+          tools: composer:v2
+          coverage: none
+
+      # `npm ci`, not `npm install`: it fails if package.json and package-lock.json
+      # disagree instead of quietly re-resolving, so every new package lands in the
+      # lockfile the risk tier checks. Its preinstall hook runs `composer install`, which
+      # installs from composer.lock (and warns if composer.json has drifted from it).
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Composer lockfiles match manifests
+        run: |
+          composer validate --no-check-publish --no-check-all
+          composer validate --no-check-publish --no-check-all --working-dir=plugins/lwtv-plugin
+
+      # PHPCS (WPCS), ESLint, Stylelint.
+      - name: Lint
+        run: npm run lint
+
+      - name: PHPStan
+        run: composer analyse -- --no-progress --error-format=github
+
+      - name: PHPUnit
+        run: npm test
+
+      # `npm run build` minus build:composer, which runs `composer update` and would
+      # resolve new versions instead of testing the ones in the lockfile.
+      # The SVG sprite URL is baked into the CSS per environment, so development builds
+      # for staging and everything else for production.
+      - name: Build
+        env:
+          SVG_SPRITE_ENV: ${{ (github.base_ref || github.ref_name) == 'development' && 'staging' || 'production' }}
+        run: |
+          echo "Building for $SVG_SPRITE_ENV"
+          npm run build:assets
+          npm run build:workspace
+          npm run build:mover
+
+      # The gate's own logic: a regression here would otherwise merge with every check
+      # green. These run the PR's own code, so they live in this job, which runs PR code
+      # anyway, and never in `security`: its scanners read .gitleaks.toml from disk, and
+      # PR code running first could rewrite it.
+      - name: Gate script tests
+        run: python3 -m unittest discover -s .github/scripts -p 'test_*.py' -v
+
+      # Pushes only (never PRs): this is what development.yaml / production.yaml
+      # ship, once the whole CI run passes. The deploy rsync's EXCLUDE list decides what
+      # reaches the server; dropping dependency and cache folders here just keeps the
+      # artifact small. Hidden files are left out, as they always were.
+      - name: Upload theme artifact
+        if: github.event_name == 'push'
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: theme-files
+          retention-days: 7
+          if-no-files-found: error
+          path: |
+            .
+            !**/node_modules/
+            !vendor/
+            !plugins/*/vendor/
+            !_build_scripts/webpackdist/
+            !_build_scripts/tmp-icons/
+
+      - name: Upload cron artifact
+        if: github.event_name == 'push'
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: cron-files
+          retention-days: 7
+          if-no-files-found: error
+          path: cron/
+
+  # Runs no PR code: only the scanners, over the PR's files as data.
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Setup PHP and Composer
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # 2.37.2
+        with:
+          php-version: '8.5'
+          tools: composer:v2
+          coverage: none
+
+      # --locked audits composer.lock without installing anything; --no-plugins and
+      # --no-scripts keep composer from running any code the PR ships.
+      # --abandoned=report: an abandoned package is worth knowing about, not a red build.
+      - name: composer audit
+        run: |
+          composer audit --locked --no-plugins --no-scripts --abandoned=report
+          composer audit --locked --no-plugins --no-scripts --abandoned=report --working-dir=plugins/lwtv-plugin
+
+      # The root lockfile covers both workspaces. --package-lock-only reads the lockfile
+      # and installs nothing. Runtime dependencies only, and only high/critical, so a
+      # moderate advisory deep in webpack tooling doesn't block a merge; OSV-Scanner
+      # still reports those on the weekly scan.
+      - name: npm audit
+        run: npm audit --package-lock-only --omit=dev --audit-level=high
+
+      # CLI, not gitleaks-action: the action needs a paid license on organisation repos.
+      - name: Install gitleaks
+        env:
+          GITLEAKS_VERSION: 8.30.1
+          GITLEAKS_SHA256: 551f6fc83ea457d62a0d98237cbad105af8d557003051f41f3e7ca7b3f2470eb
+        run: |
+          curl -sSfL -o gitleaks.tar.gz \
+            "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz"
+          echo "${GITLEAKS_SHA256}  gitleaks.tar.gz" | sha256sum -c -
+          tar -xzf gitleaks.tar.gz gitleaks
+          sudo mv gitleaks /usr/local/bin/gitleaks
+          rm gitleaks.tar.gz
+
+      # Scan only the commits this PR (or push) adds, not all of history.
+      - name: gitleaks
+        env:
+          RANGE: ${{ github.event_name == 'pull_request' && format('{0}..{1}', github.event.pull_request.base.sha, github.event.pull_request.head.sha) || format('{0}..{1}', github.event.before, github.sha) }}
+        run: gitleaks git --config .gitleaks.toml --log-opts="$RANGE" --redact --no-banner --exit-code 1 .

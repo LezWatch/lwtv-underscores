@@ -21,7 +21,7 @@ $gen_data  = ( is_array( $gen_raw ) && ! empty( $gen_raw ) ) ? (array) reset( $g
 $gen_total = (int) $character_count;
 
 $gen_cis      = isset( $gen_data['cisgender'] ) ? (int) $gen_data['cisgender']['count'] : 0;
-$gen_cis_name = isset( $gen_data['cisgender'] ) ? $gen_data['cisgender']['name'] : __( 'Cisgender', 'lwtv' );
+$gen_cis_name = isset( $gen_data['cisgender'] ) ? $gen_data['cisgender']['name'] : __( 'Cisgender', 'lwtv-underscores' );
 unset( $gen_data['cisgender'] );
 
 // Every tracked-and-populated identity besides cisgender, +1 for cisgender
@@ -40,7 +40,7 @@ if ( $gen_tracked_count > 0 ) {
 	$gen_pullstats[] = array(
 		'icon'   => 'tag.svg',
 		'number' => number_format_i18n( $gen_tracked_count ),
-		'label'  => __( 'Distinct gender identities tracked.', 'lwtv' ),
+		'label'  => __( 'Distinct gender identities tracked.', 'lwtv-underscores' ),
 	);
 }
 
@@ -49,8 +49,8 @@ if ( $gen_total > 0 ) {
 	$gen_pullstats[] = array(
 		'icon'   => 'venus-double.svg',
 		/* translators: %s: percentage of characters who are not cisgender (one decimal). */
-		'number' => sprintf( __( '%s%%', 'lwtv' ), number_format_i18n( $gen_noncis_pct, 1 ) ),
-		'label'  => __( 'Percentage of characters who are not cisgender.', 'lwtv' ),
+		'number' => sprintf( __( '%s%%', 'lwtv-underscores' ), number_format_i18n( $gen_noncis_pct, 1 ) ),
+		'label'  => __( 'Percentage of characters who are not cisgender.', 'lwtv-underscores' ),
 	);
 }
 
@@ -75,7 +75,7 @@ if ( '' !== $gen_rarest_slug && isset( $gen_firsts[ $gen_rarest_slug ] ) ) {
 		'icon'   => 'calendar-alt.svg',
 		'number' => (string) $gen_firsts[ $gen_rarest_slug ]['year'],
 		/* translators: %s: the rarest tracked gender identity's name. */
-		'label'  => sprintf( __( 'How far back our rarest tracked identity (%s) goes.', 'lwtv' ), $gen_firsts[ $gen_rarest_slug ]['name'] ),
+		'label'  => sprintf( __( 'How far back our rarest tracked identity (%s) goes.', 'lwtv-underscores' ), $gen_firsts[ $gen_rarest_slug ]['name'] ),
 	);
 }
 
@@ -129,7 +129,7 @@ foreach ( $gen_data as $gen_row ) {
 $gen_other = max( 0, $gen_total - $gen_named );
 if ( $gen_other > 0 ) {
 	$gen_segments[] = array(
-		'label' => __( 'Other', 'lwtv' ),
+		'label' => __( 'Other', 'lwtv-underscores' ),
 		'count' => $gen_other,
 		'pct'   => ( $gen_total > 0 ) ? round( ( $gen_other / $gen_total ) * 100, 1 ) : 0,
 		'class' => 'palegreen',
@@ -139,11 +139,11 @@ if ( $gen_other > 0 ) {
 $donut = array(
 	'segments'    => $gen_segments,
 	'center'      => $gen_cis,
-	'center_sub'  => __( 'cisgender', 'lwtv' ),
-	'eyebrow'     => __( 'Gender Identity', 'lwtv' ),
+	'center_sub'  => __( 'cisgender', 'lwtv-underscores' ),
+	'eyebrow'     => __( 'Gender Identity', 'lwtv-underscores' ),
 	/* translators: %s: a fraction phrase like "Over three quarters". */
-	'headline'    => sprintf( __( '%s are cisgender', 'lwtv' ), lwtv_stats_fraction_phrase( ( $gen_total > 0 ) ? round( ( $gen_cis / $gen_total ) * 100, 1 ) : 0 ) ),
-	'description' => __( 'Cisgender characters dominate, but the database tracks a growing range of trans, non-binary and genderqueer identities.', 'lwtv' ),
+	'headline'    => sprintf( __( '%s are cisgender', 'lwtv-underscores' ), lwtv_stats_fraction_phrase( ( $gen_total > 0 ) ? round( ( $gen_cis / $gen_total ) * 100, 1 ) : 0 ) ),
+	'description' => __( 'Cisgender characters dominate, but the database tracks a growing range of trans, non-binary and genderqueer identities.', 'lwtv-underscores' ),
 );
 
 // phpcs:ignore PEAR.Files.IncludingFile.UseRequire
@@ -155,7 +155,7 @@ $gen_decade_buckets = $gen_identity_trend->generate_decades( 'lez_gender', 20 );
 
 if ( ! empty( $gen_decade_buckets ) ) :
 	?>
-	<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'Gender Mix by Decade', 'lwtv' ); ?></p>
+	<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'Gender Mix by Decade', 'lwtv-underscores' ); ?></p>
 	<div class="lwtv-decade-row">
 		<?php foreach ( $gen_decade_buckets as $gen_decade_bucket ) : ?>
 			<?php
@@ -181,11 +181,11 @@ if ( ! empty( $gen_decade_buckets ) ) :
 			if ( 'before' === $gen_decade_bucket['type'] ) {
 				$gen_decade_label = $gen_decade_bucket['to']
 					/* translators: %d: the decade this bucket ends before, e.g. "Before 1980s". */
-					? sprintf( __( 'Before %1$d<span class="lwtv-decade-suffix">s</span>', 'lwtv' ), $gen_decade_bucket['to'] )
-					: __( 'Earliest years', 'lwtv' );
+					? sprintf( __( 'Before %1$d<span class="lwtv-decade-suffix">s</span>', 'lwtv-underscores' ), $gen_decade_bucket['to'] )
+					: __( 'Earliest years', 'lwtv-underscores' );
 			} else {
 				/* translators: %d: a decade, e.g. "1980s". */
-				$gen_decade_label = sprintf( __( '%1$d<span class="lwtv-decade-suffix">s</span>', 'lwtv' ), $gen_decade_bucket['from'] );
+				$gen_decade_label = sprintf( __( '%1$d<span class="lwtv-decade-suffix">s</span>', 'lwtv-underscores' ), $gen_decade_bucket['from'] );
 			}
 
 			$donut = array(
@@ -206,7 +206,7 @@ if ( ! empty( $gen_decade_buckets ) ) :
 					<?php
 					printf(
 						/* translators: %s: number of characters first on screen in this bucket. */
-						esc_html__( '%s characters', 'lwtv' ),
+						esc_html__( '%s characters', 'lwtv-underscores' ),
 						esc_html( number_format_i18n( $gen_decade_bucket['total'] ) )
 					);
 					?>
@@ -223,7 +223,7 @@ if ( ! empty( $gen_firsts ) ) :
 	$gen_firsts_sorted = $gen_firsts;
 	uasort( $gen_firsts_sorted, static fn( $a, $b ) => $a['year'] <=> $b['year'] );
 	?>
-	<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'Firsts', 'lwtv' ); ?></p>
+	<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'Firsts', 'lwtv-underscores' ); ?></p>
 	<div class="lwtv-pullstats lwtv-pullstats--three lwtv-statcards lwtv-bars--characters">
 		<?php foreach ( $gen_firsts_sorted as $gen_first ) : ?>
 			<div class="lwtv-statcard lwtv-statcard--firsts">

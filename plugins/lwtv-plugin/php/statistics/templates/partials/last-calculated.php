@@ -27,11 +27,11 @@ $lwtv_lastcalc_time    = $lwtv_lastcalc_time ?? null;
 	if ( 'volatile' === $lwtv_lastcalc_variant && ! empty( $lwtv_lastcalc_time ) ) {
 		printf(
 			/* translators: %s: absolute date and time the statistics were last recalculated. */
-			esc_html__( 'This year is still in progress, and data will change as we continue to document everything. Last recalculated %s ET.', 'lwtv' ),
+			esc_html__( 'This year is still in progress, and data will change as we continue to document everything. Last recalculated %s ET.', 'lwtv-underscores' ),
 			esc_html( wp_date( get_option( 'date_format' ) . ' \a\t ' . get_option( 'time_format' ), $lwtv_lastcalc_time ) )
 		);
 	} else {
-		esc_html_e( 'Statistics are updated daily.', 'lwtv' );
+		esc_html_e( 'Statistics are updated daily.', 'lwtv-underscores' );
 	}
 	?>
 	</p>

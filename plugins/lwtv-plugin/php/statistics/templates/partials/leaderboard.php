@@ -26,9 +26,9 @@ $lb_shown = array_slice( $lb_rows, 0, 10, true );
 $lb_rank  = 0;
 $lb_base  = $leaderboard_base ?? '/statistics/nations/';
 $lb_qvar  = $leaderboard_qvar ?? 'nation';
-$lb_title = $leaderboard_title ?? __( 'Nations by number of shows', 'lwtv' );
-$lb_col   = $leaderboard_col ?? __( 'Nation', 'lwtv' );
-$lb_items = $leaderboard_items ?? __( 'nations', 'lwtv' );
+$lb_title = $leaderboard_title ?? __( 'Nations by number of shows', 'lwtv-underscores' );
+$lb_col   = $leaderboard_col ?? __( 'Nation', 'lwtv-underscores' );
+$lb_items = $leaderboard_items ?? __( 'nations', 'lwtv-underscores' );
 $lb_isvg  = $leaderboard_icon_svg ?? 'globe.svg';
 $lb_ifa   = $leaderboard_icon_fa ?? 'svg-globe';
 ?>
@@ -43,7 +43,7 @@ $lb_ifa   = $leaderboard_icon_fa ?? 'svg-globe';
 				<?php
 				printf(
 					/* translators: 1: count, 2: plural noun (nations/stations). */
-					esc_html__( 'Top 10 of %1$s %2$s with shows.', 'lwtv' ),
+					esc_html__( 'Top 10 of %1$s %2$s with shows.', 'lwtv-underscores' ),
 					esc_html( number_format_i18n( $lb_total ) ),
 					esc_html( $lb_items )
 				);
@@ -55,10 +55,10 @@ $lb_ifa   = $leaderboard_icon_fa ?? 'svg-globe';
 		<div class="lwtv-nations-lb-head">
 			<span></span>
 			<span><?php echo esc_html( $lb_col ); ?></span>
-			<span><?php esc_html_e( 'Share of all shows', 'lwtv' ); ?></span>
-			<span class="lwtv-nations-lb-num"><?php esc_html_e( 'Shows', 'lwtv' ); ?></span>
-			<span class="lwtv-nations-lb-num"><?php esc_html_e( 'Chars', 'lwtv' ); ?></span>
-			<span class="lwtv-nations-lb-num"><?php esc_html_e( 'Dead', 'lwtv' ); ?></span>
+			<span><?php esc_html_e( 'Share of all shows', 'lwtv-underscores' ); ?></span>
+			<span class="lwtv-nations-lb-num"><?php esc_html_e( 'Shows', 'lwtv-underscores' ); ?></span>
+			<span class="lwtv-nations-lb-num"><?php esc_html_e( 'Chars', 'lwtv-underscores' ); ?></span>
+			<span class="lwtv-nations-lb-num"><?php esc_html_e( 'Dead', 'lwtv-underscores' ); ?></span>
 		</div>
 		<?php
 		foreach ( $lb_shown as $lb_slug => $lb_data ) {

@@ -75,7 +75,7 @@ class Affected_Shows {
 				<?php
 				printf(
 					/* translators: %d: number of shows. */
-					esc_html( _n( '%d show', '%d shows', $count, 'lwtv' ) ),
+					esc_html( _n( '%d show', '%d shows', $count, 'lwtv-underscores' ) ),
 					absint( $count )
 				);
 				?>
@@ -113,7 +113,7 @@ class Affected_Shows {
 			$title = get_the_title( $id );
 			$title = ( '' !== trim( (string) $title ) ) ? (string) $title : sprintf(
 				/* translators: %d: post ID. */
-				__( 'Show #%d', 'lwtv' ),
+				__( 'Show #%d', 'lwtv-underscores' ),
 				$id
 			);
 			$edit = get_edit_post_link( $id );

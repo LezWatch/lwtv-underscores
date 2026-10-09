@@ -1,73 +1,85 @@
 name: 'Deploy Theme to Production'
 
+# Deploys what CI built and tested, never a fresh build. CI (ci.yml) lints, tests and
+# builds every push to production and uploads the result; this runs when that CI run
+# finishes, and only ships it if every CI job passed.
+#
+# workflow_run always runs this file as it exists on the DEFAULT branch (production), so
+# edits here take effect only once they're merged to production, even for staging.
+#
+# It carries deploy secrets, so it only accepts a CI run that was a push to production
+# in this repository: never a PR, and never a fork.
 on:
-  push:
-    branches: [ production ]
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+    branches: [production]
+
+permissions:
+  contents: read
+  actions: read # download the artifact from the CI run
+
+# One deploy at a time; a newer one waits instead of racing the rsync.
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
   # =======================================
-  # JOB 1: Build the theme files
+  # JOB 1: Is this CI run deployable, and still current?
   # =======================================
-  build:
+  check:
+    if: >-
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'push' &&
+      github.event.workflow_run.head_branch == 'production' &&
+      github.event.workflow_run.head_repository.full_name == github.repository
     runs-on: ubuntu-latest
+    outputs:
+      current: ${{ steps.tip.outputs.current }}
     steps:
-      - name: Do a git checkout including submodules
-        uses: actions/checkout@v7
-        with:
-          submodules: true
-
-      - name: Setup Node
-        uses: actions/setup-node@v7
-        with:
-          node-version-file: '.nvmrc'
-          cache: 'npm'
-
-      - name: Setup PHP and Composer
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.5'
-          tools: composer:v2
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Lint
-        run: npm run lint
-
-      - name: Tests
-        run: npm run test
-
-      - name: Build for Production
-        run: npm run build
-
-      - name: Upload theme artifact
-        uses: actions/upload-artifact@v7
-        with:
-          name: theme-files-prod
-          path: . # Uploads the entire workspace
-
-      - name: Upload cron artifact
-        uses: actions/upload-artifact@v7
-        with:
-          name: cron-files-prod
-          path: cron/
+      # If production has moved on since this commit, a newer CI run will deploy the newer
+      # commit. Skipping here stops an older run that finished late from overwriting it.
+      - name: Commit is still the tip of production
+        id: tip
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          SHA: ${{ github.event.workflow_run.head_sha }}
+        run: |
+          TIP=$(gh api "repos/$GH_REPO/branches/production" --jq .commit.sha)
+          if [ "$TIP" = "$SHA" ]; then
+            echo "current=true" >> "$GITHUB_OUTPUT"
+            echo "Deploying $SHA."
+          else
+            echo "current=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::production is at $TIP now, not $SHA; skipping. The newer CI run deploys."
+          fi
 
   # ========================================================
   # JOB 2: Deploy the built files to the server
   # ========================================================
   deploy:
     runs-on: ubuntu-latest
-    needs: build # This ensures the 'build' job finishes first
+    needs: check
+    if: needs.check.outputs.current == 'true'
     steps:
       - name: Download theme artifact
-        uses: actions/download-artifact@v8
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
-          name: theme-files-prod
+          name: theme-files
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ github.token }}
 
       - name: Download cron artifact
-        uses: actions/download-artifact@v8
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
-          name: cron-files-prod
+          name: cron-files
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ github.token }}
           path: cron/ # Specify path to restore directory structure
 
       - name: Verify Folder Contents
@@ -83,7 +95,7 @@ jobs:
           REMOTE_HOST: ${{ secrets.LWTV_HOST }}
           REMOTE_USER: ${{ secrets.LWTV_USER }}
           TARGET: /home/${{ secrets.LWTV_USER }}/${{ secrets.LWTV_DOMAIN }}/wp-content/themes/lwtv-underscores
-          EXCLUDE: " /_build_scripts/, /.cursor/, /.git/, /.github/, /.githooks/, /.sass-cache/, /.vscode/, /cron/, /docs/, /node_modules/, /scss/, /tests/, /vendor/, webpack.config.js, .browserslistrc, .gitignore, .npmrc, .nvmrc, .ruby-version, composer.json, composer.lock, package-lock.json, package.json, phpcs.xml.dist, /plugins/lwtv-plugin/node_modules/, /plugins/lwtv-plugin/vendor/, /plugins/lwtv-plugin/.gitignore, /plugins/lwtv-plugin/composer.json, /plugins/lwtv-plugin/composer.lock, /plugins/lwtv-plugin/package-lock.json, /plugins/lwtv-plugin/package.json, /plugins/lwtv-plugin/php/blocks/node_modules/, /plugins/lwtv-plugin/php/blocks/.gitignore, /plugins/lwtv-plugin/php/blocks/package-lock.json, /plugins/lwtv-plugin/php/blocks/package.json, /plugins/lwtv-plugin/php/blocks/.eslint, /plugins/lwtv-plugin/php/src/"
+          EXCLUDE: " /_build_scripts/, /.claude/, /.gemini/, /.git/, /.github/, /.githooks/, /.phpunit.cache/, /.sass-cache/, /.superpowers/, /.vscode/, /cron/, /docs/, /node_modules/, /scss/, /tests/, /vendor/, webpack.config.js, .browserslistrc, .gitignore, .gitleaks.toml, .npmrc, .nvmrc, .ruby-version, .stylelintignore, .stylelintrc.json, composer.json, composer.lock, package-lock.json, eslint.config.js, package.json, phpcs.xml.dist, phpstan-baseline.neon, phpstan.neon.dist, phpunit.xml.dist, /plugins/lwtv-plugin/node_modules/, /plugins/lwtv-plugin/vendor/, /plugins/lwtv-plugin/.gitignore, /plugins/lwtv-plugin/composer.json, /plugins/lwtv-plugin/composer.lock, /plugins/lwtv-plugin/package-lock.json, /plugins/lwtv-plugin/package.json, /plugins/lwtv-plugin/php/blocks/node_modules/, /plugins/lwtv-plugin/php/blocks/.gitignore, /plugins/lwtv-plugin/php/blocks/package-lock.json, /plugins/lwtv-plugin/php/blocks/package.json, /plugins/lwtv-plugin/php/blocks/.eslint, /plugins/lwtv-plugin/php/src/"
 
       - name: Deploy Cron to Production Server
         uses: easingthemes/ssh-deploy@2cc5b27bf3029d0455dd5e09fe02633904031447 # v6.0.3

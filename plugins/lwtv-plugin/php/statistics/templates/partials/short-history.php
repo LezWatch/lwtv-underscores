@@ -40,7 +40,7 @@ $sh_rows  = (array) ( $short_history['rows'] ?? array() );
 						<?php
 						printf(
 							/* translators: %s: the show score (0–100). */
-							esc_html__( 'Score %s', 'lwtv' ),
+							esc_html__( 'Score %s', 'lwtv-underscores' ),
 							esc_html( number_format_i18n( (int) $sh_row['score'] ) )
 						);
 						?>

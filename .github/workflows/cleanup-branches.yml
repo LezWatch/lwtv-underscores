@@ -1,0 +1,59 @@
+name: Delete merged branch
+
+# Replaces GitHub's "Automatically delete head branches" setting, which deletes the head
+# branch of ANY merged PR. Here a branch is deleted only when its PR merges into
+# production, so a feature branch survives being merged into development for testing.
+# Dependabot targets production too, so its branches are cleaned up the same way.
+#
+# Turn OFF Settings → General → Pull Requests → "Automatically delete head branches",
+# or it will still delete branches on every merge.
+
+on:
+  pull_request:
+    types: [closed]
+    branches: [production]
+
+permissions:
+  contents: write
+  pull-requests: read
+
+jobs:
+  delete:
+    # Merged PRs only, from this repo (a fork's branch isn't ours to delete, and fork runs
+    # get a read-only token anyway).
+    if: >-
+      github.event.pull_request.merged == true &&
+      github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+      BRANCH: ${{ github.event.pull_request.head.ref }}
+      NUMBER: ${{ github.event.pull_request.number }}
+    steps:
+      - name: Delete head branch
+        run: |
+          case "$BRANCH" in
+            development|production)
+              echo "Never deleting long-lived branch $BRANCH."
+              exit 0
+              ;;
+          esac
+
+          # Deleting a branch closes every open PR that uses it as its head, so leave it
+          # alone while another one is still open.
+          OPEN=$(gh api "repos/$GH_REPO/pulls?state=open&head=${GH_REPO%%/*}:$BRANCH" --jq 'length')
+          if [ "$OPEN" != "0" ]; then
+            echo "$BRANCH is still the head of $OPEN open PR(s); not deleting."
+            exit 0
+          fi
+
+          # Already gone (deleted by hand, or by Dependabot) is fine.
+          if gh api -X DELETE "repos/$GH_REPO/git/refs/heads/$BRANCH" 2>err.txt; then
+            echo "Deleted $BRANCH after #$NUMBER merged."
+          elif grep -q "Reference does not exist" err.txt; then
+            echo "$BRANCH was already deleted."
+          else
+            cat err.txt
+            exit 1
+          fi

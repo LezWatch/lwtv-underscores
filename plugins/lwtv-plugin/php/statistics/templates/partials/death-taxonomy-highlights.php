@@ -44,7 +44,7 @@ if ( $dtx_total_dead > 0 ) {
 	$dtx_highlights[] = array(
 		'icon'   => 'skull.svg',
 		'number' => number_format_i18n( $dtx_total_dead ),
-		'label'  => __( 'On-screen queer deaths recorded across every network and country.', 'lwtv' ),
+		'label'  => __( 'On-screen queer deaths recorded across every network and country.', 'lwtv-underscores' ),
 	);
 }
 
@@ -54,9 +54,9 @@ if ( $dtx_total_terms > 0 ) {
 	$dtx_highlights[] = array(
 		'icon'   => 'chart-pie.svg',
 		/* translators: %s: percentage of tracked terms with a recorded death (one decimal). */
-		'number' => sprintf( __( '%s%%', 'lwtv' ), number_format_i18n( $dtx_death_pct, 1 ) ),
+		'number' => sprintf( __( '%s%%', 'lwtv-underscores' ), number_format_i18n( $dtx_death_pct, 1 ) ),
 		/* translators: 1: how many have a recorded death, 2: total tracked, 3: 'countries' or 'networks'. */
-		'label'  => sprintf( __( 'Of %3$s have at least one recorded on-screen death (%1$s of %2$s).', 'lwtv' ), number_format_i18n( $dtx_terms_with_death ), number_format_i18n( $dtx_total_terms ), $dtx_noun_plural ),
+		'label'  => sprintf( __( 'Of %3$s have at least one recorded on-screen death (%1$s of %2$s).', 'lwtv-underscores' ), number_format_i18n( $dtx_terms_with_death ), number_format_i18n( $dtx_total_terms ), $dtx_noun_plural ),
 	);
 }
 
@@ -64,9 +64,9 @@ if ( ! empty( $dtx_deadliest ) ) {
 	$dtx_highlights[] = array(
 		'icon'   => 'chart-bar.svg',
 		/* translators: %s: the highest death rate found among qualifying terms (one decimal). */
-		'number' => sprintf( __( '%s%%', 'lwtv' ), number_format_i18n( $dtx_deadliest['pct'], 1 ) ),
+		'number' => sprintf( __( '%s%%', 'lwtv-underscores' ), number_format_i18n( $dtx_deadliest['pct'], 1 ) ),
 		/* translators: 1: 'countries' or 'networks', 2: minimum tracked-character count to qualify. */
-		'label'  => sprintf( __( 'Of characters die — the highest death rate among %1$s with %2$d+ characters:', 'lwtv' ), $dtx_noun_plural, \LWTV\Statistics\Build\Taxonomy_Death_Leaders::MIN_CHARS_FOR_RATE ),
+		'label'  => sprintf( __( 'Of characters die — the highest death rate among %1$s with %2$d+ characters:', 'lwtv-underscores' ), $dtx_noun_plural, \LWTV\Statistics\Build\Taxonomy_Death_Leaders::MIN_CHARS_FOR_RATE ),
 		'url'    => site_url( $dtx_url_base . $dtx_deadliest['slug'] ),
 		'name'   => $dtx_deadliest['name'],
 	);
@@ -74,7 +74,7 @@ if ( ! empty( $dtx_deadliest ) ) {
 
 if ( ! empty( $dtx_highlights ) ) {
 	?>
-	<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'Standout Numbers', 'lwtv' ); ?></p>
+	<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'Standout Numbers', 'lwtv-underscores' ); ?></p>
 	<div class="lwtv-pullstats lwtv-pullstats--three lwtv-statcards lwtv-bars--death">
 		<?php
 		foreach ( $dtx_highlights as $dtx_highlight ) {

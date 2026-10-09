@@ -543,18 +543,18 @@ class Watch_Hosts {
 		$name = Watch_Host_Names::sanitize_name( $name );
 
 		if ( '' === $host ) {
-			return new \WP_Error( 'lwtv_no_host', __( 'No host was supplied.', 'lwtv' ) );
+			return new \WP_Error( 'lwtv_no_host', __( 'No host was supplied.', 'lwtv-underscores' ) );
 		}
 
 		if ( '' === $name ) {
-			return new \WP_Error( 'lwtv_no_name', __( 'A provider name is required.', 'lwtv' ) );
+			return new \WP_Error( 'lwtv_no_name', __( 'A provider name is required.', 'lwtv-underscores' ) );
 		}
 
 		if ( self::term_for( $host ) ) {
 			return new \WP_Error(
 				'lwtv_host_registered',
 				/* translators: %s: hostname. */
-				sprintf( __( '%s already resolves to a provider term.', 'lwtv' ), $host )
+				sprintf( __( '%s already resolves to a provider term.', 'lwtv-underscores' ), $host )
 			);
 		}
 
@@ -657,13 +657,13 @@ class Watch_Hosts {
 		$host = Host_Name::normalise( $host );
 
 		if ( '' === $host ) {
-			return new \WP_Error( 'lwtv_no_host', __( 'No host was supplied.', 'lwtv' ) );
+			return new \WP_Error( 'lwtv_no_host', __( 'No host was supplied.', 'lwtv-underscores' ) );
 		}
 
 		$term = get_term( $term_id, Theme_Ways_To_Watch::TAXONOMY );
 
 		if ( ! $term instanceof \WP_Term ) {
-			return new \WP_Error( 'lwtv_no_term', __( 'That provider term does not exist.', 'lwtv' ) );
+			return new \WP_Error( 'lwtv_no_term', __( 'That provider term does not exist.', 'lwtv-underscores' ) );
 		}
 
 		$current = self::term_for( $host );
@@ -677,7 +677,7 @@ class Watch_Hosts {
 				'lwtv_host_registered',
 				sprintf(
 					/* translators: 1: hostname, 2: provider name. */
-					__( '%1$s already resolves to “%2$s”. Remove it there first if it belongs here instead.', 'lwtv' ),
+					__( '%1$s already resolves to “%2$s”. Remove it there first if it belongs here instead.', 'lwtv-underscores' ),
 					$host,
 					$current->name
 				)
@@ -702,7 +702,7 @@ class Watch_Hosts {
 	 */
 	public static function merge_terms( int $keep_id, int $drop_id ) {
 		if ( $keep_id === $drop_id ) {
-			return new \WP_Error( 'lwtv_same_term', __( 'Those are the same term.', 'lwtv' ) );
+			return new \WP_Error( 'lwtv_same_term', __( 'Those are the same term.', 'lwtv-underscores' ) );
 		}
 
 		$keep = get_term( $keep_id, Theme_Ways_To_Watch::TAXONOMY );
@@ -710,7 +710,7 @@ class Watch_Hosts {
 
 		foreach ( array( $keep, $drop ) as $term ) {
 			if ( ! $term instanceof \WP_Term ) {
-				return new \WP_Error( 'lwtv_no_term', __( 'One of those provider terms does not exist.', 'lwtv' ) );
+				return new \WP_Error( 'lwtv_no_term', __( 'One of those provider terms does not exist.', 'lwtv-underscores' ) );
 			}
 		}
 

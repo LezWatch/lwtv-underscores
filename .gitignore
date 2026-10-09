@@ -70,3 +70,7 @@ debug.log
 *.asf
 *.wmv
 *.avi
+
+## Python (gate scripts in .github/scripts/)
+__pycache__/
+*.pyc

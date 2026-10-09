@@ -80,7 +80,7 @@ class Donut_Segments {
 		$other = max( 0, $total - $named );
 		if ( $other > 0 ) {
 			$segments[] = array(
-				'label' => __( 'Other', 'lwtv' ),
+				'label' => __( 'Other', 'lwtv-underscores' ),
 				'count' => $other,
 				'pct'   => ( $total > 0 ) ? round( ( $other / $total ) * 100, 1 ) : 0,
 				'class' => 'grey',

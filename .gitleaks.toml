@@ -1,0 +1,7 @@
+# gitleaks config for CI (.github/workflows/ci.yml, security job).
+# Starts from gitleaks' built-in rules. This file is on the high-risk list, so a PR
+# can't quietly add an allowlist entry for the secret it's leaking.
+title = "LWTV gitleaks config"
+
+[extend]
+useDefault = true

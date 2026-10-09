@@ -22,44 +22,44 @@ $stats_cards = array(
 	array(
 		'type'    => 'shows',
 		'class'   => 'shows',
-		'label'   => __( 'Shows', 'lwtv' ),
+		'label'   => __( 'Shows', 'lwtv-underscores' ),
 		'count'   => $stats_shows,
-		'caption' => __( 'TV series & films', 'lwtv' ),
+		'caption' => __( 'TV series & films', 'lwtv-underscores' ),
 		'svg'     => 'tv.svg',
 		'icon'    => 'svg-television',
 	),
 	array(
 		'type'    => 'characters',
 		'class'   => 'characters',
-		'label'   => __( 'Characters', 'lwtv' ),
+		'label'   => __( 'Characters', 'lwtv-underscores' ),
 		'count'   => $stats_characters,
-		'caption' => __( 'Characters tracked since 2014', 'lwtv' ),
+		'caption' => __( 'Characters tracked since 2014', 'lwtv-underscores' ),
 		'svg'     => 'user.svg',
 		'icon'    => 'svg-user',
 	),
 	array(
 		'type'    => 'actors',
 		'class'   => 'actors',
-		'label'   => __( 'Actors', 'lwtv' ),
+		'label'   => __( 'Actors', 'lwtv-underscores' ),
 		'count'   => $stats_actors,
-		'caption' => __( 'Who played them', 'lwtv' ),
+		'caption' => __( 'Who played them', 'lwtv-underscores' ),
 		'svg'     => 'film-strip.svg',
 		'icon'    => 'svg-film',
 	),
 	array(
 		'type'    => 'dead',
 		'class'   => 'dead-characters',
-		'label'   => __( 'Dead', 'lwtv' ),
+		'label'   => __( 'Dead', 'lwtv-underscores' ),
 		'count'   => $stats_dead,
 		/* translators: %d is the "1 in N" ratio of dead characters. */
-		'caption' => ( $stats_dead_ratio > 0 ) ? sprintf( __( '1 in %d characters', 'lwtv' ), $stats_dead_ratio ) : __( 'Characters lost', 'lwtv' ),
+		'caption' => ( $stats_dead_ratio > 0 ) ? sprintf( __( '1 in %d characters', 'lwtv-underscores' ), $stats_dead_ratio ) : __( 'Characters lost', 'lwtv-underscores' ),
 		'svg'     => 'skull.svg',
 		'icon'    => 'svg-skull',
 	),
 );
 ?>
 
-<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'The Database, Live', 'lwtv' ); ?></p>
+<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'The Database, Live', 'lwtv-underscores' ); ?></p>
 
 <div class="lwtv-metric-grid">
 	<?php

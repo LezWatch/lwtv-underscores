@@ -32,34 +32,34 @@ switch ( $facet_view ) {
 	case 'gender':
 		$facet_topn        = 4;
 		$facet_grey_match  = 'cisgender';
-		$facet_eyebrow     = __( 'Character Gender', 'lwtv' );
-		$facet_headline    = __( 'Gender identities', 'lwtv' );
-		$facet_sub         = __( 'characters', 'lwtv' );
-		$facet_tracked_str = __( 'Distinct gender identities tracked.', 'lwtv' );
+		$facet_eyebrow     = __( 'Character Gender', 'lwtv-underscores' );
+		$facet_headline    = __( 'Gender identities', 'lwtv-underscores' );
+		$facet_sub         = __( 'characters', 'lwtv-underscores' );
+		$facet_tracked_str = __( 'Distinct gender identities tracked.', 'lwtv-underscores' );
 		break;
 	case 'formats':
 		$facet_topn        = 5;
 		$facet_grey_match  = '';
-		$facet_eyebrow     = __( 'Show Formats', 'lwtv' );
-		$facet_headline    = __( 'How these shows are made', 'lwtv' );
-		$facet_sub         = __( 'shows', 'lwtv' );
-		$facet_tracked_str = __( 'Distinct formats tracked.', 'lwtv' );
+		$facet_eyebrow     = __( 'Show Formats', 'lwtv-underscores' );
+		$facet_headline    = __( 'How these shows are made', 'lwtv-underscores' );
+		$facet_sub         = __( 'shows', 'lwtv-underscores' );
+		$facet_tracked_str = __( 'Distinct formats tracked.', 'lwtv-underscores' );
 		break;
 	case 'tropes':
 		$facet_topn        = 5;
 		$facet_grey_match  = '';
-		$facet_eyebrow     = __( 'Common Tropes', 'lwtv' );
-		$facet_headline    = __( 'Most common tropes', 'lwtv' );
-		$facet_sub         = __( 'tagged appearances', 'lwtv' );
-		$facet_tracked_str = __( 'Distinct tropes tracked.', 'lwtv' );
+		$facet_eyebrow     = __( 'Common Tropes', 'lwtv-underscores' );
+		$facet_headline    = __( 'Most common tropes', 'lwtv-underscores' );
+		$facet_sub         = __( 'tagged appearances', 'lwtv-underscores' );
+		$facet_tracked_str = __( 'Distinct tropes tracked.', 'lwtv-underscores' );
 		break;
 	default: // sexuality.
 		$facet_topn        = 5;
 		$facet_grey_match  = '';
-		$facet_eyebrow     = __( 'Character Sexual Orientation', 'lwtv' );
-		$facet_headline    = __( 'Sexual orientations', 'lwtv' );
-		$facet_sub         = __( 'characters', 'lwtv' );
-		$facet_tracked_str = __( 'Distinct sexual orientations tracked.', 'lwtv' );
+		$facet_eyebrow     = __( 'Character Sexual Orientation', 'lwtv-underscores' );
+		$facet_headline    = __( 'Sexual orientations', 'lwtv-underscores' );
+		$facet_sub         = __( 'characters', 'lwtv-underscores' );
+		$facet_tracked_str = __( 'Distinct sexual orientations tracked.', 'lwtv-underscores' );
 		break;
 }
 
@@ -70,7 +70,7 @@ list( $facet_segments, $facet_total ) = Donut_Segments::build( $facet_list, $fac
 // docblock), so this total is intentionally the sum of tag instances, not
 // the nation/station's show count.
 $facet_description = ( 'tropes' === $facet_view )
-	? __( 'Shows can carry several tropes, so this is a share of total tags, not of the shows themselves.', 'lwtv' )
+	? __( 'Shows can carry several tropes, so this is a share of total tags, not of the shows themselves.', 'lwtv-underscores' )
 	: '';
 
 $donut = array(
@@ -107,13 +107,13 @@ if ( $facet_tracked_count > 0 ) {
 $facet_lead_index = ( '' !== $facet_grey_match ) ? 1 : 0;
 $facet_lead       = $facet_segments[ $facet_lead_index ] ?? null;
 
-if ( null !== $facet_lead && ! in_array( $facet_lead['label'], array( __( 'Other', 'lwtv' ) ), true ) ) {
+if ( null !== $facet_lead && ! in_array( $facet_lead['label'], array( __( 'Other', 'lwtv-underscores' ) ), true ) ) {
 	$facet_pullstats[] = array(
 		'icon'   => 'chart-pie.svg',
 		/* translators: %s: the leading segment's share of the total (one decimal). */
-		'number' => sprintf( __( '%s%%', 'lwtv' ), number_format_i18n( $facet_lead['pct'], 1 ) ),
+		'number' => sprintf( __( '%s%%', 'lwtv-underscores' ), number_format_i18n( $facet_lead['pct'], 1 ) ),
 		/* translators: %s: the leading segment's name. */
-		'label'  => sprintf( __( 'Are %s, the most common.', 'lwtv' ), lcfirst( $facet_lead['label'] ) ),
+		'label'  => sprintf( __( 'Are %s, the most common.', 'lwtv-underscores' ), lcfirst( $facet_lead['label'] ) ),
 	);
 }
 
@@ -127,7 +127,7 @@ if ( 'tropes' === $facet_view ) {
 		$facet_pullstats[] = array(
 			'icon'   => 'tag.svg',
 			'number' => number_format_i18n( $facet_trope_leader['count'] ),
-			'label'  => __( 'Most trope-heavy show:', 'lwtv' ),
+			'label'  => __( 'Most trope-heavy show:', 'lwtv-underscores' ),
 			'url'    => $facet_trope_leader['url'],
 			'name'   => $facet_trope_leader['name'],
 		);
@@ -162,7 +162,7 @@ if ( 'formats' === $facet_view ) {
 	if ( ! empty( $facet_prolific ) ) {
 		$facet_prolific_slugs = array_keys( $facet_prolific );
 		?>
-		<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'Top-Rated by Format', 'lwtv' ); ?></p>
+		<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'Top-Rated by Format', 'lwtv-underscores' ); ?></p>
 		<div class="lwtv-pullstats lwtv-pullstats--three lwtv-statcards lwtv-bars--geo">
 			<?php foreach ( $facet_prolific_slugs as $facet_prolific_slug ) : ?>
 				<?php $facet_prolific_row = $facet_prolific[ $facet_prolific_slug ]; ?>
@@ -193,7 +193,7 @@ if ( 'formats' === $facet_view ) {
 			}
 		}
 		?>
-		<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'Most Prolific Show', 'lwtv' ); ?></p>
+		<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'Most Prolific Show', 'lwtv-underscores' ); ?></p>
 		<div class="lwtv-pullstats lwtv-pullstats--three lwtv-statcards lwtv-bars--geo">
 			<?php
 			foreach ( $facet_prolific_slugs as $facet_prolific_slug ) {

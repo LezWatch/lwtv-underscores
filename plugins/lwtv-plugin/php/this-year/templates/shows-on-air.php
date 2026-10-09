@@ -26,17 +26,17 @@ if ( 0 === $sb_count ) {
 		<div class="lwtv-ty-empty-icon">
 			<?php echo lwtv_plugin()->get_symbolicon( svg: 'construction.svg', icon: 'svg-construction', max_size: '28' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 		</div>
-		<h2><?php esc_html_e( 'No shows were found on air this year.', 'lwtv' ); ?></h2>
-		<p><?php esc_html_e( "We're surprised too!", 'lwtv' ); ?></p>
+		<h2><?php esc_html_e( 'No shows were found on air this year.', 'lwtv-underscores' ); ?></h2>
+		<p><?php esc_html_e( "We're surprised too!", 'lwtv-underscores' ); ?></p>
 	</div>
 	<?php
 	return;
 }
 
 /* translators: 1: count, 2: year. */
-$sb_title      = sprintf( _n( '%1$s show on air in %2$s', '%1$s shows on air in %2$s', $sb_count, 'lwtv' ), number_format_i18n( $sb_count ), (string) $this_year );
-$sb_desc       = __( 'Every tracked series airing at least one episode this year.', 'lwtv' );
-$sb_foot       = __( 'Grouped alphabetically, by format, or by country of origin.', 'lwtv' );
+$sb_title      = sprintf( _n( '%1$s show on air in %2$s', '%1$s shows on air in %2$s', $sb_count, 'lwtv-underscores' ), number_format_i18n( $sb_count ), (string) $this_year );
+$sb_desc       = __( 'Every tracked series airing at least one episode this year.', 'lwtv-underscores' );
+$sb_foot       = __( 'Grouped alphabetically, by format, or by country of origin.', 'lwtv-underscores' );
 $sb_source     = 'on-air';
 $sb_by_name    = $shows_by_name;
 $sb_by_format  = $shows_by_format;

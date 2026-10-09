@@ -23,7 +23,7 @@ class Actor_Pronouns {
 		);
 		$subject_pronouns = array( 'Any', 'He', 'Per', 'She', 'They', 'Ve', 'Xe', 'Ze', 'Zie' );
 
-		$pronoun_terms = get_the_terms( $actor_id, 'lez_actor_pronouns', true );
+		$pronoun_terms = get_the_terms( $actor_id, 'lez_actor_pronouns' );
 		if ( $pronoun_terms && ! is_wp_error( $pronoun_terms ) ) {
 
 			foreach ( $pronoun_terms as $pronoun_term ) {
