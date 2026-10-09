@@ -1,0 +1,15 @@
+# OSV-Scanner configuration.
+# https://google.github.io/osv-scanner/configuration/
+#
+# Every ignore needs a reason and an expiry, so it comes back up for review
+# instead of being silently suppressed forever.
+
+[[IgnoredVulns]]
+id = "CVE-2026-93687" # GHSA-vfj7-8cjw-p6xm
+ignoreUntil = 2027-01-09
+reason = "braces@3.0.3: no fixed release exists yet (3.0.3 is latest). Dev-only build tooling via @wordpress/scripts (fast-glob, chokidar); never shipped to the site. Recheck for a patched release."
+
+[[IgnoredVulns]]
+id = "CVE-2026-104844" # GHSA-rj75-hqrm-r3gf
+ignoreUntil = 2027-01-09
+reason = "postcss-selector-parser@6.x: fix is in 7.1.6, a major bump under css-loader/cssnano/stylelint (all require ^6). Dev-only build tooling via @wordpress/scripts; overriding risks breaking the SCSS build. Recheck when @wordpress/scripts moves to v7."
