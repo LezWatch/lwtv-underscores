@@ -119,13 +119,13 @@ if ( ! empty( $live_search_results ) ) :
 									$lwtv_aka_names[] = ( '' === $lwtv_aka_item['language'] )
 										? $lwtv_aka_item['name']
 										/* translators: 1: alternate show name, 2: language, e.g. "Cable Girls (English)". */
-										: sprintf( __( '%1$s (%2$s)', 'lwtv' ), $lwtv_aka_item['name'], $lwtv_aka_item['language'] );
+										: sprintf( __( '%1$s (%2$s)', 'lwtv-underscores' ), $lwtv_aka_item['name'], $lwtv_aka_item['language'] );
 								}
 								?>
 								<p class="searchwp-live-search-result--aka">
 									<?php
 									/* translators: %s: comma-separated list of alternate show names. */
-									echo esc_html( sprintf( __( 'Also known as: %s', 'lwtv' ), implode( ', ', $lwtv_aka_names ) ) );
+									echo esc_html( sprintf( __( 'Also known as: %s', 'lwtv-underscores' ), implode( ', ', $lwtv_aka_names ) ) );
 									?>
 								</p>
 								<?php
