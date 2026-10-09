@@ -59,12 +59,12 @@ foreach ( $onair_complete as $onair_point ) {
 
 $lwtv_callouts = array(
 	array(
-		'label' => __( 'Best Year', 'lwtv' ),
+		'label' => __( 'Best Year', 'lwtv-underscores' ),
 		'svg'   => 'fireworks.svg',
 		'icon'  => 'svg-fireworks',
 		'text'  => sprintf(
 			/* translators: 1: year, 2: number of characters on air. */
-			_n( 'In %1$s, there was %2$s character on air.', 'In %1$s, there were %2$s characters on air.', $onair_most['count'], 'lwtv' ),
+			_n( 'In %1$s, there was %2$s character on air.', 'In %1$s, there were %2$s characters on air.', $onair_most['count'], 'lwtv-underscores' ),
 			(string) $onair_most['year'],
 			number_format_i18n( $onair_most['count'] )
 		),
@@ -75,12 +75,12 @@ $lwtv_callouts = array(
 // between completed years; otherwise the best year stands on its own.
 if ( $onair_drop['size'] > 0 ) {
 	$lwtv_callouts[] = array(
-		'label' => __( 'Biggest Drop', 'lwtv' ),
+		'label' => __( 'Biggest Drop', 'lwtv-underscores' ),
 		'svg'   => 'nessie.svg',
 		'icon'  => 'svg-nessie',
 		'text'  => sprintf(
 			/* translators: 1: year, 2: number of fewer characters on air than the year before. */
-			_n( 'In %1$s, %2$s fewer character was on air than the year before.', 'In %1$s, %2$s fewer characters were on air than the year before.', $onair_drop['size'], 'lwtv' ),
+			_n( 'In %1$s, %2$s fewer character was on air than the year before.', 'In %1$s, %2$s fewer characters were on air than the year before.', $onair_drop['size'], 'lwtv-underscores' ),
 			(string) $onair_drop['year'],
 			number_format_i18n( $onair_drop['size'] )
 		),
@@ -94,10 +94,10 @@ $onair_trend = Series_Trend::classify( $onair_points, (int) gmdate( 'Y' ) );
 
 switch ( $onair_trend['state'] ?? '' ) {
 	case 'recovering':
-		$headline    = __( 'Queer characters on screen are climbing again', 'lwtv' );
+		$headline    = __( 'Queer characters on screen are climbing again', 'lwtv-underscores' );
 		$description = sprintf(
 			/* translators: 1: peak year, 2: characters at the peak, 3: latest complete year, 4: characters that year. */
-			__( 'The number of queer and trans characters on air peaked in %1$s with %2$s. After a dip, %3$s reached %4$s — and the trend is pointing back up.', 'lwtv' ),
+			__( 'The number of queer and trans characters on air peaked in %1$s with %2$s. After a dip, %3$s reached %4$s — and the trend is pointing back up.', 'lwtv-underscores' ),
 			(string) $onair_trend['peak_year'],
 			number_format_i18n( $onair_trend['peak_count'] ),
 			(string) $onair_trend['latest_year'],
@@ -105,10 +105,10 @@ switch ( $onair_trend['state'] ?? '' ) {
 		);
 		break;
 	case 'receding':
-		$headline    = __( 'Queer characters on screen are down from their peak', 'lwtv' );
+		$headline    = __( 'Queer characters on screen are down from their peak', 'lwtv-underscores' );
 		$description = sprintf(
 			/* translators: 1: peak year, 2: characters at the peak, 3: latest complete year, 4: characters that year, 5: percent of the peak. */
-			__( 'The number of queer and trans characters on air peaked in %1$s with %2$s; by %3$s it had slipped to %4$s — about %5$s%% of the peak.', 'lwtv' ),
+			__( 'The number of queer and trans characters on air peaked in %1$s with %2$s; by %3$s it had slipped to %4$s — about %5$s%% of the peak.', 'lwtv-underscores' ),
 			(string) $onair_trend['peak_year'],
 			number_format_i18n( $onair_trend['peak_count'] ),
 			(string) $onair_trend['latest_year'],
@@ -117,10 +117,10 @@ switch ( $onair_trend['state'] ?? '' ) {
 		);
 		break;
 	case 'steady':
-		$headline    = __( 'Queer characters on screen are holding steady', 'lwtv' );
+		$headline    = __( 'Queer characters on screen are holding steady', 'lwtv-underscores' );
 		$description = sprintf(
 			/* translators: 1: peak year, 2: characters at the peak, 3: latest complete year, 4: characters that year. */
-			__( 'The number of queer and trans characters on air peaked in %1$s with %2$s; %3$s held level at %4$s.', 'lwtv' ),
+			__( 'The number of queer and trans characters on air peaked in %1$s with %2$s; %3$s held level at %4$s.', 'lwtv-underscores' ),
 			(string) $onair_trend['peak_year'],
 			number_format_i18n( $onair_trend['peak_count'] ),
 			(string) $onair_trend['latest_year'],
@@ -128,10 +128,10 @@ switch ( $onair_trend['state'] ?? '' ) {
 		);
 		break;
 	default: // 'at-peak', or an empty classification.
-		$headline    = __( 'More queer characters on screen than ever', 'lwtv' );
+		$headline    = __( 'More queer characters on screen than ever', 'lwtv-underscores' );
 		$description = sprintf(
 			/* translators: 1: latest complete year, 2: characters on air that year. */
-			__( 'The climb continues: %1$s had %2$s queer and trans characters on air, the most ever recorded.', 'lwtv' ),
+			__( 'The climb continues: %1$s had %2$s queer and trans characters on air, the most ever recorded.', 'lwtv-underscores' ),
 			(string) ( $onair_trend['latest_year'] ?? $onair_last['year'] ),
 			number_format_i18n( $onair_trend['latest_count'] ?? $onair_last['count'] )
 		);
@@ -148,21 +148,21 @@ $yearbars = array(
 	'peak_count'  => $onair_series['peak_count'],
 	'stat_num'    => (int) $onair_last['count'],
 	/* translators: %s: the latest year (4-digit, never thousands-formatted). */
-	'stat_sub'    => sprintf( __( 'on air in %s', 'lwtv' ), (string) $onair_last['year'] ),
-	'eyebrow'     => __( 'Characters On Air per Year', 'lwtv' ),
+	'stat_sub'    => sprintf( __( 'on air in %s', 'lwtv-underscores' ), (string) $onair_last['year'] ),
+	'eyebrow'     => __( 'Characters On Air per Year', 'lwtv-underscores' ),
 	'headline'    => $headline,
 	'description' => $description,
 	'callouts'    => $lwtv_callouts,
 	/* translators: %s: year. */
-	'hover_sub'   => __( 'on air in %s', 'lwtv' ),
+	'hover_sub'   => __( 'on air in %s', 'lwtv-underscores' ),
 );
 
 // phpcs:ignore PEAR.Files.IncludingFile.UseRequire
 include plugin_dir_path( __DIR__ ) . 'partials/year-bars.php';
 
 $download_csv = array(
-	'page'  => __( 'year', 'lwtv' ),
-	'title' => __( 'Characters on air, by year', 'lwtv' ),
+	'page'  => __( 'year', 'lwtv-underscores' ),
+	'title' => __( 'Characters on air, by year', 'lwtv-underscores' ),
 	'count' => count( $onair_series['rows'] ),
 );
 // phpcs:ignore PEAR.Files.IncludingFile.UseRequire

@@ -103,16 +103,16 @@ class Actor_Death_Rules {
 	 */
 	public static function reportable(): array {
 		return array(
-			self::FOUND       => __( 'Verify, then add the death date', 'lwtv' ),
-			self::SUSPECT     => __( 'Birth dates disagree -- wrong person? Check the QID', 'lwtv' ),
+			self::FOUND       => __( 'Verify, then add the death date', 'lwtv-underscores' ),
+			self::SUSPECT     => __( 'Birth dates disagree -- wrong person? Check the QID', 'lwtv-underscores' ),
 			self::UNVERIFIED  => sprintf(
 				/* translators: %s: a WP-CLI command to run, not translatable. */
-				__( 'QID held but unverified -- run: %s', 'lwtv' ),
+				__( 'QID held but unverified -- run: %s', 'lwtv-underscores' ),
 				'wp lwtv wikidata backfill --reverify'
 			),
-			self::AMBIGUOUS   => __( 'IMDb ID matches several WikiData items -- set the QID by hand', 'lwtv' ),
-			self::NO_IDENTITY => __( 'No QID and no usable IMDb ID -- add one to make this checkable', 'lwtv' ),
-			self::NO_DATA     => __( 'WikiData had nothing to read -- retry, or check the QID', 'lwtv' ),
+			self::AMBIGUOUS   => __( 'IMDb ID matches several WikiData items -- set the QID by hand', 'lwtv-underscores' ),
+			self::NO_IDENTITY => __( 'No QID and no usable IMDb ID -- add one to make this checkable', 'lwtv-underscores' ),
+			self::NO_DATA     => __( 'WikiData had nothing to read -- retry, or check the QID', 'lwtv-underscores' ),
 		);
 	}
 

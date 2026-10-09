@@ -33,7 +33,7 @@ $wtl_other_pct   = max( 0, round( 100 - $wtl_named_pct, 1 ) );
 if ( $wtl_other_count > 0 && $wtl_other_pct > 0 ) {
 	$wtl_rows[] = array(
 		/* translators: %s: number of remaining networks. */
-		'name' => sprintf( _n( '%s other network', '%s other networks', $wtl_other_count, 'lwtv' ), number_format_i18n( $wtl_other_count ) ),
+		'name' => sprintf( _n( '%s other network', '%s other networks', $wtl_other_count, 'lwtv-underscores' ), number_format_i18n( $wtl_other_count ) ),
 		'pct'  => $wtl_other_pct,
 	);
 }
@@ -49,12 +49,12 @@ $wtl_n_in_ten = ( $wtl_top_pct > 0 ) ? (int) round( $wtl_top_pct / 10 ) : 0;
 			<?php echo lwtv_plugin()->get_symbolicon( svg: 'satellite-signal.svg', icon: 'svg-bullhorn', max_size: '20' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 		</span>
 		<div>
-			<h2 class="lwtv-panel-title"><?php esc_html_e( 'Where queer TV lives', 'lwtv' ); ?></h2>
+			<h2 class="lwtv-panel-title"><?php esc_html_e( 'Where queer TV lives', 'lwtv-underscores' ); ?></h2>
 			<p class="lwtv-panel-sub">
 				<?php
 				printf(
 					/* translators: 1: total shows, 2: total networks. */
-					esc_html__( '%1$s shows across %2$s stations & networks:', 'lwtv' ),
+					esc_html__( '%1$s shows across %2$s stations & networks:', 'lwtv-underscores' ),
 					esc_html( number_format_i18n( $stats_shows ) ),
 					esc_html( number_format_i18n( $stats_total_stations ) )
 				);
@@ -68,7 +68,7 @@ $wtl_n_in_ten = ( $wtl_top_pct > 0 ) ? (int) round( $wtl_top_pct / 10 ) : 0;
 			<?php
 			printf(
 				/* translators: 1: "N in 10" numerator, 2: top nation name. */
-				esc_html__( 'Around %1$d in 10 shows air on %2$s.', 'lwtv' ),
+				esc_html__( 'Around %1$d in 10 shows air on %2$s.', 'lwtv-underscores' ),
 				(int) $wtl_n_in_ten,
 				esc_html( $wtl_top_name )
 			);
@@ -76,7 +76,7 @@ $wtl_n_in_ten = ( $wtl_top_pct > 0 ) ? (int) round( $wtl_top_pct / 10 ) : 0;
 		</p>
 	<?php endif; ?>
 
-	<div class="lwtv-share-bar" role="img" aria-label="<?php esc_attr_e( 'Share of shows by network', 'lwtv' ); ?>">
+	<div class="lwtv-share-bar" role="img" aria-label="<?php esc_attr_e( 'Share of shows by network', 'lwtv-underscores' ); ?>">
 		<?php
 		foreach ( $wtl_rows as $wtl_row ) {
 			printf(
@@ -103,7 +103,7 @@ $wtl_n_in_ten = ( $wtl_top_pct > 0 ) ? (int) round( $wtl_top_pct / 10 ) : 0;
 		<?php
 		printf(
 			/* translators: %s: total number of networks. */
-			esc_html__( 'View all %s networks →', 'lwtv' ),
+			esc_html__( 'View all %s networks →', 'lwtv-underscores' ),
 			esc_html( number_format_i18n( $stats_total_stations ) )
 		);
 		?>

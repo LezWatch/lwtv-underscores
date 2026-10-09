@@ -20,7 +20,7 @@ if ( $intersections && ! is_wp_error( $intersections ) ) {
 	<section id="intersections" class="widget widget_intersections">
 		<div class="card">
 			<div class="card-header">
-				<h4><?php esc_html_e( 'Intersectionality', 'lwtv' ); ?></h4>
+				<h4><?php esc_html_e( 'Intersectionality', 'lwtv-underscores' ); ?></h4>
 			</div>
 				<ul class="intersectionality-list list-group">
 					<?php
@@ -28,7 +28,7 @@ if ( $intersections && ! is_wp_error( $intersections ) ) {
 					foreach ( $intersections as $intersection ) {
 						?>
 						<li class="list-group-item show intersection intersection-<?php echo esc_attr( $intersection->slug ); ?>">
-							<a href="<?php echo esc_url( get_term_link( $intersection->slug, 'lez_intersections' ) ); ?>" rel="show intersection" aria-label="<?php echo esc_attr( sprintf( /* translators: %s: intersectionality term name */ __( 'Read more about the positive intersectionality representation of %s.', 'lwtv' ), $intersection->name ) ); ?>">
+							<a href="<?php echo esc_url( get_term_link( $intersection->slug, 'lez_intersections' ) ); ?>" rel="show intersection" aria-label="<?php echo esc_attr( sprintf( /* translators: %s: intersectionality term name */ __( 'Read more about the positive intersectionality representation of %s.', 'lwtv-underscores' ), $intersection->name ) ); ?>">
 							<?php
 							// Echo the taxonomy icon (default to the wavy flag if empty).
 							$icon = get_term_meta( $intersection->term_id, 'lez_termsmeta_icon', true );

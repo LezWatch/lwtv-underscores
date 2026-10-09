@@ -69,7 +69,7 @@ $yb_hover_sub = $yearbars['hover_sub'] ?? '%s';
 		<?php elseif ( isset( $yearbars['average'] ) && '' !== $yearbars['average'] ) : ?>
 			<div class="lwtv-yearbars-avg">
 				<span class="lwtv-yearbars-avg-num" data-count-to="<?php echo (int) round( (float) $yearbars['average'] ); ?>"><?php echo esc_html( number_format_i18n( (int) round( (float) $yearbars['average'] ) ) ); ?></span>
-				<span class="lwtv-yearbars-avg-sub"><?php esc_html_e( 'per year on average', 'lwtv' ); ?></span>
+				<span class="lwtv-yearbars-avg-sub"><?php esc_html_e( 'per year on average', 'lwtv-underscores' ); ?></span>
 			</div>
 		<?php endif; ?>
 	</div>

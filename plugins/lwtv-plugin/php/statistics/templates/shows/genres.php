@@ -67,7 +67,7 @@ if ( (int) $genres_stats['shows'] > 0 ) {
 	$genres_pullstats[] = array(
 		'icon'   => 'chart-bar.svg',
 		'number' => number_format_i18n( (float) $genres_stats['average'], 1 ),
-		'label'  => __( 'Number of genres per show, on average.', 'lwtv' ),
+		'label'  => __( 'Number of genres per show, on average.', 'lwtv-underscores' ),
 	);
 }
 
@@ -84,8 +84,8 @@ if ( (int) $shows_count > 0 ) {
 	$genres_pullstats[] = array(
 		'icon'   => 'chart-pie.svg',
 		/* translators: %s: percentage of shows carrying 3 or more genres (one decimal). */
-		'number' => sprintf( __( '%s%%', 'lwtv' ), number_format_i18n( $genres_3plus_pct, 1 ) ),
-		'label'  => __( 'Percentage of shows with 3 or more genres.', 'lwtv' ),
+		'number' => sprintf( __( '%s%%', 'lwtv-underscores' ), number_format_i18n( $genres_3plus_pct, 1 ) ),
+		'label'  => __( 'Percentage of shows with 3 or more genres.', 'lwtv-underscores' ),
 	);
 }
 
@@ -96,7 +96,7 @@ if ( ! empty( $genres_pairs ) ) {
 		'number' => number_format_i18n( (int) $genres_pairs[0]['count'] ),
 		'label'  => sprintf(
 			/* translators: 1: genre name, 2: genre name. */
-			__( 'Number of shows that pair %1$s with %2$s.', 'lwtv' ),
+			__( 'Number of shows that pair %1$s with %2$s.', 'lwtv-underscores' ),
 			$genres_pair_names[ $genres_top_pair_a ] ?? $genres_top_pair_a,
 			$genres_pair_names[ $genres_top_pair_b ] ?? $genres_top_pair_b
 		),
@@ -142,7 +142,7 @@ $waffle = array(
 	'total'    => 100,
 	'columns'  => 20,
 	'radius'   => 6,
-	'label'    => __( 'Shows grouped by how many genres each carries, from none to four or more.', 'lwtv' ),
+	'label'    => __( 'Shows grouped by how many genres each carries, from none to four or more.', 'lwtv-underscores' ),
 );
 ?>
 <div class="lwtv-genres-columns">
@@ -153,8 +153,8 @@ $waffle = array(
 					<?php echo lwtv_plugin()->get_symbolicon( svg: 'theater_masks.svg', icon: 'svg-theater-masks', max_size: '20' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 				</span>
 				<div>
-					<h2 class="lwtv-panel-title"><?php esc_html_e( 'Genre Load', 'lwtv' ); ?></h2>
-					<p class="lwtv-panel-sub"><?php esc_html_e( 'How many genres a show carries, by share of all shows', 'lwtv' ); ?></p>
+					<h2 class="lwtv-panel-title"><?php esc_html_e( 'Genre Load', 'lwtv-underscores' ); ?></h2>
+					<p class="lwtv-panel-sub"><?php esc_html_e( 'How many genres a show carries, by share of all shows', 'lwtv-underscores' ); ?></p>
 				</div>
 			</header>
 			<div class="lwtv-genreload-row">
@@ -174,7 +174,7 @@ $waffle = array(
 								echo esc_html(
 									sprintf(
 										/* translators: %s: number of genres (or "4+"). */
-										_n( '%s genre', '%s genres', ( '1' === $genres_dist_bucket['label'] ) ? 1 : 2, 'lwtv' ),
+										_n( '%s genre', '%s genres', ( '1' === $genres_dist_bucket['label'] ) ? 1 : 2, 'lwtv-underscores' ),
 										$genres_dist_bucket['label']
 									)
 								);
@@ -191,12 +191,12 @@ $waffle = array(
 						<?php echo $genres_top_media; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- get_the_post_thumbnail() returns safe markup. ?>
 					</a>
 					<figcaption class="lwtv-genreload-poster-cap">
-						<span class="lwtv-genreload-poster-eyebrow"><?php esc_html_e( 'Most genre-loaded show', 'lwtv' ); ?></span>
+						<span class="lwtv-genreload-poster-eyebrow"><?php esc_html_e( 'Most genre-loaded show', 'lwtv-underscores' ); ?></span>
 						<?php
 						if ( $genres_top['tied'] > 1 ) {
 							printf(
 								/* translators: 1: show name, 2: number of genres, 3: number of shows tied for the most. */
-								esc_html__( '%1$s spans %2$s genres, tied with %3$s other shows for the most.', 'lwtv' ),
+								esc_html__( '%1$s spans %2$s genres, tied with %3$s other shows for the most.', 'lwtv-underscores' ),
 								esc_html( get_the_title( $genres_top['id'] ) ),
 								esc_html( number_format_i18n( $genres_top['count'] ) ),
 								esc_html( number_format_i18n( $genres_top['tied'] - 1 ) )
@@ -204,7 +204,7 @@ $waffle = array(
 						} else {
 							printf(
 								/* translators: 1: show name, 2: number of genres. */
-								esc_html__( '%1$s spans %2$s genres, the most of any show.', 'lwtv' ),
+								esc_html__( '%1$s spans %2$s genres, the most of any show.', 'lwtv-underscores' ),
 								esc_html( get_the_title( $genres_top['id'] ) ),
 								esc_html( number_format_i18n( $genres_top['count'] ) )
 							);
@@ -233,9 +233,9 @@ $waffle = array(
 				'family' => 'genres',
 				'svg'    => 'vest-patches.svg',
 				'icon'   => 'svg-vest-patches',
-				'title'  => __( 'Common Pairings', 'lwtv' ),
-				'sub'    => __( 'Genres that appear together on the same show, by number of shows', 'lwtv' ),
-				'unit'   => __( 'shows together', 'lwtv' ),
+				'title'  => __( 'Common Pairings', 'lwtv-underscores' ),
+				'sub'    => __( 'Genres that appear together on the same show, by number of shows', 'lwtv-underscores' ),
+				'unit'   => __( 'shows together', 'lwtv-underscores' ),
 			);
 			// phpcs:ignore PEAR.Files.IncludingFile.UseRequire
 			include plugin_dir_path( __DIR__ ) . 'partials/matchup-cards.php';
@@ -263,7 +263,7 @@ if ( $genres_uncharted_n > 0 && (int) $shows_count > 0 ) {
 	$genres_uncharted_pct   = round( ( $genres_uncharted_total / (int) $shows_count ) * 100, 1 );
 	$genres_uncharted_names = wp_sprintf_l( '%l', array_column( $genres_uncharted, 'name' ) );
 	/* translators: %s: combined percentage of all shows the least-explored genres account for (one decimal). */
-	$genres_uncharted_gauge_label = sprintf( __( 'The least-explored genres combined account for just %s%% of shows.', 'lwtv' ), number_format_i18n( $genres_uncharted_pct, 1 ) );
+	$genres_uncharted_gauge_label = sprintf( __( 'The least-explored genres combined account for just %s%% of shows.', 'lwtv-underscores' ), number_format_i18n( $genres_uncharted_pct, 1 ) );
 	?>
 	<section class="lwtv-panel bg-light lwtv-uncharted">
 		<header class="lwtv-panel-head">
@@ -271,8 +271,8 @@ if ( $genres_uncharted_n > 0 && (int) $shows_count > 0 ) {
 				<?php echo lwtv_plugin()->get_symbolicon( svg: 'search.svg', icon: 'svg-search', max_size: '20' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 			</span>
 			<div>
-				<h2 class="lwtv-panel-title"><?php esc_html_e( 'Still Largely Uncharted', 'lwtv' ); ?></h2>
-				<p class="lwtv-panel-sub"><?php esc_html_e( 'Genres queer TV has barely explored yet', 'lwtv' ); ?></p>
+				<h2 class="lwtv-panel-title"><?php esc_html_e( 'Still Largely Uncharted', 'lwtv-underscores' ); ?></h2>
+				<p class="lwtv-panel-sub"><?php esc_html_e( 'Genres queer TV has barely explored yet', 'lwtv-underscores' ); ?></p>
 			</div>
 		</header>
 		<div class="lwtv-uncharted-gauge" role="img" aria-label="<?php echo esc_attr( $genres_uncharted_gauge_label ); ?>">
@@ -282,7 +282,7 @@ if ( $genres_uncharted_n > 0 && (int) $shows_count > 0 ) {
 			<?php
 			printf(
 				/* translators: 1: comma-and-"and"-joined list of the least-explored genre names, 2: their combined percentage of all shows (one decimal). */
-				esc_html__( '%1$s combined account for just %2$s%% of shows.', 'lwtv' ),
+				esc_html__( '%1$s combined account for just %2$s%% of shows.', 'lwtv-underscores' ),
 				esc_html( $genres_uncharted_names ),
 				esc_html( number_format_i18n( $genres_uncharted_pct, 1 ) )
 			);
@@ -299,7 +299,7 @@ if ( $genres_uncharted_n > 0 && (int) $shows_count > 0 ) {
 						<?php
 						printf(
 							/* translators: 1: number of shows, 2: percentage of all shows (one decimal). */
-							esc_html__( '%1$s shows · %2$s%%', 'lwtv' ),
+							esc_html__( '%1$s shows · %2$s%%', 'lwtv-underscores' ),
 							esc_html( number_format_i18n( (int) $genres_uncharted_genre['count'] ) ),
 							esc_html( number_format_i18n( $genres_uncharted_genre_pct, 1 ) )
 						);
@@ -321,8 +321,8 @@ $genres_decade_buckets = ( new \LWTV\Statistics\Build\Genre_Trend() )->generate(
 
 if ( ! empty( $genres_decade_buckets ) ) :
 	?>
-	<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'Genre Mix by Decade', 'lwtv' ); ?></p>
-	<p class="lwtv-decade-tile-note"><?php esc_html_e( 'Top 3 genres per decade, each as its own share of shows that premiered in that decade. As shows often carry more than one genre, the three don\'t add up to 100%.', 'lwtv' ); ?></p>
+	<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'Genre Mix by Decade', 'lwtv-underscores' ); ?></p>
+	<p class="lwtv-decade-tile-note"><?php esc_html_e( 'Top 3 genres per decade, each as its own share of shows that premiered in that decade. As shows often carry more than one genre, the three don\'t add up to 100%.', 'lwtv-underscores' ); ?></p>
 	<div class="lwtv-decade-tile-grid">
 		<?php foreach ( $genres_decade_buckets as $genres_decade_bucket ) : ?>
 			<?php
@@ -332,11 +332,11 @@ if ( ! empty( $genres_decade_buckets ) ) :
 			if ( 'before' === $genres_decade_bucket['type'] ) {
 				$genres_decade_label = $genres_decade_bucket['to']
 					/* translators: %d: the decade this bucket ends before, e.g. "Before 1980s". */
-					? sprintf( __( 'Before %1$d<span class="lwtv-decade-suffix">s</span>', 'lwtv' ), $genres_decade_bucket['to'] )
-					: __( 'Earliest years', 'lwtv' );
+					? sprintf( __( 'Before %1$d<span class="lwtv-decade-suffix">s</span>', 'lwtv-underscores' ), $genres_decade_bucket['to'] )
+					: __( 'Earliest years', 'lwtv-underscores' );
 			} else {
 				/* translators: %d: a decade, e.g. "1980s". */
-				$genres_decade_label = sprintf( __( '%1$d<span class="lwtv-decade-suffix">s</span>', 'lwtv' ), $genres_decade_bucket['from'] );
+				$genres_decade_label = sprintf( __( '%1$d<span class="lwtv-decade-suffix">s</span>', 'lwtv-underscores' ), $genres_decade_bucket['from'] );
 			}
 			?>
 			<div class="lwtv-decade-tile">
@@ -346,14 +346,14 @@ if ( ! empty( $genres_decade_buckets ) ) :
 						<?php
 						printf(
 							/* translators: %s: number of shows that premiered in this bucket. */
-							esc_html__( '%s shows', 'lwtv' ),
+							esc_html__( '%s shows', 'lwtv-underscores' ),
 							esc_html( number_format_i18n( $genres_decade_bucket['shows'] ) )
 						);
 						?>
 					</span>
 				</div>
 				<?php if ( empty( $genres_decade_bucket['top'] ) ) : ?>
-					<p class="lwtv-decade-tile-empty"><?php esc_html_e( 'No genres tracked yet.', 'lwtv' ); ?></p>
+					<p class="lwtv-decade-tile-empty"><?php esc_html_e( 'No genres tracked yet.', 'lwtv-underscores' ); ?></p>
 				<?php else : ?>
 					<div class="lwtv-decade-tile-rows lwtv-bars--genres">
 						<?php foreach ( $genres_decade_bucket['top'] as $genres_decade_row ) : ?>
@@ -385,9 +385,9 @@ endif;
 		'family' => 'genres',
 		'svg'    => 'theater_masks.svg',
 		'icon'   => 'svg-theater-masks',
-		'title'  => __( 'Genre Breakdown', 'lwtv' ),
+		'title'  => __( 'Genre Breakdown', 'lwtv-underscores' ),
 		/* translators: %s: number of genres. */
-		'sub'    => sprintf( __( '%s genres, by number of shows', 'lwtv' ), number_format_i18n( count( $genres_data ) ) ),
+		'sub'    => sprintf( __( '%s genres, by number of shows', 'lwtv-underscores' ), number_format_i18n( count( $genres_data ) ) ),
 		'base'   => '/genre/',
 	);
 	// phpcs:ignore PEAR.Files.IncludingFile.UseRequire

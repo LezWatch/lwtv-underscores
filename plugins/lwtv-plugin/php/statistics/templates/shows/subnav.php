@@ -12,20 +12,20 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 
 $lwtv_shows_subnav = array(
-	'overview'          => __( 'Overview', 'lwtv' ),
-	'formats'           => __( 'Formats', 'lwtv' ),
-	'tropes'            => __( 'Tropes', 'lwtv' ),
-	'genres'            => __( 'Genres', 'lwtv' ),
-	'intersectionality' => __( 'Intersectionality', 'lwtv' ),
-	'stars'             => __( 'Stars', 'lwtv' ),
-	'scores'            => __( 'Scores', 'lwtv' ),
-	'triggers'          => __( 'Triggers', 'lwtv' ),
-	'worth-it'          => __( 'Worth It', 'lwtv' ),
-	'we-love-it'        => __( 'We Love It', 'lwtv' ),
-	'on-air'            => __( 'On Air', 'lwtv' ),
+	'overview'          => __( 'Overview', 'lwtv-underscores' ),
+	'formats'           => __( 'Formats', 'lwtv-underscores' ),
+	'tropes'            => __( 'Tropes', 'lwtv-underscores' ),
+	'genres'            => __( 'Genres', 'lwtv-underscores' ),
+	'intersectionality' => __( 'Intersectionality', 'lwtv-underscores' ),
+	'stars'             => __( 'Stars', 'lwtv-underscores' ),
+	'scores'            => __( 'Scores', 'lwtv-underscores' ),
+	'triggers'          => __( 'Triggers', 'lwtv-underscores' ),
+	'worth-it'          => __( 'Worth It', 'lwtv-underscores' ),
+	'we-love-it'        => __( 'We Love It', 'lwtv-underscores' ),
+	'on-air'            => __( 'On Air', 'lwtv-underscores' ),
 );
 ?>
-<nav class="lwtv-stats-subnav" aria-label="<?php esc_attr_e( 'Shows statistics views', 'lwtv' ); ?>">
+<nav class="lwtv-stats-subnav" aria-label="<?php esc_attr_e( 'Shows statistics views', 'lwtv-underscores' ); ?>">
 	<?php
 	foreach ( $lwtv_shows_subnav as $lwtv_slug => $lwtv_label ) {
 		$lwtv_is_active = ( $view === $lwtv_slug );

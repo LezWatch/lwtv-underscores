@@ -83,7 +83,7 @@ class CSV_Download {
 			$raw = ( is_array( $raw ) && ! empty( $raw ) ) ? (array) reset( $raw ) : array();
 			return array(
 				'rows'     => $this->year_rows( $raw, 'name', 'count' ),
-				'headers'  => array( __( 'Year', 'lwtv' ), __( 'Characters On Air', 'lwtv' ) ),
+				'headers'  => array( __( 'Year', 'lwtv-underscores' ), __( 'Characters On Air', 'lwtv-underscores' ) ),
 				'filename' => "lwtv-characters-on-air-{$today}.csv",
 			);
 		}
@@ -94,7 +94,7 @@ class CSV_Download {
 			$raw = ( is_array( $raw ) && ! empty( $raw ) ) ? (array) reset( $raw ) : array();
 			return array(
 				'rows'     => $this->year_rows( $raw, 'name', 'count' ),
-				'headers'  => array( __( 'Year', 'lwtv' ), __( 'Shows On Air', 'lwtv' ) ),
+				'headers'  => array( __( 'Year', 'lwtv-underscores' ), __( 'Shows On Air', 'lwtv-underscores' ) ),
 				'filename' => "lwtv-shows-on-air-{$today}.csv",
 			);
 		}
@@ -107,7 +107,7 @@ class CSV_Download {
 			$raw = (array) lwtv_plugin()->generate_nation_statistics( $nation, 'on-air', 'array' );
 			return array(
 				'rows'     => $this->year_rows( $raw, 'name', 'count' ),
-				'headers'  => array( __( 'Year', 'lwtv' ), __( 'Shows On Air', 'lwtv' ) ),
+				'headers'  => array( __( 'Year', 'lwtv-underscores' ), __( 'Shows On Air', 'lwtv-underscores' ) ),
 				'filename' => "lwtv-nations-on-air-{$nation}-{$today}.csv",
 			);
 		}
@@ -120,7 +120,7 @@ class CSV_Download {
 			$raw = (array) lwtv_plugin()->generate_station_statistics( $station, 'on-air', 'array' );
 			return array(
 				'rows'     => $this->year_rows( $raw, 'name', 'count' ),
-				'headers'  => array( __( 'Year', 'lwtv' ), __( 'Shows On Air', 'lwtv' ) ),
+				'headers'  => array( __( 'Year', 'lwtv-underscores' ), __( 'Shows On Air', 'lwtv-underscores' ) ),
 				'filename' => "lwtv-stations-on-air-{$station}-{$today}.csv",
 			);
 		}
@@ -130,7 +130,7 @@ class CSV_Download {
 			$raw = (array) lwtv_plugin()->generate_dead_statistics( 'characters', 'years', 'array' );
 			return array(
 				'rows'     => $this->year_rows( $raw, 'death_year', 'death_count' ),
-				'headers'  => array( __( 'Year', 'lwtv' ), __( 'Deaths', 'lwtv' ) ),
+				'headers'  => array( __( 'Year', 'lwtv-underscores' ), __( 'Deaths', 'lwtv-underscores' ) ),
 				'filename' => "lwtv-death-years-{$today}.csv",
 			);
 		}
@@ -140,7 +140,7 @@ class CSV_Download {
 			$raw = (array) lwtv_plugin()->generate_dead_statistics( 'shows', 'stations', 'array' );
 			return array(
 				'rows'     => $this->label_rows( $raw ),
-				'headers'  => array( __( 'Station', 'lwtv' ), __( 'Deaths', 'lwtv' ) ),
+				'headers'  => array( __( 'Station', 'lwtv-underscores' ), __( 'Deaths', 'lwtv-underscores' ) ),
 				'filename' => "lwtv-death-stations-{$today}.csv",
 			);
 		}
@@ -150,7 +150,7 @@ class CSV_Download {
 			$raw = (array) lwtv_plugin()->generate_dead_statistics( 'shows', 'nations', 'array' );
 			return array(
 				'rows'     => $this->label_rows( $raw ),
-				'headers'  => array( __( 'Nation', 'lwtv' ), __( 'Deaths', 'lwtv' ) ),
+				'headers'  => array( __( 'Nation', 'lwtv-underscores' ), __( 'Deaths', 'lwtv-underscores' ) ),
 				'filename' => "lwtv-death-nations-{$today}.csv",
 			);
 		}
@@ -159,7 +159,7 @@ class CSV_Download {
 		if ( 'actors' === $group && ( '' === $view || 'overview' === $view ) ) {
 			return array(
 				'rows'     => $this->actor_roster_rows(),
-				'headers'  => array( __( 'Actor Name', 'lwtv' ), __( 'Gender', 'lwtv' ), __( 'Sexuality', 'lwtv' ), __( 'Characters Played', 'lwtv' ) ),
+				'headers'  => array( __( 'Actor Name', 'lwtv-underscores' ), __( 'Gender', 'lwtv-underscores' ), __( 'Sexuality', 'lwtv-underscores' ), __( 'Characters Played', 'lwtv-underscores' ) ),
 				'filename' => "lwtv-actors-{$today}.csv",
 			);
 		}
@@ -169,7 +169,7 @@ class CSV_Download {
 			$raw = (array) lwtv_plugin()->generate_nation_statistics( 'all', 'all', 'array' );
 			return array(
 				'rows'     => $this->summary_rows( $raw ),
-				'headers'  => array( __( 'Nation', 'lwtv' ), __( 'Shows', 'lwtv' ), __( 'Characters', 'lwtv' ), __( 'Dead', 'lwtv' ) ),
+				'headers'  => array( __( 'Nation', 'lwtv-underscores' ), __( 'Shows', 'lwtv-underscores' ), __( 'Characters', 'lwtv-underscores' ), __( 'Dead', 'lwtv-underscores' ) ),
 				'filename' => "lwtv-nations-{$today}.csv",
 			);
 		}
@@ -179,7 +179,7 @@ class CSV_Download {
 			$raw = (array) lwtv_plugin()->generate_station_statistics( 'all', 'all', 'array' );
 			return array(
 				'rows'     => $this->summary_rows( $raw ),
-				'headers'  => array( __( 'Station', 'lwtv' ), __( 'Shows', 'lwtv' ), __( 'Characters', 'lwtv' ), __( 'Dead', 'lwtv' ) ),
+				'headers'  => array( __( 'Station', 'lwtv-underscores' ), __( 'Shows', 'lwtv-underscores' ), __( 'Characters', 'lwtv-underscores' ), __( 'Dead', 'lwtv-underscores' ) ),
 				'filename' => "lwtv-stations-{$today}.csv",
 			);
 		}
@@ -189,7 +189,7 @@ class CSV_Download {
 			$raw = (array) lwtv_plugin()->generate_dead_statistics( 'characters', 'years', 'array' );
 			return array(
 				'rows'     => $this->year_rows( $raw, 'death_year', 'death_count' ),
-				'headers'  => array( __( 'Year', 'lwtv' ), __( 'Number of Dead', 'lwtv' ) ),
+				'headers'  => array( __( 'Year', 'lwtv-underscores' ), __( 'Number of Dead', 'lwtv-underscores' ) ),
 				'filename' => "lwtv-death-years-{$today}.csv",
 			);
 		}

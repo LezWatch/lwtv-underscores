@@ -21,7 +21,7 @@ use LWTV\Statistics\Build\Taxonomy_Optimized as Build_Taxonomy_Optimized;
 $lwtv_slug    = ltrim( $nation, '_' );
 $lwtv_vslug   = ltrim( $view, '_' );
 $lwtv_ndata   = $all_nations_data[ $lwtv_slug ] ?? array(
-	'name'  => __( 'Nation', 'lwtv' ),
+	'name'  => __( 'Nation', 'lwtv-underscores' ),
 	'count' => 0,
 );
 $lwtv_name    = $lwtv_ndata['name'];
@@ -38,14 +38,14 @@ $lwtv_dead    = (int) ( $character_counts[ $lwtv_slug ]['dead'] ?? 0 );
 	<div class="lwtv-fact-masthead-lead">
 		<span class="lwtv-nation-profile-chip"><?php echo lwtv_plugin()->get_symbolicon( svg: 'globe.svg', icon: 'svg-globe', max_size: '19' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
 		<div>
-			<span class="lwtv-stats-eyebrow"><?php esc_html_e( 'Nation Profile', 'lwtv' ); ?></span>
+			<span class="lwtv-stats-eyebrow"><?php esc_html_e( 'Nation Profile', 'lwtv-underscores' ); ?></span>
 			<h2 class="lwtv-fact-masthead-name"><?php echo esc_html( $lwtv_name ); ?></h2>
 		</div>
 	</div>
 	<div class="lwtv-nation-profile-figs">
-		<span><strong data-count-to="<?php echo (int) $lwtv_shows; ?>"><?php echo esc_html( number_format_i18n( $lwtv_shows ) ); ?></strong><em><?php esc_html_e( 'shows', 'lwtv' ); ?></em></span>
-		<span><strong data-count-to="<?php echo (int) $lwtv_chars; ?>"><?php echo esc_html( number_format_i18n( $lwtv_chars ) ); ?></strong><em><?php esc_html_e( 'characters', 'lwtv' ); ?></em></span>
-		<span class="lwtv-nation-profile-dead"><strong data-count-to="<?php echo (int) $lwtv_dead; ?>"><?php echo esc_html( number_format_i18n( $lwtv_dead ) ); ?></strong><em><?php esc_html_e( 'dead', 'lwtv' ); ?></em></span>
+		<span><strong data-count-to="<?php echo (int) $lwtv_shows; ?>"><?php echo esc_html( number_format_i18n( $lwtv_shows ) ); ?></strong><em><?php esc_html_e( 'shows', 'lwtv-underscores' ); ?></em></span>
+		<span><strong data-count-to="<?php echo (int) $lwtv_chars; ?>"><?php echo esc_html( number_format_i18n( $lwtv_chars ) ); ?></strong><em><?php esc_html_e( 'characters', 'lwtv-underscores' ); ?></em></span>
+		<span class="lwtv-nation-profile-dead"><strong data-count-to="<?php echo (int) $lwtv_dead; ?>"><?php echo esc_html( number_format_i18n( $lwtv_dead ) ); ?></strong><em><?php esc_html_e( 'dead', 'lwtv-underscores' ); ?></em></span>
 	</div>
 </div>
 <?php endif; ?>
@@ -112,28 +112,28 @@ switch ( $view ) {
 		$lwtv_ov_cards = array(
 			array(
 				'variant' => 'teal',
-				'label'   => __( 'Shows', 'lwtv' ),
+				'label'   => __( 'Shows', 'lwtv-underscores' ),
 				'count'   => $lwtv_shows,
 				'svg'     => 'tv.svg',
 				'icon'    => 'svg-tv',
 			),
 			array(
 				'variant' => 'amber',
-				'label'   => __( 'On Air Now', 'lwtv' ),
+				'label'   => __( 'On Air Now', 'lwtv-underscores' ),
 				'count'   => $lwtv_onair,
 				'svg'     => 'satellite-signal.svg',
 				'icon'    => 'svg-satellite-signal',
 			),
 			array(
 				'variant' => 'green',
-				'label'   => __( 'Characters', 'lwtv' ),
+				'label'   => __( 'Characters', 'lwtv-underscores' ),
 				'count'   => $lwtv_chars,
 				'svg'     => 'man-woman.svg',
 				'icon'    => 'svg-man-woman',
 			),
 			array(
 				'variant' => 'rose',
-				'label'   => __( 'Dead', 'lwtv' ),
+				'label'   => __( 'Dead', 'lwtv-underscores' ),
 				'count'   => $lwtv_dead,
 				'svg'     => 'skull.svg',
 				'icon'    => 'svg-skull',
@@ -184,7 +184,7 @@ switch ( $view ) {
 			<div class="lwtv-fact-masthead-lead">
 				<span class="lwtv-nation-profile-chip"><?php echo lwtv_plugin()->get_symbolicon( svg: 'globe.svg', icon: 'svg-globe', max_size: '19' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
 				<div>
-					<span class="lwtv-stats-eyebrow"><?php esc_html_e( 'Nation Profile', 'lwtv' ); ?></span>
+					<span class="lwtv-stats-eyebrow"><?php esc_html_e( 'Nation Profile', 'lwtv-underscores' ); ?></span>
 					<h2 class="lwtv-fact-masthead-name"><?php echo esc_html( $lwtv_name ); ?></h2>
 				</div>
 			</div>
@@ -193,21 +193,21 @@ switch ( $view ) {
 				if ( 'ranked' === $lwtv_narr['mode'] ) {
 					printf(
 						/* translators: 1: ordinal rank (e.g. 3rd), 2: first tracked year. */
-						esc_html__( '%1$s busiest nation on the site. Steady output since %2$s.', 'lwtv' ),
+						esc_html__( '%1$s busiest nation on the site. Steady output since %2$s.', 'lwtv-underscores' ),
 						esc_html( Overview_Factsheet::ordinal( $lwtv_narr['rank'] ) ),
 						esc_html( (string) $lwtv_narr['first_year'] )
 					);
 				} elseif ( 'since' === $lwtv_narr['mode'] ) {
 					printf(
 						/* translators: 1: show count, 2: first tracked year. */
-						esc_html( _n( '%1$s tracked show since %2$s.', '%1$s tracked shows since %2$s.', $lwtv_narr['shows'], 'lwtv' ) ),
+						esc_html( _n( '%1$s tracked show since %2$s.', '%1$s tracked shows since %2$s.', $lwtv_narr['shows'], 'lwtv-underscores' ) ),
 						esc_html( number_format_i18n( $lwtv_narr['shows'] ) ),
 						esc_html( (string) $lwtv_narr['first_year'] )
 					);
 				} else {
 					printf(
 						/* translators: %s: show count. */
-						esc_html( _n( '%s tracked show.', '%s tracked shows.', $lwtv_narr['shows'], 'lwtv' ) ),
+						esc_html( _n( '%s tracked show.', '%s tracked shows.', $lwtv_narr['shows'], 'lwtv-underscores' ) ),
 						esc_html( number_format_i18n( $lwtv_narr['shows'] ) )
 					);
 				}
@@ -235,11 +235,11 @@ switch ( $view ) {
 				if ( null !== $lwtv_best_yr && $lwtv_best_yr['count'] > 1 && ! Overview_Factsheet::collapse_for_shows( $lwtv_shows ) ) {
 					$lwtv_callouts = array(
 						array(
-							'label' => __( 'Best Year', 'lwtv' ),
+							'label' => __( 'Best Year', 'lwtv-underscores' ),
 							'icon'  => 'fireworks.svg',
 							'text'  => sprintf(
 								/* translators: 1: year, 2: nation name, 3: number of shows on air. */
-								_n( 'In %1$s, %2$s had %3$s show on air.', 'In %1$s, %2$s had %3$s shows on air.', $lwtv_best_yr['count'], 'lwtv' ),
+								_n( 'In %1$s, %2$s had %3$s show on air.', 'In %1$s, %2$s had %3$s shows on air.', $lwtv_best_yr['count'], 'lwtv-underscores' ),
 								(string) $lwtv_best_yr['year'],
 								$lwtv_name,
 								number_format_i18n( $lwtv_best_yr['count'] )
@@ -287,7 +287,7 @@ switch ( $view ) {
 					}
 					if ( null !== $fold['tail'] ) {
 						$segs[] = array(
-							'label' => __( 'Other', 'lwtv' ),
+							'label' => __( 'Other', 'lwtv-underscores' ),
 							'count' => $fold['tail']['count'],
 							'pct'   => $fold['tail']['pct'],
 							'class' => 'grey',
@@ -322,17 +322,17 @@ switch ( $view ) {
 				// Bar 1 — Sexuality (pct, has grey tail).
 				$lwtv_sex_segs = $lwtv_fold_segments( $lwtv_sex_fold );
 				$lwtv_sex_mode = Overview_Factsheet::finalize_bar( array_column( $lwtv_sex_segs, 'count' ), Overview_Factsheet::collapse_for_chars( $lwtv_chars ) );
-				$lwtv_render_bar( __( 'Sexuality', 'lwtv' ), $lwtv_sex_mode, $lwtv_sex_segs, $lwtv_sum_pct( $lwtv_sex_segs ), $lwtv_aria( $lwtv_sex_segs ) );
+				$lwtv_render_bar( __( 'Sexuality', 'lwtv-underscores' ), $lwtv_sex_mode, $lwtv_sex_segs, $lwtv_sum_pct( $lwtv_sex_segs ), $lwtv_aria( $lwtv_sex_segs ) );
 
 				// Bar 2 — Gender (pct, no tail).
 				$lwtv_gen_segs = $lwtv_fold_segments( $lwtv_gen_fold );
 				$lwtv_gen_mode = Overview_Factsheet::finalize_bar( array_column( $lwtv_gen_segs, 'count' ), Overview_Factsheet::collapse_for_chars( $lwtv_chars ) );
-				$lwtv_render_bar( __( 'Gender', 'lwtv' ), $lwtv_gen_mode, $lwtv_gen_segs, $lwtv_sum_pct( $lwtv_gen_segs ), $lwtv_aria( $lwtv_gen_segs ) );
+				$lwtv_render_bar( __( 'Gender', 'lwtv-underscores' ), $lwtv_gen_mode, $lwtv_gen_segs, $lwtv_sum_pct( $lwtv_gen_segs ), $lwtv_aria( $lwtv_gen_segs ) );
 
 				// Bar 3 — Format (counts, no tail).
 				$lwtv_fmt_segs = $lwtv_fold_segments( $lwtv_fmt_fold );
 				$lwtv_fmt_mode = Overview_Factsheet::finalize_bar( array_column( $lwtv_fmt_segs, 'count' ), Overview_Factsheet::collapse_for_shows( $lwtv_shows ) );
-				$lwtv_render_bar( __( 'Format', 'lwtv' ), $lwtv_fmt_mode, $lwtv_fmt_segs, $lwtv_sum_cnt( $lwtv_fmt_segs ), $lwtv_aria( $lwtv_fmt_segs ) );
+				$lwtv_render_bar( __( 'Format', 'lwtv-underscores' ), $lwtv_fmt_mode, $lwtv_fmt_segs, $lwtv_sum_cnt( $lwtv_fmt_segs ), $lwtv_aria( $lwtv_fmt_segs ) );
 		?>
 
 				<div class="lwtv-comp-rule" aria-hidden="true"></div>
@@ -342,38 +342,38 @@ switch ( $view ) {
 				$lwtv_finished = max( 0, $lwtv_shows - $lwtv_onair );
 				$lwtv_b4_segs  = array(
 					array(
-						'label' => __( 'on air', 'lwtv' ),
+						'label' => __( 'on air', 'lwtv-underscores' ),
 						'count' => $lwtv_onair,
 						'pct'   => ( $lwtv_shows > 0 ) ? round( $lwtv_onair / $lwtv_shows * 100, 1 ) : 0,
 						'class' => 'amber',
 					),
 					array(
-						'label' => __( 'finished', 'lwtv' ),
+						'label' => __( 'finished', 'lwtv-underscores' ),
 						'count' => $lwtv_finished,
 						'pct'   => ( $lwtv_shows > 0 ) ? round( $lwtv_finished / $lwtv_shows * 100, 1 ) : 0,
 						'class' => 'teal',
 					),
 				);
 				$lwtv_b4_mode  = Overview_Factsheet::finalize_bar( array( $lwtv_onair, $lwtv_finished ), Overview_Factsheet::collapse_for_shows( $lwtv_shows ) );
-				$lwtv_render_bar( __( 'Shows total vs on air', 'lwtv' ), $lwtv_b4_mode, $lwtv_b4_segs, $lwtv_sum_cnt( $lwtv_b4_segs ), $lwtv_aria( $lwtv_b4_segs ) );
+				$lwtv_render_bar( __( 'Shows total vs on air', 'lwtv-underscores' ), $lwtv_b4_mode, $lwtv_b4_segs, $lwtv_sum_cnt( $lwtv_b4_segs ), $lwtv_aria( $lwtv_b4_segs ) );
 
 				// Bar 5 — Alive or dead (counts).
 				$lwtv_b5_segs = array(
 					array(
-						'label' => __( 'alive', 'lwtv' ),
+						'label' => __( 'alive', 'lwtv-underscores' ),
 						'count' => $lwtv_alive,
 						'pct'   => ( $lwtv_chars > 0 ) ? round( $lwtv_alive / $lwtv_chars * 100, 1 ) : 0,
 						'class' => 'green',
 					),
 					array(
-						'label' => __( 'dead', 'lwtv' ),
+						'label' => __( 'dead', 'lwtv-underscores' ),
 						'count' => $lwtv_dead,
 						'pct'   => ( $lwtv_chars > 0 ) ? round( $lwtv_dead / $lwtv_chars * 100, 1 ) : 0,
 						'class' => 'rose',
 					),
 				);
 				$lwtv_b5_mode = Overview_Factsheet::finalize_bar( array( $lwtv_alive, $lwtv_dead ), Overview_Factsheet::collapse_for_chars( $lwtv_chars ) );
-				$lwtv_render_bar( __( 'Alive or dead', 'lwtv' ), $lwtv_b5_mode, $lwtv_b5_segs, $lwtv_sum_cnt( $lwtv_b5_segs ), $lwtv_aria( $lwtv_b5_segs ) );
+				$lwtv_render_bar( __( 'Alive or dead', 'lwtv-underscores' ), $lwtv_b5_mode, $lwtv_b5_segs, $lwtv_sum_cnt( $lwtv_b5_segs ), $lwtv_aria( $lwtv_b5_segs ) );
 				?>
 			</div>
 		</div>
@@ -382,14 +382,14 @@ switch ( $view ) {
 		<div class="lwtv-facts">
 			<?php if ( null !== $lwtv_top_show && ! empty( $lwtv_top_show['id'] ) ) : ?>
 				<div class="lwtv-fact">
-					<span class="lwtv-fact-num lwtv-fact-num--teal"><?php echo esc_html( number_format_i18n( round( $lwtv_top_show['score'] ) ) ); ?><span class="lwtv-fact-suffix"><?php esc_html_e( '/ 100', 'lwtv' ); ?></span></span>
+					<span class="lwtv-fact-num lwtv-fact-num--teal"><?php echo esc_html( number_format_i18n( round( $lwtv_top_show['score'] ) ) ); ?><span class="lwtv-fact-suffix"><?php esc_html_e( '/ 100', 'lwtv-underscores' ); ?></span></span>
 					<div class="lwtv-fact-caption">
 						<?php
 						// Generic phrasing (no entity name) so it reads cleanly for
 						// nations and networks alike — sidesteps "the United States".
 						printf(
 							/* translators: %s: linked show title. */
-							esc_html__( 'Best-scoring show: %s', 'lwtv' ),
+							esc_html__( 'Best-scoring show: %s', 'lwtv-underscores' ),
 							'<a href="' . esc_url( (string) get_permalink( $lwtv_top_show['id'] ) ) . '">' . esc_html( get_the_title( $lwtv_top_show['id'] ) ) . '</a>'
 						);
 						?>
@@ -405,11 +405,11 @@ switch ( $view ) {
 						if ( null !== $lwtv_global_av ) {
 							printf(
 								/* translators: %s: global average characters per show. */
-								esc_html__( 'characters per show, against a global average of %s', 'lwtv' ),
+								esc_html__( 'characters per show, against a global average of %s', 'lwtv-underscores' ),
 								esc_html( number_format_i18n( $lwtv_global_av, 1 ) )
 							);
 						} else {
-							esc_html_e( 'characters per show', 'lwtv' );
+							esc_html_e( 'characters per show', 'lwtv-underscores' );
 						}
 						?>
 					</div>
@@ -420,7 +420,7 @@ switch ( $view ) {
 				<div class="lwtv-fact">
 					<span class="lwtv-fact-num lwtv-fact-num--rose"><?php echo esc_html( number_format_i18n( $lwtv_deathpct, 1 ) ); ?>%</span>
 					<div class="lwtv-fact-caption">
-						<?php esc_html_e( 'Of its queer characters have died on screen', 'lwtv' ); ?>
+						<?php esc_html_e( 'Of its queer characters have died on screen', 'lwtv-underscores' ); ?>
 					</div>
 				</div>
 			<?php endif; ?>
@@ -452,7 +452,7 @@ switch ( $view ) {
 		$lwtv_gap_txt = '';
 		if ( (int) $lwtv_last['year'] > 0 && ( $lwtv_current - (int) $lwtv_last['year'] ) >= 2 ) {
 			/* translators: %s: the last year anything was on the air (4-digit year). */
-			$lwtv_gap_txt = sprintf( __( 'Nothing has been on the air since %s.', 'lwtv' ), (string) $lwtv_last['year'] );
+			$lwtv_gap_txt = sprintf( __( 'Nothing has been on the air since %s.', 'lwtv-underscores' ), (string) $lwtv_last['year'] );
 		}
 
 		if ( Overview_Factsheet::collapse_for_shows( $lwtv_shows ) ) {
@@ -471,7 +471,7 @@ switch ( $view ) {
 			if ( $lwtv_sh_first > 0 && $lwtv_sh_first === $lwtv_sh_last ) {
 				$lwtv_sh_lines[] = sprintf(
 					/* translators: 1: nation name, 2: the year on air, 3: number of shows. */
-					_n( '%1$s has %3$s tracked queer show, on the air in %2$s.', '%1$s has %3$s tracked queer shows, all on the air in %2$s.', $lwtv_shows, 'lwtv' ),
+					_n( '%1$s has %3$s tracked queer show, on the air in %2$s.', '%1$s has %3$s tracked queer shows, all on the air in %2$s.', $lwtv_shows, 'lwtv-underscores' ),
 					$lwtv_name,
 					(string) $lwtv_sh_first,
 					number_format_i18n( $lwtv_shows )
@@ -479,7 +479,7 @@ switch ( $view ) {
 			} elseif ( $lwtv_sh_first > 0 ) {
 				$lwtv_sh_lines[] = sprintf(
 					/* translators: 1: nation name, 2: first year on air, 3: last year on air, 4: number of shows. */
-					_n( '%1$s has %4$s tracked queer show, on the air from %2$s to %3$s.', '%1$s has %4$s tracked queer shows on the air between %2$s and %3$s.', $lwtv_shows, 'lwtv' ),
+					_n( '%1$s has %4$s tracked queer show, on the air from %2$s to %3$s.', '%1$s has %4$s tracked queer shows on the air between %2$s and %3$s.', $lwtv_shows, 'lwtv-underscores' ),
 					$lwtv_name,
 					(string) $lwtv_sh_first,
 					(string) $lwtv_sh_last,
@@ -488,7 +488,7 @@ switch ( $view ) {
 			} else {
 				$lwtv_sh_lines[] = sprintf(
 					/* translators: 1: nation name, 2: number of shows. */
-					_n( '%1$s has %2$s tracked queer show.', '%1$s has %2$s tracked queer shows.', $lwtv_shows, 'lwtv' ),
+					_n( '%1$s has %2$s tracked queer show.', '%1$s has %2$s tracked queer shows.', $lwtv_shows, 'lwtv-underscores' ),
 					$lwtv_name,
 					number_format_i18n( $lwtv_shows )
 				);
@@ -496,16 +496,16 @@ switch ( $view ) {
 
 			if ( $lwtv_onair > 0 ) {
 				$lwtv_sh_lines[] = ( $lwtv_onair === $lwtv_shows )
-					? __( 'Still on the air today.', 'lwtv' )
+					? __( 'Still on the air today.', 'lwtv-underscores' )
 					: sprintf(
 						/* translators: %s: number of shows still on the air. */
-						_n( '%s of them is still on the air.', '%s of them are still on the air.', $lwtv_onair, 'lwtv' ),
+						_n( '%s of them is still on the air.', '%s of them are still on the air.', $lwtv_onair, 'lwtv-underscores' ),
 						number_format_i18n( $lwtv_onair )
 					);
 			} elseif ( '' !== $lwtv_gap_txt ) {
 				$lwtv_sh_lines[] = $lwtv_gap_txt;
 			}
-			$lwtv_sh_lines[] = __( 'Too little to chart — so here it is in full.', 'lwtv' );
+			$lwtv_sh_lines[] = __( 'Too little to chart — so here it is in full.', 'lwtv-underscores' );
 
 			// The catalog itself. At most two shows here, so per-post meta reads are cheap.
 			$lwtv_sh_posts = get_posts(
@@ -534,13 +534,13 @@ switch ( $view ) {
 
 				if ( 'current' === $lwtv_sh_fin ) {
 					/* translators: %s: year the show started airing. */
-					$lwtv_sh_years = sprintf( __( 'On air since %s', 'lwtv' ), (string) $lwtv_sh_start );
+					$lwtv_sh_years = sprintf( __( 'On air since %s', 'lwtv-underscores' ), (string) $lwtv_sh_start );
 				} elseif ( (int) $lwtv_sh_fin > $lwtv_sh_start ) {
 					/* translators: 1: first year on air, 2: last year on air. */
-					$lwtv_sh_years = sprintf( __( 'On air %1$s–%2$s', 'lwtv' ), (string) $lwtv_sh_start, (string) (int) $lwtv_sh_fin );
+					$lwtv_sh_years = sprintf( __( 'On air %1$s–%2$s', 'lwtv-underscores' ), (string) $lwtv_sh_start, (string) (int) $lwtv_sh_fin );
 				} else {
 					/* translators: %s: the single year the show was on air. */
-					$lwtv_sh_years = sprintf( __( 'On air %s', 'lwtv' ), (string) $lwtv_sh_start );
+					$lwtv_sh_years = sprintf( __( 'On air %s', 'lwtv-underscores' ), (string) $lwtv_sh_start );
 				}
 
 				$lwtv_sh_chars = (int) get_post_meta( $lwtv_sh_post->ID, 'lezshows_char_count', true );
@@ -550,15 +550,15 @@ switch ( $view ) {
 				if ( $lwtv_sh_chars > 0 ) {
 					$lwtv_sh_meta[] = sprintf(
 						/* translators: %s: number of characters. */
-						_n( '%s character', '%s characters', $lwtv_sh_chars, 'lwtv' ),
+						_n( '%s character', '%s characters', $lwtv_sh_chars, 'lwtv-underscores' ),
 						number_format_i18n( $lwtv_sh_chars )
 					);
 				}
 				$lwtv_sh_meta[] = ( 0 === $lwtv_sh_dead )
-					? __( 'no deaths', 'lwtv' )
+					? __( 'no deaths', 'lwtv-underscores' )
 					: sprintf(
 						/* translators: %s: number of dead characters. */
-						_n( '%s death', '%s deaths', $lwtv_sh_dead, 'lwtv' ),
+						_n( '%s death', '%s deaths', $lwtv_sh_dead, 'lwtv-underscores' ),
 						number_format_i18n( $lwtv_sh_dead )
 					);
 
@@ -575,8 +575,8 @@ switch ( $view ) {
 			usort( $lwtv_sh_rows, static fn( $a, $b ) => $a['start'] <=> $b['start'] );
 
 			$short_history = array(
-				'eyebrow'  => __( 'Shows On Air Per Year', 'lwtv' ),
-				'headline' => __( 'A short history, so far', 'lwtv' ),
+				'eyebrow'  => __( 'Shows On Air Per Year', 'lwtv-underscores' ),
+				'headline' => __( 'A short history, so far', 'lwtv-underscores' ),
 				'lines'    => $lwtv_sh_lines,
 				'rows'     => $lwtv_sh_rows,
 			);
@@ -610,13 +610,13 @@ switch ( $view ) {
 			// Add Best Year
 			if ( $lwtv_best_count > 0 ) {
 				$lwtv_callouts[] = array(
-					'label' => __( 'Best Year', 'lwtv' ),
+					'label' => __( 'Best Year', 'lwtv-underscores' ),
 					'svg'   => 'fireworks.svg',
 					'icon'  => 'svg-fireworks',
 					// Raw values — the callout partial escapes the assembled text with esc_html().
 					'text'  => sprintf(
 						/* translators: 1: year, 2: nation name, 3: number of shows on air. */
-						_n( 'In %1$s, %2$s had %3$s show on air.', 'In %1$s, %2$s had %3$s shows on air.', $lwtv_best_count, 'lwtv' ),
+						_n( 'In %1$s, %2$s had %3$s show on air.', 'In %1$s, %2$s had %3$s shows on air.', $lwtv_best_count, 'lwtv-underscores' ),
 						(string) $lwtv_best_year,
 						$lwtv_name,
 						number_format_i18n( $lwtv_best_count )
@@ -627,17 +627,17 @@ switch ( $view ) {
 			// Add Worst Years
 			if ( ! empty( $no_onair_years ) ) {
 				if ( 6 > count( $no_onair_years ) ) {
-					$no_onair_years_label = _n( 'Worst Year', 'Worst Years', count( $no_onair_years ), 'lwtv' );
+					$no_onair_years_label = _n( 'Worst Year', 'Worst Years', count( $no_onair_years ), 'lwtv-underscores' );
 					$no_onair_years_text  = sprintf(
 						/* translators: 1: nation name, 2: Years with no shows on air. */
-						_n( '%1$s had no shows on air in %2$s.', '%1$s had no shows on air in the following years: %2$s', count( $no_onair_years ), 'lwtv' ),
+						_n( '%1$s had no shows on air in %2$s.', '%1$s had no shows on air in the following years: %2$s', count( $no_onair_years ), 'lwtv-underscores' ),
 						$lwtv_name,
 						implode( ', ', $no_onair_years )
 					);
 				} else {
 					/* translators: 1: nation name, 2: Number of years with no shows on air. */
-					$no_onair_years_text  = sprintf( __( '%1$s had no shows on air in %2$s years.', 'lwtv' ), $lwtv_name, count( $no_onair_years ) );
-					$no_onair_years_label = __( 'Worst Years', 'lwtv' );
+					$no_onair_years_text  = sprintf( __( '%1$s had no shows on air in %2$s years.', 'lwtv-underscores' ), $lwtv_name, count( $no_onair_years ) );
+					$no_onair_years_label = __( 'Worst Years', 'lwtv-underscores' );
 				}
 
 				$lwtv_callouts[] = array(
@@ -652,7 +652,7 @@ switch ( $view ) {
 			require_once plugin_dir_path( __DIR__ ) . 'partials/phrases.php';
 			$lwtv_oa_series = lwtv_stats_year_series( $lwtv_points, 'year', 'count', false );
 
-			$lwtv_oa_desc = __( 'Shows on air for each year, starting from the first tracked episode.', 'lwtv' );
+			$lwtv_oa_desc = __( 'Shows on air for each year, starting from the first tracked episode.', 'lwtv-underscores' );
 			if ( '' !== $lwtv_gap_txt ) {
 				$lwtv_oa_desc .= ' ' . $lwtv_gap_txt;
 			}
@@ -663,9 +663,9 @@ switch ( $view ) {
 				'peak_count'  => $lwtv_oa_series['peak_count'],
 				'stat_num'    => (int) $lwtv_last['count'],
 				/* translators: %s: the latest year (4-digit, never thousands-formatted). */
-				'stat_sub'    => sprintf( __( 'on air in %s', 'lwtv' ), (string) $lwtv_last['year'] ),
-				'eyebrow'     => __( 'Shows On Air Per Year', 'lwtv' ),
-				'headline'    => __( 'On-air over time', 'lwtv' ),
+				'stat_sub'    => sprintf( __( 'on air in %s', 'lwtv-underscores' ), (string) $lwtv_last['year'] ),
+				'eyebrow'     => __( 'Shows On Air Per Year', 'lwtv-underscores' ),
+				'headline'    => __( 'On-air over time', 'lwtv-underscores' ),
 				'description' => $lwtv_oa_desc,
 				'callouts'    => $lwtv_callouts,
 			);
@@ -676,9 +676,9 @@ switch ( $view ) {
 		}
 
 		$download_csv = array(
-			'page'  => __( 'year', 'lwtv' ),
+			'page'  => __( 'year', 'lwtv-underscores' ),
 			/* translators: %s: nation name. */
-			'title' => sprintf( __( '%s: shows on air by year', 'lwtv' ), $lwtv_name ),
+			'title' => sprintf( __( '%s: shows on air by year', 'lwtv-underscores' ), $lwtv_name ),
 			'count' => $lwtv_csv_rows,
 		);
 		// phpcs:ignore PEAR.Files.IncludingFile.UseRequire

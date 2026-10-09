@@ -47,9 +47,9 @@ $all_shows_count = lwtv_plugin()->generate_total_counts( 'shows' );
 <div class="lwtv-stats-overview">
 	<div class="lwtv-nations-picker">
 		<form method="get" id="go" class="lwtv-nations-pickerform">
-			<label for="nation" class="lwtv-stats-eyebrow"><?php esc_html_e( 'Nation', 'lwtv' ); ?></label>
+			<label for="nation" class="lwtv-stats-eyebrow"><?php esc_html_e( 'Nation', 'lwtv-underscores' ); ?></label>
 			<select name="nation" id="nation" class="form-select lwtv-nations-select" onchange="this.form.submit()">
-				<option value="all"><?php esc_html_e( 'All Nations', 'lwtv' ); ?></option>
+				<option value="all"><?php esc_html_e( 'All Nations', 'lwtv-underscores' ); ?></option>
 				<?php
 				foreach ( $all_nations_data as $lwtv_n_slug => $lwtv_n_data ) {
 					printf(
@@ -61,9 +61,9 @@ $all_shows_count = lwtv_plugin()->generate_total_counts( 'shows' );
 				}
 				?>
 			</select>
-			<noscript><button type="submit" id="submit" class="btn btn-outline-primary btn-sm"><?php esc_html_e( 'Go', 'lwtv' ); ?></button></noscript>
+			<noscript><button type="submit" id="submit" class="btn btn-outline-primary btn-sm"><?php esc_html_e( 'Go', 'lwtv-underscores' ); ?></button></noscript>
 			<?php if ( 'all' !== $nation ) : ?>
-				<a class="lwtv-nations-reset" href="/statistics/nations/"><?php esc_html_e( 'Reset to all nations', 'lwtv' ); ?></a>
+				<a class="lwtv-nations-reset" href="/statistics/nations/"><?php esc_html_e( 'Reset to all nations', 'lwtv-underscores' ); ?></a>
 			<?php endif; ?>
 		</form>
 	</div>
@@ -74,7 +74,7 @@ $all_shows_count = lwtv_plugin()->generate_total_counts( 'shows' );
 		$lwtv_sub_base  = '/statistics/nations/';
 		$lwtv_sub_query = array( 'nation' => $nation );
 		$lwtv_subnav    = array_merge( array( 'overview' => 'shows' ), $valid_views );
-		echo '<nav class="lwtv-stats-subnav" aria-label="' . esc_attr__( 'Nation statistics views', 'lwtv' ) . '">';
+		echo '<nav class="lwtv-stats-subnav" aria-label="' . esc_attr__( 'Nation statistics views', 'lwtv-underscores' ) . '">';
 		foreach ( $lwtv_subnav as $lwtv_v => $lwtv_pt ) {
 			$lwtv_is  = ( $view === $lwtv_v );
 			$lwtv_url = ( 'overview' === $lwtv_v ) ? add_query_arg( $lwtv_sub_query, $lwtv_sub_base ) : add_query_arg( $lwtv_sub_query, $lwtv_sub_base . $lwtv_v . '/' );

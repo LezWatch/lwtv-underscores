@@ -100,7 +100,7 @@ class WP_CLI_LWTV_Name_Keys {
 
 				if ( empty( $variants ) ) {
 					++$unkeyable;
-					\WP_CLI::debug( sprintf( 'Actor %d has no keyable name: "%s"', $post_id, $title ), 'lwtv' );
+					\WP_CLI::debug( sprintf( 'Actor %d has no keyable name: "%s"', $post_id, $title ), 'lwtv-underscores' );
 					continue;
 				}
 

@@ -73,7 +73,7 @@ class Admin_Notice {
 
 		$message = (string) $notice['message'];
 		$link    = (string) ( $notice['link'] ?? '' );
-		$text    = ( '' !== $link_text ) ? $link_text : __( 'Edit', 'lwtv' );
+		$text    = ( '' !== $link_text ) ? $link_text : __( 'Edit', 'lwtv-underscores' );
 		?>
 		<div class="notice <?php echo esc_attr( self::css_class( (string) ( $notice['type'] ?? '' ) ) ); ?> is-dismissible">
 			<p>

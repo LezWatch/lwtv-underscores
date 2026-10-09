@@ -44,15 +44,15 @@ foreach ( Role_Podium::ORDER as $roles_type ) {
 }
 
 // translators: %1$s: leading role type's name (e.g. "Regular/Main Character"), %2$s: its share of all tagged appearances.
-$roles_headline = ( '' !== $roles_facts['leader'] ) ? sprintf( __( '%1$s roles lead, at %2$s%%', 'lwtv' ), $roles_data[ $roles_facts['leader'] ]['name'] ?? '', number_format_i18n( $roles_facts['leader_share_pct'] ) ) : __( 'Role breakdown', 'lwtv' );
+$roles_headline = ( '' !== $roles_facts['leader'] ) ? sprintf( __( '%1$s roles lead, at %2$s%%', 'lwtv-underscores' ), $roles_data[ $roles_facts['leader'] ]['name'] ?? '', number_format_i18n( $roles_facts['leader_share_pct'] ) ) : __( 'Role breakdown', 'lwtv-underscores' );
 
 $donut = array(
 	'segments'    => $roles_segments,
 	'center'      => $roles_facts['sum'],
-	'center_sub'  => __( 'tagged appearances', 'lwtv' ),
-	'eyebrow'     => __( 'Character Role Type', 'lwtv' ),
+	'center_sub'  => __( 'tagged appearances', 'lwtv-underscores' ),
+	'eyebrow'     => __( 'Character Role Type', 'lwtv-underscores' ),
 	'headline'    => $roles_headline,
-	'description' => __( 'Every show a character appears in is tagged Regular, Recurring, or Guest — this is the split across all of them.', 'lwtv' ),
+	'description' => __( 'Every show a character appears in is tagged Regular, Recurring, or Guest — this is the split across all of them.', 'lwtv-underscores' ),
 );
 
 // phpcs:ignore PEAR.Files.IncludingFile.UseRequire
@@ -65,7 +65,7 @@ if ( $roles_facts['sum'] > 0 ) {
 	$roles_pullstats[] = array(
 		'icon'   => 'tag.svg',
 		'number' => number_format_i18n( $roles_facts['sum'] ),
-		'label'  => __( 'Tagged show appearances, across every role type.', 'lwtv' ),
+		'label'  => __( 'Tagged show appearances, across every role type.', 'lwtv-underscores' ),
 	);
 }
 
@@ -73,9 +73,9 @@ if ( '' !== $roles_facts['leader'] ) {
 	$roles_pullstats[] = array(
 		'icon'   => 'chart-pie.svg',
 		/* translators: %s: the leading role type's share of all tagged appearances (one decimal). */
-		'number' => sprintf( __( '%s%%', 'lwtv' ), number_format_i18n( $roles_facts['leader_share_pct'], 1 ) ),
+		'number' => sprintf( __( '%s%%', 'lwtv-underscores' ), number_format_i18n( $roles_facts['leader_share_pct'], 1 ) ),
 		/* translators: %s: the leading role type's name (e.g. "Regular/Main Character"). */
-		'label'  => sprintf( __( 'Of appearances are %s, the most common type.', 'lwtv' ), lcfirst( $roles_data[ $roles_facts['leader'] ]['name'] ?? '' ) ),
+		'label'  => sprintf( __( 'Of appearances are %s, the most common type.', 'lwtv-underscores' ), lcfirst( $roles_data[ $roles_facts['leader'] ]['name'] ?? '' ) ),
 	);
 }
 
@@ -83,8 +83,8 @@ if ( isset( $roles_facts['levels']['guest'] ) && $roles_facts['sum'] > 0 ) {
 	$roles_pullstats[] = array(
 		'icon'   => 'user.svg',
 		/* translators: %s: percentage of tagged appearances that are one-off Guest roles (one decimal). */
-		'number' => sprintf( __( '%s%%', 'lwtv' ), number_format_i18n( $roles_facts['levels']['guest']['share'], 1 ) ),
-		'label'  => __( 'Are one-off Guest appearances rather than a Regular or Recurring part.', 'lwtv' ),
+		'number' => sprintf( __( '%s%%', 'lwtv-underscores' ), number_format_i18n( $roles_facts['levels']['guest']['share'], 1 ) ),
+		'label'  => __( 'Are one-off Guest appearances rather than a Regular or Recurring part.', 'lwtv-underscores' ),
 	);
 }
 
@@ -110,7 +110,7 @@ endif;
 $roles_prolific = ( new Build_Actors() )->generate_prolific_by_role();
 if ( ! empty( $roles_prolific ) ) :
 	?>
-	<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'Most Prolific by Role Type', 'lwtv' ); ?></p>
+	<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'Most Prolific by Role Type', 'lwtv-underscores' ); ?></p>
 	<div class="lwtv-pullstats lwtv-pullstats--three lwtv-statcards lwtv-bars--actors">
 		<?php
 		foreach ( Role_Podium::ORDER as $roles_prolific_type ) :

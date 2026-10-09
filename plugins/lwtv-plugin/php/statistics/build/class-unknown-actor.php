@@ -169,9 +169,9 @@ class Unknown_Actor {
 			}
 		}
 		$role_labels = array(
-			'regular'   => __( 'Regular/Main Character', 'lwtv' ),
-			'recurring' => __( 'Recurring Character', 'lwtv' ),
-			'guest'     => __( 'Guest Character', 'lwtv' ),
+			'regular'   => __( 'Regular/Main Character', 'lwtv-underscores' ),
+			'recurring' => __( 'Recurring Character', 'lwtv-underscores' ),
+			'guest'     => __( 'Guest Character', 'lwtv-underscores' ),
 		);
 		$roles       = array();
 		foreach ( $role_counts as $type => $count ) {

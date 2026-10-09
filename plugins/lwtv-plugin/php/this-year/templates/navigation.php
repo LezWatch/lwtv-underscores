@@ -12,15 +12,15 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 
 $lwtv_ty_subnav = array(
-	'overview'          => __( 'Overview', 'lwtv' ),
-	'characters-on-air' => __( 'Characters On Air', 'lwtv' ),
-	'dead-characters'   => __( 'Dead Characters', 'lwtv' ),
-	'shows-on-air'      => __( 'Shows On Air', 'lwtv' ),
-	'new-shows'         => __( 'New Shows', 'lwtv' ),
-	'canceled-shows'    => __( 'Canceled Shows', 'lwtv' ),
+	'overview'          => __( 'Overview', 'lwtv-underscores' ),
+	'characters-on-air' => __( 'Characters On Air', 'lwtv-underscores' ),
+	'dead-characters'   => __( 'Dead Characters', 'lwtv-underscores' ),
+	'shows-on-air'      => __( 'Shows On Air', 'lwtv-underscores' ),
+	'new-shows'         => __( 'New Shows', 'lwtv-underscores' ),
+	'canceled-shows'    => __( 'Canceled Shows', 'lwtv-underscores' ),
 );
 ?>
-<nav class="lwtv-stats-subnav" aria-label="<?php esc_attr_e( 'This Year views', 'lwtv' ); ?>">
+<nav class="lwtv-stats-subnav" aria-label="<?php esc_attr_e( 'This Year views', 'lwtv-underscores' ); ?>">
 	<?php
 	foreach ( $lwtv_ty_subnav as $lwtv_slug => $lwtv_label ) {
 		$lwtv_is_active = ( $view === $lwtv_slug );

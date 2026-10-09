@@ -28,15 +28,15 @@ class Actors {
 		if ( empty( $char_list ) ) {
 			return array(
 				array(
-					'name'  => __( 'Regular', 'lwtv' ),
+					'name'  => __( 'Regular', 'lwtv-underscores' ),
 					'count' => 0,
 				),
 				array(
-					'name'  => __( 'Recurring', 'lwtv' ),
+					'name'  => __( 'Recurring', 'lwtv-underscores' ),
 					'count' => 0,
 				),
 				array(
-					'name'  => __( 'Guest', 'lwtv' ),
+					'name'  => __( 'Guest', 'lwtv-underscores' ),
 					'count' => 0,
 				),
 			);
@@ -62,15 +62,15 @@ class Actors {
 
 		return array(
 			array(
-				'name'  => __( 'Regular', 'lwtv' ),
+				'name'  => __( 'Regular', 'lwtv-underscores' ),
 				'count' => $role_counts['regular'],
 			),
 			array(
-				'name'  => __( 'Recurring', 'lwtv' ),
+				'name'  => __( 'Recurring', 'lwtv-underscores' ),
 				'count' => $role_counts['recurring'],
 			),
 			array(
-				'name'  => __( 'Guest', 'lwtv' ),
+				'name'  => __( 'Guest', 'lwtv-underscores' ),
 				'count' => $role_counts['guest'],
 			),
 		);
@@ -91,11 +91,11 @@ class Actors {
 		if ( empty( $char_list ) ) {
 			return array(
 				array(
-					'name'  => __( 'Alive', 'lwtv' ),
+					'name'  => __( 'Alive', 'lwtv-underscores' ),
 					'count' => 0,
 				),
 				array(
-					'name'  => __( 'Dead', 'lwtv' ),
+					'name'  => __( 'Dead', 'lwtv-underscores' ),
 					'count' => 0,
 				),
 			);
@@ -135,11 +135,11 @@ class Actors {
 
 		return array(
 			array(
-				'name'  => __( 'Alive', 'lwtv' ),
+				'name'  => __( 'Alive', 'lwtv-underscores' ),
 				'count' => $alive_count,
 			),
 			array(
-				'name'  => __( 'Dead', 'lwtv' ),
+				'name'  => __( 'Dead', 'lwtv-underscores' ),
 				'count' => $dead_count,
 			),
 		);
@@ -199,9 +199,9 @@ class Actors {
 		}
 
 		$labels = array(
-			'regular'   => __( 'Regular/Main Character', 'lwtv' ),
-			'recurring' => __( 'Recurring Character', 'lwtv' ),
-			'guest'     => __( 'Guest Character', 'lwtv' ),
+			'regular'   => __( 'Regular/Main Character', 'lwtv-underscores' ),
+			'recurring' => __( 'Recurring Character', 'lwtv-underscores' ),
+			'guest'     => __( 'Guest Character', 'lwtv-underscores' ),
 		);
 
 		$totals = array();

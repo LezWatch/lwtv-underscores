@@ -274,23 +274,23 @@ class Exclusions {
 		switch ( $key ) {
 			case 'queer_checker':
 				/* translators: %d: number of actors. */
-				return sprintf( _n( '%d actor has had their queerness overridden.', '%d actors have had their queerness overridden.', $count, 'lwtv' ), $count );
+				return sprintf( _n( '%d actor has had their queerness overridden.', '%d actors have had their queerness overridden.', $count, 'lwtv-underscores' ), $count );
 			case 'dead_checker':
 				/* translators: %d: number of shows. */
-				return sprintf( _n( '%d show has had death-score deductions overridden.', '%d shows have had death-score deductions overridden.', $count, 'lwtv' ), $count );
+				return sprintf( _n( '%d show has had death-score deductions overridden.', '%d shows have had death-score deductions overridden.', $count, 'lwtv-underscores' ), $count );
 			case 'wikidata_ignore':
 				/* translators: %d: number of actors. */
-				return sprintf( _n( '%d actor has had their WikiData match overridden.', '%d actors have had their WikiData match overridden.', $count, 'lwtv' ), $count );
+				return sprintf( _n( '%d actor has had their WikiData match overridden.', '%d actors have had their WikiData match overridden.', $count, 'lwtv-underscores' ), $count );
 			case 'tvmaze_ignore':
 				/* translators: %d: number of shows. */
-				return sprintf( _n( '%d show has had its TVMaze match overridden.', '%d shows have had their TVMaze match overridden.', $count, 'lwtv' ), $count );
+				return sprintf( _n( '%d show has had its TVMaze match overridden.', '%d shows have had their TVMaze match overridden.', $count, 'lwtv-underscores' ), $count );
 			case 'no_known_chars':
 				/* translators: %d: number of shows. */
-				return sprintf( _n( '%d show is flagged as having no known characters.', '%d shows are flagged as having no known characters.', $count, 'lwtv' ), $count );
+				return sprintf( _n( '%d show is flagged as having no known characters.', '%d shows are flagged as having no known characters.', $count, 'lwtv-underscores' ), $count );
 		}
 
 		/* translators: %d: number of overridden posts. */
-		return sprintf( _n( '%d override is set.', '%d overrides are set.', $count, 'lwtv' ), $count );
+		return sprintf( _n( '%d override is set.', '%d overrides are set.', $count, 'lwtv-underscores' ), $count );
 	}
 
 	/**
@@ -301,6 +301,6 @@ class Exclusions {
 	 */
 	private static function stale_line( int $stale ) {
 		// translators: %d is the number of items.
-		return sprintf( __( '%d of these may no longer apply. See the last column.', 'lwtv' ), $stale );
+		return sprintf( __( '%d of these may no longer apply. See the last column.', 'lwtv-underscores' ), $stale );
 	}
 }

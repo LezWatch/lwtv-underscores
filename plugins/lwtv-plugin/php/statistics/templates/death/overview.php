@@ -23,36 +23,36 @@ require_once plugin_dir_path( __DIR__ ) . 'partials/phrases.php';
 $death_cards = array(
 	array(
 		'variant' => 'crimson',
-		'label'   => __( 'Characters Who Die', 'lwtv' ),
+		'label'   => __( 'Characters Who Die', 'lwtv-underscores' ),
 		'count'   => (int) round( (float) $deadchar_percent ),
 		'suffix'  => '%',
 		/* translators: 1: dead, 2: total characters. */
-		'caption' => sprintf( __( '%1$s of %2$s queer characters', 'lwtv' ), number_format_i18n( $deadchars ), number_format_i18n( $allchars ) ),
+		'caption' => sprintf( __( '%1$s of %2$s queer characters', 'lwtv-underscores' ), number_format_i18n( $deadchars ), number_format_i18n( $allchars ) ),
 		'svg'     => 'skull.svg',
 		'icon'    => 'svg-skull',
 	),
 	array(
 		'variant' => 'raspberry',
-		'label'   => __( 'Shows That Kill', 'lwtv' ),
+		'label'   => __( 'Shows That Kill', 'lwtv-underscores' ),
 		'count'   => (int) round( (float) $deadshow_percent ),
 		'suffix'  => '%',
 		/* translators: 1: dead shows, 2: total shows. */
-		'caption' => sprintf( __( '%1$s of %2$s shows kill a queer character', 'lwtv' ), number_format_i18n( $deadshows ), number_format_i18n( $allshows ) ),
+		'caption' => sprintf( __( '%1$s of %2$s shows kill a queer character', 'lwtv-underscores' ), number_format_i18n( $deadshows ), number_format_i18n( $allshows ) ),
 		'svg'     => 'tv.svg',
 		'icon'    => 'svg-tv',
 	),
 	array(
 		'variant' => 'plum',
-		'label'   => __( 'Deaths Per Year', 'lwtv' ),
+		'label'   => __( 'Deaths Per Year', 'lwtv-underscores' ),
 		'count'   => (int) round( (float) $dead_years_average ),
 		'suffix'  => '',
-		'caption' => __( 'On average, including quiet years', 'lwtv' ),
+		'caption' => __( 'On average, including quiet years', 'lwtv-underscores' ),
 		'svg'     => 'calendar-alt.svg',
 		'icon'    => 'svg-calendar',
 	),
 );
 ?>
-<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'The Toll', 'lwtv' ); ?></p>
+<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'The Toll', 'lwtv-underscores' ); ?></p>
 <div class="lwtv-toll">
 	<?php
 	foreach ( $death_cards as $death_card ) {
@@ -90,7 +90,7 @@ foreach ( array_reverse( $death_ys['rows'] ) as $death_row ) {
 
 $stat_sub = sprintf(
 	/* translators: %s: the latest year (4-digit, never thousands-formatted). */
-	_n( 'death in %s', 'deaths in %s', (int) $death_latest['count'], 'lwtv' ),
+	_n( 'death in %s', 'deaths in %s', (int) $death_latest['count'], 'lwtv-underscores' ),
 	(string) $death_latest['year']
 );
 
@@ -101,18 +101,18 @@ $yearbars = array(
 	'stat_num'    => (int) $death_latest['count'],
 	/* translators: %s: the latest year (4-digit, never thousands-formatted). */
 	'stat_sub'    => $stat_sub,
-	'eyebrow'     => __( 'Deaths By Year', 'lwtv' ),
+	'eyebrow'     => __( 'Deaths By Year', 'lwtv-underscores' ),
 	/* translators: %s: the deadliest year (4-digit, not a quantity — never thousands-formatted). */
-	'headline'    => sprintf( __( 'Death peaked in %s.', 'lwtv' ), $death_py_year ),
+	'headline'    => sprintf( __( 'Death peaked in %s.', 'lwtv-underscores' ), $death_py_year ),
 	/* translators: %s: the deadliest year (4-digit, not a quantity — never thousands-formatted). */
-	'description' => sprintf( __( '%s was the deadliest year on record.', 'lwtv' ), $death_py_year ),
+	'description' => sprintf( __( '%s was the deadliest year on record.', 'lwtv-underscores' ), $death_py_year ),
 );
 // phpcs:ignore PEAR.Files.IncludingFile.UseRequire
 include plugin_dir_path( __DIR__ ) . 'partials/year-bars.php';
 
 $download_csv = array(
-	'page'  => __( 'year', 'lwtv' ),
-	'title' => __( 'Character deaths, by year', 'lwtv' ),
+	'page'  => __( 'year', 'lwtv-underscores' ),
+	'title' => __( 'Character deaths, by year', 'lwtv-underscores' ),
 	'count' => count( $death_ys['rows'] ),
 );
 // phpcs:ignore PEAR.Files.IncludingFile.UseRequire

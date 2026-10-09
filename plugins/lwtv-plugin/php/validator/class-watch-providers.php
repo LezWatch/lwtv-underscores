@@ -137,10 +137,10 @@ class Watch_Providers {
 						<col style="width:42%" />
 					</colgroup>
 					<thead><tr>
-						<th class="manage-column column-title column-primary" scope="col"><?php esc_html_e( 'Host', 'lwtv' ); ?></th>
-						<th class="manage-column column-comments num" scope="col"><?php esc_html_e( 'Shows', 'lwtv' ); ?></th>
-						<th class="manage-column column-author" scope="col"><?php esc_html_e( 'Renders as', 'lwtv' ); ?></th>
-						<th class="manage-column column-watchurl_term" scope="col"><?php esc_html_e( 'Provider term', 'lwtv' ); ?></th>
+						<th class="manage-column column-title column-primary" scope="col"><?php esc_html_e( 'Host', 'lwtv-underscores' ); ?></th>
+						<th class="manage-column column-comments num" scope="col"><?php esc_html_e( 'Shows', 'lwtv-underscores' ); ?></th>
+						<th class="manage-column column-author" scope="col"><?php esc_html_e( 'Renders as', 'lwtv-underscores' ); ?></th>
+						<th class="manage-column column-watchurl_term" scope="col"><?php esc_html_e( 'Provider term', 'lwtv-underscores' ); ?></th>
 					</tr></thead>
 					<tbody>
 						<?php
@@ -159,7 +159,7 @@ class Watch_Providers {
 				self::render_term_options( $terms );
 			} else {
 				?>
-				<p><em><?php esc_html_e( 'You need permission to manage categories to create or assign provider terms.', 'lwtv' ); ?></em></p>
+				<p><em><?php esc_html_e( 'You need permission to manage categories to create or assign provider terms.', 'lwtv-underscores' ); ?></em></p>
 				<?php
 			}
 		}
@@ -188,11 +188,11 @@ class Watch_Providers {
 				<span class="dashicons <?php echo esc_attr( $clean ? 'dashicons-yes' : 'dashicons-warning' ); ?>"></span>
 				<?php
 				if ( $clean ) {
-					esc_html_e( 'Excellent!', 'lwtv' );
+					esc_html_e( 'Excellent!', 'lwtv-underscores' );
 				} else {
 					printf(
 						/* translators: %d: number of hosts. */
-						esc_html( _n( '%d host needs a provider term', '%d hosts need a provider term', $unresolved, 'lwtv' ) ),
+						esc_html( _n( '%d host needs a provider term', '%d hosts need a provider term', $unresolved, 'lwtv-underscores' ) ),
 						absint( $unresolved )
 					);
 				}
@@ -203,7 +203,7 @@ class Watch_Providers {
 					<?php
 					printf(
 						/* translators: 1: hosts with no term, 2: total hosts in use. */
-						esc_html__( '%1$d of %2$d hosts in use have no term, so the front end guesses a name from the hostname. A term fixes the name permanently and lets you use Hide Display.', 'lwtv' ),
+						esc_html__( '%1$d of %2$d hosts in use have no term, so the front end guesses a name from the hostname. A term fixes the name permanently and lets you use Hide Display.', 'lwtv-underscores' ),
 						absint( $unresolved ),
 						absint( $total )
 					);
@@ -212,17 +212,17 @@ class Watch_Providers {
 						echo ' ';
 						printf(
 							/* translators: %d: number of contested hosts. */
-							esc_html( _n( '%d host is claimed by more than one term.', '%d hosts are claimed by more than one term.', $contested, 'lwtv' ) ),
+							esc_html( _n( '%d host is claimed by more than one term.', '%d hosts are claimed by more than one term.', $contested, 'lwtv-underscores' ) ),
 							absint( $contested )
 						);
 					}
 					?>
 				</p>
 				<p>
-					<?php esc_html_e( 'Web series each live on their own domain, so this list will never be empty. Work down from the top: those are the hosts most readers actually reach.', 'lwtv' ); ?>
+					<?php esc_html_e( 'Web series each live on their own domain, so this list will never be empty. Work down from the top: those are the hosts most readers actually reach.', 'lwtv-underscores' ); ?>
 				</p>
 				<p class="description">
-					<?php esc_html_e( 'Contested hosts below are always current. The list of hosts needing a term is stored, so press Recheck after creating terms elsewhere — it clears anything that has since been given one, whoever did it.', 'lwtv' ); ?>
+					<?php esc_html_e( 'Contested hosts below are always current. The list of hosts needing a term is stored, so press Recheck after creating terms elsewhere — it clears anything that has since been given one, whoever did it.', 'lwtv-underscores' ); ?>
 				</p>
 			</div>
 		</div>
@@ -241,7 +241,7 @@ class Watch_Providers {
 	 */
 	private static function render_scan_form( bool $has_items ): void {
 		$field = $has_items ? 'recheck' : 'rerun';
-		$label = $has_items ? __( 'Recheck', 'lwtv' ) : __( 'Run Scan', 'lwtv' );
+		$label = $has_items ? __( 'Recheck', 'lwtv-underscores' ) : __( 'Run Scan', 'lwtv-underscores' );
 		?>
 		<form action="<?php echo esc_url( admin_url( 'admin.php?page=lwtv_data_check&tab=tab_watch_providers' ) ); ?>" method="post">
 			<?php wp_nonce_field( self::NONCE ); ?>
@@ -252,9 +252,9 @@ class Watch_Providers {
 			<p class="description">
 				<?php
 				if ( $has_items ) {
-					esc_html_e( 'Re-checks the hosts already listed and drops any that now have a term, however it got one. It will not look for hosts that have appeared since the last full scan — use Run Scan for that.', 'lwtv' );
+					esc_html_e( 'Re-checks the hosts already listed and drops any that now have a term, however it got one. It will not look for hosts that have appeared since the last full scan — use Run Scan for that.', 'lwtv-underscores' );
 				} else {
-					esc_html_e( 'Checks every host in the Ways to Watch fields against the provider terms.', 'lwtv' );
+					esc_html_e( 'Checks every host in the Ways to Watch fields against the provider terms.', 'lwtv-underscores' );
 				}
 				?>
 			</p>
@@ -274,14 +274,14 @@ class Watch_Providers {
 	private static function render_collisions( array $collisions ): void {
 		?>
 		<div class="lwtv-tools-table">
-			<h3><?php esc_html_e( 'Contested hosts', 'lwtv' ); ?></h3>
+			<h3><?php esc_html_e( 'Contested hosts', 'lwtv-underscores' ); ?></h3>
 			<p class="description">
-				<?php esc_html_e( 'Two terms claim the same host. The front end renders whichever sorts first by name, which is stable but arbitrary. Remove the URL from whichever term is wrong, or merge them with wp lwtv waystowatch merge.', 'lwtv' ); ?>
+				<?php esc_html_e( 'Two terms claim the same host. The front end renders whichever sorts first by name, which is stable but arbitrary. Remove the URL from whichever term is wrong, or merge them with wp lwtv waystowatch merge.', 'lwtv-underscores' ); ?>
 			</p>
 			<table class="widefat fixed" cellspacing="0">
 				<thead><tr>
-					<th class="manage-column column-title column-primary" scope="col"><?php esc_html_e( 'Host', 'lwtv' ); ?></th>
-					<th class="manage-column column-author" scope="col"><?php esc_html_e( 'Claimed by', 'lwtv' ); ?></th>
+					<th class="manage-column column-title column-primary" scope="col"><?php esc_html_e( 'Host', 'lwtv-underscores' ); ?></th>
+					<th class="manage-column column-author" scope="col"><?php esc_html_e( 'Claimed by', 'lwtv-underscores' ); ?></th>
 				</tr></thead>
 				<tbody>
 					<?php
@@ -302,7 +302,7 @@ class Watch_Providers {
 
 									if ( $term_id === $winning ) {
 										/* translators: %s: provider term name. */
-										$label = sprintf( __( '%s (wins)', 'lwtv' ), $label );
+										$label = sprintf( __( '%s (wins)', 'lwtv-underscores' ), $label );
 									}
 
 									$links[] = $edit
@@ -363,11 +363,11 @@ class Watch_Providers {
 					 * rather than leaving it to be rediscovered.
 					 */
 					if ( null !== $discovered && '' !== $discovered ) {
-						esc_html_e( 'from the site', 'lwtv' );
+						esc_html_e( 'from the site', 'lwtv-underscores' );
 					} elseif ( ! Watch_Host_Names::should_ask( $host ) && Watch_Host_Names::attempts( $host ) ) {
-						esc_html_e( 'guessed — host does not answer', 'lwtv' );
+						esc_html_e( 'guessed — host does not answer', 'lwtv-underscores' );
 					} else {
-						esc_html_e( 'guessed', 'lwtv' );
+						esc_html_e( 'guessed', 'lwtv-underscores' );
 					}
 					?>
 				</span>
@@ -376,7 +376,7 @@ class Watch_Providers {
 						<?php
 						printf(
 							/* translators: %s: existing provider term name. */
-							esc_html__( 'Looks like the existing term “%s”.', 'lwtv' ),
+							esc_html__( 'Looks like the existing term “%s”.', 'lwtv-underscores' ),
 							esc_html( $suggested_name )
 						);
 						?>
@@ -406,7 +406,7 @@ class Watch_Providers {
 									<?php
 									printf(
 										/* translators: %s: existing provider term name. */
-										esc_html__( 'Assign to “%s”', 'lwtv' ),
+										esc_html__( 'Assign to “%s”', 'lwtv-underscores' ),
 										esc_html( $suggested_name )
 									);
 									?>
@@ -416,14 +416,14 @@ class Watch_Providers {
 									<?php
 									printf(
 										/* translators: %s: proposed provider name. */
-										esc_html__( 'Create “%s”', 'lwtv' ),
+										esc_html__( 'Create “%s”', 'lwtv-underscores' ),
 										esc_html( $proposed )
 									);
 									?>
 								</button>
 							<?php endif; ?>
 							<button type="button" class="button-link lwtv-watch-toggle" aria-expanded="false" aria-controls="<?php echo esc_attr( $panel_id ); ?>" hidden>
-								<?php esc_html_e( 'more', 'lwtv' ); ?>
+								<?php esc_html_e( 'more', 'lwtv-underscores' ); ?>
 							</button>
 						</div>
 
@@ -433,28 +433,28 @@ class Watch_Providers {
 									<?php
 									printf(
 										/* translators: %s: hostname. */
-										esc_html__( 'Existing provider term for %s', 'lwtv' ),
+										esc_html__( 'Existing provider term for %s', 'lwtv-underscores' ),
 										esc_html( $host )
 									);
 									?>
 								</label>
 								<select id="<?php echo esc_attr( $select_id ); ?>" name="term_id" class="lwtv-watch-term">
-									<option value="0"><?php esc_html_e( 'Assign to an existing term…', 'lwtv' ); ?></option>
+									<option value="0"><?php esc_html_e( 'Assign to an existing term…', 'lwtv-underscores' ); ?></option>
 								</select>
-								<button type="submit" name="do" value="assign" class="button"><?php esc_html_e( 'Assign', 'lwtv' ); ?></button>
+								<button type="submit" name="do" value="assign" class="button"><?php esc_html_e( 'Assign', 'lwtv-underscores' ); ?></button>
 							</p>
 							<p class="lwtv-watch-line">
 								<label class="screen-reader-text" for="<?php echo esc_attr( $field_id ); ?>">
 									<?php
 									printf(
 										/* translators: %s: hostname. */
-										esc_html__( 'Name for the new term for %s', 'lwtv' ),
+										esc_html__( 'Name for the new term for %s', 'lwtv-underscores' ),
 										esc_html( $host )
 									);
 									?>
 								</label>
 								<input type="text" id="<?php echo esc_attr( $field_id ); ?>" name="provider_name" value="<?php echo esc_attr( $proposed ); ?>" class="lwtv-watch-name" />
-								<button type="submit" name="do" value="create" class="button"><?php esc_html_e( 'Create', 'lwtv' ); ?></button>
+								<button type="submit" name="do" value="create" class="button"><?php esc_html_e( 'Create', 'lwtv-underscores' ); ?></button>
 							</p>
 						</div>
 					</form>
@@ -483,7 +483,7 @@ class Watch_Providers {
 		</template>
 		<noscript>
 			<p class="description">
-				<?php esc_html_e( 'Assigning a host to an existing term, and renaming before you create one, both need JavaScript. Without it the Create button still works with the proposed name, and the Watch Urls taxonomy screen can do the rest.', 'lwtv' ); ?>
+				<?php esc_html_e( 'Assigning a host to an existing term, and renaming before you create one, both need JavaScript. Without it the Create button still works with the proposed name, and the Watch Urls taxonomy screen can do the rest.', 'lwtv-underscores' ); ?>
 			</p>
 		</noscript>
 		<script>
@@ -495,12 +495,12 @@ class Watch_Providers {
 			<?php
 				echo wp_json_encode(
 					array(
-						'more' => __( 'more', 'lwtv' ),
-						'less' => __( 'less', 'lwtv' ),
-						'show' => __( 'Show all options', 'lwtv' ),
-						'hide' => __( 'Hide all options', 'lwtv' ),
+						'more' => __( 'more', 'lwtv-underscores' ),
+						'less' => __( 'less', 'lwtv-underscores' ),
+						'show' => __( 'Show all options', 'lwtv-underscores' ),
+						'hide' => __( 'Hide all options', 'lwtv-underscores' ),
 						/* translators: %s: provider name. */
-						'make' => __( 'Create “%s”', 'lwtv' ),
+						'make' => __( 'Create “%s”', 'lwtv-underscores' ),
 					)
 				);
 			?>
@@ -593,7 +593,7 @@ class Watch_Providers {
 		?>
 		<p class="lwtv-watch-bulk">
 			<button type="button" class="button-link" id="lwtv-watch-showall" aria-expanded="false" hidden>
-				<?php esc_html_e( 'Show all options', 'lwtv' ); ?>
+				<?php esc_html_e( 'Show all options', 'lwtv-underscores' ); ?>
 			</button>
 		</p>
 		<?php
@@ -626,7 +626,7 @@ class Watch_Providers {
 				<?php
 				printf(
 					/* translators: %d: number of hosts. */
-					esc_html( _n( 'Look up %d name', 'Look up %d names', $batch, 'lwtv' ) ),
+					esc_html( _n( 'Look up %d name', 'Look up %d names', $batch, 'lwtv-underscores' ) ),
 					(int) $batch
 				);
 				?>
@@ -635,7 +635,7 @@ class Watch_Providers {
 				<?php
 				printf(
 					/* translators: 1: number of hosts still to check, 2: WP-CLI command, already wrapped in a code element, 3: maximum attempts per host. */
-					wp_kses_post( __( 'Asks each site what it calls itself, a few at a time. %1$d still to check; %2$s does the rest. A host that does not answer is asked again on later runs, up to %3$d times, then left for you to name by hand.', 'lwtv' ) ),
+					wp_kses_post( __( 'Asks each site what it calls itself, a few at a time. %1$d still to check; %2$s does the rest. A host that does not answer is asked again on later runs, up to %3$d times, then left for you to name by hand.', 'lwtv-underscores' ) ),
 					(int) $pending,
 					'<code>wp lwtv waystowatch enrich --all</code>',
 					(int) Watch_Host_Names::MAX_ATTEMPTS
@@ -661,7 +661,7 @@ class Watch_Providers {
 		check_admin_referer( self::ACTION_CREATE . '_' . $host );
 
 		if ( ! current_user_can( self::CAP_MANAGE ) ) {
-			wp_die( esc_html__( 'You do not have permission to create provider terms.', 'lwtv' ), '', array( 'response' => 403 ) );
+			wp_die( esc_html__( 'You do not have permission to create provider terms.', 'lwtv-underscores' ), '', array( 'response' => 403 ) );
 		}
 
 		$this->create_and_notify( $host );
@@ -694,7 +694,7 @@ class Watch_Providers {
 			'success',
 			sprintf(
 				/* translators: 1: provider name, 2: hostname. */
-				__( 'Created “%1$s” and pointed it at %2$s.', 'lwtv' ),
+				__( 'Created “%1$s” and pointed it at %2$s.', 'lwtv-underscores' ),
 				$name,
 				$host
 			),
@@ -719,7 +719,7 @@ class Watch_Providers {
 		check_admin_referer( self::ACTION_ASSIGN . '_' . $host );
 
 		if ( ! current_user_can( self::CAP_MANAGE ) ) {
-			wp_die( esc_html__( 'You do not have permission to assign provider terms.', 'lwtv' ), '', array( 'response' => 403 ) );
+			wp_die( esc_html__( 'You do not have permission to assign provider terms.', 'lwtv-underscores' ), '', array( 'response' => 403 ) );
 		}
 
 		$action = isset( $_POST['do'] ) ? sanitize_key( wp_unslash( $_POST['do'] ) ) : '';
@@ -734,7 +734,7 @@ class Watch_Providers {
 		}
 
 		if ( ! $term_id ) {
-			self::set_notice( 'error', __( 'Pick a provider term to assign, or use the Create button.', 'lwtv' ) );
+			self::set_notice( 'error', __( 'Pick a provider term to assign, or use the Create button.', 'lwtv-underscores' ) );
 			self::redirect_back();
 		}
 
@@ -754,7 +754,7 @@ class Watch_Providers {
 			'success',
 			sprintf(
 				/* translators: 1: hostname, 2: provider name. */
-				__( 'Pointed %1$s at “%2$s”.', 'lwtv' ),
+				__( 'Pointed %1$s at “%2$s”.', 'lwtv-underscores' ),
 				$host,
 				$name
 			),
@@ -773,7 +773,7 @@ class Watch_Providers {
 		check_admin_referer( self::ACTION_LOOKUP );
 
 		if ( ! current_user_can( self::CAP_MANAGE ) ) {
-			wp_die( esc_html__( 'You do not have permission to do that.', 'lwtv' ), '', array( 'response' => 403 ) );
+			wp_die( esc_html__( 'You do not have permission to do that.', 'lwtv-underscores' ), '', array( 'response' => 403 ) );
 		}
 
 		if ( function_exists( 'set_time_limit' ) ) {
@@ -822,13 +822,13 @@ class Watch_Providers {
 		}
 
 		if ( ! $asked ) {
-			self::set_notice( 'info', __( 'Every unregistered host has already been asked.', 'lwtv' ) );
+			self::set_notice( 'info', __( 'Every unregistered host has already been asked.', 'lwtv-underscores' ) );
 			self::redirect_back();
 		}
 
 		$message = sprintf(
 			/* translators: 1: hosts asked, 2: names found, 3: hosts unreachable, 4: maximum attempts per host. */
-			__( 'Asked %1$d host(s): %2$d published a name, %3$d were unreachable. Unreachable hosts are retried, up to %4$d attempts each.', 'lwtv' ),
+			__( 'Asked %1$d host(s): %2$d published a name, %3$d were unreachable. Unreachable hosts are retried, up to %4$d attempts each.', 'lwtv-underscores' ),
 			$asked,
 			$found,
 			$failed,
@@ -838,7 +838,7 @@ class Watch_Providers {
 		if ( $remaining ) {
 			$message .= ' ' . sprintf(
 				/* translators: 1: hosts not yet asked, 2: WP-CLI command in a code element. */
-				__( '%1$d still to check — press the button again, or run %2$s for the rest.', 'lwtv' ),
+				__( '%1$d still to check — press the button again, or run %2$s for the rest.', 'lwtv-underscores' ),
 				$remaining,
 				'<code>wp lwtv waystowatch enrich --all</code>'
 			);
@@ -871,7 +871,7 @@ class Watch_Providers {
 	 * @return void
 	 */
 	private static function show_notice(): void {
-		Admin_Notice::show( self::NOTICE_PREFIX, __( 'Edit the term', 'lwtv' ), true );
+		Admin_Notice::show( self::NOTICE_PREFIX, __( 'Edit the term', 'lwtv-underscores' ), true );
 	}
 
 	/**

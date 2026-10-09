@@ -762,9 +762,9 @@ class WP_CLI_LWTV_Audit {
 	private function unconfirmed_action( string $verdict, int $year ): string {
 		return ( self::APPEARED_UNKNOWN_MAIN_CAST === $verdict )
 			// translators: %1 - Year
-			? sprintf( __( 'Confirm %1$d -- TVMaze lists main cast without years', 'lwtv' ), $year )
+			? sprintf( __( 'Confirm %1$d -- TVMaze lists main cast without years', 'lwtv-underscores' ), $year )
 			// translators: %1 - Year
-			: sprintf( __( 'Confirm %1$d -- no TVMaze episode data checked', 'lwtv' ), $year );
+			: sprintf( __( 'Confirm %1$d -- no TVMaze episode data checked', 'lwtv-underscores' ), $year );
 	}
 
 	/**
@@ -809,8 +809,8 @@ class WP_CLI_LWTV_Audit {
 		if ( '' === $finish || Airdates::is_still_airing( $finish ) ) {
 			$action = $ended_year
 				// translators: %s - Year
-				? sprintf( __( 'Set end year (TVMaze: ended %s)', 'lwtv' ), $ended_year )
-				: __( 'Set end year (TVMaze: ended date unknown)', 'lwtv' );
+				? sprintf( __( 'Set end year (TVMaze: ended %s)', 'lwtv-underscores' ), $ended_year )
+				: __( 'Set end year (TVMaze: ended date unknown)', 'lwtv-underscores' );
 
 			return $this->build_row(
 				$show_id,
@@ -836,7 +836,7 @@ class WP_CLI_LWTV_Audit {
 				'',
 				'',
 				// translators: %1 - LWTV end Year ; %2 TVMaze End Year
-				sprintf( __( 'End year mismatch (site: %1$s, TVMaze: %2$s)', 'lwtv' ), $finish, $ended_year ),
+				sprintf( __( 'End year mismatch (site: %1$s, TVMaze: %2$s)', 'lwtv-underscores' ), $finish, $ended_year ),
 				'end-year-mismatch'
 			);
 		}
@@ -1203,7 +1203,7 @@ class WP_CLI_LWTV_Audit {
 
 		$parts[] = sprintf(
 			/* translators: 1: actors already settled (date on file, or ignored), 2: actors checked against WikiData. */
-			__( '%1$d already settled, %2$d checked', 'lwtv' ),
+			__( '%1$d already settled, %2$d checked', 'lwtv-underscores' ),
 			$settled,
 			array_sum( $tally ) - $settled
 		);
@@ -1213,14 +1213,14 @@ class WP_CLI_LWTV_Audit {
 
 		$parts[] = sprintf(
 			/* translators: %d: number of possible deaths found. */
-			_n( '%d possible death to verify', '%d possible deaths to verify', $found, 'lwtv' ),
+			_n( '%d possible death to verify', '%d possible deaths to verify', $found, 'lwtv-underscores' ),
 			$found
 		);
 
 		if ( $suspect ) {
 			$parts[] = sprintf(
 				/* translators: %d: number of rows whose WikiData match looks wrong. */
-				_n( '%d death claim withheld (match looks wrong)', '%d death claims withheld (match looks wrong)', $suspect, 'lwtv' ),
+				_n( '%d death claim withheld (match looks wrong)', '%d death claims withheld (match looks wrong)', $suspect, 'lwtv-underscores' ),
 				$suspect
 			);
 		}
@@ -1251,21 +1251,21 @@ class WP_CLI_LWTV_Audit {
 			$parts[] = $do_unresolved
 				? sprintf(
 					/* translators: %d: number of actors that could not be checked. */
-					_n( '%d not checkable (listed)', '%d not checkable (listed)', $unresolved, 'lwtv' ),
+					_n( '%d not checkable (listed)', '%d not checkable (listed)', $unresolved, 'lwtv-underscores' ),
 					$unresolved
 				)
 				: sprintf(
 					/* translators: %d: number of actors that could not be checked. */
-					_n( '%d not checkable (--unresolved to list)', '%d not checkable (--unresolved to list)', $unresolved, 'lwtv' ),
+					_n( '%d not checkable (--unresolved to list)', '%d not checkable (--unresolved to list)', $unresolved, 'lwtv-underscores' ),
 					$unresolved
 				);
 		}
 
 		if ( 0 === $shown ) {
-			$parts[] = __( 'nothing to act on', 'lwtv' );
+			$parts[] = __( 'nothing to act on', 'lwtv-underscores' );
 		}
 
-		return __( 'Actor death audit complete.', 'lwtv' ) . ' ' . implode( '. ', $parts ) . '.';
+		return __( 'Actor death audit complete.', 'lwtv-underscores' ) . ' ' . implode( '. ', $parts ) . '.';
 	}
 
 	/**
@@ -1449,13 +1449,13 @@ class WP_CLI_LWTV_Audit {
 	 */
 	private function summary_line( array $summary ): string {
 		if ( 0 === $summary['total'] && 0 === $summary['resolved'] && 0 === $summary['ignored'] ) {
-			return __( 'Audit complete. Nothing needs attention!', 'lwtv' );
+			return __( 'Audit complete. Nothing needs attention!', 'lwtv-underscores' );
 		}
 
 		$parts   = array();
 		$parts[] = sprintf(
 			/* translators: %d: number of items needing attention. */
-			_n( '%d item needs attention', '%d items need attention', $summary['total'], 'lwtv' ),
+			_n( '%d item needs attention', '%d items need attention', $summary['total'], 'lwtv-underscores' ),
 			$summary['total']
 		);
 
@@ -1471,28 +1471,28 @@ class WP_CLI_LWTV_Audit {
 		if ( $summary['had_baseline'] ) {
 			$since   = $summary['previous_run']
 				? wp_date( get_option( 'date_format' ), $summary['previous_run'] )
-				: __( 'last run', 'lwtv' );
+				: __( 'last run', 'lwtv-underscores' );
 			$parts[] = sprintf(
 				/* translators: 1: new count, 2: still-open count, 3: resolved count, 4: date of last run. */
-				__( '%1$d new / %2$d still open / %3$d resolved since %4$s', 'lwtv' ),
+				__( '%1$d new / %2$d still open / %3$d resolved since %4$s', 'lwtv-underscores' ),
 				$summary['new'],
 				$summary['open'],
 				$summary['resolved'],
 				$since
 			);
 		} else {
-			$parts[] = __( 'first run for this scope -- all items are new', 'lwtv' );
+			$parts[] = __( 'first run for this scope -- all items are new', 'lwtv-underscores' );
 		}
 
 		if ( $summary['ignored'] ) {
 			$parts[] = sprintf(
 				/* translators: %d: number of acknowledged (hidden) items. */
-				_n( '%d acknowledged (hidden)', '%d acknowledged (hidden)', $summary['ignored'], 'lwtv' ),
+				_n( '%d acknowledged (hidden)', '%d acknowledged (hidden)', $summary['ignored'], 'lwtv-underscores' ),
 				$summary['ignored']
 			);
 		}
 
-		return __( 'Audit complete.', 'lwtv' ) . ' ' . implode( '. ', $parts ) . '.';
+		return __( 'Audit complete.', 'lwtv-underscores' ) . ' ' . implode( '. ', $parts ) . '.';
 	}
 }
 

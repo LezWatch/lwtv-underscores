@@ -41,10 +41,10 @@ $waffle = array(
 	'columns'  => 10,
 	'radius'   => 8,
 	/* translators: 1: percentage of characters with no confirmed performer, 2: percentage with one. */
-	'label'    => sprintf( __( '%1$s%% of characters have no confirmed performer on record; %2$s%% do.', 'lwtv' ), number_format_i18n( $unk_pct, 1 ), number_format_i18n( round( 100 - $unk_pct, 1 ), 1 ) ),
+	'label'    => sprintf( __( '%1$s%% of characters have no confirmed performer on record; %2$s%% do.', 'lwtv-underscores' ), number_format_i18n( $unk_pct, 1 ), number_format_i18n( round( 100 - $unk_pct, 1 ), 1 ) ),
 );
 ?>
-<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'The Unknown Actor', 'lwtv' ); ?></p>
+<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'The Unknown Actor', 'lwtv-underscores' ); ?></p>
 
 <section class="lwtv-panel bg-light lwtv-unknown-card">
 	<div class="lwtv-unknown-row">
@@ -59,21 +59,21 @@ $waffle = array(
 				<?php
 				printf(
 					/* translators: %s: percentage of characters with no confirmed performer on record. */
-					esc_html__( '%s%% of characters have no confirmed performer', 'lwtv' ),
+					esc_html__( '%s%% of characters have no confirmed performer', 'lwtv-underscores' ),
 					esc_html( number_format_i18n( $unk_pct, 1 ) )
 				);
 				?>
 			</h2>
-			<p class="lwtv-donut-desc"><?php esc_html_e( 'Every one of these characters is missing real-world casting info — this page tracks the gap instead of hiding it.', 'lwtv' ); ?></p>
+			<p class="lwtv-donut-desc"><?php esc_html_e( 'Every one of these characters is missing real-world casting info — this page tracks the gap instead of hiding it.', 'lwtv-underscores' ); ?></p>
 			<ul class="lwtv-donut-legend lwtv-donut-legend--compact">
 				<li class="lwtv-donut-legend-row">
 					<span class="lwtv-donut-dot lwtv-donut-seg--amber"></span>
-					<span class="lwtv-donut-legend-name"><?php esc_html_e( 'No confirmed performer', 'lwtv' ); ?></span>
+					<span class="lwtv-donut-legend-name"><?php esc_html_e( 'No confirmed performer', 'lwtv-underscores' ); ?></span>
 					<span class="lwtv-donut-legend-val"><?php echo esc_html( number_format_i18n( $unk_count ) . ' · ' . number_format_i18n( $unk_pct, 1 ) . '%' ); ?></span>
 				</li>
 				<li class="lwtv-donut-legend-row">
 					<span class="lwtv-donut-dot lwtv-donut-seg--bordergrey"></span>
-					<span class="lwtv-donut-legend-name"><?php esc_html_e( 'Performer on record', 'lwtv' ); ?></span>
+					<span class="lwtv-donut-legend-name"><?php esc_html_e( 'Performer on record', 'lwtv-underscores' ); ?></span>
 					<span class="lwtv-donut-legend-val"><?php echo esc_html( number_format_i18n( max( 0, $unk_total - $unk_count ) ) . ' · ' . number_format_i18n( round( 100 - $unk_pct, 1 ), 1 ) . '%' ); ?></span>
 				</li>
 			</ul>
@@ -83,7 +83,7 @@ $waffle = array(
 		<?php
 		printf(
 			/* translators: %s: total number of characters affected. */
-			esc_html__( 'Each dot is roughly 2%% of the %s characters carrying the Unknown actor.', 'lwtv' ),
+			esc_html__( 'Each dot is roughly 2%% of the %s characters carrying the Unknown actor.', 'lwtv-underscores' ),
 			esc_html( number_format_i18n( $unk_count ) )
 		);
 		?>
@@ -96,12 +96,12 @@ $unk_pullstats = array(
 	array(
 		'icon'   => 'tag.svg',
 		'number' => number_format_i18n( $unk_count ),
-		'label'  => __( 'Characters with no confirmed performer.', 'lwtv' ),
+		'label'  => __( 'Characters with no confirmed performer.', 'lwtv-underscores' ),
 	),
 	array(
 		'icon'   => 'tv.svg',
 		'number' => number_format_i18n( $unk_report['show_count'] ),
-		'label'  => __( 'Shows with at least one such character.', 'lwtv' ),
+		'label'  => __( 'Shows with at least one such character.', 'lwtv-underscores' ),
 	),
 );
 ?>
@@ -160,7 +160,7 @@ if ( ! empty( $unk_report['gender'] ) || ! empty( $unk_report['sexuality'] ) || 
 		$unk_other = max( 0, $unk_of - $unk_named );
 		if ( $unk_other > 0 ) {
 			$unk_segments[] = array(
-				'label' => __( 'Other', 'lwtv' ),
+				'label' => __( 'Other', 'lwtv-underscores' ),
 				'count' => $unk_other,
 				'pct'   => round( ( $unk_other / $unk_of ) * 100, 1 ),
 				'class' => 'ltamber',
@@ -213,17 +213,17 @@ if ( ! empty( $unk_report['gender'] ) || ! empty( $unk_report['sexuality'] ) || 
 		$unk_role_donut = array(
 			'layout'        => 'mini',
 			'segments'      => $unk_role_segments,
-			'eyebrow'       => __( 'By Role', 'lwtv' ),
+			'eyebrow'       => __( 'By Role', 'lwtv-underscores' ),
 			'center_pct'    => (int) round( $unk_role_lead['pct'] ),
 			'center_family' => $unk_role_segments[0]['class'] ?? 'amber',
 			'center_sub'    => $unk_role_lead['label'],
 		);
 	}
 
-	$unk_gender_donut    = $unk_build_mini_donut( $unk_report['gender'], $unk_count, __( 'By Gender', 'lwtv' ) );
-	$unk_sexuality_donut = $unk_build_mini_donut( $unk_report['sexuality'], $unk_count, __( 'By Sexuality', 'lwtv' ) );
+	$unk_gender_donut    = $unk_build_mini_donut( $unk_report['gender'], $unk_count, __( 'By Gender', 'lwtv-underscores' ) );
+	$unk_sexuality_donut = $unk_build_mini_donut( $unk_report['sexuality'], $unk_count, __( 'By Sexuality', 'lwtv-underscores' ) );
 	?>
-	<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'Who Are These Characters?', 'lwtv' ); ?></p>
+	<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'Who Are These Characters?', 'lwtv-underscores' ); ?></p>
 	<section class="lwtv-panel bg-light">
 		<div class="lwtv-donut-mini-row">
 			<?php
@@ -245,20 +245,20 @@ if ( ! empty( $unk_report['gender'] ) || ! empty( $unk_report['sexuality'] ) || 
 $unk_time_rows = array();
 if ( ! empty( $unk_report['oldest'] ) ) {
 	$unk_time_rows[] = array(
-		'term' => __( 'Oldest, still uncredited', 'lwtv' ),
+		'term' => __( 'Oldest, still uncredited', 'lwtv-underscores' ),
 		'row'  => $unk_report['oldest'],
 	);
 }
 if ( ! empty( $unk_report['newest'] ) && ( $unk_report['newest']['name'] ?? null ) !== ( $unk_report['oldest']['name'] ?? null ) ) {
 	$unk_time_rows[] = array(
-		'term' => __( 'Newest, still uncredited', 'lwtv' ),
+		'term' => __( 'Newest, still uncredited', 'lwtv-underscores' ),
 		'row'  => $unk_report['newest'],
 	);
 }
 
 if ( ! empty( $unk_time_rows ) ) :
 	?>
-	<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'Time Dimension', 'lwtv' ); ?></p>
+	<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'Time Dimension', 'lwtv-underscores' ); ?></p>
 	<div class="lwtv-pullstats lwtv-pullstats--three lwtv-statcards lwtv-bars--actors">
 		<?php foreach ( $unk_time_rows as $unk_time_row ) : ?>
 			<div class="lwtv-statcard lwtv-statcard--firsts">
@@ -279,7 +279,7 @@ if ( ! empty( $unk_time_rows ) ) :
 // ---- Top Shows: which shows carry the most Unknown-actor characters ----
 if ( ! empty( $unk_report['top_shows'] ) ) :
 	?>
-	<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'Top Shows', 'lwtv' ); ?></p>
+	<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'Top Shows', 'lwtv-underscores' ); ?></p>
 	<div class="lwtv-pullstats lwtv-pullstats--three lwtv-statcards lwtv-bars--actors">
 		<?php foreach ( $unk_report['top_shows'] as $unk_show_row ) : ?>
 			<div class="lwtv-statcard lwtv-statcard--firsts">
@@ -300,21 +300,21 @@ if ( ! empty( $unk_report['top_shows'] ) ) :
 $unk_dead_total = $unk_report['dead']['alive'] + $unk_report['dead']['dead'];
 if ( $unk_dead_total > 0 ) :
 	?>
-	<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'Dead or Alive', 'lwtv' ); ?></p>
+	<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'Dead or Alive', 'lwtv-underscores' ); ?></p>
 	<div class="lwtv-pullstats lwtv-pullstats--three lwtv-statcards lwtv-bars--actors">
 		<div class="lwtv-statcard">
 			<span class="lwtv-statcard-icon">
 				<?php echo lwtv_plugin()->get_symbolicon( svg: 'heart.svg', icon: 'svg-heart', max_size: '18' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 			</span>
 			<span class="lwtv-statcard-number"><?php echo esc_html( number_format_i18n( $unk_report['dead']['alive'] ) ); ?></span>
-			<p class="lwtv-statcard-label"><?php esc_html_e( 'Still alive.', 'lwtv' ); ?></p>
+			<p class="lwtv-statcard-label"><?php esc_html_e( 'Still alive.', 'lwtv-underscores' ); ?></p>
 		</div>
 		<div class="lwtv-statcard">
 			<span class="lwtv-statcard-icon">
 				<?php echo lwtv_plugin()->get_symbolicon( svg: 'skull.svg', icon: 'svg-skull', max_size: '18' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 			</span>
 			<span class="lwtv-statcard-number"><?php echo esc_html( number_format_i18n( $unk_report['dead']['dead'] ) ); ?></span>
-			<p class="lwtv-statcard-label"><?php esc_html_e( 'Dead.', 'lwtv' ); ?></p>
+			<p class="lwtv-statcard-label"><?php esc_html_e( 'Dead.', 'lwtv-underscores' ); ?></p>
 		</div>
 	</div>
 <?php endif; ?>

@@ -68,13 +68,13 @@ class Exclusion_Registry {
 	private static function checks(): array {
 		return array(
 			'queer_checker'   => array(
-				'name'    => __( 'Queer Checker', 'lwtv' ),
-				'desc'    => __( 'Actors whose queerness has been set by hand.', 'lwtv' ),
+				'name'    => __( 'Queer Checker', 'lwtv-underscores' ),
+				'desc'    => __( 'Actors whose queerness has been set by hand.', 'lwtv-underscores' ),
 				'cpt'     => self::CPT_ACTORS,
 				'meta'    => 'lezactors_queer_override',
 				'match'   => self::MATCH_ANY,
-				'column'  => __( 'Actor', 'lwtv' ),
-				'empty'   => __( 'No actors have their queerness overridden at this time.', 'lwtv' ),
+				'column'  => __( 'Actor', 'lwtv-underscores' ),
+				'empty'   => __( 'No actors have their queerness overridden at this time.', 'lwtv-underscores' ),
 				'context' => array(
 					// The stored flag the admin column, the ACF relationship labels,
 					// both REST endpoints and the statistics all read. It is written
@@ -83,50 +83,50 @@ class Exclusion_Registry {
 				),
 			),
 			'dead_checker'    => array(
-				'name'    => __( 'Dead Checker', 'lwtv' ),
-				'desc'    => __( 'Shows with the death-score deduction overridden.', 'lwtv' ),
+				'name'    => __( 'Dead Checker', 'lwtv-underscores' ),
+				'desc'    => __( 'Shows with the death-score deduction overridden.', 'lwtv-underscores' ),
 				'cpt'     => self::CPT_SHOWS,
 				'meta'    => 'lezshows_byq_override',
 				// 'on', not '1'. See the note in the class docblock.
 				'match'   => 'on',
-				'column'  => __( 'Show', 'lwtv' ),
-				'empty'   => __( 'No shows have their scores for death overridden at this time.', 'lwtv' ),
+				'column'  => __( 'Show', 'lwtv-underscores' ),
+				'empty'   => __( 'No shows have their scores for death overridden at this time.', 'lwtv-underscores' ),
 				'context' => array(),
 			),
 			'wikidata_ignore' => array(
-				'name'    => __( 'WikiData Locked', 'lwtv' ),
-				'desc'    => __( 'Actors whose WikiData QID is write-locked against the backfill.', 'lwtv' ),
+				'name'    => __( 'WikiData Locked', 'lwtv-underscores' ),
+				'desc'    => __( 'Actors whose WikiData QID is write-locked against the backfill.', 'lwtv-underscores' ),
 				'cpt'     => self::CPT_ACTORS,
 				'meta'    => 'lezactors_wikidata_ignore',
 				'match'   => '1',
-				'column'  => __( 'Actor', 'lwtv' ),
-				'empty'   => __( 'No actors have their WikiData QID write-locked at this time.', 'lwtv' ),
+				'column'  => __( 'Actor', 'lwtv-underscores' ),
+				'empty'   => __( 'No actors have their WikiData QID write-locked at this time.', 'lwtv-underscores' ),
 				'context' => array(
 					'stored_qid' => 'lezactors_wikidata_qid',
 					'qid_source' => 'lezactors_wikidata_qid_source',
 				),
 			),
 			'tvmaze_ignore'   => array(
-				'name'    => __( 'TVMaze Ignored', 'lwtv' ),
-				'desc'    => __( 'Shows whose TVMaze match an editor has overridden or ruled out.', 'lwtv' ),
+				'name'    => __( 'TVMaze Ignored', 'lwtv-underscores' ),
+				'desc'    => __( 'Shows whose TVMaze match an editor has overridden or ruled out.', 'lwtv-underscores' ),
 				'cpt'     => self::CPT_SHOWS,
 				'meta'    => 'lezshows_tvmaze_ignore',
 				'match'   => '1',
-				'column'  => __( 'Show', 'lwtv' ),
-				'empty'   => __( 'No shows have their TVMaze match overridden at this time.', 'lwtv' ),
+				'column'  => __( 'Show', 'lwtv-underscores' ),
+				'empty'   => __( 'No shows have their TVMaze match overridden at this time.', 'lwtv-underscores' ),
 				'context' => array(
 					'manual_id' => 'lezshows_tvmaze_id_manual',
 					'stored_id' => 'lezshows_tvmaze_id',
 				),
 			),
 			'no_known_chars'  => array(
-				'name'    => __( 'No Known Characters', 'lwtv' ),
-				'desc'    => __( 'Shows an editor has flagged as having no characters to list.', 'lwtv' ),
+				'name'    => __( 'No Known Characters', 'lwtv-underscores' ),
+				'desc'    => __( 'Shows an editor has flagged as having no characters to list.', 'lwtv-underscores' ),
 				'cpt'     => self::CPT_SHOWS,
 				'meta'    => 'lezshows_no_chars',
 				'match'   => '1',
-				'column'  => __( 'Show', 'lwtv' ),
-				'empty'   => __( 'No shows are flagged as having no known characters at this time.', 'lwtv' ),
+				'column'  => __( 'Show', 'lwtv-underscores' ),
+				'empty'   => __( 'No shows are flagged as having no known characters at this time.', 'lwtv-underscores' ),
 				'context' => array(
 					'char_count' => 'lezshows_char_count',
 				),
@@ -220,33 +220,33 @@ class Exclusion_Registry {
 				$source = trim( (string) ( $context['qid_source'] ?? '' ) );
 
 				if ( '' === $stored ) {
-					return __( 'No WikiData item', 'lwtv' );
+					return __( 'No WikiData item', 'lwtv-underscores' );
 				}
 
 				if ( '' !== $source ) {
 					/* translators: 1: a WikiData QID, 2: how it was resolved (manual, imdb, name, legacy). */
-					return sprintf( __( 'Locked to %1$s (%2$s)', 'lwtv' ), $stored, $source );
+					return sprintf( __( 'Locked to %1$s (%2$s)', 'lwtv-underscores' ), $stored, $source );
 				}
 
 				/* translators: %s: a WikiData QID. */
-				return sprintf( __( 'Locked to %s', 'lwtv' ), $stored );
+				return sprintf( __( 'Locked to %s', 'lwtv-underscores' ), $stored );
 
 			case 'tvmaze_ignore':
 				$manual = trim( (string) ( $context['manual_id'] ?? '' ) );
 
 				if ( '' !== $manual ) {
 					/* translators: %s: a TVMaze show ID. */
-					return sprintf( __( 'Using %s', 'lwtv' ), $manual );
+					return sprintf( __( 'Using %s', 'lwtv-underscores' ), $manual );
 				}
 
-				return __( 'No TVMaze match', 'lwtv' );
+				return __( 'No TVMaze match', 'lwtv-underscores' );
 
 			case 'no_known_chars':
 			case 'dead_checker':
-				return __( 'Yes', 'lwtv' );
+				return __( 'Yes', 'lwtv-underscores' );
 		}
 
-		return ( '' === $value ) ? __( 'Yes', 'lwtv' ) : ucfirst( $value );
+		return ( '' === $value ) ? __( 'Yes', 'lwtv-underscores' ) : ucfirst( $value );
 	}
 
 	/**
@@ -277,12 +277,12 @@ class Exclusion_Registry {
 				// has to type -- so it sits outside the placeholder.
 				if ( 'is_queer' === $override && ! $stored_says_queer ) {
 					/* translators: %s: a WP-CLI command to run, not translatable. */
-					return sprintf( __( 'Stored as not queer -- run: %s', 'lwtv' ), 'wp lwtv calc actors' );
+					return sprintf( __( 'Stored as not queer -- run: %s', 'lwtv-underscores' ), 'wp lwtv calc actors' );
 				}
 
 				if ( 'not_queer' === $override && $stored_says_queer ) {
 					/* translators: %s: a WP-CLI command to run, not translatable. */
-					return sprintf( __( 'Stored as queer -- run: %s', 'lwtv' ), 'wp lwtv calc actors' );
+					return sprintf( __( 'Stored as queer -- run: %s', 'lwtv-underscores' ), 'wp lwtv calc actors' );
 				}
 
 				return '';
@@ -311,7 +311,7 @@ class Exclusion_Registry {
 
 				if ( '' !== $stored && ! Qid_Trust::is_trusted( $source ) ) {
 					/* translators: %s: how the QID was resolved (name, legacy). */
-					return sprintf( __( 'Locked to an unverified QID (%s) -- retype it to confirm.', 'lwtv' ), Qid_Trust::normalise_source( $source ) );
+					return sprintf( __( 'Locked to an unverified QID (%s) -- retype it to confirm.', 'lwtv-underscores' ), Qid_Trust::normalise_source( $source ) );
 				}
 
 				return '';
@@ -322,7 +322,7 @@ class Exclusion_Registry {
 
 				if ( '' === $manual && '' !== $stored ) {
 					/* translators: %s: a TVMaze show ID. */
-					return sprintf( __( 'Still holds %s, which is now unused.', 'lwtv' ), $stored );
+					return sprintf( __( 'Still holds %s, which is now unused.', 'lwtv-underscores' ), $stored );
 				}
 
 				return '';
@@ -343,9 +343,9 @@ class Exclusion_Registry {
 	private static function queer_label( string $value ): string {
 		switch ( $value ) {
 			case 'is_queer':
-				return __( 'Is Queer', 'lwtv' );
+				return __( 'Is Queer', 'lwtv-underscores' );
 			case 'not_queer':
-				return __( 'Is NOT Queer', 'lwtv' );
+				return __( 'Is NOT Queer', 'lwtv-underscores' );
 		}
 
 		// An unrecognised value is echoed back rather than translated: it is a raw

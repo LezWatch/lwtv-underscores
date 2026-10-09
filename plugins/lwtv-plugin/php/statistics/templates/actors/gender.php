@@ -35,7 +35,7 @@ uasort( $gen_data, fn( $a, $b ) => (int) $b['count'] <=> (int) $a['count'] );
 $gen_ramp     = array( 'amber', 'medamber', 'midamber', 'paleamber' );
 $gen_segments = array(
 	array(
-		'label' => __( 'Cisgender', 'lwtv' ),
+		'label' => __( 'Cisgender', 'lwtv-underscores' ),
 		'count' => $gen_cis,
 		'pct'   => ( $gen_total > 0 ) ? round( ( $gen_cis / $gen_total ) * 100, 1 ) : 0,
 		'class' => 'grey',
@@ -60,14 +60,14 @@ foreach ( $gen_data as $gen_row ) {
 $gen_other = max( 0, $gen_total - $gen_named );
 if ( $gen_other > 0 ) {
 	$gen_segments[] = array(
-		'label' => __( 'Other', 'lwtv' ),
+		'label' => __( 'Other', 'lwtv-underscores' ),
 		'count' => $gen_other,
 		'pct'   => ( $gen_total > 0 ) ? round( ( $gen_other / $gen_total ) * 100, 1 ) : 0,
 		'class' => 'ltamber',
 	);
 }
 $gen_segments[] = array(
-	'label' => __( 'Unknown', 'lwtv' ),
+	'label' => __( 'Unknown', 'lwtv-underscores' ),
 	'count' => $gen_unknown,
 	'pct'   => ( $gen_total > 0 ) ? round( ( $gen_unknown / $gen_total ) * 100, 1 ) : 0,
 	'class' => 'bordergrey',
@@ -78,15 +78,15 @@ $gen_lead = $gen_segments[0] ?? array( 'pct' => 0 );
 $gen_in10 = ( $gen_lead['pct'] > 0 ) ? (int) round( $gen_lead['pct'] / 10 ) : 0;
 
 // translators: %1$1d is the X-in-10 number for the largest Gender Demographic, %2$2s is the name of the gender.
-$headline = ( $gen_in10 > 0 ) ? sprintf( __( '%1$1d in 10 actors are %2$2s', 'lwtv' ), $gen_in10, lcfirst( $gen_lead['label'] ) ) : __( 'Gender breakdown', 'lwtv' );
+$headline = ( $gen_in10 > 0 ) ? sprintf( __( '%1$1d in 10 actors are %2$2s', 'lwtv-underscores' ), $gen_in10, lcfirst( $gen_lead['label'] ) ) : __( 'Gender breakdown', 'lwtv-underscores' );
 
 $donut = array(
 	'segments'    => $gen_segments,
 	'center'      => $gen_total,
-	'center_sub'  => __( 'actors', 'lwtv' ),
-	'eyebrow'     => __( 'Actor Gender Identity', 'lwtv' ),
+	'center_sub'  => __( 'actors', 'lwtv-underscores' ),
+	'eyebrow'     => __( 'Actor Gender Identity', 'lwtv-underscores' ),
 	'headline'    => $headline,
-	'description' => __( 'Trans and non-binary actors remain a small share of the total.', 'lwtv' ),
+	'description' => __( 'Trans and non-binary actors remain a small share of the total.', 'lwtv-underscores' ),
 );
 
 // phpcs:ignore PEAR.Files.IncludingFile.UseRequire
@@ -104,7 +104,7 @@ if ( $gen_tracked_count > 0 ) {
 	$gen_pullstats[] = array(
 		'icon'   => 'tag.svg',
 		'number' => number_format_i18n( $gen_tracked_count ),
-		'label'  => __( 'Distinct gender identities tracked.', 'lwtv' ),
+		'label'  => __( 'Distinct gender identities tracked.', 'lwtv-underscores' ),
 	);
 }
 
@@ -113,21 +113,21 @@ if ( $gen_total > 0 ) {
 	$gen_pullstats[] = array(
 		'icon'   => 'chart-pie.svg',
 		/* translators: %s: percentage of actors with a gender identity other than cisgender (one decimal). */
-		'number' => sprintf( __( '%s%%', 'lwtv' ), number_format_i18n( $gen_noncis_pct, 1 ) ),
-		'label'  => __( 'Percentage with a gender identity other than cisgender.', 'lwtv' ),
+		'number' => sprintf( __( '%s%%', 'lwtv-underscores' ), number_format_i18n( $gen_noncis_pct, 1 ) ),
+		'label'  => __( 'Percentage with a gender identity other than cisgender.', 'lwtv-underscores' ),
 	);
 }
 
 // The single highest-count non-cis identity: segments[0] is always forced to
 // "Cisgender" above regardless of rank, so segments[1] (when it isn't the
 // Other/Unknown catch-alls) is the real leader.
-if ( isset( $gen_segments[1] ) && ! in_array( $gen_segments[1]['label'], array( __( 'Other', 'lwtv' ), __( 'Unknown', 'lwtv' ) ), true ) ) {
+if ( isset( $gen_segments[1] ) && ! in_array( $gen_segments[1]['label'], array( __( 'Other', 'lwtv-underscores' ), __( 'Unknown', 'lwtv-underscores' ) ), true ) ) {
 	$gen_pullstats[] = array(
 		'icon'   => 'heart.svg',
 		/* translators: %s is the leading non-cisgender identity's share. */
-		'number' => sprintf( __( '%s%%', 'lwtv' ), number_format_i18n( $gen_segments[1]['pct'], 1 ) ),
+		'number' => sprintf( __( '%s%%', 'lwtv-underscores' ), number_format_i18n( $gen_segments[1]['pct'], 1 ) ),
 		/* translators: %s: the leading non-cisgender identity's name. */
-		'label'  => sprintf( __( 'Are %s, the most common non-cisgender identity.', 'lwtv' ), lcfirst( $gen_segments[1]['label'] ) ),
+		'label'  => sprintf( __( 'Are %s, the most common non-cisgender identity.', 'lwtv-underscores' ), lcfirst( $gen_segments[1]['label'] ) ),
 	);
 }
 
@@ -153,10 +153,10 @@ if ( ! empty( $gen_gap['cis_total'] ) && $gen_gap['queer_anyway'] > 0 ) :
 	$gen_gap_pct   = round( ( $gen_gap['queer_anyway'] / $gen_gap['cis_total'] ) * 100, 1 );
 	$lwtv_callouts = array(
 		array(
-			'label' => __( 'The Overlap', 'lwtv' ),
+			'label' => __( 'The Overlap', 'lwtv-underscores' ),
 			'icon'  => 'user-heart.svg',
 			/* translators: %s: percentage of Cisgender-tagged actors who are still queer overall (one decimal). */
-			'text'  => sprintf( __( '%s%% of actors marked Cisgender by gender identity are still counted as queer once sexuality, pronouns, or romantic orientation are factored in.', 'lwtv' ), number_format_i18n( $gen_gap_pct, 1 ) ),
+			'text'  => sprintf( __( '%s%% of actors marked Cisgender by gender identity are still counted as queer once sexuality, pronouns, or romantic orientation are factored in.', 'lwtv-underscores' ), number_format_i18n( $gen_gap_pct, 1 ) ),
 		),
 	);
 	// phpcs:ignore PEAR.Files.IncludingFile.UseRequire
@@ -178,7 +178,7 @@ foreach ( $gen_cis_slugs as $gen_cis_slug ) {
 	}
 }
 if ( null !== $gen_cis_leader ) {
-	$gen_cis_leader['term_name'] = __( 'Cisgender', 'lwtv' );
+	$gen_cis_leader['term_name'] = __( 'Cisgender', 'lwtv-underscores' );
 	$gen_prolific['cisgender']   = $gen_cis_leader;
 }
 foreach ( $gen_prolific_raw as $gen_prolific_slug => $gen_prolific_row ) {
@@ -194,7 +194,7 @@ if ( ! empty( $gen_prolific ) ) :
 	// order. Slugs with no prolific entry are simply skipped below.
 	$gen_prolific_slugs = array_merge( array( 'cisgender' ), array_keys( $gen_data ) );
 	?>
-	<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'Most Prolific by Gender Identity', 'lwtv' ); ?></p>
+	<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'Most Prolific by Gender Identity', 'lwtv-underscores' ); ?></p>
 	<div class="lwtv-pullstats lwtv-pullstats--three lwtv-statcards lwtv-bars--actors">
 		<?php
 		foreach ( $gen_prolific_slugs as $gen_prolific_slug ) :

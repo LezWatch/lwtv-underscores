@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 $dtx_taxonomy    = 'lez_country';
 $dtx_url_base    = '/country/';
-$dtx_noun_plural = __( 'countries', 'lwtv' );
+$dtx_noun_plural = __( 'countries', 'lwtv-underscores' );
 // phpcs:ignore PEAR.Files.IncludingFile.UseRequire
 include plugin_dir_path( __DIR__ ) . 'partials/death-taxonomy-highlights.php';
 
@@ -38,8 +38,8 @@ $ranked = array(
 	'rows'   => array_slice( $dn_rows, 0, 10 ),
 	'total'  => $dn_tot,
 	'family' => 'characters',
-	'title'  => __( 'Top Ten Countries with the most on-screen deaths', 'lwtv' ),
-	'sub'    => __( 'The more shows in a nation, the more death. It\'s just math.', 'lwtv' ),
+	'title'  => __( 'Top Ten Countries with the most on-screen deaths', 'lwtv-underscores' ),
+	'sub'    => __( 'The more shows in a nation, the more death. It\'s just math.', 'lwtv-underscores' ),
 	'svg'    => 'globe.svg',
 	'icon'   => 'svg-globe',
 	'base'   => '',
@@ -49,8 +49,8 @@ $ranked = array(
 include plugin_dir_path( __DIR__ ) . 'partials/ranked-bars.php';
 
 $download_csv = array(
-	'page'  => __( 'country', 'lwtv' ),
-	'title' => __( 'Deaths by country', 'lwtv' ),
+	'page'  => __( 'country', 'lwtv-underscores' ),
+	'title' => __( 'Deaths by country', 'lwtv-underscores' ),
 	'count' => count( $dn_raw ),
 );
 // phpcs:ignore PEAR.Files.IncludingFile.UseRequire

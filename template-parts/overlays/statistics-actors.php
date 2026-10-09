@@ -65,16 +65,16 @@ $this_id = $args['actor_id'] ?? null;
 					$lwtv_dominant        = max( $lwtv_alive, $lwtv_dead );
 					$lwtv_status_pct      = ( $lwtv_total_status > 0 ) ? round( ( $lwtv_dominant / $lwtv_total_status ) * 100, 1 ) : 0;
 					$lwtv_status_fam      = ( 0 === $lwtv_dead ) ? 'green' : 'red';
-					$lwtv_status_sub      = ( $lwtv_alive >= $lwtv_dead ) ? __( 'alive', 'lwtv' ) : __( 'dead', 'lwtv' );
+					$lwtv_status_sub      = ( $lwtv_alive >= $lwtv_dead ) ? __( 'alive', 'lwtv-underscores' ) : __( 'dead', 'lwtv-underscores' );
 					$lwtv_status_segments = array(
 						array(
-							'label' => isset( $lwtv_dead_data[0] ) ? $lwtv_dead_data[0]['name'] : __( 'Alive', 'lwtv' ),
+							'label' => isset( $lwtv_dead_data[0] ) ? $lwtv_dead_data[0]['name'] : __( 'Alive', 'lwtv-underscores' ),
 							'count' => $lwtv_alive,
 							'pct'   => ( $lwtv_total_status > 0 ) ? round( ( $lwtv_alive / $lwtv_total_status ) * 100, 1 ) : 0,
 							'class' => 'green',
 						),
 						array(
-							'label' => isset( $lwtv_dead_data[1] ) ? $lwtv_dead_data[1]['name'] : __( 'Dead', 'lwtv' ),
+							'label' => isset( $lwtv_dead_data[1] ) ? $lwtv_dead_data[1]['name'] : __( 'Dead', 'lwtv-underscores' ),
 							'count' => $lwtv_dead,
 							'pct'   => ( $lwtv_total_status > 0 ) ? round( ( $lwtv_dead / $lwtv_total_status ) * 100, 1 ) : 0,
 							'class' => 'red',
@@ -82,12 +82,12 @@ $this_id = $args['actor_id'] ?? null;
 					);
 					?>
 					<p class="lwtv-actor-stats-caption">
-						<?php esc_html_e( 'Statistics are updated daily.', 'lwtv' ); ?>
+						<?php esc_html_e( 'Statistics are updated daily.', 'lwtv-underscores' ); ?>
 						<span class="lwtv-actor-stats-dot" aria-hidden="true"></span>
 						<strong>
 						<?php
 						/* translators: %s: number of characters played. */
-						printf( esc_html( _n( '%s character', '%s characters', $lwtv_char_count, 'lwtv' ) ), esc_html( number_format_i18n( $lwtv_char_count ) ) );
+						printf( esc_html( _n( '%s character', '%s characters', $lwtv_char_count, 'lwtv-underscores' ) ), esc_html( number_format_i18n( $lwtv_char_count ) ) );
 						?>
 						</strong>
 					</p>
@@ -97,8 +97,8 @@ $this_id = $args['actor_id'] ?? null;
 							'layout'     => 'compact',
 							'segments'   => $lwtv_role_segments,
 							'center'     => $lwtv_total_roles,
-							'center_sub' => __( 'roles', 'lwtv' ),
-							'eyebrow'    => __( 'Roles', 'lwtv' ),
+							'center_sub' => __( 'roles', 'lwtv-underscores' ),
+							'eyebrow'    => __( 'Roles', 'lwtv-underscores' ),
 						);
 						// phpcs:ignore PEAR.Files.IncludingFile.UseRequire
 						include LWTV_PLUGIN_PATH . '/php/statistics/templates/partials/donut.php';
@@ -109,13 +109,13 @@ $this_id = $args['actor_id'] ?? null;
 							'center_pct'    => (int) round( $lwtv_status_pct ),
 							'center_family' => $lwtv_status_fam,
 							'center_sub'    => $lwtv_status_sub,
-							'eyebrow'       => __( 'Status', 'lwtv' ),
+							'eyebrow'       => __( 'Status', 'lwtv-underscores' ),
 						);
 						// phpcs:ignore PEAR.Files.IncludingFile.UseRequire
 						include LWTV_PLUGIN_PATH . '/php/statistics/templates/partials/donut.php';
 						?>
 					</div>
-					<p><em><small><?php esc_html_e( 'Note: character roles may exceed the number of characters played, if the character appeared on multiple TV shows.', 'lwtv' ); ?></small></em></p>
+					<p><em><small><?php esc_html_e( 'Note: character roles may exceed the number of characters played, if the character appeared on multiple TV shows.', 'lwtv-underscores' ); ?></small></em></p>
 					<?php
 				}
 				?>

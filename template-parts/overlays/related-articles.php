@@ -43,7 +43,7 @@ if ( ! $this_id ) {
 				<p class="lwtv-articles-intro">
 					<?php
 					/* translators: %s: number of related articles. */
-					printf( esc_html( _n( '%s article tagged with this actor on the LezWatch.TV blog.', '%s articles tagged with this actor on the LezWatch.TV blog.', $lwtv_total_posts, 'lwtv' ) ), esc_html( number_format_i18n( $lwtv_total_posts ) ) );
+					printf( esc_html( _n( '%s article tagged with this actor on the LezWatch.TV blog.', '%s articles tagged with this actor on the LezWatch.TV blog.', $lwtv_total_posts, 'lwtv-underscores' ) ), esc_html( number_format_i18n( $lwtv_total_posts ) ) );
 					?>
 				</p>
 
@@ -102,7 +102,7 @@ if ( ! $this_id ) {
 						$lwtv_tag  = term_exists( $lwtv_slug, 'post_tag' );
 						if ( ! is_null( $lwtv_tag ) && is_array( $lwtv_tag ) ) {
 							?>
-							<a class="lwtv-articles-foot" href="<?php echo esc_url( get_tag_link( $lwtv_tag['term_id'] ) ); ?>"><?php esc_html_e( 'See all related coverage', 'lwtv' ); ?> <span aria-hidden="true">&rarr;</span></a>
+							<a class="lwtv-articles-foot" href="<?php echo esc_url( get_tag_link( $lwtv_tag['term_id'] ) ); ?>"><?php esc_html_e( 'See all related coverage', 'lwtv-underscores' ); ?> <span aria-hidden="true">&rarr;</span></a>
 							<?php
 						}
 					}

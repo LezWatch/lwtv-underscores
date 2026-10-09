@@ -37,25 +37,25 @@ require_once plugin_dir_path( __DIR__ ) . 'partials/phrases.php';
 $shows_cards = array(
 	array(
 		'type'    => 'shows',
-		'label'   => __( 'Shows', 'lwtv' ),
+		'label'   => __( 'Shows', 'lwtv-underscores' ),
 		'count'   => (int) $shows_count,
-		'caption' => __( 'TV series, webseries & made-for-tv movies', 'lwtv' ),
+		'caption' => __( 'TV series, webseries & made-for-tv movies', 'lwtv-underscores' ),
 		'svg'     => 'tv.svg',
 		'icon'    => 'svg-television',
 	),
 	array(
 		'type'    => 'characters', // green family (Tropes).
-		'label'   => __( 'Tropes', 'lwtv' ),
+		'label'   => __( 'Tropes', 'lwtv-underscores' ),
 		'count'   => (int) $count_tropes,
-		'caption' => __( 'Distinct tropes tracked', 'lwtv' ),
+		'caption' => __( 'Distinct tropes tracked', 'lwtv-underscores' ),
 		'svg'     => 'tag.svg',
 		'icon'    => 'svg-tag',
 	),
 	array(
 		'type'    => 'actors', // amber family (Genres).
-		'label'   => __( 'Genres', 'lwtv' ),
+		'label'   => __( 'Genres', 'lwtv-underscores' ),
 		'count'   => (int) $count_genres,
-		'caption' => __( 'Distinct genres tracked', 'lwtv' ),
+		'caption' => __( 'Distinct genres tracked', 'lwtv-underscores' ),
 		'svg'     => 'theater_masks.svg',
 		'icon'    => 'svg-theater-masks',
 	),
@@ -76,10 +76,10 @@ if ( ! empty( $idx_fmt_top['name'] ) && (int) $shows_count > 0 ) {
 	$idx_fmt_pct = round( ( (int) $idx_fmt_top['count'] / (int) $shows_count ) * 100, 1 );
 
 	$idx_cards['formats'] = array(
-		'eyebrow' => __( 'Formats', 'lwtv' ),
+		'eyebrow' => __( 'Formats', 'lwtv-underscores' ),
 		'figure'  => $idx_fmt_top['name'],
 		/* translators: %s: a fraction phrase, e.g. "Over half", lowercased mid-sentence. */
-		'text'    => sprintf( __( 'The dominant format for %s of all shows.', 'lwtv' ), lcfirst( lwtv_stats_fraction_phrase( $idx_fmt_pct ) ) ),
+		'text'    => sprintf( __( 'The dominant format for %s of all shows.', 'lwtv-underscores' ), lcfirst( lwtv_stats_fraction_phrase( $idx_fmt_pct ) ) ),
 		'url'     => $baseurl . 'formats/',
 	);
 }
@@ -91,13 +91,13 @@ if ( ! empty( $idx_top_trope['name'] ) ) {
 	$idx_trope_tied = ( ! empty( $idx_trope_next['count'] ) && (int) $idx_trope_next['count'] === (int) $idx_top_trope['count'] );
 
 	$idx_cards['tropes'] = array(
-		'eyebrow' => __( 'Tropes', 'lwtv' ),
+		'eyebrow' => __( 'Tropes', 'lwtv-underscores' ),
 		'figure'  => $idx_top_trope['name'],
 		'text'    => $idx_trope_tied
 			/* translators: 1: total number of tropes tracked, 2: shows carrying the top trope. */
-			? sprintf( _n( 'The lead is tied for the %1$s tropes we track, on %2$s show.', 'The lead is tied for the %1$s tropes we track, on %2$s shows.', (int) $idx_top_trope['count'], 'lwtv' ), number_format_i18n( (int) $count_tropes ), number_format_i18n( (int) $idx_top_trope['count'] ) )
+			? sprintf( _n( 'The lead is tied for the %1$s tropes we track, on %2$s show.', 'The lead is tied for the %1$s tropes we track, on %2$s shows.', (int) $idx_top_trope['count'], 'lwtv-underscores' ), number_format_i18n( (int) $count_tropes ), number_format_i18n( (int) $idx_top_trope['count'] ) )
 			/* translators: 1: total number of tropes tracked, 2: shows carrying the top trope. */
-			: sprintf( _n( 'Out of the %1$s tropes we track, this is seen on %2$s show.', 'Out of the %1$s tropes we track, this is seen on %2$s shows.', (int) $idx_top_trope['count'], 'lwtv' ), number_format_i18n( (int) $count_tropes ), number_format_i18n( (int) $idx_top_trope['count'] ) ),
+			: sprintf( _n( 'Out of the %1$s tropes we track, this is seen on %2$s show.', 'Out of the %1$s tropes we track, this is seen on %2$s shows.', (int) $idx_top_trope['count'], 'lwtv-underscores' ), number_format_i18n( (int) $count_tropes ), number_format_i18n( (int) $idx_top_trope['count'] ) ),
 		'url'     => $baseurl . 'tropes/',
 	);
 }
@@ -110,13 +110,13 @@ if ( ! empty( $idx_top_genre['name'] ) && (int) $shows_count > 0 ) {
 	$idx_genre_pct  = number_format_i18n( round( ( (int) $idx_top_genre['count'] / (int) $shows_count ) * 100, 1 ), 1 );
 
 	$idx_cards['genres'] = array(
-		'eyebrow' => __( 'Genres', 'lwtv' ),
+		'eyebrow' => __( 'Genres', 'lwtv-underscores' ),
 		'figure'  => $idx_top_genre['name'],
 		'text'    => $idx_genre_tied
 			/* translators: 1: total number of genres tracked, 2: the top genre's share of all shows (one decimal). */
-			? sprintf( __( 'The top of the %1$s genres is on %2$s%% of all shows.', 'lwtv' ), number_format_i18n( (int) $count_genres ), $idx_genre_pct )
+			? sprintf( __( 'The top of the %1$s genres is on %2$s%% of all shows.', 'lwtv-underscores' ), number_format_i18n( (int) $count_genres ), $idx_genre_pct )
 			/* translators: 1: total number of genres tracked, 2: the top genre's share of all shows (one decimal). */
-			: sprintf( __( 'The top of the %1$s genres, seen on %2$s%% of all shows.', 'lwtv' ), number_format_i18n( (int) $count_genres ), $idx_genre_pct ),
+			: sprintf( __( 'The top of the %1$s genres, seen on %2$s%% of all shows.', 'lwtv-underscores' ), number_format_i18n( (int) $count_genres ), $idx_genre_pct ),
 		'url'     => $baseurl . 'genres/',
 	);
 }
@@ -127,12 +127,12 @@ if ( (int) ( $idx_inter['shows'] ?? 0 ) > 0 && (int) $shows_count > 0 ) {
 	$idx_inter_pct = round( ( (int) $idx_inter['shows'] / (int) $shows_count ) * 100, 1 );
 
 	$idx_cards['intersectionality'] = array(
-		'eyebrow' => __( 'Intersectionality', 'lwtv' ),
-		'figure'  => ( $idx_inter_pct >= 100 ) ? __( 'Every show', 'lwtv' ) : number_format_i18n( $idx_inter_pct, 1 ) . '%',
+		'eyebrow' => __( 'Intersectionality', 'lwtv-underscores' ),
+		'figure'  => ( $idx_inter_pct >= 100 ) ? __( 'Every show', 'lwtv-underscores' ) : number_format_i18n( $idx_inter_pct, 1 ) . '%',
 		'text'    => ( $idx_inter_pct >= 100 )
-			? __( 'Every show carries at least one intersectional identity.', 'lwtv' )
+			? __( 'Every show carries at least one intersectional identity.', 'lwtv-underscores' )
 			/* translators: %s: a shortfall fraction phrase, e.g. "Fewer than a quarter", capitalized as the start of the sentence. */
-			: sprintf( __( '%s of all shows have at least one intersectional identity.', 'lwtv' ), lwtv_stats_shortfall_phrase( $idx_inter_pct ) ),
+			: sprintf( __( '%s of all shows have at least one intersectional identity.', 'lwtv-underscores' ), lwtv_stats_shortfall_phrase( $idx_inter_pct ) ),
 		'url'     => $baseurl . 'intersectionality/',
 	);
 }
@@ -144,13 +144,13 @@ if ( ! empty( $idx_score_values ) ) {
 	$idx_high   = (int) Score_Distribution::tails( $idx_score_values )['high'];
 
 	$idx_cards['scores'] = array(
-		'eyebrow' => __( 'Scores', 'lwtv' ),
+		'eyebrow' => __( 'Scores', 'lwtv-underscores' ),
 		'figure'  => number_format_i18n( $idx_median ),
 		'text'    => ( $idx_high <= 50 )
 			/* translators: %s: number of shows scoring 90 or higher. */
-			? sprintf( _n( 'Only %s show has ever hit 90+.', 'Only %s shows have ever hit 90+.', $idx_high, 'lwtv' ), number_format_i18n( $idx_high ) )
+			? sprintf( _n( 'Only %s show has ever hit 90+.', 'Only %s shows have ever hit 90+.', $idx_high, 'lwtv-underscores' ), number_format_i18n( $idx_high ) )
 			/* translators: %s: number of shows scoring 90 or higher. */
-			: sprintf( __( 'A total of %s shows have hit 90+.', 'lwtv' ), number_format_i18n( $idx_high ) ),
+			: sprintf( __( 'A total of %s shows have hit 90+.', 'lwtv-underscores' ), number_format_i18n( $idx_high ) ),
 		'url'     => $baseurl . 'scores/',
 	);
 }
@@ -165,11 +165,11 @@ foreach ( Trigger_Levels::ORDER as $idx_level ) {
 $idx_trig = Trigger_Levels::facts( $idx_trig_counts, (int) $shows_count );
 if ( $idx_trig['flagged'] > 0 ) {
 	$idx_cards['triggers'] = array(
-		'eyebrow' => __( 'Triggers', 'lwtv' ),
+		'eyebrow' => __( 'Triggers', 'lwtv-underscores' ),
 		/* translators: %s: the "1 in N" denominator for flagged shows. */
-		'figure'  => sprintf( __( '1 in %s', 'lwtv' ), number_format_i18n( $idx_trig['scarcity_ratio'] ) ),
+		'figure'  => sprintf( __( '1 in %s', 'lwtv-underscores' ), number_format_i18n( $idx_trig['scarcity_ratio'] ) ),
 		/* translators: %s: number of flagged shows. */
-		'text'    => sprintf( __( '%s of all shows carry a trigger warning.', 'lwtv' ), number_format_i18n( $idx_trig['flagged'] ) ),
+		'text'    => sprintf( __( '%s of all shows carry a trigger warning.', 'lwtv-underscores' ), number_format_i18n( $idx_trig['flagged'] ) ),
 		'url'     => $baseurl . 'triggers/',
 	);
 }
@@ -183,16 +183,16 @@ foreach ( array( 'gold', 'silver', 'bronze', 'anti' ) as $idx_tier ) {
 }
 $idx_star_facts  = Star_Podium::facts( $idx_star_counts, (int) $shows_count );
 $idx_star_labels = array(
-	'gold'   => __( 'Gold', 'lwtv' ),
-	'silver' => __( 'Silver', 'lwtv' ),
-	'bronze' => __( 'Bronze', 'lwtv' ),
+	'gold'   => __( 'Gold', 'lwtv-underscores' ),
+	'silver' => __( 'Silver', 'lwtv-underscores' ),
+	'bronze' => __( 'Bronze', 'lwtv-underscores' ),
 );
 if ( '' !== $idx_star_facts['leader'] ) {
 	$idx_cards['stars'] = array(
-		'eyebrow' => __( 'Stars', 'lwtv' ),
+		'eyebrow' => __( 'Stars', 'lwtv-underscores' ),
 		'figure'  => $idx_star_labels[ $idx_star_facts['leader'] ],
 		/* translators: %s: the leading tier's share of all stars (whole percent). */
-		'text'    => sprintf( __( '%1$s%% of all stars awarded are %2$s.', 'lwtv' ), number_format_i18n( $idx_star_facts['leader_share_pct'] ), lcfirst( $idx_star_labels[ $idx_star_facts['leader'] ] ) ),
+		'text'    => sprintf( __( '%1$s%% of all stars awarded are %2$s.', 'lwtv-underscores' ), number_format_i18n( $idx_star_facts['leader_share_pct'] ), lcfirst( $idx_star_labels[ $idx_star_facts['leader'] ] ) ),
 		'url'     => $baseurl . 'stars/',
 	);
 }
@@ -213,10 +213,10 @@ if ( $idx_worth_sum > 0 && $idx_worth_yes > 0 ) {
 	$idx_worth_pct = round( ( $idx_worth_yes / $idx_worth_sum ) * 100, 1 );
 
 	$idx_cards['worth-it'] = array(
-		'eyebrow' => __( 'Worth It', 'lwtv' ),
+		'eyebrow' => __( 'Worth It', 'lwtv-underscores' ),
 		'figure'  => number_format_i18n( $idx_worth_pct, 1 ) . '%',
 		/* translators: %s: a fraction phrase, e.g. "Nearly two thirds", lowercased mid-sentence. */
-		'text'    => sprintf( __( '%s of all shows are a clear yes.', 'lwtv' ), lwtv_stats_fraction_phrase( $idx_worth_pct ) ),
+		'text'    => sprintf( __( '%s of all shows are a clear yes.', 'lwtv-underscores' ), lwtv_stats_fraction_phrase( $idx_worth_pct ) ),
 		'url'     => $baseurl . 'worth-it/',
 	);
 }
@@ -225,12 +225,12 @@ if ( $idx_worth_sum > 0 && $idx_worth_yes > 0 ) {
 $idx_loved_n = count( ( new We_Love() )->get_roster() );
 if ( $idx_loved_n > 0 && (int) $shows_count > 0 ) {
 	$idx_cards['we-love-it'] = array(
-		'eyebrow' => __( 'We Love It', 'lwtv' ),
+		'eyebrow' => __( 'We Love It', 'lwtv-underscores' ),
 		/* translators: %s: the "1 in N" denominator for loved shows. */
-		'figure'  => sprintf( __( '1 in %s', 'lwtv' ), number_format_i18n( max( 2, (int) round( (int) $shows_count / $idx_loved_n ) ) ) ),
+		'figure'  => sprintf( __( '1 in %s', 'lwtv-underscores' ), number_format_i18n( max( 2, (int) round( (int) $shows_count / $idx_loved_n ) ) ) ),
 		'count'   => 0,
 		/* translators: %s: number of loved shows. */
-		'text'    => sprintf( _n( '%s show has earned the We Love flag.', '%s shows have earned the We Love flag.', $idx_loved_n, 'lwtv' ), number_format_i18n( $idx_loved_n ) ),
+		'text'    => sprintf( _n( '%s show has earned the We Love flag.', '%s shows have earned the We Love flag.', $idx_loved_n, 'lwtv-underscores' ), number_format_i18n( $idx_loved_n ) ),
 		'url'     => $baseurl . 'we-love-it/',
 	);
 }
@@ -250,24 +250,24 @@ if ( ! empty( $idx_oa ) ) {
 	switch ( $idx_oa['state'] ) {
 		case 'at-peak':
 			/* translators: %s: the latest complete year. */
-			$idx_oa_text = sprintf( __( 'The most shows ever recorded on are are from %s.', 'lwtv' ), (string) $idx_oa['latest_year'] );
+			$idx_oa_text = sprintf( __( 'The most shows ever recorded on are are from %s.', 'lwtv-underscores' ), (string) $idx_oa['latest_year'] );
 			break;
 		case 'recovering':
 			/* translators: 1: the latest complete year, 2: the peak year. */
-			$idx_oa_text = sprintf( __( 'Shows on air in %1$s are climbing again after the %2$s peak.', 'lwtv' ), (string) $idx_oa['latest_year'], (string) $idx_oa['peak_year'] );
+			$idx_oa_text = sprintf( __( 'Shows on air in %1$s are climbing again after the %2$s peak.', 'lwtv-underscores' ), (string) $idx_oa['latest_year'], (string) $idx_oa['peak_year'] );
 			break;
 		case 'receding':
 			/* translators: 1: the latest complete year, 2: the peak year. */
-			$idx_oa_text = sprintf( __( '%1$s is down from the %2$s peak for shows on air.', 'lwtv' ), (string) $idx_oa['latest_year'], (string) $idx_oa['peak_year'] );
+			$idx_oa_text = sprintf( __( '%1$s is down from the %2$s peak for shows on air.', 'lwtv-underscores' ), (string) $idx_oa['latest_year'], (string) $idx_oa['peak_year'] );
 			break;
 		default:
 			/* translators: 1: the latest complete year, 2: the peak year. */
-			$idx_oa_text = sprintf( __( 'Shows on air in %1$s is holding below the %2$s peak.', 'lwtv' ), (string) $idx_oa['latest_year'], (string) $idx_oa['peak_year'] );
+			$idx_oa_text = sprintf( __( 'Shows on air in %1$s is holding below the %2$s peak.', 'lwtv-underscores' ), (string) $idx_oa['latest_year'], (string) $idx_oa['peak_year'] );
 			break;
 	}
 
 	$idx_cards['on-air'] = array(
-		'eyebrow' => __( 'On Air', 'lwtv' ),
+		'eyebrow' => __( 'On Air', 'lwtv-underscores' ),
 		'figure'  => number_format_i18n( $idx_oa['latest_count'] ),
 		'count'   => (int) $idx_oa['latest_count'],
 		'text'    => $idx_oa_text,
@@ -301,7 +301,7 @@ $idx_depth    = ( new Catalog_Depth() )->get_totals();
 $idx_depth_ok = ( ! empty( $idx_depth['n'] ) && $idx_depth['with_episodes'] >= 0.8 * $idx_depth['n'] && $idx_depth['episodes_sum'] > 0 );
 ?>
 
-<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'Shows at a Glance', 'lwtv' ); ?></p>
+<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'Shows at a Glance', 'lwtv-underscores' ); ?></p>
 
 <div class="lwtv-metric-grid lwtv-metric-grid--3">
 	<?php
@@ -329,7 +329,7 @@ $idx_total = count( $idx_cards ) + ( empty( $idx_lead ) ? 0 : 1 );
 ?>
 <?php if ( $idx_total >= 4 ) : ?>
 	<section class="lwtv-hl-section" aria-labelledby="lwtv-hl-heading">
-		<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section" id="lwtv-hl-heading"><?php esc_html_e( 'The Headlines', 'lwtv' ); ?></p>
+		<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section" id="lwtv-hl-heading"><?php esc_html_e( 'The Headlines', 'lwtv-underscores' ); ?></p>
 		<div class="lwtv-hl bg-light">
 			<?php if ( ! empty( $idx_lead ) ) : ?>
 				<a class="lwtv-hl-lead" href="<?php echo esc_url( $idx_lead['url'] ); ?>">
@@ -371,15 +371,15 @@ $tropegap_buried_pct = ( (int) $shows_count > 0 ) ? (int) round( ( (int) $trope_
 $tropegap_happy_pct  = ( (int) $shows_count > 0 ) ? (int) round( ( (int) $trope_happy / (int) $shows_count ) * 100 ) : 0;
 $tropegap_ratio      = ( (int) $trope_happy > 0 ) ? round( (int) $trope_buried / (int) $trope_happy, 1 ) : 0;
 ?>
-<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'The Trope Gap', 'lwtv' ); ?></p>
+<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'The Trope Gap', 'lwtv-underscores' ); ?></p>
 <div class="lwtv-pullstats">
 	<div class="lwtv-tropegap lwtv-tropegap--tint card-header dead-characters">
 		<div class="lwtv-tropegap-top">
-			<span class="lwtv-stats-eyebrow"><?php esc_html_e( 'Bury Your Queers', 'lwtv' ); ?></span>
+			<span class="lwtv-stats-eyebrow"><?php esc_html_e( 'Bury Your Queers', 'lwtv-underscores' ); ?></span>
 			<span class="lwtv-tropegap-icon byq"><?php echo lwtv_plugin()->get_symbolicon( svg: 'hand-holding-skull.svg', icon: 'svg-skull', max_size: '22' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
 		</div>
 		<span class="lwtv-tropegap-number" data-count-to="<?php echo (int) $trope_buried; ?>"><?php echo esc_html( number_format_i18n( $trope_buried ) ); ?></span>
-		<p class="lwtv-tropegap-desc"><?php esc_html_e( 'The most common harmful trope in the catalogue.', 'lwtv' ); ?></p>
+		<p class="lwtv-tropegap-desc"><?php esc_html_e( 'The most common harmful trope in the catalogue.', 'lwtv-underscores' ); ?></p>
 		<?php
 		$waffle = array(
 			'filled'  => $tropegap_buried_pct,
@@ -387,7 +387,7 @@ $tropegap_ratio      = ( (int) $trope_happy > 0 ) ? round( (int) $trope_buried /
 			'columns' => 20,
 			'radius'  => 8,
 			/* translators: %s: percentage of all shows that kill off a queer character. */
-			'label'   => sprintf( __( '%s%% of all shows kill off a queer character.', 'lwtv' ), number_format_i18n( $tropegap_buried_pct ) ),
+			'label'   => sprintf( __( '%s%% of all shows kill off a queer character.', 'lwtv-underscores' ), number_format_i18n( $tropegap_buried_pct ) ),
 		);
 		// phpcs:ignore PEAR.Files.IncludingFile.UseRequire
 		include plugin_dir_path( __DIR__ ) . 'partials/waffle.php';
@@ -396,20 +396,20 @@ $tropegap_ratio      = ( (int) $trope_happy > 0 ) ? round( (int) $trope_buried /
 			<?php
 			printf(
 				/* translators: %s: percentage of all shows that kill off a queer character. */
-				esc_html__( '%s%% of everything we track.', 'lwtv' ),
+				esc_html__( '%s%% of everything we track.', 'lwtv-underscores' ),
 				esc_html( number_format_i18n( $tropegap_buried_pct ) )
 			);
 			?>
 		</p>
-		<a role="button" class="btn lwtv-tropegap-link" href="<?php echo esc_url( site_url( '/trope/dead-queers/' ) ); ?>"><?php esc_html_e( 'See these shows', 'lwtv' ); ?> <span aria-hidden="true">&#8599;</span></a>
+		<a role="button" class="btn lwtv-tropegap-link" href="<?php echo esc_url( site_url( '/trope/dead-queers/' ) ); ?>"><?php esc_html_e( 'See these shows', 'lwtv-underscores' ); ?> <span aria-hidden="true">&#8599;</span></a>
 	</div>
 	<div class="lwtv-tropegap lwtv-tropegap--tint card-header happy-endings">
 		<div class="lwtv-tropegap-top">
-			<span class="lwtv-stats-eyebrow"><?php esc_html_e( 'Happy Endings', 'lwtv' ); ?></span>
+			<span class="lwtv-stats-eyebrow"><?php esc_html_e( 'Happy Endings', 'lwtv-underscores' ); ?></span>
 			<span class="lwtv-tropegap-icon he"><?php echo lwtv_plugin()->get_symbolicon( svg: 'heart-circle.svg', icon: 'svg-heart', max_size: '22' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
 		</div>
 		<span class="lwtv-tropegap-number" data-count-to="<?php echo (int) $trope_happy; ?>"><?php echo esc_html( number_format_i18n( $trope_happy ) ); ?></span>
-		<p class="lwtv-tropegap-desc"><?php esc_html_e( 'Sometimes queer characters get a happy ending.', 'lwtv' ); ?></p>
+		<p class="lwtv-tropegap-desc"><?php esc_html_e( 'Sometimes queer characters get a happy ending.', 'lwtv-underscores' ); ?></p>
 		<?php
 		$waffle = array(
 			'filled'  => $tropegap_happy_pct,
@@ -417,7 +417,7 @@ $tropegap_ratio      = ( (int) $trope_happy > 0 ) ? round( (int) $trope_buried /
 			'columns' => 20,
 			'radius'  => 8,
 			/* translators: %s: percentage of all shows that give their queer characters a happy ending. */
-			'label'   => sprintf( __( '%s%% of all shows give their queer characters a happy ending.', 'lwtv' ), number_format_i18n( $tropegap_happy_pct ) ),
+			'label'   => sprintf( __( '%s%% of all shows give their queer characters a happy ending.', 'lwtv-underscores' ), number_format_i18n( $tropegap_happy_pct ) ),
 		);
 		// phpcs:ignore PEAR.Files.IncludingFile.UseRequire
 		include plugin_dir_path( __DIR__ ) . 'partials/waffle.php';
@@ -426,12 +426,12 @@ $tropegap_ratio      = ( (int) $trope_happy > 0 ) ? round( (int) $trope_buried /
 			<?php
 			printf(
 				/* translators: %s: percentage of all shows that give their queer characters a happy ending. */
-				esc_html__( '%s%% of everything we track.', 'lwtv' ),
+				esc_html__( '%s%% of everything we track.', 'lwtv-underscores' ),
 				esc_html( number_format_i18n( $tropegap_happy_pct ) )
 			);
 			?>
 		</p>
-		<a role="button" class="btn lwtv-tropegap-link" href="<?php echo esc_url( site_url( '/trope/happy-ending/' ) ); ?>"><?php esc_html_e( 'See these shows', 'lwtv' ); ?> <span aria-hidden="true">&#8599;</span></a>
+		<a role="button" class="btn lwtv-tropegap-link" href="<?php echo esc_url( site_url( '/trope/happy-ending/' ) ); ?>"><?php esc_html_e( 'See these shows', 'lwtv-underscores' ); ?> <span aria-hidden="true">&#8599;</span></a>
 	</div>
 </div>
 
@@ -439,10 +439,10 @@ $tropegap_ratio      = ( (int) $trope_happy > 0 ) ? round( (int) $trope_buried /
 	<?php
 	$lwtv_callouts = array(
 		array(
-			'label' => __( 'The gap', 'lwtv' ),
+			'label' => __( 'The gap', 'lwtv-underscores' ),
 			'icon'  => 'chart-bar.svg',
 			/* translators: %s: how many times more shows kill off a queer character than give one a happy ending. */
-			'text'  => sprintf( __( 'Shows are %s times more likely to kill off a queer character than to give one a happy ending.', 'lwtv' ), number_format_i18n( $tropegap_ratio, 1 ) ),
+			'text'  => sprintf( __( 'Shows are %s times more likely to kill off a queer character than to give one a happy ending.', 'lwtv-underscores' ), number_format_i18n( $tropegap_ratio, 1 ) ),
 		),
 	);
 	// phpcs:ignore PEAR.Files.IncludingFile.UseRequire
@@ -451,23 +451,23 @@ $tropegap_ratio      = ( (int) $trope_happy > 0 ) ? round( (int) $trope_buried /
 <?php endif; ?>
 
 <?php if ( $idx_depth_ok ) : ?>
-	<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'The Library', 'lwtv' ); ?></p>
+	<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'The Library', 'lwtv-underscores' ); ?></p>
 	<div class="lwtv-lib bg-light">
 		<div class="lwtv-lib-figures">
 			<div class="lwtv-lib-figure">
 				<span class="lwtv-lib-num" data-count-to="<?php echo (int) $idx_depth['seasons_sum']; ?>"><?php echo esc_html( number_format_i18n( $idx_depth['seasons_sum'] ) ); ?></span>
-				<span class="lwtv-lib-sub"><?php esc_html_e( 'seasons', 'lwtv' ); ?></span>
+				<span class="lwtv-lib-sub"><?php esc_html_e( 'seasons', 'lwtv-underscores' ); ?></span>
 			</div>
 			<div class="lwtv-lib-figure">
 				<span class="lwtv-lib-num" data-count-to="<?php echo (int) $idx_depth['episodes_sum']; ?>"><?php echo esc_html( number_format_i18n( $idx_depth['episodes_sum'] ) ); ?></span>
-				<span class="lwtv-lib-sub"><?php esc_html_e( 'episodes', 'lwtv' ); ?></span>
+				<span class="lwtv-lib-sub"><?php esc_html_e( 'episodes', 'lwtv-underscores' ); ?></span>
 			</div>
 		</div>
 		<p class="lwtv-lib-caption">
 			<?php
 			printf(
 				/* translators: %s: total number of shows. */
-				esc_html__( 'of queer TV documented across %s shows. Every show has been watched, catalogued, and argued over.', 'lwtv' ),
+				esc_html__( 'of queer TV documented across %s shows. Every show has been watched, catalogued, and argued over.', 'lwtv-underscores' ),
 				esc_html( number_format_i18n( (int) $shows_count ) )
 			);
 			?>

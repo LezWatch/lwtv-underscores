@@ -49,7 +49,7 @@ if ( 'overview' === $view ) {
 	<?php
 	$baseurl      = '/statistics/death/';
 	$death_subnav = array_merge( array( 'overview' => 1 ), array_fill_keys( $valid_views, 1 ) );
-	echo '<nav class="lwtv-stats-subnav" aria-label="' . esc_attr__( 'Death statistics views', 'lwtv' ) . '">';
+	echo '<nav class="lwtv-stats-subnav" aria-label="' . esc_attr__( 'Death statistics views', 'lwtv-underscores' ) . '">';
 	foreach ( array_keys( $death_subnav ) as $death_v ) {
 		$death_is  = ( $view === $death_v );
 		$death_url = ( 'overview' === $death_v ) ? $baseurl : $baseurl . $death_v . '/';

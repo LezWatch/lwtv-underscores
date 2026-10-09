@@ -106,7 +106,7 @@ class Watch_Url_Health {
 			return self::result(
 				self::STATUS_BROKEN,
 				/* translators: %s: error message from the HTTP request. */
-				sprintf( __( 'Unreachable: %s', 'lwtv' ), $error )
+				sprintf( __( 'Unreachable: %s', 'lwtv-underscores' ), $error )
 			);
 		}
 
@@ -121,7 +121,7 @@ class Watch_Url_Health {
 		if ( self::looks_parked( $body ) ) {
 			return self::result(
 				self::STATUS_BROKEN,
-				__( 'Answers, but serves a domain parking or for-sale page. The provider is gone.', 'lwtv' )
+				__( 'Answers, but serves a domain parking or for-sale page. The provider is gone.', 'lwtv-underscores' )
 			);
 		}
 
@@ -132,7 +132,7 @@ class Watch_Url_Health {
 				self::STATUS_REVIEW,
 				sprintf(
 					/* translators: %s: registrable domain the URL now lands on. */
-					__( 'Redirects off-site to %s. Check whether this is a rebrand to follow or a domain we lost.', 'lwtv' ),
+					__( 'Redirects off-site to %s. Check whether this is a rebrand to follow or a domain we lost.', 'lwtv-underscores' ),
 					$moved_to
 				)
 			);
@@ -143,7 +143,7 @@ class Watch_Url_Health {
 				self::STATUS_REVIEW,
 				sprintf(
 					/* translators: 1: name the site publishes for itself, 2: our provider term name. */
-					__( 'The site now calls itself “%1$s”, which does not resemble “%2$s”. Confirm it is still the same provider.', 'lwtv' ),
+					__( 'The site now calls itself “%1$s”, which does not resemble “%2$s”. Confirm it is still the same provider.', 'lwtv-underscores' ),
 					$site_name,
 					$term_name
 				),
@@ -168,14 +168,14 @@ class Watch_Url_Health {
 		// A completed request with no status code should not happen, but a
 		// silent pass here would look like a healthy URL.
 		if ( 0 === $code ) {
-			return self::result( self::STATUS_BROKEN, __( 'No HTTP status was returned. Check the URL by hand.', 'lwtv' ) );
+			return self::result( self::STATUS_BROKEN, __( 'No HTTP status was returned. Check the URL by hand.', 'lwtv-underscores' ) );
 		}
 
 		if ( 404 === $code || 410 === $code ) {
 			return self::result(
 				self::STATUS_BROKEN,
 				/* translators: %d: HTTP status code. */
-				sprintf( __( 'Gone (HTTP %d). Remove the URL from the term or point it at the current one.', 'lwtv' ), $code )
+				sprintf( __( 'Gone (HTTP %d). Remove the URL from the term or point it at the current one.', 'lwtv-underscores' ), $code )
 			);
 		}
 
@@ -183,7 +183,7 @@ class Watch_Url_Health {
 			return self::result(
 				self::STATUS_BLOCKED,
 				/* translators: %d: HTTP status code. */
-				sprintf( __( 'Refused our request (HTTP %d). Usually bot-blocking rather than a broken link, but worth one manual check.', 'lwtv' ), $code )
+				sprintf( __( 'Refused our request (HTTP %d). Usually bot-blocking rather than a broken link, but worth one manual check.', 'lwtv-underscores' ), $code )
 			);
 		}
 
@@ -191,7 +191,7 @@ class Watch_Url_Health {
 			return self::result(
 				self::STATUS_REVIEW,
 				/* translators: %d: HTTP status code. */
-				sprintf( __( 'Server error (HTTP %d). May be temporary; re-check before changing anything.', 'lwtv' ), $code )
+				sprintf( __( 'Server error (HTTP %d). May be temporary; re-check before changing anything.', 'lwtv-underscores' ), $code )
 			);
 		}
 
@@ -201,7 +201,7 @@ class Watch_Url_Health {
 		return self::result(
 			self::STATUS_REVIEW,
 			/* translators: %d: HTTP status code. */
-			sprintf( __( 'Unexpected response (HTTP %d).', 'lwtv' ), $code )
+			sprintf( __( 'Unexpected response (HTTP %d).', 'lwtv-underscores' ), $code )
 		);
 	}
 

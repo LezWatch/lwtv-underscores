@@ -79,8 +79,8 @@ class Debugging {
 		}
 		acf_add_options_sub_page(
 			array(
-				'page_title'  => __( 'Debugging Tools', 'lwtv' ),
-				'menu_title'  => __( 'Debugging Tools', 'lwtv' ),
+				'page_title'  => __( 'Debugging Tools', 'lwtv-underscores' ),
+				'menu_title'  => __( 'Debugging Tools', 'lwtv-underscores' ),
 				'parent_slug' => 'lwtv',
 				'capability'  => 'activate_plugins',
 				'menu_slug'   => 'lwtv-debugging',
