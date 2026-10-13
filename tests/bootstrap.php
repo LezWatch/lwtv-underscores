@@ -89,6 +89,7 @@ require_once __DIR__ . '/../plugins/lwtv-plugin/php/cpts/shows/watching/class-wa
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/cpts/shows/watching/class-watch-term-url-audit.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/cpts/shows/watching/class-watch-host-map.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/cpts/shows/watching/class-watch-term-match.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/cpts/shows/watching/class-justwatch.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/statistics/build/class-trope-category-coverage.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/statistics/build/class-term-count-distribution.php'; // to_cells() lives here too.
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/statistics/build/class-score-distribution.php';
