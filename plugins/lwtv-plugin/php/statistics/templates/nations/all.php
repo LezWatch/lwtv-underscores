@@ -52,44 +52,44 @@ foreach ( $lwtv_ranked as $lwtv_slug => $lwtv_data ) {
 $lwtv_cards = array(
 	array(
 		'family'  => 'shows',
-		'label'   => __( 'Nations', 'lwtv' ),
+		'label'   => __( 'Nations', 'lwtv-underscores' ),
 		'count'   => $lwtv_nation_total,
 		'suffix'  => '',
-		'caption' => __( 'With at least one queer show', 'lwtv' ),
+		'caption' => __( 'With at least one queer show', 'lwtv-underscores' ),
 		'svg'     => 'globe.svg',
 		'icon'    => 'svg-globe',
 	),
 	array(
 		'family'  => 'characters',
-		'label'   => __( 'Have 10+ Shows', 'lwtv' ),
+		'label'   => __( 'Have 10+ Shows', 'lwtv-underscores' ),
 		'count'   => $lwtv_depth,
 		'suffix'  => '',
-		'caption' => __( 'A real depth of catalogue', 'lwtv' ),
+		'caption' => __( 'A real depth of catalogue', 'lwtv-underscores' ),
 		'svg'     => 'library.svg',
 		'icon'    => 'svg-library',
 	),
 	array(
 		'family'  => 'actors',
-		'label'   => __( 'US + UK Share', 'lwtv' ),
+		'label'   => __( 'US + UK Share', 'lwtv-underscores' ),
 		'count'   => $lwtv_topshare,
 		'suffix'  => '%',
-		'caption' => __( 'Two countries, most of the shows', 'lwtv' ),
+		'caption' => __( 'Two countries, most of the shows', 'lwtv-underscores' ),
 		'svg'     => 'location-target.svg',
 		'icon'    => 'svg-location-target',
 	),
 	array(
 		'family'  => 'nations-new',
-		'label'   => __( 'New Since 2020', 'lwtv' ),
+		'label'   => __( 'New Since 2020', 'lwtv-underscores' ),
 		'count'   => $lwtv_new_2020,
 		'suffix'  => '',
-		'caption' => __( 'Debuted their first queer show', 'lwtv' ),
+		'caption' => __( 'Debuted their first queer show', 'lwtv-underscores' ),
 		'svg'     => 'graph-line.svg',
 		'icon'    => 'svg-graph-line',
 	),
 );
 ?>
 
-<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'Around the World', 'lwtv' ); ?></p>
+<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'Around the World', 'lwtv-underscores' ); ?></p>
 <div class="lwtv-metric-grid lwtv-metric-grid--4">
 	<?php
 	foreach ( $lwtv_cards as $lwtv_card ) {
@@ -118,8 +118,8 @@ $leaderboard_all   = (int) $all_shows_count;
 include plugin_dir_path( __DIR__ ) . 'partials/leaderboard.php';
 
 $download_csv = array(
-	'page'  => __( 'nation', 'lwtv' ),
-	'title' => __( 'Shows, characters & deaths, by nation', 'lwtv' ),
+	'page'  => __( 'nation', 'lwtv-underscores' ),
+	'title' => __( 'Shows, characters & deaths, by nation', 'lwtv-underscores' ),
 	// Count the CSV's own source (nations with >=1 published show) so the card
 	// row count matches the file exactly.
 	'count' => count( (array) lwtv_plugin()->generate_nation_statistics( 'all', 'all', 'array' ) ),

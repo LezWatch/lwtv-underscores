@@ -61,7 +61,7 @@ class Related_Posts_By_Taxonomy {
 			$defaults = \Related_Posts_By_Taxonomy_Defaults::get_instance();
 
 			// Add the new format .
-			$defaults->formats['lwtv_cards'] = __( 'LWTV Customized Display', 'lwtv' );
+			$defaults->formats['lwtv_cards'] = __( 'LWTV Customized Display', 'lwtv-underscores' );
 		}
 	}
 

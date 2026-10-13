@@ -4,6 +4,28 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [7.3.0] - 2026-10-09
+
+### Added
+
+- Live search shows an "Also known as" line on show results that matched an alternate name, with the name's language (for example "Cable Girls (English)").
+- Pull requests into `development` and `production` must pass CI (lint, PHPStan, PHPUnit and a full asset build), a dependency advisory and secrets scan, and a risk-tier check that holds high-risk changes until a named human approves them.
+- PHPStan at level 5, with existing errors kept in a baseline so only new ones fail.
+
+### Changed
+
+- Blog post announcements to Postiz read as title, excerpt and link, fitted to Bluesky's 300-character limit by keeping the link and title whole and shortening the excerpt at a word boundary.
+- Deploys now ship the artifact CI built and tested, instead of rebuilding on the server workflow, and only after every CI job passes on the branch tip.
+- Dependabot targets `production`, so its bumps are measured against what is live.
+- Bump simple-git to 4.0.2 (patches the `VISUAL` editor environment variable vulnerability), ics-parser to 3.6.0, PHPUnit to 13.4.1, and other build dependencies.
+- `npm run symbolicons:dev` / `symbolicons:prod` reset the cached icon clone before switching branches and write lint-clean SCSS into the theme.
+
+### Fixed
+
+- Blog post announcements now include the post's link, and multibyte excerpts are no longer cut to half length or split mid-character.
+- The symbolicons script no longer crashes on a fresh checkout before the icon cache exists.
+- Removed an invalid third argument from `get_the_terms()` calls in the JSON export and actor/character templates.
+
 ## [7.2.8] - 2026-09-25
 
 ### Added

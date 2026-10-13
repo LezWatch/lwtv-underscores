@@ -39,7 +39,7 @@ class Report {
 	 */
 	public static function make( string $tab, array $config ): void {
 		if ( ! current_user_can( self::CAPABILITY ) ) {
-			echo '<p>' . esc_html__( 'You do not have permission to view this report.', 'lwtv' ) . '</p>';
+			echo '<p>' . esc_html__( 'You do not have permission to view this report.', 'lwtv-underscores' ) . '</p>';
 			return;
 		}
 
@@ -109,7 +109,7 @@ class Report {
 	private static function render_clean( array $config ): void {
 		?>
 		<div class="lwtv-tools-container lwtv-tools-container__alert">
-			<h3><span class="dashicons dashicons-yes"></span> <?php esc_html_e( 'Excellent!', 'lwtv' ); ?></h3>
+			<h3><span class="dashicons dashicons-yes"></span> <?php esc_html_e( 'Excellent!', 'lwtv-underscores' ); ?></h3>
 			<div id="lwtv-tools-alerts">
 				<p><?php echo esc_html( $config['clean'] ); ?></p>
 				<?php echo wp_kses_post( ( new Validation() )->last_run( $config['option'] ) ); ?>
@@ -127,7 +127,7 @@ class Report {
 	 */
 	private static function render_problems( array $config, array $items ): void {
 		$count    = count( $items );
-		$sentence = _n( $config['dirty'][0], $config['dirty'][1], $count, 'lwtv' );
+		$sentence = _n( $config['dirty'][0], $config['dirty'][1], $count, 'lwtv-underscores' );
 		?>
 		<div class="lwtv-tools-container lwtv-tools-container__alert">
 			<h3>
@@ -135,7 +135,7 @@ class Report {
 				<?php
 				printf(
 					/* translators: %d: number of items needing attention. */
-					esc_html__( 'Problems (%d)', 'lwtv' ),
+					esc_html__( 'Problems (%d)', 'lwtv-underscores' ),
 					(int) $count
 				);
 				?>
@@ -153,8 +153,8 @@ class Report {
 			<table class="widefat fixed" cellspacing="0">
 				<thead><tr>
 					<th class="manage-column column-character" scope="col"><?php echo esc_html( $config['column'] ); ?></th>
-					<th class="manage-column column-problem" scope="col"><?php esc_html_e( 'Problem', 'lwtv' ); ?></th>
-					<th class="manage-column column-date" scope="col"><?php esc_html_e( 'Last Updated', 'lwtv' ); ?></th>
+					<th class="manage-column column-problem" scope="col"><?php esc_html_e( 'Problem', 'lwtv-underscores' ); ?></th>
+					<th class="manage-column column-date" scope="col"><?php esc_html_e( 'Last Updated', 'lwtv-underscores' ); ?></th>
 				</tr></thead>
 				<tbody>
 					<?php ( new Validation() )->table_content( $items ); ?>

@@ -32,15 +32,15 @@ $love_n      = count( $love_roster );
 $love_total  = (int) $shows_count;
 ?>
 
-<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'Shows We Love', 'lwtv' ); ?></p>
+<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'Shows We Love', 'lwtv-underscores' ); ?></p>
 
 <?php
 // Zero loved shows: the whole page collapses. One empty state, no cards.
 if ( $love_n <= 0 ) {
 	?>
 	<section class="lwtv-yearbars-card bg-light">
-		<h2 class="lwtv-yearbars-headline"><?php esc_html_e( 'No shows currently carry the We Love flag', 'lwtv' ); ?></h2>
-		<p class="lwtv-yearbars-desc"><?php esc_html_e( '&#8220;Shows We Love&#8221; is hand-picked, and right now the list is empty.', 'lwtv' ); ?></p>
+		<h2 class="lwtv-yearbars-headline"><?php esc_html_e( 'No shows currently carry the We Love flag', 'lwtv-underscores' ); ?></h2>
+		<p class="lwtv-yearbars-desc"><?php esc_html_e( '&#8220;Shows We Love&#8221; is hand-picked, and right now the list is empty.', 'lwtv-underscores' ); ?></p>
 	</section>
 	<?php
 	return;
@@ -55,26 +55,26 @@ $love_versus = We_Love_Compare::versus( We_Love_Compare::loved_totals( $love_ros
 
 // Cohort card sentences — counts, never bare percentages, at this n.
 if ( $love_cohort['gold'] > 0 ) {
-	$love_gold_text = __( 'also carry a gold star, meaning they are not only loved, but made for us specifically.', 'lwtv' );
+	$love_gold_text = __( 'also carry a gold star, meaning they are not only loved, but made for us specifically.', 'lwtv-underscores' );
 } else {
-	$love_gold_text = __( 'carry a gold star, and earned our love on it\'s own merits.', 'lwtv' );
+	$love_gold_text = __( 'carry a gold star, and earned our love on it\'s own merits.', 'lwtv-underscores' );
 }
 
 if ( $love_cohort['airing'] > 0 ) {
-	$love_airing_text = __( 'are still on the air right now.', 'lwtv' );
+	$love_airing_text = __( 'are still on the air right now.', 'lwtv-underscores' );
 } else {
-	$love_airing_text = __( 'are still on the air as every loved show has ended.', 'lwtv' );
+	$love_airing_text = __( 'are still on the air as every loved show has ended.', 'lwtv-underscores' );
 }
 
 if ( $love_cohort['span_min'] > 0 && $love_cohort['span_max'] > $love_cohort['span_min'] ) {
 	$love_span_fig  = $love_cohort['span_min'] . '–' . $love_cohort['span_max'];
-	$love_span_text = __( 'from the first loved premiere to the newest.', 'lwtv' );
+	$love_span_text = __( 'from the first loved premiere to the newest.', 'lwtv-underscores' );
 } elseif ( $love_cohort['span_min'] > 0 ) {
 	$love_span_fig  = (string) $love_cohort['span_min'];
-	$love_span_text = __( 'every loved show premiered in the same year.', 'lwtv' );
+	$love_span_text = __( 'every loved show premiered in the same year.', 'lwtv-underscores' );
 } else {
 	$love_span_fig  = '—';
-	$love_span_text = __( 'premiere dates are missing for these shows.', 'lwtv' );
+	$love_span_text = __( 'premiere dates are missing for these shows.', 'lwtv-underscores' );
 }
 ?>
 
@@ -86,17 +86,17 @@ if ( $love_cohort['span_min'] > 0 && $love_cohort['span_max'] > $love_cohort['sp
 				<?php
 				printf(
 					/* translators: %s: the "1 in N" denominator for loved shows. */
-					esc_html__( '1 in %s', 'lwtv' ),
+					esc_html__( '1 in %s', 'lwtv-underscores' ),
 					esc_html( number_format_i18n( $love_ratio ) )
 				);
 				?>
 			</span>
-			<span class="lwtv-love-ratio-sub"><?php esc_html_e( 'shows earns the flag', 'lwtv' ); ?></span>
+			<span class="lwtv-love-ratio-sub"><?php esc_html_e( 'shows earns the flag', 'lwtv-underscores' ); ?></span>
 			<span class="lwtv-love-ratio-meta">
 				<?php
 				printf(
 					/* translators: 1: loved count, 2: total shows, 3: loved share (one decimal). */
-					esc_html__( '%1$s of %2$s · %3$s%%', 'lwtv' ),
+					esc_html__( '%1$s of %2$s · %3$s%%', 'lwtv-underscores' ),
 					esc_html( number_format_i18n( $love_n ) ),
 					esc_html( number_format_i18n( $love_total ) ),
 					esc_html( number_format_i18n( $love_pct, 1 ) )
@@ -105,9 +105,9 @@ if ( $love_cohort['span_min'] > 0 && $love_cohort['span_max'] > $love_cohort['sp
 			</span>
 		</div>
 		<div class="lwtv-love-hero-body">
-			<h2 class="lwtv-yearbars-headline"><?php esc_html_e( 'A rare and deliberate honor', 'lwtv' ); ?></h2>
-			<p class="lwtv-love-hero-desc"><?php echo esc_html( html_entity_decode( __( '&#8220;Shows We Love&#8221; is a hand-picked, carefully curated list, so it&#8217;s a fraction of the whole database.', 'lwtv' ), ENT_QUOTES, 'UTF-8' ) ); ?></p>
-			<div class="lwtv-love-sliver" role="img" aria-label="<?php echo esc_attr( sprintf( /* translators: 1: loved count, 2: everything-else count. */ __( 'True-scale bar: %1$s loved shows against %2$s everything else.', 'lwtv' ), number_format_i18n( $love_n ), number_format_i18n( $love_rest_n ) ) ); ?>">
+			<h2 class="lwtv-yearbars-headline"><?php esc_html_e( 'A rare and deliberate honor', 'lwtv-underscores' ); ?></h2>
+			<p class="lwtv-love-hero-desc"><?php echo esc_html( html_entity_decode( __( '&#8220;Shows We Love&#8221; is a hand-picked, carefully curated list, so it&#8217;s a fraction of the whole database.', 'lwtv-underscores' ), ENT_QUOTES, 'UTF-8' ) ); ?></p>
+			<div class="lwtv-love-sliver" role="img" aria-label="<?php echo esc_attr( sprintf( /* translators: 1: loved count, 2: everything-else count. */ __( 'True-scale bar: %1$s loved shows against %2$s everything else.', 'lwtv-underscores' ), number_format_i18n( $love_n ), number_format_i18n( $love_rest_n ) ) ); ?>">
 				<span class="lwtv-love-sliver-fill" style="width:<?php echo esc_attr( (string) max( 0.1, $love_pct ) ); ?>%" aria-hidden="true"></span>
 			</div>
 			<div class="lwtv-love-sliver-caption" aria-hidden="true">
@@ -115,7 +115,7 @@ if ( $love_cohort['span_min'] > 0 && $love_cohort['span_max'] > $love_cohort['sp
 					<?php
 					printf(
 						/* translators: %s: loved count. */
-						esc_html__( '%s shows we love', 'lwtv' ),
+						esc_html__( '%s shows we love', 'lwtv-underscores' ),
 						esc_html( number_format_i18n( $love_n ) )
 					);
 					?>
@@ -124,7 +124,7 @@ if ( $love_cohort['span_min'] > 0 && $love_cohort['span_max'] > $love_cohort['sp
 					<?php
 					printf(
 						/* translators: %s: everything-else count. */
-						esc_html__( '%s everything else', 'lwtv' ),
+						esc_html__( '%s everything else', 'lwtv-underscores' ),
 						esc_html( number_format_i18n( $love_rest_n ) )
 					);
 					?>
@@ -134,19 +134,19 @@ if ( $love_cohort['span_min'] > 0 && $love_cohort['span_max'] > $love_cohort['sp
 	</div>
 
 	<div class="lwtv-love-section">
-		<span class="lwtv-love-eyebrow"><?php esc_html_e( 'The Cohort', 'lwtv' ); ?></span>
-		<h3 class="lwtv-love-h3"><?php esc_html_e( 'Who the loved shows are', 'lwtv' ); ?></h3>
+		<span class="lwtv-love-eyebrow"><?php esc_html_e( 'The Cohort', 'lwtv-underscores' ); ?></span>
+		<h3 class="lwtv-love-h3"><?php esc_html_e( 'Who the loved shows are', 'lwtv-underscores' ); ?></h3>
 		<div class="lwtv-love-rail">
 			<div class="lwtv-love-callout lwtv-love-callout--pink">
 				<div class="lwtv-love-callout-top">
-					<span class="lwtv-love-callout-eyebrow"><?php esc_html_e( 'Also Gold', 'lwtv' ); ?></span>
+					<span class="lwtv-love-callout-eyebrow"><?php esc_html_e( 'Also Gold', 'lwtv-underscores' ); ?></span>
 					<span class="lwtv-love-callout-chip"><?php echo lwtv_plugin()->get_symbolicon( svg: 'star.svg', icon: 'svg-star', max_size: '15' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
 				</div>
 				<span class="lwtv-love-callout-num">
 					<?php
 					printf(
 						/* translators: 1: gold-overlap count, 2: loved total. */
-						esc_html__( '%1$s of %2$s', 'lwtv' ),
+						esc_html__( '%1$s of %2$s', 'lwtv-underscores' ),
 						esc_html( number_format_i18n( $love_cohort['gold'] ) ),
 						esc_html( number_format_i18n( $love_n ) )
 					);
@@ -156,14 +156,14 @@ if ( $love_cohort['span_min'] > 0 && $love_cohort['span_max'] > $love_cohort['sp
 			</div>
 			<div class="lwtv-love-callout lwtv-love-callout--pinkdeep">
 				<div class="lwtv-love-callout-top">
-					<span class="lwtv-love-callout-eyebrow"><?php esc_html_e( 'Still Airing', 'lwtv' ); ?></span>
+					<span class="lwtv-love-callout-eyebrow"><?php esc_html_e( 'Still Airing', 'lwtv-underscores' ); ?></span>
 					<span class="lwtv-love-callout-chip"><?php echo lwtv_plugin()->get_symbolicon( svg: 'tv.svg', icon: 'svg-tv', max_size: '15' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
 				</div>
 				<span class="lwtv-love-callout-num">
 					<?php
 					printf(
 						/* translators: 1: still-airing count, 2: loved total. */
-						esc_html__( '%1$s of %2$s', 'lwtv' ),
+						esc_html__( '%1$s of %2$s', 'lwtv-underscores' ),
 						esc_html( number_format_i18n( $love_cohort['airing'] ) ),
 						esc_html( number_format_i18n( $love_n ) )
 					);
@@ -173,7 +173,7 @@ if ( $love_cohort['span_min'] > 0 && $love_cohort['span_max'] > $love_cohort['sp
 			</div>
 			<div class="lwtv-love-callout lwtv-love-callout--purple">
 				<div class="lwtv-love-callout-top">
-					<span class="lwtv-love-callout-eyebrow"><?php esc_html_e( 'Span', 'lwtv' ); ?></span>
+					<span class="lwtv-love-callout-eyebrow"><?php esc_html_e( 'Span', 'lwtv-underscores' ); ?></span>
 					<span class="lwtv-love-callout-chip"><?php echo lwtv_plugin()->get_symbolicon( svg: 'calendar-alt.svg', icon: 'svg-calendar', max_size: '15' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
 				</div>
 				<span class="lwtv-love-callout-num"><?php echo esc_html( $love_span_fig ); ?></span>
@@ -181,14 +181,14 @@ if ( $love_cohort['span_min'] > 0 && $love_cohort['span_max'] > $love_cohort['sp
 			</div>
 			<div class="lwtv-love-callout lwtv-love-callout--teal">
 				<div class="lwtv-love-callout-top">
-					<span class="lwtv-love-callout-eyebrow"><?php esc_html_e( 'Reach', 'lwtv' ); ?></span>
+					<span class="lwtv-love-callout-eyebrow"><?php esc_html_e( 'Reach', 'lwtv-underscores' ); ?></span>
 					<span class="lwtv-love-callout-chip"><?php echo lwtv_plugin()->get_symbolicon( svg: 'globe.svg', icon: 'svg-globe', max_size: '15' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
 				</div>
 				<span class="lwtv-love-callout-num" data-count-to="<?php echo (int) $love_cohort['countries']; ?>"><?php echo esc_html( number_format_i18n( $love_cohort['countries'] ) ); ?></span>
 				<p class="lwtv-love-callout-text">
 					<?php
 					echo esc_html(
-						_n( 'country has produced a loved show.', 'countries have produced loved shows.', $love_cohort['countries'], 'lwtv' )
+						_n( 'country has produced a loved show.', 'countries have produced loved shows.', $love_cohort['countries'], 'lwtv-underscores' )
 					);
 					?>
 				</p>
@@ -198,12 +198,12 @@ if ( $love_cohort['span_min'] > 0 && $love_cohort['span_max'] > $love_cohort['sp
 
 	<div class="lwtv-love-section">
 		<?php if ( $love_n < 10 || empty( $love_versus ) ) : ?>
-			<span class="lwtv-love-eyebrow"><?php esc_html_e( 'Loved vs. Everything Else', 'lwtv' ); ?></span>
+			<span class="lwtv-love-eyebrow"><?php esc_html_e( 'Loved vs. Everything Else', 'lwtv-underscores' ); ?></span>
 			<p class="lwtv-love-deck">
 				<?php
 				printf(
 					/* translators: %s: number of loved shows. */
-					esc_html__( 'With only %s loved shows, group comparisons would be an average of almost nothing. The roster below is the honest view.', 'lwtv' ),
+					esc_html__( 'With only %s loved shows, group comparisons would be an average of almost nothing. The roster below is the honest view.', 'lwtv-underscores' ),
 					esc_html( number_format_i18n( $love_n ) )
 				);
 				?>
@@ -211,14 +211,14 @@ if ( $love_cohort['span_min'] > 0 && $love_cohort['span_max'] > $love_cohort['sp
 		<?php else : ?>
 			<div class="lwtv-love-vs-head">
 				<div>
-					<span class="lwtv-love-eyebrow"><?php esc_html_e( 'Loved vs. Everything Else', 'lwtv' ); ?></span>
+					<span class="lwtv-love-eyebrow"><?php esc_html_e( 'Loved vs. Everything Else', 'lwtv-underscores' ); ?></span>
 					<h3 class="lwtv-love-h3">
 						<?php
 						// The claim heading asserts three leads at once; fall back when any slips.
 						if ( ! empty( $love_versus['leads_all'] ) ) {
-							esc_html_e( 'Bigger casts, queerer casts, happier endings', 'lwtv' );
+							esc_html_e( 'Bigger casts, queerer casts, happier endings', 'lwtv-underscores' );
 						} else {
-							esc_html_e( 'How the loved shows compare', 'lwtv' );
+							esc_html_e( 'How the loved shows compare', 'lwtv-underscores' );
 						}
 						?>
 					</h3>
@@ -234,7 +234,7 @@ if ( $love_cohort['span_min'] > 0 && $love_cohort['span_max'] > $love_cohort['sp
 						<?php
 						printf(
 							/* translators: %s: loved count. */
-							esc_html__( 'The %s loved', 'lwtv' ),
+							esc_html__( 'The %s loved', 'lwtv-underscores' ),
 							esc_html( number_format_i18n( $love_n ) )
 						);
 						?>
@@ -244,14 +244,14 @@ if ( $love_cohort['span_min'] > 0 && $love_cohort['span_max'] > $love_cohort['sp
 						<?php
 						printf(
 							/* translators: %s: everything-else count. */
-							esc_html__( 'The other %s', 'lwtv' ),
+							esc_html__( 'The other %s', 'lwtv-underscores' ),
 							esc_html( number_format_i18n( $love_rest_n ) )
 						);
 						?>
 					</span>
 				</div>
 			</div>
-			<p class="lwtv-love-deck"><?php esc_html_e( 'The top pair are averages per show on a 0–10 axis; the bottom pair are shares of each group on a 0–100% axis.', 'lwtv' ); ?></p>
+			<p class="lwtv-love-deck"><?php esc_html_e( 'The top pair are averages per show on a 0–10 axis; the bottom pair are shares of each group on a 0–100% axis.', 'lwtv-underscores' ); ?></p>
 
 			<?php
 			// Takeaway sentences, all directional.
@@ -260,107 +260,107 @@ if ( $love_cohort['span_min'] > 0 && $love_cohort['span_max'] > $love_cohort['sp
 			switch ( $love_versus['chars']['mode'] ) {
 				case 'multiple':
 					$love_take['chars'] = ( 2 === $love_versus['chars']['times'] )
-						? __( 'More than twice as many queer characters per loved show.', 'lwtv' )
+						? __( 'More than twice as many queer characters per loved show.', 'lwtv-underscores' )
 						/* translators: %s: a whole multiple, 3 or more. */
-						: sprintf( __( '%s times as many queer characters per loved show.', 'lwtv' ), number_format_i18n( $love_versus['chars']['times'] ) );
+						: sprintf( __( '%s times as many queer characters per loved show.', 'lwtv-underscores' ), number_format_i18n( $love_versus['chars']['times'] ) );
 					break;
 				case 'more':
-					$love_take['chars'] = __( 'More queer characters per loved show than elsewhere.', 'lwtv' );
+					$love_take['chars'] = __( 'More queer characters per loved show than elsewhere.', 'lwtv-underscores' );
 					break;
 				case 'fewer':
-					$love_take['chars'] = __( 'Loved shows actually run smaller queer casts than the rest.', 'lwtv' );
+					$love_take['chars'] = __( 'Loved shows actually run smaller queer casts than the rest.', 'lwtv-underscores' );
 					break;
 				default:
-					$love_take['chars'] = __( 'About as many queer characters as everywhere else.', 'lwtv' );
+					$love_take['chars'] = __( 'About as many queer characters as everywhere else.', 'lwtv-underscores' );
 					break;
 			}
 
 			switch ( $love_versus['actors']['mode'] ) {
 				case 'multiple':
 					$love_take['actors'] = ( 2 === $love_versus['actors']['times'] )
-						? __( 'More than twice the queer casting.', 'lwtv' )
+						? __( 'More than twice the queer casting.', 'lwtv-underscores' )
 						/* translators: %s: a whole multiple, 3 or more. */
-						: sprintf( __( '%s times the queer casting.', 'lwtv' ), number_format_i18n( $love_versus['actors']['times'] ) );
+						: sprintf( __( '%s times the queer casting.', 'lwtv-underscores' ), number_format_i18n( $love_versus['actors']['times'] ) );
 					break;
 				case 'more':
-					$love_take['actors'] = __( 'More queer actors in the cast than elsewhere.', 'lwtv' );
+					$love_take['actors'] = __( 'More queer actors in the cast than elsewhere.', 'lwtv-underscores' );
 					break;
 				case 'fewer':
-					$love_take['actors'] = __( 'Loved shows actually cast fewer queer actors.', 'lwtv' );
+					$love_take['actors'] = __( 'Loved shows actually cast fewer queer actors.', 'lwtv-underscores' );
 					break;
 				default:
-					$love_take['actors'] = __( 'About the same queer casting as everywhere else.', 'lwtv' );
+					$love_take['actors'] = __( 'About the same queer casting as everywhere else.', 'lwtv-underscores' );
 					break;
 			}
 
 			switch ( $love_versus['happy']['mode'] ) {
 				case 'multiple':
 					$love_take['happy'] = ( 2 === $love_versus['happy']['times'] )
-						? __( 'A loved show is well over twice as likely to end happily.', 'lwtv' )
+						? __( 'A loved show is well over twice as likely to end happily.', 'lwtv-underscores' )
 						/* translators: %s: a whole multiple, 3 or more. */
-						: sprintf( __( 'A loved show is %s times as likely to end happily.', 'lwtv' ), number_format_i18n( $love_versus['happy']['times'] ) );
+						: sprintf( __( 'A loved show is %s times as likely to end happily.', 'lwtv-underscores' ), number_format_i18n( $love_versus['happy']['times'] ) );
 					break;
 				case 'more':
-					$love_take['happy'] = __( 'A loved show is more likely to end happily.', 'lwtv' );
+					$love_take['happy'] = __( 'A loved show is more likely to end happily.', 'lwtv-underscores' );
 					break;
 				case 'fewer':
-					$love_take['happy'] = __( 'Loved shows are actually less likely to end happily.', 'lwtv' );
+					$love_take['happy'] = __( 'Loved shows are actually less likely to end happily.', 'lwtv-underscores' );
 					break;
 				default:
-					$love_take['happy'] = __( 'Loved shows end happily about as often as the rest.', 'lwtv' );
+					$love_take['happy'] = __( 'Loved shows end happily about as often as the rest.', 'lwtv-underscores' );
 					break;
 			}
 			// "The clearest gap on the page" is a ranking claim — only when true.
 			if ( 'happy' === $love_versus['largest_gap'] && in_array( $love_versus['happy']['mode'], array( 'multiple', 'more' ), true ) ) {
-				$love_take['happy'] .= ' ' . __( 'The clearest gap on the page.', 'lwtv' );
+				$love_take['happy'] .= ' ' . __( 'The clearest gap on the page.', 'lwtv-underscores' );
 			}
 
 			switch ( $love_versus['deaths']['direction'] ) {
 				case 'higher':
-					$love_take['deaths'] = __( 'A loved show is no less likely to kill a queer character. In fact, queer death is slightly more likely. Being loved is not the same as being safe.', 'lwtv' );
+					$love_take['deaths'] = __( 'A loved show is no less likely to kill a queer character. In fact, queer death is slightly more likely. Being loved is not the same as being safe.', 'lwtv-underscores' );
 					break;
 				case 'lower':
 					$love_take['deaths'] = ( ( $love_versus['deaths']['rest_pct'] - $love_versus['deaths']['loved_pct'] ) > 10 )
-						? __( 'Loved shows are the clearly less deadly group.', 'lwtv' )
-						: __( 'Loved shows are the less deadly group, though not by much. Read it as a small edge, not a promise.', 'lwtv' );
+						? __( 'Loved shows are the clearly less deadly group.', 'lwtv-underscores' )
+						: __( 'Loved shows are the less deadly group, though not by much. Read it as a small edge, not a promise.', 'lwtv-underscores' );
 					break;
 				default:
-					$love_take['deaths'] = __( 'Loved shows kill queer characters at about the same rate as everything else. The flag says nothing either way.', 'lwtv' );
+					$love_take['deaths'] = __( 'Loved shows kill queer characters at about the same rate as everything else. The flag says nothing either way.', 'lwtv-underscores' );
 					break;
 			}
 
 			// Row definitions: counts on the 0–10 axis, shares on 0–100%.
 			$love_rows = array(
 				'chars'  => array(
-					'name'      => __( 'Queer characters', 'lwtv' ),
-					'sub'       => __( 'Average per show', 'lwtv' ),
+					'name'      => __( 'Queer characters', 'lwtv-underscores' ),
+					'sub'       => __( 'Average per show', 'lwtv-underscores' ),
 					'loved_fig' => number_format_i18n( $love_versus['chars']['loved'], 1 ),
 					'rest_fig'  => number_format_i18n( $love_versus['chars']['rest'], 1 ),
 					'loved_w'   => min( 100, $love_versus['chars']['loved'] * 10 ),
 					'rest_w'    => min( 100, $love_versus['chars']['rest'] * 10 ),
 				),
 				'actors' => array(
-					'name'      => __( 'Queer actors', 'lwtv' ),
-					'sub'       => __( 'Average per show', 'lwtv' ),
+					'name'      => __( 'Queer actors', 'lwtv-underscores' ),
+					'sub'       => __( 'Average per show', 'lwtv-underscores' ),
 					'loved_fig' => number_format_i18n( $love_versus['actors']['loved'], 1 ),
 					'rest_fig'  => number_format_i18n( $love_versus['actors']['rest'], 1 ),
 					'loved_w'   => min( 100, $love_versus['actors']['loved'] * 10 ),
 					'rest_w'    => min( 100, $love_versus['actors']['rest'] * 10 ),
 				),
 				'happy'  => array(
-					'name'      => __( 'Happy ending', 'lwtv' ),
-					'sub'       => __( 'Carry the trope', 'lwtv' ),
+					'name'      => __( 'Happy ending', 'lwtv-underscores' ),
+					'sub'       => __( 'Carry the trope', 'lwtv-underscores' ),
 					/* translators: 1: loved shows with the trait, 2: loved total. */
-					'loved_fig' => sprintf( __( '%1$s of %2$s', 'lwtv' ), number_format_i18n( $love_versus['happy']['loved_count'] ), number_format_i18n( $love_n ) ),
+					'loved_fig' => sprintf( __( '%1$s of %2$s', 'lwtv-underscores' ), number_format_i18n( $love_versus['happy']['loved_count'] ), number_format_i18n( $love_n ) ),
 					'rest_fig'  => number_format_i18n( $love_versus['happy']['rest_pct'], 1 ) . '%',
 					'loved_w'   => $love_versus['happy']['loved_pct'],
 					'rest_w'    => $love_versus['happy']['rest_pct'],
 				),
 				'deaths' => array(
-					'name'      => __( 'Kills a queer character', 'lwtv' ),
-					'sub'       => __( 'At least one death', 'lwtv' ),
+					'name'      => __( 'Kills a queer character', 'lwtv-underscores' ),
+					'sub'       => __( 'At least one death', 'lwtv-underscores' ),
 					/* translators: 1: loved shows with the trait, 2: loved total. */
-					'loved_fig' => sprintf( __( '%1$s of %2$s', 'lwtv' ), number_format_i18n( $love_versus['deaths']['loved_count'] ), number_format_i18n( $love_n ) ),
+					'loved_fig' => sprintf( __( '%1$s of %2$s', 'lwtv-underscores' ), number_format_i18n( $love_versus['deaths']['loved_count'] ), number_format_i18n( $love_n ) ),
 					'rest_fig'  => number_format_i18n( $love_versus['deaths']['rest_pct'], 1 ) . '%',
 					'loved_w'   => $love_versus['deaths']['loved_pct'],
 					'rest_w'    => $love_versus['deaths']['rest_pct'],
@@ -379,13 +379,13 @@ if ( $love_cohort['span_min'] > 0 && $love_cohort['span_max'] > $love_cohort['sp
 						</div>
 						<div class="lwtv-love-metric-bars">
 							<div class="lwtv-love-bar-row<?php echo $love_is_share ? ' lwtv-love-bar-row--share' : ''; ?>">
-								<span class="lwtv-love-track" role="img" aria-label="<?php echo esc_attr( sprintf( /* translators: 1: metric name, 2: loved figure. */ __( '%1$s, the loved shows: %2$s.', 'lwtv' ), $love_row['name'], $love_row['loved_fig'] ) ); ?>">
+								<span class="lwtv-love-track" role="img" aria-label="<?php echo esc_attr( sprintf( /* translators: 1: metric name, 2: loved figure. */ __( '%1$s, the loved shows: %2$s.', 'lwtv-underscores' ), $love_row['name'], $love_row['loved_fig'] ) ); ?>">
 									<span class="lwtv-love-fill lwtv-love-fill--<?php echo esc_attr( $love_key ); ?>" style="width:<?php echo esc_attr( (string) $love_row['loved_w'] ); ?>%" aria-hidden="true"></span>
 								</span>
 								<span class="lwtv-love-fig"><?php echo esc_html( $love_row['loved_fig'] ); ?></span>
 							</div>
 							<div class="lwtv-love-bar-row<?php echo $love_is_share ? ' lwtv-love-bar-row--share' : ''; ?>">
-								<span class="lwtv-love-track" role="img" aria-label="<?php echo esc_attr( sprintf( /* translators: 1: metric name, 2: everything-else figure. */ __( '%1$s, everything else: %2$s.', 'lwtv' ), $love_row['name'], $love_row['rest_fig'] ) ); ?>">
+								<span class="lwtv-love-track" role="img" aria-label="<?php echo esc_attr( sprintf( /* translators: 1: metric name, 2: everything-else figure. */ __( '%1$s, everything else: %2$s.', 'lwtv-underscores' ), $love_row['name'], $love_row['rest_fig'] ) ); ?>">
 									<span class="lwtv-love-fill lwtv-love-fill--rest" style="width:<?php echo esc_attr( (string) $love_row['rest_w'] ); ?>%" aria-hidden="true"></span>
 								</span>
 								<span class="lwtv-love-fig lwtv-love-fig--rest"><?php echo esc_html( $love_row['rest_fig'] ); ?></span>
@@ -413,12 +413,12 @@ if ( $love_cohort['span_min'] > 0 && $love_cohort['span_max'] > $love_cohort['sp
 <div class="lwtv-love-roster bg-light">
 	<div class="lwtv-love-roster-head">
 		<div>
-			<span class="lwtv-love-eyebrow"><?php esc_html_e( 'The Roster', 'lwtv' ); ?></span>
+			<span class="lwtv-love-eyebrow"><?php esc_html_e( 'The Roster', 'lwtv-underscores' ); ?></span>
 			<h3 class="lwtv-love-h3">
 				<?php
 				printf(
 					/* translators: %s: number of loved shows. */
-					esc_html__( 'All %s, in one place', 'lwtv' ),
+					esc_html__( 'All %s, in one place', 'lwtv-underscores' ),
 					esc_html( number_format_i18n( $love_n ) )
 				);
 				?>
@@ -427,9 +427,9 @@ if ( $love_cohort['span_min'] > 0 && $love_cohort['span_max'] > $love_cohort['sp
 		<p class="lwtv-love-roster-note">
 			<?php
 			if ( $love_cohort['gold'] > 0 ) {
-				esc_html_e( 'A star marks the shows that also carry a gold star. Sorted newest premiere first.', 'lwtv' );
+				esc_html_e( 'A star marks the shows that also carry a gold star. Sorted newest premiere first.', 'lwtv-underscores' );
 			} else {
-				esc_html_e( 'Sorted newest premiere first.', 'lwtv' );
+				esc_html_e( 'Sorted newest premiere first.', 'lwtv-underscores' );
 			}
 			?>
 		</p>
@@ -439,30 +439,30 @@ if ( $love_cohort['span_min'] > 0 && $love_cohort['span_max'] > $love_cohort['sp
 		foreach ( $love_roster as $love_show ) :
 			if ( $love_show['airing'] ) {
 				/* translators: %s: the year the show started airing. */
-				$love_years = sprintf( __( 'Since %s', 'lwtv' ), (string) $love_show['start'] );
+				$love_years = sprintf( __( 'Since %s', 'lwtv-underscores' ), (string) $love_show['start'] );
 			} elseif ( $love_show['start'] > 0 && $love_show['finish'] > $love_show['start'] ) {
 				$love_years = $love_show['start'] . '–' . $love_show['finish'];
 			} elseif ( $love_show['start'] > 0 ) {
 				$love_years = (string) $love_show['start'];
 			} else {
-				$love_years = __( 'Date unknown', 'lwtv' );
+				$love_years = __( 'Date unknown', 'lwtv-underscores' );
 			}
 
 			$love_bits = array();
 			/* translators: %s: number of queer characters. */
-			$love_bits[] = sprintf( _n( '%s queer character', '%s queer characters', $love_show['chars'], 'lwtv' ), number_format_i18n( $love_show['chars'] ) );
+			$love_bits[] = sprintf( _n( '%s queer character', '%s queer characters', $love_show['chars'], 'lwtv-underscores' ), number_format_i18n( $love_show['chars'] ) );
 			if ( 0 === $love_show['dead'] ) {
-				$love_bits[] = __( 'no deaths', 'lwtv' );
+				$love_bits[] = __( 'no deaths', 'lwtv-underscores' );
 			} else {
 				/* translators: %s: number of character deaths. */
-				$love_bits[] = sprintf( _n( '%s death', '%s deaths', $love_show['dead'], 'lwtv' ), number_format_i18n( $love_show['dead'] ) );
+				$love_bits[] = sprintf( _n( '%s death', '%s deaths', $love_show['dead'], 'lwtv-underscores' ), number_format_i18n( $love_show['dead'] ) );
 			}
 			?>
 			<div class="lwtv-love-card">
 				<div class="lwtv-love-card-top">
 					<a class="lwtv-love-card-title" href="<?php echo esc_url( $love_show['url'] ); ?>"><?php echo esc_html( $love_show['title'] ); ?></a>
 					<?php if ( $love_show['gold'] ) : ?>
-						<span class="lwtv-love-card-star" role="img" aria-label="<?php esc_attr_e( 'Also a gold star show', 'lwtv' ); ?>"><?php echo lwtv_plugin()->get_symbolicon( svg: 'star.svg', icon: 'svg-star', max_size: '14' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
+						<span class="lwtv-love-card-star" role="img" aria-label="<?php esc_attr_e( 'Also a gold star show', 'lwtv-underscores' ); ?>"><?php echo lwtv_plugin()->get_symbolicon( svg: 'star.svg', icon: 'svg-star', max_size: '14' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
 					<?php endif; ?>
 				</div>
 				<span class="lwtv-love-card-years"><?php echo esc_html( $love_years ); ?></span>

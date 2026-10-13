@@ -393,7 +393,7 @@ class WP_CLI_LWTV_WikiData {
 
 		$parts[] = sprintf(
 			/* translators: %d: number of actors looked up. */
-			_n( '%d actor looked up', '%d actors looked up', $done, 'lwtv' ),
+			_n( '%d actor looked up', '%d actors looked up', $done, 'lwtv-underscores' ),
 			$done
 		);
 
@@ -413,15 +413,15 @@ class WP_CLI_LWTV_WikiData {
 			}
 			$parts[] = sprintf(
 				/* translators: 1: total skipped, 2: comma-separated reasons. */
-				__( '%1$d skipped: %2$s', 'lwtv' ),
+				__( '%1$d skipped: %2$s', 'lwtv-underscores' ),
 				array_sum( $skipped ),
 				implode( ', ', $bits )
 			);
 		}
 
 		$prefix = $dry_run
-			? __( 'Dry run -- nothing written.', 'lwtv' )
-			: __( 'Backfill complete.', 'lwtv' );
+			? __( 'Dry run -- nothing written.', 'lwtv-underscores' )
+			: __( 'Backfill complete.', 'lwtv-underscores' );
 
 		return $prefix . ' ' . implode( '. ', $parts ) . '.';
 	}

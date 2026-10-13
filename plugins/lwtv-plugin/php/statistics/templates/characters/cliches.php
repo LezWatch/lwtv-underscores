@@ -42,7 +42,7 @@ $waffle = array(
 	'columns'  => 20,
 	'radius'   => 6,
 	/* translators: %s: the display name of the "None" cliché term. */
-	'label'    => sprintf( __( 'Characters grouped by how many clichés each carries, from "%s" to four or more.', 'lwtv' ), $cliches_none_name ),
+	'label'    => sprintf( __( 'Characters grouped by how many clichés each carries, from "%s" to four or more.', 'lwtv-underscores' ), $cliches_none_name ),
 );
 
 // Common Cliché Pairings, counted once for the pullstat (top 1) and the
@@ -75,7 +75,7 @@ if ( (int) $cliches_stats['shows'] > 0 ) {
 	$cliches_pullstats[] = array(
 		'icon'   => 'chart-bar.svg',
 		'number' => number_format_i18n( (float) $cliches_stats['average'], 1 ),
-		'label'  => __( 'Number of clichés per character, on average.', 'lwtv' ),
+		'label'  => __( 'Number of clichés per character, on average.', 'lwtv-underscores' ),
 	);
 }
 
@@ -92,8 +92,8 @@ if ( (int) $character_count > 0 ) {
 	$cliches_pullstats[] = array(
 		'icon'   => 'chart-pie.svg',
 		/* translators: %s: percentage of characters carrying 3 or more clichés (one decimal). */
-		'number' => sprintf( __( '%s%%', 'lwtv' ), number_format_i18n( $cliches_3plus_pct, 1 ) ),
-		'label'  => __( 'Percentage of characters with 3 or more clichés.', 'lwtv' ),
+		'number' => sprintf( __( '%s%%', 'lwtv-underscores' ), number_format_i18n( $cliches_3plus_pct, 1 ) ),
+		'label'  => __( 'Percentage of characters with 3 or more clichés.', 'lwtv-underscores' ),
 	);
 }
 
@@ -104,7 +104,7 @@ if ( ! empty( $cliches_pairs ) ) {
 		'number' => number_format_i18n( (int) $cliches_pairs[0]['count'] ),
 		'label'  => sprintf(
 			/* translators: 1: cliché name, 2: cliché name. */
-			__( 'Number of characters who pair %1$s with %2$s.', 'lwtv' ),
+			__( 'Number of characters who pair %1$s with %2$s.', 'lwtv-underscores' ),
 			$cliches_pair_names[ $cliches_top_pair_a ] ?? $cliches_top_pair_a,
 			$cliches_pair_names[ $cliches_top_pair_b ] ?? $cliches_top_pair_b
 		),
@@ -151,8 +151,8 @@ if ( $cliches_top['id'] > 0 && has_post_thumbnail( $cliches_top['id'] ) ) {
 				<?php echo lwtv_plugin()->get_symbolicon( svg: 'tag.svg', icon: 'svg-tag', max_size: '20' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 			</span>
 			<div>
-				<h2 class="lwtv-panel-title"><?php esc_html_e( 'Cliché Load', 'lwtv' ); ?></h2>
-				<p class="lwtv-panel-sub"><?php esc_html_e( 'How many clichés a character carries, by share of all characters', 'lwtv' ); ?></p>
+				<h2 class="lwtv-panel-title"><?php esc_html_e( 'Cliché Load', 'lwtv-underscores' ); ?></h2>
+				<p class="lwtv-panel-sub"><?php esc_html_e( 'How many clichés a character carries, by share of all characters', 'lwtv-underscores' ); ?></p>
 			</div>
 		</header>
 		<div class="lwtv-clicheload-row">
@@ -175,7 +175,7 @@ if ( $cliches_top['id'] > 0 && has_post_thumbnail( $cliches_top['id'] ) ) {
 								echo esc_html(
 									sprintf(
 										/* translators: %s: number of clichés (or "4+"). */
-										_n( '%s cliché', '%s clichés', ( '1' === $cliches_dist_bucket['label'] ) ? 1 : 2, 'lwtv' ),
+										_n( '%s cliché', '%s clichés', ( '1' === $cliches_dist_bucket['label'] ) ? 1 : 2, 'lwtv-underscores' ),
 										$cliches_dist_bucket['label']
 									)
 								);
@@ -193,12 +193,12 @@ if ( $cliches_top['id'] > 0 && has_post_thumbnail( $cliches_top['id'] ) ) {
 					<?php echo $cliches_top_media; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- get_the_post_thumbnail() returns safe markup. ?>
 				</a>
 				<figcaption class="lwtv-clicheload-poster-cap">
-					<span class="lwtv-clicheload-poster-eyebrow"><?php esc_html_e( 'Most clichéd character', 'lwtv' ); ?></span>
+					<span class="lwtv-clicheload-poster-eyebrow"><?php esc_html_e( 'Most clichéd character', 'lwtv-underscores' ); ?></span>
 					<?php
 					if ( $cliches_top['tied'] > 1 ) {
 						printf(
 							/* translators: 1: character name, 2: number of clichés, 3: number of characters tied for the most. */
-							esc_html__( '%1$s carries %2$s clichés, tied with %3$s other characters for the most.', 'lwtv' ),
+							esc_html__( '%1$s carries %2$s clichés, tied with %3$s other characters for the most.', 'lwtv-underscores' ),
 							esc_html( get_the_title( $cliches_top['id'] ) ),
 							esc_html( number_format_i18n( $cliches_top['count'] ) ),
 							esc_html( number_format_i18n( $cliches_top['tied'] - 1 ) )
@@ -206,7 +206,7 @@ if ( $cliches_top['id'] > 0 && has_post_thumbnail( $cliches_top['id'] ) ) {
 					} else {
 						printf(
 							/* translators: 1: character name, 2: number of clichés. */
-							esc_html__( '%1$s carries %2$s clichés, the most of any character.', 'lwtv' ),
+							esc_html__( '%1$s carries %2$s clichés, the most of any character.', 'lwtv-underscores' ),
 							esc_html( get_the_title( $cliches_top['id'] ) ),
 							esc_html( number_format_i18n( $cliches_top['count'] ) )
 						);
@@ -245,11 +245,11 @@ if ( $cliches_top['id'] > 0 && has_post_thumbnail( $cliches_top['id'] ) ) {
 				'family' => 'characters',
 				'svg'    => 'vest-patches.svg',
 				'icon'   => 'svg-vest-patches',
-				'title'  => __( 'Common Pairings', 'lwtv' ),
-				'sub'    => __( 'Clichés that appear together on the same character, by number of characters', 'lwtv' ),
-				'unit'   => __( 'characters together', 'lwtv' ),
+				'title'  => __( 'Common Pairings', 'lwtv-underscores' ),
+				'sub'    => __( 'Clichés that appear together on the same character, by number of characters', 'lwtv-underscores' ),
+				'unit'   => __( 'characters together', 'lwtv-underscores' ),
 				'footer' => array(
-					'title'  => __( 'Characters with only one Cliché', 'lwtv' ),
+					'title'  => __( 'Characters with only one Cliché', 'lwtv-underscores' ),
 					'number' => number_format_i18n( $cliches_single_count ),
 				),
 			);
@@ -269,9 +269,9 @@ if ( $cliches_top['id'] > 0 && has_post_thumbnail( $cliches_top['id'] ) ) {
 		'family' => 'characters',
 		'svg'    => 'tag.svg',
 		'icon'   => 'svg-tag',
-		'title'  => __( 'All Clichés, Ranked', 'lwtv' ),
+		'title'  => __( 'All Clichés, Ranked', 'lwtv-underscores' ),
 		/* translators: %s: number of clichés. */
-		'sub'    => sprintf( __( '%s clichés, by number of characters. A character can carry several, so shares add up past 100%%.', 'lwtv' ), number_format_i18n( count( $cliches_data ) ) ),
+		'sub'    => sprintf( __( '%s clichés, by number of characters. A character can carry several, so shares add up past 100%%.', 'lwtv-underscores' ), number_format_i18n( count( $cliches_data ) ) ),
 		'base'   => '/cliche/',
 	);
 	// phpcs:ignore PEAR.Files.IncludingFile.UseRequire

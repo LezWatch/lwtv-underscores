@@ -40,27 +40,27 @@ $actor_rep_series = array(
 $actor_cards = array(
 	array(
 		'type'    => 'actors',
-		'label'   => __( 'Actors', 'lwtv' ),
+		'label'   => __( 'Actors', 'lwtv-underscores' ),
 		'count'   => (int) $actor_count,
-		'caption' => __( 'Who\'ve played a queer role', 'lwtv' ),
+		'caption' => __( 'Who\'ve played a queer role', 'lwtv-underscores' ),
 		'svg'     => 'user.svg',
 		'icon'    => 'svg-user',
 		'points'  => lwtv_stats_sparkline_points( $actor_growth ),
 	),
 	array(
 		'type'    => 'sexuality',
-		'label'   => __( 'Sexual Orientations', 'lwtv' ),
+		'label'   => __( 'Sexual Orientations', 'lwtv-underscores' ),
 		'count'   => (int) $count_sexualities,
-		'caption' => __( 'Distinct orientations tracked', 'lwtv' ),
+		'caption' => __( 'Distinct orientations tracked', 'lwtv-underscores' ),
 		'svg'     => 'heart.svg',
 		'icon'    => 'svg-heart',
 		'points'  => lwtv_stats_sparkline_points( $actor_rep_series ),
 	),
 	array(
 		'type'    => 'characters', // green family for actor gender.
-		'label'   => __( 'Gender Identities', 'lwtv' ),
+		'label'   => __( 'Gender Identities', 'lwtv-underscores' ),
 		'count'   => (int) $count_genders,
-		'caption' => __( 'Distinct identities tracked', 'lwtv' ),
+		'caption' => __( 'Distinct identities tracked', 'lwtv-underscores' ),
 		'svg'     => 'venus-double.svg',
 		'icon'    => 'svg-venus-double',
 		'points'  => lwtv_stats_sparkline_points( $actor_rep_series ),
@@ -68,7 +68,7 @@ $actor_cards = array(
 );
 ?>
 
-<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'Actors at a Glance', 'lwtv' ); ?></p>
+<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'Actors at a Glance', 'lwtv-underscores' ); ?></p>
 
 <div class="lwtv-metric-grid lwtv-metric-grid--3">
 	<?php
@@ -111,10 +111,10 @@ if ( ! empty( $idx_top_sexuality['name'] ) && (int) $actor_count > 0 ) {
 	$idx_sexuality_pct = round( ( (int) $idx_top_sexuality['count'] / (int) $actor_count ) * 100, 1 );
 
 	$idx_cards['sexuality'] = array(
-		'eyebrow' => __( 'Sexuality', 'lwtv' ),
+		'eyebrow' => __( 'Sexuality', 'lwtv-underscores' ),
 		'figure'  => $idx_top_sexuality['name'],
 		/* translators: 1: total orientations tracked, 2: the top orientation's share of all actors (one decimal). */
-		'text'    => sprintf( __( 'The top of the %1$s orientations is on %2$s%% of all actors.', 'lwtv' ), number_format_i18n( (int) $count_sexualities ), number_format_i18n( $idx_sexuality_pct, 1 ) ),
+		'text'    => sprintf( __( 'The top of the %1$s orientations is on %2$s%% of all actors.', 'lwtv-underscores' ), number_format_i18n( (int) $count_sexualities ), number_format_i18n( $idx_sexuality_pct, 1 ) ),
 		'url'     => $baseurl . 'sexuality/',
 	);
 }
@@ -125,10 +125,10 @@ if ( ! empty( $idx_top_gender['name'] ) && (int) $actor_count > 0 ) {
 	$idx_gender_pct = round( ( (int) $idx_top_gender['count'] / (int) $actor_count ) * 100, 1 );
 
 	$idx_cards['gender'] = array(
-		'eyebrow' => __( 'Gender', 'lwtv' ),
+		'eyebrow' => __( 'Gender', 'lwtv-underscores' ),
 		'figure'  => $idx_top_gender['name'],
 		/* translators: 1: total identities tracked, 2: the top identity's share of all actors (one decimal). */
-		'text'    => sprintf( __( 'The top of the %1$s identities is on %2$s%% of all actors.', 'lwtv' ), number_format_i18n( (int) $count_genders ), number_format_i18n( $idx_gender_pct, 1 ) ),
+		'text'    => sprintf( __( 'The top of the %1$s identities is on %2$s%% of all actors.', 'lwtv-underscores' ), number_format_i18n( (int) $count_genders ), number_format_i18n( $idx_gender_pct, 1 ) ),
 		'url'     => $baseurl . 'gender/',
 	);
 }
@@ -143,10 +143,10 @@ foreach ( Role_Podium::ORDER as $idx_roles_type ) {
 $idx_roles_facts = Role_Podium::facts( $idx_roles_counts );
 if ( '' !== $idx_roles_facts['leader'] ) {
 	$idx_cards['roles'] = array(
-		'eyebrow' => __( 'Roles', 'lwtv' ),
+		'eyebrow' => __( 'Roles', 'lwtv-underscores' ),
 		'figure'  => $idx_roles_data[ $idx_roles_facts['leader'] ]['name'] ?? '',
 		/* translators: %s: the leading role type's share of all tagged appearances (whole percent). */
-		'text'    => sprintf( __( '%s%% of tagged character appearances are this role type.', 'lwtv' ), number_format_i18n( $idx_roles_facts['leader_share_pct'] ) ),
+		'text'    => sprintf( __( '%s%% of tagged character appearances are this role type.', 'lwtv-underscores' ), number_format_i18n( $idx_roles_facts['leader_share_pct'] ) ),
 		'url'     => $baseurl . 'roles/',
 	);
 }
@@ -158,10 +158,10 @@ $idx_active_this_year = ( new Build_Actors() )->generate_active_this_year();
 $idx_this_year_now    = (int) ( new \DateTime( 'now', new \DateTimeZone( LWTV_TIMEZONE ) ) )->format( 'Y' );
 if ( $idx_active_this_year > 0 ) {
 	$idx_cards['on-air'] = array(
-		'eyebrow' => __( 'On Air', 'lwtv' ),
+		'eyebrow' => __( 'On Air', 'lwtv-underscores' ),
 		'figure'  => number_format_i18n( $idx_active_this_year ),
 		/* translators: %s: the current year. */
-		'text'    => sprintf( __( 'Actors currently have a character on the air in %s.', 'lwtv' ), (string) $idx_this_year_now ),
+		'text'    => sprintf( __( 'Actors currently have a character on the air in %s.', 'lwtv-underscores' ), (string) $idx_this_year_now ),
 		'url'     => home_url( '/this-year/' . $idx_this_year_now . '/' ),
 	);
 }
@@ -182,7 +182,7 @@ $idx_total = count( $idx_cards ) + ( empty( $idx_lead ) ? 0 : 1 );
 ?>
 <?php if ( $idx_total >= 2 ) : ?>
 	<section class="lwtv-hl-section" aria-labelledby="lwtv-hl-heading">
-		<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section" id="lwtv-hl-heading"><?php esc_html_e( 'The Headlines', 'lwtv' ); ?></p>
+		<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section" id="lwtv-hl-heading"><?php esc_html_e( 'The Headlines', 'lwtv-underscores' ); ?></p>
 		<div class="lwtv-hl bg-light">
 			<?php if ( ! empty( $idx_lead ) ) : ?>
 				<a class="lwtv-hl-lead" href="<?php echo esc_url( $idx_lead['url'] ); ?>">
@@ -223,11 +223,11 @@ $actor_trans_ratio = ( $actor_transnb > 0 ) ? (int) round( (int) $actor_count / 
 $actor_lgbtq_pct   = ( (int) $actor_count > 0 ) ? (int) round( ( $actor_lgbtq / (int) $actor_count ) * 100 ) : 0;
 $actor_transnb_pct = ( (int) $actor_count > 0 ) ? (int) round( ( $actor_transnb / (int) $actor_count ) * 100 ) : 0;
 ?>
-<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'Who Plays the Roles', 'lwtv' ); ?></p>
+<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'Who Plays the Roles', 'lwtv-underscores' ); ?></p>
 <div class="lwtv-pullstats">
 	<div class="lwtv-tropegap lwtv-tropegap--tint card-header openly-queer">
 		<div class="lwtv-tropegap-top">
-			<span class="lwtv-stats-eyebrow"><?php esc_html_e( 'Openly LGBTQ+', 'lwtv' ); ?></span>
+			<span class="lwtv-stats-eyebrow"><?php esc_html_e( 'Openly LGBTQ+', 'lwtv-underscores' ); ?></span>
 			<span class="lwtv-tropegap-icon"><?php echo lwtv_plugin()->get_symbolicon( svg: 'rainbow.svg', icon: 'svg-rainbow', max_size: '22' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
 		</div>
 		<span class="lwtv-tropegap-number" data-count-to="<?php echo (int) $actor_lgbtq; ?>"><?php echo esc_html( number_format_i18n( $actor_lgbtq ) ); ?></span>
@@ -235,7 +235,7 @@ $actor_transnb_pct = ( (int) $actor_count > 0 ) ? (int) round( ( $actor_transnb 
 			<?php
 			printf(
 				/* translators: %d: the "1 in N" ratio of openly-LGBTQ+ actors. */
-				esc_html__( 'Actors who are openly LGBTQ+, about 1 in %d.', 'lwtv' ),
+				esc_html__( 'Actors who are openly LGBTQ+, about 1 in %d.', 'lwtv-underscores' ),
 				(int) $actor_lgbtq_ratio
 			);
 			?>
@@ -247,7 +247,7 @@ $actor_transnb_pct = ( (int) $actor_count > 0 ) ? (int) round( ( $actor_transnb 
 			'columns' => 20,
 			'radius'  => 8,
 			/* translators: %s: percentage of all actors who are openly LGBTQ+. */
-			'label'   => sprintf( __( '%s%% of all actors are openly LGBTQ+.', 'lwtv' ), number_format_i18n( $actor_lgbtq_pct ) ),
+			'label'   => sprintf( __( '%s%% of all actors are openly LGBTQ+.', 'lwtv-underscores' ), number_format_i18n( $actor_lgbtq_pct ) ),
 		);
 		// phpcs:ignore PEAR.Files.IncludingFile.UseRequire
 		include plugin_dir_path( __DIR__ ) . 'partials/waffle.php';
@@ -256,16 +256,16 @@ $actor_transnb_pct = ( (int) $actor_count > 0 ) ? (int) round( ( $actor_transnb 
 			<?php
 			printf(
 				/* translators: %s: percentage of all actors who are openly LGBTQ+. */
-				esc_html__( '%s%% of everything we track.', 'lwtv' ),
+				esc_html__( '%s%% of everything we track.', 'lwtv-underscores' ),
 				esc_html( number_format_i18n( $actor_lgbtq_pct ) )
 			);
 			?>
 		</p>
-		<a role="button" class="btn lwtv-tropegap-link" href="<?php echo esc_url( $baseurl . 'sexuality/' ); ?>"><?php esc_html_e( 'See the breakdown', 'lwtv' ); ?> <span aria-hidden="true">&#8599;</span></a>
+		<a role="button" class="btn lwtv-tropegap-link" href="<?php echo esc_url( $baseurl . 'sexuality/' ); ?>"><?php esc_html_e( 'See the breakdown', 'lwtv-underscores' ); ?> <span aria-hidden="true">&#8599;</span></a>
 	</div>
 	<div class="lwtv-tropegap lwtv-tropegap--tint card-header trans-nb-actors">
 		<div class="lwtv-tropegap-top">
-			<span class="lwtv-stats-eyebrow"><?php esc_html_e( 'Trans &amp; Non-binary', 'lwtv' ); ?></span>
+			<span class="lwtv-stats-eyebrow"><?php esc_html_e( 'Trans &amp; Non-binary', 'lwtv-underscores' ); ?></span>
 			<span class="lwtv-tropegap-icon"><?php echo lwtv_plugin()->get_symbolicon( svg: 'group.svg', icon: 'svg-users', max_size: '22' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
 		</div>
 		<span class="lwtv-tropegap-number" data-count-to="<?php echo (int) $actor_transnb; ?>"><?php echo esc_html( number_format_i18n( $actor_transnb ) ); ?></span>
@@ -273,7 +273,7 @@ $actor_transnb_pct = ( (int) $actor_count > 0 ) ? (int) round( ( $actor_transnb 
 			<?php
 			printf(
 				/* translators: %d: the "1 in N" ratio of trans/non-binary actors. */
-				esc_html__( 'Actors who are trans or non-binary, roughly 1 in %d.', 'lwtv' ),
+				esc_html__( 'Actors who are trans or non-binary, roughly 1 in %d.', 'lwtv-underscores' ),
 				(int) $actor_trans_ratio
 			);
 			?>
@@ -285,7 +285,7 @@ $actor_transnb_pct = ( (int) $actor_count > 0 ) ? (int) round( ( $actor_transnb 
 			'columns' => 20,
 			'radius'  => 8,
 			/* translators: %s: percentage of all actors who are trans or non-binary. */
-			'label'   => sprintf( __( '%s%% of all actors are trans or non-binary.', 'lwtv' ), number_format_i18n( $actor_transnb_pct ) ),
+			'label'   => sprintf( __( '%s%% of all actors are trans or non-binary.', 'lwtv-underscores' ), number_format_i18n( $actor_transnb_pct ) ),
 		);
 		// phpcs:ignore PEAR.Files.IncludingFile.UseRequire
 		include plugin_dir_path( __DIR__ ) . 'partials/waffle.php';
@@ -294,41 +294,41 @@ $actor_transnb_pct = ( (int) $actor_count > 0 ) ? (int) round( ( $actor_transnb 
 			<?php
 			printf(
 				/* translators: %s: percentage of all actors who are trans or non-binary. */
-				esc_html__( '%s%% of everything we track.', 'lwtv' ),
+				esc_html__( '%s%% of everything we track.', 'lwtv-underscores' ),
 				esc_html( number_format_i18n( $actor_transnb_pct ) )
 			);
 			?>
 		</p>
-		<a role="button" class="btn lwtv-tropegap-link" href="<?php echo esc_url( $baseurl . 'gender/' ); ?>"><?php esc_html_e( 'See the breakdown', 'lwtv' ); ?> <span aria-hidden="true">&#8599;</span></a>
+		<a role="button" class="btn lwtv-tropegap-link" href="<?php echo esc_url( $baseurl . 'gender/' ); ?>"><?php esc_html_e( 'See the breakdown', 'lwtv-underscores' ); ?> <span aria-hidden="true">&#8599;</span></a>
 	</div>
 </div>
 
 <?php
 $actor_panels = array(
 	array(
-		'title'  => __( 'Top Sexual Orientations', 'lwtv' ),
+		'title'  => __( 'Top Sexual Orientations', 'lwtv-underscores' ),
 		'family' => 'sexuality',
 		'svg'    => 'heart.svg',
 		'icon'   => 'svg-heart',
 		'rows'   => $top_sexualities,
 		'base'   => '/actor_sexuality/',
 		/* translators: %s: total orientations. */
-		'sub'    => sprintf( __( '%s orientations tracked', 'lwtv' ), number_format_i18n( (int) $count_sexualities ) ),
+		'sub'    => sprintf( __( '%s orientations tracked', 'lwtv-underscores' ), number_format_i18n( (int) $count_sexualities ) ),
 		/* translators: %s: total orientations. */
-		'all'    => sprintf( __( 'View all %s orientations →', 'lwtv' ), number_format_i18n( (int) $count_sexualities ) ),
+		'all'    => sprintf( __( 'View all %s orientations →', 'lwtv-underscores' ), number_format_i18n( (int) $count_sexualities ) ),
 		'more'   => $baseurl . 'sexuality/',
 	),
 	array(
-		'title'  => __( 'Top Gender Identities', 'lwtv' ),
+		'title'  => __( 'Top Gender Identities', 'lwtv-underscores' ),
 		'family' => 'characters', // green.
 		'svg'    => 'venus-double.svg',
 		'icon'   => 'svg-venus-double',
 		'rows'   => $top_genders,
 		'base'   => '/actor_gender/',
 		/* translators: %s: total identities. */
-		'sub'    => sprintf( __( '%s identities tracked', 'lwtv' ), number_format_i18n( (int) $count_genders ) ),
+		'sub'    => sprintf( __( '%s identities tracked', 'lwtv-underscores' ), number_format_i18n( (int) $count_genders ) ),
 		/* translators: %s: total identities. */
-		'all'    => sprintf( __( 'View all %s identities →', 'lwtv' ), number_format_i18n( (int) $count_genders ) ),
+		'all'    => sprintf( __( 'View all %s identities →', 'lwtv-underscores' ), number_format_i18n( (int) $count_genders ) ),
 		'more'   => $baseurl . 'gender/',
 	),
 );

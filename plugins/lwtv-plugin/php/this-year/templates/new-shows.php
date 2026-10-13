@@ -26,17 +26,17 @@ if ( 0 === $sb_count ) {
 		<div class="lwtv-ty-empty-icon">
 			<?php echo lwtv_plugin()->get_symbolicon( svg: 'construction.svg', icon: 'svg-construction', max_size: '28' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 		</div>
-		<h2><?php esc_html_e( 'No shows have premiered this year.', 'lwtv' ); ?></h2>
-		<p><?php esc_html_e( "We're surprised too!", 'lwtv' ); ?></p>
+		<h2><?php esc_html_e( 'No shows have premiered this year.', 'lwtv-underscores' ); ?></h2>
+		<p><?php esc_html_e( "We're surprised too!", 'lwtv-underscores' ); ?></p>
 	</div>
 	<?php
 	return;
 }
 
 /* translators: 1: count, 2: year. */
-$sb_title      = sprintf( _n( '%1$s show premiered in %2$s', '%1$s shows premiered in %2$s', $sb_count, 'lwtv' ), number_format_i18n( $sb_count ), (string) $this_year );
-$sb_desc       = __( 'Series and TV movies that started airing this year.', 'lwtv' );
-$sb_foot       = __( 'A show counts as new the year its first episode aired.', 'lwtv' );
+$sb_title      = sprintf( _n( '%1$s show premiered in %2$s', '%1$s shows premiered in %2$s', $sb_count, 'lwtv-underscores' ), number_format_i18n( $sb_count ), (string) $this_year );
+$sb_desc       = __( 'Series and TV movies that started airing this year.', 'lwtv-underscores' );
+$sb_foot       = __( 'A show counts as new the year its first episode aired.', 'lwtv-underscores' );
 $sb_source     = 'new';
 $sb_by_name    = $new_shows_by_name;
 $sb_by_format  = $new_shows_by_format;

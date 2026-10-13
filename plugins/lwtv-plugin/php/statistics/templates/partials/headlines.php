@@ -29,7 +29,7 @@ if ( $headlines_total < 4 ) {
 }
 ?>
 <section class="lwtv-hl-section" aria-labelledby="lwtv-hl-heading">
-	<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section" id="lwtv-hl-heading"><?php esc_html_e( 'The Headlines', 'lwtv' ); ?></p>
+	<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section" id="lwtv-hl-heading"><?php esc_html_e( 'The Headlines', 'lwtv-underscores' ); ?></p>
 	<div class="lwtv-hl bg-light">
 		<?php if ( ! empty( $headlines_lead ) ) : ?>
 			<a class="lwtv-hl-lead" href="<?php echo esc_url( $headlines_lead['url'] ); ?>">

@@ -28,26 +28,26 @@ if ( $score_histo['total'] <= 0 ) {
 $score_peak_count = max( 1, max( array_column( $score_histo['buckets'], 'count' ) ) );
 ?>
 
-<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'Show Scores', 'lwtv' ); ?></p>
+<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'Show Scores', 'lwtv-underscores' ); ?></p>
 
 <div class="lwtv-pullstats lwtv-pullstats--three">
 	<div class="lwtv-tropegap card-header shows">
 		<div class="lwtv-tropegap-top">
-			<span class="lwtv-stats-eyebrow"><?php esc_html_e( 'The Typical Show', 'lwtv' ); ?></span>
+			<span class="lwtv-stats-eyebrow"><?php esc_html_e( 'The Typical Show', 'lwtv-underscores' ); ?></span>
 		</div>
 		<span class="lwtv-tropegap-number" data-count-to="<?php echo (int) round( $score_median ); ?>"><?php echo esc_html( number_format_i18n( (int) round( $score_median ) ) ); ?></span>
-		<p class="lwtv-tropegap-desc"><?php esc_html_e( 'Half of all shows grade higher, half lower.', 'lwtv' ); ?></p>
+		<p class="lwtv-tropegap-desc"><?php esc_html_e( 'Half of all shows grade higher, half lower.', 'lwtv-underscores' ); ?></p>
 	</div>
 	<div class="lwtv-tropegap card-header happy-endings">
 		<div class="lwtv-tropegap-top">
-			<span class="lwtv-stats-eyebrow"><?php esc_html_e( 'The 90+ Club', 'lwtv' ); ?></span>
+			<span class="lwtv-stats-eyebrow"><?php esc_html_e( 'The 90+ Club', 'lwtv-underscores' ); ?></span>
 		</div>
 		<span class="lwtv-tropegap-number" data-count-to="<?php echo (int) $score_tails['high']; ?>"><?php echo esc_html( number_format_i18n( $score_tails['high'] ) ); ?></span>
 		<p class="lwtv-tropegap-desc">
 			<?php
 			printf(
 				/* translators: %s: percentage of shows scoring 90 or higher. */
-				esc_html__( '%s%% of all shows have ever scored 90 or higher.', 'lwtv' ),
+				esc_html__( '%s%% of all shows have ever scored 90 or higher.', 'lwtv-underscores' ),
 				esc_html( (string) round( ( $score_tails['high'] / $score_histo['total'] ) * 100, 1 ) )
 			);
 			?>
@@ -55,22 +55,22 @@ $score_peak_count = max( 1, max( array_column( $score_histo['buckets'], 'count' 
 	</div>
 	<div class="lwtv-tropegap card-header dead-characters">
 		<div class="lwtv-tropegap-top">
-			<span class="lwtv-stats-eyebrow"><?php esc_html_e( 'Failing Grades', 'lwtv' ); ?></span>
+			<span class="lwtv-stats-eyebrow"><?php esc_html_e( 'Failing Grades', 'lwtv-underscores' ); ?></span>
 		</div>
 		<span class="lwtv-tropegap-number" data-count-to="<?php echo (int) $score_tails['low']; ?>"><?php echo esc_html( number_format_i18n( $score_tails['low'] ) ); ?></span>
-		<p class="lwtv-tropegap-desc"><?php esc_html_e( 'Shows that score under 20 are representation in name only.', 'lwtv' ); ?></p>
+		<p class="lwtv-tropegap-desc"><?php esc_html_e( 'Shows that score under 20 are representation in name only.', 'lwtv-underscores' ); ?></p>
 	</div>
 </div>
 
 <section class="lwtv-yearbars-card bg-light">
 	<div class="lwtv-yearbars-head">
 		<div>
-			<h2 class="lwtv-yearbars-headline"><?php esc_html_e( 'How shows grade out', 'lwtv' ); ?></h2>
+			<h2 class="lwtv-yearbars-headline"><?php esc_html_e( 'How shows grade out', 'lwtv-underscores' ); ?></h2>
 			<p class="lwtv-yearbars-desc">
 				<?php
 				printf(
 					/* translators: 1: total number of scored shows, 2: the median score (0–100). */
-					esc_html__( 'Every one of the %1$s scored shows, bucketed by score. Half of them land under %2$s.', 'lwtv' ),
+					esc_html__( 'Every one of the %1$s scored shows, bucketed by score. Half of them land under %2$s.', 'lwtv-underscores' ),
 					esc_html( number_format_i18n( $score_histo['total'] ) ),
 					esc_html( number_format_i18n( (int) round( $score_median ) ) )
 				);
@@ -79,12 +79,12 @@ $score_peak_count = max( 1, max( array_column( $score_histo['buckets'], 'count' 
 		</div>
 		<div class="lwtv-yearbars-avg">
 			<span class="lwtv-yearbars-avg-num" data-count-to="<?php echo (int) round( $score_median ); ?>"><?php echo esc_html( number_format_i18n( (int) round( $score_median ) ) ); ?></span>
-			<span class="lwtv-yearbars-avg-sub"><?php esc_html_e( 'median score', 'lwtv' ); ?></span>
+			<span class="lwtv-yearbars-avg-sub"><?php esc_html_e( 'median score', 'lwtv-underscores' ); ?></span>
 		</div>
 	</div>
 
 	<div class="lwtv-histo-figure">
-		<div class="lwtv-histo" role="img" aria-label="<?php esc_attr_e( 'Histogram of show scores from 0 to 100', 'lwtv' ); ?>">
+		<div class="lwtv-histo" role="img" aria-label="<?php esc_attr_e( 'Histogram of show scores from 0 to 100', 'lwtv-underscores' ); ?>">
 			<?php
 			foreach ( $score_histo['buckets'] as $score_bucket ) {
 				$score_label = $score_bucket['floor'] . '–' . $score_bucket['ceiling'];
@@ -105,7 +105,7 @@ $score_peak_count = max( 1, max( array_column( $score_histo['buckets'], 'count' 
 					<?php
 					printf(
 						/* translators: %s: the median score (0–100). */
-						esc_html__( 'median %s', 'lwtv' ),
+						esc_html__( 'median %s', 'lwtv-underscores' ),
 						esc_html( number_format_i18n( (int) round( $score_median ) ) )
 					);
 					?>

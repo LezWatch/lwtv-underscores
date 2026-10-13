@@ -134,7 +134,7 @@ class Repair {
 
 		$label = sprintf(
 			/* translators: %s: what the repair does, e.g. 'adds the "none" trope'. */
-			__( 'Fix: %s', 'lwtv' ),
+			__( 'Fix: %s', 'lwtv-underscores' ),
 			Issue_Registry::fix_label( $issue_type )
 		);
 
@@ -161,11 +161,11 @@ class Repair {
 		check_admin_referer( self::nonce_action( $post_id, $issue_type ) );
 
 		if ( ! self::is_supported( $issue_type ) ) {
-			wp_die( esc_html__( 'That is not a repairable issue.', 'lwtv' ), '', array( 'response' => 400 ) );
+			wp_die( esc_html__( 'That is not a repairable issue.', 'lwtv-underscores' ), '', array( 'response' => 400 ) );
 		}
 
 		if ( ! $post_id || ! current_user_can( 'edit_post', $post_id ) ) {
-			wp_die( esc_html__( 'You do not have permission to repair this.', 'lwtv' ), '', array( 'response' => 403 ) );
+			wp_die( esc_html__( 'You do not have permission to repair this.', 'lwtv-underscores' ), '', array( 'response' => 403 ) );
 		}
 
 		$level = Issue_Registry::level( $issue_type );
@@ -181,7 +181,7 @@ class Repair {
 				'info',
 				sprintf(
 					/* translators: %s: post title. */
-					__( 'Nothing to repair on “%s” — it looks like this was already fixed. Removed it from the list.', 'lwtv' ),
+					__( 'Nothing to repair on “%s” — it looks like this was already fixed. Removed it from the list.', 'lwtv-underscores' ),
 					get_the_title( $post_id )
 				)
 			);
@@ -194,7 +194,7 @@ class Repair {
 			'success',
 			sprintf(
 				/* translators: 1: what the repair did, 2: post title. */
-				__( 'Done — %1$s on “%2$s”.', 'lwtv' ),
+				__( 'Done — %1$s on “%2$s”.', 'lwtv-underscores' ),
 				Issue_Registry::fix_label( $issue_type ),
 				get_the_title( $post_id )
 			),
@@ -272,7 +272,7 @@ class Repair {
 	 * @return void
 	 */
 	public static function show_notice(): void {
-		Admin_Notice::show( self::NOTICE_PREFIX, __( 'Edit the post', 'lwtv' ), false );
+		Admin_Notice::show( self::NOTICE_PREFIX, __( 'Edit the post', 'lwtv-underscores' ), false );
 	}
 
 	/**

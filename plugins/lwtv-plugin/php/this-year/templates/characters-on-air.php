@@ -26,8 +26,8 @@ if ( 0 === $lwtv_coa_count ) {
 		<div class="lwtv-ty-empty-icon">
 			<?php echo lwtv_plugin()->get_symbolicon( svg: 'construction.svg', icon: 'svg-construction', max_size: '28' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 		</div>
-		<h2><?php esc_html_e( 'No characters have been recorded for this year.', 'lwtv' ); ?></h2>
-		<p><?php esc_html_e( 'Come back soon, our staff is hard at work researching.', 'lwtv' ); ?></p>
+		<h2><?php esc_html_e( 'No characters have been recorded for this year.', 'lwtv-underscores' ); ?></h2>
+		<p><?php esc_html_e( 'Come back soon, our staff is hard at work researching.', 'lwtv-underscores' ); ?></p>
 	</div>
 	<?php
 	return;
@@ -78,12 +78,12 @@ if ( 1 === $lwtv_coa_unused_n ) {
 	$lwtv_coa_unused_list = $lwtv_coa_unused[0];
 } elseif ( 2 === $lwtv_coa_unused_n ) {
 	/* translators: 1 & 2: single letters joined as an either/or pair, e.g. "X or Z". */
-	$lwtv_coa_unused_list = sprintf( __( '%1$s or %2$s', 'lwtv' ), $lwtv_coa_unused[0], $lwtv_coa_unused[1] );
+	$lwtv_coa_unused_list = sprintf( __( '%1$s or %2$s', 'lwtv-underscores' ), $lwtv_coa_unused[0], $lwtv_coa_unused[1] );
 } elseif ( $lwtv_coa_unused_n > 2 ) {
 	$lwtv_coa_unused_last = end( $lwtv_coa_unused );
 	$lwtv_coa_unused_head = implode( ', ', array_slice( $lwtv_coa_unused, 0, -1 ) );
 	/* translators: 1: comma-separated letters, 2: the final letter, e.g. "Q, X, or Z". */
-	$lwtv_coa_unused_list = sprintf( __( '%1$s, or %2$s', 'lwtv' ), $lwtv_coa_unused_head, $lwtv_coa_unused_last );
+	$lwtv_coa_unused_list = sprintf( __( '%1$s, or %2$s', 'lwtv-underscores' ), $lwtv_coa_unused_head, $lwtv_coa_unused_last );
 }
 
 // Tie captions naming the letters, e.g. "A and M". Reused for the peak / rarest sentences.
@@ -94,7 +94,7 @@ $lwtv_coa_join = static function ( array $letters ): string {
 	}
 	$last = array_pop( $letters );
 	/* translators: 1: comma-separated letters, 2: the final letter, e.g. "A, B and C". */
-	return sprintf( __( '%1$s and %2$s', 'lwtv' ), implode( ', ', $letters ), $last );
+	return sprintf( __( '%1$s and %2$s', 'lwtv-underscores' ), implode( ', ', $letters ), $last );
 };
 ?>
 
@@ -104,7 +104,7 @@ $lwtv_coa_join = static function ( array $letters ): string {
 		<?php
 		printf(
 			/* translators: %s: the year being reviewed. */
-			esc_html( _n( 'character on air in %s', 'characters on air in %s', $lwtv_coa_count, 'lwtv' ) ),
+			esc_html( _n( 'character on air in %s', 'characters on air in %s', $lwtv_coa_count, 'lwtv-underscores' ) ),
 			esc_html( (string) $this_year )
 		);
 		?>
@@ -112,21 +112,21 @@ $lwtv_coa_join = static function ( array $letters ): string {
 
 	<ul class="nav nav-pills lwtv-ty-pills" id="lwtv-ty-coa-tabs" role="tablist">
 		<li class="nav-item">
-			<a class="nav-link active" id="lwtv-ty-coa-byname-tab" data-bs-toggle="pill" href="#lwtv-ty-coa-byname" role="tab" aria-controls="lwtv-ty-coa-byname" aria-selected="true"><?php esc_html_e( 'By Name', 'lwtv' ); ?></a>
+			<a class="nav-link active" id="lwtv-ty-coa-byname-tab" data-bs-toggle="pill" href="#lwtv-ty-coa-byname" role="tab" aria-controls="lwtv-ty-coa-byname" aria-selected="true"><?php esc_html_e( 'By Name', 'lwtv-underscores' ); ?></a>
 		</li>
 		<li class="nav-item">
-			<a class="nav-link" id="lwtv-ty-coa-byshow-tab" data-bs-toggle="pill" href="#lwtv-ty-coa-byshow" role="tab" aria-controls="lwtv-ty-coa-byshow" aria-selected="false"><?php esc_html_e( 'By Show', 'lwtv' ); ?></a>
+			<a class="nav-link" id="lwtv-ty-coa-byshow-tab" data-bs-toggle="pill" href="#lwtv-ty-coa-byshow" role="tab" aria-controls="lwtv-ty-coa-byshow" aria-selected="false"><?php esc_html_e( 'By Show', 'lwtv-underscores' ); ?></a>
 		</li>
 	</ul>
 </div>
 
-<p class="lwtv-ty-section-subtitle"><?php esc_html_e( 'Every queer character with a role in a show airing this year.', 'lwtv' ); ?></p>
+<p class="lwtv-ty-section-subtitle"><?php esc_html_e( 'Every queer character with a role in a show airing this year.', 'lwtv-underscores' ); ?></p>
 
 <?php
 $lwtv_coa_role_labels = array(
-	'regular'   => __( 'Regular', 'lwtv' ),
-	'recurring' => __( 'Recurring', 'lwtv' ),
-	'guest'     => __( 'Guest', 'lwtv' ),
+	'regular'   => __( 'Regular', 'lwtv-underscores' ),
+	'recurring' => __( 'Recurring', 'lwtv-underscores' ),
+	'guest'     => __( 'Guest', 'lwtv-underscores' ),
 );
 ?>
 
@@ -136,12 +136,12 @@ $lwtv_coa_role_labels = array(
 		<?php if ( $lwtv_coa_count > 0 ) : ?>
 		<div class="lwtv-ty-coa-graph" id="top">
 			<div class="lwtv-ty-coa-graph-head">
-				<span class="lwtv-stats-eyebrow"><?php esc_html_e( 'Jump to a letter', 'lwtv' ); ?></span>
+				<span class="lwtv-stats-eyebrow"><?php esc_html_e( 'Jump to a letter', 'lwtv-underscores' ); ?></span>
 				<span class="lwtv-ty-coa-graph-hint">
 					<?php
 					printf(
 						/* translators: %s: the total character count. */
-						esc_html__( "Bar height is that letter's share of the %s", 'lwtv' ),
+						esc_html__( "Bar height is that letter's share of the %s", 'lwtv-underscores' ),
 						esc_html( number_format_i18n( $lwtv_coa_count ) )
 					);
 					?>
@@ -176,7 +176,7 @@ $lwtv_coa_role_labels = array(
 							<?php
 							printf(
 								/* translators: 1: a letter (or #), 2: number of characters under it. */
-								esc_attr__( 'Jump to %1$s, %2$s characters', 'lwtv' ),
+								esc_attr__( 'Jump to %1$s, %2$s characters', 'lwtv-underscores' ),
 								esc_attr( $lwtv_coa_letter ),
 								esc_attr( number_format_i18n( $lwtv_coa_col['count'] ) )
 							);
@@ -197,7 +197,7 @@ $lwtv_coa_role_labels = array(
 							<?php
 							printf(
 								/* translators: 1: letter(s), 2: the shared count. */
-								esc_html( _n( '%1$s has the most, %2$s', '%1$s tie for the most, %2$s each', count( $lwtv_coa_graph['top'] ), 'lwtv' ) ),
+								esc_html( _n( '%1$s has the most, %2$s', '%1$s tie for the most, %2$s each', count( $lwtv_coa_graph['top'] ), 'lwtv-underscores' ) ),
 								'<strong>' . esc_html( $lwtv_coa_join( $lwtv_coa_graph['top'] ) ) . '</strong>', // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 								esc_html( number_format_i18n( $lwtv_coa_graph['max'] ) )
 							);
@@ -210,13 +210,13 @@ $lwtv_coa_role_labels = array(
 					if ( 0 === $lwtv_coa_unused_n ) {
 						printf(
 							/* translators: %s: number of letters in use. */
-							esc_html__( '%s letters in use · every letter appears this year', 'lwtv' ),
+							esc_html__( '%s letters in use · every letter appears this year', 'lwtv-underscores' ),
 							esc_html( number_format_i18n( $lwtv_coa_graph['in_use'] ) )
 						);
 					} else {
 						printf(
 							/* translators: 1: number of letters in use, 2: list of unused letters. */
-							esc_html__( '%1$s letters in use · %2$s empty this year', 'lwtv' ),
+							esc_html__( '%1$s letters in use · %2$s empty this year', 'lwtv-underscores' ),
 							esc_html( number_format_i18n( $lwtv_coa_graph['in_use'] ) ),
 							esc_html( $lwtv_coa_unused_list )
 						);
@@ -229,9 +229,9 @@ $lwtv_coa_role_labels = array(
 
 		<div class="lwtv-ty-coa-directory">
 			<div class="lwtv-ty-coa-dir-head" aria-hidden="true">
-				<span><?php esc_html_e( 'Character', 'lwtv' ); ?></span>
-				<span class="lwtv-ty-coa-dir-head-show"><?php esc_html_e( 'Show', 'lwtv' ); ?></span>
-				<span><?php esc_html_e( 'Role', 'lwtv' ); ?></span>
+				<span><?php esc_html_e( 'Character', 'lwtv-underscores' ); ?></span>
+				<span class="lwtv-ty-coa-dir-head-show"><?php esc_html_e( 'Show', 'lwtv-underscores' ); ?></span>
+				<span><?php esc_html_e( 'Role', 'lwtv-underscores' ); ?></span>
 			</div>
 
 			<?php foreach ( $lwtv_coa_directory as $lwtv_coa_group ) : ?>
@@ -242,7 +242,7 @@ $lwtv_coa_role_labels = array(
 				<div class="lwtv-ty-coa-subhead" id="<?php echo esc_attr( $lwtv_coa_ganchor ); ?>">
 					<span class="badge lwtv-ty-coa-subhead-letter"><?php echo esc_html( $lwtv_coa_gletter ); ?></span>
 					<span class="badge lwtv-ty-coa-subhead-count"><?php echo esc_html( number_format_i18n( $lwtv_coa_group['count'] ) ); ?></span>
-					<a class="badge lwtv-ty-coa-subhead-top" href="#top" aria-label="<?php esc_attr_e( 'Back to the letter graph', 'lwtv' ); ?>">&uarr;</a>
+					<a class="badge lwtv-ty-coa-subhead-top" href="#top" aria-label="<?php esc_attr_e( 'Back to the letter graph', 'lwtv-underscores' ); ?>">&uarr;</a>
 				</div>
 
 				<?php foreach ( $lwtv_coa_group['rows'] as $lwtv_coa_row ) : ?>
@@ -254,7 +254,7 @@ $lwtv_coa_role_labels = array(
 						$lwtv_coa_label         = ( 0 === $lwtv_coa_i ) ? $lwtv_coa_label : mb_strtolower( $lwtv_coa_label );
 						$lwtv_coa_title_parts[] = ( '' !== $lwtv_coa_r['show'] )
 							/* translators: 1: role label, 2: show name. */
-							? sprintf( __( '%1$s on %2$s', 'lwtv' ), $lwtv_coa_label, $lwtv_coa_r['show'] )
+							? sprintf( __( '%1$s on %2$s', 'lwtv-underscores' ), $lwtv_coa_label, $lwtv_coa_r['show'] )
 							: $lwtv_coa_label;
 					}
 					$lwtv_coa_title = implode( ', ', $lwtv_coa_title_parts );
@@ -264,7 +264,7 @@ $lwtv_coa_role_labels = array(
 							<a href="<?php echo esc_url( home_url( '/character/' . $lwtv_coa_row['slug'] . '/' ) ); ?>"><?php echo esc_html( $lwtv_coa_row['name'] ); ?></a>
 							<?php if ( $lwtv_coa_row['dead'] ) : ?>
 								<?php echo lwtv_plugin()->get_symbolicon( svg: 'skull.svg', icon: 'svg-skull', max_size: '15' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-								<span class="screen-reader-text"><?php esc_html_e( 'Died this year', 'lwtv' ); ?></span>
+								<span class="screen-reader-text"><?php esc_html_e( 'Died this year', 'lwtv-underscores' ); ?></span>
 							<?php endif; ?>
 						</span>
 						<span class="lwtv-ty-coa-dir-show">
@@ -290,7 +290,7 @@ $lwtv_coa_role_labels = array(
 				<?php
 				printf(
 					/* translators: %s: total number of characters. */
-					esc_html__( '%s characters, A to Z.', 'lwtv' ),
+					esc_html__( '%s characters, A to Z.', 'lwtv-underscores' ),
 					esc_html( number_format_i18n( $lwtv_coa_count ) )
 				);
 				?>
@@ -300,8 +300,8 @@ $lwtv_coa_role_labels = array(
 
 	<div class="tab-pane fade" id="lwtv-ty-coa-byshow" role="tabpanel" aria-labelledby="lwtv-ty-coa-byshow-tab">
 		<div class="lwtv-ty-coa-sortnote">
-			<span class="lwtv-ty-coa-sortpill"><?php esc_html_e( 'Shows A–Z, articles ignored', 'lwtv' ); ?></span>
-			<span class="lwtv-ty-coa-sortnote-text"><?php esc_html_e( '“The Beast in Me” files under B; numeric titles like 9-1-1 lead.', 'lwtv' ); ?></span>
+			<span class="lwtv-ty-coa-sortpill"><?php esc_html_e( 'Shows A–Z, articles ignored', 'lwtv-underscores' ); ?></span>
+			<span class="lwtv-ty-coa-sortnote-text"><?php esc_html_e( '“The Beast in Me” files under B; numeric titles like 9-1-1 lead.', 'lwtv-underscores' ); ?></span>
 		</div>
 		<div class="lwtv-ty-charshow">
 			<?php
@@ -330,7 +330,7 @@ $lwtv_coa_role_labels = array(
 									<?php echo esc_html( $lwtv_ty_castmate['name'] ); ?>
 									<?php if ( ! empty( $lwtv_ty_castmate['dead'] ) ) : ?>
 										<?php echo lwtv_plugin()->get_symbolicon( svg: 'skull.svg', icon: 'svg-skull', max_size: '12' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-										<span class="screen-reader-text"><?php esc_html_e( 'Died this year', 'lwtv' ); ?></span>
+										<span class="screen-reader-text"><?php esc_html_e( 'Died this year', 'lwtv-underscores' ); ?></span>
 									<?php endif; ?>
 								</a>
 								<span class="lwtv-ty-charshow-castrole">

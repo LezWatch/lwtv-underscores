@@ -30,7 +30,7 @@ $atw_other_pct   = max( 0, round( 100 - $atw_named_pct, 1 ) );
 if ( $atw_other_count > 0 && $atw_other_pct > 0 ) {
 	$atw_rows[] = array(
 		/* translators: %s: number of remaining nations. */
-		'name' => sprintf( _n( '%s other nation', '%s other nations', $atw_other_count, 'lwtv' ), number_format_i18n( $atw_other_count ) ),
+		'name' => sprintf( _n( '%s other nation', '%s other nations', $atw_other_count, 'lwtv-underscores' ), number_format_i18n( $atw_other_count ) ),
 		'pct'  => $atw_other_pct,
 	);
 }
@@ -46,12 +46,12 @@ $atw_n_in_ten = ( $atw_top_pct > 0 ) ? (int) round( $atw_top_pct / 10 ) : 0;
 			<?php echo lwtv_plugin()->get_symbolicon( svg: 'globe.svg', icon: 'svg-globe', max_size: '20' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 		</span>
 		<div>
-			<h2 class="lwtv-panel-title"><?php esc_html_e( 'Around the world', 'lwtv' ); ?></h2>
+			<h2 class="lwtv-panel-title"><?php esc_html_e( 'Around the world', 'lwtv-underscores' ); ?></h2>
 			<p class="lwtv-panel-sub">
 				<?php
 				printf(
 					/* translators: 1: total shows, 2: total nations. */
-					esc_html__( '%1$s shows across %2$s nations:', 'lwtv' ),
+					esc_html__( '%1$s shows across %2$s nations:', 'lwtv-underscores' ),
 					esc_html( number_format_i18n( $stats_shows ) ),
 					esc_html( number_format_i18n( $stats_total_nations ) )
 				);
@@ -65,7 +65,7 @@ $atw_n_in_ten = ( $atw_top_pct > 0 ) ? (int) round( $atw_top_pct / 10 ) : 0;
 			<?php
 			printf(
 				/* translators: 1: "N in 10" numerator, 2: top nation name. */
-				esc_html__( 'Nearly %1$d in 10 shows come from %2$s.', 'lwtv' ),
+				esc_html__( 'Nearly %1$d in 10 shows come from %2$s.', 'lwtv-underscores' ),
 				(int) $atw_n_in_ten,
 				esc_html( $atw_top_name )
 			);
@@ -73,7 +73,7 @@ $atw_n_in_ten = ( $atw_top_pct > 0 ) ? (int) round( $atw_top_pct / 10 ) : 0;
 		</p>
 	<?php endif; ?>
 
-	<div class="lwtv-share-bar" role="img" aria-label="<?php esc_attr_e( 'Share of shows by nation', 'lwtv' ); ?>">
+	<div class="lwtv-share-bar" role="img" aria-label="<?php esc_attr_e( 'Share of shows by nation', 'lwtv-underscores' ); ?>">
 		<?php
 		foreach ( $atw_rows as $atw_row ) {
 			printf(
@@ -100,7 +100,7 @@ $atw_n_in_ten = ( $atw_top_pct > 0 ) ? (int) round( $atw_top_pct / 10 ) : 0;
 		<?php
 		printf(
 			/* translators: %s: total number of nations. */
-			esc_html__( 'View all %s nations →', 'lwtv' ),
+			esc_html__( 'View all %s nations →', 'lwtv-underscores' ),
 			esc_html( number_format_i18n( $stats_total_nations ) )
 		);
 		?>

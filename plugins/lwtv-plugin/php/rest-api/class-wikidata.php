@@ -78,7 +78,7 @@ class Wikidata {
 			'post-id'    => $this->get_by_post_id( $who_dat ),
 			'wikidata'   => $this->get_by_wikidata( $who_dat ),
 			default      => array(
-				'error' => __( 'Invalid request', 'lwtv' ),
+				'error' => __( 'Invalid request', 'lwtv-underscores' ),
 			),
 		};
 
@@ -86,7 +86,7 @@ class Wikidata {
 		if ( empty( $response ) ) {
 			$response = array(
 				/* translators: %s: the requested actor slug, IMDB ID, WikiData QID, or post ID. */
-				'error' => sprintf( __( 'No data found for %s', 'lwtv' ), $who_dat ),
+				'error' => sprintf( __( 'No data found for %s', 'lwtv-underscores' ), $who_dat ),
 			);
 		}
 
@@ -102,7 +102,7 @@ class Wikidata {
 	private function get_by_post_id( $post_id ): array {
 		if ( get_post_type( $post_id ) !== CPT_Actors::SLUG ) {
 			return array(
-				'error' => __( 'Invalid post ID', 'lwtv' ),
+				'error' => __( 'Invalid post ID', 'lwtv-underscores' ),
 			);
 		}
 
@@ -112,7 +112,7 @@ class Wikidata {
 		if ( ! current_user_can( 'edit_post', $post_id ) ) {
 			if ( 'publish' !== get_post_status( $post_id ) || lwtv_plugin()->hide_actor_data( $post_id, 'all' ) ) {
 				return array(
-					'error' => __( 'Invalid post ID', 'lwtv' ),
+					'error' => __( 'Invalid post ID', 'lwtv-underscores' ),
 				);
 			}
 		}
@@ -264,7 +264,7 @@ class Wikidata {
 		$slug = trim( (string) $slug );
 		if ( '' === $slug ) {
 			return array(
-				'error' => __( 'No such actor found.', 'lwtv' ),
+				'error' => __( 'No such actor found.', 'lwtv-underscores' ),
 			);
 		}
 
@@ -278,7 +278,7 @@ class Wikidata {
 
 		if ( ! $possible_ids ) {
 			return array(
-				'error' => __( 'No such actor found.', 'lwtv' ),
+				'error' => __( 'No such actor found.', 'lwtv-underscores' ),
 			);
 		}
 

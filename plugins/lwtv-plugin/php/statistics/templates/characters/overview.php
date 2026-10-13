@@ -42,36 +42,36 @@ $char_rep_series = array(
 $char_cards = array(
 	array(
 		'type'    => 'characters',
-		'label'   => __( 'Characters', 'lwtv' ),
+		'label'   => __( 'Characters', 'lwtv-underscores' ),
 		'count'   => (int) $character_count,
-		'caption' => __( 'Queer & trans, all time', 'lwtv' ),
+		'caption' => __( 'Queer & trans, all time', 'lwtv-underscores' ),
 		'svg'     => 'group.svg',
 		'icon'    => 'svg-users',
 		'points'  => lwtv_stats_sparkline_points( $char_growth ),
 	),
 	array(
 		'type'    => 'sexuality',
-		'label'   => __( 'Sexual Orientations', 'lwtv' ),
+		'label'   => __( 'Sexual Orientations', 'lwtv-underscores' ),
 		'count'   => (int) $count_sexualities,
-		'caption' => __( 'Distinct orientations tracked', 'lwtv' ),
+		'caption' => __( 'Distinct orientations tracked', 'lwtv-underscores' ),
 		'svg'     => 'heart.svg',
 		'icon'    => 'svg-heart',
 		'points'  => lwtv_stats_sparkline_points( $char_rep_series ),
 	),
 	array(
 		'type'    => 'gender',
-		'label'   => __( 'Gender Identities', 'lwtv' ),
+		'label'   => __( 'Gender Identities', 'lwtv-underscores' ),
 		'count'   => (int) $count_genders,
-		'caption' => __( 'Distinct identities tracked', 'lwtv' ),
+		'caption' => __( 'Distinct identities tracked', 'lwtv-underscores' ),
 		'svg'     => 'venus-double.svg',
 		'icon'    => 'svg-venus-double',
 		'points'  => lwtv_stats_sparkline_points( $char_rep_series ),
 	),
 	array(
 		'type'    => 'cliches',
-		'label'   => __( 'Clichés', 'lwtv' ),
+		'label'   => __( 'Clichés', 'lwtv-underscores' ),
 		'count'   => (int) $count_cliches,
-		'caption' => __( 'Recurring character quirks', 'lwtv' ),
+		'caption' => __( 'Recurring character quirks', 'lwtv-underscores' ),
 		'svg'     => 'tag.svg',
 		'icon'    => 'svg-tag',
 		'points'  => lwtv_stats_sparkline_points( $char_rep_series ),
@@ -79,7 +79,7 @@ $char_cards = array(
 );
 ?>
 
-<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'Characters at a Glance', 'lwtv' ); ?></p>
+<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'Characters at a Glance', 'lwtv-underscores' ); ?></p>
 
 <div class="lwtv-metric-grid">
 	<?php
@@ -133,24 +133,24 @@ if ( ! empty( $idx_oa ) ) {
 	switch ( $idx_oa['state'] ) {
 		case 'at-peak':
 			/* translators: %s: the latest complete year. */
-			$idx_oa_text = sprintf( __( 'The most characters ever recorded on air are from %s.', 'lwtv' ), (string) $idx_oa['latest_year'] );
+			$idx_oa_text = sprintf( __( 'The most characters ever recorded on air are from %s.', 'lwtv-underscores' ), (string) $idx_oa['latest_year'] );
 			break;
 		case 'recovering':
 			/* translators: 1: the latest complete year, 2: the peak year. */
-			$idx_oa_text = sprintf( __( 'Characters on air in %1$s are climbing again after the %2$s peak.', 'lwtv' ), (string) $idx_oa['latest_year'], (string) $idx_oa['peak_year'] );
+			$idx_oa_text = sprintf( __( 'Characters on air in %1$s are climbing again after the %2$s peak.', 'lwtv-underscores' ), (string) $idx_oa['latest_year'], (string) $idx_oa['peak_year'] );
 			break;
 		case 'receding':
 			/* translators: 1: the latest complete year, 2: the peak year. */
-			$idx_oa_text = sprintf( __( '%1$s is down from the %2$s peak for characters on air.', 'lwtv' ), (string) $idx_oa['latest_year'], (string) $idx_oa['peak_year'] );
+			$idx_oa_text = sprintf( __( '%1$s is down from the %2$s peak for characters on air.', 'lwtv-underscores' ), (string) $idx_oa['latest_year'], (string) $idx_oa['peak_year'] );
 			break;
 		default:
 			/* translators: 1: the latest complete year, 2: the peak year. */
-			$idx_oa_text = sprintf( __( 'Characters on air in %1$s is holding below the %2$s peak.', 'lwtv' ), (string) $idx_oa['latest_year'], (string) $idx_oa['peak_year'] );
+			$idx_oa_text = sprintf( __( 'Characters on air in %1$s is holding below the %2$s peak.', 'lwtv-underscores' ), (string) $idx_oa['latest_year'], (string) $idx_oa['peak_year'] );
 			break;
 	}
 
 	$idx_cards['on-air'] = array(
-		'eyebrow' => __( 'On Air', 'lwtv' ),
+		'eyebrow' => __( 'On Air', 'lwtv-underscores' ),
 		'figure'  => number_format_i18n( $idx_oa['latest_count'] ),
 		'text'    => $idx_oa_text,
 		'url'     => $baseurl . 'on-air/',
@@ -174,10 +174,10 @@ if ( ! empty( $idx_top_cliche['name'] ) && (int) $character_count > 0 ) {
 	$idx_cliche_pct = round( ( (int) $idx_top_cliche['count'] / (int) $character_count ) * 100, 1 );
 
 	$idx_cards['cliches'] = array(
-		'eyebrow' => __( 'Clichés', 'lwtv' ),
+		'eyebrow' => __( 'Clichés', 'lwtv-underscores' ),
 		'figure'  => $idx_top_cliche['name'],
 		/* translators: 1: total clichés tracked, 2: the top cliché's share of all characters (one decimal). */
-		'text'    => sprintf( __( 'The top of the %1$s clichés is on %2$s%% of all characters.', 'lwtv' ), number_format_i18n( (int) $count_cliches ), number_format_i18n( $idx_cliche_pct, 1 ) ),
+		'text'    => sprintf( __( 'The top of the %1$s clichés is on %2$s%% of all characters.', 'lwtv-underscores' ), number_format_i18n( (int) $count_cliches ), number_format_i18n( $idx_cliche_pct, 1 ) ),
 		'url'     => $baseurl . 'cliches/',
 	);
 }
@@ -189,10 +189,10 @@ $idx_cliche_leaders = ( new Build_Cliche_Leaders() )->generate( 5 );
 $idx_top_cliched    = ! empty( $idx_cliche_leaders ) ? reset( $idx_cliche_leaders ) : false;
 if ( ! empty( $idx_top_cliched['name'] ) ) {
 	$idx_cards['most-cliches'] = array(
-		'eyebrow' => __( 'Most Clichés', 'lwtv' ),
+		'eyebrow' => __( 'Most Clichés', 'lwtv-underscores' ),
 		'figure'  => $idx_top_cliched['name'],
 		/* translators: %s: number of clichés the leading character carries. */
-		'text'    => sprintf( __( 'Carries %s clichés at once, more than any other character.', 'lwtv' ), number_format_i18n( (int) $idx_top_cliched['count'] ) ),
+		'text'    => sprintf( __( 'Carries %s clichés at once, more than any other character.', 'lwtv-underscores' ), number_format_i18n( (int) $idx_top_cliched['count'] ) ),
 		'url'     => $baseurl . 'most-cliches/',
 	);
 }
@@ -203,10 +203,10 @@ if ( ! empty( $idx_top_gender['name'] ) && (int) $character_count > 0 ) {
 	$idx_gender_pct = round( ( (int) $idx_top_gender['count'] / (int) $character_count ) * 100, 1 );
 
 	$idx_cards['gender'] = array(
-		'eyebrow' => __( 'Gender', 'lwtv' ),
+		'eyebrow' => __( 'Gender', 'lwtv-underscores' ),
 		'figure'  => $idx_top_gender['name'],
 		/* translators: 1: total gender identities tracked, 2: the top identity's share of all characters (one decimal). */
-		'text'    => sprintf( __( 'The top of the %1$s identities is on %2$s%% of all characters.', 'lwtv' ), number_format_i18n( (int) $count_genders ), number_format_i18n( $idx_gender_pct, 1 ) ),
+		'text'    => sprintf( __( 'The top of the %1$s identities is on %2$s%% of all characters.', 'lwtv-underscores' ), number_format_i18n( (int) $count_genders ), number_format_i18n( $idx_gender_pct, 1 ) ),
 		'url'     => $baseurl . 'gender/',
 	);
 }
@@ -217,10 +217,10 @@ if ( ! empty( $idx_top_sexuality['name'] ) && (int) $character_count > 0 ) {
 	$idx_sexuality_pct = round( ( (int) $idx_top_sexuality['count'] / (int) $character_count ) * 100, 1 );
 
 	$idx_cards['sexuality'] = array(
-		'eyebrow' => __( 'Sexuality', 'lwtv' ),
+		'eyebrow' => __( 'Sexuality', 'lwtv-underscores' ),
 		'figure'  => $idx_top_sexuality['name'],
 		/* translators: 1: total orientations tracked, 2: the top orientation's share of all characters (one decimal). */
-		'text'    => sprintf( __( 'The top of the %1$s orientations is on %2$s%% of all characters.', 'lwtv' ), number_format_i18n( (int) $count_sexualities ), number_format_i18n( $idx_sexuality_pct, 1 ) ),
+		'text'    => sprintf( __( 'The top of the %1$s orientations is on %2$s%% of all characters.', 'lwtv-underscores' ), number_format_i18n( (int) $count_sexualities ), number_format_i18n( $idx_sexuality_pct, 1 ) ),
 		'url'     => $baseurl . 'sexuality/',
 	);
 }
@@ -230,10 +230,10 @@ if ( ( $char_queer_yes + $char_queer_no ) > 0 ) {
 	$idx_queer_pct = round( ( $char_queer_yes / ( $char_queer_yes + $char_queer_no ) ) * 100, 1 );
 
 	$idx_cards['queer-irl'] = array(
-		'eyebrow' => __( 'Queer IRL', 'lwtv' ),
+		'eyebrow' => __( 'Queer IRL', 'lwtv-underscores' ),
 		'figure'  => number_format_i18n( $idx_queer_pct, 1 ) . '%',
 		/* translators: %s: number of characters played by a queer actor. */
-		'text'    => sprintf( __( '%s characters are played by an actor who is queer in real life.', 'lwtv' ), number_format_i18n( $char_queer_yes ) ),
+		'text'    => sprintf( __( '%s characters are played by an actor who is queer in real life.', 'lwtv-underscores' ), number_format_i18n( $char_queer_yes ) ),
 		'url'     => $baseurl . 'queer-irl/',
 	);
 }
@@ -263,15 +263,15 @@ $clichegap_dead_pct = ( (int) $character_count > 0 ) ? (int) round( ( $char_dead
 $clichegap_none_pct = ( (int) $character_count > 0 ) ? (int) round( ( $char_none / (int) $character_count ) * 100 ) : 0;
 $clichegap_ratio    = ( $char_none > 0 ) ? round( $char_dead / $char_none, 1 ) : 0;
 ?>
-<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'The Cliché Gap', 'lwtv' ); ?></p>
+<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'The Cliché Gap', 'lwtv-underscores' ); ?></p>
 <div class="lwtv-pullstats">
 	<div class="lwtv-tropegap lwtv-tropegap--tint card-header dead-characters">
 		<div class="lwtv-tropegap-top">
-			<span class="lwtv-stats-eyebrow"><?php esc_html_e( 'Bury Your Gays', 'lwtv' ); ?></span>
+			<span class="lwtv-stats-eyebrow"><?php esc_html_e( 'Bury Your Gays', 'lwtv-underscores' ); ?></span>
 			<span class="lwtv-tropegap-icon"><?php echo lwtv_plugin()->get_symbolicon( svg: 'skull.svg', icon: 'svg-skull', max_size: '22' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
 		</div>
 		<span class="lwtv-tropegap-number" data-count-to="<?php echo (int) $char_dead; ?>"><?php echo esc_html( number_format_i18n( $char_dead ) ); ?></span>
-		<p class="lwtv-tropegap-desc"><?php esc_html_e( 'Characters written with the Dead cliché.', 'lwtv' ); ?></p>
+		<p class="lwtv-tropegap-desc"><?php esc_html_e( 'Characters written with the Dead cliché.', 'lwtv-underscores' ); ?></p>
 		<?php
 		$waffle = array(
 			'filled'  => $clichegap_dead_pct,
@@ -279,7 +279,7 @@ $clichegap_ratio    = ( $char_none > 0 ) ? round( $char_dead / $char_none, 1 ) :
 			'columns' => 20,
 			'radius'  => 8,
 			/* translators: %s: percentage of all characters carrying the Dead cliché. */
-			'label'   => sprintf( __( '%s%% of all characters carry the Dead cliché.', 'lwtv' ), number_format_i18n( $clichegap_dead_pct ) ),
+			'label'   => sprintf( __( '%s%% of all characters carry the Dead cliché.', 'lwtv-underscores' ), number_format_i18n( $clichegap_dead_pct ) ),
 		);
 		// phpcs:ignore PEAR.Files.IncludingFile.UseRequire
 		include plugin_dir_path( __DIR__ ) . 'partials/waffle.php';
@@ -288,20 +288,20 @@ $clichegap_ratio    = ( $char_none > 0 ) ? round( $char_dead / $char_none, 1 ) :
 			<?php
 			printf(
 				/* translators: %s: percentage of all characters carrying the Dead cliché. */
-				esc_html__( '%s%% of everything we track.', 'lwtv' ),
+				esc_html__( '%s%% of everything we track.', 'lwtv-underscores' ),
 				esc_html( number_format_i18n( $clichegap_dead_pct ) )
 			);
 			?>
 		</p>
-		<a role="button" class="btn lwtv-tropegap-link" href="<?php echo esc_url( site_url( '/cliche/dead/' ) ); ?>"><?php esc_html_e( 'See these characters', 'lwtv' ); ?> <span aria-hidden="true">&#8599;</span></a>
+		<a role="button" class="btn lwtv-tropegap-link" href="<?php echo esc_url( site_url( '/cliche/dead/' ) ); ?>"><?php esc_html_e( 'See these characters', 'lwtv-underscores' ); ?> <span aria-hidden="true">&#8599;</span></a>
 	</div>
 	<div class="lwtv-tropegap lwtv-tropegap--tint card-header no-cliche">
 		<div class="lwtv-tropegap-top">
-			<span class="lwtv-stats-eyebrow"><?php esc_html_e( 'No Cliché', 'lwtv' ); ?></span>
+			<span class="lwtv-stats-eyebrow"><?php esc_html_e( 'No Cliché', 'lwtv-underscores' ); ?></span>
 			<span class="lwtv-tropegap-icon"><?php echo lwtv_plugin()->get_symbolicon( svg: 'badge.svg', icon: 'svg-badge', max_size: '22' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
 		</div>
 		<span class="lwtv-tropegap-number" data-count-to="<?php echo (int) $char_none; ?>"><?php echo esc_html( number_format_i18n( $char_none ) ); ?></span>
-		<p class="lwtv-tropegap-desc"><?php esc_html_e( 'Characters written without any cliché at all.', 'lwtv' ); ?></p>
+		<p class="lwtv-tropegap-desc"><?php esc_html_e( 'Characters written without any cliché at all.', 'lwtv-underscores' ); ?></p>
 		<?php
 		$waffle = array(
 			'filled'  => $clichegap_none_pct,
@@ -309,7 +309,7 @@ $clichegap_ratio    = ( $char_none > 0 ) ? round( $char_dead / $char_none, 1 ) :
 			'columns' => 20,
 			'radius'  => 8,
 			/* translators: %s: percentage of all characters carrying no cliché. */
-			'label'   => sprintf( __( '%s%% of all characters carry no cliché.', 'lwtv' ), number_format_i18n( $clichegap_none_pct ) ),
+			'label'   => sprintf( __( '%s%% of all characters carry no cliché.', 'lwtv-underscores' ), number_format_i18n( $clichegap_none_pct ) ),
 		);
 		// phpcs:ignore PEAR.Files.IncludingFile.UseRequire
 		include plugin_dir_path( __DIR__ ) . 'partials/waffle.php';
@@ -318,12 +318,12 @@ $clichegap_ratio    = ( $char_none > 0 ) ? round( $char_dead / $char_none, 1 ) :
 			<?php
 			printf(
 				/* translators: %s: percentage of all characters carrying no cliché. */
-				esc_html__( '%s%% of everything we track.', 'lwtv' ),
+				esc_html__( '%s%% of everything we track.', 'lwtv-underscores' ),
 				esc_html( number_format_i18n( $clichegap_none_pct ) )
 			);
 			?>
 		</p>
-		<a role="button" class="btn lwtv-tropegap-link" href="<?php echo esc_url( site_url( '/cliche/none/' ) ); ?>"><?php esc_html_e( 'See these characters', 'lwtv' ); ?> <span aria-hidden="true">&#8599;</span></a>
+		<a role="button" class="btn lwtv-tropegap-link" href="<?php echo esc_url( site_url( '/cliche/none/' ) ); ?>"><?php esc_html_e( 'See these characters', 'lwtv-underscores' ); ?> <span aria-hidden="true">&#8599;</span></a>
 	</div>
 </div>
 
@@ -331,10 +331,10 @@ $clichegap_ratio    = ( $char_none > 0 ) ? round( $char_dead / $char_none, 1 ) :
 	<?php
 	$lwtv_callouts = array(
 		array(
-			'label' => __( 'The gap', 'lwtv' ),
+			'label' => __( 'The gap', 'lwtv-underscores' ),
 			'icon'  => 'chart-bar.svg',
 			/* translators: %s: how many times more characters carry the Dead cliché than carry no cliché at all. */
-			'text'  => sprintf( __( 'Characters are %s times more likely to be killed off than to escape cliché entirely.', 'lwtv' ), number_format_i18n( $clichegap_ratio, 1 ) ),
+			'text'  => sprintf( __( 'Characters are %s times more likely to be killed off than to escape cliché entirely.', 'lwtv-underscores' ), number_format_i18n( $clichegap_ratio, 1 ) ),
 		),
 	);
 	// phpcs:ignore PEAR.Files.IncludingFile.UseRequire
@@ -351,15 +351,15 @@ $castinggap_queer_pct = ( $castinggap_total > 0 ) ? (int) round( ( $char_queer_y
 $castinggap_cis_pct   = ( $castinggap_total > 0 ) ? 100 - $castinggap_queer_pct : 0;
 $castinggap_ratio     = ( $char_queer_yes > 0 ) ? round( $char_queer_no / $char_queer_yes, 1 ) : 0;
 ?>
-<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'The Casting Gap', 'lwtv' ); ?></p>
+<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'The Casting Gap', 'lwtv-underscores' ); ?></p>
 <section class="lwtv-panel bg-light lwtv-castinggap">
 	<header class="lwtv-panel-head">
 		<span class="lwtv-panel-icon">
 			<?php echo lwtv_plugin()->get_symbolicon( svg: 'user-heart.svg', icon: 'svg-user', max_size: '20' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 		</span>
 		<div>
-			<h2 class="lwtv-panel-title"><?php esc_html_e( 'Who Plays Queer Characters', 'lwtv' ); ?></h2>
-			<p class="lwtv-panel-sub"><?php esc_html_e( 'Whether the actor behind a queer character is queer in real life, or straight and cisgender.', 'lwtv' ); ?></p>
+			<h2 class="lwtv-panel-title"><?php esc_html_e( 'Who Plays Queer Characters', 'lwtv-underscores' ); ?></h2>
+			<p class="lwtv-panel-sub"><?php esc_html_e( 'Whether the actor behind a queer character is queer in real life, or straight and cisgender.', 'lwtv-underscores' ); ?></p>
 		</div>
 	</header>
 	<div class="lwtv-castinggap-row">
@@ -380,7 +380,7 @@ $castinggap_ratio     = ( $char_queer_yes > 0 ) ? round( $char_queer_no / $char_
 				'columns'  => 20,
 				'radius'   => 8,
 				/* translators: 1: percentage of characters played by a queer actor, 2: percentage played by a straight or cis actor. */
-				'label'    => sprintf( __( '%1$s%% of characters are played by a queer actor; %2$s%% by a straight or cis actor.', 'lwtv' ), number_format_i18n( $castinggap_queer_pct ), number_format_i18n( $castinggap_cis_pct ) ),
+				'label'    => sprintf( __( '%1$s%% of characters are played by a queer actor; %2$s%% by a straight or cis actor.', 'lwtv-underscores' ), number_format_i18n( $castinggap_queer_pct ), number_format_i18n( $castinggap_cis_pct ) ),
 			);
 			// phpcs:ignore PEAR.Files.IncludingFile.UseRequire
 			include plugin_dir_path( __DIR__ ) . 'partials/waffle.php';
@@ -389,27 +389,27 @@ $castinggap_ratio     = ( $char_queer_yes > 0 ) ? round( $char_queer_no / $char_
 		<ul class="lwtv-donut-legend lwtv-donut-legend--compact">
 			<li class="lwtv-donut-legend-row">
 				<span class="lwtv-donut-dot lwtv-donut-seg--pink"></span>
-				<span class="lwtv-donut-legend-name"><?php esc_html_e( 'Played by queer actors', 'lwtv' ); ?></span>
+				<span class="lwtv-donut-legend-name"><?php esc_html_e( 'Played by queer actors', 'lwtv-underscores' ); ?></span>
 				<span class="lwtv-donut-legend-val"><?php echo esc_html( number_format_i18n( $char_queer_yes ) . ' · ' . number_format_i18n( $castinggap_queer_pct ) . '%' ); ?></span>
 			</li>
 			<li class="lwtv-donut-legend-row">
 				<span class="lwtv-donut-dot lwtv-donut-seg--grey"></span>
-				<span class="lwtv-donut-legend-name"><?php esc_html_e( 'Played by straight or cis actors', 'lwtv' ); ?></span>
+				<span class="lwtv-donut-legend-name"><?php esc_html_e( 'Played by straight or cis actors', 'lwtv-underscores' ); ?></span>
 				<span class="lwtv-donut-legend-val"><?php echo esc_html( number_format_i18n( $char_queer_no ) . ' · ' . number_format_i18n( $castinggap_cis_pct ) . '%' ); ?></span>
 			</li>
 		</ul>
 	</div>
-	<a class="lwtv-panel-foot" href="<?php echo esc_url( $baseurl . 'queer-irl/' ); ?>"><?php esc_html_e( 'See the full breakdown →', 'lwtv' ); ?></a>
+	<a class="lwtv-panel-foot" href="<?php echo esc_url( $baseurl . 'queer-irl/' ); ?>"><?php esc_html_e( 'See the full breakdown →', 'lwtv-underscores' ); ?></a>
 </section>
 
 <?php if ( $castinggap_ratio > 0 ) : ?>
 	<?php
 	$lwtv_callouts = array(
 		array(
-			'label' => __( 'The gap', 'lwtv' ),
+			'label' => __( 'The gap', 'lwtv-underscores' ),
 			'icon'  => 'chart-bar.svg',
 			/* translators: %s: how many times more often straight/cis actors are cast in queer roles than queer actors are. */
-			'text'  => sprintf( __( 'Straight or cis actors are cast in queer roles %s times more often than queer actors are.', 'lwtv' ), number_format_i18n( $castinggap_ratio, 1 ) ),
+			'text'  => sprintf( __( 'Straight or cis actors are cast in queer roles %s times more often than queer actors are.', 'lwtv-underscores' ), number_format_i18n( $castinggap_ratio, 1 ) ),
 		),
 	);
 	// phpcs:ignore PEAR.Files.IncludingFile.UseRequire
@@ -420,7 +420,7 @@ $castinggap_ratio     = ( $char_queer_yes > 0 ) ? round( $char_queer_no / $char_
 <?php
 $char_panels = array(
 	array(
-		'title'  => __( 'Top Clichés', 'lwtv' ),
+		'title'  => __( 'Top Clichés', 'lwtv-underscores' ),
 		'family' => 'characters',
 		'svg'    => 'tag.svg',
 		'icon'   => 'svg-tag',
@@ -428,13 +428,13 @@ $char_panels = array(
 		'base'   => '/cliche/',
 		'count'  => (int) $count_cliches,
 		/* translators: %s: total clichés. */
-		'sub'    => sprintf( __( '%s clichés tracked', 'lwtv' ), number_format_i18n( (int) $count_cliches ) ),
+		'sub'    => sprintf( __( '%s clichés tracked', 'lwtv-underscores' ), number_format_i18n( (int) $count_cliches ) ),
 		/* translators: %s: total clichés. */
-		'all'    => sprintf( __( 'View all %s clichés →', 'lwtv' ), number_format_i18n( (int) $count_cliches ) ),
+		'all'    => sprintf( __( 'View all %s clichés →', 'lwtv-underscores' ), number_format_i18n( (int) $count_cliches ) ),
 		'more'   => $baseurl . 'cliches/',
 	),
 	array(
-		'title'  => __( 'Top Sexual Orientations', 'lwtv' ),
+		'title'  => __( 'Top Sexual Orientations', 'lwtv-underscores' ),
 		'family' => 'sexuality',
 		'svg'    => 'heart.svg',
 		'icon'   => 'svg-heart',
@@ -442,13 +442,13 @@ $char_panels = array(
 		'base'   => '/sexuality/',
 		'count'  => (int) $count_sexualities,
 		/* translators: %s: total orientations. */
-		'sub'    => sprintf( __( '%s orientations tracked', 'lwtv' ), number_format_i18n( (int) $count_sexualities ) ),
+		'sub'    => sprintf( __( '%s orientations tracked', 'lwtv-underscores' ), number_format_i18n( (int) $count_sexualities ) ),
 		/* translators: %s: total orientations. */
-		'all'    => sprintf( __( 'View all %s orientations →', 'lwtv' ), number_format_i18n( (int) $count_sexualities ) ),
+		'all'    => sprintf( __( 'View all %s orientations →', 'lwtv-underscores' ), number_format_i18n( (int) $count_sexualities ) ),
 		'more'   => $baseurl . 'sexuality/',
 	),
 	array(
-		'title'  => __( 'Top Gender Identities', 'lwtv' ),
+		'title'  => __( 'Top Gender Identities', 'lwtv-underscores' ),
 		'family' => 'gender',
 		'svg'    => 'venus-double.svg',
 		'icon'   => 'svg-venus-double',
@@ -456,9 +456,9 @@ $char_panels = array(
 		'base'   => '/gender/',
 		'count'  => (int) $count_genders,
 		/* translators: %s: total identities. */
-		'sub'    => sprintf( __( '%s identities tracked', 'lwtv' ), number_format_i18n( (int) $count_genders ) ),
+		'sub'    => sprintf( __( '%s identities tracked', 'lwtv-underscores' ), number_format_i18n( (int) $count_genders ) ),
 		/* translators: %s: total identities. */
-		'all'    => sprintf( __( 'View all %s identities →', 'lwtv' ), number_format_i18n( (int) $count_genders ) ),
+		'all'    => sprintf( __( 'View all %s identities →', 'lwtv-underscores' ), number_format_i18n( (int) $count_genders ) ),
 		'more'   => $baseurl . 'gender/',
 	),
 );

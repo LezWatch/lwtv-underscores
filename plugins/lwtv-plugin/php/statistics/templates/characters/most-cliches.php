@@ -36,8 +36,8 @@ $lwtv_most_categories = array(
 		'rows'            => is_array( $cliche_leaders ) ? array_values( $cliche_leaders ) : array(),
 		'svg'             => 'medal.svg',
 		'icon'            => 'svg-trophy',
-		'spotlight_label' => __( 'Most Clichés', 'lwtv' ),
-		'table_label'     => __( 'Clichés', 'lwtv' ),
+		'spotlight_label' => __( 'Most Clichés', 'lwtv-underscores' ),
+		'table_label'     => __( 'Clichés', 'lwtv-underscores' ),
 		'value'           => static fn( $row ) => number_format_i18n( (int) $row['count'] ),
 		'value_detail'    => static fn( $row ) => number_format_i18n( (int) $row['count'] ),
 	),
@@ -45,8 +45,8 @@ $lwtv_most_categories = array(
 		'rows'            => is_array( $show_leaders ) ? array_values( $show_leaders ) : array(),
 		'svg'             => 'tv.svg',
 		'icon'            => 'svg-tv',
-		'spotlight_label' => __( 'Most Shows', 'lwtv' ),
-		'table_label'     => __( 'Shows', 'lwtv' ),
+		'spotlight_label' => __( 'Most Shows', 'lwtv-underscores' ),
+		'table_label'     => __( 'Shows', 'lwtv-underscores' ),
 		'value'           => static fn( $row ) => number_format_i18n( (int) $row['count'] ),
 		'value_detail'    => static fn( $row ) => number_format_i18n( (int) $row['count'] ),
 	),
@@ -54,8 +54,8 @@ $lwtv_most_categories = array(
 		'rows'            => is_array( $actor_leaders ) ? array_values( $actor_leaders ) : array(),
 		'svg'             => 'group.svg',
 		'icon'            => 'svg-users',
-		'spotlight_label' => __( 'Most Actors', 'lwtv' ),
-		'table_label'     => __( 'Actors', 'lwtv' ),
+		'spotlight_label' => __( 'Most Actors', 'lwtv-underscores' ),
+		'table_label'     => __( 'Actors', 'lwtv-underscores' ),
 		'value'           => static fn( $row ) => number_format_i18n( (int) $row['count'] ),
 		'value_detail'    => static fn( $row ) => number_format_i18n( (int) $row['count'] ),
 	),
@@ -63,8 +63,8 @@ $lwtv_most_categories = array(
 		'rows'            => is_array( $death_leaders ) ? array_values( $death_leaders ) : array(),
 		'svg'             => 'skull.svg',
 		'icon'            => 'svg-skull',
-		'spotlight_label' => __( 'Most Resurrected', 'lwtv' ),
-		'table_label'     => __( 'Resurrected', 'lwtv' ),
+		'spotlight_label' => __( 'Most Resurrected', 'lwtv-underscores' ),
+		'table_label'     => __( 'Resurrected', 'lwtv-underscores' ),
 		'value'           => static fn( $row ) => number_format_i18n( (int) $row['count'] ),
 		'value_detail'    => static fn( $row ) => number_format_i18n( (int) $row['count'] ),
 	),
@@ -72,16 +72,16 @@ $lwtv_most_categories = array(
 		'rows'            => is_array( $longevity_leaders ) ? array_values( $longevity_leaders ) : array(),
 		'svg'             => 'calendar-alt.svg',
 		'icon'            => 'svg-calendar',
-		'spotlight_label' => __( 'Longest-Running', 'lwtv' ),
-		'table_label'     => __( 'Longest-Running', 'lwtv' ),
+		'spotlight_label' => __( 'Longest-Running', 'lwtv-underscores' ),
+		'table_label'     => __( 'Longest-Running', 'lwtv-underscores' ),
 		/* translators: %s: number of years active. */
-		'value'           => static fn( $row ) => sprintf( __( '%s yrs', 'lwtv' ), number_format_i18n( (int) $row['count'] ) ),
+		'value'           => static fn( $row ) => sprintf( __( '%s yrs', 'lwtv-underscores' ), number_format_i18n( (int) $row['count'] ) ),
 		/* translators: 1: number of years active, 2: earliest on-screen year, 3: latest on-screen year. */
-		'value_detail'    => static fn( $row ) => sprintf( __( '%1$s yrs (%2$d–%3$d)', 'lwtv' ), number_format_i18n( (int) $row['count'] ), (int) $row['min'], (int) $row['max'] ),
+		'value_detail'    => static fn( $row ) => sprintf( __( '%1$s yrs (%2$d–%3$d)', 'lwtv-underscores' ), number_format_i18n( (int) $row['count'] ), (int) $row['min'], (int) $row['max'] ),
 	),
 );
 ?>
-<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'The Records', 'lwtv' ); ?></p>
+<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'The Records', 'lwtv-underscores' ); ?></p>
 
 <div class="lwtv-metric-grid lwtv-metric-grid--5 lwtv-records-spotlight">
 	<?php
@@ -104,7 +104,7 @@ $lwtv_most_categories = array(
 				<?php endif; ?>
 			<?php else : ?>
 				<span class="lwtv-metric-number lwtv-records-number--empty" aria-hidden="true">—</span>
-				<span class="lwtv-metric-caption"><?php esc_html_e( 'No record yet', 'lwtv' ); ?></span>
+				<span class="lwtv-metric-caption"><?php esc_html_e( 'No record yet', 'lwtv-underscores' ); ?></span>
 			<?php endif; ?>
 		</div>
 		<?php
@@ -112,7 +112,7 @@ $lwtv_most_categories = array(
 	?>
 </div>
 
-<p class="lwtv-stats-eyebrow lwtv-records-table-label"><?php esc_html_e( 'Full Rankings', 'lwtv' ); ?></p>
+<p class="lwtv-stats-eyebrow lwtv-records-table-label"><?php esc_html_e( 'Full Rankings', 'lwtv-underscores' ); ?></p>
 
 <div class="lwtv-records-table-wrap">
 	<div class="lwtv-records-table">
@@ -149,4 +149,4 @@ $lwtv_most_categories = array(
 	</div>
 </div>
 
-<p class="lwtv-records-note"><?php esc_html_e( 'The spotlight shows the #1 record holder in each category; the table gives the full top five. Dashes mark categories with fewer than five qualifying characters.', 'lwtv' ); ?></p>
+<p class="lwtv-records-note"><?php esc_html_e( 'The spotlight shows the #1 record holder in each category; the table gives the full top five. Dashes mark categories with fewer than five qualifying characters.', 'lwtv-underscores' ); ?></p>

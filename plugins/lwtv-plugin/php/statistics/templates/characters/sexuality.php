@@ -53,7 +53,7 @@ foreach ( $sex_data as $sex_row ) {
 $sex_other = max( 0, $sex_total - $sex_named );
 if ( $sex_other > 0 ) {
 	$sex_segments[] = array(
-		'label' => __( 'Other', 'lwtv' ),
+		'label' => __( 'Other', 'lwtv-underscores' ),
 		'count' => $sex_other,
 		'pct'   => ( $sex_total > 0 ) ? round( ( $sex_other / $sex_total ) * 100, 1 ) : 0,
 		'class' => 'grey',
@@ -63,11 +63,11 @@ if ( $sex_other > 0 ) {
 $donut = array(
 	'segments'    => $sex_segments,
 	'center'      => $sex_total,
-	'center_sub'  => __( 'characters', 'lwtv' ),
-	'eyebrow'     => __( 'Sexual Orientation', 'lwtv' ),
+	'center_sub'  => __( 'characters', 'lwtv-underscores' ),
+	'eyebrow'     => __( 'Sexual Orientation', 'lwtv-underscores' ),
 	/* translators: %s: a fraction phrase like "Over three quarters". */
-	'headline'    => sprintf( __( '%s are lesbian or bisexual', 'lwtv' ), lwtv_stats_fraction_phrase( $sex_lesbi_pct ) ),
-	'description' => __( 'Lesbian and bisexual characters make up the bulk of the characters.', 'lwtv' ),
+	'headline'    => sprintf( __( '%s are lesbian or bisexual', 'lwtv-underscores' ), lwtv_stats_fraction_phrase( $sex_lesbi_pct ) ),
+	'description' => __( 'Lesbian and bisexual characters make up the bulk of the characters.', 'lwtv-underscores' ),
 );
 
 // phpcs:ignore PEAR.Files.IncludingFile.UseRequire
@@ -83,7 +83,7 @@ if ( $sex_tracked_count > 0 ) {
 	$sex_pullstats[] = array(
 		'icon'   => 'tag.svg',
 		'number' => number_format_i18n( $sex_tracked_count ),
-		'label'  => __( 'Distinct sexual orientations tracked.', 'lwtv' ),
+		'label'  => __( 'Distinct sexual orientations tracked.', 'lwtv-underscores' ),
 	);
 }
 
@@ -92,8 +92,8 @@ if ( $sex_total > 0 ) {
 	$sex_pullstats[]  = array(
 		'icon'   => 'chart-pie.svg',
 		/* translators: %s: percentage of characters whose orientation is not lesbian or bisexual (one decimal). */
-		'number' => sprintf( __( '%s%%', 'lwtv' ), number_format_i18n( $sex_longtail_pct, 1 ) ),
-		'label'  => __( 'Percentage with an orientation other than lesbian or bisexual.', 'lwtv' ),
+		'number' => sprintf( __( '%s%%', 'lwtv-underscores' ), number_format_i18n( $sex_longtail_pct, 1 ) ),
+		'label'  => __( 'Percentage with an orientation other than lesbian or bisexual.', 'lwtv-underscores' ),
 	);
 }
 
@@ -116,7 +116,7 @@ if ( '' !== $sex_rarest_slug && isset( $sex_firsts[ $sex_rarest_slug ] ) ) {
 		'icon'   => 'calendar-alt.svg',
 		'number' => (string) $sex_firsts[ $sex_rarest_slug ]['year'],
 		/* translators: %s: the rarest tracked orientation's name. */
-		'label'  => sprintf( __( 'How far back our rarest tracked orientation (%s) goes.', 'lwtv' ), $sex_firsts[ $sex_rarest_slug ]['name'] ),
+		'label'  => sprintf( __( 'How far back our rarest tracked orientation (%s) goes.', 'lwtv-underscores' ), $sex_firsts[ $sex_rarest_slug ]['name'] ),
 	);
 }
 
@@ -142,7 +142,7 @@ $sex_decade_buckets = $sex_identity_trend->generate_decades( 'lez_sexuality', 20
 
 if ( ! empty( $sex_decade_buckets ) ) :
 	?>
-	<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'Sexuality Mix by Decade', 'lwtv' ); ?></p>
+	<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'Sexuality Mix by Decade', 'lwtv-underscores' ); ?></p>
 	<div class="lwtv-decade-row">
 		<?php foreach ( $sex_decade_buckets as $sex_decade_bucket ) : ?>
 			<?php
@@ -168,11 +168,11 @@ if ( ! empty( $sex_decade_buckets ) ) :
 			if ( 'before' === $sex_decade_bucket['type'] ) {
 				$sex_decade_label = $sex_decade_bucket['to']
 					/* translators: %d: the decade this bucket ends before, e.g. "Before 1980s". */
-					? sprintf( __( 'Before %1$d<span class="lwtv-decade-suffix">s</span>', 'lwtv' ), $sex_decade_bucket['to'] )
-					: __( 'Earliest years', 'lwtv' );
+					? sprintf( __( 'Before %1$d<span class="lwtv-decade-suffix">s</span>', 'lwtv-underscores' ), $sex_decade_bucket['to'] )
+					: __( 'Earliest years', 'lwtv-underscores' );
 			} else {
 				/* translators: %d: a decade, e.g. "1980s". */
-				$sex_decade_label = sprintf( __( '%1$d<span class="lwtv-decade-suffix">s</span>', 'lwtv' ), $sex_decade_bucket['from'] );
+				$sex_decade_label = sprintf( __( '%1$d<span class="lwtv-decade-suffix">s</span>', 'lwtv-underscores' ), $sex_decade_bucket['from'] );
 			}
 
 			$donut = array(
@@ -193,7 +193,7 @@ if ( ! empty( $sex_decade_buckets ) ) :
 					<?php
 					printf(
 						/* translators: %s: number of characters first on screen in this bucket. */
-						esc_html__( '%s characters', 'lwtv' ),
+						esc_html__( '%s characters', 'lwtv-underscores' ),
 						esc_html( number_format_i18n( $sex_decade_bucket['total'] ) )
 					);
 					?>
@@ -210,7 +210,7 @@ if ( ! empty( $sex_firsts ) ) :
 	$sex_firsts_sorted = $sex_firsts;
 	uasort( $sex_firsts_sorted, static fn( $a, $b ) => $a['year'] <=> $b['year'] );
 	?>
-	<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'Firsts', 'lwtv' ); ?></p>
+	<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'Firsts', 'lwtv-underscores' ); ?></p>
 	<div class="lwtv-pullstats lwtv-pullstats--three lwtv-statcards lwtv-bars--characters">
 		<?php foreach ( $sex_firsts_sorted as $sex_first ) : ?>
 			<div class="lwtv-statcard lwtv-statcard--firsts">

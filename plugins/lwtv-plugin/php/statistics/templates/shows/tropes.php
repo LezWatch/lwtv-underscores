@@ -26,39 +26,39 @@ if ( array_sum( $tropes_alignment ) > 0 ) {
 	$tropes_alignment_cards = array(
 		array(
 			'family' => 'good-tropes',
-			'label'  => __( 'Good', 'lwtv' ),
+			'label'  => __( 'Good', 'lwtv-underscores' ),
 			'svg'    => 'heart-circle.svg',
 			'icon'   => 'svg-heart-circle',
 			'count'  => $tropes_alignment['good'],
-			'desc'   => __( 'Shows that carry a clearly positive trope.', 'lwtv' ),
+			'desc'   => __( 'Shows that carry a clearly positive trope.', 'lwtv-underscores' ),
 		),
 		array(
 			'family' => 'maybe-tropes',
-			'label'  => __( 'Maybe', 'lwtv' ),
+			'label'  => __( 'Maybe', 'lwtv-underscores' ),
 			'svg'    => 'question-square.svg',
 			'icon'   => 'svg-question-square',
 			'count'  => $tropes_alignment['maybe'],
-			'desc'   => __( 'Shows that carry a trope which is only good depending on context.', 'lwtv' ),
+			'desc'   => __( 'Shows that carry a trope which is only good depending on context.', 'lwtv-underscores' ),
 		),
 		array(
 			'family' => 'bad-tropes',
-			'label'  => __( 'Bad', 'lwtv' ),
+			'label'  => __( 'Bad', 'lwtv-underscores' ),
 			'svg'    => 'warning.svg',
 			'icon'   => 'svg-warning',
 			'count'  => $tropes_alignment['bad'],
-			'desc'   => __( 'Shows carry an actively harmful trope.', 'lwtv' ),
+			'desc'   => __( 'Shows carry an actively harmful trope.', 'lwtv-underscores' ),
 		),
 		array(
 			'family' => 'ploy-tropes',
-			'label'  => __( 'Ploy', 'lwtv' ),
+			'label'  => __( 'Ploy', 'lwtv-underscores' ),
 			'svg'    => 'jason-mask.svg',
 			'icon'   => 'svg-jason-mask',
 			'count'  => $tropes_alignment['ploy'],
-			'desc'   => __( 'Shows with token representation.', 'lwtv' ),
+			'desc'   => __( 'Shows with token representation.', 'lwtv-underscores' ),
 		),
 	);
 	?>
-	<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'Trope Alignment', 'lwtv' ); ?></p>
+	<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'Trope Alignment', 'lwtv-underscores' ); ?></p>
 	<div class="lwtv-pullstats lwtv-pullstats--four">
 		<?php foreach ( $tropes_alignment_cards as $tropes_align_card ) : ?>
 			<div class="lwtv-tropegap lwtv-tropegap--tint card-header <?php echo esc_attr( $tropes_align_card['family'] ); ?>">
@@ -97,7 +97,7 @@ $waffle = array(
 	'total'    => 100,
 	'columns'  => 20,
 	'radius'   => 6,
-	'label'    => __( 'Shows grouped by how many tropes each carries, from none to four or more.', 'lwtv' ),
+	'label'    => __( 'Shows grouped by how many tropes each carries, from none to four or more.', 'lwtv-underscores' ),
 );
 
 // Spotlight the most trope-loaded show as a footer strip; the caption hedges
@@ -124,8 +124,8 @@ if ( $tropes_top['id'] > 0 && has_post_thumbnail( $tropes_top['id'] ) ) {
 					<?php echo lwtv_plugin()->get_symbolicon( svg: 'chart-bar.svg', icon: 'svg-chart-bar', max_size: '20' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 				</span>
 				<div>
-					<h2 class="lwtv-panel-title"><?php esc_html_e( 'Trope Load', 'lwtv' ); ?></h2>
-					<p class="lwtv-panel-sub"><?php esc_html_e( 'How many tropes a show carries, by share of all shows', 'lwtv' ); ?></p>
+					<h2 class="lwtv-panel-title"><?php esc_html_e( 'Trope Load', 'lwtv-underscores' ); ?></h2>
+					<p class="lwtv-panel-sub"><?php esc_html_e( 'How many tropes a show carries, by share of all shows', 'lwtv-underscores' ); ?></p>
 				</div>
 			</header>
 			<div class="lwtv-tropeload-row">
@@ -142,7 +142,7 @@ if ( $tropes_top['id'] > 0 && has_post_thumbnail( $tropes_top['id'] ) ) {
 								echo esc_html(
 									sprintf(
 										/* translators: %s: number of tropes (or "4+"). */
-										_n( '%s trope', '%s tropes', ( '1' === $tropes_dist_bucket['label'] ) ? 1 : 2, 'lwtv' ),
+										_n( '%s trope', '%s tropes', ( '1' === $tropes_dist_bucket['label'] ) ? 1 : 2, 'lwtv-underscores' ),
 										$tropes_dist_bucket['label']
 									)
 								);
@@ -163,7 +163,7 @@ if ( $tropes_top['id'] > 0 && has_post_thumbnail( $tropes_top['id'] ) ) {
 						if ( $tropes_top['tied'] > 1 ) {
 							printf(
 								/* translators: 1: show name, 2: number of tropes, 3: number of shows tied for the most. */
-								esc_html__( '%1$s is tied with %3$s other shows for the most tropes (%2$s).', 'lwtv' ),
+								esc_html__( '%1$s is tied with %3$s other shows for the most tropes (%2$s).', 'lwtv-underscores' ),
 								esc_html( get_the_title( $tropes_top['id'] ) ),
 								esc_html( number_format_i18n( $tropes_top['count'] ) ),
 								esc_html( number_format_i18n( $tropes_top['tied'] - 1 ) )
@@ -171,7 +171,7 @@ if ( $tropes_top['id'] > 0 && has_post_thumbnail( $tropes_top['id'] ) ) {
 						} else {
 							printf(
 								/* translators: 1: show name, 2: number of tropes. */
-								esc_html__( '%1$s carries the most tropes of any show (%2$s).', 'lwtv' ),
+								esc_html__( '%1$s carries the most tropes of any show (%2$s).', 'lwtv-underscores' ),
 								esc_html( get_the_title( $tropes_top['id'] ) ),
 								esc_html( number_format_i18n( $tropes_top['count'] ) )
 							);
@@ -190,10 +190,10 @@ if ( $tropes_top['id'] > 0 && has_post_thumbnail( $tropes_top['id'] ) ) {
 
 		if ( $tropes_align_split['pure'] + $tropes_align_split['mixed'] > 0 ) {
 			$tropes_category_labels = array(
-				'good'  => __( 'Good', 'lwtv' ),
-				'maybe' => __( 'Maybe', 'lwtv' ),
-				'bad'   => __( 'Bad', 'lwtv' ),
-				'ploy'  => __( 'Ploy', 'lwtv' ),
+				'good'  => __( 'Good', 'lwtv-underscores' ),
+				'maybe' => __( 'Maybe', 'lwtv-underscores' ),
+				'bad'   => __( 'Bad', 'lwtv-underscores' ),
+				'ploy'  => __( 'Ploy', 'lwtv-underscores' ),
 			);
 
 			$tropes_top_category_pair = \LWTV\Statistics\Build\Intersection_Pairs::top_pairs(
@@ -211,7 +211,7 @@ if ( $tropes_top['id'] > 0 && has_post_thumbnail( $tropes_top['id'] ) ) {
 						<?php echo lwtv_plugin()->get_symbolicon( svg: 'scales.svg', icon: 'svg-scales', max_size: '20' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 					</span>
 					<div>
-						<h2 class="lwtv-panel-title"><?php esc_html_e( 'Mixed Alignment', 'lwtv' ); ?></h2>
+						<h2 class="lwtv-panel-title"><?php esc_html_e( 'Mixed Alignment', 'lwtv-underscores' ); ?></h2>
 					</div>
 				</header>
 				<p class="lwtv-panel-sub">
@@ -220,19 +220,19 @@ if ( $tropes_top['id'] > 0 && has_post_thumbnail( $tropes_top['id'] ) ) {
 						list( $tropes_pair_cat_a, $tropes_pair_cat_b ) = $tropes_top_category_pair[0]['slugs'];
 						printf(
 							/* translators: 1: percentage of shows with a categorized trope that are mixed, 2: alignment category name, 3: alignment category name. */
-							esc_html__( '%1$s%% of shows with a categorized trope carry more than one alignment at once, most often pairing a %2$s trope with a %3$s one.', 'lwtv' ),
+							esc_html__( '%1$s%% of shows with a categorized trope carry more than one alignment at once, most often pairing a %2$s trope with a %3$s one.', 'lwtv-underscores' ),
 							esc_html( number_format_i18n( $tropes_align_split['mixed_pct'], 1 ) ),
 							esc_html( $tropes_category_labels[ $tropes_pair_cat_a ] ?? $tropes_pair_cat_a ),
 							esc_html( $tropes_category_labels[ $tropes_pair_cat_b ] ?? $tropes_pair_cat_b )
 						);
 					} else {
-						esc_html_e( 'None of the shows with a categorized trope carry more than one alignment at once — alignment here is all-or-nothing.', 'lwtv' );
+						esc_html_e( 'None of the shows with a categorized trope carry more than one alignment at once — alignment here is all-or-nothing.', 'lwtv-underscores' );
 					}
 					?>
 				</p>
 				<div class="lwtv-mixed-alignment-row">
 					<div class="lwtv-donut-figure">
-						<svg class="lwtv-donut" viewBox="0 0 120 120" role="img" aria-label="<?php esc_attr_e( 'Pure versus mixed alignment shows', 'lwtv' ); ?>">
+						<svg class="lwtv-donut" viewBox="0 0 120 120" role="img" aria-label="<?php esc_attr_e( 'Pure versus mixed alignment shows', 'lwtv-underscores' ); ?>">
 							<g transform="rotate(-90 60 60)">
 								<circle class="lwtv-donut-track" cx="60" cy="60" r="50" fill="none" stroke-width="15" pathLength="100" />
 								<circle class="lwtv-donut-seg lwtv-donut-seg--green" cx="60" cy="60" r="50" fill="none" stroke-width="15" pathLength="100" stroke-dasharray="<?php echo esc_attr( (string) $tropes_align_split['mixed_pct'] ); ?> <?php echo esc_attr( (string) ( 100 - $tropes_align_split['mixed_pct'] ) ); ?>" stroke-dashoffset="0" />
@@ -240,18 +240,18 @@ if ( $tropes_top['id'] > 0 && has_post_thumbnail( $tropes_top['id'] ) ) {
 						</svg>
 						<div class="lwtv-donut-center">
 							<span class="lwtv-donut-center-num" data-count-to="<?php echo (int) round( $tropes_align_split['mixed_pct'] ); ?>" data-count-suffix="%"><?php echo esc_html( number_format_i18n( (int) round( $tropes_align_split['mixed_pct'] ) ) ); ?>%</span>
-							<span class="lwtv-donut-center-sub"><?php esc_html_e( 'mixed', 'lwtv' ); ?></span>
+							<span class="lwtv-donut-center-sub"><?php esc_html_e( 'mixed', 'lwtv-underscores' ); ?></span>
 						</div>
 					</div>
 					<ul class="lwtv-donut-legend lwtv-donut-legend--compact">
 						<li class="lwtv-donut-legend-row">
 							<span class="lwtv-donut-dot lwtv-donut-seg--bordergrey"></span>
-							<span class="lwtv-donut-legend-name"><?php esc_html_e( 'Pure (one alignment)', 'lwtv' ); ?></span>
+							<span class="lwtv-donut-legend-name"><?php esc_html_e( 'Pure (one alignment)', 'lwtv-underscores' ); ?></span>
 							<span class="lwtv-donut-legend-val"><?php echo esc_html( number_format_i18n( $tropes_align_split['pure'] ) . ' · ' . number_format_i18n( $tropes_pure_pct, 1 ) . '%' ); ?></span>
 						</li>
 						<li class="lwtv-donut-legend-row">
 							<span class="lwtv-donut-dot lwtv-donut-seg--green"></span>
-							<span class="lwtv-donut-legend-name"><?php esc_html_e( 'Mixed (2+ alignments)', 'lwtv' ); ?></span>
+							<span class="lwtv-donut-legend-name"><?php esc_html_e( 'Mixed (2+ alignments)', 'lwtv-underscores' ); ?></span>
 							<span class="lwtv-donut-legend-val"><?php echo esc_html( number_format_i18n( $tropes_align_split['mixed'] ) . ' · ' . number_format_i18n( $tropes_align_split['mixed_pct'], 1 ) . '%' ); ?></span>
 						</li>
 					</ul>
@@ -319,11 +319,11 @@ if ( $tropes_top['id'] > 0 && has_post_thumbnail( $tropes_top['id'] ) ) {
 				'family' => 'tropes',
 				'svg'    => 'vest-patches.svg',
 				'icon'   => 'svg-vest-patches',
-				'title'  => __( 'Common Pairings', 'lwtv' ),
-				'sub'    => __( 'Tropes that appear together on the same show, by number of shows', 'lwtv' ),
-				'unit'   => __( 'shows together', 'lwtv' ),
+				'title'  => __( 'Common Pairings', 'lwtv-underscores' ),
+				'sub'    => __( 'Tropes that appear together on the same show, by number of shows', 'lwtv-underscores' ),
+				'unit'   => __( 'shows together', 'lwtv-underscores' ),
 				'footer' => array(
-					'title'  => __( 'Shows with only one Trope', 'lwtv' ),
+					'title'  => __( 'Shows with only one Trope', 'lwtv-underscores' ),
 					'number' => number_format_i18n( $tropes_single_count ),
 				),
 			);
@@ -345,9 +345,9 @@ if ( $tropes_top['id'] > 0 && has_post_thumbnail( $tropes_top['id'] ) ) {
 		'family' => 'characters',
 		'svg'    => 'tag.svg',
 		'icon'   => 'svg-tag',
-		'title'  => __( 'Trope Breakdown', 'lwtv' ),
+		'title'  => __( 'Trope Breakdown', 'lwtv-underscores' ),
 		/* translators: %s: number of tropes. */
-		'sub'    => sprintf( __( '%s tropes, by number of shows', 'lwtv' ), number_format_i18n( count( $tropes_data ) ) ),
+		'sub'    => sprintf( __( '%s tropes, by number of shows', 'lwtv-underscores' ), number_format_i18n( count( $tropes_data ) ) ),
 		'base'   => '/trope/',
 	);
 	// phpcs:ignore PEAR.Files.IncludingFile.UseRequire

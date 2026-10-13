@@ -41,7 +41,7 @@ class Display_Agenda {
 		$output .= $this->get_header( $agenda->week_strip( $calendar, $today, $week ), $has_today );
 
 		if ( empty( $groups ) ) {
-			$output .= '<p class="ep-agenda-empty">' . esc_html__( 'Nothing is scheduled to air in this window. Check back soon.', 'lwtv' ) . '</p>';
+			$output .= '<p class="ep-agenda-empty">' . esc_html__( 'Nothing is scheduled to air in this window. Check back soon.', 'lwtv-underscores' ) . '</p>';
 		} else {
 			foreach ( $groups as $group ) {
 				$output .= $this->get_day_group( $group );
@@ -63,11 +63,11 @@ class Display_Agenda {
 	private function get_header( array $strip, bool $has_today ): string {
 		$header  = '<div class="ep-agenda-header">';
 		$header .= '<div class="ep-agenda-header-top">';
-		$header .= '<p class="ep-agenda-eyebrow">' . esc_html__( 'Airdate Calendar', 'lwtv' ) . ' &middot; ' . esc_html__( 'US/Eastern', 'lwtv' ) . '</p>';
+		$header .= '<p class="ep-agenda-eyebrow">' . esc_html__( 'Airdate Calendar', 'lwtv-underscores' ) . ' &middot; ' . esc_html__( 'US/Eastern', 'lwtv-underscores' ) . '</p>';
 
 		if ( $has_today ) {
 			$icon    = lwtv_plugin()->get_symbolicon( svg: 'clock.svg', icon: 'svg-clock', max_size: '13' );
-			$header .= '<a href="#ep-agenda-today" class="ep-agenda-jump" data-lwtv-agenda-jump>' . $icon . esc_html__( 'Today', 'lwtv' ) . '</a>';
+			$header .= '<a href="#ep-agenda-today" class="ep-agenda-jump" data-lwtv-agenda-jump>' . $icon . esc_html__( 'Today', 'lwtv-underscores' ) . '</a>';
 		}
 
 		$header .= '</div>';
@@ -106,7 +106,7 @@ class Display_Agenda {
 		$out .= '<span class="ep-agenda-day-label">' . esc_html( $group['label'] ) . '</span>';
 
 		if ( $is_today ) {
-			$out .= '<span class="ep-agenda-badge">' . esc_html__( 'Today', 'lwtv' ) . '</span>';
+			$out .= '<span class="ep-agenda-badge">' . esc_html__( 'Today', 'lwtv-underscores' ) . '</span>';
 		}
 
 		$out .= '</h3>';

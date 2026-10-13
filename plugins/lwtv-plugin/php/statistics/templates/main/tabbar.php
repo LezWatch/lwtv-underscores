@@ -10,35 +10,35 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 $lwtv_stats_tabs = array(
 	array(
-		'label' => __( 'Overview', 'lwtv' ),
+		'label' => __( 'Overview', 'lwtv-underscores' ),
 		'url'   => home_url( '/statistics/' ),
 	),
 	array(
-		'label' => __( 'Shows', 'lwtv' ),
+		'label' => __( 'Shows', 'lwtv-underscores' ),
 		'url'   => home_url( '/statistics/shows/' ),
 	),
 	array(
-		'label' => __( 'Characters', 'lwtv' ),
+		'label' => __( 'Characters', 'lwtv-underscores' ),
 		'url'   => home_url( '/statistics/characters/' ),
 	),
 	array(
-		'label' => __( 'Actors', 'lwtv' ),
+		'label' => __( 'Actors', 'lwtv-underscores' ),
 		'url'   => home_url( '/statistics/actors/' ),
 	),
 	array(
-		'label' => __( 'Nations', 'lwtv' ),
+		'label' => __( 'Nations', 'lwtv-underscores' ),
 		'url'   => home_url( '/statistics/nations/' ),
 	),
 	array(
-		'label' => __( 'Stations', 'lwtv' ),
+		'label' => __( 'Stations', 'lwtv-underscores' ),
 		'url'   => home_url( '/statistics/stations/' ),
 	),
 	array(
-		'label' => __( 'Death', 'lwtv' ),
+		'label' => __( 'Death', 'lwtv-underscores' ),
 		'url'   => home_url( '/statistics/death/' ),
 	),
 	array(
-		'label' => __( 'This Year', 'lwtv' ),
+		'label' => __( 'This Year', 'lwtv-underscores' ),
 		'url'   => home_url( '/this-year/' ),
 	),
 );
@@ -59,7 +59,7 @@ switch ( $statstype ?? 'main' ) {
 		break;
 }
 ?>
-<nav class="lwtv-stats-tabs" aria-label="<?php esc_attr_e( 'Statistics sections', 'lwtv' ); ?>">
+<nav class="lwtv-stats-tabs" aria-label="<?php esc_attr_e( 'Statistics sections', 'lwtv-underscores' ); ?>">
 	<?php
 	foreach ( $lwtv_stats_tabs as $lwtv_stats_tab ) {
 		$lwtv_is_active   = ( $lwtv_stats_active === $lwtv_stats_tab['url'] );

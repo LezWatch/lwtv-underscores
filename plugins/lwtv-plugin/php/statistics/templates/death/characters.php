@@ -32,7 +32,7 @@ if ( $dc_resurrected_count > 0 ) {
 	$dc_highlights[] = array(
 		'icon'   => 'zombie.svg',
 		'number' => number_format_i18n( $dc_resurrected_count ),
-		'label'  => __( 'Characters who have died and come back more than once.', 'lwtv' ),
+		'label'  => __( 'Characters who have died and come back more than once.', 'lwtv-underscores' ),
 	);
 }
 
@@ -42,7 +42,7 @@ if ( ! empty( $dc_top_resurrected ) ) {
 	$dc_highlights[] = array(
 		'icon'   => 'skull-crossbones.svg',
 		'number' => number_format_i18n( $dc_top_row['count'] ),
-		'label'  => __( 'Times died and come back — more than any other character:', 'lwtv' ),
+		'label'  => __( 'Times died and come back — more than any other character:', 'lwtv-underscores' ),
 		'url'    => $dc_top_row['url'],
 		'name'   => $dc_top_row['name'],
 	);
@@ -54,13 +54,13 @@ if ( $dc_deadliest_count > 0 && '' !== $dc_deadliest_date ) {
 		'icon'   => 'calendar-alt.svg',
 		'number' => number_format_i18n( $dc_deadliest_count ),
 		/* translators: %s: the deadliest recorded date, e.g. "March 4, 2015". */
-		'label'  => sprintf( __( 'Characters who died on %s, the deadliest day on record.', 'lwtv' ), $dc_deadliest_ts ? date_i18n( 'F j, Y', $dc_deadliest_ts ) : $dc_deadliest_date ),
+		'label'  => sprintf( __( 'Characters who died on %s, the deadliest day on record.', 'lwtv-underscores' ), $dc_deadliest_ts ? date_i18n( 'F j, Y', $dc_deadliest_ts ) : $dc_deadliest_date ),
 	);
 }
 
 if ( ! empty( $dc_highlights ) ) {
 	?>
-	<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'Standout Numbers', 'lwtv' ); ?></p>
+	<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'Standout Numbers', 'lwtv-underscores' ); ?></p>
 	<div class="lwtv-pullstats lwtv-pullstats--three lwtv-statcards lwtv-bars--death">
 		<?php
 		foreach ( $dc_highlights as $dc_highlight ) {
@@ -144,7 +144,7 @@ $dc_build = function ( $data, $topn = 5, $grey_slug = '' ) use ( $dc_ramp ) {
 	$other = max( 0, $total - $named );
 	if ( $other > 0 ) {
 		$segments[] = array(
-			'label' => __( 'Other', 'lwtv' ),
+			'label' => __( 'Other', 'lwtv-underscores' ),
 			'count' => $other,
 			'pct'   => ( $total > 0 ) ? round( ( $other / $total ) * 100, 1 ) : 0,
 			'class' => 'grey',
@@ -162,12 +162,12 @@ list( $dc_sex_seg, $dc_sex_total, $dc_sex_top ) = $dc_build( $dc_sex, 5 );
 $donut = array(
 	'segments'    => $dc_sex_seg,
 	'center'      => $dc_sex_total,
-	'center_sub'  => __( 'deaths', 'lwtv' ),
-	'eyebrow'     => __( 'Death By Sexual Orientation', 'lwtv' ),
+	'center_sub'  => __( 'deaths', 'lwtv-underscores' ),
+	'eyebrow'     => __( 'Death By Sexual Orientation', 'lwtv-underscores' ),
 	/* translators: %s: the orientation with the most deaths. */
-	'headline'    => sprintf( __( '%s characters die most', 'lwtv' ), $dc_sex_top['name'] ),
+	'headline'    => sprintf( __( '%s characters die most', 'lwtv-underscores' ), $dc_sex_top['name'] ),
 	/* translators: 1: fraction phrase, 2: orientation. */
-	'description' => sprintf( __( '%1$s of all queer deaths are %2$s characters.', 'lwtv' ), lwtv_stats_fraction_phrase( $dc_sex_top['pct'] ), strtolower( $dc_sex_top['name'] ) ),
+	'description' => sprintf( __( '%1$s of all queer deaths are %2$s characters.', 'lwtv-underscores' ), lwtv_stats_fraction_phrase( $dc_sex_top['pct'] ), strtolower( $dc_sex_top['name'] ) ),
 );
 // phpcs:ignore PEAR.Files.IncludingFile.UseRequire
 include plugin_dir_path( __DIR__ ) . 'partials/donut.php';
@@ -181,9 +181,9 @@ list( $dc_gen_seg, $dc_gen_total, $dc_gen_top ) = $dc_build( $dc_gen, 4, 'cisgen
 $donut = array(
 	'segments'    => $dc_gen_seg,
 	'center'      => $dc_gen_total,
-	'center_sub'  => __( 'deaths', 'lwtv' ),
-	'eyebrow'     => __( 'Death By Gender Identity', 'lwtv' ),
-	'headline'    => __( 'Gender of the dead', 'lwtv' ),
+	'center_sub'  => __( 'deaths', 'lwtv-underscores' ),
+	'eyebrow'     => __( 'Death By Gender Identity', 'lwtv-underscores' ),
+	'headline'    => __( 'Gender of the dead', 'lwtv-underscores' ),
 	'description' => '',
 );
 // phpcs:ignore PEAR.Files.IncludingFile.UseRequire
@@ -198,9 +198,9 @@ list( $dc_role_seg, $dc_role_total, $dc_role_top ) = $dc_build( $dc_role, 3 );
 $donut = array(
 	'segments'    => $dc_role_seg,
 	'center'      => $dc_role_total,
-	'center_sub'  => __( 'deaths', 'lwtv' ),
-	'eyebrow'     => __( 'Death By Role', 'lwtv' ),
-	'headline'    => __( 'Regulars, recurring, and guests', 'lwtv' ),
+	'center_sub'  => __( 'deaths', 'lwtv-underscores' ),
+	'eyebrow'     => __( 'Death By Role', 'lwtv-underscores' ),
+	'headline'    => __( 'Regulars, recurring, and guests', 'lwtv-underscores' ),
 	'description' => '',
 );
 // phpcs:ignore PEAR.Files.IncludingFile.UseRequire
@@ -217,7 +217,7 @@ $dc_decade_buckets = $dc_trend->generate_decades( 'lez_sexuality', 10 );
 if ( ! empty( $dc_decade_buckets ) ) {
 	?>
 	<hr>
-	<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'Deaths by Decade', 'lwtv' ); ?></p>
+	<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'Deaths by Decade', 'lwtv-underscores' ); ?></p>
 	<div class="lwtv-decade-row">
 		<?php
 		foreach ( $dc_decade_buckets as $dc_decade_bucket ) {
@@ -242,11 +242,11 @@ if ( ! empty( $dc_decade_buckets ) ) {
 			if ( 'before' === $dc_decade_bucket['type'] ) {
 				$dc_decade_label = $dc_decade_bucket['to']
 					/* translators: %d: the decade this bucket ends before, e.g. "Before 1980s". */
-					? sprintf( __( 'Before %1$d<span class="lwtv-decade-suffix">s</span>', 'lwtv' ), $dc_decade_bucket['to'] )
-					: __( 'Earliest years', 'lwtv' );
+					? sprintf( __( 'Before %1$d<span class="lwtv-decade-suffix">s</span>', 'lwtv-underscores' ), $dc_decade_bucket['to'] )
+					: __( 'Earliest years', 'lwtv-underscores' );
 			} else {
 				/* translators: %d: a decade, e.g. "1980s". */
-				$dc_decade_label = sprintf( __( '%1$d<span class="lwtv-decade-suffix">s</span>', 'lwtv' ), $dc_decade_bucket['from'] );
+				$dc_decade_label = sprintf( __( '%1$d<span class="lwtv-decade-suffix">s</span>', 'lwtv-underscores' ), $dc_decade_bucket['from'] );
 			}
 
 			$donut = array(
@@ -267,7 +267,7 @@ if ( ! empty( $dc_decade_buckets ) ) {
 					<?php
 					printf(
 						/* translators: %s: number of deaths recorded in this decade bucket. */
-						esc_html__( '%s deaths', 'lwtv' ),
+						esc_html__( '%s deaths', 'lwtv-underscores' ),
 						esc_html( number_format_i18n( $dc_decade_bucket['total'] ) )
 					);
 					?>

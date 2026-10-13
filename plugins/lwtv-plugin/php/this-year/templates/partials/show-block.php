@@ -62,7 +62,7 @@ if ( false !== $lwtv_sb_num_pos ) {
 $lwtv_sb_render_pane = static function ( array $lwtv_sb_groups, string $lwtv_sb_meta_mode, string $lwtv_sb_pane_accent, string $lwtv_sb_slug ) {
 	if ( empty( $lwtv_sb_groups ) ) {
 		?>
-		<p class="lwtv-ty-group-empty"><?php esc_html_e( 'None this year.', 'lwtv' ); ?></p>
+		<p class="lwtv-ty-group-empty"><?php esc_html_e( 'None this year.', 'lwtv-underscores' ); ?></p>
 		<?php
 		return;
 	}
@@ -81,13 +81,13 @@ $lwtv_sb_render_pane = static function ( array $lwtv_sb_groups, string $lwtv_sb_
 
 	switch ( $lwtv_sb_meta_mode ) {
 		case 'format':
-			$lwtv_sb_eyebrow = __( 'Jump to a format', 'lwtv' );
+			$lwtv_sb_eyebrow = __( 'Jump to a format', 'lwtv-underscores' );
 			break;
 		case 'country':
-			$lwtv_sb_eyebrow = __( 'Jump to a country', 'lwtv' );
+			$lwtv_sb_eyebrow = __( 'Jump to a country', 'lwtv-underscores' );
 			break;
 		default:
-			$lwtv_sb_eyebrow = __( 'Jump to a letter', 'lwtv' );
+			$lwtv_sb_eyebrow = __( 'Jump to a letter', 'lwtv-underscores' );
 			break;
 	}
 
@@ -133,7 +133,7 @@ $lwtv_sb_render_pane = static function ( array $lwtv_sb_groups, string $lwtv_sb_
 					<span class="lwtv-ty-group-count">
 						<?php
 						/* translators: %s: number of shows in this group. */
-						echo esc_html( sprintf( _n( '%s show', '%s shows', count( $lwtv_sb_shows ), 'lwtv' ), number_format_i18n( count( $lwtv_sb_shows ) ) ) );
+						echo esc_html( sprintf( _n( '%s show', '%s shows', count( $lwtv_sb_shows ), 'lwtv-underscores' ), number_format_i18n( count( $lwtv_sb_shows ) ) ) );
 						?>
 					</span>
 				</div>
@@ -213,13 +213,13 @@ if ( ! isset( $sb_callouts ) ) {
 	if ( $lwtv_sb_format ) {
 		if ( 1 === $lwtv_sb_format_ties ) {
 			/* translators: 1: format name, 2: number of shows, 3: type of output (new, canceled, on-air) */
-			$lwtv_sb_format_text = sprintf( _n( '%2$s %3$s %1$s, the most common format.', '%2$s %3$s %1$ss, the most common format.', $lwtv_sb_format_n, 'lwtv' ), $lwtv_sb_format, number_format_i18n( $lwtv_sb_format_n ), $sb_source );
+			$lwtv_sb_format_text = sprintf( _n( '%2$s %3$s %1$s, the most common format.', '%2$s %3$s %1$ss, the most common format.', $lwtv_sb_format_n, 'lwtv-underscores' ), $lwtv_sb_format, number_format_i18n( $lwtv_sb_format_n ), $sb_source );
 		} else {
 			/* translators: 1: number of tied formats, 2: shows per format. */
-			$lwtv_sb_format_text = sprintf( _n( '%1$s formats tie for the most, with %2$s %3$s show each.', '%1$s formats tie for the most, with %2$s %3$s shows each.', $lwtv_sb_format_n, 'lwtv' ), number_format_i18n( $lwtv_sb_format_ties ), number_format_i18n( $lwtv_sb_format_n ), $sb_source );
+			$lwtv_sb_format_text = sprintf( _n( '%1$s formats tie for the most, with %2$s %3$s show each.', '%1$s formats tie for the most, with %2$s %3$s shows each.', $lwtv_sb_format_n, 'lwtv-underscores' ), number_format_i18n( $lwtv_sb_format_ties ), number_format_i18n( $lwtv_sb_format_n ), $sb_source );
 		}
 		$sb_callouts[] = array(
-			'label' => __( 'Most popular format', 'lwtv' ),
+			'label' => __( 'Most popular format', 'lwtv-underscores' ),
 			'icon'  => 'tv.svg',
 			'text'  => $lwtv_sb_format_text,
 		);
@@ -228,13 +228,13 @@ if ( ! isset( $sb_callouts ) ) {
 	if ( $lwtv_sb_country ) {
 		if ( 1 === $lwtv_sb_country_ties ) {
 			/* translators: 1: country name, 2: number of shows. */
-			$lwtv_sb_country_text = sprintf( _n( '%1$s has %2$s %3$s show, more than any other country.', '%1$s has %2$s %3$s shows, more than any other country.', $lwtv_sb_country_n, 'lwtv' ), $lwtv_sb_country, number_format_i18n( $lwtv_sb_country_n ), $sb_source );
+			$lwtv_sb_country_text = sprintf( _n( '%1$s has %2$s %3$s show, more than any other country.', '%1$s has %2$s %3$s shows, more than any other country.', $lwtv_sb_country_n, 'lwtv-underscores' ), $lwtv_sb_country, number_format_i18n( $lwtv_sb_country_n ), $sb_source );
 		} else {
 			/* translators: 1: number of tied countries, 2: shows per country. */
-			$lwtv_sb_country_text = sprintf( _n( '%1$s countries tie for the most, with %2$s %3$s show each.', '%1$s countries tie for the most, with %2$s %3$s shows each.', $lwtv_sb_country_n, 'lwtv' ), number_format_i18n( $lwtv_sb_country_ties ), number_format_i18n( $lwtv_sb_country_n ), $sb_source );
+			$lwtv_sb_country_text = sprintf( _n( '%1$s countries tie for the most, with %2$s %3$s show each.', '%1$s countries tie for the most, with %2$s %3$s shows each.', $lwtv_sb_country_n, 'lwtv-underscores' ), number_format_i18n( $lwtv_sb_country_ties ), number_format_i18n( $lwtv_sb_country_n ), $sb_source );
 		}
 		$sb_callouts[] = array(
-			'label' => __( 'Most popular country', 'lwtv' ),
+			'label' => __( 'Most popular country', 'lwtv-underscores' ),
 			'icon'  => 'globe.svg',
 			'text'  => $lwtv_sb_country_text,
 		);
@@ -253,13 +253,13 @@ if ( ! isset( $sb_callouts ) ) {
 
 	<ul class="nav nav-pills lwtv-ty-pills" id="lwtv-ty-sb-tabs" role="tablist">
 		<li class="nav-item">
-			<a class="nav-link active" id="lwtv-ty-sb-byname-tab" data-bs-toggle="pill" href="#lwtv-ty-sb-byname" role="tab" aria-controls="lwtv-ty-sb-byname" aria-selected="true"><?php esc_html_e( 'By Name', 'lwtv' ); ?></a>
+			<a class="nav-link active" id="lwtv-ty-sb-byname-tab" data-bs-toggle="pill" href="#lwtv-ty-sb-byname" role="tab" aria-controls="lwtv-ty-sb-byname" aria-selected="true"><?php esc_html_e( 'By Name', 'lwtv-underscores' ); ?></a>
 		</li>
 		<li class="nav-item">
-			<a class="nav-link" id="lwtv-ty-sb-byformat-tab" data-bs-toggle="pill" href="#lwtv-ty-sb-byformat" role="tab" aria-controls="lwtv-ty-sb-byformat" aria-selected="false"><?php esc_html_e( 'By Format', 'lwtv' ); ?></a>
+			<a class="nav-link" id="lwtv-ty-sb-byformat-tab" data-bs-toggle="pill" href="#lwtv-ty-sb-byformat" role="tab" aria-controls="lwtv-ty-sb-byformat" aria-selected="false"><?php esc_html_e( 'By Format', 'lwtv-underscores' ); ?></a>
 		</li>
 		<li class="nav-item">
-			<a class="nav-link" id="lwtv-ty-sb-bycountry-tab" data-bs-toggle="pill" href="#lwtv-ty-sb-bycountry" role="tab" aria-controls="lwtv-ty-sb-bycountry" aria-selected="false"><?php esc_html_e( 'By Country', 'lwtv' ); ?></a>
+			<a class="nav-link" id="lwtv-ty-sb-bycountry-tab" data-bs-toggle="pill" href="#lwtv-ty-sb-bycountry" role="tab" aria-controls="lwtv-ty-sb-bycountry" aria-selected="false"><?php esc_html_e( 'By Country', 'lwtv-underscores' ); ?></a>
 		</li>
 	</ul>
 </div>

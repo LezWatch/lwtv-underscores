@@ -41,8 +41,8 @@ class Auto_Posting {
 
 		acf_add_options_sub_page(
 			array(
-				'page_title'  => __( 'Auto-Posting Options', 'lwtv' ),
-				'menu_title'  => __( 'Auto-Posting', 'lwtv' ),
+				'page_title'  => __( 'Auto-Posting Options', 'lwtv-underscores' ),
+				'menu_title'  => __( 'Auto-Posting', 'lwtv-underscores' ),
 				'parent_slug' => 'lwtv',
 				'capability'  => 'activate_plugins',
 				'menu_slug'   => 'lwtv-auto-posting',

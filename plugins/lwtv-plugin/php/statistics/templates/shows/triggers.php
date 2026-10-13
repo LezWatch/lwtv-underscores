@@ -36,9 +36,9 @@ $trig_facts = Trigger_Levels::facts( $trig_counts, (int) $shows_count );
 // Level meta: label + live taxonomy term description (styled, not split —
 // the leading NOTICE/CAUTION/WARNING arrives as a <strong> from the editor).
 $trig_levels = array(
-	'low'    => array( 'label' => __( 'Low', 'lwtv' ) ),
-	'medium' => array( 'label' => __( 'Medium', 'lwtv' ) ),
-	'high'   => array( 'label' => __( 'High', 'lwtv' ) ),
+	'low'    => array( 'label' => __( 'Low', 'lwtv-underscores' ) ),
+	'medium' => array( 'label' => __( 'Medium', 'lwtv-underscores' ) ),
+	'high'   => array( 'label' => __( 'High', 'lwtv-underscores' ) ),
 );
 foreach ( $trig_levels as $trig_level => $trig_meta ) {
 	$trig_term = get_term_by( 'slug', $trig_level, 'lez_triggers' );
@@ -47,16 +47,16 @@ foreach ( $trig_levels as $trig_level => $trig_meta ) {
 }
 ?>
 
-<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'Trigger Warnings', 'lwtv' ); ?></p>
+<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'Trigger Warnings', 'lwtv-underscores' ); ?></p>
 
 <?php if ( $trig_facts['flagged'] <= 0 ) : ?>
 	<section class="lwtv-yearbars-card bg-light">
-		<h2 class="lwtv-yearbars-headline"><?php esc_html_e( 'No show carries a content warning yet', 'lwtv' ); ?></h2>
+		<h2 class="lwtv-yearbars-headline"><?php esc_html_e( 'No show carries a content warning yet', 'lwtv-underscores' ); ?></h2>
 		<p class="lwtv-yearbars-desc">
 			<?php
 			printf(
 				/* translators: %s: total number of shows. */
-				esc_html__( 'All %s tracked shows are currently unflagged.', 'lwtv' ),
+				esc_html__( 'All %s tracked shows are currently unflagged.', 'lwtv-underscores' ),
 				esc_html( number_format_i18n( (int) $shows_count ) )
 			);
 			?>
@@ -71,14 +71,14 @@ foreach ( $trig_levels as $trig_level => $trig_meta ) {
 		<div class="lwtv-tw-rail">
 			<div class="lwtv-tw-stat lwtv-tw-stat--scarcity">
 				<div class="lwtv-tw-stat-top">
-					<span class="lwtv-tw-stat-eyebrow"><?php esc_html_e( 'Scarcity', 'lwtv' ); ?></span>
+					<span class="lwtv-tw-stat-eyebrow"><?php esc_html_e( 'Scarcity', 'lwtv-underscores' ); ?></span>
 					<span class="lwtv-tw-stat-icon"><?php echo lwtv_plugin()->get_symbolicon( svg: 'warning.svg', icon: 'svg-warning', max_size: '15' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
 				</div>
 				<span class="lwtv-tw-stat-figure">
 					<?php
 					printf(
 						/* translators: %s: the "1 in N" denominator for flagged shows. */
-						esc_html__( '1 in %s', 'lwtv' ),
+						esc_html__( '1 in %s', 'lwtv-underscores' ),
 						esc_html( number_format_i18n( $trig_facts['scarcity_ratio'] ) )
 					);
 					?>
@@ -87,7 +87,7 @@ foreach ( $trig_levels as $trig_level => $trig_meta ) {
 					<?php
 					printf(
 						/* translators: 1: number of flagged shows, 2: total number of shows. */
-						esc_html__( 'shows carries a warning of any kind: %1$s of %2$s.', 'lwtv' ),
+						esc_html__( 'shows carries a warning of any kind: %1$s of %2$s.', 'lwtv-underscores' ),
 						esc_html( number_format_i18n( $trig_facts['flagged'] ) ),
 						esc_html( number_format_i18n( (int) $shows_count ) )
 					);
@@ -97,7 +97,7 @@ foreach ( $trig_levels as $trig_level => $trig_meta ) {
 
 			<div class="lwtv-tw-stat lwtv-tw-stat--weight">
 				<div class="lwtv-tw-stat-top">
-					<span class="lwtv-tw-stat-eyebrow"><?php esc_html_e( 'Weight', 'lwtv' ); ?></span>
+					<span class="lwtv-tw-stat-eyebrow"><?php esc_html_e( 'Weight', 'lwtv-underscores' ); ?></span>
 					<span class="lwtv-tw-stat-icon"><?php echo lwtv_plugin()->get_symbolicon( svg: 'scales.svg', icon: 'svg-scales', max_size: '15' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
 				</div>
 				<span class="lwtv-tw-stat-figure"><?php echo esc_html( number_format_i18n( $trig_facts['heavy_pct'], 1 ) . '%' ); ?></span>
@@ -106,11 +106,11 @@ foreach ( $trig_levels as $trig_level => $trig_meta ) {
 					if ( $trig_facts['heavy'] > 0 ) {
 						printf(
 							/* translators: %s: number of medium + high warning shows. */
-							esc_html__( 'of warnings are medium or high: %s shows in all.', 'lwtv' ),
+							esc_html__( 'of warnings are medium or high: %s shows in all.', 'lwtv-underscores' ),
 							esc_html( number_format_i18n( $trig_facts['heavy'] ) )
 						);
 					} else {
-						esc_html_e( 'of warnings are medium or high — every flagged show sits at low.', 'lwtv' );
+						esc_html_e( 'of warnings are medium or high — every flagged show sits at low.', 'lwtv-underscores' );
 					}
 					?>
 				</p>
@@ -118,7 +118,7 @@ foreach ( $trig_levels as $trig_level => $trig_meta ) {
 
 			<div class="lwtv-tw-stat lwtv-tw-stat--floor">
 				<div class="lwtv-tw-stat-top">
-					<span class="lwtv-tw-stat-eyebrow"><?php esc_html_e( 'The Floor', 'lwtv' ); ?></span>
+					<span class="lwtv-tw-stat-eyebrow"><?php esc_html_e( 'The Floor', 'lwtv-underscores' ); ?></span>
 					<span class="lwtv-tw-stat-icon"><?php echo lwtv_plugin()->get_symbolicon( svg: 'graph-line.svg', icon: 'svg-graph-line', max_size: '15' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
 				</div>
 				<span class="lwtv-tw-stat-figure" data-count-to="<?php echo (int) $trig_facts['levels']['high']['count']; ?>"><?php echo esc_html( number_format_i18n( $trig_facts['levels']['high']['count'] ) ); ?></span>
@@ -127,11 +127,11 @@ foreach ( $trig_levels as $trig_level => $trig_meta ) {
 					if ( $trig_facts['floor_ratio'] > 0 ) {
 						printf(
 							/* translators: %s: the "1 in N" denominator for high-warning shows. */
-							esc_html__( 'shows carry a high warning. That&#8217;s 1 in every %s.', 'lwtv' ),
+							esc_html__( 'shows carry a high warning. That&#8217;s 1 in every %s.', 'lwtv-underscores' ),
 							esc_html( number_format_i18n( $trig_facts['floor_ratio'] ) )
 						);
 					} else {
-						esc_html_e( 'shows carry a high warning right now — the heaviest flag is unused.', 'lwtv' );
+						esc_html_e( 'shows carry a high warning right now — the heaviest flag is unused.', 'lwtv-underscores' );
 					}
 					?>
 				</p>
@@ -144,7 +144,7 @@ foreach ( $trig_levels as $trig_level => $trig_meta ) {
 			if ( 'even' === $trig_bal['mode'] ) {
 				$trig_bal_text = sprintf(
 					/* translators: 1: low-warning count, 2: high-warning count. */
-					__( 'low and high warnings are nearly even — %1$s against %2$s.', 'lwtv' ),
+					__( 'low and high warnings are nearly even — %1$s against %2$s.', 'lwtv-underscores' ),
 					number_format_i18n( $trig_facts['levels']['low']['count'] ),
 					number_format_i18n( $trig_facts['levels']['high']['count'] )
 				);
@@ -152,19 +152,19 @@ foreach ( $trig_levels as $trig_level => $trig_meta ) {
 				$trig_bal_variants = array(
 					'low-leads'  => array(
 						/* translators: 1: rounded ratio, 2: low-warning count, 3: high-warning count. */
-						'nearly'    => __( 'low warnings outnumber high ones nearly %1$s to 1 (%2$s against %3$s).', 'lwtv' ),
+						'nearly'    => __( 'low warnings outnumber high ones nearly %1$s to 1 (%2$s against %3$s).', 'lwtv-underscores' ),
 						/* translators: 1: rounded ratio, 2: low-warning count, 3: high-warning count. */
-						'more-than' => __( 'low warnings outnumber high ones more than %1$s to 1 (%2$s against %3$s).', 'lwtv' ),
+						'more-than' => __( 'low warnings outnumber high ones more than %1$s to 1 (%2$s against %3$s).', 'lwtv-underscores' ),
 						/* translators: 1: rounded ratio, 2: low-warning count, 3: high-warning count. */
-						'exactly'   => __( 'low warnings outnumber high ones %1$s to 1 (%2$s against %3$s).', 'lwtv' ),
+						'exactly'   => __( 'low warnings outnumber high ones %1$s to 1 (%2$s against %3$s).', 'lwtv-underscores' ),
 					),
 					'high-leads' => array(
 						/* translators: 1: rounded ratio, 2: high-warning count, 3: low-warning count. */
-						'nearly'    => __( 'high warnings outnumber low ones nearly %1$s to 1 (%2$s against %3$s).', 'lwtv' ),
+						'nearly'    => __( 'high warnings outnumber low ones nearly %1$s to 1 (%2$s against %3$s).', 'lwtv-underscores' ),
 						/* translators: 1: rounded ratio, 2: high-warning count, 3: low-warning count. */
-						'more-than' => __( 'high warnings outnumber low ones more than %1$s to 1 (%2$s against %3$s).', 'lwtv' ),
+						'more-than' => __( 'high warnings outnumber low ones more than %1$s to 1 (%2$s against %3$s).', 'lwtv-underscores' ),
 						/* translators: 1: rounded ratio, 2: high-warning count, 3: low-warning count. */
-						'exactly'   => __( 'high warnings outnumber low ones %1$s to 1 (%2$s against %3$s).', 'lwtv' ),
+						'exactly'   => __( 'high warnings outnumber low ones %1$s to 1 (%2$s against %3$s).', 'lwtv-underscores' ),
 					),
 				);
 
@@ -179,7 +179,7 @@ foreach ( $trig_levels as $trig_level => $trig_meta ) {
 			}
 			if ( '' !== $trig_bal_text ) :
 				?>
-				<p class="lwtv-tw-footnote"><strong><?php esc_html_e( 'Balance:', 'lwtv' ); ?></strong> <?php echo esc_html( $trig_bal_text ); ?></p>
+				<p class="lwtv-tw-footnote"><strong><?php esc_html_e( 'Balance:', 'lwtv-underscores' ); ?></strong> <?php echo esc_html( $trig_bal_text ); ?></p>
 			<?php endif; ?>
 		</div>
 
@@ -187,11 +187,11 @@ foreach ( $trig_levels as $trig_level => $trig_meta ) {
 			<h2 class="lwtv-yearbars-headline">
 				<?php
 				if ( $trig_facts['flagged_pct'] < 25 ) {
-					esc_html_e( 'A thin sliver of the archive, opened up', 'lwtv' );
+					esc_html_e( 'A thin sliver of the archive, opened up', 'lwtv-underscores' );
 				} else {
 					printf(
 						/* translators: %s: a fraction phrase, e.g. "Over a quarter". */
-						esc_html__( '%s of the archive, opened up', 'lwtv' ),
+						esc_html__( '%s of the archive, opened up', 'lwtv-underscores' ),
 						esc_html( lwtv_stats_fraction_phrase( $trig_facts['flagged_pct'] ) )
 					);
 				}
@@ -201,7 +201,7 @@ foreach ( $trig_levels as $trig_level => $trig_meta ) {
 				<?php
 				printf(
 					/* translators: 1: total number of shows, 2: number of flagged shows. */
-					esc_html__( 'Of the %1$s shows we track, the %2$s flagged ones sit at the right-hand end.', 'lwtv' ),
+					esc_html__( 'Of the %1$s shows we track, the %2$s flagged ones sit at the right-hand end.', 'lwtv-underscores' ),
 					esc_html( number_format_i18n( (int) $shows_count ) ),
 					esc_html( number_format_i18n( $trig_facts['flagged'] ) )
 				);
@@ -211,7 +211,7 @@ foreach ( $trig_levels as $trig_level => $trig_meta ) {
 			<?php
 			$trig_scale_label = sprintf(
 				/* translators: 1: unflagged count, 2: low count, 3: medium count, 4: high count, 5: total shows. */
-				__( 'True-scale bar: %1$s shows with no warning, then %2$s low, %3$s medium, and %4$s high, of %5$s shows.', 'lwtv' ),
+				__( 'True-scale bar: %1$s shows with no warning, then %2$s low, %3$s medium, and %4$s high, of %5$s shows.', 'lwtv-underscores' ),
 				number_format_i18n( $trig_facts['none'] ),
 				number_format_i18n( $trig_facts['levels']['low']['count'] ),
 				number_format_i18n( $trig_facts['levels']['medium']['count'] ),
@@ -225,7 +225,7 @@ foreach ( $trig_levels as $trig_level => $trig_meta ) {
 						<?php
 						printf(
 							/* translators: %s: number of shows without a warning. */
-							esc_html( _n( '%s show carries no warning', '%s shows carry no warning', $trig_facts['none'], 'lwtv' ) ),
+							esc_html( _n( '%s show carries no warning', '%s shows carry no warning', $trig_facts['none'], 'lwtv-underscores' ) ),
 							esc_html( number_format_i18n( $trig_facts['none'] ) )
 						);
 						?>
@@ -244,13 +244,13 @@ foreach ( $trig_levels as $trig_level => $trig_meta ) {
 			<div class="lwtv-tw-panel">
 				<div class="lwtv-tw-panel-head">
 					<span class="lwtv-tw-panel-num" data-count-to="<?php echo (int) $trig_facts['flagged']; ?>"><?php echo esc_html( number_format_i18n( $trig_facts['flagged'] ) ); ?></span>
-					<span class="lwtv-tw-panel-sub"><?php esc_html_e( 'flagged shows', 'lwtv' ); ?></span>
+					<span class="lwtv-tw-panel-sub"><?php esc_html_e( 'flagged shows', 'lwtv-underscores' ); ?></span>
 				</div>
 
 				<?php
 				$trig_mag_label = sprintf(
 					/* translators: 1: low count, 2: medium count, 3: high count, 4: flagged total. */
-					__( 'Magnified bar of the %4$s flagged shows: %1$s low, %2$s medium, %3$s high.', 'lwtv' ),
+					__( 'Magnified bar of the %4$s flagged shows: %1$s low, %2$s medium, %3$s high.', 'lwtv-underscores' ),
 					number_format_i18n( $trig_facts['levels']['low']['count'] ),
 					number_format_i18n( $trig_facts['levels']['medium']['count'] ),
 					number_format_i18n( $trig_facts['levels']['high']['count'] ),

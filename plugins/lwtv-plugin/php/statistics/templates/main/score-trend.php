@@ -55,9 +55,9 @@ foreach ( $trend_yearly as $trend_year => $trend_row ) {
 
 $trend_last = end( $trend_rows );
 
-$trend_description = __( 'The average score of every show on the air that year, on the full 0–100 scale. Years with fewer than five shows are left off.', 'lwtv' );
+$trend_description = __( 'The average score of every show on the air that year, on the full 0–100 scale. Years with fewer than five shows are left off.', 'lwtv-underscores' );
 if ( isset( $trend_yearly[ $trend_now ] ) ) {
-	$trend_description .= ' ' . __( 'The current year is still in progress.', 'lwtv' );
+	$trend_description .= ' ' . __( 'The current year is still in progress.', 'lwtv-underscores' );
 }
 
 $yearbars = array(
@@ -67,25 +67,25 @@ $yearbars = array(
 	'scale_max'   => Score_Distribution::SCORE_MAX,
 	'stat_num'    => (int) $trend_last['count'],
 	/* translators: %s: the latest year (4-digit, never thousands-formatted). */
-	'stat_sub'    => sprintf( __( 'average score in %s', 'lwtv' ), (string) $trend_last['year'] ),
-	'eyebrow'     => __( 'The Lineup, Graded', 'lwtv' ),
-	'headline'    => __( 'How good was each year of queer TV?', 'lwtv' ),
+	'stat_sub'    => sprintf( __( 'average score in %s', 'lwtv-underscores' ), (string) $trend_last['year'] ),
+	'eyebrow'     => __( 'The Lineup, Graded', 'lwtv-underscores' ),
+	'headline'    => __( 'How good was each year of queer TV?', 'lwtv-underscores' ),
 	'description' => $trend_description,
 	'callouts'    => array(
 		array(
-			'label' => __( 'Best Lineup', 'lwtv' ),
+			'label' => __( 'Best Lineup', 'lwtv-underscores' ),
 			'svg'   => 'trophy.svg',
 			'icon'  => 'svg-trophy',
 			'text'  => sprintf(
 				/* translators: 1: year, 2: average show score that year (0–100). */
-				__( 'The shows on air in %1$s averaged %2$s, making it the best-graded year of queer TV so far.', 'lwtv' ),
+				__( 'The shows on air in %1$s averaged %2$s, making it the best-graded year of queer TV so far.', 'lwtv-underscores' ),
 				(string) $trend_best['year'],
 				number_format_i18n( $trend_best['average'], 1 )
 			),
 		),
 	),
 	/* translators: %s: year. */
-	'hover_sub'   => __( 'average score in %s', 'lwtv' ),
+	'hover_sub'   => __( 'average score in %s', 'lwtv-underscores' ),
 );
 
 // phpcs:ignore PEAR.Files.IncludingFile.UseRequire

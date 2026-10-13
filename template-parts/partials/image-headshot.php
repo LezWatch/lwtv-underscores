@@ -82,7 +82,7 @@ if ( ! has_post_thumbnail( $this_id ) ) {
 		<!-- Nav tabs -->
 		<ul class="nav nav-tabs" id="char-image-tabs" role="tablist">
 			<li class="nav-item" role="presentation">
-				<a class="nav-link active" id="char-tab-primary_image" data-bs-toggle="tab" href="#char-pane-primary_image" role="tab" aria-controls="char-pane-primary_image" aria-selected="true"><?php esc_html_e( 'Primary', 'lwtv' ); ?></a>
+				<a class="nav-link active" id="char-tab-primary_image" data-bs-toggle="tab" href="#char-pane-primary_image" role="tab" aria-controls="char-pane-primary_image" aria-selected="true"><?php esc_html_e( 'Primary', 'lwtv-underscores' ); ?></a>
 			</li>
 			<?php
 			foreach ( $image_tabs as $a_tab ) {

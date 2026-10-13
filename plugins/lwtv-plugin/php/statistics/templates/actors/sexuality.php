@@ -28,7 +28,7 @@ uasort( $sex_data, fn( $a, $b ) => (int) $b['count'] <=> (int) $a['count'] );
 $sex_ramp     = array( 'amber', 'medamber', 'midamber', 'paleamber' );
 $sex_segments = array(
 	array(
-		'label' => __( 'Straight', 'lwtv' ),
+		'label' => __( 'Straight', 'lwtv-underscores' ),
 		'count' => $sex_straight,
 		'pct'   => ( $sex_total > 0 ) ? round( ( $sex_straight / $sex_total ) * 100, 1 ) : 0,
 		'class' => 'grey',
@@ -53,14 +53,14 @@ foreach ( $sex_data as $sex_row ) {
 $sex_other = max( 0, $sex_total - $sex_named );
 if ( $sex_other > 0 ) {
 	$sex_segments[] = array(
-		'label' => __( 'Other', 'lwtv' ),
+		'label' => __( 'Other', 'lwtv-underscores' ),
 		'count' => $sex_other,
 		'pct'   => ( $sex_total > 0 ) ? round( ( $sex_other / $sex_total ) * 100, 1 ) : 0,
 		'class' => 'ltamber',
 	);
 }
 $sex_segments[] = array(
-	'label' => __( 'Unknown', 'lwtv' ),
+	'label' => __( 'Unknown', 'lwtv-underscores' ),
 	'count' => $sex_unknown,
 	'pct'   => ( $sex_total > 0 ) ? round( ( $sex_unknown / $sex_total ) * 100, 1 ) : 0,
 	'class' => 'bordergrey',
@@ -71,15 +71,15 @@ $sex_lead = $sex_segments[0] ?? array( 'pct' => 0 );
 $sex_in10 = ( $sex_lead['pct'] > 0 ) ? (int) round( $sex_lead['pct'] / 10 ) : 0;
 
 // translators: %1$1d is the X-in-10 number for the largest Gender Demographic, %2$2s is the name of the gender.
-$headline = ( $sex_in10 > 0 ) ? sprintf( __( '%1$1d in 10 actors are %2$2s', 'lwtv' ), $sex_in10, lcfirst( $sex_lead['label'] ) ) : __( 'Sexuality Breakdown:', 'lwtv' );
+$headline = ( $sex_in10 > 0 ) ? sprintf( __( '%1$1d in 10 actors are %2$2s', 'lwtv-underscores' ), $sex_in10, lcfirst( $sex_lead['label'] ) ) : __( 'Sexuality Breakdown:', 'lwtv-underscores' );
 
 $donut = array(
 	'segments'    => $sex_segments,
 	'center'      => $sex_total,
-	'center_sub'  => __( 'actors', 'lwtv' ),
-	'eyebrow'     => __( 'Actor Sexual Orientation', 'lwtv' ),
+	'center_sub'  => __( 'actors', 'lwtv-underscores' ),
+	'eyebrow'     => __( 'Actor Sexual Orientation', 'lwtv-underscores' ),
 	'headline'    => $headline,
-	'description' => __( 'Queer roles are still mostly played by straight actors.', 'lwtv' ),
+	'description' => __( 'Queer roles are still mostly played by straight actors.', 'lwtv-underscores' ),
 );
 
 // phpcs:ignore PEAR.Files.IncludingFile.UseRequire
@@ -98,7 +98,7 @@ if ( $sex_tracked_count > 0 ) {
 	$sex_pullstats[] = array(
 		'icon'   => 'tag.svg',
 		'number' => number_format_i18n( $sex_tracked_count ),
-		'label'  => __( 'Distinct sexual orientations tracked.', 'lwtv' ),
+		'label'  => __( 'Distinct sexual orientations tracked.', 'lwtv-underscores' ),
 	);
 }
 
@@ -107,21 +107,21 @@ if ( $sex_total > 0 ) {
 	$sex_pullstats[]     = array(
 		'icon'   => 'chart-pie.svg',
 		/* translators: %s: percentage of actors with an orientation other than straight (one decimal). */
-		'number' => sprintf( __( '%s%%', 'lwtv' ), number_format_i18n( $sex_nonstraight_pct, 1 ) ),
-		'label'  => __( 'Percentage with an orientation other than straight.', 'lwtv' ),
+		'number' => sprintf( __( '%s%%', 'lwtv-underscores' ), number_format_i18n( $sex_nonstraight_pct, 1 ) ),
+		'label'  => __( 'Percentage with an orientation other than straight.', 'lwtv-underscores' ),
 	);
 }
 
 // The single highest-count non-straight orientation: segments[0] is always
 // forced to "Straight" above regardless of rank, so segments[1] (when it
 // isn't the Other/Unknown catch-alls) is the real leader.
-if ( isset( $sex_segments[1] ) && ! in_array( $sex_segments[1]['label'], array( __( 'Other', 'lwtv' ), __( 'Unknown', 'lwtv' ) ), true ) ) {
+if ( isset( $sex_segments[1] ) && ! in_array( $sex_segments[1]['label'], array( __( 'Other', 'lwtv-underscores' ), __( 'Unknown', 'lwtv-underscores' ) ), true ) ) {
 	$sex_pullstats[] = array(
 		'icon'   => 'heart.svg',
 		/* translators: %s is the name of the segment */
-		'number' => sprintf( __( '%s%%', 'lwtv' ), number_format_i18n( $sex_segments[1]['pct'], 1 ) ),
+		'number' => sprintf( __( '%s%%', 'lwtv-underscores' ), number_format_i18n( $sex_segments[1]['pct'], 1 ) ),
 		/* translators: %s: the leading non-straight orientation's name. */
-		'label'  => sprintf( __( 'Are %s, the most common non-straight orientation.', 'lwtv' ), lcfirst( $sex_segments[1]['label'] ) ),
+		'label'  => sprintf( __( 'Are %s, the most common non-straight orientation.', 'lwtv-underscores' ), lcfirst( $sex_segments[1]['label'] ) ),
 	);
 }
 
@@ -147,10 +147,10 @@ if ( ! empty( $sex_gap['straight_total'] ) && $sex_gap['queer_anyway'] > 0 ) :
 	$sex_gap_pct   = round( ( $sex_gap['queer_anyway'] / $sex_gap['straight_total'] ) * 100, 1 );
 	$lwtv_callouts = array(
 		array(
-			'label' => __( 'The Overlap', 'lwtv' ),
+			'label' => __( 'The Overlap', 'lwtv-underscores' ),
 			'icon'  => 'user-heart.svg',
 			/* translators: %s: percentage of Straight-tagged actors who are still queer overall (one decimal). */
-			'text'  => sprintf( __( '%s%% of actors marked Straight by orientation are still counted as queer once gender, pronouns, or romantic orientation are factored in.', 'lwtv' ), number_format_i18n( $sex_gap_pct, 1 ) ),
+			'text'  => sprintf( __( '%s%% of actors marked Straight by orientation are still counted as queer once gender, pronouns, or romantic orientation are factored in.', 'lwtv-underscores' ), number_format_i18n( $sex_gap_pct, 1 ) ),
 		),
 	);
 	// phpcs:ignore PEAR.Files.IncludingFile.UseRequire
@@ -166,7 +166,7 @@ if ( ! empty( $sex_prolific ) ) :
 	// that orientation has any characters) are simply skipped below.
 	$sex_prolific_slugs = array_merge( array( 'heterosexual' ), array_keys( $sex_data ) );
 	?>
-	<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'Most Prolific by Orientation', 'lwtv' ); ?></p>
+	<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'Most Prolific by Orientation', 'lwtv-underscores' ); ?></p>
 	<div class="lwtv-pullstats lwtv-pullstats--three lwtv-statcards lwtv-bars--actors">
 		<?php
 		foreach ( $sex_prolific_slugs as $sex_prolific_slug ) :

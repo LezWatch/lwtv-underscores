@@ -318,7 +318,7 @@ class ACF {
 		// phpcs:enable WordPress.Security.NonceVerification.Missing
 
 		if ( $start && (int) $value < $start ) {
-			return __( 'The end year cannot be earlier than the start year.', 'lwtv' );
+			return __( 'The end year cannot be earlier than the start year.', 'lwtv-underscores' );
 		}
 
 		return $valid;
@@ -380,7 +380,7 @@ class ACF {
 
 		return sprintf(
 			/* translators: 1: IMDb ID, 2: title of the post already using it, 3: that post's ID. */
-			__( 'IMDb ID %1$s is already used by "%2$s" (post %3$d). If this is a different person or show, check the ID; if it is the same one, edit that post instead of making a second.', 'lwtv' ),
+			__( 'IMDb ID %1$s is already used by "%2$s" (post %3$d). If this is a different person or show, check the ID; if it is the same one, edit that post instead of making a second.', 'lwtv-underscores' ),
 			$wanted,
 			get_the_title( $owner_id ),
 			$owner_id

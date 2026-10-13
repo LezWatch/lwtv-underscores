@@ -27,9 +27,9 @@ if ( $ds_total_shows > 0 ) {
 	$ds_highlights[] = array(
 		'icon'   => 'chart-pie.svg',
 		/* translators: %s: percentage of shows with a recorded death (one decimal). */
-		'number' => sprintf( __( '%s%%', 'lwtv' ), number_format_i18n( $ds_death_pct, 1 ) ),
+		'number' => sprintf( __( '%s%%', 'lwtv-underscores' ), number_format_i18n( $ds_death_pct, 1 ) ),
 		/* translators: 1: shows with a recorded death, 2: total shows. */
-		'label'  => sprintf( __( 'Of shows have killed at least one queer character (%1$s of %2$s).', 'lwtv' ), number_format_i18n( $ds_shows_with_death ), number_format_i18n( $ds_total_shows ) ),
+		'label'  => sprintf( __( 'Of shows have killed at least one queer character (%1$s of %2$s).', 'lwtv-underscores' ), number_format_i18n( $ds_shows_with_death ), number_format_i18n( $ds_total_shows ) ),
 	);
 }
 
@@ -37,7 +37,7 @@ if ( ! empty( $ds_most_lethal ) ) {
 	$ds_highlights[] = array(
 		'icon'   => 'skull-crossbones.svg',
 		'number' => number_format_i18n( $ds_most_lethal['count'] ),
-		'label'  => __( 'Most Lethal Show — the most queer characters killed:', 'lwtv' ),
+		'label'  => __( 'Most Lethal Show — the most queer characters killed:', 'lwtv-underscores' ),
 		'url'    => $ds_most_lethal['url'],
 		'name'   => $ds_most_lethal['name'],
 	);
@@ -47,9 +47,9 @@ if ( ! empty( $ds_highest_rate ) ) {
 	$ds_highlights[] = array(
 		'icon'   => 'chart-bar.svg',
 		/* translators: %s: the highest death rate found among qualifying shows (one decimal). */
-		'number' => sprintf( __( '%s%%', 'lwtv' ), number_format_i18n( $ds_highest_rate['pct'], 1 ) ),
+		'number' => sprintf( __( '%s%%', 'lwtv-underscores' ), number_format_i18n( $ds_highest_rate['pct'], 1 ) ),
 		/* translators: %d: the minimum cast size a show needs to qualify for this highlight. */
-		'label'  => sprintf( __( 'Of the cast dies — the highest death rate among shows with %d+ characters:', 'lwtv' ), \LWTV\Statistics\Build\Show_Death_Leaders::MIN_CAST_FOR_RATE ),
+		'label'  => sprintf( __( 'Of the cast dies — the highest death rate among shows with %d+ characters:', 'lwtv-underscores' ), \LWTV\Statistics\Build\Show_Death_Leaders::MIN_CAST_FOR_RATE ),
 		'url'    => $ds_highest_rate['url'],
 		'name'   => $ds_highest_rate['name'],
 	);
@@ -57,7 +57,7 @@ if ( ! empty( $ds_highest_rate ) ) {
 
 if ( ! empty( $ds_highlights ) ) {
 	?>
-	<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'Standout Numbers', 'lwtv' ); ?></p>
+	<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'Standout Numbers', 'lwtv-underscores' ); ?></p>
 	<div class="lwtv-pullstats lwtv-pullstats--three lwtv-statcards lwtv-bars--death">
 		<?php
 		foreach ( $ds_highlights as $ds_highlight ) {
@@ -86,9 +86,9 @@ if ( ! empty( $ds_highlights ) ) {
 <?php
 $ds_data  = lwtv_plugin()->generate_dead_statistics( 'shows', 'per-show', 'array' );
 $ds_map   = array(
-	'no_dead'   => array( __( 'No deaths', 'lwtv' ), 'magenta' ),
-	'some_dead' => array( __( 'Some deaths', 'lwtv' ), 'royal-blue' ),
-	'all_dead'  => array( __( 'All die', 'lwtv' ), 'lavender' ),
+	'no_dead'   => array( __( 'No deaths', 'lwtv-underscores' ), 'magenta' ),
+	'some_dead' => array( __( 'Some deaths', 'lwtv-underscores' ), 'royal-blue' ),
+	'all_dead'  => array( __( 'All die', 'lwtv-underscores' ), 'lavender' ),
 );
 $ds_total = 0;
 foreach ( $ds_data as $ds_row ) {
@@ -110,10 +110,10 @@ $ds_alldead = isset( $ds_data['all_dead'] ) ? (int) $ds_data['all_dead']['count'
 $donut = array(
 	'segments'    => $ds_seg,
 	'center'      => $ds_alldead,
-	'center_sub'  => __( 'kill everyone', 'lwtv' ),
-	'eyebrow'     => __( 'Deaths Per Show', 'lwtv' ),
-	'headline'    => __( 'Most shows keep their queer characters alive', 'lwtv' ),
-	'description' => __( 'Raw per-show death counts tend to match with how large a show\'s cast is.', 'lwtv' ),
+	'center_sub'  => __( 'kill everyone', 'lwtv-underscores' ),
+	'eyebrow'     => __( 'Deaths Per Show', 'lwtv-underscores' ),
+	'headline'    => __( 'Most shows keep their queer characters alive', 'lwtv-underscores' ),
+	'description' => __( 'Raw per-show death counts tend to match with how large a show\'s cast is.', 'lwtv-underscores' ),
 );
 // phpcs:ignore PEAR.Files.IncludingFile.UseRequire
 include plugin_dir_path( __DIR__ ) . 'partials/donut.php';

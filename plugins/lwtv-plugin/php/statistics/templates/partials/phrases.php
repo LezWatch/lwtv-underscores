@@ -27,17 +27,17 @@ if ( ! function_exists( 'lwtv_stats_fraction_phrase' ) ) {
 
 		// Each rung: [ minimum percent (inclusive), phrase ]. High -> low.
 		$ladder = array(
-			array( 90, __( 'Nearly all', 'lwtv' ) ),
-			array( 75, __( 'Over three quarters', 'lwtv' ) ),
-			array( 66, __( 'Over two thirds', 'lwtv' ) ),
-			array( 60, __( 'Nearly two thirds', 'lwtv' ) ),
-			array( 50, __( 'Over half', 'lwtv' ) ),
-			array( 40, __( 'Nearly half', 'lwtv' ) ),
-			array( 33, __( 'Over a third', 'lwtv' ) ),
-			array( 25, __( 'Over a quarter', 'lwtv' ) ),
-			array( 10, __( 'About a fifth', 'lwtv' ) ),
-			array( 1, __( 'A small share', 'lwtv' ) ),
-			array( 0, __( 'None', 'lwtv' ) ),
+			array( 90, __( 'Nearly all', 'lwtv-underscores' ) ),
+			array( 75, __( 'Over three quarters', 'lwtv-underscores' ) ),
+			array( 66, __( 'Over two thirds', 'lwtv-underscores' ) ),
+			array( 60, __( 'Nearly two thirds', 'lwtv-underscores' ) ),
+			array( 50, __( 'Over half', 'lwtv-underscores' ) ),
+			array( 40, __( 'Nearly half', 'lwtv-underscores' ) ),
+			array( 33, __( 'Over a third', 'lwtv-underscores' ) ),
+			array( 25, __( 'Over a quarter', 'lwtv-underscores' ) ),
+			array( 10, __( 'About a fifth', 'lwtv-underscores' ) ),
+			array( 1, __( 'A small share', 'lwtv-underscores' ) ),
+			array( 0, __( 'None', 'lwtv-underscores' ) ),
 		);
 
 		/**
@@ -54,7 +54,7 @@ if ( ! function_exists( 'lwtv_stats_fraction_phrase' ) ) {
 			}
 		}
 
-		return __( 'None', 'lwtv' );
+		return __( 'None', 'lwtv-underscores' );
 	}
 }
 
@@ -79,16 +79,16 @@ if ( ! function_exists( 'lwtv_stats_shortfall_phrase' ) ) {
 
 		// Each rung: [ exclusive ceiling percent, phrase ]. Low -> high.
 		$ladder = array(
-			array( 9, __( 'Very few', 'lwtv' ) ),
-			array( 12.5, __( 'Fewer than an eighth', 'lwtv' ) ),
-			array( 20, __( 'Fewer than a fifth', 'lwtv' ) ),
-			array( 25, __( 'Fewer than a quarter', 'lwtv' ) ),
-			array( 33, __( 'Fewer than a third', 'lwtv' ) ),
-			array( 50, __( 'Fewer than half', 'lwtv' ) ),
-			array( 66, __( 'Fewer than two thirds', 'lwtv' ) ),
-			array( 75, __( 'Fewer than three quarters', 'lwtv' ) ),
-			array( 90, __( 'Most', 'lwtv' ) ),
-			array( 99.5, __( 'Nearly all', 'lwtv' ) ),
+			array( 9, __( 'Very few', 'lwtv-underscores' ) ),
+			array( 12.5, __( 'Fewer than an eighth', 'lwtv-underscores' ) ),
+			array( 20, __( 'Fewer than a fifth', 'lwtv-underscores' ) ),
+			array( 25, __( 'Fewer than a quarter', 'lwtv-underscores' ) ),
+			array( 33, __( 'Fewer than a third', 'lwtv-underscores' ) ),
+			array( 50, __( 'Fewer than half', 'lwtv-underscores' ) ),
+			array( 66, __( 'Fewer than two thirds', 'lwtv-underscores' ) ),
+			array( 75, __( 'Fewer than three quarters', 'lwtv-underscores' ) ),
+			array( 90, __( 'Most', 'lwtv-underscores' ) ),
+			array( 99.5, __( 'Nearly all', 'lwtv-underscores' ) ),
 		);
 
 		/**
@@ -105,7 +105,7 @@ if ( ! function_exists( 'lwtv_stats_shortfall_phrase' ) ) {
 			}
 		}
 
-		return __( 'Nearly all', 'lwtv' );
+		return __( 'Nearly all', 'lwtv-underscores' );
 	}
 }
 
@@ -184,6 +184,6 @@ if ( ! function_exists( 'lwtv_stats_ratio_phrase' ) ) {
 		}
 		$denominator = max( 2, (int) round( 100 / $pct ) );
 		/* translators: %s: a whole number N, as in "one in 11". */
-		return sprintf( __( 'one in %s', 'lwtv' ), number_format_i18n( $denominator ) );
+		return sprintf( __( 'one in %s', 'lwtv-underscores' ), number_format_i18n( $denominator ) );
 	}
 }

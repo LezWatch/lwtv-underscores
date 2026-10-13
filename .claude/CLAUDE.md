@@ -201,7 +201,9 @@ vendor/bin/phpunit --filter Trends # run a single test class
 - Taxonomy slugs: `lez_stars`, `lez_triggers`, `lez_tropes`, `lez_genres`, `lez_stations`, etc.
 - Do not use `wp_reset_query()` alternatives — direct `wp_reset_query()` is intentionally allowed.
 - Avoid introducing new direct `file_get_contents()` calls for remote URLs; use `wp_remote_get()` instead, even though local file reads are permitted.
-- All user-facing strings must be i18n-ready (`__()`, `_e()`, `_n()`, etc.) with the `'lwtv'` text domain.
+- All user-facing strings must be i18n-ready (`__()`, `_e()`, `_n()`, etc.). The text domain is always `lwtv-underscores`, but not the `lwtv_` prefixes the code uses everywhere:
+  - `lwtv_` for prefixes to code.
+  - `'lwtv-underscores'` for theme files as it matches the theme's folder, which is the domain WordPress loads automatically.
 - ACF `date_picker` raw postmeta is stored as `Ymd` (not `Y-m-d`); account for the mixed formats when sorting/parsing dates.
 
 ---

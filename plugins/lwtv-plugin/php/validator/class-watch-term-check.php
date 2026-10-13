@@ -90,9 +90,9 @@ class Watch_Term_Check {
 	 */
 	private static function labels(): array {
 		return array(
-			Watch_Url_Health::STATUS_BROKEN  => array( 'dashicons-no', __( 'Broken', 'lwtv' ) ),
-			Watch_Url_Health::STATUS_REVIEW  => array( 'dashicons-warning', __( 'Needs review', 'lwtv' ) ),
-			Watch_Url_Health::STATUS_BLOCKED => array( 'dashicons-shield', __( 'Blocked us', 'lwtv' ) ),
+			Watch_Url_Health::STATUS_BROKEN  => array( 'dashicons-no', __( 'Broken', 'lwtv-underscores' ) ),
+			Watch_Url_Health::STATUS_REVIEW  => array( 'dashicons-warning', __( 'Needs review', 'lwtv-underscores' ) ),
+			Watch_Url_Health::STATUS_BLOCKED => array( 'dashicons-shield', __( 'Blocked us', 'lwtv-underscores' ) ),
 		);
 	}
 
@@ -156,19 +156,19 @@ class Watch_Term_Check {
 				<span class="dashicons dashicons-info"></span>
 				<?php
 				if ( $queued ) {
-					esc_html_e( 'Scan running', 'lwtv' );
+					esc_html_e( 'Scan running', 'lwtv-underscores' );
 				} else {
-					esc_html_e( 'No results yet', 'lwtv' );
+					esc_html_e( 'No results yet', 'lwtv-underscores' );
 				}
 				?>
 			</h3>
 			<div id="lwtv-tools-alerts">
 				<?php if ( $queued ) : ?>
-					<p><?php esc_html_e( 'A sweep is queued and will run in the background. Reload this page in a few minutes — the results appear here when it finishes.', 'lwtv' ); ?></p>
+					<p><?php esc_html_e( 'A sweep is queued and will run in the background. Reload this page in a few minutes — the results appear here when it finishes.', 'lwtv-underscores' ); ?></p>
 				<?php else : ?>
-					<p><?php esc_html_e( 'This check has not run, or its results have expired.', 'lwtv' ); ?></p>
+					<p><?php esc_html_e( 'This check has not run, or its results have expired.', 'lwtv-underscores' ); ?></p>
 					<p>
-						<?php esc_html_e( 'It makes one request per provider URL, which is too slow for a page load, so pressing Run Scan queues it to run in the background rather than making you wait. On the command line:', 'lwtv' ); ?>
+						<?php esc_html_e( 'It makes one request per provider URL, which is too slow for a page load, so pressing Run Scan queues it to run in the background rather than making you wait. On the command line:', 'lwtv-underscores' ); ?>
 						<code>wp lwtv debug watchurls --force</code>
 					</p>
 				<?php endif; ?>
@@ -198,10 +198,10 @@ class Watch_Term_Check {
 			<input type="hidden" name="action" value="<?php echo esc_attr( self::ACTION_SCAN ); ?>" />
 			<?php wp_nonce_field( self::ACTION_SCAN ); ?>
 			<p class="submit">
-				<?php submit_button( __( 'Run Scan', 'lwtv' ), 'primary', '', false ); ?>
+				<?php submit_button( __( 'Run Scan', 'lwtv-underscores' ), 'primary', '', false ); ?>
 			</p>
 			<p class="description">
-				<?php esc_html_e( 'Checks every URL on every provider term. Runs in the background; come back in a few minutes.', 'lwtv' ); ?>
+				<?php esc_html_e( 'Checks every URL on every provider term. Runs in the background; come back in a few minutes.', 'lwtv-underscores' ); ?>
 			</p>
 		</form>
 		<?php
@@ -216,7 +216,7 @@ class Watch_Term_Check {
 		check_admin_referer( self::ACTION_SCAN );
 
 		if ( ! current_user_can( self::CAP_MANAGE ) ) {
-			wp_die( esc_html__( 'You do not have permission to do that.', 'lwtv' ), '', array( 'response' => 403 ) );
+			wp_die( esc_html__( 'You do not have permission to do that.', 'lwtv-underscores' ), '', array( 'response' => 403 ) );
 		}
 
 		if ( ! Watch_URLs_Task::available() ) {
@@ -224,7 +224,7 @@ class Watch_Term_Check {
 				'error',
 				sprintf(
 					/* translators: %s: WP-CLI command in a code element. */
-					__( 'Action Scheduler is not available, so the sweep cannot be queued. Run %s instead.', 'lwtv' ),
+					__( 'Action Scheduler is not available, so the sweep cannot be queued. Run %s instead.', 'lwtv-underscores' ),
 					'<code>wp lwtv debug watchurls --force</code>'
 				)
 			);
@@ -232,9 +232,9 @@ class Watch_Term_Check {
 		}
 
 		if ( Watch_URLs_Task::queue() ) {
-			self::set_notice( 'success', __( 'Sweep queued. It runs in the background — reload in a few minutes.', 'lwtv' ) );
+			self::set_notice( 'success', __( 'Sweep queued. It runs in the background — reload in a few minutes.', 'lwtv-underscores' ) );
 		} else {
-			self::set_notice( 'info', __( 'A sweep is already queued.', 'lwtv' ) );
+			self::set_notice( 'info', __( 'A sweep is already queued.', 'lwtv-underscores' ) );
 		}
 
 		self::redirect_back();
@@ -249,9 +249,9 @@ class Watch_Term_Check {
 	private static function render_all_clear( string $last_run ): void {
 		?>
 		<div class="lwtv-tools-container lwtv-tools-container__alert">
-			<h3><span class="dashicons dashicons-yes"></span> <?php esc_html_e( 'Excellent!', 'lwtv' ); ?></h3>
+			<h3><span class="dashicons dashicons-yes"></span> <?php esc_html_e( 'Excellent!', 'lwtv-underscores' ); ?></h3>
 			<div id="lwtv-tools-alerts">
-				<p><?php esc_html_e( 'Every URL on every watch provider term answered, stayed on its own domain, and still calls itself something we recognise.', 'lwtv' ); ?></p>
+				<p><?php esc_html_e( 'Every URL on every watch provider term answered, stayed on its own domain, and still calls itself something we recognise.', 'lwtv-underscores' ); ?></p>
 				<?php echo wp_kses_post( $last_run ); ?>
 			</div>
 		</div>
@@ -316,11 +316,11 @@ class Watch_Term_Check {
 				if ( $live ) {
 					printf(
 						/* translators: %d: number of URLs with problems that at least one show reaches. */
-						esc_html( _n( '%d provider URL needs attention', '%d provider URLs need attention', $live, 'lwtv' ) ),
+						esc_html( _n( '%d provider URL needs attention', '%d provider URLs need attention', $live, 'lwtv-underscores' ) ),
 						absint( $live )
 					);
 				} else {
-					esc_html_e( 'Nothing a reader can reach is broken', 'lwtv' );
+					esc_html_e( 'Nothing a reader can reach is broken', 'lwtv-underscores' );
 				}
 				?>
 			</h3>
@@ -330,22 +330,22 @@ class Watch_Term_Check {
 						<?php
 						printf(
 							/* translators: 1: definitely broken, 2: findings on terms a show reaches. */
-							esc_html__( '%1$d of %2$d are definitely broken. The rest answered, but something suggests they may not be the provider any more — a domain that changed hands still returns a healthy 200.', 'lwtv' ),
+							esc_html__( '%1$d of %2$d are definitely broken. The rest answered, but something suggests they may not be the provider any more — a domain that changed hands still returns a healthy 200.', 'lwtv-underscores' ),
 							absint( $broken ),
 							absint( $live )
 						);
 						?>
 					</p>
-					<p><?php esc_html_e( 'Worst first, then by how many shows point at the term. Fixing a term fixes every show that reaches it.', 'lwtv' ); ?></p>
+					<p><?php esc_html_e( 'Worst first, then by how many shows point at the term. Fixing a term fixes every show that reaches it.', 'lwtv-underscores' ); ?></p>
 				<?php } else { ?>
-					<p><?php esc_html_e( 'Everything flagged is on a provider term no published show reaches, so nothing on the front end is pointing at a dead link.', 'lwtv' ); ?></p>
+					<p><?php esc_html_e( 'Everything flagged is on a provider term no published show reaches, so nothing on the front end is pointing at a dead link.', 'lwtv-underscores' ); ?></p>
 				<?php } ?>
 				<?php if ( $dormant ) { ?>
 					<p>
 						<?php
 						printf(
 							/* translators: %d: number of flagged URLs on terms no published show reaches. */
-							esc_html( _n( '%d flagged URL is on a term no published show reaches. It is listed separately below, because re-checking it cannot clear it.', '%d flagged URLs are on terms no published show reaches. Those are listed separately below, because re-checking them cannot clear them.', $dormant, 'lwtv' ) ),
+							esc_html( _n( '%d flagged URL is on a term no published show reaches. It is listed separately below, because re-checking it cannot clear it.', '%d flagged URLs are on terms no published show reaches. Those are listed separately below, because re-checking them cannot clear them.', $dormant, 'lwtv-underscores' ) ),
 							absint( $dormant )
 						);
 						?>
@@ -374,10 +374,10 @@ class Watch_Term_Check {
 		<div class="lwtv-tools-table">
 			<table class="widefat fixed" cellspacing="0">
 				<thead><tr>
-					<th class="manage-column column-title column-primary" scope="col"><?php esc_html_e( 'Provider', 'lwtv' ); ?></th>
-					<th class="manage-column column-comments num" scope="col"><?php esc_html_e( 'Shows', 'lwtv' ); ?></th>
-					<th class="manage-column column-author" scope="col"><?php esc_html_e( 'Result', 'lwtv' ); ?></th>
-					<th class="manage-column column-problem" scope="col"><?php esc_html_e( 'Problem', 'lwtv' ); ?></th>
+					<th class="manage-column column-title column-primary" scope="col"><?php esc_html_e( 'Provider', 'lwtv-underscores' ); ?></th>
+					<th class="manage-column column-comments num" scope="col"><?php esc_html_e( 'Shows', 'lwtv-underscores' ); ?></th>
+					<th class="manage-column column-author" scope="col"><?php esc_html_e( 'Result', 'lwtv-underscores' ); ?></th>
+					<th class="manage-column column-problem" scope="col"><?php esc_html_e( 'Problem', 'lwtv-underscores' ); ?></th>
 				</tr></thead>
 				<tbody>
 					<?php
@@ -410,16 +410,16 @@ class Watch_Term_Check {
 				<?php
 				printf(
 					/* translators: %d: number of provider terms no published show reaches. */
-					esc_html( _n( '%d unused provider term', '%d unused provider terms', $terms, 'lwtv' ) ),
+					esc_html( _n( '%d unused provider term', '%d unused provider terms', $terms, 'lwtv-underscores' ) ),
 					absint( $terms )
 				);
 				?>
 			</summary>
 			<p class="description">
-				<?php esc_html_e( 'No published show reaches these terms, so a dead URL here is not reaching a reader, and re-checking it cannot clear the row. The decision these need is whether the term should exist at all: a service that has shut down can be retired, which deletes the term and takes its rows off this report for good.', 'lwtv' ); ?>
+				<?php esc_html_e( 'No published show reaches these terms, so a dead URL here is not reaching a reader, and re-checking it cannot clear the row. The decision these need is whether the term should exist at all: a service that has shut down can be retired, which deletes the term and takes its rows off this report for good.', 'lwtv-underscores' ); ?>
 			</p>
 			<p class="description">
-				<?php esc_html_e( 'Two different things read as zero here. A term that genuinely serves nothing, and a term that has lost its host — the losing side of a contested host counts zero, and so does a term whose stored URL cannot be parsed, because neither one ever enters the host map shows are matched through. Check the Watch Providers tab before retiring anything you expected to be in use.', 'lwtv' ); ?>
+				<?php esc_html_e( 'Two different things read as zero here. A term that genuinely serves nothing, and a term that has lost its host — the losing side of a contested host counts zero, and so does a term whose stored URL cannot be parsed, because neither one ever enters the host map shows are matched through. Check the Watch Providers tab before retiring anything you expected to be in use.', 'lwtv-underscores' ); ?>
 			</p>
 			<?php self::render_table( $unused, true ); ?>
 		</details>
@@ -508,13 +508,13 @@ class Watch_Term_Check {
 						<span class="view">
 							<a href="<?php echo esc_url( $url ); ?>" target="_blank" rel="noopener noreferrer nofollow"><?php echo esc_html( $url ); ?></a>
 							<?php if ( '' !== $retire_link ) { ?>
-								| <a href="<?php echo esc_url( $retire_link ); ?>" class="lwtv-watch-retire"><?php esc_html_e( 'Retire term', 'lwtv' ); ?></a>
+								| <a href="<?php echo esc_url( $retire_link ); ?>" class="lwtv-watch-retire"><?php esc_html_e( 'Retire term', 'lwtv-underscores' ); ?></a>
 							<?php } ?>
 							<?php if ( '' !== $recheck_link ) { ?>
-								| <a href="<?php echo esc_url( $recheck_link ); ?>"><?php esc_html_e( 'Re-check this URL', 'lwtv' ); ?></a>
+								| <a href="<?php echo esc_url( $recheck_link ); ?>"><?php esc_html_e( 'Re-check this URL', 'lwtv-underscores' ); ?></a>
 							<?php } ?>
 							<?php if ( '' !== $confirm_link ) { ?>
-								| <a href="<?php echo esc_url( $confirm_link ); ?>"><?php esc_html_e( 'Confirm provider', 'lwtv' ); ?></a>
+								| <a href="<?php echo esc_url( $confirm_link ); ?>"><?php esc_html_e( 'Confirm provider', 'lwtv-underscores' ); ?></a>
 							<?php } ?>
 						</span>
 					</div>
@@ -545,7 +545,7 @@ class Watch_Term_Check {
 	private static function render_recheck_form( int $count, int $unused = 0 ): void {
 		if ( ! current_user_can( self::CAP_MANAGE ) ) {
 			?>
-			<p><em><?php esc_html_e( 'You need permission to manage categories to re-check these URLs.', 'lwtv' ); ?></em></p>
+			<p><em><?php esc_html_e( 'You need permission to manage categories to re-check these URLs.', 'lwtv-underscores' ); ?></em></p>
 			<?php
 			return;
 		}
@@ -553,12 +553,12 @@ class Watch_Term_Check {
 		<form action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" method="post" style="margin: 1em 0;">
 			<input type="hidden" name="action" value="<?php echo esc_attr( self::ACTION_RECHECK ); ?>" />
 			<?php wp_nonce_field( self::ACTION_RECHECK ); ?>
-			<?php submit_button( __( 'Re-check these URLs', 'lwtv' ), 'primary', '', false ); ?>
+			<?php submit_button( __( 'Re-check these URLs', 'lwtv-underscores' ), 'primary', '', false ); ?>
 			<span class="description">
 				<?php
 				printf(
 					/* translators: 1: number of flagged URLs, 2: seconds of budget, 3: WP-CLI command in a code element. */
-					wp_kses_post( __( 'Re-probes the %1$d flagged URLs only. Drops any that now pass, and any you have since removed from their term. Stops after about %2$d seconds; anything it did not reach is kept, not cleared. A full sweep of every term is %3$s.', 'lwtv' ) ),
+					wp_kses_post( __( 'Re-probes the %1$d flagged URLs only. Drops any that now pass, and any you have since removed from their term. Stops after about %2$d seconds; anything it did not reach is kept, not cleared. A full sweep of every term is %3$s.', 'lwtv-underscores' ) ),
 					absint( $count ),
 					absint( Watch_Hosts::UI_TIME_BUDGET ),
 					'<code>wp lwtv debug watchurls --force</code>'
@@ -568,7 +568,7 @@ class Watch_Term_Check {
 					echo ' ';
 					printf(
 						/* translators: %d: number of flagged URLs on terms no published show reaches. */
-						esc_html( _n( 'That count includes the %d URL on an unused term, which a re-check will only clear if the URL has come back.', 'That count includes the %d URLs on unused terms, which a re-check will only clear if those URLs have come back.', $unused, 'lwtv' ) ),
+						esc_html( _n( 'That count includes the %d URL on an unused term, which a re-check will only clear if the URL has come back.', 'That count includes the %d URLs on unused terms, which a re-check will only clear if those URLs have come back.', $unused, 'lwtv-underscores' ) ),
 						absint( $unused )
 					);
 				}
@@ -587,7 +587,7 @@ class Watch_Term_Check {
 		check_admin_referer( self::ACTION_RECHECK );
 
 		if ( ! current_user_can( self::CAP_MANAGE ) ) {
-			wp_die( esc_html__( 'You do not have permission to do that.', 'lwtv' ), '', array( 'response' => 403 ) );
+			wp_die( esc_html__( 'You do not have permission to do that.', 'lwtv-underscores' ), '', array( 'response' => 403 ) );
 		}
 
 		// Cast, so a `false` read (never run, or expired) becomes the empty array
@@ -599,7 +599,7 @@ class Watch_Term_Check {
 				'info',
 				sprintf(
 					/* translators: %s: WP-CLI command in a code element. */
-					__( 'There is nothing flagged to re-check. Run %s for a full sweep.', 'lwtv' ),
+					__( 'There is nothing flagged to re-check. Run %s for a full sweep.', 'lwtv-underscores' ),
 					'<code>wp lwtv debug watchurls --force</code>'
 				)
 			);
@@ -619,7 +619,7 @@ class Watch_Term_Check {
 		$fixed  = max( 0, $before - count( $after ) );
 
 		if ( empty( $after ) ) {
-			self::set_notice( 'success', __( 'Nothing is flagged any more. Every URL either passes or is no longer stored on a term.', 'lwtv' ) );
+			self::set_notice( 'success', __( 'Nothing is flagged any more. Every URL either passes or is no longer stored on a term.', 'lwtv-underscores' ) );
 			self::redirect_back();
 		}
 
@@ -629,7 +629,7 @@ class Watch_Term_Check {
 				// "Cleared", not "now pass": a row also goes when the URL has
 				// been removed from the term, which is the usual reason.
 				/* translators: 1: URLs cleared, 2: URLs still flagged. */
-				__( '%1$d URL(s) cleared; %2$d still flagged.', 'lwtv' ),
+				__( '%1$d URL(s) cleared; %2$d still flagged.', 'lwtv-underscores' ),
 				$fixed,
 				count( $after )
 			)
@@ -647,7 +647,7 @@ class Watch_Term_Check {
 		check_admin_referer( self::ACTION_RECHECK_ONE );
 
 		if ( ! current_user_can( self::CAP_MANAGE ) ) {
-			wp_die( esc_html__( 'You do not have permission to do that.', 'lwtv' ), '', array( 'response' => 403 ) );
+			wp_die( esc_html__( 'You do not have permission to do that.', 'lwtv-underscores' ), '', array( 'response' => 403 ) );
 		}
 
 		$term_id = isset( $_GET['term'] ) ? absint( $_GET['term'] ) : 0;
@@ -664,7 +664,7 @@ class Watch_Term_Check {
 		}
 
 		if ( null === $target ) {
-			self::set_notice( 'info', __( 'That URL is no longer flagged — nothing to re-check.', 'lwtv' ) );
+			self::set_notice( 'info', __( 'That URL is no longer flagged — nothing to re-check.', 'lwtv-underscores' ) );
 			self::redirect_back();
 		}
 
@@ -674,8 +674,8 @@ class Watch_Term_Check {
 			self::set_notice(
 				'success',
 				! empty( $result['stale'] )
-					? __( 'That URL is no longer stored on the term, so its row has been removed from the report.', 'lwtv' )
-					: __( 'That URL now passes and has been removed from the report.', 'lwtv' )
+					? __( 'That URL is no longer stored on the term, so its row has been removed from the report.', 'lwtv-underscores' )
+					: __( 'That URL now passes and has been removed from the report.', 'lwtv-underscores' )
 			);
 			self::redirect_back();
 		}
@@ -687,10 +687,10 @@ class Watch_Term_Check {
 			'' !== $problem
 				? sprintf(
 					/* translators: %s: the problem now reported for this URL. */
-					__( 'Still flagged: %s', 'lwtv' ),
+					__( 'Still flagged: %s', 'lwtv-underscores' ),
 					$problem
 				)
-				: __( 'Still flagged. See the updated row below.', 'lwtv' )
+				: __( 'Still flagged. See the updated row below.', 'lwtv-underscores' )
 		);
 
 		self::redirect_back();
@@ -710,13 +710,13 @@ class Watch_Term_Check {
 		check_admin_referer( self::ACTION_CONFIRM_PROVIDER );
 
 		if ( ! current_user_can( self::CAP_MANAGE ) ) {
-			wp_die( esc_html__( 'You do not have permission to do that.', 'lwtv' ), '', array( 'response' => 403 ) );
+			wp_die( esc_html__( 'You do not have permission to do that.', 'lwtv-underscores' ), '', array( 'response' => 403 ) );
 		}
 
 		$term_id = isset( $_GET['term'] ) ? absint( $_GET['term'] ) : 0;
 
 		if ( ! $term_id || ! get_term( $term_id, Theme_Ways_To_Watch::TAXONOMY ) ) {
-			self::set_notice( 'error', __( 'That provider term no longer exists.', 'lwtv' ) );
+			self::set_notice( 'error', __( 'That provider term no longer exists.', 'lwtv-underscores' ) );
 			self::redirect_back();
 		}
 
@@ -728,8 +728,8 @@ class Watch_Term_Check {
 		self::set_notice(
 			'success',
 			$dropped
-				? __( 'Provider confirmed. Name-mismatch reviews for this term will no longer be flagged.', 'lwtv' )
-				: __( 'Provider confirmed for future scans. Nothing currently flagged needed clearing.', 'lwtv' )
+				? __( 'Provider confirmed. Name-mismatch reviews for this term will no longer be flagged.', 'lwtv-underscores' )
+				: __( 'Provider confirmed for future scans. Nothing currently flagged needed clearing.', 'lwtv-underscores' )
 		);
 
 		self::redirect_back();
@@ -750,13 +750,13 @@ class Watch_Term_Check {
 		check_admin_referer( self::ACTION_RETIRE . '_' . $term_id );
 
 		if ( ! current_user_can( self::CAP_MANAGE ) ) {
-			wp_die( esc_html__( 'You do not have permission to do that.', 'lwtv' ), '', array( 'response' => 403 ) );
+			wp_die( esc_html__( 'You do not have permission to do that.', 'lwtv-underscores' ), '', array( 'response' => 403 ) );
 		}
 
 		$term = $term_id ? get_term( $term_id, Theme_Ways_To_Watch::TAXONOMY ) : null;
 
 		if ( ! $term instanceof \WP_Term ) {
-			self::set_notice( 'info', __( 'That provider term no longer exists — nothing to retire.', 'lwtv' ) );
+			self::set_notice( 'info', __( 'That provider term no longer exists — nothing to retire.', 'lwtv-underscores' ) );
 			self::redirect_back();
 		}
 
@@ -773,7 +773,7 @@ class Watch_Term_Check {
 				'error',
 				sprintf(
 					/* translators: %s: provider name. */
-					__( 'Could not check what “%s” is still assigned to, so it was not retired.', 'lwtv' ),
+					__( 'Could not check what “%s” is still assigned to, so it was not retired.', 'lwtv-underscores' ),
 					$name
 				)
 			);
@@ -785,7 +785,7 @@ class Watch_Term_Check {
 				'error',
 				sprintf(
 					/* translators: 1: provider name, 2: number of published shows. */
-					_n( '“%1$s” now serves %2$d published show, so it was not retired. Re-check its URL instead.', '“%1$s” now serves %2$d published shows, so it was not retired. Re-check its URL instead.', $live, 'lwtv' ),
+					_n( '“%1$s” now serves %2$d published show, so it was not retired. Re-check its URL instead.', '“%1$s” now serves %2$d published shows, so it was not retired. Re-check its URL instead.', $live, 'lwtv-underscores' ),
 					$name,
 					$live
 				)
@@ -798,7 +798,7 @@ class Watch_Term_Check {
 				'error',
 				sprintf(
 					/* translators: 1: provider name, 2: number of posts the term is assigned to. */
-					_n( '“%1$s” is still assigned to %2$d post, so it was not retired. Nothing reaches it by URL, but deleting it would drop that assignment — including on a draft or pending show. Unassign it first.', '“%1$s” is still assigned to %2$d posts, so it was not retired. Nothing reaches them by URL, but deleting it would drop those assignments — including on draft or pending shows. Unassign it first.', $assigned, 'lwtv' ),
+					_n( '“%1$s” is still assigned to %2$d post, so it was not retired. Nothing reaches it by URL, but deleting it would drop that assignment — including on a draft or pending show. Unassign it first.', '“%1$s” is still assigned to %2$d posts, so it was not retired. Nothing reaches them by URL, but deleting it would drop those assignments — including on draft or pending shows. Unassign it first.', $assigned, 'lwtv-underscores' ),
 					$name,
 					$assigned
 				)
@@ -813,7 +813,7 @@ class Watch_Term_Check {
 				'error',
 				sprintf(
 					/* translators: %s: provider name. */
-					__( '“%s” could not be retired.', 'lwtv' ),
+					__( '“%s” could not be retired.', 'lwtv-underscores' ),
 					$name
 				)
 			);
@@ -829,7 +829,7 @@ class Watch_Term_Check {
 			'success',
 			sprintf(
 				/* translators: 1: provider name, 2: number of rows removed from the report. */
-				_n( 'Retired “%1$s” and removed %2$d row from the report.', 'Retired “%1$s” and removed %2$d rows from the report.', $dropped, 'lwtv' ),
+				_n( 'Retired “%1$s” and removed %2$d row from the report.', 'Retired “%1$s” and removed %2$d rows from the report.', $dropped, 'lwtv-underscores' ),
 				$name,
 				$dropped
 			)

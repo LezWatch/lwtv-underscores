@@ -48,10 +48,10 @@ $waffle = array(
 	'columns'  => 10,
 	'radius'   => 8,
 	/* translators: 1: percentage played by a queer actor, 2: percentage played by a straight or cis actor. */
-	'label'    => sprintf( __( '%1$s%% of characters are played by a queer actor; %2$s%% by a straight or cis actor.', 'lwtv' ), number_format_i18n( $qirl_pct, 1 ), number_format_i18n( round( 100 - $qirl_pct, 1 ), 1 ) ),
+	'label'    => sprintf( __( '%1$s%% of characters are played by a queer actor; %2$s%% by a straight or cis actor.', 'lwtv-underscores' ), number_format_i18n( $qirl_pct, 1 ), number_format_i18n( round( 100 - $qirl_pct, 1 ), 1 ) ),
 );
 ?>
-<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'Queer IRL', 'lwtv' ); ?></p>
+<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'Queer IRL', 'lwtv-underscores' ); ?></p>
 
 <section class="lwtv-panel bg-light lwtv-qirl-card">
 	<div class="lwtv-qirl-row">
@@ -66,21 +66,21 @@ $waffle = array(
 				<?php
 				printf(
 					/* translators: %s: a shortfall phrase like "Fewer than a quarter". */
-					esc_html__( '%s are played by queer actors', 'lwtv' ),
+					esc_html__( '%s are played by queer actors', 'lwtv-underscores' ),
 					esc_html( lwtv_stats_shortfall_phrase( $qirl_pct ) )
 				);
 				?>
 			</h2>
-			<p class="lwtv-donut-desc"><?php esc_html_e( 'Most queer and trans characters are still played by straight or cisgender actors.', 'lwtv' ); ?></p>
+			<p class="lwtv-donut-desc"><?php esc_html_e( 'Most queer and trans characters are still played by straight or cisgender actors.', 'lwtv-underscores' ); ?></p>
 			<ul class="lwtv-donut-legend lwtv-donut-legend--compact">
 				<li class="lwtv-donut-legend-row">
 					<span class="lwtv-donut-dot lwtv-donut-seg--pink"></span>
-					<span class="lwtv-donut-legend-name"><?php esc_html_e( 'Played by queer actors', 'lwtv' ); ?></span>
+					<span class="lwtv-donut-legend-name"><?php esc_html_e( 'Played by queer actors', 'lwtv-underscores' ); ?></span>
 					<span class="lwtv-donut-legend-val"><?php echo esc_html( number_format_i18n( $qirl_yes ) . ' · ' . number_format_i18n( $qirl_pct, 1 ) . '%' ); ?></span>
 				</li>
 				<li class="lwtv-donut-legend-row">
 					<span class="lwtv-donut-dot lwtv-donut-seg--grey"></span>
-					<span class="lwtv-donut-legend-name"><?php esc_html_e( 'Straight or cis actors', 'lwtv' ); ?></span>
+					<span class="lwtv-donut-legend-name"><?php esc_html_e( 'Straight or cis actors', 'lwtv-underscores' ); ?></span>
 					<span class="lwtv-donut-legend-val"><?php echo esc_html( number_format_i18n( $qirl_no ) . ' · ' . number_format_i18n( round( 100 - $qirl_pct, 1 ), 1 ) . '%' ); ?></span>
 				</li>
 			</ul>
@@ -90,7 +90,7 @@ $waffle = array(
 		<?php
 		printf(
 			/* translators: %s: total number of queer characters tracked. */
-			esc_html__( 'Each dot is roughly 2%% of the %s queer characters we track.', 'lwtv' ),
+			esc_html__( 'Each dot is roughly 2%% of the %s queer characters we track.', 'lwtv-underscores' ),
 			esc_html( number_format_i18n( $qirl_tot ) )
 		);
 		?>
@@ -109,26 +109,26 @@ $qirl_trans_oldest = $qirl_cast_firsts->generate_trans_actor_oldest();
 $qirl_firsts_rows = array();
 if ( ! empty( $qirl_queer_firsts['oldest'] ) ) {
 	$qirl_firsts_rows[] = array(
-		'term' => __( 'Oldest, played by a queer actor', 'lwtv' ),
+		'term' => __( 'Oldest, played by a queer actor', 'lwtv-underscores' ),
 		'row'  => $qirl_queer_firsts['oldest'],
 	);
 }
 if ( ! empty( $qirl_queer_firsts['newest'] ) ) {
 	$qirl_firsts_rows[] = array(
-		'term' => __( 'Newest, played by a queer actor', 'lwtv' ),
+		'term' => __( 'Newest, played by a queer actor', 'lwtv-underscores' ),
 		'row'  => $qirl_queer_firsts['newest'],
 	);
 }
 if ( ! empty( $qirl_trans_oldest ) ) {
 	$qirl_firsts_rows[] = array(
-		'term' => __( 'Oldest, played by a trans actor', 'lwtv' ),
+		'term' => __( 'Oldest, played by a trans actor', 'lwtv-underscores' ),
 		'row'  => $qirl_trans_oldest,
 	);
 }
 
 if ( ! empty( $qirl_firsts_rows ) ) :
 	?>
-	<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'Firsts', 'lwtv' ); ?></p>
+	<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'Firsts', 'lwtv-underscores' ); ?></p>
 	<div class="lwtv-pullstats lwtv-pullstats--three lwtv-statcards lwtv-bars--queer-irl">
 		<?php foreach ( $qirl_firsts_rows as $qirl_firsts_row ) : ?>
 			<div class="lwtv-statcard lwtv-statcard--firsts">

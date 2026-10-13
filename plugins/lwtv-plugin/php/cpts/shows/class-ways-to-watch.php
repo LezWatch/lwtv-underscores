@@ -64,7 +64,7 @@ class Ways_To_Watch {
 		if ( 0 === $count ) {
 			// A provider with no URLs can never be matched by
 			// Watch_Hosts::term_for(), so it's dead weight.
-			return '<span aria-label="' . esc_attr__( 'No URLs, so this provider can never be matched', 'lwtv' ) . '">0</span>';
+			return '<span aria-label="' . esc_attr__( 'No URLs, so this provider can never be matched', 'lwtv-underscores' ) . '">0</span>';
 		}
 
 		return (string) $count;
@@ -131,7 +131,7 @@ class Ways_To_Watch {
 		unset( $columns['count'] );
 		unset( $columns['slug'] );
 
-		$columns[ self::COLUMN_URLS ] = __( 'URLs', 'lwtv' );
+		$columns[ self::COLUMN_URLS ] = __( 'URLs', 'lwtv-underscores' );
 
 		return $columns;
 	}

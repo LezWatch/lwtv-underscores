@@ -28,8 +28,8 @@ if ( 0 === $lwtv_dc_count ) {
 		<div class="lwtv-ty-empty-icon">
 			<?php echo lwtv_plugin()->get_symbolicon( svg: 'fingers-crossed.svg', icon: 'svg-fingers-crossed', max_size: '28' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 		</div>
-		<h2><?php esc_html_e( 'No characters died this year', 'lwtv' ); ?></h2>
-		<p><?php esc_html_e( "I know! We're surprised too. Fingers crossed it stays that way.", 'lwtv' ); ?></p>
+		<h2><?php esc_html_e( 'No characters died this year', 'lwtv-underscores' ); ?></h2>
+		<p><?php esc_html_e( "I know! We're surprised too. Fingers crossed it stays that way.", 'lwtv-underscores' ); ?></p>
 	</div>
 	<?php
 	return;
@@ -93,7 +93,7 @@ $lwtv_dc_join_months = static function ( array $lwtv_dc_nums ) use ( $lwtv_dc_mo
 	}
 	$last = array_pop( $names );
 	/* translators: 1: comma-separated month names, 2: the final month name. */
-	return sprintf( __( '%1$s or %2$s', 'lwtv' ), implode( ', ', $names ), $last );
+	return sprintf( __( '%1$s or %2$s', 'lwtv-underscores' ), implode( ', ', $names ), $last );
 };
 ?>
 
@@ -103,7 +103,7 @@ $lwtv_dc_join_months = static function ( array $lwtv_dc_nums ) use ( $lwtv_dc_mo
 		<?php
 		printf(
 			/* translators: %s: the year being reviewed. */
-			esc_html( _n( 'character died in %s', 'characters died in %s', $lwtv_dc_count, 'lwtv' ) ),
+			esc_html( _n( 'character died in %s', 'characters died in %s', $lwtv_dc_count, 'lwtv-underscores' ) ),
 			esc_html( (string) $this_year )
 		);
 		?>
@@ -111,10 +111,10 @@ $lwtv_dc_join_months = static function ( array $lwtv_dc_nums ) use ( $lwtv_dc_mo
 
 	<ul class="nav nav-pills lwtv-ty-pills" id="lwtv-ty-dc-tabs" role="tablist">
 		<li class="nav-item">
-			<a class="nav-link active" id="lwtv-ty-dc-bydate-tab" data-bs-toggle="pill" href="#lwtv-ty-dc-bydate" role="tab" aria-controls="lwtv-ty-dc-bydate" aria-selected="true"><?php esc_html_e( 'By Date', 'lwtv' ); ?></a>
+			<a class="nav-link active" id="lwtv-ty-dc-bydate-tab" data-bs-toggle="pill" href="#lwtv-ty-dc-bydate" role="tab" aria-controls="lwtv-ty-dc-bydate" aria-selected="true"><?php esc_html_e( 'By Date', 'lwtv-underscores' ); ?></a>
 		</li>
 		<li class="nav-item">
-			<a class="nav-link" id="lwtv-ty-dc-byshow-tab" data-bs-toggle="pill" href="#lwtv-ty-dc-byshow" role="tab" aria-controls="lwtv-ty-dc-byshow" aria-selected="false"><?php esc_html_e( 'By Show', 'lwtv' ); ?></a>
+			<a class="nav-link" id="lwtv-ty-dc-byshow-tab" data-bs-toggle="pill" href="#lwtv-ty-dc-byshow" role="tab" aria-controls="lwtv-ty-dc-byshow" aria-selected="false"><?php esc_html_e( 'By Show', 'lwtv-underscores' ); ?></a>
 		</li>
 	</ul>
 </div>
@@ -123,28 +123,28 @@ $lwtv_dc_join_months = static function ( array $lwtv_dc_nums ) use ( $lwtv_dc_mo
 	<?php
 	printf(
 		/* translators: %s: the year being reviewed. */
-		esc_html__( 'Queer characters we lost in %s.', 'lwtv' ),
+		esc_html__( 'Queer characters we lost in %s.', 'lwtv-underscores' ),
 		esc_html( (string) $this_year )
 	);
 	?>
-	<a href="<?php echo esc_url( home_url( '/statistics/death/' ) ); ?>"><?php esc_html_e( 'See the full death statistics →', 'lwtv' ); ?></a>
+	<a href="<?php echo esc_url( home_url( '/statistics/death/' ) ); ?>"><?php esc_html_e( 'See the full death statistics →', 'lwtv-underscores' ); ?></a>
 </p>
 
 <div class="lwtv-trend-callouts<?php echo ( null === $lwtv_dc_stretch ) ? ' lwtv-trend-callouts--single' : ''; ?>">
 	<div class="lwtv-trend-callout">
 		<div class="lwtv-trend-callout-body">
-			<span class="lwtv-stats-eyebrow"><?php esc_html_e( 'Deadliest Show', 'lwtv' ); ?></span>
+			<span class="lwtv-stats-eyebrow"><?php esc_html_e( 'Deadliest Show', 'lwtv-underscores' ); ?></span>
 			<p class="lwtv-trend-callout-text">
 				<?php
 				if ( $lwtv_dc_show_standout ) {
 					printf(
 						/* translators: 1: show name (emphasized), 2: number of that show's queer characters who died. */
-						esc_html( _n( '%1$s lost %2$s queer character this year.', '%1$s lost %2$s queer characters this year.', $lwtv_dc_show_max, 'lwtv' ) ),
+						esc_html( _n( '%1$s lost %2$s queer character this year.', '%1$s lost %2$s queer characters this year.', $lwtv_dc_show_max, 'lwtv-underscores' ) ),
 						'<em>' . esc_html( $lwtv_dc_show_top['name'] ) . '</em>', // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 						esc_html( number_format_i18n( $lwtv_dc_show_max ) )
 					);
 				} else {
-					esc_html_e( 'No show stands out above the rest.', 'lwtv' );
+					esc_html_e( 'No show stands out above the rest.', 'lwtv-underscores' );
 				}
 				?>
 			</p>
@@ -154,12 +154,12 @@ $lwtv_dc_join_months = static function ( array $lwtv_dc_nums ) use ( $lwtv_dc_mo
 	<?php if ( null !== $lwtv_dc_stretch ) : ?>
 	<div class="lwtv-trend-callout">
 		<div class="lwtv-trend-callout-body">
-			<span class="lwtv-stats-eyebrow"><?php esc_html_e( 'Longest Stretch', 'lwtv' ); ?></span>
+			<span class="lwtv-stats-eyebrow"><?php esc_html_e( 'Longest Stretch', 'lwtv-underscores' ); ?></span>
 			<p class="lwtv-trend-callout-text">
 				<?php
 				printf(
 					/* translators: 1: number of days, 2: start date, 3: end date. */
-					esc_html( _n( '%1$s day passed without a death, from %2$s to %3$s.', '%1$s days passed without a death, from %2$s to %3$s.', $lwtv_dc_stretch['days'], 'lwtv' ) ),
+					esc_html( _n( '%1$s day passed without a death, from %2$s to %3$s.', '%1$s days passed without a death, from %2$s to %3$s.', $lwtv_dc_stretch['days'], 'lwtv-underscores' ) ),
 					esc_html( number_format_i18n( $lwtv_dc_stretch['days'] ) ),
 					esc_html( gmdate( 'F j', strtotime( $lwtv_dc_stretch['from'] ) ) ),
 					esc_html( gmdate( 'F j', strtotime( $lwtv_dc_stretch['to'] ) ) )
@@ -177,8 +177,8 @@ $lwtv_dc_join_months = static function ( array $lwtv_dc_nums ) use ( $lwtv_dc_mo
 	<div class="tab-pane fade show active" id="lwtv-ty-dc-bydate" role="tabpanel" aria-labelledby="lwtv-ty-dc-bydate-tab">
 		<div class="lwtv-ty-dc-graph">
 			<div class="lwtv-ty-dc-graph-head">
-				<span class="lwtv-stats-eyebrow"><?php esc_html_e( 'Deaths by month', 'lwtv' ); ?></span>
-				<span class="lwtv-ty-dc-graph-hint"><?php esc_html_e( 'Click a month to jump to that section', 'lwtv' ); ?></span>
+				<span class="lwtv-stats-eyebrow"><?php esc_html_e( 'Deaths by month', 'lwtv-underscores' ); ?></span>
+				<span class="lwtv-ty-dc-graph-hint"><?php esc_html_e( 'Click a month to jump to that section', 'lwtv-underscores' ); ?></span>
 			</div>
 			<div class="lwtv-ty-dc-bars" role="list">
 				<?php
@@ -207,7 +207,7 @@ $lwtv_dc_join_months = static function ( array $lwtv_dc_nums ) use ( $lwtv_dc_mo
 							<?php
 							printf(
 								/* translators: 1: month name, 2: number of deaths that month. */
-								esc_attr__( 'Jump to %1$s, %2$s deaths', 'lwtv' ),
+								esc_attr__( 'Jump to %1$s, %2$s deaths', 'lwtv-underscores' ),
 								esc_attr( $lwtv_dc_month_name( $lwtv_dc_col['num'] ) ),
 								esc_attr( number_format_i18n( $lwtv_dc_col['count'] ) )
 							);
@@ -226,7 +226,7 @@ $lwtv_dc_join_months = static function ( array $lwtv_dc_nums ) use ( $lwtv_dc_mo
 						<?php
 						printf(
 							/* translators: 1: month name, 2: number of deaths. */
-							esc_html( _n( '%1$s was the deadliest month, %2$s death', '%1$s was the deadliest month, %2$s deaths', $lwtv_dc_peak_count, 'lwtv' ) ),
+							esc_html( _n( '%1$s was the deadliest month, %2$s death', '%1$s was the deadliest month, %2$s deaths', $lwtv_dc_peak_count, 'lwtv-underscores' ) ),
 							'<strong>' . esc_html( $lwtv_dc_month_name( $lwtv_dc_peak_nums[0] ) ) . '</strong>', // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 							esc_html( number_format_i18n( $lwtv_dc_peak_count ) )
 						);
@@ -240,13 +240,13 @@ $lwtv_dc_join_months = static function ( array $lwtv_dc_nums ) use ( $lwtv_dc_mo
 						if ( count( $lwtv_dc_empty_nums ) > 3 ) {
 							printf(
 								/* translators: %s: number of months that recorded no deaths. */
-								esc_html( _n( '%s month had no deaths', '%s months had no deaths', count( $lwtv_dc_empty_nums ), 'lwtv' ) ),
+								esc_html( _n( '%s month had no deaths', '%s months had no deaths', count( $lwtv_dc_empty_nums ), 'lwtv-underscores' ) ),
 								esc_html( number_format_i18n( count( $lwtv_dc_empty_nums ) ) )
 							);
 						} else {
 							printf(
 								/* translators: %s: list of month names that recorded no deaths. */
-								esc_html__( '%s recorded none', 'lwtv' ),
+								esc_html__( '%s recorded none', 'lwtv-underscores' ),
 								esc_html( $lwtv_dc_join_months( $lwtv_dc_empty_nums ) )
 							);
 						}
@@ -257,9 +257,9 @@ $lwtv_dc_join_months = static function ( array $lwtv_dc_nums ) use ( $lwtv_dc_mo
 		</div>
 		<?php
 		$lwtv_dc_role_labels = array(
-			'regular'   => __( 'Regular', 'lwtv' ),
-			'recurring' => __( 'Recurring', 'lwtv' ),
-			'guest'     => __( 'Guest', 'lwtv' ),
+			'regular'   => __( 'Regular', 'lwtv-underscores' ),
+			'recurring' => __( 'Recurring', 'lwtv-underscores' ),
+			'guest'     => __( 'Guest', 'lwtv-underscores' ),
 		);
 		$lwtv_dc_timeline    = Dead_Characters::timeline( $dead_by_date, $lwtv_dc_through );
 		?>
@@ -273,7 +273,7 @@ $lwtv_dc_join_months = static function ( array $lwtv_dc_nums ) use ( $lwtv_dc_mo
 							<?php
 							printf(
 								/* translators: %s: number of deaths that month. */
-								esc_html( _n( '%s death', '%s deaths', $lwtv_dc_item['count'], 'lwtv' ) ),
+								esc_html( _n( '%s death', '%s deaths', $lwtv_dc_item['count'], 'lwtv-underscores' ) ),
 								esc_html( number_format_i18n( $lwtv_dc_item['count'] ) )
 							);
 							?>
@@ -288,13 +288,13 @@ $lwtv_dc_join_months = static function ( array $lwtv_dc_nums ) use ( $lwtv_dc_mo
 							if ( count( $lwtv_dc_item['months'] ) >= 4 ) {
 								printf(
 									/* translators: %s: number of consecutive months with no deaths. */
-									esc_html( _n( 'No deaths for the next %s month', 'No deaths for the next %s months', count( $lwtv_dc_item['months'] ), 'lwtv' ) ),
+									esc_html( _n( 'No deaths for the next %s month', 'No deaths for the next %s months', count( $lwtv_dc_item['months'] ), 'lwtv-underscores' ) ),
 									esc_html( number_format_i18n( count( $lwtv_dc_item['months'] ) ) )
 								);
 							} else {
 								printf(
 									/* translators: %s: a list of month names. */
-									esc_html__( 'No deaths in %s', 'lwtv' ),
+									esc_html__( 'No deaths in %s', 'lwtv-underscores' ),
 									esc_html( $lwtv_dc_join_months( $lwtv_dc_item['months'] ) )
 								);
 							}
@@ -337,13 +337,13 @@ $lwtv_dc_join_months = static function ( array $lwtv_dc_nums ) use ( $lwtv_dc_mo
 							// build them separately and drop the months clause when none are empty.
 							$lwtv_dc_tail = sprintf(
 								/* translators: %s: total number of characters who died this year. */
-								esc_html( _n( '%s character, in the order we lost them.', '%s characters, in the order we lost them.', $lwtv_dc_item['total'], 'lwtv' ) ),
+								esc_html( _n( '%s character, in the order we lost them.', '%s characters, in the order we lost them.', $lwtv_dc_item['total'], 'lwtv-underscores' ) ),
 								esc_html( number_format_i18n( $lwtv_dc_item['total'] ) )
 							);
 							if ( $lwtv_dc_item['empty_month_count'] > 0 ) {
 								$lwtv_dc_tail .= ' ' . sprintf(
 									/* translators: %s: number of months that recorded no deaths. */
-									esc_html( _n( '%s month recorded no deaths.', '%s months recorded no deaths.', $lwtv_dc_item['empty_month_count'], 'lwtv' ) ),
+									esc_html( _n( '%s month recorded no deaths.', '%s months recorded no deaths.', $lwtv_dc_item['empty_month_count'], 'lwtv-underscores' ) ),
 									esc_html( number_format_i18n( $lwtv_dc_item['empty_month_count'] ) )
 								);
 							}
@@ -363,9 +363,9 @@ $lwtv_dc_join_months = static function ( array $lwtv_dc_nums ) use ( $lwtv_dc_mo
 		// alphabetized rows with a role dot. Role/name filtering + sort is the
 		// shared Characters_On_Air::cast_for_show() transform.
 		$lwtv_dc_role_labels = array(
-			'regular'   => __( 'Regular', 'lwtv' ),
-			'recurring' => __( 'Recurring', 'lwtv' ),
-			'guest'     => __( 'Guest', 'lwtv' ),
+			'regular'   => __( 'Regular', 'lwtv-underscores' ),
+			'recurring' => __( 'Recurring', 'lwtv-underscores' ),
+			'guest'     => __( 'Guest', 'lwtv-underscores' ),
 		);
 
 		$lwtv_dc_ds_sort_key = static function ( string $lwtv_dc_ds_name ): string {
@@ -384,8 +384,8 @@ $lwtv_dc_join_months = static function ( array $lwtv_dc_nums ) use ( $lwtv_dc_mo
 		);
 		?>
 		<div class="lwtv-ty-coa-sortnote">
-			<span class="lwtv-ty-coa-sortpill"><?php esc_html_e( 'Shows A–Z, articles ignored', 'lwtv' ); ?></span>
-			<span class="lwtv-ty-coa-sortnote-text"><?php esc_html_e( '“The Beast in Me” files under B; numeric titles like 9-1-1 lead.', 'lwtv' ); ?></span>
+			<span class="lwtv-ty-coa-sortpill"><?php esc_html_e( 'Shows A–Z, articles ignored', 'lwtv-underscores' ); ?></span>
+			<span class="lwtv-ty-coa-sortnote-text"><?php esc_html_e( '“The Beast in Me” files under B; numeric titles like 9-1-1 lead.', 'lwtv-underscores' ); ?></span>
 		</div>
 		<div class="lwtv-ty-charshow">
 			<?php

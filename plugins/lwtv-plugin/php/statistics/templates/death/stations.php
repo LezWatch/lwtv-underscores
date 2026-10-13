@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 $dtx_taxonomy    = 'lez_stations';
 $dtx_url_base    = '/station/';
-$dtx_noun_plural = __( 'networks', 'lwtv' );
+$dtx_noun_plural = __( 'networks', 'lwtv-underscores' );
 // phpcs:ignore PEAR.Files.IncludingFile.UseRequire
 include plugin_dir_path( __DIR__ ) . 'partials/death-taxonomy-highlights.php';
 
@@ -38,8 +38,8 @@ $ranked = array(
 	'rows'   => array_slice( $dst_rows, 0, 10 ),
 	'total'  => $dst_tot,
 	'family' => 'characters',
-	'title'  => __( 'Top Ten Networks with the most on-screen deaths', 'lwtv' ),
-	'sub'    => __( 'More shows on a network means more deaths.', 'lwtv' ),
+	'title'  => __( 'Top Ten Networks with the most on-screen deaths', 'lwtv-underscores' ),
+	'sub'    => __( 'More shows on a network means more deaths.', 'lwtv-underscores' ),
 	'svg'    => 'satellite-signal.svg',
 	'icon'   => 'svg-satellite-signal',
 	'base'   => '',
@@ -49,8 +49,8 @@ $ranked = array(
 include plugin_dir_path( __DIR__ ) . 'partials/ranked-bars.php';
 
 $download_csv = array(
-	'page'  => __( 'network', 'lwtv' ),
-	'title' => __( 'Deaths by network', 'lwtv' ),
+	'page'  => __( 'network', 'lwtv-underscores' ),
+	'title' => __( 'Deaths by network', 'lwtv-underscores' ),
 	'count' => count( $dst_raw ),
 );
 // phpcs:ignore PEAR.Files.IncludingFile.UseRequire

@@ -62,7 +62,7 @@ class Watch_Host_Collisions {
 					self::ISSUE,
 					sprintf(
 						/* translators: 1: hostname, 2: list of other provider terms. */
-						__( '%1$s is also claimed by %2$s. Only one term can win, and which one is decided by name order. Remove the URL from whichever is wrong, or merge them.', 'lwtv' ),
+						__( '%1$s is also claimed by %2$s. Only one term can win, and which one is decided by name order. Remove the URL from whichever is wrong, or merge them.', 'lwtv-underscores' ),
 						$host,
 						implode( ', ', $rivals )
 					),

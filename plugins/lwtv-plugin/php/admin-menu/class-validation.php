@@ -321,9 +321,9 @@ class Validation {
 
 			<form method="get" action="<?php echo esc_url( admin_url( 'admin.php' ) ); ?>" class="lwtv-tools-tabpicker">
 				<input type="hidden" name="page" value="lwtv_data_check" />
-				<label for="lwtv-tools-tab"><strong><?php esc_html_e( 'Check:', 'lwtv' ); ?></strong></label>
+				<label for="lwtv-tools-tab"><strong><?php esc_html_e( 'Check:', 'lwtv-underscores' ); ?></strong></label>
 				<select name="tab" id="lwtv-tools-tab">
-					<option value="intro" <?php selected( 'intro', $active_tab ); ?>><?php esc_html_e( 'Introduction', 'lwtv' ); ?></option>
+					<option value="intro" <?php selected( 'intro', $active_tab ); ?>><?php esc_html_e( 'Introduction', 'lwtv-underscores' ); ?></option>
 					<?php
 					$counts = self::tab_counts();
 
@@ -353,7 +353,7 @@ class Validation {
 					}
 					?>
 				</select>
-				<?php submit_button( __( 'Go', 'lwtv' ), 'secondary', '', false ); ?>
+				<?php submit_button( __( 'Go', 'lwtv-underscores' ), 'secondary', '', false ); ?>
 			</form>
 
 			<script>
@@ -477,7 +477,7 @@ class Validation {
 			// Flag only what is new. Marking everything else "open" would be
 			// noise on a report where most rows are long-standing by nature.
 			$flag = ( Baseline::NEW_ISSUE === ( $statuses[ $index ] ?? '' ) )
-				? '<span class="lwtv-debug-new" style="font-weight:600;">' . esc_html__( 'New', 'lwtv' ) . '</span> '
+				? '<span class="lwtv-debug-new" style="font-weight:600;">' . esc_html__( 'New', 'lwtv-underscores' ) . '</span> '
 				: '';
 
 			$lines[] = '<div class="lwtv-debug-issue">'
@@ -506,22 +506,22 @@ class Validation {
 		?>
 		<div class="tab-block">
 			<p class="lwtv-tools-intro">
-				<?php esc_html_e( 'If data gets out of sync or we update things incorrectly, these checkers can help identify those errors before people notice. They run on an automated cycle, each check once a week, to try and catch things early.', 'lwtv' ); ?>
+				<?php esc_html_e( 'If data gets out of sync or we update things incorrectly, these checkers can help identify those errors before people notice. They run on an automated cycle, each check once a week, to try and catch things early.', 'lwtv-underscores' ); ?>
 			</p>
 
 			<div class="lwtv-tools-callout">
-				<p><?php esc_html_e( 'When visiting the individual checker, it will show you the status of the last run. To re-run the tool, press the \'Run Scan\' button at the bottom of the page.', 'lwtv' ); ?></p>
+				<p><?php esc_html_e( 'When visiting the individual checker, it will show you the status of the last run. To re-run the tool, press the \'Run Scan\' button at the bottom of the page.', 'lwtv-underscores' ); ?></p>
 			</div>
 
-			<h2 class="lwtv-tools-subhead"><?php esc_html_e( 'Current Status', 'lwtv' ); ?></h2>
+			<h2 class="lwtv-tools-subhead"><?php esc_html_e( 'Current Status', 'lwtv-underscores' ); ?></h2>
 
 			<table class="widefat striped lwtv-tools-checkers">
 				<thead>
 					<tr>
-						<th scope="col"><?php esc_html_e( 'Checker', 'lwtv' ); ?></th>
-						<th scope="col" class="lwtv-tools-checkers__count"><?php esc_html_e( 'Issues Found', 'lwtv' ); ?></th>
+						<th scope="col"><?php esc_html_e( 'Checker', 'lwtv-underscores' ); ?></th>
+						<th scope="col" class="lwtv-tools-checkers__count"><?php esc_html_e( 'Issues Found', 'lwtv-underscores' ); ?></th>
 						<th scope="col" class="lwtv-tools-checkers__action">
-							<span class="screen-reader-text"><?php esc_html_e( 'Actions', 'lwtv' ); ?></span>
+							<span class="screen-reader-text"><?php esc_html_e( 'Actions', 'lwtv-underscores' ); ?></span>
 						</th>
 					</tr>
 				</thead>
@@ -555,7 +555,7 @@ class Validation {
 									<?php
 								} elseif ( $cached ) {
 									?>
-									<span class="lwtv-tools-checkers__none" aria-label="<?php esc_attr_e( 'No issues', 'lwtv' ); ?>">&mdash;</span>
+									<span class="lwtv-tools-checkers__none" aria-label="<?php esc_attr_e( 'No issues', 'lwtv-underscores' ); ?>">&mdash;</span>
 									<?php
 								} elseif ( $last ) {
 									// `last`, not `stored`, says it has run: a clean
@@ -574,7 +574,7 @@ class Validation {
 										<?php
 										printf(
 											/* translators: %s: human-readable time difference, e.g. "3 days". */
-											esc_html__( 'as of %s ago', 'lwtv' ),
+											esc_html__( 'as of %s ago', 'lwtv-underscores' ),
 											esc_html( human_time_diff( $last ) )
 										);
 										?>
@@ -582,13 +582,13 @@ class Validation {
 									<?php
 								} else {
 									?>
-									<span class="lwtv-tools-checkers__none"><?php esc_html_e( 'Not run', 'lwtv' ); ?></span>
+									<span class="lwtv-tools-checkers__none"><?php esc_html_e( 'Not run', 'lwtv-underscores' ); ?></span>
 									<?php
 								}
 								?>
 							</td>
 							<td class="lwtv-tools-checkers__action">
-								<a href="<?php echo esc_url( $url ); ?>" class="button button-small"><?php esc_html_e( 'View report', 'lwtv' ); ?></a>
+								<a href="<?php echo esc_url( $url ); ?>" class="button button-small"><?php esc_html_e( 'View report', 'lwtv-underscores' ); ?></a>
 							</td>
 						</tr>
 						<?php

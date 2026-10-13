@@ -12,14 +12,14 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 
 $lwtv_actor_subnav = array(
-	'overview'  => __( 'Overview', 'lwtv' ),
-	'sexuality' => __( 'Sexuality', 'lwtv' ),
-	'gender'    => __( 'Gender', 'lwtv' ),
-	'roles'     => __( 'Roles', 'lwtv' ),
-	'unknown'   => __( 'Unknown Actor', 'lwtv' ),
+	'overview'  => __( 'Overview', 'lwtv-underscores' ),
+	'sexuality' => __( 'Sexuality', 'lwtv-underscores' ),
+	'gender'    => __( 'Gender', 'lwtv-underscores' ),
+	'roles'     => __( 'Roles', 'lwtv-underscores' ),
+	'unknown'   => __( 'Unknown Actor', 'lwtv-underscores' ),
 );
 ?>
-<nav class="lwtv-stats-subnav" aria-label="<?php esc_attr_e( 'Actors statistics views', 'lwtv' ); ?>">
+<nav class="lwtv-stats-subnav" aria-label="<?php esc_attr_e( 'Actors statistics views', 'lwtv-underscores' ); ?>">
 	<?php
 	foreach ( $lwtv_actor_subnav as $lwtv_slug => $lwtv_label ) {
 		$lwtv_is_active = ( $view === $lwtv_slug );

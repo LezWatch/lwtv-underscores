@@ -11,9 +11,9 @@ $lwtv_show_sidebar_scope = empty( $GLOBALS['lwtv_in_modal'] ) && class_exists( '
 
 if ( $lwtv_show_sidebar_scope ) {
 	$candidates = array(
-		'shows'      => __( 'TV Shows', 'lwtv' ),
-		'characters' => __( 'Characters', 'lwtv' ),
-		'actors'     => __( 'Actors', 'lwtv' ),
+		'shows'      => __( 'TV Shows', 'lwtv-underscores' ),
+		'characters' => __( 'Characters', 'lwtv-underscores' ),
+		'actors'     => __( 'Actors', 'lwtv-underscores' ),
 	);
 
 	foreach ( $candidates as $engine_slug => $engine_label ) {
@@ -37,7 +37,7 @@ if ( $lwtv_show_sidebar_scope ) {
 
 		<?php if ( $lwtv_show_sidebar_scope ) : ?>
 			<center>
-				<div class="lwtv-search-scope" role="group" aria-label="<?php esc_attr_e( 'Search scope', 'lwtv' ); ?>">
+				<div class="lwtv-search-scope" role="group" aria-label="<?php esc_attr_e( 'Search scope', 'lwtv-underscores' ); ?>">
 					<?php foreach ( $lwtv_sidebar_engines as $engine_slug => $engine_label ) : ?>
 					<label class="lwtv-search-scope__option">
 						<input

@@ -53,45 +53,45 @@ foreach ( $lwtv_ranked as $lwtv_slug => $lwtv_data ) {
 $lwtv_cards = array(
 	array(
 		'family'  => 'shows',
-		'label'   => __( 'Stations', 'lwtv' ),
+		'label'   => __( 'Stations', 'lwtv-underscores' ),
 		'count'   => $lwtv_station_total,
 		'suffix'  => '',
-		'caption' => __( 'Networks & platforms tracked', 'lwtv' ),
+		'caption' => __( 'Networks & platforms tracked', 'lwtv-underscores' ),
 		'svg'     => 'satellite-signal.svg',
 		'icon'    => 'svg-satellite-signal',
 	),
 	array(
 		'family'  => 'characters',
-		'label'   => __( 'Have 10+ Shows', 'lwtv' ),
+		'label'   => __( 'Have 10+ Shows', 'lwtv-underscores' ),
 		'count'   => $lwtv_depth,
 		'suffix'  => '',
-		'caption' => __( 'A real depth of catalogue', 'lwtv' ),
+		'caption' => __( 'A real depth of catalogue', 'lwtv-underscores' ),
 		'svg'     => 'library.svg',
 		'icon'    => 'svg-library',
 	),
 	array(
 		'family'  => 'actors',
-		'label'   => __( 'Biggest Platform', 'lwtv' ),
+		'label'   => __( 'Biggest Platform', 'lwtv-underscores' ),
 		'count'   => $lwtv_topshare,
 		'suffix'  => '%',
 		/* translators: %s: top station name. */
-		'caption' => $lwtv_top_name ? sprintf( __( '%s leads the pack.', 'lwtv' ), $lwtv_top_name ) : __( 'No single network dominates', 'lwtv' ),
+		'caption' => $lwtv_top_name ? sprintf( __( '%s leads the pack.', 'lwtv-underscores' ), $lwtv_top_name ) : __( 'No single network dominates', 'lwtv-underscores' ),
 		'svg'     => 'location-target.svg',
 		'icon'    => 'svg-location-target',
 	),
 	array(
 		'family'  => 'nations-new',
-		'label'   => __( 'New Since 2020', 'lwtv' ),
+		'label'   => __( 'New Since 2020', 'lwtv-underscores' ),
 		'count'   => $lwtv_new_2020,
 		'suffix'  => '',
-		'caption' => __( 'Aired their first queer show', 'lwtv' ),
+		'caption' => __( 'Aired their first queer show', 'lwtv-underscores' ),
 		'svg'     => 'graph-line.svg',
 		'icon'    => 'svg-graph-line',
 	),
 );
 ?>
 
-<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'Across the Dial', 'lwtv' ); ?></p>
+<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'Across the Dial', 'lwtv-underscores' ); ?></p>
 <div class="lwtv-metric-grid lwtv-metric-grid--4">
 	<?php
 	foreach ( $lwtv_cards as $lwtv_card ) {
@@ -118,17 +118,17 @@ $leaderboard_chars    = $character_counts;
 $leaderboard_all      = (int) $all_shows_count;
 $leaderboard_base     = '/statistics/stations/';
 $leaderboard_qvar     = 'station';
-$leaderboard_title    = __( 'Stations by number of shows', 'lwtv' );
-$leaderboard_col      = __( 'Station', 'lwtv' );
-$leaderboard_items    = __( 'stations', 'lwtv' );
+$leaderboard_title    = __( 'Stations by number of shows', 'lwtv-underscores' );
+$leaderboard_col      = __( 'Station', 'lwtv-underscores' );
+$leaderboard_items    = __( 'stations', 'lwtv-underscores' );
 $leaderboard_icon_svg = 'satellite-signal.svg';
 $leaderboard_icon_fa  = 'svg-satellite-signal';
 // phpcs:ignore PEAR.Files.IncludingFile.UseRequire
 include plugin_dir_path( __DIR__ ) . 'partials/leaderboard.php';
 
 $download_csv = array(
-	'page'  => __( 'station', 'lwtv' ),
-	'title' => __( 'Shows, characters & deaths, by station', 'lwtv' ),
+	'page'  => __( 'station', 'lwtv-underscores' ),
+	'title' => __( 'Shows, characters & deaths, by station', 'lwtv-underscores' ),
 	// Count the CSV's own source (stations with >=1 published show), which the
 	// cached summaries provide — $all_stations_data also includes show-less ones.
 	'count' => count( (array) lwtv_plugin()->generate_station_statistics( 'all', 'all', 'array' ) ),

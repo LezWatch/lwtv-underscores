@@ -57,17 +57,17 @@ foreach ( $dl_keys as $dl_i => $dl_k ) {
 $dl_cards = array(
 	array(
 		'variant' => 'crimson',
-		'label'   => __( 'Longest Gap', 'lwtv' ),
+		'label'   => __( 'Longest Gap', 'lwtv-underscores' ),
 		'count'   => $dl_time,
-		'unit'    => __( 'days', 'lwtv' ),
-		'caption' => __( 'Between two consecutive deaths', 'lwtv' ),
+		'unit'    => __( 'days', 'lwtv-underscores' ),
+		'caption' => __( 'Between two consecutive deaths', 'lwtv-underscores' ),
 		'detail'  => $dl_longest_txt,
 	),
 	array(
 		'variant' => 'raspberry',
-		'label'   => __( 'Shortest Gap', 'lwtv' ),
+		'label'   => __( 'Shortest Gap', 'lwtv-underscores' ),
 		'count'   => 0,
-		'unit'    => __( 'days', 'lwtv' ),
+		'unit'    => __( 'days', 'lwtv-underscores' ),
 		'caption' => sprintf(
 			/* translators: %s: number of dates on which more than one character died. */
 			_n(
@@ -82,10 +82,10 @@ $dl_cards = array(
 	),
 	array(
 		'variant' => 'plum',
-		'label'   => __( 'Most In One Day', 'lwtv' ),
+		'label'   => __( 'Most In One Day', 'lwtv-underscores' ),
 		'count'   => $dl_most,
 		'unit'    => '',
-		'caption' => __( 'Characters killed on a single date', 'lwtv' ),
+		'caption' => __( 'Characters killed on a single date', 'lwtv-underscores' ),
 		'detail'  => implode( ', ', $dl_most_dates ),
 	),
 );
@@ -124,7 +124,7 @@ foreach ( $dead_records as $dl_date => $dl_group ) {
 	}
 }
 ?>
-<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'The Record', 'lwtv' ); ?></p>
+<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'The Record', 'lwtv-underscores' ); ?></p>
 <div class="lwtv-toll">
 	<?php
 	foreach ( $dl_cards as $dl_c ) {
@@ -151,13 +151,13 @@ foreach ( $dead_records as $dl_date => $dl_group ) {
 	<?php
 	printf(
 		/* translators: %s: number of dead characters. */
-		esc_html( _n( '%s character, newest first. Click a column heading to sort.', '%s characters, newest first. Click a column heading to sort.', count( $dl_rows ), 'lwtv' ) ),
+		esc_html( _n( '%s character, newest first. Click a column heading to sort.', '%s characters, newest first. Click a column heading to sort.', count( $dl_rows ), 'lwtv-underscores' ) ),
 		esc_html( number_format_i18n( count( $dl_rows ) ) )
 	);
 	?>
 
 	<?php if ( $dl_has_shared ) : ?>
-		<?php esc_html_e( 'Multiple deaths in one day are marked with *.', 'lwtv' ); ?>
+		<?php esc_html_e( 'Multiple deaths in one day are marked with *.', 'lwtv-underscores' ); ?>
 	<?php endif; ?>
 
 
@@ -166,9 +166,9 @@ foreach ( $dead_records as $dl_date => $dl_group ) {
 	<table id="DeadCharactersTable" class="tablesorter lwtv-death-list">
 		<thead>
 			<tr>
-				<th><?php esc_html_e( 'Name', 'lwtv' ); ?></th>
-				<th><?php esc_html_e( 'Date', 'lwtv' ); ?></th>
-				<th class="lwtv-death-list-num"><?php esc_html_e( 'Days Since Prev Death', 'lwtv' ); ?></th>
+				<th><?php esc_html_e( 'Name', 'lwtv-underscores' ); ?></th>
+				<th><?php esc_html_e( 'Date', 'lwtv-underscores' ); ?></th>
+				<th class="lwtv-death-list-num"><?php esc_html_e( 'Days Since Prev Death', 'lwtv-underscores' ); ?></th>
 			</tr>
 		</thead>
 		<tbody>

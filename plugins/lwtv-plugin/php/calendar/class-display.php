@@ -103,7 +103,7 @@ class Display {
 
 		return '<h2 class="lwtv-calendar-week">' . sprintf(
 			/* translators: 1: start date of the week, 2: end date of the week */
-			esc_html__( 'Week of %1$s - %2$s', 'lwtv' ),
+			esc_html__( 'Week of %1$s - %2$s', 'lwtv-underscores' ),
 			esc_html( $start->format( 'F j, Y' ) ),
 			esc_html( $end->format( 'F j, Y' ) )
 		) . '</h2>';
@@ -115,7 +115,7 @@ class Display {
 	 * @return string The intro copy.
 	 */
 	private function get_intro() {
-		return '<p class="ep-agenda-intro">' . esc_html__( 'Airdates and times are subject to change without notice, and are shown for their original US/Eastern broadcast. Always check your local listings.', 'lwtv' ) . '</p>';
+		return '<p class="ep-agenda-intro">' . esc_html__( 'Airdates and times are subject to change without notice, and are shown for their original US/Eastern broadcast. Always check your local listings.', 'lwtv-underscores' ) . '</p>';
 	}
 
 	/**
@@ -129,7 +129,7 @@ class Display {
 	 */
 	private function get_footer( $date_query, $prev_datetime, $end_datetime ) {
 		$footer  = $this->get_footer_navigation( $date_query, $prev_datetime->format( 'Y-m-d' ), $end_datetime->format( 'Y-m-d' ) );
-		$footer .= '<p class="ep-agenda-credit"><small><a href="https://www.tvmaze.com" target="_new">' . esc_html__( 'Powered by TVMaze.', 'lwtv' ) . '</a></small></p>';
+		$footer .= '<p class="ep-agenda-credit"><small><a href="https://www.tvmaze.com" target="_new">' . esc_html__( 'Powered by TVMaze.', 'lwtv-underscores' ) . '</a></small></p>';
 
 		return $footer;
 	}
@@ -154,16 +154,16 @@ class Display {
 		$last_week_icon = lwtv_plugin()->get_symbolicon( svg: 'caret-left-circle.svg', icon: 'svg-chevron-circle-left', max_size: '14' );
 		$next_week_icon = lwtv_plugin()->get_symbolicon( svg: 'caret-right-circle.svg', icon: 'svg-chevron-circle-right', max_size: '14' );
 
-		$navigation = '<nav aria-label="' . esc_attr__( 'Calendar Navigation', 'lwtv' ) . '" class="lwtv-pagination"><ul class="pagination justify-content-center">';
+		$navigation = '<nav aria-label="' . esc_attr__( 'Calendar Navigation', 'lwtv-underscores' ) . '" class="lwtv-pagination"><ul class="pagination justify-content-center">';
 
-		$navigation .= '<li class="page-item first me-auto"><a href="' . $last_week . '" class="page-link">' . $last_week_icon . ' ' . esc_html__( 'Last Week', 'lwtv' ) . '</a></li>';
+		$navigation .= '<li class="page-item first me-auto"><a href="' . $last_week . '" class="page-link">' . $last_week_icon . ' ' . esc_html__( 'Last Week', 'lwtv-underscores' ) . '</a></li>';
 
 		// We only show 'this week' when it's NOT this week.
 		if ( 'today' !== $date && $today !== $date ) {
-			$navigation .= '<li class="page-item"><a href="' . $this_week . '" class="page-link">' . esc_html__( 'This Week', 'lwtv' ) . '</a></li>';
+			$navigation .= '<li class="page-item"><a href="' . $this_week . '" class="page-link">' . esc_html__( 'This Week', 'lwtv-underscores' ) . '</a></li>';
 		}
 
-		$navigation .= '<li class="page-item last ms-auto"><a href="' . $next_week . '" class="page-link">' . esc_html__( 'Next Week', 'lwtv' ) . ' ' . $next_week_icon . '</a></li>';
+		$navigation .= '<li class="page-item last ms-auto"><a href="' . $next_week . '" class="page-link">' . esc_html__( 'Next Week', 'lwtv-underscores' ) . ' ' . $next_week_icon . '</a></li>';
 		$navigation .= '</ul></nav>';
 
 		return $navigation;

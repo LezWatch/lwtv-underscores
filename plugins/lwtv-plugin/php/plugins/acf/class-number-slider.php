@@ -23,7 +23,7 @@ class acf_field_number_slider extends acf_field {
 	 */
 	public function __construct() {
 		$this->name     = 'number_slider';
-		$this->label    = __( 'Number Slider', 'lwtv' );
+		$this->label    = __( 'Number Slider', 'lwtv-underscores' );
 		$this->category = 'basic';
 		$this->version  = '1.0.2';
 		$this->defaults = array(
@@ -47,7 +47,7 @@ class acf_field_number_slider extends acf_field {
 		acf_render_field_setting(
 			$field,
 			array(
-				'label' => __( 'Default Value', 'lwtv' ),
+				'label' => __( 'Default Value', 'lwtv-underscores' ),
 				'type'  => 'number',
 				'name'  => 'default_value',
 			)
@@ -55,7 +55,7 @@ class acf_field_number_slider extends acf_field {
 		acf_render_field_setting(
 			$field,
 			array(
-				'label' => __( 'Minimum Value', 'lwtv' ),
+				'label' => __( 'Minimum Value', 'lwtv-underscores' ),
 				'type'  => 'number',
 				'name'  => 'slider_min_value',
 			)
@@ -63,7 +63,7 @@ class acf_field_number_slider extends acf_field {
 		acf_render_field_setting(
 			$field,
 			array(
-				'label' => __( 'Maximum Value', 'lwtv' ),
+				'label' => __( 'Maximum Value', 'lwtv-underscores' ),
 				'type'  => 'number',
 				'name'  => 'slider_max_value',
 			)
@@ -71,7 +71,7 @@ class acf_field_number_slider extends acf_field {
 		acf_render_field_setting(
 			$field,
 			array(
-				'label' => __( 'Increment Value', 'lwtv' ),
+				'label' => __( 'Increment Value', 'lwtv-underscores' ),
 				'type'  => 'number',
 				'name'  => 'increment_value',
 			)
@@ -79,8 +79,8 @@ class acf_field_number_slider extends acf_field {
 		acf_render_field_setting(
 			$field,
 			array(
-				'label'        => __( 'Append', 'lwtv' ),
-				'instructions' => __( 'Text displayed after the value (e.g. "stars").', 'lwtv' ),
+				'label'        => __( 'Append', 'lwtv-underscores' ),
+				'instructions' => __( 'Text displayed after the value (e.g. "stars").', 'lwtv-underscores' ),
 				'type'         => 'text',
 				'name'         => 'slider_append',
 			)
