@@ -104,7 +104,7 @@ returns the `data-*` map, also pure:
 | `data-no-offers-message` | i18n string with `{{title}}`, e.g. "We don't know of anywhere streaming {{title}} right now." |
 | `data-title-not-found-message` | i18n string |
 
-Message strings go through `__()` with the `lwtv` text domain. The test bootstrap
+Message strings go through `__()` with the `lwtv-underscores` text domain. The test bootstrap
 already shims `__()`.
 
 ## Implementation steps

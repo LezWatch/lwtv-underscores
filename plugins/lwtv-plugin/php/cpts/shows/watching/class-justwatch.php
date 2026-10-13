@@ -98,8 +98,8 @@ class JustWatch {
 			'data-id-type'                 => 'imdb',
 			'data-theme'                   => self::theme( $theme ),
 			// translators: {{title}} is replaced by JustWatch with the show's title. Keep it as-is.
-			'data-no-offers-message'       => __( 'We don\'t know of anywhere streaming {{title}} right now.', 'lwtv' ),
-			'data-title-not-found-message' => __( 'We couldn\'t find where to watch this show right now.', 'lwtv' ),
+			'data-no-offers-message'       => __( 'We don\'t know of anywhere streaming {{title}} right now.', 'lwtv-underscores' ),
+			'data-title-not-found-message' => __( 'We couldn\'t find where to watch this show right now.', 'lwtv-underscores' ),
 		);
 	}
 

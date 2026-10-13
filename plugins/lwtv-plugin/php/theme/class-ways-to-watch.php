@@ -134,7 +134,7 @@ class Ways_To_Watch {
 		}
 
 		$fallback = '<a href="' . esc_url( self::JUSTWATCH_HOME ) . '" target="_blank" rel="noopener">'
-			. esc_html__( 'Find where to watch on JustWatch', 'lwtv' )
+			. esc_html__( 'Find where to watch on JustWatch', 'lwtv-underscores' )
 			. '</a>';
 
 		// bootstrap-color-mode.js sets data-bs-theme on <html> in the <head>, so
@@ -145,7 +145,7 @@ class Ways_To_Watch {
 		);
 
 		$branding = '<p class="justwatch-attribution">'
-			. esc_html__( 'Streaming availability from', 'lwtv' ) . ' '
+			. esc_html__( 'Streaming availability from', 'lwtv-underscores' ) . ' '
 			. '<a href="' . esc_url( self::JUSTWATCH_HOME ) . '" target="_blank" rel="noopener">JustWatch</a>'
 			. '</p>';
 
