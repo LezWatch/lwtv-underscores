@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [7.3.1] - 2026-10-13
+
+### Security
+
+- Patch the smol-toml, js-yaml and katex advisories in the markdownlint build tooling by overriding the versions it pinned.
+- Add an OSV-Scanner config that ignores the dev-only braces and postcss-selector-parser advisories until 2027-01-09, each with its reason, so they come back up for review.
+
 ## [7.3.0] - 2026-10-09
 
 ### Added
