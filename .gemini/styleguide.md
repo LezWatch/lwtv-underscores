@@ -48,7 +48,7 @@ these links.
    `wp_remote_get()`. Local file reads with `file_get_contents()` are fine and
    are explicitly allowed in `phpcs.xml.dist`.
 6. **Missing text domain.** All user-facing strings must be translatable:
-   `'lwtv'` inside `plugins/lwtv-plugin/`, `'lwtv-underscores'` in theme files.
+   `'lwtv-underscores'` for ALL files.
    "User-facing" means a site visitor or a wp-admin screen. It does **not**
    include WP-CLI console output, nor `status`/`reason`/verdict values, which
    are identifiers rather than copy — both are covered under "WP-CLI files"
