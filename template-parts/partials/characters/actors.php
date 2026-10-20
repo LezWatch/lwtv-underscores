@@ -71,7 +71,7 @@ if ( 'actors' === $format ) {
 	}
 	?>
 
-	<th scope="row"><?php echo wp_kses_post( _n( 'Actor', 'Actors', count( $the_actors ) ) ); ?></th>
+	<th scope="row"><?php echo wp_kses_post( _n( 'Actor', 'Actors', count( $the_actors ), 'lwtv-underscores' ) ); ?></th>
 	<td>
 	<?php
 	// If we have two or fewer actors, just list them.

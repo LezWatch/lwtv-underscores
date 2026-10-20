@@ -138,7 +138,7 @@ class LWTV_Today_Widget extends WP_Widget {
 
 		if ( $count > 0 ) {
 			// translators: %s is the number of dead characters.
-			$how_many = sprintf( _n( '%s character died:', '%s characters died:', $count ), $count );
+			$how_many = sprintf( _n( '%s character died:', '%s characters died:', $count, 'lwtv-underscores' ), $count );
 			$the_dead = '<ul class="byq-otd">';
 
 			foreach ( $response as $dead_character ) {

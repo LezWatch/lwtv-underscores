@@ -31,6 +31,19 @@
 		<exclude name="Universal.Operators.DisallowShortTernary.Found" />
 	</rule>
 
+	<!--
+		Rules: Text domain. There is exactly one, for the theme AND the bundled
+		plugin: it matches the theme folder, which WordPress loads automatically.
+		(lwtv_ is only the code prefix; there is no 'lwtv' domain.)
+	-->
+	<rule ref="WordPress.WP.I18n">
+		<properties>
+			<property name="text_domain" type="array">
+				<element value="lwtv-underscores" />
+			</property>
+		</properties>
+	</rule>
+
 	<!-- Rules: LWTV Custom Commands -->
 	<rule ref="WordPress.Security.EscapeOutput">
 		<properties>
@@ -78,13 +91,19 @@
 	<!-- External Libraries -->
 	<exclude-pattern>*/ICal/*</exclude-pattern>
 
-	<!-- Non Code Folders -->
-	<exclude-pattern>.claude/*</exclude-pattern>
-	<exclude-pattern>.git*/*</exclude-pattern>
-	<exclude-pattern>.superpowers/*</exclude-pattern>
-	<exclude-pattern>.vscode/*</exclude-pattern>
-	<exclude-pattern>CLAUDE*/*</exclude-pattern>
-	<exclude-pattern>docs/*</exclude-pattern>
-	<exclude-pattern>tests/*</exclude-pattern>
+	<!--
+		Non Code Folders.
+		Relative + anchored: phpcs matches exclude patterns case-insensitively
+		against the whole path, so unanchored ".claude/*" or "CLAUDE*/*" also
+		excluded every file in a git worktree under .claude/worktrees/, and
+		"docs/*" / "tests/*" matched those words anywhere in a path.
+	-->
+	<exclude-pattern type="relative">^\.claude/*</exclude-pattern>
+	<exclude-pattern type="relative">^\.git*/*</exclude-pattern>
+	<exclude-pattern type="relative">^\.superpowers/*</exclude-pattern>
+	<exclude-pattern type="relative">^\.vscode/*</exclude-pattern>
+	<exclude-pattern type="relative">^CLAUDE*/*</exclude-pattern>
+	<exclude-pattern type="relative">^docs/*</exclude-pattern>
+	<exclude-pattern type="relative">^tests/*</exclude-pattern>
 
 </ruleset>

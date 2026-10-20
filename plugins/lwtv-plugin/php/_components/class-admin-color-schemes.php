@@ -164,7 +164,7 @@ class Admin_Color_Schemes implements Component {
 
 		wp_admin_css_color(
 			'adderley',
-			__( 'Adderley', 'admin-color-schemes' ),
+			__( 'Adderley', 'lwtv-underscores' ),
 			self::get_color_url( 'adderley' ),
 			array( '#bde7f0', '#216bce', '#1730e5' ),
 			array(
@@ -176,7 +176,7 @@ class Admin_Color_Schemes implements Component {
 
 		wp_admin_css_color(
 			'modern-evergreen',
-			__( 'Modern Evergreen', 'admin-color-schemes' ),
+			__( 'Modern Evergreen', 'lwtv-underscores' ),
 			self::get_color_url( 'modern-evergreen' ),
 			array( '#1e8060', '#0f4232', '#1e1e1e', '#3855e1' ),
 			array(

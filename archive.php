@@ -12,7 +12,7 @@ $archive_icon    = lwtv_plugin()->get_symbolicon( svg: 'newspaper.svg', icon: 's
 $archive_details = '';
 
 // translators: %s is the number of articles.
-$archive_subheader = '<span class="post-count">' . sprintf( _n( '%s article', '%s articles', $current_count ), number_format_i18n( $current_count ) ) . '</span>';
+$archive_subheader = '<span class="post-count">' . sprintf( _n( '%s article', '%s articles', $current_count, 'lwtv-underscores' ), number_format_i18n( $current_count ) ) . '</span>';
 
 // Custom header info
 if ( is_author() ) {

@@ -272,7 +272,7 @@ class Characters {
 			if ( $num_posts && $num_posts->publish ) {
 				if ( self::SLUG === $post_type ) {
 					// translators: %s is the number of characters
-					$text = _n( '%s Character', '%s Characters', $num_posts->publish );
+					$text = _n( '%s Character', '%s Characters', $num_posts->publish, 'lwtv-underscores' );
 				}
 				$text = sprintf( $text, number_format_i18n( $num_posts->publish ) );
 				printf( '<li class="%1$s-count"><a href="edit.php?post_type=%1$s">%2$s</a></li>', esc_attr( $post_type ), esc_html( $text ) );

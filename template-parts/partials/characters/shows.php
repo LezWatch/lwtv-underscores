@@ -60,7 +60,7 @@ if ( '' !== $all_shows && is_array( $all_shows ) ) {
 
 ?>
 
-<th scope="row"><?php echo wp_kses_post( _n( 'Show', 'Shows', count( $shows_group ) ) ); ?></th>
+<th scope="row"><?php echo wp_kses_post( _n( 'Show', 'Shows', count( $shows_group ), 'lwtv-underscores' ) ); ?></th>
 <td>
 <?php
 // If we have two or fewer shows, just list them.

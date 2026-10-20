@@ -212,7 +212,7 @@ class Author_Box {
 				}
 			}
 			$favourites = ( empty( $show_title ) ) ? '' : implode( ', ', $show_title );
-			$fav_title  = _n( 'Show', 'Shows', count( $show_title ) );
+			$fav_title  = _n( 'Show', 'Shows', count( $show_title ), 'lwtv-underscores' );
 		}
 		$fav_shows = ( isset( $favourites ) && ! empty( $favourites ) ) ? '<div class="author-favourites">' . lwtv_plugin()->get_symbolicon( svg: 'tv-hd.svg', icon: 'svg-tv' ) . '&nbsp;Favorite ' . $fav_title . ': ' . $favourites . '</div>' : '';
 

@@ -33,10 +33,10 @@ $new_icon       = lwtv_plugin()->get_symbolicon( svg: 'construction.svg', icon: 
 			$dead_text = 'none are dead';
 			if ( $has_dead_count > '0' ) {
 				// translators: %s is a number.
-				$dead_text = sprintf( _n( '<strong>%s</strong> is dead', '<strong>%s</strong> are dead', $has_dead_count ), $has_dead_count );
+				$dead_text = sprintf( _n( '<strong>%s</strong> is dead', '<strong>%s</strong> are dead', $has_dead_count, 'lwtv-underscores' ), $has_dead_count );
 			}
 			// translators: %s is 'are' or a number.
-			echo wp_kses_post( '<p>There ' . sprintf( _n( 'is <strong>%s</strong> character', 'are <strong>%s</strong> characters', $has_char_count ), $has_char_count ) . ' listed for this actor; ' . $dead_text . '.</p>' );
+			echo wp_kses_post( '<p>There ' . sprintf( _n( 'is <strong>%s</strong> character', 'are <strong>%s</strong> characters', $has_char_count, 'lwtv-underscores' ), $has_char_count ) . ' listed for this actor; ' . $dead_text . '.</p>' );
 
 			echo '<div class="container characters-regulars-container"><div class="row site-loop character-show-loop">';
 			if ( is_array( $all_chars ) ) {

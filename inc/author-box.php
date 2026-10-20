@@ -25,7 +25,7 @@ function lwtv_author_box( $content ) {
 			: sprintf( __( 'This is the first article by %s.', 'lwtv-underscores' ), $display_name );
 
 		// translators: %s is the author.
-		$about_author = sprintf( __( 'About %s' ), $display_name );
+		$about_author = sprintf( __( 'About %s', 'lwtv-underscores' ), $display_name );
 
 		$author_details  = '<div class="sm:col-3">' . get_avatar( get_the_author_meta( 'user_email' ), 190 ) . '</div>';
 		$author_details .= '<div class="sm:col-9"><h4 class="author_name">' . $about_author . '</h4>';

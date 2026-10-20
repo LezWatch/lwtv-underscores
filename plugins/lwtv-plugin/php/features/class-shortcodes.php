@@ -147,15 +147,34 @@ class Shortcodes {
 
 		$output = '<ul>';
 		foreach ( $count_array as $topic => $count ) {
-			$subject = ( 'dead' === $topic ) ? 'characters' : $topic;
-			// translators: %s is the subject
-			$type    = ( 0 === $count ) ? 'no ' . $subject : sprintf( _n( '%s ' . rtrim( $subject, 's' ), '%s ' . $subject, $count ), $count );
-			$added   = ( 'dead' === $topic ) ? 'died' : 'added';
-			$output .= '<li>' . $type . ' ' . $added . '</li>';
+			$output .= '<li>' . esc_html( $this->this_month_line( $topic, $count ) ) . '</li>';
 		}
 		$output .= '</ul>';
 
 		return $output;
+	}
+
+	/**
+	 * One [thismonth] list line, as a whole translatable sentence.
+	 *
+	 * @param string $topic 'shows', 'characters', or 'dead'.
+	 * @param int    $count How many this month.
+	 * @return string
+	 */
+	private function this_month_line( $topic, $count ) {
+		$count = (int) $count;
+		switch ( $topic ) {
+			case 'shows':
+				/* translators: %s: number of shows. */
+				return ( 0 === $count ) ? __( 'no shows added', 'lwtv-underscores' ) : sprintf( _n( '%s show added', '%s shows added', $count, 'lwtv-underscores' ), $count );
+			case 'characters':
+				/* translators: %s: number of characters. */
+				return ( 0 === $count ) ? __( 'no characters added', 'lwtv-underscores' ) : sprintf( _n( '%s character added', '%s characters added', $count, 'lwtv-underscores' ), $count );
+			case 'dead':
+				/* translators: %s: number of characters. */
+				return ( 0 === $count ) ? __( 'no characters died', 'lwtv-underscores' ) : sprintf( _n( '%s character died', '%s characters died', $count, 'lwtv-underscores' ), $count );
+		}
+		return '';
 	}
 
 
