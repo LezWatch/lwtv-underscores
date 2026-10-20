@@ -339,6 +339,45 @@ function register_navwalker() {
 }
 add_action( 'after_setup_theme', 'register_navwalker' );
 
+/*
+ * WordPress's default menu markup (<ul class="menu"><li class="menu-item">)
+ * collides with Bootstrap 6, where .menu is the hidden dropdown panel and
+ * .menu-item its link. Rename them for every menu the Bootstrap walker
+ * doesn't build (widgets, page-list fallbacks); the walker handles its own.
+ */
+
+/**
+ * Swap the default `menu` container class for `wp-menu`.
+ *
+ * @param array $args wp_nav_menu() or wp_page_menu() arguments.
+ * @return array
+ */
+function lwtv_menu_class_not_bootstrap( $args ) {
+	$is_bootstrap = isset( $args['walker'] ) && $args['walker'] instanceof WP_Bootstrap_Navwalker;
+	if ( ! $is_bootstrap && isset( $args['menu_class'] ) && 'menu' === $args['menu_class'] ) {
+		$args['menu_class'] = 'wp-menu';
+	}
+	return $args;
+}
+add_filter( 'wp_nav_menu_args', 'lwtv_menu_class_not_bootstrap' );
+add_filter( 'wp_page_menu_args', 'lwtv_menu_class_not_bootstrap' );
+
+/**
+ * Drop the `menu-item` class from list items outside the Bootstrap walker.
+ *
+ * @param string[] $classes Menu item classes.
+ * @param WP_Post  $item    Menu item (unused).
+ * @param stdClass $args    wp_nav_menu() arguments.
+ * @return string[]
+ */
+function lwtv_menu_item_class_not_bootstrap( $classes, $item, $args ) {
+	if ( isset( $args->walker ) && $args->walker instanceof WP_Bootstrap_Navwalker ) {
+		return $classes;
+	}
+	return array_values( array_diff( $classes, array( 'menu-item' ) ) );
+}
+add_filter( 'nav_menu_css_class', 'lwtv_menu_item_class_not_bootstrap', 10, 3 );
+
 // Bootstrap pagination: wp_bootstrap_pagination().
 require_once 'inc/wp_bootstrap_pagination.php';
 

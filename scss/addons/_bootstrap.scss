@@ -76,6 +76,16 @@
 }
 
 
+/* Cards */
+
+// Bootstrap 6 made .card-header a flex column; v5's was a plain block, and the
+// theme's headers (and ones it turns into flex rows itself, like the Bury
+// Your Gays banner) were built for that. Restore v5's layout.
+.card-header {
+	display: block;
+	flex-direction: row;
+}
+
 /* List Groups */
 .list-group {
 
