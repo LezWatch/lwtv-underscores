@@ -17,6 +17,12 @@ const themePackage = require('../package.json');
 const dynamicThemeVersion = themePackage.version;
 
 (async () => {
+	// Bootstrap - only the files functions.php enqueues (plus their maps).
+	for ( const file of [ 'css/bootstrap.min.css', 'css/bootstrap.min.css.map', 'js/bootstrap.bundle.min.js', 'js/bootstrap.bundle.min.js.map' ] ) {
+		await cp( root + '/node_modules/bootstrap/dist/' + file, root + '/inc/bootstrap/' + file );
+	}
+	console.log('Bootstrap files have been moved!');
+
 	// JS Files - Theme
 	await cp( root + '/_build_scripts/webpackdist/js/yikes-theme-scripts.min.js', root + '/inc/js/yikes-theme-scripts.min.js');
 	await cp( root + '/_build_scripts/webpackdist/js/bootstrap-color-mode.min.js', root + '/inc/js/bootstrap-color-mode.min.js');

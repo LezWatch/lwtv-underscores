@@ -70,7 +70,7 @@ class Actor_Birthday {
 				$years_old = $num . $end[ $num % 10 ];
 			}
 			$old = ' ' . $years_old . ' ';
-			echo '<div class="alert alert-info" role="alert">Happy' . esc_html( $old ) . 'Birthday, ' . esc_html( get_the_title() ) . '!</div>';
+			echo '<div class="alert theme-info" role="alert">Happy' . esc_html( $old ) . 'Birthday, ' . esc_html( get_the_title() ) . '!</div>';
 		}
 	}
 }

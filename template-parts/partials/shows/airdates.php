@@ -66,7 +66,7 @@ if ( ! has_term( 'movie', 'lez_formats' ) && 'current' !== $airdates['finish'] &
 echo '<li class="list-group-item network airdates"><strong>' . wp_kses_post( $air_title ) . ':</strong> ' . wp_kses_post( $airdate );
 
 if ( $on_air ) {
-	echo '&nbsp;<span class="badge text-bg-success">On Air</span>';
+	echo '&nbsp;<span class="badge theme-success">On Air</span>';
 }
 
 echo '</li>';

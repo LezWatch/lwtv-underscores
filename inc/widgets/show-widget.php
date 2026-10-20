@@ -111,7 +111,7 @@ class LWTV_Show_Widget extends WP_Widget {
 			echo '</div></div>';
 
 			// Button
-			echo '<div class="card-footer"><a href="' . esc_url( get_the_permalink() ) . '" class="btn btn-outline-primary">Show Profile</a></div>';
+			echo '<div class="card-footer"><a href="' . esc_url( get_the_permalink() ) . '" class="btn btn-outline theme-primary">Show Profile</a></div>';
 
 			// End Body
 			echo '</div>';

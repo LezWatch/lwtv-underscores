@@ -13,7 +13,7 @@ if ( ! defined( 'LWTV_THEME_VERSION' ) ) {
 	$versions['lwtv-underscores'] = '7.3.1';
 
 	// Automatically updated by the build script.
-	$versions['bootstrap'] = '5.3.8';
+	$versions['bootstrap'] = '6.0.0-alpha.1';
 
 	// MANUAL. Bump when you update the dark mode css.
 	$versions['bootstrap_dark'] = '1.2.0';
@@ -335,7 +335,7 @@ add_action( 'widgets_init', 'lwtv_theme_widgets_init' );
  * Register Custom Navigation Walker
  */
 function register_navwalker() {
-	require_once 'inc/class-wp-bootstrap-5-navwalker.php';
+	require_once 'inc/class-wp-bootstrap-6-navwalker.php';
 }
 add_action( 'after_setup_theme', 'register_navwalker' );
 
@@ -384,7 +384,9 @@ function lwtv_theme_scripts() {
 
 	// Bootstrap
 	wp_enqueue_style( 'bootstrap', get_template_directory_uri() . '/inc/bootstrap/css/bootstrap.min.css', array(), LWTV_THEME_VERSION['bootstrap'], 'all', false );
-	wp_enqueue_script( 'bootstrap', get_template_directory_uri() . '/inc/bootstrap/js/bootstrap.bundle.min.js', array( 'jquery' ), LWTV_THEME_VERSION['bootstrap'], 'all', true );
+	// Bootstrap 6 is ESM-only: register it as a script module so other modules can `import { X } from 'bootstrap'`.
+	wp_register_script_module( 'bootstrap', get_template_directory_uri() . '/inc/bootstrap/js/bootstrap.bundle.min.js', array(), LWTV_THEME_VERSION['bootstrap'] );
+	wp_enqueue_script_module( 'lwtv-bootstrap-init', get_template_directory_uri() . '/inc/js/bootstrap-init.js', array( array( 'id' => 'bootstrap' ) ), LWTV_THEME_VERSION['lwtv-underscores'] );
 
 	// Fonts
 	wp_enqueue_style( 'open-sans', '//fonts.googleapis.com/css?family=Open+Sans:400,600,700', array(), LWTV_THEME_VERSION['lwtv-underscores'], false );
@@ -395,7 +397,7 @@ function lwtv_theme_scripts() {
 
 	// Overlay JS.
 	if ( get_post_type( get_the_ID() ) === 'post_type_actors' ) {
-		wp_enqueue_script( 'lwtv-overlay', get_template_directory_uri() . '/inc/js/overlay-linkable.js', array( 'jquery' ), LWTV_THEME_VERSION['lwtv-underscores'], true );
+		wp_enqueue_script_module( 'lwtv-overlay', get_template_directory_uri() . '/inc/js/overlay-linkable.js', array( array( 'id' => 'bootstrap' ) ), LWTV_THEME_VERSION['lwtv-underscores'] );
 	}
 }
 

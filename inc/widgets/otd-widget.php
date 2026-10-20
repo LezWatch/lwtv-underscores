@@ -207,7 +207,7 @@ class LWTV_Today_Widget extends WP_Widget {
 		// Featured Image
 		$image  = '<div class="' . $type . '-image-wrapper"><a href="' . get_the_permalink( $the_post ) . '">' . $thumbnail . '</a></div>';
 		$body   = '<div class="card-body"><h4 class="card-title">' . get_the_title( $the_post ) . '</h4><div class="card-text">' . $text . '</div></div>';
-		$button = '<div class="card-footer"><a href="' . get_the_permalink( $the_post ) . '" class="btn btn-outline-primary">' . esc_attr( ucfirst( $type ) ) . ' Profile</a>
+		$button = '<div class="card-footer"><a href="' . get_the_permalink( $the_post ) . '" class="btn btn-outline theme-primary">' . esc_attr( ucfirst( $type ) ) . ' Profile</a>
 		</div>';
 
 		$output = $image . $body . $button;

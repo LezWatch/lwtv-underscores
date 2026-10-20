@@ -143,10 +143,10 @@ class Author_Box {
 				$author_details = '<div>' . $content['avatar'] . '<br>' . esc_html( $content['name'] ) . ' ' . $author_title . '</div>';
 				break;
 			case 'compact':
-				$author_details = '<div class="col-sm-2">' . $content['avatar'] . '</div><div class="col-sm"><span class="author_name author_box_compact"><a href="' . esc_url( $content['url'] ) . '">' . esc_html( $content['name'] ) . '</a>' . $author_title . ' <span class="author_box_social">' . implode( ' ', $social_array ) . '</span></span><hr><div class="author-details">' . $view_articles . '</div></div>';
+				$author_details = '<div class="sm:col-2">' . $content['avatar'] . '</div><div class="sm:col"><span class="author_name author_box_compact"><a href="' . esc_url( $content['url'] ) . '">' . esc_html( $content['name'] ) . '</a>' . $author_title . ' <span class="author_box_social">' . implode( ' ', $social_array ) . '</span></span><hr><div class="author-details">' . $view_articles . '</div></div>';
 				break;
 			case 'large':
-				$author_details = '<div class="col-sm-2">' . $content['avatar'] . '</div><div class="col-sm"><span class="author_name author_box_large">' . esc_html( $content['name'] ) . $author_title . ' <span class="author_box_social">' . implode( ' ', $social_array ) . '</span></span><hr><div class="author-bio">' . nl2br( esc_html( $content['bio'] ) ) . '</div><div class="author-details">' . $view_articles . $content['fav_shows'] . '</div>';
+				$author_details = '<div class="sm:col-2">' . $content['avatar'] . '</div><div class="sm:col"><span class="author_name author_box_large">' . esc_html( $content['name'] ) . $author_title . ' <span class="author_box_social">' . implode( ' ', $social_array ) . '</span></span><hr><div class="author-bio">' . nl2br( esc_html( $content['bio'] ) ) . '</div><div class="author-details">' . $view_articles . $content['fav_shows'] . '</div>';
 				break;
 		}
 

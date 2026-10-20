@@ -95,7 +95,7 @@ lwtv_plugin()->get_microformats_fix( $character );
 			if ( ! empty( get_the_content() ) ) {
 				the_content();
 			} else {
-				the_title( '<p>', ' is a character who has appeared in at least one queer show on TV. Information on this page has not yet been verified. Feel free to <a href="#" data-bs-toggle="modal" data-bs-target="#suggestForm">suggest an edit</a> with any corrections or additions.</p>' );
+				the_title( '<p>', ' is a character who has appeared in at least one queer show on TV. Information on this page has not yet been verified. Feel free to <a href="#" data-bs-toggle="dialog" data-bs-target="#suggestForm">suggest an edit</a> with any corrections or additions.</p>' );
 			}
 
 			lwtv_plugin()->maybe_show_actor_note( $character );

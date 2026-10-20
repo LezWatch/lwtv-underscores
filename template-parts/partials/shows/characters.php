@@ -17,7 +17,7 @@ $new_icon      = lwtv_plugin()->get_symbolicon( svg: 'construction.svg', icon: '
 		<?php
 		if ( $treat_as_new ) {
 			?>
-			<div class="alert alert-info" role="alert">
+			<div class="alert theme-info" role="alert">
 				<?php echo $new_icon; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 				New characters for this show are being added! We appreciate your patience.
 			</div>

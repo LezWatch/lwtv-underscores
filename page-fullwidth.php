@@ -22,9 +22,9 @@ get_header(); ?>
 <div id="main" tabindex="-1" class="site-main" role="main">
 	<div class="container">
 		<div class="row">
-			<div class="col-sm-12">
+			<div class="sm:col-12">
 				<div id="primary" class="content-area">
-					<div id="content" class="site-content clearfix">
+					<div id="content" class="site-content d-flow-root">
 						<?php
 						while ( have_posts() ) :
 							the_post();

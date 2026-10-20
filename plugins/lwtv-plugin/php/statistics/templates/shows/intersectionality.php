@@ -103,7 +103,7 @@ $waffle = array(
 ?>
 <div class="lwtv-inter-columns">
 	<div class="lwtv-inter-col lwtv-inter-col--main">
-		<section class="lwtv-panel bg-light lwtv-interload">
+		<section class="lwtv-panel bg-1 lwtv-interload">
 			<header class="lwtv-panel-head">
 				<span class="lwtv-panel-icon intersections">
 					<?php echo lwtv_plugin()->get_symbolicon( svg: 'escalator.svg', icon: 'svg-escalator', max_size: '20' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
@@ -235,7 +235,7 @@ $waffle = array(
 
 		if ( ! empty( $inter_decade_buckets ) ) :
 			?>
-			<section class="lwtv-panel bg-light lwtv-inter-decades">
+			<section class="lwtv-panel bg-1 lwtv-inter-decades">
 				<header class="lwtv-panel-head">
 					<span class="lwtv-panel-icon intersections">
 						<?php echo lwtv_plugin()->get_symbolicon( svg: 'calendar-15.svg', icon: 'svg-calendar-15', max_size: '20' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
@@ -320,7 +320,7 @@ $waffle = array(
 			$inter_multi_pct  = round( ( $inter_multi_count / $inter_split_total ) * 100, 1 );
 			$inter_single_pct = round( ( $inter_single_count / $inter_split_total ) * 100, 1 );
 			?>
-			<section class="lwtv-panel bg-light lwtv-inter-split">
+			<section class="lwtv-panel bg-1 lwtv-inter-split">
 				<header class="lwtv-panel-head">
 					<span class="lwtv-panel-icon intersections">
 						<?php echo lwtv_plugin()->get_symbolicon( svg: 'scales.svg', icon: 'svg-scales', max_size: '20' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>

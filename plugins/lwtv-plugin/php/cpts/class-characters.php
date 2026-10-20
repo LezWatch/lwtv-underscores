@@ -415,7 +415,7 @@ class Characters {
 			return;
 		}
 
-		echo '<div class="maybe-private-note alert alert-danger" role="alert">';
+		echo '<div class="maybe-private-note alert theme-danger" role="alert">';
 
 		foreach ( $actor_notes as $actor => $note ) {
 			echo '<p>&nbsp;' . wp_kses_post( $note ) . '</p>';

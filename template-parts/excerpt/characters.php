@@ -115,7 +115,7 @@ if ( ( 'recurring' === $char_role && 'post_type_shows' === get_post_type() ) || 
 	if ( $archive ) {
 		?>
 		<div class="card-footer">
-			<a href="<?php the_permalink( $the_id ); ?>" title="<?php the_title_attribute( $the_id ); ?>" class="btn btn-outline-primary">Character Profile</a>
+			<a href="<?php the_permalink( $the_id ); ?>" title="<?php the_title_attribute( $the_id ); ?>" class="btn btn-outline theme-primary">Character Profile</a>
 		</div>
 		<?php
 	}

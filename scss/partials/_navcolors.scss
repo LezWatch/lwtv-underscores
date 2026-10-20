@@ -45,7 +45,7 @@
 			&:hover > a.nav-link,
 			&:focus > a.nav-link,
 			&:active > a.nav-link,
-			&.show > a.nav-link.dropdown-toggle {
+			> a.nav-link[aria-expanded="true"] {
 				background-color: colors.$lwtv-pink;
 				color: colors.$white;
 			}
@@ -56,43 +56,28 @@
 				@include mixins.screen-reader;
 			}
 
-			/* Secondary Menus */
-			ul.dropdown-menu {
+			/* Secondary Menus (Bootstrap 6 Menu: flat a.menu-item links) */
+			.menu {
 				background-color: colors.$white;
 				border-top-left-radius: 0;
-				top: 95%;
 
-				li.nav-item {
-
-					/* Style for inactive links on submenus */
-					a.dropdown-item {
-						background-color: colors.$white;
-						color: colors.$lwtv-grey-deep;
-					}
-
-					/* Style for active links on submenus */
-					&.current-menu-parent > a.dropdown-item,
-					&.active > a.dropdown-item,
-					&:hover > a.dropdown-item,
-					&:focus > a.dropdown-item {
-						background-color: colors.$lwtv-pink;
-						color: colors.$white;
-					}
-
-					/* Tertiary Menus - reveal them on parent hover */
-					&.dropdown {
-
-						&:hover,
-						&:focus {
-
-							ul.dropdown-menu {
-								display: block;
-								left: 100%;
-								top: -11px;
-							}
-						}
-					}
+				/* Style for inactive links on submenus */
+				a.menu-item {
+					background-color: colors.$white;
+					color: colors.$lwtv-grey-deep;
 				}
+
+				/* Style for active links on submenus */
+				a.menu-item.current-menu-item,
+				a.menu-item.active,
+				.submenu.current-menu-parent > a.menu-item,
+				a.menu-item:hover,
+				a.menu-item:focus {
+					background-color: colors.$lwtv-pink;
+					color: colors.$white;
+				}
+
+				/* Tertiary menus: .submenu, positioned by Bootstrap's Menu JS. */
 			}
 		}
 	}

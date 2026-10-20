@@ -86,7 +86,7 @@ class LWTV_Character_Widget extends WP_Widget {
 
 			// Button
 			echo '<div class="card-footer">
-					<a href="' . esc_url( get_the_permalink() ) . '" class="btn btn-outline-primary">Character Profile</a>
+					<a href="' . esc_url( get_the_permalink() ) . '" class="btn btn-outline theme-primary">Character Profile</a>
 				  </div>';
 
 			echo '</div>';

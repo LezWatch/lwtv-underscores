@@ -82,7 +82,7 @@ if ( 'compact' === $donut_layout ) :
 	$donut_has_pct = isset( $donut['center_pct'] );
 	$donut_family  = $donut['center_family'] ?? '';
 	?>
-	<section class="lwtv-donut-card lwtv-donut-card--compact bg-light">
+	<section class="lwtv-donut-card lwtv-donut-card--compact bg-1">
 		<?php
 		/*
 		 * Eyebrow allows one safe inline tag: a caller like Formats' decade
@@ -142,7 +142,7 @@ endif;
 ?>
 <p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php echo esc_html( $donut['eyebrow'] ?? '' ); ?></p>
 
-<section class="lwtv-donut-card bg-light">
+<section class="lwtv-donut-card bg-1">
 	<div class="lwtv-donut-figure">
 		<svg class="lwtv-donut" viewBox="0 0 120 120" role="img" aria-label="<?php echo esc_attr( $donut['eyebrow'] ?? '' ); ?>">
 			<g transform="rotate(-90 60 60)">

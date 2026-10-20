@@ -8,6 +8,11 @@
  * Plugin Name: WP Bootstrap Navwalker
  * Plugin URI:  https://github.com/wp-bootstrap/wp-bootstrap-navwalker
  * Description: A custom WordPress nav walker class to implement the Bootstrap 5 navigation style in a custom theme using the WordPress built in menu manager.
+ *
+ * LezWatch.TV fork: outputs Bootstrap 6 Menu markup. Top-level items stay
+ * `<li class="nav-item">`; a parent's toggle and its `.menu` are siblings;
+ * child items are flat `<a class="menu-item">` (no `<li>`); third-level
+ * parents are wrapped in `.submenu`.
  * Author: Edward McIntyre - @twittem, WP Bootstrap, William Patton - @pattonwebz, IanDelMar - @IanDelMar
  * Version: 5.0.0
  * Author URI: https://github.com/wp-bootstrap
@@ -43,6 +48,16 @@ class WP_Bootstrap_Navwalker extends Walker_Nav_Menu {
 	private $bs_version = 5;
 
 	/**
+	 * Closing tag owed by each open start_el(), popped by end_el().
+	 *
+	 * Bootstrap 6 child items have no `<li>`, so what end_el() must close
+	 * depends on what start_el() opened.
+	 *
+	 * @var string[]
+	 */
+	private $close_stack = array();
+
+	/**
 	 * Ensures the items_wrap argument contains microdata.
 	 *
 	 * @since 4.2.0
@@ -74,8 +89,8 @@ class WP_Bootstrap_Navwalker extends Walker_Nav_Menu {
 		}
 		$indent = str_repeat( $t, $depth );
 
-		// Default class to add to the start of the list (usually ul tag).
-		$classes = array( 'dropdown-menu' );
+		// Bootstrap 6 Menu container.
+		$classes = array( 'menu' );
 
 		/**
 		 * Filters the CSS class(es) applied to a menu list element.
@@ -90,7 +105,7 @@ class WP_Bootstrap_Navwalker extends Walker_Nav_Menu {
 		$class_names = $class_names ? ' class="' . esc_attr( $class_names ) . '"' : '';
 
 		/*
-		 * The `.dropdown-menu` container needs to have a labelledby
+		 * The `.menu` container needs to have a labelledby
 		 * attribute which points to it's trigger link.
 		 *
 		 * Form a string for the labelledby attribute from the the latest
@@ -104,7 +119,37 @@ class WP_Bootstrap_Navwalker extends Walker_Nav_Menu {
 			// Build a string to use as aria-labelledby.
 			$labelledby = 'aria-labelledby="' . esc_attr( end( $matches[2] ) ) . '"';
 		}
-		$output .= "{$n}{$indent}<ul$class_names $labelledby>{$n}";
+		$output .= "{$n}{$indent}<div$class_names $labelledby>{$n}";
+	}
+
+	/**
+	 * Ends the list of after the elements are added.
+	 *
+	 * @see Walker_Nav_Menu::end_lvl()
+	 *
+	 * @param string           $output Used to append additional content (passed by reference).
+	 * @param int              $depth  Depth of menu item. Used for padding.
+	 * @param WP_Nav_Menu_Args $args   An object of `wp_nav_menu()` arguments.
+	 */
+	public function end_lvl( &$output, $depth = 0, $args = null ) {
+		$n       = ( isset( $args->item_spacing ) && 'discard' === $args->item_spacing ) ? '' : "\n";
+		$indent  = ( $n ) ? str_repeat( "\t", $depth ) : '';
+		$output .= "{$indent}</div>{$n}";
+	}
+
+	/**
+	 * Ends the element output: closes whatever start_el() opened.
+	 *
+	 * @see Walker_Nav_Menu::end_el()
+	 *
+	 * @param string           $output Used to append additional content (passed by reference).
+	 * @param WP_Nav_Menu_Item $item   Page data object. Not used.
+	 * @param int              $depth  Depth of page. Not Used.
+	 * @param WP_Nav_Menu_Args $args   An object of `wp_nav_menu()` arguments.
+	 */
+	public function end_el( &$output, $item, $depth = 0, $args = null ) {
+		$n       = ( isset( $args->item_spacing ) && 'discard' === $args->item_spacing ) ? '' : "\n";
+		$output .= (string) array_pop( $this->close_stack ) . $n;
 	}
 
 	/**
@@ -167,9 +212,6 @@ class WP_Bootstrap_Navwalker extends Walker_Nav_Menu {
 		// Join any icon classes plucked from $classes into a string.
 		$icon_class_string = join( ' ', $icon_classes );
 
-		// Bootstrap version to create the markup for.
-		$bs_version = $this->get_bs_version( $args );
-
 		// Whether the current item is a dropdown.
 		$is_dropdown = false;
 		if ( $this->has_children && 1 !== $args->depth ) {
@@ -209,21 +251,18 @@ class WP_Bootstrap_Navwalker extends Walker_Nav_Menu {
 		 */
 		$args = apply_filters( 'nav_menu_item_args', $args, $item, $depth );
 
-		if ( $is_dropdown ) {
-			$classes[] = 'dropdown';
-		}
-
-		if ( $is_active && ! $is_dropdown_item && 5 !== $bs_version ) {
-			// For dropdown items the .active class is set on the a tag.
-			$classes[] = 'active';
-		}
-
 		// Add some additional default classes to the item.
 		$classes[] = 'menu-item-' . $item->ID;
-		$classes[] = 'nav-item';
+		if ( 0 === $depth ) {
+			$classes[] = 'nav-item';
+		}
 
 		// Allow filtering the classes.
 		$classes = apply_filters( 'nav_menu_css_class', array_filter( $classes ), $item, $args, $depth );
+
+		// WordPress adds `menu-item` to every item, but in Bootstrap 6 that is
+		// the Menu link component class. Keep it only on child links (re-added below).
+		$classes = array_diff( $classes, array( 'menu-item' ) );
 
 		// Form a string of classes in format: class="class_names".
 		$class_names = join( ' ', $classes );
@@ -243,7 +282,25 @@ class WP_Bootstrap_Navwalker extends Walker_Nav_Menu {
 		$id = apply_filters( 'nav_menu_item_id', 'menu-item-' . $item->ID, $item, $args, $depth );
 		$id = $id ? ' id="' . esc_attr( $id ) . '"' : '';
 
-		$output .= $indent . '<li ' . $id . $class_names . '>';
+		/*
+		 * Bootstrap 6 wrappers:
+		 * - top level:         <li class="nav-item">, closed with </li>
+		 * - child with kids:   <div class="submenu">, closed with </div>
+		 * - child leaf:        no wrapper; its classes and id move onto the <a>
+		 */
+		$child_classes = '';
+		$child_id      = '';
+		if ( 0 === $depth ) {
+			$output             .= $indent . '<li ' . $id . $class_names . '>';
+			$this->close_stack[] = '</li>';
+		} elseif ( $is_dropdown ) {
+			$output             .= $indent . '<div' . $id . ' class="' . esc_attr( trim( 'submenu ' . join( ' ', $classes ) ) ) . '">';
+			$this->close_stack[] = '</div>';
+		} else {
+			$child_classes       = join( ' ', $classes );
+			$child_id            = 'menu-item-' . $item->ID;
+			$this->close_stack[] = '';
+		}
 
 		// Initialize array for holding the $atts for the link item.
 		$atts           = array();
@@ -262,13 +319,20 @@ class WP_Bootstrap_Navwalker extends Walker_Nav_Menu {
 				$infix = '-bs';
 			}
 
-			$atts['href']                = '#';
-			$atts[ "data$infix-toggle" ] = 'dropdown';
-			$atts['aria-expanded']       = 'false';
-			$atts['class']               = 'dropdown-toggle nav-link';
-			$atts['id']                  = 'menu-item-dropdown-' . $item->ID;
+			$atts['href'] = '#';
+			$atts['id']   = 'menu-item-dropdown-' . $item->ID;
 
-			$atts['class'] .= ( $is_active && 5 === $bs_version ) ? ' active' : '';
+			if ( 0 === $depth ) {
+				// Top-level toggle; its `.menu` is the next sibling (start_lvl).
+				$atts[ "data$infix-toggle" ] = 'menu';
+				$atts['aria-expanded']       = 'false';
+				$atts['class']               = 'nav-link';
+			} else {
+				// `.submenu > .menu-item` is the submenu trigger; Menu handles it, no toggle attr.
+				$atts['class'] = 'menu-item';
+			}
+
+			$atts['class'] .= $is_active ? ' active' : '';
 		} else {
 			if ( true === $this->has_schema ) {
 				$atts['itemprop'] = 'url';
@@ -276,9 +340,10 @@ class WP_Bootstrap_Navwalker extends Walker_Nav_Menu {
 
 			$atts['href'] = ! empty( $item->url ) ? $item->url : '#';
 
-			// For items in dropdowns use .dropdown-item instead of .nav-link.
+			// For items in menus use .menu-item instead of .nav-link.
 			if ( $is_dropdown_item ) {
-				$atts['class']  = 'dropdown-item';
+				$atts['id']     = $child_id;
+				$atts['class']  = trim( 'menu-item ' . $child_classes );
 				$atts['class'] .= $is_active ? ' active' : '';
 			} else {
 				$atts['class'] = 'nav-link';
@@ -355,8 +420,10 @@ class WP_Bootstrap_Navwalker extends Walker_Nav_Menu {
 			}
 		}
 
-		// Put the item contents into $output.
-		$item_output .= isset( $args->link_before ) ? $args->link_before . $icon_html . $title . $args->link_after : '';
+		// Put the item contents into $output (a divider is an empty <hr>).
+		if ( 'menu-divider' !== $linkmod_type ) {
+			$item_output .= isset( $args->link_before ) ? $args->link_before . $icon_html . $title . $args->link_after : '';
+		}
 
 		/*
 		 * This is the end of the internal nav item. We need to close the
@@ -458,7 +525,8 @@ class WP_Bootstrap_Navwalker extends Walker_Nav_Menu {
 	 * Finds any custom linkmod or icon classes and store in their holder
 	 * arrays then remove them from the main classes array.
 	 *
-	 * Supported linkmods: .disabled, .dropdown-header, .dropdown-divider, .sr-only
+	 * Supported linkmods: .disabled, .menu-header, .menu-divider, .menu-text, .sr-only
+	 * (the v5 .dropdown-* names are still accepted from menu item CSS classes)
 	 * Supported iconsets: Font Awesome 4/5, Glypicons
 	 *
 	 * NOTE: This accepts the linkmod and icon arrays by reference.
@@ -482,7 +550,7 @@ class WP_Bootstrap_Navwalker extends Walker_Nav_Menu {
 				// Test for .disabled or .sr-only classes.
 				$linkmod_classes[] = $class;
 				unset( $classes[ $key ] );
-			} elseif ( preg_match( '/^dropdown-header|^dropdown-divider|^dropdown-item-text/i', $class ) && $depth > 0 ) {
+			} elseif ( preg_match( '/^(dropdown|menu)-(header|divider|item-text|text)$/i', $class ) && $depth > 0 ) {
 				/*
 				 * Test for .dropdown-header or .dropdown-divider and a
 				 * depth greater than 0 - IE inside a dropdown.
@@ -520,12 +588,12 @@ class WP_Bootstrap_Navwalker extends Walker_Nav_Menu {
 				if ( ! empty( $link_class ) ) {
 
 					// Check for special class types and set a flag for them.
-					if ( 'dropdown-header' === $link_class ) {
-						$linkmod_type = 'dropdown-header';
-					} elseif ( 'dropdown-divider' === $link_class ) {
-						$linkmod_type = 'dropdown-divider';
-					} elseif ( 'dropdown-item-text' === $link_class ) {
-						$linkmod_type = 'dropdown-item-text';
+					if ( in_array( $link_class, array( 'dropdown-header', 'menu-header' ), true ) ) {
+						$linkmod_type = 'menu-header';
+					} elseif ( in_array( $link_class, array( 'dropdown-divider', 'menu-divider' ), true ) ) {
+						$linkmod_type = 'menu-divider';
+					} elseif ( in_array( $link_class, array( 'dropdown-item-text', 'menu-text' ), true ) ) {
+						$linkmod_type = 'menu-text';
 					}
 				}
 			}
@@ -550,7 +618,8 @@ class WP_Bootstrap_Navwalker extends Walker_Nav_Menu {
 					 * Update $atts with a space and the extra classname
 					 * so long as it's not a sr-only class.
 					 */
-					if ( 'sr-only' !== $link_class ) {
+					// The linkmod element supplies its own class, so skip linkmod names.
+					if ( 'sr-only' !== $link_class && ! preg_match( '/^(dropdown|menu)-(header|divider|item-text|text)$/', $link_class ) ) {
 						$atts['class'] .= ' ' . esc_attr( $link_class );
 					}
 					// Check for special class types we need additional handling for.
@@ -558,7 +627,7 @@ class WP_Bootstrap_Navwalker extends Walker_Nav_Menu {
 						// Convert link to '#' and unset open targets.
 						$atts['href'] = '#';
 						unset( $atts['target'] );
-					} elseif ( 'dropdown-header' === $link_class || 'dropdown-divider' === $link_class || 'dropdown-item-text' === $link_class ) {
+					} elseif ( preg_match( '/^(dropdown|menu)-(header|divider|item-text|text)$/', $link_class ) ) {
 						// Store a type flag and unset href and target.
 						unset( $atts['href'] );
 						unset( $atts['target'] );
@@ -595,17 +664,15 @@ class WP_Bootstrap_Navwalker extends Walker_Nav_Menu {
 	 */
 	private function linkmod_element_open( $linkmod_type, $attributes = '' ) {
 		$output = '';
-		if ( 'dropdown-item-text' === $linkmod_type ) {
-			$output .= '<span class="dropdown-item-text"' . $attributes . '>';
-		} elseif ( 'dropdown-header' === $linkmod_type ) {
-			/*
-			 * For a header use a span with the .h6 class instead of a real
-			 * header tag so that it doesn't confuse screen readers.
-			 */
-			$output .= '<span class="dropdown-header h6"' . $attributes . '>';
-		} elseif ( 'dropdown-divider' === $linkmod_type ) {
-			// This is a divider.
-			$output .= '<div class="dropdown-divider"' . $attributes . '>';
+		// $attributes has no class (update_atts_for_linkmod_type skips linkmod names).
+		if ( 'menu-text' === $linkmod_type ) {
+			$output .= '<span class="menu-text"' . $attributes . '>';
+		} elseif ( 'menu-header' === $linkmod_type ) {
+			// A span, not a real heading, so it doesn't confuse screen readers.
+			$output .= '<span class="menu-header"' . $attributes . '>';
+		} elseif ( 'menu-divider' === $linkmod_type ) {
+			// A divider has no content; the title is not output (see linkmod_element_close).
+			$output .= '<hr class="menu-divider"' . $attributes . '>';
 		}
 		return $output;
 	}
@@ -620,15 +687,8 @@ class WP_Bootstrap_Navwalker extends Walker_Nav_Menu {
 	 */
 	private function linkmod_element_close( $linkmod_type ) {
 		$output = '';
-		if ( 'dropdown-header' === $linkmod_type || 'dropdown-item-text' === $linkmod_type ) {
-			/*
-			 * For a header use a span with the .h6 class instead of a real
-			 * header tag so that it doesn't confuse screen readers.
-			 */
+		if ( 'menu-header' === $linkmod_type || 'menu-text' === $linkmod_type ) {
 			$output .= '</span>';
-		} elseif ( 'dropdown-divider' === $linkmod_type ) {
-			// This is a divider.
-			$output .= '</div>';
 		}
 		return $output;
 	}

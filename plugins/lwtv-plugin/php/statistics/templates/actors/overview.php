@@ -183,7 +183,7 @@ $idx_total = count( $idx_cards ) + ( empty( $idx_lead ) ? 0 : 1 );
 <?php if ( $idx_total >= 2 ) : ?>
 	<section class="lwtv-hl-section" aria-labelledby="lwtv-hl-heading">
 		<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section" id="lwtv-hl-heading"><?php esc_html_e( 'The Headlines', 'lwtv-underscores' ); ?></p>
-		<div class="lwtv-hl bg-light">
+		<div class="lwtv-hl bg-1">
 			<?php if ( ! empty( $idx_lead ) ) : ?>
 				<a class="lwtv-hl-lead" href="<?php echo esc_url( $idx_lead['url'] ); ?>">
 					<span class="lwtv-hl-lead-figwrap">
@@ -340,7 +340,7 @@ $actor_panels = array(
 		$actor_leaders = array_slice( $actor_rows, 0, 5, true );
 		$actor_tail    = array_slice( $actor_rows, 5, 5, true );
 		?>
-		<section class="lwtv-panel bg-light">
+		<section class="lwtv-panel bg-1">
 			<header class="lwtv-panel-head">
 				<span class="lwtv-panel-icon <?php echo esc_attr( $actor_panel['family'] ); ?>">
 					<?php echo lwtv_plugin()->get_symbolicon( svg: $actor_panel['svg'], icon: $actor_panel['icon'], max_size: '20' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>

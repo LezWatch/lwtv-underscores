@@ -222,7 +222,7 @@ class Shortcodes {
 					$warn_color = 'info';
 					break;
 			}
-			$warning = '<span data-bs-toggle="tooltip" aria-label="Warning - This show contains triggers" title="Warning - This show contains triggers"><button type="button" class="btn btn-' . $warn_color . '"><span class="screener screener-warn ' . $warn_color . '" role="img">' . $warn_image . '</span></button></span>';
+			$warning = '<span data-bs-toggle="tooltip" aria-label="Warning - This show contains triggers" title="Warning - This show contains triggers"><button type="button" class="btn btn-solid theme-' . $warn_color . '"><span class="screener screener-warn ' . $warn_color . '" role="img">' . $warn_image . '</span></button></span>';
 		}
 
 		// Get proper Star
@@ -230,12 +230,12 @@ class Shortcodes {
 		$star  = ( in_array( $attributes['star'], array( 'gold', 'silver', 'bronze', 'anti' ), true ) ) ? $attributes['star'] : 'none';
 
 		if ( 'none' !== $star ) {
-			$stars = '<span data-bs-toggle="tooltip" aria-label="' . ucfirst( $star ) . ' Star Show" title="' . ucfirst( $star ) . ' Star Show"><button type="button" class="btn btn-info"><span role="img" class="screener screener-star ' . $star . '">' . lwtv_plugin()->get_symbolicon( svg: 'star.svg', icon: 'svg-star' ) . '</span></button></span>';
+			$stars = '<span data-bs-toggle="tooltip" aria-label="' . ucfirst( $star ) . ' Star Show" title="' . ucfirst( $star ) . ' Star Show"><button type="button" class="btn btn-solid theme-info"><span role="img" class="screener screener-star ' . $star . '">' . lwtv_plugin()->get_symbolicon( svg: 'star.svg', icon: 'svg-star' ) . '</span></button></span>';
 		}
 
 		$output = '<div class="bd-callout screener-shortcode"><h5 id="' . esc_attr( $attributes['title'] ) . '">Screener Review on <em>' . esc_html( $attributes['title'] ) . '</em></h5>
 		<p>' . esc_html( $attributes['summary'] ) . '</p>
-		<p><span data-bs-toggle="tooltip" aria-label="How good is this show for queers?" title="How good is this show for queers?"><button type="button" class="btn btn-dark">Queer Score: ' . $queer . '</button></span> <span data-bs-toggle="tooltip" aria-label="Is this show worth watching? ' . ucfirst( $worth ) . '" title="Is this show worth watching? ' . ucfirst( $worth ) . '"><button type="button" class="btn btn-' . $worth_color . '">Worth It? <span role="img" class="screener screener-worthit ' . lcfirst( $worth ) . '">' . $worth_image . '</span></button></span> ' . $warning . $stars . '</p>
+		<p><span data-bs-toggle="tooltip" aria-label="How good is this show for queers?" title="How good is this show for queers?"><button type="button" class="btn btn-solid theme-inverse">Queer Score: ' . $queer . '</button></span> <span data-bs-toggle="tooltip" aria-label="Is this show worth watching? ' . ucfirst( $worth ) . '" title="Is this show worth watching? ' . ucfirst( $worth ) . '"><button type="button" class="btn btn-solid theme-' . $worth_color . '">Worth It? <span role="img" class="screener screener-worthit ' . lcfirst( $worth ) . '">' . $worth_image . '</span></button></span> ' . $warning . $stars . '</p>
 		</div>';
 
 		return $output;
@@ -430,7 +430,7 @@ class Shortcodes {
 		);
 		$warning    = ( '' === $attributes['warning'] ) ? $default : sanitize_text_field( $attributes['warning'] );
 
-		return '<div class="alert alert-danger" role="alert"><strong>' . esc_html( $warning ) . '</strong></div>';
+		return '<div class="alert theme-danger" role="alert"><strong>' . esc_html( $warning ) . '</strong></div>';
 	}
 
 	/*

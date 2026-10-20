@@ -79,7 +79,7 @@
 /* List Groups */
 .list-group {
 
-	.list-group-item-primary {
+	.list-group-item.theme-primary {
 		background-color: colors.$lwtv-pink;
 		color: colors.$white;
 		border-color: colors.$lwtv-pink-deep;
@@ -130,11 +130,12 @@ button,
 input[type="button"],
 input[type="submit"],
 .wp-block-button .wp-block-button__link, /* keep this line for the default button style */
-a.btn-primary,
-button.btn-primary,
-input[type="button"].btn-primary,
-input[type="submit"].btn-primary,
-.show > .btn-primary.dropdown-toggle {
+a.btn-solid.theme-primary,
+button.btn-solid.theme-primary,
+input[type="button"].btn-solid.theme-primary,
+input[type="submit"].btn-solid.theme-primary,
+/* v5 class still present in saved post content (see _bootstrap-legacy.scss) */
+.btn.btn-primary {
 
 	&,
 	&:visited {
@@ -156,10 +157,12 @@ input[type="submit"].btn-primary,
 	}
 }
 
-a.btn-outline-primary,
-button.btn-outline-primary,
-input[type="button"].btn-outline-primary,
-input[type="submit"].btn-outline-primary {
+a.btn-outline.theme-primary,
+button.btn-outline.theme-primary,
+input[type="button"].btn-outline.theme-primary,
+input[type="submit"].btn-outline.theme-primary,
+/* v5 class still present in saved post content (see _bootstrap-legacy.scss) */
+.btn.btn-outline-primary {
 
 	&,
 	&:visited {
@@ -220,7 +223,7 @@ input[type="submit"].btn-outline-primary {
 		}
 	}
 
-	&.col-sm-3 {
+	&.sm\:col-3 {
 
 		.card.card-search {
 

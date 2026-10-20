@@ -93,18 +93,15 @@ if ( 'actors' === $format ) {
 	} else {
 		?>
 		<div class="accordion accordion-flush" id="characterActors">
-			<div class="accordion-item">
-				<h6 class="accordion-header">
-					<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseActors" aria-expanded="true" aria-controls="collapseActors">
+			<details class="accordion-item">
+				<summary class="accordion-header">
 					<?php
 					$first_actor = current( $the_actors );
 					echo wp_kses_post( $first_actor['name'] ) . ' and ' . esc_html( count( $the_actors ) - 1 ) . ' more...';
 					?>
-					</button>
-				</h6>
-
-				<div id="flush-collapseActors" class="accordion-collapse collapse" data-bs-parent="#characterActors">
-					<div class="accordion-body">
+					<svg class="accordion-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m2 5 6 6 6-6"/></svg>
+				</summary>
+				<div class="accordion-body">
 					<?php
 					foreach ( $the_actors as $actor_id => $actor ) {
 						echo '&bull; ';
@@ -122,8 +119,8 @@ if ( 'actors' === $format ) {
 						echo '</br>';
 					}
 					?>
-					</div>
-			</div>
+				</div>
+			</details>
 		</div>
 		<?php
 	}

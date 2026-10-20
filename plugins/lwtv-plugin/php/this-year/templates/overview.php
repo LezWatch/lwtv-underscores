@@ -662,9 +662,9 @@ $lwtv_ty_yearbars = function ( $trend_key, $family, $headline ) use ( $lwtv_ty_t
 		<p class="lwtv-ty-lead-narrative"><?php echo esc_html( $narrative ); ?></p>
 
 		<div class="btn-group" role="group" aria-label="Section Navigation">
-			<a class="btn btn-primary" href="#shape-of-the-year">The shape of the year</a>
-			<a class="btn btn-primary" href="#where-it-came-from">Where it came from</a>
-			<a class="btn btn-primary" href="#standouts">Standouts</a>
+			<a class="btn btn-solid theme-primary" href="#shape-of-the-year">The shape of the year</a>
+			<a class="btn btn-solid theme-primary" href="#where-it-came-from">Where it came from</a>
+			<a class="btn btn-solid theme-primary" href="#standouts">Standouts</a>
 		</div>
 	</div>
 	<?php if ( '' !== $lead_media ) : ?>

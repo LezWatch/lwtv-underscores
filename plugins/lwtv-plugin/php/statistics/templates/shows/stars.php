@@ -109,7 +109,7 @@ if ( $stars_counts['anti'] > 0 ) {
 
 <p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'Star Ratings', 'lwtv-underscores' ); ?></p>
 
-<div class="lwtv-star-podium bg-light">
+<div class="lwtv-star-podium bg-1">
 	<div class="lwtv-star-podium-layout">
 
 		<div class="lwtv-star-rail">

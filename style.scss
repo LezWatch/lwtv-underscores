@@ -1,32 +1,47 @@
+@use "sass:meta";
+
 /* ==========================================================================
 	Header - Includes the style.css header and version etc.
 ========================================================================== */
 @use "scss/header";
 
-/* ==========================================================================
+/*
+	Everything else joins Bootstrap 6's `components` cascade layer. Inside one
+	layer, specificity and source order decide, as they did in v5 (theme loads
+	after Bootstrap, so ties go to the theme, while e.g. `.btn-danger` still
+	beats the theme's bare `button` rule). Bootstrap's helpers and utilities
+	(no longer !important) sit in later layers, so they still beat theme rules.
+	Bootstrap's dedicated `custom` layer would instead let *every* theme rule
+	beat every component regardless of specificity.
+*/
+@layer components {
+
+	/* ==========================================================================
 	Variables
-========================================================================== */
-@use "scss/variables";
+	========================================================================== */
+	@include meta.load-css("scss/variables");
 
-/* ==========================================================================
+	/* ==========================================================================
 	Layout
-========================================================================== */
-@use "scss/layout";
+	========================================================================== */
+	@include meta.load-css("scss/layout");
 
-/* ==========================================================================
+	/* ==========================================================================
 	Specific Media STYLES
-========================================================================== */
+	========================================================================== */
 
-/* responsive styles */
-@use "scss/partials/responsive";
+	/* responsive styles */
+	@include meta.load-css("scss/partials/responsive");
 
-/* ==========================================================================
+	/* ==========================================================================
 	Addons - for plugins and other customizations
-========================================================================== */
-@use "scss/addons/bootstrap";
-@use "scss/addons/calendar";
-@use "scss/addons/facetwp";
-@use "scss/addons/relatedposts";
-@use "scss/addons/searchwp";
-@use "scss/addons/socialshare";
-@use "scss/addons/stats";
+	========================================================================== */
+	@include meta.load-css("scss/addons/bootstrap");
+	@include meta.load-css("scss/addons/bootstrap-legacy");
+	@include meta.load-css("scss/addons/calendar");
+	@include meta.load-css("scss/addons/facetwp");
+	@include meta.load-css("scss/addons/relatedposts");
+	@include meta.load-css("scss/addons/searchwp");
+	@include meta.load-css("scss/addons/socialshare");
+	@include meta.load-css("scss/addons/stats");
+}

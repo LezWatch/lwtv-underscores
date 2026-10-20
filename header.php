@@ -46,13 +46,13 @@
 			>
 				<div class="container">
 					<div class="row">
-						<div class="col-sm-3">
+						<div class="sm:col-3">
 							<div class="header-logo">
 								<?php the_custom_logo(); ?>
 							</div>
 						</div>
 
-						<div class="col-sm-9">
+						<div class="sm:col-9">
 							<h1 class="site-description">
 								<?php bloginfo( 'description' ); ?>
 							</h1>

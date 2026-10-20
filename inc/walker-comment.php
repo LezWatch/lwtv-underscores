@@ -343,9 +343,9 @@ class LWTV_Walker_Comment extends Walker {
 		$tag = ( 'div' === $args['style'] ) ? 'div' : 'li';
 		?>
 		<<?php echo wp_kses_post( $tag ); ?> id="comment-<?php comment_ID(); ?>" <?php comment_class( $this->has_children ? 'parent' : '', $comment ); ?>>
-			<article id="div-comment-<?php comment_ID(); ?>" class="comment-body clearfix">
+			<article id="div-comment-<?php comment_ID(); ?>" class="comment-body d-flow-root">
 				<div class="row">
-					<div class="col-sm-2">
+					<div class="sm:col-2">
 						<div class="comment-author vcard">
 							<?php
 							if ( 0 !== $args['avatar_size'] ) {
@@ -359,8 +359,8 @@ class LWTV_Walker_Comment extends Walker {
 						<?php endif; ?>
 					</div><!-- .comment-author -->
 
-					<div class="col-sm-10">
-						<div class="comment-content clearfix">
+					<div class="sm:col-10">
+						<div class="comment-content d-flow-root">
 							<div class="comment-metadata">
 								<?php echo lwtv_plugin()->get_symbolicon( svg: 'clock.svg', icon: 'svg-clock' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 								<a href="<?php echo esc_url( get_comment_link( $comment, $args ) ); ?>">

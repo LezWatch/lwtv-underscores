@@ -75,15 +75,12 @@ if ( 2 >= count( $shows_group ) ) {
 } else {
 	?>
 	<div class="accordion accordion-flush" id="characterShows">
-		<div class="accordion-item">
-			<h6 class="accordion-header">
-				<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseShows" aria-expanded="true" aria-controls="collapseShows">
+		<details class="accordion-item">
+			<summary class="accordion-header">
 				<?php echo wp_kses_post( $shows_group[0]['name'] ); ?> and <?php echo esc_html( count( $shows_group ) - 1 ); ?> more...
-				</button>
-			</h6>
-
-			<div id="flush-collapseShows" class="accordion-collapse collapse" data-bs-parent="#characterShows">
-				<div class="accordion-body">
+				<svg class="accordion-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m2 5 6 6 6-6"/></svg>
+			</summary>
+			<div class="accordion-body">
 				<?php
 				foreach ( $shows_group as $show ) {
 					if ( 'TBD' === $show ) {
@@ -93,8 +90,8 @@ if ( 2 >= count( $shows_group ) ) {
 					echo '&bull; ' . wp_kses_post( $show['link'] ) . ' <small>( ' . esc_html( $show['type'] ) . ' ' . esc_html( $show['appears'] ) . ')</small><br />';
 				}
 				?>
-				</div>
-		</div>
+			</div>
+		</details>
 	</div>
 	<?php
 }

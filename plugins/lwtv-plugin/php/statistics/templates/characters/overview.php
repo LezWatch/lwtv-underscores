@@ -352,7 +352,7 @@ $castinggap_cis_pct   = ( $castinggap_total > 0 ) ? 100 - $castinggap_queer_pct 
 $castinggap_ratio     = ( $char_queer_yes > 0 ) ? round( $char_queer_no / $char_queer_yes, 1 ) : 0;
 ?>
 <p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'The Casting Gap', 'lwtv-underscores' ); ?></p>
-<section class="lwtv-panel bg-light lwtv-castinggap">
+<section class="lwtv-panel bg-1 lwtv-castinggap">
 	<header class="lwtv-panel-head">
 		<span class="lwtv-panel-icon">
 			<?php echo lwtv_plugin()->get_symbolicon( svg: 'user-heart.svg', icon: 'svg-user', max_size: '20' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
@@ -470,7 +470,7 @@ $char_panels = array(
 		$char_leaders = array_slice( $char_rows, 0, 5, true );
 		$char_tail    = array_slice( $char_rows, 5, 5, true );
 		?>
-		<section class="lwtv-panel bg-light">
+		<section class="lwtv-panel bg-1">
 			<header class="lwtv-panel-head">
 				<span class="lwtv-panel-icon <?php echo esc_attr( $char_panel['family'] ); ?>">
 					<?php echo lwtv_plugin()->get_symbolicon( svg: $char_panel['svg'], icon: $char_panel['icon'], max_size: '20' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>

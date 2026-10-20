@@ -27,7 +27,7 @@ $ranked_mode  = ( isset( $ranked['mode'] ) && in_array( $ranked['mode'], array( 
 $ranked_top   = ! empty( $ranked_rows ) ? max( array_map( fn( $r ) => (int) $r['count'], $ranked_rows ) ) : 0;
 $ranked_rank  = 0;
 ?>
-<section class="lwtv-panel bg-light">
+<section class="lwtv-panel bg-1">
 	<header class="lwtv-panel-head">
 		<span class="lwtv-panel-icon <?php echo esc_attr( $ranked['family'] ?? 'shows' ); ?>">
 			<?php echo lwtv_plugin()->get_symbolicon( svg: $ranked['svg'] ?? 'tag.svg', icon: $ranked['icon'] ?? 'svg-tag', max_size: '20' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
