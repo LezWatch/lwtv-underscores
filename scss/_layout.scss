@@ -13,6 +13,14 @@
 	Layout
 ========================================================================== */
 
+// Bootstrap 6 zeroes the block margins of every .card-body child (it spaces
+// them with a flex gap instead, which addons/_bootstrap.scss turns off). Hand
+// those margins back to reboot/content, as in v5. This must load before the
+// theme's own rules so any of them with equal specificity still win.
+.card-body > * {
+	margin-block: revert-layer;
+}
+
 #main {
 	background-color: colors.$white;
 
@@ -592,6 +600,18 @@ h1.entry-title {
 		.breadcrumb-item {
 			display: inline-block;
 			float: none;
+		}
+
+		// Bootstrap 6 dropped v5's CSS "/" divider in favour of separate
+		// .breadcrumb-divider elements; put v5's back for these TOC links.
+		.breadcrumb-item + .breadcrumb-item {
+			padding-left: 0.5rem;
+
+			&::before {
+				padding-right: 0.5rem;
+				color: inherit; // the TOC's own text color, light or dark
+				content: "/";
+			}
 		}
 	}
 }

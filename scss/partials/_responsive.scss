@@ -3,8 +3,8 @@
 /* =Responsive styles
 ----------------------------------------------- */
 
-// Extra large devices (large desktops)
-@media (min-width: 1400px) {
+// Extra large devices (large desktops, Bootstrap 6 xl and up)
+@media (min-width: 1280px) {
 
 	.\32 xl\:container,
 	.xl\:container,
@@ -16,8 +16,8 @@
 	}
 }
 
-// Large devices (desktops, less than 1200px)
-@media (max-width: 1199px) {
+// Large devices (desktops, less than Bootstrap 6 xl: 1280px)
+@media (max-width: 1279px) {
 
 	#masthead {
 
@@ -96,8 +96,8 @@
 	}
 }
 
-// Medium devices (tablets, less than 990px)
-@media (max-width: 990px) {
+// Medium devices (tablets, less than Bootstrap 6 lg: 1024px)
+@media (max-width: 1023px) {
 
 	header.archive-header {
 
@@ -580,7 +580,11 @@
 
 	.navbar.main-nav {
 		height: auto;
-		position: relative;
+
+		// Un-fix the .fixed-top navbar on phones. Bootstrap 6 puts .fixed-top
+		// in its helpers layer, which outranks this components-layer rule
+		// whatever the specificity; only !important wins back across layers.
+		position: relative !important;
 
 		.menu {
 
