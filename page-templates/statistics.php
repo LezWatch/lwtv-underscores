@@ -57,9 +57,9 @@ get_header(); ?>
 <div id="main" tabindex="-1" class="site-main" role="main">
 	<div class="container">
 		<div class="row">
-			<div class="col-sm-12">
+			<div class="sm:col-12">
 				<div id="primary" class="content-area">
-					<div id="content" class="site-content clearfix" role="main">
+					<div id="content" class="site-content d-flow-root" role="main">
 						<div class="statistics">
 							<?php
 							// Shared stats section tab bar (all views).
@@ -90,7 +90,7 @@ get_header(); ?>
 						</div>
 					</div><!-- #content -->
 				</div><!-- #primary -->
-			</div><!-- .col-sm-12 -->
+			</div><!-- .sm:col-12 -->
 		</div><!-- .row -->
 	</div><!-- .container -->
 </div><!-- #main -->

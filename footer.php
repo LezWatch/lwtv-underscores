@@ -12,19 +12,19 @@
 	<div class="top-footer">
 		<div class="container">
 			<div class="row footer-widgets">
-				<div class="col-md-3 footer-col first">
+				<div class="md:col-3 footer-col first">
 					<?php dynamic_sidebar( 'footer-1' ); ?>
 				</div>
 
-				<div class="col-md-3 footer-col">
+				<div class="md:col-3 footer-col">
 					<?php dynamic_sidebar( 'footer-2' ); ?>
 				</div>
 
-				<div class="col-md-3 footer-col">
+				<div class="md:col-3 footer-col">
 					<?php dynamic_sidebar( 'footer-3' ); ?>
 				</div>
 
-				<div class="col-md-3 footer-col">
+				<div class="md:col-3 footer-col">
 					<?php dynamic_sidebar( 'footer-4' ); ?>
 				</div>
 			</div>

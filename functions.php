@@ -13,7 +13,7 @@ if ( ! defined( 'LWTV_THEME_VERSION' ) ) {
 	$versions['lwtv-underscores'] = '7.3.1';
 
 	// Automatically updated by the build script.
-	$versions['bootstrap'] = '5.3.8';
+	$versions['bootstrap'] = '6.0.0-alpha.1';
 
 	// MANUAL. Bump when you update the dark mode css.
 	$versions['bootstrap_dark'] = '1.2.0';
@@ -335,9 +335,48 @@ add_action( 'widgets_init', 'lwtv_theme_widgets_init' );
  * Register Custom Navigation Walker
  */
 function register_navwalker() {
-	require_once 'inc/class-wp-bootstrap-5-navwalker.php';
+	require_once 'inc/class-wp-bootstrap-6-navwalker.php';
 }
 add_action( 'after_setup_theme', 'register_navwalker' );
+
+/*
+ * WordPress's default menu markup (<ul class="menu"><li class="menu-item">)
+ * collides with Bootstrap 6, where .menu is the hidden dropdown panel and
+ * .menu-item its link. Rename them for every menu the Bootstrap walker
+ * doesn't build (widgets, page-list fallbacks); the walker handles its own.
+ */
+
+/**
+ * Swap the default `menu` container class for `wp-menu`.
+ *
+ * @param array $args wp_nav_menu() or wp_page_menu() arguments.
+ * @return array
+ */
+function lwtv_menu_class_not_bootstrap( $args ) {
+	$is_bootstrap = isset( $args['walker'] ) && $args['walker'] instanceof WP_Bootstrap_Navwalker;
+	if ( ! $is_bootstrap && isset( $args['menu_class'] ) && 'menu' === $args['menu_class'] ) {
+		$args['menu_class'] = 'wp-menu';
+	}
+	return $args;
+}
+add_filter( 'wp_nav_menu_args', 'lwtv_menu_class_not_bootstrap' );
+add_filter( 'wp_page_menu_args', 'lwtv_menu_class_not_bootstrap' );
+
+/**
+ * Drop the `menu-item` class from list items outside the Bootstrap walker.
+ *
+ * @param string[] $classes Menu item classes.
+ * @param WP_Post  $item    Menu item (unused).
+ * @param stdClass $args    wp_nav_menu() arguments.
+ * @return string[]
+ */
+function lwtv_menu_item_class_not_bootstrap( $classes, $item, $args ) {
+	if ( isset( $args->walker ) && $args->walker instanceof WP_Bootstrap_Navwalker ) {
+		return $classes;
+	}
+	return array_values( array_diff( $classes, array( 'menu-item' ) ) );
+}
+add_filter( 'nav_menu_css_class', 'lwtv_menu_item_class_not_bootstrap', 10, 3 );
 
 // Bootstrap pagination: wp_bootstrap_pagination().
 require_once 'inc/wp_bootstrap_pagination.php';
@@ -384,7 +423,9 @@ function lwtv_theme_scripts() {
 
 	// Bootstrap
 	wp_enqueue_style( 'bootstrap', get_template_directory_uri() . '/inc/bootstrap/css/bootstrap.min.css', array(), LWTV_THEME_VERSION['bootstrap'], 'all', false );
-	wp_enqueue_script( 'bootstrap', get_template_directory_uri() . '/inc/bootstrap/js/bootstrap.bundle.min.js', array( 'jquery' ), LWTV_THEME_VERSION['bootstrap'], 'all', true );
+	// Bootstrap 6 is ESM-only: register it as a script module so other modules can `import { X } from 'bootstrap'`.
+	wp_register_script_module( 'bootstrap', get_template_directory_uri() . '/inc/bootstrap/js/bootstrap.bundle.min.js', array(), LWTV_THEME_VERSION['bootstrap'] );
+	wp_enqueue_script_module( 'lwtv-bootstrap-init', get_template_directory_uri() . '/inc/js/bootstrap-init.js', array( array( 'id' => 'bootstrap' ) ), LWTV_THEME_VERSION['lwtv-underscores'] );
 
 	// Fonts
 	wp_enqueue_style( 'open-sans', '//fonts.googleapis.com/css?family=Open+Sans:400,600,700', array(), LWTV_THEME_VERSION['lwtv-underscores'], false );
@@ -395,7 +436,7 @@ function lwtv_theme_scripts() {
 
 	// Overlay JS.
 	if ( get_post_type( get_the_ID() ) === 'post_type_actors' ) {
-		wp_enqueue_script( 'lwtv-overlay', get_template_directory_uri() . '/inc/js/overlay-linkable.js', array( 'jquery' ), LWTV_THEME_VERSION['lwtv-underscores'], true );
+		wp_enqueue_script_module( 'lwtv-overlay', get_template_directory_uri() . '/inc/js/overlay-linkable.js', array( array( 'id' => 'bootstrap' ) ), LWTV_THEME_VERSION['lwtv-underscores'] );
 	}
 }
 

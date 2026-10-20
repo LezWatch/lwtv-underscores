@@ -76,7 +76,7 @@ class Plugin_Age {
 
 		echo '<tr class="plugin-age-tr' . esc_attr( $active_class ) . '" id="' . esc_attr( $plugin_data['slug'] . '-age' ) . '" data-slug="' . esc_attr( $plugin_data['slug'] ) . '" data-plugin="' . esc_attr( $file ) . '"><td colspan="' . esc_attr( $wp_list_table->get_column_count() ) . '" class="plugin-age colspanchange"><div class="age-message">';
 		// translators: %1 - Plugin Name ; %2 - time since last update
-		$results = sprintf( __( '%1$s was last updated %2$s ago and may no longer be supported.', 'ui-labs' ), $plugin_name, human_time_diff( $lastupdated, current_time( 'timestamp' ) ) ); // phpcs:ignore WordPress.DateTime.CurrentTimeTimestamp.Requested
+		$results = sprintf( __( '%1$s was last updated %2$s ago and may no longer be supported.', 'lwtv-underscores' ), $plugin_name, human_time_diff( $lastupdated, current_time( 'timestamp' ) ) ); // phpcs:ignore WordPress.DateTime.CurrentTimeTimestamp.Requested
 		echo esc_html( $results );
 		echo '</div></td></tr>';
 	}

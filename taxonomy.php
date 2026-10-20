@@ -69,9 +69,9 @@ get_header(); ?>
 <div id="main" tabindex="-1" class="site-main" role="main">
 	<div class="container">
 		<div class="row">
-			<div class="col-sm-9">
+			<div class="sm:col-9">
 				<div id="primary" class="content-area">
-					<div id="content" class="site-content clearfix" role="main">
+					<div id="content" class="site-content d-flow-root" role="main">
 						<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 							<div class="entry-content facetwp-template">
 								<div class="row site-loop <?php echo esc_attr( $post_type_is ); ?>-archive-loop">
@@ -108,11 +108,11 @@ get_header(); ?>
 						</article><!-- #post-## -->
 					</div><!-- #content -->
 				</div><!-- #primary -->
-			</div><!-- .col-sm-9 -->
+			</div><!-- .sm:col-9 -->
 
-			<div class="col-sm-3 site-sidebar showchars-sidebar site-loop">
+			<div class="sm:col-3 site-sidebar showchars-sidebar site-loop">
 				<?php get_sidebar(); ?>
-			</div><!-- .col-sm-3 -->
+			</div><!-- .sm:col-3 -->
 
 		</div><!-- .row -->
 	</div><!-- .container -->

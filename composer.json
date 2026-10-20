@@ -11,16 +11,9 @@
         }
     ],
     "require": {
-        "php": ">=8.5",
-        "twbs/bootstrap": "^5.3"
+        "php": ">=8.5"
     },
     "scripts": {
-        "post-install-cmd": [
-            "sh _build_scripts/copy-composer-assets.sh"
-        ],
-        "post-update-cmd": [
-            "sh _build_scripts/copy-composer-assets.sh"
-        ],
         "lint": "phpcs",
         "lint-fix": "phpcbf",
         "analyse": "phpstan analyse --memory-limit=2G",

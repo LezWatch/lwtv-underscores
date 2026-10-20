@@ -1241,7 +1241,7 @@ class WP_CLI_LWTV_Audit {
 					'%d holds an unverified QID -- run: wp lwtv wikidata backfill --reverify',
 					'%d hold unverified QIDs -- run: wp lwtv wikidata backfill --reverify',
 					$unverified,
-					'lwtv'
+					'lwtv-underscores'
 				),
 				$unverified
 			);

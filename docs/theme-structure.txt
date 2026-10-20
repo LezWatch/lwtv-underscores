@@ -105,6 +105,7 @@ root `style.scss`; `_dynamic.scss` is generated at build time by
 ├── _variables.scss
 ├── addons/ - Feature styles
 │   ├── _bootstrap.scss
+│   ├── _bootstrap-legacy.scss - Bootstrap 5 class shim for saved post content (alert-*, btn-*, text-bg-*, clearfix); delete once post_content is clean
 │   ├── _calendar.scss
 │   ├── _facetwp.scss
 │   ├── _forms.scss
@@ -129,20 +130,20 @@ root `style.scss`; `_dynamic.scss` is generated at build time by
 Template tags, walkers, widgets, and theme-side JS/CSS.
 
 ├── author-box.php - `lwtv_author_box()` content filter appending an author bio box (avatar, name, socials, bio, post count link, favourite shows) to single posts
-├── class-wp-bootstrap-4-navwalker.php - Vendored WP Bootstrap Navwalker 4.3.0, class renamed `WP_Bootstrap_Navwalker4`
-├── class-wp-bootstrap-5-navwalker.php - Vendored WP Bootstrap Navwalker 5.0.0 (`WP_Bootstrap_Navwalker`) — the walker actually used for the Bootstrap 5 navbar
+├── class-wp-bootstrap-6-navwalker.php - WP Bootstrap Navwalker 5.0.0 forked for Bootstrap 6 Menu markup (`WP_Bootstrap_Navwalker`) — the walker actually used for the navbar
 ├── custom-header.php - Registers `custom-header` support (2250x602, flex height) and the head callback that prints header text colour CSS
 ├── customizer.php - postMessage transport for blogname/blogdescription/header_textcolor; enqueues the Customizer preview JS
 ├── extras.php - Misc filters: `group-blog`/`hfeed` body classes, pingback link in `wp_head`
 ├── template-tags.php - Paging/post nav, `lwtv_theme_posted_on()`, entry footer, categorized-blog transient, `lwtv_generate_pagination_buttons()` and page-number helpers
 ├── walker-comment.php - `LWTV_Walker_Comment`, a fork of core `Walker_Comment` producing the theme's HTML5 comment/pingback markup
 ├── wp_bootstrap_pagination.php - `wp_bootstrap_pagination()` — Bootstrap `.pagination` nav with range/prev/next for any WP_Query
-├── bootstrap/ - VENDORED Bootstrap 5 dist CSS/JS, copied in from `vendor/twbs/bootstrap` by `_build_scripts/copy-composer-assets.sh`. Not hand-edited.
+├── bootstrap/ - VENDORED Bootstrap 6 dist (`bootstrap.min.css`, ESM `bootstrap.bundle.min.js` + maps), copied from `node_modules/bootstrap` by `_build_scripts/postbuild.js`. Not hand-edited.
 ├── css/
 │   ├── style-admin.scss - Source for the wp-admin/wp-login skin (login logo, form shadow, dashboard header logo)
 │   └── style-admin.css - Compiled output
 ├── js/
 │   ├── a11y.js - Adds `aria-labelledby`/`aria-label` to nav-menu widgets, the social menu, and Gravity Forms widgets
+│   ├── bootstrap-init.js - Script module: imports from the `bootstrap` import-map entry and initializes Tooltips (the one opt-in component the theme uses)
 │   ├── bootstrap-color-mode.js - Bootstrap colour-mode toggler: reads/writes `theme` in localStorage, sets `data-bs-theme`, light/dark/auto
 │   ├── bootstrap-color-mode.min.js - Build output
 │   ├── copy-post-link.js - Swaps the permalink anchor for a copy-to-clipboard button with an aria-live status message
@@ -150,8 +151,7 @@ Template tags, walkers, widgets, and theme-side JS/CSS.
 │   ├── customizer.min.js - Build output
 │   ├── lwtv-theme-scripts.js - jQuery smooth-scroll for breadcrumb/TOC anchors plus Bootstrap tooltip init
 │   ├── navigation.js - `_s` mobile nav toggle with `aria-expanded` handling and keyboard/tab support for dropdown submenus
-│   ├── overlay-linkable.js - Makes Bootstrap modals deep-linkable by syncing an `?overlay=` query param on show/hide, auto-opening on load
-│   ├── popper.min.js - VENDORED Popper.js core v2.11.8 (+ source map), the positioning engine Bootstrap dropdowns/tooltips need
+│   ├── overlay-linkable.js - Script module making Bootstrap dialogs deep-linkable by syncing an `?overlay=` query param on show/hide, auto-opening on load
 │   ├── searchbox.js - Opens/closes the header search overlay (`#search`, Esc to close) and focuses the input when the collapse expands
 │   ├── skip-link-focus-fix.js - `_s` fix making skip-link targets focusable on hashchange
 │   └── yikes-theme-scripts.min.js - BUILD OUTPUT bundling navigation + skip-link-focus-fix + lwtv-theme-scripts + a11y + searchbox + copy-post-link
@@ -251,7 +251,6 @@ Contains all template part files and subfolders used for modular theme structure
 
 ## Build Scripts - `/_build_scripts/`
 
-├── copy-composer-assets.sh - Composer post-install/post-update hook copying Bootstrap dist CSS/JS (and Popper) from `vendor/` into `inc/bootstrap` (replaces the unmaintained slowprog/composer-copy-file)
 ├── postbuild.js - Post-webpack step: copies built min JS into `inc/js/`, copies tablesorter into the plugin assets, and concatenates `scss/_header.scss` (with the package.json version substituted for `THEME_VERSION`) onto the built CSS to produce `style.css`
 ├── structure-docs.js - Regenerates the trees in `docs/plugin-structure.txt` and `docs/theme-structure.txt` from disk, carrying existing descriptions and entry order across; marks new files `TODO: describe` and reports deletions. `npm run docs:structure` / `docs:structure:check`
 ├── structure-docs.config.js - Config for structure-docs.js: which tree block maps to which directory, what to ignore or pin, and which directories are summarized (`list`) or left prose-only (`opaque`) instead of expanded

@@ -31,14 +31,14 @@ get_header(); ?>
 		<div class="row">
 			<div class="col">
 				<div id="primary" class="content-area">
-					<div id="content" class="site-content clearfix">
+					<div id="content" class="site-content d-flow-root">
 						<article id="post-0" class="post not-found">
-							<div class="entry-content clearfix">
+							<div class="entry-content d-flow-root">
 								<p><img src="<?php echo esc_url( get_template_directory_uri() ); ?>/images/rose.gif" alt="Rose revealing herself from Jane the Virgin" class="alignleft"/></p>
 								<p><?php esc_attr_e( 'Sorry, there is no page with this address. Please try again or use the search below.', 'lwtv-underscores' ); ?></p>
 
 								<div class="row g-0">
-									<div class="col-sm-8">
+									<div class="sm:col-8">
 										<?php get_search_form(); ?>
 									</div>
 								</div>

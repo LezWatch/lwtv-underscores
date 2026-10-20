@@ -52,7 +52,7 @@ $yb_hover_sub = $yearbars['hover_sub'] ?? '%s';
 		<?php endforeach; ?>
 	</div>
 <?php endif; ?>
-<section class="lwtv-yearbars-card bg-light">
+<section class="lwtv-yearbars-card bg-1">
 	<div class="lwtv-yearbars-head">
 		<div>
 			<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php echo esc_html( $yearbars['eyebrow'] ?? '' ); ?></p>

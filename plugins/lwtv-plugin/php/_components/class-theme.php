@@ -326,12 +326,12 @@ class Theme implements Component, Templater {
 					<div class="card-header"><h4>Editor Tools</h4></div>
 					<form id="update_math" name="update_math" method="post">
 						</br>
-						<center><button type="submit" class="btn btn-primary btn-block" id="submit" name="submit">
+						<center><button type="submit" class="btn btn-solid theme-primary btn-block" id="submit" name="submit">
 							Refresh Data
 							<?php
 							if ( 0 === $show_score ) {
 								?>
-								<span class="position-absolute top-0 start-100 translate-middle p-2 bg-danger border border-light rounded-circle">
+								<span class="position-absolute top-0 start-100 translate-middle p-3 bg-danger border border-white rounded-circle">
 									<span class="visually-hidden">RERUN!</span>
 								</span>
 								<?php
@@ -355,7 +355,7 @@ class Theme implements Component, Templater {
 	 */
 	public function get_last_updated( $post_id ) {
 		$updated_date = get_the_modified_time( 'F jS, Y', $post_id );
-		$last_updated = '<div class="last-updated"><small class="text-muted">This page was last edited on ' . $updated_date . '.</small></div>';
+		$last_updated = '<div class="last-updated"><small class="fg-secondary">This page was last edited on ' . $updated_date . '.</small></div>';
 		echo wp_kses_post( $last_updated );
 	}
 

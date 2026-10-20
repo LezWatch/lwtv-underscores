@@ -138,7 +138,7 @@ class LWTV_Today_Widget extends WP_Widget {
 
 		if ( $count > 0 ) {
 			// translators: %s is the number of dead characters.
-			$how_many = sprintf( _n( '%s character died:', '%s characters died:', $count ), $count );
+			$how_many = sprintf( _n( '%s character died:', '%s characters died:', $count, 'lwtv-underscores' ), $count );
 			$the_dead = '<ul class="byq-otd">';
 
 			foreach ( $response as $dead_character ) {
@@ -207,7 +207,7 @@ class LWTV_Today_Widget extends WP_Widget {
 		// Featured Image
 		$image  = '<div class="' . $type . '-image-wrapper"><a href="' . get_the_permalink( $the_post ) . '">' . $thumbnail . '</a></div>';
 		$body   = '<div class="card-body"><h4 class="card-title">' . get_the_title( $the_post ) . '</h4><div class="card-text">' . $text . '</div></div>';
-		$button = '<div class="card-footer"><a href="' . get_the_permalink( $the_post ) . '" class="btn btn-outline-primary">' . esc_attr( ucfirst( $type ) ) . ' Profile</a>
+		$button = '<div class="card-footer"><a href="' . get_the_permalink( $the_post ) . '" class="btn btn-outline theme-primary">' . esc_attr( ucfirst( $type ) ) . ' Profile</a>
 		</div>';
 
 		$output = $image . $body . $button;

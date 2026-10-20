@@ -1,43 +1,32 @@
-jQuery( function () {
-	const overlayList = document.querySelectorAll(
-		'div[data-modal-type="overlay"]'
-	);
+// Script module (see functions.php): runs after the DOM is parsed, so no ready wrapper.
+import { Dialog } from 'bootstrap';
 
-	const params = new URLSearchParams( window.location.search );
-	const path = window.location.pathname;
-	const currentView = params.get( 'overlay' );
+const overlayList = document.querySelectorAll( '[data-modal-type="overlay"]' );
 
-	// If the URL query string contains an overlay parameter, show the modal.
-	if ( currentView ) {
-		const showModal = new bootstrap.Modal(
-			document.getElementById( currentView ),
-			{}
-		);
-		showModal.toggle();
-	}
+const params = new URLSearchParams( window.location.search );
+const path = window.location.pathname;
+const currentView = params.get( 'overlay' );
 
-	overlayList.forEach( ( overlayListEl ) => {
-		// If the URL query string contains an overlay parameter, show the modal.
-		overlayListEl.addEventListener( 'show.bs.modal', ( e ) => {
-			const nextTab = e.target
-				.getAttribute( 'id' )
-				.replace( '-modal', '' );
+// If the URL query string contains an overlay parameter, show the dialog.
+if ( currentView && document.getElementById( currentView ) ) {
+	Dialog.getOrCreateInstance( document.getElementById( currentView ) ).show();
+}
 
-			// Update the URL query string with the new tab view.
-			params.set( 'overlay', nextTab );
+overlayList.forEach( ( overlayListEl ) => {
+	// When a dialog opens, put its id in the URL so the view is linkable.
+	overlayListEl.addEventListener( 'show.bs.dialog', ( e ) => {
+		const nextTab = e.target.getAttribute( 'id' ).replace( '-modal', '' );
 
-			// Update the URL visibly without changing the browser history.
-			window.history.replaceState(
-				{},
-				'',
-				path + '?' + params.toString()
-			);
-		} );
+		// Update the URL query string with the new tab view.
+		params.set( 'overlay', nextTab );
 
-		// When the modal is hidden, remove the query string from the URL.
-		overlayListEl.addEventListener( 'hide.bs.modal', () => {
-			// Update the URL visibly without changing the browser history.
-			window.history.replaceState( {}, '', path );
-		} );
+		// Update the URL visibly without changing the browser history.
+		window.history.replaceState( {}, '', path + '?' + params.toString() );
+	} );
+
+	// When the dialog is hidden, remove the query string from the URL.
+	overlayListEl.addEventListener( 'hide.bs.dialog', () => {
+		// Update the URL visibly without changing the browser history.
+		window.history.replaceState( {}, '', path );
 	} );
 } );

@@ -51,7 +51,7 @@ class Dashboard_Posts_In_Progress {
 	 * we use a hook/function to make the widget a dashboard-only widget
 	 */
 	public function register_widget() {
-		wp_add_dashboard_widget( 'dashboard_in_progress', __( 'Posts in Progress', 'lwtv-plugin' ), array( &$this, 'widget' ) );
+		wp_add_dashboard_widget( 'dashboard_in_progress', __( 'Posts in Progress', 'lwtv-underscores' ), array( &$this, 'widget' ) );
 	}
 
 	/**
@@ -118,13 +118,13 @@ class Dashboard_Posts_In_Progress {
 				$author = get_the_author_meta( 'display_name', $draft->post_author );
 
 				// Date:
-				$item = '<span>' . get_the_time( __( 'M dS Y' ), $draft ) . '</span>';
+				$item = '<span>' . get_the_time( __( 'M dS Y', 'lwtv-underscores' ), $draft ) . '</span>';
 
 				// Translators: %s = title.
-				$item .= '<a href="' . esc_url( $url ) . '" aria-label="' . esc_attr( sprintf( __( 'Edit &#8220;%s&#8221;' ), $title ) ) . '">' . esc_html( $title ) . '</a>';
+				$item .= '<a href="' . esc_url( $url ) . '" aria-label="' . esc_attr( sprintf( __( 'Edit &#8220;%s&#8221;', 'lwtv-underscores' ), $title ) ) . '">' . esc_html( $title ) . '</a>';
 
 				// Translators: %s = author display name
-				$item .= ' <span class="author">(' . sprintf( __( 'By %s', 'lwtv-plugin' ), $author ) . ')</span>';
+				$item .= ' <span class="author">(' . sprintf( __( 'By %s', 'lwtv-underscores' ), $author ) . ')</span>';
 
 				// Content if applicable
 				$the_content = wp_trim_words( $draft->post_content, 10 );
@@ -165,13 +165,13 @@ class Dashboard_Posts_In_Progress {
 				$author = get_the_author_meta( 'display_name', $pending->post_author );
 
 				// Date:
-				$item = '<span>' . get_the_time( __( 'M dS Y' ), $pending ) . '</span>';
+				$item = '<span>' . get_the_time( __( 'M dS Y', 'lwtv-underscores' ), $pending ) . '</span>';
 
 				// Translators: %s = title.
-				$item .= '<a href="' . esc_url( $url ) . '" aria-label="' . esc_attr( sprintf( __( 'Edit &#8220;%s&#8221;' ), $title ) ) . '">' . esc_html( $title ) . '</a>';
+				$item .= '<a href="' . esc_url( $url ) . '" aria-label="' . esc_attr( sprintf( __( 'Edit &#8220;%s&#8221;', 'lwtv-underscores' ), $title ) ) . '">' . esc_html( $title ) . '</a>';
 
 				// Translators: %s = author display name
-				$item .= ' <span class="author">(' . sprintf( __( 'By %s', 'lwtv-plugin' ), $author ) . ')</span>';
+				$item .= ' <span class="author">(' . sprintf( __( 'By %s', 'lwtv-underscores' ), $author ) . ')</span>';
 
 				// Content if applicable
 				$the_content = wp_trim_words( $pending->post_content, 10 );
@@ -193,7 +193,7 @@ class Dashboard_Posts_In_Progress {
 			<?php
 		} else {
 			// Translators: %s = post type (i.e. posts, pages, etc)
-			echo esc_html( sprintf( __( 'There are no pending %s at this time.', 'lwtv-plugin' ), lcfirst( $post_type_name ) ) );
+			echo esc_html( sprintf( __( 'There are no pending %s at this time.', 'lwtv-underscores' ), lcfirst( $post_type_name ) ) );
 		}
 		echo '</div>';
 	}

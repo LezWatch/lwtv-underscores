@@ -38,7 +38,7 @@ $love_total  = (int) $shows_count;
 // Zero loved shows: the whole page collapses. One empty state, no cards.
 if ( $love_n <= 0 ) {
 	?>
-	<section class="lwtv-yearbars-card bg-light">
+	<section class="lwtv-yearbars-card bg-1">
 		<h2 class="lwtv-yearbars-headline"><?php esc_html_e( 'No shows currently carry the We Love flag', 'lwtv-underscores' ); ?></h2>
 		<p class="lwtv-yearbars-desc"><?php esc_html_e( '&#8220;Shows We Love&#8221; is hand-picked, and right now the list is empty.', 'lwtv-underscores' ); ?></p>
 	</section>
@@ -78,7 +78,7 @@ if ( $love_cohort['span_min'] > 0 && $love_cohort['span_max'] > $love_cohort['sp
 }
 ?>
 
-<div class="lwtv-love bg-light">
+<div class="lwtv-love bg-1">
 
 	<div class="lwtv-love-hero">
 		<div class="lwtv-love-hero-figure">
@@ -410,7 +410,7 @@ if ( $love_cohort['span_min'] > 0 && $love_cohort['span_max'] > $love_cohort['sp
 
 </div>
 
-<div class="lwtv-love-roster bg-light">
+<div class="lwtv-love-roster bg-1">
 	<div class="lwtv-love-roster-head">
 		<div>
 			<span class="lwtv-love-eyebrow"><?php esc_html_e( 'The Roster', 'lwtv-underscores' ); ?></span>

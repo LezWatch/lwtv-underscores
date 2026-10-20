@@ -16,7 +16,7 @@
 		?>
 		<div class="card-body">
 			<h3 class="card-title"><?php the_title(); ?></h3>
-			<div class="card-meta text-muted">
+			<div class="card-meta fg-secondary">
 				<?php the_date(); ?>
 				<?php echo lwtv_plugin()->get_symbolicon( svg: 'user-circle.svg', icon: 'svg-user-circle', max_size: '20' ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
 				<?php the_author(); ?>
@@ -26,7 +26,7 @@
 			</div>
 		</div>
 		<div class="card-footer">
-			<a href="<?php the_permalink(); ?>" class="btn btn-sm btn-outline-primary">
+			<a href="<?php the_permalink(); ?>" class="btn btn-sm btn-outline theme-primary">
 				Read More <span class="screen-reader-text">about <?php the_title(); ?></span>
 			</a>
 		</div>

@@ -217,8 +217,8 @@ class Features implements Component {
 		$field_value                     = get_post_meta( $post->ID, 'lwtv_attribution', true );
 		$form_fields['lwtv_attribution'] = array(
 			'value' => $field_value ? $field_value : '',
-			'label' => __( 'Attribution' ),
-			'helps' => __( 'Insert image attribution here (i.e. "NBCUniversal" etc)' ),
+			'label' => __( 'Attribution', 'lwtv-underscores' ),
+			'helps' => __( 'Insert image attribution here (i.e. "NBCUniversal" etc)', 'lwtv-underscores' ),
 		);
 		return $form_fields;
 	}
@@ -509,7 +509,7 @@ class Features implements Component {
 				array(
 					'parent' => 'wp-logo',
 					'id'     => 'about',
-					'title'  => __( 'About LWTV' ),
+					'title'  => __( 'About LWTV', 'lwtv-underscores' ),
 					'href'   => '/about/',
 				)
 			);
@@ -517,7 +517,7 @@ class Features implements Component {
 				array(
 					'parent' => 'wp-logo-external',
 					'id'     => 'documentation',
-					'title'  => __( 'Documentation' ),
+					'title'  => __( 'Documentation', 'lwtv-underscores' ),
 					'href'   => 'https://docs.lezwatchtv.com/',
 				)
 			);
@@ -525,7 +525,7 @@ class Features implements Component {
 				array(
 					'parent' => 'wp-logo-external',
 					'id'     => 'slack',
-					'title'  => __( 'Slack' ),
+					'title'  => __( 'Slack', 'lwtv-underscores' ),
 					'href'   => 'https://lezwatchtv.slack.com/',
 				)
 			);
@@ -533,7 +533,7 @@ class Features implements Component {
 				array(
 					'parent' => 'wp-logo-external',
 					'id'     => 'validation',
-					'title'  => __( 'Data Validation' ),
+					'title'  => __( 'Data Validation', 'lwtv-underscores' ),
 					'href'   => '/wp-admin/admin.php?page=lwtv_data_check',
 				)
 			);
@@ -541,7 +541,7 @@ class Features implements Component {
 				array(
 					'parent' => 'wp-logo-external',
 					'id'     => 'monitors',
-					'title'  => __( 'Monitors' ),
+					'title'  => __( 'Monitors', 'lwtv-underscores' ),
 					'href'   => '/wp-admin/admin.php?page=lwtv_monitor_check',
 				)
 			);
@@ -549,7 +549,7 @@ class Features implements Component {
 				array(
 					'parent' => 'wp-logo-external',
 					'id'     => 'exclusions',
-					'title'  => __( 'Exclusions' ),
+					'title'  => __( 'Exclusions', 'lwtv-underscores' ),
 					'href'   => '/wp-admin/admin.php?page=lwtv_exclusion_check',
 				)
 			);

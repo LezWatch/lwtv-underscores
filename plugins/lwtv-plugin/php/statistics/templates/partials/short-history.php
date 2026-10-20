@@ -22,7 +22,7 @@ $sh_rows  = (array) ( $short_history['rows'] ?? array() );
 ?>
 <p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php echo esc_html( $short_history['eyebrow'] ?? '' ); ?></p>
 
-<section class="lwtv-yearbars-card lwtv-shorthist bg-light">
+<section class="lwtv-yearbars-card lwtv-shorthist bg-1">
 	<h2 class="lwtv-yearbars-headline"><?php echo esc_html( $short_history['headline'] ?? '' ); ?></h2>
 	<?php if ( ! empty( $sh_lines ) ) : ?>
 		<p class="lwtv-yearbars-desc lwtv-shorthist-desc"><?php echo esc_html( implode( ' ', $sh_lines ) ); ?></p>

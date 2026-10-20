@@ -37,9 +37,9 @@ get_header(); ?>
 <div id="main" tabindex="-1" class="site-main" role="main">
 	<div class="container">
 		<div class="row">
-			<div class="col-sm-8">
+			<div class="sm:col-8">
 				<div id="primary" class="content-area">
-					<div id="content" class="site-content clearfix" role="main">
+					<div id="content" class="site-content d-flow-root" role="main">
 						<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 							<div class="entry-content show-page">
 								<div class="card">
@@ -58,13 +58,13 @@ get_header(); ?>
 						</article><!-- #post-## -->
 					</div><!-- #content -->
 				</div><!-- #primary -->
-			</div><!-- .col-sm-8 -->
+			</div><!-- .sm:col-8 -->
 
-			<div class="col-sm-4 site-sidebar site-loop showschar-section">
+			<div class="sm:col-4 site-sidebar site-loop showschar-section">
 
 				<?php get_sidebar(); ?>
 
-			</div><!-- .col-sm-4 -->
+			</div><!-- .sm:col-4 -->
 		</div><!-- .row -->
 	</div><!-- .container -->
 </div><!-- #main -->
