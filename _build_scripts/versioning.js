@@ -52,7 +52,9 @@ async function updateVersionNumbers() {
 	const lwtvBlocksVersion = lwtvBlocksFile.version;
 
 	if ( currentLwtvBlocksVersion !== lwtvBlocksVersion ) {
-		const updateLwtvBlocksVersion = functionsPhp.replace(
+		// Re-read so we don't clobber the theme/Bootstrap versions written above.
+		const latestFunctionsPhp = await fs.promises.readFile( root + '/functions.php', 'utf8');
+		const updateLwtvBlocksVersion = latestFunctionsPhp.replace(
 			/\$versions\['lwtv-blocks'\]\s*=\s*'(\d+\.\d+\.\d+)';/,
 			`$versions['lwtv-blocks'] = '${lwtvBlocksVersion}';`
 		);
@@ -63,4 +65,5 @@ async function updateVersionNumbers() {
 	console.log( 'Version numbers updated!' );
 }
 
-updateVersionNumbers();
+// Exported so postbuild.js can await it and report failures.
+module.exports = updateVersionNumbers();

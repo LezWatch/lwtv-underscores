@@ -16,6 +16,24 @@ const root = process.cwd();
 const themePackage = require('../package.json');
 const dynamicThemeVersion = themePackage.version;
 
+// Bootstrap is copied out of node_modules, so a checkout that pulled a
+// dependency change without running `npm install` would fail mid-copy.
+// Check up front and say what to do.
+const bootstrapWanted = themePackage.dependencies.bootstrap;
+let bootstrapInstalled = null;
+try {
+	bootstrapInstalled = require( root + '/node_modules/bootstrap/package.json' ).version;
+} catch ( e ) {
+	// Not installed; reported below.
+}
+if ( bootstrapInstalled !== bootstrapWanted ) {
+	console.error(
+		'\npostbuild failed: package.json wants bootstrap ' + bootstrapWanted + ' but node_modules has ' +
+		( bootstrapInstalled ? bootstrapInstalled : 'none' ) + '.\nRun `npm install`, then build again.\n'
+	);
+	process.exit( 1 );
+}
+
 (async () => {
 	// Bootstrap - only the files functions.php enqueues (plus their maps).
 	for ( const file of [ 'css/bootstrap.min.css', 'css/bootstrap.min.css.map', 'js/bootstrap.bundle.min.js', 'js/bootstrap.bundle.min.js.map' ] ) {
@@ -64,5 +82,9 @@ const dynamicThemeVersion = themePackage.version;
 	console.log('CSS files have been moved!');
 
 	// Call the versioning script
-	require( './versioning' );
-})();
+	await require( './versioning' );
+})().catch( ( error ) => {
+	// Without this the failure only reaches stderr as an unhandled rejection.
+	console.error( '\npostbuild failed: ' + error.message + '\n' );
+	process.exitCode = 1;
+} );

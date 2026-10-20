@@ -57,6 +57,7 @@ Config / meta files:
 ├── composer.json / composer.lock
 ├── package.json / package-lock.json
 ├── eslint.config.js
+├── cssnano.config.js - cssnano preset for both CSS minify passes; `calc: false` because postcss-calc cannot parse relative colors (`oklch(from …)`)
 ├── .stylelintrc.json / .stylelintignore - Stylelint config for `npm run lint:css`
 ├── .nvmrc - Pinned Node version (run `nvm use` before any JS/CSS work)
 ├── .npmrc
