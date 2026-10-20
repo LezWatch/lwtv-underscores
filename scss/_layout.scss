@@ -1294,6 +1294,12 @@ footer.entry-meta {
 		vertical-align: middle;
 		margin-right: 10px;
 	}
+
+	li {
+		border-radius: 0!important;
+		border-left: none;
+		border-right: none;
+	}
 }
 
 .character-cliche svg {
@@ -1726,6 +1732,12 @@ section#characters {
 
 .network-list {
 
+	li {
+		border-radius: 0!important;
+		border-left: none;
+		border-right: none;
+	}
+
 	svg {
 		width: 20px;
 		height: 20px;
@@ -1736,6 +1748,12 @@ section#characters {
 
 .trope-list,
 .intersectionality-list {
+
+	li {
+		border-radius: 0!important;
+		border-left: none;
+		border-right: none;
+	}
 
 	svg {
 		width: 32px;
