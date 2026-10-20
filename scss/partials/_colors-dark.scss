@@ -93,6 +93,10 @@
 	.navbar.main-nav {
 		background-color: $lwtv-grey-medium;
 
+		button.navbar-toggler {
+			color: colors.$white;
+		}
+
 		ul.navbar-nav > li {
 			border-left: solid 1px colors.$lwtv-grey-light;
 			background-color: $lwtv-grey-medium;
@@ -239,7 +243,9 @@
 	.relatedposts-section h2,
 	.external-section h2,
 	.showschar-section h2 {
-		background-color: colors.$lwtv-grey-medium;
+		// The dark palette's own grey-deep, not the light-mode #999 from
+		// colors.$lwtv-grey-medium: pink links and grey text both pass AAA.
+		background-color: $lwtv-grey-deep;
 		color: colors.$lwtv-grey;
 
 		svg * {

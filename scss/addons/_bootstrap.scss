@@ -86,6 +86,16 @@
 	flex-direction: row;
 }
 
+// Same story for .card-body: v6 made it a flex column and zeroed its
+// children's block margins. As flex items, the image wrappers on character,
+// actor and show pages become their own boxes, so the floated headshot can no
+// longer wrap the text beside it. Restore v5's block layout. (The matching
+// child-margin restore sits at the top of _layout.scss, so theme rules that
+// come after it still win.)
+.card-body {
+	display: block;
+}
+
 /* List Groups */
 .list-group {
 

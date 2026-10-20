@@ -13,8 +13,12 @@
 	padding: 0;
 	background-color: colors.$white;
 
+	// v6's .navbar-toggler only sets --bs-btn-* tokens for a .btn to use;
+	// without .btn the global button rule paints it pink. Keep v5's bare icon.
 	button.navbar-toggler {
 		border: none;
+		background-color: transparent;
+		color: colors.$lwtv-grey-deep;
 	}
 
 	ul.navbar-nav > li {
@@ -48,6 +52,17 @@
 			> a.nav-link[aria-expanded="true"] {
 				background-color: colors.$lwtv-pink;
 				color: colors.$white;
+			}
+
+			/* Bootstrap 6 menus have no .dropdown-toggle caret; restore v5's.
+			   The v6 .nav-link is a flex row whose gap spaces the caret. */
+			> a.nav-link[data-bs-toggle="menu"]::after {
+				align-self: center;
+				content: "";
+				border-top: 0.3em solid;
+				border-right: 0.3em solid transparent;
+				border-bottom: 0;
+				border-left: 0.3em solid transparent;
 			}
 
 			/* Use this class on a menu item to hide the text when using an icon */
