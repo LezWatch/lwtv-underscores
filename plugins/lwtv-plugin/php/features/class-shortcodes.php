@@ -241,7 +241,8 @@ class Shortcodes {
 					$warn_color = 'info';
 					break;
 			}
-			$warning = '<span data-bs-toggle="tooltip" aria-label="Warning - This show contains triggers" title="Warning - This show contains triggers"><button type="button" class="btn btn-solid theme-' . $warn_color . '"><span class="screener screener-warn ' . $warn_color . '" role="img">' . $warn_image . '</span></button></span>';
+			$warn_label = __( 'Warning - This show contains triggers', 'lwtv-underscores' );
+			$warning    = '<span data-bs-toggle="tooltip" aria-label="' . esc_attr( $warn_label ) . '" title="' . esc_attr( $warn_label ) . '"><button type="button" class="btn btn-solid theme-' . $warn_color . '"><span class="screener screener-warn ' . $warn_color . '" role="img">' . $warn_image . '</span></button></span>';
 		}
 
 		// Get proper Star
@@ -249,12 +250,22 @@ class Shortcodes {
 		$star  = ( in_array( $attributes['star'], array( 'gold', 'silver', 'bronze', 'anti' ), true ) ) ? $attributes['star'] : 'none';
 
 		if ( 'none' !== $star ) {
-			$stars = '<span data-bs-toggle="tooltip" aria-label="' . ucfirst( $star ) . ' Star Show" title="' . ucfirst( $star ) . ' Star Show"><button type="button" class="btn btn-solid theme-info"><span role="img" class="screener screener-star ' . $star . '">' . lwtv_plugin()->get_symbolicon( svg: 'star.svg', icon: 'svg-star' ) . '</span></button></span>';
+			/* translators: %s: star level, e.g. Gold. */
+			$star_label = sprintf( __( '%s Star Show', 'lwtv-underscores' ), ucfirst( $star ) );
+			$stars      = '<span data-bs-toggle="tooltip" aria-label="' . esc_attr( $star_label ) . '" title="' . esc_attr( $star_label ) . '"><button type="button" class="btn btn-solid theme-info"><span role="img" class="screener screener-star ' . $star . '">' . lwtv_plugin()->get_symbolicon( svg: 'star.svg', icon: 'svg-star' ) . '</span></button></span>';
 		}
 
-		$output = '<div class="bd-callout screener-shortcode"><h5 id="' . esc_attr( $attributes['title'] ) . '">Screener Review on <em>' . esc_html( $attributes['title'] ) . '</em></h5>
+		$queer_label = __( 'How good is this show for queers?', 'lwtv-underscores' );
+		/* translators: %s: worth-it rating, e.g. Yes. */
+		$worth_label = sprintf( __( 'Is this show worth watching? %s', 'lwtv-underscores' ), ucfirst( $worth ) );
+		/* translators: %s: show title. */
+		$review_on = sprintf( esc_html__( 'Screener Review on %s', 'lwtv-underscores' ), '<em>' . esc_html( $attributes['title'] ) . '</em>' );
+		/* translators: %s: queer score, 0 to 5. */
+		$queer_score = sprintf( __( 'Queer Score: %s', 'lwtv-underscores' ), $queer );
+
+		$output = '<div class="bd-callout screener-shortcode"><h5 id="' . esc_attr( $attributes['title'] ) . '">' . $review_on . '</h5>
 		<p>' . esc_html( $attributes['summary'] ) . '</p>
-		<p><span data-bs-toggle="tooltip" aria-label="How good is this show for queers?" title="How good is this show for queers?"><button type="button" class="btn btn-solid theme-inverse">Queer Score: ' . $queer . '</button></span> <span data-bs-toggle="tooltip" aria-label="Is this show worth watching? ' . ucfirst( $worth ) . '" title="Is this show worth watching? ' . ucfirst( $worth ) . '"><button type="button" class="btn btn-solid theme-' . $worth_color . '">Worth It? <span role="img" class="screener screener-worthit ' . lcfirst( $worth ) . '">' . $worth_image . '</span></button></span> ' . $warning . $stars . '</p>
+		<p><span data-bs-toggle="tooltip" aria-label="' . esc_attr( $queer_label ) . '" title="' . esc_attr( $queer_label ) . '"><button type="button" class="btn btn-solid theme-inverse">' . esc_html( $queer_score ) . '</button></span> <span data-bs-toggle="tooltip" aria-label="' . esc_attr( $worth_label ) . '" title="' . esc_attr( $worth_label ) . '"><button type="button" class="btn btn-solid theme-' . $worth_color . '">' . esc_html__( 'Worth It?', 'lwtv-underscores' ) . ' <span role="img" class="screener screener-worthit ' . lcfirst( $worth ) . '">' . $worth_image . '</span></button></span> ' . $warning . $stars . '</p>
 		</div>';
 
 		return $output;

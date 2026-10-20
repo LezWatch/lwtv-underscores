@@ -358,6 +358,19 @@ class WP_Bootstrap_Navwalker extends Walker_Nav_Menu {
 		// Allow filtering of the $atts array before using it.
 		$atts = apply_filters( 'nav_menu_link_attributes', $atts, $item, $args, $depth );
 
+		// Set a typeflag to easily test if this is a linkmod or not.
+		$linkmod_type = $this->get_linkmod_type( $linkmod_classes );
+
+		// A linkmod element (header/divider/text) supplies its own class, and it
+		// is not a link, so it takes the item's other classes but not `menu-item`.
+		// Pulling them out here avoids emitting two class attributes.
+		$linkmod_extra_classes = '';
+		if ( '' !== $linkmod_type ) {
+			$item_classes          = isset( $atts['class'] ) ? preg_split( '/\s+/', $atts['class'], -1, PREG_SPLIT_NO_EMPTY ) : array();
+			$linkmod_extra_classes = join( ' ', array_diff( $item_classes, array( 'menu-item' ) ) );
+			unset( $atts['class'] );
+		}
+
 		// Build a string of html containing all the atts for the item.
 		$attributes = '';
 		foreach ( $atts as $attr => $value ) {
@@ -366,9 +379,6 @@ class WP_Bootstrap_Navwalker extends Walker_Nav_Menu {
 				$attributes .= ' ' . $attr . '="' . $value . '"';
 			}
 		}
-
-		// Set a typeflag to easily test if this is a linkmod or not.
-		$linkmod_type = $this->get_linkmod_type( $linkmod_classes );
 
 		// START appending the internal item contents to the output.
 		$item_output = isset( $args->before ) ? $args->before : '';
@@ -379,7 +389,7 @@ class WP_Bootstrap_Navwalker extends Walker_Nav_Menu {
 		 */
 		if ( '' !== $linkmod_type ) {
 			// Is linkmod, output the required element opener.
-			$item_output .= $this->linkmod_element_open( $linkmod_type, $attributes );
+			$item_output .= $this->linkmod_element_open( $linkmod_type, $attributes, $linkmod_extra_classes );
 		} else {
 			// With no link mod type set this must be a standard <a> tag.
 			$item_output .= '<a' . $attributes . '>';
@@ -547,15 +557,17 @@ class WP_Bootstrap_Navwalker extends Walker_Nav_Menu {
 			 * holder array and and unset the item from $classes.
 			 */
 			if ( preg_match( '/^disabled|^sr-only/i', $class ) ) {
-				// Test for .disabled or .sr-only classes.
-				$linkmod_classes[] = $class;
+				// Test for .disabled or .sr-only classes. Stored lowercase so the
+				// strict comparisons in get_linkmod_type() and
+				// update_atts_for_linkmod_type() match what this /i regex matched.
+				$linkmod_classes[] = strtolower( $class );
 				unset( $classes[ $key ] );
 			} elseif ( preg_match( '/^(dropdown|menu)-(header|divider|item-text|text)$/i', $class ) && $depth > 0 ) {
 				/*
 				 * Test for .dropdown-header or .dropdown-divider and a
-				 * depth greater than 0 - IE inside a dropdown.
+				 * depth greater than 0 - IE inside a dropdown. Lowercased as above.
 				 */
-				$linkmod_classes[] = $class;
+				$linkmod_classes[] = strtolower( $class );
 				unset( $classes[ $key ] );
 			} elseif ( preg_match( '/^fa-(\S*)?|^fa(s|r|l|b)?(\s?)?$/i', $class ) ) {
 				// Font Awesome.
@@ -659,20 +671,21 @@ class WP_Bootstrap_Navwalker extends Walker_Nav_Menu {
 	 * @since 4.0.0
 	 *
 	 * @param string $linkmod_type A string containing a linkmod type flag.
-	 * @param string $attributes   A string of attributes to add to the element.
+	 * @param string $attributes    A string of attributes to add to the element.
+	 * @param string $extra_classes The item's classes to merge into the element's class.
 	 * @return string A string with the opening tag for the element with attribibutes added.
 	 */
-	private function linkmod_element_open( $linkmod_type, $attributes = '' ) {
+	private function linkmod_element_open( $linkmod_type, $attributes = '', $extra_classes = '' ) {
+		// start_el() removes `class` from $attributes for linkmods and passes the
+		// item's other classes here, so the element gets a single class attribute.
+		$class  = esc_attr( trim( $linkmod_type . ' ' . $extra_classes ) );
 		$output = '';
-		// $attributes has no class (update_atts_for_linkmod_type skips linkmod names).
-		if ( 'menu-text' === $linkmod_type ) {
-			$output .= '<span class="menu-text"' . $attributes . '>';
-		} elseif ( 'menu-header' === $linkmod_type ) {
+		if ( 'menu-text' === $linkmod_type || 'menu-header' === $linkmod_type ) {
 			// A span, not a real heading, so it doesn't confuse screen readers.
-			$output .= '<span class="menu-header"' . $attributes . '>';
+			$output .= '<span class="' . $class . '"' . $attributes . '>';
 		} elseif ( 'menu-divider' === $linkmod_type ) {
 			// A divider has no content; the title is not output (see linkmod_element_close).
-			$output .= '<hr class="menu-divider"' . $attributes . '>';
+			$output .= '<hr class="' . $class . '"' . $attributes . '>';
 		}
 		return $output;
 	}

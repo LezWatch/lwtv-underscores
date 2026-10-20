@@ -47,8 +47,12 @@ these links.
 5. **Remote HTTP via `file_get_contents()`.** New remote fetches must use
    `wp_remote_get()`. Local file reads with `file_get_contents()` are fine and
    are explicitly allowed in `phpcs.xml.dist`.
-6. **Missing text domain.** All user-facing strings must be translatable:
-   `'lwtv'` inside `plugins/lwtv-plugin/`, `'lwtv-underscores'` in theme files.
+6. **Missing text domain.** All user-facing strings must be translatable
+   with the `'lwtv-underscores'` text domain — everywhere, including
+   `plugins/lwtv-plugin/`. The plugin ships inside the theme and is loaded
+   under the theme's domain; there is no separate `'lwtv'` domain, so never
+   ask for one (`lwtv_` is only the code prefix). Flag `'lwtv'`,
+   `'lwtv-plugin'`, or `'text-domain'` as the mistake.
    "User-facing" means a site visitor or a wp-admin screen. It does **not**
    include WP-CLI console output, nor `status`/`reason`/verdict values, which
    are identifiers rather than copy — both are covered under "WP-CLI files"
