@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### Changed
 
 - Update the block build tooling to `@wordpress/scripts` 37 and the block packages to their latest major versions.
+- Update the CI and deploy GitHub Actions (`setup-node`, `setup-php`, `upload-artifact`, `download-artifact`, OSV Scanner), and pin the OSV Scanner workflows to a commit like the other actions.
 
 ### Fixed
 
