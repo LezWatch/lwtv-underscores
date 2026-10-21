@@ -40,7 +40,7 @@ $atw_top_pct  = $atw_rows[0]['pct'] ?? 0;
 $atw_top_name = $atw_rows[0]['name'] ?? '';
 $atw_n_in_ten = ( $atw_top_pct > 0 ) ? (int) round( $atw_top_pct / 10 ) : 0;
 ?>
-<section class="lwtv-panel bg-light">
+<section class="lwtv-panel bg-1">
 	<header class="lwtv-panel-head">
 		<span class="lwtv-panel-icon">
 			<?php echo lwtv_plugin()->get_symbolicon( svg: 'globe.svg', icon: 'svg-globe', max_size: '20' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>

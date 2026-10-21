@@ -315,7 +315,7 @@ canvas {
 		gap: 10px;
 		margin-bottom: 24px;
 
-		@media (max-width: 991px) {
+		@media (max-width: 1023px) {
 			grid-template-columns: repeat(2, 1fr);
 		}
 
@@ -1388,7 +1388,7 @@ canvas {
 	// for every letter's min-width, so it overlaps instead of shrinking. Swap
 	// bars for wrapping letter chips before that happens (covers iPad widths,
 	// not just phones).
-	@media (max-width: 991px) {
+	@media (max-width: 1023px) {
 
 		.lwtv-ty-coa-bars {
 			display: flex;
@@ -2401,7 +2401,7 @@ canvas {
 	.lwtv-pullstats--four {
 		grid-template-columns: repeat(4, 1fr);
 
-		@media (max-width: 991px) {
+		@media (max-width: 1023px) {
 			grid-template-columns: repeat(2, 1fr);
 		}
 
@@ -2547,7 +2547,7 @@ canvas {
 	.lwtv-panels--3 {
 		grid-template-columns: repeat(3, 1fr);
 
-		@media (max-width: 991px) {
+		@media (max-width: 1023px) {
 			grid-template-columns: 1fr;
 		}
 	}
@@ -4176,7 +4176,7 @@ canvas {
 		gap: 12px;
 		margin-bottom: 1.5rem;
 
-		@media (max-width: 991px) {
+		@media (max-width: 1023px) {
 			grid-template-columns: repeat(2, 1fr);
 		}
 
@@ -4270,7 +4270,7 @@ canvas {
 	// Tablet (e.g. iPad portrait, ~810-834px): a 4-across row is too cramped to
 	// read, so drop to 2x2 here rather than waiting for a phone-width breakpoint.
 	// Mirrors the This Year ribbon (.lwtv-ty-ribbon) breakpoints.
-	@media (max-width: 991px) {
+	@media (max-width: 1023px) {
 
 		.lwtv-metric-grid {
 			grid-template-columns: repeat(2, 1fr);
@@ -6929,7 +6929,7 @@ canvas {
 	.lwtv-toll--4 {
 		grid-template-columns: repeat(4, 1fr);
 
-		@media (max-width: 991px) {
+		@media (max-width: 1023px) {
 			grid-template-columns: repeat(2, 1fr);
 		}
 
@@ -7093,7 +7093,7 @@ canvas {
 		gap: 20px;
 		margin-bottom: 20px;
 
-		@media (max-width: 991px) {
+		@media (max-width: 1023px) {
 			grid-template-columns: 1fr;
 		}
 	}

@@ -17,7 +17,7 @@ $new_icon      = lwtv_plugin()->get_symbolicon( svg: 'construction.svg', icon: '
 		<?php
 		if ( $treat_as_new ) {
 			?>
-			<div class="alert alert-info" role="alert">
+			<div class="alert theme-info" role="alert">
 				<?php echo $new_icon; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 				New characters for this show are being added! We appreciate your patience.
 			</div>
@@ -33,16 +33,16 @@ $new_icon      = lwtv_plugin()->get_symbolicon( svg: 'construction.svg', icon: '
 			$deadtext = 'none are dead';
 			if ( $havedeadcount > '0' ) {
 				// translators: %s is the number of dead characters.
-				$deadtext = sprintf( _n( '<strong>%s</strong> is dead', '<strong>%s</strong> are dead', $havedeadcount ), $havedeadcount );
+				$deadtext = sprintf( _n( '<strong>%s</strong> is dead', '<strong>%s</strong> are dead', $havedeadcount, 'lwtv-underscores' ), $havedeadcount );
 			}
 
 			// translators: %s is the number of characters total.
-			echo wp_kses_post( '<p>There ' . sprintf( _n( 'is <strong>%s</strong> queer character', 'are <strong>%s</strong> queer characters', $havecharcount ), $havecharcount ) . ' listed for this show; ' . $deadtext . '.</p>' );
+			echo wp_kses_post( '<p>There ' . sprintf( _n( 'is <strong>%s</strong> queer character', 'are <strong>%s</strong> queer characters', $havecharcount, 'lwtv-underscores' ), $havecharcount ) . ' listed for this show; ' . $deadtext . '.</p>' );
 
 			// If there are regulars...
 			if ( isset( $chars_by_role['regular'] ) && is_array( $chars_by_role['regular'] ) ) {
 				?>
-				<h3 class="title-regulars"><?php echo esc_html( _n( 'Regular', 'Regulars', count( $chars_by_role['regular'] ) ) ); ?> (<?php echo (int) count( $chars_by_role['regular'] ); ?>)</h3>
+				<h3 class="title-regulars"><?php echo esc_html( _n( 'Regular', 'Regulars', count( $chars_by_role['regular'] ), 'lwtv-underscores' ) ); ?> (<?php echo (int) count( $chars_by_role['regular'] ); ?>)</h3>
 				<div class="container characters-regulars-container"><div class="row site-loop character-show-loop">
 				<?php
 				foreach ( $chars_by_role['regular'] as $character ) {
@@ -64,7 +64,7 @@ $new_icon      = lwtv_plugin()->get_symbolicon( svg: 'construction.svg', icon: '
 			// If there are guests...
 			if ( isset( $chars_by_role['guest'] ) && is_array( $chars_by_role['guest'] ) ) {
 				?>
-				<h3 class="title-guest"><?php echo esc_html( _n( 'Guest', 'Guests', count( $chars_by_role['guest'] ) ) ); ?> (<?php echo count( $chars_by_role['guest'] ); ?>)</h3>
+				<h3 class="title-guest"><?php echo esc_html( _n( 'Guest', 'Guests', count( $chars_by_role['guest'] ), 'lwtv-underscores' ) ); ?> (<?php echo count( $chars_by_role['guest'] ); ?>)</h3>
 				<ul class="guest-character-list">
 				<?php
 				foreach ( $chars_by_role['guest'] as $character ) {

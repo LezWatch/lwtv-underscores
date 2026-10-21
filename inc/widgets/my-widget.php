@@ -92,17 +92,17 @@ class My_Widget extends WP_Widget {
 		?>
 
 		<p>
-			<label for="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>"><?php esc_html_e( 'Title (optional)' ); ?></label>
+			<label for="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>"><?php esc_html_e( 'Title (optional)', 'lwtv-underscores' ); ?></label>
 			<input class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'title' ) ); ?>" type="text" value="<?php echo esc_attr( $title ); ?>" />
 		</p>
 
 		<p>
-			<label for="<?php echo esc_attr( $this->get_field_id( 'textarea' ) ); ?>"><?php esc_html_e( 'Enter text below:' ); ?></label>
+			<label for="<?php echo esc_attr( $this->get_field_id( 'textarea' ) ); ?>"><?php esc_html_e( 'Enter text below:', 'lwtv-underscores' ); ?></label>
 			<textarea class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'textarea' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'textarea' ) ); ?>"><?php echo esc_html( $textarea ); ?></textarea>
 		</p>
 
 		<p>
-			<label for="<?php echo esc_attr( $this->get_field_id( 'textarea2' ) ); ?>"><?php esc_html_e( 'Enter more text below:' ); ?></label>
+			<label for="<?php echo esc_attr( $this->get_field_id( 'textarea2' ) ); ?>"><?php esc_html_e( 'Enter more text below:', 'lwtv-underscores' ); ?></label>
 			<textarea class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'textarea2' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'textarea2' ) ); ?>"><?php echo esc_html( $textarea2 ); ?></textarea>
 		</p>
 

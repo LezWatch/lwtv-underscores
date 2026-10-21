@@ -3,21 +3,21 @@
 /* =Responsive styles
 ----------------------------------------------- */
 
-// Extra large devices (large desktops)
-@media (min-width: 1400px) {
+// Extra large devices (large desktops, Bootstrap 6 xl and up)
+@media (min-width: 1280px) {
 
-	.container-xxl,
-	.container-xl,
-	.container-lg,
-	.container-md,
-	.container-sm,
+	.\32 xl\:container,
+	.xl\:container,
+	.lg\:container,
+	.md\:container,
+	.sm\:container,
 	.container {
 		max-width: 1140px;
 	}
 }
 
-// Large devices (desktops, less than 1200px)
-@media (max-width: 1199px) {
+// Large devices (desktops, less than Bootstrap 6 xl: 1280px)
+@media (max-width: 1279px) {
 
 	#masthead {
 
@@ -96,8 +96,8 @@
 	}
 }
 
-// Medium devices (tablets, less than 990px)
-@media (max-width: 990px) {
+// Medium devices (tablets, less than Bootstrap 6 lg: 1024px)
+@media (max-width: 1023px) {
 
 	header.archive-header {
 
@@ -115,7 +115,7 @@
 
 	.navbar.main-nav {
 
-		.dropdown-menu {
+		.menu {
 			border-top-right-radius: 0;
 		}
 	}
@@ -148,13 +148,13 @@
 		.header-search-bar {
 			padding: 20px 0 0 0;
 
-			.col-sm-1.searchbox-button {
+			.sm\:col-1.searchbox-button {
 				padding-left: 0;
 			}
 		}
 
 		// Search hides above (#search-btn), but the pill stays. In the
-		// offcanvas the segments grow to fit icon + visible label.
+		// drawer the segments grow to fit icon + visible label.
 		.dark-mode-toggle {
 			margin: 1rem 0 1rem 16px;
 			justify-content: flex-start;
@@ -179,13 +179,13 @@
 			@include fonts.font-28;
 		}
 
-		.col-sm-3 {
+		.sm\:col-3 {
 			-ms-flex: 0 0 25%;
 			flex: 0 0 25%;
 			max-width: 25%;
 		}
 
-		.col-sm-9 {
+		.sm\:col-9 {
 			flex: 0 0 auto;
 			width: 75%;
 		}
@@ -203,7 +203,7 @@
 
 		.site-content {
 
-			.col-sm-3 {
+			.sm\:col-3 {
 				-ms-flex: 0 0 33%;
 				flex: 0 0 33%;
 				max-width: 33%;
@@ -220,7 +220,7 @@
 		width: 100%;
 	}
 
-	.characters-regulars-container .col-sm-4 .character-image-wrapper {
+	.characters-regulars-container .sm\:col-4 .character-image-wrapper {
 		height: 200px;
 	}
 
@@ -230,7 +230,7 @@
 
 	.characters-regulars-container {
 
-		.col-sm-4 {
+		.sm\:col-4 {
 			-ms-flex: 0 0 50%;
 			flex: 0 0 50%;
 			max-width: 50%;
@@ -388,7 +388,7 @@
 				font-size: 1rem;
 			}
 
-			.col-sm-7.searchbox-input {
+			.sm\:col-7.searchbox-input {
 				max-width: 50%;
 			}
 
@@ -533,13 +533,13 @@
 				}
 			}
 
-			.col-sm-7.searchbox-input {
+			.sm\:col-7.searchbox-input {
 				max-width: 100%;
 				padding: 0 40px;
 				width: 100%;
 			}
 
-			.col-sm-1.searchbox-button {
+			.sm\:col-1.searchbox-button {
 				padding: 6px 15px;
 				text-align: center;
 
@@ -550,7 +550,7 @@
 				}
 			}
 
-			.col-sm-1.searchbox-close {
+			.sm\:col-1.searchbox-close {
 				position: absolute;
 				top: 4px;
 
@@ -580,9 +580,13 @@
 
 	.navbar.main-nav {
 		height: auto;
-		position: relative;
 
-		.dropdown-menu {
+		// Un-fix the .fixed-top navbar on phones. Bootstrap 6 puts .fixed-top
+		// in its helpers layer, which outranks this components-layer rule
+		// whatever the specificity; only !important wins back across layers.
+		position: relative !important;
+
+		.menu {
 
 			@include fonts.font-18;
 		}
@@ -657,9 +661,9 @@
 		max-width: 100%;
 	}
 
-	.characters-regulars-container .col-sm-4,
-	.col-sm-9 .entry-content .col-sm-4,
-	.search-results .site-content .col-sm-3 {
+	.characters-regulars-container .sm\:col-4,
+	.sm\:col-9 .entry-content .sm\:col-4,
+	.search-results .site-content .sm\:col-3 {
 		-ms-flex: 0 0 100%;
 		flex: 0 0 100%;
 		max-width: 100%;
@@ -727,7 +731,7 @@
 	.chart-container,
 	.percentage-container {
 
-		.col-sm-6 {
+		.sm\:col-6 {
 			margin-bottom: 4rem;
 		}
 
@@ -736,7 +740,7 @@
 
 			&:last-of-type {
 
-				.col-sm-6:last-of-type {
+				.sm\:col-6:last-of-type {
 					margin-bottom: 2rem;
 				}
 			}

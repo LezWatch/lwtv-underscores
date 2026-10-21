@@ -90,7 +90,7 @@ $worth_grid_label = sprintf(
 
 <p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'Worth It Ratings', 'lwtv-underscores' ); ?></p>
 
-<div class="lwtv-wi bg-light">
+<div class="lwtv-wi bg-1">
 	<div class="lwtv-wi-layout">
 
 		<div class="lwtv-wi-gridwrap">

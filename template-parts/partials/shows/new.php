@@ -22,10 +22,10 @@ if ( get_post_meta( $show_id, 'lezshows_no_chars', true ) ) {
 		<h2>No Known Characters</h2>
 
 		<div class="card-body">
-			<div class="alert alert-warning" role="alert">
+			<div class="alert theme-warning" role="alert">
 				<?php echo $no_known_characters; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 				We know there are queer characters, but cannot find information on them! If you know any details, please
-				<a href="#" data-bs-toggle="modal" data-bs-target="#suggestForm">contact us</a>!
+				<a href="#" data-bs-toggle="dialog" data-bs-target="#suggestForm">contact us</a>!
 			</div>
 		</div>
 	</section>
@@ -41,7 +41,7 @@ $under_construction = lwtv_plugin()->get_symbolicon( svg: 'construction.svg', ic
 	<h2>Under Construction</h2>
 
 	<div class="card-body">
-		<div class="alert alert-info" role="alert">
+		<div class="alert theme-info" role="alert">
 			<?php echo $under_construction; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 			This show's data is still being calculated. It will be available as soon as possible.
 		</div>

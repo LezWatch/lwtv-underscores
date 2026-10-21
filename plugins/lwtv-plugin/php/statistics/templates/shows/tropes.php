@@ -118,7 +118,7 @@ if ( $tropes_top['id'] > 0 && has_post_thumbnail( $tropes_top['id'] ) ) {
 ?>
 <div class="lwtv-tropes-columns">
 	<div class="lwtv-tropes-col lwtv-tropes-col--main">
-		<section class="lwtv-panel bg-light lwtv-tropeload">
+		<section class="lwtv-panel bg-1 lwtv-tropeload">
 			<header class="lwtv-panel-head">
 				<span class="lwtv-panel-icon tropes">
 					<?php echo lwtv_plugin()->get_symbolicon( svg: 'chart-bar.svg', icon: 'svg-chart-bar', max_size: '20' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
@@ -205,7 +205,7 @@ if ( $tropes_top['id'] > 0 && has_post_thumbnail( $tropes_top['id'] ) ) {
 			$tropes_align_denom = $tropes_align_split['pure'] + $tropes_align_split['mixed'];
 			$tropes_pure_pct    = ( $tropes_align_denom > 0 ) ? round( ( $tropes_align_split['pure'] / $tropes_align_denom ) * 100, 1 ) : 0.0;
 			?>
-			<section class="lwtv-panel bg-light lwtv-mixed-alignment">
+			<section class="lwtv-panel bg-1 lwtv-mixed-alignment">
 				<header class="lwtv-panel-head">
 					<span class="lwtv-panel-icon tropes">
 						<?php echo lwtv_plugin()->get_symbolicon( svg: 'scales.svg', icon: 'svg-scales', max_size: '20' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>

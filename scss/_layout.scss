@@ -13,6 +13,14 @@
 	Layout
 ========================================================================== */
 
+// Bootstrap 6 zeroes the block margins of every .card-body child (it spaces
+// them with a flex gap instead, which addons/_bootstrap.scss turns off). Hand
+// those margins back to reboot/content, as in v5. This must load before the
+// theme's own rules so any of them with equal specificity still win.
+.card-body > * {
+	margin-block: revert-layer;
+}
+
 #main {
 	background-color: colors.$white;
 
@@ -99,7 +107,9 @@ a {
 }
 
 /* Text */
-.text-bg-primary {
+.badge.theme-primary,
+/* v5 class still present in saved post content (see _bootstrap-legacy.scss) */
+.badge.text-bg-primary {
 
 	&,
 	&:visited {
@@ -120,7 +130,9 @@ a {
 	}
 }
 
-.text-bg-success {
+.badge.theme-success,
+/* v5 class still present in saved post content (see _bootstrap-legacy.scss) */
+.badge.text-bg-success {
 
 	&,
 	&:visited {
@@ -129,7 +141,9 @@ a {
 	}
 }
 
-.text-bg-danger {
+.badge.theme-danger,
+/* v5 class still present in saved post content (see _bootstrap-legacy.scss) */
+.badge.text-bg-danger {
 
 	&,
 	&:visited {
@@ -288,7 +302,7 @@ h6 a {
 	margin-bottom: 0;
 	max-height: 600px;
 
-	.col-sm-9 {
+	.sm\:col-9 {
 		background-color: rgba(colors.$black, 0.55);
 		border-radius: 0.375rem;
 		padding: 1rem 1.5rem;
@@ -406,12 +420,12 @@ h6 a {
 		}
 	}
 
-	.offcanvas-body {
+	.drawer-body {
 		height: 50px;
 		margin-top: -1px;
 	}
 
-	.offcanvas-header {
+	.drawer-header {
 		background-color: colors.$lwtv-purple;
 		color: colors.$white;
 
@@ -482,7 +496,7 @@ h6 a {
 		}
 	}
 
-	div#navbarToggleLWTV.offcanvas.offcanvas-end {
+	#navbarToggleLWTV.drawer.drawer-end {
 		top: 2rem;
 	}
 
@@ -493,7 +507,7 @@ h6 a {
 		outline-offset: 3px;
 	}
 
-	.dropdown-toggle:focus-visible {
+	a.nav-link[data-bs-toggle="menu"]:focus-visible {
 		outline: 3px solid colors.$lwtv-pink;
 		outline-offset: 4px;
 	}
@@ -587,6 +601,18 @@ h1.entry-title {
 			display: inline-block;
 			float: none;
 		}
+
+		// Bootstrap 6 dropped v5's CSS "/" divider in favour of separate
+		// .breadcrumb-divider elements; put v5's back for these TOC links.
+		.breadcrumb-item + .breadcrumb-item {
+			padding-left: 0.5rem;
+
+			&::before {
+				padding-right: 0.5rem;
+				color: inherit; // the TOC's own text color, light or dark
+				content: "/";
+			}
+		}
 	}
 }
 
@@ -602,14 +628,14 @@ h1.entry-title {
 		@include mixins.box-shadow(0 1px 4px 0 rgba(colors.$black, 0.14));
 		padding: 0;
 
-		&.col-sm-3,
-		&.col-sm-4,
-		&.col-sm-5,
-		&.col-sm-6,
-		&.col-sm-7,
-		&.col-sm-8,
-		&.col-sm-9,
-		&.col-sm-10 {
+		&.sm\:col-3,
+		&.sm\:col-4,
+		&.sm\:col-5,
+		&.sm\:col-6,
+		&.sm\:col-7,
+		&.sm\:col-8,
+		&.sm\:col-9,
+		&.sm\:col-10 {
 			padding: 0;
 		}
 
@@ -770,8 +796,8 @@ section {
 
 		min-height: 150px;
 
-		&.col-sm-5,
-		&.col-md-5 {
+		&.sm\:col-5,
+		&.md\:col-5 {
 			background-repeat: no-repeat;
 
 			@include mixins.cover;
@@ -785,10 +811,10 @@ section {
 	.card,
 	.image {
 
-		&.col-sm-5,
-		&.col-md-5,
-		&.col-sm-3,
-		&.col-md-3 {
+		&.sm\:col-5,
+		&.md\:col-5,
+		&.sm\:col-3,
+		&.md\:col-3 {
 			background-repeat: no-repeat;
 
 			@include mixins.cover;
@@ -1230,15 +1256,18 @@ footer.entry-meta {
 
 		#characterActors.accordion,
 		#characterShows.accordion {
-			--bs-accordion-btn-focus-box-shadow: 0 0 0 0.2rem $lwtv-grey-alt;
 
-			button {
+			.accordion-header {
 				font-family: "Open Sans", sans-serif;
 				font-size: fonts.$basefont;
 				padding: 0.2rem 0;
 			}
 
-			.accordion-button:not(.collapsed) {
+			.accordion-header:focus-visible {
+				outline-color: colors.$lwtv-grey-alt;
+			}
+
+			.accordion-item[open] > .accordion-header {
 				background-color: colors.$lwtv-grey-alt;
 			}
 		}
@@ -1264,6 +1293,12 @@ footer.entry-meta {
 		height: 32px;
 		vertical-align: middle;
 		margin-right: 10px;
+	}
+
+	li {
+		border-radius: 0!important;
+		border-left: none;
+		border-right: none;
 	}
 }
 
@@ -1697,6 +1732,12 @@ section#characters {
 
 .network-list {
 
+	li {
+		border-radius: 0!important;
+		border-left: none;
+		border-right: none;
+	}
+
 	svg {
 		width: 20px;
 		height: 20px;
@@ -1707,6 +1748,12 @@ section#characters {
 
 .trope-list,
 .intersectionality-list {
+
+	li {
+		border-radius: 0!important;
+		border-left: none;
+		border-right: none;
+	}
 
 	svg {
 		width: 32px;
@@ -1809,7 +1856,7 @@ h3 svg * {
 			fill: colors.$white;
 		}
 
-		a.btn-outline-primary {
+		a.btn-outline.theme-primary {
 			color: colors.$lwtv-pink;
 			text-decoration: none;
 
@@ -1818,7 +1865,7 @@ h3 svg * {
 			}
 		}
 
-		a.btn-outline-primary:hover {
+		a.btn-outline.theme-primary:hover {
 			color: colors.$white;
 
 			svg * {
@@ -2273,11 +2320,23 @@ div.facetwp-facet-shows_scores input.facetwp-number {
 .overlay-section {
 
 	.col {
-		cursor: pointer;
 
-		span {
-			padding-top: 1rem;
+		// A real <button> so the dialog opens from the keyboard; strip the
+		// global button rule so it still reads as the pink heading link.
+		button.overlay-trigger {
+			width: 100%;
+			padding: 1rem 0 0;
+			border: none;
+			background-color: transparent;
 			color: colors.$lwtv-pink;
+			font: inherit;
+			white-space: normal;
+			cursor: pointer;
+
+			&:focus-visible {
+				outline: 3px solid colors.$lwtv-pink;
+				outline-offset: -3px;
+			}
 
 			&:hover {
 				color: colors.$lwtv-grey-deep;
@@ -2322,7 +2381,7 @@ div.facetwp-facet-shows_scores input.facetwp-number {
 
 /* The Widget Area of Death */
 
-.home .alert-danger {
+.home .alert.theme-danger {
 	background-color: colors.$lwtv-red;
 	border: 0;
 	border-color: transparent;

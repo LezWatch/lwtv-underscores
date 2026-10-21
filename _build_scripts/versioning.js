@@ -20,7 +20,7 @@ async function updateVersionNumbers() {
 	// Update version numbers of libraries in functions.php
 	const functionsPhp = await fs.promises.readFile( root + '/functions.php', 'utf8');
 	const currentThemeVersion = functionsPhp.match(/\$versions\['lwtv-underscores'\]\s*=\s*'(\d+\.\d+\.\d+)';/)[1];
-	const currentBootstrapVersion = functionsPhp.match(/\$versions\['bootstrap'\]\s*=\s*'(\d+\.\d+\.\d+)';/)[1];
+	const currentBootstrapVersion = functionsPhp.match(/\$versions\['bootstrap'\]\s*=\s*'([\w.-]+)';/)[1];
 	const currentLwtvBlocksVersion = functionsPhp.match(/\$versions\['lwtv-blocks'\]\s*=\s*'(\d+\.\d+\.\d+)';/)[1];
 
 	// Replace Theme Version if needed
@@ -33,14 +33,14 @@ async function updateVersionNumbers() {
 		console.log( 'Theme version updated in functions.php!' );
 	}
 
-	// Bootstrap CSS Version
-	const boostrapCSSFile = await fs.promises.readFile( root + '/inc/bootstrap/css/bootstrap.css', 'utf8');
-	const boostrapCSSVersionMatch = boostrapCSSFile.match(/Bootstrap\s+v(\d+\.\d+\.\d+)/);
-	const boostrapCSSVersion = boostrapCSSVersionMatch ? boostrapCSSVersionMatch[1] : null;
+	// Bootstrap Version (from the installed npm package; may be a prerelease like 6.0.0-alpha.1)
+	const boostrapCSSVersion = require( root + '/node_modules/bootstrap/package.json' ).version;
 
 	if ( currentBootstrapVersion !== boostrapCSSVersion ) {
-		const updateBootstrapVersion = functionsPhp.replace(
-			/\$versions\['bootstrap'\]\s*=\s*'(\d+\.\d+\.\d+)';/,
+		// Re-read so we don't clobber the theme version written above.
+		const latestFunctionsPhp = await fs.promises.readFile( root + '/functions.php', 'utf8');
+		const updateBootstrapVersion = latestFunctionsPhp.replace(
+			/\$versions\['bootstrap'\]\s*=\s*'([\w.-]+)';/,
 			`$versions['bootstrap'] = '${boostrapCSSVersion}';`
 		);
 		await fs.promises.writeFile( root + '/functions.php', updateBootstrapVersion );
@@ -52,7 +52,9 @@ async function updateVersionNumbers() {
 	const lwtvBlocksVersion = lwtvBlocksFile.version;
 
 	if ( currentLwtvBlocksVersion !== lwtvBlocksVersion ) {
-		const updateLwtvBlocksVersion = functionsPhp.replace(
+		// Re-read so we don't clobber the theme/Bootstrap versions written above.
+		const latestFunctionsPhp = await fs.promises.readFile( root + '/functions.php', 'utf8');
+		const updateLwtvBlocksVersion = latestFunctionsPhp.replace(
 			/\$versions\['lwtv-blocks'\]\s*=\s*'(\d+\.\d+\.\d+)';/,
 			`$versions['lwtv-blocks'] = '${lwtvBlocksVersion}';`
 		);
@@ -63,4 +65,5 @@ async function updateVersionNumbers() {
 	console.log( 'Version numbers updated!' );
 }
 
-updateVersionNumbers();
+// Exported so postbuild.js can await it and report failures.
+module.exports = updateVersionNumbers();

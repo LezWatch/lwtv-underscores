@@ -68,7 +68,7 @@ class LWTV_Calendar_Widget extends WP_Widget {
 
 		// Check if calendar data is available
 		if ( empty( $calendar ) ) {
-			return '<div class="alert alert-warning">' . __( 'Calendar data temporarily unavailable. Please check back later.', 'lwtv-underscores' ) . '</div>';
+			return '<div class="alert theme-warning">' . __( 'Calendar data temporarily unavailable. Please check back later.', 'lwtv-underscores' ) . '</div>';
 		}
 
 		// Process calendar data using Data Processor
@@ -76,7 +76,7 @@ class LWTV_Calendar_Widget extends WP_Widget {
 		$processed_calendar = $data_processor->process_calendar_data( $calendar, 'today' );
 
 		if ( ! isset( $processed_calendar[ $today ] ) ) {
-			return '<div class="alert alert-info">' . __( 'No Shows Found for today', 'lwtv-underscores' ) . '</div>';
+			return '<div class="alert theme-info">' . __( 'No Shows Found for today', 'lwtv-underscores' ) . '</div>';
 		}
 
 		$shows = $processed_calendar[ $today ];
@@ -88,7 +88,7 @@ class LWTV_Calendar_Widget extends WP_Widget {
 			if ( 3 === $show_count ) {
 				$more_count = count( $shows ) - 3;
 				/* translators: %d: number of additional shows to view */
-				$output .= '<a class="list-group-item list-group-item-primary text-center" data-bs-toggle="collapse" data-bs-target="#collapseCalendar" aria-expanded="false" aria-controls="collapseCalendar">' . sprintf( _n( 'View %d More Show', 'View %d More Shows', $more_count, 'lwtv-underscores' ), $more_count ) . '</a>';
+				$output .= '<a class="list-group-item theme-primary text-center" data-bs-toggle="collapse" data-bs-target="#collapseCalendar" aria-expanded="false" aria-controls="collapseCalendar">' . sprintf( _n( 'View %d More Show', 'View %d More Shows', $more_count, 'lwtv-underscores' ), $more_count ) . '</a>';
 				$output .= '<div class="collapse" id="collapseCalendar">';
 			}
 
@@ -108,7 +108,7 @@ class LWTV_Calendar_Widget extends WP_Widget {
 			$output .= '</div>';
 		}
 
-		$output .= '<a class="list-group-item list-group-item-secondary text-center" href="' . home_url( '/calendar/' ) . '"><strong>' . __( 'View Full Calendar', 'lwtv-underscores' ) . '</strong></a>';
+		$output .= '<a class="list-group-item theme-secondary text-center" href="' . home_url( '/calendar/' ) . '"><strong>' . __( 'View Full Calendar', 'lwtv-underscores' ) . '</strong></a>';
 		$output .= '</div>';
 
 		return $output;
@@ -137,7 +137,7 @@ class LWTV_Calendar_Widget extends WP_Widget {
 
 		?>
 		<p>
-			<label for="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>"><?php esc_html_e( 'Title (optional)' ); ?></label>
+			<label for="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>"><?php esc_html_e( 'Title (optional)', 'lwtv-underscores' ); ?></label>
 			<input class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'title' ) ); ?>" type="text" value="<?php echo esc_attr( $title ); ?>" />
 		</p>
 		<?php

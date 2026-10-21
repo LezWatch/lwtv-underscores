@@ -32,7 +32,7 @@ $lb_items = $leaderboard_items ?? __( 'nations', 'lwtv-underscores' );
 $lb_isvg  = $leaderboard_icon_svg ?? 'globe.svg';
 $lb_ifa   = $leaderboard_icon_fa ?? 'svg-globe';
 ?>
-<section class="lwtv-panel bg-light">
+<section class="lwtv-panel bg-1">
 	<header class="lwtv-panel-head">
 		<span class="lwtv-panel-icon sexuality">
 			<?php echo lwtv_plugin()->get_symbolicon( svg: $lb_isvg, icon: $lb_ifa, max_size: '20' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>

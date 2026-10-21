@@ -54,7 +54,7 @@
 		</div>
 	</div>
 		<div class="card-footer">
-		<a href="<?php the_permalink(); ?>" class="btn btn-sm btn-outline-primary">
+		<a href="<?php the_permalink(); ?>" class="btn btn-sm btn-outline theme-primary">
 			Read More <span class="screen-reader-text">about <?php the_title(); ?></span>
 		</a>
 	</div>

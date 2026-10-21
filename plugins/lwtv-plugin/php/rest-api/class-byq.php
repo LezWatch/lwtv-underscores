@@ -546,7 +546,7 @@ class BYQ {
 						$the_dead_string = implode( '\n', $the_dead_array );
 						$count_the_dead  = count( $the_dead_array );
 						// translators: %s is the number of characters
-						$characters = sprintf( _n( '%s character', '%s characters', $count_the_dead ), $count_the_dead );
+						$characters = sprintf( _n( '%s character', '%s characters', $count_the_dead, 'lwtv-underscores' ), $count_the_dead );
 						$content    = 'On ' . $date . ', the following ' . $characters . ' died: \n' . $the_dead_string;
 					}
 					$died_today_array['content'] = $content;

@@ -8,7 +8,7 @@ $loved_post_ids = lwtv_plugin()->get_random_loved_shows_ids( 4 );
 
 if ( empty( $loved_post_ids ) ) {
 	?>
-	<div class="alert alert-info">
+	<div class="alert theme-info">
 		<p>No loved shows found.</p>
 	</div>
 	<?php
@@ -28,7 +28,7 @@ if ( empty( $loved_post_ids ) ) {
 		?>
 			<div class="card-body">
 				<h3 class="card-title"><?php echo esc_html( get_the_title( $loved_post_id ) ); ?></h3>
-				<div class="card-meta text-muted">
+				<div class="card-meta fg-secondary">
 					<?php
 					$stations = get_the_terms( $loved_post_id, 'lez_stations' );
 					if ( $stations && ! is_wp_error( $stations ) ) {
@@ -49,7 +49,7 @@ if ( empty( $loved_post_ids ) ) {
 				</div>
 			</div>
 			<div class="card-footer">
-				<a href="<?php echo esc_url( get_permalink( $loved_post_id ) ); ?>" class="btn btn-sm btn-outline-primary">
+				<a href="<?php echo esc_url( get_permalink( $loved_post_id ) ); ?>" class="btn btn-sm btn-outline theme-primary">
 					Go to Show Profile <span class="screen-reader-text">About <?php echo esc_html( get_the_title( $loved_post_id ) ); ?></span>
 				</a>
 			</div>
