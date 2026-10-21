@@ -444,6 +444,11 @@ add_action( 'wp_enqueue_scripts', 'lwtv_theme_scripts' );
 
 /**
  * Enqueue block styles in the editor.
+ *
+ * Hooked to enqueue_block_assets, not enqueue_block_editor_assets: since
+ * WordPress 6.3 the editor canvas is an iframe, and only enqueue_block_assets
+ * styles are loaded inside it. enqueue_block_editor_assets styles land in the
+ * outer editor document (toolbars, sidebars) and never reach the content.
  */
 function lwtv_block_editor_styles() {
 	// enqueue_block_assets also fires on the frontend; these are editor-only.
