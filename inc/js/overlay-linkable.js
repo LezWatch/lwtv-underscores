@@ -14,11 +14,14 @@ if ( currentView && document.getElementById( currentView ) ) {
 
 overlayList.forEach( ( overlayListEl ) => {
 	// When a dialog opens, put its id in the URL so the view is linkable.
-	overlayListEl.addEventListener( 'show.bs.dialog', ( e ) => {
-		const nextTab = e.target.getAttribute( 'id' ).replace( '-modal', '' );
+	overlayListEl.addEventListener( 'show.bs.dialog', () => {
+		// Without an id there's nothing for ?overlay= to point back to.
+		if ( ! overlayListEl.id ) {
+			return;
+		}
 
 		// Update the URL query string with the new tab view.
-		params.set( 'overlay', nextTab );
+		params.set( 'overlay', overlayListEl.id );
 
 		// Update the URL visibly without changing the browser history.
 		window.history.replaceState( {}, '', path + '?' + params.toString() );

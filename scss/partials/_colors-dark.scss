@@ -286,8 +286,12 @@
 				background-color: $lwtv-grey-medium;
 			}
 
-			span {
+			button.overlay-trigger {
 				color: colors.$lwtv-pink-light;
+
+				&:focus-visible {
+					outline-color: colors.$lwtv-pink-light;
+				}
 
 				&:hover {
 					color: colors.$lwtv-pink-deep;

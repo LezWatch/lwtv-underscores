@@ -12,9 +12,9 @@ $this_id = $args['actor_id'] ?? null;
 
 <div class="col">
 	<div class="card text-center">
-		<span data-bs-toggle="dialog" data-bs-target="#statistics" id="statistics-modal">
-			<h5><?php echo lwtv_plugin()->get_symbolicon( svg: 'presentation-alt.svg', icon: 'svg-chart-line' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?> Statistics</h5>
-		</span>
+		<h5>
+			<button type="button" class="overlay-trigger" data-bs-toggle="dialog" data-bs-target="#statistics" aria-haspopup="dialog" id="statistics-modal"><?php echo lwtv_plugin()->get_symbolicon( svg: 'presentation-alt.svg', icon: 'svg-chart-line' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?> Statistics</button>
+		</h5>
 	</div>
 </div>
 

@@ -2320,11 +2320,23 @@ div.facetwp-facet-shows_scores input.facetwp-number {
 .overlay-section {
 
 	.col {
-		cursor: pointer;
 
-		span {
-			padding-top: 1rem;
+		// A real <button> so the dialog opens from the keyboard; strip the
+		// global button rule so it still reads as the pink heading link.
+		button.overlay-trigger {
+			width: 100%;
+			padding: 1rem 0 0;
+			border: none;
+			background-color: transparent;
 			color: colors.$lwtv-pink;
+			font: inherit;
+			white-space: normal;
+			cursor: pointer;
+
+			&:focus-visible {
+				outline: 3px solid colors.$lwtv-pink;
+				outline-offset: -3px;
+			}
 
 			&:hover {
 				color: colors.$lwtv-grey-deep;

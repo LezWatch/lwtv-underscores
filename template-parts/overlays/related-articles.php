@@ -16,9 +16,9 @@ if ( ! $this_id ) {
 ?>
 <div class="col">
 	<div class="card text-center">
-		<span data-bs-toggle="dialog" data-bs-target="#articles" id="articles-modal">
-			<h5><?php echo lwtv_plugin()->get_symbolicon( svg: 'newspaper.svg', icon: 'svg-newspaper' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?> Related Articles</h5>
-		</span>
+		<h5>
+			<button type="button" class="overlay-trigger" data-bs-toggle="dialog" data-bs-target="#articles" aria-haspopup="dialog" id="articles-modal"><?php echo lwtv_plugin()->get_symbolicon( svg: 'newspaper.svg', icon: 'svg-newspaper' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?> Related Articles</button>
+		</h5>
 	</div>
 </div>
 

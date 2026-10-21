@@ -69,7 +69,7 @@ class Actor_Birthday {
 				$years_old = $num . $end[ $num % 10 ];
 			}
 			/* translators: 1: ordinal age, e.g. 30th; 2: actor name. */
-			$greeting = sprintf( __( 'Happy %1$s Birthday, %2$s!', 'lwtv-underscores' ), $years_old, get_the_title() );
+			$greeting = sprintf( __( 'Happy %1$s Birthday, %2$s!', 'lwtv-underscores' ), $years_old, get_the_title( $the_id ) );
 			echo '<div class="alert theme-info" role="alert">' . esc_html( $greeting ) . '</div>';
 		}
 	}

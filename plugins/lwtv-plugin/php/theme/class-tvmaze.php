@@ -32,7 +32,7 @@ class TVMaze {
 					// get TV Maze URLs
 					$tvmaze = ( isset( $tvmaze_episode['tvmaze'] ) ) ? $tvmaze_episode['tvmaze'] : 'https://tvmaze.com/';
 					?>
-					<span class="badge theme-primary" type="button"  data-bs-toggle="collapse" data-bs-target="#episodeSummary" aria-expanded="false" aria-controls="episodeSummary"><?php esc_html_e( 'Read More', 'lwtv-underscores' ); ?></span>
+					<button type="button" class="badge theme-primary" data-bs-toggle="collapse" data-bs-target="#episodeSummary" aria-expanded="false" aria-controls="episodeSummary"><?php esc_html_e( 'Read More', 'lwtv-underscores' ); ?></button>
 					</li>
 
 					<div class="collapse" id="episodeSummary">
