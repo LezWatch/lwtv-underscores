@@ -13,12 +13,6 @@ parameters:
 			path: functions.php
 
 		-
-			message: '#^Parameter \#5 \$media of function wp_enqueue_style expects string, true given\.$#'
-			identifier: argument.type
-			count: 1
-			path: functions.php
-
-		-
 			message: '#^Parameter \#1 \$author_id of function get_author_posts_url expects int, string given\.$#'
 			identifier: argument.type
 			count: 1
