@@ -446,7 +446,17 @@ add_action( 'wp_enqueue_scripts', 'lwtv_theme_scripts' );
  * Enqueue block styles in the editor.
  */
 function lwtv_block_editor_styles() {
-	wp_enqueue_style( 'lwtv-block-editor', get_stylesheet_directory_uri() . '/style-editor.min.css', array(), LWTV_THEME_VERSION['lwtv-blocks'], true );
+	// enqueue_block_assets also fires on the frontend; these are editor-only.
+	if ( ! is_admin() ) {
+		return;
+	}
+
+	// The frontend loads these in lwtv_theme_scripts(); the editor canvas needs them too.
+	wp_enqueue_style( 'lwtv-editor-open-sans', '//fonts.googleapis.com/css?family=Open+Sans:400,600,700', array(), LWTV_THEME_VERSION['lwtv-underscores'] );
+	wp_enqueue_style( 'lwtv-editor-oswald', '//fonts.googleapis.com/css?family=Oswald:400,500', array(), LWTV_THEME_VERSION['lwtv-underscores'] );
+
+	// The fifth argument is the media type; a bare `true` became media="1", which browsers ignore.
+	wp_enqueue_style( 'lwtv-block-editor', get_stylesheet_directory_uri() . '/style-editor.min.css', array(), LWTV_THEME_VERSION['lwtv-blocks'], 'all' );
 }
 add_action( 'enqueue_block_assets', 'lwtv_block_editor_styles' );
 
