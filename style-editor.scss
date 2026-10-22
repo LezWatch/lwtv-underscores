@@ -3,7 +3,12 @@
 /* stylelint-disable  no-duplicate-selectors */
 
 /*
-The stylesheet for Gutenberg Blocks in the editor
+The stylesheet for Gutenberg Blocks in the editor.
+
+Scoped to `html .editor-styles-wrapper` rather than `body.wp-admin`: the
+editor canvas is an iframe whose body is `.editor-styles-wrapper` and has
+no wp-admin classes. These rules must stay unlayered so they beat core's
+editor defaults, since style.css is wrapped in `@layer components`.
 */
 
 @use "scss/partials/colors";
@@ -16,7 +21,7 @@ The stylesheet for Gutenberg Blocks in the editor
    ========================================================================== */
 
 /* Content editor width */
-body.wp-admin.block-editor-page {
+html {
 
 	.editor-styles-wrapper {
 
@@ -54,7 +59,7 @@ body.wp-admin.block-editor-page {
    Global
    ========================================================================== */
 
-body.wp-admin.block-editor-page {
+html {
 
 	/* Base styles */
 	.editor-styles-wrapper {
@@ -92,7 +97,7 @@ body.wp-admin.block-editor-page {
 
 /* Headings */
 
-body.wp-admin.block-editor-page {
+html {
 
 	.editor-styles-wrapper {
 
@@ -162,7 +167,7 @@ body.wp-admin.block-editor-page {
 /* =Core blocks
 ----------------------------------------------- */
 
-body.wp-admin.block-editor-page {
+html {
 
 	.editor-styles-wrapper {
 

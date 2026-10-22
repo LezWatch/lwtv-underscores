@@ -10,7 +10,7 @@ if ( ! defined( 'LWTV_THEME_VERSION' ) ) {
 	$versions = array();
 
 	// Automatically updated by the build script. Update ./package.json to change this.
-	$versions['lwtv-underscores'] = '7.3.2';
+	$versions['lwtv-underscores'] = '7.3.3';
 
 	// Automatically updated by the build script.
 	$versions['bootstrap'] = '6.0.0-alpha.1';
@@ -444,9 +444,24 @@ add_action( 'wp_enqueue_scripts', 'lwtv_theme_scripts' );
 
 /**
  * Enqueue block styles in the editor.
+ *
+ * Hooked to enqueue_block_assets, not enqueue_block_editor_assets: since
+ * WordPress 6.3 the editor canvas is an iframe, and only enqueue_block_assets
+ * styles are loaded inside it. enqueue_block_editor_assets styles land in the
+ * outer editor document (toolbars, sidebars) and never reach the content.
  */
 function lwtv_block_editor_styles() {
-	wp_enqueue_style( 'lwtv-block-editor', get_stylesheet_directory_uri() . '/style-editor.min.css', array(), LWTV_THEME_VERSION['lwtv-blocks'], true );
+	// enqueue_block_assets also fires on the frontend; these are editor-only.
+	if ( ! is_admin() ) {
+		return;
+	}
+
+	// The frontend loads these in lwtv_theme_scripts(); the editor canvas needs them too.
+	wp_enqueue_style( 'lwtv-editor-open-sans', '//fonts.googleapis.com/css?family=Open+Sans:400,600,700', array(), LWTV_THEME_VERSION['lwtv-underscores'] );
+	wp_enqueue_style( 'lwtv-editor-oswald', '//fonts.googleapis.com/css?family=Oswald:400,500', array(), LWTV_THEME_VERSION['lwtv-underscores'] );
+
+	// The fifth argument is the media type; a bare `true` became media="1", which browsers ignore.
+	wp_enqueue_style( 'lwtv-block-editor', get_stylesheet_directory_uri() . '/style-editor.min.css', array(), LWTV_THEME_VERSION['lwtv-blocks'], 'all' );
 }
 add_action( 'enqueue_block_assets', 'lwtv_block_editor_styles' );
 
