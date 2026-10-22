@@ -4,6 +4,17 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [7.3.3] - 2026-10-21
+
+### Changed
+
+- Update the block build tooling to `@wordpress/scripts` 37 and the block packages to their latest major versions.
+- Update the CI and deploy GitHub Actions (`setup-node`, `setup-php`, `upload-artifact`, `download-artifact`, OSV Scanner), and pin the OSV Scanner workflows to a commit like the other actions.
+
+### Fixed
+
+- The block editor canvas picks up the theme's editor styles and fonts again (Open Sans and Oswald), and the editor stylesheet no longer loads on the frontend.
+
 ## [7.3.2] - 2026-10-20
 
 ### Changed
