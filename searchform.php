@@ -60,9 +60,7 @@ if ( $lwtv_show_sidebar_scope ) {
 			<?php endif; ?>
 			<div class="input-group input-group-sm">
 				<input type="text" name="s" id="sidebar-search" class="form-control" aria-label="Search for..." value="<?php the_search_query(); ?>" title="<?php echo esc_html_x( 'Search for:', 'label', 'lwtv-underscores' ); ?>" >
-				<span class="input-group-btn">
-					<button class="btn btn-solid theme-primary btn-sm" type="submit">Go</button>
-				</span>
+				<button class="btn btn-solid theme-primary btn-sm" type="submit">Go</button>
 			</div>
 		</form>
 

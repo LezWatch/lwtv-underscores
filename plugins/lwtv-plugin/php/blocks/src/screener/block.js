@@ -6,6 +6,7 @@
 import metadata from './block.json';
 import Edit from './js/edit';
 import Save from './js/save';
+import deprecated from './js/deprecated';
 import Icon from '../_common/svg/video';
 
 //  Import CSS.
@@ -18,4 +19,5 @@ registerBlockType( metadata.name, {
 	icon: Icon,
 	edit: Edit,
 	save: Save,
+	deprecated,
 } );

@@ -1,7 +1,8 @@
 import { Fragment } from '@wordpress/element';
+import { buttonClass, tooltipAttrs } from './markup';
 
 // Figure out Worth Display
-export default function DisplayWorth( { score } ) {
+export default function DisplayWorth( { score, legacy = false } ) {
 	let color = 'info';
 	let icon;
 	let svgID = 'meh';
@@ -35,12 +36,15 @@ export default function DisplayWorth( { score } ) {
 	return (
 		<Fragment>
 			<span
-				data-bs-toggle="tooltip"
+				{ ...tooltipAttrs( legacy ) }
 				aria-label={ `Is this show worth watching? ${ score }` }
 				title=""
 				data-original-title={ `Is this show worth watching? ${ score }` }
 			>
-				<button type="button" className={ `btn btn-${ color }` }>
+				<button
+					type="button"
+					className={ buttonClass( color, legacy ) }
+				>
 					Worth It?&nbsp;
 					<span
 						role="img"

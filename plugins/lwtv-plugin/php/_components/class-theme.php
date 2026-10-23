@@ -17,6 +17,7 @@ use LWTV\Theme\Actor_Birthday;
 use LWTV\Theme\Actor_Characters;
 use LWTV\Theme\Actor_Pronouns;
 use LWTV\Theme\Actor_Terms;
+use LWTV\Theme\Build\Avatar_Markup;
 use LWTV\Theme\Character_Relationships;
 use LWTV\Theme\Content_Warning;
 use LWTV\Theme\Data_Author;
@@ -62,6 +63,7 @@ class Theme implements Component, Templater {
 			'get_actor_sexuality'        => array( $this, 'get_actor_sexuality' ),
 			'get_admin_tools'            => array( $this, 'get_admin_tools' ),
 			'get_author_social'          => array( $this, 'get_author_social' ),
+			'get_avatar'                 => array( $this, 'get_avatar' ),
 			'get_author_favorite_shows'  => array( $this, 'get_author_favorite_shows' ),
 			'get_character_data'         => array( $this, 'get_character_data' ),
 			'get_characters_list'        => array( $this, 'get_characters_list' ),
@@ -137,6 +139,22 @@ class Theme implements Component, Templater {
 	 */
 	public function get_author_social( $author ) {
 		return ( new Data_Author() )->social( $author );
+	}
+
+	/**
+	 * A get_avatar() image in Bootstrap 6 Avatar markup.
+	 *
+	 * Use this instead of get_avatar() in theme output: core's `class="avatar"`
+	 * on a bare <img> is Bootstrap 6's wrapper class and shrinks it to 2.5rem.
+	 *
+	 * @param mixed  $id_or_email User ID, email, WP_User, WP_Post or WP_Comment.
+	 * @param int    $size        Size in pixels.
+	 * @param string $alt         Alt text.
+	 *
+	 * @return string
+	 */
+	public function get_avatar( $id_or_email, int $size = 96, string $alt = '' ): string {
+		return Avatar_Markup::wrap( get_avatar( $id_or_email, $size, '', $alt ), $size );
 	}
 
 	/**
@@ -326,7 +344,7 @@ class Theme implements Component, Templater {
 					<div class="card-header"><h4>Editor Tools</h4></div>
 					<form id="update_math" name="update_math" method="post">
 						</br>
-						<center><button type="submit" class="btn btn-solid theme-primary btn-block" id="submit" name="submit">
+						<center><button type="submit" class="btn btn-solid theme-primary w-100" id="submit" name="submit">
 							Refresh Data
 							<?php
 							if ( 0 === $show_score ) {

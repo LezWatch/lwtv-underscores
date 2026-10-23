@@ -6,7 +6,7 @@ export default function Save( props ) {
 
 	const container = createElement(
 		'div',
-		{ className: 'wp-block-lez-library-spoilers alert alert-danger' },
+		{ className: 'wp-block-lez-library-spoilers alert theme-danger' },
 		createElement( RichText.Content, { value: content } )
 	);
 	return container;

@@ -18,7 +18,7 @@ $this_id = $args['actor_id'] ?? null;
 	</div>
 </div>
 
-<dialog class="dialog dialog-lg" data-modal-type="overlay" id="statistics" aria-labelledby="statisticsLabel">
+<dialog class="dialog dialog-lg dialog-scrollable md-down:dialog-fullscreen" data-modal-type="overlay" id="statistics" aria-labelledby="statisticsLabel">
 	<div class="dialog-header">
 		<h3 class="dialog-title fs-lg" id="statisticsLabel">Character Statistics</h3>
 		<button type="button" class="btn-close" data-bs-dismiss="dialog" aria-label="Close"></button>

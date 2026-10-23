@@ -10,7 +10,7 @@ export default function Save( props ) {
 	return (
 		<Fragment>
 			<div className={ `${ className } bd-callout show-grade` }>
-				<div className="grade alert alert-info">{ grade }</div>
+				<div className="grade alert theme-info">{ grade }</div>
 				<div className="show-grade body">
 					<RichText.Content tagName="p" value={ summary } />
 				</div>
