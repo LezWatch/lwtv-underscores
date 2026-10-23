@@ -421,7 +421,7 @@ class WP_Bootstrap_Navwalker extends Walker_Nav_Menu {
 		 */
 		$title = apply_filters( 'nav_menu_item_title', $title, $item, $args, $depth );
 
-		// If the .sr-only class was set apply to the nav items text only.
+		// If a screen-reader linkmod was set, apply it to the nav item's text only.
 		if ( in_array( 'sr-only', $linkmod_classes, true ) ) {
 			$title         = $this->wrap_for_screen_reader( $title );
 			$keys_to_unset = array_keys( $linkmod_classes, 'sr-only', true );
@@ -535,7 +535,7 @@ class WP_Bootstrap_Navwalker extends Walker_Nav_Menu {
 	 * Finds any custom linkmod or icon classes and store in their holder
 	 * arrays then remove them from the main classes array.
 	 *
-	 * Supported linkmods: .disabled, .menu-header, .menu-divider, .menu-text, .sr-only
+	 * Supported linkmods: .disabled, .menu-header, .menu-divider, .menu-text, .visually-hidden (or .sr-only)
 	 * (the v5 .dropdown-* names are still accepted from menu item CSS classes)
 	 * Supported iconsets: Font Awesome 4/5, Glypicons
 	 *
@@ -556,11 +556,13 @@ class WP_Bootstrap_Navwalker extends Walker_Nav_Menu {
 			 * If any special classes are found, store the class in it's
 			 * holder array and and unset the item from $classes.
 			 */
-			if ( preg_match( '/^disabled|^sr-only/i', $class ) ) {
-				// Test for .disabled or .sr-only classes. Stored lowercase so the
+			if ( preg_match( '/^disabled|^sr-only|^visually-hidden/i', $class ) ) {
+				// Test for .disabled or screen-reader classes. Stored lowercase so the
 				// strict comparisons in get_linkmod_type() and
 				// update_atts_for_linkmod_type() match what this /i regex matched.
-				$linkmod_classes[] = strtolower( $class );
+				// Bootstrap 6's .visually-hidden is stored as the v4 .sr-only
+				// linkmod name, which existing menu items still use.
+				$linkmod_classes[] = ( 'visually-hidden' === strtolower( $class ) ) ? 'sr-only' : strtolower( $class );
 				unset( $classes[ $key ] );
 			} elseif ( preg_match( '/^(dropdown|menu)-(header|divider|item-text|text)$/i', $class ) && $depth > 0 ) {
 				/*
@@ -660,7 +662,8 @@ class WP_Bootstrap_Navwalker extends Walker_Nav_Menu {
 	 */
 	private function wrap_for_screen_reader( $text = '' ) {
 		if ( $text ) {
-			$text = '<span class="sr-only">' . $text . '</span>';
+			// Bootstrap 6 dropped .sr-only; .visually-hidden is its replacement.
+			$text = '<span class="visually-hidden">' . $text . '</span>';
 		}
 		return $text;
 	}

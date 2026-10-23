@@ -27,7 +27,7 @@ function lwtv_author_box( $content ) {
 		// translators: %s is the author.
 		$about_author = sprintf( __( 'About %s', 'lwtv-underscores' ), $display_name );
 
-		$author_details  = '<div class="sm:col-3">' . get_avatar( get_the_author_meta( 'user_email' ), 190 ) . '</div>';
+		$author_details  = '<div class="sm:col-3">' . lwtv_plugin()->get_avatar( get_the_author_meta( 'user_email' ), 190 ) . '</div>';
 		$author_details .= '<div class="sm:col-9"><h4 class="author_name">' . $about_author . '</h4>';
 		$author_details .= ( ! empty( $author_social ) ) ? $author_social : '';
 		$author_details .= '<div class="author-bio">' . nl2br( $author_description ) . '</div>';

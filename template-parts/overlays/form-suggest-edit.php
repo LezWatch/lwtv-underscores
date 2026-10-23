@@ -15,7 +15,7 @@ if ( is_null( $for_post ) || empty( $for_post ) ) {
 
 <!-- Button trigger dialog -->
 <div class="d-grid gap-3">
-	<button type="button" class="btn btn-solid theme-primary btn-lg btn-block" data-bs-toggle="dialog" data-bs-target="#suggestForm">
+	<button type="button" class="btn btn-solid theme-primary btn-lg w-100" data-bs-toggle="dialog" data-bs-target="#suggestForm">
 		Suggest an Edit
 	</button>
 </div>

@@ -150,3 +150,4 @@ require_once __DIR__ . '/../plugins/lwtv-plugin/php/admin-menu/build/class-exclu
  */
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/_helpers/class-admin-notice.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/plugins/searchwp/build/class-alt-names.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/theme/build/class-avatar-markup.php';
