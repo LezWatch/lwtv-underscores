@@ -6,7 +6,7 @@
  */
 ?>
 
-<nav id="site-navigation" class="navbar fixed-top lg:navbar-expand main-nav" role="navigation">
+<nav id="site-navigation" class="navbar fixed-top xl:navbar-expand main-nav" role="navigation">
 	<div class="container-fluid">
 		<div class="screen-reader-text">
 			<a href="#main">Skip to Main Content</a>
