@@ -113,36 +113,12 @@
 		}
 	}
 
-	.navbar.main-nav {
-
-		.menu {
-			border-top-right-radius: 0;
-		}
-	}
-
+	// Navbar-internal rules live in the @container block below; these are
+	// header pieces outside the navbar, which a container query can't reach.
 	#masthead {
 
-		.navbar-brand {
-			font-size: 1rem;
-		}
-
-		.navbar-brand-text {
-
-			span {
-				display: contents;
-			}
-
-			&::after {
-				content: "";
-			}
-		}
-
-		img {
+		.site-subheader img {
 			margin-left: 1rem;
-		}
-
-		#search-btn {
-			display: none;
 		}
 
 		.header-search-bar {
@@ -152,23 +128,6 @@
 				padding-left: 0;
 			}
 		}
-
-		// Search hides above (#search-btn), but the pill stays. In the
-		// drawer the segments grow to fit icon + visible label.
-		.dark-mode-toggle {
-			margin: 1rem 0 1rem 16px;
-			justify-content: flex-start;
-		}
-
-		.dark-mode-control .dark-mode-segment {
-			min-width: 0;
-			padding: 0 12px;
-		}
-	}
-
-	.navbar.main-nav ul.navbar-nav > li.nav-item > a.nav-link {
-		font-size: 0.875rem;
-		padding: 14px;
 	}
 
 	.jumbotron.jumbotron-fluid {
@@ -336,6 +295,65 @@
 		}
 	}
 
+}
+
+// Collapsed navbar (drawer mode), less than Bootstrap 6 lg: 1024px.
+// .lg:navbar-expand is a container query on the .navbar's own width, which
+// excludes a classic scrollbar; a viewport media query includes it. Querying
+// the same container keeps these rules in step with the hamburger/drawer
+// switch instead of lagging ~15px behind on Windows. Must stay before the
+// smaller breakpoints below, which override some of these.
+@container (width < 1024px) {
+
+	.navbar.main-nav {
+
+		.menu {
+			border-top-right-radius: 0;
+		}
+	}
+
+	#masthead {
+
+		.navbar-brand {
+			font-size: 1rem;
+		}
+
+		.navbar-brand-text {
+
+			span {
+				display: contents;
+			}
+
+			&::after {
+				content: "";
+			}
+		}
+
+		.navbar-brand-logo img {
+			margin-left: 1rem;
+		}
+
+		#search-btn {
+			display: none;
+		}
+
+		// Search hides above (#search-btn), but the pill stays. In the
+		// drawer the segments grow to fit icon + visible label.
+		.dark-mode-toggle {
+			margin: 1rem 0 1rem 16px;
+			justify-content: flex-start;
+		}
+
+		.dark-mode-control .dark-mode-segment {
+			min-width: 0;
+			padding: 0 12px;
+		}
+	}
+
+	.navbar.main-nav ul.navbar-nav > li.nav-item > a.nav-link {
+		font-size: 0.875rem;
+		padding: 14px;
+	}
 }
 
 // Small devices (landscape phones, less than 780px)
