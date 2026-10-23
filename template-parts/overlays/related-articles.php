@@ -22,7 +22,7 @@ if ( ! $this_id ) {
 	</div>
 </div>
 
-<dialog class="dialog dialog-lg" data-modal-type="overlay" id="articles" aria-labelledby="articlesLabel">
+<dialog class="dialog dialog-lg dialog-scrollable md-down:dialog-fullscreen" data-modal-type="overlay" id="articles" aria-labelledby="articlesLabel">
 	<div class="dialog-header">
 		<h3 class="dialog-title fs-lg" id="articlesLabel">Related Articles</h3>
 		<button type="button" class="btn-close" data-bs-dismiss="dialog" aria-label="Close"></button>

@@ -21,7 +21,7 @@ if ( is_null( $for_post ) || empty( $for_post ) ) {
 </div>
 
 <!-- Dialog -->
-<dialog class="dialog dialog-lg" id="suggestForm" aria-labelledby="suggestFormLabel">
+<dialog class="dialog dialog-lg dialog-scrollable" id="suggestForm" aria-labelledby="suggestFormLabel">
 	<div class="dialog-header">
 		<h3 class="dialog-title" id="suggestFormLabel">Suggest an Edit for <?php echo esc_html( ucfirst( $for_post_type ) ); ?> <?php echo esc_html( get_the_title( $for_post ) ); ?></h3>
 		<button type="button" class="btn-close" data-bs-dismiss="dialog" aria-label="Close"></button>
