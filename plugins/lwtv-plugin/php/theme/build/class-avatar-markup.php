@@ -52,7 +52,7 @@ class Avatar_Markup {
 	 */
 	private static function swap_class( string $img ): string {
 		$swapped = preg_replace_callback(
-			'/(<img\b[^>]*?\bclass=)(["\'])(.*?)\2/i',
+			'/(<img\b[^>]*?\sclass=)(["\'])(.*?)\2/i',
 			static function ( $m ) {
 				$classes = preg_split( '/\s+/', trim( $m[3] ) );
 				$classes = array_map(

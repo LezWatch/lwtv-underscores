@@ -48,6 +48,14 @@ class AvatarMarkupTest extends TestCase {
 		$this->assertStringContainsString( 'class="photo avatar-img avatar-50"', $html );
 	}
 
+	public function test_ignores_class_lookalike_attributes(): void {
+		$img  = '<img src="x" data-class="avatar" class="avatar avatar-50">';
+		$html = Avatar_Markup::wrap( $img, 50 );
+
+		$this->assertStringContainsString( 'data-class="avatar"', $html );
+		$this->assertStringContainsString( ' class="avatar-img avatar-50"', $html );
+	}
+
 	public function test_adds_avatar_img_when_image_has_no_class(): void {
 		$img  = '<img src="x" alt="">';
 		$html = Avatar_Markup::wrap( $img, 64 );
