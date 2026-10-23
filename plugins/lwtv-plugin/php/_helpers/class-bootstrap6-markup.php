@@ -71,7 +71,7 @@ class Bootstrap6_Markup {
 		$migrated = preg_replace_callback(
 			$pattern,
 			static function ( $m ) use ( &$changes, &$unmapped ) {
-				if ( '' !== ( $m['skip'] ?? '' ) ) {
+				if ( '' !== $m['skip'] ) {
 					return $m[0];
 				}
 
