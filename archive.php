@@ -18,7 +18,7 @@ $archive_subheader = '<span class="post-count">' . sprintf( _n( '%s article', '%
 if ( is_author() ) {
 	// Authors:
 	$author            = get_the_author_meta( 'ID' );
-	$archive_icon      = get_avatar( get_the_author_meta( 'user_email' ), 96, '', 'Avatar for author ' . get_the_author_meta( 'display_name' ) );
+	$archive_icon      = lwtv_plugin()->get_avatar( get_the_author_meta( 'user_email' ), 96, 'Avatar for author ' . get_the_author_meta( 'display_name' ) );
 	$archive_subheader = lwtv_plugin()->get_author_social( $author );
 	$archive_details   = lwtv_plugin()->get_author_favorite_shows( $author );
 } elseif ( is_tag() ) {

@@ -28,7 +28,7 @@
 ( function ( $ ) {
 	$( document ).on( 'facetwp-refresh', function () {
 		$( '.facetwp-count' ).html(
-			'<i class="fa fa-spinner fa-pulse fa-fw"></i><span class="sr-only">Loading...</span>'
+			'<i class="fa fa-spinner fa-pulse fa-fw"></i><span class="visually-hidden">Loading...</span>'
 		);
 	} );
 
