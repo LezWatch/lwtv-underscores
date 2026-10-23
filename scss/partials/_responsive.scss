@@ -1,3 +1,4 @@
+@use "colors";
 @use "fonts";
 
 /* =Responsive styles
@@ -337,6 +338,38 @@
 
 		#search-btn {
 			display: none;
+		}
+
+		// Search moves out of the drawer to sit beside the hamburger.
+		.navbar-search-compact {
+			display: flex;
+			margin-left: auto;
+			margin-right: 0.5rem;
+		}
+
+		// Full-width, left-aligned items. The wrapper's auto margin
+		// right-aligns the menu in the bar, but in the drawer's flex column it
+		// shrank the list to its content and pushed it to the edge.
+		.main-nav .drawer {
+
+			.drawer-body > .navbar-menu-wrap {
+				margin-inline-start: 0;
+			}
+
+			ul.navbar-nav > li {
+				border-left: 0;
+				border-right: 0;
+				border-bottom: 1px solid colors.$lwtv-grey-light;
+
+				&:first-child {
+					border-top: 1px solid colors.$lwtv-grey-light;
+				}
+
+				> a.nav-link {
+					flex: 1;
+					justify-content: space-between;
+				}
+			}
 		}
 
 		// Search hides above (#search-btn), but the pill stays. In the
