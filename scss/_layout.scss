@@ -403,7 +403,9 @@ h6 a {
 			margin-top: 82px;
 		}
 
-		.form-group {
+		// Not .form-group: in Bootstrap 6 that's a grid wrapper, which
+		// overrides .row's flex and stacks the search bar's columns.
+		.searchbox-row {
 			margin-bottom: 0;
 
 			label {
