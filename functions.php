@@ -19,7 +19,7 @@ if ( ! defined( 'LWTV_THEME_VERSION' ) ) {
 	$versions['bootstrap_dark'] = '1.2.0';
 
 	// Automatically updated by the build script. Update ./plugins/lwtv-plugin/php/blocks/package.json to change this.
-	$versions['lwtv-blocks'] = '1.1.0';
+	$versions['lwtv-blocks'] = '1.1.1';
 
 	define( 'LWTV_THEME_VERSION', $versions );
 }
