@@ -10,6 +10,7 @@ if ( ! defined( 'ABSPATH' ) && ! defined( 'WP_CLI' ) ) {
 	die();
 }
 
+use LWTV\_Helpers\Bootstrap6_Markup;
 use LWTV\CPTs\Shows\Watching\Watch_Hosts as CPT_Watch_Hosts;
 use LWTV\Debugger\Actors as Debug_Actors;
 use LWTV\Debugger\Characters as Debug_Characters;
@@ -51,6 +52,16 @@ class WP_CLI_LWTV_Migrate {
 	public $migrate_subtype;
 
 	/**
+	 * @var bool
+	 */
+	public $dry_run = false;
+
+	/**
+	 * @var bool
+	 */
+	public $yes = false;
+
+	/**
 	 * Construct to block facet from munging results.
 	 */
 	public function __construct() {
@@ -70,12 +81,33 @@ class WP_CLI_LWTV_Migrate {
 	 * : Type to content to migrate (i.e. 'acf').
 	 * options:
 	 * - acf
+	 * - bootstrap6
 	 * ---
 	 *
 	 *
 	 * [<subtype>]
 	 * : Optional. Secondary data. ACF uses [airdates|waystowatch|shownames|similarshows|charactor|chardeath|charimages|charimages-to-gallery|charshowgroup|autoposting|watchtermurls|debuglogging|debugstatus|debugfindings].
 	 * ---
+	 *
+	 * [--dry-run]
+	 * : bootstrap6 only. Report what would change. Writes nothing.
+	 *
+	 * [--yes]
+	 * : bootstrap6 only. Skip the confirmation prompt.
+	 *
+	 * [--format=<format>]
+	 * : bootstrap6 only. Report format (table, csv, json, ...).
+	 * ---
+	 * default: table
+	 * ---
+	 *
+	 * ## EXAMPLES
+	 *
+	 *     # What would the Bootstrap 6 class migration change?
+	 *     $ wp lwtv migrate bootstrap6 --dry-run
+	 *
+	 *     # Run it. See docs/operations/migrations/bootstrap-6.md first.
+	 *     $ wp lwtv migrate bootstrap6
 	 *
 	 * @param string $migrate_type         The type of migrator to run.
 	 * @param string|null $migrate_subtype An optional second argument for certain migrations.
@@ -85,6 +117,8 @@ class WP_CLI_LWTV_Migrate {
 		$this->format          = \WP_CLI\Utils\get_flag_value( $assoc_args, 'format', 'table' );
 		$this->migrate_type    = $args[0];
 		$this->migrate_subtype = ( isset( $args[1] ) ) ? $args[1] : null;
+		$this->dry_run         = (bool) \WP_CLI\Utils\get_flag_value( $assoc_args, 'dry-run', false );
+		$this->yes             = (bool) \WP_CLI\Utils\get_flag_value( $assoc_args, 'yes', false );
 
 		try {
 			$this->run_migrator( $this->migrate_type, $this->migrate_subtype );
@@ -151,6 +185,8 @@ class WP_CLI_LWTV_Migrate {
 				default:
 					\WP_CLI::error( 'Unknown ACF migration subtype: ' . $subtype . ' does not exist.' );
 			}
+		} elseif ( 'bootstrap6' === $type ) {
+			$this->migrate_bootstrap6();
 		} else {
 			\WP_CLI::error( 'Unknown migration type: ' . $type . ' does not exist.' );
 		}
@@ -1018,6 +1054,116 @@ class WP_CLI_LWTV_Migrate {
 			Debug_Watch_Host_Collisions::FINDINGS_PROBLEMS,
 			CPT_Watch_Hosts::FINDINGS_UNREGISTERED,
 		);
+	}
+
+	/**
+	 * Rewrite Bootstrap 5 class names in stored post content to Bootstrap 6.
+	 *
+	 * Hand-written markup only: Spoiler, Grade and Screener blocks are skipped
+	 * (Bootstrap6_Markup explains why) and upgraded by the browser re-save in
+	 * docs/operations/migrations/bootstrap-6.md. Writes post_content directly,
+	 * not through wp_update_post(): under WP-CLI there's no user with
+	 * unfiltered_html, so kses would strip markup on save. A revision of each
+	 * post is stored first, so any change can be rolled back from the editor.
+	 * Once nothing is left, scss/addons/_bootstrap-legacy.scss can go.
+	 */
+	public function migrate_bootstrap6() {
+		global $wpdb;
+
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
+		$ids = $wpdb->get_col(
+			"SELECT ID FROM {$wpdb->posts}
+			WHERE post_type NOT IN ( 'revision', 'nav_menu_item' )
+				AND post_status NOT IN ( 'trash', 'auto-draft' )
+				AND post_content REGEXP '(alert|text-bg|btn-outline|btn)-(primary|secondary|success|danger|warning|info|dark|light)'
+			ORDER BY ID"
+		);
+		// phpcs:enable
+
+		if ( empty( $ids ) ) {
+			\WP_CLI::success( 'No Bootstrap 5 classes found in post content. Nothing to migrate.' );
+			return;
+		}
+
+		$rows    = array();
+		$pending = array();
+
+		foreach ( $ids as $id ) {
+			$post   = get_post( (int) $id );
+			$result = Bootstrap6_Markup::migrate( $post->post_content );
+			$change = ( $result['html'] !== $post->post_content );
+
+			if ( ! $change && empty( $result['unmapped'] ) ) {
+				// Only skipped blocks matched; the re-save handles those.
+				continue;
+			}
+
+			$summary = array();
+			foreach ( $result['changes'] as $class => $count ) {
+				$summary[] = $class . ' x' . $count;
+			}
+
+			$rows[] = array(
+				'ID'       => $post->ID,
+				'type'     => $post->post_type,
+				'status'   => $post->post_status,
+				'title'    => $post->post_title,
+				'changes'  => implode( ', ', $summary ),
+				'unmapped' => implode( ', ', $result['unmapped'] ),
+			);
+
+			if ( $change ) {
+				$pending[ $post->ID ] = $result['html'];
+			}
+		}
+
+		if ( empty( $rows ) ) {
+			\WP_CLI::success( 'Only Spoiler, Grade or Screener blocks matched; re-save those as described in docs/operations/migrations/bootstrap-6.md.' );
+			return;
+		}
+
+		\WP_CLI\Utils\format_items( $this->format, $rows, array( 'ID', 'type', 'status', 'title', 'changes', 'unmapped' ) );
+
+		$count = count( $pending );
+		if ( $this->dry_run || 0 === $count ) {
+			\WP_CLI::log( sprintf( '%d post(s) would change. Rows with only "unmapped" classes need a manual edit.', $count ) );
+			return;
+		}
+
+		if ( ! $this->yes ) {
+			\WP_CLI::confirm( sprintf( 'Rewrite classes in %d post(s)? A revision of each is saved first.', $count ) );
+		}
+
+		$now     = current_time( 'mysql' );
+		$now_gmt = current_time( 'mysql', true );
+		$done    = 0;
+
+		foreach ( $pending as $post_id => $html ) {
+			if ( post_type_supports( get_post_type( $post_id ), 'revisions' ) ) {
+				wp_save_post_revision( $post_id );
+			}
+
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- see docblock: kses would strip markup under WP-CLI.
+			$updated = $wpdb->update(
+				$wpdb->posts,
+				array(
+					'post_content'      => $html,
+					'post_modified'     => $now,
+					'post_modified_gmt' => $now_gmt,
+				),
+				array( 'ID' => $post_id )
+			);
+
+			if ( false === $updated ) {
+				\WP_CLI::warning( 'Could not update post ' . $post_id . ': ' . $wpdb->last_error );
+				continue;
+			}
+
+			clean_post_cache( $post_id );
+			++$done;
+		}
+
+		\WP_CLI::success( sprintf( 'Migrated %d of %d post(s).', $done, $count ) );
 	}
 }
 
