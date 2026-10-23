@@ -10,6 +10,11 @@
 
 	@include mixins.box-shadow(0 2px 30px rgba(colors.$black, 0.2));
 	height: 50px;
+
+	// v6's .navbar sets min-height: var(--bs-navbar-min-height) (3.5rem),
+	// which beats height and made the bar 56px. .site-subheader's 50px
+	// margin-top assumes 50px, so the extra 6px covered whatever sat below.
+	--bs-navbar-min-height: 50px;
 	padding: 0;
 	background-color: colors.$white;
 
