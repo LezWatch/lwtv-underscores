@@ -365,9 +365,37 @@
 					border-top: 1px solid colors.$lwtv-grey-light;
 				}
 
+				// Let an open submenu drop to its own row below the link.
+				flex-wrap: wrap;
+
 				> a.nav-link {
 					flex: 1;
 					justify-content: space-between;
+
+					&[aria-expanded="true"]::after {
+						transform: rotate(180deg);
+					}
+				}
+
+				// Submenus expand inline (accordion) instead of floating over
+				// the items below. Bootstrap's Menu JS still toggles them and
+				// closes one when another opens; only positioning changes.
+				// Floating UI writes position/inset/transform as inline styles,
+				// so those three need !important to win.
+				> .menu {
+					position: static !important;
+					inset: auto !important;
+					transform: none !important;
+					flex-basis: 100%;
+					margin: 0;
+					padding: 0 0 0.5rem;
+					border: 0;
+					border-radius: 0;
+					box-shadow: none;
+
+					.menu-item {
+						padding: 0.5rem 1rem 0.5rem 2rem;
+					}
 				}
 			}
 		}
