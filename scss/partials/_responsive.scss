@@ -297,13 +297,15 @@
 
 }
 
-// Collapsed navbar (drawer mode), less than Bootstrap 6 lg: 1024px.
-// .lg:navbar-expand is a container query on the .navbar's own width, which
-// excludes a classic scrollbar; a viewport media query includes it. Querying
-// the same container keeps these rules in step with the hamburger/drawer
-// switch instead of lagging ~15px behind on Windows. Must stay before the
-// smaller breakpoints below, which override some of these.
-@container (width < 1024px) {
+// Collapsed navbar (drawer mode), less than Bootstrap 6 xl: 1280px.
+// The expanded menu (six items + search + color-mode pill) needs ~1180px,
+// so navbar.php expands at xl, not lg. .xl:navbar-expand is a container
+// query on the .navbar's own width, which excludes a classic scrollbar; a
+// viewport media query includes it. Querying the same container keeps these
+// rules in step with the hamburger/drawer switch instead of lagging ~15px
+// behind on Windows. Must stay after the 1279px/1099px media blocks above
+// and before the smaller breakpoints below, which override some of these.
+@container (width < 1280px) {
 
 	.navbar.main-nav {
 
