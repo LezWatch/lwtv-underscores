@@ -62,7 +62,7 @@ $score_peak_count = max( 1, max( array_column( $score_histo['buckets'], 'count' 
 	</div>
 </div>
 
-<section class="lwtv-yearbars-card bg-light">
+<section class="lwtv-yearbars-card bg-1">
 	<div class="lwtv-yearbars-head">
 		<div>
 			<h2 class="lwtv-yearbars-headline"><?php esc_html_e( 'How shows grade out', 'lwtv-underscores' ); ?></h2>

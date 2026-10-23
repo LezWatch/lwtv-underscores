@@ -4,6 +4,38 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [7.3.3] - 2026-10-21
+
+### Changed
+
+- Update the block build tooling to `@wordpress/scripts` 37 and the block packages to their latest major versions.
+- Update the CI and deploy GitHub Actions (`setup-node`, `setup-php`, `upload-artifact`, `download-artifact`, OSV Scanner), and pin the OSV Scanner workflows to a commit like the other actions.
+
+### Fixed
+
+- The block editor canvas picks up the theme's editor styles and fonts again (Open Sans and Oswald), and the editor stylesheet no longer loads on the frontend.
+
+## [7.3.2] - 2026-10-20
+
+### Changed
+
+- Upgrade the theme and bundled plugin from Bootstrap 5.3.8 to 6.0.0-alpha.1. Bootstrap now comes from npm and loads as a WordPress script module, and a compatibility shim keeps v5 classes in saved post content styled.
+- Modals (Suggest an Edit, Related Articles, Character Statistics) and the mobile menu are native `<dialog>` elements, and character-page accordions are `<details>`/`<summary>`.
+- Tooltips start on first hover or focus, so they also work on markup that renders after page load.
+- The theme's layout breakpoints switch at Bootstrap 6's `lg` (1024px) and `xl` (1280px), and the 1140px container starts at 1280px.
+- Move the Airing Details tab to the top of the Show Details edit screen.
+- phpcs enforces `lwtv-underscores` as the only text domain, and every string that used a missing or wrong domain is fixed. The `[thismonth]` shortcode builds whole translatable sentences.
+
+### Fixed
+
+- Character, actor and show headshots wrap their details again.
+- Restore the "/" dividers in show and actor table-of-contents breadcrumbs, and the carets on nav items with submenus.
+- On phones, the page title no longer hides behind the navbar, and the menu button is a plain icon instead of a pink button.
+- Dark-mode table of contents, Ways to Watch, affiliate and section-heading boxes have readable text (WCAG AAA contrast).
+- Restore borders on sidebar lists.
+- phpcs checks files in checkouts under `.claude/worktrees/`, which it had been skipping entirely.
+- The build no longer prints 126 minifier warnings, stops with a clear message when the installed Bootstrap doesn't match `package.json`, and no longer drops the theme version when the blocks version changes in the same build.
+
 ## [7.3.1] - 2026-10-13
 
 ### Security

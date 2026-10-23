@@ -74,7 +74,7 @@ $dl_cards = array(
 				'Multiple characters have died on the same day %s time.',
 				'Multiple characters have died on the same day %s times.',
 				$dl_shared_days,
-				'lwtv'
+				'lwtv-underscores'
 			),
 			number_format_i18n( $dl_shared_days )
 		),

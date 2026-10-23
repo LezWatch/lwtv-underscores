@@ -38,7 +38,7 @@ if ( empty( $matchup_items ) ) {
 	return;
 }
 ?>
-<section class="lwtv-panel bg-light lwtv-matchups lwtv-bars--<?php echo esc_attr( $matchup['family'] ?? 'shows' ); ?>">
+<section class="lwtv-panel bg-1 lwtv-matchups lwtv-bars--<?php echo esc_attr( $matchup['family'] ?? 'shows' ); ?>">
 	<header class="lwtv-panel-head">
 		<span class="lwtv-panel-icon <?php echo esc_attr( $matchup['family'] ?? 'shows' ); ?>">
 			<?php echo lwtv_plugin()->get_symbolicon( svg: $matchup['svg'] ?? 'tag.svg', icon: $matchup['icon'] ?? 'svg-tag', max_size: '20' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>

@@ -39,7 +39,7 @@ if ( is_array( $related_posts ) && $related_posts ) {
 					'title' => $thumb_title,
 				);
 				?>
-				<div class="card mb-3">
+				<div class="card mb-5">
 					<div class="show-like-this-image-wrapper">
 						<a href="<?php the_permalink( $the_id ); ?>">
 							<img src="<?php echo esc_url( get_the_post_thumbnail_url( $the_id, 'relatedshow-img' ) ); ?>" class="card-img-top" alt="<?php echo esc_html( $thumb_title ); ?>">
@@ -57,7 +57,7 @@ if ( is_array( $related_posts ) && $related_posts ) {
 							if ( $airdates['start'] === $airdates['finish'] ) {
 								$airdate = $airdates['finish'];
 							}
-							echo '<span class="card-subtitle mb-2 text-body-secondary similar-shows-airdates"><strong>Airdates:</strong> ' . esc_html( $airdate ) . '</span>';
+							echo '<span class="card-subtitle mb-3 fg-secondary similar-shows-airdates"><strong>Airdates:</strong> ' . esc_html( $airdate ) . '</span>';
 						}
 						?>
 					</div>

@@ -13,8 +13,12 @@
 	padding: 0;
 	background-color: colors.$white;
 
+	// v6's .navbar-toggler only sets --bs-btn-* tokens for a .btn to use;
+	// without .btn the global button rule paints it pink. Keep v5's bare icon.
 	button.navbar-toggler {
 		border: none;
+		background-color: transparent;
+		color: colors.$lwtv-grey-deep;
 	}
 
 	ul.navbar-nav > li {
@@ -45,9 +49,20 @@
 			&:hover > a.nav-link,
 			&:focus > a.nav-link,
 			&:active > a.nav-link,
-			&.show > a.nav-link.dropdown-toggle {
+			> a.nav-link[aria-expanded="true"] {
 				background-color: colors.$lwtv-pink;
 				color: colors.$white;
+			}
+
+			/* Bootstrap 6 menus have no .dropdown-toggle caret; restore v5's.
+			   The v6 .nav-link is a flex row whose gap spaces the caret. */
+			> a.nav-link[data-bs-toggle="menu"]::after {
+				align-self: center;
+				content: "";
+				border-top: 0.3em solid;
+				border-right: 0.3em solid transparent;
+				border-bottom: 0;
+				border-left: 0.3em solid transparent;
 			}
 
 			/* Use this class on a menu item to hide the text when using an icon */
@@ -56,43 +71,28 @@
 				@include mixins.screen-reader;
 			}
 
-			/* Secondary Menus */
-			ul.dropdown-menu {
+			/* Secondary Menus (Bootstrap 6 Menu: flat a.menu-item links) */
+			.menu {
 				background-color: colors.$white;
 				border-top-left-radius: 0;
-				top: 95%;
 
-				li.nav-item {
-
-					/* Style for inactive links on submenus */
-					a.dropdown-item {
-						background-color: colors.$white;
-						color: colors.$lwtv-grey-deep;
-					}
-
-					/* Style for active links on submenus */
-					&.current-menu-parent > a.dropdown-item,
-					&.active > a.dropdown-item,
-					&:hover > a.dropdown-item,
-					&:focus > a.dropdown-item {
-						background-color: colors.$lwtv-pink;
-						color: colors.$white;
-					}
-
-					/* Tertiary Menus - reveal them on parent hover */
-					&.dropdown {
-
-						&:hover,
-						&:focus {
-
-							ul.dropdown-menu {
-								display: block;
-								left: 100%;
-								top: -11px;
-							}
-						}
-					}
+				/* Style for inactive links on submenus */
+				a.menu-item {
+					background-color: colors.$white;
+					color: colors.$lwtv-grey-deep;
 				}
+
+				/* Style for active links on submenus */
+				a.menu-item.current-menu-item,
+				a.menu-item.active,
+				.submenu.current-menu-parent > a.menu-item,
+				a.menu-item:hover,
+				a.menu-item:focus {
+					background-color: colors.$lwtv-pink;
+					color: colors.$white;
+				}
+
+				/* Tertiary menus: .submenu, positioned by Bootstrap's Menu JS. */
 			}
 		}
 	}

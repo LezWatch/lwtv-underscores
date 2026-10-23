@@ -1,20 +1,8 @@
 parameters:
 	ignoreErrors:
 		-
-			message: '#^Function wp_enqueue_script invoked with 6 parameters, 1\-5 required\.$#'
-			identifier: arguments.count
-			count: 1
-			path: functions.php
-
-		-
 			message: '#^Function wp_enqueue_style invoked with 6 parameters, 1\-5 required\.$#'
 			identifier: arguments.count
-			count: 1
-			path: functions.php
-
-		-
-			message: '#^Parameter \#5 \$args of function wp_enqueue_script expects array\{strategy\?\: string, in_footer\?\: bool, fetchpriority\?\: string\}\|bool, ''all'' given\.$#'
-			identifier: argument.type
 			count: 1
 			path: functions.php
 
@@ -22,12 +10,6 @@ parameters:
 			message: '#^Parameter \#5 \$media of function wp_enqueue_style expects string, false given\.$#'
 			identifier: argument.type
 			count: 3
-			path: functions.php
-
-		-
-			message: '#^Parameter \#5 \$media of function wp_enqueue_style expects string, true given\.$#'
-			identifier: argument.type
-			count: 1
 			path: functions.php
 
 		-
@@ -46,19 +28,13 @@ parameters:
 			message: '#^@param stdClass \$args does not accept actual type of parameter\: WP_Nav_Menu_Args\|null\.$#'
 			identifier: parameter.phpDocType
 			count: 1
-			path: inc/class-wp-bootstrap-4-navwalker.php
-
-		-
-			message: '#^@param stdClass \$args does not accept actual type of parameter\: WP_Nav_Menu_Args\|null\.$#'
-			identifier: parameter.phpDocType
-			count: 1
-			path: inc/class-wp-bootstrap-5-navwalker.php
+			path: inc/class-wp-bootstrap-6-navwalker.php
 
 		-
 			message: '#^PHPDoc tag @param references unknown parameter\: \$array$#'
 			identifier: parameter.notFound
 			count: 1
-			path: inc/class-wp-bootstrap-5-navwalker.php
+			path: inc/class-wp-bootstrap-6-navwalker.php
 
 		-
 			message: '#^Found usage of constant DOING_AJAX\. Use wp_doing_ajax\(\) instead\.$#'

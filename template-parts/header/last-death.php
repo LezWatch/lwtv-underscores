@@ -5,7 +5,7 @@
  * @package LWTV Underscores
  */
 ?>
-<div class="alert alert-danger" role="alert">
+<div class="alert theme-danger" role="alert">
 	<div class="container">
 		<div class="row">
 			<div class="col dead-widget-container">

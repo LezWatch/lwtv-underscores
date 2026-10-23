@@ -36,7 +36,7 @@ class Display {
 				<button
 					aria-label="The <?php echo esc_html( $score['name'] ); ?> score is <?php echo esc_html( $score['score'] ); ?> out of 100"
 					type="button"
-					class="btn btn-light" style="background-color: <?php echo esc_html( $score['bg'] ); ?>; min-width: 100px;margin-bottom:3px;">
+					class="btn d-inline-block fg-black" style="background-color: <?php echo esc_html( $score['bg'] ); ?>; min-width: 100px;margin-bottom:3px;">
 					<center>
 						<img
 							alt="Powered By <?php echo esc_html( $score['name'] ); ?>"

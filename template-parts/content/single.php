@@ -21,7 +21,7 @@
 		</div><!-- .entry-meta -->
 	</header><!-- .entry-header -->
 
-	<div class="entry-content clearfix">
+	<div class="entry-content d-flow-root">
 		<?php
 		the_content();
 		?>

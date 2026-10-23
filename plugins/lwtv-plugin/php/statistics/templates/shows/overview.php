@@ -330,7 +330,7 @@ $idx_total = count( $idx_cards ) + ( empty( $idx_lead ) ? 0 : 1 );
 <?php if ( $idx_total >= 4 ) : ?>
 	<section class="lwtv-hl-section" aria-labelledby="lwtv-hl-heading">
 		<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section" id="lwtv-hl-heading"><?php esc_html_e( 'The Headlines', 'lwtv-underscores' ); ?></p>
-		<div class="lwtv-hl bg-light">
+		<div class="lwtv-hl bg-1">
 			<?php if ( ! empty( $idx_lead ) ) : ?>
 				<a class="lwtv-hl-lead" href="<?php echo esc_url( $idx_lead['url'] ); ?>">
 					<span class="lwtv-hl-lead-figwrap">
@@ -452,7 +452,7 @@ $tropegap_ratio      = ( (int) $trope_happy > 0 ) ? round( (int) $trope_buried /
 
 <?php if ( $idx_depth_ok ) : ?>
 	<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'The Library', 'lwtv-underscores' ); ?></p>
-	<div class="lwtv-lib bg-light">
+	<div class="lwtv-lib bg-1">
 		<div class="lwtv-lib-figures">
 			<div class="lwtv-lib-figure">
 				<span class="lwtv-lib-num" data-count-to="<?php echo (int) $idx_depth['seasons_sum']; ?>"><?php echo esc_html( number_format_i18n( $idx_depth['seasons_sum'] ) ); ?></span>

@@ -21,7 +21,7 @@ $warn_image = lwtv_plugin()->get_symbolicon( svg: 'hand.svg', icon: 'svg-hand-pa
 if ( is_array( $warning ) && 'none' !== $warning['card'] ) {
 	?>
 	<section id="trigger-warning" class="trigger-warning-container">
-		<div class="alert alert-<?php echo esc_attr( $warning['card'] ); ?>" role="alert">
+		<div class="alert theme-<?php echo esc_attr( $warning['card'] ); ?>" role="alert">
 			<span class="callout-<?php echo esc_attr( $warning['card'] ); ?>" role="img" aria-label="Warning Hand" title="Warning Hand"><?php echo $warn_image; // phpcs:ignore WordPress.Security.EscapeOutput ?></span>
 			<?php echo wp_kses_post( $warning['content'] ); ?>
 		</div>

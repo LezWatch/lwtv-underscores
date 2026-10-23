@@ -89,7 +89,7 @@ class Data_Author {
 				}
 			}
 			$favourites = ( empty( $show_title ) ) ? '' : implode( ', ', $show_title );
-			$fav_title  = _n( 'Show', 'Shows', count( $show_title ) );
+			$fav_title  = _n( 'Show', 'Shows', count( $show_title ), 'lwtv-underscores' );
 		}
 
 		$details = ( isset( $favourites ) && ! empty( $favourites ) ) ? '<div class="author-favourites">' . lwtv_plugin()->get_symbolicon( svg: 'tv-hd.svg', icon: 'svg-tv', max_size: '20' ) . '&nbsp;Favorite ' . $fav_title . ': ' . $favourites . '</div>' : '';

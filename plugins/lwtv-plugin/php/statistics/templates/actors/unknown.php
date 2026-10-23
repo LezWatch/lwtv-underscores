@@ -46,7 +46,7 @@ $waffle = array(
 ?>
 <p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'The Unknown Actor', 'lwtv-underscores' ); ?></p>
 
-<section class="lwtv-panel bg-light lwtv-unknown-card">
+<section class="lwtv-panel bg-1 lwtv-unknown-card">
 	<div class="lwtv-unknown-row">
 		<div class="lwtv-unknown-waffle">
 			<?php
@@ -224,7 +224,7 @@ if ( ! empty( $unk_report['gender'] ) || ! empty( $unk_report['sexuality'] ) || 
 	$unk_sexuality_donut = $unk_build_mini_donut( $unk_report['sexuality'], $unk_count, __( 'By Sexuality', 'lwtv-underscores' ) );
 	?>
 	<p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'Who Are These Characters?', 'lwtv-underscores' ); ?></p>
-	<section class="lwtv-panel bg-light">
+	<section class="lwtv-panel bg-1">
 		<div class="lwtv-donut-mini-row">
 			<?php
 			foreach ( array( $unk_gender_donut, $unk_sexuality_donut, $unk_role_donut ) as $unk_donut ) :

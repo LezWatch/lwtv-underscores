@@ -147,7 +147,7 @@ $waffle = array(
 ?>
 <div class="lwtv-genres-columns">
 	<div class="lwtv-genres-col lwtv-genres-col--main">
-		<section class="lwtv-panel bg-light lwtv-genreload">
+		<section class="lwtv-panel bg-1 lwtv-genreload">
 			<header class="lwtv-panel-head">
 				<span class="lwtv-panel-icon genres">
 					<?php echo lwtv_plugin()->get_symbolicon( svg: 'theater_masks.svg', icon: 'svg-theater-masks', max_size: '20' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
@@ -265,7 +265,7 @@ if ( $genres_uncharted_n > 0 && (int) $shows_count > 0 ) {
 	/* translators: %s: combined percentage of all shows the least-explored genres account for (one decimal). */
 	$genres_uncharted_gauge_label = sprintf( __( 'The least-explored genres combined account for just %s%% of shows.', 'lwtv-underscores' ), number_format_i18n( $genres_uncharted_pct, 1 ) );
 	?>
-	<section class="lwtv-panel bg-light lwtv-uncharted">
+	<section class="lwtv-panel bg-1 lwtv-uncharted">
 		<header class="lwtv-panel-head">
 			<span class="lwtv-panel-icon genres">
 				<?php echo lwtv_plugin()->get_symbolicon( svg: 'search.svg', icon: 'svg-search', max_size: '20' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>

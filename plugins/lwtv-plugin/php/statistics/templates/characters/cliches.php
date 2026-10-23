@@ -145,7 +145,7 @@ if ( $cliches_top['id'] > 0 && has_post_thumbnail( $cliches_top['id'] ) ) {
 ?>
 <div class="lwtv-cliches-columns">
 	<div class="lwtv-cliches-col lwtv-cliches-col--main">
-	<section class="lwtv-panel bg-light lwtv-clicheload">
+	<section class="lwtv-panel bg-1 lwtv-clicheload">
 		<header class="lwtv-panel-head">
 			<span class="lwtv-panel-icon characters">
 				<?php echo lwtv_plugin()->get_symbolicon( svg: 'tag.svg', icon: 'svg-tag', max_size: '20' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
