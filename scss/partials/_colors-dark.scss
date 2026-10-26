@@ -90,6 +90,20 @@
 		text-decoration: none;
 	}
 
+	// Purple is 1.08:1 on the dark bar; the light tints clear WCAG's 3:1 for icons.
+	.nav-item.search a {
+
+		&,
+		&:visited {
+			color: colors.$lwtv-purple-light;
+		}
+
+		&:hover,
+		&:focus {
+			color: colors.$lwtv-pink-light;
+		}
+	}
+
 	.navbar.main-nav {
 		background-color: $lwtv-grey-medium;
 

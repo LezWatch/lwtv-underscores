@@ -122,16 +122,17 @@
 
 .nav-item.search a {
 
+	// A purple icon on the bar, not a white icon on a purple box. The
+	// svg fills with currentcolor (_layout.scss), so these set the icon.
 	&,
 	&:visited {
-		background-color: colors.$lwtv-purple;
-		color: colors.$white;
+		color: colors.$lwtv-purple;
 		padding: 12.5px 20px;
 	}
 
 	&:hover,
 	&:focus {
-		background-color: colors.$lwtv-pink;
+		color: colors.$lwtv-pink;
 	}
 }
 
