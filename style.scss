@@ -37,6 +37,7 @@
 	Addons - for plugins and other customizations
 	========================================================================== */
 	@include meta.load-css("scss/addons/bootstrap");
+	// Comment this line out when everything is migrated.
 	@include meta.load-css("scss/addons/bootstrap-legacy");
 	@include meta.load-css("scss/addons/calendar");
 	@include meta.load-css("scss/addons/facetwp");
