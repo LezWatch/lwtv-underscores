@@ -12,14 +12,13 @@ if ( ! $show_id ) {
 	return;
 }
 
-// This reads the raw meta rather than get_field() only to decide whether the
-// section is worth opening; get_ways_to_watch() does the real work below. The
-// value is the ACF repeater's row count, so '' (never set) and '0' (all rows
-// deleted) are both correctly falsy.
-if ( ! get_post_meta( $show_id, 'lezshows_waystowatch', true ) ) {
+// Empty when the show has nothing to show: no curated links, and no JustWatch
+// widget (no key, no usable IMDb ID, or the override is on).
+$ways_to_watch = lwtv_plugin()->get_ways_to_watch( $show_id );
+if ( '' === $ways_to_watch ) {
 	return;
 }
 
 echo '<section id="ways-to-watch-link" class="ways-to-watch-container">';
-echo lwtv_plugin()->get_ways_to_watch( $show_id ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+echo $ways_to_watch; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 echo '</section>';

@@ -6,7 +6,7 @@
  */
 ?>
 
-<nav id="site-navigation" class="navbar fixed-top lg:navbar-expand main-nav" role="navigation">
+<nav id="site-navigation" class="navbar fixed-top xl:navbar-expand main-nav" role="navigation">
 	<div class="container-fluid">
 		<div class="screen-reader-text">
 			<a href="#main">Skip to Main Content</a>
@@ -21,6 +21,22 @@
 			</span>
 		</a>
 
+		<?php
+		/*
+		 * Drawer-mode search, shown beside the hamburger below xl (see
+		 * _responsive.scss). The SearchWP modal is a z-index overlay, so it
+		 * can't open over the drawer, which sits in the browser's top layer;
+		 * this trigger lives outside the drawer instead.
+		 */
+		if ( function_exists( 'searchwp_modal_form_trigger' ) ) {
+			?>
+			<span class="nav-item search navbar-search-compact">
+				<?php get_template_part( 'template-parts/header/searchbox-searchwp' ); ?>
+			</span>
+			<?php
+		}
+		?>
+
 		<button class="navbar-toggler" type="button" data-bs-toggle="drawer" data-bs-target="#navbarToggleLWTV" aria-controls="navbarToggleLWTV" aria-expanded="false" aria-label="Toggle navigation">
 			<span class="navbar-toggler-icon"></span>
 		</button>
@@ -32,7 +48,7 @@
 			</div>
 
 			<div class="drawer-body">
-				<div class="ms-auto">
+				<div class="navbar-menu-wrap">
 					<?php
 					wp_nav_menu(
 						array(

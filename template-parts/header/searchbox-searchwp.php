@@ -24,7 +24,10 @@ $modal_hash = searchwp_modal_form_get_template_hash( $engine, $template['file'] 
 add_filter(
 	'searchwp_modal_form_queue',
 	function ( $forms ) use ( $modal_hash ) {
-		$forms[] = $modal_hash;
+		// The navbar renders two triggers (bar and drawer mode); queue one modal.
+		if ( ! in_array( $modal_hash, $forms, true ) ) {
+			$forms[] = $modal_hash;
+		}
 
 		return $forms;
 	}

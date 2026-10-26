@@ -10,6 +10,15 @@
 
 	@include mixins.box-shadow(0 2px 30px rgba(colors.$black, 0.2));
 	height: 50px;
+
+	// v6's .navbar sets min-height: var(--bs-navbar-min-height) (3.5rem),
+	// which beats height and made the bar 56px. .site-subheader's 50px
+	// margin-top assumes 50px, so the extra 6px covered whatever sat below.
+	--bs-navbar-min-height: 50px;
+
+	// v6's 6px brand padding made the brand 54.5px, stretching the row and
+	// pushing the vertically-centred menu 2px below the bar.
+	--bs-navbar-brand-padding-y: 0;
 	padding: 0;
 	background-color: colors.$white;
 
@@ -19,6 +28,14 @@
 		border: none;
 		background-color: transparent;
 		color: colors.$lwtv-grey-deep;
+	}
+
+	// v6's .navbar-nav adds a 4px gap and a 1px transparent border on each
+	// .nav-link. The border made links 52.5px tall, overhanging the 50px
+	// bar; the gap left slivers between items. v5 had neither.
+	ul.navbar-nav {
+		--bs-nav-gap: 0;
+		--bs-nav-link-border-width: 0;
 	}
 
 	ul.navbar-nav > li {
@@ -39,6 +56,9 @@
 				font-weight: 600;
 				padding: 14px 20px;
 				text-transform: uppercase;
+
+				// v6 rounds .nav-link (--bs-radius-5); keep the square v5 hover/active.
+				border-radius: 0;
 			}
 
 			/* Style for active links */
@@ -102,16 +122,17 @@
 
 .nav-item.search a {
 
+	// A purple icon on the bar, not a white icon on a purple box. The
+	// svg fills with currentcolor (_layout.scss), so these set the icon.
 	&,
 	&:visited {
-		background-color: colors.$lwtv-purple;
-		color: colors.$white;
+		color: colors.$lwtv-purple;
 		padding: 12.5px 20px;
 	}
 
 	&:hover,
 	&:focus {
-		background-color: colors.$lwtv-pink;
+		color: colors.$lwtv-pink;
 	}
 }
 

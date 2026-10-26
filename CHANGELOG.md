@@ -4,6 +4,31 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [7.4.0] - 2026-10-23
+
+### Added
+
+- `wp lwtv migrate bootstrap6` rewrites Bootstrap 5 alert, button and `text-bg` classes in hand-written post content to their v6 equivalents. It does a dry run first, asks to confirm, and saves a revision before each change. A companion browser tool re-saves Spoiler, Grade and Screener blocks through the editor. See `docs/operations/migrations/bootstrap-6.md`.
+- Below 1280px, a search icon sits beside the menu button.
+
+### Changed
+
+- Avatars use Bootstrap 6's Avatar component.
+- The navbar expands at `xl` (1280px) instead of `lg`, and menu items in the mobile drawer are full-width and left-aligned.
+- Spoiler, Grade and Screener blocks save Bootstrap 6 classes. Existing blocks still validate and upgrade the next time they're saved.
+- The admin cache is busted along with the frontend, so admin screens no longer fall back to Times New Roman.
+
+### Fixed
+
+- Avatars are full size again instead of shrinking to 2.5rem.
+- The navbar is back to 50px tall and no longer covers the top of the first element on each page. Between 1024px and 1280px the menu no longer runs off the right edge and clips the color-mode toggle. Links no longer overhang the bar or have rounded hover corners.
+- On Windows, the drawer-mode styles switch at the same width as the menu button instead of about 15px later.
+- The actor overlays and the Suggest an Edit form scroll, so content and the submit button past the fold can be reached, and the actor overlays go fullscreen on phones.
+- FacetWP's loading indicator shows a spinner (it had rendered nothing), and its "Loading…" label is translatable.
+- Screener blocks saved with Bootstrap 4's `data-toggle` no longer show as invalid, and their star and trigger icons render.
+- The sidebar search button has matching corners, and the header search bar's columns no longer stack.
+- Close an unterminated `class` attribute in the non-HTML5 comment walker.
+
 ## [7.3.3] - 2026-10-21
 
 ### Changed

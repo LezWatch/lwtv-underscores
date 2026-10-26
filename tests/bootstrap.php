@@ -37,13 +37,13 @@ if ( ! function_exists( 'wp_parse_url' ) ) {
 }
 
 if ( ! function_exists( '__' ) ) {
-	function __( $text, $domain = 'default' ) { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
+	function __( $text, $domain = 'default' ) { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound,Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed -- matches core's signature; the shim doesn't translate.
 		return $text;
 	}
 }
 
 if ( ! function_exists( '_n' ) ) {
-	function _n( $single, $plural, $number, $domain = 'default' ) { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
+	function _n( $single, $plural, $number, $domain = 'default' ) { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound,Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed -- matches core's signature; the shim doesn't translate.
 		return ( 1 === (int) $number ) ? $single : $plural;
 	}
 }
@@ -84,11 +84,13 @@ require_once __DIR__ . '/../plugins/lwtv-plugin/php/_helpers/class-tmdb-response
  * the bar set above; the tests pass their own deterministic fold.
  */
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/_helpers/class-name-key.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/_helpers/class-bootstrap6-markup.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/cpts/shows/watching/class-host-name.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/cpts/shows/watching/class-watch-url-health.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/cpts/shows/watching/class-watch-term-url-audit.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/cpts/shows/watching/class-watch-host-map.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/cpts/shows/watching/class-watch-term-match.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/cpts/shows/watching/class-justwatch.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/statistics/build/class-trope-category-coverage.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/statistics/build/class-term-count-distribution.php'; // to_cells() lives here too.
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/statistics/build/class-score-distribution.php';
@@ -150,3 +152,4 @@ require_once __DIR__ . '/../plugins/lwtv-plugin/php/admin-menu/build/class-exclu
  */
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/_helpers/class-admin-notice.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/plugins/searchwp/build/class-alt-names.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/theme/build/class-avatar-markup.php';

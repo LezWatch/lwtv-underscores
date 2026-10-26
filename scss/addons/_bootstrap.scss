@@ -34,6 +34,9 @@
 		}
 
 		.page-link {
+			// v6 made .page-link a flex container, which drops the space
+			// between "Next"/"Last" and the arrow icon. Put it back as a gap.
+			gap: 0.375rem;
 
 			&.active {
 				background-color: colors.$lwtv-pink;

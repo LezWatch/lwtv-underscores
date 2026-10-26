@@ -17,7 +17,7 @@
 				<div class="search-body">
 					<div class="search-box">
 						<form role="search" class="search-form" action="<?php echo esc_url( home_url( '/' ) ); ?>" method="get">
-							<div class="form-group row">
+							<div class="row searchbox-row">
 								<label class="sm:col-3 col-form-label" for="search">Search the Site</label>
 								<div class="sm:col-7 searchbox-input">
 									<input type="text" name="s" id="header-search" class="form-control" placeholder="<?php echo esc_attr_x( 'Enter keywords &hellip;', 'placeholder', 'lwtv-underscores' ); ?>" value="<?php the_search_query(); ?>" title="<?php echo esc_attr_x( 'Search for:', 'label', 'lwtv-underscores' ); ?>" data-swplive="true" />

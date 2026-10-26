@@ -366,6 +366,18 @@ h6 a {
 		}
 	}
 
+	// Pushes the menu right in the expanded bar. Not the .ms-auto utility:
+	// utilities outrank this components-layer stylesheet, so the drawer
+	// couldn't undo it (see _responsive.scss).
+	.navbar-menu-wrap {
+		margin-inline-start: auto;
+	}
+
+	// Drawer-mode search beside the hamburger; shown in _responsive.scss.
+	.navbar-search-compact {
+		display: none;
+	}
+
 	.nav-item.search {
 
 		svg {
@@ -375,7 +387,7 @@ h6 a {
 		}
 
 		svg * {
-			fill: colors.$white;
+			fill: currentcolor;
 		}
 	}
 
@@ -391,7 +403,9 @@ h6 a {
 			margin-top: 82px;
 		}
 
-		.form-group {
+		// Not .form-group: in Bootstrap 6 that's a grid wrapper, which
+		// overrides .row's flex and stacks the search bar's columns.
+		.searchbox-row {
 			margin-bottom: 0;
 
 			label {
@@ -1583,6 +1597,16 @@ section#characters {
 	.btn {
 		margin: 0 0.4rem;
 	}
+
+	/* JustWatch widget, replaces the buttons when it renders. */
+	.justwatch {
+		margin: 0.5rem 0.4rem 0;
+	}
+
+	.justwatch-attribution {
+		font-size: 0.875rem;
+		margin: 0.5rem 0.4rem 0;
+	}
 }
 
 /* Notable Queer-Centric Episodes */
@@ -2357,10 +2381,6 @@ div.facetwp-facet-shows_scores input.facetwp-number {
 			}
 
 		}
-	}
-
-	.modal {
-		padding-block-start: 10px;
 	}
 }
 

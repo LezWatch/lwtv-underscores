@@ -15,13 +15,13 @@ if ( is_null( $for_post ) || empty( $for_post ) ) {
 
 <!-- Button trigger dialog -->
 <div class="d-grid gap-3">
-	<button type="button" class="btn btn-solid theme-primary btn-lg btn-block" data-bs-toggle="dialog" data-bs-target="#suggestForm">
+	<button type="button" class="btn btn-solid theme-primary btn-lg w-100" data-bs-toggle="dialog" data-bs-target="#suggestForm">
 		Suggest an Edit
 	</button>
 </div>
 
 <!-- Dialog -->
-<dialog class="dialog dialog-lg" id="suggestForm" aria-labelledby="suggestFormLabel">
+<dialog class="dialog dialog-lg dialog-scrollable" id="suggestForm" aria-labelledby="suggestFormLabel">
 	<div class="dialog-header">
 		<h3 class="dialog-title" id="suggestFormLabel">Suggest an Edit for <?php echo esc_html( ucfirst( $for_post_type ) ); ?> <?php echo esc_html( get_the_title( $for_post ) ); ?></h3>
 		<button type="button" class="btn-close" data-bs-dismiss="dialog" aria-label="Close"></button>
