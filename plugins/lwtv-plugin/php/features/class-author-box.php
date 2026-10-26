@@ -163,7 +163,7 @@ class Author_Box {
 	public function get_author_content( $author_id, $user ) {
 		$content = array(
 			'id'        => $author_id,
-			'avatar'    => get_avatar( $author_id, 125 ),
+			'avatar'    => lwtv_plugin()->get_avatar( $author_id, 125 ),
 			'url'       => get_author_posts_url( $author_id ) ?? null,
 			'name'      => $user->display_name ?? null,
 			'title'     => get_the_author_meta( 'jobrole', $author_id ) ?? null,

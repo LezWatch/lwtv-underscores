@@ -30,6 +30,13 @@ class Pagination {
 	public function wp_enqueue_scripts() {
 		if ( is_archive() ) {
 			wp_enqueue_script( 'facetwp-pagination', LWTV_PLUGIN_URL . '/assets/js/facetwp-pagination.js', array(), LWTV_PLUGIN_VERSION, true );
+			wp_localize_script(
+				'facetwp-pagination',
+				'lwtvFacetwp',
+				array(
+					'loading' => __( 'Loading…', 'lwtv-underscores' ),
+				)
+			);
 		}
 	}
 

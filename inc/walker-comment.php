@@ -275,10 +275,10 @@ class LWTV_Walker_Comment extends Walker {
 		<?php if ( 'div' !== $args['style'] ) : ?>
 		<div id="div-comment-<?php comment_ID(); ?>" class="comment-body">
 		<?php endif; ?>
-		<div class="comment-author vcard
+		<div class="comment-author vcard">
 			<?php
 			if ( 0 !== $args['avatar_size'] ) {
-				echo get_avatar( $comment, $args['avatar_size'] );
+				echo lwtv_plugin()->get_avatar( $comment, (int) $args['avatar_size'] );
 			}
 			?>
 		</div>
@@ -349,7 +349,7 @@ class LWTV_Walker_Comment extends Walker {
 						<div class="comment-author vcard">
 							<?php
 							if ( 0 !== $args['avatar_size'] ) {
-								echo get_avatar( $comment, $args['avatar_size'] );
+								echo lwtv_plugin()->get_avatar( $comment, (int) $args['avatar_size'] );
 							}
 							?>
 						</div><!-- .comment-author -->

@@ -1,6 +1,6 @@
 {
   "name": "lwtv-underscores",
-  "version": "7.3.3",
+  "version": "7.4.0",
   "description": "LezWatch.TV Custom Theme.",
   "main": "index.js",
   "workspaces": [
@@ -40,7 +40,7 @@
     "fix:js:plugin": "wp-scripts lint-js 'plugins/lwtv-plugin/assets/js/**/*.js' --fix",
     "start": "npm-run-all start:*",
     "start:blocks": "npm run start --workspace=@lwtv/blocks",
-    "test": "./vendor/bin/phpunit",
+    "test": "./vendor/bin/phpunit && composer lint",
     "preinstall": "composer install",
     "updater": "composer update && npm update && wp-scripts packages-update && npm run updater:workspace --workspaces --if-present && npm run updater:relock",
     "updater:relock": "rm -f package-lock.json && npm install",
